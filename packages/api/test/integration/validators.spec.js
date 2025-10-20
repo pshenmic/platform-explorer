@@ -882,6 +882,260 @@ describe('Validators routes', () => {
       })
     })
 
+    describe('other filters', async () => {
+      it('should return set by blocks_proposed_min and blocks_proposed_max', async () => {
+        const { body } = await client.get('/validators?blocks_proposed_min=2&blocks_proposed_max=12')
+          .expect(200)
+          .expect('Content-Type', 'application/json; charset=utf-8')
+
+        assert.equal(body.pagination.page, 1)
+        assert.equal(body.pagination.limit, 10)
+        assert.equal(body.pagination.total, 20)
+        assert.equal(body.resultSet.length, 10)
+
+        const expectedValidators = validators
+          .filter(row => {
+            const proposedBlocksCount = blocks.filter((block) => block.validator === row.pro_tx_hash).length
+            return proposedBlocksCount >= 2
+          })
+          .slice(0, 10)
+          .map(row => {
+            const identity = identities.find(identity =>
+              identity.identifier === base58.encode(Buffer.from(row.pro_tx_hash, 'hex')))
+            return {
+              proTxHash: row.pro_tx_hash,
+              isActive: activeValidators.some(validator => validator.pro_tx_hash === row.pro_tx_hash),
+              proposedBlocksAmount: blocks.filter((block) => block.validator === row.pro_tx_hash).length,
+              lastProposedBlockHeader: blocks
+                .filter((block) => block.validator === row.pro_tx_hash)
+                .map((block) => BlockHeader.fromRow(block))
+                .map((blockHeader) => ({
+                  hash: blockHeader.hash,
+                  height: blockHeader.height,
+                  timestamp: blockHeader.timestamp.toISOString(),
+                  blockVersion: blockHeader.blockVersion,
+                  appVersion: blockHeader.appVersion,
+                  l1LockedHeight: blockHeader.l1LockedHeight,
+                  validator: blockHeader.validator,
+                  totalGasUsed: 0,
+                  appHash: blockHeader.appHash
+                }))
+                .toReversed()[0] ?? null,
+              proTxInfo: {
+                type: dashCoreRpcResponse.type,
+                collateralHash: dashCoreRpcResponse.collateralHash,
+                collateralIndex: dashCoreRpcResponse.collateralIndex,
+                collateralAddress: dashCoreRpcResponse.collateralAddress,
+                operatorReward: dashCoreRpcResponse.operatorReward,
+                confirmations: dashCoreRpcResponse.confirmations,
+                state: dashCoreRpcResponse.state
+              },
+              totalReward: null,
+              epochReward: null,
+              identity: identity.identifier,
+              identityBalance: '0',
+              epochInfo: { ...fullEpochInfo },
+              withdrawalsCount: null,
+              lastWithdrawal: null,
+              lastWithdrawalTime: null,
+              endpoints: null
+            }
+          })
+
+        assert.deepEqual(body.resultSet, expectedValidators)
+      })
+
+      it('should return set by blocks_proposed_min and blocks_proposed_max, last_proposed_block_height_min and last_proposed_block_height_max', async () => {
+        const { body } = await client.get('/validators?blocks_proposed_min=2&blocks_proposed_max=12&last_proposed_block_height_min=35&last_proposed_block_height_max=50')
+          .expect(200)
+          .expect('Content-Type', 'application/json; charset=utf-8')
+
+        assert.equal(body.pagination.page, 1)
+        assert.equal(body.pagination.limit, 10)
+        assert.equal(body.pagination.total, 16)
+        assert.equal(body.resultSet.length, 10)
+
+        const expectedValidators = validators
+          .filter(row => {
+            const proposedBlocks = blocks.filter((block) => block.validator === row.pro_tx_hash)
+
+            const [lastProposedBlock] = proposedBlocks
+              .sort((a, b) => b.height - a.height)
+
+            return proposedBlocks.length >= 2 && proposedBlocks.length <= 12 && lastProposedBlock.height >= 35 && lastProposedBlock.height <= 50
+          })
+          .sort((a, b) => a.id - b.id)
+          .slice(0, 10)
+          .map(row => {
+            const identity = identities.find(identity =>
+              identity.identifier === base58.encode(Buffer.from(row.pro_tx_hash, 'hex')))
+            return {
+              proTxHash: row.pro_tx_hash,
+              isActive: activeValidators.some(validator => validator.pro_tx_hash === row.pro_tx_hash),
+              proposedBlocksAmount: blocks.filter((block) => block.validator === row.pro_tx_hash).length,
+              lastProposedBlockHeader: blocks
+                .filter((block) => block.validator === row.pro_tx_hash)
+                .map((block) => BlockHeader.fromRow(block))
+                .map((blockHeader) => ({
+                  hash: blockHeader.hash,
+                  height: blockHeader.height,
+                  timestamp: blockHeader.timestamp.toISOString(),
+                  blockVersion: blockHeader.blockVersion,
+                  appVersion: blockHeader.appVersion,
+                  l1LockedHeight: blockHeader.l1LockedHeight,
+                  validator: blockHeader.validator,
+                  totalGasUsed: 0,
+                  appHash: blockHeader.appHash
+                }))
+                .toReversed()[0] ?? null,
+              proTxInfo: {
+                type: dashCoreRpcResponse.type,
+                collateralHash: dashCoreRpcResponse.collateralHash,
+                collateralIndex: dashCoreRpcResponse.collateralIndex,
+                collateralAddress: dashCoreRpcResponse.collateralAddress,
+                operatorReward: dashCoreRpcResponse.operatorReward,
+                confirmations: dashCoreRpcResponse.confirmations,
+                state: dashCoreRpcResponse.state
+              },
+              totalReward: null,
+              epochReward: null,
+              identity: identity.identifier,
+              identityBalance: '0',
+              epochInfo: { ...fullEpochInfo },
+              withdrawalsCount: null,
+              lastWithdrawal: null,
+              lastWithdrawalTime: null,
+              endpoints: null
+            }
+          })
+
+        assert.deepEqual(body.resultSet, expectedValidators)
+      })
+
+      it('should return set by last_proposed_block_hash', async () => {
+        const [block] = blocks.reverse()
+
+        const { body } = await client.get(`/validators?last_proposed_block_hash=${block.hash}`)
+          .expect(200)
+          .expect('Content-Type', 'application/json; charset=utf-8')
+
+        assert.equal(body.pagination.page, 1)
+        assert.equal(body.pagination.limit, 10)
+        assert.equal(body.pagination.total, 1)
+        assert.equal(body.resultSet.length, 1)
+
+        const expectedValidators = validators
+          .filter(row => {
+            const proposedBlocks = blocks.filter((block) => block.validator === row.pro_tx_hash)
+
+            const [lastProposedBlock] = proposedBlocks
+              .sort((a, b) => b.height - a.height)
+
+            return lastProposedBlock?.hash === block.hash
+          })
+          .slice(0, 10)
+          .map(row => {
+            const identity = identities.find(identity =>
+              identity.identifier === base58.encode(Buffer.from(row.pro_tx_hash, 'hex')))
+            return {
+              proTxHash: row.pro_tx_hash,
+              isActive: activeValidators.some(validator => validator.pro_tx_hash === row.pro_tx_hash),
+              proposedBlocksAmount: blocks.filter((block) => block.validator === row.pro_tx_hash).length,
+              lastProposedBlockHeader: blocks
+                .filter((block) => block.validator === row.pro_tx_hash)
+                .map((block) => BlockHeader.fromRow(block))
+                .map((blockHeader) => ({
+                  hash: blockHeader.hash,
+                  height: blockHeader.height,
+                  timestamp: blockHeader.timestamp.toISOString(),
+                  blockVersion: blockHeader.blockVersion,
+                  appVersion: blockHeader.appVersion,
+                  l1LockedHeight: blockHeader.l1LockedHeight,
+                  validator: blockHeader.validator,
+                  totalGasUsed: 0,
+                  appHash: blockHeader.appHash
+                }))[0] ?? null,
+              proTxInfo: {
+                type: dashCoreRpcResponse.type,
+                collateralHash: dashCoreRpcResponse.collateralHash,
+                collateralIndex: dashCoreRpcResponse.collateralIndex,
+                collateralAddress: dashCoreRpcResponse.collateralAddress,
+                operatorReward: dashCoreRpcResponse.operatorReward,
+                confirmations: dashCoreRpcResponse.confirmations,
+                state: dashCoreRpcResponse.state
+              },
+              totalReward: null,
+              epochReward: null,
+              identity: identity.identifier,
+              identityBalance: '0',
+              epochInfo: { ...fullEpochInfo },
+              withdrawalsCount: null,
+              lastWithdrawal: null,
+              lastWithdrawalTime: null,
+              endpoints: null
+            }
+          })
+
+        assert.deepEqual(body.resultSet, expectedValidators)
+      })
+
+      it('should return validators by owner', async () => {
+        const [validator] = validators
+
+        const owner = base58.encode(Buffer.from(validator.pro_tx_hash, 'hex'))
+
+        const { body } = await client.get(`/validators?owner=${owner}`)
+          .expect(200)
+          .expect('Content-Type', 'application/json; charset=utf-8')
+
+        const expectedValidators = [validator]
+          .map(row => {
+            const identity = identities.find(identity =>
+              identity.identifier === base58.encode(Buffer.from(row.pro_tx_hash, 'hex')))
+            return {
+              proTxHash: row.pro_tx_hash,
+              isActive: true,
+              proposedBlocksAmount: blocks.filter((block) => block.validator === row.pro_tx_hash).length,
+              lastProposedBlockHeader: blocks
+                .filter((block) => block.validator === row.pro_tx_hash)
+                .map((block) => BlockHeader.fromRow(block))
+                .map((blockHeader) => ({
+                  hash: blockHeader.hash,
+                  height: blockHeader.height,
+                  timestamp: blockHeader.timestamp.toISOString(),
+                  blockVersion: blockHeader.blockVersion,
+                  appVersion: blockHeader.appVersion,
+                  l1LockedHeight: blockHeader.l1LockedHeight,
+                  validator: blockHeader.validator,
+                  totalGasUsed: 0,
+                  appHash: blockHeader.appHash
+                }))
+                .toReversed()[0] ?? null,
+              proTxInfo: {
+                type: dashCoreRpcResponse.type,
+                collateralHash: dashCoreRpcResponse.collateralHash,
+                collateralIndex: dashCoreRpcResponse.collateralIndex,
+                collateralAddress: dashCoreRpcResponse.collateralAddress,
+                operatorReward: dashCoreRpcResponse.operatorReward,
+                confirmations: dashCoreRpcResponse.confirmations,
+                state: dashCoreRpcResponse.state
+              },
+              totalReward: null,
+              epochReward: null,
+              identity: identity.identifier,
+              identityBalance: '0',
+              epochInfo: { ...fullEpochInfo },
+              withdrawalsCount: null,
+              lastWithdrawal: null,
+              lastWithdrawalTime: null,
+              endpoints: null
+            }
+          })
+
+        assert.deepEqual(body.resultSet, expectedValidators)
+      })
+    })
+
     describe('filter isActive = true', async () => {
       it('should return default set of validators', async () => {
         const { body } = await client.get('/validators?isActive=true')
@@ -894,6 +1148,7 @@ describe('Validators routes', () => {
         assert.equal(body.resultSet.length, 10)
 
         const expectedValidators = activeValidators
+          .sort((a, b) => a.id - b.id)
           .slice(0, 10)
           .map(row => {
             const identity = identities.find(identity =>
@@ -904,6 +1159,7 @@ describe('Validators routes', () => {
               proposedBlocksAmount: blocks.filter((block) => block.validator === row.pro_tx_hash).length,
               lastProposedBlockHeader: blocks
                 .filter((block) => block.validator === row.pro_tx_hash)
+                .sort((a, b) => a.height - b.height)
                 .map((block) => BlockHeader.fromRow(block))
                 .map((blockHeader) => ({
                   hash: blockHeader.hash,
@@ -960,6 +1216,7 @@ describe('Validators routes', () => {
               proposedBlocksAmount: blocks.filter((block) => block.validator === row.pro_tx_hash).length,
               lastProposedBlockHeader: blocks
                 .filter((block) => block.validator === row.pro_tx_hash)
+                .sort((a, b) => a.height - b.height)
                 .map((block) => BlockHeader.fromRow(block))
                 .map((blockHeader) => ({
                   hash: blockHeader.hash,
@@ -1018,6 +1275,7 @@ describe('Validators routes', () => {
               proposedBlocksAmount: blocks.filter((block) => block.validator === row.pro_tx_hash).length,
               lastProposedBlockHeader: blocks
                 .filter((block) => block.validator === row.pro_tx_hash)
+                .sort((a, b) => a.height - b.height)
                 .map((block) => BlockHeader.fromRow(block))
                 .map((blockHeader) => ({
                   hash: blockHeader.hash,
@@ -1076,6 +1334,7 @@ describe('Validators routes', () => {
               proposedBlocksAmount: blocks.filter((block) => block.validator === row.pro_tx_hash).length,
               lastProposedBlockHeader: blocks
                 .filter((block) => block.validator === row.pro_tx_hash)
+                .sort((a, b) => a.height - b.height)
                 .map((block) => BlockHeader.fromRow(block))
                 .map((blockHeader) => ({
                   hash: blockHeader.hash,
@@ -1134,6 +1393,7 @@ describe('Validators routes', () => {
               proposedBlocksAmount: blocks.filter((block) => block.validator === row.pro_tx_hash).length,
               lastProposedBlockHeader: blocks
                 .filter((block) => block.validator === row.pro_tx_hash)
+                .sort((a, b) => a.height - b.height)
                 .map((block) => BlockHeader.fromRow(block))
                 .map((blockHeader) => ({
                   hash: blockHeader.hash,
@@ -1192,6 +1452,7 @@ describe('Validators routes', () => {
               proposedBlocksAmount: blocks.filter((block) => block.validator === row.pro_tx_hash).length,
               lastProposedBlockHeader: blocks
                 .filter((block) => block.validator === row.pro_tx_hash)
+                .sort((a, b) => a.height - b.height)
                 .map((block) => BlockHeader.fromRow(block))
                 .map((blockHeader) => ({
                   hash: blockHeader.hash,
@@ -1251,6 +1512,7 @@ describe('Validators routes', () => {
               proposedBlocksAmount: blocks.filter((block) => block.validator === row.pro_tx_hash).length,
               lastProposedBlockHeader: blocks
                 .filter((block) => block.validator === row.pro_tx_hash)
+                .sort((a, b) => a.height - b.height)
                 .map((block) => BlockHeader.fromRow(block))
                 .map((blockHeader) => ({
                   hash: blockHeader.hash,

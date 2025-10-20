@@ -12,26 +12,46 @@ module.exports = class TokensDAO {
     this.sdk = sdk
   }
 
-  getTokens = async (page, limit, order) => {
+  getTokens = async (page, limit, order, owner, position, contractId) => {
     const fromRank = ((page - 1) * limit)
+
+    const filtersBindings = []
+    let filtersQuery = ''
+
+    if (owner) {
+      filtersQuery = 'LOWER(tokens.owner) = ?'
+      filtersBindings.push(owner.toLowerCase())
+    }
+
+    if (typeof position === 'number') {
+      filtersQuery = filtersQuery !== '' ? filtersQuery + ' and position = ?' : 'position = ?'
+      filtersBindings.push(position)
+    }
+
+    if (contractId) {
+      filtersQuery = filtersQuery !== '' ? filtersQuery + ' and LOWER(data_contracts.identifier) = ?' : 'LOWER(data_contracts.identifier) = ?'
+      filtersBindings.push(contractId.toLowerCase())
+    }
 
     const subquery = this.knex('tokens')
       .select('localizations', 'tokens.identifier as identifier', 'base_supply', 'max_supply', 'mintable', 'tokens.owner',
         'burnable', 'freezable', 'unfreezable', 'destroyable', 'allowed_emergency_actions',
-        'data_contracts.identifier as data_contract_identifier', 'tokens.id'
+        'data_contracts.identifier as data_contract_identifier', 'tokens.id', 'position'
       )
+      .whereRaw(filtersQuery, filtersBindings)
       .leftJoin('data_contracts', 'data_contracts.id', 'data_contract_id')
-      .as('subquery')
 
-    const rows = await this.knex(subquery)
+    const rows = await this.knex
+      .with('subquery', subquery)
       .select('localizations', 'identifier', 'base_supply', 'max_supply', 'mintable', 'owner',
         'burnable', 'freezable', 'unfreezable', 'destroyable', 'allowed_emergency_actions',
-        'data_contract_identifier'
+        'data_contract_identifier', 'position'
       )
-      .select(this.knex('tokens').count('*').as('total_count'))
+      .select(this.knex('subquery').count('*').as('total_count'))
       .orderBy('id', order)
       .offset(fromRank)
       .limit(limit)
+      .from('subquery')
 
     const totalCount = rows.length > 0 ? Number(rows[0].total_count) : 0
 
