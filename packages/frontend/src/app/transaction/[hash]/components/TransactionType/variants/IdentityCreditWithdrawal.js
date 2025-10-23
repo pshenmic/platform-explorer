@@ -1,6 +1,7 @@
 import { ValueContainer } from '@ui/containers'
 import { InfoLine, Identifier, CreditsBlock } from '@components/data'
 import { ValueCard } from '@components/cards'
+import { PayoutAddress } from '../../PayoutAddress'
 
 const poolingColors = {
   Standard: 'green',
@@ -30,6 +31,7 @@ export const IdentityCreditWithdrawal = ({
   signaturePublicKeyId,
   pooling,
   outputScript,
+  proTxHash,
   loading
 }) => (
   <>
@@ -88,20 +90,6 @@ export const IdentityCreditWithdrawal = ({
       error={pooling === undefined}
     />
 
-    <InfoLine
-      className={
-        'TransactionPage__InfoLine TransactionPage__InfoLine--OutputScript'
-      }
-      title={'Output Script'}
-      value={
-        <ValueCard className={'TransactionPage__OutputScript'}>
-          <Identifier copyButton={true} ellipsis={false}>
-            {outputScript}
-          </Identifier>
-        </ValueCard>
-      }
-      loading={loading}
-      error={outputScript === undefined}
-    />
+    <PayoutAddress identity={senderId} outputScript={outputScript} loading={loading} />
   </>
 )

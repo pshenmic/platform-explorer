@@ -11,7 +11,7 @@ import { PublicKeyCard } from '@components/transactions'
  * @param {number} [props.identityContractNonce] - Identity contract nonce related to the update.
  * @param {Array<Object>} [props.publicKeysToAdd] - Public keys to be added.
  * @param {Array<Object>} [props.publicKeys] - Current public keys (used for counts/titles).
- * @param {Array<number>} [props.setPublicKeyIdsToDisable] - Public key IDs to disable.
+ * @param {Array<number>} [props.publicKeyIdsToDisable] - Public key IDs to disable.
  * @param {number} [props.identityNonce] - Identity nonce.
  * @param {boolean} [props.loading] - Loading state flag.
  * @returns {JSX.Element}
@@ -22,7 +22,7 @@ export const IdentityUpdate = ({
   identityContractNonce,
   publicKeysToAdd,
   publicKeys,
-  setPublicKeyIdsToDisable,
+  publicKeyIdsToDisable,
   identityNonce,
   loading
 }) => (
@@ -79,7 +79,9 @@ export const IdentityUpdate = ({
         className={
           'TransactionPage__InfoLine TransactionPage__InfoLine--PublicKeys'
         }
-        title={`Add Public Keys ${publicKeys !== undefined ? `(${publicKeysToAdd?.length})` : ''}`}
+        title={`Add Public Keys ${
+          publicKeys !== undefined ? `(${publicKeysToAdd?.length})` : ''
+        }`}
         value={
           <>
             {publicKeysToAdd?.map((publicKey, i) => (
@@ -96,15 +98,19 @@ export const IdentityUpdate = ({
       />
     )}
 
-    {setPublicKeyIdsToDisable?.length > 0 && (
+    {publicKeyIdsToDisable?.length > 0 && (
       <InfoLine
         className={
           'TransactionPage__InfoLine TransactionPage__InfoLine--PublicKeys'
         }
-        title={`Disable Public Keys ${setPublicKeyIdsToDisable !== undefined ? `(${setPublicKeyIdsToDisable?.length})` : ''}`}
+        title={`Disable Public Keys ${
+          publicKeyIdsToDisable !== undefined
+            ? `(${publicKeyIdsToDisable?.length})`
+            : ''
+        }`}
         value={
           <>
-            {setPublicKeyIdsToDisable?.map((publicKey, i) => (
+            {publicKeyIdsToDisable?.map((publicKey, i) => (
               <PublicKeyCard
                 className={'TransactionPage__PublicKeyCard'}
                 publicKey={{ id: publicKey }}
@@ -114,7 +120,7 @@ export const IdentityUpdate = ({
           </>
         }
         loading={loading}
-        error={setPublicKeyIdsToDisable === undefined}
+        error={publicKeyIdsToDisable === undefined}
       />
     )}
   </>

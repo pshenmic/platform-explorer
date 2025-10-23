@@ -1,9 +1,10 @@
 import { InfoLine, Identifier } from '@components/data'
 import { ValueContainer } from '@ui/containers'
 
-import styles from './TokenConfiguration.module.scss'
 import { LocalisationGrid } from '@components/tokens/localisation/LocalisationGrid'
 import { DistType } from './DistType'
+
+import styles from './TokenConfiguration.module.scss'
 
 /**
  * Token configuration block with flat props.
@@ -92,7 +93,7 @@ export const TokenConfiguration = ({
           />
         )}
 
-        <DistType />
+       {distributionRules?.perpetualDistribution && <DistType details={distributionRules.perpetualDistribution} />}
       </div>
     </div>
   )

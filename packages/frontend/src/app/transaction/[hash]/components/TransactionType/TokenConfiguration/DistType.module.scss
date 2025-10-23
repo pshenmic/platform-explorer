@@ -10,8 +10,8 @@
 
     .container {
       width: fit-content;
-      max-width: 233px;
       padding: 6px 10px;
+      background-color: #2e393d;
 
       .title {
         font-family: $font-mono;
@@ -19,8 +19,6 @@
       }
 
       .card {
-        display: flex;
-        gap: 8px;
         margin-top: 8px;
         width: fit-content;
         padding: 6px 10px;
@@ -36,11 +34,22 @@
           display: flex;
           align-items: center;
           gap: 8px;
+          font-weight: 400;
         }
 
-        .field {
-          font-family: $font-mono;
-          font-size: 0.688rem;
+        .list {
+          margin-top: 8px;
+          display: flex;
+          flex-direction: column;
+          gap: 8px;
+
+          .field {
+            margin: 0;
+            font-family: $font-mono;
+            line-height: 140%;
+            font-size: 0.688rem;
+            font-weight: 400;
+          }
         }
       }
     }

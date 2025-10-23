@@ -101,7 +101,7 @@ export const DataContractCreate = ({
         error={schema === undefined}
       />
     )}
-    {tokens?.length &&
+    {!!tokens?.length &&
       tokens.map((token, i) => (
         <InfoLine
           key={i}
