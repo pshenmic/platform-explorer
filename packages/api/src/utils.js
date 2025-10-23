@@ -772,7 +772,7 @@ const decodeStateTransition = async (base64) => {
               action: BatchEnum[transition.actionTypeNumber],
               id: transition.id.base58(),
               dataContractId: transition.dataContractId.base58(),
-              revision: String(transition.revision),
+              revision: String(transition.revision ?? 0),
               type: transition.documentTypeName,
               identityContractNonce: String(transition.identityContractNonce)
             }
