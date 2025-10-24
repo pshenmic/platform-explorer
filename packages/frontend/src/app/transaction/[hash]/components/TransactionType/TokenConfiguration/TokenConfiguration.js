@@ -1,7 +1,7 @@
 import { InfoLine, Identifier } from '@components/data'
 import { ValueContainer } from '@ui/containers'
-
 import { LocalisationGrid } from '@components/tokens/localisation/LocalisationGrid'
+
 import { DistType } from './DistType'
 
 import styles from './TokenConfiguration.module.scss'
@@ -59,7 +59,7 @@ export const TokenConfiguration = ({
           />
         )}
 
-        {distributionRules?.newTokenDestinationIdentity && (
+        {distributionRules?.tokenId && (
           <InfoLine
             title={'Token Identifier'}
             value={
@@ -68,7 +68,7 @@ export const TokenConfiguration = ({
                 ellipsis={false}
                 styles={['highlight-both']}
               >
-                {distributionRules.newTokenDestinationIdentity}
+                {distributionRules.tokenId}
               </Identifier>
             }
           />
