@@ -5,6 +5,7 @@ import { LocalisationGrid } from '@components/tokens/localisation/LocalisationGr
 import { DistType } from './DistType'
 
 import styles from './TokenConfiguration.module.scss'
+import { ValueCard } from '@components/cards'
 
 /**
  * Token configuration block with flat props.
@@ -63,13 +64,16 @@ export const TokenConfiguration = ({
           <InfoLine
             title={'Token Identifier'}
             value={
-              <Identifier
-                copyButton={true}
-                ellipsis={false}
-                styles={['highlight-both']}
-              >
-                {distributionRules.tokenId}
-              </Identifier>
+              <ValueCard link={`/token/${distributionRules.tokenId}`}>
+                <Identifier
+                  avatar={true}
+                  copyButton={true}
+                  ellipsis={false}
+                  styles={['highlight-both']}
+                >
+                  {distributionRules.tokenId}
+                </Identifier>
+              </ValueCard>
             }
           />
         )}
