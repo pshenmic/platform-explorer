@@ -51,6 +51,9 @@ function PublicKeysListItem ({ publicKey, className }) {
           }
         </GridItem>
         <GridItem className={'PublicKeysListItem__Column PublicKeysListItem__Column--ReadOnly'}>
+          {publicKey?.disabledAt ? publicKey?.disabledAt : <NotActive>-</NotActive>}
+        </GridItem>
+        <GridItem className={'PublicKeysListItem__Column PublicKeysListItem__Column--ReadOnly'}>
           {publicKey?.readOnly !== undefined
             ? <ValueContainer colorScheme={publicKey?.readOnly ? 'red' : 'green'} size={'sm'}>
                 {publicKey?.readOnly ? 'True' : 'False'}

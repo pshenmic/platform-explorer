@@ -25,6 +25,9 @@ function PublicKeysList ({ publicKeys = [], className }) {
           <GridItem className={'PublicKeysList__ColumnTitle PublicKeysList__ColumnTitle--SecurityLevel'}>
             Security Level
           </GridItem>
+          <GridItem className={'PublicKeysList__ColumnTitle PublicKeysList__ColumnTitle--DisabledAt'}>
+            Disabled at
+          </GridItem>
           <GridItem className={'PublicKeysList__ColumnTitle PublicKeysList__ColumnTitle--ReadOnly'}>
             Read Only
           </GridItem>
