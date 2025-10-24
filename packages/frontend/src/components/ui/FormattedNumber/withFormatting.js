@@ -50,8 +50,29 @@ export const withFormatting = (Component) => {
         return (
           <Child>
             {splitNum(integer).map((num, i) => (
-              <span className={styles.item} key={`${num}-${i}`}>{num}</span>
+              <span
+                className={styles.item}
+                key={`${num}-${i}`}
+              >
+                {num}
+              </span>
             ))}
+          </Child>
+        )
+      }
+
+      if (trimedFractional) {
+        return (
+          <Child>
+            {splitNum(integer).map((num, i) => (
+              <span
+                className={styles.item}
+                key={`${num}-${i}`}
+              >
+                {num}
+              </span>
+            ))}
+            ,{trimedFractional}
           </Child>
         )
       }
@@ -59,9 +80,13 @@ export const withFormatting = (Component) => {
       return (
         <Child>
           {splitNum(integer).map((num, i) => (
-            <span className={styles.item} key={`${num}-${i}`}>{num}</span>
+            <span
+              className={styles.item}
+              key={`${num}-${i}`}
+            >
+              {num}
+            </span>
           ))}
-          ,{trimedFractional}
         </Child>
       )
     }
