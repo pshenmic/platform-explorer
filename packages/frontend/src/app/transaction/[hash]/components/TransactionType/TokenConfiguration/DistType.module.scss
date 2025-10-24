@@ -3,10 +3,16 @@
 .root {
   display: flex;
   align-items: start;
+    @media screen and (max-width: 600px) {
+      flex-wrap: wrap;
+    }
 
   .subcategory {
     display: flex;
     align-items: start;
+    @media screen and (max-width: 1100px) {
+      flex-wrap: wrap;
+    }
 
     .container {
       width: fit-content;

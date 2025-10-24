@@ -1,9 +1,10 @@
 import { InfoLine } from '@components/data'
 import { ValueContainer } from '@ui/containers'
 
-import styles from './DistType.module.scss'
 import { InfoIcon } from '@components/ui/icons'
 import { distDataByType } from './serialaze'
+
+import styles from './DistType.module.scss'
 
 export const DistType = ({ details }) => {
   const { title, ...fields } = distDataByType({

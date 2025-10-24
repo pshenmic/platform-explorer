@@ -1,23 +1,21 @@
 @import 'variables';
 
 .root {
-    transition: .3s;
+  transition: 0.3s;
 
-    &.open {
-        .list {
-        position: relative;
-        opacity: 1;
-        }
-
+  &.open {
+    .list {
+      position: relative;
+      opacity: 1;
     }
+  }
 
-    &.close {
-        .list {
-        position: absolute;
-        width: 100%;
-        top: 0;
-        opacity: 0;
-        }
-
+  &.close {
+    .list {
+      position: absolute;
+      width: 100%;
+      top: 0;
+      opacity: 0;
     }
+  }
 }

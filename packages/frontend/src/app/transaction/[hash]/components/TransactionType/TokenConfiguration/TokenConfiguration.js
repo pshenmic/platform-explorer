@@ -82,6 +82,7 @@ export const TokenConfiguration = ({
         )}
         {conventions.localizations && (
           <InfoLine
+            className={styles.localization}
             title={<b>Localization:</b>}
             postfix=''
             value={
@@ -93,7 +94,9 @@ export const TokenConfiguration = ({
           />
         )}
 
-       {distributionRules?.perpetualDistribution && <DistType details={distributionRules.perpetualDistribution} />}
+        {distributionRules?.perpetualDistribution && (
+          <DistType details={distributionRules.perpetualDistribution} />
+        )}
       </div>
     </div>
   )

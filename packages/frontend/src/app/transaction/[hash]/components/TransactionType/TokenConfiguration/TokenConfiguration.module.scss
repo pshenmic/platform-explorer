@@ -1,4 +1,4 @@
-@import "variables.scss";
+@import 'variables';
 
 .title {
   font-family: $font-heading;
@@ -24,5 +24,13 @@
     font-size: 12px;
     line-height: 100%;
     letter-spacing: 0%;
+  }
+
+  .localization {
+    align-items: start;
+
+    @media screen and (max-width: 1200px) {
+      flex-wrap: wrap;
+    }
   }
 }
