@@ -3,7 +3,27 @@
 import { CalendarIcon } from '../ui/icons'
 import { TimeDelta } from './index'
 import { Tooltip } from '../ui/Tooltips'
+
 import './DateBlock.scss'
+import { useMemo } from 'react'
+
+const formats = {
+  all: {
+    calendarIcon: true,
+    date: true,
+    delta: true
+  },
+  deltaOnly: {
+    calendarIcon: false,
+    date: false,
+    delta: true
+  },
+  dateOnly: {
+    calendarIcon: false,
+    date: true,
+    delta: false
+  }
+}
 
 const Wrapper = ({ children, tooltipContent, props }) => (
   tooltipContent
@@ -17,36 +37,19 @@ const Wrapper = ({ children, tooltipContent, props }) => (
 )
 
 function DateBlock ({ timestamp, format = 'all', showTime = false, showRelativeTooltip }) {
-  const date = new Date(timestamp)
-
-  if (String(date) === 'Invalid Date') return null
-
-  const formats = {
-    all: {
-      calendarIcon: true,
-      date: true,
-      delta: true
-    },
-    deltaOnly: {
-      calendarIcon: false,
-      date: false,
-      delta: true
-    },
-    dateOnly: {
-      calendarIcon: false,
-      date: true,
-      delta: false
-    }
-  }
-
-  const options = {
+  const options = useMemo(() => ({
     day: 'numeric',
     month: 'short',
     year: 'numeric',
     ...(showTime && { hour: '2-digit', minute: '2-digit' })
-  }
+  }), [showTime])
 
-  const formattedDate = date.toLocaleDateString('en-GB', options)
+  const value = new Date(parseInt(timestamp))
+  const { calendarIcon, date, delta } = formats[format]
+
+  if (String(value) === 'Invalid Date') return null
+
+  const formattedDate = value.toLocaleDateString('en-GB', options)
 
   return (
     <Wrapper
@@ -57,7 +60,7 @@ function DateBlock ({ timestamp, format = 'all', showTime = false, showRelativeT
       }
     >
       <div className={'DateBlock__InfoContainer'}>
-        {formats[format].calendarIcon &&
+        {calendarIcon &&
           <CalendarIcon
             className={'DateBlock__CalendarIcon'}
             color={'gray.250'}
@@ -65,14 +68,14 @@ function DateBlock ({ timestamp, format = 'all', showTime = false, showRelativeT
             h={'14px'}
           />
         }
-        {formats[format].date &&
+        {date &&
           <div className={'DateBlock__Date'}>
             {formattedDate}
           </div>
         }
-        {formats[format].delta &&
+        {delta &&
           <div className={'DateBlock__Delta'}>
-            <TimeDelta endDate={date} showTimestampTooltip={format !== 'all'}/>
+            <TimeDelta endDate={value} showTimestampTooltip={format !== 'all'}/>
           </div>
         }
       </div>

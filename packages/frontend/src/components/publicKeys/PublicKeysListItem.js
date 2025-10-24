@@ -4,7 +4,7 @@ import PublicKeyBoundCard from './PublicKeyBoundCard'
 import { ValueContainer } from '../ui/containers'
 import { CopyButton } from '../ui/Buttons'
 import * as pkEnums from '../../enums/publicKey'
-import { NotActive } from '../data'
+import { DateBlock, NotActive } from '../data'
 import './PublicKeysListItem.scss'
 import './PublicKeyBoundCard.scss'
 
@@ -51,7 +51,7 @@ function PublicKeysListItem ({ publicKey, className }) {
           }
         </GridItem>
         <GridItem className={'PublicKeysListItem__Column PublicKeysListItem__Column--ReadOnly'}>
-          {publicKey?.disabledAt ? publicKey?.disabledAt : <NotActive>-</NotActive>}
+          {publicKey?.disabledAt && <DateBlock format='dateOnly' timestamp={publicKey?.disabledAt}/> }
         </GridItem>
         <GridItem className={'PublicKeysListItem__Column PublicKeysListItem__Column--ReadOnly'}>
           {publicKey?.readOnly !== undefined
