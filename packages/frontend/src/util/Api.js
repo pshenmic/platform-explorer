@@ -239,6 +239,10 @@ const getValidatorByProTxHash = (proTxHash) => {
   return call(`validator/${proTxHash}`, 'GET')
 }
 
+const getValidatorByMasternodeIdentity = (identity) => {
+  return call(`validator/identity/${identity}`, 'GET')
+}
+
 const getBlocksStatsByValidator = (proTxHash, start, end, intervalsCount) => {
   return call(`validator/${proTxHash}/stats?timestamp_start=${start}&timestamp_end=${end}${intervalsCount ? `&intervalsCount=${intervalsCount}` : ''}`, 'GET')
 }
@@ -317,5 +321,6 @@ export {
   getEpoch,
   getContestedResourcesStats,
   getMasternodeVotes,
-  getRate
+  getRate,
+  getValidatorByMasternodeIdentity
 }
