@@ -54,7 +54,7 @@ function PublicKeysListItem ({ publicKey, className }) {
         </GridItem>
         <GridItem className={'PublicKeysListItem__Column PublicKeysListItem__Column--Disabled'}>
           {publicKey?.disabledAt
-            ? <Tooltip title={formateDate(publicKey.disabledAt).fromated}>
+            ? <Tooltip placement={'top'} title={formateDate(publicKey.disabledAt).fromated}>
                 <span>
                   <ValueContainer colorScheme={publicKey?.disabledAt ? 'red' : 'green'} size={'sm'}>
                     True
