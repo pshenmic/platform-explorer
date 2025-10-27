@@ -42,6 +42,10 @@ function DateBlock ({ timestamp, format = 'all', showTime = false, showRelativeT
 
   const formattedDate = useMemo(() => formateDate(timestamp, ({ hour, minute, ...other }) => ({ ...other, ...(showTime && { hour: '2-digit', minute: '2-digit' }) })), [showTime, timestamp])
 
+  if (!formattedDate) {
+    return null
+  }
+
   return (
     <Wrapper
       className={'DateBlock'}
