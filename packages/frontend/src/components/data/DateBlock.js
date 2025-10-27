@@ -6,6 +6,7 @@ import { Tooltip } from '../ui/Tooltips'
 
 import './DateBlock.scss'
 import { useMemo } from 'react'
+import { formateDate } from '../../util'
 
 const formats = {
   all: {
@@ -37,19 +38,9 @@ const Wrapper = ({ children, tooltipContent, props }) => (
 )
 
 function DateBlock ({ timestamp, format = 'all', showTime = false, showRelativeTooltip }) {
-  const options = useMemo(() => ({
-    day: 'numeric',
-    month: 'short',
-    year: 'numeric',
-    ...(showTime && { hour: '2-digit', minute: '2-digit' })
-  }), [showTime])
-
-  const value = new Date(parseInt(timestamp))
   const { calendarIcon, date, delta } = formats[format]
 
-  if (String(value) === 'Invalid Date') return null
-
-  const formattedDate = value.toLocaleDateString('en-GB', options)
+  const formattedDate = useMemo(() => formateDate(timestamp, ({ hour, minute, ...other }) => ({ ...other, ...(showTime && { hour: '2-digit', minute: '2-digit' }) })), [showTime, timestamp])
 
   return (
     <Wrapper
@@ -70,12 +61,12 @@ function DateBlock ({ timestamp, format = 'all', showTime = false, showRelativeT
         }
         {date &&
           <div className={'DateBlock__Date'}>
-            {formattedDate}
+            {formattedDate.fromated}
           </div>
         }
         {delta &&
           <div className={'DateBlock__Delta'}>
-            <TimeDelta endDate={value} showTimestampTooltip={format !== 'all'}/>
+            <TimeDelta endDate={formattedDate.date} showTimestampTooltip={format !== 'all'}/>
           </div>
         }
       </div>

@@ -46,6 +46,24 @@ function getTimeDelta (startDate, endDate, format) {
   return 'Invalid format'
 }
 
+const optionsDefault = {
+  day: 'numeric',
+  month: 'short',
+  year: 'numeric',
+  hour: '2-digit',
+  minute: '2-digit'
+}
+
+export const formateDate = (timestamp, setOptions = (options) => options) => {
+  const date = new Date(parseInt(timestamp))
+
+  if (String(date) === 'Invalid Date') return null
+
+  const fromated = date.toLocaleDateString('en-GB', setOptions(optionsDefault))
+
+  return { fromated, date }
+}
+
 export {
   getDaysBetweenDates,
   getDynamicRange,

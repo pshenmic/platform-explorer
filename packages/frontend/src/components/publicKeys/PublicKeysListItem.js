@@ -7,6 +7,8 @@ import * as pkEnums from '../../enums/publicKey'
 import { DateBlock, NotActive } from '../data'
 import './PublicKeysListItem.scss'
 import './PublicKeyBoundCard.scss'
+import { Tooltip } from '../ui/Tooltips'
+import { formateDate } from '../../util'
 
 function PublicKeysListItem ({ publicKey, className }) {
   const securityLevel = pkEnums.SecurityLevelInfo?.[publicKey?.securityLevel]
@@ -50,8 +52,19 @@ function PublicKeysListItem ({ publicKey, className }) {
             : <NotActive/>
           }
         </GridItem>
-        <GridItem className={'PublicKeysListItem__Column PublicKeysListItem__Column--ReadOnly'}>
-          {publicKey?.disabledAt && <DateBlock format='dateOnly' timestamp={publicKey?.disabledAt}/> }
+        <GridItem className={'PublicKeysListItem__Column PublicKeysListItem__Column--Disabled'}>
+          {publicKey?.disabledAt
+            ? <Tooltip title={formateDate(publicKey.disabledAt).fromated}>
+                <span>
+                  <ValueContainer colorScheme={publicKey?.disabledAt ? 'red' : 'green'} size={'sm'}>
+                    True
+                  </ValueContainer>
+                </span>
+              </Tooltip>
+            : <ValueContainer colorScheme={publicKey?.disabledAt ? 'red' : 'green'} size={'sm'}>
+                 False
+              </ValueContainer>
+          }
         </GridItem>
         <GridItem className={'PublicKeysListItem__Column PublicKeysListItem__Column--ReadOnly'}>
           {publicKey?.readOnly !== undefined
