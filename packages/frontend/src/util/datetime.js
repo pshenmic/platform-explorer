@@ -1,4 +1,4 @@
-function getDaysBetweenDates (startDate, endDate) {
+function getDaysBetweenDates(startDate, endDate) {
   if (!startDate || !endDate) return 0
   const start = new Date(startDate)
   const end = new Date(endDate)
@@ -14,14 +14,22 @@ const getDynamicRange = (duration) => {
   return { start, end }
 }
 
-function getTimeDelta (startDate, endDate, format) {
-  if (!startDate || !endDate || isNaN(new Date(startDate)) || isNaN(new Date(endDate))) return 'n/a'
+function getTimeDelta(startDate, endDate, format) {
+  if (
+    !startDate ||
+    !endDate ||
+    isNaN(new Date(startDate)) ||
+    isNaN(new Date(endDate))
+  )
+    return 'n/a'
 
   const diff = new Date(endDate) - new Date(startDate)
   const isFuture = diff > 0
   const absoluteDiff = Math.abs(diff)
   const days = Math.floor(absoluteDiff / (1000 * 60 * 60 * 24))
-  const hours = Math.floor((absoluteDiff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
+  const hours = Math.floor(
+    (absoluteDiff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+  )
   const minutes = Math.floor((absoluteDiff % (1000 * 60 * 60)) / (1000 * 60))
   const seconds = Math.floor((absoluteDiff % (1000 * 60)) / 1000)
 
@@ -59,13 +67,9 @@ export const formateDate = (timestamp, setOptions = (options) => options) => {
 
   if (String(date) === 'Invalid Date') return null
 
-  const fromated = date.toLocaleDateString('en-GB', setOptions(optionsDefault))
+  const fromatted = date.toLocaleDateString('en-GB', setOptions(optionsDefault))
 
-  return { fromated, date }
+  return { fromatted, date }
 }
 
-export {
-  getDaysBetweenDates,
-  getDynamicRange,
-  getTimeDelta
-}
+export { getDaysBetweenDates, getDynamicRange, getTimeDelta }

@@ -26,21 +26,34 @@ const formats = {
   }
 }
 
-const Wrapper = ({ children, tooltipContent, props }) => (
-  tooltipContent
-    ? <Tooltip
-        placement={'top'}
-        content={tooltipContent}
-      >
-        <div {...props}>{children}</div>
-      </Tooltip>
-    : <div {...props}>{children}</div>
-)
+const Wrapper = ({ children, tooltipContent, props }) =>
+  tooltipContent ? (
+    <Tooltip
+      placement={'top'}
+      content={tooltipContent}
+    >
+      <div {...props}>{children}</div>
+    </Tooltip>
+  ) : (
+    <div {...props}>{children}</div>
+  )
 
-function DateBlock ({ timestamp, format = 'all', showTime = false, showRelativeTooltip }) {
+function DateBlock({
+  timestamp,
+  format = 'all',
+  showTime = false,
+  showRelativeTooltip
+}) {
   const { calendarIcon, date, delta } = formats[format]
 
-  const formattedDate = useMemo(() => formateDate(timestamp, ({ hour, minute, ...other }) => ({ ...other, ...(showTime && { hour: '2-digit', minute: '2-digit' }) })), [showTime, timestamp])
+  const formattedDate = useMemo(
+    () =>
+      formateDate(timestamp, ({ hour, minute, ...other }) => ({
+        ...other,
+        ...(showTime && { hour: '2-digit', minute: '2-digit' })
+      })),
+    [showTime, timestamp]
+  )
 
   if (!formattedDate) {
     return null
@@ -49,30 +62,35 @@ function DateBlock ({ timestamp, format = 'all', showTime = false, showRelativeT
   return (
     <Wrapper
       className={'DateBlock'}
-      tooltipContent={showRelativeTooltip
-        ? <TimeDelta endDate={timestamp} showTimestampTooltip={false}/>
-        : null
+      tooltipContent={
+        showRelativeTooltip ? (
+          <TimeDelta
+            endDate={timestamp}
+            showTimestampTooltip={false}
+          />
+        ) : null
       }
     >
       <div className={'DateBlock__InfoContainer'}>
-        {calendarIcon &&
+        {calendarIcon && (
           <CalendarIcon
             className={'DateBlock__CalendarIcon'}
             color={'gray.250'}
             w={'12px'}
             h={'14px'}
           />
-        }
-        {date &&
-          <div className={'DateBlock__Date'}>
-            {formattedDate.fromated}
-          </div>
-        }
-        {delta &&
+        )}
+        {date && (
+          <div className={'DateBlock__Date'}>{formattedDate.fromatted}</div>
+        )}
+        {delta && (
           <div className={'DateBlock__Delta'}>
-            <TimeDelta endDate={formattedDate.date} showTimestampTooltip={format !== 'all'}/>
+            <TimeDelta
+              endDate={formattedDate.date}
+              showTimestampTooltip={format !== 'all'}
+            />
           </div>
-        }
+        )}
       </div>
     </Wrapper>
   )
