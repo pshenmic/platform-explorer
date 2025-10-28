@@ -1,4 +1,4 @@
-function getDaysBetweenDates(startDate, endDate) {
+function getDaysBetweenDates (startDate, endDate) {
   if (!startDate || !endDate) return 0
   const start = new Date(startDate)
   const end = new Date(endDate)
@@ -14,14 +14,15 @@ const getDynamicRange = (duration) => {
   return { start, end }
 }
 
-function getTimeDelta(startDate, endDate, format) {
+function getTimeDelta (startDate, endDate, format) {
   if (
     !startDate ||
     !endDate ||
     isNaN(new Date(startDate)) ||
     isNaN(new Date(endDate))
-  )
+  ) {
     return 'n/a'
+  }
 
   const diff = new Date(endDate) - new Date(startDate)
   const isFuture = diff > 0
@@ -67,9 +68,9 @@ export const formateDate = (timestamp, setOptions = (options) => options) => {
 
   if (String(date) === 'Invalid Date') return null
 
-  const fromatted = date.toLocaleDateString('en-GB', setOptions(optionsDefault))
+  const formatted = date.toLocaleDateString('en-GB', setOptions(optionsDefault))
 
-  return { fromatted, date }
+  return { formatted, date }
 }
 
 export { getDaysBetweenDates, getDynamicRange, getTimeDelta }

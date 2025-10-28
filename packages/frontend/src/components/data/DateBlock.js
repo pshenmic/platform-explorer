@@ -1,12 +1,13 @@
 'use client'
 
+import { useMemo } from 'react'
+
 import { CalendarIcon } from '../ui/icons'
 import { TimeDelta } from './index'
 import { Tooltip } from '../ui/Tooltips'
+import { formateDate } from '../../util'
 
 import './DateBlock.scss'
-import { useMemo } from 'react'
-import { formateDate } from '../../util'
 
 const formats = {
   all: {
@@ -26,19 +27,18 @@ const formats = {
   }
 }
 
-const Wrapper = ({ children, tooltipContent, props }) =>
-  tooltipContent ? (
-    <Tooltip
-      placement={'top'}
-      content={tooltipContent}
-    >
-      <div {...props}>{children}</div>
-    </Tooltip>
-  ) : (
-    <div {...props}>{children}</div>
-  )
+const Wrapper = ({ children, tooltipContent, props }) => (
+  tooltipContent
+    ? <Tooltip
+        placement={'top'}
+        content={tooltipContent}
+      >
+        <div {...props}>{children}</div>
+      </Tooltip>
+    : <div {...props}>{children}</div>
+)
 
-function DateBlock({
+function DateBlock ({
   timestamp,
   format = 'all',
   showTime = false,
@@ -62,13 +62,9 @@ function DateBlock({
   return (
     <Wrapper
       className={'DateBlock'}
-      tooltipContent={
-        showRelativeTooltip ? (
-          <TimeDelta
-            endDate={timestamp}
-            showTimestampTooltip={false}
-          />
-        ) : null
+      tooltipContent={showRelativeTooltip
+        ? <TimeDelta endDate={timestamp} showTimestampTooltip={false}/>
+        : null
       }
     >
       <div className={'DateBlock__InfoContainer'}>
@@ -81,7 +77,7 @@ function DateBlock({
           />
         )}
         {date && (
-          <div className={'DateBlock__Date'}>{formattedDate.fromatted}</div>
+          <div className={'DateBlock__Date'}>{formattedDate.formatted}</div>
         )}
         {delta && (
           <div className={'DateBlock__Delta'}>
