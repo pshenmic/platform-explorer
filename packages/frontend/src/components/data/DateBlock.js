@@ -5,7 +5,7 @@ import { useMemo } from 'react'
 import { CalendarIcon } from '../ui/icons'
 import { TimeDelta } from './index'
 import { Tooltip } from '../ui/Tooltips'
-import { formateDate } from '../../util'
+import { formatDate } from '../../util'
 
 import './DateBlock.scss'
 
@@ -48,7 +48,7 @@ function DateBlock ({
 
   const formattedDate = useMemo(
     () =>
-      formateDate(timestamp, ({ hour, minute, ...other }) => ({
+      formatDate(timestamp, ({ hour, minute, ...other }) => ({
         ...other,
         ...(showTime && { hour: '2-digit', minute: '2-digit' })
       })),

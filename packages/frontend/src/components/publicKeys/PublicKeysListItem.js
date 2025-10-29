@@ -8,7 +8,7 @@ import { NotActive } from '../data'
 import './PublicKeysListItem.scss'
 import './PublicKeyBoundCard.scss'
 import { Tooltip } from '../ui/Tooltips'
-import { formateDate } from '../../util'
+import { formatDate } from '../../util'
 
 function PublicKeysListItem ({ publicKey, className }) {
   const securityLevel = pkEnums.SecurityLevelInfo?.[publicKey?.securityLevel]
@@ -54,7 +54,7 @@ function PublicKeysListItem ({ publicKey, className }) {
         </GridItem>
         <GridItem className={'PublicKeysListItem__Column PublicKeysListItem__Column--Disabled'}>
           {publicKey?.disabledAt
-            ? <Tooltip placement={'top'} title={'Disabled at'} content={formateDate(publicKey.disabledAt).formatted}>
+            ? <Tooltip placement={'top'} title={'Disabled at'} content={formatDate(publicKey.disabledAt).formatted}>
                 <span>
                   <ValueContainer colorScheme={publicKey?.disabledAt ? 'red' : 'green'} size={'sm'}>
                     True

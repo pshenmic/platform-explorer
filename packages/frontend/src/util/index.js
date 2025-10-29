@@ -1,6 +1,6 @@
 import copyToClipboard from './copyToClipboard'
 import currencyRound from './currencyRound'
-import { getDaysBetweenDates, getDynamicRange, getTimeDelta, formateDate } from './datetime'
+import { getDaysBetweenDates, getDynamicRange, getTimeDelta, formatDate } from './datetime'
 
 function fetchHandlerSuccess (setter, data) {
   setter(state => ({
@@ -105,5 +105,5 @@ export {
   findActiveAlias,
   getTokenName,
   getMinTokenPrice,
-  formateDate
+  formatDate
 }

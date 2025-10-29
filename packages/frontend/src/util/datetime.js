@@ -63,7 +63,7 @@ const optionsDefault = {
   minute: '2-digit'
 }
 
-export const formateDate = (timestamp, setOptions = (options) => options) => {
+export const formatDate = (timestamp, setOptions = (options) => options) => {
   const date = new Date(parseInt(timestamp))
 
   if (String(date) === 'Invalid Date') return null
