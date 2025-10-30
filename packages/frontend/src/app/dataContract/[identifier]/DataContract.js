@@ -5,7 +5,6 @@ import * as Api from '../../../util/Api'
 import DocumentsList from '../../../components/documents/DocumentsList'
 import { LoadingBlock } from '../../../components/loading'
 import { ErrorMessageBlock } from '../../../components/Errors'
-import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { CodeBlock } from '../../../components/data'
 import { InfoContainer, PageDataContainer } from '../../../components/ui/containers'
 import { DataContractDigestCard, DataContractTotalCard, GroupsList } from '../../../components/dataContracts'
@@ -14,6 +13,7 @@ import { useBreadcrumbs } from '../../../contexts/BreadcrumbsContext'
 import { TransactionsList } from '../../../components/transactions'
 import TokensList from '../../../components/tokens/TokensList'
 import { useQuery } from '@tanstack/react-query'
+import { useQueryState, parseAsStringEnum, parseAsString } from 'nuqs'
 
 import './DataContract.scss'
 
@@ -66,11 +66,31 @@ function DataContract ({ identifier }) {
     queryKey: ['documents', identifier, docPage],
     queryFn: () => Api.getDocumentsByDataContract(identifier, docPage, pageSize, 'desc')
   })
-  const [activeTab, setActiveTab] = useState(tabs.indexOf(defaultTabName.toLowerCase()) !== -1 ? tabs.indexOf(defaultTabName.toLowerCase()) : 0)
-  const [expandedGroups, setExpandedGroups] = useState({})
-  const router = useRouter()
-  const pathname = usePathname()
-  const searchParams = useSearchParams()
+
+  const [activeTab, setActiveTab] = useQueryState(
+    'tab',
+    parseAsStringEnum(tabs)
+      .withDefault(defaultTabName)
+      .withOptions({
+        scroll: false,
+        shallow: false
+      })
+
+  )
+  const [group, setGroup] = useQueryState('group', parseAsString.withOptions({
+    scroll: false,
+    shallow: true
+  }))
+
+  const handleGroupToggle = (groupId) => {
+    if (group && group === groupId) {
+      setGroup(null)
+    } else {
+      setGroup(groupId)
+    }
+  }
+
+  const handleTab = (index) => setActiveTab(tabs.find((_, idx) => idx === index))
 
   useEffect(() => {
     setBreadcrumbs([
@@ -79,49 +99,6 @@ function DataContract ({ identifier }) {
       { label: dataContract.data?.name || identifier, avatarSource: identifier }
     ])
   }, [setBreadcrumbs, identifier, dataContract.data?.name])
-
-  useEffect(() => {
-    const tab = searchParams.get('tab')
-    const group = searchParams.get('group')
-
-    if (tab && tabs.indexOf(tab.toLowerCase()) !== -1) {
-      setActiveTab(tabs.indexOf(tab.toLowerCase()))
-    } else {
-      setActiveTab(tabs.indexOf(defaultTabName.toLowerCase()) !== -1 ? tabs.indexOf(defaultTabName.toLowerCase()) : 0)
-    }
-
-    if (group) {
-      setExpandedGroups({ [group]: true })
-    }
-  }, [searchParams])
-
-  useEffect(() => {
-    const urlParameters = new URLSearchParams(Array.from(searchParams.entries()))
-
-    if (activeTab === tabs.indexOf(defaultTabName.toLowerCase()) ||
-       (tabs.indexOf(defaultTabName.toLowerCase()) === -1 && activeTab === 0)) {
-      urlParameters.delete('tab')
-    } else {
-      urlParameters.set('tab', tabs[activeTab])
-    }
-
-    router.replace(`${pathname}?${urlParameters.toString()}`, { scroll: false })
-  }, [activeTab])
-
-  const handleExpandedGroupsChange = (newExpandedGroups) => {
-    setExpandedGroups(newExpandedGroups)
-
-    const urlParameters = new URLSearchParams(Array.from(searchParams.entries()))
-    const expandedGroupIds = Object.keys(newExpandedGroups).filter(id => newExpandedGroups[id])
-
-    if (expandedGroupIds.length > 0) {
-      urlParameters.set('group', expandedGroupIds[0])
-    } else {
-      urlParameters.delete('group')
-    }
-
-    router.replace(`${pathname}?${urlParameters.toString()}`, { scroll: false })
-  }
 
   return (
     <PageDataContainer
@@ -134,7 +111,7 @@ function DataContract ({ identifier }) {
       </div>
 
       <InfoContainer styles={['tabs']} id={'tabs'}>
-        <Tabs onChange={(index) => setActiveTab(index)} index={activeTab}>
+        <Tabs onChange={handleTab} index={tabs.indexOf(activeTab)}>
           <TabList>
             <Tab>Transactions {transactions.data?.pagination?.total != null
               ? <span className={`Tabs__TabItemsCount ${transactions.data?.pagination?.total === 0 ? 'Tabs__TabItemsCount--Empty' : ''}`}>
@@ -207,8 +184,8 @@ function DataContract ({ identifier }) {
                 ? <LoadingBlock h={'250px'} loading={dataContract.isLoading}>
                   <GroupsList
                     groups={dataContract.data?.groups || {}}
-                    expandedGroups={expandedGroups}
-                    onExpandedGroupsChange={handleExpandedGroupsChange}
+                    expandedGroup={group}
+                    onGroupToggle={handleGroupToggle}
                   />
                 </LoadingBlock>
                 : <Container h={20}><ErrorMessageBlock/></Container>
