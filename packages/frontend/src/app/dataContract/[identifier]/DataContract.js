@@ -5,7 +5,6 @@ import * as Api from '../../../util/Api'
 import DocumentsList from '../../../components/documents/DocumentsList'
 import { LoadingBlock } from '../../../components/loading'
 import { ErrorMessageBlock } from '../../../components/Errors'
-import { fetchHandlerSuccess, fetchHandlerError, setLoadingProp, paginationHandler } from '../../../util'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { CodeBlock } from '../../../components/data'
 import { InfoContainer, PageDataContainer } from '../../../components/ui/containers'
@@ -14,6 +13,8 @@ import { Container, Tabs, TabList, TabPanels, Tab, TabPanel } from '@chakra-ui/r
 import { useBreadcrumbs } from '../../../contexts/BreadcrumbsContext'
 import { TransactionsList } from '../../../components/transactions'
 import TokensList from '../../../components/tokens/TokensList'
+import { useQuery } from '@tanstack/react-query'
+
 import './DataContract.scss'
 
 const pagintationConfig = {
@@ -34,13 +35,37 @@ const tabs = [
 
 const defaultTabName = 'documents'
 
+const pageSize = pagintationConfig.itemsOnPage.default
+
 function DataContract ({ identifier }) {
   const { setBreadcrumbs } = useBreadcrumbs()
-  const [dataContract, setDataContract] = useState({ data: {}, loading: true, error: false })
-  const [documents, setDocuments] = useState({ data: {}, props: { currentPage: 0 }, loading: true, error: false })
-  const [transactions, setTransactions] = useState({ data: {}, props: { currentPage: 0 }, loading: true, error: false })
-  const [rate, setRate] = useState({ data: {}, loading: true, error: false })
-  const pageSize = pagintationConfig.itemsOnPage.default
+  const [txPage, setTxPage] = useState(pagintationConfig.defaultPage)
+  const [docPage, setDocPage] = useState(pagintationConfig.defaultPage)
+
+  const dataContract = useQuery({
+    queryKey: ['dataContract', identifier],
+    queryFn: () => Api.getDataContractByIdentifier(identifier)
+  })
+  const rate = useQuery({
+    queryKey: ['rate', identifier],
+    queryFn: () => Api.getRate(identifier)
+  })
+  const transactions = useQuery({
+    queryKey: ['transactions', identifier, txPage],
+    queryFn: () => Api.getDataContractTransactions(identifier, txPage, pageSize, 'desc'),
+    enabled: !!identifier,
+    select: data => ({
+      pagination: data.pagination,
+      list: data.resultSet.map((transaction) => ({
+        ...transaction,
+        batchType: transaction?.action?.[0]?.action
+      }))
+    })
+  })
+  const documents = useQuery({
+    queryKey: ['documents', identifier, docPage],
+    queryFn: () => Api.getDocumentsByDataContract(identifier, docPage, pageSize, 'desc')
+  })
   const [activeTab, setActiveTab] = useState(tabs.indexOf(defaultTabName.toLowerCase()) !== -1 ? tabs.indexOf(defaultTabName.toLowerCase()) : 0)
   const [expandedGroups, setExpandedGroups] = useState({})
   const router = useRouter()
@@ -53,17 +78,7 @@ function DataContract ({ identifier }) {
       { label: 'Data Contracts', path: '/dataContracts' },
       { label: dataContract.data?.name || identifier, avatarSource: identifier }
     ])
-  }, [setBreadcrumbs, identifier, dataContract])
-
-  useEffect(() => {
-    Api.getDataContractByIdentifier(identifier)
-      .then(res => fetchHandlerSuccess(setDataContract, res))
-      .catch(err => fetchHandlerError(setDataContract, err))
-
-    Api.getRate()
-      .then(res => fetchHandlerSuccess(setRate, res))
-      .catch(err => fetchHandlerError(setRate, err))
-  }, [identifier])
+  }, [setBreadcrumbs, identifier, dataContract.data?.name])
 
   useEffect(() => {
     const tab = searchParams.get('tab')
@@ -108,27 +123,6 @@ function DataContract ({ identifier }) {
     router.replace(`${pathname}?${urlParameters.toString()}`, { scroll: false })
   }
 
-  useEffect(() => {
-    if (!identifier) return
-    setLoadingProp(setDocuments)
-
-    Api.getDocumentsByDataContract(identifier, documents.props.currentPage + 1, pageSize, 'desc')
-      .then(res => fetchHandlerSuccess(setDocuments, res))
-      .catch(err => fetchHandlerError(setDocuments, err))
-  }, [identifier, documents.props.currentPage])
-
-  useEffect(() => {
-    if (!identifier) return
-    setLoadingProp(setTransactions)
-
-    Api.getDataContractTransactions(identifier, transactions.props.currentPage + 1, pageSize, 'desc')
-      .then(res => {
-        fetchHandlerSuccess(setDataContract, { transactionsCount: res?.pagination?.total })
-        fetchHandlerSuccess(setTransactions, res)
-      })
-      .catch(err => fetchHandlerError(setTransactions, err))
-  }, [identifier, transactions.props.currentPage])
-
   return (
     <PageDataContainer
       className={'DataContract'}
@@ -136,7 +130,7 @@ function DataContract ({ identifier }) {
     >
       <div className={'DataContract__InfoBlocks'}>
         <DataContractTotalCard className={'DataContract__InfoBlock'} dataContract={dataContract} rate={rate}/>
-        <DataContractDigestCard className={'DataContract__InfoBlock'} dataContract={dataContract} rate={rate}/>
+        <DataContractDigestCard className={'DataContract__InfoBlock'} dataContract={dataContract} rate={rate} txCount={transactions.data?.pagination?.total}/>
       </div>
 
       <InfoContainer styles={['tabs']} id={'tabs'}>
@@ -165,45 +159,42 @@ function DataContract ({ identifier }) {
           </TabList>
           <TabPanels>
             <TabPanel position={'relative'}>
-              {!transactions.error
+              {!transactions.isError
                 ? <TransactionsList
-                    transactions={transactions.data?.resultSet?.map((transaction) => ({
-                      ...transaction,
-                      batchType: transaction?.action?.[0]?.action
-                    }))}
-                    loading={transactions.loading}
+                    transactions={transactions.data?.list}
+                    loading={transactions.isLoading}
                     pagination={{
-                      onPageChange: pagination => paginationHandler(setTransactions, pagination.selected),
+                      onPageChange: pagination => setTxPage(pagination.selected),
                       pageCount: Math.ceil(transactions.data?.pagination?.total / pageSize) || 1,
-                      forcePage: transactions.props.currentPage
+                      forcePage: txPage
                     }}
                   />
                 : <Container h={20}><ErrorMessageBlock/></Container>
               }
             </TabPanel>
             <TabPanel position={'relative'}>
-              {!documents.error
+              {!documents.isError
                 ? <DocumentsList
                   documents={documents.data?.resultSet}
-                  loading={documents.loading}
+                  loading={documents.isLoading}
                   pagination={{
-                    onPageChange: pagination => paginationHandler(setDocuments, pagination.selected),
+                    onPageChange: pagination => setDocPage(pagination.selected),
                     pageCount: Math.ceil(documents.data?.pagination?.total / pageSize) || 1,
-                    forcePage: documents.props.currentPage
+                    forcePage: docPage
                   }}
                 />
                 : <Container h={20}><ErrorMessageBlock/></Container>
               }
             </TabPanel>
             <TabPanel position={'relative'}>
-              {!documents.error
-                ? <TokensList tokens={dataContract.data?.tokens} loading={dataContract.loading}/>
+              {!documents.isError
+                ? <TokensList tokens={dataContract.data?.tokens} loading={dataContract.isLoading}/>
                 : <Container h={20}><ErrorMessageBlock/></Container>
               }
             </TabPanel>
             <TabPanel position={'relative'}>
-              {!dataContract.error
-                ? <LoadingBlock h={'250px'} loading={dataContract.loading}>
+              {!dataContract.isError
+                ? <LoadingBlock h={'250px'} loading={dataContract.isLoading}>
                   {dataContract.data?.schema
                     ? <CodeBlock smoothSize={activeTab === 1} className={'DataContract__Schema'} code={dataContract.data?.schema}/>
                     : <Container h={20}><ErrorMessageBlock/></Container>}
@@ -212,8 +203,8 @@ function DataContract ({ identifier }) {
               }
             </TabPanel>
             <TabPanel position={'relative'}>
-              {!dataContract.error
-                ? <LoadingBlock h={'250px'} loading={dataContract.loading}>
+              {!dataContract.isError
+                ? <LoadingBlock h={'250px'} loading={dataContract.isLoading}>
                   <GroupsList
                     groups={dataContract.data?.groups || {}}
                     expandedGroups={expandedGroups}

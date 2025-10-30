@@ -1,9 +1,5 @@
-import {
-  QueryClient,
-  QueryClientProvider
-} from '@tanstack/react-query'
-
 import RootComponent from '../components/layout/RootComponent'
+import { Providers } from './Providers'
 
 export const viewport = {
   width: 'device-width',
@@ -11,17 +7,17 @@ export const viewport = {
   userScalable: false
 }
 
-const queryClient = new QueryClient()
-
 export default function RootLayout ({ children }) {
   return (
-    <html lang="en" data-theme="dark" style={{ colorScheme: 'dark' }} >
+    <html
+      lang='en'
+      data-theme='dark'
+      style={{ colorScheme: 'dark' }}
+    >
       <body className={'chakra-ui-dark'}>
-        <QueryClientProvider client={queryClient}>
-          <RootComponent>
-            { children }
-          </RootComponent>
-        </QueryClientProvider>
+        <Providers>
+          <RootComponent>{children}</RootComponent>
+        </Providers>
       </body>
     </html>
   )
