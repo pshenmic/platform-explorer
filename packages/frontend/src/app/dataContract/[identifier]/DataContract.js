@@ -75,8 +75,8 @@ function DataContract ({ identifier }) {
         scroll: false,
         shallow: false
       })
-
   )
+
   const [group, setGroup] = useQueryState('group', parseAsString.withOptions({
     scroll: false,
     shallow: true
