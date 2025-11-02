@@ -48,7 +48,8 @@ export default function TransactionsList ({
     getCoreRowModel: getCoreRowModel(),
     meta: {
       rate
-    }
+    },
+    manualPagination: true
   })
   const headerExtraClass = {
     default: '',

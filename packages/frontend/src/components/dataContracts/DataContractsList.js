@@ -4,9 +4,36 @@ import Pagination from '../pagination'
 import { ErrorMessageBlock } from '../Errors'
 import { LoadingList } from '../loading'
 import { Grid, GridItem } from '@chakra-ui/react'
+import {
+  createColumnHelper,
+  getCoreRowModel,
+  useReactTable
+} from '@tanstack/react-table'
 import './DataContractsList.scss'
 
+// модель таблицы (локальная для текущей страницы)
+const columnHelper = createColumnHelper()
+
+const columns = [
+  columnHelper.accessor('identifier', {
+    header: 'Identifier'
+  }),
+  columnHelper.accessor('documentsCount', {
+    header: 'Documents'
+  }),
+  columnHelper.accessor('timestamp', {
+    header: 'Timestamp'
+  })
+]
+
 function DataContractsList ({ dataContracts = [], headerStyles, pagination, loading, itemsCount = 10 }) {
+  const table = useReactTable({
+    data: dataContracts,
+    columns,
+    getCoreRowModel: getCoreRowModel(),
+    manualPagination: true
+  })
+
   const headerExtraClass = {
     default: '',
     light: 'DataContractsList__ColumnTitles--Light'
@@ -28,9 +55,9 @@ function DataContractsList ({ dataContracts = [], headerStyles, pagination, load
 
       {!loading
         ? <div className={'DataContractsList__Items'}>
-            {dataContracts?.map((dataContract, key) =>
-              <DataContractsListItem dataContract={dataContract} key={key}/>
-            )}
+            {table.getRowModel().rows.map((row) => (
+              <DataContractsListItem dataContract={row.original} key={row.id}/>
+            ))}
             {dataContracts?.length === 0 &&
               <EmptyListMessage>There are no data contracts created yet.</EmptyListMessage>
             }
