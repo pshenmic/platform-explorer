@@ -721,6 +721,7 @@ GET /dataContract/HzMke6E5SnSqLdCX1u3WdwpWx1hFFkSnFQpahTPdYUSF
     "timestamp": "2025-07-31T07:31:37.624Z",
     "isSystem": false,
     "documentsCount": 0,
+    "tokensCount": 1,
     "topIdentity": {
         "identifier": null,
         "aliases": []
@@ -831,6 +832,7 @@ GET /dataContracts?page=1&limit=10&order=asc&order_by=block_height&timestamp_sta
             "timestamp": "2025-01-22T11:09:23.892Z",
             "isSystem": false,
             "documentsCount": 3,
+            "tokensCount": 0,
             "topIdentity": null,
             "identitiesInteracted": null,
             "totalGasUsed": null,
@@ -1439,8 +1441,9 @@ GET /identities/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec/dataContracts?page=
         "schema": null,
         "txHash": "DEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEF",
         "timestamp": "2024-03-18T10:13:54.150Z",
-        "isSystem": false
-        "documentsCount": 1337
+        "isSystem": false,
+        "documentsCount": 1337,
+        "tokensCount": 0
     }, ...
     ]
 }
