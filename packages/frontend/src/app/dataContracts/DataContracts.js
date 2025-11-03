@@ -84,7 +84,7 @@ function DataContractsLayout () {
             <DataContractsFilter
               onFilterChange={handleFiltersChange}
               isMobile={isMobile}
-              className={'DataContracts__Filters'}
+              className={'DataContractsIntro__Filters'}
             />
             {!dataContracts.isError
               ? <DataContractsList
