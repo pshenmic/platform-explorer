@@ -11,7 +11,6 @@ import {
 } from '@tanstack/react-table'
 import './DataContractsList.scss'
 
-// модель таблицы (локальная для текущей страницы)
 const columnHelper = createColumnHelper()
 
 const columns = [

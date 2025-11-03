@@ -51,6 +51,10 @@ const prepareQueryParams = (params = {}) => {
   }
 
   Object.entries(params).forEach(([key, value]) => {
+    if (!value) {
+      return
+    }
+
     if (Array.isArray(value)) {
       if (value.length > 0) {
         value.forEach(item => {

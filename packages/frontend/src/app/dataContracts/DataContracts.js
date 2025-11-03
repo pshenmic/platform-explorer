@@ -3,7 +3,7 @@
 import * as Api from '../../util/Api'
 import DataContractsList from '../../components/dataContracts/DataContractsList'
 import Pagination from '../../components/pagination'
-import { ErrorMessageBlock } from '../../components/Errors'
+import { ErrorMessageBlock } from '@components/Errors'
 import PageSizeSelector from '../../components/pageSizeSelector/PageSizeSelector'
 import { useQuery } from '@tanstack/react-query'
 import { useQueryState, parseAsInteger } from 'nuqs'
@@ -11,8 +11,11 @@ import { normalizePagination } from '@utils/table'
 import {
   Container,
   Heading,
-  Box
+  Box,
+  useBreakpointValue
 } from '@chakra-ui/react'
+import { useDataContractsFilters, useDataContractsSorting } from '@components/dataContracts/hooks'
+import { DataContractsFilter } from '@components/dataContracts/DataContractsFilter'
 
 const paginateConfig = {
   pageSize: {
@@ -23,6 +26,9 @@ const paginateConfig = {
 }
 
 function DataContractsLayout () {
+  const isMobile = useBreakpointValue({ base: true, md: false })
+  const { sorting } = useDataContractsSorting()
+  const { filters, setFilters } = useDataContractsFilters()
   const [page, setPage] = useQueryState(
     'page',
     parseAsInteger
@@ -37,8 +43,14 @@ function DataContractsLayout () {
   )
 
   const dataContracts = useQuery({
-    queryKey: ['dataContracts', page, pageSize],
-    queryFn: () => Api.getDataContracts(page, pageSize, 'desc'),
+    queryKey: ['dataContracts', page, pageSize, ...Object.values(filters)],
+    queryFn: () => Api.getDataContracts(
+      page,
+      pageSize,
+      sorting.order,
+      sorting.orderBy,
+      filters
+    ),
     keepPreviousData: true,
     select: ({ pagination, ...other }) => ({
       ...other,
@@ -52,6 +64,11 @@ function DataContractsLayout () {
 
   const pagination = dataContracts.data?.pagination
 
+  const handleFiltersChange = (next) => {
+    setFilters(next)
+    setPage(1)
+  }
+
   return (
     <Container
         maxW={'container.maxPageW'}
@@ -64,7 +81,11 @@ function DataContractsLayout () {
             className={'InfoBlock'}
         >
             <Heading className={'InfoBlock__Title'} as={'h1'}>Data contracts</Heading>
-
+            <DataContractsFilter
+              onFilterChange={handleFiltersChange}
+              isMobile={isMobile}
+              className={'DataContracts__Filters'}
+            />
             {!dataContracts.isError
               ? <DataContractsList
                   dataContracts={dataContracts.data?.resultSet}
