@@ -31,7 +31,15 @@
     overflow: hidden;
   }
 
-  &__SystemLabel {
-    margin-left: auto;
+  &__Badge {
+    padding: 2px 8px;
+    border-radius: 10px;
+    background: rgba(255,255,255,0.06);
+    &--System {
+      background: rgba(255,215,0,0.18);
+    }
+    &--WithTokens {
+      background: rgba(0,141,228,0.18);
+    }
   }
 }

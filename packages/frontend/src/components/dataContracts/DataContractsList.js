@@ -17,6 +17,15 @@ const columns = [
   columnHelper.accessor('identifier', {
     header: 'Identifier'
   }),
+  columnHelper.accessor('owner', {
+    header: 'Owner'
+  }),
+  columnHelper.accessor('isSystem', {
+    header: 'System'
+  }),
+  columnHelper.accessor('withTokens', {
+    header: 'With tokens'
+  }),
   columnHelper.accessor('documentsCount', {
     header: 'Documents'
   }),
@@ -43,6 +52,15 @@ function DataContractsList ({ dataContracts = [], headerStyles, pagination, load
       <Grid className={`DataContractsList__ColumnTitles ${headerExtraClass?.[headerStyles] || ''}`}>
         <GridItem className={'DataContractsList__ColumnTitle DataContractsList__ColumnTitle--Identifier'}>
           Identifier
+        </GridItem>
+        <GridItem className={'DataContractsList__ColumnTitle DataContractsList__ColumnTitle--Owner'}>
+          Owner
+        </GridItem>
+        <GridItem className={'DataContractsList__ColumnTitle DataContractsList__ColumnTitle--System'}>
+          System
+        </GridItem>
+        <GridItem className={'DataContractsList__ColumnTitle DataContractsList__ColumnTitle--WithTokens'}>
+          With tokens
         </GridItem>
         <GridItem className={'DataContractsList__ColumnTitle DataContractsList__ColumnTitle--DocumentsCount'}>
           Documents

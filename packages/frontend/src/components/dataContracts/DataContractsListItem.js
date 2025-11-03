@@ -5,6 +5,9 @@ import { Grid, GridItem } from '@chakra-ui/react'
 import './DataContractsListItem.scss'
 
 function DataContractsListItem ({ dataContract }) {
+  const ownerId = typeof dataContract?.owner === 'object' ? dataContract?.owner?.identifier : dataContract?.owner
+  const ownerName = typeof dataContract?.owner === 'object' ? dataContract?.owner?.name || null : null
+
   return (
     <Link
       href={`/dataContract/${dataContract?.identifier}`}
@@ -26,6 +29,23 @@ function DataContractsListItem ({ dataContract }) {
           </div>
         </GridItem>
 
+        <GridItem className={'DataContractsListItem__Column DataContractsListItem__Column--Owner'}>
+          {ownerName
+            ? <Alias avatarSource={ownerId}>{ownerName}</Alias>
+            : ownerId
+              ? <Identifier ellipsis={true} avatar={true} styles={['highlight-both']}>{ownerId}</Identifier>
+              : <span>-</span>
+          }
+        </GridItem>
+
+        <GridItem className={'DataContractsListItem__Column DataContractsListItem__Column--System'}>
+          {dataContract?.isSystem ? <span className={'DataContractsListItem__Badge DataContractsListItem__Badge--System'}>Yes</span> : <span className={'DataContractsListItem__Badge'}>No</span>}
+        </GridItem>
+
+        <GridItem className={'DataContractsListItem__Column DataContractsListItem__Column--WithTokens'}>
+          {dataContract?.withTokens ? <span className={'DataContractsListItem__Badge DataContractsListItem__Badge--WithTokens'}>Yes</span> : <span className={'DataContractsListItem__Badge'}>No</span>}
+        </GridItem>
+
         <GridItem className={'DataContractsListItem__Column DataContractsListItem__Column--DocumentsCount'}>
           <ValueContainer colorScheme={dataContract?.documentsCount > 0 ? 'brand' : 'darkGray'} size={'xs'}>
             <BigNumber>{dataContract?.documentsCount}</BigNumber>
@@ -37,7 +57,7 @@ function DataContractsListItem ({ dataContract }) {
             ? <div className={'DataContractsListItem__Timestamp'}>
                 {new Date(dataContract?.timestamp).toLocaleString()}
               </div>
-            : dataContract?.isSystem && <div className={'DataContractsListItem__SystemLabel'}>SYSTEM</div>
+            : <span>-</span>
           }
         </GridItem>
       </Grid>
