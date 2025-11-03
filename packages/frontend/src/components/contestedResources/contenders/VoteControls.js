@@ -12,9 +12,7 @@ const VOTING_DATA_CONTRACT_ID = process.env.NEXT_PUBLIC_VOTING_DATA_CONTRACT_ID 
 const DOCUMENT_TYPE = 'domain'
 const INDEX_NAME = 'parentNameAndLabel'
 
-const PRO_TX_HASH = '559db949f305ae7ca1f2c3fafbde707a5adcb9ef7d53f99df4600d72b6bab965'
-
-export const VoteControls = ({ currentIdentity, contender, resourceValue }) => {
+export const VoteControls = ({ currentIdentity, contender, resourceValue, walletInfo }) => {
   const handleVote = ({ choice }) => {
     if (!window.dashPlatformExtension) {
       return
@@ -29,11 +27,13 @@ export const VoteControls = ({ currentIdentity, contender, resourceValue }) => {
       const voterIdentity = await sdk.identities.getIdentityByIdentifier(currentIdentity)
       const identityNonce = await sdk.identities.getIdentityNonce(voterIdentity.id)
 
+      const { proTxHash } = walletInfo.identities.find(({ identifier }) => identifier === currentIdentity)
+
       const vote = sdk.voting.createVote(VOTING_DATA_CONTRACT_ID, DOCUMENT_TYPE, INDEX_NAME, resourceValue, choice)
-      const stateTransition = sdk.voting.createStateTransition(vote, PRO_TX_HASH, voterIdentity.id, identityNonce + BigInt(1))
-      console.log(stateTransition.hex())
+      const stateTransition = sdk.voting.createStateTransition(vote, proTxHash, voterIdentity.id, identityNonce + BigInt(1))
       await window.dashPlatformExtension.signer.signAndBroadcast(stateTransition)
-      console.log({ stateTransition })
+
+      setTimeout(() => window.location.reload(), 2000)
     }
 
     castVote()
