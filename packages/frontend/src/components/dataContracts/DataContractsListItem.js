@@ -1,7 +1,7 @@
 import Link from 'next/link'
-import { Alias, Identifier, BigNumber } from '../data'
+import { Alias, Identifier, BigNumber, NotActive } from '../data'
 import ValueContainer from '../ui/containers/ValueContainer'
-import { Grid, GridItem } from '@chakra-ui/react'
+import { Badge, Grid, GridItem } from '@chakra-ui/react'
 import './DataContractsListItem.scss'
 
 function DataContractsListItem ({ dataContract }) {
@@ -39,11 +39,21 @@ function DataContractsListItem ({ dataContract }) {
         </GridItem>
 
         <GridItem className={'DataContractsListItem__Column DataContractsListItem__Column--System'}>
-          {dataContract?.isSystem ? <span className={'DataContractsListItem__Badge DataContractsListItem__Badge--System'}>Yes</span> : <span className={'DataContractsListItem__Badge'}>No</span>}
+          {dataContract?.isSystem !== undefined
+            ? <Badge colorScheme={dataContract?.isSystem ? 'orange' : 'gray'}>
+              {dataContract?.isSystem ? 'true' : 'false'}
+            </Badge>
+            : <NotActive/>
+          }
         </GridItem>
 
         <GridItem className={'DataContractsListItem__Column DataContractsListItem__Column--WithTokens'}>
-          {dataContract?.withTokens ? <span className={'DataContractsListItem__Badge DataContractsListItem__Badge--WithTokens'}>Yes</span> : <span className={'DataContractsListItem__Badge'}>No</span>}
+          {dataContract?.withTokens !== undefined
+            ? <Badge colorScheme={dataContract?.withTokens ? 'orange' : 'gray'}>
+              {dataContract?.withTokens ? 'true' : 'false'}
+            </Badge>
+            : <NotActive/>
+          }
         </GridItem>
 
         <GridItem className={'DataContractsListItem__Column DataContractsListItem__Column--DocumentsCount'}>
