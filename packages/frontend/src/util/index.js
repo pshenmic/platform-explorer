@@ -1,6 +1,6 @@
 import copyToClipboard from './copyToClipboard'
 import currencyRound from './currencyRound'
-import { getDaysBetweenDates, getDynamicRange, getTimeDelta } from './datetime'
+import { getDaysBetweenDates, getDynamicRange, getTimeDelta, formatDate } from './datetime'
 import { normalizePagination } from './table'
 import { encodeDateToURL, decodeDateFromURL } from './url'
 
@@ -109,5 +109,6 @@ export {
   getMinTokenPrice,
   normalizePagination,
   encodeDateToURL,
-  decodeDateFromURL
+  decodeDateFromURL,
+  formatDate
 }
