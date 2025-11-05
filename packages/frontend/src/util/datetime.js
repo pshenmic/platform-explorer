@@ -64,7 +64,8 @@ const optionsDefault = {
 }
 
 export const formatDate = (timestamp, setOptions = (options) => options) => {
-  const date = new Date(parseInt(timestamp))
+  const validatedValue = isNaN(timestamp) ? timestamp : parseInt(timestamp)
+  const date = new Date(validatedValue)
 
   if (String(date) === 'Invalid Date') return null
 
