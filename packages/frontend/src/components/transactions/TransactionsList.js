@@ -33,6 +33,11 @@ const columns = [
   })
 ]
 
+const headerExtraClass = {
+  default: '',
+  light: 'TransactionsList__ColumnTitles--Light'
+}
+
 export default function TransactionsList ({
   transactions = [],
   showMoreLink,
@@ -51,10 +56,6 @@ export default function TransactionsList ({
     },
     manualPagination: true
   })
-  const headerExtraClass = {
-    default: '',
-    light: 'TransactionsList__ColumnTitles--Light'
-  }
 
   return (
     <div className={'TransactionsList'}>

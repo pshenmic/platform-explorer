@@ -4,6 +4,7 @@ import Intro from '../../components/intro'
 import Markdown from '../../components/markdown'
 import introContent from './intro.md'
 import { Container } from '@chakra-ui/react'
+
 import './ValidatorsIntro.scss'
 
 export const metadata = {
@@ -14,10 +15,6 @@ export const metadata = {
 }
 
 function ValidatorsRoute ({ searchParams }) {
-  const page = Number(searchParams.page) || 1
-  const pageSize = Number(searchParams['page-size'])
-  const activeState = searchParams['active-state']
-
   return <>
     <Container
       maxW={'container.maxPageW'}
@@ -32,7 +29,7 @@ function ValidatorsRoute ({ searchParams }) {
         block={<ValidatorsDashboardCards/>}
       />
     </Container>
-    <Validators defaultPage={page} defaultPageSize={pageSize} defaultIsActive={activeState}/>
+    <Validators />
   </>
 }
 
