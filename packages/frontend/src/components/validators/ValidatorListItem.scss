@@ -14,7 +14,7 @@
   &__Content {
     width: 100%;
     display: grid;
-    grid-template-columns: calc(100% - 400px) 200px 200px;
+    grid-template-columns: auto 150px 150px 150px 150px 150px;
 
     &--Inline {
       display: inline !important;

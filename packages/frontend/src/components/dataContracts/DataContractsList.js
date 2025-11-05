@@ -9,6 +9,7 @@ import {
   getCoreRowModel,
   useReactTable
 } from '@tanstack/react-table'
+
 import './DataContractsList.scss'
 
 const columnHelper = createColumnHelper()
@@ -33,6 +34,10 @@ const columns = [
     header: 'Timestamp'
   })
 ]
+const headerExtraClass = {
+  default: '',
+  light: 'DataContractsList__ColumnTitles--Light'
+}
 
 function DataContractsList ({ dataContracts = [], headerStyles, pagination, loading, itemsCount = 10 }) {
   const table = useReactTable({
@@ -41,11 +46,6 @@ function DataContractsList ({ dataContracts = [], headerStyles, pagination, load
     getCoreRowModel: getCoreRowModel(),
     manualPagination: true
   })
-
-  const headerExtraClass = {
-    default: '',
-    light: 'DataContractsList__ColumnTitles--Light'
-  }
 
   return (
     <div className={'DataContractsList'}>

@@ -5,7 +5,7 @@
   &__ColumnTitles {
     @include mixins.defListTitles;
     display: grid;
-    grid-template-columns: auto 200px 200px;
+    grid-template-columns: auto 150px 150px 150px 150px 150px;
   }
 
   &__ColumnTitle {

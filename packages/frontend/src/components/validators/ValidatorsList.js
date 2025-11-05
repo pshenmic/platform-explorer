@@ -13,23 +13,33 @@ const columnHelper = createColumnHelper()
 
 const columns = [
   columnHelper.accessor('proTxHash', {
-    header: 'proTxHash'
+    id: 'identifier',
+    header: 'Identifier'
+  }),
+  columnHelper.accessor(row => (row?.isActive === true ? 'current' : 'queued'), {
+    id: 'active',
+    header: 'Active'
   }),
   columnHelper.accessor(row => row?.lastProposedBlockHeader?.height ?? 0, {
     id: 'lastBlockHeight',
     header: 'Last block height'
   }),
   columnHelper.accessor('proposedBlocksAmount', {
+    id: 'proposedBlocksAmount',
     header: 'Blocks proposed'
+  }),
+  columnHelper.accessor(row => row?.timestamp ?? null, {
+    id: 'timestamp',
+    header: 'Timestamp'
   })
 ]
 
 const TableWrapper = ({ children }) => (
-      <div className={'ValidatorsList'}>
-      <div className={'ValidatorsList__ContentContainer'}>
-          {children}
-      </div>
+  <div className={'ValidatorsList'}>
+    <div className={'ValidatorsList__ContentContainer'}>
+        {children}
     </div>
+  </div>
 )
 
 export default function ValidatorsList ({ loading, list, pageSize, error }) {
@@ -59,16 +69,14 @@ export default function ValidatorsList ({ loading, list, pageSize, error }) {
   }
 
   return (
-    <div className={'ValidatorsList'}>
-      <div className={'ValidatorsList__ContentContainer'}>
-        <ListColumnsHeader
-          headers={table.getHeaderGroups().flatMap(({ headers }) => headers)}
+    <TableWrapper>
+      <ListColumnsHeader
+        headers={table.getHeaderGroups().flatMap(({ headers }) => headers)}
 
-          className={'ValidatorsList__ColumnTitles'}
-          columnClassName={'ValidatorsList__ColumnTitle'}
-        />
+        className={'ValidatorsList__ColumnTitles'}
+        columnClassName={'ValidatorsList__ColumnTitle'}
+      />
        {table.getRowModel().rows.map((row) => <ValidatorListItem key={row.id} validator={row.original} />)}
-      </div>
-    </div>
+  </TableWrapper>
   )
 }
