@@ -1,33 +1,26 @@
 'use client'
 
 import * as Api from '../../util/Api'
-import TokensList from '../../components/tokens/TokensList'
 import Pagination from '../../components/pagination'
-import { ErrorMessageBlock } from '@components/Errors'
 import PageSizeSelector from '../../components/pageSizeSelector/PageSizeSelector'
+import { normalizePagination } from '../../util'
+import { Switcher } from '@components/ui'
+import { Container, Box, Heading, useBreakpointValue } from '@chakra-ui/react'
 import { useQuery } from '@tanstack/react-query'
-import { useQueryState, parseAsInteger } from 'nuqs'
-import { normalizePagination } from '@utils/table'
-import {
-  Container,
-  Heading,
-  Box,
-  useBreakpointValue
-} from '@chakra-ui/react'
-import { useTokensFilters, TokenFilters } from '@components/tokens'
+import { parseAsInteger, parseAsStringEnum, useQueryState } from 'nuqs'
+import { useValidatorsFilters, ValidatorsFilter, ValidatorsList } from '@components/validators'
 
 const paginateConfig = {
   pageSize: {
     default: 25,
-    values: [10, 25, 50, 75, 100]
+    values: [10, 25, 50, 75, 100, 'All']
   },
   defaultPage: 1
 }
 
-function Tokens () {
+function Validators () {
   const isMobile = useBreakpointValue({ base: true, md: false })
-  const { filters, setFilters } = useTokensFilters()
-
+  const { filters, setFilters } = useValidatorsFilters()
   const [page, setPage] = useQueryState(
     'page',
     parseAsInteger
@@ -40,10 +33,16 @@ function Tokens () {
       .withDefault(paginateConfig.pageSize.default)
       .withOptions({ scroll: false, shallow: true })
   )
+  const [activeState, setActiveState] = useQueryState(
+    'tab',
+    parseAsStringEnum(['all', 'current', 'queued'])
+      .withDefault('all')
+      .withOptions({ scroll: false, shallow: true })
+  )
 
-  const tokens = useQuery({
-    queryKey: ['tokens', page, pageSize, ...Object.values(filters)],
-    queryFn: () => Api.getTokens(
+  const validators = useQuery({
+    queryKey: ['validators', page, pageSize, activeState, ...Object.values(filters)],
+    queryFn: () => Api.getValidators(
       page,
       pageSize,
       'asc',
@@ -60,7 +59,7 @@ function Tokens () {
     })
   })
 
-  const pagination = tokens.data?.pagination
+  const pagination = validators.data?.pagination
 
   const handleFiltersChange = (next) => {
     setFilters(next)
@@ -77,24 +76,34 @@ function Tokens () {
         maxW={'container.maxPageW'}
         className={'InfoBlock'}
       >
-        <Heading className={'InfoBlock__Title'} as={'h1'}>Tokens</Heading>
-
-        <TokenFilters
+        <Heading className={'InfoBlock__Title'} as={'h1'}>Validators</Heading>
+        <Box mb={5}>
+          <Switcher
+            options={[
+              { title: 'All' },
+              { title: 'Current' },
+              { title: 'Queued' }
+            ]}
+            defaultValue={activeState}
+            onChange={(opt) => {
+              const next = (opt || '').toLowerCase()
+              setActiveState(next)
+              setPage(1)
+            }}
+          />
+        </Box>
+        <ValidatorsFilter
           onFilterChange={handleFiltersChange}
           isMobile={isMobile}
-          className={'TokensIntro__Filters'}
+          className={'ValidatorsIntro__Filters'}
         />
-
-        {!tokens.isError
-          ? <TokensList
-              tokens={tokens.data?.resultSet}
-              loading={tokens.isLoading}
-              itemsCount={pageSize}
-            />
-          : <Container h={20}><ErrorMessageBlock/></Container>
-        }
-
-        {tokens.data?.resultSet?.length > 0 &&
+        <ValidatorsList
+          list={validators.data?.resultSet}
+          loading={validators.isLoading}
+          error={validators.isError}
+          pageSize={pageSize}
+        />
+        {validators.data?.resultSet?.length > 0 &&
           <div className={'ListNavigation'}>
             <Box display={['none', 'none', 'block']} width={'155px'}/>
             <Pagination
@@ -117,4 +126,4 @@ function Tokens () {
   )
 }
 
-export default Tokens
+export default Validators
