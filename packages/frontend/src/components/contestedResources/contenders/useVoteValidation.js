@@ -72,11 +72,5 @@ export const useVoteValidation = ({ wallet, isFinished }) => {
     setVoteValidate(VoteControlState.VALIDE)
   }, [isFinished, wallet.connected, isVotingAllowed, wallet, isExtensionConnected])
 
-  useEffect(() => {
-    console.log({voteValidateState})
-
-    console.log({wallet})
-  }, [wallet])
-
   return { voteValidateState, isVoteVisible: voteValidateState === VoteControlState.VALIDE }
 }
