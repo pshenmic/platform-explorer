@@ -2,35 +2,31 @@ import { Filters } from '../filters'
 import { Identifier } from '../data'
 
 const filtersConfig = {
-  min_supply: {
-    type: 'range',
-    label: 'Min supply',
-    title: 'Max supply Range',
-    defaultValue: { min: '', max: '' },
-    minTitle: 'Minimum amount',
-    minPlaceholder: 'ex. 0...',
-    maxTitle: 'Maximum amount',
-    maxPlaceholder: 'ex. 10000000...',
-    formatValue: ({ min, max }) => {
-      if (min && max) return `${min} - ${max} Tokens`
-      if (min) return `Min ${min} Tokens`
-      if (max) return `Max ${max} Tokens`
-      return null
-    }
+  owner: {
+    label: 'Owner',
+    title: 'Filter by owner',
+    type: 'search',
+    entityType: 'identities',
+    placeholder: 'OWNER ID OR IDENTITY',
+    defaultValue: '',
+    formatValue: (value) => value || null,
+    mobileTagRenderer: (value) => (
+      <Identifier avatar={true} ellipsis={true} styles={['highlight-both']}>{value}</Identifier>
+    )
   },
-  max_supply: {
+  position: {
     type: 'range',
-    label: 'Max supply',
-    title: 'Max supply Range',
+    label: 'Position',
+    title: 'Token position in data contract',
     defaultValue: { min: '', max: '' },
-    minTitle: 'Minimum amount',
-    minPlaceholder: 'ex. 0...',
-    maxTitle: 'Maximum amount',
-    maxPlaceholder: 'ex. 10000000...',
+    minTitle: 'Min position',
+    minPlaceholder: 'ex. 0',
+    maxTitle: 'Max position',
+    maxPlaceholder: 'ex. 100000',
     formatValue: ({ min, max }) => {
-      if (min && max) return `${min} - ${max} Tokens`
-      if (min) return `Min ${min} Tokens`
-      if (max) return `Max ${max} Tokens`
+      if (min && max) return `${min} - ${max}`
+      if (min) return `Min ${min}`
+      if (max) return `Max ${max}`
       return null
     }
   },
@@ -45,27 +41,6 @@ const filtersConfig = {
     mobileTagRenderer: (value) => (
       <Identifier avatar={true} ellipsis={true} styles={['highlight-both']}>{value}</Identifier>
     )
-  },
-  owner: {
-    label: 'Owner',
-    title: 'Filter by owner',
-    type: 'search',
-    entityType: 'identities',
-    placeholder: 'OWNER ID OR IDENTITY',
-    defaultValue: '',
-    formatValue: (value) => value || null,
-    mobileTagRenderer: (value) => (
-      <Identifier avatar={true} ellipsis={true} styles={['highlight-both']}>{value}</Identifier>
-    )
-  },
-  timestamp: {
-    label: 'Date',
-    title: 'Date range',
-    type: 'daterange',
-    defaultValue: null,
-    formatValue: (value) => {
-      return `${value?.start ? `from ${value?.start?.toLocaleDateString()}` : ''} ${value?.end ? `to ${value?.end?.toLocaleDateString()}` : ''}`
-    }
   }
 }
 
@@ -74,10 +49,19 @@ export default function TokenFilters ({ initialFilters, onFilterChange, isMobile
     <Filters
       filtersConfig={filtersConfig}
       initialFilters={initialFilters}
-      onFilterChange={onFilterChange}
+      onFilterChange={(values) => {
+        const payload = {
+          owner: values.owner || undefined,
+          position_min: values.position_min || undefined,
+          position_max: values.position_max || undefined,
+          contract_id: values.data_contract || undefined
+        }
+        onFilterChange && onFilterChange(payload)
+      }}
       isMobile={isMobile}
       className={`TokenFilters ${className || ''}`}
       buttonText={'Add filter'}
+      applyOnChange={false}
     />
   )
 }

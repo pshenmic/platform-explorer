@@ -1,15 +1,21 @@
 'use client'
 
 import * as Api from '../../util/Api'
-import { fetchHandlerError, fetchHandlerSuccess } from '../../util'
-import { useEffect, useState } from 'react'
 import TokensList from '../../components/tokens/TokensList'
 import Pagination from '../../components/pagination'
+import { ErrorMessageBlock } from '@components/Errors'
 import PageSizeSelector from '../../components/pageSizeSelector/PageSizeSelector'
-import { LoadingList } from '../../components/loading'
-import { ErrorMessageBlock } from '../../components/Errors'
-import { usePathname, useRouter, useSearchParams } from 'next/navigation'
-import { Container, Heading, Box } from '@chakra-ui/react'
+import { useQuery } from '@tanstack/react-query'
+import { useQueryState, parseAsInteger } from 'nuqs'
+import { normalizePagination } from '@utils/table'
+import {
+  Container,
+  Heading,
+  Box,
+  useBreakpointValue
+} from '@chakra-ui/react'
+import { useTokensFilters, TokenFilters } from '@components/tokens'
+
 import './Tokens.scss'
 
 const paginateConfig = {
@@ -20,63 +26,54 @@ const paginateConfig = {
   defaultPage: 1
 }
 
-function Tokens ({ defaultPage = 1, defaultPageSize }) {
-  const [tokens, setTokens] = useState({ data: {}, loading: false, error: false })
-  const [rate, setRate] = useState({ data: {}, loading: true, error: false })
-  const [total, setTotal] = useState(0)
-  const [pageSize, setPageSize] = useState(defaultPageSize || paginateConfig.pageSize.default)
-  const [currentPage, setCurrentPage] = useState(defaultPage ? defaultPage - 1 : 0)
-  const pageCount = Math.ceil(total / pageSize)
-  const [filters] = useState({})
-  const router = useRouter()
-  const pathname = usePathname()
-  const searchParams = useSearchParams()
+function Tokens () {
+  const isMobile = useBreakpointValue({ base: true, md: false })
+  const { filters, setFilters } = useTokensFilters()
 
-  const fetchData = (page, count, filters) => {
-    setTokens({ data: {}, loading: true, error: false })
+  const [page, setPage] = useQueryState(
+    'page',
+    parseAsInteger
+      .withDefault(paginateConfig.defaultPage)
+      .withOptions({ scroll: false, shallow: true })
+  )
+  const [pageSize, setPageSize] = useQueryState(
+    'page-size',
+    parseAsInteger
+      .withDefault(paginateConfig.pageSize.default)
+      .withOptions({ scroll: false, shallow: true })
+  )
 
-    Api.getTokens(page, count, 'desc', filters)
-      .then(res => {
-        if (res.pagination.total === -1) {
-          setCurrentPage(0)
-        }
-        fetchHandlerSuccess(setTokens, res)
-        setTotal(res.pagination.total)
+  const tokens = useQuery({
+    queryKey: ['tokens', page, pageSize, ...Object.values(filters)],
+    queryFn: () => Api.getTokens(
+      page,
+      pageSize,
+      'asc',
+      filters
+    ),
+    keepPreviousData: true,
+    select: ({ pagination, ...other }) => ({
+      ...other,
+      pagination: normalizePagination({
+        page,
+        pageSize,
+        ...pagination
       })
-      .catch(err => fetchHandlerError(setTokens, err))
+    })
+  })
 
-    Api.getRate()
-      .then(res => fetchHandlerSuccess(setRate, res))
-      .catch(err => fetchHandlerError(setRate, err))
+  const pagination = tokens.data?.pagination
+
+  const handleFiltersChange = (next) => {
+    setFilters(next)
+    setPage(1)
   }
-
-  useEffect(() => fetchData(currentPage + 1, pageSize, filters), [pageSize, currentPage, filters])
-
-  useEffect(() => {
-    const page = parseInt(searchParams.get('page')) || paginateConfig.defaultPage
-    setCurrentPage(Math.max(page - 1, 0))
-    setPageSize(parseInt(searchParams.get('page-size')) || paginateConfig.pageSize.default)
-  }, [searchParams, pathname])
-
-  useEffect(() => {
-    const urlParameters = new URLSearchParams(Array.from(searchParams.entries()))
-
-    if (currentPage + 1 === paginateConfig.defaultPage && pageSize === paginateConfig.pageSize.default) {
-      urlParameters.delete('page')
-      urlParameters.delete('page-size')
-    } else {
-      urlParameters.set('page', currentPage + 1)
-      urlParameters.set('page-size', pageSize)
-    }
-
-    router.push(`${pathname}?${urlParameters.toString()}`, { scroll: false })
-  }, [currentPage, pageSize])
 
   return (
     <Container
-        maxW={'container.maxPageW'}
-        mt={8}
-        className={'TokensPage'}
+      maxW={'container.maxPageW'}
+      mt={8}
+      className={'Transactions'}
     >
       <Container
         maxW={'container.maxPageW'}
@@ -84,23 +81,34 @@ function Tokens ({ defaultPage = 1, defaultPageSize }) {
       >
         <Heading className={'InfoBlock__Title'} as={'h1'}>Tokens</Heading>
 
-        {!tokens.error
-          ? !tokens.loading
-              ? <TokensList tokens={tokens?.data?.resultSet || []} rate={rate}/>
-              : <LoadingList itemsCount={pageSize}/>
-          : <ErrorMessageBlock h={20}/>
+        <TokenFilters
+          onFilterChange={handleFiltersChange}
+          isMobile={isMobile}
+          className={'Tokens__Filters'}
+        />
+
+        {!tokens.isError
+          ? <TokensList
+              tokens={tokens.data?.resultSet}
+              loading={tokens.isLoading}
+              itemsCount={pageSize}
+            />
+          : <Container h={20}><ErrorMessageBlock/></Container>
         }
 
         {tokens.data?.resultSet?.length > 0 &&
           <div className={'ListNavigation'}>
             <Box display={['none', 'none', 'block']} width={'155px'}/>
             <Pagination
-              onPageChange={({ selected }) => setCurrentPage(selected)}
-              pageCount={pageCount}
-              forcePage={currentPage}
+              onPageChange={({ selected }) => setPage((selected || 0) + 1)}
+              pageCount={pagination.pageCount}
+              forcePage={pagination.forcePage}
             />
             <PageSizeSelector
-              PageSizeSelectHandler={e => setPageSize(e.value)}
+              PageSizeSelectHandler={e => {
+                setPageSize(e.value)
+                setPage(1)
+              }}
               value={pageSize}
               items={paginateConfig.pageSize.values}
             />

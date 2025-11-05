@@ -9,6 +9,7 @@ import { ChevronIcon } from '../ui/icons'
 import { MultiLevelMenu } from '../ui/menus'
 import { MobileFilterMenu } from './MobileFilterMenu'
 import { DateRangeFilter } from './DateRangeFilter'
+
 import './Filters.scss'
 
 export const Filters = ({

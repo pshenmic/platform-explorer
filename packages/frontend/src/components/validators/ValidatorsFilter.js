@@ -76,10 +76,10 @@ export const ValidatorsFilter = ({ onFilterChange, isMobile, className }) => {
         const [isActiveSelected] = values.isActive ?? []
         const payload = {
           isActive: isActiveSelected ? 'true' : undefined,
-          blocks_proposed_min: values.blocks_proposed?.min || undefined,
-          blocks_proposed_max: values.blocks_proposed?.max || undefined,
-          last_proposed_block_height_min: values.last_proposed_block_height?.min || undefined,
-          last_proposed_block_height_max: values.last_proposed_block_height?.max || undefined,
+          blocks_proposed_min: values.blocks_proposed_min || undefined,
+          blocks_proposed_max: values.blocks_proposed_max || undefined,
+          last_proposed_block_height_min: values.last_proposed_block_height_min || undefined,
+          last_proposed_block_height_max: values.last_proposed_block_height_max || undefined,
           last_proposed_block_timestamp_start: values.last_proposed_block_timestamp_start
             ? new Date(values.last_proposed_block_timestamp_start).toISOString()
             : undefined,
