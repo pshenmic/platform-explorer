@@ -5,11 +5,11 @@
   &__ColumnTitles {
     @include mixins.defListTitles;
     display: grid;
-    grid-template-columns: auto 150px 150px 150px 150px 150px;
+    grid-template-columns: auto 150px 250px 250px 150px;
   }
 
   &__ColumnTitle {
-    justify-content: flex-end;
+    justify-content: center;
 
     &:first-child {
       justify-content: flex-start;
@@ -18,7 +18,7 @@
   
   @media screen and (max-width: $breakpoint-lg) {
     &__ColumnTitles {
-      grid-template-columns: auto 170px 170px;
+      grid-template-columns: auto 170px 170px 100px 100px;
     }
   }
 

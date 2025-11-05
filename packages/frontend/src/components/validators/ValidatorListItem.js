@@ -26,7 +26,7 @@ export const ValidatorListItem = ({ validator }) => {
             </GridItem>
             <GridItem className={'ValidatorListItem__Column'}>
               {validator?.isActive !== undefined
-                ? <Badge colorScheme={validator?.isActive ? 'orange' : 'gray'}>
+                ? <Badge className='ValidatorListItem__Column--Active' colorScheme={validator?.isActive ? 'orange' : 'gray'}>
                     {validator?.isActive ? 'true' : 'false'}
                 </Badge>
                 : <NotActive />
