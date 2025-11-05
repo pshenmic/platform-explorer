@@ -43,15 +43,19 @@ function DataContractsLayout () {
   )
 
   const dataContracts = useQuery({
-    queryKey: ['dataContracts', page, pageSize, ...Object.values(filters)],
-    queryFn: () => Api.getDataContracts(
-      page,
-      pageSize,
-      sorting.order,
-      sorting.orderBy,
-      filters
-    ),
+    queryKey: ['dataContracts'],
     keepPreviousData: true,
+    refetchOnMount: false,
+    queryFn: () => {
+      console.log('dataContracts')
+      return Api.getDataContracts(
+        page,
+        pageSize,
+        sorting.order,
+        sorting.orderBy,
+        filters
+      )
+    },
     select: ({ pagination, ...other }) => ({
       ...other,
       pagination: normalizePagination({

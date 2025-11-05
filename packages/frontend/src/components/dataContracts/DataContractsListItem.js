@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { Alias, Identifier, BigNumber, NotActive } from '../data'
+import { Alias, Identifier, BigNumber, NotActive, DateBlock } from '../data'
 import ValueContainer from '../ui/containers/ValueContainer'
 import { Badge, Grid, GridItem } from '@chakra-ui/react'
 import './DataContractsListItem.scss'
@@ -63,12 +63,7 @@ function DataContractsListItem ({ dataContract }) {
         </GridItem>
 
         <GridItem className={'DataContractsListItem__Column DataContractsListItem__Column--Timestamp'}>
-          {(typeof dataContract?.timestamp === 'string')
-            ? <div className={'DataContractsListItem__Timestamp'}>
-                {new Date(dataContract?.timestamp).toLocaleString()}
-              </div>
-            : <span>-</span>
-          }
+             <DateBlock format={'dateOnly'} className={'DataContractsListItem__Timestamp'} timestamp={dataContract?.timestamp} />
         </GridItem>
       </Grid>
     </Link>
