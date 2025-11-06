@@ -44,7 +44,7 @@ function TokensListItem ({ token, variant = 'default', rate }) {
         {
           !isNaN(position)
             ? <GridItem className={'TokensListItem__Column TokensListItem__Column--Position'}>
-            {position}
+              <span>{position}</span>
           </GridItem>
             : <NotActive />
         }
