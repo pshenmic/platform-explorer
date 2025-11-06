@@ -19,8 +19,6 @@ function ContestedResourcesDashboardCards () {
 
   useEffect(fetchData, [])
 
-  console.log('stats.data?.expiringContestedResource', stats.data?.expiringContestedResource)
-
   return (
     <DashboardCards
       cards={[
