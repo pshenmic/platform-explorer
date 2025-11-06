@@ -19,16 +19,18 @@ export const useVoteValidation = ({ wallet, isFinished }) => {
 
   useEffect(() => {
     const sdk = window.dashPlatformSDK
-
-    const checkIdentity = async (identity) => {
+    console.log({wallet})
+    const checkIdentity = async ({ identifier }) => {
       if (!wallet.currentIdentity) {
         return
       }
 
       try {
-        const voterIdentity = await sdk.identities.getIdentityByIdentifier(identity)
+        const voterIdentity = await sdk.identities.getIdentityByIdentifier(identifier)
         const publicKeys = voterIdentity.getPublicKeys()
         const [publicKey] = publicKeys
+
+        console.log({publicKeys})
 
         const isAllowed = publicKeys.length === 1 && publicKey.purpose === 'VOTING'
 
@@ -38,8 +40,8 @@ export const useVoteValidation = ({ wallet, isFinished }) => {
       }
     }
 
-    if (wallet?.identities) {
-      wallet?.identities.forEach(checkIdentity)
+    if (wallet?.walletInfo?.identities) {
+      wallet?.walletInfo.identities.forEach(checkIdentity)
     }
   }, [wallet.currentIdentity])
 
@@ -71,6 +73,10 @@ export const useVoteValidation = ({ wallet, isFinished }) => {
 
     setVoteValidate(VoteControlState.VALIDE)
   }, [isFinished, wallet.connected, isVotingAllowed, wallet, isExtensionConnected])
+
+  useEffect(() =>{
+    console.log({voteValidateState})
+  }, [voteValidateState])
 
   return { voteValidateState, isVoteVisible: voteValidateState === VoteControlState.VALIDE }
 }

@@ -33,7 +33,7 @@ export const VoteControls = ({ currentIdentity, contender, resourceValue, wallet
       const stateTransition = sdk.voting.createStateTransition(vote, proTxHash, voterIdentity.id, identityNonce + BigInt(1))
       await window.dashPlatformExtension.signer.signAndBroadcast(stateTransition)
 
-      setTimeout(() => window.location.reload(), 2000)
+      // setTimeout(() => window.location.reload(), 2000)
     }
 
     castVote()
