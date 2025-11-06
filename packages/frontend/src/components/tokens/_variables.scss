@@ -5,23 +5,18 @@
   gap: 1rem;
   grid-template-columns:
     3fr
+    100px
     10rem
     2fr
     3fr
     3fr;
 
-  @container (max-width: 90rem) {
-    grid-template-columns:
-      minmax(10rem, 20rem)
-      10rem
-      10rem
-      auto
-      22rem;
-  }
+
 
   @container (max-width: 80rem) {
     grid-template-columns:
       10rem
+      100px
       10rem
       10rem
       auto
@@ -31,6 +26,7 @@
   @container (max-width: 64rem) {
     grid-template-columns:
       minmax(10rem, 22rem)
+      50px
       10rem
       10rem
       minmax(0, 22rem);
@@ -39,6 +35,7 @@
   @container (max-width: 48rem) {
     grid-template-columns:
       minmax(10rem, 16rem)
+      50px
       10rem
       minmax(0, 22rem);
   }
@@ -146,6 +143,12 @@
     }
   }
 
+  @container (max-width: 64rem) {
+    &--Position {
+      display: none;
+    }
+  }
+
   @container (max-width: 48rem) {
     &--Price {
       display: none;
@@ -178,6 +181,7 @@
       display: none;
     }
   }
+
 
   @container (max-width: 40rem) {
     &--Supply {

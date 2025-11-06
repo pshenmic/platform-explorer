@@ -17,6 +17,7 @@ const columnHelper = createColumnHelper()
 
 const columns = [
   columnHelper.accessor('name', { id: 'tokenName', header: 'Token Name' }),
+  columnHelper.accessor('position', { id: 'position', header: 'Position' }),
   columnHelper.accessor('totalSupply', { id: 'supply', header: 'Supply' }),
   columnHelper.accessor('price', { id: 'price', header: 'Price' }),
   columnHelper.accessor('dataContractIdentifier', { id: 'contract', header: 'Contract' }),
@@ -51,6 +52,9 @@ function TokensList ({
       <Grid className={`TokensList__ColumnTitles ${headerExtraClass[headerStyles] || ''}`}>
         <GridItem className={'TokensList__ColumnTitle TokensList__ColumnTitle--TokenName'}>
           Token Name
+        </GridItem>
+        <GridItem className={'TokensList__ColumnTitle TokensList__ColumnTitle--Position'}>
+          Position
         </GridItem>
         <GridItem className={'TokensList__ColumnTitle TokensList__ColumnTitle--Supply'}>
           Supply
