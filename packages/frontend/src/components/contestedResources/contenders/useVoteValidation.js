@@ -34,7 +34,9 @@ export const useVoteValidation = ({ wallet, isFinished }) => {
 
         const isAllowed = publicKeys.length === 1 && publicKey.purpose === 'VOTING'
 
-        setVotingAllowed(isAllowed)
+        if (isAllowed) {
+          setVotingAllowed(isAllowed)
+        }
       } catch (e) {
         console.error(e)
       }
