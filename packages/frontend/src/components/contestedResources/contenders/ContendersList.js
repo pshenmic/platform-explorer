@@ -6,10 +6,10 @@ import { useVoteValidation } from './useVoteValidation'
 
 const ContendersList = ({ className, isFinished, ...props }) => {
   const wallet = useWalletConnect()
-  const { isVoteVisible } = useVoteValidation({ wallet, isFinished })
+  const { isVoteVisible, prevVote } = useVoteValidation({ wallet, isFinished })
   return (
         <ContendersTemplate isVoteVisible={isVoteVisible} className={className}>
-            <ContendersContent isVoteVisible={isVoteVisible} {...wallet} {...props} />
+            <ContendersContent isVoteVisible={isVoteVisible} prevVote={prevVote} {...wallet} {...props} />
         </ContendersTemplate>
   )
 }

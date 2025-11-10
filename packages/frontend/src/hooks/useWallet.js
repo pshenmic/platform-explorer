@@ -1,7 +1,7 @@
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 
 export const useWalletConnect = () => {
-  const [connected, setConnected] = useState(false)
+  const connected = useRef(false)
   const [error, setError] = useState(null)
   const [walletInfo, setWalletInfo] = useState(null)
   const [currentIdentity, setCurrentIdentity] = useState(null)
@@ -14,11 +14,12 @@ export const useWalletConnect = () => {
     const { dashPlatformExtension } = window
 
     dashPlatformExtension.signer.connect()
-      .then((walletInfo) => {
-        setConnected(true)
-        setWalletInfo(walletInfo)
+      .then((wallet) => {
+        const current = wallet.identities.find(({ identifier }) => identifier === wallet.currentIdentity)
+        connected.current = true
+        setWalletInfo({ ...wallet, proTxHash: current.proTxHash })
         setError(null)
-        setCurrentIdentity(walletInfo.currentIdentity)
+        setCurrentIdentity(wallet.currentIdentity)
       })
       .catch((error) => {
         setError(error.toString() || 'Failed to connect wallet')
