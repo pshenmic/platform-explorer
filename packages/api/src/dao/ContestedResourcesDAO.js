@@ -293,7 +293,7 @@ module.exports = class ContestedDAO {
     return new PaginatedResultSet(resourcesWithVotes, page, limit, Number(totalCount ?? 0))
   }
 
-  getVotesForContestedResource = async (choice, resourceValue, page, limit, order) => {
+  getVotesForContestedResource = async (choice, resourceValue, proTxHash, page, limit, order) => {
     const fromRank = ((page - 1) * limit)
 
     let query = 'index_values = ?'
@@ -302,6 +302,11 @@ module.exports = class ContestedDAO {
     if (choice !== null && !isNaN(choice)) {
       query = query + ' and choice = ?'
       bindings.push(choice)
+    }
+
+    if (proTxHash) {
+      query = query + ' and LOWER(pro_tx_hash) = LOWER(?)'
+      bindings.push(proTxHash)
     }
 
     const prefundedDocumentsSubquery = this.knex('documents')
