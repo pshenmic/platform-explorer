@@ -8,7 +8,7 @@ const VOTING_DATA_CONTRACT_ID = process.env.NEXT_PUBLIC_VOTING_DATA_CONTRACT_ID 
 const DOCUMENT_TYPE = 'domain'
 const INDEX_NAME = 'parentNameAndLabel'
 
-export const VoteControls = ({ currentIdentity, contender, resourceValue, walletInfo, prevVote }) => {
+export const VoteControls = ({ currentIdentity, contender, resourceValue, walletInfo, prevVote, refresh }) => {
   const handleVote = ({ choice }) => {
     if (!window.dashPlatformExtension) {
       return
@@ -29,7 +29,7 @@ export const VoteControls = ({ currentIdentity, contender, resourceValue, wallet
       const stateTransition = sdk.voting.createStateTransition(vote, proTxHash, voterIdentity.id, identityNonce + BigInt(1))
       await window.dashPlatformExtension.signer.signAndBroadcast(stateTransition)
 
-      // setTimeout(() => window.location.reload(), 2000)
+      setTimeout(() => refresh(), 2000)
     }
 
     castVote()

@@ -11,7 +11,7 @@ import { InfoBlock } from '../ui/containers'
 import { colors } from '../../styles/colors'
 import './ContestedResourceTotalCard.scss'
 
-function ContestedResourceTotalCard ({ contestedResource, rate, className }) {
+function ContestedResourceTotalCard ({ contestedResource, rate, className, refresh }) {
   const { data, loading, error } = contestedResource
 
   const isEnded = data?.status === 'finished' || data?.finished === true
@@ -156,6 +156,7 @@ function ContestedResourceTotalCard ({ contestedResource, rate, className }) {
           }
         </div>
         <ContendersList
+          refresh={refresh}
           resourceValue={contestedResource.data.resourceValue}
           contenders={contestedResource?.data?.contenders}
           isFinished={isEnded}

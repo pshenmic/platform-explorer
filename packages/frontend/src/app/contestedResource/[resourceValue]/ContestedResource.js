@@ -30,18 +30,27 @@ const defaultTabName = 'all_votes'
 
 function ContestedResource ({ resourceValue }) {
   const { setBreadcrumbs } = useBreadcrumbs()
-  const [contestedResource, setContestedResource] = useState({ data: {}, loading: true, error: false })
-  const [votes, setVotes] = useState({ data: {}, props: { currentPage: 0 }, loading: true, error: false })
-  const [towardsIdentityVotes, setTowardsIdentityVotes] = useState({ data: {}, props: { currentPage: 0 }, loading: true, error: false })
-  const [abstainVotes, setAbstainVotes] = useState({ data: {}, props: { currentPage: 0 }, loading: true, error: false })
-  const [lockedVotes, setLockedVotes] = useState({ data: {}, props: { currentPage: 0 }, loading: true, error: false })
+  const [contestedResource, setContestedResource] = useState({ data: {}, loading: true, error: false, refreshing: true })
+  const [votes, setVotes] = useState({ data: {}, props: { currentPage: 0 }, loading: true, error: false, refreshing: true })
+  const [towardsIdentityVotes, setTowardsIdentityVotes] = useState({ data: {}, props: { currentPage: 0 }, loading: true, error: false, refreshing: true })
+  const [abstainVotes, setAbstainVotes] = useState({ data: {}, props: { currentPage: 0 }, loading: true, error: false, refreshing: true })
+  const [lockedVotes, setLockedVotes] = useState({ data: {}, props: { currentPage: 0 }, loading: true, error: false, refreshing: true })
   const [activeTab, setActiveTab] = useState(tabs.indexOf(defaultTabName.toLowerCase()) !== -1 ? tabs.indexOf(defaultTabName.toLowerCase()) : 0)
-  const [rate, setRate] = useState({ data: {}, loading: true, error: false })
+  const [rate, setRate] = useState({ data: {}, loading: true, error: false, refreshing: true })
   const pageSize = pagintationConfig.itemsOnPage.default
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
   const decodedValue = contestedResources.decodeValue(decodeURIComponent(resourceValue))
+
+  const refresh = () => {
+    setContestedResource(state => ({ ...state, refreshing: true }))
+    setRate(state => ({ ...state, refreshing: true }))
+    setVotes(state => ({ ...state, refreshing: true }))
+    setTowardsIdentityVotes(state => ({ ...state, refreshing: true }))
+    setAbstainVotes(state => ({ ...state, refreshing: true }))
+    setLockedVotes(state => ({ ...state, refreshing: true }))
+  }
 
   useEffect(() => {
     setBreadcrumbs([
@@ -76,50 +85,64 @@ function ContestedResource ({ resourceValue }) {
   }, [activeTab])
 
   useEffect(() => {
+    if (!resourceValue || !contestedResource.refreshing) return
+
+    setContestedResource(state => ({ ...state, loading: true }))
     Api.getContestedResourceByValue(resourceValue)
       .then(res => fetchHandlerSuccess(setContestedResource, res))
       .catch(err => fetchHandlerError(setContestedResource, err))
+      .finally(() => setContestedResource(state => ({ ...state, refreshing: false })))
+  }, [resourceValue, contestedResource.refreshing])
 
+  useEffect(() => {
+    if (!rate.refreshing) return
+
+    setRate(state => ({ ...state, loading: true }))
     Api.getRate()
       .then(res => fetchHandlerSuccess(setRate, res))
       .catch(err => fetchHandlerError(setRate, err))
-  }, [resourceValue])
+      .finally(() => setRate(state => ({ ...state, refreshing: false })))
+  }, [rate.refreshing])
 
   useEffect(() => {
-    if (!resourceValue) return
-    setLoadingProp(setVotes)
+    if (!resourceValue || !votes.refreshing) return
 
+    setLoadingProp(setVotes)
     Api.getContestedResourceVotes(resourceValue, votes.props.currentPage + 1, pageSize, 'desc')
       .then(res => fetchHandlerSuccess(setVotes, res))
       .catch(err => fetchHandlerError(setVotes, err))
-  }, [resourceValue, votes.props.currentPage])
+      .finally(() => setVotes(state => ({ ...state, refreshing: false })))
+  }, [resourceValue, votes.props.currentPage, votes.refreshing])
 
   useEffect(() => {
-    if (!resourceValue) return
-    setLoadingProp(setTowardsIdentityVotes)
+    if (!resourceValue || !towardsIdentityVotes.refreshing) return
 
+    setLoadingProp(setTowardsIdentityVotes)
     Api.getContestedResourceVotes(resourceValue, towardsIdentityVotes.props.currentPage + 1, pageSize, 'desc', { choice: 0 })
       .then(res => fetchHandlerSuccess(setTowardsIdentityVotes, res))
       .catch(err => fetchHandlerError(setTowardsIdentityVotes, err))
-  }, [resourceValue, towardsIdentityVotes.props.currentPage])
+      .finally(() => setTowardsIdentityVotes(state => ({ ...state, refreshing: false })))
+  }, [resourceValue, towardsIdentityVotes.props.currentPage, towardsIdentityVotes.refreshing])
 
   useEffect(() => {
-    if (!resourceValue) return
-    setLoadingProp(setAbstainVotes)
+    if (!resourceValue || !abstainVotes.refreshing) return
 
+    setLoadingProp(setAbstainVotes)
     Api.getContestedResourceVotes(resourceValue, abstainVotes.props.currentPage + 1, pageSize, 'desc', { choice: 1 })
       .then(res => fetchHandlerSuccess(setAbstainVotes, res))
       .catch(err => fetchHandlerError(setAbstainVotes, err))
-  }, [resourceValue, abstainVotes.props.currentPage])
+      .finally(() => setAbstainVotes(state => ({ ...state, refreshing: false })))
+  }, [resourceValue, abstainVotes.props.currentPage, abstainVotes.refreshing])
 
   useEffect(() => {
-    if (!resourceValue) return
-    setLoadingProp(setLockedVotes)
+    if (!resourceValue || !lockedVotes.refreshing) return
 
+    setLoadingProp(setLockedVotes)
     Api.getContestedResourceVotes(resourceValue, lockedVotes.props.currentPage + 1, pageSize, 'desc', { choice: 2 })
       .then(res => fetchHandlerSuccess(setLockedVotes, res))
       .catch(err => fetchHandlerError(setLockedVotes, err))
-  }, [resourceValue, lockedVotes.props.currentPage])
+      .finally(() => setLockedVotes(state => ({ ...state, refreshing: false })))
+  }, [resourceValue, lockedVotes.props.currentPage, lockedVotes.refreshing])
 
   useEffect(() => {
     const tab = searchParams.get('tab')
@@ -137,7 +160,7 @@ function ContestedResource ({ resourceValue }) {
       className={'ContestedResource'}
       title={'Contested Resource info'}
     >
-      <ContestedResourceTotalCard contestedResource={contestedResource} rate={rate}/>
+      <ContestedResourceTotalCard refresh={refresh} contestedResource={contestedResource} rate={rate}/>
 
       <InfoContainer styles={['tabs']}>
         <Tabs onChange={(index) => setActiveTab(index)} index={activeTab}>
