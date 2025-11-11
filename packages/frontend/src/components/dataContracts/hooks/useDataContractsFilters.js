@@ -12,7 +12,7 @@ export const useDataContractsFilters = () => {
 
   const tsStartISO = (() => {
     const d = decodeDateFromURL(tsStart)
-    return d ? d.toISOString() : (tsStart || undefined) // поддержим обратную совместимость, если уже ISO
+    return d ? d.toISOString() : (tsStart || undefined)
   })()
   const tsEndISO = (() => {
     const d = decodeDateFromURL(tsEnd)

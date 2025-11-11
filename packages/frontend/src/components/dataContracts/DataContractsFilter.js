@@ -78,8 +78,8 @@ export const DataContractsFilter = ({ onFilterChange, isMobile, className }) => 
           owner: values.owner || undefined,
           is_system: isSystemSelected ? 'true' : undefined,
           with_tokens: withTokensSelected != null ? String(withTokensSelected) : undefined,
-          documents_count_min: values.documents_count?.min || undefined,
-          documents_count_max: values.documents_count?.max || undefined,
+          documents_count_min: values.documents_count_min || undefined,
+          documents_count_max: values.documents_count_max || undefined,
           timestamp_start: values.timestamp_start ? new Date(values.timestamp_start).toISOString() : undefined,
           timestamp_end: values.timestamp_end ? new Date(values.timestamp_end).toISOString() : undefined
         }
