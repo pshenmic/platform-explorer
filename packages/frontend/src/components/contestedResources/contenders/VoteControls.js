@@ -25,9 +25,13 @@ export const VoteControls = ({ currentIdentity, contender, resourceValue, wallet
 
       const { proTxHash } = walletInfo
 
-      const vote = sdk.voting.createVote(VOTING_DATA_CONTRACT_ID, DOCUMENT_TYPE, INDEX_NAME, resourceValue, choice)
-      const stateTransition = sdk.voting.createStateTransition(vote, proTxHash, voterIdentity.id, identityNonce + BigInt(1))
-      await window.dashPlatformExtension.signer.signAndBroadcast(stateTransition)
+      try {
+        const vote = sdk.voting.createVote(VOTING_DATA_CONTRACT_ID, DOCUMENT_TYPE, INDEX_NAME, resourceValue, choice)
+        const stateTransition = sdk.voting.createStateTransition(vote, proTxHash, voterIdentity.id, identityNonce + BigInt(1))
+        await window.dashPlatformExtension.signer.signAndBroadcast(stateTransition)
+      } catch (e) {
+        console.log(e)
+      }
 
       setTimeout(() => refresh(), 2000)
     }
