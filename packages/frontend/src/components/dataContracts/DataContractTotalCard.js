@@ -3,19 +3,25 @@ import { Alias, CreditsBlock, DateBlock, Identifier, InfoLine } from '../data'
 import { HorisontalSeparator } from '../ui/separators'
 import { ValueCard } from '../cards'
 import { findActiveAlias } from '../../util'
+import { useState } from 'react'
+import { DataContractModal } from './DataContractModal'
+
 import './DataContractTotalCard.scss'
 
 function DataContractTotalCard ({ dataContract, rate, className }) {
+  const [isOpen, setOpen] = useState(false)
   const activeAlias = findActiveAlias(dataContract?.data?.owner?.aliases)
 
   return (
     <div className={`InfoBlock InfoBlock--Gradient DataContractTotalCard ${dataContract.loading ? 'DataContractTotalCard--Loading' : ''} ${className || ''}`}>
-      {dataContract.data?.name &&
+      <div className='DataContractTotalCard__TitleContainer'>
         <div className={'DataContractTotalCard__Title'}>
-          {dataContract.data.name}
+          {dataContract.data.name ?? 'Platform Extension Data Contract'}
         </div>
-      }
 
+      <button className={'DataContractTotalCard__Edit'} onClick={() => setOpen(prev => !prev)}>Edit</button>
+      </div>
+      <DataContractModal isOpen={isOpen} onClose={() => setOpen(false)} />
       <div className={'DataContractTotalCard__Header'}>
         <div className={'DataContractTotalCard__HeaderLines'}>
           <InfoLine

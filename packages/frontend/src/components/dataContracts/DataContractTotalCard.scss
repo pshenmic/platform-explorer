@@ -4,10 +4,35 @@
 .DataContractTotalCard {
   @include mixins.TotalCard();
 
+  &__TitleContainer {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+  }
+
+  &__Edit {
+      background: rgba(var(--chakra-colors-brand-normal-rgb), .2);
+      color: var(--chakra-colors-brand-normal);
+      font-family: $font-mono;
+      border-radius: 10px;
+      padding: 0.5rem 1rem;
+      font-weight: 400;
+      font-size: 12px;
+      line-height: 130%;
+      letter-spacing: 0%;
+
+  }
+
   &__Title {
     font-weight: 700;
     font-size: 0.875rem;
     margin-bottom: 0.875rem;
+    font-family: Montserrat;
+    font-weight: 800;
+    font-style: Italic;
+    font-size: 14px;
+    line-height: 120%;
+    text-transform: uppercase;
   }
 
   &__HeaderLines {

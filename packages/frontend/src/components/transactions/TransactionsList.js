@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import TransactionsListItem from './TransactionsListItem'
-import { EmptyListMessage } from '../ui/lists'
+import { EmptyListMessage } from '@ui/lists'
 import { Grid, GridItem } from '@chakra-ui/react'
 import { LoadingList } from '../loading'
 import Pagination from '../pagination'

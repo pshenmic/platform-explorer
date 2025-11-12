@@ -4,10 +4,10 @@ import { useEffect, useState } from 'react'
 import * as Api from '../../util/Api'
 import DataContractsList from '../../components/dataContracts/DataContractsList'
 import Pagination from '../../components/pagination'
-import { ErrorMessageBlock } from '../../components/Errors'
+import { ErrorMessageBlock } from '@components/Errors'
 import PageSizeSelector from '../../components/pageSizeSelector/PageSizeSelector'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
-import { fetchHandlerSuccess, fetchHandlerError } from '../../util'
+import { fetchHandlerSuccess, fetchHandlerError } from '@utils'
 
 import {
   Container,
