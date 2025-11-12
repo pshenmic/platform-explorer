@@ -7,6 +7,8 @@ import theme from '../../styles/theme'
 import Navbar from './navbar/Navbar'
 import Footer from './footer'
 import Background from './Background'
+import { NetworkProvider } from 'src/contexts/NetworkContext'
+
 import '../../styles/theme.scss'
 
 export default function RootComponent ({ children }) {
@@ -16,10 +18,12 @@ export default function RootComponent ({ children }) {
 
   return (
     <ChakraProvider theme={theme} colorModeManager={localStorageManager}>
-      <Background snow={false}/>
+      <Background snow={false} />
       <BreadcrumbsProvider>
-        <Navbar/>
-        {children}
+        <NetworkProvider>
+          <Navbar/>
+          {children}
+        </NetworkProvider>
       </BreadcrumbsProvider>
       <Footer/>
     </ChakraProvider>
