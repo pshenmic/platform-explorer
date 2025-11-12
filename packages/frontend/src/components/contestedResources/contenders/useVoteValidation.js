@@ -91,11 +91,16 @@ export const useVoteValidation = ({ wallet, isFinished }) => {
     const getPrevVote = async () => {
       const { proTxHash } = wallet.walletInfo
 
-      const { resultSet: [prev] } = await getLastVoteByProTxHash({ resourceValue, proTxHash })
-      if (prev) {
-        const choice = API_VOTE_ENUM[prev.choice]
+      try {
+        const { resultSet: [prev] } = await getLastVoteByProTxHash({ resourceValue, proTxHash })
 
-        setPrevVote(choice)
+        if (prev) {
+          const choice = API_VOTE_ENUM[prev.choice]
+
+          setPrevVote(choice)
+        }
+      } catch (e) {
+        console.log(e)
       }
     }
 
