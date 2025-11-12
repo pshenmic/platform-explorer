@@ -7,7 +7,7 @@ import {
   formatDate
 } from './datetime'
 
-function fetchHandlerSuccess(setter, data) {
+function fetchHandlerSuccess (setter, data) {
   setter((state) => ({
     ...state,
     data: {
@@ -19,7 +19,7 @@ function fetchHandlerSuccess(setter, data) {
   }))
 }
 
-function fetchHandlerError(setter, error) {
+function fetchHandlerError (setter, error) {
   console.error(error)
 
   setter((state) => ({
@@ -30,7 +30,7 @@ function fetchHandlerError(setter, error) {
   }))
 }
 
-function paginationHandler(setter, currentPage) {
+function paginationHandler (setter, currentPage) {
   setter((state) => ({
     ...state,
     props: {
@@ -40,21 +40,21 @@ function paginationHandler(setter, currentPage) {
   }))
 }
 
-function setLoadingProp(setter, value = true) {
+function setLoadingProp (setter, value = true) {
   setter((state) => ({ ...state, loading: value }))
 }
 
-function numberFormat(number) {
+function numberFormat (number) {
   return new Intl.NumberFormat('en', { maximumSignificantDigits: 3 }).format(
     number
   )
 }
 
-function creditsToDash(credits) {
+function creditsToDash (credits) {
   return credits / 10e10
 }
 
-function roundUsd(usd, maxDecimals = 5) {
+function roundUsd (usd, maxDecimals = 5) {
   if (usd >= 0.01 || usd < 1 / Math.pow(10, maxDecimals)) return usd.toFixed(2)
 
   const multiplier = Math.pow(10, maxDecimals)
@@ -72,7 +72,7 @@ function roundUsd(usd, maxDecimals = 5) {
   return usd.toFixed(precision)
 }
 
-function removeTrailingZeros(value, maxDecimals = 8) {
+function removeTrailingZeros (value, maxDecimals = 8) {
   if (typeof value !== 'number') value = Number(value)
   if (isNaN(value)) return value
 
@@ -80,7 +80,7 @@ function removeTrailingZeros(value, maxDecimals = 8) {
   return parseFloat(fixedValue)
 }
 
-function findActiveAlias(aliases = []) {
+function findActiveAlias (aliases = []) {
   if (!aliases?.length) return null
   return aliases?.find((alias) => alias.status === 'ok')
 }
@@ -97,7 +97,7 @@ const getMinTokenPrice = (prices) => {
 
 const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
 
-async function* infiniteChecker(checkFunction, maxIterations = Infinity) {
+async function * infiniteChecker (checkFunction, maxIterations = Infinity) {
   let iteration = 0
 
   while (iteration < maxIterations) {
