@@ -19,13 +19,41 @@ class DataContractsController {
   }
 
   getDataContracts = async (request, response) => {
-    const { page = 1, limit = 10, order = 'asc', order_by: orderBy = 'block_height' } = request.query
+    const {
+      page = 1,
+      limit = 10,
+      order = 'asc',
+      order_by: orderBy = 'block_height',
+      owner,
+      is_system: isSystem,
+      with_tokens: withTokens,
+      timestamp_start: timestampStart,
+      timestamp_end: timestampEnd,
+      documents_count_min: documentsCountMin,
+      documents_count_max: documentsCountMax
+    } = request.query
 
     if (!['block_height', 'documents_count', 'tx_count', 'balance'].includes(orderBy)) {
       return response.status(400).send({ message: 'invalid filters values' })
     }
 
-    const dataContracts = await this.dataContractsDAO.getDataContracts(Number(page ?? 1), Number(limit ?? 10), order, orderBy)
+    if (!timestampStart !== !timestampEnd) {
+      return response.status(400).send({ message: 'you must use timestamp_start and timestamp_end' })
+    }
+
+    const dataContracts = await this.dataContractsDAO.getDataContracts(
+      Number(page ?? 1),
+      Number(limit ?? 10),
+      order,
+      orderBy,
+      owner,
+      isSystem,
+      withTokens,
+      timestampStart,
+      timestampEnd,
+      documentsCountMin,
+      documentsCountMax
+    )
 
     response.send(dataContracts)
   }
@@ -57,6 +85,28 @@ class DataContractsController {
     }
 
     response.send(transactions)
+  }
+
+  getDataContractTrends = async (request, response) => {
+    const {
+      page = 1,
+      limit = 10,
+      order = 'asc',
+      timestamp_start: start = new Date().getTime() - 2592000000,
+      timestamp_end: end = new Date().getTime()
+    } = request.query
+
+    if (!start || !end) {
+      return response.status(400).send({ message: 'start and end must be set' })
+    }
+
+    if (start > end) {
+      return response.status(400).send({ message: 'start timestamp cannot be more than end timestamp' })
+    }
+
+    const trends = await this.dataContractsDAO.getContractsTrends(new Date(start), new Date(end), page, limit, order)
+
+    response.send(trends)
   }
 }
 

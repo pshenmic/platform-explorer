@@ -227,12 +227,20 @@ const getIdentities = (page = 1, limit = 30, order = 'asc', orderBy) => {
   return call(`identities?page=${page}&limit=${limit}&order=${order}${orderBy ? `&order_by=${orderBy}` : ''}`, 'GET')
 }
 
+const getIdentitiesHistory = (start, end, intervalsCount) => {
+  return call(`identities/history?timestamp_start=${start}&timestamp_end=${end}${intervalsCount ? `&intervalsCount=${intervalsCount}` : ''}`, 'GET')
+}
+
 const getValidators = (page = 1, limit = 30, order = 'asc', isActive, orderBy) => {
   return call(`validators?page=${page}&limit=${limit}&order=${order}${typeof isActive === 'boolean' ? `&isActive=${String(isActive)}` : ''}${orderBy ? `&order_by=${orderBy}` : ''}`, 'GET')
 }
 
 const getValidatorByProTxHash = (proTxHash) => {
   return call(`validator/${proTxHash}`, 'GET')
+}
+
+const getValidatorByMasternodeIdentity = (identity) => {
+  return call(`validator/identity/${identity}`, 'GET')
 }
 
 const getBlocksStatsByValidator = (proTxHash, start, end, intervalsCount) => {
@@ -297,6 +305,7 @@ export {
   getDataContracts,
   getIdentities,
   getIdentity,
+  getIdentitiesHistory,
   getTransactionsByIdentity,
   getDataContractsByIdentity,
   getDataContractTransactions,
@@ -312,5 +321,6 @@ export {
   getEpoch,
   getContestedResourcesStats,
   getMasternodeVotes,
-  getRate
+  getRate,
+  getValidatorByMasternodeIdentity
 }

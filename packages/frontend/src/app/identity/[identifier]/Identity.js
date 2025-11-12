@@ -160,11 +160,15 @@ function Identity ({ identifier }) {
               : ''}
             </Tab>
             <Tab>Credit Transfers {identity.data?.totalTransfers !== undefined
-              ? <span className={`Tabs__TabItemsCount ${identity.data?.totalTransfers === 0 ? 'Tabs__TabItemsCount--Empty' : ''}`}>{identity.data?.totalTransfers}</span>
+              ? <span className={`Tabs__TabItemsCount ${identity.data?.totalTransfers === 0 ? 'Tabs__TabItemsCount--Empty' : ''}`}>
+                  {identity.data?.totalTransfers}
+                </span>
               : ''}
             </Tab>
             <Tab>Tokens {tokens.data?.pagination?.total !== undefined
-              ? <span className={`Tabs__TabItemsCount ${tokens.data?.pagination?.total === 0 ? 'Tabs__TabItemsCount--Empty' : ''}`}>{tokens.data?.pagination?.total}</span>
+              ? <span className={`Tabs__TabItemsCount ${tokens.data?.pagination?.total === 0 ? 'Tabs__TabItemsCount--Empty' : ''}`}>
+                  {Math.max(tokens.data?.pagination?.total, 0)}
+                </span>
               : ''}
             </Tab>
           </TabList>

@@ -10,7 +10,7 @@ const BatchEnum = require('../../src/enums/BatchEnum')
 const { ContestedResourcesController } = require('dash-platform-sdk/src/contestedResources')
 const { IdentitiesController } = require('dash-platform-sdk/src/identities')
 const { DocumentsController } = require('dash-platform-sdk/src/documents')
-const { IdentifierWASM } = require('pshenmic-dpp')
+const { IdentifierWASM, IdentityWASM } = require('pshenmic-dpp')
 
 describe('Identities routes', () => {
   let app
@@ -30,6 +30,7 @@ describe('Identities routes', () => {
   let transfers
   let transaction
   let transactions
+  let mockIdentity
 
   let dataContractSchema
 
@@ -170,7 +171,13 @@ describe('Identities routes', () => {
       }
     }
 
-    mock.method(IdentitiesController.prototype, 'getIdentityBalance', async () => 0)
+    mockIdentity = new IdentityWASM('5DbLwAxGBzUzo81VewMUwn4b5P4bpv9FNFybi25XB5Bk')
+
+    mockIdentity.revision = 123n
+
+    mock.method(IdentitiesController.prototype, 'getIdentityBalance', async () => 0n)
+    mock.method(IdentitiesController.prototype, 'getIdentityNonce', async () => 0n)
+    mock.method(IdentitiesController.prototype, 'getIdentityByIdentifier', async () => mockIdentity)
 
     mock.method(IdentitiesController.prototype, 'getIdentityPublicKeys', async () => null)
 
@@ -230,7 +237,8 @@ describe('Identities routes', () => {
       const expectedIdentity = {
         identifier: identity.identifier,
         owner: identity.identifier,
-        revision: identity.revision,
+        revision: String(mockIdentity.revision),
+        nonce: '0',
         balance: '0',
         timestamp: block.timestamp.toISOString(),
         txHash: identity.txHash,
@@ -437,8 +445,9 @@ describe('Identities routes', () => {
       const expectedIdentities = identities.slice(0, 10).map((_identity) => ({
         identifier: _identity.identity.identifier,
         owner: _identity.identity.identifier,
-        revision: _identity.identity.revision,
-        balance: 0,
+        revision: String(mockIdentity.revision),
+        nonce: null,
+        balance: '0',
         timestamp: _identity.block.timestamp.toISOString(),
         txHash: _identity.identity.txHash,
         totalTxs: 1,
@@ -499,8 +508,9 @@ describe('Identities routes', () => {
         .slice(0, 10).map((_identity) => ({
           identifier: _identity.identity.identifier,
           owner: _identity.identity.identifier,
-          revision: _identity.identity.revision,
-          balance: 0,
+          revision: String(mockIdentity.revision),
+          nonce: null,
+          balance: '0',
           timestamp: _identity.block.timestamp.toISOString(),
           txHash: _identity.identity.txHash,
           totalTxs: 1,
@@ -562,8 +572,9 @@ describe('Identities routes', () => {
         .slice(10, 20).map((_identity) => ({
           identifier: _identity.identity.identifier,
           owner: _identity.identity.identifier,
-          revision: _identity.identity.revision,
-          balance: 0,
+          revision: String(mockIdentity.revision),
+          nonce: null,
+          balance: '0',
           timestamp: _identity.block.timestamp.toISOString(),
           txHash: _identity.identity.txHash,
           totalTxs: 1,
@@ -626,8 +637,9 @@ describe('Identities routes', () => {
         .map((_identity) => ({
           identifier: _identity.identity.identifier,
           owner: _identity.identity.identifier,
-          revision: _identity.identity.revision,
-          balance: 0,
+          revision: String(mockIdentity.revision),
+          nonce: null,
+          balance: '0',
           timestamp: _identity.block.timestamp.toISOString(),
           txHash: _identity.identity.txHash,
           totalTxs: 1,
@@ -706,8 +718,9 @@ describe('Identities routes', () => {
         .map((_identity) => ({
           identifier: _identity.identity.identifier,
           owner: _identity.identity.identifier,
-          revision: _identity.identity.revision,
-          balance: 0,
+          revision: String(mockIdentity.revision),
+          nonce: null,
+          balance: '0',
           timestamp: _identity.block.timestamp.toISOString(),
           txHash: _identity.identity.txHash,
           totalTxs: _identity.identity.transactions.length + 1,
@@ -781,6 +794,8 @@ describe('Identities routes', () => {
 
       mock.reset()
 
+      mock.method(IdentitiesController.prototype, 'getIdentityByIdentifier', async () => mockIdentity)
+
       mock.method(IdentitiesController.prototype, 'getIdentityBalance', async (identifier) => {
         const { identity } = identities.find(({ identity }) => identity.identifier === identifier)
         return identity.balance
@@ -808,8 +823,9 @@ describe('Identities routes', () => {
         .map((_identity) => ({
           identifier: _identity.identity.identifier,
           owner: _identity.identity.identifier,
-          revision: _identity.identity.revision,
-          balance: _identity.identity.balance,
+          revision: String(mockIdentity.revision),
+          nonce: null,
+          balance: String(_identity.identity.balance),
           timestamp: _identity.block.timestamp.toISOString(),
           txHash: _identity.identity.txHash,
           totalTxs: 2,
@@ -1974,6 +1990,237 @@ describe('Identities routes', () => {
         }))
 
       assert.deepEqual(body.resultSet, expectedTransfers)
+    })
+  })
+
+  describe('getIdentitiesHistorySeries()', async () => {
+    let identities
+
+    beforeEach(async () => {
+      identities = []
+
+      const block = await fixtures.block(knex, { timestamp: new Date(0) })
+      const owner = await fixtures.identity(knex, { block_hash: block.hash, block_height: block.height })
+
+      identities.push({
+        block,
+        transaction: null,
+        identity: owner
+      })
+
+      for (let i = 0; i < 30; i++) {
+        const block = await fixtures.block(knex, {
+          timestamp: new Date(new Date().getTime() - (27000000 - 900000 * i)),
+          height: i + 2
+        })
+
+        const transaction = await fixtures.transaction(knex, {
+          block_hash: block.hash,
+          block_height: block.height,
+          type: StateTransitionEnum.IDENTITY_CREATE,
+          owner: owner.identifier,
+          data: ''
+        })
+        const identity = await fixtures.identity(knex, {
+          block_hash: block.hash,
+          block_height: block.height,
+          state_transition_hash: transaction.hash
+        })
+
+        identities.push({
+          block,
+          transaction,
+          identity
+        })
+      }
+    })
+
+    it('should return default series set', async () => {
+      const { body } = await client.get('/identities/history')
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      assert.equal(body.length, 12)
+
+      const [firstPeriod] = body.toReversed()
+      const firstTimestamp = new Date(firstPeriod.timestamp)
+
+      const expectedSeriesData = []
+
+      for (let i = 0; i < body.length; i++) {
+        const nextPeriod = firstTimestamp - 300000 * i
+        const prevPeriod = firstTimestamp - 300000 * (i - 1)
+
+        const registeredIdentities = identities.filter(identity =>
+          new Date(identity.block.timestamp).getTime() <= prevPeriod
+        ).sort((a, b) => a.block.timestamp - b.block.timestamp)
+
+        expectedSeriesData.push({
+          timestamp: new Date(nextPeriod).toISOString(),
+          data: {
+            registeredIdentities: registeredIdentities.length
+          }
+        })
+      }
+
+      assert.deepEqual(expectedSeriesData.reverse(), body)
+    })
+
+    it('should return default series set timespan 2H', async () => {
+      const { body } = await client.get(`/identities/history?timestamp_start=${new Date(new Date().getTime() - 3600000).toISOString()}&timestamp_end=${new Date(new Date().getTime() + 3600000).toISOString()}&intervalsCount=5`)
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      assert.equal(body.length, 5)
+
+      const [firstPeriod] = body.toReversed()
+      const firstTimestamp = new Date(firstPeriod.timestamp)
+
+      const expectedSeriesData = []
+
+      for (let i = 0; i < body.length; i++) {
+        const nextPeriod = firstTimestamp - 1440000 * i
+        const prevPeriod = firstTimestamp - 1440000 * (i - 1)
+
+        const registeredIdentities = identities.filter(identity =>
+          new Date(identity.block.timestamp).getTime() <= prevPeriod
+        ).sort((a, b) => a.block.timestamp - b.block.timestamp)
+
+        expectedSeriesData.push({
+          timestamp: new Date(nextPeriod).toISOString(),
+          data: {
+            registeredIdentities: registeredIdentities.length
+          }
+        })
+      }
+
+      assert.deepEqual(expectedSeriesData.reverse(), body)
+    })
+
+    it('should return default series set timespan 24h', async () => {
+      const { body } = await client.get(`/identities/history?timestamp_start=${new Date(new Date().getTime() - 43200000).toISOString()}&timestamp_end=${new Date(new Date().getTime() + 43200000).toISOString()}&intervalsCount=5`)
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      assert.equal(body.length, 5)
+
+      const [firstPeriod] = body.toReversed()
+      const firstTimestamp = new Date(firstPeriod.timestamp)
+
+      const expectedSeriesData = []
+
+      for (let i = 0; i < body.length; i++) {
+        const nextPeriod = firstTimestamp - 17280000 * i
+        const prevPeriod = firstTimestamp - 17280000 * (i - 1)
+
+        const registeredIdentities = identities.filter(identity =>
+          new Date(identity.block.timestamp).getTime() <= prevPeriod
+        ).sort((a, b) => a.block.timestamp - b.block.timestamp)
+
+        expectedSeriesData.push({
+          timestamp: new Date(nextPeriod).toISOString(),
+          data: {
+            registeredIdentities: registeredIdentities.length
+          }
+        })
+      }
+
+      assert.deepEqual(expectedSeriesData.reverse(), body)
+    })
+
+    it('should return default series set timespan 3d', async () => {
+      const { body } = await client.get(`/identities/history?timestamp_start=${new Date(new Date().getTime() - 129600000).toISOString()}&timestamp_end=${new Date(new Date().getTime() + 129600000).toISOString()}&intervalsCount=5`)
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      assert.equal(body.length, 5)
+
+      const [firstPeriod] = body.toReversed()
+      const firstTimestamp = new Date(firstPeriod.timestamp)
+
+      const expectedSeriesData = []
+
+      for (let i = 0; i < body.length; i++) {
+        const nextPeriod = firstTimestamp - 51840000 * i
+        const prevPeriod = firstTimestamp - 51840000 * (i - 1)
+
+        const registeredIdentities = identities.filter(identity =>
+          new Date(identity.block.timestamp).getTime() <= prevPeriod
+        ).sort((a, b) => a.block.timestamp - b.block.timestamp)
+
+        expectedSeriesData.push({
+          timestamp: new Date(nextPeriod).toISOString(),
+          data: {
+            registeredIdentities: registeredIdentities.length
+          }
+        })
+      }
+
+      assert.deepEqual(expectedSeriesData.reverse(), body)
+    })
+
+    it('should return default series set timespan 1w', async () => {
+      const { body } = await client.get(`/identities/history?timestamp_start=${new Date(new Date().getTime() - 302400000).toISOString()}&timestamp_end=${new Date(new Date().getTime() + 302400000).toISOString()}&intervalsCount=5`)
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      assert.equal(body.length, 5)
+
+      const [firstPeriod] = body.toReversed()
+      const firstTimestamp = new Date(firstPeriod.timestamp)
+
+      const expectedSeriesData = []
+
+      for (let i = 0; i < body.length; i++) {
+        const nextPeriod = firstTimestamp - 120960000 * i
+        const prevPeriod = firstTimestamp - 120960000 * (i - 1)
+
+        const registeredIdentities = identities.filter(identity =>
+          new Date(identity.block.timestamp).getTime() <= prevPeriod
+        ).sort((a, b) => a.block.timestamp - b.block.timestamp)
+
+        expectedSeriesData.push({
+          timestamp: new Date(nextPeriod).toISOString(),
+          data: {
+            registeredIdentities: registeredIdentities.length
+          }
+        })
+      }
+
+      assert.deepEqual(expectedSeriesData.reverse(), body)
+    })
+    it('should return series of 6 intervals timespan 3d', async () => {
+      const start = new Date(new Date().getTime() - 86400000)
+      const end = new Date()
+
+      const { body } = await client.get(`/identities/history?timestamp_start=${start.toISOString()}&timestamp_end=${end.toISOString()}&intervalsCount=6`)
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      assert.equal(body.length, 6)
+
+      const [firstPeriod] = body.toReversed()
+      const firstTimestamp = new Date(firstPeriod.timestamp)
+
+      const expectedSeriesData = []
+
+      for (let i = 0; i < body.length; i++) {
+        const nextPeriod = firstTimestamp - 14400000 * i
+        const prevPeriod = firstTimestamp - 14400000 * (i - 1)
+
+        const registeredIdentities = identities.filter(identity =>
+          new Date(identity.block.timestamp).getTime() <= prevPeriod
+        ).sort((a, b) => a.block.timestamp - b.block.timestamp)
+
+        expectedSeriesData.push({
+          timestamp: new Date(nextPeriod).toISOString(),
+          data: {
+            registeredIdentities: registeredIdentities.length
+          }
+        })
+      }
+
+      assert.deepEqual(expectedSeriesData.reverse(), body)
     })
   })
 })

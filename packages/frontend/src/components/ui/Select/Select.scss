@@ -1,131 +1,135 @@
 @use '../../../styles/mixins.scss';
 @import '../../../styles/variables.scss';
 
-.Select {
-  .react-select {
+.Select .react-select,
+body > .react-select,
+body > .react-select__menu-portal > .react-select {
+  font-size: 0.75rem;
+  font-weight: 500;
+  font-family: $font-heading;
+
+  &__control {
+    padding: 4px 12px;
+    gap: 4px;
+    border: none;
+    border-radius: $border-radius-def;
+    color: #fff;
+    background-color: $color-brand-normal;
+    width: max-content;
+    min-height: 0;
+    box-shadow: none;
+
+    &:hover {
+      cursor: pointer;
+      background-color: $color-brand-light;
+    }
+
+    &--menu-is-open {
+      background-color: $color-brand-light;
+    }
+  }
+
+  &__value-container {
+    padding: 0;
+    line-height: 16px;
+  }
+
+  &__single-value {
+    margin: 0;
+    width: max-content;
+  }
+
+  &__input-container {
+    margin: 0;
+    padding: 0;
+  }
+
+  &__control--menu-is-open .react-select__dropdown-indicator {
+    transform: rotate(-180deg);
+  }
+
+  &__dropdown-indicator {
+    width: 1rem;
+    height: 1rem;
+    padding: 0;
+    transition: transform .15s;
+
+    svg {
+      width: 16px;
+      height: 16px;
+      display: block;
+      flex-shrink: 0;
+      fill: #fff;
+      stroke: #fff;
+    }
+  }
+
+  &__input-container {
+    color: #fff;
+  }
+
+  &__placeholder, &__single-value {
+    color: #fff;
     font-size: 0.75rem;
     font-weight: 500;
     font-family: $font-heading;
+  }
 
-    &__control {
-      padding: 4px 12px;
-      gap: 4px;
-      border: none;
-      border-radius: $border-radius-def;
-      color: #fff;
-      background-color: $color-brand-normal;
-      width: max-content;
-      min-height: 0;
-      box-shadow: none;
+  &__menu {
+    z-index: 1000;
+    background-color: #fff;
+    color: $color-brand-normal;
+    border-radius: $border-radius-def;
+    overflow: hidden;
+    font-size: 0.75rem;
+    font-family: $font-heading;
+    width: 100%;
+  }
+
+  &__indicator-separator {
+    display: none;
+  }
+
+  &__menu-list {
+    padding: 4px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  &__option {
+    width: 100%;
+    min-width: max-content;
+    border-radius: 4px;
+    line-height: 16px;
+    padding: 4px 8px;
+    transition: .1s;
+
+    &:hover {
+      cursor: pointer;
+    }
+
+    &--is-focused {
+      background-color: transparent;
+    }
+
+    &:hover {
+      background-color: rgba(var(--chakra-colors-gray-675-rgb), .09);
+      color: var(--chakra-colors-gray-900);
+    }
+
+    &--is-selected {
+      background-color: $color-brand-light !important;
+      color: #fff !important;
 
       &:hover {
-        cursor: pointer;
         background-color: $color-brand-light;
-      }
-
-      &--menu-is-open {
-        background-color: $color-brand-light;
+        cursor: default !important;
       }
     }
+  }
 
-    &__value-container {
-      padding: 0;
-      line-height: 16px;
-    }
-
-    &__single-value {
-      margin: 0;
-      width: max-content;
-    }
-
-    &__input-container {
-      margin: 0;
-      padding: 0;
-    }
-
-    &__control--menu-is-open .react-select__dropdown-indicator {
-      transform: rotate(-180deg);
-    }
-
-    &__dropdown-indicator {
-      width: 1rem;
-      height: 1rem;
-      padding: 0;
-      transition: transform .15s;
-
-      svg {
-        width: 16px;
-        height: 16px;
-        display: block;
-        flex-shrink: 0;
-        fill: #fff;
-        stroke: #fff;
-      }
-    }
-
-    &__input-container {
-      color: #fff;
-    }
-
-    &__placeholder, &__single-value {
-      color: #fff;
-      font-size: 0.75rem;
-      font-weight: 500;
-      font-family: $font-heading;
-    }
-
-    &__menu {
-      z-index: 1000;
-      background-color: #fff;
-      color: $color-brand-normal;
-      border-radius: $border-radius-def;
-      overflow: hidden;
-      font-size: 0.75rem;
-      font-family: $font-heading;
-      width: 100%;
-    }
-
-    &__indicator-separator {
-      display: none;
-    }
-
-    &__menu-list {
-      padding: 4px;
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-    }
-
-    &__option {
-      width: 100%;
-      min-width: max-content;
-      border-radius: 4px;
-      line-height: 16px;
-      padding: 4px 8px;
-      transition: .1s;
-      
-      &:hover {
-        cursor: pointer;
-      }
-
-      &--is-focused {
-        background-color: transparent;
-      }
-
-      &:hover {
-        background-color: rgba(var(--chakra-colors-gray-675-rgb), .09);
-        color: var(--chakra-colors-gray-900);
-      }
-
-      &--is-selected {
-        background-color: $color-brand-light !important;
-        color: #fff !important;
-
-        &:hover {
-          background-color: $color-brand-light;
-          cursor: default !important;
-        }
-      }
-    }
+  &__menu-portal {
+    z-index: 50 !important;
   }
 }

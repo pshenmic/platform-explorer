@@ -1,0 +1,32 @@
+.root {
+  margin-bottom: 14px;
+  justify-content: flex-start !important;
+
+  :global(.InfoLine__Title) {
+    width: 200px;
+    max-width: 200px;
+    line-height: 20px;
+  }
+
+  :global(.InfoLine__Value) {
+    text-align: left;
+    font-size: 0.75rem;
+  }
+
+  .card {
+    overflow-wrap: break-word;
+    word-break: break-word;
+    color: var(--chakra-colors-gray-250);
+    max-width: 510px;
+
+    :global(.CopyButton) {
+      margin-left: 4px;
+    }
+  }
+
+  .value {
+    display: flex;
+    justify-content: flex-end;
+    overflow: hidden;
+  }
+}

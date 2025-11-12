@@ -1,9 +1,10 @@
 const IdentitiesDAO = require('../dao/IdentitiesDAO')
 const { WITHDRAWAL_CONTRACT_TYPE, WITHDRAWAL_CONTRACT } = require('../constants')
 const PaginatedResultSet = require('../models/PaginatedResultSet')
-const { outputScriptToAddress } = require('../utils')
+const { outputScriptToAddress, iso8601duration, calculateInterval } = require('../utils')
 const { IdentifierWASM } = require('pshenmic-dpp')
 const StateTransitionEnum = require('../enums/StateTransitionEnum')
+const Intervals = require('../enums/IntervalsEnum')
 
 class IdentitiesController {
   constructor (knex, sdk) {
@@ -143,6 +144,40 @@ class IdentitiesController {
     const nonce = await this.sdk.identities.getIdentityContractNonce(identifier, dataContractId)
 
     response.send({ identityContractNonce: String(nonce) })
+  }
+
+  getIdentitiesHistory = async (request, response) => {
+    const {
+      timestamp_start: start = new Date().getTime() - 3600000,
+      timestamp_end: end = new Date().getTime(),
+      intervalsCount = null
+    } = request.query
+
+    if (!start || !end) {
+      return response.status(400).send({ message: 'start and end must be set' })
+    }
+
+    if (start > end) {
+      return response.status(400).send({ message: 'start timestamp cannot be more than end timestamp' })
+    }
+
+    const intervalInMs =
+      Math.ceil(
+        (new Date(end).getTime() - new Date(start).getTime()) / Number(intervalsCount ?? NaN) / 1000
+      ) * 1000
+
+    const interval = intervalsCount
+      ? iso8601duration(intervalInMs)
+      : calculateInterval(new Date(start), new Date(end))
+
+    const timeSeries = await this.identitiesDAO.getIdentitiesHistorySeries(
+      new Date(start),
+      new Date(end),
+      interval,
+      isNaN(intervalInMs) ? Intervals[interval] : intervalInMs
+    )
+
+    response.send(timeSeries)
   }
 }
 

@@ -277,8 +277,7 @@ describe('Contested documents routes', () => {
             lockVotes: contestedResources
               .filter(res =>
                 res.masternodeVote.index_values === JSON.stringify(['dash', 'xyz']) &&
-                res.masternodeVote.choice !== ChoiceEnum.ABSTAIN &&
-                (res.masternodeVote.choice === ChoiceEnum.LOCK || res.masternodeVote.towards_identity_identifier !== resource.contender.identifier))
+                res.masternodeVote.choice === ChoiceEnum.LOCK)
               .length
           })),
         indexName: 'parentNameAndLabel',
@@ -361,6 +360,45 @@ describe('Contested documents routes', () => {
       const expectedVotes = contestedResources
         .filter(resource => resource.document.data.label === 'xyz')
         .filter(vote => (vote.masternodeVote.choice === 2))
+        .sort((a, b) => a.masternodeVote.id - b.masternodeVote.id)
+        .slice(0, 10)
+        .map(({ block, masternodeVote, document }) => ({
+          proTxHash: masternodeVote.pro_tx_hash,
+          txHash: masternodeVote.state_transition_hash,
+          voterIdentifier: masternodeVote.voter_identity_id,
+          choice: masternodeVote.choice,
+          timestamp: block.timestamp.toISOString(),
+          towardsIdentity: masternodeVote.towards_identity_identifier,
+          dataContractIdentifier: dataContract.identifier,
+          documentTypeName: masternodeVote.document_type_name,
+          documentIdentifier: masternodeVote.choice === 0 ? document.identifier : null,
+          indexName: masternodeVote.index_name,
+          indexValues: JSON.parse(masternodeVote.index_values),
+          identityAliases: [],
+          power: masternodeVote.power
+        }))
+
+      assert.deepStrictEqual(body.resultSet, expectedVotes)
+    })
+
+    it('should return votes for value by choice and proTxHash', async () => {
+      const resourcesWithTokens = contestedResources
+        .filter(resource => resource.document.data.label === 'xyz')
+        .filter(vote => (vote.masternodeVote.choice === 2))
+
+      const proTxHash = resourcesWithTokens[0].masternodeVote.pro_tx_hash
+
+      const { body } = await client.get(`/contestedResource/${resourceValue}/votes?choice=2&pro_tx_hash=${proTxHash}`)
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      assert.equal(body.resultSet.length, 1)
+      assert.equal(body.pagination.limit, 10)
+      assert.equal(body.pagination.total, 1)
+      assert.equal(body.pagination.page, 1)
+
+      const expectedVotes = resourcesWithTokens
+        .filter(resource => resource.masternodeVote.pro_tx_hash === proTxHash)
         .sort((a, b) => a.masternodeVote.id - b.masternodeVote.id)
         .slice(0, 10)
         .map(({ block, masternodeVote, document }) => ({

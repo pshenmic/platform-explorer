@@ -134,6 +134,7 @@
 @mixin Column () {
   display: flex;
   align-items: center;
+  width: 100%;
 
   &:last-child {
     justify-content: flex-end;

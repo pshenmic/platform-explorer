@@ -1,9 +1,14 @@
 import copyToClipboard from './copyToClipboard'
 import currencyRound from './currencyRound'
-import { getDaysBetweenDates, getDynamicRange, getTimeDelta } from './datetime'
+import {
+  getDaysBetweenDates,
+  getDynamicRange,
+  getTimeDelta,
+  formatDate
+} from './datetime'
 
-function fetchHandlerSuccess (setter, data) {
-  setter(state => ({
+function fetchHandlerSuccess(setter, data) {
+  setter((state) => ({
     ...state,
     data: {
       ...state.data,
@@ -14,10 +19,10 @@ function fetchHandlerSuccess (setter, data) {
   }))
 }
 
-function fetchHandlerError (setter, error) {
+function fetchHandlerError(setter, error) {
   console.error(error)
 
-  setter(state => ({
+  setter((state) => ({
     ...state,
     data: null,
     loading: false,
@@ -25,8 +30,8 @@ function fetchHandlerError (setter, error) {
   }))
 }
 
-function paginationHandler (setter, currentPage) {
-  setter(state => ({
+function paginationHandler(setter, currentPage) {
+  setter((state) => ({
     ...state,
     props: {
       ...state.props,
@@ -35,19 +40,21 @@ function paginationHandler (setter, currentPage) {
   }))
 }
 
-function setLoadingProp (setter, value = true) {
-  setter(state => ({ ...state, loading: value }))
+function setLoadingProp(setter, value = true) {
+  setter((state) => ({ ...state, loading: value }))
 }
 
-function numberFormat (number) {
-  return new Intl.NumberFormat('en', { maximumSignificantDigits: 3 }).format(number)
+function numberFormat(number) {
+  return new Intl.NumberFormat('en', { maximumSignificantDigits: 3 }).format(
+    number
+  )
 }
 
-function creditsToDash (credits) {
+function creditsToDash(credits) {
   return credits / 10e10
 }
 
-function roundUsd (usd, maxDecimals = 5) {
+function roundUsd(usd, maxDecimals = 5) {
   if (usd >= 0.01 || usd < 1 / Math.pow(10, maxDecimals)) return usd.toFixed(2)
 
   const multiplier = Math.pow(10, maxDecimals)
@@ -58,15 +65,14 @@ function roundUsd (usd, maxDecimals = 5) {
 
   if (decimalPart) {
     const firstSignificantIndex = decimalPart.search(/[1-9]/)
-    precision = firstSignificantIndex + 1 <= maxDecimals
-      ? firstSignificantIndex + 1
-      : 2
+    precision =
+      firstSignificantIndex + 1 <= maxDecimals ? firstSignificantIndex + 1 : 2
   }
 
   return usd.toFixed(precision)
 }
 
-function removeTrailingZeros (value, maxDecimals = 8) {
+function removeTrailingZeros(value, maxDecimals = 8) {
   if (typeof value !== 'number') value = Number(value)
   if (isNaN(value)) return value
 
@@ -74,23 +80,24 @@ function removeTrailingZeros (value, maxDecimals = 8) {
   return parseFloat(fixedValue)
 }
 
-function findActiveAlias (aliases = []) {
+function findActiveAlias(aliases = []) {
   if (!aliases?.length) return null
-  return aliases?.find(alias => alias.status === 'ok')
+  return aliases?.find((alias) => alias.status === 'ok')
 }
 
-const getTokenName = (localizations) => localizations?.en?.singularForm ||
+const getTokenName = (localizations) =>
+  localizations?.en?.singularForm ||
   Object.values(localizations || {})[0]?.singularForm ||
   ''
 
 const getMinTokenPrice = (prices) => {
   if (!prices || prices.length === 0) return null
-  return Math.min(...prices.map(p => parseFloat(p.price)))
+  return Math.min(...prices.map((p) => parseFloat(p.price)))
 }
 
-const wait = (ms) => new Promise(resolve => setTimeout(resolve, ms))
+const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
 
-async function * infiniteChecker (checkFunction, maxIterations = Infinity) {
+async function* infiniteChecker(checkFunction, maxIterations = Infinity) {
   let iteration = 0
 
   while (iteration < maxIterations) {
@@ -129,5 +136,6 @@ export {
   getTokenName,
   getMinTokenPrice,
   wait,
-  infiniteChecker
+  infiniteChecker,
+  formatDate
 }

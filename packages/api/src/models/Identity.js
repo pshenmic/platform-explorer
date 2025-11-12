@@ -20,6 +20,7 @@ module.exports = class Identity {
   totalTopUps
   totalWithdrawals
   lastWithdrawalTimestamp
+  nonce
 
   constructor (
     identifier, owner, revision,
@@ -30,7 +31,7 @@ module.exports = class Identity {
     totalTopUpsAmount, totalWithdrawalsAmount,
     lastWithdrawalHash, lastWithdrawalTimestamp,
     totalTopUps, totalWithdrawals, publicKeys,
-    fundingCoreTx
+    fundingCoreTx, nonce
   ) {
     this.identifier = identifier ? identifier.trim() : null
     this.owner = owner ? owner.trim() : null
@@ -54,6 +55,7 @@ module.exports = class Identity {
     this.totalTopUps = totalTopUps ?? null
     this.totalWithdrawals = totalWithdrawals ?? null
     this.lastWithdrawalTimestamp = lastWithdrawalTimestamp ?? null
+    this.nonce = nonce ?? null
   }
 
   static fromObject ({
@@ -64,7 +66,7 @@ module.exports = class Identity {
     aliases, totalGasSpent, averageGasSpent,
     totalTopUpsAmount, totalWithdrawalsAmount,
     lastWithdrawalHash, publicKeys, fundingCoreTx,
-    totalTopUps, totalWithdrawals, lastWithdrawalTimestamp
+    totalTopUps, totalWithdrawals, lastWithdrawalTimestamp, nonce
   }) {
     return new Identity(
       identifier,
@@ -88,7 +90,8 @@ module.exports = class Identity {
       totalTopUps,
       totalWithdrawals,
       publicKeys,
-      fundingCoreTx
+      fundingCoreTx,
+      nonce
     )
   }
 
@@ -101,13 +104,13 @@ module.exports = class Identity {
     aliases, total_gas_spent, average_gas_spent,
     total_top_ups_amount, total_withdrawals_amount,
     last_withdrawal_hash, last_withdrawal_timestamp,
-    total_top_ups, total_withdrawals
+    total_top_ups, total_withdrawals, nonce
   }) {
     return new Identity(
       identifier?.trim(),
       owner,
       revision,
-      Number(balance),
+      String(balance),
       timestamp,
       Number(total_txs),
       Number(total_data_contracts),
@@ -123,7 +126,10 @@ module.exports = class Identity {
       last_withdrawal_hash,
       last_withdrawal_timestamp,
       Number(total_top_ups),
-      Number(total_withdrawals)
+      Number(total_withdrawals),
+      undefined,
+      undefined,
+      nonce !== undefined ? String(nonce) : undefined
     )
   }
 }

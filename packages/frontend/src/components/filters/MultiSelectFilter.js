@@ -24,26 +24,27 @@ export const MultiSelectFilter = ({
 
   return (
     <div className={'MultiSelectFilter'}>
-      {items.map((item) => (
-        <div
-          key={item.value}
-          className={`MultiSelectFilter__Item ${selectedValues.includes(item.value) ? 'MultiSelectFilter__Item--Selected' : ''}`}
-          onClick={() => onItemClick(item.value)}
-        >
-          <Checkbox
-            className={'MultiSelectFilter__ItemCheckbox'}
-            forceChecked={selectedValues.includes(item.value)}
-          />
-          <div className={'MultiSelectFilter__ItemTitle'}>
-            {item.label}
+      <div className='MultiSelectFilter__List'>
+        {items.map((item) => (
+          <div
+            key={item.value}
+            className={`MultiSelectFilter__Item ${selectedValues.includes(item.value) ? 'MultiSelectFilter__Item--Selected' : ''}`}
+            onClick={() => onItemClick(item.value)}
+          >
+            <Checkbox
+              className={'MultiSelectFilter__ItemCheckbox'}
+              forceChecked={selectedValues.includes(item.value)}
+            />
+            <div className={'MultiSelectFilter__ItemTitle'}>
+              {item.label}
+            </div>
           </div>
-        </div>
-      ))}
-
+        ))}
+      </div>
       {(showToggleAll || showSubmitButton) && (
         <FilterActions>
           {showSubmitButton && (
-            <SubmitButton className={'MultiSelectFilter__ActionButton MultiSelectFilter__ActionButton--Submit'} onSubmit={onSubmit}/>
+            <SubmitButton className={'MultiSelectFilter__ActionButton MultiSelectFilter__ActionButton--Submit'} onSubmit={onSubmit} />
           )}
 
           {showToggleAll && (

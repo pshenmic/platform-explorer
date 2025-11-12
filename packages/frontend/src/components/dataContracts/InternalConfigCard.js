@@ -1,18 +1,18 @@
 import { ValueContainer } from '../ui/containers'
 import './InternalConfigCard.scss'
 
+const storageKeyRequirementsColors = {
+  Unique: 'green',
+  Multiple: 'blue',
+  MultipleReferenceToLatest: 'orange'
+}
+
+const boolColors = {
+  true: 'green',
+  false: 'red'
+}
+
 function InternalConfigCard ({ config, className }) {
-  const boolColors = {
-    true: 'green',
-    false: 'red'
-  }
-
-  const storageKeyRequirementsColors = {
-    Unique: 'green',
-    Multiple: 'blue',
-    MultipleReferenceToLatest: 'orange'
-  }
-
   return (
     <div className={`InfoBlock InfoBlock--Gradient InternalConfigCard ${className || ''}`}>
 
