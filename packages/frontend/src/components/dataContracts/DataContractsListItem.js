@@ -48,11 +48,11 @@ function DataContractsListItem ({ dataContract }) {
         </GridItem>
 
         <GridItem className={'DataContractsListItem__Column DataContractsListItem__Column--WithTokens'}>
-          {dataContract?.withTokens !== undefined
-            ? <Badge colorScheme={dataContract?.withTokens ? 'orange' : 'gray'}>
-              {dataContract?.withTokens ? 'true' : 'false'}
+          {isNaN(dataContract?.tokensCount)
+            ? <NotActive/>
+            : <Badge colorScheme={dataContract?.tokensCount > 0 ? 'orange' : 'gray'}>
+              {dataContract?.tokensCount > 0 ? 'true' : 'false'}
             </Badge>
-            : <NotActive/>
           }
         </GridItem>
 
