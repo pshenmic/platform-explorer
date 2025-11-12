@@ -7,22 +7,21 @@ import {
   ModalCloseButton
 } from '@chakra-ui/react'
 import { useState } from 'react'
-import { NameForm } from './NameScreen'
-import { NameScreen } from './InitialScreen'
 import { FORM_MODE_ENUM } from './constants'
+import { NameForm } from './NameScreen'
+import { InitialScreen } from './InitialScreen'
 import { KeywordsScreen } from './KeywordsScreen'
-import { InfoContainer } from '@components/ui/containers'
 
 const MODE_PROPS = {
   [FORM_MODE_ENUM.INITIAL]: {
     title: 'Edit Data Contract Information',
-    Content: NameScreen
+    Content: InitialScreen
   },
   [FORM_MODE_ENUM.NAME_EDIT]: {
     title: 'Edit Data Contract Name',
     Content: NameForm
   },
-  [FORM_MODE_ENUM.INITIAL]: {
+  [FORM_MODE_ENUM.KEYWORDS_EDIT]: {
     title: 'Edit Data Contract Description and Keywords',
     Content: KeywordsScreen
   }
@@ -44,16 +43,16 @@ export const DataContractModal = ({ isOpen, onClose }) => {
       isOpen={isOpen}
       onClose={handleClose}
     >
-    <InfoContainer>
-      <ModalOverlay />
+    <ModalOverlay />
       <ModalContent>
-        <ModalHeader>{title}</ModalHeader>
-        <ModalCloseButton />
-        <ModalBody>
-          <Content />
-        </ModalBody>
+        <div className='InfoBlock InfoBlock--Gradient'>
+          <ModalHeader>{title}</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <Content />
+          </ModalBody>
+        </div>
       </ModalContent>
-    </InfoContainer>
     </Modal>
   )
 }

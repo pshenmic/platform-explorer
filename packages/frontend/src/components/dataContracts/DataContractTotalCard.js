@@ -19,7 +19,7 @@ function DataContractTotalCard ({ dataContract, rate, className }) {
           {dataContract.data.name ?? 'Platform Extension Data Contract'}
         </div>
 
-      <button className={'DataContractTotalCard__Edit'} onClick={() => setOpen(prev => !prev)}>Edit</button>
+        <button className={'DataContractTotalCard__Edit'} onClick={() => setOpen(prev => !prev)}>Edit</button>
       </div>
       <DataContractModal isOpen={isOpen} onClose={() => setOpen(false)} />
       <div className={'DataContractTotalCard__Header'}>

@@ -79,7 +79,10 @@ export const theme = extendTheme({
     Modal: {
       baseStyle: {
         dialog: {
-          background: 'gray.800'
+          bg: 'transparent',
+          boxShadow: 'none',
+          border: 'none',
+          p: 0
         }
       }
     },

@@ -7,6 +7,8 @@ import theme from '../../styles/theme'
 import Navbar from './navbar/Navbar'
 import Footer from './footer'
 import Background from './Background'
+import { ModalProvider } from 'src/contexts/ModalContext'
+
 import '../../styles/theme.scss'
 
 export default function RootComponent ({ children }) {
@@ -18,8 +20,10 @@ export default function RootComponent ({ children }) {
     <ChakraProvider theme={theme} colorModeManager={localStorageManager}>
       <Background snow={false}/>
       <BreadcrumbsProvider>
-        <Navbar/>
-        {children}
+        <ModalProvider>
+          <Navbar/>
+          {children}
+        </ModalProvider>
       </BreadcrumbsProvider>
       <Footer/>
     </ChakraProvider>
