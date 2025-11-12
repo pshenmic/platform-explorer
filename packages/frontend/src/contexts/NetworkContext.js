@@ -2,7 +2,6 @@ import { createContext, useContext, useEffect, useState } from 'react'
 import { NETWORK_OPTIONS, NETWORKS_ENUM } from 'src/constants/networks'
 
 const NetworkContext = createContext({})
-export const useBreadcrumbs = () => useContext(NetworkContext)
 
 export const NetworkProvider = ({ children }) => {
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL
