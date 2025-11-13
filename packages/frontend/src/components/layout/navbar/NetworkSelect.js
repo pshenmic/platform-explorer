@@ -13,7 +13,7 @@ const selectOptions = [
 ]
 
 function NetworkSelect () {
-  const network = useNetwork()
+  const { network } = useNetwork()
   const [showDropdown, setShowDropdown] = useState(false)
 
   return (
@@ -23,7 +23,7 @@ function NetworkSelect () {
         className={'NetworkSelect__Button'}
         onMouseEnter={() => setShowDropdown(true)}
       >
-        {network?.name || ''}
+        {network || ''}
         <svg
           className={`NetworkSelect__Button--Arrow ${showDropdown ? 'NetworkSelect__Button--ArrowActive' : ''}`}
           width={'10'}
@@ -36,7 +36,7 @@ function NetworkSelect () {
         </svg>
       </button>
       <div className={`NetworkSelect__DropdownWrapper ${showDropdown ? 'NetworkSelect__DropdownWrapperActive' : ''}`}>
-        <Dropdown active={network?.name} data={selectOptions} />
+        <Dropdown active={network} data={selectOptions} />
       </div>
     </div>
   )

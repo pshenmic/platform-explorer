@@ -3,10 +3,10 @@ import { NETWORK_OPTIONS, NETWORKS_ENUM } from 'src/constants/networks'
 
 const NetworkContext = createContext({})
 
-export const NetworkProvider = ({ children }) => {
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL
-  const activeNetwork = NETWORK_OPTIONS[NETWORKS_ENUM.MAINNET].explorerBaseUrl === baseUrl ? NETWORKS_ENUM.MAINNET : NETWORKS_ENUM.TESTNET
+const baseUrl = process.env.NEXT_PUBLIC_BASE_URL
+const activeNetwork = NETWORK_OPTIONS[NETWORKS_ENUM.MAINNET].explorerBaseUrl === baseUrl ? NETWORKS_ENUM.MAINNET : NETWORKS_ENUM.TESTNET
 
+export const NetworkProvider = ({ children }) => {
   const [network, setNetwork] = useState(activeNetwork)
   const contextValue = {
     network,
@@ -18,7 +18,7 @@ export const NetworkProvider = ({ children }) => {
   useEffect(() => {
     setNetwork(activeNetwork)
     console.log('selected network:', activeNetwork)
-  }, [baseUrl, activeNetwork])
+  }, [])
 
   useEffect(() => {
     const sdk = window.dashPlatformSDK
