@@ -5,6 +5,16 @@
   gap: 1rem;
   justify-content: space-between;
 
+
+  &--Hidden {
+     grid-template-columns:
+      3rem // Date
+      minmax(5.875rem, 30rem) // Hash
+      16.5rem // Identity
+      16.5rem // Document
+      8rem // Votes
+  }
+
   grid-template-columns:
     3rem // Date
     minmax(5.875rem, 30rem) // Hash

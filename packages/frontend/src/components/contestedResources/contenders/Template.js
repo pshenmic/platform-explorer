@@ -5,7 +5,7 @@ import './Template.scss'
 export const ContendersTemplate = ({ children, isVoteVisible, className = '' }) => (
     <div className={`ContendersList ${className}`}>
       <div className={'ContendersList__ScrollZone'}>
-        <Grid className={'ContendersList__ColumnTitles'}>
+        <Grid className={`ContendersList__ColumnTitles ${isVoteVisible ? '' : 'ContendersList__ColumnTitles--Hidden'}`}>
           <GridItem className={'ContendersList__ColumnTitle ContendersList__ColumnTitle--Timestamp'}>
             Date
           </GridItem>

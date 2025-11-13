@@ -8,9 +8,9 @@ import { VoteManeger } from './VoteManager'
 import './ContendersListItem.scss'
 
 const ContendersListItem = ({ contender, className, isVoteVisible, ...props }) => (
-    <div className={`ContendersListItem ${className || ''}`}>
+    <div className={`ContendersListItem ${className || ''} ${isVoteVisible ? '' : 'ContendersListItem__Content--Hidden'}`}>
       <div className={'ContendersListItem__ScrollZone'}>
-        <Grid className={'ContendersListItem__Content'}>
+        <Grid className={`ContendersListItem__Content ${isVoteVisible ? '' : 'ContendersListItem__Content--Hidden'}`}>
           <GridItem className={'ContendersListItem__Column--Timestamp'}>
             <TimeDelta endDate={new Date(contender.timestamp)}/>
           </GridItem>
