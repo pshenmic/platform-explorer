@@ -3,14 +3,15 @@
 @mixin Columns () {
   display: grid;
   gap: 1rem;
+  justify-content: space-between;
 
   grid-template-columns:
     3rem // Date
-    minmax(5.875rem, 100rem) // Hash
+    minmax(5.875rem, 30rem) // Hash
     16.5rem // Identity
     16.5rem // Document
     8rem // Votes
-    fit-content(98px); //Actions
+    100px; //Actions
 
   @container (max-width: 66rem) {
     grid-template-columns:
@@ -19,7 +20,7 @@
       14.5rem // Identity
       14.5rem // Document
       8rem // Votes
-      fit-content(98px); //Actions
+      100px; //Actions
   }
 
   @container (max-width: 62rem) {
@@ -29,17 +30,17 @@
       12.5rem // Identity
       12.5rem // Document
       6rem // Votes
-      fit-content(98px); //Actions
+      100px; //Actions
   }
 
   @container (max-width: 50rem) {
     grid-template-columns:
       3rem // Date
-      8rem // Votes
-      12.5rem // Identity
-      minmax(5.875rem, 46rem) // Hash
-      12.5rem // Document
-      fit-content(98px); //Actions
+      12rem // Identity
+      12rem // Hash
+      12rem  // Documtnt
+      5rem // Votes
+      100px; //Actions
   }
 }
 
