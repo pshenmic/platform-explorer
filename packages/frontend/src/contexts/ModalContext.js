@@ -9,7 +9,13 @@ export const ModalProvider = ({ children }) => {
   return (
     <ModalContext.Provider value={{ modalRef }}>
       {children}
-      <div ref={modalRef}></div>
+      <dialog
+        role='dialog'
+        aria-labelledby='modal-title'
+        aria-modal='true'
+        style={{ 'background-color': 'transparent' }}
+        ref={modalRef}
+      ></dialog>
     </ModalContext.Provider>
   )
 }

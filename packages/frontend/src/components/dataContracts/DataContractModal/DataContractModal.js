@@ -1,16 +1,9 @@
-import {
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalCloseButton
-} from '@chakra-ui/react'
 import { useState } from 'react'
 import { FORM_MODE_ENUM } from './constants'
 import { NameForm } from './NameScreen'
 import { InitialScreen } from './InitialScreen'
 import { KeywordsScreen } from './KeywordsScreen'
+import { Modal } from '@components/ui/Modal'
 
 const MODE_PROPS = {
   [FORM_MODE_ENUM.INITIAL]: {
@@ -38,21 +31,10 @@ export const DataContractModal = ({ isOpen, onClose }) => {
   const { title, Content } = MODE_PROPS[mode]
 
   return (
-
-    <Modal
-      isOpen={isOpen}
-      onClose={handleClose}
-    >
-    <ModalOverlay />
-      <ModalContent>
-        <div className='InfoBlock InfoBlock--Gradient'>
-          <ModalHeader>{title}</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-            <Content />
-          </ModalBody>
-        </div>
-      </ModalContent>
+    <Modal isOpen={isOpen}>
+      <div className='InfoBlock InfoBlock--Gradient'>
+        <Content />
+      </div>
     </Modal>
   )
 }
