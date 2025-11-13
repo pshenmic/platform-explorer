@@ -3,6 +3,7 @@
 @mixin Columns() {
   display: grid;
   gap: 16px;
+  justify-content: space-between;
 
   grid-template-columns:
     minmax(0, 24rem) /* Identifier */
@@ -16,7 +17,6 @@
     grid-template-columns:
       minmax(0, 1fr)
       6rem
-      8rem
       8rem;
   }
 
@@ -44,6 +44,7 @@
     min-width: 0;
     overflow: hidden;
   }
+
   &--Owner
   &--System,
   &--WithTokens,
