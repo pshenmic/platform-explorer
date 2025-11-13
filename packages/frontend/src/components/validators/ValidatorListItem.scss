@@ -14,7 +14,9 @@
   &__Content {
     width: 100%;
     display: grid;
-    grid-template-columns: auto 150px 250px 250px 150px;
+    grid-template-columns: minmax(0, 40rem) 150px 250px 250px 150px;
+    justify-content: space-between;
+
 
     &--Inline {
       display: inline !important;
