@@ -5,7 +5,6 @@ import { Badge, Grid, GridItem } from '@chakra-ui/react'
 import './ValidatorListItem.scss'
 
 export const ValidatorListItem = ({ validator }) => {
-  console.log({ validator })
   return (
     <Link
         href={`/validator/${validator.proTxHash}`}

@@ -73,7 +73,7 @@ function Tokens () {
     <Container
       maxW={'container.maxPageW'}
       mt={8}
-      className={'Transactions'}
+      className={'Tokens'}
     >
       <Container
         maxW={'container.maxPageW'}

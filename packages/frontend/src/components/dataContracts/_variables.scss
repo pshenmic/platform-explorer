@@ -1,14 +1,16 @@
-@mixin Columns () {
+@import '../../styles/variables.scss';
+
+@mixin Columns() {
   display: grid;
   gap: 16px;
 
   grid-template-columns:
     minmax(0, 24rem) /* Identifier */
     minmax(0, 18rem) /* Owner */
-    6rem             /* System */
-    8rem             /* With tokens */
-    8rem             /* Documents */
-    10rem;           /* Timestamp */
+    6rem /* System */
+    8rem /* With tokens */
+    8rem /* Documents */
+    10rem; /* Timestamp */
 
   @container (max-width: 48rem) {
     grid-template-columns:
@@ -17,9 +19,19 @@
       8rem
       8rem;
   }
+
+  @media screen and (min-width: $breakpoint-lg) {
+    grid-template-columns:
+      minmax(0, 24rem) /* Identifier */
+      minmax(0, 23rem) /* Owner */
+      6rem /* System */
+      8rem /* With tokens */
+      8rem /* Documents */
+      10rem; /* Timestamp */
+  }
 }
 
-@mixin Column () {
+@mixin Column() {
   display: flex;
   align-items: center;
 
@@ -32,7 +44,7 @@
     min-width: 0;
     overflow: hidden;
   }
-
+  &--Owner
   &--System,
   &--WithTokens,
   &--DocumentsCount,
@@ -42,7 +54,9 @@
   }
 
   @container (max-width: 48rem) {
-    &--Owner {
+    &--Owner,
+    &--WithTokens,
+    &--System {
       display: none;
     }
   }
