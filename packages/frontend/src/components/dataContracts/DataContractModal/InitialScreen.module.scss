@@ -25,7 +25,7 @@
       display: flex;
       flex-direction: column;
       gap: 24px;
-      transition: ease-in-out 15ms;
+      transition: background-color ease-in .2;
 
       &:hover {
         background-color: var(--chakra-colors-gray-700);
