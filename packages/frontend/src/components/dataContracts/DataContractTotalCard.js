@@ -3,13 +3,13 @@ import { Alias, CreditsBlock, DateBlock, Identifier, InfoLine } from '../data'
 import { HorisontalSeparator } from '../ui/separators'
 import { ValueCard } from '../cards'
 import { findActiveAlias } from '../../util'
-import { useState } from 'react'
 import { DataContractModal } from './DataContractModal'
+import { useModal } from '@components/ui/Modal/useModal'
 
 import './DataContractTotalCard.scss'
 
 function DataContractTotalCard ({ dataContract, rate, className }) {
-  const [isOpen, setOpen] = useState(false)
+  const { isOpen, handleOpen } = useModal()
   const activeAlias = findActiveAlias(dataContract?.data?.owner?.aliases)
 
   return (
@@ -19,9 +19,9 @@ function DataContractTotalCard ({ dataContract, rate, className }) {
           {dataContract.data.name ?? 'Platform Extension Data Contract'}
         </div>
 
-        <button className={'DataContractTotalCard__Edit'} onClick={() => setOpen(prev => !prev)}>Edit</button>
+        <button className={'DataContractTotalCard__Edit'} onClick={handleOpen}>Edit</button>
       </div>
-      <DataContractModal isOpen={isOpen} onClose={() => setOpen(false)} />
+      <DataContractModal isOpen={isOpen} />
       <div className={'DataContractTotalCard__Header'}>
         <div className={'DataContractTotalCard__HeaderLines'}>
           <InfoLine

@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { FORM_MODE_ENUM } from './constants'
 import { NameForm } from './NameScreen'
 import { InitialScreen } from './InitialScreen'
@@ -20,21 +20,20 @@ const MODE_PROPS = {
   }
 }
 
-export const DataContractModal = ({ isOpen, onClose }) => {
+export const DataContractModal = ({ isOpen }) => {
   const [mode, setMode] = useState(FORM_MODE_ENUM.INITIAL)
-
-  const handleClose = () => {
-    onClose()
-    setMode(FORM_MODE_ENUM.INITIAL)
-  }
 
   const { title, Content } = MODE_PROPS[mode]
 
+  useEffect(() => {
+    if (!isOpen) {
+      setMode(FORM_MODE_ENUM.INITIAL)
+    }
+  }, [isOpen])
+
   return (
-    <Modal isOpen={isOpen}>
-      <div className='InfoBlock InfoBlock--Gradient'>
-        <Content />
-      </div>
+    <Modal title={title}>
+      <Content setMode={setMode} />
     </Modal>
   )
 }
