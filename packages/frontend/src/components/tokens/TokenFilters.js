@@ -14,22 +14,6 @@ const filtersConfig = {
       <Identifier avatar={true} ellipsis={true} styles={['highlight-both']}>{value}</Identifier>
     )
   },
-  position: {
-    type: 'range',
-    label: 'Position',
-    title: 'Token position in data contract',
-    defaultValue: { min: '', max: '' },
-    minTitle: 'Min position',
-    minPlaceholder: 'ex. 0',
-    maxTitle: 'Max position',
-    maxPlaceholder: 'ex. 100000',
-    formatValue: ({ min, max }) => {
-      if (min && max) return `${min} - ${max}`
-      if (min) return `Min ${min}`
-      if (max) return `Max ${max}`
-      return null
-    }
-  },
   data_contract: {
     label: 'Data Contract',
     title: 'Filter by Data Contract',
@@ -52,8 +36,6 @@ export default function TokenFilters ({ initialFilters, onFilterChange, isMobile
       onFilterChange={(values) => {
         const payload = {
           owner: values.owner || undefined,
-          position_min: values.position_min || undefined,
-          position_max: values.position_max || undefined,
           contract_id: values.data_contract || undefined
         }
         onFilterChange && onFilterChange(payload)
