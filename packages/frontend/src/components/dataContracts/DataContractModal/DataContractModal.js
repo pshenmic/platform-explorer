@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { FORM_MODE_ENUM } from './constants'
-import { NameForm } from './NameScreen'
+import { NameScreen } from './NameScreen'
 import { InitialScreen } from './InitialScreen'
 import { KeywordsScreen } from './KeywordsScreen'
 import { Modal } from '@components/ui/Modal'
@@ -12,7 +12,7 @@ const MODE_PROPS = {
   },
   [FORM_MODE_ENUM.NAME_EDIT]: {
     title: 'Edit Data Contract Name',
-    Content: NameForm
+    Content: NameScreen
   },
   [FORM_MODE_ENUM.KEYWORDS_EDIT]: {
     title: 'Edit Data Contract Description and Keywords',
@@ -26,9 +26,7 @@ export const DataContractModal = ({ isOpen }) => {
   const { title, Content } = MODE_PROPS[mode]
 
   useEffect(() => {
-    if (!isOpen) {
-      setMode(FORM_MODE_ENUM.INITIAL)
-    }
+    setMode(FORM_MODE_ENUM.INITIAL)
   }, [isOpen])
 
   return (

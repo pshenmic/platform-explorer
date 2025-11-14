@@ -17,7 +17,7 @@
     .container {
       width: fit-content;
       padding: 6px 10px;
-      background-color: #2e393d;
+      background-color: var(--chakra-colors-gray-800);
 
       .title {
         font-family: $font-mono;
