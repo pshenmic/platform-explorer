@@ -10,6 +10,7 @@
 
   .form {
     display: flex;
+    align-items: baseline;
 
     .label {
       font-family: $font-mono;
