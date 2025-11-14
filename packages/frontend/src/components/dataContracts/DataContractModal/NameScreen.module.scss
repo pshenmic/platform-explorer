@@ -1,0 +1,26 @@
+@import 'variables';
+
+.root {
+  max-width: 648px;
+  width: 100%;
+
+  .divider {
+    padding: 20px 0;
+  }
+
+  .form {
+    display: flex;
+
+    .label {
+      font-family: $font-mono;
+      font-weight: 400;
+      font-size: 12px;
+      line-height: 110%;
+        flex: 1;
+    }
+
+    .input {
+        max-width: 396px;
+    }
+  }
+}
