@@ -53,10 +53,26 @@ export const useVoteValidation = ({ wallet, isFinished }) => {
       }
     }
 
+    if (voteValidateState === VoteControlState.INIT_INVALID) {
+      return
+    }
+
+    if (voteValidateState === VoteControlState.USER_HAS_NO_EXTANSION) {
+      return
+    }
+
+    if (voteValidateState === VoteControlState.USER_HAS_NO_WALLET) {
+      return
+    }
+
+    if (voteValidateState === VoteControlState.VOTING_IS_FINISHED) {
+      return
+    }
+
     if (wallet?.walletInfo?.identities) {
       wallet?.walletInfo.identities.forEach(checkIdentity)
     }
-  }, [wallet.currentIdentity])
+  }, [wallet.currentIdentity, voteValidateState, wallet?.walletInfo?.identities])
 
   useEffect(() => {
     if (isFinished) {
@@ -104,10 +120,10 @@ export const useVoteValidation = ({ wallet, isFinished }) => {
       }
     }
 
-    if (wallet.walletInfo) {
+    if (wallet.walletInfo && voteValidateState === VoteControlState.VALIDE) {
       getPrevVote()
     }
-  }, [resourceValue, wallet])
+  }, [resourceValue, wallet, voteValidateState])
 
   return { voteValidateState, isVoteVisible: voteValidateState === VoteControlState.VALIDE, prevVote }
 }
