@@ -12,9 +12,10 @@
     &--PaymentInfo {
       display: flex;
       justify-content: start;
-      align-items: start;
+      align-items: flex-start;
       gap: 8px;
     }
+
     .InfoLine__Value {
       display: flex;
       flex-direction: column;

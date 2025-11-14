@@ -5,7 +5,7 @@ const BASE_URL = process.env.NEXT_PUBLIC_API_URL
 const fetchWrapper = (url, options) => {
   return new Promise((resolve, reject) => {
     setTimeout(() => {
-      console.error('fetching timeout error')
+      console.warn('fetching timeout error')
       reject(new ResponseErrorTimeout())
     }, 30000)
     fetch(url, options).catch(reject).then(resolve)
