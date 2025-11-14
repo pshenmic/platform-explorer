@@ -1,6 +1,6 @@
 @import '../../styles/variables.scss';
 
-@mixin Columns () {
+@mixin Columns() {
   display: grid;
   gap: 1rem;
   grid-template-columns:
@@ -11,23 +11,22 @@
     3fr
     3fr;
 
-
+  justify-content: space-between;
 
   @container (max-width: 80rem) {
     grid-template-columns:
       10rem
       100px
-      10rem
-      10rem
-      auto
-      22rem;
+      6rem
+      8rem
+      8rem
+      18rem;
   }
 
   @container (max-width: 64rem) {
     grid-template-columns:
       minmax(10rem, 22rem)
       50px
-      10rem
       10rem
       minmax(0, 22rem);
   }
@@ -36,7 +35,6 @@
     grid-template-columns:
       minmax(10rem, 16rem)
       50px
-      10rem
       minmax(0, 22rem);
   }
 
@@ -60,7 +58,7 @@
 }
 
 // With balance
-@mixin ColumnsBalance () {
+@mixin ColumnsBalance() {
   display: grid;
   gap: 1rem;
   grid-template-columns:
@@ -128,7 +126,7 @@
   }
 }
 
-@mixin Column () {
+@mixin Column() {
   display: flex;
   align-items: center;
   width: 100%;
@@ -163,7 +161,7 @@
 }
 
 // With balance
-@mixin ColumnBalance () {
+@mixin ColumnBalance() {
   @container (max-width: 80rem) {
     &--OwnerIdentity {
       display: none;
@@ -181,7 +179,6 @@
       display: none;
     }
   }
-
 
   @container (max-width: 40rem) {
     &--Supply {
