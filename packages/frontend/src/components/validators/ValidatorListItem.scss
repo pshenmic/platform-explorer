@@ -26,7 +26,7 @@
   &__Column {
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start;
     font-size: 0.75rem;
     font-family: $font-mono;
     color: #fff;
@@ -40,6 +40,10 @@
     &:first-child {
       text-align: left;
       justify-content: flex-start;
+    }
+
+    &:last-child {
+      justify-content: flex-end;
     }
   }
 
