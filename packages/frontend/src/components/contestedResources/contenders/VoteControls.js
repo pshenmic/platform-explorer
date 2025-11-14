@@ -40,41 +40,41 @@ export const VoteControls = ({ currentIdentity, contender, resourceValue, wallet
   }
 
   return (
-        <div className="VoteControls">
+        <div className='VoteControls'>
             <IconButton
-                color="#58F4BC"
-                bg="#58F4BC26"
+                color='#58F4BC'
+                bg='#58F4BC26'
                 _hover={{ bg: '#58F4BC4D' }}
                 _active={{ bg: '#58F4BC', color: '#21272C' }}
-                disabled={prevVote === VoteEnum.TO_APPROVE}
-                size="30px"
-                aria-label="vote"
+                isDisabled={prevVote === VoteEnum.TO_APPROVE}
+                size='30px'
+                aria-label='vote'
                 p={0}
-                icon={<PrimalPostitiveIcon width="18px" height="10px" />}
+                icon={<PrimalPostitiveIcon width='18px' height='10px' />}
                 onClick={() => handleVote({ choice: contender })}
             />
             <IconButton
-                color="#F49A58"
-                bg="#F49A5826"
+                color='#F49A58'
+                bg='#F49A5826'
                 _hover={{ bg: '#F49A584D' }}
                 _active={{ bg: '#F49A58', color: '#21272C' }}
-                disabled={prevVote === VoteEnum.TO_ABSTAIN}
-                size="30px"
-                aria-label="vote"
+                isDisabled={prevVote === VoteEnum.TO_ABSTAIN}
+                size='30px'
+                aria-label='vote'
                 p={0}
-                icon={<PrimalNegativeIcon width="11px" height="10px" />}
+                icon={<PrimalNegativeIcon width='11px' height='10px' />}
                 onClick={() => handleVote({ choice: VoteEnum.TO_ABSTAIN })}
             />
             <IconButton
-                color="#F45858"
-                bg="#F4585826"
+                color='#F45858'
+                bg='#F4585826'
                 _hover={{ bg: '#F458584D' }}
                 _active={{ bg: '#F45858', color: '#21272C' }}
-                disabled={prevVote === VoteEnum.TO_REJECT}
-                size="30px"
-                aria-label="vote"
+                isDisabled={prevVote === VoteEnum.TO_REJECT}
+                size='30px'
+                aria-label='vote'
                 p={0}
-                icon={<CloseIcon width="8px" height="8px" />}
+                icon={<CloseIcon width='8px' height='8px' />}
                 onClick={() => handleVote({ choice: VoteEnum.TO_REJECT })}
             />
         </div>

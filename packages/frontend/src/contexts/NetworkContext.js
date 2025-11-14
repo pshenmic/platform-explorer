@@ -3,11 +3,8 @@ import { NETWORK_OPTIONS, NETWORKS_ENUM } from 'src/constants/networks'
 
 const NetworkContext = createContext({})
 
-const baseUrl = process.env.NEXT_PUBLIC_BASE_URL
-const activeNetwork = NETWORK_OPTIONS[NETWORKS_ENUM.MAINNET].explorerBaseUrl === baseUrl ? NETWORKS_ENUM.MAINNET : NETWORKS_ENUM.TESTNET
-
 export const NetworkProvider = ({ children }) => {
-  const [network, setNetwork] = useState(activeNetwork)
+  const [network, setNetwork] = useState(NETWORKS_ENUM.TESTNET)
   const contextValue = {
     network,
     toTestnet: () => setNetwork(NETWORKS_ENUM.TESTNET),
@@ -16,6 +13,12 @@ export const NetworkProvider = ({ children }) => {
   }
 
   useEffect(() => {
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL
+    const activeNetwork =
+      NETWORK_OPTIONS[NETWORKS_ENUM.MAINNET].explorerBaseUrl === baseUrl
+        ? NETWORKS_ENUM.MAINNET
+        : NETWORKS_ENUM.TESTNET
+
     setNetwork(activeNetwork)
     console.log('selected network:', activeNetwork)
   }, [])
