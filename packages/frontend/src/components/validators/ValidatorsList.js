@@ -42,7 +42,22 @@ const TableWrapper = ({ children }) => (
   </div>
 )
 
-export default function ValidatorsList ({ loading, list, pageSize, error }) {
+export const ValidatorsListSceleton = () => (
+  <TableWrapper>
+    {Array.from(
+      { length: 25 },
+      (x, i) => (
+        <LoadingLine
+          key={i}
+          loading
+          className={'ValidatorListItem ValidatorListItem--Loading'}
+        />
+      )
+    )}
+  </TableWrapper>
+)
+
+export const ValidatorsList = ({ loading, list, pageSize, error }) => {
   const table = useReactTable({
     data: list,
     columns,

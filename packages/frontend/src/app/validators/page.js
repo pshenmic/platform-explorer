@@ -6,6 +6,8 @@ import introContent from './intro.md'
 import { Container } from '@chakra-ui/react'
 
 import './ValidatorsIntro.scss'
+import { Suspense } from 'react'
+import { ValidatorsListSceleton } from '@components/validators/ValidatorsList'
 
 export const metadata = {
   title: 'Validators — Dash Platform Explorer',
@@ -29,7 +31,9 @@ function ValidatorsRoute ({ searchParams }) {
         block={<ValidatorsDashboardCards/>}
       />
     </Container>
-    <Validators />
+    <Suspense fallback={<ValidatorsListSceleton />}>
+      <Validators />
+    </Suspense>
   </>
 }
 

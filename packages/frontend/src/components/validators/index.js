@@ -1,4 +1,4 @@
-import ValidatorsList from './ValidatorsList'
+import { ValidatorsList, ValidatorsListSceleton } from './ValidatorsList'
 import ValidatorCard from './ValidatorCard'
 import ValidatorsDashboardCards from './ValidatorsDashboardCards'
 import { ValidatorsFilter } from './ValidatorsFilter'
@@ -9,5 +9,6 @@ export {
   ValidatorCard,
   ValidatorsDashboardCards,
   ValidatorsFilter,
-  useValidatorsFilters
+  useValidatorsFilters,
+  ValidatorsListSceleton
 }
