@@ -1,13 +1,12 @@
+import { Suspense } from 'react'
 import Validators from './Validators'
-import { ValidatorsDashboardCards } from '../../components/validators'
+import { ValidatorsDashboardCards, ValidatorsListSceleton } from '../../components/validators'
 import Intro from '../../components/intro'
 import Markdown from '../../components/markdown'
 import introContent from './intro.md'
 import { Container } from '@chakra-ui/react'
 
 import './ValidatorsIntro.scss'
-import { Suspense } from 'react'
-import { ValidatorsListSceleton } from '@components/validators/ValidatorsList'
 
 export const metadata = {
   title: 'Validators — Dash Platform Explorer',
