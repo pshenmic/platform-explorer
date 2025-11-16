@@ -6,11 +6,11 @@ import { API_VOTE_ENUM } from './constants'
 
 export const VoteControlState = {
   INIT_INVALID: 'INIT_INVALID',
-  USER_HAS_NO_EXTANSION: 'USER_HAS_NO_EXTANSION',
+  USER_HAS_NO_EXTENSION: 'USER_HAS_NO_EXTENSION',
   USER_HAS_NO_WALLET: 'USER_HAS_NO_WALLET',
-  USER_IS_NOT_ALLOWED_TO_VOTING: 'USER_IS_NOT_ALLOWED_TO_VOTING',
+  USER_IS_NOT_ALLOWED_TO_VOTE: 'USER_IS_NOT_ALLOWED_TO_VOTE',
   VOTING_IS_FINISHED: 'VOTING_IS_FINISHED',
-  VALIDE: 'VALIDE'
+  VALID: 'VALID'
 }
 
 const getLastVoteByProTxHash = ({ resourceValue, proTxHash }) => {
@@ -57,7 +57,7 @@ export const useVoteValidation = ({ wallet, isFinished }) => {
       return
     }
 
-    if (voteValidateState === VoteControlState.USER_HAS_NO_EXTANSION) {
+    if (voteValidateState === VoteControlState.USER_HAS_NO_EXTENSION) {
       return
     }
 
@@ -82,7 +82,7 @@ export const useVoteValidation = ({ wallet, isFinished }) => {
     }
 
     if (!isExtensionConnected) {
-      setVoteValidate(VoteControlState.USER_HAS_NO_EXTANSION)
+      setVoteValidate(VoteControlState.USER_HAS_NO_EXTENSION)
 
       return
     }
@@ -95,12 +95,12 @@ export const useVoteValidation = ({ wallet, isFinished }) => {
     }
 
     if (!isVotingAllowed) {
-      setVoteValidate(VoteControlState.USER_IS_NOT_ALLOWED_TO_VOTING)
+      setVoteValidate(VoteControlState.USER_IS_NOT_ALLOWED_TO_VOTE)
 
       return
     }
 
-    setVoteValidate(VoteControlState.VALIDE)
+    setVoteValidate(VoteControlState.VALID)
   }, [isFinished, isVotingAllowed, wallet, isExtensionConnected])
 
   useEffect(() => {
@@ -120,10 +120,10 @@ export const useVoteValidation = ({ wallet, isFinished }) => {
       }
     }
 
-    if (wallet.walletInfo && voteValidateState === VoteControlState.VALIDE) {
+    if (wallet.walletInfo && voteValidateState === VoteControlState.VALID) {
       getPrevVote()
     }
   }, [resourceValue, wallet, voteValidateState])
 
-  return { voteValidateState, isVoteVisible: voteValidateState === VoteControlState.VALIDE, prevVote }
+  return { voteValidateState, isVoteVisible: voteValidateState === VoteControlState.VALID, prevVote }
 }
