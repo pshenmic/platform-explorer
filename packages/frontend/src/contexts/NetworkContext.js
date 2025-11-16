@@ -20,7 +20,6 @@ export const NetworkProvider = ({ children }) => {
         : NETWORKS_ENUM.TESTNET
 
     setNetwork(activeNetwork)
-    console.log('selected network:', activeNetwork)
   }, [])
 
   useEffect(() => {
