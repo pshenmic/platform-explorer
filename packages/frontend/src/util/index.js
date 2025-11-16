@@ -95,29 +95,6 @@ const getMinTokenPrice = (prices) => {
   return Math.min(...prices.map((p) => parseFloat(p.price)))
 }
 
-const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
-
-async function * infiniteChecker (checkFunction, maxIterations = Infinity) {
-  let iteration = 0
-
-  while (iteration < maxIterations) {
-    const result = await checkFunction()
-
-    yield {
-      iteration: iteration + 1,
-      result,
-      done: result === true
-    }
-
-    if (result === true) {
-      return
-    }
-
-    await wait(2000)
-    iteration++
-  }
-}
-
 export {
   fetchHandlerSuccess,
   fetchHandlerError,
@@ -135,7 +112,5 @@ export {
   findActiveAlias,
   getTokenName,
   getMinTokenPrice,
-  wait,
-  infiniteChecker,
   formatDate
 }

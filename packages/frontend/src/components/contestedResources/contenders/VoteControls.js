@@ -15,10 +15,6 @@ export const VoteControls = ({ currentIdentity, contender, resourceValue, wallet
     }
 
     const castVote = async () => {
-      if (!currentIdentity) {
-        throw new Error('Current Identity not set')
-      }
-
       const sdk = window.dashPlatformSDK
       const voterIdentity = await sdk.identities.getIdentityByIdentifier(currentIdentity)
       const identityNonce = await sdk.identities.getIdentityNonce(voterIdentity.id)
