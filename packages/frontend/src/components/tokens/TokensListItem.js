@@ -20,7 +20,6 @@ function TokensListItem ({ token, variant = 'default', rate }) {
     localizations,
     balance,
     decimals,
-    position
   } = token
   const router = useRouter()
   const ownerId = typeof owner === 'object' ? owner?.identifier : owner
@@ -40,6 +39,7 @@ function TokensListItem ({ token, variant = 'default', rate }) {
             : <Identifier ellipsis={true} avatar={true} styles={['highlight-both']}>{identifier}</Identifier>
           }
         </GridItem>
+
 
         <GridItem className={'TokensListItem__Column TokensListItem__Column--Supply'}>
           {maxSupply

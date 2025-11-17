@@ -6,7 +6,7 @@ import PageSizeSelector from '../../components/pageSizeSelector/PageSizeSelector
 import { normalizePagination } from '../../util'
 import { Container, Box, Heading, useBreakpointValue } from '@chakra-ui/react'
 import { useQuery } from '@tanstack/react-query'
-import { parseAsInteger, parseAsStringEnum, useQueryState } from 'nuqs'
+import { parseAsInteger, useQueryState } from 'nuqs'
 import { useValidatorsFilters, ValidatorsFilter, ValidatorsList } from '@components/validators'
 
 const paginateConfig = {
