@@ -16,7 +16,7 @@ export const withFormatting = (Component) => {
       const value = String(children)
       const { integer, fractional } = sliceNumberByDecimals(value, decimals)
 
-      const trimedFractional = trimEndZeros(fractional)
+      const trimmedFractional = trimEndZeros(fractional)
 
       const Child = ({ children: content }) => (
         <Tooltip
@@ -35,13 +35,13 @@ export const withFormatting = (Component) => {
       )
 
       if (!integer) {
-        return <Child>0,{trimedFractional}</Child>
+        return <Child>0,{trimmedFractional}</Child>
       }
 
       if (threshold <= integer) {
         return (
           <Child>
-            {concatDecimal(currencyRound(integer), trimedFractional)}
+            {concatDecimal(currencyRound(integer), trimmedFractional)}
           </Child>
         )
       }
@@ -50,8 +50,29 @@ export const withFormatting = (Component) => {
         return (
           <Child>
             {splitNum(integer).map((num, i) => (
-              <span className={styles.item} key={`${num}-${i}`}>{num}</span>
+              <span
+                className={styles.item}
+                key={`${num}-${i}`}
+              >
+                {num}
+              </span>
             ))}
+          </Child>
+        )
+      }
+
+      if (trimmedFractional) {
+        return (
+          <Child>
+            {splitNum(integer).map((num, i) => (
+              <span
+                className={styles.item}
+                key={`${num}-${i}`}
+              >
+                {num}
+              </span>
+            ))}
+            ,{trimmedFractional}
           </Child>
         )
       }
@@ -59,9 +80,13 @@ export const withFormatting = (Component) => {
       return (
         <Child>
           {splitNum(integer).map((num, i) => (
-            <span className={styles.item} key={`${num}-${i}`}>{num}</span>
+            <span
+              className={styles.item}
+              key={`${num}-${i}`}
+            >
+              {num}
+            </span>
           ))}
-          ,{trimedFractional}
         </Child>
       )
     }

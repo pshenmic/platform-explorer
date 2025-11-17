@@ -99,6 +99,7 @@ describe('Utils', () => {
         ownerId: 'DTFPLKMVbnkVQWEfkxHX7Ch62ytjvbtqH6eG1TF3nMbD',
         tokens: [
           {
+            tokenId: '76HAP8UMczsohFApQiGtGfhkUscUceq28jWJDYa3Ghzn',
             position: 0,
             description: null,
             conventions: {

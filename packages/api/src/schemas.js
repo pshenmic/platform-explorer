@@ -265,6 +265,12 @@ const schemaTypes = [
         pattern: '^[A-Za-z0-9]+$',
         minLength: 43,
         maxLength: 44
+      },
+      pro_tx_hash: {
+        type: 'string',
+        pattern: '^[A-Za-z0-9]+$',
+        minLength: 64,
+        maxLength: 64
       }
     }
   },

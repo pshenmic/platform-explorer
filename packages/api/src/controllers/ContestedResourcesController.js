@@ -24,7 +24,7 @@ class ContestedResourcesController {
   }
 
   getContestedResourceVotes = async (request, response) => {
-    const { choice, page = 1, limit = 10, order = 'asc' } = request.query
+    const { choice, page = 1, limit = 10, order = 'asc', pro_tx_hash: proTxHash } = request.query
     const { resourceValue } = request.params
 
     if (!resourceValue) {
@@ -33,7 +33,7 @@ class ContestedResourcesController {
 
     const decodedResourceValue = JSON.parse(Buffer.from(resourceValue, 'base64'))
 
-    const votes = await this.contestedResourcesDAO.getVotesForContestedResource(Number(choice) ?? null, decodedResourceValue, Number(page ?? 1), Number(limit ?? 10), order)
+    const votes = await this.contestedResourcesDAO.getVotesForContestedResource(Number(choice) ?? null, decodedResourceValue, proTxHash, Number(page ?? 1), Number(limit ?? 10), order)
 
     if (!votes) {
       return response.status(404).send({ message: 'not found' })

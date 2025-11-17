@@ -1777,8 +1777,9 @@ Returns set of votes for selected resource
 * `resourceValue` must be specified after `/contested/` in json base64
   * `WyJkYXNoIiwieHl6Il0=` = `'["dash", "xyz"]'`
 * `choice` optional
+* `pro_tx_hash` optional hash of vote owner
 ```
-GET /contestedResource/WyJkYXNoIiwieHl6Il0=/votes?choice=1&page=1&limit=10&order=asc
+GET /contestedResource/WyJkYXNoIiwieHl6Il0=/votes?choice=1&pro_tx_hash=36011F1807FED828951DAA04B44E38163FB0162108FD1341038DBE58051F4421&page=1&limit=10&order=asc
 {
   "resultSet": [
     {
@@ -2080,6 +2081,7 @@ POST /transaction/decode
   "tokens": [
     {
       "position": 0,
+      "tokenId": "76HAP8UMczsohFApQiGtGfhkUscUceq28jWJDYa3Ghzn",
       "conventions": {
         "decimals": 8,
         "localizations": {
