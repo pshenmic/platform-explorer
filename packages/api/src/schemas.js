@@ -260,6 +260,12 @@ const schemaTypes = [
         minLength: 43,
         maxLength: 44
       },
+      token_id: {
+        type: ['string', 'null'],
+        pattern: '^[A-Za-z0-9]+$',
+        minLength: 43,
+        maxLength: 44
+      },
       pro_tx_hash: {
         type: 'string',
         pattern: '^[A-Za-z0-9]+$',

@@ -2597,6 +2597,8 @@ Return list of tokens
 * `owner` tokens owner identifier
 * `position` tokens position in data contract
 * `contract_id` contract identifier which contains tokens
+* `token_name` part of token name in EN locale. Case insensetive. Minimum 3 symbols
+* `token_id` identifier of token
 ```
 GET /tokens?limit=10&page=1&order=asc&owner=5DbLwAxGBzUzo81VewMUwn4b5P4bpv9FNFybi25XB5Bk&position=0&contract_id=ALybvzfcCwMs7sinDwmtumw17NneuW7RgFtFHgjKmF3A
 
