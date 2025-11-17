@@ -11,13 +11,12 @@
     6rem /* System */
     8rem /* With tokens */
     8rem /* Documents */
-    10rem; /* Timestamp */
+    3rem; /* Timestamp */
 
   @container (max-width: 48rem) {
     grid-template-columns:
       minmax(0, 1fr)
       6rem
-      8rem;
   }
 
   @media screen and (min-width: $breakpoint-lg) {
@@ -27,13 +26,18 @@
       6rem /* System */
       8rem /* With tokens */
       8rem /* Documents */
-      10rem; /* Timestamp */
+      3rem; /* Timestamp */
   }
 }
 
 @mixin Column() {
   display: flex;
   align-items: center;
+
+  &:last-child {
+    justify-content: flex-end;
+    text-align: right;
+  }
 
   &--Identifier {
     width: 100%;
@@ -45,16 +49,15 @@
     overflow: hidden;
   }
 
-  &--Owner
-  &--System,
-  &--WithTokens,
-  &--DocumentsCount,
-  &--Timestamp {
-    justify-content: flex-end;
-    text-align: right;
+  &--DocumentsCount {
+    min-width: 0;
+    overflow: hidden;
   }
+  
+
 
   @container (max-width: 48rem) {
+    &--DocumentsCount,
     &--Owner,
     &--WithTokens,
     &--System {
