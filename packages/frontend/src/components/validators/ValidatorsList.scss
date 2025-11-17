@@ -5,8 +5,9 @@
   &__ColumnTitles {
     @include mixins.defListTitles;
     display: grid;
-    grid-template-columns: minmax(0, 40rem) 150px 250px 250px 150px;
+    grid-template-columns: minmax(0, 40rem) 150px 150px 250px 150px;
     justify-content: space-between;
+    gap: 12px;
   }
 
   &__ColumnTitle {
@@ -19,7 +20,7 @@
   
   @media screen and (max-width: $breakpoint-lg) {
     &__ColumnTitles {
-      grid-template-columns: minmax(0, 40rem) 170px 170px 150px 100px;
+      grid-template-columns: minmax(0, 40rem) 150px 150px 150px 100px;
     }
   }
 

@@ -53,9 +53,6 @@ function TokensList ({
         <GridItem className={'TokensList__ColumnTitle TokensList__ColumnTitle--TokenName'}>
           Token Name
         </GridItem>
-        <GridItem className={'TokensList__ColumnTitle TokensList__ColumnTitle--Position'}>
-          Position
-        </GridItem>
         <GridItem className={'TokensList__ColumnTitle TokensList__ColumnTitle--Supply'}>
           Supply
         </GridItem>

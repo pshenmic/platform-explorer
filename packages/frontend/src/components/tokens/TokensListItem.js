@@ -41,14 +41,6 @@ function TokensListItem ({ token, variant = 'default', rate }) {
           }
         </GridItem>
 
-        {
-          !isNaN(position)
-            ? <GridItem className={'TokensListItem__Column TokensListItem__Column--Position'}>
-              <span>{position}</span>
-          </GridItem>
-            : <NotActive />
-        }
-
         <GridItem className={'TokensListItem__Column TokensListItem__Column--Supply'}>
           {maxSupply
             ? <Supply
