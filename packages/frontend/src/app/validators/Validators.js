@@ -4,7 +4,6 @@ import * as Api from '../../util/Api'
 import Pagination from '../../components/pagination'
 import PageSizeSelector from '../../components/pageSizeSelector/PageSizeSelector'
 import { normalizePagination } from '../../util'
-import { Switcher } from '@components/ui'
 import { Container, Box, Heading, useBreakpointValue } from '@chakra-ui/react'
 import { useQuery } from '@tanstack/react-query'
 import { parseAsInteger, parseAsStringEnum, useQueryState } from 'nuqs'
@@ -33,15 +32,9 @@ function Validators () {
       .withDefault(paginateConfig.pageSize.default)
       .withOptions({ scroll: false, shallow: true })
   )
-  const [activeState, setActiveState] = useQueryState(
-    'tab',
-    parseAsStringEnum(['all', 'current', 'queued'])
-      .withDefault('all')
-      .withOptions({ scroll: false, shallow: true })
-  )
 
   const validators = useQuery({
-    queryKey: ['validators', page, pageSize, activeState, ...Object.values(filters)],
+    queryKey: ['validators', page, pageSize, ...Object.values(filters)],
     queryFn: () => Api.getValidators(
       page,
       pageSize,
@@ -77,21 +70,6 @@ function Validators () {
         className={'InfoBlock'}
       >
         <Heading className={'InfoBlock__Title'} as={'h1'}>Validators</Heading>
-        <Box mb={5}>
-          <Switcher
-            options={[
-              { title: 'All' },
-              { title: 'Current' },
-              { title: 'Queued' }
-            ]}
-            defaultValue={activeState}
-            onChange={(opt) => {
-              const next = (opt || '').toLowerCase()
-              setActiveState(next)
-              setPage(1)
-            }}
-          />
-        </Box>
         <ValidatorsFilter
           onFilterChange={handleFiltersChange}
           isMobile={isMobile}
@@ -105,7 +83,7 @@ function Validators () {
         />
         {validators.data?.resultSet?.length > 0 &&
           <div className={'ListNavigation'}>
-            <Box display={['none', 'none', 'block']} width={'155px'}/>
+            <Box display={['none', 'none', 'block']} width={'155px'} />
             <Pagination
               onPageChange={({ selected }) => setPage((selected || 0) + 1)}
               pageCount={pagination.pageCount}

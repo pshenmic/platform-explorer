@@ -1,9 +1,27 @@
 import Identifier from '@components/data/Identifier'
 import { Filters } from '@components/filters'
 
+const ActiveOptionsEnum = {
+  CURRENT: 'Current',
+  QUEUED: 'Queued'
+}
+
 const isActiveOptions = [
-  { label: 'Active', title: 'Currently active validators', value: true }
+  { label: 'Current', title: 'Currently active validators', value: ActiveOptionsEnum.CURRENT },
+  { label: 'Queued', title: 'Currently active validators', value: ActiveOptionsEnum.QUEUED }
 ]
+
+const checkActive = (values) => {
+  if (!values || values.length === 0) {
+    return null
+  }
+
+  if (values.includes(ActiveOptionsEnum.CURRENT)) {
+    return 'true'
+  }
+
+  return 'false'
+}
 
 const filtersConfig = {
   isActive: {
@@ -13,8 +31,8 @@ const filtersConfig = {
     options: isActiveOptions,
     defaultValue: [],
     maxSelected: 1,
-    formatValue: ([value] = []) => (value ? 'true' : null),
-    isAllSelected: () => false
+    formatValue: (value) => checkActive(value) ? value : undefined,
+    isAllSelected: (values) => values.length === isActiveOptions.length
   },
   blocks_proposed: {
     type: 'range',
@@ -73,9 +91,8 @@ export const ValidatorsFilter = ({ onFilterChange, isMobile, className }) => {
     <Filters
       filtersConfig={filtersConfig}
       onFilterChange={(values) => {
-        const [isActiveSelected] = values.isActive ?? []
         const payload = {
-          isActive: isActiveSelected ? 'true' : undefined,
+          isActive: checkActive(values.isActive) || undefined,
           blocks_proposed_min: values.blocks_proposed_min || undefined,
           blocks_proposed_max: values.blocks_proposed_max || undefined,
           last_proposed_block_height_min: values.last_proposed_block_height_min || undefined,
