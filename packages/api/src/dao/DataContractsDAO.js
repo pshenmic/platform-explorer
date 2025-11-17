@@ -180,7 +180,6 @@ module.exports = class DataContractsDAO {
       .with('gas_sub', gasSubquery)
       .select('data_contract.identifier as identifier', 'data_contract.name as name', 'data_contract.owner as owner',
         'data_contract.schema as schema', 'data_contract.is_system as is_system')
-      // 'version', 'state_transitions.data as state_transition_data', 'state_transitions.hash as tx_hash', 'blocks.timestamp as timestamp')
       .select(
         this.knex('data_contract')
           .select('version')
@@ -300,7 +299,8 @@ module.exports = class DataContractsDAO {
     return DataContract.fromObject({
       ...dataContract,
       groups,
-      tokens
+      tokens,
+      tokensCount: tokens?.length
     })
   }
 
@@ -382,6 +382,11 @@ module.exports = class DataContractsDAO {
           .leftJoin('data_contracts', 'data_contracts.id', 'documents.data_contract_id')
           .whereILike('data_contracts.name', `${name}%`)
           .as('documents_count')
+      )
+      .select(this.knex('tokens')
+        .count('* as count')
+        .whereRaw('tokens.data_contract_id = data_contracts.id')
+        .as('tokens_count')
       )
       .whereILike('data_contracts.name', `${name}%`)
       .leftJoin('state_transitions', 'state_transitions.hash', 'data_contracts.state_transition_hash')
