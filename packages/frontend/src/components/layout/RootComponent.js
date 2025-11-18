@@ -1,6 +1,6 @@
 'use client'
 
-import { ModalProvider, NetworkProvider, BreadcrumbsProvider, ThemeProvider } from 'src/contexts'
+import { NetworkProvider, BreadcrumbsProvider, ThemeProvider, ModalProvider } from 'src/contexts'
 import Navbar from './navbar/Navbar'
 import Footer from './footer'
 import Background from './Background'
@@ -11,14 +11,14 @@ export default function RootComponent ({ children }) {
   return (
     <NetworkProvider>
       <ThemeProvider>
-        <Background snow={false}/>
-        <BreadcrumbsProvider>
-          <ModalProvider>
+        <ModalProvider>
+          <Background snow={false}/>
+          <BreadcrumbsProvider>
             <Navbar/>
             {children}
-          </ModalProvider>
-        </BreadcrumbsProvider>
-        <Footer/>
+          </BreadcrumbsProvider>
+          <Footer/>
+        </ModalProvider>
       </ThemeProvider>
     </NetworkProvider>
   )

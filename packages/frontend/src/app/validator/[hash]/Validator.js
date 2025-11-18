@@ -17,7 +17,6 @@ import { HorisontalSeparator } from '../../../components/ui/separators'
 import { ValidatorCard } from '../../../components/validators'
 import { CircleIcon } from '../../../components/ui/icons'
 import { RateTooltip } from '../../../components/ui/Tooltips'
-import { networks } from '../../../constants/networks'
 import { WithdrawalsList } from '../../../components/transfers'
 import { useBreadcrumbs } from '../../../contexts/BreadcrumbsContext'
 import { defaultChartConfig } from '../../../components/charts/config'
@@ -25,6 +24,8 @@ import {
   Badge,
   Tabs, TabList, TabPanels, Tab, TabPanel
 } from '@chakra-ui/react'
+import { useActiveNetwork } from 'src/contexts'
+
 import './ValidatorPage.scss'
 
 function Validator ({ hash }) {
@@ -37,9 +38,7 @@ function Validator ({ hash }) {
   const [transactions, setTransactions] = useState({ data: {}, props: { currentPage: 0 }, loading: true, error: false })
   const [withdrawals, setWithdrawals] = useState({ data: {}, props: { currentPage: 0 }, loading: true, error: false })
   const [activeChartTab, setActiveChartTab] = useState(0)
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL
-  const activeNetwork = networks.find(network => network.explorerBaseUrl === baseUrl)
-  const l1explorerBaseUrl = activeNetwork?.l1explorerBaseUrl || null
+  const { l1explorerBaseUrl } = useActiveNetwork()
   const [timespan, setTimespan] = useState(defaultChartConfig.timespan.values[defaultChartConfig.timespan.defaultIndex])
 
   useEffect(() => {

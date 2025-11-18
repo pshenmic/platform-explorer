@@ -3,8 +3,6 @@ import { Alias, CreditsBlock, DateBlock, Identifier, InfoLine } from '../data'
 import { HorisontalSeparator } from '../ui/separators'
 import { ValueCard } from '../cards'
 import { findActiveAlias } from '../../util'
-import { DataContractModal } from './DataContractModal'
-import { useModal } from '@components/ui/Modal'
 
 import './DataContractTotalCard.scss'
 

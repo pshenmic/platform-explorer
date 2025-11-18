@@ -21,20 +21,15 @@ import {
   TransactionStatusBadge
 } from '../../../../components/transactions'
 import { ErrorMessageBlock } from '../../../../components/Errors'
-import { networks } from '../../../../constants/networks'
 import { useBreadcrumbs } from '../../../../contexts/BreadcrumbsContext'
 import { useDecodedSTQuery, useRateQuery, useTransactionQuery } from './hooks'
 import { useParams } from 'next/navigation'
+import { useActiveNetwork } from 'src/contexts'
 
 import './transaction.scss'
 
-const baseUrl = process.env.NEXT_PUBLIC_BASE_URL
-const activeNetwork = networks.find(
-  (network) => network.explorerBaseUrl === baseUrl
-)
-const l1explorerBaseUrl = activeNetwork?.l1explorerBaseUrl || null
-
 export const Transaction = () => {
+  const { l1explorerBaseUrl } = useActiveNetwork()
   const { hash } = useParams()
   const { setBreadcrumbs } = useBreadcrumbs()
   const transaction = useTransactionQuery()

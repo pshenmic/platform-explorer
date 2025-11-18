@@ -10,11 +10,6 @@ export const NetworkProvider = ({ children }) => {
       ? NETWORKS_ENUM.MAINNET
       : NETWORKS_ENUM.TESTNET
 
-  const contextValue = {
-    network,
-    getNetworkOptions: () => NETWORK_OPTIONS[network]
-  }
-
   useEffect(() => {
     const sdk = window.dashPlatformSDK
     if (!sdk) {
@@ -26,10 +21,10 @@ export const NetworkProvider = ({ children }) => {
   }, [network])
 
   return (
-    <NetworkContext.Provider value={contextValue}>
+    <NetworkContext.Provider value={NETWORK_OPTIONS[network]}>
       {children}
     </NetworkContext.Provider>
   )
 }
 
-export const useNetwork = () => useContext(NetworkContext)
+export const useActiveNetwork = () => useContext(NetworkContext)
