@@ -2,18 +2,13 @@
 
 import { useState } from 'react'
 import Dropdown from './Dropdown'
-import { NETWORK_OPTIONS, NETWORKS_ENUM } from '../../../constants/networks'
-import { useNetwork } from 'src/contexts/NetworkContext'
+import { networks } from '../../../constants/networks'
+import { useActiveNetwork } from 'src/contexts'
 
 import './NetworkSelect.scss'
 
-const selectOptions = [
-  NETWORK_OPTIONS[NETWORKS_ENUM.MAINNET],
-  NETWORK_OPTIONS[NETWORKS_ENUM.TESTNET]
-]
-
 function NetworkSelect () {
-  const { network } = useNetwork()
+  const { name: network } = useActiveNetwork()
   const [showDropdown, setShowDropdown] = useState(false)
 
   return (
@@ -36,7 +31,7 @@ function NetworkSelect () {
         </svg>
       </button>
       <div className={`NetworkSelect__DropdownWrapper ${showDropdown ? 'NetworkSelect__DropdownWrapperActive' : ''}`}>
-        <Dropdown active={network} data={selectOptions} />
+        <Dropdown active={network} data={networks} />
       </div>
     </div>
   )

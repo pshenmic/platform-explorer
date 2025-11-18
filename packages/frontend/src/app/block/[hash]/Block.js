@@ -10,8 +10,9 @@ import { Container, Tabs, TabList, Tab, TabPanels, TabPanel } from '@chakra-ui/r
 import { BlockDigestCard, BlockTotalCard, QuorumMembersList } from '../../../components/blocks'
 import { useBreadcrumbs } from '../../../contexts/BreadcrumbsContext'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
-import { networks } from '../../../constants/networks'
 import { QuorumInfo } from '../../../components/blocks/quorum'
+import { useActiveNetwork } from 'src/contexts'
+
 import './Block.scss'
 
 const tabs = [
@@ -28,9 +29,7 @@ function Block ({ hash }) {
   const [rate, setRate] = useState({ data: {}, loading: true, error: false })
   const [status, setStatus] = useState({ data: {}, loading: true, error: false })
   const [activeTab, setActiveTab] = useState(tabs.indexOf(defaultTabName.toLowerCase()) !== -1 ? tabs.indexOf(defaultTabName.toLowerCase()) : 0)
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL
-  const activeNetwork = networks.find(network => network.explorerBaseUrl === baseUrl)
-  const l1explorerBaseUrl = activeNetwork?.l1explorerBaseUrl || null
+  const { l1explorerBaseUrl } = useActiveNetwork()
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
