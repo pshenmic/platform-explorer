@@ -4,6 +4,7 @@ import { NameScreen } from './NameScreen'
 import { InitialScreen } from './InitialScreen'
 import { KeywordsScreen } from './KeywordsScreen'
 import { Modal } from '@components/ui/Modal'
+import { useDataContractUpdate } from './useDataContractUpdate'
 
 const MODE_PROPS = {
   [FORM_MODE_ENUM.INITIAL]: {
@@ -20,10 +21,18 @@ const MODE_PROPS = {
   }
 }
 
-export const DataContractModal = ({ isOpen }) => {
+export const DataContractModal = ({ isOpen, onClose }) => {
   const [mode, setMode] = useState(FORM_MODE_ENUM.INITIAL)
-
   const { title, Content } = MODE_PROPS[mode]
+  const { handleDataContractChange } = useDataContractUpdate()
+  const handleDataContractUpdate = (data) => {
+    try {
+      handleDataContractChange(data)
+      onClose()
+    } catch (e) {
+      console.log(e)
+    }
+  }
 
   useEffect(() => {
     setMode(FORM_MODE_ENUM.INITIAL)
@@ -31,7 +40,10 @@ export const DataContractModal = ({ isOpen }) => {
 
   return (
     <Modal title={title}>
-      <Content setMode={setMode} />
+      <Content
+        setMode={setMode}
+        onDataContractUpdate={handleDataContractUpdate}
+      />
     </Modal>
   )
 }

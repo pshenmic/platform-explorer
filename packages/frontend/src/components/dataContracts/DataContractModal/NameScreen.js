@@ -6,7 +6,7 @@ import styles from './NameScreen.module.scss'
 
 const button = cva([styles.btn])
 
-export const NameScreen = () => {
+export const NameScreen = ({ onDataContractUpdate }) => {
   const [form, setForm] = useState({ name: '' })
   const id = useId()
 
@@ -15,16 +15,23 @@ export const NameScreen = () => {
       <div className={styles.divider}>
         <Divider />
       </div>
-      <form className={styles.form}>
+      <form
+        className={styles.form}
+        id='data-contract-name-form'
+        onSubmit={(e) => {
+          e.preventDefault()
+          onDataContractUpdate(form)
+        }}
+      >
         <label
           className={styles.label}
-          for={id}
+          wallet='data-contract-name'
         >
           Data Contract Name:
         </label>
         <Input
           placeholder='Enter Name...'
-          id={id}
+          id='data-contract-name'
           value={form.name}
           className={styles.input}
           onChange={(e) => setForm({ name: e.target.value })}
@@ -32,7 +39,11 @@ export const NameScreen = () => {
       </form>
       <div className={styles.controls}>
         <button className={button({ className: styles.cancel })}>Cancel</button>
-        <button className={button({ className: styles.submit })}>
+        <button
+          type='submit'
+          className={button({ className: styles.submit })}
+          form='data-contract-name-form'
+        >
           Submit Changes
         </button>
       </div>
