@@ -1,5 +1,5 @@
 import { Divider, Input } from '@chakra-ui/react'
-import { useId, useState } from 'react'
+import { useState } from 'react'
 import { cva } from 'class-variance-authority'
 
 import styles from './NameScreen.module.scss'
@@ -8,7 +8,6 @@ const button = cva([styles.btn])
 
 export const NameScreen = ({ onDataContractUpdate }) => {
   const [form, setForm] = useState({ name: '' })
-  const id = useId()
 
   return (
     <div className={styles.root}>
