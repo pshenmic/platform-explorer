@@ -21,7 +21,7 @@ export const useValidatorsFilters = () => {
   })()
 
   const filters = {
-    isActive: isActive === 'true' ? 'true' : undefined,
+    isActive: isActive === 'true' || isActive === 'false' ? isActive : undefined,
     blocks_proposed_min: blocksMin != null && blocksMin !== '' ? Number(blocksMin) : undefined,
     blocks_proposed_max: blocksMax != null && blocksMax !== '' ? Number(blocksMax) : undefined,
     last_proposed_block_height_min: heightMin != null && heightMin !== '' ? Number(heightMin) : undefined,
@@ -35,7 +35,7 @@ export const useValidatorsFilters = () => {
     if (!next) return
 
     if ('isActive' in next) {
-      setIsActive(next.isActive ? 'true' : null)
+      setIsActive(next.isActive || null)
     }
 
     if ('blocks_proposed_min' in next) {

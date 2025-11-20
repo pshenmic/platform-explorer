@@ -29,8 +29,7 @@ const filtersConfig = {
     label: 'Active',
     title: 'Filter by active state',
     options: isActiveOptions,
-    defaultValue: [],
-    maxSelected: 1,
+    defaultValue: [ActiveOptionsEnum.CURRENT, ActiveOptionsEnum.QUEUED],
     formatValue: (value) => checkActive(value) ? value : undefined,
     isAllSelected: (values) => values.length === isActiveOptions.length
   },
