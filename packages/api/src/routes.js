@@ -340,7 +340,8 @@ module.exports = ({
           properties: {
             validator: { $ref: 'hash#' }
           }
-        }
+        },
+        querystring: { $ref: 'paginationOptions#' }
       }
     },
     {
