@@ -41,7 +41,9 @@ class DataContractsController {
       return response.status(400).send('Bad timestamp range')
     }
 
-    if(documentsCountMin && documentsCountMin && documentsCountMin > documentsCountMax) {}
+    if (documentsCountMin && documentsCountMin && documentsCountMin > documentsCountMax) {
+      return response.status(400).send('Bad documents count range')
+    }
 
     const dataContracts = await this.dataContractsDAO.getDataContracts(
       Number(page ?? 1),

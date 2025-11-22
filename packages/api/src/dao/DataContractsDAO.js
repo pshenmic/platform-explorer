@@ -16,10 +16,10 @@ module.exports = class DataContractsDAO {
     let filtersQuery = ''
     const filtersBindings = []
 
-    let timestampsQuery = ''
+    let timestampsQueryString = ''
     const timestampBindings = []
 
-    let documentCountQuery = ''
+    let documentCountQueryString = ''
     const documentCountBindings = []
 
     const orderByOptions = [{ column: 'filtered_data_contracts.id', order }]
@@ -44,14 +44,22 @@ module.exports = class DataContractsDAO {
       filtersQuery = filtersQuery !== '' ? filtersQuery + ' and is_system = ?' : 'is_system = ?'
     }
 
-    if (documentsCountMin && documentsCountMax) {
-      documentCountQuery = 'documents_count between ? and ?'
-      documentCountBindings.push(documentsCountMin, documentsCountMax)
+    if (documentsCountMin) {
+      documentCountQueryString = 'documents_count >= ?'
+      documentCountBindings.push(documentsCountMin)
+    }
+    if (documentsCountMax) {
+      documentCountQueryString = documentCountQueryString === '' ? 'documents_count <= ?' : 'documents_count between ? and ?'
+      documentCountBindings.push(documentsCountMax)
     }
 
-    if (timestampStart && timestampEnd) {
-      timestampsQuery = 'blocks.timestamp between ? and ?'
-      timestampBindings.push(timestampStart, timestampEnd)
+    if (timestampStart) {
+      timestampsQueryString = 'blocks.timestamp >= ?'
+      timestampBindings.push(timestampStart)
+    }
+    if (timestampEnd) {
+      timestampsQueryString = timestampsQueryString === '' ? 'blocks.timestamp <= ?' : 'blocks.timestamp between ? and ?'
+      timestampBindings.push(timestampEnd)
     }
 
     const dataContractsSubquery = this.knex('data_contracts')
@@ -109,8 +117,8 @@ module.exports = class DataContractsDAO {
         'blocks.timestamp as timestamp', 'blocks.hash as block_hash', 'documents_count'
       )
       .andWhereRaw(filtersQuery, filtersBindings)
-      .andWhereRaw(timestampsQuery, timestampBindings)
-      .andWhereRaw(documentCountQuery, documentCountBindings)
+      .andWhereRaw(timestampsQueryString, timestampBindings)
+      .andWhereRaw(documentCountQueryString, documentCountBindings)
       .leftJoin('state_transitions', 'state_transitions.hash', 'filtered_data_contracts.tx_hash')
       .leftJoin('blocks', 'blocks.height', 'state_transitions.block_height')
       .from('filtered_data_contracts')
