@@ -107,12 +107,12 @@ class BlocksController {
       return response.status(400).send('Bad transaction range')
     }
 
-    if (timestampStart && timestampEnd && new Date(timestampStart).getTime() <= new Date(timestampEnd).getTime()) {
-      return response.status(400).send('Request must have start and end timestamps')
+    if (timestampStart && timestampEnd && new Date(timestampStart).getTime() < new Date(timestampEnd).getTime()) {
+      return response.status(400).send('Bad timestamp range')
     }
 
     if (epochIndexMin || epochIndexMax) {
-      if (epochIndexMin && epochIndexMax && new Date(epochIndexMax).getTime() <= new Date(epochIndexMin).getTime()) {
+      if (epochIndexMin && epochIndexMax && new Date(epochIndexMax).getTime() < new Date(epochIndexMin).getTime()) {
         return response.status(400).send('Bad epochs range')
       }
 
