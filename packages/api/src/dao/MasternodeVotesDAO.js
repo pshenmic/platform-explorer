@@ -11,7 +11,7 @@ module.exports = class MasternodeVotesDAO {
   getMasternodeVotes = async (choice, timestampStart, timestampEnd, voterIdentity, towardsIdentity, power, page, limit, order) => {
     const fromRank = ((page - 1) * limit)
 
-    let timestampsQueryString = ""
+    let timestampsQueryString = ''
     const timestampBindings = []
 
     if (timestampStart) {
