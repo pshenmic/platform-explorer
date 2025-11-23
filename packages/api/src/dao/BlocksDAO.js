@@ -226,11 +226,11 @@ module.exports = class BlockDAO {
       : ['true']
 
     if (gasMin) {
-      gasQueryString = 'total_gas_used >= ?'
+      gasQueryString = 'COALESCE(total_gas_used, 0) >= ?'
       gasQueryBindings.push(gasMin)
     }
     if (gasMax) {
-      gasQueryString = gasQueryString === '' ? 'total_gas_used >= ?' : 'total_gas_used BETWEEN ? AND ?'
+      gasQueryString = gasQueryString === '' ? 'COALESCE(total_gas_used, 0) <= ?' : 'COALESCE(total_gas_used, 0) BETWEEN ? AND ?'
       gasQueryBindings.push(gasMax)
     }
 
@@ -239,7 +239,7 @@ module.exports = class BlockDAO {
       transactionsQueryBindings.push(transactionCountMin)
     }
     if (transactionCountMax) {
-      transactionsQueryString = transactionsQueryString === '' ? 'cardinality(txs.txs) >= ?' : 'cardinality(txs.txs) BETWEEN ? AND ?'
+      transactionsQueryString = transactionsQueryString === '' ? 'cardinality(txs.txs) <= ?' : 'cardinality(txs.txs) BETWEEN ? AND ?'
       transactionsQueryBindings.push(transactionCountMax)
     }
 

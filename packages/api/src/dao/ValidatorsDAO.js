@@ -131,21 +131,21 @@ module.exports = class ValidatorsDAO {
     const filtersBindings = []
 
     if (blocksProposedMin) {
-      blocksProposedQueryString = 'proposed_blocks_amount >= ?'
+      blocksProposedQueryString = 'COALESCE(proposed_blocks_amount,0) >= ?'
       blocksProposedQueryBindings.push(blocksProposedMin)
     }
     if (blocksProposedMax) {
-      blocksProposedQueryString = blocksProposedQueryString === '' ? 'proposed_blocks_amount <= ?' : 'proposed_blocks_amount between ? and ?'
+      blocksProposedQueryString = blocksProposedQueryString === '' ? 'COALESCE(proposed_blocks_amount,0) <= ?' : 'COALESCE(proposed_blocks_amount,0) between ? and ?'
       blocksProposedQueryBindings.push(blocksProposedMax)
     }
 
     if (lastProposedBlockHeightMin) {
-      lastProposedBlockHeightQueryString = 'latest_height >= ?'
+      lastProposedBlockHeightQueryString = 'COALESCE(latest_height,0) >= ?'
       lastProposedBlockHeightQueryBindings.push(lastProposedBlockHeightMin)
     }
     if (lastProposedBlockHeightMax) {
-      blocksProposedQueryString = blocksProposedQueryString === '' ? 'latest_height <= ?' : 'proposed_blocks_amount between ? and ?'
-      blocksProposedQueryBindings.push(lastProposedBlockHeightMax)
+      lastProposedBlockHeightQueryString = lastProposedBlockHeightQueryString === '' ? 'COALESCE(latest_height,0) <= ?' : 'COALESCE(latest_height,0) between ? and ?'
+      lastProposedBlockHeightQueryBindings.push(lastProposedBlockHeightMax)
     }
 
     if (lastProposedBlockTimestampStart) {
