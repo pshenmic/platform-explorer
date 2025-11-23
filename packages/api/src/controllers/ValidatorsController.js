@@ -127,16 +127,16 @@ class ValidatorsController {
       last_proposed_block_hash: lastProposedBlockHash
     } = request.query
 
-    if (!blocksProposedMin !== !blocksProposedMax) {
-      return response.status(400).send({ message: 'you must use blocks_proposed_min and blocks_proposed_max' })
+    if (blocksProposedMin && blocksProposedMax && blocksProposedMin > blocksProposedMax) {
+      return response.status(400).send({ message: 'Bad blocks proposed range' })
     }
 
-    if (!lastProposedBlockHeightMin !== !lastProposedBlockHeightMax) {
-      return response.status(400).send({ message: 'you must use last_proposed_block_height_min and last_proposed_block_height_max' })
+    if (lastProposedBlockHeightMin && lastProposedBlockHeightMax && lastProposedBlockHeightMin > lastProposedBlockHeightMax) {
+      return response.status(400).send({ message: 'Bad last proposed block height range' })
     }
 
-    if (!lastProposedBlockTimestampStart !== !lastProposedBlockTimestampEnd) {
-      return response.status(400).send({ message: 'you must use lastProposedBlockTimestampStart and lastProposedBlockTimestampEnd' })
+    if (lastProposedBlockTimestampStart && lastProposedBlockTimestampEnd && new Date(lastProposedBlockTimestampStart).getTime() > new Date(lastProposedBlockTimestampEnd).getTime()) {
+      return response.status(400).send({ message: 'Bad last proposed block timestamp range' })
     }
 
     const activeValidators = await TenderdashRPC.getValidators()
