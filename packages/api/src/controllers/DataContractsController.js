@@ -37,7 +37,7 @@ class DataContractsController {
       return response.status(400).send({ message: 'invalid filters values' })
     }
 
-    if (timestampStart && timestampEnd && new Date(timestampStart).getTime() <= new Date(timestampEnd).getTime()) {
+    if (timestampStart && timestampEnd && new Date(timestampStart).getTime() >= new Date(timestampEnd).getTime()) {
       return response.status(400).send('Bad timestamp range')
     }
 
