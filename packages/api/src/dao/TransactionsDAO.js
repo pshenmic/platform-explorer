@@ -87,9 +87,13 @@ module.exports = class TransactionsDAO {
       filtersQuery = filtersQuery !== '' ? filtersQuery + ' and gas_used <= ?' : 'gas_used <= ?'
     }
 
-    if (timestampStart && timestampEnd) {
-      timestampsQuery = 'blocks.timestamp between ? and ?'
-      timestampBindings.push(timestampStart, timestampEnd)
+    if (timestampStart) {
+      timestampsQuery = 'blocks.timestamp >= ?'
+      timestampBindings.push(timestampStart)
+    }
+    if (timestampEnd) {
+      timestampsQuery = timestampsQuery === '' ? 'blocks.timestamp >= ?' : 'blocks.timestamp between ? and ?'
+      timestampBindings.push(timestampEnd)
     }
 
     const transactionSubquery = tokenName

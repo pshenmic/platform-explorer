@@ -69,8 +69,8 @@ class TransactionsController {
       return response.status(400).send({ message: 'invalid filters values' })
     }
 
-    if (!timestampStart !== !timestampEnd) {
-      return response.status(400).send({ message: 'you must use timestamp_start and timestamp_end' })
+    if (timestampStart && timestampEnd && new Date(timestampStart).getTime() >= new Date(timestampEnd).getTime()) {
+      return response.status(400).send('Bad timestamp range')
     }
 
     if (!['gas_used', 'timestamp', 'id', 'owner'].includes(orderBy)) {
