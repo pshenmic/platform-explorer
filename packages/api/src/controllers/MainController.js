@@ -220,7 +220,7 @@ class MainController {
 
     const uniqueDataContracts = dataContracts.filter((contract, pos) => allContractsIds.indexOf(contract.identifier) === pos)
 
-    if (uniqueDataContracts) {
+    if (uniqueDataContracts?.length > 0) {
       result = { ...result, dataContracts: uniqueDataContracts }
     }
 
