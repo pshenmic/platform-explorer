@@ -1,6 +1,11 @@
 const DataContract = require('../models/DataContract')
 const PaginatedResultSet = require('../models/PaginatedResultSet')
-const { decodeStateTransition, getAliasFromDocument, getAliasDocumentForIdentifier, getAliasDocumentForIdentifiers } = require('../utils')
+const {
+  decodeStateTransition,
+  getAliasFromDocument,
+  getAliasDocumentForIdentifier,
+  getAliasDocumentForIdentifiers, convertToSqlSafeString
+} = require('../utils')
 const Token = require('../models/Token')
 const { TokenConfigurationWASM, IdentifierWASM } = require('pshenmic-dpp')
 
@@ -134,11 +139,8 @@ module.exports = class DataContractsDAO {
       .from('filtered_data_contracts')
 
     if (description) {
-      // replace all wildcard characters to "safe" characters
-      const safeBindings = description.replaceAll('_', '\\_').replaceAll('%', '\\%')
-
       filteredContracts
-        .whereRaw('LOWER(description) like LOWER(? || \'%\')', safeBindings)
+        .whereRaw('LOWER(description) like LOWER(? || \'%\')', convertToSqlSafeString(description))
     }
 
     const rows = await this.knex
@@ -485,5 +487,37 @@ module.exports = class DataContractsDAO {
     const [row] = rows
 
     return new PaginatedResultSet(resultSet, page, limit, Number(row?.total_count ?? 0))
+  }
+
+  getDataContractByKeywordsString = async (rawKeywords) => {
+    const keywords = rawKeywords.split(' ')
+
+    const rows = await this.knex('data_contracts')
+      .select(
+        'data_contracts.identifier as identifier', 'data_contracts.name as name',
+        'data_contracts.owner as owner', 'data_contracts.is_system as is_system', 'keywords',
+        'data_contracts.version as version', 'data_contracts.schema as schema', 'description',
+        'data_contracts.state_transition_hash as tx_hash', 'blocks.timestamp as timestamp'
+      )
+      .whereRaw('keywords @> ?', [keywords])
+      .leftJoin('state_transitions', 'state_transitions.hash', 'data_contracts.state_transition_hash')
+      .leftJoin('blocks', 'state_transitions.block_hash', 'blocks.hash')
+
+    return rows.map(DataContract.fromRow)
+  }
+
+  getDataContractByDescription = async (description) => {
+    const rows = await this.knex('data_contracts')
+      .select(
+        'data_contracts.identifier as identifier', 'data_contracts.name as name',
+        'data_contracts.owner as owner', 'data_contracts.is_system as is_system', 'keywords',
+        'data_contracts.version as version', 'data_contracts.schema as schema', 'description',
+        'data_contracts.state_transition_hash as tx_hash', 'blocks.timestamp as timestamp'
+      )
+      .whereRaw('LOWER(description) like LOWER(? || \'%\')', convertToSqlSafeString(description))
+      .leftJoin('state_transitions', 'state_transitions.hash', 'data_contracts.state_transition_hash')
+      .leftJoin('blocks', 'state_transitions.block_hash', 'blocks.hash')
+
+    return rows.map(DataContract.fromRow)
   }
 }

@@ -1639,6 +1639,8 @@ This endpoint allows search any types of data
 * Data Contract
   * Full `Identifier`
   * Part `name`
+  * One of `keyword`
+  * Part `description`
 * Document
   * Full `Identifier`
 * Tokens
