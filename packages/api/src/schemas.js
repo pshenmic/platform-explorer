@@ -281,7 +281,7 @@ const schemaTypes = [
         type: ['array', 'null'],
         items: {
           type: ['string'],
-          pattern: '^[A-Za-z0-9]+$',
+          pattern: '^[A-Za-z0-9]+$'
         },
         maxItems: 20
       }
