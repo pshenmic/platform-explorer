@@ -22,9 +22,12 @@
     "dotenv": "^16.3.1",
     "fastify": "^4.21.0",
     "fastify-metrics": "^11.0.0",
-    "knex": "^2.5.1",
+    "fastify-sse-v2": "^4.2.1",
+    "ioredis": "^5.8.1",
+    "knex": "^3.1.0",
     "node-fetch": "^2.6.11",
-    "pg": "^8.11.3"
+    "pg": "^8.11.3",
+    "ws": "^8.18.3"
   },
   "devDependencies": {
     "standard": "^17.1.0",

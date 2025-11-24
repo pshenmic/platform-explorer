@@ -4,14 +4,24 @@ use tokio::time::Interval;
 
 impl Indexer {
     pub(crate) async fn process_block(
-        &self,
+        &mut self,
         last_block_height: i32,
         current_block_height: i32,
         interval: &mut Interval,
-    ) {
+    ) -> Result<(), ProcessorError> {
         if last_block_height > current_block_height {
             for block_height in current_block_height + 1..last_block_height + 1 {
                 loop {
+                    let status = self.tenderdash_rpc.get_status().await?;
+
+                    if last_block_height > current_block_height + 10
+                        || status.sync_info.catching_up == true
+                    {
+                        self.processor.set_indexing_flag(true).await;
+                    } else {
+                        self.processor.set_indexing_flag(false).await;
+                    }
+
                     let result = self.index_block(block_height.clone()).await;
 
                     match result {
@@ -25,6 +35,8 @@ impl Indexer {
                 }
             }
         }
+
+        Ok(())
     }
 
     fn process_error(err: ProcessorError, block_height: i32) {

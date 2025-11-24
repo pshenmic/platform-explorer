@@ -22,17 +22,7 @@ impl PSQLProcessor {
     ) -> () {
         let owner = state_transition.owner_id();
 
-        let st_type = match state_transition.clone() {
-            StateTransition::DataContractCreate(st) => st.state_transition_type() as u32,
-            StateTransition::DataContractUpdate(st) => st.state_transition_type() as u32,
-            StateTransition::Batch(st) => st.state_transition_type() as u32,
-            StateTransition::IdentityCreate(st) => st.state_transition_type() as u32,
-            StateTransition::IdentityTopUp(st) => st.state_transition_type() as u32,
-            StateTransition::IdentityCreditWithdrawal(st) => st.state_transition_type() as u32,
-            StateTransition::IdentityUpdate(st) => st.state_transition_type() as u32,
-            StateTransition::IdentityCreditTransfer(st) => st.state_transition_type() as u32,
-            StateTransition::MasternodeVote(st) => st.state_transition_type() as u32,
-        };
+        let st_type = get_st_type(state_transition.clone());
 
         let batch_type: Option<BatchType> = match state_transition.clone() {
             StateTransition::Batch(batch_transition) => match batch_transition {
@@ -91,48 +81,7 @@ impl PSQLProcessor {
             _ => None,
         };
 
-        let bytes = match state_transition.clone() {
-            StateTransition::DataContractCreate(st) => PlatformSerializable::serialize_to_bytes(
-                &StateTransition::DataContractCreate(st.clone()),
-            )
-            .unwrap(),
-            StateTransition::DataContractUpdate(st) => PlatformSerializable::serialize_to_bytes(
-                &StateTransition::DataContractUpdate(st.clone()),
-            )
-            .unwrap(),
-            StateTransition::Batch(st) => {
-                PlatformSerializable::serialize_to_bytes(&StateTransition::Batch(st.clone()))
-                    .unwrap()
-            }
-            StateTransition::IdentityCreate(st) => PlatformSerializable::serialize_to_bytes(
-                &StateTransition::IdentityCreate(st.clone()),
-            )
-            .unwrap(),
-            StateTransition::IdentityTopUp(st) => PlatformSerializable::serialize_to_bytes(
-                &StateTransition::IdentityTopUp(st.clone()),
-            )
-            .unwrap(),
-            StateTransition::IdentityCreditWithdrawal(st) => {
-                PlatformSerializable::serialize_to_bytes(
-                    &StateTransition::IdentityCreditWithdrawal(st.clone()),
-                )
-                .unwrap()
-            }
-            StateTransition::IdentityUpdate(st) => PlatformSerializable::serialize_to_bytes(
-                &StateTransition::IdentityUpdate(st.clone()),
-            )
-            .unwrap(),
-            StateTransition::IdentityCreditTransfer(st) => {
-                PlatformSerializable::serialize_to_bytes(&StateTransition::IdentityCreditTransfer(
-                    st.clone(),
-                ))
-                .unwrap()
-            }
-            StateTransition::MasternodeVote(st) => PlatformSerializable::serialize_to_bytes(
-                &StateTransition::MasternodeVote(st.clone()),
-            )
-            .unwrap(),
-        };
+        let bytes = get_st_bytes(state_transition.clone());
 
         let st_hash = digest(bytes.clone()).to_uppercase();
 
@@ -236,6 +185,60 @@ impl PSQLProcessor {
 
                 println!("Processed Masternode vote at block hash {}", block_hash);
             }
+        }
+    }
+}
+
+pub fn get_st_type(state_transition: StateTransition) -> u32 {
+    match state_transition {
+        StateTransition::DataContractCreate(st) => st.state_transition_type() as u32,
+        StateTransition::DataContractUpdate(st) => st.state_transition_type() as u32,
+        StateTransition::Batch(st) => st.state_transition_type() as u32,
+        StateTransition::IdentityCreate(st) => st.state_transition_type() as u32,
+        StateTransition::IdentityTopUp(st) => st.state_transition_type() as u32,
+        StateTransition::IdentityCreditWithdrawal(st) => st.state_transition_type() as u32,
+        StateTransition::IdentityUpdate(st) => st.state_transition_type() as u32,
+        StateTransition::IdentityCreditTransfer(st) => st.state_transition_type() as u32,
+        StateTransition::MasternodeVote(st) => st.state_transition_type() as u32,
+    }
+}
+
+pub fn get_st_bytes(state_transition: StateTransition) -> Vec<u8> {
+    match state_transition {
+        StateTransition::DataContractCreate(st) => PlatformSerializable::serialize_to_bytes(
+            &StateTransition::DataContractCreate(st.clone()),
+        )
+        .unwrap(),
+        StateTransition::DataContractUpdate(st) => PlatformSerializable::serialize_to_bytes(
+            &StateTransition::DataContractUpdate(st.clone()),
+        )
+        .unwrap(),
+        StateTransition::Batch(st) => {
+            PlatformSerializable::serialize_to_bytes(&StateTransition::Batch(st.clone())).unwrap()
+        }
+        StateTransition::IdentityCreate(st) => {
+            PlatformSerializable::serialize_to_bytes(&StateTransition::IdentityCreate(st.clone()))
+                .unwrap()
+        }
+        StateTransition::IdentityTopUp(st) => {
+            PlatformSerializable::serialize_to_bytes(&StateTransition::IdentityTopUp(st.clone()))
+                .unwrap()
+        }
+        StateTransition::IdentityCreditWithdrawal(st) => PlatformSerializable::serialize_to_bytes(
+            &StateTransition::IdentityCreditWithdrawal(st.clone()),
+        )
+        .unwrap(),
+        StateTransition::IdentityUpdate(st) => {
+            PlatformSerializable::serialize_to_bytes(&StateTransition::IdentityUpdate(st.clone()))
+                .unwrap()
+        }
+        StateTransition::IdentityCreditTransfer(st) => PlatformSerializable::serialize_to_bytes(
+            &StateTransition::IdentityCreditTransfer(st.clone()),
+        )
+        .unwrap(),
+        StateTransition::MasternodeVote(st) => {
+            PlatformSerializable::serialize_to_bytes(&StateTransition::MasternodeVote(st.clone()))
+                .unwrap()
         }
     }
 }

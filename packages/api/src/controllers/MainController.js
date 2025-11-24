@@ -9,17 +9,19 @@ const Epoch = require('../models/Epoch')
 const { base58 } = require('@scure/base')
 const DashCoreRPC = require('../dashcoreRpc')
 const TokensDAO = require('../dao/TokensDAO')
+const MasternodeVotesDAO = require('../dao/MasternodeVotesDAO')
 
 const API_VERSION = require('../../package.json').version
 
 class MainController {
   constructor (knex, sdk) {
-    this.blocksDAO = new BlocksDAO(knex, sdk)
     this.dataContractsDAO = new DataContractsDAO(knex, sdk)
-    this.documentsDAO = new DocumentsDAO(knex, sdk)
     this.transactionsDAO = new TransactionsDAO(knex, sdk)
+    this.documentsDAO = new DocumentsDAO(knex, sdk)
     this.identitiesDAO = new IdentitiesDAO(knex, sdk)
+    this.masternodeVotesDAO = new MasternodeVotesDAO(knex, sdk)
     this.validatorsDAO = new ValidatorsDAO(knex)
+    this.blocksDAO = new BlocksDAO(knex, sdk)
     this.tokensDAO = new TokensDAO(knex, sdk)
     this.sdk = sdk
   }

@@ -1,14 +1,20 @@
 const BlocksDAO = require('../dao/BlocksDAO')
-const { EPOCH_CHANGE_TIME, NETWORK } = require('../constants')
+const {
+  EPOCH_CHANGE_TIME,
+  NETWORK,
+  REDIS_PUBSUB_NEW_BLOCK_CHANNEL
+} = require('../constants')
 const DashCoreRPC = require('../dashcoreRpc')
 const TenderdashRPC = require('../tenderdashRpc')
 const Quorum = require('../models/Quorum')
 const QuorumTypeEnum = require('../enums/QuorumTypeEnum')
+const RedisNotConnectedError = require('../errors/RedisNotConnectedError')
 
 class BlocksController {
-  constructor (knex, sdk) {
+  constructor (knex, sdk, redis) {
     this.blocksDAO = new BlocksDAO(knex, sdk)
     this.sdk = sdk
+    this.redis = redis
   }
 
   getBlockByHash = async (request, response) => {
@@ -154,6 +160,40 @@ class BlocksController {
     )
 
     response.send(blocks)
+  }
+
+  subscribeBlock = async (request, response) => {
+    if (!this.redis) {
+      throw new RedisNotConnectedError()
+    }
+
+    const callback = async (channel, message) => {
+      if (channel === REDIS_PUBSUB_NEW_BLOCK_CHANNEL) {
+        const { blockHeight } = JSON.parse(message)
+
+        const block = await this.blocksDAO.getBlockByHeight(blockHeight)
+
+        response.sse({
+          data: JSON.stringify(block),
+          event: 'block',
+          id: String(blockHeight)
+        })
+      }
+    }
+
+    await this.redis.subscribeMessages(callback)
+
+    const lastBlock = await this.blocksDAO.getLastBlock()
+
+    response.sse({
+      data: JSON.stringify(lastBlock ?? { error: 'no blocks' }),
+      event: 'block',
+      id: String(-1)
+    })
+
+    request.raw.on('close', () => {
+      this.redis.unsubscribeMessages(callback)
+    })
   }
 }
 
