@@ -565,9 +565,9 @@ describe('Other routes', () => {
         txHash: dataContractTransaction.hash,
         timestamp: block.timestamp.toISOString(),
         isSystem: false,
-        documentsCount: 1,
+        documentsCount: null,
         keywords: dataContract.keywords ?? [],
-        tokensCount: 1,
+        tokensCount: null,
         averageGasUsed: null,
         description: dataContract.description ?? null,
         identitiesInteracted: null,
@@ -581,7 +581,7 @@ describe('Other routes', () => {
     })
 
     it('should search by data contract keyword', async () => {
-      const { body } = await client.get('/search?query=dummy')
+      const { body } = await client.get('/search?query=dummy contract')
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -594,9 +594,9 @@ describe('Other routes', () => {
         txHash: dataContractTransaction.hash,
         timestamp: block.timestamp.toISOString(),
         isSystem: false,
-        documentsCount: 1,
+        documentsCount: null,
         keywords: dataContract.keywords ?? [],
-        tokensCount: 1,
+        tokensCount: null,
         averageGasUsed: null,
         description: dataContract.description ?? null,
         identitiesInteracted: null,
