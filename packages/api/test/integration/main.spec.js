@@ -201,7 +201,9 @@ describe('Other routes', () => {
     dataContract = await fixtures.dataContract(knex, {
       state_transition_hash: dataContractTransaction.hash,
       owner: identity.identifier,
-      name: 'testContract'
+      name: 'testContract',
+      description: 'contract for test',
+      keywords: ['dummy', 'contract']
     })
 
     documentTransaction = await fixtures.transaction(knex, {
@@ -522,6 +524,64 @@ describe('Other routes', () => {
 
     it('should search by data contract name', async () => {
       const { body } = await client.get('/search?query=testContract')
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      const expectedDataContract = {
+        identifier: dataContract.identifier,
+        name: dataContract.name,
+        owner: identity.identifier.trim(),
+        schema: JSON.stringify(dataContract.schema),
+        version: 0,
+        txHash: dataContractTransaction.hash,
+        timestamp: block.timestamp.toISOString(),
+        isSystem: false,
+        documentsCount: 1,
+        keywords: dataContract.keywords ?? [],
+        tokensCount: 1,
+        averageGasUsed: null,
+        description: dataContract.description ?? null,
+        identitiesInteracted: null,
+        totalGasUsed: null,
+        topIdentity: null,
+        groups: null,
+        tokens: null
+      }
+
+      assert.deepEqual({ dataContracts: [expectedDataContract] }, body)
+    })
+
+    it('should search by data contract description', async () => {
+      const { body } = await client.get('/search?query=contract for test')
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      const expectedDataContract = {
+        identifier: dataContract.identifier,
+        name: dataContract.name,
+        owner: identity.identifier.trim(),
+        schema: JSON.stringify(dataContract.schema),
+        version: 0,
+        txHash: dataContractTransaction.hash,
+        timestamp: block.timestamp.toISOString(),
+        isSystem: false,
+        documentsCount: 1,
+        keywords: dataContract.keywords ?? [],
+        tokensCount: 1,
+        averageGasUsed: null,
+        description: dataContract.description ?? null,
+        identitiesInteracted: null,
+        totalGasUsed: null,
+        topIdentity: null,
+        groups: null,
+        tokens: null
+      }
+
+      assert.deepEqual({ dataContracts: [expectedDataContract] }, body)
+    })
+
+    it('should search by data contract keyword', async () => {
+      const { body } = await client.get('/search?query=dummy')
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
