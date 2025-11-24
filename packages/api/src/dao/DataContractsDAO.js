@@ -10,7 +10,7 @@ module.exports = class DataContractsDAO {
     this.sdk = sdk
   }
 
-  getDataContracts = async (page, limit, order, orderBy, owner, isSystem, withTokens, timestampStart, timestampEnd, documentsCountMin, documentsCountMax) => {
+  getDataContracts = async (page, limit, order, orderBy, owner, isSystem, withTokens, timestampStart, timestampEnd, documentsCountMin, documentsCountMax, description, keywords) => {
     const fromRank = ((page - 1) * limit)
 
     let filtersQuery = ''
@@ -40,8 +40,13 @@ module.exports = class DataContractsDAO {
     }
 
     if (isSystem === true || isSystem === false) {
-      filtersBindings.push(isSystem)
       filtersQuery = filtersQuery !== '' ? filtersQuery + ' and is_system = ?' : 'is_system = ?'
+      filtersBindings.push(isSystem)
+    }
+
+    if(keywords?.length > 0) {
+      filtersQuery = filtersQuery !== '' ? filtersQuery + ' and keywords @> ?' : 'keywords @> ?'
+      filtersBindings.push(keywords)
     }
 
     if (documentsCountMin) {
@@ -71,6 +76,8 @@ module.exports = class DataContractsDAO {
         'is_system',
         'version',
         'state_transition_hash',
+        'keywords',
+        'description',
         this.knex.raw('ROW_NUMBER() OVER(PARTITION BY identifier ORDER BY version DESC) as rank')
       )
 
@@ -83,6 +90,8 @@ module.exports = class DataContractsDAO {
         'owner',
         'is_system',
         'version',
+        'keywords',
+        'description',
         this.knex.raw('COALESCE(tokens_counts.count, 0) as tokens_count')
       )
       .select(this.knex('documents')
@@ -114,7 +123,8 @@ module.exports = class DataContractsDAO {
       .select(
         'filtered_data_contracts.id', 'name', 'filtered_data_contracts.owner',
         'version', 'tx_hash', 'is_system', 'identifier', 'tokens_count',
-        'blocks.timestamp as timestamp', 'blocks.hash as block_hash', 'documents_count'
+        'blocks.timestamp as timestamp', 'blocks.hash as block_hash', 'documents_count',
+        'keywords', 'description',
       )
       .andWhereRaw(filtersQuery, filtersBindings)
       .andWhereRaw(timestampsQueryString, timestampBindings)
@@ -123,14 +133,23 @@ module.exports = class DataContractsDAO {
       .leftJoin('blocks', 'blocks.height', 'state_transitions.block_height')
       .from('filtered_data_contracts')
 
+    if(description) {
+      // replace all wildcard characters to "safe" characters
+      const safeBindings = description.replaceAll('_', '\\_').replaceAll('%', '\\%')
+
+      filteredContracts
+        .whereRaw(`LOWER(description) like LOWER(? || '%')`, safeBindings)
+    }
+
     const rows = await this.knex
       .with('filtered_data_contracts', filteredContracts)
       .select(this.knex.raw('COALESCE(documents_count, 0) as documents_count'))
       .select(this.knex('filtered_data_contracts').count('*').as('total_count'))
       .select(
-        'filtered_data_contracts.id', 'name', 'tokens_count',
         'identifier', 'filtered_data_contracts.owner', 'version',
-        'filtered_data_contracts.tx_hash', 'is_system', 'timestamp', 'block_hash')
+        'filtered_data_contracts.tx_hash', 'is_system', 'timestamp', 'block_hash',
+        'filtered_data_contracts.id', 'name', 'tokens_count', 'keywords', 'description'
+      )
       .orderBy(orderByOptions)
       .limit(limit)
       .offset(fromRank)

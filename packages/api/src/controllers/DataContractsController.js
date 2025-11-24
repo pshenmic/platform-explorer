@@ -30,7 +30,9 @@ class DataContractsController {
       timestamp_start: timestampStart,
       timestamp_end: timestampEnd,
       documents_count_min: documentsCountMin,
-      documents_count_max: documentsCountMax
+      documents_count_max: documentsCountMax,
+      description,
+      keywords,
     } = request.query
 
     if (!['block_height', 'documents_count', 'tx_count', 'balance'].includes(orderBy)) {
@@ -56,7 +58,9 @@ class DataContractsController {
       timestampStart,
       timestampEnd,
       documentsCountMin,
-      documentsCountMax
+      documentsCountMax,
+      description,
+      keywords,
     )
 
     response.send(dataContracts)

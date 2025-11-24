@@ -271,6 +271,19 @@ const schemaTypes = [
         pattern: '^[A-Za-z0-9]+$',
         minLength: 64,
         maxLength: 64
+      },
+      description: {
+        type: ['string', 'null'],
+        minLength: 3,
+        maxLength: 100
+      },
+      keywords: {
+        type: ['array', 'null'],
+        items: {
+          type: ['string'],
+          pattern: '^[A-Za-z0-9]+$',
+        },
+        maxItems: 20
       }
     }
   },
