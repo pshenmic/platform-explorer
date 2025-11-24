@@ -44,7 +44,7 @@ module.exports = class DataContractsDAO {
       filtersBindings.push(isSystem)
     }
 
-    if(keywords?.length > 0) {
+    if (keywords?.length > 0) {
       filtersQuery = filtersQuery !== '' ? filtersQuery + ' and keywords @> ?' : 'keywords @> ?'
       filtersBindings.push(keywords)
     }
@@ -124,7 +124,7 @@ module.exports = class DataContractsDAO {
         'filtered_data_contracts.id', 'name', 'filtered_data_contracts.owner',
         'version', 'tx_hash', 'is_system', 'identifier', 'tokens_count',
         'blocks.timestamp as timestamp', 'blocks.hash as block_hash', 'documents_count',
-        'keywords', 'description',
+        'keywords', 'description'
       )
       .andWhereRaw(filtersQuery, filtersBindings)
       .andWhereRaw(timestampsQueryString, timestampBindings)
@@ -133,12 +133,12 @@ module.exports = class DataContractsDAO {
       .leftJoin('blocks', 'blocks.height', 'state_transitions.block_height')
       .from('filtered_data_contracts')
 
-    if(description) {
+    if (description) {
       // replace all wildcard characters to "safe" characters
       const safeBindings = description.replaceAll('_', '\\_').replaceAll('%', '\\%')
 
       filteredContracts
-        .whereRaw(`LOWER(description) like LOWER(? || '%')`, safeBindings)
+        .whereRaw('LOWER(description) like LOWER(? || \'%\')', safeBindings)
     }
 
     const rows = await this.knex
@@ -206,7 +206,7 @@ module.exports = class DataContractsDAO {
       .with('data_contract_info', dataContractInfoSubquery)
       .with('gas_sub', gasSubquery)
       .select('data_contract.identifier as identifier', 'data_contract.name as name', 'data_contract.owner as owner',
-        'data_contract.schema as schema', 'data_contract.is_system as is_system')
+        'data_contract.schema as schema', 'data_contract.is_system as is_system', 'description', 'keywords')
       .select(
         this.knex('data_contract')
           .select('version')
@@ -240,7 +240,7 @@ module.exports = class DataContractsDAO {
 
     const rows = await this.knex(dataSubquery)
       .select('identifier', 'owner', 'name', 'schema', 'is_system', 'version', 'tx_hash', 'timestamp', 'state_transition_data',
-        'documents_count', 'top_identity', 'identities_interacted', 'total_gas_used', 'average_gas_used')
+        'documents_count', 'top_identity', 'identities_interacted', 'total_gas_used', 'average_gas_used', 'description', 'keywords')
 
     const [row] = rows
 
@@ -399,8 +399,8 @@ module.exports = class DataContractsDAO {
     const rows = await this.knex('data_contracts')
       .select(
         'data_contracts.identifier as identifier', 'data_contracts.name as name',
-        'data_contracts.owner as owner', 'data_contracts.is_system as is_system',
-        'data_contracts.version as version', 'data_contracts.schema as schema',
+        'data_contracts.owner as owner', 'data_contracts.is_system as is_system', 'keywords',
+        'data_contracts.version as version', 'data_contracts.schema as schema', 'description',
         'data_contracts.state_transition_hash as tx_hash', 'blocks.timestamp as timestamp'
       )
       .select(
