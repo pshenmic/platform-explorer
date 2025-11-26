@@ -14,13 +14,12 @@ impl PostgresDAO {
         let tx_id = match st_hash.clone() {
             None => None,
             Some(hash) => Some(
-                self
-                    .get_state_transition_id(hash, sql_transaction)
+                self.get_state_transition_id(hash, sql_transaction)
                     .await
                     .expect("Error getting state_transition_id"),
             ),
         };
-        
+
         let identifier = identity.identifier;
         let revision = identity.revision;
         let revision_i32 = revision as i32;

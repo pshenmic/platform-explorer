@@ -60,7 +60,16 @@ impl Indexer {
 
         let processor = PSQLProcessor::new(dashcore_rpc);
         let tenderdash_url = env::var("TENDERDASH_URL").expect("You've not set the TENDERDASH_URL");
-        let txs_to_skip = env::var("TXS_TO_SKIP").unwrap_or(String::from(""));
+        let txs_to_skip_str = env::var("TXS_TO_SKIP").unwrap_or(String::from(""));
+
+        let mut txs_to_skip = txs_to_skip_str
+            .split(",")
+            .map(|s| String::from(s).to_lowercase())
+            .collect::<Vec<String>>();
+
+        // skip non unique txs
+        txs_to_skip.push("f72dd58af03236502b13cefa918bc13089a689b4cd06dbd44bbe277d1a77e0ab:cf285c01204a6811a06b4b60f599870fffd77f2ceafd771c2608ed56a4454ca0".to_string());
+        txs_to_skip.push("f72dd58af03236502b13cefa918bc13089a689b4cd06dbd44bbe277d1a77e0ab:9be24f6636e70d288c82a37c6b6ff9622e8f3f7c2b6dccb44d005305febeadad".to_string());
 
         let start_height = processor.get_latest_block_height().await;
 
@@ -68,10 +77,7 @@ impl Indexer {
             tenderdash_rpc: TenderdashRpcApi::new(tenderdash_url),
             processor,
             last_block_height: Cell::new(start_height),
-            txs_to_skip: txs_to_skip
-                .split(",")
-                .map(|s| String::from(s))
-                .collect::<Vec<String>>(),
+            txs_to_skip,
         }
     }
 }
