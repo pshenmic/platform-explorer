@@ -119,22 +119,42 @@ module.exports = class ValidatorsDAO {
 
     const proTxHash = owner ? Buffer.from(base58.decode(owner)).toString('hex') : null
 
+    let blocksProposedQueryString = ''
+    let lastProposedBlockHeightQueryString = ''
+    let lastProposedBlockTimestampStartQueryString = ''
+
+    const blocksProposedQueryBindings = []
+    const lastProposedBlockHeightQueryBindings = []
+    const lastProposedBlockTimestampStartQueryBinding = []
+
     let filtersQuery = ''
     const filtersBindings = []
 
-    if (blocksProposedMin && blocksProposedMax) {
-      filtersQuery = 'proposed_blocks_amount between ? and ?'
-      filtersBindings.push(blocksProposedMin, blocksProposedMax)
+    if (blocksProposedMin) {
+      blocksProposedQueryString = 'COALESCE(proposed_blocks_amount,0) >= ?'
+      blocksProposedQueryBindings.push(blocksProposedMin)
+    }
+    if (blocksProposedMax) {
+      blocksProposedQueryString = blocksProposedQueryString === '' ? 'COALESCE(proposed_blocks_amount,0) <= ?' : 'COALESCE(proposed_blocks_amount,0) between ? and ?'
+      blocksProposedQueryBindings.push(blocksProposedMax)
     }
 
-    if (lastProposedBlockHeightMin && lastProposedBlockHeightMax) {
-      filtersQuery = filtersQuery !== '' ? filtersQuery + ' and latest_height between ? and ?' : 'latest_height between ? and ?'
-      filtersBindings.push(lastProposedBlockHeightMin, lastProposedBlockHeightMax)
+    if (lastProposedBlockHeightMin) {
+      lastProposedBlockHeightQueryString = 'COALESCE(latest_height,0) >= ?'
+      lastProposedBlockHeightQueryBindings.push(lastProposedBlockHeightMin)
+    }
+    if (lastProposedBlockHeightMax) {
+      lastProposedBlockHeightQueryString = lastProposedBlockHeightQueryString === '' ? 'COALESCE(latest_height,0) <= ?' : 'COALESCE(latest_height,0) between ? and ?'
+      lastProposedBlockHeightQueryBindings.push(lastProposedBlockHeightMax)
     }
 
-    if (lastProposedBlockTimestampStart && lastProposedBlockTimestampEnd) {
-      filtersQuery = filtersQuery !== '' ? filtersQuery + ' and latest_timestamp between ? and ?' : 'latest_timestamp between ? and ?'
-      filtersBindings.push(new Date(lastProposedBlockTimestampStart).toISOString(), new Date(lastProposedBlockTimestampEnd).toISOString())
+    if (lastProposedBlockTimestampStart) {
+      lastProposedBlockTimestampStartQueryString = 'latest_timestamp >= ?'
+      lastProposedBlockTimestampStartQueryBinding.push(new Date(lastProposedBlockTimestampStart).toISOString())
+    }
+    if (lastProposedBlockTimestampEnd) {
+      lastProposedBlockTimestampStartQueryString = lastProposedBlockTimestampStartQueryString === '' ? 'latest_timestamp <= ?' : 'latest_timestamp between ? and ?'
+      lastProposedBlockTimestampStartQueryBinding.push(new Date(lastProposedBlockTimestampEnd).toISOString())
     }
 
     if (lastProposedBlockHash) {
@@ -193,6 +213,9 @@ module.exports = class ValidatorsDAO {
       )
       .leftJoin('blocks_subquery', 'subquery.id', 'blocks_subquery.validator_id')
       .whereRaw(filtersQuery, filtersBindings)
+      .whereRaw(blocksProposedQueryString, blocksProposedQueryBindings)
+      .whereRaw(lastProposedBlockHeightQueryString, lastProposedBlockHeightQueryBindings)
+      .whereRaw(lastProposedBlockTimestampStartQueryString, lastProposedBlockTimestampStartQueryBinding)
       .from('subquery')
 
     const filteredSubquery = this.knex

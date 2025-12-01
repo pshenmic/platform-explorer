@@ -37,8 +37,12 @@ class DataContractsController {
       return response.status(400).send({ message: 'invalid filters values' })
     }
 
-    if (!timestampStart !== !timestampEnd) {
-      return response.status(400).send({ message: 'you must use timestamp_start and timestamp_end' })
+    if (timestampStart && timestampEnd && new Date(timestampStart).getTime() >= new Date(timestampEnd).getTime()) {
+      return response.status(400).send('Bad timestamp range')
+    }
+
+    if (documentsCountMin && documentsCountMin && documentsCountMin > documentsCountMax) {
+      return response.status(400).send('Bad documents count range')
     }
 
     const dataContracts = await this.dataContractsDAO.getDataContracts(

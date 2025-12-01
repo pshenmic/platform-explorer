@@ -671,8 +671,7 @@ Status can be either `SUCCESS` or `FAIL`. In case of error tx, message will appe
 * `batch_type` number or string of batch type. Can be set multiple times.
 * `gas_min` number of min `gas_used`
 * `gas_max` number of max `gas_used`
-* `timestamp_start` must be used with `timestamp_end`
-* `timestamp_end` must be used with `timestamp_start`
+* `timestamp_start` and `timestamp_end` transaction timestamp 
 * `token_name` name of token
 * Valid `order_by` values are `id`, `gas_used`, `timestamp` or `owner`
 
