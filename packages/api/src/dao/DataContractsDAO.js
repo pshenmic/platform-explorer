@@ -16,10 +16,10 @@ module.exports = class DataContractsDAO {
     let filtersQuery = ''
     const filtersBindings = []
 
-    let timestampsQuery = ''
+    let timestampsQueryString = ''
     const timestampBindings = []
 
-    let documentCountQuery = ''
+    let documentCountQueryString = ''
     const documentCountBindings = []
 
     const orderByOptions = [{ column: 'filtered_data_contracts.id', order }]
@@ -44,14 +44,22 @@ module.exports = class DataContractsDAO {
       filtersQuery = filtersQuery !== '' ? filtersQuery + ' and is_system = ?' : 'is_system = ?'
     }
 
-    if (documentsCountMin && documentsCountMax) {
-      documentCountQuery = 'documents_count between ? and ?'
-      documentCountBindings.push(documentsCountMin, documentsCountMax)
+    if (documentsCountMin) {
+      documentCountQueryString = 'documents_count >= ?'
+      documentCountBindings.push(documentsCountMin)
+    }
+    if (documentsCountMax) {
+      documentCountQueryString = documentCountQueryString === '' ? 'documents_count <= ?' : 'documents_count between ? and ?'
+      documentCountBindings.push(documentsCountMax)
     }
 
-    if (timestampStart && timestampEnd) {
-      timestampsQuery = 'blocks.timestamp between ? and ?'
-      timestampBindings.push(timestampStart, timestampEnd)
+    if (timestampStart) {
+      timestampsQueryString = 'blocks.timestamp >= ?'
+      timestampBindings.push(timestampStart)
+    }
+    if (timestampEnd) {
+      timestampsQueryString = timestampsQueryString === '' ? 'blocks.timestamp <= ?' : 'blocks.timestamp between ? and ?'
+      timestampBindings.push(timestampEnd)
     }
 
     const dataContractsSubquery = this.knex('data_contracts')
@@ -109,8 +117,8 @@ module.exports = class DataContractsDAO {
         'blocks.timestamp as timestamp', 'blocks.hash as block_hash', 'documents_count'
       )
       .andWhereRaw(filtersQuery, filtersBindings)
-      .andWhereRaw(timestampsQuery, timestampBindings)
-      .andWhereRaw(documentCountQuery, documentCountBindings)
+      .andWhereRaw(timestampsQueryString, timestampBindings)
+      .andWhereRaw(documentCountQueryString, documentCountBindings)
       .leftJoin('state_transitions', 'state_transitions.hash', 'filtered_data_contracts.tx_hash')
       .leftJoin('blocks', 'blocks.height', 'state_transitions.block_height')
       .from('filtered_data_contracts')
@@ -180,7 +188,6 @@ module.exports = class DataContractsDAO {
       .with('gas_sub', gasSubquery)
       .select('data_contract.identifier as identifier', 'data_contract.name as name', 'data_contract.owner as owner',
         'data_contract.schema as schema', 'data_contract.is_system as is_system')
-      // 'version', 'state_transitions.data as state_transition_data', 'state_transitions.hash as tx_hash', 'blocks.timestamp as timestamp')
       .select(
         this.knex('data_contract')
           .select('version')
@@ -300,7 +307,8 @@ module.exports = class DataContractsDAO {
     return DataContract.fromObject({
       ...dataContract,
       groups,
-      tokens
+      tokens,
+      tokensCount: tokens?.length
     })
   }
 
@@ -382,6 +390,11 @@ module.exports = class DataContractsDAO {
           .leftJoin('data_contracts', 'data_contracts.id', 'documents.data_contract_id')
           .whereILike('data_contracts.name', `${name}%`)
           .as('documents_count')
+      )
+      .select(this.knex('tokens')
+        .count('* as count')
+        .whereRaw('tokens.data_contract_id = data_contracts.id')
+        .as('tokens_count')
       )
       .whereILike('data_contracts.name', `${name}%`)
       .leftJoin('state_transitions', 'state_transitions.hash', 'data_contracts.state_transition_hash')

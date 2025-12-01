@@ -5,7 +5,38 @@ import { Grid, GridItem } from '@chakra-ui/react'
 import { LoadingList } from '../loading'
 import Pagination from '../pagination'
 import { ErrorMessageBlock } from '../Errors'
+import {
+  createColumnHelper,
+  getCoreRowModel,
+  useReactTable
+} from '@tanstack/react-table'
+
 import './TransactionsList.scss'
+
+const columnHelper = createColumnHelper()
+
+const columns = [
+  columnHelper.accessor('timestamp', {
+    header: 'Time'
+  }),
+  columnHelper.accessor('hash', {
+    header: 'Hash'
+  }),
+  columnHelper.accessor('gasUsed', {
+    header: 'Gas used'
+  }),
+  columnHelper.accessor('owner', {
+    header: 'Owner'
+  }),
+  columnHelper.accessor('type', {
+    header: 'Type'
+  })
+]
+
+const headerExtraClass = {
+  default: '',
+  light: 'TransactionsList__ColumnTitles--Light'
+}
 
 export default function TransactionsList ({
   transactions = [],
@@ -16,10 +47,15 @@ export default function TransactionsList ({
   loading,
   itemsCount = 10
 }) {
-  const headerExtraClass = {
-    default: '',
-    light: 'TransactionsList__ColumnTitles--Light'
-  }
+  const table = useReactTable({
+    data: transactions,
+    columns,
+    getCoreRowModel: getCoreRowModel(),
+    meta: {
+      rate
+    },
+    manualPagination: true
+  })
 
   return (
     <div className={'TransactionsList'}>
@@ -43,10 +79,10 @@ export default function TransactionsList ({
 
       {!loading
         ? <div className={'TransactionsList__Items'}>
-            {transactions?.map((transaction, key) => (
+            {table.getRowModel().rows.map((row) => (
               <TransactionsListItem
-                key={key}
-                transaction={transaction}
+                key={row.id}
+                transaction={row.original}
                 rate={rate}
               />
             ))}

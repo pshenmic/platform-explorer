@@ -12,7 +12,7 @@ module.exports = class TokensDAO {
     this.sdk = sdk
   }
 
-  getTokens = async (page, limit, order, owner, position, contractId) => {
+  getTokens = async (page, limit, order, owner, position, contractId, tokenName, tokenId) => {
     const fromRank = ((page - 1) * limit)
 
     const filtersBindings = []
@@ -33,9 +33,19 @@ module.exports = class TokensDAO {
       filtersBindings.push(contractId.toLowerCase())
     }
 
+    if (tokenId) {
+      filtersQuery = filtersQuery !== '' ? filtersQuery + ' and LOWER(tokens.identifier) = ?' : 'LOWER(tokens.identifier) = ?'
+      filtersBindings.push(tokenId.toLowerCase())
+    }
+
+    if (tokenName) {
+      filtersQuery = filtersQuery !== '' ? filtersQuery + ' and LOWER(tokens.name) LIKE ?' : 'LOWER(tokens.name) LIKE ?'
+      filtersBindings.push(`${tokenName.toLowerCase()}%`)
+    }
+
     const subquery = this.knex('tokens')
       .select('localizations', 'tokens.identifier as identifier', 'base_supply', 'max_supply', 'mintable', 'tokens.owner',
-        'burnable', 'freezable', 'unfreezable', 'destroyable', 'allowed_emergency_actions',
+        'burnable', 'freezable', 'unfreezable', 'destroyable', 'allowed_emergency_actions', 'tokens.name',
         'data_contracts.identifier as data_contract_identifier', 'tokens.id', 'position'
       )
       .whereRaw(filtersQuery, filtersBindings)

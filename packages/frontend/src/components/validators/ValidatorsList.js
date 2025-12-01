@@ -1,105 +1,97 @@
 'use client'
 
-import { useState } from 'react'
 import { ListColumnsHeader } from '../ui/lists'
-import Link from 'next/link'
-import { LoadingLine } from '../loading'
-import { Identifier } from '../data'
-import { Grid, GridItem } from '@chakra-ui/react'
+import { ValidatorListItem } from './ValidatorListItem'
+import { Container } from '@chakra-ui/react'
+import { ErrorMessageBlock } from '@components/Errors'
+import { createColumnHelper, getCoreRowModel, useReactTable } from '@tanstack/react-table'
+import { LoadingLine } from '@components/loading'
+
 import './ValidatorsList.scss'
-import './ValidatorListItem.scss'
 
-const ValidatorListItem = ({ validator, loading }) => {
-  return (
-    !loading
-      ? <Link
-          href={`/validator/${validator.proTxHash}`}
-          className={'ValidatorListItem'}
-        >
-          <Grid className={'ValidatorListItem__Content'}>
-            <GridItem className={'ValidatorListItem__Column'}>
-              {validator?.proTxHash &&
-                <Identifier
-                  className={'ValidatorListItem__Column ValidatorListItem__Column--Identifier'}
-                  avatar={true}
-                  copyButton={true}
-                  styles={['highlight-both']}
-                >
-                  {validator.proTxHash}
-                </Identifier>
-              }
-            </GridItem>
-            <GridItem className={'ValidatorListItem__Column'}>
-              {validator?.lastProposedBlockHeader?.height || '-'}
-            </GridItem>
-            <GridItem className={'ValidatorListItem__Column'}>
-              {validator?.proposedBlocksAmount || '-'}
-            </GridItem>
-          </Grid>
-        </Link>
-      : <LoadingLine loading={loading} className={'ValidatorListItem ValidatorListItem--Loading'}/>
-  )
-}
+const columnHelper = createColumnHelper()
 
-export default function ValidatorsList ({ validators, pageSize }) {
-  const [sort, setSort] = useState({ key: 'blocksProposed', direction: 'asc' })
+const columns = [
+  columnHelper.accessor('proTxHash', {
+    id: 'identifier',
+    header: 'Identifier'
+  }),
+  columnHelper.accessor(row => (row?.isActive === true ? 'current' : 'queued'), {
+    id: 'active',
+    header: 'Active'
+  }),
+  columnHelper.accessor(row => row?.lastProposedBlockHeader?.height ?? 0, {
+    id: 'lastBlockHeight',
+    header: 'Last block height'
+  }),
+  columnHelper.accessor('proposedBlocksAmount', {
+    id: 'proposedBlocksAmount',
+    header: 'Blocks proposed'
+  }),
+  columnHelper.accessor(row => row?.timestamp ?? null, {
+    id: 'timestamp',
+    header: 'Timestamp'
+  })
+]
 
-  function getSortedList () {
-    if (!validators?.data?.resultSet?.length) return []
+const TableWrapper = ({ children }) => (
+  <div className={'ValidatorsList'}>
+    <div className={'ValidatorsList__ContentContainer'}>
+        {children}
+    </div>
+  </div>
+)
 
-    return validators.data.resultSet.sort((a, b) => {
-      if (sort.key === 'lastBlockHeight') {
-        return (a?.lastProposedBlockHeader?.height || 0) > (b?.lastProposedBlockHeader?.height || 0)
-          ? sort.direction === 'asc' ? 1 : -1
-          : sort.direction === 'asc' ? -1 : 1
-      }
+export const ValidatorsListSceleton = () => (
+  <TableWrapper>
+    {Array.from(
+      { length: 25 },
+      (x, i) => (
+        <LoadingLine
+          key={i}
+          loading
+          className={'ValidatorListItem ValidatorListItem--Loading'}
+        />
+      )
+    )}
+  </TableWrapper>
+)
 
-      return a[sort.key] > b[sort.key]
-        ? sort.direction === 'asc' ? 1 : -1
-        : sort.direction === 'asc' ? -1 : 1
-    })
+export const ValidatorsList = ({ loading, list, pageSize, error }) => {
+  const table = useReactTable({
+    data: list,
+    columns,
+    getCoreRowModel: getCoreRowModel(),
+    manualPagination: true
+  })
+
+  if (error) {
+    return <Container h={20}><ErrorMessageBlock /></Container>
   }
 
-  const headers = [
-    {
-      key: 'hash',
-      label: 'proTxHash'
-    },
-    {
-      key: 'lastBlockHeight',
-      label: 'Last block height',
-      isNumeric: true,
-      sortable: true
-    },
-    {
-      key: 'proposedBlocksAmount',
-      label: 'Blocks proposed',
-      isNumeric: true,
-      sortable: true
-    }
-  ]
-
-  return (
-    <div className={'ValidatorsList'}>
-      <div className={'ValidatorsList__ContentContainer'}>
-        <ListColumnsHeader
-          columns={headers}
-          sortCallback={setSort}
-          className={'ValidatorsList__ColumnTitles'}
-          columnClassName={'ValidatorsList__ColumnTitle'}
-        />
-
-        {!validators?.loading
-          ? getSortedList().map((validator, i) => <ValidatorListItem key={i} validator={validator}/>)
-          : Array.from({
+  if (loading) {
+    return (
+      <TableWrapper>
+        {
+          Array.from({
             length: String(pageSize).toLowerCase() === 'all'
               ? 50
               : pageSize
-          }, (x, i) => (
-            <ValidatorListItem key={i} loading={true}/>
-          ))
+          }, (x, i) => <LoadingLine key={i} loading={loading} className={'ValidatorListItem ValidatorListItem--Loading'}/>)
         }
-      </div>
-    </div>
+      </TableWrapper>
+    )
+  }
+
+  return (
+    <TableWrapper>
+      <ListColumnsHeader
+        headers={table.getHeaderGroups().flatMap(({ headers }) => headers)}
+
+        className={'ValidatorsList__ColumnTitles'}
+        columnClassName={'ValidatorsList__ColumnTitle'}
+      />
+       {table.getRowModel().rows.map((row) => <ValidatorListItem key={row.id} validator={row.original} />)}
+  </TableWrapper>
   )
 }

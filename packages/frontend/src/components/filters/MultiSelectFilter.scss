@@ -12,7 +12,6 @@
     flex-direction: column;
     gap: 0.25rem;
     width: fit-content;
-    min-height: 308px;
     max-height: 380px;
     overflow-y: auto;
     @include mixins.BrandScroll();

@@ -228,7 +228,8 @@ describe('Tokens', () => {
         data_contract_id: dataContract.id,
         decimals: i,
         base_supply: (i + 1) * 1000,
-        state_transition_hash: stateTransition?.hash
+        state_transition_hash: stateTransition?.hash,
+        name: `token${i}`
       })
 
       const tokenTransition = await fixtures.tokeTransition(knex, {
@@ -769,6 +770,224 @@ describe('Tokens', () => {
         .filter(({ token }) => token.data_contract_id === dataContract.id)
         .sort((a, b) => b.token.id - a.token.id)
         .slice(0, 11)
+        .map(({ token }) => ({
+          identifier: token.identifier,
+          localizations: {
+            en: {
+              pluralForm: 'tests',
+              singularForm: 'test',
+              shouldCapitalize: true
+            }
+          },
+          baseSupply: '1000',
+          totalSupply: '1000',
+          maxSupply: '1010',
+          owner: {
+            identifier: '11111111111111111111111111111111',
+            aliases: [
+              {
+                alias: 'alias.dash',
+                contested: true,
+                documentId: 'AQV2G2Egvqk8jwDBAcpngjKYcwAkck8Cecs5AjYJxfvW',
+                status: 'ok',
+                timestamp: aliasTimestamp.toISOString()
+              }
+            ]
+          },
+          mintable: false,
+          burnable: false,
+          freezable: false,
+          unfreezable: false,
+          destroyable: false,
+          allowedEmergencyActions: false,
+          dataContractIdentifier: dataContract.identifier,
+          mainGroup: null,
+          position: 29,
+          description: null,
+          changeMaxSupply: true,
+          timestamp: null,
+          totalBurnTransitionsCount: null,
+          totalFreezeTransitionsCount: null,
+          totalGasUsed: null,
+          totalTransitionsCount: null,
+          decimals: 1000,
+          perpetualDistribution: {
+            functionName: 'FixedAmount',
+            functionValue: {
+              amount: '100'
+            },
+            interval: 100,
+            recipientType: 'ContractOwner',
+            recipientValue: null,
+            type: 'BlockBasedDistribution'
+          },
+          preProgrammedDistribution: null,
+          prices: null,
+          price: null
+        }))
+
+      assert.deepEqual(body.resultSet, expectedTokens)
+    })
+
+    it('should return tokens set filter by id', async () => {
+      const [tokenReference] = tokens
+
+      const { body } = await client.get(`/tokens?order=desc&limit=10&page=1&token_id=${tokenReference.token.identifier}`)
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      assert.equal(body.pagination.page, 1)
+      assert.equal(body.pagination.limit, 10)
+      assert.equal(body.pagination.total, 1)
+
+      const expectedTokens = tokens
+        .filter(({ token }) => token.identifier === tokenReference.token.identifier)
+        .sort((a, b) => b.token.id - a.token.id)
+        .slice(0, 10)
+        .map(({ token }) => ({
+          identifier: token.identifier,
+          localizations: {
+            en: {
+              pluralForm: 'tests',
+              singularForm: 'test',
+              shouldCapitalize: true
+            }
+          },
+          baseSupply: '1000',
+          totalSupply: '1000',
+          maxSupply: '1010',
+          owner: {
+            identifier: '11111111111111111111111111111111',
+            aliases: [
+              {
+                alias: 'alias.dash',
+                contested: true,
+                documentId: 'AQV2G2Egvqk8jwDBAcpngjKYcwAkck8Cecs5AjYJxfvW',
+                status: 'ok',
+                timestamp: aliasTimestamp.toISOString()
+              }
+            ]
+          },
+          mintable: false,
+          burnable: false,
+          freezable: false,
+          unfreezable: false,
+          destroyable: false,
+          allowedEmergencyActions: false,
+          dataContractIdentifier: dataContract.identifier,
+          mainGroup: null,
+          position: 29,
+          description: null,
+          changeMaxSupply: true,
+          timestamp: null,
+          totalBurnTransitionsCount: null,
+          totalFreezeTransitionsCount: null,
+          totalGasUsed: null,
+          totalTransitionsCount: null,
+          decimals: 1000,
+          perpetualDistribution: {
+            functionName: 'FixedAmount',
+            functionValue: {
+              amount: '100'
+            },
+            interval: 100,
+            recipientType: 'ContractOwner',
+            recipientValue: null,
+            type: 'BlockBasedDistribution'
+          },
+          preProgrammedDistribution: null,
+          prices: null,
+          price: null
+        }))
+
+      assert.deepEqual(body.resultSet, expectedTokens)
+    })
+
+    it('should return tokens set filter by name with order desc', async () => {
+      const { body } = await client.get('/tokens?order=desc&limit=10&page=1&token_name=token')
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      assert.equal(body.pagination.page, 1)
+      assert.equal(body.pagination.limit, 10)
+      assert.equal(body.pagination.total, 5)
+
+      const expectedTokens = tokens
+        .filter(({ token }) => token.name?.includes('token'))
+        .sort((a, b) => b.token.id - a.token.id)
+        .slice(0, 10)
+        .map(({ token }) => ({
+          identifier: token.identifier,
+          localizations: {
+            en: {
+              pluralForm: 'tests',
+              singularForm: 'test',
+              shouldCapitalize: true
+            }
+          },
+          baseSupply: '1000',
+          totalSupply: '1000',
+          maxSupply: '1010',
+          owner: {
+            identifier: '11111111111111111111111111111111',
+            aliases: [
+              {
+                alias: 'alias.dash',
+                contested: true,
+                documentId: 'AQV2G2Egvqk8jwDBAcpngjKYcwAkck8Cecs5AjYJxfvW',
+                status: 'ok',
+                timestamp: aliasTimestamp.toISOString()
+              }
+            ]
+          },
+          mintable: false,
+          burnable: false,
+          freezable: false,
+          unfreezable: false,
+          destroyable: false,
+          allowedEmergencyActions: false,
+          dataContractIdentifier: dataContract.identifier,
+          mainGroup: null,
+          position: 29,
+          description: null,
+          changeMaxSupply: true,
+          timestamp: null,
+          totalBurnTransitionsCount: null,
+          totalFreezeTransitionsCount: null,
+          totalGasUsed: null,
+          totalTransitionsCount: null,
+          decimals: 1000,
+          perpetualDistribution: {
+            functionName: 'FixedAmount',
+            functionValue: {
+              amount: '100'
+            },
+            interval: 100,
+            recipientType: 'ContractOwner',
+            recipientValue: null,
+            type: 'BlockBasedDistribution'
+          },
+          preProgrammedDistribution: null,
+          prices: null,
+          price: null
+        }))
+
+      assert.deepEqual(body.resultSet, expectedTokens)
+    })
+
+    it('should return tokens set filter by incorrect case name with order desc', async () => {
+      const { body } = await client.get('/tokens?order=desc&limit=10&page=1&token_name=TOKEN')
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      assert.equal(body.pagination.page, 1)
+      assert.equal(body.pagination.limit, 10)
+      assert.equal(body.pagination.total, 5)
+
+      const expectedTokens = tokens
+        .filter(({ token }) => token.name?.includes('token'))
+        .sort((a, b) => b.token.id - a.token.id)
+        .slice(0, 10)
         .map(({ token }) => ({
           identifier: token.identifier,
           localizations: {

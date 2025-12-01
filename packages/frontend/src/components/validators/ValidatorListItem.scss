@@ -14,7 +14,10 @@
   &__Content {
     width: 100%;
     display: grid;
-    grid-template-columns: calc(100% - 400px) 200px 200px;
+    grid-template-columns: minmax(0, 40rem) 150px 150px 250px 150px;
+    justify-content: space-between;
+    gap: 12px;
+
 
     &--Inline {
       display: inline !important;
@@ -24,14 +27,24 @@
   &__Column {
     display: flex;
     align-items: center;
-    justify-content: flex-end;
+    justify-content: flex-start;
     font-size: 0.75rem;
     font-family: $font-mono;
     color: #fff;
 
+    &--Active {
+      width: 54px;
+      display: flex;
+      justify-content: center;
+    }
+
     &:first-child {
       text-align: left;
       justify-content: flex-start;
+    }
+
+    &:last-child {
+      justify-content: flex-end;
     }
   }
 
@@ -57,7 +70,7 @@
 
   @media screen and (max-width: $breakpoint-lg) {
     &__Content {
-      grid-template-columns: calc(100% - 340px) 170px 170px;
+      grid-template-columns: minmax(0, 40rem) 150px 150px 150px 100px;
     }
   }
 }

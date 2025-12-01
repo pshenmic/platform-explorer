@@ -107,32 +107,32 @@ class BlocksController {
       return response.status(400).send('Bad transaction range')
     }
 
-    if (timestampStart && !timestampEnd) {
-      return response.status(400).send('Request must have start and end timestamps')
+    if (timestampStart && timestampEnd && new Date(timestampStart).getTime() < new Date(timestampEnd).getTime()) {
+      return response.status(400).send('Bad timestamp range')
     }
 
-    if (epochIndexMin) {
-      if (epochIndexMax <= epochIndexMin) {
+    if (epochIndexMin || epochIndexMax) {
+      if (epochIndexMin && epochIndexMax && new Date(epochIndexMax).getTime() < new Date(epochIndexMin).getTime()) {
         return response.status(400).send('Bad epochs range')
       }
 
-      const [startEpoch] = await this.sdk.node.getEpochsInfo(
-        1,
-        true,
-        Number(epochIndexMin)
-      )
+      if (epochIndexMin) {
+        const [startEpoch] = await this.sdk.node.getEpochsInfo(
+          1,
+          true,
+          Number(epochIndexMin)
+        )
 
-      epochStartTimestamp = startEpoch?.startTime
+        epochStartTimestamp = Number(startEpoch?.startTime)
+      }
 
       if (epochIndexMax) {
         const [endEpoch] = await this.sdk.node.getEpochsInfo(
           1,
-          Number(epochIndexMax),
-          true
+          true,
+          Number(epochIndexMax)
         )
-        epochEndTimestamp = endEpoch?.startTime + EPOCH_CHANGE_TIME
-      } else {
-        epochEndTimestamp = new Date().getTime()
+        epochEndTimestamp = Number(endEpoch?.startTime) + EPOCH_CHANGE_TIME
       }
     }
 

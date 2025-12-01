@@ -10,6 +10,7 @@ import { RateTooltip, Tooltip } from '../ui/Tooltips'
 import ImageGenerator from '../imageGenerator'
 import { useRouter } from 'next/navigation'
 import { LinkContainer } from '../ui/containers'
+
 import './TransactionsListItem.scss'
 
 function TransactionsListItem ({ transaction, rate }) {
