@@ -39,7 +39,6 @@ function TokensListItem ({ token, variant = 'default', rate }) {
             : <Identifier ellipsis={true} avatar={true} styles={['highlight-both']}>{identifier}</Identifier>
           }
         </GridItem>
-
         <GridItem className={'TokensListItem__Column TokensListItem__Column--Supply'}>
           {maxSupply
             ? <Supply

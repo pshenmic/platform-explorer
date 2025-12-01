@@ -6,6 +6,7 @@ import { Grid, GridItem } from '@chakra-ui/react'
 import Pagination from '../pagination'
 import { ErrorMessageBlock } from '../Errors'
 import { LoadingList } from '../loading'
+
 import './IdentitiesList.scss'
 
 function IdentitiesList ({ identities, headerStyles = 'default', pagination, loading, itemsCount = 10 }) {
