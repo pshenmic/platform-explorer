@@ -64,6 +64,10 @@ export const SearchFilter = ({
         setSelectedEntity(entity)
         onChange(entity?.identifier || '')
         break
+      case 'dataContracts':
+        setSelectedEntity(entity)
+        onChange(entity?.identifier || '')
+        break
       default:
         setSelectedEntity(null)
         onChange(null)
@@ -86,6 +90,9 @@ export const SearchFilter = ({
         break
       case 'identities':
         setSelectedEntity(value ? { identifier: value } : null)
+        break
+      case 'dataContracts':
+        setSelectedEntity(value ? { dataContracts: value } : null)
         break
       default:
         setSelectedEntity(value)

@@ -90,7 +90,7 @@ const DocumentTransitionCard = ({ transition, owner, rate, className }) => {
           'DocumentTransitionCard__InfoLine DocumentTransitionCard__InfoLine--Action'
         }
         title={'Action'}
-        value={<BatchTypeBadge batchType={transition?.action} />}
+        value={<BatchTypeBadge className='DocumentTransitionCard__InfoLine__Badge' batchType={transition?.action} />}
         error={transition?.action === undefined}
       />
 
