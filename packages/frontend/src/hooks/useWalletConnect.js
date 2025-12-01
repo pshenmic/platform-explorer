@@ -6,20 +6,24 @@ export const useWalletConnect = () => {
   const [walletInfo, setWalletInfo] = useState(null)
   const [currentIdentity, setCurrentIdentity] = useState(null)
 
-  const connectWallet = () => {
+  const connectWallet = (cb) => {
     if (!window.dashPlatformExtension) {
       return setError('Dash Platform Extension is not installed')
     }
 
     const { dashPlatformExtension } = window
 
-    dashPlatformExtension.signer.connect()
+    dashPlatformExtension.signer
+      .connect()
       .then((wallet) => {
-        const current = wallet.identities.find(({ identifier }) => identifier === wallet.currentIdentity)
+        const current = wallet.identities.find(
+          ({ identifier }) => identifier === wallet.currentIdentity
+        )
         connected.current = true
         setWalletInfo({ ...wallet, proTxHash: current.proTxHash })
         setError(null)
         setCurrentIdentity(wallet.currentIdentity)
+        cb(wallet)
       })
       .catch((error) => {
         setError(error.toString() || 'Failed to connect wallet')

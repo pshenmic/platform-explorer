@@ -1,3 +1,5 @@
+'use client'
+
 import { createContext, useContext, useEffect } from 'react'
 import { NETWORK_OPTIONS, NETWORKS_ENUM } from 'src/constants/networks'
 

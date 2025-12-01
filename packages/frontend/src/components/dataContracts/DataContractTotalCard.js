@@ -3,34 +3,16 @@ import { Alias, CreditsBlock, DateBlock, Identifier, InfoLine } from '../data'
 import { HorisontalSeparator } from '../ui/separators'
 import { ValueCard } from '../cards'
 import { findActiveAlias } from '../../util'
-import { useModal } from '@components/ui/Modal'
-import { DataContractModal } from './DataContractModal'
+import { DataContractTitle } from './DataContractTitle'
 
 import './DataContractTotalCard.scss'
 
 function DataContractTotalCard ({ dataContract, rate, className }) {
-  const { isOpen, handleOpen, handleClose } = useModal()
   const activeAlias = findActiveAlias(dataContract?.data?.owner?.aliases)
 
   return (
     <div className={`InfoBlock InfoBlock--Gradient DataContractTotalCard ${dataContract.loading ? 'DataContractTotalCard--Loading' : ''} ${className || ''}`}>
-      {dataContract.data.name && (
-        <>
-          <div className='DataContractTotalCard__TitleContainer'>
-            <div className={'DataContractTotalCard__Title'}>
-              {dataContract.data.name}
-            </div>
-
-            <button
-              className={'DataContractTotalCard__Edit'}
-              onClick={handleOpen}
-            >
-              Edit
-            </button>
-          </div>
-          <DataContractModal isOpen={isOpen} onClose={handleClose} />
-        </>
-      )}
+      <DataContractTitle dataContract={dataContract.data} />
       <div className={'DataContractTotalCard__Header'}>
         <div className={'DataContractTotalCard__HeaderLines'}>
           <InfoLine

@@ -1,59 +1,78 @@
-import { useParams } from 'next/navigation'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
+import { useActiveNetwork } from 'src/contexts'
 import { useWalletConnect } from 'src/hooks'
 
-const DOCUMENT_TYPE = 'posts'
+const DOCUMENT_TYPE = 'dataContracts'
 
-const changeDataContract = async ({ identity, dataContractId, data }) => {
-  console.log({ identity, dataContractId, data })
+const changeDataContract = async ({
+  owner,
+  dataContractId,
+  name,
+  dataContractPE
+}) => {
   const sdk = window.dashPlatformSDK
-
-  // Get DocumentWASM from the network
-  const [document] = await sdk.documents.query(
-    dataContractId,
+  const extension = window.dashPlatformExtension
+  const document = await sdk.documents.create(
+    dataContractPE,
     DOCUMENT_TYPE,
-    [['ownerId', '==', identity]] // or any other query
+    {
+      name,
+      identifier: dataContractId
+    },
+    owner
   )
-    console.log({ document })
+  const nonce = await sdk.identities.getIdentityContractNonce(
+    owner,
+    dataContractPE
+  )
+  const params = { identityContractNonce: nonce + 1n }
 
-  // Get last identity contract nonce
-  const identityContractNonce = await sdk.documents.query(
-    ownerId,
-    dataContractId
-  ) // nonce
-
-  // Turn it into StateTransitionWASM
   const stateTransition = await sdk.documents.createStateTransition(
-    { ...document, ...data },
-    'replace',
-    identityContractNonce + 1n
+    document,
+    'create',
+    params
   )
-
-  // Broadcast transaction
-  await sdk.stateTransitions.broadcast(stateTransition)
+  await extension.signer.signAndBroadcast(stateTransition)
 }
 
-export const useDataContractUpdate = () => {
+export const useDataContractUpdate = ({
+  owner,
+  dataContractName,
+  dataContractId
+}) => {
   const wallet = useWalletConnect()
-  const { identifier } = useParams()
+  const [isDisabled, setDisabled] = useState(true)
+  const { dataContractPE } = useActiveNetwork()
 
   useEffect(() => {
-    wallet.connectWallet()
+    const validate = ({ identities }) => {
+      const validIdentity = identities.find(
+        ({ identifier }) => identifier === owner
+      )
+
+      const isDisabledEdit =
+        dataContractName &&
+        validIdentity !== -1 &&
+        dataContractId !== dataContractPE
+
+      setDisabled(isDisabledEdit)
+    }
+    wallet.connectWallet(validate)
   }, [])
 
-  const handleDataContractChange = (data) => {
-    console.log({ data })
-    console.log({ wallet })
+  const handleChangeName = (data) => {
     if (wallet.connected.current) {
       changeDataContract({
-        identity: wallet.currentIdentity,
-        dataContractId: identifier,
-        data
+        owner,
+        name: data.name,
+        dataContractId,
+        dataContractPE
       })
     }
   }
 
   return {
-    handleDataContractChange
+    handleChangeName,
+    isDisabled
   }
 }
