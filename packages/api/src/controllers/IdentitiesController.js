@@ -37,9 +37,51 @@ class IdentitiesController {
   }
 
   getIdentities = async (request, response) => {
-    const { page = 1, limit = 10, order = 'asc', order_by: orderBy = 'block_height' } = request.query
+    const {
+      page = 1,
+      limit = 10,
+      order = 'asc',
+      order_by: orderBy = 'block_height',
+      tx_count_min: txCountMin,
+      tx_count_max: txCountMax,
+      documents_count_min: documentsCountMin,
+      documents_count_max: documentsCountMax,
+      data_contracts_min: dataContractsMin,
+      data_contracts_max: dataContractsMax,
+      balance_min: balanceMin,
+      balance_max: balanceMax,
+    } = request.query
 
-    const identities = await this.identitiesDAO.getIdentities(Number(page ?? 1), Number(limit ?? 10), order, orderBy)
+    if(txCountMin > txCountMax){
+      return response.status(400).send('Bad tx count range')
+    }
+
+    if(documentsCountMin > documentsCountMax){
+      return response.status(400).send('Bad document count range')
+    }
+
+    if(dataContractsMin > dataContractsMax){
+      return response.status(400).send('Bad document count range')
+    }
+
+    if(balanceMin > balanceMax){
+      return response.status(400).send('Bad balance range')
+    }
+
+    const identities = await this.identitiesDAO.getIdentities(
+      Number(page ?? 1),
+      Number(limit ?? 10),
+      order,
+      orderBy,
+      txCountMin,
+      txCountMax,
+      documentsCountMin,
+      documentsCountMax,
+      dataContractsMin,
+      dataContractsMax,
+      balanceMin,
+      balanceMax,
+    )
 
     response.send(identities)
   }

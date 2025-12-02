@@ -271,7 +271,23 @@ const schemaTypes = [
         pattern: '^[A-Za-z0-9]+$',
         minLength: 64,
         maxLength: 64
-      }
+      },
+      data_contracts_min: {
+        type: ['number', 'null'],
+        minimum: 0
+      },
+      data_contracts_max: {
+        type: ['number', 'null'],
+        minimum: 0
+      },
+      balance_min: {
+        type: ['number', 'null'],
+        minimum: 0
+      },
+      balance_max: {
+        type: ['number', 'null'],
+        minimum: 0
+      },
     }
   },
   {
