@@ -281,12 +281,12 @@ const schemaTypes = [
         minimum: 0
       },
       balance_min: {
-        type: ['number', 'null'],
-        minimum: 0
+        type: ['string', 'null'],
+        pattern: '^[0-9]+$',
       },
       balance_max: {
-        type: ['number', 'null'],
-        minimum: 0
+        type: ['string', 'null'],
+        pattern: '^[0-9]+$',
       }
     }
   },

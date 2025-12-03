@@ -263,7 +263,7 @@ module.exports = class IdentitiesDAO {
     }
     if (documentsCountMax != null) {
       documentCountQueryString = documentCountQueryString === '' ? 'total_documents <= ?' : 'total_documents BETWEEN ? AND ?'
-      documentCountQueryBindings.push(txCountMax)
+      documentCountQueryBindings.push(documentsCountMax)
     }
 
     if (dataContractsCountMin != null) {
@@ -272,7 +272,7 @@ module.exports = class IdentitiesDAO {
     }
     if (dataContractsCountMax != null) {
       dataContractCountQueryString = dataContractCountQueryString === '' ? 'total_data_contracts <= ?' : 'total_data_contracts BETWEEN ? AND ?'
-      dataContractsCountQueryBindings.push(dataContractsCountMin)
+      dataContractsCountQueryBindings.push(dataContractsCountMax)
     }
 
     if (balanceMin != null) {
@@ -329,9 +329,13 @@ module.exports = class IdentitiesDAO {
     const subqueryAdditionalInfo = this.knex(subqueryLastRevision)
       .with('as_documents', documentsSubQuery)
       .with('as_data_contracts', dataContractsSubQuery)
-      .select('identity_id', 'identities.identifier', 'identity_owner', 'documents_count as total_documents',
-        'data_contracts_count as total_data_contracts', 'is_system', 'tx_hash', 'tx_id', 'revision', 'balance', 'total_transfers')
-      .select(this.knex('state_transitions').count('*').whereRaw('owner = identities.identifier').as('total_txs'))
+      .select('identity_id', 'identities.identifier', 'identity_owner',
+        'is_system', 'tx_hash', 'tx_id', 'revision', 'balance', 'total_transfers')
+      .select(
+        this.knex.raw('COALESCE(data_contracts_count, 0) as total_data_contracts'),
+        this.knex.raw('COALESCE(documents_count, 0) as total_documents'),
+        this.knex('state_transitions').count('*').whereRaw('owner = identities.identifier').as('total_txs')
+      )
       .leftJoin(transfersStatsSubquery, 'transfers_subquery.identifier', 'identities.identifier')
       .leftJoin('as_documents', 'as_documents.owner', 'identities.identifier')
       .leftJoin('as_data_contracts', 'as_data_contracts.owner', 'identities.identifier')
