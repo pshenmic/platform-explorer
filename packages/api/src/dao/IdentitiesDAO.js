@@ -285,7 +285,7 @@ module.exports = class IdentitiesDAO {
     }
 
     const transfersSubquery = this.knex
-      .union([
+      .unionAll([
         this.knex('transfers')
           .select('sender as identifier', this.knex.raw('-amount as amount'))
           .whereRaw('sender is not null'),
@@ -330,8 +330,9 @@ module.exports = class IdentitiesDAO {
       .with('as_documents', documentsSubQuery)
       .with('as_data_contracts', dataContractsSubQuery)
       .select('identity_id', 'identities.identifier', 'identity_owner',
-        'is_system', 'tx_hash', 'tx_id', 'revision', 'balance', 'total_transfers')
+        'is_system', 'tx_hash', 'tx_id', 'revision', 'total_transfers')
       .select(
+        this.knex.raw('COALESCE(balance, 0) as balance'),
         this.knex.raw('COALESCE(data_contracts_count, 0) as total_data_contracts'),
         this.knex.raw('COALESCE(documents_count, 0) as total_documents'),
         this.knex('state_transitions').count('*').whereRaw('owner = identities.identifier').as('total_txs')

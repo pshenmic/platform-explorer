@@ -282,11 +282,11 @@ const schemaTypes = [
       },
       balance_min: {
         type: ['string', 'null'],
-        pattern: '^[0-9]+$',
+        pattern: '^[0-9]+$'
       },
       balance_max: {
         type: ['string', 'null'],
-        pattern: '^[0-9]+$',
+        pattern: '^[0-9]+$'
       }
     }
   },
