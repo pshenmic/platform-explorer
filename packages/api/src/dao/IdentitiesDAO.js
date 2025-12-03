@@ -327,12 +327,14 @@ module.exports = class IdentitiesDAO {
       .groupBy('owner')
 
     const subqueryAdditionalInfo = this.knex(subqueryLastRevision)
+      .with('as_documents', documentsSubQuery)
+      .with('as_data_contracts', dataContractsSubQuery)
       .select('identity_id', 'identities.identifier', 'identity_owner', 'documents_count as total_documents',
         'data_contracts_count as total_data_contracts', 'is_system', 'tx_hash', 'tx_id', 'revision', 'balance', 'total_transfers')
       .select(this.knex('state_transitions').count('*').whereRaw('owner = identities.identifier').as('total_txs'))
       .leftJoin(transfersStatsSubquery, 'transfers_subquery.identifier', 'identities.identifier')
-      .leftJoin('as_documents', 'as_documents.owner', 'identifier')
-      .leftJoin('as_data_contracts', 'as_data_contracts.owner', 'identifier')
+      .leftJoin('as_documents', 'as_documents.owner', 'identities.identifier')
+      .leftJoin('as_data_contracts', 'as_data_contracts.owner', 'identities.identifier')
       .as('identities')
 
     const filteredIdentities = this.knex(subqueryAdditionalInfo)
@@ -345,8 +347,6 @@ module.exports = class IdentitiesDAO {
 
     const rows = await this.knex
       .with('with_alias', filteredIdentities)
-      .with('as_documents', documentsSubQuery)
-      .with('as_data_contracts', dataContractsSubQuery)
       .select(
         'total_txs', 'identity_id', 'identifier', 'identity_owner', 'revision', 'tx_hash',
         'tx_id', 'blocks.timestamp as timestamp', 'is_system', 'balance', 'total_transfers',
