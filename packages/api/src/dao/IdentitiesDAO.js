@@ -4,7 +4,7 @@ const Transaction = require('../models/Transaction')
 const Document = require('../models/Document')
 const DataContract = require('../models/DataContract')
 const PaginatedResultSet = require('../models/PaginatedResultSet')
-const {IDENTITY_CREDIT_WITHDRAWAL, IDENTITY_TOP_UP} = require('../enums/StateTransitionEnum')
+const { IDENTITY_CREDIT_WITHDRAWAL, IDENTITY_TOP_UP } = require('../enums/StateTransitionEnum')
 const {
   decodeStateTransition,
   getAliasStateByVote,
@@ -16,7 +16,7 @@ const BatchEnum = require('../enums/BatchEnum')
 const SeriesData = require('../models/SeriesData')
 
 module.exports = class IdentitiesDAO {
-  constructor(knex, sdk) {
+  constructor (knex, sdk) {
     this.knex = knex
     this.sdk = sdk
   }
@@ -163,7 +163,7 @@ module.exports = class IdentitiesDAO {
     let fundingCoreTx = null
 
     if (row.tx_data) {
-      const {assetLockProof} = await decodeStateTransition(row.tx_data)
+      const { assetLockProof } = await decodeStateTransition(row.tx_data)
 
       fundingCoreTx = assetLockProof?.fundingCoreTx
     }
@@ -192,9 +192,9 @@ module.exports = class IdentitiesDAO {
           publicKeyHash: key.getPublicKeyHash(),
           contractBounds: contractBounds
             ? {
-              identifier: contractBounds.identifier.base58(),
-              documentTypeName: contractBounds.documentTypeName ?? null
-            }
+                identifier: contractBounds.identifier.base58(),
+                documentTypeName: contractBounds.documentTypeName ?? null
+              }
             : null,
           disabledAt: key.disabledAt?.toString() ?? null
         }
@@ -220,40 +220,68 @@ module.exports = class IdentitiesDAO {
       return {
         identifier: row.identity_identifier,
         alias: row.alias,
-        status: getAliasStateByVote(aliasInfo, {...row}, row.identity_identifier)
+        status: getAliasStateByVote(aliasInfo, { ...row }, row.identity_identifier)
       }
     }))
   }
 
-  getIdentities = async (page, limit, order, orderBy, txCountMin, txCountMax, documentsCountMin, documentsCountMax, dataContractsMin, dataContractsMax, balanceMin, balanceMax,) => {
+  getIdentities = async (page, limit, order, orderBy, txCountMin, txCountMax, documentsCountMin, documentsCountMax, dataContractsCountMin, dataContractsCountMax, balanceMin, balanceMax) => {
     const fromRank = (page - 1) * limit
 
-    const orderByOptions = [{column: 'identity_id', order}]
+    const orderByOptions = [{ column: 'identity_id', order }]
 
     if (orderBy === 'tx_count') {
-      orderByOptions.unshift({column: 'total_txs', order})
+      orderByOptions.unshift({ column: 'total_txs', order })
     }
 
     if (orderBy === 'balance') {
-      orderByOptions.unshift({column: 'balance', order})
+      orderByOptions.unshift({ column: 'balance', order })
     }
 
-    const getRankString = () => {
-      return orderByOptions.reduce((acc, value, index, arr) =>
-        acc + ` ${value.column} ${value.order}${index === arr.length - 1 ? '' : ','}`, 'order by')
-    }
-
+    let txCountQueryString = ''
+    let documentCountQueryString = ''
+    let dataContractCountQueryString = ''
     let balanceQueryString = ''
 
-    const balanceBindings = []
+    const txCountQueryBindings = []
+    const documentCountQueryBindings = []
+    const dataContractsCountQueryBindings = []
+    const balanceQueryBindings = []
+
+    if (txCountMin != null) {
+      txCountQueryString = 'total_txs >= ?'
+      txCountQueryBindings.push(txCountMin)
+    }
+    if (txCountMax != null) {
+      txCountQueryString = txCountQueryString === '' ? 'total_txs <= ?' : 'total_txs BETWEEN ? AND ?'
+      txCountQueryBindings.push(txCountMax)
+    }
+
+    if (documentsCountMin != null) {
+      documentCountQueryString = 'total_documents >= ?'
+      documentCountQueryBindings.push(documentsCountMin)
+    }
+    if (documentsCountMax != null) {
+      documentCountQueryString = documentCountQueryString === '' ? 'total_documents <= ?' : 'total_documents BETWEEN ? AND ?'
+      documentCountQueryBindings.push(txCountMax)
+    }
+
+    if (dataContractsCountMin != null) {
+      dataContractCountQueryString = 'total_data_contracts >= ?'
+      dataContractsCountQueryBindings.push(dataContractsCountMin)
+    }
+    if (dataContractsCountMax != null) {
+      dataContractCountQueryString = dataContractCountQueryString === '' ? 'total_data_contracts <= ?' : 'total_data_contracts BETWEEN ? AND ?'
+      dataContractsCountQueryBindings.push(dataContractsCountMin)
+    }
 
     if (balanceMin != null) {
       balanceQueryString = 'balance >= ?'
-      balanceBindings.push(balanceMin)
+      balanceQueryBindings.push(balanceMin)
     }
     if (balanceMax != null) {
       balanceQueryString = balanceQueryString === '' ? 'balance <= ?' : 'balance BETWEEN ? AND ?'
-      balanceBindings.push(balanceMax)
+      balanceQueryBindings.push(balanceMax)
     }
 
     const transfersSubquery = this.knex
@@ -270,7 +298,7 @@ module.exports = class IdentitiesDAO {
     const transfersStatsSubquery = this.knex(transfersSubquery)
       .select('identifier')
       .select(this.knex.raw('SUM(amount) as balance'))
-      .count('*', {as: 'total_transfers'})
+      .count('*', { as: 'total_transfers' })
       .groupBy('identifier')
       .as('transfers_subquery')
 
@@ -286,41 +314,45 @@ module.exports = class IdentitiesDAO {
       .where('rank', 1)
       .as('identities')
 
-    const subqueryAdditionalInfo = this.knex(subqueryLastRevision)
-      .select('identity_id', 'identities.identifier', 'identity_owner',
-        'is_system', 'tx_hash', 'tx_id', 'revision', 'balance', 'total_transfers')
-      .select(this.knex('state_transitions').count('*').whereRaw('owner = identities.identifier').as('total_txs'))
-      .leftJoin(transfersStatsSubquery, 'transfers_subquery.identifier', 'identities.identifier')
-      .as('identities')
-
-    const filteredIdentities = this.knex(subqueryAdditionalInfo)
-      .select('balance', 'total_txs', 'identity_id', 'identifier', 'identity_owner', 'tx_hash', 'tx_id', 'revision', 'is_system', 'total_transfers')
-      .whereRaw(balanceQueryString, balanceBindings)
-
     const documentsSubQuery = this.knex('documents')
       .select('owner')
-      .count('*', {as: 'documents_count'})
+      .count('*', { as: 'documents_count' })
       .where('revision', 1)
       .groupBy('owner')
 
     const dataContractsSubQuery = this.knex('data_contracts')
       .select('owner')
-      .count('*', {as: 'data_contracts_count'})
+      .count('*', { as: 'data_contracts_count' })
       .where('version', 1)
       .groupBy('owner')
 
-    const rows = this.knex
+    const subqueryAdditionalInfo = this.knex(subqueryLastRevision)
+      .select('identity_id', 'identities.identifier', 'identity_owner', 'documents_count as total_documents',
+        'data_contracts_count as total_data_contracts', 'is_system', 'tx_hash', 'tx_id', 'revision', 'balance', 'total_transfers')
+      .select(this.knex('state_transitions').count('*').whereRaw('owner = identities.identifier').as('total_txs'))
+      .leftJoin(transfersStatsSubquery, 'transfers_subquery.identifier', 'identities.identifier')
+      .leftJoin('as_documents', 'as_documents.owner', 'identifier')
+      .leftJoin('as_data_contracts', 'as_data_contracts.owner', 'identifier')
+      .as('identities')
+
+    const filteredIdentities = this.knex(subqueryAdditionalInfo)
+      .select('balance', 'total_txs', 'identity_id', 'identifier', 'total_data_contracts',
+        'identity_owner', 'tx_hash', 'tx_id', 'revision', 'is_system', 'total_transfers', 'total_documents')
+      .whereRaw(txCountQueryString, txCountQueryBindings)
+      .whereRaw(documentCountQueryString, documentCountQueryBindings)
+      .whereRaw(dataContractCountQueryString, dataContractsCountQueryBindings)
+      .whereRaw(balanceQueryString, balanceQueryBindings)
+
+    const rows = await this.knex
       .with('with_alias', filteredIdentities)
       .with('as_documents', documentsSubQuery)
       .with('as_data_contracts', dataContractsSubQuery)
       .select(
         'total_txs', 'identity_id', 'identifier', 'identity_owner', 'revision', 'tx_hash',
         'tx_id', 'blocks.timestamp as timestamp', 'is_system', 'balance', 'total_transfers',
-        'documents_count as total_documents', 'data_contracts_count as total_data_contracts'
+        'total_documents', 'total_data_contracts'
       )
       .select(this.knex('with_alias').count('*').as('total_count'))
-      .leftJoin('as_documents', 'as_documents.owner', 'identifier')
-      .leftJoin('as_data_contracts', 'as_data_contracts.owner', 'identifier')
       .leftJoin('state_transitions', 'state_transitions.id', 'tx_id')
       .leftJoin('blocks', 'state_transitions.block_height', 'blocks.height')
       .offset(fromRank)
@@ -635,7 +667,7 @@ module.exports = class IdentitiesDAO {
         registeredIdentities: Number(row.identities_count ?? 0)
       }
     }))
-      .map(({timestamp, data}) => new SeriesData(timestamp, data))
+      .map(({ timestamp, data }) => new SeriesData(timestamp, data))
       .sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime())
   }
 }

@@ -287,7 +287,7 @@ const schemaTypes = [
       balance_max: {
         type: ['number', 'null'],
         minimum: 0
-      },
+      }
     }
   },
   {

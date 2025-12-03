@@ -49,22 +49,22 @@ class IdentitiesController {
       data_contracts_min: dataContractsMin,
       data_contracts_max: dataContractsMax,
       balance_min: balanceMin,
-      balance_max: balanceMax,
+      balance_max: balanceMax
     } = request.query
 
-    if(txCountMin > txCountMax){
+    if (txCountMin > txCountMax) {
       return response.status(400).send('Bad tx count range')
     }
 
-    if(documentsCountMin > documentsCountMax){
+    if (documentsCountMin > documentsCountMax) {
       return response.status(400).send('Bad document count range')
     }
 
-    if(dataContractsMin > dataContractsMax){
+    if (dataContractsMin > dataContractsMax) {
       return response.status(400).send('Bad document count range')
     }
 
-    if(balanceMin > balanceMax){
+    if (balanceMin > balanceMax) {
       return response.status(400).send('Bad balance range')
     }
 
@@ -80,7 +80,7 @@ class IdentitiesController {
       dataContractsMin,
       dataContractsMax,
       balanceMin,
-      balanceMax,
+      balanceMax
     )
 
     response.send(identities)
