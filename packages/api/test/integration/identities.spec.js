@@ -1146,7 +1146,9 @@ describe('Identities routes', () => {
         topIdentity: null,
         totalGasUsed: null,
         groups: null,
-        tokens: null
+        tokens: null,
+        keywords: _dataContract.dataContract.keywords ?? [],
+        description: _dataContract.dataContract.description ?? null
       }))
       assert.deepEqual(body.resultSet, expectedDataContracts)
     })
@@ -1199,7 +1201,9 @@ describe('Identities routes', () => {
           topIdentity: null,
           totalGasUsed: null,
           groups: null,
-          tokens: null
+          tokens: null,
+          keywords: _dataContract.dataContract.keywords ?? [],
+          description: _dataContract.dataContract.description ?? null
         }))
       assert.deepEqual(body.resultSet, expectedDataContracts)
     })
@@ -1252,7 +1256,9 @@ describe('Identities routes', () => {
           topIdentity: null,
           totalGasUsed: null,
           tokens: null,
-          groups: null
+          groups: null,
+          keywords: _dataContract.dataContract.keywords ?? [],
+          description: _dataContract.dataContract.description ?? null
         }))
       assert.deepEqual(body.resultSet, expectedDataContracts)
     })
@@ -1305,7 +1311,9 @@ describe('Identities routes', () => {
           topIdentity: null,
           totalGasUsed: null,
           tokens: null,
-          groups: null
+          groups: null,
+          keywords: _dataContract.dataContract.keywords ?? [],
+          description: _dataContract.dataContract.description ?? null
         }))
       assert.deepEqual(body.resultSet, expectedDataContracts)
     })

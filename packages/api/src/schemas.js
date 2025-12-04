@@ -272,6 +272,19 @@ const schemaTypes = [
         minLength: 64,
         maxLength: 64
       },
+      description: {
+        type: ['string', 'null'],
+        minLength: 3,
+        maxLength: 100
+      },
+      keywords: {
+        type: ['array', 'null'],
+        items: {
+          type: ['string'],
+          pattern: '^[A-Za-z0-9]+$'
+        },
+        maxItems: 20
+      },
       data_contracts_min: {
         type: ['number', 'null'],
         minimum: 0

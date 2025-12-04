@@ -775,7 +775,7 @@ const decodeStateTransition = async (base64) => {
               action: BatchEnum[transition.actionTypeNumber],
               id: transition.id.base58(),
               dataContractId: transition.dataContractId.base58(),
-              revision: String(transition.revision),
+              revision: String(transition.revision ?? 0),
               type: transition.documentTypeName,
               identityContractNonce: String(transition.identityContractNonce)
             }
@@ -1363,6 +1363,9 @@ const getAliasDocumentForIdentifiers = async (identifiers, sdk) => {
   }), {})
 }
 
+// replace all wildcard characters to "safe" characters
+const convertToSqlSafeString = (sql) => sql.replaceAll('_', '\\_').replaceAll('%', '\\%')
+
 module.exports = {
   hash,
   decodeStateTransition,
@@ -1379,5 +1382,6 @@ module.exports = {
   fetchTokenInfoByRows,
   convertToHomographSafeChars,
   getAliasDocumentForIdentifiers,
-  getAliasDocumentForIdentifier
+  getAliasDocumentForIdentifier,
+  convertToSqlSafeString
 }

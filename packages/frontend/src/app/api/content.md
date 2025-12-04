@@ -776,7 +776,9 @@ GET /dataContract/HzMke6E5SnSqLdCX1u3WdwpWx1hFFkSnFQpahTPdYUSF
             "totalBurnTransitionsCount": null,
             "decimals": 4
         }
-    ]
+    ],
+    "description": "Data Contract Description",
+    "keywords": ["keyword1", "keyword2"]
 }
 ```
 Response codes:
@@ -817,27 +819,34 @@ Return dataContracts set paged and order by block height or documents count.
 * `documents_count_min` and `documents_count_max` minimum and maximum count of documents for data contract
 
 ```
-GET /dataContracts?page=1&limit=10&order=asc&order_by=block_height&timestamp_start=2025-01-22T11:09:23.892Z&timestamp_end=2025-03-22T11:09:23.892Z&owner=G3yCKwx9ePsBriBoag5FEhDkad5Qq77cyqLG1FRyhhSi&is_system=false&with_tokens=false&documents_count_min=1&documents_count_max=5
+GET /dataContracts?page=1&limit=10&order=asc&order_by=block_height&timestamp_start=2025-01-22T11:09:23.892Z&timestamp_end=2025-03-22T11:09:23.892Z&owner=G3yCKwx9ePsBriBoag5FEhDkad5Qq77cyqLG1FRyhhSi&is_system=false&with_tokens=false&documents_count_min=1&documents_count_max=5&description=Sansnote&keywords=dash&keywords=evo
 
 {
     "resultSet": [
         {
-            "identifier": "DnLifBv1j3E8pr5gLjQFKK1HSNPn23m79LMWkSzgSNqY",
+            "identifier": "86QuRPc8n8VhEjWAcgdvfauynS1ZtnZLiSXFqUKJyo2n",
             "name": null,
-            "owner": "G3yCKwx9ePsBriBoag5FEhDkad5Qq77cyqLG1FRyhhSi",
+            "owner": "AFaVqRJCWXFZRUhuq6ZUUcWXVW8fErCN3wpEtgsBnDZm",
             "schema": null,
-            "version": 4,
-            "txHash": "8381BAC9EBDEA4DE87FFA3805F3AB9767DA3CDA64354FE6678F852C5ED448906",
-            "timestamp": "2025-01-22T11:09:23.892Z",
+            "version": 1,
+            "txHash": "B92DE3344132279D4E85C831624C857B5B2EC7F990945E1140E3160E661E5D2B",
+            "timestamp": "2025-08-16T02:58:59.740Z",
             "isSystem": false,
-            "documentsCount": 3,
-            "tokensCount": 0,
+            "documentsCount": 0,
+            "tokensCount": 1,
             "topIdentity": null,
             "identitiesInteracted": null,
             "totalGasUsed": null,
             "averageGasUsed": null,
             "groups": null,
-            "tokens": null
+            "tokens": null,
+            "description": "Sansnote (tSANS), a governance and utility token serving as the backbone of the Sansbank community.",
+            "keywords": [
+                "dash",
+                "evo",
+                "dao",
+                "tSANS"
+            ]
         },
         ...
     ],
@@ -1457,7 +1466,9 @@ GET /identities/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec/dataContracts?page=
         "timestamp": "2024-03-18T10:13:54.150Z",
         "isSystem": false,
         "documentsCount": 1337,
-        "tokensCount": 0
+        "tokensCount": 0,
+        "description": "Data Contract Description",
+        "keywords": ["keyword1", "keyword2"]
     }, ...
     ]
 }
@@ -1643,6 +1654,8 @@ This endpoint allows search any types of data
 * Data Contract
   * Full `Identifier`
   * Part `name`
+  * One of `keyword`
+  * Part `description`
 * Document
   * Full `Identifier`
 * Tokens

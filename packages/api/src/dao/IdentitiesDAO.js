@@ -409,13 +409,13 @@ module.exports = class IdentitiesDAO {
 
     const subquery = this.knex('data_contracts')
       .select('data_contracts.id', 'data_contracts.identifier as identifier', 'data_contracts.name as name',
-        'data_contracts.owner as data_contract_owner', 'data_contracts.version as version',
+        'data_contracts.owner as data_contract_owner', 'data_contracts.version as version', 'description', 'keywords',
         'data_contracts.state_transition_hash as tx_hash', 'data_contracts.is_system as is_system')
       .select(this.knex.raw('rank() over (partition by data_contracts.identifier order by data_contracts.id desc) rank'))
       .where('owner', '=', identifier)
 
     const filteredDataContracts = this.knex.with('with_alias', subquery)
-      .select('id', 'identifier', 'name', 'data_contract_owner', 'version', 'tx_hash', 'rank', 'is_system')
+      .select('id', 'identifier', 'name', 'data_contract_owner', 'version', 'tx_hash', 'rank', 'is_system', 'description', 'keywords')
       .select(this.knex('with_alias').count('*').where('rank', 1).as('total_count'))
       .select(this.knex.raw(`rank() over (order by id ${order}) row_number`))
       .from('with_alias')
@@ -423,7 +423,7 @@ module.exports = class IdentitiesDAO {
       .as('data_contract_subquery')
 
     const rows = await this.knex(filteredDataContracts)
-      .select('data_contract_subquery.id as id', 'name', 'identifier', 'data_contract_owner', 'version', 'tx_hash', 'rank', 'total_count', 'row_number', 'is_system', 'blocks.timestamp as timestamp')
+      .select('data_contract_subquery.id as id', 'name', 'identifier', 'data_contract_owner', 'version', 'tx_hash', 'rank', 'total_count', 'row_number', 'is_system', 'blocks.timestamp as timestamp', 'description', 'keywords')
       .select(this.knex(sumDocuments)
         .count('*')
         .whereRaw('sum_documents.dc_identifier = data_contract_subquery.identifier')
