@@ -1363,6 +1363,9 @@ const getAliasDocumentForIdentifiers = async (identifiers, sdk) => {
   }), {})
 }
 
+// replace all wildcard characters to "safe" characters
+const convertToSqlSafeString = (sql) => sql.replaceAll('_', '\\_').replaceAll('%', '\\%')
+
 module.exports = {
   hash,
   decodeStateTransition,
@@ -1379,5 +1382,6 @@ module.exports = {
   fetchTokenInfoByRows,
   convertToHomographSafeChars,
   getAliasDocumentForIdentifiers,
-  getAliasDocumentForIdentifier
+  getAliasDocumentForIdentifier,
+  convertToSqlSafeString
 }
