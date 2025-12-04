@@ -18,6 +18,10 @@
       justify-content: flex-start;
     }
 
+    &--Position {
+        font-size: 0.75rem;
+    }
+
     &--DataContract {
       overflow: hidden;
       justify-content: flex-start;
@@ -36,6 +40,10 @@
     &--OwnerIdentity {
       overflow: hidden;
       justify-content: flex-end;
+    }
+
+    &--Position {
+      width: 80px;
     }
 
     &--Balance, &--Price {

@@ -638,8 +638,7 @@ Status can be either `SUCCESS` or `FAIL`. In case of error tx, message will appe
 * `batch_type` number or string of batch type. Can be set multiple times.
 * `gas_min` number of min `gas_used`
 * `gas_max` number of max `gas_used`
-* `timestamp_start` must be used with `timestamp_end`
-* `timestamp_end` must be used with `timestamp_start`
+* `timestamp_start` and `timestamp_end` transaction timestamp
 * `token_name` name of token
 * Valid `order_by` values are `id`, `gas_used`, `timestamp` or `owner`
 
@@ -777,7 +776,9 @@ GET /dataContract/HzMke6E5SnSqLdCX1u3WdwpWx1hFFkSnFQpahTPdYUSF
             "totalBurnTransitionsCount": null,
             "decimals": 4
         }
-    ]
+    ],
+    "description": "Data Contract Description",
+    "keywords": ["keyword1", "keyword2"]
 }
 ```
 Response codes:
@@ -818,27 +819,34 @@ Return dataContracts set paged and order by block height or documents count.
 * `documents_count_min` and `documents_count_max` minimum and maximum count of documents for data contract
 
 ```
-GET /dataContracts?page=1&limit=10&order=asc&order_by=block_height&timestamp_start=2025-01-22T11:09:23.892Z&timestamp_end=2025-03-22T11:09:23.892Z&owner=G3yCKwx9ePsBriBoag5FEhDkad5Qq77cyqLG1FRyhhSi&is_system=false&with_tokens=false&documents_count_min=1&documents_count_max=5
+GET /dataContracts?page=1&limit=10&order=asc&order_by=block_height&timestamp_start=2025-01-22T11:09:23.892Z&timestamp_end=2025-03-22T11:09:23.892Z&owner=G3yCKwx9ePsBriBoag5FEhDkad5Qq77cyqLG1FRyhhSi&is_system=false&with_tokens=false&documents_count_min=1&documents_count_max=5&description=Sansnote&keywords=dash&keywords=evo
 
 {
     "resultSet": [
         {
-            "identifier": "DnLifBv1j3E8pr5gLjQFKK1HSNPn23m79LMWkSzgSNqY",
+            "identifier": "86QuRPc8n8VhEjWAcgdvfauynS1ZtnZLiSXFqUKJyo2n",
             "name": null,
-            "owner": "G3yCKwx9ePsBriBoag5FEhDkad5Qq77cyqLG1FRyhhSi",
+            "owner": "AFaVqRJCWXFZRUhuq6ZUUcWXVW8fErCN3wpEtgsBnDZm",
             "schema": null,
-            "version": 4,
-            "txHash": "8381BAC9EBDEA4DE87FFA3805F3AB9767DA3CDA64354FE6678F852C5ED448906",
-            "timestamp": "2025-01-22T11:09:23.892Z",
+            "version": 1,
+            "txHash": "B92DE3344132279D4E85C831624C857B5B2EC7F990945E1140E3160E661E5D2B",
+            "timestamp": "2025-08-16T02:58:59.740Z",
             "isSystem": false,
-            "documentsCount": 3,
-            "tokensCount": 0,
+            "documentsCount": 0,
+            "tokensCount": 1,
             "topIdentity": null,
             "identitiesInteracted": null,
             "totalGasUsed": null,
             "averageGasUsed": null,
             "groups": null,
-            "tokens": null
+            "tokens": null,
+            "description": "Sansnote (tSANS), a governance and utility token serving as the backbone of the Sansbank community.",
+            "keywords": [
+                "dash",
+                "evo",
+                "dao",
+                "tSANS"
+            ]
         },
         ...
     ],
@@ -1296,10 +1304,15 @@ Response codes:
 Return all identities paged and order by block height, tx count or balance.
 
 * Valid `order_by` values are `block_height`, `tx_count` or `balance`
-* `limit` cannot be more then 100
-* `page` cannot be less then 1
+* `limit` cannot be more than 100
+* `page` cannot be less than 1
+* `tx_count_min` and `tx_count_max` allows to filter identities by transaction count
+* `documents_count_min` and `documents_count_max` allows to filter identities by document count
+* `data_contracts_min` and `data_contracts_min` allows to filter identities by data contract count
+* `balance_min` and `balance_max` allows to filter identities by balance
+* All range filters can be set with one or two range limit e.g. `balance_min=0` or `balance_min=0&balance_max=1`
 ```
-GET /identities?page=1&limit=10&order=asc&order_by=block_height
+GET /identities?limit=10&order=desc&order_by=tx_count&balance_min=100000&balance_max=100000100000100000100000&documents_count_min=1&documents_count_max=5&data_contracts_min=3&data_contracts_max=4&tx_count_min=2&tx_count_max=10
 
 {
     "pagination": {
@@ -1309,28 +1322,38 @@ GET /identities?page=1&limit=10&order=asc&order_by=block_height
     },
     "resultSet": [
       {
-          "identifier": "GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec",
-          "owner": "GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec",
-          "revision": 1,
-          "nonce": null,
-          "balance": "1000000",
-          "timestamp": "2024-03-18T10:13:54.150Z",
-          "txHash": "DEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEF",
-          "totalTxs": 1,
-          "totalTransfers": 0,
-          "totalDocuments": 0,
-          "totalDataContracts": 0,
+          "identifier": "EhGUnphjMD73JZBt98h7BUK7W17PbnMSUhD4pbEceLMi",
+          "revision": "0",
+          "balance": "730783890",
+          "timestamp": "2025-01-21T16:16:23.472Z",
+          "txHash": "CA2251F97E5A55DA4FD915EADEFBEEB680FFFEF4AD848AAC463F17C10DA08A11",
+          "totalTxs": 9,
+          "totalTransfers": 2,
+          "totalDocuments": 2,
+          "totalDataContracts": 3,
           "isSystem": false,
           "aliases": [
-            {
-              "alias": "alias.dash",
-              "status": "locked",
-              "contested": true,
-              "timestamp": "2024-08-26 13:29:44.606+00",
-              "txHash": "2508B35FDDB3E2E797D4F2CB9C1FAEE71D4DC43B91CE2043BEC8CE2B4A442DD7"
-            }
-          ]
-      }, ...
+              {
+                  "alias": "CharbroilPacifismRiskPreachy.dash",
+                  "status": "ok",
+                  "timestamp": "2025-01-21T16:20:56.957Z",
+                  "documentId": "2PrPvRX3ywDqrH4HQa2kcFFFe2ApFXjm6VzNrRRRPduJ",
+                  "contested": false
+              }
+          ],
+          "totalGasSpent": null,
+          "averageGasSpent": null,
+          "totalTopUpsAmount": null,
+          "totalWithdrawalsAmount": null,
+          "lastWithdrawalHash": null,
+          "publicKeys": [],
+          "fundingCoreTx": null,
+          "totalTopUps": null,
+          "totalWithdrawals": null,
+          "lastWithdrawalTimestamp": null,
+          "nonce": null,
+          "owner": "EhGUnphjMD73JZBt98h7BUK7W17PbnMSUhD4pbEceLMi"
+        }, ...
     ]
 }
 ```
@@ -1443,7 +1466,9 @@ GET /identities/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec/dataContracts?page=
         "timestamp": "2024-03-18T10:13:54.150Z",
         "isSystem": false,
         "documentsCount": 1337,
-        "tokensCount": 0
+        "tokensCount": 0,
+        "description": "Data Contract Description",
+        "keywords": ["keyword1", "keyword2"]
     }, ...
     ]
 }
@@ -1629,6 +1654,8 @@ This endpoint allows search any types of data
 * Data Contract
   * Full `Identifier`
   * Part `name`
+  * One of `keyword`
+  * Part `description`
 * Document
   * Full `Identifier`
 * Tokens

@@ -20,6 +20,8 @@ pub struct DataContract {
     pub is_system: bool,
     pub tokens: Option<BTreeMap<TokenContractPosition, TokenConfiguration>>,
     pub format_version: Option<u32>,
+    pub description: Option<String>,
+    pub keywords: Vec<String>,
 }
 
 impl From<DataContractCreateTransition> for DataContract {
@@ -46,6 +48,8 @@ impl From<DataContractCreateTransition> for DataContract {
                             is_system: false,
                             tokens: None,
                             format_version: Some(0u32),
+                            description: None,
+                            keywords: vec![],
                         };
                     }
 
@@ -56,6 +60,8 @@ impl From<DataContractCreateTransition> for DataContract {
                         let schema = data_contract.document_schemas;
                         let schema_decoded = serde_json::to_value(schema).unwrap();
                         let tokens = data_contract.tokens;
+                        let description = data_contract.description;
+                        let keywords = data_contract.keywords;
 
                         return DataContract {
                             id: None,
@@ -67,6 +73,8 @@ impl From<DataContractCreateTransition> for DataContract {
                             is_system: false,
                             tokens: Some(tokens),
                             format_version: Some(1u32),
+                            description,
+                            keywords,
                         };
                     }
                 }
@@ -99,6 +107,8 @@ impl From<DataContractUpdateTransition> for DataContract {
                             is_system: false,
                             tokens: None,
                             format_version: Some(0u32),
+                            description: None,
+                            keywords: vec![],
                         };
                     }
 
@@ -109,6 +119,8 @@ impl From<DataContractUpdateTransition> for DataContract {
                         let schema = data_contract.document_schemas;
                         let schema_decoded = serde_json::to_value(schema).unwrap();
                         let tokens = data_contract.tokens;
+                        let description = data_contract.description;
+                        let keywords = data_contract.keywords;
 
                         return DataContract {
                             id: None,
@@ -120,6 +132,8 @@ impl From<DataContractUpdateTransition> for DataContract {
                             is_system: false,
                             tokens: Some(tokens),
                             format_version: Some(1u32),
+                            description,
+                            keywords,
                         };
                     }
                 }
@@ -157,6 +171,8 @@ impl From<SystemDataContract> for DataContract {
             is_system: true,
             tokens: None,
             format_version: None,
+            description: None,
+            keywords: vec![],
         };
     }
 }
@@ -180,6 +196,8 @@ impl From<Row> for DataContract {
             is_system,
             tokens: None,
             format_version: None,
+            description: None,
+            keywords: vec![],
         };
     }
 }

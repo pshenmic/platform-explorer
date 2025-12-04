@@ -396,7 +396,7 @@ module.exports = ({
           properties: {
             query: {
               type: 'string',
-              pattern: '^[A-Za-z0-9.-]+$'
+              pattern: '^[A-Za-z0-9\\s.-]+$'
             }
           }
         }
