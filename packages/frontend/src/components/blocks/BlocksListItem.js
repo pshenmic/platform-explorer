@@ -1,3 +1,5 @@
+'use client'
+
 import Link from 'next/link'
 import { Identifier, NotActive, TimeDelta, BigNumber, DateBlock } from '../data'
 import { Badge, Grid, GridItem } from '@chakra-ui/react'

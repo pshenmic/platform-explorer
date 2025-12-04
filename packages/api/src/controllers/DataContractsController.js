@@ -19,13 +19,49 @@ class DataContractsController {
   }
 
   getDataContracts = async (request, response) => {
-    const { page = 1, limit = 10, order = 'asc', order_by: orderBy = 'block_height' } = request.query
+    const {
+      page = 1,
+      limit = 10,
+      order = 'asc',
+      order_by: orderBy = 'block_height',
+      owner,
+      is_system: isSystem,
+      with_tokens: withTokens,
+      timestamp_start: timestampStart,
+      timestamp_end: timestampEnd,
+      documents_count_min: documentsCountMin,
+      documents_count_max: documentsCountMax,
+      description,
+      keywords
+    } = request.query
 
     if (!['block_height', 'documents_count', 'tx_count', 'balance'].includes(orderBy)) {
       return response.status(400).send({ message: 'invalid filters values' })
     }
 
-    const dataContracts = await this.dataContractsDAO.getDataContracts(Number(page ?? 1), Number(limit ?? 10), order, orderBy)
+    if (timestampStart && timestampEnd && new Date(timestampStart).getTime() >= new Date(timestampEnd).getTime()) {
+      return response.status(400).send('Bad timestamp range')
+    }
+
+    if (documentsCountMin > documentsCountMax) {
+      return response.status(400).send('Bad documents count range')
+    }
+
+    const dataContracts = await this.dataContractsDAO.getDataContracts(
+      Number(page ?? 1),
+      Number(limit ?? 10),
+      order,
+      orderBy,
+      owner,
+      isSystem,
+      withTokens,
+      timestampStart,
+      timestampEnd,
+      documentsCountMin,
+      documentsCountMax,
+      description,
+      keywords
+    )
 
     response.send(dataContracts)
   }

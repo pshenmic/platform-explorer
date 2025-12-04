@@ -330,78 +330,84 @@ GET /blocks?epoch_index_min=1000&epoch_index_max=1200&height_min=2000&height_max
 ---
 ### Validators
 Return all validators with pagination info.
+* Valid `order` values are `asc` or `desc`
 * `lastProposedBlockHeader` field is nullable
 * `?isActive=true` boolean can be supplied in the query params to filter by isActive field
 * `limit` cannot be more then 100 (0 = all validators)
 * `page` cannot be less then 1
+* `blocks_proposed_min` and `blocks_proposed_max` minimum and maximum amount of proposed blocks
+* `last_proposed_block_height_min` and `last_proposed_block_height_min` minimum and maximum last proposed blocks height
+* `last_proposed_block_timestamp_start` and `last_proposed_block_timestamp_end` timestamp start and end for last proposed blocks
+* `last_proposed_block_hash` hash of last proposed block
 ```
-GET /validators
+GET /validators?blocks_proposed_min=1&blocks_proposed_max=9999999&last_proposed_block_height_min=190458&last_proposed_block_height_max=197458&last_proposed_block_timestamp_start=2025-10-11T02:46:09.433Z&last_proposed_block_timestamp_end=2025-10-12T02:46:09.433Z&last_proposed_block_hash=9151C25609D85610C416450B4648CCB4671E373452EA8FA21AC0DF77D03039E1&is_active=true&limit=10&page=1&order=asc&owner=PJUBWbXWmzEYCs99rAAbnCiHRzrnhKLQrXbmSsuPBYB
 
 {
-  "resultSet": [
-    {
-      "proTxHash": "F60A6BF9EC0794BB0CFD1E0F2217933F4B33EDE6FE810692BC275CA18148AEF0",
-      "isActive": true,
-      "proposedBlocksAmount": 5,
-      "lastProposedBlockHeader": {
-        "height": 5,
-        "timestamp": "2024-06-23T13:51:44.154Z",
-        "hash": "7253F441FF6AEAC847F9E03672B9386E35FC8CBCFC4A7CC67557FCA10E342904",
-        "l1LockedHeight": 1337,
-        "appVersion": 1,
-        "blockVersion": 13
-        "validator": "F60A6BF9EC0794BB0CFD1E0F2217933F4B33EDE6FE810692BC275CA18148AEF0",
-        "appHash": "49C07BEDB5710565CFC82F678DEB4849D2CA1CCD3DFBA6FDA3F1C0F3C39D0AD9"
-      },
-      "proTxInfo": {
-        "type": "Evo",
-        "collateralAddress": "6ce8545e25d4f03aba1527062d9583ae01827c65b234bd979aca5954c6ae3a59",
-        "collateralAddress": 19,
-        "collateralAddress": "yYK3Kiq36Xmf1ButkTUYb1iCNtJfSSM4KH",
-        "operatorReward": 0,
-        "confirmations": 214424,
-        "state": {
-            "version": 2,
-            "service": "35.164.23.245:19999",
-            "registeredHeight": 850334,
-            "lastPaidHeight": 1064721,
-            "consecutivePayments": 0,
-            "PoSePenalty": 0,
-            "PoSeRevivedHeight": 1027671,
-            "PoSeBanHeight": -1,
-            "revocationReason": 0,
-            "ownerAddress": "yWrbg8HNwkogZfqKe1VW8czS9KiqdjvJtE",
-            "votingAddress": "yWrbg8HNwkogZfqKe1VW8czS9KiqdjvJtE",
-            "platformNodeID": "b5f25f8f70cf8d05c2d2970bdf186c994431d84e",
-            "platformP2PPort": 36656,
-            "platformHTTPPort": 1443,
-            "payoutAddress": "yeRZBWYfeNE4yVUHV4ZLs83Ppn9aMRH57A",
-            "pubKeyOperator": "b928fa4e127214ccb2b5de1660b5e371d2f3c9845077bc3900fc6aabe82ddd2e61530be3765cea15752e30fc761ab730"
+    "pagination": {
+        "page": 1,
+        "limit": 10,
+        "total": 1
+    },
+    "resultSet": [
+        {
+            "proTxHash": "05B687978344FA2433B2AA99D41F643E2D8581A789CDC23084889CECA5244EA8",
+            "isActive": true,
+            "proposedBlocksAmount": 7357,
+            "lastProposedBlockHeader": {
+                "hash": "9151C25609D85610C416450B4648CCB4671E373452EA8FA21AC0DF77D03039E1",
+                "height": 197458,
+                "timestamp": "2025-10-12T02:46:09.433Z",
+                "blockVersion": 14,
+                "appVersion": 9,
+                "l1LockedHeight": 1343619,
+                "validator": "05B687978344FA2433B2AA99D41F643E2D8581A789CDC23084889CECA5244EA8",
+                "totalGasUsed": 0,
+                "appHash": "E81BCE0B1787D512CCAFD6D93043131D6FB4E9BEE6CC549C00F7501E7E1949A8"
+            },
+            "proTxInfo": {
+                "type": "Evo",
+                "collateralHash": "6ce8545e25d4f03aba1527062d9583ae01827c65b234bd979aca5954c6ae3a59",
+                "collateralIndex": 9,
+                "collateralAddress": "yRxmN1L3FMfiDYHnnghP7bEr7tsqxAhyWe",
+                "operatorReward": 0,
+                "confirmations": 493308,
+                "state": {
+                    "version": 2,
+                    "service": "52.24.124.162:19999",
+                    "registeredHeight": 850334,
+                    "lastPaidHeight": 1343603,
+                    "consecutivePayments": 0,
+                    "PoSePenalty": 0,
+                    "PoSeRevivedHeight": 1287752,
+                    "PoSeBanHeight": -1,
+                    "revocationReason": 0,
+                    "ownerAddress": "yht22Z6kN4y7nQzJr6PZX2ct5aGVHrAPFY",
+                    "votingAddress": "yht22Z6kN4y7nQzJr6PZX2ct5aGVHrAPFY",
+                    "platformNodeID": "8feb00404d6f765856c95e587b2523a365bc7258",
+                    "platformP2PPort": 36656,
+                    "platformHTTPPort": 1443,
+                    "payoutAddress": "yeRZBWYfeNE4yVUHV4ZLs83Ppn9aMRH57A",
+                    "pubKeyOperator": "80f8efb42f65ed9650078785be5d13e6e90eb9df87a99261d4de34df2b4b79a9c9b8c5e1aec7ac068ebef14636ceac4c"
+                }
+            },
+            "identity": "PJUBWbXWmzEYCs99rAAbnCiHRzrnhKLQrXbmSsuPBYB",
+            "identityBalance": "2536538343626928",
+            "epochInfo": {
+                "number": 10801,
+                "firstBlockHeight": "197457",
+                "firstCoreBlockHeight": 1343619,
+                "startTime": 1760236987253,
+                "feeMultiplier": "1000",
+                "endTime": 1760240587253
+            },
+            "totalReward": null,
+            "epochReward": null,
+            "withdrawalsCount": null,
+            "lastWithdrawal": null,
+            "lastWithdrawalTime": null,
+            "endpoints": null
         }
-      },
-      "identity": "8tsWRSwsTM5AXv4ViCF9gu39kzjbtfFDM6rCyL2RcFzd",
-      "identityBalance": 0,
-      "epochInfo": {
-        "number": 1982,
-        "firstBlockHeight": 31976,
-        "firstCoreBlockHeight": 1118131,
-        "startTime": 1728488466559,
-        "feeMultiplier": 1,
-        "endTime": 1728492066559
-      },
-      "totalReward": null,
-      "epochReward": null,
-      "withdrawalsCount": null,
-      "lastWithdrawal": null,
-      "lastWithdrawalTime": null,
-      "endpoints": null
-    }, ...
-  ],
-  "pagination": { 
-    "page": 1, 
-    "limit": 10, 
-    "total": 30 
-  }
+    ]
 }
 ```
 ---
@@ -665,8 +671,8 @@ Status can be either `SUCCESS` or `FAIL`. In case of error tx, message will appe
 * `batch_type` number or string of batch type. Can be set multiple times.
 * `gas_min` number of min `gas_used`
 * `gas_max` number of max `gas_used`
-* `timestamp_start` must be used with `timestamp_end`
-* `timestamp_end` must be used with `timestamp_start`
+* `timestamp_start` and `timestamp_end` transaction timestamp 
+* `token_name` name of token
 * Valid `order_by` values are `id`, `gas_used`, `timestamp` or `owner`
 
 | Batch type string                   | Batch type number |
@@ -747,6 +753,7 @@ GET /dataContract/HzMke6E5SnSqLdCX1u3WdwpWx1hFFkSnFQpahTPdYUSF
     "timestamp": "2025-07-31T07:31:37.624Z",
     "isSystem": false,
     "documentsCount": 0,
+    "tokensCount": 1,
     "topIdentity": {
         "identifier": null,
         "aliases": []
@@ -802,7 +809,9 @@ GET /dataContract/HzMke6E5SnSqLdCX1u3WdwpWx1hFFkSnFQpahTPdYUSF
             "totalBurnTransitionsCount": null,
             "decimals": 4
         }
-    ]
+    ],
+    "description": "Data Contract Description",
+    "keywords": ["keyword1", "keyword2"]
 }
 ```
 Response codes:
@@ -836,29 +845,49 @@ Return dataContracts set paged and order by block height or documents count.
 * `name` field is nullable
 * `limit` cannot be more then 100
 * `page` cannot be less then 1
+* `owner` data contracts owner identifier
+* `is_system` bool field for system data contracts
+* `with_tokens` bool field data contracts with tokens
+* `timestamp_start` and `timestamp_end` timestamp start and end of data contracts creation date
+* `documents_count_min` and `documents_count_max` minimum and maximum count of documents for data contract
 
 ```
-GET /dataContracts?page=1&limit=10&order=asc&order_by=block_height
+GET /dataContracts?page=1&limit=10&order=asc&order_by=block_height&timestamp_start=2025-01-22T11:09:23.892Z&timestamp_end=2025-03-22T11:09:23.892Z&owner=G3yCKwx9ePsBriBoag5FEhDkad5Qq77cyqLG1FRyhhSi&is_system=false&with_tokens=false&documents_count_min=1&documents_count_max=5&description=Sansnote&keywords=dash&keywords=evo
 
 {
+    "resultSet": [
+        {
+            "identifier": "86QuRPc8n8VhEjWAcgdvfauynS1ZtnZLiSXFqUKJyo2n",
+            "name": null,
+            "owner": "AFaVqRJCWXFZRUhuq6ZUUcWXVW8fErCN3wpEtgsBnDZm",
+            "schema": null,
+            "version": 1,
+            "txHash": "B92DE3344132279D4E85C831624C857B5B2EC7F990945E1140E3160E661E5D2B",
+            "timestamp": "2025-08-16T02:58:59.740Z",
+            "isSystem": false,
+            "documentsCount": 0,
+            "tokensCount": 1,
+            "topIdentity": null,
+            "identitiesInteracted": null,
+            "totalGasUsed": null,
+            "averageGasUsed": null,
+            "groups": null,
+            "tokens": null,
+            "description": "Sansnote (tSANS), a governance and utility token serving as the backbone of the Sansbank community.",
+            "keywords": [
+                "dash",
+                "evo",
+                "dao",
+                "tSANS"
+            ]
+        },
+        ...
+    ],
     "pagination": {
         "page": 1,
         "limit": 10,
-        "total": 10
-    },
-    "resultSet": [
-    {
-        "identifier": "GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec",
-        "name": "DPNS",
-        "owner": "4EfA9Jrvv3nnCFdSf7fad59851iiTRZ6Wcu6YVJ4iSeF",
-        "schema": "{}",
-        "version": 0,
-        "txHash": "DEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEF",
-        "timestamp": "2024-03-18T10:13:54.150Z",
-        "isSystem": false,
-        "documentsCount": 1337
-    }, ...
-    ]
+        "total": 22
+    }
 }
 ```
 Response codes:
@@ -1168,85 +1197,108 @@ Response codes:
 ### Identity by Identifier
 Return identity by given identifier
 ```
-GET /identity/3igSMtXaaS9iRQHbWU1w4hHveKdxixwMpgmhLzjVhFZJ
+GET /identity/EP1g5AGP8QGYMXXUYdmSvhbVxggNURDbvpckF39mTxs3
 
 {
-  "identifier": "3igSMtXaaS9iRQHbWU1w4hHveKdxixwMpgmhLzjVhFZJ",
-  "revision": "0",
-  "nonce": "13",
-  "balance": "49989647300",
-  "timestamp": "2024-10-12T18:51:44.592Z",
-  "txHash": "32FB988D87E4122A2FE030B5014A59A05786C1501FD97D765E2329F89A8AD01D",
-  "totalTxs": 13,
-  "totalTransfers": 7,
-  "totalDocuments": 5,
-  "totalDataContracts": 0,
-  "isSystem": false,
-  "aliases": [
-    {
-      "alias": "owl352.dash",
-      "status": "ok",
-      "contested": false,
-      "timestamp": "2024-08-26 13:29:44.606+00",
-      "txHash": "2508B35FDDB3E2E797D4F2CB9C1FAEE71D4DC43B91CE2043BEC8CE2B4A442DD7"
-    }
-  ],
-  "totalGasSpent": 310352700,
-  "averageGasSpent": 23873285,
-  "totalTopUpsAmount": 46350660,
-  "totalWithdrawalsAmount": 0,
-  "lastWithdrawalHash": null,
-  "lastWithdrawalTimestamp": null,
-  "totalTopUps": 0,
-  "totalWithdrawals": 0,
-  "publicKeys": [
-    {
-      "keyId": 0,
-      "keyType": 0,
-      "data": "0386067dea94b1cfb23bf252084a2020a4a6712df7e4ac16c211558a1dbb66904a",
-      "purpose": 0,
-      "securityLevel": 0,
-      "readOnly": false,
-      "isMaster": true,
-      "publicKeyHash": "5501114f5842004d1ff6c7d04512c438afe0cb11",
-      "contractBounds": null
-    },
-    {
-      "keyId": 1,
-      "type": 0,
-      "data": "038a09509830d2d04685294e920aa29c96d51f9bd81044e2f934a4c198b934b102",
-      "purpose": 0,
-      "securityLevel": 2,
-      "isReadOnly": false,
-      "isMaster": false,
-      "hash": "c563c11128b9e457ad3b7220315b4bf53c8af443",
-      "contractBounds": null
-    },
-    {
-      "keyId": 2,
-      "type": 0,
-      "data": "027734bd9b8864964eb7504a77a986782e9d620e4c6d23e2bd80359e1e81790a1c",
-      "purpose": 0,
-      "securityLevel": 1,
-      "isReadOnly": false,
-      "isMaster": false,
-      "hash": "4bd1a43ea0cf7c18c1f90d1d9c0f08c63743ff1d",
-      "contractBounds": null
-    },
-    {
-      "keyId": 3,
-      "type": 0,
-      "data": "03083620dea1216b47568aead0c7cb6302ae3ca8beaa40c51e25b20f1f02ae06d4",
-      "purpose": 3,
-      "securityLevel": 1,
-      "isReadOnly": false,
-      "isMaster": false,
-      "hash": "f6d941f2d7aa4bc9d90b90bc103bd583c5943af9",
-      "contractBounds": null
-    }
-  ],
-  "fundingCoreTx": "68d77e0d2da31e9cf2758d8f97547c1bc98b75c4e2cebe64dbcaae3bb5cb8a9c",
-  "owner": "3igSMtXaaS9iRQHbWU1w4hHveKdxixwMpgmhLzjVhFZJ"
+    "identifier": "EP1g5AGP8QGYMXXUYdmSvhbVxggNURDbvpckF39mTxs3",
+    "revision": "2",
+    "balance": "1020124234",
+    "timestamp": "2024-08-26T13:35:12.760Z",
+    "txHash": "BEE41F86926F86C974832E693E394E55EB9B9CD93245980D4296A76783649C0C",
+    "totalTxs": 18,
+    "totalTransfers": 23,
+    "totalDocuments": 6,
+    "totalDataContracts": 5,
+    "isSystem": false,
+    "aliases": [
+        {
+            "alias": "Tutorial-Test-Darrion-73094.dash",
+            "status": "ok",
+            "contested": false,
+            "timestamp": "2024-08-26T13:35:15.550Z",
+            "txHash": "42A0CD5C78644D1A942848F878F4B3E9A7FF2D9CE181EF3C35E1FA2BA1E6F8E4"
+        },
+        {
+            "alias": "Tutorial-Test-Darrion-73094-backup.dash",
+            "status": "ok",
+            "contested": false,
+            "timestamp": "2024-08-26T13:35:50.741Z",
+            "txHash": "F568E27D5BF076823B6AC0168E4FF2E99B060583CB2C2107E1794F984CA40BEA"
+        }
+    ],
+    "totalGasSpent": 496071380,
+    "averageGasSpent": 27559521,
+    "totalTopUpsAmount": 1506300000,
+    "totalWithdrawalsAmount": 0,
+    "lastWithdrawalHash": null,
+    "publicKeys": [
+        {
+            "keyId": 0,
+            "keyType": "ECDSA_SECP256K1",
+            "raw": "0000000000000021022fc6ebd1462a772a98bb2383645680e16ad3d6bc63f599ff85f341e463b8f5a500",
+            "data": "022fc6ebd1462a772a98bb2383645680e16ad3d6bc63f599ff85f341e463b8f5a5",
+            "purpose": "AUTHENTICATION",
+            "securityLevel": "MASTER",
+            "readOnly": false,
+            "publicKeyHash": "cf7a7cf2eda1ca68d6482ba744c91ad6ff0a1382",
+            "contractBounds": null,
+            "disabledAt": null
+        },
+        {
+            "keyId": 1,
+            "keyType": "ECDSA_SECP256K1",
+            "raw": "0001000200000021031ea647b1659bff9e2882472369a21a73d10b085d0ae0d4c07b2cc098529dcc1f00",
+            "data": "031ea647b1659bff9e2882472369a21a73d10b085d0ae0d4c07b2cc098529dcc1f",
+            "purpose": "AUTHENTICATION",
+            "securityLevel": "HIGH",
+            "readOnly": false,
+            "publicKeyHash": "dc82bb14255c5968a6f5eff4982037ff616af831",
+            "contractBounds": null,
+            "disabledAt": null
+        },
+        {
+            "keyId": 2,
+            "keyType": "ECDSA_SECP256K1",
+            "raw": "000200010000002103ec9a35c14746aabc1073897cf4a2e8b664afd3ed81df3046028016dcc9cc526100",
+            "data": "03ec9a35c14746aabc1073897cf4a2e8b664afd3ed81df3046028016dcc9cc5261",
+            "purpose": "AUTHENTICATION",
+            "securityLevel": "CRITICAL",
+            "readOnly": false,
+            "publicKeyHash": "839114fcfac118a0ca2716ecbc1405b34e04b999",
+            "contractBounds": null,
+            "disabledAt": null
+        },
+        {
+            "keyId": 3,
+            "keyType": "ECDSA_SECP256K1",
+            "raw": "0003030100000021024ef221f5933ebc0c8a195d125708f258f7b4ad93f36e7d921296fc28baedea7400",
+            "data": "024ef221f5933ebc0c8a195d125708f258f7b4ad93f36e7d921296fc28baedea74",
+            "purpose": "TRANSFER",
+            "securityLevel": "CRITICAL",
+            "readOnly": false,
+            "publicKeyHash": "318d38a516b68821ec4a943f53f06a6d2d6c85ec",
+            "contractBounds": null,
+            "disabledAt": null
+        },
+        {
+            "keyId": 4,
+            "keyType": "ECDSA_SECP256K1",
+            "raw": "00040003000000210359207607e35612e437e542873cf10f6f1eac19a4dae0ef9e212fa71f9e01d93501fd000001918ee5d578",
+            "data": "0359207607e35612e437e542873cf10f6f1eac19a4dae0ef9e212fa71f9e01d935",
+            "purpose": "AUTHENTICATION",
+            "securityLevel": "MEDIUM",
+            "readOnly": false,
+            "publicKeyHash": "0a05e2db6b28a6c4d715bfae194fadf206ddbc81",
+            "contractBounds": null,
+            "disabledAt": "1724679312760"
+        }
+    ],
+    "fundingCoreTx": null,
+    "totalTopUps": 0,
+    "totalWithdrawals": 0,
+    "lastWithdrawalTimestamp": null,
+    "nonce": "7",
+    "owner": "EP1g5AGP8QGYMXXUYdmSvhbVxggNURDbvpckF39mTxs3"
 }
 ```
 Response codes:
@@ -1285,10 +1337,15 @@ Response codes:
 Return all identities paged and order by block height, tx count or balance.
 
 * Valid `order_by` values are `block_height`, `tx_count` or `balance`
-* `limit` cannot be more then 100
-* `page` cannot be less then 1
+* `limit` cannot be more than 100
+* `page` cannot be less than 1
+* `tx_count_min` and `tx_count_max` allows to filter identities by transaction count
+* `documents_count_min` and `documents_count_max` allows to filter identities by document count
+* `data_contracts_min` and `data_contracts_min` allows to filter identities by data contract count
+* `balance_min` and `balance_max` allows to filter identities by balance
+* All range filters can be set with one or two range limit e.g. `balance_min=0` or `balance_min=0&balance_max=1` 
 ```
-GET /identities?page=1&limit=10&order=asc&order_by=block_height
+GET /identities?limit=10&order=desc&order_by=tx_count&balance_min=100000&balance_max=100000100000100000100000&documents_count_min=1&documents_count_max=5&data_contracts_min=3&data_contracts_max=4&tx_count_min=2&tx_count_max=10
 
 {
     "pagination": {
@@ -1298,28 +1355,38 @@ GET /identities?page=1&limit=10&order=asc&order_by=block_height
     },
     "resultSet": [
       {
-          "identifier": "GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec",
-          "owner": "GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec",
-          "revision": 1,
-          "nonce": null,
-          "balance": "1000000",
-          "timestamp": "2024-03-18T10:13:54.150Z",
-          "txHash": "DEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEF",
-          "totalTxs": 1,
-          "totalTransfers": 0,
-          "totalDocuments": 0,
-          "totalDataContracts": 0,
-          "isSystem": false,
-          "aliases": [
-            {
-              "alias": "alias.dash",
-              "status": "locked",
-              "contested": true,
-              "timestamp": "2024-08-26 13:29:44.606+00",
-              "txHash": "2508B35FDDB3E2E797D4F2CB9C1FAEE71D4DC43B91CE2043BEC8CE2B4A442DD7"
-            }
-          ]
-      }, ...
+            "identifier": "EhGUnphjMD73JZBt98h7BUK7W17PbnMSUhD4pbEceLMi",
+            "revision": "0",
+            "balance": "730783890",
+            "timestamp": "2025-01-21T16:16:23.472Z",
+            "txHash": "CA2251F97E5A55DA4FD915EADEFBEEB680FFFEF4AD848AAC463F17C10DA08A11",
+            "totalTxs": 9,
+            "totalTransfers": 2,
+            "totalDocuments": 2,
+            "totalDataContracts": 3,
+            "isSystem": false,
+            "aliases": [
+                {
+                    "alias": "CharbroilPacifismRiskPreachy.dash",
+                    "status": "ok",
+                    "timestamp": "2025-01-21T16:20:56.957Z",
+                    "documentId": "2PrPvRX3ywDqrH4HQa2kcFFFe2ApFXjm6VzNrRRRPduJ",
+                    "contested": false
+                }
+            ],
+            "totalGasSpent": null,
+            "averageGasSpent": null,
+            "totalTopUpsAmount": null,
+            "totalWithdrawalsAmount": null,
+            "lastWithdrawalHash": null,
+            "publicKeys": [],
+            "fundingCoreTx": null,
+            "totalTopUps": null,
+            "totalWithdrawals": null,
+            "lastWithdrawalTimestamp": null,
+            "nonce": null,
+            "owner": "EhGUnphjMD73JZBt98h7BUK7W17PbnMSUhD4pbEceLMi"
+        }, ...
     ]
 }
 ```
@@ -1430,8 +1497,11 @@ GET /identities/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec/dataContracts?page=
         "schema": null,
         "txHash": "DEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEF",
         "timestamp": "2024-03-18T10:13:54.150Z",
-        "isSystem": false
-        "documentsCount": 1337
+        "isSystem": false,
+        "documentsCount": 1337,
+        "tokensCount": 0,
+        "description": "Data Contract Description",
+        "keywords": ["keyword1", "keyword2"]
     }, ...
     ]
 }
@@ -1617,6 +1687,8 @@ This endpoint allows search any types of data
 * Data Contract
   * Full `Identifier`
   * Part `name`
+  * One of `keyword`
+  * Part `description`
 * Document
   * Full `Identifier`
 * Tokens
@@ -1735,8 +1807,9 @@ Returns set of votes for selected resource
 * `resourceValue` must be specified after `/contested/` in json base64
   * `WyJkYXNoIiwieHl6Il0=` = `'["dash", "xyz"]'`
 * `choice` optional
+* `pro_tx_hash` optional hash of vote owner
 ```
-GET /contestedResource/WyJkYXNoIiwieHl6Il0=/votes?choice=1&page=1&limit=10&order=asc
+GET /contestedResource/WyJkYXNoIiwieHl6Il0=/votes?choice=1&pro_tx_hash=36011F1807FED828951DAA04B44E38163FB0162108FD1341038DBE58051F4421&page=1&limit=10&order=asc
 {
   "resultSet": [
     {
@@ -2038,6 +2111,7 @@ POST /transaction/decode
   "tokens": [
     {
       "position": 0,
+      "tokenId": "76HAP8UMczsohFApQiGtGfhkUscUceq28jWJDYa3Ghzn",
       "conventions": {
         "decimals": 8,
         "localizations": {
@@ -2580,56 +2654,78 @@ Return list of tokens
 * Valid `order` values are `asc` or `desc`
 * `limit` cannot be more then 100
 * `page` cannot be less then 1
+* `owner` tokens owner identifier
+* `position` tokens position in data contract
+* `contract_id` contract identifier which contains tokens
+* `token_name` part of token name in EN locale. Case insensetive. Minimum 3 symbols
+* `token_id` identifier of token
 ```
-GET /tokens?limit=2&page=1&order=asc
-[
-    {
-        "identifier": "9YxdbQUjJmQsmVPen95HjAU3Esj7tVkWSY2EQWT84ZQP",
-        "position": 0,
-        "timestamp": null,
-        "description": "note",
-        "localizations": {
-            "en": {
-                "pluralForm": "tokens",
-                "singularForm": "token",
-                "shouldCapitalize": true
-            }
-        },
-        "baseSupply": "1",
-        "totalSupply": "1",
-        "maxSupply": null,
-        "owner": {
-            "identifier": "8eTDkBhpQjHeqgbVeriwLeZr1tCa6yBGw76SckvD1cwc",
-            "aliases": [
-                {
-                    "alias": "canusieethat7.dash",
-                    "status": "ok",
-                    "timestamp": "2024-10-10T19:40:05.824Z",
-                    "documentId": "Qwb2FuwfnexmxxYoJUsMhM9pd192NVDvaEVFyjkSXAa",
-                    "contested": false
+GET /tokens?limit=10&page=1&order=asc&owner=5DbLwAxGBzUzo81VewMUwn4b5P4bpv9FNFybi25XB5Bk&position=0&contract_id=ALybvzfcCwMs7sinDwmtumw17NneuW7RgFtFHgjKmF3A
+
+{
+    "resultSet": [
+        {
+            "identifier": "Hqyu8WcRwXCTwbNxdga4CN5gsVEGc67wng4TFzceyLUv",
+            "position": 0,
+            "timestamp": null,
+            "description": "The flurgon contract on testnet",
+            "localizations": {
+                "en": {
+                    "pluralForm": "Flurgons",
+                    "singularForm": "Flurgon",
+                    "shouldCapitalize": true
                 }
-            ]
-        },
-        "mintable": false,
-        "burnable": false,
-        "freezable": false,
-        "unfreezable": false,
-        "destroyable": false,
-        "allowedEmergencyActions": false,
-        "dataContractIdentifier": "Y189uedQG3CJCuu83P3DqnG7ngQaRKz69x3gY8uDzQe",
-        "changeMaxSupply": false,
-        "totalGasUsed": null,
-        "mainGroup": null,
-        "totalTransitionsCount": null,
-        "totalFreezeTransitionsCount": null,
-        "totalBurnTransitionsCount": null,
-        "decimals": 1,
-        "perpetualDistribution": null,
-        "preProgrammedDistribution": null,
-        "price": null,
-        "prices": null
-    }, ...
-]
+            },
+            "baseSupply": "10000",
+            "totalSupply": "10110",
+            "maxSupply": null,
+            "owner": {
+                "identifier": "5DbLwAxGBzUzo81VewMUwn4b5P4bpv9FNFybi25XB5Bk",
+                "aliases": [
+                    {
+                        "alias": "therealslimshaddy5.dash",
+                        "status": "ok",
+                        "timestamp": "2025-07-13T07:55:36.840Z",
+                        "documentId": "7NYmEKQsYtniQRUmxwdPGeVcirMoPh5ZPyAKz8BWFy3r",
+                        "contested": false
+                    }
+                ]
+            },
+            "mintable": true,
+            "burnable": true,
+            "freezable": true,
+            "unfreezable": true,
+            "destroyable": true,
+            "allowedEmergencyActions": true,
+            "dataContractIdentifier": "ALybvzfcCwMs7sinDwmtumw17NneuW7RgFtFHgjKmF3A",
+            "changeMaxSupply": true,
+            "totalGasUsed": null,
+            "mainGroup": null,
+            "totalTransitionsCount": null,
+            "totalFreezeTransitionsCount": null,
+            "totalBurnTransitionsCount": null,
+            "decimals": 0,
+            "perpetualDistribution": {
+                "type": "TimeBasedDistribution",
+                "recipientType": "EvonodesByParticipation",
+                "recipientValue": null,
+                "interval": 3600000,
+                "functionName": "FixedAmount",
+                "functionValue": {
+                    "amount": "300"
+                }
+            },
+            "preProgrammedDistribution": null,
+            "price": null,
+            "prices": null
+        }
+    ],
+    "pagination": {
+        "page": 1,
+        "limit": 10,
+        "total": 1
+    }
+}
 ```
 Response codes:
 ```

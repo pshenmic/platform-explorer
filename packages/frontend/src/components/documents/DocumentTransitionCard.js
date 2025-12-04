@@ -80,117 +80,161 @@ const DocumentTransitionCard = ({ transition, owner, rate, className }) => {
   const fields = fieldsOfTypes?.[transition?.action] || []
 
   return (
-    <div className={`InfoBlock InfoBlock--Gradient DocumentTransitionCard ${className || ''}`}>
+    <div
+      className={`InfoBlock InfoBlock--Gradient DocumentTransitionCard ${
+        className || ''
+      }`}
+    >
       <InfoLine
-        className={'DocumentTransitionCard__InfoLine DocumentTransitionCard__InfoLine--Action'}
+        className={
+          'DocumentTransitionCard__InfoLine DocumentTransitionCard__InfoLine--Action'
+        }
         title={'Action'}
-        value={<BatchTypeBadge batchType={transition?.action}/>}
+        value={<BatchTypeBadge className='DocumentTransitionCard__InfoLine__Badge' batchType={transition?.action} />}
         error={transition?.action === undefined}
       />
 
-      {fields?.indexOf('DataContractIdentifier') !== -1 &&
+      {fields?.indexOf('DataContractIdentifier') !== -1 && (
         <InfoLine
-          className={'DocumentTransitionCard__InfoLine DocumentTransitionCard__InfoLine--IdContainer'}
+          className={
+            'DocumentTransitionCard__InfoLine DocumentTransitionCard__InfoLine--IdContainer'
+          }
           title={'Data Contract Identifier'}
-          value={(
+          value={
             <ValueCard link={`/dataContract/${transition.dataContractId}`}>
-              <Identifier avatar={true} copyButton={true} ellipsis={true} styles={['highlight-both']}>
+              <Identifier
+                avatar={true}
+                copyButton={true}
+                ellipsis={true}
+                styles={['highlight-both']}
+              >
                 {transition.dataContractId}
               </Identifier>
             </ValueCard>
-          )}
+          }
           error={!transition.dataContractId}
         />
-      }
+      )}
 
-      {fields?.indexOf('DocumentIdentifier') !== -1 &&
+      {fields?.indexOf('DocumentIdentifier') !== -1 && (
         <InfoLine
-          className={'DocumentTransitionCard__InfoLine DocumentTransitionCard__InfoLine--IdContainer'}
+          className={
+            'DocumentTransitionCard__InfoLine DocumentTransitionCard__InfoLine--IdContainer'
+          }
           title={'Document Identifier'}
-          value={(
+          value={
             <ValueCard link={`/document/${transition.id}`}>
-              <Identifier avatar={true} copyButton={true} ellipsis={true} styles={['highlight-both']}>
+              <Identifier
+                avatar={true}
+                copyButton={true}
+                ellipsis={true}
+                styles={['highlight-both']}
+              >
                 {transition.id}
               </Identifier>
             </ValueCard>
-          )}
+          }
           error={!transition.id}
         />
-      }
+      )}
 
-      {fields?.indexOf('RecipientIdentifier') !== -1 && transition?.recipientId &&
-        <InfoLine
-          className={'DocumentTransitionCard__InfoLine DocumentTransitionCard__InfoLine--IdContainer'}
-          title={'Recipient Identifier'}
-          value={(
-            <ValueCard link={`/identity/${transition?.recipientId}`}>
-              <Identifier avatar={true} copyButton={true} ellipsis={true} styles={['highlight-both']}>
-                {transition?.recipientId}
-              </Identifier>
-            </ValueCard>
-          )}
-        />
-      }
+      {fields?.indexOf('RecipientIdentifier') !== -1 &&
+        transition?.recipientId && (
+          <InfoLine
+            className={
+              'DocumentTransitionCard__InfoLine DocumentTransitionCard__InfoLine--IdContainer'
+            }
+            title={'Recipient Identifier'}
+            value={
+              <ValueCard link={`/identity/${transition?.recipientId}`}>
+                <Identifier
+                  avatar={true}
+                  copyButton={true}
+                  ellipsis={true}
+                  styles={['highlight-both']}
+                >
+                  {transition?.recipientId}
+                </Identifier>
+              </ValueCard>
+            }
+          />
+      )}
 
-      {fields?.indexOf('SellerIdentifier') !== -1 && owner &&
+      {fields?.indexOf('SellerIdentifier') !== -1 && owner && (
         <InfoLine
-          className={'DocumentTransitionCard__InfoLine DocumentTransitionCard__InfoLine--IdContainer'}
+          className={
+            'DocumentTransitionCard__InfoLine DocumentTransitionCard__InfoLine--IdContainer'
+          }
           title={'Buyer Identifier'}
-          value={(
+          value={
             <ValueCard link={`/identity/${owner}`}>
-              <Identifier avatar={true} copyButton={true} ellipsis={true} styles={['highlight-both']}>
+              <Identifier
+                avatar={true}
+                copyButton={true}
+                ellipsis={true}
+                styles={['highlight-both']}
+              >
                 {owner}
               </Identifier>
             </ValueCard>
-          )}
+          }
         />
-      }
+      )}
 
-      {fields?.indexOf('Price') !== -1 &&
+      {fields?.indexOf('Price') !== -1 && (
         <InfoLine
           className={'DocumentTransitionCard__InfoLine'}
           title={'Price'}
-          value={<CreditsBlock credits={transition?.price} rate={rate}/>}
+          value={
+            <CreditsBlock
+              credits={transition?.price}
+              rate={rate}
+            />
+          }
           error={transition?.price === undefined}
         />
-      }
+      )}
 
-      {fields?.indexOf('DocumentType') !== -1 &&
+      {fields?.indexOf('DocumentType') !== -1 && (
         <InfoLine
-          className={'DocumentTransitionCard__InfoLine DocumentTransitionCard__InfoLine--DocumentType'}
+          className={
+            'DocumentTransitionCard__InfoLine DocumentTransitionCard__InfoLine--DocumentType'
+          }
           title={'Document Type'}
-          value={(
-            <ValueContainer>
-              {transition?.type}
-            </ValueContainer>
-          )}
+          value={<ValueContainer>{transition?.type}</ValueContainer>}
           error={!transition?.type}
         />
-      }
+      )}
 
-      {fields?.indexOf('Revision') !== -1 &&
+      {fields?.indexOf('Revision') !== -1 && (
         <InfoLine
-          className={'DocumentTransitionCard__InfoLine DocumentTransitionCard__InfoLine--Revision'}
+          className={
+            'DocumentTransitionCard__InfoLine DocumentTransitionCard__InfoLine--Revision'
+          }
           title={'Revision'}
           value={transition?.revision}
           error={transition?.revision === undefined}
         />
-      }
+      )}
 
-      {fields?.indexOf('IdentityContractNonce') !== -1 &&
+      {fields?.indexOf('IdentityContractNonce') !== -1 && (
         <InfoLine
-          className={'DocumentTransitionCard__InfoLine DocumentTransitionCard__InfoLine--Nonce'}
+          className={
+            'DocumentTransitionCard__InfoLine DocumentTransitionCard__InfoLine--Nonce'
+          }
           title={'Identity Contract Nonce'}
           value={transition?.identityContractNonce}
           error={transition?.identityContractNonce === undefined}
         />
-      }
+      )}
 
-      {fields?.indexOf('Data') !== -1 && transition?.data &&
+      {fields?.indexOf('Data') !== -1 && transition?.data && (
         <InfoLine
-          className={'DocumentTransitionCard__InfoLine DocumentTransitionCard__InfoLine--Data'}
+          className={
+            'DocumentTransitionCard__InfoLine DocumentTransitionCard__InfoLine--Data'
+          }
           title={'Data'}
-          value={(
+          value={
             <Code
               borderRadius={'lg'}
               px={5}
@@ -198,18 +242,58 @@ const DocumentTransitionCard = ({ transition, owner, rate, className }) => {
             >
               {JSON.stringify(transition?.data, null, 2)}
             </Code>
-          )}
+          }
           error={transition?.data === undefined}
         />
-      }
+      )}
 
-      {transition?.prefundedVotingBalance &&
+      {transition?.prefundedVotingBalance && (
         <InfoLine
-          className={'DocumentTransitionCard__InfoLine DocumentTransitionCard__InfoLine--PrefundedBalance'}
+          className={
+            'DocumentTransitionCard__InfoLine DocumentTransitionCard__InfoLine--PrefundedBalance'
+          }
           title={'Prefunded Voting Balance'}
-          value={<PrefundedBalance prefundedBalance={transition?.prefundedVotingBalance} rate={rate}/>}
+          value={
+            <PrefundedBalance
+              prefundedBalance={transition?.prefundedVotingBalance}
+              rate={rate}
+            />
+          }
         />
-      }
+      )}
+
+      {transition?.tokenPaymentInfo && (
+        <InfoLine
+          className={
+            'DocumentTransitionCard__InfoLine DocumentTransitionCard__InfoLine--PaymentInfo'
+          }
+          title={'Token Payment Info'}
+          value={
+            <>
+              <InfoLine
+                title={'Gas Fees Paid By'}
+                value={transition.tokenPaymentInfo.gasFeesPaidBy}
+              />
+              <InfoLine
+                title={'maximumTokenCost'}
+                value={transition.tokenPaymentInfo.maximumTokenCost ?? '-'}
+              />
+              <InfoLine
+                title={'minimumTokenCost'}
+                value={transition.tokenPaymentInfo.minimumTokenCost}
+              />
+              <InfoLine
+                title={'paymentTokenContractId'}
+                value={transition.tokenPaymentInfo.paymentTokenContractId}
+              />
+              <InfoLine
+                title={'tokenContractPosition'}
+                value={transition.tokenPaymentInfo.tokenContractPosition}
+              />
+            </>
+          }
+        />
+      )}
     </div>
   )
 }

@@ -231,7 +231,9 @@ const fixtures = {
     state_transition_hash,
     owner,
     is_system,
-    documents = []
+    documents = [],
+    description,
+    keywords = []
   } = {}) {
     if (!identifier) {
       identifier = generateIdentifier()
@@ -248,7 +250,9 @@ const fixtures = {
       state_transition_hash,
       schema: schema ?? {},
       version: version ?? 0,
-      is_system: is_system === true
+      is_system: is_system === true,
+      description,
+      keywords
     }
 
     const result = await knex('data_contracts').insert(row).returning('id')

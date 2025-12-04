@@ -1,0 +1,63 @@
+@import 'variables';
+
+.root {
+  display: flex;
+  align-items: start;
+    @media screen and (max-width: 600px) {
+      flex-wrap: wrap;
+    }
+
+  .subcategory {
+    display: flex;
+    align-items: start;
+    @media screen and (max-width: 1100px) {
+      flex-wrap: wrap;
+    }
+
+    .container {
+      width: fit-content;
+      padding: 6px 10px;
+      background-color: #2e393d;
+
+      .title {
+        font-family: $font-mono;
+        font-size: 0.688rem;
+      }
+
+      .card {
+        margin-top: 8px;
+        width: fit-content;
+        padding: 6px 10px;
+        background-color: #58f4bc33;
+
+        .title {
+          color: #58f4bc;
+          font-family: $font-mono;
+          font-size: 0.688rem;
+        }
+
+        .header {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          font-weight: 400;
+        }
+
+        .list {
+          margin-top: 8px;
+          display: flex;
+          flex-direction: column;
+          gap: 8px;
+
+          .field {
+            margin: 0;
+            font-family: $font-mono;
+            line-height: 140%;
+            font-size: 0.688rem;
+            font-weight: 400;
+          }
+        }
+      }
+    }
+  }
+}

@@ -9,10 +9,15 @@ class TokensController {
     const {
       page = 1,
       limit = 10,
-      order = 'asc'
+      order = 'asc',
+      owner,
+      position,
+      contract_id: contractId,
+      token_name: tokenName,
+      token_id: tokenId
     } = request.query
 
-    const tokens = await this.tokensDAO.getTokens(Number(page ?? 1), Number(limit ?? 10), order)
+    const tokens = await this.tokensDAO.getTokens(Number(page ?? 1), Number(limit ?? 10), order, owner, position, contractId, tokenName, tokenId)
 
     response.send(tokens)
   }

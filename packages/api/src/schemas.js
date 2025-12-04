@@ -198,6 +198,108 @@ const schemaTypes = [
         pattern: '^[A-Za-z0-9]+$',
         minLength: 43,
         maxLength: 44
+      },
+      token_name: {
+        type: 'string',
+        pattern: '^[A-Za-z0-9-]+$',
+        minLength: 3,
+        maxLength: 25
+      },
+      is_system: {
+        type: ['boolean', 'null']
+      },
+      with_tokens: {
+        type: ['boolean', 'null']
+      },
+      documents_count_min: {
+        type: ['number', 'null'],
+        minimum: 0
+      },
+      documents_count_max: {
+        type: ['number', 'null'],
+        minimum: 0
+      },
+      blocks_proposed_min: {
+        type: ['number', 'null'],
+        minimum: 0
+      },
+      blocks_proposed_max: {
+        type: ['number', 'null'],
+        minimum: 0
+      },
+      last_proposed_block_height_min: {
+        type: ['number', 'null'],
+        minimum: 0
+      },
+      last_proposed_block_height_max: {
+        type: ['number', 'null'],
+        minimum: 0
+      },
+      last_proposed_block_timestamp_start: {
+        type: ['string', 'null'],
+        format: 'date-time'
+      },
+      last_proposed_block_timestamp_end: {
+        type: ['string', 'null'],
+        format: 'date-time'
+      },
+      last_proposed_block_hash: {
+        type: 'string',
+        pattern: '^[A-Za-z0-9]+$',
+        minLength: 64,
+        maxLength: 64
+      },
+      position: {
+        type: ['number', 'null'],
+        maximum: 65535,
+        minimum: 0
+      },
+      contract_id: {
+        type: ['string', 'null'],
+        pattern: '^[A-Za-z0-9]+$',
+        minLength: 43,
+        maxLength: 44
+      },
+      token_id: {
+        type: ['string', 'null'],
+        pattern: '^[A-Za-z0-9]+$',
+        minLength: 43,
+        maxLength: 44
+      },
+      pro_tx_hash: {
+        type: 'string',
+        pattern: '^[A-Za-z0-9]+$',
+        minLength: 64,
+        maxLength: 64
+      },
+      description: {
+        type: ['string', 'null'],
+        minLength: 3,
+        maxLength: 100
+      },
+      keywords: {
+        type: ['array', 'null'],
+        items: {
+          type: ['string'],
+          pattern: '^[A-Za-z0-9]+$'
+        },
+        maxItems: 20
+      },
+      data_contracts_min: {
+        type: ['number', 'null'],
+        minimum: 0
+      },
+      data_contracts_max: {
+        type: ['number', 'null'],
+        minimum: 0
+      },
+      balance_min: {
+        type: ['string', 'null'],
+        pattern: '^[0-9]+$'
+      },
+      balance_max: {
+        type: ['string', 'null'],
+        pattern: '^[0-9]+$'
       }
     }
   },

@@ -179,26 +179,44 @@ module.exports = class BlockDAO {
   ) => {
     const fromRank = ((page - 1) * limit)
 
-    const epochQuery = (epochStartTimestamp && epochEndTimestamp)
-      ? [
-          'timestamp BETWEEN ? AND ?',
-          [new Date(epochStartTimestamp).toISOString(), new Date(epochEndTimestamp).toISOString()]
-        ]
-      : ['true']
+    let epochQueryString = ''
+    let heightQueryString = ''
+    let timestampQueryString = ''
+    let gasQueryString = ''
+    let transactionsQueryString = ''
 
-    const heightQuery = heightMin
-      ? [
-          heightMax ? 'height BETWEEN ? AND ?' : 'height >= ?',
-          heightMax ? [heightMin, heightMax] : [heightMin]
-        ]
-      : ['true']
+    const epochQueryBindings = []
+    const heightQueryBindings = []
+    const timestampQueryBindings = []
+    const gasQueryBindings = []
+    const transactionsQueryBindings = []
 
-    const timestampQuery = startTimestamp && endTimestamp
-      ? [
-          'timestamp BETWEEN ? AND ?',
-          [new Date(startTimestamp).toISOString(), new Date(endTimestamp).toISOString()]
-        ]
-      : ['true']
+    if (epochStartTimestamp) {
+      epochQueryString = 'timestamp >= ?'
+      epochQueryBindings.push(new Date(epochStartTimestamp).toISOString())
+    }
+    if (epochEndTimestamp) {
+      epochQueryString = epochQueryString === '' ? 'timestamp <= ?' : 'timestamp BETWEEN ? AND ?'
+      epochQueryBindings.push(new Date(epochEndTimestamp).toISOString())
+    }
+
+    if (heightMin) {
+      heightQueryString = 'height >= ?'
+      heightQueryBindings.push(heightMin)
+    }
+    if (heightMax) {
+      heightQueryString = heightQueryString === '' ? 'height <= ?' : 'height BETWEEN ? AND ?'
+      heightQueryBindings.push(heightMax)
+    }
+
+    if (startTimestamp) {
+      timestampQueryString = 'timestamp >= ?'
+      timestampQueryBindings.push(new Date(startTimestamp).toISOString())
+    }
+    if (endTimestamp) {
+      timestampQueryString = timestampQueryString === '' ? 'timestamp <= ?' : 'timestamp BETWEEN ? AND ?'
+      timestampQueryBindings.push(new Date(endTimestamp).toISOString())
+    }
 
     const validatorQuery = validator
       ? [
@@ -207,19 +225,23 @@ module.exports = class BlockDAO {
         ]
       : ['true']
 
-    const gasQuery = gasMin
-      ? [
-          gasMax ? 'total_gas_used BETWEEN ? AND ?' : 'total_gas_used >= ?',
-          gasMax ? [gasMin, gasMax] : [gasMin]
-        ]
-      : ['true']
+    if (gasMin) {
+      gasQueryString = 'COALESCE(total_gas_used, 0) >= ?'
+      gasQueryBindings.push(gasMin)
+    }
+    if (gasMax) {
+      gasQueryString = gasQueryString === '' ? 'COALESCE(total_gas_used, 0) <= ?' : 'COALESCE(total_gas_used, 0) BETWEEN ? AND ?'
+      gasQueryBindings.push(gasMax)
+    }
 
-    const transactionsQuery = transactionCountMin
-      ? [
-          transactionCountMax ? 'cardinality(txs.txs) BETWEEN ? AND ?' : 'cardinality(txs.txs) >= ?',
-          transactionCountMax ? [transactionCountMin, transactionCountMax] : [transactionCountMin]
-        ]
-      : ['true']
+    if (transactionCountMin) {
+      transactionsQueryString = 'cardinality(txs.txs) >= ?'
+      transactionsQueryBindings.push(transactionCountMin)
+    }
+    if (transactionCountMax) {
+      transactionsQueryString = transactionsQueryString === '' ? 'cardinality(txs.txs) <= ?' : 'cardinality(txs.txs) BETWEEN ? AND ?'
+      transactionsQueryBindings.push(transactionCountMax)
+    }
 
     const subquery = this.knex('blocks')
       .select(
@@ -228,9 +250,9 @@ module.exports = class BlockDAO {
         'blocks.l1_locked_height as l1_locked_height', 'blocks.validator as validator',
         'blocks.app_hash as app_hash'
       )
-      .whereRaw(...epochQuery)
-      .andWhereRaw(...heightQuery)
-      .andWhereRaw(...timestampQuery)
+      .whereRaw(epochQueryString, epochQueryBindings)
+      .andWhereRaw(heightQueryString, heightQueryBindings)
+      .andWhereRaw(timestampQueryString, timestampQueryBindings)
       .andWhereRaw(...validatorQuery)
       .as('blocks')
 
@@ -244,8 +266,8 @@ module.exports = class BlockDAO {
         'hash', 'blocks.height', 'timestamp', 'block_version', 'app_hash',
         'app_version', 'l1_locked_height', 'txs.txs', 'validator', 'total_gas_used')
       .leftJoin(transactionsSubquery, 'txs.block_height', 'blocks.height')
-      .whereRaw(...gasQuery)
-      .andWhereRaw(...transactionsQuery)
+      .whereRaw(gasQueryString, gasQueryBindings)
+      .andWhereRaw(transactionsQueryString, transactionsQueryBindings)
       .as('gas')
 
     const rows = await this.knex(gasSubQuery)

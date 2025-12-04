@@ -9,5 +9,21 @@
         max-width: max-content;
       }
     }
+
+    &__Badge {
+      width: fit-content;
+    }
+
+    &--PaymentInfo {
+      display: flex;
+      justify-content: start;
+      align-items: start;
+      gap: 8px;
+    }
+    .InfoLine__Value {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
   }
 }

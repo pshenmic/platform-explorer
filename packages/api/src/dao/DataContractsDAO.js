@@ -1,6 +1,11 @@
 const DataContract = require('../models/DataContract')
 const PaginatedResultSet = require('../models/PaginatedResultSet')
-const { decodeStateTransition, getAliasFromDocument, getAliasDocumentForIdentifier, getAliasDocumentForIdentifiers } = require('../utils')
+const {
+  decodeStateTransition,
+  getAliasFromDocument,
+  getAliasDocumentForIdentifier,
+  getAliasDocumentForIdentifiers, convertToSqlSafeString
+} = require('../utils')
 const Token = require('../models/Token')
 const { TokenConfigurationWASM, IdentifierWASM } = require('pshenmic-dpp')
 
@@ -10,9 +15,17 @@ module.exports = class DataContractsDAO {
     this.sdk = sdk
   }
 
-  getDataContracts = async (page, limit, order, orderBy) => {
-    const fromRank = ((page - 1) * limit) + 1
-    const toRank = fromRank + limit - 1
+  getDataContracts = async (page, limit, order, orderBy, owner, isSystem, withTokens, timestampStart, timestampEnd, documentsCountMin, documentsCountMax, description, keywords) => {
+    const fromRank = ((page - 1) * limit)
+
+    let filtersQuery = ''
+    const filtersBindings = []
+
+    let timestampsQueryString = ''
+    const timestampBindings = []
+
+    let documentCountQueryString = ''
+    const documentCountBindings = []
 
     const orderByOptions = [{ column: 'filtered_data_contracts.id', order }]
 
@@ -20,44 +33,129 @@ module.exports = class DataContractsDAO {
       orderByOptions.unshift({ column: 'documents_count', order })
     }
 
-    const getRankString = () => {
-      return orderByOptions.reduce((acc, value, index, arr) =>
-        acc + ` ${value.column} ${value.order}${index === arr.length - 1 ? '' : ','}`, 'order by')
+    if (owner) {
+      filtersBindings.push(owner)
+      filtersQuery = 'filtered_data_contracts.owner = ?'
     }
 
-    const sumDocuments = this.knex('documents')
-      .select('documents.id', 'data_contracts.identifier as dc_identifier', 'documents.data_contract_id', 'revision')
-      .leftJoin('data_contracts', 'data_contracts.id', 'documents.data_contract_id')
-      .as('sum_documents')
+    if (withTokens === true) {
+      filtersQuery = filtersQuery !== '' ? filtersQuery + ' and tokens_count > 0' : 'tokens_count > 0'
+    } else if (withTokens === false) {
+      filtersQuery = filtersQuery !== '' ? filtersQuery + ' and tokens_count = 0' : 'tokens_count = 0'
+    }
 
-    const subquery = this.knex('data_contracts')
-      .select('data_contracts.id as id', 'data_contracts.identifier as identifier', 'data_contracts.name as name',
-        'data_contracts.identifier as my_identifier', 'data_contracts.owner as owner',
-        'data_contracts.is_system as is_system', 'data_contracts.version as version',
-        'data_contracts.state_transition_hash as tx_hash')
-      .select(this.knex(sumDocuments)
+    if (isSystem === true || isSystem === false) {
+      filtersQuery = filtersQuery !== '' ? filtersQuery + ' and is_system = ?' : 'is_system = ?'
+      filtersBindings.push(isSystem)
+    }
+
+    if (keywords?.length > 0) {
+      filtersQuery = filtersQuery !== '' ? filtersQuery + ' and keywords @> ?' : 'keywords @> ?'
+      filtersBindings.push(keywords)
+    }
+
+    if (documentsCountMin) {
+      documentCountQueryString = 'documents_count >= ?'
+      documentCountBindings.push(documentsCountMin)
+    }
+    if (documentsCountMax) {
+      documentCountQueryString = documentCountQueryString === '' ? 'documents_count <= ?' : 'documents_count between ? and ?'
+      documentCountBindings.push(documentsCountMax)
+    }
+
+    if (timestampStart) {
+      timestampsQueryString = 'blocks.timestamp >= ?'
+      timestampBindings.push(timestampStart)
+    }
+    if (timestampEnd) {
+      timestampsQueryString = timestampsQueryString === '' ? 'blocks.timestamp <= ?' : 'blocks.timestamp between ? and ?'
+      timestampBindings.push(timestampEnd)
+    }
+
+    const dataContractsSubquery = this.knex('data_contracts')
+      .select(
+        'id',
+        'identifier',
+        'name',
+        'owner',
+        'is_system',
+        'version',
+        'state_transition_hash',
+        'keywords',
+        'description',
+        this.knex.raw('ROW_NUMBER() OVER(PARTITION BY identifier ORDER BY version DESC) as rank')
+      )
+
+    const subquery = this.knex
+      .with('data_contracts_with_version', dataContractsSubquery)
+      .select(
+        'id',
+        'name',
+        'data_contracts_with_version.identifier as identifier',
+        'owner',
+        'is_system',
+        'version',
+        'keywords',
+        'description',
+        this.knex.raw('COALESCE(tokens_counts.count, 0) as tokens_count')
+      )
+      .select(this.knex('documents')
         .count('*')
-        .whereRaw('data_contracts.identifier = sum_documents.dc_identifier')
+        .whereRaw('data_contracts_with_version.identifier = data_contracts.identifier')
         .andWhere('revision', '=', '1')
+        .leftJoin('data_contracts', 'data_contracts.id', 'documents.data_contract_id')
         .as('documents_count'))
-      .select(this.knex.raw('rank() over (partition by identifier order by version desc) rank'))
-
-    const filteredContracts = this.knex.with('filtered_data_contracts', subquery)
-      .select(this.knex.raw('COALESCE(documents_count, 0) as documents_count'))
-      .select('id', 'name', 'owner', 'identifier', 'version', 'tx_hash', 'rank', 'is_system',
-        this.knex('filtered_data_contracts').count('*').as('total_count').where('rank', '1'))
-      .select(this.knex.raw(`rank() over (${getRankString()}) row_number`))
-      .from('filtered_data_contracts')
+      .select(this.knex
+        .select('state_transition_hash')
+        .whereRaw('data_contracts_with_version.identifier = d.identifier')
+        .orderBy('rank', 'DESC')
+        .limit(1)
+        .fromRaw('data_contracts_with_version d')
+        .as('tx_hash'))
+      .leftJoin(
+        this.knex('tokens')
+          .select('data_contract_id')
+          .count('* as count')
+          .groupBy('data_contract_id')
+          .as('tokens_counts'),
+        'tokens_counts.data_contract_id', '=', 'data_contracts_with_version.id'
+      )
       .where('rank', 1)
-      .as('filtered_data_contracts')
+      .from('data_contracts_with_version')
 
-    const rows = await this.knex(filteredContracts)
-      .select('filtered_data_contracts.documents_count', 'filtered_data_contracts.id', 'name', 'total_count', 'identifier', 'filtered_data_contracts.owner', 'version', 'row_number',
-        'filtered_data_contracts.tx_hash', 'is_system', 'blocks.timestamp as timestamp', 'blocks.hash as block_hash')
+    const filteredContracts = this.knex
+      .with('filtered_data_contracts', subquery)
+      .select(
+        'filtered_data_contracts.id', 'name', 'filtered_data_contracts.owner',
+        'version', 'tx_hash', 'is_system', 'identifier', 'tokens_count',
+        'blocks.timestamp as timestamp', 'blocks.hash as block_hash', 'documents_count',
+        'keywords', 'description'
+      )
+      .andWhereRaw(filtersQuery, filtersBindings)
+      .andWhereRaw(timestampsQueryString, timestampBindings)
+      .andWhereRaw(documentCountQueryString, documentCountBindings)
       .leftJoin('state_transitions', 'state_transitions.hash', 'filtered_data_contracts.tx_hash')
-      .leftJoin('blocks', 'blocks.hash', 'state_transitions.block_hash')
-      .whereBetween('row_number', [fromRank, toRank])
+      .leftJoin('blocks', 'blocks.height', 'state_transitions.block_height')
+      .from('filtered_data_contracts')
+
+    if (description) {
+      filteredContracts
+        .whereRaw('LOWER(description) like LOWER(? || \'%\')', convertToSqlSafeString(description))
+    }
+
+    const rows = await this.knex
+      .with('filtered_data_contracts', filteredContracts)
+      .select(this.knex.raw('COALESCE(documents_count, 0) as documents_count'))
+      .select(this.knex('filtered_data_contracts').count('*').as('total_count'))
+      .select(
+        'identifier', 'filtered_data_contracts.owner', 'version',
+        'filtered_data_contracts.tx_hash', 'is_system', 'timestamp', 'block_hash',
+        'filtered_data_contracts.id', 'name', 'tokens_count', 'keywords', 'description'
+      )
       .orderBy(orderByOptions)
+      .limit(limit)
+      .offset(fromRank)
+      .from('filtered_data_contracts')
 
     const totalCount = rows.length > 0 ? Number(rows[0].total_count) : 0
 
@@ -98,11 +196,36 @@ module.exports = class DataContractsDAO {
       .select(this.knex.raw('count(*) as total_count'))
       .leftJoin('state_transitions', 'hash', 'state_transition_hash')
 
-    const dataSubquery = this.knex('data_contracts')
+    const dataContractSubquery = this.knex('data_contracts')
+      .where('data_contracts.identifier', identifier)
+
+    const dataContractInfoSubquery = this.knex('data_contract')
+      .orderBy('data_contract.id', 'asc')
+      .leftJoin('state_transitions', 'hash', 'state_transition_hash')
+
+    const dataSubquery = this.knex
+      .with('data_contract', dataContractSubquery)
+      .with('data_contract_info', dataContractInfoSubquery)
       .with('gas_sub', gasSubquery)
-      .select('data_contracts.identifier as identifier', 'data_contracts.name as name', 'data_contracts.owner as owner',
-        'data_contracts.schema as schema', 'data_contracts.is_system as is_system', 'state_transitions.data as state_transition_data',
-        'data_contracts.version as version', 'state_transitions.hash as tx_hash', 'blocks.timestamp as timestamp')
+      .select('data_contract.identifier as identifier', 'data_contract.name as name', 'data_contract.owner as owner',
+        'data_contract.schema as schema', 'data_contract.is_system as is_system', 'description', 'keywords')
+      .select(
+        this.knex('data_contract')
+          .select('version')
+          .orderBy('id', 'desc')
+          .limit(1)
+          .as('version')
+      )
+      .select(this.knex('data_contract_info').select('data').limit(1).as('state_transition_data'))
+      .select(this.knex('data_contract_info').select('hash').limit(1).as('tx_hash'))
+      .select(
+        this.knex('data_contract_info')
+          .select('timestamp')
+          .leftJoin('blocks', 'blocks.height', 'block_height')
+          .limit(1)
+          .orderBy('height', 'asc')
+          .as('timestamp')
+      )
       .select(this.knex('documents').count('*')
         .leftJoin('data_contracts', 'data_contracts.id', 'documents.data_contract_id')
         .whereRaw('data_contracts.identifier = ? and revision = ?', [identifier, 1])
@@ -111,16 +234,15 @@ module.exports = class DataContractsDAO {
       .select(this.knex(groupedIdentities).select(this.knex.raw('count(*)')).limit(1).as('identities_interacted'))
       .select(this.knex('gas_sub').select('total_gas_used').as('total_gas_used'))
       .select(this.knex('gas_sub').select(this.knex.raw('round(total_gas_used/total_count,0)')).as('average_gas_used'))
-      .leftJoin('state_transitions', 'data_contracts.state_transition_hash', 'state_transitions.hash')
-      .leftJoin('blocks', 'blocks.hash', 'state_transitions.block_hash')
-      .where('data_contracts.identifier', identifier)
-      .orderBy('data_contracts.id', 'desc')
+      .where('data_contract.identifier', identifier)
+      .orderBy('data_contract.id', 'desc')
       .limit(1)
+      .from('data_contract')
       .as('data_sub')
 
     const rows = await this.knex(dataSubquery)
       .select('identifier', 'owner', 'name', 'schema', 'is_system', 'version', 'tx_hash', 'timestamp', 'state_transition_data',
-        'documents_count', 'top_identity', 'identities_interacted', 'total_gas_used', 'average_gas_used')
+        'documents_count', 'top_identity', 'identities_interacted', 'total_gas_used', 'average_gas_used', 'description', 'keywords')
 
     const [row] = rows
 
@@ -206,7 +328,8 @@ module.exports = class DataContractsDAO {
     return DataContract.fromObject({
       ...dataContract,
       groups,
-      tokens
+      tokens,
+      tokensCount: tokens?.length
     })
   }
 
@@ -278,8 +401,8 @@ module.exports = class DataContractsDAO {
     const rows = await this.knex('data_contracts')
       .select(
         'data_contracts.identifier as identifier', 'data_contracts.name as name',
-        'data_contracts.owner as owner', 'data_contracts.is_system as is_system',
-        'data_contracts.version as version', 'data_contracts.schema as schema',
+        'data_contracts.owner as owner', 'data_contracts.is_system as is_system', 'keywords',
+        'data_contracts.version as version', 'data_contracts.schema as schema', 'description',
         'data_contracts.state_transition_hash as tx_hash', 'blocks.timestamp as timestamp'
       )
       .select(
@@ -288,6 +411,11 @@ module.exports = class DataContractsDAO {
           .leftJoin('data_contracts', 'data_contracts.id', 'documents.data_contract_id')
           .whereILike('data_contracts.name', `${name}%`)
           .as('documents_count')
+      )
+      .select(this.knex('tokens')
+        .count('* as count')
+        .whereRaw('tokens.data_contract_id = data_contracts.id')
+        .as('tokens_count')
       )
       .whereILike('data_contracts.name', `${name}%`)
       .leftJoin('state_transitions', 'state_transitions.hash', 'data_contracts.state_transition_hash')
@@ -359,5 +487,37 @@ module.exports = class DataContractsDAO {
     const [row] = rows
 
     return new PaginatedResultSet(resultSet, page, limit, Number(row?.total_count ?? 0))
+  }
+
+  getDataContractByKeywordsString = async (rawKeywords) => {
+    const keywords = rawKeywords.split(' ')
+
+    const rows = await this.knex('data_contracts')
+      .select(
+        'data_contracts.identifier as identifier', 'data_contracts.name as name',
+        'data_contracts.owner as owner', 'data_contracts.is_system as is_system', 'keywords',
+        'data_contracts.version as version', 'data_contracts.schema as schema', 'description',
+        'data_contracts.state_transition_hash as tx_hash', 'blocks.timestamp as timestamp'
+      )
+      .whereRaw('keywords @> ?', [keywords])
+      .leftJoin('state_transitions', 'state_transitions.hash', 'data_contracts.state_transition_hash')
+      .leftJoin('blocks', 'state_transitions.block_hash', 'blocks.hash')
+
+    return rows.map(DataContract.fromRow)
+  }
+
+  getDataContractByDescription = async (description) => {
+    const rows = await this.knex('data_contracts')
+      .select(
+        'data_contracts.identifier as identifier', 'data_contracts.name as name',
+        'data_contracts.owner as owner', 'data_contracts.is_system as is_system', 'keywords',
+        'data_contracts.version as version', 'data_contracts.schema as schema', 'description',
+        'data_contracts.state_transition_hash as tx_hash', 'blocks.timestamp as timestamp'
+      )
+      .whereRaw('LOWER(description) like LOWER(? || \'%\')', convertToSqlSafeString(description))
+      .leftJoin('state_transitions', 'state_transitions.hash', 'data_contracts.state_transition_hash')
+      .leftJoin('blocks', 'state_transitions.block_hash', 'blocks.hash')
+
+    return rows.map(DataContract.fromRow)
   }
 }

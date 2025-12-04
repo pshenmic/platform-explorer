@@ -51,6 +51,10 @@ const prepareQueryParams = (params = {}) => {
   }
 
   Object.entries(params).forEach(([key, value]) => {
+    if (!value) {
+      return
+    }
+
     if (Array.isArray(value)) {
       if (value.length > 0) {
         value.forEach(item => {
@@ -231,12 +235,24 @@ const getIdentitiesHistory = (start, end, intervalsCount) => {
   return call(`identities/history?timestamp_start=${start}&timestamp_end=${end}${intervalsCount ? `&intervalsCount=${intervalsCount}` : ''}`, 'GET')
 }
 
-const getValidators = (page = 1, limit = 30, order = 'asc', isActive, orderBy) => {
-  return call(`validators?page=${page}&limit=${limit}&order=${order}${typeof isActive === 'boolean' ? `&isActive=${String(isActive)}` : ''}${orderBy ? `&order_by=${orderBy}` : ''}`, 'GET')
+const getValidators = (page = 1, limit = 30, order = 'asc', filters) => {
+  const params = prepareQueryParams({
+    page: Math.max(1, parseInt(page)),
+    limit: Math.max(1, parseInt(limit)),
+    order,
+    // order_by: orderBy,
+    ...filters
+  })
+
+  return call(`validators?${params}`, 'GET')
 }
 
 const getValidatorByProTxHash = (proTxHash) => {
   return call(`validator/${proTxHash}`, 'GET')
+}
+
+const getValidatorByMasternodeIdentity = (identity) => {
+  return call(`validator/identity/${identity}`, 'GET')
 }
 
 const getBlocksStatsByValidator = (proTxHash, start, end, intervalsCount) => {
@@ -317,5 +333,6 @@ export {
   getEpoch,
   getContestedResourcesStats,
   getMasternodeVotes,
-  getRate
+  getRate,
+  getValidatorByMasternodeIdentity
 }

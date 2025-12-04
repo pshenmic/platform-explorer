@@ -10,7 +10,7 @@ const Alias = require('./models/Alias')
 const TokenTransitionEnum = require('./enums/TokenTransitionsEnum')
 const {
   StateTransitionWASM,
-  BatchTransitionWASM,
+  BatchTransitionWASM, TokenConfigurationWASM,
   DataContractCreateTransitionWASM,
   IdentityCreateTransitionWASM, IdentityTopUpTransitionWASM, DataContractUpdateTransitionWASM,
   IdentityUpdateTransitionWASM, IdentityCreditTransferWASM, IdentityCreditWithdrawalTransitionWASM,
@@ -154,11 +154,13 @@ const getActionTakersValue = (actionTakers) => {
   return typeof value === 'number' ? value : value?.base58()
 }
 
-const tokensConfigToArray = (config) => {
+const tokensConfigToArray = (config, dataContractId) => {
   const tokensKeys = Object.keys(config)
 
   return tokensKeys.map((position) => {
     const token = config[position]
+
+    const tokenId = TokenConfigurationWASM.calculateTokenId(dataContractId, position)
 
     const localizations = Object.keys(token.conventions.localizations)
       .reduce((acc, localizationCode) => {
@@ -169,6 +171,7 @@ const tokensConfigToArray = (config) => {
 
     return {
       position: Number(position),
+      tokenId: tokenId.base58(),
       conventions: {
         decimals: token.conventions.decimals,
         localizations
@@ -354,7 +357,7 @@ const decodeStateTransition = async (base64) => {
       decoded.dataContractId = dataContract.id.base58()
       decoded.ownerId = dataContract.ownerId.base58()
       decoded.schema = dataContract.getSchemas()
-      decoded.tokens = tokensConfigToArray(dataContract.tokens ?? {})
+      decoded.tokens = tokensConfigToArray(dataContract.tokens ?? {}, dataContract.id)
       decoded.signature = Buffer.from(stateTransition.signature).toString('hex')
       decoded.signaturePublicKeyId = stateTransition.signaturePublicKeyId
       decoded.raw = Buffer.from(stateTransition.bytes()).toString('hex')
@@ -772,7 +775,7 @@ const decodeStateTransition = async (base64) => {
               action: BatchEnum[transition.actionTypeNumber],
               id: transition.id.base58(),
               dataContractId: transition.dataContractId.base58(),
-              revision: String(transition.revision),
+              revision: String(transition.revision ?? 0),
               type: transition.documentTypeName,
               identityContractNonce: String(transition.identityContractNonce)
             }
@@ -1007,7 +1010,7 @@ const decodeStateTransition = async (base64) => {
       decoded.ownerId = dataContractUpdateTransition.getDataContract().ownerId.base58()
       decoded.dataContractId = dataContractUpdateTransition.getDataContract().id.base58()
       decoded.schema = dataContractUpdateTransition.getDataContract().getSchemas()
-      decoded.tokens = tokensConfigToArray(dataContractUpdateTransition.getDataContract().tokens ?? {})
+      decoded.tokens = tokensConfigToArray(dataContractUpdateTransition.getDataContract().tokens ?? {}, dataContractUpdateTransition.getDataContract().id)
       decoded.version = dataContractUpdateTransition.getDataContract().version
       decoded.dataContractOwner = dataContractUpdateTransition.getDataContract().ownerId.base58()
       decoded.raw = Buffer.from(stateTransition.bytes()).toString('hex')
@@ -1360,6 +1363,9 @@ const getAliasDocumentForIdentifiers = async (identifiers, sdk) => {
   }), {})
 }
 
+// replace all wildcard characters to "safe" characters
+const convertToSqlSafeString = (sql) => sql.replaceAll('_', '\\_').replaceAll('%', '\\%')
+
 module.exports = {
   hash,
   decodeStateTransition,
@@ -1376,5 +1382,6 @@ module.exports = {
   fetchTokenInfoByRows,
   convertToHomographSafeChars,
   getAliasDocumentForIdentifiers,
-  getAliasDocumentForIdentifier
+  getAliasDocumentForIdentifier,
+  convertToSqlSafeString
 }

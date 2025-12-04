@@ -293,7 +293,7 @@ module.exports = class ContestedDAO {
     return new PaginatedResultSet(resourcesWithVotes, page, limit, Number(totalCount ?? 0))
   }
 
-  getVotesForContestedResource = async (choice, resourceValue, page, limit, order) => {
+  getVotesForContestedResource = async (choice, resourceValue, proTxHash, page, limit, order) => {
     const fromRank = ((page - 1) * limit)
 
     let query = 'index_values = ?'
@@ -302,6 +302,11 @@ module.exports = class ContestedDAO {
     if (choice !== null && !isNaN(choice)) {
       query = query + ' and choice = ?'
       bindings.push(choice)
+    }
+
+    if (proTxHash) {
+      query = query + ' and LOWER(pro_tx_hash) = LOWER(?)'
+      bindings.push(proTxHash)
     }
 
     const prefundedDocumentsSubquery = this.knex('documents')
@@ -451,11 +456,11 @@ module.exports = class ContestedDAO {
       .leftJoin('documents', 'id', 'document_id')
       .leftJoin('state_transitions', 'state_transition_hash', 'hash')
       .leftJoin('blocks', 'blocks.hash', 'state_transitions.block_hash')
-      .orderBy('timestamp', 'desc')
+      .orderBy('timestamp', 'asc')
       .limit(1)
       .as('joined_subquery')
 
-    const lastContestedResourceValue = this.knex(timestampResourceSubquery)
+    const endingContestedResourceValue = this.knex(timestampResourceSubquery)
       .select('resource_value', 'timestamp', 'choice')
       .select(this.knex.raw('NULL::bigint as total_contested_documents_count'))
       .select(this.knex.raw('NULL::bigint as pending_contested_documents_count'))
@@ -474,7 +479,7 @@ module.exports = class ContestedDAO {
       .leftJoin('state_transitions', 'state_transition_hash', 'state_transitions.hash')
       .leftJoin('blocks', 'blocks.hash', 'block_hash')
 
-    const rows = await this.knex.union(statusSubquery, lastContestedResourceValue)
+    const rows = await this.knex.union(statusSubquery, endingContestedResourceValue)
 
     const [status] = rows.filter(row => row.total_contested_documents_count !== null)
 
