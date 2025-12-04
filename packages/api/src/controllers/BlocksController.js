@@ -95,15 +95,15 @@ class BlocksController {
     let epochStartTimestamp
     let epochEndTimestamp
 
-    if (gasMin && gasMax && gasMax < gasMin) {
+    if (gasMax < gasMin) {
       return response.status(400).send('Bad gas range')
     }
 
-    if (heightMin && heightMax && heightMax < heightMin) {
+    if (heightMax < heightMin) {
       return response.status(400).send('Bad height range')
     }
 
-    if (transactionCountMin && transactionCountMax && transactionCountMax < transactionCountMin) {
+    if (transactionCountMax < transactionCountMin) {
       return response.status(400).send('Bad transaction range')
     }
 
