@@ -1,4 +1,4 @@
-use crate::processor::psql::{PSQLProcessor, ProcessorError};
+use crate::processor::psql::PSQLProcessor;
 use crate::utils::TenderdashRpcApi;
 use dashcore_rpc::{Auth, Client};
 use std::cell::Cell;
@@ -7,24 +7,6 @@ use std::env;
 pub mod index_block;
 pub mod process_block;
 pub mod start;
-
-pub enum IndexerError {
-    TenderdashRPCError,
-    ProcessorError,
-}
-
-impl From<reqwest::Error> for IndexerError {
-    fn from(value: reqwest::Error) -> Self {
-        println!("{}", value);
-        IndexerError::TenderdashRPCError
-    }
-}
-
-impl From<ProcessorError> for IndexerError {
-    fn from(_: ProcessorError) -> Self {
-        IndexerError::ProcessorError
-    }
-}
 
 pub struct Indexer {
     tenderdash_rpc: TenderdashRpcApi,
@@ -62,7 +44,7 @@ impl Indexer {
         let tenderdash_url = env::var("TENDERDASH_URL").expect("You've not set the TENDERDASH_URL");
         let txs_to_skip_str = env::var("TXS_TO_SKIP").unwrap_or(String::from(""));
 
-        let mut txs_to_skip = txs_to_skip_str
+        let txs_to_skip = txs_to_skip_str
             .split(",")
             .map(|s| String::from(s).to_lowercase())
             .collect::<Vec<String>>();

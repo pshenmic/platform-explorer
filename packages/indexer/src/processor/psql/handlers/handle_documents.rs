@@ -133,7 +133,7 @@ impl PSQLProcessor {
             if data_contract.is_some() {
                 let data_contract = data_contract.unwrap();
 
-                if (data_contract.owner == owner_id) {
+                if data_contract.owner == owner_id {
                     let data_contract_name = document_transition
                         .data()
                         .unwrap()
