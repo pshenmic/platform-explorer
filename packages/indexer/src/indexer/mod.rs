@@ -67,11 +67,6 @@ impl Indexer {
             .map(|s| String::from(s).to_lowercase())
             .collect::<Vec<String>>();
 
-        // skip non unique txs
-        // https://github.com/dashpay/platform/issues/2867
-        txs_to_skip.push("f72dd58af03236502b13cefa918bc13089a689b4cd06dbd44bbe277d1a77e0ab:cf285c01204a6811a06b4b60f599870fffd77f2ceafd771c2608ed56a4454ca0".to_string());
-        txs_to_skip.push("f72dd58af03236502b13cefa918bc13089a689b4cd06dbd44bbe277d1a77e0ab:9be24f6636e70d288c82a37c6b6ff9622e8f3f7c2b6dccb44d005305febeadad".to_string());
-
         let start_height = processor.get_latest_block_height().await;
 
         Indexer {
