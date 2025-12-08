@@ -25,15 +25,26 @@ const withTitle = (Content) => {
 export const DataContractTitle = withTitle(({ dataContract }) => {
   const { isOpen, handleOpen, handleClose } = useModal()
 
-  const { handleChangeName, isDisabled } = useDataContractUpdate({
-    owner: dataContract.owner.identifier,
-    dataContractName: dataContract.name,
-    dataContractId: dataContract.identifier
-  })
+  const { handleChangeName, handleChangeDescription, isDisabled } =
+    useDataContractUpdate({
+      owner: dataContract.owner.identifier,
+      dataContractId: dataContract.identifier,
+      defaultName: dataContract.name
+    })
 
-  const handleDataContractUpdate = (data) => {
+  const handleDataContractChangeName = ({ name }) => {
     try {
-      handleChangeName(data)
+      handleChangeName(name)
+      handleClose()
+    } catch (e) {
+      console.log(e)
+    }
+  }
+
+  const handleDataContractChangeDescription = ({ keywords, description }) => {
+    console.log('123')
+    try {
+      handleChangeDescription({ keywords, description })
       handleClose()
     } catch (e) {
       console.log(e)
@@ -54,8 +65,8 @@ export const DataContractTitle = withTitle(({ dataContract }) => {
       </button>
       <DataContractModal
         isOpen={isOpen}
-        onClose={handleClose}
-        onSubmit={handleDataContractUpdate}
+        onChangeName={handleDataContractChangeName}
+        onChangeDescription={handleDataContractChangeDescription}
       />
     </>
   )

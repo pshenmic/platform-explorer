@@ -6,7 +6,7 @@ import styles from './NameScreen.module.scss'
 
 const button = cva([styles.btn])
 
-export const NameScreen = ({ onDataContractUpdate }) => {
+export const NameScreen = ({ onChangeName }) => {
   const [form, setForm] = useState({ name: '' })
 
   return (
@@ -19,7 +19,7 @@ export const NameScreen = ({ onDataContractUpdate }) => {
         id='data-contract-name-form'
         onSubmit={(e) => {
           e.preventDefault()
-          onDataContractUpdate(form)
+          onChangeName(form)
         }}
       >
         <label

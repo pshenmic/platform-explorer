@@ -20,7 +20,7 @@ const MODE_PROPS = {
   }
 }
 
-export const DataContractModal = ({ isOpen, onClose, onSubmit }) => {
+export const DataContractModal = ({ isOpen, ...props }) => {
   const [mode, setMode] = useState(FORM_MODE_ENUM.INITIAL)
   const { title, Content } = MODE_PROPS[mode]
 
@@ -32,7 +32,7 @@ export const DataContractModal = ({ isOpen, onClose, onSubmit }) => {
     <Modal title={title}>
       <Content
         setMode={setMode}
-        onDataContractUpdate={onSubmit}
+        {...props}
       />
     </Modal>
   )

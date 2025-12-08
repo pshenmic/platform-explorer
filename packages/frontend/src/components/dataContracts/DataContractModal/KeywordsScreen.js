@@ -6,8 +6,8 @@ import styles from './KeywordsScreen.module.scss'
 
 const button = cva([styles.btn])
 
-export const KeywordsScreen = () => {
-  const [form, setForm] = useState({ description: '' })
+export const KeywordsScreen = ({ onChangeDescription }) => {
+  const [form, setForm] = useState({ description: '', keywords: '' })
   const id = useId()
 
   return (
@@ -15,11 +15,18 @@ export const KeywordsScreen = () => {
       <div className={styles.divider}>
         <Divider />
       </div>
-      <form className={styles.form}>
+      <form
+        id='data-contract-keywords-form'
+        className={styles.form}
+        onSubmit={(e) => {
+          e.preventDefault()
+          onChangeDescription(form)
+        }}
+      >
         <div className={styles.field}>
           <label
             className={styles.label}
-            for={`${id}-description`}
+            htmlFor={`${id}-description`}
           >
             Description:
           </label>
@@ -29,7 +36,9 @@ export const KeywordsScreen = () => {
             placeholder='Enter Description...'
             id={`${id}-description`}
             value={form.description}
-            onChange={(e) => setForm(prev => ({ ...prev, description: e.target.value }))}
+            onChange={(e) =>
+              setForm((prev) => ({ ...prev, description: e.target.value }))
+            }
             resize='none'
             rows={4}
           />
@@ -37,7 +46,7 @@ export const KeywordsScreen = () => {
         <div className={styles.field}>
           <label
             className={styles.label}
-            for={`${id}-keywords`}
+            htmlFor={`${id}-keywords`}
           >
             Keywords:
           </label>
@@ -46,13 +55,18 @@ export const KeywordsScreen = () => {
             id={`${id}-keywords`}
             value={form.keywords}
             className={styles.input}
-            onChange={(e) => setForm(prev => ({ ...prev, description: e.target.value }))}
+            onChange={(e) =>
+              setForm((prev) => ({ ...prev, keywords: e.target.value }))
+            }
           />
         </div>
       </form>
       <div className={styles.controls}>
         <button className={button({ className: styles.cancel })}>Cancel</button>
-        <button className={button({ className: styles.submit })}>
+        <button
+          className={button({ className: styles.submit })}
+          form='data-contract-keywords-form'
+        >
           Submit Changes
         </button>
       </div>
