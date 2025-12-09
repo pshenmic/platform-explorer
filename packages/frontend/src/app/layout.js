@@ -1,5 +1,4 @@
 import RootComponent from '../components/layout/RootComponent'
-import { Providers } from './Providers'
 
 export const viewport = {
   width: 'device-width',
@@ -15,9 +14,7 @@ export default function RootLayout ({ children }) {
       style={{ colorScheme: 'dark' }}
     >
       <body className={'chakra-ui-dark'}>
-        <Providers>
-          <RootComponent>{children}</RootComponent>
-        </Providers>
+        <RootComponent>{children}</RootComponent>
       </body>
     </html>
   )

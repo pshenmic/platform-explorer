@@ -17,20 +17,18 @@ export const WalletProvider = ({ children }) => {
     const { dashPlatformExtension } = window
 
     try {
-
-        const wallet = await dashPlatformExtension.signer.connect()
-        const current = wallet.identities.find(
-            ({ identifier }) => identifier === wallet.currentIdentity
-        )
-        connected.current = true
-        setWalletInfo({ identities: wallet.identities, current })
-        setError(null)
-        cb(wallet)
-    }catch(e) {
-        setError(e)
-        console.log(e)
+      const wallet = await dashPlatformExtension.signer.connect()
+      const current = wallet.identities.find(
+        ({ identifier }) => identifier === wallet.currentIdentity
+      )
+      connected.current = true
+      setWalletInfo({ identities: wallet.identities, current })
+      setError(null)
+      cb(wallet)
+    } catch (e) {
+      setError(e)
+      console.log(e)
     }
-
   }
 
   return (
