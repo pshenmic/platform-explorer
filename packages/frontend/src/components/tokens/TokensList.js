@@ -95,7 +95,7 @@ function TokensList ({
           className={'TokensList__Pagination'}
           onPageChange={pagination.onPageChange}
           pageCount={pagination.pageCount}
-          forcePage={pagination.forcePage}
+          forcePage={pagination.forcePage - 1}
           justify={true}
         />
       )}

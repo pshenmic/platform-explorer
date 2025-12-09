@@ -42,7 +42,6 @@ export const DataContractTitle = withTitle(({ dataContract }) => {
   }
 
   const handleDataContractChangeDescription = ({ keywords, description }) => {
-    console.log('123')
     try {
       handleChangeDescription({ keywords, description })
       handleClose()

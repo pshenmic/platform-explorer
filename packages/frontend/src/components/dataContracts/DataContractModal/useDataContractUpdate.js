@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react'
-import { useActiveNetwork } from 'src/contexts'
-import { useWalletConnect } from 'src/hooks'
+import { useActiveNetwork, useWallet } from 'src/contexts'
 
 const DOCUMENT_TYPE = 'dataContracts'
 
@@ -11,13 +10,13 @@ export const useDataContractUpdate = ({
 }) => {
   const sdk = window.dashPlatformSDK
   const signer = window.dashPlatformExtension.signer
-  const wallet = useWalletConnect()
+  const { connectWallet, connected } = useWallet()
   const [isDisabled, setDisabled] = useState(true)
   const { dataContractPE } = useActiveNetwork()
 
   const handleChangeName = async (name) => {
-    if (!wallet.connected.current) {
-      return
+    if (!connected.current) {
+      await connectWallet()
     }
 
     try {
@@ -50,8 +49,8 @@ export const useDataContractUpdate = ({
   }
 
   const handleChangeDescription = async ({ description, keywords }) => {
-    if (!wallet.connected.current) {
-      return
+    if (!connected.current) {
+      await connectWallet()
     }
 
     try {
@@ -65,6 +64,7 @@ export const useDataContractUpdate = ({
 
       dataContract.keywords = keywords
       dataContract.description = description
+      dataContract.version = dataContract.version + 1
 
       const stateTransition = await sdk.dataContracts.createStateTransition(dataContract, 'update', nonce + 1n)
 
@@ -85,7 +85,7 @@ export const useDataContractUpdate = ({
 
       setDisabled(isDisabledEdit)
     }
-    wallet.connectWallet(validate)
+    connectWallet(validate)
   }, [])
 
   return {
