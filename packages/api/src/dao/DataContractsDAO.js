@@ -150,7 +150,15 @@ module.exports = class DataContractsDAO {
       .select(
         'identifier', 'filtered_data_contracts.owner', 'version',
         'filtered_data_contracts.tx_hash', 'is_system', 'timestamp', 'block_hash',
-        'filtered_data_contracts.id', 'name', 'tokens_count', 'keywords', 'description'
+        'filtered_data_contracts.id', 'tokens_count', 'keywords', 'description'
+      )
+      .select(
+        this.knex('data_contracts')
+          .select('name')
+          .whereRaw('data_contracts.identifier = filtered_data_contracts.identifier and name is not null')
+          .orderBy('id', 'desc')
+          .limit(1)
+          .as('name')
       )
       .orderBy(orderByOptions)
       .limit(limit)
