@@ -9,15 +9,6 @@ import Popover from './components/Popover'
 import Tooltip from './components/Tooltip'
 import Input from './components/Input'
 import Textarea from './components/Textarea'
-import {
-  Montserrat,
-  Open_Sans as OpenSans,
-  Roboto_Mono as RobotoMono
-} from 'next/font/google'
-
-const montserrat = Montserrat({ subsets: ['latin'] })
-const openSans = OpenSans({ subsets: ['latin'] })
-const robotoMono = RobotoMono({ subsets: ['latin'] })
 
 export const theme = extendTheme({
   config: {
@@ -27,11 +18,6 @@ export const theme = extendTheme({
   breakpoints: {
     '2xl': '96em', // 1536px
     '3xl': '120em' // 1920px
-  },
-  fonts: {
-    heading: montserrat.style.fontFamily,
-    body: openSans.style.fontFamily,
-    mono: robotoMono.style.fontFamily
   },
   space: {
     px: '1px',

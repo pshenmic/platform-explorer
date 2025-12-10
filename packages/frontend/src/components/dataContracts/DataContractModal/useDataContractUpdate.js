@@ -1,3 +1,4 @@
+import { useQueryClient } from '@tanstack/react-query'
 import { useEffect, useState } from 'react'
 import { useActiveNetwork, useWallet } from 'src/contexts'
 
@@ -13,6 +14,7 @@ export const useDataContractUpdate = ({
   const { connectWallet, connected } = useWallet()
   const [isDisabled, setDisabled] = useState(true)
   const { dataContractPE } = useActiveNetwork()
+  const queryClient = useQueryClient()
 
   const handleChangeName = async (name) => {
     if (!connected.current) {
@@ -43,6 +45,12 @@ export const useDataContractUpdate = ({
         params
       )
       await signer.signAndBroadcast(stateTransition)
+
+      await new Promise(resolve => setTimeout(resolve, 2000))
+
+      queryClient.invalidateQueries({
+        queryKey: ['dataContract']
+      })
     } catch (e) {
       console.log(e)
     }
@@ -69,6 +77,12 @@ export const useDataContractUpdate = ({
       const stateTransition = await sdk.dataContracts.createStateTransition(dataContract, 'update', nonce + 1n)
 
       await signer.signAndBroadcast(stateTransition)
+
+      await new Promise(resolve => setTimeout(resolve, 2000))
+
+      queryClient.invalidateQueries({
+        queryKey: ['dataContract']
+      })
     } catch (e) {
       console.log(e)
     }

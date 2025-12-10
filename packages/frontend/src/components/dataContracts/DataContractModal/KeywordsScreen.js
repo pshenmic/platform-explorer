@@ -1,5 +1,5 @@
-import { Divider, Input, Textarea } from '@chakra-ui/react'
-import { useId, useState } from 'react'
+import { Divider, Input, Textarea, FormControl } from '@chakra-ui/react'
+import { useEffect, useId, useState } from 'react'
 import { cva } from 'class-variance-authority'
 
 import styles from './KeywordsScreen.module.scss'
@@ -8,7 +8,61 @@ const button = cva([styles.btn])
 
 export const KeywordsScreen = ({ onChangeDescription }) => {
   const [form, setForm] = useState({ description: '', keywords: '' })
+  const [errors, setErrors] = useState({ keywords: null })
   const id = useId()
+
+  const validateKeywords = (value) => {
+    if (!value.trim()) {
+      return null
+    }
+
+    const keywordsRegex = /^[a-zA-Zа-яА-Я0-9]+(\s*,\s*[a-zA-Zа-яА-Я0-9]+)*$/
+
+    if (!keywordsRegex.test(value)) {
+      return 'Please enter words separated by commas only'
+    }
+
+    const keywordsArray = value.split(',').map(item => item.trim())
+    if (keywordsArray.some(item => item === '')) {
+      return 'Please remove empty entries between commas'
+    }
+
+    return null
+  }
+
+  const handleKeywordsChange = (value) => {
+    setForm((prev) => ({ ...prev, keywords: value }))
+
+    const error = validateKeywords(value)
+    setErrors((prev) => ({ ...prev, keywords: error }))
+  }
+
+  const handleSubmit = (e) => {
+    e.preventDefault()
+
+    const keywordsError = validateKeywords(form.keywords)
+
+    if (keywordsError) {
+      setErrors((prev) => ({ ...prev, keywords: keywordsError }))
+      return
+    }
+
+    const keywordsArray = form.keywords
+      .split(',')
+      .map(item => item.trim())
+      .filter(item => item.length > 0)
+
+    const formData = {
+      description: form.description,
+      keywords: keywordsArray
+    }
+
+    onChangeDescription(formData)
+  }
+
+  useEffect(() => {
+    console.log(errors)
+  }, [errors])
 
   return (
     <div className={styles.root}>
@@ -18,10 +72,7 @@ export const KeywordsScreen = ({ onChangeDescription }) => {
       <form
         id='data-contract-keywords-form'
         className={styles.form}
-        onSubmit={(e) => {
-          e.preventDefault()
-          onChangeDescription(form)
-        }}
+        onSubmit={handleSubmit}
       >
         <div className={styles.field}>
           <label
@@ -50,22 +101,31 @@ export const KeywordsScreen = ({ onChangeDescription }) => {
           >
             Keywords:
           </label>
-          <Input
-            placeholder='Enter Keywords Separated With Comma...'
-            id={`${id}-keywords`}
-            value={form.keywords}
-            className={styles.input}
-            onChange={(e) =>
-              setForm((prev) => ({ ...prev, keywords: e.target.value }))
-            }
-          />
+          <FormControl className={styles.input} isInvalid={!!errors.keywords}>
+            <Input
+              placeholder='Enter Keywords Separated With Comma...'
+              id={`${id}-keywords`}
+              value={form.keywords}
+              onChange={(e) => handleKeywordsChange(e.target.value)}
+              onBlur={() => {
+                const error = validateKeywords(form.keywords)
+                setErrors((prev) => ({ ...prev, keywords: error }))
+              }}
+            />
+          </FormControl>
         </div>
       </form>
       <div className={styles.controls}>
-        <button className={button({ className: styles.cancel })}>Cancel</button>
+        <button
+          className={button({ className: styles.cancel })}
+          type="button"
+        >
+          Cancel
+        </button>
         <button
           className={button({ className: styles.submit })}
           form='data-contract-keywords-form'
+          type="submit"
         >
           Submit Changes
         </button>
