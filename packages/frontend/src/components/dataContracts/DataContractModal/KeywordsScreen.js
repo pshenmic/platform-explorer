@@ -1,5 +1,5 @@
 import { Divider, Input, Textarea, FormControl } from '@chakra-ui/react'
-import { useEffect, useId, useState } from 'react'
+import { useId, useState } from 'react'
 import { cva } from 'class-variance-authority'
 
 import styles from './KeywordsScreen.module.scss'
@@ -59,10 +59,6 @@ export const KeywordsScreen = ({ onChangeDescription }) => {
 
     onChangeDescription(formData)
   }
-
-  useEffect(() => {
-    console.log(errors)
-  }, [errors])
 
   return (
     <div className={styles.root}>

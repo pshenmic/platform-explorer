@@ -8,7 +8,6 @@ export const EditControlState = {
   VALID: 'VALID'
 }
 
-
 export const useEditValidation = ({ wallet }) => {
   const isExtensionConnected = checkPlatformExtension() === ExtensionStatusEnum.CONNECTED
 
@@ -24,9 +23,8 @@ export const useEditValidation = ({ wallet }) => {
     }
 
     if (editValidateState === EditControlState.USER_HAS_NO_WALLET) {
-      return
+      return null
     }
-
   }, [wallet.currentIdentity, editValidateState, wallet?.walletInfo?.identities])
 
   useEffect(() => {
@@ -45,7 +43,6 @@ export const useEditValidation = ({ wallet }) => {
 
     setEditValidate(EditControlState.VALID)
   }, [wallet, isExtensionConnected])
-
 
   return { editValidateState, isEditVisible: editValidateState === EditControlState.VALID }
 }
