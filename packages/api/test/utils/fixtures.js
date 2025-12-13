@@ -223,6 +223,25 @@ const fixtures = {
 
     return { ...row, id: result[0].id }
   },
+  dataContractName: async function (knex, { name, document_identifier, data_contract_identifier }) {
+    if (!name) {
+      throw new Error('name must be provided for dataContractName fixture')
+    }
+
+    if (!data_contract_identifier) {
+      throw new Error('data_contract_identifier must be provided for dataContractName fixture')
+    }
+
+    const row = {
+      name,
+      document_identifier,
+      data_contract_identifier
+    }
+
+    const result = await knex('data_contract_names').insert(row).returning('id')
+
+    return { ...row, id: result[0].id }
+  },
   dataContract: async function (knex, {
     identifier,
     name,
@@ -246,7 +265,6 @@ const fixtures = {
     const row = {
       owner,
       identifier,
-      name: name ?? null,
       state_transition_hash,
       schema: schema ?? {},
       version: version ?? 0,
@@ -257,6 +275,8 @@ const fixtures = {
 
     const result = await knex('data_contracts').insert(row).returning('id')
 
+    const nameRow = name ? await this.dataContractName(knex, { name, data_contract_identifier: identifier }) : null
+
     const st = state_transition_hash ? await this.getStateTransition(knex, { hash: state_transition_hash }) : null
 
     const transition = await this.dataContractTransition(knex, {
@@ -265,7 +285,7 @@ const fixtures = {
       state_transition_id: st?.id
     })
 
-    return { ...row, id: result[0].id, documents, transition }
+    return { ...row, id: result[0].id, documents, transition, name: nameRow?.name ?? null }
   },
   document: async function (knex, {
     identifier,
