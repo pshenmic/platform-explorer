@@ -70,7 +70,7 @@ impl PostgresDAO {
         let document_identifier = document.map(|doc| doc.identifier.to_string(Base58));
         let data_contract_identifier = data_contract.identifier.to_string(Base58);
 
-        let query = "INSERT INTO data_contract_names(name, document_id, data_contract_id) VALUES ($1, $2, $3);";
+        let query = "INSERT INTO data_contract_names(name, document_identifier, data_contract_identifier) VALUES ($1, $2, $3);";
 
         let stmt = sql_transaction.prepare_cached(query).await.unwrap();
 
