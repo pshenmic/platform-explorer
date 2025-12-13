@@ -307,12 +307,17 @@ module.exports = ({
         querystring: {
           type: 'object',
           required: ['dpns'],
-          properties: {
-            dpns: {
-              type: 'string',
-              pattern: '^[A-Za-z0-9.-]+$'
+          allOf: [
+            { $ref: 'paginationOptions#' },
+            {
+              properties: {
+                dpns: {
+                  type: 'string',
+                  pattern: '^[A-Za-z0-9.-]+$'
+                }
+              }
             }
-          }
+          ]
         }
       }
     },

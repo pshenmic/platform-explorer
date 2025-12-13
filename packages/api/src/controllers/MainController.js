@@ -177,7 +177,7 @@ class MainController {
     }
 
     // by dpns name
-    const identities = await this.identitiesDAO.getIdentitiesByDPNSName(query)
+    const identities = await this.identitiesDAO.getIdentitiesByDPNSName(query, 1, 50, 'desc')
 
     if (identities) {
       if (result.identities) {
@@ -199,7 +199,7 @@ class MainController {
     }
 
     // by data-contract name
-    const dataContractsByName = await this.dataContractsDAO.getDataContractByName(query)
+    const dataContractsByName = await this.dataContractsDAO.getDataContractsByName(query)
     if (dataContractsByName) {
       dataContracts.push(...dataContractsByName)
     }

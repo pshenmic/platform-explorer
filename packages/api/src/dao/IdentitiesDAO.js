@@ -203,12 +203,17 @@ module.exports = class IdentitiesDAO {
     })
   }
 
-  getIdentitiesByDPNSName = async (dpns) => {
+  getIdentitiesByDPNSName = async (dpns, page, limit, order) => {
+    const fromRank = (page - 1) * limit
+
     const rows = await this.knex('identity_aliases')
       .select('identity_identifier', 'alias', 'timestamp', 'state_transition_hash as tx')
       .whereILike('alias', `${dpns}%`)
       .leftJoin('state_transitions', 'state_transition_hash', 'hash')
       .leftJoin('blocks', 'blocks.hash', 'block_hash')
+      .orderBy('identity_aliases.id', order)
+      .offset(fromRank)
+      .limit(limit)
 
     if (rows.length === 0) {
       return null
