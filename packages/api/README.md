@@ -254,8 +254,8 @@ GET /block/12E5592208322B5A3598C98C1811FCDD403DF40F522511D7A965DDE1D96C97C7
 ---
 ### Blocks by validator
 Return all blocks proposed by the specific validators
-* `limit` cannot be more then 100
-* `page` cannot be less then 1
+* `limit` cannot be more than 100
+* `page` cannot be less than 1
 ```
 GET /validator/B8F90A4F07D9E59C061D41CC8E775093141492A5FD59AB3BBC4241238BB28A18/blocks
 
@@ -285,8 +285,8 @@ GET /validator/B8F90A4F07D9E59C061D41CC8E775093141492A5FD59AB3BBC4241238BB28A18/
 ---
 ### Blocks
 Return all blocks with pagination info
-* `limit` cannot be more then 100
-* `page` cannot be less then 1
+* `limit` cannot be more than 100
+* `page` cannot be less than 1
 ```
 GET /blocks?epoch_index_min=1000&epoch_index_max=1200&height_min=2000&height_max=4000&gas_min=1&gas_max=99999999999&timestamp_start=2024-08-29T23:24:11.516z&timestamp_end=2025-08-29T23:24:11.516z&tx_count_min=2&tx_count_max=11&validator=C11C1168DCF9479475CB1355855E30EA75C0CDDA8A8F9EA80591568DD1C33BA8
 
@@ -333,8 +333,8 @@ Return all validators with pagination info.
 * Valid `order` values are `asc` or `desc`
 * `lastProposedBlockHeader` field is nullable
 * `?isActive=true` boolean can be supplied in the query params to filter by isActive field
-* `limit` cannot be more then 100 (0 = all validators)
-* `page` cannot be less then 1
+* `limit` cannot be more than 100 (0 = all validators)
+* `page` cannot be less than 1
 * `blocks_proposed_min` and `blocks_proposed_max` minimum and maximum amount of proposed blocks
 * `last_proposed_block_height_min` and `last_proposed_block_height_min` minimum and maximum last proposed blocks height
 * `last_proposed_block_timestamp_start` and `last_proposed_block_timestamp_end` timestamp start and end for last proposed blocks
@@ -663,8 +663,8 @@ Return transaction set paged
 
 Status can be either `SUCCESS` or `FAIL`. In case of error tx, message will appear in the `error` field as Base64 string
 
-* `limit` cannot be more then 100
-* `page` cannot be less then 1
+* `limit` cannot be more than 100
+* `page` cannot be less than 1
 * `owner` Identity identifier
 * `status` can be `SUCCESS`, `FAIL` or `ALL`
 * `transaction_type` number or string of tx type. Can be set multiple times
@@ -843,8 +843,8 @@ Return dataContracts set paged and order by block height or documents count.
 
 * Valid `order_by` values are `block_height` or `documents_count`
 * `name` field is nullable
-* `limit` cannot be more then 100
-* `page` cannot be less then 1
+* `limit` cannot be more than 100
+* `page` cannot be less than 1
 * `owner` data contracts owner identifier
 * `is_system` bool field for system data contracts
 * `with_tokens` bool field data contracts with tokens
@@ -900,8 +900,8 @@ Response codes:
 Return set of transactions for data contract
 
 * Valid `order` values are `asc` or `desc`
-* `limit` cannot be more then 100
-* `page` cannot be less then 1
+* `limit` cannot be more than 100
+* `page` cannot be less than 1
 
 ```
 GET /dataContract/AJqYb8ZvfbA6ZFgpsvLfpMEzwjaYUPyVmeFxSJrafB18/transactions
@@ -987,9 +987,9 @@ If it is not possible to get data contract transitions for selected period,
 then will be returned list of data contracts in order of creation date
 
 * Valid `order` values are `asc` or `desc`
-* `limit` cannot be more then 100
-* `page` cannot be less then 1
-* `timestamp_start` and `timestamp_end` can be null and `timestamp_end` must be greater then `timestamp_start` if they are used. Default value is equal to the interval in the past 30 days
+* `limit` cannot be more than 100
+* `page` cannot be less than 1
+* `timestamp_start` and `timestamp_end` can be null and `timestamp_end` must be greater than `timestamp_start` if they are used. Default value is equal to the interval in the past 30 days
 
 ```
 GET /dataContracts/rating?timestamp_start=2025-08-18T21:13:57.191Z&timestamp_end=2025-09-18T21:13:57.191Z&limit=5&page=2&order=desc
@@ -1099,8 +1099,8 @@ Response codes:
 Return revisions for selected document
 
 * Valid `order` values are `asc` or `desc`
-* `limit` cannot be more then 100
-* `page` cannot be less then 1
+* `limit` cannot be more than 100
+* `page` cannot be less than 1
 
 ```
 GET /document/5Quf1y4GrqygGLLUwNHntxHBCguvUiVaMv2kWh7HNFAd/revisions
@@ -1145,8 +1145,8 @@ Response codes:
 ---
 ### Documents by Data Contract
 Return all documents by the given data contract identifier
-* `limit` cannot be more then 100
-* `page` cannot be less then 1
+* `limit` cannot be more than 100
+* `page` cannot be less than 1
 * `document_type_name` optional
 ```
 GET /dataContract/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec/documents?document_type_name=domain&page=1&limit=10&order=desc
@@ -1310,6 +1310,10 @@ Response codes:
 ---
 ### Identity by DPNS
 Return identity by given DPNS/alias
+
+* Valid `order` values are `asc` or `desc`
+* `limit` cannot be more than 100 (default: 50)
+* `page` cannot be less than 1
 ```
 GET /dpns/identity?dpns=canuseethat2.dash
 
@@ -1438,7 +1442,7 @@ Return all withdrawals for identity
 
 _Note: this request does not contain any pagination data in the response_
 
-* `limit` cannot be more then 100
+* `limit` cannot be more than 100
 * `timestamp_start` ISO String
 * `start_at` base58 encoded withdrawal document identifier
 * returns 404 `not found` if identity don't have withdrawals
@@ -1477,8 +1481,8 @@ Response codes:
 Return all data contracts by the given identity
 
 * `name` field is nullable
-* `limit` cannot be more then 100
-* `page` cannot be less then 1
+* `limit` cannot be more than 100
+* `page` cannot be less than 1
 ```
 GET /identities/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec/dataContracts?page=1&limit=10&order=asc
 
@@ -1514,8 +1518,8 @@ Response codes:
 ---
 ### Documents by Identity
 Return all documents by the given identity
-* `limit` cannot be more then 100
-* `page` cannot be less then 1
+* `limit` cannot be more than 100
+* `page` cannot be less than 1
 * `document_type_name` document type name _optional_
 ```
 GET /identities/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec/documents?page=1&limit=10&order=asc&document_type_name=preorder
@@ -1557,8 +1561,8 @@ Response codes:
 Return all transactions made by the given identity
 
 Status can be either `SUCCESS` or `FAIL`. In case of error tx, message will appear in the `error` field as Base64 string
-* `limit` cannot be more then 100
-* `page` cannot be less then 1
+* `limit` cannot be more than 100
+* `page` cannot be less than 1
 
 ```
 GET /identity/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec/transactions?page=1&limit=10&order=asc
@@ -1594,9 +1598,9 @@ Response codes:
 ---
 ### Transfers by Identity
 Return all transfers made by the given identity
-* `limit` cannot be more then 100
-* `page` cannot be less then 1
-* `type` cannot be less, then 0 and more then 8
+* `limit` cannot be more than 100
+* `page` cannot be less than 1
+* `type` cannot be less, than 0 and more than 8
 ```
 GET /identity/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec/transfers?hash=445E6F081DEE877867816AD3EF492E2C0BD1DDCCDC9C793B23DDDAF8AEA23118&page=1&limit=10&order=asc&type=6
 
@@ -2652,8 +2656,8 @@ ___
 Return list of tokens
 
 * Valid `order` values are `asc` or `desc`
-* `limit` cannot be more then 100
-* `page` cannot be less then 1
+* `limit` cannot be more than 100
+* `page` cannot be less than 1
 * `owner` tokens owner identifier
 * `position` tokens position in data contract
 * `contract_id` contract identifier which contains tokens
@@ -2933,8 +2937,8 @@ ___
 Return list of transitions for token
 
 * Valid `order` values are `asc` or `desc`
-* `limit` cannot be more then 100
-* `page` cannot be less then 1
+* `limit` cannot be more than 100
+* `page` cannot be less than 1
 ```
 GET /token/4xd9usiX6WCPE4h1AFPQBJ4Rje6TfZw8kiBzkSAzvmCL/transitions?limit=10&order=desc&page=1
 {
@@ -3003,9 +3007,9 @@ If it is not possible to get tokens transitions for selected period,
 then will be returned list of tokens in order of creation date
 
 * Valid `order` values are `asc` or `desc`
-* `limit` cannot be more then 100
-* `page` cannot be less then 1
-* `timestamp_start` and `timestamp_end` can be null and `timestamp_end` must be greater then `timestamp_start` if they are used. Default value is equal to the interval in the past 30 days
+* `limit` cannot be more than 100
+* `page` cannot be less than 1
+* `timestamp_start` and `timestamp_end` can be null and `timestamp_end` must be greater than `timestamp_start` if they are used. Default value is equal to the interval in the past 30 days
 ```
 GET tokens/rating?order=desc&limit=10&page=1&timestamp_start=2025-06-20T17:10:28.585Z&timestamp_end=2025-07-28T20:37:28.585Z
 {
@@ -3067,8 +3071,8 @@ ___
 Return list of tokens which created by identity
 
 * Valid `order` values are `asc` or `desc`
-* `limit` cannot be more then 100
-* `page` cannot be less then 1
+* `limit` cannot be more than 100
+* `page` cannot be less than 1
 ```
 GET /identity/5DbLwAxGBzUzo81VewMUwn4b5P4bpv9FNFybi25XB5B1/tokens?limit=10&page=1&order=asc
 {
@@ -3146,8 +3150,8 @@ ___
 Return list of token holders
 
 * Valid `order` values are `asc` or `desc`
-* `limit` cannot be more then 100
-* `page` cannot be less then 1
+* `limit` cannot be more than 100
+* `page` cannot be less than 1
 ```
 GET /token/Bu2749WKcP5HFNm8v3k5kshRKDSVyfsJMqoWnXmK4q7h/holders?order=desc&limit=10&page=1
 {
@@ -3201,8 +3205,8 @@ ___
 Return list of tokens info with selected part name
 
 * Valid `order` values are `asc` or `desc`
-* `limit` cannot be more then 100
-* `page` cannot be less then 1
+* `limit` cannot be more than 100
+* `page` cannot be less than 1
 
 ```
 GET /tokens/psh/info?limit=10&page=1&order=asc
