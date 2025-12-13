@@ -4,7 +4,7 @@ const Transaction = require('../models/Transaction')
 const Document = require('../models/Document')
 const DataContract = require('../models/DataContract')
 const PaginatedResultSet = require('../models/PaginatedResultSet')
-const { IDENTITY_CREDIT_WITHDRAWAL, IDENTITY_TOP_UP } = require('../enums/StateTransitionEnum')
+const {IDENTITY_CREDIT_WITHDRAWAL, IDENTITY_TOP_UP} = require('../enums/StateTransitionEnum')
 const {
   decodeStateTransition,
   getAliasStateByVote,
@@ -16,7 +16,7 @@ const BatchEnum = require('../enums/BatchEnum')
 const SeriesData = require('../models/SeriesData')
 
 module.exports = class IdentitiesDAO {
-  constructor (knex, sdk) {
+  constructor(knex, sdk) {
     this.knex = knex
     this.sdk = sdk
   }
@@ -163,7 +163,7 @@ module.exports = class IdentitiesDAO {
     let fundingCoreTx = null
 
     if (row.tx_data) {
-      const { assetLockProof } = await decodeStateTransition(row.tx_data)
+      const {assetLockProof} = await decodeStateTransition(row.tx_data)
 
       fundingCoreTx = assetLockProof?.fundingCoreTx
     }
@@ -192,9 +192,9 @@ module.exports = class IdentitiesDAO {
           publicKeyHash: key.getPublicKeyHash(),
           contractBounds: contractBounds
             ? {
-                identifier: contractBounds.identifier.base58(),
-                documentTypeName: contractBounds.documentTypeName ?? null
-              }
+              identifier: contractBounds.identifier.base58(),
+              documentTypeName: contractBounds.documentTypeName ?? null
+            }
             : null,
           disabledAt: key.disabledAt?.toString() ?? null
         }
@@ -225,7 +225,7 @@ module.exports = class IdentitiesDAO {
       return {
         identifier: row.identity_identifier,
         alias: row.alias,
-        status: getAliasStateByVote(aliasInfo, { ...row }, row.identity_identifier)
+        status: getAliasStateByVote(aliasInfo, {...row}, row.identity_identifier)
       }
     }))
   }
@@ -233,14 +233,14 @@ module.exports = class IdentitiesDAO {
   getIdentities = async (page, limit, order, orderBy, txCountMin, txCountMax, documentsCountMin, documentsCountMax, dataContractsCountMin, dataContractsCountMax, balanceMin, balanceMax) => {
     const fromRank = (page - 1) * limit
 
-    const orderByOptions = [{ column: 'identity_id', order }]
+    const orderByOptions = [{column: 'identity_id', order}]
 
     if (orderBy === 'tx_count') {
-      orderByOptions.unshift({ column: 'total_txs', order })
+      orderByOptions.unshift({column: 'total_txs', order})
     }
 
     if (orderBy === 'balance') {
-      orderByOptions.unshift({ column: 'balance', order })
+      orderByOptions.unshift({column: 'balance', order})
     }
 
     let txCountQueryString = ''
@@ -303,7 +303,7 @@ module.exports = class IdentitiesDAO {
     const transfersStatsSubquery = this.knex(transfersSubquery)
       .select('identifier')
       .select(this.knex.raw('SUM(amount) as balance'))
-      .count('*', { as: 'total_transfers' })
+      .count('*', {as: 'total_transfers'})
       .groupBy('identifier')
       .as('transfers_subquery')
 
@@ -321,13 +321,13 @@ module.exports = class IdentitiesDAO {
 
     const documentsSubQuery = this.knex('documents')
       .select('owner')
-      .count('*', { as: 'documents_count' })
+      .count('*', {as: 'documents_count'})
       .where('revision', 1)
       .groupBy('owner')
 
     const dataContractsSubQuery = this.knex('data_contracts')
       .select('owner')
-      .count('*', { as: 'data_contracts_count' })
+      .count('*', {as: 'data_contracts_count'})
       .where('version', 1)
       .groupBy('owner')
 
@@ -413,14 +413,14 @@ module.exports = class IdentitiesDAO {
       .as('sum_documents')
 
     const subquery = this.knex('data_contracts')
-      .select('data_contracts.id', 'data_contracts.identifier as identifier', 'data_contracts.name as name',
+      .select('data_contracts.id', 'data_contracts.identifier as identifier',
         'data_contracts.owner as data_contract_owner', 'data_contracts.version as version', 'description', 'keywords',
         'data_contracts.state_transition_hash as tx_hash', 'data_contracts.is_system as is_system')
       .select(this.knex.raw('rank() over (partition by data_contracts.identifier order by data_contracts.id desc) rank'))
       .where('owner', '=', identifier)
 
     const filteredDataContracts = this.knex.with('with_alias', subquery)
-      .select('id', 'identifier', 'name', 'data_contract_owner', 'version', 'tx_hash', 'rank', 'is_system', 'description', 'keywords')
+      .select('id', 'identifier', 'data_contract_owner', 'version', 'tx_hash', 'rank', 'is_system', 'description', 'keywords')
       .select(this.knex('with_alias').count('*').where('rank', 1).as('total_count'))
       .select(this.knex.raw(`rank() over (order by id ${order}) row_number`))
       .from('with_alias')
@@ -428,7 +428,7 @@ module.exports = class IdentitiesDAO {
       .as('data_contract_subquery')
 
     const rows = await this.knex(filteredDataContracts)
-      .select('data_contract_subquery.id as id', 'name', 'identifier', 'data_contract_owner', 'version', 'tx_hash', 'rank', 'total_count', 'row_number', 'is_system', 'blocks.timestamp as timestamp', 'description', 'keywords')
+      .select('data_contract_subquery.id as id', 'identifier', 'data_contract_owner', 'version', 'tx_hash', 'rank', 'total_count', 'row_number', 'is_system', 'blocks.timestamp as timestamp', 'description', 'keywords')
       .select(this.knex(sumDocuments)
         .count('*')
         .whereRaw('sum_documents.dc_identifier = data_contract_subquery.identifier')
@@ -438,6 +438,14 @@ module.exports = class IdentitiesDAO {
         .count('* as count')
         .whereRaw('tokens.data_contract_id = data_contract_subquery.id')
         .as('tokens_count')
+      )
+      .select(
+        this.knex('data_contract_names')
+          .select('name')
+          .whereRaw('data_contract_names.data_contract_identifier = data_contract_subquery.identifier')
+          .orderBy('id', 'desc')
+          .limit(1)
+          .as('name')
       )
       .leftJoin('state_transitions', 'state_transitions.hash', 'tx_hash')
       .leftJoin('blocks', 'blocks.hash', 'state_transitions.block_hash')
@@ -677,7 +685,7 @@ module.exports = class IdentitiesDAO {
         registeredIdentities: Number(row.identities_count ?? 0)
       }
     }))
-      .map(({ timestamp, data }) => new SeriesData(timestamp, data))
+      .map(({timestamp, data}) => new SeriesData(timestamp, data))
       .sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime())
   }
 }

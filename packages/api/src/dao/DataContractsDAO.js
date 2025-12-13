@@ -524,10 +524,18 @@ module.exports = class DataContractsDAO {
 
     const rows = await this.knex('data_contracts')
       .select(
-        'data_contracts.identifier as identifier', 'data_contracts.name as name',
+        'data_contracts.identifier as identifier',
         'data_contracts.owner as owner', 'data_contracts.is_system as is_system', 'keywords',
         'data_contracts.version as version', 'data_contracts.schema as schema', 'description',
         'data_contracts.state_transition_hash as tx_hash', 'blocks.timestamp as timestamp'
+      )
+      .select(
+        this.knex('data_contract_names')
+          .select('name')
+          .whereRaw('data_contract_names.data_contract_identifier = data_contracts.identifier')
+          .orderBy('id', 'desc')
+          .limit(1)
+          .as('name')
       )
       .whereRaw('keywords @> ?', [keywords])
       .leftJoin('state_transitions', 'state_transitions.hash', 'data_contracts.state_transition_hash')
@@ -539,10 +547,18 @@ module.exports = class DataContractsDAO {
   getDataContractByDescription = async (description) => {
     const rows = await this.knex('data_contracts')
       .select(
-        'data_contracts.identifier as identifier', 'data_contracts.name as name',
+        'data_contracts.identifier as identifier',
         'data_contracts.owner as owner', 'data_contracts.is_system as is_system', 'keywords',
         'data_contracts.version as version', 'data_contracts.schema as schema', 'description',
         'data_contracts.state_transition_hash as tx_hash', 'blocks.timestamp as timestamp'
+      )
+      .select(
+        this.knex('data_contract_names')
+          .select('name')
+          .whereRaw('data_contract_names.data_contract_identifier = data_contracts.identifier')
+          .orderBy('id', 'desc')
+          .limit(1)
+          .as('name')
       )
       .whereRaw('LOWER(description) like LOWER(? || \'%\')', convertToSqlSafeString(description))
       .leftJoin('state_transitions', 'state_transitions.hash', 'data_contracts.state_transition_hash')
