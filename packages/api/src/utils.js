@@ -5,7 +5,6 @@ const net = require('net')
 const { TCP_CONNECT_TIMEOUT, NETWORK, DPNS_CONTRACT } = require('./constants')
 const { base58 } = require('@scure/base')
 const Intervals = require('./enums/IntervalsEnum')
-const dashcorelib = require('@dashevo/dashcore-lib')
 const Alias = require('./models/Alias')
 const TokenTransitionEnum = require('./enums/TokenTransitionsEnum')
 const {
@@ -23,6 +22,8 @@ const PreProgrammedDistribution = require('./models/PreProgrammedDistribution')
 const Token = require('./models/Token')
 const PerpetualDistribution = require('./models/PerpetualDistribution')
 const Localization = require('./models/Localization')
+const { Transaction } = require('dash-core-sdk/src/types/Transaction')
+const { Script } = require('dash-core-sdk/src/types/Script')
 
 const getKnex = () => {
   return require('knex')({
@@ -61,7 +62,7 @@ const convertToHomographSafeChars = (input) => {
  */
 
 const outputScriptToAddress = (script) => {
-  const address = dashcorelib.Script(script).toAddress(NETWORK)
+  const address = Script.fromBytes(new Uint8Array(script)).getAddress(NETWORK)
   return address ? address.toString() : null
 }
 
@@ -913,7 +914,7 @@ const decodeStateTransition = async (base64) => {
 
       const decodedTransaction =
         assetLockProof.getLockType() === 'Instant'
-          ? dashcorelib.Transaction(Buffer.from(assetLockProof.getInstantLockProof().getTransaction()))
+          ? Transaction.fromBytes(new Uint8Array(Buffer.from(assetLockProof.getInstantLockProof().getTransaction())))
           : null
 
       decoded.assetLockProof = {
@@ -966,7 +967,7 @@ const decodeStateTransition = async (base64) => {
 
       const decodedTransaction =
         assetLockProof.getLockType() === 'Instant'
-          ? dashcorelib.Transaction(Buffer.from(assetLockProof.getInstantLockProof().getTransaction()))
+          ? Transaction.fromBytes(new Uint8Array(Buffer.from(assetLockProof.getInstantLockProof().getTransaction())))
           : null
 
       decoded.assetLockProof = {
