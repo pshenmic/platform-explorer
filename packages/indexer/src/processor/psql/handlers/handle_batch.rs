@@ -3,7 +3,7 @@ use deadpool_postgres::Transaction;
 use dpp::identifier::Identifier;
 use dpp::state_transition::batch_transition::batched_transition::BatchedTransition;
 use dpp::state_transition::batch_transition::BatchTransitionV0;
-use dpp::state_transition::StateTransitionLike;
+use dpp::state_transition::{StateTransitionLike, StateTransitionOwned};
 
 impl PSQLProcessor {
     pub async fn handle_batch_v0(

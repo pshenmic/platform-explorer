@@ -13,7 +13,7 @@ impl PostgresDAO {
         &self,
         block_hash: String,
         block_height: i32,
-        owner: Identifier,
+        owner: Option<Identifier>,
         st_type: u32,
         index: u32,
         bytes: Vec<u8>,
@@ -45,7 +45,7 @@ impl PostgresDAO {
                 &stmt,
                 &[
                     &hash,
-                    &owner.to_string(Base58),
+                    &owner.map(|id| id.to_string(Base58)),
                     &data,
                     &st_type,
                     &index_i32,
@@ -61,10 +61,9 @@ impl PostgresDAO {
             .unwrap();
 
         println!(
-            "Created ST with hash {} from block with hash {}, owner = {}",
+            "Created ST with hash {} from block with hash {}",
             &hash,
             &block_hash,
-            &owner.to_string(Base58)
         );
     }
 

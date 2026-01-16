@@ -7,7 +7,7 @@ use dpp::state_transition::batch_transition::batched_transition::document_transi
 use dpp::state_transition::batch_transition::batched_transition::token_transition::TokenTransition;
 use dpp::state_transition::batch_transition::batched_transition::BatchedTransition;
 use dpp::state_transition::batch_transition::BatchTransition;
-use dpp::state_transition::{StateTransition, StateTransitionLike};
+use dpp::state_transition::{StateTransition, StateTransitionLike, StateTransitionOwned};
 use sha256::digest;
 
 impl PSQLProcessor {
@@ -32,6 +32,14 @@ impl PSQLProcessor {
             StateTransition::IdentityUpdate(st) => st.state_transition_type() as u32,
             StateTransition::IdentityCreditTransfer(st) => st.state_transition_type() as u32,
             StateTransition::MasternodeVote(st) => st.state_transition_type() as u32,
+            StateTransition::IdentityCreditTransferToAddresses(st) => {
+                st.state_transition_type() as u32
+            }
+            StateTransition::IdentityCreateFromAddresses(st) => st.state_transition_type() as u32,
+            StateTransition::IdentityTopUpFromAddresses(st) => st.state_transition_type() as u32,
+            StateTransition::AddressFundsTransfer(st) => st.state_transition_type() as u32,
+            StateTransition::AddressFundingFromAssetLock(st) => st.state_transition_type() as u32,
+            StateTransition::AddressCreditWithdrawal(st) => st.state_transition_type() as u32,
         };
 
         let batch_type: Option<BatchType> = match state_transition.clone() {
@@ -132,6 +140,40 @@ impl PSQLProcessor {
                 &StateTransition::MasternodeVote(st.clone()),
             )
             .unwrap(),
+            StateTransition::IdentityCreditTransferToAddresses(st) => {
+                PlatformSerializable::serialize_to_bytes(
+                    &StateTransition::IdentityCreditTransferToAddresses(st.clone()),
+                )
+                .unwrap()
+            }
+            StateTransition::IdentityCreateFromAddresses(st) => {
+                PlatformSerializable::serialize_to_bytes(
+                    &StateTransition::IdentityCreateFromAddresses(st.clone()),
+                )
+                .unwrap()
+            }
+            StateTransition::IdentityTopUpFromAddresses(st) => {
+                PlatformSerializable::serialize_to_bytes(
+                    &StateTransition::IdentityTopUpFromAddresses(st.clone()),
+                )
+                .unwrap()
+            }
+            StateTransition::AddressFundsTransfer(st) => PlatformSerializable::serialize_to_bytes(
+                &StateTransition::AddressFundsTransfer(st.clone()),
+            )
+            .unwrap(),
+            StateTransition::AddressFundingFromAssetLock(st) => {
+                PlatformSerializable::serialize_to_bytes(
+                    &StateTransition::AddressFundingFromAssetLock(st.clone()),
+                )
+                .unwrap()
+            }
+            StateTransition::AddressCreditWithdrawal(st) => {
+                PlatformSerializable::serialize_to_bytes(&StateTransition::AddressCreditWithdrawal(
+                    st.clone(),
+                ))
+                .unwrap()
+            }
         };
 
         let st_hash = digest(bytes.clone()).to_uppercase();
@@ -236,6 +278,12 @@ impl PSQLProcessor {
 
                 println!("Processed Masternode vote at block hash {}", block_hash);
             }
+            StateTransition::IdentityCreditTransferToAddresses(_) => {}
+            StateTransition::IdentityCreateFromAddresses(_) => {}
+            StateTransition::IdentityTopUpFromAddresses(_) => {}
+            StateTransition::AddressFundsTransfer(_) => {}
+            StateTransition::AddressFundingFromAssetLock(_) => {}
+            StateTransition::AddressCreditWithdrawal(_) => {}
         }
     }
 }
