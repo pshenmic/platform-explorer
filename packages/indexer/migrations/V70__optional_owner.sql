@@ -1,4 +1,3 @@
-ALTER TABLE state_transitions
 DROP INDEX state_transition_owner;
 
 ALTER TABLE state_transitions
