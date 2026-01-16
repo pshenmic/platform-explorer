@@ -62,8 +62,7 @@ impl PostgresDAO {
 
         println!(
             "Created ST with hash {} from block with hash {}",
-            &hash,
-            &block_hash,
+            &hash, &block_hash,
         );
     }
 

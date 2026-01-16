@@ -278,9 +278,27 @@ impl PSQLProcessor {
 
                 println!("Processed Masternode vote at block hash {}", block_hash);
             }
-            StateTransition::IdentityCreditTransferToAddresses(_) => {}
-            StateTransition::IdentityCreateFromAddresses(_) => {}
-            StateTransition::IdentityTopUpFromAddresses(_) => {}
+            StateTransition::IdentityCreditTransferToAddresses(st) => {
+                self.handle_identity_credit_transfer_to_address(st, st_hash, sql_transaction)
+                    .await;
+
+                println!(
+                    "Processed IdentityCreditTransfer at block hash {}",
+                    block_hash
+                );
+            }
+            StateTransition::IdentityCreateFromAddresses(st) => {
+                self.handle_identity_create_from_address(st, st_hash, sql_transaction)
+                    .await;
+
+                println!("Processed IdentityCreate at block hash {}", block_hash);
+            }
+            StateTransition::IdentityTopUpFromAddresses(st) => {
+                self.handle_identity_top_up_from_address(st, st_hash, sql_transaction)
+                    .await;
+
+                println!("Processed IdentityTopUp at block hash {}", block_hash);
+            }
             StateTransition::AddressFundsTransfer(_) => {}
             StateTransition::AddressFundingFromAssetLock(_) => {}
             StateTransition::AddressCreditWithdrawal(_) => {}
