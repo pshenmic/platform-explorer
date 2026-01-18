@@ -64,7 +64,7 @@ module.exports = class Transaction {
       timestamp, parseInt(gas_used),
       status, decodedError ?? error,
       {
-        identifier: owner?.trim(),
+        identifier: owner?.trim() ?? null,
         aliases: aliases ?? []
       }
     )

@@ -81,7 +81,7 @@ module.exports = class BlockDAO {
 
     const txs = block.tx_hash
       ? await Promise.all(rows.map(async (row) => {
-        const aliasDocument = aliasDocuments[row.owner.trim()]
+        const aliasDocument = row.owner ? aliasDocuments[row.owner.trim()] : undefined
 
         const aliases = []
 
