@@ -957,7 +957,7 @@ describe('Transaction routes', () => {
       const [firstPeriod] = body.toReversed()
       const firstTimestamp = new Date(firstPeriod.timestamp)
 
-      const expectedSeriesData = []
+      let expectedSeriesData = []
 
       for (let i = 0; i < body.length; i++) {
         const nextPeriod = firstTimestamp - 300000 * i
@@ -978,7 +978,15 @@ describe('Transaction routes', () => {
         })
       }
 
-      assert.deepEqual(expectedSeriesData.reverse(), body)
+      expectedSeriesData = expectedSeriesData.toReversed().map((seriesData, i, arr) => ({
+        ...seriesData,
+        data: {
+          ...seriesData.data,
+          runningTotal: arr.slice(0, i + 1).map(v => v.data.txs).reduce((a, b) => a + b, 0)
+        }
+      }))
+
+      assert.deepEqual(expectedSeriesData, body)
     })
 
     it('should return default series set timespan 2H', async () => {
@@ -991,7 +999,7 @@ describe('Transaction routes', () => {
       const [firstPeriod] = body.toReversed()
       const firstTimestamp = new Date(firstPeriod.timestamp)
 
-      const expectedSeriesData = []
+      let expectedSeriesData = []
 
       for (let i = 0; i < body.length; i++) {
         const nextPeriod = firstTimestamp - 1440000 * i
@@ -1012,7 +1020,15 @@ describe('Transaction routes', () => {
         })
       }
 
-      assert.deepEqual(expectedSeriesData.reverse(), body)
+      expectedSeriesData = expectedSeriesData.toReversed().map((seriesData, i, arr) => ({
+        ...seriesData,
+        data: {
+          ...seriesData.data,
+          runningTotal: arr.slice(0, i + 1).map(v => v.data.txs).reduce((a, b) => a + b, 0)
+        }
+      }))
+
+      assert.deepEqual(expectedSeriesData, body)
     })
 
     it('should return default series set timespan 24h', async () => {
@@ -1025,7 +1041,7 @@ describe('Transaction routes', () => {
       const [firstPeriod] = body.toReversed()
       const firstTimestamp = new Date(firstPeriod.timestamp)
 
-      const expectedSeriesData = []
+      let expectedSeriesData = []
 
       for (let i = 0; i < body.length; i++) {
         const nextPeriod = firstTimestamp - 17280000 * i
@@ -1046,7 +1062,15 @@ describe('Transaction routes', () => {
         })
       }
 
-      assert.deepEqual(expectedSeriesData.reverse(), body)
+      expectedSeriesData = expectedSeriesData.toReversed().map((seriesData, i, arr) => ({
+        ...seriesData,
+        data: {
+          ...seriesData.data,
+          runningTotal: arr.slice(0, i + 1).map(v => v.data.txs).reduce((a, b) => a + b, 0)
+        }
+      }))
+
+      assert.deepEqual(expectedSeriesData, body)
     })
 
     it('should return default series set timespan 3d', async () => {
@@ -1059,7 +1083,7 @@ describe('Transaction routes', () => {
       const [firstPeriod] = body.toReversed()
       const firstTimestamp = new Date(firstPeriod.timestamp)
 
-      const expectedSeriesData = []
+      let expectedSeriesData = []
 
       for (let i = 0; i < body.length; i++) {
         const nextPeriod = firstTimestamp - 51840000 * i
@@ -1080,7 +1104,15 @@ describe('Transaction routes', () => {
         })
       }
 
-      assert.deepEqual(expectedSeriesData.reverse(), body)
+      expectedSeriesData = expectedSeriesData.toReversed().map((seriesData, i, arr) => ({
+        ...seriesData,
+        data: {
+          ...seriesData.data,
+          runningTotal: arr.slice(0, i + 1).map(v => v.data.txs).reduce((a, b) => a + b, 0)
+        }
+      }))
+
+      assert.deepEqual(expectedSeriesData, body)
     })
 
     it('should return default series set timespan 1w', async () => {
@@ -1093,7 +1125,7 @@ describe('Transaction routes', () => {
       const [firstPeriod] = body.toReversed()
       const firstTimestamp = new Date(firstPeriod.timestamp)
 
-      const expectedSeriesData = []
+      let expectedSeriesData = []
 
       for (let i = 0; i < body.length; i++) {
         const nextPeriod = firstTimestamp - 120960000 * i
@@ -1114,7 +1146,15 @@ describe('Transaction routes', () => {
         })
       }
 
-      assert.deepEqual(expectedSeriesData.reverse(), body)
+      expectedSeriesData = expectedSeriesData.toReversed().map((seriesData, i, arr) => ({
+        ...seriesData,
+        data: {
+          ...seriesData.data,
+          runningTotal: arr.slice(0, i + 1).map(v => v.data.txs).reduce((a, b) => a + b, 0)
+        }
+      }))
+
+      assert.deepEqual(expectedSeriesData, body)
     })
     it('should return series of 6 intervals timespan 3d', async () => {
       const start = new Date(new Date().getTime())
@@ -1129,7 +1169,7 @@ describe('Transaction routes', () => {
       const [firstPeriod] = body.toReversed()
       const firstTimestamp = new Date(firstPeriod.timestamp)
 
-      const expectedSeriesData = []
+      let expectedSeriesData = []
 
       for (let i = 0; i < body.length; i++) {
         const nextPeriod = firstTimestamp - Math.ceil((end - start) / 1000 / 6) * 1000 * i
@@ -1150,7 +1190,15 @@ describe('Transaction routes', () => {
         })
       }
 
-      assert.deepEqual(expectedSeriesData.reverse(), body)
+      expectedSeriesData = expectedSeriesData.toReversed().map((seriesData, i, arr) => ({
+        ...seriesData,
+        data: {
+          ...seriesData.data,
+          runningTotal: arr.slice(0, i + 1).map(v => v.data.txs).reduce((a, b) => a + b, 0)
+        }
+      }))
+
+      assert.deepEqual(expectedSeriesData, body)
     })
   })
 
@@ -1165,7 +1213,7 @@ describe('Transaction routes', () => {
       const [firstPeriod] = body.toReversed()
       const firstTimestamp = new Date(firstPeriod.timestamp)
 
-      const expectedSeriesData = []
+      let expectedSeriesData = []
 
       for (let i = 0; i < body.length; i++) {
         const nextPeriod = firstTimestamp - 300000 * i
@@ -1188,7 +1236,15 @@ describe('Transaction routes', () => {
         })
       }
 
-      assert.deepEqual(expectedSeriesData.reverse(), body)
+      expectedSeriesData = expectedSeriesData.toReversed().map((seriesData, i, arr) => ({
+        ...seriesData,
+        data: {
+          ...seriesData.data,
+          runningTotal: arr.slice(0, i + 1).map(v => v.data.gas).reduce((a, b) => a + b, 0)
+        }
+      }))
+
+      assert.deepEqual(expectedSeriesData, body)
     })
 
     it('should return default series set timespan 2H', async () => {
@@ -1201,7 +1257,7 @@ describe('Transaction routes', () => {
       const [firstPeriod] = body.toReversed()
       const firstTimestamp = new Date(firstPeriod.timestamp)
 
-      const expectedSeriesData = []
+      let expectedSeriesData = []
 
       for (let i = 0; i < body.length; i++) {
         const nextPeriod = firstTimestamp - 1440000 * i
@@ -1224,7 +1280,15 @@ describe('Transaction routes', () => {
         })
       }
 
-      assert.deepEqual(expectedSeriesData.reverse(), body)
+      expectedSeriesData = expectedSeriesData.toReversed().map((seriesData, i, arr) => ({
+        ...seriesData,
+        data: {
+          ...seriesData.data,
+          runningTotal: arr.slice(0, i + 1).map(v => v.data.gas).reduce((a, b) => a + b, 0)
+        }
+      }))
+
+      assert.deepEqual(expectedSeriesData, body)
     })
 
     it('should return default series set timespan 24h', async () => {
@@ -1237,7 +1301,7 @@ describe('Transaction routes', () => {
       const [firstPeriod] = body.toReversed()
       const firstTimestamp = new Date(firstPeriod.timestamp)
 
-      const expectedSeriesData = []
+      let expectedSeriesData = []
 
       for (let i = 0; i < body.length; i++) {
         const nextPeriod = firstTimestamp - 17280000 * i
@@ -1260,7 +1324,15 @@ describe('Transaction routes', () => {
         })
       }
 
-      assert.deepEqual(expectedSeriesData.reverse(), body)
+      expectedSeriesData = expectedSeriesData.toReversed().map((seriesData, i, arr) => ({
+        ...seriesData,
+        data: {
+          ...seriesData.data,
+          runningTotal: arr.slice(0, i + 1).map(v => v.data.gas).reduce((a, b) => a + b, 0)
+        }
+      }))
+
+      assert.deepEqual(expectedSeriesData, body)
     })
 
     it('should return default series set timespan 3d', async () => {
@@ -1273,7 +1345,7 @@ describe('Transaction routes', () => {
       const [firstPeriod] = body.toReversed()
       const firstTimestamp = new Date(firstPeriod.timestamp)
 
-      const expectedSeriesData = []
+      let expectedSeriesData = []
 
       for (let i = 0; i < body.length; i++) {
         const nextPeriod = firstTimestamp - 51840000 * i
@@ -1296,7 +1368,15 @@ describe('Transaction routes', () => {
         })
       }
 
-      assert.deepEqual(expectedSeriesData.reverse(), body)
+      expectedSeriesData = expectedSeriesData.toReversed().map((seriesData, i, arr) => ({
+        ...seriesData,
+        data: {
+          ...seriesData.data,
+          runningTotal: arr.slice(0, i + 1).map(v => v.data.gas).reduce((a, b) => a + b, 0)
+        }
+      }))
+
+      assert.deepEqual(expectedSeriesData, body)
     })
 
     it('should return default series set timespan 1w', async () => {
@@ -1309,7 +1389,7 @@ describe('Transaction routes', () => {
       const [firstPeriod] = body.toReversed()
       const firstTimestamp = new Date(firstPeriod.timestamp)
 
-      const expectedSeriesData = []
+      let expectedSeriesData = []
 
       for (let i = 0; i < body.length; i++) {
         const nextPeriod = firstTimestamp - 120960000 * i
@@ -1332,7 +1412,15 @@ describe('Transaction routes', () => {
         })
       }
 
-      assert.deepEqual(expectedSeriesData.reverse(), body)
+      expectedSeriesData = expectedSeriesData.toReversed().map((seriesData, i, arr) => ({
+        ...seriesData,
+        data: {
+          ...seriesData.data,
+          runningTotal: arr.slice(0, i + 1).map(v => v.data.gas).reduce((a, b) => a + b, 0)
+        }
+      }))
+
+      assert.deepEqual(expectedSeriesData, body)
     })
     it('should return series of 6 intervals timespan 3d', async () => {
       const start = new Date(new Date().getTime())
@@ -1347,7 +1435,7 @@ describe('Transaction routes', () => {
       const [firstPeriod] = body.toReversed()
       const firstTimestamp = new Date(firstPeriod.timestamp)
 
-      const expectedSeriesData = []
+      let expectedSeriesData = []
 
       for (let i = 0; i < body.length; i++) {
         const nextPeriod = firstTimestamp - Math.ceil((end - start) / 1000 / 6) * 1000 * i
@@ -1370,7 +1458,15 @@ describe('Transaction routes', () => {
         })
       }
 
-      assert.deepEqual(expectedSeriesData.reverse(), body)
+      expectedSeriesData = expectedSeriesData.toReversed().map((seriesData, i, arr) => ({
+        ...seriesData,
+        data: {
+          ...seriesData.data,
+          runningTotal: arr.slice(0, i + 1).map(v => v.data.gas).reduce((a, b) => a + b, 0)
+        }
+      }))
+
+      assert.deepEqual(expectedSeriesData, body)
     })
   })
 })
