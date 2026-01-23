@@ -592,7 +592,15 @@ GET /validator/F60A6BF9EC0794BB0CFD1E0F2217933F4B33EDE6FE810692BC275CA18148AEF0/
     {
         "timestamp": "2024-06-23T13:51:44.154Z",
         "data": {
-            "reward": 34000000
+            "reward": 34000000,
+            "runningTotal": 34000000
+        }
+    },
+    {
+        "timestamp": "2024-06-23T13:53:44.154Z",
+        "data": {
+            "reward": 34000000,
+            "runningTotal": 68000000
         }
     },...
 ]
@@ -611,7 +619,15 @@ GET /validator/F60A6BF9EC0794BB0CFD1E0F2217933F4B33EDE6FE810692BC275CA18148AEF0/
     {
         "timestamp": "2024-06-23T13:51:44.154Z",
         "data": {
-            "blocksCount": 2
+            "blocksCount": 2,
+            "runningTotal": 2
+        }
+    },
+    {
+        "timestamp": "2024-06-23T13:53:44.154Z",
+        "data": {
+            "blocksCount": 2,
+            "runningTotal": 4
         }
     },...
 ]
@@ -1744,7 +1760,8 @@ GET /transactions/history?timestamp_start=2024-01-01T00:00:00&timestamp_end=2025
     {
         "timestamp": "2024-04-22T08:45:20.911Z",
         "data": {
-          "txs": 5
+          "txs": 5,
+          "runningTotal": 5,
           "blockHeight": 2,
           "blockHash": "DEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEF"
         }
@@ -1753,6 +1770,7 @@ GET /transactions/history?timestamp_start=2024-01-01T00:00:00&timestamp_end=2025
         "timestamp": "2024-04-22T08:50:20.911Z",
         "data": {
           "txs": 13,
+          "runningTotal": 18,
           "blockHeight": 7,
           "blockHash": "DEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEF"
         }
@@ -1780,6 +1798,7 @@ GET /transactions/gas/history?timestamp_start=2024-01-01T00:00:00&timestamp_end=
         "timestamp": "2024-04-22T08:45:20.911Z",
         "data": {
           "gas": 772831320,
+          "runningTotal": 772831320,
           "blockHeight": 64060,
           "blockHash": "4A1F6B5238032DDAC55009A28797D909DB4288D5B5EC14B86DEC6EA8F25EC71A"
         }
@@ -1788,6 +1807,7 @@ GET /transactions/gas/history?timestamp_start=2024-01-01T00:00:00&timestamp_end=
         "timestamp": "2024-04-22T08:50:20.911Z",
         "data": {
           "gas": 14108752440,
+          "runningTotal": 14881583760,
           "blockHeight": 64333,
           "blockHash": "507659D9BE2FF76A031F4219061F3D2D39475A7FA4B24F25AEFDB34CD4DF2A57"
         }
