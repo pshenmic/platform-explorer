@@ -695,6 +695,25 @@ Status can be either `SUCCESS` or `FAIL`. In case of error tx, message will appe
 | TOKEN_DIRECT_PURCHASE               | 15                |
 | TOKEN_SET_PRICE_FOR_DIRECT_PURCHASE | 16                |
 
+| Transition type                       | type index |
+|---------------------------------------|------------|
+| `DATA_CONTRACT_CREATE`                | 0          |
+| `BATCH`                               | 1          |
+| `IDENTITY_CREATE`                     | 2          |
+| `IDENTITY_TOP_UP`                     | 3          |
+| `DATA_CONTRACT_UPDATE`                | 4          |
+| `IDENTITY_UPDATE`                     | 5          |
+| `IDENTITY_CREDIT_WITHDRAWAL`          | 6          |
+| `IDENTITY_CREDIT_TRANSFER`            | 7          |
+| `MASTERNODE_VOTE`                     | 8          |
+| `IDENTITY_CREDIT_TRANSFER_TO_ADDRESS` | 9          |
+| `IDENTITY_CREATE_FROM_ADDRESSES`      | 10         |
+| `IDENTITY_TOP_UP_FROM_ADDRESSES`      | 11         |
+| `ADDRESS_FUNDS_TRANSFER`              | 12         |
+| `ADDRESS_FUNDING_FROM_ASSET_LOCK`     | 13         |
+| `ADDRESS_CREDIT_WITHDRAWAL`           | 14         |
+
+
 ```
 GET /transactions?=1&limit=10&orderBy=id&order=asc&owner=6q9RFbeea73tE31LGMBLFZhtBUX3wZL3TcNynqE18Zgs&transaction_type=0&transaction_type=1&status=ALL&gas_min=0&gas_max=9999999
 

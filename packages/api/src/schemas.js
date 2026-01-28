@@ -70,7 +70,13 @@ const schemaTypes = [
                 'IDENTITY_UPDATE',
                 'IDENTITY_CREDIT_WITHDRAWAL',
                 'IDENTITY_CREDIT_TRANSFER',
-                'MASTERNODE_VOTE'
+                'MASTERNODE_VOTE',
+                'IDENTITY_CREDIT_TRANSFER_TO_ADDRESS',
+                'IDENTITY_CREATE_FROM_ADDRESSES',
+                'IDENTITY_TOP_UP_FROM_ADDRESSES',
+                'ADDRESS_FUNDS_TRANSFER',
+                'ADDRESS_FUNDING_FROM_ASSET_LOCK',
+                'ADDRESS_CREDIT_WITHDRAWAL'
               ]
             },
             {
