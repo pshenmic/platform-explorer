@@ -354,7 +354,7 @@ describe('Validators routes', () => {
 
       const expectedValidator = {
         proTxHash: validator.pro_tx_hash,
-        isActive: false,
+        isActive: true,
         proposedBlocksAmount: blocks.filter((block) => block.validator === validator.pro_tx_hash).length,
         lastProposedBlockHeader: blocks
           .filter((block) => block.validator === validator.pro_tx_hash)

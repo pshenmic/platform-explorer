@@ -80,7 +80,7 @@ impl PostgresDAO {
                     &revision_i32,
                     &data,
                     &document.deleted,
-                    &st_hash,
+                    &st_hash.map(|hash| hash.to_lowercase()),
                     &data_contract_id,
                     &is_system,
                     &prefunded_voting_balance,
