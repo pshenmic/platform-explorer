@@ -5,6 +5,7 @@ use crate::models::{
 };
 use reqwest::{Client, Error};
 use std::time::Duration;
+use serde_json::Value;
 
 pub struct TenderdashRpcApi {
     client: Client,
@@ -78,5 +79,32 @@ impl TenderdashRpcApi {
         let validators: Vec<Validator> = Vec::try_from(resp).unwrap();
 
         Ok(validators)
+    }
+}
+
+pub fn escape_null_character_string(s: String) -> String {
+    if s.contains("\0") {
+        s.replace("\0", "")
+    } else {
+        s
+    }
+}
+
+pub fn escape_null_character_json_object(value: &mut Value) {
+    match value {
+        Value::String(s) => {
+            *s = escape_null_character_string(s.to_string());
+        }
+        Value::Array(arr) => {
+            for v in arr {
+                escape_null_character_json_object(v);
+            }
+        }
+        Value::Object(map) => {
+            for v in map.values_mut() {
+                escape_null_character_json_object(v);
+            }
+        }
+        _ => {}
     }
 }

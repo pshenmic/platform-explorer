@@ -8,6 +8,7 @@ use dpp::state_transition::batch_transition::batched_transition::token_transitio
 };
 use dpp::state_transition::batch_transition::batched_transition::token_transition_action_type::TokenTransitionActionTypeGetter;
 use dpp::state_transition::batch_transition::token_base_transition::v0::v0_methods::TokenBaseTransitionV0Methods;
+use crate::utils::{escape_null_character_json_object, escape_null_character_string};
 
 impl PostgresDAO {
     pub async fn create_token(&self, token: TokenConfig, sql_transaction: &Transaction<'_>) {
@@ -28,7 +29,9 @@ impl PostgresDAO {
             ));
         let data_contract_id = data_contract.id.unwrap() as i32;
 
-        let localizations = serde_json::to_value(token.localizations).unwrap();
+        let raw_localizations = serde_json::to_value(token.localizations).unwrap();
+        let mut normal_localizations = raw_localizations.clone();
+        escape_null_character_json_object(&mut normal_localizations);
 
         let query = "INSERT INTO tokens(position, identifier, owner, data_contract_id, \
         decimals, max_supply, base_supply, localizations, \
@@ -51,7 +54,7 @@ impl PostgresDAO {
                     &(token.decimals as i16),
                     &(max_supply),
                     &(token.base_supply as i64),
-                    &localizations,
+                    &normal_localizations,
                     &token.keeps_transfer_history,
                     &token.keeps_freezing_history,
                     &token.keeps_minting_history,
@@ -67,7 +70,7 @@ impl PostgresDAO {
                     &token.allowed_emergency_actions,
                     &token.description,
                     &token.state_transition_hash,
-                    &token.name,
+                    &escape_null_character_string(token.name),
                 ],
             )
             .await
@@ -109,6 +112,8 @@ impl PostgresDAO {
 
         let token_identifier = token_transition.token_id();
 
+        let normal_public_note = public_note.map(|s| escape_null_character_string(s.clone()));
+
         let query = "INSERT INTO token_transitions \
           (owner, token_identifier, action, amount, public_note, token_contract_position, state_transition_hash, data_contract_id, recipient) \
           VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)";
@@ -123,7 +128,7 @@ impl PostgresDAO {
                     &token_identifier.to_string(Base58),
                     &(action as i16),
                     &(amount.map(|token_amount| token_amount as i64)),
-                    &public_note,
+                    &normal_public_note,
                     &(token_position as i16),
                     &st_hash,
                     &data_contract_id,
