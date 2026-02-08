@@ -1,6 +1,6 @@
 {
   "name": "api",
-  "version": "2.1.4",
+  "version": "2.2.0",
   "main": "index.js",
   "license": "MIT",
   "scripts": {
