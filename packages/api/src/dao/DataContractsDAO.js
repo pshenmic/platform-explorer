@@ -150,7 +150,15 @@ module.exports = class DataContractsDAO {
       .select(
         'identifier', 'filtered_data_contracts.owner', 'version',
         'filtered_data_contracts.tx_hash', 'is_system', 'timestamp', 'block_hash',
-        'filtered_data_contracts.id', 'name', 'tokens_count', 'keywords', 'description'
+        'filtered_data_contracts.id', 'tokens_count', 'keywords', 'description'
+      )
+      .select(
+        this.knex('data_contracts')
+          .select('name')
+          .whereRaw('data_contracts.identifier = filtered_data_contracts.identifier and name is not null')
+          .orderBy('id', 'desc')
+          .limit(1)
+          .as('name')
       )
       .orderBy(orderByOptions)
       .limit(limit)
@@ -207,8 +215,16 @@ module.exports = class DataContractsDAO {
       .with('data_contract', dataContractSubquery)
       .with('data_contract_info', dataContractInfoSubquery)
       .with('gas_sub', gasSubquery)
-      .select('data_contract.identifier as identifier', 'data_contract.name as name', 'data_contract.owner as owner',
+      .select('data_contract.identifier as identifier', 'data_contract.owner as owner',
         'data_contract.schema as schema', 'data_contract.is_system as is_system', 'description', 'keywords')
+      .select(
+        this.knex('data_contract')
+          .select('name')
+          .whereRaw('name is not null')
+          .orderBy('id', 'desc')
+          .limit(1)
+          .as('name')
+      )
       .select(
         this.knex('data_contract')
           .select('version')

@@ -10,11 +10,24 @@ const Alias = require('./models/Alias')
 const TokenTransitionEnum = require('./enums/TokenTransitionsEnum')
 const {
   StateTransitionWASM,
-  BatchTransitionWASM, TokenConfigurationWASM,
+  IdentityCreditTransferToAddressesTransitionWASM,
+  BatchTransitionWASM,
+  TokenConfigurationWASM,
   DataContractCreateTransitionWASM,
-  IdentityCreateTransitionWASM, IdentityTopUpTransitionWASM, DataContractUpdateTransitionWASM,
-  IdentityUpdateTransitionWASM, IdentityCreditTransferWASM, IdentityCreditWithdrawalTransitionWASM,
-  MasternodeVoteTransitionWASM, PlatformVersionWASM, DataContractWASM
+  IdentityCreateTransitionWASM,
+  IdentityTopUpTransitionWASM,
+  DataContractUpdateTransitionWASM,
+  IdentityUpdateTransitionWASM,
+  IdentityCreditTransferWASM,
+  IdentityCreditWithdrawalTransitionWASM,
+  MasternodeVoteTransitionWASM,
+  PlatformVersionWASM,
+  DataContractWASM,
+  IdentityCreateFromAddressesTransitionWASM,
+  IdentityTopUpFromAddressesTransitionWASM,
+  AddressFundsTransferTransitionWASM,
+  AddressFundingFromAssetLockTransitionWASM,
+  AddressCreditWithdrawalTransitionWASM
 } = require('pshenmic-dpp')
 const BatchEnum = require('./enums/BatchEnum')
 const dpnsContract = require('../data_contracts/dpns.json')
@@ -1117,6 +1130,237 @@ const decodeStateTransition = async (base64) => {
       decoded.raw = Buffer.from(stateTransition.bytes()).toString('hex')
       decoded.proTxHash = masternodeVoteTransition.proTxHash.hex()
       decoded.identityNonce = String(masternodeVoteTransition.nonce)
+
+      break
+    }
+    case StateTransitionEnum.IDENTITY_CREDIT_TRANSFER_TO_ADDRESS: {
+      const identityCreditTransferToAddress = IdentityCreditTransferToAddressesTransitionWASM.fromStateTransition(stateTransition)
+
+      decoded.userFeeIncrease = identityCreditTransferToAddress.userFeeIncrease
+      decoded.nonce = identityCreditTransferToAddress.nonce.toString()
+      decoded.recipientAddresses = identityCreditTransferToAddress.recipientAddresses.map(({ address, amount }) => ({
+        address: address.toAddress(NETWORK),
+        amount: amount.toString()
+      }))
+      decoded.senderId = identityCreditTransferToAddress.identityId.base58()
+      decoded.raw = Buffer.from(stateTransition.bytes()).toString('hex')
+
+      break
+    }
+    case StateTransitionEnum.IDENTITY_CREATE_FROM_ADDRESSES: {
+      const identityCreateFromAddresses = IdentityCreateFromAddressesTransitionWASM.fromStateTransition(stateTransition)
+
+      decoded.userFeeIncrease = identityCreateFromAddresses.userFeeIncrease
+      decoded.inputs = identityCreateFromAddresses.inputs.map((input) => ({
+        address: input.address.toAddress(NETWORK),
+        credits: input.credits.toString(),
+        nonce: input.nonce.toString()
+      }))
+      decoded.output = identityCreateFromAddresses.output
+        ? {
+            address: identityCreateFromAddresses.output.address.toAddress(NETWORK),
+            credits: identityCreateFromAddresses.output.credits.toString()
+          }
+        : null
+      decoded.publicKeys = identityCreateFromAddresses.publicKeys.map(key => {
+        const { contractBounds } = key
+
+        return {
+          contractBounds: contractBounds
+            ? {
+                type: contractBounds.contractBoundsType,
+                id: contractBounds.identifier.base58(),
+                typeName: contractBounds.documentTypeName
+              }
+            : null,
+          id: key.keyId,
+          type: key.keyType,
+          data: Buffer.from(key.data).toString('hex'),
+          publicKeyHash: Buffer.from(key.getHash()).toString('hex'),
+          purpose: key.purpose,
+          securityLevel: key.securityLevel,
+          readOnly: key.readOnly,
+          signature: Buffer.from(key.signature).toString('hex')
+        }
+      })
+      decoded.raw = Buffer.from(stateTransition.bytes()).toString('hex')
+
+      break
+    }
+    case StateTransitionEnum.IDENTITY_TOP_UP_FROM_ADDRESSES: {
+      const identityTopUpFromAddresses = IdentityTopUpFromAddressesTransitionWASM.fromStateTransition(stateTransition)
+
+      decoded.userFeeIncrease = identityTopUpFromAddresses.userFeeIncrease
+      decoded.inputs = identityTopUpFromAddresses.inputs.map((input) => ({
+        address: input.address.toAddress(NETWORK),
+        credits: input.credits.toString(),
+        nonce: input.nonce.toString()
+      }))
+      decoded.inputWitness = identityTopUpFromAddresses.inputWitness.map((input) => {
+        const type = input.getType()
+        const rawValue = input.getValue()
+        const value = type === 'P2PKH'
+          ? {
+              signature: Buffer.from(rawValue.signature).toString('hex')
+            }
+          : {
+              signatures: rawValue.signatures.map(sig => Buffer.from(sig).toString('hex')),
+              redeemScript: Buffer.from(rawValue.redeemScript).toString('hex')
+            }
+        return {
+          type: input.getType(),
+          value
+        }
+      })
+      decoded.output = identityTopUpFromAddresses.output
+        ? {
+            address: identityTopUpFromAddresses.output.address.toAddress(NETWORK),
+            credits: identityTopUpFromAddresses.output.credits.toString()
+          }
+        : null
+      decoded.feeStrategy = identityTopUpFromAddresses.feeStrategy.map(step => ({
+        type: step.getValueType(),
+        value: step.getValue()
+      }))
+      decoded.raw = Buffer.from(stateTransition.bytes()).toString('hex')
+
+      break
+    }
+    case StateTransitionEnum.ADDRESS_FUNDS_TRANSFER: {
+      const addressFundsTransferTransition = AddressFundsTransferTransitionWASM.fromStateTransition(stateTransition)
+
+      decoded.userFeeIncrease = addressFundsTransferTransition.userFeeIncrease
+      decoded.inputs = addressFundsTransferTransition.inputs.map((input) => ({
+        address: input.address.toAddress(NETWORK),
+        credits: input.credits.toString(),
+        nonce: input.nonce.toString()
+      }))
+      decoded.inputWitness = addressFundsTransferTransition.inputWitness.map((input) => {
+        const type = input.getType()
+        const rawValue = input.getValue()
+        const value = type === 'P2PKH'
+          ? {
+              signature: Buffer.from(rawValue.signature).toString('hex')
+            }
+          : {
+              signatures: rawValue.signatures.map(sig => Buffer.from(sig).toString('hex')),
+              redeemScript: Buffer.from(rawValue.redeemScript).toString('hex')
+            }
+        return {
+          type: input.getType(),
+          value
+        }
+      })
+      decoded.outputs = addressFundsTransferTransition.outputs.map((output) => ({
+        address: output.address.toAddress(NETWORK),
+        credits: output.credits.toString()
+      }))
+      decoded.feeStrategy = addressFundsTransferTransition.feeStrategy.map(step => ({
+        type: step.getValueType(),
+        value: step.getValue()
+      }))
+      decoded.raw = Buffer.from(stateTransition.bytes()).toString('hex')
+
+      break
+    }
+    case StateTransitionEnum.ADDRESS_FUNDING_FROM_ASSET_LOCK: {
+      const addressFundingFromAssetLockTransition = AddressFundingFromAssetLockTransitionWASM.fromStateTransition(stateTransition)
+
+      const assetLockProof = addressFundingFromAssetLockTransition.assetLockProof
+
+      const decodedTransaction =
+        assetLockProof.getLockType() === 'Instant'
+          ? dashcorelib.Transaction(Buffer.from(assetLockProof.getInstantLockProof().getTransaction()))
+          : null
+
+      decoded.assetLockProof = {
+        coreChainLockedHeight: assetLockProof.getLockType() === 'Chain' ? assetLockProof.getChainLockProof().coreChainLockedHeight : null,
+        type: assetLockProof.getLockType() === 'Instant' ? 'instantSend' : 'chainLock',
+        instantLock: assetLockProof.getLockType() === 'Instant' ? Buffer.from(assetLockProof.getInstantLockProof().getInstantLockBytes()).toString('base64') : null,
+        fundingAmount: decodedTransaction?.outputs[assetLockProof.getOutPoint().getVOUT()].satoshis
+          ? String(decodedTransaction?.outputs[assetLockProof.getOutPoint().getVOUT()].satoshis)
+          : null,
+        fundingCoreTx: assetLockProof.getOutPoint().getTXID(),
+        vout: assetLockProof.getOutPoint().getVOUT()
+      }
+
+      decoded.userFeeIncrease = addressFundingFromAssetLockTransition.userFeeIncrease
+      decoded.inputs = addressFundingFromAssetLockTransition.inputs.map((input) => ({
+        address: input.address.toAddress(NETWORK),
+        credits: input.credits.toString(),
+        nonce: input.nonce.toString()
+      }))
+      decoded.inputWitness = addressFundingFromAssetLockTransition.inputWitness.map((input) => {
+        const type = input.getType()
+        const rawValue = input.getValue()
+        const value = type === 'P2PKH'
+          ? {
+              signature: Buffer.from(rawValue.signature).toString('hex')
+            }
+          : {
+              signatures: rawValue.signatures.map(sig => Buffer.from(sig).toString('hex')),
+              redeemScript: Buffer.from(rawValue.redeemScript).toString('hex')
+            }
+        return {
+          type: input.getType(),
+          value
+        }
+      })
+      decoded.outputs = addressFundingFromAssetLockTransition.outputs.map((output) => ({
+        address: output.address.toAddress(NETWORK),
+        credits: output.credits.toString()
+      }))
+      decoded.feeStrategy = addressFundingFromAssetLockTransition.feeStrategy.map(step => ({
+        type: step.getValueType(),
+        value: step.getValue()
+      }))
+      decoded.signature = Buffer.from(addressFundingFromAssetLockTransition.signature).toString('hex')
+      decoded.raw = Buffer.from(stateTransition.bytes()).toString('hex')
+
+      break
+    }
+    case StateTransitionEnum.ADDRESS_CREDIT_WITHDRAWAL: {
+      const addressCreditWithdrawalTransition = AddressCreditWithdrawalTransitionWASM.fromStateTransition(stateTransition)
+
+      decoded.userFeeIncrease = addressCreditWithdrawalTransition.userFeeIncrease
+      decoded.inputs = addressCreditWithdrawalTransition.inputs.map((input) => ({
+        address: input.address.toAddress(NETWORK),
+        credits: input.credits.toString(),
+        nonce: input.nonce.toString()
+      }))
+      decoded.inputWitness = addressCreditWithdrawalTransition.inputWitness.map((input) => {
+        const type = input.getType()
+        const rawValue = input.getValue()
+        const value = type === 'P2PKH'
+          ? {
+              signature: Buffer.from(rawValue.signature).toString('hex')
+            }
+          : {
+              signatures: rawValue.signatures.map(sig => Buffer.from(sig).toString('hex')),
+              redeemScript: Buffer.from(rawValue.redeemScript).toString('hex')
+            }
+        return {
+          type: input.getType(),
+          value
+        }
+      })
+      decoded.output = addressCreditWithdrawalTransition.output
+        ? {
+            address: addressCreditWithdrawalTransition.output.address.toAddress(NETWORK),
+            credits: addressCreditWithdrawalTransition.output.credits.toString()
+          }
+        : null
+      decoded.feeStrategy = addressCreditWithdrawalTransition.feeStrategy.map(step => ({
+        type: step.getValueType(),
+        value: step.getValue()
+      }))
+      decoded.pooling = addressCreditWithdrawalTransition.pooling
+      decoded.outputAddress = addressCreditWithdrawalTransition.outputScript
+        ? outputScriptToAddress(Buffer.from(addressCreditWithdrawalTransition.outputScript.bytes()))
+        : null
+      decoded.outputScript = addressCreditWithdrawalTransition?.outputScript?.hex() ?? null
+
+      decoded.raw = Buffer.from(stateTransition.bytes()).toString('hex')
 
       break
     }

@@ -5,6 +5,7 @@ use dpp::identifier::Identifier;
 use dpp::platform_value::string_encoding::Encoding::Base58;
 use serde_json::{Map, Number, Value};
 use tokio_postgres::Row;
+use crate::utils::escape_null_character_json_object;
 
 impl PostgresDAO {
     pub async fn create_document(
@@ -17,7 +18,16 @@ impl PostgresDAO {
         let revision = document.revision;
         let revision_i32 = revision as i32;
         let transition_type = document.transition_type as i64;
-        let data = document.data;
+        let raw_data = document.data;
+        let normal_data = match raw_data.clone() {
+            None => None,
+            Some(data) => {
+                let mut cloned_data = data.clone();
+                escape_null_character_json_object(&mut cloned_data);
+
+                Some(cloned_data)
+            }
+        };
         let prefunded_voting_balance: Option<Value> =
             document
                 .prefunded_voting_balance
@@ -78,7 +88,7 @@ impl PostgresDAO {
                     &transition_type,
                     &owner.to_string(Base58),
                     &revision_i32,
-                    &data,
+                    &normal_data,
                     &document.deleted,
                     &st_hash,
                     &data_contract_id,
@@ -124,78 +134,5 @@ impl PostgresDAO {
             .collect::<Vec<Document>>();
 
         Ok(documents.first().cloned())
-    }
-
-    pub async fn update_document_price(
-        &self,
-        document: Document,
-        sql_transaction: &Transaction<'_>,
-    ) -> Result<(), PoolError> {
-        let stmt = sql_transaction
-            .prepare_cached(
-                "UPDATE documents set \
-        price = $1, \
-        revision = $2 \
-        WHERE identifier = $3;",
-            )
-            .await
-            .unwrap();
-
-        sql_transaction
-            .execute(
-                &stmt,
-                &[
-                    &(document.price.unwrap() as i64),
-                    &(document.revision as i32),
-                    &document.identifier.to_string(Base58),
-                ],
-            )
-            .await
-            .unwrap();
-
-        println!(
-            "Updated price for a document {} to {}",
-            &document.identifier.to_string(Base58),
-            &document.price.unwrap()
-        );
-
-        Ok(())
-    }
-
-    pub async fn assign_document(
-        &self,
-        document: Document,
-        owner: Identifier,
-        sql_transaction: &Transaction<'_>,
-    ) -> Result<(), PoolError> {
-        let stmt = sql_transaction
-            .prepare_cached(
-                "UPDATE documents set \
-        owner = $1, \
-        revision = $2 \
-        WHERE identifier = $3;",
-            )
-            .await
-            .unwrap();
-
-        sql_transaction
-            .execute(
-                &stmt,
-                &[
-                    &owner.to_string(Base58),
-                    &(document.revision as i32),
-                    &document.identifier.to_string(Base58),
-                ],
-            )
-            .await
-            .unwrap();
-
-        println!(
-            "Reassigned document {} to the {}",
-            &document.identifier.to_string(Base58),
-            &owner.to_string(Base58)
-        );
-
-        Ok(())
     }
 }
