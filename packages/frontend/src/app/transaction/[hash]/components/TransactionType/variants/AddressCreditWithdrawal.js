@@ -1,4 +1,4 @@
-import { Flex, Text } from '@chakra-ui/react'
+import { Flex, Grid, Text } from '@chakra-ui/react'
 import { ValueCard } from '@components/cards'
 import { InfoLine, Identifier } from '@components/data'
 import { CopyButton } from '@components/ui/Buttons'
@@ -47,7 +47,7 @@ export const AddressCreditWithdrawal = ({
                     <div>
                         {inputs.map((input, index) => (
                             <ValueCard key={index}>
-                                <Flex gap={4} direction={{ base: 'column', md: 'row' }} maxW={{ base: 270, md: 'none' }}>
+                                <Flex gap={4} direction={{ base: 'column', lg: 'row' }} >
                                     <ValueCard>
                                         <Identifier
                                             avatar
@@ -86,11 +86,14 @@ export const AddressCreditWithdrawal = ({
                             <ValueCard key={index}>
                                 <Flex direction={{ base: 'column', lg: 'row' }} align={{ base: 'start', lg: 'center' }} gap={4}>
                                     <Flex align='center' gap={4}>
-                                        <div>
+                                        <Text>
                                             Type:
-                                        </div>
+                                        </Text>
                                         <ValueCard>
-                                            {witness.type}
+                                            <Text>
+                                                {witness.type}
+                                            </Text>
+
                                         </ValueCard>
                                     </Flex>
                                     <Flex align='center' gap={4}>
@@ -108,11 +111,9 @@ export const AddressCreditWithdrawal = ({
                                                 </Text>
 
                                                 <CopyButton text={witness.value.signature} />
-
                                             </Flex>
                                         </ValueCard>
                                     </Flex>
-
                                 </Flex>
                             </ValueCard>
 
@@ -202,15 +203,17 @@ export const AddressCreditWithdrawal = ({
                 className={'TransactionPage__InfoLine TransactionPage__InfoLine--FullWidth'}
                 title={'Raw Transaction'}
                 value={
-                    <ValueCard className={'TransactionPage__RawTransaction'}>
-                        <Identifier
-                            copyButton
-                            ellipsis
-                            styles={['highlight-both']}
-                        >
-                            {raw}
-                        </Identifier>
-                    </ValueCard>
+                    <Grid templateColumns='minmax(300px, auto)'>
+                        <ValueCard className={'TransactionPage__RawTransaction'}>
+                            <Identifier
+                                copyButton
+                                ellipsis
+                                styles={['highlight-both']}
+                            >
+                                {raw}
+                            </Identifier>
+                        </ValueCard>
+                    </Grid>
                 }
             />
         )}

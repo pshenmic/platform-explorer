@@ -1,4 +1,4 @@
-import { Flex, Text } from '@chakra-ui/react'
+import { Flex, Grid, Stack, Text } from '@chakra-ui/react'
 import { ValueCard } from '@components/cards'
 import { InfoLine, Identifier } from '@components/data'
 import { CopyButton } from '@components/ui/Buttons'
@@ -40,7 +40,7 @@ export const AddressFundsTransfer = ({
           <div>
             {inputs.map((input, index) => (
               <ValueCard key={index}>
-                <Flex direction={{ base: 'column', lg: 'row' }} align={{ lg: 'center' }} gap={4} maxW={{ base: 270, md: 'none' }}>
+                <Flex direction={{ base: 'column', lg: 'row' }} align={{ lg: 'center' }} gap={4} >
                   <ValueCard>
                       <Identifier
                         avatar
@@ -100,7 +100,6 @@ export const AddressFundsTransfer = ({
                           </Text>
 
                           <CopyButton text={witness.value.signature} />
-
                         </Flex>
                       )}
                     </ValueCard>
@@ -120,10 +119,10 @@ export const AddressFundsTransfer = ({
         className={'TransactionPage__InfoLine TransactionPage__InfoLine--FullWidth'}
         title={`Outputs (${outputs.length})`}
         value={
-          <Flex direction='column' gap={2}>
+          <Stack gap={2}>
             {outputs.map((output, index) => (
               <ValueCard key={index}>
-                <Flex gap={4} direction={{ base: 'column', md: 'row' }} maxW={{ base: 270, md: 'none' }}>
+                <Grid gap={4} templateColumns={{ base: '1fr', lg: '1fr 150px' }} w='100%' align='center'>
                   <ValueCard>
                     <Identifier
                       avatar
@@ -134,16 +133,14 @@ export const AddressFundsTransfer = ({
                       {output.address}
                     </Identifier>
                   </ValueCard>
-                  <ValueCard >
-                    <div>
-                      {output.credits} credits
-                    </div>
+                  <ValueCard>
+                    {output.credits} credits
                   </ValueCard>
-                </Flex>
+                </Grid>
               </ValueCard>
 
             ))}
-          </Flex>
+          </Stack>
         }
       />
     )}

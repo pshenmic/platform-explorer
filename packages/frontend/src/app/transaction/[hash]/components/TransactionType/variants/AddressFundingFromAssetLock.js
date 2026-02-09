@@ -39,9 +39,9 @@ export const AddressFundingFromAssetLock = ({
         className={'TransactionPage__InfoLine TransactionPage__InfoLine--FullWidth'}
         title={'Asset Lock Proof'}
         value={
-          <Grid templateColumns={{ base: '1fr 200px', md: '1fr 400px', lg: '1fr 500px' }} gap="6">
+          <Grid templateColumns={{ base: 'minmax(250px, auto)', md: '1fr 400px', lg: '1fr 500px' }} px={{ base: 5, md: 0 }} gap={4}>
             <GridItem>
-              <div>Type:</div>
+              <Text>Type:</Text>
             </GridItem>
             <GridItem>
               <ValueCard>
@@ -52,9 +52,9 @@ export const AddressFundingFromAssetLock = ({
             {assetLockProof.coreChainLockedHeight !== null && (
               <>
                 <GridItem>
-                  <div>
+                  <Text>
                     Core Chain Locked Height:
-                  </div>
+                  </Text>
                 </GridItem>
                 <GridItem>
                   <ValueCard>
@@ -64,9 +64,9 @@ export const AddressFundingFromAssetLock = ({
               </>
             )}
             <GridItem>
-              <div>
+              <Text>
                 Funding Amount:
-              </div>
+              </Text>
             </GridItem>
             <GridItem>
               <ValueCard>
@@ -74,9 +74,9 @@ export const AddressFundingFromAssetLock = ({
               </ValueCard>
             </GridItem>
             <GridItem>
-              <div>
+              <Text>
                 Output Index (vout):
-              </div>
+              </Text>
             </GridItem>
             <GridItem>
               <ValueCard>
@@ -85,7 +85,7 @@ export const AddressFundingFromAssetLock = ({
             </GridItem>
 
             <GridItem colSpan={1}>
-              <div>Funding Core Transaction:</div>
+              <Text>Funding Core Transaction:</Text>
             </GridItem>
             <GridItem>
               <ValueCard mb={2}>
@@ -100,7 +100,9 @@ export const AddressFundingFromAssetLock = ({
             </GridItem>
 
             <GridItem colSpan={1}>
-              <div>Instant Lock:</div>
+              <Flex align='center' h='100%'>
+                <Text>Instant Lock:</Text>
+              </Flex>
             </GridItem>
             <GridItem>
               <ValueCard className={'TransactionPage__RawTransaction'}>
