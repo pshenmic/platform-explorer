@@ -8,6 +8,9 @@ import Progress from './components/Progress'
 import Popover from './components/Popover'
 import Tooltip from './components/Tooltip'
 import Input from './components/Input'
+import Heading from './components/Heading'
+import Textarea from './components/Textarea'
+
 import {
   Montserrat,
   Open_Sans as OpenSans,
@@ -95,7 +98,9 @@ export const theme = extendTheme({
     Progress,
     Popover,
     Tooltip,
-    Input
+    Input,
+    Heading,
+    Textarea
   }
 })
 

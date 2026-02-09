@@ -1,0 +1,20 @@
+@use 'mixins.scss';
+@import 'variables.scss';
+
+.schema {
+    .code {
+        font-family: $font-mono;
+        height: 228px;
+        font-size: 12px;
+        line-height: 133%;
+        padding: 10px;
+        background-color: #2E393D;
+        border: 1px solid #404E53;
+
+        &::placeholder {
+            font-size: 14px;
+            line-height: 110%;
+            color: #fff;
+        }
+    }
+}
