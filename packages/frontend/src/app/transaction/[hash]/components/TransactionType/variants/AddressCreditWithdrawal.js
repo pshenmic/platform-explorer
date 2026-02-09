@@ -1,7 +1,6 @@
-import { Flex, Grid, Text } from '@chakra-ui/react'
+import { Flex, Grid, GridItem, Text } from '@chakra-ui/react'
 import { ValueCard } from '@components/cards'
 import { InfoLine, Identifier } from '@components/data'
-import { CopyButton } from '@components/ui/Buttons'
 
 /**
  * Displays details for an Address Credit Withdrawal transaction.
@@ -84,37 +83,29 @@ export const AddressCreditWithdrawal = ({
                     <div>
                         {inputWitness.map((witness, index) => (
                             <ValueCard key={index}>
-                                <Flex direction={{ base: 'column', lg: 'row' }} align={{ base: 'start', lg: 'center' }} gap={4}>
-                                    <Flex align='center' gap={4}>
-                                        <Text>
-                                            Type:
-                                        </Text>
+                                <Grid templateColumns={{ base: '1fr minmax(240px, 1fr)', md: '100px minmax(100px, 1fr)' }} gap={4}>
+                                    <Text>
+                                        Type:
+                                    </Text>
+                                    <GridItem width='fit-content'>
                                         <ValueCard>
-                                            <Text>
-                                                {witness.type}
-                                            </Text>
-
+                                            {witness.type}
                                         </ValueCard>
-                                    </Flex>
-                                    <Flex align='center' gap={4}>
-                                        <div>
-                                            Signature:
-                                        </div>
-                                        <ValueCard >
-                                            <Flex gap={2} maxW={{ base: 150, sm: 300, lg: 400 }} align='center' justify='space-between'>
-                                                <Text
-                                                    overflow="hidden"
-                                                    textOverflow="ellipsis"
-                                                    whiteSpace="nowrap"
-                                                >
-                                                    {witness.value.signature}
-                                                </Text>
+                                    </GridItem>
 
-                                                <CopyButton text={witness.value.signature} />
-                                            </Flex>
-                                        </ValueCard>
-                                    </Flex>
-                                </Flex>
+                                    <Text>
+                                        Signature:
+                                    </Text>
+                                    <ValueCard>
+                                        <Identifier
+                                            copyButton
+                                            ellipsis
+                                            styles={['highlight-both']}
+                                        >
+                                            {witness.value.signature}
+                                        </Identifier>
+                                    </ValueCard>
+                                </Grid>
                             </ValueCard>
 
                         ))}

@@ -1,7 +1,6 @@
-import { Flex, Grid, Stack, Text } from '@chakra-ui/react'
+import { Flex, Grid, GridItem, Stack, Text } from '@chakra-ui/react'
 import { ValueCard } from '@components/cards'
 import { InfoLine, Identifier } from '@components/data'
-import { CopyButton } from '@components/ui/Buttons'
 
 /**
  * Displays details for an Address Funds Transfer transaction.
@@ -31,25 +30,24 @@ export const AddressFundsTransfer = ({
       value={userFeeIncrease}
       error={userFeeIncrease === undefined}
     />
-
     {inputs && inputs.length > 0 && (
       <InfoLine
         className={'TransactionPage__InfoLine TransactionPage__InfoLine--FullWidth'}
         title={`Inputs (${inputs.length})`}
         value={
-          <div>
+          <Stack gap={2}>
             {inputs.map((input, index) => (
               <ValueCard key={index}>
-                <Flex direction={{ base: 'column', lg: 'row' }} align={{ lg: 'center' }} gap={4} >
+                <Flex direction={{ base: 'column', lg: 'row' }} align={{ lg: 'center' }} justify='space-between' gap={4} w='100%' >
                   <ValueCard>
-                      <Identifier
-                        avatar
-                        copyButton
-                        ellipsis
-                        styles={['highlight-both']}
-                      >
-                        {input.address}
-                      </Identifier>
+                    <Identifier
+                      avatar
+                      copyButton
+                      ellipsis
+                      styles={['highlight-both']}
+                    >
+                      {input.address}
+                    </Identifier>
                   </ValueCard>
                   <ValueCard>
                     {input.credits} credits
@@ -59,9 +57,8 @@ export const AddressFundsTransfer = ({
                   </ValueCard>
                 </Flex>
               </ValueCard>
-
             ))}
-          </div>
+          </Stack>
         }
       />
     )}
@@ -72,43 +69,41 @@ export const AddressFundsTransfer = ({
         title={`Input Witness (${inputWitness.length})`}
         align='top'
         value={
-          <div>
+          <Stack gap={2}>
             {inputWitness.map((witness, index) => (
               <ValueCard key={index}>
-                <Flex direction={{ lg: 'row', base: 'column' }} gap={4} align={{ lg: 'center', base: 'start' }}>
-                  <Flex align='center' gap={4}>
-                    <div>
-                      Type:
-                    </div>
-                    <ValueCard >
+                <Grid templateColumns={{ base: '1fr minmax(240px, 1fr)', md: '100px minmax(100px, 1fr)' }} gap={4}>
+                  <Text>
+                    Type:
+                  </Text>
+                  <GridItem
+                    width='fit-content'
+                    minW="min-content"
+                  >
+                    <ValueCard>
                       {witness.type}
                     </ValueCard>
-                  </Flex>
-                  <Flex align='center' gap={4}>
-                    <div >
-                      Signature:
-                    </div>
-                    <ValueCard >
-                      {witness.value && witness.value.signature && (
-                        <Flex gap={2} maxW={{ base: 100, sm: 300 }} align='center'>
-                          <Text
-                            overflow="hidden"
-                            textOverflow="ellipsis"
-                            whiteSpace="nowrap"
-                          >
-                            {witness.value.signature}
-                          </Text>
+                  </GridItem>
 
-                          <CopyButton text={witness.value.signature} />
-                        </Flex>
-                      )}
-                    </ValueCard>
-                  </Flex>
+                  <Text>
+                    Signature:
+                  </Text>
+                  <ValueCard>
+                    {witness.value && witness.value.signature && (
+                      <Identifier
+                        copyButton
+                        ellipsis
+                        styles={['highlight-both']}
+                      >
+                        {witness.value.signature}
+                      </Identifier>
+                    )}
+                  </ValueCard>
 
-                </Flex>
+                </Grid>
               </ValueCard>
             ))}
-          </div>
+          </Stack>
         }
       />
     )}
@@ -122,7 +117,7 @@ export const AddressFundsTransfer = ({
           <Stack gap={2}>
             {outputs.map((output, index) => (
               <ValueCard key={index}>
-                <Grid gap={4} templateColumns={{ base: '1fr', lg: '1fr 150px' }} w='100%' align='center'>
+                <Grid gap={4} templateColumns={{ base: '1r', lg: '1fr 200px' }} w='100%' align='center'>
                   <ValueCard>
                     <Identifier
                       avatar
