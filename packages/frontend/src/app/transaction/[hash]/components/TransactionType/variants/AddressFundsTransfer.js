@@ -133,7 +133,6 @@ export const AddressFundsTransfer = ({
                   </ValueCard>
                 </Grid>
               </ValueCard>
-
             ))}
           </Stack>
         }

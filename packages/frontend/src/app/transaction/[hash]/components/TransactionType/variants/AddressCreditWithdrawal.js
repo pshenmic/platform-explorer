@@ -159,7 +159,6 @@ export const AddressCreditWithdrawal = ({
                 value={
                     <ValueCard>
                         <Identifier
-                            avatar
                             copyButton
                             ellipsis
                             styles={['highlight-both']}
