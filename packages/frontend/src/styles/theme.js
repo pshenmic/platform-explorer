@@ -16,6 +16,7 @@ import {
   Open_Sans as OpenSans,
   Roboto_Mono as RobotoMono
 } from 'next/font/google'
+import Checkbox from './components/Checkbox'
 
 const montserrat = Montserrat({ subsets: ['latin'] })
 const openSans = OpenSans({ subsets: ['latin'] })
@@ -100,7 +101,8 @@ export const theme = extendTheme({
     Tooltip,
     Input,
     Heading,
-    Textarea
+    Textarea,
+    Checkbox
   }
 })
 

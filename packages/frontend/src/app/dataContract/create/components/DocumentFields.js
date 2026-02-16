@@ -4,25 +4,25 @@ import { KeywordsField, DescriptionField, CommentField, AdditionalFields } from 
 
 export const DocumentFields = () => {
   return (
-      <Grid w='100%' templateColumns='1fr 1fr' gap={5}>
-        <Flex direction='column' gap={5}>
-          <CardWrapper title='Description'>
-            <DescriptionField />
-          </CardWrapper>
+    <Grid w='100%' templateColumns='1fr 1fr' gap={5}>
+      <Flex direction='column' gap={5}>
+        <CardWrapper title='Description'>
+          <DescriptionField />
+        </CardWrapper>
 
-          <CardWrapper title='Additional Fields'>
-            <AdditionalFields />
-          </CardWrapper>
-        </Flex>
+        <CardWrapper title='Additional Fields'>
+          <AdditionalFields />
+        </CardWrapper>
+      </Flex>
 
-        <Flex direction='column' gap={5}>
-                    <CardWrapper title='Keywords'>
-            <KeywordsField />
-          </CardWrapper>
-          <CardWrapper title='Comment'>
-            <CommentField />
-          </CardWrapper>
-        </Flex>
-      </Grid>
+      <Flex direction='column' gap={5}>
+        <CardWrapper title='Keywords'>
+          <KeywordsField />
+        </CardWrapper>
+        <CardWrapper title='Comment'>
+          <CommentField />
+        </CardWrapper>
+      </Flex>
+    </Grid>
   )
 }

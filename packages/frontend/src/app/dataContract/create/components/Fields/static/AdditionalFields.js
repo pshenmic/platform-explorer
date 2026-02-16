@@ -5,7 +5,6 @@ const fieldList = [
     label: 'Mutable',
     name: 'mutable'
   },
-
   {
     label: 'Keep History',
     name: 'history'
@@ -23,20 +22,12 @@ const fieldList = [
     name: 'restricted'
   }]
 
-const CheckboxField = ({ label, name }) => (
-    <Checkbox.Root>
-        <Checkbox.Label>{label}</Checkbox.Label>
-        <Checkbox.Control />
-        <Checkbox.HiddenInput />
-    </Checkbox.Root>
-)
-
 export const AdditionalFields = () => (
     <Wrap>
         {
             fieldList.map(({ name, label }) => (
                 <WrapItem key={name}>
-                    <CheckboxField name={name} label={label} />
+                    <Checkbox name={name} >{label}</Checkbox>
                 </WrapItem>
             ))
         }
