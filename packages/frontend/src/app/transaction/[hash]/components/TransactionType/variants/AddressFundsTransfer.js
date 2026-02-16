@@ -34,6 +34,7 @@ export const AddressFundsTransfer = ({
       <InfoLine
         className={'TransactionPage__InfoLine TransactionPage__InfoLine--FullWidth'}
         title={`Inputs (${inputs.length})`}
+        align={inputs.length !== 1 && 'top'}
         value={
           <Stack gap={2}>
             {inputs.map((input, index) => (
@@ -67,7 +68,7 @@ export const AddressFundsTransfer = ({
       <InfoLine
         className={'TransactionPage__InfoLine TransactionPage__InfoLine--FullWidth'}
         title={`Input Witness (${inputWitness.length})`}
-        align='top'
+        align={inputWitness.length !== 1 && 'top'}
         value={
           <Stack gap={2}>
             {inputWitness.map((witness, index) => (
@@ -110,7 +111,7 @@ export const AddressFundsTransfer = ({
 
     {outputs && outputs.length > 0 && (
       <InfoLine
-        align='top'
+        align={outputs.length !== 1 && 'top'}
         className={'TransactionPage__InfoLine TransactionPage__InfoLine--FullWidth'}
         title={`Outputs (${outputs.length})`}
         value={
@@ -143,7 +144,7 @@ export const AddressFundsTransfer = ({
       <InfoLine
         className={'TransactionPage__InfoLine TransactionPage__InfoLine--FullWidth'}
         title={'Fee Strategy'}
-        align='top'
+        align={feeStrategy.length !== 1 && 'top'}
         value={
           <div>
             {feeStrategy.map((strategy, index) => (
