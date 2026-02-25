@@ -696,7 +696,7 @@ describe('Utils', () => {
             value: 0
           }
         ],
-        pooling: 0,
+        pooling: 'Never',
         outputAddress: 'yT6NQzvH2h16ggSKNj2b2Wu3NMFiYVKXeB',
         outputScript: '76a9144a4fc56e14aa98799880abbcd46de5d2e09998fb88ac',
         raw: '0e000100914e8a18eb34517b7a6a4432cf237f68c5f8332e05fd0000003a352944000001000001001976a9144a4fc56e14aa98799880abbcd46de5d2e09998fb88ac000100412097d5baef616aeeb6b19e5baf4fdc2bdadcc685bd01161844c199b22b41afe1547a90cef74d70a776263ef723f509711f495a6907a63f89b7ddb260956404299b'

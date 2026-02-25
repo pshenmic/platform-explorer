@@ -223,8 +223,8 @@ module.exports = class TokensDAO {
 
       const localizations = {}
 
-      for (const locale in token.conventions.localizations) {
-        localizations[locale] = Localization.fromObject(token.conventions.localizations[locale])
+      for (const locale in token.tokenConfiguration.conventions.localizations) {
+        localizations[locale] = Localization.fromObject(token.tokenConfiguration.conventions.localizations[locale])
       }
 
       return {

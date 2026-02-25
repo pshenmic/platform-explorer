@@ -95,9 +95,7 @@ describe('Tokens', () => {
             perpetualDistribution: {
               distributionType: {
                 getDistribution: () => ({
-                  constructor: {
-                    name: 'BlockBasedDistributionWASM'
-                  },
+                  distributionType: 'BlockBasedDistribution',
                   interval: 100n,
                   function: {
                     getFunctionName: () => 'FixedAmount',

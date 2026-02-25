@@ -31,7 +31,7 @@ module.exports = class PerpetualDistribution {
     const perpetualDistributionRecipientType = perpetualDistribution?.distributionRecipient?.getType() ?? null
     const perpetualDistributionRecipientValue = perpetualDistribution?.distributionRecipient?.getValue() ?? null
 
-    const perpetualDistributionType = perpetualDistributionValue.constructor?.name?.slice(0, -4) ?? null
+    const perpetualDistributionType = perpetualDistributionValue?.distributionType ?? null
     const perpetualDistributionInterval = perpetualDistributionValue?.interval ? Number(perpetualDistributionValue?.interval) : null
     const perpetualDistributionFunctionName = perpetualDistributionValue?.function?.getFunctionName() ?? null
 
