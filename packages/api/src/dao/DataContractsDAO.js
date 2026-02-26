@@ -306,12 +306,8 @@ module.exports = class DataContractsDAO {
 
       groups = (config ?? { groups: undefined }).groups
 
-      const tokenPositions = Object.keys(config?.tokens ?? {})
-
-      tokens = await Promise.all(tokenPositions.map(async (tokenPosition) => {
-        const tokenConfig = config.tokens[tokenPosition]
-
-        const tokenIdentifier = TokenConfigurationWASM.calculateTokenId(new IdentifierWASM(identifier), Number(tokenPosition))
+      tokens = await Promise.all(config?.tokens.map(async (tokenConfig) => {
+        const tokenIdentifier = TokenConfigurationWASM.calculateTokenId(new IdentifierWASM(identifier), Number(tokenConfig.position))
 
         const tokenTotalSupply = await this.sdk.tokens.getTokenTotalSupply(tokenIdentifier.base58())
 
@@ -319,7 +315,7 @@ module.exports = class DataContractsDAO {
           identifier: tokenIdentifier.base58(),
           dataContractIdentifier: identifier,
           owner: dataContract.owner,
-          position: Number(tokenPosition),
+          position: tokenConfig.position,
           totalSupply: tokenTotalSupply?.totalSystemAmount.toString(),
           description: tokenConfig.tokenConfiguration?.description,
           localizations: tokenConfig.tokenConfiguration?.conventions?.localizations,
@@ -345,7 +341,7 @@ module.exports = class DataContractsDAO {
       ...dataContract,
       groups,
       tokens,
-      tokensCount: tokens?.length
+      tokensCount: tokens?.length ?? 0
     })
   }
 

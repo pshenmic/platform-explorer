@@ -92,17 +92,8 @@ const fetchTokenInfoByRows = async (rows, sdk) => {
       return undefined
     }
 
-    const tokensPositions = Object.keys(dataContract.tokens)
-
-    return await Promise.all(tokensPositions.map(async (tokenPosition) => {
-      const tokenIdentifier =
-        row.tokens?.find(token => token.position === Number(tokenPosition))?.token_identifier ?? row.identifier
-
-      if (!tokenIdentifier) {
-        return undefined
-      }
-
-      const tokenConfig = dataContract.tokens[tokenPosition]
+    return await Promise.all(dataContract.tokens.map(async (tokenConfig) => {
+      const tokenIdentifier = TokenConfigurationWASM.calculateTokenId(dataContract.id, Number(tokenConfig.position))
 
       const tokenTotalSupply = await sdk.tokens.getTokenTotalSupply(tokenIdentifier)
 
@@ -125,7 +116,7 @@ const fetchTokenInfoByRows = async (rows, sdk) => {
       }
 
       return Token.fromObject({
-        identifier: tokenIdentifier,
+        identifier: tokenIdentifier.base58(),
         dataContractIdentifier: row.data_contract_identifier,
         owner: {
           identifier: dataContract.ownerId.base58(),
@@ -138,7 +129,7 @@ const fetchTokenInfoByRows = async (rows, sdk) => {
         totalTransitionsCount: Number(row.total_transitions_count),
         totalBurnTransitionsCount: Number(row.total_burn_transitions_count),
         totalFreezeTransitionsCount: Number(row.total_freeze_transitions_count),
-        position: Number(tokenPosition),
+        position: Number(tokenConfig.position),
         totalSupply: tokenTotalSupply?.totalSystemAmount.toString(),
         description: tokenConfig?.tokenConfiguration.description,
         localizations: tokenConfig?.tokenConfiguration.conventions?.localizations,
