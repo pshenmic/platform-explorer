@@ -31,7 +31,7 @@ const {
 } = require('pshenmic-dpp')
 const BatchEnum = require('./enums/BatchEnum')
 const dpnsContract = require('../data_contracts/dpns.json')
-const { ContestedStateResultType } = require('dash-platform-sdk/src/types')
+const { ContestedStateResultType } = require('dash-platform-sdk/types')
 const PreProgrammedDistribution = require('./models/PreProgrammedDistribution')
 const Token = require('./models/Token')
 const PerpetualDistribution = require('./models/PerpetualDistribution')
@@ -92,17 +92,8 @@ const fetchTokenInfoByRows = async (rows, sdk) => {
       return undefined
     }
 
-    const tokensPositions = Object.keys(dataContract.tokens)
-
-    return await Promise.all(tokensPositions.map(async (tokenPosition) => {
-      const tokenIdentifier =
-        row.tokens?.find(token => token.position === Number(tokenPosition))?.token_identifier ?? row.identifier
-
-      if (!tokenIdentifier) {
-        return undefined
-      }
-
-      const tokenConfig = dataContract.tokens[tokenPosition]
+    return await Promise.all(dataContract.tokens.map(async (tokenConfig) => {
+      const tokenIdentifier = TokenConfigurationWASM.calculateTokenId(dataContract.id, Number(tokenConfig.position))
 
       const tokenTotalSupply = await sdk.tokens.getTokenTotalSupply(tokenIdentifier)
 
@@ -114,7 +105,7 @@ const fetchTokenInfoByRows = async (rows, sdk) => {
         aliases.push(getAliasFromDocument(aliasDocument))
       }
 
-      const { perpetualDistribution, preProgrammedDistribution } = tokenConfig?.distributionRules ?? {}
+      const { perpetualDistribution, preProgrammedDistribution } = tokenConfig?.tokenConfiguration.distributionRules ?? {}
 
       let priceTx = null
 
@@ -125,7 +116,7 @@ const fetchTokenInfoByRows = async (rows, sdk) => {
       }
 
       return Token.fromObject({
-        identifier: tokenIdentifier,
+        identifier: tokenIdentifier.base58(),
         dataContractIdentifier: row.data_contract_identifier,
         owner: {
           identifier: dataContract.ownerId.base58(),
@@ -138,21 +129,21 @@ const fetchTokenInfoByRows = async (rows, sdk) => {
         totalTransitionsCount: Number(row.total_transitions_count),
         totalBurnTransitionsCount: Number(row.total_burn_transitions_count),
         totalFreezeTransitionsCount: Number(row.total_freeze_transitions_count),
-        position: Number(tokenPosition),
+        position: Number(tokenConfig.position),
         totalSupply: tokenTotalSupply?.totalSystemAmount.toString(),
-        description: tokenConfig?.description,
-        localizations: tokenConfig?.conventions?.localizations,
-        decimals: tokenConfig?.conventions?.decimals,
-        baseSupply: tokenConfig?.baseSupply.toString(),
-        maxSupply: tokenConfig?.maxSupply?.toString(),
-        mintable: tokenConfig?.manualMintingRules?.authorizedToMakeChange.getTakerType() !== 'NoOne',
-        burnable: tokenConfig?.manualBurningRules?.authorizedToMakeChange.getTakerType() !== 'NoOne',
-        freezable: tokenConfig?.freezeRules?.authorizedToMakeChange.getTakerType() !== 'NoOne',
-        changeMaxSupply: tokenConfig?.maxSupplyChangeRules?.authorizedToMakeChange.getTakerType() !== 'NoOne',
-        unfreezable: tokenConfig?.unfreezeRules?.authorizedToMakeChange.getTakerType() !== 'NoOne',
-        destroyable: tokenConfig?.destroyFrozenFundsRules?.authorizedToMakeChange.getTakerType() !== 'NoOne',
-        allowedEmergencyActions: tokenConfig?.emergencyActionRules?.authorizedToMakeChange.getTakerType() !== 'NoOne',
-        mainGroup: tokenConfig?.mainControlGroup,
+        description: tokenConfig?.tokenConfiguration.description,
+        localizations: tokenConfig?.tokenConfiguration.conventions?.localizations,
+        decimals: tokenConfig?.tokenConfiguration.conventions?.decimals,
+        baseSupply: tokenConfig?.tokenConfiguration.baseSupply.toString(),
+        maxSupply: tokenConfig?.tokenConfiguration.maxSupply?.toString(),
+        mintable: tokenConfig?.tokenConfiguration.manualMintingRules?.authorizedToMakeChange.getTakerType() !== 'NoOne',
+        burnable: tokenConfig?.tokenConfiguration.manualBurningRules?.authorizedToMakeChange.getTakerType() !== 'NoOne',
+        freezable: tokenConfig?.tokenConfiguration.freezeRules?.authorizedToMakeChange.getTakerType() !== 'NoOne',
+        changeMaxSupply: tokenConfig?.tokenConfiguration.maxSupplyChangeRules?.authorizedToMakeChange.getTakerType() !== 'NoOne',
+        unfreezable: tokenConfig?.tokenConfiguration.unfreezeRules?.authorizedToMakeChange.getTakerType() !== 'NoOne',
+        destroyable: tokenConfig?.tokenConfiguration.destroyFrozenFundsRules?.authorizedToMakeChange.getTakerType() !== 'NoOne',
+        allowedEmergencyActions: tokenConfig?.tokenConfiguration.emergencyActionRules?.authorizedToMakeChange.getTakerType() !== 'NoOne',
+        mainGroup: tokenConfig?.tokenConfiguration.mainControlGroup,
         perpetualDistribution: perpetualDistribution ? PerpetualDistribution.fromWASMObject(perpetualDistribution) : null,
         preProgrammedDistribution: preProgrammedDistribution ? PreProgrammedDistribution.fromWASMObject(preProgrammedDistribution) : null
       })
@@ -173,12 +164,12 @@ const tokensConfigToArray = (config, dataContractId) => {
   return tokensKeys.map((position) => {
     const token = config[position]
 
-    const tokenId = TokenConfigurationWASM.calculateTokenId(dataContractId, position)
+    const tokenId = TokenConfigurationWASM.calculateTokenId(dataContractId, Number(position))
 
-    const localizations = Object.keys(token.conventions.localizations)
+    const localizations = Object.keys(token.tokenConfiguration.conventions.localizations)
       .reduce((acc, localizationCode) => {
         return {
-          [localizationCode]: Localization.fromObject(token.conventions.localizations[localizationCode])
+          [localizationCode]: Localization.fromObject(token.tokenConfiguration.conventions.localizations[localizationCode])
         }
       }, {})
 
@@ -186,153 +177,153 @@ const tokensConfigToArray = (config, dataContractId) => {
       position: Number(position),
       tokenId: tokenId.base58(),
       conventions: {
-        decimals: token.conventions.decimals,
+        decimals: token.tokenConfiguration.conventions.decimals,
         localizations
       },
       conventionsChangeRules: {
         authorizedToMakeChange: {
-          takerType: token.conventionsChangeRules.authorizedToMakeChange.getTakerType(),
-          taker: getActionTakersValue(token.conventionsChangeRules.authorizedToMakeChange.getValue()) ?? null
+          takerType: token.tokenConfiguration.conventionsChangeRules.authorizedToMakeChange.getTakerType(),
+          taker: getActionTakersValue(token.tokenConfiguration.conventionsChangeRules.authorizedToMakeChange.getValue()) ?? null
         },
         adminActionTakers: {
-          takerType: token.conventionsChangeRules.adminActionTakers.getTakerType(),
-          taker: getActionTakersValue(token.conventionsChangeRules.adminActionTakers.getValue()) ?? null
+          takerType: token.tokenConfiguration.conventionsChangeRules.adminActionTakers.getTakerType(),
+          taker: getActionTakersValue(token.tokenConfiguration.conventionsChangeRules.adminActionTakers.getValue()) ?? null
         },
-        changingAuthorizedActionTakersToNoOneAllowed: token.conventionsChangeRules.changingAuthorizedActionTakersToNoOneAllowed,
-        changingAdminActionTakersToNoOneAllowed: token.conventionsChangeRules.changingAdminActionTakersToNoOneAllowed,
-        selfChangingAdminActionTakersAllowed: token.conventionsChangeRules.selfChangingAdminActionTakersAllowed
+        changingAuthorizedActionTakersToNoOneAllowed: token.tokenConfiguration.conventionsChangeRules.changingAuthorizedActionTakersToNoOneAllowed,
+        changingAdminActionTakersToNoOneAllowed: token.tokenConfiguration.conventionsChangeRules.changingAdminActionTakersToNoOneAllowed,
+        selfChangingAdminActionTakersAllowed: token.tokenConfiguration.conventionsChangeRules.selfChangingAdminActionTakersAllowed
       },
-      baseSupply: token.baseSupply.toString(),
+      baseSupply: token.tokenConfiguration.baseSupply.toString(),
       keepsHistory: {
-        keepsTransferHistory: token.keepsHistory.keepsTransferHistory,
-        keepsFreezingHistory: token.keepsHistory.keepsFreezingHistory,
-        keepsMintingHistory: token.keepsHistory.keepsMintingHistory,
-        keepsBurningHistory: token.keepsHistory.keepsBurningHistory,
-        keepsDirectPricingHistory: token.keepsHistory.keepsDirectPricingHistory,
-        keepsDirectPurchaseHistory: token.keepsHistory.keepsDirectPurchaseHistory
+        keepsTransferHistory: token.tokenConfiguration.keepsHistory.keepsTransferHistory,
+        keepsFreezingHistory: token.tokenConfiguration.keepsHistory.keepsFreezingHistory,
+        keepsMintingHistory: token.tokenConfiguration.keepsHistory.keepsMintingHistory,
+        keepsBurningHistory: token.tokenConfiguration.keepsHistory.keepsBurningHistory,
+        keepsDirectPricingHistory: token.tokenConfiguration.keepsHistory.keepsDirectPricingHistory,
+        keepsDirectPurchaseHistory: token.tokenConfiguration.keepsHistory.keepsDirectPurchaseHistory
       },
-      startAsPaused: token.startAsPaused,
-      isAllowedTransferToFrozenBalance: token.isAllowedTransferToFrozenBalance,
-      maxSupply: token.maxSupply?.toString() ?? null,
+      startAsPaused: token.tokenConfiguration.startAsPaused,
+      isAllowedTransferToFrozenBalance: token.tokenConfiguration.isAllowedTransferToFrozenBalance,
+      maxSupply: token.tokenConfiguration.maxSupply?.toString() ?? null,
       maxSupplyChangeRules: {
         authorizedToMakeChange: {
-          takerType: token.maxSupplyChangeRules.authorizedToMakeChange.getTakerType(),
-          taker: getActionTakersValue(token.maxSupplyChangeRules.authorizedToMakeChange.getValue()) ?? null
+          takerType: token.tokenConfiguration.maxSupplyChangeRules.authorizedToMakeChange.getTakerType(),
+          taker: getActionTakersValue(token.tokenConfiguration.maxSupplyChangeRules.authorizedToMakeChange.getValue()) ?? null
         },
         adminActionTakers: {
-          takerType: token.maxSupplyChangeRules.adminActionTakers.getTakerType(),
-          taker: getActionTakersValue(token.maxSupplyChangeRules.adminActionTakers.getValue()) ?? null
+          takerType: token.tokenConfiguration.maxSupplyChangeRules.adminActionTakers.getTakerType(),
+          taker: getActionTakersValue(token.tokenConfiguration.maxSupplyChangeRules.adminActionTakers.getValue()) ?? null
         },
-        changingAuthorizedActionTakersToNoOneAllowed: token.maxSupplyChangeRules.changingAuthorizedActionTakersToNoOneAllowed,
-        changingAdminActionTakersToNoOneAllowed: token.maxSupplyChangeRules.changingAdminActionTakersToNoOneAllowed,
-        selfChangingAdminActionTakersAllowed: token.maxSupplyChangeRules.selfChangingAdminActionTakersAllowed
+        changingAuthorizedActionTakersToNoOneAllowed: token.tokenConfiguration.maxSupplyChangeRules.changingAuthorizedActionTakersToNoOneAllowed,
+        changingAdminActionTakersToNoOneAllowed: token.tokenConfiguration.maxSupplyChangeRules.changingAdminActionTakersToNoOneAllowed,
+        selfChangingAdminActionTakersAllowed: token.tokenConfiguration.maxSupplyChangeRules.selfChangingAdminActionTakersAllowed
       },
       distributionRules: {
-        perpetualDistribution: token.distributionRules?.perpetualDistribution ? PerpetualDistribution.fromWASMObject(token.distributionRules.perpetualDistribution) : null,
-        preProgrammedDistribution: token.distributionRules?.preProgrammedDistribution ? PreProgrammedDistribution.fromWASMObject(token.distributionRules.preProgrammedDistribution) : null,
-        newTokenDestinationIdentity: token.distributionRules.newTokenDestinationIdentity?.base58() ?? null,
-        mintingAllowChoosingDestination: token.distributionRules.mintingAllowChoosingDestination
+        perpetualDistribution: token.tokenConfiguration.distributionRules?.perpetualDistribution ? PerpetualDistribution.fromWASMObject(token.tokenConfiguration.distributionRules.perpetualDistribution) : null,
+        preProgrammedDistribution: token.tokenConfiguration.distributionRules?.preProgrammedDistribution ? PreProgrammedDistribution.fromWASMObject(token.tokenConfiguration.distributionRules.preProgrammedDistribution) : null,
+        newTokenDestinationIdentity: token.tokenConfiguration.distributionRules.newTokenDestinationIdentity?.base58() ?? null,
+        mintingAllowChoosingDestination: token.tokenConfiguration.distributionRules.mintingAllowChoosingDestination
       },
       marketplaceRules: {
-        tradeMode: token.marketplaceRules.tradeMode.getValue(),
+        tradeMode: token.tokenConfiguration.marketplaceRules.tradeMode.getValue(),
         tradeModeChangeRules: {
           authorizedToMakeChange: {
-            takerType: token.marketplaceRules.tradeModeChangeRules.authorizedToMakeChange.getTakerType(),
-            taker: getActionTakersValue(token.marketplaceRules.tradeModeChangeRules.authorizedToMakeChange.getValue()) ?? null
+            takerType: token.tokenConfiguration.marketplaceRules.tradeModeChangeRules.authorizedToMakeChange.getTakerType(),
+            taker: getActionTakersValue(token.tokenConfiguration.marketplaceRules.tradeModeChangeRules.authorizedToMakeChange.getValue()) ?? null
           },
           adminActionTakers: {
-            takerType: token.marketplaceRules.tradeModeChangeRules.adminActionTakers.getTakerType(),
-            taker: getActionTakersValue(token.marketplaceRules.tradeModeChangeRules.adminActionTakers.getValue()) ?? null
+            takerType: token.tokenConfiguration.marketplaceRules.tradeModeChangeRules.adminActionTakers.getTakerType(),
+            taker: getActionTakersValue(token.tokenConfiguration.marketplaceRules.tradeModeChangeRules.adminActionTakers.getValue()) ?? null
           },
-          changingAuthorizedActionTakersToNoOneAllowed: token.marketplaceRules.tradeModeChangeRules.changingAuthorizedActionTakersToNoOneAllowed,
-          changingAdminActionTakersToNoOneAllowed: token.marketplaceRules.tradeModeChangeRules.changingAdminActionTakersToNoOneAllowed,
-          selfChangingAdminActionTakersAllowed: token.marketplaceRules.tradeModeChangeRules.selfChangingAdminActionTakersAllowed
+          changingAuthorizedActionTakersToNoOneAllowed: token.tokenConfiguration.marketplaceRules.tradeModeChangeRules.changingAuthorizedActionTakersToNoOneAllowed,
+          changingAdminActionTakersToNoOneAllowed: token.tokenConfiguration.marketplaceRules.tradeModeChangeRules.changingAdminActionTakersToNoOneAllowed,
+          selfChangingAdminActionTakersAllowed: token.tokenConfiguration.marketplaceRules.tradeModeChangeRules.selfChangingAdminActionTakersAllowed
         }
       },
       manualMintingRules: {
         authorizedToMakeChange: {
-          takerType: token.manualMintingRules.authorizedToMakeChange.getTakerType(),
-          taker: getActionTakersValue(token.manualMintingRules.authorizedToMakeChange.getValue()) ?? null
+          takerType: token.tokenConfiguration.manualMintingRules.authorizedToMakeChange.getTakerType(),
+          taker: getActionTakersValue(token.tokenConfiguration.manualMintingRules.authorizedToMakeChange.getValue()) ?? null
         },
         adminActionTakers: {
-          takerType: token.manualMintingRules.adminActionTakers.getTakerType(),
-          taker: getActionTakersValue(token.manualMintingRules.adminActionTakers.getValue()) ?? null
+          takerType: token.tokenConfiguration.manualMintingRules.adminActionTakers.getTakerType(),
+          taker: getActionTakersValue(token.tokenConfiguration.manualMintingRules.adminActionTakers.getValue()) ?? null
         },
-        changingAuthorizedActionTakersToNoOneAllowed: token.manualMintingRules.changingAuthorizedActionTakersToNoOneAllowed,
-        changingAdminActionTakersToNoOneAllowed: token.manualMintingRules.changingAdminActionTakersToNoOneAllowed,
-        selfChangingAdminActionTakersAllowed: token.manualMintingRules.selfChangingAdminActionTakersAllowed
+        changingAuthorizedActionTakersToNoOneAllowed: token.tokenConfiguration.manualMintingRules.changingAuthorizedActionTakersToNoOneAllowed,
+        changingAdminActionTakersToNoOneAllowed: token.tokenConfiguration.manualMintingRules.changingAdminActionTakersToNoOneAllowed,
+        selfChangingAdminActionTakersAllowed: token.tokenConfiguration.manualMintingRules.selfChangingAdminActionTakersAllowed
       },
       manualBurningRules: {
         authorizedToMakeChange: {
-          takerType: token.manualBurningRules.authorizedToMakeChange.getTakerType(),
-          taker: getActionTakersValue(token.manualBurningRules.authorizedToMakeChange.getValue()) ?? null
+          takerType: token.tokenConfiguration.manualBurningRules.authorizedToMakeChange.getTakerType(),
+          taker: getActionTakersValue(token.tokenConfiguration.manualBurningRules.authorizedToMakeChange.getValue()) ?? null
         },
         adminActionTakers: {
-          takerType: token.manualBurningRules.adminActionTakers.getTakerType(),
-          taker: getActionTakersValue(token.manualBurningRules.adminActionTakers.getValue()) ?? null
+          takerType: token.tokenConfiguration.manualBurningRules.adminActionTakers.getTakerType(),
+          taker: getActionTakersValue(token.tokenConfiguration.manualBurningRules.adminActionTakers.getValue()) ?? null
         },
-        changingAuthorizedActionTakersToNoOneAllowed: token.manualBurningRules.changingAuthorizedActionTakersToNoOneAllowed,
-        changingAdminActionTakersToNoOneAllowed: token.manualBurningRules.changingAdminActionTakersToNoOneAllowed,
-        selfChangingAdminActionTakersAllowed: token.manualBurningRules.selfChangingAdminActionTakersAllowed
+        changingAuthorizedActionTakersToNoOneAllowed: token.tokenConfiguration.manualBurningRules.changingAuthorizedActionTakersToNoOneAllowed,
+        changingAdminActionTakersToNoOneAllowed: token.tokenConfiguration.manualBurningRules.changingAdminActionTakersToNoOneAllowed,
+        selfChangingAdminActionTakersAllowed: token.tokenConfiguration.manualBurningRules.selfChangingAdminActionTakersAllowed
       },
       freezeRules: {
         authorizedToMakeChange: {
-          takerType: token.freezeRules.authorizedToMakeChange.getTakerType(),
-          taker: getActionTakersValue(token.freezeRules.authorizedToMakeChange.getValue()) ?? null
+          takerType: token.tokenConfiguration.freezeRules.authorizedToMakeChange.getTakerType(),
+          taker: getActionTakersValue(token.tokenConfiguration.freezeRules.authorizedToMakeChange.getValue()) ?? null
         },
         adminActionTakers: {
-          takerType: token.freezeRules.adminActionTakers.getTakerType(),
-          taker: getActionTakersValue(token.freezeRules.adminActionTakers.getValue()) ?? null
+          takerType: token.tokenConfiguration.freezeRules.adminActionTakers.getTakerType(),
+          taker: getActionTakersValue(token.tokenConfiguration.freezeRules.adminActionTakers.getValue()) ?? null
         },
-        changingAuthorizedActionTakersToNoOneAllowed: token.freezeRules.changingAuthorizedActionTakersToNoOneAllowed,
-        changingAdminActionTakersToNoOneAllowed: token.freezeRules.changingAdminActionTakersToNoOneAllowed,
-        selfChangingAdminActionTakersAllowed: token.freezeRules.selfChangingAdminActionTakersAllowed
+        changingAuthorizedActionTakersToNoOneAllowed: token.tokenConfiguration.freezeRules.changingAuthorizedActionTakersToNoOneAllowed,
+        changingAdminActionTakersToNoOneAllowed: token.tokenConfiguration.freezeRules.changingAdminActionTakersToNoOneAllowed,
+        selfChangingAdminActionTakersAllowed: token.tokenConfiguration.freezeRules.selfChangingAdminActionTakersAllowed
       },
       unfreezeRules: {
         authorizedToMakeChange: {
-          takerType: token.unfreezeRules.authorizedToMakeChange.getTakerType(),
-          taker: getActionTakersValue(token.unfreezeRules.authorizedToMakeChange.getValue()) ?? null
+          takerType: token.tokenConfiguration.unfreezeRules.authorizedToMakeChange.getTakerType(),
+          taker: getActionTakersValue(token.tokenConfiguration.unfreezeRules.authorizedToMakeChange.getValue()) ?? null
         },
         adminActionTakers: {
-          takerType: token.unfreezeRules.adminActionTakers.getTakerType(),
-          taker: getActionTakersValue(token.unfreezeRules.adminActionTakers.getValue()) ?? null
+          takerType: token.tokenConfiguration.unfreezeRules.adminActionTakers.getTakerType(),
+          taker: getActionTakersValue(token.tokenConfiguration.unfreezeRules.adminActionTakers.getValue()) ?? null
         },
-        changingAuthorizedActionTakersToNoOneAllowed: token.unfreezeRules.changingAuthorizedActionTakersToNoOneAllowed,
-        changingAdminActionTakersToNoOneAllowed: token.unfreezeRules.changingAdminActionTakersToNoOneAllowed,
-        selfChangingAdminActionTakersAllowed: token.unfreezeRules.selfChangingAdminActionTakersAllowed
+        changingAuthorizedActionTakersToNoOneAllowed: token.tokenConfiguration.unfreezeRules.changingAuthorizedActionTakersToNoOneAllowed,
+        changingAdminActionTakersToNoOneAllowed: token.tokenConfiguration.unfreezeRules.changingAdminActionTakersToNoOneAllowed,
+        selfChangingAdminActionTakersAllowed: token.tokenConfiguration.unfreezeRules.selfChangingAdminActionTakersAllowed
       },
       destroyFrozenFundsRules: {
         authorizedToMakeChange: {
-          takerType: token.destroyFrozenFundsRules.authorizedToMakeChange.getTakerType(),
-          taker: getActionTakersValue(token.destroyFrozenFundsRules.authorizedToMakeChange.getValue()) ?? null
+          takerType: token.tokenConfiguration.destroyFrozenFundsRules.authorizedToMakeChange.getTakerType(),
+          taker: getActionTakersValue(token.tokenConfiguration.destroyFrozenFundsRules.authorizedToMakeChange.getValue()) ?? null
         },
         adminActionTakers: {
-          takerType: token.destroyFrozenFundsRules.adminActionTakers.getTakerType(),
-          taker: getActionTakersValue(token.destroyFrozenFundsRules.adminActionTakers.getValue()) ?? null
+          takerType: token.tokenConfiguration.destroyFrozenFundsRules.adminActionTakers.getTakerType(),
+          taker: getActionTakersValue(token.tokenConfiguration.destroyFrozenFundsRules.adminActionTakers.getValue()) ?? null
         },
-        changingAuthorizedActionTakersToNoOneAllowed: token.destroyFrozenFundsRules.changingAuthorizedActionTakersToNoOneAllowed,
-        changingAdminActionTakersToNoOneAllowed: token.destroyFrozenFundsRules.changingAdminActionTakersToNoOneAllowed,
-        selfChangingAdminActionTakersAllowed: token.destroyFrozenFundsRules.selfChangingAdminActionTakersAllowed
+        changingAuthorizedActionTakersToNoOneAllowed: token.tokenConfiguration.destroyFrozenFundsRules.changingAuthorizedActionTakersToNoOneAllowed,
+        changingAdminActionTakersToNoOneAllowed: token.tokenConfiguration.destroyFrozenFundsRules.changingAdminActionTakersToNoOneAllowed,
+        selfChangingAdminActionTakersAllowed: token.tokenConfiguration.destroyFrozenFundsRules.selfChangingAdminActionTakersAllowed
       },
       emergencyActionRules: {
         authorizedToMakeChange: {
-          takerType: token.emergencyActionRules.authorizedToMakeChange.getTakerType(),
-          taker: getActionTakersValue(token.emergencyActionRules.authorizedToMakeChange.getValue()) ?? null
+          takerType: token.tokenConfiguration.emergencyActionRules.authorizedToMakeChange.getTakerType(),
+          taker: getActionTakersValue(token.tokenConfiguration.emergencyActionRules.authorizedToMakeChange.getValue()) ?? null
         },
         adminActionTakers: {
-          takerType: token.emergencyActionRules.adminActionTakers.getTakerType(),
-          taker: getActionTakersValue(token.emergencyActionRules.adminActionTakers.getValue()) ?? null
+          takerType: token.tokenConfiguration.emergencyActionRules.adminActionTakers.getTakerType(),
+          taker: getActionTakersValue(token.tokenConfiguration.emergencyActionRules.adminActionTakers.getValue()) ?? null
         },
-        changingAuthorizedActionTakersToNoOneAllowed: token.emergencyActionRules.changingAuthorizedActionTakersToNoOneAllowed,
-        changingAdminActionTakersToNoOneAllowed: token.emergencyActionRules.changingAdminActionTakersToNoOneAllowed,
-        selfChangingAdminActionTakersAllowed: token.emergencyActionRules.selfChangingAdminActionTakersAllowed
+        changingAuthorizedActionTakersToNoOneAllowed: token.tokenConfiguration.emergencyActionRules.changingAuthorizedActionTakersToNoOneAllowed,
+        changingAdminActionTakersToNoOneAllowed: token.tokenConfiguration.emergencyActionRules.changingAdminActionTakersToNoOneAllowed,
+        selfChangingAdminActionTakersAllowed: token.tokenConfiguration.emergencyActionRules.selfChangingAdminActionTakersAllowed
       },
       mainControlGroupCanBeModified: {
-        takerType: token.mainControlGroupCanBeModified.getTakerType(),
-        taker: getActionTakersValue(token.mainControlGroupCanBeModified.getValue()) ?? null
+        takerType: token.tokenConfiguration.mainControlGroupCanBeModified.getTakerType(),
+        taker: getActionTakersValue(token.tokenConfiguration.mainControlGroupCanBeModified.getValue()) ?? null
       },
-      mainControlGroup: token.mainControlGroup ?? null,
-      description: token.description ?? null
+      mainControlGroup: token.tokenConfiguration.mainControlGroup ?? null,
+      description: token.tokenConfiguration.description ?? null
     }
   }, {})
 }
@@ -391,12 +382,12 @@ const decodeStateTransition = async (base64) => {
       decoded.transitions = batch.transitions.map((batchedTransitions) => {
         const transition = batchedTransitions.toTransition()
 
-        const transitionType = transition.__type === 'DocumentTransitionWASM' ? 0 : 1
+        const transitionType = transition.idDocumentTransition()
 
         let out = {}
 
         switch (transitionType) {
-          case 1: {
+          case false: {
             const tokenTransitionType = transition.getTransitionType()
 
             const tokenTransition = transition.getTransition()
@@ -783,7 +774,7 @@ const decodeStateTransition = async (base64) => {
             }
             break
           }
-          case 0: {
+          case true: {
             out = {
               action: BatchEnum[transition.actionTypeNumber],
               id: transition.id.base58(),
@@ -1118,7 +1109,7 @@ const decodeStateTransition = async (base64) => {
 
       const towardsIdentity = masternodeVoteTransition.vote.resourceVoteChoice.getValue()?.base58()
 
-      decoded.indexValues = masternodeVoteTransition.vote.votePoll.indexValues.map(bytes => Buffer.from(bytes).toString('base64'))
+      decoded.indexValues = masternodeVoteTransition.vote.votePoll.indexValues
       decoded.contractId = masternodeVoteTransition.vote.votePoll.contractId.base58()
       decoded.modifiedDataIds = masternodeVoteTransition.modifiedDataIds.map(identifier => identifier.base58())
       decoded.ownerId = stateTransition.getOwnerId().base58()
@@ -1308,7 +1299,7 @@ const decodeStateTransition = async (base64) => {
       })
       decoded.outputs = addressFundingFromAssetLockTransition.outputs.map((output) => ({
         address: output.address.toAddress(NETWORK),
-        credits: output.credits.toString()
+        credits: output.credits?.toString() ?? '0'
       }))
       decoded.feeStrategy = addressFundingFromAssetLockTransition.feeStrategy.map(step => ({
         type: step.getValueType(),
@@ -1561,7 +1552,7 @@ const getAliasInfo = async (aliasText, sdk) => {
     const labelBuffer = buildIndexBuffer(normalizedLabel)
 
     const contestedState = await sdk.contestedResources.getContestedResourceVoteState(
-      DataContractWASM.fromValue(dpnsContract, true, PlatformVersionWASM.PLATFORM_V9),
+      DataContractWASM.fromValue(dpnsContract, true),
       'domain',
       'parentNameAndLabel',
       [
@@ -1582,7 +1573,7 @@ const sleep = (ms) => {
 }
 
 const getAliasDocumentForIdentifier = async (identifier, sdk) => {
-  const [alias] = await sdk.documents.query(DPNS_CONTRACT, 'domain', [['records.identity', '=', identifier]], 1)
+  const [alias] = await sdk.documents.query(DPNS_CONTRACT, 'domain', [['records.identity', '=', identifier]], [], 1)
 
   return alias
 }

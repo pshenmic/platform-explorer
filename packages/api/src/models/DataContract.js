@@ -83,12 +83,10 @@ module.exports = class DataContract {
   }) {
     let formattedGroups
     if (groups) {
-      const groupsKeys = Object.keys(groups)
-
-      formattedGroups = groupsKeys.map(key => ({
-        position: Number(key),
-        members: groups[key].members,
-        requiredPower: groups[key].requiredPower
+      formattedGroups = groups.map(({ group, position }) => ({
+        position: group.position,
+        members: group.members,
+        requiredPower: group.requiredPower
       }))
     }
 

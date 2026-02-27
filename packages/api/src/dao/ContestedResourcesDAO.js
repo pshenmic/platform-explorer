@@ -5,7 +5,7 @@ const Vote = require('../models/Vote')
 const PaginatedResultSet = require('../models/PaginatedResultSet')
 const { CONTESTED_RESOURCE_VOTE_DEADLINE } = require('../constants')
 const ContestedResourceStatus = require('../models/ContestedResourcesStatus')
-const { ContestedStateResultType } = require('dash-platform-sdk/src/types')
+const { ContestedStateResultType } = require('dash-platform-sdk/types')
 
 module.exports = class ContestedDAO {
   constructor (knex, sdk) {

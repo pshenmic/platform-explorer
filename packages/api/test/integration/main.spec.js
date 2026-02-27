@@ -81,77 +81,79 @@ describe('Other routes', () => {
     }))
     mock.method(DataContractsController.prototype, 'getDataContractByIdentifier', async () => ({
       ownerId: new IdentifierWASM('11111111111111111111111111111111'),
-      tokens: {
-        29: {
-          description: null,
-          baseSupply: 1000n,
-          maxSupply: 1010n,
-          conventions: {
-            decimals: 1000,
-            localizations: {
-              en: {
-                pluralForm: 'tests',
-                singularForm: 'test',
-                shouldCapitalize: true
+      id: new IdentifierWASM('ALybvzfcCwMs7sinDwmtumw17NneuW7RgFtFHgjKmF3A'),
+      tokens: [
+        {
+          position: 29,
+          tokenConfiguration: {
+            description: null,
+            baseSupply: 1000n,
+            maxSupply: 1010n,
+            conventions: {
+              decimals: 1000,
+              localizations: {
+                en: {
+                  pluralForm: 'tests',
+                  singularForm: 'test',
+                  shouldCapitalize: true
+                }
               }
-            }
-          },
-          manualMintingRules: {
-            authorizedToMakeChange: {
-              getTakerType: () => 'NoOne'
-            }
-          },
-          manualBurningRules: {
-            authorizedToMakeChange: {
-              getTakerType: () => 'NoOne'
-            }
-          },
-          freezeRules: {
-            authorizedToMakeChange: {
-              getTakerType: () => 'NoOne'
-            }
-          },
-          unfreezeRules: {
-            authorizedToMakeChange: {
-              getTakerType: () => 'NoOne'
-            }
-          },
-          destroyFrozenFundsRules: {
-            authorizedToMakeChange: {
-              getTakerType: () => 'NoOne'
-            }
-          },
-          emergencyActionRules: {
-            authorizedToMakeChange: {
-              getTakerType: () => 'NoOne'
-            }
-          },
-          distributionRules: {
-            perpetualDistribution: {
-              distributionType: {
-                getDistribution: () => ({
-                  constructor: {
-                    name: 'BlockBasedDistributionWASM'
-                  },
-                  interval: 100n,
-                  function: {
-                    getFunctionName: () => 'FixedAmount',
-                    getFunctionValue: () => ({
-                      amount: 100n
-                    })
-                  }
-                })
-              },
-              distributionRecipient: {
-                getType: () => 'ContractOwner',
-                getValue: () => undefined
+            },
+            manualMintingRules: {
+              authorizedToMakeChange: {
+                getTakerType: () => 'NoOne'
               }
+            },
+            manualBurningRules: {
+              authorizedToMakeChange: {
+                getTakerType: () => 'NoOne'
+              }
+            },
+            freezeRules: {
+              authorizedToMakeChange: {
+                getTakerType: () => 'NoOne'
+              }
+            },
+            unfreezeRules: {
+              authorizedToMakeChange: {
+                getTakerType: () => 'NoOne'
+              }
+            },
+            destroyFrozenFundsRules: {
+              authorizedToMakeChange: {
+                getTakerType: () => 'NoOne'
+              }
+            },
+            emergencyActionRules: {
+              authorizedToMakeChange: {
+                getTakerType: () => 'NoOne'
+              }
+            },
+            distributionRules: {
+              perpetualDistribution: {
+                distributionType: {
+                  getDistribution: () => ({
+                    distributionType: 'BlockBasedDistribution',
+                    interval: 100n,
+                    function: {
+                      getFunctionName: () => 'FixedAmount',
+                      getFunctionValue: () => ({
+                        amount: 100n
+                      })
+                    }
+                  })
+                },
+                distributionRecipient: {
+                  getType: () => 'ContractOwner',
+                  getValue: () => undefined
+                }
 
-            }
-          },
-          mainGroup: undefined
+              }
+            },
+            mainGroup: undefined
+          }
         }
-      }
+      ]
     }))
 
     app = await server.start()
@@ -224,6 +226,7 @@ describe('Other routes', () => {
     token = await fixtures.token(knex, {
       position: 29,
       owner: identity.identifier,
+      identifier: 'BZZUT4W8mPvH7bs7hCu3FtQVaKeZEtLbNHC2kESvNoEv',
       data_contract_id: dataContract.id,
       decimals: 10,
       base_supply: 1000,
