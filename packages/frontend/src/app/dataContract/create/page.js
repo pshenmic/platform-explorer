@@ -3,7 +3,7 @@
 import { PageDataContainer } from '@components/ui/containers'
 import {
   Schema,
-  DocumentFields,
+  CardsGrid,
   TypesList,
   DocTypeField
 } from './components'
@@ -17,7 +17,7 @@ function DataContractCreate () {
          <PageDataContainer title='DOCUMENT' isChevronHidden>
             <TypesList />
             <DocTypeField />
-            <DocumentFields />
+            <CardsGrid />
          </PageDataContainer>
       </>
   )

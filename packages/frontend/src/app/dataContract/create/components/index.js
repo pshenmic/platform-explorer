@@ -1,5 +1,5 @@
 export * from './Schema'
-export * from './DocumentFields'
+export * from './CardsGrid'
 export * from './TypesList'
 export * from './DocTypeField'
 export * from './CardWrapper'

@@ -1,11 +1,14 @@
 import { Flex, Grid } from '@chakra-ui/react'
 import { CardWrapper } from './CardWrapper'
-import { KeywordsField, DescriptionField, CommentField, AdditionalFields } from './Fields'
+import { KeywordsField, DescriptionField, CommentField, AdditionalFields, PropertiesCard } from './fields'
 
-export const DocumentFields = () => {
+export const CardsGrid = () => {
   return (
     <Grid w='100%' templateColumns='1fr 1fr' gap={5}>
       <Flex direction='column' gap={5}>
+        <CardWrapper title='Data Contract Properties'>
+          <PropertiesCard />
+        </CardWrapper>
         <CardWrapper title='Description'>
           <DescriptionField />
         </CardWrapper>
