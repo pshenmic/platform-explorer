@@ -5,11 +5,11 @@ import { SchemaHeader, SchemaField, FormControls } from './schemaAtomic'
 import styles from './Schema.module.scss'
 
 export const Schema = () => (
-    <CardWrapper title='Contract' className={styles.schema}>
-        <SchemaHeader />
-        <SchemaField className={styles.code} />
-        <Box mt={2}>
-          <FormControls />
-        </Box>
-    </CardWrapper>
+  <CardWrapper title="Contract" className={styles.schema}>
+    <SchemaHeader />
+    <SchemaField className={styles.code} />
+    <Box mt={2}>
+      <FormControls />
+    </Box>
+  </CardWrapper>
 )

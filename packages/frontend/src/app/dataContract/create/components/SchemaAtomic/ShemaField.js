@@ -1,4 +1,5 @@
 import { Textarea } from '@chakra-ui/react'
+import { useSchema } from '../../SchemaProvider'
 
 const PALCEHOLDER = `{
           "Pshenmic.dev": {
@@ -14,10 +15,16 @@ const PALCEHOLDER = `{
           }
         }`
 
-export const SchemaField = (props) => (
-  <Textarea
-    resize='none'
-    placeholder={PALCEHOLDER}
-    {...props}
-  />
-)
+export const SchemaField = (props) => {
+  const { value, handleChange } = useSchema()
+
+  return (
+    <Textarea
+      value={value}
+      onChange={(e) => handleChange(e.target.value)}
+      placeholder={PALCEHOLDER}
+      resize="none"
+      {...props}
+    />
+  )
+}
