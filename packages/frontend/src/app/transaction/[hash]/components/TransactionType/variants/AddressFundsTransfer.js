@@ -32,14 +32,22 @@ export const AddressFundsTransfer = ({
     />
     {inputs && inputs.length > 0 && (
       <InfoLine
-        className={'TransactionPage__InfoLine TransactionPage__InfoLine--FullWidth'}
+        className={
+          'TransactionPage__InfoLine TransactionPage__InfoLine--FullWidth'
+        }
         title={`Inputs (${inputs.length})`}
         align={inputs.length !== 1 && 'top'}
         value={
           <Stack gap={2}>
             {inputs.map((input, index) => (
               <ValueCard key={index}>
-                <Flex direction={{ base: 'column', lg: 'row' }} align={{ lg: 'center' }} justify='space-between' gap={4} w='100%' >
+                <Flex
+                  direction={{ base: 'column', lg: 'row' }}
+                  align={{ lg: 'center' }}
+                  justify='space-between'
+                  gap={4}
+                  w='100%'
+                >
                   <ValueCard>
                     <Identifier
                       avatar
@@ -50,12 +58,8 @@ export const AddressFundsTransfer = ({
                       {input.address}
                     </Identifier>
                   </ValueCard>
-                  <ValueCard>
-                    {input.credits} credits
-                  </ValueCard>
-                  <ValueCard>
-                    Nonce: {input.nonce}
-                  </ValueCard>
+                  <ValueCard>{input.credits} credits</ValueCard>
+                  <ValueCard>Nonce: {input.nonce}</ValueCard>
                 </Flex>
               </ValueCard>
             ))}
@@ -66,29 +70,28 @@ export const AddressFundsTransfer = ({
 
     {inputWitness && inputWitness.length > 0 && (
       <InfoLine
-        className={'TransactionPage__InfoLine TransactionPage__InfoLine--FullWidth'}
+        className={
+          'TransactionPage__InfoLine TransactionPage__InfoLine--FullWidth'
+        }
         title={`Input Witness (${inputWitness.length})`}
         align={inputWitness.length !== 1 && 'top'}
         value={
           <Stack gap={2}>
             {inputWitness.map((witness, index) => (
               <ValueCard key={index}>
-                <Grid templateColumns={{ base: '1fr minmax(240px, 1fr)', md: '100px minmax(100px, 1fr)' }} gap={4}>
-                  <Text>
-                    Type:
-                  </Text>
-                  <GridItem
-                    width='fit-content'
-                    minW="min-content"
-                  >
-                    <ValueCard>
-                      {witness.type}
-                    </ValueCard>
+                <Grid
+                  templateColumns={{
+                    base: '1fr minmax(240px, 1fr)',
+                    md: '100px minmax(100px, 1fr)'
+                  }}
+                  gap={4}
+                >
+                  <Text>Type:</Text>
+                  <GridItem width='fit-content' minW='min-content'>
+                    <ValueCard>{witness.type}</ValueCard>
                   </GridItem>
 
-                  <Text>
-                    Signature:
-                  </Text>
+                  <Text>Signature:</Text>
                   <ValueCard>
                     {witness.value && witness.value.signature && (
                       <Identifier
@@ -100,7 +103,6 @@ export const AddressFundsTransfer = ({
                       </Identifier>
                     )}
                   </ValueCard>
-
                 </Grid>
               </ValueCard>
             ))}
@@ -112,13 +114,20 @@ export const AddressFundsTransfer = ({
     {outputs && outputs.length > 0 && (
       <InfoLine
         align={outputs.length !== 1 && 'top'}
-        className={'TransactionPage__InfoLine TransactionPage__InfoLine--FullWidth'}
+        className={
+          'TransactionPage__InfoLine TransactionPage__InfoLine--FullWidth'
+        }
         title={`Outputs (${outputs.length})`}
         value={
           <Stack gap={2}>
             {outputs.map((output, index) => (
               <ValueCard key={index}>
-                <Grid gap={4} templateColumns={{ base: '1r', lg: '1fr 200px' }} w='100%' align='center'>
+                <Grid
+                  gap={4}
+                  templateColumns={{ base: '1r', lg: '1fr 200px' }}
+                  w='100%'
+                  align='center'
+                >
                   <ValueCard>
                     <Identifier
                       avatar
@@ -129,9 +138,7 @@ export const AddressFundsTransfer = ({
                       {output.address}
                     </Identifier>
                   </ValueCard>
-                  <ValueCard>
-                    {output.credits} credits
-                  </ValueCard>
+                  <ValueCard>{output.credits} credits</ValueCard>
                 </Grid>
               </ValueCard>
             ))}
@@ -142,15 +149,17 @@ export const AddressFundsTransfer = ({
 
     {feeStrategy && feeStrategy.length > 0 && (
       <InfoLine
-        className={'TransactionPage__InfoLine TransactionPage__InfoLine--FullWidth'}
+        className={
+          'TransactionPage__InfoLine TransactionPage__InfoLine--FullWidth'
+        }
         title={'Fee Strategy'}
         align={feeStrategy.length !== 1 && 'top'}
         value={
           <div>
             {feeStrategy.map((strategy, index) => (
-              <Flex gap={4} key={index} >
-                <div >{strategy.type}</div>
-                <div >{strategy.value}</div>
+              <Flex gap={4} key={index}>
+                <div>{strategy.type}</div>
+                <div>{strategy.value}</div>
               </Flex>
             ))}
           </div>

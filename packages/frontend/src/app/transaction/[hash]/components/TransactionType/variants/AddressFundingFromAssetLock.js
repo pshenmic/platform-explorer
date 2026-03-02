@@ -27,8 +27,8 @@ export const AddressFundingFromAssetLock = ({
 }) => (
   <>
     <InfoLine
-      className={'TransactionPage__InfoLine TransactionPage__InfoLine--Inline'}
-      title={'User Fee Increase'}
+      className='TransactionPage__InfoLine TransactionPage__InfoLine--Inline'
+      title='User Fee Increase'
       value={userFeeIncrease}
       error={userFeeIncrease === undefined}
     />
@@ -36,52 +36,46 @@ export const AddressFundingFromAssetLock = ({
     {assetLockProof && (
       <InfoLine
         align='top'
-        className={'TransactionPage__InfoLine TransactionPage__InfoLine--FullWidth'}
-        title={'Asset Lock Proof'}
+        className='TransactionPage__InfoLine TransactionPage__InfoLine--FullWidth'
+        title='Asset Lock Proof'
         value={
-          <Grid templateColumns={{ base: 'minmax(250px, auto)', md: '1fr 400px', lg: '1fr 500px' }} px={{ base: 5, md: 0 }} gap={4}>
+          <Grid
+            templateColumns={{
+              base: 'minmax(250px, auto)',
+              md: '1fr 400px',
+              lg: '1fr 500px'
+            }}
+            px={{ base: 5, md: 0 }}
+            gap={4}
+          >
             <GridItem>
               <Text>Type:</Text>
             </GridItem>
             <GridItem>
-              <ValueCard>
-                {assetLockProof.type}
-              </ValueCard>
+              <ValueCard>{assetLockProof.type}</ValueCard>
             </GridItem>
 
             {assetLockProof.coreChainLockedHeight !== null && (
               <>
                 <GridItem>
-                  <Text>
-                    Core Chain Locked Height:
-                  </Text>
+                  <Text>Core Chain Locked Height:</Text>
                 </GridItem>
                 <GridItem>
-                  <ValueCard>
-                    {assetLockProof.coreChainLockedHeight}
-                  </ValueCard>
+                  <ValueCard>{assetLockProof.coreChainLockedHeight}</ValueCard>
                 </GridItem>
               </>
             )}
             <GridItem>
-              <Text>
-                Funding Amount:
-              </Text>
+              <Text>Funding Amount:</Text>
             </GridItem>
             <GridItem>
-              <ValueCard>
-                {assetLockProof.fundingAmount} satoshis
-              </ValueCard>
+              <ValueCard>{assetLockProof.fundingAmount} satoshis</ValueCard>
             </GridItem>
             <GridItem>
-              <Text>
-                Output Index (vout):
-              </Text>
+              <Text>Output Index (vout):</Text>
             </GridItem>
             <GridItem>
-              <ValueCard>
-                {assetLockProof.vout}
-              </ValueCard>
+              <ValueCard>{assetLockProof.vout}</ValueCard>
             </GridItem>
 
             <GridItem colSpan={1}>
@@ -120,13 +114,19 @@ export const AddressFundingFromAssetLock = ({
     {outputs && outputs.length > 0 && (
       <InfoLine
         align='top'
-        className={'TransactionPage__InfoLine TransactionPage__InfoLine--FullWidth'}
+        className={
+          'TransactionPage__InfoLine TransactionPage__InfoLine--FullWidth'
+        }
         title={`Outputs (${outputs.length})`}
         value={
           <Flex direction='column' gap={2}>
             {outputs.map((output, index) => (
               <ValueCard key={index}>
-                <Flex gap={4} direction={{ base: 'column', md: 'row' }} maxW={{ base: 270, md: 'none' }}>
+                <Flex
+                  gap={4}
+                  direction={{ base: 'column', md: 'row' }}
+                  maxW={{ base: 270, md: 'none' }}
+                >
                   <ValueCard>
                     <Identifier
                       avatar
@@ -137,10 +137,8 @@ export const AddressFundingFromAssetLock = ({
                       {output.address}
                     </Identifier>
                   </ValueCard>
-                  <ValueCard >
-                    <div>
-                      {output.credits} credits
-                    </div>
+                  <ValueCard>
+                    <div>{output.credits} credits</div>
                   </ValueCard>
                 </Flex>
               </ValueCard>
@@ -152,18 +150,14 @@ export const AddressFundingFromAssetLock = ({
 
     {feeStrategy && feeStrategy.length > 0 && (
       <InfoLine
-        className={'TransactionPage__InfoLine TransactionPage__InfoLine--FullWidth'}
-        title={'Fee Strategy'}
+        className='TransactionPage__InfoLine TransactionPage__InfoLine--FullWidth'
+        title='Fee Strategy'
         value={
           <div>
             {feeStrategy.map((strategy, index) => (
               <Flex key={index} align='center' gap={6} mb={4}>
-                <ValueCard>
-                  {strategy.type}
-                </ValueCard>
-                <ValueCard>
-                  Value: {strategy.value}
-                </ValueCard>
+                <ValueCard>{strategy.type}</ValueCard>
+                <ValueCard>Value: {strategy.value}</ValueCard>
               </Flex>
             ))}
           </div>
@@ -173,22 +167,25 @@ export const AddressFundingFromAssetLock = ({
 
     {signature && (
       <InfoLine
-        className={'TransactionPage__InfoLine TransactionPage__InfoLine--FullWidth'}
-        title={'Signature'}
+        className='TransactionPage__InfoLine TransactionPage__InfoLine--FullWidth'
+        title='Signature'
         value={
-
-          <ValueCard >
-            <Flex gap={2} maxW={{ base: 250, sm: 400 }} align='center' justify='space-between'>
+          <ValueCard>
+            <Flex
+              gap={2}
+              maxW={{ base: 250, sm: 400 }}
+              align='center'
+              justify='space-between'
+            >
               <Text
-                overflow="hidden"
-                textOverflow="ellipsis"
-                whiteSpace="nowrap"
+                overflow='hidden'
+                textOverflow='ellipsis'
+                whiteSpace='nowrap'
               >
                 {signature}
               </Text>
 
               <CopyButton text={signature} />
-
             </Flex>
           </ValueCard>
         }
