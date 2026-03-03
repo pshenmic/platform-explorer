@@ -14,6 +14,7 @@ import { TransactionsList } from '../../../components/transactions'
 import TokensList from '../../../components/tokens/TokensList'
 import { useQuery } from '@tanstack/react-query'
 import { useQueryState, parseAsStringEnum, parseAsString } from 'nuqs'
+import { normalizePagination } from '@utils/table'
 
 import './DataContract.scss'
 
@@ -54,17 +55,32 @@ function DataContract ({ identifier }) {
     queryKey: ['transactions', identifier, txPage],
     queryFn: () => Api.getDataContractTransactions(identifier, txPage, pageSize, 'desc'),
     enabled: !!identifier,
-    select: data => ({
-      pagination: data.pagination,
+    select: ({ pagination, ...data }) => ({
+      pagination: normalizePagination({
+        page: txPage,
+        pageSize,
+        ...pagination
+      }),
       list: data.resultSet.map((transaction) => ({
         ...transaction,
         batchType: transaction?.action?.[0]?.action
       }))
     })
   })
+
   const documents = useQuery({
     queryKey: ['documents', identifier, docPage],
-    queryFn: () => Api.getDocumentsByDataContract(identifier, docPage, pageSize, 'desc')
+    queryFn: () => Api.getDocumentsByDataContract(identifier, docPage, pageSize, 'desc'),
+    select: ({ pagination, data }) => ({
+      data: {
+        ...data,
+        pagination: normalizePagination({
+          page: docPage,
+          pageSize,
+          ...pagination
+        })
+      }
+    })
   })
 
   const [activeTab, setActiveTab] = useQueryState(
@@ -91,6 +107,10 @@ function DataContract ({ identifier }) {
   }
 
   const handleTab = (index) => setActiveTab(tabs.find((_, idx) => idx === index))
+
+  const txPagination = transactions.data?.pagination
+  const docPagination = transactions.data?.pagination
+
 
   useEffect(() => {
     setBreadcrumbs([
@@ -141,9 +161,9 @@ function DataContract ({ identifier }) {
                     transactions={transactions.data?.list}
                     loading={transactions.isLoading}
                     pagination={{
-                      onPageChange: pagination => setTxPage(pagination.selected),
-                      pageCount: Math.ceil(transactions.data?.pagination?.total / pageSize) || 1,
-                      forcePage: txPage
+                      onPageChange: ({ selected }) => setTxPage(selected > 0 ? selected + 1 : selected),
+                      pageCount: txPagination?.pageCount,
+                      forcePage: txPagination?.forcePage
                     }}
                   />
                 : <Container h={20}><ErrorMessageBlock/></Container>
@@ -155,9 +175,9 @@ function DataContract ({ identifier }) {
                   documents={documents.data?.resultSet}
                   loading={documents.isLoading}
                   pagination={{
-                    onPageChange: pagination => setDocPage(pagination.selected),
-                    pageCount: Math.ceil(documents.data?.pagination?.total / pageSize) || 1,
-                    forcePage: docPage
+                    onPageChange: ({ selected }) => setDocPage(selected > 0 ? selected + 1 : selected),
+                    pageCount: docPagination?.pageCount,
+                    forcePage: docPagination?.forcePage
                   }}
                 />
                 : <Container h={20}><ErrorMessageBlock/></Container>
