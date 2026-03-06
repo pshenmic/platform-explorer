@@ -1,7 +1,9 @@
 use deadpool_postgres::tokio_postgres::NoTls;
 use deadpool_postgres::{Config, ManagerConfig, Pool, RecyclingMethod, Runtime};
+use dpp::dashcore::Network;
 use std::env;
 
+mod addresses;
 pub mod blocks;
 pub mod data_contracts;
 pub mod documents;
@@ -15,10 +17,11 @@ pub mod validators;
 
 pub struct PostgresDAO {
     pub(crate) connection_pool: Pool,
+    network: Network,
 }
 
 impl PostgresDAO {
-    pub fn new() -> PostgresDAO {
+    pub fn new(network: Network) -> PostgresDAO {
         let mut cfg = Config::new();
 
         let postgres_host = env::var("POSTGRES_HOST").expect("You've not set the POSTGRES_HOST");
@@ -41,6 +44,9 @@ impl PostgresDAO {
 
         let connection_pool = cfg.create_pool(Some(Runtime::Tokio1), NoTls).unwrap();
 
-        PostgresDAO { connection_pool }
+        PostgresDAO {
+            connection_pool,
+            network,
+        }
     }
 }

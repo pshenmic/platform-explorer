@@ -1,3 +1,4 @@
+pub mod address_transition;
 pub mod block;
 pub mod block_header;
 pub mod data_contract;
