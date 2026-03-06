@@ -1,3 +1,4 @@
+use crate::entities::address_transition::AddressTransition;
 use crate::enums::batch_type::BatchType;
 use crate::models::{TransactionResult, TransactionStatus};
 use crate::processor::psql::PSQLProcessor;
@@ -279,29 +280,124 @@ impl PSQLProcessor {
                 println!("Processed Masternode vote at block hash {}", block_hash);
             }
             StateTransition::IdentityCreditTransferToAddresses(st) => {
-                self.handle_identity_credit_transfer_to_address(st, st_hash, sql_transaction)
-                    .await;
+                self.handle_identity_credit_transfer_to_address(
+                    st.clone(),
+                    st_hash.clone(),
+                    sql_transaction,
+                )
+                .await;
 
                 println!(
                     "Processed IdentityCreditTransfer at block hash {}",
                     block_hash
                 );
+
+                let address_transitions =
+                    AddressTransition::from_identity_credit_transfer_to_address_transition(
+                        st.clone(),
+                        st_hash.clone(),
+                    );
+                self.handle_address_transitions(address_transitions.clone(), sql_transaction)
+                    .await
+                    .unwrap();
+
+                println!(
+                    "Processed {} Address transitions at block hash {}",
+                    address_transitions.len(),
+                    block_hash
+                );
             }
             StateTransition::IdentityCreateFromAddresses(st) => {
-                self.handle_identity_create_from_address(st, st_hash, sql_transaction)
-                    .await;
+                self.handle_identity_create_from_address(
+                    st.clone(),
+                    st_hash.clone(),
+                    sql_transaction,
+                )
+                .await;
 
                 println!("Processed IdentityCreate at block hash {}", block_hash);
+
+                let address_transitions =
+                    AddressTransition::from_identity_create_from_address_transition(
+                        st.clone(),
+                        st_hash.clone(),
+                    );
+                self.handle_address_transitions(address_transitions.clone(), sql_transaction)
+                    .await
+                    .unwrap();
+
+                println!(
+                    "Processed {} Address transitions at block hash {}",
+                    address_transitions.len(),
+                    block_hash
+                );
             }
             StateTransition::IdentityTopUpFromAddresses(st) => {
-                self.handle_identity_top_up_from_address(st, st_hash, sql_transaction)
-                    .await;
+                self.handle_identity_top_up_from_address(
+                    st.clone(),
+                    st_hash.clone(),
+                    sql_transaction,
+                )
+                .await;
 
                 println!("Processed IdentityTopUp at block hash {}", block_hash);
+
+                let address_transitions =
+                    AddressTransition::from_identity_top_up_from_address_transition(
+                        st.clone(),
+                        st_hash.clone(),
+                    );
+                self.handle_address_transitions(address_transitions.clone(), sql_transaction)
+                    .await
+                    .unwrap();
+
+                println!(
+                    "Processed {} Address transitions at block hash {}",
+                    address_transitions.len(),
+                    block_hash
+                );
             }
-            StateTransition::AddressFundsTransfer(_) => {}
-            StateTransition::AddressFundingFromAssetLock(_) => {}
-            StateTransition::AddressCreditWithdrawal(_) => {}
+            StateTransition::AddressFundsTransfer(st) => {
+                let address_transitions =
+                    AddressTransition::from_address_funds_transfer(st.clone(), st_hash.clone());
+                self.handle_address_transitions(address_transitions.clone(), sql_transaction)
+                    .await
+                    .unwrap();
+
+                println!(
+                    "Processed {} Address transitions at block hash {}",
+                    address_transitions.len(),
+                    block_hash
+                );
+            }
+            StateTransition::AddressFundingFromAssetLock(st) => {
+                let address_transitions = AddressTransition::from_address_funding_from_asset_lock(
+                    st.clone(),
+                    st_hash.clone(),
+                );
+                self.handle_address_transitions(address_transitions.clone(), sql_transaction)
+                    .await
+                    .unwrap();
+
+                println!(
+                    "Processed {} Address transitions at block hash {}",
+                    address_transitions.len(),
+                    block_hash
+                );
+            }
+            StateTransition::AddressCreditWithdrawal(st) => {
+                let address_transitions =
+                    AddressTransition::from_address_credit_withdrawal(st.clone(), st_hash.clone());
+                self.handle_address_transitions(address_transitions.clone(), sql_transaction)
+                    .await
+                    .unwrap();
+
+                println!(
+                    "Processed {} Address transitions at block hash {}",
+                    address_transitions.len(),
+                    block_hash
+                );
+            }
         }
     }
 }
