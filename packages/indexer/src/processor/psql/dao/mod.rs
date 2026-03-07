@@ -3,7 +3,7 @@ use deadpool_postgres::{Config, ManagerConfig, Pool, RecyclingMethod, Runtime};
 use dpp::dashcore::Network;
 use std::env;
 
-mod addresses;
+mod platform_addresses;
 pub mod blocks;
 pub mod data_contracts;
 pub mod documents;

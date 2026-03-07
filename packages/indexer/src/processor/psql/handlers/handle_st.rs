@@ -1,4 +1,4 @@
-use crate::entities::address_transition::AddressTransition;
+use crate::entities::platform_address_transition::PlatformAddressTransition;
 use crate::enums::batch_type::BatchType;
 use crate::models::{TransactionResult, TransactionStatus};
 use crate::processor::psql::PSQLProcessor;
@@ -293,11 +293,11 @@ impl PSQLProcessor {
                 );
 
                 let address_transitions =
-                    AddressTransition::from_identity_credit_transfer_to_address_transition(
+                    PlatformAddressTransition::from_identity_credit_transfer_to_address_transition(
                         st.clone(),
                         st_hash.clone(),
                     );
-                self.handle_address_transitions(address_transitions.clone(), sql_transaction)
+                self.handle_platform_address_transitions(address_transitions.clone(), sql_transaction)
                     .await
                     .unwrap();
 
@@ -318,11 +318,11 @@ impl PSQLProcessor {
                 println!("Processed IdentityCreate at block hash {}", block_hash);
 
                 let address_transitions =
-                    AddressTransition::from_identity_create_from_address_transition(
+                    PlatformAddressTransition::from_identity_create_from_address_transition(
                         st.clone(),
                         st_hash.clone(),
                     );
-                self.handle_address_transitions(address_transitions.clone(), sql_transaction)
+                self.handle_platform_address_transitions(address_transitions.clone(), sql_transaction)
                     .await
                     .unwrap();
 
@@ -343,11 +343,11 @@ impl PSQLProcessor {
                 println!("Processed IdentityTopUp at block hash {}", block_hash);
 
                 let address_transitions =
-                    AddressTransition::from_identity_top_up_from_address_transition(
+                    PlatformAddressTransition::from_identity_top_up_from_address_transition(
                         st.clone(),
                         st_hash.clone(),
                     );
-                self.handle_address_transitions(address_transitions.clone(), sql_transaction)
+                self.handle_platform_address_transitions(address_transitions.clone(), sql_transaction)
                     .await
                     .unwrap();
 
@@ -359,8 +359,8 @@ impl PSQLProcessor {
             }
             StateTransition::AddressFundsTransfer(st) => {
                 let address_transitions =
-                    AddressTransition::from_address_funds_transfer(st.clone(), st_hash.clone());
-                self.handle_address_transitions(address_transitions.clone(), sql_transaction)
+                    PlatformAddressTransition::from_address_funds_transfer(st.clone(), st_hash.clone());
+                self.handle_platform_address_transitions(address_transitions.clone(), sql_transaction)
                     .await
                     .unwrap();
 
@@ -371,11 +371,11 @@ impl PSQLProcessor {
                 );
             }
             StateTransition::AddressFundingFromAssetLock(st) => {
-                let address_transitions = AddressTransition::from_address_funding_from_asset_lock(
+                let address_transitions = PlatformAddressTransition::from_address_funding_from_asset_lock(
                     st.clone(),
                     st_hash.clone(),
                 );
-                self.handle_address_transitions(address_transitions.clone(), sql_transaction)
+                self.handle_platform_address_transitions(address_transitions.clone(), sql_transaction)
                     .await
                     .unwrap();
 
@@ -387,8 +387,8 @@ impl PSQLProcessor {
             }
             StateTransition::AddressCreditWithdrawal(st) => {
                 let address_transitions =
-                    AddressTransition::from_address_credit_withdrawal(st.clone(), st_hash.clone());
-                self.handle_address_transitions(address_transitions.clone(), sql_transaction)
+                    PlatformAddressTransition::from_address_credit_withdrawal(st.clone(), st_hash.clone());
+                self.handle_platform_address_transitions(address_transitions.clone(), sql_transaction)
                     .await
                     .unwrap();
 

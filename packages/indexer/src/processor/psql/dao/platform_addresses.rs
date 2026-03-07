@@ -1,17 +1,17 @@
-use crate::entities::address_transition::AddressTransition;
+use crate::entities::platform_address_transition::PlatformAddressTransition;
 use crate::processor::psql::dao::PostgresDAO;
 use deadpool_postgres::{PoolError, Transaction};
 use dpp::address_funds::PlatformAddress;
 use tokio_postgres::Row;
 
 impl PostgresDAO {
-    pub async fn create_address(
+    pub async fn create_platform_address(
         &self,
         address: PlatformAddress,
         sql_transaction: &Transaction<'_>,
     ) -> Result<i32, PoolError> {
         let address_id = self
-            .get_address_id(address, sql_transaction)
+            .get_platform_address_id(address, sql_transaction)
             .await
             .expect("cannot get address id");
 
@@ -21,7 +21,7 @@ impl PostgresDAO {
 
             let stmt = sql_transaction
                 .prepare_cached(
-                    "INSERT INTO addresses(address, bech32m_address) VALUES ($1, $2) RETURNING id;",
+                    "INSERT INTO platform_addresses(address, bech32m_address) VALUES ($1, $2) RETURNING id;",
                 )
                 .await?;
 
@@ -34,9 +34,9 @@ impl PostgresDAO {
         }
     }
 
-    pub async fn create_address_transition(
+    pub async fn create_platform_address_transition(
         &self,
-        transition: AddressTransition,
+        transition: PlatformAddressTransition,
         sender_id: Option<i32>,
         recipient_id: Option<i32>,
         sql_transaction: &Transaction<'_>,
@@ -48,8 +48,8 @@ impl PostgresDAO {
 
         let stmt = sql_transaction
             .prepare_cached(
-                "INSERT INTO address_transitions(sender_id, recipient_id,\
-            state_transition_id, transition_type) VALUES ($1, $2, $3, $4);",
+                "INSERT INTO platform_addresses_address_transitions(sender_id, recipient_id,\
+            state_transition_id, state_transition_type) VALUES ($1, $2, $3, $4);",
             )
             .await?;
 
@@ -63,7 +63,7 @@ impl PostgresDAO {
         Ok(())
     }
 
-    pub async fn get_address_id(
+    pub async fn get_platform_address_id(
         &self,
         address: PlatformAddress,
         sql_transaction: &Transaction<'_>,
@@ -71,7 +71,7 @@ impl PostgresDAO {
         let address_bech32m_str = address.to_bech32m_string(self.network);
 
         let stmt = sql_transaction
-            .prepare_cached("SELECT id FROM addresses WHERE bech32m_address = $1 limit 1;")
+            .prepare_cached("SELECT id FROM platform_addresses WHERE bech32m_address = $1 limit 1;")
             .await?;
 
         let rows: Vec<Row> = sql_transaction
