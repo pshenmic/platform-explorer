@@ -2,7 +2,7 @@ const { getKnex } = require('../../src/utils')
 
 const knex = getKnex()
 
-const tables = ['token_holders', 'address_transitions', 'data_contract_transitions', 'token_transitions', 'tokens', 'masternode_votes', 'transfers', 'documents', 'identity_aliases', 'identities', 'data_contracts', 'state_transitions', 'blocks', 'validators', 'refinery_schema_history', 'addresses']
+const tables = ['token_holders', 'platform_address_transitions', 'data_contract_transitions', 'token_transitions', 'tokens', 'masternode_votes', 'transfers', 'documents', 'identity_aliases', 'identities', 'data_contracts', 'state_transitions', 'blocks', 'validators', 'refinery_schema_history', 'platform_addresses']
 
 const sql = tables.reduce((acc, table) => acc + `DROP TABLE IF EXISTS ${table};`, '')
 
