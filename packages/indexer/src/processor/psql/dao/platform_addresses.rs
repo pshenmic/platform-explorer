@@ -48,7 +48,7 @@ impl PostgresDAO {
 
         let stmt = sql_transaction
             .prepare_cached(
-                "INSERT INTO platform_addresses_address_transitions(sender_id, recipient_id,\
+                "INSERT INTO platform_address_transitions(sender_id, recipient_id,\
             state_transition_id, state_transition_type) VALUES ($1, $2, $3, $4);",
             )
             .await?;
