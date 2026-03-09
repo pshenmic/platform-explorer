@@ -2610,7 +2610,10 @@ IDENTITY_CREATE with instantLock
   "userFeeIncrease": 0,
   "inputs": [
     {
-      "address": "yRpNvoc3hd66c3rNrPRGubVd9vGUoAVpZV",
+      "platformAddress": {
+        "base58": "yRpNvoc3hd66c3rNrPRGubVd9vGUoAVpZV",
+        "bech32m": "tdashevo1qq79z66rh34l4u2axlz3jv34zwshggnenut9k093"
+      },
       "credits": "100000000",
       "nonce": "2"
     }
@@ -2625,403 +2628,17 @@ IDENTITY_CREATE with instantLock
   ],
   "outputs": [
     {
-      "address": "yLRvYtK1GKU3V96igCuENoDNZTDqMueSq5",
+      "platformAddress": {
+        "base58": "yRpNvoc3hd66c3rNrPRGubVd9vGUoAVpZV",
+        "bech32m": "tdashevo1qq79z66rh34l4u2axlz3jv34zwshggnenut9k093"
+      },
       "credits": "1000000"
     },
     {
-      "address": "yLy3FKiUN2h1NtJr8D4Cb85KEfQVkgCxBV",
-      "credits": "1000000"
-    },
-    {
-      "address": "yMEyWias3eQEyZJjFXov2hddgHckxf4Vz5",
-      "credits": "1000000"
-    },
-    {
-      "address": "yMGBpsFMpe8jheCwAbLNCTr4XJHRFstFQb",
-      "credits": "1000000"
-    },
-    {
-      "address": "yMMqB5R21PtheP7AAgKAniZxzzy5z3prjT",
-      "credits": "1000000"
-    },
-    {
-      "address": "yMScsdSb8fEEHsEYHCGWNuAyRvY6QtJGfV",
-      "credits": "1000000"
-    },
-    {
-      "address": "yMVSAUDBTtgX1tDVgaQDprXgtRVHGSN3wY",
-      "credits": "1000000"
-    },
-    {
-      "address": "yMYxWfJvp7JvvDeaXyFmKhzZMNdZ2jZ4tE",
-      "credits": "1000000"
-    },
-    {
-      "address": "yMZ6UKi2VWLPkP7aab7mSRj7w46KVntvu7",
-      "credits": "1000000"
-    },
-    {
-      "address": "yMancpJ2cEGhAALrLQsbPLbH3fgoXBHnxg",
-      "credits": "1000000"
-    },
-    {
-      "address": "yMjVb7NhnfGoJaoMmDoMwZJb4AL1eQiCa6",
-      "credits": "1000000"
-    },
-    {
-      "address": "yMokTBpjJ7hwiYbWxt3foP8sjHorgg93FY",
-      "credits": "1000000"
-    },
-    {
-      "address": "yMwYsfEeiZToU2JovbKZqnQZqkTZxdhGg2",
-      "credits": "1000000"
-    },
-    {
-      "address": "yNZ1cyWUarwRWJNGiEE7s8uesV328i6iLR",
-      "credits": "1000000"
-    },
-    {
-      "address": "yNZ6Tu7BYiR8jh6kRJexYAXbzvLYQeS7K1",
-      "credits": "1000000"
-    },
-    {
-      "address": "yNadMm4hfU1tPBp29uJfzC8oxd1GcPPUBv",
-      "credits": "1000000"
-    },
-    {
-      "address": "yP4pqSqYeGtWSjZaBfAsKynNgAbDtNQf63",
-      "credits": "1000000"
-    },
-    {
-      "address": "yP8182D7K9NxmQBrvbxy398jN9KM3rNiaf",
-      "credits": "1000000"
-    },
-    {
-      "address": "yP9htGD6Zvc1UpDMh4xASFqMXYVAhM6HHF",
-      "credits": "1000000"
-    },
-    {
-      "address": "yQDfWfdoU6JBma525GuuSZu1xo35oPqt7f",
-      "credits": "1000000"
-    },
-    {
-      "address": "yQMLwDt3QgDK4s4t7nehYXQQZqY83p2ctM",
-      "credits": "1000000"
-    },
-    {
-      "address": "yQSdsMLDJWVbiVzmiB4nAwSgT2cRZ9gYdX",
-      "credits": "1000000"
-    },
-    {
-      "address": "yQWXsMMs9ATvRqzzeoV6K4QR4K9hqfTcLb",
-      "credits": "1000000"
-    },
-    {
-      "address": "yRHZpq4qVQcbwyqwTUhTD3xGgASP1Q7uMh",
-      "credits": "1000000"
-    },
-    {
-      "address": "yRLDkUcUnhCkaTumhRjLf9uCnDbXXN7Ui9",
-      "credits": "1000000"
-    },
-    {
-      "address": "yRRd5NBguXFNp3mcGWUY3TyaU2WVMVDFyR",
-      "credits": "1000000"
-    },
-    {
-      "address": "yRiRVUS5SSApuqk9tpo3iHAMqeASj1Awoz",
-      "credits": "1000000"
-    },
-    {
-      "address": "yRk5uXAFoQU1a1KYq1i4yzmUC2bqweiZmV",
-      "credits": "1000000"
-    },
-    {
-      "address": "ySceoSJ3Gwoy2qfiXShiP3YpwWBLE6f36F",
-      "credits": "1000000"
-    },
-    {
-      "address": "ySv2CLogbYUBnHVDey6MTYX7mpAM6J1cGZ",
-      "credits": "1000000"
-    },
-    {
-      "address": "yT1jGGpp22NsvFKS75KNca67BH3E87k88L",
-      "credits": "1000000"
-    },
-    {
-      "address": "yT7V5riT1BTLHWPvWKqVacrAgCmUoQQ53J",
-      "credits": "1000000"
-    },
-    {
-      "address": "yT9BLtjQcVJrah76hJbjHMbWPfEUmJkvee",
-      "credits": "1000000"
-    },
-    {
-      "address": "yTUc6sZGwPGEQTmuX22fpK6xWnaNLGK9zC",
-      "credits": "1000000"
-    },
-    {
-      "address": "yTVozH4Trw5ZEEzZjpsGXCKxsr1AQqk4rg",
-      "credits": "1000000"
-    },
-    {
-      "address": "yTxA1HarqB1mk1jkAzCwDgqePjviuvqcVa",
-      "credits": "1000000"
-    },
-    {
-      "address": "yUm6NVpuRLtbL2zCU2XkwoUBxquuVU4Gum",
-      "credits": "1000000"
-    },
-    {
-      "address": "yUqYfyabEh4YhBdzDNFvjonDfUayWRDCJX",
-      "credits": "1000000"
-    },
-    {
-      "address": "yV8xieK8YMgNCMDiSCurBuFEKkfEqwW4Yi",
-      "credits": "1000000"
-    },
-    {
-      "address": "yVMpAbWhUWMbK7HwM2rjDgmmhysXnQJEmD",
-      "credits": "1000000"
-    },
-    {
-      "address": "yVWMZMZUsxr1ag2HpVLBYzWQHjuW7sWDNx",
-      "credits": "1000000"
-    },
-    {
-      "address": "yVwq9cWArNRmvzDaLwdgYhUpxwJSLmBgza",
-      "credits": "1000000"
-    },
-    {
-      "address": "yW3rHfmHtA8GQxYAC6vS3y4RAs3umdfB4V",
-      "credits": "1000000"
-    },
-    {
-      "address": "yW6qq9g9GN8WcMmRtvqrpX7UFRJzXfyLhe",
-      "credits": "1000000"
-    },
-    {
-      "address": "yWfmjfCPToQMyt6sJmE65mwQgHQHSXpvti",
-      "credits": "1000000"
-    },
-    {
-      "address": "yWo2mo7P4S7GkoQamwCERfXHGAVc8BSWJ3",
-      "credits": "1000000"
-    },
-    {
-      "address": "yWxhMyQ9kKvnYSk86fbJtmVAQZ5BpotNti",
-      "credits": "1000000"
-    },
-    {
-      "address": "yX1nE18Wvnn1vnG8FphtrsMzPJJEct6UGH",
-      "credits": "1000000"
-    },
-    {
-      "address": "yXMKz81VvXebQRWD13Gb3Hn44vph2DcbSy",
-      "credits": "1000000"
-    },
-    {
-      "address": "yXZx4VDFobvosk3pMmG7ESDC1R9DgtG8Gq",
-      "credits": "1000000"
-    },
-    {
-      "address": "yXhxMuGneNWTpE7vXhKX98tvazPCiNsEEX",
-      "credits": "1000000"
-    },
-    {
-      "address": "yY69u7ciejdH1f4BGNAMkZQfPAnsGP7egZ",
-      "credits": "1000000"
-    },
-    {
-      "address": "yYkQibAJLyoAkH9dzYdfxb79ZJL21B9JAN",
-      "credits": "1000000"
-    },
-    {
-      "address": "yYmifT5tpKiMa59mBZMw4qL1s8KdVfrJPv",
-      "credits": "1000000"
-    },
-    {
-      "address": "yZH5jHKaY7UcNTtbAiU95Kvdrta8iWtuuN",
-      "credits": "1000000"
-    },
-    {
-      "address": "yZjdPezWkG1izgiy6iJ7gruvf96UFhKeTW",
-      "credits": "1000000"
-    },
-    {
-      "address": "yaJwJcb5RVcunVecj5S3aSJk72iJW5Z7Rb",
-      "credits": "1000000"
-    },
-    {
-      "address": "yaLJxDuPKcp5w6wA5Vfn37bgmAVrxjS7P7",
-      "credits": "1000000"
-    },
-    {
-      "address": "yakXR5Gv5hgYPcctDrXhpS1hVb6z1THTP1",
-      "credits": "1000000"
-    },
-    {
-      "address": "yb6VemqRsVQqfrykp59YayUdMXmJKTLNec",
-      "credits": "1000000"
-    },
-    {
-      "address": "ybSAidoYahDGajCeHCFciQM4TdnRJYuSHY",
-      "credits": "1000000"
-    },
-    {
-      "address": "ybShKQAjTMRCwiLHCWu9hkpYfoBtXwhDVJ",
-      "credits": "1000000"
-    },
-    {
-      "address": "ybadnE5pXBDmSdgymzag53MRCVproTiFy3",
-      "credits": "1000000"
-    },
-    {
-      "address": "ybpbqxMkyk6iVgFBcgvQ89YnvHxrJKzHQv",
-      "credits": "1000000"
-    },
-    {
-      "address": "ycDXm8wZUVeV6JSAgXbwSWT7BG4tWPPDBt",
-      "credits": "1000000"
-    },
-    {
-      "address": "ycDpHouARkGcYhbWhH2a4wyCdVzsqseLeR",
-      "credits": "1000000"
-    },
-    {
-      "address": "ycSmc4A4unM2q28x2yX9qCw85B8oCxVCw8",
-      "credits": "1000000"
-    },
-    {
-      "address": "ycTk8aj9kKTVeJwHYjzQnkebSyKCAwh7Xz",
-      "credits": "1000000"
-    },
-    {
-      "address": "ycYMMYJLePGGcbJdVYBKiHGKypHHcYW7tp",
-      "credits": "1000000"
-    },
-    {
-      "address": "ydVTpMEcEXp649wKQ7iDhkoxwewc7SzJAR",
-      "credits": "1000000"
-    },
-    {
-      "address": "ydc2GTd7TeBsiaMU6PDmA2P6PLwBNwy5HT",
-      "credits": "1000000"
-    },
-    {
-      "address": "ydmW8n953aMJXHDhaEsRbHZfB5sSpaKVis",
-      "credits": "1000000"
-    },
-    {
-      "address": "yeTNj7UYKtbzG4YrMrbF3GpQXevaM5TagS",
-      "credits": "1000000"
-    },
-    {
-      "address": "yebRhQKtHp7iTrZ6r1tKL6Wsv9Z6imFVjg",
-      "credits": "1000000"
-    },
-    {
-      "address": "yebjGGqvWkVBz7c7zpFJz9PjH4db2GwAiR",
-      "credits": "1000000"
-    },
-    {
-      "address": "yewgoHb5qLavZu2fttmaoCQLqPU77uQGJy",
-      "credits": "1000000"
-    },
-    {
-      "address": "yf5Z5eBatRAq3i9dBNTeveBEBp5AoGWt5T",
-      "credits": "1000000"
-    },
-    {
-      "address": "yfGL5bmuU8Y1F7GQKjScRuKBra6CF8hWfT",
-      "credits": "1000000"
-    },
-    {
-      "address": "yfK9cZ2PQnconkFsaHMybapd6cK878M7eq",
-      "credits": "1000000"
-    },
-    {
-      "address": "yfPFhWXgA1Tst26BpYK987PVK7ZMC6vN2r",
-      "credits": "1000000"
-    },
-    {
-      "address": "yfhjXoef2BTVGBmRVeLf28HwN87bhCs2PT",
-      "credits": "1000000"
-    },
-    {
-      "address": "yfqZ94mpizRaCb2SxDPVAN1CowV2Nf3VSa",
-      "credits": "1000000"
-    },
-    {
-      "address": "yfvqMykpEAVL4Qf71gWmkxtEtjGYcBTGPy",
-      "credits": "1000000"
-    },
-    {
-      "address": "yg1PfyFgGyNQmbMGHMFpzqU6bg9kBh8kHy",
-      "credits": "1000000"
-    },
-    {
-      "address": "yg2Z7YWoDaqt3rUiKRrMKeJYRDvL1SGAA7",
-      "credits": "1000000"
-    },
-    {
-      "address": "ygako22ivy56mNfcVMBpyomXDruKYoXvHs",
-      "credits": "1000000"
-    },
-    {
-      "address": "ygi43dcsk4rq6fUNHRWR5ZLcbgezFQKRyu",
-      "credits": "1000000"
-    },
-    {
-      "address": "ygxTk4iCmeybuZjsHoGJMupNNMogX5PjvU",
-      "credits": "1000000"
-    },
-    {
-      "address": "yh96RHPCHe2MWRAcpK8weVNZACrwbYSPzv",
-      "credits": "1000000"
-    },
-    {
-      "address": "yhp9w9RCnNSms4Tz9qBGuWVEYsyJHSDFru",
-      "credits": "1000000"
-    },
-    {
-      "address": "yiBWcJBvUeKYeTYCCeGAxatjFNZnzWrPwS",
-      "credits": "1000000"
-    },
-    {
-      "address": "yiXVMYTDuxowjJYCR2CNtShMNc6VGQZ26j",
-      "credits": "1000000"
-    },
-    {
-      "address": "yiYYsCnWWQGJmy6qExnuc2CCS8sRRKi6Rr",
-      "credits": "1000000"
-    },
-    {
-      "address": "yieZW4dNtt1KGboTPhuS8XCNDoMzg2RFCJ",
-      "credits": "1000000"
-    },
-    {
-      "address": "yigRT5xmcG3FNBV2tooXEE4HEfQCybjo7i",
-      "credits": "1000000"
-    },
-    {
-      "address": "yisEgEhYEVrbcMA9PWE6GM4fxASMLSqkFU",
-      "credits": "1000000"
-    },
-    {
-      "address": "yisxcvx58QP8p2WMF4VJLsj4ady9iG88yW",
-      "credits": "1000000"
-    },
-    {
-      "address": "yizbrqY3wP8ih72aq4B2EYmboYMNfxTXe8",
-      "credits": "1000000"
-    },
-    {
-      "address": "yj2uK3j6cSKAVCELpWy5ScQHkXS7jN11XL",
-      "credits": "1000000"
-    },
-    {
-      "address": "yj86W4svnFKBuVrXRTiW7i6HdFmcSYoZ4t",
+      "platformAddress": {
+        "base58": "yRpNvoc3hd66c3rNrPRGubVd9vGUoAVpZV",
+        "bech32m": "tdashevo1qq79z66rh34l4u2axlz3jv34zwshggnenut9k093"
+      },
       "credits": "1000000"
     }
   ],
@@ -3051,7 +2668,10 @@ IDENTITY_CREATE with instantLock
     "inputWitness": [],
     "outputs": [
         {
-            "address": "yTdAgPuFgiByksqV1Hhwgxbw3EdJRKQBwb",
+            "platformAddress": {
+              "base58": "yRpNvoc3hd66c3rNrPRGubVd9vGUoAVpZV",
+              "bech32m": "tdashevo1qq79z66rh34l4u2axlz3jv34zwshggnenut9k093"
+            },
             "credits": "0"
         }
     ],
@@ -3072,7 +2692,10 @@ IDENTITY_CREATE with instantLock
     "userFeeIncrease": 0,
     "inputs": [
         {
-            "address": "yZZkv2xhfqoXMgWEDvog9U65c17RzZLrbV",
+            "platformAddress": {
+              "base58": "yRpNvoc3hd66c3rNrPRGubVd9vGUoAVpZV",
+              "bech32m": "tdashevo1qq79z66rh34l4u2axlz3jv34zwshggnenut9k093"
+            },
             "credits": "250000000000",
             "nonce": "5"
         }
