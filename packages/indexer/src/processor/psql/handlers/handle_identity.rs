@@ -6,11 +6,15 @@ use dashcore_rpc::RpcApi;
 use deadpool_postgres::Transaction;
 use dpp::identity::state_transition::AssetLockProved;
 use dpp::prelude::AssetLockProof;
+use dpp::state_transition::identity_create_from_addresses_transition::IdentityCreateFromAddressesTransition;
 use dpp::state_transition::identity_create_transition::IdentityCreateTransition;
+use dpp::state_transition::identity_credit_transfer_to_addresses_transition::IdentityCreditTransferToAddressesTransition;
 use dpp::state_transition::identity_credit_transfer_transition::IdentityCreditTransferTransition;
 use dpp::state_transition::identity_credit_withdrawal_transition::IdentityCreditWithdrawalTransition;
+use dpp::state_transition::identity_topup_from_addresses_transition::IdentityTopUpFromAddressesTransition;
 use dpp::state_transition::identity_topup_transition::IdentityTopUpTransition;
 use dpp::state_transition::identity_update_transition::IdentityUpdateTransition;
+use dpp::state_transition::StateTransitionIdentityIdFromInputs;
 
 impl PSQLProcessor {
     pub async fn handle_identity_create(
@@ -109,6 +113,56 @@ impl PSQLProcessor {
     pub async fn handle_identity_credit_transfer(
         &self,
         state_transition: IdentityCreditTransferTransition,
+        st_hash: String,
+        sql_transaction: &Transaction<'_>,
+    ) -> () {
+        let transfer = Transfer::from(state_transition);
+
+        self.dao
+            .create_transfer(transfer, st_hash.clone(), sql_transaction)
+            .await
+            .unwrap();
+    }
+
+    pub async fn handle_identity_credit_transfer_to_address(
+        &self,
+        state_transition: IdentityCreditTransferToAddressesTransition,
+        st_hash: String,
+        sql_transaction: &Transaction<'_>,
+    ) -> () {
+        let transfer = Transfer::from(state_transition);
+
+        self.dao
+            .create_transfer(transfer, st_hash.clone(), sql_transaction)
+            .await
+            .unwrap();
+    }
+
+    pub async fn handle_identity_create_from_address(
+        &self,
+        state_transition: IdentityCreateFromAddressesTransition,
+        st_hash: String,
+        sql_transaction: &Transaction<'_>,
+    ) -> () {
+        let identifier = state_transition.identity_id_from_inputs().unwrap();
+
+        let identity = Identity {
+            identifier,
+            owner: identifier,
+            revision: 0u64,
+            balance: None,
+            is_system: false,
+        };
+
+        self.dao
+            .create_identity(identity, Some(st_hash.clone()), sql_transaction)
+            .await
+            .unwrap();
+    }
+
+    pub async fn handle_identity_top_up_from_address(
+        &self,
+        state_transition: IdentityTopUpFromAddressesTransition,
         st_hash: String,
         sql_transaction: &Transaction<'_>,
     ) -> () {

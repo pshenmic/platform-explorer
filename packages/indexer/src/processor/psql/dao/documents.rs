@@ -5,6 +5,7 @@ use dpp::identifier::Identifier;
 use dpp::platform_value::string_encoding::Encoding::Base58;
 use serde_json::{Map, Number, Value};
 use tokio_postgres::Row;
+use crate::utils::escape_null_character_json_object;
 
 impl PostgresDAO {
     pub async fn create_document(
@@ -17,7 +18,16 @@ impl PostgresDAO {
         let revision = document.revision;
         let revision_i32 = revision as i32;
         let transition_type = document.transition_type as i64;
-        let data = document.data;
+        let raw_data = document.data;
+        let normal_data = match raw_data.clone() {
+            None => None,
+            Some(data) => {
+                let mut cloned_data = data.clone();
+                escape_null_character_json_object(&mut cloned_data);
+
+                Some(cloned_data)
+            }
+        };
         let prefunded_voting_balance: Option<Value> =
             document
                 .prefunded_voting_balance
@@ -78,7 +88,7 @@ impl PostgresDAO {
                     &transition_type,
                     &owner.to_string(Base58),
                     &revision_i32,
-                    &data,
+                    &normal_data,
                     &document.deleted,
                     &st_hash,
                     &data_contract_id,

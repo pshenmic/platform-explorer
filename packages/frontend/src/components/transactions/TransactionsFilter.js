@@ -45,6 +45,36 @@ const transactionOptions = [
     label: <TypeBadge type={'MASTERNODE_VOTE'} />,
     title: TransactionTypesInfo.MASTERNODE_VOTE.title,
     value: 'MASTERNODE_VOTE'
+  },
+  {
+    label: <TypeBadge type={'IDENTITY_CREDIT_TRANSFER_TO_ADDRESS'} />,
+    title: TransactionTypesInfo.IDENTITY_CREDIT_TRANSFER_TO_ADDRESS.title,
+    value: 'IDENTITY_CREDIT_TRANSFER_TO_ADDRESS'
+  },
+  {
+    label: <TypeBadge type={'IDENTITY_CREATE_FROM_ADDRESSES'} />,
+    title: TransactionTypesInfo.IDENTITY_CREATE_FROM_ADDRESSES.title,
+    value: 'IDENTITY_CREATE_FROM_ADDRESSES'
+  },
+  {
+    label: <TypeBadge type={'IDENTITY_TOP_UP_FROM_ADDRESSES'} />,
+    title: TransactionTypesInfo.IDENTITY_TOP_UP_FROM_ADDRESSES.title,
+    value: 'IDENTITY_TOP_UP_FROM_ADDRESSES'
+  },
+  {
+    label: <TypeBadge type={'ADDRESS_FUNDS_TRANSFER'} />,
+    title: TransactionTypesInfo.ADDRESS_FUNDS_TRANSFER.title,
+    value: 'ADDRESS_FUNDS_TRANSFER'
+  },
+  {
+    label: <TypeBadge type={'ADDRESS_FUNDING_FROM_ASSET_LOCK'} />,
+    title: TransactionTypesInfo.ADDRESS_FUNDING_FROM_ASSET_LOCK.title,
+    value: 'ADDRESS_FUNDING_FROM_ASSET_LOCK'
+  },
+  {
+    label: <TypeBadge type={'ADDRESS_CREDIT_WITHDRAWAL'} />,
+    title: TransactionTypesInfo.ADDRESS_CREDIT_WITHDRAWAL.title,
+    value: 'ADDRESS_CREDIT_WITHDRAWAL'
   }
 ]
 

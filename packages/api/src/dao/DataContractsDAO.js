@@ -306,12 +306,8 @@ module.exports = class DataContractsDAO {
 
       groups = (config ?? { groups: undefined }).groups
 
-      const tokenPositions = Object.keys(config?.tokens ?? {})
-
-      tokens = await Promise.all(tokenPositions.map(async (tokenPosition) => {
-        const tokenConfig = config.tokens[tokenPosition]
-
-        const tokenIdentifier = TokenConfigurationWASM.calculateTokenId(new IdentifierWASM(identifier), Number(tokenPosition))
+      tokens = await Promise.all(config?.tokens.map(async (tokenConfig) => {
+        const tokenIdentifier = TokenConfigurationWASM.calculateTokenId(new IdentifierWASM(identifier), Number(tokenConfig.position))
 
         const tokenTotalSupply = await this.sdk.tokens.getTokenTotalSupply(tokenIdentifier.base58())
 
@@ -319,22 +315,22 @@ module.exports = class DataContractsDAO {
           identifier: tokenIdentifier.base58(),
           dataContractIdentifier: identifier,
           owner: dataContract.owner,
-          position: Number(tokenPosition),
+          position: tokenConfig.position,
           totalSupply: tokenTotalSupply?.totalSystemAmount.toString(),
-          description: tokenConfig?.description,
-          localizations: tokenConfig?.conventions?.localizations,
-          decimals: tokenConfig?.conventions?.decimals,
-          baseSupply: tokenConfig?.baseSupply.toString(),
-          maxSupply: tokenConfig?.maxSupply?.toString(),
-          mintable: tokenConfig?.manualMintingRules?.authorizedToMakeChange.getTakerType() !== 'NoOne',
-          burnable: tokenConfig?.manualBurningRules?.authorizedToMakeChange.getTakerType() !== 'NoOne',
-          freezable: tokenConfig?.freezeRules?.authorizedToMakeChange.getTakerType() !== 'NoOne',
-          changeMaxSupply: tokenConfig?.maxSupplyChangeRules?.authorizedToMakeChange.getTakerType() !== 'NoOne',
-          unfreezable: tokenConfig?.unfreezeRules?.authorizedToMakeChange.getTakerType() !== 'NoOne',
-          destroyable: tokenConfig?.destroyFrozenFundsRules?.authorizedToMakeChange.getTakerType() !== 'NoOne',
-          allowedEmergencyActions: tokenConfig?.emergencyActionRules?.authorizedToMakeChange.getTakerType() !== 'NoOne',
-          distributionType: tokenConfig?.distributionRules?.perpetualDistribution?.distributionType?.getDistribution()?.constructor?.name?.slice(0, -4) ?? null,
-          mainGroup: tokenConfig?.mainControlGroup
+          description: tokenConfig.tokenConfiguration?.description,
+          localizations: tokenConfig.tokenConfiguration?.conventions?.localizations,
+          decimals: tokenConfig.tokenConfiguration?.conventions?.decimals,
+          baseSupply: tokenConfig.tokenConfiguration?.baseSupply.toString(),
+          maxSupply: tokenConfig.tokenConfiguration?.maxSupply?.toString(),
+          mintable: tokenConfig.tokenConfiguration?.manualMintingRules?.authorizedToMakeChange.getTakerType() !== 'NoOne',
+          burnable: tokenConfig.tokenConfiguration?.manualBurningRules?.authorizedToMakeChange.getTakerType() !== 'NoOne',
+          freezable: tokenConfig.tokenConfiguration?.freezeRules?.authorizedToMakeChange.getTakerType() !== 'NoOne',
+          changeMaxSupply: tokenConfig.tokenConfiguration?.maxSupplyChangeRules?.authorizedToMakeChange.getTakerType() !== 'NoOne',
+          unfreezable: tokenConfig.tokenConfiguration?.unfreezeRules?.authorizedToMakeChange.getTakerType() !== 'NoOne',
+          destroyable: tokenConfig.tokenConfiguration?.destroyFrozenFundsRules?.authorizedToMakeChange.getTakerType() !== 'NoOne',
+          allowedEmergencyActions: tokenConfig.tokenConfiguration?.emergencyActionRules?.authorizedToMakeChange.getTakerType() !== 'NoOne',
+          distributionType: tokenConfig.tokenConfiguration?.distributionRules?.perpetualDistribution?.distributionType?.getDistribution()?.constructor?.name?.slice(0, -4) ?? null,
+          mainGroup: tokenConfig.tokenConfiguration?.mainControlGroup
         })
       }))
     } catch (error) {
@@ -345,7 +341,7 @@ module.exports = class DataContractsDAO {
       ...dataContract,
       groups,
       tokens,
-      tokensCount: tokens?.length
+      tokensCount: tokens?.length ?? 0
     })
   }
 

@@ -7,7 +7,10 @@ import {
   DataContractUpdate,
   IdentityUpdate,
   IdentityCreditWithdrawal,
-  IdentityCreditTransfer
+  IdentityCreditTransfer,
+  AddressFundsTransfer,
+  AddressFundingFromAssetLock,
+  AddressCreditWithdrawal
 } from './variants'
 
 export const TransactionType = ({ typeString: type, ...other }) => {
@@ -47,5 +50,33 @@ export const TransactionType = ({ typeString: type, ...other }) => {
 
   if (type === 'IDENTITY_CREDIT_TRANSFER') {
     return <IdentityCreditTransfer {...other} />
+  }
+
+  if (type === 'IDENTITY_CREDIT_TRANSFER_TO_ADDRESS') {
+    return <>IDENTITY_CREDIT_TRANSFER_TO_ADDRESS</>
+  }
+
+  if (type === 'IDENTITY_CREATE_FROM_ADDRESSES') {
+    return <>IDENTITY_CREATE_FROM_ADDRESSES</>
+  }
+
+  if (type === 'IDENTITY_TOP_UP_FROM_ADDRESSES') {
+    return <>IDENTITY_TOP_UP_FROM_ADDRESSES</>
+  }
+
+  if (type === 'IDENTITY_TOP_UP_FROM_ADDRESSES') {
+    return <>IDENTITY_TOP_UP_FROM_ADDRESSES</>
+  }
+
+  if (type === 'ADDRESS_FUNDS_TRANSFER') {
+    return <AddressFundsTransfer {...other} />
+  }
+
+  if (type === 'ADDRESS_FUNDING_FROM_ASSET_LOCK') {
+    return <AddressFundingFromAssetLock {...other} />
+  }
+
+  if (type === 'ADDRESS_CREDIT_WITHDRAWAL') {
+    return <AddressCreditWithdrawal {...other} />
   }
 }
