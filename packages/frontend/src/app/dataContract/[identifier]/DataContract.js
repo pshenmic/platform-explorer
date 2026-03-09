@@ -111,7 +111,6 @@ function DataContract ({ identifier }) {
   const txPagination = transactions.data?.pagination
   const docPagination = transactions.data?.pagination
 
-
   useEffect(() => {
     setBreadcrumbs([
       { label: 'Home', path: '/' },
