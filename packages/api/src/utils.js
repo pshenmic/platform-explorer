@@ -1262,7 +1262,7 @@ const decodeStateTransition = async (base64) => {
 
       const decodedTransaction =
         assetLockProof.getLockType() === 'Instant'
-          ? dashcorelib.Transaction(Buffer.from(assetLockProof.getInstantLockProof().getTransaction()))
+          ? Transaction.fromBytes(assetLockProof.getInstantLockProof().getTransaction())
           : null
 
       decoded.assetLockProof = {
