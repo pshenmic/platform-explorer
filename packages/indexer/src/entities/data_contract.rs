@@ -180,15 +180,14 @@ impl From<SystemDataContract> for DataContract {
 impl From<Row> for DataContract {
     fn from(row: Row) -> Self {
         let id: i32 = row.get(0);
-        let name: Option<String> = row.get(1);
-        let owner: String = row.get(2);
-        let identifier: String = row.get(3);
-        let version: i32 = row.get(4);
-        let is_system: bool = row.get(5);
+        let owner: String = row.get(1);
+        let identifier: String = row.get(2);
+        let version: i32 = row.get(3);
+        let is_system: bool = row.get(4);
 
         return DataContract {
             id: Some(id as u32),
-            name,
+            name: None,
             owner: Identifier::from_string(owner.trim(), Base58).unwrap(),
             identifier: Identifier::from_string(identifier.trim(), Base58).unwrap(),
             schema: None,

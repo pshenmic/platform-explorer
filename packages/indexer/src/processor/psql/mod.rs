@@ -86,6 +86,18 @@ impl PSQLProcessor {
             .create_data_contract(data_contract.clone(), None, sql_transaction)
             .await;
 
+        if data_contract.name.is_some() {
+            self.dao
+                .set_data_contract_name(
+                    data_contract.name.clone().unwrap(),
+                    None,
+                    data_contract.clone(),
+                    sql_transaction,
+                )
+                .await
+                .unwrap();
+        }
+
         self.handle_data_contract_transition(None, data_contract.identifier, sql_transaction)
             .await;
 

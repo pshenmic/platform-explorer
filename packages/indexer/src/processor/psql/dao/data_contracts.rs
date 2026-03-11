@@ -1,4 +1,5 @@
 use crate::entities::data_contract::DataContract;
+use crate::entities::document::Document;
 use crate::processor::psql::PostgresDAO;
 use deadpool_postgres::{PoolError, Transaction};
 use dpp::identifier::Identifier;
@@ -13,7 +14,6 @@ impl PostgresDAO {
         sql_transaction: &Transaction<'_>,
     ) {
         let id = data_contract.identifier;
-        let name = data_contract.name;
         let owner = data_contract.owner;
 
         let schema = data_contract.schema;
@@ -30,8 +30,8 @@ impl PostgresDAO {
         let description = data_contract.description;
         let keywords = data_contract.keywords;
 
-        let query = "INSERT INTO data_contracts(identifier, name, owner, schema, version, \
-        state_transition_hash, is_system, format_version, description, keywords) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10);";
+        let query = "INSERT INTO data_contracts(identifier, owner, schema, version, \
+        state_transition_hash, is_system, format_version, description, keywords) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9);";
 
         let stmt = sql_transaction.prepare_cached(query).await.unwrap();
 
@@ -40,7 +40,6 @@ impl PostgresDAO {
                 &stmt,
                 &[
                     &id.to_string(Base58),
-                    &name,
                     &owner.to_string(Base58),
                     &schema_decoded,
                     &version,
@@ -63,27 +62,31 @@ impl PostgresDAO {
 
     pub async fn set_data_contract_name(
         &self,
-        data_contract: DataContract,
         name: String,
+        document: Option<Document>,
+        data_contract: DataContract,
         sql_transaction: &Transaction<'_>,
     ) -> Result<(), PoolError> {
-        let stmt = sql_transaction
-            .prepare_cached(
-                "UPDATE data_contracts set name = $1 \
-        WHERE identifier = $2;",
+        let document_identifier = document.map(|doc| doc.identifier.to_string(Base58));
+        let data_contract_identifier = data_contract.identifier.to_string(Base58);
+
+        let query = "INSERT INTO data_contract_names(name, document_identifier, data_contract_identifier) VALUES ($1, $2, $3);";
+
+        let stmt = sql_transaction.prepare_cached(query).await.unwrap();
+
+        sql_transaction
+            .execute(
+                &stmt,
+                &[&name, &document_identifier, &data_contract_identifier],
             )
             .await
             .unwrap();
 
-        sql_transaction
-            .execute(&stmt, &[&name, &data_contract.identifier.to_string(Base58)])
-            .await
-            .unwrap();
-
         println!(
-            "DataContract {} was verified with the name {}",
-            &data_contract.identifier.to_string(Base58),
-            &name
+            "DataContract {} was verified with the name {} at document {}",
+            &data_contract_identifier,
+            &name,
+            &document_identifier.unwrap_or("none".to_string())
         );
 
         Ok(())
@@ -126,7 +129,7 @@ impl PostgresDAO {
     ) -> Result<Option<DataContract>, PoolError> {
         let stmt = sql_transaction
             .prepare_cached(
-                "SELECT id,name,owner,identifier,version,is_system \
+                "SELECT id, owner, identifier, version, is_system \
         FROM data_contracts where identifier = $1 ORDER by version DESC LIMIT 1;",
             )
             .await

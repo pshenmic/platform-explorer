@@ -142,8 +142,9 @@ impl PSQLProcessor {
 
                     self.dao
                         .set_data_contract_name(
-                            data_contract.clone(),
                             String::from(data_contract_name),
+                            Some(document.clone()),
+                            data_contract.clone(),
                             sql_transaction,
                         )
                         .await
