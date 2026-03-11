@@ -13,6 +13,7 @@
  * @param masternodeVotesController {MasternodeVotesController}
  * @param contestedResourcesController {ContestedResourcesController}
  * @param tokensController {TokensController}
+ * @param platformAddressesController {PlatformAddressesController}
  */
 module.exports = ({
   fastify,
@@ -27,7 +28,8 @@ module.exports = ({
   rateController,
   masternodeVotesController,
   contestedResourcesController,
-  tokensController
+  tokensController,
+  platformAddressesController,
 }) => {
   const routes = [
     {
@@ -686,7 +688,24 @@ module.exports = ({
           }
         }
       }
-    }
+    },
+    {
+      path: '/platform/address/:platform_address/info',
+      method: 'GET',
+      handler: platformAddressesController.getPlatformAddressInfo,
+      schema: {
+        params: {
+          type: 'object',
+          properties: {
+            platform_address: {
+              type: 'string',
+              maxLength: 100,
+              pattern: '^[A-Za-z0-9]+$',
+            }
+          }
+        }
+      }
+    },
   ]
 
   routes.forEach(
