@@ -1,4 +1,5 @@
 use dpp::address_funds::PlatformAddress;
+use dpp::dashcore::TxOut;
 use dpp::state_transition::address_credit_withdrawal_transition::accessors::AddressCreditWithdrawalTransitionAccessorsV0;
 use dpp::state_transition::address_credit_withdrawal_transition::AddressCreditWithdrawalTransition;
 use dpp::state_transition::address_funding_from_asset_lock_transition::accessors::AddressFundingFromAssetLockTransitionAccessorsV0;
@@ -18,6 +19,7 @@ pub struct PlatformAddressTransition {
     pub recipient: Option<PlatformAddress>,
     pub transition_hash: String,
     pub transition_type: i32,
+    pub amount: u64,
 }
 
 impl PlatformAddressTransition {
@@ -29,11 +31,12 @@ impl PlatformAddressTransition {
         transition
             .recipient_addresses()
             .iter()
-            .map(|(addr, _)| PlatformAddressTransition {
+            .map(|(addr, amount)| PlatformAddressTransition {
                 transition_type,
                 transition_hash: transition_hash.clone(),
                 recipient: Some(addr.clone()),
                 sender: None,
+                amount: amount.clone(),
             })
             .collect()
     }
@@ -47,11 +50,12 @@ impl PlatformAddressTransition {
         transition
             .inputs()
             .iter()
-            .map(|(addr, _)| PlatformAddressTransition {
+            .map(|(addr, (_, amount))| PlatformAddressTransition {
                 transition_type,
                 transition_hash: transition_hash.clone(),
                 sender: Some(addr.clone()),
                 recipient: None,
+                amount: amount.clone(),
             })
             .collect()
     }
@@ -65,25 +69,29 @@ impl PlatformAddressTransition {
         let inputs = transition.inputs();
         let output_address: Option<PlatformAddress> =
             transition.output().map(|(addr, _)| addr.clone());
+        let output_amount: Option<u64> = transition.output().map(|(_, amount)| amount.clone());
 
         let mut address_transitions: Vec<PlatformAddressTransition> =
             Vec::with_capacity(inputs.len() + (output_address.is_some() as usize));
 
-        address_transitions.extend(inputs.iter().map(|(addr, _)| PlatformAddressTransition {
-            transition_type,
-            transition_hash: transition_hash.clone(),
-            sender: Some(addr.clone()),
-            recipient: None,
+        address_transitions.extend(inputs.iter().map(|(addr, (_, amount))| {
+            PlatformAddressTransition {
+                transition_type,
+                transition_hash: transition_hash.clone(),
+                sender: Some(addr.clone()),
+                recipient: None,
+                amount: amount.clone(),
+            }
         }));
 
-        match output_address {
-            Some(addr) => address_transitions.push(PlatformAddressTransition {
+        if let (Some(addr), Some(amount)) = (output_address, output_amount) {
+            address_transitions.push(PlatformAddressTransition {
                 transition_type,
                 transition_hash: transition_hash.clone(),
                 sender: None,
                 recipient: Some(addr.clone()),
-            }),
-            None => {}
+                amount: amount.clone(),
+            })
         }
 
         address_transitions
@@ -100,18 +108,24 @@ impl PlatformAddressTransition {
 
         let mut address_transitions = Vec::with_capacity(inputs.len() + outputs.len());
 
-        address_transitions.extend(inputs.iter().map(|(addr, _)| PlatformAddressTransition {
-            transition_type,
-            transition_hash: transition_hash.clone(),
-            sender: Some(addr.clone()),
-            recipient: None,
+        address_transitions.extend(inputs.iter().map(|(addr, (_, amount))| {
+            PlatformAddressTransition {
+                transition_type,
+                transition_hash: transition_hash.clone(),
+                sender: Some(addr.clone()),
+                recipient: None,
+                amount: amount.clone(),
+            }
         }));
 
-        address_transitions.extend(outputs.iter().map(|(addr, _)| PlatformAddressTransition {
-            transition_type,
-            transition_hash: transition_hash.clone(),
-            sender: None,
-            recipient: Some(addr.clone()),
+        address_transitions.extend(outputs.iter().map(|(addr, amount)| {
+            PlatformAddressTransition {
+                transition_type,
+                transition_hash: transition_hash.clone(),
+                sender: None,
+                recipient: Some(addr.clone()),
+                amount: amount.clone(),
+            }
         }));
 
         address_transitions
@@ -120,26 +134,44 @@ impl PlatformAddressTransition {
     pub fn from_address_funding_from_asset_lock(
         transition: AddressFundingFromAssetLockTransition,
         transition_hash: String,
+        tx_out: TxOut,
     ) -> Vec<PlatformAddressTransition> {
         let transition_type: i32 = transition.state_transition_type() as _;
 
         let inputs = transition.inputs();
         let outputs = transition.outputs();
 
+        // duffs to credits
+        let asset_lock_credits = tx_out.value * 1000;
+
+        let inputs_amount: u64 = inputs.values().map(|(_, credits)| credits.clone()).sum();
+
+        let total_in = asset_lock_credits + inputs_amount;
+
+        let explicit_outputs_amount: u64 = outputs.values().flatten().sum();
+
+        let remainder_amount = total_in - explicit_outputs_amount;
+
         let mut address_transitions = Vec::with_capacity(inputs.len() + outputs.len());
 
-        address_transitions.extend(inputs.iter().map(|(addr, _)| PlatformAddressTransition {
-            transition_type,
-            transition_hash: transition_hash.clone(),
-            sender: Some(addr.clone()),
-            recipient: None,
+        address_transitions.extend(inputs.iter().map(|(addr, (_, amount))| {
+            PlatformAddressTransition {
+                transition_type,
+                transition_hash: transition_hash.clone(),
+                sender: Some(addr.clone()),
+                recipient: None,
+                amount: amount.clone(),
+            }
         }));
 
-        address_transitions.extend(outputs.iter().map(|(addr, _)| PlatformAddressTransition {
-            transition_type,
-            transition_hash: transition_hash.clone(),
-            sender: None,
-            recipient: Some(addr.clone()),
+        address_transitions.extend(outputs.iter().map(|(addr, amount_opt)| {
+            PlatformAddressTransition {
+                transition_type,
+                transition_hash: transition_hash.clone(),
+                sender: None,
+                recipient: Some(addr.clone()),
+                amount: amount_opt.unwrap_or(remainder_amount),
+            }
         }));
 
         address_transitions
@@ -152,27 +184,28 @@ impl PlatformAddressTransition {
         let transition_type: i32 = transition.state_transition_type() as _;
 
         let inputs = transition.inputs();
-        let output_address: Option<PlatformAddress> =
-            transition.output().map(|(addr, _)| addr.clone());
+        let output = transition.output();
 
-        let mut address_transitions: Vec<PlatformAddressTransition> =
-            Vec::with_capacity(inputs.len() + (output_address.is_some() as usize));
+        let mut address_transitions = Vec::with_capacity(inputs.len() + output.is_some() as usize);
 
-        address_transitions.extend(inputs.iter().map(|(addr, _)| PlatformAddressTransition {
-            transition_type,
-            transition_hash: transition_hash.clone(),
-            sender: Some(addr.clone()),
-            recipient: None,
+        address_transitions.extend(inputs.iter().map(|(addr, (_, amount))| {
+            PlatformAddressTransition {
+                transition_type,
+                transition_hash: transition_hash.clone(),
+                sender: Some(addr.clone()),
+                recipient: None,
+                amount: amount.clone(),
+            }
         }));
 
-        match output_address {
-            Some(addr) => address_transitions.push(PlatformAddressTransition {
+        if let Some((addr, amount)) = output {
+            address_transitions.push(PlatformAddressTransition {
                 transition_type,
                 transition_hash: transition_hash.clone(),
                 sender: None,
                 recipient: Some(addr.clone()),
-            }),
-            None => {}
+                amount: amount.clone(),
+            });
         }
 
         address_transitions

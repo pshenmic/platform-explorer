@@ -45,18 +45,19 @@ impl PostgresDAO {
             .get_state_transition_id(transition.transition_hash, sql_transaction)
             .await?;
         let transition_type = transition.transition_type;
+        let transition_amount = transition.amount as i64;
 
         let stmt = sql_transaction
             .prepare_cached(
                 "INSERT INTO platform_address_transitions(sender_id, recipient_id,\
-            state_transition_id, state_transition_type) VALUES ($1, $2, $3, $4);",
+            state_transition_id, state_transition_type, amount) VALUES ($1, $2, $3, $4, $5);",
             )
             .await?;
 
         sql_transaction
             .execute(
                 &stmt,
-                &[&sender_id, &recipient_id, &transition_id, &transition_type],
+                &[&sender_id, &recipient_id, &transition_id, &transition_type, &transition_amount],
             )
             .await?;
 
