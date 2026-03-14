@@ -29,4 +29,17 @@ module.exports = class PlatformAddressesController {
     response.send(platformAddresses)
   }
 
+  getPlatformAddressTransition = async (request, response) => {
+    const {
+      page = 1,
+      limit = 10,
+      order = 'asc',
+    } = request.query
+
+    const {platform_address: platformAddress} = request.params
+
+    const transitions = await this.platformAddressesDAO.getPlatformAddressTransitions(platformAddress, Number(page ?? 0), Number(limit ?? 0), order)
+
+    response.send(transitions)
+  }
 }

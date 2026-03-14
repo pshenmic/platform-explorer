@@ -707,6 +707,24 @@ module.exports = ({
       }
     },
     {
+      path: '/platform/address/:platform_address/transitions',
+      method: 'GET',
+      handler: platformAddressesController.getPlatformAddressTransition,
+      schema: {
+        querystring: { $ref: 'paginationOptions#' },
+        params: {
+          type: 'object',
+          properties: {
+            platform_address: {
+              type: 'string',
+              maxLength: 100,
+              pattern: '^[A-Za-z0-9]+$',
+            }
+          }
+        }
+      }
+    },
+    {
       path: '/platform/addresses',
       method: 'GET',
       handler: platformAddressesController.getPlatformAddresses,
