@@ -29,7 +29,7 @@ module.exports = ({
   masternodeVotesController,
   contestedResourcesController,
   tokensController,
-  platformAddressesController,
+  platformAddressesController
 }) => {
   const routes = [
     {
@@ -700,7 +700,7 @@ module.exports = ({
             platform_address: {
               type: 'string',
               maxLength: 100,
-              pattern: '^[A-Za-z0-9]+$',
+              pattern: '^[A-Za-z0-9]+$'
             }
           }
         }
@@ -718,7 +718,7 @@ module.exports = ({
             platform_address: {
               type: 'string',
               maxLength: 100,
-              pattern: '^[A-Za-z0-9]+$',
+              pattern: '^[A-Za-z0-9]+$'
             }
           }
         }
@@ -731,7 +731,7 @@ module.exports = ({
       schema: {
         querystring: { $ref: 'paginationOptions#' }
       }
-    },
+    }
   ]
 
   routes.forEach(

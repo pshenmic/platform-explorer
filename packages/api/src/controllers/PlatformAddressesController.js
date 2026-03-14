@@ -1,17 +1,17 @@
-const PlatformAddressesDAO = require("../dao/PlatformAddressesDAO");
+const PlatformAddressesDAO = require('../dao/PlatformAddressesDAO')
 
 module.exports = class PlatformAddressesController {
-  constructor(knex, sdk) {
+  constructor (knex, sdk) {
     this.platformAddressesDAO = new PlatformAddressesDAO(knex, sdk)
   }
 
   getPlatformAddressInfo = async (request, response) => {
-    const {platform_address: platformAddress} = request.params
+    const { platform_address: platformAddress } = request.params
 
     const platformAddressInfo = await this.platformAddressesDAO.getPlatformAddressInfo(platformAddress)
 
     if (!platformAddressInfo) {
-      return response.status(404).send({message: 'not found'})
+      return response.status(404).send({ message: 'not found' })
     }
 
     response.send(platformAddressInfo)
@@ -21,10 +21,10 @@ module.exports = class PlatformAddressesController {
     const {
       page = 1,
       limit = 10,
-      order = 'asc',
+      order = 'asc'
     } = request.query
 
-    const platformAddresses = await this.platformAddressesDAO.getPlatformAddresses(Number(page ?? 0), Number(limit ?? 0))
+    const platformAddresses = await this.platformAddressesDAO.getPlatformAddresses(Number(page ?? 0), Number(limit ?? 0), order)
 
     response.send(platformAddresses)
   }
@@ -33,10 +33,10 @@ module.exports = class PlatformAddressesController {
     const {
       page = 1,
       limit = 10,
-      order = 'asc',
+      order = 'asc'
     } = request.query
 
-    const {platform_address: platformAddress} = request.params
+    const { platform_address: platformAddress } = request.params
 
     const transitions = await this.platformAddressesDAO.getPlatformAddressTransitions(platformAddress, Number(page ?? 0), Number(limit ?? 0), order)
 

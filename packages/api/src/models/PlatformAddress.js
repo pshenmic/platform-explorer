@@ -9,7 +9,7 @@ module.exports = class PlatformAddress {
   totalIncomingAmount
   totalOutgoingAmount
 
-  constructor(base58Address, bech32mAddress, totalTxs, incomingTxs, outgoingTxs, totalIncomingAmount, totalOutgoingAmount, nonce, balance) {
+  constructor (base58Address, bech32mAddress, totalTxs, incomingTxs, outgoingTxs, totalIncomingAmount, totalOutgoingAmount, nonce, balance) {
     this.base58Address = base58Address ?? null
     this.bech32mAddress = bech32mAddress ?? null
     this.totalTxs = totalTxs ?? null
@@ -26,7 +26,7 @@ module.exports = class PlatformAddress {
     return new PlatformAddress(base58_address, bech32m_address, Number(total_txs), Number(incoming_txs), Number(outgoing_txs), total_incoming_amount, total_outgoing_amount)
   }
 
-  static fromObject({base58Address, bech32mAddress, totalTxs, incomingTxs, outgoingTxs, nonce, balance, totalIncomingAmount, totalOutgoingAmount}) {
+  static fromObject ({ base58Address, bech32mAddress, totalTxs, incomingTxs, outgoingTxs, nonce, balance, totalIncomingAmount, totalOutgoingAmount }) {
     return new PlatformAddress(base58Address, bech32mAddress, totalTxs, incomingTxs, outgoingTxs, totalIncomingAmount, totalOutgoingAmount, nonce, balance)
   }
 }

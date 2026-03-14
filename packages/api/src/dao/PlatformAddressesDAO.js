@@ -1,10 +1,10 @@
-const PlatformAddress = require("../models/PlatformAddress");
-const {NETWORK} = require("../constants");
-const PaginatedResultSet = require("../models/PaginatedResultSet");
-const Transaction = require("../models/Transaction");
-const {getAliasDocumentForIdentifiers, getAliasFromDocument} = require("../utils");
+const PlatformAddress = require('../models/PlatformAddress')
+const { NETWORK } = require('../constants')
+const PaginatedResultSet = require('../models/PaginatedResultSet')
+const Transaction = require('../models/Transaction')
+const { getAliasDocumentForIdentifiers, getAliasFromDocument } = require('../utils')
 module.exports = class PlatformAddressesDAO {
-  constructor(knex, sdk) {
+  constructor (knex, sdk) {
     this.knex = knex
     this.sdk = sdk
   }
@@ -68,7 +68,7 @@ module.exports = class PlatformAddressesDAO {
     return PlatformAddress.fromObject({
       ...platformAddressInfo,
       nonce: platformAddressInfoWithBalance.nonce,
-      balance: platformAddressInfoWithBalance.balance.toString(),
+      balance: platformAddressInfoWithBalance.balance.toString()
     })
   }
 
@@ -98,7 +98,7 @@ module.exports = class PlatformAddressesDAO {
       addressesInfo.map(info => (
         [info.address.toBech32m(NETWORK), {
           nonce: info.nonce,
-          balance: info.balance.toString(),
+          balance: info.balance.toString()
         }]))
     )
 
@@ -108,7 +108,7 @@ module.exports = class PlatformAddressesDAO {
       return PlatformAddress.fromObject({
         ...addr,
         balance: addressInfo?.balance ?? undefined,
-        nonce: addressInfo?.nonce ?? undefined,
+        nonce: addressInfo?.nonce ?? undefined
       })
     })
 
@@ -161,7 +161,7 @@ module.exports = class PlatformAddressesDAO {
       .leftJoin('state_transitions', 'state_transitions.id', 'state_transition_id')
       .leftJoin('blocks', 'state_transitions.block_height', 'blocks.height')
 
-    const identifiers = rows.filter(row=>row.owner!=null).map(row => row.owner?.trim())
+    const identifiers = rows.filter(row => row.owner != null).map(row => row.owner?.trim())
 
     const aliasDocuments = await getAliasDocumentForIdentifiers(identifiers, this.sdk)
 
