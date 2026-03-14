@@ -57,7 +57,13 @@ impl PostgresDAO {
         sql_transaction
             .execute(
                 &stmt,
-                &[&sender_id, &recipient_id, &transition_id, &transition_type, &transition_amount],
+                &[
+                    &sender_id,
+                    &recipient_id,
+                    &transition_id,
+                    &transition_type,
+                    &transition_amount,
+                ],
             )
             .await?;
 

@@ -1,4 +1,3 @@
-pub mod platform_address_transition;
 pub mod block;
 pub mod block_header;
 pub mod data_contract;
@@ -6,6 +5,7 @@ pub mod document;
 pub mod identity;
 pub mod identity_token;
 pub mod masternode_vote;
+pub mod platform_address_transition;
 pub mod token_config;
 pub mod transfer;
 pub mod validator;
