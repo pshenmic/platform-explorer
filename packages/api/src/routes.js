@@ -706,6 +706,14 @@ module.exports = ({
         }
       }
     },
+    {
+      path: '/platform/addresses',
+      method: 'GET',
+      handler: platformAddressesController.getPlatformAddresses,
+      schema: {
+        querystring: { $ref: 'paginationOptions#' }
+      }
+    },
   ]
 
   routes.forEach(

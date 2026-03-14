@@ -1,4 +1,6 @@
 const PlatformAddress = require("../models/PlatformAddress");
+const {NETWORK} = require("../constants");
+const PaginatedResultSet = require("../models/PaginatedResultSet");
 module.exports = class PlatformAddressesDAO {
   constructor(knex, sdk) {
     this.knex = knex
@@ -66,5 +68,50 @@ module.exports = class PlatformAddressesDAO {
       nonce: platformAddressInfoWithBalance.nonce,
       balance: platformAddressInfoWithBalance.balance.toString(),
     })
+  }
+
+  getPlatformAddresses = async (page, limit, order) => {
+    const fromRank = (page - 1) * limit
+
+    const countSubquery = this.knex
+      .select(
+        this.knex('platform_addresses')
+          .count('*')
+          .as('total_count')
+      )
+
+    const rows = await this.knex('platform_addresses')
+      .with('count_subquery', countSubquery)
+      .select('address as base58_address', 'bech32m_address')
+      .select(this.knex('count_subquery').select('total_count').as('total_count'))
+      .orderBy('id', order)
+      .offset(fromRank)
+      .limit(limit)
+
+    const platformAddresses = rows.map(PlatformAddress.fromRow)
+    const bech32mAddresses = platformAddresses.map(address => address.bech32mAddress)
+
+    const addressesInfo = await this.sdk.platformAddresses.getAddressesInfos(bech32mAddresses)
+    const addressesInfoJSON = Object.fromEntries(
+      addressesInfo.map(info => (
+        [info.address.toBech32m(NETWORK), {
+          nonce: info.nonce,
+          balance: info.balance.toString(),
+        }]))
+    )
+
+    const resultSet = platformAddresses.map(addr => {
+      const addressInfo = addressesInfoJSON[addr.bech32mAddress]
+
+      return PlatformAddress.fromObject({
+        ...addr,
+        balance: addressInfo?.balance ?? undefined,
+        nonce: addressInfo?.nonce ?? undefined,
+      })
+    })
+
+    const [row] = rows
+
+    return new PaginatedResultSet(resultSet, page, limit, Number(row?.total_count))
   }
 }

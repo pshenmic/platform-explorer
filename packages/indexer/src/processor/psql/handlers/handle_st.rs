@@ -392,11 +392,16 @@ impl PSQLProcessor {
             StateTransition::AddressFundingFromAssetLock(st) => {
                 let asset_lock_amount = match AssetLockProved::asset_lock_proof(&st) {
                     AssetLockProof::Instant(i) => {
-                        i.transaction.output[i.output_index as usize].value
+                        i.transaction
+                            .special_transaction_payload
+                            .clone()
+                            .unwrap()
+                            .to_asset_lock_payload()
+                            .expect("Cannot get asset lock payload for instant lock proof")
+                            .credit_outputs[i.output_index as usize]
+                            .value
                     }
                     AssetLockProof::Chain(c) => {
-                        println!("{}", c.out_point.vout);
-                        println!("{}", c.out_point.txid);
                         let tx = self
                             .dashcore_rpc
                             .get_raw_transaction_info(&c.out_point.txid, None)
