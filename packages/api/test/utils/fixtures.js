@@ -8,7 +8,7 @@ const base58Address = require('./base58address')
 
 const generateHash = () => (crypto.randomBytes(32)).toString('hex').toUpperCase()
 const generateIdentifier = () => base58.encode(crypto.randomBytes(32))
-const generateBech32mAddress = () => bech32mEncode('tdashevo',crypto.randomBytes(20))
+const generateBech32mAddress = () => bech32mEncode('tdashevo', crypto.randomBytes(20))
 const generateBase58Address = () => base58Address(crypto.randomBytes(20))
 
 const fixtures = {
@@ -586,16 +586,16 @@ const fixtures = {
     state_transition_type,
     amount
   }) {
-    if(sender_id == null && recipient_id == null) {
+    if (sender_id == null && recipient_id == null) {
       throw new Error('sender_id or recipient_id must be provided')
     }
-    if(state_transition_id == null) {
+    if (state_transition_id == null) {
       throw new Error('state_transition_id must be provided')
     }
-    if(state_transition_type == null) {
+    if (state_transition_type == null) {
       throw new Error('state_transition_type must be provided')
     }
-    if(amount == null) {
+    if (amount == null) {
       throw new Error('amount must be provided')
     }
 

@@ -1,6 +1,6 @@
-const CHARSET = "qpzry9x8gf2tvdw0s3jn54khce6mua7l"
+const CHARSET = 'qpzry9x8gf2tvdw0s3jn54khce6mua7l'
 
-function polymod(values) {
+function polymod (values) {
   const GENERATOR = [
     0x3b6a57b2,
     0x26508e6d,
@@ -25,7 +25,7 @@ function polymod(values) {
   return chk
 }
 
-function hrpExpand(hrp) {
+function hrpExpand (hrp) {
   const ret = []
 
   for (let i = 0; i < hrp.length; i++) {
@@ -41,13 +41,13 @@ function hrpExpand(hrp) {
   return ret
 }
 
-function createChecksum(hrp, data) {
+function createChecksum (hrp, data) {
   const BECH32M_CONST = 0x2bc830a3
 
   const values = [
     ...hrpExpand(hrp),
     ...data,
-    0,0,0,0,0,0
+    0, 0, 0, 0, 0, 0
   ]
 
   const mod = polymod(values) ^ BECH32M_CONST
@@ -61,7 +61,7 @@ function createChecksum(hrp, data) {
   return ret
 }
 
-function convertBits(data, fromBits, toBits, pad = true) {
+function convertBits (data, fromBits, toBits, pad = true) {
   let acc = 0
   let bits = 0
   const ret = []
@@ -71,7 +71,7 @@ function convertBits(data, fromBits, toBits, pad = true) {
     const value = data[i]
 
     if (value < 0 || (value >> fromBits) !== 0) {
-      throw new Error("invalid value")
+      throw new Error('invalid value')
     }
 
     acc = (acc << fromBits) | value
@@ -88,17 +88,17 @@ function convertBits(data, fromBits, toBits, pad = true) {
       ret.push((acc << (toBits - bits)) & maxv)
     }
   } else if (bits >= fromBits || ((acc << (toBits - bits)) & maxv)) {
-    throw new Error("invalid padding")
+    throw new Error('invalid padding')
   }
 
   return ret
 }
 
-function encodeBech32m(hrp, data) {
+function encodeBech32m (hrp, data) {
   const checksum = createChecksum(hrp, data)
   const combined = [...data, ...checksum]
 
-  let ret = hrp + "1"
+  let ret = hrp + '1'
 
   for (let i = 0; i < combined.length; i++) {
     ret += CHARSET[combined[i]]
@@ -107,7 +107,7 @@ function encodeBech32m(hrp, data) {
   return ret
 }
 
-module.exports = function bech32mEncode(hrp, bytes) {
+module.exports = function bech32mEncode (hrp, bytes) {
   const data = convertBits(bytes, 8, 5, true)
   return encodeBech32m(hrp, data)
 }
