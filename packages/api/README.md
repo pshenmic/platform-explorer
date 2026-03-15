@@ -92,6 +92,9 @@ Reference:
 * [Broadcast Transaction](#broadcast-transaction)
 * [Wait for State Transition Result](#wait-for-state-transition-result)
 * [Quorum Info](#quorum-info)
+* [Platform Addresses](#platform-addresses)
+* [Platform Address Info](#platform-address-info)
+* [Platform Address Transitions](#platform-address-transitions)
 
 ### Status
 Returns basic stats and epoch info
@@ -3649,4 +3652,128 @@ Response codes:
 200: OK
 500: Internal Server Error
 503: Service Temporarily Unavailable
+```
+___
+### Platform Addresses
+Return all platform addresses paged and order by creation height.
+
+* Valid `order` values are `asc` or `desc`
+* `limit` cannot be more than 100
+* `page` cannot be less than 1
+
+```
+GET /platform/addresses?page=1&limit=10&order=desc
+
+{
+    "resultSet": [
+        {
+            "base58Address": "yjaZy4BRBd99jB4mSpd6hJQkYFaCeprGQm",
+            "bech32mAddress": "tdashevo1qrljwyc2mvdllj288hxmzc9tr893tp3qss0uxzzy",
+            "totalTxs": null,
+            "incomingTxs": null,
+            "outgoingTxs": null,
+            "nonce": 0,
+            "balance": "1000000",
+            "totalIncomingAmount": null,
+            "totalOutgoingAmount": null
+        },
+        {
+            "base58Address": "yjGTyDvzFoA98VzoJh6hAEDEFRo8PZKtoR",
+            "bech32mAddress": "tdashevo1qram499ccysvuwafjtus5jawqydpct3dcgq9c250",
+            "totalTxs": null,
+            "incomingTxs": null,
+            "outgoingTxs": null,
+            "nonce": 0,
+            "balance": "1000000",
+            "totalIncomingAmount": null,
+            "totalOutgoingAmount": null
+        },
+        ...
+    ],
+    "pagination": {
+        "page": 1,
+        "limit": 10,
+        "total": 555893
+    }
+}
+```
+
+Response codes:
+```
+200: OK
+500: Internal Server Error
+```
+___
+### Platform Address Info
+Return platform address info by given addres (base58check or bech32m)
+
+```
+GET /platform/address/tdashevo1zm37f22lmtkysgznz7mnf3d9tmuh9urrflvjul/info
+
+{
+    "base58Address": "yRpNvoc3hd66c3rNrPRGubVd9vGUoAVpZV",
+    "bech32mAddress": "tdashevo1qq79z66rh34l4u2axlz3jv34zwshggnenut9k093",
+    "totalTxs": 80,
+    "incomingTxs": 1,
+    "outgoingTxs": 79,
+    "nonce": 79,
+    "balance": "37372853480",
+    "totalIncomingAmount": "100000000000",
+    "totalOutgoingAmount": "7900000000"
+}
+```
+
+Response codes:
+```
+200: OK
+404: Not found
+500: Internal Server Error
+```
+___
+### Platform Address Transitions
+Return all transitions for platform address paged and order by creation height.
+
+* Valid `order` values are `asc` or `desc`
+* `limit` cannot be more than 100
+* `page` cannot be less than 1
+
+```
+GET /platform/address/yRpNvoc3hd66c3rNrPRGubVd9vGUoAVpZV/transitions?page=1&limit=10&order=desc
+
+{
+    "resultSet": [
+        {
+            "hash": "99C5901B019156C0547472B4C825D05E0510DD60C0EE1DDB7730A2387421D52D",
+            "index": 17,
+            "blockHash": "A3D5152ECA3629D4BD8DE05E77B5BDC1AA6D22F8180630EE10CBC01F946A2885",
+            "blockHeight": 246835,
+            "type": 12,
+            "batchType": null,
+            "data": "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",
+            "timestamp": "2026-01-15T16:15:33.127Z",
+            "gasUsed": 704433560,
+            "status": "SUCCESS",
+            "error": null,
+            "owner": {
+                "identifier": null,
+                "aliases": []
+            },
+            "incoming": false,
+            "base58Address": "yRpNvoc3hd66c3rNrPRGubVd9vGUoAVpZV",
+            "bech32mAddress": "tdashevo1qq79z66rh34l4u2axlz3jv34zwshggnenut9k093"
+        },
+        ...
+    ],
+    "pagination": {
+        "page": 1,
+        "limit": 10,
+        "total": 80
+    }
+}
+```
+
+Response codes:
+```
+200: OK
+500: Internal Server Error
 ```
