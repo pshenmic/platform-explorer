@@ -292,6 +292,9 @@ describe('Other routes', () => {
         },
         txs: [
           {
+            base58Address: null,
+            bech32mAddress: null,
+            incoming: null,
             batchType: null,
             hash: identityTransaction.hash,
             index: identityTransaction.index,
@@ -317,6 +320,9 @@ describe('Other routes', () => {
             }
           },
           {
+            base58Address: null,
+            bech32mAddress: null,
+            incoming: null,
             batchType: null,
             hash: dataContractTransaction.hash,
             index: dataContractTransaction.index,
@@ -342,6 +348,9 @@ describe('Other routes', () => {
             }
           },
           {
+            base58Address: null,
+            bech32mAddress: null,
+            incoming: null,
             batchType: null,
             hash: documentTransaction.hash,
             index: documentTransaction.index,
@@ -378,6 +387,9 @@ describe('Other routes', () => {
         .expect('Content-Type', 'application/json; charset=utf-8')
 
       const expectedTransaction = {
+        base58Address: null,
+        bech32mAddress: null,
+        incoming: null,
         batchType: null,
         hash: dataContractTransaction.hash,
         index: dataContractTransaction.index,
