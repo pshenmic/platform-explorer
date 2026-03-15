@@ -101,7 +101,7 @@ describe('Platform Addresses routes', () => {
   describe('getAddressInfo()', () => {
     it('should return address info by bech32m', async () => {
       const [platformAddress] = platformAddresses
-      const { body } = await client.get(`/platform/address/${platformAddress.address.bech32m_address}/info`)
+      const { body } = await client.get(`/platformAddress/${platformAddress.address.bech32m_address}/info`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -122,7 +122,7 @@ describe('Platform Addresses routes', () => {
 
     it('should return address info by base58check', async () => {
       const [platformAddress] = platformAddresses
-      const { body } = await client.get(`/platform/address/${platformAddress.address.address}/info`)
+      const { body } = await client.get(`/platformAddress/${platformAddress.address.address}/info`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -142,7 +142,7 @@ describe('Platform Addresses routes', () => {
     })
 
     it('should return 404 if not found', async () => {
-      await client.get('/platform/address/asdkalalksksksksklallakla/info')
+      await client.get('/platformAddress/asdkalalksksksksklallakla/info')
         .expect(404)
         .expect('Content-Type', 'application/json; charset=utf-8')
     })
@@ -151,7 +151,7 @@ describe('Platform Addresses routes', () => {
   describe('getAddressTransitions()', () => {
     it('should return default set of address transitions', async () => {
       const [platformAddress] = platformAddresses
-      const { body } = await client.get(`/platform/address/${platformAddress.address.bech32m_address}/transitions`)
+      const { body } = await client.get(`/platformAddress/${platformAddress.address.bech32m_address}/transitions`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -187,7 +187,7 @@ describe('Platform Addresses routes', () => {
 
     it('should return set of address transitions with custom limit', async () => {
       const [platformAddress] = platformAddresses
-      const { body } = await client.get(`/platform/address/${platformAddress.address.bech32m_address}/transitions?limit=7`)
+      const { body } = await client.get(`/platformAddress/${platformAddress.address.bech32m_address}/transitions?limit=7`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -223,7 +223,7 @@ describe('Platform Addresses routes', () => {
 
     it('should return set of address transitions with custom limit and page', async () => {
       const [platformAddress] = platformAddresses
-      const { body } = await client.get(`/platform/address/${platformAddress.address.bech32m_address}/transitions?limit=7&page=3`)
+      const { body } = await client.get(`/platformAddress/${platformAddress.address.bech32m_address}/transitions?limit=7&page=3`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -259,7 +259,7 @@ describe('Platform Addresses routes', () => {
 
     it('should return set of address transitions with custom limit, page and order', async () => {
       const [platformAddress] = platformAddresses
-      const { body } = await client.get(`/platform/address/${platformAddress.address.bech32m_address}/transitions?limit=7&page=3&order=desc`)
+      const { body } = await client.get(`/platformAddress/${platformAddress.address.bech32m_address}/transitions?limit=7&page=3&order=desc`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -296,7 +296,7 @@ describe('Platform Addresses routes', () => {
 
   describe('getAddresses()', () => {
     it('should return default set of platform addresses', async () => {
-      const { body } = await client.get('/platform/addresses')
+      const { body } = await client.get('/platformAddresses')
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -323,7 +323,7 @@ describe('Platform Addresses routes', () => {
     })
 
     it('should return set of platform addresses with custom limit', async () => {
-      const { body } = await client.get('/platform/addresses?limit=7')
+      const { body } = await client.get('/platformAddresses?limit=7')
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -350,7 +350,7 @@ describe('Platform Addresses routes', () => {
     })
 
     it('should return set of platform addresses with custom limit and page', async () => {
-      const { body } = await client.get('/platform/addresses?limit=7&page=2')
+      const { body } = await client.get('/platformAddresses?limit=7&page=2')
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -377,7 +377,7 @@ describe('Platform Addresses routes', () => {
     })
 
     it('should return set of platform addresses with custom limit, page and order', async () => {
-      const { body } = await client.get('/platform/addresses?limit=7&page=2&order=desc')
+      const { body } = await client.get('/platformAddresses?limit=7&page=2&order=desc')
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 

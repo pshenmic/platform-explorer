@@ -690,7 +690,7 @@ module.exports = ({
       }
     },
     {
-      path: '/platform/address/:platform_address/info',
+      path: '/platformAddress/:platform_address/info',
       method: 'GET',
       handler: platformAddressesController.getPlatformAddressInfo,
       schema: {
@@ -707,7 +707,7 @@ module.exports = ({
       }
     },
     {
-      path: '/platform/address/:platform_address/transitions',
+      path: '/platformAddress/:platform_address/transitions',
       method: 'GET',
       handler: platformAddressesController.getPlatformAddressTransition,
       schema: {
@@ -725,7 +725,7 @@ module.exports = ({
       }
     },
     {
-      path: '/platform/addresses',
+      path: '/platformAddresses',
       method: 'GET',
       handler: platformAddressesController.getPlatformAddresses,
       schema: {

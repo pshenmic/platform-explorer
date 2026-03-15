@@ -3662,7 +3662,7 @@ Return all platform addresses paged and order by creation height.
 * `page` cannot be less than 1
 
 ```
-GET /platform/addresses?page=1&limit=10&order=desc
+GET /platformAddresses?page=1&limit=10&order=desc
 
 {
     "resultSet": [
@@ -3708,7 +3708,7 @@ ___
 Return platform address info by given addres (base58check or bech32m)
 
 ```
-GET /platform/address/tdashevo1zm37f22lmtkysgznz7mnf3d9tmuh9urrflvjul/info
+GET /platformAddress/tdashevo1zm37f22lmtkysgznz7mnf3d9tmuh9urrflvjul/info
 
 {
     "base58Address": "yRpNvoc3hd66c3rNrPRGubVd9vGUoAVpZV",
@@ -3738,7 +3738,7 @@ Return all transitions for platform address paged and order by creation height.
 * `page` cannot be less than 1
 
 ```
-GET /platform/address/yRpNvoc3hd66c3rNrPRGubVd9vGUoAVpZV/transitions?page=1&limit=10&order=desc
+GET /platformAddress/yRpNvoc3hd66c3rNrPRGubVd9vGUoAVpZV/transitions?page=1&limit=10&order=desc
 
 {
     "resultSet": [
