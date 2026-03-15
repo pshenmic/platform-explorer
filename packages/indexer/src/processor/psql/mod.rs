@@ -13,6 +13,7 @@ use dpp::platform_value::{platform_value, BinaryData};
 use dpp::state_transition::state_transitions::batch_transition::batched_transition::document_transition_action_type::DocumentTransitionActionType;
 use std::env;
 use std::num::ParseIntError;
+use dpp::dashcore::Network;
 
 pub mod handlers;
 
@@ -52,9 +53,10 @@ pub struct PSQLProcessor {
 }
 
 impl PSQLProcessor {
-    pub fn new(dashcore_rpc: Client) -> PSQLProcessor {
-        let dao = PostgresDAO::new();
+    pub fn new(dashcore_rpc: Client, network: Network) -> PSQLProcessor {
+        let dao = PostgresDAO::new(network);
         let decoder = StateTransitionDecoder::new();
+
         let platform_explorer_identifier_string: String =
             env::var("PLATFORM_EXPLORER_DATA_CONTRACT_IDENTIFIER")
                 .expect("You've not set the PLATFORM_EXPLORER_DATA_CONTRACT_IDENTIFIER")
@@ -62,12 +64,13 @@ impl PSQLProcessor {
                 .expect("Failed to parse PLATFORM_EXPLORER_DATA_CONTRACT_IDENTIFIER env");
         let platform_explorer_identifier =
             Identifier::from_string(&platform_explorer_identifier_string, Base58).unwrap();
-        return PSQLProcessor {
+
+        PSQLProcessor {
             decoder,
             dao,
             platform_explorer_identifier,
             dashcore_rpc,
-        };
+        }
     }
 
     pub async fn get_latest_block_height(&self) -> i32 {

@@ -40,8 +40,15 @@ impl Indexer {
         )
         .unwrap();
 
-        let processor = PSQLProcessor::new(dashcore_rpc);
         let tenderdash_url = env::var("TENDERDASH_URL").expect("You've not set the TENDERDASH_URL");
+        let tenderdash_rpc = TenderdashRpcApi::new(tenderdash_url);
+
+        let network = tenderdash_rpc
+            .get_network()
+            .await
+            .expect("Failed to get network");
+
+        let processor = PSQLProcessor::new(dashcore_rpc, network);
         let txs_to_skip_str = env::var("TXS_TO_SKIP").unwrap_or(String::from(""));
 
         let txs_to_skip = txs_to_skip_str
@@ -52,7 +59,7 @@ impl Indexer {
         let start_height = processor.get_latest_block_height().await;
 
         Indexer {
-            tenderdash_rpc: TenderdashRpcApi::new(tenderdash_url),
+            tenderdash_rpc,
             processor,
             last_block_height: Cell::new(start_height),
             txs_to_skip,

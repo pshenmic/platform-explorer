@@ -1,5 +1,6 @@
 use crate::entities::token_config::TokenConfig;
 use crate::processor::psql::dao::PostgresDAO;
+use crate::utils::{escape_null_character_json_object, escape_null_character_string};
 use deadpool_postgres::{PoolError, Transaction};
 use dpp::identifier::Identifier;
 use dpp::platform_value::string_encoding::Encoding::Base58;
@@ -8,7 +9,6 @@ use dpp::state_transition::batch_transition::batched_transition::token_transitio
 };
 use dpp::state_transition::batch_transition::batched_transition::token_transition_action_type::TokenTransitionActionTypeGetter;
 use dpp::state_transition::batch_transition::token_base_transition::v0::v0_methods::TokenBaseTransitionV0Methods;
-use crate::utils::{escape_null_character_json_object, escape_null_character_string};
 
 impl PostgresDAO {
     pub async fn create_token(&self, token: TokenConfig, sql_transaction: &Transaction<'_>) {

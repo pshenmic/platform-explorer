@@ -1,3 +1,4 @@
+mod handle_platform_address_transition;
 mod handle_batch;
 mod handle_block;
 mod handle_data_contract;
