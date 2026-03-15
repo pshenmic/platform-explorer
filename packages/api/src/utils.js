@@ -1131,7 +1131,10 @@ const decodeStateTransition = async (base64) => {
       decoded.userFeeIncrease = identityCreditTransferToAddress.userFeeIncrease
       decoded.nonce = identityCreditTransferToAddress.nonce.toString()
       decoded.recipientAddresses = identityCreditTransferToAddress.recipientAddresses.map(({ address, amount }) => ({
-        address: address.toAddress(NETWORK),
+        platformAddress: {
+          base58: address.toAddress(NETWORK),
+          bech32m: address.toBech32m(NETWORK)
+        },
         amount: amount.toString()
       }))
       decoded.senderId = identityCreditTransferToAddress.identityId.base58()
@@ -1144,13 +1147,19 @@ const decodeStateTransition = async (base64) => {
 
       decoded.userFeeIncrease = identityCreateFromAddresses.userFeeIncrease
       decoded.inputs = identityCreateFromAddresses.inputs.map((input) => ({
-        address: input.address.toAddress(NETWORK),
+        platformAddress: {
+          base58: input.address.toAddress(NETWORK),
+          bech32m: input.address.toBech32m(NETWORK)
+        },
         credits: input.credits.toString(),
         nonce: input.nonce.toString()
       }))
       decoded.output = identityCreateFromAddresses.output
         ? {
-            address: identityCreateFromAddresses.output.address.toAddress(NETWORK),
+            platformAddress: {
+              base58: identityCreateFromAddresses.output.address.toAddress(NETWORK),
+              bech32m: identityCreateFromAddresses.output.address.toBech32m(NETWORK)
+            },
             credits: identityCreateFromAddresses.output.credits.toString()
           }
         : null
@@ -1184,7 +1193,10 @@ const decodeStateTransition = async (base64) => {
 
       decoded.userFeeIncrease = identityTopUpFromAddresses.userFeeIncrease
       decoded.inputs = identityTopUpFromAddresses.inputs.map((input) => ({
-        address: input.address.toAddress(NETWORK),
+        platformAddress: {
+          base58: input.address.toAddress(NETWORK),
+          bech32m: input.address.toBech32m(NETWORK)
+        },
         credits: input.credits.toString(),
         nonce: input.nonce.toString()
       }))
@@ -1206,7 +1218,10 @@ const decodeStateTransition = async (base64) => {
       })
       decoded.output = identityTopUpFromAddresses.output
         ? {
-            address: identityTopUpFromAddresses.output.address.toAddress(NETWORK),
+            platformAddress: {
+              base58: identityTopUpFromAddresses.output.address.toAddress(NETWORK),
+              bech32m: identityTopUpFromAddresses.output.address.toBech32m(NETWORK)
+            },
             credits: identityTopUpFromAddresses.output.credits.toString()
           }
         : null
@@ -1223,7 +1238,10 @@ const decodeStateTransition = async (base64) => {
 
       decoded.userFeeIncrease = addressFundsTransferTransition.userFeeIncrease
       decoded.inputs = addressFundsTransferTransition.inputs.map((input) => ({
-        address: input.address.toAddress(NETWORK),
+        platformAddress: {
+          base58: input.address.toAddress(NETWORK),
+          bech32m: input.address.toBech32m(NETWORK)
+        },
         credits: input.credits.toString(),
         nonce: input.nonce.toString()
       }))
@@ -1244,7 +1262,10 @@ const decodeStateTransition = async (base64) => {
         }
       })
       decoded.outputs = addressFundsTransferTransition.outputs.map((output) => ({
-        address: output.address.toAddress(NETWORK),
+        platformAddress: {
+          base58: output.address.toAddress(NETWORK),
+          bech32m: output.address.toBech32m(NETWORK)
+        },
         credits: output.credits.toString()
       }))
       decoded.feeStrategy = addressFundsTransferTransition.feeStrategy.map(step => ({
@@ -1278,7 +1299,10 @@ const decodeStateTransition = async (base64) => {
 
       decoded.userFeeIncrease = addressFundingFromAssetLockTransition.userFeeIncrease
       decoded.inputs = addressFundingFromAssetLockTransition.inputs.map((input) => ({
-        address: input.address.toAddress(NETWORK),
+        platformAddress: {
+          base58: input.address.toAddress(NETWORK),
+          bech32m: input.address.toBech32m(NETWORK)
+        },
         credits: input.credits.toString(),
         nonce: input.nonce.toString()
       }))
@@ -1299,7 +1323,10 @@ const decodeStateTransition = async (base64) => {
         }
       })
       decoded.outputs = addressFundingFromAssetLockTransition.outputs.map((output) => ({
-        address: output.address.toAddress(NETWORK),
+        platformAddress: {
+          base58: output.address.toAddress(NETWORK),
+          bech32m: output.address.toBech32m(NETWORK)
+        },
         credits: output.credits?.toString() ?? '0'
       }))
       decoded.feeStrategy = addressFundingFromAssetLockTransition.feeStrategy.map(step => ({
@@ -1316,7 +1343,10 @@ const decodeStateTransition = async (base64) => {
 
       decoded.userFeeIncrease = addressCreditWithdrawalTransition.userFeeIncrease
       decoded.inputs = addressCreditWithdrawalTransition.inputs.map((input) => ({
-        address: input.address.toAddress(NETWORK),
+        platformAddress: {
+          base58: input.address.toAddress(NETWORK),
+          bech32m: input.address.toBech32m(NETWORK)
+        },
         credits: input.credits.toString(),
         nonce: input.nonce.toString()
       }))
@@ -1338,7 +1368,10 @@ const decodeStateTransition = async (base64) => {
       })
       decoded.output = addressCreditWithdrawalTransition.output
         ? {
-            address: addressCreditWithdrawalTransition.output.address.toAddress(NETWORK),
+            platformAddress: {
+              base58: addressCreditWithdrawalTransition.output.address.toAddress(NETWORK),
+              bech32m: addressCreditWithdrawalTransition.output.address.toBech32m(NETWORK)
+            },
             credits: addressCreditWithdrawalTransition.output.credits.toString()
           }
         : null

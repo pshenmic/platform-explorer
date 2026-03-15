@@ -1,10 +1,11 @@
-use dashcore_rpc::RpcApi;
 use crate::entities::platform_address_transition::PlatformAddressTransition;
 use crate::enums::batch_type::BatchType;
 use crate::models::{TransactionResult, TransactionStatus};
 use crate::processor::psql::PSQLProcessor;
+use dashcore_rpc::dashcore::consensus::Decodable;
+use dashcore_rpc::RpcApi;
 use deadpool_postgres::Transaction;
-use dpp::dashcore::TxOut;
+use dpp::dashcore::transaction::special_transaction::asset_lock::AssetLockPayload;
 use dpp::identity::state_transition::AssetLockProved;
 use dpp::prelude::AssetLockProof;
 use dpp::serialization::PlatformSerializable;
@@ -301,9 +302,12 @@ impl PSQLProcessor {
                         st.clone(),
                         st_hash.clone(),
                     );
-                self.handle_platform_address_transitions(address_transitions.clone(), sql_transaction)
-                    .await
-                    .unwrap();
+                self.handle_platform_address_transitions(
+                    address_transitions.clone(),
+                    sql_transaction,
+                )
+                .await
+                .unwrap();
 
                 println!(
                     "Processed {} Address transitions at block hash {}",
@@ -326,9 +330,12 @@ impl PSQLProcessor {
                         st.clone(),
                         st_hash.clone(),
                     );
-                self.handle_platform_address_transitions(address_transitions.clone(), sql_transaction)
-                    .await
-                    .unwrap();
+                self.handle_platform_address_transitions(
+                    address_transitions.clone(),
+                    sql_transaction,
+                )
+                .await
+                .unwrap();
 
                 println!(
                     "Processed {} Address transitions at block hash {}",
@@ -351,9 +358,12 @@ impl PSQLProcessor {
                         st.clone(),
                         st_hash.clone(),
                     );
-                self.handle_platform_address_transitions(address_transitions.clone(), sql_transaction)
-                    .await
-                    .unwrap();
+                self.handle_platform_address_transitions(
+                    address_transitions.clone(),
+                    sql_transaction,
+                )
+                .await
+                .unwrap();
 
                 println!(
                     "Processed {} Address transitions at block hash {}",
@@ -362,11 +372,16 @@ impl PSQLProcessor {
                 );
             }
             StateTransition::AddressFundsTransfer(st) => {
-                let address_transitions =
-                    PlatformAddressTransition::from_address_funds_transfer(st.clone(), st_hash.clone());
-                self.handle_platform_address_transitions(address_transitions.clone(), sql_transaction)
-                    .await
-                    .unwrap();
+                let address_transitions = PlatformAddressTransition::from_address_funds_transfer(
+                    st.clone(),
+                    st_hash.clone(),
+                );
+                self.handle_platform_address_transitions(
+                    address_transitions.clone(),
+                    sql_transaction,
+                )
+                .await
+                .unwrap();
 
                 println!(
                     "Processed {} Address transitions at block hash {}",
@@ -375,32 +390,48 @@ impl PSQLProcessor {
                 );
             }
             StateTransition::AddressFundingFromAssetLock(st) => {
-                let tx_out = match AssetLockProved::asset_lock_proof(&st) {
+                let asset_lock_amount = match AssetLockProved::asset_lock_proof(&st) {
                     AssetLockProof::Instant(i) => {
-                        i.transaction.output[i.output_index as usize].clone()
+                        i.transaction
+                            .special_transaction_payload
+                            .clone()
+                            .unwrap()
+                            .to_asset_lock_payload()
+                            .expect("Cannot get asset lock payload for instant lock proof")
+                            .credit_outputs[i.output_index as usize]
+                            .value
                     }
                     AssetLockProof::Chain(c) => {
-                        let tx_out_result = self.dashcore_rpc.get_tx_out(&c.out_point.txid, c.out_point.vout, None).expect("Cannot get TxOut");
-                        match tx_out_result {
-                            Some(result) => {
-                                TxOut {
-                                    value: result.value.to_sat(),
-                                    script_pubkey: result.script_pub_key.script().unwrap(),
-                                }
-                            },
-                            None => panic!("Empty tx out")
-                        }
+                        let tx = self
+                            .dashcore_rpc
+                            .get_raw_transaction_info(&c.out_point.txid, None)
+                            .unwrap();
+
+                        let payload = tx
+                            .extra_payload
+                            .clone()
+                            .expect("Cannot get Asset Lock Payload");
+
+                        let asset_lock_payload =
+                            AssetLockPayload::consensus_decode(&mut payload.as_slice())
+                                .expect("Cannot parse payload");
+
+                        asset_lock_payload.credit_outputs[c.out_point.vout as usize].value
                     }
                 };
 
-                let address_transitions = PlatformAddressTransition::from_address_funding_from_asset_lock(
-                    st.clone(),
-                    st_hash.clone(),
-                    tx_out
-                );
-                self.handle_platform_address_transitions(address_transitions.clone(), sql_transaction)
-                    .await
-                    .unwrap();
+                let address_transitions =
+                    PlatformAddressTransition::from_address_funding_from_asset_lock(
+                        st.clone(),
+                        st_hash.clone(),
+                        asset_lock_amount,
+                    );
+                self.handle_platform_address_transitions(
+                    address_transitions.clone(),
+                    sql_transaction,
+                )
+                .await
+                .unwrap();
 
                 println!(
                     "Processed {} Address transitions at block hash {}",
@@ -409,11 +440,16 @@ impl PSQLProcessor {
                 );
             }
             StateTransition::AddressCreditWithdrawal(st) => {
-                let address_transitions =
-                    PlatformAddressTransition::from_address_credit_withdrawal(st.clone(), st_hash.clone());
-                self.handle_platform_address_transitions(address_transitions.clone(), sql_transaction)
-                    .await
-                    .unwrap();
+                let address_transitions = PlatformAddressTransition::from_address_credit_withdrawal(
+                    st.clone(),
+                    st_hash.clone(),
+                );
+                self.handle_platform_address_transitions(
+                    address_transitions.clone(),
+                    sql_transaction,
+                )
+                .await
+                .unwrap();
 
                 println!(
                     "Processed {} Address transitions at block hash {}",

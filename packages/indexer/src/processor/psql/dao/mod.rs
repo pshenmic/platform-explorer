@@ -3,12 +3,12 @@ use deadpool_postgres::{Config, ManagerConfig, Pool, RecyclingMethod, Runtime};
 use dpp::dashcore::Network;
 use std::env;
 
-mod platform_addresses;
 pub mod blocks;
 pub mod data_contracts;
 pub mod documents;
 pub mod identities;
 pub mod masternode_votes;
+mod platform_addresses;
 pub mod state_transitions;
 pub mod token;
 mod token_holders;

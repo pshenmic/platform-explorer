@@ -1,5 +1,5 @@
 use dpp::address_funds::PlatformAddress;
-use dpp::dashcore::TxOut;
+use dpp::balances::credits::CREDITS_PER_DUFF;
 use dpp::state_transition::address_credit_withdrawal_transition::accessors::AddressCreditWithdrawalTransitionAccessorsV0;
 use dpp::state_transition::address_credit_withdrawal_transition::AddressCreditWithdrawalTransition;
 use dpp::state_transition::address_funding_from_asset_lock_transition::accessors::AddressFundingFromAssetLockTransitionAccessorsV0;
@@ -134,7 +134,7 @@ impl PlatformAddressTransition {
     pub fn from_address_funding_from_asset_lock(
         transition: AddressFundingFromAssetLockTransition,
         transition_hash: String,
-        tx_out: TxOut,
+        asset_lock_duffs: u64,
     ) -> Vec<PlatformAddressTransition> {
         let transition_type: i32 = transition.state_transition_type() as _;
 
@@ -142,7 +142,7 @@ impl PlatformAddressTransition {
         let outputs = transition.outputs();
 
         // duffs to credits
-        let asset_lock_credits = tx_out.value * 1000;
+        let asset_lock_credits = asset_lock_duffs * CREDITS_PER_DUFF;
 
         let inputs_amount: u64 = inputs.values().map(|(_, credits)| credits.clone()).sum();
 

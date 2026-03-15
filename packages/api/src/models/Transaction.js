@@ -14,8 +14,11 @@ module.exports = class Transaction {
   status
   error
   owner
+  incoming
+  base58Address
+  bech32mAddress
 
-  constructor (hash, index, blockHash, blockHeight, type, batchType, data, timestamp, gasUsed, status, error, owner) {
+  constructor (hash, index, blockHash, blockHeight, type, batchType, data, timestamp, gasUsed, status, error, owner, incoming, base58Address, bech32mAddress) {
     this.hash = hash ?? null
     this.index = index ?? null
     this.blockHash = blockHash ?? null
@@ -28,6 +31,9 @@ module.exports = class Transaction {
     this.status = status ?? null
     this.error = error ?? null
     this.owner = owner || null
+    this.incoming = incoming ?? null
+    this.base58Address = base58Address ?? null
+    this.bech32mAddress = bech32mAddress ?? null
   }
 
   /* eslint-disable camelcase */
@@ -44,7 +50,10 @@ module.exports = class Transaction {
     status,
     error,
     owner,
-    aliases
+    aliases,
+    incoming,
+    base58_address,
+    bech32m_address
   }) {
     let decodedError = null
 
@@ -66,7 +75,8 @@ module.exports = class Transaction {
       {
         identifier: owner?.trim() ?? null,
         aliases: aliases ?? []
-      }
+      },
+      incoming, base58_address, bech32m_address
     )
   }
 }
