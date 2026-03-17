@@ -5,9 +5,9 @@ import {
   Roboto_Mono as RobotoMono
 } from 'next/font/google'
 
-const montserrat = Montserrat({ subsets: ['latin'], variable: '--font-montserrat' })
-const openSans = OpenSans({ subsets: ['latin'], variable: '--font-open-sans' })
-const robotoMono = RobotoMono({ subsets: ['latin'], variable: '--font-roboto-mono' })
+const montserrat = Montserrat({ subsets: ['latin'] })
+const openSans = OpenSans({ subsets: ['latin'] })
+const robotoMono = RobotoMono({ subsets: ['latin'] })
 
 export const viewport = {
   width: 'device-width',
@@ -15,14 +15,14 @@ export const viewport = {
   userScalable: false
 }
 
-export default function RootLayout ({ children }) {
+export default function RootLayout({ children }) {
   return (
     <html
       lang='en'
       data-theme='dark'
       style={{ colorScheme: 'dark' }}
       className={`${montserrat.variable} ${robotoMono.variable} ${openSans.variable}`}
-      >
+    >
       <body className={'chakra-ui-dark'}>
         <RootComponent>{children}</RootComponent>
       </body>

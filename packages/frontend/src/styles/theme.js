@@ -19,11 +19,6 @@ export const theme = extendTheme({
     '2xl': '96em', // 1536px
     '3xl': '120em' // 1920px
   },
-  fonts: {
-    heading: 'var(--font-montserrat)',
-    body: 'var(--font-open-sans)',
-    mono: 'var(--font-roboto-mono)'
-  },
   space: {
     px: '1px',
     0: '0',
