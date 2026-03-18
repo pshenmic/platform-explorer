@@ -54,7 +54,7 @@ export const AddressCreditWithdrawal = ({
                       ellipsis
                       styles={['highlight-both']}
                     >
-                      {input.address}
+                      {input.platformAddress.bech32m}
                     </Identifier>
                   </ValueCard>
                   <ValueCard>
