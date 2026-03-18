@@ -22,7 +22,7 @@ export const IdentityTopUpFromAddresses = ({
   inputs = [],
   inputWitness = [],
   outputs = [],
-  feeStrategy = [],
+  feeStrategy = []
 }) => (
   <>
     {userFeeIncrease != null && (
