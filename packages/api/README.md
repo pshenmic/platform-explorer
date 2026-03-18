@@ -1716,6 +1716,8 @@ This endpoint allows search any types of data
 * Tokens
   * Full `Identifier`
   * Part `name`
+* Platform Address
+  * Full `Bech32m`
 
 ```
 GET /search?query=xyz
