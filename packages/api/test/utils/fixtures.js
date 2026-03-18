@@ -8,9 +8,17 @@ const base58Address = require('./base58address')
 
 const generateHash = () => (crypto.randomBytes(32)).toString('hex').toUpperCase()
 const generateIdentifier = () => base58.encode(crypto.randomBytes(32))
-const generateBech32mAddress = () => bech32mEncode('tdashevo', crypto.randomBytes(20))
-const generateBase58Address = () => base58Address(crypto.randomBytes(20))
+const generateBech32mAddress = () => {
+  const ADDRESS_TYPE = 0x00;
 
+  const randomPayload = crypto.randomBytes(20);
+  const bytes = Buffer.concat([Buffer.from([ADDRESS_TYPE]), randomPayload]);
+
+  return bech32mEncode('dashevo', bytes);
+}
+const generateBase58Address = () => base58Address(crypto.randomBytes(21))
+
+generateBech32mAddress()
 const fixtures = {
   identifier: () => generateIdentifier(),
   getDataContract: async (knex, { identifier, id }) => {

@@ -15,6 +15,7 @@ const { ContestedResourcesController } = require('dash-platform-sdk/src/conteste
 const { DocumentsController } = require('dash-platform-sdk/src/documents')
 const { TokensController } = require('dash-platform-sdk/src/tokens')
 const { DataContractsController } = require('dash-platform-sdk/src/dataContracts')
+const {PlatformAddressesController} = require("dash-platform-sdk/src/platformAddresses");
 
 const genesisTime = new Date(0)
 const blockDiffTime = 2 * 3600 * 1000
@@ -36,6 +37,7 @@ describe('Other routes', () => {
   let transactions
   let aliasTimestamp
   let token
+  let platformAddress
 
   before(async () => {
     aliasTimestamp = new Date()
@@ -233,6 +235,8 @@ describe('Other routes', () => {
       name: 'test',
       state_transition_hash: dataContractTransaction?.hash
     })
+
+    platformAddress = await fixtures.platformAddress(knex)
 
     transactions.push(identityTransaction.hash)
     transactions.push(dataContractTransaction.hash)
@@ -730,6 +734,39 @@ describe('Other routes', () => {
       }
 
       assert.deepEqual(body, { identities: [expectedIdentity] })
+    })
+
+    it('should search platform address bech32m', async () => {
+      mock.method(PlatformAddressesController.prototype, 'getAddressInfo', async () => {
+
+
+        return {
+          address: {
+            toAddress: () => platformAddress.address,
+            toBech32m: () => platformAddress.bech32m_address
+          },
+          nonce: 12,
+          balance: BigInt(111111)
+        }
+      })
+
+      const { body } = await client.get(`/search?query=${platformAddress.bech32m_address}`)
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      const expectedAddress = {
+        base58Address: platformAddress.address,
+        bech32mAddress: platformAddress.bech32m_address,
+        totalTxs: 0,
+        incomingTxs: 0,
+        outgoingTxs: 0,
+        nonce: 12,
+        balance: '111111',
+        totalIncomingAmount: null,
+        totalOutgoingAmount: null
+      }
+
+      assert.deepEqual(body, { platformAddresses: [expectedAddress] })
     })
 
     it('should search token', async () => {
