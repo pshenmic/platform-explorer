@@ -9,6 +9,7 @@ const Epoch = require('../models/Epoch')
 const { base58 } = require('@scure/base')
 const DashCoreRPC = require('../dashcoreRpc')
 const TokensDAO = require('../dao/TokensDAO')
+const PlatformAddressesDAO = require("../dao/PlatformAddressesDAO");
 
 const API_VERSION = require('../../package.json').version
 
@@ -21,6 +22,7 @@ class MainController {
     this.identitiesDAO = new IdentitiesDAO(knex, sdk)
     this.validatorsDAO = new ValidatorsDAO(knex)
     this.tokensDAO = new TokensDAO(knex, sdk)
+    this.platformAddressesDAO = new PlatformAddressesDAO(knex, sdk)
     this.sdk = sdk
   }
 
@@ -173,6 +175,16 @@ class MainController {
 
       if (token) {
         result = { ...result, tokens: [token] }
+      }
+    }
+
+    // check for platform addresses
+    if (/^[0-9A-Za-z]{48,90}$/.test(query)) {
+      // search platform address
+      const address = await this.platformAddressesDAO.getPlatformAddressInfo(query)
+
+      if (address) {
+        result = { ...result, platformAddresses: [address] }
       }
     }
 
