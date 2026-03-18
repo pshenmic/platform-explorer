@@ -115,7 +115,7 @@ export const AddressFundingFromAssetLock = ({
       <InfoLine
         align='top'
         className={
-          'TransactionPage__InfoLine TransactionPage__InfoLine--FullWidth'
+          'TransactionPage__InfoLine TransactionPage__InfoLine--FullWidth TransactionPage__InfoLine--Outputs'
         }
         title={`Outputs (${outputs.length})`}
         value={
@@ -125,16 +125,16 @@ export const AddressFundingFromAssetLock = ({
                 <Flex
                   gap={4}
                   direction={{ base: 'column', md: 'row' }}
-                  maxW={{ base: 270, md: 'none' }}
+                  w='100%'
                 >
-                  <ValueCard>
+                  <ValueCard className='TransactionPage__AddressCard'>
                     <Identifier
                       avatar
                       copyButton
                       ellipsis
                       styles={['highlight-both']}
                     >
-                      {output.address}
+                      {output.platformAddress.bech32m}
                     </Identifier>
                   </ValueCard>
                   <ValueCard>
