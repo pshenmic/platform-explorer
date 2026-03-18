@@ -32,9 +32,7 @@ export const AddressFundsTransfer = ({
     />
     {inputs && inputs.length > 0 && (
       <InfoLine
-        className={
-          'TransactionPage__InfoLine TransactionPage__InfoLine--FullWidth'
-        }
+        className={'TransactionPage__InfoLine TransactionPage__InfoLine--FullWidth'}
         title={`Inputs (${inputs.length})`}
         align={inputs.length !== 1 && 'top'}
         value={
@@ -55,7 +53,7 @@ export const AddressFundsTransfer = ({
                       ellipsis
                       styles={['highlight-both']}
                     >
-                      {input.address}
+                      {input.platformAddress.bech32m}
                     </Identifier>
                   </ValueCard>
                   <ValueCard>{input.credits} credits</ValueCard>
@@ -128,14 +126,14 @@ export const AddressFundsTransfer = ({
                   w='100%'
                   align='center'
                 >
-                  <ValueCard>
+                  <ValueCard className='TransactionPage__AddressCard'>
                     <Identifier
                       avatar
                       copyButton
                       ellipsis
                       styles={['highlight-both']}
                     >
-                      {output.address}
+                      {output.platformAddress.bech32m}
                     </Identifier>
                   </ValueCard>
                   <ValueCard>{output.credits} credits</ValueCard>

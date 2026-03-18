@@ -139,6 +139,10 @@
     }
   }
 
+  &__AddressCard {
+    overflow: hidden;
+  }
+
   &__VoteIndexValuesContainer {
     container-type: inline-size;
     width: 100%;
