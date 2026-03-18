@@ -9,7 +9,7 @@ const Epoch = require('../models/Epoch')
 const { base58 } = require('@scure/base')
 const DashCoreRPC = require('../dashcoreRpc')
 const TokensDAO = require('../dao/TokensDAO')
-const PlatformAddressesDAO = require("../dao/PlatformAddressesDAO");
+const PlatformAddressesDAO = require('../dao/PlatformAddressesDAO')
 
 const API_VERSION = require('../../package.json').version
 

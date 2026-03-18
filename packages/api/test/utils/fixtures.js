@@ -9,12 +9,12 @@ const base58Address = require('./base58address')
 const generateHash = () => (crypto.randomBytes(32)).toString('hex').toUpperCase()
 const generateIdentifier = () => base58.encode(crypto.randomBytes(32))
 const generateBech32mAddress = () => {
-  const ADDRESS_TYPE = 0x00;
+  const ADDRESS_TYPE = 0x00
 
-  const randomPayload = crypto.randomBytes(20);
-  const bytes = Buffer.concat([Buffer.from([ADDRESS_TYPE]), randomPayload]);
+  const randomPayload = crypto.randomBytes(20)
+  const bytes = Buffer.concat([Buffer.from([ADDRESS_TYPE]), randomPayload])
 
-  return bech32mEncode('dashevo', bytes);
+  return bech32mEncode('dashevo', bytes)
 }
 const generateBase58Address = () => base58Address(crypto.randomBytes(21))
 

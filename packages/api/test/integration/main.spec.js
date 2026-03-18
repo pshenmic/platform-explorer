@@ -15,7 +15,7 @@ const { ContestedResourcesController } = require('dash-platform-sdk/src/conteste
 const { DocumentsController } = require('dash-platform-sdk/src/documents')
 const { TokensController } = require('dash-platform-sdk/src/tokens')
 const { DataContractsController } = require('dash-platform-sdk/src/dataContracts')
-const {PlatformAddressesController} = require("dash-platform-sdk/src/platformAddresses");
+const { PlatformAddressesController } = require('dash-platform-sdk/src/platformAddresses')
 
 const genesisTime = new Date(0)
 const blockDiffTime = 2 * 3600 * 1000
@@ -738,8 +738,6 @@ describe('Other routes', () => {
 
     it('should search platform address bech32m', async () => {
       mock.method(PlatformAddressesController.prototype, 'getAddressInfo', async () => {
-
-
         return {
           address: {
             toAddress: () => platformAddress.address,
