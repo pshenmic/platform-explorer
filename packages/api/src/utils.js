@@ -1130,12 +1130,12 @@ const decodeStateTransition = async (base64) => {
 
       decoded.userFeeIncrease = identityCreditTransferToAddress.userFeeIncrease
       decoded.nonce = identityCreditTransferToAddress.nonce.toString()
-      decoded.recipientAddresses = identityCreditTransferToAddress.recipientAddresses.map(({ address, amount }) => ({
+      decoded.recipientAddresses = identityCreditTransferToAddress.recipientAddresses.map(({ address, credits }) => ({
         platformAddress: {
           base58: address.toAddress(NETWORK),
           bech32m: address.toBech32m(NETWORK)
         },
-        amount: amount.toString()
+        amount: credits.toString()
       }))
       decoded.senderId = identityCreditTransferToAddress.identityId.base58()
       decoded.raw = Buffer.from(stateTransition.bytes()).toString('hex')
