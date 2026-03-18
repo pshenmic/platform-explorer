@@ -1479,32 +1479,30 @@ describe('Utils', () => {
       })
     })
 
-
     it('should decode IdentityCreditTransferToAddress', async () => {
       const decoded = await utils.decodeStateTransition(identityCreditTransferToAddress.data)
 
       assert.deepEqual(
         decoded,
         {
-          "type": 9,
-          "typeString": "IDENTITY_CREDIT_TRANSFER_TO_ADDRESS",
-          "userFeeIncrease": 0,
-          "nonce": "22",
-          "recipientAddresses": [
+          type: 9,
+          typeString: 'IDENTITY_CREDIT_TRANSFER_TO_ADDRESS',
+          userFeeIncrease: 0,
+          nonce: '22',
+          recipientAddresses: [
             {
-              "platformAddress": {
-                "base58": "yZxXgZM6HhFGjBZB1uucEJELa5f5Sq244k",
-                "bech32m": "tdashevo1qz2e6rudezas4y3htwh7ktlgrhqvf05hzs2u5hkj"
+              platformAddress: {
+                base58: 'yZxXgZM6HhFGjBZB1uucEJELa5f5Sq244k',
+                bech32m: 'tdashevo1qz2e6rudezas4y3htwh7ktlgrhqvf05hzs2u5hkj'
               },
-              "amount": "179780720"
+              amount: '179780720'
             }
           ],
-          "senderId": "8eTDkBhpQjHeqgbVeriwLeZr1tCa6yBGw76SckvD1cwc",
-          "raw": "09007199f1f68404c86ecf60d9cb93aef318fa0f2b08e59ffd176bdef43154ffde6b0100959d0f8dc8bb0a92375bafeb2fe81dc0c4be9714fc0ab73c701600044120e8594bed0affacc75d13a9190f1b4b8b01657bf4d56823bfe4ef6ca275c4105c63523c9834e3caf9ad2e97ad14fa89231b8fbb532836bbd9f3ef6259e82bdff2"
+          senderId: '8eTDkBhpQjHeqgbVeriwLeZr1tCa6yBGw76SckvD1cwc',
+          raw: '09007199f1f68404c86ecf60d9cb93aef318fa0f2b08e59ffd176bdef43154ffde6b0100959d0f8dc8bb0a92375bafeb2fe81dc0c4be9714fc0ab73c701600044120e8594bed0affacc75d13a9190f1b4b8b01657bf4d56823bfe4ef6ca275c4105c63523c9834e3caf9ad2e97ad14fa89231b8fbb532836bbd9f3ef6259e82bdff2'
         }
       )
-
-    });
+    })
   })
 
   describe('buildIndexBuffer()', () => {
