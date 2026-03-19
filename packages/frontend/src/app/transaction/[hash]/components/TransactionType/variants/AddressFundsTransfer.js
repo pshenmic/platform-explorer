@@ -46,7 +46,7 @@ export const AddressFundsTransfer = ({
                   gap={4}
                   w='100%'
                 >
-                  <ValueCard>
+                  <ValueCard link={`/platformAddress/${input.platformAddress.bech32m}`}>
                     <Identifier
                       avatar
                       copyButton
@@ -126,7 +126,7 @@ export const AddressFundsTransfer = ({
                   w='100%'
                   align='center'
                 >
-                  <ValueCard className='TransactionPage__AddressCard'>
+                  <ValueCard className='TransactionPage__AddressCard' link={`/platformAddress/${output.platformAddress.bech32m}`}>
                     <Identifier
                       avatar
                       copyButton

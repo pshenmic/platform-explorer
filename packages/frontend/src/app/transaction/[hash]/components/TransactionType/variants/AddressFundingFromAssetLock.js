@@ -127,7 +127,7 @@ export const AddressFundingFromAssetLock = ({
                   direction={{ base: 'column', md: 'row' }}
                   w='100%'
                 >
-                  <ValueCard className='TransactionPage__AddressCard'>
+                  <ValueCard className='TransactionPage__AddressCard' link={`/platformAddress/${output.platformAddress.bech32m}`}>
                     <Identifier
                       avatar
                       copyButton

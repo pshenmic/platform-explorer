@@ -50,8 +50,9 @@ export const IdentityCreditTransferToAddress = ({
             className={'TransactionPage__InfoLine'}
             title={label}
             value={
-              <ValueCard>
+              <ValueCard link={`/platformAddress/${recipient.platformAddress?.bech32m}`}>
                 <Identifier
+                  avatar={true}
                   copyButton={true}
                   ellipsis={true}
                   styles={['highlight-both']}
