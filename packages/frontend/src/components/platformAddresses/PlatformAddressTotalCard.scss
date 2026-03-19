@@ -1,0 +1,131 @@
+@use '../../styles/mixins';
+@import '../../styles/variables';
+
+.PlatformAddressTotalCard {
+  @include mixins.TotalCard();
+  @include mixins.InfoContainerPadding(padding, 0px, true);
+  display: flex;
+  flex-direction: column;
+  gap: 0.875rem;
+
+  &--Loading & {
+    &__InfoLine {
+      .InfoLine__Value {
+        height: 1.5rem;
+      }
+    }
+
+    &__Avatar {
+      @include mixins.LoadingContainer;
+    }
+
+    &__Header {
+      .InfoLine__Value {
+        width: 100% !important;
+      }
+    }
+  }
+
+  &__Header {
+    position: relative;
+    display: flex;
+    align-items: flex-start;
+    width: 100%;
+  }
+
+  &__CommonLines {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  &__InfoLine {
+    &--Address {
+      .InfoLine__Value {
+        container-type: inline-size;
+        width: 100%;
+      }
+
+      .Identifier__SymbolsContainer {
+        margin-left: auto;
+
+        @container (max-width: 22rem) {
+          max-width: 10rem;
+        }
+      }
+    }
+  }
+
+  &__Separator {
+    margin: 1.25rem 0;
+  }
+
+  @media screen and (max-width: $breakpoint-lg) {
+    &__InfoLine {
+      &--Address, &--Balance {
+        flex-direction: column;
+        align-items: flex-start;
+
+        .InfoLine__Value {
+          text-align: left;
+        }
+      }
+    }
+  }
+
+  @media screen and (min-width: $breakpoint-md) and (max-width: $breakpoint-lg),
+  screen and (max-width: $breakpoint-md) {
+    &__InfoLine {
+      gap: 0.25rem;
+
+      &--Address {
+        .Identifier__SymbolsContainer {
+          margin-left: 0;
+        }
+      }
+    }
+  }
+
+  @media screen and (max-width: $breakpoint-md) {
+    @include mixins.TotalCard(true);
+
+    &__Avatar {
+      right: 0.25rem;
+      top: 0;
+    }
+
+    &__Separator {
+      @include mixins.InfoContainerPadding(margin-top, 0px, true);
+      @include mixins.InfoContainerPadding(margin-bottom, 0px, true);
+    }
+
+    &__InfoLine {
+      flex-wrap: wrap;
+
+      &--Address, &--Balance {
+        padding-right: 6.25rem;
+      }
+    }
+
+    &--Loading {
+      .InfoLine__Value {
+        width: 100% !important;
+      }
+    }
+  }
+
+  @media screen and (max-width: $breakpoint-sm) {
+    &__Digest {
+      @include mixins.InfoContainerPadding(margin-left, 0px, true, true);
+      @include mixins.InfoContainerPadding(margin-right, 0px, true, true);
+      @include mixins.InfoContainerPadding(margin-bottom, 0px, true, true);
+    }
+
+    &__InfoLine {
+      &--Balance {
+        margin-top: 0.5rem;
+        padding-right: 0;
+      }
+    }
+  }
+}
