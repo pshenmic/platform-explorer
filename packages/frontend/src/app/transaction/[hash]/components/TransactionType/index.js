@@ -11,7 +11,7 @@ import {
   AddressFundsTransfer,
   AddressFundingFromAssetLock,
   AddressCreditWithdrawal,
-  // IdentityCreditTransferToAddress,
+  IdentityCreditTransferToAddress,
   IdentityCreateFromAddresses,
   IdentityTopUpFromAddresses
 } from './variants'
@@ -56,8 +56,7 @@ export const TransactionType = ({ typeString: type, ...other }) => {
   }
 
   if (type === 'IDENTITY_CREDIT_TRANSFER_TO_ADDRESS') {
-    return <>IDENTITY_CREDIT_TRANSFER_TO_ADDRESS</>
-    // return <IdentityCreditTransferToAddress {...other} />
+    return <IdentityCreditTransferToAddress {...other} />
   }
 
   if (type === 'IDENTITY_CREATE_FROM_ADDRESSES') {
