@@ -707,7 +707,7 @@ module.exports = ({
       }
     },
     {
-      path: '/platformAddress/:platform_address/transitions',
+      path: '/platformAddress/:platform_address/transactions',
       method: 'GET',
       handler: platformAddressesController.getPlatformAddressTransition,
       schema: {

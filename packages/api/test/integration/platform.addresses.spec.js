@@ -151,7 +151,7 @@ describe('Platform Addresses routes', () => {
   describe('getAddressTransitions()', () => {
     it('should return default set of address transitions', async () => {
       const [platformAddress] = platformAddresses
-      const { body } = await client.get(`/platformAddress/${platformAddress.address.bech32m_address}/transitions`)
+      const { body } = await client.get(`/platformAddress/${platformAddress.address.bech32m_address}/transactions`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -187,7 +187,7 @@ describe('Platform Addresses routes', () => {
 
     it('should return set of address transitions with custom limit', async () => {
       const [platformAddress] = platformAddresses
-      const { body } = await client.get(`/platformAddress/${platformAddress.address.bech32m_address}/transitions?limit=7`)
+      const { body } = await client.get(`/platformAddress/${platformAddress.address.bech32m_address}/transactions?limit=7`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -223,7 +223,7 @@ describe('Platform Addresses routes', () => {
 
     it('should return set of address transitions with custom limit and page', async () => {
       const [platformAddress] = platformAddresses
-      const { body } = await client.get(`/platformAddress/${platformAddress.address.bech32m_address}/transitions?limit=7&page=3`)
+      const { body } = await client.get(`/platformAddress/${platformAddress.address.bech32m_address}/transactions?limit=7&page=3`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -259,7 +259,7 @@ describe('Platform Addresses routes', () => {
 
     it('should return set of address transitions with custom limit, page and order', async () => {
       const [platformAddress] = platformAddresses
-      const { body } = await client.get(`/platformAddress/${platformAddress.address.bech32m_address}/transitions?limit=7&page=3&order=desc`)
+      const { body } = await client.get(`/platformAddress/${platformAddress.address.bech32m_address}/transactions?limit=7&page=3&order=desc`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
