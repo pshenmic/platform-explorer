@@ -40,6 +40,8 @@
   }
 
   &__InfoLine {
+    align-items: flex-start !important;
+
     &--Address {
       .InfoLine__Value {
         container-type: inline-size;
