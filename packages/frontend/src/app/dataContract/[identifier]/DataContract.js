@@ -71,15 +71,13 @@ function DataContract ({ identifier }) {
   const documents = useQuery({
     queryKey: ['documents', identifier, docPage],
     queryFn: () => Api.getDocumentsByDataContract(identifier, docPage, pageSize, 'desc'),
-    select: ({ pagination, data }) => ({
-      data: {
-        ...data,
-        pagination: normalizePagination({
-          page: docPage,
-          pageSize,
-          ...pagination
-        })
-      }
+    select: ({ pagination, resultSet }) => ({
+      pagination: normalizePagination({
+        page: docPage,
+        pageSize,
+        ...pagination
+      }),
+      resultSet
     })
   })
 
@@ -109,7 +107,7 @@ function DataContract ({ identifier }) {
   const handleTab = (index) => setActiveTab(tabs.find((_, idx) => idx === index))
 
   const txPagination = transactions.data?.pagination
-  const docPagination = transactions.data?.pagination
+  const docPagination = documents.data?.pagination
 
   useEffect(() => {
     setBreadcrumbs([
@@ -160,7 +158,7 @@ function DataContract ({ identifier }) {
                     transactions={transactions.data?.list}
                     loading={transactions.isLoading}
                     pagination={{
-                      onPageChange: ({ selected }) => setTxPage(selected > 0 ? selected + 1 : selected),
+                      onPageChange: ({ selected }) => setTxPage(selected + 1),
                       pageCount: txPagination?.pageCount,
                       forcePage: txPagination?.forcePage
                     }}
@@ -174,7 +172,7 @@ function DataContract ({ identifier }) {
                   documents={documents.data?.resultSet}
                   loading={documents.isLoading}
                   pagination={{
-                    onPageChange: ({ selected }) => setDocPage(selected > 0 ? selected + 1 : selected),
+                    onPageChange: ({ selected }) => setDocPage(selected + 1),
                     pageCount: docPagination?.pageCount,
                     forcePage: docPagination?.forcePage
                   }}
