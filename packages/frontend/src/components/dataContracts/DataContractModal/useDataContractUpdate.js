@@ -46,7 +46,7 @@ export const useDataContractUpdate = ({
       )
       await signer.signAndBroadcast(stateTransition)
 
-      await new Promise(resolve => setTimeout(resolve, 2000))
+      await new Promise((resolve) => setTimeout(resolve, 2000))
 
       queryClient.invalidateQueries({
         queryKey: ['dataContract']
@@ -62,9 +62,8 @@ export const useDataContractUpdate = ({
     }
 
     try {
-      const dataContract = await sdk.dataContracts.getDataContractByIdentifier(
-        dataContractId
-      )
+      const dataContract =
+        await sdk.dataContracts.getDataContractByIdentifier(dataContractId)
       const nonce = await sdk.identities.getIdentityContractNonce(
         owner,
         dataContractId
@@ -74,11 +73,15 @@ export const useDataContractUpdate = ({
       dataContract.description = description
       dataContract.version = dataContract.version + 1
 
-      const stateTransition = await sdk.dataContracts.createStateTransition(dataContract, 'update', nonce + 1n)
+      const stateTransition = await sdk.dataContracts.createStateTransition(
+        dataContract,
+        'update',
+        nonce + 1n
+      )
 
       await signer.signAndBroadcast(stateTransition)
 
-      await new Promise(resolve => setTimeout(resolve, 2000))
+      await new Promise((resolve) => setTimeout(resolve, 2000))
 
       queryClient.invalidateQueries({
         queryKey: ['dataContract']
@@ -90,12 +93,12 @@ export const useDataContractUpdate = ({
 
   useEffect(() => {
     const validate = ({ identities }) => {
-      const validIdentity = identities.find(
+      const isValidIdentity = identities.some(
         ({ identifier }) => identifier === owner
       )
 
       const isDisabledEdit =
-        defaultName && validIdentity !== -1 && dataContractId !== dataContractPE
+        defaultName && isValidIdentity && dataContractId !== dataContractPE
 
       setDisabled(isDisabledEdit)
     }
