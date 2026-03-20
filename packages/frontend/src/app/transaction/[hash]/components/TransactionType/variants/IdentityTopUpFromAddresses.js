@@ -3,20 +3,21 @@ import { ValueCard } from '@components/cards'
 import { InfoLine, Identifier } from '@components/data'
 
 /**
- * Displays details for an Address Funds Transfer transaction.
+ * Displays details for an Identity Top Up From Addresses transition.
  *
  * @param {Object} props
- * @param {number} [props.type] - Transaction type number.
- * @param {string} [props.typeString] - Transaction type string.
+ * @param {string} [props.identityId] - Identity identifier being topped up.
+ * @param {number|string} [props.amount] - Credits amount used to top up the identity.
+ * @param {number} [props.rate] - Fiat/DASH conversion rate used by nested components.
  * @param {number} [props.userFeeIncrease] - User fee increase amount.
  * @param {Array} [props.inputs] - Transaction inputs array.
  * @param {Array} [props.inputWitness] - Transaction witness array.
  * @param {Array} [props.outputs] - Transaction outputs array.
  * @param {Array} [props.feeStrategy] - Fee strategy array.
- * @param {string} [props.raw] - Raw transaction data.
+ * @param {boolean} [props.loading] - Loading state flag.
  * @returns {JSX.Element}
  */
-export const AddressFundsTransfer = ({
+export const IdentityTopUpFromAddresses = ({
   userFeeIncrease,
   inputs = [],
   inputWitness = [],
@@ -24,17 +25,38 @@ export const AddressFundsTransfer = ({
   feeStrategy = []
 }) => (
   <>
-    <InfoLine
-      className={'TransactionPage__InfoLine TransactionPage__InfoLine--Inline'}
-      title={'User Fee Increase'}
-      value={userFeeIncrease}
-      error={userFeeIncrease === undefined}
-    />
+    {userFeeIncrease != null && (
+      <InfoLine
+        className={'TransactionPage__InfoLine TransactionPage__InfoLine--Inline'}
+        title={'User Fee Increase'}
+        value={userFeeIncrease}
+        error={userFeeIncrease === undefined}
+      />
+    )}
+
+    {feeStrategy && feeStrategy.length > 0 && (
+      <InfoLine
+        className={'TransactionPage__InfoLine TransactionPage__InfoLine--FullWidth'}
+        title={'Fee Strategy'}
+        align={feeStrategy.length !== 1 ? 'top' : undefined}
+        value={
+          <div>
+            {feeStrategy.map((strategy, index) => (
+              <Flex gap={4} key={index}>
+                <div>{strategy.type}</div>
+                <div>{strategy.value}</div>
+              </Flex>
+            ))}
+          </div>
+        }
+      />
+    )}
+
     {inputs && inputs.length > 0 && (
       <InfoLine
         className={'TransactionPage__InfoLine TransactionPage__InfoLine--FullWidth'}
         title={`Inputs (${inputs.length})`}
-        align={inputs.length !== 1 && 'top'}
+        align={inputs.length !== 1 ? 'top' : undefined}
         value={
           <Stack gap={2}>
             {inputs.map((input, index) => (
@@ -68,11 +90,9 @@ export const AddressFundsTransfer = ({
 
     {inputWitness && inputWitness.length > 0 && (
       <InfoLine
-        className={
-          'TransactionPage__InfoLine TransactionPage__InfoLine--FullWidth'
-        }
+        className={'TransactionPage__InfoLine TransactionPage__InfoLine--FullWidth'}
         title={`Input Witness (${inputWitness.length})`}
-        align={inputWitness.length !== 1 && 'top'}
+        align={inputWitness.length !== 1 ? 'top' : undefined}
         value={
           <Stack gap={2}>
             {inputWitness.map((witness, index) => (
@@ -111,21 +131,14 @@ export const AddressFundsTransfer = ({
 
     {outputs && outputs.length > 0 && (
       <InfoLine
-        align={outputs.length !== 1 && 'top'}
-        className={
-          'TransactionPage__InfoLine TransactionPage__InfoLine--FullWidth'
-        }
+        align={outputs.length !== 1 ? 'top' : undefined}
+        className={'TransactionPage__InfoLine TransactionPage__InfoLine--FullWidth TransactionPage__InfoLine--Outputs'}
         title={`Outputs (${outputs.length})`}
         value={
-          <Stack gap={2}>
+          <Flex direction='column' gap={2}>
             {outputs.map((output, index) => (
               <ValueCard key={index}>
-                <Grid
-                  gap={4}
-                  templateColumns={{ base: '1r', lg: '1fr 200px' }}
-                  w='100%'
-                  align='center'
-                >
+                <Flex gap={4} direction={{ base: 'column', md: 'row' }} w='100%'>
                   <ValueCard className='TransactionPage__AddressCard' link={`/platformAddress/${output.platformAddress.bech32m}`}>
                     <Identifier
                       avatar
@@ -136,31 +149,13 @@ export const AddressFundsTransfer = ({
                       {output.platformAddress.bech32m}
                     </Identifier>
                   </ValueCard>
-                  <ValueCard>{output.credits} credits</ValueCard>
-                </Grid>
+                  <ValueCard>
+                    <div>{output.credits} credits</div>
+                  </ValueCard>
+                </Flex>
               </ValueCard>
             ))}
-          </Stack>
-        }
-      />
-    )}
-
-    {feeStrategy && feeStrategy.length > 0 && (
-      <InfoLine
-        className={
-          'TransactionPage__InfoLine TransactionPage__InfoLine--FullWidth'
-        }
-        title={'Fee Strategy'}
-        align={feeStrategy.length !== 1 && 'top'}
-        value={
-          <div>
-            {feeStrategy.map((strategy, index) => (
-              <Flex gap={4} key={index}>
-                <div>{strategy.type}</div>
-                <div>{strategy.value}</div>
-              </Flex>
-            ))}
-          </div>
+          </Flex>
         }
       />
     )}

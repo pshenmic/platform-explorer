@@ -47,14 +47,14 @@ export const AddressCreditWithdrawal = ({
             {inputs.map((input, index) => (
               <ValueCard key={index}>
                 <Flex gap={4} direction={{ base: 'column', lg: 'row' }}>
-                  <ValueCard>
+                  <ValueCard link={`/platformAddress/${input.platformAddress.bech32m}`}>
                     <Identifier
                       avatar
                       copyButton
                       ellipsis
                       styles={['highlight-both']}
                     >
-                      {input.address}
+                      {input.platformAddress.bech32m}
                     </Identifier>
                   </ValueCard>
                   <ValueCard>

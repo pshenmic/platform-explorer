@@ -283,7 +283,7 @@ const getPlatformAddressInfo = (hash) => {
 }
 
 const getPlatformAddressTransitions = (hash, page = 1, limit = 10, order = 'desc') => {
-  return call(`platformAddress/${hash}/transitions?page=${page}&limit=${limit}&order=${order}`, 'GET')
+  return call(`platformAddress/${hash}/transactions?page=${page}&limit=${limit}&order=${order}`, 'GET')
 }
 
 const getStatus = () => {
