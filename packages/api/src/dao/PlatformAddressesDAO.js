@@ -3,6 +3,7 @@ const { NETWORK } = require('../constants')
 const PaginatedResultSet = require('../models/PaginatedResultSet')
 const Transaction = require('../models/Transaction')
 const { getAliasDocumentForIdentifiers, getAliasFromDocument } = require('../utils')
+const StateTransitionEnum = require("../enums/StateTransitionEnum");
 module.exports = class PlatformAddressesDAO {
   constructor (knex, sdk) {
     this.knex = knex
@@ -177,7 +178,8 @@ module.exports = class PlatformAddressesDAO {
       return Transaction.fromRow({
         ...row,
         owner: row.owner,
-        aliases
+        aliases,
+        type: StateTransitionEnum[row.type],
       })
     })
 
