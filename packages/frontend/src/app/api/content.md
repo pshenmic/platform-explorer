@@ -61,7 +61,7 @@ Reference:
 * [Quorum Info](#quorum-info)
 * [Platform Addresses](#platform-addresses)
 * [Platform Address Info](#platform-address-info)
-* [Platform Address Transitions](#platform-address-transitions)
+* [Platform Address Transactions](#platform-address-transactions)
 
 ### Status
 Returns basic stats and epoch info
@@ -1683,6 +1683,8 @@ This endpoint allows search any types of data
 * Tokens
   * Full `Identifier`
   * Part `name`
+* Platform Address
+  * Full `Bech32m`
 
 ```
 GET /search?query=xyz
@@ -3697,7 +3699,7 @@ Response codes:
 500: Internal Server Error
 ```
 ___
-### Platform Address Transitions
+### Platform Address Transactions
 Return all transitions for platform address paged and order by creation height.
 
 * Valid `order` values are `asc` or `desc`
