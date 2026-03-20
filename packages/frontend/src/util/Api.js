@@ -278,6 +278,14 @@ const getContestedResourcesStats = () => {
   return call('contestedResources/stats', 'GET')
 }
 
+const getPlatformAddressInfo = (hash) => {
+  return call(`platformAddress/${hash}/info`, 'GET')
+}
+
+const getPlatformAddressTransitions = (hash, page = 1, limit = 10, order = 'desc') => {
+  return call(`platformAddress/${hash}/transactions?page=${page}&limit=${limit}&order=${order}`, 'GET')
+}
+
 const getStatus = () => {
   return call('status', 'GET')
 }
@@ -334,5 +342,7 @@ export {
   getContestedResourcesStats,
   getMasternodeVotes,
   getRate,
+  getPlatformAddressInfo,
+  getPlatformAddressTransitions,
   getValidatorByMasternodeIdentity
 }

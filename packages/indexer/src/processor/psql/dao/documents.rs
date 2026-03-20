@@ -1,11 +1,11 @@
 use crate::entities::document::Document;
 use crate::processor::psql::PostgresDAO;
+use crate::utils::escape_null_character_json_object;
 use deadpool_postgres::{PoolError, Transaction};
 use dpp::identifier::Identifier;
 use dpp::platform_value::string_encoding::Encoding::Base58;
 use serde_json::{Map, Number, Value};
 use tokio_postgres::Row;
-use crate::utils::escape_null_character_json_object;
 
 impl PostgresDAO {
     pub async fn create_document(

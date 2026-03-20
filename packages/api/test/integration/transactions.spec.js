@@ -150,6 +150,9 @@ describe('Transaction routes', () => {
         .expect('Content-Type', 'application/json; charset=utf-8')
 
       const expectedTransaction = {
+        base58Address: null,
+        bech32mAddress: null,
+        incoming: null,
         blockHash: transaction.block.hash,
         blockHeight: transaction.block.height,
         data: '{}',
@@ -185,6 +188,9 @@ describe('Transaction routes', () => {
         .expect('Content-Type', 'application/json; charset=utf-8')
 
       const expectedTransaction = {
+        base58Address: null,
+        bech32mAddress: null,
+        incoming: null,
         blockHash: transaction.block.hash,
         blockHeight: transaction.block.height,
         data: '{}',
@@ -234,6 +240,9 @@ describe('Transaction routes', () => {
       const expectedTransactions = transactions
         .slice(0, 10)
         .map(transaction => ({
+          base58Address: null,
+          bech32mAddress: null,
+          incoming: null,
           blockHash: transaction.block.hash,
           blockHeight: transaction.block.height,
           data: '{}',
@@ -276,6 +285,9 @@ describe('Transaction routes', () => {
         .sort((a, b) => b.transaction.id - a.transaction.id)
         .slice(0, 10)
         .map(transaction => ({
+          base58Address: null,
+          bech32mAddress: null,
+          incoming: null,
           blockHash: transaction.block.hash,
           blockHeight: transaction.block.height,
           data: '{}',
@@ -321,6 +333,9 @@ describe('Transaction routes', () => {
         .sort((a, b) => b.transaction.id - a.transaction.id)
         .slice(0, 10)
         .map(transaction => ({
+          base58Address: null,
+          bech32mAddress: null,
+          incoming: null,
           blockHash: transaction.block.hash,
           blockHeight: transaction.block.height,
           data: '{}',
@@ -368,6 +383,9 @@ describe('Transaction routes', () => {
         .sort((a, b) => b.transaction.id - a.transaction.id)
         .slice(0, 10)
         .map(transaction => ({
+          base58Address: null,
+          bech32mAddress: null,
+          incoming: null,
           blockHash: transaction.block.hash,
           blockHeight: transaction.block.height,
           data: '{}',
@@ -415,6 +433,9 @@ describe('Transaction routes', () => {
         .sort((a, b) => b.transaction.id - a.transaction.id)
         .slice(0, 10)
         .map(transaction => ({
+          base58Address: null,
+          bech32mAddress: null,
+          incoming: null,
           blockHash: transaction.block.hash,
           blockHeight: transaction.block.height,
           data: '{}',
@@ -462,6 +483,9 @@ describe('Transaction routes', () => {
         .sort((a, b) => b.transaction.id - a.transaction.id)
         .slice(0, 10)
         .map(transaction => ({
+          base58Address: null,
+          bech32mAddress: null,
+          incoming: null,
           blockHash: transaction.block.hash,
           blockHeight: transaction.block.height,
           data: '{}',
@@ -509,6 +533,9 @@ describe('Transaction routes', () => {
         .sort((a, b) => b.transaction.id - a.transaction.id)
         .slice(0, 10)
         .map(transaction => ({
+          base58Address: null,
+          bech32mAddress: null,
+          incoming: null,
           blockHash: transaction.block.hash,
           blockHeight: transaction.block.height,
           data: '{}',
@@ -554,6 +581,9 @@ describe('Transaction routes', () => {
       const expectedTransactions = txsWithType
         .filter(transaction => transaction.transaction.status === 'FAIL')
         .map(transaction => ({
+          base58Address: null,
+          bech32mAddress: null,
+          incoming: null,
           blockHash: transaction.block.hash,
           blockHeight: transaction.block.height,
           data: '{}',
@@ -601,6 +631,9 @@ describe('Transaction routes', () => {
       const expectedTransactions = txsWithType
         .slice(0, 10)
         .map(transaction => ({
+          base58Address: null,
+          bech32mAddress: null,
+          incoming: null,
           blockHash: transaction.block.hash,
           blockHeight: transaction.block.height,
           data: '{}',
@@ -652,6 +685,9 @@ describe('Transaction routes', () => {
       const expectedTransactions = txsWithType
         .slice(0, 10)
         .map(transaction => ({
+          base58Address: null,
+          bech32mAddress: null,
+          incoming: null,
           blockHash: transaction.block.hash,
           blockHeight: transaction.block.height,
           data: '{}',
@@ -704,6 +740,9 @@ describe('Transaction routes', () => {
         .sort((a, b) => b.transaction.id - a.transaction.id)
         .slice(6, 9)
         .map(transaction => ({
+          base58Address: null,
+          bech32mAddress: null,
+          incoming: null,
           blockHash: transaction.block.hash,
           blockHeight: transaction.block.height,
           data: '{}',
@@ -746,6 +785,9 @@ describe('Transaction routes', () => {
         .sort((a, b) => b.transaction.id - a.transaction.id)
         .slice(6, 9)
         .map(transaction => ({
+          base58Address: null,
+          bech32mAddress: null,
+          incoming: null,
           blockHash: transaction.block.hash,
           blockHeight: transaction.block.height,
           data: '{}',
@@ -788,6 +830,9 @@ describe('Transaction routes', () => {
         .sort((a, b) => b.transaction.gas_used - a.transaction.gas_used)
         .slice(6, 9)
         .map(transaction => ({
+          base58Address: null,
+          bech32mAddress: null,
+          incoming: null,
           blockHash: transaction.block.hash,
           blockHeight: transaction.block.height,
           data: '{}',
@@ -830,6 +875,9 @@ describe('Transaction routes', () => {
         .sort((a, b) => new Date(a.block.timestamp).getTime() - new Date(b.block.timestamp).getTime())
         .slice(6, 9)
         .map(transaction => ({
+          base58Address: null,
+          bech32mAddress: null,
+          incoming: null,
           blockHash: transaction.block.hash,
           blockHeight: transaction.block.height,
           data: '{}',
@@ -875,6 +923,9 @@ describe('Transaction routes', () => {
         .sort((a, b) => new Date(b.block.timestamp).getTime() - new Date(a.block.timestamp).getTime())
         .slice(7, 14)
         .map(transaction => ({
+          base58Address: null,
+          bech32mAddress: null,
+          incoming: null,
           hash: transaction.transaction.hash,
           index: transaction.transaction.index,
           blockHash: transaction.block.hash,
@@ -917,6 +968,9 @@ describe('Transaction routes', () => {
         .sort((a, b) => a.transaction.id - b.transaction.id)
         .slice(6, 9)
         .map(transaction => ({
+          base58Address: null,
+          bech32mAddress: null,
+          incoming: null,
           hash: transaction.transaction.hash,
           index: transaction.transaction.index,
           blockHash: transaction.block.hash,

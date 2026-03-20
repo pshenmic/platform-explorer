@@ -219,12 +219,16 @@ module.exports = class TokensDAO {
     const resultSet = await Promise.all(rows.map(async (row) => {
       const dataContract = await this.sdk.dataContracts.getDataContractByIdentifier(row.data_contract_identifier)
 
-      const token = dataContract.tokens[row.position]
+      const token = dataContract.tokens.find(({ position }) => position === row.position)
+
+      if (token == null) {
+        return null
+      }
 
       const localizations = {}
 
-      for (const locale in token.conventions.localizations) {
-        localizations[locale] = Localization.fromObject(token.conventions.localizations[locale])
+      for (const locale in token.tokenConfiguration.conventions.localizations) {
+        localizations[locale] = Localization.fromObject(token.tokenConfiguration.conventions.localizations[locale])
       }
 
       return {
@@ -236,7 +240,7 @@ module.exports = class TokensDAO {
 
     const [row] = rows
 
-    return new PaginatedResultSet(resultSet, page, limit, Number(row?.total_count ?? 0))
+    return new PaginatedResultSet(resultSet.filter(v => v != null), page, limit, Number(row?.total_count ?? 0))
   }
 
   getTokensByIdentity = async (identifier, page, limit, order) => {

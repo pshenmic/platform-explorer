@@ -17,6 +17,7 @@ const masternodeVote = require('./mocks/masternode_vote.json')
 const addressCreditWithdrawal = require('./mocks/address_credit_withdrawal.json')
 const addressFundingFromAssetLock = require('./mocks/address_funding_from_asset_lock.json')
 const addressFundsTransfer = require('./mocks/address_funds_transfer.json')
+const identityCreditTransferToAddress = require('./mocks/identity_credit_transfer_to_address.json')
 const Alias = require('../../src/models/Alias')
 const { buildIndexBuffer } = require('../../src/utils')
 const { IdentifierWASM } = require('pshenmic-dpp')
@@ -676,7 +677,10 @@ describe('Utils', () => {
         userFeeIncrease: 0,
         inputs: [
           {
-            address: 'yZZkv2xhfqoXMgWEDvog9U65c17RzZLrbV',
+            platformAddress: {
+              base58: 'yZZkv2xhfqoXMgWEDvog9U65c17RzZLrbV',
+              bech32m: 'tdashevo1qzg5azscav69z7m6dfzr9ner0a5vt7pn9cf27pv0'
+            },
             credits: '250000000000',
             nonce: '5'
           }
@@ -696,7 +700,7 @@ describe('Utils', () => {
             value: 0
           }
         ],
-        pooling: 0,
+        pooling: 'Never',
         outputAddress: 'yT6NQzvH2h16ggSKNj2b2Wu3NMFiYVKXeB',
         outputScript: '76a9144a4fc56e14aa98799880abbcd46de5d2e09998fb88ac',
         raw: '0e000100914e8a18eb34517b7a6a4432cf237f68c5f8332e05fd0000003a352944000001000001001976a9144a4fc56e14aa98799880abbcd46de5d2e09998fb88ac000100412097d5baef616aeeb6b19e5baf4fdc2bdadcc685bd01161844c199b22b41afe1547a90cef74d70a776263ef723f509711f495a6907a63f89b7ddb260956404299b'
@@ -721,7 +725,10 @@ describe('Utils', () => {
         inputWitness: [],
         outputs: [
           {
-            address: 'yTdAgPuFgiByksqV1Hhwgxbw3EdJRKQBwb',
+            platformAddress: {
+              base58: 'yTdAgPuFgiByksqV1Hhwgxbw3EdJRKQBwb',
+              bech32m: 'tdashevo1qpgz9hk6tkn5zj3653s8qkjmk9439qkf0gl4yxxw'
+            },
             credits: '0'
           }
         ],
@@ -744,7 +751,10 @@ describe('Utils', () => {
         userFeeIncrease: 0,
         inputs: [
           {
-            address: 'yRpNvoc3hd66c3rNrPRGubVd9vGUoAVpZV',
+            platformAddress: {
+              base58: 'yRpNvoc3hd66c3rNrPRGubVd9vGUoAVpZV',
+              bech32m: 'tdashevo1qq79z66rh34l4u2axlz3jv34zwshggnenut9k093'
+            },
             credits: '100000000',
             nonce: '2'
           }
@@ -759,403 +769,703 @@ describe('Utils', () => {
         ],
         outputs: [
           {
-            address: 'yLRvYtK1GKU3V96igCuENoDNZTDqMueSq5',
+            platformAddress: {
+              base58: 'yLRvYtK1GKU3V96igCuENoDNZTDqMueSq5',
+              bech32m: 'tdashevo1qqqnn84grgmrqrh98h33e3u9f7vasdrt7cmdhy2s'
+            },
             credits: '1000000'
           },
           {
-            address: 'yLy3FKiUN2h1NtJr8D4Cb85KEfQVkgCxBV',
+            platformAddress: {
+              base58: 'yLy3FKiUN2h1NtJr8D4Cb85KEfQVkgCxBV',
+              bech32m: 'tdashevo1qqr3cxhgel75ru0yrhj5eq8j8jt92m5enqhkn3dv'
+            },
             credits: '1000000'
           },
           {
-            address: 'yMEyWias3eQEyZJjFXov2hddgHckxf4Vz5',
+            platformAddress: {
+              base58: 'yMEyWias3eQEyZJjFXov2hddgHckxf4Vz5',
+              bech32m: 'tdashevo1qq9plfyacx9q26dtaxgwuw9lt78nyu2mzc9eqmdw'
+            },
             credits: '1000000'
           },
           {
-            address: 'yMGBpsFMpe8jheCwAbLNCTr4XJHRFstFQb',
+            platformAddress: {
+              base58: 'yMGBpsFMpe8jheCwAbLNCTr4XJHRFstFQb',
+              bech32m: 'tdashevo1qq9954jedavs9twj6r07yg25y2ymkzqg5s2r43u6'
+            },
             credits: '1000000'
           },
           {
-            address: 'yMMqB5R21PtheP7AAgKAniZxzzy5z3prjT',
+            platformAddress: {
+              base58: 'yMMqB5R21PtheP7AAgKAniZxzzy5z3prjT',
+              bech32m: 'tdashevo1qq9khxq3mrllp3vd72kj4valdnwfmpxfxshyr08y'
+            },
             credits: '1000000'
           },
           {
-            address: 'yMScsdSb8fEEHsEYHCGWNuAyRvY6QtJGfV',
+            platformAddress: {
+              base58: 'yMScsdSb8fEEHsEYHCGWNuAyRvY6QtJGfV',
+              bech32m: 'tdashevo1qqx9xe7khtgedcr0lyrdh08wm852l0k9xutgy0qm'
+            },
             credits: '1000000'
           },
           {
-            address: 'yMVSAUDBTtgX1tDVgaQDprXgtRVHGSN3wY',
+            platformAddress: {
+              base58: 'yMVSAUDBTtgX1tDVgaQDprXgtRVHGSN3wY',
+              bech32m: 'tdashevo1qqxdhd4tz8lhu0g66px0qzqe0uhp08840y4pzk38'
+            },
             credits: '1000000'
           },
           {
-            address: 'yMYxWfJvp7JvvDeaXyFmKhzZMNdZ2jZ4tE',
+            platformAddress: {
+              base58: 'yMYxWfJvp7JvvDeaXyFmKhzZMNdZ2jZ4tE',
+              bech32m: 'tdashevo1qqxcvjmkfw7j0azk66wk6s0r347kldvgnygcqc4r'
+            },
             credits: '1000000'
           },
           {
-            address: 'yMZ6UKi2VWLPkP7aab7mSRj7w46KVntvu7',
+            platformAddress: {
+              base58: 'yMZ6UKi2VWLPkP7aab7mSRj7w46KVntvu7',
+              bech32m: 'tdashevo1qqxceurw4venw24eway33yvf8qfcs4x2gunnhkcv'
+            },
             credits: '1000000'
           },
           {
-            address: 'yMancpJ2cEGhAALrLQsbPLbH3fgoXBHnxg',
+            platformAddress: {
+              base58: 'yMancpJ2cEGhAALrLQsbPLbH3fgoXBHnxg',
+              bech32m: 'tdashevo1qqxaah3p4ucc92q8k2g7ttgzmwnrh0zsqsht3muc'
+            },
             credits: '1000000'
           },
           {
-            address: 'yMjVb7NhnfGoJaoMmDoMwZJb4AL1eQiCa6',
+            platformAddress: {
+              base58: 'yMjVb7NhnfGoJaoMmDoMwZJb4AL1eQiCa6',
+              bech32m: 'tdashevo1qq8cge2mvmca93flzf8pn449suahm77eeq606uh6'
+            },
             credits: '1000000'
           },
           {
-            address: 'yMokTBpjJ7hwiYbWxt3foP8sjHorgg93FY',
+            platformAddress: {
+              base58: 'yMokTBpjJ7hwiYbWxt3foP8sjHorgg93FY',
+              bech32m: 'tdashevo1qqg9yau5tgxfv82ge7k3atxm2f2fxtt3lvcx27n9'
+            },
             credits: '1000000'
           },
           {
-            address: 'yMwYsfEeiZToU2JovbKZqnQZqkTZxdhGg2',
+            platformAddress: {
+              base58: 'yMwYsfEeiZToU2JovbKZqnQZqkTZxdhGg2',
+              bech32m: 'tdashevo1qqgucg2zejzkex9rp6dhftnjdxgcmqh8gccckla3'
+            },
             credits: '1000000'
           },
           {
-            address: 'yNZ1cyWUarwRWJNGiEE7s8uesV328i6iLR',
+            platformAddress: {
+              base58: 'yNZ1cyWUarwRWJNGiEE7s8uesV328i6iLR',
+              bech32m: 'tdashevo1qqvgzpq9q7r9uxnmx8k6a0atfejwrs4gyudp7cw2'
+            },
             credits: '1000000'
           },
           {
-            address: 'yNZ6Tu7BYiR8jh6kRJexYAXbzvLYQeS7K1',
+            platformAddress: {
+              base58: 'yNZ6Tu7BYiR8jh6kRJexYAXbzvLYQeS7K1',
+              bech32m: 'tdashevo1qqvg2rc377vtkl8qgl6qdmuzr6ayuv7t0vnl3x52'
+            },
             credits: '1000000'
           },
           {
-            address: 'yNadMm4hfU1tPBp29uJfzC8oxd1GcPPUBv',
+            platformAddress: {
+              base58: 'yNadMm4hfU1tPBp29uJfzC8oxd1GcPPUBv',
+              bech32m: 'tdashevo1qqvv7sun7efzmq8m4t5fj990cq4pxk5fd5hqavpe'
+            },
             credits: '1000000'
           },
           {
-            address: 'yP4pqSqYeGtWSjZaBfAsKynNgAbDtNQf63',
+            platformAddress: {
+              base58: 'yP4pqSqYeGtWSjZaBfAsKynNgAbDtNQf63',
+              bech32m: 'tdashevo1qq0zgl0qjyhz9f0y4mdvwrf3s29vn7q2dgk0wgcv'
+            },
             credits: '1000000'
           },
           {
-            address: 'yP8182D7K9NxmQBrvbxy398jN9KM3rNiaf',
+            platformAddress: {
+              base58: 'yP8182D7K9NxmQBrvbxy398jN9KM3rNiaf',
+              bech32m: 'tdashevo1qq0tu5mr9vw8gawnyd4qmuzd680l2qzz2c2axt0v'
+            },
             credits: '1000000'
           },
           {
-            address: 'yP9htGD6Zvc1UpDMh4xASFqMXYVAhM6HHF',
+            platformAddress: {
+              base58: 'yP9htGD6Zvc1UpDMh4xASFqMXYVAhM6HHF',
+              bech32m: 'tdashevo1qq03p3xvmtz2appq3ggkmcvrm5fel6a6kqax82h0'
+            },
             credits: '1000000'
           },
           {
-            address: 'yQDfWfdoU6JBma525GuuSZu1xo35oPqt7f',
+            platformAddress: {
+              base58: 'yQDfWfdoU6JBma525GuuSZu1xo35oPqt7f',
+              bech32m: 'tdashevo1qq4v3yl6mw9napv5j9qs6ltxwg0sceyhzszk00qs'
+            },
             credits: '1000000'
           },
           {
-            address: 'yQMLwDt3QgDK4s4t7nehYXQQZqY83p2ctM',
+            platformAddress: {
+              base58: 'yQMLwDt3QgDK4s4t7nehYXQQZqY83p2ctM',
+              bech32m: 'tdashevo1qqkrces4qjft9qd5rd907jdaauz8czmhuqneah7t'
+            },
             credits: '1000000'
           },
           {
-            address: 'yQSdsMLDJWVbiVzmiB4nAwSgT2cRZ9gYdX',
+            platformAddress: {
+              base58: 'yQSdsMLDJWVbiVzmiB4nAwSgT2cRZ9gYdX',
+              bech32m: 'tdashevo1qqkne8ga388u0kgla8uv4z4jfyzqefl5ds3qeffe'
+            },
             credits: '1000000'
           },
           {
-            address: 'yQWXsMMs9ATvRqzzeoV6K4QR4K9hqfTcLb',
+            platformAddress: {
+              base58: 'yQWXsMMs9ATvRqzzeoV6K4QR4K9hqfTcLb',
+              bech32m: 'tdashevo1qqklj3xlk0pzvjqz3k8rkj22uw7wjdlphgu6pnt4'
+            },
             credits: '1000000'
           },
           {
-            address: 'yRHZpq4qVQcbwyqwTUhTD3xGgASP1Q7uMh',
+            platformAddress: {
+              base58: 'yRHZpq4qVQcbwyqwTUhTD3xGgASP1Q7uMh',
+              bech32m: 'tdashevo1qqm8m8km8mt5pdf5l66pzpyk4cd43gvhdgh9lxfq'
+            },
             credits: '1000000'
           },
           {
-            address: 'yRLDkUcUnhCkaTumhRjLf9uCnDbXXN7Ui9',
+            platformAddress: {
+              base58: 'yRLDkUcUnhCkaTumhRjLf9uCnDbXXN7Ui9',
+              bech32m: 'tdashevo1qqm0u8z3xrlud5g57p5rp898pus38zdprcffmsf3'
+            },
             credits: '1000000'
           },
           {
-            address: 'yRRd5NBguXFNp3mcGWUY3TyaU2WVMVDFyR',
+            platformAddress: {
+              base58: 'yRRd5NBguXFNp3mcGWUY3TyaU2WVMVDFyR',
+              bech32m: 'tdashevo1qquq82tx800ppjd8x3xkjx2lfx98scvgdu7wgaxn'
+            },
             credits: '1000000'
           },
           {
-            address: 'yRiRVUS5SSApuqk9tpo3iHAMqeASj1Awoz',
+            platformAddress: {
+              base58: 'yRiRVUS5SSApuqk9tpo3iHAMqeASj1Awoz',
+              bech32m: 'tdashevo1qqanzyquh69sx95ndy4asjjkk83qs9cjnsuaf6ku'
+            },
             credits: '1000000'
           },
           {
-            address: 'yRk5uXAFoQU1a1KYq1i4yzmUC2bqweiZmV',
+            platformAddress: {
+              base58: 'yRk5uXAFoQU1a1KYq1i4yzmUC2bqweiZmV',
+              bech32m: 'tdashevo1qqacrzae2enwyr797gtyfrtwj7cwamfdl52p3kws'
+            },
             credits: '1000000'
           },
           {
-            address: 'ySceoSJ3Gwoy2qfiXShiP3YpwWBLE6f36F',
+            platformAddress: {
+              base58: 'ySceoSJ3Gwoy2qfiXShiP3YpwWBLE6f36F',
+              bech32m: 'tdashevo1qpz3rnd8sv75uxrugwhx00e9e6jlxlpceu3v3r63'
+            },
             credits: '1000000'
           },
           {
-            address: 'ySv2CLogbYUBnHVDey6MTYX7mpAM6J1cGZ',
+            platformAddress: {
+              base58: 'ySv2CLogbYUBnHVDey6MTYX7mpAM6J1cGZ',
+              bech32m: 'tdashevo1qpy94wlc7k68rcz3exr9puuykl0esv3cd5xffmyd'
+            },
             credits: '1000000'
           },
           {
-            address: 'yT1jGGpp22NsvFKS75KNca67BH3E87k88L',
+            platformAddress: {
+              base58: 'yT1jGGpp22NsvFKS75KNca67BH3E87k88L',
+              bech32m: 'tdashevo1qpyk7xyzzgtlswcl7l03u529prc47qj64vuxug9p'
+            },
             credits: '1000000'
           },
           {
-            address: 'yT7V5riT1BTLHWPvWKqVacrAgCmUoQQ53J',
+            platformAddress: {
+              base58: 'yT7V5riT1BTLHWPvWKqVacrAgCmUoQQ53J',
+              bech32m: 'tdashevo1qp9gts2xmjjz2jxe97dkzf5gtc2k706deyj2jcqy'
+            },
             credits: '1000000'
           },
           {
-            address: 'yT9BLtjQcVJrah76hJbjHMbWPfEUmJkvee',
+            platformAddress: {
+              base58: 'yT9BLtjQcVJrah76hJbjHMbWPfEUmJkvee',
+              bech32m: 'tdashevo1qp9d03c522js948sj59av4jh7a2k5jqjxug8cact'
+            },
             credits: '1000000'
           },
           {
-            address: 'yTUc6sZGwPGEQTmuX22fpK6xWnaNLGK9zC',
+            platformAddress: {
+              base58: 'yTUc6sZGwPGEQTmuX22fpK6xWnaNLGK9zC',
+              bech32m: 'tdashevo1qp8ggkgujpvgehgq3kxswgegd5j2tam3w5hrnfly'
+            },
             credits: '1000000'
           },
           {
-            address: 'yTVozH4Trw5ZEEzZjpsGXCKxsr1AQqk4rg',
+            platformAddress: {
+              base58: 'yTVozH4Trw5ZEEzZjpsGXCKxsr1AQqk4rg',
+              bech32m: 'tdashevo1qp8tatadrzph6z2xh8r9w73leqh9ymtp35fgfezz'
+            },
             credits: '1000000'
           },
           {
-            address: 'yTxA1HarqB1mk1jkAzCwDgqePjviuvqcVa',
+            platformAddress: {
+              base58: 'yTxA1HarqB1mk1jkAzCwDgqePjviuvqcVa',
+              bech32m: 'tdashevo1qpfm5d0lpaawh2rmtftelqxek74c0yd9myn5kp9n'
+            },
             credits: '1000000'
           },
           {
-            address: 'yUm6NVpuRLtbL2zCU2XkwoUBxquuVU4Gum',
+            platformAddress: {
+              base58: 'yUm6NVpuRLtbL2zCU2XkwoUBxquuVU4Gum',
+              bech32m: 'tdashevo1qpwf4w34yy998jy30vwdwfmcykww4s3mhufzwuav'
+            },
             credits: '1000000'
           },
           {
-            address: 'yUqYfyabEh4YhBdzDNFvjonDfUayWRDCJX',
+            platformAddress: {
+              base58: 'yUqYfyabEh4YhBdzDNFvjonDfUayWRDCJX',
+              bech32m: 'tdashevo1qpwhyk9nxm37nmnn3azeh88yre38yqlnuqv3pkph'
+            },
             credits: '1000000'
           },
           {
-            address: 'yV8xieK8YMgNCMDiSCurBuFEKkfEqwW4Yi',
+            platformAddress: {
+              base58: 'yV8xieK8YMgNCMDiSCurBuFEKkfEqwW4Yi',
+              bech32m: 'tdashevo1qpst6lvv2xdwfqv98xsh8kyynuh0gs3szcz2ag5y'
+            },
             credits: '1000000'
           },
           {
-            address: 'yVMpAbWhUWMbK7HwM2rjDgmmhysXnQJEmD',
+            platformAddress: {
+              base58: 'yVMpAbWhUWMbK7HwM2rjDgmmhysXnQJEmD',
+              bech32m: 'tdashevo1qp3jhs352gdwwljn9xs2e7v6pua3kzztmyzlqqsa'
+            },
             credits: '1000000'
           },
           {
-            address: 'yVWMZMZUsxr1ag2HpVLBYzWQHjuW7sWDNx',
+            platformAddress: {
+              base58: 'yVWMZMZUsxr1ag2HpVLBYzWQHjuW7sWDNx',
+              bech32m: 'tdashevo1qpjvjj5kmeksx5dxcac62zdnhtd58pgtl5yzcv6k'
+            },
             credits: '1000000'
           },
           {
-            address: 'yVwq9cWArNRmvzDaLwdgYhUpxwJSLmBgza',
+            platformAddress: {
+              base58: 'yVwq9cWArNRmvzDaLwdgYhUpxwJSLmBgza',
+              bech32m: 'tdashevo1qp5e4wx07j6rqtu9ay6gnwpwxnrejquce5v6z72t'
+            },
             credits: '1000000'
           },
           {
-            address: 'yW3rHfmHtA8GQxYAC6vS3y4RAs3umdfB4V',
+            platformAddress: {
+              base58: 'yW3rHfmHtA8GQxYAC6vS3y4RAs3umdfB4V',
+              bech32m: 'tdashevo1qp4tu2cugdf2rmpkqdvgkn5quy8elcxmgqk4uhml'
+            },
             credits: '1000000'
           },
           {
-            address: 'yW6qq9g9GN8WcMmRtvqrpX7UFRJzXfyLhe',
+            platformAddress: {
+              base58: 'yW6qq9g9GN8WcMmRtvqrpX7UFRJzXfyLhe',
+              bech32m: 'tdashevo1qp457zxu4wl30lef7ufsj02aun2v4aw0m5gpx25r'
+            },
             credits: '1000000'
           },
           {
-            address: 'yWfmjfCPToQMyt6sJmE65mwQgHQHSXpvti',
+            platformAddress: {
+              base58: 'yWfmjfCPToQMyt6sJmE65mwQgHQHSXpvti',
+              bech32m: 'tdashevo1qpccj4lz88tlr26tucza53dwe2p6kshr6cjed7y2'
+            },
             credits: '1000000'
           },
           {
-            address: 'yWo2mo7P4S7GkoQamwCERfXHGAVc8BSWJ3',
+            platformAddress: {
+              base58: 'yWo2mo7P4S7GkoQamwCERfXHGAVc8BSWJ3',
+              bech32m: 'tdashevo1qpew3n4pyrc7m2dd826yduvrsq32ge2ymgpqh0q4'
+            },
             credits: '1000000'
           },
           {
-            address: 'yWxhMyQ9kKvnYSk86fbJtmVAQZ5BpotNti',
+            platformAddress: {
+              base58: 'yWxhMyQ9kKvnYSk86fbJtmVAQZ5BpotNti',
+              bech32m: 'tdashevo1qp6tesm54y4ys8mkgw76kzvs68vshlcu45vuw8xj'
+            },
             credits: '1000000'
           },
           {
-            address: 'yX1nE18Wvnn1vnG8FphtrsMzPJJEct6UGH',
+            platformAddress: {
+              base58: 'yX1nE18Wvnn1vnG8FphtrsMzPJJEct6UGH',
+              bech32m: 'tdashevo1qp64yysf73kazy8n5f6gwcsyel4jv3x7q5yl0c52'
+            },
             credits: '1000000'
           },
           {
-            address: 'yXMKz81VvXebQRWD13Gb3Hn44vph2DcbSy',
+            platformAddress: {
+              base58: 'yXMKz81VvXebQRWD13Gb3Hn44vph2DcbSy',
+              bech32m: 'tdashevo1qpusglrcpk9auyyt3earl8dltc67med66u0wz9f6'
+            },
             credits: '1000000'
           },
           {
-            address: 'yXZx4VDFobvosk3pMmG7ESDC1R9DgtG8Gq',
+            platformAddress: {
+              base58: 'yXZx4VDFobvosk3pMmG7ESDC1R9DgtG8Gq',
+              bech32m: 'tdashevo1qpak09uysjqeujcmd2jlz6aly5yfy9vpkvxf6fqp'
+            },
             credits: '1000000'
           },
           {
-            address: 'yXhxMuGneNWTpE7vXhKX98tvazPCiNsEEX',
+            platformAddress: {
+              base58: 'yXhxMuGneNWTpE7vXhKX98tvazPCiNsEEX',
+              bech32m: 'tdashevo1qp7wk2ujf5adtpujxl7tt48mejepe6dr7s0kqc77'
+            },
             credits: '1000000'
           },
           {
-            address: 'yY69u7ciejdH1f4BGNAMkZQfPAnsGP7egZ',
+            platformAddress: {
+              base58: 'yY69u7ciejdH1f4BGNAMkZQfPAnsGP7egZ',
+              bech32m: 'tdashevo1qzq3muljuxs9ts9m4memdl355z5yuyqe3q3677f2'
+            },
             credits: '1000000'
           },
           {
-            address: 'yYkQibAJLyoAkH9dzYdfxb79ZJL21B9JAN',
+            platformAddress: {
+              base58: 'yYkQibAJLyoAkH9dzYdfxb79ZJL21B9JAN',
+              bech32m: 'tdashevo1qzy95ggaeu9pkeszlnaxdxv26kkusfqcsq8taa7q'
+            },
             credits: '1000000'
           },
           {
-            address: 'yYmifT5tpKiMa59mBZMw4qL1s8KdVfrJPv',
+            platformAddress: {
+              base58: 'yYmifT5tpKiMa59mBZMw4qL1s8KdVfrJPv',
+              bech32m: 'tdashevo1qzyfnp5em972xpuclnkz2jq0xpn9ujgjeyr6xyu2'
+            },
             credits: '1000000'
           },
           {
-            address: 'yZH5jHKaY7UcNTtbAiU95Kvdrta8iWtuuN',
+            platformAddress: {
+              base58: 'yZH5jHKaY7UcNTtbAiU95Kvdrta8iWtuuN',
+              bech32m: 'tdashevo1qz8zwtr6getn57yramejt24x8ln5y8c7yu6f3gfe'
+            },
             credits: '1000000'
           },
           {
-            address: 'yZjdPezWkG1izgiy6iJ7gruvf96UFhKeTW',
+            platformAddress: {
+              base58: 'yZjdPezWkG1izgiy6iJ7gruvf96UFhKeTW',
+              bech32m: 'tdashevo1qzfjc6eyadlxpj77kdftjkwxtf26tj8ekvf4gg0a'
+            },
             credits: '1000000'
           },
           {
-            address: 'yaJwJcb5RVcunVecj5S3aSJk72iJW5Z7Rb',
+            platformAddress: {
+              base58: 'yaJwJcb5RVcunVecj5S3aSJk72iJW5Z7Rb',
+              bech32m: 'tdashevo1qzvhjxfdmsyr9hy8d3zfgs8q7nvq0nq46qmghty8'
+            },
             credits: '1000000'
           },
           {
-            address: 'yaLJxDuPKcp5w6wA5Vfn37bgmAVrxjS7P7',
+            platformAddress: {
+              base58: 'yaLJxDuPKcp5w6wA5Vfn37bgmAVrxjS7P7',
+              bech32m: 'tdashevo1qzvmh90yvuxv4nenw2u8e9gfvl60ntv93uz92szz'
+            },
             credits: '1000000'
           },
           {
-            address: 'yakXR5Gv5hgYPcctDrXhpS1hVb6z1THTP1',
+            platformAddress: {
+              base58: 'yakXR5Gv5hgYPcctDrXhpS1hVb6z1THTP1',
+              bech32m: 'tdashevo1qz0yl7x7470eme9tlsdth8h0ckcsq4f8yqmn8ej9'
+            },
             credits: '1000000'
           },
           {
-            address: 'yb6VemqRsVQqfrykp59YayUdMXmJKTLNec',
+            platformAddress: {
+              base58: 'yb6VemqRsVQqfrykp59YayUdMXmJKTLNec',
+              bech32m: 'tdashevo1qz3pd5dv9a362y20ajud6ajfmf9hd45v5gx4520t'
+            },
             credits: '1000000'
           },
           {
-            address: 'ybSAidoYahDGajCeHCFciQM4TdnRJYuSHY',
+            platformAddress: {
+              base58: 'ybSAidoYahDGajCeHCFciQM4TdnRJYuSHY',
+              bech32m: 'tdashevo1qzju742unjde6f7el4hxc9ngu767qcgp556qhmrt'
+            },
             credits: '1000000'
           },
           {
-            address: 'ybShKQAjTMRCwiLHCWu9hkpYfoBtXwhDVJ',
+            platformAddress: {
+              base58: 'ybShKQAjTMRCwiLHCWu9hkpYfoBtXwhDVJ',
+              bech32m: 'tdashevo1qzj73cry0xwvlcfg6qn6jptsd25qv55cjvn7wthp'
+            },
             credits: '1000000'
           },
           {
-            address: 'ybadnE5pXBDmSdgymzag53MRCVproTiFy3',
+            platformAddress: {
+              base58: 'ybadnE5pXBDmSdgymzag53MRCVproTiFy3',
+              bech32m: 'tdashevo1qznkjsz5tc79ptw0ck6uf2ns6wtmzrwcws6xkkde'
+            },
             credits: '1000000'
           },
           {
-            address: 'ybpbqxMkyk6iVgFBcgvQ89YnvHxrJKzHQv',
+            platformAddress: {
+              base58: 'ybpbqxMkyk6iVgFBcgvQ89YnvHxrJKzHQv',
+              bech32m: 'tdashevo1qz4q6at6h9mdj2q3ec8pks3hm6ursd5e5cde5998'
+            },
             credits: '1000000'
           },
           {
-            address: 'ycDXm8wZUVeV6JSAgXbwSWT7BG4tWPPDBt',
+            platformAddress: {
+              base58: 'ycDXm8wZUVeV6JSAgXbwSWT7BG4tWPPDBt',
+              bech32m: 'tdashevo1qzhx88s7etpvm0d8dz8ea4qylj0aeq6j4qk3meck'
+            },
             credits: '1000000'
           },
           {
-            address: 'ycDpHouARkGcYhbWhH2a4wyCdVzsqseLeR',
+            platformAddress: {
+              base58: 'ycDpHouARkGcYhbWhH2a4wyCdVzsqseLeR',
+              bech32m: 'tdashevo1qzh8z6jvzhepmv5nxpf2gt87up7lwrpmkg5xfk6t'
+            },
             credits: '1000000'
           },
           {
-            address: 'ycSmc4A4unM2q28x2yX9qCw85B8oCxVCw8',
+            platformAddress: {
+              base58: 'ycSmc4A4unM2q28x2yX9qCw85B8oCxVCw8',
+              bech32m: 'tdashevo1qzcwf99ladwwk6yfvmp6ht3qvylwhj6ke54x9glr'
+            },
             credits: '1000000'
           },
           {
-            address: 'ycTk8aj9kKTVeJwHYjzQnkebSyKCAwh7Xz',
+            platformAddress: {
+              base58: 'ycTk8aj9kKTVeJwHYjzQnkebSyKCAwh7Xz',
+              bech32m: 'tdashevo1qzc383zskcsghj6dyk0075wfdtu6j726qvgswnw8'
+            },
             credits: '1000000'
           },
           {
-            address: 'ycYMMYJLePGGcbJdVYBKiHGKypHHcYW7tp',
+            platformAddress: {
+              base58: 'ycYMMYJLePGGcbJdVYBKiHGKypHHcYW7tp',
+              bech32m: 'tdashevo1qzcl94t0v2aspl5qjredgphx6cn8eclt7u9jred7'
+            },
             credits: '1000000'
           },
           {
-            address: 'ydVTpMEcEXp649wKQ7iDhkoxwewc7SzJAR',
+            platformAddress: {
+              base58: 'ydVTpMEcEXp649wKQ7iDhkoxwewc7SzJAR',
+              bech32m: 'tdashevo1qz797xeyspyqpdpur2tzmhjvc2ccq2rek5jrmqmy'
+            },
             credits: '1000000'
           },
           {
-            address: 'ydc2GTd7TeBsiaMU6PDmA2P6PLwBNwy5HT',
+            platformAddress: {
+              base58: 'ydc2GTd7TeBsiaMU6PDmA2P6PLwBNwy5HT',
+              bech32m: 'tdashevo1qz7eevye8ng62ap0en2cwytm3s3v6yqakua9c3hk'
+            },
             credits: '1000000'
           },
           {
-            address: 'ydmW8n953aMJXHDhaEsRbHZfB5sSpaKVis',
+            platformAddress: {
+              base58: 'ydmW8n953aMJXHDhaEsRbHZfB5sSpaKVis',
+              bech32m: 'tdashevo1qzlk0v3cvnyj86ff4hpetw3qn529xzua8ct7q3d8'
+            },
             credits: '1000000'
           },
           {
-            address: 'yeTNj7UYKtbzG4YrMrbF3GpQXevaM5TagS',
+            platformAddress: {
+              base58: 'yeTNj7UYKtbzG4YrMrbF3GpQXevaM5TagS',
+              bech32m: 'tdashevo1qrr0yf54j284t9qrfxsmd6w2mwdelnjk0s4g4dy9'
+            },
             credits: '1000000'
           },
           {
-            address: 'yebRhQKtHp7iTrZ6r1tKL6Wsv9Z6imFVjg',
+            platformAddress: {
+              base58: 'yebRhQKtHp7iTrZ6r1tKL6Wsv9Z6imFVjg',
+              bech32m: 'tdashevo1qry80a29p9xadvj3eakjzkk0vafgy2kgrctqrdlm'
+            },
             credits: '1000000'
           },
           {
-            address: 'yebjGGqvWkVBz7c7zpFJz9PjH4db2GwAiR',
+            platformAddress: {
+              base58: 'yebjGGqvWkVBz7c7zpFJz9PjH4db2GwAiR',
+              bech32m: 'tdashevo1qrygd8elwfgwcvd3p3hr5vczdtwltk7qxq4e6ll6'
+            },
             credits: '1000000'
           },
           {
-            address: 'yewgoHb5qLavZu2fttmaoCQLqPU77uQGJy',
+            platformAddress: {
+              base58: 'yewgoHb5qLavZu2fttmaoCQLqPU77uQGJy',
+              bech32m: 'tdashevo1qrxyec3y4kf2dkrh7z3c90yg49nqhe4zjy23pxh5'
+            },
             credits: '1000000'
           },
           {
-            address: 'yf5Z5eBatRAq3i9dBNTeveBEBp5AoGWt5T',
+            platformAddress: {
+              base58: 'yf5Z5eBatRAq3i9dBNTeveBEBp5AoGWt5T',
+              bech32m: 'tdashevo1qrxun394fd48lvemssrrfchurmy0km3xfugknvpd'
+            },
             credits: '1000000'
           },
           {
-            address: 'yfGL5bmuU8Y1F7GQKjScRuKBra6CF8hWfT',
+            platformAddress: {
+              base58: 'yfGL5bmuU8Y1F7GQKjScRuKBra6CF8hWfT',
+              bech32m: 'tdashevo1qr8axlw58lrw72qnfe7ycgj9x42zm45c6vu3f6hg'
+            },
             credits: '1000000'
           },
           {
-            address: 'yfK9cZ2PQnconkFsaHMybapd6cK878M7eq',
+            platformAddress: {
+              base58: 'yfK9cZ2PQnconkFsaHMybapd6cK878M7eq',
+              bech32m: 'tdashevo1qrg9cq98pjyrdjkpxptcwvnrptj6xuwxwcude46y'
+            },
             credits: '1000000'
           },
           {
-            address: 'yfPFhWXgA1Tst26BpYK987PVK7ZMC6vN2r',
+            platformAddress: {
+              base58: 'yfPFhWXgA1Tst26BpYK987PVK7ZMC6vN2r',
+              bech32m: 'tdashevo1qrgj90cv5jqqaam49j9qztvvg59lt4g3aqz8cxjh'
+            },
             credits: '1000000'
           },
           {
-            address: 'yfhjXoef2BTVGBmRVeLf28HwN87bhCs2PT',
+            platformAddress: {
+              base58: 'yfhjXoef2BTVGBmRVeLf28HwN87bhCs2PT',
+              bech32m: 'tdashevo1qr22zaukume5k40q8c923d2gdtagjm7saqvgzevg'
+            },
             credits: '1000000'
           },
           {
-            address: 'yfqZ94mpizRaCb2SxDPVAN1CowV2Nf3VSa',
+            platformAddress: {
+              base58: 'yfqZ94mpizRaCb2SxDPVAN1CowV2Nf3VSa',
+              bech32m: 'tdashevo1qrtpc84hn05e7xvntng3gnutjl2rxz7euvehlacm'
+            },
             credits: '1000000'
           },
           {
-            address: 'yfvqMykpEAVL4Qf71gWmkxtEtjGYcBTGPy',
+            platformAddress: {
+              base58: 'yfvqMykpEAVL4Qf71gWmkxtEtjGYcBTGPy',
+              bech32m: 'tdashevo1qrt3h009vfff3t9dlq5ya2nfpfvmmvf7nsfhh7rw'
+            },
             credits: '1000000'
           },
           {
-            address: 'yg1PfyFgGyNQmbMGHMFpzqU6bg9kBh8kHy',
+            platformAddress: {
+              base58: 'yg1PfyFgGyNQmbMGHMFpzqU6bg9kBh8kHy',
+              bech32m: 'tdashevo1qrtlscrhtunhfmaqnzeq2j2uswdtpzxauspqzumf'
+            },
             credits: '1000000'
           },
           {
-            address: 'yg2Z7YWoDaqt3rUiKRrMKeJYRDvL1SGAA7',
+            platformAddress: {
+              base58: 'yg2Z7YWoDaqt3rUiKRrMKeJYRDvL1SGAA7',
+              bech32m: 'tdashevo1qrvrptr40mz78rffyfef9jqmrvz2m4p3lumr3h57'
+            },
             credits: '1000000'
           },
           {
-            address: 'ygako22ivy56mNfcVMBpyomXDruKYoXvHs',
+            platformAddress: {
+              base58: 'ygako22ivy56mNfcVMBpyomXDruKYoXvHs',
+              bech32m: 'tdashevo1qr0y00prfp4ceh5pmfnnv5hmze9ms22vqs4ezw7y'
+            },
             credits: '1000000'
           },
           {
-            address: 'ygi43dcsk4rq6fUNHRWR5ZLcbgezFQKRyu',
+            platformAddress: {
+              base58: 'ygi43dcsk4rq6fUNHRWR5ZLcbgezFQKRyu',
+              bech32m: 'tdashevo1qr06jrzqgh9xwzxz3zz9s74fqh9fjs7kxu66h45y'
+            },
             credits: '1000000'
           },
           {
-            address: 'ygxTk4iCmeybuZjsHoGJMupNNMogX5PjvU',
+            platformAddress: {
+              base58: 'ygxTk4iCmeybuZjsHoGJMupNNMogX5PjvU',
+              bech32m: 'tdashevo1qr3x9fc4hnu6ey3f694nh85q73sjahrf0ug2wl9l'
+            },
             credits: '1000000'
           },
           {
-            address: 'yh96RHPCHe2MWRAcpK8weVNZACrwbYSPzv',
+            platformAddress: {
+              base58: 'yh96RHPCHe2MWRAcpK8weVNZACrwbYSPzv',
+              bech32m: 'tdashevo1qrjx2mvnxfx96uqv5q6mdtfxr8vunsy275htxjus'
+            },
             credits: '1000000'
           },
           {
-            address: 'yhp9w9RCnNSms4Tz9qBGuWVEYsyJHSDFru',
+            platformAddress: {
+              base58: 'yhp9w9RCnNSms4Tz9qBGuWVEYsyJHSDFru',
+              bech32m: 'tdashevo1qr4u39dghypalhyuyde2yuv39l9q3htc9g8xvr4l'
+            },
             credits: '1000000'
           },
           {
-            address: 'yiBWcJBvUeKYeTYCCeGAxatjFNZnzWrPwS',
+            platformAddress: {
+              base58: 'yiBWcJBvUeKYeTYCCeGAxatjFNZnzWrPwS',
+              bech32m: 'tdashevo1qrha99q5cv7sm5nj8sn7c2hd3q7a5528gs5y6snf'
+            },
             credits: '1000000'
           },
           {
-            address: 'yiXVMYTDuxowjJYCR2CNtShMNc6VGQZ26j',
+            platformAddress: {
+              base58: 'yiXVMYTDuxowjJYCR2CNtShMNc6VGQZ26j',
+              bech32m: 'tdashevo1qreenkdl9e27utkpzxtdwl9km49anxfj9q8xmm3e'
+            },
             credits: '1000000'
           },
           {
-            address: 'yiYYsCnWWQGJmy6qExnuc2CCS8sRRKi6Rr',
+            platformAddress: {
+              base58: 'yiYYsCnWWQGJmy6qExnuc2CCS8sRRKi6Rr',
+              bech32m: 'tdashevo1qreu6v5u09q7zp5qkzm7j02kyhnjttxjqvxcl7e3'
+            },
             credits: '1000000'
           },
           {
-            address: 'yieZW4dNtt1KGboTPhuS8XCNDoMzg2RFCJ',
+            platformAddress: {
+              base58: 'yieZW4dNtt1KGboTPhuS8XCNDoMzg2RFCJ',
+              bech32m: 'tdashevo1qr60qw24hmt0qqhvgufspxc6fvhkdumlnqz0hrcd'
+            },
             credits: '1000000'
           },
           {
-            address: 'yigRT5xmcG3FNBV2tooXEE4HEfQCybjo7i',
+            platformAddress: {
+              base58: 'yigRT5xmcG3FNBV2tooXEE4HEfQCybjo7i',
+              bech32m: 'tdashevo1qr6554wpyeyxqz4wj7p8eex57yse2lt4au8c8k3u'
+            },
             credits: '1000000'
           },
           {
-            address: 'yisEgEhYEVrbcMA9PWE6GM4fxASMLSqkFU',
+            platformAddress: {
+              base58: 'yisEgEhYEVrbcMA9PWE6GM4fxASMLSqkFU',
+              bech32m: 'tdashevo1qrm4t6hqn80g3thr2xle6frpyxf0zn0yuszpllq3'
+            },
             credits: '1000000'
           },
           {
-            address: 'yisxcvx58QP8p2WMF4VJLsj4ady9iG88yW',
+            platformAddress: {
+              base58: 'yisxcvx58QP8p2WMF4VJLsj4ady9iG88yW',
+              bech32m: 'tdashevo1qrmh3msrnfjxn2umaegzzftq4zv6uyhtyy3crhqe'
+            },
             credits: '1000000'
           },
           {
-            address: 'yizbrqY3wP8ih72aq4B2EYmboYMNfxTXe8',
+            platformAddress: {
+              base58: 'yizbrqY3wP8ih72aq4B2EYmboYMNfxTXe8',
+              bech32m: 'tdashevo1qrut4qhlg5hf45xjmspcf84jt56xwrthr5phmzf2'
+            },
             credits: '1000000'
           },
           {
-            address: 'yj2uK3j6cSKAVCELpWy5ScQHkXS7jN11XL',
+            platformAddress: {
+              base58: 'yj2uK3j6cSKAVCELpWy5ScQHkXS7jN11XL',
+              bech32m: 'tdashevo1qrujn6tgqwkqrnppqed2gayakxq7t83l9gm90k8k'
+            },
             credits: '1000000'
           },
           {
-            address: 'yj86W4svnFKBuVrXRTiW7i6HdFmcSYoZ4t',
+            platformAddress: {
+              base58: 'yj86W4svnFKBuVrXRTiW7i6HdFmcSYoZ4t',
+              bech32m: 'tdashevo1qraz24g7xgv2dadc867nww82lner8yqt4udtvmlm'
+            },
             credits: '1000000'
           }
         ],
@@ -1167,6 +1477,31 @@ describe('Utils', () => {
         ],
         raw: '0c0001003c516b43bc6bfaf15d37c519323513a17422799f02fc05f5e100640001399ea81a36300ee53de31cc7854f99d8346bf6fc000f424000071c1ae8cffd41f1e41de54c80f23c96556e9998fc000f4240000a1fa49dc18a0569abe990ee38bf5f8f32715b16fc000f4240000a5a56596f5902add2d0dfe221542289bb0808a4fc000f4240000b6b9811d8fff0c58df2ad2ab3bf6cdc9d84c934fc000f4240000c5367d6bad196e06ff906dbbceed9e8afbec537fc000f4240000cdbb6ab11ff7e3d1ad04cf008197f2e179cf579fc000f4240000d864b764bbd27f456d69d6d41e38d7d6fb58899fc000f4240000d8cf06eab33372ab9774918918938138854ca47fc000f4240000ddede21af3182a807b291e5ad02dba63bbc5004fc000f4240000f84655b66f1d2c53f124e19d6a5873b7dfbd9c8fc000f424000105277945a0c961d48cfad1eacdb5254932d71fbfc000f42400011cc2142cc856c98a30e9b74ae7269918d82e746fc000f4240001881040507865e1a7b31edaebfab4e64e1c2a827fc000f42400018850f11f798bb7ce047f406ef821eba4e33cb7bfc000f42400018cf4393f6522d80fbaae89914afc02a135a896dfc000f4240001e247de0912e22a5e4aedac70d31828ac9f80a6afc000f4240001ebe53632b1c7475d3236a0df04dd1dff5004256fc000f4240001f10c4ccdac4ae84208a116de183dd139febbab0fc000f4240002ac893fadb8b3e859491410d7d66721f0c649714fc000f4240002c3c66150492b281b41b4aff49bdef047c0b77e0fc000f4240002d3c9d1d89cfc7d91fe9f8ca8ab249040ca7f46cfc000f4240002df944dfb3c22648028d8e3b494ae3bce937e1bafc000f424000367d9edb3ed740b534feb4110496ae1b58a1976afc000f42400036fe1c5130ffc6d114f068309ca70f211389a11efc000f4240003803a9663bde10c9a7344d69195f498a7861886ffc000f4240003b31101cbe8b031693692bd84a56b1e20817129cfc000f4240003b818bb95666e20fc5f216448d6e97b0eeed2dfdfc000f4240004511cda7833d4e187c43ae67bf25cea5f37c38cffc000f424000485abbf8f5b471e051c98650f384b7df9832386dfc000f424000496f18821217f83b1ff7df1e514508f15f025aabfc000f4240004a85c146dca42548d92f9b6126885e156f3f4dc9fc000f4240004ad7c71452a502d4f0950bd65657f7556a481237fc000f4240004e84591c90588cdd008d8d0723286d24a5f77175fc000f4240004ebeafad18837d0946b9c6577a3fc82e526d618dfc000f42400053ba35ff0f7aeba87b5a579f80d9b7ab8791a5d9fc000f4240005c9aba35210a53c8917b1cd72778259ceac23bbffc000f4240005d7258b336e3e9ee738f459b9ce41e627203f3e0fc000f42400060bd7d8c519ae4818539a173d8849f2ef4423016fc000f424000632bc234521ae77e5329a0acf99a0f3b1b084bd9fc000f42400064c94a96de6d0351a6c771a509b3badb43850bfdfc000f424000699ab8cff4b4302f85e93489b82e34c7990398cdfc000f4240006abe2b1c4352a1ec3603588b4e80e10f9fe0db40fc000f4240006b4f08dcabbf17ff29f713093d5de4d4caf5cfddfc000f424000718957e239d7f1ab4be605da45aeca83ab42e3d6fc000f42400072e8cea120f1eda9ad3ab446f1838022a46544dafc000f42400074bcc374a92a481f7643bdab0990d1d90bff1cadfc000f42400075521209f46dd110f3a274876204cfeb2644de05fc000f42400079047c780d8bde108b8e7a3f9dbf5e35ede5bad7fc000f4240007b67978484819e4b1b6aa5f16bbf2508921581b3fc000f4240007ceb2b924d3ad5879237fcb5d4fbccb21ce9a3f4fc000f424000811df3f2e1a055c0bbaef3b6fe34a0a84e101988fc000f424000885a211dcf0a1b6602fcfa66998ad5adc8241880fc000f42400088998699d97ca30798fcec25480f30665e4912c9fc000f4240008e272c7a46573a7883eef325aaa63fe7421f1e27fc000f424000932c6b24eb7e60cbdeb352b959c65a55a5c8f9b3fc000f4240009979192ddc0832dc876c449440e0f4d807cc15d0fc000f42400099bb95e4670ccacf3372b87c950967f4f9ad858ffc000f4240009e4ff8deaf9f9de4abfc1abb9eefc5b100552720fc000f424000a216d1ac2f63a5114fecb8dd7649da4b76d68ca2fc000f424000a5cf555c9c9b9d27d9fd6e6c1668e7b5e06101a5fc000f424000a5e8e064799ccfe128d027a905706aa806529893fc000f424000a76940545e3c50adcfc5b5c4aa70d397b10dd874fc000f424000aa0d757ab976d92811ce0e1b4237deb8383699a6fc000f424000ae639e1ecac2cdbda7688f9ed404fc9fdc8352a8fc000f424000ae716a4c15f21db2933052a42cfee07df70c3bb2fc000f424000b0e494bfeb5ceb688966c3abae20613eebcb56cdfc000f424000b113c450b6208bcb4d259eff51c96af9a9795a03fc000f424000b1f2d56f62bb00fe8090f2d406e6d6267ce3ebf7fc000f424000bc5f1b24804800b43c1a962dde4cc2b1802879b5fc000f424000bd9cb0993cd1a5742fccd587117b8c22cd101db7fc000f424000bf67b23864c923e929adc395ba209d14530b9d3efc000f424000c6f22695928f55940349a1b6e9cadb9b9fce567cfc000f424000c877f545094dd6b251cf6d215acf6752822ac81efc000f424000c8869f3f7250ec31b10c6e3a33026addf5dbc030fc000f424000cc4ce224ad92a6d877f0a382bc88a9660be6a291fc000f424000cdc9c4b54b6a7fb33b840634e2fc1ec8fb6e264ffc000f424000cfd37dd43fc6ef28134e7c4c224535542dd698d3fc000f424000d05c00a70c8836cac130578732630ae5a371c676fc000f424000d122bf0ca4800ef7752c8a012d8c450bf5d511e8fc000f424000d4a17796e6f34b55e03e0aa8b5486afa896fd0e8fc000f424000d61c1eb79be99f19935cd1144f8b97d4330bd9e3fc000f424000d71bbde5625298acadf8284eaa690a59bdb13e9cfc000f424000d7f860775f2774efa098b205495c839ab088dde4fc000f424000d830ac757ec5e38d29227292c81b1b04add431fffc000f424000de47bc23486b8cde81da673652fb164bb8294c04fc000f424000dfa90c4045ca6708c28884587aa905ca9943d637fc000f424000e262a715bcf9ac9229d16b3b9e80f4612edc697ffc000f424000e4656d93324c5d700ca035b6ad2619d9c9c08af5fc000f424000ebc895a8b903dfdc9c2372a271912fca08dd782afc000f424000efd29414c33d0dd2723c27ec2aed883dda514744fc000f424000f399d9bf2e55ee2ec11196d77cb6dd4bd9993228fc000f424000f3cd329c7941e10680b0b7e93d5625e725acd203fc000f424000f4f03955bed6f002ec4713009b1a4b2f66f37f98fc000f424000f54a55c12648600aae97827ce4d4f121957d75effc000f424000f755eae099de88aee351bf9d24612192f14de4e4fc000f424000f778ee039a6469ab9bee50212560a899ae12eb21fc000f424000f8ba82ff452e9ad0d2dc03849eb25d34670d771dfc000f424000f929e96803ac01cc21065aa4749db181e59e3f2afc000f424000fa25551e3218a6f5b83ebd3738eafcf233900baffc000f4240010000000100411f8d77c0034cfbd9dde264a109b36ac666f579a76730de8840c9ec95515286bcfc1b3bdf140d70915e96c251e5e6a63ab210abbe813d99ec6f4a77b4c844c99e94'
       })
+    })
+
+    it('should decode IdentityCreditTransferToAddress', async () => {
+      const decoded = await utils.decodeStateTransition(identityCreditTransferToAddress.data)
+
+      assert.deepEqual(
+        decoded,
+        {
+          type: 9,
+          typeString: 'IDENTITY_CREDIT_TRANSFER_TO_ADDRESS',
+          userFeeIncrease: 0,
+          nonce: '22',
+          recipientAddresses: [
+            {
+              platformAddress: {
+                base58: 'yZxXgZM6HhFGjBZB1uucEJELa5f5Sq244k',
+                bech32m: 'tdashevo1qz2e6rudezas4y3htwh7ktlgrhqvf05hzs2u5hkj'
+              },
+              amount: '179780720'
+            }
+          ],
+          senderId: '8eTDkBhpQjHeqgbVeriwLeZr1tCa6yBGw76SckvD1cwc',
+          raw: '09007199f1f68404c86ecf60d9cb93aef318fa0f2b08e59ffd176bdef43154ffde6b0100959d0f8dc8bb0a92375bafeb2fe81dc0c4be9714fc0ab73c701600044120e8594bed0affacc75d13a9190f1b4b8b01657bf4d56823bfe4ef6ca275c4105c63523c9834e3caf9ad2e97ad14fa89231b8fbb532836bbd9f3ef6259e82bdff2'
+        }
+      )
     })
   })
 

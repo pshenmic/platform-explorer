@@ -3,9 +3,10 @@ use crate::models::{
     TenderdashRPCBlockResponse, TenderdashRPCBlockResultsResponse, TenderdashRPCStatusResponse,
     TenderdashRPCValidatorsResponse,
 };
+use dpp::dashcore::Network;
 use reqwest::{Client, Error};
-use std::time::Duration;
 use serde_json::Value;
+use std::time::Duration;
 
 pub struct TenderdashRpcApi {
     client: Client,
@@ -33,6 +34,16 @@ impl TenderdashRpcApi {
         let resp = res.json::<TenderdashRPCStatusResponse>().await?;
 
         Ok(resp)
+    }
+
+    pub async fn get_network(&self) -> Result<Network, Error> {
+        let status = self.get_status().await?;
+
+        if status.node_info.network.to_lowercase().contains("evo") {
+            Ok(Network::Dash)
+        } else {
+            Ok(Network::Testnet)
+        }
     }
 
     pub async fn get_block_by_height(
