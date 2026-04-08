@@ -10,7 +10,7 @@ export const useDataContractUpdate = ({
   dataContractId
 }) => {
   const sdk = window.dashPlatformSDK
-  const signer = window.dashPlatformExtension.signer
+  const signer = window.dashPlatformExtension?.signer
   const { connectWallet, connected } = useWallet()
   const [isDisabled, setDisabled] = useState(true)
   const { dataContractPE } = useActiveNetwork()
@@ -68,6 +68,8 @@ export const useDataContractUpdate = ({
         owner,
         dataContractId
       )
+
+      console.log({ keywords })
 
       dataContract.keywords = keywords
       dataContract.description = description
