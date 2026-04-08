@@ -1,14 +1,30 @@
-import { IconButton } from '@chakra-ui/react'
-import { PrimalPostitiveIcon, PrimalNegativeIcon, CloseIcon } from '../../ui/icons'
+import { IconButton, Tooltip } from '@chakra-ui/react'
+import {
+  PrimalPostitiveIcon,
+  PrimalNegativeIcon,
+  CloseIcon
+} from '../../ui/icons'
 import { VoteEnum } from './constants'
 
 import './VoteControls.scss'
+import { useEffect, useState } from 'react'
 
-const VOTING_DATA_CONTRACT_ID = process.env.NEXT_PUBLIC_VOTING_DATA_CONTRACT_ID ?? 'GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec'
+const VOTING_DATA_CONTRACT_ID =
+  process.env.NEXT_PUBLIC_VOTING_DATA_CONTRACT_ID ??
+  'GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec'
 const DOCUMENT_TYPE = 'domain'
 const INDEX_NAME = 'parentNameAndLabel'
 
-export const VoteControls = ({ currentIdentity, contender, resourceValue, walletInfo, prevVote, refresh }) => {
+export const VoteControls = ({
+  currentIdentity,
+  contender,
+  resourceValue,
+  walletInfo,
+  prevVote,
+  refresh
+}) => {
+  const [showChangeMessage, setShowChangeMessage] = useState(false)
+
   const handleVote = ({ choice }) => {
     if (!window.dashPlatformExtension) {
       return
@@ -16,15 +32,31 @@ export const VoteControls = ({ currentIdentity, contender, resourceValue, wallet
 
     const castVote = async () => {
       const sdk = window.dashPlatformSDK
-      const voterIdentity = await sdk.identities.getIdentityByIdentifier(currentIdentity)
-      const identityNonce = await sdk.identities.getIdentityNonce(voterIdentity.id)
+      const voterIdentity =
+        await sdk.identities.getIdentityByIdentifier(currentIdentity)
+      const identityNonce = await sdk.identities.getIdentityNonce(
+        voterIdentity.id
+      )
 
       const { proTxHash } = walletInfo
 
       try {
-        const vote = sdk.voting.createVote(VOTING_DATA_CONTRACT_ID, DOCUMENT_TYPE, INDEX_NAME, resourceValue, choice)
-        const stateTransition = sdk.voting.createStateTransition(vote, proTxHash, voterIdentity.id, identityNonce + BigInt(1))
-        await window.dashPlatformExtension.signer.signAndBroadcast(stateTransition)
+        const vote = sdk.voting.createVote(
+          VOTING_DATA_CONTRACT_ID,
+          DOCUMENT_TYPE,
+          INDEX_NAME,
+          resourceValue,
+          choice
+        )
+        const stateTransition = sdk.voting.createStateTransition(
+          vote,
+          proTxHash,
+          voterIdentity.id,
+          identityNonce + BigInt(1)
+        )
+        await window.dashPlatformExtension.signer.signAndBroadcast(
+          stateTransition
+        )
 
         setTimeout(() => refresh(), 2000)
       } catch (e) {
@@ -35,44 +67,70 @@ export const VoteControls = ({ currentIdentity, contender, resourceValue, wallet
     castVote()
   }
 
+  useEffect(() => {
+    if (!walletInfo.identities) {
+      return
+    }
+
+    const currentInfo = walletInfo.identities.find(
+      ({ identifier }) => identifier === currentIdentity
+    )
+
+    if (currentInfo.type === 'voting') {
+      setShowChangeMessage(false)
+      return
+    }
+
+    const canUserVote = walletInfo.identities.some(
+      ({ type }) => type === 'voting'
+    )
+
+    setShowChangeMessage(canUserVote)
+  }, [currentIdentity, walletInfo, walletInfo?.identities])
+
   return (
-        <div className='VoteControls'>
-            <IconButton
-                color='#58F4BC'
-                bg='#58F4BC26'
-                _hover={{ bg: '#58F4BC4D' }}
-                _active={{ bg: '#58F4BC', color: '#21272C' }}
-                isDisabled={prevVote === VoteEnum.TO_APPROVE}
-                size='30px'
-                aria-label='vote'
-                p={0}
-                icon={<PrimalPostitiveIcon width='18px' height='10px' />}
-                onClick={() => handleVote({ choice: contender })}
-            />
-            <IconButton
-                color='#F49A58'
-                bg='#F49A5826'
-                _hover={{ bg: '#F49A584D' }}
-                _active={{ bg: '#F49A58', color: '#21272C' }}
-                isDisabled={prevVote === VoteEnum.TO_ABSTAIN}
-                size='30px'
-                aria-label='vote'
-                p={0}
-                icon={<PrimalNegativeIcon width='11px' height='10px' />}
-                onClick={() => handleVote({ choice: VoteEnum.TO_ABSTAIN })}
-            />
-            <IconButton
-                color='#F45858'
-                bg='#F4585826'
-                _hover={{ bg: '#F458584D' }}
-                _active={{ bg: '#F45858', color: '#21272C' }}
-                isDisabled={prevVote === VoteEnum.TO_REJECT}
-                size='30px'
-                aria-label='vote'
-                p={0}
-                icon={<CloseIcon width='8px' height='8px' />}
-                onClick={() => handleVote({ choice: VoteEnum.TO_REJECT })}
-            />
-        </div>
+    <Tooltip
+      isDisabled={!showChangeMessage}
+      label='Please choose your voting type identity'
+    >
+      <div className='VoteControls'>
+        <IconButton
+          color='#58F4BC'
+          bg='#58F4BC26'
+          _hover={{ bg: '#58F4BC4D' }}
+          _active={{ bg: '#58F4BC', color: '#21272C' }}
+          isDisabled={showChangeMessage || prevVote === VoteEnum.TO_APPROVE}
+          size='30px'
+          aria-label='vote'
+          p={0}
+          icon={<PrimalPostitiveIcon width='18px' height='10px' />}
+          onClick={() => handleVote({ choice: contender })}
+        />
+        <IconButton
+          color='#F49A58'
+          bg='#F49A5826'
+          _hover={{ bg: '#F49A584D' }}
+          _active={{ bg: '#F49A58', color: '#21272C' }}
+          isDisabled={showChangeMessage || prevVote === VoteEnum.TO_ABSTAIN}
+          size='30px'
+          aria-label='vote'
+          p={0}
+          icon={<PrimalNegativeIcon width='11px' height='10px' />}
+          onClick={() => handleVote({ choice: VoteEnum.TO_ABSTAIN })}
+        />
+        <IconButton
+          color='#F45858'
+          bg='#F4585826'
+          _hover={{ bg: '#F458584D' }}
+          _active={{ bg: '#F45858', color: '#21272C' }}
+          isDisabled={showChangeMessage || prevVote === VoteEnum.TO_REJECT}
+          size='30px'
+          aria-label='vote'
+          p={0}
+          icon={<CloseIcon width='8px' height='8px' />}
+          onClick={() => handleVote({ choice: VoteEnum.TO_REJECT })}
+        />
+      </div>
+    </Tooltip>
   )
 }

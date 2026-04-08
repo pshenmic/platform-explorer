@@ -13,9 +13,12 @@ export const useWalletConnect = () => {
 
     const { dashPlatformExtension } = window
 
-    dashPlatformExtension.signer.connect()
+    dashPlatformExtension.signer
+      .connect()
       .then((wallet) => {
-        const current = wallet.identities.find(({ identifier }) => identifier === wallet.currentIdentity)
+        const current = wallet.identities.find(
+          ({ identifier }) => identifier === wallet.currentIdentity
+        )
         connected.current = true
         setWalletInfo({ ...wallet, proTxHash: current.proTxHash })
         setError(null)
