@@ -1,0 +1,31 @@
+.dialog {
+  background-color: #181f22;
+  max-width: 648px;
+  width: 100%;
+
+  .header {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+
+    .title,
+    #modal-title {
+      font-family: var(--font-montserrat);
+      font-weight: 700;
+      font-style: Bold;
+      font-size: 14px;
+      line-height: 120%;
+      margin: 0;
+    }
+
+  }
+
+  .content {
+    margin-top: 14px;
+  }
+
+  &::backdrop {
+    background: rgba(0, 0, 0, 0.5);
+  }
+}

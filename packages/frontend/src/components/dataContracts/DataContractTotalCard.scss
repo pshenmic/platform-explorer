@@ -4,22 +4,58 @@
 .DataContractTotalCard {
   @include mixins.TotalCard();
 
+  &__TitleContainer {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+  }
+
+  &__Edit {
+    background: rgba(var(--chakra-colors-brand-normal-rgb), 0.2);
+    color:  $color-brand-normal;
+    font-family: $font-mono;
+    border-radius: 10px;
+    padding: 0.5rem 1rem;
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 130%;
+    transition: all ease-in .2;
+
+    &:hover {
+      background: rgba(var(--chakra-colors-brand-normal-rgb), 0.5);
+      color: var(--chakra-colors-white-50);
+    }
+
+    &:active {
+      background: rgba(var(--chakra-colors-brand-normal-rgb), 1);
+      color: var(--chakra-colors-white-50);
+    }
+  }
+
   &__Title {
     font-weight: 700;
     font-size: 0.875rem;
     margin-bottom: 0.875rem;
+    font-family: var(--font-montserrat);
+    font-weight: 800;
+    font-style: Italic;
+    font-size: 14px;
+    line-height: 120%;
+    text-transform: uppercase;
+    margin: 0 0 22px;
   }
 
   &__HeaderLines {
     width: 100%;
   }
 
-  &__Identifier, &__Owner {
+  &__Identifier,
+  &__Owner {
     .InfoLine__Value {
       width: 100%;
       text-align: right;
       overflow: hidden;
-      
+
       .Identifier {
         justify-content: flex-end;
       }
