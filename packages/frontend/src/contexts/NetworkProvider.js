@@ -19,7 +19,7 @@ export const NetworkProvider = ({ children }) => {
       return
     }
 
-    sdk.setNetwork(network)
+    sdk.setNetwork(NETWORKS_ENUM.TESTNET)
   }, [network])
 
   return (
