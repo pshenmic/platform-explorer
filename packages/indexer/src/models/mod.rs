@@ -5,12 +5,18 @@ use serde::Deserialize;
 #[derive(Deserialize)]
 pub struct TenderdashRPCStatusResponse {
     pub sync_info: TenderdashSyncInfo,
+    pub node_info: TenderdashNodeInfo,
 }
 
 #[derive(Deserialize)]
 pub struct TenderdashRPCValidatorsResponse {
     pub block_height: i32,
     pub validators: Vec<TDValidator>,
+}
+
+#[derive(Deserialize)]
+pub struct TenderdashNodeInfo {
+    pub network: String,
 }
 
 #[derive(Deserialize)]

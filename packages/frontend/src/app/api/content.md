@@ -59,6 +59,9 @@ Reference:
 * [Broadcast Transaction](#broadcast-transaction)
 * [Wait for State Transition Result](#wait-for-state-transition-result)
 * [Quorum Info](#quorum-info)
+* [Platform Addresses](#platform-addresses)
+* [Platform Address Info](#platform-address-info)
+* [Platform Address Transactions](#platform-address-transactions)
 
 ### Status
 Returns basic stats and epoch info
@@ -638,8 +641,7 @@ Status can be either `SUCCESS` or `FAIL`. In case of error tx, message will appe
 * `batch_type` number or string of batch type. Can be set multiple times.
 * `gas_min` number of min `gas_used`
 * `gas_max` number of max `gas_used`
-* `timestamp_start` must be used with `timestamp_end`
-* `timestamp_end` must be used with `timestamp_start`
+* `timestamp_start` and `timestamp_end` transaction timestamp
 * `token_name` name of token
 * Valid `order_by` values are `id`, `gas_used`, `timestamp` or `owner`
 
@@ -662,6 +664,25 @@ Status can be either `SUCCESS` or `FAIL`. In case of error tx, message will appe
 | TOKEN_CONFIG_UPDATE                 | 14                |
 | TOKEN_DIRECT_PURCHASE               | 15                |
 | TOKEN_SET_PRICE_FOR_DIRECT_PURCHASE | 16                |
+
+| Transition type                       | type index |
+|---------------------------------------|------------|
+| `DATA_CONTRACT_CREATE`                | 0          |
+| `BATCH`                               | 1          |
+| `IDENTITY_CREATE`                     | 2          |
+| `IDENTITY_TOP_UP`                     | 3          |
+| `DATA_CONTRACT_UPDATE`                | 4          |
+| `IDENTITY_UPDATE`                     | 5          |
+| `IDENTITY_CREDIT_WITHDRAWAL`          | 6          |
+| `IDENTITY_CREDIT_TRANSFER`            | 7          |
+| `MASTERNODE_VOTE`                     | 8          |
+| `IDENTITY_CREDIT_TRANSFER_TO_ADDRESS` | 9          |
+| `IDENTITY_CREATE_FROM_ADDRESSES`      | 10         |
+| `IDENTITY_TOP_UP_FROM_ADDRESSES`      | 11         |
+| `ADDRESS_FUNDS_TRANSFER`              | 12         |
+| `ADDRESS_FUNDING_FROM_ASSET_LOCK`     | 13         |
+| `ADDRESS_CREDIT_WITHDRAWAL`           | 14         |
+
 
 ```
 GET /transactions?=1&limit=10&orderBy=id&order=asc&owner=6q9RFbeea73tE31LGMBLFZhtBUX3wZL3TcNynqE18Zgs&transaction_type=0&transaction_type=1&status=ALL&gas_min=0&gas_max=9999999
@@ -721,6 +742,7 @@ GET /dataContract/HzMke6E5SnSqLdCX1u3WdwpWx1hFFkSnFQpahTPdYUSF
     "timestamp": "2025-07-31T07:31:37.624Z",
     "isSystem": false,
     "documentsCount": 0,
+    "tokensCount": 1,
     "topIdentity": {
         "identifier": null,
         "aliases": []
@@ -776,7 +798,9 @@ GET /dataContract/HzMke6E5SnSqLdCX1u3WdwpWx1hFFkSnFQpahTPdYUSF
             "totalBurnTransitionsCount": null,
             "decimals": 4
         }
-    ]
+    ],
+    "description": "Data Contract Description",
+    "keywords": ["keyword1", "keyword2"]
 }
 ```
 Response codes:
@@ -817,26 +841,34 @@ Return dataContracts set paged and order by block height or documents count.
 * `documents_count_min` and `documents_count_max` minimum and maximum count of documents for data contract
 
 ```
-GET /dataContracts?page=1&limit=10&order=asc&order_by=block_height&timestamp_start=2025-01-22T11:09:23.892Z&timestamp_end=2025-03-22T11:09:23.892Z&owner=G3yCKwx9ePsBriBoag5FEhDkad5Qq77cyqLG1FRyhhSi&is_system=false&with_tokens=false&documents_count_min=1&documents_count_max=5
+GET /dataContracts?page=1&limit=10&order=asc&order_by=block_height&timestamp_start=2025-01-22T11:09:23.892Z&timestamp_end=2025-03-22T11:09:23.892Z&owner=G3yCKwx9ePsBriBoag5FEhDkad5Qq77cyqLG1FRyhhSi&is_system=false&with_tokens=false&documents_count_min=1&documents_count_max=5&description=Sansnote&keywords=dash&keywords=evo
 
 {
     "resultSet": [
         {
-            "identifier": "DnLifBv1j3E8pr5gLjQFKK1HSNPn23m79LMWkSzgSNqY",
+            "identifier": "86QuRPc8n8VhEjWAcgdvfauynS1ZtnZLiSXFqUKJyo2n",
             "name": null,
-            "owner": "G3yCKwx9ePsBriBoag5FEhDkad5Qq77cyqLG1FRyhhSi",
+            "owner": "AFaVqRJCWXFZRUhuq6ZUUcWXVW8fErCN3wpEtgsBnDZm",
             "schema": null,
-            "version": 4,
-            "txHash": "8381BAC9EBDEA4DE87FFA3805F3AB9767DA3CDA64354FE6678F852C5ED448906",
-            "timestamp": "2025-01-22T11:09:23.892Z",
+            "version": 1,
+            "txHash": "B92DE3344132279D4E85C831624C857B5B2EC7F990945E1140E3160E661E5D2B",
+            "timestamp": "2025-08-16T02:58:59.740Z",
             "isSystem": false,
-            "documentsCount": 3,
+            "documentsCount": 0,
+            "tokensCount": 1,
             "topIdentity": null,
             "identitiesInteracted": null,
             "totalGasUsed": null,
             "averageGasUsed": null,
             "groups": null,
-            "tokens": null
+            "tokens": null,
+            "description": "Sansnote (tSANS), a governance and utility token serving as the backbone of the Sansbank community.",
+            "keywords": [
+                "dash",
+                "evo",
+                "dao",
+                "tSANS"
+            ]
         },
         ...
     ],
@@ -1294,10 +1326,15 @@ Response codes:
 Return all identities paged and order by block height, tx count or balance.
 
 * Valid `order_by` values are `block_height`, `tx_count` or `balance`
-* `limit` cannot be more then 100
-* `page` cannot be less then 1
+* `limit` cannot be more than 100
+* `page` cannot be less than 1
+* `tx_count_min` and `tx_count_max` allows to filter identities by transaction count
+* `documents_count_min` and `documents_count_max` allows to filter identities by document count
+* `data_contracts_min` and `data_contracts_min` allows to filter identities by data contract count
+* `balance_min` and `balance_max` allows to filter identities by balance
+* All range filters can be set with one or two range limit e.g. `balance_min=0` or `balance_min=0&balance_max=1`
 ```
-GET /identities?page=1&limit=10&order=asc&order_by=block_height
+GET /identities?limit=10&order=desc&order_by=tx_count&balance_min=100000&balance_max=100000100000100000100000&documents_count_min=1&documents_count_max=5&data_contracts_min=3&data_contracts_max=4&tx_count_min=2&tx_count_max=10
 
 {
     "pagination": {
@@ -1307,28 +1344,38 @@ GET /identities?page=1&limit=10&order=asc&order_by=block_height
     },
     "resultSet": [
       {
-          "identifier": "GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec",
-          "owner": "GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec",
-          "revision": 1,
-          "nonce": null,
-          "balance": "1000000",
-          "timestamp": "2024-03-18T10:13:54.150Z",
-          "txHash": "DEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEF",
-          "totalTxs": 1,
-          "totalTransfers": 0,
-          "totalDocuments": 0,
-          "totalDataContracts": 0,
-          "isSystem": false,
-          "aliases": [
-            {
-              "alias": "alias.dash",
-              "status": "locked",
-              "contested": true,
-              "timestamp": "2024-08-26 13:29:44.606+00",
-              "txHash": "2508B35FDDB3E2E797D4F2CB9C1FAEE71D4DC43B91CE2043BEC8CE2B4A442DD7"
-            }
-          ]
-      }, ...
+            "identifier": "EhGUnphjMD73JZBt98h7BUK7W17PbnMSUhD4pbEceLMi",
+            "revision": "0",
+            "balance": "730783890",
+            "timestamp": "2025-01-21T16:16:23.472Z",
+            "txHash": "CA2251F97E5A55DA4FD915EADEFBEEB680FFFEF4AD848AAC463F17C10DA08A11",
+            "totalTxs": 9,
+            "totalTransfers": 2,
+            "totalDocuments": 2,
+            "totalDataContracts": 3,
+            "isSystem": false,
+            "aliases": [
+                {
+                    "alias": "CharbroilPacifismRiskPreachy.dash",
+                    "status": "ok",
+                    "timestamp": "2025-01-21T16:20:56.957Z",
+                    "documentId": "2PrPvRX3ywDqrH4HQa2kcFFFe2ApFXjm6VzNrRRRPduJ",
+                    "contested": false
+                }
+            ],
+            "totalGasSpent": null,
+            "averageGasSpent": null,
+            "totalTopUpsAmount": null,
+            "totalWithdrawalsAmount": null,
+            "lastWithdrawalHash": null,
+            "publicKeys": [],
+            "fundingCoreTx": null,
+            "totalTopUps": null,
+            "totalWithdrawals": null,
+            "lastWithdrawalTimestamp": null,
+            "nonce": null,
+            "owner": "EhGUnphjMD73JZBt98h7BUK7W17PbnMSUhD4pbEceLMi"
+        }, ...
     ]
 }
 ```
@@ -1439,8 +1486,11 @@ GET /identities/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec/dataContracts?page=
         "schema": null,
         "txHash": "DEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEF",
         "timestamp": "2024-03-18T10:13:54.150Z",
-        "isSystem": false
-        "documentsCount": 1337
+        "isSystem": false,
+        "documentsCount": 1337,
+        "tokensCount": 0,
+        "description": "Data Contract Description",
+        "keywords": ["keyword1", "keyword2"]
     }, ...
     ]
 }
@@ -1626,11 +1676,15 @@ This endpoint allows search any types of data
 * Data Contract
   * Full `Identifier`
   * Part `name`
+  * One of `keyword`
+  * Part `description`
 * Document
   * Full `Identifier`
 * Tokens
   * Full `Identifier`
   * Part `name`
+* Platform Address
+  * Full `Bech32m`
 
 ```
 GET /search?query=xyz
@@ -1978,21 +2032,27 @@ Return a decoded State Transition
 
 Available transactions type for decode
 
-| Transition type              | type index |
-|------------------------------|------------|
-| `DATA_CONTRACT_CREATE`       | 0          |
-| `BATCH`                      | 1          |
-| `IDENTITY_CREATE`            | 2          |
-| `IDENTITY_TOP_UP`            | 3          |
-| `DATA_CONTRACT_UPDATE`       | 4          |
-| `IDENTITY_UPDATE`            | 5          |
-| `IDENTITY_CREDIT_WITHDRAWAL` | 6          |
-| `IDENTITY_CREDIT_TRANSFER`   | 7          |
-| `MASTERNODE_VOTE`            | 8          |
+| Transition type                       | type index |
+|---------------------------------------|------------|
+| `DATA_CONTRACT_CREATE`                | 0          |
+| `BATCH`                               | 1          |
+| `IDENTITY_CREATE`                     | 2          |
+| `IDENTITY_TOP_UP`                     | 3          |
+| `DATA_CONTRACT_UPDATE`                | 4          |
+| `IDENTITY_UPDATE`                     | 5          |
+| `IDENTITY_CREDIT_WITHDRAWAL`          | 6          |
+| `IDENTITY_CREDIT_TRANSFER`            | 7          |
+| `MASTERNODE_VOTE`                     | 8          |
+| `IDENTITY_CREDIT_TRANSFER_TO_ADDRESS` | 9          |
+| `IDENTITY_CREATE_FROM_ADDRESSES`      | 10         |
+| `IDENTITY_TOP_UP_FROM_ADDRESSES`      | 11         |
+| `ADDRESS_FUNDS_TRANSFER`              | 12         |
+| `ADDRESS_FUNDING_FROM_ASSET_LOCK`     | 13         |
+| `ADDRESS_CREDIT_WITHDRAWAL`           | 14         |
 
 - `fundingAddress` can be null
 - `prefundedVotingBalance` can be null
-- `contractBounds` always null
+- `output` can be null
 
 ```
 POST /transaction/decode
@@ -2548,6 +2608,124 @@ IDENTITY_CREATE with instantLock
     "raw": "08005b246080ba64350685fe302d3d790f5bb238cb619920d46230c844f079944a233bb2df460e72e3d59e7fe1c082ab3a5bd9445dd0dd5c4894a6d9f0d9ed9404b5000000e668c659af66aee1e72c186dde7b5b7e0a1d712a09c40d5721f622bf53c5315506646f6d61696e12706172656e744e616d65416e644c6162656c021204646173681203793031010c00412019d90a905092dd3074da3cd42b05abe944d857fc2573e81e1d39a16ba659c00c7b38b88bee46a853c5c30deb9c2ae3abf4fbb781eec12b86a0928ca7b02ced7d"
 }
 ```
+```json
+{
+  "type": 12,
+  "typeString": "ADDRESS_FUNDS_TRANSFER",
+  "userFeeIncrease": 0,
+  "inputs": [
+    {
+      "platformAddress": {
+        "base58": "yRpNvoc3hd66c3rNrPRGubVd9vGUoAVpZV",
+        "bech32m": "tdashevo1qq79z66rh34l4u2axlz3jv34zwshggnenut9k093"
+      },
+      "credits": "100000000",
+      "nonce": "2"
+    }
+  ],
+  "inputWitness": [
+    {
+      "type": "P2PKH",
+      "value": {
+        "signature": "1f8d77c0034cfbd9dde264a109b36ac666f579a76730de8840c9ec95515286bcfc1b3bdf140d70915e96c251e5e6a63ab210abbe813d99ec6f4a77b4c844c99e94"
+      }
+    }
+  ],
+  "outputs": [
+    {
+      "platformAddress": {
+        "base58": "yRpNvoc3hd66c3rNrPRGubVd9vGUoAVpZV",
+        "bech32m": "tdashevo1qq79z66rh34l4u2axlz3jv34zwshggnenut9k093"
+      },
+      "credits": "1000000"
+    },
+    {
+      "platformAddress": {
+        "base58": "yRpNvoc3hd66c3rNrPRGubVd9vGUoAVpZV",
+        "bech32m": "tdashevo1qq79z66rh34l4u2axlz3jv34zwshggnenut9k093"
+      },
+      "credits": "1000000"
+    }
+  ],
+  "feeStrategy": [
+    {
+      "type": "DeductFromInput",
+      "value": 0
+    }
+  ],
+  "raw": "0c0001003c516b43bc6bfaf15d37c519323513a17422799f02fc05f5e100640001399ea81a36300ee53de31cc7854f99d8346bf6fc000f424000071c1ae8cffd41f1e41de54c80f23c96556e9998fc000f4240000a1fa49dc18a0569abe990ee38bf5f8f32715b16fc000f4240000a5a56596f5902add2d0dfe221542289bb0808a4fc000f4240000b6b9811d8fff0c58df2ad2ab3bf6cdc9d84c934fc000f4240000c5367d6bad196e06ff906dbbceed9e8afbec537fc000f4240000cdbb6ab11ff7e3d1ad04cf008197f2e179cf579fc000f4240000d864b764bbd27f456d69d6d41e38d7d6fb58899fc000f4240000d8cf06eab33372ab9774918918938138854ca47fc000f4240000ddede21af3182a807b291e5ad02dba63bbc5004fc000f4240000f84655b66f1d2c53f124e19d6a5873b7dfbd9c8fc000f424000105277945a0c961d48cfad1eacdb5254932d71fbfc000f42400011cc2142cc856c98a30e9b74ae7269918d82e746fc000f4240001881040507865e1a7b31edaebfab4e64e1c2a827fc000f42400018850f11f798bb7ce047f406ef821eba4e33cb7bfc000f42400018cf4393f6522d80fbaae89914afc02a135a896dfc000f4240001e247de0912e22a5e4aedac70d31828ac9f80a6afc000f4240001ebe53632b1c7475d3236a0df04dd1dff5004256fc000f4240001f10c4ccdac4ae84208a116de183dd139febbab0fc000f4240002ac893fadb8b3e859491410d7d66721f0c649714fc000f4240002c3c66150492b281b41b4aff49bdef047c0b77e0fc000f4240002d3c9d1d89cfc7d91fe9f8ca8ab249040ca7f46cfc000f4240002df944dfb3c22648028d8e3b494ae3bce937e1bafc000f424000367d9edb3ed740b534feb4110496ae1b58a1976afc000f42400036fe1c5130ffc6d114f068309ca70f211389a11efc000f4240003803a9663bde10c9a7344d69195f498a7861886ffc000f4240003b31101cbe8b031693692bd84a56b1e20817129cfc000f4240003b818bb95666e20fc5f216448d6e97b0eeed2dfdfc000f4240004511cda7833d4e187c43ae67bf25cea5f37c38cffc000f424000485abbf8f5b471e051c98650f384b7df9832386dfc000f424000496f18821217f83b1ff7df1e514508f15f025aabfc000f4240004a85c146dca42548d92f9b6126885e156f3f4dc9fc000f4240004ad7c71452a502d4f0950bd65657f7556a481237fc000f4240004e84591c90588cdd008d8d0723286d24a5f77175fc000f4240004ebeafad18837d0946b9c6577a3fc82e526d618dfc000f42400053ba35ff0f7aeba87b5a579f80d9b7ab8791a5d9fc000f4240005c9aba35210a53c8917b1cd72778259ceac23bbffc000f4240005d7258b336e3e9ee738f459b9ce41e627203f3e0fc000f42400060bd7d8c519ae4818539a173d8849f2ef4423016fc000f424000632bc234521ae77e5329a0acf99a0f3b1b084bd9fc000f42400064c94a96de6d0351a6c771a509b3badb43850bfdfc000f424000699ab8cff4b4302f85e93489b82e34c7990398cdfc000f4240006abe2b1c4352a1ec3603588b4e80e10f9fe0db40fc000f4240006b4f08dcabbf17ff29f713093d5de4d4caf5cfddfc000f424000718957e239d7f1ab4be605da45aeca83ab42e3d6fc000f42400072e8cea120f1eda9ad3ab446f1838022a46544dafc000f42400074bcc374a92a481f7643bdab0990d1d90bff1cadfc000f42400075521209f46dd110f3a274876204cfeb2644de05fc000f42400079047c780d8bde108b8e7a3f9dbf5e35ede5bad7fc000f4240007b67978484819e4b1b6aa5f16bbf2508921581b3fc000f4240007ceb2b924d3ad5879237fcb5d4fbccb21ce9a3f4fc000f424000811df3f2e1a055c0bbaef3b6fe34a0a84e101988fc000f424000885a211dcf0a1b6602fcfa66998ad5adc8241880fc000f42400088998699d97ca30798fcec25480f30665e4912c9fc000f4240008e272c7a46573a7883eef325aaa63fe7421f1e27fc000f424000932c6b24eb7e60cbdeb352b959c65a55a5c8f9b3fc000f4240009979192ddc0832dc876c449440e0f4d807cc15d0fc000f42400099bb95e4670ccacf3372b87c950967f4f9ad858ffc000f4240009e4ff8deaf9f9de4abfc1abb9eefc5b100552720fc000f424000a216d1ac2f63a5114fecb8dd7649da4b76d68ca2fc000f424000a5cf555c9c9b9d27d9fd6e6c1668e7b5e06101a5fc000f424000a5e8e064799ccfe128d027a905706aa806529893fc000f424000a76940545e3c50adcfc5b5c4aa70d397b10dd874fc000f424000aa0d757ab976d92811ce0e1b4237deb8383699a6fc000f424000ae639e1ecac2cdbda7688f9ed404fc9fdc8352a8fc000f424000ae716a4c15f21db2933052a42cfee07df70c3bb2fc000f424000b0e494bfeb5ceb688966c3abae20613eebcb56cdfc000f424000b113c450b6208bcb4d259eff51c96af9a9795a03fc000f424000b1f2d56f62bb00fe8090f2d406e6d6267ce3ebf7fc000f424000bc5f1b24804800b43c1a962dde4cc2b1802879b5fc000f424000bd9cb0993cd1a5742fccd587117b8c22cd101db7fc000f424000bf67b23864c923e929adc395ba209d14530b9d3efc000f424000c6f22695928f55940349a1b6e9cadb9b9fce567cfc000f424000c877f545094dd6b251cf6d215acf6752822ac81efc000f424000c8869f3f7250ec31b10c6e3a33026addf5dbc030fc000f424000cc4ce224ad92a6d877f0a382bc88a9660be6a291fc000f424000cdc9c4b54b6a7fb33b840634e2fc1ec8fb6e264ffc000f424000cfd37dd43fc6ef28134e7c4c224535542dd698d3fc000f424000d05c00a70c8836cac130578732630ae5a371c676fc000f424000d122bf0ca4800ef7752c8a012d8c450bf5d511e8fc000f424000d4a17796e6f34b55e03e0aa8b5486afa896fd0e8fc000f424000d61c1eb79be99f19935cd1144f8b97d4330bd9e3fc000f424000d71bbde5625298acadf8284eaa690a59bdb13e9cfc000f424000d7f860775f2774efa098b205495c839ab088dde4fc000f424000d830ac757ec5e38d29227292c81b1b04add431fffc000f424000de47bc23486b8cde81da673652fb164bb8294c04fc000f424000dfa90c4045ca6708c28884587aa905ca9943d637fc000f424000e262a715bcf9ac9229d16b3b9e80f4612edc697ffc000f424000e4656d93324c5d700ca035b6ad2619d9c9c08af5fc000f424000ebc895a8b903dfdc9c2372a271912fca08dd782afc000f424000efd29414c33d0dd2723c27ec2aed883dda514744fc000f424000f399d9bf2e55ee2ec11196d77cb6dd4bd9993228fc000f424000f3cd329c7941e10680b0b7e93d5625e725acd203fc000f424000f4f03955bed6f002ec4713009b1a4b2f66f37f98fc000f424000f54a55c12648600aae97827ce4d4f121957d75effc000f424000f755eae099de88aee351bf9d24612192f14de4e4fc000f424000f778ee039a6469ab9bee50212560a899ae12eb21fc000f424000f8ba82ff452e9ad0d2dc03849eb25d34670d771dfc000f424000f929e96803ac01cc21065aa4749db181e59e3f2afc000f424000fa25551e3218a6f5b83ebd3738eafcf233900baffc000f4240010000000100411f8d77c0034cfbd9dde264a109b36ac666f579a76730de8840c9ec95515286bcfc1b3bdf140d70915e96c251e5e6a63ab210abbe813d99ec6f4a77b4c844c99e94"
+}
+```
+```json
+{
+    "type": 13,
+    "typeString": "ADDRESS_FUNDING_FROM_ASSET_LOCK",
+    "assetLockProof": {
+        "coreChainLockedHeight": null,
+        "type": "instantSend",
+        "instantLock": "AQKflfCMay9YZSHo7Yy2u5l0vwE0obDfr8cqfShF9bqn/gEAAAD2vDZ5zvy1mcNCSF5jfsxQkw0veXBo6aJNE/13WYR7awEAAACJfGgEXp9GdjneIf96kXXJEn+b/Qix6fYXJ1hgqBQzH/y3yJZU0Ky99rsWgfhfdvFC4UBFsddngtq6TJgBAAAAix7+tMc2flwUVAB1uquM+dk5TF/nhmAnX9PmNHbUnIUTFWvpfXw7lnqpLERjGgKeF5ITbSsXcFU2TiKYWg7esh/DYYYrbdXBbJ6OoiLVQjjI60Em+1NK4nPycG9g6xOX",
+        "fundingAmount": "100000000",
+        "fundingCoreTx": "1f3314a860582717f6e9b108fd9b7f12c975917aff21de3976469f5e04687c89",
+        "vout": 0
+    },
+    "userFeeIncrease": 0,
+    "inputs": [],
+    "inputWitness": [],
+    "outputs": [
+        {
+            "platformAddress": {
+              "base58": "yRpNvoc3hd66c3rNrPRGubVd9vGUoAVpZV",
+              "bech32m": "tdashevo1qq79z66rh34l4u2axlz3jv34zwshggnenut9k093"
+            },
+            "credits": "0"
+        }
+    ],
+    "feeStrategy": [
+        {
+            "type": "ReduceOutput",
+            "value": 0
+        }
+    ],
+    "signature": "202856c525c2d3c001cfd581bd46df6f73220db84fcbb111c6729bd66d2d07e2d37c84e543627bd9fbb953ff0bf98e0367abedc790970471fec6816df2ad6f4064",
+    "raw": "0d0000ea01029f95f08c6b2f586521e8ed8cb6bb9974bf0134a1b0dfafc72a7d2845f5baa7fe01000000f6bc3679cefcb599c342485e637ecc50930d2f797068e9a24d13fd7759847b6b01000000897c68045e9f467639de21ff7a9175c9127f9bfd08b1e9f617275860a814331ffcb7c89654d0acbdf6bb1681f85f76f142e14045b1d76782daba4c98010000008b1efeb4c7367e5c14540075baab8cf9d9394c5fe78660275fd3e63476d49c8513156be97d7c3b967aa92c44631a029e1792136d2b177055364e22985a0edeb21fc361862b6dd5c16c9e8ea222d54238c8eb4126fb534ae273f2706f60eb1397fb018303000800029f95f08c6b2f586521e8ed8cb6bb9974bf0134a1b0dfafc72a7d2845f5baa7fe010000006b483045022100bbfbd824846523f7d2c6799b47a9dea88c0fb60dd433d0d8971abee63dd4966b022008dcee6d9780aa962d37cfed6ca54e256f6dba1190c01c7a58cc749709179f450121022bb6c14bedb4deb4059a260c7228f0d38f8274e7fadeea4b5739a4c120d651aefffffffff6bc3679cefcb599c342485e637ecc50930d2f797068e9a24d13fd7759847b6b010000006a473044022074bd9c8c4ca4557cdf57017627b6b666c7586b674503f3f26ae8f1fed714d2510220295ea1d64c5745988e94c963972059d20171d0e0f92b07c31469bb622a468f3c0121022bb6c14bedb4deb4059a260c7228f0d38f8274e7fadeea4b5739a4c120d651aeffffffff0200e1f50500000000026a00a008510b000000001976a914f84b203ee59814a41f1aa2379043ab3af98143f188ac0000000024010100e1f505000000001976a91469dccf851a2cb6c2f18ee1274e4fd1669af7685a88ac000001005022deda5da7414a3aa460705a5bb16b1282c97a000101000041202856c525c2d3c001cfd581bd46df6f73220db84fcbb111c6729bd66d2d07e2d37c84e543627bd9fbb953ff0bf98e0367abedc790970471fec6816df2ad6f406400"
+}
+```
+```json
+{
+    "type": 14,
+    "typeString": "ADDRESS_CREDIT_WITHDRAWAL",
+    "userFeeIncrease": 0,
+    "inputs": [
+        {
+            "platformAddress": {
+              "base58": "yRpNvoc3hd66c3rNrPRGubVd9vGUoAVpZV",
+              "bech32m": "tdashevo1qq79z66rh34l4u2axlz3jv34zwshggnenut9k093"
+            },
+            "credits": "250000000000",
+            "nonce": "5"
+        }
+    ],
+    "inputWitness": [
+        {
+            "type": "P2PKH",
+            "value": {
+                "signature": "2097d5baef616aeeb6b19e5baf4fdc2bdadcc685bd01161844c199b22b41afe1547a90cef74d70a776263ef723f509711f495a6907a63f89b7ddb260956404299b"
+            }
+        }
+    ],
+    "output": null,
+    "feeStrategy": [
+        {
+            "type": "DeductFromInput",
+            "value": 0
+        }
+    ],
+    "pooling": 0,
+    "outputAddress": "yT6NQzvH2h16ggSKNj2b2Wu3NMFiYVKXeB",
+    "outputScript": "76a9144a4fc56e14aa98799880abbcd46de5d2e09998fb88ac",
+    "raw": "0e000100914e8a18eb34517b7a6a4432cf237f68c5f8332e05fd0000003a352944000001000001001976a9144a4fc56e14aa98799880abbcd46de5d2e09998fb88ac000100412097d5baef616aeeb6b19e5baf4fdc2bdadcc685bd01161844c199b22b41afe1547a90cef74d70a776263ef723f509711f495a6907a63f89b7ddb260956404299b"
+}
+```
 Response codes:
 ```
 200: OK
@@ -2594,6 +2772,8 @@ Return list of tokens
 * `owner` tokens owner identifier
 * `position` tokens position in data contract
 * `contract_id` contract identifier which contains tokens
+* `token_name` part of token name in EN locale. Case insensetive. Minimum 3 symbols
+* `token_id` identifier of token
 ```
 GET /tokens?limit=10&page=1&order=asc&owner=5DbLwAxGBzUzo81VewMUwn4b5P4bpv9FNFybi25XB5Bk&position=0&contract_id=ALybvzfcCwMs7sinDwmtumw17NneuW7RgFtFHgjKmF3A
 
@@ -3441,4 +3621,128 @@ Response codes:
 200: OK
 500: Internal Server Error
 503: Service Temporarily Unavailable
+```
+___
+### Platform Addresses
+Return all platform addresses paged and order by creation height.
+
+* Valid `order` values are `asc` or `desc`
+* `limit` cannot be more than 100
+* `page` cannot be less than 1
+
+```
+GET /platformAddresses?page=1&limit=10&order=desc
+
+{
+    "resultSet": [
+        {
+            "base58Address": "yjaZy4BRBd99jB4mSpd6hJQkYFaCeprGQm",
+            "bech32mAddress": "tdashevo1qrljwyc2mvdllj288hxmzc9tr893tp3qss0uxzzy",
+            "totalTxs": null,
+            "incomingTxs": null,
+            "outgoingTxs": null,
+            "nonce": 0,
+            "balance": "1000000",
+            "totalIncomingAmount": null,
+            "totalOutgoingAmount": null
+        },
+        {
+            "base58Address": "yjGTyDvzFoA98VzoJh6hAEDEFRo8PZKtoR",
+            "bech32mAddress": "tdashevo1qram499ccysvuwafjtus5jawqydpct3dcgq9c250",
+            "totalTxs": null,
+            "incomingTxs": null,
+            "outgoingTxs": null,
+            "nonce": 0,
+            "balance": "1000000",
+            "totalIncomingAmount": null,
+            "totalOutgoingAmount": null
+        },
+        ...
+    ],
+    "pagination": {
+        "page": 1,
+        "limit": 10,
+        "total": 555893
+    }
+}
+```
+
+Response codes:
+```
+200: OK
+500: Internal Server Error
+```
+___
+### Platform Address Info
+Return platform address info by given addres (base58check or bech32m)
+
+```
+GET /platformAddress/tdashevo1zm37f22lmtkysgznz7mnf3d9tmuh9urrflvjul/info
+
+{
+    "base58Address": "yRpNvoc3hd66c3rNrPRGubVd9vGUoAVpZV",
+    "bech32mAddress": "tdashevo1qq79z66rh34l4u2axlz3jv34zwshggnenut9k093",
+    "totalTxs": 80,
+    "incomingTxs": 1,
+    "outgoingTxs": 79,
+    "nonce": 79,
+    "balance": "37372853480",
+    "totalIncomingAmount": "100000000000",
+    "totalOutgoingAmount": "7900000000"
+}
+```
+
+Response codes:
+```
+200: OK
+404: Not found
+500: Internal Server Error
+```
+___
+### Platform Address Transactions
+Return all transitions for platform address paged and order by creation height.
+
+* Valid `order` values are `asc` or `desc`
+* `limit` cannot be more than 100
+* `page` cannot be less than 1
+
+```
+GET /platformAddress/yRpNvoc3hd66c3rNrPRGubVd9vGUoAVpZV/transitions?page=1&limit=10&order=desc
+
+{
+    "resultSet": [
+        {
+            "hash": "99C5901B019156C0547472B4C825D05E0510DD60C0EE1DDB7730A2387421D52D",
+            "index": 17,
+            "blockHash": "A3D5152ECA3629D4BD8DE05E77B5BDC1AA6D22F8180630EE10CBC01F946A2885",
+            "blockHeight": 246835,
+            "type": "ADDRESS_FUNDS_TRANSFER",
+            "batchType": null,
+            "data": "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",
+            "timestamp": "2026-01-15T16:15:33.127Z",
+            "gasUsed": 704433560,
+            "status": "SUCCESS",
+            "error": null,
+            "owner": {
+                "identifier": null,
+                "aliases": []
+            },
+            "incoming": false,
+            "base58Address": "yRpNvoc3hd66c3rNrPRGubVd9vGUoAVpZV",
+            "bech32mAddress": "tdashevo1qq79z66rh34l4u2axlz3jv34zwshggnenut9k093"
+        },
+        ...
+    ],
+    "pagination": {
+        "page": 1,
+        "limit": 10,
+        "total": 80
+    }
+}
+```
+
+Response codes:
+```
+200: OK
+500: Internal Server Error
 ```

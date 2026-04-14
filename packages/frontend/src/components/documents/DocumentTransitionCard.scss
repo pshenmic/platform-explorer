@@ -9,6 +9,11 @@
         max-width: max-content;
       }
     }
+
+    &__Badge {
+      width: fit-content;
+    }
+
     &--PaymentInfo {
       display: flex;
       justify-content: start;

@@ -13,6 +13,7 @@
  * @param masternodeVotesController {MasternodeVotesController}
  * @param contestedResourcesController {ContestedResourcesController}
  * @param tokensController {TokensController}
+ * @param platformAddressesController {PlatformAddressesController}
  */
 module.exports = ({
   fastify,
@@ -27,7 +28,8 @@ module.exports = ({
   rateController,
   masternodeVotesController,
   contestedResourcesController,
-  tokensController
+  tokensController,
+  platformAddressesController
 }) => {
   const routes = [
     {
@@ -340,7 +342,8 @@ module.exports = ({
           properties: {
             validator: { $ref: 'hash#' }
           }
-        }
+        },
+        querystring: { $ref: 'paginationOptions#' }
       }
     },
     {
@@ -395,7 +398,7 @@ module.exports = ({
           properties: {
             query: {
               type: 'string',
-              pattern: '^[A-Za-z0-9.-]+$'
+              pattern: '^[A-Za-z0-9\\s.-]+$'
             }
           }
         }
@@ -684,6 +687,49 @@ module.exports = ({
             hash: { $ref: 'hash#' }
           }
         }
+      }
+    },
+    {
+      path: '/platformAddress/:platform_address/info',
+      method: 'GET',
+      handler: platformAddressesController.getPlatformAddressInfo,
+      schema: {
+        params: {
+          type: 'object',
+          properties: {
+            platform_address: {
+              type: 'string',
+              maxLength: 100,
+              pattern: '^[A-Za-z0-9]+$'
+            }
+          }
+        }
+      }
+    },
+    {
+      path: '/platformAddress/:platform_address/transactions',
+      method: 'GET',
+      handler: platformAddressesController.getPlatformAddressTransition,
+      schema: {
+        querystring: { $ref: 'paginationOptions#' },
+        params: {
+          type: 'object',
+          properties: {
+            platform_address: {
+              type: 'string',
+              maxLength: 100,
+              pattern: '^[A-Za-z0-9]+$'
+            }
+          }
+        }
+      }
+    },
+    {
+      path: '/platformAddresses',
+      method: 'GET',
+      handler: platformAddressesController.getPlatformAddresses,
+      schema: {
+        querystring: { $ref: 'paginationOptions#' }
       }
     }
   ]

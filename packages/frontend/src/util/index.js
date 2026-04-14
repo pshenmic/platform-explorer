@@ -1,14 +1,11 @@
 import copyToClipboard from './copyToClipboard'
 import currencyRound from './currencyRound'
-import {
-  getDaysBetweenDates,
-  getDynamicRange,
-  getTimeDelta,
-  formatDate
-} from './datetime'
+import { getDaysBetweenDates, getDynamicRange, getTimeDelta, formatDate } from './datetime'
+import { normalizePagination } from './table'
+import { encodeDateToURL, decodeDateFromURL } from './url'
 
 function fetchHandlerSuccess (setter, data) {
-  setter((state) => ({
+  setter(state => ({
     ...state,
     data: {
       ...state.data,
@@ -22,7 +19,7 @@ function fetchHandlerSuccess (setter, data) {
 function fetchHandlerError (setter, error) {
   console.error(error)
 
-  setter((state) => ({
+  setter(state => ({
     ...state,
     data: null,
     loading: false,
@@ -31,7 +28,7 @@ function fetchHandlerError (setter, error) {
 }
 
 function paginationHandler (setter, currentPage) {
-  setter((state) => ({
+  setter(state => ({
     ...state,
     props: {
       ...state.props,
@@ -41,13 +38,11 @@ function paginationHandler (setter, currentPage) {
 }
 
 function setLoadingProp (setter, value = true) {
-  setter((state) => ({ ...state, loading: value }))
+  setter(state => ({ ...state, loading: value }))
 }
 
 function numberFormat (number) {
-  return new Intl.NumberFormat('en', { maximumSignificantDigits: 3 }).format(
-    number
-  )
+  return new Intl.NumberFormat('en', { maximumSignificantDigits: 3 }).format(number)
 }
 
 function creditsToDash (credits) {
@@ -65,8 +60,9 @@ function roundUsd (usd, maxDecimals = 5) {
 
   if (decimalPart) {
     const firstSignificantIndex = decimalPart.search(/[1-9]/)
-    precision =
-      firstSignificantIndex + 1 <= maxDecimals ? firstSignificantIndex + 1 : 2
+    precision = firstSignificantIndex + 1 <= maxDecimals
+      ? firstSignificantIndex + 1
+      : 2
   }
 
   return usd.toFixed(precision)
@@ -82,17 +78,16 @@ function removeTrailingZeros (value, maxDecimals = 8) {
 
 function findActiveAlias (aliases = []) {
   if (!aliases?.length) return null
-  return aliases?.find((alias) => alias.status === 'ok')
+  return aliases?.find(alias => alias.status === 'ok')
 }
 
-const getTokenName = (localizations) =>
-  localizations?.en?.singularForm ||
+const getTokenName = (localizations) => localizations?.en?.singularForm ||
   Object.values(localizations || {})[0]?.singularForm ||
   ''
 
 const getMinTokenPrice = (prices) => {
   if (!prices || prices.length === 0) return null
-  return Math.min(...prices.map((p) => parseFloat(p.price)))
+  return Math.min(...prices.map(p => parseFloat(p.price)))
 }
 
 export {
@@ -112,5 +107,8 @@ export {
   findActiveAlias,
   getTokenName,
   getMinTokenPrice,
+  normalizePagination,
+  encodeDateToURL,
+  decodeDateFromURL,
   formatDate
 }

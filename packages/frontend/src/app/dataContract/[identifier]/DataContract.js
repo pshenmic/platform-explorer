@@ -5,8 +5,6 @@ import * as Api from '../../../util/Api'
 import DocumentsList from '../../../components/documents/DocumentsList'
 import { LoadingBlock } from '../../../components/loading'
 import { ErrorMessageBlock } from '../../../components/Errors'
-import { fetchHandlerSuccess, fetchHandlerError, setLoadingProp, paginationHandler } from '../../../util'
-import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { CodeBlock } from '../../../components/data'
 import { InfoContainer, PageDataContainer } from '../../../components/ui/containers'
 import { DataContractDigestCard, DataContractTotalCard, GroupsList } from '../../../components/dataContracts'
@@ -14,6 +12,10 @@ import { Container, Tabs, TabList, TabPanels, Tab, TabPanel } from '@chakra-ui/r
 import { useBreadcrumbs } from '../../../contexts/BreadcrumbsContext'
 import { TransactionsList } from '../../../components/transactions'
 import TokensList from '../../../components/tokens/TokensList'
+import { useQuery } from '@tanstack/react-query'
+import { useQueryState, parseAsStringEnum, parseAsString } from 'nuqs'
+import { normalizePagination } from '@utils/table'
+
 import './DataContract.scss'
 
 const pagintationConfig = {
@@ -34,18 +36,78 @@ const tabs = [
 
 const defaultTabName = 'documents'
 
+const pageSize = pagintationConfig.itemsOnPage.default
+
 function DataContract ({ identifier }) {
   const { setBreadcrumbs } = useBreadcrumbs()
-  const [dataContract, setDataContract] = useState({ data: {}, loading: true, error: false })
-  const [documents, setDocuments] = useState({ data: {}, props: { currentPage: 0 }, loading: true, error: false })
-  const [transactions, setTransactions] = useState({ data: {}, props: { currentPage: 0 }, loading: true, error: false })
-  const [rate, setRate] = useState({ data: {}, loading: true, error: false })
-  const pageSize = pagintationConfig.itemsOnPage.default
-  const [activeTab, setActiveTab] = useState(tabs.indexOf(defaultTabName.toLowerCase()) !== -1 ? tabs.indexOf(defaultTabName.toLowerCase()) : 0)
-  const [expandedGroups, setExpandedGroups] = useState({})
-  const router = useRouter()
-  const pathname = usePathname()
-  const searchParams = useSearchParams()
+  const [txPage, setTxPage] = useState(pagintationConfig.defaultPage)
+  const [docPage, setDocPage] = useState(pagintationConfig.defaultPage)
+
+  const dataContract = useQuery({
+    queryKey: ['dataContract', identifier],
+    queryFn: () => Api.getDataContractByIdentifier(identifier)
+  })
+  const rate = useQuery({
+    queryKey: ['rate', identifier],
+    queryFn: () => Api.getRate(identifier)
+  })
+  const transactions = useQuery({
+    queryKey: ['transactions', identifier, txPage],
+    queryFn: () => Api.getDataContractTransactions(identifier, txPage, pageSize, 'desc'),
+    enabled: !!identifier,
+    select: ({ pagination, ...data }) => ({
+      pagination: normalizePagination({
+        page: txPage,
+        pageSize,
+        ...pagination
+      }),
+      list: data.resultSet.map((transaction) => ({
+        ...transaction,
+        batchType: transaction?.action?.[0]?.action
+      }))
+    })
+  })
+
+  const documents = useQuery({
+    queryKey: ['documents', identifier, docPage],
+    queryFn: () => Api.getDocumentsByDataContract(identifier, docPage, pageSize, 'desc'),
+    select: ({ pagination, resultSet }) => ({
+      pagination: normalizePagination({
+        page: docPage,
+        pageSize,
+        ...pagination
+      }),
+      resultSet
+    })
+  })
+
+  const [activeTab, setActiveTab] = useQueryState(
+    'tab',
+    parseAsStringEnum(tabs)
+      .withDefault(defaultTabName)
+      .withOptions({
+        scroll: false,
+        shallow: false
+      })
+  )
+
+  const [group, setGroup] = useQueryState('group', parseAsString.withOptions({
+    scroll: false,
+    shallow: true
+  }))
+
+  const handleGroupToggle = (groupId) => {
+    if (group && group === groupId) {
+      setGroup(null)
+    } else {
+      setGroup(groupId)
+    }
+  }
+
+  const handleTab = (index) => setActiveTab(tabs.find((_, idx) => idx === index))
+
+  const txPagination = transactions.data?.pagination
+  const docPagination = documents.data?.pagination
 
   useEffect(() => {
     setBreadcrumbs([
@@ -53,81 +115,7 @@ function DataContract ({ identifier }) {
       { label: 'Data Contracts', path: '/dataContracts' },
       { label: dataContract.data?.name || identifier, avatarSource: identifier }
     ])
-  }, [setBreadcrumbs, identifier, dataContract])
-
-  useEffect(() => {
-    Api.getDataContractByIdentifier(identifier)
-      .then(res => fetchHandlerSuccess(setDataContract, res))
-      .catch(err => fetchHandlerError(setDataContract, err))
-
-    Api.getRate()
-      .then(res => fetchHandlerSuccess(setRate, res))
-      .catch(err => fetchHandlerError(setRate, err))
-  }, [identifier])
-
-  useEffect(() => {
-    const tab = searchParams.get('tab')
-    const group = searchParams.get('group')
-
-    if (tab && tabs.indexOf(tab.toLowerCase()) !== -1) {
-      setActiveTab(tabs.indexOf(tab.toLowerCase()))
-    } else {
-      setActiveTab(tabs.indexOf(defaultTabName.toLowerCase()) !== -1 ? tabs.indexOf(defaultTabName.toLowerCase()) : 0)
-    }
-
-    if (group) {
-      setExpandedGroups({ [group]: true })
-    }
-  }, [searchParams])
-
-  useEffect(() => {
-    const urlParameters = new URLSearchParams(Array.from(searchParams.entries()))
-
-    if (activeTab === tabs.indexOf(defaultTabName.toLowerCase()) ||
-       (tabs.indexOf(defaultTabName.toLowerCase()) === -1 && activeTab === 0)) {
-      urlParameters.delete('tab')
-    } else {
-      urlParameters.set('tab', tabs[activeTab])
-    }
-
-    router.replace(`${pathname}?${urlParameters.toString()}`, { scroll: false })
-  }, [activeTab])
-
-  const handleExpandedGroupsChange = (newExpandedGroups) => {
-    setExpandedGroups(newExpandedGroups)
-
-    const urlParameters = new URLSearchParams(Array.from(searchParams.entries()))
-    const expandedGroupIds = Object.keys(newExpandedGroups).filter(id => newExpandedGroups[id])
-
-    if (expandedGroupIds.length > 0) {
-      urlParameters.set('group', expandedGroupIds[0])
-    } else {
-      urlParameters.delete('group')
-    }
-
-    router.replace(`${pathname}?${urlParameters.toString()}`, { scroll: false })
-  }
-
-  useEffect(() => {
-    if (!identifier) return
-    setLoadingProp(setDocuments)
-
-    Api.getDocumentsByDataContract(identifier, documents.props.currentPage + 1, pageSize, 'desc')
-      .then(res => fetchHandlerSuccess(setDocuments, res))
-      .catch(err => fetchHandlerError(setDocuments, err))
-  }, [identifier, documents.props.currentPage])
-
-  useEffect(() => {
-    if (!identifier) return
-    setLoadingProp(setTransactions)
-
-    Api.getDataContractTransactions(identifier, transactions.props.currentPage + 1, pageSize, 'desc')
-      .then(res => {
-        fetchHandlerSuccess(setDataContract, { transactionsCount: res?.pagination?.total })
-        fetchHandlerSuccess(setTransactions, res)
-      })
-      .catch(err => fetchHandlerError(setTransactions, err))
-  }, [identifier, transactions.props.currentPage])
+  }, [setBreadcrumbs, identifier, dataContract.data?.name])
 
   return (
     <PageDataContainer
@@ -136,11 +124,11 @@ function DataContract ({ identifier }) {
     >
       <div className={'DataContract__InfoBlocks'}>
         <DataContractTotalCard className={'DataContract__InfoBlock'} dataContract={dataContract} rate={rate}/>
-        <DataContractDigestCard className={'DataContract__InfoBlock'} dataContract={dataContract} rate={rate}/>
+        <DataContractDigestCard className={'DataContract__InfoBlock'} dataContract={dataContract} rate={rate} txCount={transactions.data?.pagination?.total}/>
       </div>
 
       <InfoContainer styles={['tabs']} id={'tabs'}>
-        <Tabs onChange={(index) => setActiveTab(index)} index={activeTab}>
+        <Tabs onChange={handleTab} index={tabs.indexOf(activeTab)}>
           <TabList>
             <Tab>Transactions {transactions.data?.pagination?.total != null
               ? <span className={`Tabs__TabItemsCount ${transactions.data?.pagination?.total === 0 ? 'Tabs__TabItemsCount--Empty' : ''}`}>
@@ -165,45 +153,42 @@ function DataContract ({ identifier }) {
           </TabList>
           <TabPanels>
             <TabPanel position={'relative'}>
-              {!transactions.error
+              {!transactions.isError
                 ? <TransactionsList
-                    transactions={transactions.data?.resultSet?.map((transaction) => ({
-                      ...transaction,
-                      batchType: transaction?.action?.[0]?.action
-                    }))}
-                    loading={transactions.loading}
+                    transactions={transactions.data?.list}
+                    loading={transactions.isLoading}
                     pagination={{
-                      onPageChange: pagination => paginationHandler(setTransactions, pagination.selected),
-                      pageCount: Math.ceil(transactions.data?.pagination?.total / pageSize) || 1,
-                      forcePage: transactions.props.currentPage
+                      onPageChange: ({ selected }) => setTxPage(selected + 1),
+                      pageCount: txPagination?.pageCount,
+                      forcePage: txPagination?.forcePage
                     }}
                   />
                 : <Container h={20}><ErrorMessageBlock/></Container>
               }
             </TabPanel>
             <TabPanel position={'relative'}>
-              {!documents.error
+              {!documents.isError
                 ? <DocumentsList
                   documents={documents.data?.resultSet}
-                  loading={documents.loading}
+                  loading={documents.isLoading}
                   pagination={{
-                    onPageChange: pagination => paginationHandler(setDocuments, pagination.selected),
-                    pageCount: Math.ceil(documents.data?.pagination?.total / pageSize) || 1,
-                    forcePage: documents.props.currentPage
+                    onPageChange: ({ selected }) => setDocPage(selected + 1),
+                    pageCount: docPagination?.pageCount,
+                    forcePage: docPagination?.forcePage
                   }}
                 />
                 : <Container h={20}><ErrorMessageBlock/></Container>
               }
             </TabPanel>
             <TabPanel position={'relative'}>
-              {!documents.error
-                ? <TokensList tokens={dataContract.data?.tokens} loading={dataContract.loading}/>
+              {!documents.isError
+                ? <TokensList tokens={dataContract.data?.tokens} loading={dataContract.isLoading}/>
                 : <Container h={20}><ErrorMessageBlock/></Container>
               }
             </TabPanel>
             <TabPanel position={'relative'}>
-              {!dataContract.error
-                ? <LoadingBlock h={'250px'} loading={dataContract.loading}>
+              {!dataContract.isError
+                ? <LoadingBlock h={'250px'} loading={dataContract.isLoading}>
                   {dataContract.data?.schema
                     ? <CodeBlock smoothSize={activeTab === 1} className={'DataContract__Schema'} code={dataContract.data?.schema}/>
                     : <Container h={20}><ErrorMessageBlock/></Container>}
@@ -212,12 +197,12 @@ function DataContract ({ identifier }) {
               }
             </TabPanel>
             <TabPanel position={'relative'}>
-              {!dataContract.error
-                ? <LoadingBlock h={'250px'} loading={dataContract.loading}>
+              {!dataContract.isError
+                ? <LoadingBlock h={'250px'} loading={dataContract.isLoading}>
                   <GroupsList
                     groups={dataContract.data?.groups || {}}
-                    expandedGroups={expandedGroups}
-                    onExpandedGroupsChange={handleExpandedGroupsChange}
+                    expandedGroup={group}
+                    onGroupToggle={handleGroupToggle}
                   />
                 </LoadingBlock>
                 : <Container h={20}><ErrorMessageBlock/></Container>

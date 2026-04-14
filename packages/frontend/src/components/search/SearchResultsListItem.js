@@ -5,7 +5,9 @@ import {
   DataContractSearchItem,
   DocumentSearchItem,
   TransactionSearchItem,
-  ValidatorSearchItem
+  ValidatorSearchItem,
+  TokenSearchItem,
+  PlatformAddressSearchItem
 } from './items'
 import { entityTypes } from './constants'
 import './SearchResultsListItem.scss'
@@ -26,6 +28,10 @@ function SearchResultsListItem ({ entity, entityType, className, onClick }) {
       return <DataContractSearchItem dataContract={entity} className={className} onClick={onClick}/>
     case entityTypes.document:
       return <DocumentSearchItem document={entity} className={className} onClick={onClick}/>
+    case entityTypes.token:
+      return <TokenSearchItem token={entity} className={className} onClick={onClick}/>
+    case entityTypes.platformAddress:
+      return <PlatformAddressSearchItem platformAddress={entity} className={className} onClick={onClick}/>
     default:
       return null
   }

@@ -1,10 +1,13 @@
 import Link from 'next/link'
-import { Alias, Identifier, BigNumber } from '../data'
+import { Alias, Identifier, BigNumber, NotActive, DateBlock } from '../data'
 import ValueContainer from '../ui/containers/ValueContainer'
-import { Grid, GridItem } from '@chakra-ui/react'
+import { Badge, Grid, GridItem } from '@chakra-ui/react'
 import './DataContractsListItem.scss'
 
 function DataContractsListItem ({ dataContract }) {
+  const ownerId = typeof dataContract?.owner === 'object' ? dataContract?.owner?.identifier : dataContract?.owner
+  const ownerName = typeof dataContract?.owner === 'object' ? dataContract?.owner?.name || null : null
+
   return (
     <Link
       href={`/dataContract/${dataContract?.identifier}`}
@@ -26,6 +29,33 @@ function DataContractsListItem ({ dataContract }) {
           </div>
         </GridItem>
 
+        <GridItem className={'DataContractsListItem__Column DataContractsListItem__Column--Owner'}>
+          {ownerName
+            ? <Alias avatarSource={ownerId}>{ownerName}</Alias>
+            : ownerId
+              ? <Identifier ellipsis={true} avatar={true} styles={['highlight-both']}>{ownerId}</Identifier>
+              : <span>-</span>
+          }
+        </GridItem>
+
+        <GridItem className={'DataContractsListItem__Column DataContractsListItem__Column--System'}>
+          {dataContract?.isSystem !== undefined
+            ? <Badge colorScheme={dataContract?.isSystem ? 'orange' : 'gray'}>
+              {dataContract?.isSystem ? 'true' : 'false'}
+            </Badge>
+            : <NotActive/>
+          }
+        </GridItem>
+
+        <GridItem className={'DataContractsListItem__Column DataContractsListItem__Column--WithTokens'}>
+          {isNaN(dataContract?.tokensCount)
+            ? <NotActive/>
+            : <Badge colorScheme={dataContract?.tokensCount > 0 ? 'orange' : 'gray'}>
+              {dataContract?.tokensCount > 0 ? 'true' : 'false'}
+            </Badge>
+          }
+        </GridItem>
+
         <GridItem className={'DataContractsListItem__Column DataContractsListItem__Column--DocumentsCount'}>
           <ValueContainer colorScheme={dataContract?.documentsCount > 0 ? 'brand' : 'darkGray'} size={'xs'}>
             <BigNumber>{dataContract?.documentsCount}</BigNumber>
@@ -33,12 +63,7 @@ function DataContractsListItem ({ dataContract }) {
         </GridItem>
 
         <GridItem className={'DataContractsListItem__Column DataContractsListItem__Column--Timestamp'}>
-          {(typeof dataContract?.timestamp === 'string')
-            ? <div className={'DataContractsListItem__Timestamp'}>
-                {new Date(dataContract?.timestamp).toLocaleString()}
-              </div>
-            : dataContract?.isSystem && <div className={'DataContractsListItem__SystemLabel'}>SYSTEM</div>
-          }
+          <DateBlock timestamp={dataContract?.timestamp} format='dateOnly' />
         </GridItem>
       </Grid>
     </Link>

@@ -671,7 +671,249 @@ describe('Identities routes', () => {
       assert.deepEqual(body.resultSet, expectedIdentities)
     })
 
+    it('should allow walk through pages desc and filter by balance', async () => {
+      const identities = []
+      const aliases = []
+
+      mock.method(IdentitiesController.prototype, 'getIdentityBalance', async (identifier) => identities.find(({ identity }) => identity.identifier === identifier)?.balance)
+
+      for (let i = 0; i < 100; i++) {
+        block = await fixtures.block(knex, { height: i + 1, timestamp: new Date(0) })
+        identity = await fixtures.identity(knex, { block_hash: block.hash, block_height: block.height })
+        for (let t = 0; t < (i - i % 4) / 4; t++) {
+          await fixtures.transfer(knex, {
+            amount: 10000,
+            recipient: identity.identifier,
+            state_transition_hash: identity.transaction.hash
+          })
+        }
+        alias = await fixtures.identity_alias(knex, {
+          alias: `#test3$${i}`,
+          identity,
+          state_transition_hash: identity.transaction.hash
+        })
+        identities.push({ identity, block, balance: (i - i % 4) / 4 * 10000 })
+        aliases.push(alias)
+      }
+
+      const { body } = await client.get('/identities?page=2&limit=5&order=desc&balance_min=120000&balance_max=150000')
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      assert.equal(body.resultSet.length, 5)
+      assert.equal(body.pagination.total, 16)
+      assert.equal(body.pagination.page, 2)
+      assert.equal(body.pagination.limit, 5)
+
+      const expectedIdentities = identities
+        .filter(({ balance }) => balance >= 120000 && balance <= 150000)
+        .sort((a, b) => b.identity.id - a.identity.id)
+        .slice(5, 10)
+        .map((_identity) => ({
+          identifier: _identity.identity.identifier,
+          owner: _identity.identity.identifier,
+          revision: String(mockIdentity.revision),
+          nonce: null,
+          balance: String(_identity.balance),
+          timestamp: _identity.block.timestamp.toISOString(),
+          txHash: _identity.identity.txHash,
+          totalTxs: 1,
+          totalTransfers: _identity.balance / 10000,
+          totalDocuments: 0,
+          totalDataContracts: 0,
+          isSystem: false,
+          aliases: [
+            {
+              alias: 'test.test',
+              status: 'ok',
+              contested: true,
+              documentId: 'Bwr4WHCPz5rFVAD87RqTs3izo4zpzwsEdKPWUT1NS1C7',
+              timestamp: '1970-01-01T00:00:00.000Z'
+            }
+          ],
+          totalGasSpent: null,
+          averageGasSpent: null,
+          totalTopUpsAmount: null,
+          totalWithdrawalsAmount: null,
+          lastWithdrawalHash: null,
+          publicKeys: [],
+          fundingCoreTx: null,
+          lastWithdrawalTimestamp: null,
+          totalTopUps: null,
+          totalWithdrawals: null
+        }))
+
+      assert.deepEqual(body.resultSet, expectedIdentities)
+    })
+
+    it('should allow walk through pages desc and filter by balance and tx count', async () => {
+      const identities = []
+      const aliases = []
+
+      mock.method(IdentitiesController.prototype, 'getIdentityBalance', async (identifier) => identities.find(({ identity }) => identity.identifier === identifier)?.balance)
+
+      for (let i = 0; i < 100; i++) {
+        block = await fixtures.block(knex, { height: i + 1, timestamp: new Date(0) })
+        identity = await fixtures.identity(knex, { block_hash: block.hash, block_height: block.height })
+        for (let t = 0; t < (i - i % 4) / 4; t++) {
+          const st = await fixtures.transaction(knex, {
+            block_hash: block.hash,
+            block_height: block.height,
+            type: 0,
+            owner: identity.identifier
+          })
+          await fixtures.transfer(knex, { amount: 10000, recipient: identity.identifier, state_transition_hash: st.hash })
+        }
+        alias = await fixtures.identity_alias(knex, {
+          alias: `#test3$${i}`,
+          identity,
+          state_transition_hash: identity.transaction.hash
+        })
+        identities.push({ identity, block, balance: (i - i % 4) / 4 * 10000 })
+        aliases.push(alias)
+      }
+
+      const { body } = await client.get('/identities?page=2&limit=5&order=desc&balance_min=120000&balance_max=150000&tx_count_min=12&tx_count_max=14')
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      assert.equal(body.resultSet.length, 3)
+      assert.equal(body.pagination.total, 8)
+      assert.equal(body.pagination.page, 2)
+      assert.equal(body.pagination.limit, 5)
+
+      const expectedIdentities = identities
+        .filter(({ balance }) => balance >= 120000 && balance <= 150000)
+        .filter(({ balance }) => balance / 10000 + 1 <= 14 && balance / 10000 + 1 >= 12)
+        .sort((a, b) => b.identity.id - a.identity.id)
+        .slice(5, 10)
+        .map((_identity) => ({
+          identifier: _identity.identity.identifier,
+          owner: _identity.identity.identifier,
+          revision: String(mockIdentity.revision),
+          nonce: null,
+          balance: String(_identity.balance),
+          timestamp: _identity.block.timestamp.toISOString(),
+          txHash: _identity.identity.txHash,
+          totalTxs: _identity.balance / 10000 + 1,
+          totalTransfers: _identity.balance / 10000,
+          totalDocuments: 0,
+          totalDataContracts: 0,
+          isSystem: false,
+          aliases: [
+            {
+              alias: 'test.test',
+              status: 'ok',
+              contested: true,
+              documentId: 'Bwr4WHCPz5rFVAD87RqTs3izo4zpzwsEdKPWUT1NS1C7',
+              timestamp: '1970-01-01T00:00:00.000Z'
+            }
+          ],
+          totalGasSpent: null,
+          averageGasSpent: null,
+          totalTopUpsAmount: null,
+          totalWithdrawalsAmount: null,
+          lastWithdrawalHash: null,
+          publicKeys: [],
+          fundingCoreTx: null,
+          lastWithdrawalTimestamp: null,
+          totalTopUps: null,
+          totalWithdrawals: null
+        }))
+
+      assert.deepEqual(body.resultSet, expectedIdentities)
+    })
+
+    it('should allow walk through pages desc and filter by balance, tx count, document count and data contract count', async () => {
+      const identities = []
+      const aliases = []
+
+      mock.method(IdentitiesController.prototype, 'getIdentityBalance', async (identifier) => identities.find(({ identity }) => identity.identifier === identifier)?.balance)
+
+      for (let i = 0; i < 100; i++) {
+        block = await fixtures.block(knex, { height: i + 1, timestamp: new Date(0) })
+        identity = await fixtures.identity(knex, { block_hash: block.hash, block_height: block.height })
+        for (let t = 0; t < (i - i % 4) / 4; t++) {
+          const st = await fixtures.transaction(knex, {
+            block_hash: block.hash,
+            block_height: block.height,
+            type: 0,
+            owner: identity.identifier
+          })
+          const contract = await fixtures.dataContract(knex, {
+            owner: identity.identifier,
+            state_transition_hash: st.hash,
+            version: 1
+          })
+          await fixtures.document(knex, {
+            owner: identity.identifier,
+            data_contract_id: contract.id
+          })
+          await fixtures.transfer(knex, { amount: 10000, recipient: identity.identifier, state_transition_hash: st.hash })
+        }
+        alias = await fixtures.identity_alias(knex, {
+          alias: `#test3$${i}`,
+          identity,
+          state_transition_hash: identity.transaction.hash
+        })
+        identities.push({ identity, block, balance: (i - i % 4) / 4 * 10000 })
+        aliases.push(alias)
+      }
+
+      const { body } = await client.get('/identities?page=2&limit=5&order=desc&balance_min=120000&balance_max=200000&tx_count_min=12&tx_count_max=20&documents_count_min=10&documents_count_max=15&data_contracts_min=12&data_contracts_max=15')
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      assert.equal(body.resultSet.length, 5)
+      assert.equal(body.pagination.total, 16)
+      assert.equal(body.pagination.page, 2)
+      assert.equal(body.pagination.limit, 5)
+
+      const expectedIdentities = identities
+        .filter(({ balance }) => balance >= 120000 && balance <= 150000)
+        .filter(({ balance }) => balance / 10000 + 1 <= 20 && balance / 10000 + 1 >= 12)
+        .filter(({ balance }) => balance / 10000 >= 12 && balance / 10000 <= 15)
+        .sort((a, b) => b.identity.id - a.identity.id)
+        .slice(5, 10)
+        .map((_identity) => ({
+          identifier: _identity.identity.identifier,
+          owner: _identity.identity.identifier,
+          revision: String(mockIdentity.revision),
+          nonce: null,
+          balance: String(_identity.balance),
+          timestamp: _identity.block.timestamp.toISOString(),
+          txHash: _identity.identity.txHash,
+          totalTxs: _identity.balance / 10000 + 1,
+          totalTransfers: _identity.balance / 10000,
+          totalDocuments: _identity.balance / 10000,
+          totalDataContracts: _identity.balance / 10000,
+          isSystem: false,
+          aliases: [
+            {
+              alias: 'test.test',
+              status: 'ok',
+              contested: true,
+              documentId: 'Bwr4WHCPz5rFVAD87RqTs3izo4zpzwsEdKPWUT1NS1C7',
+              timestamp: '1970-01-01T00:00:00.000Z'
+            }
+          ],
+          totalGasSpent: null,
+          averageGasSpent: null,
+          totalTopUpsAmount: null,
+          totalWithdrawalsAmount: null,
+          lastWithdrawalHash: null,
+          publicKeys: [],
+          fundingCoreTx: null,
+          lastWithdrawalTimestamp: null,
+          totalTopUps: null,
+          totalWithdrawals: null
+        }))
+
+      assert.deepEqual(body.resultSet, expectedIdentities)
+    })
+
     it('should allow sort by tx count', async () => {
+      mock.method(IdentitiesController.prototype, 'getIdentityBalance', async () => BigInt(0))
       const identities = []
       const aliases = []
 
@@ -898,12 +1140,15 @@ describe('Identities routes', () => {
         timestamp: _dataContract.block.timestamp.toISOString(),
         isSystem: false,
         documentsCount: 0,
+        tokensCount: 0,
         averageGasUsed: null,
         identitiesInteracted: null,
         topIdentity: null,
         totalGasUsed: null,
         groups: null,
-        tokens: null
+        tokens: null,
+        keywords: _dataContract.dataContract.keywords ?? [],
+        description: _dataContract.dataContract.description ?? null
       }))
       assert.deepEqual(body.resultSet, expectedDataContracts)
     })
@@ -950,12 +1195,15 @@ describe('Identities routes', () => {
           timestamp: _dataContract.block.timestamp.toISOString(),
           isSystem: false,
           documentsCount: 0,
+          tokensCount: 0,
           averageGasUsed: null,
           identitiesInteracted: null,
           topIdentity: null,
           totalGasUsed: null,
           groups: null,
-          tokens: null
+          tokens: null,
+          keywords: _dataContract.dataContract.keywords ?? [],
+          description: _dataContract.dataContract.description ?? null
         }))
       assert.deepEqual(body.resultSet, expectedDataContracts)
     })
@@ -1002,12 +1250,15 @@ describe('Identities routes', () => {
           timestamp: _dataContract.block.timestamp.toISOString(),
           isSystem: false,
           documentsCount: 0,
+          tokensCount: 0,
           averageGasUsed: null,
           identitiesInteracted: null,
           topIdentity: null,
           totalGasUsed: null,
           tokens: null,
-          groups: null
+          groups: null,
+          keywords: _dataContract.dataContract.keywords ?? [],
+          description: _dataContract.dataContract.description ?? null
         }))
       assert.deepEqual(body.resultSet, expectedDataContracts)
     })
@@ -1054,12 +1305,15 @@ describe('Identities routes', () => {
           timestamp: _dataContract.block.timestamp.toISOString(),
           isSystem: false,
           documentsCount: 0,
+          tokensCount: 0,
           averageGasUsed: null,
           identitiesInteracted: null,
           topIdentity: null,
           totalGasUsed: null,
           tokens: null,
-          groups: null
+          groups: null,
+          keywords: _dataContract.dataContract.keywords ?? [],
+          description: _dataContract.dataContract.description ?? null
         }))
       assert.deepEqual(body.resultSet, expectedDataContracts)
     })
@@ -1482,6 +1736,9 @@ describe('Identities routes', () => {
         .sort((a, b) => a.block.height - b.block.height)
         .slice(0, 10)
         .map((_transaction, i) => ({
+          base58Address: null,
+          bech32mAddress: null,
+          incoming: null,
           hash: _transaction.transaction.hash,
           index: 0,
           blockHash: _transaction.transaction.block_hash,
@@ -1532,6 +1789,9 @@ describe('Identities routes', () => {
         .sort((a, b) => b.block.height - a.block.height)
         .slice(0, 10)
         .map((_transaction) => ({
+          base58Address: null,
+          bech32mAddress: null,
+          incoming: null,
           hash: _transaction.transaction.hash,
           index: 0,
           blockHash: _transaction.transaction.block_hash,
@@ -1582,6 +1842,9 @@ describe('Identities routes', () => {
         .sort((a, b) => a.block.height - b.block.height)
         .slice(4, 8)
         .map((_transaction) => ({
+          base58Address: null,
+          bech32mAddress: null,
+          incoming: null,
           hash: _transaction.transaction.hash,
           index: 0,
           blockHash: _transaction.transaction.block_hash,
@@ -1632,6 +1895,9 @@ describe('Identities routes', () => {
         .sort((a, b) => b.block.height - a.block.height)
         .slice(4, 8)
         .map((_transaction) => ({
+          base58Address: null,
+          bech32mAddress: null,
+          incoming: null,
           hash: _transaction.transaction.hash,
           index: 0,
           blockHash: _transaction.transaction.block_hash,

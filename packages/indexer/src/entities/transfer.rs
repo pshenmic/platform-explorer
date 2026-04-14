@@ -1,9 +1,13 @@
 use dpp::identifier::Identifier;
 use dpp::identity::state_transition::AssetLockProved;
+use dpp::state_transition::identity_credit_transfer_to_addresses_transition::accessors::IdentityCreditTransferToAddressesTransitionAccessorsV0;
+use dpp::state_transition::identity_credit_transfer_to_addresses_transition::IdentityCreditTransferToAddressesTransition;
 use dpp::state_transition::identity_credit_transfer_transition::accessors::IdentityCreditTransferTransitionAccessorsV0;
 use dpp::state_transition::identity_credit_transfer_transition::IdentityCreditTransferTransition;
 use dpp::state_transition::identity_credit_withdrawal_transition::accessors::IdentityCreditWithdrawalTransitionAccessorsV0;
 use dpp::state_transition::identity_credit_withdrawal_transition::IdentityCreditWithdrawalTransition;
+use dpp::state_transition::identity_topup_from_addresses_transition::accessors::IdentityTopUpFromAddressesTransitionAccessorsV0;
+use dpp::state_transition::identity_topup_from_addresses_transition::IdentityTopUpFromAddressesTransition;
 use dpp::state_transition::identity_topup_transition::accessors::IdentityTopUpTransitionAccessorsV0;
 use dpp::state_transition::identity_topup_transition::IdentityTopUpTransition;
 
@@ -40,6 +44,24 @@ impl From<IdentityTopUpTransition> for Transfer {
     }
 }
 
+impl From<IdentityTopUpFromAddressesTransition> for Transfer {
+    fn from(state_transition: IdentityTopUpFromAddressesTransition) -> Self {
+        let identifier = state_transition.identity_id().clone();
+
+        let amount = state_transition
+            .output()
+            .iter()
+            .map(|(_, amount)| amount)
+            .sum();
+
+        return Transfer {
+            sender: None,
+            recipient: Some(identifier),
+            amount,
+        };
+    }
+}
+
 impl From<IdentityCreditWithdrawalTransition> for Transfer {
     fn from(state_transition: IdentityCreditWithdrawalTransition) -> Self {
         let identifier = state_transition.identity_id().clone();
@@ -62,6 +84,23 @@ impl From<IdentityCreditTransferTransition> for Transfer {
         return Transfer {
             sender: Some(sender),
             recipient: Some(recipient),
+            amount,
+        };
+    }
+}
+
+impl From<IdentityCreditTransferToAddressesTransition> for Transfer {
+    fn from(state_transition: IdentityCreditTransferToAddressesTransition) -> Self {
+        let sender = state_transition.identity_id().clone();
+        let amount = state_transition
+            .recipient_addresses()
+            .iter()
+            .map(|(_, value)| value.clone())
+            .sum();
+
+        return Transfer {
+            sender: Some(sender),
+            recipient: None,
             amount,
         };
     }

@@ -27,7 +27,7 @@ module.exports = class TransactionsDAO {
       return null
     }
 
-    const aliasDocument = await getAliasDocumentForIdentifier(row.owner.trim(), this.sdk)
+    const aliasDocument = row.owner ? await getAliasDocumentForIdentifier(row.owner.trim(), this.sdk) : undefined
 
     const aliases = []
 
@@ -87,9 +87,13 @@ module.exports = class TransactionsDAO {
       filtersQuery = filtersQuery !== '' ? filtersQuery + ' and gas_used <= ?' : 'gas_used <= ?'
     }
 
-    if (timestampStart && timestampEnd) {
-      timestampsQuery = 'blocks.timestamp between ? and ?'
-      timestampBindings.push(timestampStart, timestampEnd)
+    if (timestampStart) {
+      timestampsQuery = 'blocks.timestamp >= ?'
+      timestampBindings.push(timestampStart)
+    }
+    if (timestampEnd) {
+      timestampsQuery = timestampsQuery === '' ? 'blocks.timestamp >= ?' : 'blocks.timestamp between ? and ?'
+      timestampBindings.push(timestampEnd)
     }
 
     const transactionSubquery = tokenName
@@ -139,12 +143,12 @@ module.exports = class TransactionsDAO {
 
     const totalCount = rows.length > 0 ? Number(rows[0].total_count) : 0
 
-    const owners = rows.map(row => row.owner.trim())
+    const owners = rows.filter(row => row.owner).map(row => row.owner.trim())
 
     const aliasDocuments = await getAliasDocumentForIdentifiers(owners, this.sdk)
 
     const resultSet = await Promise.all(rows.map(async (row) => {
-      const aliasDocument = aliasDocuments[row.owner.trim()]
+      const aliasDocument = row.owner ? aliasDocuments[row.owner.trim()] : undefined
 
       const aliases = []
 

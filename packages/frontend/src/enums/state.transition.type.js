@@ -43,5 +43,35 @@ export const TransactionTypesInfo = {
     title: 'Masternode Vote',
     description: 'Vote for a contested resource on the Dash Platform',
     colorScheme: 'orange'
+  },
+  IDENTITY_CREDIT_TRANSFER_TO_ADDRESS: {
+    title: 'Identity Credit Transfer To Addresses',
+    description: 'Transfer credits from identity to Platform addresses',
+    colorScheme: 'dimGray'
+  },
+  IDENTITY_CREATE_FROM_ADDRESSES: {
+    title: 'Identity Create From Addresses',
+    description: 'Create identity funded by Platform addresses',
+    colorScheme: 'dimGray'
+  },
+  IDENTITY_TOP_UP_FROM_ADDRESSES: {
+    title: 'Identity Top Up From Addresses',
+    description: 'Top up identity using Platform address balances',
+    colorScheme: 'dimGray'
+  },
+  ADDRESS_FUNDS_TRANSFER: {
+    title: 'Address Funds Transfer',
+    description: 'Transfer credits between Platform addresses',
+    colorScheme: 'dimGray'
+  },
+  ADDRESS_FUNDING_FROM_ASSET_LOCK: {
+    title: 'Address Funding From Asset Lock',
+    description: 'Top up Platform address from asset lock',
+    colorScheme: 'dimGray'
+  },
+  ADDRESS_CREDIT_WITHDRAWAL: {
+    title: 'Address Credit Withdrawal',
+    description: 'Withdraw credits from Platform addresses to Core (L1) Dash addresses',
+    colorScheme: 'dimGray'
   }
 }

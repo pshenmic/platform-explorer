@@ -45,7 +45,7 @@ const schemaTypes = [
           },
           {
             type: 'number',
-            enum: [0, 1, 2, 3, 4, 5, 6, 7, 8]
+            enum: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]
           }
         ]
       },
@@ -70,12 +70,18 @@ const schemaTypes = [
                 'IDENTITY_UPDATE',
                 'IDENTITY_CREDIT_WITHDRAWAL',
                 'IDENTITY_CREDIT_TRANSFER',
-                'MASTERNODE_VOTE'
+                'MASTERNODE_VOTE',
+                'IDENTITY_CREDIT_TRANSFER_TO_ADDRESS',
+                'IDENTITY_CREATE_FROM_ADDRESSES',
+                'IDENTITY_TOP_UP_FROM_ADDRESSES',
+                'ADDRESS_FUNDS_TRANSFER',
+                'ADDRESS_FUNDING_FROM_ASSET_LOCK',
+                'ADDRESS_CREDIT_WITHDRAWAL'
               ]
             },
             {
               type: 'number',
-              enum: [0, 1, 2, 3, 4, 5, 6, 7, 8]
+              enum: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]
             }
           ]
         }
@@ -260,11 +266,46 @@ const schemaTypes = [
         minLength: 43,
         maxLength: 44
       },
+      token_id: {
+        type: ['string', 'null'],
+        pattern: '^[A-Za-z0-9]+$',
+        minLength: 43,
+        maxLength: 44
+      },
       pro_tx_hash: {
         type: 'string',
         pattern: '^[A-Za-z0-9]+$',
         minLength: 64,
         maxLength: 64
+      },
+      description: {
+        type: ['string', 'null'],
+        minLength: 3,
+        maxLength: 100
+      },
+      keywords: {
+        type: ['array', 'null'],
+        items: {
+          type: ['string'],
+          pattern: '^[A-Za-z0-9]+$'
+        },
+        maxItems: 20
+      },
+      data_contracts_min: {
+        type: ['number', 'null'],
+        minimum: 0
+      },
+      data_contracts_max: {
+        type: ['number', 'null'],
+        minimum: 0
+      },
+      balance_min: {
+        type: ['string', 'null'],
+        pattern: '^[0-9]+$'
+      },
+      balance_max: {
+        type: ['string', 'null'],
+        pattern: '^[0-9]+$'
       }
     }
   },

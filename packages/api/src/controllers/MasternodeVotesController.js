@@ -12,6 +12,10 @@ class MasternodeVotesController {
       voter_identity: voterIdentity, towards_identity: towardsIdentity, choice, power
     } = request.query
 
+    if (timestampStart && timestampEnd && new Date(timestampStart).getTime() >= new Date(timestampEnd).getTime()) {
+      return response.status(400).send('Bad timestamp range')
+    }
+
     const masternodeVotes = await this.masternodeVotesDAO.getMasternodeVotes(choice, timestampStart, timestampEnd, voterIdentity, towardsIdentity, power, Number(page ?? 1), Number(limit ?? 10), order)
 
     response.send(masternodeVotes)

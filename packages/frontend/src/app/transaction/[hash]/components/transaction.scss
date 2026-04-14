@@ -18,6 +18,12 @@
     margin-bottom: 14px;
     justify-content: flex-start !important;
 
+    &--Outputs {
+      .InfoLine__Value {
+        overflow: hidden;
+      }
+    }
+
     &--VoteIndexValues {
       .InfoLine__Value {
         width: 100%;
@@ -137,6 +143,10 @@
     &:last-child {
       margin-bottom: 0;
     }
+  }
+
+  &__AddressCard {
+    overflow: hidden;
   }
 
   &__VoteIndexValuesContainer {
