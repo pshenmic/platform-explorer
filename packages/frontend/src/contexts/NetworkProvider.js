@@ -13,13 +13,25 @@ export const NetworkProvider = ({ children }) => {
       : NETWORKS_ENUM.TESTNET
 
   useEffect(() => {
-    const sdk = window.dashPlatformSDK
-    if (!sdk) {
-      console.log('Dash Platform SDK is not initialized')
-      return
+    let cancelled = false
+    let timer
+
+    const tryApply = () => {
+      if (cancelled) return
+      const sdk = window.dashPlatformSDK
+      if (!sdk) {
+        timer = setTimeout(tryApply, 100)
+        return
+      }
+      sdk.setNetwork(network)
     }
 
-    sdk.setNetwork(network)
+    tryApply()
+
+    return () => {
+      cancelled = true
+      if (timer) clearTimeout(timer)
+    }
   }, [network])
 
   return (
