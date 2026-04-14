@@ -54,15 +54,15 @@ export const useVoteValidation = ({ wallet, isFinished }) => {
       try {
         const voterIdentity =
           await sdk.identities.getIdentityByIdentifier(identifier)
-        const publicKeys = voterIdentity.getPublicKeys()
+        if (!voterIdentity) return
+
+        const publicKeys = voterIdentity.getPublicKeys() ?? []
+        if (publicKeys.length !== 1) return
+
         const [publicKey] = publicKeys
+        if (publicKey?.purpose !== 'VOTING') return
 
-        const isAllowed =
-          publicKeys.length === 1 && publicKey.purpose === 'VOTING'
-
-        if (isAllowed) {
-          setVotingAllowed(isAllowed)
-        }
+        setVotingAllowed(true)
       } catch (e) {
         console.error(e)
       }
