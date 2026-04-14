@@ -13,7 +13,7 @@ export const VoteControlState = {
   USER_HAS_NO_WALLET: 'USER_HAS_NO_WALLET',
   USER_IS_NOT_ALLOWED_TO_VOTE: 'USER_IS_NOT_ALLOWED_TO_VOTE',
   VOTING_IS_FINISHED: 'VOTING_IS_FINISHED',
-  VALID: 'VALID'
+  CAN_VOTE: 'CAN_VOTE'
 }
 
 const getLastVoteByProTxHash = ({ resourceValue, proTxHash }) => {
@@ -119,7 +119,7 @@ export const useVoteValidation = ({ wallet, isFinished }) => {
       return
     }
 
-    setVoteValidate(VoteControlState.VALID)
+    setVoteValidate(VoteControlState.CAN_VOTE)
   }, [isFinished, isVotingAllowed, wallet, isExtensionConnected, proTxHash])
 
   useEffect(() => {
@@ -141,14 +141,14 @@ export const useVoteValidation = ({ wallet, isFinished }) => {
       }
     }
 
-    if (wallet.walletInfo && voteValidateState === VoteControlState.VALID) {
+    if (wallet.walletInfo && voteValidateState === VoteControlState.CAN_VOTE) {
       getPrevVote()
     }
   }, [resourceValue, wallet, voteValidateState])
 
   return {
     voteValidateState,
-    isVoteVisible: voteValidateState === VoteControlState.VALID,
+    isVoteVisible: voteValidateState === VoteControlState.CAN_VOTE,
     prevVote
   }
 }
