@@ -108,7 +108,6 @@ export const useVoteValidation = ({ wallet, isFinished }) => {
 
     if (!wallet.connected.current) {
       setVoteValidate(VoteControlState.USER_HAS_NO_WALLET)
-      wallet.connectWallet()
 
       return
     }
@@ -148,7 +147,9 @@ export const useVoteValidation = ({ wallet, isFinished }) => {
 
   return {
     voteValidateState,
-    isVoteVisible: voteValidateState === VoteControlState.CAN_VOTE,
+    isVoteVisible:
+      voteValidateState === VoteControlState.CAN_VOTE ||
+      voteValidateState === VoteControlState.USER_HAS_NO_WALLET,
     prevVote
   }
 }
