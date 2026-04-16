@@ -80,7 +80,7 @@ export const VoteControls = ({
   }
 
   useEffect(() => {
-    if (!walletInfo.identities) {
+    if (!walletInfo?.identities) {
       return
     }
 
@@ -88,7 +88,7 @@ export const VoteControls = ({
       ({ identifier }) => identifier === currentIdentity
     )
 
-    if (currentInfo.type === 'voting') {
+    if (currentInfo?.type === 'voting') {
       setShowChangeMessage(false)
       return
     }
