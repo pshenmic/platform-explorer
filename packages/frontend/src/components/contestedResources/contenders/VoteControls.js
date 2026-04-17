@@ -24,7 +24,8 @@ export const VoteControls = ({
   refresh,
   isPollingAfterVote,
   isDisabled = false,
-  disabledTooltip
+  disabledTooltip,
+  onConnectRequest
 }) => {
   const [isLoading, setIsLoading] = useState(false)
   const [activeChoice, setActiveChoice] = useState(null)
@@ -36,6 +37,14 @@ export const VoteControls = ({
       setActiveChoice(null)
     }
   }, [isPollingAfterVote])
+
+  const handleClick = (choice) => {
+    if (onConnectRequest) {
+      onConnectRequest()
+      return
+    }
+    castVote({ choice })
+  }
 
   const castVote = async ({ choice }) => {
     if (!window.dashPlatformExtension) return
@@ -83,8 +92,10 @@ export const VoteControls = ({
 
   const buttonDisabled = isDisabled || isLoading
 
+  const showTooltip = (isDisabled || onConnectRequest) && !!disabledTooltip
+
   return (
-    <Tooltip isDisabled={!isDisabled || !disabledTooltip} label={disabledTooltip}>
+    <Tooltip isDisabled={!showTooltip} label={disabledTooltip}>
       <div className='VoteControls'>
         <IconButton
           color='#58F4BC'
@@ -97,7 +108,7 @@ export const VoteControls = ({
           aria-label='vote'
           p={0}
           icon={<PrimalPostitiveIcon width='18px' height='10px' />}
-          onClick={() => castVote({ choice: contender })}
+          onClick={() => handleClick(contender)}
         />
         <IconButton
           color='#F49A58'
@@ -110,7 +121,7 @@ export const VoteControls = ({
           aria-label='vote'
           p={0}
           icon={<PrimalNegativeIcon width='11px' height='10px' />}
-          onClick={() => castVote({ choice: VoteEnum.TO_ABSTAIN })}
+          onClick={() => handleClick(VoteEnum.TO_ABSTAIN)}
         />
         <IconButton
           color='#F45858'
@@ -123,7 +134,7 @@ export const VoteControls = ({
           aria-label='vote'
           p={0}
           icon={<CloseIcon width='8px' height='8px' />}
-          onClick={() => castVote({ choice: VoteEnum.TO_REJECT })}
+          onClick={() => handleClick(VoteEnum.TO_REJECT)}
         />
       </div>
     </Tooltip>
