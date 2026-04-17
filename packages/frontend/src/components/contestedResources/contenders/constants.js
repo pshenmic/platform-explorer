@@ -6,7 +6,9 @@ export const VoteEnum = {
 
 export const API_VOTE_ENUM = [VoteEnum.TO_APPROVE, VoteEnum.TO_ABSTAIN, VoteEnum.TO_REJECT]
 
-// 'masternode' is included for forward-compatibility: protocol (rs-dpp) allows
-// OWNER-purpose keys to vote, but dash-platform-extension 1.2.3 rejects them.
-// See https://github.com/pshenmic/dash-platform-extension/issues/116
-export const VOTING_CAPABLE_TYPES = ['voting', 'masternode']
+// Masternode vote state transitions require strictly Purpose::VOTING keys at the
+// protocol level, per rs-dpp: masternode_vote_transition/v0 returns
+// `purpose_requirement() -> vec![Purpose::VOTING]`.
+// https://github.com/dashpay/platform/blob/master/packages/rs-dpp/src/state_transition/state_transitions/identity/masternode_vote_transition/v0/identity_signed.rs
+// Only identities of extension type 'voting' carry such keys.
+export const VOTING_CAPABLE_TYPES = ['voting']
