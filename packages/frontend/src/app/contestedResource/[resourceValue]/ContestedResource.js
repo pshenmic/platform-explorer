@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import * as Api from '../../../util/Api'
 import { fetchHandlerSuccess, fetchHandlerError, paginationHandler, setLoadingProp } from '../../../util'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
@@ -43,14 +43,43 @@ function ContestedResource ({ resourceValue }) {
   const searchParams = useSearchParams()
   const decodedValue = contestedResources.decodeValue(decodeURIComponent(resourceValue))
 
-  const refresh = () => {
-    setContestedResource(state => ({ ...state, refreshing: true }))
-    setRate(state => ({ ...state, refreshing: true }))
-    setVotes(state => ({ ...state, refreshing: true }))
-    setTowardsIdentityVotes(state => ({ ...state, refreshing: true }))
-    setAbstainVotes(state => ({ ...state, refreshing: true }))
-    setLockedVotes(state => ({ ...state, refreshing: true }))
+  const [isPollingAfterVote, setIsPollingAfterVote] = useState(false)
+  const initialVoteCountRef = useRef(null)
+
+  const refreshAfterVote = () => {
+    initialVoteCountRef.current = contestedResource.data?.totalCountVotes ?? 0
+    setIsPollingAfterVote(true)
   }
+
+  useEffect(() => {
+    if (!isPollingAfterVote) return
+
+    const POLL_INTERVAL = 2000
+    const MAX_ATTEMPTS = 5
+    let attempts = 0
+
+    const poll = () => {
+      attempts++
+      setContestedResource(state => ({ ...state, refreshing: true }))
+      setVotes(state => ({ ...state, refreshing: true }))
+
+      if (attempts >= MAX_ATTEMPTS) {
+        setIsPollingAfterVote(false)
+      }
+    }
+
+    poll()
+    const timer = setInterval(poll, POLL_INTERVAL)
+    return () => clearInterval(timer)
+  }, [isPollingAfterVote])
+
+  useEffect(() => {
+    if (!isPollingAfterVote) return
+    const latest = contestedResource.data?.totalCountVotes ?? 0
+    if (initialVoteCountRef.current != null && latest > initialVoteCountRef.current) {
+      setIsPollingAfterVote(false)
+    }
+  }, [contestedResource.data?.totalCountVotes, isPollingAfterVote])
 
   useEffect(() => {
     setBreadcrumbs([
@@ -87,7 +116,9 @@ function ContestedResource ({ resourceValue }) {
   useEffect(() => {
     if (!resourceValue || !contestedResource.refreshing) return
 
-    setContestedResource(state => ({ ...state, loading: true }))
+    const isInitialLoad = contestedResource.data == null || Object.keys(contestedResource.data).length === 0
+    if (isInitialLoad) setContestedResource(state => ({ ...state, loading: true }))
+
     Api.getContestedResourceByValue(resourceValue)
       .then(res => fetchHandlerSuccess(setContestedResource, res))
       .catch(err => fetchHandlerError(setContestedResource, err))
@@ -107,7 +138,9 @@ function ContestedResource ({ resourceValue }) {
   useEffect(() => {
     if (!resourceValue || !votes.refreshing) return
 
-    setLoadingProp(setVotes)
+    const isInitialLoad = votes.data == null || Object.keys(votes.data).length === 0
+    if (isInitialLoad) setLoadingProp(setVotes)
+
     Api.getContestedResourceVotes(resourceValue, votes.props.currentPage + 1, pageSize, 'desc')
       .then(res => fetchHandlerSuccess(setVotes, res))
       .catch(err => fetchHandlerError(setVotes, err))
@@ -160,7 +193,7 @@ function ContestedResource ({ resourceValue }) {
       className={'ContestedResource'}
       title={'Contested Resource info'}
     >
-      <ContestedResourceTotalCard refresh={refresh} contestedResource={contestedResource} rate={rate}/>
+      <ContestedResourceTotalCard refresh={refreshAfterVote} isPollingAfterVote={isPollingAfterVote} contestedResource={contestedResource} rate={rate}/>
 
       <InfoContainer styles={['tabs']}>
         <Tabs onChange={(index) => setActiveTab(index)} index={activeTab}>

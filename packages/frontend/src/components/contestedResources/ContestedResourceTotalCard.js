@@ -15,7 +15,8 @@ function ContestedResourceTotalCard ({
   contestedResource,
   rate,
   className,
-  refresh
+  refresh,
+  isPollingAfterVote
 }) {
   const { data, loading, error } = contestedResource
 
@@ -179,6 +180,7 @@ function ContestedResourceTotalCard ({
         </div>
         <ContendersList
           refresh={refresh}
+          isPollingAfterVote={isPollingAfterVote}
           resourceValue={contestedResource.data?.resourceValue}
           contenders={contestedResource?.data?.contenders}
           isFinished={isEnded}

@@ -7,7 +7,7 @@ import {
 import { VoteEnum } from './constants'
 
 import './VoteControls.scss'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 const VOTING_DATA_CONTRACT_ID =
   process.env.NEXT_PUBLIC_VOTING_DATA_CONTRACT_ID ??
@@ -22,11 +22,16 @@ export const VoteControls = ({
   walletInfo,
   prevVote,
   refresh,
+  isPollingAfterVote,
   isDisabled = false,
   disabledTooltip
 }) => {
   const [isLoading, setIsLoading] = useState(false)
   const toast = useToast()
+
+  useEffect(() => {
+    if (!isPollingAfterVote) setIsLoading(false)
+  }, [isPollingAfterVote])
 
   const castVote = async ({ choice }) => {
     if (!window.dashPlatformExtension) return
@@ -57,14 +62,7 @@ export const VoteControls = ({
 
       await window.dashPlatformExtension.signer.signAndBroadcast(stateTransition)
 
-      toast({
-        title: 'Vote submitted',
-        status: 'success',
-        duration: 5000,
-        isClosable: true
-      })
-
-      setTimeout(() => refresh(), 2000)
+      refresh()
     } catch (e) {
       console.error(e)
       toast({
@@ -74,7 +72,6 @@ export const VoteControls = ({
         duration: 7000,
         isClosable: true
       })
-    } finally {
       setIsLoading(false)
     }
   }
@@ -90,6 +87,7 @@ export const VoteControls = ({
           _hover={{ bg: '#58F4BC4D' }}
           _active={{ bg: '#58F4BC', color: '#21272C' }}
           isDisabled={buttonDisabled || prevVote === VoteEnum.TO_APPROVE}
+          isLoading={isLoading}
           size='30px'
           aria-label='vote'
           p={0}
@@ -102,6 +100,7 @@ export const VoteControls = ({
           _hover={{ bg: '#F49A584D' }}
           _active={{ bg: '#F49A58', color: '#21272C' }}
           isDisabled={buttonDisabled || prevVote === VoteEnum.TO_ABSTAIN}
+          isLoading={isLoading}
           size='30px'
           aria-label='vote'
           p={0}
@@ -114,6 +113,7 @@ export const VoteControls = ({
           _hover={{ bg: '#F458584D' }}
           _active={{ bg: '#F45858', color: '#21272C' }}
           isDisabled={buttonDisabled || prevVote === VoteEnum.TO_REJECT}
+          isLoading={isLoading}
           size='30px'
           aria-label='vote'
           p={0}
