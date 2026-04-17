@@ -5,7 +5,7 @@ import {
   ExtensionStatusEnum
 } from '../../../util/extension'
 import { useParams } from 'next/navigation'
-import { API_VOTE_ENUM } from './constants'
+import { API_VOTE_ENUM, VOTING_CAPABLE_TYPES } from './constants'
 
 export const VoteControlState = {
   INIT_INVALID: 'INIT_INVALID',
@@ -15,6 +15,11 @@ export const VoteControlState = {
   VOTING_IS_FINISHED: 'VOTING_IS_FINISHED',
   CAN_VOTE: 'CAN_VOTE'
 }
+
+const HIDDEN_STATES = [
+  VoteControlState.INIT_INVALID,
+  VoteControlState.VOTING_IS_FINISHED
+]
 
 const getLastVoteByProTxHash = ({ resourceValue, proTxHash }) => {
   const defaultOptions = {
@@ -38,88 +43,47 @@ export const useVoteValidation = ({ wallet, isFinished }) => {
   const isExtensionConnected =
     checkPlatformExtension() === ExtensionStatusEnum.CONNECTED
   const [prevVote, setPrevVote] = useState(null)
-
   const [voteValidateState, setVoteValidate] = useState(
     VoteControlState.INIT_INVALID
   )
-  const [isVotingAllowed, setVotingAllowed] = useState(false)
 
-  useEffect(() => {
-    const sdk = window.dashPlatformSDK
-    const checkIdentity = async ({ identifier }) => {
-      if (!wallet.currentIdentity) {
-        return
-      }
-
-      try {
-        const voterIdentity =
-          await sdk.identities.getIdentityByIdentifier(identifier)
-        if (!voterIdentity) return
-
-        const publicKeys = voterIdentity.getPublicKeys() ?? []
-        if (publicKeys.length !== 1) return
-
-        const [publicKey] = publicKeys
-        if (publicKey?.purpose !== 'VOTING') return
-
-        setVotingAllowed(true)
-      } catch (e) {
-        console.error(e)
-      }
-    }
-
-    if (voteValidateState === VoteControlState.INIT_INVALID) {
-      return
-    }
-
-    if (voteValidateState === VoteControlState.USER_HAS_NO_EXTENSION) {
-      return
-    }
-
-    if (voteValidateState === VoteControlState.USER_HAS_NO_WALLET) {
-      return
-    }
-
-    if (voteValidateState === VoteControlState.VOTING_IS_FINISHED) {
-      return
-    }
-
-    if (wallet?.walletInfo?.identities) {
-      wallet?.walletInfo.identities.forEach(checkIdentity)
-    }
-  }, [
-    wallet.currentIdentity,
-    voteValidateState,
-    wallet?.walletInfo?.identities
-  ])
+  const identities = wallet.walletInfo?.identities ?? []
+  const currentIdentityInfo = identities.find(
+    ({ identifier }) => identifier === wallet.currentIdentity
+  )
+  const currentCanVote = VOTING_CAPABLE_TYPES.includes(
+    currentIdentityInfo?.type
+  )
 
   useEffect(() => {
     if (isFinished) {
       setVoteValidate(VoteControlState.VOTING_IS_FINISHED)
-
       return
     }
 
     if (!isExtensionConnected) {
       setVoteValidate(VoteControlState.USER_HAS_NO_EXTENSION)
-
       return
     }
 
-    if (!wallet.connected.current) {
+    if (!wallet.connected.current || !wallet.walletInfo) {
       setVoteValidate(VoteControlState.USER_HAS_NO_WALLET)
-
       return
     }
 
-    if (!isVotingAllowed || !proTxHash) {
+    if (!currentCanVote || !proTxHash) {
       setVoteValidate(VoteControlState.USER_IS_NOT_ALLOWED_TO_VOTE)
-
       return
     }
 
     setVoteValidate(VoteControlState.CAN_VOTE)
-  }, [isFinished, isVotingAllowed, wallet, isExtensionConnected, proTxHash])
+  }, [
+    isFinished,
+    isExtensionConnected,
+    wallet,
+    currentCanVote,
+    proTxHash
+  ])
 
   useEffect(() => {
     const getPrevVote = async () => {
@@ -147,9 +111,7 @@ export const useVoteValidation = ({ wallet, isFinished }) => {
 
   return {
     voteValidateState,
-    isVoteVisible:
-      voteValidateState === VoteControlState.CAN_VOTE ||
-      voteValidateState === VoteControlState.USER_HAS_NO_WALLET,
+    isVoteVisible: !HIDDEN_STATES.includes(voteValidateState),
     prevVote
   }
 }
