@@ -27,15 +27,20 @@ export const VoteControls = ({
   disabledTooltip
 }) => {
   const [isLoading, setIsLoading] = useState(false)
+  const [activeChoice, setActiveChoice] = useState(null)
   const toast = useToast()
 
   useEffect(() => {
-    if (!isPollingAfterVote) setIsLoading(false)
+    if (!isPollingAfterVote) {
+      setIsLoading(false)
+      setActiveChoice(null)
+    }
   }, [isPollingAfterVote])
 
   const castVote = async ({ choice }) => {
     if (!window.dashPlatformExtension) return
 
+    setActiveChoice(choice)
     setIsLoading(true)
     try {
       const sdk = window.dashPlatformSDK
@@ -87,7 +92,7 @@ export const VoteControls = ({
           _hover={{ bg: '#58F4BC4D' }}
           _active={{ bg: '#58F4BC', color: '#21272C' }}
           isDisabled={buttonDisabled || prevVote === VoteEnum.TO_APPROVE}
-          isLoading={isLoading}
+          isLoading={isLoading && activeChoice === contender}
           size='30px'
           aria-label='vote'
           p={0}
@@ -100,7 +105,7 @@ export const VoteControls = ({
           _hover={{ bg: '#F49A584D' }}
           _active={{ bg: '#F49A58', color: '#21272C' }}
           isDisabled={buttonDisabled || prevVote === VoteEnum.TO_ABSTAIN}
-          isLoading={isLoading}
+          isLoading={isLoading && activeChoice === VoteEnum.TO_ABSTAIN}
           size='30px'
           aria-label='vote'
           p={0}
@@ -113,7 +118,7 @@ export const VoteControls = ({
           _hover={{ bg: '#F458584D' }}
           _active={{ bg: '#F45858', color: '#21272C' }}
           isDisabled={buttonDisabled || prevVote === VoteEnum.TO_REJECT}
-          isLoading={isLoading}
+          isLoading={isLoading && activeChoice === VoteEnum.TO_REJECT}
           size='30px'
           aria-label='vote'
           p={0}
