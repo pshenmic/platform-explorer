@@ -7,7 +7,7 @@ import {
 import { VoteEnum } from './constants'
 
 import './VoteControls.scss'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 
 const VOTING_DATA_CONTRACT_ID =
   process.env.NEXT_PUBLIC_VOTING_DATA_CONTRACT_ID ??
@@ -21,9 +21,10 @@ export const VoteControls = ({
   resourceValue,
   walletInfo,
   prevVote,
-  refresh
+  refresh,
+  isDisabled = false,
+  disabledTooltip
 }) => {
-  const [showChangeMessage, setShowChangeMessage] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const toast = useToast()
 
@@ -58,7 +59,6 @@ export const VoteControls = ({
 
       toast({
         title: 'Vote submitted',
-        description: 'It may take a few minutes to appear.',
         status: 'success',
         duration: 5000,
         isClosable: true
@@ -79,39 +79,17 @@ export const VoteControls = ({
     }
   }
 
-  useEffect(() => {
-    if (!walletInfo?.identities) {
-      return
-    }
-
-    const currentInfo = walletInfo.identities.find(
-      ({ identifier }) => identifier === currentIdentity
-    )
-
-    if (currentInfo?.type === 'voting') {
-      setShowChangeMessage(false)
-      return
-    }
-
-    const canUserVote = walletInfo.identities.some(
-      ({ type }) => type === 'voting'
-    )
-
-    setShowChangeMessage(canUserVote)
-  }, [currentIdentity, walletInfo, walletInfo?.identities])
+  const buttonDisabled = isDisabled || isLoading
 
   return (
-    <Tooltip
-      isDisabled={!showChangeMessage}
-      label='Please choose your voting type identity'
-    >
+    <Tooltip isDisabled={!isDisabled || !disabledTooltip} label={disabledTooltip}>
       <div className='VoteControls'>
         <IconButton
           color='#58F4BC'
           bg='#58F4BC26'
           _hover={{ bg: '#58F4BC4D' }}
           _active={{ bg: '#58F4BC', color: '#21272C' }}
-          isDisabled={isLoading || showChangeMessage || prevVote === VoteEnum.TO_APPROVE}
+          isDisabled={buttonDisabled || prevVote === VoteEnum.TO_APPROVE}
           size='30px'
           aria-label='vote'
           p={0}
@@ -123,7 +101,7 @@ export const VoteControls = ({
           bg='#F49A5826'
           _hover={{ bg: '#F49A584D' }}
           _active={{ bg: '#F49A58', color: '#21272C' }}
-          isDisabled={isLoading || showChangeMessage || prevVote === VoteEnum.TO_ABSTAIN}
+          isDisabled={buttonDisabled || prevVote === VoteEnum.TO_ABSTAIN}
           size='30px'
           aria-label='vote'
           p={0}
@@ -135,7 +113,7 @@ export const VoteControls = ({
           bg='#F4585826'
           _hover={{ bg: '#F458584D' }}
           _active={{ bg: '#F45858', color: '#21272C' }}
-          isDisabled={isLoading || showChangeMessage || prevVote === VoteEnum.TO_REJECT}
+          isDisabled={buttonDisabled || prevVote === VoteEnum.TO_REJECT}
           size='30px'
           aria-label='vote'
           p={0}
