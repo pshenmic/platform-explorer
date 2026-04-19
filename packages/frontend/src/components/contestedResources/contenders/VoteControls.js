@@ -1,4 +1,4 @@
-import { IconButton, Tooltip, useToast } from '@chakra-ui/react'
+import { IconButton, Tooltip } from '@chakra-ui/react'
 import {
   PrimalPostitiveIcon,
   PrimalNegativeIcon,
@@ -24,12 +24,10 @@ export const VoteControls = ({
   refresh,
   isPollingAfterVote,
   isDisabled = false,
-  disabledTooltip,
-  onConnectRequest
+  disabledTooltip
 }) => {
   const [isLoading, setIsLoading] = useState(false)
   const [activeChoice, setActiveChoice] = useState(null)
-  const toast = useToast()
 
   useEffect(() => {
     if (!isPollingAfterVote) {
@@ -37,14 +35,6 @@ export const VoteControls = ({
       setActiveChoice(null)
     }
   }, [isPollingAfterVote])
-
-  const handleClick = (choice) => {
-    if (onConnectRequest) {
-      onConnectRequest()
-      return
-    }
-    castVote({ choice })
-  }
 
   const castVote = async ({ choice }) => {
     if (!window.dashPlatformExtension) return
@@ -79,20 +69,13 @@ export const VoteControls = ({
       refresh()
     } catch (e) {
       console.error(e)
-      toast({
-        title: 'Failed to submit vote',
-        description: e?.message ?? 'Unknown error',
-        status: 'error',
-        duration: 7000,
-        isClosable: true
-      })
       setIsLoading(false)
     }
   }
 
   const buttonDisabled = isDisabled || isLoading
 
-  const showTooltip = (isDisabled || onConnectRequest) && !!disabledTooltip
+  const showTooltip = isDisabled && !!disabledTooltip
 
   return (
     <Tooltip isDisabled={!showTooltip} label={disabledTooltip}>
@@ -108,7 +91,7 @@ export const VoteControls = ({
           aria-label='vote'
           p={0}
           icon={<PrimalPostitiveIcon width='18px' height='10px' />}
-          onClick={() => handleClick(contender)}
+          onClick={() => castVote({ choice: contender })}
         />
         <IconButton
           color='#F49A58'
@@ -121,7 +104,7 @@ export const VoteControls = ({
           aria-label='vote'
           p={0}
           icon={<PrimalNegativeIcon width='11px' height='10px' />}
-          onClick={() => handleClick(VoteEnum.TO_ABSTAIN)}
+          onClick={() => castVote({ choice: VoteEnum.TO_ABSTAIN })}
         />
         <IconButton
           color='#F45858'
@@ -134,7 +117,7 @@ export const VoteControls = ({
           aria-label='vote'
           p={0}
           icon={<CloseIcon width='8px' height='8px' />}
-          onClick={() => handleClick(VoteEnum.TO_REJECT)}
+          onClick={() => castVote({ choice: VoteEnum.TO_REJECT })}
         />
       </div>
     </Tooltip>

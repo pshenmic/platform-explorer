@@ -1,3 +1,4 @@
+import { Button } from '@chakra-ui/react'
 import { VoteControls } from './VoteControls'
 import { VoteControlState } from './useVoteValidation'
 import { VOTING_CAPABLE_TYPES } from './constants'
@@ -21,6 +22,7 @@ const getDisabledTooltip = (voteValidateState, walletInfo) => {
 export const VoteManeger = ({
   voteValidateState,
   connectWallet,
+  isConnecting,
   walletInfo,
   identifier,
   ...other
@@ -37,13 +39,16 @@ export const VoteManeger = ({
 
   if (voteValidateState === VoteControlState.USER_HAS_NO_WALLET) {
     return (
-      <VoteControls
-        contender={identifier}
-        walletInfo={walletInfo}
-        disabledTooltip='Connect wallet to vote'
-        onConnectRequest={() => connectWallet()}
-        {...other}
-      />
+      <Button
+        onClick={() => connectWallet()}
+        isLoading={isConnecting}
+        variant='brand'
+        size='sm'
+        h='30px'
+        w='94px'
+      >
+        Vote
+      </Button>
     )
   }
 
