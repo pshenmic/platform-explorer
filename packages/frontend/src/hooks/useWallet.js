@@ -5,6 +5,7 @@ export const useWalletConnect = () => {
   const [error, setError] = useState(null)
   const [walletInfo, setWalletInfo] = useState(null)
   const [currentIdentity, setCurrentIdentity] = useState(null)
+  const [isConnecting, setIsConnecting] = useState(false)
 
   const connectWallet = () => {
     if (!window.dashPlatformExtension) {
@@ -13,12 +14,17 @@ export const useWalletConnect = () => {
 
     const { dashPlatformExtension } = window
 
+    setIsConnecting(true)
     dashPlatformExtension.signer
       .connect()
       .then((wallet) => {
-        const current = wallet.identities.find(
+        const current = wallet.identities?.find(
           ({ identifier }) => identifier === wallet.currentIdentity
         )
+        if (!current) {
+          setError('Wallet connection returned no current identity')
+          return
+        }
         connected.current = true
         setWalletInfo({ ...wallet, proTxHash: current.proTxHash })
         setError(null)
@@ -27,6 +33,7 @@ export const useWalletConnect = () => {
       .catch((error) => {
         setError(error.toString() || 'Failed to connect wallet')
       })
+      .finally(() => setIsConnecting(false))
   }
 
   return {
@@ -34,6 +41,7 @@ export const useWalletConnect = () => {
     connected,
     error,
     walletInfo,
-    currentIdentity
+    currentIdentity,
+    isConnecting
   }
 }
