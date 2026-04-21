@@ -15,8 +15,8 @@ const getDisabledTooltip = (voteValidateState, walletInfo) => {
   )
 
   return hasVotingCapableIdentity
-    ? 'Switch to a masternode identity'
-    : 'Requires a masternode identity'
+    ? 'Please switch to a voting masternode identity'
+    : 'Please choose a masternode identity from the extension'
 }
 
 export const VoteManeger = ({
