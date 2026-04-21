@@ -11,7 +11,13 @@ import { InfoBlock } from '../ui/containers'
 import { colors } from '../../styles/colors'
 import './ContestedResourceTotalCard.scss'
 
-function ContestedResourceTotalCard ({ contestedResource, rate, className }) {
+function ContestedResourceTotalCard ({
+  contestedResource,
+  rate,
+  className,
+  refresh,
+  isPollingAfterVote
+}) {
   const { data, loading, error } = contestedResource
 
   const isEnded = data?.status === 'finished' || data?.finished === true
@@ -25,18 +31,17 @@ function ContestedResourceTotalCard ({ contestedResource, rate, className }) {
   }, [data?.towardsIdentity, data?.contenders, data?.totalCountVotes])
 
   const colorScheme = useMemo(() => {
-    return isEnded
-      ? winner
-        ? 'green'
-        : 'red'
-      : 'blue'
+    return isEnded ? (winner ? 'green' : 'red') : 'blue'
   }, [data?.status, winner])
 
-  const signIconColor = useMemo(() => ({
-    blue: colors.brand.normal,
-    red: colors.red.default,
-    green: colors.green.default
-  }), [])
+  const signIconColor = useMemo(
+    () => ({
+      blue: colors.brand.normal,
+      red: colors.red.default,
+      green: colors.green.default
+    }),
+    []
+  )
 
   return (
     <InfoBlock
@@ -45,7 +50,9 @@ function ContestedResourceTotalCard ({ contestedResource, rate, className }) {
       className={`ContestedResourcesTotalCard ${loading ? 'ContestedResourceTotalCard--Loading' : ''} ${className || ''}`}
     >
       <div className={'ContestedResourcesTotalCard__Title'}>
-        <Alias>{contestedResources.getResourceValue(data?.resourceValue)}</Alias>
+        <Alias>
+          {contestedResources.getResourceValue(data?.resourceValue)}
+        </Alias>
       </div>
 
       <div className={'ContestedResourcesTotalCard__ContentContainer'}>
@@ -58,17 +65,25 @@ function ContestedResourceTotalCard ({ contestedResource, rate, className }) {
                 loading={loading}
                 error={error}
                 value={
-                  <Alias>{contestedResources.getResourceValue(contestedResource?.data?.resourceValue)}</Alias>
+                  <Alias>
+                    {contestedResources.getResourceValue(
+                      contestedResource?.data?.resourceValue
+                    )}
+                  </Alias>
                 }
               />
 
               <InfoLine
-                className={'ContestedResourcesTotalCard__InfoLine ContestedResourcesTotalCard__InfoLine--DataContract'}
+                className={
+                  'ContestedResourcesTotalCard__InfoLine ContestedResourcesTotalCard__InfoLine--DataContract'
+                }
                 title={'Data Contract'}
                 loading={loading}
                 error={error || !data?.dataContractIdentifier}
                 value={
-                  <ValueCard link={`/dataContract/${data?.dataContractIdentifier}`}>
+                  <ValueCard
+                    link={`/dataContract/${data?.dataContractIdentifier}`}
+                  >
                     <Identifier
                       styles={['highlight-both']}
                       ellipsis={false}
@@ -81,7 +96,9 @@ function ContestedResourceTotalCard ({ contestedResource, rate, className }) {
               />
 
               <InfoLine
-                className={'ContestedResourcesTotalCard__InfoLine ContestedResourcesTotalCard__InfoLine--IndexName'}
+                className={
+                  'ContestedResourcesTotalCard__InfoLine ContestedResourcesTotalCard__InfoLine--IndexName'
+                }
                 title={'Index Name'}
                 loading={loading}
                 error={error || !data?.indexName}
@@ -89,43 +106,44 @@ function ContestedResourceTotalCard ({ contestedResource, rate, className }) {
               />
 
               <InfoLine
-                className={'ContestedResourcesTotalCard__InfoLine ContestedResourcesTotalCard__InfoLine--DocumentType'}
+                className={
+                  'ContestedResourcesTotalCard__InfoLine ContestedResourcesTotalCard__InfoLine--DocumentType'
+                }
                 title={'Document Type'}
                 loading={loading}
                 error={error || !data?.documentTypeName}
-                value={
-                  <Badge size={'sm'}>
-                    {data?.documentTypeName}
-                  </Badge>
-                }
+                value={<Badge size={'sm'}>{data?.documentTypeName}</Badge>}
               />
             </div>
 
             <div className={'ContestedResourcesTotalCard__Avatar'}>
-              <SignatureIcon color={signIconColor[colorScheme]}/>
+              <SignatureIcon color={signIconColor[colorScheme]} />
             </div>
           </div>
 
-          <HorisontalSeparator className={'ContestedResourcesTotalCard__Separator'}/>
+          <HorisontalSeparator
+            className={'ContestedResourcesTotalCard__Separator'}
+          />
 
           <div className={'ContestedResourcesTotalCard__CommonInfo'}>
             <InfoLine
               title={'Creation Date'}
-              value={<DateBlock showTime={true} timestamp={data?.timestamp}/>}
+              value={<DateBlock showTime={true} timestamp={data?.timestamp} />}
               loading={loading}
               error={error || !data?.timestamp}
             />
 
             <InfoLine
               title={'Prefunding Voting Balance'}
-              value={(
+              value={
                 <CreditsBlock
                   credits={data?.prefundedVotingBalance?.[data?.indexName]}
                   rate={rate}
                 />
-              )}
+              }
               loading={loading}
-              error={error ||
+              error={
+                error ||
                 data?.prefundedVotingBalance?.[data?.indexName] === null ||
                 data?.prefundedVotingBalance?.[data?.indexName] === undefined
               }
@@ -133,9 +151,13 @@ function ContestedResourceTotalCard ({ contestedResource, rate, className }) {
 
             <InfoLine
               title={'Gas Fees'}
-              value={<CreditsBlock credits={data?.totalGasUsed} rate={rate}/>}
+              value={<CreditsBlock credits={data?.totalGasUsed} rate={rate} />}
               loading={loading}
-              error={error || data?.totalGasUsed === null || data?.totalGasUsed === undefined}
+              error={
+                error ||
+                data?.totalGasUsed === null ||
+                data?.totalGasUsed === undefined
+              }
             />
           </div>
         </div>
@@ -151,12 +173,17 @@ function ContestedResourceTotalCard ({ contestedResource, rate, className }) {
 
       <div className={'ContestedResourcesTotalCard__ContendersListContainer'}>
         <div className={'ContestedResourcesTotalCard__ContendersListTitle'}>
-          Contenders {typeof contestedResource?.data?.contenders?.length === 'number' &&
+          Contenders{' '}
+          {typeof contestedResource?.data?.contenders?.length === 'number' && (
             <>({contestedResource?.data?.contenders?.length})</>
-          }
+          )}
         </div>
         <ContendersList
+          refresh={refresh}
+          isPollingAfterVote={isPollingAfterVote}
+          resourceValue={contestedResource.data?.resourceValue}
           contenders={contestedResource?.data?.contenders}
+          isFinished={isEnded}
           loading={loading}
           itemsCount={2}
         />
