@@ -9,7 +9,7 @@ export const useWalletConnect = () => {
 
   const connectWallet = () => {
     if (!window.dashPlatformExtension) {
-      return setError('Dash Platform Extension is not installed')
+      return setError('Voting is available to Masternode Owners (via Dash Platform Extension)')
     }
 
     const { dashPlatformExtension } = window
