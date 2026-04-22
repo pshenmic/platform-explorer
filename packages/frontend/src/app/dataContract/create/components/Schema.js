@@ -1,6 +1,6 @@
 import { Box } from '@chakra-ui/react'
 import { CardWrapper } from './CardWrapper'
-import { SchemaHeader, SchemaField, FormControls } from './schemaAtomic'
+import { SchemaHeader, SchemaField, FormControls } from './SchemaAtomic'
 
 import styles from './Schema.module.scss'
 

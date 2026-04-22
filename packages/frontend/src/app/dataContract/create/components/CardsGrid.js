@@ -6,7 +6,7 @@ import {
   CommentField,
   AdditionalFields,
   PropertiesCard
-} from './fields'
+} from './Fields'
 
 export const CardsGrid = () => {
   return (
