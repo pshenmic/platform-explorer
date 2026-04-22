@@ -1,43 +1,55 @@
-import { Alert, AlertIcon, Link, Text, VStack } from '@chakra-ui/react'
+import { Link, Text } from '@chakra-ui/react'
 import { useDeploy } from '../../DeployContext'
 
 export const DeployStatus = () => {
-  const { isConnected, wallet, deploy } = useDeploy()
+  const { schemaError, isConnected, wallet, deploy } = useDeploy()
 
-  if (!isConnected && wallet.error == null && deploy.error == null && deploy.result == null) {
-    return null
+  if (schemaError != null) {
+    return (
+      <Text color='red.500' fontSize='sm'>
+        {schemaError}
+      </Text>
+    )
   }
 
-  return (
-    <VStack align='stretch' spacing={2} mt={3}>
-      {isConnected && (
-        <Text fontSize='xs' color='gray.500'>
-          Signing as: {wallet.currentIdentity}
-        </Text>
-      )}
-      {wallet.error != null && (
-        <Alert status='error'>
-          <AlertIcon />
-          {wallet.error}
-        </Alert>
-      )}
-      {deploy.error != null && (
-        <Alert status='error'>
-          <AlertIcon />
-          {deploy.error}
-        </Alert>
-      )}
-      {deploy.result != null && (
-        <Alert status='success'>
-          <AlertIcon />
-          <Text>
-            Contract deployed:{' '}
-            <Link href={`/dataContract/${deploy.result.dataContractId}`} color='blue.500'>
-              {deploy.result.dataContractId}
-            </Link>
-          </Text>
-        </Alert>
-      )}
-    </VStack>
-  )
+  if (wallet.error != null) {
+    return (
+      <Text color='red.500' fontSize='sm'>
+        {wallet.error}
+      </Text>
+    )
+  }
+
+  if (deploy.error != null) {
+    return (
+      <Text color='red.500' fontSize='sm'>
+        {deploy.error}
+      </Text>
+    )
+  }
+
+  if (deploy.result != null) {
+    return (
+      <Text color='green.500' fontSize='sm'>
+        ✓ Contract deployed:{' '}
+        <Link
+          href={`/dataContract/${deploy.result.dataContractId}`}
+          color='green.500'
+          textDecoration='underline'
+        >
+          {deploy.result.dataContractId}
+        </Link>
+      </Text>
+    )
+  }
+
+  if (isConnected) {
+    return (
+      <Text color='gray.500' fontSize='sm'>
+        Signing as: {wallet.currentIdentity}
+      </Text>
+    )
+  }
+
+  return null
 }
