@@ -1,5 +1,3 @@
 export * from './Schema'
-export * from './CardsGrid'
-export * from './TypesList'
-export * from './DocTypeField'
 export * from './CardWrapper'
+export * from './DeployBlock'
