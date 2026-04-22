@@ -4,7 +4,8 @@
 .schema {
     .code {
         font-family: $font-mono;
-        height: 228px;
+        height: calc(100vh - 500px);
+        min-height: 300px;
         font-size: 12px;
         line-height: 133%;
         padding: 10px;
