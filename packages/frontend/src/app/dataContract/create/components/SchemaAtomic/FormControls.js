@@ -1,25 +1,39 @@
-import { Button, Flex, Link } from '@chakra-ui/react'
+import { Button, Flex } from '@chakra-ui/react'
 import { CloseIcon } from '@components/ui/icons'
 import { useSchema } from '../../SchemaProvider'
-
-const DOCS_URL = 'https://docs.dash.org/projects/platform/en/stable/docs/explanations/platform-protocol-data-contract.html'
+import { useDeploy } from '../../DeployContext'
 
 export const FormControls = () => {
-  const { error, handleChange } = useSchema()
+  const { value, error: schemaError, handleChange, handleReset } = useSchema()
+  const { isConnected, handlePrimary, wallet, deploy } = useDeploy()
 
-  const handleClear = () => handleChange('')
+  const handleFormat = () => {
+    try {
+      handleChange(JSON.stringify(JSON.parse(value), null, 2))
+    } catch {
+      // JSON invalid — error shown separately, nothing to format
+    }
+  }
+
+  const isBusy = wallet.isConnecting || deploy.isLoading
 
   return (
     <Flex gap={2} align='center' wrap='wrap'>
-      <Button variant='blue' isDisabled={error != null}>
-        Validate
+      <Button variant='blue' size='sm' onClick={handleFormat} isDisabled={schemaError != null}>
+        Format
       </Button>
-      <Button leftIcon={<CloseIcon />} variant='red' onClick={handleClear}>
-        Clear
+      <Button leftIcon={<CloseIcon />} variant='red' size='sm' onClick={handleReset}>
+        Reset
       </Button>
-      <Link href={DOCS_URL} isExternal fontSize='sm' ml='auto'>
-        Data Contract docs →
-      </Link>
+      <Button
+        variant='brand'
+        size='sm'
+        onClick={handlePrimary}
+        isLoading={isBusy}
+        isDisabled={isConnected && schemaError != null}
+      >
+        {isConnected ? 'Deploy Contract' : 'Connect Wallet'}
+      </Button>
     </Flex>
   )
 }
