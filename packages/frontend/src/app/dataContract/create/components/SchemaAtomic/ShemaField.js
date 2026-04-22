@@ -1,31 +1,60 @@
-import { Textarea } from '@chakra-ui/react'
+import CodeMirror from '@uiw/react-codemirror'
+import { json } from '@codemirror/lang-json'
+import { oneDark } from '@codemirror/theme-one-dark'
+import { EditorView } from '@codemirror/view'
 import { useSchema } from '../../SchemaProvider'
 
-const PLACEHOLDER = `{
-  "myType": {
-    "type": "object",
-    "properties": {
-      "myField": {
-        "type": "string",
-        "position": 0
-      }
-    },
-    "required": ["myField"],
-    "additionalProperties": false
+// Override oneDark colors to match Platform Explorer dark palette
+const platformTheme = EditorView.theme({
+  '&': {
+    backgroundColor: '#2E393D',
+    border: '1px solid #404E53',
+    borderRadius: '0.375rem',
+    fontSize: '12px'
+  },
+  '.cm-gutters': {
+    backgroundColor: '#1F2528',
+    borderRight: '1px solid #404E53',
+    color: '#6B7780'
+  },
+  '.cm-activeLineGutter': {
+    backgroundColor: 'transparent'
+  },
+  '.cm-activeLine': {
+    backgroundColor: 'rgba(255, 255, 255, 0.03)'
+  },
+  '.cm-content': {
+    caretColor: '#ffffff'
+  },
+  '&.cm-focused': {
+    outline: 'none'
+  },
+  '&.cm-focused .cm-cursor': {
+    borderLeftColor: '#ffffff'
   }
-}`
+})
 
-export const SchemaField = (props) => {
+export const SchemaField = ({ className }) => {
   const { value, handleChange } = useSchema()
 
   return (
-    <Textarea
+    <CodeMirror
+      className={className}
       value={value}
-      onChange={(e) => handleChange(e.target.value)}
-      placeholder={PLACEHOLDER}
-      resize='vertical'
-      fontFamily='monospace'
-      {...props}
+      onChange={handleChange}
+      extensions={[json(), platformTheme]}
+      theme={oneDark}
+      basicSetup={{
+        lineNumbers: true,
+        foldGutter: true,
+        highlightActiveLine: true,
+        highlightActiveLineGutter: true,
+        bracketMatching: true,
+        autocompletion: false,
+        indentOnInput: true
+      }}
+      height='calc(100vh - 500px)'
+      minHeight='300px'
     />
   )
 }
