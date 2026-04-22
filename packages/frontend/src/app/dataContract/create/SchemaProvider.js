@@ -39,6 +39,9 @@ const validateStructure = (schema) => {
     if (typeof def.properties !== 'object' || def.properties === null) {
       throw new Error(`"${name}" must have "properties" object`)
     }
+    if (def.additionalProperties !== false) {
+      throw new Error(`"${name}" must have "additionalProperties": false`)
+    }
     for (const propName of Object.keys(def.properties)) {
       const prop = def.properties[propName]
       if (typeof prop !== 'object' || prop === null) {
@@ -46,6 +49,9 @@ const validateStructure = (schema) => {
       }
       if (typeof prop.type !== 'string') {
         throw new Error(`"${name}.${propName}" is missing "type"`)
+      }
+      if (typeof prop.position !== 'number') {
+        throw new Error(`"${name}.${propName}" must have numeric "position"`)
       }
     }
   }
