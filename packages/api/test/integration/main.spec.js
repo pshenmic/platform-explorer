@@ -15,6 +15,7 @@ const { ContestedResourcesController } = require('dash-platform-sdk/src/conteste
 const { DocumentsController } = require('dash-platform-sdk/src/documents')
 const { TokensController } = require('dash-platform-sdk/src/tokens')
 const { DataContractsController } = require('dash-platform-sdk/src/dataContracts')
+const { PlatformAddressesController } = require('dash-platform-sdk/src/platformAddresses')
 
 const genesisTime = new Date(0)
 const blockDiffTime = 2 * 3600 * 1000
@@ -36,6 +37,7 @@ describe('Other routes', () => {
   let transactions
   let aliasTimestamp
   let token
+  let platformAddress
 
   before(async () => {
     aliasTimestamp = new Date()
@@ -81,77 +83,79 @@ describe('Other routes', () => {
     }))
     mock.method(DataContractsController.prototype, 'getDataContractByIdentifier', async () => ({
       ownerId: new IdentifierWASM('11111111111111111111111111111111'),
-      tokens: {
-        29: {
-          description: null,
-          baseSupply: 1000n,
-          maxSupply: 1010n,
-          conventions: {
-            decimals: 1000,
-            localizations: {
-              en: {
-                pluralForm: 'tests',
-                singularForm: 'test',
-                shouldCapitalize: true
+      id: new IdentifierWASM('ALybvzfcCwMs7sinDwmtumw17NneuW7RgFtFHgjKmF3A'),
+      tokens: [
+        {
+          position: 29,
+          tokenConfiguration: {
+            description: null,
+            baseSupply: 1000n,
+            maxSupply: 1010n,
+            conventions: {
+              decimals: 1000,
+              localizations: {
+                en: {
+                  pluralForm: 'tests',
+                  singularForm: 'test',
+                  shouldCapitalize: true
+                }
               }
-            }
-          },
-          manualMintingRules: {
-            authorizedToMakeChange: {
-              getTakerType: () => 'NoOne'
-            }
-          },
-          manualBurningRules: {
-            authorizedToMakeChange: {
-              getTakerType: () => 'NoOne'
-            }
-          },
-          freezeRules: {
-            authorizedToMakeChange: {
-              getTakerType: () => 'NoOne'
-            }
-          },
-          unfreezeRules: {
-            authorizedToMakeChange: {
-              getTakerType: () => 'NoOne'
-            }
-          },
-          destroyFrozenFundsRules: {
-            authorizedToMakeChange: {
-              getTakerType: () => 'NoOne'
-            }
-          },
-          emergencyActionRules: {
-            authorizedToMakeChange: {
-              getTakerType: () => 'NoOne'
-            }
-          },
-          distributionRules: {
-            perpetualDistribution: {
-              distributionType: {
-                getDistribution: () => ({
-                  constructor: {
-                    name: 'BlockBasedDistributionWASM'
-                  },
-                  interval: 100n,
-                  function: {
-                    getFunctionName: () => 'FixedAmount',
-                    getFunctionValue: () => ({
-                      amount: 100n
-                    })
-                  }
-                })
-              },
-              distributionRecipient: {
-                getType: () => 'ContractOwner',
-                getValue: () => undefined
+            },
+            manualMintingRules: {
+              authorizedToMakeChange: {
+                getTakerType: () => 'NoOne'
               }
+            },
+            manualBurningRules: {
+              authorizedToMakeChange: {
+                getTakerType: () => 'NoOne'
+              }
+            },
+            freezeRules: {
+              authorizedToMakeChange: {
+                getTakerType: () => 'NoOne'
+              }
+            },
+            unfreezeRules: {
+              authorizedToMakeChange: {
+                getTakerType: () => 'NoOne'
+              }
+            },
+            destroyFrozenFundsRules: {
+              authorizedToMakeChange: {
+                getTakerType: () => 'NoOne'
+              }
+            },
+            emergencyActionRules: {
+              authorizedToMakeChange: {
+                getTakerType: () => 'NoOne'
+              }
+            },
+            distributionRules: {
+              perpetualDistribution: {
+                distributionType: {
+                  getDistribution: () => ({
+                    distributionType: 'BlockBasedDistribution',
+                    interval: 100n,
+                    function: {
+                      getFunctionName: () => 'FixedAmount',
+                      getFunctionValue: () => ({
+                        amount: 100n
+                      })
+                    }
+                  })
+                },
+                distributionRecipient: {
+                  getType: () => 'ContractOwner',
+                  getValue: () => undefined
+                }
 
-            }
-          },
-          mainGroup: undefined
+              }
+            },
+            mainGroup: undefined
+          }
         }
-      }
+      ]
     }))
 
     app = await server.start()
@@ -224,12 +228,15 @@ describe('Other routes', () => {
     token = await fixtures.token(knex, {
       position: 29,
       owner: identity.identifier,
+      identifier: 'BZZUT4W8mPvH7bs7hCu3FtQVaKeZEtLbNHC2kESvNoEv',
       data_contract_id: dataContract.id,
       decimals: 10,
       base_supply: 1000,
       name: 'test',
       state_transition_hash: dataContractTransaction?.hash
     })
+
+    platformAddress = await fixtures.platformAddress(knex)
 
     transactions.push(identityTransaction.hash)
     transactions.push(dataContractTransaction.hash)
@@ -289,6 +296,9 @@ describe('Other routes', () => {
         },
         txs: [
           {
+            base58Address: null,
+            bech32mAddress: null,
+            incoming: null,
             batchType: null,
             hash: identityTransaction.hash,
             index: identityTransaction.index,
@@ -314,6 +324,9 @@ describe('Other routes', () => {
             }
           },
           {
+            base58Address: null,
+            bech32mAddress: null,
+            incoming: null,
             batchType: null,
             hash: dataContractTransaction.hash,
             index: dataContractTransaction.index,
@@ -339,6 +352,9 @@ describe('Other routes', () => {
             }
           },
           {
+            base58Address: null,
+            bech32mAddress: null,
+            incoming: null,
             batchType: null,
             hash: documentTransaction.hash,
             index: documentTransaction.index,
@@ -375,6 +391,9 @@ describe('Other routes', () => {
         .expect('Content-Type', 'application/json; charset=utf-8')
 
       const expectedTransaction = {
+        base58Address: null,
+        bech32mAddress: null,
+        incoming: null,
         batchType: null,
         hash: dataContractTransaction.hash,
         index: dataContractTransaction.index,
@@ -715,6 +734,37 @@ describe('Other routes', () => {
       }
 
       assert.deepEqual(body, { identities: [expectedIdentity] })
+    })
+
+    it('should search platform address bech32m', async () => {
+      mock.method(PlatformAddressesController.prototype, 'getAddressInfo', async () => {
+        return {
+          address: {
+            toAddress: () => platformAddress.address,
+            toBech32m: () => platformAddress.bech32m_address
+          },
+          nonce: 12,
+          balance: BigInt(111111)
+        }
+      })
+
+      const { body } = await client.get(`/search?query=${platformAddress.bech32m_address}`)
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      const expectedAddress = {
+        base58Address: platformAddress.address,
+        bech32mAddress: platformAddress.bech32m_address,
+        totalTxs: 0,
+        incomingTxs: 0,
+        outgoingTxs: 0,
+        nonce: 12,
+        balance: '111111',
+        totalIncomingAmount: null,
+        totalOutgoingAmount: null
+      }
+
+      assert.deepEqual(body, { platformAddresses: [expectedAddress] })
     })
 
     it('should search token', async () => {

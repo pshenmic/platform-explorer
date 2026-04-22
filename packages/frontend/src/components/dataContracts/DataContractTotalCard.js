@@ -3,6 +3,7 @@ import { Alias, CreditsBlock, DateBlock, Identifier, InfoLine } from '../data'
 import { HorisontalSeparator } from '../ui/separators'
 import { ValueCard } from '../cards'
 import { findActiveAlias } from '../../util'
+
 import './DataContractTotalCard.scss'
 
 function DataContractTotalCard ({ dataContract, rate, className }) {

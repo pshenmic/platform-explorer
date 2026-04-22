@@ -1,16 +1,26 @@
-export const networks = [
-  {
-    name: 'mainnet',
+export const NETWORKS_ENUM = {
+  MAINNET: 'mainnet',
+  TESTNET: 'testnet'
+}
+
+export const NETWORK_OPTIONS = {
+  [NETWORKS_ENUM.MAINNET]: {
+    name: NETWORKS_ENUM.MAINNET,
     subname: '',
     disabled: false,
-    explorerBaseUrl: 'https://platform-explorer.com',
-    l1explorerBaseUrl: 'https://insight.dash.org/insight'
+    explorerBaseUrl: process.env.NEXT_PUBLIC_MAINNET_BASE_URL,
+    l1explorerBaseUrl: process.env.NEXT_PUBLIC_MAINNET_INSIGHT_URL
   },
-  {
-    name: 'testnet',
+  [NETWORKS_ENUM.TESTNET]: {
+    name: NETWORKS_ENUM.TESTNET,
     subname: '',
     disabled: false,
-    explorerBaseUrl: 'https://testnet.platform-explorer.com',
-    l1explorerBaseUrl: 'http://insight.testnet.networks.dash.org/insight'
+    explorerBaseUrl: process.env.NEXT_PUBLIC_TESTNET_BASE_URL,
+    l1explorerBaseUrl: process.env.NEXT_PUBLIC_TESTNET_INSIGHT_URL
   }
+}
+
+export const networks = [
+  NETWORK_OPTIONS[NETWORKS_ENUM.MAINNET],
+  NETWORK_OPTIONS[NETWORKS_ENUM.TESTNET]
 ]

@@ -975,7 +975,7 @@ describe('DataContracts routes', () => {
           ]
         },
         totalGasUsed: 0,
-        tokens: [],
+        tokens: null,
         description: dataContract.dataContract.description ?? null,
         keywords: dataContract.dataContract.keywords ?? []
       }
@@ -1034,7 +1034,7 @@ describe('DataContracts routes', () => {
           ]
         },
         totalGasUsed: 0,
-        tokens: [],
+        tokens: null,
         description: dataContract.dataContract.description ?? null,
         keywords: dataContract.dataContract.keywords ?? []
       }

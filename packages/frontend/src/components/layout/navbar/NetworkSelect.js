@@ -1,13 +1,14 @@
 'use client'
 
 import { useState } from 'react'
-import './NetworkSelect.scss'
 import Dropdown from './Dropdown'
 import { networks } from '../../../constants/networks'
+import { useActiveNetwork } from 'src/contexts'
+
+import './NetworkSelect.scss'
 
 function NetworkSelect () {
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL
-  const activeNetwork = networks.find(network => network.explorerBaseUrl === baseUrl)
+  const { name: network } = useActiveNetwork()
   const [showDropdown, setShowDropdown] = useState(false)
 
   return (
@@ -17,7 +18,7 @@ function NetworkSelect () {
         className={'NetworkSelect__Button'}
         onMouseEnter={() => setShowDropdown(true)}
       >
-        {activeNetwork?.name || ''}
+        {network || ''}
         <svg
           className={`NetworkSelect__Button--Arrow ${showDropdown ? 'NetworkSelect__Button--ArrowActive' : ''}`}
           width={'10'}
@@ -30,7 +31,7 @@ function NetworkSelect () {
         </svg>
       </button>
       <div className={`NetworkSelect__DropdownWrapper ${showDropdown ? 'NetworkSelect__DropdownWrapperActive' : ''}`}>
-        <Dropdown active={activeNetwork?.name} data={networks} />
+        <Dropdown active={network} data={networks} />
       </div>
     </div>
   )

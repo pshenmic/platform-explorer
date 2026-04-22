@@ -64,7 +64,7 @@ function TransactionsListItem ({ transaction, rate }) {
           }
         </GridItem>
           <GridItem className={'TransactionsListItem__Column TransactionsListItem__Column--Owner'}>
-            {transaction?.owner
+            {transaction?.owner?.identifier
               ? <LinkContainer
                   className={'TransactionsListItem__OwnerLink'}
                   onClick={e => {
@@ -82,7 +82,7 @@ function TransactionsListItem ({ transaction, rate }) {
                     : <Identifier avatar={true} styles={['highlight-both']}>{transaction?.owner?.identifier}</Identifier>
                   }
                 </LinkContainer>
-              : <NotActive/>
+              : <NotActive>-</NotActive>
             }
           </GridItem>
         <GridItem className={'TransactionsListItem__Column TransactionsListItem__Column--Type'}>

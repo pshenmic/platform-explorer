@@ -1,7 +1,13 @@
+use crate::entities::platform_address_transition::PlatformAddressTransition;
 use crate::enums::batch_type::BatchType;
 use crate::models::{TransactionResult, TransactionStatus};
 use crate::processor::psql::PSQLProcessor;
+use dashcore_rpc::dashcore::consensus::Decodable;
+use dashcore_rpc::RpcApi;
 use deadpool_postgres::Transaction;
+use dpp::dashcore::transaction::special_transaction::asset_lock::AssetLockPayload;
+use dpp::identity::state_transition::AssetLockProved;
+use dpp::prelude::AssetLockProof;
 use dpp::serialization::PlatformSerializable;
 use dpp::state_transition::batch_transition::batched_transition::document_transition::DocumentTransition;
 use dpp::state_transition::batch_transition::batched_transition::token_transition::TokenTransition;
@@ -279,29 +285,178 @@ impl PSQLProcessor {
                 println!("Processed Masternode vote at block hash {}", block_hash);
             }
             StateTransition::IdentityCreditTransferToAddresses(st) => {
-                self.handle_identity_credit_transfer_to_address(st, st_hash, sql_transaction)
-                    .await;
+                self.handle_identity_credit_transfer_to_address(
+                    st.clone(),
+                    st_hash.clone(),
+                    sql_transaction,
+                )
+                .await;
 
                 println!(
                     "Processed IdentityCreditTransfer at block hash {}",
                     block_hash
                 );
+
+                let address_transitions =
+                    PlatformAddressTransition::from_identity_credit_transfer_to_address_transition(
+                        st.clone(),
+                        st_hash.clone(),
+                    );
+                self.handle_platform_address_transitions(
+                    address_transitions.clone(),
+                    sql_transaction,
+                )
+                .await
+                .unwrap();
+
+                println!(
+                    "Processed {} Address transitions at block hash {}",
+                    address_transitions.len(),
+                    block_hash
+                );
             }
             StateTransition::IdentityCreateFromAddresses(st) => {
-                self.handle_identity_create_from_address(st, st_hash, sql_transaction)
-                    .await;
+                self.handle_identity_create_from_address(
+                    st.clone(),
+                    st_hash.clone(),
+                    sql_transaction,
+                )
+                .await;
 
                 println!("Processed IdentityCreate at block hash {}", block_hash);
+
+                let address_transitions =
+                    PlatformAddressTransition::from_identity_create_from_address_transition(
+                        st.clone(),
+                        st_hash.clone(),
+                    );
+                self.handle_platform_address_transitions(
+                    address_transitions.clone(),
+                    sql_transaction,
+                )
+                .await
+                .unwrap();
+
+                println!(
+                    "Processed {} Address transitions at block hash {}",
+                    address_transitions.len(),
+                    block_hash
+                );
             }
             StateTransition::IdentityTopUpFromAddresses(st) => {
-                self.handle_identity_top_up_from_address(st, st_hash, sql_transaction)
-                    .await;
+                self.handle_identity_top_up_from_address(
+                    st.clone(),
+                    st_hash.clone(),
+                    sql_transaction,
+                )
+                .await;
 
                 println!("Processed IdentityTopUp at block hash {}", block_hash);
+
+                let address_transitions =
+                    PlatformAddressTransition::from_identity_top_up_from_address_transition(
+                        st.clone(),
+                        st_hash.clone(),
+                    );
+                self.handle_platform_address_transitions(
+                    address_transitions.clone(),
+                    sql_transaction,
+                )
+                .await
+                .unwrap();
+
+                println!(
+                    "Processed {} Address transitions at block hash {}",
+                    address_transitions.len(),
+                    block_hash
+                );
             }
-            StateTransition::AddressFundsTransfer(_) => {}
-            StateTransition::AddressFundingFromAssetLock(_) => {}
-            StateTransition::AddressCreditWithdrawal(_) => {}
+            StateTransition::AddressFundsTransfer(st) => {
+                let address_transitions = PlatformAddressTransition::from_address_funds_transfer(
+                    st.clone(),
+                    st_hash.clone(),
+                );
+                self.handle_platform_address_transitions(
+                    address_transitions.clone(),
+                    sql_transaction,
+                )
+                .await
+                .unwrap();
+
+                println!(
+                    "Processed {} Address transitions at block hash {}",
+                    address_transitions.len(),
+                    block_hash
+                );
+            }
+            StateTransition::AddressFundingFromAssetLock(st) => {
+                let asset_lock_amount = match AssetLockProved::asset_lock_proof(&st) {
+                    AssetLockProof::Instant(i) => {
+                        i.transaction
+                            .special_transaction_payload
+                            .clone()
+                            .unwrap()
+                            .to_asset_lock_payload()
+                            .expect("Cannot get asset lock payload for instant lock proof")
+                            .credit_outputs[i.output_index as usize]
+                            .value
+                    }
+                    AssetLockProof::Chain(c) => {
+                        let tx = self
+                            .dashcore_rpc
+                            .get_raw_transaction_info(&c.out_point.txid, None)
+                            .unwrap();
+
+                        let payload = tx
+                            .extra_payload
+                            .clone()
+                            .expect("Cannot get Asset Lock Payload");
+
+                        let asset_lock_payload =
+                            AssetLockPayload::consensus_decode(&mut payload.as_slice())
+                                .expect("Cannot parse payload");
+
+                        asset_lock_payload.credit_outputs[c.out_point.vout as usize].value
+                    }
+                };
+
+                let address_transitions =
+                    PlatformAddressTransition::from_address_funding_from_asset_lock(
+                        st.clone(),
+                        st_hash.clone(),
+                        asset_lock_amount,
+                    );
+                self.handle_platform_address_transitions(
+                    address_transitions.clone(),
+                    sql_transaction,
+                )
+                .await
+                .unwrap();
+
+                println!(
+                    "Processed {} Address transitions at block hash {}",
+                    address_transitions.len(),
+                    block_hash
+                );
+            }
+            StateTransition::AddressCreditWithdrawal(st) => {
+                let address_transitions = PlatformAddressTransition::from_address_credit_withdrawal(
+                    st.clone(),
+                    st_hash.clone(),
+                );
+                self.handle_platform_address_transitions(
+                    address_transitions.clone(),
+                    sql_transaction,
+                )
+                .await
+                .unwrap();
+
+                println!(
+                    "Processed {} Address transitions at block hash {}",
+                    address_transitions.len(),
+                    block_hash
+                );
+            }
         }
     }
 }

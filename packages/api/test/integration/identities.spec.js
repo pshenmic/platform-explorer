@@ -1736,6 +1736,9 @@ describe('Identities routes', () => {
         .sort((a, b) => a.block.height - b.block.height)
         .slice(0, 10)
         .map((_transaction, i) => ({
+          base58Address: null,
+          bech32mAddress: null,
+          incoming: null,
           hash: _transaction.transaction.hash,
           index: 0,
           blockHash: _transaction.transaction.block_hash,
@@ -1786,6 +1789,9 @@ describe('Identities routes', () => {
         .sort((a, b) => b.block.height - a.block.height)
         .slice(0, 10)
         .map((_transaction) => ({
+          base58Address: null,
+          bech32mAddress: null,
+          incoming: null,
           hash: _transaction.transaction.hash,
           index: 0,
           blockHash: _transaction.transaction.block_hash,
@@ -1836,6 +1842,9 @@ describe('Identities routes', () => {
         .sort((a, b) => a.block.height - b.block.height)
         .slice(4, 8)
         .map((_transaction) => ({
+          base58Address: null,
+          bech32mAddress: null,
+          incoming: null,
           hash: _transaction.transaction.hash,
           index: 0,
           blockHash: _transaction.transaction.block_hash,
@@ -1886,6 +1895,9 @@ describe('Identities routes', () => {
         .sort((a, b) => b.block.height - a.block.height)
         .slice(4, 8)
         .map((_transaction) => ({
+          base58Address: null,
+          bech32mAddress: null,
+          incoming: null,
           hash: _transaction.transaction.hash,
           index: 0,
           blockHash: _transaction.transaction.block_hash,

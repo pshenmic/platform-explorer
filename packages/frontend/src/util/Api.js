@@ -4,7 +4,10 @@ const BASE_URL = process.env.NEXT_PUBLIC_API_URL
 
 const fetchWrapper = (url, options) => {
   return new Promise((resolve, reject) => {
-    setTimeout(() => reject(new ResponseErrorTimeout()), 30000)
+    setTimeout(() => {
+      console.warn('fetching timeout error')
+      reject(new ResponseErrorTimeout())
+    }, 30000)
     fetch(url, options).catch(reject).then(resolve)
   })
 }
@@ -278,6 +281,14 @@ const getContestedResourcesStats = () => {
   return call('contestedResources/stats', 'GET')
 }
 
+const getPlatformAddressInfo = (hash) => {
+  return call(`platformAddress/${hash}/info`, 'GET')
+}
+
+const getPlatformAddressTransitions = (hash, page = 1, limit = 10, order = 'desc') => {
+  return call(`platformAddress/${hash}/transactions?page=${page}&limit=${limit}&order=${order}`, 'GET')
+}
+
 const getStatus = () => {
   return call('status', 'GET')
 }
@@ -334,5 +345,7 @@ export {
   getContestedResourcesStats,
   getMasternodeVotes,
   getRate,
+  getPlatformAddressInfo,
+  getPlatformAddressTransitions,
   getValidatorByMasternodeIdentity
 }
