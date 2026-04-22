@@ -26,8 +26,9 @@ export const FormControls = () => {
         Reset
       </Button>
       <Button
-        variant='brand'
+        variant='blue'
         size='sm'
+        minW='160px'
         onClick={handlePrimary}
         isLoading={isBusy}
         isDisabled={isConnected && schemaError != null}
