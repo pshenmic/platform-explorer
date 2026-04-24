@@ -134,8 +134,8 @@ class IdentitiesController {
     const { order = 'asc' } = request.query
 
     // In Future maybe we don't need this.
-    // at this moment used only for batch size
-    const limit = 100
+    // at this moment used only for page size while requesting batches
+    const pageSize = 100
     // 10000 documents
     const maxPages = 100
 
@@ -152,14 +152,14 @@ class IdentitiesController {
         WITHDRAWAL_CONTRACT_TYPE,
         query,
         [['$ownerId', 'asc'], ['status', 'asc'], ['$createdAt', 'asc']],
-        limit,
+        pageSize,
         undefined,
         startAfter
       )
 
       documents.push(...batch)
 
-      if (batch.length < limit) break
+      if (batch.length < pageSize) break
 
       startAfter = batch[batch.length - 1].id
       currentPage += 1
