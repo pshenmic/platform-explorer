@@ -133,9 +133,10 @@ class IdentitiesController {
     const { identifier } = request.params
     const { timestamp_start: timestampStart, start_at: startAt, order = 'asc' } = request.query
 
+    // In Future maybe we don't need this.
     // at this moment used only for batch size
     const limit = 100
-    const maxDocuments = 1000
+    const maxDocuments = 2000
 
     const query = [['$ownerId', '=', new IdentifierWASM(identifier).base58()]]
 
