@@ -1427,8 +1427,6 @@ Return all withdrawals for identity
 
 _Note: this request does not contain any pagination data in the response_
 
-* `timestamp_start` ISO String
-* `start_at` base58 encoded withdrawal document identifier; used only as the cursor for the first DAPI batch, subsequent batches use the id of the last fetched document
 * `order` `asc` or `desc`
 * returns 404 `not found` if identity don't have withdrawals
 * Pagination always `null`
