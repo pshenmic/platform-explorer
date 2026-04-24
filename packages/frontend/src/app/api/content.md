@@ -1427,13 +1427,13 @@ Return all withdrawals for identity
 
 _Note: this request does not contain any pagination data in the response_
 
-* `limit` cannot be more then 100
 * `timestamp_start` ISO String
-* `start_at` base58 encoded withdrawal document identifier
+* `start_at` base58 encoded withdrawal document identifier; used only as the cursor for the first DAPI batch, subsequent batches use the id of the last fetched document
+* `order` `asc` or `desc`
 * returns 404 `not found` if identity don't have withdrawals
 * Pagination always `null`
 ```
-GET /identity/A1rgGVjRGuznRThdAA316VEEpKuVQ7mV8mBK1BFJvXnb/withdrawals?limit=5&start_at=95eiiqMotMvH23f6cv3BPC4ykcHFWTy2g3baCTWZANAs&timestamp_start=2024-10-10T02:37:39.187Z
+GET /identity/A1rgGVjRGuznRThdAA316VEEpKuVQ7mV8mBK1BFJvXnb/withdrawals?order=asc&start_at=95eiiqMotMvH23f6cv3BPC4ykcHFWTy2g3baCTWZANAs&timestamp_start=2024-10-10T02:37:39.187Z
 
 {
   "pagination": {
