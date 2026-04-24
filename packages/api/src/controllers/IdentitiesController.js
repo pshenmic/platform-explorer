@@ -186,9 +186,9 @@ class IdentitiesController {
       )?.hash
     }))
       .sort((a, b) => {
-        const direction = order === 'asc' ? 1 : -1;
-        return (a.timestamp - b.timestamp) * direction;
-      });
+        const direction = order === 'asc' ? 1 : -1
+        return (a.timestamp - b.timestamp) * direction
+      })
 
     response.send(new PaginatedResultSet(resultSet, null, null, null))
   }
