@@ -340,7 +340,7 @@ module.exports = ({
         params: {
           type: 'object',
           properties: {
-            validator: { $ref: 'hash#' }
+            identifier: { $ref: 'identifier#' }
           }
         },
         querystring: { $ref: 'paginationOptions#' }
