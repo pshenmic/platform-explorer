@@ -131,30 +131,29 @@ class IdentitiesController {
 
   getWithdrawalsByIdentity = async (request, response) => {
     const { identifier } = request.params
-    const { timestamp_start: timestampStart, start_at: startAt, order = 'asc' } = request.query
+    const { order = 'asc' } = request.query
 
     // In Future maybe we don't need this.
     // at this moment used only for batch size
     const limit = 100
-    const maxDocuments = 2000
+    // 10000 documents
+    const maxPages = 100
 
     const query = [['$ownerId', '=', new IdentifierWASM(identifier).base58()]]
-
-    if (timestampStart) {
-      query.push(['status', 'in', [0, 1, 2, 3, 4]], ['$createdAt', '>=', new Date(timestampStart).getTime()])
-    }
 
     const documents = []
     let startAfter
 
-    while (documents.length <= maxDocuments) {
+    let currentPage = 0
+
+    do {
       const batch = await this.sdk.documents.query(
         WITHDRAWAL_CONTRACT,
         WITHDRAWAL_CONTRACT_TYPE,
         query,
         [['$ownerId', 'asc'], ['status', 'asc'], ['$createdAt', 'asc']],
         limit,
-        startAfter == null ? startAt : undefined,
+        undefined,
         startAfter
       )
 
@@ -163,7 +162,8 @@ class IdentitiesController {
       if (batch.length < limit) break
 
       startAfter = batch[batch.length - 1].id
-    }
+      currentPage += 1
+    } while (currentPage <= maxPages)
 
     if (documents.length === 0) {
       return response.send(new PaginatedResultSet([], null, null, null))
