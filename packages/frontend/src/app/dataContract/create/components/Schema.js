@@ -1,6 +1,6 @@
-import { Box, Flex, Link, Text } from '@chakra-ui/react'
+import { Flex, Link, Text } from '@chakra-ui/react'
 import { CardWrapper } from './CardWrapper'
-import { SchemaHeader, SchemaField, DeployStatus } from './SchemaAtomic'
+import { SchemaHeader, SchemaField } from './SchemaAtomic'
 import { useSchema } from '../SchemaProvider'
 
 import styles from './Schema.module.scss'
@@ -23,18 +23,13 @@ export const Schema = () => {
     <CardWrapper title='Contract' className={styles.schema}>
       <SchemaHeader />
       <SchemaField className={styles.code} />
-      <Flex mt={2} gap={4} align='flex-start' minH='24px'>
-        <Box flex='1'>
-          <DeployStatus />
-        </Box>
-        <Flex direction='column' align='flex-end' gap={1}>
-          <Text fontSize='sm' color='gray.500' whiteSpace='nowrap'>
-            Size: {byteSize} Bytes
-          </Text>
-          <Link href={DOCS_URL} isExternal fontSize='sm' whiteSpace='nowrap'>
-            Read Data Contract documentation →
-          </Link>
-        </Flex>
+      <Flex mt={2} justify='space-between' align='center' minH='24px' gap={4}>
+        <Text fontSize='sm' color='gray.500' whiteSpace='nowrap'>
+          Size: {byteSize} Bytes
+        </Text>
+        <Link href={DOCS_URL} isExternal fontSize='sm' whiteSpace='nowrap'>
+          Read Data Contract documentation →
+        </Link>
       </Flex>
     </CardWrapper>
   )

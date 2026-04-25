@@ -2,30 +2,18 @@ import { Link, Text } from '@chakra-ui/react'
 import { useDeploy } from '../../DeployContext'
 
 export const DeployStatus = () => {
-  const { schemaError, isConnected, wallet, deploy } = useDeploy()
+  const { schemaError, signer, deploy } = useDeploy()
 
   if (schemaError != null) {
-    return (
-      <Text color='red.500' fontSize='sm'>
-        {schemaError}
-      </Text>
-    )
+    return <Text color='red.500' fontSize='sm'>{schemaError}</Text>
   }
 
-  if (wallet.error != null) {
-    return (
-      <Text color='red.500' fontSize='sm'>
-        {wallet.error}
-      </Text>
-    )
+  if (signer.error != null) {
+    return <Text color='red.500' fontSize='sm'>{signer.error}</Text>
   }
 
   if (deploy.error != null) {
-    return (
-      <Text color='red.500' fontSize='sm'>
-        {deploy.error}
-      </Text>
-    )
+    return <Text color='red.500' fontSize='sm'>{deploy.error}</Text>
   }
 
   if (deploy.result != null) {
@@ -43,13 +31,13 @@ export const DeployStatus = () => {
     )
   }
 
-  if (isConnected) {
+  if (signer.isConnected) {
     return (
       <Text color='gray.500' fontSize='sm'>
-        Signing as: {wallet.currentIdentity}
+        Signing as: {signer.signer.identityId}
       </Text>
     )
   }
 
-  return null
+  return <Text color='gray.500' fontSize='sm'>Connect a wallet to deploy</Text>
 }

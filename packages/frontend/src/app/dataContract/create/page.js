@@ -1,7 +1,8 @@
 'use client'
 
+import { Stack } from '@chakra-ui/react'
 import { PageDataContainer } from '@components/ui/containers'
-import { Schema } from './components'
+import { Schema, Deploy } from './components'
 import { SchemaProvider } from './SchemaProvider'
 import { DeployProvider } from './DeployContext'
 
@@ -10,7 +11,10 @@ function DataContractCreate () {
     <SchemaProvider>
       <DeployProvider>
         <PageDataContainer title='DATA CONTRACT CREATION'>
-          <Schema />
+          <Stack spacing={4}>
+            <Schema />
+            <Deploy />
+          </Stack>
         </PageDataContainer>
       </DeployProvider>
     </SchemaProvider>
