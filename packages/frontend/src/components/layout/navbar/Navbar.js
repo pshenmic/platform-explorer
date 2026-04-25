@@ -22,7 +22,14 @@ const menuItems = [
     ]
   },
   { title: 'Tokens', href: '/tokens' },
-  { title: 'Data Contracts', href: '/dataContracts' },
+  {
+    title: 'Data Contracts',
+    href: '/dataContracts',
+    submenuItems: [
+      { title: 'Data Contracts list', href: '/dataContracts' },
+      { title: 'Data Contract Creation', href: '/dataContract/create' }
+    ]
+  },
   {
     title: 'Contested Resources',
     href: '/contestedResources',
