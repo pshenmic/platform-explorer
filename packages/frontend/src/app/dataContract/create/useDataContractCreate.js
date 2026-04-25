@@ -5,17 +5,17 @@ export const useDataContractCreate = () => {
   const [error, setError] = useState(null)
   const [result, setResult] = useState(null)
 
-  const submit = async ({ schemaString, currentIdentity }) => {
+  const submit = async ({ schemaString, signer }) => {
     setIsLoading(true)
     setError(null)
     setResult(null)
 
     try {
-      if (!window.dashPlatformExtension || !window.dashPlatformSDK) {
-        throw new Error('Dash Platform Extension is required')
+      if (!window.dashPlatformSDK) {
+        throw new Error('Dash Platform SDK is not available')
       }
-      if (!currentIdentity) {
-        throw new Error('No identity selected in the extension')
+      if (!signer?.identityId) {
+        throw new Error('No signer connected')
       }
 
       let schema
@@ -27,7 +27,7 @@ export const useDataContractCreate = () => {
 
       const sdk = window.dashPlatformSDK
 
-      const identity = await sdk.identities.getIdentityByIdentifier(currentIdentity)
+      const identity = await sdk.identities.getIdentityByIdentifier(signer.identityId)
       const identityNonce = await sdk.identities.getIdentityNonce(identity.id)
       const nextNonce = identityNonce + BigInt(1)
 
@@ -43,7 +43,7 @@ export const useDataContractCreate = () => {
         nextNonce
       )
 
-      await window.dashPlatformExtension.signer.signAndBroadcast(stateTransition)
+      await signer.signAndBroadcast(stateTransition)
 
       setResult({ dataContractId: dataContract.id.base58() })
     } catch (e) {
@@ -53,5 +53,10 @@ export const useDataContractCreate = () => {
     }
   }
 
-  return { submit, isLoading, error, result }
+  const reset = () => {
+    setError(null)
+    setResult(null)
+  }
+
+  return { submit, reset, isLoading, error, result }
 }

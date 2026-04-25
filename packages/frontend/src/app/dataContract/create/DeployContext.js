@@ -1,5 +1,5 @@
 import { createContext, useContext } from 'react'
-import { useWalletConnect } from '../../../hooks/useWallet'
+import { useSigner } from './useSigner'
 import { useDataContractCreate } from './useDataContractCreate'
 import { useSchema } from './SchemaProvider'
 
@@ -9,28 +9,26 @@ export const useDeploy = () => useContext(DeployContext)
 
 export const DeployProvider = ({ children }) => {
   const { value: schemaString, error: schemaError } = useSchema()
-  const wallet = useWalletConnect()
+  const signerCtl = useSigner()
   const deploy = useDataContractCreate()
 
-  const isConnected = wallet.walletInfo != null
-
   const handlePrimary = () => {
-    if (!isConnected) {
-      wallet.connectWallet()
-    } else {
-      deploy.submit({
-        schemaString,
-        currentIdentity: wallet.currentIdentity
-      })
+    if (!signerCtl.isConnected) {
+      signerCtl.connect()
+      return
     }
+    if (deploy.result != null) {
+      deploy.reset()
+      return
+    }
+    deploy.submit({ schemaString, signer: signerCtl.signer })
   }
 
   return (
     <DeployContext.Provider
       value={{
-        wallet,
+        signer: signerCtl,
         deploy,
-        isConnected,
         schemaError,
         handlePrimary
       }}
