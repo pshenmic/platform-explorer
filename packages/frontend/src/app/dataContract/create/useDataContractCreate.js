@@ -11,10 +11,7 @@ export const useDataContractCreate = () => {
     setResult(null)
 
     try {
-      if (!window.dashPlatformSDK) {
-        throw new Error('Dash Platform SDK is not available')
-      }
-      if (!signer?.identityId) {
+      if (!signer?.identityId || !signer?.sdk) {
         throw new Error('No signer connected')
       }
 
@@ -25,7 +22,7 @@ export const useDataContractCreate = () => {
         throw new Error('Schema must be valid JSON')
       }
 
-      const sdk = window.dashPlatformSDK
+      const { sdk } = signer
 
       const identity = await sdk.identities.getIdentityByIdentifier(signer.identityId)
       const identityNonce = await sdk.identities.getIdentityNonce(identity.id)
@@ -47,7 +44,10 @@ export const useDataContractCreate = () => {
 
       setResult({ dataContractId: dataContract.id.base58() })
     } catch (e) {
-      setError(e.message ?? 'Failed to deploy contract')
+      console.error('Data contract deploy failed:', e)
+      const message =
+        e?.message ?? e?.toString?.() ?? 'Failed to deploy contract'
+      setError(typeof message === 'string' ? message : 'Failed to deploy contract')
     } finally {
       setIsLoading(false)
     }
