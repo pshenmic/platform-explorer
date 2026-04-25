@@ -56,7 +56,7 @@ export const useSigner = () => {
       const trimmedIdentityId = identityId?.trim()
       if (!trimmedWif) throw new Error('Private key is required')
 
-      const [{ DashPlatformSDK }, { PrivateKeyWASM, StateTransitionWASM }] = await Promise.all([
+      const [{ DashPlatformSDK }, { PrivateKeyWASM, StateTransitionWASM, IdentityPublicKeyWASM }] = await Promise.all([
         import('dash-platform-sdk'),
         import('pshenmic-dpp')
       ])
@@ -109,10 +109,26 @@ export const useSigner = () => {
             throw new Error('Could not locate signing key on identity')
           }
 
-          // Reconstruct from base64 to avoid stale WASM proxy on the original transition
+          // pshenmic-dpp 1.1.2-dev.8 drops securityLevel when state_transition::sign()
+          // does `&public_key.clone().into()` on a key returned by getPublicKeys() —
+          // sign() then validates against MASTER (default) and rejects HIGH/CRITICAL
+          // requirements. Reconstructing the key via the public constructor preserves
+          // all fields through the conversion.
+          const rebuiltKey = new IdentityPublicKeyWASM(
+            freshKey.keyId,
+            freshKey.purpose,
+            freshKey.securityLevel,
+            freshKey.keyType,
+            freshKey.readOnly,
+            freshKey.data,
+            freshKey.disabledAt,
+            freshKey.getContractBounds?.() ?? null
+          )
+
+          // Reconstruct state transition from base64 to avoid stale WASM proxy
           const fresh = StateTransitionWASM.fromBase64(stateTransition.base64())
-          fresh.signaturePublicKeyId = freshKey.keyId
-          fresh.sign(privateKey, freshKey)
+          fresh.signaturePublicKeyId = rebuiltKey.keyId
+          fresh.sign(privateKey, rebuiltKey)
 
           await sdk.stateTransitions.broadcast(fresh)
         }
