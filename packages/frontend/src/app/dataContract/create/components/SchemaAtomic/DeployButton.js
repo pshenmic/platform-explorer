@@ -1,5 +1,6 @@
 import { Button } from '@chakra-ui/react'
 import { useDeploy } from '../../DeployContext'
+import { SignerMethod } from '../../useSigner'
 
 export const DeployButton = () => {
   const { signer, deploy, schemaError, handlePrimary } = useDeploy()
@@ -7,11 +8,17 @@ export const DeployButton = () => {
   const isBusy = signer.isConnecting || deploy.isLoading
   const hasResult = deploy.result != null
 
-  let label = 'Connect Wallet'
-  if (signer.isConnected) {
-    if (deploy.isLoading) label = 'Deploying...'
-    else if (hasResult) label = 'Deploy Another'
-    else label = 'Deploy Contract'
+  let label
+  if (!signer.isConnected) {
+    label = signer.method === SignerMethod.PRIVATE_KEY
+      ? 'Use Private Key'
+      : 'Connect Wallet'
+  } else if (deploy.isLoading) {
+    label = 'Deploying...'
+  } else if (hasResult) {
+    label = 'Deploy Another'
+  } else {
+    label = 'Deploy Contract'
   }
 
   const isDisabled =

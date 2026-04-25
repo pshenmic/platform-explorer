@@ -53,8 +53,8 @@ export const SchemaField = ({ className }) => {
         autocompletion: false,
         indentOnInput: true
       }}
-      height='calc(100vh - 620px)'
-      minHeight='240px'
+      height='calc(100vh - 720px)'
+      minHeight='200px'
     />
   )
 }
