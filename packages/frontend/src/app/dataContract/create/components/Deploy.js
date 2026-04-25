@@ -13,7 +13,9 @@ export const Deploy = () => {
     <CardWrapper title='Deploy'>
       <Stack spacing={4}>
         <MethodSelect />
-        {showPrivateKeyForm && <PrivateKeyForm />}
+        <Box visibility={showPrivateKeyForm ? 'visible' : 'hidden'} aria-hidden={!showPrivateKeyForm}>
+          <PrivateKeyForm />
+        </Box>
         <Flex gap={4} align='center' wrap='wrap' minH='24px'>
           <Box flex='1' minW='200px'>
             <DeployStatus />
