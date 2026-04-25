@@ -331,7 +331,7 @@ describe('Identities routes', () => {
         hash: withdrawal.id.base58(),
         document: withdrawal.id.base58(),
         sender: withdrawal.ownerId.base58(),
-        status: 0,
+        status: 'QUEUED',
         timestamp: new Date(withdrawal.createdAt).toISOString(),
         amount: withdrawal.properties.amount,
         withdrawalAddress: null
