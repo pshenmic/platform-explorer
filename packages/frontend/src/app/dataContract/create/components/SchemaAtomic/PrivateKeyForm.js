@@ -1,12 +1,16 @@
 import { FormControl, FormLabel, Input, Text } from '@chakra-ui/react'
 import { useDeploy } from '../../DeployContext'
+import { SignerMethod } from '../../useSigner'
 
 export const PrivateKeyForm = () => {
   const { signer, privateKeyForm } = useDeploy()
-  const isBusy = signer.isConnecting || signer.isConnected
+  const isInactive =
+    signer.method !== SignerMethod.PRIVATE_KEY ||
+    signer.isConnecting ||
+    signer.isConnected
 
   return (
-    <FormControl>
+    <FormControl isDisabled={isInactive}>
       <FormLabel fontSize='xs' color='gray.400' mb={1}>
         Private Key (WIF)
       </FormLabel>
@@ -17,7 +21,6 @@ export const PrivateKeyForm = () => {
         placeholder='WIF private key'
         value={privateKeyForm.wif}
         onChange={(e) => privateKeyForm.setWif(e.target.value)}
-        isDisabled={isBusy}
         fontFamily='mono'
       />
       <Text fontSize='xs' color='gray.500' mt={1}>
