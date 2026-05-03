@@ -10,6 +10,7 @@ const platformTheme = EditorView.theme({
     backgroundColor: '#2E393D',
     border: '1px solid #404E53',
     borderRadius: '0.375rem',
+    overflow: 'hidden',
     fontSize: '12px'
   },
   '.cm-gutters': {
