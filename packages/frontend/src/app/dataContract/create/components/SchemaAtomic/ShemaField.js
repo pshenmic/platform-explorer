@@ -10,6 +10,7 @@ const platformTheme = EditorView.theme({
     backgroundColor: '#2E393D',
     border: '1px solid #404E53',
     borderRadius: '0.375rem',
+    overflow: 'hidden',
     fontSize: '12px'
   },
   '.cm-gutters': {
@@ -53,8 +54,8 @@ export const SchemaField = ({ className }) => {
         autocompletion: false,
         indentOnInput: true
       }}
-      height='calc(100vh - 620px)'
-      minHeight='240px'
+      height='calc(100vh - 720px)'
+      minHeight='200px'
     />
   )
 }

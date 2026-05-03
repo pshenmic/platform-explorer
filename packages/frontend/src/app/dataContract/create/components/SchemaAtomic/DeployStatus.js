@@ -1,5 +1,6 @@
 import { Link, Text } from '@chakra-ui/react'
 import { useDeploy } from '../../DeployContext'
+import { SignerMethod } from '../../useSigner'
 
 export const DeployStatus = () => {
   const { schemaError, signer, deploy } = useDeploy()
@@ -37,6 +38,10 @@ export const DeployStatus = () => {
         Signing as: {signer.signer.identityId}
       </Text>
     )
+  }
+
+  if (signer.method === SignerMethod.PRIVATE_KEY) {
+    return <Text color='gray.500' fontSize='sm'>Enter your private key from your Identity</Text>
   }
 
   return <Text color='gray.500' fontSize='sm'>Connect a wallet to deploy</Text>
