@@ -12,13 +12,14 @@ export const DeployProvider = ({ children }) => {
   const signerCtl = useSigner()
   const deploy = useDataContractCreate()
   const [wif, setWif] = useState('')
+  const [identityId, setIdentityId] = useState('')
 
-  const privateKeyForm = { wif, setWif }
+  const privateKeyForm = { wif, setWif, identityId, setIdentityId }
 
   const handlePrimary = () => {
     if (!signerCtl.isConnected) {
       if (signerCtl.method === SignerMethod.PRIVATE_KEY) {
-        signerCtl.connect({ wif })
+        signerCtl.connect({ wif, identityId })
       } else {
         signerCtl.connect()
       }
