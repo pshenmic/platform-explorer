@@ -1,0 +1,70 @@
+@import 'variables';
+
+.root {
+  max-width: 648px;
+  width: 100%;
+
+  .divider {
+    padding: 20px 0;
+  }
+
+  .form {
+    display: flex;
+    align-items: baseline;
+    margin-top: 14px;
+
+    .label {
+      font-family: $font-mono;
+      font-weight: 400;
+      font-size: 12px;
+      line-height: 110%;
+      flex: 1;
+      color: var(--chakra-colors-gray-250);
+    }
+
+    .input {
+      max-width: 396px;
+    }
+  }
+
+  .controls {
+    margin-top: 24px;
+    margin-bottom: 6px;
+    display: flex;
+    gap: 12px;
+    justify-content: space-between;
+
+    .btn {
+      max-width: 294px;
+      width: 100%;
+      border-radius: $border-radius-def;
+      padding: 12px;
+      transition: all ease-in .2;
+
+      &.cancel {
+        background-color: rgba(var(--chakra-colors-gray-250-rgb), 0.1);
+
+        &:hover {
+          background-color: rgba(var(--chakra-colors-gray-250-rgb), 0.3);
+        }
+
+        &:active {
+          background-color: rgba(var(--chakra-colors-gray-250-rgb), 0.5);
+        }
+      }
+
+      &.submit {
+        background-color: $color-brand-normal;
+
+        &:hover {
+          background-color: $color-brand-light;
+        }
+
+        &:active {
+          background-color: var(--chakra-colors-gray-50);
+          color: $color-brand-normal;
+        }
+      }
+    }
+  }
+}

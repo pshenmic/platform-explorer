@@ -3,6 +3,7 @@ import { Alias, CreditsBlock, DateBlock, Identifier, InfoLine } from '../data'
 import { HorisontalSeparator } from '../ui/separators'
 import { ValueCard } from '../cards'
 import { findActiveAlias } from '../../util'
+import { DataContractTitle } from './DataContractTitle'
 
 import './DataContractTotalCard.scss'
 
@@ -11,12 +12,7 @@ function DataContractTotalCard ({ dataContract, rate, className }) {
 
   return (
     <div className={`InfoBlock InfoBlock--Gradient DataContractTotalCard ${dataContract.loading ? 'DataContractTotalCard--Loading' : ''} ${className || ''}`}>
-      {dataContract.data?.name &&
-        <div className={'DataContractTotalCard__Title'}>
-          {dataContract.data.name}
-        </div>
-      }
-
+      <DataContractTitle dataContract={dataContract.data} />
       <div className={'DataContractTotalCard__Header'}>
         <div className={'DataContractTotalCard__HeaderLines'}>
           <InfoLine

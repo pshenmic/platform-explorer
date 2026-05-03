@@ -8,15 +8,7 @@ import Progress from './components/Progress'
 import Popover from './components/Popover'
 import Tooltip from './components/Tooltip'
 import Input from './components/Input'
-import {
-  Montserrat,
-  Open_Sans as OpenSans,
-  Roboto_Mono as RobotoMono
-} from 'next/font/google'
-
-const montserrat = Montserrat({ subsets: ['latin'] })
-const openSans = OpenSans({ subsets: ['latin'] })
-const robotoMono = RobotoMono({ subsets: ['latin'] })
+import Textarea from './components/Textarea'
 
 export const theme = extendTheme({
   config: {
@@ -26,11 +18,6 @@ export const theme = extendTheme({
   breakpoints: {
     '2xl': '96em', // 1536px
     '3xl': '120em' // 1920px
-  },
-  fonts: {
-    heading: montserrat.style.fontFamily,
-    body: openSans.style.fontFamily,
-    mono: robotoMono.style.fontFamily
   },
   space: {
     px: '1px',
@@ -79,7 +66,10 @@ export const theme = extendTheme({
     Modal: {
       baseStyle: {
         dialog: {
-          background: 'gray.800'
+          bg: 'transparent',
+          boxShadow: 'none',
+          border: 'none',
+          p: 0
         }
       }
     },
@@ -95,7 +85,8 @@ export const theme = extendTheme({
     Progress,
     Popover,
     Tooltip,
-    Input
+    Input,
+    Textarea
   }
 })
 

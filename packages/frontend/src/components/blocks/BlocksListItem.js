@@ -6,6 +6,7 @@ import { Badge, Grid, GridItem } from '@chakra-ui/react'
 import { BlockIcon } from '../ui/icons'
 import { LinkContainer } from '../ui/containers'
 import { useRouter } from 'next/navigation'
+
 import './BlocksListItem.scss'
 
 function BlocksListItem ({ block, absoluteDate }) {

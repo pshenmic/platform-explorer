@@ -8,6 +8,7 @@ import PageSizeSelector from '../../components/pageSizeSelector/PageSizeSelector
 import { useQuery } from '@tanstack/react-query'
 import { useQueryState, parseAsInteger } from 'nuqs'
 import { normalizePagination } from '@utils/table'
+
 import {
   Container,
   Heading,
