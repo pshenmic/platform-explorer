@@ -1,6 +1,6 @@
 export * from './FormControls'
 export * from './SchemaHeader'
-export * from './ShemaField'
+export * from './SchemaField'
 export * from './DeployStatus'
 export * from './DeployButton'
 export * from './MethodSelect'
