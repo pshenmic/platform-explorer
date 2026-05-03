@@ -9,7 +9,7 @@ export const MethodSelect = () => {
     <RadioGroup
       value={signer.method}
       onChange={signer.setMethod}
-      isDisabled={signer.isConnected || signer.isConnecting}
+      isDisabled={signer.isConnecting}
     >
       <HStack spacing={6} align='center'>
         <Radio value={SignerMethod.EXTENSION}>Extension</Radio>

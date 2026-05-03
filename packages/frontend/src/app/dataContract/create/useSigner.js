@@ -10,10 +10,25 @@ export const SignerMethod = SIGNER_METHODS
 
 export const useSigner = () => {
   const network = useActiveNetwork()
-  const [method, setMethod] = useState(SIGNER_METHODS.EXTENSION)
-  const [signer, setSigner] = useState(null)
+  const [method, setMethodState] = useState(SIGNER_METHODS.EXTENSION)
+  const [signers, setSigners] = useState({
+    [SIGNER_METHODS.EXTENSION]: null,
+    [SIGNER_METHODS.PRIVATE_KEY]: null
+  })
   const [isConnecting, setIsConnecting] = useState(false)
   const [error, setError] = useState(null)
+
+  const signer = signers[method]
+
+  const setMethod = (newMethod) => {
+    setMethodState(newMethod)
+    setError(null)
+    // signers cache untouched — switching back restores previous connection
+  }
+
+  const cacheSigner = (signerObj) => {
+    setSigners((prev) => ({ ...prev, [signerObj.method]: signerObj }))
+  }
 
   const connectExtension = async () => {
     if (!window.dashPlatformExtension || !window.dashPlatformSDK) {
@@ -33,7 +48,7 @@ export const useSigner = () => {
         throw new Error('Wallet connection returned no current identity')
       }
 
-      setSigner({
+      cacheSigner({
         method: SIGNER_METHODS.EXTENSION,
         identityId: wallet.currentIdentity,
         sdk: window.dashPlatformSDK,
@@ -92,7 +107,7 @@ export const useSigner = () => {
 
       const identityIdStr = identity.id.base58()
 
-      setSigner({
+      cacheSigner({
         method: SIGNER_METHODS.PRIVATE_KEY,
         identityId: identityIdStr,
         sdk,
