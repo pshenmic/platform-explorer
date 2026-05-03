@@ -1,4 +1,4 @@
-import { FormControl, FormHelperText, FormLabel, Input } from '@chakra-ui/react'
+import { FormControl, Input } from '@chakra-ui/react'
 import { useDeploy } from '../../DeployContext'
 import { SignerMethod } from '../../useSigner'
 
@@ -11,9 +11,6 @@ export const PrivateKeyForm = () => {
 
   return (
     <FormControl isDisabled={isInactive}>
-      <FormLabel fontSize='xs' color='gray.400' mb={1}>
-        Private Key
-      </FormLabel>
       <Input
         size='sm'
         variant='filled'
@@ -23,9 +20,6 @@ export const PrivateKeyForm = () => {
         onChange={(e) => privateKeyForm.setWif(e.target.value)}
         fontFamily='mono'
       />
-      <FormHelperText fontSize='xs' color='gray.500' mt={1}>
-        Enter your private key from your Identity
-      </FormHelperText>
     </FormControl>
   )
 }

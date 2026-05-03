@@ -30,6 +30,7 @@ export const DeployButton = () => {
       variant='blue'
       size='sm'
       minW='160px'
+      alignSelf='flex-start'
       onClick={handlePrimary}
       isLoading={isBusy}
       isDisabled={isDisabled}
