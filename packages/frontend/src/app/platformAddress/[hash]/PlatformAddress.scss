@@ -1,0 +1,26 @@
+
+
+.PlatformAddress {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+
+  &__CommonInfo {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+
+    .InfoLine {
+      justify-content: flex-start !important;
+
+      &__Title {
+        width: 200px;
+        flex-grow: 0;
+      }
+
+      &__Value {
+        text-align: left;
+      }
+    }
+  }
+}

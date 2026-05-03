@@ -9,6 +9,7 @@ const Epoch = require('../models/Epoch')
 const { base58 } = require('@scure/base')
 const DashCoreRPC = require('../dashcoreRpc')
 const TokensDAO = require('../dao/TokensDAO')
+const PlatformAddressesDAO = require('../dao/PlatformAddressesDAO')
 
 const API_VERSION = require('../../package.json').version
 
@@ -21,6 +22,7 @@ class MainController {
     this.identitiesDAO = new IdentitiesDAO(knex, sdk)
     this.validatorsDAO = new ValidatorsDAO(knex)
     this.tokensDAO = new TokensDAO(knex, sdk)
+    this.platformAddressesDAO = new PlatformAddressesDAO(knex, sdk)
     this.sdk = sdk
   }
 
@@ -98,6 +100,7 @@ class MainController {
     const { query } = request.query
 
     let result = {}
+    const dataContracts = []
 
     const epoch = Epoch.fromObject({
       startTime: 0,
@@ -158,7 +161,7 @@ class MainController {
       const dataContract = await this.dataContractsDAO.getDataContractByIdentifier(query)
 
       if (dataContract) {
-        result = { ...result, dataContracts: [dataContract] }
+        dataContracts.push(dataContract)
       }
 
       // search documents
@@ -172,6 +175,16 @@ class MainController {
 
       if (token) {
         result = { ...result, tokens: [token] }
+      }
+    }
+
+    // check for platform addresses
+    if (/^[0-9A-Za-z]{48,90}$/.test(query)) {
+      // search platform address
+      const address = await this.platformAddressesDAO.getPlatformAddressInfo(query)
+
+      if (address) {
+        result = { ...result, platformAddresses: [address] }
       }
     }
 
@@ -198,14 +211,29 @@ class MainController {
     }
 
     // by data-contract name
-    const dataContracts = await this.dataContractsDAO.getDataContractByName(query)
+    const dataContractsByName = await this.dataContractsDAO.getDataContractByName(query)
+    if (dataContractsByName) {
+      dataContracts.push(...dataContractsByName)
+    }
 
-    if (dataContracts) {
-      if (result.dataContracts) {
-        result.dataContracts.push(dataContracts)
-      } else {
-        result = { ...result, dataContracts }
-      }
+    // by data-contract keywords
+    const dataContractsByKeywords = await this.dataContractsDAO.getDataContractByKeywordsString(query)
+    if (dataContractsByKeywords) {
+      dataContracts.push(...dataContractsByKeywords)
+    }
+
+    // by data-contract description
+    const dataContractsByDescription = await this.dataContractsDAO.getDataContractByDescription(query)
+    if (dataContractsByDescription) {
+      dataContracts.push(...dataContractsByDescription)
+    }
+
+    const allContractsIds = dataContracts.map(contract => contract.identifier)
+
+    const uniqueDataContracts = dataContracts.filter((contract, pos) => allContractsIds.indexOf(contract.identifier) === pos)
+
+    if (uniqueDataContracts?.length > 0) {
+      result = { ...result, dataContracts: uniqueDataContracts }
     }
 
     if (Object.keys(result).length === 0) {

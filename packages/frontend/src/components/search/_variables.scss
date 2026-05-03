@@ -19,9 +19,18 @@
       1rem;
   }
 
+  &--PlatformAddress {
+    grid-template-columns:
+      minmax(0, 80rem)
+      5rem
+      1rem;
+  }
+
   @container (max-width: 48rem) {
     &--Document,
-    &--DataContract {
+    &--DataContract,
+    &--Token,
+    &--PlatformAddress {
       grid-template-columns: 
         minmax(0, 80rem)
         4.5rem
@@ -82,10 +91,18 @@
     justify-content: flex-end;
   }
 
+  [class*="--PlatformAddress"] & {
+    &:nth-last-child(3) {
+      justify-content: flex-start;
+    }
+  }
+
   @container (max-width: 48rem) {
     [class*="--Document"] &,
     [class*="--DataContract"] &,
-    [class*="--Validator"] & {
+    [class*="--Validator"] &,
+    [class*="--Token"] &,
+    [class*="--PlatformAddress"] & {
       &:nth-child(2) {
         display: none;
       }

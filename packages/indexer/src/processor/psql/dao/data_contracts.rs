@@ -27,8 +27,11 @@ impl PostgresDAO {
             Some(version) => Some(version as i32),
         };
 
+        let description = data_contract.description;
+        let keywords = data_contract.keywords;
+
         let query = "INSERT INTO data_contracts(identifier, name, owner, schema, version, \
-        state_transition_hash, is_system, format_version) VALUES ($1, $2, $3, $4, $5, $6, $7, $8);";
+        state_transition_hash, is_system, format_version, description, keywords) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10);";
 
         let stmt = sql_transaction.prepare_cached(query).await.unwrap();
 
@@ -44,6 +47,8 @@ impl PostgresDAO {
                     &st_hash,
                     &is_system,
                     &format_version,
+                    &description,
+                    &keywords,
                 ],
             )
             .await

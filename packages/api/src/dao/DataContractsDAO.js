@@ -1,6 +1,11 @@
 const DataContract = require('../models/DataContract')
 const PaginatedResultSet = require('../models/PaginatedResultSet')
-const { decodeStateTransition, getAliasFromDocument, getAliasDocumentForIdentifier, getAliasDocumentForIdentifiers } = require('../utils')
+const {
+  decodeStateTransition,
+  getAliasFromDocument,
+  getAliasDocumentForIdentifier,
+  getAliasDocumentForIdentifiers, convertToSqlSafeString
+} = require('../utils')
 const Token = require('../models/Token')
 const { TokenConfigurationWASM, IdentifierWASM } = require('pshenmic-dpp')
 
@@ -10,7 +15,7 @@ module.exports = class DataContractsDAO {
     this.sdk = sdk
   }
 
-  getDataContracts = async (page, limit, order, orderBy, owner, isSystem, withTokens, timestampStart, timestampEnd, documentsCountMin, documentsCountMax) => {
+  getDataContracts = async (page, limit, order, orderBy, owner, isSystem, withTokens, timestampStart, timestampEnd, documentsCountMin, documentsCountMax, description, keywords) => {
     const fromRank = ((page - 1) * limit)
 
     let filtersQuery = ''
@@ -40,8 +45,13 @@ module.exports = class DataContractsDAO {
     }
 
     if (isSystem === true || isSystem === false) {
-      filtersBindings.push(isSystem)
       filtersQuery = filtersQuery !== '' ? filtersQuery + ' and is_system = ?' : 'is_system = ?'
+      filtersBindings.push(isSystem)
+    }
+
+    if (keywords?.length > 0) {
+      filtersQuery = filtersQuery !== '' ? filtersQuery + ' and keywords @> ?' : 'keywords @> ?'
+      filtersBindings.push(keywords)
     }
 
     if (documentsCountMin) {
@@ -71,6 +81,8 @@ module.exports = class DataContractsDAO {
         'is_system',
         'version',
         'state_transition_hash',
+        'keywords',
+        'description',
         this.knex.raw('ROW_NUMBER() OVER(PARTITION BY identifier ORDER BY version DESC) as rank')
       )
 
@@ -83,6 +95,8 @@ module.exports = class DataContractsDAO {
         'owner',
         'is_system',
         'version',
+        'keywords',
+        'description',
         this.knex.raw('COALESCE(tokens_counts.count, 0) as tokens_count')
       )
       .select(this.knex('documents')
@@ -114,7 +128,8 @@ module.exports = class DataContractsDAO {
       .select(
         'filtered_data_contracts.id', 'name', 'filtered_data_contracts.owner',
         'version', 'tx_hash', 'is_system', 'identifier', 'tokens_count',
-        'blocks.timestamp as timestamp', 'blocks.hash as block_hash', 'documents_count'
+        'blocks.timestamp as timestamp', 'blocks.hash as block_hash', 'documents_count',
+        'keywords', 'description'
       )
       .andWhereRaw(filtersQuery, filtersBindings)
       .andWhereRaw(timestampsQueryString, timestampBindings)
@@ -123,14 +138,28 @@ module.exports = class DataContractsDAO {
       .leftJoin('blocks', 'blocks.height', 'state_transitions.block_height')
       .from('filtered_data_contracts')
 
+    if (description) {
+      filteredContracts
+        .whereRaw('LOWER(description) like LOWER(? || \'%\')', convertToSqlSafeString(description))
+    }
+
     const rows = await this.knex
       .with('filtered_data_contracts', filteredContracts)
       .select(this.knex.raw('COALESCE(documents_count, 0) as documents_count'))
       .select(this.knex('filtered_data_contracts').count('*').as('total_count'))
       .select(
-        'filtered_data_contracts.id', 'name', 'tokens_count',
         'identifier', 'filtered_data_contracts.owner', 'version',
-        'filtered_data_contracts.tx_hash', 'is_system', 'timestamp', 'block_hash')
+        'filtered_data_contracts.tx_hash', 'is_system', 'timestamp', 'block_hash',
+        'filtered_data_contracts.id', 'tokens_count', 'keywords', 'description'
+      )
+      .select(
+        this.knex('data_contracts')
+          .select('name')
+          .whereRaw('data_contracts.identifier = filtered_data_contracts.identifier and name is not null')
+          .orderBy('id', 'desc')
+          .limit(1)
+          .as('name')
+      )
       .orderBy(orderByOptions)
       .limit(limit)
       .offset(fromRank)
@@ -186,8 +215,16 @@ module.exports = class DataContractsDAO {
       .with('data_contract', dataContractSubquery)
       .with('data_contract_info', dataContractInfoSubquery)
       .with('gas_sub', gasSubquery)
-      .select('data_contract.identifier as identifier', 'data_contract.name as name', 'data_contract.owner as owner',
-        'data_contract.schema as schema', 'data_contract.is_system as is_system')
+      .select('data_contract.identifier as identifier', 'data_contract.owner as owner',
+        'data_contract.schema as schema', 'data_contract.is_system as is_system', 'description', 'keywords')
+      .select(
+        this.knex('data_contract')
+          .select('name')
+          .whereRaw('name is not null')
+          .orderBy('id', 'desc')
+          .limit(1)
+          .as('name')
+      )
       .select(
         this.knex('data_contract')
           .select('version')
@@ -221,7 +258,7 @@ module.exports = class DataContractsDAO {
 
     const rows = await this.knex(dataSubquery)
       .select('identifier', 'owner', 'name', 'schema', 'is_system', 'version', 'tx_hash', 'timestamp', 'state_transition_data',
-        'documents_count', 'top_identity', 'identities_interacted', 'total_gas_used', 'average_gas_used')
+        'documents_count', 'top_identity', 'identities_interacted', 'total_gas_used', 'average_gas_used', 'description', 'keywords')
 
     const [row] = rows
 
@@ -269,12 +306,8 @@ module.exports = class DataContractsDAO {
 
       groups = (config ?? { groups: undefined }).groups
 
-      const tokenPositions = Object.keys(config?.tokens ?? {})
-
-      tokens = await Promise.all(tokenPositions.map(async (tokenPosition) => {
-        const tokenConfig = config.tokens[tokenPosition]
-
-        const tokenIdentifier = TokenConfigurationWASM.calculateTokenId(new IdentifierWASM(identifier), Number(tokenPosition))
+      tokens = await Promise.all(config?.tokens.map(async (tokenConfig) => {
+        const tokenIdentifier = TokenConfigurationWASM.calculateTokenId(new IdentifierWASM(identifier), Number(tokenConfig.position))
 
         const tokenTotalSupply = await this.sdk.tokens.getTokenTotalSupply(tokenIdentifier.base58())
 
@@ -282,22 +315,22 @@ module.exports = class DataContractsDAO {
           identifier: tokenIdentifier.base58(),
           dataContractIdentifier: identifier,
           owner: dataContract.owner,
-          position: Number(tokenPosition),
+          position: tokenConfig.position,
           totalSupply: tokenTotalSupply?.totalSystemAmount.toString(),
-          description: tokenConfig?.description,
-          localizations: tokenConfig?.conventions?.localizations,
-          decimals: tokenConfig?.conventions?.decimals,
-          baseSupply: tokenConfig?.baseSupply.toString(),
-          maxSupply: tokenConfig?.maxSupply?.toString(),
-          mintable: tokenConfig?.manualMintingRules?.authorizedToMakeChange.getTakerType() !== 'NoOne',
-          burnable: tokenConfig?.manualBurningRules?.authorizedToMakeChange.getTakerType() !== 'NoOne',
-          freezable: tokenConfig?.freezeRules?.authorizedToMakeChange.getTakerType() !== 'NoOne',
-          changeMaxSupply: tokenConfig?.maxSupplyChangeRules?.authorizedToMakeChange.getTakerType() !== 'NoOne',
-          unfreezable: tokenConfig?.unfreezeRules?.authorizedToMakeChange.getTakerType() !== 'NoOne',
-          destroyable: tokenConfig?.destroyFrozenFundsRules?.authorizedToMakeChange.getTakerType() !== 'NoOne',
-          allowedEmergencyActions: tokenConfig?.emergencyActionRules?.authorizedToMakeChange.getTakerType() !== 'NoOne',
-          distributionType: tokenConfig?.distributionRules?.perpetualDistribution?.distributionType?.getDistribution()?.constructor?.name?.slice(0, -4) ?? null,
-          mainGroup: tokenConfig?.mainControlGroup
+          description: tokenConfig.tokenConfiguration?.description,
+          localizations: tokenConfig.tokenConfiguration?.conventions?.localizations,
+          decimals: tokenConfig.tokenConfiguration?.conventions?.decimals,
+          baseSupply: tokenConfig.tokenConfiguration?.baseSupply.toString(),
+          maxSupply: tokenConfig.tokenConfiguration?.maxSupply?.toString(),
+          mintable: tokenConfig.tokenConfiguration?.manualMintingRules?.authorizedToMakeChange.getTakerType() !== 'NoOne',
+          burnable: tokenConfig.tokenConfiguration?.manualBurningRules?.authorizedToMakeChange.getTakerType() !== 'NoOne',
+          freezable: tokenConfig.tokenConfiguration?.freezeRules?.authorizedToMakeChange.getTakerType() !== 'NoOne',
+          changeMaxSupply: tokenConfig.tokenConfiguration?.maxSupplyChangeRules?.authorizedToMakeChange.getTakerType() !== 'NoOne',
+          unfreezable: tokenConfig.tokenConfiguration?.unfreezeRules?.authorizedToMakeChange.getTakerType() !== 'NoOne',
+          destroyable: tokenConfig.tokenConfiguration?.destroyFrozenFundsRules?.authorizedToMakeChange.getTakerType() !== 'NoOne',
+          allowedEmergencyActions: tokenConfig.tokenConfiguration?.emergencyActionRules?.authorizedToMakeChange.getTakerType() !== 'NoOne',
+          distributionType: tokenConfig.tokenConfiguration?.distributionRules?.perpetualDistribution?.distributionType?.getDistribution()?.constructor?.name?.slice(0, -4) ?? null,
+          mainGroup: tokenConfig.tokenConfiguration?.mainControlGroup
         })
       }))
     } catch (error) {
@@ -308,7 +341,7 @@ module.exports = class DataContractsDAO {
       ...dataContract,
       groups,
       tokens,
-      tokensCount: tokens?.length
+      tokensCount: tokens?.length ?? 0
     })
   }
 
@@ -380,8 +413,8 @@ module.exports = class DataContractsDAO {
     const rows = await this.knex('data_contracts')
       .select(
         'data_contracts.identifier as identifier', 'data_contracts.name as name',
-        'data_contracts.owner as owner', 'data_contracts.is_system as is_system',
-        'data_contracts.version as version', 'data_contracts.schema as schema',
+        'data_contracts.owner as owner', 'data_contracts.is_system as is_system', 'keywords',
+        'data_contracts.version as version', 'data_contracts.schema as schema', 'description',
         'data_contracts.state_transition_hash as tx_hash', 'blocks.timestamp as timestamp'
       )
       .select(
@@ -466,5 +499,37 @@ module.exports = class DataContractsDAO {
     const [row] = rows
 
     return new PaginatedResultSet(resultSet, page, limit, Number(row?.total_count ?? 0))
+  }
+
+  getDataContractByKeywordsString = async (rawKeywords) => {
+    const keywords = rawKeywords.split(' ')
+
+    const rows = await this.knex('data_contracts')
+      .select(
+        'data_contracts.identifier as identifier', 'data_contracts.name as name',
+        'data_contracts.owner as owner', 'data_contracts.is_system as is_system', 'keywords',
+        'data_contracts.version as version', 'data_contracts.schema as schema', 'description',
+        'data_contracts.state_transition_hash as tx_hash', 'blocks.timestamp as timestamp'
+      )
+      .whereRaw('keywords @> ?', [keywords])
+      .leftJoin('state_transitions', 'state_transitions.hash', 'data_contracts.state_transition_hash')
+      .leftJoin('blocks', 'state_transitions.block_hash', 'blocks.hash')
+
+    return rows.map(DataContract.fromRow)
+  }
+
+  getDataContractByDescription = async (description) => {
+    const rows = await this.knex('data_contracts')
+      .select(
+        'data_contracts.identifier as identifier', 'data_contracts.name as name',
+        'data_contracts.owner as owner', 'data_contracts.is_system as is_system', 'keywords',
+        'data_contracts.version as version', 'data_contracts.schema as schema', 'description',
+        'data_contracts.state_transition_hash as tx_hash', 'blocks.timestamp as timestamp'
+      )
+      .whereRaw('LOWER(description) like LOWER(? || \'%\')', convertToSqlSafeString(description))
+      .leftJoin('state_transitions', 'state_transitions.hash', 'data_contracts.state_transition_hash')
+      .leftJoin('blocks', 'state_transitions.block_hash', 'blocks.hash')
+
+    return rows.map(DataContract.fromRow)
   }
 }

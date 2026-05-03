@@ -9,7 +9,9 @@ const COLUMN_TITLES = {
   [categoryMap.dataContracts]: ['Owner', 'Time'],
   [categoryMap.blocks]: ['Height', 'Time'],
   [categoryMap.documents]: ['Identity', 'Time'],
-  [categoryMap.transactions]: ['Status', 'Time']
+  [categoryMap.transactions]: ['Status', 'Time'],
+  [categoryMap.tokens]: ['Owner', 'Time'],
+  [categoryMap.platformAddresses]: ['Txs']
 }
 
 function ListCategory ({ type, data, onItemClick }) {

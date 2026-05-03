@@ -127,11 +127,11 @@ class ValidatorsController {
       last_proposed_block_hash: lastProposedBlockHash
     } = request.query
 
-    if (blocksProposedMin && blocksProposedMax && blocksProposedMin > blocksProposedMax) {
+    if (blocksProposedMin > blocksProposedMax) {
       return response.status(400).send({ message: 'Bad blocks proposed range' })
     }
 
-    if (lastProposedBlockHeightMin && lastProposedBlockHeightMax && lastProposedBlockHeightMin > lastProposedBlockHeightMax) {
+    if (lastProposedBlockHeightMin > lastProposedBlockHeightMax) {
       return response.status(400).send({ message: 'Bad last proposed block height range' })
     }
 

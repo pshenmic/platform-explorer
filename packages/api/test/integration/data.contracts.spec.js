@@ -63,7 +63,9 @@ describe('DataContracts routes', () => {
       const dataContract = await fixtures.dataContract(knex, {
         state_transition_hash: null,
         is_system: true,
-        owner: identity.identifier
+        owner: identity.identifier,
+        description: 'Data contract with description',
+        keywords: i % 2 === 0 ? ['test', 'experimental'] : ['test']
       })
 
       dataContracts.push({ transaction: null, block: null, dataContract })
@@ -226,7 +228,9 @@ describe('DataContracts routes', () => {
             identitiesInteracted: null,
             topIdentity: null,
             totalGasUsed: null,
-            tokens: null
+            tokens: null,
+            description: dataContract.description ?? null,
+            keywords: dataContract.keywords ?? []
           }
         })
 
@@ -280,7 +284,9 @@ describe('DataContracts routes', () => {
             identitiesInteracted: null,
             topIdentity: null,
             totalGasUsed: null,
-            tokens: null
+            tokens: null,
+            description: dataContract.description ?? null,
+            keywords: dataContract.keywords ?? []
           }
         })
 
@@ -334,7 +340,9 @@ describe('DataContracts routes', () => {
             identitiesInteracted: null,
             topIdentity: null,
             totalGasUsed: null,
-            tokens: null
+            tokens: null,
+            description: dataContract.description ?? null,
+            keywords: dataContract.keywords ?? []
           }
         })
 
@@ -388,7 +396,9 @@ describe('DataContracts routes', () => {
             identitiesInteracted: null,
             topIdentity: null,
             totalGasUsed: null,
-            tokens: null
+            tokens: null,
+            description: dataContract.description ?? null,
+            keywords: dataContract.keywords ?? []
           }
         })
 
@@ -443,7 +453,9 @@ describe('DataContracts routes', () => {
             identitiesInteracted: null,
             topIdentity: null,
             totalGasUsed: null,
-            tokens: null
+            tokens: null,
+            description: dataContract.description ?? null,
+            keywords: dataContract.keywords ?? []
           }
         })
 
@@ -499,7 +511,9 @@ describe('DataContracts routes', () => {
             identitiesInteracted: null,
             topIdentity: null,
             totalGasUsed: null,
-            tokens: null
+            tokens: null,
+            description: dataContract.description ?? null,
+            keywords: dataContract.keywords ?? []
           }
         })
 
@@ -555,7 +569,9 @@ describe('DataContracts routes', () => {
             identitiesInteracted: null,
             topIdentity: null,
             totalGasUsed: null,
-            tokens: null
+            tokens: null,
+            description: dataContract.description ?? null,
+            keywords: dataContract.keywords ?? []
           }
         })
 
@@ -611,7 +627,9 @@ describe('DataContracts routes', () => {
             identitiesInteracted: null,
             topIdentity: null,
             totalGasUsed: null,
-            tokens: null
+            tokens: null,
+            description: dataContract.description ?? null,
+            keywords: dataContract.keywords ?? []
           }
         })
 
@@ -671,7 +689,9 @@ describe('DataContracts routes', () => {
             identitiesInteracted: null,
             topIdentity: null,
             totalGasUsed: null,
-            tokens: null
+            tokens: null,
+            description: dataContract.description ?? null,
+            keywords: dataContract.keywords ?? []
           }
         })
 
@@ -732,7 +752,9 @@ describe('DataContracts routes', () => {
             identitiesInteracted: null,
             topIdentity: null,
             totalGasUsed: null,
-            tokens: null
+            tokens: null,
+            description: dataContract.description ?? null,
+            keywords: dataContract.keywords ?? []
           }
         })
 
@@ -791,12 +813,115 @@ describe('DataContracts routes', () => {
             identitiesInteracted: null,
             topIdentity: null,
             totalGasUsed: null,
-            tokens: null
+            tokens: null,
+            description: dataContract.description ?? null,
+            keywords: dataContract.keywords ?? []
           }
         })
 
       assert.equal(body.resultSet.length, 1)
       assert.equal(body.pagination.total, 1)
+      assert.equal(body.pagination.page, 1)
+      assert.equal(body.pagination.limit, 10)
+
+      assert.deepEqual(body.resultSet, expectedDataContracts)
+    })
+
+    it('should return set of data contracts with filter by description (desc)', async () => {
+      const { body } = await client.get('/dataContracts?order=desc&description=DaTa CoNtRaCt WiTh')
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      const allContracts = [...dataContracts, ...diferentVersionsDataContract]
+
+      const expectedDataContracts = dataContracts
+        .filter(({ dataContract }) => dataContract.description?.toLowerCase().includes('data contract with'))
+        .sort((a, b) => (b.dataContract.id - a.dataContract.id))
+        .slice(0, 10)
+        .map(({ dataContract, token }) => {
+          const [contractFirstVersion] = allContracts
+            .filter(({ dataContract: contract }) => contract.identifier === dataContract.identifier)
+            .sort((a, b) => a.dataContract.version - b.dataContract.version)
+
+          const [contractLastVersion] = allContracts
+            .filter(({ dataContract: contract }) => contract.identifier === dataContract.identifier)
+            .sort((a, b) => b.dataContract.version - a.dataContract.version)
+
+          return {
+            identifier: dataContract.identifier,
+            name: dataContract.name,
+            owner: identity.identifier,
+            schema: null,
+            groups: null,
+            version: contractLastVersion.dataContract.version,
+            txHash: dataContract.is_system ? null : contractFirstVersion.transaction.hash,
+            timestamp: dataContract.is_system ? null : contractFirstVersion.block.timestamp.toISOString(),
+            isSystem: dataContract.is_system,
+            documentsCount: dataContract.documents.length,
+            tokensCount: token ? 1 : 0,
+            averageGasUsed: null,
+            identitiesInteracted: null,
+            topIdentity: null,
+            totalGasUsed: null,
+            tokens: null,
+            description: dataContract.description ?? null,
+            keywords: dataContract.keywords ?? []
+          }
+        })
+
+      assert.equal(body.resultSet.length, 5)
+      assert.equal(body.pagination.total, 5)
+      assert.equal(body.pagination.page, 1)
+      assert.equal(body.pagination.limit, 10)
+
+      assert.deepEqual(body.resultSet, expectedDataContracts)
+    })
+
+    it('should return set of data contracts with filter by description and keywords (desc)', async () => {
+      const { body } = await client.get('/dataContracts?order=desc&description=DaTa CoNtRaCt WiTh&keywords=experimental&keywords=test')
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      const allContracts = [...dataContracts, ...diferentVersionsDataContract]
+
+      const expectedDataContracts = dataContracts
+        .filter(({ dataContract }) => dataContract.description?.toLowerCase().includes('data contract with'))
+        .filter(({ dataContract }) => dataContract.keywords?.includes('experimental') && dataContract.keywords?.includes('test'))
+        .sort((a, b) => (b.dataContract.id - a.dataContract.id))
+        .slice(0, 10)
+        .map(({ dataContract, token }) => {
+          const [contractFirstVersion] = allContracts
+            .filter(({ dataContract: contract }) => contract.identifier === dataContract.identifier)
+            .sort((a, b) => a.dataContract.version - b.dataContract.version)
+
+          const [contractLastVersion] = allContracts
+            .filter(({ dataContract: contract }) => contract.identifier === dataContract.identifier)
+            .sort((a, b) => b.dataContract.version - a.dataContract.version)
+
+          return {
+            identifier: dataContract.identifier,
+            name: dataContract.name,
+            owner: identity.identifier,
+            schema: null,
+            groups: null,
+            version: contractLastVersion.dataContract.version,
+            txHash: dataContract.is_system ? null : contractFirstVersion.transaction.hash,
+            timestamp: dataContract.is_system ? null : contractFirstVersion.block.timestamp.toISOString(),
+            isSystem: dataContract.is_system,
+            documentsCount: dataContract.documents.length,
+            tokensCount: token ? 1 : 0,
+            averageGasUsed: null,
+            identitiesInteracted: null,
+            topIdentity: null,
+            totalGasUsed: null,
+            tokens: null,
+            description: dataContract.description ?? null,
+            keywords: dataContract.keywords ?? []
+          }
+        })
+
+      assert.equal(body.resultSet.length, 3)
+      assert.equal(body.pagination.total, 3)
       assert.equal(body.pagination.page, 1)
       assert.equal(body.pagination.limit, 10)
 
@@ -850,7 +975,9 @@ describe('DataContracts routes', () => {
           ]
         },
         totalGasUsed: 0,
-        tokens: []
+        tokens: null,
+        description: dataContract.dataContract.description ?? null,
+        keywords: dataContract.dataContract.keywords ?? []
       }
 
       assert.deepEqual(body, expectedDataContract)
@@ -907,7 +1034,9 @@ describe('DataContracts routes', () => {
           ]
         },
         totalGasUsed: 0,
-        tokens: []
+        tokens: null,
+        description: dataContract.dataContract.description ?? null,
+        keywords: dataContract.dataContract.keywords ?? []
       }
 
       assert.deepEqual(body, expectedDataContract)
