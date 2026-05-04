@@ -1,3 +1,4 @@
+// @ts-nocheck — TODO: type this module incrementally
 const pad2 = (n) => String(n).padStart(2, '0')
 const DATE_RE = /^(\d{2})_(\d{2})_(\d{4})$/
 
