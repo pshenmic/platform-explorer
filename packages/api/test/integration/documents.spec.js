@@ -623,10 +623,45 @@ describe('Documents routes', () => {
     })
 
     it('should filter documents by revision range', async () => {
-      // fixtures default to revision=0, so any revision_min>=1 yields no results
-      const { body } = await client.get(`/dataContract/${dataContract.identifier}/documents?revision_min=1`)
+      const tx = await fixtures.transaction(knex, {
+        block_hash: block.hash,
+        block_height: block.height,
+        type: StateTransitionEnum.BATCH,
+        owner: identity.identifier
+      })
+
+      const rev1 = await fixtures.document(knex, {
+        data_contract_id: dataContract.id,
+        owner: identity.identifier,
+        state_transition_hash: tx.hash,
+        revision: 1
+      })
+      const rev2 = await fixtures.document(knex, {
+        data_contract_id: dataContract.id,
+        owner: identity.identifier,
+        state_transition_hash: tx.hash,
+        revision: 2
+      })
+      const rev3 = await fixtures.document(knex, {
+        data_contract_id: dataContract.id,
+        owner: identity.identifier,
+        state_transition_hash: tx.hash,
+        revision: 3
+      })
+
+      const { body: minTwo } = await client.get(`/dataContract/${dataContract.identifier}/documents?revision_min=2&limit=100`)
         .expect(200)
-      assert.equal(body.pagination.total, 0)
+      const minTwoIds = new Set(minTwo.resultSet.map(r => r.identifier))
+      assert.ok(minTwoIds.has(rev2.identifier))
+      assert.ok(minTwoIds.has(rev3.identifier))
+      assert.ok(!minTwoIds.has(rev1.identifier))
+
+      const { body: exactTwo } = await client.get(`/dataContract/${dataContract.identifier}/documents?revision_min=2&revision_max=2&limit=100`)
+        .expect(200)
+      const exactTwoIds = new Set(exactTwo.resultSet.map(r => r.identifier))
+      assert.ok(exactTwoIds.has(rev2.identifier))
+      assert.ok(!exactTwoIds.has(rev1.identifier))
+      assert.ok(!exactTwoIds.has(rev3.identifier))
     })
 
     it('should reject revision below 1', async () => {
