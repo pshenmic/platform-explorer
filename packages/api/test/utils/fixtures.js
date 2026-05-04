@@ -153,49 +153,46 @@ const fixtures = {
     state_transition_hash,
     revision,
     owner,
-    is_system,
-    masternode = false
+    is_system
   } = {}) {
     if (!identifier) {
       identifier = generateIdentifier()
     }
 
+    if (!block_hash) {
+      throw Error('Block hash must be provided')
+    }
+
+    if (!block_height) {
+      throw Error('Block height must be provided')
+    }
+
     let transaction
     let temp
 
-    if (!masternode) {
-      if (!block_hash) {
-        throw Error('Block hash must be provided')
-      }
-
-      if (!block_height) {
-        throw Error('Block height must be provided')
-      }
-
-      if (!state_transition_hash) {
-        transaction = await fixtures.transaction(knex, {
-          block_hash,
-          block_height,
-          owner: identifier,
-          type: StateTransitionEnum.IDENTITY_CREATE
-        })
-      } else {
-        temp = await fixtures.getStateTransition(knex, { hash: state_transition_hash })
-      }
+    if (!state_transition_hash) {
+      transaction = await fixtures.transaction(knex, {
+        block_hash,
+        block_height,
+        owner: identifier,
+        type: StateTransitionEnum.IDENTITY_CREATE
+      })
+    } else {
+      temp = await fixtures.getStateTransition(knex, { hash: state_transition_hash })
     }
 
     const row = {
       identifier,
       revision: revision ?? 0,
-      state_transition_hash: masternode ? null : (state_transition_hash ?? transaction.hash),
-      state_transition_id: masternode ? null : (transaction?.id ?? temp?.id),
+      state_transition_hash: state_transition_hash ?? transaction.hash,
+      state_transition_id: transaction?.id ?? temp?.id,
       owner: owner ?? identifier,
       is_system: is_system ?? false
     }
 
     const result = await knex('identities').insert(row).returning('id')
 
-    return { ...row, txHash: row.state_transition_hash, id: result[0].id, transaction }
+    return { ...row, txHash: state_transition_hash ?? transaction.hash, id: result[0].id, transaction }
   },
 
   identity_alias: async function (knex, { alias, identity, block_hash, state_transition_hash } = {}) {

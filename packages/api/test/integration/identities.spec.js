@@ -1099,55 +1099,84 @@ describe('Identities routes', () => {
       assert.deepEqual(body.resultSet, expectedIdentities)
     })
 
-    it('should hide masternode identities by default', async () => {
+    it('should return all identities when include_masternodes is omitted', async () => {
       const regular = []
       const masternode = []
 
       for (let i = 0; i < 5; i++) {
         block = await fixtures.block(knex, { height: i + 1, timestamp: new Date(0) })
         identity = await fixtures.identity(knex, { block_hash: block.hash, block_height: block.height })
-        regular.push({ identity, block })
+        regular.push(identity.identifier)
       }
 
       for (let i = 0; i < 5; i++) {
-        identity = await fixtures.identity(knex, { masternode: true })
-        masternode.push({ identity })
+        block = await fixtures.block(knex, { height: 100 + i, timestamp: new Date(0) })
+        identity = await fixtures.identity(knex, { block_hash: block.hash, block_height: block.height })
+        await knex('identities').where('id', identity.id).update({ state_transition_hash: null, state_transition_id: null })
+        masternode.push(identity.identifier)
       }
 
       const { body } = await client.get('/identities')
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
-      assert.equal(body.pagination.total, regular.length)
-      assert.equal(body.resultSet.length, regular.length)
-
-      const returnedIdentifiers = body.resultSet.map(r => r.identifier)
-      const masternodeIdentifiers = masternode.map(m => m.identity.identifier)
-      for (const mn of masternodeIdentifiers) {
-        assert.equal(returnedIdentifiers.includes(mn), false)
-      }
+      assert.equal(body.pagination.total, regular.length + masternode.length)
     })
 
-    it('should include masternode identities when include_masternodes=true', async () => {
-      const all = []
+    it('should return only non-masternode identities when include_masternodes=false', async () => {
+      const regular = []
+      const masternode = []
 
       for (let i = 0; i < 5; i++) {
         block = await fixtures.block(knex, { height: i + 1, timestamp: new Date(0) })
         identity = await fixtures.identity(knex, { block_hash: block.hash, block_height: block.height })
-        all.push(identity.identifier)
+        regular.push(identity.identifier)
       }
 
       for (let i = 0; i < 5; i++) {
-        identity = await fixtures.identity(knex, { masternode: true })
-        all.push(identity.identifier)
+        block = await fixtures.block(knex, { height: 200 + i, timestamp: new Date(0) })
+        identity = await fixtures.identity(knex, { block_hash: block.hash, block_height: block.height })
+        await knex('identities').where('id', identity.id).update({ state_transition_hash: null, state_transition_id: null })
+        masternode.push(identity.identifier)
+      }
+
+      const { body } = await client.get('/identities?include_masternodes=false')
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      assert.equal(body.pagination.total, regular.length)
+      const returnedIdentifiers = body.resultSet.map(r => r.identifier)
+      for (const mn of masternode) {
+        assert.equal(returnedIdentifiers.includes(mn), false)
+      }
+    })
+
+    it('should return only masternode identities when include_masternodes=true', async () => {
+      const regular = []
+      const masternode = []
+
+      for (let i = 0; i < 5; i++) {
+        block = await fixtures.block(knex, { height: i + 1, timestamp: new Date(0) })
+        identity = await fixtures.identity(knex, { block_hash: block.hash, block_height: block.height })
+        regular.push(identity.identifier)
+      }
+
+      for (let i = 0; i < 5; i++) {
+        block = await fixtures.block(knex, { height: 300 + i, timestamp: new Date(0) })
+        identity = await fixtures.identity(knex, { block_hash: block.hash, block_height: block.height })
+        await knex('identities').where('id', identity.id).update({ state_transition_hash: null, state_transition_id: null })
+        masternode.push(identity.identifier)
       }
 
       const { body } = await client.get('/identities?include_masternodes=true')
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
-      assert.equal(body.pagination.total, all.length)
-      assert.equal(body.resultSet.length, all.length)
+      assert.equal(body.pagination.total, masternode.length)
+      const returnedIdentifiers = body.resultSet.map(r => r.identifier)
+      for (const reg of regular) {
+        assert.equal(returnedIdentifiers.includes(reg), false)
+      }
     })
   })
 

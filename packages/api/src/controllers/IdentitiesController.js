@@ -50,7 +50,7 @@ class IdentitiesController {
       data_contracts_max: dataContractsMax,
       balance_min: balanceMin,
       balance_max: balanceMax,
-      include_masternodes: includeMasternodes = false
+      include_masternodes: includeMasternodes
     } = request.query
 
     if (txCountMin > txCountMax) {
