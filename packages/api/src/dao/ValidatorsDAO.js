@@ -252,7 +252,7 @@ module.exports = class ValidatorsDAO {
       .from(this.knex.raw(`generate_series(${startSql}, ${endSql}, '${interval}'::interval) date_to`))
       .select('date_to', this.knex.raw(`LAG(date_to, 1, '${start.toISOString()}'::timestamptz) over (order by date_to asc) date_from`))
 
-    const rows = await this.knex.with('ranges', ranges)
+    const subquery = this.knex.with('ranges', ranges)
       .select('date_from')
       .select(
         this.knex('blocks')
@@ -263,11 +263,20 @@ module.exports = class ValidatorsDAO {
       )
       .from('ranges')
 
+    const rows = await this.knex
+      .with('subquery', subquery)
+      .select('date_from', 'blocks_count')
+      .select(
+        this.knex.raw('SUM(blocks_count) OVER (ORDER BY date_from) AS running_total')
+      )
+      .from('subquery')
+
     return rows
       .map(row => ({
         timestamp: row.date_from,
         data: {
-          blocksCount: parseInt(row.blocks_count)
+          blocksCount: Number(row.blocks_count),
+          runningTotal: Number(row.running_total ?? 0)
         }
       }))
       .map(({ timestamp, data }) => new SeriesData(timestamp, data))
@@ -282,7 +291,7 @@ module.exports = class ValidatorsDAO {
       .from(this.knex.raw(`generate_series(${startSql}, ${endSql}, '${interval}'::interval) date_to`))
       .select('date_to', this.knex.raw(`LAG(date_to, 1, '${start.toISOString()}'::timestamptz) over (order by date_to asc) date_from`))
 
-    const rows = await this.knex.with('ranges', ranges)
+    const subquery = this.knex.with('ranges', ranges)
       .select('date_from')
       .select(
         this.knex('blocks')
@@ -294,12 +303,21 @@ module.exports = class ValidatorsDAO {
       )
       .from('ranges')
 
+    const rows = await this.knex
+      .with('subquery', subquery)
+      .select('date_from', 'gas_used')
+      .select(
+        this.knex.raw('SUM(gas_used) OVER (ORDER BY date_from) AS running_total')
+      )
+      .from('subquery')
+
     return rows
       .slice(1)
       .map(row => ({
         timestamp: row.date_from,
         data: {
-          reward: parseInt(row.gas_used ?? 0)
+          reward: Number(row.gas_used ?? 0),
+          runningTotal: Number(row.running_total ?? 0)
         }
       }))
       .map(({ timestamp, data }) => new SeriesData(timestamp, data))
