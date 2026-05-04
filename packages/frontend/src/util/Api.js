@@ -237,8 +237,8 @@ const getIdentities = (page = 1, limit = 30, order = 'asc', orderBy, { includeMa
     order,
     order_by: orderBy,
     // includeMasternodes=true (Show all toggle on) → omit param so backend returns everything
-    // includeMasternodes=false (default) → send 'false' to keep only non-masternode identities
-    include_masternodes: includeMasternodes ? null : 'false'
+    // includeMasternodes=false (default) → request only regular identities
+    identity_type: includeMasternodes ? null : 'regular'
   })
   return call(`identities?${params.toString()}`, 'GET')
 }
