@@ -102,7 +102,7 @@ class DocumentsController {
       timestamp_end: timestampEnd
     } = request.query
 
-    if (revisionMin != null && revisionMax != null && Number(revisionMin) > Number(revisionMax)) {
+    if (revisionMin != null && revisionMax != null && revisionMin > revisionMax) {
       return response.status(400).send('Bad revision range')
     }
 
@@ -116,13 +116,11 @@ class DocumentsController {
       Number(page ?? 1),
       Number(limit ?? 10),
       order,
-      {
-        owner,
-        revisionMin: revisionMin != null ? Number(revisionMin) : null,
-        revisionMax: revisionMax != null ? Number(revisionMax) : null,
-        timestampStart,
-        timestampEnd
-      }
+      owner,
+      revisionMin,
+      revisionMax,
+      timestampStart,
+      timestampEnd
     )
 
     response.send(documents)

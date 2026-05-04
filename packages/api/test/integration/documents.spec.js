@@ -623,13 +623,15 @@ describe('Documents routes', () => {
     })
 
     it('should filter documents by revision range', async () => {
-      const { body: lo } = await client.get(`/dataContract/${dataContract.identifier}/documents?revision_min=0`)
+      // fixtures default to revision=0, so any revision_min>=1 yields no results
+      const { body } = await client.get(`/dataContract/${dataContract.identifier}/documents?revision_min=1`)
         .expect(200)
-      assert.equal(lo.pagination.total, 55)
+      assert.equal(body.pagination.total, 0)
+    })
 
-      const { body: hi } = await client.get(`/dataContract/${dataContract.identifier}/documents?revision_min=1`)
-        .expect(200)
-      assert.equal(hi.pagination.total, 0)
+    it('should reject revision below 1', async () => {
+      await client.get(`/dataContract/${dataContract.identifier}/documents?revision_min=0`)
+        .expect(400)
     })
 
     it('should reject inverted revision range', async () => {

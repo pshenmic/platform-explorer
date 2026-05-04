@@ -95,9 +95,7 @@ module.exports = class DocumentsDAO {
     }
   }
 
-  getDocumentsByDataContract = async (identifier, typeName, page, limit, order, filters = {}) => {
-    const { owner, revisionMin, revisionMax, timestampStart, timestampEnd } = filters
-
+  getDocumentsByDataContract = async (identifier, typeName, page, limit, order, owner, revisionMin, revisionMax, timestampStart, timestampEnd) => {
     const fromRank = ((page - 1) * limit) + 1
     const toRank = fromRank + limit - 1
 
