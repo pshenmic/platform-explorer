@@ -135,7 +135,7 @@ module.exports = class DocumentsDAO {
     const rankOneFiltered = this.knex.with('with_alias', subquery)
       .select('with_alias.id as id', 'with_alias.identifier as identifier', 'document_owner', 'revision', 'data_contract_identifier',
         'tx_hash', 'deleted', 'is_system', 'document_data', 'document_type_name', 'transition_type', 'prefunded_voting_balance',
-        'blocks.timestamp as block_timestamp', 'state_transitions.gas_used as gas_used')
+        'blocks.timestamp as block_timestamp')
       .from('with_alias')
       .where('rank', '1')
       .leftJoin('state_transitions', 'state_transitions.hash', 'with_alias.tx_hash')
@@ -151,7 +151,7 @@ module.exports = class DocumentsDAO {
     const filteredDocuments = this.knex(rankOneFiltered)
       .select('id', 'identifier', 'document_owner', 'revision', 'data_contract_identifier',
         'tx_hash', 'deleted', 'is_system', 'document_data', 'document_type_name', 'transition_type',
-        'prefunded_voting_balance', 'block_timestamp', 'gas_used')
+        'prefunded_voting_balance', 'block_timestamp')
       .select(this.knex.raw('count(*) over () as total_count'))
       .select(this.knex.raw(`rank() over (order by id ${order}) row_number`))
       .as('documents')
@@ -159,7 +159,7 @@ module.exports = class DocumentsDAO {
     const rows = await this.knex(filteredDocuments)
       .select('documents.id as id', 'documents.identifier as identifier', 'document_owner', 'row_number', 'revision', 'data_contract_identifier',
         'tx_hash', 'deleted', 'document_data', 'total_count', 'is_system', 'block_timestamp as timestamp', 'prefunded_voting_balance',
-        'document_type_name', 'transition_type', 'gas_used')
+        'document_type_name', 'transition_type')
       .whereBetween('row_number', [fromRank, toRank])
       .leftJoin(filterDataSubquery, 'documents.identifier', '=', 'documents_data.identifier')
       .orderBy('id', order)

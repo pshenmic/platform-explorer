@@ -623,9 +623,10 @@ describe('Documents routes', () => {
     })
 
     it('should filter documents by revision range', async () => {
+      const isolatedBlock = await fixtures.block(knex, { height: 999, timestamp: new Date('2026-01-01') })
       const tx = await fixtures.transaction(knex, {
-        block_hash: block.hash,
-        block_height: block.height,
+        block_hash: isolatedBlock.hash,
+        block_height: isolatedBlock.height,
         type: StateTransitionEnum.BATCH,
         owner: identity.identifier
       })
