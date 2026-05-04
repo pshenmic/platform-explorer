@@ -1,5 +1,5 @@
-// Базовые типы ответов platform-explorer API.
-// Расширяем по мере того как доходят руки до соответствующих компонентов.
+// Response types for the platform-explorer API.
+// Extended incrementally as components get migrated.
 
 export interface Pagination {
   page: number
