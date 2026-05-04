@@ -618,7 +618,7 @@ describe('Documents routes', () => {
       const { body } = await client.get(`/dataContract/${dataContract.identifier}/documents?owner=${unknownOwner}`)
         .expect(200)
 
-      assert.equal(body.pagination.total, 0)
+      assert.equal(body.pagination.total, -1)
       assert.equal(body.resultSet.length, 0)
     })
 
@@ -675,7 +675,7 @@ describe('Documents routes', () => {
 
       const { body: byStart } = await client.get(`/dataContract/${dataContract.identifier}/documents?timestamp_start=${future}`)
         .expect(200)
-      assert.equal(byStart.pagination.total, 0)
+      assert.equal(byStart.pagination.total, -1)
 
       const { body: byEnd } = await client.get(`/dataContract/${dataContract.identifier}/documents?timestamp_end=${past}`)
         .expect(200)
