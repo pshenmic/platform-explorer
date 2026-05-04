@@ -91,10 +91,10 @@ function Validator ({ hash }) {
 
     setWithdrawals(state => ({ ...state, loading: true }))
 
-    Api.getWithdrawalsByIdentity(validator.data.identity, withdrawals.props.currentPage + 1, pageSize, 'desc')
+    Api.getWithdrawalsByIdentity(validator.data.identity, 1, 100, 'desc')
       .then(res => fetchHandlerSuccess(setWithdrawals, res))
       .catch(err => fetchHandlerError(setWithdrawals, err))
-  }, [validator, withdrawals.props.currentPage])
+  }, [validator])
 
   const handlePageClick = useCallback(({ selected }) => {
     setCurrentPage(selected)
@@ -105,6 +105,14 @@ function Validator ({ hash }) {
     setCurrentPage(0)
     handlePageClick({ selected: 0 })
   }, [pageSize, handlePageClick])
+
+  const withdrawalsAll = withdrawals?.data?.resultSet || []
+  const withdrawalsPage = withdrawals.props.currentPage
+  const visibleWithdrawals = withdrawalsAll.slice(
+    withdrawalsPage * pageSize,
+    (withdrawalsPage + 1) * pageSize
+  )
+  const withdrawalsPageCount = Math.max(1, Math.ceil(withdrawalsAll.length / pageSize))
 
   return (
     <PageDataContainer
@@ -494,7 +502,7 @@ function Validator ({ hash }) {
                     ? <div className={'ValidatorPage__List'}>
                         {!withdrawals.loading
                           ? <WithdrawalsList
-                              withdrawals={withdrawals?.data?.resultSet || Object.values(withdrawals.data) || []}
+                              withdrawals={visibleWithdrawals}
                               l1explorerBaseUrl={l1explorerBaseUrl}
                               rate={rate.data}
                               defaultPayoutAddress={validator.data?.proTxInfo?.state?.payoutAddress}
@@ -506,12 +514,12 @@ function Validator ({ hash }) {
                     : <ErrorMessageBlock/>
                   }
 
-                  {withdrawals.data?.resultSet &&
+                  {withdrawalsAll.length > 0 &&
                     <div className={'ValidatorPage__ListPagination'}>
                       <Pagination
                         onPageChange={pagination => paginationHandler(setWithdrawals, pagination.selected)}
-                        pageCount={Math.ceil(withdrawals.data?.pagination?.total / pageSize) || 1}
-                        forcePage={currentPage}
+                        pageCount={withdrawalsPageCount}
+                        forcePage={withdrawalsPage}
                         pageRangeDisplayed={0}
                       />
                     </div>
