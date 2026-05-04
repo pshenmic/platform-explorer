@@ -230,8 +230,15 @@ const getIdentity = (identifier) => {
   return call(`identity/${identifier}`, 'GET')
 }
 
-const getIdentities = (page = 1, limit = 30, order = 'asc', orderBy) => {
-  return call(`identities?page=${page}&limit=${limit}&order=${order}${orderBy ? `&order_by=${orderBy}` : ''}`, 'GET')
+const getIdentities = (page = 1, limit = 30, order = 'asc', orderBy, { includeMasternodes = false } = {}) => {
+  const params = prepareQueryParams({
+    page,
+    limit,
+    order,
+    order_by: orderBy,
+    include_masternodes: includeMasternodes ? 'true' : null
+  })
+  return call(`identities?${params.toString()}`, 'GET')
 }
 
 const getIdentitiesHistory = (start, end, intervalsCount) => {
