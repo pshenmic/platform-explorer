@@ -1,0 +1,23 @@
+@import 'variables';
+
+.label {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    width: 100%;
+    align-items: center;
+    justify-content: center;
+
+    .text {
+        color: #93AAB2;
+        font-family: $font-mono;
+        font-weight: 400;
+        font-size: 12px;
+        line-height: 110%;
+        margin: 0;
+    }
+
+    .input {
+        flex: 1;
+    }
+}
