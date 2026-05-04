@@ -1098,6 +1098,57 @@ describe('Identities routes', () => {
 
       assert.deepEqual(body.resultSet, expectedIdentities)
     })
+
+    it('should hide masternode identities by default', async () => {
+      const regular = []
+      const masternode = []
+
+      for (let i = 0; i < 5; i++) {
+        block = await fixtures.block(knex, { height: i + 1, timestamp: new Date(0) })
+        identity = await fixtures.identity(knex, { block_hash: block.hash, block_height: block.height })
+        regular.push({ identity, block })
+      }
+
+      for (let i = 0; i < 5; i++) {
+        identity = await fixtures.identity(knex, { masternode: true })
+        masternode.push({ identity })
+      }
+
+      const { body } = await client.get('/identities')
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      assert.equal(body.pagination.total, regular.length)
+      assert.equal(body.resultSet.length, regular.length)
+
+      const returnedIdentifiers = body.resultSet.map(r => r.identifier)
+      const masternodeIdentifiers = masternode.map(m => m.identity.identifier)
+      for (const mn of masternodeIdentifiers) {
+        assert.equal(returnedIdentifiers.includes(mn), false)
+      }
+    })
+
+    it('should include masternode identities when include_masternodes=true', async () => {
+      const all = []
+
+      for (let i = 0; i < 5; i++) {
+        block = await fixtures.block(knex, { height: i + 1, timestamp: new Date(0) })
+        identity = await fixtures.identity(knex, { block_hash: block.hash, block_height: block.height })
+        all.push(identity.identifier)
+      }
+
+      for (let i = 0; i < 5; i++) {
+        identity = await fixtures.identity(knex, { masternode: true })
+        all.push(identity.identifier)
+      }
+
+      const { body } = await client.get('/identities?include_masternodes=true')
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      assert.equal(body.pagination.total, all.length)
+      assert.equal(body.resultSet.length, all.length)
+    })
   })
 
   describe('getDataContractsByIdentity()', async () => {

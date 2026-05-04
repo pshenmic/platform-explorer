@@ -214,6 +214,9 @@ const schemaTypes = [
       is_system: {
         type: ['boolean', 'null']
       },
+      include_masternodes: {
+        type: ['boolean', 'null']
+      },
       with_tokens: {
         type: ['boolean', 'null']
       },
