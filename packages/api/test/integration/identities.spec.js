@@ -1100,6 +1100,8 @@ describe('Identities routes', () => {
     })
 
     it('should return all identities when include_masternodes is omitted', async () => {
+      mock.method(IdentitiesController.prototype, 'getIdentityBalance', async () => 0)
+
       const regular = []
       const masternode = []
 
@@ -1124,6 +1126,8 @@ describe('Identities routes', () => {
     })
 
     it('should return only non-masternode identities when include_masternodes=false', async () => {
+      mock.method(IdentitiesController.prototype, 'getIdentityBalance', async () => 0)
+
       const regular = []
       const masternode = []
 
@@ -1152,6 +1156,8 @@ describe('Identities routes', () => {
     })
 
     it('should return only masternode identities when include_masternodes=true', async () => {
+      mock.method(IdentitiesController.prototype, 'getIdentityBalance', async () => 0)
+
       const regular = []
       const masternode = []
 
