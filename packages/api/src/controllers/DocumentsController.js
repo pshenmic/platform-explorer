@@ -90,9 +90,40 @@ class DocumentsController {
 
   getDocumentsByDataContract = async (request, response) => {
     const { identifier } = request.params
-    const { page = 1, limit = 10, order = 'asc', document_type_name: documentTypeName } = request.query
+    const {
+      page = 1,
+      limit = 10,
+      order = 'asc',
+      document_type_name: documentTypeName,
+      owner,
+      revision_min: revisionMin,
+      revision_max: revisionMax,
+      timestamp_start: timestampStart,
+      timestamp_end: timestampEnd
+    } = request.query
 
-    const documents = await this.documentsDAO.getDocumentsByDataContract(identifier, documentTypeName, Number(page ?? 1), Number(limit ?? 10), order)
+    if (revisionMin != null && revisionMax != null && Number(revisionMin) > Number(revisionMax)) {
+      return response.status(400).send('Bad revision range')
+    }
+
+    if (timestampStart && timestampEnd && new Date(timestampStart) > new Date(timestampEnd)) {
+      return response.status(400).send('Bad timestamp range')
+    }
+
+    const documents = await this.documentsDAO.getDocumentsByDataContract(
+      identifier,
+      documentTypeName,
+      Number(page ?? 1),
+      Number(limit ?? 10),
+      order,
+      {
+        owner,
+        revisionMin: revisionMin != null ? Number(revisionMin) : null,
+        revisionMax: revisionMax != null ? Number(revisionMax) : null,
+        timestampStart,
+        timestampEnd
+      }
+    )
 
     response.send(documents)
   }

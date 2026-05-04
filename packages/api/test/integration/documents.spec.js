@@ -600,5 +600,59 @@ describe('Documents routes', () => {
 
       assert.deepEqual(body.resultSet, expectedDocuments)
     })
+
+    it('should filter documents by owner', async () => {
+      const { body } = await client.get(`/dataContract/${dataContract.identifier}/documents?owner=${identity.identifier}`)
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      assert.equal(body.pagination.total, 55)
+      assert.equal(body.resultSet.length, 10)
+      for (const doc of body.resultSet) {
+        assert.equal(doc.owner.identifier, identity.identifier)
+      }
+    })
+
+    it('should return empty set for unknown owner', async () => {
+      const unknownOwner = '11111111111111111111111111111111111111111111'
+      const { body } = await client.get(`/dataContract/${dataContract.identifier}/documents?owner=${unknownOwner}`)
+        .expect(200)
+
+      assert.equal(body.pagination.total, 0)
+      assert.equal(body.resultSet.length, 0)
+    })
+
+    it('should filter documents by revision range', async () => {
+      const { body: lo } = await client.get(`/dataContract/${dataContract.identifier}/documents?revision_min=0`)
+        .expect(200)
+      assert.equal(lo.pagination.total, 55)
+
+      const { body: hi } = await client.get(`/dataContract/${dataContract.identifier}/documents?revision_min=1`)
+        .expect(200)
+      assert.equal(hi.pagination.total, 0)
+    })
+
+    it('should reject inverted revision range', async () => {
+      await client.get(`/dataContract/${dataContract.identifier}/documents?revision_min=5&revision_max=2`)
+        .expect(400)
+    })
+
+    it('should filter documents by timestamp range', async () => {
+      const future = '2999-01-01T00:00:00.000Z'
+      const past = '1970-01-01T00:00:00.000Z'
+
+      const { body: byStart } = await client.get(`/dataContract/${dataContract.identifier}/documents?timestamp_start=${future}`)
+        .expect(200)
+      assert.equal(byStart.pagination.total, 0)
+
+      const { body: byEnd } = await client.get(`/dataContract/${dataContract.identifier}/documents?timestamp_end=${past}`)
+        .expect(200)
+      assert.equal(byEnd.pagination.total, 55)
+    })
+
+    it('should reject inverted timestamp range', async () => {
+      await client.get(`/dataContract/${dataContract.identifier}/documents?timestamp_start=2999-01-01T00:00:00.000Z&timestamp_end=1970-01-01T00:00:00.000Z`)
+        .expect(400)
+    })
   })
 })
