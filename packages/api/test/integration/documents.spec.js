@@ -664,11 +664,6 @@ describe('Documents routes', () => {
       assert.ok(!exactTwoIds.has(rev3.identifier))
     })
 
-    it('should reject revision below 1', async () => {
-      await client.get(`/dataContract/${dataContract.identifier}/documents?revision_min=0`)
-        .expect(400)
-    })
-
     it('should reject inverted revision range', async () => {
       await client.get(`/dataContract/${dataContract.identifier}/documents?revision_min=5&revision_max=2`)
         .expect(400)

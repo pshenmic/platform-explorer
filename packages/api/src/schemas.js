@@ -172,11 +172,11 @@ const schemaTypes = [
       },
       revision_min: {
         type: ['number', 'null'],
-        minimum: 1
+        minimum: 0
       },
       revision_max: {
         type: ['number', 'null'],
-        minimum: 1
+        minimum: 0
       },
       timestamp_start: {
         type: ['string', 'null'],
