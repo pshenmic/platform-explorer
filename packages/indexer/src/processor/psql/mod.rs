@@ -126,7 +126,7 @@ impl PSQLProcessor {
                     data_contract_identifier,
                     data: Some(serde_json::to_value(dash_tld_document_values).unwrap()),
                     deleted: false,
-                    revision: 0,
+                    revision: Some(1),
                     is_system: true,
                     price: None,
                     transition_type: DocumentTransitionActionType::Create,

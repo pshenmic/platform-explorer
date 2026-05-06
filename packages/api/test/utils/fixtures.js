@@ -304,7 +304,7 @@ const fixtures = {
     const row = {
       identifier,
       state_transition_hash,
-      revision: revision ?? 1,
+      revision: revision ?? (deleted ? null : 1),
       data: data ?? {},
       deleted: deleted ?? false,
       data_contract_id,
