@@ -670,6 +670,11 @@ describe('Documents routes', () => {
         .expect(400)
     })
 
+    it('should reject revision below 1', async () => {
+      await client.get(`/dataContract/${dataContract.identifier}/documents?revision_min=0`)
+        .expect(400)
+    })
+
     it('should filter documents by timestamp range', async () => {
       const future = '2999-01-01T00:00:00.000Z'
       const past = '1970-01-01T00:00:00.000Z'
