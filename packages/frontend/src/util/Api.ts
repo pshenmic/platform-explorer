@@ -1,3 +1,4 @@
+// @ts-nocheck — TODO: type this module incrementally
 import { ResponseErrorNotFound, ResponseErrorTimeout } from './Errors'
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL

@@ -114,7 +114,7 @@ module.exports = class DocumentsDAO {
 
     const dataSubquery = this.knex('documents')
       .select('documents.data as data', 'documents.identifier as identifier')
-      .select(this.knex.raw('rank() over (partition by documents.identifier order by documents.revision desc) rank'))
+      .select(this.knex.raw('rank() over (partition by documents.identifier order by documents.revision desc nulls last) rank'))
       .orderBy('documents.id', 'desc')
       .as('documents_data')
 
@@ -238,7 +238,7 @@ module.exports = class DocumentsDAO {
         transitions = decodedTransitions.transitions ?? []
       }
 
-      const [transitionWithEntropy] = transitions?.filter(transition => transition.id === row.identifier && transition.revision === row.revision.toString())
+      const [transitionWithEntropy] = transitions?.filter(transition => transition.id === row.identifier && transition.revision === row.revision?.toString())
 
       const document = Document.fromRow({
         ...row,

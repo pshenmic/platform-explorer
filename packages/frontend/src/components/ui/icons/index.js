@@ -41,8 +41,8 @@ const CalendarGradientIcon = (props) => (
 const CloseIcon = (props) => (
   <Icon viewBox='0 0 10 10' {...props}>
     <svg width='10' height='10' viewBox='0 0 10 10' fill='none' xmlns='http://www.w3.org/2000/svg'>
-      <path d='M1 1L9 9' stroke='currentColor' strokeWidth='2' strokeLinecap='round'/>
-      <path d='M9 1L1 9' stroke='currentColor' strokeWidth='2' strokeLinecap='round'/>
+      <path d='M1 1L9 9' stroke='currentColor' strokeWidth='1.5' strokeLinecap='round'/>
+      <path d='M9 1L1 9' stroke='currentColor' strokeWidth='1.5' strokeLinecap='round'/>
     </svg>
   </Icon>
 )
@@ -560,7 +560,33 @@ const TokenFreezeIcon = (props) => {
   )
 }
 
+const SaveIcon = (props) => {
+  return (
+    <Icon width="13" height="13" viewBox="0 0 13 13" fill="none" {...props}>
+      <path d="M6.25 11.75L0.75 6.25M6.25 11.75L11.75 6.25M6.25 11.75L6.25 0.75" stroke="#4C7EFF" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </Icon>
+  )
+}
+
+const ImportIcon = (props) => {
+  return (
+    <Icon
+      viewBox='0 0 13 13'
+      boxSize={3}
+      fill='none'
+      {...props}
+    >
+      <path
+        d="M6.25 11.75L0.75 6.25M6.25 11.75L11.75 6.25M6.25 11.75L6.25 0.75"
+        stroke="currentColor"
+        strokeWidth="1.5"
+      />
+    </Icon>
+  )
+}
+
 export {
+  SaveIcon,
   CalendarIcon,
   CalendarIcon2,
   CalendarGradientIcon,
@@ -601,5 +627,6 @@ export {
   TokenMintIcon,
   TokenTotalIcon,
   TokenBurnIcon,
-  TokenFreezeIcon
+  TokenFreezeIcon,
+  ImportIcon
 }

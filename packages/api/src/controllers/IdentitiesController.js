@@ -5,6 +5,7 @@ const { outputScriptToAddress, iso8601duration, calculateInterval } = require('.
 const { IdentifierWASM } = require('pshenmic-dpp')
 const StateTransitionEnum = require('../enums/StateTransitionEnum')
 const Intervals = require('../enums/IntervalsEnum')
+const WithdrawalStatusEnum = require('../enums/WithdrawalStatusEnum')
 
 class IdentitiesController {
   constructor (knex, sdk) {
@@ -176,7 +177,7 @@ class IdentitiesController {
     const resultSet = documents.map(document => ({
       document: document.id.base58(),
       sender: document.ownerId.base58(),
-      status: document.properties.status,
+      status: WithdrawalStatusEnum[document.properties.status],
       timestamp: new Date(Number(document.createdAt)),
       amount: document.properties.amount,
       withdrawalAddress: outputScriptToAddress(Buffer.from(document.properties.outputScript ?? [], 'base64')),

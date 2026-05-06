@@ -38,7 +38,7 @@ module.exports = class Document {
 
   // eslint-disable-next-line camelcase
   static fromRow ({ identifier, owner, data_contract_identifier, revision, tx_hash, deleted, data, timestamp, is_system, document_type_name, transition_type, prefunded_voting_balance, gas_used: gasUsed, total_gas_used: totalGasUsed }) {
-    return new Document(identifier, owner, data_contract_identifier, deleted ? null : revision, tx_hash, deleted, data ? JSON.stringify(data) : null, timestamp, is_system, document_type_name, transition_type, prefunded_voting_balance, gasUsed != null ? Number(gasUsed) : null, totalGasUsed != null ? Number(totalGasUsed) : null)
+    return new Document(identifier, owner, data_contract_identifier, revision, tx_hash, deleted, data ? JSON.stringify(data) : null, timestamp, is_system, document_type_name, transition_type, prefunded_voting_balance, gasUsed != null ? Number(gasUsed) : null, totalGasUsed != null ? Number(totalGasUsed) : null)
   }
 
   static fromObject ({ identifier, owner, dataContractIdentifier, revision, txHash, deleted, data, timestamp, system, documentTypeName, transitionType, entropy, prefundedVotingBalance, identityContractNonce, gasUsed, totalGasUsed }) {
