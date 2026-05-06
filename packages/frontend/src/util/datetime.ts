@@ -1,3 +1,4 @@
+// @ts-nocheck — TODO: type this module incrementally
 function getDaysBetweenDates (startDate, endDate) {
   if (!startDate || !endDate) return 0
   const start = new Date(startDate)
