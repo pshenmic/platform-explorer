@@ -1099,7 +1099,7 @@ describe('Identities routes', () => {
       assert.deepEqual(body.resultSet, expectedIdentities)
     })
 
-    it('should return all identities when include_masternodes is omitted', async () => {
+    it('should return all identities when identity_type is omitted', async () => {
       mock.method(IdentitiesController.prototype, 'getIdentityBalance', async () => 0)
 
       const regular = []
@@ -1125,7 +1125,7 @@ describe('Identities routes', () => {
       assert.equal(body.pagination.total, regular.length + masternode.length)
     })
 
-    it('should return only non-masternode identities when include_masternodes=false', async () => {
+    it('should return only regular identities when identity_type=regular', async () => {
       mock.method(IdentitiesController.prototype, 'getIdentityBalance', async () => 0)
 
       const regular = []
@@ -1144,7 +1144,7 @@ describe('Identities routes', () => {
         masternode.push(identity.identifier)
       }
 
-      const { body } = await client.get('/identities?include_masternodes=false')
+      const { body } = await client.get('/identities?identity_type=regular')
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -1155,7 +1155,7 @@ describe('Identities routes', () => {
       }
     })
 
-    it('should return only masternode identities when include_masternodes=true', async () => {
+    it('should return only masternode identities when identity_type=masternode', async () => {
       mock.method(IdentitiesController.prototype, 'getIdentityBalance', async () => 0)
 
       const regular = []
@@ -1174,7 +1174,7 @@ describe('Identities routes', () => {
         masternode.push(identity.identifier)
       }
 
-      const { body } = await client.get('/identities?include_masternodes=true')
+      const { body } = await client.get('/identities?identity_type=masternode')
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 

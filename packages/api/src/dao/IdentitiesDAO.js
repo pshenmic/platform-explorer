@@ -225,7 +225,7 @@ module.exports = class IdentitiesDAO {
     }))
   }
 
-  getIdentities = async (page, limit, order, orderBy, txCountMin, txCountMax, documentsCountMin, documentsCountMax, dataContractsCountMin, dataContractsCountMax, balanceMin, balanceMax, includeMasternodes) => {
+  getIdentities = async (page, limit, order, orderBy, txCountMin, txCountMax, documentsCountMin, documentsCountMax, dataContractsCountMin, dataContractsCountMax, balanceMin, balanceMax, identityType) => {
     const fromRank = (page - 1) * limit
 
     const orderByOptions = [{ column: 'identity_id', order }]
@@ -350,8 +350,8 @@ module.exports = class IdentitiesDAO {
       .whereRaw(dataContractCountQueryString, dataContractsCountQueryBindings)
       .whereRaw(balanceQueryString, balanceQueryBindings)
       .modify(qb => {
-        if (includeMasternodes === true) qb.whereNull('tx_id')
-        if (includeMasternodes === false) qb.whereNotNull('tx_id')
+        if (identityType === 'masternode') qb.whereNull('tx_id')
+        if (identityType === 'regular') qb.whereNotNull('tx_id')
       })
 
     const rows = await this.knex
