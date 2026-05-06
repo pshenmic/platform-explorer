@@ -1098,6 +1098,92 @@ describe('Identities routes', () => {
 
       assert.deepEqual(body.resultSet, expectedIdentities)
     })
+
+    it('should return all identities when identity_type is omitted', async () => {
+      mock.method(IdentitiesController.prototype, 'getIdentityBalance', async () => 0)
+
+      const regular = []
+      const masternode = []
+
+      for (let i = 0; i < 5; i++) {
+        block = await fixtures.block(knex, { height: i + 1, timestamp: new Date(0) })
+        identity = await fixtures.identity(knex, { block_hash: block.hash, block_height: block.height })
+        regular.push(identity.identifier)
+      }
+
+      for (let i = 0; i < 5; i++) {
+        block = await fixtures.block(knex, { height: 100 + i, timestamp: new Date(0) })
+        identity = await fixtures.identity(knex, { block_hash: block.hash, block_height: block.height })
+        await knex('identities').where('id', identity.id).update({ state_transition_hash: null, state_transition_id: null })
+        masternode.push(identity.identifier)
+      }
+
+      const { body } = await client.get('/identities')
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      assert.equal(body.pagination.total, regular.length + masternode.length)
+    })
+
+    it('should return only regular identities when identity_type=regular', async () => {
+      mock.method(IdentitiesController.prototype, 'getIdentityBalance', async () => 0)
+
+      const regular = []
+      const masternode = []
+
+      for (let i = 0; i < 5; i++) {
+        block = await fixtures.block(knex, { height: i + 1, timestamp: new Date(0) })
+        identity = await fixtures.identity(knex, { block_hash: block.hash, block_height: block.height })
+        regular.push(identity.identifier)
+      }
+
+      for (let i = 0; i < 5; i++) {
+        block = await fixtures.block(knex, { height: 200 + i, timestamp: new Date(0) })
+        identity = await fixtures.identity(knex, { block_hash: block.hash, block_height: block.height })
+        await knex('identities').where('id', identity.id).update({ state_transition_hash: null, state_transition_id: null })
+        masternode.push(identity.identifier)
+      }
+
+      const { body } = await client.get('/identities?identity_type=regular')
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      assert.equal(body.pagination.total, regular.length)
+      const returnedIdentifiers = body.resultSet.map(r => r.identifier)
+      for (const mn of masternode) {
+        assert.equal(returnedIdentifiers.includes(mn), false)
+      }
+    })
+
+    it('should return only masternode identities when identity_type=masternode', async () => {
+      mock.method(IdentitiesController.prototype, 'getIdentityBalance', async () => 0)
+
+      const regular = []
+      const masternode = []
+
+      for (let i = 0; i < 5; i++) {
+        block = await fixtures.block(knex, { height: i + 1, timestamp: new Date(0) })
+        identity = await fixtures.identity(knex, { block_hash: block.hash, block_height: block.height })
+        regular.push(identity.identifier)
+      }
+
+      for (let i = 0; i < 5; i++) {
+        block = await fixtures.block(knex, { height: 300 + i, timestamp: new Date(0) })
+        identity = await fixtures.identity(knex, { block_hash: block.hash, block_height: block.height })
+        await knex('identities').where('id', identity.id).update({ state_transition_hash: null, state_transition_id: null })
+        masternode.push(identity.identifier)
+      }
+
+      const { body } = await client.get('/identities?identity_type=masternode')
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      assert.equal(body.pagination.total, masternode.length)
+      const returnedIdentifiers = body.resultSet.map(r => r.identifier)
+      for (const reg of regular) {
+        assert.equal(returnedIdentifiers.includes(reg), false)
+      }
+    })
   })
 
   describe('getDataContractsByIdentity()', async () => {

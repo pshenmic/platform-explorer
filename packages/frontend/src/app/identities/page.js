@@ -18,6 +18,7 @@ export const metadata = {
 function IdentitiesRoute ({ searchParams }) {
   const page = Number(searchParams.page) || 1
   const pageSize = Number(searchParams['page-size'])
+  const showAll = searchParams['show-all'] === 'true'
 
   return <>
     <Container
@@ -53,7 +54,7 @@ function IdentitiesRoute ({ searchParams }) {
         }
       />
     </Container>
-    <Identities defaultPage={page} defaultPageSize={pageSize}/>
+    <Identities defaultPage={page} defaultPageSize={pageSize} defaultShowAll={showAll}/>
   </>
 }
 
