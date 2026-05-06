@@ -30,7 +30,7 @@ const filtersConfig = {
     title: 'Revision range',
     defaultValue: { min: '', max: '' },
     minTitle: 'Minimum revision',
-    minPlaceholder: 'ex. 0',
+    minPlaceholder: 'ex. 1',
     maxTitle: 'Maximum revision',
     maxPlaceholder: 'ex. 5',
     formatValue: ({ min, max }) => {
