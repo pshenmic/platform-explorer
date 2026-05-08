@@ -6,7 +6,16 @@
   border-radius: $border-radius-medium;
   container-type: inline-size;
 
+  &__DescriptionValue {
+    max-width: 576px;
+    text-align: left;
+  }
+
   &__InfoLine {
+    &--Description {
+      align-items: flex-start;
+    }
+
     &--TopIdentity {
       .InfoLine__Value {
         overflow: hidden;
