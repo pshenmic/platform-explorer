@@ -16,7 +16,7 @@
 
     .field {
       display: flex;
-      align-items: center;
+      align-items: flex-start;
 
       .label {
         font-family: $font-mono;
@@ -24,11 +24,17 @@
         font-size: 12px;
         line-height: 110%;
         flex: 1;
+        padding-top: 10px;
         color: var(--chakra-colors-gray-250);
       }
 
       .input {
         max-width: 396px;
+      }
+
+      .errorSlot {
+        min-height: 40px;
+        margin-top: 4px;
       }
     }
   }
