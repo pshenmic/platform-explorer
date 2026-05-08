@@ -63,8 +63,12 @@ export const useDataContractUpdate = ({ owner, dataContractId }) => {
         dataContractId
       )
 
-      dataContract.keywords = keywords
-      dataContract.description = description
+      if (Array.isArray(keywords)) {
+        dataContract.keywords = keywords
+      }
+      if (description?.trim()) {
+        dataContract.description = description
+      }
       dataContract.version = dataContract.version + 1
 
       const stateTransition = await sdk.dataContracts.createStateTransition(
