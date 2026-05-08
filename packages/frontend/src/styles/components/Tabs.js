@@ -1,3 +1,5 @@
+import { colors } from '../colors'
+
 const tabPaddingSize = {
   base: 6,
   sm: 8,
@@ -76,7 +78,7 @@ const Tabs = {
         display: 'block',
         width: '100%',
         height: '1px',
-        backgroundColor: 'gray.800',
+        backgroundColor: colors.gray[800],
         position: 'absolute',
         bottom: '0',
         left: 0

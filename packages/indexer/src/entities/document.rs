@@ -26,7 +26,7 @@ pub struct Document {
     pub data_contract_identifier: Identifier,
     pub data: Option<Value>,
     pub deleted: bool,
-    pub revision: Revision,
+    pub revision: Option<Revision>,
     pub is_system: bool,
     pub prefunded_voting_balance: Option<(String, Credits)>,
 }
@@ -54,7 +54,7 @@ impl From<DocumentTransition> for Document {
                     price: None,
                     data: Some(data_decoded),
                     data_contract_identifier,
-                    revision: revision.unwrap(),
+                    revision: revision,
                     deleted: false,
                     is_system: false,
                     prefunded_voting_balance,
@@ -76,7 +76,7 @@ impl From<DocumentTransition> for Document {
                     price: None,
                     data: Some(data_decoded),
                     data_contract_identifier,
-                    revision: revision.unwrap(),
+                    revision: revision,
                     deleted: false,
                     is_system: false,
                     prefunded_voting_balance: None,
@@ -96,7 +96,7 @@ impl From<DocumentTransition> for Document {
                     price: None,
                     data: None,
                     data_contract_identifier,
-                    revision: Revision::from(0 as u64),
+                    revision: None,
                     deleted: true,
                     is_system: false,
                     prefunded_voting_balance: None,
@@ -118,7 +118,7 @@ impl From<DocumentTransition> for Document {
                     price: None,
                     data: None,
                     data_contract_identifier,
-                    revision,
+                    revision: Some(revision),
                     deleted: false,
                     is_system: false,
                     prefunded_voting_balance: None,
@@ -140,7 +140,7 @@ impl From<DocumentTransition> for Document {
                     price: Some(price),
                     data: None,
                     data_contract_identifier,
-                    revision,
+                    revision: Some(revision),
                     deleted: false,
                     is_system: false,
                     prefunded_voting_balance: None,
@@ -162,7 +162,7 @@ impl From<DocumentTransition> for Document {
                     price: Some(price),
                     data: None,
                     data_contract_identifier,
-                    revision,
+                    revision: Some(revision),
                     deleted: false,
                     is_system: false,
                     prefunded_voting_balance: None,
@@ -181,7 +181,7 @@ impl From<Row> for Document {
         let owner: Option<String> = row.get(5);
         let price: Option<i64> = row.get(6);
         let deleted: bool = row.get(7);
-        let revision: i32 = row.get(8);
+        let revision: Option<i32> = row.get(8);
         let is_system: bool = row.get(9);
         let prefunded_voting_balance: Option<Value> = row.get(10);
 
@@ -205,7 +205,7 @@ impl From<Row> for Document {
             identifier: Identifier::from_string(identifier.as_str(), Base58).unwrap(),
             document_type_name,
             is_system,
-            revision: Revision::from(revision as u64),
+            revision: revision.map(|r| r as u64),
             transition_type: DocumentTransitionActionType::try_from(transition_type).unwrap(),
             prefunded_voting_balance: prefunded_voting_balance.map(|value| {
                 let test = value.as_object().unwrap();

@@ -3,10 +3,6 @@ import { ValueCard } from '../cards'
 import './PublicKeyBoundCard.scss'
 
 function PublicKeyBoundCard ({ publicKeyBounds, className }) {
-  const boundTypeTitles = {
-    documentType: 'Document Type'
-  }
-
   return (
     <ValueCard className={`PublicKeyBoundCard ${className || ''}`} colorScheme={'transparent'}>
       <div className={'PublicKeyBoundCard__Title'}>Bound to</div>
@@ -16,17 +12,15 @@ function PublicKeyBoundCard ({ publicKeyBounds, className }) {
           elipsed={true}
           size={'xs'}
           clickable={true}
-          link={'/dataContract/' + publicKeyBounds?.id}
+          link={'/dataContract/' + publicKeyBounds?.identifier}
         >
-          {publicKeyBounds?.id}
+          {publicKeyBounds?.identifier}
         </ValueContainer>
       </div>
       <div className={'PublicKeyBoundCard__Type'}>
-        <span className={'PublicKeyBoundCard__TypeTitle'}>
-          {boundTypeTitles[publicKeyBounds?.type] || publicKeyBounds.type}:
-        </span>
+        <span className={'PublicKeyBoundCard__TypeTitle'}>Document Type:</span>
         <span className={'PublicKeyBoundCard__TypeValue'}>
-          {publicKeyBounds.typeName}
+          {publicKeyBounds?.documentTypeName}
         </span>
       </div>
     </ValueCard>

@@ -1,3 +1,4 @@
+// @ts-nocheck — TODO: type this module incrementally
 import copyToClipboard from './copyToClipboard'
 import currencyRound from './currencyRound'
 import { getDaysBetweenDates, getDynamicRange, getTimeDelta, formatDate } from './datetime'

@@ -39,9 +39,11 @@ const menuItems = [
     breakpoints: { base: true, sm: true, md: true, lg: true, xl: false, '2xl': true, '3xl': true }
   },
   {
-    title: 'API',
-    href: '/api',
-    breakpoints: { base: true, sm: true, md: true, lg: false, xl: false, '2xl': true, '3xl': true }
+    title: 'Developers',
+    submenuItems: [
+      { title: 'API', href: '/api' },
+      { title: 'Create Data Contract', href: '/dataContract/create' }
+    ]
   },
   {
     title: 'more',
@@ -61,11 +63,6 @@ const menuItems = [
         title: 'Validators',
         href: '/validators',
         breakpoints: { base: true, sm: false, md: false, lg: false, xl: true, '2xl': true, '3xl': true }
-      },
-      {
-        title: 'API',
-        href: '/api',
-        breakpoints: { base: false, sm: false, md: false, lg: true, xl: true, '2xl': true, '3xl': true }
       }
     ]
   }

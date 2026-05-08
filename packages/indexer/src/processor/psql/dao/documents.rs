@@ -16,7 +16,7 @@ impl PostgresDAO {
     ) -> Result<(), PoolError> {
         let id = document.identifier;
         let revision = document.revision;
-        let revision_i32 = revision as i32;
+        let revision_i32 = revision.map(|r| r as i32);
         let transition_type = document.transition_type as i64;
         let raw_data = document.data;
         let normal_data = match raw_data.clone() {
@@ -100,7 +100,7 @@ impl PostgresDAO {
             .unwrap();
 
         println!(
-            "Created document {} [{} revision] [is_deleted {}]",
+            "Created document {} [{:?} revision] [is_deleted {}]",
             document.identifier.to_string(Base58),
             revision_i32,
             document.deleted

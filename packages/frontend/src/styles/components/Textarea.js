@@ -15,6 +15,9 @@ const Textarea = {
     outline: {
       bg: 'rgba(var(--chakra-colors-gray-800-rgb), 0.5)'
     }
+  },
+  defaultProps: {
+    variant: 'outline'
   }
 }
 
