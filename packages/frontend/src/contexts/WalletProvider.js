@@ -8,31 +8,40 @@ export const WalletProvider = ({ children }) => {
   const connected = useRef(false)
   const [error, setError] = useState(null)
   const [walletInfo, setWalletInfo] = useState(null)
+  const [currentIdentity, setCurrentIdentity] = useState(null)
+  const [isConnecting, setIsConnecting] = useState(false)
 
-  const connectWallet = async (cb) => {
+  const connectWallet = () => {
     if (!window.dashPlatformExtension) {
       return setError('Dash Platform Extension is not installed')
     }
 
     const { dashPlatformExtension } = window
 
-    try {
-      const wallet = await dashPlatformExtension.signer.connect()
-      const current = wallet.identities.find(
-        ({ identifier }) => identifier === wallet.currentIdentity
-      )
-      connected.current = true
-      setWalletInfo({ identities: wallet.identities, current })
-      setError(null)
-      cb(wallet)
-    } catch (e) {
-      setError(e)
-      console.log(e)
-    }
+    setIsConnecting(true)
+    return dashPlatformExtension.signer
+      .connect()
+      .then((wallet) => {
+        const current = wallet.identities?.find(
+          ({ identifier }) => identifier === wallet.currentIdentity
+        )
+        if (!current) {
+          setError('Wallet connection returned no current identity')
+          return
+        }
+        connected.current = true
+        setWalletInfo({ ...wallet, proTxHash: current.proTxHash })
+        setError(null)
+        setCurrentIdentity(wallet.currentIdentity)
+      })
+      .catch((e) => {
+        setError(e?.toString() || 'Failed to connect wallet')
+      })
+      .finally(() => setIsConnecting(false))
   }
 
   return (
-    <WalletContext.Provider value={{ connectWallet, connected, walletInfo, error }}>
+    <WalletContext.Provider value={{ connectWallet, connected, walletInfo, currentIdentity, error, isConnecting }}>
       {children}
     </WalletContext.Provider>
   )
