@@ -53,6 +53,20 @@ function DataContractTotalCard ({ dataContract, rate, className }) {
               </ValueCard>
             }
           />
+
+          <InfoLine
+            className={'DataContractTotalCard__Keywords'}
+            title={'Keywords'}
+            loading={dataContract.loading}
+            error={dataContract.error || !dataContract.data?.keywords?.length}
+            value={
+              <div className={'DataContractTotalCard__KeywordsList'}>
+                {dataContract.data?.keywords?.map((kw, i) => (
+                  <ValueCard key={i}>{kw}</ValueCard>
+                ))}
+              </div>
+            }
+          />
         </div>
         <div className={'DataContractTotalCard__Avatar'}>
           {!dataContract.error

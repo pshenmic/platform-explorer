@@ -46,6 +46,13 @@
     color: var(--chakra-colors-gray-500);
   }
 
+  &__KeywordsList {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: flex-end;
+  }
+
   &__Title {
     font-weight: 700;
     font-size: 0.875rem;
