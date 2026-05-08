@@ -97,7 +97,7 @@ export default function TransactionsList ({
           className={'TransactionsList__Pagination'}
           onPageChange={pagination.onPageChange}
           pageCount={pagination.pageCount}
-          forcePage={pagination.forcePage - 1}
+          forcePage={pagination.forcePage}
           justify={true}
         />
       }
