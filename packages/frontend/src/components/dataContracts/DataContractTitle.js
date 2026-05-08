@@ -1,18 +1,23 @@
 import { useModal } from '@components/ui/Modal'
+import { useWallet } from 'src/contexts'
 import { DataContractModal } from './DataContractModal'
 import { useDataContractUpdate } from './DataContractModal/useDataContractUpdate'
+import {
+  EditControlState,
+  useEditValidation
+} from './DataContractModal/useEditValidation'
 
 const withTitle = (Content) => {
   const Title = (props) => {
-    const { dataContract } = props
-
-    if (!dataContract?.name) {
+    if (!props.dataContract) {
       return null
     }
     return (
       <div className='DataContractTotalCard__TitleContainer'>
         <div className={'DataContractTotalCard__Title'}>
-          {dataContract.name}
+          {props.dataContract.name || (
+            <span className={'DataContractTotalCard__NoName'}>No name</span>
+          )}
         </div>
         <Content {...props} />
       </div>
@@ -23,14 +28,20 @@ const withTitle = (Content) => {
 }
 
 export const DataContractTitle = withTitle(({ dataContract }) => {
+  const wallet = useWallet()
+  const { connectWallet, isConnecting } = wallet
+  const { editValidateState } = useEditValidation({
+    wallet,
+    ownerIdentifier: dataContract.owner.identifier
+  })
+
   const { isOpen, handleOpen, handleClose } = useModal()
 
-  const { handleChangeName, handleChangeDescription, isDisabled } =
-    useDataContractUpdate({
-      owner: dataContract.owner.identifier,
-      dataContractId: dataContract.identifier,
-      defaultName: dataContract.name
-    })
+  const { handleChangeName, handleChangeDescription } = useDataContractUpdate({
+    owner: dataContract.owner.identifier,
+    dataContractId: dataContract.identifier,
+    defaultName: dataContract.name
+  })
 
   const handleDataContractChangeName = ({ name }) => {
     try {
@@ -50,23 +61,37 @@ export const DataContractTitle = withTitle(({ dataContract }) => {
     }
   }
 
-  if (!isDisabled) {
-    return null
-  }
-
-  return (
-    <>
+  if (editValidateState === EditControlState.USER_HAS_NO_WALLET) {
+    return (
       <button
         className={'DataContractTotalCard__Edit'}
-        onClick={handleOpen}
+        onClick={() => connectWallet()}
+        disabled={isConnecting}
       >
-        Edit
+        Connect wallet
       </button>
-      <DataContractModal
-        isOpen={isOpen}
-        onChangeName={handleDataContractChangeName}
-        onChangeDescription={handleDataContractChangeDescription}
-      />
-    </>
-  )
+    )
+  }
+
+  if (editValidateState === EditControlState.VALID) {
+    return (
+      <>
+        <button
+          className={'DataContractTotalCard__Edit'}
+          onClick={handleOpen}
+        >
+          Edit
+        </button>
+        <DataContractModal
+          isOpen={isOpen}
+          defaultDescription={dataContract.description}
+          defaultKeywords={dataContract.keywords}
+          onChangeName={handleDataContractChangeName}
+          onChangeDescription={handleDataContractChangeDescription}
+        />
+      </>
+    )
+  }
+
+  return null
 })

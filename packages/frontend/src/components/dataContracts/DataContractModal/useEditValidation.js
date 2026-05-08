@@ -1,48 +1,55 @@
 import { useEffect, useState } from 'react'
-import { checkPlatformExtension, ExtensionStatusEnum } from '../../../util/extension'
+import {
+  checkPlatformExtension,
+  ExtensionStatusEnum
+} from '../../../util/extension'
 
 export const EditControlState = {
   INIT_INVALID: 'INIT_INVALID',
   USER_HAS_NO_EXTENSION: 'USER_HAS_NO_EXTENSION',
   USER_HAS_NO_WALLET: 'USER_HAS_NO_WALLET',
+  USER_IS_NOT_OWNER: 'USER_IS_NOT_OWNER',
   VALID: 'VALID'
 }
 
-export const useEditValidation = ({ wallet }) => {
-  const isExtensionConnected = checkPlatformExtension() === ExtensionStatusEnum.CONNECTED
+const VISIBLE_STATES = [
+  EditControlState.USER_HAS_NO_WALLET,
+  EditControlState.VALID
+]
 
-  const [editValidateState, setEditValidate] = useState(EditControlState.INIT_INVALID)
+export const useEditValidation = ({ wallet, ownerIdentifier }) => {
+  const isExtensionConnected =
+    checkPlatformExtension() === ExtensionStatusEnum.CONNECTED
 
-  useEffect(() => {
-    if (editValidateState === EditControlState.INIT_INVALID) {
-      return
-    }
-
-    if (editValidateState === EditControlState.USER_HAS_NO_EXTENSION) {
-      return
-    }
-
-    if (editValidateState === EditControlState.USER_HAS_NO_WALLET) {
-      return null
-    }
-  }, [wallet.currentIdentity, editValidateState, wallet?.walletInfo?.identities])
+  const [editValidateState, setEditValidate] = useState(
+    EditControlState.INIT_INVALID
+  )
 
   useEffect(() => {
     if (!isExtensionConnected) {
       setEditValidate(EditControlState.USER_HAS_NO_EXTENSION)
-
       return
     }
 
-    if (!wallet.connected.current) {
+    if (!wallet.connected.current || !wallet.walletInfo) {
       setEditValidate(EditControlState.USER_HAS_NO_WALLET)
-      wallet.connectWallet()
+      return
+    }
 
+    const isOwner = (wallet.walletInfo?.identities ?? []).some(
+      ({ identifier }) => identifier === ownerIdentifier
+    )
+
+    if (!isOwner) {
+      setEditValidate(EditControlState.USER_IS_NOT_OWNER)
       return
     }
 
     setEditValidate(EditControlState.VALID)
-  }, [wallet, isExtensionConnected])
+  }, [isExtensionConnected, wallet, ownerIdentifier])
 
-  return { editValidateState, isEditVisible: editValidateState === EditControlState.VALID }
+  return {
+    editValidateState,
+    isEditVisible: VISIBLE_STATES.includes(editValidateState)
+  }
 }

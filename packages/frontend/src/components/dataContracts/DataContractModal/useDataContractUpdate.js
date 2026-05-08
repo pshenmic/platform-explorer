@@ -1,18 +1,12 @@
 import { useQueryClient } from '@tanstack/react-query'
-import { useEffect, useState } from 'react'
 import { useActiveNetwork, useWallet } from 'src/contexts'
 
 const DOCUMENT_TYPE = 'dataContracts'
 
-export const useDataContractUpdate = ({
-  owner,
-  defaultName,
-  dataContractId
-}) => {
+export const useDataContractUpdate = ({ owner, dataContractId }) => {
   const sdk = window.dashPlatformSDK
   const signer = window.dashPlatformExtension?.signer
   const { connectWallet, connected } = useWallet()
-  const [isDisabled, setDisabled] = useState(true)
   const { dataContractPE } = useActiveNetwork()
   const queryClient = useQueryClient()
 
@@ -69,8 +63,6 @@ export const useDataContractUpdate = ({
         dataContractId
       )
 
-      console.log({ keywords })
-
       dataContract.keywords = keywords
       dataContract.description = description
       dataContract.version = dataContract.version + 1
@@ -93,23 +85,8 @@ export const useDataContractUpdate = ({
     }
   }
 
-  useEffect(() => {
-    const validate = ({ identities }) => {
-      const isValidIdentity = identities.some(
-        ({ identifier }) => identifier === owner
-      )
-
-      const isDisabledEdit =
-        defaultName && isValidIdentity && dataContractId !== dataContractPE
-
-      setDisabled(isDisabledEdit)
-    }
-    connectWallet(validate)
-  }, [])
-
   return {
     handleChangeName,
-    handleChangeDescription,
-    isDisabled
+    handleChangeDescription
   }
 }

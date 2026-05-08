@@ -16,6 +16,8 @@
     font-family: $font-mono;
     border-radius: 10px;
     padding: 0.5rem 1rem;
+    min-width: 140px;
+    text-align: center;
     font-weight: 400;
     font-size: 12px;
     line-height: 130%;
@@ -30,6 +32,18 @@
       background: rgba(var(--chakra-colors-brand-normal-rgb), 1);
       color: var(--chakra-colors-white-50);
     }
+
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+  }
+
+  &__NoName {
+    font-style: italic;
+    font-weight: 400;
+    text-transform: none;
+    color: var(--chakra-colors-gray-500);
   }
 
   &__Title {
