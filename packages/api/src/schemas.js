@@ -214,6 +214,10 @@ const schemaTypes = [
       is_system: {
         type: ['boolean', 'null']
       },
+      identity_type: {
+        type: ['string', 'null'],
+        enum: ['regular', 'masternode']
+      },
       with_tokens: {
         type: ['boolean', 'null']
       },

@@ -231,8 +231,17 @@ const getIdentity = (identifier) => {
   return call(`identity/${identifier}`, 'GET')
 }
 
-const getIdentities = (page = 1, limit = 30, order = 'asc', orderBy) => {
-  return call(`identities?page=${page}&limit=${limit}&order=${order}${orderBy ? `&order_by=${orderBy}` : ''}`, 'GET')
+const getIdentities = (page = 1, limit = 30, order = 'asc', orderBy, { includeMasternodes = false } = {}) => {
+  const params = prepareQueryParams({
+    page,
+    limit,
+    order,
+    order_by: orderBy,
+    // includeMasternodes=true (Show all toggle on) → omit param so backend returns everything
+    // includeMasternodes=false (default) → request only regular identities
+    identity_type: includeMasternodes ? null : 'regular'
+  })
+  return call(`identities?${params.toString()}`, 'GET')
 }
 
 const getIdentitiesHistory = (start, end, intervalsCount) => {

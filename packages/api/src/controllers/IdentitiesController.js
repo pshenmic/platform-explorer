@@ -50,7 +50,8 @@ class IdentitiesController {
       data_contracts_min: dataContractsMin,
       data_contracts_max: dataContractsMax,
       balance_min: balanceMin,
-      balance_max: balanceMax
+      balance_max: balanceMax,
+      identity_type: identityType
     } = request.query
 
     if (txCountMin > txCountMax) {
@@ -81,7 +82,8 @@ class IdentitiesController {
       dataContractsMin,
       dataContractsMax,
       balanceMin,
-      balanceMax
+      balanceMax,
+      identityType
     )
 
     response.send(identities)
