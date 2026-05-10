@@ -195,8 +195,19 @@ const getDocumentRevisions = (identifier, page = 1, limit = 30, order = 'asc') =
   return call(`document/${identifier}/revisions?page=${page}&limit=${limit}&order=${order}`, 'GET')
 }
 
-const getDocumentsByDataContract = (dataContractIdentifier, page = 1, limit = 30, order = 'asc') => {
-  return call(`dataContract/${dataContractIdentifier}/documents?page=${page}&limit=${limit}&order=${order}`, 'GET')
+const getDocumentsByDataContract = (dataContractIdentifier, page = 1, limit = 30, order = 'asc', filters = {}) => {
+  const params = prepareQueryParams({
+    page,
+    limit,
+    order,
+    document_type_name: filters.document_type_name,
+    owner: filters.owner,
+    revision_min: filters.revision_min,
+    revision_max: filters.revision_max,
+    timestamp_start: filters.timestamp_start,
+    timestamp_end: filters.timestamp_end
+  })
+  return call(`dataContract/${dataContractIdentifier}/documents?${params.toString()}`, 'GET')
 }
 
 const getEpoch = (identifier) => {

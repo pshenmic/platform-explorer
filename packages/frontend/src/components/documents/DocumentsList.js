@@ -24,11 +24,26 @@ export default function DocumentsList ({
         <GridItem className={'DocumentsList__ColumnTitle DocumentsList__ColumnTitle--Timestamp'}>
           Time
         </GridItem>
+        <GridItem className={'DocumentsList__ColumnTitle DocumentsList__ColumnTitle--TransitionType'}>
+          Action
+        </GridItem>
+        <GridItem className={'DocumentsList__ColumnTitle DocumentsList__ColumnTitle--DocumentType'}>
+          Type
+        </GridItem>
+        <GridItem className={'DocumentsList__ColumnTitle DocumentsList__ColumnTitle--Revision'}>
+          Rev
+        </GridItem>
         <GridItem className={'DocumentsList__ColumnTitle DocumentsList__ColumnTitle--Identifier'}>
           Identifier
         </GridItem>
         <GridItem className={'DocumentsList__ColumnTitle DocumentsList__ColumnTitle--Owner'}>
           Owner
+        </GridItem>
+        <GridItem className={'DocumentsList__ColumnTitle DocumentsList__ColumnTitle--Gas'}>
+          Gas
+        </GridItem>
+        <GridItem className={'DocumentsList__ColumnTitle DocumentsList__ColumnTitle--Status'}>
+          Status
         </GridItem>
       </Grid>
 

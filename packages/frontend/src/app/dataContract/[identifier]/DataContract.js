@@ -8,10 +8,12 @@ import { ErrorMessageBlock } from '../../../components/Errors'
 import { CodeBlock } from '../../../components/data'
 import { InfoContainer, PageDataContainer } from '../../../components/ui/containers'
 import { DataContractDigestCard, DataContractTotalCard, GroupsList } from '../../../components/dataContracts'
-import { Container, Tabs, TabList, TabPanels, Tab, TabPanel } from '@chakra-ui/react'
+import { Box, Container, Tabs, TabList, TabPanels, Tab, TabPanel, useBreakpointValue } from '@chakra-ui/react'
 import { useBreadcrumbs } from '../../../contexts/BreadcrumbsContext'
 import { TransactionsList } from '../../../components/transactions'
 import TokensList from '../../../components/tokens/TokensList'
+import { useDataContractDocumentsFilters } from '../../../components/documents/hooks/useDataContractDocumentsFilters'
+import { DocumentsFilter } from '../../../components/documents/DocumentsFilter'
 import { useQuery } from '@tanstack/react-query'
 import { useQueryState, parseAsStringEnum, parseAsString } from 'nuqs'
 import { normalizePagination } from '@utils/table'
@@ -40,8 +42,10 @@ const pageSize = pagintationConfig.itemsOnPage.default
 
 function DataContract ({ identifier }) {
   const { setBreadcrumbs } = useBreadcrumbs()
+  const isMobile = useBreakpointValue({ base: true, md: false })
   const [txPage, setTxPage] = useState(pagintationConfig.defaultPage)
   const [docPage, setDocPage] = useState(pagintationConfig.defaultPage)
+  const { filters: docFilters, setFilters: setDocFilters } = useDataContractDocumentsFilters()
 
   const dataContract = useQuery({
     queryKey: ['dataContract', identifier],
@@ -69,8 +73,9 @@ function DataContract ({ identifier }) {
   })
 
   const documents = useQuery({
-    queryKey: ['documents', identifier, docPage],
-    queryFn: () => Api.getDocumentsByDataContract(identifier, docPage, pageSize, 'desc'),
+    queryKey: ['documents', identifier, docPage, ...Object.values(docFilters)],
+    queryFn: () => Api.getDocumentsByDataContract(identifier, docPage, pageSize, 'desc', docFilters),
+    keepPreviousData: true,
     select: ({ pagination, resultSet }) => ({
       pagination: normalizePagination({
         page: docPage,
@@ -80,6 +85,11 @@ function DataContract ({ identifier }) {
       resultSet
     })
   })
+
+  const handleDocFiltersChange = (next) => {
+    setDocFilters(next)
+    setDocPage(pagintationConfig.defaultPage)
+  }
 
   const [activeTab, setActiveTab] = useQueryState(
     'tab',
@@ -167,6 +177,13 @@ function DataContract ({ identifier }) {
               }
             </TabPanel>
             <TabPanel position={'relative'}>
+              <Box mb={3}>
+                <DocumentsFilter
+                  onFilterChange={handleDocFiltersChange}
+                  isMobile={isMobile}
+                  className={'DataContract__DocumentsFilter'}
+                />
+              </Box>
               {!documents.isError
                 ? <DocumentsList
                   documents={documents.data?.resultSet}
