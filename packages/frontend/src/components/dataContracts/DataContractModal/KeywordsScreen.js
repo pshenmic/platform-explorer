@@ -1,7 +1,8 @@
-import { Divider, Input, Textarea, FormControl, FormErrorMessage } from '@chakra-ui/react'
+import { Divider, Input, Textarea, FormControl } from '@chakra-ui/react'
 import { useId, useState } from 'react'
 import { cva } from 'class-variance-authority'
 
+import { FORM_MODE_ENUM } from './constants'
 import styles from './KeywordsScreen.module.scss'
 
 const button = cva([styles.btn])
@@ -12,7 +13,7 @@ const KEYWORD_MIN = 3
 const KEYWORD_MAX = 50
 const KEYWORDS_MAX_ITEMS = 20
 
-export const KeywordsScreen = ({ onChangeDescription, defaultDescription, defaultKeywords }) => {
+export const KeywordsScreen = ({ onChangeDescription, setMode, defaultDescription, defaultKeywords }) => {
   const [form, setForm] = useState({
     description: defaultDescription || '',
     keywords: Array.isArray(defaultKeywords) ? defaultKeywords.join(', ') : ''
@@ -138,10 +139,13 @@ export const KeywordsScreen = ({ onChangeDescription, defaultDescription, defaul
               resize='none'
               rows={4}
             />
-            <div className={styles.errorSlot}>
-              <FormErrorMessage>{errors.description}</FormErrorMessage>
-            </div>
           </FormControl>
+
+          <div className={styles.errorSlot}>
+            {errors.description && (
+              <span className={styles.errorText}>{errors.description}</span>
+            )}
+          </div>
         </div>
         <div className={styles.field}>
           <label
@@ -161,16 +165,20 @@ export const KeywordsScreen = ({ onChangeDescription, defaultDescription, defaul
                 setErrors((prev) => ({ ...prev, keywords: error }))
               }}
             />
-            <div className={styles.errorSlot}>
-              <FormErrorMessage>{errors.keywords}</FormErrorMessage>
-            </div>
           </FormControl>
+
+          <div className={styles.errorSlot}>
+            {errors.keywords && (
+              <span className={styles.errorText}>{errors.keywords}</span>
+            )}
+          </div>
         </div>
       </form>
       <div className={styles.controls}>
         <button
           className={button({ className: styles.cancel })}
           type="button"
+          onClick={() => setMode(FORM_MODE_ENUM.INITIAL)}
         >
           Cancel
         </button>
