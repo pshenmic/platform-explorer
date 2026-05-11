@@ -123,7 +123,7 @@ function DataContract ({ identifier }) {
       title={'Data Contract info'}
     >
       <div className={'DataContract__InfoBlocks'}>
-        <DataContractTotalCard className={'DataContract__InfoBlock'} dataContract={dataContract} rate={rate}/>
+        <DataContractTotalCard className={'DataContract__InfoBlock'} dataContract={dataContract}/>
         <DataContractDigestCard className={'DataContract__InfoBlock'} dataContract={dataContract} rate={rate} txCount={transactions.data?.pagination?.total}/>
       </div>
 
