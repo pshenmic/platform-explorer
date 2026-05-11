@@ -84,6 +84,7 @@ export const DataContractTitle = withTitle(({ dataContract }) => {
         </button>
         <DataContractModal
           isOpen={isOpen}
+          defaultName={dataContract.name}
           defaultDescription={dataContract.description}
           defaultKeywords={dataContract.keywords}
           onChangeName={handleDataContractChangeName}
