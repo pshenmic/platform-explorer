@@ -70,7 +70,7 @@ function Block ({ hash }) {
     }
 
     router.replace(`${pathname}?${urlParameters.toString()}`, { scroll: false })
-  }, [activeTab])
+  }, [activeTab, pathname, router, searchParams])
 
   const fetchData = () => {
     setBlock(state => ({ ...state, loading: true }))

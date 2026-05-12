@@ -19,7 +19,8 @@ const decodeValue = (encodedValue) => {
   }
 }
 
-export default {
+const contestedResourcesUtils = {
   getResourceValue,
   decodeValue
 }
+export default contestedResourcesUtils

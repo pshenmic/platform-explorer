@@ -1,6 +1,10 @@
-import { useState, useRef } from 'react'
+'use client'
 
-export const useWalletConnect = () => {
+import { createContext, useContext, useState, useRef } from 'react'
+
+const WalletContext = createContext({})
+
+export const WalletProvider = ({ children }) => {
   const connected = useRef(false)
   const [error, setError] = useState(null)
   const [walletInfo, setWalletInfo] = useState(null)
@@ -9,13 +13,13 @@ export const useWalletConnect = () => {
 
   const connectWallet = () => {
     if (!window.dashPlatformExtension) {
-      return setError('Voting is available to Masternode Owners (via Dash Platform Extension)')
+      return setError('Dash Platform Extension is not installed')
     }
 
     const { dashPlatformExtension } = window
 
     setIsConnecting(true)
-    dashPlatformExtension.signer
+    return dashPlatformExtension.signer
       .connect()
       .then((wallet) => {
         const current = wallet.identities?.find(
@@ -30,18 +34,17 @@ export const useWalletConnect = () => {
         setError(null)
         setCurrentIdentity(wallet.currentIdentity)
       })
-      .catch((error) => {
-        setError(error.toString() || 'Failed to connect wallet')
+      .catch((e) => {
+        setError(e?.toString() || 'Failed to connect wallet')
       })
       .finally(() => setIsConnecting(false))
   }
 
-  return {
-    connectWallet,
-    connected,
-    error,
-    walletInfo,
-    currentIdentity,
-    isConnecting
-  }
+  return (
+    <WalletContext.Provider value={{ connectWallet, connected, walletInfo, currentIdentity, error, isConnecting }}>
+      {children}
+    </WalletContext.Provider>
+  )
 }
+
+export const useWallet = () => useContext(WalletContext)

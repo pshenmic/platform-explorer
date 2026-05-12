@@ -1,22 +1,17 @@
 import ImageGenerator from '../imageGenerator'
-import { Alias, CreditsBlock, DateBlock, Identifier, InfoLine } from '../data'
-import { HorisontalSeparator } from '../ui/separators'
+import { Alias, DateBlock, Identifier, InfoLine } from '../data'
 import { ValueCard } from '../cards'
 import { findActiveAlias } from '../../util'
+import { DataContractTitle } from './DataContractTitle'
 
 import './DataContractTotalCard.scss'
 
-function DataContractTotalCard ({ dataContract, rate, className }) {
+function DataContractTotalCard ({ dataContract, className }) {
   const activeAlias = findActiveAlias(dataContract?.data?.owner?.aliases)
 
   return (
     <div className={`InfoBlock InfoBlock--Gradient DataContractTotalCard ${dataContract.loading ? 'DataContractTotalCard--Loading' : ''} ${className || ''}`}>
-      {dataContract.data?.name &&
-        <div className={'DataContractTotalCard__Title'}>
-          {dataContract.data.name}
-        </div>
-      }
-
+      <DataContractTitle dataContract={dataContract.data} />
       <div className={'DataContractTotalCard__Header'}>
         <div className={'DataContractTotalCard__HeaderLines'}>
           <InfoLine
@@ -57,6 +52,45 @@ function DataContractTotalCard ({ dataContract, rate, className }) {
               </ValueCard>
             }
           />
+
+          <InfoLine
+            className={'DataContractTotalCard__Keywords'}
+            title={'Keywords'}
+            loading={dataContract.loading}
+            error={dataContract.error || !dataContract.data?.keywords?.length}
+            value={
+              <div className={'DataContractTotalCard__KeywordsList'}>
+                {dataContract.data?.keywords?.map((kw, i) => (
+                  <ValueCard key={i}>{kw}</ValueCard>
+                ))}
+              </div>
+            }
+          />
+
+          <InfoLine
+            className={'DataContractTotalCard__InfoLine DataContractTotalCard__InfoLine--Description'}
+            title={'Description'}
+            loading={dataContract.loading}
+            error={dataContract.error || !dataContract.data?.description}
+            value={
+              <ValueCard className={'DataContractTotalCard__DescriptionValue'}>
+                {dataContract.data?.description}
+              </ValueCard>
+            }
+          />
+
+          <InfoLine
+            className={'DataContractTotalCard__CreationDate'}
+            title={'Creation Date'}
+            loading={dataContract.loading}
+            error={dataContract.error}
+            value={dataContract?.data?.txHash
+              ? <ValueCard link={`/transaction/${dataContract.data?.txHash}`}>
+                  <DateBlock timestamp={dataContract.data?.timestamp}/>
+                </ValueCard>
+              : <DateBlock timestamp={dataContract.data?.timestamp}/>
+            }
+          />
         </div>
         <div className={'DataContractTotalCard__Avatar'}>
           {!dataContract.error
@@ -70,36 +104,6 @@ function DataContractTotalCard ({ dataContract, rate, className }) {
             : 'n/a'
           }
         </div>
-      </div>
-
-      <HorisontalSeparator className={'DataContractTotalCard__Separator'}/>
-
-      <div className={'DataContractTotalCard__CommonInfo'}>
-        <InfoLine
-          title={'Version'}
-          value={dataContract.data?.version}
-          loading={dataContract.loading}
-          error={dataContract.error}
-        />
-
-        <InfoLine
-          title={'Total Gas Used'}
-          value={<CreditsBlock credits={dataContract.data?.totalGasUsed} rate={rate}/>}
-          loading={dataContract.loading}
-          error={dataContract.error}
-        />
-
-        <InfoLine
-          title={'Creation Date'}
-          value={dataContract?.data?.txHash
-            ? <ValueCard link={`/transaction/${dataContract.data?.txHash}`}>
-                <DateBlock timestamp={dataContract.data?.timestamp}/>
-              </ValueCard>
-            : <DateBlock timestamp={dataContract.data?.timestamp}/>
-          }
-          loading={dataContract.loading}
-          error={dataContract.error}
-        />
       </div>
     </div>
   )
