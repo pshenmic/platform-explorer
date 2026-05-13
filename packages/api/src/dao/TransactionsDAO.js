@@ -12,6 +12,11 @@ module.exports = class TransactionsDAO {
   }
 
   getTransactionByHash = async (hash) => {
+    const duplicatesSubquery = this.knex('state_transition_duplicates')
+      .leftJoin({ dup_blocks: 'blocks' }, this.knex.raw('UPPER(state_transition_duplicates.block_hash) = dup_blocks.hash'))
+      .whereRaw('LOWER(state_transition_duplicates.hash) = LOWER(state_transitions.hash)')
+      .select(this.knex.raw("json_agg(json_build_object('block_hash', dup_blocks.hash, 'block_height', dup_blocks.height, 'timestamp', dup_blocks.timestamp))"))
+
     const [row] = await this.knex('state_transitions')
       .select(
         'state_transitions.hash as tx_hash', 'state_transitions.data as data',
@@ -20,6 +25,7 @@ module.exports = class TransactionsDAO {
         'state_transitions.index as index', 'blocks.height as block_height',
         'blocks.hash as block_hash', 'blocks.timestamp as timestamp', 'state_transitions.owner as owner'
       )
+      .select(duplicatesSubquery.as('duplicates'))
       .whereILike('state_transitions.hash', hash)
       .leftJoin('blocks', 'blocks.hash', 'state_transitions.block_hash')
 
@@ -35,11 +41,26 @@ module.exports = class TransactionsDAO {
       aliases.push(getAliasFromDocument(aliasDocument))
     }
 
+    const duplicates = row.duplicates
+      ? row.duplicates.map(dup => Transaction.fromRow({
+        ...row,
+        block_hash: dup.block_hash,
+        block_height: dup.block_height,
+        timestamp: dup.timestamp,
+        type: StateTransitionEnum[row.type],
+        batch_type: BatchEnum[row.batch_type],
+        status: 'FAIL',
+        aliases,
+        duplicates: null
+      }))
+      : undefined
+
     return Transaction.fromRow(
       {
         ...row,
         type: StateTransitionEnum[row.type],
-        aliases
+        aliases,
+        duplicates
       })
   }
 
