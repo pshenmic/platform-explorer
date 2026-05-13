@@ -224,6 +224,84 @@ describe('Transaction routes', () => {
         .expect(404)
         .expect('Content-Type', 'application/json; charset=utf-8')
     })
+
+    it('should return transaction with duplicates', async () => {
+      const [, transaction] = transactions
+      const duplicatesCount = 2
+
+      for (let i = 0; i < duplicatesCount; i++) {
+        await fixtures.stateTransitionDuplicate(knex, {
+          hash: transaction.transaction.hash,
+          block_hash: transaction.block.hash
+        })
+      }
+
+      const { body } = await client.get(`/transaction/${transaction.transaction.hash}`)
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      const expectedTransaction = {
+        base58Address: null,
+        bech32mAddress: null,
+        incoming: null,
+        blockHash: transaction.block.hash,
+        blockHeight: transaction.block.height,
+        data: '{}',
+        hash: transaction.transaction.hash,
+        index: transaction.transaction.index,
+        timestamp: transaction.block.timestamp.toISOString(),
+        type: StateTransitionEnum[transaction.transaction.type],
+        batchType: BatchTypeEnum[transaction.transaction.batch_type] ?? null,
+        gasUsed: 0,
+        status: 'FAIL',
+        error: 'Cannot deserialize',
+        owner: {
+          identifier: transaction.transaction.owner,
+          aliases: [
+            {
+              alias: 'alias.dash',
+              contested: true,
+              documentId: 'AQV2G2Egvqk8jwDBAcpngjKYcwAkck8Cecs5AjYJxfvW',
+              status: 'ok',
+              timestamp: aliasTimestamp.toISOString()
+            }
+          ]
+        },
+        duplicates: Array.from({ length: duplicatesCount }, () => ({
+          base58Address: null,
+          bech32mAddress: null,
+          incoming: null,
+          blockHash: transaction.block.hash,
+          blockHeight: transaction.block.height,
+          data: '{}',
+          hash: transaction.transaction.hash,
+          index: transaction.transaction.index,
+          timestamp: transaction.block.timestamp.toISOString(),
+          type: StateTransitionEnum[transaction.transaction.type],
+          batchType: BatchTypeEnum[transaction.transaction.batch_type] ?? null,
+          gasUsed: 0,
+          status: 'FAIL',
+          error: 'Cannot deserialize',
+          owner: {
+            identifier: transaction.transaction.owner,
+            aliases: [
+              {
+                alias: 'alias.dash',
+                contested: true,
+                documentId: 'AQV2G2Egvqk8jwDBAcpngjKYcwAkck8Cecs5AjYJxfvW',
+                status: 'ok',
+                timestamp: aliasTimestamp.toISOString()
+              }
+            ]
+          },
+          duplicates: null
+        }))
+      }
+
+      assert.deepEqual(expectedTransaction, body)
+
+      await knex.raw('DELETE FROM state_transition_duplicates')
+    })
   })
 
   describe('getTransactions()', async () => {
@@ -1594,5 +1672,6 @@ describe('Transaction routes', () => {
       assert.equal(body.pagination.total, duplicatedTxs.length)
       assert.deepEqual(body.resultSet, expectedResultSet)
     })
+
   })
 })
