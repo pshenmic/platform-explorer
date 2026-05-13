@@ -20,6 +20,7 @@ Reference:
 * [Validator Blocks Statistic](#validator-stats-by-protxhash)
 * [Transaction by hash](#transaction-by-hash)
 * [Transactions](#transactions)
+* [Duplicated Transactions](#duplicated-transactions)
 * [Data Contract By Identifier](#data-contract-by-identifier)
 * [RAW Data Contract By Identifier](#raw-data-contract-by-identifier)
 * [Data Contracts](#data-contracts)
@@ -592,6 +593,8 @@ Get a transaction (state transition) by hash
 
 Status can be either `SUCCESS` or `FAIL`. In case of error tx, message will appear in the `error` field as Base64 string
 
+If the same state transition hash was observed in more than one block, the response includes a `duplicates` field — an array of `Transaction` objects, one per occurrence. Each duplicate has `status: "FAIL"` and its own `blockHash`/`blockHeight`/`timestamp`; all other fields are inherited from the canonical state transition.
+
 ```
 GET /transaction/DEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEF
 
@@ -617,7 +620,26 @@ GET /transaction/DEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEE
           "txHash": "2508B35FDDB3E2E797D4F2CB9C1FAEE71D4DC43B91CE2043BEC8CE2B4A442DD7"
         }
       ]
-    }
+    },
+    "duplicates": [
+        {
+            "blockHash": "9EFA730C41CE9408F9732E4C72A4DAE7A2701AF0F7B1DCE8A72F163E285BEBF3",
+            "blockHeight": 153886,
+            "data": "{}",
+            "hash": "DEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEF",
+            "index": 0,
+            "timestamp": "2024-03-18T10:14:02.350Z",
+            "type": 0,
+            "gasUsed": 1337000,
+            "status": "FAIL",
+            "error": null,
+            "owner": {
+              "identifier": "6q9RFbeea73tE31LGMBLFZhtBUX3wZL3TcNynqE18Zgs",
+              "aliases": []
+            },
+            "duplicates": null
+        }, ...
+    ]
 }
 ```
 
@@ -710,6 +732,68 @@ GET /transactions?=1&limit=10&orderBy=id&order=asc&owner=6q9RFbeea73tE31LGMBLFZh
                 "identifier": "DTFPLKMVbnkVQWEfkxHX7Ch62ytjvbtqH6eG1TF3nMbD",
                 "aliases": []
             }
+        }, ...
+    ]
+}
+```
+Response codes:
+```
+200: OK
+500: Internal Server Error
+```
+---
+### Duplicated Transactions
+Return paged set of state transitions that appeared in more than one block. Each entry is a `Transaction` object representing the shared state-transition data (`blockHash`/`blockHeight`/`timestamp` are `null` since the tx spans multiple blocks), with a `duplicates` array listing one `Transaction` per occurrence (status `FAIL`, with the per-block fields populated).
+
+* `limit` cannot be more then 100
+* `page` cannot be less then 1
+* `order` can be `asc` or `desc`
+
+```
+GET /transactions/duplicated?page=1&limit=10&order=asc
+
+{
+    "pagination": {
+        "page": 1,
+        "limit": 10,
+        "total": 3
+    },
+    "resultSet": [
+      {
+            "hash": "1ba0895d9785eff87f0d69d1a7bc22b54e73d267fae3d14513af5c56358b42a5",
+            "index": 0,
+            "blockHash": null,
+            "blockHeight": null,
+            "type": "BATCH",
+            "batchType": "DOCUMENT_CREATE",
+            "data": "AgG5BZwAg32+...",
+            "timestamp": null,
+            "gasUsed": 1040160,
+            "status": "FAIL",
+            "error": null,
+            "owner": {
+                "identifier": "DTFPLKMVbnkVQWEfkxHX7Ch62ytjvbtqH6eG1TF3nMbD",
+                "aliases": []
+            },
+            "duplicates": [
+                {
+                    "hash": "1ba0895d9785eff87f0d69d1a7bc22b54e73d267fae3d14513af5c56358b42a5",
+                    "index": 0,
+                    "blockHash": "9EFA730C41CE9408F9732E4C72A4DAE7A2701AF0F7B1DCE8A72F163E285BEBF3",
+                    "blockHeight": 153886,
+                    "type": "BATCH",
+                    "batchType": "DOCUMENT_CREATE",
+                    "data": "AgG5BZwAg32+...",
+                    "timestamp": "2025-07-15T14:42:41.156Z",
+                    "gasUsed": 1040160,
+                    "status": "FAIL",
+                    "error": null,
+                    "owner": {
+                        "identifier": "DTFPLKMVbnkVQWEfkxHX7Ch62ytjvbtqH6eG1TF3nMbD",
+                        "aliases": []
+                    }
+                }, ...
+            ]
         }, ...
     ]
 }
