@@ -1427,4 +1427,172 @@ describe('Transaction routes', () => {
       assert.deepEqual(expectedSeriesData.reverse(), body)
     })
   })
+
+  describe('getDuplicatedTransactions()', async () => {
+    let duplicatedTxs
+
+    before(async () => {
+      const baseTxs = transactions
+        .filter(t => t.transaction.type === StateTransitionEnum.BATCH)
+        .slice(0, 15)
+
+      duplicatedTxs = []
+
+      for (let i = 0; i < baseTxs.length; i++) {
+        const { transaction, block } = baseTxs[i]
+        const duplicatesCount = i % 2 === 0 ? 2 : 3
+
+        for (let j = 0; j < duplicatesCount; j++) {
+          await fixtures.stateTransitionDuplicate(knex, {
+            hash: transaction.hash,
+            block_hash: block.hash
+          })
+        }
+
+        duplicatedTxs.push({ transaction, block, duplicatesCount })
+      }
+    })
+
+    it('should return paginated duplicated transactions', async () => {
+      const { body } = await client.get('/transactions/duplicated')
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      const expectedResultSet = duplicatedTxs
+        .toReversed()
+        .slice(0, 10)
+        .map(({ transaction, block, duplicatesCount }) => ({
+          base58Address: null,
+          bech32mAddress: null,
+          incoming: null,
+          hash: transaction.hash.toLowerCase(),
+          index: transaction.index,
+          blockHash: null,
+          blockHeight: null,
+          type: StateTransitionEnum[transaction.type],
+          batchType: BatchTypeEnum[transaction.batch_type] ?? null,
+          data: '{}',
+          timestamp: null,
+          gasUsed: transaction.gas_used,
+          status: 'FAIL',
+          error: transaction.error,
+          owner: {
+            identifier: transaction.owner,
+            aliases: [
+              {
+                alias: 'alias.dash',
+                contested: true,
+                documentId: 'AQV2G2Egvqk8jwDBAcpngjKYcwAkck8Cecs5AjYJxfvW',
+                status: 'ok',
+                timestamp: aliasTimestamp.toISOString()
+              }
+            ]
+          },
+          duplicates: Array.from({ length: duplicatesCount }, () => ({
+            base58Address: null,
+            bech32mAddress: null,
+            incoming: null,
+            hash: transaction.hash.toLowerCase(),
+            index: transaction.index,
+            blockHash: block.hash,
+            blockHeight: block.height,
+            type: StateTransitionEnum[transaction.type],
+            batchType: BatchTypeEnum[transaction.batch_type] ?? null,
+            data: '{}',
+            timestamp: block.timestamp.toISOString(),
+            gasUsed: transaction.gas_used,
+            status: 'FAIL',
+            error: transaction.error,
+            owner: {
+              identifier: transaction.owner,
+              aliases: [
+                {
+                  alias: 'alias.dash',
+                  contested: true,
+                  documentId: 'AQV2G2Egvqk8jwDBAcpngjKYcwAkck8Cecs5AjYJxfvW',
+                  status: 'ok',
+                  timestamp: aliasTimestamp.toISOString()
+                }
+              ]
+            }
+          }))
+        }))
+
+      assert.equal(body.pagination.page, 1)
+      assert.equal(body.pagination.limit, 10)
+      assert.equal(body.pagination.total, duplicatedTxs.length)
+      assert.deepEqual(body.resultSet, expectedResultSet)
+    })
+
+    it('should be able to walk through pages', async () => {
+      const { body } = await client.get('/transactions/duplicated?page=3&limit=3')
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      const expectedResultSet = duplicatedTxs
+        .toReversed()
+        .slice(6, 9)
+        .map(({ transaction, block, duplicatesCount }) => ({
+          base58Address: null,
+          bech32mAddress: null,
+          incoming: null,
+          hash: transaction.hash.toLowerCase(),
+          index: transaction.index,
+          blockHash: null,
+          blockHeight: null,
+          type: StateTransitionEnum[transaction.type],
+          batchType: BatchTypeEnum[transaction.batch_type] ?? null,
+          data: '{}',
+          timestamp: null,
+          gasUsed: transaction.gas_used,
+          status: 'FAIL',
+          error: transaction.error,
+          owner: {
+            identifier: transaction.owner,
+            aliases: [
+              {
+                alias: 'alias.dash',
+                contested: true,
+                documentId: 'AQV2G2Egvqk8jwDBAcpngjKYcwAkck8Cecs5AjYJxfvW',
+                status: 'ok',
+                timestamp: aliasTimestamp.toISOString()
+              }
+            ]
+          },
+          duplicates: Array.from({ length: duplicatesCount }, () => ({
+            base58Address: null,
+            bech32mAddress: null,
+            incoming: null,
+            hash: transaction.hash.toLowerCase(),
+            index: transaction.index,
+            blockHash: block.hash,
+            blockHeight: block.height,
+            type: StateTransitionEnum[transaction.type],
+            batchType: BatchTypeEnum[transaction.batch_type] ?? null,
+            data: '{}',
+            timestamp: block.timestamp.toISOString(),
+            gasUsed: transaction.gas_used,
+            status: 'FAIL',
+            error: transaction.error,
+            owner: {
+              identifier: transaction.owner,
+              aliases: [
+                {
+                  alias: 'alias.dash',
+                  contested: true,
+                  documentId: 'AQV2G2Egvqk8jwDBAcpngjKYcwAkck8Cecs5AjYJxfvW',
+                  status: 'ok',
+                  timestamp: aliasTimestamp.toISOString()
+                }
+              ]
+            }
+          }))
+        }))
+
+      assert.equal(body.pagination.page, 3)
+      assert.equal(body.pagination.limit, 3)
+      assert.equal(body.pagination.total, duplicatedTxs.length)
+      assert.deepEqual(body.resultSet, expectedResultSet)
+    })
+  })
 })

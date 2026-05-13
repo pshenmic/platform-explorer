@@ -731,6 +731,14 @@ module.exports = ({
       schema: {
         querystring: { $ref: 'paginationOptions#' }
       }
+    },
+    {
+      path: '/transactions/duplicated',
+      method: 'GET',
+      handler: transactionsController.getDuplicatedTransactions,
+      schema: {
+        querystring: { $ref: 'paginationOptions#' }
+      }
     }
   ]
 
