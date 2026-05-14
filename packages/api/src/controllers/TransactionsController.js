@@ -176,7 +176,7 @@ class TransactionsController {
   broadcastTransaction = async (request, response) => {
     const { base64, hex } = request.body
 
-    if (!base64 && !hex || base64 != null && hex != null) {
+    if ((!base64 && !hex) || (base64 != null && hex != null)) {
       return response.status(400).send('hex or base64 must be set')
     }
 
@@ -196,7 +196,7 @@ class TransactionsController {
   verifyTransaction = async (request, response) => {
     const { base64, hex } = request.body
 
-    if (!base64 && !hex || base64 != null && hex != null) {
+    if ((!base64 && !hex) || (base64 != null && hex != null)) {
       return response.status(400).send('hex or base64 must be set')
     }
 
@@ -205,12 +205,12 @@ class TransactionsController {
         ? StateTransitionWASM.fromHex(hex)
         : StateTransitionWASM.fromBase64(base64)
 
-      const {code, gasWanted, info} = await TenderdashRPC.verifyTransaction(transaction.hex())
+      const { code, gasWanted, info } = await TenderdashRPC.verifyTransaction(transaction.hex())
 
       const result = code === 0 ? 'ok' : 'error'
       const error = code === 0 ? null : ConsensusError[code]
 
-      response.send({ result, error, code, gasWanted, info})
+      response.send({ result, error, code, gasWanted, info })
     } catch (e) {
       return response.status(400).send({ error: e.toString() })
     }

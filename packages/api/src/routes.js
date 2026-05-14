@@ -749,7 +749,7 @@ module.exports = ({
           type: 'object',
           properties: {
             base64: { type: 'string' },
-            hex: { type: 'string' },
+            hex: { type: 'string' }
           }
         }
       }
