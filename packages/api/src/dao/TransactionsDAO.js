@@ -46,7 +46,7 @@ module.exports = class TransactionsDAO {
         ...row,
         block_hash: dup.block_hash,
         block_height: dup.block_height,
-        timestamp: dup.timestamp,
+        timestamp: dup.timestamp ? new Date(dup.timestamp) : null,
         type: StateTransitionEnum[row.type],
         batch_type: BatchEnum[row.batch_type],
         status: 'FAIL',
