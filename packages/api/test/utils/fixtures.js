@@ -622,7 +622,25 @@ const fixtures = {
       id: result.id
     }
   },
+  stateTransitionDuplicate: async (knex, { hash, block_hash }) => {
+    if (!hash) {
+      throw new Error('hash must be provided for stateTransitionDuplicate fixture')
+    }
+    if (!block_hash) {
+      throw new Error('block_hash must be provided for stateTransitionDuplicate fixture')
+    }
+
+    const row = {
+      hash: hash.toLowerCase(),
+      block_hash: block_hash.toLowerCase()
+    }
+
+    const [result] = await knex('state_transition_duplicates').insert(row).returning('id')
+
+    return { ...row, id: result.id }
+  },
   cleanup: async (knex) => {
+    await knex.raw('DELETE FROM state_transition_duplicates')
     await knex.raw('DELETE FROM platform_address_transitions')
     await knex.raw('DELETE FROM platform_addresses')
     await knex.raw('DELETE FROM token_holders')

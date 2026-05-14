@@ -17,8 +17,9 @@ module.exports = class Transaction {
   incoming
   base58Address
   bech32mAddress
+  duplicates
 
-  constructor (hash, index, blockHash, blockHeight, type, batchType, data, timestamp, gasUsed, status, error, owner, incoming, base58Address, bech32mAddress) {
+  constructor (hash, index, blockHash, blockHeight, type, batchType, data, timestamp, gasUsed, status, error, owner, incoming, base58Address, bech32mAddress, duplicates) {
     this.hash = hash ?? null
     this.index = index ?? null
     this.blockHash = blockHash ?? null
@@ -34,6 +35,7 @@ module.exports = class Transaction {
     this.incoming = incoming ?? null
     this.base58Address = base58Address ?? null
     this.bech32mAddress = bech32mAddress ?? null
+    this.duplicates = duplicates
   }
 
   /* eslint-disable camelcase */
@@ -53,14 +55,15 @@ module.exports = class Transaction {
     aliases,
     incoming,
     base58_address,
-    bech32m_address
+    bech32m_address,
+    duplicates
   }) {
     let decodedError = null
 
     try {
       if (typeof error === 'string') {
         const { serializedError } = cbor.decode(Buffer.from(error, 'base64'))?.data
-        decodedError = ConsensusErrorWASM.deserialize(serializedError)?.message
+        decodedError = ConsensusErrorWASM.deserialize(new Uint8Array(serializedError))?.message
       }
     } catch (e) {
       console.error(e)
@@ -76,7 +79,8 @@ module.exports = class Transaction {
         identifier: owner?.trim() ?? null,
         aliases: aliases ?? []
       },
-      incoming, base58_address, bech32m_address
+      incoming, base58_address, bech32m_address,
+      duplicates
     )
   }
 }

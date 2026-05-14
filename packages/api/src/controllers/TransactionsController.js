@@ -222,6 +222,14 @@ class TransactionsController {
       return response.status(500).send({ message: 'internal server error' })
     } while (true)
   }
+
+  getDuplicatedTransactions = async (request, response) => {
+    const { page = 1, limit = 10, order = 'asc' } = request.query
+
+    const result = await this.transactionsDAO.getDuplicatedTransactions(Number(page), Number(limit), order)
+
+    response.send(result)
+  }
 }
 
 module.exports = TransactionsController
