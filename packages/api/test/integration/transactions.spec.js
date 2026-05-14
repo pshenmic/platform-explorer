@@ -1537,7 +1537,6 @@ describe('Transaction routes', () => {
         .expect('Content-Type', 'application/json; charset=utf-8')
 
       const expectedResultSet = duplicatedTxs
-        .toReversed()
         .slice(0, 10)
         .map(({ transaction, block, duplicatesCount }) => ({
           base58Address: null,
@@ -1608,7 +1607,6 @@ describe('Transaction routes', () => {
         .expect('Content-Type', 'application/json; charset=utf-8')
 
       const expectedResultSet = duplicatedTxs
-        .toReversed()
         .slice(6, 9)
         .map(({ transaction, block, duplicatesCount }) => ({
           base58Address: null,
