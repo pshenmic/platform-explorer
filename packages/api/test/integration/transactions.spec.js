@@ -1532,7 +1532,7 @@ describe('Transaction routes', () => {
     })
 
     it('should return paginated duplicated transactions', async () => {
-      const { body } = await client.get('/transactions/duplicated')
+      const { body } = await client.get('/transactions/duplicates')
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -1602,7 +1602,7 @@ describe('Transaction routes', () => {
     })
 
     it('should be able to walk through pages', async () => {
-      const { body } = await client.get('/transactions/duplicated?page=3&limit=3')
+      const { body } = await client.get('/transactions/duplicates?page=3&limit=3')
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 

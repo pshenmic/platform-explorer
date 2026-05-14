@@ -783,7 +783,7 @@ Return paged set of state transitions that appeared in more than one block. Each
 * `order` can be `asc` or `desc`
 
 ```
-GET /transactions/duplicated?page=1&limit=10&order=asc
+GET /transactions/duplicates?page=1&limit=10&order=asc
 
 {
     "pagination": {

@@ -733,7 +733,7 @@ module.exports = ({
       }
     },
     {
-      path: '/transactions/duplicated',
+      path: '/transactions/duplicates',
       method: 'GET',
       handler: transactionsController.getDuplicatedTransactions,
       schema: {
