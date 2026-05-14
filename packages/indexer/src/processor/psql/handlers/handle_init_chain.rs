@@ -30,6 +30,9 @@ impl PSQLProcessor {
         self.process_system_data_contract(SystemDataContract::WalletUtils, sql_transaction)
             .await;
 
+        println!("Processing state transition duplicates");
+        self.process_state_transition_duplicates(sql_transaction).await;
+
         println!("Finished initChain processing");
     }
 }

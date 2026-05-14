@@ -9,6 +9,7 @@ pub mod documents;
 pub mod identities;
 pub mod masternode_votes;
 mod platform_addresses;
+pub mod state_transition_duplicates;
 pub mod state_transitions;
 pub mod token;
 mod token_holders;
