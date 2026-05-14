@@ -381,6 +381,7 @@ module.exports = class TransactionsDAO {
         'blocks',
         this.knex.raw('UPPER(state_transition_duplicates.block_hash) = blocks.hash')
       )
+      .orderBy('grouped_subquery.min_id', order)
 
     const totalCount = rows.length > 0 ? Number(rows[0].total_count) : 0
 
