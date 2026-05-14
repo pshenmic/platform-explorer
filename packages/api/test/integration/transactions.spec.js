@@ -1672,6 +1672,5 @@ describe('Transaction routes', () => {
       assert.equal(body.pagination.total, duplicatedTxs.length)
       assert.deepEqual(body.resultSet, expectedResultSet)
     })
-
   })
 })

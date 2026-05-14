@@ -224,7 +224,7 @@ class TransactionsController {
   }
 
   getDuplicatedTransactions = async (request, response) => {
-    const {page = 1, limit = 10, order = 'asc'} = request.query
+    const { page = 1, limit = 10, order = 'asc' } = request.query
 
     const result = await this.transactionsDAO.getDuplicatedTransactions(Number(page), Number(limit), order)
 

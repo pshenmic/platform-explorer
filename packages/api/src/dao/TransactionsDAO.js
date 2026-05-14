@@ -368,7 +368,7 @@ module.exports = class TransactionsDAO {
         'blocks.hash as block_hash', 'blocks.timestamp as timestamp', 'state_transitions.owner as owner',
         'grouped_subquery.total_count as total_count'
       )
-      .select(this.knex.raw('\'FAIL\' as status',))
+      .select(this.knex.raw('\'FAIL\' as status'))
       .leftJoin(
         'state_transitions',
         this.knex.raw('LOWER(state_transitions.hash) = LOWER(tx_hash)')
