@@ -739,6 +739,20 @@ module.exports = ({
       schema: {
         querystring: { $ref: 'paginationOptions#' }
       }
+    },
+    {
+      path: '/transaction/verify',
+      method: 'POST',
+      handler: transactionsController.verifyTransaction,
+      schema: {
+        body: {
+          type: 'object',
+          properties: {
+            base64: { type: 'string' },
+            hex: { type: 'string' },
+          }
+        }
+      }
     }
   ]
 
