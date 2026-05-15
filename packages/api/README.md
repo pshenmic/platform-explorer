@@ -3501,6 +3501,45 @@ Response codes:
 503: Service Temporarily Unavailable
 ```
 ___
+### Verify Transaction
+Send Transaction for Broadcast
+
+* `base64` optional field. State transition buffer in base64
+* `hex` optional field. State transition buffer in hex
+* You must pass `hex` or `base64`
+
+```
+POST /transaction/verify
+BODY:
+{
+    "base64": "AgDpAd/Bcqls4/fTNNbAtp3zsByG0w/wOnwk9RaDj5Q0DQEAAAAetrSpdOHzvWhmll5EyXQFOW6JEoHRY2Alb0wBP6ic9AcEbm90ZYpK8hfzQOnEyVhXSWzzO2jrbHEqxtIKHreFTRSv2f/PxVTtZXkupT+mJytiIWsAU0U1Ke1abN0JJvNNU1182eoCBmF1dGhvchIGb3dsMzUyB21lc3NhZ2USBHRlc3QAAAAA"
+}
+
+INVALID TX RESPONSE:
+{
+  "result": "error",
+  "error": "IdentityInsufficientBalanceError",
+  "code": 40210,
+  "info": "oWRkYXRhoW9zZXJpYWxpemVkRXJyb3KYLAIYHQUY+xi3GKIYoRgtGLMYug4Y+hiwGK4LGDESGO4YKQ8YtxjqGMQYlRiOGGkYgxjRGEIYbhjPGM8YSAMY/AQYlRg8GKIY/AoY5xj9GFs=",
+  "gasWanted": "182975835",
+}
+
+VALID TX RESPONSE:
+{
+  "result": "ok",
+  "error": null,
+  "code": 0,
+  "info": "oWRkYXRhoW9zZXJpYWxpemVkRXJyb3KYLAIYHQUY+xi3GKIYoRgtGLMYug4Y+hiwGK4LGDESGO4YKQ8YtxjqGMQYlRiOGGkYgxjRGEIYbhjPGM8YSAMY/AQYlRg8GKIY/AoY5xj9GFs=",
+  "gasWanted": "182975835",
+}
+```
+Response codes:
+```
+200: OK
+500: Internal Server Error
+503: Service Temporarily Unavailable
+```
+___
 ### Broadcast Transaction
 Send Transaction for Broadcast
 
