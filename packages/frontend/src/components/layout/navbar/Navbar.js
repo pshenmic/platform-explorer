@@ -46,6 +46,12 @@ const menuItems = [
     ]
   },
   {
+    title: 'Utils',
+    submenuItems: [
+      { title: 'Broadcast Transaction', href: '/utils/broadcast' }
+    ]
+  },
+  {
     title: 'more',
     breakpoints: { base: false, sm: false, md: false, lg: true, xl: true, '2xl': false, '3xl': false },
     submenuItems: [
