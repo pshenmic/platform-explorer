@@ -235,6 +235,9 @@ module.exports = class TransactionsDAO {
 
     const rows = await this.knex(heightSubquery)
       .select('tx_count', 'block_height', 'hash as block_hash', 'date_from')
+      .select(
+        this.knex.raw('SUM(tx_count) OVER (ORDER BY date_from) AS running_total')
+      )
       .leftJoin('blocks', function () {
         this.on('blocks.height', '=', 'block_height').andOnNotNull('block_height')
       })
@@ -243,7 +246,8 @@ module.exports = class TransactionsDAO {
       .map(row => ({
         timestamp: new Date(row.date_from).toISOString(),
         data: {
-          txs: parseInt(row.tx_count ?? 0),
+          txs: Number(row.tx_count ?? 0),
+          runningTotal: Number(row.running_total ?? 0),
           blockHeight: row.block_height,
           blockHash: row.block_hash
         }
@@ -298,6 +302,9 @@ module.exports = class TransactionsDAO {
 
     const rows = await this.knex(heightSubquery)
       .select('gas', 'block_height', 'hash as block_hash', 'date_from')
+      .select(
+        this.knex.raw('SUM(gas) OVER (ORDER BY date_from) AS running_total')
+      )
       .leftJoin('blocks', function () {
         this.on('blocks.height', '=', 'block_height').andOnNotNull('block_height')
       })
@@ -306,7 +313,8 @@ module.exports = class TransactionsDAO {
       .map(row => ({
         timestamp: new Date(row.date_from).toISOString(),
         data: {
-          gas: parseInt(row.gas ?? 0),
+          gas: Number(row.gas ?? 0),
+          runningTotal: Number(row.running_total ?? 0),
           blockHeight: row.block_height,
           blockHash: row.block_hash
         }
