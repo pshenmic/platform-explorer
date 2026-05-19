@@ -2,36 +2,14 @@
 
 import { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
-import CodeMirror from '@uiw/react-codemirror'
-import { json } from '@codemirror/lang-json'
-import { oneDark } from '@codemirror/theme-one-dark'
-import { EditorView } from '@codemirror/view'
+import { Button } from '@chakra-ui/react'
 import * as Api from '../../../util/Api'
-import { InfoLine, CreditsBlock } from '../../../components/data'
+import { InfoLine, CreditsBlock, JsonViewer, NotActive } from '../../../components/data'
 import { CopyButton } from '../../../components/ui/Buttons'
 import TransactionStatusBadge from '../../../components/transactions/TransactionStatusBadge'
 import TypeBadge from '../../../components/transactions/TypeBadge'
 import { explainConsensusError } from '../../../enums/consensusErrors'
 import './BroadcastForm.scss'
-
-const editorTheme = EditorView.theme({
-  '&': {
-    backgroundColor: '#2E393D',
-    border: '1px solid #404E53',
-    borderRadius: '0.625rem',
-    overflow: 'hidden',
-    fontSize: '12px'
-  },
-  '.cm-gutters': {
-    backgroundColor: '#1F2528',
-    borderRight: '1px solid #404E53',
-    color: '#6B7780'
-  },
-  '.cm-activeLineGutter': { backgroundColor: 'transparent' },
-  '.cm-activeLine': { backgroundColor: 'transparent' },
-  '.cm-content': { caretColor: 'transparent' },
-  '&.cm-focused': { outline: 'none' }
-})
 
 const STATE = {
   EMPTY: 'EMPTY',
@@ -65,7 +43,7 @@ const computeHashFromWasm = async (trimmed) => {
 
 const toBase64 = (trimmed) => {
   if (!isHex(trimmed)) return trimmed
-  // hex → base64 для вызова /transaction/decode (он принимает base64)
+  // /transaction/decode accepts base64 only — re-encode hex first
   const bytes = new Uint8Array(trimmed.length / 2)
   for (let i = 0; i < bytes.length; i++) {
     bytes[i] = parseInt(trimmed.substr(i * 2, 2), 16)
@@ -142,7 +120,7 @@ function BroadcastForm () {
     }
   }
 
-  const handleSign = async () => {
+  const handleBroadcast = async () => {
     if (state !== STATE.VERIFIED_OK || !hash) return
 
     setState(STATE.BROADCASTING)
@@ -164,85 +142,59 @@ function BroadcastForm () {
   }
 
   const verifyDisabled = !input.trim() || state === STATE.VERIFYING || state === STATE.BROADCASTING
-  const signDisabled = state !== STATE.VERIFIED_OK
-
-  const verifyButtonLabel = state === STATE.VERIFYING ? 'Verifying…' : 'Verify'
-  const signButtonLabel = state === STATE.BROADCASTING
-    ? 'Broadcasting…'
-    : state === STATE.WAITING
-      ? 'Waiting…'
-      : 'Sign'
+  const broadcastDisabled = state !== STATE.VERIFIED_OK
+  const broadcastLoading = state === STATE.BROADCASTING || state === STATE.WAITING
+  const broadcastLoadingText = state === STATE.WAITING ? 'Waiting…' : 'Broadcasting…'
 
   const statusValue = verify?.result === 'ok' ? 'SUCCESS' : 'FAIL'
-
-  const showResults = !!verify
+  const hasSchema = decoded?.schema && (decoded.typeString === 'DATA_CONTRACT_CREATE' || decoded.typeString === 'DATA_CONTRACT_UPDATE')
 
   return (
     <div className={'BroadcastForm'}>
       <div className={'BroadcastForm__Section'}>
         <div className={'BroadcastForm__SectionTitle'}>Details</div>
 
-        <InfoLine
-          className={'BroadcastForm__InputLine'}
-          title={'Raw transaction data'}
-          value={
-            <div className={'BroadcastForm__Actions'}>
-              <textarea
-                ref={textareaRef}
-                className={'BroadcastForm__Input'}
-                placeholder={'(HEX, base64) Input Transaction Data...'}
-                value={input}
-                onChange={(e) => handleInputChange(e.target.value)}
-                rows={3}
-              />
-              <button
-                type='button'
-                className={'BroadcastForm__Button BroadcastForm__Button--Primary'}
-                onClick={handleVerify}
-                disabled={verifyDisabled}
-              >
-                {verifyButtonLabel}
-              </button>
-              <button
-                type='button'
-                className={'BroadcastForm__Button BroadcastForm__Button--Secondary'}
-                onClick={handleSign}
-                disabled={signDisabled}
-              >
-                {signButtonLabel}
-              </button>
-            </div>
-          }
-        />
-
-        {!showResults && !errorText && (
-          <div className={'BroadcastForm__Helper'}>
-            Paste a signed state transition above and click <strong>Verify</strong> to preview metadata and fee before broadcasting.
-          </div>
-        )}
-
-        {showResults && (
-          <>
+        <div className={'BroadcastForm__DetailsRow'}>
+          <div className={'BroadcastForm__DetailsForm'}>
             <InfoLine
-              title={'Status'}
-              value={<TransactionStatusBadge status={statusValue}/>}
-            />
-            <InfoLine
-              title={'Size'}
+              className={'BroadcastForm__InputLine'}
+              title={'Raw transaction data'}
               value={
-                <span className={'BroadcastForm__Size'}>
-                  <span>{size} </span>
-                  <span className={'BroadcastForm__SizeUnit'}>bytes</span>
-                </span>
+                <div className={'BroadcastForm__Actions'}>
+                  <textarea
+                    ref={textareaRef}
+                    className={'BroadcastForm__Input'}
+                    placeholder={'(HEX, base64) Input Transaction Data...'}
+                    value={input}
+                    onChange={(e) => handleInputChange(e.target.value)}
+                    rows={3}
+                  />
+                  <div className={'BroadcastForm__ButtonsRow'}>
+                    <Button
+                      variant={'blue'}
+                      size={'sm'}
+                      minW={'160px'}
+                      onClick={handleVerify}
+                      isLoading={state === STATE.VERIFYING}
+                      loadingText={'Verifying…'}
+                      isDisabled={verifyDisabled}
+                    >
+                      Verify
+                    </Button>
+                    <Button
+                      variant={'gray'}
+                      size={'sm'}
+                      minW={'160px'}
+                      onClick={handleBroadcast}
+                      isLoading={broadcastLoading}
+                      loadingText={broadcastLoadingText}
+                      isDisabled={broadcastDisabled}
+                    >
+                      Broadcast
+                    </Button>
+                  </div>
+                </div>
               }
-            />
-            <InfoLine
-              title={'Type'}
-              value={<TypeBadge type={decoded?.typeString}/>}
-            />
-            <InfoLine
-              title={'Fee'}
-              value={<CreditsBlock credits={verify?.gasWanted} rate={rate}/>}
             />
 
             {verify?.result === 'error' && (
@@ -250,50 +202,76 @@ function BroadcastForm () {
                 {explainConsensusError(verify.error, verify.code)}
               </div>
             )}
-          </>
-        )}
 
-        {errorText && (
-          <div className={'BroadcastForm__ErrorMessage'}>{errorText}</div>
-        )}
+            {errorText && (
+              <div className={'BroadcastForm__ErrorMessage'}>{errorText}</div>
+            )}
 
-        {state === STATE.SUCCESS && hash && (
-          <div className={'BroadcastForm__HashRow'}>
-            Broadcasted! <Link href={`/transaction/${hash}`}>View transaction →</Link>
+            {state === STATE.SUCCESS && hash && (
+              <div className={'BroadcastForm__HashRow'}>
+                Broadcasted! <Link href={`/transaction/${hash}`}>View transaction →</Link>
+              </div>
+            )}
           </div>
-        )}
+
+          <div className={'BroadcastForm__DetailsMetadata'}>
+            <InfoLine
+              title={'Status'}
+              value={verify ? <TransactionStatusBadge status={statusValue}/> : <NotActive>—</NotActive>}
+            />
+            <InfoLine
+              title={'Size'}
+              value={size != null
+                ? (
+                  <span className={'BroadcastForm__Size'}>
+                    <span>{size} </span>
+                    <span className={'BroadcastForm__SizeUnit'}>bytes</span>
+                  </span>
+                  )
+                : <NotActive>—</NotActive>}
+            />
+            <InfoLine
+              title={'Type'}
+              value={decoded?.typeString ? <TypeBadge type={decoded.typeString}/> : <NotActive>—</NotActive>}
+            />
+            <InfoLine
+              title={'Fee'}
+              value={verify?.gasWanted != null
+                ? <CreditsBlock credits={verify.gasWanted} rate={rate}/>
+                : <NotActive>—</NotActive>}
+            />
+          </div>
+        </div>
       </div>
 
-      {decoded && (
-        <div className={'BroadcastForm__Section BroadcastForm__Section--Editor'}>
-          <div className={'BroadcastForm__SectionTitle'}>Transaction Details</div>
-          <InfoLine
-            title={'Raw data'}
-            value={
-              <div className={'BroadcastForm__EditorWrapper'}>
-                <CodeMirror
-                  className={'BroadcastForm__Editor'}
-                  value={JSON.stringify(decoded, null, 2)}
-                  extensions={[json(), editorTheme, EditorView.editable.of(false)]}
-                  theme={oneDark}
-                  basicSetup={{
-                    lineNumbers: true,
-                    foldGutter: true,
-                    highlightActiveLine: false,
-                    highlightActiveLineGutter: false,
-                    bracketMatching: true,
-                    autocompletion: false
-                  }}
-                  height='auto'
-                  minHeight='100px'
-                  maxHeight='500px'
-                />
-                <CopyButton text={JSON.stringify(decoded, null, 2)}/>
-              </div>
-            }
+      <div className={'BroadcastForm__Columns'}>
+        <div className={'BroadcastForm__Section'}>
+          <div className={'BroadcastForm__SectionHeader'}>
+            <div className={'BroadcastForm__SectionTitle'}>Decoded — Schema</div>
+            {hasSchema && <CopyButton text={JSON.stringify(decoded.schema, null, 2)}/>}
+          </div>
+          <JsonViewer
+            value={hasSchema ? decoded.schema : null}
+            fill
+            showCopy={false}
+            placeholder={decoded
+              ? (hasSchema ? undefined : 'This transaction type has no schema preview.')
+              : 'Verify a Data Contract transaction to preview its schema here.'}
           />
         </div>
-      )}
+        <div className={'BroadcastForm__Section'}>
+          <div className={'BroadcastForm__SectionHeader'}>
+            <div className={'BroadcastForm__SectionTitle'}>Transaction Details</div>
+            {decoded && <CopyButton text={JSON.stringify(decoded, null, 2)}/>}
+          </div>
+          <JsonViewer
+            value={decoded}
+            fill
+            showCopy={false}
+            placeholder={'Paste a signed transaction above and click Verify to decode it here.'}
+          />
+        </div>
+      </div>
     </div>
   )
 }
