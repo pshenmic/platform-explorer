@@ -1,5 +1,5 @@
 import { ValueCard } from '@components/cards'
-import { InfoLine, Identifier, CodeBlock } from '@components/data'
+import { InfoLine, Identifier, JsonViewer } from '@components/data'
 import { InternalConfigCard } from '@components/dataContracts'
 import { TokenConfiguration } from '../TokenConfiguration'
 
@@ -87,7 +87,7 @@ export const DataContractCreate = ({
     <InfoLine
       className={'TransactionPage__InfoLine TransactionPage__InfoLine--Schema'}
       title={'Schema'}
-      value={<CodeBlock code={JSON.stringify(schema)} />}
+      value={<JsonViewer value={schema} />}
       error={schema === undefined}
     />
 
