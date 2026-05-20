@@ -63,31 +63,60 @@
     width: 100%;
   }
 
-  &__DetailsRow {
-    display: flex;
-    gap: 24px;
-    width: 100%;
-    align-items: stretch;
+  &__Section--Details {
+    overflow-y: auto;
+  }
 
-    @media (max-width: 1024px) {
+  &__Section--Json {
+    padding: 24px;
+
+    .BroadcastForm__Tabs {
+      flex: 1;
+      min-height: 0;
+      display: flex;
       flex-direction: column;
+    }
+
+    .BroadcastForm__TabPanels {
+      flex: 1;
+      min-height: 0;
+    }
+
+    .BroadcastForm__TabPanel {
+      height: 100%;
+      padding: 14px 0 0 0;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .BroadcastForm__TabPanel--Variant {
+      overflow-y: auto;
+      gap: 12px;
     }
   }
 
-  &__DetailsForm {
-    flex: 2;
-    min-width: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
+  &__EmptyVariant {
+    padding: 24px;
+    text-align: center;
+    color: var(--chakra-colors-gray-250);
+    font-family: $font-mono;
+    font-size: 12px;
+    line-height: 140%;
   }
 
-  &__DetailsMetadata {
-    flex: 1;
-    min-width: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
+  &__Signature {
+    font-family: $font-mono;
+    font-size: 12px;
+    word-break: break-all;
+    color: var(--chakra-colors-gray-250);
+    position: relative;
+    padding-right: 32px;
+
+    .CopyButton {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+    }
   }
 
   .InfoLine {

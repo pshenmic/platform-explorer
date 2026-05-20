@@ -2,12 +2,16 @@
 
 import { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
-import { Button } from '@chakra-ui/react'
+import { Button, Tabs, TabList, TabPanels, Tab, TabPanel } from '@chakra-ui/react'
 import * as Api from '../../../util/Api'
-import { InfoLine, CreditsBlock, JsonViewer, NotActive } from '../../../components/data'
+import { InfoLine, CreditsBlock, JsonViewer, NotActive, Identifier } from '../../../components/data'
+import { ValueCard } from '../../../components/cards'
+import { InternalConfigCard } from '../../../components/dataContracts'
 import { CopyButton } from '../../../components/ui/Buttons'
 import TransactionStatusBadge from '../../../components/transactions/TransactionStatusBadge'
 import TypeBadge from '../../../components/transactions/TypeBadge'
+import FeeMultiplier from '../../../components/transactions/FeeMultiplier'
+import { TransactionType } from '../../transaction/[hash]/components/TransactionType'
 import { explainConsensusError } from '../../../enums/consensusErrors'
 import './BroadcastForm.scss'
 
@@ -147,129 +151,176 @@ function BroadcastForm () {
   const broadcastLoadingText = state === STATE.WAITING ? 'Waiting…' : 'Broadcasting…'
 
   const statusValue = verify?.result === 'ok' ? 'SUCCESS' : 'FAIL'
-  const hasSchema = decoded?.schema && (decoded.typeString === 'DATA_CONTRACT_CREATE' || decoded.typeString === 'DATA_CONTRACT_UPDATE')
+  const hasInternalConfig = decoded?.internalConfig && (decoded.typeString === 'DATA_CONTRACT_CREATE' || decoded.typeString === 'DATA_CONTRACT_UPDATE')
 
   return (
     <div className={'BroadcastForm'}>
       <div className={'BroadcastForm__Section'}>
-        <div className={'BroadcastForm__SectionTitle'}>Details</div>
+        <div className={'BroadcastForm__SectionTitle'}>Input</div>
 
-        <div className={'BroadcastForm__DetailsRow'}>
-          <div className={'BroadcastForm__DetailsForm'}>
-            <InfoLine
-              className={'BroadcastForm__InputLine'}
-              title={'Raw transaction data'}
-              value={
-                <div className={'BroadcastForm__Actions'}>
-                  <textarea
-                    ref={textareaRef}
-                    className={'BroadcastForm__Input'}
-                    placeholder={'(HEX, base64) Input Transaction Data...'}
-                    value={input}
-                    onChange={(e) => handleInputChange(e.target.value)}
-                    rows={3}
-                  />
-                  <div className={'BroadcastForm__ButtonsRow'}>
-                    <Button
-                      variant={'blue'}
-                      size={'sm'}
-                      minW={'160px'}
-                      onClick={handleVerify}
-                      isLoading={state === STATE.VERIFYING}
-                      loadingText={'Verifying…'}
-                      isDisabled={verifyDisabled}
-                    >
-                      Verify
-                    </Button>
-                    <Button
-                      variant={'gray'}
-                      size={'sm'}
-                      minW={'160px'}
-                      onClick={handleBroadcast}
-                      isLoading={broadcastLoading}
-                      loadingText={broadcastLoadingText}
-                      isDisabled={broadcastDisabled}
-                    >
-                      Broadcast
-                    </Button>
-                  </div>
-                </div>
-              }
-            />
-
-            {verify?.result === 'error' && (
-              <div className={'BroadcastForm__ErrorMessage'}>
-                {explainConsensusError(verify.error, verify.code)}
+        <InfoLine
+          className={'BroadcastForm__InputLine'}
+          title={'Raw transaction data'}
+          value={
+            <div className={'BroadcastForm__Actions'}>
+              <textarea
+                ref={textareaRef}
+                className={'BroadcastForm__Input'}
+                placeholder={'(HEX, base64) Input Transaction Data...'}
+                value={input}
+                onChange={(e) => handleInputChange(e.target.value)}
+                rows={3}
+              />
+              <div className={'BroadcastForm__ButtonsRow'}>
+                <Button
+                  variant={'blue'}
+                  size={'sm'}
+                  minW={'160px'}
+                  onClick={handleVerify}
+                  isLoading={state === STATE.VERIFYING}
+                  loadingText={'Verifying…'}
+                  isDisabled={verifyDisabled}
+                >
+                  Verify
+                </Button>
+                <Button
+                  variant={'gray'}
+                  size={'sm'}
+                  minW={'160px'}
+                  onClick={handleBroadcast}
+                  isLoading={broadcastLoading}
+                  loadingText={broadcastLoadingText}
+                  isDisabled={broadcastDisabled}
+                >
+                  Broadcast
+                </Button>
               </div>
-            )}
+            </div>
+          }
+        />
 
-            {errorText && (
-              <div className={'BroadcastForm__ErrorMessage'}>{errorText}</div>
-            )}
-
-            {state === STATE.SUCCESS && hash && (
-              <div className={'BroadcastForm__HashRow'}>
-                Broadcasted! <Link href={`/transaction/${hash}`}>View transaction →</Link>
-              </div>
-            )}
+        {verify?.result === 'error' && (
+          <div className={'BroadcastForm__ErrorMessage'}>
+            {explainConsensusError(verify.error, verify.code)}
           </div>
+        )}
 
-          <div className={'BroadcastForm__DetailsMetadata'}>
-            <InfoLine
-              title={'Status'}
-              value={verify ? <TransactionStatusBadge status={statusValue}/> : <NotActive>—</NotActive>}
-            />
-            <InfoLine
-              title={'Size'}
-              value={size != null
-                ? (
-                  <span className={'BroadcastForm__Size'}>
-                    <span>{size} </span>
-                    <span className={'BroadcastForm__SizeUnit'}>bytes</span>
-                  </span>
-                  )
-                : <NotActive>—</NotActive>}
-            />
-            <InfoLine
-              title={'Type'}
-              value={decoded?.typeString ? <TypeBadge type={decoded.typeString}/> : <NotActive>—</NotActive>}
-            />
-            <InfoLine
-              title={'Fee'}
-              value={verify?.gasWanted != null
-                ? <CreditsBlock credits={verify.gasWanted} rate={rate}/>
-                : <NotActive>—</NotActive>}
-            />
+        {errorText && (
+          <div className={'BroadcastForm__ErrorMessage'}>{errorText}</div>
+        )}
+
+        {state === STATE.SUCCESS && hash && (
+          <div className={'BroadcastForm__HashRow'}>
+            Broadcasted! <Link href={`/transaction/${hash}`}>View transaction →</Link>
           </div>
-        </div>
+        )}
       </div>
 
       <div className={'BroadcastForm__Columns'}>
-        <div className={'BroadcastForm__Section'}>
-          <div className={'BroadcastForm__SectionHeader'}>
-            <div className={'BroadcastForm__SectionTitle'}>Decoded — Schema</div>
-            {hasSchema && <CopyButton text={JSON.stringify(decoded.schema, null, 2)}/>}
-          </div>
-          <JsonViewer
-            value={hasSchema ? decoded.schema : null}
-            fill
-            showCopy={false}
-            placeholder={decoded
-              ? (hasSchema ? undefined : 'This transaction type has no schema preview.')
-              : 'Verify a Data Contract transaction to preview its schema here.'}
+        <div className={'BroadcastForm__Section BroadcastForm__Section--Details'}>
+          <div className={'BroadcastForm__SectionTitle'}>Details</div>
+
+          <InfoLine
+            title={'Hash'}
+            value={hash
+              ? <Identifier copyButton={true} ellipsis={true} styles={['highlight-both']}>{hash}</Identifier>
+              : <NotActive>—</NotActive>}
+          />
+          <InfoLine
+            title={'Type'}
+            value={decoded?.typeString ? <TypeBadge type={decoded.typeString}/> : <NotActive>—</NotActive>}
+          />
+          <InfoLine
+            title={'Status'}
+            value={verify ? <TransactionStatusBadge status={statusValue}/> : <NotActive>—</NotActive>}
+          />
+          <InfoLine
+            title={'Size'}
+            value={size != null
+              ? (
+                <span className={'BroadcastForm__Size'}>
+                  <span>{size} </span>
+                  <span className={'BroadcastForm__SizeUnit'}>bytes</span>
+                </span>
+                )
+              : <NotActive>—</NotActive>}
+          />
+          <InfoLine
+            title={'Owner'}
+            value={decoded?.ownerId
+              ? (
+                <ValueCard link={`/identity/${decoded.ownerId}`}>
+                  <Identifier avatar={true} copyButton={true} ellipsis={true} styles={['highlight-both']}>
+                    {decoded.ownerId}
+                  </Identifier>
+                </ValueCard>
+                )
+              : <NotActive>—</NotActive>}
+          />
+          <InfoLine
+            title={'Fee'}
+            value={verify?.gasWanted != null
+              ? <CreditsBlock credits={verify.gasWanted} rate={rate}/>
+              : <NotActive>—</NotActive>}
+          />
+          <InfoLine
+            title={'Fee Multiplier'}
+            value={decoded?.userFeeIncrease != null
+              ? <FeeMultiplier value={Number(decoded.userFeeIncrease)}/>
+              : <NotActive>—</NotActive>}
+          />
+          <InfoLine
+            title={'Identity Nonce'}
+            value={decoded?.identityNonce != null ? decoded.identityNonce : <NotActive>—</NotActive>}
+          />
+          <InfoLine
+            title={'Signature Public Key Id'}
+            value={decoded?.signaturePublicKeyId != null ? decoded.signaturePublicKeyId : <NotActive>—</NotActive>}
+          />
+          <InfoLine
+            title={'Signature'}
+            value={decoded?.signature
+              ? (
+                <ValueCard className={'BroadcastForm__Signature'}>
+                  {decoded.signature}
+                  <CopyButton text={decoded.signature}/>
+                </ValueCard>
+                )
+              : <NotActive>—</NotActive>}
           />
         </div>
-        <div className={'BroadcastForm__Section'}>
-          <div className={'BroadcastForm__SectionHeader'}>
-            <div className={'BroadcastForm__SectionTitle'}>Transaction Details</div>
-            {decoded && <CopyButton text={JSON.stringify(decoded, null, 2)}/>}
-          </div>
-          <JsonViewer
-            value={decoded}
-            fill
-            showCopy={false}
-            placeholder={'Paste a signed transaction above and click Verify to decode it here.'}
-          />
+
+        <div className={'BroadcastForm__Section BroadcastForm__Section--Json'}>
+          <Tabs variant={'line'} isLazy className={'BroadcastForm__Tabs'}>
+            <TabList>
+              <Tab>Decoded</Tab>
+              {hasInternalConfig && <Tab>Config</Tab>}
+              <Tab>Raw</Tab>
+            </TabList>
+            <TabPanels className={'BroadcastForm__TabPanels'}>
+              <TabPanel className={'BroadcastForm__TabPanel BroadcastForm__TabPanel--Variant TransactionPage'}>
+                {decoded
+                  ? <TransactionType rate={rate} {...decoded} internalConfig={undefined}/>
+                  : (
+                    <div className={'BroadcastForm__EmptyVariant'}>
+                      Paste a signed transaction above and click Verify to decode it here.
+                    </div>
+                    )}
+              </TabPanel>
+              {hasInternalConfig && (
+                <TabPanel className={'BroadcastForm__TabPanel'}>
+                  <InternalConfigCard config={decoded.internalConfig}/>
+                </TabPanel>
+              )}
+              <TabPanel className={'BroadcastForm__TabPanel'}>
+                <JsonViewer
+                  value={decoded}
+                  fill
+                  placeholder={'Paste a signed transaction above and click Verify to decode it here.'}
+                />
+              </TabPanel>
+            </TabPanels>
+          </Tabs>
         </div>
       </div>
     </div>
