@@ -1,3 +1,4 @@
+@use '../../../styles/mixins.scss';
 @import 'src/styles/variables';
 
 .BroadcastForm {
@@ -64,7 +65,29 @@
   }
 
   &__Section--Details {
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  &__DetailsSigner {
+    flex: 0 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--chakra-colors-gray-700);
+    margin-bottom: 14px;
+  }
+
+  &__DetailsScroll {
+    flex: 1 1 auto;
+    min-height: 0;
     overflow-y: auto;
+    @include mixins.BrandScroll();
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
   }
 
   &__Section--Json {
@@ -92,6 +115,11 @@
     .BroadcastForm__TabPanel--Variant {
       overflow-y: auto;
       gap: 12px;
+      @include mixins.BrandScroll();
+    }
+
+    .BroadcastForm__TabPanel--Config {
+      gap: 14px;
     }
   }
 
@@ -144,22 +172,33 @@
     }
   }
 
-  &__Actions {
+  &__DetailsActions {
+    flex: 0 0 auto;
+    margin-top: 14px;
+    padding-top: 14px;
+    border-top: 1px solid var(--chakra-colors-gray-700);
     display: flex;
     flex-direction: column;
     gap: 12px;
-    align-items: stretch;
+  }
+
+  &__ActionsSigner {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
     width: 100%;
   }
 
-  &__ButtonsRow {
+  &__ActionsButtons {
     display: flex;
+    flex-wrap: wrap;
     gap: 8px;
     align-items: center;
   }
 
   &__Input {
-    flex: 1;
+    width: 100%;
+    box-sizing: border-box;
     font-family: $font-mono;
     font-size: 12px;
     background: rgba(var(--chakra-colors-gray-800-rgb), 0.5);
@@ -174,6 +213,7 @@
     line-height: 130%;
     word-break: break-all;
     white-space: pre-wrap;
+    @include mixins.BrandScroll();
 
     &:focus {
       outline: none;
@@ -212,5 +252,57 @@
       color: $color-brand-normal;
       &:hover { text-decoration: underline; }
     }
+  }
+
+  &__SignPanel {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    padding: 16px;
+    background: rgba(var(--chakra-colors-gray-800-rgb), 0.4);
+    border: 1px solid var(--chakra-colors-gray-700);
+    border-radius: $border-radius-def;
+  }
+
+  &__SignPanelHeader {
+    font-family: var(--font-montserrat);
+    font-weight: 600;
+    font-size: 13px;
+    color: var(--chakra-colors-white-50);
+  }
+
+  &__SignPanelMethod {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  &__SignPanelHint {
+    font-family: $font-mono;
+    font-size: 11px;
+    color: var(--chakra-colors-gray-250);
+    line-height: 140%;
+  }
+
+  &__SignPanelForm {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  &__SignPanelDetectedOwner {
+    font-family: $font-mono;
+    font-size: 11px;
+    color: var(--chakra-colors-gray-250);
+    word-break: break-all;
+
+    code {
+      color: var(--chakra-colors-white-50);
+    }
+  }
+
+  &__SignPanelActions {
+    display: flex;
+    gap: 8px;
   }
 }
