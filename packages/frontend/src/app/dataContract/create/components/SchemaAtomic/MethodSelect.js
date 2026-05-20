@@ -1,20 +1,13 @@
-import { HStack, Radio, RadioGroup } from '@chakra-ui/react'
+import { MethodSelect as SharedMethodSelect } from 'src/components/signing'
 import { useDeploy } from '../../DeployContext'
-import { SignerMethod } from '../../useSigner'
 
 export const MethodSelect = () => {
   const { signer } = useDeploy()
-
   return (
-    <RadioGroup
+    <SharedMethodSelect
       value={signer.method}
       onChange={signer.setMethod}
       isDisabled={signer.isConnecting}
-    >
-      <HStack spacing={6} align='center'>
-        <Radio value={SignerMethod.EXTENSION}>Extension</Radio>
-        <Radio value={SignerMethod.PRIVATE_KEY}>Private Key</Radio>
-      </HStack>
-    </RadioGroup>
+    />
   )
 }

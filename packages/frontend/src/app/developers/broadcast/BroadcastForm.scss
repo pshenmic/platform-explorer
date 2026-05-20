@@ -1,0 +1,308 @@
+@use '../../../styles/mixins.scss';
+@import 'src/styles/variables';
+
+.BroadcastForm {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  width: 100%;
+  height: calc(100vh - 320px);
+  overflow: hidden;
+
+  &__Section {
+    background: var(--chakra-colors-gray-675);
+    border: 1px solid var(--chakra-colors-gray-550);
+    border-radius: $border-radius-medium;
+    padding: 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    width: 100%;
+    flex-shrink: 0;
+  }
+
+  &__Columns {
+    display: flex;
+    gap: 24px;
+    width: 100%;
+    align-items: stretch;
+    flex: 1;
+    min-height: 0;
+
+    > .BroadcastForm__Section {
+      flex: 1;
+      min-width: 0;
+      min-height: 0;
+      overflow: hidden;
+    }
+
+    @media (max-width: 1024px) {
+      flex-direction: column;
+    }
+  }
+
+  @media (max-width: 1024px) {
+    height: auto;
+    overflow: visible;
+  }
+
+  &__SectionTitle {
+    font-family: var(--font-montserrat);
+    font-weight: 700;
+    font-size: 12px;
+    line-height: 110%;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--chakra-colors-white-50);
+  }
+
+  &__SectionHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    width: 100%;
+  }
+
+  &__Section--Details {
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  &__DetailsSigner {
+    flex: 0 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--chakra-colors-gray-700);
+    margin-bottom: 14px;
+  }
+
+  &__DetailsScroll {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    @include mixins.BrandScroll();
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  &__Section--Json {
+    padding: 24px;
+
+    .BroadcastForm__Tabs {
+      flex: 1;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .BroadcastForm__TabPanels {
+      flex: 1;
+      min-height: 0;
+    }
+
+    .BroadcastForm__TabPanel {
+      height: 100%;
+      padding: 14px 0 0 0;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .BroadcastForm__TabPanel--Variant {
+      overflow-y: auto;
+      gap: 12px;
+      @include mixins.BrandScroll();
+    }
+
+    .BroadcastForm__TabPanel--Config {
+      gap: 14px;
+    }
+  }
+
+  &__EmptyVariant {
+    padding: 24px;
+    text-align: center;
+    color: var(--chakra-colors-gray-250);
+    font-family: $font-mono;
+    font-size: 12px;
+    line-height: 140%;
+  }
+
+  &__Signature {
+    font-family: $font-mono;
+    font-size: 12px;
+    word-break: break-all;
+    color: var(--chakra-colors-gray-250);
+    position: relative;
+    padding-right: 32px;
+
+    .CopyButton {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+    }
+  }
+
+  .InfoLine {
+    justify-content: flex-start !important;
+
+    .InfoLine__Title {
+      width: 200px;
+      max-width: 200px;
+      line-height: 20px;
+      flex-grow: 0;
+      flex-shrink: 0;
+    }
+
+    .InfoLine__Value {
+      text-align: left;
+      font-size: 0.75rem;
+      flex: 1;
+      min-width: 0;
+    }
+  }
+
+  &__InputLine {
+    .InfoLine__Value {
+      flex: 1;
+    }
+  }
+
+  &__DetailsActions {
+    flex: 0 0 auto;
+    margin-top: 14px;
+    padding-top: 14px;
+    border-top: 1px solid var(--chakra-colors-gray-700);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  &__ActionsSigner {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+  }
+
+  &__ActionsButtons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+  }
+
+  &__Input {
+    width: 100%;
+    box-sizing: border-box;
+    font-family: $font-mono;
+    font-size: 12px;
+    background: rgba(var(--chakra-colors-gray-800-rgb), 0.5);
+    border: 1px solid var(--chakra-colors-gray-750);
+    border-radius: $border-radius-def;
+    padding: 10px 12px;
+    color: var(--chakra-colors-white-50);
+    min-height: 40px;
+    max-height: 200px;
+    resize: none;
+    overflow-y: auto;
+    line-height: 130%;
+    word-break: break-all;
+    white-space: pre-wrap;
+    @include mixins.BrandScroll();
+
+    &:focus {
+      outline: none;
+      border-color: $color-brand-normal;
+    }
+
+    &::placeholder {
+      color: rgba(var(--chakra-colors-white-50-rgb, 255, 255, 255), 0.2);
+    }
+  }
+
+  &__Size {
+    font-family: $font-mono;
+    font-size: 12px;
+    color: var(--chakra-colors-white-50);
+  }
+
+  &__SizeUnit {
+    opacity: 0.5;
+  }
+
+  &__ErrorMessage {
+    color: var(--chakra-colors-red-default);
+    font-family: $font-mono;
+    font-size: 13px;
+    line-height: 130%;
+  }
+
+  &__HashRow {
+    font-family: $font-mono;
+    font-size: 12px;
+    color: var(--chakra-colors-gray-250);
+    word-break: break-all;
+
+    a {
+      color: $color-brand-normal;
+      &:hover { text-decoration: underline; }
+    }
+  }
+
+  &__SignPanel {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    padding: 16px;
+    background: rgba(var(--chakra-colors-gray-800-rgb), 0.4);
+    border: 1px solid var(--chakra-colors-gray-700);
+    border-radius: $border-radius-def;
+  }
+
+  &__SignPanelHeader {
+    font-family: var(--font-montserrat);
+    font-weight: 600;
+    font-size: 13px;
+    color: var(--chakra-colors-white-50);
+  }
+
+  &__SignPanelMethod {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  &__SignPanelHint {
+    font-family: $font-mono;
+    font-size: 11px;
+    color: var(--chakra-colors-gray-250);
+    line-height: 140%;
+  }
+
+  &__SignPanelForm {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  &__SignPanelDetectedOwner {
+    font-family: $font-mono;
+    font-size: 11px;
+    color: var(--chakra-colors-gray-250);
+    word-break: break-all;
+
+    code {
+      color: var(--chakra-colors-white-50);
+    }
+  }
+
+  &__SignPanelActions {
+    display: flex;
+    gap: 8px;
+  }
+}
