@@ -1,3 +1,5 @@
+@use '../../styles/mixins.scss';
+
 .JsonViewer {
   position: relative;
   width: 100%;
@@ -11,6 +13,10 @@
     top: 10px;
     right: 10px;
     z-index: 1;
+  }
+
+  .cm-scroller {
+    @include mixins.BrandScroll();
   }
 
   &--Fill {
