@@ -329,7 +329,7 @@ function BroadcastForm () {
           className={'BroadcastForm__InputLine'}
           title={'Raw transaction data'}
           value={
-            state === STATE.SIGNED && unsignedSnapshot
+            unsignedSnapshot
               ? <SignedHexView
                   unsignedHex={unsignedSnapshot}
                   signedHex={input}

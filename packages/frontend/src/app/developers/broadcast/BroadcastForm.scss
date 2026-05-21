@@ -271,9 +271,11 @@
   }
 
   &__SignedHexAppended {
-    background: rgba(0, 141, 228, 0.25);
+    background: rgba(0, 141, 228, 0.45);
     color: var(--chakra-colors-white-100);
+    font-weight: 600;
     border-radius: 2px;
     padding: 1px 0;
+    box-shadow: 0 0 0 1px rgba(0, 141, 228, 0.6);
   }
 }
