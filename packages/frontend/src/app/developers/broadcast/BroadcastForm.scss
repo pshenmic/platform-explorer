@@ -230,4 +230,50 @@
     display: flex;
     gap: 8px;
   }
+
+  &__SignedHexView {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+  }
+
+  &__SignedHexHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    font-family: var(--font-montserrat);
+    font-size: 12px;
+    color: var(--chakra-colors-white-50);
+  }
+
+  &__SignedHexActions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+
+  &__SignedHexBody {
+    font-family: $font-mono;
+    font-size: 12px;
+    line-height: 130%;
+    color: var(--chakra-colors-white-50);
+    background: rgba(var(--chakra-colors-gray-800-rgb), 0.5);
+    border: 1px solid var(--chakra-colors-gray-750);
+    border-radius: $border-radius-def;
+    padding: 10px 12px;
+    max-height: 200px;
+    overflow-y: auto;
+    word-break: break-all;
+    white-space: pre-wrap;
+    @include mixins.BrandScroll();
+  }
+
+  &__SignedHexAppended {
+    background: rgba(0, 141, 228, 0.25);
+    color: var(--chakra-colors-white-100);
+    border-radius: 2px;
+    padding: 1px 0;
+  }
 }

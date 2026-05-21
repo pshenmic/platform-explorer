@@ -69,6 +69,33 @@ const toBase64 = (trimmed) => {
   return btoa(binary)
 }
 
+function SignedHexView ({ unsignedHex, signedHex, onEdit }) {
+  const bodyRef = useRef(null)
+  let diffStart = 0
+  const min = Math.min(unsignedHex.length, signedHex.length)
+  while (diffStart < min && unsignedHex[diffStart] === signedHex[diffStart]) diffStart++
+  const unchanged = signedHex.slice(0, diffStart)
+  const appended = signedHex.slice(diffStart)
+  useEffect(() => {
+    if (bodyRef.current) bodyRef.current.scrollTop = bodyRef.current.scrollHeight
+  }, [signedHex])
+  return (
+    <div className={'BroadcastForm__SignedHexView'}>
+      <div className={'BroadcastForm__SignedHexHeader'}>
+        <span>Signed locally — {appended.length} new hex chars appended</span>
+        <div className={'BroadcastForm__SignedHexActions'}>
+          <CopyButton text={signedHex}/>
+          <Button variant={'gray'} size={'xs'} onClick={onEdit}>Edit</Button>
+        </div>
+      </div>
+      <div ref={bodyRef} className={'BroadcastForm__SignedHexBody'}>
+        <span>{unchanged}</span>
+        <span className={'BroadcastForm__SignedHexAppended'}>{appended}</span>
+      </div>
+    </div>
+  )
+}
+
 function BroadcastForm () {
   const [input, setInput] = useState('')
   const [state, setState] = useState(STATE.EMPTY)
@@ -79,6 +106,7 @@ function BroadcastForm () {
   const [rate, setRate] = useState({ data: null, loading: true, error: null })
   const [errorText, setErrorText] = useState(null)
   const [detectedOwnerId, setDetectedOwnerId] = useState(null)
+  const [unsignedSnapshot, setUnsignedSnapshot] = useState(null)
   const textareaRef = useRef(null)
 
   const signerCtl = useSigner()
@@ -105,6 +133,7 @@ function BroadcastForm () {
     setSize(null)
     setDetectedOwnerId(null)
     setErrorText(null)
+    setUnsignedSnapshot(null)
     setState(STATE.EMPTY)
   }
 
@@ -200,9 +229,11 @@ function BroadcastForm () {
     }
 
     try {
-      const { tx } = await parseStateTransition(input.trim())
+      const trimmedInput = input.trim()
+      const { tx } = await parseStateTransition(trimmedInput)
       const signedTx = await activeSigner.sign(tx)
       const signedHex = signedTx.hex()
+      setUnsignedSnapshot(trimmedInput)
       setInput(signedHex)
       setHash(signedTx.hash(false))
       setSize(computeSize(signedHex))
@@ -288,14 +319,27 @@ function BroadcastForm () {
           className={'BroadcastForm__InputLine'}
           title={'Raw transaction data'}
           value={
-            <textarea
-              ref={textareaRef}
-              className={'BroadcastForm__Input'}
-              placeholder={'(HEX, base64) Input Transaction Data...'}
-              value={input}
-              onChange={(e) => handleInputChange(e.target.value)}
-              rows={3}
-            />
+            state === STATE.SIGNED && unsignedSnapshot
+              ? <SignedHexView
+                  unsignedHex={unsignedSnapshot}
+                  signedHex={input}
+                  onEdit={() => {
+                    setInput(unsignedSnapshot)
+                    setUnsignedSnapshot(null)
+                    setVerify(null)
+                    setHash(null)
+                    setSize(null)
+                    setState(STATE.EMPTY)
+                  }}
+                />
+              : <textarea
+                  ref={textareaRef}
+                  className={'BroadcastForm__Input'}
+                  placeholder={'(HEX, base64) Input Transaction Data...'}
+                  value={input}
+                  onChange={(e) => handleInputChange(e.target.value)}
+                  rows={3}
+                />
           }
         />
 
@@ -332,12 +376,6 @@ function BroadcastForm () {
 
         {errorText && (
           <div className={'BroadcastForm__ErrorMessage'}>{errorText}</div>
-        )}
-
-        {state === STATE.SIGNED && (
-          <div className={'BroadcastForm__HashRow'}>
-            Signed locally. Click <strong>Verify</strong> to dry-run, then <strong>Broadcast</strong> when ready.
-          </div>
         )}
 
         {state === STATE.SUCCESS && hash && (
