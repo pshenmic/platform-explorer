@@ -115,7 +115,6 @@ function BroadcastForm () {
     ) reset()
   }
 
-  // Prefill identityId input from detected ownerId once Verify discovers it
   useEffect(() => {
     if (detectedOwnerId && !identityIdInput) {
       setIdentityIdInput(detectedOwnerId)
@@ -185,7 +184,6 @@ function BroadcastForm () {
     }
   }
 
-  // Private Key flow: sign locally, replace hex, auto-verify to surface signed details
   const handleSignPrivateKey = async () => {
     setState(STATE.SIGNING)
     setErrorText(null)
@@ -205,7 +203,6 @@ function BroadcastForm () {
       const signedTx = await activeSigner.sign(tx)
       const signedHex = signedTx.hex()
       setInput(signedHex)
-      // Auto-verify so user sees signed details + Broadcast button enabled
       await verifyHex(signedHex)
     } catch (e) {
       console.error(e)
@@ -214,7 +211,6 @@ function BroadcastForm () {
     }
   }
 
-  // Extension flow: signs and broadcasts atomically via popup
   const handleSignAndBroadcastExtension = async () => {
     setState(STATE.SIGNING)
     setErrorText(null)
@@ -251,7 +247,6 @@ function BroadcastForm () {
     if (signerCtl.method === SignerMethod.EXTENSION) return handleSignAndBroadcastExtension()
   }
 
-  // Switching signer method should clear stale errors from the previous attempt
   const handleMethodChange = (newMethod) => {
     setErrorText(null)
     signerCtl.setMethod(newMethod)
