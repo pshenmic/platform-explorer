@@ -238,7 +238,10 @@ function BroadcastForm () {
       setState(STATE.SUCCESS)
     } catch (e) {
       console.error(e)
-      setErrorText(e?.message || 'Failed to sign & broadcast via extension')
+      const wasRejected = /reject/i.test(e?.message ?? '')
+      setErrorText(wasRejected
+        ? 'Extension cached an earlier rejection. Disable/re-enable the Dash Platform Extension in chrome://extensions/ to reset its state, then try again.'
+        : (e?.message || 'Failed to sign & broadcast via extension'))
       setState(STATE.ERROR)
     }
   }
