@@ -11,6 +11,7 @@ export const useIdentitiesFilters = () => {
   const [contractsMin, setContractsMin] = useQueryState('data_contracts_min', { scroll: false, shallow: true })
   const [contractsMax, setContractsMax] = useQueryState('data_contracts_max', { scroll: false, shallow: true })
   const [orderBy, setOrderBy] = useQueryState('order_by', { scroll: false, shallow: true })
+  const [order, setOrder] = useQueryState('order', { scroll: false, shallow: true })
 
   const filters = {
     identity_type: identityType === 'regular' || identityType === 'masternode' ? identityType : undefined,
@@ -22,7 +23,8 @@ export const useIdentitiesFilters = () => {
     documents_count_max: docsMax != null && docsMax !== '' ? Number(docsMax) : undefined,
     data_contracts_min: contractsMin != null && contractsMin !== '' ? Number(contractsMin) : undefined,
     data_contracts_max: contractsMax != null && contractsMax !== '' ? Number(contractsMax) : undefined,
-    order_by: orderBy || undefined
+    order_by: orderBy || undefined,
+    order: order === 'asc' || order === 'desc' ? order : undefined
   }
 
   const setFilters = (next) => {
@@ -42,6 +44,7 @@ export const useIdentitiesFilters = () => {
     if ('data_contracts_max' in next) setContractsMax(next.data_contracts_max !== '' && next.data_contracts_max != null ? String(next.data_contracts_max) : null)
 
     if ('order_by' in next) setOrderBy(next.order_by || null)
+    if ('order' in next) setOrder(next.order === 'asc' || next.order === 'desc' ? next.order : null)
   }
 
   return { filters, setFilters }

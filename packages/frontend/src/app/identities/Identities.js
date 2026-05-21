@@ -130,7 +130,14 @@ function Identities ({ defaultPage = 1, defaultPageSize, defaultShowAll = false 
 
         {!identities.error
           ? !identities.loading
-              ? <IdentitiesList identities={identities.data.resultSet}/>
+              ? <IdentitiesList
+                  identities={identities.data.resultSet}
+                  sort={{ order_by: filters.order_by, order: filters.order }}
+                  onSortChange={(next) => {
+                    setFilters(next)
+                    setCurrentPage(0)
+                  }}
+                />
               : <LoadingList itemsCount={pageSize}/>
           : <ErrorMessageBlock h={20}/>
         }

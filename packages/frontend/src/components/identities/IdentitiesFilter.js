@@ -17,13 +17,6 @@ const pickIdentityType = (values) => {
   return values[0]
 }
 
-const orderByOptions = [
-  { label: 'Block height', title: 'Order by block height', value: 'block_height' },
-  { label: 'Balance', title: 'Order by balance', value: 'balance' },
-  { label: 'Transactions', title: 'Order by tx count', value: 'tx_count' },
-  { label: 'Documents', title: 'Order by documents count', value: 'documents_count' }
-]
-
 const rangeFormat = ({ min, max }) => {
   if (min && max) return `${min} – ${max}`
   if (min) return `Min ${min}`
@@ -84,15 +77,6 @@ const filtersConfig = {
     maxTitle: 'Max',
     maxPlaceholder: 'ex. 10',
     formatValue: rangeFormat
-  },
-  order_by: {
-    type: 'multiselect',
-    label: 'Sort by',
-    title: 'Order results by',
-    options: orderByOptions,
-    defaultValue: [],
-    formatValue: (values) => (Array.isArray(values) && values[0]) || undefined,
-    isAllSelected: () => false
   }
 }
 
@@ -111,8 +95,7 @@ export const IdentitiesFilter = ({ initialFilters, onFilterChange, isMobile, cla
           documents_count_min: values.documents_count_min || undefined,
           documents_count_max: values.documents_count_max || undefined,
           data_contracts_min: values.data_contracts_min || undefined,
-          data_contracts_max: values.data_contracts_max || undefined,
-          order_by: (Array.isArray(values.order_by) && values.order_by[0]) || undefined
+          data_contracts_max: values.data_contracts_max || undefined
         }
         onFilterChange && onFilterChange(payload)
       }}

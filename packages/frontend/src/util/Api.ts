@@ -365,7 +365,7 @@ const getIdentities = (
   const params = prepareQueryParams({
     page,
     limit,
-    order,
+    order: filters?.order ?? order,
     order_by: filters?.order_by ?? orderBy,
     identity_type:
       filters?.identity_type ?? (includeMasternodes ? null : 'regular'),
