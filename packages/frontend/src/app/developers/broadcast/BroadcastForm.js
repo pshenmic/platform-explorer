@@ -23,6 +23,7 @@ const STATE = {
   VERIFIED_FAIL: 'VERIFIED_FAIL',
   UNSIGNED: 'UNSIGNED',
   SIGNING: 'SIGNING',
+  SIGNED: 'SIGNED',
   BROADCASTING: 'BROADCASTING',
   WAITING: 'WAITING',
   SUCCESS: 'SUCCESS',
@@ -203,7 +204,10 @@ function BroadcastForm () {
       const signedTx = await activeSigner.sign(tx)
       const signedHex = signedTx.hex()
       setInput(signedHex)
-      await verifyHex(signedHex)
+      setHash(signedTx.hash(false))
+      setSize(computeSize(signedHex))
+      setVerify(null)
+      setState(STATE.SIGNED)
     } catch (e) {
       console.error(e)
       setErrorText(e?.message || 'Failed to sign transaction')
@@ -328,6 +332,12 @@ function BroadcastForm () {
 
         {errorText && (
           <div className={'BroadcastForm__ErrorMessage'}>{errorText}</div>
+        )}
+
+        {state === STATE.SIGNED && (
+          <div className={'BroadcastForm__HashRow'}>
+            Signed locally. Click <strong>Verify</strong> to dry-run, then <strong>Broadcast</strong> when ready.
+          </div>
         )}
 
         {state === STATE.SUCCESS && hash && (
