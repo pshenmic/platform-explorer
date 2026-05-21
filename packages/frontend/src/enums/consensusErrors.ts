@@ -3,20 +3,29 @@
 // Only common cases are mapped here — fallback shows the raw name + code.
 
 export const CONSENSUS_ERROR_MESSAGES: Record<string, string> = {
-  IdentityInsufficientBalanceError: 'Identity has insufficient credits. Top up before broadcasting.',
-  AddressInvalidNonceError: 'Nonce mismatch — transaction may have been broadcast already or is out of order.',
-  InvalidIdentityNonceError: 'Invalid identity nonce. Transaction may already be included or skipped.',
-  IdentityNotFoundError: 'Identity not found on the platform.',
-  InvalidStateTransitionSignatureError: 'Invalid signature. Re-sign the transaction with the correct key.',
-  JsonSchemaError: 'Transaction violates the data contract schema.',
-  InvalidDocumentRevisionError: 'Invalid document revision. Refetch and resubmit.',
-  DocumentAlreadyPresentError: 'Document already exists with this identifier.',
-  DocumentNotFoundError: 'Referenced document does not exist.',
-  DataContractNotPresentError: 'Referenced data contract not found.',
-  DataContractIsReadonlyError: 'Data contract is read-only and cannot be modified.',
-  BalanceIsNotEnoughError: 'Insufficient credits to pay processing fees.',
-  StateTransitionMaxSizeExceededError: 'Transaction exceeds maximum allowed size.',
-  DuplicateUniqueIndexError: 'Value violates a unique index on the document.'
+  IdentityInsufficientBalanceError: 'Insufficient credits. Top up identity.',
+  AddressInvalidNonceError: 'Nonce mismatch — already broadcast or out of order.',
+  InvalidIdentityNonceError: 'Invalid identity nonce.',
+  NonceOutOfBoundsError: 'Nonce out of allowed range. Regenerate.',
+  IdentityNotFoundError: 'Identity not found.',
+  InvalidStateTransitionSignatureError: 'Invalid signature. Re-sign with correct key.',
+  MissingPublicKeyError: 'Public key not found on identity.',
+  InvalidSignaturePublicKeySecurityLevelError: 'Signing key security level too low. Sign first to fix.',
+  PublicKeySecurityLevelNotMetError: 'Signing key security level too low.',
+  InvalidSignaturePublicKeyPurposeError: 'Signing key has wrong purpose.',
+  WrongPublicKeyPurposeError: 'Signing key has wrong purpose.',
+  PublicKeyIsDisabledError: 'Public key is disabled.',
+  DataContractAlreadyPresentError: 'Contract ID already exists. Regenerate with new nonce.',
+  JsonSchemaError: 'Violates contract schema.',
+  InvalidDocumentRevisionError: 'Invalid document revision.',
+  DocumentAlreadyPresentError: 'Document already exists.',
+  DocumentNotFoundError: 'Document not found.',
+  DataContractNotPresentError: 'Contract not found.',
+  DataContractIsReadonlyError: 'Contract is read-only.',
+  BalanceIsNotEnoughError: 'Insufficient credits for fees.',
+  StateTransitionMaxSizeExceededError: 'Transaction too large.',
+  InvalidStateTransitionTypeError: 'Unknown state transition type.',
+  DuplicateUniqueIndexError: 'Duplicate value in unique index.'
 }
 
 export function explainConsensusError (errorName: string | null | undefined, code: number | null | undefined): string {
