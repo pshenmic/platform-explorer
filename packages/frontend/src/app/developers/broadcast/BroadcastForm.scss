@@ -278,4 +278,15 @@
     padding: 1px 0;
     box-shadow: 0 0 0 1px rgba(0, 141, 228, 0.6);
   }
+
+  &__DecodedMeta {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  &__DecodedDivider {
+    border-top: 1px solid var(--chakra-colors-gray-700);
+    margin: 12px 0;
+  }
 }

@@ -437,79 +437,6 @@ function BroadcastForm () {
         </div>
       </div>
 
-      <div className={'BroadcastForm__Section'}>
-        <div className={'BroadcastForm__SectionTitle'}>Details</div>
-
-        <InfoLine
-          title={'Hash'}
-          value={hash
-            ? <Identifier copyButton={true} ellipsis={false} styles={['highlight-both']}>{hash}</Identifier>
-            : <NotActive>—</NotActive>}
-        />
-        <InfoLine
-          title={'Type'}
-          value={decoded?.typeString ? <TypeBadge type={decoded.typeString}/> : <NotActive>—</NotActive>}
-        />
-        <InfoLine
-          title={'Status'}
-          value={hasStatus ? <TransactionStatusBadge status={statusValue}/> : <NotActive>—</NotActive>}
-        />
-        <InfoLine
-          title={'Size'}
-          value={size != null
-            ? (
-              <span className={'BroadcastForm__Size'}>
-                <span>{size} </span>
-                <span className={'BroadcastForm__SizeUnit'}>bytes</span>
-              </span>
-              )
-            : <NotActive>—</NotActive>}
-        />
-        <InfoLine
-          title={'Owner'}
-          value={(decoded?.ownerId || detectedOwnerId)
-            ? (
-              <ValueCard link={`/identity/${decoded?.ownerId ?? detectedOwnerId}`}>
-                <Identifier avatar={true} copyButton={true} ellipsis={false} styles={['highlight-both']}>
-                  {decoded?.ownerId ?? detectedOwnerId}
-                </Identifier>
-              </ValueCard>
-              )
-            : <NotActive>—</NotActive>}
-        />
-        <InfoLine
-          title={'Fee'}
-          value={verify?.gasWanted != null
-            ? <CreditsBlock credits={verify.gasWanted} rate={rate}/>
-            : <NotActive>—</NotActive>}
-        />
-        <InfoLine
-          title={'Fee Multiplier'}
-          value={decoded?.userFeeIncrease != null
-            ? <FeeMultiplier value={Number(decoded.userFeeIncrease)}/>
-            : <NotActive>—</NotActive>}
-        />
-        <InfoLine
-          title={'Identity Nonce'}
-          value={decoded?.identityNonce != null ? decoded.identityNonce : <NotActive>—</NotActive>}
-        />
-        <InfoLine
-          title={'Signature Public Key Id'}
-          value={decoded?.signaturePublicKeyId != null ? decoded.signaturePublicKeyId : <NotActive>—</NotActive>}
-        />
-        <InfoLine
-          title={'Signature'}
-          value={decoded?.signature
-            ? (
-              <ValueCard className={'BroadcastForm__Signature'}>
-                {decoded.signature}
-                <CopyButton text={decoded.signature}/>
-              </ValueCard>
-              )
-            : <NotActive>—</NotActive>}
-        />
-      </div>
-
       <div className={'BroadcastForm__Section BroadcastForm__Section--Json'}>
         <Tabs variant={'line'} isLazy className={'BroadcastForm__Tabs'}>
           <TabList>
@@ -518,6 +445,77 @@ function BroadcastForm () {
           </TabList>
           <TabPanels className={'BroadcastForm__TabPanels'}>
             <TabPanel className={'BroadcastForm__TabPanel BroadcastForm__TabPanel--Variant TransactionPage'}>
+              <div className={'BroadcastForm__DecodedMeta'}>
+                <InfoLine
+                  title={'Hash'}
+                  value={hash
+                    ? <Identifier copyButton={true} ellipsis={false} styles={['highlight-both']}>{hash}</Identifier>
+                    : <NotActive>—</NotActive>}
+                />
+                <InfoLine
+                  title={'Type'}
+                  value={decoded?.typeString ? <TypeBadge type={decoded.typeString}/> : <NotActive>—</NotActive>}
+                />
+                <InfoLine
+                  title={'Status'}
+                  value={hasStatus ? <TransactionStatusBadge status={statusValue}/> : <NotActive>—</NotActive>}
+                />
+                <InfoLine
+                  title={'Size'}
+                  value={size != null
+                    ? (
+                      <span className={'BroadcastForm__Size'}>
+                        <span>{size} </span>
+                        <span className={'BroadcastForm__SizeUnit'}>bytes</span>
+                      </span>
+                      )
+                    : <NotActive>—</NotActive>}
+                />
+                <InfoLine
+                  title={'Owner'}
+                  value={(decoded?.ownerId || detectedOwnerId)
+                    ? (
+                      <ValueCard link={`/identity/${decoded?.ownerId ?? detectedOwnerId}`}>
+                        <Identifier avatar={true} copyButton={true} ellipsis={false} styles={['highlight-both']}>
+                          {decoded?.ownerId ?? detectedOwnerId}
+                        </Identifier>
+                      </ValueCard>
+                      )
+                    : <NotActive>—</NotActive>}
+                />
+                <InfoLine
+                  title={'Fee'}
+                  value={verify?.gasWanted != null
+                    ? <CreditsBlock credits={verify.gasWanted} rate={rate}/>
+                    : <NotActive>—</NotActive>}
+                />
+                <InfoLine
+                  title={'Fee Multiplier'}
+                  value={decoded?.userFeeIncrease != null
+                    ? <FeeMultiplier value={Number(decoded.userFeeIncrease)}/>
+                    : <NotActive>—</NotActive>}
+                />
+                <InfoLine
+                  title={'Identity Nonce'}
+                  value={decoded?.identityNonce != null ? decoded.identityNonce : <NotActive>—</NotActive>}
+                />
+                <InfoLine
+                  title={'Signature Public Key Id'}
+                  value={decoded?.signaturePublicKeyId != null ? decoded.signaturePublicKeyId : <NotActive>—</NotActive>}
+                />
+                <InfoLine
+                  title={'Signature'}
+                  value={decoded?.signature
+                    ? (
+                      <ValueCard className={'BroadcastForm__Signature'}>
+                        {decoded.signature}
+                        <CopyButton text={decoded.signature}/>
+                      </ValueCard>
+                      )
+                    : <NotActive>—</NotActive>}
+                />
+              </div>
+              <div className={'BroadcastForm__DecodedDivider'}/>
               {decoded
                 ? <TransactionType rate={rate} {...decoded}/>
                 : (
