@@ -31,6 +31,19 @@ const STATE = {
   ERROR: 'ERROR'
 }
 
+// Consensus errors that signing will actually resolve. For unsigned tx with
+// these errors, we show the sign panel (signing fixes them). For other errors
+// (nonce, schema, state conflicts), signing won't help — show FAIL instead.
+const SIGN_FIXABLE_ERRORS = new Set([
+  'InvalidStateTransitionSignatureError', // 20002
+  'MissingPublicKeyError', // 20003
+  'InvalidSignaturePublicKeySecurityLevelError', // 20004
+  'WrongPublicKeyPurposeError', // 20005
+  'PublicKeyIsDisabledError', // 20006
+  'PublicKeySecurityLevelNotMetError', // 20007
+  'InvalidSignaturePublicKeyPurposeError' // 20011
+])
+
 const isHex = (input) => /^[0-9a-fA-F]+$/.test(input.trim())
 
 const computeSize = (trimmed) => {
@@ -171,28 +184,28 @@ function BroadcastForm () {
       const parsed = await parseStateTransition(trimmed)
       setHash(parsed.hash)
       setSize(computeSize(trimmed))
+      if (!parsed.isSigned) setDetectedOwnerId(parsed.ownerId)
 
       const base64 = toBase64(trimmed)
-
-      if (!parsed.isSigned) {
-        setDetectedOwnerId(parsed.ownerId)
-        const decodedResult = await Api.decodeTx(base64)
-          .catch((e) => { console.warn('decode failed:', e); return null })
-        setDecoded(decodedResult)
-        setVerify(null)
-        setState(STATE.UNSIGNED)
-        return
-      }
-
       const payload = isHex(trimmed) ? { hex: trimmed } : { base64: trimmed }
       const [decodedResult, verifyResult] = await Promise.all([
         Api.decodeTx(base64).catch((e) => { console.warn('decode failed:', e); return null }),
-        Api.verifyTransaction(payload)
+        Api.verifyTransaction(payload).catch((e) => { console.warn('verify failed:', e); return null })
       ])
 
       setDecoded(decodedResult)
       setVerify(verifyResult)
-      setState(verifyResult.result === 'ok' ? STATE.VERIFIED_OK : STATE.VERIFIED_FAIL)
+
+      if (!parsed.isSigned) {
+        if (verifyResult?.result === 'error') {
+          const fixableBySigning = SIGN_FIXABLE_ERRORS.has(verifyResult.error)
+          setState(fixableBySigning ? STATE.UNSIGNED : STATE.VERIFIED_FAIL)
+        } else {
+          setState(STATE.UNSIGNED)
+        }
+      } else {
+        setState(verifyResult?.result === 'ok' ? STATE.VERIFIED_OK : STATE.VERIFIED_FAIL)
+      }
     } catch (e) {
       console.error(e)
       setErrorText(e?.message || 'Failed to parse or verify transaction')
@@ -356,7 +369,7 @@ function BroadcastForm () {
           }
         />
 
-        {verify?.result === 'error' && (
+        {verify?.result === 'error' && state !== STATE.UNSIGNED && (
           <div className={'BroadcastForm__ErrorMessage'}>
             {explainConsensusError(verify.error, verify.code)}
           </div>
