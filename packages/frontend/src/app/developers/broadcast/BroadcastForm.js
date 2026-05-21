@@ -8,13 +8,11 @@ import { useSigner, SignerMethod } from 'src/hooks/useSigner'
 import { MethodSelect, PrivateKeyForm } from 'src/components/signing'
 import { InfoLine, CreditsBlock, JsonViewer, NotActive, Identifier } from '../../../components/data'
 import { ValueCard } from '../../../components/cards'
-import { InternalConfigCard } from '../../../components/dataContracts'
 import { CopyButton } from '../../../components/ui/Buttons'
 import TransactionStatusBadge from '../../../components/transactions/TransactionStatusBadge'
 import TypeBadge from '../../../components/transactions/TypeBadge'
 import FeeMultiplier from '../../../components/transactions/FeeMultiplier'
 import { TransactionType } from '../../transaction/[hash]/components/TransactionType'
-import { TokenConfiguration } from '../../transaction/[hash]/components/TransactionType/TokenConfiguration'
 import { explainConsensusError } from '../../../enums/consensusErrors'
 import './BroadcastForm.scss'
 
@@ -80,7 +78,6 @@ function BroadcastForm () {
   const [rate, setRate] = useState({ data: null, loading: true, error: null })
   const [errorText, setErrorText] = useState(null)
   const [detectedOwnerId, setDetectedOwnerId] = useState(null)
-  const [isInputUnsigned, setIsInputUnsigned] = useState(false)
   const textareaRef = useRef(null)
 
   const signerCtl = useSigner()
@@ -118,34 +115,12 @@ function BroadcastForm () {
     ) reset()
   }
 
-  // Prefill identityId input from detected ownerId of unsigned tx
+  // Prefill identityId input from detected ownerId once Verify discovers it
   useEffect(() => {
     if (detectedOwnerId && !identityIdInput) {
       setIdentityIdInput(detectedOwnerId)
     }
   }, [detectedOwnerId, identityIdInput])
-
-  // Eager detect unsigned: cheap local WASM parse on every input change
-  useEffect(() => {
-    const trimmed = input.trim()
-    if (!trimmed || trimmed.length < 16) {
-      setIsInputUnsigned(false)
-      setDetectedOwnerId(null)
-      return
-    }
-    let cancelled = false
-    parseStateTransition(trimmed)
-      .then((parsed) => {
-        if (cancelled) return
-        setIsInputUnsigned(!parsed.isSigned)
-        if (!parsed.isSigned) setDetectedOwnerId(parsed.ownerId)
-      })
-      .catch(() => {
-        if (cancelled) return
-        setIsInputUnsigned(false)
-      })
-    return () => { cancelled = true }
-  }, [input])
 
   const verifyHex = async (rawHex) => {
     const trimmed = rawHex.trim()
@@ -273,6 +248,12 @@ function BroadcastForm () {
     if (signerCtl.method === SignerMethod.EXTENSION) return handleSignAndBroadcastExtension()
   }
 
+  // Switching signer method should clear stale errors from the previous attempt
+  const handleMethodChange = (newMethod) => {
+    setErrorText(null)
+    signerCtl.setMethod(newMethod)
+  }
+
   const verifyDisabled = !input.trim() ||
     state === STATE.VERIFYING || state === STATE.BROADCASTING || state === STATE.SIGNING
   const broadcastDisabled = state !== STATE.VERIFIED_OK
@@ -282,6 +263,12 @@ function BroadcastForm () {
   const signLoading = state === STATE.SIGNING || signerCtl.isConnecting
   const signDisabled = signLoading ||
     (signerCtl.method === SignerMethod.PRIVATE_KEY && !wif.trim())
+  const signButtonLabel = signerCtl.method === SignerMethod.EXTENSION
+    ? 'Sign & Broadcast (Extension)'
+    : 'Sign Transaction'
+  const signLoadingText = signerCtl.method === SignerMethod.EXTENSION
+    ? 'Awaiting popup…'
+    : 'Signing…'
 
   const statusValue = state === STATE.SUCCESS
     ? 'SUCCESS'
@@ -289,10 +276,6 @@ function BroadcastForm () {
       ? 'UNSIGNED'
       : verify?.result === 'ok' ? 'SUCCESS' : 'FAIL'
   const hasStatus = verify || state === STATE.UNSIGNED || state === STATE.SUCCESS
-  const isDataContract = decoded?.typeString === 'DATA_CONTRACT_CREATE' || decoded?.typeString === 'DATA_CONTRACT_UPDATE'
-  const hasInternalConfig = !!decoded?.internalConfig && isDataContract
-  const hasTokens = !!decoded?.tokens?.length && isDataContract
-  const hasConfig = hasInternalConfig || hasTokens
 
   return (
     <div className={'BroadcastForm'}>
@@ -313,186 +296,197 @@ function BroadcastForm () {
             />
           }
         />
-      </div>
 
-      <div className={'BroadcastForm__Columns'}>
-        <div className={'BroadcastForm__Section BroadcastForm__Section--Details'}>
-          <div className={'BroadcastForm__SectionTitle'}>Details</div>
+        <div className={'BroadcastForm__ButtonsRow'}>
+          <Button
+            variant={'blue'}
+            size={'sm'}
+            minW={'160px'}
+            onClick={handleVerify}
+            isLoading={state === STATE.VERIFYING}
+            loadingText={'Verifying…'}
+            isDisabled={verifyDisabled}
+          >
+            Verify
+          </Button>
+          <Button
+            variant={'gray'}
+            size={'sm'}
+            minW={'160px'}
+            onClick={handleBroadcast}
+            isLoading={broadcastLoading}
+            loadingText={broadcastLoadingText}
+            isDisabled={broadcastDisabled}
+          >
+            Broadcast
+          </Button>
+        </div>
 
-          <Collapse in={isInputUnsigned} animateOpacity unmountOnExit>
-            <div className={'BroadcastForm__DetailsSigner'}>
+        {verify?.result === 'error' && (
+          <div className={'BroadcastForm__ErrorMessage'}>
+            {explainConsensusError(verify.error, verify.code)}
+          </div>
+        )}
+
+        {errorText && (
+          <div className={'BroadcastForm__ErrorMessage'}>{errorText}</div>
+        )}
+
+        {state === STATE.SUCCESS && hash && (
+          <div className={'BroadcastForm__HashRow'}>
+            Broadcasted! <Link href={`/transaction/${hash}`}>View transaction →</Link>
+          </div>
+        )}
+
+        <Collapse in={state === STATE.UNSIGNED || state === STATE.SIGNING} animateOpacity unmountOnExit={false}>
+          <div className={'BroadcastForm__SignPanel'}>
+            <div className={'BroadcastForm__SignPanelHeader'}>
+              Transaction is not signed. Sign it to continue.
+            </div>
+
+            <div className={'BroadcastForm__SignPanelMethod'}>
               <MethodSelect
                 value={signerCtl.method}
-                onChange={signerCtl.setMethod}
+                onChange={handleMethodChange}
                 isDisabled={signerCtl.isConnecting || state === STATE.SIGNING}
               />
-              {signerCtl.method === SignerMethod.PRIVATE_KEY && (
-                <PrivateKeyForm
-                  wif={wif}
-                  setWif={setWif}
-                  identityId={identityIdInput}
-                  setIdentityId={setIdentityIdInput}
-                  isInactive={signerCtl.isConnecting || state === STATE.SIGNING}
-                  identityIdPlaceholder={detectedOwnerId ? 'Identity ID (auto)' : 'Identity ID (optional)'}
-                />
-              )}
+              <div className={'BroadcastForm__SignPanelHint'}>
+                {signerCtl.method === SignerMethod.EXTENSION
+                  ? 'Extension signs and broadcasts in one step (via popup).'
+                  : 'Private Key signs locally — you can verify and broadcast separately.'}
+              </div>
             </div>
-          </Collapse>
 
-          <div className={'BroadcastForm__DetailsScroll'}>
-            <InfoLine
-              title={'Hash'}
-              value={hash
-                ? <Identifier copyButton={true} ellipsis={true} styles={['highlight-both']}>{hash}</Identifier>
-                : <NotActive>—</NotActive>}
-            />
-            <InfoLine
-              title={'Type'}
-              value={decoded?.typeString ? <TypeBadge type={decoded.typeString}/> : <NotActive>—</NotActive>}
-            />
-            <InfoLine
-              title={'Status'}
-              value={hasStatus ? <TransactionStatusBadge status={statusValue}/> : <NotActive>—</NotActive>}
-            />
-            <InfoLine
-              title={'Size'}
-              value={size != null
-                ? (
-                  <span className={'BroadcastForm__Size'}>
-                    <span>{size} </span>
-                    <span className={'BroadcastForm__SizeUnit'}>bytes</span>
-                  </span>
-                  )
-                : <NotActive>—</NotActive>}
-            />
-            <InfoLine
-              title={'Owner'}
-              value={(decoded?.ownerId || detectedOwnerId)
-                ? (
-                  <ValueCard link={`/identity/${decoded?.ownerId ?? detectedOwnerId}`}>
-                    <Identifier avatar={true} copyButton={true} ellipsis={true} styles={['highlight-both']}>
-                      {decoded?.ownerId ?? detectedOwnerId}
-                    </Identifier>
-                  </ValueCard>
-                  )
-                : <NotActive>—</NotActive>}
-            />
-            <InfoLine
-              title={'Fee'}
-              value={verify?.gasWanted != null
-                ? <CreditsBlock credits={verify.gasWanted} rate={rate}/>
-                : <NotActive>—</NotActive>}
-            />
-            <InfoLine
-              title={'Fee Multiplier'}
-              value={decoded?.userFeeIncrease != null
-                ? <FeeMultiplier value={Number(decoded.userFeeIncrease)}/>
-                : <NotActive>—</NotActive>}
-            />
-            <InfoLine
-              title={'Identity Nonce'}
-              value={decoded?.identityNonce != null ? decoded.identityNonce : <NotActive>—</NotActive>}
-            />
-            <InfoLine
-              title={'Signature Public Key Id'}
-              value={decoded?.signaturePublicKeyId != null ? decoded.signaturePublicKeyId : <NotActive>—</NotActive>}
-            />
-            <InfoLine
-              title={'Signature'}
-              value={decoded?.signature
-                ? (
-                  <ValueCard className={'BroadcastForm__Signature'}>
-                    {decoded.signature}
-                    <CopyButton text={decoded.signature}/>
-                  </ValueCard>
-                  )
-                : <NotActive>—</NotActive>}
-            />
-          </div>
+            {signerCtl.method === SignerMethod.PRIVATE_KEY && (
+              <PrivateKeyForm
+                wif={wif}
+                setWif={setWif}
+                identityId={identityIdInput}
+                setIdentityId={setIdentityIdInput}
+                isInactive={signerCtl.isConnecting || state === STATE.SIGNING}
+                identityIdPlaceholder={detectedOwnerId ? 'Identity ID (detected from tx)' : 'Identity ID (optional)'}
+              />
+            )}
 
-          <div className={'BroadcastForm__DetailsActions'}>
-            <div className={'BroadcastForm__ActionsButtons'}>
+            <div className={'BroadcastForm__SignPanelActions'}>
               <Button
                 variant={'blue'}
                 size={'sm'}
-                minW={'160px'}
-                onClick={isInputUnsigned ? handlePrimarySign : handleVerify}
-                isLoading={isInputUnsigned ? signLoading : state === STATE.VERIFYING}
-                loadingText={isInputUnsigned ? 'Signing…' : 'Verifying…'}
-                isDisabled={isInputUnsigned ? signDisabled : verifyDisabled}
+                minW={'200px'}
+                onClick={handlePrimarySign}
+                isLoading={signLoading}
+                loadingText={signLoadingText}
+                isDisabled={signDisabled}
               >
-                {isInputUnsigned ? 'Sign' : 'Verify'}
-              </Button>
-              <Button
-                variant={'gray'}
-                size={'sm'}
-                minW={'160px'}
-                onClick={handleBroadcast}
-                isLoading={broadcastLoading}
-                loadingText={broadcastLoadingText}
-                isDisabled={broadcastDisabled}
-              >
-                Broadcast
+                {signButtonLabel}
               </Button>
             </div>
 
-            {verify?.result === 'error' && (
-              <div className={'BroadcastForm__ErrorMessage'}>
-                {explainConsensusError(verify.error, verify.code)}
-              </div>
-            )}
-
-            {errorText && (
-              <div className={'BroadcastForm__ErrorMessage'}>{errorText}</div>
-            )}
-
-            {isInputUnsigned && signerCtl.error && (
+            {signerCtl.error && (
               <div className={'BroadcastForm__ErrorMessage'}>{signerCtl.error}</div>
             )}
-
-            {state === STATE.SUCCESS && hash && (
-              <div className={'BroadcastForm__HashRow'}>
-                Broadcasted! <Link href={`/transaction/${hash}`}>View transaction →</Link>
-              </div>
-            )}
           </div>
-        </div>
+        </Collapse>
+      </div>
 
-        <div className={'BroadcastForm__Section BroadcastForm__Section--Json'}>
-          <Tabs variant={'line'} isLazy className={'BroadcastForm__Tabs'}>
-            <TabList>
-              <Tab>Decoded</Tab>
-              {hasConfig && <Tab>Config</Tab>}
-              <Tab>Raw</Tab>
-            </TabList>
-            <TabPanels className={'BroadcastForm__TabPanels'}>
-              <TabPanel className={'BroadcastForm__TabPanel BroadcastForm__TabPanel--Variant TransactionPage'}>
-                {decoded
-                  ? <TransactionType rate={rate} {...decoded} internalConfig={undefined} tokens={undefined}/>
-                  : (
-                    <div className={'BroadcastForm__EmptyVariant'}>
-                      Paste a signed transaction above and click Verify to decode it here.
-                    </div>
-                    )}
-              </TabPanel>
-              {hasConfig && (
-                <TabPanel className={'BroadcastForm__TabPanel BroadcastForm__TabPanel--Config'}>
-                  {hasInternalConfig && <InternalConfigCard config={decoded.internalConfig}/>}
-                  {hasTokens && decoded.tokens.map((token, i) => (
-                    <TokenConfiguration key={i} {...token}/>
-                  ))}
-                </TabPanel>
-              )}
-              <TabPanel className={'BroadcastForm__TabPanel'}>
-                <JsonViewer
-                  value={decoded}
-                  fill
-                  placeholder={'Paste a signed transaction above and click Verify to decode it here.'}
-                />
-              </TabPanel>
-            </TabPanels>
-          </Tabs>
-        </div>
+      <div className={'BroadcastForm__Section'}>
+        <div className={'BroadcastForm__SectionTitle'}>Details</div>
+
+        <InfoLine
+          title={'Hash'}
+          value={hash
+            ? <Identifier copyButton={true} ellipsis={false} styles={['highlight-both']}>{hash}</Identifier>
+            : <NotActive>—</NotActive>}
+        />
+        <InfoLine
+          title={'Type'}
+          value={decoded?.typeString ? <TypeBadge type={decoded.typeString}/> : <NotActive>—</NotActive>}
+        />
+        <InfoLine
+          title={'Status'}
+          value={hasStatus ? <TransactionStatusBadge status={statusValue}/> : <NotActive>—</NotActive>}
+        />
+        <InfoLine
+          title={'Size'}
+          value={size != null
+            ? (
+              <span className={'BroadcastForm__Size'}>
+                <span>{size} </span>
+                <span className={'BroadcastForm__SizeUnit'}>bytes</span>
+              </span>
+              )
+            : <NotActive>—</NotActive>}
+        />
+        <InfoLine
+          title={'Owner'}
+          value={(decoded?.ownerId || detectedOwnerId)
+            ? (
+              <ValueCard link={`/identity/${decoded?.ownerId ?? detectedOwnerId}`}>
+                <Identifier avatar={true} copyButton={true} ellipsis={false} styles={['highlight-both']}>
+                  {decoded?.ownerId ?? detectedOwnerId}
+                </Identifier>
+              </ValueCard>
+              )
+            : <NotActive>—</NotActive>}
+        />
+        <InfoLine
+          title={'Fee'}
+          value={verify?.gasWanted != null
+            ? <CreditsBlock credits={verify.gasWanted} rate={rate}/>
+            : <NotActive>—</NotActive>}
+        />
+        <InfoLine
+          title={'Fee Multiplier'}
+          value={decoded?.userFeeIncrease != null
+            ? <FeeMultiplier value={Number(decoded.userFeeIncrease)}/>
+            : <NotActive>—</NotActive>}
+        />
+        <InfoLine
+          title={'Identity Nonce'}
+          value={decoded?.identityNonce != null ? decoded.identityNonce : <NotActive>—</NotActive>}
+        />
+        <InfoLine
+          title={'Signature Public Key Id'}
+          value={decoded?.signaturePublicKeyId != null ? decoded.signaturePublicKeyId : <NotActive>—</NotActive>}
+        />
+        <InfoLine
+          title={'Signature'}
+          value={decoded?.signature
+            ? (
+              <ValueCard className={'BroadcastForm__Signature'}>
+                {decoded.signature}
+                <CopyButton text={decoded.signature}/>
+              </ValueCard>
+              )
+            : <NotActive>—</NotActive>}
+        />
+      </div>
+
+      <div className={'BroadcastForm__Section BroadcastForm__Section--Json'}>
+        <Tabs variant={'line'} isLazy className={'BroadcastForm__Tabs'}>
+          <TabList>
+            <Tab>Decoded</Tab>
+            <Tab>Raw</Tab>
+          </TabList>
+          <TabPanels className={'BroadcastForm__TabPanels'}>
+            <TabPanel className={'BroadcastForm__TabPanel BroadcastForm__TabPanel--Variant TransactionPage'}>
+              {decoded
+                ? <TransactionType rate={rate} {...decoded}/>
+                : (
+                  <div className={'BroadcastForm__EmptyVariant'}>
+                    Paste a signed transaction above and click Verify to decode it here.
+                  </div>
+                  )}
+            </TabPanel>
+            <TabPanel className={'BroadcastForm__TabPanel'}>
+              <JsonViewer
+                value={decoded}
+                fill
+                placeholder={'Paste a signed transaction above and click Verify to decode it here.'}
+              />
+            </TabPanel>
+          </TabPanels>
+        </Tabs>
       </div>
     </div>
   )

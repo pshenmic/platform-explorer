@@ -6,8 +6,6 @@
   flex-direction: column;
   gap: 24px;
   width: 100%;
-  height: calc(100vh - 320px);
-  overflow: hidden;
 
   &__Section {
     background: var(--chakra-colors-gray-675);
@@ -18,32 +16,6 @@
     flex-direction: column;
     gap: 14px;
     width: 100%;
-    flex-shrink: 0;
-  }
-
-  &__Columns {
-    display: flex;
-    gap: 24px;
-    width: 100%;
-    align-items: stretch;
-    flex: 1;
-    min-height: 0;
-
-    > .BroadcastForm__Section {
-      flex: 1;
-      min-width: 0;
-      min-height: 0;
-      overflow: hidden;
-    }
-
-    @media (max-width: 1024px) {
-      flex-direction: column;
-    }
-  }
-
-  @media (max-width: 1024px) {
-    height: auto;
-    overflow: visible;
   }
 
   &__SectionTitle {
@@ -64,30 +36,10 @@
     width: 100%;
   }
 
-  &__Section--Details {
-    overflow: hidden;
+  &__ButtonsRow {
     display: flex;
-    flex-direction: column;
-  }
-
-  &__DetailsSigner {
-    flex: 0 0 auto;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    padding-bottom: 14px;
-    border-bottom: 1px solid var(--chakra-colors-gray-700);
-    margin-bottom: 14px;
-  }
-
-  &__DetailsScroll {
-    flex: 1 1 auto;
-    min-height: 0;
-    overflow-y: auto;
-    @include mixins.BrandScroll();
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
+    gap: 8px;
+    align-items: center;
   }
 
   &__Section--Json {
@@ -115,11 +67,8 @@
     .BroadcastForm__TabPanel--Variant {
       overflow-y: auto;
       gap: 12px;
+      padding: 14px 4px 4px 0;
       @include mixins.BrandScroll();
-    }
-
-    .BroadcastForm__TabPanel--Config {
-      gap: 14px;
     }
   }
 
@@ -170,30 +119,6 @@
     .InfoLine__Value {
       flex: 1;
     }
-  }
-
-  &__DetailsActions {
-    flex: 0 0 auto;
-    margin-top: 14px;
-    padding-top: 14px;
-    border-top: 1px solid var(--chakra-colors-gray-700);
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-  }
-
-  &__ActionsSigner {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    width: 100%;
-  }
-
-  &__ActionsButtons {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    align-items: center;
   }
 
   &__Input {
