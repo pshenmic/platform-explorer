@@ -15,13 +15,9 @@
     @include identities.Column();
     width: 100%;
     display: block;
-    word-break: normal;
-    white-space: normal;
-    overflow-wrap: break-word;
-
-    &--Hash {
-      white-space: nowrap;
-    }
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 
     &:last-child {
       text-align: right;

@@ -21,6 +21,18 @@ function IdentitiesList ({ identities, headerStyles = 'default', pagination, loa
         <GridItem className={'IdentitiesList__ColumnTitle IdentitiesList__ColumnTitle--Identifier'}>
           Identifier
         </GridItem>
+        <GridItem className={'IdentitiesList__ColumnTitle IdentitiesList__ColumnTitle--Balance'}>
+          Balance
+        </GridItem>
+        <GridItem className={'IdentitiesList__ColumnTitle IdentitiesList__ColumnTitle--Txs'}>
+          Transactions
+        </GridItem>
+        <GridItem className={'IdentitiesList__ColumnTitle IdentitiesList__ColumnTitle--Documents'}>
+          Documents
+        </GridItem>
+        <GridItem className={'IdentitiesList__ColumnTitle IdentitiesList__ColumnTitle--Contracts'}>
+          Data Contracts
+        </GridItem>
         <GridItem className={'IdentitiesList__ColumnTitle IdentitiesList__ColumnTitle--Timestamp'}>
           Timestamp
         </GridItem>

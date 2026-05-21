@@ -16,5 +16,14 @@
     &--Identifier {
       overflow: hidden;
     }
+
+    &--Balance,
+    &--Txs,
+    &--Documents,
+    &--Contracts {
+      font-family: $font-mono;
+      font-size: 0.75rem;
+      color: var(--chakra-colors-white-50);
+    }
   }
 }
