@@ -288,7 +288,10 @@ function BroadcastForm () {
 
   const handlePrimarySign = () => {
     if (signerCtl.method === SignerMethod.PRIVATE_KEY) return handleSignPrivateKey()
-    if (signerCtl.method === SignerMethod.EXTENSION) return handleSignAndBroadcastExtension()
+    if (signerCtl.method === SignerMethod.EXTENSION) {
+      if (!signerCtl.isConnected) return signerCtl.connect()
+      return handleSignAndBroadcastExtension()
+    }
   }
 
   const handleMethodChange = (newMethod) => {
@@ -307,10 +310,10 @@ function BroadcastForm () {
   const signDisabled = signLoading ||
     (signerCtl.method === SignerMethod.PRIVATE_KEY && !wif.trim())
   const signButtonLabel = signerCtl.method === SignerMethod.EXTENSION
-    ? 'Sign & Broadcast (Extension)'
+    ? (signerCtl.isConnected ? 'Sign & Broadcast' : 'Connect Wallet')
     : 'Sign Transaction'
   const signLoadingText = signerCtl.method === SignerMethod.EXTENSION
-    ? 'Awaiting popup…'
+    ? (signerCtl.isConnected ? 'Awaiting popup…' : 'Connecting…')
     : 'Signing…'
 
   const statusValue = state === STATE.SUCCESS
