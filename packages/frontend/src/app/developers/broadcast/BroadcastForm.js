@@ -353,31 +353,6 @@ function BroadcastForm () {
           }
         />
 
-        <div className={'BroadcastForm__ButtonsRow'}>
-          <Button
-            variant={'blue'}
-            size={'sm'}
-            minW={'160px'}
-            onClick={handleVerify}
-            isLoading={state === STATE.VERIFYING}
-            loadingText={'Verifying…'}
-            isDisabled={verifyDisabled}
-          >
-            Verify
-          </Button>
-          <Button
-            variant={'gray'}
-            size={'sm'}
-            minW={'160px'}
-            onClick={handleBroadcast}
-            isLoading={broadcastLoading}
-            loadingText={broadcastLoadingText}
-            isDisabled={broadcastDisabled}
-          >
-            Broadcast
-          </Button>
-        </div>
-
         {verify?.result === 'error' && (
           <div className={'BroadcastForm__ErrorMessage'}>
             {explainConsensusError(verify.error, verify.code)}
@@ -443,6 +418,20 @@ function BroadcastForm () {
             )}
           </div>
         </Collapse>
+
+        <div className={'BroadcastForm__ButtonsRow'}>
+          <Button
+            variant={'blue'}
+            size={'sm'}
+            minW={'200px'}
+            onClick={state === STATE.VERIFIED_OK ? handleBroadcast : handleVerify}
+            isLoading={state === STATE.VERIFIED_OK ? broadcastLoading : state === STATE.VERIFYING}
+            loadingText={state === STATE.VERIFIED_OK ? broadcastLoadingText : 'Verifying…'}
+            isDisabled={state === STATE.VERIFIED_OK ? broadcastDisabled : verifyDisabled}
+          >
+            {state === STATE.VERIFIED_OK ? 'Broadcast' : 'Verify'}
+          </Button>
+        </div>
       </div>
 
       <div className={'BroadcastForm__Section'}>
