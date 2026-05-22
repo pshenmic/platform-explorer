@@ -318,6 +318,9 @@ const schemaTypes = [
       balance_max: {
         type: ['string', 'null'],
         pattern: '^[0-9]+$'
+      },
+      voting_finished: {
+        type: ['boolean', 'null'],
       }
     }
   },
