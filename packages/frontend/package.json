@@ -32,7 +32,6 @@
     "react-markdown": "^9.0.1",
     "react-paginate": "^8.2.0",
     "react-router-dom": "^6.12.1",
-    "react-scripts": "5.0.1",
     "react-select": "^5.9.0",
     "react-spring": "^9.7.5",
     "rehype-raw": "^7.0.0",
