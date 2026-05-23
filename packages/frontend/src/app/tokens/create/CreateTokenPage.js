@@ -13,12 +13,11 @@ function CreateTokenPage () {
   return (
     <TokenWizardProvider>
       <div className='CreateTokenPage'>
-        <div className='CreateTokenPage__TemplateStrip'>
-          <TemplateStrip/>
-        </div>
-
         <div className='CreateTokenPage__Layout'>
           <div className='CreateTokenPage__FormPane'>
+            <div className='CreateTokenPage__SectionTitle'>Template</div>
+            <TemplateStrip/>
+
             <div className='CreateTokenPage__SectionTitle'>Essentials</div>
             <Essentials/>
 
