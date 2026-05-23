@@ -1,0 +1,11 @@
+@import 'src/styles/variables';
+
+.Essentials {
+  &__Label {
+    font-family: var(--font-montserrat);
+    font-weight: 600;
+    font-size: 12px;
+    color: var(--chakra-colors-white-50);
+    margin-bottom: 6px;
+  }
+}
