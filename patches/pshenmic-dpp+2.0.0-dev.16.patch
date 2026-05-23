@@ -1,0 +1,13 @@
+diff --git a/node_modules/pshenmic-dpp/dist/binaries/wasmCreation.cjs b/node_modules/pshenmic-dpp/dist/binaries/wasmCreation.cjs
+index 252e0bb..c7ef3e7 100644
+--- a/node_modules/pshenmic-dpp/dist/binaries/wasmCreation.cjs
++++ b/node_modules/pshenmic-dpp/dist/binaries/wasmCreation.cjs
+@@ -3,7 +3,7 @@ const { WASI } = require('@tybys/wasm-util');
+ const { getDefaultContext } = require('@emnapi/runtime');
+ const { instantiateNapiModuleSync } = require('@emnapi/core');
+ const { bytes } = require('./wasm/wasmBytes.cjs');
+-const { decode } = require('../utils/base122.js');
++const { decode } = require('../utils/base122.cjs');
+ const { decompressSync } = require('fflate');
+ const wasmBytes = new Uint8Array(decode(bytes));
+ const wasi = new WASI({
