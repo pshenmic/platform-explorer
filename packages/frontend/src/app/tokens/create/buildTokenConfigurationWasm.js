@@ -1,39 +1,28 @@
-// Async helper: form state -> TokenConfigurationWASM instance ready to be
-// passed into sdk.dataContracts.create(...). Builds all nested WASM rule
-// objects with v1 defaults (owner-only auth, NotTradeable marketplace,
-// English-only localization, history tracking on for everything).
+// Async helper: form state -> v2 TokenConfigurationWASM wrapper ready for
+// sdk.dataContracts.create(...). Builds all nested wrappers with v1-product
+// defaults (owner-only auth, NotTradeable marketplace, English-only
+// localization, history tracking on for everything).
 //
-// WASM constructor signatures verified against:
-//   packages/frontend/node_modules/pshenmic-dpp/dist/wasm/pshenmic_dpp.d.ts
-//   - TokenConfigurationWASM        — line 2860 (19 positional args)
-//   - TokenDistributionRulesWASM    — line 2968 (8 positional args)
-//   - TokenConfigurationConventionWASM — line 2803 (any localizations, decimals)
+// v2 wrapper signatures live in pshenmic-dpp/dist/src/dpp/structs/. They
+// differ from the raw NAPI ones in pshenmic-dpp v1.x: optional slots are now
+// trailing (just omit), keepsHistory moved earlier in TokenConfigurationWASM,
+// maxSupply moved to the end. Localization is a WASM wrapper instance.
 //
-// Two non-obvious gotchas:
-//
-// 1) WASM bindings move ownership when an instance is passed into a constructor.
-//    Reusing the same ChangeControlRulesWASM (or AuthorizedActionTakersWASM)
-//    instance twice fails with "expected instance of ChangeControlRulesWASM" on
-//    the second call. So every constructor slot gets a fresh instance via the
-//    factory functions below.
-//
-// 2) TokenConfigurationConventionWASM deserializes its first argument via
-//    serde_wasm_bindgen and expects plain JS values, not WASM instances. Passing
-//    `{ en: <TokenConfigurationLocalizationWASM> }` triggers
-//    "Converting circular structure to JSON" because the wrapper exposes
-//    getter-backed sub-objects. Use a plain JS object instead.
+// Each constructor still moves ownership of nested WASM instances, so every
+// rule slot gets a fresh instance via factory functions.
 
 export async function buildTokenConfigurationWasm (form) {
   const {
     TokenConfigurationWASM,
     TokenConfigurationConventionWASM,
+    TokenConfigurationLocalizationWASM,
     ChangeControlRulesWASM,
     AuthorizedActionTakersWASM,
     TokenKeepsHistoryRulesWASM,
     TokenDistributionRulesWASM,
     TokenMarketplaceRulesWASM,
     TokenTradeModeWASM
-  } = await import('pshenmic-dpp')
+  } = await import('pshenmic-dpp/wasm')
 
   const ownerTaker = () => AuthorizedActionTakersWASM.ContractOwner()
   const noOneTaker = () => AuthorizedActionTakersWASM.NoOne()
@@ -54,11 +43,13 @@ export async function buildTokenConfigurationWasm (form) {
   )
 
   const name = (form.name || 'Token').trim()
-  const localizations = {
-    en: { shouldCapitalize: true, singularForm: name, pluralForm: `${name}s` }
-  }
+  const enLocalization = new TokenConfigurationLocalizationWASM(
+    true,
+    name,
+    `${name}s`
+  )
   const conventions = new TokenConfigurationConventionWASM(
-    localizations,
+    { en: enLocalization },
     Number(form.decimals) || 0
   )
 
@@ -66,21 +57,13 @@ export async function buildTokenConfigurationWasm (form) {
     true, true, true, true, true, true
   )
 
-  // TokenDistributionRulesWASM(
-  //   js_perpetual_distribution, perpetual_distribution_rules,
-  //   js_pre_programmed_distribution, js_new_tokens_destination_identity,
-  //   new_tokens_destination_identity_rules,
-  //   minting_allow_choosing_destination,
-  //   minting_allow_choosing_destination_rules,
-  //   change_direct_purchase_pricing_rules)
-  // emnapi `Option<&T>` extraction rejects `null` here with
-  // "Value supplied as TokenPerpetualDistributionWASM is not an object" even
-  // though the .d.ts types these slots as `any`. `undefined` maps to None.
+  // v2 TokenDistributionRulesWASM signature:
+  //   (perpetualDistributionRules, newTokensDestinationIdentityRules,
+  //    mintingAllowChoosingDestination, mintingAllowChoosingDestinationRules,
+  //    changeDirectPurchasePricingRules,
+  //    perpetualDistribution?, preProgrammedDistribution?, newTokensDestinationIdentity?)
   const distributionRules = new TokenDistributionRulesWASM(
-    undefined,
     ownerOnlyRule(),
-    undefined,
-    undefined,
     ownerOnlyRule(),
     form.allowMint,
     ownerOnlyRule(),
@@ -97,18 +80,16 @@ export async function buildTokenConfigurationWasm (form) {
     ? BigInt(form.maxSupply)
     : undefined
 
-  // TokenConfigurationWASM(
-  //   conventions, conventions_change_rules, base_supply, max_supply,
-  //   keeps_history, start_as_paused, allow_transfer_to_frozen_balance,
-  //   max_supply_change_rules, distribution_rules, marketplace_rules,
-  //   manual_minting_rules, manual_burning_rules,
-  //   freeze_rules, unfreeze_rules, destroy_frozen_funds_rules, emergency_action_rules,
-  //   main_control_group, main_control_group_can_be_modified, description?)
+  // v2 TokenConfigurationWASM signature:
+  //   (conventions, conventionsChangeRules, baseSupply, keepsHistory,
+  //    startAsPaused, allowTransferToFrozenBalance, maxSupplyChangeRules,
+  //    distributionRules, marketplaceRules, manualMintingRules, manualBurningRules,
+  //    freezeRules, unfreezeRules, destroyFrozenFundsRules, emergencyActionRules,
+  //    mainControlGroupCanBeModified, maxSupply?, mainControlGroup?, description?)
   return new TokenConfigurationWASM(
     conventions,
     ownerOnlyRule(),
     baseSupply,
-    maxSupply,
     keepsHistory,
     false,
     false,
@@ -121,13 +102,14 @@ export async function buildTokenConfigurationWasm (form) {
     ownerOnlyRule(),
     ownerOnlyRule(),
     ownerOnlyRule(),
-    undefined,
     ownerTaker(),
+    maxSupply,
+    undefined,
     form.description ? form.description.trim() : undefined
   )
 }
 
 export async function calculateTokenId (contractIdLike, position = 0) {
-  const { TokenConfigurationWASM } = await import('pshenmic-dpp')
+  const { TokenConfigurationWASM } = await import('pshenmic-dpp/wasm')
   return TokenConfigurationWASM.calculateTokenId(contractIdLike, position)
 }

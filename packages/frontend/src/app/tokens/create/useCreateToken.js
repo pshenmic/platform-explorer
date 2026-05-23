@@ -44,14 +44,15 @@ export const useCreateToken = () => {
 
       // DataContractsController.create signature:
       //   (ownerId, identityNonce, schema, fullValidation?, tokenConfiguration?, ...)
-      // tokens reach DataContractWASM's `js_tokens` slot — napi-rs maps JS Map
-      // into `Vec<(u16, &TokenConfigurationNAPI)>` cleanly.
+      // v2 SDK wrapper expects an array of `{ position, tokenConfiguration }`
+      // objects where `tokenConfiguration` is a TokenConfigurationWASM wrapper
+      // instance (carries `_rawTokenConfiguration` internally).
       const dataContract = sdk.dataContracts.create(
         identity.id,
         nextNonce,
         schema,
         true,
-        new Map([[0, tokenConfiguration]])
+        [{ position: 0, tokenConfiguration }]
       )
 
       const stateTransition = sdk.dataContracts.createStateTransition(
