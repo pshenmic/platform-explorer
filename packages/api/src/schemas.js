@@ -320,7 +320,7 @@ const schemaTypes = [
         pattern: '^[0-9]+$'
       },
       voting_finished: {
-        type: ['boolean', 'null'],
+        type: ['boolean', 'null']
       }
     }
   },

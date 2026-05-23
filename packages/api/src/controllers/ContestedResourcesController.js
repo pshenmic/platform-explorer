@@ -51,7 +51,7 @@ class ContestedResourcesController {
       contract_id: contractId,
       voting_finished: votingFinished,
       timestamp_start: timestampStart,
-      timestamp_end: timestampEnd,
+      timestamp_end: timestampEnd
     } = request.query
 
     const votes = await this.contestedResourcesDAO.getContestedResources(
