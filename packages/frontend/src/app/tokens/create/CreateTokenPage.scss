@@ -1,0 +1,50 @@
+@use '../../../styles/mixins.scss';
+@import 'src/styles/variables';
+
+.CreateTokenPage {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+
+  &__TemplateStrip {
+    background: var(--chakra-colors-gray-675);
+    border: 1px solid var(--chakra-colors-gray-550);
+    border-radius: $border-radius-medium;
+    padding: 16px 24px;
+  }
+
+  &__SectionTitle {
+    font-family: var(--font-montserrat);
+    font-weight: 700;
+    font-size: 12px;
+    line-height: 110%;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--chakra-colors-white-50);
+    margin-bottom: 12px;
+  }
+
+  &__Layout {
+    display: grid;
+    grid-template-columns: 3fr 2fr;
+    gap: 16px;
+
+    @media (max-width: 960px) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  &__FormPane,
+  &__PreviewPane {
+    background: var(--chakra-colors-gray-675);
+    border: 1px solid var(--chakra-colors-gray-550);
+    border-radius: $border-radius-medium;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    min-height: 320px;
+  }
+
+}
