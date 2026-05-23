@@ -2046,9 +2046,13 @@ Return set of contested resources
 
 * `page` cannot be less than 1
 * `limit` cannot be more than 100
+* `document_type_name` filter by document type name
+* `contract_id` filter by data contract identifier
+* `voting_finished` bool field, filter resources whose voting deadline has passed (`true`) or is still pending (`false`)
+* `timestamp_start` and `timestamp_end` timestamp start and end of the contested resource creation date
 
 ```
-GET /contestedResources?page=1&limit=10&order=asc
+GET /contestedResources?page=1&limit=10&order=asc&document_type_name=domain&contract_id=GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec&voting_finished=true&timestamp_start=2024-08-01T00:00:00.000Z&timestamp_end=2025-08-01T00:00:00.000Z
 
 {
     "resultSet": [
@@ -2071,7 +2075,9 @@ GET /contestedResources?page=1&limit=10&order=asc
             "totalCountAbstain": 0,
             "totalCountTowardsIdentity": 1,
             "status": null,
-            "endTimestamp": "2024-09-02T22:14:06.680Z"
+            "endTimestamp": "2024-09-02T22:14:06.680Z",
+            "finished": true,
+            "towardsIdentity": null
         },
         ...
     ],
@@ -2117,7 +2123,9 @@ GET /contestedResources/stats
         "totalCountAbstain": 0,
         "totalCountTowardsIdentity": 0,
         "status": null,
-        "endTimestamp": "2025-02-19T14:08:55.321Z"
+        "endTimestamp": "2025-02-19T14:08:55.321Z",
+        "finished": true,
+        "towardsIdentity": null
     }
 }
 ```

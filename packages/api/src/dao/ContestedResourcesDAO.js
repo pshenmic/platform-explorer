@@ -183,7 +183,7 @@ module.exports = class ContestedDAO {
     })
   }
 
-  getContestedResources = async (page, limit, order) => {
+  getContestedResources = async (page, limit, order, documentTypeName, contractId, votingFinished, timestampStart, timestampEnd) => {
     const fromRank = (page - 1) * limit + 1
     const toRank = fromRank + limit - 1
 
@@ -192,6 +192,17 @@ module.exports = class ContestedDAO {
       .andWhereRaw('data is not null')
       .groupBy('identifier', 'id', 'data_contract_id')
       .as('sub')
+
+    if (documentTypeName) {
+      prefundedDocumentsSubquery.where('document_type_name', documentTypeName)
+    }
+
+    if (contractId) {
+      prefundedDocumentsSubquery.whereIn(
+        'data_contract_id',
+        this.knex('data_contracts').select('id').where('identifier', contractId)
+      )
+    }
 
     const documentsPrefundingIndexeKeysSubquery = this.knex(prefundedDocumentsSubquery)
       .select('id', 'data_contract_id', 'data', 'state_transition_hash')
@@ -233,6 +244,31 @@ module.exports = class ContestedDAO {
       .select('document_id', 'resource_value')
       .select(this.knex.raw(`rank() over (order by document_id ${order})`))
       .where('value_rank', '=', '1')
+
+    if (timestampStart || timestampEnd || typeof votingFinished === 'boolean') {
+      const votingFinishedThreshold = new Date(Date.now() - CONTESTED_RESOURCE_VOTE_DEADLINE).toISOString()
+
+      paginationRankSubquery
+        .leftJoin('documents', 'documents.id', 'ranked_documents.document_id')
+        .leftJoin('state_transitions', 'documents.state_transition_hash', 'state_transitions.hash')
+        .leftJoin('blocks', 'blocks.hash', 'state_transitions.block_hash')
+
+      if (timestampStart) {
+        paginationRankSubquery.where('blocks.timestamp', '>=', timestampStart)
+      }
+
+      if (timestampEnd) {
+        paginationRankSubquery.where('blocks.timestamp', '<=', timestampEnd)
+      }
+
+      if (votingFinished === true) {
+        paginationRankSubquery.where('blocks.timestamp', '<', votingFinishedThreshold)
+      }
+
+      if (votingFinished === false) {
+        paginationRankSubquery.where('blocks.timestamp', '>=', votingFinishedThreshold)
+      }
+    }
 
     const rows = await this.knex
       .with('ranked_documents', paginationRankSubquery)
