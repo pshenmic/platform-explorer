@@ -75,9 +75,15 @@ export async function buildTokenConfigurationWasm (form) {
     ownerOnlyRule()
   )
 
-  const baseSupply = BigInt(form.baseSupply || '0')
+  // User enters supply in "tokens" (Uniswap-style). DPP stores raw smallest
+  // units, so multiply by 10^decimals before broadcast. Hides the decimals
+  // footgun from beginners — `baseSupply: 100` with `decimals: 8` becomes
+  // `10000000000` on chain and displays as `100.00000000` everywhere.
+  const decimals = Number(form.decimals) || 0
+  const scale = 10n ** BigInt(decimals)
+  const baseSupply = BigInt(form.baseSupply || '0') * scale
   const maxSupply = form.hasMaxSupply && form.maxSupply
-    ? BigInt(form.maxSupply)
+    ? BigInt(form.maxSupply) * scale
     : undefined
 
   // v2 TokenConfigurationWASM signature:

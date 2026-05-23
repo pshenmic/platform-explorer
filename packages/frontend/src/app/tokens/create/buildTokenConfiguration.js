@@ -13,8 +13,16 @@ const noOneRule = {
 }
 
 export const buildTokenConfiguration = (form) => {
-  const baseSupply = form.baseSupply ? String(form.baseSupply) : '0'
-  const maxSupply = form.hasMaxSupply && form.maxSupply ? String(form.maxSupply) : null
+  // User enters supply in "tokens" — DPP stores raw smallest units, so the
+  // preview JSON shows the multiplied number (matches what gets broadcast).
+  const decimals = Number(form.decimals) || 0
+  const scale = 10n ** BigInt(decimals)
+  const baseSupply = form.baseSupply
+    ? String(BigInt(form.baseSupply) * scale)
+    : '0'
+  const maxSupply = form.hasMaxSupply && form.maxSupply
+    ? String(BigInt(form.maxSupply) * scale)
+    : null
 
   return {
     conventions: {

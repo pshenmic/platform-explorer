@@ -14,12 +14,11 @@ export const buildSummary = (form) => {
 
   const name = form.name?.trim() || 'Unnamed token'
   const supply = formatNumber(form.baseSupply)
-  const decimals = Number(form.decimals) || 0
 
   bullets.push(
     supply
-      ? `${supply} ${name} (${decimals} decimals)`
-      : `${name} — supply not set (${decimals} decimals)`
+      ? `${supply} ${name}`
+      : `${name} — supply not set`
   )
 
   if (form.hasMaxSupply) {
