@@ -16,5 +16,8 @@
   "workspaces": [
     "packages/*"
   ],
+  "overrides": {
+    "pshenmic-dpp": "2.0.0-dev.17"
+  },
   "repository": "git@github.com:pshenmic/platform-explorer.git"
 }
