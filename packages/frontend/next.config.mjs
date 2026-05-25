@@ -15,9 +15,10 @@ const nextConfig = {
       use: 'raw-loader'
     })
 
-    // Force every bare `pshenmic-dpp` import (ours and inside dash-platform-sdk)
-    // to resolve to the wasm build. The package's conditional `"node"` export
-    // pulls a NAPI-native build that webpack can't bundle for the browser.
+    // Force `pshenmic-dpp` to resolve to its wasm build. The package's
+    // `"node"` conditional export still wins in Next.js SSR (webpack default
+    // `conditionNames` doesn't include `"browser"`), pulling a NAPI-native
+    // build that webpack can't bundle. Workaround for owl352/pshenmic-dpp#178.
     config.resolve.alias = {
       ...config.resolve.alias,
       'pshenmic-dpp$': 'pshenmic-dpp/wasm'
