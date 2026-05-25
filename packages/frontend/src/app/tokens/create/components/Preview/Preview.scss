@@ -8,6 +8,23 @@
     gap: 8px;
   }
 
+  &__Json {
+    flex: 1;
+    min-height: 0;
+
+    .cm-theme,
+    .cm-editor {
+      flex: 1;
+      min-height: 0;
+    }
+  }
+
+  &__JsonError {
+    font-family: $font-mono;
+    font-size: 11px;
+    color: var(--chakra-colors-red-default);
+  }
+
   &__SummaryTitle,
   &__JsonTitle {
     font-family: var(--font-montserrat);
@@ -17,6 +34,26 @@
     letter-spacing: 0.04em;
     text-transform: uppercase;
     color: var(--chakra-colors-white-50);
+    flex-shrink: 0;
+  }
+
+  &__JsonTitle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  &__JsonDocsLink {
+    font-family: $font-mono;
+    font-size: 11px;
+    font-weight: 400;
+    text-transform: none;
+    letter-spacing: 0;
+    color: $color-brand-normal;
+
+    &:hover {
+      text-decoration: underline;
+    }
   }
 
   &__SummaryList {
