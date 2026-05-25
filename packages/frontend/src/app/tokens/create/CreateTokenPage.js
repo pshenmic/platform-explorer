@@ -14,14 +14,23 @@ function CreateTokenPage () {
       <div className='CreateTokenPage'>
         <div className='CreateTokenPage__Layout'>
           <div className='CreateTokenPage__FormPane'>
-            <div className='CreateTokenPage__SectionTitle'>Essentials</div>
-            <Essentials/>
+            <div className='CreateTokenPage__FormScroll'>
+              <div className='CreateTokenPage__Columns'>
+                <div className='CreateTokenPage__Column'>
+                  <div className='CreateTokenPage__SectionTitle'>Essentials</div>
+                  <Essentials/>
+                </div>
+                <div className='CreateTokenPage__Column'>
+                  <div className='CreateTokenPage__SectionTitle'>Features</div>
+                  <Features/>
+                </div>
+              </div>
+            </div>
 
-            <div className='CreateTokenPage__SectionTitle'>Features</div>
-            <Features/>
-
-            <div className='CreateTokenPage__SectionTitle'>Deploy</div>
-            <DeployBar/>
+            <div className='CreateTokenPage__FormFooter'>
+              <div className='CreateTokenPage__SectionTitle'>Deploy</div>
+              <DeployBar/>
+            </div>
           </div>
           <div className='CreateTokenPage__PreviewPane'>
             <JsonPreview/>

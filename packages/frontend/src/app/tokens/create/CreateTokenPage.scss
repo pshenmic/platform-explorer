@@ -38,18 +38,71 @@
     display: flex;
     flex-direction: column;
     gap: 16px;
-    min-height: 320px;
+  }
+
+  &__FormPane {
+    height: calc(100vh - 300px);
+    overflow: hidden;
+    padding: 0;
+
+    @media (max-width: 960px) {
+      height: auto;
+      overflow: visible;
+    }
+  }
+
+  &__FormScroll {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    padding: 24px 24px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+
+    @media (max-width: 960px) {
+      overflow-y: visible;
+    }
+  }
+
+  &__Columns {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    align-items: start;
+
+    @media (max-width: 768px) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  &__Column {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    min-width: 0;
+  }
+
+  &__FormFooter {
+    flex-shrink: 0;
+    padding: 16px 24px;
+    border-top: 1px solid var(--chakra-colors-gray-700);
+    background: var(--chakra-colors-gray-675);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
   }
 
   &__PreviewPane {
     position: sticky;
     top: 16px;
-    max-height: calc(100vh - 200px);
-    overflow-y: auto;
+    height: calc(100vh - 300px);
+    overflow: hidden;
 
     @media (max-width: 960px) {
       position: static;
-      max-height: none;
+      height: auto;
+      overflow: visible;
     }
   }
 

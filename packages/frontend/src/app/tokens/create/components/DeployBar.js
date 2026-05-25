@@ -9,6 +9,7 @@ import { ViewIcon, ViewOffIcon } from '@chakra-ui/icons'
 import { useSigner, SignerMethod } from '../../../dataContract/create/useSigner'
 import { useTokenWizard } from '../TokenWizardContext'
 import { useCreateToken } from '../useCreateToken'
+import HelpPopover from './HelpPopover'
 import ReviewModal from './ReviewModal'
 import './DeployBar.scss'
 
@@ -68,63 +69,68 @@ function DeployBar () {
 
   return (
     <div className='DeployBar'>
-      <RadioGroup
-        value={signerCtl.method}
-        onChange={signerCtl.setMethod}
-        isDisabled={isBusy || isConnected}
-      >
-        <HStack spacing={6} align='center'>
-          <Radio value={SignerMethod.EXTENSION}>Extension</Radio>
-          <Radio value={SignerMethod.PRIVATE_KEY}>Private Key</Radio>
+      <HStack className='DeployBar__MethodRow' spacing={4} align='center'>
+        <HStack className='DeployBar__Method' spacing={3} align='center' flexShrink={0}>
+          <RadioGroup
+            value={signerCtl.method}
+            onChange={signerCtl.setMethod}
+            isDisabled={isBusy || isConnected}
+          >
+            <HStack spacing={6} align='center'>
+              <Radio value={SignerMethod.EXTENSION}>Extension</Radio>
+              <Radio value={SignerMethod.PRIVATE_KEY}>Private Key</Radio>
+            </HStack>
+          </RadioGroup>
+          <HelpPopover>
+            {isExt
+              ? 'Extension will sign and broadcast in one popup step.'
+              : 'Private Key signs locally. Identity ID auto-detected if owned by the key.'}
+          </HelpPopover>
         </HStack>
-      </RadioGroup>
 
-      <div className='DeployBar__Hint'>
-        {isExt
-          ? 'Extension will sign and broadcast in one popup step.'
-          : 'Private Key signs locally. Identity ID auto-detected if owned by the key.'}
-      </div>
-
-      {isPK && !isConnected && (
-        <Flex gap={2} wrap='wrap'>
-          <FormControl flex='1' minW='200px' isDisabled={isBusy}>
-            <InputGroup size='sm'>
-              <Input
-                variant='filled'
-                type='text'
-                name='wif'
-                placeholder='WIF, hex, or base64'
-                value={wif}
-                onChange={(e) => setWif(e.target.value)}
-                fontFamily='mono'
-                sx={!showWif ? { WebkitTextSecurity: 'disc', textSecurity: 'disc' } : undefined}
-                {...noAutofillProps}
-              />
-              <InputRightElement>
-                <IconButton
-                  size='xs'
-                  variant='ghost'
-                  tabIndex={-1}
-                  icon={showWif ? <ViewOffIcon/> : <ViewIcon/>}
-                  aria-label={showWif ? 'Hide private key' : 'Show private key'}
-                  onClick={() => setShowWif((v) => !v)}
+        <Flex className='DeployBar__SignerForm' flex='1' gap={2} wrap='wrap'>
+          {isPK && !isConnected && (
+            <>
+              <FormControl flex='1' minW='200px' isDisabled={isBusy}>
+                <InputGroup size='sm'>
+                  <Input
+                    variant='filled'
+                    type='text'
+                    name='wif'
+                    placeholder='WIF, hex, or base64'
+                    value={wif}
+                    onChange={(e) => setWif(e.target.value)}
+                    fontFamily='mono'
+                    sx={!showWif ? { WebkitTextSecurity: 'disc', textSecurity: 'disc' } : undefined}
+                    {...noAutofillProps}
+                  />
+                  <InputRightElement>
+                    <IconButton
+                      size='xs'
+                      variant='ghost'
+                      tabIndex={-1}
+                      icon={showWif ? <ViewOffIcon/> : <ViewIcon/>}
+                      aria-label={showWif ? 'Hide private key' : 'Show private key'}
+                      onClick={() => setShowWif((v) => !v)}
+                    />
+                  </InputRightElement>
+                </InputGroup>
+              </FormControl>
+              <FormControl flex='1' minW='200px' isDisabled={isBusy}>
+                <Input
+                  size='sm'
+                  variant='filled'
+                  placeholder='Identity ID (optional)'
+                  value={identityIdInput}
+                  onChange={(e) => setIdentityIdInput(e.target.value)}
+                  fontFamily='mono'
+                  {...noAutofillProps}
                 />
-              </InputRightElement>
-            </InputGroup>
-          </FormControl>
-          <FormControl flex='1' minW='200px' isDisabled={isBusy}>
-            <Input
-              size='sm'
-              variant='filled'
-              placeholder='Identity ID (optional)'
-              value={identityIdInput}
-              onChange={(e) => setIdentityIdInput(e.target.value)}
-              fontFamily='mono'
-              {...noAutofillProps}
-            />
-          </FormControl>
+              </FormControl>
+            </>
+          )}
         </Flex>
-      )}
+      </HStack>
 
       {signerCtl.error && (
         <div className='DeployBar__ErrorMessage'>{signerCtl.error}</div>
