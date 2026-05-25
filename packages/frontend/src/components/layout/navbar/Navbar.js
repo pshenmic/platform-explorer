@@ -21,14 +21,7 @@ const menuItems = [
       { title: 'Transactions', href: '/transactions' }
     ]
   },
-  {
-    title: 'Tokens',
-    href: '/tokens',
-    submenuItems: [
-      { title: 'Tokens list', href: '/tokens' },
-      { title: 'Create Token', href: '/tokens/create' }
-    ]
-  },
+  { title: 'Tokens', href: '/tokens' },
   { title: 'Data Contracts', href: '/dataContracts' },
   {
     title: 'Contested Resources',
@@ -49,7 +42,8 @@ const menuItems = [
     title: 'Developers',
     submenuItems: [
       { title: 'API', href: '/api' },
-      { title: 'Create Data Contract', href: '/dataContract/create' }
+      { title: 'Create Data Contract', href: '/dataContract/create' },
+      { title: 'Create Token', href: '/tokens/create' }
     ]
   },
   {
