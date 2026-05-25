@@ -14,7 +14,11 @@ export const TEMPLATES = [
       allowMint: true,
       allowBurn: true,
       allowTransfer: true,
-      allowDirectPurchase: false
+      allowDirectPurchase: false,
+      allowFreeze: true,
+      allowDestroyFrozen: true,
+      allowEmergency: true,
+      startAsPaused: false
     }
   },
   {
@@ -28,7 +32,11 @@ export const TEMPLATES = [
       allowMint: false,
       allowBurn: true,
       allowTransfer: true,
-      allowDirectPurchase: false
+      allowDirectPurchase: false,
+      allowFreeze: true,
+      allowDestroyFrozen: true,
+      allowEmergency: true,
+      startAsPaused: false
     }
   },
   {
@@ -42,7 +50,11 @@ export const TEMPLATES = [
       allowMint: true,
       allowBurn: true,
       allowTransfer: true,
-      allowDirectPurchase: false
+      allowDirectPurchase: false,
+      allowFreeze: true,
+      allowDestroyFrozen: true,
+      allowEmergency: true,
+      startAsPaused: false
     }
   }
 ]

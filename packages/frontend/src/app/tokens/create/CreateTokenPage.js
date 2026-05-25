@@ -3,6 +3,7 @@
 import { TokenWizardProvider } from './TokenWizardContext'
 import TemplateStrip from './components/TemplateStrip'
 import Essentials from './components/Essentials'
+import Features from './components/Features'
 import PlainEnglishSummary from './components/Preview/PlainEnglishSummary'
 import JsonPreview from './components/Preview/JsonPreview'
 import DeployBar from './components/DeployBar'
@@ -20,6 +21,9 @@ function CreateTokenPage () {
 
             <div className='CreateTokenPage__SectionTitle'>Essentials</div>
             <Essentials/>
+
+            <div className='CreateTokenPage__SectionTitle'>Features</div>
+            <Features/>
 
             <div className='CreateTokenPage__SectionTitle'>Deploy</div>
             <DeployBar/>

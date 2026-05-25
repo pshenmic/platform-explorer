@@ -35,5 +35,13 @@ export const buildSummary = (form) => {
   if (form.allowTransfer) bullets.push('Holders can transfer tokens')
   if (form.allowDirectPurchase) bullets.push('Direct purchase from issuer enabled (set price later)')
 
+  if (form.startAsPaused) bullets.push('Starts paused — owner must unpause before transfers')
+  if (form.allowFreeze) bullets.push('Owner can freeze and unfreeze holder balances')
+  if (form.allowDestroyFrozen) bullets.push('Owner can burn frozen funds')
+  if (form.allowEmergency) bullets.push('Emergency pause available to owner')
+
+  const description = form.description?.trim()
+  if (description) bullets.push(`Description: ${description}`)
+
   return bullets
 }

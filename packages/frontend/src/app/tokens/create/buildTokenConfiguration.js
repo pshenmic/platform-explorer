@@ -46,7 +46,7 @@ export const buildTokenConfiguration = (form) => {
       keepsDirectPricingHistory: true,
       keepsDirectPurchaseHistory: true
     },
-    startAsPaused: false,
+    startAsPaused: !!form.startAsPaused,
     allowTransferToFrozenBalance: false,
     maxSupplyChangeRules: form.hasMaxSupply ? ownerOnlyRule : noOneRule,
     distributionRules: {
@@ -62,10 +62,10 @@ export const buildTokenConfiguration = (form) => {
     },
     manualMintingRules: form.allowMint ? ownerOnlyRule : noOneRule,
     manualBurningRules: form.allowBurn ? ownerOnlyRule : noOneRule,
-    freezeRules: ownerOnlyRule,
-    unfreezeRules: ownerOnlyRule,
-    destroyFrozenFundsRules: ownerOnlyRule,
-    emergencyActionRules: ownerOnlyRule,
+    freezeRules: form.allowFreeze ? ownerOnlyRule : noOneRule,
+    unfreezeRules: form.allowFreeze ? ownerOnlyRule : noOneRule,
+    destroyFrozenFundsRules: form.allowDestroyFrozen ? ownerOnlyRule : noOneRule,
+    emergencyActionRules: form.allowEmergency ? ownerOnlyRule : noOneRule,
     mainControlGroup: null,
     mainControlGroupCanBeModified: 'ContractOwner',
     description: form.description || null

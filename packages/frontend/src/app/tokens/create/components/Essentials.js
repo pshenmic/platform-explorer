@@ -1,26 +1,14 @@
 'use client'
 
 import {
-  FormControl, FormLabel, Input, InputGroup, InputRightElement, Checkbox, Stack, SimpleGrid
+  FormControl, FormLabel, Input, InputGroup, InputRightElement, Textarea, Stack
 } from '@chakra-ui/react'
-import { InfoOutlineIcon } from '@chakra-ui/icons'
 import { useTokenWizard } from '../TokenWizardContext'
-import { Tooltip } from '../../../../components/ui/Tooltips'
+import HelpPopover from './HelpPopover'
 import './Essentials.scss'
-
-const HelpIcon = ({ tooltip }) => (
-  <Tooltip content={tooltip}>
-    <span><InfoOutlineIcon boxSize={3} color='gray.400' cursor='help'/></span>
-  </Tooltip>
-)
 
 function Essentials () {
   const { form, setField } = useTokenWizard()
-
-  const onDigitsChange = (key) => (e) => {
-    const next = e.target.value.replace(/\D/g, '')
-    setField(key, next)
-  }
 
   return (
     <div className='Essentials'>
@@ -37,56 +25,26 @@ function Essentials () {
               maxLength={64}
             />
             <InputRightElement>
-              <HelpIcon tooltip='Short label shown to users wherever your token appears (wallets, explorers, marketplaces).'/>
+              <HelpPopover>
+                Short label shown to users wherever your token appears (wallets, explorers, marketplaces).
+              </HelpPopover>
             </InputRightElement>
           </InputGroup>
         </FormControl>
 
-        <SimpleGrid columns={{ base: 1, md: 2 }} spacing={3}>
-          <FormControl>
-            <FormLabel className='Essentials__Label'>Base supply</FormLabel>
-            <InputGroup size='sm'>
-              <Input
-                variant='filled'
-                placeholder='1000000'
-                value={form.baseSupply}
-                onChange={onDigitsChange('baseSupply')}
-                fontFamily='mono'
-                inputMode='numeric'
-              />
-              <InputRightElement>
-                <HelpIcon tooltip='Total tokens minted now. They go to your identity and you can transfer or mint more later if minting is enabled.'/>
-              </InputRightElement>
-            </InputGroup>
-          </FormControl>
-
-          <FormControl>
-            <Stack direction='row' align='center' justify='space-between' mb={1}>
-              <FormLabel className='Essentials__Label' mb={0}>Max supply</FormLabel>
-              <Checkbox
-                size='sm'
-                isChecked={form.hasMaxSupply}
-                onChange={(e) => setField('hasMaxSupply', e.target.checked)}
-              >
-                Cap
-              </Checkbox>
-            </Stack>
-            <InputGroup size='sm'>
-              <Input
-                variant='filled'
-                placeholder={form.hasMaxSupply ? '10000000' : 'Unlimited'}
-                value={form.maxSupply}
-                onChange={onDigitsChange('maxSupply')}
-                fontFamily='mono'
-                inputMode='numeric'
-                isDisabled={!form.hasMaxSupply}
-              />
-              <InputRightElement>
-                <HelpIcon tooltip='Hard cap on total tokens that can ever exist. Tick "Cap" to set a limit.'/>
-              </InputRightElement>
-            </InputGroup>
-          </FormControl>
-        </SimpleGrid>
+        <FormControl>
+          <FormLabel className='Essentials__Label'>Description</FormLabel>
+          <Textarea
+            size='sm'
+            variant='filled'
+            placeholder='Optional notes shown on the token page (e.g. what the token is for).'
+            value={form.description}
+            onChange={(e) => setField('description', e.target.value)}
+            fontFamily='mono'
+            rows={3}
+            maxLength={256}
+          />
+        </FormControl>
       </Stack>
     </div>
   )

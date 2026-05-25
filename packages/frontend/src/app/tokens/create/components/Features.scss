@@ -1,0 +1,16 @@
+@import 'src/styles/variables';
+
+.Features {
+  &__Row {
+    font-family: $font-mono;
+    font-size: 12px;
+  }
+
+  &__Label {
+    font-family: $font-mono;
+    font-size: 12px;
+    color: var(--chakra-colors-white-50);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+}

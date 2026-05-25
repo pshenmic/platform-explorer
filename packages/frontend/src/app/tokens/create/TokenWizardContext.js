@@ -24,6 +24,10 @@ const buildInitialForm = (templateId) => {
     allowBurn: template.defaults.allowBurn,
     allowTransfer: template.defaults.allowTransfer,
     allowDirectPurchase: template.defaults.allowDirectPurchase,
+    allowFreeze: template.defaults.allowFreeze ?? true,
+    allowDestroyFrozen: template.defaults.allowDestroyFrozen ?? true,
+    allowEmergency: template.defaults.allowEmergency ?? true,
+    startAsPaused: template.defaults.startAsPaused ?? false,
     description: ''
   }
 }
@@ -46,7 +50,11 @@ export const TokenWizardProvider = ({ children }) => {
       allowMint: template.defaults.allowMint,
       allowBurn: template.defaults.allowBurn,
       allowTransfer: template.defaults.allowTransfer,
-      allowDirectPurchase: template.defaults.allowDirectPurchase
+      allowDirectPurchase: template.defaults.allowDirectPurchase,
+      allowFreeze: template.defaults.allowFreeze ?? true,
+      allowDestroyFrozen: template.defaults.allowDestroyFrozen ?? true,
+      allowEmergency: template.defaults.allowEmergency ?? true,
+      startAsPaused: template.defaults.startAsPaused ?? false
     }))
   }
 
