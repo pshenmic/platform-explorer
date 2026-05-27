@@ -1,6 +1,6 @@
 'use client'
 
-import { Suspense, useEffect } from 'react'
+import { useEffect } from 'react'
 import { useBreadcrumbs } from '../../../contexts/BreadcrumbsContext'
 import { PageDataContainer } from '@components/ui/containers'
 import BroadcastForm from './BroadcastForm'
@@ -17,9 +17,7 @@ function BroadcastPage () {
 
   return (
     <PageDataContainer title={'BROADCAST TRANSACTION'}>
-      <Suspense fallback={null}>
-        <BroadcastForm/>
-      </Suspense>
+      <BroadcastForm/>
     </PageDataContainer>
   )
 }

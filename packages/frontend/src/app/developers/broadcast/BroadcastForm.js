@@ -1,7 +1,6 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
-import { useQueryState } from 'nuqs'
 import Link from 'next/link'
 import { Button, Collapse, Tabs, TabList, TabPanels, Tab, TabPanel } from '@chakra-ui/react'
 import * as Api from '../../../util/Api'
@@ -111,7 +110,7 @@ function SignedHexView ({ unsignedHex, signedHex, onEdit }) {
 }
 
 function BroadcastForm () {
-  const [input, setInput] = useQueryState('tx', { defaultValue: '', clearOnDefault: true })
+  const [input, setInput] = useState('')
   const [state, setState] = useState(STATE.EMPTY)
   const [verify, setVerify] = useState(null)
   const [decoded, setDecoded] = useState(null)
@@ -125,15 +124,7 @@ function BroadcastForm () {
 
   const signerCtl = useSigner()
   const [wif, setWif] = useState('')
-  const [identityIdInput, setIdentityIdInput] = useQueryState('identity', { defaultValue: '', clearOnDefault: true })
-  const [methodParam, setMethodParam] = useQueryState('method', { defaultValue: '', clearOnDefault: true })
-
-  useEffect(() => {
-    if (methodParam && methodParam !== signerCtl.method) {
-      signerCtl.setMethod(methodParam)
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [methodParam])
+  const [identityIdInput, setIdentityIdInput] = useState('')
 
   useEffect(() => {
     Api.getRate()
@@ -310,7 +301,6 @@ function BroadcastForm () {
   const handleMethodChange = (newMethod) => {
     setErrorText(null)
     signerCtl.setMethod(newMethod)
-    setMethodParam(newMethod)
   }
 
   const verifyDisabled = !input.trim() ||
