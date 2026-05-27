@@ -28,7 +28,6 @@ function CreateTokenPage () {
             </div>
 
             <div className='CreateTokenPage__FormFooter'>
-              <div className='CreateTokenPage__SectionTitle'>Deploy</div>
               <DeployBar/>
             </div>
           </div>

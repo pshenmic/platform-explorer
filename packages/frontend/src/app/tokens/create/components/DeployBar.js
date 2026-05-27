@@ -1,17 +1,21 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import {
-  Button, HStack, Radio, RadioGroup, Flex, FormControl, Input, InputGroup, InputRightElement, IconButton
+  Button, HStack, Radio, RadioGroup, Flex, FormControl, Input, InputGroup, InputRightElement, IconButton, useToast
 } from '@chakra-ui/react'
 import { ViewIcon, ViewOffIcon } from '@chakra-ui/icons'
 import { useSigner, SignerMethod } from '../../../dataContract/create/useSigner'
 import { useTokenWizard } from '../TokenWizardContext'
 import { useCreateToken } from '../useCreateToken'
-import HelpPopover from './HelpPopover'
 import ReviewModal from './ReviewModal'
 import './DeployBar.scss'
+
+const METHOD_HINTS = {
+  [SignerMethod.EXTENSION]: 'Extension will sign and broadcast in one popup step.',
+  [SignerMethod.PRIVATE_KEY]: 'Private Key signs locally. Identity ID auto-detected if owned by the key.'
+}
 
 const noAutofillProps = {
   autoComplete: 'off',
@@ -27,18 +31,49 @@ function DeployBar () {
   const { form } = useTokenWizard()
   const signerCtl = useSigner()
   const deploy = useCreateToken()
+  const toast = useToast()
 
   const [wif, setWif] = useState('')
   const [showWif, setShowWif] = useState(false)
   const [identityIdInput, setIdentityIdInput] = useState('')
   const [isReviewOpen, setIsReviewOpen] = useState(false)
 
-  const isExt = signerCtl.method === SignerMethod.EXTENSION
+  // Async signer / deploy errors surface as toasts so the sticky footer never
+  // grows or shifts when they appear (inline alerts here broke the layout).
+  useEffect(() => {
+    if (signerCtl.error) {
+      toast({
+        title: 'Signer error',
+        description: signerCtl.error,
+        status: 'error',
+        duration: 6000,
+        isClosable: true,
+        position: 'bottom-right'
+      })
+    }
+  }, [signerCtl.error, toast])
+
+  useEffect(() => {
+    if (deploy.error) {
+      toast({
+        title: 'Deploy failed',
+        description: deploy.error,
+        status: 'error',
+        duration: 6000,
+        isClosable: true,
+        position: 'bottom-right'
+      })
+    }
+  }, [deploy.error, toast])
+
   const isPK = signerCtl.method === SignerMethod.PRIVATE_KEY
   const isConnected = signerCtl.isConnected
   const isBusy = signerCtl.isConnecting || deploy.isLoading
 
-  const formIsValid = form.name.trim() && Number(form.decimals) >= 0 && form.baseSupply
+  const formIsValid = form.name.trim().length >= 3 &&
+    (form.pluralForm || '').trim().length >= 3 &&
+    Number(form.decimals) >= 0 &&
+    form.baseSupply
 
   const handlePrimary = () => {
     if (deploy.result) {
@@ -69,6 +104,13 @@ function DeployBar () {
 
   return (
     <div className='DeployBar'>
+      <HStack className='DeployBar__Header' align='baseline' spacing={3}>
+        <div className='DeployBar__Title'>Deploy</div>
+        {METHOD_HINTS[signerCtl.method] && (
+          <div className='DeployBar__Hint'>{METHOD_HINTS[signerCtl.method]}</div>
+        )}
+      </HStack>
+
       <HStack className='DeployBar__MethodRow' spacing={4} align='center'>
         <HStack className='DeployBar__Method' spacing={3} align='center' flexShrink={0}>
           <RadioGroup
@@ -81,11 +123,6 @@ function DeployBar () {
               <Radio value={SignerMethod.PRIVATE_KEY}>Private Key</Radio>
             </HStack>
           </RadioGroup>
-          <HelpPopover>
-            {isExt
-              ? 'Extension will sign and broadcast in one popup step.'
-              : 'Private Key signs locally. Identity ID auto-detected if owned by the key.'}
-          </HelpPopover>
         </HStack>
 
         <Flex className='DeployBar__SignerForm' flex='1' gap={2} wrap='wrap'>
@@ -131,13 +168,6 @@ function DeployBar () {
           )}
         </Flex>
       </HStack>
-
-      {signerCtl.error && (
-        <div className='DeployBar__ErrorMessage'>{signerCtl.error}</div>
-      )}
-      {deploy.error && (
-        <div className='DeployBar__ErrorMessage'>{deploy.error}</div>
-      )}
 
       {deploy.result && (
         <div className='DeployBar__SuccessRow'>
