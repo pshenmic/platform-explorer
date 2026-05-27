@@ -1,16 +1,40 @@
 'use client'
 
-import { Switch, HStack, Stack, Input, Text } from '@chakra-ui/react'
+import {
+  Switch, HStack, Stack, Input, Text,
+  Popover, PopoverTrigger, PopoverContent, PopoverArrow, PopoverBody
+} from '@chakra-ui/react'
 import { useTokenWizard } from '../TokenWizardContext'
-import HelpPopover from './HelpPopover'
 import './Features.scss'
 
+// The label word itself is the help trigger — click it to reveal the tooltip.
+// No standalone help icons cluttering the rows.
 const RowLabel = ({ label, tooltip, width }) => (
   <HStack spacing={2} align='center' width={width} flexShrink={0}>
-    <HelpPopover>{tooltip}</HelpPopover>
-    <Text fontSize='12px' fontFamily='mono' color='var(--chakra-colors-white-100)'>
-      {label}
-    </Text>
+    <Popover trigger='click' placement='top' isLazy>
+      <PopoverTrigger>
+        <Text
+          as='button'
+          type='button'
+          fontSize='12px'
+          fontFamily='mono'
+          color='var(--chakra-colors-white-100)'
+          sx={{
+            background: 'transparent',
+            border: 'none',
+            borderBottom: '1px dashed var(--chakra-colors-gray-500)',
+            padding: 0,
+            cursor: 'help'
+          }}
+        >
+          {label}
+        </Text>
+      </PopoverTrigger>
+      <PopoverContent maxW='280px' fontSize='12px' fontFamily='var(--font-mono)'>
+        <PopoverArrow/>
+        <PopoverBody>{tooltip}</PopoverBody>
+      </PopoverContent>
+    </Popover>
   </HStack>
 )
 
