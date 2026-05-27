@@ -1,0 +1,85 @@
+'use client'
+
+import { Fragment, useState } from 'react'
+import {
+  tokenFaqGroups, FIELD_SOURCE, TOKEN_LIMITS_DOC_URL, STRUCT_URL
+} from '../../tokenFaq'
+
+// Render `backtick`-wrapped segments of an answer. Field names known to
+// FIELD_SOURCE become links to their definition in the rs-dpp source; value
+// literals (ContractOwner, NoOne, …) stay plain monospace so the link
+// affordance is honest.
+const renderAnswer = (text) =>
+  text.split('`').map((part, i) => {
+    if (i % 2 === 0) return <Fragment key={i}>{part}</Fragment>
+    const href = FIELD_SOURCE[part]
+    return href
+      ? (
+        <a
+          key={i}
+          href={href}
+          target='_blank'
+          rel='noopener noreferrer'
+          className='Preview__FaqFieldLink'
+        >
+          {part}
+        </a>
+        )
+      : <code key={i} className='Preview__FaqCode'>{part}</code>
+  })
+
+// Read-only companion to the JSON editor: explains the token configuration
+// fields, since docs.dash.org doesn't document them. Grouped accordion —
+// questions are visible, answers expand on click.
+function FaqView () {
+  const [open, setOpen] = useState(() => new Set())
+
+  const toggle = (key) =>
+    setOpen((prev) => {
+      const next = new Set(prev)
+      next.has(key) ? next.delete(key) : next.add(key)
+      return next
+    })
+
+  return (
+    <div className='Preview__Faq'>
+      <p className='Preview__FaqIntro'>
+        These fields aren&apos;t covered by the official token docs (which only
+        describe operations). See{' '}
+        <a href={TOKEN_LIMITS_DOC_URL} target='_blank' rel='noopener noreferrer' className='Preview__FaqSource'>
+          Constants &amp; Limits ↗
+        </a>{' '}or the{' '}
+        <a href={STRUCT_URL} target='_blank' rel='noopener noreferrer' className='Preview__FaqSource'>
+          full schema ↗
+        </a>.
+      </p>
+
+      {tokenFaqGroups.map((group) => (
+        <div key={group.title} className='Preview__FaqGroup'>
+          <div className='Preview__FaqGroupTitle'>{group.title}</div>
+          {group.items.map((item) => {
+            const isOpen = open.has(item.key)
+            return (
+              <div key={item.key} className='Preview__FaqItem'>
+                <button
+                  type='button'
+                  className='Preview__FaqQ'
+                  aria-expanded={isOpen}
+                  onClick={() => toggle(item.key)}
+                >
+                  <span className='Preview__FaqMarker'>{isOpen ? '▾' : '▸'}</span>
+                  <span>{item.question}</span>
+                </button>
+                {isOpen && (
+                  <p className='Preview__FaqAnswer'>{renderAnswer(item.answer)}</p>
+                )}
+              </div>
+            )
+          })}
+        </div>
+      ))}
+    </div>
+  )
+}
+
+export default FaqView

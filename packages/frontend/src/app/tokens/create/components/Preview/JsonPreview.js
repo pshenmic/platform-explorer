@@ -5,8 +5,11 @@ import CodeMirror from '@uiw/react-codemirror'
 import { json } from '@codemirror/lang-json'
 import { oneDark } from '@codemirror/theme-one-dark'
 import { EditorView } from '@codemirror/view'
+import { EditorState } from '@codemirror/state'
 import { useTokenWizard } from '../../TokenWizardContext'
 import { buildTokenConfiguration } from '../../buildTokenConfiguration'
+import { buildDataContract } from '../../buildDataContract'
+import FaqView from './FaqView'
 
 // Same palette override as /dataContract/create SchemaField — Platform Explorer dark.
 const platformTheme = EditorView.theme({
@@ -30,7 +33,29 @@ const platformTheme = EditorView.theme({
   }
 })
 
-const extensions = [json(), platformTheme]
+const editableExtensions = [json(), platformTheme]
+const readOnlyExtensions = [
+  json(),
+  platformTheme,
+  EditorView.editable.of(false),
+  EditorState.readOnly.of(true)
+]
+
+const basicSetup = {
+  lineNumbers: true,
+  foldGutter: true,
+  highlightActiveLine: false,
+  highlightActiveLineGutter: false,
+  bracketMatching: true,
+  autocompletion: false,
+  indentOnInput: false
+}
+
+const TITLES = {
+  token: 'Token configuration',
+  contract: 'Data contract',
+  faq: 'FAQ'
+}
 
 // Reverse mapping: JSON config → partial form updates. Only "simple" fields
 // that have a 1:1 form widget are mapped back. baseSupply / maxSupply stay
@@ -74,13 +99,27 @@ const parseFormUpdates = (config) => {
   return updates
 }
 
+const TabButton = ({ id, label, view, onSelect }) => (
+  <button
+    type='button'
+    role='tab'
+    aria-selected={view === id}
+    className={`Preview__ViewToggleBtn${view === id ? ' Preview__ViewToggleBtn--active' : ''}`}
+    onClick={() => onSelect(id)}
+  >
+    {label}
+  </button>
+)
+
 function JsonPreview () {
   const { form, setField } = useTokenWizard()
   const configuration = useMemo(() => buildTokenConfiguration(form), [form])
   const code = useMemo(() => JSON.stringify(configuration, null, 2), [configuration])
+  const contractCode = useMemo(() => JSON.stringify(buildDataContract(form), null, 2), [form])
 
   const [editorValue, setEditorValue] = useState(code)
   const [parseError, setParseError] = useState(null)
+  const [view, setView] = useState('faq')
   const isFocusedRef = useRef(false)
   const debounceRef = useRef(null)
 
@@ -122,37 +161,43 @@ function JsonPreview () {
   return (
     <div className='Preview__Json'>
       <div className='Preview__JsonTitle'>
-        <span>Token configuration</span>
-        <a
-          href='https://github.com/dashpay/platform/tree/master/packages/rs-dpp/src/data_contract/associated_token'
-          target='_blank'
-          rel='noopener noreferrer'
-          className='Preview__JsonDocsLink'
-        >
-          ↗ docs
-        </a>
+        <span>{TITLES[view]}</span>
+        <div className='Preview__ViewToggle' role='tablist'>
+          <TabButton id='token' label='Token' view={view} onSelect={setView}/>
+          <TabButton id='contract' label='Contract' view={view} onSelect={setView}/>
+          <TabButton id='faq' label='FAQ' view={view} onSelect={setView}/>
+        </div>
       </div>
-      <CodeMirror
-        value={editorValue}
-        extensions={extensions}
-        theme={oneDark}
-        basicSetup={{
-          lineNumbers: true,
-          foldGutter: true,
-          highlightActiveLine: false,
-          highlightActiveLineGutter: false,
-          bracketMatching: true,
-          autocompletion: false,
-          indentOnInput: false
-        }}
-        onChange={handleChange}
-        onFocus={() => { isFocusedRef.current = true }}
-        onBlur={() => { isFocusedRef.current = false }}
-        height='100%'
-      />
-      {parseError && (
-        <div className='Preview__JsonError'>Invalid JSON — last valid state kept</div>
+
+      {view === 'token' && (
+        <>
+          <CodeMirror
+            value={editorValue}
+            extensions={editableExtensions}
+            theme={oneDark}
+            basicSetup={basicSetup}
+            onChange={handleChange}
+            onFocus={() => { isFocusedRef.current = true }}
+            onBlur={() => { isFocusedRef.current = false }}
+            height='100%'
+          />
+          {parseError && (
+            <div className='Preview__JsonError'>Invalid JSON — last valid state kept</div>
+          )}
+        </>
       )}
+
+      {view === 'contract' && (
+        <CodeMirror
+          value={contractCode}
+          extensions={readOnlyExtensions}
+          theme={oneDark}
+          basicSetup={basicSetup}
+          height='100%'
+        />
+      )}
+
+      {view === 'faq' && <FaqView/>}
     </div>
   )
 }
