@@ -16,6 +16,8 @@ const buildInitialForm = (templateId) => {
   return {
     template: templateId,
     name: '',
+    pluralForm: '',
+    pluralEdited: false,
     decimals: template.defaults.decimals,
     baseSupply: '',
     hasMaxSupply: template.defaults.hasMaxSupply,

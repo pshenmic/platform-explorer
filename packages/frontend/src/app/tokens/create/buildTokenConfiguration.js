@@ -15,7 +15,8 @@ const noOneRule = {
 export const buildTokenConfiguration = (form) => {
   // User enters supply in "tokens" — DPP stores raw smallest units, so the
   // preview JSON shows the multiplied number (matches what gets broadcast).
-  const decimals = Number(form.decimals) || 0
+  // DPP caps decimals at 16.
+  const decimals = Math.min(16, Number(form.decimals) || 0)
   const scale = 10n ** BigInt(decimals)
   const baseSupply = form.baseSupply
     ? String(BigInt(form.baseSupply) * scale)
@@ -26,12 +27,12 @@ export const buildTokenConfiguration = (form) => {
 
   return {
     conventions: {
-      decimals: Number(form.decimals) || 0,
+      decimals,
       localizations: {
         en: {
           shouldCapitalize: true,
           singularForm: form.name || '',
-          pluralForm: form.name ? `${form.name}s` : ''
+          pluralForm: form.pluralForm || (form.name ? `${form.name}s` : '')
         }
       }
     },

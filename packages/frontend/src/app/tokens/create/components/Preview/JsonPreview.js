@@ -46,6 +46,15 @@ const parseFormUpdates = (config) => {
   const name = config?.conventions?.localizations?.en?.singularForm
   if (typeof name === 'string') updates.name = name
 
+  const plural = config?.conventions?.localizations?.en?.pluralForm
+  if (typeof plural === 'string') {
+    updates.pluralForm = plural
+    updates.pluralEdited = true
+  }
+
+  const decimals = config?.conventions?.decimals
+  if (typeof decimals === 'number') updates.decimals = decimals
+
   if (typeof config.startAsPaused === 'boolean') {
     updates.startAsPaused = config.startAsPaused
   }

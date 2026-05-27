@@ -43,14 +43,15 @@ export async function buildTokenConfigurationWasm (form) {
   )
 
   const name = (form.name || 'Token').trim()
+  const pluralForm = (form.pluralForm || `${name}s`).trim()
   const enLocalization = new TokenConfigurationLocalizationWASM(
     true,
     name,
-    `${name}s`
+    pluralForm
   )
   const conventions = new TokenConfigurationConventionWASM(
     { en: enLocalization },
-    Number(form.decimals) || 0
+    Math.min(16, Number(form.decimals) || 0)
   )
 
   const keepsHistory = new TokenKeepsHistoryRulesWASM(
@@ -79,7 +80,7 @@ export async function buildTokenConfigurationWasm (form) {
   // units, so multiply by 10^decimals before broadcast. Hides the decimals
   // footgun from beginners — `baseSupply: 100` with `decimals: 8` becomes
   // `10000000000` on chain and displays as `100.00000000` everywhere.
-  const decimals = Number(form.decimals) || 0
+  const decimals = Math.min(16, Number(form.decimals) || 0)
   const scale = 10n ** BigInt(decimals)
   const baseSupply = BigInt(form.baseSupply || '0') * scale
   const maxSupply = form.hasMaxSupply && form.maxSupply

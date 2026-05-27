@@ -8,4 +8,10 @@
     color: var(--chakra-colors-white-50);
     margin-bottom: 6px;
   }
+
+  &__Hint {
+    font-family: $font-mono;
+    font-size: 11px;
+    margin-top: 4px;
+  }
 }

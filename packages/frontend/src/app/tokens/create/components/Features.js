@@ -5,8 +5,8 @@ import { useTokenWizard } from '../TokenWizardContext'
 import HelpPopover from './HelpPopover'
 import './Features.scss'
 
-const RowLabel = ({ label, tooltip }) => (
-  <HStack spacing={2} align='center'>
+const RowLabel = ({ label, tooltip, width }) => (
+  <HStack spacing={2} align='center' width={width} flexShrink={0}>
     <HelpPopover>{tooltip}</HelpPopover>
     <Text fontSize='12px' fontFamily='mono' color='var(--chakra-colors-white-100)'>
       {label}
@@ -27,6 +27,13 @@ function Features () {
   const onDigitsChange = (key) => (e) => {
     const next = e.target.value.replace(/\D/g, '')
     setField(key, next)
+  }
+
+  // DPP caps decimals at 16. Empty allowed mid-typing (treated as 0 on build).
+  const onDecimalsChange = (e) => {
+    const digits = e.target.value.replace(/\D/g, '')
+    if (digits === '') return setField('decimals', '')
+    setField('decimals', Math.min(16, Number(digits)))
   }
 
   const setSwitch = (key) => (e) => setField(key, e.target.checked)
@@ -86,7 +93,28 @@ function Features () {
         <HStack className='Features__Row' justify='space-between' spacing={3}>
           <HStack spacing={3}>
             <RowLabel
+              label='Decimals'
+              width='120px'
+              tooltip='How many fractional digits the token supports (like cents). Max 16. DASH itself uses 8. Your supply inputs are multiplied by 10^decimals on chain.'
+            />
+            <Input
+              size='xs'
+              variant='filled'
+              placeholder='8'
+              value={form.decimals}
+              onChange={onDecimalsChange}
+              fontFamily='mono'
+              inputMode='numeric'
+              width='160px'
+            />
+          </HStack>
+        </HStack>
+
+        <HStack className='Features__Row' justify='space-between' spacing={3}>
+          <HStack spacing={3}>
+            <RowLabel
               label='Base supply'
+              width='120px'
               tooltip='Total tokens minted now. They go to your identity and you can transfer or mint more later if minting is enabled.'
             />
             <Input
@@ -106,6 +134,7 @@ function Features () {
           <HStack spacing={3}>
             <RowLabel
               label='Max supply'
+              width='120px'
               tooltip='Hard cap on total tokens that can ever exist. Toggle on to set a limit; leave off for unlimited.'
             />
             <Input
