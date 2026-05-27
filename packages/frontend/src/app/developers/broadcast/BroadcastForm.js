@@ -290,34 +290,38 @@ function BroadcastForm () {
     }
   }
 
-  const handlePrimarySign = () => {
-    if (signerCtl.method === SignerMethod.PRIVATE_KEY) return handleSignPrivateKey()
-    if (signerCtl.method === SignerMethod.EXTENSION) {
-      if (!signerCtl.isConnected) return signerCtl.connect()
-      return handleSignAndBroadcastExtension()
-    }
-  }
-
   const handleMethodChange = (newMethod) => {
     setErrorText(null)
     signerCtl.setMethod(newMethod)
   }
 
-  const verifyDisabled = !input.trim() ||
-    state === STATE.VERIFYING || state === STATE.BROADCASTING || state === STATE.SIGNING
-  const broadcastDisabled = state !== STATE.VERIFIED_OK
-  const broadcastLoading = state === STATE.BROADCASTING || state === STATE.WAITING
-  const broadcastLoadingText = state === STATE.WAITING ? 'Waiting…' : 'Broadcasting…'
+  // Single dynamic button — морфится через весь флоу: Verify → (Connect / Sign /
+  // Sign & Broadcast) → Broadcast, в зависимости от состояния и метода подписи.
+  const getPrimaryAction = () => {
+    if (state === STATE.BROADCASTING || state === STATE.WAITING) {
+      return { label: 'Broadcast', isLoading: true, loadingText: state === STATE.WAITING ? 'Waiting…' : 'Broadcasting…', isDisabled: true }
+    }
+    if (state === STATE.VERIFIED_OK) {
+      return { label: 'Broadcast', onClick: handleBroadcast, isDisabled: !hash }
+    }
+    if (state === STATE.UNSIGNED || state === STATE.SIGNING) {
+      if (signerCtl.method === SignerMethod.EXTENSION) {
+        if (!signerCtl.isConnected) {
+          return { label: 'Connect Wallet', onClick: () => signerCtl.connect(), isLoading: signerCtl.isConnecting, loadingText: 'Connecting…' }
+        }
+        return { label: 'Sign & Broadcast', onClick: handleSignAndBroadcastExtension, isLoading: state === STATE.SIGNING, loadingText: 'Awaiting popup…' }
+      }
+      // Private key
+      return { label: 'Sign', onClick: handleSignPrivateKey, isLoading: state === STATE.SIGNING || signerCtl.isConnecting, loadingText: 'Signing…', isDisabled: !wif.trim() }
+    }
+    if (state === STATE.VERIFYING) {
+      return { label: 'Verify', isLoading: true, loadingText: 'Verifying…', isDisabled: true }
+    }
+    // EMPTY / SIGNED / VERIFIED_FAIL / ERROR → verify
+    return { label: 'Verify', onClick: handleVerify, isDisabled: !input.trim() }
+  }
 
-  const signLoading = state === STATE.SIGNING || signerCtl.isConnecting
-  const signDisabled = signLoading ||
-    (signerCtl.method === SignerMethod.PRIVATE_KEY && !wif.trim())
-  const signButtonLabel = signerCtl.method === SignerMethod.EXTENSION
-    ? (signerCtl.isConnected ? 'Sign & Broadcast' : 'Connect Wallet')
-    : 'Sign Transaction'
-  const signLoadingText = signerCtl.method === SignerMethod.EXTENSION
-    ? (signerCtl.isConnected ? 'Awaiting popup…' : 'Connecting…')
-    : 'Signing…'
+  const primaryAction = getPrimaryAction()
 
   const statusValue = state === STATE.SUCCESS
     ? 'SUCCESS'
@@ -359,22 +363,6 @@ function BroadcastForm () {
           }
         />
 
-        {verify?.result === 'error' && state !== STATE.UNSIGNED && (
-          <div className={'BroadcastForm__ErrorMessage'}>
-            {explainConsensusError(verify.error, verify.code)}
-          </div>
-        )}
-
-        {errorText && (
-          <div className={'BroadcastForm__ErrorMessage'}>{errorText}</div>
-        )}
-
-        {state === STATE.SUCCESS && hash && (
-          <div className={'BroadcastForm__HashRow'}>
-            Broadcasted! <Link href={`/transaction/${hash}`}>View transaction →</Link>
-          </div>
-        )}
-
         <Collapse in={state === STATE.UNSIGNED || state === STATE.SIGNING} animateOpacity unmountOnExit={false}>
           <div className={'BroadcastForm__SignPanel'}>
             <div className={'BroadcastForm__SignPanelHeader'}>
@@ -405,20 +393,6 @@ function BroadcastForm () {
               />
             )}
 
-            <div className={'BroadcastForm__SignPanelActions'}>
-              <Button
-                variant={'blue'}
-                size={'sm'}
-                minW={'200px'}
-                onClick={handlePrimarySign}
-                isLoading={signLoading}
-                loadingText={signLoadingText}
-                isDisabled={signDisabled}
-              >
-                {signButtonLabel}
-              </Button>
-            </div>
-
             {signerCtl.error && (
               <div className={'BroadcastForm__ErrorMessage'}>{signerCtl.error}</div>
             )}
@@ -430,13 +404,29 @@ function BroadcastForm () {
             variant={'blue'}
             size={'sm'}
             minW={'200px'}
-            onClick={state === STATE.VERIFIED_OK ? handleBroadcast : handleVerify}
-            isLoading={state === STATE.VERIFIED_OK ? broadcastLoading : state === STATE.VERIFYING}
-            loadingText={state === STATE.VERIFIED_OK ? broadcastLoadingText : 'Verifying…'}
-            isDisabled={state === STATE.VERIFIED_OK ? broadcastDisabled : verifyDisabled}
+            onClick={primaryAction.onClick}
+            isLoading={primaryAction.isLoading}
+            loadingText={primaryAction.loadingText}
+            isDisabled={primaryAction.isDisabled}
           >
-            {state === STATE.VERIFIED_OK ? 'Broadcast' : 'Verify'}
+            {primaryAction.label}
           </Button>
+
+          <div className={'BroadcastForm__ButtonMessage'}>
+            {verify?.result === 'error' && state !== STATE.UNSIGNED && (
+              <span className={'BroadcastForm__ButtonMessage--error'}>
+                {explainConsensusError(verify.error, verify.code)}
+              </span>
+            )}
+            {errorText && (
+              <span className={'BroadcastForm__ButtonMessage--error'}>{errorText}</span>
+            )}
+            {state === STATE.SUCCESS && hash && (
+              <span className={'BroadcastForm__ButtonMessage--success'}>
+                Broadcasted! <Link href={`/transaction/${hash}`}>View transaction →</Link>
+              </span>
+            )}
+          </div>
         </div>
       </div>
 

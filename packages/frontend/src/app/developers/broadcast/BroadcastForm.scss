@@ -38,8 +38,30 @@
 
   &__ButtonsRow {
     display: flex;
-    gap: 8px;
+    gap: 16px;
     align-items: center;
+  }
+
+  &__ButtonMessage {
+    flex: 1;
+    min-width: 0;
+    font-family: $font-mono;
+    font-size: 13px;
+    line-height: 130%;
+    word-break: break-word;
+
+    &--error {
+      color: var(--chakra-colors-red-default);
+    }
+
+    &--success {
+      color: var(--chakra-colors-gray-250);
+
+      a {
+        color: $color-brand-normal;
+        &:hover { text-decoration: underline; }
+      }
+    }
   }
 
   &__Section--Json {
