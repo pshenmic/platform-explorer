@@ -48,12 +48,21 @@ export const useSigner = () => {
         throw new Error('Wallet connection returned no current identity')
       }
 
+      // Use OUR bundled SDK + WASM (not the extension-injected `window.dashPlatformSDK`).
+      // WASM-tagged objects (TokenConfigurationWASM, StateTransitionWASM, …) built in our
+      // wasm memory can't be unwrapped as NAPI types by the extension's separate wasm
+      // instance → "Failed to recover TokenConfigurationNAPI type from napi value".
+      // The extension's signAndBroadcast accepts a base64 string of the state transition
+      // and reconstructs internally in its own wasm — clean cross-context handoff.
+      const { DashPlatformSDK } = await import('dash-platform-sdk/types')
+      const sdk = new DashPlatformSDK({ network: network.name })
+
       cacheSigner({
         method: SIGNER_METHODS.EXTENSION,
         identityId: wallet.currentIdentity,
-        sdk: window.dashPlatformSDK,
+        sdk,
         signAndBroadcast: (stateTransition) =>
-          window.dashPlatformExtension.signer.signAndBroadcast(stateTransition)
+          window.dashPlatformExtension.signer.signAndBroadcast(stateTransition.base64())
       })
     } catch (e) {
       setError(e?.message ?? e?.toString() ?? 'Failed to connect wallet')
