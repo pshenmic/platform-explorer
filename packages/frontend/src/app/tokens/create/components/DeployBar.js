@@ -48,7 +48,7 @@ function DeployBar () {
         status: 'error',
         duration: 6000,
         isClosable: true,
-        position: 'bottom-right'
+        position: 'top-right'
       })
     }
   }, [signerCtl.error, toast])
@@ -61,7 +61,7 @@ function DeployBar () {
         status: 'error',
         duration: 6000,
         isClosable: true,
-        position: 'bottom-right'
+        position: 'top-right'
       })
     }
   }, [deploy.error, toast])
