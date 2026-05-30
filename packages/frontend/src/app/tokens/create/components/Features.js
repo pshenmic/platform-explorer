@@ -1,9 +1,10 @@
 'use client'
 
 import {
-  Switch, HStack, Stack, Input, Text,
+  HStack, Stack, Input, Text,
   Popover, PopoverTrigger, PopoverContent, PopoverArrow, PopoverBody
 } from '@chakra-ui/react'
+import { ValueContainer } from '@components/ui/containers'
 import { useTokenWizard } from '../TokenWizardContext'
 import './Features.scss'
 
@@ -38,10 +39,32 @@ const RowLabel = ({ label, tooltip, width }) => (
   </HStack>
 )
 
-const FeatureToggle = ({ label, tooltip, isChecked, onChange }) => (
+// Clickable Yes/No badge in the app's unified ValueContainer style
+// (green Yes / red No), matching the token detail page flags.
+const YesNoBadge = ({ value, onToggle }) => (
+  <ValueContainer
+    size='sm'
+    colorScheme={value ? 'green' : 'red'}
+    clickable
+    onClick={onToggle}
+    role='switch'
+    aria-checked={!!value}
+    tabIndex={0}
+    onKeyDown={(e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault()
+        onToggle()
+      }
+    }}
+  >
+    {value ? 'Yes' : 'No'}
+  </ValueContainer>
+)
+
+const FeatureToggle = ({ label, tooltip, value, onToggle }) => (
   <HStack className='Features__Row' justify='space-between' spacing={3}>
     <RowLabel label={label} tooltip={tooltip}/>
-    <Switch size='sm' isChecked={isChecked} onChange={onChange}/>
+    <YesNoBadge value={value} onToggle={onToggle}/>
   </HStack>
 )
 
@@ -60,7 +83,7 @@ function Features () {
     setField('decimals', Math.min(16, Number(digits)))
   }
 
-  const setSwitch = (key) => (e) => setField(key, e.target.checked)
+  const toggle = (key) => () => setField(key, !form[key])
 
   return (
     <div className='Features'>
@@ -69,48 +92,48 @@ function Features () {
         <FeatureToggle
           label='Mintable'
           tooltip='Owner can mint more tokens later. Disable to lock the initial supply.'
-          isChecked={form.allowMint}
-          onChange={setSwitch('allowMint')}
+          value={form.allowMint}
+          onToggle={toggle('allowMint')}
         />
         <FeatureToggle
           label='Burnable'
           tooltip='Owner can burn tokens. Useful for redemption or deflationary models.'
-          isChecked={form.allowBurn}
-          onChange={setSwitch('allowBurn')}
+          value={form.allowBurn}
+          onToggle={toggle('allowBurn')}
         />
         <FeatureToggle
           label='Allow direct purchase'
           tooltip='Owner can set a price and accept direct purchases from holders.'
-          isChecked={form.allowDirectPurchase}
-          onChange={setSwitch('allowDirectPurchase')}
+          value={form.allowDirectPurchase}
+          onToggle={toggle('allowDirectPurchase')}
         />
 
         {/* Lifecycle */}
         <FeatureToggle
           label='Start paused'
           tooltip='Token is created in a paused state. Owner must unpause before transfers work.'
-          isChecked={form.startAsPaused}
-          onChange={setSwitch('startAsPaused')}
+          value={form.startAsPaused}
+          onToggle={toggle('startAsPaused')}
         />
 
         {/* Admin / safety */}
         <FeatureToggle
           label='Freezable'
           tooltip='Owner can freeze and unfreeze holder balances. Useful for anti-fraud or compliance.'
-          isChecked={form.allowFreeze}
-          onChange={setSwitch('allowFreeze')}
+          value={form.allowFreeze}
+          onToggle={toggle('allowFreeze')}
         />
         <FeatureToggle
           label='Burn frozen funds'
           tooltip='Owner can destroy tokens that are currently frozen. Requires Freezable.'
-          isChecked={form.allowDestroyFrozen}
-          onChange={setSwitch('allowDestroyFrozen')}
+          value={form.allowDestroyFrozen}
+          onToggle={toggle('allowDestroyFrozen')}
         />
         <FeatureToggle
           label='Emergency pause'
           tooltip='Owner can pause all token operations in an emergency.'
-          isChecked={form.allowEmergency}
-          onChange={setSwitch('allowEmergency')}
+          value={form.allowEmergency}
+          onToggle={toggle('allowEmergency')}
         />
 
         {/* Supply */}
@@ -173,10 +196,9 @@ function Features () {
               width='160px'
             />
           </HStack>
-          <Switch
-            size='sm'
-            isChecked={form.hasMaxSupply}
-            onChange={setSwitch('hasMaxSupply')}
+          <YesNoBadge
+            value={form.hasMaxSupply}
+            onToggle={toggle('hasMaxSupply')}
           />
         </HStack>
       </Stack>
