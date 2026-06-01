@@ -1,94 +1,18 @@
 'use client'
 
-import {
-  HStack, Stack, Input, Text,
-  Popover, PopoverTrigger, PopoverContent, PopoverArrow, PopoverBody
-} from '@chakra-ui/react'
-import { ValueContainer } from '@components/ui/containers'
+import { Stack } from '@chakra-ui/react'
+import { FeatureToggle } from './FeatureRow'
 import { useTokenWizard } from '../TokenWizardContext'
 import './Features.scss'
 
-// The label word itself is the help trigger — click it to reveal the tooltip.
-// No standalone help icons cluttering the rows.
-const RowLabel = ({ label, tooltip, width }) => (
-  <HStack spacing={2} align='center' width={width} flexShrink={0}>
-    <Popover trigger='click' placement='top' isLazy>
-      <PopoverTrigger>
-        <Text
-          as='button'
-          type='button'
-          fontSize='12px'
-          fontFamily='mono'
-          color='var(--chakra-colors-white-100)'
-          sx={{
-            background: 'transparent',
-            border: 'none',
-            borderBottom: '1px dashed var(--chakra-colors-gray-500)',
-            padding: 0,
-            cursor: 'help'
-          }}
-        >
-          {label}
-        </Text>
-      </PopoverTrigger>
-      <PopoverContent maxW='280px' fontSize='12px' fontFamily='var(--font-mono)'>
-        <PopoverArrow/>
-        <PopoverBody>{tooltip}</PopoverBody>
-      </PopoverContent>
-    </Popover>
-  </HStack>
-)
-
-// Clickable Yes/No badge in the app's unified ValueContainer style
-// (green Yes / red No), matching the token detail page flags.
-const YesNoBadge = ({ value, onToggle }) => (
-  <ValueContainer
-    size='sm'
-    colorScheme={value ? 'green' : 'red'}
-    clickable
-    onClick={onToggle}
-    role='switch'
-    aria-checked={!!value}
-    tabIndex={0}
-    onKeyDown={(e) => {
-      if (e.key === 'Enter' || e.key === ' ') {
-        e.preventDefault()
-        onToggle()
-      }
-    }}
-  >
-    {value ? 'Yes' : 'No'}
-  </ValueContainer>
-)
-
-const FeatureToggle = ({ label, tooltip, value, onToggle }) => (
-  <HStack className='Features__Row' justify='space-between' spacing={3}>
-    <RowLabel label={label} tooltip={tooltip}/>
-    <YesNoBadge value={value} onToggle={onToggle}/>
-  </HStack>
-)
-
 function Features () {
   const { form, setField } = useTokenWizard()
-
-  const onDigitsChange = (key) => (e) => {
-    const next = e.target.value.replace(/\D/g, '')
-    setField(key, next)
-  }
-
-  // DPP caps decimals at 16. Empty allowed mid-typing (treated as 0 on build).
-  const onDecimalsChange = (e) => {
-    const digits = e.target.value.replace(/\D/g, '')
-    if (digits === '') return setField('decimals', '')
-    setField('decimals', Math.min(16, Number(digits)))
-  }
 
   const toggle = (key) => () => setField(key, !form[key])
 
   return (
     <div className='Features'>
       <Stack spacing={2}>
-        {/* Operations */}
         <FeatureToggle
           label='Mintable'
           tooltip='Owner can mint more tokens later. Disable to lock the initial supply.'
@@ -102,30 +26,26 @@ function Features () {
           onToggle={toggle('allowBurn')}
         />
         <FeatureToggle
-          label='Allow direct purchase'
-          tooltip='Owner can set a price and accept direct purchases from holders.'
-          value={form.allowDirectPurchase}
-          onToggle={toggle('allowDirectPurchase')}
-        />
-
-        {/* Lifecycle */}
-        <FeatureToggle
-          label='Start paused'
-          tooltip='Token is created in a paused state. Owner must unpause before transfers work.'
-          value={form.startAsPaused}
-          onToggle={toggle('startAsPaused')}
-        />
-
-        {/* Admin / safety */}
-        <FeatureToggle
           label='Freezable'
           tooltip='Owner can freeze and unfreeze holder balances. Useful for anti-fraud or compliance.'
           value={form.allowFreeze}
           onToggle={toggle('allowFreeze')}
         />
         <FeatureToggle
+          label='Capitalize singular form'
+          tooltip='Hints that the token name should be rendered capitalized in clients (e.g. MyToken, not mytoken). Metadata only.'
+          value={form.shouldCapitalize}
+          onToggle={toggle('shouldCapitalize')}
+        />
+        <FeatureToggle
+          label='Start paused'
+          tooltip='Token is created in a paused state. Owner must unpause before transfers work.'
+          value={form.startAsPaused}
+          onToggle={toggle('startAsPaused')}
+        />
+        <FeatureToggle
           label='Burn frozen funds'
-          tooltip='Owner can destroy tokens that are currently frozen. Requires Freezable.'
+          tooltip='Owner can destroy tokens that are currently frozen. Only meaningful when Freezable is on.'
           value={form.allowDestroyFrozen}
           onToggle={toggle('allowDestroyFrozen')}
         />
@@ -135,72 +55,12 @@ function Features () {
           value={form.allowEmergency}
           onToggle={toggle('allowEmergency')}
         />
-
-        {/* Supply */}
-        <HStack className='Features__Row' justify='space-between' spacing={3}>
-          <HStack spacing={3}>
-            <RowLabel
-              label='Decimals'
-              width='120px'
-              tooltip='How many fractional digits the token supports (like cents). Max 16. DASH itself uses 8. Your supply inputs are multiplied by 10^decimals on chain.'
-            />
-            <Input
-              size='xs'
-              variant='filled'
-              placeholder='8'
-              value={form.decimals}
-              onChange={onDecimalsChange}
-              fontFamily='mono'
-              inputMode='numeric'
-              width='160px'
-            />
-          </HStack>
-        </HStack>
-
-        <HStack className='Features__Row' justify='space-between' spacing={3}>
-          <HStack spacing={3}>
-            <RowLabel
-              label='Base supply'
-              width='120px'
-              tooltip='Total tokens minted now. They go to your identity and you can transfer or mint more later if minting is enabled.'
-            />
-            <Input
-              size='xs'
-              variant='filled'
-              placeholder='1000000'
-              value={form.baseSupply}
-              onChange={onDigitsChange('baseSupply')}
-              fontFamily='mono'
-              inputMode='numeric'
-              width='160px'
-            />
-          </HStack>
-        </HStack>
-
-        <HStack className='Features__Row' justify='space-between' spacing={3}>
-          <HStack spacing={3}>
-            <RowLabel
-              label='Max supply'
-              width='120px'
-              tooltip='Hard cap on total tokens that can ever exist. Toggle on to set a limit; leave off for unlimited.'
-            />
-            <Input
-              size='xs'
-              variant='filled'
-              placeholder={form.hasMaxSupply ? '10000000' : 'Unlimited'}
-              value={form.maxSupply}
-              onChange={onDigitsChange('maxSupply')}
-              fontFamily='mono'
-              inputMode='numeric'
-              isDisabled={!form.hasMaxSupply}
-              width='160px'
-            />
-          </HStack>
-          <YesNoBadge
-            value={form.hasMaxSupply}
-            onToggle={toggle('hasMaxSupply')}
-          />
-        </HStack>
+        <FeatureToggle
+          label='Allow transfer to frozen balance'
+          tooltip='If on, mints and transfers can land on a balance that is currently frozen. Off bounces them.'
+          value={form.allowTransferToFrozenBalance}
+          onToggle={toggle('allowTransferToFrozenBalance')}
+        />
       </Stack>
     </div>
   )
