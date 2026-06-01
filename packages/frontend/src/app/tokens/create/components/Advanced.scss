@@ -1,0 +1,41 @@
+@import 'src/styles/variables';
+
+.Advanced {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  &__Body {
+    padding: 0;
+  }
+
+  &__Subsection {
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--chakra-colors-gray-700);
+
+    &:last-child {
+      border-bottom: 0;
+      padding-bottom: 0;
+    }
+  }
+
+  // Mini-header above a repeater / conditional block. Visually separates
+  // from the flat list of simple rows above.
+  &__GroupHeader {
+    margin-top: 10px;
+    padding-top: 8px;
+    border-top: 1px solid var(--chakra-colors-gray-700);
+  }
+
+  &__Row {
+    padding: 4px 0;
+    font-family: $font-mono;
+    font-size: 12px;
+  }
+
+  &__RepeaterRow {
+    padding: 4px 0;
+    font-family: $font-mono;
+    font-size: 12px;
+  }
+}
