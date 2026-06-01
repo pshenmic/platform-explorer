@@ -30,9 +30,7 @@ const STATE = {
   ERROR: 'ERROR'
 }
 
-// Consensus errors that signing will actually resolve. For unsigned tx with
-// these errors, we show the sign panel (signing fixes them). For other errors
-// (nonce, schema, state conflicts), signing won't help — show FAIL instead.
+// Signature-related errors only: signing fixes these. Nonce/schema/state errors are not in this set.
 const SIGN_FIXABLE_ERRORS = new Set([
   'InvalidStateTransitionSignatureError', // 20002
   'MissingPublicKeyError', // 20003
@@ -295,8 +293,6 @@ function BroadcastForm () {
     signerCtl.setMethod(newMethod)
   }
 
-  // Single dynamic button — морфится через весь флоу: Verify → (Connect / Sign /
-  // Sign & Broadcast) → Broadcast, в зависимости от состояния и метода подписи.
   const getPrimaryAction = () => {
     if (state === STATE.BROADCASTING || state === STATE.WAITING) {
       return { label: 'Broadcast', isLoading: true, loadingText: state === STATE.WAITING ? 'Waiting…' : 'Broadcasting…', isDisabled: true }
@@ -311,13 +307,11 @@ function BroadcastForm () {
         }
         return { label: 'Sign & Broadcast', onClick: handleSignAndBroadcastExtension, isLoading: state === STATE.SIGNING, loadingText: 'Awaiting popup…' }
       }
-      // Private key
       return { label: 'Sign', onClick: handleSignPrivateKey, isLoading: state === STATE.SIGNING || signerCtl.isConnecting, loadingText: 'Signing…', isDisabled: !wif.trim() }
     }
     if (state === STATE.VERIFYING) {
       return { label: 'Verify', isLoading: true, loadingText: 'Verifying…', isDisabled: true }
     }
-    // EMPTY / SIGNED / VERIFIED_FAIL / ERROR → verify
     return { label: 'Verify', onClick: handleVerify, isDisabled: !input.trim() }
   }
 

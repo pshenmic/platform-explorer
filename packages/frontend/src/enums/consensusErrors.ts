@@ -1,6 +1,4 @@
-// Maps ConsensusError names from /transaction/verify to user-friendly messages.
-// Backend enum lives at packages/api/src/enums/ConsensusErrorEnum.js (332 codes).
-// Only common cases are mapped here — fallback shows the raw name + code.
+// User-friendly text for consensus error names. Authoritative source: packages/api/src/enums/ConsensusErrorEnum.js.
 
 export const CONSENSUS_ERROR_MESSAGES: Record<string, string> = {
   IdentityInsufficientBalanceError: 'Insufficient credits. Top up identity.',

@@ -79,16 +79,14 @@ export const useSigner = () => {
 
       const { DashPlatformSDK, PrivateKeyWASM, StateTransitionWASM } = await import('dash-platform-sdk/types')
 
+      // Try WIF first (self-validating via fromWIF throw), then 64-char hex, then 32-byte base64.
       const parsePrivateKey = () => {
-        // 1. WIF (base58 — distinct from hex/base64 char set)
         try { return PrivateKeyWASM.fromWIF(trimmedWif) } catch {}
 
-        // 2. Hex (exactly 64 chars for 32 bytes)
         if (/^[0-9a-fA-F]{64}$/.test(trimmedWif)) {
           try { return PrivateKeyWASM.fromHex(trimmedWif, network.name) } catch {}
         }
 
-        // 3. Base64 (decode to 32 bytes, then fromBytes)
         if (/^[A-Za-z0-9+/]+={0,2}$/.test(trimmedWif)) {
           try {
             const bytes = Uint8Array.from(atob(trimmedWif), (c) => c.charCodeAt(0))
