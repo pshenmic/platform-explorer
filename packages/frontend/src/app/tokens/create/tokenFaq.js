@@ -33,10 +33,15 @@ export const FIELD_SOURCE = {
   decimals: `${CONVENTION}#L39`,
   'conventions.decimals': `${CONVENTION}#L39`,
   'conventions.localizations.en': `${LOCALIZATION}#L24`,
+  shouldCapitalize: `${LOCALIZATION}#L19`,
   baseSupply: `${STRUCT}#L45`,
   maxSupply: `${STRUCT}#L51`,
   keepsHistory: `${STRUCT}#L55`,
   startAsPaused: `${STRUCT}#L61`,
+  allowTransferToFrozenBalance: `${STRUCT}#L65`,
+  newTokensDestinationIdentity: `${BASE}/token_distribution_rules/v0/mod.rs#L24`,
+  perpetualDistribution: `${BASE}/token_distribution_rules/v0/mod.rs#L18`,
+  preProgrammedDistribution: `${BASE}/token_distribution_rules/v0/mod.rs#L22`,
   distributionRules: `${STRUCT}#L75`,
   marketplaceRules: `${STRUCT}#L79`,
   manualMintingRules: `${STRUCT}#L83`,
@@ -63,6 +68,11 @@ export const tokenFaqGroups = [
         key: 'decimals',
         question: 'What does "decimals" mean?',
         answer: 'How many fractional digits the token supports, like cents on a dollar. Max is 16; DASH itself uses 8. Your supply inputs are multiplied by 10^`decimals` before going on chain.'
+      },
+      {
+        key: 'shouldCapitalize',
+        question: 'What does "Capitalize singular form" do?',
+        answer: 'Sets `shouldCapitalize` in the English localization, hinting to clients that the singular name should render with a capital letter (e.g. `MyToken`, not `mytoken`). It is metadata only — chain logic never depends on it.'
       }
     ]
   },
@@ -128,6 +138,31 @@ export const tokenFaqGroups = [
         key: 'distribution',
         question: 'What are the distribution rules?',
         answer: '`distributionRules` defines perpetual and pre-programmed distribution logic, the destination identity for new tokens, and who may change direct-purchase pricing. With "Allow direct purchase" on, the owner can set a price and accept purchases.'
+      },
+      {
+        key: 'destination',
+        question: 'Where do newly minted tokens land?',
+        answer: 'By default `newTokensDestinationIdentity` is `null` and mints go to the contract owner. Set it to an Identity ID in Advanced to redirect all mints to that identity — useful for treasury / vault setups.'
+      },
+      {
+        key: 'transferToFrozen',
+        question: 'What does "Allow transfer to frozen balance" do?',
+        answer: '`allowTransferToFrozenBalance` controls whether incoming mints and transfers can land on a balance that is currently frozen. Off (default) bounces them; on lets them accumulate while still being frozen.'
+      },
+      {
+        key: 'historyToggles',
+        question: 'Can I disable specific history streams?',
+        answer: 'Yes. `keepsHistory` is six independent flags (transfers, freezes, mints, burns, direct pricing, direct purchases). Disable any of them in Advanced if you do not need that audit trail. These are about *audit recording*, not about whether the action is allowed — the latter is controlled by Mintable / Burnable / Freezable in Features.'
+      },
+      {
+        key: 'preProgrammed',
+        question: 'What is pre-programmed distribution?',
+        answer: '`preProgrammedDistribution` is a list of one-off scheduled distributions: each row mints a fixed amount to a specific identity at a specific time. Useful for airdrops, vesting unlocks, or any "release X tokens to Y on date Z" rule that should live in the contract itself.'
+      },
+      {
+        key: 'perpetual',
+        question: 'What is perpetual distribution?',
+        answer: 'A recurring auto-mint: every `interval` the contract emits a fixed amount to the chosen recipient. The full DPP schema supports several function shapes (linear, exponential, stepwise, …) and block- / epoch-based timing; our Advanced UI exposes only the most common slice — Time-based + FixedAmount + Owner/Identity recipient. For other shapes use Dash Evo Tool.'
       },
       {
         key: 'marketplace',
