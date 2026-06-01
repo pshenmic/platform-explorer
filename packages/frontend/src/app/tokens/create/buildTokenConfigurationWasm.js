@@ -11,6 +11,13 @@
 // Each constructor still moves ownership of nested WASM instances, so every
 // rule slot gets a fresh instance via factory functions.
 
+const INTERVAL_UNIT_MS = {
+  seconds: 1000n,
+  minutes: 60_000n,
+  hours: 3_600_000n,
+  days: 86_400_000n
+}
+
 export async function buildTokenConfigurationWasm (form) {
   const {
     TokenConfigurationWASM,
@@ -21,7 +28,12 @@ export async function buildTokenConfigurationWasm (form) {
     TokenKeepsHistoryRulesWASM,
     TokenDistributionRulesWASM,
     TokenMarketplaceRulesWASM,
-    TokenTradeModeWASM
+    TokenTradeModeWASM,
+    TokenPerpetualDistributionWASM,
+    TokenPreProgrammedDistributionWASM,
+    RewardDistributionTypeWASM,
+    DistributionFunctionWASM,
+    TokenDistributionRecipientWASM
   } = await import('pshenmic-dpp/wasm')
 
   const ownerTaker = () => AuthorizedActionTakersWASM.ContractOwner()
@@ -45,7 +57,7 @@ export async function buildTokenConfigurationWasm (form) {
   const name = (form.name || 'Token').trim()
   const pluralForm = (form.pluralForm || `${name}s`).trim()
   const enLocalization = new TokenConfigurationLocalizationWASM(
-    true,
+    !!form.shouldCapitalize,
     name,
     pluralForm
   )
@@ -54,11 +66,58 @@ export async function buildTokenConfigurationWasm (form) {
     Math.min(16, Number(form.decimals) || 0)
   )
 
+  const h = form.keepsHistory || {}
   const keepsHistory = new TokenKeepsHistoryRulesWASM(
-    true, true, true, true, true, true
+    h.transfer !== false,
+    h.freezing !== false,
+    h.minting !== false,
+    h.burning !== false,
+    h.directPricing !== false,
+    h.directPurchase !== false
   )
 
-  // v2 TokenDistributionRulesWASM signature:
+  const destinationIdentity = form.destinationIdentity?.trim() || undefined
+
+  // User enters supply in "tokens" — multiply by 10^decimals before chain.
+  const decimalsForScale = Math.min(16, Number(form.decimals) || 0)
+  const scale = 10n ** BigInt(decimalsForScale)
+
+  // Pre-programmed distribution: object keyed by ms timestamp -> id -> bigint amount.
+  let preProgrammedDist
+  const groupedPP = {}
+  for (const row of form.preProgrammedRows || []) {
+    if (!row.time || !row.identity?.trim() || !row.amount) continue
+    const ts = Date.parse(row.time)
+    if (Number.isNaN(ts)) continue
+    let scaled
+    try { scaled = BigInt(row.amount) * scale } catch { continue }
+    const key = String(ts)
+    if (!groupedPP[key]) groupedPP[key] = {}
+    groupedPP[key][row.identity.trim()] = scaled
+  }
+  if (Object.keys(groupedPP).length) {
+    preProgrammedDist = new TokenPreProgrammedDistributionWASM(groupedPP)
+  }
+
+  // Perpetual distribution: Time-based + FixedAmount only.
+  let perpetualDist
+  if (form.perpetualEnabled) {
+    const intervalValue = Number(form.perpetualIntervalValue)
+    const unitMs = INTERVAL_UNIT_MS[form.perpetualIntervalUnit] || INTERVAL_UNIT_MS.days
+    let amountScaled
+    try { amountScaled = BigInt(form.perpetualAmount || '0') * scale } catch { amountScaled = 0n }
+    if (intervalValue > 0 && amountScaled > 0n) {
+      const intervalMs = BigInt(intervalValue) * unitMs
+      const fn = DistributionFunctionWASM.FixedAmountDistribution(amountScaled)
+      const rewardType = RewardDistributionTypeWASM.TimeBasedDistribution(intervalMs, fn)
+      const recipient = form.perpetualRecipient === 'identity' && form.perpetualRecipientIdentity?.trim()
+        ? TokenDistributionRecipientWASM.Identity(form.perpetualRecipientIdentity.trim())
+        : TokenDistributionRecipientWASM.ContractOwner()
+      perpetualDist = new TokenPerpetualDistributionWASM(rewardType, recipient)
+    }
+  }
+
+  // TokenDistributionRulesWASM signature:
   //   (perpetualDistributionRules, newTokensDestinationIdentityRules,
   //    mintingAllowChoosingDestination, mintingAllowChoosingDestinationRules,
   //    changeDirectPurchasePricingRules,
@@ -68,7 +127,10 @@ export async function buildTokenConfigurationWasm (form) {
     ownerOnlyRule(),
     form.allowMint,
     ownerOnlyRule(),
-    form.allowDirectPurchase ? ownerOnlyRule() : noOneRule()
+    form.allowDirectPurchase ? ownerOnlyRule() : noOneRule(),
+    perpetualDist,
+    preProgrammedDist,
+    destinationIdentity
   )
 
   const marketplaceRules = new TokenMarketplaceRulesWASM(
@@ -80,8 +142,7 @@ export async function buildTokenConfigurationWasm (form) {
   // units, so multiply by 10^decimals before broadcast. Hides the decimals
   // footgun from beginners — `baseSupply: 100` with `decimals: 8` becomes
   // `10000000000` on chain and displays as `100.00000000` everywhere.
-  const decimals = Math.min(16, Number(form.decimals) || 0)
-  const scale = 10n ** BigInt(decimals)
+  // `scale` already declared above (used for perpetual/pre-programmed amounts).
   const baseSupply = BigInt(form.baseSupply || '0') * scale
   const maxSupply = form.hasMaxSupply && form.maxSupply
     ? BigInt(form.maxSupply) * scale
@@ -99,7 +160,7 @@ export async function buildTokenConfigurationWasm (form) {
     baseSupply,
     keepsHistory,
     !!form.startAsPaused,
-    false,
+    !!form.allowTransferToFrozenBalance,
     form.hasMaxSupply ? ownerOnlyRule() : noOneRule(),
     distributionRules,
     marketplaceRules,
