@@ -12,6 +12,52 @@ const noOneRule = {
   authorizedToChangeChangeAuthorizedRules: 'NoOne'
 }
 
+const INTERVAL_UNIT_MS = {
+  seconds: 1000,
+  minutes: 60_000,
+  hours: 3_600_000,
+  days: 86_400_000
+}
+
+const buildPreProgrammedDistribution = (rows, scale) => {
+  const distributions = {}
+  for (const row of rows || []) {
+    if (!row.time || !row.identity || !row.amount) continue
+    const ts = Date.parse(row.time)
+    if (Number.isNaN(ts)) continue
+    let scaled
+    try { scaled = String(BigInt(row.amount) * scale) } catch { continue }
+    const key = String(ts)
+    if (!distributions[key]) distributions[key] = {}
+    distributions[key][row.identity.trim()] = scaled
+  }
+  return Object.keys(distributions).length ? { distributions } : null
+}
+
+const buildPerpetualDistribution = (form, scale) => {
+  if (!form.perpetualEnabled) return null
+  const unitMs = INTERVAL_UNIT_MS[form.perpetualIntervalUnit] || INTERVAL_UNIT_MS.days
+  const intervalValue = Number(form.perpetualIntervalValue)
+  if (!intervalValue || intervalValue <= 0) return null
+  let amountScaled
+  try { amountScaled = String(BigInt(form.perpetualAmount || '0') * scale) } catch { return null }
+  if (amountScaled === '0') return null
+
+  const recipient = form.perpetualRecipient === 'identity' && form.perpetualRecipientIdentity?.trim()
+    ? { Identity: form.perpetualRecipientIdentity.trim() }
+    : 'ContractOwner'
+
+  return {
+    distributionType: {
+      TimeBasedDistribution: {
+        interval: intervalValue * unitMs,
+        function: { FixedAmount: { amount: amountScaled } }
+      }
+    },
+    distributionRecipient: recipient
+  }
+}
+
 export const buildTokenConfiguration = (form) => {
   // User enters supply in "tokens" — DPP stores raw smallest units, so the
   // preview JSON shows the multiplied number (matches what gets broadcast).
@@ -25,12 +71,13 @@ export const buildTokenConfiguration = (form) => {
     ? String(BigInt(form.maxSupply) * scale)
     : null
 
+  const history = form.keepsHistory || {}
   return {
     conventions: {
       decimals,
       localizations: {
         en: {
-          shouldCapitalize: true,
+          shouldCapitalize: !!form.shouldCapitalize,
           singularForm: form.name || '',
           pluralForm: form.pluralForm || (form.name ? `${form.name}s` : '')
         }
@@ -40,20 +87,20 @@ export const buildTokenConfiguration = (form) => {
     baseSupply,
     maxSupply,
     keepsHistory: {
-      keepsTransferHistory: true,
-      keepsFreezingHistory: true,
-      keepsMintingHistory: true,
-      keepsBurningHistory: true,
-      keepsDirectPricingHistory: true,
-      keepsDirectPurchaseHistory: true
+      keepsTransferHistory: history.transfer !== false,
+      keepsFreezingHistory: history.freezing !== false,
+      keepsMintingHistory: history.minting !== false,
+      keepsBurningHistory: history.burning !== false,
+      keepsDirectPricingHistory: history.directPricing !== false,
+      keepsDirectPurchaseHistory: history.directPurchase !== false
     },
     startAsPaused: !!form.startAsPaused,
-    allowTransferToFrozenBalance: false,
+    allowTransferToFrozenBalance: !!form.allowTransferToFrozenBalance,
     maxSupplyChangeRules: form.hasMaxSupply ? ownerOnlyRule : noOneRule,
     distributionRules: {
-      perpetualDistribution: null,
-      preProgrammedDistribution: null,
-      newTokensDestinationIdentity: null,
+      perpetualDistribution: buildPerpetualDistribution(form, scale),
+      preProgrammedDistribution: buildPreProgrammedDistribution(form.preProgrammedRows, scale),
+      newTokensDestinationIdentity: form.destinationIdentity?.trim() || null,
       mintingAllowChoosingDestination: form.allowMint,
       changeDirectPurchasePricingRules: form.allowDirectPurchase ? ownerOnlyRule : noOneRule
     },
