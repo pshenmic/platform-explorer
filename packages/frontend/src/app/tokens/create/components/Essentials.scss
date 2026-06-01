@@ -6,7 +6,24 @@
     font-weight: 600;
     font-size: 12px;
     color: var(--chakra-colors-white-50);
+    background: transparent;
+    border: 0;
+    padding: 0;
+    margin: 0;
+    cursor: help;
+    border-bottom: 1px dashed var(--chakra-colors-gray-500);
+
+    &:hover {
+      color: var(--chakra-colors-white-100);
+    }
+  }
+
+  &__LabelRow {
     margin-bottom: 6px;
+    // Inherit the same compact mono context as Features__Row so the
+    // Yes/No badge inside Max supply renders at the same size.
+    font-family: $font-mono;
+    font-size: 12px;
   }
 
   &__Hint {
