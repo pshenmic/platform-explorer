@@ -68,13 +68,14 @@ const parseFormUpdates = (config) => {
   if (!config || typeof config !== 'object') return null
   const updates = {}
 
-  const name = config?.conventions?.localizations?.en?.singularForm
-  if (typeof name === 'string') updates.name = name
-
-  const plural = config?.conventions?.localizations?.en?.pluralForm
-  if (typeof plural === 'string') {
-    updates.pluralForm = plural
+  const enLoc = config?.conventions?.localizations?.en
+  if (typeof enLoc?.singularForm === 'string') updates.name = enLoc.singularForm
+  if (typeof enLoc?.pluralForm === 'string') {
+    updates.pluralForm = enLoc.pluralForm
     updates.pluralEdited = true
+  }
+  if (typeof enLoc?.shouldCapitalize === 'boolean') {
+    updates.shouldCapitalize = enLoc.shouldCapitalize
   }
 
   const decimals = config?.conventions?.decimals
@@ -82,6 +83,9 @@ const parseFormUpdates = (config) => {
 
   if (typeof config.startAsPaused === 'boolean') {
     updates.startAsPaused = config.startAsPaused
+  }
+  if (typeof config.allowTransferToFrozenBalance === 'boolean') {
+    updates.allowTransferToFrozenBalance = config.allowTransferToFrozenBalance
   }
 
   if (config.manualMintingRules) updates.allowMint = isOwnerRule(config.manualMintingRules)
@@ -92,6 +96,73 @@ const parseFormUpdates = (config) => {
   if (config.freezeRules) updates.allowFreeze = isOwnerRule(config.freezeRules)
   if (config.destroyFrozenFundsRules) updates.allowDestroyFrozen = isOwnerRule(config.destroyFrozenFundsRules)
   if (config.emergencyActionRules) updates.allowEmergency = isOwnerRule(config.emergencyActionRules)
+
+  const dest = config?.distributionRules?.newTokensDestinationIdentity
+  if (typeof dest === 'string') updates.destinationIdentity = dest
+  else if (dest === null) updates.destinationIdentity = ''
+
+  // Pre-programmed: flatten { ts: { id: amount } } back to row list.
+  const pp = config?.distributionRules?.preProgrammedDistribution
+  if (pp && typeof pp === 'object' && pp.distributions && typeof pp.distributions === 'object') {
+    const rows = []
+    let seq = 0
+    for (const [ts, perId] of Object.entries(pp.distributions)) {
+      const tsNum = Number(ts)
+      if (!Number.isFinite(tsNum) || !perId || typeof perId !== 'object') continue
+      const iso = new Date(tsNum).toISOString().slice(0, 16)
+      for (const [identity, amount] of Object.entries(perId)) {
+        rows.push({ id: `pp${++seq}`, time: iso, identity, amount: String(amount) })
+      }
+    }
+    updates.preProgrammedRows = rows
+  } else if (pp === null) {
+    updates.preProgrammedRows = []
+  }
+
+  // Perpetual: only Time + FixedAmount round-trips back to form; others ignored.
+  const pd = config?.distributionRules?.perpetualDistribution
+  if (pd && typeof pd === 'object') {
+    const time = pd.distributionType?.TimeBasedDistribution
+    const fixed = time?.function?.FixedAmount
+    if (time && fixed && typeof time.interval === 'number') {
+      updates.perpetualEnabled = true
+      const intervalMs = time.interval
+      let unit = 'days'; let value = intervalMs / 86_400_000
+      if (intervalMs % 86_400_000 !== 0) {
+        unit = 'hours'; value = intervalMs / 3_600_000
+        if (intervalMs % 3_600_000 !== 0) {
+          unit = 'minutes'; value = intervalMs / 60_000
+          if (intervalMs % 60_000 !== 0) {
+            unit = 'seconds'; value = intervalMs / 1000
+          }
+        }
+      }
+      updates.perpetualIntervalValue = String(value)
+      updates.perpetualIntervalUnit = unit
+      updates.perpetualAmount = String(fixed.amount)
+      if (typeof pd.distributionRecipient === 'string' && pd.distributionRecipient === 'ContractOwner') {
+        updates.perpetualRecipient = 'owner'
+        updates.perpetualRecipientIdentity = ''
+      } else if (pd.distributionRecipient?.Identity) {
+        updates.perpetualRecipient = 'identity'
+        updates.perpetualRecipientIdentity = pd.distributionRecipient.Identity
+      }
+    }
+  } else if (pd === null) {
+    updates.perpetualEnabled = false
+  }
+
+  const kh = config?.keepsHistory
+  if (kh && typeof kh === 'object') {
+    updates.keepsHistory = {
+      transfer: kh.keepsTransferHistory !== false,
+      freezing: kh.keepsFreezingHistory !== false,
+      minting: kh.keepsMintingHistory !== false,
+      burning: kh.keepsBurningHistory !== false,
+      directPricing: kh.keepsDirectPricingHistory !== false,
+      directPurchase: kh.keepsDirectPurchaseHistory !== false
+    }
+  }
 
   if (typeof config.description === 'string') updates.description = config.description
   else if (config.description === null) updates.description = ''
