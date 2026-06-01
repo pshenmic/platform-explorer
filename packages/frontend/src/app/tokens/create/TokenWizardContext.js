@@ -11,6 +11,15 @@ export const useTokenWizard = () => {
   return ctx
 }
 
+const DEFAULT_KEEPS_HISTORY = {
+  transfer: true,
+  freezing: true,
+  minting: true,
+  burning: true,
+  directPricing: true,
+  directPurchase: true
+}
+
 const buildInitialForm = (templateId) => {
   const template = getTemplate(templateId)
   return {
@@ -30,7 +39,22 @@ const buildInitialForm = (templateId) => {
     allowDestroyFrozen: template.defaults.allowDestroyFrozen ?? true,
     allowEmergency: template.defaults.allowEmergency ?? true,
     startAsPaused: template.defaults.startAsPaused ?? false,
-    description: ''
+    description: '',
+    // Advanced fields — collapsed by default in the UI.
+    shouldCapitalize: template.defaults.shouldCapitalize ?? true,
+    destinationIdentity: template.defaults.destinationIdentity ?? '',
+    allowTransferToFrozenBalance: template.defaults.allowTransferToFrozenBalance ?? false,
+    keepsHistory: { ...DEFAULT_KEEPS_HISTORY, ...(template.defaults.keepsHistory || {}) },
+    // Pre-programmed: list of one-off scheduled distributions. Show one
+    // empty row by default so the form structure is visible.
+    preProgrammedRows: [{ id: 'pp-init', time: '', identity: '', amount: '' }],
+    // Perpetual: only Time-based + FixedAmount + Owner/Identity supported.
+    perpetualEnabled: false,
+    perpetualIntervalValue: '',
+    perpetualIntervalUnit: 'days',
+    perpetualAmount: '',
+    perpetualRecipient: 'owner',
+    perpetualRecipientIdentity: ''
   }
 }
 
@@ -56,7 +80,15 @@ export const TokenWizardProvider = ({ children }) => {
       allowFreeze: template.defaults.allowFreeze ?? true,
       allowDestroyFrozen: template.defaults.allowDestroyFrozen ?? true,
       allowEmergency: template.defaults.allowEmergency ?? true,
-      startAsPaused: template.defaults.startAsPaused ?? false
+      startAsPaused: template.defaults.startAsPaused ?? false,
+      // Advanced — only overwrite when the template explicitly sets the field;
+      // otherwise preserve whatever the user typed in Advanced.
+      shouldCapitalize: template.defaults.shouldCapitalize ?? prev.shouldCapitalize,
+      destinationIdentity: template.defaults.destinationIdentity ?? prev.destinationIdentity,
+      allowTransferToFrozenBalance: template.defaults.allowTransferToFrozenBalance ?? prev.allowTransferToFrozenBalance,
+      keepsHistory: template.defaults.keepsHistory
+        ? { ...DEFAULT_KEEPS_HISTORY, ...template.defaults.keepsHistory }
+        : prev.keepsHistory
     }))
   }
 
