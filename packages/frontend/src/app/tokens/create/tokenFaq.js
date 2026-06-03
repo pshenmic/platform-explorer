@@ -57,7 +57,7 @@ export const FIELD_SOURCE = {
 // `backticks`; FaqView turns the ones present in FIELD_SOURCE into links.
 export const tokenFaqGroups = [
   {
-    title: 'Naming & display',
+    title: 'Essentials',
     items: [
       {
         key: 'naming',
@@ -70,16 +70,6 @@ export const tokenFaqGroups = [
         answer: 'How many fractional digits the token supports, like cents on a dollar. Max is 16; DASH itself uses 8. Your supply inputs are multiplied by 10^`decimals` before going on chain.'
       },
       {
-        key: 'shouldCapitalize',
-        question: 'What does "Capitalize singular form" do?',
-        answer: 'Sets `shouldCapitalize` in the English localization, hinting to clients that the singular name should render with a capital letter (e.g. `MyToken`, not `mytoken`). It is metadata only — chain logic never depends on it.'
-      }
-    ]
-  },
-  {
-    title: 'Supply',
-    items: [
-      {
         key: 'baseSupply',
         question: 'What is the base supply?',
         answer: 'The initial token supply minted at creation (`baseSupply`). It goes to your identity, and you can transfer it or mint more later if minting is enabled.'
@@ -88,6 +78,11 @@ export const tokenFaqGroups = [
         key: 'maxSupply',
         question: 'Can the supply be unlimited?',
         answer: 'Yes. Leave "Max supply" off and `maxSupply` is `null` — the supply is unbounded unless minting rules constrain it. If you set a cap, it can never be reduced below the base supply.'
+      },
+      {
+        key: 'description',
+        question: 'Where is the description shown?',
+        answer: 'The optional `description` describes the token\'s purpose and is shown on the token page. Leave it empty and it is stored as `null`.'
       }
     ]
   },
@@ -110,6 +105,16 @@ export const tokenFaqGroups = [
         answer: 'With "Freezable" on, `freezeRules` and `unfreezeRules` let the owner freeze and unfreeze individual holder balances — useful for anti-fraud or compliance. Off locks both to `NoOne`.'
       },
       {
+        key: 'shouldCapitalize',
+        question: 'What does "Capitalize singular form" do?',
+        answer: 'Sets `shouldCapitalize` in the English localization, hinting to clients that the singular name should render with a capital letter (e.g. `MyToken`, not `mytoken`). It is metadata only — chain logic never depends on it.'
+      },
+      {
+        key: 'startAsPaused',
+        question: 'Why would my token start paused?',
+        answer: 'If "Start paused" is on, `startAsPaused` is true and the token is created paused — transfers are disallowed until explicitly unpaused via an emergency action.'
+      },
+      {
         key: 'destroyFrozen',
         question: 'What is "Burn frozen funds"?',
         answer: 'It sets `destroyFrozenFundsRules` so the owner can destroy tokens that are currently frozen. It only makes sense together with Freezable.'
@@ -118,22 +123,17 @@ export const tokenFaqGroups = [
         key: 'emergency',
         question: 'What is the emergency action / pause?',
         answer: '`emergencyActionRules` governs who may invoke emergency actions such as pausing all token operations at once. With "Emergency pause" on, that is the owner.'
+      },
+      {
+        key: 'transferToFrozen',
+        question: 'What does "Allow transfer to frozen balance" do?',
+        answer: '`allowTransferToFrozenBalance` controls whether incoming mints and transfers can land on a balance that is currently frozen. Off (default) bounces them; on lets them accumulate while still being frozen.'
       }
     ]
   },
   {
-    title: 'Lifecycle & rules',
+    title: 'Distribution',
     items: [
-      {
-        key: 'startAsPaused',
-        question: 'Why would my token start paused?',
-        answer: 'If "Start paused" is on, `startAsPaused` is true and the token is created paused — transfers are disallowed until explicitly unpaused via an emergency action.'
-      },
-      {
-        key: 'keepsHistory',
-        question: 'What does history tracking record?',
-        answer: '`keepsHistory` controls which actions are recorded on chain: transfers, freezes, mints, burns, direct pricing and direct purchases. By default the preview keeps all of them.'
-      },
       {
         key: 'distribution',
         question: 'What are the distribution rules?',
@@ -143,16 +143,6 @@ export const tokenFaqGroups = [
         key: 'destination',
         question: 'Where do newly minted tokens land?',
         answer: 'By default `newTokensDestinationIdentity` is `null` and mints go to the contract owner. Set it to an Identity ID in Advanced to redirect all mints to that identity — useful for treasury / vault setups.'
-      },
-      {
-        key: 'transferToFrozen',
-        question: 'What does "Allow transfer to frozen balance" do?',
-        answer: '`allowTransferToFrozenBalance` controls whether incoming mints and transfers can land on a balance that is currently frozen. Off (default) bounces them; on lets them accumulate while still being frozen.'
-      },
-      {
-        key: 'historyToggles',
-        question: 'Can I disable specific history streams?',
-        answer: 'Yes. `keepsHistory` is six independent flags (transfers, freezes, mints, burns, direct pricing, direct purchases). Disable any of them in Advanced if you do not need that audit trail. These are about *audit recording*, not about whether the action is allowed — the latter is controlled by Mintable / Burnable / Freezable in Features.'
       },
       {
         key: 'preProgrammed',
@@ -168,11 +158,21 @@ export const tokenFaqGroups = [
         key: 'marketplace',
         question: 'Can the token be traded?',
         answer: '`marketplaceRules` defines the trade mode. The preview defaults to `NotTradeable`; the owner controls whether and how trading is enabled.'
+      }
+    ]
+  },
+  {
+    title: 'Logging',
+    items: [
+      {
+        key: 'keepsHistory',
+        question: 'What does history tracking record?',
+        answer: '`keepsHistory` controls which actions are recorded on chain: transfers, freezes, mints, burns, direct pricing and direct purchases. By default the preview keeps all of them.'
       },
       {
-        key: 'description',
-        question: 'Where is the description shown?',
-        answer: 'The optional `description` describes the token\'s purpose and is shown on the token page. Leave it empty and it is stored as `null`.'
+        key: 'historyToggles',
+        question: 'Can I disable specific history streams?',
+        answer: 'Yes. `keepsHistory` is six independent flags (transfers, freezes, mints, burns, direct pricing, direct purchases). Disable any of them in Advanced if you do not need that audit trail. These are about *audit recording*, not about whether the action is allowed — the latter is controlled by Mintable / Burnable / Freezable in Features.'
       }
     ]
   }
