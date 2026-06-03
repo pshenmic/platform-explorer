@@ -19,8 +19,14 @@ const columns = [
   columnHelper.accessor('timestamp', {
     header: 'Time'
   }),
+  columnHelper.accessor('status', {
+    header: 'Status'
+  }),
   columnHelper.accessor('hash', {
     header: 'Hash'
+  }),
+  columnHelper.accessor('blockHeight', {
+    header: 'Block'
   }),
   columnHelper.accessor('gasUsed', {
     header: 'Gas used'
@@ -63,8 +69,14 @@ export default function TransactionsList ({
         <GridItem className={'TransactionsList__ColumnTitle TransactionsList__ColumnTitle--Timestamp'}>
           Time
         </GridItem>
+        <GridItem className={'TransactionsList__ColumnTitle TransactionsList__ColumnTitle--Status'}>
+          Status
+        </GridItem>
         <GridItem className={'TransactionsList__ColumnTitle TransactionsList__ColumnTitle--Hash'}>
           Hash
+        </GridItem>
+        <GridItem className={'TransactionsList__ColumnTitle TransactionsList__ColumnTitle--Block'}>
+          Block
         </GridItem>
         <GridItem className={'TransactionsList__ColumnTitle TransactionsList__ColumnTitle--GasUsed'}>
           Gas used
