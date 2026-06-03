@@ -41,11 +41,11 @@
   &__Row {
     display: grid;
     grid-template-columns:
-      minmax(0, 1fr)   // hash (eats space → кластер прижат вправо)
+      minmax(0, 1fr)   // hash — eats remaining space
       auto             // height
       auto             // type
-      90px             // time (фикс → выравнивается построчно)
-      92px             // status (фикс → SUCCESS/FAIL не смещают колонки)
+      90px             // time — fixed width keeps rows aligned
+      92px             // status — fixed width so SUCCESS/FAIL doesn't shift columns
       2rem;            // arrow
     align-items: center;
     gap: 16px;

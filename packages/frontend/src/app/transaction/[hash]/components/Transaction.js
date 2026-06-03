@@ -40,7 +40,7 @@ export const Transaction = () => {
   const pathname = usePathname()
   const searchParams = useSearchParams()
 
-  // Все вхождения tx (каноническая + дубли); выбранное определяется ?block=<hash>
+  // Occurrences = canonical + duplicates; the selected one is driven by ?block=
   const occurrences = transaction.data
     ? [transaction.data, ...(transaction.data.duplicates ?? [])]
     : []

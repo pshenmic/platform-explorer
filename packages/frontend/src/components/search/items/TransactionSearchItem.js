@@ -5,8 +5,7 @@ import { BaseSearchItem, BaseSearchItemContent } from './BaseSearchItem'
 import { TransactionStatusBadge } from '../../transactions'
 
 export function TransactionSearchItem ({ transaction, className, onClick }) {
-  // Дубль-вхождение ведёт на ту же транзакцию с выбранным блоком (master-detail ?block=),
-  // каноническое — на обычную страницу транзакции.
+  // Duplicate rows deep-link to the same tx with that occurrence preselected (?block=)
   const href = transaction?.isDuplicate
     ? `/transaction/${transaction?.hash}?block=${transaction?.blockHash}`
     : `/transaction/${transaction?.hash}`

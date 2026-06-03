@@ -3,8 +3,7 @@ import './SearchResultsList.scss'
 import { Grid, GridItem } from '@chakra-ui/react'
 import { categoryMap, entityTypes, singularCategoryNames, pluralCategoryNames, modifierMap } from './constants'
 
-// Разворачиваем каждую транзакцию в [каноническая, ...duplicates], чтобы каждое
-// вхождение (включая FAIL-дубли из вложенного поля duplicates) стало отдельной строкой.
+// Flatten each tx into its occurrences so duplicates render as their own rows
 const expandOccurrences = (entity) => [
   entity,
   ...(entity?.duplicates ?? []).map((duplicate) => ({ ...duplicate, isDuplicate: true }))
