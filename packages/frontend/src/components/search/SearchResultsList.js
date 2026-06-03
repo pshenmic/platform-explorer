@@ -1,7 +1,14 @@
 import SearchResultsListItem from './SearchResultsListItem'
 import './SearchResultsList.scss'
 import { Grid, GridItem } from '@chakra-ui/react'
-import { categoryMap, singularCategoryNames, pluralCategoryNames, modifierMap } from './constants'
+import { categoryMap, entityTypes, singularCategoryNames, pluralCategoryNames, modifierMap } from './constants'
+
+// Разворачиваем каждую транзакцию в [каноническая, ...duplicates], чтобы каждое
+// вхождение (включая FAIL-дубли из вложенного поля duplicates) стало отдельной строкой.
+const expandOccurrences = (entity) => [
+  entity,
+  ...(entity?.duplicates ?? []).map((duplicate) => ({ ...duplicate, isDuplicate: true }))
+]
 
 const COLUMN_TITLES = {
   [categoryMap.validators]: ['Identity', 'Balance'],
@@ -19,11 +26,15 @@ function ListCategory ({ type, data, onItemClick }) {
 
   if (!titles) return null
 
+  const displayData = categoryMap[type] === entityTypes.transaction
+    ? data.flatMap(expandOccurrences)
+    : data
+
   return (
     <div className={'SearchResultsList__Category'}>
       <Grid className={`SearchResultsList__ColumnTitles SearchResultsList__ColumnTitles--${modifierMap[categoryMap[type]] || ''}`}>
         <GridItem className={'SearchResultsList__ColumnTitle'}>
-          {data?.length} {data?.length > 1 ? pluralCategoryNames[type] : singularCategoryNames[categoryMap[type]]} FOUND
+          {displayData?.length} {displayData?.length > 1 ? pluralCategoryNames[type] : singularCategoryNames[categoryMap[type]]} FOUND
         </GridItem>
         {titles.map((title, i) => (
           <GridItem key={i} className={'SearchResultsList__ColumnTitle'}>
@@ -33,7 +44,7 @@ function ListCategory ({ type, data, onItemClick }) {
         <GridItem/>
       </Grid>
       <div>
-        {data?.map((entity, i) => (
+        {displayData?.map((entity, i) => (
           <SearchResultsListItem
             entity={entity}
             entityType={categoryMap[type]}
