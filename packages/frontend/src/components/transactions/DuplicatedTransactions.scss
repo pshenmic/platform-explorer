@@ -12,6 +12,25 @@
     margin-bottom: 14px;
   }
 
+  &__Notice {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    margin-bottom: 14px;
+    padding: 10px 14px;
+    border-radius: 8px;
+    font-size: 0.8125rem;
+    line-height: 1.4;
+    color: #f49a58;
+    background-color: rgba(244, 154, 88, .2);
+  }
+
+  &__NoticeIcon {
+    flex-shrink: 0;
+    margin-top: 2px;
+    color: #f49a58;
+  }
+
   &__List {
     display: flex;
     flex-direction: column;

@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { Button } from '@chakra-ui/react'
+import { WarningTwoIcon } from '@chakra-ui/icons'
 import { Identifier, TimeDelta, NotActive } from '../data'
 import TypeBadge from './TypeBadge'
 import BatchTypeBadge from './BatchTypeBadge'
@@ -105,6 +106,13 @@ function DuplicatedTransactions ({ transaction, selectedBlockHash, onSelect }) {
   return (
     <div className={'DuplicatedTransactions'}>
       <div className={'DuplicatedTransactions__Title'}>Duplicated Transactions</div>
+      <div className={'DuplicatedTransactions__Notice'}>
+        <WarningTwoIcon className={'DuplicatedTransactions__NoticeIcon'}/>
+        <span>
+          This transaction was included in more than one block. The duplicate occurrences
+          failed, the canonical transaction is valid.
+        </span>
+      </div>
       <div className={'DuplicatedTransactions__List'}>
         {visibleOccurrences.map((occurrence, i) => (
           <OccurrenceRow
