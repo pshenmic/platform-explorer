@@ -57,11 +57,8 @@ const TITLES = {
   faq: 'FAQ'
 }
 
-// Reverse mapping: JSON config → partial form updates. Only "simple" fields
-// that have a 1:1 form widget are mapped back. baseSupply / maxSupply stay
-// form-only because the form value gets scaled by 10^decimals before reaching
-// JSON — round-tripping the raw scaled value back to the form input would be
-// lossy.
+// JSON → form. Supply fields aren't reversed: form scales by 10^decimals
+// before reaching JSON, so the round-trip would be lossy.
 const isOwnerRule = (rule) => rule?.authorizedToMakeChange === 'ContractOwner'
 
 const parseFormUpdates = (config) => {
@@ -101,7 +98,6 @@ const parseFormUpdates = (config) => {
   if (typeof dest === 'string') updates.destinationIdentity = dest
   else if (dest === null) updates.destinationIdentity = ''
 
-  // Pre-programmed: flatten { ts: { id: amount } } back to row list.
   const pp = config?.distributionRules?.preProgrammedDistribution
   if (pp && typeof pp === 'object' && pp.distributions && typeof pp.distributions === 'object') {
     const rows = []
@@ -194,9 +190,8 @@ function JsonPreview () {
   const isFocusedRef = useRef(false)
   const debounceRef = useRef(null)
 
-  // Sync form → editor ONLY when form changes (not on blur). Blur preserves
-  // the user's typed text. Use a ref for focus so the effect doesn't depend
-  // on it; otherwise blur would re-fire the effect and snap the value back.
+  // Sync form → editor only on form change. Focus tracked via ref so blur
+  // doesn't re-fire and snap the user's typed value back.
   useEffect(() => {
     if (!isFocusedRef.current) {
       setEditorValue(code)

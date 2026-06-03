@@ -6,8 +6,6 @@ import {
 } from '@chakra-ui/react'
 import { ValueContainer } from '@components/ui/containers'
 
-// The label word itself is the help trigger — click it to reveal the tooltip.
-// No standalone help icons cluttering the rows.
 export const RowLabel = ({ label, tooltip, width }) => (
   <HStack spacing={2} align='center' width={width} flexShrink={0}>
     <Popover trigger='click' placement='top' isLazy>
@@ -37,8 +35,6 @@ export const RowLabel = ({ label, tooltip, width }) => (
   </HStack>
 )
 
-// Clickable Yes/No badge in the app's unified ValueContainer style
-// (green Yes / red No), matching the token detail page flags.
 export const YesNoBadge = ({ value, onToggle }) => (
   <ValueContainer
     size='sm'

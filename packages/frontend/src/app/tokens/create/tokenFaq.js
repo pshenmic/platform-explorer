@@ -1,32 +1,21 @@
-// In-app FAQ for the token configuration fields shown in the JSON preview.
-//
-// Why this exists: docs.dash.org documents token *operations* (mint / burn /
-// transfer state transitions) but NOT the configuration fields a token is
-// created with. Those fields live only in the rs-dpp source, where each field
-// of `TokenConfigurationV0` carries a /// doc comment. The answers below are
-// based on those comments plus practical guidance.
+// docs.dash.org covers token operations but not configuration fields —
+// the source of truth is rs-dpp `TokenConfigurationV0` doc comments.
 
 // docs.dash.org token reference — only its "Constants and Limits" section is
 // relevant to configuration (value limits); the rest is about operations.
 export const TOKEN_LIMITS_DOC_URL =
   'https://docs.dash.org/projects/platform/en/stable/docs/protocol-ref/token.html#token-constants-and-limits'
 
-// rs-dpp token config sources. Fields live across three structs, so we need
-// three base files. Line numbers verified via `grep -n` against master; if they
-// drift the link still lands in the right file. Value literals (ContractOwner,
-// NoOne, null, NotTradeable, …) are intentionally absent from the map below so
-// they render as plain text, not links.
+// rs-dpp config lives across three structs. Line numbers verified; if they
+// drift the link still lands in the right file.
 const BASE =
   'https://github.com/dashpay/platform/blob/master/packages/rs-dpp/src/data_contract/associated_token'
 const STRUCT = `${BASE}/token_configuration/v0/mod.rs`
 const CONVENTION = `${BASE}/token_configuration_convention/v0/mod.rs`
 const LOCALIZATION = `${BASE}/token_configuration_localization/v0/mod.rs`
 
-// The TokenConfigurationV0 struct — the canonical definition of every field.
 export const STRUCT_URL = STRUCT
 
-// Field name (as written in answers, between backticks) → deep link to its
-// declaration line.
 export const FIELD_SOURCE = {
   conventions: `${STRUCT}#L37`,
   // decimals & names live in their own structs, not in TokenConfigurationV0.
@@ -53,8 +42,6 @@ export const FIELD_SOURCE = {
   description: `${STRUCT}#L115`
 }
 
-// FAQ grouped into sections. Field names referenced in answers are wrapped in
-// `backticks`; FaqView turns the ones present in FIELD_SOURCE into links.
 export const tokenFaqGroups = [
   {
     title: 'Essentials',

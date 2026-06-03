@@ -38,8 +38,7 @@ function DeployBar () {
   const [identityIdInput, setIdentityIdInput] = useState('')
   const [isReviewOpen, setIsReviewOpen] = useState(false)
 
-  // Async signer / deploy errors surface as toasts so the sticky footer never
-  // grows or shifts when they appear (inline alerts here broke the layout).
+  // Errors go to toast — inline alerts broke the sticky footer layout.
   useEffect(() => {
     if (signerCtl.error) {
       toast({

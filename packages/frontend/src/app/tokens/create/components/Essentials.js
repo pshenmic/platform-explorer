@@ -9,9 +9,8 @@ import { YesNoBadge } from './FeatureRow'
 import { useTokenWizard } from '../TokenWizardContext'
 import './Essentials.scss'
 
-// DPP rejects whitespace + control chars in token name forms and caps length
-// at 3–25 bytes. We restrict to ASCII letters/digits so maxLength maps 1:1 to
-// the byte limit and the auto-pluralization stays sane.
+// DPP caps name at 3–25 bytes and rejects whitespace/control chars.
+// ASCII letters/digits keep maxLength byte-accurate and pluralization sane.
 const sanitizeName = (s) => s.replace(/[^A-Za-z0-9]/g, '')
 
 const nameHint = (value) => {
@@ -19,9 +18,6 @@ const nameHint = (value) => {
   return null
 }
 
-// Unified label for Essentials fields. Always a click-trigger (dashed
-// underline) opening a popover with the tooltip. `rightSlot` is rendered
-// on the right of the label row — used by Max supply for the Yes/No toggle.
 const FieldLabel = ({ label, tooltip, rightSlot }) => (
   <HStack className='Essentials__LabelRow' justify='space-between' spacing={3}>
     <Popover trigger='click' placement='top' isLazy>
@@ -52,15 +48,13 @@ function Essentials () {
   const onNameChange = (e) => {
     const next = sanitizeName(e.target.value)
     setField('name', next)
-    // Auto-suggest plural from singular until the user edits the plural field
-    // (only possible via the JSON tab now — there's no plural input in the UI).
+    // Plural auto-derives from singular; manual edits only via JSON tab.
     if (!form.pluralEdited) {
       setField('pluralForm', next ? `${next}s` : '')
     }
   }
 
-  // Show the hint only after the field is blurred — avoids flagging while
-  // the user is still typing (2026 validate-on-blur practice).
+  // Show hint only after blur — don't flag while user is still typing.
   const nameError = touched.name ? nameHint(form.name) : null
 
   const onDigitsChange = (key) => (e) => {

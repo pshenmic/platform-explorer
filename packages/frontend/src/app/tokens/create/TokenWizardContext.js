@@ -40,15 +40,12 @@ const buildInitialForm = (templateId) => {
     allowEmergency: template.defaults.allowEmergency ?? true,
     startAsPaused: template.defaults.startAsPaused ?? false,
     description: '',
-    // Advanced fields — collapsed by default in the UI.
     shouldCapitalize: template.defaults.shouldCapitalize ?? true,
     destinationIdentity: template.defaults.destinationIdentity ?? '',
     allowTransferToFrozenBalance: template.defaults.allowTransferToFrozenBalance ?? false,
     keepsHistory: { ...DEFAULT_KEEPS_HISTORY, ...(template.defaults.keepsHistory || {}) },
-    // Pre-programmed: list of one-off scheduled distributions. Show one
-    // empty row by default so the form structure is visible.
+    // Seed one row so the repeater UI is visible by default.
     preProgrammedRows: [{ id: 'pp-init', time: '', identity: '', amount: '' }],
-    // Perpetual: only Time-based + FixedAmount + Owner/Identity supported.
     perpetualEnabled: false,
     perpetualIntervalValue: '',
     perpetualIntervalUnit: 'days',
@@ -81,8 +78,7 @@ export const TokenWizardProvider = ({ children }) => {
       allowDestroyFrozen: template.defaults.allowDestroyFrozen ?? true,
       allowEmergency: template.defaults.allowEmergency ?? true,
       startAsPaused: template.defaults.startAsPaused ?? false,
-      // Advanced — only overwrite when the template explicitly sets the field;
-      // otherwise preserve whatever the user typed in Advanced.
+      // Templates only override fields they explicitly define; preserve user input otherwise.
       shouldCapitalize: template.defaults.shouldCapitalize ?? prev.shouldCapitalize,
       destinationIdentity: template.defaults.destinationIdentity ?? prev.destinationIdentity,
       allowTransferToFrozenBalance: template.defaults.allowTransferToFrozenBalance ?? prev.allowTransferToFrozenBalance,

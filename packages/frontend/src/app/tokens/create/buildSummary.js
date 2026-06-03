@@ -1,7 +1,3 @@
-// Pure helper: form state → array of plain-English bullets describing what the
-// token will do. Drives the right-pane summary so users see the effect of their
-// inputs in human terms, not just JSON.
-
 const formatNumber = (n) => {
   if (n === '' || n == null) return null
   const value = String(n).replace(/\D/g, '')

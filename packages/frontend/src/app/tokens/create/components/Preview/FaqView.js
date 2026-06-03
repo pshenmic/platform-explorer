@@ -5,10 +5,7 @@ import {
   tokenFaqGroups, FIELD_SOURCE, TOKEN_LIMITS_DOC_URL, STRUCT_URL
 } from '../../tokenFaq'
 
-// Render `backtick`-wrapped segments of an answer. Field names known to
-// FIELD_SOURCE become links to their definition in the rs-dpp source; value
-// literals (ContractOwner, NoOne, …) stay plain monospace so the link
-// affordance is honest.
+// Field names in FIELD_SOURCE link to rs-dpp; bare value literals stay plain so the link affordance is honest.
 const renderAnswer = (text) =>
   text.split('`').map((part, i) => {
     if (i % 2 === 0) return <Fragment key={i}>{part}</Fragment>
@@ -28,9 +25,7 @@ const renderAnswer = (text) =>
       : <code key={i} className='Preview__FaqCode'>{part}</code>
   })
 
-// Read-only companion to the JSON editor: explains the token configuration
-// fields, since docs.dash.org doesn't document them. Grouped accordion —
-// questions are visible, answers expand on click.
+// Companion to the JSON editor — docs.dash.org doesn't cover config fields.
 function FaqView () {
   const [open, setOpen] = useState(() => new Set())
 

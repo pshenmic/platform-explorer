@@ -1,7 +1,3 @@
-// Pure helper: form state → plain JSON object that mirrors TokenConfigurationWASM
-// structure for live preview. Building the actual WASM instance happens at deploy
-// time (separate step). Keeps the preview fast and decoupled from WASM init.
-
 const ownerOnlyRule = {
   authorizedToMakeChange: 'ContractOwner',
   authorizedToChangeChangeAuthorizedRules: 'ContractOwner'
@@ -59,9 +55,7 @@ const buildPerpetualDistribution = (form, scale) => {
 }
 
 export const buildTokenConfiguration = (form) => {
-  // User enters supply in "tokens" — DPP stores raw smallest units, so the
-  // preview JSON shows the multiplied number (matches what gets broadcast).
-  // DPP caps decimals at 16.
+  // Supply is multiplied by 10^decimals before broadcast. DPP caps decimals at 16.
   const decimals = Math.min(16, Number(form.decimals) || 0)
   const scale = 10n ** BigInt(decimals)
   const baseSupply = form.baseSupply

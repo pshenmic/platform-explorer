@@ -48,7 +48,6 @@ function Distribution () {
           />
         </Row>
 
-        {/* Pre-programmed distribution */}
         <GroupHeader
           label='Pre-programmed distribution'
           tooltip='One-off scheduled distributions. Each row sends a fixed amount to one identity at a specific time. Useful for airdrops or vesting unlocks. Amounts are in tokens (scaled by 10^decimals on chain).'
@@ -110,7 +109,6 @@ function Distribution () {
           </HStack>
         ))}
 
-        {/* Perpetual distribution */}
         <GroupHeader
           label='Perpetual distribution'
           tooltip='Mints a fixed amount on every time interval. Advanced function shapes (linear/exponential/stepwise) and block- / epoch-based timing are not configurable here — use Dash Evo Tool for those.'

@@ -5,9 +5,7 @@ import {
 } from '@chakra-ui/react'
 import { InfoOutlineIcon } from '@chakra-ui/icons'
 
-// Click-triggered popover instead of hover tooltip — text inside is
-// selectable / copyable, accessibility-friendly. Reused across Essentials and
-// Features form widgets.
+// Click (not hover) so tooltip text is selectable / copyable.
 function HelpPopover ({ children }) {
   return (
     <Popover trigger='click' placement='top' isLazy>

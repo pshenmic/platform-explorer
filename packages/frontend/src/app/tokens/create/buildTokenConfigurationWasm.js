@@ -1,15 +1,6 @@
-// Async helper: form state -> v2 TokenConfigurationWASM wrapper ready for
-// sdk.dataContracts.create(...). Builds all nested wrappers with v1-product
-// defaults (owner-only auth, NotTradeable marketplace, English-only
-// localization, history tracking on for everything).
-//
-// v2 wrapper signatures live in pshenmic-dpp/dist/src/dpp/structs/. They
-// differ from the raw NAPI ones in pshenmic-dpp v1.x: optional slots are now
-// trailing (just omit), keepsHistory moved earlier in TokenConfigurationWASM,
-// maxSupply moved to the end. Localization is a WASM wrapper instance.
-//
-// Each constructor still moves ownership of nested WASM instances, so every
-// rule slot gets a fresh instance via factory functions.
+// v2 wrappers (pshenmic-dpp/dist/src/dpp/structs/) reorder args vs v1 NAPI:
+// optionals trail, keepsHistory moved earlier, maxSupply to the end. Each ctor
+// moves ownership of nested instances — rule slots use factory functions.
 
 const INTERVAL_UNIT_MS = {
   seconds: 1000n,
@@ -78,11 +69,10 @@ export async function buildTokenConfigurationWasm (form) {
 
   const destinationIdentity = form.destinationIdentity?.trim() || undefined
 
-  // User enters supply in "tokens" — multiply by 10^decimals before chain.
+  // Supply is multiplied by 10^decimals before broadcast.
   const decimalsForScale = Math.min(16, Number(form.decimals) || 0)
   const scale = 10n ** BigInt(decimalsForScale)
 
-  // Pre-programmed distribution: object keyed by ms timestamp -> id -> bigint amount.
   let preProgrammedDist
   const groupedPP = {}
   for (const row of form.preProgrammedRows || []) {
@@ -99,7 +89,6 @@ export async function buildTokenConfigurationWasm (form) {
     preProgrammedDist = new TokenPreProgrammedDistributionWASM(groupedPP)
   }
 
-  // Perpetual distribution: Time-based + FixedAmount only.
   let perpetualDist
   if (form.perpetualEnabled) {
     const intervalValue = Number(form.perpetualIntervalValue)
@@ -138,11 +127,6 @@ export async function buildTokenConfigurationWasm (form) {
     ownerOnlyRule()
   )
 
-  // User enters supply in "tokens" (Uniswap-style). DPP stores raw smallest
-  // units, so multiply by 10^decimals before broadcast. Hides the decimals
-  // footgun from beginners — `baseSupply: 100` with `decimals: 8` becomes
-  // `10000000000` on chain and displays as `100.00000000` everywhere.
-  // `scale` already declared above (used for perpetual/pre-programmed amounts).
   const baseSupply = BigInt(form.baseSupply || '0') * scale
   const maxSupply = form.hasMaxSupply && form.maxSupply
     ? BigInt(form.maxSupply) * scale

@@ -25,13 +25,9 @@ export const useCreateToken = () => {
       const identityNonce = await sdk.identities.getIdentityNonce(identity.id)
       const nextNonce = identityNonce + BigInt(1)
 
-      // Placeholder document type. Required because pshenmic-dpp's NAPI
-      // constructor builds the contract value WITHOUT the tokens field and
-      // runs DPP structural validation before attaching tokens via
-      // set_tokens. DPP's "documents OR tokens" check therefore sees an
-      // empty contract and fails — the check itself is structural and isn't
-      // bypassed by fullValidation: false. Drop this once pshenmic-dpp
-      // populates tokens in contract_value before from_value.
+      // Placeholder document type — pshenmic-dpp's NAPI runs DPP structural
+      // validation BEFORE attaching tokens via set_tokens, so empty schemas fail
+      // the "documents OR tokens" check. Drop once tokens are populated upstream.
       const schema = {
         note: {
           type: 'object',
@@ -44,9 +40,7 @@ export const useCreateToken = () => {
 
       // DataContractsController.create signature:
       //   (ownerId, identityNonce, schema, fullValidation?, tokenConfiguration?, ...)
-      // v2 SDK wrapper expects an array of `{ position, tokenConfiguration }`
-      // objects where `tokenConfiguration` is a TokenConfigurationWASM wrapper
-      // instance (carries `_rawTokenConfiguration` internally).
+      // v2 SDK expects `{ position, tokenConfiguration }` array; each tokenConfiguration is a WASM wrapper.
       const dataContract = sdk.dataContracts.create(
         identity.id,
         nextNonce,

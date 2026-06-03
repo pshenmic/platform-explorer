@@ -1,6 +1,4 @@
-// Template presets — each defines hardcoded rule-sets and default form values
-// that get merged with user input. For v1 only "Simple Utility" is fully wired;
-// the other two are visible-but-disabled stubs.
+// Only "Simple Utility" is fully wired; other presets are visible stubs.
 
 export const TEMPLATES = [
   {
