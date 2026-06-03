@@ -41,7 +41,7 @@
   }
 
   &__FormPane {
-    height: calc(100vh - 300px);
+    height: var(--layout-page-h);
     overflow: hidden;
     padding: 0;
 
@@ -99,7 +99,7 @@
   &__PreviewPane {
     position: sticky;
     top: 16px;
-    height: calc(100vh - 300px);
+    height: calc(var(--layout-page-h) - 16px);
     overflow: hidden;
 
     @media (max-width: 960px) {
