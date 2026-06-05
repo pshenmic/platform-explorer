@@ -42,7 +42,8 @@ const menuItems = [
     title: 'Developers',
     submenuItems: [
       { title: 'API', href: '/api' },
-      { title: 'Create Data Contract', href: '/dataContract/create' }
+      { title: 'Create Data Contract', href: '/dataContract/create' },
+      { title: 'Broadcast Transaction', href: '/developers/broadcast' }
     ]
   },
   {

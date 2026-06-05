@@ -326,6 +326,18 @@ const decodeTx = (base64) => {
   return call('transaction/decode', 'POST', { base64 })
 }
 
+const verifyTransaction = (payload) => {
+  return call('transaction/verify', 'POST', payload)
+}
+
+const broadcastTransaction = (payload) => {
+  return call('transaction/broadcast', 'POST', payload)
+}
+
+const waitForStateTransitionResult = (hash) => {
+  return call(`waitForStateTransitionResult/${hash}`, 'GET')
+}
+
 export {
   getStatus,
   getBlocks,
@@ -368,5 +380,8 @@ export {
   getRate,
   getPlatformAddressInfo,
   getPlatformAddressTransitions,
-  getValidatorByMasternodeIdentity
+  getValidatorByMasternodeIdentity,
+  verifyTransaction,
+  broadcastTransaction,
+  waitForStateTransitionResult
 }
