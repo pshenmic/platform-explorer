@@ -1,7 +1,16 @@
 import { useState, useEffect } from 'react'
 
-const useWindowSize = ({ useVisualViewport = false } = {}) => {
-  const getSize = () => {
+export interface WindowSize {
+  width: number
+  height: number
+}
+
+interface UseWindowSizeOptions {
+  useVisualViewport?: boolean
+}
+
+const useWindowSize = ({ useVisualViewport = false }: UseWindowSizeOptions = {}): WindowSize => {
+  const getSize = (): WindowSize => {
     if (typeof window === 'undefined') return { width: 0, height: 0 }
 
     const width = useVisualViewport && window?.visualViewport
