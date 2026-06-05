@@ -109,8 +109,7 @@ function DuplicatedTransactions ({ transaction, selectedBlockHash, onSelect }) {
       <div className={'DuplicatedTransactions__Notice'}>
         <WarningTwoIcon className={'DuplicatedTransactions__NoticeIcon'}/>
         <span>
-          This transaction was included in more than one block. The duplicate occurrences
-          failed, the canonical transaction is valid.
+          This transaction was included in more than one block
         </span>
       </div>
       <div className={'DuplicatedTransactions__List'}>
