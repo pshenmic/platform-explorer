@@ -43,6 +43,7 @@
 @mixin Column () {
   display: flex;
   align-items: center;
+  font-size: 0.75rem;
 
   &--Timestamp {
     max-width: 70px;
@@ -80,7 +81,7 @@
   &--Gas {
     justify-content: flex-end;
     font-variant-numeric: tabular-nums;
-    font-size: 0.85em;
+    font-size: 0.75rem;
     opacity: 0.85;
   }
 
