@@ -109,9 +109,17 @@ class IdentitiesController {
 
   getDocumentsByIdentity = async (request, response) => {
     const { identifier } = request.params
-    const { page = 1, limit = 10, order = 'asc', document_type_name: documentTypeName } = request.query
+    const {
+      page = 1,
+      limit = 10,
+      order = 'asc',
+      document_type_name: documentTypeName,
+      timestamp_start: timestampStart,
+      timestamp_end: timestampEnd,
+      deleted,
+    } = request.query
 
-    const documents = await this.identitiesDAO.getDocumentsByIdentity(identifier, documentTypeName, Number(page ?? 1), Number(limit ?? 10), order)
+    const documents = await this.identitiesDAO.getDocumentsByIdentity(identifier, documentTypeName, timestampStart, timestampEnd, deleted, Number(page ?? 1), Number(limit ?? 10), order)
 
     response.send(documents)
   }

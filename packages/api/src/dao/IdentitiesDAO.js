@@ -451,18 +451,30 @@ module.exports = class IdentitiesDAO {
     })), page, limit, totalCount)
   }
 
-  getDocumentsByIdentity = async (identifier, typeName, page, limit, order) => {
+  getDocumentsByIdentity = async (identifier, typeName, timestampStart, timestampEnd, deleted, page, limit, order) => {
     const fromRank = (page - 1) * limit + 1
     const toRank = fromRank + limit - 1
 
     let typeQuery = 'documents.owner = ?'
+    const typeQueryBindings = [identifier]
 
-    const queryBindings = [identifier]
+    let filtersQuery = ''
+    const filtersBindings = []
 
     if (typeName) {
       typeQuery = typeQuery + ' and document_type_name = ?'
 
-      queryBindings.push(typeName)
+      typeQueryBindings.push(typeName)
+    }
+
+    if(timestampStart!=null && timestampEnd!=null){
+      filtersQuery = filtersQuery + 'timestamp_start >= ? and timestamp_end <= ?'
+      filtersBindings.push(timestampStart, timestampEnd)
+    }
+
+    if(deleted!=null){
+      filtersQuery = filtersQuery !== '' ? filtersQuery + ' and deleted = ?' : 'deleted = ?'
+      filtersBindings.push(deleted)
     }
 
     const subquery = this.knex('documents')
@@ -470,26 +482,41 @@ module.exports = class IdentitiesDAO {
         'documents.revision as revision', 'documents.state_transition_hash as tx_hash',
         'documents.deleted as deleted', 'documents.is_system as document_is_system', 'document_type_name', 'transition_type')
       .select(this.knex.raw('rank() over (partition by documents.identifier order by documents.id desc) rank'))
-      .whereRaw(typeQuery, queryBindings)
+      .whereRaw(typeQuery, typeQueryBindings)
 
-    const filteredDocuments = this.knex.with('with_alias', subquery)
+    const lastRevisionSubquery = this.knex.with('with_alias', subquery)
       .select('with_alias.id as document_id', 'identifier', 'document_owner', 'revision', 'data_contract_id',
         'deleted', 'tx_hash', 'document_is_system', 'rank', 'document_type_name', 'transition_type')
-      .select(this.knex('with_alias').count('*').where('rank', 1).as('total_count'))
-      .select(this.knex.raw(`rank() over (order by with_alias.id ${order}) row_number`))
+      .select(this.knex('with_alias as wa')
+        .select('tx_hash')
+        .whereRaw('wa.identifier=with_alias.identifier')
+        .andWhere('wa.revision', 1)
+        .limit(1)
+        .as('initial_tx_hash')
+      )
       .from('with_alias')
       .where('rank', 1)
       .as('documents')
 
-    const rows = await this.knex(filteredDocuments)
+    const filteredSubquery = this.knex(lastRevisionSubquery)
       .select('document_id', 'documents.identifier as identifier', 'document_owner', 'data_contracts.identifier as data_contract_identifier',
-        'revision', 'deleted', 'tx_hash', 'total_count', 'row_number', 'document_type_name', 'transition_type',
+        'revision', 'deleted', 'initial_tx_hash as tx_hash', 'document_type_name',
         'data_contract_id', 'blocks.timestamp as timestamp', 'document_is_system')
-      .leftJoin('state_transitions', 'state_transitions.hash', 'tx_hash')
+      .select(this.knex.raw(`rank() over (order by document_id ${order}) row_number`))
+      .whereRaw(filtersQuery, filtersBindings)
+      .leftJoin('state_transitions', 'state_transitions.hash', 'initial_tx_hash')
       .leftJoin('blocks', 'blocks.hash', 'state_transitions.block_hash')
       .leftJoin('data_contracts', 'data_contracts.id', 'data_contract_id')
+
+    const rows = await this.knex
+      .with('filtered_subquery', filteredSubquery)
+      .select('document_id', 'identifier', 'document_owner', 'data_contract_identifier',
+        'revision', 'deleted', 'tx_hash', 'row_number', 'document_type_name',
+        'data_contract_id', 'timestamp', 'document_is_system')
+      .select(this.knex('filtered_subquery').count('*').as('total_count'))
       .whereBetween('row_number', [fromRank, toRank])
       .orderBy('document_id ', order)
+      .from('filtered_subquery')
 
     const totalCount = rows.length > 0 ? Number(rows[0].total_count) : 0
 
