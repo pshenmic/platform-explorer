@@ -181,6 +181,7 @@ function DataContract ({ identifier }) {
                 <DocumentsFilter
                   onFilterChange={handleDocFiltersChange}
                   isMobile={isMobile}
+                  excludeFilters={['transition_type', 'status']}
                   className={'DataContract__DocumentsFilter'}
                 />
               </Box>

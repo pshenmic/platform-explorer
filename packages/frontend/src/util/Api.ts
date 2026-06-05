@@ -44,7 +44,10 @@ const getBlockByHash = (hash) => {
 }
 
 const getTransactionsHistory = (start, end, intervalsCount) => {
-  return call(`transactions/history?timestamp_start=${start}&timestamp_end=${end}${intervalsCount ? `&intervalsCount=${intervalsCount}` : ''}`, 'GET')
+  return call(
+    `transactions/history?timestamp_start=${start}&timestamp_end=${end}${intervalsCount ? `&intervalsCount=${intervalsCount}` : ''}`,
+    'GET'
+  )
 }
 
 const prepareQueryParams = (params = {}) => {
@@ -61,7 +64,7 @@ const prepareQueryParams = (params = {}) => {
 
     if (Array.isArray(value)) {
       if (value.length > 0) {
-        value.forEach(item => {
+        value.forEach((item) => {
           if (parameterIsValid(item)) {
             queryParams.append(key, item)
           }
@@ -116,8 +119,16 @@ const getToken = (identifier) => {
   return call(`token/${identifier}`, 'GET')
 }
 
-const getTokenTransitions = (identifier, page = 1, limit = 30, order = 'asc') => {
-  return call(`token/${identifier}/transitions?page=${page}&limit=${limit}&order=${order}`, 'GET')
+const getTokenTransitions = (
+  identifier,
+  page = 1,
+  limit = 30,
+  order = 'asc'
+) => {
+  return call(
+    `token/${identifier}/transitions?page=${page}&limit=${limit}&order=${order}`,
+    'GET'
+  )
 }
 
 const getBlocks = (page = 1, limit = 30, order = 'asc', filters = {}) => {
@@ -131,11 +142,25 @@ const getBlocks = (page = 1, limit = 30, order = 'asc', filters = {}) => {
   return call(`blocks?${params.toString()}`, 'GET')
 }
 
-const getBlocksByValidator = (proTxHash, page = 1, limit = 30, order = 'asc') => {
-  return call(`validator/${proTxHash}/blocks?page=${page}&limit=${limit}&order=${order}`, 'GET')
+const getBlocksByValidator = (
+  proTxHash,
+  page = 1,
+  limit = 30,
+  order = 'asc'
+) => {
+  return call(
+    `validator/${proTxHash}/blocks?page=${page}&limit=${limit}&order=${order}`,
+    'GET'
+  )
 }
 
-const getContestedResources = (page = 1, limit = 30, order = 'asc', orderBy, filters = {}) => {
+const getContestedResources = (
+  page = 1,
+  limit = 30,
+  order = 'asc',
+  orderBy,
+  filters = {}
+) => {
   const params = prepareQueryParams({
     page: Math.max(1, parseInt(page)),
     limit: Math.max(1, parseInt(limit)),
@@ -151,7 +176,13 @@ const getContestedResourceByValue = (value) => {
   return call(`contestedResource/${value}`, 'GET')
 }
 
-const getContestedResourceVotes = (value, page = 1, limit = 30, order = 'asc', filters = {}) => {
+const getContestedResourceVotes = (
+  value,
+  page = 1,
+  limit = 30,
+  order = 'asc',
+  filters = {}
+) => {
   const params = prepareQueryParams({
     page: Math.max(1, parseInt(page)),
     limit: Math.max(1, parseInt(limit)),
@@ -166,11 +197,25 @@ const getDataContractByIdentifier = (identifier) => {
   return call(`dataContract/${identifier}`, 'GET')
 }
 
-const getDataContractTransactions = (identifier, page = 1, limit = 30, order = 'asc') => {
-  return call(`dataContract/${identifier}/transactions?page=${page}&limit=${limit}&order=${order}`, 'GET')
+const getDataContractTransactions = (
+  identifier,
+  page = 1,
+  limit = 30,
+  order = 'asc'
+) => {
+  return call(
+    `dataContract/${identifier}/transactions?page=${page}&limit=${limit}&order=${order}`,
+    'GET'
+  )
 }
 
-const getDataContracts = (page = 1, limit = 30, order = 'asc', orderBy, filters = {}) => {
+const getDataContracts = (
+  page = 1,
+  limit = 30,
+  order = 'asc',
+  orderBy,
+  filters = {}
+) => {
   const params = prepareQueryParams({
     page: Math.max(1, parseInt(page)),
     limit: Math.max(1, parseInt(limit)),
@@ -188,14 +233,31 @@ const getDocumentByIdentifier = (identifier, dataContractId, typeName) => {
   if (typeName) params.push(`document_type_name=${typeName}`)
   const queryParams = params.join('&')
 
-  return call(`document/${identifier}?${queryParams ? `?${queryParams}` : ''}`, 'GET')
+  return call(
+    `document/${identifier}?${queryParams ? `?${queryParams}` : ''}`,
+    'GET'
+  )
 }
 
-const getDocumentRevisions = (identifier, page = 1, limit = 30, order = 'asc') => {
-  return call(`document/${identifier}/revisions?page=${page}&limit=${limit}&order=${order}`, 'GET')
+const getDocumentRevisions = (
+  identifier,
+  page = 1,
+  limit = 30,
+  order = 'asc'
+) => {
+  return call(
+    `document/${identifier}/revisions?page=${page}&limit=${limit}&order=${order}`,
+    'GET'
+  )
 }
 
-const getDocumentsByDataContract = (dataContractIdentifier, page = 1, limit = 30, order = 'asc', filters = {}) => {
+const getDocumentsByDataContract = (
+  dataContractIdentifier,
+  page = 1,
+  limit = 30,
+  order = 'asc',
+  filters = {}
+) => {
   const params = prepareQueryParams({
     page,
     limit,
@@ -207,56 +269,135 @@ const getDocumentsByDataContract = (dataContractIdentifier, page = 1, limit = 30
     timestamp_start: filters.timestamp_start,
     timestamp_end: filters.timestamp_end
   })
-  return call(`dataContract/${dataContractIdentifier}/documents?${params.toString()}`, 'GET')
+  return call(
+    `dataContract/${dataContractIdentifier}/documents?${params.toString()}`,
+    'GET'
+  )
 }
 
 const getEpoch = (identifier) => {
   return call(`epoch/${identifier || ''}`, 'GET')
 }
 
-const getTransactionsByIdentity = (identifier, page = 1, limit = 10, order = 'asc') => {
-  return call(`identity/${identifier}/transactions?page=${page}&limit=${limit}&order=${order}`, 'GET')
+const getTransactionsByIdentity = (
+  identifier,
+  page = 1,
+  limit = 10,
+  order = 'asc'
+) => {
+  return call(
+    `identity/${identifier}/transactions?page=${page}&limit=${limit}&order=${order}`,
+    'GET'
+  )
 }
 
-const getDataContractsByIdentity = (identifier, page = 1, limit = 10, order = 'asc') => {
-  return call(`identity/${identifier}/dataContracts?page=${page}&limit=${limit}&order=${order}`, 'GET')
+const getDataContractsByIdentity = (
+  identifier,
+  page = 1,
+  limit = 10,
+  order = 'asc'
+) => {
+  return call(
+    `identity/${identifier}/dataContracts?page=${page}&limit=${limit}&order=${order}`,
+    'GET'
+  )
 }
 
-const getDocumentsByIdentity = (identifier, page = 1, limit = 10, order = 'asc') => {
-  return call(`identity/${identifier}/documents?page=${page}&limit=${limit}&order=${order}`, 'GET')
+const getDocumentsByIdentity = (
+  identifier,
+  page = 1,
+  limit = 10,
+  order = 'asc',
+  filters = {}
+) => {
+  const params = prepareQueryParams({
+    page,
+    limit,
+    order,
+    // document_type_name works today; transition_type/deleted/timestamp_* await backend (see #798)
+    document_type_name: filters.document_type_name,
+    transition_type: filters.transition_type,
+    deleted: filters.deleted,
+    timestamp_start: filters.timestamp_start,
+    timestamp_end: filters.timestamp_end
+  })
+  return call(
+    `identity/${identifier}/documents?${params.toString()}`,
+    'GET'
+  )
 }
 
-const getWithdrawalsByIdentity = (identifier, page = 1, limit = 10, order = 'asc') => {
-  return call(`identity/${identifier}/withdrawals?page=${page}&limit=${limit}&order=${order}`, 'GET')
+const getWithdrawalsByIdentity = (
+  identifier,
+  page = 1,
+  limit = 10,
+  order = 'asc'
+) => {
+  return call(
+    `identity/${identifier}/withdrawals?page=${page}&limit=${limit}&order=${order}`,
+    'GET'
+  )
 }
 
-const getTransfersByIdentity = (identifier, page = 1, limit = 10, order = 'asc') => {
-  return call(`identity/${identifier}/transfers?page=${page}&limit=${limit}&order=${order}`, 'GET')
+const getTransfersByIdentity = (
+  identifier,
+  page = 1,
+  limit = 10,
+  order = 'asc'
+) => {
+  return call(
+    `identity/${identifier}/transfers?page=${page}&limit=${limit}&order=${order}`,
+    'GET'
+  )
 }
 
-const getTokensByIdentity = (identifier, page = 1, limit = 10, order = 'asc') => {
-  return call(`identity/${identifier}/tokens?page=${page}&limit=${limit}&order=${order}`, 'GET')
+const getTokensByIdentity = (
+  identifier,
+  page = 1,
+  limit = 10,
+  order = 'asc'
+) => {
+  return call(
+    `identity/${identifier}/tokens?page=${page}&limit=${limit}&order=${order}`,
+    'GET'
+  )
 }
 
 const getIdentity = (identifier) => {
   return call(`identity/${identifier}`, 'GET')
 }
 
-const getIdentities = (page = 1, limit = 30, order = 'asc', orderBy, { includeMasternodes = false } = {}) => {
+const getIdentities = (
+  page = 1,
+  limit = 30,
+  order = 'asc',
+  orderBy,
+  { includeMasternodes = false, filters = {} } = {}
+) => {
   const params = prepareQueryParams({
     page,
     limit,
-    order,
-    order_by: orderBy,
-    // includeMasternodes=true (Show all toggle on) → omit param so backend returns everything
-    // includeMasternodes=false (default) → request only regular identities
-    identity_type: includeMasternodes ? null : 'regular'
+    order: filters?.order ?? order,
+    order_by: filters?.order_by ?? orderBy,
+    identity_type:
+      filters?.identity_type ?? (includeMasternodes ? null : 'regular'),
+    balance_min: filters?.balance_min,
+    balance_max: filters?.balance_max,
+    tx_count_min: filters?.tx_count_min,
+    tx_count_max: filters?.tx_count_max,
+    documents_count_min: filters?.documents_count_min,
+    documents_count_max: filters?.documents_count_max,
+    data_contracts_min: filters?.data_contracts_min,
+    data_contracts_max: filters?.data_contracts_max
   })
   return call(`identities?${params.toString()}`, 'GET')
 }
 
 const getIdentitiesHistory = (start, end, intervalsCount) => {
-  return call(`identities/history?timestamp_start=${start}&timestamp_end=${end}${intervalsCount ? `&intervalsCount=${intervalsCount}` : ''}`, 'GET')
+  return call(
+    `identities/history?timestamp_start=${start}&timestamp_end=${end}${intervalsCount ? `&intervalsCount=${intervalsCount}` : ''}`,
+    'GET'
+  )
 }
 
 const getValidators = (page = 1, limit = 30, order = 'asc', filters) => {
@@ -280,14 +421,25 @@ const getValidatorByMasternodeIdentity = (identity) => {
 }
 
 const getBlocksStatsByValidator = (proTxHash, start, end, intervalsCount) => {
-  return call(`validator/${proTxHash}/stats?timestamp_start=${start}&timestamp_end=${end}${intervalsCount ? `&intervalsCount=${intervalsCount}` : ''}`, 'GET')
+  return call(
+    `validator/${proTxHash}/stats?timestamp_start=${start}&timestamp_end=${end}${intervalsCount ? `&intervalsCount=${intervalsCount}` : ''}`,
+    'GET'
+  )
 }
 
 const getRewardsStatsByValidator = (proTxHash, start, end, intervalsCount) => {
-  return call(`validator/${proTxHash}/rewards/stats?timestamp_start=${start}&timestamp_end=${end}${intervalsCount ? `&intervalsCount=${intervalsCount}` : ''}`, 'GET')
+  return call(
+    `validator/${proTxHash}/rewards/stats?timestamp_start=${start}&timestamp_end=${end}${intervalsCount ? `&intervalsCount=${intervalsCount}` : ''}`,
+    'GET'
+  )
 }
 
-const getMasternodeVotes = (page = 1, limit = 10, order = 'asc', filters = {}) => {
+const getMasternodeVotes = (
+  page = 1,
+  limit = 10,
+  order = 'asc',
+  filters = {}
+) => {
   const params = prepareQueryParams({
     page: Math.max(1, parseInt(page)),
     limit: Math.max(1, parseInt(limit)),
@@ -306,8 +458,16 @@ const getPlatformAddressInfo = (hash) => {
   return call(`platformAddress/${hash}/info`, 'GET')
 }
 
-const getPlatformAddressTransitions = (hash, page = 1, limit = 10, order = 'desc') => {
-  return call(`platformAddress/${hash}/transactions?page=${page}&limit=${limit}&order=${order}`, 'GET')
+const getPlatformAddressTransitions = (
+  hash,
+  page = 1,
+  limit = 10,
+  order = 'desc'
+) => {
+  return call(
+    `platformAddress/${hash}/transactions?page=${page}&limit=${limit}&order=${order}`,
+    'GET'
+  )
 }
 
 const getStatus = () => {
