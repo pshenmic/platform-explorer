@@ -307,10 +307,22 @@ const getDocumentsByIdentity = (
   identifier,
   page = 1,
   limit = 10,
-  order = 'asc'
+  order = 'asc',
+  filters = {}
 ) => {
+  const params = prepareQueryParams({
+    page,
+    limit,
+    order,
+    // document_type_name works today; transition_type/deleted/timestamp_* await backend (see #798)
+    document_type_name: filters.document_type_name,
+    transition_type: filters.transition_type,
+    deleted: filters.deleted,
+    timestamp_start: filters.timestamp_start,
+    timestamp_end: filters.timestamp_end
+  })
   return call(
-    `identity/${identifier}/documents?page=${page}&limit=${limit}&order=${order}`,
+    `identity/${identifier}/documents?${params.toString()}`,
     'GET'
   )
 }

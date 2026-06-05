@@ -5,6 +5,7 @@ import * as Api from '../../../util/Api'
 import TransactionsList from '../../../components/transactions/TransactionsList'
 import TransactionsFilter from '../../../components/transactions/TransactionsFilter'
 import DocumentsList from '../../../components/documents/DocumentsList'
+import { DocumentsFilter } from '../../../components/documents/DocumentsFilter'
 import DataContractsList from '../../../components/dataContracts/DataContractsList'
 import TransfersList from '../../../components/transfers/TransfersList'
 import { fetchHandlerSuccess, fetchHandlerError, paginationHandler, setLoadingProp } from '../../../util'
@@ -39,6 +40,7 @@ function Identity ({ identifier }) {
   const [transactions, setTransactions] = useState({ data: {}, props: { currentPage: 0 }, loading: true, error: false })
   const [transfers, setTransfers] = useState({ data: {}, props: { currentPage: 0 }, loading: true, error: false })
   const [txFilters, setTxFilters] = useState({})
+  const [docFilters, setDocFilters] = useState({})
   const [rate, setRate] = useState({ data: {}, loading: true, error: false })
   const pageSize = 10
   const [activeTab, setActiveTab] = useState(tabs.indexOf(defaultTabName.toLowerCase()) !== -1
@@ -101,10 +103,16 @@ function Identity ({ identifier }) {
     if (!identifier) return
     setLoadingProp(setDocuments)
 
-    Api.getDocumentsByIdentity(identifier, documents.props.currentPage + 1, pageSize, 'desc')
+    Api.getDocumentsByIdentity(identifier, documents.props.currentPage + 1, pageSize, 'desc', docFilters)
       .then(paginatedDataContracts => fetchHandlerSuccess(setDocuments, paginatedDataContracts))
       .catch(err => fetchHandlerError(setDocuments, err))
-  }, [identifier, documents.props.currentPage])
+  }, [identifier, documents.props.currentPage, docFilters])
+
+  const docFiltersChangeHandler = (newFilters) => {
+    if (JSON.stringify(newFilters) === JSON.stringify(docFilters)) return
+    setDocFilters(newFilters)
+    setDocuments(prev => ({ ...prev, props: { ...prev.props, currentPage: 0 } }))
+  }
 
   useEffect(() => {
     if (!identifier) return
@@ -217,9 +225,15 @@ function Identity ({ identifier }) {
               }
             </TabPanel>
             <TabPanel>
+              <DocumentsFilter
+                onFilterChange={docFiltersChangeHandler}
+                excludeFilters={['owner', 'revision']}
+                className={'IdentityPage__DocumentsFilter'}
+              />
               {!documents.error
                 ? <DocumentsList
                     documents={documents.data?.resultSet}
+                    showDataContract={true}
                     pagination={{
                       onPageChange: pagination => paginationHandler(setDocuments, pagination.selected),
                       pageCount: Math.ceil(documents.data?.pagination?.total / pageSize) || 1,
