@@ -119,6 +119,10 @@ class IdentitiesController {
       deleted,
     } = request.query
 
+    if (timestampStart && timestampEnd && new Date(timestampStart).getTime() >= new Date(timestampEnd).getTime()) {
+      return response.status(400).send('Bad timestamp range')
+    }
+
     const documents = await this.identitiesDAO.getDocumentsByIdentity(identifier, documentTypeName, timestampStart, timestampEnd, deleted, Number(page ?? 1), Number(limit ?? 10), order)
 
     response.send(documents)
