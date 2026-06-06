@@ -468,7 +468,7 @@ module.exports = class IdentitiesDAO {
     }
 
     if(timestampStart!=null && timestampEnd!=null){
-      filtersQuery = filtersQuery + 'timestamp_start >= ? and timestamp_end <= ?'
+      filtersQuery = filtersQuery + 'blocks.timestamp >= ? and blocks.timestamp <= ?'
       filtersBindings.push(timestampStart, timestampEnd)
     }
 
