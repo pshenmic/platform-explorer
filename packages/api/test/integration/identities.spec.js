@@ -1471,7 +1471,7 @@ describe('Identities routes', () => {
         documentTypeName: 'type_name',
         timestamp: _document.block.timestamp.toISOString(),
         system: false,
-        transitionType: BatchEnum[0],
+        transitionType: null,
         identityContractNonce: null,
         gasUsed: null,
         totalGasUsed: null
@@ -1548,7 +1548,7 @@ describe('Identities routes', () => {
           documentTypeName: 'type_name',
           timestamp: _document.block.timestamp.toISOString(),
           system: false,
-          transitionType: BatchEnum[0],
+          transitionType: null,
           gasUsed: null,
           identityContractNonce: null,
           totalGasUsed: null
@@ -1624,7 +1624,7 @@ describe('Identities routes', () => {
           data: null,
           timestamp: _document.block.timestamp.toISOString(),
           system: false,
-          transitionType: BatchEnum[0],
+          transitionType: null,
           documentTypeName: 'my_type',
           prefundedVotingBalance: null,
           entropy: null,
@@ -1704,7 +1704,7 @@ describe('Identities routes', () => {
           documentTypeName: 'type_name',
           timestamp: _document.block.timestamp.toISOString(),
           system: false,
-          transitionType: BatchEnum[0],
+          transitionType: null,
           gasUsed: null,
           identityContractNonce: null,
           totalGasUsed: null
@@ -1781,7 +1781,7 @@ describe('Identities routes', () => {
           documentTypeName: 'type_name',
           timestamp: _document.block.timestamp.toISOString(),
           system: false,
-          transitionType: BatchEnum[0],
+          transitionType: null,
           gasUsed: null,
           identityContractNonce: null,
           totalGasUsed: null
