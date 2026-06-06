@@ -44,7 +44,7 @@ export const FIELD_SOURCE = {
 
 export const tokenFaqGroups = [
   {
-    title: 'Essentials',
+    title: 'Basic Info',
     items: [
       {
         key: 'naming',
@@ -74,7 +74,7 @@ export const tokenFaqGroups = [
     ]
   },
   {
-    title: 'Permissions',
+    title: 'Action Rules',
     items: [
       {
         key: 'minting',
@@ -149,7 +149,7 @@ export const tokenFaqGroups = [
     ]
   },
   {
-    title: 'Logging',
+    title: 'Advanced',
     items: [
       {
         key: 'keepsHistory',

@@ -7,9 +7,9 @@ import Distribution from './Distribution'
 import './Features.scss'
 
 const TABS = [
-  { id: 'features', label: 'Permissions' },
+  { id: 'features', label: 'Action Rules' },
   { id: 'distribution', label: 'Distribution' },
-  { id: 'history', label: 'Logging' }
+  { id: 'history', label: 'Advanced' }
 ]
 
 function FeaturesPane () {

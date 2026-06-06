@@ -17,7 +17,7 @@ function CreateTokenPage () {
             <div className='CreateTokenPage__FormScroll'>
               <div className='CreateTokenPage__Columns'>
                 <div className='CreateTokenPage__Column'>
-                  <div className='CreateTokenPage__SectionTitle'>Essentials</div>
+                  <div className='CreateTokenPage__SectionTitle'>Basic Info</div>
                   <Essentials/>
                 </div>
                 <div className='CreateTokenPage__Column'>
