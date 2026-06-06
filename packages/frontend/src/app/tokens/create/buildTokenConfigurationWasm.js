@@ -92,16 +92,28 @@ export async function buildTokenConfigurationWasm (form) {
   let perpetualDist
   if (form.perpetualEnabled) {
     const intervalValue = Number(form.perpetualIntervalValue)
-    const unitMs = INTERVAL_UNIT_MS[form.perpetualIntervalUnit] || INTERVAL_UNIT_MS.days
     let amountScaled
     try { amountScaled = BigInt(form.perpetualAmount || '0') * scale } catch { amountScaled = 0n }
     if (intervalValue > 0 && amountScaled > 0n) {
-      const intervalMs = BigInt(intervalValue) * unitMs
       const fn = DistributionFunctionWASM.FixedAmountDistribution(amountScaled)
-      const rewardType = RewardDistributionTypeWASM.TimeBasedDistribution(intervalMs, fn)
-      const recipient = form.perpetualRecipient === 'identity' && form.perpetualRecipientIdentity?.trim()
-        ? TokenDistributionRecipientWASM.Identity(form.perpetualRecipientIdentity.trim())
-        : TokenDistributionRecipientWASM.ContractOwner()
+      const type = form.perpetualType || 'time'
+      let rewardType
+      if (type === 'block') {
+        rewardType = RewardDistributionTypeWASM.BlockBasedDistribution(BigInt(intervalValue), fn)
+      } else if (type === 'epoch') {
+        rewardType = RewardDistributionTypeWASM.EpochBasedDistribution(intervalValue, fn)
+      } else {
+        const unitMs = INTERVAL_UNIT_MS[form.perpetualIntervalUnit] || INTERVAL_UNIT_MS.days
+        rewardType = RewardDistributionTypeWASM.TimeBasedDistribution(BigInt(intervalValue) * unitMs, fn)
+      }
+      let recipient
+      if (type === 'epoch' && form.perpetualRecipient === 'evonodes') {
+        recipient = TokenDistributionRecipientWASM.EvonodesByParticipation()
+      } else if (form.perpetualRecipient === 'identity' && form.perpetualRecipientIdentity?.trim()) {
+        recipient = TokenDistributionRecipientWASM.Identity(form.perpetualRecipientIdentity.trim())
+      } else {
+        recipient = TokenDistributionRecipientWASM.ContractOwner()
+      }
       perpetualDist = new TokenPerpetualDistributionWASM(rewardType, recipient)
     }
   }

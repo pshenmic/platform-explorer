@@ -125,8 +125,29 @@ function Distribution () {
         {form.perpetualEnabled && (
           <>
             <Row
+              label='Type'
+              tooltip='How the emission interval is measured. Time = wall-clock; Block = every N blocks; Epoch = every N protocol epochs (~9 days each). Epoch unlocks the Evonodes recipient.'
+            >
+              <Select
+                size='xs'
+                variant='filled'
+                value={form.perpetualType}
+                onChange={(e) => {
+                  const v = e.target.value
+                  setField('perpetualType', v)
+                  if (v !== 'epoch' && form.perpetualRecipient === 'evonodes') setField('perpetualRecipient', 'owner')
+                }}
+                width='160px'
+                fontFamily='mono'
+              >
+                <option value='time'>Time</option>
+                <option value='block'>Block</option>
+                <option value='epoch'>Epoch</option>
+              </Select>
+            </Row>
+            <Row
               label='Interval'
-              tooltip='How often new tokens are emitted. Stored on chain as TimestampMillisInterval.'
+              tooltip='How often new tokens are emitted.'
             >
               <HStack spacing={2}>
                 <Input
@@ -139,19 +160,27 @@ function Distribution () {
                   inputMode='numeric'
                   width='80px'
                 />
-                <Select
-                  size='xs'
-                  variant='filled'
-                  value={form.perpetualIntervalUnit}
-                  onChange={(e) => setField('perpetualIntervalUnit', e.target.value)}
-                  width='110px'
-                  fontFamily='mono'
-                >
-                  <option value='seconds'>seconds</option>
-                  <option value='minutes'>minutes</option>
-                  <option value='hours'>hours</option>
-                  <option value='days'>days</option>
-                </Select>
+                {form.perpetualType === 'time'
+                  ? (
+                    <Select
+                      size='xs'
+                      variant='filled'
+                      value={form.perpetualIntervalUnit}
+                      onChange={(e) => setField('perpetualIntervalUnit', e.target.value)}
+                      width='110px'
+                      fontFamily='mono'
+                    >
+                      <option value='seconds'>seconds</option>
+                      <option value='minutes'>minutes</option>
+                      <option value='hours'>hours</option>
+                      <option value='days'>days</option>
+                    </Select>
+                    )
+                  : (
+                    <span style={{ fontFamily: 'mono', fontSize: '12px', color: 'var(--chakra-colors-gray-300)', alignSelf: 'center' }}>
+                      {form.perpetualType === 'block' ? 'blocks' : 'epochs'}
+                    </span>
+                    )}
               </HStack>
             </Row>
             <Row
@@ -183,6 +212,7 @@ function Distribution () {
               >
                 <option value='owner'>Contract owner</option>
                 <option value='identity'>Specific identity</option>
+                {form.perpetualType === 'epoch' && <option value='evonodes'>Evonodes by participation</option>}
               </Select>
             </Row>
             {form.perpetualRecipient === 'identity' && (

@@ -32,26 +32,34 @@ const buildPreProgrammedDistribution = (rows, scale) => {
 
 const buildPerpetualDistribution = (form, scale) => {
   if (!form.perpetualEnabled) return null
-  const unitMs = INTERVAL_UNIT_MS[form.perpetualIntervalUnit] || INTERVAL_UNIT_MS.days
   const intervalValue = Number(form.perpetualIntervalValue)
   if (!intervalValue || intervalValue <= 0) return null
   let amountScaled
   try { amountScaled = String(BigInt(form.perpetualAmount || '0') * scale) } catch { return null }
   if (amountScaled === '0') return null
 
-  const recipient = form.perpetualRecipient === 'identity' && form.perpetualRecipientIdentity?.trim()
-    ? { Identity: form.perpetualRecipientIdentity.trim() }
-    : 'ContractOwner'
-
-  return {
-    distributionType: {
-      TimeBasedDistribution: {
-        interval: intervalValue * unitMs,
-        function: { FixedAmount: { amount: amountScaled } }
-      }
-    },
-    distributionRecipient: recipient
+  const type = form.perpetualType || 'time'
+  const fn = { FixedAmount: { amount: amountScaled } }
+  let distributionType
+  if (type === 'block') {
+    distributionType = { BlockBasedDistribution: { interval: intervalValue, function: fn } }
+  } else if (type === 'epoch') {
+    distributionType = { EpochBasedDistribution: { interval: intervalValue, function: fn } }
+  } else {
+    const unitMs = INTERVAL_UNIT_MS[form.perpetualIntervalUnit] || INTERVAL_UNIT_MS.days
+    distributionType = { TimeBasedDistribution: { interval: intervalValue * unitMs, function: fn } }
   }
+
+  let recipient
+  if (type === 'epoch' && form.perpetualRecipient === 'evonodes') {
+    recipient = 'EvonodesByParticipation'
+  } else if (form.perpetualRecipient === 'identity' && form.perpetualRecipientIdentity?.trim()) {
+    recipient = { Identity: form.perpetualRecipientIdentity.trim() }
+  } else {
+    recipient = 'ContractOwner'
+  }
+
+  return { distributionType, distributionRecipient: recipient }
 }
 
 export const buildTokenConfiguration = (form) => {

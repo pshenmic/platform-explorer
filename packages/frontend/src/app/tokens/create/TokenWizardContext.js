@@ -47,6 +47,7 @@ const buildInitialForm = (templateId) => {
     // Seed one row so the repeater UI is visible by default.
     preProgrammedRows: [{ id: 'pp-init', time: '', identity: '', amount: '' }],
     perpetualEnabled: false,
+    perpetualType: 'time',
     perpetualIntervalValue: '',
     perpetualIntervalUnit: 'days',
     perpetualAmount: '',
