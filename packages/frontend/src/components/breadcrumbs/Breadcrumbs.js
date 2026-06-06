@@ -12,7 +12,8 @@ export const breadcrumbsActiveRoutes = [
   '/document/',
   '/block/',
   '/contestedResource/',
-  '/tokens/'
+  '/tokens/',
+  '/developers/'
 ]
 
 export const Breadcrumbs = () => {

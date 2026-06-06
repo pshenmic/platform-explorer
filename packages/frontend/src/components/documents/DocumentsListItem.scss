@@ -4,11 +4,7 @@
 
 .DocumentsListItem {
   @include mixins.DefListItem;
-  display: block;
-
-  &__Content {
-    @include docs.Columns();
-  }
+  @include docs.SubColumns();
 
   &__Column {
     @include docs.Column();

@@ -3,12 +3,36 @@
 @mixin Columns () {
   display: grid;
   gap: 1rem;
-  grid-template-columns: auto 10rem;
+  grid-template-columns: auto 12rem 7rem 7rem 8rem 11rem;
+
+  @container (max-width: 72rem) {
+    grid-template-columns: auto 12rem 7rem 7rem 11rem;
+
+    .IdentitiesList__ColumnTitle--Contracts,
+    .IdentitiesListItem__Column--Contracts { display: none; }
+  }
+
+  @container (max-width: 56rem) {
+    grid-template-columns: auto 12rem 7rem 11rem;
+
+    .IdentitiesList__ColumnTitle--Documents,
+    .IdentitiesListItem__Column--Documents { display: none; }
+  }
+
+  @container (max-width: 44rem) {
+    grid-template-columns: auto 11rem;
+
+    .IdentitiesList__ColumnTitle--Balance,
+    .IdentitiesListItem__Column--Balance,
+    .IdentitiesList__ColumnTitle--Txs,
+    .IdentitiesListItem__Column--Txs { display: none; }
+  }
 }
 
 @mixin Column () {
   display: flex;
   align-items: center;
+  white-space: nowrap;
 
   &:last-child {
     justify-content: flex-end;

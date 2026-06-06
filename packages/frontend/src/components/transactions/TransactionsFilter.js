@@ -258,10 +258,14 @@ const filtersConfig = {
   }
 }
 
-export default function TransactionsFilter ({ onFilterChange, isMobile, className }) {
+export default function TransactionsFilter ({ onFilterChange, isMobile, className, excludeFilters = [] }) {
+  const config = excludeFilters.length
+    ? Object.fromEntries(Object.entries(filtersConfig).filter(([key]) => !excludeFilters.includes(key)))
+    : filtersConfig
+
   return (
     <Filters
-      filtersConfig={filtersConfig}
+      filtersConfig={config}
       onFilterChange={onFilterChange}
       isMobile={isMobile}
       className={`TransactionsFilter ${className || ''}`}

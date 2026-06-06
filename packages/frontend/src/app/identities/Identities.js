@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import * as Api from '../../util/Api'
 import IdentitiesList from '../../components/identities/IdentitiesList'
+import { IdentitiesFilter, useIdentitiesFilters } from '../../components/identities'
 import Pagination from '../../components/pagination'
 import PageSizeSelector from '../../components/pageSizeSelector/PageSizeSelector'
 import { LoadingList } from '../../components/loading'
@@ -34,15 +35,16 @@ function Identities ({ defaultPage = 1, defaultPageSize, defaultShowAll = false 
   const [pageSize, setPageSize] = useState(defaultPageSize || paginateConfig.pageSize.default)
   const [currentPage, setCurrentPage] = useState(defaultPage ? defaultPage - 1 : 0)
   const [showAll, setShowAll] = useState(defaultShowAll)
+  const { filters, setFilters } = useIdentitiesFilters()
   const pageCount = Math.ceil(total / pageSize)
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
 
-  const fetchData = (page, count, includeMasternodes) => {
+  const fetchData = (page, count, includeMasternodes, currentFilters) => {
     setIdentities(state => ({ ...state, loading: true }))
 
-    Api.getIdentities(page, count, 'desc', undefined, { includeMasternodes })
+    Api.getIdentities(page, count, 'desc', undefined, { includeMasternodes, filters: currentFilters })
       .then(res => {
         if (res.pagination.total === -1) {
           setCurrentPage(0)
@@ -53,7 +55,11 @@ function Identities ({ defaultPage = 1, defaultPageSize, defaultShowAll = false 
       .catch(err => fetchHandlerError(setIdentities, err))
   }
 
-  useEffect(() => fetchData(currentPage + 1, pageSize, showAll), [pageSize, currentPage, showAll])
+  useEffect(
+    () => fetchData(currentPage + 1, pageSize, showAll, filters),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [pageSize, currentPage, showAll, JSON.stringify(filters)]
+  )
 
   useEffect(() => {
     const page = parseInt(searchParams.get('page')) || paginateConfig.defaultPage
@@ -113,9 +119,25 @@ function Identities ({ defaultPage = 1, defaultPageSize, defaultShowAll = false 
           </FormControl>
         </Flex>
 
+        <IdentitiesFilter
+          initialFilters={filters}
+          className={'IdentitiesPage__Filters'}
+          onFilterChange={(next) => {
+            setFilters(next)
+            setCurrentPage(0)
+          }}
+        />
+
         {!identities.error
           ? !identities.loading
-              ? <IdentitiesList identities={identities.data.resultSet}/>
+              ? <IdentitiesList
+                  identities={identities.data.resultSet}
+                  sort={{ order_by: filters.order_by, order: filters.order }}
+                  onSortChange={(next) => {
+                    setFilters(next)
+                    setCurrentPage(0)
+                  }}
+                />
               : <LoadingList itemsCount={pageSize}/>
           : <ErrorMessageBlock h={20}/>
         }

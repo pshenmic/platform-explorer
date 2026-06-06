@@ -4,9 +4,11 @@
   display: grid;
   gap: 16px;
 
-  grid-template-columns: 
+  grid-template-columns:
     minmax(120px, 120px) // time
+    minmax(90px, 110px) // status
     minmax(0, 600px) // hash
+    minmax(70px, 90px) // block
     auto // gas used
     minmax(0, 400px) // owner
     150px; // type
@@ -66,7 +68,9 @@
   }
 
   @container (max-width: 810px) {
-    &--GasUsed {
+    &--GasUsed,
+    &--Status,
+    &--Block {
       display: none;
     }
   }

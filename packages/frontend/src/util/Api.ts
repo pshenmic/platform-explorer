@@ -1,19 +1,46 @@
-// @ts-nocheck — TODO: type this module incrementally
 import { ResponseErrorNotFound, ResponseErrorTimeout } from './Errors'
+import type {
+  Block,
+  ContestedResource,
+  ContestedResourcesStatus,
+  DataContract,
+  Document,
+  EpochData,
+  Identity,
+  PaginatedResultSet,
+  PlatformAddress,
+  Rate,
+  SeriesData,
+  Status,
+  Token,
+  TokenTransition,
+  Transaction,
+  Transfer,
+  Validator,
+  Vote,
+  Withdrawal
+} from '../types'
+
+type HttpMethod = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH'
+type SortOrder = 'asc' | 'desc'
+type QueryValue = string | number | boolean | string[] | null | undefined
+type QueryFilters = Record<string, QueryValue>
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL
 
-const fetchWrapper = (url, options) => {
+const fetchWrapper = (url: string, options: RequestInit): Promise<Response> => {
   return new Promise((resolve, reject) => {
     setTimeout(() => {
       console.warn('fetching timeout error')
       reject(new ResponseErrorTimeout())
     }, 30000)
-    fetch(url, options).catch(reject).then(resolve)
+    fetch(url, options).catch(reject).then(value => {
+      if (value) resolve(value)
+    })
   })
 }
 
-const call = async (path, method, body) => {
+const call = async <T>(path: string, method: HttpMethod, body?: unknown): Promise<T> => {
   try {
     const response = await fetchWrapper(`${BASE_URL}/${path}`, {
       method,
@@ -24,7 +51,7 @@ const call = async (path, method, body) => {
     })
 
     if (response.status === 200) {
-      return response.json()
+      return response.json() as Promise<T>
     } else if (response.status === 404) {
       throw new ResponseErrorNotFound()
     } else {
@@ -39,18 +66,10 @@ const call = async (path, method, body) => {
   }
 }
 
-const getBlockByHash = (hash) => {
-  return call(`block/${hash}`, 'GET')
-}
-
-const getTransactionsHistory = (start, end, intervalsCount) => {
-  return call(`transactions/history?timestamp_start=${start}&timestamp_end=${end}${intervalsCount ? `&intervalsCount=${intervalsCount}` : ''}`, 'GET')
-}
-
-const prepareQueryParams = (params = {}) => {
+const prepareQueryParams = (params: QueryFilters = {}): URLSearchParams => {
   const queryParams = new URLSearchParams()
 
-  const parameterIsValid = (value) => {
+  const parameterIsValid = (value: QueryValue): boolean => {
     return value !== undefined && value !== ''
   }
 
@@ -63,139 +82,249 @@ const prepareQueryParams = (params = {}) => {
       if (value.length > 0) {
         value.forEach(item => {
           if (parameterIsValid(item)) {
-            queryParams.append(key, item)
+            queryParams.append(key, String(item))
           }
         })
       }
     } else if (parameterIsValid(value)) {
-      queryParams.append(key, value)
+      queryParams.append(key, String(value))
     }
   })
 
   return queryParams
 }
 
-const getTransactions = (page = 1, limit = 10, order = 'asc', filters = {}) => {
+const getBlockByHash = (hash: string): Promise<Block> => {
+  return call<Block>(`block/${hash}`, 'GET')
+}
+
+interface TransactionsHistoryPoint {
+  txs: number
+  blockHeight: number | null
+  blockHash: string | null
+}
+
+const getTransactionsHistory = (
+  start: string,
+  end: string,
+  intervalsCount?: number
+): Promise<Array<SeriesData<TransactionsHistoryPoint>>> => {
+  return call<Array<SeriesData<TransactionsHistoryPoint>>>(
+    `transactions/history?timestamp_start=${start}&timestamp_end=${end}${intervalsCount ? `&intervalsCount=${intervalsCount}` : ''}`,
+    'GET'
+  )
+}
+
+const getTransactions = (
+  page: number = 1,
+  limit: number = 10,
+  order: SortOrder = 'asc',
+  filters: QueryFilters = {}
+): Promise<PaginatedResultSet<Transaction>> => {
   const params = prepareQueryParams({
-    page: Math.max(1, parseInt(page)),
-    limit: Math.max(1, parseInt(limit)),
+    page: Math.max(1, Number(page)),
+    limit: Math.max(1, Number(limit)),
     order,
     ...filters
   })
 
-  return call(`transactions?${params.toString()}`, 'GET')
+  return call<PaginatedResultSet<Transaction>>(`transactions?${params.toString()}`, 'GET')
 }
 
-const getTransaction = (txHash) => {
-  return call(`transaction/${txHash}`, 'GET')
+const getTransaction = (txHash: string): Promise<Transaction> => {
+  return call<Transaction>(`transaction/${txHash}`, 'GET')
 }
 
-const getTokens = (page = 1, limit = 30, order = 'asc', filters = {}) => {
+const getTokens = (
+  page: number = 1,
+  limit: number = 30,
+  order: SortOrder = 'asc',
+  filters: QueryFilters = {}
+): Promise<PaginatedResultSet<Token>> => {
   const params = prepareQueryParams({
-    page: Math.max(1, parseInt(page)),
-    limit: Math.max(1, parseInt(limit)),
+    page: Math.max(1, Number(page)),
+    limit: Math.max(1, Number(limit)),
     order,
     ...filters
   })
 
-  return call(`tokens?${params.toString()}`, 'GET')
+  return call<PaginatedResultSet<Token>>(`tokens?${params.toString()}`, 'GET')
 }
 
-const getTokensRating = (page = 1, limit = 10, order = 'asc', filters = {}) => {
+const getTokensRating = (
+  page: number = 1,
+  limit: number = 10,
+  order: SortOrder = 'asc',
+  filters: QueryFilters = {}
+): Promise<PaginatedResultSet<Token>> => {
   const params = prepareQueryParams({
-    page: Math.max(1, parseInt(page)),
-    limit: Math.max(1, parseInt(limit)),
+    page: Math.max(1, Number(page)),
+    limit: Math.max(1, Number(limit)),
     order,
     ...filters
   })
 
-  return call(`tokens/rating?${params.toString()}`, 'GET')
+  return call<PaginatedResultSet<Token>>(`tokens/rating?${params.toString()}`, 'GET')
 }
 
-const getToken = (identifier) => {
-  return call(`token/${identifier}`, 'GET')
+const getToken = (identifier: string): Promise<Token> => {
+  return call<Token>(`token/${identifier}`, 'GET')
 }
 
-const getTokenTransitions = (identifier, page = 1, limit = 30, order = 'asc') => {
-  return call(`token/${identifier}/transitions?page=${page}&limit=${limit}&order=${order}`, 'GET')
+const getTokenTransitions = (
+  identifier: string,
+  page: number = 1,
+  limit: number = 30,
+  order: SortOrder = 'asc'
+): Promise<PaginatedResultSet<TokenTransition>> => {
+  return call<PaginatedResultSet<TokenTransition>>(
+    `token/${identifier}/transitions?page=${page}&limit=${limit}&order=${order}`,
+    'GET'
+  )
 }
 
-const getBlocks = (page = 1, limit = 30, order = 'asc', filters = {}) => {
+const getBlocks = (
+  page: number = 1,
+  limit: number = 30,
+  order: SortOrder = 'asc',
+  filters: QueryFilters = {}
+): Promise<PaginatedResultSet<Block>> => {
   const params = prepareQueryParams({
-    page: Math.max(1, parseInt(page)),
-    limit: Math.max(1, parseInt(limit)),
+    page: Math.max(1, Number(page)),
+    limit: Math.max(1, Number(limit)),
     order,
     ...filters
   })
 
-  return call(`blocks?${params.toString()}`, 'GET')
+  return call<PaginatedResultSet<Block>>(`blocks?${params.toString()}`, 'GET')
 }
 
-const getBlocksByValidator = (proTxHash, page = 1, limit = 30, order = 'asc') => {
-  return call(`validator/${proTxHash}/blocks?page=${page}&limit=${limit}&order=${order}`, 'GET')
+const getBlocksByValidator = (
+  proTxHash: string,
+  page: number = 1,
+  limit: number = 30,
+  order: SortOrder = 'asc'
+): Promise<PaginatedResultSet<Block>> => {
+  return call<PaginatedResultSet<Block>>(
+    `validator/${proTxHash}/blocks?page=${page}&limit=${limit}&order=${order}`,
+    'GET'
+  )
 }
 
-const getContestedResources = (page = 1, limit = 30, order = 'asc', orderBy, filters = {}) => {
+const getContestedResources = (
+  page: number = 1,
+  limit: number = 30,
+  order: SortOrder = 'asc',
+  orderBy?: string,
+  filters: QueryFilters = {}
+): Promise<PaginatedResultSet<ContestedResource>> => {
   const params = prepareQueryParams({
-    page: Math.max(1, parseInt(page)),
-    limit: Math.max(1, parseInt(limit)),
+    page: Math.max(1, Number(page)),
+    limit: Math.max(1, Number(limit)),
     order,
     order_by: orderBy,
     ...filters
   })
 
-  return call(`contestedResources?${params.toString()}`, 'GET')
+  return call<PaginatedResultSet<ContestedResource>>(`contestedResources?${params.toString()}`, 'GET')
 }
 
-const getContestedResourceByValue = (value) => {
-  return call(`contestedResource/${value}`, 'GET')
+const getContestedResourceByValue = (value: string): Promise<ContestedResource> => {
+  return call<ContestedResource>(`contestedResource/${value}`, 'GET')
 }
 
-const getContestedResourceVotes = (value, page = 1, limit = 30, order = 'asc', filters = {}) => {
+const getContestedResourceVotes = (
+  value: string,
+  page: number = 1,
+  limit: number = 30,
+  order: SortOrder = 'asc',
+  filters: QueryFilters = {}
+): Promise<PaginatedResultSet<Vote>> => {
   const params = prepareQueryParams({
-    page: Math.max(1, parseInt(page)),
-    limit: Math.max(1, parseInt(limit)),
+    page: Math.max(1, Number(page)),
+    limit: Math.max(1, Number(limit)),
     order,
     ...filters
   })
 
-  return call(`contestedResource/${value}/votes?${params.toString()}`, 'GET')
+  return call<PaginatedResultSet<Vote>>(`contestedResource/${value}/votes?${params.toString()}`, 'GET')
 }
 
-const getDataContractByIdentifier = (identifier) => {
-  return call(`dataContract/${identifier}`, 'GET')
+const getDataContractByIdentifier = (identifier: string): Promise<DataContract> => {
+  return call<DataContract>(`dataContract/${identifier}`, 'GET')
 }
 
-const getDataContractTransactions = (identifier, page = 1, limit = 30, order = 'asc') => {
-  return call(`dataContract/${identifier}/transactions?page=${page}&limit=${limit}&order=${order}`, 'GET')
+const getDataContractTransactions = (
+  identifier: string,
+  page: number = 1,
+  limit: number = 30,
+  order: SortOrder = 'asc'
+): Promise<PaginatedResultSet<Transaction>> => {
+  return call<PaginatedResultSet<Transaction>>(
+    `dataContract/${identifier}/transactions?page=${page}&limit=${limit}&order=${order}`,
+    'GET'
+  )
 }
 
-const getDataContracts = (page = 1, limit = 30, order = 'asc', orderBy, filters = {}) => {
+const getDataContracts = (
+  page: number = 1,
+  limit: number = 30,
+  order: SortOrder = 'asc',
+  orderBy?: string,
+  filters: QueryFilters = {}
+): Promise<PaginatedResultSet<DataContract>> => {
   const params = prepareQueryParams({
-    page: Math.max(1, parseInt(page)),
-    limit: Math.max(1, parseInt(limit)),
+    page: Math.max(1, Number(page)),
+    limit: Math.max(1, Number(limit)),
     order,
     order_by: orderBy,
     ...filters
   })
 
-  return call(`dataContracts?${params.toString()}`, 'GET')
+  return call<PaginatedResultSet<DataContract>>(`dataContracts?${params.toString()}`, 'GET')
 }
 
-const getDocumentByIdentifier = (identifier, dataContractId, typeName) => {
+const getDocumentByIdentifier = (
+  identifier: string,
+  dataContractId?: string,
+  typeName?: string
+): Promise<Document> => {
   const params = []
   if (dataContractId) params.push(`contract_id=${dataContractId}`)
   if (typeName) params.push(`document_type_name=${typeName}`)
   const queryParams = params.join('&')
 
-  return call(`document/${identifier}?${queryParams ? `?${queryParams}` : ''}`, 'GET')
+  return call<Document>(`document/${identifier}?${queryParams ? `?${queryParams}` : ''}`, 'GET')
 }
 
-const getDocumentRevisions = (identifier, page = 1, limit = 30, order = 'asc') => {
-  return call(`document/${identifier}/revisions?page=${page}&limit=${limit}&order=${order}`, 'GET')
+const getDocumentRevisions = (
+  identifier: string,
+  page: number = 1,
+  limit: number = 30,
+  order: SortOrder = 'asc'
+): Promise<PaginatedResultSet<Document>> => {
+  return call<PaginatedResultSet<Document>>(
+    `document/${identifier}/revisions?page=${page}&limit=${limit}&order=${order}`,
+    'GET'
+  )
 }
 
-const getDocumentsByDataContract = (dataContractIdentifier, page = 1, limit = 30, order = 'asc', filters = {}) => {
+interface DocumentsByDataContractFilters {
+  document_type_name?: string
+  owner?: string
+  revision_min?: number
+  revision_max?: number
+  timestamp_start?: string
+  timestamp_end?: string
+}
+
+const getDocumentsByDataContract = (
+  dataContractIdentifier: string,
+  page: number = 1,
+  limit: number = 30,
+  order: SortOrder = 'asc',
+  filters: DocumentsByDataContractFilters = {}
+): Promise<PaginatedResultSet<Document>> => {
   const params = prepareQueryParams({
     page,
     limit,
@@ -207,123 +336,292 @@ const getDocumentsByDataContract = (dataContractIdentifier, page = 1, limit = 30
     timestamp_start: filters.timestamp_start,
     timestamp_end: filters.timestamp_end
   })
-  return call(`dataContract/${dataContractIdentifier}/documents?${params.toString()}`, 'GET')
+  return call<PaginatedResultSet<Document>>(`dataContract/${dataContractIdentifier}/documents?${params.toString()}`, 'GET')
 }
 
-const getEpoch = (identifier) => {
-  return call(`epoch/${identifier || ''}`, 'GET')
+const getEpoch = (identifier?: number | string): Promise<EpochData> => {
+  return call<EpochData>(`epoch/${identifier ?? ''}`, 'GET')
 }
 
-const getTransactionsByIdentity = (identifier, page = 1, limit = 10, order = 'asc') => {
-  return call(`identity/${identifier}/transactions?page=${page}&limit=${limit}&order=${order}`, 'GET')
+const getTransactionsByIdentity = (
+  identifier: string,
+  page: number = 1,
+  limit: number = 10,
+  order: SortOrder = 'asc'
+): Promise<PaginatedResultSet<Transaction>> => {
+  return call<PaginatedResultSet<Transaction>>(
+    `identity/${identifier}/transactions?page=${page}&limit=${limit}&order=${order}`,
+    'GET'
+  )
 }
 
-const getDataContractsByIdentity = (identifier, page = 1, limit = 10, order = 'asc') => {
-  return call(`identity/${identifier}/dataContracts?page=${page}&limit=${limit}&order=${order}`, 'GET')
+const getDataContractsByIdentity = (
+  identifier: string,
+  page: number = 1,
+  limit: number = 10,
+  order: SortOrder = 'asc'
+): Promise<PaginatedResultSet<DataContract>> => {
+  return call<PaginatedResultSet<DataContract>>(
+    `identity/${identifier}/dataContracts?page=${page}&limit=${limit}&order=${order}`,
+    'GET'
+  )
 }
 
-const getDocumentsByIdentity = (identifier, page = 1, limit = 10, order = 'asc') => {
-  return call(`identity/${identifier}/documents?page=${page}&limit=${limit}&order=${order}`, 'GET')
+interface DocumentsByIdentityFilters {
+  document_type_name?: string
+  transition_type?: string
+  deleted?: boolean
+  timestamp_start?: string
+  timestamp_end?: string
 }
 
-const getWithdrawalsByIdentity = (identifier, page = 1, limit = 10, order = 'asc') => {
-  return call(`identity/${identifier}/withdrawals?page=${page}&limit=${limit}&order=${order}`, 'GET')
-}
-
-const getTransfersByIdentity = (identifier, page = 1, limit = 10, order = 'asc') => {
-  return call(`identity/${identifier}/transfers?page=${page}&limit=${limit}&order=${order}`, 'GET')
-}
-
-const getTokensByIdentity = (identifier, page = 1, limit = 10, order = 'asc') => {
-  return call(`identity/${identifier}/tokens?page=${page}&limit=${limit}&order=${order}`, 'GET')
-}
-
-const getIdentity = (identifier) => {
-  return call(`identity/${identifier}`, 'GET')
-}
-
-const getIdentities = (page = 1, limit = 30, order = 'asc', orderBy, { includeMasternodes = false } = {}) => {
+const getDocumentsByIdentity = (
+  identifier: string,
+  page: number = 1,
+  limit: number = 10,
+  order: SortOrder = 'asc',
+  filters: DocumentsByIdentityFilters = {}
+): Promise<PaginatedResultSet<Document>> => {
   const params = prepareQueryParams({
     page,
     limit,
     order,
-    order_by: orderBy,
-    // includeMasternodes=true (Show all toggle on) → omit param so backend returns everything
-    // includeMasternodes=false (default) → request only regular identities
-    identity_type: includeMasternodes ? null : 'regular'
+    // document_type_name works today; transition_type/deleted/timestamp_* await backend (see #798)
+    document_type_name: filters.document_type_name,
+    transition_type: filters.transition_type,
+    deleted: filters.deleted,
+    timestamp_start: filters.timestamp_start,
+    timestamp_end: filters.timestamp_end
   })
-  return call(`identities?${params.toString()}`, 'GET')
+  return call<PaginatedResultSet<Document>>(`identity/${identifier}/documents?${params.toString()}`, 'GET')
 }
 
-const getIdentitiesHistory = (start, end, intervalsCount) => {
-  return call(`identities/history?timestamp_start=${start}&timestamp_end=${end}${intervalsCount ? `&intervalsCount=${intervalsCount}` : ''}`, 'GET')
+const getWithdrawalsByIdentity = (
+  identifier: string,
+  page: number = 1,
+  limit: number = 10,
+  order: SortOrder = 'asc'
+): Promise<PaginatedResultSet<Withdrawal>> => {
+  return call<PaginatedResultSet<Withdrawal>>(
+    `identity/${identifier}/withdrawals?page=${page}&limit=${limit}&order=${order}`,
+    'GET'
+  )
 }
 
-const getValidators = (page = 1, limit = 30, order = 'asc', filters) => {
+const getTransfersByIdentity = (
+  identifier: string,
+  page: number = 1,
+  limit: number = 10,
+  order: SortOrder = 'asc'
+): Promise<PaginatedResultSet<Transfer>> => {
+  return call<PaginatedResultSet<Transfer>>(
+    `identity/${identifier}/transfers?page=${page}&limit=${limit}&order=${order}`,
+    'GET'
+  )
+}
+
+const getTokensByIdentity = (
+  identifier: string,
+  page: number = 1,
+  limit: number = 10,
+  order: SortOrder = 'asc'
+): Promise<PaginatedResultSet<Token>> => {
+  return call<PaginatedResultSet<Token>>(
+    `identity/${identifier}/tokens?page=${page}&limit=${limit}&order=${order}`,
+    'GET'
+  )
+}
+
+const getIdentity = (identifier: string): Promise<Identity> => {
+  return call<Identity>(`identity/${identifier}`, 'GET')
+}
+
+interface IdentitiesFilters {
+  order?: SortOrder
+  order_by?: string
+  identity_type?: string | null
+  balance_min?: number
+  balance_max?: number
+  tx_count_min?: number
+  tx_count_max?: number
+  documents_count_min?: number
+  documents_count_max?: number
+  data_contracts_min?: number
+  data_contracts_max?: number
+}
+
+interface GetIdentitiesOptions {
+  includeMasternodes?: boolean
+  filters?: IdentitiesFilters
+}
+
+const getIdentities = (
+  page: number = 1,
+  limit: number = 30,
+  order: SortOrder = 'asc',
+  orderBy?: string,
+  { includeMasternodes = false, filters = {} }: GetIdentitiesOptions = {}
+): Promise<PaginatedResultSet<Identity>> => {
   const params = prepareQueryParams({
-    page: Math.max(1, parseInt(page)),
-    limit: Math.max(1, parseInt(limit)),
+    page,
+    limit,
+    order: filters?.order ?? order,
+    order_by: filters?.order_by ?? orderBy,
+    // includeMasternodes=true (Show all toggle on) → omit identity_type so backend returns everything
+    // includeMasternodes=false (default) → request only regular identities
+    identity_type: filters?.identity_type ?? (includeMasternodes ? null : 'regular'),
+    balance_min: filters?.balance_min,
+    balance_max: filters?.balance_max,
+    tx_count_min: filters?.tx_count_min,
+    tx_count_max: filters?.tx_count_max,
+    documents_count_min: filters?.documents_count_min,
+    documents_count_max: filters?.documents_count_max,
+    data_contracts_min: filters?.data_contracts_min,
+    data_contracts_max: filters?.data_contracts_max
+  })
+  return call<PaginatedResultSet<Identity>>(`identities?${params.toString()}`, 'GET')
+}
+
+interface IdentitiesHistoryPoint {
+  registeredIdentities: number
+}
+
+const getIdentitiesHistory = (
+  start: string,
+  end: string,
+  intervalsCount?: number
+): Promise<Array<SeriesData<IdentitiesHistoryPoint>>> => {
+  return call<Array<SeriesData<IdentitiesHistoryPoint>>>(
+    `identities/history?timestamp_start=${start}&timestamp_end=${end}${intervalsCount ? `&intervalsCount=${intervalsCount}` : ''}`,
+    'GET'
+  )
+}
+
+const getValidators = (
+  page: number = 1,
+  limit: number = 30,
+  order: SortOrder = 'asc',
+  filters?: QueryFilters
+): Promise<PaginatedResultSet<Validator>> => {
+  const params = prepareQueryParams({
+    page: Math.max(1, Number(page)),
+    limit: Math.max(1, Number(limit)),
     order,
     // order_by: orderBy,
     ...filters
   })
 
-  return call(`validators?${params}`, 'GET')
+  return call<PaginatedResultSet<Validator>>(`validators?${params}`, 'GET')
 }
 
-const getValidatorByProTxHash = (proTxHash) => {
-  return call(`validator/${proTxHash}`, 'GET')
+const getValidatorByProTxHash = (proTxHash: string): Promise<Validator> => {
+  return call<Validator>(`validator/${proTxHash}`, 'GET')
 }
 
-const getValidatorByMasternodeIdentity = (identity) => {
-  return call(`validator/identity/${identity}`, 'GET')
+const getValidatorByMasternodeIdentity = (identity: string): Promise<Validator> => {
+  return call<Validator>(`validator/identity/${identity}`, 'GET')
 }
 
-const getBlocksStatsByValidator = (proTxHash, start, end, intervalsCount) => {
-  return call(`validator/${proTxHash}/stats?timestamp_start=${start}&timestamp_end=${end}${intervalsCount ? `&intervalsCount=${intervalsCount}` : ''}`, 'GET')
+interface ValidatorBlocksStatsPoint {
+  blocksCount: number
 }
 
-const getRewardsStatsByValidator = (proTxHash, start, end, intervalsCount) => {
-  return call(`validator/${proTxHash}/rewards/stats?timestamp_start=${start}&timestamp_end=${end}${intervalsCount ? `&intervalsCount=${intervalsCount}` : ''}`, 'GET')
+interface ValidatorRewardsStatsPoint {
+  reward: number
 }
 
-const getMasternodeVotes = (page = 1, limit = 10, order = 'asc', filters = {}) => {
+const getBlocksStatsByValidator = (
+  proTxHash: string,
+  start: string,
+  end: string,
+  intervalsCount?: number
+): Promise<Array<SeriesData<ValidatorBlocksStatsPoint>>> => {
+  return call<Array<SeriesData<ValidatorBlocksStatsPoint>>>(
+    `validator/${proTxHash}/stats?timestamp_start=${start}&timestamp_end=${end}${intervalsCount ? `&intervalsCount=${intervalsCount}` : ''}`,
+    'GET'
+  )
+}
+
+const getRewardsStatsByValidator = (
+  proTxHash: string,
+  start: string,
+  end: string,
+  intervalsCount?: number
+): Promise<Array<SeriesData<ValidatorRewardsStatsPoint>>> => {
+  return call<Array<SeriesData<ValidatorRewardsStatsPoint>>>(
+    `validator/${proTxHash}/rewards/stats?timestamp_start=${start}&timestamp_end=${end}${intervalsCount ? `&intervalsCount=${intervalsCount}` : ''}`,
+    'GET'
+  )
+}
+
+const getMasternodeVotes = (
+  page: number = 1,
+  limit: number = 10,
+  order: SortOrder = 'asc',
+  filters: QueryFilters = {}
+): Promise<PaginatedResultSet<Vote>> => {
   const params = prepareQueryParams({
-    page: Math.max(1, parseInt(page)),
-    limit: Math.max(1, parseInt(limit)),
+    page: Math.max(1, Number(page)),
+    limit: Math.max(1, Number(limit)),
     order,
     ...filters
   })
 
-  return call(`masternodes/votes?${params.toString()}`, 'GET')
+  return call<PaginatedResultSet<Vote>>(`masternodes/votes?${params.toString()}`, 'GET')
 }
 
-const getContestedResourcesStats = () => {
-  return call('contestedResources/stats', 'GET')
+const getContestedResourcesStats = (): Promise<ContestedResourcesStatus> => {
+  return call<ContestedResourcesStatus>('contestedResources/stats', 'GET')
 }
 
-const getPlatformAddressInfo = (hash) => {
-  return call(`platformAddress/${hash}/info`, 'GET')
+const getPlatformAddressInfo = (hash: string): Promise<PlatformAddress> => {
+  return call<PlatformAddress>(`platformAddress/${hash}/info`, 'GET')
 }
 
-const getPlatformAddressTransitions = (hash, page = 1, limit = 10, order = 'desc') => {
-  return call(`platformAddress/${hash}/transactions?page=${page}&limit=${limit}&order=${order}`, 'GET')
+const getPlatformAddressTransitions = (
+  hash: string,
+  page: number = 1,
+  limit: number = 10,
+  order: SortOrder = 'desc'
+): Promise<PaginatedResultSet<Transaction>> => {
+  return call<PaginatedResultSet<Transaction>>(
+    `platformAddress/${hash}/transactions?page=${page}&limit=${limit}&order=${order}`,
+    'GET'
+  )
 }
 
-const getStatus = () => {
-  return call('status', 'GET')
+const getStatus = (): Promise<Status> => {
+  return call<Status>('status', 'GET')
 }
 
-const getRate = () => {
-  return call('rate', 'GET')
+const getRate = (): Promise<Rate> => {
+  return call<Rate>('rate', 'GET')
 }
 
-const search = (query) => {
-  return call(`search?query=${query}`, 'GET')
+// Response shape is not yet documented in this PR — type it precisely in a
+// follow-up after a valid query returns a populated payload.
+const search = (query: string): Promise<unknown> => {
+  return call<unknown>(`search?query=${query}`, 'GET')
 }
 
-const decodeTx = (base64) => {
-  return call('transaction/decode', 'POST', { base64 })
+// Response shape is not yet documented in this PR — type it precisely in a
+// follow-up after testing with a real base64-encoded transaction.
+const decodeTx = (base64: string): Promise<unknown> => {
+  return call<unknown>('transaction/decode', 'POST', { base64 })
+}
+
+// Broadcast-flow endpoints added on develop (#790) — payloads/responses are
+// not modelled in backend yet; type precisely in a follow-up.
+const verifyTransaction = (payload: unknown): Promise<unknown> => {
+  return call<unknown>('transaction/verify', 'POST', payload)
+}
+
+const broadcastTransaction = (payload: unknown): Promise<unknown> => {
+  return call<unknown>('transaction/broadcast', 'POST', payload)
+}
+
+const waitForStateTransitionResult = (hash: string): Promise<unknown> => {
+  return call<unknown>(`waitForStateTransitionResult/${hash}`, 'GET')
 }
 
 export {
@@ -368,5 +666,8 @@ export {
   getRate,
   getPlatformAddressInfo,
   getPlatformAddressTransitions,
-  getValidatorByMasternodeIdentity
+  getValidatorByMasternodeIdentity,
+  verifyTransaction,
+  broadcastTransaction,
+  waitForStateTransitionResult
 }

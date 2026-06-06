@@ -14,7 +14,8 @@ import {
   Container,
   Heading
 } from '@chakra-ui/react'
-import { ContestedResourcesList } from '../../components/contestedResources'
+import { ContestedResourcesList, ContestedResourcesFilter, useContestedResourcesFilters } from '../../components/contestedResources'
+import './ContestedResourcesPage.scss'
 
 const paginateConfig = {
   pageSize: {
@@ -29,15 +30,16 @@ function ContestedResources ({ defaultPage = 1, defaultPageSize }) {
   const [total, setTotal] = useState(1)
   const [pageSize, setPageSize] = useState(defaultPageSize || paginateConfig.pageSize.default)
   const [currentPage, setCurrentPage] = useState(defaultPage ? defaultPage - 1 : 0)
+  const { filters, setFilters } = useContestedResourcesFilters()
   const pageCount = Math.ceil(total / pageSize) ? Math.ceil(total / pageSize) : 1
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
 
-  const fetchData = (page, count) => {
+  const fetchData = (page, count, currentFilters) => {
     setContestedResources(state => ({ ...state, loading: true }))
 
-    Api.getContestedResources(page, count, 'desc')
+    Api.getContestedResources(page, count, 'desc', undefined, currentFilters)
       .then(res => {
         if (res.pagination.total === -1) {
           setCurrentPage(0)
@@ -48,7 +50,11 @@ function ContestedResources ({ defaultPage = 1, defaultPageSize }) {
       .catch(err => fetchHandlerError(setContestedResources, err))
   }
 
-  useEffect(() => fetchData(currentPage + 1, pageSize), [pageSize, currentPage])
+  useEffect(
+    () => fetchData(currentPage + 1, pageSize, filters),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [pageSize, currentPage, JSON.stringify(filters)]
+  )
 
   useEffect(() => {
     const page = parseInt(searchParams.get('page')) || paginateConfig.defaultPage
@@ -72,11 +78,20 @@ function ContestedResources ({ defaultPage = 1, defaultPageSize }) {
 
   return (
     <Container
-      className={'InfoBlock ContestedResources'}
+      className={'InfoBlock ContestedResources ContestedResourcesPage'}
       maxW={'container.maxPageW'}
       my={8}
     >
       <Heading className={'InfoBlock__Title'} as={'h1'}>Contested Resources</Heading>
+
+      <ContestedResourcesFilter
+        initialFilters={filters}
+        className={'ContestedResourcesPage__Filters'}
+        onFilterChange={(next) => {
+          setFilters(next)
+          setCurrentPage(0)
+        }}
+      />
 
       {!contestedResources.error
         ? <>

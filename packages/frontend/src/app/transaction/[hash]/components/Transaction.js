@@ -18,12 +18,13 @@ import { CopyButton } from '../../../../components/ui/Buttons'
 import {
   TypeBadge,
   FeeMultiplier,
-  TransactionStatusBadge
+  TransactionStatusBadge,
+  DuplicatedTransactions
 } from '../../../../components/transactions'
 import { ErrorMessageBlock } from '../../../../components/Errors'
 import { useBreadcrumbs } from '../../../../contexts/BreadcrumbsContext'
 import { useDecodedSTQuery, useRateQuery, useTransactionQuery } from './hooks'
-import { useParams } from 'next/navigation'
+import { useParams, usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { useActiveNetwork } from 'src/contexts'
 
 import './transaction.scss'
@@ -35,6 +36,25 @@ export const Transaction = () => {
   const transaction = useTransactionQuery()
   const decodedST = useDecodedSTQuery(transaction.data)
   const rate = useRateQuery()
+  const router = useRouter()
+  const pathname = usePathname()
+  const searchParams = useSearchParams()
+
+  // Occurrences = canonical + duplicates; the selected one is driven by ?block=
+  const occurrences = transaction.data
+    ? [transaction.data, ...(transaction.data.duplicates ?? [])]
+    : []
+  const selectedBlockHash = searchParams.get('block')
+  const selected =
+    occurrences.find((o) => o?.blockHash === selectedBlockHash) || transaction.data
+
+  const handleSelectOccurrence = (blockHash) => {
+    if (!blockHash || blockHash === selected?.blockHash) {
+      router.replace(pathname, { scroll: false })
+    } else {
+      router.replace(`${pathname}?block=${blockHash}`, { scroll: false })
+    }
+  }
 
   useEffect(() => {
     setBreadcrumbs([
@@ -48,6 +68,14 @@ export const Transaction = () => {
     <PageDataContainer className={'TransactionPage'} title={'Transaction Info'}>
       {transaction.error && <ErrorMessageBlock h={'450px'} />}
 
+      {!transaction.error && transaction.data?.duplicates?.length > 0 && (
+        <DuplicatedTransactions
+          transaction={transaction.data}
+          selectedBlockHash={selected?.blockHash}
+          onSelect={handleSelectOccurrence}
+        />
+      )}
+
       {!transaction.error && (
         <div className={'TransactionPage__CommonInfo'}>
           <InfoLine
@@ -57,7 +85,7 @@ export const Transaction = () => {
             title={'Timestamp'}
             value={
               <DateBlock
-                timestamp={transaction.data?.timestamp}
+                timestamp={selected?.timestamp}
                 showTime={true}
               />
             }
@@ -74,7 +102,7 @@ export const Transaction = () => {
                 ellipsis={false}
                 styles={['highlight-both']}
               >
-                {transaction.data?.hash}
+                {selected?.hash}
               </Identifier>
             }
             loading={transaction.loading}
@@ -86,18 +114,18 @@ export const Transaction = () => {
             title={'Block Hash'}
             value={
               <ValueCard
-                link={`/block/${transaction.data?.blockHash}`}
+                link={`/block/${selected?.blockHash}`}
                 className={'TransactionPage__BlockHash'}
               >
                 <ValueCard className={'TransactionPage__BlockHeight'}>
-                  Height: {transaction.data?.blockHeight}
+                  Height: {selected?.blockHeight}
                 </ValueCard>
                 <Identifier
                   copyButton={true}
                   ellipsis={false}
                   styles={['highlight-both']}
                 >
-                  {transaction.data?.blockHash}
+                  {selected?.blockHash}
                 </Identifier>
               </ValueCard>
             }
@@ -110,7 +138,7 @@ export const Transaction = () => {
               'TransactionPage__InfoLine TransactionPage__InfoLine--Index'
             }
             title={'Index'}
-            value={transaction.data?.index}
+            value={selected?.index}
             loading={transaction.loading}
             error={transaction.error}
           />
@@ -120,7 +148,7 @@ export const Transaction = () => {
               'TransactionPage__InfoLine TransactionPage__InfoLine--Type'
             }
             title={'Type'}
-            value={<TypeBadge type={transaction.data?.type} />}
+            value={<TypeBadge type={selected?.type} />}
             loading={transaction.loading}
             error={transaction.error}
           />
@@ -132,10 +160,10 @@ export const Transaction = () => {
             title={'Status'}
             value={
               <div className={'TransactionPage__StatusContainer'}>
-                <TransactionStatusBadge status={transaction.data?.status} />
-                {transaction.data?.error && (
+                <TransactionStatusBadge status={selected?.status} />
+                {selected?.error && (
                   <ValueContainer className={'TransactionPage__ErrorContainer'}>
-                    {transaction.data.error}
+                    {selected.error}
                   </ValueContainer>
                 )}
               </div>
@@ -151,7 +179,7 @@ export const Transaction = () => {
             title={'Owner'}
             value={
               <ValueCard
-                link={`/identity/${transaction.data?.owner?.identifier}`}
+                link={`/identity/${selected?.owner?.identifier}`}
               >
                 <Identifier
                   avatar={true}
@@ -159,7 +187,7 @@ export const Transaction = () => {
                   ellipsis={false}
                   styles={['highlight-both']}
                 >
-                  {transaction.data?.owner?.identifier}
+                  {selected?.owner?.identifier}
                 </Identifier>
               </ValueCard>
             }
@@ -174,8 +202,8 @@ export const Transaction = () => {
             title={'Raw Transaction'}
             value={
               <ValueCard className={'TransactionPage__RawTransaction'}>
-                {transaction.data?.data}
-                <CopyButton text={transaction.data?.data} />
+                {selected?.data}
+                <CopyButton text={selected?.data} />
               </ValueCard>
             }
             loading={transaction.loading}
@@ -188,7 +216,7 @@ export const Transaction = () => {
             }
             title={'Gas Used'}
             value={
-              <CreditsBlock credits={transaction.data?.gasUsed} rate={rate} />
+              <CreditsBlock credits={selected?.gasUsed} rate={rate} />
             }
             loading={transaction.loading}
             error={transaction.error}

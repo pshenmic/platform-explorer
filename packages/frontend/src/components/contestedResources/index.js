@@ -4,3 +4,5 @@ export { default as ContestedResourceTotalCard } from './ContestedResourceTotalC
 export { default as ContestedResourceDigestCard } from './ContestedResourceDigestCard'
 export { default as VoteStatusValue } from './VoteStatusValue'
 export { default as MasternodeVotesFilters } from './MasternodeVotesFilters'
+export { ContestedResourcesFilter } from './ContestedResourcesFilter'
+export * from './hooks'
