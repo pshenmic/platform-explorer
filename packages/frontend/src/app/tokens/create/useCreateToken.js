@@ -25,18 +25,7 @@ export const useCreateToken = () => {
       const identityNonce = await sdk.identities.getIdentityNonce(identity.id)
       const nextNonce = identityNonce + BigInt(1)
 
-      // Placeholder document type — pshenmic-dpp's NAPI runs DPP structural
-      // validation BEFORE attaching tokens via set_tokens, so empty schemas fail
-      // the "documents OR tokens" check. Drop once tokens are populated upstream.
-      const schema = {
-        note: {
-          type: 'object',
-          properties: {
-            message: { type: 'string', maxLength: 256, position: 0 }
-          },
-          additionalProperties: false
-        }
-      }
+      const schema = {}
 
       // DataContractsController.create signature:
       //   (ownerId, identityNonce, schema, fullValidation?, tokenConfiguration?, ...)
