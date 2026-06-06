@@ -467,12 +467,12 @@ module.exports = class IdentitiesDAO {
       typeQueryBindings.push(typeName)
     }
 
-    if(timestampStart!=null && timestampEnd!=null){
+    if (timestampStart != null && timestampEnd != null) {
       filtersQuery = filtersQuery + 'blocks.timestamp >= ? and blocks.timestamp <= ?'
       filtersBindings.push(timestampStart, timestampEnd)
     }
 
-    if(deleted!=null){
+    if (deleted != null) {
       filtersQuery = filtersQuery !== '' ? filtersQuery + ' and deleted = ?' : 'deleted = ?'
       filtersBindings.push(deleted)
     }

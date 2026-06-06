@@ -116,7 +116,7 @@ class IdentitiesController {
       document_type_name: documentTypeName,
       timestamp_start: timestampStart,
       timestamp_end: timestampEnd,
-      deleted,
+      deleted
     } = request.query
 
     if (timestampStart && timestampEnd && new Date(timestampStart).getTime() >= new Date(timestampEnd).getTime()) {
