@@ -46,12 +46,12 @@ const buildInitialForm = (templateId) => {
     keepsHistory: { ...DEFAULT_KEEPS_HISTORY, ...(template.defaults.keepsHistory || {}) },
     // Seed one row so the repeater UI is visible by default.
     preProgrammedRows: [{ id: 'pp-init', time: '', identity: '', amount: '' }],
-    perpetualEnabled: false,
-    perpetualType: 'time',
-    perpetualIntervalValue: '',
-    perpetualIntervalUnit: 'days',
-    perpetualAmount: '',
-    perpetualRecipient: 'owner',
+    perpetualEnabled: template.defaults.perpetualEnabled ?? false,
+    perpetualType: template.defaults.perpetualType ?? 'time',
+    perpetualIntervalValue: template.defaults.perpetualIntervalValue ?? '',
+    perpetualIntervalUnit: template.defaults.perpetualIntervalUnit ?? 'days',
+    perpetualAmount: template.defaults.perpetualAmount ?? '',
+    perpetualRecipient: template.defaults.perpetualRecipient ?? 'owner',
     perpetualRecipientIdentity: ''
   }
 }
@@ -64,6 +64,11 @@ export const TokenWizardProvider = ({ children }) => {
   }
 
   const selectTemplate = (templateId) => {
+    // "Custom" just marks the form as off-preset without touching any fields.
+    if (templateId === 'custom') {
+      setFormState((prev) => ({ ...prev, template: 'custom' }))
+      return
+    }
     const template = getTemplate(templateId)
     if (template.disabled) return
     setFormState((prev) => ({
@@ -85,7 +90,14 @@ export const TokenWizardProvider = ({ children }) => {
       allowTransferToFrozenBalance: template.defaults.allowTransferToFrozenBalance ?? prev.allowTransferToFrozenBalance,
       keepsHistory: template.defaults.keepsHistory
         ? { ...DEFAULT_KEEPS_HISTORY, ...template.defaults.keepsHistory }
-        : prev.keepsHistory
+        : prev.keepsHistory,
+      // Distribution seeds (Reward/Airdrop presets); preserve user input otherwise.
+      perpetualEnabled: template.defaults.perpetualEnabled ?? prev.perpetualEnabled,
+      perpetualType: template.defaults.perpetualType ?? prev.perpetualType,
+      perpetualIntervalValue: template.defaults.perpetualIntervalValue ?? prev.perpetualIntervalValue,
+      perpetualIntervalUnit: template.defaults.perpetualIntervalUnit ?? prev.perpetualIntervalUnit,
+      perpetualAmount: template.defaults.perpetualAmount ?? prev.perpetualAmount,
+      perpetualRecipient: template.defaults.perpetualRecipient ?? prev.perpetualRecipient
     }))
   }
 

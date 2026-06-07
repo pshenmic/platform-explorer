@@ -1,0 +1,76 @@
+@import 'src/styles/variables';
+
+.PresetStrip {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+
+  &__Cards {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 0.5rem;
+
+    @media (max-width: 768px) {
+      grid-auto-flow: column;
+      grid-auto-columns: minmax(88px, 1fr);
+      grid-template-columns: none;
+      overflow-x: auto;
+    }
+  }
+
+  &__Card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.375rem;
+    padding: 0.75rem 0.5rem;
+    background: var(--chakra-colors-gray-700);
+    border: 1px solid var(--chakra-colors-gray-550);
+    border-radius: $border-radius-def;
+    color: var(--chakra-colors-white-50);
+    cursor: pointer;
+    transition: border-color $transition-time-def, color $transition-time-def, background $transition-time-def;
+
+    &:hover {
+      color: var(--chakra-colors-white-100);
+      border-color: var(--chakra-colors-gray-500);
+    }
+
+    &--active {
+      color: var(--chakra-colors-white-100);
+      border-color: $color-brand-normal;
+      background: var(--chakra-colors-gray-675);
+    }
+  }
+
+  &__Icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 24px;
+  }
+
+  &__Label {
+    font-family: $font-heading;
+    font-weight: 600;
+    font-size: 0.75rem;
+    letter-spacing: 0.02em;
+  }
+
+  &__Custom {
+    align-self: flex-start;
+    font-family: $font-body;
+    font-size: 0.75rem;
+    color: var(--chakra-colors-white-50);
+    background: transparent;
+    border: 0;
+    padding: 0.25rem 0;
+    cursor: pointer;
+    transition: color $transition-time-def;
+
+    &:hover,
+    &--active {
+      color: var(--chakra-colors-white-100);
+    }
+  }
+}
