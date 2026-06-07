@@ -1,8 +1,8 @@
 'use client'
 
 import { TokenWizardProvider } from './TokenWizardContext'
-import Essentials from './components/Essentials'
-import FeaturesPane from './components/FeaturesPane'
+import PresetStrip from './components/PresetStrip'
+import FormAccordion from './components/FormAccordion'
 import JsonPreview from './components/Preview/JsonPreview'
 import DeployBar from './components/DeployBar'
 import './CreateTokenPage.scss'
@@ -15,15 +15,8 @@ function CreateTokenPage () {
         <div className='CreateTokenPage__Layout'>
           <div className='CreateTokenPage__FormPane'>
             <div className='CreateTokenPage__FormScroll'>
-              <div className='CreateTokenPage__Columns'>
-                <div className='CreateTokenPage__Column'>
-                  <div className='CreateTokenPage__SectionTitle'>Basic Info</div>
-                  <Essentials/>
-                </div>
-                <div className='CreateTokenPage__Column'>
-                  <FeaturesPane/>
-                </div>
-              </div>
+              <PresetStrip/>
+              <FormAccordion/>
             </div>
 
             <div className='CreateTokenPage__FormFooter'>

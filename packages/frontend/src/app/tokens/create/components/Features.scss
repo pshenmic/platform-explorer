@@ -1,16 +1,8 @@
 @import 'src/styles/variables';
 
 .Features {
-  height: 100%;
   display: flex;
   flex-direction: column;
-
-  // Rows spread to fill the column when there's room; when content is taller
-  // than the pane, FormScroll (overflow-y: auto) takes over and scrolls.
-  > .chakra-stack {
-    flex: 1;
-    justify-content: space-between;
-  }
 
   &__Row {
     font-family: $font-mono;
@@ -25,50 +17,4 @@
     letter-spacing: 0.04em;
   }
 
-}
-
-.FeaturesPane {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  height: 100%;
-
-  &__Tabs {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    margin-bottom: 4px;
-  }
-
-  &__Tab {
-    font-family: var(--font-montserrat);
-    font-weight: 700;
-    font-size: 12px;
-    line-height: 110%;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
-    color: var(--chakra-colors-white-50);
-    background: transparent;
-    border: 0;
-    padding: 4px 0;
-    cursor: pointer;
-    border-bottom: 1px solid transparent;
-    transition: color 0.12s, border-color 0.12s;
-
-    &:hover {
-      color: var(--chakra-colors-white-100);
-    }
-
-    &--active {
-      color: var(--chakra-colors-white-100);
-      border-bottom-color: $color-brand-normal;
-    }
-  }
-
-  &__Body {
-    flex: 1;
-    min-height: 0;
-    display: flex;
-    flex-direction: column;
-  }
 }

@@ -32,18 +32,6 @@ function Features () {
           onToggle={toggle('allowFreeze')}
         />
         <FeatureToggle
-          label='Capitalize singular form'
-          tooltip='Hints that the token name should be rendered capitalized in clients (e.g. MyToken, not mytoken). Metadata only.'
-          value={form.shouldCapitalize}
-          onToggle={toggle('shouldCapitalize')}
-        />
-        <FeatureToggle
-          label='Start paused'
-          tooltip='Token is created in a paused state. Owner must unpause before transfers work.'
-          value={form.startAsPaused}
-          onToggle={toggle('startAsPaused')}
-        />
-        <FeatureToggle
           label='Burn frozen funds'
           tooltip='Owner can destroy tokens that are currently frozen. Only meaningful when Freezable is on.'
           value={form.allowDestroyFrozen}
@@ -54,12 +42,6 @@ function Features () {
           tooltip='Owner can pause all token operations in an emergency.'
           value={form.allowEmergency}
           onToggle={toggle('allowEmergency')}
-        />
-        <FeatureToggle
-          label='Allow transfer to frozen balance'
-          tooltip='If on, mints and transfers can land on a balance that is currently frozen. Off bounces them.'
-          value={form.allowTransferToFrozenBalance}
-          onToggle={toggle('allowTransferToFrozenBalance')}
         />
       </Stack>
     </div>

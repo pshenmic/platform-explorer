@@ -62,13 +62,6 @@ function Essentials () {
     setField(key, next)
   }
 
-  // DPP caps decimals at 16. Empty allowed mid-typing (treated as 0 on build).
-  const onDecimalsChange = (e) => {
-    const digits = e.target.value.replace(/\D/g, '')
-    if (digits === '') return setField('decimals', '')
-    setField('decimals', Math.min(16, Number(digits)))
-  }
-
   const toggle = (key) => () => setField(key, !form[key])
 
   return (
@@ -107,23 +100,6 @@ function Essentials () {
             fontFamily='mono'
             rows={3}
             maxLength={256}
-            width='100%'
-          />
-        </FormControl>
-
-        <FormControl>
-          <FieldLabel
-            label='Decimals'
-            tooltip='How many fractional digits the token supports (like cents). Max 16. DASH itself uses 8. Your supply inputs are multiplied by 10^decimals on chain.'
-          />
-          <Input
-            size='sm'
-            variant='filled'
-            placeholder='8'
-            value={form.decimals}
-            onChange={onDecimalsChange}
-            fontFamily='mono'
-            inputMode='numeric'
             width='100%'
           />
         </FormControl>
