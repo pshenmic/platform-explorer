@@ -1,69 +1,45 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import Link from 'next/link'
-import {
-  Button, HStack, Radio, RadioGroup, Flex, FormControl, Input, InputGroup, InputRightElement, IconButton, useToast
-} from '@chakra-ui/react'
-import { ViewIcon, ViewOffIcon } from '@chakra-ui/icons'
+import { useState } from 'react'
+import { Button, Stack, Box, Text, Link } from '@chakra-ui/react'
+import { MethodSelect, PrivateKeyForm } from 'src/components/signing'
+import { CardWrapper } from '../../../dataContract/create/components/CardWrapper'
 import { useSigner, SignerMethod } from '../../../dataContract/create/useSigner'
 import { useTokenWizard } from '../TokenWizardContext'
 import { useCreateToken } from '../useCreateToken'
 import ReviewModal from './ReviewModal'
-import './DeployBar.scss'
 
-const METHOD_HINTS = {
-  [SignerMethod.EXTENSION]: 'Extension will sign and broadcast in one popup step.',
-  [SignerMethod.PRIVATE_KEY]: 'Private Key signs locally. Identity ID auto-detected if owned by the key.'
-}
-
-const noAutofillProps = {
-  autoComplete: 'off',
-  autoCorrect: 'off',
-  autoCapitalize: 'off',
-  spellCheck: false,
-  'data-1p-ignore': 'true',
-  'data-lpignore': 'true',
-  'data-form-type': 'other'
+// Mirrors dataContract/create Deploy.js so both creation flows look identical:
+// CardWrapper + MethodSelect + PrivateKeyForm + status line + button. Wiring is
+// ours (useSigner + useCreateToken); ReviewModal stays as a confirm step before
+// the irreversible broadcast.
+const DeployStatus = ({ signer, deploy }) => {
+  if (deploy.error != null) return <Text color='red.500' fontSize='sm'>{deploy.error}</Text>
+  if (signer.error != null) return <Text color='red.500' fontSize='sm'>{signer.error}</Text>
+  if (deploy.result != null) {
+    return (
+      <Text color='green.500' fontSize='sm'>
+        ✓ Token deployed:{' '}
+        <Link href={`/dataContract/${deploy.result.dataContractId}`} color='green.500' textDecoration='underline'>
+          {deploy.result.dataContractId}
+        </Link>
+        {' '}· {deploy.result.tokenId}
+      </Text>
+    )
+  }
+  if (signer.isConnected) return <Text color='gray.500' fontSize='sm'>Signing as: {signer.signer.identityId}</Text>
+  if (signer.method === SignerMethod.PRIVATE_KEY) return <Text color='gray.500' fontSize='sm'>Enter your private key from your Identity</Text>
+  return <Text color='gray.500' fontSize='sm'>Connect a wallet to deploy</Text>
 }
 
 function DeployBar () {
   const { form } = useTokenWizard()
   const signerCtl = useSigner()
   const deploy = useCreateToken()
-  const toast = useToast()
 
   const [wif, setWif] = useState('')
-  const [showWif, setShowWif] = useState(false)
   const [identityIdInput, setIdentityIdInput] = useState('')
   const [isReviewOpen, setIsReviewOpen] = useState(false)
-
-  // Errors go to toast — inline alerts broke the sticky footer layout.
-  useEffect(() => {
-    if (signerCtl.error) {
-      toast({
-        title: 'Signer error',
-        description: signerCtl.error,
-        status: 'error',
-        duration: 6000,
-        isClosable: true,
-        position: 'top-right'
-      })
-    }
-  }, [signerCtl.error, toast])
-
-  useEffect(() => {
-    if (deploy.error) {
-      toast({
-        title: 'Deploy failed',
-        description: deploy.error,
-        status: 'error',
-        duration: 6000,
-        isClosable: true,
-        position: 'top-right'
-      })
-    }
-  }, [deploy.error, toast])
 
   const isPK = signerCtl.method === SignerMethod.PRIVATE_KEY
   const isConnected = signerCtl.isConnected
@@ -75,10 +51,7 @@ function DeployBar () {
     form.baseSupply
 
   const handlePrimary = () => {
-    if (deploy.result) {
-      deploy.reset()
-      return
-    }
+    if (deploy.result) { deploy.reset(); return }
     if (!isConnected) {
       if (isPK) signerCtl.connect({ wif, identityId: identityIdInput })
       else signerCtl.connect()
@@ -92,105 +65,49 @@ function DeployBar () {
     setIsReviewOpen(false)
   }
 
-  let primaryLabel
-  if (deploy.result) primaryLabel = 'Create Another'
-  else if (!isConnected) primaryLabel = isPK ? 'Use Private Key' : 'Connect Wallet'
-  else primaryLabel = 'Deploy Token'
+  let label
+  if (deploy.result) label = 'Deploy Another'
+  else if (!isConnected) label = isPK ? 'Use Private Key' : 'Connect Wallet'
+  else if (deploy.isLoading) label = 'Deploying...'
+  else label = 'Deploy Token'
 
-  const primaryDisabled = isBusy ||
+  const isDisabled = isBusy ||
     (!isConnected && isPK && !wif.trim()) ||
     (isConnected && !deploy.result && !formIsValid)
 
   return (
-    <div className='DeployBar'>
-      <HStack className='DeployBar__Header' align='baseline' spacing={3}>
-        <div className='DeployBar__Title'>Deploy</div>
-        {METHOD_HINTS[signerCtl.method] && (
-          <div className='DeployBar__Hint'>{METHOD_HINTS[signerCtl.method]}</div>
+    <CardWrapper title='Deploy'>
+      <Stack spacing={3}>
+        <MethodSelect
+          value={signerCtl.method}
+          onChange={signerCtl.setMethod}
+          isDisabled={isBusy || isConnected}
+        />
+        {/* Pinned footer stays compact: key inputs appear only when chosen. */}
+        {isPK && !isConnected && (
+          <PrivateKeyForm
+            wif={wif}
+            setWif={setWif}
+            identityId={identityIdInput}
+            setIdentityId={setIdentityIdInput}
+            isInactive={isBusy}
+          />
         )}
-      </HStack>
-
-      <HStack className='DeployBar__MethodRow' spacing={4} align='center'>
-        <HStack className='DeployBar__Method' spacing={3} align='center' flexShrink={0}>
-          <RadioGroup
-            value={signerCtl.method}
-            onChange={signerCtl.setMethod}
-            isDisabled={isBusy || isConnected}
-          >
-            <HStack spacing={6} align='center'>
-              <Radio value={SignerMethod.EXTENSION}>Extension</Radio>
-              <Radio value={SignerMethod.PRIVATE_KEY}>Private Key</Radio>
-            </HStack>
-          </RadioGroup>
-        </HStack>
-
-        <Flex className='DeployBar__SignerForm' flex='1' gap={2} wrap='wrap'>
-          {isPK && !isConnected && (
-            <>
-              <FormControl flex='1' minW='200px' isDisabled={isBusy}>
-                <InputGroup size='sm'>
-                  <Input
-                    variant='filled'
-                    type='text'
-                    name='wif'
-                    placeholder='WIF, hex, or base64'
-                    value={wif}
-                    onChange={(e) => setWif(e.target.value)}
-                    fontFamily='mono'
-                    sx={!showWif ? { WebkitTextSecurity: 'disc', textSecurity: 'disc' } : undefined}
-                    {...noAutofillProps}
-                  />
-                  <InputRightElement>
-                    <IconButton
-                      size='xs'
-                      variant='ghost'
-                      tabIndex={-1}
-                      icon={showWif ? <ViewOffIcon/> : <ViewIcon/>}
-                      aria-label={showWif ? 'Hide private key' : 'Show private key'}
-                      onClick={() => setShowWif((v) => !v)}
-                    />
-                  </InputRightElement>
-                </InputGroup>
-              </FormControl>
-              <FormControl flex='1' minW='200px' isDisabled={isBusy}>
-                <Input
-                  size='sm'
-                  variant='filled'
-                  placeholder='Identity ID (optional)'
-                  value={identityIdInput}
-                  onChange={(e) => setIdentityIdInput(e.target.value)}
-                  fontFamily='mono'
-                  {...noAutofillProps}
-                />
-              </FormControl>
-            </>
-          )}
-        </Flex>
-      </HStack>
-
-      {deploy.result && (
-        <div className='DeployBar__SuccessRow'>
-          Token created! Contract:{' '}
-          <Link href={`/dataContract/${deploy.result.dataContractId}`}>
-            {deploy.result.dataContractId}
-          </Link>
-          {' '}— Token ID: {deploy.result.tokenId}
-        </div>
-      )}
-
-      <div className='DeployBar__Actions'>
+        <Box minH='20px'>
+          <DeployStatus signer={signerCtl} deploy={deploy}/>
+        </Box>
         <Button
           variant='blue'
           size='sm'
-          minW='200px'
+          minW='160px'
+          alignSelf='flex-start'
           onClick={handlePrimary}
           isLoading={isBusy}
-          loadingText={signerCtl.isConnecting ? 'Connecting…' : 'Deploying…'}
-          isDisabled={primaryDisabled}
+          isDisabled={isDisabled}
         >
-          {primaryLabel}
+          {label}
         </Button>
-      </div>
+      </Stack>
 
       <ReviewModal
         isOpen={isReviewOpen}
@@ -199,7 +116,7 @@ function DeployBar () {
         isDeploying={deploy.isLoading}
         signerIdentityId={signerCtl.signer?.identityId}
       />
-    </div>
+    </CardWrapper>
   )
 }
 
