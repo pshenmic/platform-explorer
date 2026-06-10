@@ -4,8 +4,6 @@
   display: flex;
   flex-direction: column;
 
-  // Row is layout only — label and value set their own typography
-  // (label: body via RowLabel; value: the Yes/No badge component).
   &__Row {
     font-size: 0.75rem;
   }

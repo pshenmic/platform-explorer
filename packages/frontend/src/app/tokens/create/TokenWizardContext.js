@@ -19,9 +19,7 @@ const DEFAULT_KEEPS_HISTORY = {
   directPurchase: true
 }
 
-// Neutral starting point: a general-purpose token (mintable, burnable,
-// transferable, no max supply, all guards on, no recurring distribution).
-// Every field stays editable — there are no presets that pre-set hidden options.
+// Neutral defaults: a general-purpose token, every field editable.
 const buildInitialForm = () => ({
   name: '',
   pluralForm: '',
@@ -43,7 +41,6 @@ const buildInitialForm = () => ({
   destinationIdentity: '',
   allowTransferToFrozenBalance: false,
   keepsHistory: { ...DEFAULT_KEEPS_HISTORY },
-  // Seed one row so the repeater UI is visible by default.
   preProgrammedRows: [{ id: 'pp-init', time: '', identity: '', amount: '' }],
   perpetualEnabled: false,
   perpetualType: 'time',

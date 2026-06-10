@@ -9,8 +9,7 @@ import './Advanced.scss'
 let __rowSeq = 0
 const makeRowId = () => `pp${++__rowSeq}`
 
-// The chain stores schedule times as UTC epoch ms. The datetime-local field is
-// the user's local wall-clock, so show the resolved UTC instant for clarity.
+// datetime-local is local wall-clock; show the resolved UTC instant (chain stores UTC ms).
 const pad = (n) => String(n).padStart(2, '0')
 
 const tzOffsetLabel = () => {
@@ -94,8 +93,7 @@ function Distribution () {
                   }}
                   fontFamily='mono'
                   width='200px'
-                  // Native popup + spinners render dark; recolor the calendar glyph so
-                  // it stays visible on the dark field.
+                  // Dark popup + visible calendar glyph on the dark field.
                   sx={{
                     colorScheme: 'dark',
                     '&::-webkit-calendar-picker-indicator': { filter: 'invert(0.8)', cursor: 'pointer' }

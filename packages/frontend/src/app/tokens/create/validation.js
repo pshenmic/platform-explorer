@@ -1,9 +1,6 @@
-// Pre-flight checks so the user sees plain-language problems before the
-// irreversible broadcast, plus a mapper that turns raw WASM/SDK errors into
-// readable text. Returns an array of messages — empty means valid.
+// Pre-flight form checks + a mapper for raw WASM/SDK errors. Returns messages; empty = valid.
 
-// Dash Platform identifiers are 32 bytes → ~43-44 base58 chars. Keep the length
-// window loose; the goal is catching obviously-wrong input, not strict parsing.
+// Loose base58 length check — catches obviously-wrong ids, not strict parsing.
 const BASE58 = /^[1-9A-HJ-NP-Za-km-z]{40,46}$/
 const isIdentityId = (s) => BASE58.test((s || '').trim())
 const isWholeNumber = (s) => /^\d+$/.test((s || '').trim())
@@ -52,8 +49,7 @@ export const validateForm = (form) => {
   return errors
 }
 
-// Raw SDK/WASM errors are cryptic — map the common ones, keep the original as
-// a fallback so nothing is silently swallowed.
+// Map common cryptic errors; keep the original as fallback.
 export const humanizeDeployError = (e) => {
   const raw = (e?.message ?? String(e ?? '')).trim()
   const low = raw.toLowerCase()

@@ -1,13 +1,8 @@
-// docs.dash.org covers token operations but not configuration fields —
-// the source of truth is rs-dpp `TokenConfigurationV0` doc comments.
-
-// docs.dash.org token reference — only its "Constants and Limits" section is
-// relevant to configuration (value limits); the rest is about operations.
+// Config fields aren't in docs.dash.org — source of truth is rs-dpp TokenConfigurationV0.
 export const TOKEN_LIMITS_DOC_URL =
   'https://docs.dash.org/projects/platform/en/stable/docs/protocol-ref/token.html#token-constants-and-limits'
 
-// rs-dpp config lives across three structs. Line numbers verified; if they
-// drift the link still lands in the right file.
+// Config spans three rs-dpp structs; line anchors may drift but the file stays right.
 const BASE =
   'https://github.com/dashpay/platform/blob/master/packages/rs-dpp/src/data_contract/associated_token'
 const STRUCT = `${BASE}/token_configuration/v0/mod.rs`

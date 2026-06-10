@@ -10,9 +10,7 @@ import Distribution from './Distribution'
 import Advanced from './Advanced'
 import './FormAccordion.scss'
 
-// Section names follow the official Dash Evo Tool taxonomy (Basic Info /
-// Action Rules / Distribution / Advanced) so users moving between tools see
-// the same vocabulary. Groups / Document Schemas are Phase 2.
+// Section names follow Dash Evo Tool. Groups / Document Schemas are Phase 2.
 const SECTIONS = [
   { id: 'basic', label: 'Basic Info', Comp: Essentials },
   { id: 'rules', label: 'Action Rules', Comp: Features },

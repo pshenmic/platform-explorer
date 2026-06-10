@@ -1,6 +1,4 @@
-// v2 wrappers (pshenmic-dpp/dist/src/dpp/structs/) reorder args vs v1 NAPI:
-// optionals trail, keepsHistory moved earlier, maxSupply to the end. Each ctor
-// moves ownership of nested instances — rule slots use factory functions.
+// v2 ctors move ownership of nested instances — rule slots use factory functions.
 
 const INTERVAL_UNIT_MS = {
   seconds: 1000n,
@@ -118,11 +116,7 @@ export async function buildTokenConfigurationWasm (form) {
     }
   }
 
-  // TokenDistributionRulesWASM signature:
-  //   (perpetualDistributionRules, newTokensDestinationIdentityRules,
-  //    mintingAllowChoosingDestination, mintingAllowChoosingDestinationRules,
-  //    changeDirectPurchasePricingRules,
-  //    perpetualDistribution?, preProgrammedDistribution?, newTokensDestinationIdentity?)
+  // Positional ctor — arg order per pshenmic-dpp TokenDistributionRulesWASM (no reliable .d.ts, see #76).
   const distributionRules = new TokenDistributionRulesWASM(
     ownerOnlyRule(),
     ownerOnlyRule(),
@@ -144,12 +138,7 @@ export async function buildTokenConfigurationWasm (form) {
     ? BigInt(form.maxSupply) * scale
     : undefined
 
-  // v2 TokenConfigurationWASM signature:
-  //   (conventions, conventionsChangeRules, baseSupply, keepsHistory,
-  //    startAsPaused, allowTransferToFrozenBalance, maxSupplyChangeRules,
-  //    distributionRules, marketplaceRules, manualMintingRules, manualBurningRules,
-  //    freezeRules, unfreezeRules, destroyFrozenFundsRules, emergencyActionRules,
-  //    mainControlGroupCanBeModified, maxSupply?, mainControlGroup?, description?)
+  // Positional ctor — arg order per pshenmic-dpp TokenConfigurationWASM v2 (see #76).
   return new TokenConfigurationWASM(
     conventions,
     ownerOnlyRule(),

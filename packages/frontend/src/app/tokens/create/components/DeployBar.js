@@ -10,10 +10,6 @@ import { useCreateToken } from '../useCreateToken'
 import { validateForm } from '../validation'
 import ReviewModal from './ReviewModal'
 
-// Mirrors dataContract/create Deploy.js so both creation flows look identical:
-// CardWrapper + MethodSelect + PrivateKeyForm + status line + button. Wiring is
-// ours (useSigner + useCreateToken); ReviewModal stays as a confirm step before
-// the irreversible broadcast.
 const DeployStatus = ({ signer, deploy }) => {
   if (deploy.error != null) return <Text color='red.500' fontSize='sm'>{deploy.error}</Text>
   if (signer.error != null) return <Text color='red.500' fontSize='sm'>{signer.error}</Text>
@@ -56,8 +52,7 @@ function DeployBar () {
       else signerCtl.connect()
       return
     }
-    // Reveal problems only when the user actually tries to deploy — no nagging
-    // on the empty default form.
+    // Surface errors only on a deploy attempt — no nagging on the empty form.
     if (errors.length) { setShowErrors(true); return }
     setShowErrors(false)
     setIsReviewOpen(true)
@@ -74,8 +69,7 @@ function DeployBar () {
   else if (deploy.isLoading) label = 'Deploying...'
   else label = 'Deploy Token'
 
-  // Keep the button clickable when connected so a click can surface the
-  // validation errors; the actual gate lives in handlePrimary.
+  // Stays clickable when connected so a click can reveal validation errors.
   const isDisabled = isBusy || (!isConnected && isPK && !wif.trim())
 
   return (
@@ -86,7 +80,6 @@ function DeployBar () {
           onChange={signerCtl.setMethod}
           isDisabled={isBusy || isConnected}
         />
-        {/* Pinned footer stays compact: key inputs appear only when chosen. */}
         {isPK && !isConnected && (
           <PrivateKeyForm
             wif={wif}

@@ -6,14 +6,11 @@ import { FeatureToggle } from './FeatureRow'
 import History from './History'
 import { useTokenWizard } from '../TokenWizardContext'
 
-// "Advanced" mirrors the official Dash Evo Tool bucket: less-common token
-// config (decimals, capitalization, paused state, transfer-to-frozen) plus the
-// on-chain history flags. Kept together so Action Rules stays just the rules.
 function Advanced () {
   const { form, setField } = useTokenWizard()
   const toggle = (key) => () => setField(key, !form[key])
 
-  // DPP caps decimals at 16. Empty allowed mid-typing (treated as 0 on build).
+  // DPP caps decimals at 16; empty allowed mid-typing.
   const onDecimalsChange = (e) => {
     const digits = e.target.value.replace(/\D/g, '')
     if (digits === '') return setField('decimals', '')

@@ -19,15 +19,13 @@
     }
   }
 
-  // Mini-header above a repeater / conditional block. Visually separates
-  // from the flat list of simple rows above.
+  // Mini-header above a repeater / conditional block.
   &__GroupHeader {
     margin-top: 8px;
     padding-top: 8px;
     border-top: 1px solid var(--chakra-colors-gray-700);
   }
 
-  // Rows are layout only — label sets its own body font; typed values keep mono.
   &__Row {
     padding: 4px 0;
     font-size: 0.75rem;
