@@ -13,8 +13,9 @@ export const RowLabel = ({ label, tooltip, width }) => (
         <Text
           as='button'
           type='button'
-          fontSize='12px'
-          fontFamily='mono'
+          fontSize='0.75rem'
+          fontWeight='600'
+          fontFamily='var(--font-body)'
           color='var(--chakra-colors-white-100)'
           sx={{
             background: 'transparent',
@@ -27,7 +28,7 @@ export const RowLabel = ({ label, tooltip, width }) => (
           {label}
         </Text>
       </PopoverTrigger>
-      <PopoverContent maxW='280px' fontSize='12px' fontFamily='var(--font-mono)'>
+      <PopoverContent maxW='280px' fontSize='0.75rem' fontFamily='var(--font-body)'>
         <PopoverArrow/>
         <PopoverBody>{tooltip}</PopoverBody>
       </PopoverContent>

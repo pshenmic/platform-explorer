@@ -2,9 +2,9 @@
 
 .Essentials {
   &__Label {
-    font-family: var(--font-montserrat);
+    font-family: $font-body;
     font-weight: 600;
-    font-size: 12px;
+    font-size: 0.75rem;
     color: var(--chakra-colors-white-50);
     background: transparent;
     border: 0;
@@ -19,16 +19,13 @@
   }
 
   &__LabelRow {
-    margin-bottom: 6px;
-    // Inherit the same compact mono context as Features__Row so the
-    // Yes/No badge inside Max supply renders at the same size.
-    font-family: $font-mono;
-    font-size: 12px;
+    margin-bottom: 8px;
+    font-size: 0.75rem;
   }
 
   &__Hint {
-    font-family: $font-mono;
-    font-size: 11px;
+    font-family: $font-body;
+    font-size: 0.75rem;
     margin-top: 4px;
   }
 }

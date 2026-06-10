@@ -18,7 +18,7 @@ function HelpPopover ({ children }) {
           <InfoOutlineIcon boxSize={3} color='gray.400'/>
         </button>
       </PopoverTrigger>
-      <PopoverContent maxW='280px' fontSize='12px' fontFamily='var(--font-mono)'>
+      <PopoverContent maxW='280px' fontSize='0.75rem' fontFamily='var(--font-body)'>
         <PopoverArrow/>
         <PopoverBody>{children}</PopoverBody>
       </PopoverContent>

@@ -30,7 +30,7 @@ const FieldLabel = ({ label, tooltip, rightSlot }) => (
           {label}
         </Text>
       </PopoverTrigger>
-      <PopoverContent maxW='320px' fontSize='12px' fontFamily='var(--font-mono)'>
+      <PopoverContent maxW='320px' fontSize='0.75rem' fontFamily='var(--font-body)'>
         <PopoverArrow/>
         <PopoverBody>{tooltip}</PopoverBody>
       </PopoverContent>
