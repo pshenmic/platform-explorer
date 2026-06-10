@@ -63,8 +63,8 @@
 
   &__PreviewPane {
     position: sticky;
-    top: 16px;
-    height: calc(var(--layout-page-h) - 16px);
+    top: 0;
+    height: var(--layout-page-h);
     overflow: hidden;
 
     @media (max-width: 960px) {
