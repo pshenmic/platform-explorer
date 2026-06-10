@@ -234,6 +234,8 @@ function Identity ({ identifier }) {
                 ? <DocumentsList
                     documents={documents.data?.resultSet}
                     showDataContract={true}
+                    showAction={false}
+                    showGas={false}
                     pagination={{
                       onPageChange: pagination => paginationHandler(setDocuments, pagination.selected),
                       pageCount: Math.ceil(documents.data?.pagination?.total / pageSize) || 1,
