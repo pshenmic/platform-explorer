@@ -1,7 +1,6 @@
 'use client'
 
 import { createContext, useContext, useMemo, useState } from 'react'
-import { DEFAULT_TEMPLATE_ID, getTemplate } from './templates'
 
 const TokenWizardContext = createContext(null)
 
@@ -20,89 +19,50 @@ const DEFAULT_KEEPS_HISTORY = {
   directPurchase: true
 }
 
-const buildInitialForm = (templateId) => {
-  const template = getTemplate(templateId)
-  return {
-    template: templateId,
-    name: '',
-    pluralForm: '',
-    pluralEdited: false,
-    decimals: template.defaults.decimals,
-    baseSupply: '',
-    hasMaxSupply: template.defaults.hasMaxSupply,
-    maxSupply: '',
-    allowMint: template.defaults.allowMint,
-    allowBurn: template.defaults.allowBurn,
-    allowTransfer: template.defaults.allowTransfer,
-    allowDirectPurchase: template.defaults.allowDirectPurchase,
-    allowFreeze: template.defaults.allowFreeze ?? true,
-    allowDestroyFrozen: template.defaults.allowDestroyFrozen ?? true,
-    allowEmergency: template.defaults.allowEmergency ?? true,
-    startAsPaused: template.defaults.startAsPaused ?? false,
-    description: '',
-    shouldCapitalize: template.defaults.shouldCapitalize ?? true,
-    destinationIdentity: template.defaults.destinationIdentity ?? '',
-    allowTransferToFrozenBalance: template.defaults.allowTransferToFrozenBalance ?? false,
-    keepsHistory: { ...DEFAULT_KEEPS_HISTORY, ...(template.defaults.keepsHistory || {}) },
-    // Seed one row so the repeater UI is visible by default.
-    preProgrammedRows: [{ id: 'pp-init', time: '', identity: '', amount: '' }],
-    perpetualEnabled: template.defaults.perpetualEnabled ?? false,
-    perpetualType: template.defaults.perpetualType ?? 'time',
-    perpetualIntervalValue: template.defaults.perpetualIntervalValue ?? '',
-    perpetualIntervalUnit: template.defaults.perpetualIntervalUnit ?? 'days',
-    perpetualAmount: template.defaults.perpetualAmount ?? '',
-    perpetualRecipient: template.defaults.perpetualRecipient ?? 'owner',
-    perpetualRecipientIdentity: ''
-  }
-}
+// Neutral starting point: a general-purpose token (mintable, burnable,
+// transferable, no max supply, all guards on, no recurring distribution).
+// Every field stays editable — there are no presets that pre-set hidden options.
+const buildInitialForm = () => ({
+  name: '',
+  pluralForm: '',
+  pluralEdited: false,
+  decimals: 8,
+  baseSupply: '',
+  hasMaxSupply: false,
+  maxSupply: '',
+  allowMint: true,
+  allowBurn: true,
+  allowTransfer: true,
+  allowDirectPurchase: false,
+  allowFreeze: true,
+  allowDestroyFrozen: true,
+  allowEmergency: true,
+  startAsPaused: false,
+  description: '',
+  shouldCapitalize: true,
+  destinationIdentity: '',
+  allowTransferToFrozenBalance: false,
+  keepsHistory: { ...DEFAULT_KEEPS_HISTORY },
+  // Seed one row so the repeater UI is visible by default.
+  preProgrammedRows: [{ id: 'pp-init', time: '', identity: '', amount: '' }],
+  perpetualEnabled: false,
+  perpetualType: 'time',
+  perpetualIntervalValue: '',
+  perpetualIntervalUnit: 'days',
+  perpetualAmount: '',
+  perpetualRecipient: 'owner',
+  perpetualRecipientIdentity: ''
+})
 
 export const TokenWizardProvider = ({ children }) => {
-  const [form, setFormState] = useState(() => buildInitialForm(DEFAULT_TEMPLATE_ID))
+  const [form, setFormState] = useState(buildInitialForm)
 
   const setField = (key, value) => {
     setFormState((prev) => ({ ...prev, [key]: value }))
   }
 
-  const selectTemplate = (templateId) => {
-    // "Custom" just marks the form as off-preset without touching any fields.
-    if (templateId === 'custom') {
-      setFormState((prev) => ({ ...prev, template: 'custom' }))
-      return
-    }
-    const template = getTemplate(templateId)
-    if (template.disabled) return
-    setFormState((prev) => ({
-      ...prev,
-      template: templateId,
-      decimals: template.defaults.decimals,
-      hasMaxSupply: template.defaults.hasMaxSupply,
-      allowMint: template.defaults.allowMint,
-      allowBurn: template.defaults.allowBurn,
-      allowTransfer: template.defaults.allowTransfer,
-      allowDirectPurchase: template.defaults.allowDirectPurchase,
-      allowFreeze: template.defaults.allowFreeze ?? true,
-      allowDestroyFrozen: template.defaults.allowDestroyFrozen ?? true,
-      allowEmergency: template.defaults.allowEmergency ?? true,
-      startAsPaused: template.defaults.startAsPaused ?? false,
-      // Templates only override fields they explicitly define; preserve user input otherwise.
-      shouldCapitalize: template.defaults.shouldCapitalize ?? prev.shouldCapitalize,
-      destinationIdentity: template.defaults.destinationIdentity ?? prev.destinationIdentity,
-      allowTransferToFrozenBalance: template.defaults.allowTransferToFrozenBalance ?? prev.allowTransferToFrozenBalance,
-      keepsHistory: template.defaults.keepsHistory
-        ? { ...DEFAULT_KEEPS_HISTORY, ...template.defaults.keepsHistory }
-        : prev.keepsHistory,
-      // Distribution seeds (Reward/Airdrop presets); preserve user input otherwise.
-      perpetualEnabled: template.defaults.perpetualEnabled ?? prev.perpetualEnabled,
-      perpetualType: template.defaults.perpetualType ?? prev.perpetualType,
-      perpetualIntervalValue: template.defaults.perpetualIntervalValue ?? prev.perpetualIntervalValue,
-      perpetualIntervalUnit: template.defaults.perpetualIntervalUnit ?? prev.perpetualIntervalUnit,
-      perpetualAmount: template.defaults.perpetualAmount ?? prev.perpetualAmount,
-      perpetualRecipient: template.defaults.perpetualRecipient ?? prev.perpetualRecipient
-    }))
-  }
-
   const value = useMemo(
-    () => ({ form, setField, selectTemplate }),
+    () => ({ form, setField }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [form]
   )

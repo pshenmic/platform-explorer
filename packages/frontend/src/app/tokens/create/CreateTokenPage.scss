@@ -7,17 +7,6 @@
   gap: 16px;
   width: 100%;
 
-  &__SectionTitle {
-    font-family: var(--font-montserrat);
-    font-weight: 700;
-    font-size: 12px;
-    line-height: 110%;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
-    color: var(--chakra-colors-white-50);
-    margin-bottom: 12px;
-  }
-
   &__Layout {
     display: grid;
     grid-template-columns: 3fr 2fr;
@@ -55,7 +44,7 @@
     flex: 1;
     min-height: 0;
     overflow-y: auto;
-    padding: 24px 24px 0;
+    padding: 24px;
     display: flex;
     flex-direction: column;
     gap: 16px;
@@ -65,35 +54,11 @@
     }
   }
 
-  &__Columns {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 24px;
-    align-items: stretch;
-    flex: 1;
-    min-height: 0;
-
-    @media (max-width: 768px) {
-      grid-template-columns: 1fr;
-      flex: initial;
-    }
-  }
-
-  &__Column {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-    min-width: 0;
-  }
-
-  &__FormFooter {
-    flex-shrink: 0;
-    padding: 16px 24px;
-    border-top: 1px solid var(--chakra-colors-gray-700);
-    background: var(--chakra-colors-gray-675);
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
+  // Deploy scrolls with the form. margin-top:auto pins it to the bottom of the
+  // visible pane while the form is short; once sections expand and the content
+  // overflows, it flows below the fold and is reached by scrolling.
+  &__DeployBlock {
+    margin-top: auto;
   }
 
   &__PreviewPane {
