@@ -1,6 +1,6 @@
 'use client'
 
-import { HStack, Stack, Input, Select, IconButton } from '@chakra-ui/react'
+import { HStack, Stack, Input, Select, IconButton, Text } from '@chakra-ui/react'
 import { YesNoBadge } from './FeatureRow'
 import { Row, GroupHeader } from './AdvancedRow'
 import { useTokenWizard } from '../TokenWizardContext'
@@ -8,6 +8,25 @@ import './Advanced.scss'
 
 let __rowSeq = 0
 const makeRowId = () => `pp${++__rowSeq}`
+
+// The chain stores schedule times as UTC epoch ms. The datetime-local field is
+// the user's local wall-clock, so show the resolved UTC instant for clarity.
+const pad = (n) => String(n).padStart(2, '0')
+
+const tzOffsetLabel = () => {
+  const mins = -new Date().getTimezoneOffset()
+  const sign = mins >= 0 ? '+' : '-'
+  const h = Math.floor(Math.abs(mins) / 60)
+  const m = Math.abs(mins) % 60
+  return `UTC${sign}${h}${m ? ':' + pad(m) : ''}`
+}
+
+const toUtcPreview = (local) => {
+  const ts = Date.parse(local)
+  if (Number.isNaN(ts)) return null
+  const d = new Date(ts)
+  return `${d.getUTCFullYear()}-${pad(d.getUTCMonth() + 1)}-${pad(d.getUTCDate())} ${pad(d.getUTCHours())}:${pad(d.getUTCMinutes())} UTC`
+}
 
 function Distribution () {
   const { form, setField } = useTokenWizard()
@@ -53,67 +72,82 @@ function Distribution () {
           tooltip='One-off scheduled distributions. Each row sends a fixed amount to one identity at a specific time. Useful for airdrops or vesting unlocks. Amounts are in tokens (scaled by 10^decimals on chain).'
           onAdd={addPreProgrammedRow}
         />
-        {(form.preProgrammedRows || []).map((row, idx) => (
-          <HStack key={row.id} className='Advanced__RepeaterRow' spacing={2} align='center'>
-            <Input
-              size='xs'
-              variant='filled'
-              type='datetime-local'
-              value={row.time}
-              onChange={(e) => {
-                const next = [...form.preProgrammedRows]
-                next[idx] = { ...row, time: e.target.value }
-                setField('preProgrammedRows', next)
-              }}
-              fontFamily='mono'
-              width='200px'
-              // Native popup + spinners render dark; recolor the calendar glyph so
-              // it stays visible on the dark field.
-              sx={{
-                colorScheme: 'dark',
-                '&::-webkit-calendar-picker-indicator': { filter: 'invert(0.8)', cursor: 'pointer' }
-              }}
-            />
-            <Input
-              size='xs'
-              variant='filled'
-              placeholder='Identity ID'
-              value={row.identity}
-              onChange={(e) => {
-                const next = [...form.preProgrammedRows]
-                next[idx] = { ...row, identity: e.target.value }
-                setField('preProgrammedRows', next)
-              }}
-              fontFamily='mono'
-              flex={1}
-            />
-            <Input
-              size='xs'
-              variant='filled'
-              placeholder='Amount'
-              value={row.amount}
-              onChange={(e) => {
-                const v = e.target.value.replace(/\D/g, '')
-                const next = [...form.preProgrammedRows]
-                next[idx] = { ...row, amount: v }
-                setField('preProgrammedRows', next)
-              }}
-              fontFamily='mono'
-              inputMode='numeric'
-              width='120px'
-            />
-            <IconButton
-              size='xs'
-              variant='ghost'
-              aria-label='Remove row'
-              icon={<span style={{ fontSize: '14px', lineHeight: 1 }}>×</span>}
-              onClick={() => {
-                const next = form.preProgrammedRows.filter((_, i) => i !== idx)
-                setField('preProgrammedRows', next)
-              }}
-            />
-          </HStack>
-        ))}
+        {(form.preProgrammedRows || []).length > 0 && (
+          <Text fontSize='0.6875rem' fontFamily='var(--font-body)' color='var(--chakra-colors-white-50)'>
+            Times are in your local zone ({tzOffsetLabel()}); the on-chain UTC instant is shown under each row.
+          </Text>
+        )}
+        {(form.preProgrammedRows || []).map((row, idx) => {
+          const utc = row.time ? toUtcPreview(row.time) : null
+          return (
+            <Stack key={row.id} spacing={1} className='Advanced__RepeaterRow'>
+              <HStack spacing={2} align='center'>
+                <Input
+                  size='xs'
+                  variant='filled'
+                  type='datetime-local'
+                  value={row.time}
+                  onChange={(e) => {
+                    const next = [...form.preProgrammedRows]
+                    next[idx] = { ...row, time: e.target.value }
+                    setField('preProgrammedRows', next)
+                  }}
+                  fontFamily='mono'
+                  width='200px'
+                  // Native popup + spinners render dark; recolor the calendar glyph so
+                  // it stays visible on the dark field.
+                  sx={{
+                    colorScheme: 'dark',
+                    '&::-webkit-calendar-picker-indicator': { filter: 'invert(0.8)', cursor: 'pointer' }
+                  }}
+                />
+                <Input
+                  size='xs'
+                  variant='filled'
+                  placeholder='Identity ID'
+                  value={row.identity}
+                  onChange={(e) => {
+                    const next = [...form.preProgrammedRows]
+                    next[idx] = { ...row, identity: e.target.value }
+                    setField('preProgrammedRows', next)
+                  }}
+                  fontFamily='mono'
+                  flex={1}
+                />
+                <Input
+                  size='xs'
+                  variant='filled'
+                  placeholder='Amount'
+                  value={row.amount}
+                  onChange={(e) => {
+                    const v = e.target.value.replace(/\D/g, '')
+                    const next = [...form.preProgrammedRows]
+                    next[idx] = { ...row, amount: v }
+                    setField('preProgrammedRows', next)
+                  }}
+                  fontFamily='mono'
+                  inputMode='numeric'
+                  width='120px'
+                />
+                <IconButton
+                  size='xs'
+                  variant='ghost'
+                  aria-label='Remove row'
+                  icon={<span style={{ fontSize: '14px', lineHeight: 1 }}>×</span>}
+                  onClick={() => {
+                    const next = form.preProgrammedRows.filter((_, i) => i !== idx)
+                    setField('preProgrammedRows', next)
+                  }}
+                />
+              </HStack>
+              {utc && (
+                <Text fontSize='0.625rem' fontFamily='mono' color='var(--chakra-colors-white-50)'>
+                  → {utc}
+                </Text>
+              )}
+            </Stack>
+          )
+        })}
 
         <GroupHeader
           label='Perpetual distribution'

@@ -96,7 +96,10 @@ const parseFormUpdates = (config) => {
     for (const [ts, perId] of Object.entries(pp.distributions)) {
       const tsNum = Number(ts)
       if (!Number.isFinite(tsNum) || !perId || typeof perId !== 'object') continue
-      const iso = new Date(tsNum).toISOString().slice(0, 16)
+      // datetime-local is local wall-clock, so shift by the tz offset before
+      // slicing — using raw toISOString() (UTC) would drift the round-trip.
+      const local = new Date(tsNum - new Date(tsNum).getTimezoneOffset() * 60000)
+      const iso = local.toISOString().slice(0, 16)
       for (const [identity, amount] of Object.entries(perId)) {
         rows.push({ id: `pp${++seq}`, time: iso, identity, amount: String(amount) })
       }
