@@ -605,13 +605,10 @@
 
 @mixin BrandScroll () {
   scroll-behavior: smooth;
-  // Standards-based styling (Chrome 121+, Firefox, Safari 18.2+) — transparent
-  // track keeps it minimal on the dark theme.
   scrollbar-width: thin;
   scrollbar-color: $scrollColor transparent;
 
-  // WebKit enhancement: 8px grabbable thumb, rounded, inset via a transparent
-  // border + background-clip so the track gutter stays subtle.
+  // WebKit: rounded, inset thumb via transparent border + background-clip.
   &::-webkit-scrollbar {
     height: 8px;
     width: 8px;
