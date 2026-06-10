@@ -62,7 +62,8 @@ function Distribution () {
             value={form.destinationIdentity}
             onChange={(e) => setField('destinationIdentity', e.target.value)}
             fontFamily='mono'
-            width='280px'
+            w='100%'
+            maxW='280px'
           />
         </Row>
 
@@ -80,7 +81,7 @@ function Distribution () {
           const utc = row.time ? toUtcPreview(row.time) : null
           return (
             <Stack key={row.id} spacing={1} className='Advanced__RepeaterRow'>
-              <HStack spacing={2} align='center'>
+              <HStack spacing={2} align='center' flexWrap='wrap'>
                 <Input
                   size='xs'
                   variant='filled'
@@ -92,7 +93,7 @@ function Distribution () {
                     setField('preProgrammedRows', next)
                   }}
                   fontFamily='mono'
-                  width='200px'
+                  flex='1 1 170px'
                   // Dark popup + visible calendar glyph on the dark field.
                   sx={{
                     colorScheme: 'dark',
@@ -110,7 +111,7 @@ function Distribution () {
                     setField('preProgrammedRows', next)
                   }}
                   fontFamily='mono'
-                  flex={1}
+                  flex='2 1 160px'
                 />
                 <Input
                   size='xs'
@@ -125,7 +126,7 @@ function Distribution () {
                   }}
                   fontFamily='mono'
                   inputMode='numeric'
-                  width='120px'
+                  flex='1 1 100px'
                 />
                 <IconButton
                   size='xs'
@@ -175,7 +176,9 @@ function Distribution () {
                   setField('perpetualType', v)
                   if (v !== 'epoch' && form.perpetualRecipient === 'evonodes') setField('perpetualRecipient', 'owner')
                 }}
-                width='160px'
+                flex='1'
+                minW='0'
+                maxW='160px'
                 fontFamily='mono'
               >
                 <option value='time'>Time</option>
@@ -187,7 +190,7 @@ function Distribution () {
               label='Interval'
               tooltip='How often new tokens are emitted.'
             >
-              <HStack spacing={2}>
+              <HStack spacing={2} flex='1' minW='0' maxW='240px'>
                 <Input
                   size='xs'
                   variant='filled'
@@ -196,7 +199,8 @@ function Distribution () {
                   onChange={(e) => setField('perpetualIntervalValue', e.target.value.replace(/\D/g, ''))}
                   fontFamily='mono'
                   inputMode='numeric'
-                  width='80px'
+                  flex='1'
+                  minW='0'
                 />
                 {form.perpetualType === 'time'
                   ? (
@@ -205,7 +209,8 @@ function Distribution () {
                       variant='filled'
                       value={form.perpetualIntervalUnit}
                       onChange={(e) => setField('perpetualIntervalUnit', e.target.value)}
-                      width='110px'
+                      flex='1'
+                      minW='0'
                       fontFamily='mono'
                     >
                       <option value='seconds'>seconds</option>
@@ -233,7 +238,9 @@ function Distribution () {
                 onChange={(e) => setField('perpetualAmount', e.target.value.replace(/\D/g, ''))}
                 fontFamily='mono'
                 inputMode='numeric'
-                width='160px'
+                flex='1'
+                minW='0'
+                maxW='160px'
               />
             </Row>
             <Row
@@ -245,7 +252,9 @@ function Distribution () {
                 variant='filled'
                 value={form.perpetualRecipient}
                 onChange={(e) => setField('perpetualRecipient', e.target.value)}
-                width='180px'
+                flex='1'
+                minW='0'
+                maxW='180px'
                 fontFamily='mono'
               >
                 <option value='owner'>Contract owner</option>
@@ -265,7 +274,9 @@ function Distribution () {
                   value={form.perpetualRecipientIdentity}
                   onChange={(e) => setField('perpetualRecipientIdentity', e.target.value)}
                   fontFamily='mono'
-                  width='280px'
+                  flex='1'
+                  minW='0'
+                  maxW='280px'
                 />
               </Row>
             )}

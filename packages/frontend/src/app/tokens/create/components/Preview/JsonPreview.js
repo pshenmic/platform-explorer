@@ -172,14 +172,13 @@ const TabButton = ({ id, label, view, onSelect }) => (
   </button>
 )
 
-function JsonPreview () {
+function JsonPreview ({ view, onViewChange }) {
   const { form, setField } = useTokenWizard()
   const configuration = useMemo(() => buildTokenConfiguration(form), [form])
   const code = useMemo(() => JSON.stringify(configuration, null, 2), [configuration])
 
   const [editorValue, setEditorValue] = useState(code)
   const [parseError, setParseError] = useState(null)
-  const [view, setView] = useState('json')
   // Kept here so FAQ open-state survives switching to the JSON tab and back.
   const [faqOpen, setFaqOpen] = useState(() => new Set())
   const toggleFaq = (key) => setFaqOpen((prev) => {
@@ -229,8 +228,8 @@ function JsonPreview () {
       <div className='Preview__JsonTitle'>
         <span>{TITLES[view]}</span>
         <div className='Preview__ViewToggle' role='tablist'>
-          <TabButton id='json' label='JSON' view={view} onSelect={setView}/>
-          <TabButton id='faq' label='FAQ' view={view} onSelect={setView}/>
+          <TabButton id='json' label='JSON' view={view} onSelect={onViewChange}/>
+          <TabButton id='faq' label='FAQ' view={view} onSelect={onViewChange}/>
         </div>
       </div>
 

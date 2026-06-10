@@ -45,7 +45,8 @@
     }
   }
 
-  // Segmented JSON | FAQ switch in the panel title.
+  // Segmented JSON | FAQ switch in the panel title. Hidden on mobile — the
+  // flattened Form/JSON/FAQ top bar drives the view there.
   &__ViewToggle {
     display: inline-flex;
     gap: 2px;
@@ -53,6 +54,10 @@
     border: 1px solid #404e53;
     border-radius: 0.375rem;
     background: #1f2528;
+
+    @media (max-width: 960px) {
+      display: none;
+    }
   }
 
   &__ViewToggleBtn {
