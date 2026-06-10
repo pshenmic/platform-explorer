@@ -237,7 +237,6 @@ function JsonPreview () {
             onChange={handleChange}
             onFocus={() => { isFocusedRef.current = true }}
             onBlur={() => { isFocusedRef.current = false }}
-            height='100%'
           />
           {parseError && (
             <div className='Preview__JsonError'>Invalid JSON — last valid state kept</div>

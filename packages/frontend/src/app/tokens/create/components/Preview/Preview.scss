@@ -8,17 +8,6 @@
     gap: 8px;
   }
 
-  &__Json {
-    flex: 1;
-    min-height: 0;
-
-    .cm-theme,
-    .cm-editor {
-      flex: 1;
-      min-height: 0;
-    }
-  }
-
   &__JsonError {
     font-family: $font-mono;
     font-size: 11px;
@@ -91,9 +80,6 @@
 
   // FAQ view — read-only companion to the JSON editor.
   &__Faq {
-    flex: 1;
-    min-height: 0;
-    overflow-y: auto;
     display: flex;
     flex-direction: column;
     gap: 14px;
