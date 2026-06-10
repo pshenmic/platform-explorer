@@ -8,11 +8,15 @@ import Progress from './components/Progress'
 import Popover from './components/Popover'
 import Tooltip from './components/Tooltip'
 import Input from './components/Input'
+import Heading from './components/Heading'
+import Textarea from './components/Textarea'
+
 import {
   Montserrat,
   Open_Sans as OpenSans,
   Roboto_Mono as RobotoMono
 } from 'next/font/google'
+import Checkbox from './components/Checkbox'
 
 const montserrat = Montserrat({ subsets: ['latin'] })
 const openSans = OpenSans({ subsets: ['latin'] })
@@ -79,7 +83,10 @@ export const theme = extendTheme({
     Modal: {
       baseStyle: {
         dialog: {
-          background: 'gray.800'
+          bg: 'transparent',
+          boxShadow: 'none',
+          border: 'none',
+          p: 0
         }
       }
     },
@@ -95,7 +102,10 @@ export const theme = extendTheme({
     Progress,
     Popover,
     Tooltip,
-    Input
+    Input,
+    Heading,
+    Textarea,
+    Checkbox
   }
 })
 

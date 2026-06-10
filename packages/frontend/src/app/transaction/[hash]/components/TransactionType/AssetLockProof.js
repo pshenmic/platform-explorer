@@ -1,19 +1,16 @@
-import { networks } from '../../../../../constants/networks'
 import { CopyButton } from '../../../../../components/ui/Buttons'
 import { InfoLine, Identifier } from '@components/data'
 import { ValueCard } from '@components/cards'
 import { ValueContainer } from '@components/ui/containers'
-
-const baseUrl = process.env.NEXT_PUBLIC_BASE_URL
-const activeNetwork = networks.find(
-  (network) => network.explorerBaseUrl === baseUrl
-)
-const l1explorerBaseUrl = activeNetwork?.l1explorerBaseUrl || null
+import { useActiveNetwork } from 'src/contexts'
 
 export const AssetLockProof = ({
   assetLockProof: { fundingCoreTx, instantLock },
   loading
-}) => (
+}) => {
+  const { l1explorerBaseUrl } = useActiveNetwork()
+
+  return (
   <>
     {instantLock && (
       <InfoLine
@@ -60,4 +57,5 @@ export const AssetLockProof = ({
       />
     )}
   </>
-)
+  )
+}

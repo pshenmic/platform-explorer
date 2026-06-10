@@ -170,6 +170,14 @@ const schemaTypes = [
         type: ['number', 'null'],
         minimum: 0
       },
+      revision_min: {
+        type: ['number', 'null'],
+        minimum: 1
+      },
+      revision_max: {
+        type: ['number', 'null'],
+        minimum: 1
+      },
       timestamp_start: {
         type: ['string', 'null'],
         format: 'date-time'
@@ -213,6 +221,10 @@ const schemaTypes = [
       },
       is_system: {
         type: ['boolean', 'null']
+      },
+      identity_type: {
+        type: ['string', 'null'],
+        enum: ['regular', 'masternode']
       },
       with_tokens: {
         type: ['boolean', 'null']
@@ -306,6 +318,9 @@ const schemaTypes = [
       balance_max: {
         type: ['string', 'null'],
         pattern: '^[0-9]+$'
+      },
+      voting_finished: {
+        type: ['boolean', 'null']
       }
     }
   },

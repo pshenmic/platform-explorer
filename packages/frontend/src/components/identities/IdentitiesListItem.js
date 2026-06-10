@@ -1,10 +1,15 @@
 import Link from 'next/link'
-import { Identifier, Alias, DateBlock } from '../data'
+import { Identifier, Alias, DateBlock, BigNumber, NotActive } from '../data'
 import { Grid, GridItem } from '@chakra-ui/react'
 import './IdentitiesListItem.scss'
 
+const renderCount = (value) =>
+  value != null && Number.isFinite(Number(value))
+    ? <BigNumber>{value}</BigNumber>
+    : <NotActive>—</NotActive>
+
 function IdentitiesListItem ({ identity }) {
-  const { aliases, identifier, timestamp, isSystem } = identity
+  const { aliases, identifier, timestamp, isSystem, balance, totalTxs, totalDocuments, totalDataContracts } = identity
   const activeAlias = aliases?.find(alias => alias?.status === 'ok')
 
   return (
@@ -32,6 +37,22 @@ function IdentitiesListItem ({ identity }) {
                 </Identifier>
             }
           </div>
+        </GridItem>
+
+        <GridItem className={'IdentitiesListItem__Column IdentitiesListItem__Column--Balance'}>
+          {balance != null ? <BigNumber>{balance}</BigNumber> : <NotActive>—</NotActive>}
+        </GridItem>
+
+        <GridItem className={'IdentitiesListItem__Column IdentitiesListItem__Column--Txs'}>
+          {renderCount(totalTxs)}
+        </GridItem>
+
+        <GridItem className={'IdentitiesListItem__Column IdentitiesListItem__Column--Documents'}>
+          {renderCount(totalDocuments)}
+        </GridItem>
+
+        <GridItem className={'IdentitiesListItem__Column IdentitiesListItem__Column--Contracts'}>
+          {renderCount(totalDataContracts)}
         </GridItem>
 
         <GridItem className={'IdentitiesListItem__Column IdentitiesListItem__Column--Timestamp'}>

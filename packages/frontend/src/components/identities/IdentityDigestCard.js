@@ -2,13 +2,12 @@ import { CreditsBlock, DateBlock, Identifier, InfoLine } from '../data'
 import Link from 'next/link'
 import { ValueContainer } from '../ui/containers'
 import { LoadingLine } from '../loading'
-import { networks } from '../../constants/networks'
+import { useActiveNetwork } from 'src/contexts'
+
 import './IdentityDigestCard.scss'
 
 function IdentityDigestCard ({ identity, rate, className }) {
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL
-  const activeNetwork = networks.find(network => network.explorerBaseUrl === baseUrl)
-  const l1explorerBaseUrl = activeNetwork?.l1explorerBaseUrl || null
+  const { l1explorerBaseUrl } = useActiveNetwork()
 
   return (
     <div className={`IdentityDigestCard ${className || ''} ${identity.loading ? 'IdentityDigestCard--Loading' : ''}`}>

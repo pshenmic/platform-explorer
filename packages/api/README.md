@@ -53,6 +53,7 @@ Reference:
 * [Validator Blocks Statistic](#validator-stats-by-protxhash)
 * [Transaction by hash](#transaction-by-hash)
 * [Transactions](#transactions)
+* [Duplicated Transactions](#duplicated-transactions)
 * [Data Contract By Identifier](#data-contract-by-identifier)
 * [RAW Data Contract By Identifier](#raw-data-contract-by-identifier)
 * [Data Contracts](#data-contracts)
@@ -625,6 +626,8 @@ Get a transaction (state transition) by hash
 
 Status can be either `SUCCESS` or `FAIL`. In case of error tx, message will appear in the `error` field as Base64 string
 
+If the same state transition hash was observed in more than one block, the response includes a `duplicates` field — an array of `Transaction` objects, one per occurrence. Each duplicate has `status: "FAIL"` and its own `blockHash`/`blockHeight`/`timestamp`; all other fields are inherited from the canonical state transition.
+
 ```
 GET /transaction/DEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEF
 
@@ -650,7 +653,26 @@ GET /transaction/DEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEE
           "txHash": "2508B35FDDB3E2E797D4F2CB9C1FAEE71D4DC43B91CE2043BEC8CE2B4A442DD7"
         }
       ]
-    }
+    },
+    "duplicates": [
+        {
+            "blockHash": "9EFA730C41CE9408F9732E4C72A4DAE7A2701AF0F7B1DCE8A72F163E285BEBF3",
+            "blockHeight": 153886,
+            "data": "{}",
+            "hash": "DEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEF",
+            "index": 0,
+            "timestamp": "2024-03-18T10:14:02.350Z",
+            "type": 0,
+            "gasUsed": 1337000,
+            "status": "FAIL",
+            "error": null,
+            "owner": {
+              "identifier": "6q9RFbeea73tE31LGMBLFZhtBUX3wZL3TcNynqE18Zgs",
+              "aliases": []
+            },
+            "duplicates": null
+        }, ...
+    ]
 }
 ```
 
@@ -743,6 +765,68 @@ GET /transactions?=1&limit=10&orderBy=id&order=asc&owner=6q9RFbeea73tE31LGMBLFZh
                 "identifier": "DTFPLKMVbnkVQWEfkxHX7Ch62ytjvbtqH6eG1TF3nMbD",
                 "aliases": []
             }
+        }, ...
+    ]
+}
+```
+Response codes:
+```
+200: OK
+500: Internal Server Error
+```
+---
+### Duplicated Transactions
+Return paged set of state transitions that appeared in more than one block. Each entry is a `Transaction` object representing the shared state-transition data (`blockHash`/`blockHeight`/`timestamp` are `null` since the tx spans multiple blocks), with a `duplicates` array listing one `Transaction` per occurrence (status `FAIL`, with the per-block fields populated).
+
+* `limit` cannot be more then 100
+* `page` cannot be less then 1
+* `order` can be `asc` or `desc`
+
+```
+GET /transactions/duplicates?page=1&limit=10&order=asc
+
+{
+    "pagination": {
+        "page": 1,
+        "limit": 10,
+        "total": 3
+    },
+    "resultSet": [
+      {
+            "hash": "1ba0895d9785eff87f0d69d1a7bc22b54e73d267fae3d14513af5c56358b42a5",
+            "index": 0,
+            "blockHash": null,
+            "blockHeight": null,
+            "type": "BATCH",
+            "batchType": "DOCUMENT_CREATE",
+            "data": "AgG5BZwAg32+...",
+            "timestamp": null,
+            "gasUsed": 1040160,
+            "status": "FAIL",
+            "error": null,
+            "owner": {
+                "identifier": "DTFPLKMVbnkVQWEfkxHX7Ch62ytjvbtqH6eG1TF3nMbD",
+                "aliases": []
+            },
+            "duplicates": [
+                {
+                    "hash": "1ba0895d9785eff87f0d69d1a7bc22b54e73d267fae3d14513af5c56358b42a5",
+                    "index": 0,
+                    "blockHash": "9EFA730C41CE9408F9732E4C72A4DAE7A2701AF0F7B1DCE8A72F163E285BEBF3",
+                    "blockHeight": 153886,
+                    "type": "BATCH",
+                    "batchType": "DOCUMENT_CREATE",
+                    "data": "AgG5BZwAg32+...",
+                    "timestamp": "2025-07-15T14:42:41.156Z",
+                    "gasUsed": 1040160,
+                    "status": "FAIL",
+                    "error": null,
+                    "owner": {
+                        "identifier": "DTFPLKMVbnkVQWEfkxHX7Ch62ytjvbtqH6eG1TF3nMbD",
+                        "aliases": []
+                    }
+                }, ...
+            ]
         }, ...
     ]
 }
@@ -1460,13 +1544,12 @@ Return all withdrawals for identity
 
 _Note: this request does not contain any pagination data in the response_
 
-* `limit` cannot be more then 100
-* `timestamp_start` ISO String
-* `start_at` base58 encoded withdrawal document identifier
+* `order` `asc` or `desc`
 * returns 404 `not found` if identity don't have withdrawals
 * Pagination always `null`
+* `status` is a string. Possible values: `QUEUED`, `POOLED`, `BROADCASTED`, `COMPLETE`, `EXPIRED`
 ```
-GET /identity/A1rgGVjRGuznRThdAA316VEEpKuVQ7mV8mBK1BFJvXnb/withdrawals?limit=5&start_at=95eiiqMotMvH23f6cv3BPC4ykcHFWTy2g3baCTWZANAs&timestamp_start=2024-10-10T02:37:39.187Z
+GET /identity/A1rgGVjRGuznRThdAA316VEEpKuVQ7mV8mBK1BFJvXnb/withdrawals?order=asc&start_at=95eiiqMotMvH23f6cv3BPC4ykcHFWTy2g3baCTWZANAs&timestamp_start=2024-10-10T02:37:39.187Z
 
 {
   "pagination": {
@@ -1478,7 +1561,7 @@ GET /identity/A1rgGVjRGuznRThdAA316VEEpKuVQ7mV8mBK1BFJvXnb/withdrawals?limit=5&s
     {
       "document": "95eiiqMotMvH23f6cv3BPC4ykcHFWTy2g3baCTWZANAs",
       "sender": "A1rgGVjRGuznRThdAA316VEEpKuVQ7mV8mBK1BFJvXnb",
-      "status": 3,
+      "status": "COMPLETE",
       "amount": 200000,
       "timestamp": "2024-10-10T02:37:39.187Z",
       "withdrawalAddress": "yeRZBWYfeNE4yVUHV4ZLs83Ppn9aMRH57A",
@@ -1963,9 +2046,13 @@ Return set of contested resources
 
 * `page` cannot be less than 1
 * `limit` cannot be more than 100
+* `document_type_name` filter by document type name
+* `contract_id` filter by data contract identifier
+* `voting_finished` bool field, filter resources whose voting deadline has passed (`true`) or is still pending (`false`)
+* `timestamp_start` and `timestamp_end` timestamp start and end of the contested resource creation date
 
 ```
-GET /contestedResources?page=1&limit=10&order=asc
+GET /contestedResources?page=1&limit=10&order=asc&document_type_name=domain&contract_id=GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec&voting_finished=true&timestamp_start=2024-08-01T00:00:00.000Z&timestamp_end=2025-08-01T00:00:00.000Z
 
 {
     "resultSet": [
@@ -1988,7 +2075,9 @@ GET /contestedResources?page=1&limit=10&order=asc
             "totalCountAbstain": 0,
             "totalCountTowardsIdentity": 1,
             "status": null,
-            "endTimestamp": "2024-09-02T22:14:06.680Z"
+            "endTimestamp": "2024-09-02T22:14:06.680Z",
+            "finished": true,
+            "towardsIdentity": null
         },
         ...
     ],
@@ -2034,7 +2123,9 @@ GET /contestedResources/stats
         "totalCountAbstain": 0,
         "totalCountTowardsIdentity": 0,
         "status": null,
-        "endTimestamp": "2025-02-19T14:08:55.321Z"
+        "endTimestamp": "2025-02-19T14:08:55.321Z",
+        "finished": true,
+        "towardsIdentity": null
     }
 }
 ```
@@ -3409,6 +3500,45 @@ GET /tokens/psh/info?limit=10&page=1&order=asc
         "limit": 10,
         "total": 1
     }
+}
+```
+Response codes:
+```
+200: OK
+500: Internal Server Error
+503: Service Temporarily Unavailable
+```
+___
+### Verify Transaction
+Send Transaction for Broadcast
+
+* `base64` optional field. State transition buffer in base64
+* `hex` optional field. State transition buffer in hex
+* You must pass `hex` or `base64`
+
+```
+POST /transaction/verify
+BODY:
+{
+    "base64": "AgDpAd/Bcqls4/fTNNbAtp3zsByG0w/wOnwk9RaDj5Q0DQEAAAAetrSpdOHzvWhmll5EyXQFOW6JEoHRY2Alb0wBP6ic9AcEbm90ZYpK8hfzQOnEyVhXSWzzO2jrbHEqxtIKHreFTRSv2f/PxVTtZXkupT+mJytiIWsAU0U1Ke1abN0JJvNNU1182eoCBmF1dGhvchIGb3dsMzUyB21lc3NhZ2USBHRlc3QAAAAA"
+}
+
+INVALID TX RESPONSE:
+{
+  "result": "error",
+  "error": "IdentityInsufficientBalanceError",
+  "code": 40210,
+  "info": "oWRkYXRhoW9zZXJpYWxpemVkRXJyb3KYLAIYHQUY+xi3GKIYoRgtGLMYug4Y+hiwGK4LGDESGO4YKQ8YtxjqGMQYlRiOGGkYgxjRGEIYbhjPGM8YSAMY/AQYlRg8GKIY/AoY5xj9GFs=",
+  "gasWanted": "182975835",
+}
+
+VALID TX RESPONSE:
+{
+  "result": "ok",
+  "error": null,
+  "code": 0,
+  "info": "oWRkYXRhoW9zZXJpYWxpemVkRXJyb3KYLAIYHQUY+xi3GKIYoRgtGLMYug4Y+hiwGK4LGDESGO4YKQ8YtxjqGMQYlRiOGGkYgxjRGEIYbhjPGM8YSAMY/AQYlRg8GKIY/AoY5xj9GFs=",
+  "gasWanted": "182975835",
 }
 ```
 Response codes:

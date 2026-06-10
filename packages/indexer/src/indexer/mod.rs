@@ -1,4 +1,4 @@
-use crate::processor::psql::PSQLProcessor;
+use crate::processor::psql::{state_transition_duplicates, PSQLProcessor};
 use crate::utils::TenderdashRpcApi;
 use dashcore_rpc::{Auth, Client};
 use std::cell::Cell;
@@ -51,10 +51,15 @@ impl Indexer {
         let processor = PSQLProcessor::new(dashcore_rpc, network);
         let txs_to_skip_str = env::var("TXS_TO_SKIP").unwrap_or(String::from(""));
 
-        let txs_to_skip = txs_to_skip_str
+        let mut txs_to_skip = txs_to_skip_str
             .split(",")
+            .filter(|s| !s.is_empty())
             .map(|s| String::from(s).to_lowercase())
             .collect::<Vec<String>>();
+
+        for (hash, block_hash) in state_transition_duplicates(network) {
+            txs_to_skip.push(format!("{}:{}", block_hash, hash).to_lowercase());
+        }
 
         let start_height = processor.get_latest_block_height().await;
 

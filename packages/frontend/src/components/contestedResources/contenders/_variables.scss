@@ -1,45 +1,78 @@
 @import '../../../styles/variables.scss';
 
-@mixin Columns () {
+@mixin Columns() {
   display: grid;
   gap: 1rem;
+  justify-content: space-between;
 
-  grid-template-columns:
-    5rem // Date
-    minmax(5.875rem, 100rem) // Hash
+  &--Hidden {
+    grid-template-columns: 3rem // Date
+      minmax(5.875rem, 30rem) // Hash
+      16.5rem // Identity
+      16.5rem // Document
+      8rem; // Votes
+  }
+
+  grid-template-columns: 3rem // Date
+    minmax(5.875rem, 30rem) // Hash
     16.5rem // Identity
     16.5rem // Document
-    8rem; // Votes
+    8rem // Votes
+    100px; //Actions
 
   @container (max-width: 66rem) {
-    grid-template-columns:
-      5rem // Date
+    grid-template-columns: 3rem // Date
       minmax(5.875rem, 46rem) // Hash
       14.5rem // Identity
       14.5rem // Document
-      8rem; // Votes
+      8rem // Votes
+      100px; //Actions
+
+    &--Hidden {
+      grid-template-columns: 3rem // Date
+        minmax(5.875rem, 46rem) // Hash
+        14.5rem // Identity
+        14.5rem // Document
+        8rem; // Votes
+    }
   }
 
   @container (max-width: 62rem) {
-    grid-template-columns:
-      5rem // Date
-      minmax(5.875rem, 46rem) // Hash
+    grid-template-columns: 3rem // Date
+      6rem // Hash
       12.5rem // Identity
       12.5rem // Document
-      8rem; // Votes
+      6rem // Votes
+      100px; //Actions
+
+    &--Hidden {
+      grid-template-columns: 3rem // Date
+        6rem // Hash
+        12.5rem // Identity
+        12.5rem // Document
+        6rem; // Votes
+    }
   }
 
   @container (max-width: 50rem) {
-    grid-template-columns:
-      5rem // Date
-      8rem // Votes
-      12.5rem // Identity
-      minmax(5.875rem, 46rem) // Hash
-      12.5rem; // Document
+    grid-template-columns: 3rem // Date
+      12rem // Identity
+      12rem // Hash
+      12rem // Documtnt
+      5rem // Votes
+      100px; //Actions
+  }
+
+  &--Hidden {
+    grid-template-columns: 3rem // Date
+      12rem // Identity
+      12rem // Hash
+      12rem // Documtnt
+      5rem; // Votes
   }
 }
 
-@mixin Column () {
+@mixin Column() {
   display: flex;
   align-items: center;
 
@@ -48,14 +81,6 @@
   }
 
   @container (max-width: 50rem) {
-    &:last-child {
-      justify-content: flex-start;
-    }
-
-    &--Votes {
-      order: 0;
-    }
-
     &--Identity {
       order: 1;
     }
@@ -66,6 +91,14 @@
 
     &--Document {
       order: 3;
+    }
+
+    &--Votes {
+      order: 4;
+    }
+
+    &--Actions {
+      order: 5;
     }
   }
 }

@@ -112,6 +112,12 @@ class TenderdashRPC {
 
     return validators
   }
+
+  static async verifyTransaction (hex) {
+    const { code, data, info, gasWanted } = await call(`check_tx?tx=0x${hex}`, 'GET')
+
+    return { code, data, info, gasWanted }
+  }
 }
 
 module.exports = TenderdashRPC

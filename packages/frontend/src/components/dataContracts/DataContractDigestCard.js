@@ -71,6 +71,22 @@ function DataContractDigestCard ({ dataContract, rate, txCount }) {
         loading={dataContract.loading}
         error={dataContract.error}
       />
+
+      <InfoLine
+        className={'DataContractDigestCard__InfoLine'}
+        title={'Tokens'}
+        value={dataContract.data?.tokensCount}
+        loading={dataContract.loading}
+        error={dataContract.error || dataContract.data?.tokensCount == null}
+      />
+
+      <InfoLine
+        className={'DataContractDigestCard__InfoLine'}
+        title={'Version'}
+        value={dataContract.data?.version}
+        loading={dataContract.loading}
+        error={dataContract.error}
+      />
     </div>
   )
 }

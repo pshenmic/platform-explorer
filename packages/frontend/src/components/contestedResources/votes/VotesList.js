@@ -46,14 +46,14 @@ function VotesList ({ votes = [], headerStyles, pagination, loading, itemsCount 
           {!loading
             ? <div className={'VotesList__Items'}>
               {votes?.map((vote, i) =>
-                <VotesListItem vote={vote} showDataContract={showDataContract} key={i}/>
+                <VotesListItem vote={vote} showDataContract={showDataContract} key={i} />
               )}
               {votes?.length === 0 &&
                 <EmptyListMessage>There are no votes yet.</EmptyListMessage>
               }
               {votes === undefined && <ErrorMessageBlock/>}
             </div>
-            : <LoadingList itemsCount={itemsCount}/>
+            : <LoadingList itemsCount={itemsCount} />
           }
         </div>
       </div>

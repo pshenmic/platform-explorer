@@ -340,7 +340,7 @@ module.exports = ({
         params: {
           type: 'object',
           properties: {
-            validator: { $ref: 'hash#' }
+            identifier: { $ref: 'identifier#' }
           }
         },
         querystring: { $ref: 'paginationOptions#' }
@@ -730,6 +730,28 @@ module.exports = ({
       handler: platformAddressesController.getPlatformAddresses,
       schema: {
         querystring: { $ref: 'paginationOptions#' }
+      }
+    },
+    {
+      path: '/transactions/duplicates',
+      method: 'GET',
+      handler: transactionsController.getDuplicatedTransactions,
+      schema: {
+        querystring: { $ref: 'paginationOptions#' }
+      }
+    },
+    {
+      path: '/transaction/verify',
+      method: 'POST',
+      handler: transactionsController.verifyTransaction,
+      schema: {
+        body: {
+          type: 'object',
+          properties: {
+            base64: { type: 'string' },
+            hex: { type: 'string' }
+          }
+        }
       }
     }
   ]

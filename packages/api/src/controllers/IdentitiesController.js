@@ -5,6 +5,7 @@ const { outputScriptToAddress, iso8601duration, calculateInterval } = require('.
 const { IdentifierWASM } = require('pshenmic-dpp')
 const StateTransitionEnum = require('../enums/StateTransitionEnum')
 const Intervals = require('../enums/IntervalsEnum')
+const WithdrawalStatusEnum = require('../enums/WithdrawalStatusEnum')
 
 class IdentitiesController {
   constructor (knex, sdk) {
@@ -49,7 +50,8 @@ class IdentitiesController {
       data_contracts_min: dataContractsMin,
       data_contracts_max: dataContractsMax,
       balance_min: balanceMin,
-      balance_max: balanceMax
+      balance_max: balanceMax,
+      identity_type: identityType
     } = request.query
 
     if (txCountMin > txCountMax) {
@@ -80,7 +82,8 @@ class IdentitiesController {
       dataContractsMin,
       dataContractsMax,
       balanceMin,
-      balanceMax
+      balanceMax,
+      identityType
     )
 
     response.send(identities)
@@ -131,22 +134,39 @@ class IdentitiesController {
 
   getWithdrawalsByIdentity = async (request, response) => {
     const { identifier } = request.params
-    const { limit = 100, timestamp_start: timestampStart, start_at: startAt } = request.query
+    const { order = 'asc' } = request.query
+
+    // In Future maybe we don't need this.
+    // at this moment used only for page size while requesting batches
+    const pageSize = 100
+    // 10000 documents
+    const maxPages = 100
 
     const query = [['$ownerId', '=', new IdentifierWASM(identifier).base58()]]
 
-    if (timestampStart) {
-      query.push(['status', 'in', [0, 1, 2, 3, 4]], ['$createdAt', '>=', new Date(timestampStart).getTime()])
-    }
+    const documents = []
+    let startAfter
 
-    const documents = await this.sdk.documents.query(
-      WITHDRAWAL_CONTRACT,
-      WITHDRAWAL_CONTRACT_TYPE,
-      query,
-      [['$ownerId', 'asc'], ['status', 'asc'], ['$createdAt', 'asc']],
-      limit,
-      startAt
-    )
+    let currentPage = 0
+
+    do {
+      const batch = await this.sdk.documents.query(
+        WITHDRAWAL_CONTRACT,
+        WITHDRAWAL_CONTRACT_TYPE,
+        query,
+        [['$ownerId', 'asc'], ['status', 'asc'], ['$createdAt', 'asc']],
+        pageSize,
+        undefined,
+        startAfter
+      )
+
+      documents.push(...batch)
+
+      if (batch.length < pageSize) break
+
+      startAfter = batch[batch.length - 1].id
+      currentPage += 1
+    } while (currentPage <= maxPages)
 
     if (documents.length === 0) {
       return response.send(new PaginatedResultSet([], null, null, null))
@@ -159,7 +179,7 @@ class IdentitiesController {
     const resultSet = documents.map(document => ({
       document: document.id.base58(),
       sender: document.ownerId.base58(),
-      status: document.properties.status,
+      status: WithdrawalStatusEnum[document.properties.status],
       timestamp: new Date(Number(document.createdAt)),
       amount: document.properties.amount,
       withdrawalAddress: outputScriptToAddress(Buffer.from(document.properties.outputScript ?? [], 'base64')),
@@ -168,6 +188,10 @@ class IdentitiesController {
           withdrawal.timestamp.getTime() === Number(document.createdAt)
       )?.hash
     }))
+      .sort((a, b) => {
+        const direction = order === 'asc' ? 1 : -1
+        return (a.timestamp - b.timestamp) * direction
+      })
 
     response.send(new PaginatedResultSet(resultSet, null, null, null))
   }

@@ -7,6 +7,7 @@ const StateTransitionEnum = require('../enums/StateTransitionEnum')
 const BatchTypeEnum = require('../enums/BatchEnum')
 const { StateTransitionWASM } = require('pshenmic-dpp')
 const TenderdashRPC = require('../tenderdashRpc')
+const ConsensusError = require('../enums/ConsensusErrorEnum')
 
 class TransactionsController {
   constructor (knex, sdk) {
@@ -175,21 +176,44 @@ class TransactionsController {
   broadcastTransaction = async (request, response) => {
     const { base64, hex } = request.body
 
-    if (!base64 && !hex) {
+    if ((!base64 && !hex) || (base64 != null && hex != null)) {
       return response.status(400).send('hex or base64 must be set')
     }
 
-    const transaction = hex
-      ? StateTransitionWASM.fromHex(hex)
-      : StateTransitionWASM.fromBase64(base64)
-
     try {
+      const transaction = hex
+        ? StateTransitionWASM.fromHex(hex)
+        : StateTransitionWASM.fromBase64(base64)
+
       await this.sdk.stateTransitions.broadcast(transaction)
     } catch (e) {
       return response.status(400).send({ error: e.toString() })
     }
 
     response.send({ message: 'broadcasted' })
+  }
+
+  verifyTransaction = async (request, response) => {
+    const { base64, hex } = request.body
+
+    if ((!base64 && !hex) || (base64 != null && hex != null)) {
+      return response.status(400).send('hex or base64 must be set')
+    }
+
+    try {
+      const transaction = hex
+        ? StateTransitionWASM.fromHex(hex)
+        : StateTransitionWASM.fromBase64(base64)
+
+      const { code, gasWanted, info } = await TenderdashRPC.verifyTransaction(transaction.hex())
+
+      const result = code === 0 ? 'ok' : 'error'
+      const error = code === 0 ? null : ConsensusError[code]
+
+      response.send({ result, error, code, gasWanted, info })
+    } catch (e) {
+      return response.status(400).send({ error: e.toString() })
+    }
   }
 
   waitForStateTransitionResult = async (request, response) => {
@@ -221,6 +245,14 @@ class TransactionsController {
 
       return response.status(500).send({ message: 'internal server error' })
     } while (true)
+  }
+
+  getDuplicatedTransactions = async (request, response) => {
+    const { page = 1, limit = 10, order = 'asc' } = request.query
+
+    const result = await this.transactionsDAO.getDuplicatedTransactions(Number(page), Number(limit), order)
+
+    response.send(result)
   }
 }
 

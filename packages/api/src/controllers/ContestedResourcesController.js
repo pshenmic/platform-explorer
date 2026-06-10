@@ -43,9 +43,27 @@ class ContestedResourcesController {
   }
 
   getContestedResources = async (request, response) => {
-    const { page = 1, limit = 10, order = 'asc' } = request.query
+    const {
+      page = 1,
+      limit = 10,
+      order = 'asc',
+      document_type_name: documentTypeName,
+      contract_id: contractId,
+      voting_finished: votingFinished,
+      timestamp_start: timestampStart,
+      timestamp_end: timestampEnd
+    } = request.query
 
-    const votes = await this.contestedResourcesDAO.getContestedResources(Number(page ?? 1), Number(limit ?? 10), order)
+    const votes = await this.contestedResourcesDAO.getContestedResources(
+      Number(page ?? 1),
+      Number(limit ?? 10),
+      order,
+      documentTypeName,
+      contractId,
+      votingFinished,
+      timestampStart,
+      timestampEnd
+    )
 
     response.send(votes)
   }

@@ -3,18 +3,14 @@ import { ValueCard } from '@components/cards'
 import { useEffect, useState } from 'react'
 import * as Api from '@utils/Api'
 import { fetchHandlerSuccess, fetchHandlerError } from '@utils'
-import { networks } from '../../../../constants/networks'
 import { ValueContainer } from '@components/ui/containers'
+import { useActiveNetwork } from 'src/contexts'
 
 import styles from './PayoutAddress.module.scss'
 
-const baseUrl = process.env.NEXT_PUBLIC_BASE_URL
-const activeNetwork = networks.find(
-  (network) => network.explorerBaseUrl === baseUrl
-)
-const l1explorerBaseUrl = activeNetwork?.l1explorerBaseUrl || null
-
 export const PayoutAddress = ({ outputScript, loading, identity }) => {
+  const { l1explorerBaseUrl } = useActiveNetwork()
+
   const [validator, setValidator] = useState({
     data: {},
     loading: true,
