@@ -1,6 +1,27 @@
 export const global = {
   '*': {
-    borderColor: 'rgba(255, 255, 255, 0.07)'
+    borderColor: 'rgba(255, 255, 255, 0.07)',
+    // Global custom scrollbar (standards-based) so the page and every scroll
+    // container match the dark theme instead of the OS default.
+    scrollbarWidth: 'thin',
+    scrollbarColor: 'var(--chakra-colors-brand-normal) transparent'
+  },
+  // WebKit enhancement: 8px rounded, inset thumb, brightens on hover.
+  '*::-webkit-scrollbar': {
+    width: '8px',
+    height: '8px'
+  },
+  '*::-webkit-scrollbar-track': {
+    background: 'transparent'
+  },
+  '*::-webkit-scrollbar-thumb': {
+    backgroundColor: 'var(--chakra-colors-brand-normal)',
+    borderRadius: '8px',
+    border: '2px solid transparent',
+    backgroundClip: 'padding-box'
+  },
+  '*::-webkit-scrollbar-thumb:hover': {
+    backgroundColor: 'var(--chakra-colors-brand-light)'
   },
   'html, body': {
     color: 'white',
