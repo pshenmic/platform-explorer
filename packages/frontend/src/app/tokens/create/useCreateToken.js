@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { buildTokenConfigurationWasm, calculateTokenId } from './buildTokenConfigurationWasm'
+import { humanizeDeployError } from './validation'
 
 export const useCreateToken = () => {
   const [isLoading, setIsLoading] = useState(false)
@@ -53,7 +54,7 @@ export const useCreateToken = () => {
       setResult({ dataContractId, tokenId })
     } catch (e) {
       console.error('Token deploy failed:', e)
-      setError(e?.message ?? 'Failed to deploy token')
+      setError(humanizeDeployError(e))
     } finally {
       setIsLoading(false)
     }
