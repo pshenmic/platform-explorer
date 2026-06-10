@@ -157,9 +157,9 @@ function Identity ({ identifier }) {
       <InfoContainer styles={['tabs']} className={'IdentityPage__ListContainer'}>
         <Tabs onChange={setActiveTab} index={activeTab}>
           <TabList>
-            <Tab>Transactions {identity.data?.totalTxs !== undefined
-              ? <span className={`Tabs__TabItemsCount ${identity.data?.totalTxs === 0 ? 'Tabs__TabItemsCount--Empty' : ''}`}>
-                  {identity.data?.totalTxs}
+            <Tab>Transactions {(transactions.data?.pagination?.total ?? identity.data?.totalTxs) !== undefined
+              ? <span className={`Tabs__TabItemsCount ${(transactions.data?.pagination?.total ?? identity.data?.totalTxs) === 0 ? 'Tabs__TabItemsCount--Empty' : ''}`}>
+                  {Math.max(transactions.data?.pagination?.total ?? identity.data?.totalTxs, 0)}
                 </span>
               : ''}
             </Tab>
@@ -169,9 +169,9 @@ function Identity ({ identifier }) {
                 </span>
               : ''}
             </Tab>
-            <Tab>Documents {identity.data?.totalDocuments !== undefined
-              ? <span className={`Tabs__TabItemsCount ${identity.data?.totalDocuments === 0 ? 'Tabs__TabItemsCount--Empty' : ''}`}>
-                  {identity.data?.totalDocuments}
+            <Tab>Documents {(documents.data?.pagination?.total ?? identity.data?.totalDocuments) !== undefined
+              ? <span className={`Tabs__TabItemsCount ${(documents.data?.pagination?.total ?? identity.data?.totalDocuments) === 0 ? 'Tabs__TabItemsCount--Empty' : ''}`}>
+                  {Math.max(documents.data?.pagination?.total ?? identity.data?.totalDocuments, 0)}
                 </span>
               : ''}
             </Tab>
