@@ -5,11 +5,8 @@ import CodeMirror from '@uiw/react-codemirror'
 import { json } from '@codemirror/lang-json'
 import { oneDark } from '@codemirror/theme-one-dark'
 import { EditorView } from '@codemirror/view'
-import { EditorState } from '@codemirror/state'
 import { useTokenWizard } from '../../TokenWizardContext'
 import { buildTokenConfiguration } from '../../buildTokenConfiguration'
-import { buildDataContract } from '../../buildDataContract'
-import { buildSummary } from '../../buildSummary'
 import FaqView from './FaqView'
 
 // Same palette override as /dataContract/create SchemaField — Platform Explorer dark.
@@ -35,12 +32,6 @@ const platformTheme = EditorView.theme({
 })
 
 const editableExtensions = [json(), platformTheme]
-const readOnlyExtensions = [
-  json(),
-  platformTheme,
-  EditorView.editable.of(false),
-  EditorState.readOnly.of(true)
-]
 
 const basicSetup = {
   lineNumbers: true,
@@ -53,9 +44,7 @@ const basicSetup = {
 }
 
 const TITLES = {
-  summary: 'Summary',
-  token: 'Token configuration',
-  contract: 'Data contract',
+  json: 'Token configuration',
   faq: 'FAQ'
 }
 
@@ -184,12 +173,10 @@ function JsonPreview () {
   const { form, setField } = useTokenWizard()
   const configuration = useMemo(() => buildTokenConfiguration(form), [form])
   const code = useMemo(() => JSON.stringify(configuration, null, 2), [configuration])
-  const contractCode = useMemo(() => JSON.stringify(buildDataContract(form), null, 2), [form])
-  const summary = useMemo(() => buildSummary(form), [form])
 
   const [editorValue, setEditorValue] = useState(code)
   const [parseError, setParseError] = useState(null)
-  const [view, setView] = useState('summary')
+  const [view, setView] = useState('json')
   const isFocusedRef = useRef(false)
   const debounceRef = useRef(null)
 
@@ -232,22 +219,12 @@ function JsonPreview () {
       <div className='Preview__JsonTitle'>
         <span>{TITLES[view]}</span>
         <div className='Preview__ViewToggle' role='tablist'>
-          <TabButton id='summary' label='Summary' view={view} onSelect={setView}/>
-          <TabButton id='token' label='Token' view={view} onSelect={setView}/>
-          <TabButton id='contract' label='Contract' view={view} onSelect={setView}/>
+          <TabButton id='json' label='JSON' view={view} onSelect={setView}/>
           <TabButton id='faq' label='FAQ' view={view} onSelect={setView}/>
         </div>
       </div>
 
-      {view === 'summary' && (
-        <ul className='Preview__SummaryList'>
-          {summary.map((line, i) => (
-            <li key={i} className='Preview__SummaryItem'>{line}</li>
-          ))}
-        </ul>
-      )}
-
-      {view === 'token' && (
+      {view === 'json' && (
         <>
           <CodeMirror
             value={editorValue}
@@ -263,16 +240,6 @@ function JsonPreview () {
             <div className='Preview__JsonError'>Invalid JSON — last valid state kept</div>
           )}
         </>
-      )}
-
-      {view === 'contract' && (
-        <CodeMirror
-          value={contractCode}
-          extensions={readOnlyExtensions}
-          theme={oneDark}
-          basicSetup={basicSetup}
-          height='100%'
-        />
       )}
 
       {view === 'faq' && <FaqView/>}
