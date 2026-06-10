@@ -70,7 +70,7 @@ function Essentials () {
         <FormControl isInvalid={!!nameError}>
           <FieldLabel
             label='Token name'
-            tooltip='Display name (singular). 3–25 ASCII letters or digits, no spaces. Used as singularForm in the English localization. The plural form is auto-derived (name + s); customize it via the JSON tab if your name does not pluralize with -s.'
+            tooltip='Singular display name. 3–25 letters or digits, no spaces.'
           />
           <Input
             size='sm'
@@ -89,7 +89,7 @@ function Essentials () {
         <FormControl>
           <FieldLabel
             label='Description'
-            tooltip='Optional human-readable description shown on the token page. Up to 256 characters. Stored as description in the contract.'
+            tooltip='Optional note shown on the token page. Up to 256 characters.'
           />
           <Textarea
             size='sm'
@@ -107,7 +107,7 @@ function Essentials () {
         <FormControl>
           <FieldLabel
             label='Base supply'
-            tooltip='Total tokens minted now. They go to your identity and you can transfer or mint more later if minting is enabled.'
+            tooltip='Tokens minted to you now. Mint more later if minting is on.'
           />
           <Input
             size='sm'
@@ -124,7 +124,7 @@ function Essentials () {
         <FormControl>
           <FieldLabel
             label='Max supply'
-            tooltip='Hard cap on total tokens that can ever exist. Toggle on to set a limit; leave off for unlimited.'
+            tooltip='Hard cap on tokens that can ever exist. Off = unlimited.'
             rightSlot={<YesNoBadge value={form.hasMaxSupply} onToggle={toggle('hasMaxSupply')}/>}
           />
           <Input
