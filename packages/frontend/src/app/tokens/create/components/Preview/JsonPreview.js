@@ -9,6 +9,7 @@ import { EditorState } from '@codemirror/state'
 import { useTokenWizard } from '../../TokenWizardContext'
 import { buildTokenConfiguration } from '../../buildTokenConfiguration'
 import { buildDataContract } from '../../buildDataContract'
+import { buildSummary } from '../../buildSummary'
 import FaqView from './FaqView'
 
 // Same palette override as /dataContract/create SchemaField — Platform Explorer dark.
@@ -52,6 +53,7 @@ const basicSetup = {
 }
 
 const TITLES = {
+  summary: 'Summary',
   token: 'Token configuration',
   contract: 'Data contract',
   faq: 'FAQ'
@@ -183,10 +185,11 @@ function JsonPreview () {
   const configuration = useMemo(() => buildTokenConfiguration(form), [form])
   const code = useMemo(() => JSON.stringify(configuration, null, 2), [configuration])
   const contractCode = useMemo(() => JSON.stringify(buildDataContract(form), null, 2), [form])
+  const summary = useMemo(() => buildSummary(form), [form])
 
   const [editorValue, setEditorValue] = useState(code)
   const [parseError, setParseError] = useState(null)
-  const [view, setView] = useState('faq')
+  const [view, setView] = useState('summary')
   const isFocusedRef = useRef(false)
   const debounceRef = useRef(null)
 
@@ -229,11 +232,20 @@ function JsonPreview () {
       <div className='Preview__JsonTitle'>
         <span>{TITLES[view]}</span>
         <div className='Preview__ViewToggle' role='tablist'>
+          <TabButton id='summary' label='Summary' view={view} onSelect={setView}/>
           <TabButton id='token' label='Token' view={view} onSelect={setView}/>
           <TabButton id='contract' label='Contract' view={view} onSelect={setView}/>
           <TabButton id='faq' label='FAQ' view={view} onSelect={setView}/>
         </div>
       </div>
+
+      {view === 'summary' && (
+        <ul className='Preview__SummaryList'>
+          {summary.map((line, i) => (
+            <li key={i} className='Preview__SummaryItem'>{line}</li>
+          ))}
+        </ul>
+      )}
 
       {view === 'token' && (
         <>
