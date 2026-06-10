@@ -180,6 +180,13 @@ function JsonPreview () {
   const [editorValue, setEditorValue] = useState(code)
   const [parseError, setParseError] = useState(null)
   const [view, setView] = useState('json')
+  // Kept here so FAQ open-state survives switching to the JSON tab and back.
+  const [faqOpen, setFaqOpen] = useState(() => new Set())
+  const toggleFaq = (key) => setFaqOpen((prev) => {
+    const next = new Set(prev)
+    next.has(key) ? next.delete(key) : next.add(key)
+    return next
+  })
   const isFocusedRef = useRef(false)
   const debounceRef = useRef(null)
 
@@ -244,7 +251,7 @@ function JsonPreview () {
         </>
       )}
 
-      {view === 'faq' && <FaqView/>}
+      {view === 'faq' && <FaqView open={faqOpen} onToggle={toggleFaq}/>}
     </div>
   )
 }

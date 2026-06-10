@@ -1,6 +1,6 @@
 'use client'
 
-import { Fragment, useState } from 'react'
+import { Fragment } from 'react'
 import {
   tokenFaqGroups, FIELD_SOURCE, TOKEN_LIMITS_DOC_URL, STRUCT_URL
 } from '../../tokenFaq'
@@ -26,16 +26,8 @@ const renderAnswer = (text) =>
   })
 
 // Companion to the JSON editor — docs.dash.org doesn't cover config fields.
-function FaqView () {
-  const [open, setOpen] = useState(() => new Set())
-
-  const toggle = (key) =>
-    setOpen((prev) => {
-      const next = new Set(prev)
-      next.has(key) ? next.delete(key) : next.add(key)
-      return next
-    })
-
+// open-state lives in the parent so it survives switching JSON <-> FAQ tabs.
+function FaqView ({ open, onToggle }) {
   return (
     <div className='Preview__Faq'>
       <p className='Preview__FaqIntro'>
@@ -60,7 +52,7 @@ function FaqView () {
                   type='button'
                   className='Preview__FaqQ'
                   aria-expanded={isOpen}
-                  onClick={() => toggle(item.key)}
+                  onClick={() => onToggle(item.key)}
                 >
                   <span className='Preview__FaqMarker'>{isOpen ? '▾' : '▸'}</span>
                   <span>{item.question}</span>
