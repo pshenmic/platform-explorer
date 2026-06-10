@@ -227,7 +227,7 @@ function Identity ({ identifier }) {
             <TabPanel>
               <DocumentsFilter
                 onFilterChange={docFiltersChangeHandler}
-                excludeFilters={['owner', 'revision']}
+                excludeFilters={['owner', 'revision', 'transition_type']}
                 className={'IdentityPage__DocumentsFilter'}
               />
               {!documents.error
