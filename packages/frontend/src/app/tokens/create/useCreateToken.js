@@ -22,17 +22,15 @@ export const useCreateToken = () => {
       const tokenConfiguration = await buildTokenConfigurationWasm(form)
 
       const { sdk } = signer
-      const identity = await sdk.identities.getIdentityByIdentifier(signer.identityId)
-      const identityNonce = await sdk.identities.getIdentityNonce(identity.id)
+      // SDK accepts a string id — no need to fetch the identity.
+      const identityNonce = await sdk.identities.getIdentityNonce(signer.identityId)
       const nextNonce = identityNonce + BigInt(1)
 
       const schema = {}
 
-      // DataContractsController.create signature:
-      //   (ownerId, identityNonce, schema, fullValidation?, tokenConfiguration?, ...)
-      // v2 SDK expects `{ position, tokenConfiguration }` array; each tokenConfiguration is a WASM wrapper.
+      // create() arg order is (ownerId, nonce, schema, fullValidation, tokens[]) — see pshenmic/dash-platform-sdk#76.
       const dataContract = sdk.dataContracts.create(
-        identity.id,
+        signer.identityId,
         nextNonce,
         schema,
         true,
