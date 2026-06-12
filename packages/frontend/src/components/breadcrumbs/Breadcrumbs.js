@@ -12,6 +12,7 @@ export const breadcrumbsActiveRoutes = [
   '/document/',
   '/block/',
   '/contestedResource/',
+  '/tokens/',
   '/developers/'
 ]
 

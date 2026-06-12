@@ -1,0 +1,84 @@
+@use '../../../styles/mixins.scss';
+@import 'src/styles/variables';
+
+.CreateTokenPage {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+
+  // Segmented Form/Preview switch — mobile only (single-column layout).
+  &__MobileTabs {
+    display: none;
+    gap: 2px;
+    padding: 2px;
+    border: 1px solid var(--chakra-colors-gray-550);
+    border-radius: 0.375rem;
+    background: var(--chakra-colors-gray-675);
+  }
+
+  &__MobileTab {
+    flex: 1;
+    font-family: $font-heading;
+    font-weight: 600;
+    font-size: 0.75rem;
+    padding: 6px 0;
+    border-radius: 0.25rem;
+    color: var(--chakra-colors-white-50);
+    background: transparent;
+    cursor: pointer;
+    transition: background $transition-time-def, color $transition-time-def;
+
+    &--active {
+      color: $color-brand-normal;
+      background: var(--chakra-colors-gray-800);
+    }
+  }
+
+  &__Layout {
+    display: grid;
+    // minmax(0, …) lets the tracks shrink below content min-content — without it
+    // fixed-width inputs in (even collapsed) accordion panels blow the grid wider
+    // than the viewport and the card gets clipped on narrow screens.
+    grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+    gap: 16px;
+    align-items: start;
+
+    @media (max-width: 960px) {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+
+  // Mobile: show only the pane the toggle selects.
+  @media (max-width: 960px) {
+    &__MobileTabs {
+      display: flex;
+    }
+
+    &__Layout--m-form &__PreviewPane {
+      display: none;
+    }
+
+    &__Layout--m-preview &__FormPane {
+      display: none;
+    }
+  }
+
+  &__FormPane,
+  &__PreviewPane {
+    background: var(--chakra-colors-gray-675);
+    border: 1px solid var(--chakra-colors-gray-550);
+    border-radius: $border-radius-medium;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  &__FormScroll {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+}

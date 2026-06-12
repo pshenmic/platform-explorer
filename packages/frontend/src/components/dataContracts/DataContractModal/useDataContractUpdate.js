@@ -38,7 +38,8 @@ export const useDataContractUpdate = ({ owner, dataContractId }) => {
         'create',
         params
       )
-      await signer.signAndBroadcast(stateTransition)
+      // base64, not the raw WASM object — the extension runs a separate wasm and can't unwrap it.
+      await signer.signAndBroadcast(stateTransition.base64())
 
       await new Promise((resolve) => setTimeout(resolve, 2000))
 
@@ -77,7 +78,7 @@ export const useDataContractUpdate = ({ owner, dataContractId }) => {
         nonce + 1n
       )
 
-      await signer.signAndBroadcast(stateTransition)
+      await signer.signAndBroadcast(stateTransition.base64())
 
       await new Promise((resolve) => setTimeout(resolve, 2000))
 
