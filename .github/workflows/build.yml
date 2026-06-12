@@ -2,14 +2,11 @@ name: Build and push packages
 
 on:
   push:
-    tags:
-      - '*'
     branches:
-      - 'master'
       - 'develop'
   pull_request:
-    branches: [ "master", "develop" ]
-    types: [ opened, synchronize, reopened, labeled, unlabeled, edited ]
+    branches: [ "develop" ]
+    types: [ opened, synchronize, reopened ]
 
 env:
   REGISTRY: ghcr.io
@@ -152,8 +149,8 @@ jobs:
         with:
           context: ./
           file: ./packages/api/Dockerfile
-          push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:api
+          push: false
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-api
 
   build_indexer:
     needs: pull_request_lint
@@ -181,5 +178,5 @@ jobs:
         uses: docker/build-push-action@v4
         with:
           context: ./packages/indexer
-          push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:indexer
+          push: false
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-indexer
