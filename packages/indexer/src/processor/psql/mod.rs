@@ -56,7 +56,7 @@ pub struct PSQLProcessor {
 // ST HASH, BLOCK HASH
 pub fn state_transition_duplicates(network: Network) -> Vec<(String, String)> {
     match network {
-        Network::Dash => vec![
+        Network::Mainnet => vec![
             ("35C08D574302D32D7160E603D8159042C8606BE12FD97D952CF5FD40DB57313C".into(), "67DF4322B8062C17326414BC4D2D0FDDA60C44C44EF08592DFB01A3F125A0F25".into()),
             ("6963A9535DBD3D47229BBE419DFC2E3011DC786D958F72A4B7BEEE3F24FBE097".into(), "6DDD512F5CE7D54B73C7DB877E6FB46F31B8721FD77D1D389CE598F4C9D6E458".into()),
         ],

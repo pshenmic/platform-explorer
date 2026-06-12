@@ -40,7 +40,7 @@ impl TenderdashRpcApi {
         let status = self.get_status().await?;
 
         if status.node_info.network.to_lowercase().contains("evo") {
-            Ok(Network::Dash)
+            Ok(Network::Mainnet)
         } else {
             Ok(Network::Testnet)
         }
