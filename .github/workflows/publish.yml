@@ -84,7 +84,6 @@ jobs:
       - name: Build and push indexer Docker image
         uses: docker/build-push-action@v4
         with:
-          context: ./
-          file: ./packages/indexer/Dockerfile
-          push: false
+          context: ./packages/indexer
+          push: true
           tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-indexer
