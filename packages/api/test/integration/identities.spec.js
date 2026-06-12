@@ -6,7 +6,6 @@ const { getKnex } = require('../../src/utils')
 const fixtures = require('../utils/fixtures')
 const StateTransitionEnum = require('../../src/enums/StateTransitionEnum')
 const tenderdashRpc = require('../../src/tenderdashRpc')
-const BatchEnum = require('../../src/enums/BatchEnum')
 const { ContestedResourcesController } = require('dash-platform-sdk/src/contestedResources')
 const { IdentitiesController } = require('dash-platform-sdk/src/identities')
 const { DocumentsController } = require('dash-platform-sdk/src/documents')
@@ -1471,7 +1470,7 @@ describe('Identities routes', () => {
         documentTypeName: 'type_name',
         timestamp: _document.block.timestamp.toISOString(),
         system: false,
-        transitionType: BatchEnum[0],
+        transitionType: null,
         identityContractNonce: null,
         gasUsed: null,
         totalGasUsed: null
@@ -1548,7 +1547,7 @@ describe('Identities routes', () => {
           documentTypeName: 'type_name',
           timestamp: _document.block.timestamp.toISOString(),
           system: false,
-          transitionType: BatchEnum[0],
+          transitionType: null,
           gasUsed: null,
           identityContractNonce: null,
           totalGasUsed: null
@@ -1624,7 +1623,7 @@ describe('Identities routes', () => {
           data: null,
           timestamp: _document.block.timestamp.toISOString(),
           system: false,
-          transitionType: BatchEnum[0],
+          transitionType: null,
           documentTypeName: 'my_type',
           prefundedVotingBalance: null,
           entropy: null,
@@ -1704,7 +1703,7 @@ describe('Identities routes', () => {
           documentTypeName: 'type_name',
           timestamp: _document.block.timestamp.toISOString(),
           system: false,
-          transitionType: BatchEnum[0],
+          transitionType: null,
           gasUsed: null,
           identityContractNonce: null,
           totalGasUsed: null
@@ -1781,13 +1780,181 @@ describe('Identities routes', () => {
           documentTypeName: 'type_name',
           timestamp: _document.block.timestamp.toISOString(),
           system: false,
-          transitionType: BatchEnum[0],
+          transitionType: null,
           gasUsed: null,
           identityContractNonce: null,
           totalGasUsed: null
         }))
 
       assert.deepEqual(body.resultSet, expectedDocuments)
+    })
+
+    it('should return set of documents by identity filtered by timestamp range', async () => {
+      documents = []
+      block = await fixtures.block(knex, { height: 1 })
+      identity = await fixtures.identity(knex, { block_hash: block.hash, block_height: block.height })
+
+      for (let i = 1; i < 31; i++) {
+        block = await fixtures.block(knex, { height: i + 1, timestamp: new Date(i * 1000) })
+        dataContractTransaction = await fixtures.transaction(knex, {
+          block_hash: block.hash,
+          block_height: block.height,
+          owner: identity.identifier,
+          type: StateTransitionEnum.DATA_CONTRACT_CREATE
+        })
+        dataContract = await fixtures.dataContract(knex, {
+          state_transition_hash: dataContractTransaction.hash,
+          owner: identity.identifier
+        })
+        transaction = await fixtures.transaction(knex, {
+          block_hash: block.hash,
+          block_height: block.height,
+          owner: identity.identifier,
+          type: StateTransitionEnum.BATCH,
+          data: 'AgE+qIzJYi7CLZTbni56gjvhPCY9AygUa6gK/sM7NLqBrwEAAAAB7oqwuqydXWC3ZNKdsOewDBvVPG59q2STMTFBSX39PpsGBmRvbWFpbuZoxlmvZq7h5ywYbd57W34KHXEqCcQNVyH2Ir9TxTFVADX/3MRaB7Ujt7MChW+omvQ4l5lZQcj2oeuDAo1Xqp0DBwVsYWJlbBIRdGhlcmVhMXMxMW1zaGFkZHkPbm9ybWFsaXplZExhYmVsEhF0aGVyZWExczExbXNoYWRkeRpub3JtYWxpemVkUGFyZW50RG9tYWluTmFtZRIEZGFzaBBwYXJlbnREb21haW5OYW1lEgRkYXNoDHByZW9yZGVyU2FsdAwJO0EguXjRH+tISRlNWqdayLael99pDBeK2UHJ2GdO5AdyZWNvcmRzFgESCGlkZW50aXR5ED6ojMliLsItlNueLnqCO+E8Jj0DKBRrqAr+wzs0uoGvDnN1YmRvbWFpblJ1bGVzFgESD2FsbG93U3ViZG9tYWlucxMAARJwYXJlbnROYW1lQW5kTGFiZWz9AAAABKgXyAAAAUEfnR0sqWBSop6NAWColV8pyCWFMohaQWAFV0PbICNwdRltcTrEqKqQdowqzKZsz+PaWgkny8RwCmDE5Fxa7833rQ=='
+        })
+        document = await fixtures.document(knex, {
+          state_transition_hash: transaction.hash,
+          owner: identity.identifier,
+          data_contract_id: dataContract.id
+        })
+        documents.push({ document, dataContract, transaction, identity, block })
+      }
+
+      const timestampStart = new Date(6 * 1000).toISOString()
+      const timestampEnd = new Date(15 * 1000).toISOString()
+
+      const { body } = await client.get(`/identity/${identity.identifier}/documents?timestamp_start=${timestampStart}&timestamp_end=${timestampEnd}`)
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      const expectedDocuments = documents
+        .filter(({ block }) => block.timestamp.getTime() >= new Date(timestampStart).getTime() && block.timestamp.getTime() <= new Date(timestampEnd).getTime())
+        .sort((a, b) => a.document.id - b.document.id)
+        .slice(0, 10)
+        .map((_document) => ({
+          identifier: _document.document.identifier,
+          owner: {
+            identifier: identity.identifier,
+            aliases: [
+              {
+                alias: 'test.test',
+                status: 'ok',
+                contested: true,
+                documentId: 'Bwr4WHCPz5rFVAD87RqTs3izo4zpzwsEdKPWUT1NS1C7',
+                timestamp: '1970-01-01T00:00:00.000Z'
+              }
+            ]
+          },
+          dataContractIdentifier: _document.dataContract.identifier,
+          revision: 1,
+          txHash: _document.transaction.hash,
+          deleted: false,
+          data: null,
+          entropy: null,
+          prefundedVotingBalance: null,
+          documentTypeName: 'type_name',
+          timestamp: _document.block.timestamp.toISOString(),
+          system: false,
+          transitionType: null,
+          gasUsed: null,
+          identityContractNonce: null,
+          totalGasUsed: null
+        }))
+
+      assert.equal(body.resultSet.length, expectedDocuments.length)
+      assert.equal(body.pagination.total, expectedDocuments.length)
+      assert.equal(body.pagination.page, 1)
+      assert.equal(body.pagination.limit, 10)
+
+      assert.deepEqual(body.resultSet, expectedDocuments)
+    })
+
+    it('should return set of documents by identity filtered by deleted', async () => {
+      documents = []
+      block = await fixtures.block(knex, { height: 1 })
+      identity = await fixtures.identity(knex, { block_hash: block.hash, block_height: block.height })
+
+      for (let i = 1; i < 31; i++) {
+        block = await fixtures.block(knex, { height: i + 1 })
+        dataContractTransaction = await fixtures.transaction(knex, {
+          block_hash: block.hash,
+          block_height: block.height,
+          owner: identity.identifier,
+          type: StateTransitionEnum.DATA_CONTRACT_CREATE
+        })
+        dataContract = await fixtures.dataContract(knex, {
+          state_transition_hash: dataContractTransaction.hash,
+          owner: identity.identifier
+        })
+        transaction = await fixtures.transaction(knex, {
+          block_hash: block.hash,
+          block_height: block.height,
+          owner: identity.identifier,
+          type: StateTransitionEnum.BATCH,
+          data: 'AgE+qIzJYi7CLZTbni56gjvhPCY9AygUa6gK/sM7NLqBrwEAAAAB7oqwuqydXWC3ZNKdsOewDBvVPG59q2STMTFBSX39PpsGBmRvbWFpbuZoxlmvZq7h5ywYbd57W34KHXEqCcQNVyH2Ir9TxTFVADX/3MRaB7Ujt7MChW+omvQ4l5lZQcj2oeuDAo1Xqp0DBwVsYWJlbBIRdGhlcmVhMXMxMW1zaGFkZHkPbm9ybWFsaXplZExhYmVsEhF0aGVyZWExczExbXNoYWRkeRpub3JtYWxpemVkUGFyZW50RG9tYWluTmFtZRIEZGFzaBBwYXJlbnREb21haW5OYW1lEgRkYXNoDHByZW9yZGVyU2FsdAwJO0EguXjRH+tISRlNWqdayLael99pDBeK2UHJ2GdO5AdyZWNvcmRzFgESCGlkZW50aXR5ED6ojMliLsItlNueLnqCO+E8Jj0DKBRrqAr+wzs0uoGvDnN1YmRvbWFpblJ1bGVzFgESD2FsbG93U3ViZG9tYWlucxMAARJwYXJlbnROYW1lQW5kTGFiZWz9AAAABKgXyAAAAUEfnR0sqWBSop6NAWColV8pyCWFMohaQWAFV0PbICNwdRltcTrEqKqQdowqzKZsz+PaWgkny8RwCmDE5Fxa7833rQ=='
+        })
+        document = await fixtures.document(knex, {
+          state_transition_hash: transaction.hash,
+          owner: identity.identifier,
+          data_contract_id: dataContract.id,
+          deleted: i % 2 === 0,
+          revision: 1
+        })
+        documents.push({ document, dataContract, transaction, identity, block })
+      }
+
+      const { body } = await client.get(`/identity/${identity.identifier}/documents?deleted=true&order=desc`)
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      assert.equal(body.pagination.total, documents.filter(({ document }) => document.deleted).length)
+      assert.equal(body.pagination.page, 1)
+      assert.equal(body.pagination.limit, 10)
+
+      const expectedDocuments = documents
+        .filter(({ document }) => document.deleted)
+        .sort((a, b) => b.document.id - a.document.id)
+        .slice(0, 10)
+        .map((_document) => ({
+          identifier: _document.document.identifier,
+          owner: {
+            identifier: identity.identifier,
+            aliases: [
+              {
+                alias: 'test.test',
+                status: 'ok',
+                contested: true,
+                documentId: 'Bwr4WHCPz5rFVAD87RqTs3izo4zpzwsEdKPWUT1NS1C7',
+                timestamp: '1970-01-01T00:00:00.000Z'
+              }
+            ]
+          },
+          dataContractIdentifier: _document.dataContract.identifier,
+          revision: 1,
+          txHash: _document.transaction.hash,
+          deleted: true,
+          data: null,
+          entropy: null,
+          prefundedVotingBalance: null,
+          documentTypeName: 'type_name',
+          timestamp: _document.block.timestamp.toISOString(),
+          system: false,
+          transitionType: null,
+          gasUsed: null,
+          identityContractNonce: null,
+          totalGasUsed: null
+        }))
+
+      assert.deepEqual(body.resultSet, expectedDocuments)
+    })
+
+    it('should return error for inverted timestamp range', async () => {
+      block = await fixtures.block(knex, { height: 1 })
+      identity = await fixtures.identity(knex, { block_hash: block.hash, block_height: block.height })
+
+      await client.get(`/identity/${identity.identifier}/documents?timestamp_start=2999-01-01T00:00:00.000Z&timestamp_end=1970-01-01T00:00:00.000Z`)
+        .expect(400)
     })
   })
 
