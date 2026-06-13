@@ -2,7 +2,7 @@
   "version": 0,
   "ownerId": "11111111111111111111111111111111",
   "id": "GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec",
-  "$format_version": "0",
+  "$formatVersion": "0",
   "documentSchemas": {
     "domain": {
       "type": "object",

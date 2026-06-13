@@ -679,7 +679,7 @@ describe('Utils', () => {
           {
             platformAddress: {
               base58: 'yZZkv2xhfqoXMgWEDvog9U65c17RzZLrbV',
-              bech32m: 'tdashevo1qzg5azscav69z7m6dfzr9ner0a5vt7pn9cf27pv0'
+              bech32m: 'tdash1kzg5azscav69z7m6dfzr9ner0a5vt7pn9ca4sz8d'
             },
             credits: '250000000000',
             nonce: '5'
@@ -727,7 +727,7 @@ describe('Utils', () => {
           {
             platformAddress: {
               base58: 'yTdAgPuFgiByksqV1Hhwgxbw3EdJRKQBwb',
-              bech32m: 'tdashevo1qpgz9hk6tkn5zj3653s8qkjmk9439qkf0gl4yxxw'
+              bech32m: 'tdash1kpgz9hk6tkn5zj3653s8qkjmk9439qkf0gt229dv'
             },
             credits: '0'
           }
@@ -753,7 +753,7 @@ describe('Utils', () => {
           {
             platformAddress: {
               base58: 'yRpNvoc3hd66c3rNrPRGubVd9vGUoAVpZV',
-              bech32m: 'tdashevo1qq79z66rh34l4u2axlz3jv34zwshggnenut9k093'
+              bech32m: 'tdash1kq79z66rh34l4u2axlz3jv34zwshggnenul6cvwn'
             },
             credits: '100000000',
             nonce: '2'
@@ -771,700 +771,700 @@ describe('Utils', () => {
           {
             platformAddress: {
               base58: 'yLRvYtK1GKU3V96igCuENoDNZTDqMueSq5',
-              bech32m: 'tdashevo1qqqnn84grgmrqrh98h33e3u9f7vasdrt7cmdhy2s'
+              bech32m: 'tdash1kqqnn84grgmrqrh98h33e3u9f7vasdrt7c0je8pj'
             },
             credits: '1000000'
           },
           {
             platformAddress: {
               base58: 'yLy3FKiUN2h1NtJr8D4Cb85KEfQVkgCxBV',
-              bech32m: 'tdashevo1qqr3cxhgel75ru0yrhj5eq8j8jt92m5enqhkn3dv'
+              bech32m: 'tdash1kqr3cxhgel75ru0yrhj5eq8j8jt92m5enqrfajxw'
             },
             credits: '1000000'
           },
           {
             platformAddress: {
               base58: 'yMEyWias3eQEyZJjFXov2hddgHckxf4Vz5',
-              bech32m: 'tdashevo1qq9plfyacx9q26dtaxgwuw9lt78nyu2mzc9eqmdw'
+              bech32m: 'tdash1kq9plfyacx9q26dtaxgwuw9lt78nyu2mzc3xwcxv'
             },
             credits: '1000000'
           },
           {
             platformAddress: {
               base58: 'yMGBpsFMpe8jheCwAbLNCTr4XJHRFstFQb',
-              bech32m: 'tdashevo1qq9954jedavs9twj6r07yg25y2ymkzqg5s2r43u6'
+              bech32m: 'tdash1kq9954jedavs9twj6r07yg25y2ymkzqg5s7umjhc'
             },
             credits: '1000000'
           },
           {
             platformAddress: {
               base58: 'yMMqB5R21PtheP7AAgKAniZxzzy5z3prjT',
-              bech32m: 'tdashevo1qq9khxq3mrllp3vd72kj4valdnwfmpxfxshyr08y'
+              bech32m: 'tdash1kq9khxq3mrllp3vd72kj4valdnwfmpxfxsrmdvvx'
             },
             credits: '1000000'
           },
           {
             platformAddress: {
               base58: 'yMScsdSb8fEEHsEYHCGWNuAyRvY6QtJGfV',
-              bech32m: 'tdashevo1qqx9xe7khtgedcr0lyrdh08wm852l0k9xutgy0qm'
+              bech32m: 'tdash1kqx9xe7khtgedcr0lyrdh08wm852l0k9xulh2vte'
             },
             credits: '1000000'
           },
           {
             platformAddress: {
               base58: 'yMVSAUDBTtgX1tDVgaQDprXgtRVHGSN3wY',
-              bech32m: 'tdashevo1qqxdhd4tz8lhu0g66px0qzqe0uhp08840y4pzk38'
+              bech32m: 'tdash1kqxdhd4tz8lhu0g66px0qzqe0uhp08840yp7v469'
             },
             credits: '1000000'
           },
           {
             platformAddress: {
               base58: 'yMYxWfJvp7JvvDeaXyFmKhzZMNdZ2jZ4tE',
-              bech32m: 'tdashevo1qqxcvjmkfw7j0azk66wk6s0r347kldvgnygcqc4r'
+              bech32m: 'tdash1kqxcvjmkfw7j0azk66wk6s0r347kldvgnyu8wm7p'
             },
             credits: '1000000'
           },
           {
             platformAddress: {
               base58: 'yMZ6UKi2VWLPkP7aab7mSRj7w46KVntvu7',
-              bech32m: 'tdashevo1qqxceurw4venw24eway33yvf8qfcs4x2gunnhkcv'
+              bech32m: 'tdash1kqxceurw4venw24eway33yvf8qfcs4x2gu8ve4nw'
             },
             credits: '1000000'
           },
           {
             platformAddress: {
               base58: 'yMancpJ2cEGhAALrLQsbPLbH3fgoXBHnxg',
-              bech32m: 'tdashevo1qqxaah3p4ucc92q8k2g7ttgzmwnrh0zsqsht3muc'
+              bech32m: 'tdash1kqxaah3p4ucc92q8k2g7ttgzmwnrh0zsqsr5lch6'
             },
             credits: '1000000'
           },
           {
             platformAddress: {
               base58: 'yMjVb7NhnfGoJaoMmDoMwZJb4AL1eQiCa6',
-              bech32m: 'tdashevo1qq8cge2mvmca93flzf8pn449suahm77eeq606uh6'
+              bech32m: 'tdash1kq8cge2mvmca93flzf8pn449suahm77eeqws5luc'
             },
             credits: '1000000'
           },
           {
             platformAddress: {
               base58: 'yMokTBpjJ7hwiYbWxt3foP8sjHorgg93FY',
-              bech32m: 'tdashevo1qqg9yau5tgxfv82ge7k3atxm2f2fxtt3lvcx27n9'
+              bech32m: 'tdash1kqg9yau5tgxfv82ge7k3atxm2f2fxtt3lvveyac8'
             },
             credits: '1000000'
           },
           {
             platformAddress: {
               base58: 'yMwYsfEeiZToU2JovbKZqnQZqkTZxdhGg2',
-              bech32m: 'tdashevo1qqgucg2zejzkex9rp6dhftnjdxgcmqh8gccckla3'
+              bech32m: 'tdash1kqgucg2zejzkex9rp6dhftnjdxgcmqh8gcv8cukn'
             },
             credits: '1000000'
           },
           {
             platformAddress: {
               base58: 'yNZ1cyWUarwRWJNGiEE7s8uesV328i6iLR',
-              bech32m: 'tdashevo1qqvgzpq9q7r9uxnmx8k6a0atfejwrs4gyudp7cw2'
+              bech32m: 'tdash1kqvgzpq9q7r9uxnmx8k6a0atfejwrs4gyue7sm9g'
             },
             credits: '1000000'
           },
           {
             platformAddress: {
               base58: 'yNZ6Tu7BYiR8jh6kRJexYAXbzvLYQeS7K1',
-              bech32m: 'tdashevo1qqvg2rc377vtkl8qgl6qdmuzr6ayuv7t0vnl3x52'
+              bech32m: 'tdash1kqvg2rc377vtkl8qgl6qdmuzr6ayuv7t0v8ql9lg'
             },
             credits: '1000000'
           },
           {
             platformAddress: {
               base58: 'yNadMm4hfU1tPBp29uJfzC8oxd1GcPPUBv',
-              bech32m: 'tdashevo1qqvv7sun7efzmq8m4t5fj990cq4pxk5fd5hqavpe'
+              bech32m: 'tdash1kqvv7sun7efzmq8m4t5fj990cq4pxk5fd5rln02m'
             },
             credits: '1000000'
           },
           {
             platformAddress: {
               base58: 'yP4pqSqYeGtWSjZaBfAsKynNgAbDtNQf63',
-              bech32m: 'tdashevo1qq0zgl0qjyhz9f0y4mdvwrf3s29vn7q2dgk0wgcv'
+              bech32m: 'tdash1kq0zgl0qjyhz9f0y4mdvwrf3s29vn7q2dgzsqtnw'
             },
             credits: '1000000'
           },
           {
             platformAddress: {
               base58: 'yP8182D7K9NxmQBrvbxy398jN9KM3rNiaf',
-              bech32m: 'tdashevo1qq0tu5mr9vw8gawnyd4qmuzd680l2qzz2c2axt0v'
+              bech32m: 'tdash1kq0tu5mr9vw8gawnyd4qmuzd680l2qzz2c7zggyw'
             },
             credits: '1000000'
           },
           {
             platformAddress: {
               base58: 'yP9htGD6Zvc1UpDMh4xASFqMXYVAhM6HHF',
-              bech32m: 'tdashevo1qq03p3xvmtz2appq3ggkmcvrm5fel6a6kqax82h0'
+              bech32m: 'tdash1kq03p3xvmtz2appq3ggkmcvrm5fel6a6kqfeffud'
             },
             credits: '1000000'
           },
           {
             platformAddress: {
               base58: 'yQDfWfdoU6JBma525GuuSZu1xo35oPqt7f',
-              bech32m: 'tdashevo1qq4v3yl6mw9napv5j9qs6ltxwg0sceyhzszk00qs'
+              bech32m: 'tdash1kq4v3yl6mw9napv5j9qs6ltxwg0sceyhzskfpvtj'
             },
             credits: '1000000'
           },
           {
             platformAddress: {
               base58: 'yQMLwDt3QgDK4s4t7nehYXQQZqY83p2ctM',
-              bech32m: 'tdashevo1qqkrces4qjft9qd5rd907jdaauz8czmhuqneah7t'
+              bech32m: 'tdash1kqkrces4qjft9qd5rd907jdaauz8czmhuq8xn54f'
             },
             credits: '1000000'
           },
           {
             platformAddress: {
               base58: 'yQSdsMLDJWVbiVzmiB4nAwSgT2cRZ9gYdX',
-              bech32m: 'tdashevo1qqkne8ga388u0kgla8uv4z4jfyzqefl5ds3qeffe'
+              bech32m: 'tdash1kqkne8ga388u0kgla8uv4z4jfyzqefl5ds9lh2zm'
             },
             credits: '1000000'
           },
           {
             platformAddress: {
               base58: 'yQWXsMMs9ATvRqzzeoV6K4QR4K9hqfTcLb',
-              bech32m: 'tdashevo1qqklj3xlk0pzvjqz3k8rkj22uw7wjdlphgu6pnt4'
+              bech32m: 'tdash1kqklj3xlk0pzvjqz3k8rkj22uw7wjdlphgg90sqh'
             },
             credits: '1000000'
           },
           {
             platformAddress: {
               base58: 'yRHZpq4qVQcbwyqwTUhTD3xGgASP1Q7uMh',
-              bech32m: 'tdashevo1qqm8m8km8mt5pdf5l66pzpyk4cd43gvhdgh9lxfq'
+              bech32m: 'tdash1kqm8m8km8mt5pdf5l66pzpyk4cd43gvhdgr639zz'
             },
             credits: '1000000'
           },
           {
             platformAddress: {
               base58: 'yRLDkUcUnhCkaTumhRjLf9uCnDbXXN7Ui9',
-              bech32m: 'tdashevo1qqm0u8z3xrlud5g57p5rp898pus38zdprcffmsf3'
+              bech32m: 'tdash1kqm0u8z3xrlud5g57p5rp898pus38zdprcak4nzn'
             },
             credits: '1000000'
           },
           {
             platformAddress: {
               base58: 'yRRd5NBguXFNp3mcGWUY3TyaU2WVMVDFyR',
-              bech32m: 'tdashevo1qquq82tx800ppjd8x3xkjx2lfx98scvgdu7wgaxn'
+              bech32m: 'tdash1kquq82tx800ppjd8x3xkjx2lfx98scvgdu23x7d3'
             },
             credits: '1000000'
           },
           {
             platformAddress: {
               base58: 'yRiRVUS5SSApuqk9tpo3iHAMqeASj1Awoz',
-              bech32m: 'tdashevo1qqanzyquh69sx95ndy4asjjkk83qs9cjnsuaf6ku'
+              bech32m: 'tdash1kqanzyquh69sx95ndy4asjjkk83qs9cjnsgz8ea7'
             },
             credits: '1000000'
           },
           {
             platformAddress: {
               base58: 'yRk5uXAFoQU1a1KYq1i4yzmUC2bqweiZmV',
-              bech32m: 'tdashevo1qqacrzae2enwyr797gtyfrtwj7cwamfdl52p3kws'
+              bech32m: 'tdash1kqacrzae2enwyr797gtyfrtwj7cwamfdl577l49j'
             },
             credits: '1000000'
           },
           {
             platformAddress: {
               base58: 'ySceoSJ3Gwoy2qfiXShiP3YpwWBLE6f36F',
-              bech32m: 'tdashevo1qpz3rnd8sv75uxrugwhx00e9e6jlxlpceu3v3r63'
+              bech32m: 'tdash1kpz3rnd8sv75uxrugwhx00e9e6jlxlpceu9nlq3n'
             },
             credits: '1000000'
           },
           {
             platformAddress: {
               base58: 'ySv2CLogbYUBnHVDey6MTYX7mpAM6J1cGZ',
-              bech32m: 'tdashevo1qpy94wlc7k68rcz3exr9puuykl0esv3cd5xffmyd'
+              bech32m: 'tdash1kpy94wlc7k68rcz3exr9puuykl0esv3cd5jk8c00'
             },
             credits: '1000000'
           },
           {
             platformAddress: {
               base58: 'yT1jGGpp22NsvFKS75KNca67BH3E87k88L',
-              bech32m: 'tdashevo1qpyk7xyzzgtlswcl7l03u529prc47qj64vuxug9p'
+              bech32m: 'tdash1kpyk7xyzzgtlswcl7l03u529prc47qj64vgejtwr'
             },
             credits: '1000000'
           },
           {
             platformAddress: {
               base58: 'yT7V5riT1BTLHWPvWKqVacrAgCmUoQQ53J',
-              bech32m: 'tdashevo1qp9gts2xmjjz2jxe97dkzf5gtc2k706deyj2jcqy'
+              bech32m: 'tdash1kp9gts2xmjjz2jxe97dkzf5gtc2k706deyx4umtx'
             },
             credits: '1000000'
           },
           {
             platformAddress: {
               base58: 'yT9BLtjQcVJrah76hJbjHMbWPfEUmJkvee',
-              bech32m: 'tdashevo1qp9d03c522js948sj59av4jh7a2k5jqjxug8cact'
+              bech32m: 'tdash1kp9d03c522js948sj59av4jh7a2k5jqjxuuck7nf'
             },
             credits: '1000000'
           },
           {
             platformAddress: {
               base58: 'yTUc6sZGwPGEQTmuX22fpK6xWnaNLGK9zC',
-              bech32m: 'tdashevo1qp8ggkgujpvgehgq3kxswgegd5j2tam3w5hrnfly'
+              bech32m: 'tdash1kp8ggkgujpvgehgq3kxswgegd5j2tam3w5rua25x'
             },
             credits: '1000000'
           },
           {
             platformAddress: {
               base58: 'yTVozH4Trw5ZEEzZjpsGXCKxsr1AQqk4rg',
-              bech32m: 'tdashevo1qp8tatadrzph6z2xh8r9w73leqh9ymtp35fgfezz'
+              bech32m: 'tdash1kp8tatadrzph6z2xh8r9w73leqh9ymtp35ah86fq'
             },
             credits: '1000000'
           },
           {
             platformAddress: {
               base58: 'yTxA1HarqB1mk1jkAzCwDgqePjviuvqcVa',
-              bech32m: 'tdashevo1qpfm5d0lpaawh2rmtftelqxek74c0yd9myn5kp9n'
+              bech32m: 'tdash1kpfm5d0lpaawh2rmtftelqxek74c0yd9my8tczw3'
             },
             credits: '1000000'
           },
           {
             platformAddress: {
               base58: 'yUm6NVpuRLtbL2zCU2XkwoUBxquuVU4Gum',
-              bech32m: 'tdashevo1qpwf4w34yy998jy30vwdwfmcykww4s3mhufzwuav'
+              bech32m: 'tdash1kpwf4w34yy998jy30vwdwfmcykww4s3mhuaaqlkw'
             },
             credits: '1000000'
           },
           {
             platformAddress: {
               base58: 'yUqYfyabEh4YhBdzDNFvjonDfUayWRDCJX',
-              bech32m: 'tdashevo1qpwhyk9nxm37nmnn3azeh88yre38yqlnuqv3pkph'
+              bech32m: 'tdash1kpwhyk9nxm37nmnn3azeh88yre38yqlnuqcw0424'
             },
             credits: '1000000'
           },
           {
             platformAddress: {
               base58: 'yV8xieK8YMgNCMDiSCurBuFEKkfEqwW4Yi',
-              bech32m: 'tdashevo1qpst6lvv2xdwfqv98xsh8kyynuh0gs3szcz2ag5y'
+              bech32m: 'tdash1kpst6lvv2xdwfqv98xsh8kyynuh0gs3szck4ntlx'
             },
             credits: '1000000'
           },
           {
             platformAddress: {
               base58: 'yVMpAbWhUWMbK7HwM2rjDgmmhysXnQJEmD',
-              bech32m: 'tdashevo1qp3jhs352gdwwljn9xs2e7v6pua3kzztmyzlqqsa'
+              bech32m: 'tdash1kp3jhs352gdwwljn9xs2e7v6pua3kzztmykqwrml'
             },
             credits: '1000000'
           },
           {
             platformAddress: {
               base58: 'yVWMZMZUsxr1ag2HpVLBYzWQHjuW7sWDNx',
-              bech32m: 'tdashevo1qpjvjj5kmeksx5dxcac62zdnhtd58pgtl5yzcv6k'
+              bech32m: 'tdash1kpjvjj5kmeksx5dxcac62zdnhtd58pgtl5sak035'
             },
             credits: '1000000'
           },
           {
             platformAddress: {
               base58: 'yVwq9cWArNRmvzDaLwdgYhUpxwJSLmBgza',
-              bech32m: 'tdashevo1qp5e4wx07j6rqtu9ay6gnwpwxnrejquce5v6z72t'
+              bech32m: 'tdash1kp5e4wx07j6rqtu9ay6gnwpwxnrejquce5c9vapf'
             },
             credits: '1000000'
           },
           {
             platformAddress: {
               base58: 'yW3rHfmHtA8GQxYAC6vS3y4RAs3umdfB4V',
-              bech32m: 'tdashevo1qp4tu2cugdf2rmpkqdvgkn5quy8elcxmgqk4uhml'
+              bech32m: 'tdash1kp4tu2cugdf2rmpkqdvgkn5quy8elcxmgqz2j5sa'
             },
             credits: '1000000'
           },
           {
             platformAddress: {
               base58: 'yW6qq9g9GN8WcMmRtvqrpX7UFRJzXfyLhe',
-              bech32m: 'tdashevo1qp457zxu4wl30lef7ufsj02aun2v4aw0m5gpx25r'
+              bech32m: 'tdash1kp457zxu4wl30lef7ufsj02aun2v4aw0m5u7gflp'
             },
             credits: '1000000'
           },
           {
             platformAddress: {
               base58: 'yWfmjfCPToQMyt6sJmE65mwQgHQHSXpvti',
-              bech32m: 'tdashevo1qpccj4lz88tlr26tucza53dwe2p6kshr6cjed7y2'
+              bech32m: 'tdash1kpccj4lz88tlr26tucza53dwe2p6kshr6cxxra0g'
             },
             credits: '1000000'
           },
           {
             platformAddress: {
               base58: 'yWo2mo7P4S7GkoQamwCERfXHGAVc8BSWJ3',
-              bech32m: 'tdashevo1qpew3n4pyrc7m2dd826yduvrsq32ge2ymgpqh0q4'
+              bech32m: 'tdash1kpew3n4pyrc7m2dd826yduvrsq32ge2ymg4levth'
             },
             credits: '1000000'
           },
           {
             platformAddress: {
               base58: 'yWxhMyQ9kKvnYSk86fbJtmVAQZ5BpotNti',
-              bech32m: 'tdashevo1qp6tesm54y4ys8mkgw76kzvs68vshlcu45vuw8xj'
+              bech32m: 'tdash1kp6tesm54y4ys8mkgw76kzvs68vshlcu45crqyds'
             },
             credits: '1000000'
           },
           {
             platformAddress: {
               base58: 'yX1nE18Wvnn1vnG8FphtrsMzPJJEct6UGH',
-              bech32m: 'tdashevo1qp64yysf73kazy8n5f6gwcsyel4jv3x7q5yl0c52'
+              bech32m: 'tdash1kp64yysf73kazy8n5f6gwcsyel4jv3x7q5sqpmlg'
             },
             credits: '1000000'
           },
           {
             platformAddress: {
               base58: 'yXMKz81VvXebQRWD13Gb3Hn44vph2DcbSy',
-              bech32m: 'tdashevo1qpusglrcpk9auyyt3earl8dltc67med66u0wz9f6'
+              bech32m: 'tdash1kpusglrcpk9auyyt3earl8dltc67med66um3vxzc'
             },
             credits: '1000000'
           },
           {
             platformAddress: {
               base58: 'yXZx4VDFobvosk3pMmG7ESDC1R9DgtG8Gq',
-              bech32m: 'tdashevo1qpak09uysjqeujcmd2jlz6aly5yfy9vpkvxf6fqp'
+              bech32m: 'tdash1kpak09uysjqeujcmd2jlz6aly5yfy9vpkvjk52tr'
             },
             credits: '1000000'
           },
           {
             platformAddress: {
               base58: 'yXhxMuGneNWTpE7vXhKX98tvazPCiNsEEX',
-              bech32m: 'tdashevo1qp7wk2ujf5adtpujxl7tt48mejepe6dr7s0kqc77'
+              bech32m: 'tdash1kp7wk2ujf5adtpujxl7tt48mejepe6dr7smfwm4u'
             },
             credits: '1000000'
           },
           {
             platformAddress: {
               base58: 'yY69u7ciejdH1f4BGNAMkZQfPAnsGP7egZ',
-              bech32m: 'tdashevo1qzq3muljuxs9ts9m4memdl355z5yuyqe3q3677f2'
+              bech32m: 'tdash1kzq3muljuxs9ts9m4memdl355z5yuyqe3q99sazg'
             },
             credits: '1000000'
           },
           {
             platformAddress: {
               base58: 'yYkQibAJLyoAkH9dzYdfxb79ZJL21B9JAN',
-              bech32m: 'tdashevo1qzy95ggaeu9pkeszlnaxdxv26kkusfqcsq8taa7q'
+              bech32m: 'tdash1kzy95ggaeu9pkeszlnaxdxv26kkusfqcsqn5n74z'
             },
             credits: '1000000'
           },
           {
             platformAddress: {
               base58: 'yYmifT5tpKiMa59mBZMw4qL1s8KdVfrJPv',
-              bech32m: 'tdashevo1qzyfnp5em972xpuclnkz2jq0xpn9ujgjeyr6xyu2'
+              bech32m: 'tdash1kzyfnp5em972xpuclnkz2jq0xpn9ujgjeyh9g8hg'
             },
             credits: '1000000'
           },
           {
             platformAddress: {
               base58: 'yZH5jHKaY7UcNTtbAiU95Kvdrta8iWtuuN',
-              bech32m: 'tdashevo1qz8zwtr6getn57yramejt24x8ln5y8c7yu6f3gfe'
+              bech32m: 'tdash1kz8zwtr6getn57yramejt24x8ln5y8c7yuwkltzm'
             },
             credits: '1000000'
           },
           {
             platformAddress: {
               base58: 'yZjdPezWkG1izgiy6iJ7gruvf96UFhKeTW',
-              bech32m: 'tdashevo1qzfjc6eyadlxpj77kdftjkwxtf26tj8ekvf4gg0a'
+              bech32m: 'tdash1kzfjc6eyadlxpj77kdftjkwxtf26tj8ekva2xtyl'
             },
             credits: '1000000'
           },
           {
             platformAddress: {
               base58: 'yaJwJcb5RVcunVecj5S3aSJk72iJW5Z7Rb',
-              bech32m: 'tdashevo1qzvhjxfdmsyr9hy8d3zfgs8q7nvq0nq46qmghty8'
+              bech32m: 'tdash1kzvhjxfdmsyr9hy8d3zfgs8q7nvq0nq46q0heg09'
             },
             credits: '1000000'
           },
           {
             platformAddress: {
               base58: 'yaLJxDuPKcp5w6wA5Vfn37bgmAVrxjS7P7',
-              bech32m: 'tdashevo1qzvmh90yvuxv4nenw2u8e9gfvl60ntv93uz92szz'
+              bech32m: 'tdash1kzvmh90yvuxv4nenw2u8e9gfvl60ntv93uk6ynfq'
             },
             credits: '1000000'
           },
           {
             platformAddress: {
               base58: 'yakXR5Gv5hgYPcctDrXhpS1hVb6z1THTP1',
-              bech32m: 'tdashevo1qz0yl7x7470eme9tlsdth8h0ckcsq4f8yqmn8ej9'
+              bech32m: 'tdash1kz0yl7x7470eme9tlsdth8h0ckcsq4f8yq0vf6e8'
             },
             credits: '1000000'
           },
           {
             platformAddress: {
               base58: 'yb6VemqRsVQqfrykp59YayUdMXmJKTLNec',
-              bech32m: 'tdashevo1qz3pd5dv9a362y20ajud6ajfmf9hd45v5gx4520t'
+              bech32m: 'tdash1kz3pd5dv9a362y20ajud6ajfmf9hd45v5gj26fyf'
             },
             credits: '1000000'
           },
           {
             platformAddress: {
               base58: 'ybSAidoYahDGajCeHCFciQM4TdnRJYuSHY',
-              bech32m: 'tdashevo1qzju742unjde6f7el4hxc9ngu767qcgp556qhmrt'
+              bech32m: 'tdash1kzju742unjde6f7el4hxc9ngu767qcgp55wlecgf'
             },
             credits: '1000000'
           },
           {
             platformAddress: {
               base58: 'ybShKQAjTMRCwiLHCWu9hkpYfoBtXwhDVJ',
-              bech32m: 'tdashevo1qzj73cry0xwvlcfg6qn6jptsd25qv55cjvn7wthp'
+              bech32m: 'tdash1kzj73cry0xwvlcfg6qn6jptsd25qv55cjv8pqgur'
             },
             credits: '1000000'
           },
           {
             platformAddress: {
               base58: 'ybadnE5pXBDmSdgymzag53MRCVproTiFy3',
-              bech32m: 'tdashevo1qznkjsz5tc79ptw0ck6uf2ns6wtmzrwcws6xkkde'
+              bech32m: 'tdash1kznkjsz5tc79ptw0ck6uf2ns6wtmzrwcwswec4xm'
             },
             credits: '1000000'
           },
           {
             platformAddress: {
               base58: 'ybpbqxMkyk6iVgFBcgvQ89YnvHxrJKzHQv',
-              bech32m: 'tdashevo1qz4q6at6h9mdj2q3ec8pks3hm6ursd5e5cde5998'
+              bech32m: 'tdash1kz4q6at6h9mdj2q3ec8pks3hm6ursd5e5cex6xw9'
             },
             credits: '1000000'
           },
           {
             platformAddress: {
               base58: 'ycDXm8wZUVeV6JSAgXbwSWT7BG4tWPPDBt',
-              bech32m: 'tdashevo1qzhx88s7etpvm0d8dz8ea4qylj0aeq6j4qk3meck'
+              bech32m: 'tdash1kzhx88s7etpvm0d8dz8ea4qylj0aeq6j4qzw46n5'
             },
             credits: '1000000'
           },
           {
             platformAddress: {
               base58: 'ycDpHouARkGcYhbWhH2a4wyCdVzsqseLeR',
-              bech32m: 'tdashevo1qzh8z6jvzhepmv5nxpf2gt87up7lwrpmkg5xfk6t'
+              bech32m: 'tdash1kzh8z6jvzhepmv5nxpf2gt87up7lwrpmkgqe843f'
             },
             credits: '1000000'
           },
           {
             platformAddress: {
               base58: 'ycSmc4A4unM2q28x2yX9qCw85B8oCxVCw8',
-              bech32m: 'tdashevo1qzcwf99ladwwk6yfvmp6ht3qvylwhj6ke54x9glr'
+              bech32m: 'tdash1kzcwf99ladwwk6yfvmp6ht3qvylwhj6ke5pett5p'
             },
             credits: '1000000'
           },
           {
             platformAddress: {
               base58: 'ycTk8aj9kKTVeJwHYjzQnkebSyKCAwh7Xz',
-              bech32m: 'tdashevo1qzc383zskcsghj6dyk0075wfdtu6j726qvgswnw8'
+              bech32m: 'tdash1kzc383zskcsghj6dyk0075wfdtu6j726qvu0qs99'
             },
             credits: '1000000'
           },
           {
             platformAddress: {
               base58: 'ycYMMYJLePGGcbJdVYBKiHGKypHHcYW7tp',
-              bech32m: 'tdashevo1qzcl94t0v2aspl5qjredgphx6cn8eclt7u9jred7'
+              bech32m: 'tdash1kzcl94t0v2aspl5qjredgphx6cn8eclt7u3dd6xu'
             },
             credits: '1000000'
           },
           {
             platformAddress: {
               base58: 'ydVTpMEcEXp649wKQ7iDhkoxwewc7SzJAR',
-              bech32m: 'tdashevo1qz797xeyspyqpdpur2tzmhjvc2ccq2rek5jrmqmy'
+              bech32m: 'tdash1kz797xeyspyqpdpur2tzmhjvc2ccq2rek5xu4rsx'
             },
             credits: '1000000'
           },
           {
             platformAddress: {
               base58: 'ydc2GTd7TeBsiaMU6PDmA2P6PLwBNwy5HT',
-              bech32m: 'tdashevo1qz7eevye8ng62ap0en2cwytm3s3v6yqakua9c3hk'
+              bech32m: 'tdash1kz7eevye8ng62ap0en2cwytm3s3v6yqakuf6kju5'
             },
             credits: '1000000'
           },
           {
             platformAddress: {
               base58: 'ydmW8n953aMJXHDhaEsRbHZfB5sSpaKVis',
-              bech32m: 'tdashevo1qzlk0v3cvnyj86ff4hpetw3qn529xzua8ct7q3d8'
+              bech32m: 'tdash1kzlk0v3cvnyj86ff4hpetw3qn529xzua8clpwjx9'
             },
             credits: '1000000'
           },
           {
             platformAddress: {
               base58: 'yeTNj7UYKtbzG4YrMrbF3GpQXevaM5TagS',
-              bech32m: 'tdashevo1qrr0yf54j284t9qrfxsmd6w2mwdelnjk0s4g4dy9'
+              bech32m: 'tdash1krr0yf54j284t9qrfxsmd6w2mwdelnjk0sphmw08'
             },
             credits: '1000000'
           },
           {
             platformAddress: {
               base58: 'yebRhQKtHp7iTrZ6r1tKL6Wsv9Z6imFVjg',
-              bech32m: 'tdashevo1qry80a29p9xadvj3eakjzkk0vafgy2kgrctqrdlm'
+              bech32m: 'tdash1kry80a29p9xadvj3eakjzkk0vafgy2kgrclldw5e'
             },
             credits: '1000000'
           },
           {
             platformAddress: {
               base58: 'yebjGGqvWkVBz7c7zpFJz9PjH4db2GwAiR',
-              bech32m: 'tdashevo1qrygd8elwfgwcvd3p3hr5vczdtwltk7qxq4e6ll6'
+              bech32m: 'tdash1krygd8elwfgwcvd3p3hr5vczdtwltk7qxqpx5u5c'
             },
             credits: '1000000'
           },
           {
             platformAddress: {
               base58: 'yewgoHb5qLavZu2fttmaoCQLqPU77uQGJy',
-              bech32m: 'tdashevo1qrxyec3y4kf2dkrh7z3c90yg49nqhe4zjy23pxh5'
+              bech32m: 'tdash1krxyec3y4kf2dkrh7z3c90yg49nqhe4zjy7w09uk'
             },
             credits: '1000000'
           },
           {
             platformAddress: {
               base58: 'yf5Z5eBatRAq3i9dBNTeveBEBp5AoGWt5T',
-              bech32m: 'tdashevo1qrxun394fd48lvemssrrfchurmy0km3xfugknvpd'
+              bech32m: 'tdash1krxun394fd48lvemssrrfchurmy0km3xfuufa020'
             },
             credits: '1000000'
           },
           {
             platformAddress: {
               base58: 'yfGL5bmuU8Y1F7GQKjScRuKBra6CF8hWfT',
-              bech32m: 'tdashevo1qr8axlw58lrw72qnfe7ycgj9x42zm45c6vu3f6hg'
+              bech32m: 'tdash1kr8axlw58lrw72qnfe7ycgj9x42zm45c6vgw8eu2'
             },
             credits: '1000000'
           },
           {
             platformAddress: {
               base58: 'yfK9cZ2PQnconkFsaHMybapd6cK878M7eq',
-              bech32m: 'tdashevo1qrg9cq98pjyrdjkpxptcwvnrptj6xuwxwcude46y'
+              bech32m: 'tdash1krg9cq98pjyrdjkpxptcwvnrptj6xuwxwcgjhk3x'
             },
             credits: '1000000'
           },
           {
             platformAddress: {
               base58: 'yfPFhWXgA1Tst26BpYK987PVK7ZMC6vN2r',
-              bech32m: 'tdashevo1qrgj90cv5jqqaam49j9qztvvg59lt4g3aqz8cxjh'
+              bech32m: 'tdash1krgj90cv5jqqaam49j9qztvvg59lt4g3aqkck9e4'
             },
             credits: '1000000'
           },
           {
             platformAddress: {
               base58: 'yfhjXoef2BTVGBmRVeLf28HwN87bhCs2PT',
-              bech32m: 'tdashevo1qr22zaukume5k40q8c923d2gdtagjm7saqvgzevg'
+              bech32m: 'tdash1kr22zaukume5k40q8c923d2gdtagjm7saqchv682'
             },
             credits: '1000000'
           },
           {
             platformAddress: {
               base58: 'yfqZ94mpizRaCb2SxDPVAN1CowV2Nf3VSa',
-              bech32m: 'tdashevo1qrtpc84hn05e7xvntng3gnutjl2rxz7euvehlacm'
+              bech32m: 'tdash1krtpc84hn05e7xvntng3gnutjl2rxz7euvdg37ne'
             },
             credits: '1000000'
           },
           {
             platformAddress: {
               base58: 'yfvqMykpEAVL4Qf71gWmkxtEtjGYcBTGPy',
-              bech32m: 'tdashevo1qrt3h009vfff3t9dlq5ya2nfpfvmmvf7nsfhh7rw'
+              bech32m: 'tdash1krt3h009vfff3t9dlq5ya2nfpfvmmvf7nsageagv'
             },
             credits: '1000000'
           },
           {
             platformAddress: {
               base58: 'yg1PfyFgGyNQmbMGHMFpzqU6bg9kBh8kHy',
-              bech32m: 'tdashevo1qrtlscrhtunhfmaqnzeq2j2uswdtpzxauspqzumf'
+              bech32m: 'tdash1krtlscrhtunhfmaqnzeq2j2uswdtpzxaus4lvlst'
             },
             credits: '1000000'
           },
           {
             platformAddress: {
               base58: 'yg2Z7YWoDaqt3rUiKRrMKeJYRDvL1SGAA7',
-              bech32m: 'tdashevo1qrvrptr40mz78rffyfef9jqmrvz2m4p3lumr3h57'
+              bech32m: 'tdash1krvrptr40mz78rffyfef9jqmrvz2m4p3lu0ul5lu'
             },
             credits: '1000000'
           },
           {
             platformAddress: {
               base58: 'ygako22ivy56mNfcVMBpyomXDruKYoXvHs',
-              bech32m: 'tdashevo1qr0y00prfp4ceh5pmfnnv5hmze9ms22vqs4ezw7y'
+              bech32m: 'tdash1kr0y00prfp4ceh5pmfnnv5hmze9ms22vqspxvd4x'
             },
             credits: '1000000'
           },
           {
             platformAddress: {
               base58: 'ygi43dcsk4rq6fUNHRWR5ZLcbgezFQKRyu',
-              bech32m: 'tdashevo1qr06jrzqgh9xwzxz3zz9s74fqh9fjs7kxu66h45y'
+              bech32m: 'tdash1kr06jrzqgh9xwzxz3zz9s74fqh9fjs7kxuw9eklx'
             },
             credits: '1000000'
           },
           {
             platformAddress: {
               base58: 'ygxTk4iCmeybuZjsHoGJMupNNMogX5PjvU',
-              bech32m: 'tdashevo1qr3x9fc4hnu6ey3f694nh85q73sjahrf0ug2wl9l'
+              bech32m: 'tdash1kr3x9fc4hnu6ey3f694nh85q73sjahrf0uu4quwa'
             },
             credits: '1000000'
           },
           {
             platformAddress: {
               base58: 'yh96RHPCHe2MWRAcpK8weVNZACrwbYSPzv',
-              bech32m: 'tdashevo1qrjx2mvnxfx96uqv5q6mdtfxr8vunsy275htxjus'
+              bech32m: 'tdash1krjx2mvnxfx96uqv5q6mdtfxr8vunsy275r5g3hj'
             },
             credits: '1000000'
           },
           {
             platformAddress: {
               base58: 'yhp9w9RCnNSms4Tz9qBGuWVEYsyJHSDFru',
-              bech32m: 'tdashevo1qr4u39dghypalhyuyde2yuv39l9q3htc9g8xvr4l'
+              bech32m: 'tdash1kr4u39dghypalhyuyde2yuv39l9q3htc9gnezq7a'
             },
             credits: '1000000'
           },
           {
             platformAddress: {
               base58: 'yiBWcJBvUeKYeTYCCeGAxatjFNZnzWrPwS',
-              bech32m: 'tdashevo1qrha99q5cv7sm5nj8sn7c2hd3q7a5528gs5y6snf'
+              bech32m: 'tdash1krha99q5cv7sm5nj8sn7c2hd3q7a5528gsqm5nct'
             },
             credits: '1000000'
           },
           {
             platformAddress: {
               base58: 'yiXVMYTDuxowjJYCR2CNtShMNc6VGQZ26j',
-              bech32m: 'tdashevo1qreenkdl9e27utkpzxtdwl9km49anxfj9q8xmm3e'
+              bech32m: 'tdash1kreenkdl9e27utkpzxtdwl9km49anxfj9qne4c6m'
             },
             credits: '1000000'
           },
           {
             platformAddress: {
               base58: 'yiYYsCnWWQGJmy6qExnuc2CCS8sRRKi6Rr',
-              bech32m: 'tdashevo1qreu6v5u09q7zp5qkzm7j02kyhnjttxjqvxcl7e3'
+              bech32m: 'tdash1kreu6v5u09q7zp5qkzm7j02kyhnjttxjqvj83ajn'
             },
             credits: '1000000'
           },
           {
             platformAddress: {
               base58: 'yieZW4dNtt1KGboTPhuS8XCNDoMzg2RFCJ',
-              bech32m: 'tdashevo1qr60qw24hmt0qqhvgufspxc6fvhkdumlnqz0hrcd'
+              bech32m: 'tdash1kr60qw24hmt0qqhvgufspxc6fvhkdumlnqkseqn0'
             },
             credits: '1000000'
           },
           {
             platformAddress: {
               base58: 'yigRT5xmcG3FNBV2tooXEE4HEfQCybjo7i',
-              bech32m: 'tdashevo1qr6554wpyeyxqz4wj7p8eex57yse2lt4au8c8k3u'
+              bech32m: 'tdash1kr6554wpyeyxqz4wj7p8eex57yse2lt4aun8f467'
             },
             credits: '1000000'
           },
           {
             platformAddress: {
               base58: 'yisEgEhYEVrbcMA9PWE6GM4fxASMLSqkFU',
-              bech32m: 'tdashevo1qrm4t6hqn80g3thr2xle6frpyxf0zn0yuszpllq3'
+              bech32m: 'tdash1krm4t6hqn80g3thr2xle6frpyxf0zn0yusk73utn'
             },
             credits: '1000000'
           },
           {
             platformAddress: {
               base58: 'yisxcvx58QP8p2WMF4VJLsj4ady9iG88yW',
-              bech32m: 'tdashevo1qrmh3msrnfjxn2umaegzzftq4zv6uyhtyy3crhqe'
+              bech32m: 'tdash1krmh3msrnfjxn2umaegzzftq4zv6uyhtyy98d5tm'
             },
             credits: '1000000'
           },
           {
             platformAddress: {
               base58: 'yizbrqY3wP8ih72aq4B2EYmboYMNfxTXe8',
-              bech32m: 'tdashevo1qrut4qhlg5hf45xjmspcf84jt56xwrthr5phmzf2'
+              bech32m: 'tdash1krut4qhlg5hf45xjmspcf84jt56xwrthr54g4pzg'
             },
             credits: '1000000'
           },
           {
             platformAddress: {
               base58: 'yj2uK3j6cSKAVCELpWy5ScQHkXS7jN11XL',
-              bech32m: 'tdashevo1qrujn6tgqwkqrnppqed2gayakxq7t83l9gm90k8k'
+              bech32m: 'tdash1krujn6tgqwkqrnppqed2gayakxq7t83l9g06p4v5'
             },
             credits: '1000000'
           },
           {
             platformAddress: {
               base58: 'yj86W4svnFKBuVrXRTiW7i6HdFmcSYoZ4t',
-              bech32m: 'tdashevo1qraz24g7xgv2dadc867nww82lner8yqt4udtvmlm'
+              bech32m: 'tdash1kraz24g7xgv2dadc867nww82lner8yqt4ue5zc5e'
             },
             credits: '1000000'
           }
@@ -1493,7 +1493,7 @@ describe('Utils', () => {
             {
               platformAddress: {
                 base58: 'yZxXgZM6HhFGjBZB1uucEJELa5f5Sq244k',
-                bech32m: 'tdashevo1qz2e6rudezas4y3htwh7ktlgrhqvf05hzs2u5hkj'
+                bech32m: 'tdash1kz2e6rudezas4y3htwh7ktlgrhqvf05hzs7r65as'
               },
               amount: '179780720'
             }
