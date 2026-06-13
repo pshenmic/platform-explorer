@@ -14,10 +14,6 @@ impl PSQLProcessor {
         self.process_system_data_contract(SystemDataContract::MasternodeRewards, sql_transaction)
             .await;
 
-        println!("Processing SystemDataContract::FeatureFlags");
-        self.process_system_data_contract(SystemDataContract::FeatureFlags, sql_transaction)
-            .await;
-
         println!("Processing SystemDataContract::DPNS");
         self.process_system_data_contract(SystemDataContract::DPNS, sql_transaction)
             .await;
