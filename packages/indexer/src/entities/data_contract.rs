@@ -156,24 +156,27 @@ impl From<SystemDataContract> for DataContract {
             SystemDataContract::KeywordSearch => "KeywordSearch",
         };
         let identifier = data_contract.id();
-        let source = data_contract.source(platform_version).unwrap();
-        let owner = Identifier::from(source.owner_id_bytes);
-        let schema = source.document_schemas;
-        let schema_decoded = serde_json::to_value(schema).unwrap();
+        let source = data_contract.source(platform_version).ok();
+        let owner = source
+            .as_ref()
+            .map(|s| Identifier::from(s.owner_id_bytes))
+            .unwrap_or(identifier);
+        let schema_decoded = source
+            .map(|s| serde_json::to_value(s.document_schemas).unwrap());
 
-        return DataContract {
+        DataContract {
             id: None,
             name: Some(String::from(name)),
             owner,
             identifier,
-            schema: Some(schema_decoded),
+            schema: schema_decoded,
             version: 0,
             is_system: true,
             tokens: None,
             format_version: None,
             description: None,
             keywords: vec![],
-        };
+        }
     }
 }
 
