@@ -31,6 +31,31 @@
   }
 }
 
+// Identity Documents tab: same tracks as ColumnsMaster, minus Action and Gas.
+@mixin ColumnsMasterCompact () {
+  grid-template-columns:
+    70px               // time
+    fit-content(220px) // type
+    50px               // rev
+    minmax(0, 1fr)     // identifier
+    minmax(0, 1fr)     // data contract
+    80px;              // status
+
+  @container (max-width: 64rem) {
+    grid-template-columns:
+      70px fit-content(220px) 50px minmax(0, 1fr) minmax(0, 1fr) 80px;
+  }
+
+  @container (max-width: 48rem) {
+    grid-template-columns:
+      70px fit-content(200px) 50px minmax(0, 1fr) 80px;
+  }
+
+  @container (max-width: 22rem) {
+    grid-template-columns: 70px minmax(0, 1fr);
+  }
+}
+
 // Header / row: a grid item that spans all master columns and re-uses the
 // master tracks via subgrid.
 @mixin SubColumns () {

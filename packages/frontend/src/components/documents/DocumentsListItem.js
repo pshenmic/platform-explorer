@@ -7,7 +7,7 @@ import { useRouter } from 'next/navigation'
 import { findActiveAlias } from '../../util'
 import './DocumentsListItem.scss'
 
-function DocumentsListItem ({ document, showDataContract = false }) {
+function DocumentsListItem ({ document, showDataContract = false, showAction = true, showGas = true }) {
   const activeAlias = findActiveAlias(document?.owner?.aliases)
   const router = useRouter()
 
@@ -17,12 +17,14 @@ function DocumentsListItem ({ document, showDataContract = false }) {
         <TimeDelta endDate={document?.timestamp}/>
       </GridItem>
 
-      <GridItem className={'DocumentsListItem__Column DocumentsListItem__Column--TransitionType'}>
-        {document?.transitionType
-          ? <BatchTypeBadge batchType={document.transitionType}/>
-          : <NotActive/>
-        }
-      </GridItem>
+      {showAction &&
+        <GridItem className={'DocumentsListItem__Column DocumentsListItem__Column--TransitionType'}>
+          {document?.transitionType
+            ? <BatchTypeBadge batchType={document.transitionType}/>
+            : <NotActive/>
+          }
+        </GridItem>
+      }
 
       <GridItem
         className={'DocumentsListItem__Column DocumentsListItem__Column--DocumentType'}
@@ -78,9 +80,11 @@ function DocumentsListItem ({ document, showDataContract = false }) {
           </GridItem>
       }
 
-      <GridItem className={'DocumentsListItem__Column DocumentsListItem__Column--Gas'}>
-        {Number.isFinite(document?.gasUsed) ? document.gasUsed.toLocaleString() : <NotActive/>}
-      </GridItem>
+      {showGas &&
+        <GridItem className={'DocumentsListItem__Column DocumentsListItem__Column--Gas'}>
+          {Number.isFinite(document?.gasUsed) ? document.gasUsed.toLocaleString() : <NotActive/>}
+        </GridItem>
+      }
 
       <GridItem className={'DocumentsListItem__Column DocumentsListItem__Column--Status'}>
         {document?.deleted

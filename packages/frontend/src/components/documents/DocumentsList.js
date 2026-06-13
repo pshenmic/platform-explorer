@@ -12,23 +12,29 @@ export default function DocumentsList ({
   pagination,
   loading,
   itemsCount = 10,
-  showDataContract = false
+  showDataContract = false,
+  showAction = true,
+  showGas = true
 }) {
   const headerExtraClass = {
     default: '',
     light: 'DocumentsList__ColumnTitles--Light'
   }
 
+  const compact = !showAction && !showGas
+
   return (
     <div className={'DocumentsList'}>
-      <div className={'DocumentsList__Table'}>
+      <div className={`DocumentsList__Table${compact ? ' DocumentsList__Table--Compact' : ''}`}>
       <Grid className={`DocumentsList__ColumnTitles ${headerExtraClass?.[headerStyles] || ''}`}>
         <GridItem className={'DocumentsList__ColumnTitle DocumentsList__ColumnTitle--Timestamp'}>
           Time
         </GridItem>
-        <GridItem className={'DocumentsList__ColumnTitle DocumentsList__ColumnTitle--TransitionType'}>
-          Action
-        </GridItem>
+        {showAction &&
+          <GridItem className={'DocumentsList__ColumnTitle DocumentsList__ColumnTitle--TransitionType'}>
+            Action
+          </GridItem>
+        }
         <GridItem className={'DocumentsList__ColumnTitle DocumentsList__ColumnTitle--DocumentType'}>
           Type
         </GridItem>
@@ -41,9 +47,11 @@ export default function DocumentsList ({
         <GridItem className={`DocumentsList__ColumnTitle DocumentsList__ColumnTitle--${showDataContract ? 'DataContract' : 'Owner'}`}>
           {showDataContract ? 'Data Contract' : 'Owner'}
         </GridItem>
-        <GridItem className={'DocumentsList__ColumnTitle DocumentsList__ColumnTitle--Gas'}>
-          Gas
-        </GridItem>
+        {showGas &&
+          <GridItem className={'DocumentsList__ColumnTitle DocumentsList__ColumnTitle--Gas'}>
+            Gas
+          </GridItem>
+        }
         <GridItem className={'DocumentsList__ColumnTitle DocumentsList__ColumnTitle--Status'}>
           Status
         </GridItem>
@@ -52,7 +60,7 @@ export default function DocumentsList ({
       {!loading
         ? <>
           {documents?.map((document, key) =>
-            <DocumentsListItem document={document} showDataContract={showDataContract} key={key}/>
+            <DocumentsListItem document={document} showDataContract={showDataContract} showAction={showAction} showGas={showGas} key={key}/>
           )}
           {documents?.length === 0 &&
             <EmptyListMessage>There are no documents created yet.</EmptyListMessage>

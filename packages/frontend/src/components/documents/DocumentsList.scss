@@ -13,6 +13,10 @@
     > *:not(.DocumentsList__ColumnTitles):not(.DocumentsListItem) {
       grid-column: 1 / -1;
     }
+
+    &--Compact {
+      @include docs.ColumnsMasterCompact();
+    }
   }
 
   &__ColumnTitles {
