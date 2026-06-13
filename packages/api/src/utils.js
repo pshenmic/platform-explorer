@@ -26,7 +26,13 @@ const {
   IdentityTopUpFromAddressesTransitionWASM,
   AddressFundsTransferTransitionWASM,
   AddressFundingFromAssetLockTransitionWASM,
-  AddressCreditWithdrawalTransitionWASM
+  AddressCreditWithdrawalTransitionWASM,
+  ShieldTransitionWASM,
+  ShieldFromAssetLockTransitionWASM,
+  ShieldedTransferTransitionWASM,
+  UnshieldTransitionWASM,
+  ShieldedWithdrawalTransitionWASM,
+  IdentityCreateFromShieldedPoolTransitionWASM
 } = require('pshenmic-dpp')
 const BatchEnum = require('./enums/BatchEnum')
 const dpnsContract = require('../data_contracts/dpns.json')
@@ -1385,6 +1391,216 @@ const decodeStateTransition = async (base64) => {
         : null
       decoded.outputScript = addressCreditWithdrawalTransition?.outputScript?.hex() ?? null
 
+      decoded.raw = Buffer.from(stateTransition.bytes()).toString('hex')
+
+      break
+    }
+    case StateTransitionEnum.SHIELD: {
+      const shieldTransition = ShieldTransitionWASM.fromStateTransition(stateTransition)
+
+      decoded.userFeeIncrease = shieldTransition.userFeeIncrease
+      decoded.inputs = shieldTransition.inputs.map((input) => ({
+        platformAddress: {
+          base58: input.address.toAddress(NETWORK),
+          bech32m: input.address.toBech32m(NETWORK)
+        },
+        credits: input.credits.toString(),
+        nonce: input.nonce.toString()
+      }))
+      decoded.inputWitnesses = shieldTransition.inputWitnesses.map((input) => {
+        const type = input.getType()
+        const rawValue = input.getValue()
+        const value = type === 'P2PKH'
+          ? {
+              signature: Buffer.from(rawValue.signature).toString('hex')
+            }
+          : {
+              signatures: rawValue.signatures.map(sig => Buffer.from(sig).toString('hex')),
+              redeemScript: Buffer.from(rawValue.redeemScript).toString('hex')
+            }
+        return {
+          type,
+          value
+        }
+      })
+      decoded.actions = shieldTransition.actions.map((action) => ({
+        nullifier: Buffer.from(action.nullifier).toString('hex'),
+        rk: Buffer.from(action.rk).toString('hex'),
+        cmx: Buffer.from(action.cmx).toString('hex'),
+        encryptedNote: Buffer.from(action.encryptedNote).toString('hex'),
+        cvNet: Buffer.from(action.cvNet).toString('hex'),
+        spendAuthSig: Buffer.from(action.spendAuthSig).toString('hex')
+      }))
+      decoded.amount = shieldTransition.amount.toString()
+      decoded.anchor = Buffer.from(shieldTransition.anchor).toString('hex')
+      decoded.proof = Buffer.from(shieldTransition.proof).toString('hex')
+      decoded.bindingsSignature = Buffer.from(shieldTransition.bindingsSignature).toString('hex')
+      decoded.feeStrategy = shieldTransition.feeStrategy.map(step => ({
+        type: step.getValueType(),
+        value: step.getValue()
+      }))
+      decoded.raw = Buffer.from(stateTransition.bytes()).toString('hex')
+
+      break
+    }
+    case StateTransitionEnum.SHIELDED_TRANSFER: {
+      const shieldedTransferTransition = ShieldedTransferTransitionWASM.fromStateTransition(stateTransition)
+
+      decoded.actions = shieldedTransferTransition.actions.map((action) => ({
+        nullifier: Buffer.from(action.nullifier).toString('hex'),
+        rk: Buffer.from(action.rk).toString('hex'),
+        cmx: Buffer.from(action.cmx).toString('hex'),
+        encryptedNote: Buffer.from(action.encryptedNote).toString('hex'),
+        cvNet: Buffer.from(action.cvNet).toString('hex'),
+        spendAuthSig: Buffer.from(action.spendAuthSig).toString('hex')
+      }))
+      decoded.valueBalance = shieldedTransferTransition.valueBalance.toString()
+      decoded.anchor = Buffer.from(shieldedTransferTransition.anchor).toString('hex')
+      decoded.proof = Buffer.from(shieldedTransferTransition.proof).toString('hex')
+      decoded.bindingsSignature = Buffer.from(shieldedTransferTransition.bindingsSignature).toString('hex')
+      decoded.raw = Buffer.from(stateTransition.bytes()).toString('hex')
+
+      break
+    }
+    case StateTransitionEnum.UNSHIELD: {
+      const unshieldTransition = UnshieldTransitionWASM.fromStateTransition(stateTransition)
+
+      decoded.outputAddress = {
+        platformAddress: {
+          base58: unshieldTransition.outputAddress.toAddress(NETWORK),
+          bech32m: unshieldTransition.outputAddress.toBech32m(NETWORK)
+        }
+      }
+      decoded.actions = unshieldTransition.actions.map((action) => ({
+        nullifier: Buffer.from(action.nullifier).toString('hex'),
+        rk: Buffer.from(action.rk).toString('hex'),
+        cmx: Buffer.from(action.cmx).toString('hex'),
+        encryptedNote: Buffer.from(action.encryptedNote).toString('hex'),
+        cvNet: Buffer.from(action.cvNet).toString('hex'),
+        spendAuthSig: Buffer.from(action.spendAuthSig).toString('hex')
+      }))
+      decoded.unshieldingAmount = unshieldTransition.unshieldingAmount.toString()
+      decoded.anchor = Buffer.from(unshieldTransition.anchor).toString('hex')
+      decoded.proof = Buffer.from(unshieldTransition.proof).toString('hex')
+      decoded.bindingsSignature = Buffer.from(unshieldTransition.bindingsSignature).toString('hex')
+      decoded.raw = Buffer.from(stateTransition.bytes()).toString('hex')
+
+      break
+    }
+    case StateTransitionEnum.SHIELD_FROM_ASSET_LOCK: {
+      const shieldFromAssetLockTransition = ShieldFromAssetLockTransitionWASM.fromStateTransition(stateTransition)
+
+      const assetLockProof = shieldFromAssetLockTransition.assetLockProof
+
+      const decodedTransaction =
+        assetLockProof.getLockType() === 'Instant'
+          ? Transaction.fromBytes(assetLockProof.getInstantLockProof().getTransaction())
+          : null
+
+      decoded.assetLockProof = {
+        coreChainLockedHeight: assetLockProof.getLockType() === 'Chain' ? assetLockProof.getChainLockProof().coreChainLockedHeight : null,
+        type: assetLockProof.getLockType() === 'Instant' ? 'instantSend' : 'chainLock',
+        instantLock: assetLockProof.getLockType() === 'Instant' ? Buffer.from(assetLockProof.getInstantLockProof().getInstantLockBytes()).toString('base64') : null,
+        fundingAmount: decodedTransaction?.outputs[assetLockProof.getOutPoint().getVOUT()].satoshis
+          ? String(decodedTransaction?.outputs[assetLockProof.getOutPoint().getVOUT()].satoshis)
+          : null,
+        fundingCoreTx: assetLockProof.getOutPoint().getTXID(),
+        vout: assetLockProof.getOutPoint().getVOUT()
+      }
+
+      decoded.actions = shieldFromAssetLockTransition.actions.map((action) => ({
+        nullifier: Buffer.from(action.nullifier).toString('hex'),
+        rk: Buffer.from(action.rk).toString('hex'),
+        cmx: Buffer.from(action.cmx).toString('hex'),
+        encryptedNote: Buffer.from(action.encryptedNote).toString('hex'),
+        cvNet: Buffer.from(action.cvNet).toString('hex'),
+        spendAuthSig: Buffer.from(action.spendAuthSig).toString('hex')
+      }))
+      decoded.valueBalance = shieldFromAssetLockTransition.valueBalance.toString()
+      decoded.anchor = Buffer.from(shieldFromAssetLockTransition.anchor).toString('hex')
+      decoded.proof = Buffer.from(shieldFromAssetLockTransition.proof).toString('hex')
+      decoded.bindingsSignature = Buffer.from(shieldFromAssetLockTransition.bindingsSignature).toString('hex')
+      decoded.surplusOutput = shieldFromAssetLockTransition.surplusOutput
+        ? {
+            platformAddress: {
+              base58: shieldFromAssetLockTransition.surplusOutput.toAddress(NETWORK),
+              bech32m: shieldFromAssetLockTransition.surplusOutput.toBech32m(NETWORK)
+            }
+          }
+        : null
+      decoded.signature = Buffer.from(shieldFromAssetLockTransition.signature).toString('hex')
+      decoded.raw = Buffer.from(stateTransition.bytes()).toString('hex')
+
+      break
+    }
+    case StateTransitionEnum.SHIELDED_WITHDRAWAL: {
+      const shieldedWithdrawalTransition = ShieldedWithdrawalTransitionWASM.fromStateTransition(stateTransition)
+
+      decoded.actions = shieldedWithdrawalTransition.actions.map((action) => ({
+        nullifier: Buffer.from(action.nullifier).toString('hex'),
+        rk: Buffer.from(action.rk).toString('hex'),
+        cmx: Buffer.from(action.cmx).toString('hex'),
+        encryptedNote: Buffer.from(action.encryptedNote).toString('hex'),
+        cvNet: Buffer.from(action.cvNet).toString('hex'),
+        spendAuthSig: Buffer.from(action.spendAuthSig).toString('hex')
+      }))
+      decoded.unshieldingAmount = shieldedWithdrawalTransition.unshieldingAmount.toString()
+      decoded.anchor = Buffer.from(shieldedWithdrawalTransition.anchor).toString('hex')
+      decoded.proof = Buffer.from(shieldedWithdrawalTransition.proof).toString('hex')
+      decoded.bindingsSignature = Buffer.from(shieldedWithdrawalTransition.bindingsSignature).toString('hex')
+      decoded.coreFeePerByte = shieldedWithdrawalTransition.coreFeePerByte
+      decoded.pooling = shieldedWithdrawalTransition.pooling
+      decoded.outputAddress = shieldedWithdrawalTransition.outputScript
+        ? outputScriptToAddress(Buffer.from(shieldedWithdrawalTransition.outputScript.bytes()))
+        : null
+      decoded.outputScript = shieldedWithdrawalTransition?.outputScript?.hex() ?? null
+      decoded.raw = Buffer.from(stateTransition.bytes()).toString('hex')
+
+      break
+    }
+    case StateTransitionEnum.IDENTITY_CREATE_FROM_SHIELDED_POOL: {
+      const identityCreateFromShieldedPool = IdentityCreateFromShieldedPoolTransitionWASM.fromStateTransition(stateTransition)
+
+      decoded.identityId = identityCreateFromShieldedPool.identityId.base58()
+      decoded.denomination = identityCreateFromShieldedPool.denomination.toString()
+      decoded.publicKeys = identityCreateFromShieldedPool.publicKeys.map(key => {
+        const { contractBounds } = key
+
+        return {
+          contractBounds: contractBounds
+            ? {
+                type: contractBounds.contractBoundsType,
+                id: contractBounds.identifier.base58(),
+                typeName: contractBounds.documentTypeName
+              }
+            : null,
+          id: key.keyId,
+          type: key.keyType,
+          data: Buffer.from(key.data).toString('hex'),
+          publicKeyHash: Buffer.from(key.getHash()).toString('hex'),
+          purpose: key.purpose,
+          securityLevel: key.securityLevel,
+          readOnly: key.readOnly,
+          signature: Buffer.from(key.signature).toString('hex')
+        }
+      })
+      decoded.actions = identityCreateFromShieldedPool.actions.map((action) => ({
+        nullifier: Buffer.from(action.nullifier).toString('hex'),
+        rk: Buffer.from(action.rk).toString('hex'),
+        cmx: Buffer.from(action.cmx).toString('hex'),
+        encryptedNote: Buffer.from(action.encryptedNote).toString('hex'),
+        cvNet: Buffer.from(action.cvNet).toString('hex'),
+        spendAuthSig: Buffer.from(action.spendAuthSig).toString('hex')
+      }))
+      decoded.anchor = Buffer.from(identityCreateFromShieldedPool.anchor).toString('hex')
+      decoded.proof = Buffer.from(identityCreateFromShieldedPool.proof).toString('hex')
+      decoded.bindingsSignature = Buffer.from(identityCreateFromShieldedPool.bindingsSignature).toString('hex')
+      decoded.sendToAddressOnCreationFailure = {
+        platformAddress: {
+          base58: identityCreateFromShieldedPool.sendToAddressOnCreationFailure.toAddress(NETWORK),
+          bech32m: identityCreateFromShieldedPool.sendToAddressOnCreationFailure.toBech32m(NETWORK)
+        }
+      }
       decoded.raw = Buffer.from(stateTransition.bytes()).toString('hex')
 
       break
