@@ -2176,6 +2176,12 @@ Available transactions type for decode
 | `ADDRESS_FUNDS_TRANSFER`              | 12         |
 | `ADDRESS_FUNDING_FROM_ASSET_LOCK`     | 13         |
 | `ADDRESS_CREDIT_WITHDRAWAL`           | 14         |
+| `SHIELD`                              | 15         |
+| `SHIELDED_TRANSFER`                   | 16         |
+| `UNSHIELD`                            | 17         |
+| `SHIELD_FROM_ASSET_LOCK`              | 18         |
+| `SHIELDED_WITHDRAWAL`                 | 19         |
+| `IDENTITY_CREATE_FROM_SHIELDED_POOL`  | 20         |
 
 - `fundingAddress` can be null
 - `prefundedVotingBalance` can be null
