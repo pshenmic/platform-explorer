@@ -606,24 +606,27 @@
 @mixin BrandScroll () {
   scroll-behavior: smooth;
   scrollbar-width: thin;
-  scrollbar-color: $scrollColor $scrollBackgroundColor;
+  scrollbar-color: $scrollColor transparent;
 
+  // WebKit: rounded, inset thumb via transparent border + background-clip.
   &::-webkit-scrollbar {
-    height: 2px;
-    width: 2px;
+    height: 8px;
+    width: 8px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
   }
 
   &::-webkit-scrollbar-thumb {
     background-color: $scrollColor;
+    border-radius: 8px;
+    border: 2px solid transparent;
+    background-clip: padding-box;
   }
 
-  &::-webkit-scrollbar-track {
-    background-color: $scrollBackgroundColor;
-  }
-
-  @supports (scrollbar-width: thin) {
-    scrollbar-width: thin;
-    scrollbar-color: $scrollColor $scrollBackgroundColor;
+  &::-webkit-scrollbar-thumb:hover {
+    background-color: $color-brand-light;
   }
 }
 

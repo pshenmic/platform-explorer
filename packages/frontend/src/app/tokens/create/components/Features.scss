@@ -1,0 +1,10 @@
+@import 'src/styles/variables';
+
+.Features {
+  display: flex;
+  flex-direction: column;
+
+  &__Row {
+    font-size: 0.75rem;
+  }
+}

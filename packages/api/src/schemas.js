@@ -321,6 +321,9 @@ const schemaTypes = [
       },
       voting_finished: {
         type: ['boolean', 'null']
+      },
+      deleted: {
+        type: ['boolean', 'null']
       }
     }
   },

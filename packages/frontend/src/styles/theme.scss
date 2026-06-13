@@ -3,6 +3,13 @@
 @import 'components/Tabs.scss';
 @import './variables.scss';
 
+:root {
+  --layout-nav-h: 66px;
+  --layout-footer-h: 66px;
+  --layout-page-chrome: 202px;
+  --layout-page-h: calc(100vh - var(--layout-nav-h) - var(--layout-footer-h) - var(--layout-page-chrome));
+}
+
 * {
   border-color: var(--chakra-colors-gray-800);
 }

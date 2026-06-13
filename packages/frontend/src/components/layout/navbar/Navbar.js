@@ -43,6 +43,7 @@ const menuItems = [
     submenuItems: [
       { title: 'API', href: '/api' },
       { title: 'Create Data Contract', href: '/dataContract/create' },
+      { title: 'Create Token', href: '/tokens/create' },
       { title: 'Broadcast Transaction', href: '/developers/broadcast' }
     ]
   },

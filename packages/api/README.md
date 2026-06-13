@@ -1622,8 +1622,10 @@ Return all documents by the given identity
 * `limit` cannot be more then 100
 * `page` cannot be less then 1
 * `document_type_name` document type name _optional_
+* `timestamp_start` and `timestamp_end` timestamp start and end of documents creation date, must be used together _optional_
+* `deleted` bool field to filter documents by deleted status _optional_
 ```
-GET /identities/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec/documents?page=1&limit=10&order=asc&document_type_name=preorder
+GET /identities/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec/documents?page=1&limit=10&order=asc&document_type_name=preorder&timestamp_start=2024-01-01T00:00:00.000Z&timestamp_end=2025-01-01T00:00:00.000Z&deleted=false
 
 {
   "resultSet": [
@@ -1655,6 +1657,7 @@ GET /identities/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec/documents?page=1&li
 Response codes:
 ```
 200: OK
+400: Invalid input, check start/end values
 500: Internal Server Error
 ```
 ---
