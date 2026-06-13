@@ -361,7 +361,7 @@ describe('Documents routes', () => {
                   id: document.data?.dataContractObject?.id ?? null,
                   ownerId: document.data?.dataContractObject?.ownerId ?? null,
                   version: document.data?.dataContractObject?.version ?? null,
-                  $format_version: document.data?.dataContractObject?.$format_version ?? null,
+                  $formatVersion: document.data?.dataContractObject?.$formatVersion ?? null,
                   documentSchemas: document.data?.dataContractObject?.documentSchemas ?? null
                 }
               }
@@ -464,7 +464,7 @@ describe('Documents routes', () => {
                   id: document.data?.dataContractObject?.id ?? null,
                   ownerId: document.data?.dataContractObject?.ownerId ?? null,
                   version: document.data?.dataContractObject?.version ?? null,
-                  $format_version: document.data?.dataContractObject?.$format_version ?? null,
+                  $formatVersion: document.data?.dataContractObject?.$formatVersion ?? null,
                   documentSchemas: document.data?.dataContractObject?.documentSchemas ?? null
                 }
               }
@@ -517,7 +517,7 @@ describe('Documents routes', () => {
                   id: document.data?.dataContractObject?.id ?? null,
                   ownerId: document.data?.dataContractObject?.ownerId ?? null,
                   version: document.data?.dataContractObject?.version ?? null,
-                  $format_version: document.data?.dataContractObject?.$format_version ?? null,
+                  $formatVersion: document.data?.dataContractObject?.$formatVersion ?? null,
                   documentSchemas: document.data?.dataContractObject?.documentSchemas ?? null
                 }
               }
@@ -570,7 +570,7 @@ describe('Documents routes', () => {
                   id: document.data?.dataContractObject?.id ?? null,
                   ownerId: document.data?.dataContractObject?.ownerId ?? null,
                   version: document.data?.dataContractObject?.version ?? null,
-                  $format_version: document.data?.dataContractObject?.$format_version ?? null,
+                  $formatVersion: document.data?.dataContractObject?.$formatVersion ?? null,
                   documentSchemas: document.data?.dataContractObject?.documentSchemas ?? null
                 }
               }
