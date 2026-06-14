@@ -11,10 +11,7 @@ $ npm start
 
 Environments:
 ```
-POSTGRES_HOST=127.0.0.1
-POSTGRES_DB=indexer
-POSTGRES_USER=indexer
-POSTGRES_PASS=indexer
+POSTGRES_URL=postgres://indexer:indexer@127.0.0.1:5432/indexer
 TENDERDASH_URL=http://127.0.0.1:36657
 CORE_RPC_HOST=127.0.0.1
 CORE_RPC_PORT=19998
