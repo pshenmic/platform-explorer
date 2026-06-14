@@ -5,13 +5,56 @@ import { ValueContainer } from '@components/ui/containers'
 import { useActiveNetwork } from 'src/contexts'
 
 export const AssetLockProof = ({
-  assetLockProof: { fundingCoreTx, instantLock },
+  assetLockProof: {
+    fundingCoreTx,
+    instantLock,
+    type,
+    fundingAmount,
+    vout,
+    coreChainLockedHeight
+  },
   loading
 }) => {
   const { l1explorerBaseUrl } = useActiveNetwork()
 
   return (
   <>
+    {type !== undefined && type !== null && (
+      <InfoLine
+        className={'TransactionPage__InfoLine'}
+        title={'Asset Lock Type'}
+        value={<ValueCard>{type}</ValueCard>}
+        loading={loading}
+      />
+    )}
+
+    {coreChainLockedHeight !== undefined && coreChainLockedHeight !== null && (
+      <InfoLine
+        className={'TransactionPage__InfoLine'}
+        title={'Core Chain Locked Height'}
+        value={<ValueCard>{coreChainLockedHeight}</ValueCard>}
+        loading={loading}
+      />
+    )}
+
+    {fundingAmount !== undefined && fundingAmount !== null && (
+      <InfoLine
+        className={'TransactionPage__InfoLine'}
+        title={'Funding Amount'}
+        value={<ValueCard>{fundingAmount} satoshis</ValueCard>}
+        loading={loading}
+      />
+    )}
+
+    {vout !== undefined && vout !== null && (
+      <InfoLine
+        className={'TransactionPage__InfoLine'}
+        title={'Output Index (vout)'}
+        value={<ValueCard>{vout}</ValueCard>}
+        loading={loading}
+      />
+    )}
+
     {instantLock && (
       <InfoLine
         className={'TransactionPage__InfoLine'}
