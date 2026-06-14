@@ -21,7 +21,6 @@ import {
  * @param {string} [props.proof]
  * @param {string} [props.bindingsSignature]
  * @param {string} [props.signature]
- * @param {string} [props.raw]
  * @param {Object} [props.rate]
  * @returns {JSX.Element}
  */
@@ -35,7 +34,6 @@ export const IdentityCreateFromShieldedPool = ({
   proof,
   bindingsSignature,
   signature,
-  raw,
   rate
 }) => (
   <>
@@ -61,6 +59,5 @@ export const IdentityCreateFromShieldedPool = ({
     <HashInfoLine title='Bindings Signature' value={bindingsSignature} />
     <HashInfoLine title='Signature' value={signature} />
     <HashInfoLine title='Proof' value={proof} />
-    <HashInfoLine title='Raw Transaction' value={raw} />
   </>
 )

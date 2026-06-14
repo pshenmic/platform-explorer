@@ -9,7 +9,6 @@ import { ShieldedActions, AmountInfoLine, HashInfoLine } from '../ShieldedCommon
  * @param {string} [props.anchor]
  * @param {string} [props.proof]
  * @param {string} [props.bindingsSignature]
- * @param {string} [props.raw]
  * @param {Object} [props.rate]
  * @returns {JSX.Element}
  */
@@ -19,7 +18,6 @@ export const ShieldedTransfer = ({
   anchor,
   proof,
   bindingsSignature,
-  raw,
   rate
 }) => (
   <>
@@ -28,6 +26,5 @@ export const ShieldedTransfer = ({
     <HashInfoLine title='Anchor' value={anchor} />
     <HashInfoLine title='Bindings Signature' value={bindingsSignature} />
     <HashInfoLine title='Proof' value={proof} />
-    <HashInfoLine title='Raw Transaction' value={raw} />
   </>
 )

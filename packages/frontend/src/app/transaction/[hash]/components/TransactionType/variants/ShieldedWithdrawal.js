@@ -20,7 +20,6 @@ import {
  * @param {string} [props.pooling]
  * @param {string} [props.outputAddress] - Plain address string.
  * @param {string} [props.outputScript]
- * @param {string} [props.raw]
  * @param {Object} [props.rate]
  * @returns {JSX.Element}
  */
@@ -34,7 +33,6 @@ export const ShieldedWithdrawal = ({
   pooling,
   outputAddress,
   outputScript,
-  raw,
   rate
 }) => (
   <>
@@ -60,6 +58,5 @@ export const ShieldedWithdrawal = ({
     <HashInfoLine title='Anchor' value={anchor} />
     <HashInfoLine title='Bindings Signature' value={bindingsSignature} />
     <HashInfoLine title='Proof' value={proof} />
-    <HashInfoLine title='Raw Transaction' value={raw} />
   </>
 )

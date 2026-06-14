@@ -21,8 +21,6 @@ import {
   ShieldedWithdrawal,
   IdentityCreateFromShieldedPool
 } from './variants'
-import { ValueCard } from '@components/cards'
-import { InfoLine, Identifier } from '@components/data'
 
 export const TransactionType = ({ typeString: type, ...other }) => {
   if (other.data === null) return <></>
@@ -109,23 +107,6 @@ export const TransactionType = ({ typeString: type, ...other }) => {
 
   if (type === 'IDENTITY_CREATE_FROM_SHIELDED_POOL') {
     return <IdentityCreateFromShieldedPool {...other} />
-  }
-
-  // Unknown type: show the raw payload instead of an empty Details section.
-  if (other.raw) {
-    return (
-      <InfoLine
-        className='TransactionPage__InfoLine TransactionPage__InfoLine--FullWidth'
-        title='Raw Transaction'
-        value={
-          <ValueCard className='TransactionPage__RawTransaction'>
-            <Identifier copyButton ellipsis styles={['highlight-both']}>
-              {other.raw}
-            </Identifier>
-          </ValueCard>
-        }
-      />
-    )
   }
 
   return <></>

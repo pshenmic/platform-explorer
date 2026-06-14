@@ -21,7 +21,6 @@ import {
  * @param {string} [props.proof]
  * @param {string} [props.bindingsSignature]
  * @param {Array} [props.feeStrategy]
- * @param {string} [props.raw]
  * @param {Object} [props.rate]
  * @returns {JSX.Element}
  */
@@ -35,7 +34,6 @@ export const Shield = ({
   proof,
   bindingsSignature,
   feeStrategy = [],
-  raw,
   rate
 }) => (
   <>
@@ -54,6 +52,5 @@ export const Shield = ({
     <HashInfoLine title='Bindings Signature' value={bindingsSignature} />
     <FeeStrategyLine feeStrategy={feeStrategy} />
     <HashInfoLine title='Proof' value={proof} />
-    <HashInfoLine title='Raw Transaction' value={raw} />
   </>
 )
