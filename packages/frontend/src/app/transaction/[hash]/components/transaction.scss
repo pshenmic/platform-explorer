@@ -63,6 +63,23 @@
       }
     }
 
+    &--RawTransaction {
+      .InfoLine__Value {
+        min-width: 0;
+        overflow: hidden;
+      }
+
+      .ValueCard {
+        min-width: 0;
+        max-width: 100%;
+      }
+
+      .Identifier {
+        min-width: 0;
+        max-width: 100%;
+      }
+    }
+
     &--Transitions {
       .InfoLine__Value {
         flex-grow: 1;

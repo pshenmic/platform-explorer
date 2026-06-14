@@ -202,8 +202,9 @@ export const Transaction = () => {
             title={'Raw Transaction'}
             value={
               <ValueCard className={'TransactionPage__RawTransaction'}>
-                {selected?.data}
-                <CopyButton text={selected?.data} />
+                <Identifier copyButton ellipsis styles={['highlight-both']}>
+                  {selected?.data}
+                </Identifier>
               </ValueCard>
             }
             loading={transaction.loading}

@@ -73,5 +73,35 @@ export const TransactionTypesInfo = {
     title: 'Address Credit Withdrawal',
     description: 'Withdraw credits from Platform addresses to Core (L1) Dash addresses',
     colorScheme: 'dimGray'
+  },
+  SHIELD: {
+    title: 'Shield',
+    description: 'Moves credits from a transparent Platform address into the shielded (private) pool.',
+    colorScheme: 'green'
+  },
+  SHIELDED_TRANSFER: {
+    title: 'Shielded Transfer',
+    description: 'Transfers value privately between shielded notes inside the shielded pool.',
+    colorScheme: 'green'
+  },
+  UNSHIELD: {
+    title: 'Unshield',
+    description: 'Moves credits from the shielded pool back to a transparent Platform address.',
+    colorScheme: 'green'
+  },
+  SHIELD_FROM_ASSET_LOCK: {
+    title: 'Shield From Asset Lock',
+    description: 'Funds the shielded pool directly from a Core (L1) asset lock proof.',
+    colorScheme: 'green'
+  },
+  SHIELDED_WITHDRAWAL: {
+    title: 'Shielded Withdrawal',
+    description: 'Withdraws value from the shielded pool to a Core (L1) Dash address.',
+    colorScheme: 'green'
+  },
+  IDENTITY_CREATE_FROM_SHIELDED_POOL: {
+    title: 'Identity Create From Shielded Pool',
+    description: 'Creates a new identity funded from the shielded (private) pool.',
+    colorScheme: 'green'
   }
 }

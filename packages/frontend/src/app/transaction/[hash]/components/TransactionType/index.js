@@ -13,7 +13,13 @@ import {
   AddressCreditWithdrawal,
   IdentityCreditTransferToAddress,
   IdentityCreateFromAddresses,
-  IdentityTopUpFromAddresses
+  IdentityTopUpFromAddresses,
+  Shield,
+  ShieldedTransfer,
+  Unshield,
+  ShieldFromAssetLock,
+  ShieldedWithdrawal,
+  IdentityCreateFromShieldedPool
 } from './variants'
 
 export const TransactionType = ({ typeString: type, ...other }) => {
@@ -78,4 +84,30 @@ export const TransactionType = ({ typeString: type, ...other }) => {
   if (type === 'ADDRESS_CREDIT_WITHDRAWAL') {
     return <AddressCreditWithdrawal {...other} />
   }
+
+  if (type === 'SHIELD') {
+    return <Shield {...other} />
+  }
+
+  if (type === 'SHIELDED_TRANSFER') {
+    return <ShieldedTransfer {...other} />
+  }
+
+  if (type === 'UNSHIELD') {
+    return <Unshield {...other} />
+  }
+
+  if (type === 'SHIELD_FROM_ASSET_LOCK') {
+    return <ShieldFromAssetLock {...other} />
+  }
+
+  if (type === 'SHIELDED_WITHDRAWAL') {
+    return <ShieldedWithdrawal {...other} />
+  }
+
+  if (type === 'IDENTITY_CREATE_FROM_SHIELDED_POOL') {
+    return <IdentityCreateFromShieldedPool {...other} />
+  }
+
+  return <></>
 }
