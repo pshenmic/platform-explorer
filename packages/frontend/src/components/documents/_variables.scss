@@ -1,25 +1,94 @@
-@mixin Columns () {
+// Master grid: defines the column tracks once for the whole table.
+// Header and every row inherit these tracks via `subgrid` (see SubColumns),
+// so columns stay aligned AND the TYPE track sizes to the widest type on the
+// page (fit-content) — no per-row drift, no truncation for normal names.
+@mixin ColumnsMaster () {
   display: grid;
-  gap: 16px;
+  column-gap: 12px;
 
-  grid-template-columns: 
-    70px
-    auto
-    minmax(0, 400px);
+  grid-template-columns:
+    70px               // time
+    150px              // action
+    fit-content(220px) // type
+    50px               // rev
+    minmax(0, 1fr)     // identifier
+    minmax(0, 1fr)     // owner / data contract
+    100px              // gas
+    80px;              // status
+
+  @container (max-width: 64rem) {
+    grid-template-columns:
+      70px 150px fit-content(220px) 50px minmax(0, 1fr) minmax(0, 1fr) 80px;
+  }
+
+  @container (max-width: 48rem) {
+    grid-template-columns:
+      70px 150px fit-content(200px) 50px minmax(0, 1fr) 80px;
+  }
 
   @container (max-width: 22rem) {
-    grid-template-columns:
-      70px
-      auto;
+    grid-template-columns: 70px minmax(0, 1fr);
   }
+}
+
+// Identity Documents tab: same tracks as ColumnsMaster, minus Action and Gas.
+@mixin ColumnsMasterCompact () {
+  grid-template-columns:
+    70px               // time
+    fit-content(220px) // type
+    50px               // rev
+    minmax(0, 1fr)     // identifier
+    minmax(0, 1fr)     // data contract
+    80px;              // status
+
+  @container (max-width: 64rem) {
+    grid-template-columns:
+      70px fit-content(220px) 50px minmax(0, 1fr) minmax(0, 1fr) 80px;
+  }
+
+  @container (max-width: 48rem) {
+    grid-template-columns:
+      70px fit-content(200px) 50px minmax(0, 1fr) 80px;
+  }
+
+  @container (max-width: 22rem) {
+    grid-template-columns: 70px minmax(0, 1fr);
+  }
+}
+
+// Header / row: a grid item that spans all master columns and re-uses the
+// master tracks via subgrid.
+@mixin SubColumns () {
+  display: grid;
+  grid-column: 1 / -1;
+  grid-template-columns: subgrid;
+  column-gap: 12px;
 }
 
 @mixin Column () {
   display: flex;
   align-items: center;
+  font-size: 0.75rem;
 
   &--Timestamp {
     max-width: 70px;
+  }
+
+  &--TransitionType {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &--DocumentType {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &--Revision {
+    justify-content: flex-end;
+    font-variant-numeric: tabular-nums;
   }
 
   &--Identifier {
@@ -28,13 +97,63 @@
     overflow: hidden;
   }
 
-  &--Owner {
+  &--Owner,
+  &--DataContract {
     overflow: hidden;
     justify-content: flex-end;
   }
 
+  &--Gas {
+    justify-content: flex-end;
+    font-variant-numeric: tabular-nums;
+    font-size: 0.75rem;
+    opacity: 0.85;
+  }
+
+  &--Status {
+    justify-content: flex-end;
+  }
+
+  @container (max-width: 64rem) {
+    &--Gas {
+      display: none;
+    }
+  }
+
+  @container (max-width: 48rem) {
+    &--Owner,
+    &--DataContract {
+      display: none;
+    }
+
+    &--Gas {
+      display: none;
+    }
+  }
+
   @container (max-width: 22rem) {
-    &--Owner {
+    &--TransitionType {
+      display: none;
+    }
+
+    &--DocumentType {
+      display: none;
+    }
+
+    &--Revision {
+      display: none;
+    }
+
+    &--Owner,
+    &--DataContract {
+      display: none;
+    }
+
+    &--Gas {
+      display: none;
+    }
+
+    &--Status {
       display: none;
     }
 

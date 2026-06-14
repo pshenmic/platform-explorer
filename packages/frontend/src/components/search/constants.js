@@ -5,6 +5,8 @@ export const entityTypes = {
   validator: 'validator',
   dataContract: 'dataContract',
   document: 'document',
+  token: 'token',
+  platformAddress: 'platformAddress',
   loading: 'loading'
 }
 
@@ -14,7 +16,9 @@ export const categoryMap = {
   documents: entityTypes.document,
   identities: entityTypes.identity,
   blocks: entityTypes.block,
-  validators: entityTypes.validator
+  validators: entityTypes.validator,
+  tokens: entityTypes.token,
+  platformAddresses: entityTypes.platformAddress
 }
 
 export const singularCategoryNames = {
@@ -23,7 +27,9 @@ export const singularCategoryNames = {
   [entityTypes.document]: 'Document',
   [entityTypes.identity]: 'Identity',
   [entityTypes.block]: 'Block',
-  [entityTypes.validator]: 'Validator'
+  [entityTypes.validator]: 'Validator',
+  [entityTypes.token]: 'Token',
+  [entityTypes.platformAddress]: 'Platform Address'
 }
 
 export const pluralCategoryNames = {
@@ -32,7 +38,9 @@ export const pluralCategoryNames = {
   documents: 'Documents',
   identities: 'Identities',
   blocks: 'Blocks',
-  validators: 'Validators'
+  validators: 'Validators',
+  tokens: 'Tokens',
+  platformAddresses: 'Platform Addresses'
 }
 
 export const modifierMap = {
@@ -41,5 +49,7 @@ export const modifierMap = {
   [entityTypes.document]: 'Document',
   [entityTypes.identity]: 'Identity',
   [entityTypes.block]: 'Block',
-  [entityTypes.validator]: 'Validator'
+  [entityTypes.validator]: 'Validator',
+  [entityTypes.token]: 'Token',
+  [entityTypes.platformAddress]: 'PlatformAddress'
 }

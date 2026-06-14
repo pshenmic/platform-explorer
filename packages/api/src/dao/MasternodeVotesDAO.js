@@ -1,7 +1,6 @@
 const Vote = require('../models/Vote')
 const PaginatedResultSet = require('../models/PaginatedResultSet')
-const { getAliasFromDocument } = require('../utils')
-const { DPNS_CONTRACT } = require('../constants')
+const { getAliasFromDocument, getAliasDocumentForIdentifiers } = require('../utils')
 
 module.exports = class MasternodeVotesDAO {
   constructor (knex, sdk) {
@@ -12,12 +11,17 @@ module.exports = class MasternodeVotesDAO {
   getMasternodeVotes = async (choice, timestampStart, timestampEnd, voterIdentity, towardsIdentity, power, page, limit, order) => {
     const fromRank = ((page - 1) * limit)
 
-    const timestampFilter = timestampStart && timestampEnd
-      ? [
-          'blocks.timestamp BETWEEN ? AND ?',
-          [timestampStart, timestampEnd]
-        ]
-      : ['true']
+    let timestampsQueryString = ''
+    const timestampBindings = []
+
+    if (timestampStart) {
+      timestampsQueryString = 'blocks.timestamp >= ?'
+      timestampBindings.push(timestampStart)
+    }
+    if (timestampEnd) {
+      timestampsQueryString = timestampsQueryString === '' ? 'blocks.timestamp <= ?' : 'blocks.timestamp between ? and ?'
+      timestampBindings.push(timestampEnd)
+    }
 
     const voterIdentityFilter = voterIdentity
       ? [
@@ -51,7 +55,7 @@ module.exports = class MasternodeVotesDAO {
       .select('masternode_votes.id as id', 'pro_tx_hash', 'masternode_votes.state_transition_hash as state_transition_hash', 'voter_identity_id', 'choice',
         'towards_identity_identifier', 'data_contract_id', 'document_type_name', 'index_name', 'index_values',
         'data_contracts.identifier as data_contract_identifier', 'blocks.timestamp as timestamp', 'power')
-      .whereRaw(...timestampFilter)
+      .whereRaw(timestampsQueryString, timestampBindings)
       .whereRaw(...voterIdentityFilter)
       .whereRaw(...towardsIdentityFilter)
       .whereRaw(...choiceFilter)
@@ -70,8 +74,14 @@ module.exports = class MasternodeVotesDAO {
       .limit(limit)
       .orderBy('subquery.id', order)
 
+    const identifiers = rows
+      .filter(row => row.towards_identity_identifier)
+      .map(row => row.towards_identity_identifier.trim())
+
+    const aliasDocuments = await getAliasDocumentForIdentifiers(identifiers, this.sdk)
+
     const resultSet = await Promise.all(rows.map(async (row) => {
-      const [aliasDocument] = row.towards_identity_identifier ? await this.sdk.documents.query(DPNS_CONTRACT, 'domain', [['records.identity', '=', row.towards_identity_identifier.trim()]], 1) : []
+      const aliasDocument = row.towards_identity_identifier ? aliasDocuments[row.towards_identity_identifier.trim()] : undefined
 
       const aliases = []
 

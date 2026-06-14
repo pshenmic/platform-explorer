@@ -1,9 +1,31 @@
 'use client'
 
+import { useMemo } from 'react'
+
 import { CalendarIcon } from '../ui/icons'
 import { TimeDelta } from './index'
 import { Tooltip } from '../ui/Tooltips'
+import { formatDate } from '../../util'
+
 import './DateBlock.scss'
+
+const formats = {
+  all: {
+    calendarIcon: true,
+    date: true,
+    delta: true
+  },
+  deltaOnly: {
+    calendarIcon: false,
+    date: false,
+    delta: true
+  },
+  dateOnly: {
+    calendarIcon: false,
+    date: true,
+    delta: false
+  }
+}
 
 const Wrapper = ({ children, tooltipContent, props }) => (
   tooltipContent
@@ -16,37 +38,26 @@ const Wrapper = ({ children, tooltipContent, props }) => (
     : <div {...props}>{children}</div>
 )
 
-function DateBlock ({ timestamp, format = 'all', showTime = false, showRelativeTooltip }) {
-  const date = new Date(timestamp)
+function DateBlock ({
+  timestamp,
+  format = 'all',
+  showTime = false,
+  showRelativeTooltip
+}) {
+  const { calendarIcon, date, delta } = formats[format]
 
-  if (String(date) === 'Invalid Date') return null
+  const formattedDate = useMemo(
+    () =>
+      formatDate(timestamp, ({ hour, minute, ...other }) => ({
+        ...other,
+        ...(showTime && { hour: '2-digit', minute: '2-digit' })
+      })),
+    [showTime, timestamp]
+  )
 
-  const formats = {
-    all: {
-      calendarIcon: true,
-      date: true,
-      delta: true
-    },
-    deltaOnly: {
-      calendarIcon: false,
-      date: false,
-      delta: true
-    },
-    dateOnly: {
-      calendarIcon: false,
-      date: true,
-      delta: false
-    }
+  if (!formattedDate) {
+    return null
   }
-
-  const options = {
-    day: 'numeric',
-    month: 'short',
-    year: 'numeric',
-    ...(showTime && { hour: '2-digit', minute: '2-digit' })
-  }
-
-  const formattedDate = date.toLocaleDateString('en-GB', options)
 
   return (
     <Wrapper
@@ -57,24 +68,25 @@ function DateBlock ({ timestamp, format = 'all', showTime = false, showRelativeT
       }
     >
       <div className={'DateBlock__InfoContainer'}>
-        {formats[format].calendarIcon &&
+        {calendarIcon && (
           <CalendarIcon
             className={'DateBlock__CalendarIcon'}
             color={'gray.250'}
             w={'12px'}
             h={'14px'}
           />
-        }
-        {formats[format].date &&
-          <div className={'DateBlock__Date'}>
-            {formattedDate}
-          </div>
-        }
-        {formats[format].delta &&
+        )}
+        {date && (
+          <div className={'DateBlock__Date'}>{formattedDate.formatted}</div>
+        )}
+        {delta && (
           <div className={'DateBlock__Delta'}>
-            <TimeDelta endDate={date} showTimestampTooltip={format !== 'all'}/>
+            <TimeDelta
+              endDate={formattedDate.date}
+              showTimestampTooltip={format !== 'all'}
+            />
           </div>
-        }
+        )}
       </div>
     </Wrapper>
   )

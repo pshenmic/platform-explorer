@@ -67,7 +67,8 @@ export const badgeColors = {
   gray: {
     bg: 'rgba(255,255,255, .2)',
     bgHover: 'rgba(255,255,255, .3)',
-    text: '#fff'
+    text: '#fff',
+    border: colors.gray[750]
   },
   dimGray: {
     bg: colors.gray[800],

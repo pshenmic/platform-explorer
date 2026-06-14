@@ -4,8 +4,6 @@
 
 .TopIdentities {
   width: 100%;
-  padding: 20px 32px;
-  border-top-left-radius: 20px;
 
   &__ColumnTitles {
     @include mixins.defListTitles;
@@ -19,9 +17,5 @@
     word-break: normal;
     white-space: normal;
     overflow-wrap: break-word;
-  }
-
-  @media screen and (max-width: $breakpoint-lg) {
-    padding: 16px;
   }
 }

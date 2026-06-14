@@ -71,6 +71,19 @@ describe('Transaction routes', () => {
     })
     transactions.push({ transaction: errorTx, block })
 
+    const dataContract = await fixtures.dataContract(knex, {
+      owner: identity.identifier
+    })
+
+    const token = await fixtures.token(knex, {
+      position: 0,
+      owner: identity.identifier,
+      data_contract_id: dataContract.id,
+      decimals: 1,
+      base_supply: 1,
+      name: 'tests111'
+    })
+
     for (let i = 2; i < 30; i++) {
       block = await fixtures.block(knex, {
         height: i + 1,
@@ -100,13 +113,26 @@ describe('Transaction routes', () => {
           block_height: block.height,
           data: '{}',
           type: j % 5 === 0 ? StateTransitionEnum.BATCH : StateTransitionEnum.DATA_CONTRACT_CREATE,
-          batch_type: j % 5 === 0 ? 2 : undefined,
+          batch_type: j % 5 === 0 ? BatchTypeEnum.TOKEN_CLAIM : undefined,
           owner: identity.identifier,
           index: j,
           gas_used: j * 123
         })
 
-        transactions.push({ transaction, block })
+        let tokenTransaction
+
+        if (j % 5 === 0) {
+          tokenTransaction = await fixtures.tokeTransition(knex, {
+            token_identifier: token.identifier,
+            owner: identity.identifier,
+            action: BatchTypeEnum.TOKEN_CLAIM,
+            state_transition_hash: transaction.hash,
+            token_contract_position: 0,
+            data_contract_id: dataContract.id
+          })
+        }
+
+        transactions.push({ transaction, block, tokenTransaction })
       }
     }
   })
@@ -124,6 +150,9 @@ describe('Transaction routes', () => {
         .expect('Content-Type', 'application/json; charset=utf-8')
 
       const expectedTransaction = {
+        base58Address: null,
+        bech32mAddress: null,
+        incoming: null,
         blockHash: transaction.block.hash,
         blockHeight: transaction.block.height,
         data: '{}',
@@ -159,6 +188,9 @@ describe('Transaction routes', () => {
         .expect('Content-Type', 'application/json; charset=utf-8')
 
       const expectedTransaction = {
+        base58Address: null,
+        bech32mAddress: null,
+        incoming: null,
         blockHash: transaction.block.hash,
         blockHeight: transaction.block.height,
         data: '{}',
@@ -192,6 +224,84 @@ describe('Transaction routes', () => {
         .expect(404)
         .expect('Content-Type', 'application/json; charset=utf-8')
     })
+
+    it('should return transaction with duplicates', async () => {
+      const [, transaction] = transactions
+      const duplicatesCount = 2
+
+      for (let i = 0; i < duplicatesCount; i++) {
+        await fixtures.stateTransitionDuplicate(knex, {
+          hash: transaction.transaction.hash,
+          block_hash: transaction.block.hash
+        })
+      }
+
+      const { body } = await client.get(`/transaction/${transaction.transaction.hash}`)
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      const expectedTransaction = {
+        base58Address: null,
+        bech32mAddress: null,
+        incoming: null,
+        blockHash: transaction.block.hash,
+        blockHeight: transaction.block.height,
+        data: '{}',
+        hash: transaction.transaction.hash,
+        index: transaction.transaction.index,
+        timestamp: transaction.block.timestamp.toISOString(),
+        type: StateTransitionEnum[transaction.transaction.type],
+        batchType: BatchTypeEnum[transaction.transaction.batch_type] ?? null,
+        gasUsed: 0,
+        status: 'FAIL',
+        error: 'Cannot deserialize',
+        owner: {
+          identifier: transaction.transaction.owner,
+          aliases: [
+            {
+              alias: 'alias.dash',
+              contested: true,
+              documentId: 'AQV2G2Egvqk8jwDBAcpngjKYcwAkck8Cecs5AjYJxfvW',
+              status: 'ok',
+              timestamp: aliasTimestamp.toISOString()
+            }
+          ]
+        },
+        duplicates: Array.from({ length: duplicatesCount }, () => ({
+          base58Address: null,
+          bech32mAddress: null,
+          incoming: null,
+          blockHash: transaction.block.hash,
+          blockHeight: transaction.block.height,
+          data: '{}',
+          hash: transaction.transaction.hash,
+          index: transaction.transaction.index,
+          timestamp: transaction.block.timestamp.toISOString(),
+          type: StateTransitionEnum[transaction.transaction.type],
+          batchType: BatchTypeEnum[transaction.transaction.batch_type] ?? null,
+          gasUsed: 0,
+          status: 'FAIL',
+          error: 'Cannot deserialize',
+          owner: {
+            identifier: transaction.transaction.owner,
+            aliases: [
+              {
+                alias: 'alias.dash',
+                contested: true,
+                documentId: 'AQV2G2Egvqk8jwDBAcpngjKYcwAkck8Cecs5AjYJxfvW',
+                status: 'ok',
+                timestamp: aliasTimestamp.toISOString()
+              }
+            ]
+          },
+          duplicates: null
+        }))
+      }
+
+      assert.deepEqual(expectedTransaction, body)
+
+      await knex.raw('DELETE FROM state_transition_duplicates')
+    })
   })
 
   describe('getTransactions()', async () => {
@@ -208,6 +318,9 @@ describe('Transaction routes', () => {
       const expectedTransactions = transactions
         .slice(0, 10)
         .map(transaction => ({
+          base58Address: null,
+          bech32mAddress: null,
+          incoming: null,
           blockHash: transaction.block.hash,
           blockHeight: transaction.block.height,
           data: '{}',
@@ -250,6 +363,9 @@ describe('Transaction routes', () => {
         .sort((a, b) => b.transaction.id - a.transaction.id)
         .slice(0, 10)
         .map(transaction => ({
+          base58Address: null,
+          bech32mAddress: null,
+          incoming: null,
           blockHash: transaction.block.hash,
           blockHeight: transaction.block.height,
           data: '{}',
@@ -295,6 +411,9 @@ describe('Transaction routes', () => {
         .sort((a, b) => b.transaction.id - a.transaction.id)
         .slice(0, 10)
         .map(transaction => ({
+          base58Address: null,
+          bech32mAddress: null,
+          incoming: null,
           blockHash: transaction.block.hash,
           blockHeight: transaction.block.height,
           data: '{}',
@@ -342,6 +461,9 @@ describe('Transaction routes', () => {
         .sort((a, b) => b.transaction.id - a.transaction.id)
         .slice(0, 10)
         .map(transaction => ({
+          base58Address: null,
+          bech32mAddress: null,
+          incoming: null,
           blockHash: transaction.block.hash,
           blockHeight: transaction.block.height,
           data: '{}',
@@ -373,11 +495,11 @@ describe('Transaction routes', () => {
     it('should return default set of transactions desc with owner and batch filter', async () => {
       const owner = transactions[0].transaction.owner
 
-      const { body } = await client.get(`/transactions?order=desc&owner=${owner}&batch_type=2`)
+      const { body } = await client.get(`/transactions?order=desc&owner=${owner}&batch_type=${BatchTypeEnum.TOKEN_CLAIM}`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
-      const txsWithType = transactions.filter(transaction => transaction.transaction.batch_type === 2)
+      const txsWithType = transactions.filter(transaction => transaction.transaction.batch_type === BatchTypeEnum.TOKEN_CLAIM)
 
       assert.equal(body.resultSet.length, 10)
       assert.equal(body.pagination.total, txsWithType.length)
@@ -389,6 +511,9 @@ describe('Transaction routes', () => {
         .sort((a, b) => b.transaction.id - a.transaction.id)
         .slice(0, 10)
         .map(transaction => ({
+          base58Address: null,
+          bech32mAddress: null,
+          incoming: null,
           blockHash: transaction.block.hash,
           blockHeight: transaction.block.height,
           data: '{}',
@@ -420,11 +545,11 @@ describe('Transaction routes', () => {
     it('should return default set of transactions desc with owner and batch filter string', async () => {
       const owner = transactions[0].transaction.owner
 
-      const { body } = await client.get(`/transactions?order=desc&owner=${owner}&batch_type=DOCUMENT_DELETE`)
+      const { body } = await client.get(`/transactions?order=desc&owner=${owner}&batch_type=${BatchTypeEnum[BatchTypeEnum.TOKEN_CLAIM]}`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
-      const txsWithType = transactions.filter(transaction => transaction.transaction.batch_type === 2)
+      const txsWithType = transactions.filter(transaction => transaction.transaction.batch_type === BatchTypeEnum.TOKEN_CLAIM)
 
       assert.equal(body.resultSet.length, 10)
       assert.equal(body.pagination.total, txsWithType.length)
@@ -436,6 +561,9 @@ describe('Transaction routes', () => {
         .sort((a, b) => b.transaction.id - a.transaction.id)
         .slice(0, 10)
         .map(transaction => ({
+          base58Address: null,
+          bech32mAddress: null,
+          incoming: null,
           blockHash: transaction.block.hash,
           blockHeight: transaction.block.height,
           data: '{}',
@@ -483,6 +611,9 @@ describe('Transaction routes', () => {
         .sort((a, b) => b.transaction.id - a.transaction.id)
         .slice(0, 10)
         .map(transaction => ({
+          base58Address: null,
+          bech32mAddress: null,
+          incoming: null,
           blockHash: transaction.block.hash,
           blockHeight: transaction.block.height,
           data: '{}',
@@ -528,6 +659,9 @@ describe('Transaction routes', () => {
       const expectedTransactions = txsWithType
         .filter(transaction => transaction.transaction.status === 'FAIL')
         .map(transaction => ({
+          base58Address: null,
+          bech32mAddress: null,
+          incoming: null,
           blockHash: transaction.block.hash,
           blockHeight: transaction.block.height,
           data: '{}',
@@ -575,6 +709,9 @@ describe('Transaction routes', () => {
       const expectedTransactions = txsWithType
         .slice(0, 10)
         .map(transaction => ({
+          base58Address: null,
+          bech32mAddress: null,
+          incoming: null,
           blockHash: transaction.block.hash,
           blockHeight: transaction.block.height,
           data: '{}',
@@ -626,6 +763,9 @@ describe('Transaction routes', () => {
       const expectedTransactions = txsWithType
         .slice(0, 10)
         .map(transaction => ({
+          base58Address: null,
+          bech32mAddress: null,
+          incoming: null,
           blockHash: transaction.block.hash,
           blockHeight: transaction.block.height,
           data: '{}',
@@ -678,6 +818,9 @@ describe('Transaction routes', () => {
         .sort((a, b) => b.transaction.id - a.transaction.id)
         .slice(6, 9)
         .map(transaction => ({
+          base58Address: null,
+          bech32mAddress: null,
+          incoming: null,
           blockHash: transaction.block.hash,
           blockHeight: transaction.block.height,
           data: '{}',
@@ -720,6 +863,9 @@ describe('Transaction routes', () => {
         .sort((a, b) => b.transaction.id - a.transaction.id)
         .slice(6, 9)
         .map(transaction => ({
+          base58Address: null,
+          bech32mAddress: null,
+          incoming: null,
           blockHash: transaction.block.hash,
           blockHeight: transaction.block.height,
           data: '{}',
@@ -762,6 +908,9 @@ describe('Transaction routes', () => {
         .sort((a, b) => b.transaction.gas_used - a.transaction.gas_used)
         .slice(6, 9)
         .map(transaction => ({
+          base58Address: null,
+          bech32mAddress: null,
+          incoming: null,
           blockHash: transaction.block.hash,
           blockHeight: transaction.block.height,
           data: '{}',
@@ -804,6 +953,9 @@ describe('Transaction routes', () => {
         .sort((a, b) => new Date(a.block.timestamp).getTime() - new Date(b.block.timestamp).getTime())
         .slice(6, 9)
         .map(transaction => ({
+          base58Address: null,
+          bech32mAddress: null,
+          incoming: null,
           blockHash: transaction.block.hash,
           blockHeight: transaction.block.height,
           data: '{}',
@@ -832,7 +984,55 @@ describe('Transaction routes', () => {
       assert.deepEqual(expectedTransactions, body.resultSet)
     })
 
-    it('should return be able to walk through pages', async () => {
+    it('should return transactions with token name, custom page size, custom page and order desc timestamp', async () => {
+      const { body } = await client.get('/transactions?token_name=tests111&limit=7&page=2&order=desc&orderBy=id')
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      const transactionWithTokenTransaction = transactions
+        .filter(({ tokenTransaction }) => tokenTransaction)
+
+      assert.equal(body.resultSet.length, 7)
+      assert.equal(body.pagination.total, transactionWithTokenTransaction.length)
+      assert.equal(body.pagination.page, 2)
+      assert.equal(body.pagination.limit, 7)
+
+      const expectedTransactions = transactionWithTokenTransaction
+        .sort((a, b) => new Date(b.block.timestamp).getTime() - new Date(a.block.timestamp).getTime())
+        .slice(7, 14)
+        .map(transaction => ({
+          base58Address: null,
+          bech32mAddress: null,
+          incoming: null,
+          hash: transaction.transaction.hash,
+          index: transaction.transaction.index,
+          blockHash: transaction.block.hash,
+          blockHeight: transaction.block.height,
+          type: StateTransitionEnum[transaction.transaction.type],
+          batchType: BatchTypeEnum[transaction.transaction.batch_type] ?? null,
+          data: '{}',
+          timestamp: transaction.block.timestamp.toISOString(),
+          gasUsed: transaction.transaction.gas_used,
+          status: transaction.transaction.status,
+          error: transaction.transaction.error,
+          owner: {
+            identifier: transaction.transaction.owner,
+            aliases: [
+              {
+                alias: 'alias.dash',
+                contested: true,
+                documentId: 'AQV2G2Egvqk8jwDBAcpngjKYcwAkck8Cecs5AjYJxfvW',
+                status: 'ok',
+                timestamp: aliasTimestamp.toISOString()
+              }
+            ]
+          }
+        }))
+
+      assert.deepEqual(body.resultSet, expectedTransactions)
+    })
+
+    it('should be able to walk through pages', async () => {
       const { body } = await client.get('/transactions?page=3&limit=3')
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
@@ -846,6 +1046,9 @@ describe('Transaction routes', () => {
         .sort((a, b) => a.transaction.id - b.transaction.id)
         .slice(6, 9)
         .map(transaction => ({
+          base58Address: null,
+          bech32mAddress: null,
+          incoming: null,
           hash: transaction.transaction.hash,
           index: transaction.transaction.index,
           blockHash: transaction.block.hash,
@@ -1300,6 +1503,172 @@ describe('Transaction routes', () => {
       }
 
       assert.deepEqual(expectedSeriesData.reverse(), body)
+    })
+  })
+
+  describe('getDuplicatedTransactions()', async () => {
+    let duplicatedTxs
+
+    before(async () => {
+      const baseTxs = transactions
+        .filter(t => t.transaction.type === StateTransitionEnum.BATCH)
+        .slice(0, 15)
+
+      duplicatedTxs = []
+
+      for (let i = 0; i < baseTxs.length; i++) {
+        const { transaction, block } = baseTxs[i]
+        const duplicatesCount = i % 2 === 0 ? 2 : 3
+
+        for (let j = 0; j < duplicatesCount; j++) {
+          await fixtures.stateTransitionDuplicate(knex, {
+            hash: transaction.hash,
+            block_hash: block.hash
+          })
+        }
+
+        duplicatedTxs.push({ transaction, block, duplicatesCount })
+      }
+    })
+
+    it('should return paginated duplicated transactions', async () => {
+      const { body } = await client.get('/transactions/duplicates')
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      const expectedResultSet = duplicatedTxs
+        .slice(0, 10)
+        .map(({ transaction, block, duplicatesCount }) => ({
+          base58Address: null,
+          bech32mAddress: null,
+          incoming: null,
+          hash: transaction.hash.toLowerCase(),
+          index: transaction.index,
+          blockHash: null,
+          blockHeight: null,
+          type: StateTransitionEnum[transaction.type],
+          batchType: BatchTypeEnum[transaction.batch_type] ?? null,
+          data: '{}',
+          timestamp: null,
+          gasUsed: transaction.gas_used,
+          status: 'FAIL',
+          error: transaction.error,
+          owner: {
+            identifier: transaction.owner,
+            aliases: [
+              {
+                alias: 'alias.dash',
+                contested: true,
+                documentId: 'AQV2G2Egvqk8jwDBAcpngjKYcwAkck8Cecs5AjYJxfvW',
+                status: 'ok',
+                timestamp: aliasTimestamp.toISOString()
+              }
+            ]
+          },
+          duplicates: Array.from({ length: duplicatesCount }, () => ({
+            base58Address: null,
+            bech32mAddress: null,
+            incoming: null,
+            hash: transaction.hash.toLowerCase(),
+            index: transaction.index,
+            blockHash: block.hash,
+            blockHeight: block.height,
+            type: StateTransitionEnum[transaction.type],
+            batchType: BatchTypeEnum[transaction.batch_type] ?? null,
+            data: '{}',
+            timestamp: block.timestamp.toISOString(),
+            gasUsed: transaction.gas_used,
+            status: 'FAIL',
+            error: transaction.error,
+            owner: {
+              identifier: transaction.owner,
+              aliases: [
+                {
+                  alias: 'alias.dash',
+                  contested: true,
+                  documentId: 'AQV2G2Egvqk8jwDBAcpngjKYcwAkck8Cecs5AjYJxfvW',
+                  status: 'ok',
+                  timestamp: aliasTimestamp.toISOString()
+                }
+              ]
+            }
+          }))
+        }))
+
+      assert.equal(body.pagination.page, 1)
+      assert.equal(body.pagination.limit, 10)
+      assert.equal(body.pagination.total, duplicatedTxs.length)
+      assert.deepEqual(body.resultSet, expectedResultSet)
+    })
+
+    it('should be able to walk through pages', async () => {
+      const { body } = await client.get('/transactions/duplicates?page=3&limit=3')
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      const expectedResultSet = duplicatedTxs
+        .slice(6, 9)
+        .map(({ transaction, block, duplicatesCount }) => ({
+          base58Address: null,
+          bech32mAddress: null,
+          incoming: null,
+          hash: transaction.hash.toLowerCase(),
+          index: transaction.index,
+          blockHash: null,
+          blockHeight: null,
+          type: StateTransitionEnum[transaction.type],
+          batchType: BatchTypeEnum[transaction.batch_type] ?? null,
+          data: '{}',
+          timestamp: null,
+          gasUsed: transaction.gas_used,
+          status: 'FAIL',
+          error: transaction.error,
+          owner: {
+            identifier: transaction.owner,
+            aliases: [
+              {
+                alias: 'alias.dash',
+                contested: true,
+                documentId: 'AQV2G2Egvqk8jwDBAcpngjKYcwAkck8Cecs5AjYJxfvW',
+                status: 'ok',
+                timestamp: aliasTimestamp.toISOString()
+              }
+            ]
+          },
+          duplicates: Array.from({ length: duplicatesCount }, () => ({
+            base58Address: null,
+            bech32mAddress: null,
+            incoming: null,
+            hash: transaction.hash.toLowerCase(),
+            index: transaction.index,
+            blockHash: block.hash,
+            blockHeight: block.height,
+            type: StateTransitionEnum[transaction.type],
+            batchType: BatchTypeEnum[transaction.batch_type] ?? null,
+            data: '{}',
+            timestamp: block.timestamp.toISOString(),
+            gasUsed: transaction.gas_used,
+            status: 'FAIL',
+            error: transaction.error,
+            owner: {
+              identifier: transaction.owner,
+              aliases: [
+                {
+                  alias: 'alias.dash',
+                  contested: true,
+                  documentId: 'AQV2G2Egvqk8jwDBAcpngjKYcwAkck8Cecs5AjYJxfvW',
+                  status: 'ok',
+                  timestamp: aliasTimestamp.toISOString()
+                }
+              ]
+            }
+          }))
+        }))
+
+      assert.equal(body.pagination.page, 3)
+      assert.equal(body.pagination.limit, 3)
+      assert.equal(body.pagination.total, duplicatedTxs.length)
+      assert.deepEqual(body.resultSet, expectedResultSet)
     })
   })
 })

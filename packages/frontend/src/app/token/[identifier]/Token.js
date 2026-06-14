@@ -102,7 +102,7 @@ function Token ({ identifier }) {
           </TabList>
           <TabPanels>
             <TabPanel>
-              <ActivityList activities={tokenTransactions.data?.resultSet} loading={false} error={false}/>
+              <ActivityList decimals={token?.data?.decimals} activities={tokenTransactions.data?.resultSet} loading={false} error={false}/>
             </TabPanel>
             <TabPanel>
             </TabPanel>

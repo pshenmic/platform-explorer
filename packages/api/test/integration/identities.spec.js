@@ -6,10 +6,10 @@ const { getKnex } = require('../../src/utils')
 const fixtures = require('../utils/fixtures')
 const StateTransitionEnum = require('../../src/enums/StateTransitionEnum')
 const tenderdashRpc = require('../../src/tenderdashRpc')
-const BatchEnum = require('../../src/enums/BatchEnum')
 const { ContestedResourcesController } = require('dash-platform-sdk/src/contestedResources')
 const { IdentitiesController } = require('dash-platform-sdk/src/identities')
 const { DocumentsController } = require('dash-platform-sdk/src/documents')
+const { IdentifierWASM, IdentityWASM } = require('pshenmic-dpp')
 
 describe('Identities routes', () => {
   let app
@@ -29,6 +29,7 @@ describe('Identities routes', () => {
   let transfers
   let transaction
   let transactions
+  let mockIdentity
 
   let dataContractSchema
 
@@ -169,7 +170,13 @@ describe('Identities routes', () => {
       }
     }
 
-    mock.method(IdentitiesController.prototype, 'getIdentityBalance', async () => 0)
+    mockIdentity = new IdentityWASM('5DbLwAxGBzUzo81VewMUwn4b5P4bpv9FNFybi25XB5Bk')
+
+    mockIdentity.revision = 123n
+
+    mock.method(IdentitiesController.prototype, 'getIdentityBalance', async () => 0n)
+    mock.method(IdentitiesController.prototype, 'getIdentityNonce', async () => 0n)
+    mock.method(IdentitiesController.prototype, 'getIdentityByIdentifier', async () => mockIdentity)
 
     mock.method(IdentitiesController.prototype, 'getIdentityPublicKeys', async () => null)
 
@@ -229,7 +236,8 @@ describe('Identities routes', () => {
       const expectedIdentity = {
         identifier: identity.identifier,
         owner: identity.identifier,
-        revision: identity.revision,
+        revision: String(mockIdentity.revision),
+        nonce: '0',
         balance: '0',
         timestamp: block.timestamp.toISOString(),
         txHash: identity.txHash,
@@ -322,7 +330,7 @@ describe('Identities routes', () => {
         hash: withdrawal.id.base58(),
         document: withdrawal.id.base58(),
         sender: withdrawal.ownerId.base58(),
-        status: 0,
+        status: 'QUEUED',
         timestamp: new Date(withdrawal.createdAt).toISOString(),
         amount: withdrawal.properties.amount,
         withdrawalAddress: null
@@ -403,20 +411,25 @@ describe('Identities routes', () => {
   })
 
   describe('getIdentities()', async () => {
+    before(() => {
+      mock.method(DocumentsController.prototype, 'query', async () => [{
+        properties: {
+          label: 'test',
+          parentDomainName: 'test',
+          normalizedLabel: 'test'
+        },
+        id: new IdentifierWASM('Bwr4WHCPz5rFVAD87RqTs3izo4zpzwsEdKPWUT1NS1C7'),
+        createdAt: 0
+      }])
+    })
+
     it('should return default set of identities', async () => {
       const identities = []
-      const aliases = []
 
       for (let i = 0; i < 30; i++) {
         block = await fixtures.block(knex, { height: i + 1, timestamp: new Date(0) })
         identity = await fixtures.identity(knex, { block_hash: block.hash, block_height: block.height })
-        alias = await fixtures.identity_alias(knex, {
-          alias: `#test$${i}`,
-          identity,
-          state_transition_hash: identity.transaction.hash
-        })
         identities.push({ identity, block })
-        aliases.push(alias)
       }
 
       const { body } = await client.get('/identities')
@@ -431,8 +444,9 @@ describe('Identities routes', () => {
       const expectedIdentities = identities.slice(0, 10).map((_identity) => ({
         identifier: _identity.identity.identifier,
         owner: _identity.identity.identifier,
-        revision: _identity.identity.revision,
-        balance: 0,
+        revision: String(mockIdentity.revision),
+        nonce: null,
+        balance: '0',
         timestamp: _identity.block.timestamp.toISOString(),
         txHash: _identity.identity.txHash,
         totalTxs: 1,
@@ -441,14 +455,14 @@ describe('Identities routes', () => {
         totalDataContracts: 0,
         isSystem: false,
         aliases: [
-          aliases.find((_alias) => _alias.identity_identifier === _identity.identity.identifier)
-        ].map(alias => ({
-          alias: alias.alias,
-          txHash: alias.state_transition_hash,
-          status: 'ok',
-          contested: false,
-          timestamp: '1970-01-01T00:00:00.000Z'
-        })),
+          {
+            alias: 'test.test',
+            status: 'ok',
+            contested: true,
+            documentId: 'Bwr4WHCPz5rFVAD87RqTs3izo4zpzwsEdKPWUT1NS1C7',
+            timestamp: '1970-01-01T00:00:00.000Z'
+          }
+        ],
         totalGasSpent: null,
         averageGasSpent: null,
         totalTopUpsAmount: null,
@@ -493,8 +507,9 @@ describe('Identities routes', () => {
         .slice(0, 10).map((_identity) => ({
           identifier: _identity.identity.identifier,
           owner: _identity.identity.identifier,
-          revision: _identity.identity.revision,
-          balance: 0,
+          revision: String(mockIdentity.revision),
+          nonce: null,
+          balance: '0',
           timestamp: _identity.block.timestamp.toISOString(),
           txHash: _identity.identity.txHash,
           totalTxs: 1,
@@ -503,14 +518,14 @@ describe('Identities routes', () => {
           totalDataContracts: 0,
           isSystem: false,
           aliases: [
-            aliases.find((_alias) => _alias.identity_identifier === _identity.identity.identifier)
-          ].map(alias => ({
-            alias: alias.alias,
-            txHash: alias.state_transition_hash,
-            status: 'ok',
-            contested: false,
-            timestamp: '1970-01-01T00:00:00.000Z'
-          })),
+            {
+              alias: 'test.test',
+              status: 'ok',
+              contested: true,
+              documentId: 'Bwr4WHCPz5rFVAD87RqTs3izo4zpzwsEdKPWUT1NS1C7',
+              timestamp: '1970-01-01T00:00:00.000Z'
+            }
+          ],
           totalGasSpent: null,
           averageGasSpent: null,
           totalTopUpsAmount: null,
@@ -556,8 +571,9 @@ describe('Identities routes', () => {
         .slice(10, 20).map((_identity) => ({
           identifier: _identity.identity.identifier,
           owner: _identity.identity.identifier,
-          revision: _identity.identity.revision,
-          balance: 0,
+          revision: String(mockIdentity.revision),
+          nonce: null,
+          balance: '0',
           timestamp: _identity.block.timestamp.toISOString(),
           txHash: _identity.identity.txHash,
           totalTxs: 1,
@@ -566,14 +582,14 @@ describe('Identities routes', () => {
           totalDataContracts: 0,
           isSystem: false,
           aliases: [
-            aliases.find((_alias) => _alias.identity_identifier === _identity.identity.identifier)
-          ].map(alias => ({
-            alias: alias.alias,
-            txHash: alias.state_transition_hash,
-            status: 'ok',
-            contested: false,
-            timestamp: '1970-01-01T00:00:00.000Z'
-          })),
+            {
+              alias: 'test.test',
+              status: 'ok',
+              contested: true,
+              documentId: 'Bwr4WHCPz5rFVAD87RqTs3izo4zpzwsEdKPWUT1NS1C7',
+              timestamp: '1970-01-01T00:00:00.000Z'
+            }
+          ],
           totalGasSpent: null,
           averageGasSpent: null,
           totalTopUpsAmount: null,
@@ -620,8 +636,9 @@ describe('Identities routes', () => {
         .map((_identity) => ({
           identifier: _identity.identity.identifier,
           owner: _identity.identity.identifier,
-          revision: _identity.identity.revision,
-          balance: 0,
+          revision: String(mockIdentity.revision),
+          nonce: null,
+          balance: '0',
           timestamp: _identity.block.timestamp.toISOString(),
           txHash: _identity.identity.txHash,
           totalTxs: 1,
@@ -630,14 +647,255 @@ describe('Identities routes', () => {
           totalDataContracts: 0,
           isSystem: false,
           aliases: [
-            aliases.find((_alias) => _alias.identity_identifier === _identity.identity.identifier)
-          ].map(alias => ({
-            alias: alias.alias,
-            txHash: alias.state_transition_hash,
-            status: 'ok',
-            contested: false,
-            timestamp: '1970-01-01T00:00:00.000Z'
-          })),
+            {
+              alias: 'test.test',
+              status: 'ok',
+              contested: true,
+              documentId: 'Bwr4WHCPz5rFVAD87RqTs3izo4zpzwsEdKPWUT1NS1C7',
+              timestamp: '1970-01-01T00:00:00.000Z'
+            }
+          ],
+          totalGasSpent: null,
+          averageGasSpent: null,
+          totalTopUpsAmount: null,
+          totalWithdrawalsAmount: null,
+          lastWithdrawalHash: null,
+          publicKeys: [],
+          fundingCoreTx: null,
+          lastWithdrawalTimestamp: null,
+          totalTopUps: null,
+          totalWithdrawals: null
+        }))
+
+      assert.deepEqual(body.resultSet, expectedIdentities)
+    })
+
+    it('should allow walk through pages desc and filter by balance', async () => {
+      const identities = []
+      const aliases = []
+
+      mock.method(IdentitiesController.prototype, 'getIdentityBalance', async (identifier) => identities.find(({ identity }) => identity.identifier === identifier)?.balance)
+
+      for (let i = 0; i < 100; i++) {
+        block = await fixtures.block(knex, { height: i + 1, timestamp: new Date(0) })
+        identity = await fixtures.identity(knex, { block_hash: block.hash, block_height: block.height })
+        for (let t = 0; t < (i - i % 4) / 4; t++) {
+          await fixtures.transfer(knex, {
+            amount: 10000,
+            recipient: identity.identifier,
+            state_transition_hash: identity.transaction.hash
+          })
+        }
+        alias = await fixtures.identity_alias(knex, {
+          alias: `#test3$${i}`,
+          identity,
+          state_transition_hash: identity.transaction.hash
+        })
+        identities.push({ identity, block, balance: (i - i % 4) / 4 * 10000 })
+        aliases.push(alias)
+      }
+
+      const { body } = await client.get('/identities?page=2&limit=5&order=desc&balance_min=120000&balance_max=150000')
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      assert.equal(body.resultSet.length, 5)
+      assert.equal(body.pagination.total, 16)
+      assert.equal(body.pagination.page, 2)
+      assert.equal(body.pagination.limit, 5)
+
+      const expectedIdentities = identities
+        .filter(({ balance }) => balance >= 120000 && balance <= 150000)
+        .sort((a, b) => b.identity.id - a.identity.id)
+        .slice(5, 10)
+        .map((_identity) => ({
+          identifier: _identity.identity.identifier,
+          owner: _identity.identity.identifier,
+          revision: String(mockIdentity.revision),
+          nonce: null,
+          balance: String(_identity.balance),
+          timestamp: _identity.block.timestamp.toISOString(),
+          txHash: _identity.identity.txHash,
+          totalTxs: 1,
+          totalTransfers: _identity.balance / 10000,
+          totalDocuments: 0,
+          totalDataContracts: 0,
+          isSystem: false,
+          aliases: [
+            {
+              alias: 'test.test',
+              status: 'ok',
+              contested: true,
+              documentId: 'Bwr4WHCPz5rFVAD87RqTs3izo4zpzwsEdKPWUT1NS1C7',
+              timestamp: '1970-01-01T00:00:00.000Z'
+            }
+          ],
+          totalGasSpent: null,
+          averageGasSpent: null,
+          totalTopUpsAmount: null,
+          totalWithdrawalsAmount: null,
+          lastWithdrawalHash: null,
+          publicKeys: [],
+          fundingCoreTx: null,
+          lastWithdrawalTimestamp: null,
+          totalTopUps: null,
+          totalWithdrawals: null
+        }))
+
+      assert.deepEqual(body.resultSet, expectedIdentities)
+    })
+
+    it('should allow walk through pages desc and filter by balance and tx count', async () => {
+      const identities = []
+      const aliases = []
+
+      mock.method(IdentitiesController.prototype, 'getIdentityBalance', async (identifier) => identities.find(({ identity }) => identity.identifier === identifier)?.balance)
+
+      for (let i = 0; i < 100; i++) {
+        block = await fixtures.block(knex, { height: i + 1, timestamp: new Date(0) })
+        identity = await fixtures.identity(knex, { block_hash: block.hash, block_height: block.height })
+        for (let t = 0; t < (i - i % 4) / 4; t++) {
+          const st = await fixtures.transaction(knex, {
+            block_hash: block.hash,
+            block_height: block.height,
+            type: 0,
+            owner: identity.identifier
+          })
+          await fixtures.transfer(knex, { amount: 10000, recipient: identity.identifier, state_transition_hash: st.hash })
+        }
+        alias = await fixtures.identity_alias(knex, {
+          alias: `#test3$${i}`,
+          identity,
+          state_transition_hash: identity.transaction.hash
+        })
+        identities.push({ identity, block, balance: (i - i % 4) / 4 * 10000 })
+        aliases.push(alias)
+      }
+
+      const { body } = await client.get('/identities?page=2&limit=5&order=desc&balance_min=120000&balance_max=150000&tx_count_min=12&tx_count_max=14')
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      assert.equal(body.resultSet.length, 3)
+      assert.equal(body.pagination.total, 8)
+      assert.equal(body.pagination.page, 2)
+      assert.equal(body.pagination.limit, 5)
+
+      const expectedIdentities = identities
+        .filter(({ balance }) => balance >= 120000 && balance <= 150000)
+        .filter(({ balance }) => balance / 10000 + 1 <= 14 && balance / 10000 + 1 >= 12)
+        .sort((a, b) => b.identity.id - a.identity.id)
+        .slice(5, 10)
+        .map((_identity) => ({
+          identifier: _identity.identity.identifier,
+          owner: _identity.identity.identifier,
+          revision: String(mockIdentity.revision),
+          nonce: null,
+          balance: String(_identity.balance),
+          timestamp: _identity.block.timestamp.toISOString(),
+          txHash: _identity.identity.txHash,
+          totalTxs: _identity.balance / 10000 + 1,
+          totalTransfers: _identity.balance / 10000,
+          totalDocuments: 0,
+          totalDataContracts: 0,
+          isSystem: false,
+          aliases: [
+            {
+              alias: 'test.test',
+              status: 'ok',
+              contested: true,
+              documentId: 'Bwr4WHCPz5rFVAD87RqTs3izo4zpzwsEdKPWUT1NS1C7',
+              timestamp: '1970-01-01T00:00:00.000Z'
+            }
+          ],
+          totalGasSpent: null,
+          averageGasSpent: null,
+          totalTopUpsAmount: null,
+          totalWithdrawalsAmount: null,
+          lastWithdrawalHash: null,
+          publicKeys: [],
+          fundingCoreTx: null,
+          lastWithdrawalTimestamp: null,
+          totalTopUps: null,
+          totalWithdrawals: null
+        }))
+
+      assert.deepEqual(body.resultSet, expectedIdentities)
+    })
+
+    it('should allow walk through pages desc and filter by balance, tx count, document count and data contract count', async () => {
+      const identities = []
+      const aliases = []
+
+      mock.method(IdentitiesController.prototype, 'getIdentityBalance', async (identifier) => identities.find(({ identity }) => identity.identifier === identifier)?.balance)
+
+      for (let i = 0; i < 100; i++) {
+        block = await fixtures.block(knex, { height: i + 1, timestamp: new Date(0) })
+        identity = await fixtures.identity(knex, { block_hash: block.hash, block_height: block.height })
+        for (let t = 0; t < (i - i % 4) / 4; t++) {
+          const st = await fixtures.transaction(knex, {
+            block_hash: block.hash,
+            block_height: block.height,
+            type: 0,
+            owner: identity.identifier
+          })
+          const contract = await fixtures.dataContract(knex, {
+            owner: identity.identifier,
+            state_transition_hash: st.hash,
+            version: 1
+          })
+          await fixtures.document(knex, {
+            owner: identity.identifier,
+            data_contract_id: contract.id
+          })
+          await fixtures.transfer(knex, { amount: 10000, recipient: identity.identifier, state_transition_hash: st.hash })
+        }
+        alias = await fixtures.identity_alias(knex, {
+          alias: `#test3$${i}`,
+          identity,
+          state_transition_hash: identity.transaction.hash
+        })
+        identities.push({ identity, block, balance: (i - i % 4) / 4 * 10000 })
+        aliases.push(alias)
+      }
+
+      const { body } = await client.get('/identities?page=2&limit=5&order=desc&balance_min=120000&balance_max=200000&tx_count_min=12&tx_count_max=20&documents_count_min=10&documents_count_max=15&data_contracts_min=12&data_contracts_max=15')
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      assert.equal(body.resultSet.length, 5)
+      assert.equal(body.pagination.total, 16)
+      assert.equal(body.pagination.page, 2)
+      assert.equal(body.pagination.limit, 5)
+
+      const expectedIdentities = identities
+        .filter(({ balance }) => balance >= 120000 && balance <= 150000)
+        .filter(({ balance }) => balance / 10000 + 1 <= 20 && balance / 10000 + 1 >= 12)
+        .filter(({ balance }) => balance / 10000 >= 12 && balance / 10000 <= 15)
+        .sort((a, b) => b.identity.id - a.identity.id)
+        .slice(5, 10)
+        .map((_identity) => ({
+          identifier: _identity.identity.identifier,
+          owner: _identity.identity.identifier,
+          revision: String(mockIdentity.revision),
+          nonce: null,
+          balance: String(_identity.balance),
+          timestamp: _identity.block.timestamp.toISOString(),
+          txHash: _identity.identity.txHash,
+          totalTxs: _identity.balance / 10000 + 1,
+          totalTransfers: _identity.balance / 10000,
+          totalDocuments: _identity.balance / 10000,
+          totalDataContracts: _identity.balance / 10000,
+          isSystem: false,
+          aliases: [
+            {
+              alias: 'test.test',
+              status: 'ok',
+              contested: true,
+              documentId: 'Bwr4WHCPz5rFVAD87RqTs3izo4zpzwsEdKPWUT1NS1C7',
+              timestamp: '1970-01-01T00:00:00.000Z'
+            }
+          ],
           totalGasSpent: null,
           averageGasSpent: null,
           totalTopUpsAmount: null,
@@ -654,6 +912,7 @@ describe('Identities routes', () => {
     })
 
     it('should allow sort by tx count', async () => {
+      mock.method(IdentitiesController.prototype, 'getIdentityBalance', async () => BigInt(0))
       const identities = []
       const aliases = []
 
@@ -700,8 +959,9 @@ describe('Identities routes', () => {
         .map((_identity) => ({
           identifier: _identity.identity.identifier,
           owner: _identity.identity.identifier,
-          revision: _identity.identity.revision,
-          balance: 0,
+          revision: String(mockIdentity.revision),
+          nonce: null,
+          balance: '0',
           timestamp: _identity.block.timestamp.toISOString(),
           txHash: _identity.identity.txHash,
           totalTxs: _identity.identity.transactions.length + 1,
@@ -710,14 +970,14 @@ describe('Identities routes', () => {
           totalDataContracts: 0,
           isSystem: false,
           aliases: [
-            aliases.find((_alias) => _alias.identity_identifier === _identity.identity.identifier)
-          ].map(alias => ({
-            alias: alias.alias,
-            txHash: alias.state_transition_hash,
-            status: 'ok',
-            contested: false,
-            timestamp: '1970-01-01T00:00:00.000Z'
-          })),
+            {
+              alias: 'test.test',
+              status: 'ok',
+              contested: true,
+              documentId: 'Bwr4WHCPz5rFVAD87RqTs3izo4zpzwsEdKPWUT1NS1C7',
+              timestamp: '1970-01-01T00:00:00.000Z'
+            }
+          ],
           totalGasSpent: null,
           averageGasSpent: null,
           totalTopUpsAmount: null,
@@ -734,6 +994,16 @@ describe('Identities routes', () => {
     })
 
     it('should allow sort by balance', async () => {
+      mock.method(DocumentsController.prototype, 'query', async () => [{
+        properties: {
+          label: 'test',
+          parentDomainName: 'test',
+          normalizedLabel: 'test'
+        },
+        id: new IdentifierWASM('Bwr4WHCPz5rFVAD87RqTs3izo4zpzwsEdKPWUT1NS1C7'),
+        createdAt: 0
+      }])
+
       const identities = []
       const aliases = []
 
@@ -765,6 +1035,8 @@ describe('Identities routes', () => {
 
       mock.reset()
 
+      mock.method(IdentitiesController.prototype, 'getIdentityByIdentifier', async () => mockIdentity)
+
       mock.method(IdentitiesController.prototype, 'getIdentityBalance', async (identifier) => {
         const { identity } = identities.find(({ identity }) => identity.identifier === identifier)
         return identity.balance
@@ -792,8 +1064,9 @@ describe('Identities routes', () => {
         .map((_identity) => ({
           identifier: _identity.identity.identifier,
           owner: _identity.identity.identifier,
-          revision: _identity.identity.revision,
-          balance: _identity.identity.balance,
+          revision: String(mockIdentity.revision),
+          nonce: null,
+          balance: String(_identity.identity.balance),
           timestamp: _identity.block.timestamp.toISOString(),
           txHash: _identity.identity.txHash,
           totalTxs: 2,
@@ -802,14 +1075,14 @@ describe('Identities routes', () => {
           totalDataContracts: 0,
           isSystem: false,
           aliases: [
-            aliases.find((_alias) => _alias.identity_identifier === _identity.identity.identifier)
-          ].map(alias => ({
-            alias: alias.alias,
-            txHash: alias.state_transition_hash,
-            status: 'ok',
-            contested: false,
-            timestamp: '1970-01-01T00:00:00.000Z'
-          })),
+            {
+              alias: 'test.test',
+              status: 'ok',
+              contested: true,
+              documentId: 'Bwr4WHCPz5rFVAD87RqTs3izo4zpzwsEdKPWUT1NS1C7',
+              timestamp: '1970-01-01T00:00:00.000Z'
+            }
+          ],
           totalGasSpent: null,
           averageGasSpent: null,
           totalTopUpsAmount: null,
@@ -823,6 +1096,92 @@ describe('Identities routes', () => {
         }))
 
       assert.deepEqual(body.resultSet, expectedIdentities)
+    })
+
+    it('should return all identities when identity_type is omitted', async () => {
+      mock.method(IdentitiesController.prototype, 'getIdentityBalance', async () => 0)
+
+      const regular = []
+      const masternode = []
+
+      for (let i = 0; i < 5; i++) {
+        block = await fixtures.block(knex, { height: i + 1, timestamp: new Date(0) })
+        identity = await fixtures.identity(knex, { block_hash: block.hash, block_height: block.height })
+        regular.push(identity.identifier)
+      }
+
+      for (let i = 0; i < 5; i++) {
+        block = await fixtures.block(knex, { height: 100 + i, timestamp: new Date(0) })
+        identity = await fixtures.identity(knex, { block_hash: block.hash, block_height: block.height })
+        await knex('identities').where('id', identity.id).update({ state_transition_hash: null, state_transition_id: null })
+        masternode.push(identity.identifier)
+      }
+
+      const { body } = await client.get('/identities')
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      assert.equal(body.pagination.total, regular.length + masternode.length)
+    })
+
+    it('should return only regular identities when identity_type=regular', async () => {
+      mock.method(IdentitiesController.prototype, 'getIdentityBalance', async () => 0)
+
+      const regular = []
+      const masternode = []
+
+      for (let i = 0; i < 5; i++) {
+        block = await fixtures.block(knex, { height: i + 1, timestamp: new Date(0) })
+        identity = await fixtures.identity(knex, { block_hash: block.hash, block_height: block.height })
+        regular.push(identity.identifier)
+      }
+
+      for (let i = 0; i < 5; i++) {
+        block = await fixtures.block(knex, { height: 200 + i, timestamp: new Date(0) })
+        identity = await fixtures.identity(knex, { block_hash: block.hash, block_height: block.height })
+        await knex('identities').where('id', identity.id).update({ state_transition_hash: null, state_transition_id: null })
+        masternode.push(identity.identifier)
+      }
+
+      const { body } = await client.get('/identities?identity_type=regular')
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      assert.equal(body.pagination.total, regular.length)
+      const returnedIdentifiers = body.resultSet.map(r => r.identifier)
+      for (const mn of masternode) {
+        assert.equal(returnedIdentifiers.includes(mn), false)
+      }
+    })
+
+    it('should return only masternode identities when identity_type=masternode', async () => {
+      mock.method(IdentitiesController.prototype, 'getIdentityBalance', async () => 0)
+
+      const regular = []
+      const masternode = []
+
+      for (let i = 0; i < 5; i++) {
+        block = await fixtures.block(knex, { height: i + 1, timestamp: new Date(0) })
+        identity = await fixtures.identity(knex, { block_hash: block.hash, block_height: block.height })
+        regular.push(identity.identifier)
+      }
+
+      for (let i = 0; i < 5; i++) {
+        block = await fixtures.block(knex, { height: 300 + i, timestamp: new Date(0) })
+        identity = await fixtures.identity(knex, { block_hash: block.hash, block_height: block.height })
+        await knex('identities').where('id', identity.id).update({ state_transition_hash: null, state_transition_id: null })
+        masternode.push(identity.identifier)
+      }
+
+      const { body } = await client.get('/identities?identity_type=masternode')
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      assert.equal(body.pagination.total, masternode.length)
+      const returnedIdentifiers = body.resultSet.map(r => r.identifier)
+      for (const reg of regular) {
+        assert.equal(returnedIdentifiers.includes(reg), false)
+      }
     })
   })
 
@@ -866,12 +1225,15 @@ describe('Identities routes', () => {
         timestamp: _dataContract.block.timestamp.toISOString(),
         isSystem: false,
         documentsCount: 0,
+        tokensCount: 0,
         averageGasUsed: null,
         identitiesInteracted: null,
         topIdentity: null,
         totalGasUsed: null,
         groups: null,
-        tokens: null
+        tokens: null,
+        keywords: _dataContract.dataContract.keywords ?? [],
+        description: _dataContract.dataContract.description ?? null
       }))
       assert.deepEqual(body.resultSet, expectedDataContracts)
     })
@@ -918,12 +1280,15 @@ describe('Identities routes', () => {
           timestamp: _dataContract.block.timestamp.toISOString(),
           isSystem: false,
           documentsCount: 0,
+          tokensCount: 0,
           averageGasUsed: null,
           identitiesInteracted: null,
           topIdentity: null,
           totalGasUsed: null,
           groups: null,
-          tokens: null
+          tokens: null,
+          keywords: _dataContract.dataContract.keywords ?? [],
+          description: _dataContract.dataContract.description ?? null
         }))
       assert.deepEqual(body.resultSet, expectedDataContracts)
     })
@@ -970,12 +1335,15 @@ describe('Identities routes', () => {
           timestamp: _dataContract.block.timestamp.toISOString(),
           isSystem: false,
           documentsCount: 0,
+          tokensCount: 0,
           averageGasUsed: null,
           identitiesInteracted: null,
           topIdentity: null,
           totalGasUsed: null,
           tokens: null,
-          groups: null
+          groups: null,
+          keywords: _dataContract.dataContract.keywords ?? [],
+          description: _dataContract.dataContract.description ?? null
         }))
       assert.deepEqual(body.resultSet, expectedDataContracts)
     })
@@ -1022,12 +1390,15 @@ describe('Identities routes', () => {
           timestamp: _dataContract.block.timestamp.toISOString(),
           isSystem: false,
           documentsCount: 0,
+          tokensCount: 0,
           averageGasUsed: null,
           identitiesInteracted: null,
           topIdentity: null,
           totalGasUsed: null,
           tokens: null,
-          groups: null
+          groups: null,
+          keywords: _dataContract.dataContract.keywords ?? [],
+          description: _dataContract.dataContract.description ?? null
         }))
       assert.deepEqual(body.resultSet, expectedDataContracts)
     })
@@ -1079,7 +1450,15 @@ describe('Identities routes', () => {
         identifier: _document.document.identifier,
         owner: {
           identifier: identity.identifier,
-          aliases: []
+          aliases: [
+            {
+              alias: 'test.test',
+              status: 'ok',
+              contested: true,
+              documentId: 'Bwr4WHCPz5rFVAD87RqTs3izo4zpzwsEdKPWUT1NS1C7',
+              timestamp: '1970-01-01T00:00:00.000Z'
+            }
+          ]
         },
         dataContractIdentifier: _document.dataContract.identifier,
         revision: 1,
@@ -1091,7 +1470,7 @@ describe('Identities routes', () => {
         documentTypeName: 'type_name',
         timestamp: _document.block.timestamp.toISOString(),
         system: false,
-        transitionType: BatchEnum[0],
+        transitionType: null,
         identityContractNonce: null,
         gasUsed: null,
         totalGasUsed: null
@@ -1148,7 +1527,15 @@ describe('Identities routes', () => {
           identifier: _document.document.identifier,
           owner: {
             identifier: identity.identifier,
-            aliases: []
+            aliases: [
+              {
+                alias: 'test.test',
+                status: 'ok',
+                contested: true,
+                documentId: 'Bwr4WHCPz5rFVAD87RqTs3izo4zpzwsEdKPWUT1NS1C7',
+                timestamp: '1970-01-01T00:00:00.000Z'
+              }
+            ]
           },
           dataContractIdentifier: _document.dataContract.identifier,
           revision: 1,
@@ -1160,7 +1547,7 @@ describe('Identities routes', () => {
           documentTypeName: 'type_name',
           timestamp: _document.block.timestamp.toISOString(),
           system: false,
-          transitionType: BatchEnum[0],
+          transitionType: null,
           gasUsed: null,
           identityContractNonce: null,
           totalGasUsed: null
@@ -1219,7 +1606,15 @@ describe('Identities routes', () => {
           identifier: _document.document.identifier,
           owner: {
             identifier: identity.identifier,
-            aliases: []
+            aliases: [
+              {
+                alias: 'test.test',
+                status: 'ok',
+                contested: true,
+                documentId: 'Bwr4WHCPz5rFVAD87RqTs3izo4zpzwsEdKPWUT1NS1C7',
+                timestamp: '1970-01-01T00:00:00.000Z'
+              }
+            ]
           },
           dataContractIdentifier: _document.dataContract.identifier,
           revision: 1,
@@ -1228,7 +1623,7 @@ describe('Identities routes', () => {
           data: null,
           timestamp: _document.block.timestamp.toISOString(),
           system: false,
-          transitionType: BatchEnum[0],
+          transitionType: null,
           documentTypeName: 'my_type',
           prefundedVotingBalance: null,
           entropy: null,
@@ -1288,7 +1683,15 @@ describe('Identities routes', () => {
           identifier: _document.document.identifier,
           owner: {
             identifier: identity.identifier,
-            aliases: []
+            aliases: [
+              {
+                alias: 'test.test',
+                status: 'ok',
+                contested: true,
+                documentId: 'Bwr4WHCPz5rFVAD87RqTs3izo4zpzwsEdKPWUT1NS1C7',
+                timestamp: '1970-01-01T00:00:00.000Z'
+              }
+            ]
           },
           dataContractIdentifier: _document.dataContract.identifier,
           revision: 1,
@@ -1300,7 +1703,7 @@ describe('Identities routes', () => {
           documentTypeName: 'type_name',
           timestamp: _document.block.timestamp.toISOString(),
           system: false,
-          transitionType: BatchEnum[0],
+          transitionType: null,
           gasUsed: null,
           identityContractNonce: null,
           totalGasUsed: null
@@ -1357,7 +1760,15 @@ describe('Identities routes', () => {
           identifier: _document.document.identifier,
           owner: {
             identifier: identity.identifier,
-            aliases: []
+            aliases: [
+              {
+                alias: 'test.test',
+                status: 'ok',
+                contested: true,
+                documentId: 'Bwr4WHCPz5rFVAD87RqTs3izo4zpzwsEdKPWUT1NS1C7',
+                timestamp: '1970-01-01T00:00:00.000Z'
+              }
+            ]
           },
           dataContractIdentifier: _document.dataContract.identifier,
           revision: 1,
@@ -1369,13 +1780,181 @@ describe('Identities routes', () => {
           documentTypeName: 'type_name',
           timestamp: _document.block.timestamp.toISOString(),
           system: false,
-          transitionType: BatchEnum[0],
+          transitionType: null,
           gasUsed: null,
           identityContractNonce: null,
           totalGasUsed: null
         }))
 
       assert.deepEqual(body.resultSet, expectedDocuments)
+    })
+
+    it('should return set of documents by identity filtered by timestamp range', async () => {
+      documents = []
+      block = await fixtures.block(knex, { height: 1 })
+      identity = await fixtures.identity(knex, { block_hash: block.hash, block_height: block.height })
+
+      for (let i = 1; i < 31; i++) {
+        block = await fixtures.block(knex, { height: i + 1, timestamp: new Date(i * 1000) })
+        dataContractTransaction = await fixtures.transaction(knex, {
+          block_hash: block.hash,
+          block_height: block.height,
+          owner: identity.identifier,
+          type: StateTransitionEnum.DATA_CONTRACT_CREATE
+        })
+        dataContract = await fixtures.dataContract(knex, {
+          state_transition_hash: dataContractTransaction.hash,
+          owner: identity.identifier
+        })
+        transaction = await fixtures.transaction(knex, {
+          block_hash: block.hash,
+          block_height: block.height,
+          owner: identity.identifier,
+          type: StateTransitionEnum.BATCH,
+          data: 'AgE+qIzJYi7CLZTbni56gjvhPCY9AygUa6gK/sM7NLqBrwEAAAAB7oqwuqydXWC3ZNKdsOewDBvVPG59q2STMTFBSX39PpsGBmRvbWFpbuZoxlmvZq7h5ywYbd57W34KHXEqCcQNVyH2Ir9TxTFVADX/3MRaB7Ujt7MChW+omvQ4l5lZQcj2oeuDAo1Xqp0DBwVsYWJlbBIRdGhlcmVhMXMxMW1zaGFkZHkPbm9ybWFsaXplZExhYmVsEhF0aGVyZWExczExbXNoYWRkeRpub3JtYWxpemVkUGFyZW50RG9tYWluTmFtZRIEZGFzaBBwYXJlbnREb21haW5OYW1lEgRkYXNoDHByZW9yZGVyU2FsdAwJO0EguXjRH+tISRlNWqdayLael99pDBeK2UHJ2GdO5AdyZWNvcmRzFgESCGlkZW50aXR5ED6ojMliLsItlNueLnqCO+E8Jj0DKBRrqAr+wzs0uoGvDnN1YmRvbWFpblJ1bGVzFgESD2FsbG93U3ViZG9tYWlucxMAARJwYXJlbnROYW1lQW5kTGFiZWz9AAAABKgXyAAAAUEfnR0sqWBSop6NAWColV8pyCWFMohaQWAFV0PbICNwdRltcTrEqKqQdowqzKZsz+PaWgkny8RwCmDE5Fxa7833rQ=='
+        })
+        document = await fixtures.document(knex, {
+          state_transition_hash: transaction.hash,
+          owner: identity.identifier,
+          data_contract_id: dataContract.id
+        })
+        documents.push({ document, dataContract, transaction, identity, block })
+      }
+
+      const timestampStart = new Date(6 * 1000).toISOString()
+      const timestampEnd = new Date(15 * 1000).toISOString()
+
+      const { body } = await client.get(`/identity/${identity.identifier}/documents?timestamp_start=${timestampStart}&timestamp_end=${timestampEnd}`)
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      const expectedDocuments = documents
+        .filter(({ block }) => block.timestamp.getTime() >= new Date(timestampStart).getTime() && block.timestamp.getTime() <= new Date(timestampEnd).getTime())
+        .sort((a, b) => a.document.id - b.document.id)
+        .slice(0, 10)
+        .map((_document) => ({
+          identifier: _document.document.identifier,
+          owner: {
+            identifier: identity.identifier,
+            aliases: [
+              {
+                alias: 'test.test',
+                status: 'ok',
+                contested: true,
+                documentId: 'Bwr4WHCPz5rFVAD87RqTs3izo4zpzwsEdKPWUT1NS1C7',
+                timestamp: '1970-01-01T00:00:00.000Z'
+              }
+            ]
+          },
+          dataContractIdentifier: _document.dataContract.identifier,
+          revision: 1,
+          txHash: _document.transaction.hash,
+          deleted: false,
+          data: null,
+          entropy: null,
+          prefundedVotingBalance: null,
+          documentTypeName: 'type_name',
+          timestamp: _document.block.timestamp.toISOString(),
+          system: false,
+          transitionType: null,
+          gasUsed: null,
+          identityContractNonce: null,
+          totalGasUsed: null
+        }))
+
+      assert.equal(body.resultSet.length, expectedDocuments.length)
+      assert.equal(body.pagination.total, expectedDocuments.length)
+      assert.equal(body.pagination.page, 1)
+      assert.equal(body.pagination.limit, 10)
+
+      assert.deepEqual(body.resultSet, expectedDocuments)
+    })
+
+    it('should return set of documents by identity filtered by deleted', async () => {
+      documents = []
+      block = await fixtures.block(knex, { height: 1 })
+      identity = await fixtures.identity(knex, { block_hash: block.hash, block_height: block.height })
+
+      for (let i = 1; i < 31; i++) {
+        block = await fixtures.block(knex, { height: i + 1 })
+        dataContractTransaction = await fixtures.transaction(knex, {
+          block_hash: block.hash,
+          block_height: block.height,
+          owner: identity.identifier,
+          type: StateTransitionEnum.DATA_CONTRACT_CREATE
+        })
+        dataContract = await fixtures.dataContract(knex, {
+          state_transition_hash: dataContractTransaction.hash,
+          owner: identity.identifier
+        })
+        transaction = await fixtures.transaction(knex, {
+          block_hash: block.hash,
+          block_height: block.height,
+          owner: identity.identifier,
+          type: StateTransitionEnum.BATCH,
+          data: 'AgE+qIzJYi7CLZTbni56gjvhPCY9AygUa6gK/sM7NLqBrwEAAAAB7oqwuqydXWC3ZNKdsOewDBvVPG59q2STMTFBSX39PpsGBmRvbWFpbuZoxlmvZq7h5ywYbd57W34KHXEqCcQNVyH2Ir9TxTFVADX/3MRaB7Ujt7MChW+omvQ4l5lZQcj2oeuDAo1Xqp0DBwVsYWJlbBIRdGhlcmVhMXMxMW1zaGFkZHkPbm9ybWFsaXplZExhYmVsEhF0aGVyZWExczExbXNoYWRkeRpub3JtYWxpemVkUGFyZW50RG9tYWluTmFtZRIEZGFzaBBwYXJlbnREb21haW5OYW1lEgRkYXNoDHByZW9yZGVyU2FsdAwJO0EguXjRH+tISRlNWqdayLael99pDBeK2UHJ2GdO5AdyZWNvcmRzFgESCGlkZW50aXR5ED6ojMliLsItlNueLnqCO+E8Jj0DKBRrqAr+wzs0uoGvDnN1YmRvbWFpblJ1bGVzFgESD2FsbG93U3ViZG9tYWlucxMAARJwYXJlbnROYW1lQW5kTGFiZWz9AAAABKgXyAAAAUEfnR0sqWBSop6NAWColV8pyCWFMohaQWAFV0PbICNwdRltcTrEqKqQdowqzKZsz+PaWgkny8RwCmDE5Fxa7833rQ=='
+        })
+        document = await fixtures.document(knex, {
+          state_transition_hash: transaction.hash,
+          owner: identity.identifier,
+          data_contract_id: dataContract.id,
+          deleted: i % 2 === 0,
+          revision: 1
+        })
+        documents.push({ document, dataContract, transaction, identity, block })
+      }
+
+      const { body } = await client.get(`/identity/${identity.identifier}/documents?deleted=true&order=desc`)
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      assert.equal(body.pagination.total, documents.filter(({ document }) => document.deleted).length)
+      assert.equal(body.pagination.page, 1)
+      assert.equal(body.pagination.limit, 10)
+
+      const expectedDocuments = documents
+        .filter(({ document }) => document.deleted)
+        .sort((a, b) => b.document.id - a.document.id)
+        .slice(0, 10)
+        .map((_document) => ({
+          identifier: _document.document.identifier,
+          owner: {
+            identifier: identity.identifier,
+            aliases: [
+              {
+                alias: 'test.test',
+                status: 'ok',
+                contested: true,
+                documentId: 'Bwr4WHCPz5rFVAD87RqTs3izo4zpzwsEdKPWUT1NS1C7',
+                timestamp: '1970-01-01T00:00:00.000Z'
+              }
+            ]
+          },
+          dataContractIdentifier: _document.dataContract.identifier,
+          revision: 1,
+          txHash: _document.transaction.hash,
+          deleted: true,
+          data: null,
+          entropy: null,
+          prefundedVotingBalance: null,
+          documentTypeName: 'type_name',
+          timestamp: _document.block.timestamp.toISOString(),
+          system: false,
+          transitionType: null,
+          gasUsed: null,
+          identityContractNonce: null,
+          totalGasUsed: null
+        }))
+
+      assert.deepEqual(body.resultSet, expectedDocuments)
+    })
+
+    it('should return error for inverted timestamp range', async () => {
+      block = await fixtures.block(knex, { height: 1 })
+      identity = await fixtures.identity(knex, { block_hash: block.hash, block_height: block.height })
+
+      await client.get(`/identity/${identity.identifier}/documents?timestamp_start=2999-01-01T00:00:00.000Z&timestamp_end=1970-01-01T00:00:00.000Z`)
+        .expect(400)
     })
   })
 
@@ -1410,6 +1989,9 @@ describe('Identities routes', () => {
         .sort((a, b) => a.block.height - b.block.height)
         .slice(0, 10)
         .map((_transaction, i) => ({
+          base58Address: null,
+          bech32mAddress: null,
+          incoming: null,
           hash: _transaction.transaction.hash,
           index: 0,
           blockHash: _transaction.transaction.block_hash,
@@ -1460,6 +2042,9 @@ describe('Identities routes', () => {
         .sort((a, b) => b.block.height - a.block.height)
         .slice(0, 10)
         .map((_transaction) => ({
+          base58Address: null,
+          bech32mAddress: null,
+          incoming: null,
           hash: _transaction.transaction.hash,
           index: 0,
           blockHash: _transaction.transaction.block_hash,
@@ -1510,6 +2095,9 @@ describe('Identities routes', () => {
         .sort((a, b) => a.block.height - b.block.height)
         .slice(4, 8)
         .map((_transaction) => ({
+          base58Address: null,
+          bech32mAddress: null,
+          incoming: null,
           hash: _transaction.transaction.hash,
           index: 0,
           blockHash: _transaction.transaction.block_hash,
@@ -1560,6 +2148,9 @@ describe('Identities routes', () => {
         .sort((a, b) => b.block.height - a.block.height)
         .slice(4, 8)
         .map((_transaction) => ({
+          base58Address: null,
+          bech32mAddress: null,
+          incoming: null,
           hash: _transaction.transaction.hash,
           index: 0,
           blockHash: _transaction.transaction.block_hash,
@@ -1918,6 +2509,237 @@ describe('Identities routes', () => {
         }))
 
       assert.deepEqual(body.resultSet, expectedTransfers)
+    })
+  })
+
+  describe('getIdentitiesHistorySeries()', async () => {
+    let identities
+
+    beforeEach(async () => {
+      identities = []
+
+      const block = await fixtures.block(knex, { timestamp: new Date(0) })
+      const owner = await fixtures.identity(knex, { block_hash: block.hash, block_height: block.height })
+
+      identities.push({
+        block,
+        transaction: null,
+        identity: owner
+      })
+
+      for (let i = 0; i < 30; i++) {
+        const block = await fixtures.block(knex, {
+          timestamp: new Date(new Date().getTime() - (27000000 - 900000 * i)),
+          height: i + 2
+        })
+
+        const transaction = await fixtures.transaction(knex, {
+          block_hash: block.hash,
+          block_height: block.height,
+          type: StateTransitionEnum.IDENTITY_CREATE,
+          owner: owner.identifier,
+          data: ''
+        })
+        const identity = await fixtures.identity(knex, {
+          block_hash: block.hash,
+          block_height: block.height,
+          state_transition_hash: transaction.hash
+        })
+
+        identities.push({
+          block,
+          transaction,
+          identity
+        })
+      }
+    })
+
+    it('should return default series set', async () => {
+      const { body } = await client.get('/identities/history')
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      assert.equal(body.length, 12)
+
+      const [firstPeriod] = body.toReversed()
+      const firstTimestamp = new Date(firstPeriod.timestamp)
+
+      const expectedSeriesData = []
+
+      for (let i = 0; i < body.length; i++) {
+        const nextPeriod = firstTimestamp - 300000 * i
+        const prevPeriod = firstTimestamp - 300000 * (i - 1)
+
+        const registeredIdentities = identities.filter(identity =>
+          new Date(identity.block.timestamp).getTime() <= prevPeriod
+        ).sort((a, b) => a.block.timestamp - b.block.timestamp)
+
+        expectedSeriesData.push({
+          timestamp: new Date(nextPeriod).toISOString(),
+          data: {
+            registeredIdentities: registeredIdentities.length
+          }
+        })
+      }
+
+      assert.deepEqual(expectedSeriesData.reverse(), body)
+    })
+
+    it('should return default series set timespan 2H', async () => {
+      const { body } = await client.get(`/identities/history?timestamp_start=${new Date(new Date().getTime() - 3600000).toISOString()}&timestamp_end=${new Date(new Date().getTime() + 3600000).toISOString()}&intervalsCount=5`)
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      assert.equal(body.length, 5)
+
+      const [firstPeriod] = body.toReversed()
+      const firstTimestamp = new Date(firstPeriod.timestamp)
+
+      const expectedSeriesData = []
+
+      for (let i = 0; i < body.length; i++) {
+        const nextPeriod = firstTimestamp - 1440000 * i
+        const prevPeriod = firstTimestamp - 1440000 * (i - 1)
+
+        const registeredIdentities = identities.filter(identity =>
+          new Date(identity.block.timestamp).getTime() <= prevPeriod
+        ).sort((a, b) => a.block.timestamp - b.block.timestamp)
+
+        expectedSeriesData.push({
+          timestamp: new Date(nextPeriod).toISOString(),
+          data: {
+            registeredIdentities: registeredIdentities.length
+          }
+        })
+      }
+
+      assert.deepEqual(expectedSeriesData.reverse(), body)
+    })
+
+    it('should return default series set timespan 24h', async () => {
+      const { body } = await client.get(`/identities/history?timestamp_start=${new Date(new Date().getTime() - 43200000).toISOString()}&timestamp_end=${new Date(new Date().getTime() + 43200000).toISOString()}&intervalsCount=5`)
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      assert.equal(body.length, 5)
+
+      const [firstPeriod] = body.toReversed()
+      const firstTimestamp = new Date(firstPeriod.timestamp)
+
+      const expectedSeriesData = []
+
+      for (let i = 0; i < body.length; i++) {
+        const nextPeriod = firstTimestamp - 17280000 * i
+        const prevPeriod = firstTimestamp - 17280000 * (i - 1)
+
+        const registeredIdentities = identities.filter(identity =>
+          new Date(identity.block.timestamp).getTime() <= prevPeriod
+        ).sort((a, b) => a.block.timestamp - b.block.timestamp)
+
+        expectedSeriesData.push({
+          timestamp: new Date(nextPeriod).toISOString(),
+          data: {
+            registeredIdentities: registeredIdentities.length
+          }
+        })
+      }
+
+      assert.deepEqual(expectedSeriesData.reverse(), body)
+    })
+
+    it('should return default series set timespan 3d', async () => {
+      const { body } = await client.get(`/identities/history?timestamp_start=${new Date(new Date().getTime() - 129600000).toISOString()}&timestamp_end=${new Date(new Date().getTime() + 129600000).toISOString()}&intervalsCount=5`)
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      assert.equal(body.length, 5)
+
+      const [firstPeriod] = body.toReversed()
+      const firstTimestamp = new Date(firstPeriod.timestamp)
+
+      const expectedSeriesData = []
+
+      for (let i = 0; i < body.length; i++) {
+        const nextPeriod = firstTimestamp - 51840000 * i
+        const prevPeriod = firstTimestamp - 51840000 * (i - 1)
+
+        const registeredIdentities = identities.filter(identity =>
+          new Date(identity.block.timestamp).getTime() <= prevPeriod
+        ).sort((a, b) => a.block.timestamp - b.block.timestamp)
+
+        expectedSeriesData.push({
+          timestamp: new Date(nextPeriod).toISOString(),
+          data: {
+            registeredIdentities: registeredIdentities.length
+          }
+        })
+      }
+
+      assert.deepEqual(expectedSeriesData.reverse(), body)
+    })
+
+    it('should return default series set timespan 1w', async () => {
+      const { body } = await client.get(`/identities/history?timestamp_start=${new Date(new Date().getTime() - 302400000).toISOString()}&timestamp_end=${new Date(new Date().getTime() + 302400000).toISOString()}&intervalsCount=5`)
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      assert.equal(body.length, 5)
+
+      const [firstPeriod] = body.toReversed()
+      const firstTimestamp = new Date(firstPeriod.timestamp)
+
+      const expectedSeriesData = []
+
+      for (let i = 0; i < body.length; i++) {
+        const nextPeriod = firstTimestamp - 120960000 * i
+        const prevPeriod = firstTimestamp - 120960000 * (i - 1)
+
+        const registeredIdentities = identities.filter(identity =>
+          new Date(identity.block.timestamp).getTime() <= prevPeriod
+        ).sort((a, b) => a.block.timestamp - b.block.timestamp)
+
+        expectedSeriesData.push({
+          timestamp: new Date(nextPeriod).toISOString(),
+          data: {
+            registeredIdentities: registeredIdentities.length
+          }
+        })
+      }
+
+      assert.deepEqual(expectedSeriesData.reverse(), body)
+    })
+    it('should return series of 6 intervals timespan 3d', async () => {
+      const start = new Date(new Date().getTime() - 86400000)
+      const end = new Date()
+
+      const { body } = await client.get(`/identities/history?timestamp_start=${start.toISOString()}&timestamp_end=${end.toISOString()}&intervalsCount=6`)
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      assert.equal(body.length, 6)
+
+      const [firstPeriod] = body.toReversed()
+      const firstTimestamp = new Date(firstPeriod.timestamp)
+
+      const expectedSeriesData = []
+
+      for (let i = 0; i < body.length; i++) {
+        const nextPeriod = firstTimestamp - 14400000 * i
+        const prevPeriod = firstTimestamp - 14400000 * (i - 1)
+
+        const registeredIdentities = identities.filter(identity =>
+          new Date(identity.block.timestamp).getTime() <= prevPeriod
+        ).sort((a, b) => a.block.timestamp - b.block.timestamp)
+
+        expectedSeriesData.push({
+          timestamp: new Date(nextPeriod).toISOString(),
+          data: {
+            registeredIdentities: registeredIdentities.length
+          }
+        })
+      }
+
+      assert.deepEqual(expectedSeriesData.reverse(), body)
     })
   })
 })

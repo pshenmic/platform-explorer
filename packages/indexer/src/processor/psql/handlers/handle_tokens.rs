@@ -39,8 +39,7 @@ impl PSQLProcessor {
 
         match transition.clone() {
             TokenTransition::Mint(mint) => {
-                self
-                    .dao
+                self.dao
                     .token_transition(
                         transition.clone(),
                         Some(mint.amount()),
@@ -55,12 +54,15 @@ impl PSQLProcessor {
 
                 if mint.issued_to_identity_id().is_some() {
                     self.dao
-                        .token_holder(mint.issued_to_identity_id().unwrap(), transition.token_id(), &sql_transaction)
+                        .token_holder(
+                            mint.issued_to_identity_id().unwrap(),
+                            transition.token_id(),
+                            &sql_transaction,
+                        )
                         .await
                         .unwrap();
                 }
-                
-            },
+            }
             TokenTransition::Burn(burn) => self
                 .dao
                 .token_transition(
@@ -75,8 +77,7 @@ impl PSQLProcessor {
                 .await
                 .unwrap(),
             TokenTransition::Transfer(transfer) => {
-                self
-                    .dao
+                self.dao
                     .token_transition(
                         transition.clone(),
                         Some(transfer.amount()),
@@ -90,13 +91,16 @@ impl PSQLProcessor {
                     .unwrap();
 
                 self.dao
-                    .token_holder(transfer.recipient_id(), transition.token_id(), &sql_transaction)
+                    .token_holder(
+                        transfer.recipient_id(),
+                        transition.token_id(),
+                        &sql_transaction,
+                    )
                     .await
                     .unwrap();
-            },
+            }
             TokenTransition::Freeze(freeze) => {
-                self
-                    .dao
+                self.dao
                     .token_transition(
                         transition.clone(),
                         None,
@@ -110,13 +114,16 @@ impl PSQLProcessor {
                     .unwrap();
 
                 self.dao
-                    .token_holder(freeze.frozen_identity_id(), transition.token_id(), &sql_transaction)
+                    .token_holder(
+                        freeze.frozen_identity_id(),
+                        transition.token_id(),
+                        &sql_transaction,
+                    )
                     .await
                     .unwrap();
-            },
+            }
             TokenTransition::Unfreeze(unfreeze) => {
-                self
-                    .dao
+                self.dao
                     .token_transition(
                         transition.clone(),
                         None,
@@ -130,10 +137,14 @@ impl PSQLProcessor {
                     .unwrap();
 
                 self.dao
-                    .token_holder(unfreeze.frozen_identity_id(), transition.token_id(), &sql_transaction)
+                    .token_holder(
+                        unfreeze.frozen_identity_id(),
+                        transition.token_id(),
+                        &sql_transaction,
+                    )
                     .await
                     .unwrap();
-            },
+            }
             TokenTransition::DestroyFrozenFunds(destroy_frozen_funds) => self
                 .dao
                 .token_transition(

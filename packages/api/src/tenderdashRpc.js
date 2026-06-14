@@ -61,6 +61,10 @@ class TenderdashRPC {
     return call(`tx?hash=${hash}`, 'GET')
   }
 
+  static async getUnconfirmedTransactionByHash (hash) {
+    return call(`unconfirmed_tx?hash=${hash}`, 'GET')
+  }
+
   static async getTransactions (from, to) {
     let query = 'tx_search?query='
 
@@ -107,6 +111,12 @@ class TenderdashRPC {
     const { validators } = await call('validators', 'GET')
 
     return validators
+  }
+
+  static async verifyTransaction (hex) {
+    const { code, data, info, gasWanted } = await call(`check_tx?tx=0x${hex}`, 'GET')
+
+    return { code, data, info, gasWanted }
   }
 }
 

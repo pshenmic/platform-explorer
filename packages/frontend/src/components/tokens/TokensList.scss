@@ -13,22 +13,12 @@
 
   &__ColumnTitle {
     @include tokens.Column();
-    width: 100%;
-    display: block;
     word-break: normal;
     white-space: normal;
     overflow-wrap: break-word;
 
     &--TokenName {
       justify-content: flex-start;
-    }
-
-    &--Ticker {
-      justify-content: center;
-    }
-
-    &--Supply {
-      justify-content: center;
     }
 
     &--Contract {

@@ -1,7 +1,7 @@
 import ContestedResource from './ContestedResource'
 import contestedResources from '../../../util/contestedResources'
 
-export async function generateMetadata ({ params }) {
+export const generateMetadata = async ({ params }) => {
   const resourceValue = decodeURIComponent(params.resourceValue)
   const decodedValue = contestedResources.decodeValue(resourceValue)
   const readableValue = contestedResources.getResourceValue(decodedValue)
@@ -28,8 +28,8 @@ export async function generateMetadata ({ params }) {
   }
 }
 
-function ContestedResourceRoute ({ params }) {
-  return <ContestedResource resourceValue={params.resourceValue}/>
+const ContestedResourceRoute = ({ params }) => {
+  return <ContestedResource resourceValue={params.resourceValue} />
 }
 
 export default ContestedResourceRoute

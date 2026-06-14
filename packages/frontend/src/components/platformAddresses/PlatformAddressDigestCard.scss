@@ -1,0 +1,106 @@
+@use '../../styles/mixins';
+@import '../../styles/variables';
+
+.PlatformAddressDigestCard {
+  @include mixins.DigestCard();
+
+  &, &__Transfers {
+    display: flex;
+    gap: 0.875rem;
+  }
+
+  &--Loading & {
+    &__Transfers {
+      .LoadingLine {
+        height: 1.5rem;
+      }
+    }
+  }
+
+  &__Transfer {
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    padding: 1.5rem;
+    background: rgba(var(--chakra-colors-gray-800-rgb), .5);
+    border-radius: $border-radius-def;
+
+    .CreditsBlock {
+      display: flex;
+      flex-direction: column;
+
+      .CreditsBlock__Usd {
+        margin-top: 0.25rem;
+        margin-left: auto;
+      }
+    }
+
+    &--Outgoing {
+      .CreditsBlock__Usd {
+        background-color: rgba(var(--chakra-colors-red-default-rgb), .2);
+        color: var(--chakra-colors-red-default);
+      }
+    }
+  }
+
+  &__TransferTitle {
+    font-size: 0.75rem;
+    color: var(--chakra-colors-gray-250);
+  }
+
+  @media screen and (min-width: $breakpoint-md) and (max-width: $breakpoint-lg),
+  screen and (max-width: $breakpoint-sm) {
+    &--Loading {
+      .InfoLine__Value {
+        width: 100% !important;
+      }
+    }
+
+    &__Transfers {
+      flex-direction: column;
+    }
+
+    &__Transfer {
+      width: 100%;
+
+      .CreditsBlock {
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-items: center;
+
+        .CreditsBlock__Usd {
+          margin-top: 0.25rem;
+          margin-bottom: 0.25rem;
+        }
+      }
+    }
+  }
+
+  @container (max-width: 24em) {
+    &--Loading {
+      .InfoLine__Value {
+        width: 100% !important;
+      }
+    }
+
+    &__InfoLine {
+      flex-direction: column;
+      align-items: flex-start;
+
+      .InfoLine__Value {
+        width: 100%;
+        text-align: left;
+      }
+
+      .CreditsBlock {
+        display: flex;
+        flex-wrap: wrap;
+
+        &__Usd {
+          margin-left: auto;
+        }
+      }
+    }
+  }
+}

@@ -48,6 +48,24 @@
       white-space: nowrap;
       text-align: left;
     }
+
+    &--Block {
+      font-family: $font-mono;
+      font-size: 0.75rem;
+      color: var(--chakra-colors-gray-250);
+      white-space: nowrap;
+    }
+  }
+
+  &__BlockLink {
+    position: relative;
+    z-index: 2;
+    transition: mixins.$transition-time-def;
+    border-radius: 4px;
+
+    &:hover {
+      background: rgba(255, 255, 255, .1);
+    }
   }
 
   &__AliasContainer {

@@ -1,11 +1,13 @@
 const TransactionsDAO = require('../dao/TransactionsDAO')
 const utils = require('../utils')
-const { calculateInterval, iso8601duration } = require('../utils')
+const { calculateInterval, iso8601duration, sleep } = require('../utils')
 const Intervals = require('../enums/IntervalsEnum')
 const DataContractsDAO = require('../dao/DataContractsDAO')
 const StateTransitionEnum = require('../enums/StateTransitionEnum')
 const BatchTypeEnum = require('../enums/BatchEnum')
 const { StateTransitionWASM } = require('pshenmic-dpp')
+const TenderdashRPC = require('../tenderdashRpc')
+const ConsensusError = require('../enums/ConsensusErrorEnum')
 
 class TransactionsController {
   constructor (knex, sdk) {
@@ -39,8 +41,22 @@ class TransactionsController {
       transaction_type: transactionTypes,
       batch_type: batchTypes,
       timestamp_start: timestampStart,
-      timestamp_end: timestampEnd
+      timestamp_end: timestampEnd,
+      token_name: tokenName
     } = request.query
+
+    const normalizedTransactionTypes = transactionTypes?.map(transactionType => typeof transactionType === 'string' ? StateTransitionEnum[transactionType] : transactionType)
+    const normalizedBatchTypes = batchTypes?.map(batchType => typeof batchType === 'string' ? BatchTypeEnum[batchType] : batchType)
+
+    if (tokenName && normalizedBatchTypes?.some(batchType => batchType < 6)) {
+      return response.status(400).send({ message: 'with a filter by token name you must use only token token transitions types for filter by batch type' })
+    }
+
+    if (normalizedTransactionTypes && normalizedBatchTypes?.length > 0) {
+      if (normalizedTransactionTypes[0] !== 1 || normalizedTransactionTypes.length > 1) {
+        return response.status(400).send({ message: 'with a filter by batch type you must use only batch transaction type for filter by transaction types' })
+      }
+    }
 
     if (order !== 'asc' && order !== 'desc') {
       return response.status(400).send({ message: `invalid ordering value ${order}. only 'asc' or 'desc' is valid values` })
@@ -54,8 +70,8 @@ class TransactionsController {
       return response.status(400).send({ message: 'invalid filters values' })
     }
 
-    if (!timestampStart !== !timestampEnd) {
-      return response.status(400).send({ message: 'you must use timestamp_start and timestamp_end' })
+    if (timestampStart && timestampEnd && new Date(timestampStart).getTime() >= new Date(timestampEnd).getTime()) {
+      return response.status(400).send('Bad timestamp range')
     }
 
     if (!['gas_used', 'timestamp', 'id', 'owner'].includes(orderBy)) {
@@ -67,14 +83,15 @@ class TransactionsController {
       Number(limit ?? 10),
       order,
       orderBy,
-      transactionTypes?.map(transactionType => typeof transactionType === 'string' ? StateTransitionEnum[transactionType] : transactionType),
-      batchTypes?.map(batchType => typeof batchType === 'string' ? BatchTypeEnum[batchType] : batchType),
+      normalizedTransactionTypes,
+      normalizedBatchTypes,
       owner,
       status,
       gasMin,
       gasMax,
       timestampStart,
-      timestampEnd
+      timestampEnd,
+      tokenName
     )
 
     response.send(transactions)
@@ -159,21 +176,83 @@ class TransactionsController {
   broadcastTransaction = async (request, response) => {
     const { base64, hex } = request.body
 
-    if (!base64 && !hex) {
+    if ((!base64 && !hex) || (base64 != null && hex != null)) {
       return response.status(400).send('hex or base64 must be set')
     }
 
-    const transaction = hex
-      ? StateTransitionWASM.fromHex(hex)
-      : StateTransitionWASM.fromBase64(base64)
-
     try {
+      const transaction = hex
+        ? StateTransitionWASM.fromHex(hex)
+        : StateTransitionWASM.fromBase64(base64)
+
       await this.sdk.stateTransitions.broadcast(transaction)
     } catch (e) {
       return response.status(400).send({ error: e.toString() })
     }
 
     response.send({ message: 'broadcasted' })
+  }
+
+  verifyTransaction = async (request, response) => {
+    const { base64, hex } = request.body
+
+    if ((!base64 && !hex) || (base64 != null && hex != null)) {
+      return response.status(400).send('hex or base64 must be set')
+    }
+
+    try {
+      const transaction = hex
+        ? StateTransitionWASM.fromHex(hex)
+        : StateTransitionWASM.fromBase64(base64)
+
+      const { code, gasWanted, info } = await TenderdashRPC.verifyTransaction(transaction.hex())
+
+      const result = code === 0 ? 'ok' : 'error'
+      const error = code === 0 ? null : ConsensusError[code]
+
+      response.send({ result, error, code, gasWanted, info })
+    } catch (e) {
+      return response.status(400).send({ error: e.toString() })
+    }
+  }
+
+  waitForStateTransitionResult = async (request, response) => {
+    const { hash } = request.params
+
+    const unconfirmed = await TenderdashRPC.getUnconfirmedTransactionByHash(hash.toUpperCase())
+
+    // if we don't see unconfirmed tx from the tenderdash on the first run, its either confirmed or is not in mempool
+    if (!unconfirmed.tx) {
+      return response.status(200).send({ message: 'tx is not in mempool or already confirmed' })
+    }
+
+    do {
+      const unconfirmed = await TenderdashRPC.getUnconfirmedTransactionByHash(hash.toUpperCase())
+
+      const { data, tx } = unconfirmed
+
+      // still unconfirmed
+      if (tx) {
+        // wait 250ms between calls to RPC
+        await sleep(250)
+
+        continue
+      }
+
+      if (data === `transaction ${hash.toUpperCase()} not found`) {
+        return response.status(200).send({ message: 'ok' })
+      }
+
+      return response.status(500).send({ message: 'internal server error' })
+    } while (true)
+  }
+
+  getDuplicatedTransactions = async (request, response) => {
+    const { page = 1, limit = 10, order = 'asc' } = request.query
+
+    const result = await this.transactionsDAO.getDuplicatedTransactions(Number(page), Number(limit), order)
+
+    response.send(result)
   }
 }
 

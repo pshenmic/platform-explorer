@@ -1,8 +1,6 @@
 .BigNumber {
-  white-space: nowrap;
-
-  &__Space {
+  &__Space:not(:last-child) {
     display: inline-block;
-    width: 3px;
+    border-right: transparent solid 3px;
   }
 }

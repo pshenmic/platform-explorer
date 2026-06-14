@@ -4,6 +4,7 @@ use tokio::time;
 
 impl Indexer {
     pub async fn start(&self) {
+        println!("Transactions for skip: [{}]", self.txs_to_skip.join(", "));
         println!("Indexer loop started");
 
         let mut interval = time::interval(Duration::from_millis(3000));

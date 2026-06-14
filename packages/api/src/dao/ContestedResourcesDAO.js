@@ -1,11 +1,11 @@
 const ChoiceEnum = require('../enums/ChoiceEnum')
 const ContestedResource = require('../models/ContestedResource')
-const { buildIndexBuffer, getAliasFromDocument } = require('../utils')
+const { buildIndexBuffer, getAliasFromDocument, getAliasDocumentForIdentifiers } = require('../utils')
 const Vote = require('../models/Vote')
 const PaginatedResultSet = require('../models/PaginatedResultSet')
-const { CONTESTED_RESOURCE_VOTE_DEADLINE, DPNS_CONTRACT } = require('../constants')
+const { CONTESTED_RESOURCE_VOTE_DEADLINE } = require('../constants')
 const ContestedResourceStatus = require('../models/ContestedResourcesStatus')
-const { ContestedStateResultType } = require('dash-platform-sdk/src/types')
+const { ContestedStateResultType } = require('dash-platform-sdk/types')
 
 module.exports = class ContestedDAO {
   constructor (knex, sdk) {
@@ -116,8 +116,12 @@ module.exports = class ContestedDAO {
     const totalDocumentsGasUsed = uniqueContenders
       .reduce((accumulator, currentValue) => accumulator + Number((currentValue.document_tx_gas_used ?? 0)), 0)
 
+    const owners = rows.map(row => row.owner.trim())
+
+    const aliasDocuments = await getAliasDocumentForIdentifiers(owners, this.sdk)
+
     const contenders = await Promise.all(uniqueContenders.map(async (row) => {
-      const [aliasDocument] = row.owner ? await this.sdk.documents.query(DPNS_CONTRACT, 'domain', [['records.identity', '=', row.owner.trim()]], 1) : []
+      const aliasDocument = aliasDocuments[row.owner.trim()]
 
       const aliases = []
 
@@ -141,7 +145,7 @@ module.exports = class ContestedDAO {
           ? accumulator + 1 * currentValue.masternode_power
           : accumulator
         , 0) ?? null,
-        lockVotes: uniqueVotes.reduce((accumulator, currentValue) => (currentValue.choice !== ChoiceEnum.ABSTAIN && currentValue.choice !== null) && currentValue.towards_identity?.trim() !== row.owner.trim()
+        lockVotes: uniqueVotes.reduce((accumulator, currentValue) => (currentValue.choice === ChoiceEnum.LOCK) && currentValue.towards_identity?.trim() !== row.owner.trim()
           ? accumulator + 1 * currentValue.masternode_power
           : accumulator
         , 0) ?? null
@@ -179,7 +183,7 @@ module.exports = class ContestedDAO {
     })
   }
 
-  getContestedResources = async (page, limit, order) => {
+  getContestedResources = async (page, limit, order, documentTypeName, contractId, votingFinished, timestampStart, timestampEnd) => {
     const fromRank = (page - 1) * limit + 1
     const toRank = fromRank + limit - 1
 
@@ -188,6 +192,17 @@ module.exports = class ContestedDAO {
       .andWhereRaw('data is not null')
       .groupBy('identifier', 'id', 'data_contract_id')
       .as('sub')
+
+    if (documentTypeName) {
+      prefundedDocumentsSubquery.where('document_type_name', documentTypeName)
+    }
+
+    if (contractId) {
+      prefundedDocumentsSubquery.whereIn(
+        'data_contract_id',
+        this.knex('data_contracts').select('id').where('identifier', contractId)
+      )
+    }
 
     const documentsPrefundingIndexeKeysSubquery = this.knex(prefundedDocumentsSubquery)
       .select('id', 'data_contract_id', 'data', 'state_transition_hash')
@@ -229,6 +244,31 @@ module.exports = class ContestedDAO {
       .select('document_id', 'resource_value')
       .select(this.knex.raw(`rank() over (order by document_id ${order})`))
       .where('value_rank', '=', '1')
+
+    if (timestampStart || timestampEnd || typeof votingFinished === 'boolean') {
+      const votingFinishedThreshold = new Date(Date.now() - CONTESTED_RESOURCE_VOTE_DEADLINE).toISOString()
+
+      paginationRankSubquery
+        .leftJoin('documents', 'documents.id', 'ranked_documents.document_id')
+        .leftJoin('state_transitions', 'documents.state_transition_hash', 'state_transitions.hash')
+        .leftJoin('blocks', 'blocks.hash', 'state_transitions.block_hash')
+
+      if (timestampStart) {
+        paginationRankSubquery.where('blocks.timestamp', '>=', timestampStart)
+      }
+
+      if (timestampEnd) {
+        paginationRankSubquery.where('blocks.timestamp', '<=', timestampEnd)
+      }
+
+      if (votingFinished === true) {
+        paginationRankSubquery.where('blocks.timestamp', '<', votingFinishedThreshold)
+      }
+
+      if (votingFinished === false) {
+        paginationRankSubquery.where('blocks.timestamp', '>=', votingFinishedThreshold)
+      }
+    }
 
     const rows = await this.knex
       .with('ranked_documents', paginationRankSubquery)
@@ -289,7 +329,7 @@ module.exports = class ContestedDAO {
     return new PaginatedResultSet(resourcesWithVotes, page, limit, Number(totalCount ?? 0))
   }
 
-  getVotesForContestedResource = async (choice, resourceValue, page, limit, order) => {
+  getVotesForContestedResource = async (choice, resourceValue, proTxHash, page, limit, order) => {
     const fromRank = ((page - 1) * limit)
 
     let query = 'index_values = ?'
@@ -298,6 +338,11 @@ module.exports = class ContestedDAO {
     if (choice !== null && !isNaN(choice)) {
       query = query + ' and choice = ?'
       bindings.push(choice)
+    }
+
+    if (proTxHash) {
+      query = query + ' and LOWER(pro_tx_hash) = LOWER(?)'
+      bindings.push(proTxHash)
     }
 
     const prefundedDocumentsSubquery = this.knex('documents')
@@ -367,8 +412,14 @@ module.exports = class ContestedDAO {
       .leftJoin(contestedDocumentsSubquery, 'towards_identity_identifier', 'owner')
       .orderBy('subquery.id', order)
 
+    const towardsIdentityIdentifiers = rows
+      .filter(row => row.towards_identity_identifier)
+      .map(row => row.towards_identity_identifier.trim())
+
+    const aliasDocuments = await getAliasDocumentForIdentifiers(towardsIdentityIdentifiers, this.sdk)
+
     const resultSet = await Promise.all(rows.map(async (row) => {
-      const [aliasDocument] = row.towards_identity_identifier ? await this.sdk.documents.query(DPNS_CONTRACT, 'domain', [['records.identity', '=', row.towards_identity_identifier.trim()]], 1) : []
+      const aliasDocument = row.towards_identity_identifier ? aliasDocuments[row.towards_identity_identifier.trim()] : undefined
 
       const aliases = []
 
@@ -441,11 +492,11 @@ module.exports = class ContestedDAO {
       .leftJoin('documents', 'id', 'document_id')
       .leftJoin('state_transitions', 'state_transition_hash', 'hash')
       .leftJoin('blocks', 'blocks.hash', 'state_transitions.block_hash')
-      .orderBy('timestamp', 'desc')
+      .orderBy('timestamp', 'asc')
       .limit(1)
       .as('joined_subquery')
 
-    const lastContestedResourceValue = this.knex(timestampResourceSubquery)
+    const endingContestedResourceValue = this.knex(timestampResourceSubquery)
       .select('resource_value', 'timestamp', 'choice')
       .select(this.knex.raw('NULL::bigint as total_contested_documents_count'))
       .select(this.knex.raw('NULL::bigint as pending_contested_documents_count'))
@@ -464,7 +515,7 @@ module.exports = class ContestedDAO {
       .leftJoin('state_transitions', 'state_transition_hash', 'state_transitions.hash')
       .leftJoin('blocks', 'blocks.hash', 'block_hash')
 
-    const rows = await this.knex.union(statusSubquery, lastContestedResourceValue)
+    const rows = await this.knex.union(statusSubquery, endingContestedResourceValue)
 
     const [status] = rows.filter(row => row.total_contested_documents_count !== null)
 

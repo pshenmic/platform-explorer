@@ -1,9 +1,8 @@
 const Document = require('../models/Document')
 const PaginatedResultSet = require('../models/PaginatedResultSet')
 const DocumentActionEnum = require('../enums/DocumentActionEnum')
-const { decodeStateTransition, getAliasFromDocument } = require('../utils')
+const { decodeStateTransition, getAliasFromDocument, getAliasDocumentForIdentifier, getAliasDocumentForIdentifiers } = require('../utils')
 const BatchEnum = require('../enums/BatchEnum')
-const { DPNS_CONTRACT } = require('../constants')
 
 module.exports = class DocumentsDAO {
   constructor (knex, sdk) {
@@ -59,7 +58,7 @@ module.exports = class DocumentsDAO {
       return null
     }
 
-    const [aliasDocument] = await this.sdk.documents.query(DPNS_CONTRACT, 'domain', [['records.identity', '=', row.document_owner.trim()]], 1)
+    const aliasDocument = await getAliasDocumentForIdentifier(row.document_owner.trim(), this.sdk)
 
     const aliases = []
 
@@ -96,7 +95,7 @@ module.exports = class DocumentsDAO {
     }
   }
 
-  getDocumentsByDataContract = async (identifier, typeName, page, limit, order) => {
+  getDocumentsByDataContract = async (identifier, typeName, page, limit, order, owner, revisionMin, revisionMax, timestampStart, timestampEnd) => {
     const fromRank = ((page - 1) * limit) + 1
     const toRank = fromRank + limit - 1
 
@@ -108,9 +107,14 @@ module.exports = class DocumentsDAO {
       queryBindings.push(typeName)
     }
 
+    if (owner) {
+      typeQuery = typeQuery + ' and documents.owner = ?'
+      queryBindings.push(owner)
+    }
+
     const dataSubquery = this.knex('documents')
       .select('documents.data as data', 'documents.identifier as identifier')
-      .select(this.knex.raw('rank() over (partition by documents.identifier order by documents.revision desc) rank'))
+      .select(this.knex.raw('rank() over (partition by documents.identifier order by documents.revision desc nulls last) rank'))
       .orderBy('documents.id', 'desc')
       .as('documents_data')
 
@@ -128,29 +132,46 @@ module.exports = class DocumentsDAO {
       .leftJoin('data_contracts', 'data_contracts.id', 'documents.data_contract_id')
       .whereRaw(typeQuery, queryBindings)
 
-    const filteredDocuments = this.knex.with('with_alias', subquery)
-      .select('id', 'with_alias.identifier as identifier', 'document_owner', 'rank', 'revision', 'data_contract_identifier',
+    const rankOneFiltered = this.knex.with('with_alias', subquery)
+      .select('with_alias.id as id', 'with_alias.identifier as identifier', 'document_owner', 'revision', 'data_contract_identifier',
         'tx_hash', 'deleted', 'is_system', 'document_data', 'document_type_name', 'transition_type', 'prefunded_voting_balance',
-        this.knex('with_alias').count('*').as('total_count').where('rank', '1'))
-      .select(this.knex.raw(`rank() over (order by id ${order}) row_number`))
+        'blocks.timestamp as block_timestamp')
       .from('with_alias')
       .where('rank', '1')
+      .leftJoin('state_transitions', 'state_transitions.hash', 'with_alias.tx_hash')
+      .leftJoin('blocks', 'blocks.hash', 'state_transitions.block_hash')
+      .modify(qb => {
+        if (revisionMin != null) qb.andWhere('revision', '>=', revisionMin)
+        if (revisionMax != null) qb.andWhere('revision', '<=', revisionMax)
+        if (timestampStart) qb.andWhere('blocks.timestamp', '>=', timestampStart)
+        if (timestampEnd) qb.andWhere('blocks.timestamp', '<=', timestampEnd)
+      })
+      .as('rank_one_filtered')
+
+    const filteredDocuments = this.knex(rankOneFiltered)
+      .select('id', 'identifier', 'document_owner', 'revision', 'data_contract_identifier',
+        'tx_hash', 'deleted', 'is_system', 'document_data', 'document_type_name', 'transition_type',
+        'prefunded_voting_balance', 'block_timestamp')
+      .select(this.knex.raw('count(*) over () as total_count'))
+      .select(this.knex.raw(`rank() over (order by id ${order}) row_number`))
       .as('documents')
 
     const rows = await this.knex(filteredDocuments)
       .select('documents.id as id', 'documents.identifier as identifier', 'document_owner', 'row_number', 'revision', 'data_contract_identifier',
-        'tx_hash', 'deleted', 'document_data', 'total_count', 'is_system', 'blocks.timestamp as timestamp', 'prefunded_voting_balance',
+        'tx_hash', 'deleted', 'document_data', 'total_count', 'is_system', 'block_timestamp as timestamp', 'prefunded_voting_balance',
         'document_type_name', 'transition_type')
       .whereBetween('row_number', [fromRank, toRank])
-      .leftJoin('state_transitions', 'tx_hash', 'state_transitions.hash')
       .leftJoin(filterDataSubquery, 'documents.identifier', '=', 'documents_data.identifier')
-      .leftJoin('blocks', 'blocks.hash', 'state_transitions.block_hash')
       .orderBy('id', order)
 
     const totalCount = rows.length > 0 ? Number(rows[0].total_count) : 0
 
+    const owners = rows.map(row => row.document_owner.trim())
+
+    const aliasDocuments = await getAliasDocumentForIdentifiers(owners, this.sdk)
+
     const resultSet = await Promise.all(rows.map(async (row) => {
-      const [aliasDocument] = await this.sdk.documents.query(DPNS_CONTRACT, 'domain', [['records.identity', '=', row.document_owner.trim()]], 1)
+      const aliasDocument = aliasDocuments[row.document_owner.trim()]
 
       const aliases = []
 
@@ -196,8 +217,12 @@ module.exports = class DocumentsDAO {
 
     const totalCount = row?.total_count
 
+    const owners = rows.map(row => row.owner.trim())
+
+    const aliasDocuments = await getAliasDocumentForIdentifiers(owners, this.sdk)
+
     const resultSet = await Promise.all(rows.map(async (row) => {
-      const [aliasDocument] = await this.sdk.documents.query(DPNS_CONTRACT, 'domain', [['records.identity', '=', row.owner.trim()]], 1)
+      const aliasDocument = aliasDocuments[row.owner.trim()]
 
       const aliases = []
 
@@ -213,7 +238,7 @@ module.exports = class DocumentsDAO {
         transitions = decodedTransitions.transitions ?? []
       }
 
-      const [transitionWithEntropy] = transitions?.filter(transition => transition.id === row.identifier && transition.revision === row.revision.toString())
+      const [transitionWithEntropy] = transitions?.filter(transition => transition.id === row.identifier && transition.revision === row.revision?.toString())
 
       const document = Document.fromRow({
         ...row,

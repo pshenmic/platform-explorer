@@ -1,35 +1,66 @@
-@mixin Columns () {
+@import '../../styles/variables.scss';
+
+@mixin Columns() {
   display: grid;
   gap: 16px;
+  justify-content: space-between;
 
   grid-template-columns:
-    minmax(0, 999rem)
-    auto
-    9rem;
+    minmax(0, 24rem) /* Identifier */
+    minmax(0, 18rem) /* Owner */
+    6rem /* System */
+    8rem /* With tokens */
+    8rem /* Documents */
+    3rem; /* Timestamp */
 
-  @container (max-width: 22.5rem) {
+  @container (max-width: 48rem) {
     grid-template-columns:
-      minmax(0, 999rem)
-      9rem;
+      minmax(0, 1fr)
+      6rem
+  }
+
+  @media screen and (min-width: $breakpoint-lg) {
+    grid-template-columns:
+      minmax(0, 24rem) /* Identifier */
+      minmax(0, 23rem) /* Owner */
+      6rem /* System */
+      8rem /* With tokens */
+      8rem /* Documents */
+      3rem; /* Timestamp */
   }
 }
 
-@mixin Column () {
+@mixin Column() {
   display: flex;
   align-items: center;
+
+  &:last-child {
+    justify-content: flex-end;
+    text-align: right;
+  }
 
   &--Identifier {
     width: 100%;
     overflow: hidden;
   }
 
-  &--DocumentsCount {
-    width: max-content;
-    text-align: right;
+  &--Owner {
+    min-width: 0;
+    overflow: hidden;
   }
 
-  @container (max-width: 22.5rem) {
-    &--DocumentsCount {
+  &--DocumentsCount {
+    min-width: 0;
+    overflow: hidden;
+  }
+  
+
+
+  @container (max-width: 48rem) {
+    &--DocumentsCount,
+    &--Owner,
+    &--WithTokens,
+    &--System {
       display: none;
     }
   }

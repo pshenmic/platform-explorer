@@ -1,6 +1,10 @@
 @import '../../styles/variables.scss';
 
 .DataContractsIntro {
+  &__Filters {
+    margin: 0.75rem 0 1.5rem;
+  }
+
   .Intro__Info {
     width: 360px;
   }

@@ -121,12 +121,6 @@ impl PSQLProcessor {
             let data_contract_identifier =
                 Identifier::from_string(data_contract_identifier_str, Base58).unwrap();
 
-            let data_contract_name = document_transition
-                .data()
-                .unwrap()
-                .get_str_at_path("name")
-                .unwrap();
-
             let data_contract = self
                 .dao
                 .get_data_contract_by_identifier(data_contract_identifier, sql_transaction)
@@ -134,21 +128,27 @@ impl PSQLProcessor {
                 .expect(&format!(
                     "Could not get DataContract with identifier {} from the database",
                     data_contract_identifier_str
-                ))
-                .expect(&format!(
-                    "Could not find DataContract with identifier {} in the database",
-                    data_contract_identifier_str
                 ));
 
-            if data_contract.owner == owner_id {
-                self.dao
-                    .set_data_contract_name(
-                        data_contract.clone(),
-                        String::from(data_contract_name),
-                        sql_transaction,
-                    )
-                    .await
-                    .unwrap();
+            if data_contract.is_some() {
+                let data_contract = data_contract.unwrap();
+
+                if data_contract.owner == owner_id {
+                    let data_contract_name = document_transition
+                        .data()
+                        .unwrap()
+                        .get_str_at_path("name")
+                        .unwrap();
+
+                    self.dao
+                        .set_data_contract_name(
+                            data_contract.clone(),
+                            String::from(data_contract_name),
+                            sql_transaction,
+                        )
+                        .await
+                        .unwrap();
+                }
             } else {
                 println!("Failed to set custom data contract name for contract {}, owner of the tx {} does not match data contract", st_hash, document_identifier.to_string(Base58));
             }

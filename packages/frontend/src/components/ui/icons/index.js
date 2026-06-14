@@ -41,8 +41,8 @@ const CalendarGradientIcon = (props) => (
 const CloseIcon = (props) => (
   <Icon viewBox='0 0 10 10' {...props}>
     <svg width='10' height='10' viewBox='0 0 10 10' fill='none' xmlns='http://www.w3.org/2000/svg'>
-      <path d='M1 1L9 9' stroke='currentColor' strokeWidth='2' strokeLinecap='round'/>
-      <path d='M9 1L1 9' stroke='currentColor' strokeWidth='2' strokeLinecap='round'/>
+      <path d='M1 1L9 9' stroke='currentColor' strokeWidth='1.5' strokeLinecap='round'/>
+      <path d='M9 1L1 9' stroke='currentColor' strokeWidth='1.5' strokeLinecap='round'/>
     </svg>
   </Icon>
 )
@@ -76,10 +76,27 @@ const ArrowCornerIcon = (props) => (
 
 const SuccessIcon = (props) => (
   <Icon viewBox='0 0 18 18' {...props}>
-    <svg width='18' height='18' viewBox='0 0 18 18' fill='none' xmlns='http://www.w3.org/2000/svg'>
-      <circle cx='9' cy='9' r='9' fill='#1CC400' fillOpacity='0.2'/>
-      <path d='M5 8.5L8 11.5L13.5 6' stroke='#1CC400' strokeWidth='2' strokeLinecap='round'/>
+    <svg width="14" height="10" viewBox="0 0 14 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M1.6875 4.6875L5.4375 8.4375L12.3125 1.5625" stroke="#58F4BC" strokeWidth="1.5" strokeLinecap="round"/>
     </svg>
+  </Icon>
+)
+
+export const PrimalPostitiveIcon = (props) => (
+  <Icon viewBox="0 0 14 10" {...props}>
+    <path
+      d="M1.6875 4.6875L5.4375 8.4375L12.3125 1.5625"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      fill="none"
+    />
+  </Icon>
+)
+
+export const PrimalNegativeIcon = (props) => (
+  <Icon viewBox="0 0 12 2"{...props}>
+    <path d="M1.13864 1.00003L10.8614 1.00003" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
   </Icon>
 )
 
@@ -543,7 +560,33 @@ const TokenFreezeIcon = (props) => {
   )
 }
 
+const SaveIcon = (props) => {
+  return (
+    <Icon width="13" height="13" viewBox="0 0 13 13" fill="none" {...props}>
+      <path d="M6.25 11.75L0.75 6.25M6.25 11.75L11.75 6.25M6.25 11.75L6.25 0.75" stroke="#4C7EFF" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </Icon>
+  )
+}
+
+const ImportIcon = (props) => {
+  return (
+    <Icon
+      viewBox='0 0 13 13'
+      boxSize={3}
+      fill='none'
+      {...props}
+    >
+      <path
+        d="M6.25 11.75L0.75 6.25M6.25 11.75L11.75 6.25M6.25 11.75L6.25 0.75"
+        stroke="currentColor"
+        strokeWidth="1.5"
+      />
+    </Icon>
+  )
+}
+
 export {
+  SaveIcon,
   CalendarIcon,
   CalendarIcon2,
   CalendarGradientIcon,
@@ -584,5 +627,6 @@ export {
   TokenMintIcon,
   TokenTotalIcon,
   TokenBurnIcon,
-  TokenFreezeIcon
+  TokenFreezeIcon,
+  ImportIcon
 }

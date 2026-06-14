@@ -62,7 +62,7 @@ impl Indexer {
       let bytes = general_purpose::STANDARD.decode(tx.data.clone()).unwrap();
       let tx_hash = sha256::digest(bytes.clone()).to_uppercase();
 
-      let skip = self.txs_to_skip.contains(&format!("{}:{}", &block_hash, &tx_hash));
+      let skip = self.txs_to_skip.contains(&format!("{}:{}", &block_hash, &tx_hash).to_lowercase());
 
       if skip {
         println!("Transaction {} from block with hash {} is skipped because it's marked that in TXS_TO_SKIP environment", &tx_hash, &block_hash);

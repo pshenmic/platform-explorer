@@ -75,6 +75,7 @@ function MenuLevel ({ items = [], onMenuItemClick, placement = 'right-start', on
               variant={'menu'}
               offset={[0, 25]}
               overflow={'visible'}
+              boundary={'scrollParent'}
             >
               <PopoverTrigger>
                 <div
@@ -83,7 +84,7 @@ function MenuLevel ({ items = [], onMenuItemClick, placement = 'right-start', on
                 >
                   {<span>{item.label}</span>}
                   <div className={'MenuLevel__ItemIcon'}>
-                    <ChevronIcon/>
+                    <ChevronIcon />
                   </div>
                 </div>
               </PopoverTrigger>

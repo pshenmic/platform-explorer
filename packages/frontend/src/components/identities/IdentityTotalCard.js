@@ -88,6 +88,13 @@ function IdentityTotalCard ({ identity, rate }) {
             />
             <InfoLine
               className={'IdentityTotalCard__InfoLine'}
+              title={'Nonce'}
+              value={identity.data?.nonce}
+              loading={identity.loading}
+              error={identity.error || (!identity.loading && identity.data?.nonce === undefined)}
+            />
+            <InfoLine
+              className={'IdentityTotalCard__InfoLine'}
               title={'Creation date'}
               value={identity?.data?.txHash
                 ? <ValueCard link={`/transaction/${identity.data.txHash}`}>

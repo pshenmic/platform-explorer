@@ -1,0 +1,30 @@
+@import '../../styles/variables.scss';
+
+.IdentitiesPage {
+  &__Filters {
+    margin: 0.75rem 0 1.5rem;
+  }
+
+  &__IntroTabs {
+    width: 100%;
+    padding-bottom: 0;
+
+    .TimeframeSelector__Button {
+      top: -2px !important;
+    }
+
+    .ChartBlock {
+      &--MenuIsOpen {
+        margin-bottom: -52px !important;
+      }
+    }
+  }
+
+  &__IdentitiesCountChart {
+    overflow: visible !important;
+
+    .Chart {
+      overflow: visible !important;
+    }
+  }
+}

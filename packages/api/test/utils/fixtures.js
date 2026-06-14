@@ -3,9 +3,22 @@
 const { base58 } = require('@scure/base')
 const crypto = require('crypto')
 const StateTransitionEnum = require('../../src/enums/StateTransitionEnum')
+const bech32mEncode = require('./bech32m')
+const base58Address = require('./base58address')
 
 const generateHash = () => (crypto.randomBytes(32)).toString('hex').toUpperCase()
 const generateIdentifier = () => base58.encode(crypto.randomBytes(32))
+const generateBech32mAddress = () => {
+  const ADDRESS_TYPE = 0x00
+
+  const randomPayload = crypto.randomBytes(20)
+  const bytes = Buffer.concat([Buffer.from([ADDRESS_TYPE]), randomPayload])
+
+  return bech32mEncode('dashevo', bytes)
+}
+const generateBase58Address = () => base58Address(crypto.randomBytes(21))
+
+generateBech32mAddress()
 const fixtures = {
   identifier: () => generateIdentifier(),
   getDataContract: async (knex, { identifier, id }) => {
@@ -43,8 +56,10 @@ const fixtures = {
     const eqValue = hash ?? id
     const eqField = hash ? 'hash' : 'id'
 
-    const [row] = await knex('state_transitions')
+    const rows = await knex('state_transitions')
       .where(eqField, eqValue)
+
+    const [row] = rows
 
     return row
   },
@@ -113,10 +128,6 @@ const fixtures = {
       throw new Error('type must be provided for transaction fixture')
     }
 
-    if (!owner) {
-      throw new Error('owner must be provided for transaction fixture')
-    }
-
     const row = {
       block_hash,
       block_height,
@@ -135,7 +146,15 @@ const fixtures = {
 
     return { ...row, id: result.id }
   },
-  identity: async (knex, { identifier, block_hash, block_height, state_transition_hash, revision, owner, is_system } = {}) => {
+  identity: async function (knex, {
+    identifier,
+    block_hash,
+    block_height,
+    state_transition_hash,
+    revision,
+    owner,
+    is_system
+  } = {}) {
     if (!identifier) {
       identifier = generateIdentifier()
     }
@@ -149,6 +168,7 @@ const fixtures = {
     }
 
     let transaction
+    let temp
 
     if (!state_transition_hash) {
       transaction = await fixtures.transaction(knex, {
@@ -157,12 +177,15 @@ const fixtures = {
         owner: identifier,
         type: StateTransitionEnum.IDENTITY_CREATE
       })
+    } else {
+      temp = await fixtures.getStateTransition(knex, { hash: state_transition_hash })
     }
 
     const row = {
       identifier,
       revision: revision ?? 0,
       state_transition_hash: state_transition_hash ?? transaction.hash,
+      state_transition_id: transaction?.id ?? temp?.id,
       owner: owner ?? identifier,
       is_system: is_system ?? false
     }
@@ -217,7 +240,9 @@ const fixtures = {
     state_transition_hash,
     owner,
     is_system,
-    documents = []
+    documents = [],
+    description,
+    keywords = []
   } = {}) {
     if (!identifier) {
       identifier = generateIdentifier()
@@ -234,7 +259,9 @@ const fixtures = {
       state_transition_hash,
       schema: schema ?? {},
       version: version ?? 0,
-      is_system: is_system === true
+      is_system: is_system === true,
+      description,
+      keywords
     }
 
     const result = await knex('data_contracts').insert(row).returning('id')
@@ -277,7 +304,7 @@ const fixtures = {
     const row = {
       identifier,
       state_transition_hash,
-      revision: revision ?? 1,
+      revision: revision ?? (deleted ? null : 1),
       data: data ?? {},
       deleted: deleted ?? false,
       data_contract_id,
@@ -389,9 +416,16 @@ const fixtures = {
       holder
     }
 
-    const [result] = await knex('token_holders').insert(row).returning('id')
+    const [alreadyExistHolder] = await knex('token_holders')
+      .where('holder', holder)
+      .andWhere('token_id', token_id)
+      .returning('id')
 
-    return { ...row, id: result.id }
+    if (!alreadyExistHolder) {
+      const [result] = await knex('token_holders').insert(row).returning('id')
+
+      return { ...row, id: result.id }
+    }
   },
   token: async function (knex, {
     position,
@@ -537,7 +571,78 @@ const fixtures = {
 
     return { ...row, id: result.id, transition }
   },
+  platformAddress: async function (knex, {
+    address,
+    bech32mAddress
+  } = {}) {
+    const row = {
+      address: address ?? generateBase58Address(),
+      bech32m_address: bech32mAddress ?? generateBech32mAddress()
+    }
+
+    const [result] = await knex('platform_addresses').insert(row).returning('id')
+
+    return {
+      ...row,
+      id: result.id
+    }
+  },
+  platformAddressTransition: async function (knex, {
+    sender_id,
+    recipient_id,
+    state_transition_id,
+    state_transition_type,
+    amount
+  }) {
+    if (sender_id == null && recipient_id == null) {
+      throw new Error('sender_id or recipient_id must be provided')
+    }
+    if (state_transition_id == null) {
+      throw new Error('state_transition_id must be provided')
+    }
+    if (state_transition_type == null) {
+      throw new Error('state_transition_type must be provided')
+    }
+    if (amount == null) {
+      throw new Error('amount must be provided')
+    }
+
+    const row = {
+      sender_id,
+      recipient_id,
+      state_transition_id,
+      state_transition_type,
+      amount
+    }
+
+    const [result] = await knex('platform_address_transitions').insert(row).returning('id')
+
+    return {
+      ...row,
+      id: result.id
+    }
+  },
+  stateTransitionDuplicate: async (knex, { hash, block_hash }) => {
+    if (!hash) {
+      throw new Error('hash must be provided for stateTransitionDuplicate fixture')
+    }
+    if (!block_hash) {
+      throw new Error('block_hash must be provided for stateTransitionDuplicate fixture')
+    }
+
+    const row = {
+      hash: hash.toLowerCase(),
+      block_hash: block_hash.toLowerCase()
+    }
+
+    const [result] = await knex('state_transition_duplicates').insert(row).returning('id')
+
+    return { ...row, id: result.id }
+  },
   cleanup: async (knex) => {
+    await knex.raw('DELETE FROM state_transition_duplicates')
+    await knex.raw('DELETE FROM platform_address_transitions')
+    await knex.raw('DELETE FROM platform_addresses')
     await knex.raw('DELETE FROM token_holders')
     await knex.raw('DELETE FROM data_contract_transitions')
     await knex.raw('DELETE FROM token_transitions')

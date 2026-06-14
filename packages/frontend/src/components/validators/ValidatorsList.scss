@@ -5,20 +5,22 @@
   &__ColumnTitles {
     @include mixins.defListTitles;
     display: grid;
-    grid-template-columns: auto 200px 200px;
+    grid-template-columns: minmax(0, 40rem) 150px 150px 250px 150px;
+    justify-content: space-between;
+    gap: 12px;
   }
 
   &__ColumnTitle {
-    justify-content: flex-end;
+    justify-content: flex-start;
 
-    &:first-child {
-      justify-content: flex-start;
+    &:last-child {
+      justify-content: flex-end;
     }
   }
   
   @media screen and (max-width: $breakpoint-lg) {
     &__ColumnTitles {
-      grid-template-columns: auto 170px 170px;
+      grid-template-columns: minmax(0, 40rem) 150px 150px 150px 100px;
     }
   }
 

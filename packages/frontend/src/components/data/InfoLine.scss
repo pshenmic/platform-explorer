@@ -8,6 +8,10 @@
   font-family: $font-mono;
   gap: 0.75rem;
 
+  &__Align--top {
+    align-items: flex-start;
+  }
+
   &__Icon {
     &, svg {
       width: 1.75rem;

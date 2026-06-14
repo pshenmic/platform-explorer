@@ -13,6 +13,7 @@
  * @param masternodeVotesController {MasternodeVotesController}
  * @param contestedResourcesController {ContestedResourcesController}
  * @param tokensController {TokensController}
+ * @param platformAddressesController {PlatformAddressesController}
  */
 module.exports = ({
   fastify,
@@ -27,7 +28,8 @@ module.exports = ({
   rateController,
   masternodeVotesController,
   contestedResourcesController,
-  tokensController
+  tokensController,
+  platformAddressesController
 }) => {
   const routes = [
     {
@@ -177,6 +179,14 @@ module.exports = ({
       }
     },
     {
+      path: '/dataContracts/rating',
+      method: 'GET',
+      handler: dataContractsController.getDataContractTrends,
+      schema: {
+        querystring: { $ref: 'paginationOptions#' }
+      }
+    },
+    {
       path: '/document/:identifier',
       method: 'GET',
       handler: documentsController.getDocumentByIdentifier,
@@ -300,7 +310,10 @@ module.exports = ({
           type: 'object',
           required: ['dpns'],
           properties: {
-            dpns: { type: 'string' }
+            dpns: {
+              type: 'string',
+              pattern: '^[A-Za-z0-9.-]+$'
+            }
           }
         }
       }
@@ -327,9 +340,10 @@ module.exports = ({
         params: {
           type: 'object',
           properties: {
-            validator: { $ref: 'hash#' }
+            identifier: { $ref: 'identifier#' }
           }
-        }
+        },
+        querystring: { $ref: 'paginationOptions#' }
       }
     },
     {
@@ -382,7 +396,10 @@ module.exports = ({
         querystring: {
           type: 'object',
           properties: {
-            query: { type: 'string' }
+            query: {
+              type: 'string',
+              pattern: '^[A-Za-z0-9\\s.-]+$'
+            }
           }
         }
       }
@@ -564,6 +581,20 @@ module.exports = ({
       }
     },
     {
+      path: '/token/:identifier/holders',
+      method: 'GET',
+      handler: tokensController.getTokenHolders,
+      schema: {
+        params: {
+          type: 'object',
+          properties: {
+            identifier: { $ref: 'identifier#' }
+          }
+        },
+        querystring: { $ref: 'paginationOptions#' }
+      }
+    },
+    {
       path: '/tokens/:name/info',
       method: 'GET',
       handler: tokensController.getTokensByName,
@@ -574,6 +605,7 @@ module.exports = ({
             name: {
               type: 'string',
               // minimal token name is 3 but for search by part name we use minimal length 1
+              pattern: '^[A-Za-z0-9-]+$',
               minLength: 1,
               maxLength: 25
             }
@@ -632,6 +664,92 @@ module.exports = ({
               ]
             },
             quorumHash: { $ref: 'hash#' }
+          }
+        }
+      }
+    },
+    {
+      path: '/identities/history',
+      method: 'GET',
+      handler: identitiesController.getIdentitiesHistory,
+      schema: {
+        querystring: { $ref: 'timeInterval#' }
+      }
+    },
+    {
+      path: '/waitForStateTransitionResult/:hash',
+      method: 'GET',
+      handler: transactionsController.waitForStateTransitionResult,
+      schema: {
+        params: {
+          type: 'object',
+          properties: {
+            hash: { $ref: 'hash#' }
+          }
+        }
+      }
+    },
+    {
+      path: '/platformAddress/:platform_address/info',
+      method: 'GET',
+      handler: platformAddressesController.getPlatformAddressInfo,
+      schema: {
+        params: {
+          type: 'object',
+          properties: {
+            platform_address: {
+              type: 'string',
+              maxLength: 100,
+              pattern: '^[A-Za-z0-9]+$'
+            }
+          }
+        }
+      }
+    },
+    {
+      path: '/platformAddress/:platform_address/transactions',
+      method: 'GET',
+      handler: platformAddressesController.getPlatformAddressTransition,
+      schema: {
+        querystring: { $ref: 'paginationOptions#' },
+        params: {
+          type: 'object',
+          properties: {
+            platform_address: {
+              type: 'string',
+              maxLength: 100,
+              pattern: '^[A-Za-z0-9]+$'
+            }
+          }
+        }
+      }
+    },
+    {
+      path: '/platformAddresses',
+      method: 'GET',
+      handler: platformAddressesController.getPlatformAddresses,
+      schema: {
+        querystring: { $ref: 'paginationOptions#' }
+      }
+    },
+    {
+      path: '/transactions/duplicates',
+      method: 'GET',
+      handler: transactionsController.getDuplicatedTransactions,
+      schema: {
+        querystring: { $ref: 'paginationOptions#' }
+      }
+    },
+    {
+      path: '/transaction/verify',
+      method: 'POST',
+      handler: transactionsController.verifyTransaction,
+      schema: {
+        body: {
+          type: 'object',
+          properties: {
+            base64: { type: 'string' },
+            hex: { type: 'string' }
           }
         }
       }

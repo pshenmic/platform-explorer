@@ -69,6 +69,10 @@ function GlobalSearchInput ({ onResultChange, forceValue, onChange, categoryFilt
           return `/document/${firstItem.identifier}`
         case 'validators':
           return `/validator/${firstItem.proTxHash}`
+        case 'tokens':
+          return `/token/${firstItem.identifier}`
+        case 'platformAddresses':
+          return `/platformAddress/${firstItem.bech32mAddress}`
         default:
           return null
       }

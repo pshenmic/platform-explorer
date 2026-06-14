@@ -53,6 +53,12 @@ const Button = {
       _hover: {
         bg: badgeColors.gray.bgHover
       }
+
+    },
+    red: {
+      color: badgeColors.red.text,
+      _hover: { bg: badgeColors.red.bg, color: '#fff' },
+      border: `1px solid ${badgeColors.gray.border}`
     }
   }
 }

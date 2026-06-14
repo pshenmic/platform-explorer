@@ -1,11 +1,10 @@
 @import '../../../styles/variables.scss';
 
-@mixin Columns () {
+@mixin Columns() {
   display: grid;
   gap: 1.5rem;
 
-  grid-template-columns: 
-    minmax(6.25rem, 6.25rem) // Language
+  grid-template-columns: minmax(6.25rem, 6.25rem) // Language
     minmax(7.75rem, 7.75rem) // Singular
     minmax(14rem, 100rem) // Plural
     auto; // Capitalize
@@ -15,7 +14,7 @@
   }
 }
 
-@mixin Column () {
+@mixin Column() {
   display: flex;
   align-items: center;
   width: 100%;

@@ -1,0 +1,320 @@
+'use client'
+
+import { useEffect } from 'react'
+import {
+  CreditsBlock,
+  InfoLine,
+  DateBlock,
+  Identifier
+} from '../../../../components/data'
+import { TransactionType } from './TransactionType'
+import {
+  PageDataContainer,
+  ValueContainer
+} from '../../../../components/ui/containers'
+import { ValueCard } from '../../../../components/cards'
+import { HorisontalSeparator } from '../../../../components/ui/separators'
+import { CopyButton } from '../../../../components/ui/Buttons'
+import {
+  TypeBadge,
+  FeeMultiplier,
+  TransactionStatusBadge,
+  DuplicatedTransactions
+} from '../../../../components/transactions'
+import { ErrorMessageBlock } from '../../../../components/Errors'
+import { useBreadcrumbs } from '../../../../contexts/BreadcrumbsContext'
+import { useDecodedSTQuery, useRateQuery, useTransactionQuery } from './hooks'
+import { useParams, usePathname, useRouter, useSearchParams } from 'next/navigation'
+import { useActiveNetwork } from 'src/contexts'
+
+import './transaction.scss'
+
+export const Transaction = () => {
+  const { l1explorerBaseUrl } = useActiveNetwork()
+  const { hash } = useParams()
+  const { setBreadcrumbs } = useBreadcrumbs()
+  const transaction = useTransactionQuery()
+  const decodedST = useDecodedSTQuery(transaction.data)
+  const rate = useRateQuery()
+  const router = useRouter()
+  const pathname = usePathname()
+  const searchParams = useSearchParams()
+
+  // Occurrences = canonical + duplicates; the selected one is driven by ?block=
+  const occurrences = transaction.data
+    ? [transaction.data, ...(transaction.data.duplicates ?? [])]
+    : []
+  const selectedBlockHash = searchParams.get('block')
+  const selected =
+    occurrences.find((o) => o?.blockHash === selectedBlockHash) || transaction.data
+
+  const handleSelectOccurrence = (blockHash) => {
+    if (!blockHash || blockHash === selected?.blockHash) {
+      router.replace(pathname, { scroll: false })
+    } else {
+      router.replace(`${pathname}?block=${blockHash}`, { scroll: false })
+    }
+  }
+
+  useEffect(() => {
+    setBreadcrumbs([
+      { label: 'Home', path: '/' },
+      { label: 'Transactions', path: '/transactions' },
+      { label: hash }
+    ])
+  }, [setBreadcrumbs, hash])
+
+  return (
+    <PageDataContainer className={'TransactionPage'} title={'Transaction Info'}>
+      {transaction.error && <ErrorMessageBlock h={'450px'} />}
+
+      {!transaction.error && transaction.data?.duplicates?.length > 0 && (
+        <DuplicatedTransactions
+          transaction={transaction.data}
+          selectedBlockHash={selected?.blockHash}
+          onSelect={handleSelectOccurrence}
+        />
+      )}
+
+      {!transaction.error && (
+        <div className={'TransactionPage__CommonInfo'}>
+          <InfoLine
+            className={
+              'TransactionPage__InfoLine TransactionPage__InfoLine--Timestamp'
+            }
+            title={'Timestamp'}
+            value={
+              <DateBlock
+                timestamp={selected?.timestamp}
+                showTime={true}
+              />
+            }
+            loading={transaction.loading}
+            error={transaction.error}
+          />
+
+          <InfoLine
+            className={'TransactionPage__InfoLine'}
+            title={'Hash'}
+            value={
+              <Identifier
+                copyButton={true}
+                ellipsis={false}
+                styles={['highlight-both']}
+              >
+                {selected?.hash}
+              </Identifier>
+            }
+            loading={transaction.loading}
+            error={transaction.error}
+          />
+
+          <InfoLine
+            className={'TransactionPage__InfoLine'}
+            title={'Block Hash'}
+            value={
+              <ValueCard
+                link={`/block/${selected?.blockHash}`}
+                className={'TransactionPage__BlockHash'}
+              >
+                <ValueCard className={'TransactionPage__BlockHeight'}>
+                  Height: {selected?.blockHeight}
+                </ValueCard>
+                <Identifier
+                  copyButton={true}
+                  ellipsis={false}
+                  styles={['highlight-both']}
+                >
+                  {selected?.blockHash}
+                </Identifier>
+              </ValueCard>
+            }
+            loading={transaction.loading}
+            error={transaction.error}
+          />
+
+          <InfoLine
+            className={
+              'TransactionPage__InfoLine TransactionPage__InfoLine--Index'
+            }
+            title={'Index'}
+            value={selected?.index}
+            loading={transaction.loading}
+            error={transaction.error}
+          />
+
+          <InfoLine
+            className={
+              'TransactionPage__InfoLine TransactionPage__InfoLine--Type'
+            }
+            title={'Type'}
+            value={<TypeBadge type={selected?.type} />}
+            loading={transaction.loading}
+            error={transaction.error}
+          />
+
+          <InfoLine
+            className={
+              'TransactionPage__InfoLine TransactionPage__InfoLine--Status'
+            }
+            title={'Status'}
+            value={
+              <div className={'TransactionPage__StatusContainer'}>
+                <TransactionStatusBadge status={selected?.status} />
+                {selected?.error && (
+                  <ValueContainer className={'TransactionPage__ErrorContainer'}>
+                    {selected.error}
+                  </ValueContainer>
+                )}
+              </div>
+            }
+            loading={transaction.loading}
+            error={transaction.error}
+          />
+
+          <InfoLine
+            className={
+              'TransactionPage__InfoLine TransactionPage__InfoLine--Owner'
+            }
+            title={'Owner'}
+            value={
+              <ValueCard
+                link={`/identity/${selected?.owner?.identifier}`}
+              >
+                <Identifier
+                  avatar={true}
+                  copyButton={true}
+                  ellipsis={false}
+                  styles={['highlight-both']}
+                >
+                  {selected?.owner?.identifier}
+                </Identifier>
+              </ValueCard>
+            }
+            loading={transaction.loading}
+            error={transaction.error}
+          />
+
+          <InfoLine
+            className={
+              'TransactionPage__InfoLine TransactionPage__InfoLine--RawTransaction'
+            }
+            title={'Raw Transaction'}
+            value={
+              <ValueCard className={'TransactionPage__RawTransaction'}>
+                {selected?.data}
+                <CopyButton text={selected?.data} />
+              </ValueCard>
+            }
+            loading={transaction.loading}
+            error={transaction.error}
+          />
+
+          <InfoLine
+            className={
+              'TransactionPage__InfoLine TransactionPage__InfoLine--GasUsed'
+            }
+            title={'Gas Used'}
+            value={
+              <CreditsBlock credits={selected?.gasUsed} rate={rate} />
+            }
+            loading={transaction.loading}
+            error={transaction.error}
+          />
+
+          <InfoLine
+            className={
+              'TransactionPage__InfoLine TransactionPage__InfoLine--FeeMultiplier'
+            }
+            title={'Fee Multiplier'}
+            value={
+              <FeeMultiplier value={Number(decodedST.data?.userFeeIncrease)} />
+            }
+            loading={transaction.loading || decodedST.loading}
+            error={
+              decodedST.error ||
+              (!decodedST.loading &&
+                decodedST.data?.userFeeIncrease === undefined)
+            }
+          />
+
+          <InfoLine
+            className={'TransactionPage__InfoLine'}
+            title={'Signature'}
+            value={
+              <ValueCard className={'TransactionPage__Signature'}>
+                {decodedST.data?.signature}
+                <CopyButton text={decodedST.data?.signature} />
+              </ValueCard>
+            }
+            loading={transaction.loading || decodedST.loading}
+            error={
+              decodedST.error ||
+              (!decodedST.loading && !decodedST.data?.signature)
+            }
+          />
+        </div>
+      )}
+
+      {(decodedST.data?.outputAddress || decodedST.data?.fundingAddress) && (
+        <>
+          <HorisontalSeparator />
+
+          {decodedST.data?.coreFeePerByte && (
+            <InfoLine
+              className={
+                'TransactionPage__InfoLine TransactionPage__InfoLine--CoreFeePerByte'
+              }
+              title={'Core Fee Per Byte'}
+              value={<>{decodedST.data?.coreFeePerByte} Duff</>}
+              loading={decodedST.loading}
+            />
+          )}
+
+          {decodedST.data?.outputAddress && (
+            <InfoLine
+              className={
+                'TransactionPage__InfoLine TransactionPage__InfoLine--CoreWithdrawalAddress'
+              }
+              title={'Core Withdrawal Address'}
+              value={
+                <a
+                  href={
+                    l1explorerBaseUrl
+                      ? `${l1explorerBaseUrl}/address/${decodedST.data?.outputAddress}`
+                      : '#'
+                  }
+                  target={'_blank'}
+                  rel={'noopener noreferrer'}
+                >
+                  <ValueContainer clickable={true} external={true}>
+                    <Identifier
+                      copyButton={true}
+                      ellipsis={false}
+                      styles={['highlight-both']}
+                    >
+                      {decodedST.data?.outputAddress}
+                    </Identifier>
+                  </ValueContainer>
+                </a>
+              }
+              loading={decodedST.loading}
+            />
+          )}
+        </>
+      )}
+
+      {decodedST.data && (
+        <>
+          <HorisontalSeparator />
+          <div className={'TransactionPage__DetailsInfo'}>
+            <div className={'TransactionPage__DetailsInfoTitle'}>Details</div>
+            <TransactionType rate={rate} {...decodedST.data} />
+          </div>
+        </>
+      )}
+    </PageDataContainer>
+  )
+}
+
+export default Transaction

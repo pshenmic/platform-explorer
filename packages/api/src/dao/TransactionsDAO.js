@@ -1,10 +1,9 @@
 const Transaction = require('../models/Transaction')
 const PaginatedResultSet = require('../models/PaginatedResultSet')
 const SeriesData = require('../models/SeriesData')
-const { getAliasFromDocument } = require('../utils')
+const { getAliasFromDocument, getAliasDocumentForIdentifier, getAliasDocumentForIdentifiers } = require('../utils')
 const StateTransitionEnum = require('../enums/StateTransitionEnum')
 const BatchEnum = require('../enums/BatchEnum')
-const { DPNS_CONTRACT } = require('../constants')
 
 module.exports = class TransactionsDAO {
   constructor (knex, sdk) {
@@ -13,6 +12,11 @@ module.exports = class TransactionsDAO {
   }
 
   getTransactionByHash = async (hash) => {
+    const duplicatesSubquery = this.knex('state_transition_duplicates')
+      .leftJoin({ dup_blocks: 'blocks' }, this.knex.raw('UPPER(state_transition_duplicates.block_hash) = dup_blocks.hash'))
+      .whereRaw('LOWER(state_transition_duplicates.hash) = LOWER(state_transitions.hash)')
+      .select(this.knex.raw("json_agg(json_build_object('block_hash', dup_blocks.hash, 'block_height', dup_blocks.height, 'timestamp', dup_blocks.timestamp))"))
+
     const [row] = await this.knex('state_transitions')
       .select(
         'state_transitions.hash as tx_hash', 'state_transitions.data as data',
@@ -21,6 +25,7 @@ module.exports = class TransactionsDAO {
         'state_transitions.index as index', 'blocks.height as block_height',
         'blocks.hash as block_hash', 'blocks.timestamp as timestamp', 'state_transitions.owner as owner'
       )
+      .select(duplicatesSubquery.as('duplicates'))
       .whereILike('state_transitions.hash', hash)
       .leftJoin('blocks', 'blocks.hash', 'state_transitions.block_hash')
 
@@ -28,7 +33,7 @@ module.exports = class TransactionsDAO {
       return null
     }
 
-    const [aliasDocument] = await this.sdk.documents.query(DPNS_CONTRACT, 'domain', [['records.identity', '=', row.owner.trim()]], 1)
+    const aliasDocument = row.owner ? await getAliasDocumentForIdentifier(row.owner.trim(), this.sdk) : undefined
 
     const aliases = []
 
@@ -36,15 +41,30 @@ module.exports = class TransactionsDAO {
       aliases.push(getAliasFromDocument(aliasDocument))
     }
 
+    const duplicates = row.duplicates
+      ? row.duplicates.map(dup => Transaction.fromRow({
+        ...row,
+        block_hash: dup.block_hash,
+        block_height: dup.block_height,
+        timestamp: dup.timestamp ? new Date(dup.timestamp) : null,
+        type: StateTransitionEnum[row.type],
+        batch_type: BatchEnum[row.batch_type],
+        status: 'FAIL',
+        aliases,
+        duplicates: null
+      }))
+      : undefined
+
     return Transaction.fromRow(
       {
         ...row,
         type: StateTransitionEnum[row.type],
-        aliases
+        aliases,
+        duplicates
       })
   }
 
-  getTransactions = async (page, limit, order, orderBy, transactionsTypes, batchTypes, owner, status, min, max, timestampStart, timestampEnd) => {
+  getTransactions = async (page, limit, order, orderBy, transactionsTypes, batchTypes, owner, status, min, max, timestampStart, timestampEnd, tokenName) => {
     const fromRank = ((page - 1) * limit)
 
     let filtersQuery = ''
@@ -62,7 +82,7 @@ module.exports = class TransactionsDAO {
     if (batchTypes) {
       // Currently knex cannot digest an array of numbers correctly
       // https://github.com/knex/knex/issues/2060
-      filtersQuery = filtersQuery + `${filtersQuery !== '' ? ' and' : ''}` +
+      filtersQuery = filtersQuery + `${filtersQuery !== '' ? ' and ' : ''}` +
         (batchTypes.length > 1
           ? `batch_type in (${batchTypes.join(',')})`
           : `batch_type = ${batchTypes[0]}`)
@@ -88,22 +108,36 @@ module.exports = class TransactionsDAO {
       filtersQuery = filtersQuery !== '' ? filtersQuery + ' and gas_used <= ?' : 'gas_used <= ?'
     }
 
-    if (timestampStart && timestampEnd) {
-      timestampsQuery = 'blocks.timestamp between ? and ?'
-      timestampBindings.push(timestampStart, timestampEnd)
+    if (timestampStart) {
+      timestampsQuery = 'blocks.timestamp >= ?'
+      timestampBindings.push(timestampStart)
+    }
+    if (timestampEnd) {
+      timestampsQuery = timestampsQuery === '' ? 'blocks.timestamp >= ?' : 'blocks.timestamp between ? and ?'
+      timestampBindings.push(timestampEnd)
     }
 
-    const subquery = this.knex('state_transitions')
-      .select('state_transitions.hash as tx_hash',
+    const transactionSubquery = tokenName
+      ? this.knex('tokens')
+        .select(
+          'state_transitions.hash', 'data', 'type', 'index', 'batch_type', 'state_transitions.owner',
+          'gas_used', 'status', 'error', 'block_hash', 'block_height', 'state_transitions.id')
+        .whereILike('name', tokenName)
+        .leftJoin('token_transitions', 'token_identifier', 'identifier')
+        .leftJoin('state_transitions', 'token_transitions.state_transition_hash', 'state_transitions.hash')
+        .whereRaw('state_transitions.id is not null')
+      : this.knex('state_transitions')
+
+    const subquery = this.knex(transactionSubquery.as('state_transitions_subquery'))
+      .select('state_transitions_subquery.hash as tx_hash',
+        'block_hash', 'id', 'owner', 'block_height',
         'data', 'type', 'index', 'batch_type',
         'gas_used', 'status', 'error',
-        'block_hash', 'id', 'owner',
-        'blocks.height as block_height',
         'blocks.timestamp as timestamp'
       )
       .whereRaw(timestampsQuery, timestampBindings)
       .whereRaw(filtersQuery, filtersBindings)
-      .leftJoin('blocks', 'blocks.hash', 'block_hash')
+      .leftJoin('blocks', 'blocks.height', 'block_height')
 
     const sortedSubquery = this.knex
       .with('subquery', subquery)
@@ -130,8 +164,12 @@ module.exports = class TransactionsDAO {
 
     const totalCount = rows.length > 0 ? Number(rows[0].total_count) : 0
 
+    const owners = rows.filter(row => row.owner).map(row => row.owner.trim())
+
+    const aliasDocuments = await getAliasDocumentForIdentifiers(owners, this.sdk)
+
     const resultSet = await Promise.all(rows.map(async (row) => {
-      const [aliasDocument] = await this.sdk.documents.query(DPNS_CONTRACT, 'domain', [['records.identity', '=', row.owner.trim()]], 1)
+      const aliasDocument = row.owner ? aliasDocuments[row.owner.trim()] : undefined
 
       const aliases = []
 
@@ -157,20 +195,30 @@ module.exports = class TransactionsDAO {
 
     const ranges = this.knex
       .from(this.knex.raw(`generate_series(${startSql}, ${endSql}, '${interval}'::interval) date_to`))
+      .select('date_to')
       .select(
-        'date_to',
-        this.knex.raw(`LAG(date_to, 1, '${start.toISOString()}'::timestamptz) OVER (ORDER BY date_to) AS date_from`)
+        this.knex.raw(
+          'LAG(date_to, 1, ?::timestamptz) OVER (ORDER BY date_to ASC) AS date_from',
+          [start.toISOString()]
+        )
       )
 
+    const subRanges = this.knex('ranges')
+      .select(this.knex.raw('min(date_from) as min_date'))
+      .select(this.knex.raw('max(date_to) as max_date'))
+      .limit(1)
+
     const blocksSubquery = this.knex('blocks')
-      .whereRaw('blocks.timestamp > (SELECT MIN(date_from) FROM ranges) AND blocks.timestamp <= (SELECT MAX(date_to) FROM ranges)')
+      .with('sub_ranges', subRanges)
+      .whereRaw('blocks.timestamp > (SELECT min_date FROM sub_ranges) AND blocks.timestamp <= (SELECT max_date FROM sub_ranges)')
       .as('blocks_sub')
 
     const dataSubquery = this.knex(blocksSubquery)
       .leftJoin('state_transitions', 'state_transitions.block_hash', 'blocks_sub.hash')
       .select('blocks_sub.timestamp', 'state_transitions.gas_used', 'blocks_sub.hash', 'blocks_sub.height')
 
-    const heightSubquery = this.knex.with('ranges', ranges)
+    const heightSubquery = this.knex
+      .with('ranges', ranges)
       .with(
         'filtered_data',
         dataSubquery
@@ -187,8 +235,9 @@ module.exports = class TransactionsDAO {
 
     const rows = await this.knex(heightSubquery)
       .select('tx_count', 'block_height', 'hash as block_hash', 'date_from')
-      .orderBy('date_from', 'asc')
-      .leftJoin('blocks', 'blocks.height', 'block_height')
+      .leftJoin('blocks', function () {
+        this.on('blocks.height', '=', 'block_height').andOnNotNull('block_height')
+      })
 
     return rows
       .map(row => ({
@@ -210,10 +259,22 @@ module.exports = class TransactionsDAO {
 
     const ranges = this.knex
       .from(this.knex.raw(`generate_series(${startSql}, ${endSql}, '${interval}'::interval) date_to`))
-      .select('date_to', this.knex.raw(`LAG(date_to, 1, '${start.toISOString()}'::timestamptz) over (order by date_to asc) date_from`))
+      .select('date_to')
+      .select(
+        this.knex.raw(
+          'LAG(date_to, 1, ?::timestamptz) OVER (ORDER BY date_to ASC) AS date_from',
+          [start.toISOString()]
+        )
+      )
+
+    const subRanges = this.knex('ranges')
+      .select(this.knex.raw('min(date_from) as min_date'))
+      .select(this.knex.raw('max(date_to) as max_date'))
+      .limit(1)
 
     const blocksSubquery = this.knex('blocks')
-      .whereRaw('blocks.timestamp > (SELECT MIN(date_from) FROM ranges) AND blocks.timestamp <= (SELECT MAX(date_to) FROM ranges)')
+      .with('sub_ranges', subRanges)
+      .whereRaw('blocks.timestamp > (SELECT min_date FROM sub_ranges) AND blocks.timestamp <= (SELECT max_date FROM sub_ranges)')
       .as('blocks_sub')
 
     const dataSubquery = this.knex(blocksSubquery)
@@ -237,8 +298,9 @@ module.exports = class TransactionsDAO {
 
     const rows = await this.knex(heightSubquery)
       .select('gas', 'block_height', 'hash as block_hash', 'date_from')
-      .orderBy('date_from', 'asc')
-      .leftJoin('blocks', 'blocks.height', 'block_height')
+      .leftJoin('blocks', function () {
+        this.on('blocks.height', '=', 'block_height').andOnNotNull('block_height')
+      })
 
     return rows
       .map(row => ({
@@ -282,5 +344,83 @@ module.exports = class TransactionsDAO {
       )
 
     return Number(row.total_collected_fees ?? 0)
+  }
+
+  getDuplicatedTransactions = async (page, limit, order) => {
+    const fromRank = (page - 1) * limit
+
+    const groupedSubquery = this.knex('state_transition_duplicates')
+      .select('hash as tx_hash')
+      .select(this.knex.raw('count(block_hash) as duplicates_count'))
+      .select(this.knex.raw('count(*) over () as total_count'))
+      .min('id as min_id')
+      .groupBy('hash')
+      .orderBy('min_id', order)
+      .limit(limit)
+      .offset(fromRank)
+      .as('grouped_subquery')
+
+    const rows = await this.knex(groupedSubquery)
+      .select(
+        'tx_hash', 'state_transitions.data as data', 'state_transitions.gas_used as gas_used',
+        'state_transitions.error as error', 'state_transitions.type as type', 'state_transitions.batch_type as batch_type',
+        'state_transitions.index as index', 'blocks.height as block_height',
+        'blocks.hash as block_hash', 'blocks.timestamp as timestamp', 'state_transitions.owner as owner',
+        'grouped_subquery.total_count as total_count'
+      )
+      .select(this.knex.raw('\'FAIL\' as status'))
+      .leftJoin(
+        'state_transitions',
+        this.knex.raw('LOWER(state_transitions.hash) = LOWER(tx_hash)')
+      )
+      .leftJoin(
+        'state_transition_duplicates',
+        this.knex.raw('state_transition_duplicates.hash = tx_hash')
+      )
+      .leftJoin(
+        'blocks',
+        this.knex.raw('UPPER(state_transition_duplicates.block_hash) = blocks.hash')
+      )
+      .orderBy('grouped_subquery.min_id', order)
+
+    const totalCount = rows.length > 0 ? Number(rows[0].total_count) : 0
+
+    const owners = rows.filter(row => row.owner).map(row => row.owner.trim())
+
+    const aliasDocuments = await getAliasDocumentForIdentifiers(owners, this.sdk)
+
+    const resultSet = rows.reduce((acc, row) => {
+      const aliasDocument = row.owner ? aliasDocuments[row.owner.trim()] : undefined
+
+      const aliases = aliasDocument ? [getAliasFromDocument(aliasDocument)] : []
+
+      const duplicate = Transaction.fromRow({
+        ...row,
+        type: StateTransitionEnum[row.type],
+        batch_type: BatchEnum[row.batch_type],
+        aliases
+      })
+
+      const entry = acc.find(item => item.hash === row.tx_hash)
+
+      if (entry) {
+        entry.duplicates.push(duplicate)
+      } else {
+        acc.push(Transaction.fromRow({
+          ...row,
+          block_hash: null,
+          block_height: null,
+          timestamp: null,
+          type: StateTransitionEnum[row.type],
+          batch_type: BatchEnum[row.batch_type],
+          aliases,
+          duplicates: [duplicate]
+        }))
+      }
+
+      return acc
+    }, [])
+
+    return new PaginatedResultSet(resultSet, page, limit, totalCount)
   }
 }

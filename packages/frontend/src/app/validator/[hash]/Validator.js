@@ -17,7 +17,6 @@ import { HorisontalSeparator } from '../../../components/ui/separators'
 import { ValidatorCard } from '../../../components/validators'
 import { CircleIcon } from '../../../components/ui/icons'
 import { RateTooltip } from '../../../components/ui/Tooltips'
-import { networks } from '../../../constants/networks'
 import { WithdrawalsList } from '../../../components/transfers'
 import { useBreadcrumbs } from '../../../contexts/BreadcrumbsContext'
 import { defaultChartConfig } from '../../../components/charts/config'
@@ -25,6 +24,8 @@ import {
   Badge,
   Tabs, TabList, TabPanels, Tab, TabPanel
 } from '@chakra-ui/react'
+import { useActiveNetwork } from 'src/contexts'
+
 import './ValidatorPage.scss'
 
 function Validator ({ hash }) {
@@ -37,9 +38,7 @@ function Validator ({ hash }) {
   const [transactions, setTransactions] = useState({ data: {}, props: { currentPage: 0 }, loading: true, error: false })
   const [withdrawals, setWithdrawals] = useState({ data: {}, props: { currentPage: 0 }, loading: true, error: false })
   const [activeChartTab, setActiveChartTab] = useState(0)
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL
-  const activeNetwork = networks.find(network => network.explorerBaseUrl === baseUrl)
-  const l1explorerBaseUrl = activeNetwork?.l1explorerBaseUrl || null
+  const { l1explorerBaseUrl } = useActiveNetwork()
   const [timespan, setTimespan] = useState(defaultChartConfig.timespan.values[defaultChartConfig.timespan.defaultIndex])
 
   useEffect(() => {
@@ -92,10 +91,10 @@ function Validator ({ hash }) {
 
     setWithdrawals(state => ({ ...state, loading: true }))
 
-    Api.getWithdrawalsByIdentity(validator.data.identity, withdrawals.props.currentPage + 1, pageSize, 'desc')
+    Api.getWithdrawalsByIdentity(validator.data.identity, 1, 100, 'desc')
       .then(res => fetchHandlerSuccess(setWithdrawals, res))
       .catch(err => fetchHandlerError(setWithdrawals, err))
-  }, [validator, withdrawals.props.currentPage])
+  }, [validator])
 
   const handlePageClick = useCallback(({ selected }) => {
     setCurrentPage(selected)
@@ -106,6 +105,14 @@ function Validator ({ hash }) {
     setCurrentPage(0)
     handlePageClick({ selected: 0 })
   }, [pageSize, handlePageClick])
+
+  const withdrawalsAll = withdrawals?.data?.resultSet || []
+  const withdrawalsPage = withdrawals.props.currentPage
+  const visibleWithdrawals = withdrawalsAll.slice(
+    withdrawalsPage * pageSize,
+    (withdrawalsPage + 1) * pageSize
+  )
+  const withdrawalsPageCount = Math.max(1, Math.ceil(withdrawalsAll.length / pageSize))
 
   return (
     <PageDataContainer
@@ -495,7 +502,7 @@ function Validator ({ hash }) {
                     ? <div className={'ValidatorPage__List'}>
                         {!withdrawals.loading
                           ? <WithdrawalsList
-                              withdrawals={withdrawals?.data?.resultSet || Object.values(withdrawals.data) || []}
+                              withdrawals={visibleWithdrawals}
                               l1explorerBaseUrl={l1explorerBaseUrl}
                               rate={rate.data}
                               defaultPayoutAddress={validator.data?.proTxInfo?.state?.payoutAddress}
@@ -507,12 +514,12 @@ function Validator ({ hash }) {
                     : <ErrorMessageBlock/>
                   }
 
-                  {withdrawals.data?.resultSet &&
+                  {withdrawalsAll.length > 0 &&
                     <div className={'ValidatorPage__ListPagination'}>
                       <Pagination
                         onPageChange={pagination => paginationHandler(setWithdrawals, pagination.selected)}
-                        pageCount={Math.ceil(withdrawals.data?.pagination?.total / pageSize) || 1}
-                        forcePage={currentPage}
+                        pageCount={withdrawalsPageCount}
+                        forcePage={withdrawalsPage}
                         pageRangeDisplayed={0}
                       />
                     </div>

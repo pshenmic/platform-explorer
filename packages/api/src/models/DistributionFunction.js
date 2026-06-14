@@ -27,7 +27,7 @@ module.exports = class DistributionFunction {
     this.min = min ? String(min) : undefined
     this.max = max ? String(max) : undefined
 
-    if (stepCount) {
+    if (stepCount !== undefined) {
       this.stepCount = stepCount
       this.decreasePerIntervalNumerator = decreasePerIntervalNumerator
       this.decreasePerIntervalDenominator = decreasePerIntervalDenominator
@@ -38,16 +38,7 @@ module.exports = class DistributionFunction {
       this.minValue = minValue || null
     }
 
-    if (startStep) {
-      this.a = String(a)
-      this.d = String(d)
-      this.startStep = startStep ? String(startStep) : null
-      this.startingAmount = String(startingAmount)
-      this.minValue = minValue ? String(minValue) : null
-      this.maxValue = maxValue ? String(maxValue) : null
-    }
-
-    if (m) {
+    if (m !== undefined) {
       this.a = String(a)
       this.d = String(d)
       this.m = String(m)
@@ -58,9 +49,41 @@ module.exports = class DistributionFunction {
       this.minValue = minValue ? String(minValue) : null
       this.maxValue = maxValue ? String(maxValue) : null
     }
+
+    if (a !== undefined && d !== undefined && startingAmount !== undefined) {
+      this.a = String(a)
+      this.d = String(d)
+      this.startStep = startStep ? String(startStep) : null
+      this.startingAmount = String(startingAmount)
+      this.minValue = minValue ? String(minValue) : null
+      this.maxValue = maxValue ? String(maxValue) : null
+    }
   }
 
-  static fromObject ({ amount, min, max, stepCount, decreasePerIntervalNumerator, decreasePerIntervalDenominator, startDecreasingOffset, maxIntervalCount, distributionStartAmount, trailingDistributionIntervalAmount, a, b, d, m, n, o, p, startStep, startingAmount, minValue, maxValue, startMoment }) {
+  static fromObject ({
+    amount,
+    min,
+    max,
+    stepCount,
+    decreasePerIntervalNumerator,
+    decreasePerIntervalDenominator,
+    startDecreasingOffset,
+    maxIntervalCount,
+    distributionStartAmount,
+    trailingDistributionIntervalAmount,
+    a,
+    b,
+    d,
+    m,
+    n,
+    o,
+    p,
+    startStep,
+    startingAmount,
+    minValue,
+    maxValue,
+    startMoment
+  }) {
     return new DistributionFunction(amount, min, max, stepCount, decreasePerIntervalNumerator, decreasePerIntervalDenominator, startDecreasingOffset, maxIntervalCount, distributionStartAmount, trailingDistributionIntervalAmount, a, b, d, m, n, o, p, startStep, startingAmount, minValue, maxValue, startMoment)
   }
 }

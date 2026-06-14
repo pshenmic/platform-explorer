@@ -11,39 +11,65 @@ export default function DocumentsList ({
   headerStyles,
   pagination,
   loading,
-  itemsCount = 10
+  itemsCount = 10,
+  showDataContract = false,
+  showAction = true,
+  showGas = true
 }) {
   const headerExtraClass = {
     default: '',
     light: 'DocumentsList__ColumnTitles--Light'
   }
 
+  const compact = !showAction && !showGas
+
   return (
     <div className={'DocumentsList'}>
+      <div className={`DocumentsList__Table${compact ? ' DocumentsList__Table--Compact' : ''}`}>
       <Grid className={`DocumentsList__ColumnTitles ${headerExtraClass?.[headerStyles] || ''}`}>
         <GridItem className={'DocumentsList__ColumnTitle DocumentsList__ColumnTitle--Timestamp'}>
           Time
         </GridItem>
+        {showAction &&
+          <GridItem className={'DocumentsList__ColumnTitle DocumentsList__ColumnTitle--TransitionType'}>
+            Action
+          </GridItem>
+        }
+        <GridItem className={'DocumentsList__ColumnTitle DocumentsList__ColumnTitle--DocumentType'}>
+          Type
+        </GridItem>
+        <GridItem className={'DocumentsList__ColumnTitle DocumentsList__ColumnTitle--Revision'}>
+          Rev
+        </GridItem>
         <GridItem className={'DocumentsList__ColumnTitle DocumentsList__ColumnTitle--Identifier'}>
           Identifier
         </GridItem>
-        <GridItem className={'DocumentsList__ColumnTitle DocumentsList__ColumnTitle--Owner'}>
-          Owner
+        <GridItem className={`DocumentsList__ColumnTitle DocumentsList__ColumnTitle--${showDataContract ? 'DataContract' : 'Owner'}`}>
+          {showDataContract ? 'Data Contract' : 'Owner'}
+        </GridItem>
+        {showGas &&
+          <GridItem className={'DocumentsList__ColumnTitle DocumentsList__ColumnTitle--Gas'}>
+            Gas
+          </GridItem>
+        }
+        <GridItem className={'DocumentsList__ColumnTitle DocumentsList__ColumnTitle--Status'}>
+          Status
         </GridItem>
       </Grid>
 
       {!loading
-        ? <div className={'DocumentsList__Items'}>
+        ? <>
           {documents?.map((document, key) =>
-            <DocumentsListItem document={document} key={key}/>
+            <DocumentsListItem document={document} showDataContract={showDataContract} showAction={showAction} showGas={showGas} key={key}/>
           )}
           {documents?.length === 0 &&
             <EmptyListMessage>There are no documents created yet.</EmptyListMessage>
           }
           {documents === undefined && <ErrorMessageBlock/>}
-        </div>
+        </>
         : <LoadingList itemsCount={itemsCount}/>
       }
+      </div>
 
       {pagination &&
         <Pagination

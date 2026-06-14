@@ -3,7 +3,9 @@
 import { useState, useEffect } from 'react'
 import * as Api from '../../../util/Api'
 import TransactionsList from '../../../components/transactions/TransactionsList'
+import TransactionsFilter from '../../../components/transactions/TransactionsFilter'
 import DocumentsList from '../../../components/documents/DocumentsList'
+import { DocumentsFilter } from '../../../components/documents/DocumentsFilter'
 import DataContractsList from '../../../components/dataContracts/DataContractsList'
 import TransfersList from '../../../components/transfers/TransfersList'
 import { fetchHandlerSuccess, fetchHandlerError, paginationHandler, setLoadingProp } from '../../../util'
@@ -37,6 +39,8 @@ function Identity ({ identifier }) {
   const [tokens, setTokens] = useState({ data: {}, props: { currentPage: 0 }, loading: true, error: false })
   const [transactions, setTransactions] = useState({ data: {}, props: { currentPage: 0 }, loading: true, error: false })
   const [transfers, setTransfers] = useState({ data: {}, props: { currentPage: 0 }, loading: true, error: false })
+  const [txFilters, setTxFilters] = useState({})
+  const [docFilters, setDocFilters] = useState({})
   const [rate, setRate] = useState({ data: {}, loading: true, error: false })
   const pageSize = 10
   const [activeTab, setActiveTab] = useState(tabs.indexOf(defaultTabName.toLowerCase()) !== -1
@@ -66,10 +70,16 @@ function Identity ({ identifier }) {
     if (!identifier) return
     setLoadingProp(setTransactions)
 
-    Api.getTransactionsByIdentity(identifier, transactions.props.currentPage + 1, pageSize, 'desc')
-      .then(paginatedDataContracts => fetchHandlerSuccess(setTransactions, paginatedDataContracts))
+    Api.getTransactions(transactions.props.currentPage + 1, pageSize, 'desc', { owner: identifier, ...txFilters })
+      .then(paginatedTransactions => fetchHandlerSuccess(setTransactions, paginatedTransactions))
       .catch(err => fetchHandlerError(setTransactions, err))
-  }, [identifier, transactions.props.currentPage])
+  }, [identifier, transactions.props.currentPage, txFilters])
+
+  const txFiltersChangeHandler = (newFilters) => {
+    if (JSON.stringify(newFilters) === JSON.stringify(txFilters)) return
+    setTxFilters(newFilters)
+    setTransactions(prev => ({ ...prev, props: { ...prev.props, currentPage: 0 } }))
+  }
 
   useEffect(() => {
     if (!identifier) return
@@ -93,10 +103,16 @@ function Identity ({ identifier }) {
     if (!identifier) return
     setLoadingProp(setDocuments)
 
-    Api.getDocumentsByIdentity(identifier, documents.props.currentPage + 1, pageSize, 'desc')
+    Api.getDocumentsByIdentity(identifier, documents.props.currentPage + 1, pageSize, 'desc', docFilters)
       .then(paginatedDataContracts => fetchHandlerSuccess(setDocuments, paginatedDataContracts))
       .catch(err => fetchHandlerError(setDocuments, err))
-  }, [identifier, documents.props.currentPage])
+  }, [identifier, documents.props.currentPage, docFilters])
+
+  const docFiltersChangeHandler = (newFilters) => {
+    if (JSON.stringify(newFilters) === JSON.stringify(docFilters)) return
+    setDocFilters(newFilters)
+    setDocuments(prev => ({ ...prev, props: { ...prev.props, currentPage: 0 } }))
+  }
 
   useEffect(() => {
     if (!identifier) return
@@ -141,9 +157,9 @@ function Identity ({ identifier }) {
       <InfoContainer styles={['tabs']} className={'IdentityPage__ListContainer'}>
         <Tabs onChange={setActiveTab} index={activeTab}>
           <TabList>
-            <Tab>Transactions {identity.data?.totalTxs !== undefined
-              ? <span className={`Tabs__TabItemsCount ${identity.data?.totalTxs === 0 ? 'Tabs__TabItemsCount--Empty' : ''}`}>
-                  {identity.data?.totalTxs}
+            <Tab>Transactions {(transactions.data?.pagination?.total ?? identity.data?.totalTxs) !== undefined
+              ? <span className={`Tabs__TabItemsCount ${(transactions.data?.pagination?.total ?? identity.data?.totalTxs) === 0 ? 'Tabs__TabItemsCount--Empty' : ''}`}>
+                  {Math.max(transactions.data?.pagination?.total ?? identity.data?.totalTxs, 0)}
                 </span>
               : ''}
             </Tab>
@@ -153,23 +169,32 @@ function Identity ({ identifier }) {
                 </span>
               : ''}
             </Tab>
-            <Tab>Documents {identity.data?.totalDocuments !== undefined
-              ? <span className={`Tabs__TabItemsCount ${identity.data?.totalDocuments === 0 ? 'Tabs__TabItemsCount--Empty' : ''}`}>
-                  {identity.data?.totalDocuments}
+            <Tab>Documents {(documents.data?.pagination?.total ?? identity.data?.totalDocuments) !== undefined
+              ? <span className={`Tabs__TabItemsCount ${(documents.data?.pagination?.total ?? identity.data?.totalDocuments) === 0 ? 'Tabs__TabItemsCount--Empty' : ''}`}>
+                  {Math.max(documents.data?.pagination?.total ?? identity.data?.totalDocuments, 0)}
                 </span>
               : ''}
             </Tab>
             <Tab>Credit Transfers {identity.data?.totalTransfers !== undefined
-              ? <span className={`Tabs__TabItemsCount ${identity.data?.totalTransfers === 0 ? 'Tabs__TabItemsCount--Empty' : ''}`}>{identity.data?.totalTransfers}</span>
+              ? <span className={`Tabs__TabItemsCount ${identity.data?.totalTransfers === 0 ? 'Tabs__TabItemsCount--Empty' : ''}`}>
+                  {identity.data?.totalTransfers}
+                </span>
               : ''}
             </Tab>
             <Tab>Tokens {tokens.data?.pagination?.total !== undefined
-              ? <span className={`Tabs__TabItemsCount ${tokens.data?.pagination?.total === 0 ? 'Tabs__TabItemsCount--Empty' : ''}`}>{tokens.data?.pagination?.total}</span>
+              ? <span className={`Tabs__TabItemsCount ${tokens.data?.pagination?.total === 0 ? 'Tabs__TabItemsCount--Empty' : ''}`}>
+                  {Math.max(tokens.data?.pagination?.total, 0)}
+                </span>
               : ''}
             </Tab>
           </TabList>
           <TabPanels>
             <TabPanel>
+              <TransactionsFilter
+                onFilterChange={txFiltersChangeHandler}
+                excludeFilters={['owner']}
+                className={'IdentityPage__TransactionsFilter'}
+              />
               {!transactions.error
                 ? <TransactionsList
                     transactions={transactions.data?.resultSet}
@@ -200,9 +225,17 @@ function Identity ({ identifier }) {
               }
             </TabPanel>
             <TabPanel>
+              <DocumentsFilter
+                onFilterChange={docFiltersChangeHandler}
+                excludeFilters={['owner', 'revision', 'transition_type']}
+                className={'IdentityPage__DocumentsFilter'}
+              />
               {!documents.error
                 ? <DocumentsList
                     documents={documents.data?.resultSet}
+                    showDataContract={true}
+                    showAction={false}
+                    showGas={false}
                     pagination={{
                       onPageChange: pagination => paginationHandler(setDocuments, pagination.selected),
                       pageCount: Math.ceil(documents.data?.pagination?.total / pageSize) || 1,

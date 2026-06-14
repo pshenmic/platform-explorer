@@ -3,15 +3,57 @@
 import IdentitiesListItem from './IdentitiesListItem'
 import { EmptyListMessage } from '../ui/lists'
 import { Grid, GridItem } from '@chakra-ui/react'
+import { ChevronUpIcon, ChevronDownIcon } from '@chakra-ui/icons'
 import Pagination from '../pagination'
 import { ErrorMessageBlock } from '../Errors'
 import { LoadingList } from '../loading'
+
 import './IdentitiesList.scss'
 
-function IdentitiesList ({ identities, headerStyles = 'default', pagination, loading, itemsCount = 10 }) {
+const SORTABLE_HEADERS = [
+  { key: 'balance', modifier: 'Balance', label: 'Balance' },
+  { key: 'tx_count', modifier: 'Txs', label: 'Transactions' },
+  { key: 'documents_count', modifier: 'Documents', label: 'Documents' },
+  { key: 'timestamp', modifier: 'Timestamp', label: 'Timestamp' }
+]
+
+function SortableHeader ({ headerKey, label, modifier, sort, onSortChange }) {
+  const isActive = sort?.order_by === headerKey
+  const direction = isActive ? sort.order : null
+  const className = [
+    'IdentitiesList__ColumnTitle',
+    `IdentitiesList__ColumnTitle--${modifier}`,
+    'IdentitiesList__ColumnTitle--Sortable',
+    isActive ? 'IdentitiesList__ColumnTitle--Active' : ''
+  ].filter(Boolean).join(' ')
+
+  const handleClick = () => {
+    if (!onSortChange) return
+    const nextOrder = isActive && direction === 'desc' ? 'asc' : 'desc'
+    onSortChange({ order_by: headerKey, order: nextOrder })
+  }
+
+  return (
+    <GridItem as={'button'} type={'button'} className={className} onClick={handleClick}>
+      {isActive
+        ? direction === 'asc'
+          ? <ChevronUpIcon w={4} h={4}/>
+          : <ChevronDownIcon w={4} h={4}/>
+        : <span aria-hidden className={'IdentitiesList__SortSpacer'}/>}
+      <span>{label}</span>
+    </GridItem>
+  )
+}
+
+function IdentitiesList ({ identities, headerStyles = 'default', pagination, loading, itemsCount = 10, sort, onSortChange }) {
   const headerExtraClass = {
     default: '',
     light: 'IdentitiesList__ColumnTitles--Light'
+  }
+
+  const sortableProps = (key) => {
+    const header = SORTABLE_HEADERS.find(h => h.key === key)
+    return { headerKey: header.key, label: header.label, modifier: header.modifier, sort, onSortChange }
   }
 
   return (
@@ -20,9 +62,13 @@ function IdentitiesList ({ identities, headerStyles = 'default', pagination, loa
         <GridItem className={'IdentitiesList__ColumnTitle IdentitiesList__ColumnTitle--Identifier'}>
           Identifier
         </GridItem>
-        <GridItem className={'IdentitiesList__ColumnTitle IdentitiesList__ColumnTitle--Timestamp'}>
-          Timestamp
+        <SortableHeader {...sortableProps('balance')}/>
+        <SortableHeader {...sortableProps('tx_count')}/>
+        <SortableHeader {...sortableProps('documents_count')}/>
+        <GridItem className={'IdentitiesList__ColumnTitle IdentitiesList__ColumnTitle--Contracts'}>
+          Data Contracts
         </GridItem>
+        <SortableHeader {...sortableProps('timestamp')}/>
       </Grid>
 
       {!loading

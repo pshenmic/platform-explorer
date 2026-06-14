@@ -4,12 +4,13 @@ import Link from 'next/link'
 import { Grid, GridItem } from '@chakra-ui/react'
 import TypeBadge from './TypeBadge'
 import BatchTypeBadge from './BatchTypeBadge'
+import TransactionStatusBadge from './TransactionStatusBadge'
 import { Identifier, BigNumber, Alias, TimeDelta, NotActive } from '../data'
-import StatusIcon from './StatusIcon'
-import { RateTooltip, Tooltip } from '../ui/Tooltips'
+import { RateTooltip } from '../ui/Tooltips'
 import ImageGenerator from '../imageGenerator'
 import { useRouter } from 'next/navigation'
 import { LinkContainer } from '../ui/containers'
+
 import './TransactionsListItem.scss'
 
 function TransactionsListItem ({ transaction, rate }) {
@@ -21,32 +22,34 @@ function TransactionsListItem ({ transaction, rate }) {
       <Grid className={'TransactionsListItem__Content'}>
         <GridItem className={'TransactionsListItem__Column TransactionsListItem__Column--Timestamp'}>
           {transaction?.timestamp
-            ? <>
-                {transaction?.status &&
-                  <Tooltip
-                    title={transaction.status}
-                    content={transaction?.error || ''}
-                    placement={'top'}
-                  >
-                    <span>
-                      <StatusIcon
-                        className={'TransactionsListItem__StatusIcon'}
-                        status={transaction.status}
-                        w={'1.125rem'}
-                        h={'1.125rem'}
-                        mr={'0.5rem'}
-                      />
-                    </span>
-                  </Tooltip>
-                }
-                <TimeDelta endDate={new Date(transaction.timestamp)}/>
-              </>
+            ? <TimeDelta endDate={new Date(transaction.timestamp)}/>
+            : <NotActive/>
+          }
+        </GridItem>
+        <GridItem className={'TransactionsListItem__Column TransactionsListItem__Column--Status'}>
+          {transaction?.status
+            ? <TransactionStatusBadge status={transaction.status}/>
             : <NotActive/>
           }
         </GridItem>
         <GridItem className={'TransactionsListItem__Column TransactionsListItem__Column--Hash'}>
           {transaction?.hash
             ? <Identifier styles={['highlight-both']}>{transaction.hash}</Identifier>
+            : <NotActive/>
+          }
+        </GridItem>
+        <GridItem className={'TransactionsListItem__Column TransactionsListItem__Column--Block'}>
+          {transaction?.blockHeight != null
+            ? <LinkContainer
+                className={'TransactionsListItem__BlockLink'}
+                onClick={e => {
+                  e.stopPropagation()
+                  e.preventDefault()
+                  router.push(`/block/${transaction?.blockHash}`)
+                }}
+              >
+                <BigNumber>{transaction.blockHeight}</BigNumber>
+              </LinkContainer>
             : <NotActive/>
           }
         </GridItem>
@@ -63,7 +66,7 @@ function TransactionsListItem ({ transaction, rate }) {
           }
         </GridItem>
           <GridItem className={'TransactionsListItem__Column TransactionsListItem__Column--Owner'}>
-            {transaction?.owner
+            {transaction?.owner?.identifier
               ? <LinkContainer
                   className={'TransactionsListItem__OwnerLink'}
                   onClick={e => {
@@ -81,7 +84,7 @@ function TransactionsListItem ({ transaction, rate }) {
                     : <Identifier avatar={true} styles={['highlight-both']}>{transaction?.owner?.identifier}</Identifier>
                   }
                 </LinkContainer>
-              : <NotActive/>
+              : <NotActive>-</NotActive>
             }
           </GridItem>
         <GridItem className={'TransactionsListItem__Column TransactionsListItem__Column--Type'}>

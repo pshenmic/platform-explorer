@@ -9,10 +9,15 @@ class TokensController {
     const {
       page = 1,
       limit = 10,
-      order = 'asc'
+      order = 'asc',
+      owner,
+      position,
+      contract_id: contractId,
+      token_name: tokenName,
+      token_id: tokenId
     } = request.query
 
-    const tokens = await this.tokensDAO.getTokens(Number(page ?? 1), Number(limit ?? 10), order)
+    const tokens = await this.tokensDAO.getTokens(Number(page ?? 1), Number(limit ?? 10), order, owner, position, contractId, tokenName, tokenId)
 
     response.send(tokens)
   }
@@ -66,7 +71,7 @@ class TokensController {
       return response.status(400).send({ message: 'start timestamp cannot be more than end timestamp' })
     }
 
-    const rating = await this.tokensDAO.getTokensTrends(
+    const trends = await this.tokensDAO.getTokensTrends(
       new Date(start),
       new Date(end),
       Number(page ?? 1),
@@ -74,7 +79,7 @@ class TokensController {
       order
     )
 
-    response.send(rating)
+    response.send(trends)
   }
 
   getTokensByIdentity = async (request, response) => {
@@ -93,6 +98,24 @@ class TokensController {
     const tokens = await this.tokensDAO.getTokensByName(name, Number(page ?? 1), Number(limit ?? 10), order)
 
     response.send(tokens)
+  }
+
+  getTokenHolders = async (request, response) => {
+    const { identifier } = request.params
+    const {
+      page = 1,
+      limit = 10,
+      order = 'asc'
+    } = request.query
+
+    const transitions = await this.tokensDAO.getTokenHolders(
+      identifier,
+      Number(page ?? 1),
+      Number(limit ?? 10),
+      order
+    )
+
+    response.send(transitions)
   }
 }
 

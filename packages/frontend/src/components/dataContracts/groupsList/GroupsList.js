@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react'
 import GroupsListItem from './GroupsListItem'
 import { EmptyListMessage } from '../../ui/lists'
 import { ErrorMessageBlock } from '../../Errors'
@@ -6,6 +5,7 @@ import { LoadingList } from '../../loading'
 import { SmoothSize } from '../../ui/containers'
 import { Button, Grid, GridItem } from '@chakra-ui/react'
 import { ChevronIcon } from '../../ui/icons'
+
 import './GroupsList.scss'
 
 const convertMembersToArray = (members) => {
@@ -19,9 +19,7 @@ const convertMembersToArray = (members) => {
   }))
 }
 
-function GroupsList ({ groups = {}, headerStyles = 'light', loading, itemsCount = 10, expandedGroups, onExpandedGroupsChange }) {
-  const [localExpandedGroups, setLocalExpandedGroups] = useState(expandedGroups || {})
-
+function GroupsList ({ groups = {}, headerStyles = 'light', loading, itemsCount = 10, expandedGroup, onGroupToggle }) {
   const headerExtraClass = {
     default: '',
     light: 'GroupsList__ColumnTitles--Light'
@@ -32,18 +30,9 @@ function GroupsList ({ groups = {}, headerStyles = 'light', loading, itemsCount 
     ...group
   }))
 
-  useEffect(() => setLocalExpandedGroups(expandedGroups), [expandedGroups])
-
   const toggleGroup = (groupId) => {
-    const newExpandedGroups = {
-      ...localExpandedGroups,
-      [groupId]: !localExpandedGroups?.[groupId]
-    }
-
-    setLocalExpandedGroups(newExpandedGroups)
-
-    if (typeof onExpandedGroupsChange === 'function') {
-      onExpandedGroupsChange(newExpandedGroups)
+    if (typeof onGroupToggle === 'function') {
+      onGroupToggle(groupId)
     }
   }
 
@@ -53,7 +42,7 @@ function GroupsList ({ groups = {}, headerStyles = 'light', loading, itemsCount 
         ? <div className={'GroupsList__Items'}>
             {groupsArray?.map((group) => {
               const membersArray = convertMembersToArray(group?.members)
-              const isExpanded = localExpandedGroups?.[group?.id]
+              const isExpanded = expandedGroup === group?.id
 
               return (
                 <div key={group.id} className={`GroupsList__Group ${isExpanded ? 'GroupsList__Group--Expanded' : ''}`}>

@@ -6,15 +6,26 @@
   @include mixins.List;
   container-type: inline-size;
 
+  &__Table {
+    @include docs.ColumnsMaster();
+
+    // loading / empty / error states span the full table width
+    > *:not(.DocumentsList__ColumnTitles):not(.DocumentsListItem) {
+      grid-column: 1 / -1;
+    }
+
+    &--Compact {
+      @include docs.ColumnsMasterCompact();
+    }
+  }
+
   &__ColumnTitles {
     @include mixins.defListTitles;
-    @include docs.Columns();
+    @include docs.SubColumns();
   }
 
   &__ColumnTitle {
     @include docs.Column();
-    width: 100%;
-    display: block;
     word-break: normal;
     white-space: normal;
     overflow-wrap: break-word;

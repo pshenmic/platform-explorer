@@ -238,6 +238,73 @@ describe('Contested documents routes', () => {
         masternodeVote
       })
     }
+
+    // Extra fixture with a different document_type_name (old timestamp, so still "finished")
+    {
+      const block = await fixtures.block(knex, {
+        timestamp: new Date(50),
+        height: 41
+      })
+      const contender = await fixtures.identity(knex, {
+        block_hash: block.hash,
+        block_height: block.height
+      })
+      const documentTransaction = await fixtures.transaction(knex, {
+        block_hash: block.hash,
+        block_height: block.height,
+        type: 0,
+        owner: contender.identifier,
+        gas_used: 11
+      })
+      const document = await fixtures.document(knex, {
+        owner: contender.identifier,
+        data_contract_id: dataContract.id,
+        document_type_name: 'other_type',
+        data: {
+          label: 'othertype01',
+          records: { identity: '36LGwPSXef8q8wpdnx4EdDeVNuqCYNAE9boDu5bxytsm' },
+          preorderSalt: 'r9uAaZjEz+lsPrpqt+rqGQ+qIxZS40Ci7wkV8cGI7k4=',
+          subdomainRules: { allowSubdomains: false },
+          normalizedLabel: 'othertype01',
+          parentDomainName: 'dash',
+          normalizedParentDomainName: 'dash'
+        },
+        prefunded_voting_balance: { parentNameAndLabel: 20000000 },
+        state_transition_hash: documentTransaction.hash
+      })
+
+      const masternodeIdentity = await fixtures.identity(knex, {
+        block_hash: block.hash,
+        block_height: block.height
+      })
+      const masternodeTransaction = await fixtures.transaction(knex, {
+        block_hash: block.hash,
+        block_height: block.height,
+        type: 0,
+        owner: masternodeIdentity.identifier,
+        gas_used: 13
+      })
+      const masternodeVote = await fixtures.masternodeVote(knex, {
+        state_transition_hash: masternodeTransaction.hash,
+        voter_identity_id: masternodeIdentity.identifier,
+        data_contract_id: dataContract.id,
+        choice: 0,
+        towards_identity_identifier: contender.identifier,
+        index_values: JSON.stringify(['dash', 'othertype01']),
+        document_type_name: 'other_type',
+        index_name: 'parentNameAndLabel'
+      })
+
+      contestedResources.push({
+        block,
+        contender,
+        documentTransaction,
+        document,
+        masternodeIdentity,
+        masternodeTransaction,
+        masternodeVote
+      })
+    }
   })
 
   after(async () => {
@@ -277,8 +344,7 @@ describe('Contested documents routes', () => {
             lockVotes: contestedResources
               .filter(res =>
                 res.masternodeVote.index_values === JSON.stringify(['dash', 'xyz']) &&
-                res.masternodeVote.choice !== ChoiceEnum.ABSTAIN &&
-                (res.masternodeVote.choice === ChoiceEnum.LOCK || res.masternodeVote.towards_identity_identifier !== resource.contender.identifier))
+                res.masternodeVote.choice === ChoiceEnum.LOCK)
               .length
           })),
         indexName: 'parentNameAndLabel',
@@ -361,6 +427,45 @@ describe('Contested documents routes', () => {
       const expectedVotes = contestedResources
         .filter(resource => resource.document.data.label === 'xyz')
         .filter(vote => (vote.masternodeVote.choice === 2))
+        .sort((a, b) => a.masternodeVote.id - b.masternodeVote.id)
+        .slice(0, 10)
+        .map(({ block, masternodeVote, document }) => ({
+          proTxHash: masternodeVote.pro_tx_hash,
+          txHash: masternodeVote.state_transition_hash,
+          voterIdentifier: masternodeVote.voter_identity_id,
+          choice: masternodeVote.choice,
+          timestamp: block.timestamp.toISOString(),
+          towardsIdentity: masternodeVote.towards_identity_identifier,
+          dataContractIdentifier: dataContract.identifier,
+          documentTypeName: masternodeVote.document_type_name,
+          documentIdentifier: masternodeVote.choice === 0 ? document.identifier : null,
+          indexName: masternodeVote.index_name,
+          indexValues: JSON.parse(masternodeVote.index_values),
+          identityAliases: [],
+          power: masternodeVote.power
+        }))
+
+      assert.deepStrictEqual(body.resultSet, expectedVotes)
+    })
+
+    it('should return votes for value by choice and proTxHash', async () => {
+      const resourcesWithTokens = contestedResources
+        .filter(resource => resource.document.data.label === 'xyz')
+        .filter(vote => (vote.masternodeVote.choice === 2))
+
+      const proTxHash = resourcesWithTokens[0].masternodeVote.pro_tx_hash
+
+      const { body } = await client.get(`/contestedResource/${resourceValue}/votes?choice=2&pro_tx_hash=${proTxHash}`)
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      assert.equal(body.resultSet.length, 1)
+      assert.equal(body.pagination.limit, 10)
+      assert.equal(body.pagination.total, 1)
+      assert.equal(body.pagination.page, 1)
+
+      const expectedVotes = resourcesWithTokens
+        .filter(resource => resource.masternodeVote.pro_tx_hash === proTxHash)
         .sort((a, b) => a.masternodeVote.id - b.masternodeVote.id)
         .slice(0, 10)
         .map(({ block, masternodeVote, document }) => ({
@@ -506,6 +611,182 @@ describe('Contested documents routes', () => {
 
       assert.deepEqual(body.resultSet, expectedResources)
     })
+
+    it('should filter contested resources by document_type_name', async () => {
+      const { body } = await client.get('/contestedResources?document_type_name=other_type&limit=100&order=asc')
+
+      const expectedResources = contestedResources
+        .filter(({ document }) => document.document_type_name === 'other_type')
+        .sort((a, b) => a.block.height - b.block.height)
+        .filter((item, pos, self) => self
+          .findIndex((resource) => resource.document.data.label === self[pos].document.data.label) === pos
+        )
+        .slice(0, 100)
+        .map((resource) => {
+          const lock = contestedResources.filter(votedResource => resource.masternodeVote.index_values === votedResource.masternodeVote.index_values && votedResource.masternodeVote.choice === ChoiceEnum.LOCK).length
+          const abstain = contestedResources.filter(votedResource => resource.masternodeVote.index_values === votedResource.masternodeVote.index_values && votedResource.masternodeVote.choice === ChoiceEnum.ABSTAIN).length
+          const towards = contestedResources.filter(votedResource => resource.masternodeVote.index_values === votedResource.masternodeVote.index_values && votedResource.masternodeVote.choice === ChoiceEnum.TowardsIdentity).length
+          return {
+            contenders: null,
+            indexName: resource.masternodeVote.index_name,
+            resourceValue: JSON.parse(resource.masternodeVote.index_values),
+            dataContractIdentifier: dataContract.identifier,
+            prefundedVotingBalance: null,
+            documentTypeName: resource.document.document_type_name,
+            timestamp: resource.block.timestamp.toISOString(),
+            totalGasUsed: null,
+            totalVotesGasUsed: null,
+            totalCountVotes: towards + abstain + lock,
+            totalDocumentsGasUsed: null,
+            totalCountLock: lock,
+            totalCountAbstain: abstain,
+            totalCountTowardsIdentity: towards,
+            status: null,
+            endTimestamp: new Date(resource.block.timestamp.getTime() + CONTESTED_RESOURCE_VOTE_DEADLINE).toISOString(),
+            finished: true,
+            towardsIdentity: null
+          }
+        })
+
+      assert.equal(body.resultSet.length, expectedResources.length)
+      assert.ok(expectedResources.length > 0)
+      assert.deepEqual(body.resultSet, expectedResources)
+    })
+
+    it('should filter contested resources by contract_id', async () => {
+      const { body } = await client.get(`/contestedResources?contract_id=${dataContract.identifier}&limit=100&order=asc`)
+
+      const expectedResources = contestedResources
+        .sort((a, b) => a.block.height - b.block.height)
+        .filter((item, pos, self) => self
+          .findIndex((resource) => resource.document.data.label === self[pos].document.data.label) === pos
+        )
+        .slice(0, 100)
+        .map((resource) => {
+          const lock = contestedResources.filter(votedResource => resource.masternodeVote.index_values === votedResource.masternodeVote.index_values && votedResource.masternodeVote.choice === ChoiceEnum.LOCK).length
+          const abstain = contestedResources.filter(votedResource => resource.masternodeVote.index_values === votedResource.masternodeVote.index_values && votedResource.masternodeVote.choice === ChoiceEnum.ABSTAIN).length
+          const towards = contestedResources.filter(votedResource => resource.masternodeVote.index_values === votedResource.masternodeVote.index_values && votedResource.masternodeVote.choice === ChoiceEnum.TowardsIdentity).length
+          return {
+            contenders: null,
+            indexName: resource.masternodeVote.index_name,
+            resourceValue: JSON.parse(resource.masternodeVote.index_values),
+            dataContractIdentifier: dataContract.identifier,
+            prefundedVotingBalance: null,
+            documentTypeName: resource.document.document_type_name,
+            timestamp: resource.block.timestamp.toISOString(),
+            totalGasUsed: null,
+            totalVotesGasUsed: null,
+            totalCountVotes: towards + abstain + lock,
+            totalDocumentsGasUsed: null,
+            totalCountLock: lock,
+            totalCountAbstain: abstain,
+            totalCountTowardsIdentity: towards,
+            status: null,
+            endTimestamp: new Date(resource.block.timestamp.getTime() + CONTESTED_RESOURCE_VOTE_DEADLINE).toISOString(),
+            finished: true,
+            towardsIdentity: null
+          }
+        })
+
+      assert.deepEqual(body.resultSet, expectedResources)
+    })
+
+    it('should return empty set when contract_id does not match any contract', async () => {
+      const { body } = await client.get(`/contestedResources?contract_id=${'A'.repeat(43)}&limit=100`)
+
+      assert.deepEqual(body.resultSet, [])
+    })
+
+    it('should filter contested resources by voting_finished=true and return all (every fixture is past the deadline)', async () => {
+      const { body } = await client.get('/contestedResources?voting_finished=true&limit=100&order=asc')
+
+      const expectedResources = contestedResources
+        .sort((a, b) => a.block.height - b.block.height)
+        .filter((item, pos, self) => self
+          .findIndex((resource) => resource.document.data.label === self[pos].document.data.label) === pos
+        )
+        .filter((resource) => resource.block.timestamp.getTime() + CONTESTED_RESOURCE_VOTE_DEADLINE <= Date.now())
+        .slice(0, 100)
+        .map((resource) => {
+          const lock = contestedResources.filter(votedResource => resource.masternodeVote.index_values === votedResource.masternodeVote.index_values && votedResource.masternodeVote.choice === ChoiceEnum.LOCK).length
+          const abstain = contestedResources.filter(votedResource => resource.masternodeVote.index_values === votedResource.masternodeVote.index_values && votedResource.masternodeVote.choice === ChoiceEnum.ABSTAIN).length
+          const towards = contestedResources.filter(votedResource => resource.masternodeVote.index_values === votedResource.masternodeVote.index_values && votedResource.masternodeVote.choice === ChoiceEnum.TowardsIdentity).length
+          return {
+            contenders: null,
+            indexName: resource.masternodeVote.index_name,
+            resourceValue: JSON.parse(resource.masternodeVote.index_values),
+            dataContractIdentifier: dataContract.identifier,
+            prefundedVotingBalance: null,
+            documentTypeName: resource.document.document_type_name,
+            timestamp: resource.block.timestamp.toISOString(),
+            totalGasUsed: null,
+            totalVotesGasUsed: null,
+            totalCountVotes: towards + abstain + lock,
+            totalDocumentsGasUsed: null,
+            totalCountLock: lock,
+            totalCountAbstain: abstain,
+            totalCountTowardsIdentity: towards,
+            status: null,
+            endTimestamp: new Date(resource.block.timestamp.getTime() + CONTESTED_RESOURCE_VOTE_DEADLINE).toISOString(),
+            finished: true,
+            towardsIdentity: null
+          }
+        })
+
+      assert.deepEqual(body.resultSet, expectedResources)
+    })
+
+    it('should filter contested resources by voting_finished=false and return empty (no recent fixtures)', async () => {
+      const { body } = await client.get('/contestedResources?voting_finished=false&limit=100')
+
+      assert.deepEqual(body.resultSet, [])
+    })
+
+    it('should filter contested resources by timestamp range', async () => {
+      const timestampStart = new Date(0).toISOString()
+      const timestampEnd = new Date(2000).toISOString()
+
+      const { body } = await client.get(`/contestedResources?timestamp_start=${timestampStart}&timestamp_end=${timestampEnd}&limit=100&order=asc`)
+
+      const expectedResources = contestedResources
+        .sort((a, b) => a.block.height - b.block.height)
+        .filter((item, pos, self) => self
+          .findIndex((resource) => resource.document.data.label === self[pos].document.data.label) === pos
+        )
+        .filter((resource) =>
+          resource.block.timestamp.getTime() >= new Date(timestampStart).getTime() &&
+          resource.block.timestamp.getTime() <= new Date(timestampEnd).getTime()
+        )
+        .slice(0, 100)
+        .map((resource) => {
+          const lock = contestedResources.filter(votedResource => resource.masternodeVote.index_values === votedResource.masternodeVote.index_values && votedResource.masternodeVote.choice === ChoiceEnum.LOCK).length
+          const abstain = contestedResources.filter(votedResource => resource.masternodeVote.index_values === votedResource.masternodeVote.index_values && votedResource.masternodeVote.choice === ChoiceEnum.ABSTAIN).length
+          const towards = contestedResources.filter(votedResource => resource.masternodeVote.index_values === votedResource.masternodeVote.index_values && votedResource.masternodeVote.choice === ChoiceEnum.TowardsIdentity).length
+          return {
+            contenders: null,
+            indexName: resource.masternodeVote.index_name,
+            resourceValue: JSON.parse(resource.masternodeVote.index_values),
+            dataContractIdentifier: dataContract.identifier,
+            prefundedVotingBalance: null,
+            documentTypeName: resource.document.document_type_name,
+            timestamp: resource.block.timestamp.toISOString(),
+            totalGasUsed: null,
+            totalVotesGasUsed: null,
+            totalCountVotes: towards + abstain + lock,
+            totalDocumentsGasUsed: null,
+            totalCountLock: lock,
+            totalCountAbstain: abstain,
+            totalCountTowardsIdentity: towards,
+            status: null,
+            endTimestamp: new Date(resource.block.timestamp.getTime() + CONTESTED_RESOURCE_VOTE_DEADLINE).toISOString(),
+            finished: true,
+            towardsIdentity: null
+          }
+        })
+
+      assert.ok(expectedResources.length > 0)
+      assert.deepEqual(body.resultSet, expectedResources)
+    })
   })
 
   describe('get contested resources status', async () => {
@@ -513,9 +794,9 @@ describe('Contested documents routes', () => {
       const { body } = await client.get('/contestedResources/stats')
 
       const expectedBody = {
-        totalContestedResources: 40,
+        totalContestedResources: 41,
         totalPendingContestedResources: 0,
-        totalVotesCount: 40,
+        totalVotesCount: 41,
         expiringContestedResource: null
       }
 
@@ -563,9 +844,9 @@ describe('Contested documents routes', () => {
       const { body } = await client.get('/contestedResources/stats')
 
       const expectedBody = {
-        totalContestedResources: 41,
+        totalContestedResources: 42,
         totalPendingContestedResources: 1,
-        totalVotesCount: 40,
+        totalVotesCount: 41,
         expiringContestedResource: {
           contenders: null,
           indexName: null,

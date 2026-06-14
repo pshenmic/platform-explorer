@@ -1,11 +1,48 @@
 import Link from 'next/link'
 import TransactionsListItem from './TransactionsListItem'
-import { EmptyListMessage } from '../ui/lists'
+import { EmptyListMessage } from '@ui/lists'
 import { Grid, GridItem } from '@chakra-ui/react'
 import { LoadingList } from '../loading'
 import Pagination from '../pagination'
 import { ErrorMessageBlock } from '../Errors'
+import {
+  createColumnHelper,
+  getCoreRowModel,
+  useReactTable
+} from '@tanstack/react-table'
+
 import './TransactionsList.scss'
+
+const columnHelper = createColumnHelper()
+
+const columns = [
+  columnHelper.accessor('timestamp', {
+    header: 'Time'
+  }),
+  columnHelper.accessor('status', {
+    header: 'Status'
+  }),
+  columnHelper.accessor('hash', {
+    header: 'Hash'
+  }),
+  columnHelper.accessor('blockHeight', {
+    header: 'Block'
+  }),
+  columnHelper.accessor('gasUsed', {
+    header: 'Gas used'
+  }),
+  columnHelper.accessor('owner', {
+    header: 'Owner'
+  }),
+  columnHelper.accessor('type', {
+    header: 'Type'
+  })
+]
+
+const headerExtraClass = {
+  default: '',
+  light: 'TransactionsList__ColumnTitles--Light'
+}
 
 export default function TransactionsList ({
   transactions = [],
@@ -16,10 +53,15 @@ export default function TransactionsList ({
   loading,
   itemsCount = 10
 }) {
-  const headerExtraClass = {
-    default: '',
-    light: 'TransactionsList__ColumnTitles--Light'
-  }
+  const table = useReactTable({
+    data: transactions,
+    columns,
+    getCoreRowModel: getCoreRowModel(),
+    meta: {
+      rate
+    },
+    manualPagination: true
+  })
 
   return (
     <div className={'TransactionsList'}>
@@ -27,8 +69,14 @@ export default function TransactionsList ({
         <GridItem className={'TransactionsList__ColumnTitle TransactionsList__ColumnTitle--Timestamp'}>
           Time
         </GridItem>
+        <GridItem className={'TransactionsList__ColumnTitle TransactionsList__ColumnTitle--Status'}>
+          Status
+        </GridItem>
         <GridItem className={'TransactionsList__ColumnTitle TransactionsList__ColumnTitle--Hash'}>
           Hash
+        </GridItem>
+        <GridItem className={'TransactionsList__ColumnTitle TransactionsList__ColumnTitle--Block'}>
+          Block
         </GridItem>
         <GridItem className={'TransactionsList__ColumnTitle TransactionsList__ColumnTitle--GasUsed'}>
           Gas used
@@ -43,19 +91,17 @@ export default function TransactionsList ({
 
       {!loading
         ? <div className={'TransactionsList__Items'}>
-            {transactions?.map((transaction, key) => (
+            {table.getRowModel().rows.map((row) => (
               <TransactionsListItem
-                key={key}
-                transaction={transaction}
+                key={row.id}
+                transaction={row.original}
                 rate={rate}
               />
             ))}
-            {transactions?.length === 0 &&
-              <EmptyListMessage>There are no transactions yet.</EmptyListMessage>
-            }
-            {transactions === undefined && <ErrorMessageBlock/>}
+            {transactions?.length === 0 && <EmptyListMessage>There are no transactions yet.</EmptyListMessage>}
+            {transactions === undefined && <ErrorMessageBlock />}
           </div>
-        : <LoadingList itemsCount={itemsCount}/>
+        : <LoadingList itemsCount={itemsCount} />
       }
 
       {pagination &&
@@ -67,10 +113,7 @@ export default function TransactionsList ({
           justify={true}
         />
       }
-
-      {showMoreLink &&
-        <Link href={showMoreLink} className={'SimpleList__ShowMoreButton'}>Show more</Link>
-      }
+      {showMoreLink && <Link href={showMoreLink} className={'SimpleList__ShowMoreButton'}>Show more</Link>}
     </div>
   )
 }

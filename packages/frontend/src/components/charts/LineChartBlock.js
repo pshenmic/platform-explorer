@@ -34,7 +34,9 @@ export default function LineChartBlock ({
   timespanChange,
   title,
   config,
-  blockBorders = true
+  blockBorders = true,
+  useInfoBlock = true,
+  className
 }) {
   const chartConfig = config || defaultChartConfig
   const [timespan, setTimespan] = useState(chartConfig.timespan.default)
@@ -64,17 +66,20 @@ export default function LineChartBlock ({
 
   return (<>
     <Flex
-        className={`ChartBlock InfoBlock ${!blockBorders ? 'InfoBlock--NoBorder' : ''} ${menuIsOpen ? 'ChartBlock--MenuIsOpen' : ''}`}
+        className={`ChartBlock ${useInfoBlock ? `InfoBlock ${!blockBorders ? 'InfoBlock--NoBorder' : ''}` : ''} ${menuIsOpen ? 'ChartBlock--MenuIsOpen' : ''} ${className ?? ''}`}
         maxW={'none'}
         width={'100%'}
-        borderWidth={'1px'} borderRadius={'block'}
+        borderWidth={useInfoBlock ? '1px' : '0'}
+        borderRadius={useInfoBlock ? 'block' : 'none'}
         direction={'column'}
         style={{
           height: menuIsOpen ? `${Math.max(selectorHeight, heightPx)}px` : `${heightPx}px`,
           minHeight: '100%'
         }}
     >
-      <Heading className={'InfoBlock__Title'} as={'h1'}>{title}</Heading>
+      {useInfoBlock &&
+        <Heading className={'InfoBlock__Title'} as={'h1'}>{title}</Heading>
+      }
 
       <TimeframeSelector
         menuRef={TimeframeMenuRef}

@@ -18,6 +18,7 @@ const RateController = require('./controllers/RateController')
 const MasternodeVotesController = require('./controllers/MasternodeVotesController')
 const ContestedResourcesController = require('./controllers/ContestedResourcesController')
 const TokensController = require('./controllers/TokensController')
+const PlatformAddressesController = require('./controllers/PlatformAddressesController')
 const { DashPlatformSDK } = require('dash-platform-sdk')
 
 function errorHandler (err, req, reply) {
@@ -79,6 +80,7 @@ module.exports = {
     const masternodeVotesController = new MasternodeVotesController(knex, sdk)
     const contestedResourcesController = new ContestedResourcesController(knex, sdk)
     const tokensController = new TokensController(knex, sdk)
+    const platformAddressesController = new PlatformAddressesController(knex, sdk)
 
     Routes({
       fastify,
@@ -93,7 +95,8 @@ module.exports = {
       rateController,
       masternodeVotesController,
       contestedResourcesController,
-      tokensController
+      tokensController,
+      platformAddressesController
     })
 
     fastify.setErrorHandler(errorHandler)

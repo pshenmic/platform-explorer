@@ -4,7 +4,7 @@ import { ValueCard } from '../cards'
 import { findActiveAlias } from '../../util'
 import './DataContractDigestCard.scss'
 
-function DataContractDigestCard ({ dataContract, rate }) {
+function DataContractDigestCard ({ dataContract, rate, txCount }) {
   const topIdentityActiveAlias = findActiveAlias(dataContract?.data?.topIdentity?.aliases)
 
   return (
@@ -14,9 +14,9 @@ function DataContractDigestCard ({ dataContract, rate }) {
           <InfoLine
             className={'DataContractDigestCard__InfoLine DataContractDigestCard__InfoLine--TotalTransactions'}
             title={(<span><TransactionsIcon/>Total transactions</span>)}
-            value={dataContract.data?.transactionsCount}
+            value={txCount}
             loading={dataContract.loading}
-            error={dataContract.error || dataContract.data?.transactionsCount === undefined}
+            error={dataContract.error || txCount === undefined}
           />
         </div>
 
@@ -68,6 +68,22 @@ function DataContractDigestCard ({ dataContract, rate }) {
         className={'DataContractDigestCard__InfoLine'}
         title={'Average Gas Spent'}
         value={<CreditsBlock credits={dataContract.data?.averageGasUsed} rate={rate}/>}
+        loading={dataContract.loading}
+        error={dataContract.error}
+      />
+
+      <InfoLine
+        className={'DataContractDigestCard__InfoLine'}
+        title={'Tokens'}
+        value={dataContract.data?.tokensCount}
+        loading={dataContract.loading}
+        error={dataContract.error || dataContract.data?.tokensCount == null}
+      />
+
+      <InfoLine
+        className={'DataContractDigestCard__InfoLine'}
+        title={'Version'}
+        value={dataContract.data?.version}
         loading={dataContract.loading}
         error={dataContract.error}
       />

@@ -19,6 +19,6 @@ module.exports = class Token {
 
   /* eslint-disable */
   static fromRow ({action, amount, state_transition_hash, recipient, timestamp, public_note, owner}) {
-    return new Token(action, Number(amount), state_transition_hash, recipient, timestamp, public_note, owner)
+    return new Token(action, amount, state_transition_hash, recipient, timestamp, public_note, owner)
   }
 }

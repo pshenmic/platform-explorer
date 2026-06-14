@@ -3,6 +3,9 @@ import { TopIdentitiesCards, TopIdentityCard } from './TopIdentities/TopIdentity
 import TopIdentities from './TopIdentities/TopIdentities'
 import IdentityTotalCard from './IdentityTotalCard'
 import IdentityDigestCard from './IdentityDigestCard'
+import { IdentitiesFilter } from './IdentitiesFilter'
+
+export * from './hooks'
 
 export {
   IdentitiesList,
@@ -10,5 +13,6 @@ export {
   TopIdentityCard,
   TopIdentities,
   IdentityTotalCard,
-  IdentityDigestCard
+  IdentityDigestCard,
+  IdentitiesFilter
 }
