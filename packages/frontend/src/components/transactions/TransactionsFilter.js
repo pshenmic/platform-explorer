@@ -75,6 +75,36 @@ const transactionOptions = [
     label: <TypeBadge type={'ADDRESS_CREDIT_WITHDRAWAL'} />,
     title: TransactionTypesInfo.ADDRESS_CREDIT_WITHDRAWAL.title,
     value: 'ADDRESS_CREDIT_WITHDRAWAL'
+  },
+  {
+    label: <TypeBadge type={'SHIELD'} />,
+    title: TransactionTypesInfo.SHIELD.title,
+    value: 'SHIELD'
+  },
+  {
+    label: <TypeBadge type={'SHIELDED_TRANSFER'} />,
+    title: TransactionTypesInfo.SHIELDED_TRANSFER.title,
+    value: 'SHIELDED_TRANSFER'
+  },
+  {
+    label: <TypeBadge type={'UNSHIELD'} />,
+    title: TransactionTypesInfo.UNSHIELD.title,
+    value: 'UNSHIELD'
+  },
+  {
+    label: <TypeBadge type={'SHIELD_FROM_ASSET_LOCK'} />,
+    title: TransactionTypesInfo.SHIELD_FROM_ASSET_LOCK.title,
+    value: 'SHIELD_FROM_ASSET_LOCK'
+  },
+  {
+    label: <TypeBadge type={'SHIELDED_WITHDRAWAL'} />,
+    title: TransactionTypesInfo.SHIELDED_WITHDRAWAL.title,
+    value: 'SHIELDED_WITHDRAWAL'
+  },
+  {
+    label: <TypeBadge type={'IDENTITY_CREATE_FROM_SHIELDED_POOL'} />,
+    title: TransactionTypesInfo.IDENTITY_CREATE_FROM_SHIELDED_POOL.title,
+    value: 'IDENTITY_CREATE_FROM_SHIELDED_POOL'
   }
 ]
 
