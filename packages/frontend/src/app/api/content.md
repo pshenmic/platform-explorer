@@ -704,6 +704,12 @@ Status can be either `SUCCESS` or `FAIL`. In case of error tx, message will appe
 | `ADDRESS_FUNDS_TRANSFER`              | 12         |
 | `ADDRESS_FUNDING_FROM_ASSET_LOCK`     | 13         |
 | `ADDRESS_CREDIT_WITHDRAWAL`           | 14         |
+| `SHIELD`                              | 15         |
+| `SHIELDED_TRANSFER`                   | 16         |
+| `UNSHIELD`                            | 17         |
+| `SHIELD_FROM_ASSET_LOCK`              | 18         |
+| `SHIELDED_WITHDRAWAL`                 | 19         |
+| `IDENTITY_CREATE_FROM_SHIELDED_POOL`  | 20         |
 
 
 ```
