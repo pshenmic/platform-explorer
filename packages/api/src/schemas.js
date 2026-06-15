@@ -76,12 +76,18 @@ const schemaTypes = [
                 'IDENTITY_TOP_UP_FROM_ADDRESSES',
                 'ADDRESS_FUNDS_TRANSFER',
                 'ADDRESS_FUNDING_FROM_ASSET_LOCK',
-                'ADDRESS_CREDIT_WITHDRAWAL'
+                'ADDRESS_CREDIT_WITHDRAWAL',
+                'SHIELD',
+                'SHIELDED_TRANSFER',
+                'UNSHIELD',
+                'SHIELD_FROM_ASSET_LOCK',
+                'SHIELDED_WITHDRAWAL',
+                'IDENTITY_CREATE_FROM_SHIELDED_POOL'
               ]
             },
             {
               type: 'number',
-              enum: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]
+              enum: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
             }
           ]
         }
