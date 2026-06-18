@@ -47,14 +47,7 @@ const { Script } = require('dash-core-sdk/src/types/Script')
 const getKnex = () => {
   return require('knex')({
     client: 'pg',
-    connection: {
-      host: process.env.POSTGRES_HOST,
-      port: process.env.POSTGRES_PORT,
-      user: process.env.POSTGRES_USER,
-      database: process.env.POSTGRES_DB,
-      password: process.env.POSTGRES_PASS,
-      ssl: process.env.POSTGRES_SSL ? { rejectUnauthorized: false } : false
-    }
+    connection: process.env.POSTGRES_URL
   })
 }
 
