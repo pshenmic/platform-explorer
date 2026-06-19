@@ -1,0 +1,138 @@
+@use '../../styles/mixins.scss';
+@import '../../styles/variables.scss';
+
+.HomeHero {
+  @include mixins.Block(true);
+  width: 100%;
+  padding: 0 !important;
+
+  &__Inner {
+    display: grid;
+    grid-template-columns: 1.2fr 0.9fr 1.3fr;
+    align-items: center;
+    gap: 2rem;
+    padding: 32px 40px;
+
+    @media screen and (max-width: $breakpoint-xl) {
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+
+      .HomeHero__Chart {
+        grid-column: 1 / -1;
+      }
+    }
+
+    @media screen and (max-width: $breakpoint-lg) {
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+      padding: 32px 24px;
+
+      .HomeHero__Chart {
+        grid-column: auto;
+      }
+    }
+  }
+
+  &__Welcome {
+    font-size: 0.8125rem;
+    text-transform: uppercase;
+    font-family: $font-heading;
+    font-weight: 800;
+    font-style: italic;
+    letter-spacing: 0.04em;
+    color: $color-brand-normal;
+    margin: 0 0 6px;
+  }
+
+  &__Title {
+    font-style: italic;
+    font-size: 2.5rem !important;
+    font-weight: 800;
+    line-height: 1.05;
+    margin: 0 0 12px;
+  }
+
+  &__Description {
+    font-size: 0.8125rem;
+    font-family: $font-mono;
+    color: var(--chakra-colors-gray-500);
+    line-height: 1.6;
+    max-width: 460px;
+    margin: 0 0 18px;
+  }
+
+  &__Status {
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+  }
+
+  &__Badge {
+    display: inline-flex;
+    align-items: center;
+  }
+
+  &__Cta {
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  // Middle panel: the "Live Block Height" hero number
+  &__Live {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    padding-left: 2rem;
+    border-left: 1px solid rgba(var(--chakra-colors-gray-800-rgb), 0.6);
+
+    @media screen and (max-width: $breakpoint-lg) {
+      padding-left: 0;
+      padding-top: 1.25rem;
+      border-left: none;
+      border-top: 1px solid rgba(var(--chakra-colors-gray-800-rgb), 0.6);
+    }
+  }
+
+  // Right panel: the Transactions history chart
+  &__Chart {
+    min-width: 0;
+
+    @media screen and (max-width: $breakpoint-lg) {
+      padding-top: 1.25rem;
+      border-top: 1px solid rgba(var(--chakra-colors-gray-800-rgb), 0.6);
+    }
+  }
+
+  &__LiveLabel {
+    font-size: 0.6875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--chakra-colors-gray-500);
+    margin: 0 0 6px;
+  }
+
+  &__Height {
+    font-family: $font-heading;
+    font-weight: 800;
+    font-style: italic;
+    font-size: 3.25rem;
+    line-height: 1;
+    color: #fff;
+
+    @media screen and (max-width: $breakpoint-lg) {
+      font-size: 2.5rem;
+    }
+  }
+
+  &__LiveMeta {
+    font-size: 0.75rem;
+    font-family: $font-mono;
+    color: var(--chakra-colors-gray-500);
+    margin: 10px 0 0;
+  }
+
+  &__Live--Loading &__Height {
+    opacity: 0.4;
+  }
+}
