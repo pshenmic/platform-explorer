@@ -6,7 +6,7 @@ import { fetchHandlerSuccess, fetchHandlerError, getDaysBetweenDates } from '../
 import { defaultChartConfig } from './config'
 import LineChartBlock from './LineChartBlock'
 
-export default function TransactionsHistory ({ heightPx = 300, blockBorders = true }) {
+export default function TransactionsHistory ({ heightPx = 300, blockBorders = true, useInfoBlock = true, menuIsActive = true, title = 'Transactions history' }) {
   const [transactionsHistory, setTransactionsHistory] = useState({ data: {}, loading: true, error: false })
   const [timespan, setTimespan] = useState(defaultChartConfig.timespan.values[defaultChartConfig.timespan.defaultIndex])
 
@@ -23,7 +23,9 @@ export default function TransactionsHistory ({ heightPx = 300, blockBorders = tr
 
   return (
     <LineChartBlock
-        title={'Transactions history'}
+        title={title}
+        useInfoBlock={useInfoBlock}
+        menuIsActive={menuIsActive}
         loading={transactionsHistory.loading}
         error={transactionsHistory.error}
         timespanChange={setTimespan}
