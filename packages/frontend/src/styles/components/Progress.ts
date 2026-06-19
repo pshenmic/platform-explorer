@@ -1,8 +1,8 @@
+import type { StyleFunctionProps } from '@chakra-ui/react'
 import { colors, badgeColors } from '../colors'
 
 const Progress = {
-  baseStyle: props => {
-    const { colorScheme } = props
+  baseStyle: (props: StyleFunctionProps) => {
     const trackColor = {
       red: badgeColors.red.bg,
       green: badgeColors.green.bg,
@@ -21,6 +21,8 @@ const Progress = {
       orange: badgeColors.orange.text,
       emerald: badgeColors.emerald.text
     }
+
+    const colorScheme = props.colorScheme as keyof typeof trackColor
 
     return {
       track: {

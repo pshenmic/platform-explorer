@@ -1,8 +1,9 @@
+import type { StyleFunctionProps } from '@chakra-ui/react'
 import { badgeColors } from '../colors'
 
 const Badge = {
-  baseStyle: props => {
-    const { colorScheme } = props
+  baseStyle: (props: StyleFunctionProps) => {
+    const colorScheme = props.colorScheme as keyof typeof badgeColors
 
     return {
       borderWidth: '0px',
