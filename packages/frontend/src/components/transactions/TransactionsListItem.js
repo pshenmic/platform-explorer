@@ -81,7 +81,7 @@ function TransactionsListItem ({ transaction, rate }) {
                                       lightness={50} saturation={50} width={24} height={24}/>
                       <Alias alias={activeAlias?.alias || activeAlias}/>
                     </div>
-                    : <Identifier avatar={true} styles={['highlight-both']}>{transaction?.owner?.identifier}</Identifier>
+                    : <Identifier avatar={true} copyButton={true} styles={['highlight-both']}>{transaction?.owner?.identifier}</Identifier>
                   }
                 </LinkContainer>
               : <NotActive>-</NotActive>
