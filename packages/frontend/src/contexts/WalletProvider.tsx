@@ -18,6 +18,8 @@ export interface WalletInfo {
 
 interface DashPlatformExtensionSigner {
   connect: () => Promise<WalletInfo>
+  // Extension signs and broadcasts atomically; receives the state transition as base64.
+  signAndBroadcast: (base64: string) => Promise<unknown>
 }
 
 interface DashPlatformExtension {
