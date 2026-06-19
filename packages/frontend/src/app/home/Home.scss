@@ -1,0 +1,77 @@
+@import '../../styles/variables.scss';
+
+// Entity tabs → one full-width table
+.EntityTables {
+  .chakra-tabs__tablist {
+    overflow-x: auto;
+    overflow-y: hidden;
+    scrollbar-width: none;
+
+    &::-webkit-scrollbar { display: none; }
+  }
+
+  .chakra-tabs__tab-panel {
+    overflow-x: auto;
+  }
+}
+
+.HomeSection__ViewAll {
+  font-size: 0.8125rem;
+  font-family: $font-heading;
+  font-weight: 700;
+  color: $color-brand-normal;
+  white-space: nowrap;
+  transition: opacity .15s;
+
+  &:hover {
+    opacity: 0.75;
+  }
+}
+
+// Compact KPI cards in the home header (static metrics with ? tooltips)
+.HomeKpi {
+  &__Item {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 6px;
+    min-height: 84px;
+    padding: 16px 18px !important;
+  }
+
+  &__Head {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  &__Label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: $color-brand-normal;
+    font-family: $font-heading;
+    font-weight: 700;
+  }
+
+  &__Info {
+    display: inline-flex;
+    align-items: center;
+    color: var(--chakra-colors-gray-500);
+    cursor: pointer;
+    transition: color .15s;
+
+    &:hover {
+      color: $color-brand-normal;
+    }
+  }
+
+  &__Value {
+    font-family: $font-heading;
+    font-weight: 800;
+    font-style: italic;
+    font-size: 1.5rem;
+    line-height: 1.1;
+    color: #fff;
+  }
+}
