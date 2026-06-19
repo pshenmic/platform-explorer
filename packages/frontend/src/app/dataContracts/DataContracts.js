@@ -28,7 +28,7 @@ const paginateConfig = {
 
 function DataContractsLayout () {
   const isMobile = useBreakpointValue({ base: true, md: false })
-  const { sorting } = useDataContractsSorting()
+  const { sorting, setSorting } = useDataContractsSorting()
   const { filters, setFilters } = useDataContractsFilters()
   const [page, setPage] = useQueryState(
     'page',
@@ -44,7 +44,7 @@ function DataContractsLayout () {
   )
 
   const dataContracts = useQuery({
-    queryKey: ['dataContracts', page, pageSize, ...Object.values(filters)],
+    queryKey: ['dataContracts', page, pageSize, sorting.order, sorting.orderBy, ...Object.values(filters)],
     queryFn: () => Api.getDataContracts(
       page,
       pageSize,
@@ -92,6 +92,8 @@ function DataContractsLayout () {
                   dataContracts={dataContracts.data?.resultSet}
                   loading={dataContracts.isLoading}
                   itemsCount={pageSize}
+                  sort={{ order_by: sorting.orderBy, order: sorting.order }}
+                  onSortChange={(next) => { setSorting(next); setPage(1) }}
                 />
               : <Container h={20}><ErrorMessageBlock/></Container>
             }
