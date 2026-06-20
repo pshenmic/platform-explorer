@@ -1,6 +1,13 @@
+import type { ComponentProps, ReactNode } from 'react'
 import './NavigationButton.scss'
 
-function NavigationButton ({ active, name, subName, disabled, ...props }) {
+interface NavigationButtonProps extends Omit<ComponentProps<'button'>, 'name'> {
+  active?: boolean
+  name?: ReactNode
+  subName?: ReactNode
+}
+
+function NavigationButton ({ active, name, subName, disabled, ...props }: NavigationButtonProps) {
   return (
     <button
       className={`NavigationButton ${disabled ? 'NavigationButton__NoActive' : ''} ${active ? 'NavigationButton__Active' : ''}`}
