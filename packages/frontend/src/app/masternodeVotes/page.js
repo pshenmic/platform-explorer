@@ -1,7 +1,6 @@
 import MasternodeVotes from './MasternodeVotes'
 import { Container } from '@chakra-ui/react'
 import Intro from '../../components/intro'
-import Markdown from '../../components/markdown'
 import introContent from './intro.md'
 import MasternodeVotesDashboardCards from '../../components/contestedResources/MasternodeVotesDashboardCards'
 
@@ -41,7 +40,7 @@ function MasternodeVotesRoute ({ searchParams }) {
         <Intro
           className={'MasternodeVotesIntro'}
           title={'Masternode Votes'}
-          description={<Markdown>{introContent}</Markdown>}
+          description={introContent}
           block={<MasternodeVotesDashboardCards/>}
         />
         <MasternodeVotes defaultPage={page} defaultPageSize={pageSize}/>

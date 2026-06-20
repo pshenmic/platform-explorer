@@ -2,7 +2,6 @@ import { Suspense } from 'react'
 import Validators from './Validators'
 import { ValidatorsDashboardCards, ValidatorsListSceleton } from '../../components/validators'
 import Intro from '../../components/intro'
-import Markdown from '../../components/markdown'
 import introContent from './intro.md'
 import { Container } from '@chakra-ui/react'
 
@@ -26,7 +25,7 @@ function ValidatorsRoute ({ searchParams }) {
       <Intro
         className={'ValidatorsIntro'}
         title={'Validators'}
-        description={<Markdown>{introContent}</Markdown>}
+        description={introContent}
         block={<ValidatorsDashboardCards/>}
       />
     </Container>

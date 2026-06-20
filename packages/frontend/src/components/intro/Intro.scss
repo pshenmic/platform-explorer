@@ -4,51 +4,62 @@
 .Intro {
   @include mixins.Block(true);
   display: flex;
-  padding: 64px;
+  flex-direction: column;
+  padding: 1.5rem 2rem;
   width: 100%;
-  gap: 2.5rem;
+
+  &__Header {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+  }
 
   &__Title {
     font-style: italic;
     font-weight: 800;
   }
 
-  &__Info {
-    width: 480px;
+  &__InfoButton {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    opacity: 0.55;
+    transition: opacity $transition-time-def ease, transform $transition-time-def ease;
+    cursor: pointer;
+
+    &:hover {
+      opacity: 1;
+    }
+
+    &--Active {
+      opacity: 1;
+      transform: scale(1.08);
+    }
+  }
+
+  &__Divider {
     flex-shrink: 0;
   }
 
   &__Block {
-    display: flex;
-    align-items: center;
-    flex-grow: 1;
-    flex-shrink: 1;
-    min-width: 0;
-    overflow: hidden;
-  }
-
-  @media screen and (min-width: $breakpoint-2xl) {
-    &__Info {
-      min-width: 40%;
-    }
-  }
-
-  @media screen and (max-width: 75em) {
-    flex-wrap: wrap;
-    padding: 2.5rem;
-    gap: 2.5rem;
-
-    &__Info, &__Block {
-      width: 100%;
-    }
-
-    &__Block {
-      margin-left: 0;
-    }
+    width: 100%;
   }
 
   @media screen and (max-width: $breakpoint-lg) {
-    gap: 1.5rem;
-    padding: 1.5rem;
+    padding: 1.25rem;
+  }
+}
+
+// PopoverContent is rendered in a Portal, so it is not nested under .Intro
+.Intro__DescriptionPopover {
+  .Intro__DescriptionText {
+    margin: 0;
+    font-size: 0.8125rem;
+    line-height: 1.55;
+    color: var(--chakra-colors-gray-100);
   }
 }

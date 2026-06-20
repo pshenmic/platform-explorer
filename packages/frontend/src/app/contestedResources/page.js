@@ -1,7 +1,6 @@
 import ContestedResources from './ContestedResources'
 import { Container } from '@chakra-ui/react'
 import Intro from '../../components/intro'
-import Markdown from '../../components/markdown'
 import ContestedResourcesDashboardCards from '../../components/contestedResources/ContestedResourcesDashboardCards'
 import introContent from './intro.md'
 
@@ -42,7 +41,7 @@ function ContestedResourcesRoute ({ searchParams }) {
         <Intro
           className={'ContestedResourcesIntro'}
           title={'Contested Resources'}
-          description={<Markdown>{introContent}</Markdown>}
+          description={introContent}
           block={<ContestedResourcesDashboardCards/>}
         />
         <ContestedResources defaultPage={page} defaultPageSize={pageSize}/>

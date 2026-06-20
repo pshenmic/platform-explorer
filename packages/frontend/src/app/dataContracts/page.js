@@ -1,6 +1,5 @@
 import DataContracts from './DataContracts'
 import Intro from '../../components/intro'
-import Markdown from '../../components/markdown'
 import introContent from './intro.md'
 import { Container } from '@chakra-ui/react'
 import Cards from './Cards'
@@ -27,7 +26,7 @@ function DataContractsRoute ({ searchParams }) {
       <Intro
         className={'DataContractsIntro'}
         title={'Data contracts'}
-        description={<Markdown>{introContent}</Markdown>}
+        description={introContent}
         block={<Cards/>}
       />
     </Container>

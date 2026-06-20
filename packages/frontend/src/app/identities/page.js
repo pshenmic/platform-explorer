@@ -1,6 +1,5 @@
 import Identities from './Identities'
 import Intro from '../../components/intro'
-import Markdown from '../../components/markdown'
 import introContent from './intro.md'
 import { Container, Tabs, TabList, Tab, TabPanels, TabPanel } from '@chakra-ui/react'
 import { InfoContainer } from '../../components/ui/containers'
@@ -29,7 +28,7 @@ function IdentitiesRoute ({ searchParams }) {
     >
       <Intro
         title={'Identities'}
-        description={<Markdown>{introContent}</Markdown>}
+        description={introContent}
         block={
           <InfoContainer styles={['tabs']} className={'IdentitiesPage__IntroTabs'}>
             <Tabs>
