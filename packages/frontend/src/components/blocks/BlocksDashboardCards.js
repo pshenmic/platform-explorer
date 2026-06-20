@@ -27,6 +27,7 @@ export default function BlocksDashboardCards () {
 
   return (
     <DashboardCards
+      sliderMode={'never'}
       cards={[
         {
           title: 'Epoch',

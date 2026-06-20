@@ -41,6 +41,7 @@ export default function ValidatorsDashboardCards () {
 
   return (
     <DashboardCards
+      sliderMode={'never'}
       className={'ValidatorsTotal'}
       cards={[
         {
