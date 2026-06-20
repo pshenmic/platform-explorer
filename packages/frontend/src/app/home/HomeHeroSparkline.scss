@@ -1,0 +1,63 @@
+@import '../../styles/variables.scss';
+
+.HomeHeroSparkline {
+  position: relative;
+  width: 100%;
+  display: flex;
+  align-items: flex-end;
+
+  svg {
+    display: block;
+    width: 100%;
+    overflow: visible;
+  }
+
+  &__Scale {
+    fill: var(--chakra-colors-gray-500);
+    font-family: $font-mono;
+    font-size: 9px;
+    pointer-events: none;
+  }
+
+  &__Guide {
+    stroke: #008DE4;
+    stroke-width: 1;
+    stroke-dasharray: 3 3;
+    opacity: 0.4;
+  }
+
+  &__Dot {
+    fill: #008DE4;
+    stroke: #fff;
+    stroke-width: 2;
+  }
+
+  &__Tooltip {
+    position: absolute;
+    bottom: calc(100% + 6px);
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1px;
+    padding: 4px 8px;
+    background: var(--chakra-colors-gray-800);
+    border: 1px solid var(--chakra-colors-gray-700);
+    border-radius: 6px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+    font-family: $font-mono;
+    white-space: nowrap;
+    pointer-events: none;
+    z-index: 2;
+  }
+
+  &__TipValue {
+    font-size: 0.75rem;
+    color: #fff;
+  }
+
+  &__TipDate {
+    font-size: 0.625rem;
+    color: var(--chakra-colors-gray-250);
+  }
+}
