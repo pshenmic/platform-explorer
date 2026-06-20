@@ -9,13 +9,18 @@ import { Tooltip } from '../../ui/Tooltips'
 const copyMessageSuccess = 'Copied'
 const copyMessageError = 'Copy Failed'
 
-function CopyButton ({ text, className }) {
+interface CopyButtonProps {
+  text?: string
+  className?: string
+}
+
+function CopyButton ({ text, className }: CopyButtonProps) {
   const [messageState, setMessageState] = useState({
     active: false,
     text: copyMessageSuccess
   })
 
-  const showMessage = (result) => {
+  const showMessage = (result: { status: boolean }) => {
     setMessageState(messageState => ({
       ...messageState,
       text: result.status ? copyMessageSuccess : copyMessageError,
@@ -48,6 +53,7 @@ function CopyButton ({ text, className }) {
       flexShrink={0}
     >
       <Tooltip
+        className={''}
         label={messageState.text}
         aria-label={'A tooltip'}
         placement={'top'}
