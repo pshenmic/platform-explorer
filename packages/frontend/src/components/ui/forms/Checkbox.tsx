@@ -2,8 +2,15 @@
 
 import { useEffect, useState } from 'react'
 
-export default function Checkbox ({ initialChecked, forceChecked, onChange, className }) {
-  const [checked, setChecked] = useState(initialChecked ?? forceChecked ?? false)
+interface CheckboxProps {
+  initialChecked?: boolean
+  forceChecked?: boolean
+  onChange?: (checked: boolean | undefined) => void
+  className?: string
+}
+
+export default function Checkbox ({ initialChecked, forceChecked, onChange, className }: CheckboxProps) {
+  const [checked, setChecked] = useState<boolean | undefined>(initialChecked ?? forceChecked ?? false)
 
   useEffect(() => {
     if (typeof onChange === 'function') onChange(checked)
