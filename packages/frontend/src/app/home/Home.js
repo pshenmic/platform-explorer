@@ -5,9 +5,11 @@ import * as Api from '../../util/Api'
 import HomeHero from './HomeHero.js'
 import HomeKpi from './HomeKpi.js'
 import EntityTables from './EntityTables.js'
+import ContestedResourcesDashboardCards from '../../components/contestedResources/ContestedResourcesDashboardCards'
+import IdentitiesGrowthChart from '../../components/charts/IdentitiesGrowthChart'
 import { fetchHandlerSuccess, fetchHandlerError } from '../../util'
 import theme from '../../styles/theme'
-import { Container, Flex } from '@chakra-ui/react'
+import { Box, Container, Flex, Heading } from '@chakra-ui/react'
 import './Home.scss'
 
 function computeAvgBlockTime (blocks) {
@@ -27,6 +29,7 @@ function Home () {
   const [transactions, setTransactions] = useState({ data: {}, props: { printCount: 10 }, loading: true, error: false })
   const [latestContracts, setLatestContracts] = useState({ data: {}, props: { printCount: 10 }, loading: true, error: false })
   const [latestIdentities, setLatestIdentities] = useState({ data: {}, props: { printCount: 10 }, loading: true, error: false })
+  const [validators, setValidators] = useState({ data: {}, loading: true, error: false })
   const [rate, setRate] = useState({ data: {}, loading: true, error: false })
 
   const gap = theme.blockOffset
@@ -52,6 +55,10 @@ function Home () {
       .then(res => fetchHandlerSuccess(setLatestIdentities, res))
       .catch(err => fetchHandlerError(setLatestIdentities, err))
 
+    Api.getValidators(1, 1, 'desc')
+      .then(res => fetchHandlerSuccess(setValidators, res))
+      .catch(err => fetchHandlerError(setValidators, err))
+
     Api.getRate()
       .then(res => fetchHandlerSuccess(setRate, res))
       .catch(err => fetchHandlerError(setRate, err))
@@ -66,7 +73,7 @@ function Home () {
       <Flex direction={'column'} gap={gap}>
         <HomeHero status={status.data} loading={status.loading} avgBlockTimeSec={avgBlockTimeSec}/>
 
-        <HomeKpi status={status}/>
+        <HomeKpi status={status} validators={validators}/>
 
         <EntityTables
           blocks={blocks}
@@ -75,6 +82,16 @@ function Home () {
           identities={latestIdentities}
           rate={rate}
         />
+
+        <Box className={'InfoBlock InfoBlock--NoBorder Home__Governance'} w={'100%'}>
+          <Heading className={'InfoBlock__Title'} as={'h2'}>Governance</Heading>
+          <ContestedResourcesDashboardCards/>
+        </Box>
+
+        <Box className={'InfoBlock InfoBlock--NoBorder'} w={'100%'}>
+          <Heading className={'InfoBlock__Title'} as={'h2'}>Identities growth</Heading>
+          <IdentitiesGrowthChart isActive={true}/>
+        </Box>
       </Flex>
     </Container>
   )

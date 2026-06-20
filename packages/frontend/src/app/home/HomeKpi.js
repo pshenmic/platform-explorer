@@ -10,23 +10,32 @@ function num (v) {
   return (typeof v === 'number' || typeof v === 'string') ? currencyRound(v) : '-'
 }
 
-export default function HomeKpi ({ status }) {
+export default function HomeKpi ({ status, validators }) {
   const loading = status?.loading
   const s = status?.data || {}
+  const validatorsTotal = validators?.data?.pagination?.total
 
   const cards = [
     { title: 'Blocks', value: num(s?.api?.block?.height), hint: 'Current chain height — total blocks produced on Dash Platform.' },
     { title: 'Transactions', value: num(s?.transactionsCount), hint: 'Total state transitions processed across the network.' },
     { title: 'Data Contracts', value: num(s?.dataContractsCount), hint: 'Total registered data contracts (app schemas).' },
     { title: 'Documents', value: num(s?.documentsCount), hint: 'Total documents across all data contracts. Browse documents within each contract.' },
-    { title: 'Identities', value: num(s?.identitiesCount), hint: 'Total registered identities on the platform.' }
+    { title: 'Identities', value: num(s?.identitiesCount), hint: 'Total registered identities on the platform.' },
+    {
+      title: 'Masternodes',
+      value: validatorsTotal > 0 ? num(validatorsTotal) : '-',
+      hint: 'Active validators (evonodes) securing the network.',
+      loading: validators?.loading
+    }
   ]
 
   return (
-    <SimpleGrid columns={[2, 3, 3, 5]} spacing={3} className={'HomeKpi'}>
-      {cards.map((card, i) => (
-        <InfoCard key={i} loading={loading} className={'HomeKpi__Item'}>
-          {!loading &&
+    <SimpleGrid columns={[2, 3, 3, 6]} spacing={3} className={'HomeKpi'}>
+      {cards.map((card, i) => {
+        const cardLoading = card.loading ?? loading
+        return (
+        <InfoCard key={i} loading={cardLoading} className={'HomeKpi__Item'}>
+          {!cardLoading &&
             <>
               <div className={'HomeKpi__Head'}>
                 <span className={'HomeKpi__Label'}>{card.title}</span>
@@ -39,7 +48,8 @@ export default function HomeKpi ({ status }) {
               <div className={'HomeKpi__Value'}>{card.value}</div>
             </>}
         </InfoCard>
-      ))}
+        )
+      })}
     </SimpleGrid>
   )
 }

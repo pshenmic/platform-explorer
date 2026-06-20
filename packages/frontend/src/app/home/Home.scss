@@ -1,5 +1,15 @@
 @import '../../styles/variables.scss';
 
+// Governance dashboard cards (slider) — keep peeking slides clipped to the section
+.Home__Governance {
+  overflow: hidden;
+
+  .DashboardCards,
+  .DashboardCards__Slider {
+    min-width: 0;
+  }
+}
+
 // Entity tabs → one full-width table
 .EntityTables {
   .chakra-tabs__tablist {
