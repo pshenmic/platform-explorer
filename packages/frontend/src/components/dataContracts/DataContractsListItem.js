@@ -63,7 +63,9 @@ function DataContractsListItem ({ dataContract }) {
         </GridItem>
 
         <GridItem className={'DataContractsListItem__Column DataContractsListItem__Column--Timestamp'}>
-          <DateBlock timestamp={dataContract?.timestamp} format='dateOnly' />
+          {!dataContract?.timestamp && dataContract?.isSystem
+            ? <span className={'DataContractsListItem__Genesis'}>Genesis</span>
+            : <DateBlock timestamp={dataContract?.timestamp} format='dateOnly' />}
         </GridItem>
       </Grid>
     </Link>
