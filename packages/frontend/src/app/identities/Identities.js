@@ -3,21 +3,30 @@
 import { useEffect, useState } from 'react'
 import * as Api from '../../util/Api'
 import IdentitiesList from '../../components/identities/IdentitiesList'
-import { IdentitiesFilter, useIdentitiesFilters } from '../../components/identities'
+import { IdentitiesFilter, useIdentitiesFilters, TopIdentities } from '../../components/identities'
+import IdentitiesGrowthChart from '../../components/charts/IdentitiesGrowthChart'
 import Pagination from '../../components/pagination'
 import PageSizeSelector from '../../components/pageSizeSelector/PageSizeSelector'
 import { LoadingList } from '../../components/loading'
 import { ErrorMessageBlock } from '../../components/Errors'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
-import { fetchHandlerSuccess, fetchHandlerError } from '../../util'
+import { fetchHandlerSuccess, fetchHandlerError, currencyRound } from '../../util'
+import { InfoContainer } from '../../components/ui/containers'
+import PageTitle from '../../components/intro/PageTitle'
+import NetworkStatsInline from '../../components/stats/NetworkStatsInline'
+import introContent from './intro.md'
 
 import {
   Container,
   Box,
-  Flex,
   FormControl,
   FormLabel,
-  Switch
+  Switch,
+  Tabs,
+  TabList,
+  Tab,
+  TabPanels,
+  TabPanel
 } from '@chakra-ui/react'
 
 const paginateConfig = {
@@ -102,8 +111,15 @@ function Identities ({ defaultPage = 1, defaultPageSize, defaultShowAll = false 
         maxW={'container.maxPageW'}
         className={'InfoBlock'}
       >
-        <Flex align={'center'} justify={'flex-end'} wrap={'wrap'} gap={2} mb={4}>
-          <FormControl display={'flex'} alignItems={'center'} width={'auto'}>
+        <div className={'IdentitiesPage__Controls'}>
+          <PageTitle title={'Identities'} description={introContent} className={'IdentitiesPage__Title'}/>
+
+          <NetworkStatsInline
+            className={'IdentitiesPage__Stats'}
+            items={[{ label: 'Identities', value: currencyRound(total), loading: identities.loading }]}
+          />
+
+          <FormControl display={'flex'} alignItems={'center'} width={'auto'} className={'IdentitiesPage__ShowAll'}>
             <FormLabel htmlFor={'show-all-identities'} mb={0} mr={2} fontSize={'sm'} fontWeight={'normal'}>
               Show all (incl. masternode)
             </FormLabel>
@@ -113,16 +129,37 @@ function Identities ({ defaultPage = 1, defaultPageSize, defaultShowAll = false 
               onChange={handleShowAllChange}
             />
           </FormControl>
-        </Flex>
 
-        <IdentitiesFilter
-          initialFilters={filters}
-          className={'IdentitiesPage__Filters'}
-          onFilterChange={(next) => {
-            setFilters(next)
-            setCurrentPage(0)
-          }}
-        />
+          <IdentitiesFilter
+            initialFilters={filters}
+            className={'IdentitiesPage__Filters'}
+            onFilterChange={(next) => {
+              setFilters(next)
+              setCurrentPage(0)
+            }}
+          />
+        </div>
+
+        <InfoContainer styles={['tabs']} className={'IdentitiesPage__IntroTabs'}>
+          <Tabs>
+            <TabList>
+              <Tab>Top Identities</Tab>
+              <Tab>Identities Growth</Tab>
+            </TabList>
+            <TabPanels>
+              <TabPanel>
+                <TopIdentities/>
+              </TabPanel>
+              <TabPanel>
+                <IdentitiesGrowthChart
+                  blockBorders={false}
+                  useInfoBlock={false}
+                  className={'IdentitiesPage__IdentitiesCountChart'}
+                />
+              </TabPanel>
+            </TabPanels>
+          </Tabs>
+        </InfoContainer>
 
         {!identities.error
           ? !identities.loading
