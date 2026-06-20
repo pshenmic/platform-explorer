@@ -5,11 +5,14 @@ import { useState, useEffect } from 'react'
 import { fetchHandlerSuccess, fetchHandlerError, currencyRound } from '../../util'
 import './NetworkStatsInline.scss'
 
-export default function NetworkStatsInline ({ className }) {
+export default function NetworkStatsInline ({ className, items: itemsProp }) {
+  const useDefault = !itemsProp
   const [status, setStatus] = useState({ data: {}, loading: true, error: false })
   const [epoch, setEpoch] = useState({ data: {}, loading: true, error: false })
 
   useEffect(() => {
+    if (!useDefault) return
+
     Api.getStatus()
       .then(res => {
         fetchHandlerSuccess(setStatus, res)
@@ -19,9 +22,9 @@ export default function NetworkStatsInline ({ className }) {
           .catch(err => fetchHandlerError(setEpoch, err))
       })
       .catch(err => fetchHandlerError(setStatus, err))
-  }, [])
+  }, [useDefault])
 
-  const items = [
+  const items = itemsProp || [
     {
       label: 'Epoch',
       value: typeof status.data?.epoch?.number === 'number' ? `#${status.data.epoch.number}` : null,
