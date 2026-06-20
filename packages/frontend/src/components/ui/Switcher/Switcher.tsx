@@ -1,11 +1,21 @@
 import './Switcher.scss'
 
-function Switcher ({ options = [], onChange, defaultValue }) {
+interface SwitcherOption {
+  title: string
+}
+
+interface SwitcherProps {
+  options?: SwitcherOption[]
+  onChange?: (value: string) => void
+  defaultValue?: string
+}
+
+function Switcher ({ options = [], onChange, defaultValue }: SwitcherProps) {
   if (!options?.length) return <></>
   if (!onChange) onChange = () => {}
 
   return (
-    <div className={'Switcher'} onChange={e => onChange(e.target.value)}>
+    <div className={'Switcher'} onChange={e => onChange((e.target as HTMLInputElement).value)}>
       {options.map((option, i) => (
         <label className={'Switcher__Option'} key={i}>
           <input
