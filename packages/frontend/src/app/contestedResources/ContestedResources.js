@@ -14,6 +14,9 @@ import {
   Container
 } from '@chakra-ui/react'
 import { ContestedResourcesList, ContestedResourcesFilter, useContestedResourcesFilters } from '../../components/contestedResources'
+import ContestedResourcesStatsInline from '../../components/contestedResources/ContestedResourcesStatsInline'
+import PageTitle from '../../components/intro/PageTitle'
+import introContent from './intro.md'
 import './ContestedResourcesPage.scss'
 
 const paginateConfig = {
@@ -81,14 +84,20 @@ function ContestedResources ({ defaultPage = 1, defaultPageSize }) {
       maxW={'container.maxPageW'}
       my={8}
     >
-      <ContestedResourcesFilter
-        initialFilters={filters}
-        className={'ContestedResourcesPage__Filters'}
-        onFilterChange={(next) => {
-          setFilters(next)
-          setCurrentPage(0)
-        }}
-      />
+      <div className={'ContestedResourcesPage__Controls'}>
+        <PageTitle title={'Contested Resources'} description={introContent} className={'ContestedResourcesPage__Title'}/>
+
+        <ContestedResourcesStatsInline className={'ContestedResourcesPage__Stats'}/>
+
+        <ContestedResourcesFilter
+          initialFilters={filters}
+          className={'ContestedResourcesPage__Filters'}
+          onFilterChange={(next) => {
+            setFilters(next)
+            setCurrentPage(0)
+          }}
+        />
+      </div>
 
       {!contestedResources.error
         ? <>
