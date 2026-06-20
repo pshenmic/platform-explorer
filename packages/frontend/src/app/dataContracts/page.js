@@ -1,9 +1,4 @@
 import DataContracts from './DataContracts'
-import Intro from '../../components/intro'
-import introContent from './intro.md'
-import { Container } from '@chakra-ui/react'
-import Cards from './Cards'
-import './DataContractsIntro.scss'
 
 export const metadata = {
   title: 'Data Contracts — Dash Platform Explorer',
@@ -12,26 +7,8 @@ export const metadata = {
   applicationName: 'Dash Platform Explorer'
 }
 
-function DataContractsRoute ({ searchParams }) {
-  const page = Number(searchParams.page) || 1
-  const pageSize = Number(searchParams['page-size'])
-
-  return <>
-    <Container
-      maxW={'container.maxPageW'}
-      color={'white'}
-      mt={8}
-      mb={0}
-    >
-      <Intro
-        className={'DataContractsIntro'}
-        title={'Data contracts'}
-        description={introContent}
-        block={<Cards/>}
-      />
-    </Container>
-    <DataContracts defaultPage={page} defaultPageSize={pageSize}/>
-  </>
+function DataContractsRoute () {
+  return <DataContracts/>
 }
 
 export default DataContractsRoute

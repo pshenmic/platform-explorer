@@ -16,6 +16,10 @@ import {
 } from '@chakra-ui/react'
 import { useDataContractsFilters, useDataContractsSorting } from '@components/dataContracts/hooks'
 import { DataContractsFilter } from '@components/dataContracts/DataContractsFilter'
+import DataContractsStatsInline from '@components/dataContracts/DataContractsStatsInline'
+import PageTitle from '../../components/intro/PageTitle'
+import introContent from './intro.md'
+import './DataContractsPage.scss'
 
 const paginateConfig = {
   pageSize: {
@@ -42,14 +46,17 @@ function DataContractsLayout () {
       .withOptions({ scroll: false, shallow: true })
   )
 
+  const showPinnedSystem = !filters.is_system
+  const listFilters = showPinnedSystem ? { ...filters, is_system: 'false' } : filters
+
   const dataContracts = useQuery({
-    queryKey: ['dataContracts', page, pageSize, ...Object.values(filters)],
+    queryKey: ['dataContracts', page, pageSize, ...Object.values(listFilters)],
     queryFn: () => Api.getDataContracts(
       page,
       pageSize,
       sorting.order,
       sorting.orderBy,
-      filters
+      listFilters
     ),
     keepPreviousData: true,
     select: ({ pagination, ...other }) => ({
@@ -61,6 +68,17 @@ function DataContractsLayout () {
       })
     })
   })
+
+  const systemContracts = useQuery({
+    queryKey: ['dataContracts', 'system', sorting.order, sorting.orderBy],
+    queryFn: () => Api.getDataContracts(1, 12, sorting.order, sorting.orderBy, { is_system: 'true' }),
+    keepPreviousData: true,
+    enabled: showPinnedSystem
+  })
+
+  const pinnedGroup = showPinnedSystem
+    ? { label: 'System contracts', items: systemContracts.data?.resultSet || [] }
+    : null
 
   const pagination = dataContracts.data?.pagination
 
@@ -80,16 +98,24 @@ function DataContractsLayout () {
             maxW={'container.maxPageW'}
             className={'InfoBlock'}
         >
-            <DataContractsFilter
-              onFilterChange={handleFiltersChange}
-              isMobile={isMobile}
-              className={'DataContractsIntro__Filters'}
-            />
+            <div className={'DataContractsPage__Controls'}>
+              <PageTitle title={'Data contracts'} description={introContent} className={'DataContractsPage__Title'}/>
+
+              <DataContractsStatsInline className={'DataContractsPage__Stats'}/>
+
+              <DataContractsFilter
+                onFilterChange={handleFiltersChange}
+                isMobile={isMobile}
+                className={'DataContractsPage__Filters'}
+              />
+            </div>
+
             {!dataContracts.isError
               ? <DataContractsList
                   dataContracts={dataContracts.data?.resultSet}
                   loading={dataContracts.isLoading}
                   itemsCount={pageSize}
+                  pinnedGroup={pinnedGroup}
                 />
               : <Container h={20}><ErrorMessageBlock/></Container>
             }
