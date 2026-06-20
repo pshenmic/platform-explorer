@@ -1,7 +1,1 @@
-Tokens on the [Platform Explorer](/) are digital assets managed through Dash Platform data contracts. Each token’s features—such as minting, burning, freezing, and admin controls—are defined by its contract, ensuring transparency and reliability throughout its lifecycle.
-
-On the Tokens page, you’ll find:
-- **View Supply**: Track initial, current, and maximum supply
-- **Check Ownership**: See which identities hold tokens
-- **Review History**: Access logs of minting, transfers, and other actions
-- **Manage Controls**: Understand admin settings like pause and freeze options
+A token is a digital asset defined by a data contract on Dash Platform. The contract sets its supply limits and the rules for who can mint, burn, freeze, or pause it.
