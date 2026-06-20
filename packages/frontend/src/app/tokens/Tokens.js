@@ -10,7 +10,6 @@ import { useQueryState, parseAsInteger } from 'nuqs'
 import { normalizePagination } from '@utils/table'
 import {
   Container,
-  Heading,
   Box,
   useBreakpointValue
 } from '@chakra-ui/react'
@@ -79,8 +78,6 @@ function Tokens () {
         maxW={'container.maxPageW'}
         className={'InfoBlock'}
       >
-        <Heading className={'InfoBlock__Title'} as={'h1'}>Tokens</Heading>
-
         <TokenFilters
           onFilterChange={handleFiltersChange}
           isMobile={isMobile}

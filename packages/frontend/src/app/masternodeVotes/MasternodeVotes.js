@@ -7,7 +7,7 @@ import PageSizeSelector from '../../components/pageSizeSelector/PageSizeSelector
 import { ErrorMessageBlock } from '../../components/Errors'
 import { fetchHandlerSuccess, fetchHandlerError } from '../../util'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
-import { Box, Container, Heading, useBreakpointValue } from '@chakra-ui/react'
+import { Box, Container, useBreakpointValue } from '@chakra-ui/react'
 import { VotesList } from '../../components/contestedResources/votes'
 import { MasternodeVotesFilters } from '../../components/contestedResources'
 import './MasternodeVotes.scss'
@@ -91,8 +91,6 @@ function MasternodeVotes ({ defaultPage = 1, defaultPageSize }) {
         _dark={{ color: 'white' }}
         className={'InfoBlock'}
       >
-        <Heading className={'InfoBlock__Title'} as={'h1'}>Masternode Votes</Heading>
-
         <div className={'MasternodeVotes__Controls'}>
           <MasternodeVotesFilters
             onFilterChange={filtersChangeHandler}

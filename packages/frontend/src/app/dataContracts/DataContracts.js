@@ -11,7 +11,6 @@ import { normalizePagination } from '@utils/table'
 
 import {
   Container,
-  Heading,
   Box,
   useBreakpointValue
 } from '@chakra-ui/react'
@@ -81,7 +80,6 @@ function DataContractsLayout () {
             maxW={'container.maxPageW'}
             className={'InfoBlock'}
         >
-            <Heading className={'InfoBlock__Title'} as={'h1'}>Data contracts</Heading>
             <DataContractsFilter
               onFilterChange={handleFiltersChange}
               isMobile={isMobile}

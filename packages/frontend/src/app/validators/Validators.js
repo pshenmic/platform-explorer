@@ -4,7 +4,7 @@ import * as Api from '../../util/Api'
 import Pagination from '../../components/pagination'
 import PageSizeSelector from '../../components/pageSizeSelector/PageSizeSelector'
 import { normalizePagination } from '../../util'
-import { Container, Box, Heading, useBreakpointValue } from '@chakra-ui/react'
+import { Container, Box, useBreakpointValue } from '@chakra-ui/react'
 import { useQuery } from '@tanstack/react-query'
 import { parseAsInteger, useQueryState } from 'nuqs'
 import { useValidatorsFilters, ValidatorsFilter, ValidatorsList } from '@components/validators'
@@ -69,7 +69,6 @@ function Validators () {
         maxW={'container.maxPageW'}
         className={'InfoBlock'}
       >
-        <Heading className={'InfoBlock__Title'} as={'h1'}>Validators</Heading>
         <ValidatorsFilter
           onFilterChange={handleFiltersChange}
           isMobile={isMobile}

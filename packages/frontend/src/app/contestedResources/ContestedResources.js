@@ -11,8 +11,7 @@ import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 
 import {
   Box,
-  Container,
-  Heading
+  Container
 } from '@chakra-ui/react'
 import { ContestedResourcesList, ContestedResourcesFilter, useContestedResourcesFilters } from '../../components/contestedResources'
 import './ContestedResourcesPage.scss'
@@ -82,8 +81,6 @@ function ContestedResources ({ defaultPage = 1, defaultPageSize }) {
       maxW={'container.maxPageW'}
       my={8}
     >
-      <Heading className={'InfoBlock__Title'} as={'h1'}>Contested Resources</Heading>
-
       <ContestedResourcesFilter
         initialFilters={filters}
         className={'ContestedResourcesPage__Filters'}

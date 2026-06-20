@@ -13,7 +13,6 @@ import { fetchHandlerSuccess, fetchHandlerError } from '../../util'
 
 import {
   Container,
-  Heading,
   Box,
   Flex,
   FormControl,
@@ -103,10 +102,7 @@ function Identities ({ defaultPage = 1, defaultPageSize, defaultShowAll = false 
         maxW={'container.maxPageW'}
         className={'InfoBlock'}
       >
-        <Flex align={'center'} justify={'space-between'} wrap={'wrap'} gap={2} mb={4}>
-          <Heading className={'InfoBlock__Title'} as={'h1'} mb={0}>
-            Identities {total > 0 && <span style={{ opacity: 0.6, fontSize: '0.7em', fontWeight: 'normal' }}>({total})</span>}
-          </Heading>
+        <Flex align={'center'} justify={'flex-end'} wrap={'wrap'} gap={2} mb={4}>
           <FormControl display={'flex'} alignItems={'center'} width={'auto'}>
             <FormLabel htmlFor={'show-all-identities'} mb={0} mr={2} fontSize={'sm'} fontWeight={'normal'}>
               Show all (incl. masternode)
