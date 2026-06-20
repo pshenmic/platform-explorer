@@ -3,7 +3,10 @@ import { EmptyListMessage } from '../ui/lists'
 import Pagination from '../pagination'
 import { ErrorMessageBlock } from '../Errors'
 import { LoadingList } from '../loading'
+import { ChevronIcon } from '../ui/icons'
+import SmoothSize from '../ui/containers/SmoothSize'
 import { Grid, GridItem } from '@chakra-ui/react'
+import { useState } from 'react'
 import {
   createColumnHelper,
   getCoreRowModel,
@@ -39,13 +42,16 @@ const headerExtraClass = {
   light: 'DataContractsList__ColumnTitles--Light'
 }
 
-function DataContractsList ({ dataContracts = [], headerStyles, pagination, loading, itemsCount = 10 }) {
+function DataContractsList ({ dataContracts = [], headerStyles, pagination, loading, itemsCount = 10, pinnedGroup = null }) {
+  const [groupOpen, setGroupOpen] = useState(true)
   const table = useReactTable({
     data: dataContracts,
     columns,
     getCoreRowModel: getCoreRowModel(),
     manualPagination: true
   })
+
+  const pinnedItems = pinnedGroup?.items || []
 
   return (
     <div className={'DataContractsList'}>
@@ -69,6 +75,31 @@ function DataContractsList ({ dataContracts = [], headerStyles, pagination, load
           Timestamp
         </GridItem>
       </Grid>
+
+      {pinnedItems.length > 0 &&
+        <div className={'DataContractsList__Group'}>
+          <button
+            type={'button'}
+            className={'DataContractsList__GroupHeader'}
+            onClick={() => setGroupOpen(open => !open)}
+            aria-expanded={groupOpen}
+          >
+            <ChevronIcon className={`DataContractsList__GroupChevron ${groupOpen ? 'DataContractsList__GroupChevron--Open' : ''}`}/>
+            <span className={'DataContractsList__GroupLabel'}>{pinnedGroup.label}</span>
+            <span className={'DataContractsList__GroupCount'}>{pinnedItems.length}</span>
+          </button>
+
+          <SmoothSize>
+            {groupOpen &&
+              <div className={'DataContractsList__Items DataContractsList__Items--Pinned'}>
+                {pinnedItems.map((dataContract, index) => (
+                  <DataContractsListItem dataContract={dataContract} key={dataContract?.identifier || index}/>
+                ))}
+              </div>
+            }
+          </SmoothSize>
+        </div>
+      }
 
       {!loading
         ? <div className={'DataContractsList__Items'}>
