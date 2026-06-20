@@ -1,11 +1,23 @@
 'use client'
 
-import Link from 'next/link'
-import { Box, Button, Flex, Heading, Text, Badge } from '@chakra-ui/react'
+import { Box, Flex, Heading, Text, Badge } from '@chakra-ui/react'
 import { CheckCircleIcon, WarningIcon } from '@chakra-ui/icons'
 import { TimeDelta, BigNumber } from '../../components/data'
-import TransactionsHistory from '../../components/charts/TransactionsHistory'
+import HomeHeroSparkline from './HomeHeroSparkline.js'
 import './HomeHero.scss'
+
+function ChainPulse () {
+  const nodes = [4, 50, 96, 142, 188]
+  return (
+    <svg className={'HomeHero__Pulse'} viewBox={'0 0 192 24'} aria-hidden={'true'}>
+      <line x1={4} y1={12} x2={188} y2={12} className={'HomeHero__PulseLine'}/>
+      {nodes.map((cx, i) => (
+        <circle key={i} cx={cx} cy={12} r={3} className={'HomeHero__PulseNode'}/>
+      ))}
+      <circle cx={0} cy={12} r={4} className={'HomeHero__PulseDot'}/>
+    </svg>
+  )
+}
 
 function isNetworkLive (status) {
   const ts = status?.tenderdash?.block?.timestamp || status?.api?.block?.timestamp
@@ -20,12 +32,13 @@ export default function HomeHero ({ status, loading, avgBlockTimeSec }) {
 
   return (
     <Box className={'InfoBlock InfoBlock--NoBorder HomeHero'}>
-      <Flex className={'HomeHero__Inner'}>
+      <div className={'HomeHero__Glow'} aria-hidden={'true'}/>
+      <Box className={'HomeHero__Inner'}>
         <div className={'HomeHero__Brand'}>
-          <Text className={'HomeHero__Welcome'}>Welcome to Dash Platform</Text>
+          <Text className={'HomeHero__Welcome'}>Dash Platform</Text>
           <Heading as={'h1'} className={'HomeHero__Title'}>Platform Explorer</Heading>
           <Text className={'HomeHero__Description'}>
-            Blocks, transactions, data contracts &amp; identities — streamed straight from Dash Platform.
+            Real-time blocks, transactions, data contracts &amp; identities — straight from the chain.
           </Text>
 
           <Flex className={'HomeHero__Status'}>
@@ -40,14 +53,7 @@ export default function HomeHero ({ status, loading, avgBlockTimeSec }) {
             }
           </Flex>
 
-          <Flex className={'HomeHero__Cta'}>
-            <Button as={Link} href={'/blocks'} className={'HomeHero__Button'} variant={'gray'}>
-              Explore Blocks
-            </Button>
-            <Button as={Link} href={'/transactions'} className={'HomeHero__Button'} variant={'gray'}>
-              Transactions
-            </Button>
-          </Flex>
+          <ChainPulse/>
         </div>
 
         <div className={`HomeHero__Live ${loading ? 'HomeHero__Live--Loading' : ''}`}>
@@ -64,9 +70,9 @@ export default function HomeHero ({ status, loading, avgBlockTimeSec }) {
 
         <div className={'HomeHero__Chart'}>
           <Text className={'HomeHero__LiveLabel'}>Transactions history</Text>
-          <TransactionsHistory useInfoBlock={false} heightPx={150}/>
+          <HomeHeroSparkline/>
         </div>
-      </Flex>
+      </Box>
     </Box>
   )
 }

@@ -3,10 +3,28 @@
 
 .HomeHero {
   @include mixins.Block(true);
+  position: relative;
+  overflow: hidden;
   width: 100%;
   padding: 0 !important;
 
+  // soft brand glow behind the left block (same recipe as Background--Light)
+  &__Glow {
+    position: absolute;
+    top: -40%;
+    left: -8%;
+    width: 480px;
+    height: 480px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(var(--chakra-colors-brand-normal-rgb), 0.18) 0%, rgba(var(--chakra-colors-brand-normal-rgb), 0) 60%);
+    filter: blur(50px);
+    pointer-events: none;
+    z-index: 0;
+  }
+
   &__Inner {
+    position: relative;
+    z-index: 1;
     display: grid;
     grid-template-columns: 1.2fr 0.9fr 1.3fr;
     align-items: center;
@@ -31,6 +49,10 @@
         grid-column: auto;
       }
     }
+  }
+
+  &__Brand {
+    min-width: 0;
   }
 
   &__Welcome {
@@ -72,9 +94,35 @@
     align-items: center;
   }
 
-  &__Cta {
-    gap: 12px;
-    flex-wrap: wrap;
+  // animated "chain pulse" accent (echoes block production)
+  &__Pulse {
+    display: block;
+    width: 192px;
+    max-width: 100%;
+    height: 24px;
+    overflow: visible;
+  }
+
+  &__PulseLine {
+    stroke: rgba(var(--chakra-colors-brand-normal-rgb), 0.35);
+    stroke-width: 1;
+  }
+
+  &__PulseNode {
+    fill: rgba(var(--chakra-colors-brand-normal-rgb), 0.5);
+  }
+
+  &__PulseDot {
+    fill: $color-brand-light;
+    filter: drop-shadow(0 0 4px rgba(var(--chakra-colors-brand-light-rgb), 0.9));
+    animation: HomeHeroPulse 2.6s ease-in-out infinite;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    &__PulseDot {
+      animation: none;
+      opacity: 0;
+    }
   }
 
   // Middle panel: the "Live Block Height" hero number
@@ -83,6 +131,7 @@
     flex-direction: column;
     align-items: flex-start;
     justify-content: center;
+    min-width: 0;
     padding-left: 2rem;
     border-left: 1px solid rgba(var(--chakra-colors-gray-800-rgb), 0.6);
 
@@ -120,6 +169,11 @@
     line-height: 1;
     color: #fff;
 
+    // make the thousands separators visible at this large size
+    .BigNumber__Space:not(:last-child) {
+      border-right-width: 0.22em;
+    }
+
     @media screen and (max-width: $breakpoint-lg) {
       font-size: 2.5rem;
     }
@@ -135,4 +189,11 @@
   &__Live--Loading &__Height {
     opacity: 0.4;
   }
+}
+
+@keyframes HomeHeroPulse {
+  0% { transform: translateX(0); opacity: 0; }
+  12% { opacity: 1; }
+  88% { opacity: 1; }
+  100% { transform: translateX(188px); opacity: 0; }
 }
