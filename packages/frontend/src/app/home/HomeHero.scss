@@ -8,6 +8,10 @@
   width: 100%;
   padding: 0 !important;
 
+  // compact hero: header / telemetry / status strip stacked at natural height
+  display: flex;
+  flex-direction: column;
+
   // soft brand glow behind the left block (same recipe as Background--Light)
   &__Glow {
     position: absolute;
@@ -26,28 +30,15 @@
     position: relative;
     z-index: 1;
     display: grid;
-    grid-template-columns: 1.2fr 0.9fr 1.3fr;
+    grid-template-columns: 1.4fr 1fr;
     align-items: center;
     gap: 2rem;
     padding: 32px 40px;
-
-    @media screen and (max-width: $breakpoint-xl) {
-      grid-template-columns: 1fr 1fr;
-      gap: 1.5rem;
-
-      .HomeHero__Chart {
-        grid-column: 1 / -1;
-      }
-    }
 
     @media screen and (max-width: $breakpoint-lg) {
       grid-template-columns: 1fr;
       gap: 1.5rem;
       padding: 32px 24px;
-
-      .HomeHero__Chart {
-        grid-column: auto;
-      }
     }
   }
 
@@ -83,72 +74,556 @@
     margin: 0 0 18px;
   }
 
-  &__Status {
-    gap: 8px;
-    flex-wrap: wrap;
-    margin-bottom: 20px;
-  }
-
   &__Badge {
     display: inline-flex;
     align-items: center;
   }
 
-  // animated "chain pulse" accent (echoes block production)
-  &__Pulse {
-    display: block;
-    width: 192px;
+  // network/governance status strip
+  &__StatusBar {
+    position: relative;
+    z-index: 1;
+    flex-wrap: wrap;
+    align-items: stretch;
+    gap: 0;
+    border-top: 1px solid rgba(var(--chakra-colors-gray-800-rgb), 0.6);
+    padding: 14px 40px;
+
+    @media screen and (max-width: $breakpoint-lg) {
+      padding: 14px 24px;
+    }
+  }
+
+  &__StatusCell {
+    flex: 1 1 0;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 0 20px;
+    border-right: 1px solid rgba(var(--chakra-colors-gray-800-rgb), 0.6);
+
+    // Epoch cell carries the progress bar — give it a touch more room
+    &:first-child { padding-left: 0; flex-grow: 1.3; }
+    &:last-child { border-right: none; }
+
+    @media screen and (max-width: $breakpoint-md) {
+      flex: 1 1 40%;
+      border-right: none;
+      padding: 0 16px 0 0;
+    }
+  }
+
+  &__StatusHead {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  &__StatusLabel {
+    font-size: 0.625rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--chakra-colors-gray-500);
+  }
+
+  &__StatusInfo {
+    display: inline-flex;
+    align-items: center;
+    color: var(--chakra-colors-gray-500);
+    cursor: pointer;
+    transition: color .15s;
+
+    &:hover { color: $color-brand-normal; }
+  }
+
+  &__StatusLink {
+    color: inherit;
+    transition: color .15s;
+
+    &:hover { color: $color-brand-normal; }
+  }
+
+  // Governance cells (Contested / Total votes): count+pill left, rotating feed over dots right.
+  &__Gov {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    width: 100%;
+    min-width: 0;
+  }
+
+  &__GovLeft {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    flex-shrink: 0;
+  }
+
+  &__GovCount {
+    font-family: $font-heading;
+    font-weight: 800;
+    font-style: italic;
+    font-size: 1.5rem;
+    line-height: 1;
+    color: #fff;
+    text-shadow: 0 0 12px rgba(var(--chakra-colors-brand-normal-rgb), 0.45);
+    transition: color .15s, text-shadow .15s;
+
+    &:hover {
+      color: $color-brand-light;
+      text-shadow: 0 0 14px rgba(var(--chakra-colors-brand-normal-rgb), 0.65);
+    }
+  }
+
+  // subtle brand-tinted pill
+  &__GovCountLabel {
+    align-self: flex-start;
+    margin-top: 5px;
+    font-size: 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    padding: 1px 5px;
+    border-radius: 4px;
+    color: $color-brand-light;
+    background: rgba(var(--chakra-colors-brand-normal-rgb), 0.14);
+    border: 1px solid rgba(var(--chakra-colors-brand-normal-rgb), 0.3);
+  }
+
+  &__GovFeed {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 6px;
+    text-align: right;
+  }
+
+  &__GovDots {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    flex-shrink: 0;
+  }
+
+  &__GovDot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: rgba(var(--chakra-colors-gray-500-rgb, 122, 132, 137), 0.45);
+    transition: background .15s, transform .15s;
+
+    &:hover { transform: scale(1.3); }
+    &.is-active { background: $color-brand-normal; }
+  }
+
+  // Contested-specific: the rotating name link
+  &__ContestedName {
     max-width: 100%;
-    height: 24px;
+    font-size: 0.6875rem;
+    font-family: $font-mono;
+    color: var(--chakra-colors-gray-250);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    transition: color .15s;
+
+    &:hover { color: $color-brand-normal; }
+  }
+
+  // Total-votes-specific: the rotating vote item (choice badge + voter)
+  &__VotesItem {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    max-width: 100%;
+    overflow: hidden;
+    transition: opacity .15s;
+
+    &:hover {
+      opacity: 0.82;
+
+      .HomeHero__VotesVoter { color: var(--chakra-colors-gray-250); }
+    }
+
+    .VoteBadge { flex-shrink: 0; }
+  }
+
+  &__VotesChoiceText {
+    flex-shrink: 0;
+    font-size: 0.6875rem;
+    font-family: $font-mono;
+    color: var(--chakra-colors-gray-250);
+  }
+
+  &__VotesVoter {
+    min-width: 0;
+    font-size: 0.6875rem;
+    font-family: $font-mono;
+    color: var(--chakra-colors-gray-500);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    transition: color .15s;
+  }
+
+  &__Versions {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+
+  // Version "release tag" pill — quiet, brightens + reveals the ↗ on hover.
+  &__VersionTag {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 2px 7px;
+    border-radius: 6px;
+    border: 1px solid rgba(var(--chakra-colors-brand-normal-rgb), 0.22);
+    background: rgba(var(--chakra-colors-brand-normal-rgb), 0.07);
+    font-family: $font-mono;
+    line-height: 1.4;
+    transition: border-color .15s, background-color .15s;
+
+    &:hover {
+      border-color: rgba(var(--chakra-colors-brand-normal-rgb), 0.5);
+      background: rgba(var(--chakra-colors-brand-normal-rgb), 0.14);
+
+      .HomeHero__VersionGlyph { fill: $color-brand-light; }
+      .HomeHero__VersionArrow { color: $color-brand-light; opacity: 1; }
+    }
+
+    &:focus-visible {
+      outline: 1px solid $color-brand-normal;
+      outline-offset: 2px;
+    }
+  }
+
+  &__VersionGlyph {
+    width: 9px;
+    height: 9px;
+    flex-shrink: 0;
+    fill: rgba(var(--chakra-colors-brand-normal-rgb), 0.7);
+    transition: fill .15s;
+  }
+
+  &__VersionName {
+    font-size: 0.625rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--chakra-colors-gray-500);
+  }
+
+  &__VersionNum {
+    font-size: 0.75rem;
+    color: #fff;
+  }
+
+  // pre-release suffix (rc.2 / dev.3) — tiny muted sub-tag
+  &__VersionPre {
+    font-size: 0.5625rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--chakra-colors-gray-250);
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 4px;
+    padding: 0 4px;
+  }
+
+  &__VersionArrow {
+    flex-shrink: 0;
+    color: rgba(var(--chakra-colors-brand-normal-rgb), 0.7);
+    opacity: 0.75;
+    transition: color .15s, opacity .15s;
+  }
+
+  // Status cell: two "dot + text" lines (network name / API status)
+  &__StatusLines {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+
+  &__StatusLine {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.75rem;
+    color: #fff;
+    white-space: nowrap;
+  }
+
+  &__DotMark {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    flex-shrink: 0;
+
+    &.is-ok {
+      background: var(--chakra-colors-green-400);
+      box-shadow: 0 0 6px rgba(149, 191, 64, 0.8);
+    }
+
+    &.is-down {
+      background: var(--chakra-colors-red-400);
+      box-shadow: 0 0 6px rgba(255, 80, 60, 0.7);
+    }
+  }
+
+  // votes breakdown inside the Total-votes info tooltip
+  &__VotesBreakdown {
+    display: block;
+    margin-top: 6px;
+    padding-top: 6px;
+    border-top: 1px solid rgba(255, 255, 255, 0.12);
+  }
+
+  &__VotesBreakdownLabel {
+    display: block;
+    font-size: 0.625rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    opacity: 0.6;
+    margin-bottom: 2px;
+  }
+
+  &__VotesBreakdownRow {
+    font-family: $font-mono;
+    font-size: 0.6875rem;
+  }
+
+  &__Vote {
+    font-weight: 700;
+
+    &--towards { color: var(--chakra-colors-green-400); }
+    &--abstain { color: var(--chakra-colors-orange-400); }
+    &--lock { color: var(--chakra-colors-red-400); }
+  }
+
+  &__VoteSep {
+    margin: 0 5px;
+    opacity: 0.4;
+  }
+
+  &__StatusValue {
+    font-size: 0.8125rem;
+    font-family: $font-mono;
+    color: #fff;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  &__StatusSub {
+    display: block;
+    margin-top: 2px;
+    font-size: 0.625rem;
+    font-family: $font-mono;
+    color: var(--chakra-colors-gray-500);
+    white-space: nowrap;
+  }
+
+  // Masternodes cell: shield + count, active-ratio bar, secured value
+  &__MnStack {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  &__MnHead {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: #fff;
+    transition: color .15s;
+
+    &:hover {
+      color: $color-brand-normal;
+
+      .HomeHero__MnShield { fill: $color-brand-light; }
+    }
+  }
+
+  &__MnShield {
+    width: 12px;
+    height: 12px;
+    flex-shrink: 0;
+    fill: rgba(var(--chakra-colors-brand-normal-rgb), 0.85);
+    transition: fill .15s;
+  }
+
+  &__MnBar {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 5px;
+  }
+
+  &__MnProgress {
+    flex: 1;
+    min-width: 40px;
+    max-width: 84px;
+    border-radius: 999px;
+    overflow: hidden;
+  }
+
+  &__MnBarLabel {
+    font-size: 0.5625rem;
+    font-family: $font-mono;
+    color: var(--chakra-colors-gray-500);
+    white-space: nowrap;
+  }
+
+  &__MnSecured {
+    display: block;
+    margin-top: 4px;
+    font-size: 0.625rem;
+    font-family: $font-mono;
+    color: var(--chakra-colors-gray-500);
+    white-space: nowrap;
+  }
+
+  &__Epoch {
+    display: inline-flex;
+    flex-direction: column;
+  }
+
+  &__EpochProgress {
+    min-width: 120px;
+    margin-top: 2px;
+  }
+
+  // Metric wave: trading-style line under the subhead with the 4 metrics as points
+  &__Wave {
+    position: relative;
+    width: 100%;
+    height: 210px;
+    margin-top: 4px;
+    padding: 0 40px;
+
+    @media screen and (max-width: $breakpoint-lg) {
+      height: auto;
+      padding: 16px 8px 0;
+    }
+  }
+
+  &__WaveSvg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
     overflow: visible;
+
+    @media screen and (max-width: $breakpoint-lg) { display: none; }
   }
 
-  &__PulseLine {
-    stroke: rgba(var(--chakra-colors-brand-normal-rgb), 0.35);
-    stroke-width: 1;
+  &__WaveLine {
+    stroke: rgba(var(--chakra-colors-brand-normal-rgb), 0.7);
+    stroke-width: 2px;
+    stroke-linejoin: round;
+    stroke-linecap: round;
   }
 
-  &__PulseNode {
-    fill: rgba(var(--chakra-colors-brand-normal-rgb), 0.5);
-  }
-
-  &__PulseDot {
-    fill: $color-brand-light;
+  // bright dash scanning along the line (pathLength=100 keeps it uniform when stretched)
+  &__WaveScan {
+    stroke: $color-brand-light;
+    stroke-width: 2px;
+    stroke-linecap: round;
+    stroke-dasharray: 3 97;
     filter: drop-shadow(0 0 4px rgba(var(--chakra-colors-brand-light-rgb), 0.9));
-    animation: HomeHeroPulse 2.6s ease-in-out infinite;
+    animation: HomeHeroDash 5s linear infinite;
+  }
+
+  // metric points overlaid on the line vertices (inline left/top set the position)
+  &__WavePoint {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    cursor: default;
+    outline: none;
+
+    @media screen and (max-width: $breakpoint-lg) {
+      position: static !important;
+      transform: none;
+    }
+  }
+
+  &__WaveValue {
+    font-family: $font-heading;
+    font-weight: 800;
+    font-style: italic;
+    font-size: 1.75rem;
+    line-height: 1;
+    color: #fff;
+    text-shadow: 0 0 12px rgba(var(--chakra-colors-brand-normal-rgb), 0.45);
+    transition: color .15s;
+  }
+
+  &__WaveDot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: $color-brand-light;
+    box-shadow: 0 0 0 3px rgba(var(--chakra-colors-brand-normal-rgb), 0.18);
+    transition: transform .15s, box-shadow .15s;
+  }
+
+  &__WaveLabel {
+    font-size: 0.625rem;
+    font-family: $font-mono;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--chakra-colors-gray-500);
+    white-space: nowrap;
+  }
+
+  &__WavePoint:hover,
+  &__WavePoint:focus-within {
+    .HomeHero__WaveValue { color: $color-brand-light; }
+
+    .HomeHero__WaveDot {
+      transform: scale(1.5);
+      box-shadow: 0 0 12px 3px rgba(var(--chakra-colors-brand-light-rgb), 0.9);
+    }
+  }
+
+  // mobile fallback: hide the wave SVG, lay the 4 points out as a 2×2 grid
+  &__Wave {
+    @media screen and (max-width: $breakpoint-lg) {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 22px 16px;
+      text-align: center;
+    }
   }
 
   @media (prefers-reduced-motion: reduce) {
-    &__PulseDot {
-      animation: none;
-      opacity: 0;
-    }
+    &__WaveScan { animation: none; opacity: 0; }
   }
 
   // Middle panel: the "Live Block Height" hero number
   &__Live {
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
+    align-items: flex-end;
     justify-content: center;
     min-width: 0;
+    text-align: right;
     padding-left: 2rem;
     border-left: 1px solid rgba(var(--chakra-colors-gray-800-rgb), 0.6);
 
     @media screen and (max-width: $breakpoint-lg) {
+      align-items: flex-start;
+      text-align: left;
       padding-left: 0;
       padding-top: 1.25rem;
       border-left: none;
-      border-top: 1px solid rgba(var(--chakra-colors-gray-800-rgb), 0.6);
-    }
-  }
-
-  // Right panel: the Transactions history chart
-  &__Chart {
-    min-width: 0;
-
-    @media screen and (max-width: $breakpoint-lg) {
-      padding-top: 1.25rem;
       border-top: 1px solid rgba(var(--chakra-colors-gray-800-rgb), 0.6);
     }
   }
@@ -191,9 +666,8 @@
   }
 }
 
-@keyframes HomeHeroPulse {
-  0% { transform: translateX(0); opacity: 0; }
-  12% { opacity: 1; }
-  88% { opacity: 1; }
-  100% { transform: translateX(188px); opacity: 0; }
+// bright dash scans along the wave line (pathLength=100 → 3% dash travels the whole path)
+@keyframes HomeHeroDash {
+  from { stroke-dashoffset: 0; }
+  to { stroke-dashoffset: -100; }
 }

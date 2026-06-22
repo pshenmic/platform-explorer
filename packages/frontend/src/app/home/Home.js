@@ -3,13 +3,12 @@
 import { useState, useEffect } from 'react'
 import * as Api from '../../util/Api'
 import HomeHero from './HomeHero.js'
-import HomeKpi from './HomeKpi.js'
 import EntityTables from './EntityTables.js'
-import ContestedResourcesDashboardCards from '../../components/contestedResources/ContestedResourcesDashboardCards'
+import TransactionsHistory from '../../components/charts/TransactionsHistory'
 import IdentitiesGrowthChart from '../../components/charts/IdentitiesGrowthChart'
 import { fetchHandlerSuccess, fetchHandlerError } from '../../util'
 import theme from '../../styles/theme'
-import { Box, Container, Flex, Heading } from '@chakra-ui/react'
+import { Box, Container, Flex, Heading, SimpleGrid } from '@chakra-ui/react'
 import './Home.scss'
 
 function computeAvgBlockTime (blocks) {
@@ -30,13 +29,24 @@ function Home () {
   const [latestContracts, setLatestContracts] = useState({ data: {}, props: { printCount: 10 }, loading: true, error: false })
   const [latestIdentities, setLatestIdentities] = useState({ data: {}, props: { printCount: 10 }, loading: true, error: false })
   const [validators, setValidators] = useState({ data: {}, loading: true, error: false })
+  const [validatorsActive, setValidatorsActive] = useState({ data: {}, loading: true, error: false })
+  const [contested, setContested] = useState({ data: {}, loading: true, error: false })
+  const [activeContested, setActiveContested] = useState({ data: {}, loading: true, error: false })
+  const [latestContested, setLatestContested] = useState({ data: {}, loading: true, error: false })
+  const [latestVotes, setLatestVotes] = useState({ data: {}, loading: true, error: false })
+  const [epochData, setEpochData] = useState({ data: {}, loading: true, error: false })
   const [rate, setRate] = useState({ data: {}, loading: true, error: false })
 
   const gap = theme.blockOffset
 
   const fetchData = () => {
     Api.getStatus()
-      .then(res => fetchHandlerSuccess(setStatus, res))
+      .then(res => {
+        fetchHandlerSuccess(setStatus, res)
+        Api.getEpoch(res?.epoch?.number)
+          .then(epochRes => fetchHandlerSuccess(setEpochData, epochRes))
+          .catch(err => fetchHandlerError(setEpochData, err))
+      })
       .catch(err => fetchHandlerError(setStatus, err))
 
     Api.getBlocks(1, blocks.props.printCount, 'desc')
@@ -55,9 +65,29 @@ function Home () {
       .then(res => fetchHandlerSuccess(setLatestIdentities, res))
       .catch(err => fetchHandlerError(setLatestIdentities, err))
 
-    Api.getValidators(1, 1, 'desc')
+    Api.getValidators(1, 100, 'desc')
       .then(res => fetchHandlerSuccess(setValidators, res))
       .catch(err => fetchHandlerError(setValidators, err))
+
+    Api.getValidators(1, 1, 'desc', { isActive: 'true' })
+      .then(res => fetchHandlerSuccess(setValidatorsActive, res))
+      .catch(err => fetchHandlerError(setValidatorsActive, err))
+
+    Api.getContestedResourcesStats()
+      .then(res => fetchHandlerSuccess(setContested, res))
+      .catch(err => fetchHandlerError(setContested, err))
+
+    Api.getContestedResources(1, 10, 'desc', undefined, { voting_finished: false })
+      .then(res => fetchHandlerSuccess(setActiveContested, res))
+      .catch(err => fetchHandlerError(setActiveContested, err))
+
+    Api.getContestedResources(1, 5, 'desc')
+      .then(res => fetchHandlerSuccess(setLatestContested, res))
+      .catch(err => fetchHandlerError(setLatestContested, err))
+
+    Api.getMasternodeVotes(1, 10, 'desc')
+      .then(res => fetchHandlerSuccess(setLatestVotes, res))
+      .catch(err => fetchHandlerError(setLatestVotes, err))
 
     Api.getRate()
       .then(res => fetchHandlerSuccess(setRate, res))
@@ -71,9 +101,18 @@ function Home () {
   return (
     <Container maxW={'container.maxPageW'} color={'white'} px={3} py={0} mt={gap} mb={gap}>
       <Flex direction={'column'} gap={gap}>
-        <HomeHero status={status.data} loading={status.loading} avgBlockTimeSec={avgBlockTimeSec}/>
+        <HomeHero status={status.data} loading={status.loading} avgBlockTimeSec={avgBlockTimeSec} contested={contested} activeContested={activeContested} latestContested={latestContested} latestVotes={latestVotes} validators={validators} validatorsActive={validatorsActive} epochData={epochData} rate={rate}/>
 
-        <HomeKpi status={status} validators={validators}/>
+        <SimpleGrid columns={{ base: 1, lg: 2 }} spacing={gap} w={'100%'}>
+          <Box className={'InfoBlock InfoBlock--NoBorder'} w={'100%'}>
+            <Heading className={'InfoBlock__Title'} as={'h2'}>Transactions history</Heading>
+            <TransactionsHistory blockBorders={false} heightPx={240} useInfoBlock={false} type={'bar'}/>
+          </Box>
+          <Box className={'InfoBlock InfoBlock--NoBorder'} w={'100%'}>
+            <Heading className={'InfoBlock__Title'} as={'h2'}>Identities growth</Heading>
+            <IdentitiesGrowthChart isActive={true}/>
+          </Box>
+        </SimpleGrid>
 
         <EntityTables
           blocks={blocks}
@@ -82,16 +121,6 @@ function Home () {
           identities={latestIdentities}
           rate={rate}
         />
-
-        <Box className={'InfoBlock InfoBlock--NoBorder Home__Governance'} w={'100%'}>
-          <Heading className={'InfoBlock__Title'} as={'h2'}>Governance</Heading>
-          <ContestedResourcesDashboardCards/>
-        </Box>
-
-        <Box className={'InfoBlock InfoBlock--NoBorder'} w={'100%'}>
-          <Heading className={'InfoBlock__Title'} as={'h2'}>Identities growth</Heading>
-          <IdentitiesGrowthChart isActive={true}/>
-        </Box>
       </Flex>
     </Container>
   )
