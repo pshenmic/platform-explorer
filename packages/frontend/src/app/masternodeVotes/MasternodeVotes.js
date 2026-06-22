@@ -10,6 +10,9 @@ import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { Box, Container, useBreakpointValue } from '@chakra-ui/react'
 import { VotesList } from '../../components/contestedResources/votes'
 import { MasternodeVotesFilters } from '../../components/contestedResources'
+import MasternodeVotesStatsInline from '../../components/contestedResources/MasternodeVotesStatsInline'
+import PageTitle from '../../components/intro/PageTitle'
+import introContent from './intro.md'
 import './MasternodeVotes.scss'
 
 const paginateConfig = {
@@ -92,6 +95,10 @@ function MasternodeVotes ({ defaultPage = 1, defaultPageSize }) {
         className={'InfoBlock'}
       >
         <div className={'MasternodeVotes__Controls'}>
+          <PageTitle title={'Masternode Votes'} description={introContent} className={'MasternodeVotes__Title'}/>
+
+          <MasternodeVotesStatsInline className={'MasternodeVotes__Stats'} total={total}/>
+
           <MasternodeVotesFilters
             onFilterChange={filtersChangeHandler}
             isMobile={isMobile}
