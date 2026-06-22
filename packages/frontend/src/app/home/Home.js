@@ -4,11 +4,10 @@ import { useState, useEffect } from 'react'
 import * as Api from '../../util/Api'
 import HomeHero from './HomeHero.js'
 import EntityTables from './EntityTables.js'
-import TransactionsHistory from '../../components/charts/TransactionsHistory'
-import IdentitiesGrowthChart from '../../components/charts/IdentitiesGrowthChart'
+import { MetricChart } from '../../components/home'
 import { fetchHandlerSuccess, fetchHandlerError } from '../../util'
 import theme from '../../styles/theme'
-import { Box, Container, Flex, Heading, SimpleGrid } from '@chakra-ui/react'
+import { Container, Flex, SimpleGrid } from '@chakra-ui/react'
 import './Home.scss'
 
 function computeAvgBlockTime (blocks) {
@@ -104,14 +103,8 @@ function Home () {
         <HomeHero status={status.data} loading={status.loading} avgBlockTimeSec={avgBlockTimeSec} contested={contested} activeContested={activeContested} latestContested={latestContested} latestVotes={latestVotes} validators={validators} validatorsActive={validatorsActive} epochData={epochData} rate={rate}/>
 
         <SimpleGrid columns={{ base: 1, lg: 2 }} spacing={gap} w={'100%'}>
-          <Box className={'InfoBlock InfoBlock--NoBorder'} w={'100%'}>
-            <Heading className={'InfoBlock__Title'} as={'h2'}>Transactions history</Heading>
-            <TransactionsHistory blockBorders={false} heightPx={240} useInfoBlock={false} type={'bar'}/>
-          </Box>
-          <Box className={'InfoBlock InfoBlock--NoBorder'} w={'100%'}>
-            <Heading className={'InfoBlock__Title'} as={'h2'}>Identities growth</Heading>
-            <IdentitiesGrowthChart isActive={true}/>
-          </Box>
+          <MetricChart title={'Transactions history'} type={'bar'} fetcher={Api.getTransactionsHistory} field={'txs'} yAbbr={'txs'}/>
+          <MetricChart title={'Identities growth'} type={'line'} fetcher={Api.getIdentitiesHistory} field={'registeredIdentities'} yAbbr={'identities'}/>
         </SimpleGrid>
 
         <EntityTables
