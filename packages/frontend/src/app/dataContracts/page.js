@@ -1,3 +1,4 @@
+import { Suspense } from 'react'
 import DataContracts from './DataContracts'
 
 export const metadata = {
@@ -8,7 +9,11 @@ export const metadata = {
 }
 
 function DataContractsRoute () {
-  return <DataContracts/>
+  return (
+    <Suspense fallback={null}>
+      <DataContracts/>
+    </Suspense>
+  )
 }
 
 export default DataContractsRoute

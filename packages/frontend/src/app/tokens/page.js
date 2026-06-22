@@ -1,3 +1,4 @@
+import { Suspense } from 'react'
 import Tokens from './Tokens'
 
 export const metadata = {
@@ -8,7 +9,11 @@ export const metadata = {
 }
 
 function TokensRoute () {
-  return <Tokens/>
+  return (
+    <Suspense fallback={null}>
+      <Tokens/>
+    </Suspense>
+  )
 }
 
 export default TokensRoute
