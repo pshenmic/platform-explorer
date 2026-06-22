@@ -18,16 +18,19 @@ export default function ContestedResourcesStatsInline ({ className }) {
     {
       label: 'Resources',
       value: currencyRound(stats.data?.totalContestedResources),
+      color: 'var(--chakra-colors-brand-light)',
       loading: stats.loading
     },
     {
       label: 'Pending',
       value: currencyRound(stats.data?.totalPendingContestedResources),
+      color: 'var(--chakra-colors-orange-default)',
       loading: stats.loading
     },
     {
       label: 'Votes',
       value: currencyRound(stats.data?.totalVotesCount),
+      color: 'var(--chakra-colors-green-label)',
       loading: stats.loading
     }
   ]
