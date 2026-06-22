@@ -7,13 +7,11 @@ import { DashboardCards } from '../cards'
 import {
   BestValidatorCardContent,
   EpochCardContent,
-  FeesCollectedCardContent,
-  TotalValidatorsCardContent
+  FeesCollectedCardContent
 } from '../cards/dashboard'
 
 export default function ValidatorsDashboardCards () {
   const [status, setStatus] = useState({ data: {}, loading: true, error: false })
-  const [validators, setValidators] = useState({ data: {}, loading: true, error: false })
   const [epoch, setEpoch] = useState({ data: {}, loading: true, error: false })
   const [rate, setRate] = useState({ data: {}, loading: true, error: false })
 
@@ -27,10 +25,6 @@ export default function ValidatorsDashboardCards () {
           .catch(err => fetchHandlerError(setEpoch, err))
       })
       .catch(err => fetchHandlerError(setStatus, err))
-
-    Api.getValidators(1, 10)
-      .then(res => fetchHandlerSuccess(setValidators, res))
-      .catch(err => fetchHandlerError(setValidators, err))
 
     Api.getRate()
       .then(res => fetchHandlerSuccess(setRate, res))
@@ -62,13 +56,6 @@ export default function ValidatorsDashboardCards () {
           value: <BestValidatorCardContent epoch={epoch.data}/>,
           loading: epoch.loading,
           error: !epoch?.data?.bestValidator
-        },
-        {
-          title: 'Total Validators',
-          value: <TotalValidatorsCardContent validators={validators}/>,
-          className: 'ValidatorsTotalCard ValidatorsTotalCard--TotalValidators',
-          loading: validators.loading,
-          error: validators.data?.pagination?.total === undefined || validators.data?.pagination?.total === null
         }
       ]}
     />
