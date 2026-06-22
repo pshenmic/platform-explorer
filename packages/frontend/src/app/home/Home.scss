@@ -1,87 +1,19 @@
+@use '../../styles/mixins.scss';
 @import '../../styles/variables.scss';
 
-// Governance dashboard cards (slider) — keep peeking slides clipped to the section
-.Home__Governance {
-  overflow: hidden;
-
-  .DashboardCards,
-  .DashboardCards__Slider {
-    min-width: 0;
-  }
-}
-
-// Entity tabs → one full-width table
-.EntityTables {
-  .chakra-tabs__tablist {
-    overflow-x: auto;
-    overflow-y: hidden;
-    scrollbar-width: none;
-
-    &::-webkit-scrollbar { display: none; }
-  }
-
-  .chakra-tabs__tab-panel {
-    overflow-x: auto;
-  }
-}
-
+// Compact "Show more" pill — reuses the DefButton flash effect.
 .HomeSection__ViewAll {
-  font-size: 0.8125rem;
-  font-family: $font-heading;
-  font-weight: 700;
-  color: $color-brand-normal;
+  @include mixins.DefButton;
+
+  width: auto;
+  flex-shrink: 0;
+  padding: 7px 14px;
+  font-size: 11px;
+  border-radius: 8px;
+  color: #fff;
   white-space: nowrap;
-  transition: opacity .15s;
 
-  &:hover {
-    opacity: 0.75;
-  }
-}
-
-// Compact KPI cards in the home header (static metrics with ? tooltips)
-.HomeKpi {
-  &__Item {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    gap: 6px;
-    min-height: 84px;
-    padding: 16px 18px !important;
-  }
-
-  &__Head {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-  }
-
-  &__Label {
-    font-size: 0.75rem;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-    color: $color-brand-normal;
-    font-family: $font-heading;
-    font-weight: 700;
-  }
-
-  &__Info {
-    display: inline-flex;
-    align-items: center;
-    color: var(--chakra-colors-gray-500);
-    cursor: pointer;
-    transition: color .15s;
-
-    &:hover {
-      color: $color-brand-normal;
-    }
-  }
-
-  &__Value {
-    font-family: $font-heading;
-    font-weight: 800;
-    font-style: italic;
-    font-size: 1.5rem;
-    line-height: 1.1;
-    color: #fff;
+  @media (prefers-reduced-motion: reduce) {
+    &::after { animation: none; }
   }
 }
