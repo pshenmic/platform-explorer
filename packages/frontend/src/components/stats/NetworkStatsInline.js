@@ -52,7 +52,7 @@ export default function NetworkStatsInline ({ className, items: itemsProp }) {
       {items.map((item, index) => (
         <div className={'NetworkStatsInline__Item'} key={index}>
           <span className={'NetworkStatsInline__Label'}>{item.label}</span>
-          <span className={'NetworkStatsInline__Value'}>
+          <span className={'NetworkStatsInline__Value'} style={item.color ? { color: item.color } : undefined}>
             {item.loading ? '…' : (item.value ?? 'N/A')}
           </span>
         </div>
