@@ -26,4 +26,36 @@
       color: var(--chakra-colors-white-50);
     }
   }
+
+  &__IdentifierContainer {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-width: 0;
+  }
+
+  &__Medal {
+    flex-shrink: 0;
+    width: 22px;
+    height: 22px;
+  }
+
+  // Сдержанное «уважение» топ-3 по текущей метрике сортировки:
+  // лёгкий тинт строки + тонкий левый акцент (inset, не обрезается).
+  @mixin RankAccent($color) {
+    background: linear-gradient(90deg, rgba($color, 0.06) 0%, rgba($color, 0) 60%);
+    box-shadow: inset 2px 0 0 0 rgba($color, 0.6);
+  }
+
+  &--Rank1 {
+    @include RankAccent(#FFD205);
+  }
+
+  &--Rank2 {
+    @include RankAccent(#c6cacd);
+  }
+
+  &--Rank3 {
+    @include RankAccent(#f49a58);
+  }
 }
