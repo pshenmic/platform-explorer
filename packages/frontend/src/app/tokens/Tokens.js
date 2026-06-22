@@ -2,6 +2,7 @@
 
 import * as Api from '../../util/Api'
 import TokensList from '../../components/tokens/TokensList'
+import TokensTicker from '../../components/tokens/TokensTicker'
 import Pagination from '../../components/pagination'
 import { ErrorMessageBlock } from '@components/Errors'
 import PageSizeSelector from '../../components/pageSizeSelector/PageSizeSelector'
@@ -14,6 +15,10 @@ import {
   useBreakpointValue
 } from '@chakra-ui/react'
 import { useTokensFilters, TokenFilters } from '@components/tokens'
+import PageTitle from '../../components/intro/PageTitle'
+import NetworkStatsInline from '../../components/stats/NetworkStatsInline'
+import { currencyRound } from '../../util'
+import introContent from './intro.md'
 
 import './Tokens.scss'
 
@@ -53,6 +58,7 @@ function Tokens () {
     keepPreviousData: true,
     select: ({ pagination, ...other }) => ({
       ...other,
+      total: pagination?.total,
       pagination: normalizePagination({
         page,
         pageSize,
@@ -62,6 +68,7 @@ function Tokens () {
   })
 
   const pagination = tokens.data?.pagination
+  const totalTokens = tokens.data?.total
 
   const handleFiltersChange = (next) => {
     setFilters(next)
@@ -78,11 +85,22 @@ function Tokens () {
         maxW={'container.maxPageW'}
         className={'InfoBlock'}
       >
-        <TokenFilters
-          onFilterChange={handleFiltersChange}
-          isMobile={isMobile}
-          className={'Tokens__Filters'}
-        />
+        <div className={'Tokens__Controls'}>
+          <PageTitle title={'Tokens'} description={introContent} className={'Tokens__Title'}/>
+
+          <NetworkStatsInline
+            className={'Tokens__Stats'}
+            items={[{ label: 'Tokens', value: typeof totalTokens === 'number' ? currencyRound(totalTokens) : null, loading: tokens.isLoading }]}
+          />
+
+          <TokenFilters
+            onFilterChange={handleFiltersChange}
+            isMobile={isMobile}
+            className={'Tokens__Filters'}
+          />
+        </div>
+
+        <TokensTicker/>
 
         {!tokens.isError
           ? <TokensList
