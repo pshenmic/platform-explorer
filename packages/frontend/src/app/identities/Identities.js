@@ -3,15 +3,14 @@
 import { useEffect, useState } from 'react'
 import * as Api from '../../util/Api'
 import IdentitiesList from '../../components/identities/IdentitiesList'
-import { IdentitiesFilter, useIdentitiesFilters, TopIdentities } from '../../components/identities'
-import IdentitiesGrowthChart from '../../components/charts/IdentitiesGrowthChart'
+import { IdentitiesFilter, useIdentitiesFilters } from '../../components/identities'
+import IdentitiesGrowthChartCompact from '../../components/charts/IdentitiesGrowthChartCompact'
 import Pagination from '../../components/pagination'
 import PageSizeSelector from '../../components/pageSizeSelector/PageSizeSelector'
 import { LoadingList } from '../../components/loading'
 import { ErrorMessageBlock } from '../../components/Errors'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { fetchHandlerSuccess, fetchHandlerError, currencyRound } from '../../util'
-import { InfoContainer } from '../../components/ui/containers'
 import PageTitle from '../../components/intro/PageTitle'
 import NetworkStatsInline from '../../components/stats/NetworkStatsInline'
 import introContent from './intro.md'
@@ -21,12 +20,7 @@ import {
   Box,
   FormControl,
   FormLabel,
-  Switch,
-  Tabs,
-  TabList,
-  Tab,
-  TabPanels,
-  TabPanel
+  Switch
 } from '@chakra-ui/react'
 
 const paginateConfig = {
@@ -52,7 +46,10 @@ function Identities ({ defaultPage = 1, defaultPageSize, defaultShowAll = false 
   const fetchData = (page, count, includeMasternodes, currentFilters) => {
     setIdentities(state => ({ ...state, loading: true }))
 
-    Api.getIdentities(page, count, 'desc', undefined, { includeMasternodes, filters: currentFilters })
+    const orderBy = currentFilters.order_by || 'balance'
+    const order = currentFilters.order || 'desc'
+
+    Api.getIdentities(page, count, order, orderBy, { includeMasternodes, filters: currentFilters })
       .then(res => {
         if (res.pagination.total === -1) {
           setCurrentPage(0)
@@ -140,32 +137,14 @@ function Identities ({ defaultPage = 1, defaultPageSize, defaultShowAll = false 
           />
         </div>
 
-        <InfoContainer styles={['tabs']} className={'IdentitiesPage__IntroTabs'}>
-          <Tabs>
-            <TabList>
-              <Tab>Top Identities</Tab>
-              <Tab>Identities Growth</Tab>
-            </TabList>
-            <TabPanels>
-              <TabPanel>
-                <TopIdentities/>
-              </TabPanel>
-              <TabPanel>
-                <IdentitiesGrowthChart
-                  blockBorders={false}
-                  useInfoBlock={false}
-                  className={'IdentitiesPage__IdentitiesCountChart'}
-                />
-              </TabPanel>
-            </TabPanels>
-          </Tabs>
-        </InfoContainer>
+        <IdentitiesGrowthChartCompact className={'IdentitiesPage__GrowthChart'}/>
 
         {!identities.error
           ? !identities.loading
               ? <IdentitiesList
                   identities={identities.data.resultSet}
-                  sort={{ order_by: filters.order_by, order: filters.order }}
+                  sort={{ order_by: filters.order_by || 'balance', order: filters.order || 'desc' }}
+                  page={currentPage}
                   onSortChange={(next) => {
                     setFilters(next)
                     setCurrentPage(0)

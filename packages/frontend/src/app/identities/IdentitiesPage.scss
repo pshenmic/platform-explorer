@@ -28,28 +28,8 @@
     flex-shrink: 0;
   }
 
-  &__IntroTabs {
-    width: 100%;
-    padding-bottom: 0;
+  &__GrowthChart {
     margin-bottom: 1.5rem;
-
-    .TimeframeSelector__Button {
-      top: -2px !important;
-    }
-
-    .ChartBlock {
-      &--MenuIsOpen {
-        margin-bottom: -52px !important;
-      }
-    }
-  }
-
-  &__IdentitiesCountChart {
-    overflow: visible !important;
-
-    .Chart {
-      overflow: visible !important;
-    }
   }
 
   @media screen and (max-width: $breakpoint-md) {
