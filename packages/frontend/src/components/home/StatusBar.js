@@ -4,19 +4,10 @@ import Link from 'next/link'
 import { Flex, Progress } from '@chakra-ui/react'
 import EpochProgress from '../networkStatus/EpochProgress'
 import { useCountUp } from './hooks'
-import { compact, isNetworkLive, isApiOperational } from './utils'
+import { compact } from './utils'
 import { StatusCell } from './StatusCell'
-import { VersionLink } from './VersionLink'
 import { ContestedCell } from './ContestedCell'
 import { TotalVotesCell } from './TotalVotesCell'
-
-function ShieldGlyph ({ className }) {
-  return (
-    <svg className={className} viewBox={'0 0 12 12'} aria-hidden={'true'}>
-      <path d={'M6 0.6 1.3 2.3v3.3c0 3 2 4.8 4.7 5.8 2.7-1 4.7-2.8 4.7-5.8V2.3L6 0.6Z'}/>
-    </svg>
-  )
-}
 
 function MasternodesHint () {
   return (
@@ -52,8 +43,6 @@ function VotesHint ({ topVotedResource }) {
 }
 
 export function StatusBar ({ status, contested, activeContested, latestContested, latestVotes, validators, validatorsActive, epochData, rate }) {
-  const live = isNetworkLive(status)
-  const apiOk = isApiOperational(status)
   const epoch = status?.epoch
 
   const contestedCount = contested?.data?.totalContestedResources
@@ -75,61 +64,45 @@ export function StatusBar ({ status, contested, activeContested, latestContested
     <Flex className={'HomeHero__StatusBar'}>
       <StatusCell label={'Epoch'} hint={'A fixed ~9-day window the network runs in. A new epoch starts automatically when the timer ends.'}>
         {typeof epoch?.number === 'number'
-          ? <span className={'HomeHero__Epoch'}>
-              #{epoch.number}
+          ? <div className={'HomeHero__Gov'}>
+              <div className={'HomeHero__GovLeft'}>
+                <span className={'HomeHero__GovCount'}>#{epoch.number}</span>
+                <span className={'HomeHero__GovCountLabel'}>epoch</span>
+              </div>
               {epoch?.startTime && epoch?.endTime &&
                 <EpochProgress className={'HomeHero__EpochProgress'} epoch={epoch}/>}
-            </span>
+            </div>
           : 'n/a'}
       </StatusCell>
 
-      <StatusCell
-        label={'Status'}
-        hint={`Network: ${live ? 'live' : 'stalled'} (${status?.network || 'n/a'}) · API: ${apiOk ? 'operational' : 'disrupted'}. Network = blocks are being produced; API = the explorer data service is responding.`}
-      >
-        <span className={'HomeHero__StatusLines'}>
-          <span className={'HomeHero__StatusLine'}>
-            <i className={`HomeHero__DotMark ${live ? 'is-ok' : 'is-down'}`} aria-hidden={'true'}/>
-            {status?.network || 'n/a'}
-          </span>
-          <span className={'HomeHero__StatusLine'}>
-            <i className={`HomeHero__DotMark ${apiOk ? 'is-ok' : 'is-down'}`} aria-hidden={'true'}/>
-            {apiOk ? 'operational' : 'disrupted'}
-          </span>
-        </span>
-      </StatusCell>
-
-      <StatusCell label={'Versions'} hint={'Software the network runs — Drive stores data; Tenderdash (TD) keeps all nodes in agreement.'}>
-        {status?.versions?.software?.drive !== undefined || status?.versions?.software?.tenderdash
-          ? <span className={'HomeHero__Versions'}>
-              <VersionLink label={'Drive'} version={status?.versions?.software?.drive} href={'https://github.com/dashpay/platform/releases'}/>
-              <VersionLink label={'TD'} version={status?.versions?.software?.tenderdash} href={'https://github.com/dashpay/tenderdash/releases'}/>
-            </span>
-          : '-'}
-      </StatusCell>
-
       <StatusCell label={'Masternodes'} hint={<MasternodesHint/>}>
-        <span className={'HomeHero__MnStack'}>
-          <Link href={'/validators'} className={'HomeHero__MnHead'}>
-            <ShieldGlyph className={'HomeHero__MnShield'}/>
-            {typeof masternodesAnimated === 'number' ? masternodesAnimated : '-'}
-          </Link>
-
-          {validatorsTotal > 0 && typeof activeTotal === 'number' &&
-            <span className={'HomeHero__MnBar'}>
-              <Progress
-                className={'HomeHero__MnProgress'}
-                value={Math.min(100, (activeTotal / validatorsTotal) * 100)}
-                size={'xs'}
-              />
-              <span className={'HomeHero__MnBarLabel'}>{activeTotal} active</span>
-            </span>}
+        <div className={'HomeHero__Gov'}>
+          <div className={'HomeHero__GovLeft'}>
+            <Link
+              href={'/validators'}
+              className={'HomeHero__GovCount'}
+              aria-label={`${validatorsTotal || 0} masternodes${typeof activeTotal === 'number' ? `, ${activeTotal} active` : ''}`}
+            >
+              {typeof masternodesAnimated === 'number' ? masternodesAnimated : '-'}
+              {typeof activeTotal === 'number' &&
+                <span className={'HomeHero__MnActive'}>/ {activeTotal}</span>}
+            </Link>
+            {validatorsTotal > 0 && typeof activeTotal === 'number' &&
+              <span className={'HomeHero__MnBar'}>
+                <Progress
+                  className={'HomeHero__MnProgress'}
+                  value={Math.min(100, (activeTotal / validatorsTotal) * 100)}
+                  size={'xs'}
+                />
+              </span>}
+          </div>
 
           {securedDash &&
-            <span className={'HomeHero__MnSecured'}>
-              {compact(securedDash)} DASH{securedUsd ? ` · ~$${compact(securedUsd)}` : ''}
-            </span>}
-        </span>
+            <div className={'HomeHero__MnSecured'}>
+              <span className={'HomeHero__MnDash'}>{compact(securedDash)} DASH</span>
+              {securedUsd && <span className={'HomeHero__MnUsd'}>≈ ${compact(securedUsd)}</span>}
+            </div>}
+        </div>
       </StatusCell>
 
       <StatusCell

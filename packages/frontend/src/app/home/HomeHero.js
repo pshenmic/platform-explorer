@@ -2,7 +2,7 @@
 
 import { Box, Heading, Text } from '@chakra-ui/react'
 import { TimeDelta, BigNumber } from '../../components/data'
-import { MetricWave, StatusBar } from '../../components/home'
+import { MetricWave, StatusBar, HeroMeta } from '../../components/home'
 import { useCountUp } from '../../components/home/hooks'
 import './HomeHero.scss'
 
@@ -14,6 +14,8 @@ export default function HomeHero ({ status, loading, avgBlockTimeSec, contested,
   return (
     <Box className={'InfoBlock InfoBlock--NoBorder HomeHero'}>
       <div className={'HomeHero__Glow'} aria-hidden={'true'}/>
+
+      <HeroMeta status={status}/>
 
       <Box className={'HomeHero__Inner'}>
         <div className={'HomeHero__Brand'}>

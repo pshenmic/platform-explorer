@@ -1,7 +1,6 @@
 'use client'
 
 import { Tooltip } from '../ui/Tooltips'
-import { currencyRound } from '../../util'
 import { useCountUp } from './hooks'
 
 const METRICS = [
@@ -13,12 +12,12 @@ const METRICS = [
 
 // 0..100 viewBox vertices: start (under subhead) → 4 metric waves → end (under live meta)
 const WAVE_POINTS = [
-  { x: 2, y: 62 },
+  { x: 0, y: 62 },
   { x: 23, y: 20, metric: 0 },
   { x: 44, y: 52, metric: 1 },
   { x: 64, y: 26, metric: 2 },
   { x: 83, y: 56, metric: 3 },
-  { x: 98, y: 40 }
+  { x: 100, y: 40 }
 ]
 
 const WAVE_LINE_D = `M ${WAVE_POINTS.map(p => `${p.x} ${p.y}`).join(' L ')}`
@@ -26,7 +25,7 @@ const WAVE_AREA_D = `M ${WAVE_POINTS[0].x} 100 L ${WAVE_POINTS.map(p => `${p.x} 
 
 function MetricPoint ({ node, value, x, y }) {
   const animated = useCountUp(typeof value === 'number' ? value : null)
-  const display = (typeof animated === 'number' || typeof animated === 'string') ? currencyRound(animated) : '-'
+  const display = typeof animated === 'number' ? animated.toLocaleString('en-US') : (animated ?? '-')
 
   return (
     <Tooltip title={node.label} content={node.hint} placement={'top'}>

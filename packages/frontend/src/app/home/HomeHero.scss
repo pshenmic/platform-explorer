@@ -269,92 +269,60 @@
     transition: color .15s;
   }
 
-  &__Versions {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
+  // top ribbon strip: Network · API · Drive · Tenderdash in one evenly-spread row
+  &__Meta {
+    position: relative;
+    z-index: 1;
+    display: flex;
     flex-wrap: wrap;
-  }
-
-  // Version "release tag" pill — quiet, brightens + reveals the ↗ on hover.
-  &__VersionTag {
-    display: inline-flex;
     align-items: center;
-    gap: 5px;
-    padding: 2px 7px;
-    border-radius: 6px;
-    border: 1px solid rgba(var(--chakra-colors-brand-normal-rgb), 0.22);
-    background: rgba(var(--chakra-colors-brand-normal-rgb), 0.07);
-    font-family: $font-mono;
-    line-height: 1.4;
-    transition: border-color .15s, background-color .15s;
+    justify-content: space-between;
+    gap: 14px 28px;
+    padding: 11px 40px;
+    border-bottom: 1px solid rgba(var(--chakra-colors-gray-800-rgb), 0.6);
 
-    &:hover {
-      border-color: rgba(var(--chakra-colors-brand-normal-rgb), 0.5);
-      background: rgba(var(--chakra-colors-brand-normal-rgb), 0.14);
-
-      .HomeHero__VersionGlyph { fill: $color-brand-light; }
-      .HomeHero__VersionArrow { color: $color-brand-light; opacity: 1; }
-    }
-
-    &:focus-visible {
-      outline: 1px solid $color-brand-normal;
-      outline-offset: 2px;
+    @media screen and (max-width: $breakpoint-lg) {
+      justify-content: flex-start;
+      padding: 11px 24px;
     }
   }
 
-  &__VersionGlyph {
-    width: 9px;
-    height: 9px;
-    flex-shrink: 0;
-    fill: rgba(var(--chakra-colors-brand-normal-rgb), 0.7);
-    transition: fill .15s;
+  &__MetaItem {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 7px;
   }
 
-  &__VersionName {
+  &__MetaLabel {
     font-size: 0.625rem;
+    font-family: $font-mono;
     text-transform: uppercase;
-    letter-spacing: 0.06em;
+    letter-spacing: 0.08em;
     color: var(--chakra-colors-gray-500);
   }
 
-  &__VersionNum {
-    font-size: 0.75rem;
-    color: #fff;
-  }
-
-  // pre-release suffix (rc.2 / dev.3) — tiny muted sub-tag
-  &__VersionPre {
-    font-size: 0.5625rem;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-    color: var(--chakra-colors-gray-250);
-    background: rgba(255, 255, 255, 0.08);
-    border-radius: 4px;
-    padding: 0 4px;
-  }
-
-  &__VersionArrow {
-    flex-shrink: 0;
-    color: rgba(var(--chakra-colors-brand-normal-rgb), 0.7);
-    opacity: 0.75;
-    transition: color .15s, opacity .15s;
-  }
-
-  // Status cell: two "dot + text" lines (network name / API status)
-  &__StatusLines {
-    display: flex;
-    flex-direction: column;
-    gap: 3px;
-  }
-
-  &__StatusLine {
+  &__MetaValue {
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    font-size: 0.75rem;
+    min-width: 0;
+    font-size: 0.8125rem;
+    font-family: $font-mono;
     color: #fff;
-    white-space: nowrap;
+  }
+
+  &__MetaVer {
+    transition: color .15s;
+
+    .chakra-icon {
+      color: rgba(var(--chakra-colors-brand-normal-rgb), 0.7);
+      transition: color .15s;
+    }
+
+    &:hover {
+      color: $color-brand-light;
+      .chakra-icon { color: $color-brand-light; }
+    }
   }
 
   &__DotMark {
@@ -426,74 +394,60 @@
     white-space: nowrap;
   }
 
-  // Masternodes cell: shield + count, active-ratio bar, secured value
-  &__MnStack {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  &__MnHead {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    color: #fff;
-    transition: color .15s;
-
-    &:hover {
-      color: $color-brand-normal;
-
-      .HomeHero__MnShield { fill: $color-brand-light; }
-    }
-  }
-
-  &__MnShield {
-    width: 12px;
-    height: 12px;
-    flex-shrink: 0;
-    fill: rgba(var(--chakra-colors-brand-normal-rgb), 0.85);
-    transition: fill .15s;
+  // Masternodes cell: reuses __Gov 2-column pattern (count + active/bar | secured)
+  &__MnActive {
+    margin-left: 3px;
+    font-size: 0.9375rem;
+    font-style: italic;
+    color: $color-brand-light;
   }
 
   &__MnBar {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    margin-top: 5px;
+    display: block;
+    width: 100%;
+    margin-top: 6px;
   }
 
   &__MnProgress {
-    flex: 1;
-    min-width: 40px;
-    max-width: 84px;
+    width: 100%;
     border-radius: 999px;
     overflow: hidden;
   }
 
-  &__MnBarLabel {
-    font-size: 0.5625rem;
-    font-family: $font-mono;
-    color: var(--chakra-colors-gray-500);
-    white-space: nowrap;
-  }
-
   &__MnSecured {
-    display: block;
-    margin-top: 4px;
-    font-size: 0.625rem;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    text-align: right;
+    flex-shrink: 0;
+  }
+
+  &__MnDash {
     font-family: $font-mono;
+    font-size: 0.8125rem;
+    color: #fff;
+    white-space: nowrap;
+  }
+
+  &__MnUsd {
+    margin-top: 2px;
+    font-family: $font-mono;
+    font-size: 0.625rem;
     color: var(--chakra-colors-gray-500);
     white-space: nowrap;
   }
 
-  &__Epoch {
-    display: inline-flex;
-    flex-direction: column;
-  }
-
+  // Epoch cell: reuses __Gov pattern — big #number left, EpochProgress right
   &__EpochProgress {
-    min-width: 120px;
-    margin-top: 2px;
+    flex-shrink: 0;
+    min-width: 104px;
+    align-self: center;
+
+    .EpochProgress__Info {
+      justify-content: flex-end;
+      margin-top: 5px;
+      font-size: 0.625rem;
+    }
   }
 
   // Metric wave: trading-style line under the subhead with the 4 metrics as points
@@ -502,7 +456,7 @@
     width: 100%;
     height: 210px;
     margin-top: 4px;
-    padding: 0 40px;
+    padding: 0;
 
     @media screen and (max-width: $breakpoint-lg) {
       height: auto;
@@ -544,7 +498,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 4px;
+    gap: 12px;
     cursor: default;
     outline: none;
 
@@ -616,7 +570,6 @@
     min-width: 0;
     text-align: right;
     padding-left: 2rem;
-    border-left: 1px solid rgba(var(--chakra-colors-gray-800-rgb), 0.6);
 
     @media screen and (max-width: $breakpoint-lg) {
       align-items: flex-start;
