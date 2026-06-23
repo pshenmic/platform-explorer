@@ -6,6 +6,11 @@
   @include mixins.DefListItem;
   display: block;
 
+  // copy button revealed only on row hover (no per-row clutter)
+  .Identifier__CopyButton { opacity: 0; pointer-events: none; transition: opacity .15s; }
+  &:hover .Identifier__CopyButton,
+  &:focus-within .Identifier__CopyButton { opacity: 1; pointer-events: auto; }
+
   &__Content {
     @include identities.Columns();
   }
@@ -25,5 +30,10 @@
       font-size: 0.75rem;
       color: var(--chakra-colors-white-50);
     }
+  }
+
+  &__IdentifierContainer {
+    flex: 1;
+    min-width: 0;
   }
 }
