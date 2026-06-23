@@ -45,6 +45,11 @@
     &--Active {
       color: var(--chakra-colors-brand-normal);
     }
+
+    // hide the sortable Documents header together with its column on narrow
+    @container (max-width: 48rem) {
+      &--DocumentsCount { display: none; }
+    }
   }
 
   &__SortSpacer {
