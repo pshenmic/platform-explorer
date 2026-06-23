@@ -19,24 +19,6 @@ function BlocksListItem ({ block, absoluteDate }) {
       }`}
     >
       <Grid className={'BlocksListItem__Content'}>
-        <GridItem
-          className={`BlocksListItem__Column BlocksListItem__Column--Timestamp ${
-            absoluteDate ? 'BlocksListItem__Column--TimestampAbsolute' : ''
-          }`}
-        >
-          {header?.timestamp
-            ? absoluteDate
-              ? <DateBlock
-                  format={'dateOnly'}
-                  showTime={true}
-                  timestamp={header.timestamp}
-                  showRelativeTooltip={true}
-                />
-              : <TimeDelta showTimestampTooltip={true} endDate={new Date(header.timestamp)}/>
-            : <NotActive/>
-          }
-        </GridItem>
-
         <GridItem className={'BlocksListItem__Column BlocksListItem__Column--Height'}>
           <BlockIcon w={'1.125rem'} h={'1.125rem'} mr={'0.5rem'}/>
           {header?.height ?? <NotActive>-</NotActive>}
@@ -44,7 +26,7 @@ function BlocksListItem ({ block, absoluteDate }) {
 
         <GridItem className={'BlocksListItem__Column BlocksListItem__Column--Hash'}>
           {typeof header?.hash === 'string' &&
-            <Identifier className={'BlocksListItem__Hash'} styles={['highlight-both']}>
+            <Identifier className={'BlocksListItem__Hash'} middleEllipsis={true} copyButton={true}>
               {header?.hash}
             </Identifier>
           }
@@ -60,9 +42,9 @@ function BlocksListItem ({ block, absoluteDate }) {
             }}
           >
             <Identifier
-              styles={['highlight-both']}
-              linesAdjustment={false}
+              middleEllipsis={true}
               avatar={true}
+              copyButton={true}
             >
               {header?.validator}
             </Identifier>
@@ -81,6 +63,24 @@ function BlocksListItem ({ block, absoluteDate }) {
             <Badge>
               {txs.length}
             </Badge>
+          }
+        </GridItem>
+
+        <GridItem
+          className={`BlocksListItem__Column BlocksListItem__Column--Timestamp ${
+            absoluteDate ? 'BlocksListItem__Column--TimestampAbsolute' : ''
+          }`}
+        >
+          {header?.timestamp
+            ? absoluteDate
+              ? <DateBlock
+                  format={'dateOnly'}
+                  showTime={true}
+                  timestamp={header.timestamp}
+                  showRelativeTooltip={true}
+                />
+              : <TimeDelta showTimestampTooltip={true} endDate={new Date(header.timestamp)}/>
+            : <NotActive/>
           }
         </GridItem>
       </Grid>

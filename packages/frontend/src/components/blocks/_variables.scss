@@ -9,80 +9,96 @@
 
   @container (min-width: 90em) {
     grid-template-columns:
-    $timeSpanWidth // time
     5.3rem // height
-    minmax(0, 500rem) // hash
-    35rem // proposed by
+    minmax(0, 1fr) // hash
+    minmax(0, 1fr) // proposed by
     minmax(5rem, 15rem) // fees
-    4.75rem; // tx count
+    4.75rem // tx count
+    $timeSpanWidth; // time
   }
 
   grid-template-columns:
-    $timeSpanWidth // time
     5.3rem // height
-    minmax(0, 60rem) // hash
-    16.5rem // proposed by
+    minmax(0, 1fr) // hash
+    minmax(0, 1fr) // proposed by
     minmax(5rem, 8rem) // fees
-    4.75rem; // tx count
+    4.75rem // tx count
+    $timeSpanWidth; // time
 
   @container (max-width: 56em) {
     grid-template-columns:
-      $timeSpanWidth // time
       5.3rem // height
-      minmax(0, 30rem) // hash
-      6.25rem // proposed by
+      minmax(0, 1fr) // hash
+      minmax(0, 1fr) // proposed by
       minmax(5rem, 8rem) // fees
-      4.75rem; // tx count
+      4.75rem // tx count
+      $timeSpanWidth; // time
   }
 
   @container (max-width: 46.5em) {
     grid-template-columns:
-      $timeSpanWidth // time
       5.3rem // height
-      minmax(0, 30rem) // hash
-      6.25rem // proposed by
-      4.75rem; // tx count
+      minmax(0, 1fr) // hash
+      minmax(0, 1fr) // proposed by
+      4.75rem // tx count
+      $timeSpanWidth; // time
   }
 
   @container (max-width: 37.5em) {
     grid-template-columns:
-      $timeSpanWidth // time
       5.3rem // height
-      minmax(0, 30rem) // hash
-      4.75rem; // tx count
+      minmax(0, 1fr) // hash
+      4.75rem // tx count
+      $timeSpanWidth; // time
   }
 
   @container (max-width: 30em) {
     grid-template-columns:
-      $timeSpanWidth // time
       5.3rem // height
-      minmax(0, 30rem); // hash
+      minmax(0, 1fr) // hash
+      $timeSpanWidth; // time
   }
 
   @container (max-width: 24.5em) {
     grid-template-columns:
-      $timeSpanWidth // time
-      minmax(0, 400px) // hash
-      4.75rem; // tx count
+      minmax(0, 1fr) // hash
+      4.75rem // tx count
+      $timeSpanWidth; // time
   }
 
   @container (max-width: 23em) {
     grid-template-columns:
-      $timeSpanWidth // time
-      minmax(0, 400px); // hash
+      minmax(0, 1fr) // hash
+      $timeSpanWidth; // time
   }
 }
 
 @mixin Column () {
   display: flex;
   align-items: center;
+  justify-content: center;
+  text-align: center;
+
+  &--Height,
+  &--Hash,
+  &--Validator {
+    justify-content: flex-start;
+    text-align: left;
+  }
 
   &:last-child {
     text-align: right;
+    justify-content: flex-end;
+    white-space: nowrap;
   }
 
   &--Fees {
     width: 5rem;
+    font-variant-numeric: tabular-nums;
+  }
+
+  &--Txs {
+    font-variant-numeric: tabular-nums;
   }
 
   @container (max-width: 46.5em) {
