@@ -5,66 +5,76 @@
   gap: 16px;
 
   grid-template-columns:
-    minmax(120px, 120px) // time
-    minmax(90px, 110px) // status
-    minmax(0, 600px) // hash
-    minmax(70px, 90px) // block
-    auto // gas used
-    minmax(0, 400px) // owner
-    150px; // type
+    6.5rem // status
+    minmax(0, 1fr) // hash
+    6rem // block
+    11rem // gas used
+    minmax(0, 1fr) // owner
+    10rem // type
+    10.5rem; // time
 
   @container (max-width: 810px) {
-    grid-template-columns: 
-      minmax(120px, 120px)
-      minmax(0, 240px)
-      minmax(0, 1fr)
-      auto;
+    grid-template-columns:
+      minmax(0, 1fr) // hash
+      minmax(0, 1fr) // owner
+      10rem // type
+      10.5rem; // time
   }
 
   @container (max-width: 660px) {
-    grid-template-columns: 
-      minmax(120px, 120px)
-      minmax(0, 600px)
-      20px
-      auto;
+    grid-template-columns:
+      minmax(0, 1fr) // hash
+      20px // owner
+      10rem // type
+      10.5rem; // time
   }
 
   @container (max-width: 430px) {
     gap: 12px;
-    grid-template-columns: 
-      minmax(120px, 120px)
-      minmax(0, 600px)
-      auto;
+    grid-template-columns:
+      minmax(0, 1fr) // hash
+      8rem // type
+      9rem; // time
   }
 
   @container (max-width: 400px) {
-    grid-template-columns: 
-      minmax(80px, 80px)
-      minmax(0, 600px)
-      auto;
+    grid-template-columns:
+      minmax(0, 1fr) // hash
+      7rem // type
+      8rem; // time
   }
 }
 
 @mixin Column () {
   display: flex;
   align-items: center;
+  justify-content: center;
+  text-align: center;
 
-  &--Hash {
-    max-width: 600px;
+  &--Status,
+  &--Hash,
+  &--Owner {
+    justify-content: flex-start;
+    text-align: left;
   }
 
   &--Owner {
-    max-width: 400px;
+    min-width: 0;
     width: 100%;
   }
 
   &--Type {
-    justify-content: flex-end;
     white-space: nowrap;
   }
 
   &--GasUsed {
-    width: 150px;
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+  }
+
+  &--Timestamp {
+    justify-content: flex-end;
+    text-align: right;
   }
 
   @container (max-width: 810px) {
