@@ -3,6 +3,9 @@
 
 // Network overview: shared header row — label (left) + meta strip (right), one hairline below.
 .HomeOverview {
+  // trim the oversized InfoBlock bottom padding under the status row
+  &.InfoBlock { padding-bottom: 22px !important; }
+
   // header band broken out of the block padding: badge + meta on one centered row,
   // hairline directly under the badge, full width.
   &__Head {
@@ -11,12 +14,12 @@
     justify-content: space-between;
     flex-wrap: wrap;
     gap: 10px 1.5rem;
-    margin: -20px -32px 18px;
+    margin: -20px -32px 30px;
     padding: 0 32px 0 0;
     border-bottom: 1px solid rgba(var(--chakra-colors-gray-800-rgb), 0.6);
 
     @media screen and (max-width: $breakpoint-lg) {
-      margin: -20px -16px 18px;
+      margin: -20px -16px 30px;
       padding: 0 16px 0 0;
     }
   }
