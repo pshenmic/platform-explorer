@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { Flex } from '@chakra-ui/react'
+import { BigNumber } from '../data'
 import EpochProgress from '../networkStatus/EpochProgress'
 import { useCountUp } from './hooks'
 import { compact } from './utils'
@@ -74,23 +75,18 @@ export function StatusBar ({ status, contested, activeContested, latestContested
           : 'n/a'}
       </StatusCell>
 
-      <StatusCell label={'Value locked'} hint={<MasternodesHint/>}>
-        <div className={'HomeHero__Gov'}>
-          <div className={'HomeHero__GovLeft'}>
-            <Link
-              href={'/validators'}
-              className={'HomeHero__GovCount'}
-              aria-label={securedDash ? `${securedDash} DASH locked by masternodes` : 'masternodes collateral'}
-            >
-              {lockedAnimated != null ? compact(lockedAnimated) : '-'}
-            </Link>
-            <span className={'HomeHero__GovCountLabel'}>DASH locked</span>
-          </div>
-
+      <StatusCell label={'Value'} hint={<MasternodesHint/>}>
+        <div className={'HomeHero__GovLeft'}>
+          <Link
+            href={'/validators'}
+            className={'HomeHero__GovCount HomeHero__Value'}
+            aria-label={securedDash ? `${securedDash} DASH locked by masternodes` : 'masternodes collateral'}
+          >
+            {lockedAnimated != null ? <BigNumber>{lockedAnimated}</BigNumber> : '-'}
+            <span className={'HomeHero__ValueUnit'}>DASH</span>
+          </Link>
           {securedUsd &&
-            <div className={'HomeHero__MnSecured'}>
-              <span className={'HomeHero__MnUsd'}>≈ ${compact(securedUsd)}</span>
-            </div>}
+            <span className={'HomeHero__ValueUsd'}>≈ ${compact(securedUsd)}</span>}
         </div>
       </StatusCell>
 
