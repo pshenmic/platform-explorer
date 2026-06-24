@@ -3,6 +3,7 @@
 import { Box, Heading, Text } from '@chakra-ui/react'
 import { TimeDelta, BigNumber } from '../../components/data'
 import { useCountUp } from '../../components/home/hooks'
+import { HeroNodes } from '../../components/home'
 import './HomeHero.scss'
 
 export default function HomeHero ({ status, loading, avgBlockTimeSec }) {
@@ -13,6 +14,7 @@ export default function HomeHero ({ status, loading, avgBlockTimeSec }) {
   return (
     <Box className={'InfoBlock InfoBlock--NoBorder HomeHero'}>
       <div className={'HomeHero__Glow'} aria-hidden={'true'}/>
+      <HeroNodes/>
 
       <Box className={'HomeHero__Inner'}>
         <div className={'HomeHero__Brand'}>
