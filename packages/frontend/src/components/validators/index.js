@@ -1,13 +1,13 @@
 import { ValidatorsList, ValidatorsListSceleton } from './ValidatorsList'
 import ValidatorCard from './ValidatorCard'
-import ValidatorsDashboardCards from './ValidatorsDashboardCards'
+import ValidatorsStatsInline from './ValidatorsStatsInline'
 import { ValidatorsFilter } from './ValidatorsFilter'
 import { useValidatorsFilters } from './hooks'
 
 export {
   ValidatorsList,
   ValidatorCard,
-  ValidatorsDashboardCards,
+  ValidatorsStatsInline,
   ValidatorsFilter,
   useValidatorsFilters,
   ValidatorsListSceleton
