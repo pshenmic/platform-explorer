@@ -1,0 +1,93 @@
+@import '../../styles/variables.scss';
+
+.MasternodesDonut {
+  &__Head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 6px;
+  }
+
+  &__Body {
+    height: 200px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+  }
+
+  &__Empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    font-size: 0.8125rem;
+    color: var(--chakra-colors-gray-500);
+  }
+
+  &__Svg {
+    display: block;
+    width: 132px;
+    height: 132px;
+  }
+
+  &__Track {
+    stroke: rgba(255, 255, 255, 0.08);
+  }
+
+  &__Arc {
+    stroke: $color-brand-normal;
+    filter: drop-shadow(0 0 6px rgba(var(--chakra-colors-brand-normal-rgb), 0.5));
+    transition: stroke-dashoffset 0.6s ease;
+  }
+
+  &__Total {
+    fill: #fff;
+    font-family: $font-heading;
+    font-weight: 800;
+    font-style: italic;
+  }
+
+  &__TotalLabel {
+    fill: var(--chakra-colors-gray-500);
+    font-family: $font-mono;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  &__Legend {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    font-family: $font-mono;
+    font-size: 0.75rem;
+    color: var(--chakra-colors-gray-250);
+  }
+
+  &__LegendItem {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  &__Dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+
+    &--active { background: $color-brand-normal; }
+    &--inactive { background: rgba(255, 255, 255, 0.18); }
+  }
+
+  &__Caption {
+    font-family: $font-mono;
+    font-size: 0.6875rem;
+    color: var(--chakra-colors-gray-500);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    &__Arc { transition: none; }
+  }
+}
