@@ -2,11 +2,10 @@
 
 import { Box, Heading, Text } from '@chakra-ui/react'
 import { TimeDelta, BigNumber } from '../../components/data'
-import { MetricWave, StatusBar, HeroMeta } from '../../components/home'
 import { useCountUp } from '../../components/home/hooks'
 import './HomeHero.scss'
 
-export default function HomeHero ({ status, loading, avgBlockTimeSec, contested, activeContested, latestContested, latestVotes, validators, validatorsActive, epochData, rate }) {
+export default function HomeHero ({ status, loading, avgBlockTimeSec }) {
   const height = status?.api?.block?.height
   const lastBlockTimestamp = status?.api?.block?.timestamp
   const heightCount = useCountUp(typeof height === 'number' ? height : null)
@@ -15,14 +14,14 @@ export default function HomeHero ({ status, loading, avgBlockTimeSec, contested,
     <Box className={'InfoBlock InfoBlock--NoBorder HomeHero'}>
       <div className={'HomeHero__Glow'} aria-hidden={'true'}/>
 
-      <HeroMeta status={status}/>
-
       <Box className={'HomeHero__Inner'}>
         <div className={'HomeHero__Brand'}>
-          <Text className={'HomeHero__Welcome'}>Dash Platform</Text>
+          <Text className={'HomeHero__Welcome'}>Welcome to</Text>
           <Heading as={'h1'} className={'HomeHero__Title'}>Platform Explorer</Heading>
+          <Text className={'HomeHero__Tagline'}>The information resource about Dash Platform</Text>
           <Text className={'HomeHero__Description'}>
-            Real-time transactions, data contracts, documents &amp; identities — straight from the chain.
+            Your portal for real-time and historical data across the Dash blockchain &mdash; track and
+            verify transactions, identities, contracts and documents with confidence.
           </Text>
         </div>
 
@@ -38,20 +37,6 @@ export default function HomeHero ({ status, loading, avgBlockTimeSec, contested,
           </Text>
         </div>
       </Box>
-
-      <MetricWave status={status}/>
-
-      <StatusBar
-        status={status}
-        contested={contested}
-        activeContested={activeContested}
-        latestContested={latestContested}
-        latestVotes={latestVotes}
-        validators={validators}
-        validatorsActive={validatorsActive}
-        epochData={epochData}
-        rate={rate}
-      />
     </Box>
   )
 }

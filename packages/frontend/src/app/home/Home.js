@@ -4,10 +4,10 @@ import { useState, useEffect } from 'react'
 import * as Api from '../../util/Api'
 import HomeHero from './HomeHero.js'
 import EntityTables from './EntityTables.js'
-import { MetricChart } from '../../components/home'
+import { MetricChart, MetricWave, StatusBar, HeroMeta, MasternodesDonut } from '../../components/home'
 import { fetchHandlerSuccess, fetchHandlerError } from '../../util'
 import theme from '../../styles/theme'
-import { Container, Flex, SimpleGrid } from '@chakra-ui/react'
+import { Box, Container, Flex, Heading, SimpleGrid } from '@chakra-ui/react'
 import './Home.scss'
 
 function computeAvgBlockTime (blocks) {
@@ -100,11 +100,31 @@ function Home () {
   return (
     <Container maxW={'container.maxPageW'} color={'white'} px={3} py={0} mt={gap} mb={gap}>
       <Flex direction={'column'} gap={gap}>
-        <HomeHero status={status.data} loading={status.loading} avgBlockTimeSec={avgBlockTimeSec} contested={contested} activeContested={activeContested} latestContested={latestContested} latestVotes={latestVotes} validators={validators} validatorsActive={validatorsActive} epochData={epochData} rate={rate}/>
+        <HomeHero status={status.data} loading={status.loading} avgBlockTimeSec={avgBlockTimeSec}/>
 
-        <SimpleGrid columns={{ base: 1, lg: 2 }} spacing={gap} w={'100%'}>
+        <Box className={'InfoBlock InfoBlock--NoBorder HomeOverview'} w={'100%'}>
+          <div className={'HomeOverview__Head'}>
+            <Heading className={'InfoBlock__Title HomeOverview__Title'} as={'h2'}>Network overview</Heading>
+            <HeroMeta status={status.data}/>
+          </div>
+          <MetricWave status={status.data}/>
+          <StatusBar
+            status={status.data}
+            contested={contested}
+            activeContested={activeContested}
+            latestContested={latestContested}
+            latestVotes={latestVotes}
+            validators={validators}
+            validatorsActive={validatorsActive}
+            epochData={epochData}
+            rate={rate}
+          />
+        </Box>
+
+        <SimpleGrid columns={{ base: 1, lg: 3 }} spacing={gap} w={'100%'}>
           <MetricChart title={'Transactions history'} type={'bar'} fetcher={Api.getTransactionsHistory} field={'txs'} yAbbr={'txs'}/>
           <MetricChart title={'Identities growth'} type={'line'} fetcher={Api.getIdentitiesHistory} field={'registeredIdentities'} yAbbr={'identities'}/>
+          <MasternodesDonut validators={validators} validatorsActive={validatorsActive}/>
         </SimpleGrid>
 
         <EntityTables
