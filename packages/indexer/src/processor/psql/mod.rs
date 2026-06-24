@@ -3,7 +3,7 @@ mod dao;
 use crate::decoder::decoder::StateTransitionDecoder;
 use crate::entities::data_contract::DataContract;
 use crate::entities::document::Document;
-use crate::processor::psql::dao::PostgresDAO;
+pub use crate::processor::psql::dao::PostgresDAO;
 use dashcore_rpc::Client;
 use data_contracts::SystemDataContract;
 use deadpool_postgres::{PoolError, Transaction};

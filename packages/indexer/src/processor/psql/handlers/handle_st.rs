@@ -369,7 +369,15 @@ impl PSQLProcessor {
             StateTransition::Unshield(_) => {}
             StateTransition::ShieldFromAssetLock(_) => {}
             StateTransition::ShieldedWithdrawal(_) => {}
-            StateTransition::IdentityCreateFromShieldedPool(_) => {}
+            StateTransition::IdentityCreateFromShieldedPool(st) => {
+                self.handle_identity_create_from_shielded_pool(st, st_hash, sql_transaction)
+                    .await;
+
+                println!(
+                    "Processed IdentityCreateFromShieldedPool at block hash {}",
+                    block_hash
+                );
+            }
         }
     }
 }
