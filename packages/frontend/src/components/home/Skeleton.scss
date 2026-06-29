@@ -1,0 +1,17 @@
+@import '../../styles/variables.scss';
+
+.Skeleton {
+  display: inline-block;
+  flex-shrink: 0;
+  background: rgba(var(--chakra-colors-brand-normal-rgb), 0.13);
+  animation: SkeletonPulse 1.4s ease-in-out infinite;
+}
+
+@keyframes SkeletonPulse {
+  0%, 100% { opacity: 0.45; }
+  50% { opacity: 0.9; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .Skeleton { animation: none; opacity: 0.5; }
+}
