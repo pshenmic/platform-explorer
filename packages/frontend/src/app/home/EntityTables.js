@@ -2,8 +2,6 @@
 
 import Link from 'next/link'
 import { Box, Flex, Heading } from '@chakra-ui/react'
-import BlocksList from '../../components/blocks/BlocksList'
-import TransactionsList from '../../components/transactions/TransactionsList'
 import DataContractsList from '../../components/dataContracts/DataContractsList'
 import IdentitiesList from '../../components/identities/IdentitiesList'
 import { ErrorMessageBlock } from '../../components/Errors'
@@ -27,17 +25,9 @@ function Section ({ title, viewAll, state, children }) {
   )
 }
 
-function EntityTables ({ blocks, transactions, dataContracts, identities, rate }) {
+function EntityTables ({ dataContracts, identities }) {
   return (
     <Flex direction={'column'} gap={3} w={'100%'} className={'EntityTables'}>
-      <Section title={'Latest Blocks'} viewAll={'/blocks'} state={blocks}>
-        <BlocksList blocks={blocks.data?.resultSet || []} absoluteDate={true}/>
-      </Section>
-
-      <Section title={'Latest Transactions'} viewAll={'/transactions'} state={transactions}>
-        <TransactionsList transactions={transactions.data?.resultSet || []} rate={rate?.data} absoluteDate={true}/>
-      </Section>
-
       <Section title={'Latest Data Contracts'} viewAll={'/dataContracts'} state={dataContracts}>
         <DataContractsList dataContracts={dataContracts.data?.resultSet || []}/>
       </Section>

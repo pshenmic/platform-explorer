@@ -1,45 +1,83 @@
 @use '../../styles/mixins.scss';
 @import '../../styles/variables.scss';
 
-// Network overview: shared header row — label (left) + meta strip (right), one hairline below.
+// Network overview: asymmetric — narrow system rail (left) + wide latest-transactions feed (right).
+// Telemetry is secondary reference info, so it gets a slim column; the live feed gets the space.
 .HomeOverview {
-  // trim the oversized InfoBlock bottom padding under the status row
-  &.InfoBlock { padding-bottom: 22px !important; }
+  &__Grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    margin-top: 8px;
 
-  // header band broken out of the block padding: badge + meta on one centered row,
-  // hairline directly under the badge, full width.
-  &__Head {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 10px 1.5rem;
-    margin: -20px -32px 30px;
-    padding: 0 32px 0 0;
-    border-bottom: 1px solid rgba(var(--chakra-colors-gray-800-rgb), 0.6);
-
-    @media screen and (max-width: $breakpoint-lg) {
-      margin: -20px -16px 30px;
-      padding: 0 16px 0 0;
+    @media screen and (min-width: $breakpoint-lg) {
+      grid-template-columns: 250px minmax(0, 1fr) minmax(0, 1fr);
+      gap: 0;
+      align-items: stretch;
     }
   }
 
-  // override InfoBlock__Title corner offset so the badge flows in the row, centered with meta
-  &__Title {
-    position: static !important;
-    left: 0 !important;
-    top: 0 !important;
-    margin: 0 !important;
-    flex-shrink: 0;
+  // shared column sub-label (System / Latest Transactions / Latest Blocks)
+  &__TxTitle {
+    font-size: 0.625rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--chakra-colors-gray-500);
   }
 
-  // meta spreads evenly across the row, after the badge
-  &__Head .HomeHero__Meta {
-    border-bottom: none;
-    padding: 0;
-    flex: 1 1 auto;
+  // identical header row for all three columns → titles align on one line
+  &__TxHead {
+    display: flex;
+    align-items: center;
     justify-content: space-between;
-    gap: 10px 28px;
+    gap: 1rem;
+    min-height: 30px;
+    margin-bottom: 8px;
+  }
+
+  // left rail: System header + telemetry as a flush-left key→value table on the shared 44px row grid
+  &__Sys {
+    // reset the hero-strip meta defaults (40px side padding + bottom border) for the rail context
+    .HomeHero__Meta {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      padding: 0;
+      border-bottom: none;
+    }
+
+    // same row rhythm as the tx/block lists (44px) so rows line up across columns
+    .HomeHero__MetaItem {
+      display: grid;
+      grid-template-columns: 84px 1fr;
+      align-items: center;
+      gap: 0.5rem;
+      width: 100%;
+      min-height: 44px;
+      border-bottom: 1px solid rgba(var(--chakra-colors-gray-800-rgb), 0.5);
+
+      &:last-child { border-bottom: none; }
+    }
+
+    .HomeHero__MetaLabel { text-align: left; }
+
+    @media screen and (min-width: $breakpoint-lg) {
+      border-right: 1px solid rgba(var(--chakra-colors-gray-800-rgb), 0.6);
+      padding-right: 2rem;
+
+      .HomeHero__MetaItem { font-size: 0.75rem; }
+      .HomeHero__MetaLabel,
+      .HomeHero__MetaValue { white-space: nowrap; }
+    }
+  }
+
+  // three columns separated by hairlines: System | Latest Tx | Latest Blocks
+  @media screen and (min-width: $breakpoint-lg) {
+    &__Tx {
+      padding: 0 2rem;
+      border-right: 1px solid rgba(var(--chakra-colors-gray-800-rgb), 0.6);
+    }
+    &__Blocks { padding-left: 2rem; }
   }
 }
 

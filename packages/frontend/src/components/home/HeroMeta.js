@@ -1,7 +1,9 @@
 import { ArrowCornerIcon } from '../ui/icons'
+import { Skeleton } from './Skeleton'
 import { isNetworkLive, isApiOperational } from './utils'
 
-function VersionValue ({ version, href }) {
+function VersionValue ({ version, href, loading }) {
+  if (loading) return <span className={'HomeHero__MetaValue'}><Skeleton w={'54px'} h={'0.8em'}/></span>
   if (version === undefined || version === null) return <span className={'HomeHero__MetaValue'}>-</span>
   return (
     <a
@@ -17,11 +19,12 @@ function VersionValue ({ version, href }) {
   )
 }
 
-function DotValue ({ ok, children }) {
+function DotValue ({ ok, loading, children }) {
+  const state = loading ? 'is-loading' : (ok ? 'is-ok' : 'is-down')
   return (
     <span className={'HomeHero__MetaValue'}>
-      <i className={`HomeHero__DotMark ${ok ? 'is-ok' : 'is-down'}`} aria-hidden={'true'}/>
-      {children}
+      <i className={`HomeHero__DotMark ${state}`} aria-hidden={'true'}/>
+      {loading ? <Skeleton w={'82px'} h={'0.8em'}/> : children}
     </span>
   )
 }
@@ -37,7 +40,9 @@ function MetaItem ({ label, children }) {
 
 // Network / API status + Drive / Tenderdash versions as label-over-value mini-cells
 // (consistent with the status row), between the brand block and the live block height.
-export function HeroMeta ({ status }) {
+export function HeroMeta ({ status, loading }) {
+  // until status data has actually arrived, render neutral placeholders (not a red "down" flash)
+  const ready = !loading && status && Object.keys(status).length > 0
   const live = isNetworkLive(status)
   const apiOk = isApiOperational(status)
   const drive = status?.versions?.software?.drive
@@ -46,16 +51,16 @@ export function HeroMeta ({ status }) {
   return (
     <div className={'HomeHero__Meta'}>
       <MetaItem label={'Network'}>
-        <DotValue ok={live}>{status?.network || 'n/a'}</DotValue>
+        <DotValue ok={live} loading={!ready}>{status?.network || 'n/a'}</DotValue>
       </MetaItem>
       <MetaItem label={'API'}>
-        <DotValue ok={apiOk}>{apiOk ? 'operational' : 'disrupted'}</DotValue>
+        <DotValue ok={apiOk} loading={!ready}>{apiOk ? 'operational' : 'disrupted'}</DotValue>
       </MetaItem>
       <MetaItem label={'Drive'}>
-        <VersionValue version={drive} href={'https://github.com/dashpay/platform/releases'}/>
+        <VersionValue version={drive} href={'https://github.com/dashpay/platform/releases'} loading={!ready}/>
       </MetaItem>
       <MetaItem label={'Tenderdash'}>
-        <VersionValue version={tenderdash} href={'https://github.com/dashpay/tenderdash/releases'}/>
+        <VersionValue version={tenderdash} href={'https://github.com/dashpay/tenderdash/releases'} loading={!ready}/>
       </MetaItem>
     </div>
   )

@@ -3,7 +3,6 @@
 import Link from 'next/link'
 import { Flex } from '@chakra-ui/react'
 import { BigNumber } from '../data'
-import EpochProgress from '../networkStatus/EpochProgress'
 import { useCountUp } from './hooks'
 import { compact } from './utils'
 import { StatusCell } from './StatusCell'
@@ -44,8 +43,6 @@ function VotesHint ({ topVotedResource }) {
 }
 
 export function StatusBar ({ status, contested, activeContested, latestContested, latestVotes, validators, validatorsActive, epochData, rate }) {
-  const epoch = status?.epoch
-
   const contestedCount = contested?.data?.totalContestedResources
   const votesCount = contested?.data?.totalVotesCount
   const validatorsTotal = validators?.data?.pagination?.total
@@ -62,19 +59,6 @@ export function StatusBar ({ status, contested, activeContested, latestContested
 
   return (
     <Flex className={'HomeHero__StatusBar'}>
-      <StatusCell label={'Epoch'} hint={'A fixed ~9-day window the network runs in. A new epoch starts automatically when the timer ends.'}>
-        {typeof epoch?.number === 'number'
-          ? <div className={'HomeHero__Gov'}>
-              <div className={'HomeHero__GovLeft'}>
-                <span className={'HomeHero__GovCount'}>#{epoch.number}</span>
-                <span className={'HomeHero__GovCountLabel'}>epoch</span>
-              </div>
-              {epoch?.startTime && epoch?.endTime &&
-                <EpochProgress className={'HomeHero__EpochProgress'} epoch={epoch}/>}
-            </div>
-          : 'n/a'}
-      </StatusCell>
-
       <StatusCell label={'Value'} hint={<MasternodesHint/>}>
         <div className={'HomeHero__GovLeft'}>
           <Link

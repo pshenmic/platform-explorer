@@ -1,10 +1,11 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import Link from 'next/link'
 import * as Api from '../../util/Api'
 import HomeHero from './HomeHero.js'
 import EntityTables from './EntityTables.js'
-import { MetricChart, MetricWave, StatusBar, HeroMeta, MasternodesDonut } from '../../components/home'
+import { MetricChart, EpochsOverview, StatusBar, HeroMeta, MasternodesDonut, CompactTxList, CompactBlocksList } from '../../components/home'
 import { fetchHandlerSuccess, fetchHandlerError } from '../../util'
 import theme from '../../styles/theme'
 import { Box, Container, Flex, Heading, SimpleGrid } from '@chakra-ui/react'
@@ -34,6 +35,7 @@ function Home () {
   const [latestContested, setLatestContested] = useState({ data: {}, loading: true, error: false })
   const [latestVotes, setLatestVotes] = useState({ data: {}, loading: true, error: false })
   const [epochData, setEpochData] = useState({ data: {}, loading: true, error: false })
+  const [epochs, setEpochs] = useState({ data: { list: [] }, loading: true, error: false })
   const [rate, setRate] = useState({ data: {}, loading: true, error: false })
 
   const gap = theme.blockOffset
@@ -45,6 +47,15 @@ function Home () {
         Api.getEpoch(res?.epoch?.number)
           .then(epochRes => fetchHandlerSuccess(setEpochData, epochRes))
           .catch(err => fetchHandlerError(setEpochData, err))
+
+        // last 4 epochs (oldest -> newest) for the overview wave; no list endpoint exists
+        const current = res?.epoch?.number
+        if (typeof current === 'number') {
+          const numbers = [current - 3, current - 2, current - 1, current].filter(n => n >= 0)
+          Promise.all(numbers.map(n => Api.getEpoch(n).catch(() => null)))
+            .then(results => fetchHandlerSuccess(setEpochs, { list: results.filter(Boolean) }))
+            .catch(err => fetchHandlerError(setEpochs, err))
+        }
       })
       .catch(err => fetchHandlerError(setStatus, err))
 
@@ -103,11 +114,43 @@ function Home () {
         <HomeHero status={status.data} loading={status.loading} avgBlockTimeSec={avgBlockTimeSec}/>
 
         <Box className={'InfoBlock InfoBlock--NoBorder HomeOverview'} w={'100%'}>
-          <div className={'HomeOverview__Head'}>
-            <Heading className={'InfoBlock__Title HomeOverview__Title'} as={'h2'}>Network overview</Heading>
-            <HeroMeta status={status.data}/>
+          <Heading className={'InfoBlock__Title'} as={'h2'}>Network overview</Heading>
+          <div className={'HomeOverview__Grid'}>
+            <div className={'HomeOverview__Sys'}>
+              <div className={'HomeOverview__TxHead'}>
+                <span className={'HomeOverview__TxTitle'}>System</span>
+              </div>
+              <HeroMeta status={status.data} loading={status.loading}/>
+            </div>
+            <div className={'HomeOverview__Tx'}>
+              <div className={'HomeOverview__TxHead'}>
+                <span className={'HomeOverview__TxTitle'}>Latest Transactions</span>
+                <Link href={'/transactions'} className={'HomeSection__ViewAll'}>Show more</Link>
+              </div>
+              <CompactTxList transactions={transactions.data?.resultSet} limit={7} loading={transactions.loading}/>
+            </div>
+            <div className={'HomeOverview__Blocks'}>
+              <div className={'HomeOverview__TxHead'}>
+                <span className={'HomeOverview__TxTitle'}>Latest Blocks</span>
+                <Link href={'/blocks'} className={'HomeSection__ViewAll'}>Show more</Link>
+              </div>
+              <CompactBlocksList blocks={blocks.data?.resultSet} limit={7} loading={blocks.loading}/>
+            </div>
           </div>
-          <MetricWave status={status.data}/>
+        </Box>
+
+        <Box className={'InfoBlock InfoBlock--NoBorder HomeEpochs'} w={'100%'}>
+          <Heading className={'InfoBlock__Title'} as={'h2'}>Epochs</Heading>
+          <EpochsOverview
+            epochs={epochs.data?.list}
+            currentHeight={status.data?.api?.block?.height}
+            rate={rate}
+            loading={epochs.loading}
+          />
+        </Box>
+
+        <Box className={'InfoBlock InfoBlock--NoBorder HomeStats'} w={'100%'}>
+          <Heading className={'InfoBlock__Title'} as={'h2'}>Platform stats</Heading>
           <StatusBar
             status={status.data}
             contested={contested}
@@ -128,11 +171,8 @@ function Home () {
         </SimpleGrid>
 
         <EntityTables
-          blocks={blocks}
-          transactions={transactions}
           dataContracts={latestContracts}
           identities={latestIdentities}
-          rate={rate}
         />
       </Flex>
     </Container>

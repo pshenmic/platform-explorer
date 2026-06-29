@@ -416,6 +416,18 @@
       background: var(--chakra-colors-red-400);
       box-shadow: 0 0 6px rgba(255, 80, 60, 0.7);
     }
+
+    // neutral state while status is still loading (no red flash on first paint)
+    &.is-loading {
+      background: var(--chakra-colors-gray-600, #4a5568);
+      animation: HeroMetaPulse 1.2s ease-in-out infinite;
+    }
+  }
+
+  &__MetaValue--Muted { color: var(--chakra-colors-gray-500); }
+
+  @media (prefers-reduced-motion: reduce) {
+    &__DotMark.is-loading { animation: none; }
   }
 
   // votes breakdown inside the Total-votes info tooltip
@@ -701,4 +713,179 @@
 @keyframes HomeHeroDash {
   from { stroke-dashoffset: 0; }
   to { stroke-dashoffset: -100; }
+}
+
+// gentle pulse for the neutral "loading" status dot
+@keyframes HeroMetaPulse {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 1; }
+}
+
+// Epochs overview: the KPI wave repurposed as the last 4 epochs (clickable) + selected-epoch detail.
+.EpochsWave {
+  // unlike the old KPI wave, keep the line + points ON the curve at every width
+  // (do NOT collapse the SVG/points into a 2x2 grid) so the wave never "disappears".
+  &.HomeHero__Wave {
+    @media screen and (max-width: $breakpoint-lg) {
+      display: block;
+      height: 150px;
+      margin: 4px 0 0;
+      padding: 0;
+    }
+  }
+
+  .HomeHero__WaveSvg {
+    @media screen and (max-width: $breakpoint-lg) { display: block; }
+  }
+
+  .HomeHero__WavePoint {
+    @media screen and (max-width: $breakpoint-lg) {
+      position: absolute !important;
+      transform: translate(-50%, -50%);
+    }
+  }
+
+  &--Empty {
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    color: var(--chakra-colors-gray-500);
+    font-family: $font-mono;
+    font-size: 0.8125rem;
+  }
+
+  // each epoch vertex is a button now: reset chrome, dim unselected, brighten the active one
+  &__Point {
+    appearance: none;
+    background: none;
+    border: none;
+    font: inherit;
+    cursor: pointer;
+    opacity: 0.55;
+    transition: opacity .15s;
+
+    .HomeHero__WaveValue { font-size: 1.5rem; }
+
+    // tighter on small screens so the 4 epoch numbers never collide
+    @media screen and (max-width: $breakpoint-lg) {
+      .HomeHero__WaveValue { font-size: 0.875rem; }
+      .EpochsWave__Live {
+        display: block;
+        width: fit-content;
+        margin: 2px auto 0;
+      }
+    }
+
+    &.is-active { opacity: 0.8; }
+
+    &.is-selected {
+      opacity: 1;
+
+      .HomeHero__WaveDot {
+        transform: scale(1.5);
+        box-shadow: 0 0 12px 3px rgba(var(--chakra-colors-brand-light-rgb), 0.9);
+      }
+    }
+
+    &.is-active .HomeHero__WaveDot {
+      background: $color-brand-light;
+      box-shadow: 0 0 0 4px rgba(var(--chakra-colors-brand-normal-rgb), 0.22);
+    }
+  }
+
+  // "live" pill next to the current epoch number
+  &__Live {
+    margin-left: 6px;
+    padding: 1px 5px;
+    border-radius: 4px;
+    font-size: 0.5rem;
+    letter-spacing: 0.08em;
+    color: $color-brand-light;
+    background: rgba(var(--chakra-colors-brand-normal-rgb), 0.16);
+    border: 1px solid rgba(var(--chakra-colors-brand-normal-rgb), 0.32);
+  }
+}
+
+.EpochsOverview {
+  &__Detail { margin-top: 26px; }
+
+  &__DetailHead {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px 16px;
+    margin-bottom: 4px;
+  }
+
+  &__DetailEpoch {
+    font-family: $font-heading;
+    font-weight: 800;
+    font-style: italic;
+    font-size: 1.0625rem;
+    color: #fff;
+  }
+
+  &__DetailMeta {
+    font-size: 0.6875rem;
+    font-family: $font-mono;
+    color: var(--chakra-colors-gray-500);
+  }
+
+  // EpochProgress sits inline in the head; keep it compact
+  &__Progress {
+    flex: 0 1 220px;
+    min-width: 160px;
+  }
+
+  // reuse the StatusBar grid for the per-epoch cells (plain div needs explicit flex)
+  &__Cells {
+    display: flex;
+    margin-top: 14px;
+  }
+
+  &__Stat {
+    display: inline-flex;
+    align-items: baseline;
+    font-family: $font-heading;
+    font-weight: 800;
+    font-style: italic;
+    font-size: 1.25rem;
+    line-height: 1;
+    color: #fff;
+  }
+
+  &__Unit {
+    margin-left: 6px;
+    font-family: $font-mono;
+    font-style: normal;
+    font-weight: 600;
+    font-size: 0.625rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: $color-brand-light;
+  }
+
+  &__Sub {
+    display: block;
+    margin-top: 5px;
+    max-width: 100%;
+    font-size: 0.6875rem;
+    font-family: $font-mono;
+    color: var(--chakra-colors-gray-250);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__SubLink {
+    transition: color .15s;
+    &:hover { color: $color-brand-normal; }
+  }
+
+  &__Proposer {
+    display: block;
+    max-width: 100%;
+    transition: opacity .15s;
+    &:hover { opacity: 0.8; }
+  }
 }
