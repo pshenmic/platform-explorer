@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import * as Api from '../../util/Api'
 import HomeHero from './HomeHero.js'
-import EntityTables from './EntityTables.js'
 import { MetricChart, EpochsOverview, StatusBar, HeroMeta, MasternodesDonut, CompactTxList, CompactBlocksList } from '../../components/home'
 import { fetchHandlerSuccess, fetchHandlerError } from '../../util'
 import theme from '../../styles/theme'
@@ -26,8 +25,6 @@ function Home () {
   const [status, setStatus] = useState({ data: {}, loading: true, error: false })
   const [blocks, setBlocks] = useState({ data: {}, props: { printCount: 10 }, loading: true, error: false })
   const [transactions, setTransactions] = useState({ data: {}, props: { printCount: 10 }, loading: true, error: false })
-  const [latestContracts, setLatestContracts] = useState({ data: {}, props: { printCount: 10 }, loading: true, error: false })
-  const [latestIdentities, setLatestIdentities] = useState({ data: {}, props: { printCount: 10 }, loading: true, error: false })
   const [validators, setValidators] = useState({ data: {}, loading: true, error: false })
   const [validatorsActive, setValidatorsActive] = useState({ data: {}, loading: true, error: false })
   const [contested, setContested] = useState({ data: {}, loading: true, error: false })
@@ -66,14 +63,6 @@ function Home () {
     Api.getTransactions(1, transactions.props.printCount, 'desc')
       .then(res => fetchHandlerSuccess(setTransactions, res))
       .catch(err => fetchHandlerError(setTransactions, err))
-
-    Api.getDataContracts(1, latestContracts.props.printCount, 'desc', 'block_height')
-      .then(res => fetchHandlerSuccess(setLatestContracts, res))
-      .catch(err => fetchHandlerError(setLatestContracts, err))
-
-    Api.getIdentities(1, latestIdentities.props.printCount, 'desc', undefined)
-      .then(res => fetchHandlerSuccess(setLatestIdentities, res))
-      .catch(err => fetchHandlerError(setLatestIdentities, err))
 
     Api.getValidators(1, 100, 'desc')
       .then(res => fetchHandlerSuccess(setValidators, res))
@@ -169,11 +158,6 @@ function Home () {
           <MetricChart title={'Identities growth'} type={'line'} fetcher={Api.getIdentitiesHistory} field={'registeredIdentities'} yAbbr={'identities'}/>
           <MasternodesDonut validators={validators} validatorsActive={validatorsActive}/>
         </SimpleGrid>
-
-        <EntityTables
-          dataContracts={latestContracts}
-          identities={latestIdentities}
-        />
       </Flex>
     </Container>
   )
