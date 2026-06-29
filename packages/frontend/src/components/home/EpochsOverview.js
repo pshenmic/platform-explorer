@@ -14,8 +14,6 @@ const X_POSITIONS = [10, 37, 63, 90]
 const Y_HIGH = 22
 const Y_LOW = 70
 
-const EPOCH_HINT = 'A fixed ~9.125-day cycle. Evonodes accrue rewards for proposed blocks; payouts settle at the end of each epoch.'
-
 // blocks mined in an epoch = next epoch first height - this epoch first height
 // (current epoch uses the live chain height).
 function blocksFor (epochs, i, currentHeight) {
