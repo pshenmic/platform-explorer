@@ -9,6 +9,28 @@ import { StatusCell } from './StatusCell'
 import { ContestedCell } from './ContestedCell'
 import { TotalVotesCell } from './TotalVotesCell'
 
+// cumulative network totals from the status payload (the figures the old KPI wave showed)
+const TOTALS = [
+  { key: 'transactions', label: 'Transactions', field: 'transactionsCount', href: '/transactions', hint: 'Total state transitions processed across the network.' },
+  { key: 'dataContracts', label: 'Data Contracts', field: 'dataContractsCount', href: '/dataContracts', hint: 'Total registered data contracts (app schemas).' },
+  { key: 'documents', label: 'Documents', field: 'documentsCount', hint: 'Total documents across all data contracts.' },
+  { key: 'identities', label: 'Identities', field: 'identitiesCount', href: '/identities', hint: 'Total registered identities on the platform.' }
+]
+
+function TotalCell ({ item, status }) {
+  const value = status?.[item.field]
+  const animated = useCountUp(typeof value === 'number' ? value : null)
+  const num = animated != null ? <BigNumber>{animated}</BigNumber> : '-'
+
+  return (
+    <StatusCell label={item.label} hint={item.hint}>
+      {item.href
+        ? <Link href={item.href} className={'HomeHero__GovCount HomeHero__TotalNum'}>{num}</Link>
+        : <span className={'HomeHero__GovCount HomeHero__TotalNum'}>{num}</span>}
+    </StatusCell>
+  )
+}
+
 function MasternodesHint () {
   return (
     <span>
@@ -59,6 +81,8 @@ export function StatusBar ({ status, contested, activeContested, latestContested
 
   return (
     <Flex className={'HomeHero__StatusBar'}>
+      {TOTALS.map(item => <TotalCell key={item.key} item={item} status={status}/>)}
+
       <StatusCell label={'Value'} hint={<MasternodesHint/>}>
         <div className={'HomeHero__GovLeft'}>
           <Link
