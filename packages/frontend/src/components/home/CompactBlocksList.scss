@@ -1,0 +1,67 @@
+@import '../../styles/variables.scss';
+
+.CompactBlocks {
+  display: flex;
+  flex-direction: column;
+
+  &__Empty {
+    padding: 14px 0;
+    color: var(--chakra-colors-gray-500);
+    font-family: $font-mono;
+    font-size: 0.8125rem;
+  }
+
+  &__Row {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto auto;
+    align-items: center;
+    gap: 12px;
+    min-height: 44px;
+    padding: 0 6px;
+    border-bottom: 1px solid rgba(var(--chakra-colors-gray-800-rgb), 0.5);
+    border-radius: 6px;
+    transition: background .15s;
+
+    &:last-child { border-bottom: none; }
+    &:hover { background: rgba(var(--chakra-colors-brand-normal-rgb), 0.07); }
+
+    &--skeleton { cursor: default; &:hover { background: none; } }
+  }
+
+  &__Height {
+    display: inline-flex;
+    align-items: baseline;
+    font-family: $font-mono;
+    font-size: 0.8125rem;
+    color: #fff;
+    white-space: nowrap;
+  }
+
+  &__Hatch {
+    margin-right: 1px;
+    color: var(--chakra-colors-gray-500);
+  }
+
+  &__HashCell {
+    min-width: 0;
+    font-size: 0.8125rem;
+  }
+
+  &__Txs {
+    padding: 1px 7px;
+    border-radius: 4px;
+    font-family: $font-mono;
+    font-size: 0.625rem;
+    color: $color-brand-light;
+    background: rgba(var(--chakra-colors-brand-normal-rgb), 0.12);
+    white-space: nowrap;
+  }
+
+  &__Time {
+    font-family: $font-mono;
+    font-size: 0.6875rem;
+    color: var(--chakra-colors-gray-500);
+    white-space: nowrap;
+    text-align: right;
+  }
+}

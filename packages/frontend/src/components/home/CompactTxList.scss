@@ -1,0 +1,54 @@
+@import '../../styles/variables.scss';
+
+.CompactTx {
+  display: flex;
+  flex-direction: column;
+
+  &__Empty {
+    padding: 14px 0;
+    color: var(--chakra-colors-gray-500);
+    font-family: $font-mono;
+    font-size: 0.8125rem;
+  }
+
+  &__Row {
+    display: grid;
+    grid-template-columns: 18px minmax(0, 1fr) auto auto;
+    align-items: center;
+    gap: 12px;
+    min-height: 44px;
+    padding: 0 6px;
+    border-bottom: 1px solid rgba(var(--chakra-colors-gray-800-rgb), 0.5);
+    border-radius: 6px;
+    transition: background .15s;
+
+    &:last-child { border-bottom: none; }
+    &:hover { background: rgba(var(--chakra-colors-brand-normal-rgb), 0.07); }
+
+    &--skeleton { cursor: default; &:hover { background: none; } }
+  }
+
+  &__Status,
+  &__StatusIcon { display: inline-flex; align-items: center; }
+
+  &__Hash {
+    min-width: 0;
+    font-size: 0.8125rem;
+  }
+
+  &__Type { white-space: nowrap; }
+
+  &__Time {
+    font-family: $font-mono;
+    font-size: 0.6875rem;
+    color: var(--chakra-colors-gray-500);
+    white-space: nowrap;
+    text-align: right;
+  }
+
+  // very narrow: drop the type badge so hash + time stay readable
+  @media screen and (max-width: $breakpoint-sm) {
+    &__Type { display: none; }
+    &__Row { grid-template-columns: 18px minmax(0, 1fr) auto; }
+  }
+}
