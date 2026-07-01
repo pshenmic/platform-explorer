@@ -677,7 +677,7 @@ module.exports = class IdentitiesDAO {
     const dataSubquery = this.knex(blocksSubquery)
       .select('blocks_sub.timestamp', 'identifier', 'blocks_sub.height')
       .leftJoin('state_transitions', function () {
-        this.on('type', '=', StateTransitionEnum.IDENTITY_CREATE).andOn('state_transitions.block_height', '=', 'blocks_sub.height')
+        this.onIn('type', [StateTransitionEnum.IDENTITY_CREATE, StateTransitionEnum.IDENTITY_CREATE_FROM_SHIELDED_POOL, StateTransitionEnum.IDENTITY_CREATE_FROM_ADDRESSES]).andOn('state_transitions.block_height', '=', 'blocks_sub.height')
       })
       .whereRaw('identifier is not null')
       .leftJoin('identities', 'state_transition_id', 'state_transitions.id')
