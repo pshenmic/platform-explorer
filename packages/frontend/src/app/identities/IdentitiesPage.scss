@@ -28,10 +28,6 @@
     flex-shrink: 0;
   }
 
-  &__GrowthChart {
-    margin-bottom: 1.5rem;
-  }
-
   @media screen and (max-width: $breakpoint-md) {
     &__Controls {
       flex-direction: column;

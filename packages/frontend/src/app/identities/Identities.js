@@ -4,7 +4,6 @@ import { useEffect, useState } from 'react'
 import * as Api from '../../util/Api'
 import IdentitiesList from '../../components/identities/IdentitiesList'
 import { IdentitiesFilter, useIdentitiesFilters } from '../../components/identities'
-import IdentitiesGrowthChartCompact from '../../components/charts/IdentitiesGrowthChartCompact'
 import Pagination from '../../components/pagination'
 import PageSizeSelector from '../../components/pageSizeSelector/PageSizeSelector'
 import { LoadingList } from '../../components/loading'
@@ -136,8 +135,6 @@ function Identities ({ defaultPage = 1, defaultPageSize, defaultShowAll = false 
             }}
           />
         </div>
-
-        <IdentitiesGrowthChartCompact className={'IdentitiesPage__GrowthChart'}/>
 
         {!identities.error
           ? !identities.loading
