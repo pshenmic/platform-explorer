@@ -2,7 +2,7 @@
 
 import * as Api from '../../util/Api'
 import { useState, useEffect } from 'react'
-import { fetchHandlerSuccess, fetchHandlerError, currencyRound } from '../../util'
+import { fetchHandlerSuccess, fetchHandlerError, formatFullNumber } from '../../util'
 import NetworkStatsInline from '../stats/NetworkStatsInline'
 
 export default function ContestedResourcesStatsInline ({ className }) {
@@ -16,20 +16,20 @@ export default function ContestedResourcesStatsInline ({ className }) {
 
   const items = [
     {
-      label: 'Resources',
-      value: currencyRound(stats.data?.totalContestedResources),
+      label: 'Total',
+      value: formatFullNumber(stats.data?.totalContestedResources),
       color: 'var(--chakra-colors-brand-light)',
       loading: stats.loading
     },
     {
       label: 'Pending',
-      value: currencyRound(stats.data?.totalPendingContestedResources),
+      value: formatFullNumber(stats.data?.totalPendingContestedResources),
       color: 'var(--chakra-colors-orange-default)',
       loading: stats.loading
     },
     {
       label: 'Votes',
-      value: currencyRound(stats.data?.totalVotesCount),
+      value: formatFullNumber(stats.data?.totalVotesCount),
       color: 'var(--chakra-colors-green-label)',
       loading: stats.loading
     }

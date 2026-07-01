@@ -2,7 +2,7 @@
 
 import * as Api from '../../util/Api'
 import { useState, useEffect } from 'react'
-import { fetchHandlerSuccess, fetchHandlerError, currencyRound } from '../../util'
+import { fetchHandlerSuccess, fetchHandlerError, formatFullNumber } from '../../util'
 import './NetworkStatsInline.scss'
 
 export default function NetworkStatsInline ({ className, items: itemsProp }) {
@@ -37,12 +37,12 @@ export default function NetworkStatsInline ({ className, items: itemsProp }) {
     },
     {
       label: 'Blocks',
-      value: currencyRound(status.data?.api?.block?.height),
+      value: formatFullNumber(status.data?.api?.block?.height),
       loading: status.loading
     },
     {
       label: 'Transactions',
-      value: currencyRound(status.data?.transactionsCount),
+      value: formatFullNumber(status.data?.transactionsCount),
       loading: status.loading
     }
   ]

@@ -2,7 +2,7 @@
 
 import * as Api from '../../util/Api'
 import { useState, useEffect } from 'react'
-import { fetchHandlerSuccess, fetchHandlerError, currencyRound } from '../../util'
+import { fetchHandlerSuccess, fetchHandlerError, formatFullNumber } from '../../util'
 import NetworkStatsInline from '../stats/NetworkStatsInline'
 
 export default function DataContractsStatsInline ({ className }) {
@@ -16,8 +16,8 @@ export default function DataContractsStatsInline ({ className }) {
 
   const items = [
     {
-      label: 'Contracts',
-      value: currencyRound(status.data?.dataContractsCount),
+      label: 'Total',
+      value: formatFullNumber(status.data?.dataContractsCount),
       loading: status.loading
     }
   ]

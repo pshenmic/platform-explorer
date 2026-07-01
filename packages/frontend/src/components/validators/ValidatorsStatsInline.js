@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import * as Api from '../../util/Api'
 import { useState, useEffect } from 'react'
-import { fetchHandlerSuccess, fetchHandlerError, currencyRound } from '../../util'
+import { fetchHandlerSuccess, fetchHandlerError, formatFullNumber } from '../../util'
 import NetworkStatsInline from '../stats/NetworkStatsInline'
 
 const shortHash = (hash) => `${hash.slice(0, 6)}…${hash.slice(-4)}`
@@ -28,8 +28,8 @@ export default function ValidatorsStatsInline ({ total, className }) {
 
   const items = [
     {
-      label: 'Validators',
-      value: typeof total === 'number' ? currencyRound(total) : null,
+      label: 'Total',
+      value: typeof total === 'number' ? formatFullNumber(total) : null,
       loading: total == null
     },
     {
@@ -40,7 +40,7 @@ export default function ValidatorsStatsInline ({ total, className }) {
     },
     {
       label: 'Fees',
-      value: typeof epoch.data?.totalCollectedFees === 'number' ? currencyRound(epoch.data.totalCollectedFees) : null,
+      value: typeof epoch.data?.totalCollectedFees === 'number' ? formatFullNumber(epoch.data.totalCollectedFees) : null,
       color: 'var(--chakra-colors-brand-light)',
       loading: epoch.loading
     },

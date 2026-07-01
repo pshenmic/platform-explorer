@@ -17,7 +17,7 @@ import {
 import { useTokensFilters, TokenFilters } from '@components/tokens'
 import PageTitle from '../../components/intro/PageTitle'
 import NetworkStatsInline from '../../components/stats/NetworkStatsInline'
-import { currencyRound } from '../../util'
+import { formatFullNumber } from '../../util'
 import introContent from './intro.md'
 
 import './Tokens.scss'
@@ -90,7 +90,7 @@ function Tokens () {
 
           <NetworkStatsInline
             className={'Tokens__Stats'}
-            items={[{ label: 'Tokens', value: typeof totalTokens === 'number' ? currencyRound(totalTokens) : null, loading: tokens.isLoading }]}
+            items={[{ label: 'Total', value: typeof totalTokens === 'number' ? formatFullNumber(totalTokens) : null, loading: tokens.isLoading }]}
           />
 
           <TokensTrending className={'Tokens__Trending'}/>

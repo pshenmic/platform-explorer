@@ -9,7 +9,7 @@ import PageSizeSelector from '../../components/pageSizeSelector/PageSizeSelector
 import { LoadingList } from '../../components/loading'
 import { ErrorMessageBlock } from '../../components/Errors'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
-import { fetchHandlerSuccess, fetchHandlerError, currencyRound } from '../../util'
+import { fetchHandlerSuccess, fetchHandlerError, formatFullNumber } from '../../util'
 import PageTitle from '../../components/intro/PageTitle'
 import NetworkStatsInline from '../../components/stats/NetworkStatsInline'
 import introContent from './intro.md'
@@ -112,7 +112,7 @@ function Identities ({ defaultPage = 1, defaultPageSize, defaultShowAll = false 
 
           <NetworkStatsInline
             className={'IdentitiesPage__Stats'}
-            items={[{ label: 'Identities', value: currencyRound(total), loading: identities.loading }]}
+            items={[{ label: 'Total', value: formatFullNumber(total), loading: identities.loading }]}
           />
 
           <FormControl display={'flex'} alignItems={'center'} width={'auto'} className={'IdentitiesPage__ShowAll'}>
