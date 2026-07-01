@@ -5,6 +5,7 @@
 .IdentitiesListItem {
   @include mixins.DefListItem;
   display: block;
+  position: relative;
 
   &__Content {
     @include identities.Columns();
@@ -40,11 +41,21 @@
     height: 22px;
   }
 
-  // Сдержанное «уважение» топ-3 по текущей метрике сортировки:
-  // лёгкий тинт строки + тонкий левый акцент (inset, не обрезается).
+  // background-image (not background) and ::before (not box-shadow) avoid clashing with :active
   @mixin RankAccent($color) {
-    background: linear-gradient(90deg, rgba($color, 0.06) 0%, rgba($color, 0) 60%);
-    box-shadow: inset 2px 0 0 0 rgba($color, 0.6);
+    background-image: linear-gradient(90deg, rgba($color, 0.12) 0%, rgba($color, 0) 60%);
+
+    &::before {
+      content: '';
+      position: absolute;
+      left: 2px;
+      top: 8px;
+      bottom: 8px;
+      width: 3px;
+      border-radius: 3px;
+      background: $color;
+      opacity: 0.75;
+    }
   }
 
   &--Rank1 {
