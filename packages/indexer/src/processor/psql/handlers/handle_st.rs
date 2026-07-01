@@ -1,4 +1,5 @@
 use crate::entities::platform_address_transition::PlatformAddressTransition;
+use crate::entities::shielded_transition::ShieldedTransition;
 use crate::enums::batch_type::BatchType;
 use crate::models::{TransactionResult, TransactionStatus};
 use crate::processor::psql::PSQLProcessor;
@@ -364,19 +365,79 @@ impl PSQLProcessor {
                     block_hash
                 );
             }
-            StateTransition::Shield(_) => {}
-            StateTransition::ShieldedTransfer(_) => {}
-            StateTransition::Unshield(_) => {}
-            StateTransition::ShieldFromAssetLock(_) => {}
-            StateTransition::ShieldedWithdrawal(_) => {}
+            StateTransition::Shield(st) => {
+                let shielded_transition =
+                    ShieldedTransition::from_shield_transition(st.clone(), st_hash.clone());
+                self.handle_shielded_transition(shielded_transition, sql_transaction)
+                    .await
+                    .unwrap();
+
+                println!("Processed Shield at block hash {}", block_hash);
+            }
+            StateTransition::ShieldedTransfer(st) => {
+                let shielded_transition = ShieldedTransition::from_shielded_transfer_transition(
+                    st.clone(),
+                    st_hash.clone(),
+                );
+                self.handle_shielded_transition(shielded_transition, sql_transaction)
+                    .await
+                    .unwrap();
+
+                println!("Processed ShieldedTransfer at block hash {}", block_hash);
+            }
+            StateTransition::Unshield(st) => {
+                let shielded_transition =
+                    ShieldedTransition::from_unshield_transition(st.clone(), st_hash.clone());
+                self.handle_shielded_transition(shielded_transition, sql_transaction)
+                    .await
+                    .unwrap();
+
+                println!("Processed Unshield at block hash {}", block_hash);
+            }
+            StateTransition::ShieldFromAssetLock(st) => {
+                let shielded_transition =
+                    ShieldedTransition::from_shield_from_asset_lock_transition(
+                        st.clone(),
+                        st_hash.clone(),
+                    );
+                self.handle_shielded_transition(shielded_transition, sql_transaction)
+                    .await
+                    .unwrap();
+
+                println!("Processed ShieldFromAssetLock at block hash {}", block_hash);
+            }
+            StateTransition::ShieldedWithdrawal(st) => {
+                let shielded_transition = ShieldedTransition::from_shielded_withdrawal_transition(
+                    st.clone(),
+                    st_hash.clone(),
+                );
+                self.handle_shielded_transition(shielded_transition, sql_transaction)
+                    .await
+                    .unwrap();
+
+                println!("Processed ShieldedWithdrawal at block hash {}", block_hash);
+            }
             StateTransition::IdentityCreateFromShieldedPool(st) => {
-                self.handle_identity_create_from_shielded_pool(st, st_hash, sql_transaction)
-                    .await;
+                self.handle_identity_create_from_shielded_pool(
+                    st.clone(),
+                    st_hash.clone(),
+                    sql_transaction,
+                )
+                .await;
 
                 println!(
                     "Processed IdentityCreateFromShieldedPool at block hash {}",
                     block_hash
                 );
+
+                let shielded_transition =
+                    ShieldedTransition::from_identity_create_from_shielded_pool_transition(
+                        st.clone(),
+                        st_hash.clone(),
+                    );
+                self.handle_shielded_transition(shielded_transition, sql_transaction)
+                    .await
+                    .unwrap();
             }
         }
     }
