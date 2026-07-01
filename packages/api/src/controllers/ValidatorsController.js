@@ -117,6 +117,7 @@ class ValidatorsController {
       limit = 10,
       order = 'asc',
       isActive = undefined,
+      isBanned = undefined,
       owner,
       blocks_proposed_min: blocksProposedMin,
       blocks_proposed_max: blocksProposedMax,
@@ -144,12 +145,45 @@ class ValidatorsController {
     const [currentEpoch] = await this.sdk.node.getEpochsInfo(1)
     const epochInfo = Epoch.fromObject(currentEpoch)
 
+    const validatorsInDataBase = await this.validatorsDAO.getValidatorsHashes()
+
+    const validatorsInfos = await Promise.all(validatorsInDataBase.map(async (proTxHash) => {
+      const cached = cache.get(`${VALIDATORS_CACHE_KEY}_${proTxHash}`)
+
+      let validatorInfo = null
+
+      if (cached) {
+        validatorInfo = cached
+      } else {
+        const proTxInfo = await DashCoreRPC.getProTxInfo(proTxHash)
+
+        validatorInfo = Validator.fromObject(
+          {
+            proTxHash,
+            isActive: activeValidators.some(activeValidator =>
+              activeValidator.pro_tx_hash === proTxHash),
+            proTxInfo: ProTxInfo.fromObject(proTxInfo),
+            epochInfo
+          }
+        )
+
+        cache.set(`${VALIDATORS_CACHE_KEY}_${proTxHash}`, validatorInfo, VALIDATORS_CACHE_LIFE_INTERVAL)
+      }
+
+      return validatorInfo
+    }))
+
+
+    const validatorsWithoutBan = validatorsInfos.filter(validator => validator.proTxInfo?.state.PoSeBanHeight === -1)
+
     const validators = await this.validatorsDAO.getValidators(
       Number(page ?? 1),
       Number(limit ?? 10),
       order,
       isActive,
       activeValidators,
+      isBanned,
+      validatorsWithoutBan,
       owner,
       blocksProposedMin,
       blocksProposedMax,
@@ -166,7 +200,9 @@ class ValidatorsController {
 
         let validatorInfo = null
 
-        if (cached) {
+        // first run needed for pose ban info, but it doesn't contain all needed info
+        // re-cache validators with actual data when they don't have identifier field
+        if (cached && cached?.identifier != null) {
           validatorInfo = cached
         } else {
           const proTxInfo = await DashCoreRPC.getProTxInfo(validator.proTxHash)

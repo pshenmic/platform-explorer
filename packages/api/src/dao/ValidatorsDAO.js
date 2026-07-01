@@ -114,7 +114,14 @@ module.exports = class ValidatorsDAO {
     })
   }
 
-  getValidators = async (page, limit, order, isActive, validators, owner, blocksProposedMin, blocksProposedMax, lastProposedBlockHeightMin, lastProposedBlockHeightMax, lastProposedBlockTimestampStart, lastProposedBlockTimestampEnd, lastProposedBlockHash) => {
+  getValidatorsHashes = async () => {
+    const rows = await this.knex('validators')
+      .select('pro_tx_hash')
+
+    return rows.map(r=>r.pro_tx_hash)
+  }
+
+  getValidators = async (page, limit, order, isActive, activeValidators, isBanned, validatorsWithoutBan, owner, blocksProposedMin, blocksProposedMax, lastProposedBlockHeightMin, lastProposedBlockHeightMax, lastProposedBlockTimestampStart, lastProposedBlockTimestampEnd, lastProposedBlockHash) => {
     const fromRank = ((page - 1) * limit)
 
     const proTxHash = owner ? Buffer.from(base58.decode(owner)).toString('hex') : null
@@ -180,9 +187,20 @@ module.exports = class ValidatorsDAO {
       )
       .modify(function (knex) {
         if (isActive !== undefined && isActive) {
-          knex.whereIn('pro_tx_hash', validators.map(validator => validator.pro_tx_hash))
+          knex.whereIn('pro_tx_hash', activeValidators.map(validator => validator.pro_tx_hash))
         } else if (isActive !== undefined && !isActive) {
-          knex.whereNotIn('pro_tx_hash', validators.map(validator => validator.pro_tx_hash))
+          knex.whereNotIn('pro_tx_hash', activeValidators.map(validator => validator.pro_tx_hash))
+        }
+      })
+      .modify(function (knex) {
+        if (isBanned !== undefined && isBanned) {
+          knex
+            .whereNotIn('pro_tx_hash', validatorsWithoutBan.map(validator => validator.proTxHash.toUpperCase()))
+          // banned validator cannot be active
+          knex
+            .whereNotIn('pro_tx_hash', activeValidators.map(validator => validator.pro_tx_hash))
+        } else if (isBanned !== undefined && !isBanned) {
+          knex.whereIn('pro_tx_hash', validatorsWithoutBan.map(validator => validator.proTxHash.toUpperCase()))
         }
       })
 
