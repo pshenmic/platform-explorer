@@ -2,7 +2,7 @@
 
 import * as Api from '../../util/Api'
 import TokensList from '../../components/tokens/TokensList'
-import TokensTicker from '../../components/tokens/TokensTicker'
+import TokensTrending from '../../components/tokens/TokensTrending'
 import Pagination from '../../components/pagination'
 import { ErrorMessageBlock } from '@components/Errors'
 import PageSizeSelector from '../../components/pageSizeSelector/PageSizeSelector'
@@ -93,14 +93,14 @@ function Tokens () {
             items={[{ label: 'Tokens', value: typeof totalTokens === 'number' ? currencyRound(totalTokens) : null, loading: tokens.isLoading }]}
           />
 
+          <TokensTrending className={'Tokens__Trending'}/>
+
           <TokenFilters
             onFilterChange={handleFiltersChange}
             isMobile={isMobile}
             className={'Tokens__Filters'}
           />
         </div>
-
-        <TokensTicker/>
 
         {!tokens.isError
           ? <TokensList

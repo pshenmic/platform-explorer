@@ -1,13 +1,10 @@
 @import '../../styles/variables.scss';
 
-.TokensTicker {
+.TokensTrending {
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  margin: 0.25rem 0 1.25rem;
-  padding: 0.4rem 0.75rem;
-  border-radius: $border-radius-def;
-  background: rgba(var(--chakra-colors-brand-normal-rgb), 0.05);
+  min-width: 0;
   overflow: hidden;
 
   &__Label {
@@ -27,8 +24,7 @@
     min-width: 0;
     overflow: hidden;
 
-    // мягкие края
-    mask-image: linear-gradient(to right, transparent, #000 2rem, #000 calc(100% - 2rem), transparent);
+    mask-image: linear-gradient(to right, transparent, #000 1.5rem, #000 calc(100% - 1.5rem), transparent);
   }
 
   &__Track {
@@ -36,7 +32,8 @@
     align-items: center;
     gap: 1.5rem;
     width: max-content;
-    animation: TokensTicker-scroll 40s linear infinite;
+    // duration is overridden inline per row count; this is just a slow fallback
+    animation: TokensTrending-scroll 60s linear infinite;
   }
 
   &:hover &__Track {
@@ -87,18 +84,18 @@
   }
 }
 
-@keyframes TokensTicker-scroll {
+@keyframes TokensTrending-scroll {
   from { transform: translateX(0); }
   to { transform: translateX(-50%); }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .TokensTicker__Viewport {
+  .TokensTrending__Viewport {
     overflow-x: auto;
     mask-image: none;
   }
 
-  .TokensTicker__Track {
+  .TokensTrending__Track {
     animation: none;
   }
 }
