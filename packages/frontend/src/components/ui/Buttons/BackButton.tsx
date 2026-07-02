@@ -1,8 +1,13 @@
 'use client'
 
+import type { ComponentProps } from 'react'
 import { useRouter } from 'next/navigation'
 
-function BackButton ({ link, children, ...props }) {
+interface BackButtonProps extends ComponentProps<'button'> {
+  link?: string
+}
+
+function BackButton ({ link, children, ...props }: BackButtonProps) {
   const router = useRouter()
 
   return <button onClick={() => router.back()} {...props}>{children}</button>

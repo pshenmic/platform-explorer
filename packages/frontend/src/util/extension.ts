@@ -1,9 +1,11 @@
-// @ts-nocheck — TODO: type window.dashPlatformExtension augmentation
 export const ExtensionStatusEnum = {
   CONNECTED: 'CONNECTED',
   NONE: 'NONE'
-}
-export const checkPlatformExtension = () =>
+} as const
+
+export type ExtensionStatus = 'CONNECTED' | 'NONE'
+
+export const checkPlatformExtension = (): ExtensionStatus =>
   typeof window !== 'undefined' && window.dashPlatformExtension
     ? ExtensionStatusEnum.CONNECTED
     : ExtensionStatusEnum.NONE

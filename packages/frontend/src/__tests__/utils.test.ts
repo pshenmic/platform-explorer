@@ -1,6 +1,6 @@
+import { describe, it, expect } from '@jest/globals'
 import currencyRound from '../util/currencyRound'
-import { sliceNumberByDecimals } from '../util/sliceNumberByDecimals'
-import { trimEndZeros } from '../util/trimEndZeros'
+import { sliceNumberByDecimals, trimEndZeros } from '../util/numbers'
 
 describe('trimEndZeros', () => {
   it('no trailing zeros', () => {

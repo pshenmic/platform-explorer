@@ -75,6 +75,9 @@ jobs:
       - name: Check lint rules
         run: cd packages/frontend && npm run lint
 
+      - name: Check types
+        run: cd packages/frontend && npm run typecheck
+
   test_api:
     needs: pull_request_lint
     runs-on: ubuntu-latest

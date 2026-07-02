@@ -2,12 +2,29 @@ import { useEffect, useState } from 'react'
 import { ChevronUpIcon, ChevronDownIcon } from '@chakra-ui/icons'
 import { Th, Box } from '@chakra-ui/react'
 
-function TableHeaders ({ headers, sortCallback }) {
+interface TableHeader {
+  key: string
+  label: string
+  sortable?: boolean
+  isNumeric?: boolean
+}
+
+interface SortState {
+  key: string
+  direction: 'asc' | 'desc'
+}
+
+interface TableHeadersProps {
+  headers: TableHeader[]
+  sortCallback?: (sort: SortState) => void
+}
+
+function TableHeaders ({ headers, sortCallback }: TableHeadersProps) {
   if (!sortCallback) sortCallback = () => {}
 
-  const [sort, setSort] = useState({ key: 'blocksProposed', direction: 'asc' })
+  const [sort, setSort] = useState<SortState>({ key: 'blocksProposed', direction: 'asc' })
 
-  function sortHandler (header) {
+  function sortHandler (header: TableHeader) {
     setSort({
       key: header.key,
       direction: header.key === sort.key

@@ -1,4 +1,7 @@
-export const sliceNumberByDecimals = (str, decimalPlaces) => {
+export const sliceNumberByDecimals = (
+  str: string | null | undefined,
+  decimalPlaces: number | string
+): { integer: string, fractional: string } => {
   if (str === undefined || str === null) return { integer: '0', fractional: '' }
 
   if (str === '') return { integer: '0', fractional: '' }
@@ -24,12 +27,12 @@ export const sliceNumberByDecimals = (str, decimalPlaces) => {
   }
 }
 
-export const trimEndZeros = (str) => {
+export const trimEndZeros = (str: string): string => {
   return str.replace(/0+$/, '')
 }
 
-export const splitNum = (str) =>
-  Array.from(String(str)).reduceRight((acc, char) => {
+export const splitNum = (str: string | number): string[] =>
+  Array.from(String(str)).reduceRight<string[]>((acc, char) => {
     const [first = '', ...rest] = acc
 
     if (first.length < 3) {
@@ -39,7 +42,7 @@ export const splitNum = (str) =>
     return [char, ...acc]
   }, [])
 
-export const concatDecimal = (integer, fractional) => {
+export const concatDecimal = (integer: string, fractional: string): string => {
   if (fractional) {
     return integer + '.' + fractional
   }

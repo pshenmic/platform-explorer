@@ -1,11 +1,12 @@
 import { Icon, useId } from '@chakra-ui/react'
+import type { IconProps } from '@chakra-ui/react'
 import FirstPlaceIcon from './FirstPlaceIcon'
 import SecondPlaceIcon from './SecondPlaceIcon'
 import ThirdPlaceIcon from './ThirdPlaceIcon'
 import PlatformExplorerLogoColor from './PlatformExplorerLogoColor'
 import PlatformExplorerLogoStroke from './PlatformExplorerLogoStroke'
 
-const CalendarIcon = (props) => (
+const CalendarIcon = (props: IconProps) => (
   <Icon viewBox='0 0 12 14' {...props}>
     <path
       fill='currentColor'
@@ -14,7 +15,7 @@ const CalendarIcon = (props) => (
   </Icon>
 )
 
-const CalendarIcon2 = (props) => (
+const CalendarIcon2 = (props: IconProps) => (
   <Icon viewBox='0 0 16 16' {...props}>
     <svg width='16' height='16' viewBox='0 0 16 16' fill='none' xmlns='http://www.w3.org/2000/svg'>
       <path fill='currentColor' d='M14.0281 2H13V3.27187C13 3.975 12.275 4.5 11.525 4.5C10.775 4.5 10 3.975 10 3.27187V2H6V3.27187C6 3.975 5.25 4.5 4.5 4.5C3.75 4.5 3 3.975 3 3.27187V2H1.97187C1.43437 2 1 2.41563 1 2.91875V14.0906C1 14.5938 1.43437 15 1.97187 15H14.0281C14.5656 15 15 14.5938 15 14.0875V2.91875C15 2.41563 14.5656 2 14.0281 2ZM13.5 13.1219C13.5 13.3281 13.3188 13.4969 13.1 13.4969L2.89687 13.5C2.67812 13.4906 2.5 13.325 2.5 13.1187V5.88438C2.5 5.66875 2.68438 5.5 2.91563 5.5H13.0875C13.3156 5.5 13.5 5.66563 13.5 5.87813V13.1219Z'/>
@@ -24,7 +25,7 @@ const CalendarIcon2 = (props) => (
   </Icon>
 )
 
-const CalendarGradientIcon = (props) => (
+const CalendarGradientIcon = (props: IconProps) => (
   <Icon viewBox='0 0 48 48' fill='none' color={'#008DE4'} {...props}>
       <path
         d='M15 0.75V0H13.5V0.75V6H4.5H3V7.5V16.5V18V46.5V48H4.5H43.5H45V46.5V18V16.5V7.5V6H43.5H34.5V0.75V0H33V0.75V6H15V0.75ZM4.5 18H43.5V46.5H4.5V18ZM13.5 7.5V11.25V12H15V11.25V7.5H33V11.25V12H34.5V11.25V7.5H43.5V16.5H4.5V7.5H13.5ZM10.5 34.5V25.5H19.5V34.5H10.5ZM9 24V25.5V34.5V36H10.5H19.5H21V34.5V25.5V24H19.5H10.5H9Z'
@@ -38,7 +39,7 @@ const CalendarGradientIcon = (props) => (
   </Icon>
 )
 
-const CloseIcon = (props) => (
+const CloseIcon = (props: IconProps) => (
   <Icon viewBox='0 0 10 10' {...props}>
     <svg width='10' height='10' viewBox='0 0 10 10' fill='none' xmlns='http://www.w3.org/2000/svg'>
       <path d='M1 1L9 9' stroke='currentColor' strokeWidth='1.5' strokeLinecap='round'/>
@@ -47,25 +48,25 @@ const CloseIcon = (props) => (
   </Icon>
 )
 
-const ChevronIcon = (props) => (
+const ChevronIcon = (props: IconProps) => (
   <Icon viewBox='0 0 6 10' fill='none' {...props}>
     <path d='M1 9L5 5L1 1' stroke='currentColor' strokeWidth='1.5' strokeLinecap='round' strokeLinejoin='round'/>
   </Icon>
 )
 
-const ChevronIcon2 = (props) => (
+const ChevronIcon2 = (props: IconProps) => (
   <Icon width='7' height='10' viewBox='0 0 7 10' fill='none' {...props}>
     <path d='M1.5 9L5.5 5L1.5 1' stroke='currentColor' strokeWidth='2' strokeLinecap='round' strokeLinejoin='round'/>
   </Icon>
 )
 
-const CircleIcon = (props) => (
+const CircleIcon = (props: IconProps) => (
   <Icon viewBox='0 0 8 8' {...props}>
     <circle fill='currentColor' cx='4' cy='4' r='4'/>
   </Icon>
 )
 
-const ArrowCornerIcon = (props) => (
+const ArrowCornerIcon = (props: IconProps) => (
   <Icon viewBox='0 0 10 11' {...props}>
     <path
       fill='currentColor'
@@ -74,7 +75,7 @@ const ArrowCornerIcon = (props) => (
   </Icon>
 )
 
-const SuccessIcon = (props) => (
+const SuccessIcon = (props: IconProps) => (
   <Icon viewBox='0 0 18 18' {...props}>
     <svg width="14" height="10" viewBox="0 0 14 10" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path d="M1.6875 4.6875L5.4375 8.4375L12.3125 1.5625" stroke="#58F4BC" strokeWidth="1.5" strokeLinecap="round"/>
@@ -82,7 +83,7 @@ const SuccessIcon = (props) => (
   </Icon>
 )
 
-export const PrimalPostitiveIcon = (props) => (
+export const PrimalPostitiveIcon = (props: IconProps) => (
   <Icon viewBox="0 0 14 10" {...props}>
     <path
       d="M1.6875 4.6875L5.4375 8.4375L12.3125 1.5625"
@@ -94,13 +95,13 @@ export const PrimalPostitiveIcon = (props) => (
   </Icon>
 )
 
-export const PrimalNegativeIcon = (props) => (
+export const PrimalNegativeIcon = (props: IconProps) => (
   <Icon viewBox="0 0 12 2"{...props}>
     <path d="M1.13864 1.00003L10.8614 1.00003" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
   </Icon>
 )
 
-const ErrorIcon = (props) => (
+const ErrorIcon = (props: IconProps) => (
   <Icon viewBox='0 0 18 18' width='18' height='18' fill='none' {...props}>
     <rect width='18' height='18' rx='4' fill='#F45858' fillOpacity='0.2'/>
     <path d='M9.06951 10L9.0695 4.86092' stroke='#F45858' strokeWidth='2' strokeLinecap='round'/>
@@ -108,7 +109,7 @@ const ErrorIcon = (props) => (
   </Icon>
 )
 
-const QueuedIcon = (props) => (
+const QueuedIcon = (props: IconProps) => (
   <Icon viewBox='0 0 18 18' {...props}>
     <svg width='18' height='18' viewBox='0 0 18 18' fill='none' xmlns='http://www.w3.org/2000/svg'>
       <rect width='18' height='18' rx='4' fill='#F4A358' fillOpacity='0.2'/>
@@ -117,7 +118,7 @@ const QueuedIcon = (props) => (
   </Icon>
 )
 
-const PooledIcon = (props) => (
+const PooledIcon = (props: IconProps) => (
   <Icon viewBox='0 0 18 18' {...props}>
     <svg width='18' height='18' viewBox='0 0 18 18' fill='none' xmlns='http://www.w3.org/2000/svg'>
       <rect width='18' height='18' rx='4' fill='#008DE4' fillOpacity='0.2'/>
@@ -128,7 +129,7 @@ const PooledIcon = (props) => (
   </Icon>
 )
 
-const BroadcastedIcon = (props) => (
+const BroadcastedIcon = (props: IconProps) => (
   <Icon viewBox='0 0 18 18' {...props}>
     <svg width='18' height='18' viewBox='0 0 18 18' fill='none' xmlns='http://www.w3.org/2000/svg'>
       <rect width='18' height='18' rx='4' fill='#008DE4' fillOpacity='0.2'/>
@@ -137,7 +138,7 @@ const BroadcastedIcon = (props) => (
   </Icon>
 )
 
-const CheckmarkIcon = (props) => (
+const CheckmarkIcon = (props: IconProps) => (
   <Icon viewBox='0 0 12 13' {...props}>
     <svg width='12' height='13' viewBox='0 0 12 13' fill='none' xmlns='http://www.w3.org/2000/svg'>
       <circle cx='6' cy='6.5' r='6' fill='#1CC400'/>
@@ -146,7 +147,7 @@ const CheckmarkIcon = (props) => (
   </Icon>
 )
 
-const ErrorCircleIcon = (props) => (
+const ErrorCircleIcon = (props: IconProps) => (
   <Icon viewBox='0 0 12 13' {...props}>
     <svg width='12' height='13' viewBox='0 0 12 13' fill='none' xmlns='http://www.w3.org/2000/svg'>
       <circle cx='6' cy='6.5' r='6' fill='#F45858'/>
@@ -156,7 +157,7 @@ const ErrorCircleIcon = (props) => (
   </Icon>
 )
 
-const BigClockIcon = (props) => (
+const BigClockIcon = (props: IconProps) => (
   <Icon viewBox='0 0 35 34' {...props}>
     <svg width='35' height='34' viewBox='0 0 35 34' fill='none' xmlns='http://www.w3.org/2000/svg'>
       <path fillRule='evenodd' clipRule='evenodd'
@@ -169,7 +170,7 @@ const BigClockIcon = (props) => (
   </Icon>
 )
 
-const PshenmicLogoIcon = (props) => (
+const PshenmicLogoIcon = (props: IconProps) => (
   <Icon viewBox='0 0 95 8' {...props}>
     <path
       d='M0 8V2H6V3H7V5H6V6H2V8H0ZM2 5H5V3H2V5ZM8 7V6H13V5H9V4H8V3H9V2H14V3H10V4H14V5H15V6H14V7H8ZM16 7V0H18V2H22V3H23V7H21V3H18V7H16ZM25 7V6H24V3H25V2H30V3H31V5H26V6H30V7H25ZM26 4H29V3H26V4ZM32 7V2H38V3H39V7H37V3H34V7H32ZM40 7V2H46V3H47V7H45V3H44V7H42V3H41V7H40ZM51 1V0H53V1H51ZM49 7V6H51V3H50V2H53V6H55V7H49ZM57 7V6H56V3H57V2H63V3H58V6H63V7H57ZM66 7V5H68V7H66ZM73 7V6H72V3H73V2H77V0H79V7H73ZM74 6H77V3H74V6ZM81 7V6H80V3H81V2H86V3H87V5H82V6H86V7H81ZM82 4H85V3H82V4ZM91 7V6H90V5H89V2H91V5H93V2H95V5H94V6H93V7H91Z'
@@ -178,8 +179,8 @@ const PshenmicLogoIcon = (props) => (
   </Icon>
 )
 
-const TransactionsIcon = (props) => {
-  const uniqueId = useId()
+const TransactionsIcon = (props: IconProps) => {
+  const uniqueId = useId(undefined)
   return (
     <Icon viewBox='0 0 28 25' width='28' height='25' fill='none' {...props}>
       <svg width='28' height='25' viewBox='0 0 28 25' fill='none' xmlns='http://www.w3.org/2000/svg'>
@@ -198,8 +199,8 @@ const TransactionsIcon = (props) => {
   )
 }
 
-const DocumentIcon = (props) => {
-  const uniqueId = useId()
+const DocumentIcon = (props: IconProps) => {
+  const uniqueId = useId(undefined)
   return (
     <Icon viewBox='0 0 20 27' width='20' height='27' fill='none' {...props}>
       <path
@@ -216,8 +217,8 @@ const DocumentIcon = (props) => {
   )
 }
 
-const QueuePositionIcon = (props) => {
-  const uniqueId = useId()
+const QueuePositionIcon = (props: IconProps) => {
+  const uniqueId = useId(undefined)
   return (
     <Icon viewBox='0 0 28 28' width='28' height='28' fill='none' {...props}>
       <svg width='28' height='28' viewBox='0 0 28 28' fill='none' xmlns='http://www.w3.org/2000/svg'>
@@ -249,8 +250,8 @@ const QueuePositionIcon = (props) => {
   )
 }
 
-const MembersIcon = (props) => {
-  const uniqueId = useId()
+const MembersIcon = (props: IconProps) => {
+  const uniqueId = useId(undefined)
   return (
     <Icon viewBox='0 0 29 28' width='29' height='28' fill='none' {...props}>
       <svg width='29' height='28' viewBox='0 0 29 28' fill='none' xmlns='http://www.w3.org/2000/svg'>
@@ -274,8 +275,8 @@ const MembersIcon = (props) => {
   )
 }
 
-const BlockIcon = (props) => {
-  const uniqueId = useId()
+const BlockIcon = (props: IconProps) => {
+  const uniqueId = useId(undefined)
   return (
     <Icon viewBox='0 0 48 48' width='48' height='48' fill='none' {...props}>
       <svg width='48' height='48' viewBox='0 0 48 48' fill='none' xmlns='http://www.w3.org/2000/svg'>
@@ -293,7 +294,7 @@ const BlockIcon = (props) => {
   )
 }
 
-const InfoIcon = ({ bg, ...props }) => (
+const InfoIcon = ({ bg, ...props }: IconProps) => (
   <Icon viewBox='0 0 16 16' width='16' height='16' color={'#008DE4'} {...props}>
     <svg width='16' height='16' viewBox='0 0 16 16' fill='none' xmlns='http://www.w3.org/2000/svg'>
       <path
@@ -306,7 +307,7 @@ const InfoIcon = ({ bg, ...props }) => (
   </Icon>
 )
 
-const SearchIcon = (props) => (
+const SearchIcon = (props: IconProps) => (
   <Icon viewBox='0 0 14 14' width='14' height='14' color={'#008DE4'} {...props}>
     <svg width='14' height='14' viewBox='0 0 14 14' fill='none' xmlns='http://www.w3.org/2000/svg'>
       <path fillRule='evenodd' clipRule='evenodd'
@@ -318,8 +319,8 @@ const SearchIcon = (props) => (
   </Icon>
 )
 
-const HourglassIcon = (props) => {
-  const uniqueId = useId()
+const HourglassIcon = (props: IconProps) => {
+  const uniqueId = useId(undefined)
 
   return (
     <Icon viewBox='0 0 48 48' width='48' height='48' color={'#008DE4'} {...props}>
@@ -336,7 +337,7 @@ const HourglassIcon = (props) => {
   )
 }
 
-const SignatureIcon = (props) => {
+const SignatureIcon = (props: IconProps) => {
   return (
     <Icon viewBox='0 0 48 48' width='48' height='48' fill='none' color={'#0493EB'} {...props}>
       <path
@@ -352,8 +353,8 @@ const SignatureIcon = (props) => {
   )
 }
 
-const ListIcon = (props) => {
-  const uniqueId = useId()
+const ListIcon = (props: IconProps) => {
+  const uniqueId = useId(undefined)
 
   return (
     <Icon viewBox='0 0 48 48' width='48' height='48' fill='none' color={'#008DE4'} {...props}>
@@ -370,7 +371,7 @@ const ListIcon = (props) => {
   )
 }
 
-const LockIcon = (props) => (
+const LockIcon = (props: IconProps) => (
   <Icon width='12px' height='11px' viewBox='0 0 12 11' fill='none' color={'#F45858'} {...props}>
     <path
       fillRule='evenodd'
@@ -392,8 +393,8 @@ const LockIcon = (props) => (
   </Icon>
 )
 
-const PercentHandIcon = (props) => {
-  const uniqueId = useId()
+const PercentHandIcon = (props: IconProps) => {
+  const uniqueId = useId(undefined)
 
   return (
     <Icon width='48' height='48' viewBox='0 0 48 48' fill='none' color={'#008DE4'} {...props}>
@@ -410,8 +411,8 @@ const PercentHandIcon = (props) => {
   )
 }
 
-const SignatureTopIcon = (props) => {
-  const uniqueId = useId()
+const SignatureTopIcon = (props: IconProps) => {
+  const uniqueId = useId(undefined)
 
   return (
     <Icon width='49' height='48' viewBox='0 0 49 48' fill='none' color={'#008DE4'} {...props}>
@@ -432,8 +433,8 @@ const SignatureTopIcon = (props) => {
   )
 }
 
-const CirclePauseIcon = (props) => {
-  const uniqueId = useId()
+const CirclePauseIcon = (props: IconProps) => {
+  const uniqueId = useId(undefined)
 
   return (
     <Icon viewBox='0 0 24 24' width='24' height='24' fill='none' color={'#F45858'} {...props}>
@@ -451,8 +452,8 @@ const CirclePauseIcon = (props) => {
   )
 }
 
-const CirclePlayIcon = (props) => {
-  const uniqueId = useId()
+const CirclePlayIcon = (props: IconProps) => {
+  const uniqueId = useId(undefined)
 
   return (
     <Icon viewBox='0 0 24 24' width='24' height='24' fill='none' color={'#81F458'} {...props}>
@@ -470,8 +471,8 @@ const CirclePlayIcon = (props) => {
   )
 }
 
-const TokenMintIcon = (props) => {
-  const uniqueId = useId()
+const TokenMintIcon = (props: IconProps) => {
+  const uniqueId = useId(undefined)
 
   return (
     <Icon viewBox='0 0 28 28' width='28' height='28' fill='none' color={'#008DE4'} {...props}>
@@ -488,8 +489,8 @@ const TokenMintIcon = (props) => {
   )
 }
 
-const TokenTotalIcon = (props) => {
-  const uniqueId = useId()
+const TokenTotalIcon = (props: IconProps) => {
+  const uniqueId = useId(undefined)
 
   return (
     <Icon viewBox='0 0 28 28' width='28' height='28' fill='none' color={'#008DE4'} {...props}>
@@ -512,8 +513,8 @@ const TokenTotalIcon = (props) => {
   )
 }
 
-const TokenBurnIcon = (props) => {
-  const uniqueId = useId()
+const TokenBurnIcon = (props: IconProps) => {
+  const uniqueId = useId(undefined)
 
   return (
     <Icon viewBox='0 0 28 28' width='28' height='28' fill='none' color={'#008DE4'} {...props}>
@@ -530,8 +531,8 @@ const TokenBurnIcon = (props) => {
   )
 }
 
-const TokenFreezeIcon = (props) => {
-  const uniqueId = useId()
+const TokenFreezeIcon = (props: IconProps) => {
+  const uniqueId = useId(undefined)
 
   return (
     <Icon viewBox='0 0 29 28' width='29' height='28' fill='none' color={'#008DE4'} {...props}>
@@ -560,7 +561,7 @@ const TokenFreezeIcon = (props) => {
   )
 }
 
-const SaveIcon = (props) => {
+const SaveIcon = (props: IconProps) => {
   return (
     <Icon width="13" height="13" viewBox="0 0 13 13" fill="none" {...props}>
       <path d="M6.25 11.75L0.75 6.25M6.25 11.75L11.75 6.25M6.25 11.75L6.25 0.75" stroke="#4C7EFF" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
@@ -568,7 +569,7 @@ const SaveIcon = (props) => {
   )
 }
 
-const ImportIcon = (props) => {
+const ImportIcon = (props: IconProps) => {
   return (
     <Icon
       viewBox='0 0 13 13'

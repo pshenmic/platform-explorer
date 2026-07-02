@@ -1,5 +1,6 @@
 import { DeleteIcon } from '@chakra-ui/icons'
 import { Button } from '@chakra-ui/react'
+import type { ButtonProps } from '@chakra-ui/react'
 
 const SIZE = {
   lg: {
@@ -12,9 +13,12 @@ const SIZE = {
   }
 }
 
-export const TrashButton = ({ size = 'lg', ...props }) => (
+interface TrashButtonProps extends Omit<ButtonProps, 'size'> {
+  size?: keyof typeof SIZE
+}
+
+export const TrashButton = ({ size = 'lg', ...props }: TrashButtonProps) => (
   <Button
-    padding={'10px 20px'}
     borderRadius={'10px'}
     bgColor={'#F4585833'}
     _hover={{

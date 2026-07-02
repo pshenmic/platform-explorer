@@ -1,6 +1,12 @@
 import { Button } from '@chakra-ui/react'
+import type { ButtonProps } from '@chakra-ui/react'
 
-export default function SubmitButton ({ onSubmit, text, children, ...props }) {
+interface SubmitButtonProps extends ButtonProps {
+  onSubmit?: () => void
+  text?: string
+}
+
+export default function SubmitButton ({ onSubmit, text, children, ...props }: SubmitButtonProps) {
   return (
     <Button
       className={'SubmitButton'}

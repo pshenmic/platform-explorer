@@ -1,5 +1,8 @@
 import { useState } from 'react'
+import type { DashPlatformSDK, StateTransitionWASM } from 'dash-platform-sdk/types'
 import { useActiveNetwork } from 'src/contexts'
+
+type KeyTypeArg = Parameters<StateTransitionWASM['signByPrivateKey']>[2]
 
 const SIGNER_METHODS = {
   EXTENSION: 'extension',
@@ -8,24 +11,37 @@ const SIGNER_METHODS = {
 
 export const SignerMethod = SIGNER_METHODS
 
+export interface Signer {
+  method: string
+  identityId: string
+  sdk: DashPlatformSDK
+  sign: (stateTransition: StateTransitionWASM) => Promise<StateTransitionWASM> | StateTransitionWASM
+  signAndBroadcast: (stateTransition: StateTransitionWASM) => Promise<unknown>
+}
+
+interface ConnectParams {
+  wif?: string
+  identityId?: string
+}
+
 export const useSigner = () => {
   const network = useActiveNetwork()
   const [method, setMethodState] = useState(SIGNER_METHODS.EXTENSION)
-  const [signers, setSigners] = useState({
+  const [signers, setSigners] = useState<Record<string, Signer | null>>({
     [SIGNER_METHODS.EXTENSION]: null,
     [SIGNER_METHODS.PRIVATE_KEY]: null
   })
   const [isConnecting, setIsConnecting] = useState(false)
-  const [error, setError] = useState(null)
+  const [error, setError] = useState<string | null>(null)
 
   const signer = signers[method]
 
-  const setMethod = (newMethod) => {
+  const setMethod = (newMethod: string) => {
     setMethodState(newMethod)
     setError(null)
   }
 
-  const cacheSigner = (signerObj) => {
+  const cacheSigner = (signerObj: Signer): Signer => {
     setSigners((prev) => ({ ...prev, [signerObj.method]: signerObj }))
     return signerObj
   }
@@ -36,11 +52,13 @@ export const useSigner = () => {
       return null
     }
 
+    const extension = window.dashPlatformExtension
+
     setIsConnecting(true)
     setError(null)
 
     try {
-      const wallet = await window.dashPlatformExtension.signer.connect()
+      const wallet = await extension.signer.connect()
       const current = wallet.identities?.find(
         ({ identifier }) => identifier === wallet.currentIdentity
       )
@@ -61,8 +79,8 @@ export const useSigner = () => {
         method: SIGNER_METHODS.EXTENSION,
         identityId: wallet.currentIdentity,
         sdk,
-        signAndBroadcast: (stateTransition) =>
-          window.dashPlatformExtension.signer.signAndBroadcast(stateTransition.base64()),
+        signAndBroadcast: (stateTransition: StateTransitionWASM) =>
+          extension.signer.signAndBroadcast(stateTransition.base64()),
         sign: () => {
           throw new Error(
             'Sign-only is not supported via Extension yet — extension signs and broadcasts atomically'
@@ -70,14 +88,14 @@ export const useSigner = () => {
         }
       })
     } catch (e) {
-      setError(e?.message ?? e?.toString() ?? 'Failed to connect wallet')
+      setError((e as Error)?.message ?? (e as Error)?.toString() ?? 'Failed to connect wallet')
       return null
     } finally {
       setIsConnecting(false)
     }
   }
 
-  const connectWithPrivateKey = async ({ wif, identityId }) => {
+  const connectWithPrivateKey = async ({ wif, identityId }: ConnectParams) => {
     setIsConnecting(true)
     setError(null)
 
@@ -149,29 +167,29 @@ export const useSigner = () => {
         method: SIGNER_METHODS.PRIVATE_KEY,
         identityId: identityIdStr,
         sdk,
-        sign: async (stateTransition) => {
+        sign: async (stateTransition: StateTransitionWASM) => {
           const freshKey = await refreshKey()
           const fresh = StateTransitionWASM.fromBase64(stateTransition.base64())
-          fresh.signByPrivateKey(privateKey, freshKey.keyId, freshKey.keyType)
+          fresh.signByPrivateKey(privateKey, freshKey.keyId, freshKey.keyType as KeyTypeArg)
           return fresh
         },
-        signAndBroadcast: async (stateTransition) => {
+        signAndBroadcast: async (stateTransition: StateTransitionWASM) => {
           const freshKey = await refreshKey()
           const fresh = StateTransitionWASM.fromBase64(stateTransition.base64())
-          fresh.signByPrivateKey(privateKey, freshKey.keyId, freshKey.keyType)
+          fresh.signByPrivateKey(privateKey, freshKey.keyId, freshKey.keyType as KeyTypeArg)
           await sdk.stateTransitions.broadcast(fresh)
           return fresh
         }
       })
     } catch (e) {
-      setError(e?.message ?? 'Failed to connect with private key')
+      setError((e as Error)?.message ?? 'Failed to connect with private key')
       return null
     } finally {
       setIsConnecting(false)
     }
   }
 
-  const connect = (params) => {
+  const connect = (params?: ConnectParams) => {
     if (method === SIGNER_METHODS.EXTENSION) return connectExtension()
     if (method === SIGNER_METHODS.PRIVATE_KEY) return connectWithPrivateKey(params ?? {})
     setError('Unknown signer method')

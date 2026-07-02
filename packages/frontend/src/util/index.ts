@@ -1,23 +1,23 @@
-// @ts-nocheck — TODO: type this module incrementally
+import type { Alias, LoadableSetter } from '../types'
 import copyToClipboard from './copyToClipboard'
 import currencyRound from './currencyRound'
 import { getDaysBetweenDates, getDynamicRange, getTimeDelta, formatDate } from './datetime'
 import { normalizePagination } from './table'
 import { encodeDateToURL, decodeDateFromURL } from './url'
 
-function fetchHandlerSuccess (setter, data) {
+function fetchHandlerSuccess<T> (setter: LoadableSetter<T>, data: Partial<T>): void {
   setter(state => ({
     ...state,
     data: {
-      ...state.data,
+      ...(state.data as Record<string, unknown> | null),
       ...data
-    },
+    } as T,
     loading: false,
     error: false
   }))
 }
 
-function fetchHandlerError (setter, error) {
+function fetchHandlerError<T> (setter: LoadableSetter<T>, error: unknown): void {
   console.error(error)
 
   setter(state => ({
@@ -28,7 +28,7 @@ function fetchHandlerError (setter, error) {
   }))
 }
 
-function paginationHandler (setter, currentPage) {
+function paginationHandler<T> (setter: LoadableSetter<T>, currentPage: number): void {
   setter(state => ({
     ...state,
     props: {
@@ -38,24 +38,24 @@ function paginationHandler (setter, currentPage) {
   }))
 }
 
-function setLoadingProp (setter, value = true) {
+function setLoadingProp<T> (setter: LoadableSetter<T>, value = true): void {
   setter(state => ({ ...state, loading: value }))
 }
 
-function numberFormat (number) {
-  return new Intl.NumberFormat('en', { maximumSignificantDigits: 3 }).format(number)
+function numberFormat (number: number | string): string {
+  return new Intl.NumberFormat('en', { maximumSignificantDigits: 3 }).format(Number(number))
 }
 
 // full number with thousand separators — used where precision beats compactness (toolbar stats)
-function formatFullNumber (value) {
+function formatFullNumber (value: unknown): string | unknown {
   return typeof value === 'number' && Number.isFinite(value) ? value.toLocaleString('en-US') : value
 }
 
-function creditsToDash (credits) {
+function creditsToDash (credits: number): number {
   return credits / 10e10
 }
 
-function roundUsd (usd, maxDecimals = 5) {
+function roundUsd (usd: number, maxDecimals = 5): string {
   if (usd >= 0.01 || usd < 1 / Math.pow(10, maxDecimals)) return usd.toFixed(2)
 
   const multiplier = Math.pow(10, maxDecimals)
@@ -74,26 +74,29 @@ function roundUsd (usd, maxDecimals = 5) {
   return usd.toFixed(precision)
 }
 
-function removeTrailingZeros (value, maxDecimals = 8) {
-  if (typeof value !== 'number') value = Number(value)
-  if (isNaN(value)) return value
+function removeTrailingZeros (value: number | string, maxDecimals = 8): number {
+  const numericValue = typeof value !== 'number' ? Number(value) : value
+  if (isNaN(numericValue)) return numericValue
 
-  const fixedValue = value.toFixed(maxDecimals)
+  const fixedValue = numericValue.toFixed(maxDecimals)
   return parseFloat(fixedValue)
 }
 
-function findActiveAlias (aliases = []) {
+function findActiveAlias (aliases: Alias[] = []): Alias | null {
   if (!aliases?.length) return null
-  return aliases?.find(alias => alias.status === 'ok')
+  return aliases?.find(alias => alias.status === 'ok') ?? null
 }
 
-const getTokenName = (localizations) => localizations?.en?.singularForm ||
+type TokenLocalization = { singularForm?: string }
+
+const getTokenName = (localizations?: Record<string, TokenLocalization> | null): string =>
+  localizations?.en?.singularForm ||
   Object.values(localizations || {})[0]?.singularForm ||
   ''
 
-const getMinTokenPrice = (prices) => {
+const getMinTokenPrice = (prices?: Array<{ price: string | number }> | null): number | null => {
   if (!prices || prices.length === 0) return null
-  return Math.min(...prices.map(p => parseFloat(p.price)))
+  return Math.min(...prices.map(p => parseFloat(String(p.price))))
 }
 
 export {

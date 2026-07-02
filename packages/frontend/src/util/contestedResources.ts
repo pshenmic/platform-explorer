@@ -1,11 +1,11 @@
-const getResourceValue = (resourceValue) => (
+const getResourceValue = (resourceValue?: Array<string | undefined> | null): string => (
   (resourceValue?.[1] || '') +
   `${resourceValue?.[0]
     ? '.' + resourceValue?.[0]
     : ''}`
 )
 
-const decodeValue = (encodedValue) => {
+const decodeValue = (encodedValue: string): unknown => {
   const jsonString = String(Buffer
     .from(encodedValue, 'base64')
     .toString('utf-8')
