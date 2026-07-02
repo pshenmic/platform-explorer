@@ -1,7 +1,8 @@
 import { useState } from 'react'
-import type { DashPlatformSDK, StateTransitionWASM, Network } from 'dash-platform-sdk/types'
-import type { KeyTypeLike } from 'pshenmic-dpp'
+import type { DashPlatformSDK, StateTransitionWASM } from 'dash-platform-sdk/types'
 import { useActiveNetwork } from 'src/contexts'
+
+type KeyTypeArg = Parameters<StateTransitionWASM['signByPrivateKey']>[2]
 
 const SIGNER_METHODS = {
   EXTENSION: 'extension',
@@ -72,7 +73,7 @@ export const useSigner = () => {
       // The extension's signAndBroadcast accepts a base64 string of the state transition
       // and reconstructs internally in its own wasm — clean cross-context handoff.
       const { DashPlatformSDK } = await import('dash-platform-sdk/types')
-      const sdk = new DashPlatformSDK({ network: network.name as Network })
+      const sdk = new DashPlatformSDK({ network: network.name })
 
       return cacheSigner({
         method: SIGNER_METHODS.EXTENSION,
@@ -110,13 +111,13 @@ export const useSigner = () => {
         try { return PrivateKeyWASM.fromWIF(trimmedWif) } catch {}
 
         if (/^[0-9a-fA-F]{64}$/.test(trimmedWif)) {
-          try { return PrivateKeyWASM.fromHex(trimmedWif, network.name as Network) } catch {}
+          try { return PrivateKeyWASM.fromHex(trimmedWif, network.name) } catch {}
         }
 
         if (/^[A-Za-z0-9+/]+={0,2}$/.test(trimmedWif)) {
           try {
             const bytes = Uint8Array.from(atob(trimmedWif), (c) => c.charCodeAt(0))
-            if (bytes.length === 32) return PrivateKeyWASM.fromBytes(bytes, network.name as Network)
+            if (bytes.length === 32) return PrivateKeyWASM.fromBytes(bytes, network.name)
           } catch {}
         }
 
@@ -125,7 +126,7 @@ export const useSigner = () => {
 
       const privateKey = parsePrivateKey()
 
-      const sdk = new DashPlatformSDK({ network: network.name as Network })
+      const sdk = new DashPlatformSDK({ network: network.name })
       const publicKeyHash = privateKey.getPublicKeyHash()
 
       let identity
@@ -169,13 +170,13 @@ export const useSigner = () => {
         sign: async (stateTransition: StateTransitionWASM) => {
           const freshKey = await refreshKey()
           const fresh = StateTransitionWASM.fromBase64(stateTransition.base64())
-          fresh.signByPrivateKey(privateKey, freshKey.keyId, freshKey.keyType as KeyTypeLike)
+          fresh.signByPrivateKey(privateKey, freshKey.keyId, freshKey.keyType as KeyTypeArg)
           return fresh
         },
         signAndBroadcast: async (stateTransition: StateTransitionWASM) => {
           const freshKey = await refreshKey()
           const fresh = StateTransitionWASM.fromBase64(stateTransition.base64())
-          fresh.signByPrivateKey(privateKey, freshKey.keyId, freshKey.keyType as KeyTypeLike)
+          fresh.signByPrivateKey(privateKey, freshKey.keyId, freshKey.keyType as KeyTypeArg)
           await sdk.stateTransitions.broadcast(fresh)
           return fresh
         }
