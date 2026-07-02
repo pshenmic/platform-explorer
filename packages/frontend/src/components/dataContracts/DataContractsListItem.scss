@@ -30,4 +30,9 @@
     margin-left: auto;
     overflow: hidden;
   }
+
+  &__Genesis {
+    color: var(--chakra-colors-gray-400);
+    font-style: italic;
+  }
 }

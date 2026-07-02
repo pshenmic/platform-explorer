@@ -1,0 +1,40 @@
+@import '../../styles/variables.scss';
+
+.PageTitle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.625rem;
+
+  &__Title {
+    font-style: italic;
+    font-weight: 800;
+    white-space: nowrap;
+  }
+
+  &__InfoButton {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    opacity: 0.55;
+    transition: opacity $transition-time-def ease, transform $transition-time-def ease;
+    cursor: pointer;
+
+    &:hover {
+      opacity: 1;
+    }
+  }
+}
+
+// PopoverContent renders in a Portal, outside .PageTitle
+.PageTitle__DescriptionPopover {
+  .PageTitle__DescriptionText {
+    margin: 0;
+    font-size: 0.8125rem;
+    line-height: 1.55;
+    color: var(--chakra-colors-gray-100);
+  }
+}

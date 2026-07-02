@@ -9,7 +9,11 @@ import PageSizeSelector from '../../components/pageSizeSelector/PageSizeSelector
 import { LoadingList } from '../../components/loading'
 import { ErrorMessageBlock } from '../../components/Errors'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
-import { Container, Heading, Box, useBreakpointValue } from '@chakra-ui/react'
+import { Container, Box, useBreakpointValue } from '@chakra-ui/react'
+import NetworkStatsInline from '../../components/stats/NetworkStatsInline'
+import PageTitle from '../../components/intro/PageTitle'
+import TransactionsChartCompact from '../../components/charts/TransactionsChartCompact'
+import introContent from './intro.md'
 import './Transactions.scss'
 
 const paginateConfig = {
@@ -98,13 +102,19 @@ function Transactions ({ defaultPage = 1, defaultPageSize }) {
       className={'Transactions'}
     >
         <Container maxW={'container.maxPageW'} className={'InfoBlock'}>
-          <Heading className={'InfoBlock__Title'} as={'h1'}>Transactions</Heading>
+          <div className={'Transactions__Controls'}>
+            <PageTitle title={'Transactions'} description={introContent} className={'Transactions__Title'}/>
 
-          <TransactionsFilter
-            onFilterChange={filtersChangeHandler}
-            isMobile={isMobile}
-            className={'Transactions__Filters'}
-          />
+            <NetworkStatsInline className={'Transactions__Stats'}/>
+
+            <TransactionsFilter
+              onFilterChange={filtersChangeHandler}
+              isMobile={isMobile}
+              className={'Transactions__Filters'}
+            />
+          </div>
+
+          <TransactionsChartCompact className={'Transactions__Chart'}/>
 
           {!transactions.error
             ? !transactions.loading
