@@ -180,7 +180,7 @@ const PshenmicLogoIcon = (props: IconProps) => (
 )
 
 const TransactionsIcon = (props: IconProps) => {
-  const uniqueId = (useId as () => string)()
+  const uniqueId = useId(undefined)
   return (
     <Icon viewBox='0 0 28 25' width='28' height='25' fill='none' {...props}>
       <svg width='28' height='25' viewBox='0 0 28 25' fill='none' xmlns='http://www.w3.org/2000/svg'>
@@ -200,7 +200,7 @@ const TransactionsIcon = (props: IconProps) => {
 }
 
 const DocumentIcon = (props: IconProps) => {
-  const uniqueId = (useId as () => string)()
+  const uniqueId = useId(undefined)
   return (
     <Icon viewBox='0 0 20 27' width='20' height='27' fill='none' {...props}>
       <path
@@ -218,7 +218,7 @@ const DocumentIcon = (props: IconProps) => {
 }
 
 const QueuePositionIcon = (props: IconProps) => {
-  const uniqueId = (useId as () => string)()
+  const uniqueId = useId(undefined)
   return (
     <Icon viewBox='0 0 28 28' width='28' height='28' fill='none' {...props}>
       <svg width='28' height='28' viewBox='0 0 28 28' fill='none' xmlns='http://www.w3.org/2000/svg'>
@@ -251,7 +251,7 @@ const QueuePositionIcon = (props: IconProps) => {
 }
 
 const MembersIcon = (props: IconProps) => {
-  const uniqueId = (useId as () => string)()
+  const uniqueId = useId(undefined)
   return (
     <Icon viewBox='0 0 29 28' width='29' height='28' fill='none' {...props}>
       <svg width='29' height='28' viewBox='0 0 29 28' fill='none' xmlns='http://www.w3.org/2000/svg'>
@@ -276,7 +276,7 @@ const MembersIcon = (props: IconProps) => {
 }
 
 const BlockIcon = (props: IconProps) => {
-  const uniqueId = (useId as () => string)()
+  const uniqueId = useId(undefined)
   return (
     <Icon viewBox='0 0 48 48' width='48' height='48' fill='none' {...props}>
       <svg width='48' height='48' viewBox='0 0 48 48' fill='none' xmlns='http://www.w3.org/2000/svg'>
@@ -320,7 +320,7 @@ const SearchIcon = (props: IconProps) => (
 )
 
 const HourglassIcon = (props: IconProps) => {
-  const uniqueId = (useId as () => string)()
+  const uniqueId = useId(undefined)
 
   return (
     <Icon viewBox='0 0 48 48' width='48' height='48' color={'#008DE4'} {...props}>
@@ -354,7 +354,7 @@ const SignatureIcon = (props: IconProps) => {
 }
 
 const ListIcon = (props: IconProps) => {
-  const uniqueId = (useId as () => string)()
+  const uniqueId = useId(undefined)
 
   return (
     <Icon viewBox='0 0 48 48' width='48' height='48' fill='none' color={'#008DE4'} {...props}>
@@ -394,7 +394,7 @@ const LockIcon = (props: IconProps) => (
 )
 
 const PercentHandIcon = (props: IconProps) => {
-  const uniqueId = (useId as () => string)()
+  const uniqueId = useId(undefined)
 
   return (
     <Icon width='48' height='48' viewBox='0 0 48 48' fill='none' color={'#008DE4'} {...props}>
@@ -412,7 +412,7 @@ const PercentHandIcon = (props: IconProps) => {
 }
 
 const SignatureTopIcon = (props: IconProps) => {
-  const uniqueId = (useId as () => string)()
+  const uniqueId = useId(undefined)
 
   return (
     <Icon width='49' height='48' viewBox='0 0 49 48' fill='none' color={'#008DE4'} {...props}>
@@ -434,7 +434,7 @@ const SignatureTopIcon = (props: IconProps) => {
 }
 
 const CirclePauseIcon = (props: IconProps) => {
-  const uniqueId = (useId as () => string)()
+  const uniqueId = useId(undefined)
 
   return (
     <Icon viewBox='0 0 24 24' width='24' height='24' fill='none' color={'#F45858'} {...props}>
@@ -453,7 +453,7 @@ const CirclePauseIcon = (props: IconProps) => {
 }
 
 const CirclePlayIcon = (props: IconProps) => {
-  const uniqueId = (useId as () => string)()
+  const uniqueId = useId(undefined)
 
   return (
     <Icon viewBox='0 0 24 24' width='24' height='24' fill='none' color={'#81F458'} {...props}>
@@ -472,7 +472,7 @@ const CirclePlayIcon = (props: IconProps) => {
 }
 
 const TokenMintIcon = (props: IconProps) => {
-  const uniqueId = (useId as () => string)()
+  const uniqueId = useId(undefined)
 
   return (
     <Icon viewBox='0 0 28 28' width='28' height='28' fill='none' color={'#008DE4'} {...props}>
@@ -490,7 +490,7 @@ const TokenMintIcon = (props: IconProps) => {
 }
 
 const TokenTotalIcon = (props: IconProps) => {
-  const uniqueId = (useId as () => string)()
+  const uniqueId = useId(undefined)
 
   return (
     <Icon viewBox='0 0 28 28' width='28' height='28' fill='none' color={'#008DE4'} {...props}>
@@ -514,7 +514,7 @@ const TokenTotalIcon = (props: IconProps) => {
 }
 
 const TokenBurnIcon = (props: IconProps) => {
-  const uniqueId = (useId as () => string)()
+  const uniqueId = useId(undefined)
 
   return (
     <Icon viewBox='0 0 28 28' width='28' height='28' fill='none' color={'#008DE4'} {...props}>
@@ -532,7 +532,7 @@ const TokenBurnIcon = (props: IconProps) => {
 }
 
 const TokenFreezeIcon = (props: IconProps) => {
-  const uniqueId = (useId as () => string)()
+  const uniqueId = useId(undefined)
 
   return (
     <Icon viewBox='0 0 29 28' width='29' height='28' fill='none' color={'#008DE4'} {...props}>

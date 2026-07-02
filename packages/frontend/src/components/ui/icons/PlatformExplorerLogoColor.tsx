@@ -2,7 +2,7 @@ import { Icon, useId } from '@chakra-ui/react'
 import type { IconProps } from '@chakra-ui/react'
 
 const PlatformExplorerLogoColor = (props: IconProps) => {
-  const uniqueId = (useId as () => string)()
+  const uniqueId = useId(undefined)
 
   return (
     <Icon viewBox='0 0 289 289' width='289' height='289' fill='none' color={'#008DE4'} {...props}>
