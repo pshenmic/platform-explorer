@@ -1,10 +1,12 @@
+import type { Network } from 'dash-platform-sdk/types'
+
 export const NETWORKS_ENUM = {
   MAINNET: 'mainnet',
   TESTNET: 'testnet'
-} as const
+} as const satisfies Record<string, Network>
 
 export interface NetworkOption {
-  name: string
+  name: Network
   subname: string
   disabled: boolean
   explorerBaseUrl: string | undefined
