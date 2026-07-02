@@ -23,6 +23,15 @@ pub struct PostgresDAO {
 
 impl PostgresDAO {
     pub fn new(network: Network) -> PostgresDAO {
+        let connection_pool = PostgresDAO::create_pool();
+
+        PostgresDAO {
+            connection_pool,
+            network,
+        }
+    }
+
+    pub fn create_pool() -> Pool {
         let mut cfg = Config::new();
 
         let postgres_host = env::var("POSTGRES_HOST").expect("You've not set the POSTGRES_HOST");
@@ -43,11 +52,6 @@ impl PostgresDAO {
             recycling_method: RecyclingMethod::Fast,
         });
 
-        let connection_pool = cfg.create_pool(Some(Runtime::Tokio1), NoTls).unwrap();
-
-        PostgresDAO {
-            connection_pool,
-            network,
-        }
+        cfg.create_pool(Some(Runtime::Tokio1), NoTls).unwrap()
     }
 }

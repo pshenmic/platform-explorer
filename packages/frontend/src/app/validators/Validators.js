@@ -4,10 +4,13 @@ import * as Api from '../../util/Api'
 import Pagination from '../../components/pagination'
 import PageSizeSelector from '../../components/pageSizeSelector/PageSizeSelector'
 import { normalizePagination } from '../../util'
-import { Container, Box, Heading, useBreakpointValue } from '@chakra-ui/react'
+import { Container, Box, useBreakpointValue } from '@chakra-ui/react'
 import { useQuery } from '@tanstack/react-query'
 import { parseAsInteger, useQueryState } from 'nuqs'
-import { useValidatorsFilters, ValidatorsFilter, ValidatorsList } from '@components/validators'
+import { useValidatorsFilters, ValidatorsFilter, ValidatorsList, ValidatorsStatsInline } from '@components/validators'
+import PageTitle from '../../components/intro/PageTitle'
+import introContent from './intro.md'
+import './ValidatorsPage.scss'
 
 const paginateConfig = {
   pageSize: {
@@ -44,6 +47,7 @@ function Validators () {
     keepPreviousData: true,
     select: ({ pagination, ...other }) => ({
       ...other,
+      total: pagination?.total,
       pagination: normalizePagination({
         page,
         pageSize,
@@ -53,6 +57,7 @@ function Validators () {
   })
 
   const pagination = validators.data?.pagination
+  const totalValidators = validators.data?.total
 
   const handleFiltersChange = (next) => {
     setFilters(next)
@@ -63,18 +68,27 @@ function Validators () {
     <Container
       maxW={'container.maxPageW'}
       mt={8}
-      className={'Transactions'}
+      className={'Validators'}
     >
       <Container
         maxW={'container.maxPageW'}
         className={'InfoBlock'}
       >
-        <Heading className={'InfoBlock__Title'} as={'h1'}>Validators</Heading>
-        <ValidatorsFilter
-          onFilterChange={handleFiltersChange}
-          isMobile={isMobile}
-          className={'ValidatorsIntro__Filters'}
-        />
+        <div className={'Validators__Controls'}>
+          <PageTitle title={'Validators'} description={introContent} className={'Validators__Title'}/>
+
+          <ValidatorsStatsInline
+            className={'Validators__Stats'}
+            total={totalValidators}
+          />
+
+          <ValidatorsFilter
+            onFilterChange={handleFiltersChange}
+            isMobile={isMobile}
+            className={'Validators__Filters'}
+          />
+        </div>
+
         <ValidatorsList
           list={validators.data?.resultSet}
           loading={validators.isLoading}

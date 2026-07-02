@@ -1872,20 +1872,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "postgres"
-version = "0.19.12"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e7c48ece1c6cda0db61b058c1721378da76855140e9214339fa1317decacb176"
-dependencies = [
- "bytes",
- "fallible-iterator",
- "futures-util",
- "log",
- "tokio",
- "tokio-postgres",
-]
-
-[[package]]
 name = "postgres-protocol"
 version = "0.6.10"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2077,12 +2063,13 @@ dependencies = [
  "async-trait",
  "cfg-if",
  "log",
- "postgres",
  "regex",
  "serde",
  "siphasher",
  "thiserror 1.0.69",
  "time",
+ "tokio",
+ "tokio-postgres",
  "toml 0.8.23",
  "url",
  "walkdir",

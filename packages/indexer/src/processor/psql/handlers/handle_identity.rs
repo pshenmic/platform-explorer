@@ -7,6 +7,8 @@ use deadpool_postgres::Transaction;
 use dpp::identity::state_transition::AssetLockProved;
 use dpp::prelude::AssetLockProof;
 use dpp::state_transition::identity_create_from_addresses_transition::IdentityCreateFromAddressesTransition;
+use dpp::state_transition::identity_create_from_shielded_pool_transition::accessors::IdentityCreateFromShieldedPoolTransitionAccessorsV0;
+use dpp::state_transition::identity_create_from_shielded_pool_transition::IdentityCreateFromShieldedPoolTransition;
 use dpp::state_transition::identity_create_transition::IdentityCreateTransition;
 use dpp::state_transition::identity_credit_transfer_to_addresses_transition::IdentityCreditTransferToAddressesTransition;
 use dpp::state_transition::identity_credit_transfer_transition::IdentityCreditTransferTransition;
@@ -156,6 +158,38 @@ impl PSQLProcessor {
 
         self.dao
             .create_identity(identity, Some(st_hash.clone()), sql_transaction)
+            .await
+            .unwrap();
+    }
+
+    pub async fn handle_identity_create_from_shielded_pool(
+        &self,
+        state_transition: IdentityCreateFromShieldedPoolTransition,
+        st_hash: String,
+        sql_transaction: &Transaction<'_>,
+    ) -> () {
+        let identifier = state_transition.identity_id();
+
+        let identity = Identity {
+            identifier,
+            owner: identifier,
+            revision: 0u64,
+            balance: Some(state_transition.denomination()),
+            is_system: false,
+        };
+
+        let transfer = Transfer {
+            sender: None,
+            recipient: Some(identifier),
+            amount: state_transition.denomination(),
+        };
+
+        self.dao
+            .create_identity(identity, Some(st_hash.clone()), sql_transaction)
+            .await
+            .unwrap();
+        self.dao
+            .create_transfer(transfer, st_hash.clone(), sql_transaction)
             .await
             .unwrap();
     }

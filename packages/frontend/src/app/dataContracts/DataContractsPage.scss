@@ -1,6 +1,6 @@
 @import '../../styles/variables.scss';
 
-.IdentitiesPage {
+.DataContractsPage {
   &__Controls {
     display: flex;
     align-items: center;
@@ -19,13 +19,9 @@
     min-width: 0;
   }
 
-  &__ShowAll {
-    flex-shrink: 0;
-    margin-left: auto;
-  }
-
   &__Filters {
     flex-shrink: 0;
+    margin-left: auto;
   }
 
   @media screen and (max-width: $breakpoint-md) {
@@ -35,7 +31,7 @@
       gap: 1rem;
     }
 
-    &__ShowAll {
+    &__Filters {
       margin-left: 0;
     }
   }

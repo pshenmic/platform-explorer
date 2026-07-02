@@ -3,18 +3,27 @@
 .Blocks {
   &__Controls {
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-start;
     align-items: center;
-    gap: 0.5rem;
+    gap: 1rem;
     margin: 0.75rem 0 1.5rem;
+    flex-wrap: wrap;
+  }
+
+  &__Title {
+    flex-shrink: 0;
+    margin-right: 0.5rem;
+  }
+
+  &__Stats {
+    flex: 1 1 auto;
+    min-width: 0;
   }
 
   &__Filters {
-    width: 100%;
-  }
-
-  &__SearchWrapper {
-    width: 300px;
+    width: auto;
+    flex-shrink: 0;
+    margin-left: auto;
   }
 
   .PageSizeSelector, .GoToHeightForm {
@@ -58,8 +67,8 @@
       gap: 1rem;
     }
 
-    &__SearchWrapper {
-      width: 100%;
+    &__Filters {
+      margin-left: 0;
     }
   }
 }

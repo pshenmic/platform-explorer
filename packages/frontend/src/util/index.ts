@@ -46,6 +46,11 @@ function numberFormat (number: number | string): string {
   return new Intl.NumberFormat('en', { maximumSignificantDigits: 3 }).format(Number(number))
 }
 
+// full number with thousand separators — used where precision beats compactness (toolbar stats)
+function formatFullNumber (value: unknown): string | unknown {
+  return typeof value === 'number' && Number.isFinite(value) ? value.toLocaleString('en-US') : value
+}
+
 function creditsToDash (credits: number): number {
   return credits / 10e10
 }
@@ -101,6 +106,7 @@ export {
   setLoadingProp,
   numberFormat,
   currencyRound,
+  formatFullNumber,
   copyToClipboard,
   getTimeDelta,
   creditsToDash,

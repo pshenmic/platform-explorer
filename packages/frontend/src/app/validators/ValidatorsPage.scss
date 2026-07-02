@@ -1,6 +1,6 @@
 @import '../../styles/variables.scss';
 
-.IdentitiesPage {
+.Validators {
   &__Controls {
     display: flex;
     align-items: center;
@@ -19,13 +19,13 @@
     min-width: 0;
   }
 
-  &__ShowAll {
+  &__Filters {
     flex-shrink: 0;
     margin-left: auto;
   }
 
-  &__Filters {
-    flex-shrink: 0;
+  .ValidatorsTotal {
+    margin-bottom: 1.5rem;
   }
 
   @media screen and (max-width: $breakpoint-md) {
@@ -35,7 +35,7 @@
       gap: 1rem;
     }
 
-    &__ShowAll {
+    &__Filters {
       margin-left: 0;
     }
   }

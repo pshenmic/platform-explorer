@@ -31,7 +31,7 @@
 
       span {
         text-overflow: ellipsis;
-        overflow: hidden; 
+        overflow: hidden;
         white-space: nowrap;
       }
     }
@@ -39,6 +39,7 @@
     &--Type {
       justify-content: flex-end;
       white-space: nowrap;
+      min-width: 0;
     }
 
     &--GasUsed {
@@ -70,6 +71,19 @@
 
   &__AliasContainer {
     display: flex;
+  }
+
+  &__TypeBadge {
+    max-width: 100%;
+    min-width: 0;
+  }
+
+  &__TypeBadgeLabel {
+    display: block;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
   &__OwnerLink {

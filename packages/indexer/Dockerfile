@@ -5,6 +5,7 @@ WORKDIR /app
 COPY Cargo.lock /app
 COPY Cargo.toml /app
 COPY src /app/src
+COPY migrations /app/migrations
 RUN cargo build
 
 FROM alpine:3.20 as indexer

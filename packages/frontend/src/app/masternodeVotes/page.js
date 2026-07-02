@@ -1,9 +1,4 @@
 import MasternodeVotes from './MasternodeVotes'
-import { Container } from '@chakra-ui/react'
-import Intro from '../../components/intro'
-import Markdown from '../../components/markdown'
-import introContent from './intro.md'
-import MasternodeVotesDashboardCards from '../../components/contestedResources/MasternodeVotesDashboardCards'
 
 export async function generateMetadata () {
   return {
@@ -30,24 +25,7 @@ function MasternodeVotesRoute ({ searchParams }) {
   const page = Number(searchParams.page) || 1
   const pageSize = Number(searchParams['page-size'])
 
-  return (
-    <div>
-      <Container
-        maxW={'container.maxPageW'}
-        color={'white'}
-        mt={8}
-        mb={0}
-      >
-        <Intro
-          className={'MasternodeVotesIntro'}
-          title={'Masternode Votes'}
-          description={<Markdown>{introContent}</Markdown>}
-          block={<MasternodeVotesDashboardCards/>}
-        />
-        <MasternodeVotes defaultPage={page} defaultPageSize={pageSize}/>
-      </Container>
-    </div>
-  )
+  return <MasternodeVotes defaultPage={page} defaultPageSize={pageSize}/>
 }
 
 export default MasternodeVotesRoute
