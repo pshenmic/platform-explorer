@@ -416,7 +416,8 @@ describe('Other routes', () => {
               timestamp: aliasTimestamp.toISOString()
             }
           ]
-        }
+        },
+        shielded: null
       }
 
       assert.deepEqual({ transactions: [expectedTransaction] }, body)
