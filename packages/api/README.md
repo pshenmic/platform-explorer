@@ -78,6 +78,7 @@ Reference:
 * [Transactions Shield history](#transactions-shield-history)
 * [Transactions Unshield history](#transactions-unshield-history)
 * [Transactions Statistic](#transactions-statistic)
+* [Shielded Statistic](#shielded-statistic)
 * [Votes for contested resource](#votes-for-contested-resource)
 * [Contested Resource Value](#contested-resource-value)
 * [Contested Resources](#contested-resources)
@@ -647,6 +648,13 @@ Status can be either `SUCCESS` or `FAIL`. In case of error tx, message will appe
 
 If the same state transition hash was observed in more than one block, the response includes a `duplicates` field — an array of `Transaction` objects, one per occurrence. Each duplicate has `status: "FAIL"` and its own `blockHash`/`blockHeight`/`timestamp`; all other fields are inherited from the canonical state transition.
 
+For shielded state transitions the response also includes a `shielded` object with the transition `amount` (credits, as a string) and its `direction`:
+* `IN` — value moved into the shielded pool (`SHIELD`, `SHIELD_FROM_ASSET_LOCK`)
+* `OUT` — value moved out of the shielded pool (`UNSHIELD`, `SHIELDED_WITHDRAWAL`, `IDENTITY_CREATE_FROM_SHIELDED_POOL`)
+* `TRANSFER` — value stays inside the shielded pool (`SHIELDED_TRANSFER`)
+
+For non-shielded transitions `shielded` is `null`.
+
 ```
 GET /transaction/DEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEF
 
@@ -673,6 +681,7 @@ GET /transaction/DEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEE
         }
       ]
     },
+    "shielded": null,
     "duplicates": [
         {
             "blockHash": "9EFA730C41CE9408F9732E4C72A4DAE7A2701AF0F7B1DCE8A72F163E285BEBF3",
@@ -2045,6 +2054,39 @@ GET /transactions/statistic
         "count": 115
     }, ...
 ]
+```
+Response codes:
+```
+200: OK
+500: Internal Server Error
+```
+___
+### Shielded Statistic
+Return an aggregate overview of the shielded pool.
+
+* `totalShieldedIn` — total credits moved into the pool (`SHIELD` + `SHIELD_FROM_ASSET_LOCK`), as a string
+* `totalShieldedOut` — total credits moved out of the pool (`UNSHIELD` + `SHIELDED_WITHDRAWAL` + `IDENTITY_CREATE_FROM_SHIELDED_POOL`), as a string
+* `poolBalance` — `totalShieldedIn` − `totalShieldedOut`, an estimate of the current shielded pool size, as a string
+* `transitionsCount` — total number of shielded transitions
+* `types` — per-type breakdown with `count` and summed `amount` (string)
+
+Note: `SHIELDED_TRANSFER` stays inside the pool and is counted in `types`/`transitionsCount` but excluded from `totalShieldedIn`/`totalShieldedOut`.
+
+```
+GET /transactions/shielded/statistic
+{
+    "totalShieldedIn": "300000000",
+    "totalShieldedOut": "150000000",
+    "poolBalance": "150000000",
+    "transitionsCount": 6,
+    "types": [
+        {
+            "transactionType": "SHIELD",
+            "count": 2,
+            "amount": "200000000"
+        }, ...
+    ]
+}
 ```
 Response codes:
 ```
