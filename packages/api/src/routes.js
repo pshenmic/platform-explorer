@@ -773,7 +773,7 @@ module.exports = ({
     {
       path: '/transactions/statistic',
       method: 'GET',
-      handler: transactionsController.getTransactionStatistic,
+      handler: transactionsController.getTransactionStatistic
     },
     {
       path: '/identities/active',
@@ -782,7 +782,7 @@ module.exports = ({
       schema: {
         querystring: { $ref: 'paginationOptions#' }
       }
-    },
+    }
   ]
 
   routes.forEach(
