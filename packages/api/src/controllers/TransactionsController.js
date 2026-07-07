@@ -330,6 +330,12 @@ class TransactionsController {
 
     response.send(info)
   }
+
+  getShieldedStatistic = async (request, response) => {
+    const info = await this.transactionsDAO.getShieldedStatistic()
+
+    response.send(info)
+  }
 }
 
 module.exports = TransactionsController

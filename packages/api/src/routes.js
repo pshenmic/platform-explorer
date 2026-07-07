@@ -776,6 +776,11 @@ module.exports = ({
       handler: transactionsController.getTransactionStatistic
     },
     {
+      path: '/transactions/shielded/statistic',
+      method: 'GET',
+      handler: transactionsController.getShieldedStatistic
+    },
+    {
       path: '/identities/active',
       method: 'GET',
       handler: identitiesController.getActiveIdentities,

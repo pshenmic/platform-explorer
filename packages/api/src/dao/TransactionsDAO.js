@@ -4,6 +4,7 @@ const SeriesData = require('../models/SeriesData')
 const { getAliasFromDocument, getAliasDocumentForIdentifier, getAliasDocumentForIdentifiers } = require('../utils')
 const StateTransitionEnum = require('../enums/StateTransitionEnum')
 const BatchEnum = require('../enums/BatchEnum')
+const { SHIELD_IN_TYPES, SHIELD_OUT_TYPES, getShieldedDirection } = require('../enums/ShieldedTransitionEnum')
 
 module.exports = class TransactionsDAO {
   constructor (knex, sdk) {
@@ -23,11 +24,13 @@ module.exports = class TransactionsDAO {
         'state_transitions.gas_used as gas_used', 'state_transitions.status as status',
         'state_transitions.error as error', 'state_transitions.type as type', 'state_transitions.batch_type as batch_type',
         'state_transitions.index as index', 'blocks.height as block_height',
-        'blocks.hash as block_hash', 'blocks.timestamp as timestamp', 'state_transitions.owner as owner'
+        'blocks.hash as block_hash', 'blocks.timestamp as timestamp', 'state_transitions.owner as owner',
+        'shielded_transitions.amount as shielded_amount'
       )
       .select(duplicatesSubquery.as('duplicates'))
       .whereILike('state_transitions.hash', hash)
       .leftJoin('blocks', 'blocks.hash', 'state_transitions.block_hash')
+      .leftJoin('shielded_transitions', 'shielded_transitions.state_transition_id', 'state_transitions.id')
 
     if (!row) {
       return null
@@ -55,13 +58,22 @@ module.exports = class TransactionsDAO {
       }))
       : undefined
 
-    return Transaction.fromRow(
+    const transaction = Transaction.fromRow(
       {
         ...row,
         type: StateTransitionEnum[row.type],
         aliases,
         duplicates
       })
+
+    transaction.shielded = row.shielded_amount != null
+      ? {
+          amount: String(row.shielded_amount),
+          direction: getShieldedDirection(row.type)
+        }
+      : null
+
+    return transaction
   }
 
   getTransactions = async (page, limit, order, orderBy, transactionsTypes, batchTypes, owner, status, min, max, timestampStart, timestampEnd, tokenName) => {
@@ -429,13 +441,7 @@ module.exports = class TransactionsDAO {
 
     const endSql = `'${new Date(end.getTime()).toISOString()}'::timestamptz`
 
-    // shield
-    let transitionTypes = [StateTransitionEnum.SHIELD, StateTransitionEnum.SHIELD_FROM_ASSET_LOCK]
-
-    // unshield
-    if (direction !== true) {
-      transitionTypes = [StateTransitionEnum.UNSHIELD, StateTransitionEnum.SHIELDED_WITHDRAWAL, StateTransitionEnum.IDENTITY_CREATE_FROM_SHIELDED_POOL]
-    }
+    const transitionTypes = direction === true ? SHIELD_IN_TYPES : SHIELD_OUT_TYPES
 
     const ranges = this.knex
       .from(this.knex.raw(`generate_series(${startSql}, ${endSql}, '${interval}'::interval) date_to`))
@@ -510,5 +516,44 @@ module.exports = class TransactionsDAO {
       transactionType: StateTransitionEnum[row.type],
       count: Number(row.count)
     }))
+  }
+
+  getShieldedStatistic = async () => {
+    const rows = await this.knex('shielded_transitions')
+      .select('state_transition_type as type')
+      .sum('amount as total_amount')
+      .count('* as count')
+      .groupBy('state_transition_type')
+
+    let totalShieldedIn = 0n
+    let totalShieldedOut = 0n
+    let transitionsCount = 0
+
+    const types = rows.map(row => {
+      const amount = BigInt(row.total_amount ?? 0)
+      const count = Number(row.count)
+
+      transitionsCount += count
+
+      if (SHIELD_IN_TYPES.includes(row.type)) {
+        totalShieldedIn += amount
+      } else if (SHIELD_OUT_TYPES.includes(row.type)) {
+        totalShieldedOut += amount
+      }
+
+      return {
+        transactionType: StateTransitionEnum[row.type],
+        count,
+        amount: amount.toString()
+      }
+    })
+
+    return {
+      totalShieldedIn: totalShieldedIn.toString(),
+      totalShieldedOut: totalShieldedOut.toString(),
+      poolBalance: (totalShieldedIn - totalShieldedOut).toString(),
+      transitionsCount,
+      types
+    }
   }
 }
