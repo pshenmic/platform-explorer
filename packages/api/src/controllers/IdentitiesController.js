@@ -276,7 +276,7 @@ class IdentitiesController {
       new Date(end),
       Number(page ?? 1),
       Number(limit ?? 10),
-      order,
+      order
     )
 
     response.send(identities)

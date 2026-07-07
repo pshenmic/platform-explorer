@@ -173,7 +173,6 @@ class ValidatorsController {
       return validatorInfo
     }))
 
-
     const validatorsWithoutBan = validatorsInfos.filter(validator => validator.proTxInfo?.state.PoSeBanHeight === -1)
 
     const validators = await this.validatorsDAO.getValidators(

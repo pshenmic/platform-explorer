@@ -430,10 +430,10 @@ module.exports = class TransactionsDAO {
     const endSql = `'${new Date(end.getTime()).toISOString()}'::timestamptz`
 
     // shield
-    let transitionTypes = [StateTransitionEnum.SHIELD,StateTransitionEnum.SHIELD_FROM_ASSET_LOCK]
+    let transitionTypes = [StateTransitionEnum.SHIELD, StateTransitionEnum.SHIELD_FROM_ASSET_LOCK]
 
     // unshield
-    if(direction!==true) {
+    if (direction !== true) {
       transitionTypes = [StateTransitionEnum.UNSHIELD, StateTransitionEnum.SHIELDED_WITHDRAWAL, StateTransitionEnum.IDENTITY_CREATE_FROM_SHIELDED_POOL]
     }
 
@@ -508,7 +508,7 @@ module.exports = class TransactionsDAO {
 
     return rows.map(row => ({
       transactionType: StateTransitionEnum[row.type],
-      count: Number(row.count),
+      count: Number(row.count)
     }))
   }
 }

@@ -118,7 +118,7 @@ module.exports = class ValidatorsDAO {
     const rows = await this.knex('validators')
       .select('pro_tx_hash')
 
-    return rows.map(r=>r.pro_tx_hash)
+    return rows.map(r => r.pro_tx_hash)
   }
 
   getValidators = async (page, limit, order, isActive, activeValidators, isBanned, validatorsWithoutBan, owner, blocksProposedMin, blocksProposedMax, lastProposedBlockHeightMin, lastProposedBlockHeightMax, lastProposedBlockTimestampStart, lastProposedBlockTimestampEnd, lastProposedBlockHash) => {

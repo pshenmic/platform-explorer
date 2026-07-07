@@ -732,7 +732,6 @@ module.exports = class IdentitiesDAO {
       .offset(fromRank)
       .from('ranked_subquery')
 
-
     const totalCount = rows.length > 0 ? Number(rows[0].total_count) : 0
 
     const identifiers = rows.map(row => row.identifier.trim())
@@ -751,7 +750,7 @@ module.exports = class IdentitiesDAO {
       return {
         identifier: row.identifier,
         transactionsCount: row.transactions_count,
-        aliases: aliases
+        aliases
       }
     }))
 
