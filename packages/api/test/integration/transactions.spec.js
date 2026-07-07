@@ -1506,6 +1506,106 @@ describe('Transaction routes', () => {
     })
   })
 
+  describe('getTransactionStatistic()', async () => {
+    it('should return transaction count grouped by type', async () => {
+      const { body } = await client.get('/transactions/statistic')
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      const countsByType = transactions.reduce((acc, { transaction }) => {
+        acc[transaction.type] = (acc[transaction.type] ?? 0) + 1
+        return acc
+      }, {})
+
+      const expectedStatistic = Object.entries(countsByType)
+        .map(([type, count]) => ({ transactionType: StateTransitionEnum[type], count }))
+        .sort((a, b) => a.transactionType.localeCompare(b.transactionType))
+
+      assert.deepEqual(
+        body.sort((a, b) => a.transactionType.localeCompare(b.transactionType)),
+        expectedStatistic
+      )
+    })
+  })
+
+  describe('getShieldHistorySeries() / getUnshieldHistorySeries()', async () => {
+    let start
+    let end
+    let shieldAmount
+    let unshieldAmount
+
+    before(async () => {
+      start = new Date('2030-01-01T00:00:00.000Z')
+      end = new Date('2030-01-01T01:00:00.000Z')
+
+      shieldAmount = 0
+      unshieldAmount = 0
+
+      const shieldTypes = [StateTransitionEnum.SHIELD, StateTransitionEnum.SHIELD_FROM_ASSET_LOCK]
+      const unshieldTypes = [StateTransitionEnum.UNSHIELD, StateTransitionEnum.SHIELDED_WITHDRAWAL]
+
+      let height = 1000
+      let minuteOffset = 3
+
+      // spread transitions across the window so they fall into different
+      // intervals of the resulting series
+      const createShieldedTransition = async (type, amount) => {
+        const block = await fixtures.block(knex, {
+          height: height++,
+          timestamp: new Date(start.getTime() + (minuteOffset += 5) * 60000)
+        })
+
+        const transaction = await fixtures.transaction(knex, {
+          block_hash: block.hash,
+          block_height: block.height,
+          type,
+          owner: identity.identifier
+        })
+
+        await fixtures.shieldedTransition(knex, {
+          state_transition_id: transaction.id,
+          state_transition_type: type,
+          amount
+        })
+      }
+
+      for (const type of shieldTypes) {
+        await createShieldedTransition(type, 100000000)
+        shieldAmount += 100000000
+      }
+
+      for (const type of unshieldTypes) {
+        await createShieldedTransition(type, 50000000)
+        unshieldAmount += 50000000
+      }
+    })
+
+    it('should return shielded amount series', async () => {
+      const { body } = await client.get(`/transactions/shield/history?timestamp_start=${start.toISOString()}&timestamp_end=${end.toISOString()}&intervalsCount=10`)
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      const totalAmount = body.reduce((acc, point) => acc + point.data.amount, 0)
+
+      assert.equal(totalAmount, shieldAmount)
+    })
+
+    it('should return unshielded amount series', async () => {
+      const { body } = await client.get(`/transactions/unshield/history?timestamp_start=${start.toISOString()}&timestamp_end=${end.toISOString()}&intervalsCount=10`)
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      const totalAmount = body.reduce((acc, point) => acc + point.data.amount, 0)
+
+      assert.equal(totalAmount, unshieldAmount)
+    })
+
+    it('should return error when start is after end', async () => {
+      await client.get(`/transactions/shield/history?timestamp_start=${end.toISOString()}&timestamp_end=${start.toISOString()}`)
+        .expect(400)
+    })
+  })
+
   describe('getDuplicatedTransactions()', async () => {
     let duplicatedTxs
 

@@ -978,7 +978,12 @@ describe('Other routes', () => {
           firstCoreBlockHeight: 0,
           startTime: 0,
           feeMultiplier: '0',
-          endTime: null
+          endTime: null,
+          totalBlocksInEpoch: null,
+          totalProcessingFees: null,
+          totalDistributedStorageFees: null,
+          totalCreatedStorageFees: null,
+          coreBlockRewards: null
         },
         identitiesCount: 1,
         transactionsCount: 51,

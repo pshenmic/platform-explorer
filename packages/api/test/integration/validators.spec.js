@@ -2036,6 +2036,70 @@ describe('Validators routes', () => {
           .expect('Content-Type', 'application/json; charset=utf-8')
       })
     })
+
+    describe('filter isBanned', async () => {
+      let bannedValidators
+
+      before(() => {
+        // restore the healthy mocks (preceding describes leave some throwing)
+        mock.method(tenderdashRpc, 'getValidators',
+          async () =>
+            Promise.resolve(activeValidators.map(activeValidator =>
+              ({ pro_tx_hash: activeValidator.pro_tx_hash }))))
+
+        // ban a subset of the inactive validators (a banned validator can
+        // never be active) by returning a positive PoSeBanHeight for them
+        bannedValidators = inactiveValidators.slice(0, 10)
+
+        mock.method(DashCoreRPC, 'getProTxInfo', async (proTxHash) => {
+          const isBanned = bannedValidators.some(validator =>
+            validator.pro_tx_hash.toUpperCase() === proTxHash.toUpperCase())
+
+          return {
+            ...dashCoreRpcResponse,
+            state: {
+              ...dashCoreRpcResponse.state,
+              PoSeBanHeight: isBanned ? 1000 : -1
+            }
+          }
+        })
+      })
+
+      after(() => {
+        mock.method(DashCoreRPC, 'getProTxInfo', async () => dashCoreRpcResponse)
+      })
+
+      it('should return only banned validators', async () => {
+        const { body } = await client.get('/validators?isBanned=true&limit=0')
+          .expect(200)
+          .expect('Content-Type', 'application/json; charset=utf-8')
+
+        assert.equal(body.pagination.total, bannedValidators.length)
+        assert.equal(body.resultSet.length, bannedValidators.length)
+
+        const returnedHashes = body.resultSet.map(validator => validator.proTxHash).sort()
+        const expectedHashes = bannedValidators.map(validator => validator.pro_tx_hash).sort()
+
+        assert.deepEqual(returnedHashes, expectedHashes)
+      })
+
+      it('should return only not banned validators', async () => {
+        const { body } = await client.get('/validators?isBanned=false&limit=0')
+          .expect(200)
+          .expect('Content-Type', 'application/json; charset=utf-8')
+
+        const notBannedCount = validators.length - bannedValidators.length
+
+        assert.equal(body.pagination.total, notBannedCount)
+        assert.equal(body.resultSet.length, notBannedCount)
+
+        const returnedHashes = body.resultSet.map(validator => validator.proTxHash)
+
+        for (const banned of bannedValidators) {
+          assert.equal(returnedHashes.includes(banned.pro_tx_hash), false)
+        }
+      })
+    })
   })
 
   describe('getValidatorStatsByProTxHash()', async () => {
