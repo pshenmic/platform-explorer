@@ -7,8 +7,9 @@ module.exports = class EpochData {
   bestVoter
   totalVotesCount
   totalVotesGasUsed
+  totalTxCount
 
-  constructor (epoch, tps, totalCollectedFees, bestValidator, topVotedResource, bestVoter, totalVotesCount, totalVotesGasUsed) {
+  constructor (epoch, tps, totalCollectedFees, bestValidator, topVotedResource, bestVoter, totalVotesCount, totalVotesGasUsed, totalTxCount) {
     this.epoch = epoch ?? null
     this.tps = tps ?? null
     this.totalCollectedFees = totalCollectedFees ?? null
@@ -17,6 +18,7 @@ module.exports = class EpochData {
     this.bestVoter = bestVoter ?? null
     this.totalVotesCount = totalVotesCount ?? null
     this.totalVotesGasUsed = totalVotesGasUsed ?? null
+    this.totalTxCount = totalTxCount ?? null
   }
 
   /* eslint-disable camelcase */
@@ -34,7 +36,8 @@ module.exports = class EpochData {
     resource_votes_abstain,
     resource_votes_lock,
     total_votes,
-    total_votes_gas_used
+    total_votes_gas_used,
+    total_tx_count
   }) {
     return new EpochData(
       epoch,
@@ -54,7 +57,8 @@ module.exports = class EpochData {
         totalCountLock: Number(voter_lock ?? 0)
       },
       Number(total_votes ?? 0),
-      Number(total_votes_gas_used ?? 0)
+      Number(total_votes_gas_used ?? 0),
+      Number(total_tx_count ?? 0)
     )
   }
 }

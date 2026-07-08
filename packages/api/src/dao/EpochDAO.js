@@ -74,6 +74,7 @@ module.exports = class EpochDAO {
         'collected_fees',
         'row_num',
         this.knex.raw('SUM(collected_fees) OVER () as total_collected_fees'),
+        this.knex.raw('SUM(tx_count) OVER () as total_tx_count'),
         this.knex.raw(`SUM(tx_count) OVER () * 1.0 / ${epochPeriod / 1000} as tps`)
       )
       .orderBy('row_num', 'asc')
@@ -85,7 +86,7 @@ module.exports = class EpochDAO {
       .limit(1)
       .select(
         'validator as best_validator',
-        this.knex(epochInfo).select('tx_count').as('tx_count'),
+        this.knex(epochInfo).select('total_tx_count').as('total_tx_count'),
         this.knex(epochInfo).select('total_collected_fees').as('total_collected_fees'),
         this.knex(epochInfo).select('tps').as('tps'),
         this.knex(votesSubquery).select('index_values').as('top_voted_resource'),

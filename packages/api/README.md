@@ -177,6 +177,7 @@ If you want to get the last epoch don't set epoch index
 
 * tps - Transactions per second
 * totalCollectedFees - total number or fees spent per epoch
+* totalTxCount - total number of transactions in the epoch
 * bestValidator - validator with most validated blocks
 * epoch number can be null
 
@@ -226,7 +227,8 @@ HTTP /epoch/2492
     "totalCountLock": 2
   },
   "totalVotesCount": 12,
-  "totalVotesGasUsed": 120000000
+  "totalVotesGasUsed": 120000000,
+  "totalTxCount": 49
 }
 ```
 ---

@@ -159,7 +159,8 @@ describe('Epoch routes', () => {
           resourceValue: [30]
         },
         totalVotesCount: 465,
-        totalVotesGasUsed: masternodeVotesGas
+        totalVotesGasUsed: masternodeVotesGas,
+        totalTxCount: identities.length + transactions.length
       }
       assert.deepEqual(body, expectedBlock)
     })
