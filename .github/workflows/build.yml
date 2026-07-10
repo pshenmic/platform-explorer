@@ -2,6 +2,8 @@ name: Build and push packages
 
 on:
   push:
+    tags:
+      - '*'
     branches:
       - 'develop'
   pull_request:
