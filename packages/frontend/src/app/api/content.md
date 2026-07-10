@@ -34,6 +34,7 @@ Reference:
 * [Identity by DPNS](#identity-by-dpns)
 * [Identity Withdrawals](#identity-withdrawals)
 * [Identities](#identities)
+* [Active Identities](#active-identities)
 * [Identities history](#identities-history)
 * [Data Contracts by Identity](#data-contracts-by-identity)
 * [Documents by Identity](#documents-by-identity)
@@ -41,6 +42,10 @@ Reference:
 * [Transfers by Identity](#transfers-by-identity)
 * [Transactions history](#transactions-history)
 * [Transactions gas history](#transactions-gas-history)
+* [Transactions Shield history](#transactions-shield-history)
+* [Transactions Unshield history](#transactions-unshield-history)
+* [Transactions Statistic](#transactions-statistic)
+* [Shielded Statistic](#shielded-statistic)
 * [Votes for contested resource](#votes-for-contested-resource)
 * [Contested Resource Value](#contested-resource-value)
 * [Contested Resources](#contested-resources)
@@ -142,6 +147,15 @@ If you want to get the last epoch don't set epoch index
 * bestValidator - validator with most validated blocks
 * epoch number can be null
 
+Finalized on-chain totals are provided by the SDK and are only available for
+already-completed epochs. For the current (in-progress) epoch they are `null`.
+
+* epoch.totalBlocksInEpoch - total number of blocks produced in the epoch
+* epoch.totalProcessingFees - total processing fees collected in the epoch (credits)
+* epoch.totalDistributedStorageFees - total storage fees distributed in the epoch (credits)
+* epoch.totalCreatedStorageFees - total storage fees created in the epoch (credits)
+* epoch.coreBlockRewards - core block rewards for the epoch
+
 
 ```
 HTTP /epoch/2492
@@ -153,7 +167,12 @@ HTTP /epoch/2492
     "firstCoreBlockHeight": 1131311,
     "startTime": 1730324534559,
     "feeMultiplier": 1,
-    "endTime": 1730328026683
+    "endTime": 1730328026683,
+    "totalBlocksInEpoch": 3742,
+    "totalProcessingFees": "1897008860",
+    "totalDistributedStorageFees": "0",
+    "totalCreatedStorageFees": "13860000000",
+    "coreBlockRewards": "1932735784"
   },
   "tps": 0.0140315750528904,
   "totalCollectedFees": 1897008860,
@@ -304,6 +323,7 @@ Return all validators with pagination info.
 * Valid `order` values are `asc` or `desc`
 * `lastProposedBlockHeader` field is nullable
 * `?isActive=true` boolean can be supplied in the query params to filter by isActive field
+* `?isBanned=true` boolean can be supplied in the query params to filter by PoSe ban status (a banned validator is never active)
 * `limit` cannot be more then 100 (0 = all validators)
 * `page` cannot be less then 1
 * `blocks_proposed_min` and `blocks_proposed_max` minimum and maximum amount of proposed blocks
@@ -595,6 +615,13 @@ Status can be either `SUCCESS` or `FAIL`. In case of error tx, message will appe
 
 If the same state transition hash was observed in more than one block, the response includes a `duplicates` field — an array of `Transaction` objects, one per occurrence. Each duplicate has `status: "FAIL"` and its own `blockHash`/`blockHeight`/`timestamp`; all other fields are inherited from the canonical state transition.
 
+For shielded state transitions the response also includes a `shielded` object with the transition `amount` (credits, as a string) and its `direction`:
+* `IN` — value moved into the shielded pool (`SHIELD`, `SHIELD_FROM_ASSET_LOCK`)
+* `OUT` — value moved out of the shielded pool (`UNSHIELD`, `SHIELDED_WITHDRAWAL`, `IDENTITY_CREATE_FROM_SHIELDED_POOL`)
+* `TRANSFER` — value stays inside the shielded pool (`SHIELDED_TRANSFER`)
+
+For non-shielded transitions `shielded` is `null`.
+
 ```
 GET /transaction/DEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEF
 
@@ -621,6 +648,7 @@ GET /transaction/DEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEE
         }
       ]
     },
+    "shielded": null,
     "duplicates": [
         {
             "blockHash": "9EFA730C41CE9408F9732E4C72A4DAE7A2701AF0F7B1DCE8A72F163E285BEBF3",
@@ -1475,6 +1503,46 @@ Response codes:
 500: Internal Server Error
 ```
 ---
+### Active Identities
+Return identities that owned state transitions within a time range, ordered by their
+transaction count in that range, paged.
+
+* `timestamp_start` lower interval threshold (defaults to one hour ago)
+* `timestamp_end` upper interval threshold (defaults to now)
+* `limit` cannot be more than 100
+* `page` cannot be less than 1
+* Valid `order` values are `asc` or `desc`
+```
+GET /identities/active?timestamp_start=2025-01-01T00:00:00.000Z&timestamp_end=2025-01-02T00:00:00.000Z&page=1&limit=10&order=desc
+
+{
+    "pagination": {
+        "page": 1,
+        "limit": 10,
+        "total": 10
+    },
+    "resultSet": [
+        {
+            "identifier": "EhGUnphjMD73JZBt98h7BUK7W17PbnMSUhD4pbEceLMi",
+            "transactionsCount": 9,
+            "aliases": [
+                {
+                    "alias": "CharbroilPacifismRiskPreachy.dash",
+                    "status": "ok",
+                    "contested": false
+                }
+            ]
+        }, ...
+    ]
+}
+```
+Response codes:
+```
+200: OK
+400: Bad timestamp range
+500: Internal Server Error
+```
+---
 ### Identities history
 Return a series data for the amount of registered identities
 
@@ -1881,6 +1949,115 @@ Response codes:
 ```
 200: OK
 400: Invalid input, check start/end values
+500: Internal Server Error
+```
+___
+### Transactions Shield history
+Return a series data for the total shielded amount chart (shield and shield-from-asset-lock transitions)
+
+* `timestamp_start` lower interval threshold in ISO string
+* `timestamp_end` upper interval threshold in ISO string
+* `intervalsCount` intervals count in response ( _optional_ )
+
+```
+GET /transactions/shield/history?timestamp_start=2024-01-01T00:00:00&timestamp_end=2025-01-01T00:00:00
+[
+    {
+        "timestamp": "2024-04-22T08:45:20.911Z",
+        "data": {
+          "amount": 100000000,
+          "blockHeight": 64060,
+          "blockHash": "4A1F6B5238032DDAC55009A28797D909DB4288D5B5EC14B86DEC6EA8F25EC71A"
+        }
+    }, ...
+]
+```
+Response codes:
+```
+200: OK
+400: Invalid input, check start/end values
+500: Internal Server Error
+```
+___
+### Transactions Unshield history
+Return a series data for the total unshielded amount chart (unshield, shielded withdrawal and identity-create-from-shielded-pool transitions)
+
+* `timestamp_start` lower interval threshold in ISO string
+* `timestamp_end` upper interval threshold in ISO string
+* `intervalsCount` intervals count in response ( _optional_ )
+
+```
+GET /transactions/unshield/history?timestamp_start=2024-01-01T00:00:00&timestamp_end=2025-01-01T00:00:00
+[
+    {
+        "timestamp": "2024-04-22T08:45:20.911Z",
+        "data": {
+          "amount": 50000000,
+          "blockHeight": 64333,
+          "blockHash": "507659D9BE2FF76A031F4219061F3D2D39475A7FA4B24F25AEFDB34CD4DF2A57"
+        }
+    }, ...
+]
+```
+Response codes:
+```
+200: OK
+400: Invalid input, check start/end values
+500: Internal Server Error
+```
+___
+### Transactions Statistic
+Return the count of state transitions grouped by transaction type.
+
+```
+GET /transactions/statistic
+[
+    {
+        "transactionType": "DATA_CONTRACT_CREATE",
+        "count": 39
+    },
+    {
+        "transactionType": "DOCUMENTS_BATCH",
+        "count": 115
+    }, ...
+]
+```
+Response codes:
+```
+200: OK
+500: Internal Server Error
+```
+___
+### Shielded Statistic
+Return an aggregate overview of the shielded pool.
+
+* `totalShieldedIn` — total credits moved into the pool (`SHIELD` + `SHIELD_FROM_ASSET_LOCK`), as a string
+* `totalShieldedOut` — total credits moved out of the pool (`UNSHIELD` + `SHIELDED_WITHDRAWAL` + `IDENTITY_CREATE_FROM_SHIELDED_POOL`), as a string
+* `poolBalance` — `totalShieldedIn` − `totalShieldedOut`, an estimate of the current shielded pool size, as a string
+* `transitionsCount` — total number of shielded transitions
+* `types` — per-type breakdown with `count` and summed `amount` (string)
+
+Note: `SHIELDED_TRANSFER` stays inside the pool and is counted in `types`/`transitionsCount` but excluded from `totalShieldedIn`/`totalShieldedOut`.
+
+```
+GET /transactions/shielded/statistic
+{
+    "totalShieldedIn": "300000000",
+    "totalShieldedOut": "150000000",
+    "poolBalance": "150000000",
+    "transitionsCount": 6,
+    "types": [
+        {
+            "transactionType": "SHIELD",
+            "count": 2,
+            "amount": "200000000"
+        }, ...
+    ]
+}
+```
+Response codes:
+```
+200: OK
 500: Internal Server Error
 ```
 ___

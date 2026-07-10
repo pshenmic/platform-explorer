@@ -6,6 +6,7 @@ mod handle_identity;
 mod handle_init_chain;
 mod handle_masternode_vote;
 mod handle_platform_address_transition;
+mod handle_shielded_transition;
 mod handle_st;
 mod handle_token_configuration;
 mod handle_tokens;

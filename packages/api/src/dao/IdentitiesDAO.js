@@ -439,7 +439,7 @@ module.exports = class IdentitiesDAO {
         .as('tokens_count')
       )
       .leftJoin('state_transitions', 'state_transitions.hash', 'tx_hash')
-      .leftJoin('blocks', 'blocks.hash', 'state_transitions.block_hash')
+      .leftJoin('blocks', 'blocks.height', 'state_transitions.block_height')
       .whereBetween('row_number', [fromRank, toRank])
       .orderBy('blocks.height ', order)
 
@@ -505,7 +505,7 @@ module.exports = class IdentitiesDAO {
       .select(this.knex.raw(`rank() over (order by document_id ${order}) row_number`))
       .whereRaw(filtersQuery, filtersBindings)
       .leftJoin('state_transitions', 'state_transitions.hash', 'initial_tx_hash')
-      .leftJoin('blocks', 'blocks.hash', 'state_transitions.block_hash')
+      .leftJoin('blocks', 'blocks.height', 'state_transitions.block_height')
       .leftJoin('data_contracts', 'data_contracts.id', 'data_contract_id')
 
     const rows = await this.knex
@@ -677,7 +677,7 @@ module.exports = class IdentitiesDAO {
     const dataSubquery = this.knex(blocksSubquery)
       .select('blocks_sub.timestamp', 'identifier', 'blocks_sub.height')
       .leftJoin('state_transitions', function () {
-        this.on('type', '=', StateTransitionEnum.IDENTITY_CREATE).andOn('state_transitions.block_height', '=', 'blocks_sub.height')
+        this.onIn('type', [StateTransitionEnum.IDENTITY_CREATE, StateTransitionEnum.IDENTITY_CREATE_FROM_SHIELDED_POOL, StateTransitionEnum.IDENTITY_CREATE_FROM_ADDRESSES]).andOn('state_transitions.block_height', '=', 'blocks_sub.height')
       })
       .whereRaw('identifier is not null')
       .leftJoin('identities', 'state_transition_id', 'state_transitions.id')
@@ -705,5 +705,55 @@ module.exports = class IdentitiesDAO {
     }))
       .map(({ timestamp, data }) => new SeriesData(timestamp, data))
       .sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime())
+  }
+
+  getActiveIdentities = async (start, end, page, limit, order) => {
+    const fromRank = (page - 1) * limit
+
+    const rankedSubquery = this.knex('blocks')
+      .select('owner')
+      .count()
+      .whereRaw('blocks.timestamp >= ? and blocks.timestamp <= ?', [start, end])
+      .andWhereRaw('state_transitions.owner is not null')
+      .leftJoin('state_transitions', 'block_height', 'blocks.height')
+      .groupBy('owner')
+
+    const rows = await this.knex
+      .with('ranked_subquery', rankedSubquery)
+      .select('count as transactions_count', 'owner as identifier')
+      .select(
+        this.knex('ranked_subquery')
+          .select(this.knex.raw('count(*)'))
+          .limit(1)
+          .as('total_count')
+      )
+      .orderBy('transactions_count', order)
+      .limit(limit)
+      .offset(fromRank)
+      .from('ranked_subquery')
+
+    const totalCount = rows.length > 0 ? Number(rows[0].total_count) : 0
+
+    const identifiers = rows.map(row => row.identifier.trim())
+
+    const aliasDocuments = await getAliasDocumentForIdentifiers(identifiers, this.sdk)
+
+    const resultSet = await Promise.all(rows.map(async row => {
+      const aliasDocument = aliasDocuments[row.identifier.trim()]
+
+      const aliases = []
+
+      if (aliasDocument) {
+        aliases.push(getAliasFromDocument(aliasDocument))
+      }
+
+      return {
+        identifier: row.identifier,
+        transactionsCount: row.transactions_count,
+        aliases
+      }
+    }))
+
+    return new PaginatedResultSet(resultSet, page, limit, totalCount)
   }
 }

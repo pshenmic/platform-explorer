@@ -6,6 +6,7 @@ pub mod identity;
 pub mod identity_token;
 pub mod masternode_vote;
 pub mod platform_address_transition;
+pub mod shielded_transition;
 pub mod token_config;
 pub mod transfer;
 pub mod validator;

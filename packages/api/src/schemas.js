@@ -28,6 +28,7 @@ const schemaTypes = [
         enum: ['block_height', 'documents_count', 'tx_count', 'balance', 'gas_used', 'timestamp', 'id', 'owner']
       },
       isActive: { type: ['boolean', 'null'] },
+      isBanned: { type: ['boolean', 'null'] },
       type: {
         oneOf: [
           {

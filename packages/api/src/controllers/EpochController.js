@@ -18,7 +18,19 @@ class EpochController {
     try {
       const [currentEpoch, nextEpoch] = await this.sdk.node.getEpochsInfo(2, index ? true : undefined, index ?? undefined)
 
-      const epoch = Epoch.fromObject(typeof index === 'number' ? { ...currentEpoch, nextEpoch } : { ...nextEpoch })
+      const epochObject = typeof index === 'number' ? { ...currentEpoch, nextEpoch } : { ...nextEpoch }
+
+      // Finalized info is only available for already-completed epochs, so the
+      // current (in-progress) epoch is expected to reject here.
+      let finalizedEpochInfo
+      try {
+        [finalizedEpochInfo] = await this.sdk.node
+          .getFinalizedEpochsInfo(epochObject.number, true, epochObject.number + 1, false)
+      } catch (e) {
+        finalizedEpochInfo = undefined
+      }
+
+      const epoch = Epoch.fromObject({ ...epochObject, finalizedEpochInfo })
 
       const epochInfo = await this.epochDAO.getEpochByObject(epoch)
 

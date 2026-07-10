@@ -257,6 +257,30 @@ class IdentitiesController {
 
     response.send(timeSeries)
   }
+
+  getActiveIdentities = async (request, response) => {
+    const {
+      timestamp_start: start = new Date().getTime() - 3600000,
+      timestamp_end: end = new Date().getTime(),
+      page = 1,
+      limit = 10,
+      order = 'asc'
+    } = request.query
+
+    if (start && end && new Date(start).getTime() >= new Date(end).getTime()) {
+      return response.status(400).send('Bad timestamp range')
+    }
+
+    const identities = await this.identitiesDAO.getActiveIdentities(
+      new Date(start),
+      new Date(end),
+      Number(page ?? 1),
+      Number(limit ?? 10),
+      order
+    )
+
+    response.send(identities)
+  }
 }
 
 module.exports = IdentitiesController

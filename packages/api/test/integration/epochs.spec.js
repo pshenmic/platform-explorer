@@ -45,6 +45,15 @@ describe('Epoch routes', () => {
         startTime: 1800000,
         feeMultiplier: 1
       }])
+    mock.method(NodeController.prototype, 'getFinalizedEpochsInfo', () => [
+      {
+        epochIndex: 0,
+        totalBlocksInEpoch: 30n,
+        totalProcessingFees: 1000n,
+        totalDistributedStorageFees: 2000n,
+        totalCreatedStorageFees: 3000n,
+        coreBlockRewards: 4000n
+      }])
     app = await server.start()
     client = supertest(app.server)
 
@@ -127,7 +136,12 @@ describe('Epoch routes', () => {
           firstCoreBlockHeight: 1,
           startTime: 0,
           feeMultiplier: '1',
-          endTime: 1800000
+          endTime: 1800000,
+          totalBlocksInEpoch: 30,
+          totalProcessingFees: '1000',
+          totalDistributedStorageFees: '2000',
+          totalCreatedStorageFees: '3000',
+          coreBlockRewards: '4000'
         },
         tps: (identities.length + transactions.length) / 1800,
         totalCollectedFees: transactions.reduce((acc, tx) => acc + tx.gas_used, 0),
@@ -145,7 +159,8 @@ describe('Epoch routes', () => {
           resourceValue: [30]
         },
         totalVotesCount: 465,
-        totalVotesGasUsed: masternodeVotesGas
+        totalVotesGasUsed: masternodeVotesGas,
+        totalTxCount: identities.length + transactions.length
       }
       assert.deepEqual(body, expectedBlock)
     })
