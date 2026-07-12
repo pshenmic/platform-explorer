@@ -645,11 +645,20 @@
       white-space: nowrap;
     }
 
-    .HomeHero__WaveLabel {
+    // always-visible per-epoch caption under the dot: "N tx" + "window · ended/left"
+    .EpochsWave__Meta {
       position: absolute;
       top: calc(100% + 6px);
       left: 50%;
       transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+      white-space: nowrap;
+    }
+
+    .HomeHero__WaveLabel {
       font-size: 0.6875rem;
       transition: color .2s, transform .2s;
     }
@@ -698,7 +707,7 @@
 
       .HomeHero__WaveLabel {
         color: $color-brand-light;
-        transform: translateX(-50%) scale(1.12);
+        transform: scale(1.12);
       }
     }
 
@@ -727,6 +736,18 @@
     &__Point .HomeHero__WaveDot::before { animation: none; opacity: 0; }
   }
 
+  // second caption row: epoch window + ended-ago / time-left
+  &__When {
+    font-size: 0.625rem;
+    font-family: $font-mono;
+    color: var(--chakra-colors-gray-500);
+    white-space: nowrap;
+
+    // TimeRemaining renders block divs — flatten them into the inline caption
+    .TimeRemaining,
+    .TimeRemaining__TimeLeft { display: inline; }
+  }
+
   &__Live {
     margin-left: 6px;
     padding: 1px 5px;
@@ -747,18 +768,20 @@
     justify-content: space-between;
     flex-wrap: wrap;
     gap: 10px 1.5rem;
-    margin: -20px -32px 14px;
+    // 30px bottom keeps the top epoch number clear of the hairline (same rhythm as other sections)
+    margin: -20px -32px 30px;
     padding: 0 32px 0 0;
     border-bottom: 1px solid rgba(var(--chakra-colors-gray-800-rgb), 0.6);
 
     @media screen and (max-width: $breakpoint-lg) {
-      margin: -20px -16px 14px;
+      margin: -20px -16px 30px;
       padding: 0 16px 0 0;
     }
   }
 
   // cancel the InfoBlock__Title corner offset so the badge flows in the row
-  &__Title {
+  // (double-class selector outweighs the base .InfoBlock__Title rule without !important)
+  &__Head &__Title {
     position: static;
     left: 0;
     top: 0;
@@ -766,39 +789,27 @@
     flex-shrink: 0;
   }
 
-  &__Detail { margin-top: 26px; }
-
-  &__DetailHead {
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 8px 16px;
-  }
-
-  &__DetailEpoch {
-    font-family: $font-heading;
-    font-weight: 800;
-    font-style: italic;
-    font-size: 1.0625rem;
-    color: #fff;
-  }
-
-  &__DetailMeta {
-    font-size: 0.6875rem;
-    font-family: $font-mono;
-    color: var(--chakra-colors-gray-500);
-  }
-
-  // EpochProgress sits inline in the head; keep it compact
-  &__Progress {
-    flex: 0 1 220px;
-    min-width: 160px;
-  }
-
-  // reuse the StatusBar grid for the per-epoch cells (plain div needs explicit flex)
+  // selected-epoch stat cells sit in the head row as one-line label + value pairs
   &__Cells {
+    flex: 1 1 auto;
     display: flex;
-    margin-top: 14px;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px 24px;
+    min-width: 0;
+
+    .HomeHero__StatusCell {
+      flex: 0 1 auto;
+      flex-direction: row;
+      align-items: baseline;
+      gap: 8px;
+      min-width: 0;
+      padding: 0;
+      border: none;
+    }
+
+    // no room for the sub-line (top voted resource) in the one-line head cells
+    .EpochsOverview__Sub { display: none; }
   }
 
   &__Stat {
@@ -807,7 +818,7 @@
     font-family: $font-heading;
     font-weight: 800;
     font-style: italic;
-    font-size: 1.25rem;
+    font-size: 1.05rem;
     line-height: 1;
     color: #fff;
     // stat tiles never wrap: compact value on one line, exact value lives in the tooltip
