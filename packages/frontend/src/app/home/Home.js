@@ -127,33 +127,28 @@ function Home () {
         </Box>
 
         <Box className={'InfoBlock InfoBlock--NoBorder HomeEpochs'} w={'100%'}>
-          <Heading className={'InfoBlock__Title'} as={'h2'}>Epochs</Heading>
           <EpochsOverview
+            title={'Epochs'}
             epochs={epochs.data?.list}
             rate={rate}
             loading={epochs.loading}
           />
         </Box>
 
-        <Box className={'InfoBlock InfoBlock--NoBorder HomeStats'} w={'100%'}>
-          <Heading className={'InfoBlock__Title'} as={'h2'}>Platform stats</Heading>
-          <StatusBar
-            status={status.data}
-            contested={contested}
-            activeContested={activeContested}
-            latestContested={latestContested}
-            latestVotes={latestVotes}
-            validators={validators}
-            validatorsActive={validatorsActive}
-            epochData={epochData}
-            rate={rate}
-          />
-        </Box>
-
-        <SimpleGrid columns={{ base: 1, lg: 3 }} spacing={gap} w={'100%'}>
+        <SimpleGrid columns={{ base: 1, md: 2, xl: 4 }} spacing={gap} w={'100%'}>
           <MetricChart title={'Transactions history'} type={'bar'} fetcher={Api.getTransactionsHistory} field={'txs'} yAbbr={'txs'}/>
           <MetricChart title={'Identities growth'} type={'line'} fetcher={Api.getIdentitiesHistory} field={'registeredIdentities'} yAbbr={'identities'}/>
           <MasternodesDonut validators={validators} validatorsActive={validatorsActive}/>
+          <Box className={'InfoBlock InfoBlock--NoBorder HomeGovCard'} w={'100%'}>
+            <Heading className={'InfoBlock__Title'} as={'h2'}>Governance</Heading>
+            <StatusBar
+              contested={contested}
+              activeContested={activeContested}
+              latestContested={latestContested}
+              latestVotes={latestVotes}
+              epochData={epochData}
+            />
+          </Box>
         </SimpleGrid>
       </Flex>
     </Container>

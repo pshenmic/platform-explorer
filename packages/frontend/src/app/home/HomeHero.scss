@@ -199,36 +199,6 @@
     flex-shrink: 0;
   }
 
-  // Value cell: full DASH amount with a small inline unit, muted USD line below
-  &__Value {
-    display: inline-flex;
-    align-items: baseline;
-    white-space: nowrap;
-  }
-
-  &__ValueUnit {
-    margin-left: 7px;
-    font-family: $font-mono;
-    font-size: 0.6875rem;
-    font-style: normal;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: $color-brand-light;
-  }
-
-  &__ValueUsd {
-    align-self: flex-start;
-    margin-top: 6px;
-    padding: 2px 7px;
-    border-radius: 4px;
-    font-family: $font-mono;
-    font-size: 0.6875rem;
-    color: var(--chakra-colors-gray-250);
-    background: rgba(var(--chakra-colors-brand-normal-rgb), 0.1);
-    border: 1px solid rgba(var(--chakra-colors-brand-normal-rgb), 0.22);
-  }
-
   &__GovCount {
     font-family: $font-heading;
     font-weight: 800;
