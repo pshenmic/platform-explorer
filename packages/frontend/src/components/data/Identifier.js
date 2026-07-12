@@ -134,8 +134,7 @@ export default function Identifier ({
     ? styleToMode[styles.find(style => style in styleToMode)]
     : null
 
-  // middle truncation: balanced start…end filling available width; recomputed on resize.
-  // full value lives in title + copy button
+  // start…end truncation sized to the available width (recomputed on resize); full value in title
   const MiddleTruncated = ({ children }) => {
     if (!children || typeof children !== 'string') return <NotActive/>
 

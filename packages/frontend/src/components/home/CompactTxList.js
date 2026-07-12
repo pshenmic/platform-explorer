@@ -17,12 +17,11 @@ const STATUS_LABEL = {
   BROADCASTED: 'Broadcasted'
 }
 
-// Dense latest-transactions list for the Network overview column: icon-only status (tooltip),
-// hash, type badge, relative time (full timestamp in tooltip). No gas/owner/block columns.
+// dense latest-transactions list for the Network overview column
 export function CompactTxList ({ transactions, limit = 7, loading }) {
   const rows = Array.isArray(transactions) ? transactions.slice(0, limit) : []
 
-  // skeleton shell while loading — same row grid (44px, 4 cols) so the swap doesn't shift layout
+  // skeleton mirrors the real row grid so there's no layout shift
   if (loading && !rows.length) {
     return (
       <div className={'CompactTx'}>

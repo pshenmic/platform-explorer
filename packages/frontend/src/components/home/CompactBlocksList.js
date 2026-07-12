@@ -5,12 +5,11 @@ import { BigNumber, TimeDelta, NotActive, Identifier } from '../data'
 import { Skeleton } from './Skeleton'
 import './CompactBlocksList.scss'
 
-// Dense latest-blocks list for the Network overview column: height, tx count, relative time
-// (full timestamp in tooltip). Mirrors CompactTxList. Row links to /block/{hash}.
+// dense latest-blocks list for the Network overview column
 export function CompactBlocksList ({ blocks, limit = 7, loading }) {
   const rows = Array.isArray(blocks) ? blocks.slice(0, limit) : []
 
-  // skeleton shell while loading — mirrors the real row grid so there's no layout shift
+  // skeleton mirrors the real row grid so there's no layout shift
   if (loading && !rows.length) {
     return (
       <div className={'CompactBlocks'}>

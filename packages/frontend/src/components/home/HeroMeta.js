@@ -39,9 +39,8 @@ function MetaItem ({ label, children }) {
 }
 
 // Network / API status + Drive / Tenderdash versions as label-over-value mini-cells
-// (consistent with the status row), between the brand block and the live block height.
 export function HeroMeta ({ status, loading }) {
-  // until status data has actually arrived, render neutral placeholders (not a red "down" flash)
+  // until status data arrives, render neutral placeholders (no red "down" flash)
   const ready = !loading && status && Object.keys(status).length > 0
   const live = isNetworkLive(status)
   const apiOk = isApiOperational(status)

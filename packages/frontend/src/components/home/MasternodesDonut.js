@@ -8,8 +8,7 @@ const STROKE = 16
 const R = (SIZE - STROKE) / 2
 const C = 2 * Math.PI * R
 
-// Validator-set composition: active vs inactive (exact from pagination totals),
-// with an approximate evonodes/regular split sampled from the loaded page.
+// active/inactive from exact pagination totals; evonode split approximated from the loaded page
 export default function MasternodesDonut ({ validators, validatorsActive }) {
   const total = validators?.data?.pagination?.total
   const active = validatorsActive?.data?.pagination?.total

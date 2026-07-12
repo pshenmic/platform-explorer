@@ -2,7 +2,6 @@
 
 import { useEffect, useRef } from 'react'
 
-// Decorative Hero
 const LINK_DIST = 130
 const NODE_MIN = 18
 const NODE_MAX = 44

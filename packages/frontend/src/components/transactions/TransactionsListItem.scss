@@ -6,7 +6,7 @@
   @include mixins.DefListItem;
   display: block;
 
-  // copy button revealed only on row hover (no per-row clutter)
+  // copy button revealed only on row hover
   .Identifier__CopyButton { opacity: 0; pointer-events: none; transition: opacity .15s; }
   &:hover .Identifier__CopyButton,
   &:focus-within .Identifier__CopyButton { opacity: 1; pointer-events: auto; }

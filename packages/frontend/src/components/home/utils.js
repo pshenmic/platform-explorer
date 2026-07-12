@@ -6,7 +6,7 @@ export function contestedHref (resourceValue) {
   }
 }
 
-// Compact k/M/B formatter for the masternodes "secured" value.
+// compact K/M/B number formatter
 export function compact (value) {
   if (typeof value !== 'number' || isNaN(value)) return null
   if (value >= 1e9) return `${(value / 1e9).toFixed(1)}B`

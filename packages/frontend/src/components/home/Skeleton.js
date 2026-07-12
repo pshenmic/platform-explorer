@@ -1,7 +1,6 @@
 import './Skeleton.scss'
 
-// Tiny pulsing skeleton block. Size it to match the real element it stands in for so the
-// swap to real content causes no layout shift.
+// pulsing placeholder; size it to match the real element so the swap causes no layout shift
 export function Skeleton ({ w, h = '0.7em', radius = 4, circle = false, className = '' }) {
   return (
     <span

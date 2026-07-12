@@ -8,11 +8,9 @@
   width: 100%;
   padding: 0 !important;
 
-  // compact hero: header / telemetry / status strip stacked at natural height
   display: flex;
   flex-direction: column;
 
-  // soft brand glow behind the left block (same recipe as Background--Light)
   &__Glow {
     position: absolute;
     top: -40%;
@@ -26,7 +24,6 @@
     z-index: 0;
   }
 
-  // decorative map
   &__Nodes {
     position: absolute;
     inset: 0;
@@ -124,11 +121,10 @@
     padding: 0 20px;
     border-right: 1px solid rgba(var(--chakra-colors-gray-800-rgb), 0.6);
 
-    // Epoch cell carries the progress bar — give it a touch more room
     &:first-child { padding-left: 0; flex-grow: 1.3; }
     &:last-child { border-right: none; }
 
-    // tablet: 2 per row (cells stay wide enough for the gov content)
+    // tablet: 2 per row
     @media screen and (max-width: $breakpoint-lg) {
       flex: 1 1 45%;
       border-right: none;
@@ -136,7 +132,7 @@
       &:first-child { flex-grow: 1; }
     }
 
-    // phone: one column, full width, separated by bottom borders
+    // phone: one column
     @media screen and (max-width: $breakpoint-md) {
       flex: 1 1 100%;
       padding: 12px 0;
@@ -176,7 +172,7 @@
     &:hover { color: $color-brand-normal; }
   }
 
-  // Governance cells (Contested / Total votes): count+pill left, rotating feed over dots right.
+  // governance cell: count left, rotating feed over pager dots right
   &__Gov {
     display: flex;
     align-items: center;
@@ -209,7 +205,6 @@
     }
   }
 
-  // subtle brand-tinted pill
   &__GovCountLabel {
     align-self: flex-start;
     margin-top: 5px;
@@ -251,7 +246,6 @@
     &.is-active { background: $color-brand-normal; }
   }
 
-  // Contested-specific: the rotating name link
   &__ContestedName {
     max-width: 100%;
     font-size: 0.6875rem;
@@ -265,7 +259,6 @@
     &:hover { color: $color-brand-normal; }
   }
 
-  // Total-votes-specific: the rotating vote item (choice badge + voter)
   &__VotesItem {
     display: inline-flex;
     align-items: center;
@@ -301,7 +294,7 @@
     transition: color .15s;
   }
 
-  // top ribbon strip: Network · API · Drive · Tenderdash in one evenly-spread row
+  // status ribbon: Network / API / Drive / Tenderdash
   &__Meta {
     position: relative;
     z-index: 1;
@@ -466,7 +459,7 @@
     stroke-linecap: round;
   }
 
-  // bright dash scanning along the line (pathLength=100 keeps it uniform when stretched)
+  // pathLength=100 keeps the scanning dash uniform when the path is stretched
   &__WaveScan {
     stroke: $color-brand-light;
     stroke-width: 2px;
@@ -476,7 +469,7 @@
     animation: HomeHeroDash 5s linear infinite;
   }
 
-  // metric points overlaid on the line vertices (inline left/top set the position)
+  // points overlaid on the line vertices (inline left/top set the position)
   &__WavePoint {
     position: absolute;
     transform: translate(-50%, -50%);
