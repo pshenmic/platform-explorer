@@ -538,19 +538,17 @@
     }
   }
 
-  // Metric wave: trading-style line under the subhead with the 4 metrics as points
+  // wave line with vertex points (base styles for the Epochs overview wave)
   &__Wave {
     position: relative;
     width: auto;
     height: 150px;
-    // full-bleed to the block edges (cancels InfoBlock side padding); siblings stay inset
+    // full-bleed to the block edges (cancels InfoBlock side padding)
     margin: 4px -32px 0;
     padding: 0;
 
     @media screen and (max-width: $breakpoint-lg) {
-      height: auto;
       margin: 4px 0 0;
-      padding: 16px 8px 0;
     }
   }
 
@@ -560,8 +558,6 @@
     width: 100%;
     height: 100%;
     overflow: visible;
-
-    @media screen and (max-width: $breakpoint-lg) { display: none; }
   }
 
   &__WaveLine {
@@ -591,11 +587,6 @@
     gap: 12px;
     cursor: default;
     outline: none;
-
-    @media screen and (max-width: $breakpoint-lg) {
-      position: static !important;
-      transform: none;
-    }
   }
 
   &__WaveValue {
@@ -637,21 +628,10 @@
     }
   }
 
-  // mobile fallback: hide the wave SVG, lay the 4 points out as a 2×2 grid
-  &__Wave {
-    @media screen and (max-width: $breakpoint-lg) {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 22px 16px;
-      text-align: center;
-    }
-  }
-
   @media (prefers-reduced-motion: reduce) {
     &__WaveScan { animation: none; opacity: 0; }
   }
 
-  // Middle panel: the "Live Block Height" hero number
   &__Live {
     display: flex;
     flex-direction: column;
@@ -709,42 +689,35 @@
   }
 }
 
-// bright dash scans along the wave line (pathLength=100 → 3% dash travels the whole path)
 @keyframes HomeHeroDash {
   from { stroke-dashoffset: 0; }
   to { stroke-dashoffset: -100; }
 }
 
-// gentle pulse for the neutral "loading" status dot
 @keyframes HeroMetaPulse {
   0%, 100% { opacity: 0.4; }
   50% { opacity: 1; }
 }
 
-// Epochs overview: the KPI wave repurposed as the last 4 epochs (clickable) + selected-epoch detail.
+@keyframes EpochPing {
+  0% { transform: scale(1); opacity: 0.9; }
+  75%, 100% { transform: scale(2.6); opacity: 0; }
+}
+
+@keyframes EpochDotBreath {
+  0%, 100% { box-shadow: 0 0 8px 2px rgba(var(--chakra-colors-brand-light-rgb), 0.55); }
+  50% { box-shadow: 0 0 16px 5px rgba(var(--chakra-colors-brand-light-rgb), 0.95); }
+}
+
+// node glow fired as the line scan passes through: quick flash, then rest of the 5s sweep
+@keyframes EpochFlowPulse {
+  0% { opacity: 0.85; transform: scale(0.6); }
+  7% { opacity: 0; transform: scale(2.6); }
+  100% { opacity: 0; transform: scale(2.6); }
+}
+
+// Epochs overview wave: last 4 epochs as clickable points + selected-epoch detail
 .EpochsWave {
-  // unlike the old KPI wave, keep the line + points ON the curve at every width
-  // (do NOT collapse the SVG/points into a 2x2 grid) so the wave never "disappears".
-  &.HomeHero__Wave {
-    @media screen and (max-width: $breakpoint-lg) {
-      display: block;
-      height: 150px;
-      margin: 4px 0 0;
-      padding: 0;
-    }
-  }
-
-  .HomeHero__WaveSvg {
-    @media screen and (max-width: $breakpoint-lg) { display: block; }
-  }
-
-  .HomeHero__WavePoint {
-    @media screen and (max-width: $breakpoint-lg) {
-      position: absolute !important;
-      transform: translate(-50%, -50%);
-    }
-  }
-
   &--Empty {
     display: flex !important;
     align-items: center;
@@ -754,7 +727,7 @@
     font-size: 0.8125rem;
   }
 
-  // each epoch vertex is a button now: reset chrome, dim unselected, brighten the active one
+  // only the 28px dot box stays in flow so translate(-50%,-50%) centers it on the vertex
   &__Point {
     appearance: none;
     background: none;
@@ -763,12 +736,57 @@
     cursor: pointer;
     opacity: 0.55;
     transition: opacity .15s;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
 
     .HomeHero__WaveValue { font-size: 1.5rem; }
+
+    .EpochsWave__Number {
+      position: absolute;
+      bottom: calc(100% + 6px);
+      left: 50%;
+      transform: translateX(-50%);
+      white-space: nowrap;
+    }
+
+    .HomeHero__WaveLabel {
+      position: absolute;
+      top: calc(100% + 6px);
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 0.6875rem;
+      transition: color .2s, transform .2s;
+    }
+
+    // the dot hosts the flow pulse (::before) and the live radar ring (::after)
+    .HomeHero__WaveDot { position: relative; }
+
+    // flow pulse: a glow that fires when the line scan passes through this node
+    .HomeHero__WaveDot::before {
+      content: '';
+      position: absolute;
+      inset: -3px;
+      border-radius: 50%;
+      background: rgba(var(--chakra-colors-brand-light-rgb), 0.55);
+      opacity: 0;
+      transform: scale(0.6);
+      animation: EpochFlowPulse 5s linear infinite;
+    }
+
+    // fire each node in sync with the scan reaching its x position (x% of the 5s sweep)
+    &:nth-of-type(1) .HomeHero__WaveDot::before { animation-delay: 0.5s; }
+    &:nth-of-type(2) .HomeHero__WaveDot::before { animation-delay: 1.85s; }
+    &:nth-of-type(3) .HomeHero__WaveDot::before { animation-delay: 3.15s; }
+    &:nth-of-type(4) .HomeHero__WaveDot::before { animation-delay: 4.5s; }
 
     // tighter on small screens so the 4 epoch numbers never collide
     @media screen and (max-width: $breakpoint-lg) {
       .HomeHero__WaveValue { font-size: 0.875rem; }
+      .HomeHero__WaveLabel { font-size: 0.625rem; }
       .EpochsWave__Live {
         display: block;
         width: fit-content;
@@ -783,17 +801,40 @@
 
       .HomeHero__WaveDot {
         transform: scale(1.5);
-        box-shadow: 0 0 12px 3px rgba(var(--chakra-colors-brand-light-rgb), 0.9);
+        animation: EpochDotBreath 2.4s ease-in-out infinite;
+      }
+
+      .HomeHero__WaveLabel {
+        color: $color-brand-light;
+        transform: translateX(-50%) scale(1.12);
       }
     }
 
     &.is-active .HomeHero__WaveDot {
       background: $color-brand-light;
       box-shadow: 0 0 0 4px rgba(var(--chakra-colors-brand-normal-rgb), 0.22);
+
+      // expanding ring marks the live epoch
+      &::after {
+        content: '';
+        position: absolute;
+        inset: -2px;
+        border-radius: 50%;
+        border: 2px solid rgba(var(--chakra-colors-brand-light-rgb), 0.85);
+        animation: EpochPing 2.2s cubic-bezier(0, 0, 0.2, 1) infinite;
+      }
     }
   }
 
-  // "live" pill next to the current epoch number
+  @media (prefers-reduced-motion: reduce) {
+    &__Point.is-selected .HomeHero__WaveDot {
+      animation: none;
+      box-shadow: 0 0 12px 3px rgba(var(--chakra-colors-brand-light-rgb), 0.9);
+    }
+    &__Point.is-active .HomeHero__WaveDot::after { animation: none; opacity: 0; }
+    &__Point .HomeHero__WaveDot::before { animation: none; opacity: 0; }
+  }
+
   &__Live {
     margin-left: 6px;
     padding: 1px 5px;
@@ -852,6 +893,8 @@
     font-size: 1.25rem;
     line-height: 1;
     color: #fff;
+    // stat tiles never wrap: compact value on one line, exact value lives in the tooltip
+    white-space: nowrap;
   }
 
   &__Unit {
@@ -863,6 +906,15 @@
     text-transform: uppercase;
     letter-spacing: 0.08em;
     color: $color-brand-light;
+  }
+
+  // finalized-only value not yet available for the in-progress epoch
+  &__Pending {
+    font-family: $font-mono;
+    font-size: 0.6875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--chakra-colors-gray-500);
   }
 
   &__Sub {

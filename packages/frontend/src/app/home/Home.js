@@ -132,7 +132,6 @@ function Home () {
           <Heading className={'InfoBlock__Title'} as={'h2'}>Epochs</Heading>
           <EpochsOverview
             epochs={epochs.data?.list}
-            currentHeight={status.data?.api?.block?.height}
             rate={rate}
             loading={epochs.loading}
           />
