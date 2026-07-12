@@ -1,9 +1,16 @@
 @use '../../styles/mixins.scss';
 @import '../../styles/variables.scss';
 
-// Network overview: asymmetric — narrow system rail (left) + wide latest-transactions feed (right).
-// Telemetry is secondary reference info, so it gets a slim column; the live feed gets the space.
 .HomeOverview {
+  // the title flag leaves the flow so the column heads rise into its row
+  @media screen and (min-width: $breakpoint-lg) {
+    .InfoBlock__Title {
+      position: absolute;
+      left: 0;
+      top: 0;
+    }
+  }
+
   &__Grid {
     display: grid;
     grid-template-columns: 1fr;
@@ -14,6 +21,8 @@
       grid-template-columns: 250px minmax(0, 1fr) minmax(0, 1fr);
       gap: 0;
       align-items: stretch;
+      // lift the head row so its center matches the absolutely-positioned title flag
+      margin-top: -16px;
     }
   }
 
@@ -35,40 +44,77 @@
     margin-bottom: 8px;
   }
 
-  // left rail: System header + telemetry as a flush-left key→value table on the shared 44px row grid
+  // left rail: stat tiles stretched to full column height, level with the lists
   &__Sys {
-    // reset the hero-strip meta defaults (40px side padding + bottom border) for the rail context
+    display: flex;
+    flex-direction: column;
+
+    // reset the hero-strip meta defaults (side padding + bottom border)
     .HomeHero__Meta {
-      display: flex;
-      flex-direction: column;
+      flex: 1;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
       gap: 0;
       padding: 0;
       border-bottom: none;
     }
 
-    // same row rhythm as the tx/block lists (44px) so rows line up across columns
     .HomeHero__MetaItem {
-      display: grid;
-      grid-template-columns: 84px 1fr;
-      align-items: center;
-      gap: 0.5rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: flex-start;
+      gap: 4px;
       width: 100%;
-      min-height: 44px;
+      min-height: 64px;
       border-bottom: 1px solid rgba(var(--chakra-colors-gray-800-rgb), 0.5);
 
-      &:last-child { border-bottom: none; }
+      &:nth-last-child(-n+2) { border-bottom: none; }
     }
 
     .HomeHero__MetaLabel { text-align: left; }
+    .HomeHero__MetaValue {
+      font-size: 0.875rem;
+      white-space: nowrap;
+    }
 
     @media screen and (min-width: $breakpoint-lg) {
       border-right: 1px solid rgba(var(--chakra-colors-gray-800-rgb), 0.6);
       padding-right: 2rem;
+      // offset by the sibling head row (30px + 8px) so tiles align with list rows
+      padding-top: 38px;
 
-      .HomeHero__MetaItem { font-size: 0.75rem; }
+      // one tile per row, equal heights filling the column
+      .HomeHero__Meta {
+        grid-template-columns: 1fr;
+        grid-template-rows: repeat(4, 1fr);
+      }
+
+      .HomeHero__MetaItem {
+        min-height: 0;
+
+        &:nth-last-child(-n+2) { border-bottom: 1px solid rgba(var(--chakra-colors-gray-800-rgb), 0.5); }
+        &:last-child { border-bottom: none; }
+      }
+
       .HomeHero__MetaLabel,
       .HomeHero__MetaValue { white-space: nowrap; }
     }
+  }
+
+  // compact "Show more" text link in the column head, opposite the title
+  &__More {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    flex-shrink: 0;
+    font-family: $font-mono;
+    font-size: 0.6875rem;
+    color: var(--chakra-colors-gray-500);
+    white-space: nowrap;
+    transition: color 0.2s;
+
+    &:hover { color: #fff; }
   }
 
   // three columns separated by hairlines: System | Latest Tx | Latest Blocks

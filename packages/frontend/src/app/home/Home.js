@@ -8,6 +8,7 @@ import { MetricChart, EpochsOverview, StatusBar, HeroMeta, MasternodesDonut, Com
 import { fetchHandlerSuccess, fetchHandlerError } from '../../util'
 import theme from '../../styles/theme'
 import { Box, Container, Flex, Heading, SimpleGrid } from '@chakra-ui/react'
+import { ChevronIcon } from '../../components/ui/icons'
 import './Home.scss'
 
 function computeAvgBlockTime (blocks) {
@@ -106,22 +107,19 @@ function Home () {
           <Heading className={'InfoBlock__Title'} as={'h2'}>Network overview</Heading>
           <div className={'HomeOverview__Grid'}>
             <div className={'HomeOverview__Sys'}>
-              <div className={'HomeOverview__TxHead'}>
-                <span className={'HomeOverview__TxTitle'}>System</span>
-              </div>
               <HeroMeta status={status.data} loading={status.loading}/>
             </div>
             <div className={'HomeOverview__Tx'}>
               <div className={'HomeOverview__TxHead'}>
                 <span className={'HomeOverview__TxTitle'}>Latest Transactions</span>
-                <Link href={'/transactions'} className={'HomeSection__ViewAll'}>Show more</Link>
+                <Link href={'/transactions'} className={'HomeOverview__More'}>Show more <ChevronIcon w={'5px'} h={'8px'}/></Link>
               </div>
               <CompactTxList transactions={transactions.data?.resultSet} limit={7} loading={transactions.loading}/>
             </div>
             <div className={'HomeOverview__Blocks'}>
               <div className={'HomeOverview__TxHead'}>
                 <span className={'HomeOverview__TxTitle'}>Latest Blocks</span>
-                <Link href={'/blocks'} className={'HomeSection__ViewAll'}>Show more</Link>
+                <Link href={'/blocks'} className={'HomeOverview__More'}>Show more <ChevronIcon w={'5px'} h={'8px'}/></Link>
               </div>
               <CompactBlocksList blocks={blocks.data?.resultSet} limit={7} loading={blocks.loading}/>
             </div>
