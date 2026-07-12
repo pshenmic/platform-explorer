@@ -1,15 +1,10 @@
-'use client'
-
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
 import { Alias, Identifier, BigNumber, NotActive, DateBlock } from '../data'
 import ValueContainer from '../ui/containers/ValueContainer'
-import { LinkContainer } from '../ui/containers'
 import { Badge, Grid, GridItem } from '@chakra-ui/react'
 import './DataContractsListItem.scss'
 
 function DataContractsListItem ({ dataContract }) {
-  const router = useRouter()
   const ownerId = typeof dataContract?.owner === 'object' ? dataContract?.owner?.identifier : dataContract?.owner
   const ownerName = typeof dataContract?.owner === 'object' ? dataContract?.owner?.name || null : null
 
@@ -26,8 +21,8 @@ function DataContractsListItem ({ dataContract }) {
               : <Identifier
                   className={'DataContractsListItem__Identifier'}
                   avatar={true}
-                  middleEllipsis={true}
-                  copyButton={true}
+                  styles={['highlight-both']}
+                  ellipsis={true}
                 >
                 {dataContract.identifier}
               </Identifier>}
@@ -35,20 +30,11 @@ function DataContractsListItem ({ dataContract }) {
         </GridItem>
 
         <GridItem className={'DataContractsListItem__Column DataContractsListItem__Column--Owner'}>
-          {ownerId
-            ? <LinkContainer
-                className={'DataContractsListItem__OwnerLink'}
-                onClick={e => {
-                  e.stopPropagation()
-                  e.preventDefault()
-                  router.push(`/identity/${ownerId}`)
-                }}
-              >
-                {ownerName
-                  ? <Alias avatarSource={ownerId}>{ownerName}</Alias>
-                  : <Identifier avatar={true} middleEllipsis={true} copyButton={true}>{ownerId}</Identifier>}
-              </LinkContainer>
-            : <span>-</span>
+          {ownerName
+            ? <Alias avatarSource={ownerId}>{ownerName}</Alias>
+            : ownerId
+              ? <Identifier ellipsis={true} avatar={true} styles={['highlight-both']}>{ownerId}</Identifier>
+              : <span>-</span>
           }
         </GridItem>
 
@@ -77,7 +63,9 @@ function DataContractsListItem ({ dataContract }) {
         </GridItem>
 
         <GridItem className={'DataContractsListItem__Column DataContractsListItem__Column--Timestamp'}>
-          <DateBlock timestamp={dataContract?.timestamp} format='dateOnly' showTime={true} showRelativeTooltip={true} />
+          {!dataContract?.timestamp && dataContract?.isSystem
+            ? <span className={'DataContractsListItem__Genesis'}>Genesis</span>
+            : <DateBlock timestamp={dataContract?.timestamp} format='dateOnly' />}
         </GridItem>
       </Grid>
     </Link>

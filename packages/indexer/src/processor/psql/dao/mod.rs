@@ -9,6 +9,7 @@ pub mod documents;
 pub mod identities;
 pub mod masternode_votes;
 mod platform_addresses;
+pub mod shielded_transitions;
 pub mod state_transition_duplicates;
 pub mod state_transitions;
 pub mod token;
@@ -23,6 +24,15 @@ pub struct PostgresDAO {
 
 impl PostgresDAO {
     pub fn new(network: Network) -> PostgresDAO {
+        let connection_pool = PostgresDAO::create_pool();
+
+        PostgresDAO {
+            connection_pool,
+            network,
+        }
+    }
+
+    pub fn create_pool() -> Pool {
         let mut cfg = Config::new();
 
         let postgres_host = env::var("POSTGRES_HOST").expect("You've not set the POSTGRES_HOST");
@@ -43,11 +53,6 @@ impl PostgresDAO {
             recycling_method: RecyclingMethod::Fast,
         });
 
-        let connection_pool = cfg.create_pool(Some(Runtime::Tokio1), NoTls).unwrap();
-
-        PostgresDAO {
-            connection_pool,
-            network,
-        }
+        cfg.create_pool(Some(Runtime::Tokio1), NoTls).unwrap()
     }
 }

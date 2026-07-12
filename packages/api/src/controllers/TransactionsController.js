@@ -254,6 +254,88 @@ class TransactionsController {
 
     response.send(result)
   }
+
+  getShieldHistorySeries = async (request, response) => {
+    const {
+      timestamp_start: start = new Date().getTime() - 3600000,
+      timestamp_end: end = new Date().getTime(),
+      intervalsCount = null
+    } = request.query
+
+    if (!start || !end) {
+      return response.status(400).send({ message: 'start and end must be set' })
+    }
+
+    if (start > end) {
+      return response.status(400).send({ message: 'start timestamp cannot be more than end timestamp' })
+    }
+
+    const intervalInMs =
+      Math.ceil(
+        (new Date(end).getTime() - new Date(start).getTime()) / Number(intervalsCount ?? NaN) / 1000
+      ) * 1000
+
+    const interval = intervalsCount
+      ? iso8601duration(intervalInMs)
+      : calculateInterval(new Date(start), new Date(end))
+
+    const timeSeries = await this.transactionsDAO.getShieldHistorySeries(
+      new Date(start),
+      new Date(end),
+      interval,
+      isNaN(intervalInMs) ? Intervals[interval] : intervalInMs,
+      true
+    )
+
+    response.send(timeSeries)
+  }
+
+  getUnshieldHistorySeries = async (request, response) => {
+    const {
+      timestamp_start: start = new Date().getTime() - 3600000,
+      timestamp_end: end = new Date().getTime(),
+      intervalsCount = null
+    } = request.query
+
+    if (!start || !end) {
+      return response.status(400).send({ message: 'start and end must be set' })
+    }
+
+    if (start > end) {
+      return response.status(400).send({ message: 'start timestamp cannot be more than end timestamp' })
+    }
+
+    const intervalInMs =
+      Math.ceil(
+        (new Date(end).getTime() - new Date(start).getTime()) / Number(intervalsCount ?? NaN) / 1000
+      ) * 1000
+
+    const interval = intervalsCount
+      ? iso8601duration(intervalInMs)
+      : calculateInterval(new Date(start), new Date(end))
+
+    const timeSeries = await this.transactionsDAO.getShieldHistorySeries(
+      new Date(start),
+      new Date(end),
+      interval,
+      isNaN(intervalInMs) ? Intervals[interval] : intervalInMs,
+      false
+    )
+
+    response.send(timeSeries)
+  }
+
+  getTransactionStatistic = async (request, response) => {
+    const info = await this.transactionsDAO.getTransactionStatistic()
+
+    response.send(info)
+  }
+
+  getShieldedStatistic = async (request, response) => {
+    const info = await this.transactionsDAO.getShieldedStatistic()
+
+    response.send(info)
+  }
 }
 
 module.exports = TransactionsController

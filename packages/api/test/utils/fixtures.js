@@ -639,8 +639,32 @@ const fixtures = {
 
     return { ...row, id: result.id }
   },
+  shieldedTransition: async (knex, {
+    state_transition_id,
+    state_transition_type,
+    amount
+  } = {}) => {
+    if (!state_transition_id) {
+      throw new Error('state_transition_id must be provided for shieldedTransition fixture')
+    }
+
+    if (!state_transition_type && state_transition_type !== 0) {
+      throw new Error('state_transition_type must be provided for shieldedTransition fixture')
+    }
+
+    const row = {
+      state_transition_id,
+      state_transition_type,
+      amount: amount ?? 0
+    }
+
+    const [result] = await knex('shielded_transitions').insert(row).returning('id')
+
+    return { ...row, id: result.id }
+  },
   cleanup: async (knex) => {
     await knex.raw('DELETE FROM state_transition_duplicates')
+    await knex.raw('DELETE FROM shielded_transitions')
     await knex.raw('DELETE FROM platform_address_transitions')
     await knex.raw('DELETE FROM platform_addresses')
     await knex.raw('DELETE FROM token_holders')

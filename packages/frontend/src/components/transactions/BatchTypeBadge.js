@@ -6,7 +6,7 @@ function BatchTypeBadge ({ batchType, ...props }) {
   const batchInfo = BatchActions?.[batchType]
 
   if (!batchInfo) {
-    return <Badge colorScheme='gray' {...props}>{batchType}</Badge>
+    return <Badge colorScheme='gray' {...props}><span className={'TransactionsListItem__TypeBadgeLabel'}>{batchType}</span></Badge>
   }
 
   return (
@@ -16,7 +16,7 @@ function BatchTypeBadge ({ batchType, ...props }) {
       placement={'top'}
     >
       <Badge colorScheme={batchInfo.colorScheme} {...props}>
-        {batchInfo.title}
+        <span className={'TransactionsListItem__TypeBadgeLabel'}>{batchInfo.title}</span>
       </Badge>
     </Tooltip>
   )

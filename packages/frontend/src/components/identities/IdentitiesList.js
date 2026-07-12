@@ -45,11 +45,15 @@ function SortableHeader ({ headerKey, label, modifier, sort, onSortChange }) {
   )
 }
 
-function IdentitiesList ({ identities, headerStyles = 'default', pagination, loading, itemsCount = 10, sort, onSortChange }) {
+function IdentitiesList ({ identities, headerStyles = 'default', pagination, loading, itemsCount = 10, sort, onSortChange, page = 0 }) {
   const headerExtraClass = {
     default: '',
     light: 'IdentitiesList__ColumnTitles--Light'
   }
+
+  const showRank = sort?.order === 'desc' &&
+    ['balance', 'tx_count', 'documents_count'].includes(sort?.order_by) &&
+    page === 0
 
   const sortableProps = (key) => {
     const header = SORTABLE_HEADERS.find(h => h.key === key)
@@ -77,6 +81,7 @@ function IdentitiesList ({ identities, headerStyles = 'default', pagination, loa
               <IdentitiesListItem
                 key={key}
                 identity={identity}
+                place={showRank && key < 3 ? key + 1 : undefined}
               />
             )}
             {!identities?.length &&

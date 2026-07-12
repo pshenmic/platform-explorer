@@ -753,6 +753,40 @@ module.exports = ({
           }
         }
       }
+    },
+    {
+      path: '/transactions/shield/history',
+      method: 'GET',
+      handler: transactionsController.getShieldHistorySeries,
+      schema: {
+        querystring: { $ref: 'timeInterval#' }
+      }
+    },
+    {
+      path: '/transactions/unshield/history',
+      method: 'GET',
+      handler: transactionsController.getUnshieldHistorySeries,
+      schema: {
+        querystring: { $ref: 'timeInterval#' }
+      }
+    },
+    {
+      path: '/transactions/statistic',
+      method: 'GET',
+      handler: transactionsController.getTransactionStatistic
+    },
+    {
+      path: '/transactions/shielded/statistic',
+      method: 'GET',
+      handler: transactionsController.getShieldedStatistic
+    },
+    {
+      path: '/identities/active',
+      method: 'GET',
+      handler: identitiesController.getActiveIdentities,
+      schema: {
+        querystring: { $ref: 'paginationOptions#' }
+      }
     }
   ]
 

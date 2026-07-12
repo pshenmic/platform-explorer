@@ -13,7 +13,7 @@ function TypeBadge ({ type, ...props }) {
         colorScheme={TransactionTypesInfo?.[type]?.colorScheme}
         {...props}
       >
-        {TransactionTypesInfo?.[type]?.title}
+        <span className={'TransactionsListItem__TypeBadgeLabel'}>{TransactionTypesInfo?.[type]?.title}</span>
       </Badge>
     </Tooltip>
   )

@@ -46,6 +46,13 @@ class DashCoreRPC {
     })
   }
 
+  static async getProTxList (type, detailed, blockHeight = undefined) {
+    const args = ['list', type, detailed]
+    if (blockHeight) args.push(blockHeight)
+
+    return await this.callMethod('protx', args)
+  }
+
   static async getQuorumsListExtended (height) {
     const args = ['listextended']
     if (height) args.push(height)

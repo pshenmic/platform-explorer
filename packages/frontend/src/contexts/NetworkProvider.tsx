@@ -3,15 +3,10 @@
 import { createContext, useContext, useEffect } from 'react'
 import type { ReactNode } from 'react'
 import { NETWORK_OPTIONS, NETWORKS_ENUM } from 'src/constants/networks'
+import type { NetworkOption } from 'src/constants/networks'
 
-export interface NetworkOption {
-  name: string
-  subname: string
-  disabled: boolean
-  explorerBaseUrl: string | undefined
-  l1explorerBaseUrl: string | undefined
-  dataContractPE: string | undefined
-}
+// Re-exported for backward compatibility — `NetworkOption` now lives in constants/networks.
+export type { NetworkOption }
 
 // window.dashPlatformSDK is injected by the Dash Platform browser extension.
 // Typed minimally — only the method we call here.

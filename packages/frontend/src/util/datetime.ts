@@ -1,31 +1,32 @@
-// @ts-nocheck — TODO: type this module incrementally
-function getDaysBetweenDates (startDate, endDate) {
+type DateInput = string | number | Date
+
+function getDaysBetweenDates (startDate: DateInput, endDate: DateInput): number {
   if (!startDate || !endDate) return 0
   const start = new Date(startDate)
   const end = new Date(endDate)
-  const diffInMilliseconds = Math.abs(end - start)
+  const diffInMilliseconds = Math.abs(end.getTime() - start.getTime())
   const daysDifference = Math.ceil(diffInMilliseconds / (1000 * 60 * 60 * 24))
   return daysDifference
 }
 
-const getDynamicRange = (duration) => {
+const getDynamicRange = (duration: number): { start: string, end: string } => {
   const now = new Date()
   const end = now.toISOString()
-  const start = new Date(now - duration).toISOString()
+  const start = new Date(now.getTime() - duration).toISOString()
   return { start, end }
 }
 
-function getTimeDelta (startDate, endDate, format) {
+function getTimeDelta (startDate: DateInput, endDate: DateInput, format?: string): string {
   if (
     !startDate ||
     !endDate ||
-    isNaN(new Date(startDate)) ||
-    isNaN(new Date(endDate))
+    isNaN(new Date(startDate).getTime()) ||
+    isNaN(new Date(endDate).getTime())
   ) {
     return 'n/a'
   }
 
-  const diff = new Date(endDate) - new Date(startDate)
+  const diff = new Date(endDate).getTime() - new Date(startDate).getTime()
   const isFuture = diff > 0
   const absoluteDiff = Math.abs(diff)
   const days = Math.floor(absoluteDiff / (1000 * 60 * 60 * 24))
@@ -56,7 +57,7 @@ function getTimeDelta (startDate, endDate, format) {
   return 'Invalid format'
 }
 
-const optionsDefault = {
+const optionsDefault: Intl.DateTimeFormatOptions = {
   day: 'numeric',
   month: 'short',
   year: 'numeric',
@@ -64,8 +65,13 @@ const optionsDefault = {
   minute: '2-digit'
 }
 
-export const formatDate = (timestamp, setOptions = (options) => options) => {
-  const validatedValue = isNaN(timestamp) ? timestamp : parseInt(timestamp)
+type DateOptionsTransform = (options: Intl.DateTimeFormatOptions) => Intl.DateTimeFormatOptions
+
+export const formatDate = (
+  timestamp: string | number,
+  setOptions: DateOptionsTransform = (options) => options
+): { formatted: string, date: Date } | null => {
+  const validatedValue = isNaN(Number(timestamp)) ? timestamp : parseInt(String(timestamp))
   const date = new Date(validatedValue)
 
   if (String(date) === 'Invalid Date') return null

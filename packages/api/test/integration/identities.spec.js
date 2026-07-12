@@ -2742,4 +2742,74 @@ describe('Identities routes', () => {
       assert.deepEqual(expectedSeriesData.reverse(), body)
     })
   })
+
+  describe('getActiveIdentities()', async () => {
+    let activeIdentities
+    let start
+    let end
+
+    before(() => {
+      mock.method(DocumentsController.prototype, 'query', async () => [])
+    })
+
+    beforeEach(async () => {
+      activeIdentities = []
+
+      start = new Date('2025-01-01T00:00:00.000Z')
+      end = new Date('2025-01-02T00:00:00.000Z')
+
+      // owner k owns (k + 1) transitions inside the range
+      // (1 from identity create + k extra transactions)
+      for (let k = 1; k <= 5; k++) {
+        const block = await fixtures.block(knex, {
+          height: k,
+          timestamp: new Date(start.getTime() + k * 60000)
+        })
+        const identity = await fixtures.identity(knex, {
+          block_hash: block.hash,
+          block_height: block.height
+        })
+
+        for (let j = 0; j < k; j++) {
+          await fixtures.transaction(knex, {
+            block_hash: block.hash,
+            block_height: block.height,
+            type: StateTransitionEnum.DATA_CONTRACT_CREATE,
+            owner: identity.identifier,
+            index: j
+          })
+        }
+
+        activeIdentities.push({
+          identifier: identity.identifier,
+          transactionsCount: k + 1
+        })
+      }
+    })
+
+    it('should return active identities ordered by transactions count desc', async () => {
+      const { body } = await client.get(`/identities/active?timestamp_start=${start.toISOString()}&timestamp_end=${end.toISOString()}&order=desc&page=1&limit=10`)
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      assert.equal(body.pagination.total, activeIdentities.length)
+      assert.equal(body.pagination.page, 1)
+      assert.equal(body.pagination.limit, 10)
+
+      const expectedIdentities = [...activeIdentities]
+        .sort((a, b) => b.transactionsCount - a.transactionsCount)
+        .map(identity => ({
+          identifier: identity.identifier,
+          transactionsCount: String(identity.transactionsCount),
+          aliases: []
+        }))
+
+      assert.deepEqual(body.resultSet, expectedIdentities)
+    })
+
+    it('should return error for bad timestamp range', async () => {
+      await client.get(`/identities/active?timestamp_start=${end.toISOString()}&timestamp_end=${start.toISOString()}`)
+        .expect(400)
+    })
+  })
 })

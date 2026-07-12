@@ -9,13 +9,14 @@ import PageSizeSelector from '../../components/pageSizeSelector/PageSizeSelector
 import { LoadingList } from '../../components/loading'
 import { ErrorMessageBlock } from '../../components/Errors'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
-import { fetchHandlerSuccess, fetchHandlerError } from '../../util'
+import { fetchHandlerSuccess, fetchHandlerError, formatFullNumber } from '../../util'
+import PageTitle from '../../components/intro/PageTitle'
+import NetworkStatsInline from '../../components/stats/NetworkStatsInline'
+import introContent from './intro.md'
 
 import {
   Container,
-  Heading,
   Box,
-  Flex,
   FormControl,
   FormLabel,
   Switch
@@ -44,7 +45,10 @@ function Identities ({ defaultPage = 1, defaultPageSize, defaultShowAll = false 
   const fetchData = (page, count, includeMasternodes, currentFilters) => {
     setIdentities(state => ({ ...state, loading: true }))
 
-    Api.getIdentities(page, count, 'desc', undefined, { includeMasternodes, filters: currentFilters })
+    const orderBy = currentFilters.order_by || 'balance'
+    const order = currentFilters.order || 'desc'
+
+    Api.getIdentities(page, count, order, orderBy, { includeMasternodes, filters: currentFilters })
       .then(res => {
         if (res.pagination.total === -1) {
           setCurrentPage(0)
@@ -103,11 +107,15 @@ function Identities ({ defaultPage = 1, defaultPageSize, defaultShowAll = false 
         maxW={'container.maxPageW'}
         className={'InfoBlock'}
       >
-        <Flex align={'center'} justify={'space-between'} wrap={'wrap'} gap={2} mb={4}>
-          <Heading className={'InfoBlock__Title'} as={'h1'} mb={0}>
-            Identities {total > 0 && <span style={{ opacity: 0.6, fontSize: '0.7em', fontWeight: 'normal' }}>({total})</span>}
-          </Heading>
-          <FormControl display={'flex'} alignItems={'center'} width={'auto'}>
+        <div className={'IdentitiesPage__Controls'}>
+          <PageTitle title={'Identities'} description={introContent} className={'IdentitiesPage__Title'}/>
+
+          <NetworkStatsInline
+            className={'IdentitiesPage__Stats'}
+            items={[{ label: 'Total', value: formatFullNumber(total), loading: identities.loading }]}
+          />
+
+          <FormControl display={'flex'} alignItems={'center'} width={'auto'} className={'IdentitiesPage__ShowAll'}>
             <FormLabel htmlFor={'show-all-identities'} mb={0} mr={2} fontSize={'sm'} fontWeight={'normal'}>
               Show all (incl. masternode)
             </FormLabel>
@@ -117,22 +125,23 @@ function Identities ({ defaultPage = 1, defaultPageSize, defaultShowAll = false 
               onChange={handleShowAllChange}
             />
           </FormControl>
-        </Flex>
 
-        <IdentitiesFilter
-          initialFilters={filters}
-          className={'IdentitiesPage__Filters'}
-          onFilterChange={(next) => {
-            setFilters(next)
-            setCurrentPage(0)
-          }}
-        />
+          <IdentitiesFilter
+            initialFilters={filters}
+            className={'IdentitiesPage__Filters'}
+            onFilterChange={(next) => {
+              setFilters(next)
+              setCurrentPage(0)
+            }}
+          />
+        </div>
 
         {!identities.error
           ? !identities.loading
               ? <IdentitiesList
                   identities={identities.data.resultSet}
-                  sort={{ order_by: filters.order_by, order: filters.order }}
+                  sort={{ order_by: filters.order_by || 'balance', order: filters.order || 'desc' }}
+                  page={currentPage}
                   onSortChange={(next) => {
                     setFilters(next)
                     setCurrentPage(0)

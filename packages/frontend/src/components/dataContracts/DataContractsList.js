@@ -3,8 +3,10 @@ import { EmptyListMessage } from '../ui/lists'
 import Pagination from '../pagination'
 import { ErrorMessageBlock } from '../Errors'
 import { LoadingList } from '../loading'
+import { ChevronIcon } from '../ui/icons'
+import SmoothSize from '../ui/containers/SmoothSize'
 import { Grid, GridItem } from '@chakra-ui/react'
-import { ChevronUpIcon, ChevronDownIcon } from '@chakra-ui/icons'
+import { useState } from 'react'
 import {
   createColumnHelper,
   getCoreRowModel,
@@ -12,34 +14,6 @@ import {
 } from '@tanstack/react-table'
 
 import './DataContractsList.scss'
-
-function SortableHeader ({ headerKey, label, modifier, sort, onSortChange }) {
-  const isActive = sort?.order_by === headerKey
-  const direction = isActive ? sort.order : null
-  const className = [
-    'DataContractsList__ColumnTitle',
-    `DataContractsList__ColumnTitle--${modifier}`,
-    'DataContractsList__ColumnTitle--Sortable',
-    isActive ? 'DataContractsList__ColumnTitle--Active' : ''
-  ].filter(Boolean).join(' ')
-
-  const handleClick = () => {
-    if (!onSortChange) return
-    const nextOrder = isActive && direction === 'desc' ? 'asc' : 'desc'
-    onSortChange({ order_by: headerKey, order: nextOrder })
-  }
-
-  return (
-    <GridItem as={'button'} type={'button'} className={className} onClick={handleClick}>
-      {isActive
-        ? direction === 'asc'
-          ? <ChevronUpIcon w={4} h={4}/>
-          : <ChevronDownIcon w={4} h={4}/>
-        : <span aria-hidden className={'DataContractsList__SortSpacer'}/>}
-      <span>{label}</span>
-    </GridItem>
-  )
-}
 
 const columnHelper = createColumnHelper()
 
@@ -68,13 +42,16 @@ const headerExtraClass = {
   light: 'DataContractsList__ColumnTitles--Light'
 }
 
-function DataContractsList ({ dataContracts = [], headerStyles, pagination, loading, itemsCount = 10, sort, onSortChange }) {
+function DataContractsList ({ dataContracts = [], headerStyles, pagination, loading, itemsCount = 10, pinnedGroup = null }) {
+  const [groupOpen, setGroupOpen] = useState(true)
   const table = useReactTable({
     data: dataContracts,
     columns,
     getCoreRowModel: getCoreRowModel(),
     manualPagination: true
   })
+
+  const pinnedItems = pinnedGroup?.items || []
 
   return (
     <div className={'DataContractsList'}>
@@ -91,17 +68,38 @@ function DataContractsList ({ dataContracts = [], headerStyles, pagination, load
         <GridItem className={'DataContractsList__ColumnTitle DataContractsList__ColumnTitle--WithTokens'}>
           With tokens
         </GridItem>
-        <SortableHeader
-          headerKey={'documents_count'}
-          label={'Documents'}
-          modifier={'DocumentsCount'}
-          sort={sort}
-          onSortChange={onSortChange}
-        />
+        <GridItem className={'DataContractsList__ColumnTitle DataContractsList__ColumnTitle--DocumentsCount'}>
+          Documents
+        </GridItem>
         <GridItem className={'DataContractsList__ColumnTitle DataContractsList__ColumnTitle--Timestamp'}>
           Timestamp
         </GridItem>
       </Grid>
+
+      {pinnedItems.length > 0 &&
+        <div className={'DataContractsList__Group'}>
+          <button
+            type={'button'}
+            className={'DataContractsList__GroupHeader'}
+            onClick={() => setGroupOpen(open => !open)}
+            aria-expanded={groupOpen}
+          >
+            <ChevronIcon className={`DataContractsList__GroupChevron ${groupOpen ? 'DataContractsList__GroupChevron--Open' : ''}`}/>
+            <span className={'DataContractsList__GroupLabel'}>{pinnedGroup.label}</span>
+            <span className={'DataContractsList__GroupCount'}>{pinnedItems.length}</span>
+          </button>
+
+          <SmoothSize>
+            {groupOpen &&
+              <div className={'DataContractsList__Items DataContractsList__Items--Pinned'}>
+                {pinnedItems.map((dataContract, index) => (
+                  <DataContractsListItem dataContract={dataContract} key={dataContract?.identifier || index}/>
+                ))}
+              </div>
+            }
+          </SmoothSize>
+        </div>
+      }
 
       {!loading
         ? <div className={'DataContractsList__Items'}>

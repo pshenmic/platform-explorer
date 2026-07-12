@@ -175,7 +175,8 @@ describe('Transaction routes', () => {
               timestamp: aliasTimestamp.toISOString()
             }
           ]
-        }
+        },
+        shielded: null
       }
 
       assert.deepEqual(expectedTransaction, body)
@@ -213,7 +214,8 @@ describe('Transaction routes', () => {
               timestamp: aliasTimestamp.toISOString()
             }
           ]
-        }
+        },
+        shielded: null
       }
 
       assert.deepEqual(expectedTransaction, body)
@@ -223,6 +225,32 @@ describe('Transaction routes', () => {
       await client.get('/transaction/DEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEF')
         .expect(404)
         .expect('Content-Type', 'application/json; charset=utf-8')
+    })
+
+    it('should return shielded amount and direction for a shielded transaction', async () => {
+      const block = await fixtures.block(knex, { height: 900, timestamp: new Date() })
+      const shieldTx = await fixtures.transaction(knex, {
+        block_hash: block.hash,
+        block_height: block.height,
+        type: StateTransitionEnum.SHIELD,
+        owner: identity.identifier
+      })
+      await fixtures.shieldedTransition(knex, {
+        state_transition_id: shieldTx.id,
+        state_transition_type: StateTransitionEnum.SHIELD,
+        amount: 123456789
+      })
+
+      const { body } = await client.get(`/transaction/${shieldTx.hash}`)
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      assert.deepEqual(body.shielded, { amount: '123456789', direction: 'IN' })
+
+      // fully clean up so later count/total assertions are unaffected
+      await knex.raw('DELETE FROM shielded_transitions')
+      await knex('state_transitions').where('hash', shieldTx.hash).del()
+      await knex('blocks').where('hash', block.hash).del()
     })
 
     it('should return transaction with duplicates', async () => {
@@ -267,6 +295,7 @@ describe('Transaction routes', () => {
             }
           ]
         },
+        shielded: null,
         duplicates: Array.from({ length: duplicatesCount }, () => ({
           base58Address: null,
           bech32mAddress: null,
@@ -1503,6 +1532,164 @@ describe('Transaction routes', () => {
       }
 
       assert.deepEqual(expectedSeriesData.reverse(), body)
+    })
+  })
+
+  describe('getTransactionStatistic()', async () => {
+    it('should return transaction count grouped by type', async () => {
+      const { body } = await client.get('/transactions/statistic')
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      const countsByType = transactions.reduce((acc, { transaction }) => {
+        acc[transaction.type] = (acc[transaction.type] ?? 0) + 1
+        return acc
+      }, {})
+
+      const expectedStatistic = Object.entries(countsByType)
+        .map(([type, count]) => ({ transactionType: StateTransitionEnum[type], count }))
+        .sort((a, b) => a.transactionType.localeCompare(b.transactionType))
+
+      assert.deepEqual(
+        body.sort((a, b) => a.transactionType.localeCompare(b.transactionType)),
+        expectedStatistic
+      )
+    })
+  })
+
+  describe('getShieldHistorySeries() / getUnshieldHistorySeries()', async () => {
+    let start
+    let end
+    let shieldAmount
+    let unshieldAmount
+
+    before(async () => {
+      start = new Date('2030-01-01T00:00:00.000Z')
+      end = new Date('2030-01-01T01:00:00.000Z')
+
+      shieldAmount = 0
+      unshieldAmount = 0
+
+      const shieldTypes = [StateTransitionEnum.SHIELD, StateTransitionEnum.SHIELD_FROM_ASSET_LOCK]
+      const unshieldTypes = [StateTransitionEnum.UNSHIELD, StateTransitionEnum.SHIELDED_WITHDRAWAL]
+
+      let height = 1000
+      let minuteOffset = 3
+
+      // spread transitions across the window so they fall into different
+      // intervals of the resulting series
+      const createShieldedTransition = async (type, amount) => {
+        const block = await fixtures.block(knex, {
+          height: height++,
+          timestamp: new Date(start.getTime() + (minuteOffset += 5) * 60000)
+        })
+
+        const transaction = await fixtures.transaction(knex, {
+          block_hash: block.hash,
+          block_height: block.height,
+          type,
+          owner: identity.identifier
+        })
+
+        await fixtures.shieldedTransition(knex, {
+          state_transition_id: transaction.id,
+          state_transition_type: type,
+          amount
+        })
+      }
+
+      for (const type of shieldTypes) {
+        await createShieldedTransition(type, 100000000)
+        shieldAmount += 100000000
+      }
+
+      for (const type of unshieldTypes) {
+        await createShieldedTransition(type, 50000000)
+        unshieldAmount += 50000000
+      }
+    })
+
+    it('should return shielded amount series', async () => {
+      const { body } = await client.get(`/transactions/shield/history?timestamp_start=${start.toISOString()}&timestamp_end=${end.toISOString()}&intervalsCount=10`)
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      const totalAmount = body.reduce((acc, point) => acc + point.data.amount, 0)
+
+      assert.equal(totalAmount, shieldAmount)
+    })
+
+    it('should return unshielded amount series', async () => {
+      const { body } = await client.get(`/transactions/unshield/history?timestamp_start=${start.toISOString()}&timestamp_end=${end.toISOString()}&intervalsCount=10`)
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      const totalAmount = body.reduce((acc, point) => acc + point.data.amount, 0)
+
+      assert.equal(totalAmount, unshieldAmount)
+    })
+
+    it('should return error when start is after end', async () => {
+      await client.get(`/transactions/shield/history?timestamp_start=${end.toISOString()}&timestamp_end=${start.toISOString()}`)
+        .expect(400)
+    })
+  })
+
+  describe('getShieldedStatistic()', async () => {
+    // amount per shielded transition type inserted for this suite
+    const amounts = {
+      [StateTransitionEnum.SHIELD]: 100,
+      [StateTransitionEnum.SHIELD_FROM_ASSET_LOCK]: 200,
+      [StateTransitionEnum.UNSHIELD]: 40,
+      [StateTransitionEnum.SHIELDED_WITHDRAWAL]: 50,
+      [StateTransitionEnum.IDENTITY_CREATE_FROM_SHIELDED_POOL]: 60,
+      [StateTransitionEnum.SHIELDED_TRANSFER]: 999
+    }
+
+    before(async () => {
+      // start from a clean shielded pool so the aggregate is deterministic
+      await knex.raw('DELETE FROM shielded_transitions')
+
+      let height = 2000
+
+      for (const [type, amount] of Object.entries(amounts)) {
+        const block = await fixtures.block(knex, { height: height++, timestamp: new Date() })
+        const transaction = await fixtures.transaction(knex, {
+          block_hash: block.hash,
+          block_height: block.height,
+          type: Number(type),
+          owner: identity.identifier
+        })
+        await fixtures.shieldedTransition(knex, {
+          state_transition_id: transaction.id,
+          state_transition_type: Number(type),
+          amount
+        })
+      }
+    })
+
+    after(async () => {
+      await knex.raw('DELETE FROM shielded_transitions')
+    })
+
+    it('should return aggregated shielded pool statistic', async () => {
+      const { body } = await client.get('/transactions/shielded/statistic')
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      const expectedIn = amounts[StateTransitionEnum.SHIELD] + amounts[StateTransitionEnum.SHIELD_FROM_ASSET_LOCK]
+      const expectedOut = amounts[StateTransitionEnum.UNSHIELD] +
+        amounts[StateTransitionEnum.SHIELDED_WITHDRAWAL] +
+        amounts[StateTransitionEnum.IDENTITY_CREATE_FROM_SHIELDED_POOL]
+
+      assert.equal(body.totalShieldedIn, String(expectedIn))
+      assert.equal(body.totalShieldedOut, String(expectedOut))
+      assert.equal(body.poolBalance, String(expectedIn - expectedOut))
+      assert.equal(body.transitionsCount, Object.keys(amounts).length)
+      assert.equal(body.types.length, Object.keys(amounts).length)
+
+      const shieldType = body.types.find(type => type.transactionType === 'SHIELD')
+      assert.deepEqual(shieldType, { transactionType: 'SHIELD', count: 1, amount: '100' })
     })
   })
 

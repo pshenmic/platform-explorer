@@ -11,10 +11,12 @@ import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 
 import {
   Box,
-  Container,
-  Heading
+  Container
 } from '@chakra-ui/react'
 import { ContestedResourcesList, ContestedResourcesFilter, useContestedResourcesFilters } from '../../components/contestedResources'
+import ContestedResourcesStatsInline from '../../components/contestedResources/ContestedResourcesStatsInline'
+import PageTitle from '../../components/intro/PageTitle'
+import introContent from './intro.md'
 import './ContestedResourcesPage.scss'
 
 const paginateConfig = {
@@ -82,16 +84,20 @@ function ContestedResources ({ defaultPage = 1, defaultPageSize }) {
       maxW={'container.maxPageW'}
       my={8}
     >
-      <Heading className={'InfoBlock__Title'} as={'h1'}>Contested Resources</Heading>
+      <div className={'ContestedResourcesPage__Controls'}>
+        <PageTitle title={'Contested Resources'} description={introContent} className={'ContestedResourcesPage__Title'}/>
 
-      <ContestedResourcesFilter
-        initialFilters={filters}
-        className={'ContestedResourcesPage__Filters'}
-        onFilterChange={(next) => {
-          setFilters(next)
-          setCurrentPage(0)
-        }}
-      />
+        <ContestedResourcesStatsInline className={'ContestedResourcesPage__Stats'}/>
+
+        <ContestedResourcesFilter
+          initialFilters={filters}
+          className={'ContestedResourcesPage__Filters'}
+          onFilterChange={(next) => {
+            setFilters(next)
+            setCurrentPage(0)
+          }}
+        />
+      </div>
 
       {!contestedResources.error
         ? <>

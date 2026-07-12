@@ -1,30 +1,42 @@
 @import '../../styles/variables.scss';
 
 .IdentitiesPage {
-  &__Filters {
+  &__Controls {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
     margin: 0.75rem 0 1.5rem;
+    flex-wrap: wrap;
   }
 
-  &__IntroTabs {
-    width: 100%;
-    padding-bottom: 0;
-
-    .TimeframeSelector__Button {
-      top: -2px !important;
-    }
-
-    .ChartBlock {
-      &--MenuIsOpen {
-        margin-bottom: -52px !important;
-      }
-    }
+  &__Title {
+    flex-shrink: 0;
+    margin-right: 0.5rem;
   }
 
-  &__IdentitiesCountChart {
-    overflow: visible !important;
+  &__Stats {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
 
-    .Chart {
-      overflow: visible !important;
+  &__ShowAll {
+    flex-shrink: 0;
+    margin-left: auto;
+  }
+
+  &__Filters {
+    flex-shrink: 0;
+  }
+
+  @media screen and (max-width: $breakpoint-md) {
+    &__Controls {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 1rem;
+    }
+
+    &__ShowAll {
+      margin-left: 0;
     }
   }
 }
