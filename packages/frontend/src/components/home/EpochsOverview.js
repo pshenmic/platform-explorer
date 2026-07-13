@@ -378,6 +378,7 @@ export function EpochsOverview ({ title, epochs, currentEpoch, rate, loading }) 
           </defs>
           <path d={areaD} fill={'url(#homeEpochFill)'} stroke={'none'}/>
           <path className={'HomeHero__WaveLine'} d={lineD} fill={'none'} vectorEffect={'non-scaling-stroke'}/>
+          <path className={'HomeHero__WaveScanGlow'} d={lineD} fill={'none'} pathLength={'100'} vectorEffect={'non-scaling-stroke'}/>
           <path className={'HomeHero__WaveScan'} d={lineD} fill={'none'} pathLength={'100'} vectorEffect={'non-scaling-stroke'}/>
         </svg>
 

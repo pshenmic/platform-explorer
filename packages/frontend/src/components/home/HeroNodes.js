@@ -120,13 +120,19 @@ export default function HeroNodes () {
       }
     }
 
+    // ~30fps is indistinguishable for this slow drift and halves the per-frame work
+    let lastFrame = 0
+    let inView = true
     const loop = (t) => {
-      draw(t)
+      if (t - lastFrame >= 33) {
+        lastFrame = t
+        draw(t)
+      }
       raf = requestAnimationFrame(loop)
     }
 
     const start = () => {
-      if (raf == null && !reduced && !document.hidden) raf = requestAnimationFrame(loop)
+      if (raf == null && !reduced && !document.hidden && inView) raf = requestAnimationFrame(loop)
     }
     const stop = () => {
       if (raf != null) { cancelAnimationFrame(raf); raf = null }
@@ -145,6 +151,13 @@ export default function HeroNodes () {
     const ro = new ResizeObserver(resize)
     ro.observe(parent)
 
+    // no CPU for a constellation that's scrolled out of sight
+    const io = new IntersectionObserver(([entry]) => {
+      inView = entry.isIntersecting
+      inView ? start() : stop()
+    })
+    io.observe(parent)
+
     if (reduced) {
       draw(0)
     } else {
@@ -157,6 +170,7 @@ export default function HeroNodes () {
     return () => {
       stop()
       ro.disconnect()
+      io.disconnect()
       document.removeEventListener('visibilitychange', onVisibility)
       parent.removeEventListener('mousemove', onMove)
       parent.removeEventListener('mouseleave', onLeave)

@@ -465,7 +465,15 @@
     stroke-width: 2px;
     stroke-linecap: round;
     stroke-dasharray: 3 97;
-    filter: drop-shadow(0 0 4px rgba(var(--chakra-colors-brand-light-rgb), 0.9));
+    animation: HomeHeroDash 5s linear infinite;
+  }
+
+  // fat translucent twin stroke: an animated drop-shadow would re-blur the path every frame
+  &__WaveScanGlow {
+    stroke: rgba(var(--chakra-colors-brand-light-rgb), 0.3);
+    stroke-width: 6px;
+    stroke-linecap: round;
+    stroke-dasharray: 3 97;
     animation: HomeHeroDash 5s linear infinite;
   }
 
