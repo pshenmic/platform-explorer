@@ -3,11 +3,13 @@
 import Link from 'next/link'
 import { BigNumber, TimeDelta, NotActive, Identifier } from '../data'
 import { Skeleton } from './Skeleton'
+import { useLiveList } from './hooks'
 import './CompactBlocksList.scss'
 
-// dense latest-blocks list for the Network overview column
+// dense latest-blocks list; refreshes are held back while hovered
 export function CompactBlocksList ({ blocks, limit = 7, loading }) {
-  const rows = Array.isArray(blocks) ? blocks.slice(0, limit) : []
+  const { shown, newKeys, hoverBind } = useLiveList(blocks, b => b?.header?.hash)
+  const rows = Array.isArray(shown) ? shown.slice(0, limit) : []
 
   // skeleton mirrors the real row grid so there's no layout shift
   if (loading && !rows.length) {
@@ -30,12 +32,18 @@ export function CompactBlocksList ({ blocks, limit = 7, loading }) {
   }
 
   return (
-    <div className={'CompactBlocks'}>
-      {rows.map(block => {
+    <div className={'CompactBlocks'} {...hoverBind}>
+      {rows.map((block, i) => {
         const header = block?.header
         const txCount = Array.isArray(block?.txs) ? block.txs.length : 0
         return (
-          <Link key={header?.hash} href={`/block/${header?.hash}`} className={'CompactBlocks__Row'}>
+          <Link
+            key={header?.hash}
+            href={`/block/${header?.hash}`}
+            className={`CompactBlocks__Row${newKeys.has(header?.hash) ? ' is-new' : ''}`}
+            // fresh rows cascade in top-down instead of swapping in one frame
+            style={newKeys.has(header?.hash) ? { '--stagger': `${i * 50}ms` } : undefined}
+          >
             <span className={'CompactBlocks__Height'}>
               {typeof header?.height === 'number' ? <><span className={'CompactBlocks__Hatch'}>#</span><BigNumber>{header.height}</BigNumber></> : <NotActive/>}
             </span>

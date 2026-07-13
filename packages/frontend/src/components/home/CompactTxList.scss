@@ -44,6 +44,8 @@
     color: var(--chakra-colors-gray-500);
     white-space: nowrap;
     text-align: right;
+    // worst-case width ("59 sec. ago"): a ticking digit count never reflows the row
+    min-width: 11ch;
   }
 
   // very narrow: drop the type badge so hash + time stay readable
@@ -51,4 +53,23 @@
     &__Type { display: none; }
     &__Row { grid-template-columns: 18px minmax(0, 1fr) auto; }
   }
+
+  // new rows cascade in with a fading highlight; backwards keeps delayed rows hidden
+  &__Row.is-new {
+    animation: CompactRowIn .4s ease-out backwards, CompactRowGlow 1.4s ease-out backwards;
+    animation-delay: var(--stagger, 0ms);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    // colour fade only: change stays visible without motion
+    &__Row.is-new { animation: CompactRowGlow 1.4s ease-out backwards; }
+  }
+}
+
+@keyframes CompactRowIn {
+  from { opacity: 0; transform: translateY(-6px); }
+}
+
+@keyframes CompactRowGlow {
+  from { background-color: rgba(var(--chakra-colors-brand-normal-rgb), 0.12); }
 }

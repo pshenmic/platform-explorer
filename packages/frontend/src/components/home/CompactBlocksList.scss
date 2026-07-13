@@ -63,5 +63,18 @@
     color: var(--chakra-colors-gray-500);
     white-space: nowrap;
     text-align: right;
+    // worst-case width ("59 sec. ago"): a ticking digit count never reflows the row
+    min-width: 11ch;
+  }
+
+  // new rows cascade in with a fading highlight (keyframes shared from CompactTxList.scss)
+  &__Row.is-new {
+    animation: CompactRowIn .4s ease-out backwards, CompactRowGlow 1.4s ease-out backwards;
+    animation-delay: var(--stagger, 0ms);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    // colour fade only: change stays visible without motion
+    &__Row.is-new { animation: CompactRowGlow 1.4s ease-out backwards; }
   }
 }

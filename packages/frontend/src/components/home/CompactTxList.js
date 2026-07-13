@@ -7,6 +7,7 @@ import BatchTypeBadge from '../transactions/BatchTypeBadge'
 import { Identifier, TimeDelta, NotActive } from '../data'
 import { Tooltip } from '../ui/Tooltips'
 import { Skeleton } from './Skeleton'
+import { useLiveList } from './hooks'
 import './CompactTxList.scss'
 
 const STATUS_LABEL = {
@@ -17,9 +18,10 @@ const STATUS_LABEL = {
   BROADCASTED: 'Broadcasted'
 }
 
-// dense latest-transactions list for the Network overview column
+// dense latest-transactions list; refreshes are held back while hovered
 export function CompactTxList ({ transactions, limit = 7, loading }) {
-  const rows = Array.isArray(transactions) ? transactions.slice(0, limit) : []
+  const { shown, newKeys, hoverBind } = useLiveList(transactions, tx => tx?.hash)
+  const rows = Array.isArray(shown) ? shown.slice(0, limit) : []
 
   // skeleton mirrors the real row grid so there's no layout shift
   if (loading && !rows.length) {
@@ -42,9 +44,15 @@ export function CompactTxList ({ transactions, limit = 7, loading }) {
   }
 
   return (
-    <div className={'CompactTx'}>
-      {rows.map(tx => (
-        <Link key={tx.hash} href={`/transaction/${tx.hash}`} className={'CompactTx__Row'}>
+    <div className={'CompactTx'} {...hoverBind}>
+      {rows.map((tx, i) => (
+        <Link
+          key={tx.hash}
+          href={`/transaction/${tx.hash}`}
+          className={`CompactTx__Row${newKeys.has(tx.hash) ? ' is-new' : ''}`}
+          // fresh rows cascade in top-down instead of swapping in one frame
+          style={newKeys.has(tx.hash) ? { '--stagger': `${i * 50}ms` } : undefined}
+        >
           <span className={'CompactTx__Status'}>
             {tx.status
               ? <Tooltip content={STATUS_LABEL[tx.status] || tx.status} placement={'top'}>
