@@ -998,6 +998,18 @@
     white-space: nowrap;
   }
 
+  // values that carry a tooltip advertise it: dotted underline + pointer + brand hover
+  &__Stat--Tip {
+    cursor: pointer;
+    border-bottom: 1px dotted rgba(var(--chakra-colors-gray-500-rgb, 122, 132, 137), 0.6);
+    transition: color .15s, border-color .15s;
+
+    &:hover {
+      color: $color-brand-light;
+      border-bottom-color: rgba(var(--chakra-colors-brand-light-rgb), 0.7);
+    }
+  }
+
   // fees tooltip: DASH/$ headline over the processing/storage breakdown rows
   &__FeesTip {
     display: flex;

@@ -146,7 +146,7 @@ function EpochCells ({ data, rate }) {
 
       <StatusCell label={'Fees'} hint={'Total fees (credits) collected from state transitions this epoch. Hover the value for DASH / USD and the processing/storage breakdown.'}>
         <FeesTooltip data={data} rate={rate}>
-          <span className={'EpochsOverview__Stat'}>
+          <span className={'EpochsOverview__Stat EpochsOverview__Stat--Tip'}>
             {compact(typeof feesAnim === 'number' ? feesAnim : feesCredits) ?? 0}
             <span className={'EpochsOverview__Unit'}>credits</span>
           </span>
@@ -156,7 +156,7 @@ function EpochCells ({ data, rate }) {
       <StatusCell label={'Rewards'} hint={'Core block rewards (credits) added to the evonode pool for the epoch (finalized after it ends). Hover for the exact DASH / USD value.'}>
         {typeof rewardsAnim === 'number'
           ? <RateTooltip dash={creditsToDash(Number(rewards))} rate={rate?.data} placement={'top'}>
-              <span className={'EpochsOverview__Stat'}>
+              <span className={'EpochsOverview__Stat EpochsOverview__Stat--Tip'}>
                 {creditsToDash(rewardsAnim).toFixed(2)}
                 <span className={'EpochsOverview__Unit'}>DASH</span>
               </span>
