@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import * as Api from '../../util/Api'
 import HomeHero from './HomeHero.js'
-import { MetricChart, EpochsOverview, StatusBar, HeroMeta, MasternodesDonut, CompactTxList, CompactBlocksList } from '../../components/home'
+import { MetricChart, EpochsOverview, StatusBar, HeroMeta, MasternodesDonut, TxTypesDonut, ShieldedPoolCard, CompactTxList, CompactBlocksList } from '../../components/home'
 import { fetchHandlerSuccess, fetchHandlerError } from '../../util'
 import theme from '../../styles/theme'
 import { Box, Container, Flex, Heading, SimpleGrid } from '@chakra-ui/react'
@@ -142,6 +142,12 @@ function Home () {
           </div>
         </Box>
 
+        <SimpleGrid columns={{ base: 1, md: 2, xl: 3 }} spacing={gap} w={'100%'}>
+          <MetricChart title={'Transactions history'} type={'bar'} fetcher={Api.getTransactionsHistory} field={'txs'} yAbbr={'txs'}/>
+          <MetricChart title={'Identities growth'} type={'line'} fetcher={Api.getIdentitiesHistory} field={'registeredIdentities'} yAbbr={'identities'}/>
+          <ShieldedPoolCard rate={rate}/>
+        </SimpleGrid>
+
         <Box className={'InfoBlock InfoBlock--NoBorder HomeEpochs'} w={'100%'}>
           <EpochsOverview
             title={'Epochs'}
@@ -152,9 +158,8 @@ function Home () {
           />
         </Box>
 
-        <SimpleGrid columns={{ base: 1, md: 2, xl: 4 }} spacing={gap} w={'100%'}>
-          <MetricChart title={'Transactions history'} type={'bar'} fetcher={Api.getTransactionsHistory} field={'txs'} yAbbr={'txs'}/>
-          <MetricChart title={'Identities growth'} type={'line'} fetcher={Api.getIdentitiesHistory} field={'registeredIdentities'} yAbbr={'identities'}/>
+        <SimpleGrid columns={{ base: 1, md: 2, xl: 3 }} spacing={gap} w={'100%'}>
+          <TxTypesDonut/>
           <MasternodesDonut validators={validators} validatorsActive={validatorsActive} validatorsBanned={validatorsBanned}/>
           <Box className={'InfoBlock InfoBlock--NoBorder HomeGovCard'} w={'100%'}>
             <Heading className={'InfoBlock__Title'} as={'h2'}>Governance</Heading>
