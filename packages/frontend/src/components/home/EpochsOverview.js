@@ -4,8 +4,8 @@ import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
 import { Heading } from '@chakra-ui/react'
 import { BigNumber, TimeDelta, TimeRemaining } from '../data'
-import { RateTooltip } from '../ui/Tooltips'
-import { creditsToDash } from '../../util'
+import { RateTooltip, Tooltip } from '../ui/Tooltips'
+import { creditsToDash, removeTrailingZeros, roundUsd } from '../../util'
 import { useCountUp, useScramble } from './hooks'
 import { StatusCell } from './StatusCell'
 import { Skeleton } from './Skeleton'
@@ -76,6 +76,47 @@ function EpochPoint ({ epoch, metricLabel, x, y, selected, hovered, onSelect }) 
   )
 }
 
+// Fees value tooltip: exact DASH/USD plus the epoch fee economics masternode owners care about
+function FeesTooltip ({ data, rate, children }) {
+  const feesCredits = Number(data.totalCollectedFees) || 0
+  const dash = creditsToDash(feesCredits)
+  const usd = typeof rate?.data?.usd === 'number' ? dash * rate.data.usd : null
+  const epoch = data.epoch
+  const rows = [
+    ['Processing', epoch?.totalProcessingFees],
+    ['Storage paid out', epoch?.totalDistributedStorageFees],
+    ['Storage created', epoch?.totalCreatedStorageFees]
+  ].filter(([, v]) => v != null)
+
+  return (
+    <Tooltip
+      title={'Fees'}
+      content={(
+        <div className={'EpochsOverview__FeesTip'}>
+          <div className={'EpochsOverview__FeesTipMain'}>
+            {removeTrailingZeros(dash.toFixed(8))} Dash
+            {typeof usd === 'number' && <span className={'EpochsOverview__FeesTipUsd'}> · ~{roundUsd(usd)}$</span>}
+          </div>
+          {rows.map(([label, v]) => (
+            <div className={'EpochsOverview__FeesTipRow'} key={label}>
+              <span>{label}</span>
+              <span>{compact(Number(v))} credits</span>
+            </div>
+          ))}
+          {epoch?.feeMultiplier != null &&
+            <div className={'EpochsOverview__FeesTipRow'}>
+              <span>Fee multiplier</span>
+              <span>×{epoch.feeMultiplier}</span>
+            </div>}
+        </div>
+      )}
+      placement={'top'}
+    >
+      {children}
+    </Tooltip>
+  )
+}
+
 // stat row for the shown (hovered or pinned) epoch; every number eases from its previous value
 function EpochCells ({ data, rate }) {
   const epoch = data.epoch
@@ -103,13 +144,13 @@ function EpochCells ({ data, rate }) {
           : <Pending/>}
       </StatusCell>
 
-      <StatusCell label={'Fees'} hint={'Total fees (credits) collected from state transitions this epoch. Hover for the exact DASH / USD value.'}>
-        <RateTooltip credits={feesCredits} rate={rate?.data} placement={'top'}>
+      <StatusCell label={'Fees'} hint={'Total fees (credits) collected from state transitions this epoch. Hover the value for DASH / USD and the processing/storage breakdown.'}>
+        <FeesTooltip data={data} rate={rate}>
           <span className={'EpochsOverview__Stat'}>
             {compact(typeof feesAnim === 'number' ? feesAnim : feesCredits) ?? 0}
             <span className={'EpochsOverview__Unit'}>credits</span>
           </span>
-        </RateTooltip>
+        </FeesTooltip>
       </StatusCell>
 
       <StatusCell label={'Rewards'} hint={'Core block rewards (credits) added to the evonode pool for the epoch (finalized after it ends). Hover for the exact DASH / USD value.'}>

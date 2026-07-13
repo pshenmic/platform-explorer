@@ -962,6 +962,35 @@
     white-space: nowrap;
   }
 
+  // fees tooltip: DASH/$ headline over the processing/storage breakdown rows
+  &__FeesTip {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    min-width: 190px;
+  }
+
+  &__FeesTipMain {
+    font-family: $font-mono;
+    color: #fff;
+    padding-bottom: 4px;
+    margin-bottom: 2px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  }
+
+  &__FeesTipUsd { color: var(--chakra-colors-gray-250); }
+
+  &__FeesTipRow {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    font-size: 0.6875rem;
+    font-family: $font-mono;
+    color: var(--chakra-colors-gray-250);
+
+    span:first-child { color: var(--chakra-colors-gray-500); }
+  }
+
   &__Unit {
     margin-left: 6px;
     font-family: $font-mono;
