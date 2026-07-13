@@ -929,7 +929,7 @@
   // the wave point captions are two rows tall, so give the row extra clearance
   &__Detail { margin-top: 40px; }
 
-  // one row of equal-width label+value cells so a ticking value never shifts its neighbours
+  // one row of label+value cells; widths follow the content, free space is shared evenly
   &__Cells {
     position: relative;
     display: flex;
@@ -961,8 +961,9 @@
       }
     }
 
+    // content-sized cells: flex-grow splits the free space, so the gaps stay even
     .HomeHero__StatusCell {
-      flex: 1 1 0;
+      flex: 1 1 auto;
       flex-direction: row;
       align-items: center;
       gap: 8px;
@@ -975,6 +976,12 @@
     .HomeHero__StatusHead {
       white-space: nowrap;
       flex-shrink: 0;
+    }
+
+    // reserve the worst-case value width so switching epochs never nudges the row
+    .EpochsOverview__Stat,
+    .EpochsOverview__Pending {
+      min-width: 6ch;
     }
 
     // no room for the sub-line (top voted resource) in single-line cells
@@ -1082,15 +1089,20 @@
   &__Proposer {
     display: block;
     max-width: 100%;
+    min-width: 0;
     transition: opacity .15s;
     &:hover { opacity: 0.8; }
   }
 
-  // proposer hash is mono so the hex scramble never wiggles the width
+  // mono keeps the hex scramble width steady; tight rows clip with an ellipsis
   &__ProposerVal {
     font-family: $font-mono;
     font-style: normal;
     font-weight: 700;
     letter-spacing: 0.02em;
+    min-width: 0;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 }
