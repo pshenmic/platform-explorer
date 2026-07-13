@@ -92,21 +92,82 @@ function FeesTooltip ({ data, rate, children }) {
     <Tooltip
       title={'Fees'}
       content={(
-        <div className={'EpochsOverview__FeesTip'}>
-          <div className={'EpochsOverview__FeesTipMain'}>
+        <div className={'EpochsOverview__Tip'}>
+          <div className={'EpochsOverview__TipMain'}>
             {removeTrailingZeros(dash.toFixed(8))} Dash
-            {typeof usd === 'number' && <span className={'EpochsOverview__FeesTipUsd'}> · ~{roundUsd(usd)}$</span>}
+            {typeof usd === 'number' && <span className={'EpochsOverview__TipUsd'}> · ~{roundUsd(usd)}$</span>}
           </div>
           {rows.map(([label, v]) => (
-            <div className={'EpochsOverview__FeesTipRow'} key={label}>
+            <div className={'EpochsOverview__TipRow'} key={label}>
               <span>{label}</span>
               <span>{compact(Number(v))} credits</span>
             </div>
           ))}
           {epoch?.feeMultiplier != null &&
-            <div className={'EpochsOverview__FeesTipRow'}>
+            <div className={'EpochsOverview__TipRow'}>
               <span>Fee multiplier</span>
               <span>×{epoch.feeMultiplier}</span>
+            </div>}
+        </div>
+      )}
+      placement={'top'}
+    >
+      {children}
+    </Tooltip>
+  )
+}
+
+// Votes value tooltip: governance activity that doesn't fit the single-line cell
+function VotesTooltip ({ data, children }) {
+  const resource = data.topVotedResource
+  const voter = data.bestVoter?.identifier
+
+  return (
+    <Tooltip
+      title={'Votes'}
+      content={(
+        <div className={'EpochsOverview__Tip'}>
+          <div className={'EpochsOverview__TipMain'}>{Number(data.totalVotesCount) || 0} masternode votes</div>
+          <div className={'EpochsOverview__TipRow'}>
+            <span>Gas used</span>
+            <span>{compact(Number(data.totalVotesGasUsed) || 0)} credits</span>
+          </div>
+          {voter != null &&
+            <div className={'EpochsOverview__TipRow'}>
+              <span>Top voter</span>
+              <span>{shortId(voter)}</span>
+            </div>}
+          {resource?.resourceValue != null &&
+            <div className={'EpochsOverview__TipRow'}>
+              <span>Top resource</span>
+              <span>
+                {String(resource.resourceValue)} · {resource.totalCountTowardsIdentity ?? 0}/{resource.totalCountAbstain ?? 0}/{resource.totalCountLock ?? 0}
+              </span>
+            </div>}
+        </div>
+      )}
+      placement={'top'}
+    >
+      {children}
+    </Tooltip>
+  )
+}
+
+// Blocks value tooltip: where the epoch started on both chains
+function BlocksTooltip ({ epoch, children }) {
+  return (
+    <Tooltip
+      title={'Blocks'}
+      content={(
+        <div className={'EpochsOverview__Tip'}>
+          <div className={'EpochsOverview__TipRow'}>
+            <span>First block</span>
+            <span>#{epoch.firstBlockHeight}</span>
+          </div>
+          {epoch.firstCoreBlockHeight != null &&
+            <div className={'EpochsOverview__TipRow'}>
+              <span>Core height</span>
+              <span>{epoch.firstCoreBlockHeight}</span>
             </div>}
         </div>
       )}
@@ -138,10 +199,14 @@ function EpochCells ({ data, rate }) {
         <span className={'EpochsOverview__Stat'}><BigNumber>{txAnim}</BigNumber></span>
       </StatusCell>
 
-      <StatusCell label={'Blocks'} hint={'Blocks produced in the epoch (finalized after it ends).'}>
-        {typeof blocksAnim === 'number'
-          ? <span className={'EpochsOverview__Stat'}><BigNumber>{blocksAnim}</BigNumber></span>
-          : <Pending/>}
+      <StatusCell label={'Blocks'} hint={'Blocks produced in the epoch (finalized after it ends). Hover the value for the starting heights.'}>
+        {typeof blocksAnim === 'number' && epoch?.firstBlockHeight != null
+          ? <BlocksTooltip epoch={epoch}>
+              <span className={'EpochsOverview__Stat EpochsOverview__Stat--Tip'}><BigNumber>{blocksAnim}</BigNumber></span>
+            </BlocksTooltip>
+          : typeof blocksAnim === 'number'
+            ? <span className={'EpochsOverview__Stat'}><BigNumber>{blocksAnim}</BigNumber></span>
+            : <Pending/>}
       </StatusCell>
 
       <StatusCell label={'Fees'} hint={'Total fees (credits) collected from state transitions this epoch. Hover the value for DASH / USD and the processing/storage breakdown.'}>
@@ -164,26 +229,28 @@ function EpochCells ({ data, rate }) {
           : <Pending/>}
       </StatusCell>
 
-      <StatusCell label={'Protocol'} hint={'Platform protocol version the epoch ran on (from its first block). Upgrades activate on epoch boundaries, so a version bump means node operators had to update.'}>
-        <span className={'EpochsOverview__Stat'}>
-          {typeof data.protocolVersion === 'number' ? `v${data.protocolVersion}` : '-'}
-        </span>
-      </StatusCell>
-
-      <StatusCell label={'Votes'} hint={'Masternode votes cast this epoch and the most-voted contested resource.'}>
-        <span className={'EpochsOverview__Stat'}>{votesAnim}</span>
-        {topResource &&
-          <Link href={contestedHref(topResource)} className={'EpochsOverview__Sub EpochsOverview__SubLink'}>
-            {String(topResource)}
-          </Link>}
-      </StatusCell>
-
       <StatusCell label={'Proposer'} hint={'Validator that proposed the most blocks this epoch.'}>
         {data.bestValidator
           ? <Link href={`/validator/${data.bestValidator}`} className={'EpochsOverview__Proposer'}>
               <span className={'EpochsOverview__Stat EpochsOverview__ProposerVal'}>{proposerAnim}</span>
             </Link>
           : <span className={'EpochsOverview__Stat'}>-</span>}
+      </StatusCell>
+
+      <StatusCell label={'Votes'} hint={'Masternode votes cast this epoch. Hover the value for gas, the top voter and the most-voted resource.'}>
+        <VotesTooltip data={data}>
+          <span className={'EpochsOverview__Stat EpochsOverview__Stat--Tip'}>{votesAnim}</span>
+        </VotesTooltip>
+        {topResource &&
+          <Link href={contestedHref(topResource)} className={'EpochsOverview__Sub EpochsOverview__SubLink'}>
+            {String(topResource)}
+          </Link>}
+      </StatusCell>
+
+      <StatusCell label={'Protocol'} hint={'Platform protocol version the epoch ran on (from its first block). Upgrades activate on epoch boundaries, so a version bump means node operators had to update.'}>
+        <span className={'EpochsOverview__Stat'}>
+          {typeof data.protocolVersion === 'number' ? `v${data.protocolVersion}` : '-'}
+        </span>
       </StatusCell>
     </div>
   )

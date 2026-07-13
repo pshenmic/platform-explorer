@@ -1017,15 +1017,15 @@
     }
   }
 
-  // fees tooltip: DASH/$ headline over the processing/storage breakdown rows
-  &__FeesTip {
+  // stat tooltips (fees / votes / blocks): optional headline over label-value rows
+  &__Tip {
     display: flex;
     flex-direction: column;
     gap: 3px;
     min-width: 190px;
   }
 
-  &__FeesTipMain {
+  &__TipMain {
     font-family: $font-mono;
     color: #fff;
     padding-bottom: 4px;
@@ -1033,9 +1033,9 @@
     border-bottom: 1px solid rgba(255, 255, 255, 0.12);
   }
 
-  &__FeesTipUsd { color: var(--chakra-colors-gray-250); }
+  &__TipUsd { color: var(--chakra-colors-gray-250); }
 
-  &__FeesTipRow {
+  &__TipRow {
     display: flex;
     justify-content: space-between;
     gap: 16px;
