@@ -29,14 +29,19 @@ type QueryFilters = Record<string, QueryValue>
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL
 
 const fetchWrapper = (url: string, options: RequestInit): Promise<Response> => {
+  const controller = new AbortController()
   return new Promise((resolve, reject) => {
-    setTimeout(() => {
+    const timer = setTimeout(() => {
       console.warn('fetching timeout error')
+      controller.abort()
       reject(new ResponseErrorTimeout())
     }, 30000)
-    fetch(url, options).catch(reject).then(value => {
-      if (value) resolve(value)
-    })
+    fetch(url, { ...options, signal: controller.signal })
+      .then(value => {
+        if (value) resolve(value)
+      })
+      .catch(reject)
+      .finally(() => clearTimeout(timer))
   })
 }
 
