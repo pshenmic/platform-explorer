@@ -6,17 +6,20 @@ import { useRotator, useCountUp } from './hooks'
 import { contestedHref } from './utils'
 import { GovDots } from './GovDots'
 
+// the rotator and the dot pager must share one list, or the active dot runs off the pager
+const FEED_LIMIT = 6
+
 // Count + pill (left); rotating active/latest contested name over bullet dots (right).
 export function ContestedCell ({ count, active, latest }) {
   const activeItems = active?.data?.resultSet || []
   const latestItems = latest?.data?.resultSet || []
-  const feed = activeItems.length > 0 ? activeItems : latestItems
+  const feed = (activeItems.length > 0 ? activeItems : latestItems).slice(0, FEED_LIMIT)
   const rotator = useRotator(feed)
   const countAnimated = useCountUp(typeof count === 'number' ? count : null)
 
   const item = rotator.item
   const name = item ? contestedResources.getResourceValue(item.resourceValue) : null
-  const dotCount = Math.min(rotator.length, 6)
+  const dotCount = rotator.length
 
   return (
     <div className={'HomeHero__Gov'}>
