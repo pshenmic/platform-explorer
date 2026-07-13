@@ -43,6 +43,11 @@
     transition: stroke-dashoffset 0.6s ease;
   }
 
+  &__ArcBanned {
+    stroke: var(--chakra-colors-red-default, #f45858);
+    opacity: 0.8;
+  }
+
   &__Total {
     fill: #fff;
     font-family: $font-heading;
@@ -79,6 +84,7 @@
 
     &--active { background: $color-brand-normal; }
     &--inactive { background: rgba(255, 255, 255, 0.18); }
+    &--banned { background: var(--chakra-colors-red-default, #f45858); }
   }
 
   &__Caption {

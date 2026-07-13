@@ -28,6 +28,7 @@ function Home () {
   const [transactions, setTransactions] = useState({ data: {}, props: { printCount: 10 }, loading: true, error: false })
   const [validators, setValidators] = useState({ data: {}, loading: true, error: false })
   const [validatorsActive, setValidatorsActive] = useState({ data: {}, loading: true, error: false })
+  const [validatorsBanned, setValidatorsBanned] = useState({ data: {}, loading: true, error: false })
   const [contested, setContested] = useState({ data: {}, loading: true, error: false })
   const [activeContested, setActiveContested] = useState({ data: {}, loading: true, error: false })
   const [latestContested, setLatestContested] = useState({ data: {}, loading: true, error: false })
@@ -83,6 +84,10 @@ function Home () {
     Api.getValidators(1, 1, 'desc', { isActive: 'true' })
       .then(res => fetchHandlerSuccess(setValidatorsActive, res))
       .catch(err => fetchHandlerError(setValidatorsActive, err))
+
+    Api.getValidators(1, 1, 'desc', { isBanned: 'true' })
+      .then(res => fetchHandlerSuccess(setValidatorsBanned, res))
+      .catch(err => fetchHandlerError(setValidatorsBanned, err))
 
     Api.getContestedResourcesStats()
       .then(res => fetchHandlerSuccess(setContested, res))
@@ -150,7 +155,7 @@ function Home () {
         <SimpleGrid columns={{ base: 1, md: 2, xl: 4 }} spacing={gap} w={'100%'}>
           <MetricChart title={'Transactions history'} type={'bar'} fetcher={Api.getTransactionsHistory} field={'txs'} yAbbr={'txs'}/>
           <MetricChart title={'Identities growth'} type={'line'} fetcher={Api.getIdentitiesHistory} field={'registeredIdentities'} yAbbr={'identities'}/>
-          <MasternodesDonut validators={validators} validatorsActive={validatorsActive}/>
+          <MasternodesDonut validators={validators} validatorsActive={validatorsActive} validatorsBanned={validatorsBanned}/>
           <Box className={'InfoBlock InfoBlock--NoBorder HomeGovCard'} w={'100%'}>
             <Heading className={'InfoBlock__Title'} as={'h2'}>Governance</Heading>
             <StatusBar

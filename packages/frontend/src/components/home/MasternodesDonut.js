@@ -8,14 +8,16 @@ const STROKE = 16
 const R = (SIZE - STROKE) / 2
 const C = 2 * Math.PI * R
 
-// active/inactive from exact pagination totals; evonode split approximated from the loaded page
-export default function MasternodesDonut ({ validators, validatorsActive }) {
+// active/inactive/banned from exact pagination totals; evonode split approximated from the loaded page
+export default function MasternodesDonut ({ validators, validatorsActive, validatorsBanned }) {
   const total = validators?.data?.pagination?.total
   const active = validatorsActive?.data?.pagination?.total
+  const banned = validatorsBanned?.data?.pagination?.total ?? 0
   const ready = typeof total === 'number' && total > 0 && typeof active === 'number'
 
-  const inactive = ready ? Math.max(total - active, 0) : 0
+  const inactive = ready ? Math.max(total - active - banned, 0) : 0
   const activeFrac = ready ? Math.min(active / total, 1) : 0
+  const bannedFrac = ready ? Math.min(banned / total, 1 - activeFrac) : 0
 
   const rows = validators?.data?.resultSet || []
   const evoCount = rows.filter(v => /evo|high/i.test(v?.proTxInfo?.type || '')).length
@@ -51,6 +53,18 @@ export default function MasternodesDonut ({ validators, validatorsActive }) {
                     strokeDashoffset={C * (1 - activeFrac)}
                     transform={`rotate(-90 ${SIZE / 2} ${SIZE / 2})`}
                   />
+                  {bannedFrac > 0 &&
+                    <circle
+                      className={'MasternodesDonut__ArcBanned'}
+                      cx={SIZE / 2}
+                      cy={SIZE / 2}
+                      r={R}
+                      fill={'none'}
+                      strokeWidth={STROKE}
+                      strokeDasharray={`${bannedFrac * C} ${C}`}
+                      strokeDashoffset={-activeFrac * C}
+                      transform={`rotate(-90 ${SIZE / 2} ${SIZE / 2})`}
+                    />}
                   <text className={'MasternodesDonut__Total'} x={'50%'} y={'45%'} textAnchor={'middle'} dominantBaseline={'middle'} fontSize={38}>{total}</text>
                   <text className={'MasternodesDonut__TotalLabel'} x={'50%'} y={'62%'} textAnchor={'middle'} dominantBaseline={'middle'} fontSize={12}>masternodes</text>
                 </svg>
@@ -63,6 +77,10 @@ export default function MasternodesDonut ({ validators, validatorsActive }) {
                 <span className={'MasternodesDonut__LegendItem'}>
                   <i className={'MasternodesDonut__Dot MasternodesDonut__Dot--inactive'}/> Inactive {inactive}
                 </span>
+                {banned > 0 &&
+                  <span className={'MasternodesDonut__LegendItem'}>
+                    <i className={'MasternodesDonut__Dot MasternodesDonut__Dot--banned'}/> Banned {banned}
+                  </span>}
               </div>
 
               {evoPct != null &&
