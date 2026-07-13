@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
+import { Heading } from '@chakra-ui/react'
 import { BigNumber, TimeDelta, TimeRemaining } from '../data'
 import { RateTooltip } from '../ui/Tooltips'
 import { creditsToDash } from '../../util'
@@ -29,30 +30,49 @@ function Pending () {
   return <span className={'EpochsOverview__Pending'}>pending</span>
 }
 
-function EpochPoint ({ epoch, metricLabel, x, y, active, selected, hovered, onSelect }) {
+// section header band: badge on the left, the LIVE (in-progress) epoch summary on the right
+function SectionHead ({ title, currentEpoch }) {
+  const data = currentEpoch?.data
+  const epoch = data?.epoch
+
+  return (
+    <div className={'EpochsOverview__Head'}>
+      <Heading className={'InfoBlock__Title EpochsOverview__Title'} as={'h2'}>{title}</Heading>
+      {epoch?.number != null &&
+        <div className={'EpochsOverview__Now'}>
+          <span className={'EpochsWave__Live EpochsOverview__NowLive'}>live</span>
+          <span className={'EpochsOverview__NowNumber'}>#{epoch.number}</span>
+          {typeof data?.totalTxCount === 'number' &&
+            <span className={'EpochsOverview__NowMeta'}>{compact(data.totalTxCount)} tx</span>}
+          {epoch?.startTime && epoch?.endTime &&
+            <span className={'EpochsOverview__NowMeta'}>
+              ends in <TimeRemaining startTime={epoch.startTime} endTime={epoch.endTime} displayProgress={false}/>
+            </span>}
+        </div>}
+    </div>
+  )
+}
+
+function EpochPoint ({ epoch, metricLabel, x, y, selected, hovered, onSelect }) {
   const windowLabel = windowLabelOf(epoch)
 
   return (
     <button
       type={'button'}
-      className={`HomeHero__WavePoint EpochsWave__Point${selected ? ' is-selected' : ''}${active ? ' is-active' : ''}${hovered ? ' is-hovered' : ''}`}
+      className={`HomeHero__WavePoint EpochsWave__Point${selected ? ' is-selected' : ''}${hovered ? ' is-hovered' : ''}`}
       style={{ left: `${x}%`, top: `${y}%` }}
       onClick={onSelect}
       aria-pressed={selected}
       aria-label={`Epoch ${epoch?.number}`}
     >
-      <span className={'HomeHero__WaveValue EpochsWave__Number'}>
-        #{epoch?.number}{active && <span className={'EpochsWave__Live'}>live</span>}
-      </span>
+      <span className={'HomeHero__WaveValue EpochsWave__Number'}>#{epoch?.number}</span>
       <span className={'HomeHero__WaveDot'} aria-hidden={'true'}/>
       <span className={'EpochsWave__Meta'}>
         <span className={'HomeHero__WaveLabel'}>{metricLabel}</span>
         {epoch?.endTime &&
           <span className={'EpochsWave__When'}>
             {windowLabel && <>{windowLabel} · </>}
-            {active
-              ? <TimeRemaining startTime={epoch.startTime} endTime={epoch.endTime} displayProgress={false}/>
-              : <>ended <TimeDelta endDate={new Date(epoch.endTime)}/></>}
+            ended <TimeDelta endDate={new Date(epoch.endTime)}/>
           </span>}
       </span>
     </button>
@@ -125,7 +145,7 @@ function EpochCells ({ data, rate }) {
   )
 }
 
-export function EpochsOverview ({ epochs, rate, loading }) {
+export function EpochsOverview ({ title, epochs, currentEpoch, rate, loading }) {
   const list = Array.isArray(epochs) ? epochs.filter(e => e?.epoch) : []
   const lastIdx = list.length - 1
   const [selected, setSelected] = useState(lastIdx)
@@ -135,10 +155,11 @@ export function EpochsOverview ({ epochs, rate, loading }) {
   // keep selection pinned to the newest epoch as data streams in
   useEffect(() => { setSelected(lastIdx) }, [lastIdx])
 
-  // skeleton keeps the wave height + cells row so layout doesn't jump on swap
+  // skeleton keeps the head + wave height + cells row so layout doesn't jump on swap
   if (loading && !list.length) {
     return (
       <div className={'EpochsOverview'}>
+        <SectionHead title={title} currentEpoch={currentEpoch}/>
         <div className={'HomeHero__Wave EpochsWave EpochsWave--Skeleton'}>
           <Skeleton w={'100%'} h={'120px'} radius={8}/>
         </div>
@@ -157,7 +178,12 @@ export function EpochsOverview ({ epochs, rate, loading }) {
   }
 
   if (!list.length) {
-    return <div className={'HomeHero__Wave EpochsWave EpochsWave--Empty'}>No epoch data</div>
+    return (
+      <div className={'EpochsOverview'}>
+        <SectionHead title={title} currentEpoch={currentEpoch}/>
+        <div className={'HomeHero__Wave EpochsWave EpochsWave--Empty'}>No epoch data</div>
+      </div>
+    )
   }
 
   // wave height is driven by tx count — the one metric available for every epoch incl. current
@@ -200,6 +226,8 @@ export function EpochsOverview ({ epochs, rate, loading }) {
 
   return (
     <div className={'EpochsOverview'} style={{ '--epoch-x-frac': (points[selIdx]?.x ?? 50) / 100 }}>
+      <SectionHead title={title} currentEpoch={currentEpoch}/>
+
       <div
         className={'HomeHero__Wave EpochsWave'}
         onMouseMove={handleMove}
@@ -244,7 +272,6 @@ export function EpochsOverview ({ epochs, rate, loading }) {
             metricLabel={`${compact(txCounts[i])} tx`}
             x={points[i].x}
             y={points[i].y}
-            active={i === lastIdx}
             selected={i === selIdx}
             hovered={i === hovered}
             onSelect={() => setSelected(i)}

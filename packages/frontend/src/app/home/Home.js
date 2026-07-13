@@ -46,10 +46,10 @@ function Home () {
           .then(epochRes => fetchHandlerSuccess(setEpochData, epochRes))
           .catch(err => fetchHandlerError(setEpochData, err))
 
-        // last 4 epochs (oldest -> newest) for the overview wave; no list endpoint exists
+        // last 4 finalized epochs for the wave; the in-progress one shows in the section header
         const current = res?.epoch?.number
         if (typeof current === 'number') {
-          const numbers = [current - 3, current - 2, current - 1, current].filter(n => n >= 0)
+          const numbers = [current - 4, current - 3, current - 2, current - 1].filter(n => n >= 0)
           Promise.all(numbers.map(n => Api.getEpoch(n).catch(() => null)))
             .then(results => fetchHandlerSuccess(setEpochs, { list: results.filter(Boolean) }))
             .catch(err => fetchHandlerError(setEpochs, err))
@@ -127,9 +127,10 @@ function Home () {
         </Box>
 
         <Box className={'InfoBlock InfoBlock--NoBorder HomeEpochs'} w={'100%'}>
-          <Heading className={'InfoBlock__Title'} as={'h2'}>Epochs</Heading>
           <EpochsOverview
+            title={'Epochs'}
             epochs={epochs.data?.list}
+            currentEpoch={epochData}
             rate={rate}
             loading={epochs.loading}
           />

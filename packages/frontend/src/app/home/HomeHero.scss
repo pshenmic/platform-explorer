@@ -591,11 +591,6 @@
   50% { opacity: 1; }
 }
 
-@keyframes EpochPing {
-  0% { transform: scale(1); opacity: 0.9; }
-  75%, 100% { transform: scale(2.6); opacity: 0; }
-}
-
 @keyframes EpochDotBreath {
   0%, 100% { box-shadow: 0 0 8px 2px rgba(var(--chakra-colors-brand-light-rgb), 0.55); }
   50% { box-shadow: 0 0 16px 5px rgba(var(--chakra-colors-brand-light-rgb), 0.95); }
@@ -695,14 +690,7 @@
     @media screen and (max-width: $breakpoint-lg) {
       .HomeHero__WaveValue { font-size: 0.875rem; }
       .HomeHero__WaveLabel { font-size: 0.625rem; }
-      .EpochsWave__Live {
-        display: block;
-        width: fit-content;
-        margin: 2px auto 0;
-      }
     }
-
-    &.is-active { opacity: 0.8; }
 
     &.is-selected {
       opacity: 1;
@@ -715,21 +703,6 @@
       .HomeHero__WaveLabel {
         color: $color-brand-light;
         transform: scale(1.12);
-      }
-    }
-
-    &.is-active .HomeHero__WaveDot {
-      background: $color-brand-light;
-      box-shadow: 0 0 0 4px rgba(var(--chakra-colors-brand-normal-rgb), 0.22);
-
-      // expanding ring marks the live epoch
-      &::after {
-        content: '';
-        position: absolute;
-        inset: -2px;
-        border-radius: 50%;
-        border: 2px solid rgba(var(--chakra-colors-brand-light-rgb), 0.85);
-        animation: EpochPing 2.2s cubic-bezier(0, 0, 0.2, 1) infinite;
       }
     }
   }
@@ -833,7 +806,6 @@
       animation: none;
       box-shadow: 0 0 12px 3px rgba(var(--chakra-colors-brand-light-rgb), 0.9);
     }
-    &__Point.is-active .HomeHero__WaveDot::after { animation: none; opacity: 0; }
     &__Point .HomeHero__WaveDot::before { animation: none; opacity: 0; }
     &__Beam { transition: none; }
     &__BeamPulse { animation: none; opacity: 0; }
@@ -864,6 +836,75 @@
 }
 
 .EpochsOverview {
+  // header band breaks out of the block padding: badge + live-epoch summary on one hairlined row
+  &__Head {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    gap: 10px 1.25rem;
+    margin: -20px -32px 30px;
+    padding: 0 32px 0 0;
+    border-bottom: 1px solid rgba(var(--chakra-colors-gray-800-rgb), 0.6);
+
+    @media screen and (max-width: $breakpoint-lg) {
+      margin: -20px -16px 30px;
+      padding: 0 16px 0 0;
+    }
+  }
+
+  // cancel the InfoBlock__Title corner offset so the badge flows in the row
+  &__Head &__Title {
+    position: static;
+    left: 0;
+    top: 0;
+    margin: 0;
+    flex-shrink: 0;
+  }
+
+  // live (in-progress) epoch summary: [live] #N · tx · ends in ...
+  &__Now {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+
+    // gently pulsing live dot
+    &::before {
+      content: '';
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: $color-brand-light;
+      box-shadow: 0 0 6px rgba(var(--chakra-colors-brand-light-rgb), 0.8);
+      animation: HeroMetaPulse 1.6s ease-in-out infinite;
+    }
+  }
+
+  &__NowLive { margin-left: 0; }
+
+  &__NowNumber {
+    font-family: $font-heading;
+    font-weight: 800;
+    font-style: italic;
+    font-size: 1.0625rem;
+    color: #fff;
+  }
+
+  &__NowMeta {
+    font-size: 0.6875rem;
+    font-family: $font-mono;
+    color: var(--chakra-colors-gray-500);
+    white-space: nowrap;
+
+    .TimeRemaining,
+    .TimeRemaining__TimeLeft { display: inline; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    &__Now::before { animation: none; }
+  }
+
   // selected-epoch stat row sits below the wave (details right under the chart you click);
   // the wave point captions are two rows tall, so give the row extra clearance
   &__Detail { margin-top: 40px; }
