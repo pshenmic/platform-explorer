@@ -761,37 +761,12 @@
 }
 
 .EpochsOverview {
-  // header band breaks out of the block padding: badge + epoch info on one hairlined row
-  &__Head {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 10px 1.5rem;
-    // 30px bottom keeps the top epoch number clear of the hairline (same rhythm as other sections)
-    margin: -20px -32px 30px;
-    padding: 0 32px 0 0;
-    border-bottom: 1px solid rgba(var(--chakra-colors-gray-800-rgb), 0.6);
+  // selected-epoch stat row sits below the wave (details right under the chart you click);
+  // the wave point captions are two rows tall, so give the row extra clearance
+  &__Detail { margin-top: 40px; }
 
-    @media screen and (max-width: $breakpoint-lg) {
-      margin: -20px -16px 30px;
-      padding: 0 16px 0 0;
-    }
-  }
-
-  // cancel the InfoBlock__Title corner offset so the badge flows in the row
-  // (double-class selector outweighs the base .InfoBlock__Title rule without !important)
-  &__Head &__Title {
-    position: static;
-    left: 0;
-    top: 0;
-    margin: 0;
-    flex-shrink: 0;
-  }
-
-  // selected-epoch stat cells sit in the head row as one-line label + value pairs
+  // one row of single-line cells: label + value side by side (overrides the StatusCell column layout)
   &__Cells {
-    flex: 1 1 auto;
     display: flex;
     justify-content: space-between;
     flex-wrap: wrap;
@@ -808,7 +783,7 @@
       border: none;
     }
 
-    // no room for the sub-line (top voted resource) in the one-line head cells
+    // no room for the sub-line (top voted resource) in single-line cells
     .EpochsOverview__Sub { display: none; }
   }
 
@@ -818,7 +793,7 @@
     font-family: $font-heading;
     font-weight: 800;
     font-style: italic;
-    font-size: 1.05rem;
+    font-size: 1.25rem;
     line-height: 1;
     color: #fff;
     // stat tiles never wrap: compact value on one line, exact value lives in the tooltip

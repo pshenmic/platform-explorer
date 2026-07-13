@@ -127,8 +127,8 @@ function Home () {
         </Box>
 
         <Box className={'InfoBlock InfoBlock--NoBorder HomeEpochs'} w={'100%'}>
+          <Heading className={'InfoBlock__Title'} as={'h2'}>Epochs</Heading>
           <EpochsOverview
-            title={'Epochs'}
             epochs={epochs.data?.list}
             rate={rate}
             loading={epochs.loading}

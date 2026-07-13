@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { Heading } from '@chakra-ui/react'
 import { Identifier, BigNumber, TimeDelta, TimeRemaining } from '../data'
 import { RateTooltip } from '../ui/Tooltips'
 import { creditsToDash } from '../../util'
@@ -27,15 +26,6 @@ function windowLabelOf (epoch) {
 // neutral marker for finalized-only fields that are null while the epoch is in progress
 function Pending () {
   return <span className={'EpochsOverview__Pending'}>pending</span>
-}
-
-function SectionHead ({ title, children }) {
-  return (
-    <div className={'EpochsOverview__Head'}>
-      <Heading className={'InfoBlock__Title EpochsOverview__Title'} as={'h2'}>{title}</Heading>
-      {children}
-    </div>
-  )
 }
 
 function EpochPoint ({ epoch, metricLabel, x, y, active, selected, onSelect }) {
@@ -68,7 +58,7 @@ function EpochPoint ({ epoch, metricLabel, x, y, active, selected, onSelect }) {
   )
 }
 
-export function EpochsOverview ({ title, epochs, rate, loading }) {
+export function EpochsOverview ({ epochs, rate, loading }) {
   const list = Array.isArray(epochs) ? epochs.filter(e => e?.epoch) : []
   const lastIdx = list.length - 1
   const [selected, setSelected] = useState(lastIdx)
@@ -76,34 +66,29 @@ export function EpochsOverview ({ title, epochs, rate, loading }) {
   // keep selection pinned to the newest epoch as data streams in
   useEffect(() => { setSelected(lastIdx) }, [lastIdx])
 
-  // skeleton keeps the head + wave height so layout doesn't jump on swap
+  // skeleton keeps the wave height + cells row so layout doesn't jump on swap
   if (loading && !list.length) {
     return (
       <div className={'EpochsOverview'}>
-        <SectionHead title={title}>
-          <div className={'EpochsOverview__Cells'}>
+        <div className={'HomeHero__Wave EpochsWave EpochsWave--Skeleton'}>
+          <Skeleton w={'100%'} h={'120px'} radius={8}/>
+        </div>
+        <div className={'EpochsOverview__Detail'}>
+          <div className={'EpochsOverview__Cells HomeHero__StatusBar'}>
             {Array.from({ length: 6 }).map((_, i) => (
               <div className={'HomeHero__StatusCell'} key={i}>
                 <Skeleton w={'48px'} h={'0.6em'}/>
-                <Skeleton w={'64px'} h={'1em'} className={'EpochsOverview__SkelGap'}/>
+                <Skeleton w={'64px'} h={'1.1em'} className={'EpochsOverview__SkelGap'}/>
               </div>
             ))}
           </div>
-        </SectionHead>
-        <div className={'HomeHero__Wave EpochsWave EpochsWave--Skeleton'}>
-          <Skeleton w={'100%'} h={'120px'} radius={8}/>
         </div>
       </div>
     )
   }
 
   if (!list.length) {
-    return (
-      <div className={'EpochsOverview'}>
-        <SectionHead title={title}/>
-        <div className={'HomeHero__Wave EpochsWave EpochsWave--Empty'}>No epoch data</div>
-      </div>
-    )
+    return <div className={'HomeHero__Wave EpochsWave EpochsWave--Empty'}>No epoch data</div>
   }
 
   // wave height is driven by tx count — the one metric available for every epoch incl. current
@@ -133,8 +118,35 @@ export function EpochsOverview ({ title, epochs, rate, loading }) {
 
   return (
     <div className={'EpochsOverview'}>
-      <SectionHead title={title}>
-        <div className={'EpochsOverview__Cells'}>
+      <div className={'HomeHero__Wave EpochsWave'}>
+        <svg className={'HomeHero__WaveSvg'} viewBox={'0 0 100 100'} preserveAspectRatio={'none'} aria-hidden={'true'}>
+          <defs>
+            <linearGradient id={'homeEpochFill'} x1={'0'} y1={'0'} x2={'0'} y2={'1'}>
+              <stop offset={'0%'} stopColor={'rgba(0, 141, 228, 0.28)'}/>
+              <stop offset={'100%'} stopColor={'rgba(0, 141, 228, 0)'}/>
+            </linearGradient>
+          </defs>
+          <path d={areaD} fill={'url(#homeEpochFill)'} stroke={'none'}/>
+          <path className={'HomeHero__WaveLine'} d={lineD} fill={'none'} vectorEffect={'non-scaling-stroke'}/>
+          <path className={'HomeHero__WaveScan'} d={lineD} fill={'none'} pathLength={'100'} vectorEffect={'non-scaling-stroke'}/>
+        </svg>
+
+        {list.map((e, i) => (
+          <EpochPoint
+            key={e.epoch.number}
+            epoch={e.epoch}
+            metricLabel={`${compact(txCounts[i])} tx`}
+            x={points[i].x}
+            y={points[i].y}
+            active={i === lastIdx}
+            selected={i === selIdx}
+            onSelect={() => setSelected(i)}
+          />
+        ))}
+      </div>
+
+      <div className={'EpochsOverview__Detail'}>
+        <div className={'EpochsOverview__Cells HomeHero__StatusBar'}>
           <StatusCell label={'Transactions'} hint={'State transitions processed during this epoch.'}>
             <span className={'EpochsOverview__Stat'}><BigNumber>{txCount}</BigNumber></span>
           </StatusCell>
@@ -181,33 +193,6 @@ export function EpochsOverview ({ title, epochs, rate, loading }) {
               : <span className={'EpochsOverview__Stat'}>-</span>}
           </StatusCell>
         </div>
-      </SectionHead>
-
-      <div className={'HomeHero__Wave EpochsWave'}>
-        <svg className={'HomeHero__WaveSvg'} viewBox={'0 0 100 100'} preserveAspectRatio={'none'} aria-hidden={'true'}>
-          <defs>
-            <linearGradient id={'homeEpochFill'} x1={'0'} y1={'0'} x2={'0'} y2={'1'}>
-              <stop offset={'0%'} stopColor={'rgba(0, 141, 228, 0.28)'}/>
-              <stop offset={'100%'} stopColor={'rgba(0, 141, 228, 0)'}/>
-            </linearGradient>
-          </defs>
-          <path d={areaD} fill={'url(#homeEpochFill)'} stroke={'none'}/>
-          <path className={'HomeHero__WaveLine'} d={lineD} fill={'none'} vectorEffect={'non-scaling-stroke'}/>
-          <path className={'HomeHero__WaveScan'} d={lineD} fill={'none'} pathLength={'100'} vectorEffect={'non-scaling-stroke'}/>
-        </svg>
-
-        {list.map((e, i) => (
-          <EpochPoint
-            key={e.epoch.number}
-            epoch={e.epoch}
-            metricLabel={`${compact(txCounts[i])} tx`}
-            x={points[i].x}
-            y={points[i].y}
-            active={i === lastIdx}
-            selected={i === selIdx}
-            onSelect={() => setSelected(i)}
-          />
-        ))}
       </div>
     </div>
   )
