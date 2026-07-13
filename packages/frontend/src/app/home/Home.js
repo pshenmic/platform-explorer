@@ -46,11 +46,22 @@ function Home () {
           .then(epochRes => fetchHandlerSuccess(setEpochData, epochRes))
           .catch(err => fetchHandlerError(setEpochData, err))
 
-        // last 4 finalized epochs for the wave; the in-progress one shows in the section header
+        // last 4 finalized epochs for the wave; the in-progress one shows in the section header.
+        // the protocol version is not part of /epoch, so it's read from the epoch's first block
         const current = res?.epoch?.number
         if (typeof current === 'number') {
           const numbers = [current - 4, current - 3, current - 2, current - 1].filter(n => n >= 0)
-          Promise.all(numbers.map(n => Api.getEpoch(n).catch(() => null)))
+          Promise.all(numbers.map(n =>
+            Api.getEpoch(n)
+              .then(ep => {
+                const height = ep?.epoch?.firstBlockHeight
+                if (height == null) return ep
+                return Api.getBlocks(1, 1, 'asc', { height_min: height, height_max: height })
+                  .then(blocksRes => ({ ...ep, protocolVersion: blocksRes?.resultSet?.[0]?.header?.appVersion ?? null }))
+                  .catch(() => ep)
+              })
+              .catch(() => null)
+          ))
             .then(results => fetchHandlerSuccess(setEpochs, { list: results.filter(Boolean) }))
             .catch(err => fetchHandlerError(setEpochs, err))
         }

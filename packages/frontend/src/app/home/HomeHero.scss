@@ -935,6 +935,12 @@
       border: none;
     }
 
+    // labels never break into a second line, same as the values
+    .HomeHero__StatusHead {
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
     // no room for the sub-line (top voted resource) in single-line cells
     .EpochsOverview__Sub { display: none; }
   }

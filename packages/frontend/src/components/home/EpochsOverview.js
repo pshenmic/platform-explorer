@@ -123,6 +123,12 @@ function EpochCells ({ data, rate }) {
           : <Pending/>}
       </StatusCell>
 
+      <StatusCell label={'Protocol'} hint={'Platform protocol version the epoch ran on (from its first block). Upgrades activate on epoch boundaries, so a version bump means node operators had to update.'}>
+        <span className={'EpochsOverview__Stat'}>
+          {typeof data.protocolVersion === 'number' ? `v${data.protocolVersion}` : '-'}
+        </span>
+      </StatusCell>
+
       <StatusCell label={'Votes'} hint={'Masternode votes cast this epoch and the most-voted contested resource.'}>
         <span className={'EpochsOverview__Stat'}>{votesAnim}</span>
         {topResource &&
@@ -131,7 +137,7 @@ function EpochCells ({ data, rate }) {
           </Link>}
       </StatusCell>
 
-      <StatusCell label={'Top proposer'} hint={'Validator that proposed the most blocks this epoch.'}>
+      <StatusCell label={'Proposer'} hint={'Validator that proposed the most blocks this epoch.'}>
         {data.bestValidator
           ? <Link href={`/validator/${data.bestValidator}`} className={'EpochsOverview__Proposer'}>
               <span className={'EpochsOverview__Stat EpochsOverview__ProposerVal'}>{proposerAnim}</span>
@@ -162,7 +168,7 @@ export function EpochsOverview ({ title, epochs, currentEpoch, rate, loading }) 
         </div>
         <div className={'EpochsOverview__Detail'}>
           <div className={'EpochsOverview__Cells HomeHero__StatusBar'}>
-            {Array.from({ length: 6 }).map((_, i) => (
+            {Array.from({ length: 7 }).map((_, i) => (
               <div className={'HomeHero__StatusCell'} key={i}>
                 <Skeleton w={'48px'} h={'0.6em'}/>
                 <Skeleton w={'64px'} h={'1.1em'} className={'EpochsOverview__SkelGap'}/>
