@@ -129,6 +129,46 @@ const getTransactionsStatistic = (): Promise<TransactionsStatisticItem[]> => {
   return call<TransactionsStatisticItem[]>('transactions/statistic', 'GET')
 }
 
+interface ShieldedStatistic {
+  totalShieldedIn: string
+  totalShieldedOut: string
+  poolBalance: string
+  transitionsCount: number
+  types: Array<{ transactionType: string, count: number, amount: string }>
+}
+
+const getShieldedStatistic = (): Promise<ShieldedStatistic> => {
+  return call<ShieldedStatistic>('transactions/shielded/statistic', 'GET')
+}
+
+interface ShieldHistoryPoint {
+  amount: number
+  blockHeight: number | null
+  blockHash: string | null
+}
+
+const getShieldHistory = (
+  start: string,
+  end: string,
+  intervalsCount?: number
+): Promise<Array<SeriesData<ShieldHistoryPoint>>> => {
+  return call<Array<SeriesData<ShieldHistoryPoint>>>(
+    `transactions/shield/history?timestamp_start=${start}&timestamp_end=${end}${intervalsCount ? `&intervalsCount=${intervalsCount}` : ''}`,
+    'GET'
+  )
+}
+
+const getUnshieldHistory = (
+  start: string,
+  end: string,
+  intervalsCount?: number
+): Promise<Array<SeriesData<ShieldHistoryPoint>>> => {
+  return call<Array<SeriesData<ShieldHistoryPoint>>>(
+    `transactions/unshield/history?timestamp_start=${start}&timestamp_end=${end}${intervalsCount ? `&intervalsCount=${intervalsCount}` : ''}`,
+    'GET'
+  )
+}
+
 const getTransactions = (
   page: number = 1,
   limit: number = 10,
@@ -647,6 +687,9 @@ export {
   getBlockByHash,
   getTransactionsHistory,
   getTransactionsStatistic,
+  getShieldedStatistic,
+  getShieldHistory,
+  getUnshieldHistory,
   getTransactions,
   getTransaction,
   getTokens,

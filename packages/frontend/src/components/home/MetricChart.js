@@ -8,19 +8,22 @@ import { getDaysBetweenDates, currencyRound } from '../../util'
 import './MetricChart.scss'
 
 const DAY = 24 * 60 * 60 * 1000
-const PRESETS = [
+export const PRESETS = [
   { label: '24h', ms: DAY, intervals: 48 },
   { label: '1W', ms: 7 * DAY, intervals: 84 },
   { label: '1M', ms: 30 * DAY, intervals: 100 },
+  { label: '6M', ms: 182 * DAY, intervals: 100 },
   { label: '1Y', ms: 365 * DAY, intervals: 100 },
   { label: 'All', start: '2024-01-01T00:00:00.000Z', intervals: 100 }
 ]
 const DEFAULT_PRESET = 2
 
-function presetRange (preset) {
+export function presetRange (preset) {
+  // full-hour end: the history API drops trailing buckets (and their data) for sub-hour ends
+  const endMs = Math.ceil(Date.now() / 3600000) * 3600000
   return {
-    start: preset.start ?? new Date(Date.now() - preset.ms).toISOString(),
-    end: new Date().toISOString()
+    start: preset.start ?? new Date(endMs - preset.ms).toISOString(),
+    end: new Date(endMs).toISOString()
   }
 }
 
