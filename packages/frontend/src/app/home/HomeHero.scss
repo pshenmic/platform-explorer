@@ -765,18 +765,17 @@
   // the wave point captions are two rows tall, so give the row extra clearance
   &__Detail { margin-top: 40px; }
 
-  // one row of single-line cells: label + value side by side (overrides the StatusCell column layout)
+  // one row of equal-width label+value cells so a ticking value never shifts its neighbours
   &__Cells {
     display: flex;
-    justify-content: space-between;
     flex-wrap: wrap;
     gap: 8px 24px;
     min-width: 0;
 
     .HomeHero__StatusCell {
-      flex: 0 1 auto;
+      flex: 1 1 0;
       flex-direction: row;
-      align-items: baseline;
+      align-items: center;
       gap: 8px;
       min-width: 0;
       padding: 0;
@@ -789,13 +788,17 @@
 
   &__Stat {
     display: inline-flex;
-    align-items: baseline;
+    align-items: center;
+    // fixed slot height + tabular digits: count-up ticks and number<->pending swaps don't jiggle the row
+    height: 1.25rem;
     font-family: $font-heading;
     font-weight: 800;
     font-style: italic;
     font-size: 1.25rem;
     line-height: 1;
     color: #fff;
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: 'tnum' 1;
     // stat tiles never wrap: compact value on one line, exact value lives in the tooltip
     white-space: nowrap;
   }
@@ -811,8 +814,11 @@
     color: $color-brand-light;
   }
 
-  // finalized-only value not yet available for the in-progress epoch
+  // pending marker shares the __Stat slot height so the number<->pending swap doesn't jump the row
   &__Pending {
+    display: inline-flex;
+    align-items: center;
+    height: 1.25rem;
     font-family: $font-mono;
     font-size: 0.6875rem;
     text-transform: uppercase;
@@ -842,5 +848,13 @@
     max-width: 100%;
     transition: opacity .15s;
     &:hover { opacity: 0.8; }
+  }
+
+  // proposer hash is mono so the hex scramble never wiggles the width
+  &__ProposerVal {
+    font-family: $font-mono;
+    font-style: normal;
+    font-weight: 700;
+    letter-spacing: 0.02em;
   }
 }

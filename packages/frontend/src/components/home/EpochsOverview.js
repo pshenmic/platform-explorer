@@ -2,12 +2,13 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { Identifier, BigNumber, TimeDelta, TimeRemaining } from '../data'
+import { BigNumber, TimeDelta, TimeRemaining } from '../data'
 import { RateTooltip } from '../ui/Tooltips'
 import { creditsToDash } from '../../util'
+import { useCountUp, useScramble } from './hooks'
 import { StatusCell } from './StatusCell'
 import { Skeleton } from './Skeleton'
-import { contestedHref, compact } from './utils'
+import { contestedHref, compact, shortId } from './utils'
 
 // 4 epoch points spread across the wave (oldest left -> current right)
 const X_POSITIONS = [10, 37, 63, 90]
@@ -55,6 +56,72 @@ function EpochPoint ({ epoch, metricLabel, x, y, active, selected, onSelect }) {
           </span>}
       </span>
     </button>
+  )
+}
+
+// stat row for the shown (hovered or pinned) epoch; every number eases from its previous value
+function EpochCells ({ data, rate }) {
+  const epoch = data.epoch
+  const blocks = epoch?.totalBlocksInEpoch // finalized-only (null for current)
+  const rewards = epoch?.coreBlockRewards // finalized-only (credits, null for current)
+  const feesCredits = Number(data.totalCollectedFees) || 0
+  const topResource = data.topVotedResource?.resourceValue
+
+  const txAnim = useCountUp(Number(data.totalTxCount) || 0)
+  const blocksAnim = useCountUp(typeof blocks === 'number' ? blocks : null)
+  const feesAnim = useCountUp(feesCredits)
+  const rewardsAnim = useCountUp(rewards != null ? Number(rewards) : null)
+  const votesAnim = useCountUp(Number(data.totalVotesCount) || 0)
+  const proposerAnim = useScramble(data.bestValidator ? shortId(data.bestValidator) : null)
+
+  return (
+    <div className={'EpochsOverview__Cells HomeHero__StatusBar'}>
+      <StatusCell label={'Transactions'} hint={'State transitions processed during this epoch.'}>
+        <span className={'EpochsOverview__Stat'}><BigNumber>{txAnim}</BigNumber></span>
+      </StatusCell>
+
+      <StatusCell label={'Blocks'} hint={'Blocks produced in the epoch (finalized after it ends).'}>
+        {typeof blocksAnim === 'number'
+          ? <span className={'EpochsOverview__Stat'}><BigNumber>{blocksAnim}</BigNumber></span>
+          : <Pending/>}
+      </StatusCell>
+
+      <StatusCell label={'Fees'} hint={'Total fees (credits) collected from state transitions this epoch. Hover for the exact DASH / USD value.'}>
+        <RateTooltip credits={feesCredits} rate={rate?.data} placement={'top'}>
+          <span className={'EpochsOverview__Stat'}>
+            {compact(typeof feesAnim === 'number' ? feesAnim : feesCredits) ?? 0}
+            <span className={'EpochsOverview__Unit'}>credits</span>
+          </span>
+        </RateTooltip>
+      </StatusCell>
+
+      <StatusCell label={'Rewards'} hint={'Core block rewards (credits) added to the evonode pool for the epoch (finalized after it ends). Hover for the exact DASH / USD value.'}>
+        {typeof rewardsAnim === 'number'
+          ? <RateTooltip dash={creditsToDash(Number(rewards))} rate={rate?.data} placement={'top'}>
+              <span className={'EpochsOverview__Stat'}>
+                {creditsToDash(rewardsAnim).toFixed(2)}
+                <span className={'EpochsOverview__Unit'}>DASH</span>
+              </span>
+            </RateTooltip>
+          : <Pending/>}
+      </StatusCell>
+
+      <StatusCell label={'Votes'} hint={'Masternode votes cast this epoch and the most-voted contested resource.'}>
+        <span className={'EpochsOverview__Stat'}>{votesAnim}</span>
+        {topResource &&
+          <Link href={contestedHref(topResource)} className={'EpochsOverview__Sub EpochsOverview__SubLink'}>
+            {String(topResource)}
+          </Link>}
+      </StatusCell>
+
+      <StatusCell label={'Top proposer'} hint={'Validator that proposed the most blocks this epoch.'}>
+        {data.bestValidator
+          ? <Link href={`/validator/${data.bestValidator}`} className={'EpochsOverview__Proposer'}>
+              <span className={'EpochsOverview__Stat EpochsOverview__ProposerVal'}>{proposerAnim}</span>
+            </Link>
+          : <span className={'EpochsOverview__Stat'}>-</span>}
+      </StatusCell>
+    </div>
   )
 }
 
@@ -107,14 +174,7 @@ export function EpochsOverview ({ epochs, rate, loading }) {
   const areaD = `M 0 100 L ${linePts.map(p => `${p.x} ${p.y}`).join(' L ')} L 100 100 Z`
 
   const selIdx = Math.min(selected, lastIdx)
-  const sel = list[selIdx] || list[lastIdx]
-  const selEpoch = sel.epoch
-
-  const txCount = Number(sel.totalTxCount) || 0
-  const blocks = selEpoch?.totalBlocksInEpoch // finalized-only (null for current)
-  const rewards = selEpoch?.coreBlockRewards // finalized-only (credits, null for current)
-  const feesCredits = Number(sel.totalCollectedFees) || 0
-  const topResource = sel.topVotedResource?.resourceValue
+  const shown = list[selIdx] || list[lastIdx]
 
   return (
     <div className={'EpochsOverview'}>
@@ -146,53 +206,7 @@ export function EpochsOverview ({ epochs, rate, loading }) {
       </div>
 
       <div className={'EpochsOverview__Detail'}>
-        <div className={'EpochsOverview__Cells HomeHero__StatusBar'}>
-          <StatusCell label={'Transactions'} hint={'State transitions processed during this epoch.'}>
-            <span className={'EpochsOverview__Stat'}><BigNumber>{txCount}</BigNumber></span>
-          </StatusCell>
-
-          <StatusCell label={'Blocks'} hint={'Blocks produced in the epoch (finalized after it ends).'}>
-            {typeof blocks === 'number'
-              ? <span className={'EpochsOverview__Stat'}><BigNumber>{blocks}</BigNumber></span>
-              : <Pending/>}
-          </StatusCell>
-
-          <StatusCell label={'Fees'} hint={'Total fees (credits) collected from state transitions this epoch. Hover for the exact DASH / USD value.'}>
-            <RateTooltip credits={feesCredits} rate={rate?.data} placement={'top'}>
-              <span className={'EpochsOverview__Stat'}>
-                {compact(feesCredits) ?? 0}
-                <span className={'EpochsOverview__Unit'}>credits</span>
-              </span>
-            </RateTooltip>
-          </StatusCell>
-
-          <StatusCell label={'Rewards'} hint={'Core block rewards (credits) added to the evonode pool for the epoch (finalized after it ends). Hover for the exact DASH / USD value.'}>
-            {rewards != null
-              ? <RateTooltip dash={creditsToDash(Number(rewards))} rate={rate?.data} placement={'top'}>
-                  <span className={'EpochsOverview__Stat'}>
-                    {creditsToDash(Number(rewards)).toFixed(2)}
-                    <span className={'EpochsOverview__Unit'}>DASH</span>
-                  </span>
-                </RateTooltip>
-              : <Pending/>}
-          </StatusCell>
-
-          <StatusCell label={'Votes'} hint={'Masternode votes cast this epoch and the most-voted contested resource.'}>
-            <span className={'EpochsOverview__Stat'}>{Number(sel.totalVotesCount) || 0}</span>
-            {topResource &&
-              <Link href={contestedHref(topResource)} className={'EpochsOverview__Sub EpochsOverview__SubLink'}>
-                {String(topResource)}
-              </Link>}
-          </StatusCell>
-
-          <StatusCell label={'Top proposer'} hint={'Validator that proposed the most blocks this epoch.'}>
-            {sel.bestValidator
-              ? <Link href={`/validator/${sel.bestValidator}`} className={'EpochsOverview__Proposer'}>
-                  <Identifier ellipsis={false} middleEllipsis={true}>{sel.bestValidator}</Identifier>
-                </Link>
-              : <span className={'EpochsOverview__Stat'}>-</span>}
-          </StatusCell>
-        </div>
+        <EpochCells data={shown} rate={rate}/>
       </div>
     </div>
   )
