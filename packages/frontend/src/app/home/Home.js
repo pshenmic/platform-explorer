@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
+import { useQuery } from '@tanstack/react-query'
 import * as Api from '../../util/Api'
 import HomeHero from './HomeHero.js'
 import { MetricChart, EpochsOverview, StatusBar, HeroMeta, MasternodesDonut, TxTypesDonut, ShieldedPoolCard, CompactTxList, CompactBlocksList } from '../../components/home'
@@ -23,9 +24,6 @@ function computeAvgBlockTime (blocks) {
 }
 
 function Home () {
-  const [status, setStatus] = useState({ data: {}, loading: true, error: false })
-  const [blocks, setBlocks] = useState({ data: {}, props: { printCount: 10 }, loading: true, error: false })
-  const [transactions, setTransactions] = useState({ data: {}, props: { printCount: 10 }, loading: true, error: false })
   const [validators, setValidators] = useState({ data: {}, loading: true, error: false })
   const [validatorsActive, setValidatorsActive] = useState({ data: {}, loading: true, error: false })
   const [validatorsBanned, setValidatorsBanned] = useState({ data: {}, loading: true, error: false })
@@ -39,44 +37,38 @@ function Home () {
 
   const gap = theme.blockOffset
 
+  // refetchInterval keeps the hero and both lists live; focus revalidation is the v5 default
+  const statusQuery = useQuery({ queryKey: ['home', 'status'], queryFn: Api.getStatus, refetchInterval: 60000 })
+  const txQuery = useQuery({ queryKey: ['home', 'transactions'], queryFn: () => Api.getTransactions(1, 10, 'desc'), refetchInterval: 30000 })
+  const blocksQuery = useQuery({ queryKey: ['home', 'blocks'], queryFn: () => Api.getBlocks(1, 10, 'desc'), refetchInterval: 30000 })
+
+  // last 4 finalized epochs for the wave; keyed by the epoch number so a rollover refreshes it
+  const currentEpochNumber = statusQuery.data?.epoch?.number
+  useEffect(() => {
+    if (typeof currentEpochNumber !== 'number') return
+
+    Api.getEpoch(currentEpochNumber)
+      .then(epochRes => fetchHandlerSuccess(setEpochData, epochRes))
+      .catch(err => fetchHandlerError(setEpochData, err))
+
+    const numbers = [currentEpochNumber - 4, currentEpochNumber - 3, currentEpochNumber - 2, currentEpochNumber - 1].filter(n => n >= 0)
+    Promise.all(numbers.map(n =>
+      Api.getEpoch(n)
+        .then(ep => {
+          const height = ep?.epoch?.firstBlockHeight
+          if (height == null) return ep
+          // protocol version is not part of /epoch, so read it from the epoch's first block
+          return Api.getBlocks(1, 1, 'asc', { height_min: height, height_max: height })
+            .then(blocksRes => ({ ...ep, protocolVersion: blocksRes?.resultSet?.[0]?.header?.appVersion ?? null }))
+            .catch(() => ep)
+        })
+        .catch(() => null)
+    ))
+      .then(results => fetchHandlerSuccess(setEpochs, { list: results.filter(Boolean) }))
+      .catch(err => fetchHandlerError(setEpochs, err))
+  }, [currentEpochNumber])
+
   const fetchData = () => {
-    Api.getStatus()
-      .then(res => {
-        fetchHandlerSuccess(setStatus, res)
-        Api.getEpoch(res?.epoch?.number)
-          .then(epochRes => fetchHandlerSuccess(setEpochData, epochRes))
-          .catch(err => fetchHandlerError(setEpochData, err))
-
-        // last 4 finalized epochs for the wave; the in-progress one shows in the section header.
-        // the protocol version is not part of /epoch, so it's read from the epoch's first block
-        const current = res?.epoch?.number
-        if (typeof current === 'number') {
-          const numbers = [current - 4, current - 3, current - 2, current - 1].filter(n => n >= 0)
-          Promise.all(numbers.map(n =>
-            Api.getEpoch(n)
-              .then(ep => {
-                const height = ep?.epoch?.firstBlockHeight
-                if (height == null) return ep
-                return Api.getBlocks(1, 1, 'asc', { height_min: height, height_max: height })
-                  .then(blocksRes => ({ ...ep, protocolVersion: blocksRes?.resultSet?.[0]?.header?.appVersion ?? null }))
-                  .catch(() => ep)
-              })
-              .catch(() => null)
-          ))
-            .then(results => fetchHandlerSuccess(setEpochs, { list: results.filter(Boolean) }))
-            .catch(err => fetchHandlerError(setEpochs, err))
-        }
-      })
-      .catch(err => fetchHandlerError(setStatus, err))
-
-    Api.getBlocks(1, blocks.props.printCount, 'desc')
-      .then(res => fetchHandlerSuccess(setBlocks, res))
-      .catch(err => fetchHandlerError(setBlocks, err))
-
-    Api.getTransactions(1, transactions.props.printCount, 'desc')
-      .then(res => fetchHandlerSuccess(setTransactions, res))
-      .catch(err => fetchHandlerError(setTransactions, err))
-
     Api.getValidators(1, 100, 'desc')
       .then(res => fetchHandlerSuccess(setValidators, res))
       .catch(err => fetchHandlerError(setValidators, err))
@@ -112,32 +104,32 @@ function Home () {
 
   useEffect(fetchData, [])
 
-  const avgBlockTimeSec = computeAvgBlockTime(blocks.data?.resultSet)
+  const avgBlockTimeSec = computeAvgBlockTime(blocksQuery.data?.resultSet)
 
   return (
     <Container maxW={'container.maxPageW'} color={'white'} px={3} py={0} mt={gap} mb={gap}>
       <Flex direction={'column'} gap={gap}>
-        <HomeHero status={status.data} loading={status.loading} avgBlockTimeSec={avgBlockTimeSec}/>
+        <HomeHero status={statusQuery.data ?? {}} loading={statusQuery.isLoading} avgBlockTimeSec={avgBlockTimeSec}/>
 
         <Box className={'InfoBlock InfoBlock--NoBorder HomeOverview'} w={'100%'}>
           <Heading className={'InfoBlock__Title'} as={'h2'}>Network overview</Heading>
           <div className={'HomeOverview__Grid'}>
             <div className={'HomeOverview__Sys'}>
-              <HeroMeta status={status.data} loading={status.loading}/>
+              <HeroMeta status={statusQuery.data ?? {}} loading={statusQuery.isLoading}/>
             </div>
             <div className={'HomeOverview__Tx'}>
               <div className={'HomeOverview__TxHead'}>
                 <span className={'HomeOverview__TxTitle'}>Latest Transactions</span>
                 <Link href={'/transactions'} className={'HomeOverview__More'}>Show more <ChevronIcon w={'5px'} h={'8px'}/></Link>
               </div>
-              <CompactTxList transactions={transactions.data?.resultSet} limit={7} loading={transactions.loading}/>
+              <CompactTxList transactions={txQuery.data?.resultSet} limit={7} loading={txQuery.isLoading}/>
             </div>
             <div className={'HomeOverview__Blocks'}>
               <div className={'HomeOverview__TxHead'}>
                 <span className={'HomeOverview__TxTitle'}>Latest Blocks</span>
                 <Link href={'/blocks'} className={'HomeOverview__More'}>Show more <ChevronIcon w={'5px'} h={'8px'}/></Link>
               </div>
-              <CompactBlocksList blocks={blocks.data?.resultSet} limit={7} loading={blocks.loading}/>
+              <CompactBlocksList blocks={blocksQuery.data?.resultSet} limit={7} loading={blocksQuery.isLoading}/>
             </div>
           </div>
         </Box>
