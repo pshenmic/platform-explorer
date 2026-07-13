@@ -621,6 +621,42 @@
     font-size: 0.8125rem;
   }
 
+  // loading state: ghost outline of the coming chart instead of a solid placeholder box
+  &__GhostLine {
+    stroke: rgba(var(--chakra-colors-gray-500-rgb, 122, 132, 137), 0.25);
+    stroke-width: 1.5px;
+    stroke-linejoin: round;
+    stroke-linecap: round;
+  }
+
+  &__GhostScan {
+    stroke: rgba(var(--chakra-colors-brand-light-rgb), 0.5);
+    stroke-width: 1.5px;
+    stroke-linecap: round;
+    stroke-dasharray: 12 88;
+    animation: HomeHeroDash 5s linear infinite;
+  }
+
+  &__GhostDot {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.2);
+    pointer-events: none;
+    animation: HeroMetaPulse 1.6s ease-in-out infinite;
+
+    &:nth-of-type(2) { animation-delay: 0.4s; }
+    &:nth-of-type(3) { animation-delay: 0.8s; }
+    &:nth-of-type(4) { animation-delay: 1.2s; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    &__GhostScan { animation: none; stroke-dasharray: none; opacity: 0.3; }
+    &__GhostDot { animation: none; }
+  }
+
   // only the 28px dot box stays in flow so translate(-50%,-50%) centers it on the vertex
   &__Point {
     appearance: none;

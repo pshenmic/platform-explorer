@@ -30,6 +30,36 @@ const formatValue = (v) => Math.abs(v) >= 1e6 ? currencyRound(v) : d3.format(','
 const M = { top: 10, right: 8, bottom: 18, left: 46 }
 const HEIGHT = 200
 
+// first-load placeholder: ghost outline of the coming chart (grid + neutral series shape)
+const GHOST_LINE_D = 'M 0 62 L 12 50 L 25 58 L 38 42 L 50 48 L 62 34 L 75 42 L 88 26 L 100 32'
+const GHOST_BARS = [38, 52, 30, 60, 45, 66, 40, 56, 34, 62, 48, 58]
+
+function ChartGhost ({ type }) {
+  return (
+    <svg className={'MetricChart__Ghost'} viewBox={'0 0 100 100'} preserveAspectRatio={'none'} aria-hidden={'true'}>
+      {[18, 42, 66, 90].map(gy => (
+        <line key={gy} className={'MetricChart__GhostGrid'} x1={0} x2={100} y1={gy} y2={gy} vectorEffect={'non-scaling-stroke'}/>
+      ))}
+      {type === 'bar'
+        ? GHOST_BARS.map((h, i) => (
+            <rect
+              key={i}
+              className={'MetricChart__GhostBar'}
+              x={2 + i * 8.2}
+              y={90 - h}
+              width={4.5}
+              height={h}
+              style={{ animationDelay: `${i * 0.12}s` }}
+            />
+        ))
+        : <>
+            <path className={'MetricChart__GhostLine'} d={GHOST_LINE_D} fill={'none'} vectorEffect={'non-scaling-stroke'}/>
+            <path className={'MetricChart__GhostScan'} d={GHOST_LINE_D} fill={'none'} pathLength={'100'} vectorEffect={'non-scaling-stroke'}/>
+          </>}
+    </svg>
+  )
+}
+
 export function MetricChart ({ title, type = 'line', fetcher, field, yAbbr = '' }) {
   const [presetIdx, setPresetIdx] = useState(DEFAULT_PRESET)
   const [state, setState] = useState({ loading: true, error: false, points: [] })
@@ -118,12 +148,13 @@ export function MetricChart ({ title, type = 'line', fetcher, field, yAbbr = '' 
       <div ref={wrapRef} className={'MetricChart__Plot'} style={{ height: HEIGHT }}>
         {error
           ? <div className={'MetricChart__Empty'}>Error loading data</div>
-          : loading
-            ? <div className={'MetricChart__Empty'}>Loading…</div>
+          : loading && !ready
+            ? <ChartGhost type={type}/>
             : !ready
                 ? <div className={'MetricChart__Empty'}>No data</div>
                 : <svg
-                  className={'MetricChart__Svg'}
+                  // preset switch keeps the stale chart dimmed instead of flashing a skeleton
+                  className={`MetricChart__Svg${loading ? ' MetricChart__Svg--Stale' : ''}`}
                   viewBox={`0 0 ${width} ${HEIGHT}`}
                   width={width}
                   height={HEIGHT}

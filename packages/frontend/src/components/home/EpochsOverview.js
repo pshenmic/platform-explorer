@@ -199,13 +199,29 @@ export function EpochsOverview ({ title, epochs, currentEpoch, rate, loading }) 
   // keep selection pinned to the newest epoch as data streams in
   useEffect(() => { setSelected(lastIdx) }, [lastIdx])
 
-  // skeleton keeps the head + wave height + cells row so layout doesn't jump on swap
+  // skeleton keeps the section footprint; the wave loads as a ghost outline, not a grey box
   if (loading && !list.length) {
+    const ghostYs = [46, 40, 52, 44]
+    const ghostPts = X_POSITIONS.map((gx, i) => ({ x: gx, y: ghostYs[i] }))
+    const ghostLine = [{ x: 0, y: ghostYs[0] }, ...ghostPts, { x: 100, y: ghostYs[ghostYs.length - 1] }]
+    const ghostD = `M ${ghostLine.map(p => `${p.x} ${p.y}`).join(' L ')}`
+
     return (
       <div className={'EpochsOverview'}>
         <SectionHead title={title} currentEpoch={currentEpoch}/>
         <div className={'HomeHero__Wave EpochsWave EpochsWave--Skeleton'}>
-          <Skeleton w={'100%'} h={'120px'} radius={8}/>
+          <svg className={'HomeHero__WaveSvg'} viewBox={'0 0 100 100'} preserveAspectRatio={'none'} aria-hidden={'true'}>
+            <path className={'EpochsWave__GhostLine'} d={ghostD} fill={'none'} vectorEffect={'non-scaling-stroke'}/>
+            <path className={'EpochsWave__GhostScan'} d={ghostD} fill={'none'} pathLength={'100'} vectorEffect={'non-scaling-stroke'}/>
+          </svg>
+          {ghostPts.map(p => (
+            <span
+              key={p.x}
+              className={'EpochsWave__GhostDot'}
+              style={{ left: `${p.x}%`, top: `${p.y}%` }}
+              aria-hidden={'true'}
+            />
+          ))}
         </div>
         <div className={'EpochsOverview__Detail'}>
           <div className={'EpochsOverview__Cells HomeHero__StatusBar'}>

@@ -49,6 +49,49 @@
 
   &__Svg { display: block; }
 
+  // preset switch: the stale chart dims until fresh points land (no skeleton flash)
+  &__Svg--Stale {
+    opacity: 0.4;
+    transition: opacity .2s;
+  }
+
+  // first-load ghost: outline of the coming chart instead of a "Loading…" label
+  &__Ghost {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  &__GhostGrid {
+    stroke: rgba(255, 255, 255, 0.06);
+    stroke-width: 1px;
+  }
+
+  &__GhostLine {
+    stroke: rgba(var(--chakra-colors-gray-500-rgb, 122, 132, 137), 0.25);
+    stroke-width: 1.5px;
+    stroke-linejoin: round;
+    stroke-linecap: round;
+  }
+
+  &__GhostScan {
+    stroke: rgba(var(--chakra-colors-brand-light-rgb), 0.5);
+    stroke-width: 1.5px;
+    stroke-linecap: round;
+    stroke-dasharray: 12 88;
+    animation: MetricChartGhostDash 5s linear infinite;
+  }
+
+  &__GhostBar {
+    fill: rgba(var(--chakra-colors-brand-normal-rgb), 0.14);
+    animation: MetricChartGhostBar 1.6s ease-in-out infinite;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    &__GhostScan { animation: none; stroke-dasharray: none; opacity: 0.3; }
+    &__GhostBar { animation: none; }
+  }
+
   &__Grid {
     stroke: rgba(255, 255, 255, 0.06);
     stroke-width: 1;
@@ -120,4 +163,14 @@
     font-size: 0.5625rem;
     color: var(--chakra-colors-gray-500);
   }
+}
+
+@keyframes MetricChartGhostDash {
+  from { stroke-dashoffset: 0; }
+  to { stroke-dashoffset: -100; }
+}
+
+@keyframes MetricChartGhostBar {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 1; }
 }
