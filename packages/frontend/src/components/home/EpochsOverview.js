@@ -39,14 +39,11 @@ function SectionHead ({ title, currentEpoch }) {
     <Heading className={'InfoBlock__Title EpochsOverview__Title'} as={'h2'}>
       {title}
       {epoch?.number != null &&
-        <span className={'EpochsOverview__Now'}>
-          <span className={'EpochsOverview__NowLive'}>live</span>
+        <span className={'EpochsOverview__Now'} aria-label={`Current epoch ${epoch.number}, in progress`}>
           <span className={'EpochsOverview__NowNumber'}>#{epoch.number}</span>
-          {typeof data?.totalTxCount === 'number' &&
-            <span className={'EpochsOverview__NowMeta EpochsOverview__NowMeta--Tx'}>{compact(data.totalTxCount)} tx</span>}
           {epoch?.startTime && epoch?.endTime &&
             <span className={'EpochsOverview__NowMeta'}>
-              ends in <TimeRemaining startTime={epoch.startTime} endTime={epoch.endTime} displayProgress={false}/>
+              <TimeRemaining startTime={epoch.startTime} endTime={epoch.endTime} displayProgress={false}/>
             </span>}
         </span>}
     </Heading>

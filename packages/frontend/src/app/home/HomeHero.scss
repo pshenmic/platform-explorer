@@ -843,7 +843,7 @@
     gap: 12px;
   }
 
-  // live (in-progress) epoch summary inside the badge: | ● live #N · tx · ends in ...
+  // live (in-progress) epoch summary inside the badge: | ● #N · 40 min. left
   &__Now {
     display: inline-flex;
     align-items: center;
@@ -863,14 +863,6 @@
     }
   }
 
-  &__NowLive {
-    font-size: 0.5625rem;
-    font-style: normal;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    color: rgba(255, 255, 255, 0.85);
-  }
-
   &__NowNumber {
     font-family: $font-heading;
     font-weight: 800;
@@ -886,15 +878,11 @@
     color: rgba(255, 255, 255, 0.75);
     white-space: nowrap;
 
+    // typographic separator between the epoch number and the ticking time
+    &::before { content: '· '; }
+
     .TimeRemaining,
     .TimeRemaining__TimeLeft { display: inline; }
-
-    // the badge gets long on phones: keep number + time, drop the tx counter
-    &--Tx {
-      @media screen and (max-width: $breakpoint-md) {
-        display: none;
-      }
-    }
   }
 
   @media (prefers-reduced-motion: reduce) {
