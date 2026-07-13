@@ -435,12 +435,12 @@
     position: relative;
     width: auto;
     height: 150px;
-    // full-bleed to the block edges (cancels InfoBlock side padding)
-    margin: 4px -32px 0;
+    // full-bleed to the block edges; top clearance keeps epoch numbers off the badge
+    margin: 14px -32px 0;
     padding: 0;
 
     @media screen and (max-width: $breakpoint-lg) {
-      margin: 4px 0 0;
+      margin: 14px 0 0;
     }
   }
 
@@ -836,69 +836,65 @@
 }
 
 .EpochsOverview {
-  // header band breaks out of the block padding: badge + live-epoch summary on one hairlined row
-  &__Head {
-    display: flex;
+  // live-epoch summary sits inside the badge so the header stays one element
+  &__Title {
+    display: inline-flex;
     align-items: center;
-    justify-content: flex-start;
-    flex-wrap: wrap;
-    gap: 10px 1.25rem;
-    margin: -20px -32px 30px;
-    padding: 0 32px 0 0;
-    border-bottom: 1px solid rgba(var(--chakra-colors-gray-800-rgb), 0.6);
-
-    @media screen and (max-width: $breakpoint-lg) {
-      margin: -20px -16px 30px;
-      padding: 0 16px 0 0;
-    }
+    gap: 12px;
   }
 
-  // cancel the InfoBlock__Title corner offset so the badge flows in the row
-  &__Head &__Title {
-    position: static;
-    left: 0;
-    top: 0;
-    margin: 0;
-    flex-shrink: 0;
-  }
-
-  // live (in-progress) epoch summary: [live] #N · tx · ends in ...
+  // live (in-progress) epoch summary inside the badge: | ● live #N · tx · ends in ...
   &__Now {
     display: inline-flex;
     align-items: center;
-    gap: 10px;
-    min-width: 0;
+    gap: 8px;
+    border-left: 1px solid rgba(255, 255, 255, 0.3);
+    padding-left: 12px;
 
-    // gently pulsing live dot
+    // gently pulsing live dot (white reads best on the brand-blue badge)
     &::before {
       content: '';
-      width: 7px;
-      height: 7px;
+      width: 6px;
+      height: 6px;
       border-radius: 50%;
-      background: $color-brand-light;
-      box-shadow: 0 0 6px rgba(var(--chakra-colors-brand-light-rgb), 0.8);
+      background: #fff;
+      box-shadow: 0 0 6px rgba(255, 255, 255, 0.7);
       animation: HeroMetaPulse 1.6s ease-in-out infinite;
     }
   }
 
-  &__NowLive { margin-left: 0; }
+  &__NowLive {
+    font-size: 0.5625rem;
+    font-style: normal;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: rgba(255, 255, 255, 0.85);
+  }
 
   &__NowNumber {
     font-family: $font-heading;
     font-weight: 800;
     font-style: italic;
-    font-size: 1.0625rem;
+    font-size: 0.9375rem;
     color: #fff;
   }
 
   &__NowMeta {
     font-size: 0.6875rem;
+    font-style: normal;
     font-family: $font-mono;
-    color: var(--chakra-colors-gray-500);
+    color: rgba(255, 255, 255, 0.75);
     white-space: nowrap;
 
     .TimeRemaining,
     .TimeRemaining__TimeLeft { display: inline; }
+
+    // the badge gets long on phones: keep number + time, drop the tx counter
+    &--Tx {
+      @media screen and (max-width: $breakpoint-md) {
+        display: none;
+      }
+    }
   }
 
   @media (prefers-reduced-motion: reduce) {

@@ -30,26 +30,26 @@ function Pending () {
   return <span className={'EpochsOverview__Pending'}>pending</span>
 }
 
-// section header band: badge on the left, the LIVE (in-progress) epoch summary on the right
+// section badge with the live (in-progress) epoch summary inside it
 function SectionHead ({ title, currentEpoch }) {
   const data = currentEpoch?.data
   const epoch = data?.epoch
 
   return (
-    <div className={'EpochsOverview__Head'}>
-      <Heading className={'InfoBlock__Title EpochsOverview__Title'} as={'h2'}>{title}</Heading>
+    <Heading className={'InfoBlock__Title EpochsOverview__Title'} as={'h2'}>
+      {title}
       {epoch?.number != null &&
-        <div className={'EpochsOverview__Now'}>
-          <span className={'EpochsWave__Live EpochsOverview__NowLive'}>live</span>
+        <span className={'EpochsOverview__Now'}>
+          <span className={'EpochsOverview__NowLive'}>live</span>
           <span className={'EpochsOverview__NowNumber'}>#{epoch.number}</span>
           {typeof data?.totalTxCount === 'number' &&
-            <span className={'EpochsOverview__NowMeta'}>{compact(data.totalTxCount)} tx</span>}
+            <span className={'EpochsOverview__NowMeta EpochsOverview__NowMeta--Tx'}>{compact(data.totalTxCount)} tx</span>}
           {epoch?.startTime && epoch?.endTime &&
             <span className={'EpochsOverview__NowMeta'}>
               ends in <TimeRemaining startTime={epoch.startTime} endTime={epoch.endTime} displayProgress={false}/>
             </span>}
-        </div>}
-    </div>
+        </span>}
+    </Heading>
   )
 }
 
