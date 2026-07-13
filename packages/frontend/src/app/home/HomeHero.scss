@@ -1041,16 +1041,25 @@
     &__Wash { animation: none; }
   }
 
-  // values that carry a tooltip advertise it: dotted underline + pointer + brand hover
+  // dotted underline lives on the inner wrapper so it hugs the value, not the 6ch slot
   &__Stat--Tip {
     cursor: pointer;
-    border-bottom: 1px dotted rgba(var(--chakra-colors-gray-500-rgb, 122, 132, 137), 0.6);
-    transition: color .15s, border-color .15s;
+    transition: color .15s;
 
     &:hover {
       color: $color-brand-light;
-      border-bottom-color: rgba(var(--chakra-colors-brand-light-rgb), 0.7);
+
+      .EpochsOverview__TipTarget {
+        border-bottom-color: rgba(var(--chakra-colors-brand-light-rgb), 0.7);
+      }
     }
+  }
+
+  &__TipTarget {
+    display: inline-flex;
+    align-items: center;
+    border-bottom: 1px dotted rgba(var(--chakra-colors-gray-500-rgb, 122, 132, 137), 0.6);
+    transition: border-color .15s;
   }
 
   // stat tooltips (fees / votes / blocks): optional headline over label-value rows

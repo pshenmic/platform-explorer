@@ -203,7 +203,9 @@ function EpochCells ({ data, rate, washKey }) {
       <StatusCell label={'Blocks'} hint={'Blocks produced in the epoch (finalized after it ends). Hover the value for the starting heights.'}>
         {typeof blocksAnim === 'number' && epoch?.firstBlockHeight != null
           ? <BlocksTooltip epoch={epoch}>
-              <span className={'EpochsOverview__Stat EpochsOverview__Stat--Tip'}><BigNumber>{blocksAnim}</BigNumber></span>
+              <span className={'EpochsOverview__Stat EpochsOverview__Stat--Tip'}>
+                <span className={'EpochsOverview__TipTarget'}><BigNumber>{blocksAnim}</BigNumber></span>
+              </span>
             </BlocksTooltip>
           : typeof blocksAnim === 'number'
             ? <span className={'EpochsOverview__Stat'}><BigNumber>{blocksAnim}</BigNumber></span>
@@ -213,8 +215,10 @@ function EpochCells ({ data, rate, washKey }) {
       <StatusCell label={'Fees'} hint={'Total fees (credits) collected from state transitions this epoch. Hover the value for DASH / USD and the processing/storage breakdown.'}>
         <FeesTooltip data={data} rate={rate}>
           <span className={'EpochsOverview__Stat EpochsOverview__Stat--Tip'}>
-            {compact(typeof feesAnim === 'number' ? feesAnim : feesCredits) ?? 0}
-            <span className={'EpochsOverview__Unit'}>credits</span>
+            <span className={'EpochsOverview__TipTarget'}>
+              {compact(typeof feesAnim === 'number' ? feesAnim : feesCredits) ?? 0}
+              <span className={'EpochsOverview__Unit'}>credits</span>
+            </span>
           </span>
         </FeesTooltip>
       </StatusCell>
@@ -223,8 +227,10 @@ function EpochCells ({ data, rate, washKey }) {
         {typeof rewardsAnim === 'number'
           ? <RateTooltip dash={creditsToDash(Number(rewards))} rate={rate?.data} placement={'top'}>
               <span className={'EpochsOverview__Stat EpochsOverview__Stat--Tip'}>
-                {creditsToDash(rewardsAnim).toFixed(2)}
-                <span className={'EpochsOverview__Unit'}>DASH</span>
+                <span className={'EpochsOverview__TipTarget'}>
+                  {creditsToDash(rewardsAnim).toFixed(2)}
+                  <span className={'EpochsOverview__Unit'}>DASH</span>
+                </span>
               </span>
             </RateTooltip>
           : <Pending/>}
@@ -240,7 +246,9 @@ function EpochCells ({ data, rate, washKey }) {
 
       <StatusCell label={'Votes'} hint={'Masternode votes cast this epoch. Hover the value for gas, the top voter and the most-voted resource.'}>
         <VotesTooltip data={data}>
-          <span className={'EpochsOverview__Stat EpochsOverview__Stat--Tip'}>{votesAnim}</span>
+          <span className={'EpochsOverview__Stat EpochsOverview__Stat--Tip'}>
+            <span className={'EpochsOverview__TipTarget'}>{votesAnim}</span>
+          </span>
         </VotesTooltip>
         {topResource &&
           <Link href={contestedHref(topResource)} className={'EpochsOverview__Sub EpochsOverview__SubLink'}>
