@@ -120,6 +120,15 @@ const getTransactionsHistory = (
   )
 }
 
+interface TransactionsStatisticItem {
+  transactionType: string
+  count: number
+}
+
+const getTransactionsStatistic = (): Promise<TransactionsStatisticItem[]> => {
+  return call<TransactionsStatisticItem[]>('transactions/statistic', 'GET')
+}
+
 const getTransactions = (
   page: number = 1,
   limit: number = 10,
@@ -637,6 +646,7 @@ export {
   getContestedResourceVotes,
   getBlockByHash,
   getTransactionsHistory,
+  getTransactionsStatistic,
   getTransactions,
   getTransaction,
   getTokens,
