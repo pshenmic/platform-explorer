@@ -154,3 +154,8 @@
     &:last-child { border-bottom: none; padding-bottom: 0; }
   }
 }
+
+// the epochs card clips its full-bleed decor (seam, liquid wash) at the rounded corners
+.HomeEpochs {
+  overflow: hidden;
+}

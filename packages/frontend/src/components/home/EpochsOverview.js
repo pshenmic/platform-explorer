@@ -178,8 +178,8 @@ function BlocksTooltip ({ epoch, children }) {
   )
 }
 
-// stat row for the shown (hovered or pinned) epoch; every number eases from its previous value
-function EpochCells ({ data, rate }) {
+// stat row for the shown epoch; washKey remounts the wash so the pour replays on every pick
+function EpochCells ({ data, rate, washKey }) {
   const epoch = data.epoch
   const blocks = epoch?.totalBlocksInEpoch // finalized-only (null for current)
   const rewards = epoch?.coreBlockRewards // finalized-only (credits, null for current)
@@ -195,6 +195,7 @@ function EpochCells ({ data, rate }) {
 
   return (
     <div className={'EpochsOverview__Cells HomeHero__StatusBar'}>
+      <span key={`wash-${washKey}`} className={'EpochsOverview__Wash'} aria-hidden={'true'}/>
       <StatusCell label={'Transactions'} hint={'State transitions processed during this epoch.'}>
         <span className={'EpochsOverview__Stat'}><BigNumber>{txAnim}</BigNumber></span>
       </StatusCell>
@@ -407,7 +408,7 @@ export function EpochsOverview ({ title, epochs, currentEpoch, rate, loading }) 
       </div>
 
       <div className={'EpochsOverview__Detail'}>
-        <EpochCells data={shown} rate={rate}/>
+        <EpochCells data={shown} rate={rate} washKey={selIdx}/>
       </div>
     </div>
   )

@@ -610,6 +610,13 @@
   100% { top: calc(100% - 12px); opacity: 0; }
 }
 
+// liquid pour into the stats row: a narrow jet at the seam, down, then out along the row
+@keyframes EpochWashPour {
+  0% { opacity: 0; transform: scale(0.08, 0.2); }
+  35% { opacity: 0.9; transform: scale(0.16, 1); }
+  100% { opacity: 1; transform: scale(1, 1); }
+}
+
 // Epochs overview wave: last 4 epochs as clickable points + selected-epoch detail
 .EpochsWave {
   &--Empty {
@@ -936,13 +943,22 @@
     flex-wrap: wrap;
     gap: 8px 24px;
     min-width: 0;
+    // full-bleed like the wave, so --epoch-x-frac maps 1:1; cells keep the inner padding
+    margin: 10px -32px 0;
+    padding: 22px 32px 0;
 
-    // glowing seam under the selected epoch: --epoch-x-frac maps onto the full-bleed wave width (row + 64px, shifted -32px)
+    // below lg the wave is not full-bleed either, so the row stays inside the padding
+    @media screen and (max-width: $breakpoint-lg) {
+      margin: 10px 0 0;
+      padding: 22px 0 0;
+    }
+
+    // glowing seam under the selected epoch
     &::before {
       content: '';
       position: absolute;
       top: -1px;
-      left: calc((100% + 64px) * var(--epoch-x-frac, 0.5) - 32px);
+      left: calc(100% * var(--epoch-x-frac, 0.5));
       transform: translateX(-50%);
       width: 160px;
       height: 2px;
@@ -954,11 +970,6 @@
       );
       transition: left .3s ease;
       pointer-events: none;
-
-      // below lg the wave is not full-bleed, so the fraction maps 1:1 onto the row width
-      @media screen and (max-width: $breakpoint-lg) {
-        left: calc(100% * var(--epoch-x-frac, 0.5));
-      }
     }
 
     // content-sized cells: flex-grow splits the free space, so the gaps stay even
@@ -1003,6 +1014,31 @@
     font-feature-settings: 'tnum' 1;
     // stat tiles never wrap: compact value on one line, exact value lives in the tooltip
     white-space: nowrap;
+  }
+
+  // scaling from the seam origin stretches the gradient like poured liquid
+  &__Wash {
+    position: absolute;
+    // the pool runs all the way down to the card's bottom edge (32px padding, 16px below lg)
+    inset: -6px 0 -32px;
+
+    @media screen and (max-width: $breakpoint-lg) {
+      inset: -6px 0 -16px;
+    }
+    background: radial-gradient(
+      ellipse 60% 150% at calc(100% * var(--epoch-x-frac, 0.5)) 0%,
+      rgba(var(--chakra-colors-brand-normal-rgb), 0.18),
+      rgba(var(--chakra-colors-brand-normal-rgb), 0.055) 55%,
+      transparent 95%
+    );
+    transform-origin: calc(100% * var(--epoch-x-frac, 0.5)) top;
+    animation: EpochWashPour .9s ease-out backwards;
+    pointer-events: none;
+    z-index: -1;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    &__Wash { animation: none; }
   }
 
   // values that carry a tooltip advertise it: dotted underline + pointer + brand hover
