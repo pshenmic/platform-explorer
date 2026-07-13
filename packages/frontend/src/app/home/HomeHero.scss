@@ -608,6 +608,13 @@
   100% { opacity: 0; transform: scale(2.6); }
 }
 
+// droplet down the beam: animating top makes the travel match the beam's actual height
+@keyframes EpochBeamDrop {
+  0% { top: 0; opacity: 1; }
+  75% { opacity: 1; }
+  100% { top: calc(100% - 12px); opacity: 0; }
+}
+
 // Epochs overview wave: last 4 epochs as clickable points + selected-epoch detail
 .EpochsWave {
   &--Empty {
@@ -727,6 +734,100 @@
     }
   }
 
+  // hover anywhere over the wave snaps to the closest epoch; pointer cursor only on the buttons
+  .HomeHero__WaveLine { transition: stroke .25s; }
+  &:hover .HomeHero__WaveLine { stroke: rgba(var(--chakra-colors-brand-normal-rgb), 0.95); }
+
+  // hovered (snapped) point mirrors the direct :hover treatment
+  &__Point.is-hovered {
+    opacity: 1;
+
+    .HomeHero__WaveValue { color: $color-brand-light; }
+
+    .HomeHero__WaveDot {
+      transform: scale(1.5);
+      box-shadow: 0 0 12px 3px rgba(var(--chakra-colors-brand-light-rgb), 0.9);
+    }
+
+    .HomeHero__WaveLabel { color: $color-brand-light; }
+  }
+
+  // two light rails framing the selected epoch column, running down to its stats row
+  &__Beam {
+    position: absolute;
+    // top is set inline; bottom extends past the wave box to land on the stats-row seam
+    bottom: -40px;
+    // widest caption is ~132px: 160px keeps >=14px of air on both sides and matches the seam width
+    width: 160px;
+    transform: translateX(-50%);
+
+    @media screen and (max-width: $breakpoint-lg) {
+      width: 120px;
+    }
+    // barely-there inner fill, dissolving into the page background at the top
+    background: linear-gradient(
+      180deg,
+      transparent,
+      rgba(var(--chakra-colors-brand-light-rgb), 0.08)
+    );
+    transition: left .3s ease, top .3s ease;
+    pointer-events: none;
+
+    // edge rails, intensifying toward the stats row below
+    &::before,
+    &::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 1px;
+      background: linear-gradient(
+        180deg,
+        transparent,
+        rgba(var(--chakra-colors-brand-light-rgb), 0.45) 40%,
+        rgba(var(--chakra-colors-brand-light-rgb), 0.8)
+      );
+    }
+
+    &::before { left: 0; }
+    &::after { right: 0; }
+  }
+
+  // one-shot droplets falling down both rails into the stats on each selection (key remount)
+  &__BeamPulse {
+    position: absolute;
+    top: 0;
+    width: 3px;
+    height: 12px;
+    border-radius: 2px;
+    background: $color-brand-light;
+    box-shadow: 0 0 8px 2px rgba(var(--chakra-colors-brand-light-rgb), 0.8);
+    animation: EpochBeamDrop .45s ease-in forwards;
+
+    &--l { left: -1px; }
+    &--r { right: -1px; }
+  }
+
+  // vertical crosshair tracking the cursor continuously across the wave (trading-chart style)
+  &__Crosshair {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background: linear-gradient(
+      180deg,
+      transparent,
+      rgba(var(--chakra-colors-brand-light-rgb), 0.45) 30%,
+      rgba(var(--chakra-colors-brand-light-rgb), 0.45) 70%,
+      transparent
+    );
+    opacity: 0;
+    transition: opacity .2s;
+    pointer-events: none;
+
+    &.is-visible { opacity: 1; }
+  }
+
   @media (prefers-reduced-motion: reduce) {
     &__Point.is-selected .HomeHero__WaveDot {
       animation: none;
@@ -734,6 +835,8 @@
     }
     &__Point.is-active .HomeHero__WaveDot::after { animation: none; opacity: 0; }
     &__Point .HomeHero__WaveDot::before { animation: none; opacity: 0; }
+    &__Beam { transition: none; }
+    &__BeamPulse { animation: none; opacity: 0; }
   }
 
   // second caption row: epoch window + ended-ago / time-left
@@ -767,10 +870,35 @@
 
   // one row of equal-width label+value cells so a ticking value never shifts its neighbours
   &__Cells {
+    position: relative;
     display: flex;
     flex-wrap: wrap;
     gap: 8px 24px;
     min-width: 0;
+
+    // glowing seam under the selected epoch: --epoch-x-frac maps onto the full-bleed wave width (row + 64px, shifted -32px)
+    &::before {
+      content: '';
+      position: absolute;
+      top: -1px;
+      left: calc((100% + 64px) * var(--epoch-x-frac, 0.5) - 32px);
+      transform: translateX(-50%);
+      width: 160px;
+      height: 2px;
+      background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(var(--chakra-colors-brand-light-rgb), 0.75),
+        transparent
+      );
+      transition: left .3s ease;
+      pointer-events: none;
+
+      // below lg the wave is not full-bleed, so the fraction maps 1:1 onto the row width
+      @media screen and (max-width: $breakpoint-lg) {
+        left: calc(100% * var(--epoch-x-frac, 0.5));
+      }
+    }
 
     .HomeHero__StatusCell {
       flex: 1 1 0;

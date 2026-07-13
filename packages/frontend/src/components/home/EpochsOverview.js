@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
 import { BigNumber, TimeDelta, TimeRemaining } from '../data'
 import { RateTooltip } from '../ui/Tooltips'
@@ -29,13 +29,13 @@ function Pending () {
   return <span className={'EpochsOverview__Pending'}>pending</span>
 }
 
-function EpochPoint ({ epoch, metricLabel, x, y, active, selected, onSelect }) {
+function EpochPoint ({ epoch, metricLabel, x, y, active, selected, hovered, onSelect }) {
   const windowLabel = windowLabelOf(epoch)
 
   return (
     <button
       type={'button'}
-      className={`HomeHero__WavePoint EpochsWave__Point${selected ? ' is-selected' : ''}${active ? ' is-active' : ''}`}
+      className={`HomeHero__WavePoint EpochsWave__Point${selected ? ' is-selected' : ''}${active ? ' is-active' : ''}${hovered ? ' is-hovered' : ''}`}
       style={{ left: `${x}%`, top: `${y}%` }}
       onClick={onSelect}
       aria-pressed={selected}
@@ -129,6 +129,8 @@ export function EpochsOverview ({ epochs, rate, loading }) {
   const list = Array.isArray(epochs) ? epochs.filter(e => e?.epoch) : []
   const lastIdx = list.length - 1
   const [selected, setSelected] = useState(lastIdx)
+  const [hovered, setHovered] = useState(null)
+  const crosshairRef = useRef(null)
 
   // keep selection pinned to the newest epoch as data streams in
   useEffect(() => { setSelected(lastIdx) }, [lastIdx])
@@ -174,11 +176,35 @@ export function EpochsOverview ({ epochs, rate, loading }) {
   const areaD = `M 0 100 L ${linePts.map(p => `${p.x} ${p.y}`).join(' L ')} L 100 100 Z`
 
   const selIdx = Math.min(selected, lastIdx)
+  // cells below always show the CLICKED epoch; hover only highlights on the chart
   const shown = list[selIdx] || list[lastIdx]
 
+  // nearest-point snap: any position over the wave maps to the closest epoch
+  const nearestIdx = (e) => {
+    const rect = e.currentTarget.getBoundingClientRect()
+    const xPct = ((e.clientX - rect.left) / rect.width) * 100
+    let best = 0
+    for (let i = 1; i < list.length; i++) {
+      if (Math.abs(xPct - points[i].x) < Math.abs(xPct - points[best].x)) best = i
+    }
+    return best
+  }
+
+  // crosshair position is set straight on the DOM node so mousemove causes zero re-renders
+  const handleMove = (e) => {
+    const rect = e.currentTarget.getBoundingClientRect()
+    const xPct = ((e.clientX - rect.left) / rect.width) * 100
+    if (crosshairRef.current) crosshairRef.current.style.left = `${xPct}%`
+    setHovered(nearestIdx(e))
+  }
+
   return (
-    <div className={'EpochsOverview'}>
-      <div className={'HomeHero__Wave EpochsWave'}>
+    <div className={'EpochsOverview'} style={{ '--epoch-x-frac': (points[selIdx]?.x ?? 50) / 100 }}>
+      <div
+        className={'HomeHero__Wave EpochsWave'}
+        onMouseMove={handleMove}
+        onMouseLeave={() => setHovered(null)}
+      >
         <svg className={'HomeHero__WaveSvg'} viewBox={'0 0 100 100'} preserveAspectRatio={'none'} aria-hidden={'true'}>
           <defs>
             <linearGradient id={'homeEpochFill'} x1={'0'} y1={'0'} x2={'0'} y2={'1'}>
@@ -191,6 +217,26 @@ export function EpochsOverview ({ epochs, rate, loading }) {
           <path className={'HomeHero__WaveScan'} d={lineD} fill={'none'} pathLength={'100'} vectorEffect={'non-scaling-stroke'}/>
         </svg>
 
+        <span
+          ref={crosshairRef}
+          className={`EpochsWave__Crosshair${hovered != null ? ' is-visible' : ''}`}
+          aria-hidden={'true'}
+        />
+
+        {/* two light rails framing the selected epoch, running down to its stats row */}
+        <span
+          className={'EpochsWave__Beam'}
+          style={{
+            left: `${points[selIdx]?.x ?? 50}%`,
+            // top sits just above the epoch number so no empty rail hangs over it
+            top: `calc(${points[selIdx]?.y ?? 50}% - 48px)`
+          }}
+          aria-hidden={'true'}
+        >
+          <span key={`l-${selIdx}`} className={'EpochsWave__BeamPulse EpochsWave__BeamPulse--l'}/>
+          <span key={`r-${selIdx}`} className={'EpochsWave__BeamPulse EpochsWave__BeamPulse--r'}/>
+        </span>
+
         {list.map((e, i) => (
           <EpochPoint
             key={e.epoch.number}
@@ -200,6 +246,7 @@ export function EpochsOverview ({ epochs, rate, loading }) {
             y={points[i].y}
             active={i === lastIdx}
             selected={i === selIdx}
+            hovered={i === hovered}
             onSelect={() => setSelected(i)}
           />
         ))}
