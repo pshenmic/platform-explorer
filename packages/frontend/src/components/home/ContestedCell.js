@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import contestedResources from '../../util/contestedResources'
 import { useRotator, useCountUp } from './hooks'
-import { contestedHref } from './utils'
+import { contestedHref, trimName } from './utils'
 import { GovDots } from './GovDots'
 
 // the rotator and the dot pager must share one list, or the active dot runs off the pager
@@ -36,9 +36,16 @@ export function ContestedCell ({ count, active, latest }) {
           onMouseEnter={rotator.onMouseEnter}
           onMouseLeave={rotator.onMouseLeave}
         >
-          <Link href={contestedHref(item.resourceValue)} className={'HomeHero__ContestedName'} title={name}>
-            {name}
-          </Link>
+          {/* key remounts the ticker so each rotation slides in; .dash TLD gets the brand accent */}
+          <span key={rotator.index} className={'HomeHero__GovTicker'}>
+            <Link href={contestedHref(item.resourceValue)} className={'HomeHero__ContestedName'} title={name}>
+              {(() => {
+                // middle-trim keeps both ends readable; the .dash suffix stays and is accented
+                const { text, dash } = trimName(name)
+                return <>{text}{dash && <span className={'HomeHero__GovTld'}>.dash</span>}</>
+              })()}
+            </Link>
+          </span>
           <GovDots count={dotCount} index={rotator.index} setIndex={rotator.setIndex}/>
         </div>}
     </div>

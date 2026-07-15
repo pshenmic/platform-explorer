@@ -35,3 +35,13 @@ export function isApiOperational (status) {
   const t = new Date(td).getTime()
   return !Number.isNaN(a) && !Number.isNaN(t) && Math.abs(a - t) <= 10 * 60 * 1000
 }
+
+// middle-truncate a display name; the ".dash" suffix survives and can be styled separately
+export function trimName (name, head = 8, tail = 5) {
+  const hasDash = typeof name === 'string' && name.endsWith('.dash')
+  const base = hasDash ? name.slice(0, -5) : name
+  const trimmed = typeof base === 'string' && base.length > head + tail + 1
+    ? `${base.slice(0, head)}…${base.slice(-tail)}`
+    : base
+  return { text: trimmed, dash: hasDash }
+}
