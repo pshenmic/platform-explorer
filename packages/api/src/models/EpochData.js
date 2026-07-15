@@ -8,8 +8,10 @@ module.exports = class EpochData {
   totalVotesCount
   totalVotesGasUsed
   totalTxCount
+  pendingBlocksInEpoch
+  pendingEpochReward
 
-  constructor (epoch, tps, totalCollectedFees, bestValidator, topVotedResource, bestVoter, totalVotesCount, totalVotesGasUsed, totalTxCount) {
+  constructor (epoch, tps, totalCollectedFees, bestValidator, topVotedResource, bestVoter, totalVotesCount, totalVotesGasUsed, totalTxCount, pendingBlocksInEpoch, pendingEpochReward) {
     this.epoch = epoch ?? null
     this.tps = tps ?? null
     this.totalCollectedFees = totalCollectedFees ?? null
@@ -19,6 +21,8 @@ module.exports = class EpochData {
     this.totalVotesCount = totalVotesCount ?? null
     this.totalVotesGasUsed = totalVotesGasUsed ?? null
     this.totalTxCount = totalTxCount ?? null
+    this.pendingBlocksInEpoch = pendingBlocksInEpoch ?? null
+    this.pendingEpochReward = pendingEpochReward ?? null
   }
 
   /* eslint-disable camelcase */
@@ -37,7 +41,9 @@ module.exports = class EpochData {
     resource_votes_lock,
     total_votes,
     total_votes_gas_used,
-    total_tx_count
+    total_tx_count,
+    pending_blocks_in_epoch,
+    pending_epoch_reward
   }) {
     return new EpochData(
       epoch,
@@ -58,7 +64,9 @@ module.exports = class EpochData {
       },
       Number(total_votes ?? 0),
       Number(total_votes_gas_used ?? 0),
-      Number(total_tx_count ?? 0)
+      Number(total_tx_count ?? 0),
+      pending_blocks_in_epoch !== undefined ? Number(pending_blocks_in_epoch ?? 0) : null,
+      pending_epoch_reward !== undefined ? Number(pending_epoch_reward ?? 0) : null
     )
   }
 }
