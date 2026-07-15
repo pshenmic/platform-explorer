@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { BigNumber, TimeDelta, NotActive, Identifier } from '../data'
+import { BigNumber, TimeDelta, NotActive } from '../data'
 import { Skeleton } from './Skeleton'
 import { useLiveList } from './hooks'
 import './CompactBlocksList.scss'
@@ -49,7 +49,7 @@ export function CompactBlocksList ({ blocks, limit = 7, loading }) {
             </span>
 
             <span className={'CompactBlocks__HashCell'}>
-              {header?.hash ? <Identifier middleEllipsis={true}>{header.hash}</Identifier> : <NotActive/>}
+              {header?.hash ? <span className={'CompactBlocks__HashText'}>{header.hash}</span> : <NotActive/>}
             </span>
 
             <span className={'CompactBlocks__Txs'}>{txCount} {txCount === 1 ? 'tx' : 'txs'}</span>

@@ -4,7 +4,7 @@ import Link from 'next/link'
 import StatusIcon from '../transactions/StatusIcon'
 import TypeBadge from '../transactions/TypeBadge'
 import BatchTypeBadge from '../transactions/BatchTypeBadge'
-import { Identifier, TimeDelta, NotActive } from '../data'
+import { TimeDelta, NotActive } from '../data'
 import { Tooltip } from '../ui/Tooltips'
 import { Skeleton } from './Skeleton'
 import { useLiveList } from './hooks'
@@ -56,13 +56,13 @@ export function CompactTxList ({ transactions, limit = 7, loading }) {
           <span className={'CompactTx__Status'}>
             {tx.status
               ? <Tooltip content={STATUS_LABEL[tx.status] || tx.status} placement={'top'}>
-                  <span className={'CompactTx__StatusIcon'}><StatusIcon status={tx.status} w={'16px'} h={'16px'}/></span>
+                  <span className={'CompactTx__StatusIcon'}><StatusIcon status={tx.status} w={'18px'} h={'18px'}/></span>
                 </Tooltip>
               : <NotActive/>}
           </span>
 
           <span className={'CompactTx__Hash'}>
-            {tx.hash ? <Identifier middleEllipsis={true}>{tx.hash}</Identifier> : <NotActive/>}
+            {tx.hash ? <span className={'CompactTx__HashText'}>{tx.hash}</span> : <NotActive/>}
           </span>
 
           <span className={'CompactTx__Type'}>

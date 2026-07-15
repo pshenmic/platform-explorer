@@ -13,7 +13,8 @@
 
   &__Row {
     display: grid;
-    grid-template-columns: auto minmax(0, 1fr) auto auto;
+    // fixed txs column (fits "20000 txs") + height reserve: new rows never shift the grid
+    grid-template-columns: minmax(8ch, auto) minmax(0, 1fr) 76px auto;
     align-items: center;
     gap: 12px;
     min-height: 44px;
@@ -48,6 +49,7 @@
   }
 
   &__Txs {
+    justify-self: center; // the chip centres inside its fixed column
     padding: 1px 7px;
     border-radius: 4px;
     font-family: $font-mono;
@@ -55,6 +57,17 @@
     color: $color-brand-light;
     background: rgba(var(--chakra-colors-brand-normal-rgb), 0.12);
     white-space: nowrap;
+  }
+
+  // the hash is clipped by CSS to its leading slice, Proposer-style
+  &__HashText {
+    display: block;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-family: $font-mono;
+    font-size: 0.75rem;
   }
 
   &__Time {
