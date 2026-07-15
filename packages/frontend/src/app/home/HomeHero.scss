@@ -424,6 +424,7 @@
 
   @media (prefers-reduced-motion: reduce) {
     &__DotMark.is-loading { animation: none; }
+    &__LiveBadge { animation: none; }
   }
 
   // votes breakdown inside the Total-votes info tooltip
@@ -598,6 +599,37 @@
     margin: 0 0 6px;
   }
 
+  // chain status pill: breathing glow while live
+  &__LiveBadge {
+    display: inline-block;
+    padding: 2px 8px;
+    margin-right: 8px;
+    border-radius: 999px;
+    border: 1px solid;
+    font-weight: 700;
+
+    &.is-live {
+      color: var(--chakra-colors-green-400);
+      border-color: rgba(149, 191, 64, 0.4);
+      background: rgba(149, 191, 64, 0.08);
+      animation: HeroLiveBreath 2.4s ease-in-out infinite;
+    }
+
+    // static alarm: a blinking failure state reads as noise, not urgency
+    &.is-down {
+      color: var(--chakra-colors-red-400);
+      border-color: rgba(255, 80, 60, 0.45);
+      background: rgba(255, 80, 60, 0.08);
+      box-shadow: 0 0 10px rgba(255, 80, 60, 0.25);
+    }
+
+    &.is-loading {
+      color: var(--chakra-colors-gray-500);
+      border-color: rgba(255, 255, 255, 0.15);
+      animation: HeroMetaPulse 1.2s ease-in-out infinite;
+    }
+  }
+
   &__Height {
     font-family: $font-heading;
     font-weight: 800;
@@ -636,6 +668,11 @@
 @keyframes HeroMetaPulse {
   0%, 100% { opacity: 0.4; }
   50% { opacity: 1; }
+}
+
+@keyframes HeroLiveBreath {
+  0%, 100% { box-shadow: 0 0 4px rgba(149, 191, 64, 0.15); }
+  50% { box-shadow: 0 0 12px rgba(149, 191, 64, 0.45); }
 }
 
 // governance ticker entries ease in as the rotator advances
