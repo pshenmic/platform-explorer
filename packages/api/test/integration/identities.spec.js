@@ -268,6 +268,47 @@ describe('Identities routes', () => {
       assert.deepEqual(body, expectedIdentity)
     })
 
+    it('should return identity when contested vote state is not found', async (t) => {
+      const block = await fixtures.block(knex, { timestamp: new Date(0) })
+      const owner = await fixtures.identity(knex, { block_hash: block.hash, block_height: block.height })
+
+      const transaction = await fixtures.transaction(knex, {
+        block_hash: block.hash,
+        block_height: block.height,
+        type: StateTransitionEnum.IDENTITY_CREATE,
+        owner: owner.identifier,
+        data: ''
+      })
+      const identity = await fixtures.identity(knex, {
+        block_hash: block.hash,
+        block_height: block.height,
+        state_transition_hash: transaction.hash
+      })
+      const alias = await fixtures.identity_alias(knex,
+        {
+          alias: 'test.dash',
+          identity,
+          state_transition_hash: transaction.hash
+        }
+      )
+
+      t.mock.method(ContestedResourcesController.prototype, 'getContestedResourceVoteState', async () => {
+        throw new Error('Vote state not found')
+      })
+
+      const { body } = await client.get(`/identity/${identity.identifier}`)
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      assert.deepEqual(body.aliases, [{
+        alias: alias.alias,
+        contested: true,
+        status: 'unknown',
+        timestamp: '1970-01-01T00:00:00.000Z',
+        txHash: alias.state_transition_hash
+      }])
+    })
+
     it('should return 404 when identity not found', async () => {
       await client.get('/identity/Cxo56ta5EMrWok8yp2Gpzm8cjBoa3mGYKZaAp9yqD3gW')
         .expect(404)
