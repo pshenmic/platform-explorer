@@ -190,6 +190,12 @@ already-completed epochs. For the current (in-progress) epoch they are `null`.
 * epoch.totalCreatedStorageFees - total storage fees created in the epoch (credits)
 * epoch.coreBlockRewards - core block rewards for the epoch
 
+For the current (in-progress) epoch, live values are computed from the indexed
+data instead. For already-completed epochs they are `null`.
+
+* pendingBlocksInEpoch - number of blocks produced in the epoch so far
+* pendingEpochReward - fees collected in the epoch so far (credits)
+
 
 ```
 HTTP /epoch/2492
@@ -228,7 +234,9 @@ HTTP /epoch/2492
   },
   "totalVotesCount": 12,
   "totalVotesGasUsed": 120000000,
-  "totalTxCount": 49
+  "totalTxCount": 49,
+  "pendingBlocksInEpoch": null,
+  "pendingEpochReward": null
 }
 ```
 ---
