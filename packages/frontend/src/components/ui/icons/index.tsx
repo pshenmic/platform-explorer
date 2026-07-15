@@ -77,7 +77,8 @@ const ArrowCornerIcon = (props: IconProps) => (
 
 const SuccessIcon = (props: IconProps) => (
   <Icon viewBox='0 0 18 18' {...props}>
-    <svg width="14" height="10" viewBox="0 0 14 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+    {/* x/y centre the 14x10 glyph inside the 18x18 box (a nested svg defaults to 0,0) */}
+    <svg x="2" y="4" width="14" height="10" viewBox="0 0 14 10" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path d="M1.6875 4.6875L5.4375 8.4375L12.3125 1.5625" stroke="#58F4BC" strokeWidth="1.5" strokeLinecap="round"/>
     </svg>
   </Icon>
