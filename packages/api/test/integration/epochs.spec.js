@@ -160,9 +160,71 @@ describe('Epoch routes', () => {
         },
         totalVotesCount: 465,
         totalVotesGasUsed: masternodeVotesGas,
-        totalTxCount: identities.length + transactions.length
+        totalTxCount: identities.length + transactions.length,
+        pendingBlocksInEpoch: null,
+        pendingEpochReward: null
       }
       assert.deepEqual(body, expectedBlock)
+    })
+
+    it('should return live block count for the epoch in progress', async () => {
+      const startTime = Date.now() - 900000
+
+      mock.method(NodeController.prototype, 'getEpochsInfo', () => [
+        {
+          number: 1,
+          firstBlockHeight: 21,
+          firstCoreBlockHeight: 1,
+          startTime,
+          feeMultiplier: 1
+        }
+      ])
+      mock.method(NodeController.prototype, 'getFinalizedEpochsInfo', () => {
+        throw new Error('Epoch is not finalized yet')
+      })
+
+      const { body } = await client.get('/epoch/1')
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      const expectedEpoch = {
+        epoch: {
+          number: 1,
+          firstBlockHeight: '21',
+          firstCoreBlockHeight: 1,
+          startTime,
+          feeMultiplier: '1',
+          endTime: startTime + 3600000,
+          totalBlocksInEpoch: null,
+          totalProcessingFees: null,
+          totalDistributedStorageFees: null,
+          totalCreatedStorageFees: null,
+          coreBlockRewards: null
+        },
+        tps: 0,
+        totalCollectedFees: 0,
+        bestValidator: null,
+        bestVoter: {
+          totalCountAbstain: 0,
+          totalCountTowardsIdentity: 0,
+          totalCountLock: 0,
+          identifier: null
+        },
+        topVotedResource: {
+          totalCountAbstain: 0,
+          totalCountTowardsIdentity: 0,
+          totalCountLock: 0,
+          resourceValue: null
+        },
+        totalVotesCount: 0,
+        totalVotesGasUsed: 0,
+        totalTxCount: 0,
+        pendingBlocksInEpoch: 10,
+        pendingEpochReward: transactions
+          .filter((transaction) => transaction.block_height >= 21)
+          .reduce((acc, transaction) => acc + transaction.gas_used, 0)
+      }
+      assert.deepEqual(body, expectedEpoch)
     })
 
     it('should return error if not valid date', async () => {
