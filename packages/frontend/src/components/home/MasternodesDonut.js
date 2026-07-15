@@ -17,7 +17,10 @@ export default function MasternodesDonut ({ validators, validatorsActive, valida
 
   const inactive = ready ? Math.max(total - active - banned, 0) : 0
   const activeFrac = ready ? Math.min(active / total, 1) : 0
-  const bannedFrac = ready ? Math.min(banned / total, 1 - activeFrac) : 0
+  // a sub-pixel slice reads as an artifact: clamp for display, the legend keeps the exact count
+  const MIN_ARC_FRAC = 0.008
+  const bannedFracRaw = ready ? Math.min(banned / total, 1 - activeFrac) : 0
+  const bannedFrac = bannedFracRaw > 0 ? Math.max(bannedFracRaw, MIN_ARC_FRAC) : 0
 
   const rows = validators?.data?.resultSet || []
   const evoCount = rows.filter(v => /evo|high/i.test(v?.proTxInfo?.type || '')).length
