@@ -185,22 +185,30 @@ function VotesTooltip ({ data, children }) {
   )
 }
 
-// Blocks value tooltip: where the epoch started on both chains
-function BlocksTooltip ({ epoch, children }) {
+// Blocks value tooltip: where the epoch started and ended, in blocks and time
+function BlocksTooltip ({ epoch, endHeight, children }) {
+  const longEpoch = (epoch?.endTime - epoch?.startTime) >= 86400000
+  const fmt = longEpoch ? boundDateFmt : boundTimeFmt
+  const inProgress = epoch?.endTime > Date.now()
+
   return (
     <Tooltip
       title={'Blocks'}
       content={(
         <div className={'EpochsOverview__Tip'}>
           <div className={'EpochsOverview__TipRow'}>
-            <span>First block</span>
-            <span>#{epoch.firstBlockHeight}</span>
+            <span>Started</span>
+            <span>#{epoch.firstBlockHeight}{epoch.startTime ? ` · ${fmt.format(new Date(epoch.startTime))}` : ''}</span>
           </div>
-          {epoch.firstCoreBlockHeight != null &&
-            <div className={'EpochsOverview__TipRow'}>
-              <span>Core height</span>
-              <span>{epoch.firstCoreBlockHeight}</span>
-            </div>}
+          {inProgress
+            ? <div className={'EpochsOverview__TipRow'}>
+                <span>Ends</span>
+                <span>{epoch.endTime ? `${fmt.format(new Date(epoch.endTime))} · ` : ''}in progress</span>
+              </div>
+            : <div className={'EpochsOverview__TipRow'}>
+                <span>Ended</span>
+                <span>{endHeight != null ? `#${endHeight} · ` : ''}{epoch.endTime ? fmt.format(new Date(epoch.endTime)) : ''}</span>
+              </div>}
         </div>
       )}
       placement={'top'}
@@ -211,8 +219,12 @@ function BlocksTooltip ({ epoch, children }) {
 }
 
 // stat row for the shown epoch; washKey remounts the wash so the pour replays on every pick
-function EpochCells ({ data, rate, washKey }) {
+function EpochCells ({ data, nextData, rate, washKey }) {
   const epoch = data.epoch
+  // the epoch's last block is the one right before the NEXT epoch's first block
+  const endHeight = nextData?.epoch?.number === epoch?.number + 1 && nextData?.epoch?.firstBlockHeight != null
+    ? Number(nextData.epoch.firstBlockHeight) - 1
+    : null
   const blocks = epoch?.totalBlocksInEpoch // finalized-only (null for current)
   const rewards = epoch?.coreBlockRewards // finalized-only (credits, null for current)
   const feesCredits = Number(data.totalCollectedFees) || 0
@@ -223,7 +235,8 @@ function EpochCells ({ data, rate, washKey }) {
   const feesAnim = useCountUp(feesCredits)
   const rewardsAnim = useCountUp(rewards != null ? Number(rewards) : null)
   const votesAnim = useCountUp(Number(data.totalVotesCount) || 0)
-  const proposerAnim = useScramble(data.bestValidator ? shortId(data.bestValidator) : null)
+  // full hash in the markup; CSS clips it to a leading slice ("20107EC…")
+  const proposerAnim = useScramble(data.bestValidator || null)
 
   return (
     <div className={'EpochsOverview__Cells HomeHero__StatusBar'}>
@@ -232,11 +245,14 @@ function EpochCells ({ data, rate, washKey }) {
         <span className={'EpochsOverview__Stat'}><BigNumber>{txAnim}</BigNumber></span>
       </StatusCell>
 
-      <StatusCell label={'Blocks'} hint={'Blocks produced in the epoch (finalized after it ends). Hover the value for the starting heights.'}>
-        {typeof blocksAnim === 'number' && epoch?.firstBlockHeight != null
-          ? <BlocksTooltip epoch={epoch}>
+      <StatusCell label={'Blocks'} hint={'Blocks produced in the epoch (finalized after it ends). Hover the value for where the epoch started and ended.'}>
+        {epoch?.firstBlockHeight != null
+          // start/end are known even while the live block count is still pending
+          ? <BlocksTooltip epoch={epoch} endHeight={endHeight}>
               <span className={'EpochsOverview__Stat EpochsOverview__Stat--Tip'}>
-                <span className={'EpochsOverview__TipTarget'}><BigNumber>{blocksAnim}</BigNumber></span>
+                <span className={'EpochsOverview__TipTarget'}>
+                  {typeof blocksAnim === 'number' ? <BigNumber>{blocksAnim}</BigNumber> : <Pending/>}
+                </span>
               </span>
             </BlocksTooltip>
           : typeof blocksAnim === 'number'
@@ -255,7 +271,7 @@ function EpochCells ({ data, rate, washKey }) {
         </FeesTooltip>
       </StatusCell>
 
-      <StatusCell label={'Rewards'} hint={'Core block rewards (credits) added to the evonode pool for the epoch (finalized after it ends). Hover for the exact DASH / USD value.'}>
+      <StatusCell label={'Core rewards'} hint={'The evonode share (37.5%) of the masternode portion of Dash Core block rewards, pooled over this epoch and paid out to participating evonodes when it ends (finalized after the epoch). Hover for the exact DASH / USD value.'}>
         {typeof rewardsAnim === 'number'
           ? <RateTooltip dash={creditsToDash(Number(rewards))} rate={rate?.data} placement={'top'}>
               <span className={'EpochsOverview__Stat EpochsOverview__Stat--Tip'}>
@@ -489,7 +505,7 @@ export function EpochsOverview ({ title, epochs, currentEpoch, rate, loading }) 
       </div>
 
       <div className={'EpochsOverview__Detail'}>
-        <EpochCells data={shown} rate={rate} washKey={selIdx}/>
+        <EpochCells data={shown} nextData={list[selIdx + 1]} rate={rate} washKey={selIdx}/>
       </div>
     </div>
   )

@@ -1190,19 +1190,26 @@
     display: block;
     max-width: 100%;
     min-width: 0;
-    transition: opacity .15s;
-    &:hover { opacity: 0.8; }
+
+    &:hover .EpochsOverview__ProposerVal {
+      color: $color-brand-light;
+      border-bottom-color: rgba(var(--chakra-colors-brand-light-rgb), 0.7);
+    }
   }
 
-  // mono keeps the hex scramble width steady; tight rows clip with an ellipsis
+  // full hash in the markup; inline-block + fixed cap clips it and keeps the mono width steady
   &__ProposerVal {
     font-family: $font-mono;
     font-style: normal;
     font-weight: 700;
     letter-spacing: 0.02em;
-    min-width: 0;
-    max-width: 100%;
+    display: inline-block;
+    max-width: 8ch;
     overflow: hidden;
     text-overflow: ellipsis;
+    line-height: 1.25rem;
+    // same "clickable value" affordance as the tooltip'ed stats in this row
+    border-bottom: 1px dotted rgba(var(--chakra-colors-gray-500-rgb, 122, 132, 137), 0.6);
+    transition: color .15s, border-color .15s;
   }
 }
