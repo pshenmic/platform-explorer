@@ -284,7 +284,7 @@ function EpochCells ({ data, nextData, rate, washKey }) {
           : <Pending/>}
       </StatusCell>
 
-      <StatusCell label={'Proposer'} hint={'Validator that proposed the most blocks this epoch.'}>
+      <StatusCell label={'Top proposer'} hint={'Validator that proposed the most blocks this epoch.'}>
         {data.bestValidator
           ? <Link href={`/validator/${data.bestValidator}`} className={'EpochsOverview__Proposer'}>
               <span className={'EpochsOverview__Stat EpochsOverview__ProposerVal'}>{proposerAnim}</span>
