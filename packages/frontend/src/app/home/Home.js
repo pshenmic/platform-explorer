@@ -42,16 +42,31 @@ function Home () {
   const txQuery = useQuery({ queryKey: ['home', 'transactions'], queryFn: () => Api.getTransactions(1, 10, 'desc'), refetchInterval: 30000 })
   const blocksQuery = useQuery({ queryKey: ['home', 'blocks'], queryFn: () => Api.getBlocks(1, 10, 'desc'), refetchInterval: 30000 })
 
-  // last 4 finalized epochs for the wave; keyed by the epoch number so a rollover refreshes it
+  // 3 finalized epochs + the in-progress one for the wave; keyed by the epoch number so a rollover refreshes it
   const currentEpochNumber = statusQuery.data?.epoch?.number
+
+  // refresh the in-progress epoch on every status tick and merge it into the wave's last entry
   useEffect(() => {
     if (typeof currentEpochNumber !== 'number') return
 
     Api.getEpoch(currentEpochNumber)
-      .then(epochRes => fetchHandlerSuccess(setEpochData, epochRes))
+      .then(ep => {
+        fetchHandlerSuccess(setEpochData, ep)
+        setEpochs(s => {
+          const epochsList = s.data?.list || []
+          const last = epochsList[epochsList.length - 1]
+          if (last?.epoch?.number !== currentEpochNumber) return s
+          // keep protocolVersion/firstBlockHash resolved earlier, refresh the live fields
+          return { ...s, data: { list: [...epochsList.slice(0, -1), { ...last, ...ep }] } }
+        })
+      })
       .catch(err => fetchHandlerError(setEpochData, err))
+  }, [currentEpochNumber, statusQuery.dataUpdatedAt])
 
-    const numbers = [currentEpochNumber - 4, currentEpochNumber - 3, currentEpochNumber - 2, currentEpochNumber - 1].filter(n => n >= 0)
+  useEffect(() => {
+    if (typeof currentEpochNumber !== 'number') return
+
+    const numbers = [currentEpochNumber - 3, currentEpochNumber - 2, currentEpochNumber - 1, currentEpochNumber].filter(n => n >= 0)
     Promise.all(numbers.map(n =>
       Api.getEpoch(n)
         .then(ep => {
@@ -59,7 +74,11 @@ function Home () {
           if (height == null) return ep
           // protocol version is not part of /epoch, so read it from the epoch's first block
           return Api.getBlocks(1, 1, 'asc', { height_min: height, height_max: height })
-            .then(blocksRes => ({ ...ep, protocolVersion: blocksRes?.resultSet?.[0]?.header?.appVersion ?? null }))
+            .then(blocksRes => ({
+              ...ep,
+              protocolVersion: blocksRes?.resultSet?.[0]?.header?.appVersion ?? null,
+              firstBlockHash: blocksRes?.resultSet?.[0]?.header?.hash ?? null
+            }))
             .catch(() => ep)
         })
         .catch(() => null)

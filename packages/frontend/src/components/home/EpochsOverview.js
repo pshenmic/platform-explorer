@@ -1,9 +1,9 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { Heading } from '@chakra-ui/react'
-import { BigNumber, TimeDelta, TimeRemaining } from '../data'
+import { BigNumber, TimeDelta } from '../data'
 import { RateTooltip, Tooltip } from '../ui/Tooltips'
 import { creditsToDash, removeTrailingZeros, roundUsd } from '../../util'
 import { useCountUp, useScramble } from './hooks'
@@ -11,56 +11,93 @@ import { StatusCell } from './StatusCell'
 import { Skeleton } from './Skeleton'
 import { contestedHref, compact, shortId } from './utils'
 
-// 4 epoch points spread across the wave (oldest left -> current right)
-const X_POSITIONS = [10, 37, 63, 90]
+// 4 epoch points, ends pulled inward so the edge block-markers have room
+const X_POSITIONS = [14, 38, 62, 86]
+// edge block-markers sit a breath off the wave rims; epoch segments end at these markers
+const EDGE_L = 1.2
+const EDGE_R = 98.8
 const Y_HIGH = 22
 const Y_LOW = 70
-
-// compact epoch window: 1h on testnet, 9.1d on mainnet
-function windowLabelOf (epoch) {
-  if (!epoch?.startTime || !epoch?.endTime) return null
-  const ms = epoch.endTime - epoch.startTime
-  if (ms >= 86400000) return `${(ms / 86400000).toFixed(1)}d`
-  if (ms >= 3600000) return `${Math.round(ms / 3600000)}h`
-  return `${Math.round(ms / 60000)}m`
-}
 
 // neutral marker for finalized-only fields that are null while the epoch is in progress
 function Pending () {
   return <span className={'EpochsOverview__Pending'}>pending</span>
 }
 
-// section badge with the live (in-progress) epoch summary inside it
+// compact epoch length: fixed per network (1h on testnet, 9.125d on mainnet)
+function durationLabelOf (epoch) {
+  if (!epoch?.startTime || !epoch?.endTime) return null
+  const ms = epoch.endTime - epoch.startTime
+  return ms >= 86400000 ? `${(ms / 86400000).toFixed(1)}d` : `${Math.round(ms / 3600000)}h`
+}
+
+// boundary timestamps: date + time on short (testnet) epochs, date on mainnet-length ones
+const boundTimeFmt = new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit', hour12: false })
+const boundDateFmt = new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric' })
+
+// session-break marker between two epochs: the block (and moment) one epoch flowed into the next
+function EpochBound ({ bound, longEpochs }) {
+  const label = bound.ts ? (longEpochs ? boundDateFmt : boundTimeFmt).format(new Date(bound.ts)) : null
+  const content = (
+    <>
+      <span className={'EpochsWave__BoundBlock'}>
+        <span className={'EpochsWave__BoundTag'}>{bound.approx ? 'est. block' : 'block'}</span> {bound.approx ? '~' : ''}#{bound.height}
+      </span>
+      {label && <span className={'EpochsWave__BoundWhen'}>{label}</span>}
+    </>
+  )
+  const edgeClass = bound.edge ? ` EpochsWave__Bound--edge${bound.edge.toUpperCase()}` : ''
+  const approxClass = bound.approx ? ' is-approx' : ''
+
+  // only the label is a link; top tracks the wave height so it sits just above the line
+  return (
+    <span className={`EpochsWave__Bound${edgeClass}${approxClass}`} style={{ left: `${bound.x}%`, top: `calc(${bound.y}% - 44px)` }}>
+      {bound.hash
+        ? <Link
+            href={`/block/${bound.hash}`}
+            className={'EpochsWave__BoundLabel'}
+            aria-label={`Epoch boundary, first block #${bound.height}`}
+          >
+            {content}
+          </Link>
+        : <span
+            className={`EpochsWave__BoundLabel${bound.approx ? ' is-approx' : ''}`}
+            aria-label={bound.approx ? `Estimated final block ~#${bound.height}` : undefined}
+            aria-hidden={bound.approx ? undefined : 'true'}
+          >
+            {content}
+          </span>}
+    </span>
+  )
+}
+
+// section badge states only the fixed epoch length; the live epoch sits on the wave
 function SectionHead ({ title, currentEpoch }) {
-  const data = currentEpoch?.data
-  const epoch = data?.epoch
+  const durationLabel = durationLabelOf(currentEpoch?.data?.epoch)
 
   return (
     <Heading className={'InfoBlock__Title EpochsOverview__Title'} as={'h2'}>
       {title}
-      {epoch?.number != null &&
-        <span className={'EpochsOverview__Now'} aria-label={`Current epoch ${epoch.number}, in progress`}>
-          <span className={'EpochsOverview__NowNumber'}>#{epoch.number}</span>
-          {epoch?.startTime && epoch?.endTime &&
-            <span className={'EpochsOverview__NowMeta'}>
-              <TimeRemaining startTime={epoch.startTime} endTime={epoch.endTime} displayProgress={false}/>
-            </span>}
+      {durationLabel &&
+        <span className={'EpochsOverview__Now'} aria-label={`Epoch length ${durationLabel}`}>
+          <span className={'EpochsOverview__NowMeta'}>every {durationLabel}</span>
         </span>}
     </Heading>
   )
 }
 
 function EpochPoint ({ epoch, metricLabel, x, y, selected, hovered, onSelect }) {
-  const windowLabel = windowLabelOf(epoch)
+  // the in-progress epoch counts down ("36 min. left") instead of "ended X ago"
+  const inProgress = epoch?.endTime > Date.now()
 
   return (
     <button
       type={'button'}
-      className={`HomeHero__WavePoint EpochsWave__Point${selected ? ' is-selected' : ''}${hovered ? ' is-hovered' : ''}`}
+      className={`HomeHero__WavePoint EpochsWave__Point${selected ? ' is-selected' : ''}${hovered ? ' is-hovered' : ''}${inProgress ? ' is-live' : ''}`}
       style={{ left: `${x}%`, top: `${y}%` }}
       onClick={onSelect}
       aria-pressed={selected}
-      aria-label={`Epoch ${epoch?.number}`}
+      aria-label={`Epoch ${epoch?.number}${inProgress ? ', in progress' : ''}`}
     >
       <span className={'HomeHero__WaveValue EpochsWave__Number'}>#{epoch?.number}</span>
       <span className={'HomeHero__WaveDot'} aria-hidden={'true'}/>
@@ -68,8 +105,8 @@ function EpochPoint ({ epoch, metricLabel, x, y, selected, hovered, onSelect }) 
         <span className={'HomeHero__WaveLabel'}>{metricLabel}</span>
         {epoch?.endTime &&
           <span className={'EpochsWave__When'}>
-            {windowLabel && <>{windowLabel} · </>}
-            ended <TimeDelta endDate={new Date(epoch.endTime)}/>
+            {!inProgress && <>ended </>}
+            <TimeDelta endDate={new Date(epoch.endTime)}/>
           </span>}
       </span>
     </button>
@@ -103,11 +140,6 @@ function FeesTooltip ({ data, rate, children }) {
               <span>{compact(Number(v))} credits</span>
             </div>
           ))}
-          {epoch?.feeMultiplier != null &&
-            <div className={'EpochsOverview__TipRow'}>
-              <span>Fee multiplier</span>
-              <span>×{epoch.feeMultiplier}</span>
-            </div>}
         </div>
       )}
       placement={'top'}
@@ -270,7 +302,6 @@ export function EpochsOverview ({ title, epochs, currentEpoch, rate, loading }) 
   const lastIdx = list.length - 1
   const [selected, setSelected] = useState(lastIdx)
   const [hovered, setHovered] = useState(null)
-  const crosshairRef = useRef(null)
 
   // keep selection pinned to the newest epoch as data streams in
   useEffect(() => { setSelected(lastIdx) }, [lastIdx])
@@ -332,6 +363,54 @@ export function EpochsOverview ({ title, epochs, currentEpoch, rate, loading }) 
   }
 
   const points = list.map((e, i) => ({ x: X_POSITIONS[i] ?? (i / Math.max(1, lastIdx)) * 100, y: yOf(txCounts[i]) }))
+
+  // epoch boundaries sit between adjacent points: epoch i ended where epoch i+1 began
+  const bounds = list.slice(1).map((e, i) => ({
+    x: (points[i].x + points[i + 1].x) / 2,
+    // wave height at the boundary (the line is straight between vertices) — labels ride above it
+    y: (points[i].y + points[i + 1].y) / 2,
+    height: e.epoch?.firstBlockHeight,
+    ts: e.epoch?.startTime,
+    hash: e.firstBlockHash
+  })).filter(b => b.height != null)
+
+  // edge markers: exact window start; projected live-epoch close (height estimated)
+  if (list[0]?.epoch?.firstBlockHeight != null) {
+    bounds.unshift({
+      x: EDGE_L,
+      y: points[0].y,
+      height: list[0].epoch.firstBlockHeight,
+      ts: list[0].epoch.startTime,
+      hash: list[0].firstBlockHash,
+      edge: 'l'
+    })
+  }
+  const lastEntry = list[lastIdx]
+  const prevEntry = list[lastIdx - 1]
+  if (
+    lastEntry?.epoch?.endTime > Date.now() &&
+    lastEntry?.epoch?.firstBlockHeight != null &&
+    prevEntry?.epoch?.firstBlockHeight != null
+  ) {
+    const prevSpan = Number(lastEntry.epoch.firstBlockHeight) - Number(prevEntry.epoch.firstBlockHeight)
+    bounds.push({
+      x: EDGE_R,
+      y: points[lastIdx].y,
+      height: Number(lastEntry.epoch.firstBlockHeight) + prevSpan - 1,
+      ts: lastEntry.epoch.endTime,
+      hash: null,
+      edge: 'r',
+      approx: true
+    })
+  }
+  const longEpochs = list.some(e => (e.epoch?.endTime - e.epoch?.startTime) >= 86400000)
+
+  // boundaries carve the wave into one segment per epoch, ending at the edge markers
+  const segments = points.map((p, i) => {
+    const l = i === 0 ? EDGE_L : (points[i - 1].x + p.x) / 2
+    const r = i === lastIdx ? EDGE_R : (p.x + points[i + 1].x) / 2
+    return { l: l / 100, w: (r - l) / 100 }
+  })
   // anchor the line to the block edges for the full-bleed look
   const linePts = [{ x: 0, y: points[0].y }, ...points, { x: 100, y: points[lastIdx].y }]
   const lineD = `M ${linePts.map(p => `${p.x} ${p.y}`).join(' L ')}`
@@ -352,16 +431,12 @@ export function EpochsOverview ({ title, epochs, currentEpoch, rate, loading }) 
     return best
   }
 
-  // crosshair position is set straight on the DOM node so mousemove causes zero re-renders
-  const handleMove = (e) => {
-    const rect = e.currentTarget.getBoundingClientRect()
-    const xPct = ((e.clientX - rect.left) / rect.width) * 100
-    if (crosshairRef.current) crosshairRef.current.style.left = `${xPct}%`
-    setHovered(nearestIdx(e))
-  }
+  const handleMove = (e) => setHovered(nearestIdx(e))
+
+  const seg = segments[selIdx] ?? { l: 0, w: 1 }
 
   return (
-    <div className={'EpochsOverview'} style={{ '--epoch-x-frac': (points[selIdx]?.x ?? 50) / 100 }}>
+    <div className={'EpochsOverview'} style={{ '--epoch-seg-l': seg.l, '--epoch-seg-w': seg.w }}>
       <SectionHead title={title} currentEpoch={currentEpoch}/>
 
       <div
@@ -382,19 +457,16 @@ export function EpochsOverview ({ title, epochs, currentEpoch, rate, loading }) 
           <path className={'HomeHero__WaveScan'} d={lineD} fill={'none'} pathLength={'100'} vectorEffect={'non-scaling-stroke'}/>
         </svg>
 
-        <span
-          ref={crosshairRef}
-          className={`EpochsWave__Crosshair${hovered != null ? ' is-visible' : ''}`}
-          aria-hidden={'true'}
-        />
+        {bounds.map(b => <EpochBound key={`${b.edge || 'mid'}-${b.height}`} bound={b} longEpochs={longEpochs}/>)}
 
-        {/* two light rails framing the selected epoch, running down to its stats row */}
+        {/* light rails framing the selected epoch's whole segment (boundary to boundary) */}
         <span
           className={'EpochsWave__Beam'}
           style={{
-            left: `${points[selIdx]?.x ?? 50}%`,
-            // top sits just above the epoch number so no empty rail hangs over it
-            top: `calc(${points[selIdx]?.y ?? 50}% - 48px)`
+            left: `${seg.l * 100}%`,
+            width: `${seg.w * 100}%`,
+            // rails run down from the wave line, keeping the boundary labels unobstructed
+            top: `${points[selIdx]?.y ?? 50}%`
           }}
           aria-hidden={'true'}
         >

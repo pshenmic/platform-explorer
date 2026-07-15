@@ -636,6 +636,105 @@
     font-size: 0.8125rem;
   }
 
+  // dashed epoch-boundary line; only the label is clickable, clicks fall through the line
+  &__Bound {
+    position: absolute;
+    // top is set inline per boundary: it follows the wave height at that x
+    bottom: 12%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    z-index: 0;
+    pointer-events: none;
+
+    &::after {
+      content: '';
+      flex: 1;
+      width: 1px;
+      margin-top: 4px;
+      background: repeating-linear-gradient(
+        180deg,
+        rgba(255, 255, 255, 0.14) 0 4px,
+        transparent 4px 9px
+      );
+    }
+  }
+
+  // the estimated boundary is still forming: its dashed line gently breathes
+  &__Bound.is-approx::after {
+    animation: HeroMetaPulse 2.4s ease-in-out infinite;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    &__Bound.is-approx::after { animation: none; }
+  }
+
+  // edge markers hug the wave rims: labels align inward, the line sits on the rim
+  &__Bound--edgeL {
+    transform: none;
+    align-items: flex-start;
+
+    .EpochsWave__BoundLabel { align-items: flex-start; }
+  }
+
+  &__Bound--edgeR {
+    transform: translateX(-100%);
+    align-items: flex-end;
+
+    .EpochsWave__BoundLabel { align-items: flex-end; }
+  }
+
+  &__BoundLabel {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    text-decoration: none;
+    pointer-events: auto;
+
+    // the estimated final block is a projection, not a link: dimmer, no underline
+    &.is-approx {
+      opacity: 0.75;
+
+      .EpochsWave__BoundBlock { border-bottom: none; }
+      &:hover .EpochsWave__BoundBlock { color: var(--chakra-colors-gray-250); }
+    }
+
+    &:hover .EpochsWave__BoundBlock {
+      color: $color-brand-light;
+      border-bottom-color: rgba(var(--chakra-colors-brand-light-rgb), 0.7);
+    }
+  }
+
+  &__BoundBlock {
+    font-family: $font-mono;
+    font-size: 0.625rem;
+    color: var(--chakra-colors-gray-250);
+    white-space: nowrap;
+    // same "clickable value" affordance as the tooltip'ed stats below the wave
+    border-bottom: 1px dotted rgba(var(--chakra-colors-gray-500-rgb, 122, 132, 137), 0.5);
+    transition: color .15s, border-color .15s;
+  }
+
+  // the word is dimmer than the height, so the number stays the anchor
+  &__BoundTag {
+    color: var(--chakra-colors-gray-500);
+  }
+
+  &__BoundWhen {
+    font-family: $font-mono;
+    font-size: 0.5625rem;
+    color: var(--chakra-colors-gray-500);
+    white-space: nowrap;
+  }
+
+  // small screens: keep the break line, hide the labels so they can't collide with captions
+  @media screen and (max-width: $breakpoint-lg) {
+    &__BoundBlock,
+    &__BoundWhen { display: none; }
+  }
+
   // loading state: ghost outline of the coming chart instead of a solid placeholder box
   &__GhostLine {
     stroke: rgba(var(--chakra-colors-gray-500-rgb, 122, 132, 137), 0.25);
@@ -756,6 +855,11 @@
         transform: scale(1.12);
       }
     }
+
+    // the in-progress epoch breathes even when not selected
+    &.is-live .HomeHero__WaveDot {
+      animation: EpochDotBreath 2.4s ease-in-out infinite;
+    }
   }
 
   // hover anywhere over the wave snaps to the closest epoch; pointer cursor only on the buttons
@@ -779,22 +883,15 @@
   // two light rails framing the selected epoch column, running down to its stats row
   &__Beam {
     position: absolute;
-    // top is set inline; bottom extends past the wave box to land on the stats-row seam
+    // left/width/top are set inline to the epoch's segment; bottom lands on the stats-row seam
     bottom: -40px;
-    // widest caption is ~132px: 160px keeps >=14px of air on both sides and matches the seam width
-    width: 160px;
-    transform: translateX(-50%);
-
-    @media screen and (max-width: $breakpoint-lg) {
-      width: 120px;
-    }
     // barely-there inner fill, dissolving into the page background at the top
     background: linear-gradient(
       180deg,
       transparent,
       rgba(var(--chakra-colors-brand-light-rgb), 0.08)
     );
-    transition: left .3s ease, top .3s ease;
+    transition: left .3s ease, width .3s ease, top .3s ease;
     pointer-events: none;
 
     // edge rails, intensifying toward the stats row below
@@ -830,26 +927,6 @@
 
     &--l { left: -1px; }
     &--r { right: -1px; }
-  }
-
-  // vertical crosshair tracking the cursor continuously across the wave (trading-chart style)
-  &__Crosshair {
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    width: 1px;
-    background: linear-gradient(
-      180deg,
-      transparent,
-      rgba(var(--chakra-colors-brand-light-rgb), 0.45) 30%,
-      rgba(var(--chakra-colors-brand-light-rgb), 0.45) 70%,
-      transparent
-    );
-    opacity: 0;
-    transition: opacity .2s;
-    pointer-events: none;
-
-    &.is-visible { opacity: 1; }
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -894,32 +971,12 @@
     gap: 12px;
   }
 
-  // live (in-progress) epoch summary inside the badge: | ● #N · 40 min. left
+  // epoch length note inside the badge: | every 1h (the live epoch itself is on the wave)
   &__Now {
     display: inline-flex;
     align-items: center;
-    gap: 8px;
     border-left: 1px solid rgba(255, 255, 255, 0.3);
     padding-left: 12px;
-
-    // gently pulsing live dot (white reads best on the brand-blue badge)
-    &::before {
-      content: '';
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
-      background: #fff;
-      box-shadow: 0 0 6px rgba(255, 255, 255, 0.7);
-      animation: HeroMetaPulse 1.6s ease-in-out infinite;
-    }
-  }
-
-  &__NowNumber {
-    font-family: $font-heading;
-    font-weight: 800;
-    font-style: italic;
-    font-size: 0.9375rem;
-    color: #fff;
   }
 
   &__NowMeta {
@@ -928,16 +985,6 @@
     font-family: $font-mono;
     color: rgba(255, 255, 255, 0.75);
     white-space: nowrap;
-
-    // typographic separator between the epoch number and the ticking time
-    &::before { content: '· '; }
-
-    .TimeRemaining,
-    .TimeRemaining__TimeLeft { display: inline; }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    &__Now::before { animation: none; }
   }
 
   // selected-epoch stat row sits below the wave (details right under the chart you click);
@@ -951,7 +998,7 @@
     flex-wrap: wrap;
     gap: 8px 24px;
     min-width: 0;
-    // full-bleed like the wave, so --epoch-x-frac maps 1:1; cells keep the inner padding
+    // full-bleed like the wave, so the segment vars map 1:1; cells keep the inner padding
     margin: 10px -32px 0;
     padding: 22px 32px 0;
 
@@ -961,14 +1008,13 @@
       padding: 22px 0 0;
     }
 
-    // glowing seam under the selected epoch
+    // glowing seam spanning the selected epoch's segment (boundary to boundary)
     &::before {
       content: '';
       position: absolute;
       top: -1px;
-      left: calc(100% * var(--epoch-x-frac, 0.5));
-      transform: translateX(-50%);
-      width: 160px;
+      left: calc(100% * var(--epoch-seg-l, 0));
+      width: calc(100% * var(--epoch-seg-w, 1));
       height: 2px;
       background: linear-gradient(
         90deg,
@@ -976,7 +1022,7 @@
         rgba(var(--chakra-colors-brand-light-rgb), 0.75),
         transparent
       );
-      transition: left .3s ease;
+      transition: left .3s ease, width .3s ease;
       pointer-events: none;
     }
 
@@ -1027,19 +1073,20 @@
   // scaling from the seam origin stretches the gradient like poured liquid
   &__Wash {
     position: absolute;
-    // the pool runs all the way down to the card's bottom edge (32px padding, 16px below lg)
-    inset: -6px 0 -32px;
+    // flush with the row's hairline on top, down to the card's bottom edge (32px padding, 16px below lg);
+    // the pool fills the WHOLE row — its epicentre tracks the selected segment's centre
+    inset: 0 0 -32px;
 
     @media screen and (max-width: $breakpoint-lg) {
-      inset: -6px 0 -16px;
+      inset: 0 0 -16px;
     }
     background: radial-gradient(
-      ellipse 60% 150% at calc(100% * var(--epoch-x-frac, 0.5)) 0%,
+      ellipse 60% 150% at calc(100% * (var(--epoch-seg-l, 0) + var(--epoch-seg-w, 1) / 2)) 0%,
       rgba(var(--chakra-colors-brand-normal-rgb), 0.18),
       rgba(var(--chakra-colors-brand-normal-rgb), 0.055) 55%,
       transparent 95%
     );
-    transform-origin: calc(100% * var(--epoch-x-frac, 0.5)) top;
+    transform-origin: calc(100% * (var(--epoch-seg-l, 0) + var(--epoch-seg-w, 1) / 2)) top;
     animation: EpochWashPour .9s ease-out backwards;
     pointer-events: none;
     z-index: -1;
