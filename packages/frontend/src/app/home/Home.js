@@ -1,8 +1,8 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo, useRef } from 'react'
 import Link from 'next/link'
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, useQueries } from '@tanstack/react-query'
 import * as Api from '../../util/Api'
 import HomeHero from './HomeHero.js'
 import { MetricChart, EpochsOverview, StatusBar, HeroMeta, MasternodesDonut, TxTypesBar, ShieldedPoolCard, CompactTxList, CompactBlocksList } from '../../components/home'
@@ -23,6 +23,11 @@ function computeAvgBlockTime (blocks) {
   return Math.round(total / (stamps.length - 1) / 1000)
 }
 
+function epochNumbersOf (current) {
+  if (typeof current !== 'number') return []
+  return [current - 3, current - 2, current - 1, current].filter(n => n >= 0)
+}
+
 function Home () {
   const [validators, setValidators] = useState({ data: {}, loading: true, error: false })
   const [validatorsActive, setValidatorsActive] = useState({ data: {}, loading: true, error: false })
@@ -31,63 +36,89 @@ function Home () {
   const [activeContested, setActiveContested] = useState({ data: {}, loading: true, error: false })
   const [latestContested, setLatestContested] = useState({ data: {}, loading: true, error: false })
   const [latestVotes, setLatestVotes] = useState({ data: {}, loading: true, error: false })
-  const [epochData, setEpochData] = useState({ data: {}, loading: true, error: false })
-  const [epochs, setEpochs] = useState({ data: { list: [] }, loading: true, error: false })
   const [rate, setRate] = useState({ data: {}, loading: true, error: false })
 
   const gap = theme.blockOffset
+  const secondaryStarted = useRef(false)
 
   // refetchInterval keeps the hero and both lists live; focus revalidation is the v5 default
   const statusQuery = useQuery({ queryKey: ['home', 'status'], queryFn: Api.getStatus, refetchInterval: 60000 })
   const txQuery = useQuery({ queryKey: ['home', 'transactions'], queryFn: () => Api.getTransactions(1, 10, 'desc'), refetchInterval: 30000 })
   const blocksQuery = useQuery({ queryKey: ['home', 'blocks'], queryFn: () => Api.getBlocks(1, 10, 'desc'), refetchInterval: 30000 })
 
-  // 3 finalized epochs + the in-progress one for the wave; keyed by the epoch number so a rollover refreshes it
   const currentEpochNumber = statusQuery.data?.epoch?.number
+  const epochNumbers = useMemo(() => epochNumbersOf(currentEpochNumber), [currentEpochNumber])
 
-  // refresh the in-progress epoch on every status tick and merge it into the wave's last entry
+  // one query per epoch — results stream in independently (no Promise.all gate on the skeleton)
+  const epochQueries = useQueries({
+    queries: epochNumbers.map(n => ({
+      queryKey: ['home', 'epoch', n],
+      queryFn: () => Api.getEpoch(n),
+      staleTime: 30_000,
+      // live epoch refreshes with the status cadence; finalized epochs stay cached
+      refetchInterval: n === currentEpochNumber ? 60_000 : false
+    }))
+  })
+
+  // progressive list: whatever has arrived, in epoch order (partial wave is OK)
+  const epochDataStamp = epochQueries.map(q => `${q.dataUpdatedAt}:${q.fetchStatus}`).join('|')
+  const epochsBaseList = useMemo(() => (
+    epochNumbers
+      .map((n, i) => epochQueries[i]?.data)
+      .filter(Boolean)
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- stamp tracks per-query arrivals
+  ), [epochNumbers, epochDataStamp])
+
+  const epochsLoading = typeof currentEpochNumber !== 'number' ||
+    (epochsBaseList.length === 0 && epochQueries.some(q => q.isPending || q.isLoading))
+
+  // phase B: first-block meta only after an epoch exists (does not block the wave)
+  const blockQueries = useQueries({
+    queries: epochsBaseList.map(ep => {
+      const height = ep?.epoch?.firstBlockHeight
+      return {
+        queryKey: ['home', 'epoch-block', height],
+        queryFn: () => Api.getBlocks(1, 1, 'asc', { height_min: height, height_max: height }),
+        enabled: height != null,
+        staleTime: 60_000
+      }
+    })
+  })
+
+  const blockDataStamp = blockQueries.map(q => q.dataUpdatedAt).join('|')
+  const epochsList = useMemo(() => (
+    epochsBaseList.map((ep, i) => {
+      const blockRes = blockQueries[i]?.data
+      if (!blockRes) return ep
+      return {
+        ...ep,
+        protocolVersion: blockRes?.resultSet?.[0]?.header?.appVersion ?? null,
+        firstBlockHash: blockRes?.resultSet?.[0]?.header?.hash ?? null
+      }
+    })
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- stamp tracks block enrich arrivals
+  ), [epochsBaseList, blockDataStamp])
+
+  const currentEpochPayload = epochsList.find(e => e?.epoch?.number === currentEpochNumber) || null
+  const epochData = {
+    data: currentEpochPayload || {},
+    loading: typeof currentEpochNumber === 'number' && !currentEpochPayload && epochsLoading,
+    error: false
+  }
+
+  // secondary cards wait until the first epoch has painted (or all epoch queries settled empty)
   useEffect(() => {
+    if (secondaryStarted.current) return
     if (typeof currentEpochNumber !== 'number') return
 
-    Api.getEpoch(currentEpochNumber)
-      .then(ep => {
-        fetchHandlerSuccess(setEpochData, ep)
-        setEpochs(s => {
-          const epochsList = s.data?.list || []
-          const last = epochsList[epochsList.length - 1]
-          if (last?.epoch?.number !== currentEpochNumber) return s
-          // keep protocolVersion/firstBlockHash resolved earlier, refresh the live fields
-          return { ...s, data: { list: [...epochsList.slice(0, -1), { ...last, ...ep }] } }
-        })
-      })
-      .catch(err => fetchHandlerError(setEpochData, err))
-  }, [currentEpochNumber, statusQuery.dataUpdatedAt])
+    const epochsSettled = epochNumbers.length > 0 &&
+      epochQueries.length === epochNumbers.length &&
+      epochQueries.every(q => !q.isPending && !q.isLoading)
+    const canStartSecondary = epochsBaseList.length > 0 || epochsSettled
+    if (!canStartSecondary) return
 
-  useEffect(() => {
-    if (typeof currentEpochNumber !== 'number') return
+    secondaryStarted.current = true
 
-    const numbers = [currentEpochNumber - 3, currentEpochNumber - 2, currentEpochNumber - 1, currentEpochNumber].filter(n => n >= 0)
-    Promise.all(numbers.map(n =>
-      Api.getEpoch(n)
-        .then(ep => {
-          const height = ep?.epoch?.firstBlockHeight
-          if (height == null) return ep
-          // protocol version is not part of /epoch, so read it from the epoch's first block
-          return Api.getBlocks(1, 1, 'asc', { height_min: height, height_max: height })
-            .then(blocksRes => ({
-              ...ep,
-              protocolVersion: blocksRes?.resultSet?.[0]?.header?.appVersion ?? null,
-              firstBlockHash: blocksRes?.resultSet?.[0]?.header?.hash ?? null
-            }))
-            .catch(() => ep)
-        })
-        .catch(() => null)
-    ))
-      .then(results => fetchHandlerSuccess(setEpochs, { list: results.filter(Boolean) }))
-      .catch(err => fetchHandlerError(setEpochs, err))
-  }, [currentEpochNumber])
-
-  const fetchData = () => {
     Api.getValidators(1, 100, 'desc')
       .then(res => fetchHandlerSuccess(setValidators, res))
       .catch(err => fetchHandlerError(setValidators, err))
@@ -119,9 +150,7 @@ function Home () {
     Api.getRate()
       .then(res => fetchHandlerSuccess(setRate, res))
       .catch(err => fetchHandlerError(setRate, err))
-  }
-
-  useEffect(fetchData, [])
+  }, [currentEpochNumber, epochNumbers.length, epochsBaseList.length, epochQueries])
 
   const avgBlockTimeSec = computeAvgBlockTime(blocksQuery.data?.resultSet)
 
@@ -162,10 +191,11 @@ function Home () {
         <Box className={'InfoBlock InfoBlock--NoBorder HomeEpochs'} w={'100%'}>
           <EpochsOverview
             title={'Epochs'}
-            epochs={epochs.data?.list}
+            epochs={epochsList}
             currentEpoch={epochData}
             rate={rate}
-            loading={epochs.loading}
+            loading={epochsLoading}
+            slotNumbers={epochNumbers}
           />
         </Box>
 
