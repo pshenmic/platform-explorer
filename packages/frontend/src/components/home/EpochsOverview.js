@@ -55,6 +55,8 @@ function EpochBound ({ bound, longEpochs }) {
       {bound.hash
         ? <Link
             href={`/block/${bound.hash}`}
+            // boundary hashes change with the epoch wave; skip viewport prefetch so they don't pile up in the router cache
+            prefetch={false}
             className={'EpochsWave__BoundLabel'}
             aria-label={`Epoch boundary, first block #${bound.height}`}
           >
@@ -286,7 +288,7 @@ function EpochCells ({ data, nextData, rate, washKey }) {
 
       <StatusCell label={'Top proposer'} hint={'Validator that proposed the most blocks this epoch.'}>
         {data.bestValidator
-          ? <Link href={`/validator/${data.bestValidator}`} className={'EpochsOverview__Proposer'}>
+          ? <Link href={`/validator/${data.bestValidator}`} prefetch={false} className={'EpochsOverview__Proposer'}>
               <span className={'EpochsOverview__Stat EpochsOverview__ProposerVal'}>{proposerAnim}</span>
             </Link>
           : <span className={'EpochsOverview__Stat'}>-</span>}

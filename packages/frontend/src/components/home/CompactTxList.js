@@ -49,6 +49,8 @@ export function CompactTxList ({ transactions, limit = 7, loading }) {
         <Link
           key={tx.hash}
           href={`/transaction/${tx.hash}`}
+          // rows churn every refresh tick; prefetching each new hash grows the router cache for the tab's lifetime
+          prefetch={false}
           className={`CompactTx__Row${newKeys.has(tx.hash) ? ' is-new' : ''}`}
           // fresh rows cascade in top-down instead of swapping in one frame
           style={newKeys.has(tx.hash) ? { '--stagger': `${i * 50}ms` } : undefined}

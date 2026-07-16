@@ -40,6 +40,8 @@ export function CompactBlocksList ({ blocks, limit = 7, loading }) {
           <Link
             key={header?.hash}
             href={`/block/${header?.hash}`}
+            // rows churn every refresh tick; prefetching each new hash grows the router cache for the tab's lifetime
+            prefetch={false}
             className={`CompactBlocks__Row${newKeys.has(header?.hash) ? ' is-new' : ''}`}
             // fresh rows cascade in top-down instead of swapping in one frame
             style={newKeys.has(header?.hash) ? { '--stagger': `${i * 50}ms` } : undefined}
