@@ -63,7 +63,7 @@ function ChartGhost ({ type }) {
   )
 }
 
-export function MetricChart ({ title, type = 'line', fetcher, field, yAbbr = '' }) {
+export function MetricChart ({ title, type = 'line', fetcher, field, yAbbr = '', enabled = true }) {
   const [presetIdx, setPresetIdx] = useState(DEFAULT_PRESET)
   const [state, setState] = useState({ loading: true, error: false, points: [] })
   const [width, setWidth] = useState(0)
@@ -77,6 +77,11 @@ export function MetricChart ({ title, type = 'line', fetcher, field, yAbbr = '' 
   }, [])
 
   useEffect(() => {
+    // below-fold: stay skeleton until parent prioritizes above-fold status/epochs
+    if (!enabled) {
+      setState(s => ({ ...s, loading: true, error: false }))
+      return
+    }
     const preset = PRESETS[presetIdx]
     const { start, end } = presetRange(preset)
     setState(s => ({ ...s, loading: true, error: false }))
@@ -91,7 +96,7 @@ export function MetricChart ({ title, type = 'line', fetcher, field, yAbbr = '' 
         setState({ loading: false, error: false, points: pts.slice(s) })
       })
       .catch(() => setState({ loading: false, error: true, points: [] }))
-  }, [presetIdx, fetcher, field])
+  }, [presetIdx, fetcher, field, enabled])
 
   const { loading, error, points } = state
   const preset = PRESETS[presetIdx]

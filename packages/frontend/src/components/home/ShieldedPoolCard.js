@@ -27,7 +27,7 @@ function barH (amount, max) {
 }
 
 // shielded pool overview: balance + in/out totals over diverging in/out flow bars
-export default function ShieldedPoolCard ({ rate }) {
+export default function ShieldedPoolCard ({ rate, enabled = true }) {
   const [stats, setStats] = useState({ loading: true, error: false, data: null })
   const [flows, setFlows] = useState({ loading: true, buckets: [] })
   const [presetIdx, setPresetIdx] = useState(DEFAULT_PRESET)
@@ -35,12 +35,20 @@ export default function ShieldedPoolCard ({ rate }) {
 
   // pool balance and totals are all-time by nature: fetched once, unaffected by the preset
   useEffect(() => {
+    if (!enabled) {
+      setStats(s => ({ ...s, loading: true, error: false }))
+      return
+    }
     Api.getShieldedStatistic()
       .then(res => setStats({ loading: false, error: false, data: res }))
       .catch(() => setStats({ loading: false, error: true, data: null }))
-  }, [])
+  }, [enabled])
 
   useEffect(() => {
+    if (!enabled) {
+      setFlows(s => ({ ...s, loading: true }))
+      return
+    }
     const preset = PRESETS[presetIdx]
     const { start, end } = presetRange(preset)
     const intervals = SPARK_INTERVALS[preset.label] ?? 30
@@ -61,7 +69,7 @@ export default function ShieldedPoolCard ({ rate }) {
       while (s < buckets.length - 1 && !buckets[s].inAmt && !buckets[s].outAmt) s++
       setFlows({ loading: false, buckets: buckets.slice(s) })
     })
-  }, [presetIdx])
+  }, [presetIdx, enabled])
 
   const data = stats.data
   const balanceCredits = Number(data?.poolBalance) || 0

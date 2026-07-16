@@ -29,9 +29,6 @@ function epochNumbersOf (current) {
 }
 
 function Home () {
-  const [validators, setValidators] = useState({ data: {}, loading: true, error: false })
-  const [validatorsActive, setValidatorsActive] = useState({ data: {}, loading: true, error: false })
-  const [validatorsBanned, setValidatorsBanned] = useState({ data: {}, loading: true, error: false })
   const [contested, setContested] = useState({ data: {}, loading: true, error: false })
   const [activeContested, setActiveContested] = useState({ data: {}, loading: true, error: false })
   const [latestContested, setLatestContested] = useState({ data: {}, loading: true, error: false })
@@ -41,10 +38,39 @@ function Home () {
   const gap = theme.blockOffset
   const secondaryStarted = useRef(false)
 
-  // refetchInterval keeps the hero and both lists live; focus revalidation is the v5 default
+  // wave 0: hero + overview + validator totals (independent; RQ dedupes Strict Mode double-mount)
   const statusQuery = useQuery({ queryKey: ['home', 'status'], queryFn: Api.getStatus, refetchInterval: 60000 })
   const txQuery = useQuery({ queryKey: ['home', 'transactions'], queryFn: () => Api.getTransactions(1, 10, 'desc'), refetchInterval: 30000 })
   const blocksQuery = useQuery({ queryKey: ['home', 'blocks'], queryFn: () => Api.getBlocks(1, 10, 'desc'), refetchInterval: 30000 })
+  const validatorsQuery = useQuery({
+    queryKey: ['home', 'validators', 'total'],
+    queryFn: () => Api.getValidators(1, 1, 'desc'),
+    staleTime: 60_000
+  })
+  const validatorsActiveQuery = useQuery({
+    queryKey: ['home', 'validators', 'active'],
+    queryFn: () => Api.getValidators(1, 1, 'desc', { isActive: 'true' }),
+    staleTime: 60_000
+  })
+  const validatorsBannedQuery = useQuery({
+    queryKey: ['home', 'validators', 'banned'],
+    queryFn: () => Api.getValidators(1, 1, 'desc', { isBanned: 'true' }),
+    staleTime: 60_000
+  })
+
+  // shape expected by MasternodesDonut ({ data, loading })
+  const validators = {
+    data: validatorsQuery.data ?? {},
+    loading: validatorsQuery.isPending || validatorsQuery.isLoading
+  }
+  const validatorsActive = {
+    data: validatorsActiveQuery.data ?? {},
+    loading: validatorsActiveQuery.isPending || validatorsActiveQuery.isLoading
+  }
+  const validatorsBanned = {
+    data: validatorsBannedQuery.data ?? {},
+    loading: validatorsBannedQuery.isPending || validatorsBannedQuery.isLoading
+  }
 
   const currentEpochNumber = statusQuery.data?.epoch?.number
   const epochNumbers = useMemo(() => epochNumbersOf(currentEpochNumber), [currentEpochNumber])
@@ -106,30 +132,11 @@ function Home () {
     error: false
   }
 
-  // secondary cards wait until the first epoch has painted (or all epoch queries settled empty)
+  // gov + rate after status (parallel with epochs); keep them off wave 0 so validators keep bandwidth
   useEffect(() => {
     if (secondaryStarted.current) return
-    if (typeof currentEpochNumber !== 'number') return
-
-    const epochsSettled = epochNumbers.length > 0 &&
-      epochQueries.length === epochNumbers.length &&
-      epochQueries.every(q => !q.isPending && !q.isLoading)
-    const canStartSecondary = epochsBaseList.length > 0 || epochsSettled
-    if (!canStartSecondary) return
-
+    if (!statusQuery.isSuccess) return
     secondaryStarted.current = true
-
-    Api.getValidators(1, 100, 'desc')
-      .then(res => fetchHandlerSuccess(setValidators, res))
-      .catch(err => fetchHandlerError(setValidators, err))
-
-    Api.getValidators(1, 1, 'desc', { isActive: 'true' })
-      .then(res => fetchHandlerSuccess(setValidatorsActive, res))
-      .catch(err => fetchHandlerError(setValidatorsActive, err))
-
-    Api.getValidators(1, 1, 'desc', { isBanned: 'true' })
-      .then(res => fetchHandlerSuccess(setValidatorsBanned, res))
-      .catch(err => fetchHandlerError(setValidatorsBanned, err))
 
     Api.getContestedResourcesStats()
       .then(res => fetchHandlerSuccess(setContested, res))
@@ -150,7 +157,13 @@ function Home () {
     Api.getRate()
       .then(res => fetchHandlerSuccess(setRate, res))
       .catch(err => fetchHandlerError(setRate, err))
-  }, [currentEpochNumber, epochNumbers.length, epochsBaseList.length, epochQueries])
+  }, [statusQuery.isSuccess])
+
+  // below-fold charts wait until the first epoch paints (or all epoch queries settle empty)
+  const epochsSettled = epochNumbers.length > 0 &&
+    epochQueries.length === epochNumbers.length &&
+    epochQueries.every(q => !q.isPending && !q.isLoading)
+  const belowFoldReady = epochsBaseList.length > 0 || epochsSettled
 
   const avgBlockTimeSec = computeAvgBlockTime(blocksQuery.data?.resultSet)
 
@@ -194,10 +207,10 @@ function Home () {
         </Box>
 
         <SimpleGrid columns={{ base: 1, md: 2 }} spacing={gap} w={'100%'}>
-          <MetricChart title={'Transactions history'} type={'bar'} fetcher={Api.getTransactionsHistory} field={'txs'} yAbbr={'txs'}/>
-          <MetricChart title={'Identities growth'} type={'line'} fetcher={Api.getIdentitiesHistory} field={'registeredIdentities'} yAbbr={'identities'}/>
-          <TxTypesBar/>
-          <ShieldedPoolCard rate={rate}/>
+          <MetricChart title={'Transactions history'} type={'bar'} fetcher={Api.getTransactionsHistory} field={'txs'} yAbbr={'txs'} enabled={belowFoldReady}/>
+          <MetricChart title={'Identities growth'} type={'line'} fetcher={Api.getIdentitiesHistory} field={'registeredIdentities'} yAbbr={'identities'} enabled={belowFoldReady}/>
+          <TxTypesBar enabled={belowFoldReady}/>
+          <ShieldedPoolCard rate={rate} enabled={belowFoldReady}/>
           <MasternodesDonut validators={validators} validatorsActive={validatorsActive} validatorsBanned={validatorsBanned}/>
           <Box className={'InfoBlock InfoBlock--NoBorder HomeGovCard'} w={'100%'}>
             <Heading className={'InfoBlock__Title'} as={'h2'}>Governance</Heading>

@@ -17,14 +17,18 @@ function labelOf (type) {
 }
 
 // all-time tx counts by state transition type: one stacked share bar over a chip legend
-export default function TxTypesBar () {
+export default function TxTypesBar ({ enabled = true }) {
   const [state, setState] = useState({ loading: true, error: false, items: [] })
 
   useEffect(() => {
+    if (!enabled) {
+      setState(s => ({ ...s, loading: true, error: false }))
+      return
+    }
     Api.getTransactionsStatistic()
       .then(res => setState({ loading: false, error: false, items: Array.isArray(res) ? res : [] }))
       .catch(() => setState({ loading: false, error: true, items: [] }))
-  }, [])
+  }, [enabled])
 
   const sorted = [...state.items]
     .filter(t => (t.count || 0) > 0)
