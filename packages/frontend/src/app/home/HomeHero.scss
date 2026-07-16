@@ -711,6 +711,18 @@
   100% { opacity: 1; transform: scale(1, 1); }
 }
 
+// progressive slot fill: keep the centering translate, only scale/opacity
+@keyframes EpochPointIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.85);
+  }
+  to {
+    opacity: 0.55;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
 // Epochs overview wave: last 4 epochs as clickable points + selected-epoch detail
 .EpochsWave {
   &--Empty {
@@ -855,6 +867,24 @@
   @media (prefers-reduced-motion: reduce) {
     &__GhostScan { animation: none; stroke-dasharray: none; opacity: 0.3; }
     &__GhostDot { animation: none; }
+    &__Point.is-ready { animation: none; }
+    &__Point,
+    &__GhostDot--slot,
+    &__Line,
+    &__Area { transition: none; }
+  }
+
+  // progressive fill: ghost holds the fixed slot; live point fades in without rebinding X
+  &__GhostDot--slot {
+    animation: none;
+    opacity: 0.35;
+    transition: top .35s ease, opacity .2s ease;
+  }
+
+  // d-path morph is not universal; opacity still softens redraws
+  &__Line,
+  &__Area {
+    transition: opacity .25s ease;
   }
 
   // only the 28px dot box stays in flow so translate(-50%,-50%) centers it on the vertex
@@ -865,13 +895,19 @@
     font: inherit;
     cursor: pointer;
     opacity: 0.55;
-    transition: opacity .15s;
+    // top eases when y-scale refines; left stays fixed per slot
+    transition: opacity .15s, top .35s ease;
     width: 28px;
     height: 28px;
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 0;
+
+    // one-shot entrance when an epoch payload fills this slot
+    &.is-ready {
+      animation: EpochPointIn .22s ease-out both;
+    }
 
     .HomeHero__WaveValue { font-size: 1.5rem; }
 
@@ -926,6 +962,13 @@
     @media screen and (max-width: $breakpoint-lg) {
       .HomeHero__WaveValue { font-size: 0.875rem; }
       .HomeHero__WaveLabel { font-size: 0.625rem; }
+    }
+
+    // entrance fill-mode must not lock opacity after select/hover
+    &.is-ready.is-selected,
+    &.is-ready.is-hovered {
+      animation: none;
+      opacity: 1;
     }
 
     &.is-selected {

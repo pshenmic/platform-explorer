@@ -95,7 +95,7 @@ function EpochPoint ({ epoch, metricLabel, x, y, selected, hovered, onSelect }) 
   return (
     <button
       type={'button'}
-      className={`HomeHero__WavePoint EpochsWave__Point${selected ? ' is-selected' : ''}${hovered ? ' is-hovered' : ''}${inProgress ? ' is-live' : ''}`}
+      className={`HomeHero__WavePoint EpochsWave__Point is-ready${selected ? ' is-selected' : ''}${hovered ? ' is-hovered' : ''}${inProgress ? ' is-live' : ''}`}
       style={{ left: `${x}%`, top: `${y}%` }}
       onClick={onSelect}
       aria-pressed={selected}
@@ -315,38 +315,68 @@ function EpochCells ({ data, nextData, rate, washKey }) {
   )
 }
 
-export function EpochsOverview ({ title, epochs, currentEpoch, rate, loading }) {
-  const list = Array.isArray(epochs) ? epochs.filter(e => e?.epoch) : []
-  const lastIdx = list.length - 1
+// fixed topology for progressive fill: always n-3…n (or whatever slotNumbers parent passes)
+function deriveSlots (slotNumbers, currentEpoch, arrived) {
+  if (Array.isArray(slotNumbers) && slotNumbers.length) return slotNumbers
+  const cur = currentEpoch?.data?.epoch?.number
+  if (typeof cur === 'number') {
+    return [cur - 3, cur - 2, cur - 1, cur].filter(n => n >= 0)
+  }
+  if (arrived.length) {
+    const max = Math.max(...arrived.map(e => e.epoch.number))
+    return [max - 3, max - 2, max - 1, max].filter(n => n >= 0)
+  }
+  return []
+}
+
+export function EpochsOverview ({ title, epochs, currentEpoch, rate, loading, slotNumbers }) {
+  const arrived = Array.isArray(epochs) ? epochs.filter(e => e?.epoch) : []
+  const byNumber = new Map(arrived.map(e => [e.epoch.number, e]))
+  const slots = deriveSlots(slotNumbers, currentEpoch, arrived)
+  const lastIdx = Math.max(0, slots.length - 1)
+
   const [selected, setSelected] = useState(lastIdx)
   const [hovered, setHovered] = useState(null)
 
-  // keep selection pinned to the newest epoch as data streams in
-  useEffect(() => { setSelected(lastIdx) }, [lastIdx])
+  // pin selection to the newest *arrived* epoch (stable slot index, not growing list index)
+  useEffect(() => {
+    for (let i = slots.length - 1; i >= 0; i--) {
+      if (byNumber.has(slots[i])) {
+        setSelected(i)
+        return
+      }
+    }
+    setSelected(lastIdx)
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- only when slot set or which epochs have data changes
+  }, [slots.join(','), arrived.map(e => e.epoch.number).join(',')])
 
-  // skeleton keeps the section footprint; the wave loads as a ghost outline, not a grey box
-  if (loading && !list.length) {
+  // status not ready yet: fixed 4-slot ghost scaffold (same footprint as the live wave)
+  if (!slots.length) {
     const ghostYs = [46, 40, 52, 44]
-    const ghostPts = X_POSITIONS.map((gx, i) => ({ x: gx, y: ghostYs[i] }))
-    const ghostLine = [{ x: 0, y: ghostYs[0] }, ...ghostPts, { x: 100, y: ghostYs[ghostYs.length - 1] }]
+    const ghostPts = X_POSITIONS.map((gx, i) => ({ x: gx, y: ghostYs[i] ?? 46 }))
+    const ghostLine = [{ x: 0, y: ghostYs[0] }, ...ghostPts, { x: 100, y: ghostYs[ghostPts.length - 1] }]
     const ghostD = `M ${ghostLine.map(p => `${p.x} ${p.y}`).join(' L ')}`
 
     return (
       <div className={'EpochsOverview'}>
         <SectionHead title={title} currentEpoch={currentEpoch}/>
-        <div className={'HomeHero__Wave EpochsWave EpochsWave--Skeleton'}>
-          <svg className={'HomeHero__WaveSvg'} viewBox={'0 0 100 100'} preserveAspectRatio={'none'} aria-hidden={'true'}>
-            <path className={'EpochsWave__GhostLine'} d={ghostD} fill={'none'} vectorEffect={'non-scaling-stroke'}/>
-            <path className={'EpochsWave__GhostScan'} d={ghostD} fill={'none'} pathLength={'100'} vectorEffect={'non-scaling-stroke'}/>
-          </svg>
-          {ghostPts.map(p => (
-            <span
-              key={p.x}
-              className={'EpochsWave__GhostDot'}
-              style={{ left: `${p.x}%`, top: `${p.y}%` }}
-              aria-hidden={'true'}
-            />
-          ))}
+        <div className={`HomeHero__Wave EpochsWave${loading ? ' EpochsWave--Skeleton' : ' EpochsWave--Empty'}`}>
+          {loading
+            ? <>
+                <svg className={'HomeHero__WaveSvg'} viewBox={'0 0 100 100'} preserveAspectRatio={'none'} aria-hidden={'true'}>
+                  <path className={'EpochsWave__GhostLine'} d={ghostD} fill={'none'} vectorEffect={'non-scaling-stroke'}/>
+                  <path className={'EpochsWave__GhostScan'} d={ghostD} fill={'none'} pathLength={'100'} vectorEffect={'non-scaling-stroke'}/>
+                </svg>
+                {ghostPts.map(p => (
+                  <span
+                    key={p.x}
+                    className={'EpochsWave__GhostDot'}
+                    style={{ left: `${p.x}%`, top: `${p.y}%` }}
+                    aria-hidden={'true'}
+                  />
+                ))}
+              </>
+            : 'No epoch data'}
         </div>
         <div className={'EpochsOverview__Detail'}>
           <div className={'EpochsOverview__Cells HomeHero__StatusBar'}>
@@ -362,49 +392,58 @@ export function EpochsOverview ({ title, epochs, currentEpoch, rate, loading }) 
     )
   }
 
-  if (!list.length) {
-    return (
-      <div className={'EpochsOverview'}>
-        <SectionHead title={title} currentEpoch={currentEpoch}/>
-        <div className={'HomeHero__Wave EpochsWave EpochsWave--Empty'}>No epoch data</div>
-      </div>
-    )
-  }
-
-  // wave height is driven by tx count — the one metric available for every epoch incl. current
-  const txCounts = list.map(e => Number(e.totalTxCount) || 0)
-  const tMin = Math.min(...txCounts)
-  const tMax = Math.max(...txCounts)
+  // y-scale from arrived data only; empty slots sit on the midline until filled (X never rebinds)
+  const knownTx = slots
+    .map(n => byNumber.get(n))
+    .filter(Boolean)
+    .map(e => Number(e.totalTxCount) || 0)
+  const tMin = knownTx.length ? Math.min(...knownTx) : 0
+  const tMax = knownTx.length ? Math.max(...knownTx) : 1
+  const midY = (Y_HIGH + Y_LOW) / 2
   const yOf = (v) => {
-    if (tMax === tMin) return (Y_HIGH + Y_LOW) / 2
+    if (!knownTx.length || tMax === tMin) return midY
     return Y_LOW - ((v - tMin) / (tMax - tMin)) * (Y_LOW - Y_HIGH)
   }
 
-  const points = list.map((e, i) => ({ x: X_POSITIONS[i] ?? (i / Math.max(1, lastIdx)) * 100, y: yOf(txCounts[i]) }))
+  const points = slots.map((num, i) => {
+    const ep = byNumber.get(num)
+    return {
+      num,
+      x: X_POSITIONS[i] ?? (i / Math.max(1, lastIdx)) * 100,
+      y: ep ? yOf(Number(ep.totalTxCount) || 0) : midY,
+      ep: ep || null,
+      ready: !!ep
+    }
+  })
 
-  // epoch boundaries sit between adjacent points: epoch i ended where epoch i+1 began
-  const bounds = list.slice(1).map((e, i) => ({
-    x: (points[i].x + points[i + 1].x) / 2,
-    // wave height at the boundary (the line is straight between vertices) — labels ride above it
-    y: (points[i].y + points[i + 1].y) / 2,
-    height: e.epoch?.firstBlockHeight,
-    ts: e.epoch?.startTime,
-    hash: e.firstBlockHash
-  })).filter(b => b.height != null)
+  // boundaries only where we know the next epoch's first block
+  const bounds = []
+  for (let i = 1; i < points.length; i++) {
+    const e = points[i].ep
+    if (!e?.epoch?.firstBlockHeight) continue
+    bounds.push({
+      x: (points[i - 1].x + points[i].x) / 2,
+      y: (points[i - 1].y + points[i].y) / 2,
+      height: e.epoch.firstBlockHeight,
+      ts: e.epoch.startTime,
+      hash: e.firstBlockHash
+    })
+  }
 
-  // edge markers: exact window start; projected live-epoch close (height estimated)
-  if (list[0]?.epoch?.firstBlockHeight != null) {
+  const firstReady = points.find(p => p.ready)
+  if (firstReady?.ep?.epoch?.firstBlockHeight != null) {
     bounds.unshift({
       x: EDGE_L,
       y: points[0].y,
-      height: list[0].epoch.firstBlockHeight,
-      ts: list[0].epoch.startTime,
-      hash: list[0].firstBlockHash,
+      height: firstReady.ep.epoch.firstBlockHeight,
+      ts: firstReady.ep.epoch.startTime,
+      hash: firstReady.ep.firstBlockHash,
       edge: 'l'
     })
   }
-  const lastEntry = list[lastIdx]
-  const prevEntry = list[lastIdx - 1]
+
+  const lastEntry = points[lastIdx]?.ep
+  const prevEntry = points[lastIdx - 1]?.ep
   if (
     lastEntry?.epoch?.endTime > Date.now() &&
     lastEntry?.epoch?.firstBlockHeight != null &&
@@ -421,44 +460,44 @@ export function EpochsOverview ({ title, epochs, currentEpoch, rate, loading }) 
       approx: true
     })
   }
-  const longEpochs = list.some(e => (e.epoch?.endTime - e.epoch?.startTime) >= 86400000)
 
-  // boundaries carve the wave into one segment per epoch, ending at the edge markers
+  const longEpochs = arrived.some(e => (e.epoch?.endTime - e.epoch?.startTime) >= 86400000)
+
   const segments = points.map((p, i) => {
     const l = i === 0 ? EDGE_L : (points[i - 1].x + p.x) / 2
     const r = i === lastIdx ? EDGE_R : (p.x + points[i + 1].x) / 2
     return { l: l / 100, w: (r - l) / 100 }
   })
-  // anchor the line to the block edges for the full-bleed look
-  const linePts = [{ x: 0, y: points[0].y }, ...points, { x: 100, y: points[lastIdx].y }]
+
+  // full-width path through all 4 fixed slots (ghosts hold the midline until filled)
+  const linePts = [{ x: 0, y: points[0].y }, ...points.map(p => ({ x: p.x, y: p.y })), { x: 100, y: points[lastIdx].y }]
   const lineD = `M ${linePts.map(p => `${p.x} ${p.y}`).join(' L ')}`
   const areaD = `M 0 100 L ${linePts.map(p => `${p.x} ${p.y}`).join(' L ')} L 100 100 Z`
 
-  const selIdx = Math.min(selected, lastIdx)
-  // cells below always show the CLICKED epoch; hover only highlights on the chart
-  const shown = list[selIdx] || list[lastIdx]
+  const selIdx = Math.min(Math.max(0, selected), lastIdx)
+  const shown = points[selIdx]?.ep || points.filter(p => p.ready).at(-1)?.ep
+  const nextShown = points[selIdx + 1]?.ep
 
-  // nearest-point snap: any position over the wave maps to the closest epoch
   const nearestIdx = (e) => {
     const rect = e.currentTarget.getBoundingClientRect()
     const xPct = ((e.clientX - rect.left) / rect.width) * 100
     let best = 0
-    for (let i = 1; i < list.length; i++) {
+    for (let i = 1; i < points.length; i++) {
       if (Math.abs(xPct - points[i].x) < Math.abs(xPct - points[best].x)) best = i
     }
     return best
   }
 
   const handleMove = (e) => setHovered(nearestIdx(e))
-
   const seg = segments[selIdx] ?? { l: 0, w: 1 }
+  const hasAny = points.some(p => p.ready)
 
   return (
     <div className={'EpochsOverview'} style={{ '--epoch-seg-l': seg.l, '--epoch-seg-w': seg.w }}>
       <SectionHead title={title} currentEpoch={currentEpoch}/>
 
       <div
-        className={'HomeHero__Wave EpochsWave'}
+        className={`HomeHero__Wave EpochsWave${hasAny ? '' : ' EpochsWave--Skeleton'}`}
         onMouseMove={handleMove}
         onMouseLeave={() => setHovered(null)}
       >
@@ -469,45 +508,69 @@ export function EpochsOverview ({ title, epochs, currentEpoch, rate, loading }) 
               <stop offset={'100%'} stopColor={'rgba(0, 141, 228, 0)'}/>
             </linearGradient>
           </defs>
-          <path d={areaD} fill={'url(#homeEpochFill)'} stroke={'none'}/>
-          <path className={'HomeHero__WaveLine'} d={lineD} fill={'none'} vectorEffect={'non-scaling-stroke'}/>
-          <path className={'HomeHero__WaveScanGlow'} d={lineD} fill={'none'} pathLength={'100'} vectorEffect={'non-scaling-stroke'}/>
-          <path className={'HomeHero__WaveScan'} d={lineD} fill={'none'} pathLength={'100'} vectorEffect={'non-scaling-stroke'}/>
+          {hasAny
+            ? <>
+                <path className={'EpochsWave__Area'} d={areaD} fill={'url(#homeEpochFill)'} stroke={'none'}/>
+                <path className={'HomeHero__WaveLine EpochsWave__Line'} d={lineD} fill={'none'} vectorEffect={'non-scaling-stroke'}/>
+                <path className={'HomeHero__WaveScanGlow'} d={lineD} fill={'none'} pathLength={'100'} vectorEffect={'non-scaling-stroke'}/>
+                <path className={'HomeHero__WaveScan'} d={lineD} fill={'none'} pathLength={'100'} vectorEffect={'non-scaling-stroke'}/>
+              </>
+            : <>
+                <path className={'EpochsWave__GhostLine'} d={lineD} fill={'none'} vectorEffect={'non-scaling-stroke'}/>
+                <path className={'EpochsWave__GhostScan'} d={lineD} fill={'none'} pathLength={'100'} vectorEffect={'non-scaling-stroke'}/>
+              </>}
         </svg>
 
-        {bounds.map(b => <EpochBound key={`${b.edge || 'mid'}-${b.height}`} bound={b} longEpochs={longEpochs}/>)}
+        {hasAny && bounds.map(b => (
+          <EpochBound key={`${b.edge || 'mid'}-${b.height}`} bound={b} longEpochs={longEpochs}/>
+        ))}
 
-        {/* light rails framing the selected epoch's whole segment (boundary to boundary) */}
-        <span
-          className={'EpochsWave__Beam'}
-          style={{
-            left: `${seg.l * 100}%`,
-            width: `${seg.w * 100}%`,
-            // rails run down from the wave line, keeping the boundary labels unobstructed
-            top: `${points[selIdx]?.y ?? 50}%`
-          }}
-          aria-hidden={'true'}
-        >
-          <span key={`l-${selIdx}`} className={'EpochsWave__BeamPulse EpochsWave__BeamPulse--l'}/>
-          <span key={`r-${selIdx}`} className={'EpochsWave__BeamPulse EpochsWave__BeamPulse--r'}/>
-        </span>
+        {hasAny &&
+          <span
+            className={'EpochsWave__Beam'}
+            style={{
+              left: `${seg.l * 100}%`,
+              width: `${seg.w * 100}%`,
+              top: `${points[selIdx]?.y ?? 50}%`
+            }}
+            aria-hidden={'true'}
+          >
+            <span key={`l-${selIdx}`} className={'EpochsWave__BeamPulse EpochsWave__BeamPulse--l'}/>
+            <span key={`r-${selIdx}`} className={'EpochsWave__BeamPulse EpochsWave__BeamPulse--r'}/>
+          </span>}
 
-        {list.map((e, i) => (
-          <EpochPoint
-            key={e.epoch.number}
-            epoch={e.epoch}
-            metricLabel={`${compact(txCounts[i])} tx`}
-            x={points[i].x}
-            y={points[i].y}
-            selected={i === selIdx}
-            hovered={i === hovered}
-            onSelect={() => setSelected(i)}
-          />
+        {points.map((p, i) => (
+          p.ready
+            ? <EpochPoint
+                key={p.num}
+                epoch={p.ep.epoch}
+                metricLabel={`${compact(Number(p.ep.totalTxCount) || 0)} tx`}
+                x={p.x}
+                y={p.y}
+                selected={i === selIdx}
+                hovered={i === hovered}
+                onSelect={() => setSelected(i)}
+              />
+            : <span
+                key={`ghost-${p.num}`}
+                className={'EpochsWave__GhostDot EpochsWave__GhostDot--slot'}
+                style={{ left: `${p.x}%`, top: `${p.y}%` }}
+                aria-hidden={'true'}
+              />
         ))}
       </div>
 
       <div className={'EpochsOverview__Detail'}>
-        <EpochCells data={shown} nextData={list[selIdx + 1]} rate={rate} washKey={selIdx}/>
+        {shown
+          ? <EpochCells data={shown} nextData={nextShown} rate={rate} washKey={selIdx}/>
+          : <div className={'EpochsOverview__Cells HomeHero__StatusBar'}>
+              {Array.from({ length: 7 }).map((_, i) => (
+                <div className={'HomeHero__StatusCell'} key={i}>
+                  <Skeleton w={'48px'} h={'0.6em'}/>
+                  <Skeleton w={'64px'} h={'1.1em'} className={'EpochsOverview__SkelGap'}/>
+                </div>
+              ))}
+            </div>}
       </div>
     </div>
   )
