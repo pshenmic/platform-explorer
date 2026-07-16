@@ -1,0 +1,132 @@
+@import '../../styles/variables.scss';
+
+// badge family hues with lightness steps: distinct color per category; BATCH stays muted
+$txtype-colors: (
+  'BATCH': rgba(255, 255, 255, 0.45),
+  'MASTERNODE_VOTE': #f49a58,
+  'IDENTITY_CREDIT_TRANSFER': #d9742c,
+  'IDENTITY_CREDIT_WITHDRAWAL': #f45858,
+  'IDENTITY_CREATE': #2cbbff,
+  'DATA_CONTRACT_CREATE': #008de4,
+  'IDENTITY_UPDATE': #f4e458,
+  'DATA_CONTRACT_UPDATE': #cfae2e,
+  'IDENTITY_TOP_UP': #58f4bc,
+  'SHIELD': #81f458,
+  'SHIELD_FROM_ASSET_LOCK': #5fd437,
+  'SHIELDED_TRANSFER': #a4f77e,
+  'UNSHIELD': #66e04a,
+  'SHIELDED_WITHDRAWAL': #8fee62,
+  'IDENTITY_CREATE_FROM_SHIELDED_POOL': #b8fa9b,
+  'ADDRESS_FUNDING_FROM_ASSET_LOCK': #93aab2,
+  'ADDRESS_FUNDS_TRANSFER': #7b939c,
+  'ADDRESS_CREDIT_WITHDRAWAL': #a8bcc3,
+  'IDENTITY_CREDIT_TRANSFER_TO_ADDRESS': #86979e,
+  'IDENTITY_CREATE_FROM_ADDRESSES': #9fb3ba,
+  'IDENTITY_TOP_UP_FROM_ADDRESSES': #8ba0a8,
+  'UNKNOWN': rgba(255, 255, 255, 0.25)
+);
+
+.TxTypesBar {
+  &__Head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 6px;
+  }
+
+  &__Total {
+    font-family: $font-heading;
+    font-weight: 800;
+    font-style: italic;
+    font-size: 1.125rem;
+    color: #fff;
+    white-space: nowrap;
+  }
+
+  &__TotalLabel {
+    font-family: $font-mono;
+    font-style: normal;
+    font-weight: 400;
+    font-size: 0.625rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--chakra-colors-gray-500);
+  }
+
+  &__Body {
+    height: 200px;
+    display: flex;
+    align-items: center;
+  }
+
+  &__Stack {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  &__Empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    font-size: 0.8125rem;
+    color: var(--chakra-colors-gray-500);
+  }
+
+  &__Bar {
+    display: flex;
+    gap: 2px;
+    width: 100%;
+    height: 14px;
+    border-radius: 7px;
+    overflow: hidden;
+  }
+
+  &__Seg {
+    display: block;
+    height: 100%;
+    transition: width 0.6s ease;
+
+    &:hover { filter: brightness(1.25); }
+  }
+
+  &__Chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px 22px;
+    font-family: $font-mono;
+    font-size: 0.6875rem;
+    color: var(--chakra-colors-gray-250);
+  }
+
+  &__Chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+  }
+
+  &__ChipCount {
+    color: var(--chakra-colors-gray-500);
+  }
+
+  &__Dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  @each $name, $color in $txtype-colors {
+    &__Seg--#{$name} { background: $color; }
+    &__Dot--#{$name} { background: $color; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    &__Seg { transition: none; }
+  }
+}

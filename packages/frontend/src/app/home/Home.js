@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { useQuery } from '@tanstack/react-query'
 import * as Api from '../../util/Api'
 import HomeHero from './HomeHero.js'
-import { MetricChart, EpochsOverview, StatusBar, HeroMeta, MasternodesDonut, TxTypesDonut, ShieldedPoolCard, CompactTxList, CompactBlocksList } from '../../components/home'
+import { MetricChart, EpochsOverview, StatusBar, HeroMeta, MasternodesDonut, TxTypesBar, ShieldedPoolCard, CompactTxList, CompactBlocksList } from '../../components/home'
 import { fetchHandlerSuccess, fetchHandlerError } from '../../util'
 import theme from '../../styles/theme'
 import { Box, Container, Flex, Heading, SimpleGrid } from '@chakra-ui/react'
@@ -170,7 +170,7 @@ function Home () {
         </Box>
 
         <SimpleGrid columns={{ base: 1, md: 2, xl: 3 }} spacing={gap} w={'100%'}>
-          <TxTypesDonut/>
+          <TxTypesBar/>
           <MasternodesDonut validators={validators} validatorsActive={validatorsActive} validatorsBanned={validatorsBanned}/>
           <Box className={'InfoBlock InfoBlock--NoBorder HomeGovCard'} w={'100%'}>
             <Heading className={'InfoBlock__Title'} as={'h2'}>Governance</Heading>
