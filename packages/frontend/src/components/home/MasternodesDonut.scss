@@ -9,13 +9,13 @@
     margin-bottom: 6px;
   }
 
+  // donut left, breakdown rows right
   &__Body {
     height: 200px;
     display: flex;
-    flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 10px;
+    gap: 22px;
   }
 
   &__Empty {
@@ -25,6 +25,21 @@
     height: 100%;
     font-size: 0.8125rem;
     color: var(--chakra-colors-gray-500);
+  }
+
+  &__Chart {
+    position: relative;
+  }
+
+  // loading placeholders centered in the ring, sized like the real number/label
+  &__ChartSkeleton {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
   }
 
   &__Svg {
@@ -39,8 +54,9 @@
 
   &__Arc {
     stroke: $color-brand-normal;
-    filter: drop-shadow(0 0 6px rgba(var(--chakra-colors-brand-normal-rgb), 0.5));
-    transition: stroke-dashoffset 0.6s ease;
+    // keep the glow tighter than the inter-segment gap so it can't tint neighbors
+    filter: drop-shadow(0 0 3px rgba(var(--chakra-colors-brand-normal-rgb), 0.35));
+    transition: stroke-dasharray 0.6s ease;
   }
 
   &__ArcBanned {
@@ -62,25 +78,74 @@
     letter-spacing: 0.06em;
   }
 
+  // wide enough that the share bars soak up the card's spare width
   &__Legend {
     display: flex;
-    align-items: center;
-    gap: 18px;
+    flex-direction: column;
+    gap: 9px;
+    flex: 0 1 380px;
+    min-width: 0;
     font-family: $font-mono;
-    font-size: 0.75rem;
+    font-size: 0.6875rem;
     color: var(--chakra-colors-gray-250);
   }
 
   &__LegendItem {
-    display: inline-flex;
+    display: flex;
     align-items: center;
     gap: 6px;
+    min-width: 0;
+  }
+
+  &__LegendLabel {
+    flex-shrink: 0;
+    width: 9ch;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__LegendBar {
+    flex: 1;
+    min-width: 40px;
+    height: 4px;
+    border-radius: 2px;
+    background: rgba(255, 255, 255, 0.07);
+    overflow: hidden;
+  }
+
+  &__LegendFill {
+    display: block;
+    height: 100%;
+    border-radius: 2px;
+    transition: width 0.6s ease;
+
+    &--active { background: $color-brand-normal; }
+    &--inactive { background: rgba(255, 255, 255, 0.18); }
+    &--banned { background: var(--chakra-colors-red-default, #f45858); }
+  }
+
+  &__LegendCount {
+    flex-shrink: 0;
+    min-width: 4ch;
+    padding-left: 4px;
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+  }
+
+  &__LegendPct {
+    flex-shrink: 0;
+    min-width: 3.5ch;
+    text-align: right;
+    color: var(--chakra-colors-gray-500);
+    font-variant-numeric: tabular-nums;
   }
 
   &__Dot {
     width: 8px;
     height: 8px;
     border-radius: 50%;
+    flex-shrink: 0;
 
     &--active { background: $color-brand-normal; }
     &--inactive { background: rgba(255, 255, 255, 0.18); }
@@ -88,6 +153,7 @@
   }
 
   &__Caption {
+    margin-top: 2px;
     font-family: $font-mono;
     font-size: 0.6875rem;
     color: var(--chakra-colors-gray-500);
@@ -95,5 +161,6 @@
 
   @media (prefers-reduced-motion: reduce) {
     &__Arc { transition: none; }
+    &__LegendFill { transition: none; }
   }
 }
