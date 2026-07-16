@@ -182,12 +182,6 @@ function Home () {
           </div>
         </Box>
 
-        <SimpleGrid columns={{ base: 1, md: 2, xl: 3 }} spacing={gap} w={'100%'}>
-          <MetricChart title={'Transactions history'} type={'bar'} fetcher={Api.getTransactionsHistory} field={'txs'} yAbbr={'txs'}/>
-          <MetricChart title={'Identities growth'} type={'line'} fetcher={Api.getIdentitiesHistory} field={'registeredIdentities'} yAbbr={'identities'}/>
-          <ShieldedPoolCard rate={rate}/>
-        </SimpleGrid>
-
         <Box className={'InfoBlock InfoBlock--NoBorder HomeEpochs'} w={'100%'}>
           <EpochsOverview
             title={'Epochs'}
@@ -199,8 +193,11 @@ function Home () {
           />
         </Box>
 
-        <SimpleGrid columns={{ base: 1, md: 2, xl: 3 }} spacing={gap} w={'100%'}>
+        <SimpleGrid columns={{ base: 1, md: 2 }} spacing={gap} w={'100%'}>
+          <MetricChart title={'Transactions history'} type={'bar'} fetcher={Api.getTransactionsHistory} field={'txs'} yAbbr={'txs'}/>
+          <MetricChart title={'Identities growth'} type={'line'} fetcher={Api.getIdentitiesHistory} field={'registeredIdentities'} yAbbr={'identities'}/>
           <TxTypesBar/>
+          <ShieldedPoolCard rate={rate}/>
           <MasternodesDonut validators={validators} validatorsActive={validatorsActive} validatorsBanned={validatorsBanned}/>
           <Box className={'InfoBlock InfoBlock--NoBorder HomeGovCard'} w={'100%'}>
             <Heading className={'InfoBlock__Title'} as={'h2'}>Governance</Heading>
