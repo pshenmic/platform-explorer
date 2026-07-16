@@ -11,15 +11,20 @@
   display: flex;
   flex-direction: column;
 
+  // soft brand wash without live filter:blur — gaussian filter here was a continuous GPU tax
   &__Glow {
     position: absolute;
     top: -40%;
     left: -8%;
-    width: 480px;
-    height: 480px;
+    width: 520px;
+    height: 520px;
     border-radius: 50%;
-    background: radial-gradient(circle, rgba(var(--chakra-colors-brand-normal-rgb), 0.18) 0%, rgba(var(--chakra-colors-brand-normal-rgb), 0) 60%);
-    filter: blur(50px);
+    background: radial-gradient(
+      circle,
+      rgba(var(--chakra-colors-brand-normal-rgb), 0.22) 0%,
+      rgba(var(--chakra-colors-brand-normal-rgb), 0.08) 38%,
+      rgba(var(--chakra-colors-brand-normal-rgb), 0) 68%
+    );
     pointer-events: none;
     z-index: 0;
   }
