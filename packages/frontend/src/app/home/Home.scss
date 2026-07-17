@@ -87,6 +87,24 @@
       white-space: nowrap;
     }
 
+    // four content-sized tiles per row: equal 1fr tracks are too narrow for "operational"
+    @media screen and (max-width: $breakpoint-md) {
+      .HomeHero__Meta {
+        grid-template-columns: repeat(4, auto);
+        justify-content: space-between;
+      }
+
+      .HomeHero__MetaItem {
+        min-height: 0;
+        padding: 2px 0;
+        border-bottom: none;
+      }
+
+      .HomeHero__MetaValue {
+        font-size: 0.6875rem;
+      }
+    }
+
     @media screen and (min-width: $breakpoint-lg) {
       border-right: 1px solid rgba(var(--chakra-colors-gray-800-rgb), 0.6);
       padding-right: 2rem;

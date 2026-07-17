@@ -481,11 +481,16 @@
     width: auto;
     height: 150px;
     // full-bleed to the block edges; top clearance keeps epoch numbers off the badge
+    // (negative margins mirror the BlockSpacing card padding at each breakpoint)
     margin: 14px -32px 0;
     padding: 0;
 
     @media screen and (max-width: $breakpoint-lg) {
-      margin: 14px 0 0;
+      margin: 14px -20px 0;
+    }
+
+    @media screen and (max-width: $breakpoint-md) {
+      margin: 14px -16px 0;
     }
   }
 
@@ -1128,13 +1133,22 @@
     gap: 8px 24px;
     min-width: 0;
     // full-bleed like the wave, so the segment vars map 1:1; cells keep the inner padding
+    // (negative margins mirror the BlockSpacing card padding at each breakpoint)
     margin: 10px -32px 0;
     padding: 22px 32px 0;
 
-    // below lg the wave is not full-bleed either, so the row stays inside the padding
     @media screen and (max-width: $breakpoint-lg) {
-      margin: 10px 0 0;
-      padding: 22px 0 0;
+      margin: 10px -20px 0;
+      padding: 22px 20px 0;
+    }
+
+    @media screen and (max-width: $breakpoint-md) {
+      margin: 10px -16px 0;
+      padding: 22px 16px 0;
+      // phone KPI grid; minmax(0,1fr) lets tracks shrink below the hash's min-content
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: 14px 16px;
     }
 
     // glowing seam spanning the selected epoch's segment (boundary to boundary)
@@ -1164,6 +1178,30 @@
       min-width: 0;
       padding: 0;
       border: none;
+
+      @media screen and (max-width: $breakpoint-md) {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 4px;
+      }
+    }
+
+    // proposer takes a full row; without :has the cell just keeps the short clip
+    @media screen and (max-width: $breakpoint-md) {
+      .HomeHero__StatusCell:has(.EpochsOverview__Proposer) {
+        grid-column: 1 / -1;
+      }
+
+      // every wrapper must shrink, or the 64-char hash blows the grid out via min-content
+      .HomeHero__StatusValue,
+      .EpochsOverview__Proposer {
+        min-width: 0;
+        max-width: 100%;
+      }
+
+      .EpochsOverview__ProposerVal {
+        max-width: 100%;
+      }
     }
 
     // labels never break into a second line, same as the values
@@ -1202,11 +1240,15 @@
   // scaling from the seam origin stretches the gradient like poured liquid
   &__Wash {
     position: absolute;
-    // flush with the row's hairline on top, down to the card's bottom edge (32px padding, 16px below lg);
+    // flush with the row's hairline on top, down to the card's bottom edge (mirrors BlockSpacing);
     // the pool fills the WHOLE row — its epicentre tracks the selected segment's centre
     inset: 0 0 -32px;
 
     @media screen and (max-width: $breakpoint-lg) {
+      inset: 0 0 -20px;
+    }
+
+    @media screen and (max-width: $breakpoint-md) {
       inset: 0 0 -16px;
     }
     background: radial-gradient(
