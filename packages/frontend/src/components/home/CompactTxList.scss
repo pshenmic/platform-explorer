@@ -70,10 +70,20 @@
     min-width: 11ch;
   }
 
-  // very narrow: drop the type badge so hash + time stay readable
+  // very narrow: hash and badge split the space and clip; the tooltip keeps the full type
   @media screen and (max-width: $breakpoint-sm) {
-    grid-template-columns: 18px minmax(0, 1fr) 11ch;
-    &__Type { display: none; }
+    grid-template-columns: 18px minmax(0, 1.1fr) minmax(0, 0.9fr) 11ch;
+
+    &__Type {
+      justify-self: start;
+      min-width: 0;
+
+      .chakra-badge {
+        max-width: 100%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+    }
   }
 
   // new rows cascade in with a fading highlight; backwards keeps delayed rows hidden

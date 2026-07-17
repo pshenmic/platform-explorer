@@ -58,6 +58,12 @@ $txtype-colors: (
     height: 200px;
     display: flex;
     align-items: center;
+
+    // the chip legend wraps into ~10 rows on a phone: let the card grow instead of overflowing
+    @media screen and (max-width: $breakpoint-md) {
+      height: auto;
+      padding: 6px 0 2px;
+    }
   }
 
   &__Stack {
@@ -101,6 +107,13 @@ $txtype-colors: (
     font-family: $font-mono;
     font-size: 0.6875rem;
     color: var(--chakra-colors-gray-250);
+
+    // even two-column grid on phones; tail names clip, the tooltip keeps the full name
+    @media screen and (max-width: $breakpoint-md) {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px 14px;
+    }
   }
 
   &__Chip {
@@ -108,10 +121,29 @@ $txtype-colors: (
     align-items: center;
     gap: 6px;
     white-space: nowrap;
+
+    @media screen and (max-width: $breakpoint-md) {
+      display: flex;
+      min-width: 0;
+    }
+  }
+
+  &__ChipLabel {
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    @media screen and (max-width: $breakpoint-md) {
+      flex: 1;
+      min-width: 0;
+    }
   }
 
   &__ChipCount {
     color: var(--chakra-colors-gray-500);
+
+    @media screen and (max-width: $breakpoint-md) {
+      margin-left: auto;
+    }
   }
 
   &__Dot {
