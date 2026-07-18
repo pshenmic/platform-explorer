@@ -1744,6 +1744,16 @@ const buildIndexBuffer = (name) => {
 const getAliasStateByVote = (aliasInfo, alias, identifier) => {
   let status = null
 
+  if (aliasInfo.unknownState) {
+    return Alias.fromObject({
+      alias: alias.alias ?? alias,
+      status: 'unknown',
+      contested: true,
+      timestamp: alias.timestamp ? new Date(alias.timestamp) : null,
+      txHash: alias.tx
+    })
+  }
+
   if (aliasInfo.contestedState === null) {
     return Alias.fromObject({
       alias: alias.alias,
@@ -1801,18 +1811,26 @@ const getAliasInfo = async (aliasText, sdk) => {
 
     const labelBuffer = buildIndexBuffer(normalizedLabel)
 
-    const contestedState = await sdk.contestedResources.getContestedResourceVoteState(
-      DataContractWASM.fromValue(dpnsContract, true),
-      'domain',
-      'parentNameAndLabel',
-      [
-        domainBuffer,
-        labelBuffer
-      ],
-      ContestedStateResultType.DOCUMENTS_AND_VOTE_TALLY
-    )
+    try {
+      const contestedState = await sdk.contestedResources.getContestedResourceVoteState(
+        DataContractWASM.fromValue(dpnsContract, true),
+        'domain',
+        'parentNameAndLabel',
+        [
+          domainBuffer,
+          labelBuffer
+        ],
+        ContestedStateResultType.DOCUMENTS_AND_VOTE_TALLY
+      )
 
-    return { alias: aliasText, contestedState }
+      return { alias: aliasText, contestedState }
+    } catch (e) {
+      if (e.message !== 'Vote state not found') {
+        throw e
+      }
+
+      return { alias: aliasText, contestedState: null, unknownState: true }
+    }
   }
 
   return { alias: aliasText, contestedState: null }

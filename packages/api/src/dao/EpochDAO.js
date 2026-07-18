@@ -81,38 +81,56 @@ module.exports = class EpochDAO {
       .limit(1)
       .as('epochInfo')
 
-    const [row] = await this.knex(bestValidator)
-      .orderBy('rating', 'desc')
-      .limit(1)
-      .select(
-        'validator as best_validator',
-        this.knex(epochInfo).select('total_tx_count').as('total_tx_count'),
-        this.knex(epochInfo).select('total_collected_fees').as('total_collected_fees'),
-        this.knex(epochInfo).select('tps').as('tps'),
-        this.knex(votesSubquery).select('index_values').as('top_voted_resource'),
-        this.knex(votes)
-          .count('* as yes')
-          .where('choice', '=', ChoiceEnum.TowardsIdentity)
-          .as('resource_votes_yes'),
-        this.knex(votes)
-          .count('* as abstain')
-          .where('choice', '=', ChoiceEnum.ABSTAIN)
-          .as('resource_votes_abstain'),
-        this.knex(votes)
-          .count('* as lock')
-          .where('choice', '=', ChoiceEnum.LOCK)
-          .as('resource_votes_lock'),
-        this.knex(votersSubquery).select('voter_identity_id').limit(1).as('voter_identity_id'),
-        this.knex(votersSubquery).select('voter_yes').limit(1).as('voter_yes'),
-        this.knex(votersSubquery).select('voter_abstain').limit(1).as('voter_abstain'),
-        this.knex(votersSubquery).select('voter_lock').limit(1).as('voter_lock'),
-        this.knex(votesBaseSubquery)
+    const isInProgressEpoch = epoch.totalBlocksInEpoch === null && epoch.endTime > Date.now()
+
+    const columns = [
+      this.knex(bestValidator)
+        .select('validator')
+        .orderBy('rating', 'desc')
+        .limit(1)
+        .as('best_validator'),
+      this.knex(epochInfo).select('total_tx_count').as('total_tx_count'),
+      this.knex(epochInfo).select('total_collected_fees').as('total_collected_fees'),
+      this.knex(epochInfo).select('tps').as('tps'),
+      this.knex(votesSubquery).select('index_values').as('top_voted_resource'),
+      this.knex(votes)
+        .count('* as yes')
+        .where('choice', '=', ChoiceEnum.TowardsIdentity)
+        .as('resource_votes_yes'),
+      this.knex(votes)
+        .count('* as abstain')
+        .where('choice', '=', ChoiceEnum.ABSTAIN)
+        .as('resource_votes_abstain'),
+      this.knex(votes)
+        .count('* as lock')
+        .where('choice', '=', ChoiceEnum.LOCK)
+        .as('resource_votes_lock'),
+      this.knex(votersSubquery).select('voter_identity_id').limit(1).as('voter_identity_id'),
+      this.knex(votersSubquery).select('voter_yes').limit(1).as('voter_yes'),
+      this.knex(votersSubquery).select('voter_abstain').limit(1).as('voter_abstain'),
+      this.knex(votersSubquery).select('voter_lock').limit(1).as('voter_lock'),
+      this.knex(votesBaseSubquery)
+        .count('*')
+        .as('total_votes'),
+      this.knex(votesBaseSubquery)
+        .sum('gas_used')
+        .as('total_votes_gas_used')
+    ]
+
+    if (isInProgressEpoch) {
+      columns.push(
+        this.knex('blocks')
           .count('*')
-          .as('total_votes'),
-        this.knex(votesBaseSubquery)
+          .where('height', '>=', Number(epoch.firstBlockHeight))
+          .as('pending_blocks_in_epoch'),
+        this.knex('state_transitions')
           .sum('gas_used')
-          .as('total_votes_gas_used')
+          .where('block_height', '>=', Number(epoch.firstBlockHeight))
+          .as('pending_epoch_reward')
       )
+    }
+
+    const [row] = await this.knex.select(columns)
 
     return EpochData.fromObject({ epoch, ...row })
   }
