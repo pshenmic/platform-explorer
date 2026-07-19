@@ -1555,6 +1555,53 @@ describe('Transaction routes', () => {
         expectedStatistic
       )
     })
+
+    it('should return transaction count grouped by type in the given interval', async () => {
+      const start = new Date(transactions[5].block.timestamp)
+      const end = new Date(transactions[15].block.timestamp)
+
+      const { body } = await client.get(`/transactions/statistic?timestamp_start=${start.toISOString()}&timestamp_end=${end.toISOString()}`)
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      const countsByType = transactions
+        .filter(({ block }) =>
+          new Date(block.timestamp).getTime() >= start.getTime() &&
+          new Date(block.timestamp).getTime() <= end.getTime()
+        )
+        .reduce((acc, { transaction }) => {
+          acc[transaction.type] = (acc[transaction.type] ?? 0) + 1
+          return acc
+        }, {})
+
+      const expectedStatistic = Object.entries(countsByType)
+        .map(([type, count]) => ({ transactionType: StateTransitionEnum[type], count }))
+        .sort((a, b) => a.transactionType.localeCompare(b.transactionType))
+
+      assert.deepEqual(
+        body.sort((a, b) => a.transactionType.localeCompare(b.transactionType)),
+        expectedStatistic
+      )
+    })
+
+    it('should return error if only one of start and end is set', async () => {
+      const { body } = await client.get(`/transactions/statistic?timestamp_start=${new Date().toISOString()}`)
+        .expect(400)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      assert.equal(body.message, 'start and end must be set')
+    })
+
+    it('should return error if start timestamp is more than end timestamp', async () => {
+      const start = new Date()
+      const end = new Date(start.getTime() - 3600000)
+
+      const { body } = await client.get(`/transactions/statistic?timestamp_start=${start.toISOString()}&timestamp_end=${end.toISOString()}`)
+        .expect(400)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      assert.equal(body.message, 'start timestamp cannot be more than end timestamp')
+    })
   })
 
   describe('getShieldHistorySeries() / getUnshieldHistorySeries()', async () => {
@@ -1631,6 +1678,137 @@ describe('Transaction routes', () => {
 
     it('should return error when start is after end', async () => {
       await client.get(`/transactions/shield/history?timestamp_start=${end.toISOString()}&timestamp_end=${start.toISOString()}`)
+        .expect(400)
+    })
+  })
+
+  describe('getInputHistorySeries() / getOutputHistorySeries()', async () => {
+    let start
+    let end
+    let inputAmount
+    let outputAmount
+
+    before(async () => {
+      start = new Date('2031-01-01T00:00:00.000Z')
+      end = new Date('2031-01-01T01:00:00.000Z')
+
+      inputAmount = 0
+      outputAmount = 0
+
+      let height = 2000
+      let minuteOffset = 3
+
+      // spread transitions across the window so they fall into different
+      // intervals of the resulting series
+      const createTransaction = async (type) => {
+        const block = await fixtures.block(knex, {
+          height: height++,
+          timestamp: new Date(start.getTime() + (minuteOffset += 5) * 60000)
+        })
+
+        return fixtures.transaction(knex, {
+          block_hash: block.hash,
+          block_height: block.height,
+          type,
+          owner: identity.identifier
+        })
+      }
+
+      // transitions with amounts in the transfers table
+      const transferTypes = {
+        [StateTransitionEnum.IDENTITY_CREATE]: true,
+        [StateTransitionEnum.IDENTITY_TOP_UP]: true,
+        [StateTransitionEnum.IDENTITY_CREDIT_WITHDRAWAL]: false
+      }
+
+      for (const [type, isInput] of Object.entries(transferTypes)) {
+        const transaction = await createTransaction(Number(type))
+
+        await fixtures.transfer(knex, {
+          amount: 100000000,
+          sender: isInput ? null : identity.identifier,
+          recipient: isInput ? identity.identifier : null,
+          state_transition_hash: transaction.hash
+        })
+
+        if (isInput) {
+          inputAmount += 100000000
+        } else {
+          outputAmount += 100000000
+        }
+      }
+
+      // transitions with amounts in the platform_address_transitions table
+      const platformAddress = await fixtures.platformAddress(knex, {})
+
+      const addressTypes = {
+        [StateTransitionEnum.ADDRESS_FUNDING_FROM_ASSET_LOCK]: true,
+        [StateTransitionEnum.ADDRESS_CREDIT_WITHDRAWAL]: false
+      }
+
+      for (const [type, isInput] of Object.entries(addressTypes)) {
+        const transaction = await createTransaction(Number(type))
+
+        await fixtures.platformAddressTransition(knex, {
+          sender_id: isInput ? null : platformAddress.id,
+          recipient_id: isInput ? platformAddress.id : null,
+          state_transition_id: transaction.id,
+          state_transition_type: Number(type),
+          amount: 70000000
+        })
+
+        if (isInput) {
+          inputAmount += 70000000
+        } else {
+          outputAmount += 70000000
+        }
+      }
+
+      // transitions with amounts in the shielded_transitions table
+      const shieldedTypes = {
+        [StateTransitionEnum.SHIELD_FROM_ASSET_LOCK]: true,
+        [StateTransitionEnum.SHIELDED_WITHDRAWAL]: false
+      }
+
+      for (const [type, isInput] of Object.entries(shieldedTypes)) {
+        const transaction = await createTransaction(Number(type))
+
+        await fixtures.shieldedTransition(knex, {
+          state_transition_id: transaction.id,
+          state_transition_type: Number(type),
+          amount: 50000000
+        })
+
+        if (isInput) {
+          inputAmount += 50000000
+        } else {
+          outputAmount += 50000000
+        }
+      }
+    })
+
+    it('should return input amount series', async () => {
+      const { body } = await client.get(`/transactions/input/history?timestamp_start=${start.toISOString()}&timestamp_end=${end.toISOString()}&intervalsCount=10`)
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      const totalAmount = body.reduce((acc, point) => acc + point.data.amount, 0)
+
+      assert.equal(totalAmount, inputAmount)
+    })
+
+    it('should return output amount series', async () => {
+      const { body } = await client.get(`/transactions/output/history?timestamp_start=${start.toISOString()}&timestamp_end=${end.toISOString()}&intervalsCount=10`)
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      const totalAmount = body.reduce((acc, point) => acc + point.data.amount, 0)
+
+      assert.equal(totalAmount, outputAmount)
+    })
+
+    it('should return error when start is after end', async () => {
+      await client.get(`/transactions/input/history?timestamp_start=${end.toISOString()}&timestamp_end=${start.toISOString()}`)
         .expect(400)
     })
   })

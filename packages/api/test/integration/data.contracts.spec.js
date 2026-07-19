@@ -1544,4 +1544,110 @@ describe('DataContracts routes', () => {
       assert.deepEqual(body.resultSet, expected)
     })
   })
+
+  describe('getActiveDataContracts()', () => {
+    let activeDataContracts
+    let start
+    let end
+
+    before(async () => {
+      activeDataContracts = []
+
+      // isolated time window so data seeded by other suites don't interfere
+      start = new Date('2031-01-01T00:00:00.000Z')
+      end = new Date('2031-01-02T00:00:00.000Z')
+
+      let height = 100000
+
+      // contract k gets (k + 1) transitions inside the range
+      // (1 from data contract create + k document transitions)
+      for (let k = 1; k <= 5; k++) {
+        const block = await fixtures.block(knex, {
+          height: height++,
+          timestamp: new Date(start.getTime() + k * 60000)
+        })
+
+        const identity = await fixtures.identity(knex, {
+          block_hash: block.hash,
+          block_height: block.height
+        })
+
+        const dataContractTransaction = await fixtures.transaction(knex, {
+          block_hash: block.hash,
+          block_height: block.height,
+          type: StateTransitionEnum.DATA_CONTRACT_CREATE,
+          owner: identity.identifier
+        })
+
+        const dataContract = await fixtures.dataContract(knex, {
+          owner: identity.identifier,
+          state_transition_hash: dataContractTransaction.hash
+        })
+
+        for (let j = 0; j < k; j++) {
+          const documentTransaction = await fixtures.transaction(knex, {
+            block_hash: block.hash,
+            block_height: block.height,
+            type: StateTransitionEnum.BATCH,
+            owner: identity.identifier,
+            index: j + 1
+          })
+
+          await fixtures.document(knex, {
+            owner: identity.identifier,
+            data_contract_id: dataContract.id,
+            state_transition_hash: documentTransaction.hash
+          })
+        }
+
+        activeDataContracts.push({
+          identifier: dataContract.identifier,
+          transitionsCount: k + 1
+        })
+      }
+
+      // contract with activity outside of the range must not appear
+      const block = await fixtures.block(knex, {
+        height: height++,
+        timestamp: new Date(end.getTime() + 60000)
+      })
+
+      const identity = await fixtures.identity(knex, {
+        block_hash: block.hash,
+        block_height: block.height
+      })
+
+      const dataContractTransaction = await fixtures.transaction(knex, {
+        block_hash: block.hash,
+        block_height: block.height,
+        type: StateTransitionEnum.DATA_CONTRACT_CREATE,
+        owner: identity.identifier
+      })
+
+      await fixtures.dataContract(knex, {
+        owner: identity.identifier,
+        state_transition_hash: dataContractTransaction.hash
+      })
+    })
+
+    it('should return active data contracts ordered by transitions count desc', async () => {
+      const { body } = await client.get(`/dataContracts/active?timestamp_start=${start.toISOString()}&timestamp_end=${end.toISOString()}&order=desc&page=1&limit=10`)
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      assert.equal(body.pagination.total, activeDataContracts.length)
+      assert.equal(body.pagination.page, 1)
+      assert.equal(body.pagination.limit, 10)
+
+      const expectedDataContracts = [...activeDataContracts]
+        .sort((a, b) => b.transitionsCount - a.transitionsCount)
+
+      assert.deepEqual(body.resultSet, expectedDataContracts)
+    })
+
+    it('should return error for bad timestamp range', async () => {
+      await client.get(`/dataContracts/active?timestamp_start=${end.toISOString()}&timestamp_end=${start.toISOString()}`)
+        .expect(400)
+    })
+  })
 })

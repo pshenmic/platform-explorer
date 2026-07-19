@@ -7,6 +7,7 @@ const fixtures = require('../utils/fixtures')
 const { getKnex } = require('../../src/utils')
 const tenderdashRpc = require('../../src/tenderdashRpc')
 const { NodeController } = require('dash-platform-sdk/src/node')
+const { DPNS_CONTRACT } = require('../../src/constants')
 
 describe('Epoch routes', () => {
   let app
@@ -19,6 +20,10 @@ describe('Epoch routes', () => {
   let validator
   let dataContracts
   let documents
+  let deletedDocuments
+  let contestedDocuments
+  let dpnsContract
+  let registeredNames
   let masternodeVotes
   let masternodeVotesGas
 
@@ -64,6 +69,9 @@ describe('Epoch routes', () => {
     identities = []
     dataContracts = []
     documents = []
+    deletedDocuments = []
+    contestedDocuments = []
+    registeredNames = []
     masternodeVotes = []
     masternodeVotesGas = 0
 
@@ -90,8 +98,52 @@ describe('Epoch routes', () => {
       })
       const document = await fixtures.document(knex, {
         owner: identity.identifier,
-        data_contract_id: dataContract.id
+        data_contract_id: dataContract.id,
+        state_transition_hash: transaction.hash
       })
+
+      if (i % 5 === 0) {
+        const deletedDocument = await fixtures.document(knex, {
+          owner: identity.identifier,
+          data_contract_id: dataContract.id,
+          state_transition_hash: transaction.hash,
+          transition_type: 2,
+          deleted: true
+        })
+
+        deletedDocuments.push(deletedDocument)
+      }
+
+      if (i === 1) {
+        dpnsContract = await fixtures.dataContract(knex, {
+          owner: identity.identifier,
+          identifier: DPNS_CONTRACT
+        })
+      }
+
+      if (i % 3 === 0) {
+        const nameDocument = await fixtures.document(knex, {
+          owner: identity.identifier,
+          data_contract_id: dpnsContract.id,
+          state_transition_hash: transaction.hash,
+          document_type_name: 'domain'
+        })
+
+        documents.push(nameDocument)
+        registeredNames.push(nameDocument)
+      }
+
+      if (i % 4 === 0) {
+        const contestedDocument = await fixtures.document(knex, {
+          owner: identity.identifier,
+          data_contract_id: dataContract.id,
+          state_transition_hash: transaction.hash,
+          prefunded_voting_balance: JSON.stringify({ parentNameAndLabel: 20000000000 })
+        })
+
+        documents.push(contestedDocument)
+        contestedDocuments.push(contestedDocument)
+      }
 
       const masternodeVotesPart = []
 
@@ -161,6 +213,11 @@ describe('Epoch routes', () => {
         totalVotesCount: 465,
         totalVotesGasUsed: masternodeVotesGas,
         totalTxCount: identities.length + transactions.length,
+        totalCreatedDocumentsCount: documents.length,
+        totalDeletedDocumentsCount: deletedDocuments.length,
+        totalRegisteredNamesCount: registeredNames.length,
+        totalContestedDocumentsCount: contestedDocuments.length,
+        avgBlockTime: 60000,
         pendingBlocksInEpoch: null,
         pendingEpochReward: null
       }
@@ -219,6 +276,11 @@ describe('Epoch routes', () => {
         totalVotesCount: 0,
         totalVotesGasUsed: 0,
         totalTxCount: 0,
+        totalCreatedDocumentsCount: 0,
+        totalDeletedDocumentsCount: 0,
+        totalRegisteredNamesCount: 0,
+        totalContestedDocumentsCount: 0,
+        avgBlockTime: null,
         pendingBlocksInEpoch: 10,
         pendingEpochReward: transactions
           .filter((transaction) => transaction.block_height >= 21)

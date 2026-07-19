@@ -9,6 +9,7 @@ const { getKnex, checkTcpConnect } = require('../../src/utils')
 const BlockHeader = require('../../src/models/BlockHeader')
 const tenderdashRpc = require('../../src/tenderdashRpc')
 const DashCoreRPC = require('../../src/dashcoreRpc')
+const GeoIP = require('../../src/geoip')
 const ServiceNotAvailableError = require('../../src/errors/ServiceNotAvailableError')
 const Epoch = require('../../src/models/Epoch')
 const { base58 } = require('@scure/base')
@@ -33,6 +34,7 @@ describe('Validators routes', () => {
 
   let dashCoreRpcResponse
   let endpoints
+  let geoIpInfo
 
   let epochInfo
   let fullEpochInfo
@@ -67,6 +69,14 @@ describe('Validators routes', () => {
         status: 'ERR_OUT_OF_RANGE',
         message: 'The value of "msecs" is out of range. It must be a non-negative finite number. Received NaN'
       }
+    }
+
+    geoIpInfo = {
+      ipv4: '255.255.255.255',
+      countryCode: 'US',
+      city: 'Boardman',
+      latitude: 45.8399,
+      longitude: -119.7009
     }
 
     dashCoreRpcResponse = {
@@ -195,6 +205,8 @@ describe('Validators routes', () => {
 
     mock.method(DashCoreRPC, 'getProTxInfo', async () => dashCoreRpcResponse)
 
+    mock.method(GeoIP, 'lookup', () => geoIpInfo)
+
     mock.method(NodeController.prototype, 'getEpochsInfo', epochInfo)
 
     mock.method(IdentitiesController.prototype, 'getIdentityBalance', async () => 0)
@@ -240,7 +252,8 @@ describe('Validators routes', () => {
         withdrawalsCount: 5,
         lastWithdrawal: transactions[transactions.length - 1].hash,
         lastWithdrawalTime: timestamp.toISOString(),
-        endpoints
+        endpoints,
+        geoIpInfo
       }
 
       assert.deepEqual(body, expectedValidator)
@@ -292,7 +305,8 @@ describe('Validators routes', () => {
         withdrawalsCount: 5,
         lastWithdrawal: transactions[transactions.length - 2].hash,
         lastWithdrawalTime: timestamp.toISOString(),
-        endpoints
+        endpoints,
+        geoIpInfo
       }
 
       assert.deepEqual(body, expectedValidator)
@@ -337,7 +351,8 @@ describe('Validators routes', () => {
         withdrawalsCount: 5,
         lastWithdrawal: transactions[transactions.length - 1].hash,
         lastWithdrawalTime: timestamp.toISOString(),
-        endpoints
+        endpoints,
+        geoIpInfo
       }
 
       assert.deepEqual(body, expectedValidator)
@@ -388,7 +403,8 @@ describe('Validators routes', () => {
         withdrawalsCount: 5,
         lastWithdrawal: transactions[transactions.length - 2].hash,
         lastWithdrawalTime: timestamp.toISOString(),
-        endpoints
+        endpoints,
+        geoIpInfo
       }
 
       assert.deepEqual(body, expectedValidator)
@@ -454,7 +470,8 @@ describe('Validators routes', () => {
               withdrawalsCount: null,
               lastWithdrawal: null,
               lastWithdrawalTime: null,
-              endpoints: null
+              endpoints: null,
+              geoIpInfo
             }
           })
 
@@ -510,7 +527,8 @@ describe('Validators routes', () => {
               withdrawalsCount: null,
               lastWithdrawal: null,
               lastWithdrawalTime: null,
-              endpoints: null
+              endpoints: null,
+              geoIpInfo
             }
           })
 
@@ -567,7 +585,8 @@ describe('Validators routes', () => {
               withdrawalsCount: null,
               lastWithdrawal: null,
               lastWithdrawalTime: null,
-              endpoints: null
+              endpoints: null,
+              geoIpInfo
             }
           })
 
@@ -625,7 +644,8 @@ describe('Validators routes', () => {
               withdrawalsCount: null,
               lastWithdrawal: null,
               lastWithdrawalTime: null,
-              endpoints: null
+              endpoints: null,
+              geoIpInfo
             }
           })
 
@@ -687,7 +707,8 @@ describe('Validators routes', () => {
               withdrawalsCount: null,
               lastWithdrawal: null,
               lastWithdrawalTime: null,
-              endpoints: null
+              endpoints: null,
+              geoIpInfo
             }
           })
 
@@ -745,7 +766,8 @@ describe('Validators routes', () => {
               withdrawalsCount: null,
               lastWithdrawal: null,
               lastWithdrawalTime: null,
-              endpoints: null
+              endpoints: null,
+              geoIpInfo
             }
           })
 
@@ -803,7 +825,8 @@ describe('Validators routes', () => {
               withdrawalsCount: null,
               lastWithdrawal: null,
               lastWithdrawalTime: null,
-              endpoints: null
+              endpoints: null,
+              geoIpInfo
             }
           })
 
@@ -859,7 +882,8 @@ describe('Validators routes', () => {
               withdrawalsCount: null,
               lastWithdrawal: null,
               lastWithdrawalTime: null,
-              endpoints: null
+              endpoints: null,
+              geoIpInfo
             }
           })
 
@@ -938,7 +962,8 @@ describe('Validators routes', () => {
               withdrawalsCount: null,
               lastWithdrawal: null,
               lastWithdrawalTime: null,
-              endpoints: null
+              endpoints: null,
+              geoIpInfo
             }
           })
 
@@ -1005,7 +1030,8 @@ describe('Validators routes', () => {
               withdrawalsCount: null,
               lastWithdrawal: null,
               lastWithdrawalTime: null,
-              endpoints: null
+              endpoints: null,
+              geoIpInfo
             }
           })
 
@@ -1072,7 +1098,8 @@ describe('Validators routes', () => {
               withdrawalsCount: null,
               lastWithdrawal: null,
               lastWithdrawalTime: null,
-              endpoints: null
+              endpoints: null,
+              geoIpInfo
             }
           })
 
@@ -1128,7 +1155,8 @@ describe('Validators routes', () => {
               withdrawalsCount: null,
               lastWithdrawal: null,
               lastWithdrawalTime: null,
-              endpoints: null
+              endpoints: null,
+              geoIpInfo
             }
           })
 
@@ -1190,7 +1218,8 @@ describe('Validators routes', () => {
               withdrawalsCount: null,
               lastWithdrawal: null,
               lastWithdrawalTime: null,
-              endpoints: null
+              endpoints: null,
+              geoIpInfo
             }
           })
 
@@ -1247,7 +1276,8 @@ describe('Validators routes', () => {
               withdrawalsCount: null,
               lastWithdrawal: null,
               lastWithdrawalTime: null,
-              endpoints: null
+              endpoints: null,
+              geoIpInfo
             }
           })
 
@@ -1306,7 +1336,8 @@ describe('Validators routes', () => {
               withdrawalsCount: null,
               lastWithdrawal: null,
               lastWithdrawalTime: null,
-              endpoints: null
+              endpoints: null,
+              geoIpInfo
             }
           })
 
@@ -1365,7 +1396,8 @@ describe('Validators routes', () => {
               withdrawalsCount: null,
               lastWithdrawal: null,
               lastWithdrawalTime: null,
-              endpoints: null
+              endpoints: null,
+              geoIpInfo
             }
           })
 
@@ -1424,7 +1456,8 @@ describe('Validators routes', () => {
               withdrawalsCount: null,
               lastWithdrawal: null,
               lastWithdrawalTime: null,
-              endpoints: null
+              endpoints: null,
+              geoIpInfo
             }
           })
 
@@ -1483,7 +1516,8 @@ describe('Validators routes', () => {
               withdrawalsCount: null,
               lastWithdrawal: null,
               lastWithdrawalTime: null,
-              endpoints: null
+              endpoints: null,
+              geoIpInfo
             }
           })
 
@@ -1543,7 +1577,8 @@ describe('Validators routes', () => {
               withdrawalsCount: null,
               lastWithdrawal: null,
               lastWithdrawalTime: null,
-              endpoints: null
+              endpoints: null,
+              geoIpInfo
             }
           })
 
@@ -1601,7 +1636,8 @@ describe('Validators routes', () => {
               withdrawalsCount: null,
               lastWithdrawal: null,
               lastWithdrawalTime: null,
-              endpoints: null
+              endpoints: null,
+              geoIpInfo
             }
           })
 
@@ -1662,7 +1698,8 @@ describe('Validators routes', () => {
               withdrawalsCount: null,
               lastWithdrawal: null,
               lastWithdrawalTime: null,
-              endpoints: null
+              endpoints: null,
+              geoIpInfo
             }
           })
 
@@ -1704,7 +1741,8 @@ describe('Validators routes', () => {
               withdrawalsCount: null,
               lastWithdrawal: null,
               lastWithdrawalTime: null,
-              endpoints: null
+              endpoints: null,
+              geoIpInfo
             }
           })
 
@@ -1749,7 +1787,8 @@ describe('Validators routes', () => {
               withdrawalsCount: null,
               lastWithdrawal: null,
               lastWithdrawalTime: null,
-              endpoints: null
+              endpoints: null,
+              geoIpInfo
             }
           })
 
@@ -1793,7 +1832,8 @@ describe('Validators routes', () => {
               withdrawalsCount: null,
               lastWithdrawal: null,
               lastWithdrawalTime: null,
-              endpoints: null
+              endpoints: null,
+              geoIpInfo
             }
           })
 
@@ -1837,7 +1877,8 @@ describe('Validators routes', () => {
               withdrawalsCount: null,
               lastWithdrawal: null,
               lastWithdrawalTime: null,
-              endpoints: null
+              endpoints: null,
+              geoIpInfo
             }
           })
 
@@ -1881,7 +1922,8 @@ describe('Validators routes', () => {
               withdrawalsCount: null,
               lastWithdrawal: null,
               lastWithdrawalTime: null,
-              endpoints: null
+              endpoints: null,
+              geoIpInfo
             }
           })
 
@@ -1938,7 +1980,8 @@ describe('Validators routes', () => {
               withdrawalsCount: null,
               lastWithdrawal: null,
               lastWithdrawalTime: null,
-              endpoints: null
+              endpoints: null,
+              geoIpInfo
             }
           })
 
@@ -1994,7 +2037,8 @@ describe('Validators routes', () => {
               withdrawalsCount: null,
               lastWithdrawal: null,
               lastWithdrawalTime: null,
-              endpoints: null
+              endpoints: null,
+              geoIpInfo
             }
           })
 
@@ -2213,6 +2257,94 @@ describe('Validators routes', () => {
 
     it('should return error on wrong bounds', async () => {
       await client.get(`/validator/${validators[0].pro_tx_hash}/stats?timestamp_start=2025-01-02T00:00:00&timestamp_end=2024-01-08T00:00:00`)
+        .expect(400)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+    })
+  })
+
+  describe('getValidatorIncomeStatsByProTxHash()', async () => {
+    let start
+    let end
+    let validatorA
+    let validatorB
+
+    before(async () => {
+      // isolated time window so blocks seeded by other suites don't interfere
+      start = new Date('2031-01-01T00:00:00.000Z')
+      end = new Date('2031-01-01T01:00:00.000Z')
+
+      validatorA = await fixtures.validator(knex)
+      validatorB = await fixtures.validator(knex)
+
+      let height = 3000
+
+      const createBlockWithGas = async (validator, minuteOffset, gasUsed) => {
+        const block = await fixtures.block(knex, {
+          validator: validator.pro_tx_hash,
+          height: height++,
+          timestamp: new Date(start.getTime() + minuteOffset * 60000)
+        })
+
+        if (gasUsed !== null) {
+          await fixtures.transaction(knex, {
+            block_hash: block.hash,
+            block_height: block.height,
+            type: IDENTITY_CREDIT_WITHDRAWAL,
+            owner: identities[0].identifier,
+            gas_used: gasUsed
+          })
+        }
+      }
+
+      // first interval: both validators propose, fees split pro-rata by blocks
+      await createBlockWithGas(validatorA, 2, 1000)
+      await createBlockWithGas(validatorB, 4, 3000)
+
+      // second interval: only validatorA proposes
+      await createBlockWithGas(validatorA, 8, 600)
+
+      // third interval: only validatorB proposes, no income for validatorA
+      await createBlockWithGas(validatorB, 14, 500)
+    })
+
+    it('should return income stats by proTxHash', async () => {
+      const { body } = await client.get(`/validator/${validatorA.pro_tx_hash}/income/stats?timestamp_start=${start.toISOString()}&timestamp_end=${end.toISOString()}&intervalsCount=10`)
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      const intervalMs = 360000
+
+      const expectedStats = []
+
+      for (let i = 0; i < 10; i++) {
+        // validatorA proposed 1 of 2 blocks in the first interval and the
+        // only block in the second one
+        const income = i === 0 ? 2000 : i === 1 ? 600 : 0
+
+        expectedStats.push({
+          timestamp: new Date(start.getTime() + intervalMs * i).toISOString(),
+          data: {
+            income
+          }
+        })
+      }
+
+      assert.deepEqual(expectedStats, body)
+    })
+
+    it('should return zero income series for validator without blocks', async () => {
+      const validator = await fixtures.validator(knex)
+
+      const { body } = await client.get(`/validator/${validator.pro_tx_hash}/income/stats?timestamp_start=${start.toISOString()}&timestamp_end=${end.toISOString()}&intervalsCount=10`)
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      assert.equal(body.length, 10)
+      assert.ok(body.every((point) => point.data.income === 0))
+    })
+
+    it('should return error on wrong bounds', async () => {
+      await client.get(`/validator/${validatorA.pro_tx_hash}/income/stats?timestamp_start=2025-01-02T00:00:00&timestamp_end=2024-01-08T00:00:00`)
         .expect(400)
         .expect('Content-Type', 'application/json; charset=utf-8')
     })
