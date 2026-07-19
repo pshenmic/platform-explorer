@@ -14,6 +14,7 @@
   "dependencies": {
     "@dashevo/dashd-rpc": "github:owl352/dashd-rpc",
     "@fastify/cors": "^8.3.0",
+    "@ip-location-db/dbip-city-mmdb": "latest",
     "@scure/base": "^1.1.5",
     "bs58": "^6.0.0",
     "cbor": "^9.0.2",
@@ -23,6 +24,7 @@
     "fastify": "^4.21.0",
     "fastify-metrics": "^11.0.0",
     "knex": "^2.5.1",
+    "mmdb-lib": "^3.0.2",
     "node-fetch": "^2.6.11",
     "pg": "^8.11.3"
   },
