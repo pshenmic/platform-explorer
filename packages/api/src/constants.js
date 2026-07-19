@@ -12,6 +12,8 @@ module.exports = {
   DPNS_CONTRACT: 'GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec',
   WITHDRAWAL_CONTRACT: '4fJLR2GYTPFdomuTVvNy3VRrvWgvkKPzqehEBpNf2nk6',
   NETWORK: process.env.NETWORK ?? 'testnet',
+  GEOIP_PROVIDER: '@ip-location-db/dbip-city-mmdb',
+  GEOIP_TABLE_NAME: 'dbip-city-ipv4.mmdb',
   get genesisTime () {
     if (!genesisTime || isNaN(genesisTime)) {
       return TenderdashRPC.getBlockByHeight(1).then((blockInfo) => {
