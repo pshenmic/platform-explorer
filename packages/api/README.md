@@ -2263,6 +2263,7 @@ Return an aggregate overview of the shielded pool.
 * `totalShieldedOut` — total credits moved out of the pool (`UNSHIELD` + `SHIELDED_WITHDRAWAL` + `IDENTITY_CREATE_FROM_SHIELDED_POOL`), as a string
 * `poolBalance` — `totalShieldedIn` − `totalShieldedOut`, an estimate of the current shielded pool size, as a string
 * `transitionsCount` — total number of shielded transitions
+* `notesCount` — total count of notes (leaves) in the shielded notes commitment tree, fetched from the platform; `null` when unavailable
 * `types` — per-type breakdown with `count` and summed `amount` (string)
 
 Note: `SHIELDED_TRANSFER` stays inside the pool and is counted in `types`/`transitionsCount` but excluded from `totalShieldedIn`/`totalShieldedOut`.
@@ -2274,6 +2275,7 @@ GET /transactions/shielded/statistic
     "totalShieldedOut": "150000000",
     "poolBalance": "150000000",
     "transitionsCount": 6,
+    "notesCount": 14,
     "types": [
         {
             "transactionType": "SHIELD",
