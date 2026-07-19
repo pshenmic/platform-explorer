@@ -417,7 +417,12 @@ class TransactionsController {
   getShieldedStatistic = async (request, response) => {
     const info = await this.transactionsDAO.getShieldedStatistic()
 
-    response.send(info)
+    const notesCount = await this.sdk.shielded.getShieldedNotesCount()
+
+    response.send({
+      ...info,
+      notesCount: notesCount !== undefined ? Number(notesCount) : null
+    })
   }
 }
 
