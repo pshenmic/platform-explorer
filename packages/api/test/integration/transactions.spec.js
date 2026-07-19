@@ -9,6 +9,7 @@ const tenderdashRpc = require('../../src/tenderdashRpc')
 const { IdentifierWASM } = require('pshenmic-dpp')
 const BatchTypeEnum = require('../../src/enums/BatchEnum')
 const { DocumentsController } = require('dash-platform-sdk/src/documents')
+const { ShieldedController } = require('dash-platform-sdk/src/shielded')
 
 describe('Transaction routes', () => {
   let app
@@ -1828,6 +1829,8 @@ describe('Transaction routes', () => {
       // start from a clean shielded pool so the aggregate is deterministic
       await knex.raw('DELETE FROM shielded_transitions')
 
+      mock.method(ShieldedController.prototype, 'getShieldedNotesCount', async () => 12n)
+
       let height = 2000
 
       for (const [type, amount] of Object.entries(amounts)) {
@@ -1864,6 +1867,7 @@ describe('Transaction routes', () => {
       assert.equal(body.totalShieldedOut, String(expectedOut))
       assert.equal(body.poolBalance, String(expectedIn - expectedOut))
       assert.equal(body.transitionsCount, Object.keys(amounts).length)
+      assert.equal(body.notesCount, 12)
       assert.equal(body.types.length, Object.keys(amounts).length)
 
       const shieldType = body.types.find(type => type.transactionType === 'SHIELD')
