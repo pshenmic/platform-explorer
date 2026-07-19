@@ -46,10 +46,12 @@ Reference:
 * [Block by hash](#block-by-hash)
 * [Blocks by validator](#blocks-by-validator)
 * [Blocks](#blocks)
+* [Average Block Time History](#average-block-time-history)
 * [Validators](#validators)
 * [Validator by ProTxHash](#validator-by-protxhash)
 * [Validator by Masternode Identifier](#validator-by-masternode-identifier)
 * [Validator Rewards Statistic](#validator-rewards-stats-by-protxhash)
+* [Validator Income Statistic](#validator-income-stats-by-protxhash)
 * [Validator Blocks Statistic](#validator-stats-by-protxhash)
 * [Transaction by hash](#transaction-by-hash)
 * [Transactions](#transactions)
@@ -59,6 +61,7 @@ Reference:
 * [Data Contracts](#data-contracts)
 * [Data Contract Transactions](#data-contract-transactions)
 * [Data Contracts Rating](#data-contracts-rating)
+* [Active Data Contracts](#active-data-contracts)
 * [Document by Identifier](#document-by-identifier)
 * [RAW Document by Identifier](#raw-document-by-identifier)
 * [Document Revisions](#document-revisions)
@@ -196,6 +199,8 @@ data instead. For already-completed epochs they are `null`.
 * pendingBlocksInEpoch - number of blocks produced in the epoch so far
 * pendingEpochReward - fees collected in the epoch so far (credits)
 
+`avgBlockTime` is the average time between consecutive blocks in the epoch in milliseconds, or `null` when the epoch contains less than two blocks.
+
 
 ```
 HTTP /epoch/2492
@@ -235,6 +240,11 @@ HTTP /epoch/2492
   "totalVotesCount": 12,
   "totalVotesGasUsed": 120000000,
   "totalTxCount": 49,
+  "totalCreatedDocumentsCount": 14,
+  "totalDeletedDocumentsCount": 2,
+  "totalRegisteredNamesCount": 5,
+  "totalContestedDocumentsCount": 3,
+  "avgBlockTime": 933,
   "pendingBlocksInEpoch": null,
   "pendingEpochReward": null
 }
@@ -361,6 +371,31 @@ GET /blocks?epoch_index_min=1000&epoch_index_max=1200&height_min=2000&height_max
 }
 ```
 ---
+### Average Block Time History
+Return a series data for the average block time chart. `avgBlockTime` is the average time between consecutive blocks in the interval in milliseconds, or `null` when the interval contains less than two blocks
+
+* `timestamp_start` lower interval threshold in ISO string
+* `timestamp_end` upper interval threshold in ISO string
+* `intervalsCount` intervals count in response ( _optional_ )
+
+```
+GET /blocks/avgBlockTime/history?timestamp_start=2024-01-01T00:00:00&timestamp_end=2025-01-01T00:00:00
+[
+    {
+        "timestamp": "2024-06-23T13:51:44.154Z",
+        "data": {
+          "avgBlockTime": 5210
+        }
+    }, ...
+]
+```
+Response codes:
+```
+200: OK
+400: Invalid input, check start/end values
+500: Internal Server Error
+```
+---
 ### Validators
 Return all validators with pagination info.
 * Valid `order` values are `asc` or `desc`
@@ -373,6 +408,8 @@ Return all validators with pagination info.
 * `last_proposed_block_height_min` and `last_proposed_block_height_min` minimum and maximum last proposed blocks height
 * `last_proposed_block_timestamp_start` and `last_proposed_block_timestamp_end` timestamp start and end for last proposed blocks
 * `last_proposed_block_hash` hash of last proposed block
+* `geoIpInfo` contains the node location resolved from its service IP with the [DB-IP City Lite](https://db-ip.com) database; it is `null` when the service address has no IPv4 host, and its fields are `null` when the IP is not present in the database
+* the DB-IP City Lite database is licensed under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/): any page displaying `geoIpInfo` data must include an attribution link back to DB-IP.com, e.g. `<a href='https://db-ip.com'>IP Geolocation by DB-IP</a>`
 ```
 GET /validators?blocks_proposed_min=1&blocks_proposed_max=9999999&last_proposed_block_height_min=190458&last_proposed_block_height_max=197458&last_proposed_block_timestamp_start=2025-10-11T02:46:09.433Z&last_proposed_block_timestamp_end=2025-10-12T02:46:09.433Z&last_proposed_block_hash=9151C25609D85610C416450B4648CCB4671E373452EA8FA21AC0DF77D03039E1&is_active=true&limit=10&page=1&order=asc&owner=PJUBWbXWmzEYCs99rAAbnCiHRzrnhKLQrXbmSsuPBYB
 
@@ -439,7 +476,14 @@ GET /validators?blocks_proposed_min=1&blocks_proposed_max=9999999&last_proposed_
             "withdrawalsCount": null,
             "lastWithdrawal": null,
             "lastWithdrawalTime": null,
-            "endpoints": null
+            "endpoints": null,
+            "geoIpInfo": {
+                "ipv4": "52.24.124.162",
+                "countryCode": "US",
+                "city": "Boardman",
+                "latitude": 45.8399,
+                "longitude": -119.7009
+            }
         }
     ]
 }
@@ -448,6 +492,8 @@ GET /validators?blocks_proposed_min=1&blocks_proposed_max=9999999&last_proposed_
 ### Validator by ProTxHash
 Get validator by ProTxHash.
 * `lastProposedBlockHeader` field is nullable
+* `geoIpInfo` contains the node location resolved from its service IP with the [DB-IP City Lite](https://db-ip.com) database; it is `null` when the service address has no IPv4 host, and its fields are `null` when the IP is not present in the database
+* the DB-IP City Lite database is licensed under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/): any page displaying `geoIpInfo` data must include an attribution link back to DB-IP.com, e.g. `<a href='https://db-ip.com'>IP Geolocation by DB-IP</a>`
 ```
 GET /validator/F60A6BF9EC0794BB0CFD1E0F2217933F4B33EDE6FE810692BC275CA18148AEF0
 
@@ -525,6 +571,13 @@ GET /validator/F60A6BF9EC0794BB0CFD1E0F2217933F4B33EDE6FE810692BC275CA18148AEF0
       "status": 'ERROR',
       "message": null
     }
+  },
+  "geoIpInfo": {
+    "ipv4": "35.164.23.245",
+    "countryCode": "US",
+    "city": "Boardman",
+    "latitude": 45.8399,
+    "longitude": -119.7009
   }
 }
 ```
@@ -609,6 +662,13 @@ GET /validator/identity/8tsWRSwsTM5AXv4ViCF9gu39kzjbtfFDM6rCyL2RcFzd
       "status": 'ERROR',
       "message": null
     }
+  },
+  "geoIpInfo": {
+    "ipv4": "35.164.23.245",
+    "countryCode": "US",
+    "city": "Boardman",
+    "latitude": 45.8399,
+    "longitude": -119.7009
   }
 }
 ```
@@ -627,6 +687,25 @@ GET /validator/F60A6BF9EC0794BB0CFD1E0F2217933F4B33EDE6FE810692BC275CA18148AEF0/
         "timestamp": "2024-06-23T13:51:44.154Z",
         "data": {
             "reward": 34000000
+        }
+    },...
+]
+```
+---
+### Validator income stats by ProTxHash
+Return a series data for the validator income chart. Income per interval is estimated as the validator share of collected fees, proportional to the number of blocks it proposed (matching the platform fee pool distribution between epoch proposers)
+
+* `timestamp_start` lower interval threshold in ISO string
+* `timestamp_end` upper interval threshold in ISO string
+* `intervalsCount` intervals count in response ( _optional_ )
+
+```
+GET /validator/F60A6BF9EC0794BB0CFD1E0F2217933F4B33EDE6FE810692BC275CA18148AEF0/income/stats?timestamp_start=2024-01-01T00:00:00&timestamp_end=2025-01-01T00:00:00
+[
+    {
+        "timestamp": "2024-06-23T13:51:44.154Z",
+        "data": {
+            "income": 17000000
         }
     },...
 ]
@@ -1177,6 +1256,44 @@ GET /dataContracts/rating?timestamp_start=2025-08-18T21:13:57.191Z&timestamp_end
 Response codes:
 ```
 200: OK
+500: Internal Server Error
+```
+---
+### Active Data Contracts
+Return data contracts that had state transitions within a time range, ordered by their
+transitions count in that range, paged. Unlike the rating endpoint, contracts without
+activity in the range are not included
+
+* `timestamp_start` lower interval threshold (defaults to one hour ago)
+* `timestamp_end` upper interval threshold (defaults to now)
+* `limit` cannot be more than 100
+* `page` cannot be less than 1
+* Valid `order` values are `asc` or `desc`
+```
+GET /dataContracts/active?timestamp_start=2025-01-01T00:00:00.000Z&timestamp_end=2025-01-02T00:00:00.000Z&page=1&limit=10&order=desc
+
+{
+    "resultSet": [
+        {
+            "identifier": "465jdPpFCZefhb4g2k2FpCcrKpPYhJJskDqbGFsKu6wb",
+            "transitionsCount": 26
+        },
+        {
+            "identifier": "GWghYQoDFEb3osEfigrF7CKdZLWauxC7TwM4jsJyqa23",
+            "transitionsCount": 21
+        }, ...
+    ],
+    "pagination": {
+        "page": 1,
+        "limit": 10,
+        "total": 14
+    }
+}
+```
+Response codes:
+```
+200: OK
+400: Bad timestamp range
 500: Internal Server Error
 ```
 ---
@@ -2058,11 +2175,69 @@ Response codes:
 500: Internal Server Error
 ```
 ___
+### Transactions Input history
+Return a series data for the chart of the total amount entering the platform from the core chain (identity create, identity top up, address funding from asset lock and shield-from-asset-lock transitions)
+
+* `timestamp_start` lower interval threshold in ISO string
+* `timestamp_end` upper interval threshold in ISO string
+* `intervalsCount` intervals count in response ( _optional_ )
+
+```
+GET /transactions/input/history?timestamp_start=2024-01-01T00:00:00&timestamp_end=2025-01-01T00:00:00
+[
+    {
+        "timestamp": "2024-04-22T08:45:20.911Z",
+        "data": {
+          "amount": 100000000,
+          "blockHeight": 64060,
+          "blockHash": "4A1F6B5238032DDAC55009A28797D909DB4288D5B5EC14B86DEC6EA8F25EC71A"
+        }
+    }, ...
+]
+```
+Response codes:
+```
+200: OK
+400: Invalid input, check start/end values
+500: Internal Server Error
+```
+___
+### Transactions Output history
+Return a series data for the chart of the total amount leaving the platform to the core chain (identity credit withdrawal, address credit withdrawal and shielded withdrawal transitions)
+
+* `timestamp_start` lower interval threshold in ISO string
+* `timestamp_end` upper interval threshold in ISO string
+* `intervalsCount` intervals count in response ( _optional_ )
+
+```
+GET /transactions/output/history?timestamp_start=2024-01-01T00:00:00&timestamp_end=2025-01-01T00:00:00
+[
+    {
+        "timestamp": "2024-04-22T08:45:20.911Z",
+        "data": {
+          "amount": 50000000,
+          "blockHeight": 64333,
+          "blockHash": "507659D9BE2FF76A031F4219061F3D2D39475A7FA4B24F25AEFDB34CD4DF2A57"
+        }
+    }, ...
+]
+```
+Response codes:
+```
+200: OK
+400: Invalid input, check start/end values
+500: Internal Server Error
+```
+___
 ### Transactions Statistic
 Return the count of state transitions grouped by transaction type.
 
+Optionally accepts a time interval. Without parameters the statistic is calculated over all time.
+
+* `timestamp_start` and `timestamp_end` must be set together
+
 ```
-GET /transactions/statistic
+GET /transactions/statistic?timestamp_start=2024-10-01T00:00:00.000Z&timestamp_end=2024-11-01T00:00:00.000Z
 [
     {
         "transactionType": "DATA_CONTRACT_CREATE",
@@ -2077,6 +2252,7 @@ GET /transactions/statistic
 Response codes:
 ```
 200: OK
+400: Invalid input, check start/end values
 500: Internal Server Error
 ```
 ___
