@@ -54,11 +54,11 @@ function spanX (pts) {
   return Math.abs(pts[pts.length - 1].x - pts[0].x)
 }
 
-// Split scan: wave left/right of selection + U on selected epoch rails (to wave/KPI join only).
+// split scan: wave left/right of selection + vertical rails on the clicked epoch; the seam stays static
 // Tiny edge stubs omitted — pathLength=100 turns them into lines.
 function buildScanParts (linePts, seg) {
   if (!linePts?.length || !seg) {
-    return { leftD: ptsToPathD(linePts), rightD: null, railD: null }
+    return { leftD: ptsToPathD(linePts), rightD: null, railDownD: null, railUpD: null }
   }
   const leftX = seg.l * 100
   const rightX = (seg.l + seg.w) * 100
@@ -77,18 +77,21 @@ function buildScanParts (linePts, seg) {
     if (p.x > rightX + 1e-6) right.push(p)
   }
 
-  // U only on the *selected* epoch boundaries (block rails + KPI seam)
-  const rail = [
+  // vertical legs only — no horizontal crawl along the colored KPI seam
+  const railDownD = ptsToPathD([
     { x: leftX, y: yL },
-    { x: leftX, y: SCAN_BOTTOM_Y },
+    { x: leftX, y: SCAN_BOTTOM_Y }
+  ])
+  const railUpD = ptsToPathD([
     { x: rightX, y: SCAN_BOTTOM_Y },
     { x: rightX, y: yR }
-  ]
+  ])
 
   return {
     leftD: left.length >= 2 && spanX(left) >= SCAN_MIN_WAVE_SPAN ? ptsToPathD(left) : null,
     rightD: right.length >= 2 && spanX(right) >= SCAN_MIN_WAVE_SPAN ? ptsToPathD(right) : null,
-    railD: ptsToPathD(rail)
+    railDownD,
+    railUpD
   }
 }
 
@@ -673,10 +676,10 @@ export function EpochsOverview ({ title, epochs, currentEpoch, rate, loading, sl
 
   const seg = segments[selIdx] ?? { l: 0, w: 1 }
   const hasAny = points.some(p => p.ready)
-  // wave scan on non-selected segments; rail U only around the clicked epoch (wave/KPI join)
-  const { leftD, rightD, railD } = hasAny
+  // wave scan outside selection; vertical rails only on clicked epoch (no bottom seam runner)
+  const { leftD, rightD, railDownD, railUpD } = hasAny
     ? buildScanParts(linePts, seg)
-    : { leftD: null, rightD: null, railD: null }
+    : { leftD: null, rightD: null, railDownD: null, railUpD: null }
 
   return (
     <div
@@ -732,11 +735,16 @@ export function EpochsOverview ({ title, epochs, currentEpoch, rate, loading, sl
                     <path className={'HomeHero__WaveScanGlow HomeHero__WaveScan--Phase'} d={rightD} fill={'none'} pathLength={'100'} vectorEffect={'non-scaling-stroke'}/>
                     <path className={'HomeHero__WaveScan HomeHero__WaveScan--Phase'} d={rightD} fill={'none'} pathLength={'100'} vectorEffect={'non-scaling-stroke'}/>
                   </>}
-                {/* U-detour for the clicked epoch: down left rail → seam → up right rail */}
-                {railD &&
+                {/* selected epoch: drop left rail (fade out) + climb right rail (fade in) — no seam crawl */}
+                {railDownD &&
                   <>
-                    <path className={'HomeHero__WaveScanGlow EpochsWave__RailScan'} d={railD} fill={'none'} pathLength={'100'} vectorEffect={'non-scaling-stroke'}/>
-                    <path className={'HomeHero__WaveScan EpochsWave__RailScan'} d={railD} fill={'none'} pathLength={'100'} vectorEffect={'non-scaling-stroke'}/>
+                    <path className={'HomeHero__WaveScanGlow EpochsWave__RailScan EpochsWave__RailScan--Down'} d={railDownD} fill={'none'} pathLength={'100'} vectorEffect={'non-scaling-stroke'}/>
+                    <path className={'HomeHero__WaveScan EpochsWave__RailScan EpochsWave__RailScan--Down'} d={railDownD} fill={'none'} pathLength={'100'} vectorEffect={'non-scaling-stroke'}/>
+                  </>}
+                {railUpD &&
+                  <>
+                    <path className={'HomeHero__WaveScanGlow EpochsWave__RailScan EpochsWave__RailScan--Up'} d={railUpD} fill={'none'} pathLength={'100'} vectorEffect={'non-scaling-stroke'}/>
+                    <path className={'HomeHero__WaveScan EpochsWave__RailScan EpochsWave__RailScan--Up'} d={railUpD} fill={'none'} pathLength={'100'} vectorEffect={'non-scaling-stroke'}/>
                   </>}
               </>
             : <>

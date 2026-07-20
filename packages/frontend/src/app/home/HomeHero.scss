@@ -911,6 +911,15 @@
     &__BoundWhen { display: none; }
   }
 
+  // steady opacity like the wave scan; the dash leaving a short path reads clearly on its own
+  &__RailScan {
+    opacity: 0.85;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    &__RailScan { animation: none !important; opacity: 0; }
+  }
+
   // loading state: ghost outline of the coming chart instead of a solid placeholder box
   &__GhostLine {
     stroke: rgba(var(--chakra-colors-gray-500-rgb, 122, 132, 137), 0.25);
