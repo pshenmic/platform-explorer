@@ -168,17 +168,19 @@
   }
 }
 
-// tighter sides/bottom than default InfoBlock; extra top for Epoch / block label stacks
+// extra top for taller first epoch stack (EPOCH + duration + #) and bound "block" labels
 .HomeEpochs {
   border-radius: var(--chakra-radii-block);
-  // top > bottom: room for lifted "Epoch every…" / "block" pills above the wave
-  padding: 32px 20px 16px 20px !important;
+  // top: room for first point Id stack; bottom 0 — KPI mesh is the card edge (no empty plate)
+  padding: 40px 20px 0 20px !important;
+  // contain full-bleed wave/cells (neg. margins) so nothing can expand page width
+  overflow-x: hidden;
 
   @media screen and (max-width: $breakpoint-lg) {
-    padding: 28px 16px 16px 16px !important;
+    padding: 36px 16px 0 16px !important;
   }
 
   @media screen and (max-width: $breakpoint-md) {
-    padding: 24px 12px 14px 12px !important;
+    padding: 32px 16px 0 16px !important;
   }
 }
