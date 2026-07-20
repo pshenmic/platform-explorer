@@ -151,7 +151,8 @@
     flex-wrap: nowrap;
     align-items: stretch;
     border-top: none;
-    margin-top: 8px;
+    // the shared CardHead margin already provides the standard head→content gap
+    margin-top: 0;
     padding: 0;
   }
 
