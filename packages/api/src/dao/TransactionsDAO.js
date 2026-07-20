@@ -506,11 +506,116 @@ module.exports = class TransactionsDAO {
       .sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime())
   }
 
-  getTransactionStatistic = async () => {
-    const rows = await this.knex('state_transitions')
+  getFundsFlowHistorySeries = async (start, end, interval, intervalInMs, direction) => {
+    const startSql = `'${new Date(start.getTime() + intervalInMs).toISOString()}'::timestamptz`
+
+    const endSql = `'${new Date(end.getTime()).toISOString()}'::timestamptz`
+
+    // amounts of core-chain <-> platform value transitions live in three
+    // tables, each covering its own set of state transition types
+    const transferTypes = direction === true
+      ? [StateTransitionEnum.IDENTITY_CREATE, StateTransitionEnum.IDENTITY_TOP_UP]
+      : [StateTransitionEnum.IDENTITY_CREDIT_WITHDRAWAL]
+
+    const addressTransitionTypes = direction === true
+      ? [StateTransitionEnum.ADDRESS_FUNDING_FROM_ASSET_LOCK]
+      : [StateTransitionEnum.ADDRESS_CREDIT_WITHDRAWAL]
+
+    const shieldedTransitionTypes = direction === true
+      ? [StateTransitionEnum.SHIELD_FROM_ASSET_LOCK]
+      : [StateTransitionEnum.SHIELDED_WITHDRAWAL]
+
+    const ranges = this.knex
+      .from(this.knex.raw(`generate_series(${startSql}, ${endSql}, '${interval}'::interval) date_to`))
+      .select('date_to')
+      .select(
+        this.knex.raw(
+          'LAG(date_to, 1, ?::timestamptz) OVER (ORDER BY date_to ASC) AS date_from',
+          [start.toISOString()]
+        )
+      )
+
+    const subRanges = this.knex('ranges')
+      .select(this.knex.raw('min(date_from) as min_date'))
+      .select(this.knex.raw('max(date_to) as max_date'))
+      .limit(1)
+
+    const blocksSubquery = this.knex('blocks')
+      .with('sub_ranges', subRanges)
+      .whereRaw('blocks.timestamp > (SELECT min_date FROM sub_ranges) AND blocks.timestamp <= (SELECT max_date FROM sub_ranges)')
+      .as('blocks_sub')
+
+    const transfersFlows = this.knex('transfers')
+      .select('state_transitions.block_height', 'transfers.amount')
+      .leftJoin('state_transitions', 'transfers.state_transition_hash', 'state_transitions.hash')
+      .whereIn('state_transitions.type', transferTypes)
+
+    const addressFlows = this.knex('platform_address_transitions')
+      .select('state_transitions.block_height', 'platform_address_transitions.amount')
+      .leftJoin('state_transitions', 'platform_address_transitions.state_transition_id', 'state_transitions.id')
+      .whereIn('platform_address_transitions.state_transition_type', addressTransitionTypes)
+
+    const shieldedFlows = this.knex('shielded_transitions')
+      .select('state_transitions.block_height', 'shielded_transitions.amount')
+      .leftJoin('state_transitions', 'shielded_transitions.state_transition_id', 'state_transitions.id')
+      .whereIn('shielded_transitions.state_transition_type', shieldedTransitionTypes)
+
+    const flowsSubquery = transfersFlows
+      .unionAll([addressFlows, shieldedFlows], true)
+      .as('flows_subquery')
+
+    const dataSubquery = this.knex(blocksSubquery)
+      .leftJoin(flowsSubquery, 'flows_subquery.block_height', 'blocks_sub.height')
+      .select('blocks_sub.timestamp', 'flows_subquery.amount', 'blocks_sub.hash', 'blocks_sub.height')
+
+    const heightSubquery = this.knex.with('ranges', ranges)
+      .with(
+        'filtered_data',
+        dataSubquery
+      )
+      .select('date_from')
+      .select(this.knex.raw('sum(amount) as total_amount'))
+      .select(this.knex.raw('min(height) as block_height'))
+      .leftJoin('filtered_data', function () {
+        this.on('timestamp', '>', 'date_from').andOn('timestamp', '<=', 'date_to')
+      })
+      .from('ranges')
+      .groupBy('date_from')
+      .as('sub')
+
+    const rows = await this.knex(heightSubquery)
+      .select('total_amount', 'block_height', 'hash as block_hash', 'date_from')
+      .leftJoin('blocks', function () {
+        this.on('blocks.height', '=', 'block_height').andOnNotNull('block_height')
+      })
+
+    return rows
+      .map(row => ({
+        timestamp: new Date(row.date_from).toISOString(),
+        data: {
+          amount: parseInt(row.total_amount ?? 0),
+          blockHeight: row.block_height,
+          blockHash: row.block_hash
+        }
+      }))
+      .map(({ timestamp, data }) => new SeriesData(timestamp, data))
+      .sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime())
+  }
+
+  getTransactionStatistic = async (timestampStart, timestampEnd) => {
+    let query = this.knex('state_transitions')
       .select('type')
       .groupBy('type')
       .count()
+
+    if (timestampStart && timestampEnd) {
+      query = query
+        .leftJoin('blocks', 'blocks.hash', 'state_transitions.block_hash')
+        .where('blocks.timestamp', '>=', new Date(timestampStart).toISOString())
+        .andWhere('blocks.timestamp', '<=', new Date(timestampEnd).toISOString())
+    }
+
+    const rows = await query
 
     return rows.map(row => ({
       transactionType: StateTransitionEnum[row.type],

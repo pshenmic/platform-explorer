@@ -1,5 +1,7 @@
 const EpochData = require('../models/EpochData')
 const ChoiceEnum = require('../enums/ChoiceEnum')
+const BatchEnum = require('../enums/BatchEnum')
+const { DPNS_CONTRACT } = require('../constants')
 
 module.exports = class EpochDAO {
   constructor (knex) {
@@ -45,6 +47,15 @@ module.exports = class EpochDAO {
       .leftJoin('state_transitions', 'state_transition_hash', 'state_transitions.hash')
       .leftJoin('blocks', 'blocks.hash', 'state_transitions.block_hash')
       .as('resource_votes')
+
+    const documentsSubquery = this.knex('documents')
+      .select('documents.transition_type', 'documents.document_type_name', 'documents.prefunded_voting_balance', 'data_contracts.identifier as data_contract_identifier')
+      .leftJoin('data_contracts', 'data_contracts.id', 'documents.data_contract_id')
+      .leftJoin('state_transitions', 'state_transitions.hash', 'documents.state_transition_hash')
+      .leftJoin('blocks', 'blocks.hash', 'state_transitions.block_hash')
+      .where('blocks.timestamp', '>', new Date(epoch.startTime).toISOString())
+      .andWhere('blocks.timestamp', '<=', epochEnd.toISOString())
+      .as('epoch_documents')
 
     const bestValidator = this.knex('blocks')
       .select('validator')
@@ -114,7 +125,31 @@ module.exports = class EpochDAO {
         .as('total_votes'),
       this.knex(votesBaseSubquery)
         .sum('gas_used')
-        .as('total_votes_gas_used')
+        .as('total_votes_gas_used'),
+      this.knex(documentsSubquery)
+        .count('*')
+        .where('transition_type', '=', BatchEnum.DOCUMENT_CREATE)
+        .as('total_created_documents_count'),
+      this.knex(documentsSubquery)
+        .count('*')
+        .where('transition_type', '=', BatchEnum.DOCUMENT_DELETE)
+        .as('total_deleted_documents_count'),
+      this.knex(documentsSubquery)
+        .count('*')
+        .where('transition_type', '=', BatchEnum.DOCUMENT_CREATE)
+        .andWhere('document_type_name', '=', 'domain')
+        .andWhere('data_contract_identifier', '=', DPNS_CONTRACT)
+        .as('total_registered_names_count'),
+      this.knex(documentsSubquery)
+        .count('*')
+        .where('transition_type', '=', BatchEnum.DOCUMENT_CREATE)
+        .whereRaw('prefunded_voting_balance is not null')
+        .as('total_contested_documents_count'),
+      this.knex('blocks')
+        .select(this.knex.raw('CASE WHEN count(*) > 1 THEN round(extract(epoch from max(timestamp) - min(timestamp)) * 1000 / (count(*) - 1)) ELSE NULL END'))
+        .where('timestamp', '>', new Date(epoch.startTime).toISOString())
+        .andWhere('timestamp', '<=', epochEnd.toISOString())
+        .as('avg_block_time')
     ]
 
     if (isInProgressEpoch) {

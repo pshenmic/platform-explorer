@@ -736,4 +736,64 @@ describe('Blocks routes', () => {
       assert.deepEqual(expectedBlocks, body.resultSet)
     })
   })
+
+  describe('getAvgBlockTimeHistory()', async () => {
+    let start
+    let end
+
+    before(async () => {
+      // isolated time window so blocks seeded by other suites don't interfere
+      start = new Date('2031-01-01T00:00:00.000Z')
+      end = new Date('2031-01-01T01:00:00.000Z')
+
+      let height = 4000
+
+      const createBlock = async (minuteOffset) => {
+        await fixtures.block(knex, {
+          height: height++,
+          timestamp: new Date(start.getTime() + minuteOffset * 60000)
+        })
+      }
+
+      // first interval: three blocks one minute apart
+      await createBlock(1)
+      await createBlock(2)
+      await createBlock(3)
+
+      // second interval: two blocks two minutes apart
+      await createBlock(8)
+      await createBlock(10)
+
+      // third interval: a single block, block time is not defined
+      await createBlock(14)
+    })
+
+    it('should return average block time series', async () => {
+      const { body } = await client.get(`/blocks/avgBlockTime/history?timestamp_start=${start.toISOString()}&timestamp_end=${end.toISOString()}&intervalsCount=10`)
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      const intervalMs = 360000
+
+      const expectedSeries = []
+
+      for (let i = 0; i < 10; i++) {
+        const avgBlockTime = i === 0 ? 60000 : i === 1 ? 120000 : null
+
+        expectedSeries.push({
+          timestamp: new Date(start.getTime() + intervalMs * i).toISOString(),
+          data: {
+            avgBlockTime
+          }
+        })
+      }
+
+      assert.deepEqual(expectedSeries, body)
+    })
+
+    it('should return error when start is after end', async () => {
+      await client.get(`/blocks/avgBlockTime/history?timestamp_start=${end.toISOString()}&timestamp_end=${start.toISOString()}`)
+        .expect(400)
+    })
+  })
 })

@@ -96,6 +96,14 @@ module.exports = ({
       }
     },
     {
+      path: '/blocks/avgBlockTime/history',
+      method: 'GET',
+      handler: blocksController.getAvgBlockTimeHistory,
+      schema: {
+        querystring: { $ref: 'timeInterval#' }
+      }
+    },
+    {
       path: '/transactions',
       method: 'GET',
       handler: transactionsController.getTransactions,
@@ -182,6 +190,14 @@ module.exports = ({
       path: '/dataContracts/rating',
       method: 'GET',
       handler: dataContractsController.getDataContractTrends,
+      schema: {
+        querystring: { $ref: 'paginationOptions#' }
+      }
+    },
+    {
+      path: '/dataContracts/active',
+      method: 'GET',
+      handler: dataContractsController.getActiveDataContracts,
       schema: {
         querystring: { $ref: 'paginationOptions#' }
       }
@@ -484,6 +500,20 @@ module.exports = ({
       }
     },
     {
+      path: '/validator/:hash/income/stats',
+      method: 'GET',
+      handler: validatorsController.getValidatorIncomeStatsByProTxHash,
+      schema: {
+        params: {
+          type: 'object',
+          properties: {
+            hash: { $ref: 'hash#' }
+          }
+        },
+        querystring: { $ref: 'timeInterval#' }
+      }
+    },
+    {
       path: '/validator/:hash',
       method: 'GET',
       handler: validatorsController.getValidatorByProTxHash,
@@ -771,9 +801,28 @@ module.exports = ({
       }
     },
     {
+      path: '/transactions/input/history',
+      method: 'GET',
+      handler: transactionsController.getInputHistorySeries,
+      schema: {
+        querystring: { $ref: 'timeInterval#' }
+      }
+    },
+    {
+      path: '/transactions/output/history',
+      method: 'GET',
+      handler: transactionsController.getOutputHistorySeries,
+      schema: {
+        querystring: { $ref: 'timeInterval#' }
+      }
+    },
+    {
       path: '/transactions/statistic',
       method: 'GET',
-      handler: transactionsController.getTransactionStatistic
+      handler: transactionsController.getTransactionStatistic,
+      schema: {
+        querystring: { $ref: 'timeInterval#' }
+      }
     },
     {
       path: '/transactions/shielded/statistic',

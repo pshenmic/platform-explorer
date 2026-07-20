@@ -440,6 +440,42 @@ module.exports = class DataContractsDAO {
     return rows.map(row => DataContract.fromRow(row))
   }
 
+  getActiveDataContracts = async (start, end, page, limit, order) => {
+    const fromRank = (page - 1) * limit
+
+    const rankedSubquery = this.knex('data_contract_transitions')
+      .select('data_contract_identifier')
+      .count()
+      .whereRaw('blocks.timestamp >= ? and blocks.timestamp <= ?', [start, end])
+      .andWhereRaw('data_contract_identifier is not null')
+      .leftJoin('state_transitions', 'data_contract_transitions.state_transition_id', 'state_transitions.id')
+      .leftJoin('blocks', 'state_transitions.block_height', 'blocks.height')
+      .groupBy('data_contract_identifier')
+
+    const rows = await this.knex
+      .with('ranked_subquery', rankedSubquery)
+      .select('count as transitions_count', 'data_contract_identifier as identifier')
+      .select(
+        this.knex('ranked_subquery')
+          .select(this.knex.raw('count(*)'))
+          .limit(1)
+          .as('total_count')
+      )
+      .orderBy('transitions_count', order)
+      .limit(limit)
+      .offset(fromRank)
+      .from('ranked_subquery')
+
+    const totalCount = rows.length > 0 ? Number(rows[0].total_count) : 0
+
+    const resultSet = rows.map(row => ({
+      identifier: row.identifier,
+      transitionsCount: Number(row.transitions_count ?? 0)
+    }))
+
+    return new PaginatedResultSet(resultSet, page, limit, totalCount)
+  }
+
   getContractsTrends = async (startDate, endDate, page, limit, order) => {
     const fromRank = (page - 1) * limit
 

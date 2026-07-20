@@ -1,4 +1,6 @@
 const BlocksDAO = require('../dao/BlocksDAO')
+const { calculateInterval, iso8601duration } = require('../utils')
+const Intervals = require('../enums/IntervalsEnum')
 const { EPOCH_CHANGE_TIME, NETWORK } = require('../constants')
 const DashCoreRPC = require('../dashcoreRpc')
 const TenderdashRPC = require('../tenderdashRpc')
@@ -72,6 +74,40 @@ class BlocksController {
     }
 
     response.send(block)
+  }
+
+  getAvgBlockTimeHistory = async (request, response) => {
+    const {
+      timestamp_start: timestampStart = new Date().getTime() - 3600000,
+      timestamp_end: timestampEnd = new Date().getTime(),
+      intervalsCount = null
+    } = request.query
+
+    if (!timestampStart || !timestampEnd) {
+      return response.status(400).send({ message: 'start and end must be set' })
+    }
+
+    if (timestampStart > timestampEnd) {
+      return response.status(400).send({ message: 'start timestamp cannot be more than end timestamp' })
+    }
+
+    const intervalInMs =
+      Math.ceil(
+        (new Date(timestampEnd).getTime() - new Date(timestampStart).getTime()) / Number(intervalsCount ?? NaN) / 1000
+      ) * 1000
+
+    const interval = intervalsCount
+      ? iso8601duration(intervalInMs)
+      : calculateInterval(new Date(timestampStart), new Date(timestampEnd))
+
+    const timeSeries = await this.blocksDAO.getAvgBlockTimeHistorySeries(
+      new Date(timestampStart),
+      new Date(timestampEnd),
+      interval,
+      isNaN(intervalInMs) ? Intervals[interval] : intervalInMs
+    )
+
+    response.send(timeSeries)
   }
 
   getBlocks = async (request, response) => {

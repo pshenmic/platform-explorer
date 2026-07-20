@@ -325,8 +325,91 @@ class TransactionsController {
     response.send(timeSeries)
   }
 
+  getInputHistorySeries = async (request, response) => {
+    const {
+      timestamp_start: start = new Date().getTime() - 3600000,
+      timestamp_end: end = new Date().getTime(),
+      intervalsCount = null
+    } = request.query
+
+    if (!start || !end) {
+      return response.status(400).send({ message: 'start and end must be set' })
+    }
+
+    if (start > end) {
+      return response.status(400).send({ message: 'start timestamp cannot be more than end timestamp' })
+    }
+
+    const intervalInMs =
+      Math.ceil(
+        (new Date(end).getTime() - new Date(start).getTime()) / Number(intervalsCount ?? NaN) / 1000
+      ) * 1000
+
+    const interval = intervalsCount
+      ? iso8601duration(intervalInMs)
+      : calculateInterval(new Date(start), new Date(end))
+
+    const timeSeries = await this.transactionsDAO.getFundsFlowHistorySeries(
+      new Date(start),
+      new Date(end),
+      interval,
+      isNaN(intervalInMs) ? Intervals[interval] : intervalInMs,
+      true
+    )
+
+    response.send(timeSeries)
+  }
+
+  getOutputHistorySeries = async (request, response) => {
+    const {
+      timestamp_start: start = new Date().getTime() - 3600000,
+      timestamp_end: end = new Date().getTime(),
+      intervalsCount = null
+    } = request.query
+
+    if (!start || !end) {
+      return response.status(400).send({ message: 'start and end must be set' })
+    }
+
+    if (start > end) {
+      return response.status(400).send({ message: 'start timestamp cannot be more than end timestamp' })
+    }
+
+    const intervalInMs =
+      Math.ceil(
+        (new Date(end).getTime() - new Date(start).getTime()) / Number(intervalsCount ?? NaN) / 1000
+      ) * 1000
+
+    const interval = intervalsCount
+      ? iso8601duration(intervalInMs)
+      : calculateInterval(new Date(start), new Date(end))
+
+    const timeSeries = await this.transactionsDAO.getFundsFlowHistorySeries(
+      new Date(start),
+      new Date(end),
+      interval,
+      isNaN(intervalInMs) ? Intervals[interval] : intervalInMs,
+      false
+    )
+
+    response.send(timeSeries)
+  }
+
   getTransactionStatistic = async (request, response) => {
-    const info = await this.transactionsDAO.getTransactionStatistic()
+    const {
+      timestamp_start: timestampStart = null,
+      timestamp_end: timestampEnd = null
+    } = request.query
+
+    if ((timestampStart && !timestampEnd) || (!timestampStart && timestampEnd)) {
+      return response.status(400).send({ message: 'start and end must be set' })
+    }
+
+    if (new Date(timestampStart).getTime() > new Date(timestampEnd).getTime()) {
+      return response.status(400).send({ message: 'start timestamp cannot be more than end timestamp' })
+    }
+
+    const info = await this.transactionsDAO.getTransactionStatistic(timestampStart, timestampEnd)
 
     response.send(info)
   }
@@ -334,7 +417,12 @@ class TransactionsController {
   getShieldedStatistic = async (request, response) => {
     const info = await this.transactionsDAO.getShieldedStatistic()
 
-    response.send(info)
+    const notesCount = await this.sdk.shielded.getShieldedNotesCount()
+
+    response.send({
+      ...info,
+      notesCount: notesCount !== undefined ? Number(notesCount) : null
+    })
   }
 }
 

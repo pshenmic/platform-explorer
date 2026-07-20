@@ -3,6 +3,7 @@ const TenderdashRPC = require('../tenderdashRpc')
 const Validator = require('../models/Validator')
 const DashCoreRPC = require('../dashcoreRpc')
 const ProTxInfo = require('../models/ProTxInfo')
+const GeoIP = require('../geoip')
 const { checkTcpConnect, calculateInterval, iso8601duration } = require('../utils')
 const Epoch = require('../models/Epoch')
 const { base58 } = require('@scure/base')
@@ -44,6 +45,8 @@ class ValidatorsController {
       const identifier = validator.proTxHash ? base58.encode(Buffer.from(validator.proTxHash, 'hex')) : null
       const identityBalance = identifier ? await this.sdk.identities.getIdentityBalance(identifier) : null
 
+      const [serviceHost] = proTxInfo?.state?.service?.match(/^\d+\.\d+\.\d+\.\d+/) ?? [null]
+
       validatorInfo = Validator.fromObject(
         {
           ...validator,
@@ -51,7 +54,8 @@ class ValidatorsController {
           proTxInfo: ProTxInfo.fromObject(proTxInfo),
           identity: identifier,
           identityBalance: String(identityBalance),
-          epochInfo
+          epochInfo,
+          geoIpInfo: serviceHost ? GeoIP.lookup(serviceHost) : null
         }
       )
 
@@ -157,13 +161,16 @@ class ValidatorsController {
       } else {
         const proTxInfo = await DashCoreRPC.getProTxInfo(proTxHash)
 
+        const [serviceHost] = proTxInfo?.state?.service?.match(/^\d+\.\d+\.\d+\.\d+/) ?? [null]
+
         validatorInfo = Validator.fromObject(
           {
             proTxHash,
             isActive: activeValidators.some(activeValidator =>
               activeValidator.pro_tx_hash === proTxHash),
             proTxInfo: ProTxInfo.fromObject(proTxInfo),
-            epochInfo
+            epochInfo,
+            geoIpInfo: serviceHost ? GeoIP.lookup(serviceHost) : null
           }
         )
 
@@ -208,6 +215,8 @@ class ValidatorsController {
           const identifier = validator.proTxHash ? base58.encode(Buffer.from(validator.proTxHash, 'hex')) : null
           const identityBalance = identifier ? await this.sdk.identities.getIdentityBalance(identifier) : null
 
+          const [serviceHost] = proTxInfo?.state?.service?.match(/^\d+\.\d+\.\d+\.\d+/) ?? [null]
+
           validatorInfo = Validator.fromObject(
             {
               ...validator,
@@ -216,7 +225,8 @@ class ValidatorsController {
               proTxInfo: ProTxInfo.fromObject(proTxInfo),
               identity: identifier,
               identityBalance: String(identityBalance),
-              epochInfo
+              epochInfo,
+              geoIpInfo: serviceHost ? GeoIP.lookup(serviceHost) : null
             }
           )
 
@@ -261,6 +271,42 @@ class ValidatorsController {
       hash,
       new Date(start),
       new Date(end),
+      interval,
+      isNaN(intervalInMs) ? Intervals[interval] : intervalInMs
+    )
+
+    response.send(stats)
+  }
+
+  getValidatorIncomeStatsByProTxHash = async (request, response) => {
+    const { hash } = request.params
+    const {
+      timestamp_start: timestampStart = new Date().getTime() - 3600000,
+      timestamp_end: timestampEnd = new Date().getTime(),
+      intervalsCount = null
+    } = request.query
+
+    if (!timestampStart || !timestampEnd) {
+      return response.status(400).send({ message: 'start and end must be set' })
+    }
+
+    if (timestampStart > timestampEnd) {
+      return response.status(400).send({ message: 'start timestamp cannot be more than end timestamp' })
+    }
+
+    const intervalInMs =
+      Math.ceil(
+        (new Date(timestampEnd).getTime() - new Date(timestampStart).getTime()) / Number(intervalsCount ?? NaN) / 1000
+      ) * 1000
+
+    const interval = intervalsCount
+      ? iso8601duration(intervalInMs)
+      : calculateInterval(new Date(timestampStart), new Date(timestampEnd))
+
+    const stats = await this.validatorsDAO.getValidatorIncomeStatsByProTxHash(
+      hash,
+      new Date(timestampStart),
+      new Date(timestampEnd),
       interval,
       isNaN(intervalInMs) ? Intervals[interval] : intervalInMs
     )

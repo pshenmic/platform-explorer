@@ -204,14 +204,13 @@ module.exports = class ValidatorsDAO {
         }
       })
 
-    const blocksSubquery = this.knex('subquery')
+    const blocksSubquery = this.knex('blocks')
       .select(
-        'subquery.id as validator_id'
+        'blocks.validator_id as validator_id'
       )
       .select(this.knex.raw('MAX(height) AS max_height'))
       .select(this.knex.raw('count(height) as proposed_blocks_amount'))
-      .groupBy('subquery.id')
-      .leftJoin('blocks', 'blocks.validator_id', 'subquery.id')
+      .groupBy('blocks.validator_id')
       .as('blocks_subquery')
 
     const joinedBlocksSubqeury = this.knex(blocksSubquery)
@@ -227,7 +226,8 @@ module.exports = class ValidatorsDAO {
       .with('blocks_subquery', joinedBlocksSubqeury)
       .select(
         'block_hash', 'latest_height', 'latest_timestamp', 'l1_locked_height',
-        'app_version', 'block_version', 'app_hash', 'id', 'pro_tx_hash', 'proposed_blocks_amount'
+        'app_version', 'block_version', 'app_hash', 'id', 'pro_tx_hash',
+        this.knex.raw('COALESCE(proposed_blocks_amount, 0) as proposed_blocks_amount')
       )
       .leftJoin('blocks_subquery', 'subquery.id', 'blocks_subquery.validator_id')
       .whereRaw(filtersQuery, filtersBindings)
@@ -288,6 +288,62 @@ module.exports = class ValidatorsDAO {
           blocksCount: parseInt(row.blocks_count)
         }
       }))
+      .map(({ timestamp, data }) => new SeriesData(timestamp, data))
+  }
+
+  getValidatorIncomeStatsByProTxHash = async (proTxHash, start, end, interval, intervalInMs) => {
+    const startSql = `'${new Date(start.getTime()).toISOString()}'::timestamptz`
+
+    const endSql = `'${end.toISOString()}'::timestamptz`
+
+    const ranges = this.knex
+      .from(this.knex.raw(`generate_series(${startSql}, ${endSql}, '${interval}'::interval) date_to`))
+      .select('date_to', this.knex.raw(`LAG(date_to, 1, '${start.toISOString()}'::timestamptz) over (order by date_to asc) date_from`))
+
+    const rows = await this.knex.with('ranges', ranges)
+      .select('date_from')
+      .select(
+        this.knex('blocks')
+          .whereRaw('blocks.timestamp > date_from and blocks.timestamp <= date_to')
+          .whereILike('validator', proTxHash)
+          .count('*')
+          .as('proposed_blocks_count')
+      )
+      .select(
+        this.knex('blocks')
+          .whereRaw('blocks.timestamp > date_from and blocks.timestamp <= date_to')
+          .count('*')
+          .as('total_blocks_count')
+      )
+      .select(
+        this.knex('blocks')
+          .whereRaw('blocks.timestamp > date_from and blocks.timestamp <= date_to')
+          .sum('gas_used')
+          .leftJoin('state_transitions', 'state_transitions.block_hash', 'blocks.hash')
+          .as('collected_fees')
+      )
+      .from('ranges')
+
+    return rows
+      .slice(1)
+      .map(row => {
+        const proposedBlocksCount = parseInt(row.proposed_blocks_count ?? 0)
+        const totalBlocksCount = parseInt(row.total_blocks_count ?? 0)
+        const collectedFees = parseInt(row.collected_fees ?? 0)
+
+        // fees collected in an epoch are distributed between validators
+        // proportionally to the number of blocks they proposed
+        const income = totalBlocksCount > 0
+          ? Math.floor(collectedFees * proposedBlocksCount / totalBlocksCount)
+          : 0
+
+        return {
+          timestamp: row.date_from,
+          data: {
+            income
+          }
+        }
+      })
       .map(({ timestamp, data }) => new SeriesData(timestamp, data))
   }
 

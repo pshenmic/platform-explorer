@@ -12,8 +12,9 @@ module.exports = class Epoch {
   totalDistributedStorageFees
   totalCreatedStorageFees
   coreBlockRewards
+  blockProposers
 
-  constructor (number, firstBlockHeight, firstCoreBlockHeight, startTime, feeMultiplier, endTime, totalBlocksInEpoch, totalProcessingFees, totalDistributedStorageFees, totalCreatedStorageFees, coreBlockRewards) {
+  constructor (number, firstBlockHeight, firstCoreBlockHeight, startTime, feeMultiplier, endTime, totalBlocksInEpoch, totalProcessingFees, totalDistributedStorageFees, totalCreatedStorageFees, coreBlockRewards, blockProposers) {
     this.number = number ?? null
     this.firstBlockHeight = firstBlockHeight ?? null
     this.firstCoreBlockHeight = firstCoreBlockHeight ?? null
@@ -25,6 +26,7 @@ module.exports = class Epoch {
     this.totalDistributedStorageFees = totalDistributedStorageFees ?? null
     this.totalCreatedStorageFees = totalCreatedStorageFees ?? null
     this.coreBlockRewards = coreBlockRewards ?? null
+    this.blockProposers = blockProposers ?? null
   }
 
   static fromObject ({ number, firstBlockHeight, firstCoreBlockHeight, startTime, feeMultiplier, nextEpoch, finalizedEpochInfo }) {
@@ -47,7 +49,13 @@ module.exports = class Epoch {
       finalizedEpochInfo ? String(finalizedEpochInfo.totalProcessingFees) : null,
       finalizedEpochInfo ? String(finalizedEpochInfo.totalDistributedStorageFees) : null,
       finalizedEpochInfo ? String(finalizedEpochInfo.totalCreatedStorageFees) : null,
-      finalizedEpochInfo ? String(finalizedEpochInfo.coreBlockRewards) : null
+      finalizedEpochInfo ? String(finalizedEpochInfo.coreBlockRewards) : null,
+      finalizedEpochInfo
+        ? (finalizedEpochInfo.blockProposers ?? []).map(blockProposer => ({
+            proposer: (typeof blockProposer.proposer === 'string' ? blockProposer.proposer : blockProposer.proposer.hex()).toUpperCase(),
+            count: Number(blockProposer.count)
+          }))
+        : null
     )
   }
 }

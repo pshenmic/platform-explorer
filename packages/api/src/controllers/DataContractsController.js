@@ -95,6 +95,30 @@ class DataContractsController {
     response.send(transactions)
   }
 
+  getActiveDataContracts = async (request, response) => {
+    const {
+      timestamp_start: start = new Date().getTime() - 3600000,
+      timestamp_end: end = new Date().getTime(),
+      page = 1,
+      limit = 10,
+      order = 'asc'
+    } = request.query
+
+    if (start && end && new Date(start).getTime() >= new Date(end).getTime()) {
+      return response.status(400).send('Bad timestamp range')
+    }
+
+    const dataContracts = await this.dataContractsDAO.getActiveDataContracts(
+      new Date(start),
+      new Date(end),
+      Number(page ?? 1),
+      Number(limit ?? 10),
+      order
+    )
+
+    response.send(dataContracts)
+  }
+
   getDataContractTrends = async (request, response) => {
     const {
       page = 1,
