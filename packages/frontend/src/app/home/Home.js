@@ -183,7 +183,16 @@ function Home () {
   const avgBlockTimeSec = computeAvgBlockTime(blocksQuery.data?.resultSet)
 
   return (
-    <Container className={'HomePage'} maxW={'container.maxPageW'} color={'white'} px={3} py={0} mt={gap} mb={gap}>
+    <Container
+      className={'HomePage'}
+      maxW={'container.maxPageW'}
+      color={'white'}
+      // mobile: tight gutter so card border/shadow aren't clipped; md+: standard 12px
+      px={{ base: 2, md: 3 }}
+      py={0}
+      mt={gap}
+      mb={gap}
+    >
       <Flex direction={'column'} gap={gap}>
         <HomeHero status={statusQuery.data ?? {}} loading={statusQuery.isLoading} avgBlockTimeSec={avgBlockTimeSec}/>
 
