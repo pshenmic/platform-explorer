@@ -186,8 +186,12 @@ function Home () {
       <Flex direction={'column'} gap={gap}>
         <HomeHero status={statusQuery.data ?? {}} loading={statusQuery.isLoading} avgBlockTimeSec={avgBlockTimeSec}/>
 
-        <Box className={'InfoBlock InfoBlock--NoBorder HomeOverview'} w={'100%'}>
-          <Heading className={'InfoBlock__Title'} as={'h2'}>Network overview</Heading>
+        <Box
+          className={'InfoBlock InfoBlock--NoBorder HomeOverview'}
+          w={'100%'}
+          as={'section'}
+          aria-label={'Network overview'}
+        >
           <div className={'HomeOverview__Grid'}>
             <div className={'HomeOverview__Sys'}>
               <HeroMeta status={statusQuery.data ?? {}} loading={statusQuery.isLoading}/>
