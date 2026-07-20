@@ -125,8 +125,9 @@ interface TransactionsStatisticItem {
   count: number
 }
 
-const getTransactionsStatistic = (): Promise<TransactionsStatisticItem[]> => {
-  return call<TransactionsStatisticItem[]>('transactions/statistic', 'GET')
+const getTransactionsStatistic = (start?: string, end?: string): Promise<TransactionsStatisticItem[]> => {
+  const range = start && end ? `?timestamp_start=${start}&timestamp_end=${end}` : ''
+  return call<TransactionsStatisticItem[]>(`transactions/statistic${range}`, 'GET')
 }
 
 interface ShieldedStatistic {
