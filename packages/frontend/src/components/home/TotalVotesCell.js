@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import ChoiceBadge from '../contestedResources/ChoiceBadge'
 import { useRotator, useCountUp } from './hooks'
-import { trimName } from './utils'
+import { trimName, contestedHref } from './utils'
 import { GovDots } from './GovDots'
 
 // the rotator and the dot pager must share one list, or the active dot runs off the pager
@@ -36,8 +36,8 @@ export function TotalVotesCell ({ count, votes }) {
           {/* key remounts the ticker so each rotation slides in */}
           <span key={rotator.index} className={'HomeHero__GovTicker'}>
             <Link
-              // regular voters have no detail page, so the entry opens the votes list
-              href={'/masternodeVotes'}
+              // votes with indexValues link to their contested dispute; others fall back to the list
+              href={item.indexValues ? contestedHref(item.indexValues) : '/masternodeVotes'}
               className={'HomeHero__VotesItem'}
             >
               {typeof item.choice === 'number'
