@@ -2,6 +2,13 @@
 @import '../../../styles/variables.scss';
 
 .Tooltip {
+  // keep tip interactive when moving from the trigger into the portal
+  pointer-events: auto !important;
+
+  &__Body {
+    pointer-events: auto;
+  }
+
   &__Title {
     color: #fff;
     font-weight: 800;
