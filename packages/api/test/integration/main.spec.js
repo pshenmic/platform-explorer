@@ -984,7 +984,8 @@ describe('Other routes', () => {
           totalProcessingFees: null,
           totalDistributedStorageFees: null,
           totalCreatedStorageFees: null,
-          coreBlockRewards: null
+          coreBlockRewards: null,
+          blockProposers: null
         },
         identitiesCount: 1,
         transactionsCount: 51,
