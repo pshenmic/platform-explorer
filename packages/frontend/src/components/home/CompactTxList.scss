@@ -1,15 +1,52 @@
+@use '../../styles/mixins.scss';
 @import '../../styles/variables.scss';
 
 .CompactTx {
   display: grid;
-  // shared subgrid tracks: the type column sizes to the longest badge across all rows
-  grid-template-columns: 18px minmax(0, 1fr) max-content 11ch;
+  // fit-content(10rem): Type sizes to its badge but caps, so Time stays close; long badges clip
+  grid-template-columns: 3.5rem minmax(0, 1fr) fit-content(10rem) 5ch;
 
   &__Empty {
     padding: 14px 0;
     color: var(--chakra-colors-gray-500);
     font-family: $font-mono;
     font-size: 0.8125rem;
+  }
+
+  // column titles — the project's list-title bar (see /blocks), aligned to the subgrid tracks
+  &__Head {
+    display: grid;
+    grid-template-columns: subgrid;
+    grid-column: 1 / -1;
+    align-items: center;
+    gap: 12px;
+    padding: 4px 6px 8px;
+    margin-bottom: 4px;
+    border-bottom: 1px solid rgba(var(--chakra-colors-gray-800-rgb), 0.6);
+  }
+
+  &__HeadCell {
+    font-family: $font-heading;
+    font-weight: 700;
+    font-size: 0.6875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: #fff;
+    white-space: nowrap;
+
+    &--status { text-align: center; }
+    &--time { text-align: right; }
+  }
+
+  // footer action, full width, in place of the old top "Show more" — the project's default button
+  &__More {
+    @include mixins.DefButton;
+
+    grid-column: 1 / -1;
+    width: 100%;
+    margin-top: 8px;
+
+    &::before { content: ''; }
   }
 
   &__Row {
@@ -57,7 +94,18 @@
 
   &__Type {
     white-space: nowrap;
-    justify-self: center; // full badge, centred in the shared column
+    // fill the capped track (no justify-self:start — that would content-size the cell
+    // to the badge and overflow the track into Time); the badge sits left inside it
+    min-width: 0;
+    overflow: hidden; // nothing bleeds into the Time column
+
+    // full flex-shrink chain so the label ellipsizes instead of hard-cutting;
+    // the badge tooltip carries the full type name
+    .chakra-badge {
+      min-width: 0;
+      max-width: 100%;
+      overflow: hidden;
+    }
   }
 
   &__Time {
@@ -66,24 +114,16 @@
     color: var(--chakra-colors-gray-500);
     white-space: nowrap;
     text-align: right;
-    // worst-case width ("59 sec. ago"): a ticking digit count never reflows the row
-    min-width: 11ch;
+    // worst-case width ("365d"/"59m"): compact format, a ticking digit never reflows the row
+    min-width: 5ch;
   }
 
   // very narrow: hash and badge split the space and clip; the tooltip keeps the full type
   @media screen and (max-width: $breakpoint-sm) {
-    grid-template-columns: 18px minmax(0, 1.1fr) minmax(0, 0.9fr) 11ch;
-
-    &__Type {
-      justify-self: start;
-      min-width: 0;
-
-      .chakra-badge {
-        max-width: 100%;
-        overflow: hidden;
-        text-overflow: ellipsis;
-      }
-    }
+    // narrower status track on phones (a wider one overflowed the row); "Status" header
+    // sits a touch tight to "Hash" here, acceptable at this width
+    grid-template-columns: 2.75rem minmax(0, 1.1fr) minmax(0, 0.9fr) 5ch;
+    // __Type clipping (ellipsis + tooltip) lives in the base rule now
   }
 
   // new rows cascade in with a fading highlight; backwards keeps delayed rows hidden

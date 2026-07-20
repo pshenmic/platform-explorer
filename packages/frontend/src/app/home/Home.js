@@ -1,7 +1,6 @@
 'use client'
 
 import { useState, useEffect, useMemo, useRef } from 'react'
-import Link from 'next/link'
 import { useQuery, useQueries } from '@tanstack/react-query'
 import * as Api from '../../util/Api'
 import HomeHero from './HomeHero.js'
@@ -9,7 +8,6 @@ import { MetricChart, EpochsOverview, StatusBar, HeroMeta, MasternodesDonut, TxT
 import { fetchHandlerSuccess, fetchHandlerError } from '../../util'
 import theme from '../../styles/theme'
 import { Box, Container, Flex, Heading, SimpleGrid } from '@chakra-ui/react'
-import { ChevronIcon } from '../../components/ui/icons'
 import './Home.scss'
 
 function computeAvgBlockTime (blocks) {
@@ -179,18 +177,22 @@ function Home () {
               <HeroMeta status={statusQuery.data ?? {}} loading={statusQuery.isLoading}/>
             </div>
             <div className={'HomeOverview__Tx'}>
-              <div className={'HomeOverview__TxHead'}>
-                <span className={'HomeOverview__TxTitle'}>Latest Transactions</span>
-                <Link href={'/transactions'} className={'HomeOverview__More'}>Show more <ChevronIcon w={'5px'} h={'8px'}/></Link>
-              </div>
-              <CompactTxList transactions={txQuery.data?.resultSet} limit={7} loading={txQuery.isLoading}/>
+              <CompactTxList
+                transactions={txQuery.data?.resultSet}
+                limit={6}
+                loading={txQuery.isLoading}
+                moreHref={'/transactions'}
+                moreLabel={'View all transactions'}
+              />
             </div>
             <div className={'HomeOverview__Blocks'}>
-              <div className={'HomeOverview__TxHead'}>
-                <span className={'HomeOverview__TxTitle'}>Latest Blocks</span>
-                <Link href={'/blocks'} className={'HomeOverview__More'}>Show more <ChevronIcon w={'5px'} h={'8px'}/></Link>
-              </div>
-              <CompactBlocksList blocks={blocksQuery.data?.resultSet} limit={7} loading={blocksQuery.isLoading}/>
+              <CompactBlocksList
+                blocks={blocksQuery.data?.resultSet}
+                limit={6}
+                loading={blocksQuery.isLoading}
+                moreHref={'/blocks'}
+                moreLabel={'View all blocks'}
+              />
             </div>
           </div>
         </Box>

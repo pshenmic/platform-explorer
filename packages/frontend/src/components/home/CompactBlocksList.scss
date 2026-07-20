@@ -1,8 +1,10 @@
+@use '../../styles/mixins.scss';
 @import '../../styles/variables.scss';
 
 .CompactBlocks {
-  display: flex;
-  flex-direction: column;
+  // one shared set of subgrid tracks: per-row grids resolve auto/1fr differently and misalign
+  display: grid;
+  grid-template-columns: minmax(8ch, auto) minmax(0, 1fr) 76px auto;
 
   &__Empty {
     padding: 14px 0;
@@ -11,10 +13,46 @@
     font-size: 0.8125rem;
   }
 
+  // column titles — the project's list-title bar (see /blocks), aligned to the shared tracks
+  &__Head {
+    display: grid;
+    grid-template-columns: subgrid;
+    grid-column: 1 / -1;
+    align-items: center;
+    gap: 12px;
+    padding: 4px 6px 8px;
+    margin-bottom: 4px;
+    border-bottom: 1px solid rgba(var(--chakra-colors-gray-800-rgb), 0.6);
+  }
+
+  &__HeadCell {
+    font-family: $font-heading;
+    font-weight: 700;
+    font-size: 0.6875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: #fff;
+    white-space: nowrap;
+
+    &--txs { text-align: center; }
+    &--time { text-align: right; }
+  }
+
+  // full-width footer action, the project's default button
+  &__More {
+    @include mixins.DefButton;
+
+    grid-column: 1 / -1;
+    width: 100%;
+    margin-top: 8px;
+
+    &::before { content: ''; }
+  }
+
   &__Row {
     display: grid;
-    // fixed txs column (fits "20000 txs") + height reserve: new rows never shift the grid
-    grid-template-columns: minmax(8ch, auto) minmax(0, 1fr) 76px auto;
+    grid-template-columns: subgrid;
+    grid-column: 1 / -1;
     align-items: center;
     gap: 12px;
     min-height: 44px;
@@ -31,16 +69,25 @@
 
   &__Height {
     display: inline-flex;
-    align-items: baseline;
+    align-items: center;
+    gap: 8px;
     font-family: $font-mono;
     font-size: 0.8125rem;
     color: #fff;
     white-space: nowrap;
   }
 
-  &__Hatch {
-    margin-right: 1px;
-    color: var(--chakra-colors-gray-500);
+  // the icon nests a fixed-size svg: pin the box and let the inner svg fill it
+  &__Icon {
+    flex-shrink: 0;
+    width: 1.05rem;
+    height: 1.05rem;
+
+    svg {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
   }
 
   &__HashCell {
@@ -76,8 +123,8 @@
     color: var(--chakra-colors-gray-500);
     white-space: nowrap;
     text-align: right;
-    // worst-case width ("59 sec. ago"): a ticking digit count never reflows the row
-    min-width: 11ch;
+    // worst-case width ("365d"/"59m"): compact format, a ticking digit never reflows the row
+    min-width: 5ch;
   }
 
   // new rows cascade in with a fading highlight (keyframes shared from CompactTxList.scss)

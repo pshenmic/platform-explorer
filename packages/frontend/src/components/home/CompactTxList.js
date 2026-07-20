@@ -5,6 +5,7 @@ import StatusIcon from '../transactions/StatusIcon'
 import TypeBadge from '../transactions/TypeBadge'
 import BatchTypeBadge from '../transactions/BatchTypeBadge'
 import { TimeDelta, NotActive } from '../data'
+import { CheckmarkIcon, ErrorCircleIcon } from '../ui/icons'
 import { Tooltip } from '../ui/Tooltips'
 import { Skeleton } from './Skeleton'
 import { useLiveList } from './hooks'
@@ -18,15 +19,32 @@ const STATUS_LABEL = {
   BROADCASTED: 'Broadcasted'
 }
 
+// column-title row aligned to the grid, so the compact list reads like the full tables
+function CompactTxHead () {
+  return (
+    <div className={'CompactTx__Head'} aria-hidden={'true'}>
+      <span className={'CompactTx__HeadCell CompactTx__HeadCell--status'}>Status</span>
+      <span className={'CompactTx__HeadCell'}>Hash</span>
+      <span className={'CompactTx__HeadCell'}>Type</span>
+      <span className={'CompactTx__HeadCell CompactTx__HeadCell--time'}>Time</span>
+    </div>
+  )
+}
+
 // dense latest-transactions list; refreshes are held back while hovered
-export function CompactTxList ({ transactions, limit = 7, loading }) {
+export function CompactTxList ({ transactions, limit = 6, loading, moreHref, moreLabel }) {
   const { shown, newKeys, hoverBind } = useLiveList(transactions, tx => tx?.hash)
   const rows = Array.isArray(shown) ? shown.slice(0, limit) : []
+
+  const footer = moreHref
+    ? <Link href={moreHref} prefetch={false} className={'CompactTx__More'}>{moreLabel || 'View all'}</Link>
+    : null
 
   // skeleton mirrors the real row grid so there's no layout shift
   if (loading && !rows.length) {
     return (
       <div className={'CompactTx'}>
+        <CompactTxHead/>
         {Array.from({ length: limit }).map((_, i) => (
           <div className={'CompactTx__Row CompactTx__Row--skeleton'} key={i}>
             <span className={'CompactTx__Status'}><Skeleton w={'16px'} circle={true}/></span>
@@ -35,6 +53,7 @@ export function CompactTxList ({ transactions, limit = 7, loading }) {
             <span className={'CompactTx__Time'}><Skeleton w={'42px'} h={'0.7em'}/></span>
           </div>
         ))}
+        {footer}
       </div>
     )
   }
@@ -45,6 +64,7 @@ export function CompactTxList ({ transactions, limit = 7, loading }) {
 
   return (
     <div className={'CompactTx'} {...hoverBind}>
+      <CompactTxHead/>
       {rows.map((tx, i) => (
         <Link
           key={tx.hash}
@@ -58,7 +78,14 @@ export function CompactTxList ({ transactions, limit = 7, loading }) {
           <span className={'CompactTx__Status'}>
             {tx.status
               ? <Tooltip content={STATUS_LABEL[tx.status] || tx.status} placement={'top'}>
-                  <span className={'CompactTx__StatusIcon'}><StatusIcon status={tx.status} w={'18px'} h={'18px'}/></span>
+                  <span className={'CompactTx__StatusIcon'}>
+                    {/* filled colour disc from the /transactions status badge, minus the label text */}
+                    {tx.status === 'SUCCESS'
+                      ? <CheckmarkIcon w={'18px'} h={'18px'}/>
+                      : tx.status === 'FAIL'
+                        ? <ErrorCircleIcon w={'18px'} h={'18px'}/>
+                        : <StatusIcon status={tx.status} w={'18px'} h={'18px'}/>}
+                  </span>
                 </Tooltip>
               : <NotActive/>}
           </span>
@@ -76,10 +103,11 @@ export function CompactTxList ({ transactions, limit = 7, loading }) {
           </span>
 
           <span className={'CompactTx__Time'}>
-            {tx.timestamp ? <TimeDelta showTimestampTooltip={true} endDate={new Date(tx.timestamp)}/> : <NotActive/>}
+            {tx.timestamp ? <TimeDelta showTimestampTooltip={true} format={'compact'} endDate={new Date(tx.timestamp)}/> : <NotActive/>}
           </span>
         </Link>
       ))}
+      {footer}
     </div>
   )
 }
