@@ -57,7 +57,11 @@ describe('Epoch routes', () => {
         totalProcessingFees: 1000n,
         totalDistributedStorageFees: 2000n,
         totalCreatedStorageFees: 3000n,
-        coreBlockRewards: 4000n
+        coreBlockRewards: 4000n,
+        blockProposers: [
+          { proposer: { hex: () => 'a1b2c3' }, count: 20n },
+          { proposer: { hex: () => 'd4e5f6' }, count: 10n }
+        ]
       }])
     app = await server.start()
     client = supertest(app.server)
@@ -193,7 +197,11 @@ describe('Epoch routes', () => {
           totalProcessingFees: '1000',
           totalDistributedStorageFees: '2000',
           totalCreatedStorageFees: '3000',
-          coreBlockRewards: '4000'
+          coreBlockRewards: '4000',
+          blockProposers: [
+            { proposer: 'A1B2C3', count: 20 },
+            { proposer: 'D4E5F6', count: 10 }
+          ]
         },
         tps: (identities.length + transactions.length) / 1800,
         totalCollectedFees: transactions.reduce((acc, tx) => acc + tx.gas_used, 0),
@@ -256,7 +264,8 @@ describe('Epoch routes', () => {
           totalProcessingFees: null,
           totalDistributedStorageFees: null,
           totalCreatedStorageFees: null,
-          coreBlockRewards: null
+          coreBlockRewards: null,
+          blockProposers: null
         },
         tps: 0,
         totalCollectedFees: 0,
