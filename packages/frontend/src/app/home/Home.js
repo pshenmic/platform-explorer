@@ -55,6 +55,12 @@ function Home () {
     queryFn: () => Api.getValidators(1, 1, 'desc', { isBanned: 'true' }),
     staleTime: 60_000
   })
+  // inactive straight from the backend (not-active AND not-banned) — no client-side arithmetic
+  const validatorsInactiveQuery = useQuery({
+    queryKey: ['home', 'validators', 'inactive'],
+    queryFn: () => Api.getValidators(1, 1, 'desc', { isActive: 'false', isBanned: 'false' }),
+    staleTime: 60_000
+  })
 
   // shape expected by MasternodesDonut ({ data, loading })
   const validators = {
@@ -68,6 +74,10 @@ function Home () {
   const validatorsBanned = {
     data: validatorsBannedQuery.data ?? {},
     loading: validatorsBannedQuery.isPending || validatorsBannedQuery.isLoading
+  }
+  const validatorsInactive = {
+    data: validatorsInactiveQuery.data ?? {},
+    loading: validatorsInactiveQuery.isPending || validatorsInactiveQuery.isLoading
   }
 
   const currentEpochNumber = statusQuery.data?.epoch?.number
@@ -213,7 +223,7 @@ function Home () {
           <MetricChart title={'Identities growth'} type={'line'} fetcher={Api.getIdentitiesHistory} field={'registeredIdentities'} yAbbr={'identities'} enabled={belowFoldReady}/>
           <TxTypesBar enabled={belowFoldReady}/>
           <ShieldedPoolCard rate={rate} enabled={belowFoldReady}/>
-          <MasternodesDonut validators={validators} validatorsActive={validatorsActive} validatorsBanned={validatorsBanned}/>
+          <MasternodesDonut validators={validators} validatorsActive={validatorsActive} validatorsBanned={validatorsBanned} validatorsInactive={validatorsInactive}/>
           <Box className={'InfoBlock InfoBlock--NoBorder HomeGovCard'} w={'100%'}>
             <Heading className={'InfoBlock__Title'} as={'h2'}>Governance</Heading>
             <StatusBar

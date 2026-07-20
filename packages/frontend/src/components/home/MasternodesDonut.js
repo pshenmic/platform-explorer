@@ -1,42 +1,57 @@
 'use client'
 
 import { Box, Heading } from '@chakra-ui/react'
+import { InfoIcon, RepeatIcon } from '@chakra-ui/icons'
+import { Tooltip } from '../ui/Tooltips'
 import { Skeleton } from './Skeleton'
 import './MasternodesDonut.scss'
 
-const SIZE = 200
-const STROKE = 16
-const R = (SIZE - STROKE) / 2
-const C = 2 * Math.PI * R
+// tiny slices (e.g. banned 1%) would vanish from the bar; clamp the display width, keep exact counts
+const MIN_SEG_FRAC = 0.02
 
-// exact pagination totals; total paints first, arcs fill as active/banned arrive
-export default function MasternodesDonut ({ validators, validatorsActive, validatorsBanned }) {
+// composite "Validator set": status tiles over a stacked status bar;
+// every count is a backend /validators pagination total, no client-side arithmetic
+export default function MasternodesDonut ({ validators, validatorsActive, validatorsBanned, validatorsInactive }) {
   const total = validators?.data?.pagination?.total
   const active = validatorsActive?.data?.pagination?.total
   const banned = validatorsBanned?.data?.pagination?.total
+  const inactive = validatorsInactive?.data?.pagination?.total
 
   const hasTotal = typeof total === 'number' && total > 0
   const hasActive = typeof active === 'number'
   const hasBanned = typeof banned === 'number'
+  const hasInactive = typeof inactive === 'number'
   const loadingTotal = Boolean(validators?.loading)
-  const loadingRest = Boolean(validatorsActive?.loading || validatorsBanned?.loading)
 
-  // skeleton only while we still don't know the set size
   const showSkeleton = !hasTotal && loadingTotal
   const showEmpty = !hasTotal && !loadingTotal
-  const showChart = hasTotal
+  const showContent = hasTotal
 
-  const bannedCount = hasBanned ? banned : 0
   const activeCount = hasActive ? active : 0
-  const inactive = hasActive ? Math.max(total - activeCount - bannedCount, 0) : null
+  const bannedCount = hasBanned ? banned : 0
+
+  const pct = n => Math.round((n / total) * 100)
+
+  // display fractions for the bar: clamp banned so a 1% slice still shows; inactive soaks the rest
   const activeFrac = hasActive ? Math.min(activeCount / total, 1) : 0
-  // a sub-pixel slice reads as an artifact: clamp for display, the legend keeps the exact count
-  const MIN_ARC_FRAC = 0.018
-  const bannedFracRaw = hasBanned ? Math.min(bannedCount / total, 1 - activeFrac) : 0
-  const bannedFrac = bannedFracRaw > 0 ? Math.max(bannedFracRaw, MIN_ARC_FRAC) : 0
-  // gapped butt caps keep thin segments apart (round caps overhang); no notch on a full circle
-  const GAP = (hasActive && (activeFrac < 1 || bannedFrac > 0)) ? 3 : 0
-  const arcDash = frac => `${Math.max(frac * C - GAP, 0)} ${C}`
+  const bannedRaw = hasBanned ? bannedCount / total : 0
+  const bannedFrac = bannedRaw > 0 ? Math.max(bannedRaw, MIN_SEG_FRAC) : 0
+  const inactiveFrac = Math.max(1 - activeFrac - bannedFrac, 0)
+
+  const inactiveCount = hasInactive ? inactive : 0
+
+  const tiles = [
+    { key: 'total', label: 'Total', count: total, noPct: true, hint: 'All Platform validators (evonodes) tracked on the network.' },
+    { key: 'active', label: 'Active', count: hasActive ? activeCount : null, hint: 'In the current validator set — validating blocks right now. The set rotates each epoch.' },
+    { key: 'inactive', label: 'Standby', count: hasInactive ? inactiveCount : null, rotate: true, hint: 'Registered evonode that is not in the current validator set — waiting to rotate in.' },
+    { key: 'banned', label: 'Banned', count: hasBanned ? bannedCount : null, hint: 'PoSe-banned (failed to provide service). Never in the active set.' }
+  ]
+
+  const segs = [
+    { key: 'active', label: 'Active', count: activeCount, frac: activeFrac },
+    { key: 'inactive', label: 'Inactive', count: inactiveCount, frac: inactiveFrac },
+    { key: 'banned', label: 'Banned', count: bannedCount, frac: bannedFrac }
+  ].filter(s => s.frac > 0)
 
   return (
     <Box className={'InfoBlock InfoBlock--NoBorder MasternodesDonut'} w={'100%'}>
@@ -47,84 +62,60 @@ export default function MasternodesDonut ({ validators, validatorsActive, valida
       <div className={'MasternodesDonut__Body'}>
         {showSkeleton &&
           <>
-            <div className={'MasternodesDonut__Chart'}>
-              <svg className={'MasternodesDonut__Svg'} viewBox={`0 0 ${SIZE} ${SIZE}`} aria-hidden={'true'}>
-                <circle className={'MasternodesDonut__Track'} cx={SIZE / 2} cy={SIZE / 2} r={R} fill={'none'} strokeWidth={STROKE}/>
-              </svg>
-              <div className={'MasternodesDonut__ChartSkeleton'}>
-                <Skeleton w={'48px'} h={'1.5em'}/>
-                <Skeleton w={'64px'} h={'0.6em'}/>
-              </div>
+            <div className={'MasternodesDonut__Tiles'}>
+              {Array.from({ length: 4 }).map((_, i) => (
+                <div className={'MasternodesDonut__Tile'} key={i}>
+                  <Skeleton w={'52px'} h={'0.6em'}/>
+                  <Skeleton w={'56px'} h={'1.4em'} className={'MasternodesDonut__SkelGap'}/>
+                </div>
+              ))}
             </div>
-            <div className={'MasternodesDonut__Legend'}>
-              {Array.from({ length: 3 }).map((_, i) => <Skeleton w={'100%'} h={'0.75em'} key={i}/>)}
-            </div>
+            <Skeleton w={'100%'} h={'10px'} radius={5}/>
           </>}
-        {showEmpty &&
-          <div className={'MasternodesDonut__Empty'}>No data</div>}
-        {showChart &&
-          <>
-              <div className={'MasternodesDonut__Chart'}>
-                <svg
-                  className={'MasternodesDonut__Svg'}
-                  viewBox={`0 0 ${SIZE} ${SIZE}`}
-                  role={'img'}
-                  aria-label={hasActive ? `${activeCount} of ${total} validators active` : `${total} masternodes`}
-                >
-                  <circle className={'MasternodesDonut__Track'} cx={SIZE / 2} cy={SIZE / 2} r={R} fill={'none'} strokeWidth={STROKE}/>
-                  {hasActive &&
-                    <circle
-                      className={'MasternodesDonut__Arc'}
-                      cx={SIZE / 2}
-                      cy={SIZE / 2}
-                      r={R}
-                      fill={'none'}
-                      strokeWidth={STROKE}
-                      strokeDasharray={arcDash(activeFrac)}
-                      transform={`rotate(-90 ${SIZE / 2} ${SIZE / 2})`}
-                    />}
-                  {hasBanned && bannedFrac > 0 &&
-                    <circle
-                      className={'MasternodesDonut__ArcBanned'}
-                      cx={SIZE / 2}
-                      cy={SIZE / 2}
-                      r={R}
-                      fill={'none'}
-                      strokeWidth={STROKE}
-                      strokeDasharray={arcDash(bannedFrac)}
-                      strokeDashoffset={-activeFrac * C}
-                      transform={`rotate(-90 ${SIZE / 2} ${SIZE / 2})`}
-                    />}
-                  <text className={'MasternodesDonut__Total'} x={'50%'} y={'45%'} textAnchor={'middle'} dominantBaseline={'middle'} fontSize={38}>{total}</text>
-                  <text className={'MasternodesDonut__TotalLabel'} x={'50%'} y={'62%'} textAnchor={'middle'} dominantBaseline={'middle'} fontSize={12}>masternodes</text>
-                </svg>
-              </div>
 
-              <div className={'MasternodesDonut__Legend'}>
-                {[
-                  { label: 'Active', count: hasActive ? activeCount : null, cls: 'active' },
-                  { label: 'Inactive', count: inactive, cls: 'inactive' },
-                  ...(hasBanned && bannedCount > 0 ? [{ label: 'Banned', count: bannedCount, cls: 'banned' }] : [])
-                ].map(row => (
-                  <span className={'MasternodesDonut__LegendItem'} key={row.label}>
-                    <i className={`MasternodesDonut__Dot MasternodesDonut__Dot--${row.cls}`}/>
-                    <span className={'MasternodesDonut__LegendLabel'}>{row.label}</span>
-                    <span className={'MasternodesDonut__LegendBar'}>
-                      {typeof row.count === 'number'
-                        ? <i className={`MasternodesDonut__LegendFill MasternodesDonut__LegendFill--${row.cls}`} style={{ width: `${Math.max((row.count / total) * 100, 1.5)}%` }}/>
-                        : null}
-                    </span>
-                    <span className={'MasternodesDonut__LegendCount'}>
-                      {typeof row.count === 'number' ? row.count : (loadingRest ? '…' : '—')}
-                    </span>
-                    <span className={'MasternodesDonut__LegendPct'}>
-                      {typeof row.count === 'number' ? `${Math.round((row.count / total) * 100)}%` : ''}
-                    </span>
+        {showEmpty && <div className={'MasternodesDonut__Empty'}>No data</div>}
+
+        {showContent &&
+          <>
+            <div className={'MasternodesDonut__Tiles'}>
+              {tiles.map(t => (
+                <div className={`MasternodesDonut__Tile MasternodesDonut__Tile--${t.key}`} key={t.key}>
+                  <span className={'MasternodesDonut__TileLabel'}>
+                    <i className={`MasternodesDonut__Dot MasternodesDonut__Dot--${t.key}`}/>
+                    {t.label}
+                    {t.rotate && <RepeatIcon className={'MasternodesDonut__Rotate'} aria-hidden={'true'}/>}
+                    {t.hint &&
+                      <Tooltip content={t.hint} placement={'top'}>
+                        <span className={'MasternodesDonut__TileInfo'} aria-label={`About ${t.label}`}>
+                          <InfoIcon boxSize={2.5}/>
+                        </span>
+                      </Tooltip>}
                   </span>
+                  <span className={'MasternodesDonut__TileValue'}>
+                    {typeof t.count === 'number' ? t.count : '—'}
+                  </span>
+                  {!t.noPct &&
+                    <span className={'MasternodesDonut__TilePct'}>
+                      {typeof t.count === 'number' ? `${pct(t.count)}%` : ''}
+                    </span>}
+                </div>
+              ))}
+            </div>
+
+            <div className={'MasternodesDonut__Bottom'}>
+              <div className={'MasternodesDonut__Bar'} role={'img'} aria-label={hasActive ? `${activeCount} of ${total} validators active` : `${total} validators`}>
+                {segs.map(s => (
+                  <Tooltip key={s.key} content={`${s.label} · ${s.count.toLocaleString('en-US')} · ${pct(s.count)}%`} placement={'top'}>
+                    <span
+                      className={`MasternodesDonut__Seg MasternodesDonut__Seg--${s.key}`}
+                      style={{ width: `${s.frac * 100}%` }}
+                    />
+                  </Tooltip>
                 ))}
               </div>
-            </>
-        }
+
+            </div>
+          </>}
       </div>
     </Box>
   )
