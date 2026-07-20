@@ -75,6 +75,18 @@ export default function Tooltip ({ title = '', content = '', children, className
       openDelay={0}
       closeDelay={0}
       gutter={8}
+      // keep tips inside the viewport on phones; avoid 100vw (scrollbar width → h-scroll)
+      maxW={'18rem'}
+      modifiers={[
+        {
+          name: 'preventOverflow',
+          options: { padding: 12, altAxis: true, tether: false }
+        },
+        {
+          name: 'flip',
+          options: { fallbackPlacements: ['bottom', 'top', 'left', 'right'] }
+        }
+      ]}
       {...props}
     >
       {element}
