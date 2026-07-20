@@ -1,13 +1,8 @@
 @import '../../styles/variables.scss';
 
 .MasternodesDonut {
-  &__Head {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-    margin-bottom: 6px;
-  }
+  // query card width (not viewport): home md+ puts this in a half-width SimpleGrid cell
+  container-type: inline-size;
 
   // status tiles fill the top, the stacked bar sits at the bottom — fills the paired card height
   &__Body {
@@ -33,15 +28,17 @@
     color: var(--chakra-colors-gray-500);
   }
 
-  // four equal status cards (Total / Active / Standby / Banned)
+  // four equal status cards (Total / In Quorum / Queued / Banned)
   &__Tiles {
     flex: 1;
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 12px;
 
-    @media screen and (max-width: $breakpoint-sm) {
+    // ~1024 2-col home + phones: 4-up starves labels ("In Quorum"); 2×2 gives each tile room
+    @container (max-width: 560px) {
       grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
     }
   }
 
@@ -51,10 +48,14 @@
     justify-content: center;
     gap: 7px;
     min-width: 0;
-    padding: 14px 14px;
+    padding: 14px 12px;
     border: 1px solid rgba(var(--chakra-colors-gray-800-rgb), 0.7);
     border-radius: 10px;
     background: rgba(255, 255, 255, 0.015);
+
+    @container (max-width: 560px) {
+      padding: 12px 10px;
+    }
   }
 
   &__SkelGap { margin-top: 6px; }
@@ -63,17 +64,22 @@
     display: inline-flex;
     align-items: center;
     gap: 5px;
+    min-width: 0;
+    max-width: 100%;
     font-family: $font-mono;
     font-size: 0.625rem;
     text-transform: uppercase;
     letter-spacing: 0.08em;
     color: var(--chakra-colors-gray-500);
     white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   // (i) hint, same affordance as the epoch stat cells
   &__TileInfo {
     display: inline-flex;
+    flex-shrink: 0;
     align-items: center;
     color: var(--chakra-colors-gray-500);
     cursor: pointer;
@@ -84,6 +90,7 @@
 
   // rotation glyph on Standby: a visual cue that these validators are awaiting rotation into the set
   &__Rotate {
+    flex-shrink: 0;
     width: 10px;
     height: 10px;
     color: var(--chakra-colors-gray-500);

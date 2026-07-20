@@ -27,26 +27,6 @@ $txtype-colors: (
 );
 
 .TxTypesBar {
-  &__Head {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 10px 16px;
-    margin-bottom: 6px;
-
-    // phones: the preset row drops under the title instead of squeezing it
-    @media screen and (max-width: $breakpoint-md) {
-      flex-wrap: wrap;
-    }
-  }
-
-  &__HeadLeft {
-    display: flex;
-    align-items: baseline;
-    gap: 10px;
-    min-width: 0;
-  }
-
   &__Total {
     font-family: $font-heading;
     font-weight: 800;
@@ -67,13 +47,12 @@ $txtype-colors: (
   }
 
   &__Body {
-    height: 200px;
+    // min-height: the "All" chip legend can outgrow 200px
+    min-height: 200px;
     display: flex;
     align-items: center;
 
-    // the chip legend wraps into ~10 rows on a phone: let the card grow instead of overflowing
     @media screen and (max-width: $breakpoint-md) {
-      height: auto;
       padding: 6px 0 2px;
     }
   }

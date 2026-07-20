@@ -1,8 +1,9 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Box, Heading } from '@chakra-ui/react'
+import { Box } from '@chakra-ui/react'
 import * as Api from '../../util/Api'
+import { CardHead, Presets } from '../cards'
 import { TransactionTypesInfo } from '../../enums/state.transition.type'
 import { Tooltip } from '../ui/Tooltips'
 import { Skeleton } from './Skeleton'
@@ -61,29 +62,15 @@ export default function TxTypesBar ({ enabled = true }) {
 
   return (
     <Box className={'InfoBlock InfoBlock--NoBorder TxTypesBar'} w={'100%'}>
-      <div className={'TxTypesBar__Head'}>
-        <div className={'TxTypesBar__HeadLeft'}>
-          <Heading className={'InfoBlock__Title'} as={'h2'}>Transaction types</Heading>
-          {total > 0 &&
-            <span className={'TxTypesBar__Total'}>
-              {total.toLocaleString('en-US')} <span className={'TxTypesBar__TotalLabel'}>{rangeLabel}</span>
-            </span>}
-        </div>
-
-        <div className={'MetricChart__Presets'}>
-          {PRESETS.map((p, i) => (
-            <button
-              key={p.label}
-              type={'button'}
-              className={`MetricChart__Chip ${i === presetIdx ? 'is-active' : ''}`}
-              aria-pressed={i === presetIdx}
-              onClick={() => setPresetIdx(i)}
-            >
-              {p.label}
-            </button>
-          ))}
-        </div>
-      </div>
+      <CardHead
+        title={'Transaction types'}
+        extra={total > 0 &&
+          <span className={'TxTypesBar__Total'}>
+            {total.toLocaleString('en-US')} <span className={'TxTypesBar__TotalLabel'}>{rangeLabel}</span>
+          </span>}
+      >
+        <Presets options={PRESETS} value={presetIdx} onChange={setPresetIdx}/>
+      </CardHead>
 
       <div className={'TxTypesBar__Body'}>
         {state.loading

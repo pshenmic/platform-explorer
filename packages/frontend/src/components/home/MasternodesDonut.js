@@ -1,7 +1,8 @@
 'use client'
 
-import { Box, Heading } from '@chakra-ui/react'
+import { Box } from '@chakra-ui/react'
 import { InfoIcon, RepeatIcon } from '@chakra-ui/icons'
+import { CardHead } from '../cards'
 import { Tooltip } from '../ui/Tooltips'
 import { Skeleton } from './Skeleton'
 import './MasternodesDonut.scss'
@@ -77,9 +78,7 @@ export default function MasternodesDonut ({ validators, validatorsActive, valida
 
   return (
     <Box className={'InfoBlock InfoBlock--NoBorder MasternodesDonut'} w={'100%'}>
-      <div className={'MasternodesDonut__Head'}>
-        <Heading className={'InfoBlock__Title'} as={'h2'}>Validator set</Heading>
-      </div>
+      <CardHead title={'Validator set'}/>
 
       <div className={'MasternodesDonut__Body'}>
         {showSkeleton &&

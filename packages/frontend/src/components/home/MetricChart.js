@@ -3,7 +3,8 @@
 import { useState, useEffect, useRef, useId } from 'react'
 import * as d3 from 'd3'
 import useResizeObserver from '@react-hook/resize-observer'
-import { Box, Heading } from '@chakra-ui/react'
+import { Box } from '@chakra-ui/react'
+import { CardHead, Presets } from '../cards'
 import { getDaysBetweenDates, currencyRound } from '../../util'
 import './MetricChart.scss'
 
@@ -136,22 +137,9 @@ export function MetricChart ({ title, type = 'line', fetcher, field, yAbbr = '',
 
   return (
     <Box className={'InfoBlock InfoBlock--NoBorder MetricChart'} w={'100%'}>
-      <div className={'MetricChart__Head'}>
-        <Heading className={'InfoBlock__Title'} as={'h2'}>{title}</Heading>
-        <div className={'MetricChart__Presets'}>
-          {PRESETS.map((pr, i) => (
-            <button
-              key={pr.label}
-              type={'button'}
-              className={`MetricChart__Chip ${i === presetIdx ? 'is-active' : ''}`}
-              aria-pressed={i === presetIdx}
-              onClick={() => setPresetIdx(i)}
-            >
-              {pr.label}
-            </button>
-          ))}
-        </div>
-      </div>
+      <CardHead title={title}>
+        <Presets options={PRESETS} value={presetIdx} onChange={setPresetIdx}/>
+      </CardHead>
 
       <div ref={wrapRef} className={'MetricChart__Plot'} style={{ height: HEIGHT }}>
         {error

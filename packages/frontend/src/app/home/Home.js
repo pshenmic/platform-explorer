@@ -7,7 +7,8 @@ import HomeHero from './HomeHero.js'
 import { MetricChart, EpochsOverview, StatusBar, HeroMeta, MasternodesDonut, TxTypesBar, ShieldedPoolCard, CompactTxList, CompactBlocksList } from '../../components/home'
 import { fetchHandlerSuccess, fetchHandlerError } from '../../util'
 import theme from '../../styles/theme'
-import { Box, Container, Flex, Heading, SimpleGrid } from '@chakra-ui/react'
+import { Box, Container, Flex, SimpleGrid } from '@chakra-ui/react'
+import { CardHead } from '../../components/cards'
 import './Home.scss'
 
 function computeAvgBlockTime (blocks) {
@@ -235,7 +236,7 @@ function Home () {
           <ShieldedPoolCard rate={rate} enabled={belowFoldReady}/>
           <MasternodesDonut validators={validators} validatorsActive={validatorsActive} validatorsBanned={validatorsBanned} validatorsInactive={validatorsInactive} validatorsList={validatorsGeoQuery.data?.resultSet}/>
           <Box className={'InfoBlock InfoBlock--NoBorder HomeGovCard'} w={'100%'}>
-            <Heading className={'InfoBlock__Title'} as={'h2'}>Governance</Heading>
+            <CardHead title={'Governance'}/>
             <StatusBar
               contested={contested}
               activeContested={activeContested}

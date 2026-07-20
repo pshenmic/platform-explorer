@@ -1,8 +1,9 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Box, Heading } from '@chakra-ui/react'
+import { Box } from '@chakra-ui/react'
 import * as Api from '../../util/Api'
+import { CardHead, Presets } from '../cards'
 import { RateTooltip } from '../ui/Tooltips'
 import { creditsToDash } from '../../util'
 import { Skeleton } from './Skeleton'
@@ -95,22 +96,9 @@ export default function ShieldedPoolCard ({ rate, enabled = true }) {
 
   return (
     <Box className={'InfoBlock InfoBlock--NoBorder ShieldedPool'} w={'100%'}>
-      <div className={'ShieldedPool__Head'}>
-        <Heading className={'InfoBlock__Title'} as={'h2'}>Shielded pool</Heading>
-        <div className={'MetricChart__Presets'}>
-          {PRESETS.map((pr, i) => (
-            <button
-              key={pr.label}
-              type={'button'}
-              className={`MetricChart__Chip ${i === presetIdx ? 'is-active' : ''}`}
-              aria-pressed={i === presetIdx}
-              onClick={() => setPresetIdx(i)}
-            >
-              {pr.label}
-            </button>
-          ))}
-        </div>
-      </div>
+      <CardHead title={'Shielded pool'}>
+        <Presets options={PRESETS} value={presetIdx} onChange={setPresetIdx}/>
+      </CardHead>
 
       <div className={'ShieldedPool__Body'}>
         {stats.loading
