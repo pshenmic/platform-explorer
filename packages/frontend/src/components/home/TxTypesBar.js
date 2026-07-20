@@ -7,6 +7,7 @@ import { TransactionTypesInfo } from '../../enums/state.transition.type'
 import { Tooltip } from '../ui/Tooltips'
 import { Skeleton } from './Skeleton'
 import { compact } from './utils'
+import { PRESETS, presetRange } from './MetricChart'
 import './TxTypesBar.scss'
 
 // a sub-percent slice would collapse below the segment gap: clamp for display, chips keep exact counts
@@ -16,19 +17,26 @@ function labelOf (type) {
   return TransactionTypesInfo[type]?.title ?? type
 }
 
-// all-time tx counts by state transition type: one stacked share bar over a chip legend
+// tx counts by state transition type for a chosen time range: one stacked share bar over chips
 export default function TxTypesBar ({ enabled = true }) {
   const [state, setState] = useState({ loading: true, error: false, items: [] })
+  // default to "All" so the initial view stays the familiar all-time distribution
+  const [presetIdx, setPresetIdx] = useState(PRESETS.length - 1)
 
   useEffect(() => {
     if (!enabled) {
       setState(s => ({ ...s, loading: true, error: false }))
       return
     }
-    Api.getTransactionsStatistic()
+    setState(s => ({ ...s, loading: true, error: false }))
+    const { start, end } = presetRange(PRESETS[presetIdx])
+    Api.getTransactionsStatistic(start, end)
       .then(res => setState({ loading: false, error: false, items: Array.isArray(res) ? res : [] }))
       .catch(() => setState({ loading: false, error: true, items: [] }))
-  }, [enabled])
+  }, [enabled, presetIdx])
+
+  const preset = PRESETS[presetIdx]
+  const rangeLabel = preset.label === 'All' ? 'all time' : preset.label
 
   const sorted = [...state.items]
     .filter(t => (t.count || 0) > 0)
@@ -54,11 +62,27 @@ export default function TxTypesBar ({ enabled = true }) {
   return (
     <Box className={'InfoBlock InfoBlock--NoBorder TxTypesBar'} w={'100%'}>
       <div className={'TxTypesBar__Head'}>
-        <Heading className={'InfoBlock__Title'} as={'h2'}>Transaction types</Heading>
-        {total > 0 &&
-          <span className={'TxTypesBar__Total'}>
-            {total.toLocaleString('en-US')} <span className={'TxTypesBar__TotalLabel'}>all time</span>
-          </span>}
+        <div className={'TxTypesBar__HeadLeft'}>
+          <Heading className={'InfoBlock__Title'} as={'h2'}>Transaction types</Heading>
+          {total > 0 &&
+            <span className={'TxTypesBar__Total'}>
+              {total.toLocaleString('en-US')} <span className={'TxTypesBar__TotalLabel'}>{rangeLabel}</span>
+            </span>}
+        </div>
+
+        <div className={'MetricChart__Presets'}>
+          {PRESETS.map((p, i) => (
+            <button
+              key={p.label}
+              type={'button'}
+              className={`MetricChart__Chip ${i === presetIdx ? 'is-active' : ''}`}
+              aria-pressed={i === presetIdx}
+              onClick={() => setPresetIdx(i)}
+            >
+              {p.label}
+            </button>
+          ))}
+        </div>
       </div>
 
       <div className={'TxTypesBar__Body'}>

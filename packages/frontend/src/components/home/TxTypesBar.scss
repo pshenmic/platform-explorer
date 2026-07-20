@@ -29,10 +29,22 @@ $txtype-colors: (
 .TxTypesBar {
   &__Head {
     display: flex;
-    align-items: baseline;
+    align-items: center;
     justify-content: space-between;
-    gap: 12px;
+    gap: 10px 16px;
     margin-bottom: 6px;
+
+    // phones: the preset row drops under the title instead of squeezing it
+    @media screen and (max-width: $breakpoint-md) {
+      flex-wrap: wrap;
+    }
+  }
+
+  &__HeadLeft {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    min-width: 0;
   }
 
   &__Total {
