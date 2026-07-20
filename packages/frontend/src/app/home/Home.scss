@@ -11,54 +11,36 @@
 }
 
 .HomeOverview {
-  // the title flag leaves the flow so the column heads rise into its row
-  @media screen and (min-width: $breakpoint-lg) {
-    .InfoBlock__Title {
-      position: absolute;
-      left: 0;
-      top: 0;
-    }
-  }
-
   &__Grid {
     display: grid;
     grid-template-columns: 1fr;
     gap: 1.5rem;
-    margin-top: 8px;
+    margin-top: 0;
 
     @media screen and (min-width: $breakpoint-lg) {
       grid-template-columns: 250px minmax(0, 1fr) minmax(0, 1fr);
       gap: 0;
       align-items: stretch;
-      // lift the head row so its center matches the absolutely-positioned title flag
-      margin-top: -16px;
     }
   }
 
-  // shared column sub-label (System / Latest Transactions / Latest Blocks)
-  &__TxTitle {
-    font-size: 0.625rem;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    color: var(--chakra-colors-gray-500);
-  }
-
-  // identical header row for all three columns → titles align on one line
-  &__TxHead {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1rem;
-    min-height: 30px;
-    margin-bottom: 8px;
-  }
-
-  // left rail: stat tiles stretched to full column height, level with the lists
+  // left rail: Network label shares the head band with Status / Hash / Height
   &__Sys {
     display: flex;
     flex-direction: column;
 
-    // reset the hero-strip meta defaults (side padding + bottom border)
+    // labels match CompactTx__HeadCell / CompactBlocks__HeadCell
+    .HomeHero__MetaLabel {
+      font-family: $font-heading;
+      font-weight: 700;
+      font-size: 0.6875rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: #fff;
+      white-space: nowrap;
+      text-align: left;
+    }
+
     .HomeHero__Meta {
       flex: 1;
       display: grid;
@@ -66,28 +48,26 @@
       gap: 0;
       padding: 0;
       border-bottom: none;
+      min-height: 0;
     }
 
     .HomeHero__MetaItem {
       display: flex;
       flex-direction: column;
-      justify-content: center;
+      justify-content: flex-start;
       align-items: flex-start;
-      gap: 4px;
+      gap: 8px;
       width: 100%;
       min-height: 64px;
-      border-bottom: 1px solid rgba(var(--chakra-colors-gray-800-rgb), 0.5);
-
-      &:nth-last-child(-n+2) { border-bottom: none; }
+      padding: 6px 0;
     }
 
-    .HomeHero__MetaLabel { text-align: left; }
     .HomeHero__MetaValue {
-      font-size: 0.875rem;
+      font-size: 0.8125rem;
       white-space: nowrap;
     }
 
-    // four content-sized tiles per row: equal 1fr tracks are too narrow for "operational"
+    // four content-sized tiles per row on small screens
     @media screen and (max-width: $breakpoint-md) {
       .HomeHero__Meta {
         grid-template-columns: repeat(4, auto);
@@ -97,31 +77,53 @@
       .HomeHero__MetaItem {
         min-height: 0;
         padding: 2px 0;
-        border-bottom: none;
       }
 
       .HomeHero__MetaValue {
-        font-size: 0.6875rem;
+        font-size: 0.625rem;
+      }
+
+      .HomeHero__MetaChip {
+        padding: 3px 8px;
       }
     }
 
     @media screen and (min-width: $breakpoint-lg) {
       border-right: 1px solid rgba(var(--chakra-colors-gray-800-rgb), 0.6);
       padding-right: 2rem;
-      // offset by the sibling head row (30px + 8px) so tiles align with list rows
-      padding-top: 38px;
 
-      // one tile per row, equal heights filling the column
+      // column flex: Network hugs the top head line; rest fill remaining height
       .HomeHero__Meta {
-        grid-template-columns: 1fr;
-        grid-template-rows: repeat(4, 1fr);
+        display: flex;
+        flex-direction: column;
+        grid-template-columns: none;
       }
 
       .HomeHero__MetaItem {
         min-height: 0;
+        padding: 0;
+        gap: 8px;
 
-        &:nth-last-child(-n+2) { border-bottom: 1px solid rgba(var(--chakra-colors-gray-800-rgb), 0.5); }
-        &:last-child { border-bottom: none; }
+        // Network: same head band as CompactTx__Head (padding 6px + mb 4px + hairline)
+        &:first-child {
+          flex: 0 0 auto;
+          padding-bottom: 8px;
+
+          .HomeHero__MetaLabel {
+            display: flex;
+            align-items: center;
+            min-height: calc(0.6875rem * 1.2 + 12px); // line + head padding 6+6
+            padding: 6px 0;
+            margin-bottom: 4px;
+            width: 100%;
+          }
+        }
+
+        // API / Drive / Tenderdash share the body column under the head
+        &:not(:first-child) {
+          flex: 1 1 0;
+          justify-content: center;
+        }
       }
 
       .HomeHero__MetaLabel,

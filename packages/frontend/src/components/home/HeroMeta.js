@@ -3,11 +3,19 @@ import { Skeleton } from './Skeleton'
 import { isNetworkLive, isApiOperational } from './utils'
 
 function VersionValue ({ version, href, loading }) {
-  if (loading) return <span className={'HomeHero__MetaValue'}><Skeleton w={'54px'} h={'0.8em'}/></span>
-  if (version === undefined || version === null) return <span className={'HomeHero__MetaValue'}>-</span>
+  if (loading) {
+    return (
+      <span className={'HomeHero__MetaValue HomeHero__MetaChip HomeHero__MetaChip--Loading'}>
+        <Skeleton w={'54px'} h={'0.8em'}/>
+      </span>
+    )
+  }
+  if (version === undefined || version === null) {
+    return <span className={'HomeHero__MetaValue HomeHero__MetaChip'}>-</span>
+  }
   return (
     <a
-      className={'HomeHero__MetaValue HomeHero__MetaVer'}
+      className={'HomeHero__MetaValue HomeHero__MetaVer HomeHero__MetaChip'}
       href={href}
       target={'_blank'}
       rel={'noopener noreferrer'}
@@ -19,11 +27,10 @@ function VersionValue ({ version, href, loading }) {
   )
 }
 
-function DotValue ({ ok, loading, children }) {
+function StatusValue ({ ok, loading, children }) {
   const state = loading ? 'is-loading' : (ok ? 'is-ok' : 'is-down')
   return (
-    <span className={'HomeHero__MetaValue'}>
-      <i className={`HomeHero__DotMark ${state}`} aria-hidden={'true'}/>
+    <span className={`HomeHero__MetaValue HomeHero__MetaChip HomeHero__MetaChip--Status ${state}`}>
       {loading ? <Skeleton w={'82px'} h={'0.8em'}/> : children}
     </span>
   )
@@ -50,10 +57,10 @@ export function HeroMeta ({ status, loading }) {
   return (
     <div className={'HomeHero__Meta'}>
       <MetaItem label={'Network'}>
-        <DotValue ok={live} loading={!ready}>{status?.network || 'n/a'}</DotValue>
+        <StatusValue ok={live} loading={!ready}>{status?.network || 'n/a'}</StatusValue>
       </MetaItem>
       <MetaItem label={'API'}>
-        <DotValue ok={apiOk} loading={!ready}>{apiOk ? 'operational' : 'disrupted'}</DotValue>
+        <StatusValue ok={apiOk} loading={!ready}>{apiOk ? 'operational' : 'disrupted'}</StatusValue>
       </MetaItem>
       <MetaItem label={'Drive'}>
         <VersionValue version={drive} href={'https://github.com/dashpay/platform/releases'} loading={!ready}/>

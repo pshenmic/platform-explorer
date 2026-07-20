@@ -374,7 +374,7 @@
     font-size: 0.625rem;
     font-family: $font-mono;
     text-transform: uppercase;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.1em;
     color: var(--chakra-colors-gray-500);
   }
 
@@ -385,11 +385,57 @@
     min-width: 0;
     font-size: 0.8125rem;
     font-family: $font-mono;
+    font-variant-numeric: tabular-nums;
     color: #fff;
   }
 
+  // shared chip shell for status (Network/API) and versions (Drive/Tenderdash)
+  // radius matches system Badge / LiveBadge (full pill)
+  &__MetaChip {
+    padding: 4px 10px;
+    border-radius: 999px;
+    border: 1px solid rgba(var(--chakra-colors-gray-800-rgb), 0.9);
+    background: rgba(255, 255, 255, 0.03);
+    line-height: 1.3;
+    max-width: 100%;
+    transition: color .15s, border-color .15s, background .15s;
+
+    &--Loading {
+      color: var(--chakra-colors-gray-500);
+    }
+
+    // Network / API: same language as LiveBadge, but 6px radius like version chips
+    &--Status {
+      font-weight: 700;
+
+      &.is-ok {
+        // green.label — status Badge green
+        color: var(--chakra-colors-green-label);
+        border-color: rgba(var(--chakra-colors-green-label-rgb), 0.4);
+        background: rgba(var(--chakra-colors-green-label-rgb), 0.12);
+        animation: HeroLiveBreath 2.4s ease-in-out infinite;
+      }
+
+      // static alarm: blinking failure reads as noise, not urgency
+      &.is-down {
+        color: var(--chakra-colors-red-default);
+        border-color: rgba(var(--chakra-colors-red-default-rgb), 0.45);
+        background: rgba(var(--chakra-colors-red-default-rgb), 0.12);
+        box-shadow: 0 0 10px rgba(var(--chakra-colors-red-default-rgb), 0.25);
+      }
+
+      &.is-loading {
+        color: var(--chakra-colors-gray-500);
+        border-color: rgba(255, 255, 255, 0.15);
+        background: transparent;
+        animation: HeroMetaPulse 1.2s ease-in-out infinite;
+      }
+    }
+  }
+
   &__MetaVer {
-    transition: color .15s;
+    text-decoration: none;
+    transition: color .15s, border-color .15s, background .15s;
 
     .chakra-icon {
       color: rgba(var(--chakra-colors-brand-normal-rgb), 0.7);
@@ -398,37 +444,19 @@
 
     &:hover {
       color: $color-brand-light;
+      border-color: rgba(var(--chakra-colors-brand-normal-rgb), 0.55);
+      background: rgba(var(--chakra-colors-brand-normal-rgb), 0.1);
+      text-decoration: none;
+
       .chakra-icon { color: $color-brand-light; }
-    }
-  }
-
-  &__DotMark {
-    width: 7px;
-    height: 7px;
-    border-radius: 50%;
-    flex-shrink: 0;
-
-    &.is-ok {
-      background: var(--chakra-colors-green-400);
-      box-shadow: 0 0 6px rgba(149, 191, 64, 0.8);
-    }
-
-    &.is-down {
-      background: var(--chakra-colors-red-400);
-      box-shadow: 0 0 6px rgba(255, 80, 60, 0.7);
-    }
-
-    // neutral state while status is still loading (no red flash on first paint)
-    &.is-loading {
-      background: var(--chakra-colors-gray-600, #4a5568);
-      animation: HeroMetaPulse 1.2s ease-in-out infinite;
     }
   }
 
   &__MetaValue--Muted { color: var(--chakra-colors-gray-500); }
 
   @media (prefers-reduced-motion: reduce) {
-    &__DotMark.is-loading { animation: none; }
+    &__MetaChip--Status.is-ok,
+    &__MetaChip--Status.is-loading,
     &__LiveBadge { animation: none; }
   }
 
@@ -609,28 +637,29 @@
     margin: 0 0 6px;
   }
 
-  // chain status pill: breathing glow while live
+  // chain status pill: breathing glow while live (radius matches MetaChip / Badge)
   &__LiveBadge {
     display: inline-block;
-    padding: 2px 8px;
+    padding: 3px 10px;
     margin-right: 8px;
     border-radius: 999px;
     border: 1px solid;
     font-weight: 700;
 
     &.is-live {
-      color: var(--chakra-colors-green-400);
-      border-color: rgba(149, 191, 64, 0.4);
-      background: rgba(149, 191, 64, 0.08);
+      // green.label — status Badge green
+      color: var(--chakra-colors-green-label);
+      border-color: rgba(var(--chakra-colors-green-label-rgb), 0.4);
+      background: rgba(var(--chakra-colors-green-label-rgb), 0.12);
       animation: HeroLiveBreath 2.4s ease-in-out infinite;
     }
 
     // static alarm: a blinking failure state reads as noise, not urgency
     &.is-down {
-      color: var(--chakra-colors-red-400);
-      border-color: rgba(255, 80, 60, 0.45);
-      background: rgba(255, 80, 60, 0.08);
-      box-shadow: 0 0 10px rgba(255, 80, 60, 0.25);
+      color: var(--chakra-colors-red-default);
+      border-color: rgba(var(--chakra-colors-red-default-rgb), 0.45);
+      background: rgba(var(--chakra-colors-red-default-rgb), 0.12);
+      box-shadow: 0 0 10px rgba(var(--chakra-colors-red-default-rgb), 0.25);
     }
 
     &.is-loading {
@@ -681,8 +710,8 @@
 }
 
 @keyframes HeroLiveBreath {
-  0%, 100% { box-shadow: 0 0 4px rgba(149, 191, 64, 0.15); }
-  50% { box-shadow: 0 0 12px rgba(149, 191, 64, 0.45); }
+  0%, 100% { box-shadow: 0 0 4px rgba(var(--chakra-colors-green-label-rgb), 0.15); }
+  50% { box-shadow: 0 0 12px rgba(var(--chakra-colors-green-label-rgb), 0.45); }
 }
 
 // governance ticker entries ease in as the rotator advances
