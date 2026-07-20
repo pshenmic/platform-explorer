@@ -52,6 +52,11 @@
       gap: 1.5rem;
       padding: 32px 24px;
     }
+
+    // phone + edge cards: same 16px content inset as InfoBlock
+    @media screen and (max-width: $breakpoint-md) {
+      padding: 24px 16px;
+    }
   }
 
   &__Brand {
@@ -509,17 +514,17 @@
     width: auto;
     // taller so the filled area reaches the data row
     height: 200px;
-    // full-bleed sides; top margin + HomeEpochs padding-top give space above Epoch labels
-    // negative side margins match .HomeEpochs padding (20 / 16 / 12)
-    margin: 16px -20px 0;
+    // full-bleed sides; top margin + HomeEpochs padding-top give space for taller first Id stack
+    // (EPOCH + every 1h + #); negative side margins match .HomeEpochs padding (20 / 16)
+    margin: 20px -20px 0;
     padding: 0;
 
     @media screen and (max-width: $breakpoint-lg) {
-      margin: 14px -16px 0;
+      margin: 18px -16px 0;
     }
 
     @media screen and (max-width: $breakpoint-md) {
-      margin: 12px -12px 0;
+      margin: 16px -16px 0;
     }
   }
 
@@ -1005,7 +1010,26 @@
       pointer-events: none;
     }
 
-    // one chip, one string: "Epoch every 1h" — larger than the block tag
+    // first slot only: EPOCH title above duration chip (taller stack — card top pad compensates)
+    .EpochsWave__KindStack {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px; // title → duration (tighter than Id gap 6)
+    }
+
+    // micro title — same language as BoundTag "block"
+    .EpochsWave__KindTitle {
+      font-family: $font-heading;
+      font-weight: 700;
+      font-size: 0.5625rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: $color-brand-light;
+      line-height: 1.2;
+    }
+
+    // duration chip only: "every 1h" / "every 9.1d"
     .EpochsWave__Kind {
       display: inline-block;
       padding: 3px 8px;
@@ -1029,6 +1053,13 @@
       text-align: center;
       // italic overhang so the glyph mass sits centered under the chip
       padding: 0 0.12em;
+    }
+
+    @media screen and (max-width: $breakpoint-md) {
+      .EpochsWave__Kind {
+        padding: 2px 6px;
+        font-size: 0.5625rem;
+      }
     }
 
     // always-visible per-epoch caption under the dot: "N tx" + "window · ended/left"
@@ -1175,10 +1206,8 @@
   // seam-coloured glow over the table; absolute (no grid cell), CSS-var position avoids remount flashes
   &__Wash {
     position: absolute;
-    // extend into HomeEpochs bottom padding only (16 / 14), not a deep empty plate
-    inset: 0 0 -16px;
-
-    @media screen and (max-width: $breakpoint-md) { inset: 0 0 -14px; }
+    // card bottom pad is 0 — wash stays inside the cells frame
+    inset: 0;
 
     background: radial-gradient(
       ellipse 60% 150% at calc(100% * (var(--epoch-seg-l, 0) + var(--epoch-seg-w, 1) / 2)) 0%,
@@ -1196,46 +1225,43 @@
     &__Wash { transition: none; }
   }
 
-  // flat KPI table: one fixed row from 1280 up, auto-fit wrap below; colour from --epoch-color-rgb
+  // flat KPI table: 11 metrics; even 2 rows (6+5) mid widths, one row from xl; colour from --epoch-color-rgb
   &__Cells {
     position: relative;
     display: grid;
     // no full-width border-top: the selected epoch's Beam + seam mark the connection instead
     border-top: none;
-    // below xl: as many equal tracks as fit, then wrap/compress (all metrics remain)
-    grid-template-columns: repeat(auto-fit, minmax(104px, 1fr));
-    // tight column gap so the fixed 11-col row still clears the widest label at 1280
-    gap: 18px 10px;
-    align-items: start;
+    // phone: flexible wrap (all metrics remain)
+    grid-template-columns: repeat(auto-fit, minmax(96px, 1fr));
+    // hairline mesh via cell inset shadows — gap 0 so lines read as a continuous grid
+    gap: 0;
+    align-items: stretch;
     min-width: 0;
-    // full-bleed like the wave (neg. margin = HomeEpochs side pad); re-pad content evenly
-    margin: 0 -20px 0;
-    padding: 12px 20px 0;
-    gap: 16px 10px;
+    // full-bleed to card edges (cancel HomeEpochs side pad); no re-pad — mesh flush, no side gutters
+    margin: 0 -20px;
+    padding: 0;
+    // clip the outer right/bottom hairlines so the mesh doesn't double the card edge
+    overflow: hidden;
 
-    // >=1280: a fixed 11-column row + hairline column dividers (table-like)
+    // soft outer frame (same gray-800 language as CompactTx row rules)
+    box-shadow: inset 0 0 0 1px rgba(var(--chakra-colors-gray-800-rgb), 0.4);
+
+    // md–xl (incl. ~1024): 6 tracks → row1: 6, row2: 5 equal 1fr (not ragged auto-fit 9+2)
+    @media screen and (min-width: $breakpoint-md) {
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+    }
+
+    // >=1280: a fixed 11-column row
     @media screen and (min-width: $breakpoint-xl) {
       grid-template-columns: repeat(11, minmax(0, 1fr));
-      gap: 16px 0;
-
-      .HomeHero__StatusCell {
-        padding: 0 6px;
-        border-right: 1px solid rgba(var(--chakra-colors-gray-800-rgb), 0.55);
-
-        &:last-child { border-right: none; }
-      }
     }
 
     @media screen and (max-width: $breakpoint-lg) {
-      margin: 0 -16px 0;
-      padding: 12px 16px 0;
+      margin: 0 -16px;
     }
 
     @media screen and (max-width: $breakpoint-md) {
-      margin: 0 -12px 0;
-      padding: 12px 12px 0;
-      gap: 14px 12px;
-      grid-template-columns: repeat(auto-fit, minmax(96px, 1fr));
+      margin: 0 -16px;
     }
 
     // glowing seam spanning the selected epoch's segment (boundary to boundary)
@@ -1257,26 +1283,46 @@
       z-index: 1;
     }
 
-    // KPI tile: label (header) centred over its value
+    // KPI tile: label over value + wrap-safe hairline mesh (right + bottom)
     .HomeHero__StatusCell {
+      position: relative; // anchor for mobile (i) corner
       flex-direction: column;
       align-items: center;
       justify-content: flex-start;
       gap: 5px;
       min-width: 0;
-      padding: 0;
       border: none;
       text-align: center;
+      // CompactTx-adjacent separators; transparent fill keeps epoch wash visible
+      box-shadow:
+        inset -1px 0 0 0 rgba(var(--chakra-colors-gray-800-rgb), 0.5),
+        inset 0 -1px 0 0 rgba(var(--chakra-colors-gray-800-rgb), 0.4);
+      padding: 12px 10px 14px;
+
+      @media screen and (max-width: $breakpoint-md) {
+        // room for corner (i) so it doesn't sit on the value
+        padding: 10px 8px 14px;
+      }
     }
 
-    // head width = label only so the value centers under the title, not title+(i)
+    // label + (i): desktop in-flow beside title; mobile (i) docks to cell corner
     .HomeHero__StatusHead {
       position: relative;
-      display: inline-flex;
-      align-items: center;
-      white-space: nowrap;
-      flex-shrink: 0;
+      display: flex;
+      align-items: flex-start; // (i) tops with first line when the title wraps
       justify-content: center;
+      gap: 3px;
+      width: 100%;
+      max-width: 100%;
+      min-width: 0;
+      flex-shrink: 1;
+      white-space: normal;
+      box-sizing: border-box;
+
+      @media screen and (max-width: $breakpoint-md) {
+        // let (i) position against the cell, not the head
+        position: static;
+      }
     }
 
     // same language as CompactTx Status / Hash / Type / Time (not brand pills)
@@ -1287,17 +1333,41 @@
       text-transform: uppercase;
       letter-spacing: 0.04em;
       color: #fff;
-      line-height: 1.2;
+      line-height: 1.15;
+      flex: 1 1 auto;
+      min-width: 0;
+      // leave room for the (i) so long titles wrap inside the tile (desktop)
+      max-width: calc(100% - 14px);
+      text-align: center;
+      white-space: normal; // "Core rewards" / "Top proposer" wrap in narrow tiles
+
+      @media screen and (max-width: $breakpoint-md) {
+        font-size: 0.625rem;
+        letter-spacing: 0.03em;
+        max-width: 100%; // (i) is in the corner, not beside the title
+      }
     }
 
-    // out of flow: sits to the right of the label without shifting the optical center
+    // desktop: in-flow after label; mobile: bottom-right of the data cell
     .HomeHero__StatusInfo {
-      position: absolute;
-      left: 100%;
-      top: 50%;
-      transform: translateY(-50%);
-      margin-left: 4px;
-      padding: 2px; // slightly easier hit target
+      position: static;
+      flex: 0 0 auto;
+      margin-left: 0;
+      margin-top: 1px; // optical align with uppercase caps
+      padding: 2px;
+      line-height: 0;
+      transform: none;
+
+      @media screen and (max-width: $breakpoint-md) {
+        position: absolute;
+        right: 4px;
+        bottom: 4px;
+        z-index: 2;
+        margin-top: 0;
+        // slightly larger hit target for touch
+        padding: 4px;
+        color: var(--chakra-colors-gray-500);
+      }
     }
 
     .HomeHero__StatusValue {

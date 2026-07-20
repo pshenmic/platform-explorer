@@ -173,8 +173,12 @@ function EpochPoint ({ epoch, metricLabel, x, y, colorRgb, selected, onSelect, s
     >
       <span className={'EpochsWave__Id'}>
         {showKind &&
-          <span className={'EpochsWave__Kind'}>
-            {durationLabel ? `Epoch every ${durationLabel}` : 'Epoch'}
+          // visual only — button aria-label already carries "Epoch N, every 1h"
+          // stack is taller than other points: HomeEpochs top pad leaves room
+          <span className={'EpochsWave__KindStack'} aria-hidden={'true'}>
+            <span className={'EpochsWave__KindTitle'}>Epoch</span>
+            {durationLabel &&
+              <span className={'EpochsWave__Kind'}>every {durationLabel}</span>}
           </span>}
         <span className={'HomeHero__WaveValue EpochsWave__Number'}>#{epoch?.number}</span>
       </span>
