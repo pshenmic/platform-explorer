@@ -100,16 +100,15 @@ export function MetricChart ({ title, type = 'line', fetcher, field, yAbbr = '',
   }, [presetIdx, fetcher, field, enabled])
 
   const { loading, error, points } = state
-  const preset = PRESETS[presetIdx]
-  const range = presetRange(preset)
-  const spanDays = getDaysBetweenDates(range.start, range.end)
-  const tickFmt = d3.timeFormat(spanDays > 365 ? '%b %Y' : spanDays > 7 ? '%b %d' : '%H:%M')
-  const tipFmt = d3.timeFormat(spanDays > 365 ? '%b %d, %Y' : spanDays > 3 ? '%b %d' : '%b %d, %H:%M')
 
   const ready = width > 0 && points.length > 1
-  let x, y, areaD, lineD, bars, xTicks, yTicks
+  let x, y, areaD, lineD, bars, xTicks, yTicks, tipFmt
   if (ready) {
     x = d3.scaleTime(d3.extent(points, p => p.x), [M.left, width - M.right])
+    // format and density follow the actual data window and width, not the preset span
+    const dataSpanDays = getDaysBetweenDates(points[0].x, points[points.length - 1].x)
+    const tickFmt = d3.timeFormat(dataSpanDays > 365 ? '%b %Y' : dataSpanDays > 7 ? '%b %d' : '%H:%M')
+    tipFmt = d3.timeFormat(dataSpanDays > 365 ? '%b %d, %Y' : dataSpanDays > 3 ? '%b %d' : '%b %d, %H:%M')
     const maxY = d3.max(points, p => p.y) || 1
     const minY = d3.min(points, p => p.y) || 0
     // bars read from a 0 baseline; a level line (cumulative) auto-zooms to its range
@@ -123,7 +122,9 @@ export function MetricChart ({ title, type = 'line', fetcher, field, yAbbr = '',
     const step = points.length > 1 ? Math.abs(x(points[1].x) - x(points[0].x)) : 8
     const bw = Math.max(1, Math.min(step * 0.65, 16))
     bars = points.map(p => ({ x: x(p.x) - bw / 2, y: y(p.y), w: bw, h: Math.max(0, y(0) - y(p.y)) }))
-    xTicks = x.ticks(Math.min(5, points.length)).map(d => ({ v: x(d), label: tickFmt(d) }))
+    // one label per ~72px so narrow phones/"All" don't crowd or overlap the axis
+    const tickCount = Math.max(2, Math.min(6, Math.floor((width - M.left - M.right) / 72)))
+    xTicks = x.ticks(tickCount).map(d => ({ v: x(d), label: tickFmt(d) }))
     yTicks = y.ticks(4).map(v => ({ v: y(v), label: formatValue(v) }))
   }
 
@@ -174,7 +175,14 @@ export function MetricChart ({ title, type = 'line', fetcher, field, yAbbr = '',
                   ))}
 
                   {xTicks.map((t, i) => (
-                    <text key={i} className={'MetricChart__Tick MetricChart__Tick--X'} x={t.v} y={HEIGHT - 4}>{t.label}</text>
+                    <text
+                      key={i}
+                      className={'MetricChart__Tick MetricChart__Tick--X'}
+                      // first/last anchor inward (inline beats the CSS middle) so edge labels don't clip
+                      style={{ textAnchor: i === 0 ? 'start' : i === xTicks.length - 1 ? 'end' : 'middle' }}
+                      x={t.v}
+                      y={HEIGHT - 4}
+                    >{t.label}</text>
                   ))}
 
                   {type === 'bar'
