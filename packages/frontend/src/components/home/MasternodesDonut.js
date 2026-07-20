@@ -8,10 +8,20 @@ import './MasternodesDonut.scss'
 
 // tiny slices (e.g. banned 1%) would vanish from the bar; clamp the display width, keep exact counts
 const MIN_SEG_FRAC = 0.02
+// cap so a large network's country list can't blow the card height; the rest folds into "+N"
+const MAX_COUNTRIES = 12
+
+// ISO-2 -> English country name via the platform's Intl (no dependency); falls back to the code
+const regionNames = (() => {
+  try { return new Intl.DisplayNames(['en'], { type: 'region' }) } catch { return null }
+})()
+const countryName = cc => {
+  try { return regionNames?.of(cc) || cc } catch { return cc }
+}
 
 // composite "Validator set": status tiles over a stacked status bar;
 // every count is a backend /validators pagination total, no client-side arithmetic
-export default function MasternodesDonut ({ validators, validatorsActive, validatorsBanned, validatorsInactive }) {
+export default function MasternodesDonut ({ validators, validatorsActive, validatorsBanned, validatorsInactive, validatorsList }) {
   const total = validators?.data?.pagination?.total
   const active = validatorsActive?.data?.pagination?.total
   const banned = validatorsBanned?.data?.pagination?.total
@@ -52,6 +62,18 @@ export default function MasternodesDonut ({ validators, validatorsActive, valida
     { key: 'inactive', label: 'Inactive', count: inactiveCount, frac: inactiveFrac },
     { key: 'banned', label: 'Banned', count: bannedCount, frac: bannedFrac }
   ].filter(s => s.frac > 0)
+
+  // "by country" from geoIpInfo (#822); aggregated on the client (no backend geo endpoint yet).
+  // empty on networks that don't ship geoIpInfo yet → the row hides itself
+  const geoCounts = {}
+  for (const v of Array.isArray(validatorsList) ? validatorsList : []) {
+    const cc = v?.geoIpInfo?.countryCode
+    if (cc) geoCounts[cc] = (geoCounts[cc] || 0) + 1
+  }
+  const countries = Object.entries(geoCounts).sort((a, b) => b[1] - a[1])
+  const topCountries = countries.slice(0, MAX_COUNTRIES)
+  const moreCountries = countries.length - topCountries.length
+  const hasGeo = countries.length > 0
 
   return (
     <Box className={'InfoBlock InfoBlock--NoBorder MasternodesDonut'} w={'100%'}>
@@ -114,6 +136,29 @@ export default function MasternodesDonut ({ validators, validatorsActive, valida
                 ))}
               </div>
 
+              {hasGeo &&
+                <div className={'MasternodesDonut__Geo'}>
+                  <span className={'MasternodesDonut__GeoLabel'}>By country</span>
+                  <span className={'MasternodesDonut__GeoList'}>
+                    {topCountries.map(([cc, n]) => (
+                      <Tooltip key={cc} content={countryName(cc)} placement={'top'}>
+                        <span className={'MasternodesDonut__GeoItem'}>
+                          <img
+                            className={'MasternodesDonut__Flag'}
+                            src={`/flags/circle/${cc.toLowerCase()}.svg`}
+                            alt={''}
+                            width={16}
+                            height={16}
+                            loading={'lazy'}
+                            onError={e => { e.currentTarget.style.display = 'none' }}
+                          />
+                          <b>{cc}</b> {n}
+                        </span>
+                      </Tooltip>
+                    ))}
+                    {moreCountries > 0 && <span className={'MasternodesDonut__GeoMore'}>+{moreCountries}</span>}
+                  </span>
+                </div>}
             </div>
           </>}
       </div>

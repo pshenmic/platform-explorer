@@ -164,6 +164,58 @@
     &--banned { background: var(--chakra-colors-red-default, #f45858); }
   }
 
+  // validators by country (geoIpInfo, #822)
+  &__Geo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+    font-family: $font-mono;
+    font-size: 0.6875rem;
+  }
+
+  &__GeoLabel {
+    flex-shrink: 0;
+    font-size: 0.5625rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--chakra-colors-gray-500);
+  }
+
+  // spread the countries evenly across the block's full width; label stays level on the left
+  &__GeoList {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px 10px;
+    min-width: 0;
+    color: var(--chakra-colors-gray-250);
+    font-variant-numeric: tabular-nums;
+
+    b { color: #fff; font-weight: 700; }
+  }
+
+  &__GeoItem {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    cursor: default;
+  }
+
+  // round flag SVGs are self-hosted (CSP); border-radius is a safety net over the round art
+  &__Flag {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    display: block;
+    object-fit: cover;
+  }
+
+  &__GeoMore { color: var(--chakra-colors-gray-500); }
+
   @media (prefers-reduced-motion: reduce) {
     &__Seg { transition: none; }
   }

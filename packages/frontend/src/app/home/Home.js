@@ -61,6 +61,12 @@ function Home () {
     queryFn: () => Api.getValidators(1, 1, 'desc', { isActive: 'false', isBanned: 'false' }),
     staleTime: 60_000
   })
+  // one page for geoIpInfo (#822): full set on testnet, a sample on large networks
+  const validatorsGeoQuery = useQuery({
+    queryKey: ['home', 'validators', 'geo'],
+    queryFn: () => Api.getValidators(1, 100, 'desc'),
+    staleTime: 300_000
+  })
 
   // shape expected by MasternodesDonut ({ data, loading })
   const validators = {
@@ -223,7 +229,7 @@ function Home () {
           <MetricChart title={'Identities growth'} type={'line'} fetcher={Api.getIdentitiesHistory} field={'registeredIdentities'} yAbbr={'identities'} enabled={belowFoldReady}/>
           <TxTypesBar enabled={belowFoldReady}/>
           <ShieldedPoolCard rate={rate} enabled={belowFoldReady}/>
-          <MasternodesDonut validators={validators} validatorsActive={validatorsActive} validatorsBanned={validatorsBanned} validatorsInactive={validatorsInactive}/>
+          <MasternodesDonut validators={validators} validatorsActive={validatorsActive} validatorsBanned={validatorsBanned} validatorsInactive={validatorsInactive} validatorsList={validatorsGeoQuery.data?.resultSet}/>
           <Box className={'InfoBlock InfoBlock--NoBorder HomeGovCard'} w={'100%'}>
             <Heading className={'InfoBlock__Title'} as={'h2'}>Governance</Heading>
             <StatusBar
