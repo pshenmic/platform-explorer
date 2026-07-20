@@ -4,6 +4,7 @@
 .CompactBlocks {
   // one shared set of subgrid tracks: per-row grids resolve auto/1fr differently and misalign
   display: grid;
+  column-gap: 12px; // parent gap so Head/Row subgrid doesn't squeeze tracks
   grid-template-columns: minmax(8ch, auto) minmax(0, 1fr) 76px auto;
 
   &__Empty {
@@ -19,7 +20,6 @@
     grid-template-columns: subgrid;
     grid-column: 1 / -1;
     align-items: center;
-    gap: 12px;
     // symmetric padding centres the header text on the section title line
     padding: 6px;
     margin-bottom: 4px;
@@ -55,7 +55,6 @@
     grid-template-columns: subgrid;
     grid-column: 1 / -1;
     align-items: center;
-    gap: 12px;
     min-height: 44px;
     padding: 0 6px;
     border-bottom: 1px solid rgba(var(--chakra-colors-gray-800-rgb), 0.5);

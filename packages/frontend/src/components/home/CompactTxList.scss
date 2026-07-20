@@ -3,8 +3,10 @@
 
 .CompactTx {
   display: grid;
-  // fit-content(10rem): Type sizes to its badge but caps, so Time stays close; long badges clip
-  grid-template-columns: 3.5rem minmax(0, 1fr) fit-content(10rem) 5ch;
+  // gap on the parent so subgrid Head/Row tracks match; a child gap squeezes Status
+  column-gap: 12px;
+  // Hash floor 8ch: fit-content's preferred size can crush it near 1024; Type clips via minmax
+  grid-template-columns: 3.5rem minmax(8ch, 1fr) minmax(0, 10rem) 5ch;
 
   &__Empty {
     padding: 14px 0;
@@ -19,7 +21,6 @@
     grid-template-columns: subgrid;
     grid-column: 1 / -1;
     align-items: center;
-    gap: 12px;
     // symmetric padding centres the header text on the section title line
     padding: 6px;
     margin-bottom: 4px;
@@ -34,8 +35,12 @@
     letter-spacing: 0.04em;
     color: #fff;
     white-space: nowrap;
+    min-width: 0;
 
-    &--status { text-align: center; }
+    &--status {
+      text-align: center;
+      overflow: hidden; // never paint "Status" into Hash if still tight
+    }
     &--time { text-align: right; }
   }
 
@@ -55,7 +60,6 @@
     grid-template-columns: subgrid;
     grid-column: 1 / -1;
     align-items: center;
-    gap: 12px;
     min-height: 44px;
     padding: 0 6px;
     border-bottom: 1px solid rgba(var(--chakra-colors-gray-800-rgb), 0.5);
@@ -103,6 +107,7 @@
     // full flex-shrink chain so the label ellipsizes instead of hard-cutting;
     // the badge tooltip carries the full type name
     .chakra-badge {
+      display: inline-flex;
       min-width: 0;
       max-width: 100%;
       overflow: hidden;
@@ -119,12 +124,10 @@
     min-width: 5ch;
   }
 
-  // very narrow: hash and badge split the space and clip; the tooltip keeps the full type
+  // very narrow: hash keeps a floor, badge shares the rest and clips; tooltip has full type
   @media screen and (max-width: $breakpoint-sm) {
-    // narrower status track on phones (a wider one overflowed the row); "Status" header
-    // sits a touch tight to "Hash" here, acceptable at this width
-    grid-template-columns: 2.75rem minmax(0, 1.1fr) minmax(0, 0.9fr) 5ch;
-    // __Type clipping (ellipsis + tooltip) lives in the base rule now
+    // 3.25rem fits uppercase "Status" (~46px); 2.75rem overflowed into Hash at 360
+    grid-template-columns: 3.25rem minmax(6ch, 1.1fr) minmax(0, 0.9fr) 5ch;
   }
 
   // new rows cascade in with a fading highlight; backwards keeps delayed rows hidden
