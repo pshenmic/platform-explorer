@@ -188,7 +188,7 @@ function VotesTooltip ({ data, children }) {
 }
 
 // Blocks value tooltip: where the epoch started and ended, in blocks and time
-function BlocksTooltip ({ epoch, endHeight, children }) {
+function BlocksTooltip ({ epoch, endHeight, liveCount, children }) {
   const longEpoch = (epoch?.endTime - epoch?.startTime) >= 86400000
   const fmt = longEpoch ? boundDateFmt : boundTimeFmt
   const inProgress = epoch?.endTime > Date.now()
@@ -211,6 +211,12 @@ function BlocksTooltip ({ epoch, endHeight, children }) {
                 <span>Ended</span>
                 <span>{endHeight != null ? `#${endHeight} · ` : ''}{epoch.endTime ? fmt.format(new Date(epoch.endTime)) : ''}</span>
               </div>}
+          {/* live running count: an exact fact so far, not a projection — no "~" */}
+          {liveCount != null &&
+            <div className={'EpochsOverview__TipRow'}>
+              <span>Produced</span>
+              <span>{liveCount.toLocaleString('en-US')} so far · counting</span>
+            </div>}
         </div>
       )}
       placement={'top'}
@@ -227,7 +233,11 @@ function EpochCells ({ data, nextData, rate, washKey }) {
   const endHeight = nextData?.epoch?.number === epoch?.number + 1 && nextData?.epoch?.firstBlockHeight != null
     ? Number(nextData.epoch.firstBlockHeight) - 1
     : null
-  const blocks = epoch?.totalBlocksInEpoch // finalized-only (null for current)
+  // finalized after the epoch ends; live pendingBlocksInEpoch sits at the response top level
+  const finalizedBlocks = epoch?.totalBlocksInEpoch
+  const pendingBlocks = data.pendingBlocksInEpoch != null ? Number(data.pendingBlocksInEpoch) : null
+  const blocks = finalizedBlocks ?? pendingBlocks ?? null
+  const blocksLive = finalizedBlocks == null && blocks != null
   const rewards = epoch?.coreBlockRewards // finalized-only (credits, null for current)
   const feesCredits = Number(data.totalCollectedFees) || 0
   const topResource = data.topVotedResource?.resourceValue
@@ -250,7 +260,7 @@ function EpochCells ({ data, nextData, rate, washKey }) {
       <StatusCell label={'Blocks'} hint={'Blocks produced in the epoch (finalized after it ends). Hover the value for where the epoch started and ended.'}>
         {epoch?.firstBlockHeight != null
           // start/end are known even while the live block count is still pending
-          ? <BlocksTooltip epoch={epoch} endHeight={endHeight}>
+          ? <BlocksTooltip epoch={epoch} endHeight={endHeight} liveCount={blocksLive ? blocks : null}>
               <span className={'EpochsOverview__Stat EpochsOverview__Stat--Tip'}>
                 <span className={'EpochsOverview__TipTarget'}>
                   {typeof blocksAnim === 'number' ? <BigNumber>{blocksAnim}</BigNumber> : <Pending/>}
