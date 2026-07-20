@@ -192,6 +192,7 @@ already-completed epochs. For the current (in-progress) epoch they are `null`.
 * epoch.totalDistributedStorageFees - total storage fees distributed in the epoch (credits)
 * epoch.totalCreatedStorageFees - total storage fees created in the epoch (credits)
 * epoch.coreBlockRewards - core block rewards for the epoch
+* epoch.blockProposers - block proposers of the finalized epoch, each `{ proposer, count }` where `proposer` is the validator ProTxHash (hex) and `count` is the number of blocks it proposed
 
 For the current (in-progress) epoch, live values are computed from the indexed
 data instead. For already-completed epochs they are `null`.
@@ -217,7 +218,13 @@ HTTP /epoch/2492
     "totalProcessingFees": "1897008860",
     "totalDistributedStorageFees": "0",
     "totalCreatedStorageFees": "13860000000",
-    "coreBlockRewards": "1932735784"
+    "coreBlockRewards": "1932735784",
+    "blockProposers": [
+      {
+        "proposer": "87075234AC47353B42BB97CE46330CB67CD4648C01F0B2393D7E729B0D678918",
+        "count": 3742
+      }
+    ]
   },
   "tps": 0.0140315750528904,
   "totalCollectedFees": 1897008860,
