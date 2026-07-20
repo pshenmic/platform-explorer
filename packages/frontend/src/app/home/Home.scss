@@ -184,7 +184,17 @@
   }
 }
 
-// clip only the bottom corners: overflow hidden would trim the title flag's top-left arc
+// tighter sides/bottom than default InfoBlock; extra top for Epoch / block label stacks
 .HomeEpochs {
-  clip-path: inset(0 round 0 0 var(--chakra-radii-block) var(--chakra-radii-block));
+  border-radius: var(--chakra-radii-block);
+  // top > bottom: room for lifted "Epoch every…" / "block" pills above the wave
+  padding: 32px 20px 16px 20px !important;
+
+  @media screen and (max-width: $breakpoint-lg) {
+    padding: 28px 16px 16px 16px !important;
+  }
+
+  @media screen and (max-width: $breakpoint-md) {
+    padding: 24px 12px 14px 12px !important;
+  }
 }

@@ -2,22 +2,95 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { Heading } from '@chakra-ui/react'
 import { BigNumber, TimeDelta } from '../data'
-import { RateTooltip, Tooltip } from '../ui/Tooltips'
+import { BlockIcon } from '../ui/icons'
 import { creditsToDash, removeTrailingZeros, roundUsd } from '../../util'
 import { useCountUp, useScramble } from './hooks'
 import { StatusCell } from './StatusCell'
 import { Skeleton } from './Skeleton'
-import { contestedHref, compact, shortId } from './utils'
+import { compact, shortId } from './utils'
 
 // 4 epoch points, ends pulled inward so the edge block-markers have room
 const X_POSITIONS = [14, 38, 62, 86]
+// Ocean palette by slot (old -> new): deep blue -> bright aqua; encodes epoch recency.
+// The line flows through these; the selected slot's colour pours into the table below.
+const WAVE_RGB = ['10, 108, 184', '0, 141, 228', '44, 187, 255', '88, 225, 255']
+const slotRgb = (i) => WAVE_RGB[Math.min(Math.max(0, i), WAVE_RGB.length - 1)]
 // edge block-markers sit a breath off the wave rims; epoch segments end at these markers
 const EDGE_L = 1.2
 const EDGE_R = 98.8
 const Y_HIGH = 22
-const Y_LOW = 70
+// taller wave: keep the dip higher so point captions clear the data row below
+const Y_LOW = 60
+// scan detour rides the block rails down to the wave/KPI join (viewBox bottom)
+const SCAN_BOTTOM_Y = 100
+// stubs shorter than this (viewBox units) render as a static “stick” with pathLength=100 — skip them
+const SCAN_MIN_WAVE_SPAN = 10
+
+// y on a polyline at a given x (viewBox coords)
+function yAtX (pts, x) {
+  if (!pts?.length) return 50
+  if (x <= pts[0].x) return pts[0].y
+  if (x >= pts[pts.length - 1].x) return pts[pts.length - 1].y
+  for (let i = 0; i < pts.length - 1; i++) {
+    const a = pts[i]
+    const b = pts[i + 1]
+    if (x >= a.x && x <= b.x) {
+      const t = b.x === a.x ? 0 : (x - a.x) / (b.x - a.x)
+      return a.y + t * (b.y - a.y)
+    }
+  }
+  return pts[pts.length - 1].y
+}
+
+function ptsToPathD (pts) {
+  if (!pts?.length) return null
+  if (pts.length === 1) return `M ${pts[0].x} ${pts[0].y}`
+  return `M ${pts.map(p => `${p.x} ${p.y}`).join(' L ')}`
+}
+
+function spanX (pts) {
+  if (!pts?.length) return 0
+  return Math.abs(pts[pts.length - 1].x - pts[0].x)
+}
+
+// Split scan: wave left/right of selection + U on selected epoch rails (to wave/KPI join only).
+// Tiny edge stubs omitted — pathLength=100 turns them into lines.
+function buildScanParts (linePts, seg) {
+  if (!linePts?.length || !seg) {
+    return { leftD: ptsToPathD(linePts), rightD: null, railD: null }
+  }
+  const leftX = seg.l * 100
+  const rightX = (seg.l + seg.w) * 100
+  const yL = yAtX(linePts, leftX)
+  const yR = yAtX(linePts, rightX)
+
+  const left = []
+  for (const p of linePts) {
+    if (p.x < leftX - 1e-6) left.push(p)
+    else break
+  }
+  left.push({ x: leftX, y: yL })
+
+  const right = [{ x: rightX, y: yR }]
+  for (const p of linePts) {
+    if (p.x > rightX + 1e-6) right.push(p)
+  }
+
+  // U only on the *selected* epoch boundaries (block rails + KPI seam)
+  const rail = [
+    { x: leftX, y: yL },
+    { x: leftX, y: SCAN_BOTTOM_Y },
+    { x: rightX, y: SCAN_BOTTOM_Y },
+    { x: rightX, y: yR }
+  ]
+
+  return {
+    leftD: left.length >= 2 && spanX(left) >= SCAN_MIN_WAVE_SPAN ? ptsToPathD(left) : null,
+    rightD: right.length >= 2 && spanX(right) >= SCAN_MIN_WAVE_SPAN ? ptsToPathD(right) : null,
+    railD: ptsToPathD(rail)
+  }
+}
 
 // neutral marker for finalized-only fields that are null while the epoch is in progress
 function Pending () {
@@ -31,17 +104,27 @@ function durationLabelOf (epoch) {
   return ms >= 86400000 ? `${(ms / 86400000).toFixed(1)}d` : `${Math.round(ms / 3600000)}h`
 }
 
+// avgBlockTime arrives in ms: seconds under a minute, minutes above
+function avgBlockTimeLabel (ms) {
+  const s = ms / 1000
+  return s < 60 ? `${s.toFixed(1)}s` : `${(s / 60).toFixed(1)}m`
+}
+
 // boundary timestamps: date + time on short (testnet) epochs, date on mainnet-length ones
 const boundTimeFmt = new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit', hour12: false })
 const boundDateFmt = new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric' })
 
 // session-break marker between two epochs: the block (and moment) one epoch flowed into the next
-function EpochBound ({ bound, longEpochs }) {
+// showTag: "block" once on the left edge; approx right edge is ~#height only
+function EpochBound ({ bound, longEpochs, showTag }) {
   const label = bound.ts ? (longEpochs ? boundDateFmt : boundTimeFmt).format(new Date(bound.ts)) : null
+  // stack: optional "block" pill above height; icon matches CompactBlocks Height column (no #)
   const content = (
     <>
+      {showTag && <span className={'EpochsWave__BoundTag'}>block</span>}
       <span className={'EpochsWave__BoundBlock'}>
-        <span className={'EpochsWave__BoundTag'}>{bound.approx ? 'est. block' : 'block'}</span> {bound.approx ? '~' : ''}#{bound.height}
+        <BlockIcon className={'EpochsWave__BoundIcon'} w={'0.75rem'} h={'0.75rem'} aria-hidden={'true'}/>
+        {bound.approx ? '~' : ''}{bound.height}
       </span>
       {label && <span className={'EpochsWave__BoundWhen'}>{label}</span>}
     </>
@@ -51,7 +134,7 @@ function EpochBound ({ bound, longEpochs }) {
 
   // only the label is a link; top tracks the wave height so it sits just above the line
   return (
-    <span className={`EpochsWave__Bound${edgeClass}${approxClass}`} style={{ left: `${bound.x}%`, top: `calc(${bound.y}% - 44px)` }}>
+    <span className={`EpochsWave__Bound${edgeClass}${approxClass}`} style={{ left: `${bound.x}%`, top: `calc(${bound.y}% - 76px)` }}>
       {bound.hash
         ? <Link
             href={`/block/${bound.hash}`}
@@ -73,35 +156,28 @@ function EpochBound ({ bound, longEpochs }) {
   )
 }
 
-// section badge states only the fixed epoch length; the live epoch sits on the wave
-function SectionHead ({ title, currentEpoch }) {
-  const durationLabel = durationLabelOf(currentEpoch?.data?.epoch)
-
-  return (
-    <Heading className={'InfoBlock__Title EpochsOverview__Title'} as={'h2'}>
-      {title}
-      {durationLabel &&
-        <span className={'EpochsOverview__Now'} aria-label={`Epoch length ${durationLabel}`}>
-          <span className={'EpochsOverview__NowMeta'}>every {durationLabel}</span>
-        </span>}
-    </Heading>
-  )
-}
-
-function EpochPoint ({ epoch, metricLabel, x, y, selected, hovered, onSelect }) {
+function EpochPoint ({ epoch, metricLabel, x, y, colorRgb, selected, onSelect, showKind, durationLabel }) {
   // the in-progress epoch counts down ("36 min. left") instead of "ended X ago"
   const inProgress = epoch?.endTime > Date.now()
+  // sync node pulse with the 5s left→right scan (same period as HomeHeroDash)
+  const scanPulseDelay = `${(Number(x) / 100) * 5}s`
 
   return (
     <button
       type={'button'}
-      className={`HomeHero__WavePoint EpochsWave__Point is-ready${selected ? ' is-selected' : ''}${hovered ? ' is-hovered' : ''}${inProgress ? ' is-live' : ''}`}
-      style={{ left: `${x}%`, top: `${y}%` }}
+      className={`HomeHero__WavePoint EpochsWave__Point is-ready${selected ? ' is-selected' : ''}${inProgress ? ' is-live' : ''}`}
+      style={{ left: `${x}%`, top: `${y}%`, '--wave-c-rgb': colorRgb, '--scan-pulse-delay': scanPulseDelay }}
       onClick={onSelect}
       aria-pressed={selected}
-      aria-label={`Epoch ${epoch?.number}${inProgress ? ', in progress' : ''}`}
+      aria-label={`Epoch ${epoch?.number}${inProgress ? ', in progress' : ''}${durationLabel ? `, every ${durationLabel}` : ''}`}
     >
-      <span className={'HomeHero__WaveValue EpochsWave__Number'}>#{epoch?.number}</span>
+      <span className={'EpochsWave__Id'}>
+        {showKind &&
+          <span className={'EpochsWave__Kind'}>
+            {durationLabel ? `Epoch every ${durationLabel}` : 'Epoch'}
+          </span>}
+        <span className={'HomeHero__WaveValue EpochsWave__Number'}>#{epoch?.number}</span>
+      </span>
       <span className={'HomeHero__WaveDot'} aria-hidden={'true'}/>
       <span className={'EpochsWave__Meta'}>
         <span className={'HomeHero__WaveLabel'}>{metricLabel}</span>
@@ -115,8 +191,17 @@ function EpochPoint ({ epoch, metricLabel, x, y, selected, hovered, onSelect }) 
   )
 }
 
-// Fees value tooltip: exact DASH/USD plus the epoch fee economics masternode owners care about
-function FeesTooltip ({ data, rate, children }) {
+// tip bodies for the (i) icon — description + optional breakdown in one place (not on the value)
+function TipShell ({ blurb, children }) {
+  return (
+    <div className={'EpochsOverview__Tip'}>
+      {blurb && <div className={'EpochsOverview__TipBlurb'}>{blurb}</div>}
+      {children}
+    </div>
+  )
+}
+
+function feesHint (data, rate) {
   const feesCredits = Number(data.totalCollectedFees) || 0
   const dash = creditsToDash(feesCredits)
   const usd = typeof rate?.data?.usd === 'number' ? dash * rate.data.usd : null
@@ -128,106 +213,187 @@ function FeesTooltip ({ data, rate, children }) {
   ].filter(([, v]) => v != null)
 
   return (
-    <Tooltip
-      title={'Fees'}
-      content={(
-        <div className={'EpochsOverview__Tip'}>
-          <div className={'EpochsOverview__TipMain'}>
-            {removeTrailingZeros(dash.toFixed(8))} Dash
-            {typeof usd === 'number' && <span className={'EpochsOverview__TipUsd'}> · ~{roundUsd(usd)}$</span>}
-          </div>
-          {rows.map(([label, v]) => (
-            <div className={'EpochsOverview__TipRow'} key={label}>
-              <span>{label}</span>
-              <span>{compact(Number(v))} credits</span>
-            </div>
-          ))}
+    <TipShell blurb={'Total fees (credits) collected from state transitions this epoch.'}>
+      <div className={'EpochsOverview__TipMain'}>
+        {removeTrailingZeros(dash.toFixed(8))} Dash
+        {typeof usd === 'number' && <span className={'EpochsOverview__TipUsd'}> · ~{roundUsd(usd)}$</span>}
+      </div>
+      {rows.map(([label, v]) => (
+        <div className={'EpochsOverview__TipRow'} key={label}>
+          <span>{label}</span>
+          <span>{compact(Number(v))} credits</span>
         </div>
-      )}
-      placement={'top'}
-    >
-      {children}
-    </Tooltip>
+      ))}
+    </TipShell>
   )
 }
 
-// Votes value tooltip: governance activity that doesn't fit the single-line cell
-function VotesTooltip ({ data, children }) {
+function votesHint (data) {
   const resource = data.topVotedResource
   const voter = data.bestVoter?.identifier
 
   return (
-    <Tooltip
-      title={'Votes'}
-      content={(
-        <div className={'EpochsOverview__Tip'}>
-          <div className={'EpochsOverview__TipMain'}>{Number(data.totalVotesCount) || 0} masternode votes</div>
-          <div className={'EpochsOverview__TipRow'}>
-            <span>Gas used</span>
-            <span>{compact(Number(data.totalVotesGasUsed) || 0)} credits</span>
-          </div>
-          {voter != null &&
-            <div className={'EpochsOverview__TipRow'}>
-              <span>Top voter</span>
-              <span>{shortId(voter)}</span>
-            </div>}
-          {resource?.resourceValue != null &&
-            <div className={'EpochsOverview__TipRow'}>
-              <span>Top resource</span>
-              <span>
-                {String(resource.resourceValue)} · {resource.totalCountTowardsIdentity ?? 0}/{resource.totalCountAbstain ?? 0}/{resource.totalCountLock ?? 0}
-              </span>
-            </div>}
-        </div>
-      )}
-      placement={'top'}
-    >
-      {children}
-    </Tooltip>
+    <TipShell blurb={'Masternode votes cast this epoch.'}>
+      <div className={'EpochsOverview__TipMain'}>{Number(data.totalVotesCount) || 0} masternode votes</div>
+      <div className={'EpochsOverview__TipRow'}>
+        <span>Gas used</span>
+        <span>{compact(Number(data.totalVotesGasUsed) || 0)} credits</span>
+      </div>
+      {voter != null &&
+        <div className={'EpochsOverview__TipRow'}>
+          <span>Top voter</span>
+          <span>{shortId(voter)}</span>
+        </div>}
+      {resource?.resourceValue != null &&
+        <div className={'EpochsOverview__TipRow'}>
+          <span>Top resource</span>
+          <span>
+            {String(resource.resourceValue)} · {resource.totalCountTowardsIdentity ?? 0}/{resource.totalCountAbstain ?? 0}/{resource.totalCountLock ?? 0}
+          </span>
+        </div>}
+    </TipShell>
   )
 }
 
-// Blocks value tooltip: where the epoch started and ended, in blocks and time
-function BlocksTooltip ({ epoch, endHeight, liveCount, children }) {
+function proposersHint (proposers) {
+  const blurb = 'Validators that proposed Platform blocks this epoch (proposer rotates; similar counts mean even share). Click a row to open the validator.'
+  if (!Array.isArray(proposers) || !proposers.length) {
+    return 'Validator that proposed the most blocks this epoch. Full breakdown is available after the epoch finalizes.'
+  }
+
+  const sorted = [...proposers].sort((a, b) => Number(b.count) - Number(a.count))
+  const top = sorted.slice(0, 10)
+  const rest = sorted.length - top.length
+
+  return (
+    <TipShell blurb={blurb}>
+      <div className={'EpochsOverview__TipMain'}>
+        Top {top.length} of {sorted.length} proposers
+      </div>
+      {top.map(p => (
+        <div className={'EpochsOverview__TipRow'} key={p.proposer}>
+          <Link
+            href={`/validator/${p.proposer}`}
+            prefetch={false}
+            className={'EpochsOverview__TipLink'}
+            title={p.proposer}
+            onClick={e => e.stopPropagation()}
+          >
+            {/* full hash in markup; CSS clips to a leading slice like Top proposer cell */}
+            <span className={'EpochsOverview__TipHash'}>{p.proposer}</span>
+          </Link>
+          <span>{Number(p.count)} blocks</span>
+        </div>
+      ))}
+      {rest > 0 &&
+        <div className={'EpochsOverview__TipRow'}>
+          <span>+{rest} more</span>
+          <span/>
+        </div>}
+    </TipShell>
+  )
+}
+
+function blocksHint (epoch, endHeight, liveCount) {
+  const blurb = 'Blocks produced in the epoch (finalized after it ends).'
+  if (epoch?.firstBlockHeight == null) return blurb
+
   const longEpoch = (epoch?.endTime - epoch?.startTime) >= 86400000
   const fmt = longEpoch ? boundDateFmt : boundTimeFmt
   const inProgress = epoch?.endTime > Date.now()
 
   return (
-    <Tooltip
-      title={'Blocks'}
-      content={(
-        <div className={'EpochsOverview__Tip'}>
-          <div className={'EpochsOverview__TipRow'}>
-            <span>Started</span>
-            <span>#{epoch.firstBlockHeight}{epoch.startTime ? ` · ${fmt.format(new Date(epoch.startTime))}` : ''}</span>
+    <TipShell blurb={blurb}>
+      <div className={'EpochsOverview__TipRow'}>
+        <span>Started</span>
+        <span>#{epoch.firstBlockHeight}{epoch.startTime ? ` · ${fmt.format(new Date(epoch.startTime))}` : ''}</span>
+      </div>
+      {inProgress
+        ? <div className={'EpochsOverview__TipRow'}>
+            <span>Ends</span>
+            <span>{epoch.endTime ? `${fmt.format(new Date(epoch.endTime))} · ` : ''}in progress</span>
           </div>
-          {inProgress
-            ? <div className={'EpochsOverview__TipRow'}>
-                <span>Ends</span>
-                <span>{epoch.endTime ? `${fmt.format(new Date(epoch.endTime))} · ` : ''}in progress</span>
-              </div>
-            : <div className={'EpochsOverview__TipRow'}>
-                <span>Ended</span>
-                <span>{endHeight != null ? `#${endHeight} · ` : ''}{epoch.endTime ? fmt.format(new Date(epoch.endTime)) : ''}</span>
-              </div>}
-          {/* live running count: an exact fact so far, not a projection — no "~" */}
-          {liveCount != null &&
-            <div className={'EpochsOverview__TipRow'}>
-              <span>Produced</span>
-              <span>{liveCount.toLocaleString('en-US')} so far · counting</span>
-            </div>}
-        </div>
-      )}
-      placement={'top'}
-    >
-      {children}
-    </Tooltip>
+        : <div className={'EpochsOverview__TipRow'}>
+            <span>Ended</span>
+            <span>{endHeight != null ? `#${endHeight} · ` : ''}{epoch.endTime ? fmt.format(new Date(epoch.endTime)) : ''}</span>
+          </div>}
+      {liveCount != null &&
+        <div className={'EpochsOverview__TipRow'}>
+          <span>Produced</span>
+          <span>{liveCount.toLocaleString('en-US')} so far · counting</span>
+        </div>}
+    </TipShell>
   )
 }
 
-// stat row for the shown epoch; washKey remounts the wash so the pour replays on every pick
-function EpochCells ({ data, nextData, rate, washKey }) {
+function rewardsHint (rewards, rate) {
+  const blurb = 'The evonode share (37.5%) of the masternode portion of Dash Core block rewards, pooled over this epoch and paid out to participating evonodes when it ends (finalized after the epoch).'
+  if (rewards == null) return blurb
+
+  const dash = creditsToDash(Number(rewards))
+  const usd = typeof rate?.data?.usd === 'number' ? dash * rate.data.usd : null
+
+  return (
+    <TipShell blurb={blurb}>
+      <div className={'EpochsOverview__TipMain'}>
+        {removeTrailingZeros(dash.toFixed(8))} Dash
+        {typeof usd === 'number' && <span className={'EpochsOverview__TipUsd'}> · ~{roundUsd(usd)}$</span>}
+      </div>
+    </TipShell>
+  )
+}
+
+function documentsHint (created, deleted) {
+  const blurb = 'Documents created and deleted during this epoch.'
+  if (created == null && deleted == null) return blurb
+
+  const c = Number(created) || 0
+  const d = Number(deleted) || 0
+
+  return (
+    <TipShell blurb={blurb}>
+      <div className={'EpochsOverview__TipRow'}>
+        <span>Created</span>
+        <span>{c.toLocaleString('en-US')}</span>
+      </div>
+      <div className={'EpochsOverview__TipRow'}>
+        <span>Deleted</span>
+        <span>{d.toLocaleString('en-US')}</span>
+      </div>
+      <div className={'EpochsOverview__TipRow'}>
+        <span>Total</span>
+        <span>{(c + d).toLocaleString('en-US')}</span>
+      </div>
+    </TipShell>
+  )
+}
+
+function transactionsHint (data) {
+  const blurb = 'State transitions processed during this epoch.'
+  const tps = data?.tps
+  if (tps == null || Number.isNaN(Number(tps))) return blurb
+
+  const tpsNum = Number(tps)
+  const tpsLabel = tpsNum < 0.01 && tpsNum > 0
+    ? tpsNum.toFixed(4)
+    : tpsNum.toFixed(3)
+
+  return (
+    <TipShell blurb={blurb}>
+      <div className={'EpochsOverview__TipRow'}>
+        <span>Transactions</span>
+        <span>{(Number(data.totalTxCount) || 0).toLocaleString('en-US')}</span>
+      </div>
+      <div className={'EpochsOverview__TipRow'}>
+        <span>TPS</span>
+        <span>{tpsLabel}</span>
+      </div>
+    </TipShell>
+  )
+}
+
+// stat row for the shown epoch (the selected epoch's colour reaches it via the Beam column)
+function EpochCells ({ data, nextData, rate }) {
   const epoch = data.epoch
   // the epoch's last block is the one right before the NEXT epoch's first block
   const endHeight = nextData?.epoch?.number === epoch?.number + 1 && nextData?.epoch?.firstBlockHeight != null
@@ -240,86 +406,101 @@ function EpochCells ({ data, nextData, rate, washKey }) {
   const blocksLive = finalizedBlocks == null && blocks != null
   const rewards = epoch?.coreBlockRewards // finalized-only (credits, null for current)
   const feesCredits = Number(data.totalCollectedFees) || 0
-  const topResource = data.topVotedResource?.resourceValue
+
+  // second-row fields (#822): undefined until the API deploys them (mainnet) -> Pending;
+  // a real 0 (testnet, quiet epoch) is a number, so `!= null` keeps it distinct from "not deployed"
+  const created = data.totalCreatedDocumentsCount
+  const deleted = data.totalDeletedDocumentsCount
+  const names = data.totalRegisteredNamesCount
+  const contested = data.totalContestedDocumentsCount
+  const avgMs = data.avgBlockTime
+  const proposers = epoch?.blockProposers // finalized-only breakdown [{proposer, count}]
 
   const txAnim = useCountUp(Number(data.totalTxCount) || 0)
   const blocksAnim = useCountUp(typeof blocks === 'number' ? blocks : null)
   const feesAnim = useCountUp(feesCredits)
   const rewardsAnim = useCountUp(rewards != null ? Number(rewards) : null)
   const votesAnim = useCountUp(Number(data.totalVotesCount) || 0)
+  const docsAnim = useCountUp(created != null ? Number(created) : null)
+  const delAnim = useCountUp(deleted != null ? Number(deleted) : null)
+  const namesAnim = useCountUp(names != null ? Number(names) : null)
+  const contestedAnim = useCountUp(contested != null ? Number(contested) : null)
   // full hash in the markup; CSS clips it to a leading slice ("20107EC…")
   const proposerAnim = useScramble(data.bestValidator || null)
 
   return (
+    // one flat KPI table: label over value, many columns, read left-to-right (no group headers)
     <div className={'EpochsOverview__Cells HomeHero__StatusBar'}>
-      <span key={`wash-${washKey}`} className={'EpochsOverview__Wash'} aria-hidden={'true'}/>
-      <StatusCell label={'Transactions'} hint={'State transitions processed during this epoch.'}>
+      {/* selected-epoch wash — no remount key (avoids a full-second opacity flash on epoch change) */}
+      <span className={'EpochsOverview__Wash'} aria-hidden={'true'}/>
+      <StatusCell label={'Transactions'} hint={transactionsHint(data)}>
         <span className={'EpochsOverview__Stat'}><BigNumber>{txAnim}</BigNumber></span>
       </StatusCell>
 
-      <StatusCell label={'Blocks'} hint={'Blocks produced in the epoch (finalized after it ends). Hover the value for where the epoch started and ended.'}>
-        {epoch?.firstBlockHeight != null
-          // start/end are known even while the live block count is still pending
-          ? <BlocksTooltip epoch={epoch} endHeight={endHeight} liveCount={blocksLive ? blocks : null}>
-              <span className={'EpochsOverview__Stat EpochsOverview__Stat--Tip'}>
-                <span className={'EpochsOverview__TipTarget'}>
-                  {typeof blocksAnim === 'number' ? <BigNumber>{blocksAnim}</BigNumber> : <Pending/>}
-                </span>
-              </span>
-            </BlocksTooltip>
-          : typeof blocksAnim === 'number'
-            ? <span className={'EpochsOverview__Stat'}><BigNumber>{blocksAnim}</BigNumber></span>
-            : <Pending/>}
-      </StatusCell>
-
-      <StatusCell label={'Fees'} hint={'Total fees (credits) collected from state transitions this epoch. Hover the value for DASH / USD and the processing/storage breakdown.'}>
-        <FeesTooltip data={data} rate={rate}>
-          <span className={'EpochsOverview__Stat EpochsOverview__Stat--Tip'}>
-            <span className={'EpochsOverview__TipTarget'}>
-              {compact(typeof feesAnim === 'number' ? feesAnim : feesCredits) ?? 0}
-              <span className={'EpochsOverview__Unit'}>credits</span>
-            </span>
-          </span>
-        </FeesTooltip>
-      </StatusCell>
-
-      <StatusCell label={'Core rewards'} hint={'The evonode share (37.5%) of the masternode portion of Dash Core block rewards, pooled over this epoch and paid out to participating evonodes when it ends (finalized after the epoch). Hover for the exact DASH / USD value.'}>
-        {typeof rewardsAnim === 'number'
-          ? <RateTooltip dash={creditsToDash(Number(rewards))} rate={rate?.data} placement={'top'}>
-              <span className={'EpochsOverview__Stat EpochsOverview__Stat--Tip'}>
-                <span className={'EpochsOverview__TipTarget'}>
-                  {creditsToDash(rewardsAnim).toFixed(2)}
-                  <span className={'EpochsOverview__Unit'}>DASH</span>
-                </span>
-              </span>
-            </RateTooltip>
+      <StatusCell
+        label={'Blocks'}
+        hint={blocksHint(epoch, endHeight, blocksLive ? blocks : null)}
+      >
+        {typeof blocksAnim === 'number'
+          ? <span className={'EpochsOverview__Stat'}><BigNumber>{blocksAnim}</BigNumber></span>
           : <Pending/>}
       </StatusCell>
 
-      <StatusCell label={'Top proposer'} hint={'Validator that proposed the most blocks this epoch.'}>
-        {data.bestValidator
-          ? <Link href={`/validator/${data.bestValidator}`} prefetch={false} className={'EpochsOverview__Proposer'}>
-              <span className={'EpochsOverview__Stat EpochsOverview__ProposerVal'}>{proposerAnim}</span>
-            </Link>
-          : <span className={'EpochsOverview__Stat'}>-</span>}
+      <StatusCell label={'Fees'} hint={feesHint(data, rate)}>
+        <span className={'EpochsOverview__Stat'}>
+          {compact(typeof feesAnim === 'number' ? feesAnim : feesCredits) ?? 0}
+        </span>
       </StatusCell>
 
-      <StatusCell label={'Votes'} hint={'Masternode votes cast this epoch. Hover the value for gas, the top voter and the most-voted resource.'}>
-        <VotesTooltip data={data}>
-          <span className={'EpochsOverview__Stat EpochsOverview__Stat--Tip'}>
-            <span className={'EpochsOverview__TipTarget'}>{votesAnim}</span>
-          </span>
-        </VotesTooltip>
-        {topResource &&
-          <Link href={contestedHref(topResource)} className={'EpochsOverview__Sub EpochsOverview__SubLink'}>
-            {String(topResource)}
-          </Link>}
+      <StatusCell label={'Core rewards'} hint={rewardsHint(rewards, rate)}>
+        {typeof rewardsAnim === 'number'
+          ? <span className={'EpochsOverview__Stat'}>{creditsToDash(rewardsAnim).toFixed(2)}</span>
+          : <Pending/>}
+      </StatusCell>
+
+      <StatusCell label={'Documents'} hint={documentsHint(created, deleted)}>
+        {typeof docsAnim === 'number'
+          ? <span className={'EpochsOverview__Stat EpochsOverview__DocStat'}>
+              <span className={'EpochsOverview__DocNew'}>+{compact(docsAnim)}</span>
+              <span className={'EpochsOverview__DocDel'}>−{compact(delAnim ?? 0)}</span>
+            </span>
+          : <Pending/>}
+      </StatusCell>
+
+      <StatusCell label={'Names'} hint={'DPNS names registered during this epoch.'}>
+        {typeof namesAnim === 'number'
+          ? <span className={'EpochsOverview__Stat'}><BigNumber>{namesAnim}</BigNumber></span>
+          : <Pending/>}
+      </StatusCell>
+
+      <StatusCell label={'Contested'} hint={'Contested documents (e.g. premium names) opened for masternode voting this epoch.'}>
+        {typeof contestedAnim === 'number'
+          ? <span className={'EpochsOverview__Stat'}><BigNumber>{contestedAnim}</BigNumber></span>
+          : <Pending/>}
+      </StatusCell>
+
+      <StatusCell label={'Votes'} hint={votesHint(data)}>
+        <span className={'EpochsOverview__Stat'}>{votesAnim}</span>
+      </StatusCell>
+
+      <StatusCell label={'Block time'} hint={'Average time between blocks in this epoch (needs at least two blocks).'}>
+        {avgMs != null
+          ? <span className={'EpochsOverview__Stat'}>{avgBlockTimeLabel(Number(avgMs))}</span>
+          : <Pending/>}
       </StatusCell>
 
       <StatusCell label={'Protocol'} hint={'Platform protocol version the epoch ran on (from its first block). Upgrades activate on epoch boundaries, so a version bump means node operators had to update.'}>
         <span className={'EpochsOverview__Stat'}>
           {typeof data.protocolVersion === 'number' ? `v${data.protocolVersion}` : '-'}
         </span>
+      </StatusCell>
+
+      <StatusCell label={'Top proposer'} hint={proposersHint(proposers)}>
+        {data.bestValidator
+          ? <Link href={`/validator/${data.bestValidator}`} prefetch={false} className={'EpochsOverview__Proposer'}>
+              <span className={'EpochsOverview__Stat EpochsOverview__ProposerVal'}>{proposerAnim}</span>
+            </Link>
+          : <span className={'EpochsOverview__Stat'}>-</span>}
       </StatusCell>
     </div>
   )
@@ -346,7 +527,6 @@ export function EpochsOverview ({ title, epochs, currentEpoch, rate, loading, sl
   const lastIdx = Math.max(0, slots.length - 1)
 
   const [selected, setSelected] = useState(lastIdx)
-  const [hovered, setHovered] = useState(null)
 
   // pin selection to the newest *arrived* epoch (stable slot index, not growing list index)
   useEffect(() => {
@@ -368,8 +548,7 @@ export function EpochsOverview ({ title, epochs, currentEpoch, rate, loading, sl
     const ghostD = `M ${ghostLine.map(p => `${p.x} ${p.y}`).join(' L ')}`
 
     return (
-      <div className={'EpochsOverview'}>
-        <SectionHead title={title} currentEpoch={currentEpoch}/>
+      <div className={'EpochsOverview'} aria-label={title || 'Epochs'}>
         <div className={`HomeHero__Wave EpochsWave${loading ? ' EpochsWave--Skeleton' : ' EpochsWave--Empty'}`}>
           {loading
             ? <>
@@ -390,7 +569,7 @@ export function EpochsOverview ({ title, epochs, currentEpoch, rate, loading, sl
         </div>
         <div className={'EpochsOverview__Detail'}>
           <div className={'EpochsOverview__Cells HomeHero__StatusBar'}>
-            {Array.from({ length: 7 }).map((_, i) => (
+            {Array.from({ length: 11 }).map((_, i) => (
               <div className={'HomeHero__StatusCell'} key={i}>
                 <Skeleton w={'48px'} h={'0.6em'}/>
                 <Skeleton w={'64px'} h={'1.1em'} className={'EpochsOverview__SkelGap'}/>
@@ -488,42 +667,73 @@ export function EpochsOverview ({ title, epochs, currentEpoch, rate, loading, sl
   const shown = points[selIdx]?.ep || points.filter(p => p.ready).at(-1)?.ep
   const nextShown = points[selIdx + 1]?.ep
 
-  const nearestIdx = (e) => {
-    const rect = e.currentTarget.getBoundingClientRect()
-    const xPct = ((e.clientX - rect.left) / rect.width) * 100
-    let best = 0
-    for (let i = 1; i < points.length; i++) {
-      if (Math.abs(xPct - points[i].x) < Math.abs(xPct - points[best].x)) best = i
-    }
-    return best
-  }
-
-  const handleMove = (e) => setHovered(nearestIdx(e))
   const seg = segments[selIdx] ?? { l: 0, w: 1 }
   const hasAny = points.some(p => p.ready)
+  // wave scan on non-selected segments; rail U only around the clicked epoch (wave/KPI join)
+  const { leftD, rightD, railD } = hasAny
+    ? buildScanParts(linePts, seg)
+    : { leftD: null, rightD: null, railD: null }
 
   return (
-    <div className={'EpochsOverview'} style={{ '--epoch-seg-l': seg.l, '--epoch-seg-w': seg.w }}>
-      <SectionHead title={title} currentEpoch={currentEpoch}/>
-
+    <div
+      className={'EpochsOverview'}
+      style={{ '--epoch-seg-l': seg.l, '--epoch-seg-w': seg.w, '--epoch-color-rgb': slotRgb(selIdx) }}
+      aria-label={title || 'Epochs'}
+    >
       <div
         className={`HomeHero__Wave EpochsWave${hasAny ? '' : ' EpochsWave--Skeleton'}`}
-        onMouseMove={handleMove}
-        onMouseLeave={() => setHovered(null)}
       >
         <svg className={'HomeHero__WaveSvg'} viewBox={'0 0 100 100'} preserveAspectRatio={'none'} aria-hidden={'true'}>
           <defs>
-            <linearGradient id={'homeEpochFill'} x1={'0'} y1={'0'} x2={'0'} y2={'1'}>
-              <stop offset={'0%'} stopColor={'rgba(0, 141, 228, 0.28)'}/>
-              <stop offset={'100%'} stopColor={'rgba(0, 141, 228, 0)'}/>
+            {/* area fill: subtle horizontal Ocean gradient (epochs flow into each other), evenly filled */}
+            <linearGradient id={'homeEpochFill'} x1={'0'} y1={'0'} x2={'1'} y2={'0'}>
+              <stop offset={'0%'} stopColor={`rgba(${WAVE_RGB[0]}, 0.16)`}/>
+              <stop offset={`${X_POSITIONS[0]}%`} stopColor={`rgba(${WAVE_RGB[0]}, 0.16)`}/>
+              <stop offset={`${X_POSITIONS[1]}%`} stopColor={`rgba(${WAVE_RGB[1]}, 0.16)`}/>
+              <stop offset={`${X_POSITIONS[2]}%`} stopColor={`rgba(${WAVE_RGB[2]}, 0.16)`}/>
+              <stop offset={`${X_POSITIONS[3]}%`} stopColor={`rgba(${WAVE_RGB[3]}, 0.16)`}/>
+              <stop offset={'100%'} stopColor={`rgba(${WAVE_RGB[3]}, 0.16)`}/>
             </linearGradient>
+            {/* horizontal Ocean gradient: the line flows through the epoch-slot colours (old -> new) */}
+            <linearGradient id={'homeEpochStroke'} x1={'0'} y1={'0'} x2={'1'} y2={'0'}>
+              <stop offset={'0%'} stopColor={`rgb(${WAVE_RGB[0]})`}/>
+              <stop offset={`${X_POSITIONS[0]}%`} stopColor={`rgb(${WAVE_RGB[0]})`}/>
+              <stop offset={`${X_POSITIONS[1]}%`} stopColor={`rgb(${WAVE_RGB[1]})`}/>
+              <stop offset={`${X_POSITIONS[2]}%`} stopColor={`rgb(${WAVE_RGB[2]})`}/>
+              <stop offset={`${X_POSITIONS[3]}%`} stopColor={`rgb(${WAVE_RGB[3]})`}/>
+              <stop offset={'100%'} stopColor={`rgb(${WAVE_RGB[3]})`}/>
+            </linearGradient>
+            {/* vertical fade so the area dissolves toward the data block instead of a hard bottom edge */}
+            <linearGradient id={'homeEpochFadeGrad'} x1={'0'} y1={'0'} x2={'0'} y2={'100'} gradientUnits={'userSpaceOnUse'}>
+              <stop offset={'0%'} stopColor={'#fff'}/>
+              <stop offset={'50%'} stopColor={'#fff'}/>
+              <stop offset={'100%'} stopColor={'#000'}/>
+            </linearGradient>
+            <mask id={'homeEpochFade'} maskUnits={'userSpaceOnUse'} x={'0'} y={'0'} width={'100'} height={'100'}>
+              <rect x={'0'} y={'0'} width={'100'} height={'100'} fill={'url(#homeEpochFadeGrad)'}/>
+            </mask>
           </defs>
           {hasAny
             ? <>
-                <path className={'EpochsWave__Area'} d={areaD} fill={'url(#homeEpochFill)'} stroke={'none'}/>
+                <path className={'EpochsWave__Area'} d={areaD} fill={'url(#homeEpochFill)'} mask={'url(#homeEpochFade)'} stroke={'none'}/>
                 <path className={'HomeHero__WaveLine EpochsWave__Line'} d={lineD} fill={'none'} vectorEffect={'non-scaling-stroke'}/>
-                <path className={'HomeHero__WaveScanGlow'} d={lineD} fill={'none'} pathLength={'100'} vectorEffect={'non-scaling-stroke'}/>
-                <path className={'HomeHero__WaveScan'} d={lineD} fill={'none'} pathLength={'100'} vectorEffect={'non-scaling-stroke'}/>
+                {/* continuous wave scan outside selection — never “goes dark” when leaving an epoch */}
+                {leftD &&
+                  <>
+                    <path className={'HomeHero__WaveScanGlow'} d={leftD} fill={'none'} pathLength={'100'} vectorEffect={'non-scaling-stroke'}/>
+                    <path className={'HomeHero__WaveScan'} d={leftD} fill={'none'} pathLength={'100'} vectorEffect={'non-scaling-stroke'}/>
+                  </>}
+                {rightD &&
+                  <>
+                    <path className={'HomeHero__WaveScanGlow HomeHero__WaveScan--Phase'} d={rightD} fill={'none'} pathLength={'100'} vectorEffect={'non-scaling-stroke'}/>
+                    <path className={'HomeHero__WaveScan HomeHero__WaveScan--Phase'} d={rightD} fill={'none'} pathLength={'100'} vectorEffect={'non-scaling-stroke'}/>
+                  </>}
+                {/* U-detour for the clicked epoch: down left rail → seam → up right rail */}
+                {railD &&
+                  <>
+                    <path className={'HomeHero__WaveScanGlow EpochsWave__RailScan'} d={railD} fill={'none'} pathLength={'100'} vectorEffect={'non-scaling-stroke'}/>
+                    <path className={'HomeHero__WaveScan EpochsWave__RailScan'} d={railD} fill={'none'} pathLength={'100'} vectorEffect={'non-scaling-stroke'}/>
+                  </>}
               </>
             : <>
                 <path className={'EpochsWave__GhostLine'} d={lineD} fill={'none'} vectorEffect={'non-scaling-stroke'}/>
@@ -532,7 +742,12 @@ export function EpochsOverview ({ title, epochs, currentEpoch, rate, loading, sl
         </svg>
 
         {hasAny && bounds.map(b => (
-          <EpochBound key={`${b.edge || 'mid'}-${b.height}`} bound={b} longEpochs={longEpochs}/>
+          <EpochBound
+            key={`${b.edge || 'mid'}-${b.height}`}
+            bound={b}
+            longEpochs={longEpochs}
+            showTag={b.edge === 'l'}
+          />
         ))}
 
         {hasAny &&
@@ -544,10 +759,7 @@ export function EpochsOverview ({ title, epochs, currentEpoch, rate, loading, sl
               top: `${points[selIdx]?.y ?? 50}%`
             }}
             aria-hidden={'true'}
-          >
-            <span key={`l-${selIdx}`} className={'EpochsWave__BeamPulse EpochsWave__BeamPulse--l'}/>
-            <span key={`r-${selIdx}`} className={'EpochsWave__BeamPulse EpochsWave__BeamPulse--r'}/>
-          </span>}
+          />}
 
         {points.map((p, i) => (
           p.ready
@@ -557,9 +769,12 @@ export function EpochsOverview ({ title, epochs, currentEpoch, rate, loading, sl
                 metricLabel={`${compact(Number(p.ep.totalTxCount) || 0)} tx`}
                 x={p.x}
                 y={p.y}
+                colorRgb={slotRgb(i)}
                 selected={i === selIdx}
-                hovered={i === hovered}
                 onSelect={() => setSelected(i)}
+                // series label + duration once on the first slot (left → right scan)
+                showKind={i === 0}
+                durationLabel={i === 0 ? durationLabelOf(currentEpoch?.data?.epoch || p.ep.epoch) : null}
               />
             : <span
                 key={`ghost-${p.num}`}
@@ -572,9 +787,9 @@ export function EpochsOverview ({ title, epochs, currentEpoch, rate, loading, sl
 
       <div className={'EpochsOverview__Detail'}>
         {shown
-          ? <EpochCells data={shown} nextData={nextShown} rate={rate} washKey={selIdx}/>
+          ? <EpochCells data={shown} nextData={nextShown} rate={rate}/>
           : <div className={'EpochsOverview__Cells HomeHero__StatusBar'}>
-              {Array.from({ length: 7 }).map((_, i) => (
+              {Array.from({ length: 11 }).map((_, i) => (
                 <div className={'HomeHero__StatusCell'} key={i}>
                   <Skeleton w={'48px'} h={'0.6em'}/>
                   <Skeleton w={'64px'} h={'1.1em'} className={'EpochsOverview__SkelGap'}/>

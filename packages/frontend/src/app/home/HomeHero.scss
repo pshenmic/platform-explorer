@@ -507,18 +507,19 @@
   &__Wave {
     position: relative;
     width: auto;
-    height: 150px;
-    // full-bleed to the block edges; top clearance keeps epoch numbers off the badge
-    // (negative margins mirror the BlockSpacing card padding at each breakpoint)
-    margin: 14px -32px 0;
+    // taller so the filled area reaches the data row
+    height: 200px;
+    // full-bleed sides; top margin + HomeEpochs padding-top give space above Epoch labels
+    // negative side margins match .HomeEpochs padding (20 / 16 / 12)
+    margin: 16px -20px 0;
     padding: 0;
 
     @media screen and (max-width: $breakpoint-lg) {
-      margin: 14px -20px 0;
+      margin: 14px -16px 0;
     }
 
     @media screen and (max-width: $breakpoint-md) {
-      margin: 14px -16px 0;
+      margin: 12px -12px 0;
     }
   }
 
@@ -531,28 +532,40 @@
   }
 
   &__WaveLine {
-    stroke: rgba(var(--chakra-colors-brand-normal-rgb), 0.7);
+    // Ocean gradient flowing through the epoch slots (defined in the SVG defs)
+    stroke: url(#homeEpochStroke);
     stroke-width: 2px;
     stroke-linejoin: round;
     stroke-linecap: round;
   }
 
+  // soft ice-blue runner: same family as the ocean line, brighter so it still tracks on aqua
   // pathLength=100 keeps the scanning dash uniform when the path is stretched
   &__WaveScan {
-    stroke: $color-brand-light;
-    stroke-width: 2px;
+    stroke: #b8ecff;
+    stroke-width: 2.5px;
     stroke-linecap: round;
-    stroke-dasharray: 3 97;
+    // short head + long gap reads as a bead, not a streak
+    stroke-dasharray: 2.5 97.5;
     animation: HomeHeroDash 5s linear infinite;
+
+    // second wave segment runs offset so left/right of selection both stay “alive”
+    &--Phase {
+      animation-delay: -2.5s;
+    }
   }
 
-  // fat translucent twin stroke: an animated drop-shadow would re-blur the path every frame
+  // cool blue halo — softer than white, still readable on deep + light stops
   &__WaveScanGlow {
-    stroke: rgba(var(--chakra-colors-brand-light-rgb), 0.3);
-    stroke-width: 6px;
+    stroke: rgba(120, 200, 255, 0.4);
+    stroke-width: 7px;
     stroke-linecap: round;
-    stroke-dasharray: 3 97;
+    stroke-dasharray: 2.5 97.5;
     animation: HomeHeroDash 5s linear infinite;
+
+    &.HomeHero__WaveScan--Phase {
+      animation-delay: -2.5s;
+    }
   }
 
   // points overlaid on the line vertices (inline left/top set the position)
@@ -582,8 +595,9 @@
     width: 10px;
     height: 10px;
     border-radius: 50%;
-    background: $color-brand-light;
-    box-shadow: 0 0 0 3px rgba(var(--chakra-colors-brand-normal-rgb), 0.18);
+    // each dot wears its own epoch-slot colour (falls back to brand for ghosts)
+    background: rgb(var(--wave-c-rgb, var(--chakra-colors-brand-light-rgb)));
+    box-shadow: 0 0 0 3px rgba(var(--wave-c-rgb, var(--chakra-colors-brand-normal-rgb)), 0.18);
     transition: transform .15s, box-shadow .15s;
   }
 
@@ -602,7 +616,7 @@
 
     .HomeHero__WaveDot {
       transform: scale(1.5);
-      box-shadow: 0 0 12px 3px rgba(var(--chakra-colors-brand-light-rgb), 0.9);
+      box-shadow: 0 0 12px 3px rgba(var(--wave-c-rgb, var(--chakra-colors-brand-light-rgb)), 0.9);
     }
   }
 
@@ -724,11 +738,12 @@
   50% { box-shadow: 0 0 16px 5px rgba(var(--chakra-colors-brand-light-rgb), 0.95); }
 }
 
-// node glow fired as the line scan passes through: quick flash, then rest of the 5s sweep
+// node glow when the scan bead passes this x: bright pop, then rest of the 5s sweep quiet
 @keyframes EpochFlowPulse {
-  0% { opacity: 0.85; transform: scale(0.6); }
-  7% { opacity: 0; transform: scale(2.6); }
-  100% { opacity: 0; transform: scale(2.6); }
+  0% { opacity: 0; transform: scale(0.5); }
+  2% { opacity: 1; transform: scale(1.1); }
+  10% { opacity: 0; transform: scale(2.4); }
+  100% { opacity: 0; transform: scale(2.4); }
 }
 
 // droplet down the beam: animating top makes the travel match the beam's actual height
@@ -752,12 +767,14 @@
     transform: translate(-50%, -50%) scale(0.85);
   }
   to {
-    opacity: 0.55;
+    // resting opacity for non-selected epochs (forwards keeps this; select only adds opacity:1)
+    opacity: 0.8;
     transform: translate(-50%, -50%) scale(1);
   }
 }
 
 // Epochs overview wave: last 4 epochs as clickable points + selected-epoch detail
+// spacing rhythm: 6px between stack items, 12px from stack → line/dot
 .EpochsWave {
   &--Empty {
     display: flex !important;
@@ -771,8 +788,8 @@
   // dashed epoch-boundary line; only the label is clickable, clicks fall through the line
   &__Bound {
     position: absolute;
-    // top is set inline per boundary: it follows the wave height at that x
-    bottom: 12%;
+    // top is set inline per boundary; the dashed line runs down to the data-row top
+    bottom: 0;
     transform: translateX(-50%);
     display: flex;
     flex-direction: column;
@@ -784,7 +801,8 @@
       content: '';
       flex: 1;
       width: 1px;
-      margin-top: 4px;
+      // 12px: same clearance as epoch Id stack above the wave dot
+      margin-top: 12px;
       background: repeating-linear-gradient(
         180deg,
         rgba(255, 255, 255, 0.14) 0 4px,
@@ -802,26 +820,23 @@
     &__Bound.is-approx::after { animation: none; }
   }
 
-  // edge markers hug the wave rims: labels align inward, the line sits on the rim
+  // edge markers hug the wave rims; label stacks stay centered on their # number
   &__Bound--edgeL {
     transform: none;
-    align-items: flex-start;
-
-    .EpochsWave__BoundLabel { align-items: flex-start; }
+    align-items: flex-start; // rail on the left rim
   }
 
   &__Bound--edgeR {
     transform: translateX(-100%);
-    align-items: flex-end;
-
-    .EpochsWave__BoundLabel { align-items: flex-end; }
+    align-items: flex-end; // rail on the right rim
   }
 
   &__BoundLabel {
     display: flex;
     flex-direction: column;
-    align-items: center;
-    gap: 4px;
+    align-items: center; // pill centered over #height
+    text-align: center;
+    gap: 6px; // pill → number → when (same as Epoch Id stack)
     text-decoration: none;
     pointer-events: auto;
 
@@ -840,18 +855,40 @@
   }
 
   &__BoundBlock {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
     font-family: $font-mono;
     font-size: 0.625rem;
     color: var(--chakra-colors-gray-250);
     white-space: nowrap;
+    text-align: center;
     // same "clickable value" affordance as the tooltip'ed stats below the wave
     border-bottom: 1px dotted rgba(var(--chakra-colors-gray-500-rgb, 122, 132, 137), 0.5);
     transition: color .15s, border-color .15s;
   }
 
-  // the word is dimmer than the height, so the number stays the anchor
+  // same glyph as CompactBlocks Height; slightly smaller for the dense wave
+  &__BoundIcon {
+    flex-shrink: 0;
+    opacity: 0.9;
+  }
+
+  // micro brand pill above #height — same language as Epoch Kind / Governance
   &__BoundTag {
-    color: var(--chakra-colors-gray-500);
+    display: inline-block;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-family: $font-heading;
+    font-size: 0.5625rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: $color-brand-light;
+    background: rgba(var(--chakra-colors-brand-normal-rgb), 0.14);
+    border: 1px solid rgba(var(--chakra-colors-brand-normal-rgb), 0.3);
+    line-height: 1.2;
+    text-align: center;
   }
 
   &__BoundWhen {
@@ -859,10 +896,12 @@
     font-size: 0.5625rem;
     color: var(--chakra-colors-gray-500);
     white-space: nowrap;
+    text-align: center;
   }
 
   // small screens: keep the break line, hide the labels so they can't collide with captions
   @media screen and (max-width: $breakpoint-lg) {
+    &__BoundTag,
     &__BoundBlock,
     &__BoundWhen { display: none; }
   }
@@ -928,9 +967,11 @@
     border: none;
     font: inherit;
     cursor: pointer;
-    opacity: 0.55;
+    // non-selected epochs stay legible; selected goes to full opacity
+    opacity: 0.8;
     // top eases when y-scale refines; left stays fixed per slot
-    transition: opacity .15s, top .35s ease;
+    // opacity eases on select/deselect — never re-run entrance anim (that caused old-epoch flicker)
+    transition: opacity .2s ease, top .35s ease;
     width: 28px;
     height: 28px;
     display: flex;
@@ -938,31 +979,68 @@
     justify-content: center;
     gap: 0;
 
-    // one-shot entrance when an epoch payload fills this slot
+    // one-shot entrance when slot first fills; forwards keeps end state so re-select won't restart
     &.is-ready {
-      animation: EpochPointIn .22s ease-out both;
+      animation: EpochPointIn .22s ease-out forwards;
+    }
+
+    .HomeHero__WaveDot {
+      transition: transform .2s ease, box-shadow .2s ease;
     }
 
     .HomeHero__WaveValue { font-size: 1.5rem; }
 
-    .EpochsWave__Number {
+    // Epoch label over number — lifted above the #, even 6px stack gaps
+    .EpochsWave__Id {
       position: absolute;
-      bottom: calc(100% + 6px);
-      left: 50%;
-      transform: translateX(-50%);
-      white-space: nowrap;
-    }
-
-    // always-visible per-epoch caption under the dot: "N tx" + "window · ended/left"
-    .EpochsWave__Meta {
-      position: absolute;
-      top: calc(100% + 6px);
+      bottom: calc(100% + 12px); // clearance stack → dot (matches Bound rail)
       left: 50%;
       transform: translateX(-50%);
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 3px;
+      text-align: center;
+      gap: 6px; // pill → number (matches BoundLabel)
+      white-space: nowrap;
+      pointer-events: none;
+    }
+
+    // one chip, one string: "Epoch every 1h" — larger than the block tag
+    .EpochsWave__Kind {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-family: $font-heading;
+      font-weight: 700;
+      font-size: 0.625rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: $color-brand-light;
+      line-height: 1.25;
+      background: rgba(var(--chakra-colors-brand-normal-rgb), 0.14);
+      border: 1px solid rgba(var(--chakra-colors-brand-normal-rgb), 0.3);
+      text-align: center;
+    }
+
+    .EpochsWave__Number {
+      position: static;
+      transform: none;
+      white-space: nowrap;
+      text-align: center;
+      // italic overhang so the glyph mass sits centered under the chip
+      padding: 0 0.12em;
+    }
+
+    // always-visible per-epoch caption under the dot: "N tx" + "window · ended/left"
+    .EpochsWave__Meta {
+      position: absolute;
+      top: calc(100% + 12px); // clearance dot → meta (matches Id above)
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
       white-space: nowrap;
     }
 
@@ -974,23 +1052,19 @@
     // the dot hosts the flow pulse (::before) and the live radar ring (::after)
     .HomeHero__WaveDot { position: relative; }
 
-    // flow pulse: a glow that fires when the line scan passes through this node
+    // ice-blue ring: fires when the scan bead crosses this epoch (delay from --scan-pulse-delay / x%)
     .HomeHero__WaveDot::before {
       content: '';
       position: absolute;
-      inset: -3px;
+      inset: -5px;
       border-radius: 50%;
-      background: rgba(var(--chakra-colors-brand-light-rgb), 0.55);
+      background: radial-gradient(circle, rgba(184, 236, 255, 0.9) 0%, rgba(120, 200, 255, 0.35) 45%, transparent 70%);
       opacity: 0;
-      transform: scale(0.6);
+      transform: scale(0.5);
       animation: EpochFlowPulse 5s linear infinite;
+      animation-delay: var(--scan-pulse-delay, 0s);
+      pointer-events: none;
     }
-
-    // fire each node in sync with the scan reaching its x position (x% of the 5s sweep)
-    &:nth-of-type(1) .HomeHero__WaveDot::before { animation-delay: 0.5s; }
-    &:nth-of-type(2) .HomeHero__WaveDot::before { animation-delay: 1.85s; }
-    &:nth-of-type(3) .HomeHero__WaveDot::before { animation-delay: 3.15s; }
-    &:nth-of-type(4) .HomeHero__WaveDot::before { animation-delay: 4.5s; }
 
     // tighter on small screens so the 4 epoch numbers never collide
     @media screen and (max-width: $breakpoint-lg) {
@@ -998,19 +1072,18 @@
       .HomeHero__WaveLabel { font-size: 0.625rem; }
     }
 
-    // entrance fill-mode must not lock opacity after select/hover
-    &.is-ready.is-selected,
-    &.is-ready.is-hovered {
-      animation: none;
-      opacity: 1;
-    }
-
+    // brighten only: re-applying the entrance animation on deselect flickers the old epoch
     &.is-selected {
       opacity: 1;
 
       .HomeHero__WaveDot {
         transform: scale(1.5);
         animation: EpochDotBreath 2.4s ease-in-out infinite;
+      }
+
+      // keep pass-through pulse even when selected (scan rails still “hit” this column in x-time)
+      .HomeHero__WaveDot::before {
+        inset: -6px;
       }
 
       .HomeHero__WaveLabel {
@@ -1026,55 +1099,23 @@
   }
 
   // hover anywhere over the wave snaps to the closest epoch; pointer cursor only on the buttons
-  .HomeHero__WaveLine { transition: stroke .25s; }
-  &:hover .HomeHero__WaveLine { stroke: rgba(var(--chakra-colors-brand-normal-rgb), 0.95); }
+  // (the line is a gradient now, so brighten it instead of recolouring the stroke)
+  .HomeHero__WaveLine { transition: filter .25s; }
+  &:hover .HomeHero__WaveLine { filter: brightness(1.12); }
 
-  // hovered (snapped) point mirrors the direct :hover treatment
-  &__Point.is-hovered {
-    opacity: 1;
-
-    .HomeHero__WaveValue { color: $color-brand-light; }
-
-    .HomeHero__WaveDot {
-      transform: scale(1.5);
-      box-shadow: 0 0 12px 3px rgba(var(--chakra-colors-brand-light-rgb), 0.9);
-    }
-
-    .HomeHero__WaveLabel { color: $color-brand-light; }
-  }
-
-  // two light rails framing the selected epoch column, running down to its stats row
+  // soft column glow over the selected epoch's segment, down to its stats row (no hard rails)
   &__Beam {
     position: absolute;
-    // left/width/top are set inline to the epoch's segment; bottom lands on the stats-row seam
-    bottom: -40px;
-    // barely-there inner fill, dissolving into the page background at the top
+    // left/width/top are set inline to the epoch's segment; the wave bottom is now the data top
+    bottom: 0;
+    // fuller fill for the selected column, intensifying toward the data (the rest of the graph fades)
     background: linear-gradient(
       180deg,
       transparent,
-      rgba(var(--chakra-colors-brand-light-rgb), 0.08)
+      rgba(var(--epoch-color-rgb, var(--chakra-colors-brand-light-rgb)), 0.24)
     );
     transition: left .3s ease, width .3s ease, top .3s ease;
     pointer-events: none;
-
-    // edge rails, intensifying toward the stats row below
-    &::before,
-    &::after {
-      content: '';
-      position: absolute;
-      top: 0;
-      bottom: 0;
-      width: 1px;
-      background: linear-gradient(
-        180deg,
-        transparent,
-        rgba(var(--chakra-colors-brand-light-rgb), 0.45) 40%,
-        rgba(var(--chakra-colors-brand-light-rgb), 0.8)
-      );
-    }
-
-    &::before { left: 0; }
-    &::after { right: 0; }
   }
 
   // one-shot droplets falling down both rails into the stats on each selection (key remount)
@@ -1084,8 +1125,8 @@
     width: 3px;
     height: 12px;
     border-radius: 2px;
-    background: $color-brand-light;
-    box-shadow: 0 0 8px 2px rgba(var(--chakra-colors-brand-light-rgb), 0.8);
+    background: rgb(var(--epoch-color-rgb, var(--chakra-colors-brand-light-rgb)));
+    box-shadow: 0 0 8px 2px rgba(var(--epoch-color-rgb, var(--chakra-colors-brand-light-rgb)), 0.8);
     animation: EpochBeamDrop .45s ease-in forwards;
 
     &--l { left: -1px; }
@@ -1095,7 +1136,7 @@
   @media (prefers-reduced-motion: reduce) {
     &__Point.is-selected .HomeHero__WaveDot {
       animation: none;
-      box-shadow: 0 0 12px 3px rgba(var(--chakra-colors-brand-light-rgb), 0.9);
+      box-shadow: 0 0 12px 3px rgba(var(--wave-c-rgb, var(--chakra-colors-brand-light-rgb)), 0.9);
     }
     &__Point .HomeHero__WaveDot::before { animation: none; opacity: 0; }
     &__Beam { transition: none; }
@@ -1127,57 +1168,74 @@
 }
 
 .EpochsOverview {
-  // live-epoch summary sits inside the badge so the header stays one element
-  &__Title {
-    display: inline-flex;
-    align-items: center;
-    gap: 12px;
+  // point captions are two rows tall, so the stat row needs extra clearance
+  // no gap: the taller wave already carries the fill down to the data row
+  &__Detail { margin-top: 0; }
+
+  // seam-coloured glow over the table; absolute (no grid cell), CSS-var position avoids remount flashes
+  &__Wash {
+    position: absolute;
+    // extend into HomeEpochs bottom padding only (16 / 14), not a deep empty plate
+    inset: 0 0 -16px;
+
+    @media screen and (max-width: $breakpoint-md) { inset: 0 0 -14px; }
+
+    background: radial-gradient(
+      ellipse 60% 150% at calc(100% * (var(--epoch-seg-l, 0) + var(--epoch-seg-w, 1) / 2)) 0%,
+      rgba(var(--epoch-color-rgb, var(--chakra-colors-brand-normal-rgb)), 0.20),
+      rgba(var(--epoch-color-rgb, var(--chakra-colors-brand-normal-rgb)), 0.06) 55%,
+      transparent 90%
+    );
+    transform-origin: calc(100% * (var(--epoch-seg-l, 0) + var(--epoch-seg-w, 1) / 2)) top;
+    transition: background 0.35s ease;
+    pointer-events: none;
+    z-index: -1;
   }
 
-  // epoch length note inside the badge: | every 1h (the live epoch itself is on the wave)
-  &__Now {
-    display: inline-flex;
-    align-items: center;
-    border-left: 1px solid rgba(255, 255, 255, 0.3);
-    padding-left: 12px;
+  @media (prefers-reduced-motion: reduce) {
+    &__Wash { transition: none; }
   }
 
-  &__NowMeta {
-    font-size: 0.6875rem;
-    font-style: normal;
-    font-family: $font-mono;
-    color: rgba(255, 255, 255, 0.75);
-    white-space: nowrap;
-  }
-
-  // selected-epoch stat row sits below the wave (details right under the chart you click);
-  // the wave point captions are two rows tall, so give the row extra clearance
-  &__Detail { margin-top: 40px; }
-
-  // one row of label+value cells; widths follow the content, free space is shared evenly
+  // flat KPI table: one fixed row from 1280 up, auto-fit wrap below; colour from --epoch-color-rgb
   &__Cells {
     position: relative;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px 24px;
+    display: grid;
+    // no full-width border-top: the selected epoch's Beam + seam mark the connection instead
+    border-top: none;
+    // below xl: as many equal tracks as fit, then wrap/compress (all metrics remain)
+    grid-template-columns: repeat(auto-fit, minmax(104px, 1fr));
+    // tight column gap so the fixed 11-col row still clears the widest label at 1280
+    gap: 18px 10px;
+    align-items: start;
     min-width: 0;
-    // full-bleed like the wave, so the segment vars map 1:1; cells keep the inner padding
-    // (negative margins mirror the BlockSpacing card padding at each breakpoint)
-    margin: 10px -32px 0;
-    padding: 22px 32px 0;
+    // full-bleed like the wave (neg. margin = HomeEpochs side pad); re-pad content evenly
+    margin: 0 -20px 0;
+    padding: 12px 20px 0;
+    gap: 16px 10px;
+
+    // >=1280: a fixed 11-column row + hairline column dividers (table-like)
+    @media screen and (min-width: $breakpoint-xl) {
+      grid-template-columns: repeat(11, minmax(0, 1fr));
+      gap: 16px 0;
+
+      .HomeHero__StatusCell {
+        padding: 0 6px;
+        border-right: 1px solid rgba(var(--chakra-colors-gray-800-rgb), 0.55);
+
+        &:last-child { border-right: none; }
+      }
+    }
 
     @media screen and (max-width: $breakpoint-lg) {
-      margin: 10px -20px 0;
-      padding: 22px 20px 0;
+      margin: 0 -16px 0;
+      padding: 12px 16px 0;
     }
 
     @media screen and (max-width: $breakpoint-md) {
-      margin: 10px -16px 0;
-      padding: 22px 16px 0;
-      // phone KPI grid; minmax(0,1fr) lets tracks shrink below the hash's min-content
-      display: grid;
-      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-      gap: 14px 16px;
+      margin: 0 -12px 0;
+      padding: 12px 12px 0;
+      gap: 14px 12px;
+      grid-template-columns: repeat(auto-fit, minmax(96px, 1fr));
     }
 
     // glowing seam spanning the selected epoch's segment (boundary to boundary)
@@ -1191,63 +1249,88 @@
       background: linear-gradient(
         90deg,
         transparent,
-        rgba(var(--chakra-colors-brand-light-rgb), 0.75),
+        rgba(var(--epoch-color-rgb, var(--chakra-colors-brand-light-rgb)), 0.75),
         transparent
       );
       transition: left .3s ease, width .3s ease;
       pointer-events: none;
+      z-index: 1;
     }
 
-    // content-sized cells: flex-grow splits the free space, so the gaps stay even
+    // KPI tile: label (header) centred over its value
     .HomeHero__StatusCell {
-      flex: 1 1 auto;
-      flex-direction: row;
+      flex-direction: column;
       align-items: center;
-      gap: 8px;
+      justify-content: flex-start;
+      gap: 5px;
       min-width: 0;
       padding: 0;
       border: none;
-
-      @media screen and (max-width: $breakpoint-md) {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 4px;
-      }
+      text-align: center;
     }
 
-    // proposer takes a full row; without :has the cell just keeps the short clip
-    @media screen and (max-width: $breakpoint-md) {
-      .HomeHero__StatusCell:has(.EpochsOverview__Proposer) {
-        grid-column: 1 / -1;
-      }
-
-      // every wrapper must shrink, or the 64-char hash blows the grid out via min-content
-      .HomeHero__StatusValue,
-      .EpochsOverview__Proposer {
-        min-width: 0;
-        max-width: 100%;
-      }
-
-      .EpochsOverview__ProposerVal {
-        max-width: 100%;
-      }
-    }
-
-    // labels never break into a second line, same as the values
+    // head width = label only so the value centers under the title, not title+(i)
     .HomeHero__StatusHead {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
       white-space: nowrap;
       flex-shrink: 0;
+      justify-content: center;
     }
 
-    // reserve the worst-case value width so switching epochs never nudges the row
+    // same language as CompactTx Status / Hash / Type / Time (not brand pills)
+    .HomeHero__StatusLabel {
+      font-family: $font-heading;
+      font-weight: 700;
+      font-size: 0.6875rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: #fff;
+      line-height: 1.2;
+    }
+
+    // out of flow: sits to the right of the label without shifting the optical center
+    .HomeHero__StatusInfo {
+      position: absolute;
+      left: 100%;
+      top: 50%;
+      transform: translateY(-50%);
+      margin-left: 4px;
+      padding: 2px; // slightly easier hit target
+    }
+
+    .HomeHero__StatusValue {
+      min-width: 0;
+      text-align: center;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+    }
+
+    // slightly smaller than the hero stat so 11 tiles fit one row without clipping the widest value
+    .EpochsOverview__Stat { font-size: 1.0625rem; }
+
+    // reserve the worst-case value width so switching epochs never nudges the tile
     .EpochsOverview__Stat,
     .EpochsOverview__Pending {
       min-width: 6ch;
+      justify-content: center;
     }
 
     // no room for the sub-line (top voted resource) in single-line cells
     .EpochsOverview__Sub { display: none; }
   }
+
+  // Documents value: created (+) and deleted (−) inline, so both read at a glance;
+  // deleted is muted (not a semantic red) to keep the created figure primary
+  &__DocStat {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 6px;
+    white-space: nowrap;
+  }
+  &__DocDel { color: var(--chakra-colors-gray-250, #93aab2); }
 
   &__Stat {
     display: inline-flex;
@@ -1266,63 +1349,22 @@
     white-space: nowrap;
   }
 
-  // scaling from the seam origin stretches the gradient like poured liquid
-  &__Wash {
-    position: absolute;
-    // flush with the row's hairline on top, down to the card's bottom edge (mirrors BlockSpacing);
-    // the pool fills the WHOLE row — its epicentre tracks the selected segment's centre
-    inset: 0 0 -32px;
-
-    @media screen and (max-width: $breakpoint-lg) {
-      inset: 0 0 -20px;
-    }
-
-    @media screen and (max-width: $breakpoint-md) {
-      inset: 0 0 -16px;
-    }
-    background: radial-gradient(
-      ellipse 60% 150% at calc(100% * (var(--epoch-seg-l, 0) + var(--epoch-seg-w, 1) / 2)) 0%,
-      rgba(var(--chakra-colors-brand-normal-rgb), 0.18),
-      rgba(var(--chakra-colors-brand-normal-rgb), 0.055) 55%,
-      transparent 95%
-    );
-    transform-origin: calc(100% * (var(--epoch-seg-l, 0) + var(--epoch-seg-w, 1) / 2)) top;
-    animation: EpochWashPour .9s ease-out backwards;
-    pointer-events: none;
-    z-index: -1;
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    &__Wash { animation: none; }
-  }
-
-  // dotted underline lives on the inner wrapper so it hugs the value, not the 6ch slot
-  &__Stat--Tip {
-    cursor: pointer;
-    transition: color .15s;
-
-    &:hover {
-      color: $color-brand-light;
-
-      .EpochsOverview__TipTarget {
-        border-bottom-color: rgba(var(--chakra-colors-brand-light-rgb), 0.7);
-      }
-    }
-  }
-
-  &__TipTarget {
-    display: inline-flex;
-    align-items: center;
-    border-bottom: 1px dotted rgba(var(--chakra-colors-gray-500-rgb, 122, 132, 137), 0.6);
-    transition: border-color .15s;
-  }
-
-  // stat tooltips (fees / votes / blocks): optional headline over label-value rows
+  // (i) tooltips: blurb + optional headline / label-value rows
   &__Tip {
     display: flex;
     flex-direction: column;
     gap: 3px;
     min-width: 190px;
+    max-width: 280px;
+  }
+
+  &__TipBlurb {
+    font-size: 0.6875rem;
+    line-height: 1.35;
+    color: var(--chakra-colors-gray-250);
+    margin-bottom: 4px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   }
 
   &__TipMain {
@@ -1344,6 +1386,37 @@
     color: var(--chakra-colors-gray-250);
 
     span:first-child { color: var(--chakra-colors-gray-500); }
+  }
+
+  // clickable proposer rows inside (i) tips — same leading clip as Top proposer cell
+  &__TipLink {
+    color: $color-brand-light;
+    text-decoration: none;
+    min-width: 0;
+    max-width: 9ch;
+    transition: color .15s;
+
+    &:hover {
+      color: #fff;
+
+      .EpochsOverview__TipHash {
+        border-bottom-color: rgba(255, 255, 255, 0.7);
+      }
+    }
+  }
+
+  &__TipHash {
+    display: inline-block;
+    max-width: 8ch;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-family: $font-mono;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    vertical-align: bottom;
+    border-bottom: 1px dotted rgba(var(--chakra-colors-brand-light-rgb), 0.45);
+    transition: border-color .15s;
   }
 
   &__Unit {
