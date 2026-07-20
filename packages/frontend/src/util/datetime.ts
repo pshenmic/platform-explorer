@@ -54,6 +54,14 @@ function getTimeDelta (startDate: DateInput, endDate: DateInput, format?: string
     return `${days}d:${hours}h:${minutes}m`
   }
 
+  // dense lists: largest non-zero unit only; the full timestamp lives in the tooltip
+  if (format === 'compact') {
+    if (days > 0) return `${days}d`
+    if (hours > 0) return `${hours}h`
+    if (minutes > 0) return `${minutes}m`
+    return `${seconds}s`
+  }
+
   return 'Invalid format'
 }
 
