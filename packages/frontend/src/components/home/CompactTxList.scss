@@ -20,7 +20,8 @@
     grid-column: 1 / -1;
     align-items: center;
     gap: 12px;
-    padding: 4px 6px 8px;
+    // symmetric padding centres the header text on the section title line
+    padding: 6px;
     margin-bottom: 4px;
     border-bottom: 1px solid rgba(var(--chakra-colors-gray-800-rgb), 0.6);
   }
