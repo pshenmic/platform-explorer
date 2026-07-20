@@ -53,14 +53,14 @@ export default function MasternodesDonut ({ validators, validatorsActive, valida
 
   const tiles = [
     { key: 'total', label: 'Total', count: total, noPct: true, hint: 'All Platform validators (evonodes) tracked on the network.' },
-    { key: 'active', label: 'Active', count: hasActive ? activeCount : null, hint: 'In the current validator set — validating blocks right now. The set rotates each epoch.' },
-    { key: 'inactive', label: 'Standby', count: hasInactive ? inactiveCount : null, rotate: true, hint: 'Registered evonode that is not in the current validator set — waiting to rotate in.' },
-    { key: 'banned', label: 'Banned', count: hasBanned ? bannedCount : null, hint: 'PoSe-banned (failed to provide service). Never in the active set.' }
+    { key: 'active', label: 'In Quorum', count: hasActive ? activeCount : null, hint: 'Evonodes in the current validator quorum — proposing and validating Platform blocks right now. The quorum rotates.' },
+    { key: 'inactive', label: 'Queued', count: hasInactive ? inactiveCount : null, rotate: true, hint: 'Registered evonode not in the current quorum — waiting to rotate in.' },
+    { key: 'banned', label: 'Banned', count: hasBanned ? bannedCount : null, hint: 'PoSe-banned (failed to provide service). Never in the active quorum.' }
   ]
 
   const segs = [
-    { key: 'active', label: 'Active', count: activeCount, frac: activeFrac },
-    { key: 'inactive', label: 'Inactive', count: inactiveCount, frac: inactiveFrac },
+    { key: 'active', label: 'In Quorum', count: activeCount, frac: activeFrac },
+    { key: 'inactive', label: 'Queued', count: inactiveCount, frac: inactiveFrac },
     { key: 'banned', label: 'Banned', count: bannedCount, frac: bannedFrac }
   ].filter(s => s.frac > 0)
 
@@ -115,16 +115,16 @@ export default function MasternodesDonut ({ validators, validatorsActive, valida
                   <span className={'MasternodesDonut__TileValue'}>
                     {typeof t.count === 'number' ? t.count : '—'}
                   </span>
-                  {!t.noPct &&
-                    <span className={'MasternodesDonut__TilePct'}>
-                      {typeof t.count === 'number' ? `${pct(t.count)}%` : ''}
-                    </span>}
+                  {/* always render the % row (nbsp when absent) so all tiles stay 3 lines tall */}
+                  <span className={'MasternodesDonut__TilePct'}>
+                    {t.noPct || typeof t.count !== 'number' ? ' ' : `${pct(t.count)}%`}
+                  </span>
                 </div>
               ))}
             </div>
 
             <div className={'MasternodesDonut__Bottom'}>
-              <div className={'MasternodesDonut__Bar'} role={'img'} aria-label={hasActive ? `${activeCount} of ${total} validators active` : `${total} validators`}>
+              <div className={'MasternodesDonut__Bar'} role={'img'} aria-label={hasActive ? `${activeCount} of ${total} evonodes in quorum` : `${total} validators`}>
                 {segs.map(s => (
                   <Tooltip key={s.key} content={`${s.label} · ${s.count.toLocaleString('en-US')} · ${pct(s.count)}%`} placement={'top'}>
                     <span
