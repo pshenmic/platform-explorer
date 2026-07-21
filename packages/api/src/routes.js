@@ -827,7 +827,15 @@ module.exports = ({
     {
       path: '/transactions/shielded/statistic',
       method: 'GET',
-      handler: transactionsController.getShieldedStatistic
+      handler: transactionsController.getShieldedStatistic,
+      schema: {
+        querystring: { $ref: 'timeInterval#' }
+      }
+    },
+    {
+      path: '/transactions/shielded/pool',
+      method: 'GET',
+      handler: transactionsController.getShieldedPool
     },
     {
       path: '/identities/active',
