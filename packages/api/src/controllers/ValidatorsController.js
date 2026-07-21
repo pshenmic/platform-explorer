@@ -4,7 +4,7 @@ const Validator = require('../models/Validator')
 const DashCoreRPC = require('../dashcoreRpc')
 const ProTxInfo = require('../models/ProTxInfo')
 const GeoIP = require('../geoip')
-const { checkTcpConnect, calculateInterval, iso8601duration } = require('../utils')
+const { checkTcpConnect, calculateInterval, iso8601duration, getFinalPoSeBanHeight } = require('../utils')
 const Epoch = require('../models/Epoch')
 const { base58 } = require('@scure/base')
 const Intervals = require('../enums/IntervalsEnum')
@@ -149,38 +149,32 @@ class ValidatorsController {
     const [currentEpoch] = await this.sdk.node.getEpochsInfo(1)
     const epochInfo = Epoch.fromObject(currentEpoch)
 
-    const validatorsInDataBase = await this.validatorsDAO.getValidatorsHashes()
+    let validatorsWithoutBan = []
 
-    const validatorsInfos = await Promise.all(validatorsInDataBase.map(async (proTxHash) => {
-      const cached = cache.get(`${VALIDATORS_CACHE_KEY}_${proTxHash}`)
+    // Ban status is derived from the current masternode list. Validators that
+    // have left the list (collateral spent) are not there anymore, so their ban
+    // state is resolved from their last block in the list (see getFinalPoSeBanHeight):
+    // banned-then-removed stays banned, cleanly-retired counts as not banned.
+    if (isBanned !== undefined) {
+      const registeredMasternodes = await DashCoreRPC.getProTxList('registered', true)
 
-      let validatorInfo = null
+      const registeredHashes = new Set(registeredMasternodes.map(masternode => masternode.proTxHash.toUpperCase()))
 
-      if (cached) {
-        validatorInfo = cached
-      } else {
-        const proTxInfo = await DashCoreRPC.getProTxInfo(proTxHash)
+      const validatorsInDataBase = await this.validatorsDAO.getValidatorsHashes()
 
-        const [serviceHost] = proTxInfo?.state?.service?.match(/^\d+\.\d+\.\d+\.\d+/) ?? [null]
+      const removedValidators = validatorsInDataBase.filter(proTxHash => !registeredHashes.has(proTxHash.toUpperCase()))
 
-        validatorInfo = Validator.fromObject(
-          {
-            proTxHash,
-            isActive: activeValidators.some(activeValidator =>
-              activeValidator.pro_tx_hash === proTxHash),
-            proTxInfo: ProTxInfo.fromObject(proTxInfo),
-            epochInfo,
-            geoIpInfo: serviceHost ? GeoIP.lookup(serviceHost) : null
-          }
-        )
+      const retiredValidators = (await Promise.all(removedValidators.map(async (proTxHash) => {
+        const finalPoSeBanHeight = await getFinalPoSeBanHeight(proTxHash)
 
-        cache.set(`${VALIDATORS_CACHE_KEY}_${proTxHash}`, validatorInfo, VALIDATORS_CACHE_LIFE_INTERVAL)
-      }
+        return finalPoSeBanHeight === -1 ? { proTxHash } : null
+      }))).filter(Boolean)
 
-      return validatorInfo
-    }))
-
-    const validatorsWithoutBan = validatorsInfos.filter(validator => validator.proTxInfo?.state.PoSeBanHeight === -1)
+      validatorsWithoutBan = [
+        ...registeredMasternodes.filter(masternode => masternode.state?.PoSeBanHeight === -1),
+        ...retiredValidators
+      ]
+    }
 
     const validators = await this.validatorsDAO.getValidators(
       Number(page ?? 1),
