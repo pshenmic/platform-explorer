@@ -1,10 +1,10 @@
 'use client'
 
-import type { ComponentProps } from 'react'
+import type { ComponentPropsWithoutRef } from 'react'
 import { ChevronIcon } from '../icons'
 import './ArrowButton.scss'
 
-function ArrowButton ({ children, className, ...props }: ComponentProps<'button'>) {
+function ArrowButton ({ children, className, ...props }: ComponentPropsWithoutRef<'button'>) {
   return (
     <button className={`ArrowButton ${className || ''}`} {...props}>
       <ChevronIcon/>

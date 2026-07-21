@@ -1,9 +1,9 @@
 'use client'
 
-import type { ComponentProps } from 'react'
+import type { ComponentPropsWithoutRef } from 'react'
 import { useRouter } from 'next/navigation'
 
-interface BackButtonProps extends ComponentProps<'button'> {
+interface BackButtonProps extends ComponentPropsWithoutRef<'button'> {
   link?: string
 }
 
