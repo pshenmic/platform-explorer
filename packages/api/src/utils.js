@@ -2,7 +2,9 @@ const crypto = require('crypto')
 const StateTransitionEnum = require('./enums/StateTransitionEnum')
 const DocumentActionEnum = require('./enums/DocumentActionEnum')
 const net = require('net')
-const { TCP_CONNECT_TIMEOUT, NETWORK, DPNS_CONTRACT } = require('./constants')
+const { TCP_CONNECT_TIMEOUT, NETWORK, DPNS_CONTRACT, BANNED_STATE_CACHE_KEY } = require('./constants')
+const DashCoreRPC = require('./dashcoreRpc')
+const cache = require('./cache')
 const { base58 } = require('@scure/base')
 const Intervals = require('./enums/IntervalsEnum')
 const Alias = require('./models/Alias')
@@ -1643,6 +1645,58 @@ const checkTcpConnect = (port, host) => {
   })
 }
 
+// Resolves the final PoSeBanHeight of a validator that has left the masternode
+// list by binary-searching for the last block it was still present (between its
+// registration height and the chain tip) and reading the ban height there.
+// A validator that has left the list can never re-enter it, so the result is
+// immutable and cached permanently.
+const getFinalPoSeBanHeight = async (proTxHash) => {
+  const cacheKey = `${BANNED_STATE_CACHE_KEY}_${proTxHash}`
+
+  const cached = cache.get(cacheKey)
+
+  if (cached !== undefined) {
+    return cached
+  }
+
+  let finalPoSeBanHeight
+
+  try {
+    // registration-block state gives the lower search bound (registeredHeight)
+    const registrationInfo = await DashCoreRPC.getProTxInfo(proTxHash)
+
+    const tip = await DashCoreRPC.getBlockCount()
+
+    let low = registrationInfo?.state?.registeredHeight ?? 1
+    let high = tip
+
+    finalPoSeBanHeight = registrationInfo?.state?.PoSeBanHeight ?? -1
+
+    while (low <= high) {
+      const middle = Math.floor((low + high) / 2)
+
+      const blockHash = await DashCoreRPC.getBlockHash(middle)
+      const info = await DashCoreRPC.getProTxInfo(proTxHash, blockHash, false)
+
+      if (info) {
+        finalPoSeBanHeight = info.state.PoSeBanHeight
+        low = middle + 1
+      } else {
+        high = middle - 1
+      }
+    }
+  } catch (e) {
+    // if the final state cannot be resolved, treat the validator as banned
+    // rather than incorrectly listing it as active, and do not cache it
+    console.error(e)
+    return 0
+  }
+
+  cache.set(cacheKey, finalPoSeBanHeight)
+
+  return finalPoSeBanHeight
+}
+
 // Calculating period and calculate the period
 // and find the interval with less than 2 periods
 // and take the previous interval
@@ -1875,6 +1929,7 @@ module.exports = {
   getKnex,
   sleep,
   checkTcpConnect,
+  getFinalPoSeBanHeight,
   calculateInterval,
   iso8601duration,
   getAliasInfo,
