@@ -62,6 +62,19 @@ class ValidatorsController {
       cache.set(`${VALIDATORS_CACHE_KEY}_${validator.proTxHash}`, validatorInfo, VALIDATORS_CACHE_LIFE_INTERVAL)
     }
 
+    // For a validator that has left the masternode list, getProTxInfo resolves
+    // its state from the registration block, which reports it as not banned.
+    // This endpoint reports the precise final ban state instead (the list
+    // endpoint stays coarse). A present validator (no-fallback lookup succeeds)
+    // already carries its accurate ban height.
+    if (!isActive && validatorInfo.proTxInfo?.state) {
+      const currentProTxInfo = await DashCoreRPC.getProTxInfo(validator.proTxHash, undefined, false)
+
+      if (!currentProTxInfo) {
+        validatorInfo.proTxInfo.state.PoSeBanHeight = await getFinalPoSeBanHeight(validator.proTxHash)
+      }
+    }
+
     const { proTxInfo } = validatorInfo
 
     const [host] = proTxInfo?.state?.service?.match(/^\d+\.\d+\.\d+\.\d+/) ?? [null]
@@ -151,29 +164,15 @@ class ValidatorsController {
 
     let validatorsWithoutBan = []
 
-    // Ban status is derived from the current masternode list. Validators that
-    // have left the list (collateral spent) are not there anymore, so their ban
-    // state is resolved from their last block in the list (see getFinalPoSeBanHeight):
-    // banned-then-removed stays banned, cleanly-retired counts as not banned.
+    // Ban status is derived from the current masternode list. A validator that
+    // has left the list (collateral spent) is treated as banned here: resolving
+    // its precise final ban state requires a per-node historical lookup that is
+    // too expensive for the list endpoint (see getFinalPoSeBanHeight, used only
+    // on the single-validator endpoint).
     if (isBanned !== undefined) {
       const registeredMasternodes = await DashCoreRPC.getProTxList('registered', true)
 
-      const registeredHashes = new Set(registeredMasternodes.map(masternode => masternode.proTxHash.toUpperCase()))
-
-      const validatorsInDataBase = await this.validatorsDAO.getValidatorsHashes()
-
-      const removedValidators = validatorsInDataBase.filter(proTxHash => !registeredHashes.has(proTxHash.toUpperCase()))
-
-      const retiredValidators = (await Promise.all(removedValidators.map(async (proTxHash) => {
-        const finalPoSeBanHeight = await getFinalPoSeBanHeight(proTxHash)
-
-        return finalPoSeBanHeight === -1 ? { proTxHash } : null
-      }))).filter(Boolean)
-
-      validatorsWithoutBan = [
-        ...registeredMasternodes.filter(masternode => masternode.state?.PoSeBanHeight === -1),
-        ...retiredValidators
-      ]
+      validatorsWithoutBan = registeredMasternodes.filter(masternode => masternode.state?.PoSeBanHeight === -1)
     }
 
     const validators = await this.validatorsDAO.getValidators(
