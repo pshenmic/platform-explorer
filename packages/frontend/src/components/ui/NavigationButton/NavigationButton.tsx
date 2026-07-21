@@ -1,7 +1,7 @@
-import type { ComponentProps, ReactNode } from 'react'
+import type { ComponentPropsWithoutRef, ReactNode } from 'react'
 import './NavigationButton.scss'
 
-interface NavigationButtonProps extends Omit<ComponentProps<'button'>, 'name'> {
+interface NavigationButtonProps extends Omit<ComponentPropsWithoutRef<'button'>, 'name'> {
   active?: boolean
   name?: ReactNode
   subName?: ReactNode
