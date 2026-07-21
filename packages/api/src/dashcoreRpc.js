@@ -20,7 +20,9 @@ class DashCoreRPC {
     } catch (e) {
       const handlerResponse = await onError(e)
 
-      if (handlerResponse) {
+      // a handler that returns undefined did not handle the error; any other
+      // value (including null) is treated as the resolved result
+      if (handlerResponse !== undefined) {
         return handlerResponse
       }
 
@@ -33,17 +35,33 @@ class DashCoreRPC {
     return await this.callMethod('getRawTransaction', [proTxHash, 1])
   }
 
-  static async getProTxInfo (proTxHash, blockHash = undefined) {
+  // When the masternode is not in the list at the requested block Core returns
+  // a -8 error. With `fallback` (default) the state is resolved from the node's
+  // registration block instead; with `fallback` disabled null is returned so
+  // callers can use it as a present/absent probe (e.g. binary search).
+  static async getProTxInfo (proTxHash, blockHash = undefined, fallback = true) {
     const args = ['info', proTxHash]
     if (blockHash) args.push(blockHash)
 
     return await this.callMethod('protx', args, async (e) => {
       if (e.code === -8) {
+        if (!fallback) {
+          return null
+        }
+
         const { blockhash } = await this.getRawTransaction(proTxHash)
 
         return await this.getProTxInfo(proTxHash, blockhash)
       }
     })
+  }
+
+  static async getBlockCount () {
+    return await this.callMethod('getblockcount', [])
+  }
+
+  static async getBlockHash (height) {
+    return await this.callMethod('getblockhash', [height])
   }
 
   static async getProTxList (type, detailed, blockHeight = undefined) {

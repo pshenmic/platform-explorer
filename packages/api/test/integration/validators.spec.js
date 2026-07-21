@@ -207,6 +207,12 @@ describe('Validators routes', () => {
 
     mock.method(GeoIP, 'lookup', () => geoIpInfo)
 
+    mock.method(DashCoreRPC, 'getProTxList', async () =>
+      validators.map(validator =>
+        ({ proTxHash: validator.pro_tx_hash, state: { PoSeBanHeight: -1 } })))
+
+    mock.method(GeoIP, 'lookup', () => geoIpInfo)
+
     mock.method(NodeController.prototype, 'getEpochsInfo', epochInfo)
 
     mock.method(IdentitiesController.prototype, 'getIdentityBalance', async () => 0)
@@ -2083,6 +2089,8 @@ describe('Validators routes', () => {
 
     describe('filter isBanned', async () => {
       let bannedValidators
+      let retiredValidators
+      let removedValidators
 
       before(() => {
         // restore the healthy mocks (preceding describes leave some throwing)
@@ -2091,13 +2099,34 @@ describe('Validators routes', () => {
             Promise.resolve(activeValidators.map(activeValidator =>
               ({ pro_tx_hash: activeValidator.pro_tx_hash }))))
 
-        // ban a subset of the inactive validators (a banned validator can
-        // never be active) by returning a positive PoSeBanHeight for them
+        // validators that have left the masternode list (a banned validator can
+        // never be active, so these come from the inactive set):
+        // - bannedValidators were PoSe-banned before removal -> banned
+        // - retiredValidators cleanly spent collateral        -> not banned
         bannedValidators = inactiveValidators.slice(0, 10)
+        retiredValidators = inactiveValidators.slice(10, 15)
+        removedValidators = [...bannedValidators, ...retiredValidators]
 
-        mock.method(DashCoreRPC, 'getProTxInfo', async (proTxHash) => {
+        // the registered list no longer contains the removed validators
+        mock.method(DashCoreRPC, 'getProTxList', async () =>
+          validators
+            .filter(validator => !removedValidators.some(removed =>
+              removed.pro_tx_hash === validator.pro_tx_hash))
+            .map(validator =>
+              ({ proTxHash: validator.pro_tx_hash, state: { PoSeBanHeight: -1 } })))
+
+        // getFinalPoSeBanHeight resolves a removed validator's last state: the
+        // registration lookup (fallback) provides registeredHeight, and the
+        // per-block probe (fallback disabled) reports the final PoSeBanHeight
+        mock.method(DashCoreRPC, 'getBlockCount', async () => 900000)
+        mock.method(DashCoreRPC, 'getBlockHash', async () => dashCoreRpcResponse.collateralHash)
+        mock.method(DashCoreRPC, 'getProTxInfo', async (proTxHash, blockHash, fallback = true) => {
+          if (fallback) {
+            return dashCoreRpcResponse
+          }
+
           const isBanned = bannedValidators.some(validator =>
-            validator.pro_tx_hash.toUpperCase() === proTxHash.toUpperCase())
+            validator.pro_tx_hash === proTxHash)
 
           return {
             ...dashCoreRpcResponse,
@@ -2111,6 +2140,9 @@ describe('Validators routes', () => {
 
       after(() => {
         mock.method(DashCoreRPC, 'getProTxInfo', async () => dashCoreRpcResponse)
+        mock.method(DashCoreRPC, 'getProTxList', async () =>
+          validators.map(validator =>
+            ({ proTxHash: validator.pro_tx_hash, state: { PoSeBanHeight: -1 } })))
       })
 
       it('should return only banned validators', async () => {
@@ -2141,6 +2173,18 @@ describe('Validators routes', () => {
 
         for (const banned of bannedValidators) {
           assert.equal(returnedHashes.includes(banned.pro_tx_hash), false)
+        }
+      })
+
+      it('should treat cleanly retired validators as not banned', async () => {
+        const { body } = await client.get('/validators?isBanned=false&limit=0')
+          .expect(200)
+          .expect('Content-Type', 'application/json; charset=utf-8')
+
+        const returnedHashes = body.resultSet.map(validator => validator.proTxHash)
+
+        for (const retired of retiredValidators) {
+          assert.equal(returnedHashes.includes(retired.pro_tx_hash), true)
         }
       })
     })

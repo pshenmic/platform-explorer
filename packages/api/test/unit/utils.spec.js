@@ -1,6 +1,8 @@
-const { describe, it } = require('node:test')
+const { describe, it, mock, before } = require('node:test')
 const assert = require('node:assert').strict
 const utils = require('../../src/utils')
+const DashCoreRPC = require('../../src/dashcoreRpc')
+const cache = require('../../src/cache')
 const createIdentityMock = require('./mocks/create_identity.json')
 const dataContractCreateMock = require('./mocks/data_contract_create.json')
 const dataContractCreateWithTokensMock = require('./mocks/data_contract_create_with_tokens.json')
@@ -1856,6 +1858,49 @@ describe('Utils', () => {
         contested: true,
         timestamp: null
       }))
+    })
+  })
+
+  describe('getFinalPoSeBanHeight()', () => {
+    before(() => {
+      // the resolved state is cached permanently; keep every case independent
+      mock.method(cache, 'get', () => undefined)
+      mock.method(cache, 'set', () => {})
+
+      mock.method(DashCoreRPC, 'getBlockCount', async () => 1000)
+      mock.method(DashCoreRPC, 'getBlockHash', async () => 'blockHash')
+    })
+
+    it('should return the ban height of a validator banned before it left the list', async () => {
+      mock.method(DashCoreRPC, 'getProTxInfo', async (proTxHash, blockHash, fallback = true) =>
+        fallback
+          ? { state: { registeredHeight: 100, PoSeBanHeight: -1 } }
+          : { state: { PoSeBanHeight: 500 } })
+
+      const result = await utils.getFinalPoSeBanHeight('bannedHash')
+
+      assert.equal(result, 500)
+    })
+
+    it('should return -1 for a validator that cleanly retired', async () => {
+      mock.method(DashCoreRPC, 'getProTxInfo', async (proTxHash, blockHash, fallback = true) =>
+        fallback
+          ? { state: { registeredHeight: 100, PoSeBanHeight: -1 } }
+          : { state: { PoSeBanHeight: -1 } })
+
+      const result = await utils.getFinalPoSeBanHeight('retiredHash')
+
+      assert.equal(result, -1)
+    })
+
+    it('should treat the validator as banned when the final state cannot be resolved', async () => {
+      mock.method(DashCoreRPC, 'getProTxInfo', async () => {
+        throw new Error('service unavailable')
+      })
+
+      const result = await utils.getFinalPoSeBanHeight('unresolvableHash')
+
+      assert.equal(result, 0)
     })
   })
 })
