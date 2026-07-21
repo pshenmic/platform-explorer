@@ -1825,16 +1825,28 @@ describe('Transaction routes', () => {
       [StateTransitionEnum.SHIELDED_TRANSFER]: 999
     }
 
+    const inTypes = [StateTransitionEnum.SHIELD, StateTransitionEnum.SHIELD_FROM_ASSET_LOCK]
+    const outTypes = [
+      StateTransitionEnum.UNSHIELD,
+      StateTransitionEnum.SHIELDED_WITHDRAWAL,
+      StateTransitionEnum.IDENTITY_CREATE_FROM_SHIELDED_POOL
+    ]
+
+    // each transition is placed in its own block one hour apart so a range can
+    // select a subset
+    const entries = []
+
     before(async () => {
       // start from a clean shielded pool so the aggregate is deterministic
       await knex.raw('DELETE FROM shielded_transitions')
 
-      mock.method(ShieldedController.prototype, 'getShieldedNotesCount', async () => 12n)
-
       let height = 2000
+      const baseTime = new Date('2024-01-01T00:00:00.000Z').getTime()
+      let index = 0
 
       for (const [type, amount] of Object.entries(amounts)) {
-        const block = await fixtures.block(knex, { height: height++, timestamp: new Date() })
+        const timestamp = new Date(baseTime + index * 3600000)
+        const block = await fixtures.block(knex, { height: height++, timestamp })
         const transaction = await fixtures.transaction(knex, {
           block_hash: block.hash,
           block_height: block.height,
@@ -1846,6 +1858,9 @@ describe('Transaction routes', () => {
           state_transition_type: Number(type),
           amount
         })
+
+        entries.push({ type: Number(type), amount, timestamp })
+        index++
       }
     })
 
@@ -1865,13 +1880,72 @@ describe('Transaction routes', () => {
 
       assert.equal(body.totalShieldedIn, String(expectedIn))
       assert.equal(body.totalShieldedOut, String(expectedOut))
-      assert.equal(body.poolBalance, String(expectedIn - expectedOut))
       assert.equal(body.transitionsCount, Object.keys(amounts).length)
-      assert.equal(body.notesCount, 12)
       assert.equal(body.types.length, Object.keys(amounts).length)
 
       const shieldType = body.types.find(type => type.transactionType === 'SHIELD')
       assert.deepEqual(shieldType, { transactionType: 'SHIELD', count: 1, amount: '100' })
+    })
+
+    it('should scope totals to the given interval', async () => {
+      const start = entries[1].timestamp
+      const end = entries[3].timestamp
+
+      const { body } = await client.get(`/transactions/shielded/statistic?timestamp_start=${start.toISOString()}&timestamp_end=${end.toISOString()}`)
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      const inRange = entries.filter(entry =>
+        entry.timestamp.getTime() >= start.getTime() &&
+        entry.timestamp.getTime() <= end.getTime())
+
+      const rangeIn = inRange
+        .filter(entry => inTypes.includes(entry.type))
+        .reduce((sum, entry) => sum + entry.amount, 0)
+      const rangeOut = inRange
+        .filter(entry => outTypes.includes(entry.type))
+        .reduce((sum, entry) => sum + entry.amount, 0)
+
+      assert.equal(body.totalShieldedIn, String(rangeIn))
+      assert.equal(body.totalShieldedOut, String(rangeOut))
+      assert.equal(body.transitionsCount, inRange.length)
+      assert.equal(body.types.length, inRange.length)
+    })
+
+    it('should return error if only one of start and end is set', async () => {
+      const { body } = await client.get(`/transactions/shielded/statistic?timestamp_start=${new Date().toISOString()}`)
+        .expect(400)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      assert.equal(body.message, 'start and end must be set')
+    })
+
+    it('should return error if start timestamp is more than end timestamp', async () => {
+      const start = new Date()
+      const end = new Date(start.getTime() - 3600000)
+
+      const { body } = await client.get(`/transactions/shielded/statistic?timestamp_start=${start.toISOString()}&timestamp_end=${end.toISOString()}`)
+        .expect(400)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      assert.equal(body.message, 'start timestamp cannot be more than end timestamp')
+    })
+  })
+
+  describe('getShieldedPool()', async () => {
+    before(() => {
+      // poolBalance is the platform-verified pool total, notesCount the tree size
+      mock.method(ShieldedController.prototype, 'getShieldedPoolState', async () => 150000000n)
+      mock.method(ShieldedController.prototype, 'getShieldedNotesCount', async () => 12n)
+    })
+
+    it('should return the current pool balance and notes count', async () => {
+      const { body } = await client.get('/transactions/shielded/pool')
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      assert.equal(body.poolBalance, '150000000')
+      assert.equal(body.notesCount, 12)
     })
   })
 
