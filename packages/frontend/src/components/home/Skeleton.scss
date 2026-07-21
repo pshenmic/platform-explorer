@@ -1,0 +1,27 @@
+@import '../../styles/variables.scss';
+
+// shimmer sweep (not an opacity pulse): motion reads as "loading in progress"
+.Skeleton {
+  display: inline-block;
+  flex-shrink: 0;
+  background: linear-gradient(
+    90deg,
+    rgba(var(--chakra-colors-brand-normal-rgb), 0.1) 25%,
+    rgba(var(--chakra-colors-brand-normal-rgb), 0.28) 50%,
+    rgba(var(--chakra-colors-brand-normal-rgb), 0.1) 75%
+  );
+  background-size: 200% 100%;
+  animation: SkeletonShimmer 1.6s linear infinite;
+}
+
+@keyframes SkeletonShimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .Skeleton {
+    animation: none;
+    background: rgba(var(--chakra-colors-brand-normal-rgb), 0.15);
+  }
+}

@@ -1,274 +1,263 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo, useRef } from 'react'
+import { useQuery, useQueries } from '@tanstack/react-query'
 import * as Api from '../../util/Api'
-import TransactionsHistory from '../../components/charts/TransactionsHistory'
-import { SimpleList } from '../../components/ui/lists'
-import TotalInfo from '../../components/total/TotalInfo'
+import HomeHero from './HomeHero.js'
+import { MetricChart, EpochsOverview, StatusBar, HeroMeta, MasternodesDonut, TxTypesBar, ShieldedPoolCard, CompactTxList, CompactBlocksList } from '../../components/home'
 import { fetchHandlerSuccess, fetchHandlerError } from '../../util'
-import TransactionsList from '../../components/transactions/TransactionsList'
-import { ErrorMessageBlock } from '../../components/Errors'
-import { LoadingList } from '../../components/loading'
-import Intro from './HomeIntro.js'
 import theme from '../../styles/theme'
-import {
-  Box,
-  Container,
-  Heading,
-  Flex
-} from '@chakra-ui/react'
+import { Box, Container, Flex, SimpleGrid } from '@chakra-ui/react'
+import { CardHead } from '../../components/cards'
+import './Home.scss'
+
+function computeAvgBlockTime (blocks) {
+  const stamps = (blocks || [])
+    .map(b => new Date(b?.header?.timestamp).getTime())
+    .filter(t => !Number.isNaN(t))
+    .sort((a, b) => b - a)
+  if (stamps.length < 2) return null
+  let total = 0
+  for (let i = 0; i < stamps.length - 1; i++) total += stamps[i] - stamps[i + 1]
+  return Math.round(total / (stamps.length - 1) / 1000)
+}
+
+function epochNumbersOf (current) {
+  if (typeof current !== 'number') return []
+  return [current - 3, current - 2, current - 1, current].filter(n => n >= 0)
+}
 
 function Home () {
-  const [status, setStatus] = useState({ data: {}, loading: true, error: false })
-  const [dataContracts, setDataContracts] = useState({ data: {}, props: { printCount: 5 }, loading: true, error: false })
-  const [transactions, setTransactions] = useState({ data: {}, props: { printCount: 15 }, loading: true, error: false })
-  const [richestIdentities, setRichestIdentities] = useState({ data: {}, props: { printCount: 5 }, loading: true, error: false })
-  const [trendingIdentities, setTrendingIdentities] = useState({ data: {}, props: { printCount: 5 }, loading: true, error: false })
+  const [contested, setContested] = useState({ data: {}, loading: true, error: false })
+  const [activeContested, setActiveContested] = useState({ data: {}, loading: true, error: false })
+  const [latestContested, setLatestContested] = useState({ data: {}, loading: true, error: false })
+  const [latestVotes, setLatestVotes] = useState({ data: {}, loading: true, error: false })
   const [rate, setRate] = useState({ data: {}, loading: true, error: false })
-  const blockOffset = theme.blockOffset
-  const blockMaxWidth = ['100%', '100%', 'calc(50% - 10px)', 'calc(50% - 10px)', 'calc(50% - 20px)']
 
-  const fetchData = () => {
-    Promise.all([
-      Api.getStatus()
-        .then(res => fetchHandlerSuccess(setStatus, res))
-        .catch(err => fetchHandlerError(setStatus, err)),
+  const gap = theme.blockOffset
+  const secondaryStarted = useRef(false)
 
-      Api.getTransactions(1, 15, 'desc')
-        .then(paginatedTransactions => fetchHandlerSuccess(setTransactions, paginatedTransactions))
-        .catch(err => fetchHandlerError(setTransactions, err)),
+  // wave 0: hero + overview + validator totals (independent; RQ dedupes Strict Mode double-mount)
+  const statusQuery = useQuery({ queryKey: ['home', 'status'], queryFn: Api.getStatus, refetchInterval: 60000 })
+  const txQuery = useQuery({ queryKey: ['home', 'transactions'], queryFn: () => Api.getTransactions(1, 10, 'desc'), refetchInterval: 30000 })
+  const blocksQuery = useQuery({ queryKey: ['home', 'blocks'], queryFn: () => Api.getBlocks(1, 10, 'desc'), refetchInterval: 30000 })
+  const validatorsQuery = useQuery({
+    queryKey: ['home', 'validators', 'total'],
+    queryFn: () => Api.getValidators(1, 1, 'desc'),
+    staleTime: 60_000
+  })
+  const validatorsActiveQuery = useQuery({
+    queryKey: ['home', 'validators', 'active'],
+    queryFn: () => Api.getValidators(1, 1, 'desc', { isActive: 'true' }),
+    staleTime: 60_000
+  })
+  const validatorsBannedQuery = useQuery({
+    queryKey: ['home', 'validators', 'banned'],
+    queryFn: () => Api.getValidators(1, 1, 'desc', { isBanned: 'true' }),
+    staleTime: 60_000
+  })
+  // inactive straight from the backend (not-active AND not-banned) — no client-side arithmetic
+  const validatorsInactiveQuery = useQuery({
+    queryKey: ['home', 'validators', 'inactive'],
+    queryFn: () => Api.getValidators(1, 1, 'desc', { isActive: 'false', isBanned: 'false' }),
+    staleTime: 60_000
+  })
+  // one page for geoIpInfo (#822): full set on testnet, a sample on large networks
+  const validatorsGeoQuery = useQuery({
+    queryKey: ['home', 'validators', 'geo'],
+    queryFn: () => Api.getValidators(1, 100, 'desc'),
+    staleTime: 300_000
+  })
 
-      Api.getDataContracts(1, dataContracts.props.printCount, 'desc', 'documents_count')
-        .then(paginatedDataContracts => fetchHandlerSuccess(setDataContracts, paginatedDataContracts))
-        .catch(err => fetchHandlerError(setDataContracts, err)),
-
-      Api.getIdentities(1, 10, 'desc', 'balance')
-        .then(paginatedRichestIdentities => fetchHandlerSuccess(setRichestIdentities, paginatedRichestIdentities))
-        .catch(err => fetchHandlerError(setRichestIdentities, err)),
-
-      Api.getIdentities(1, 10, 'desc', 'tx_count')
-        .then(paginatedTrendingIdentities => fetchHandlerSuccess(setTrendingIdentities, paginatedTrendingIdentities))
-        .catch(err => fetchHandlerError(setTrendingIdentities, err)),
-
-      Api.getRate()
-        .then(res => fetchHandlerSuccess(setRate, res))
-        .catch(err => fetchHandlerError(setRate, err))
-    ])
-      .catch(console.log)
+  // shape expected by MasternodesDonut ({ data, loading })
+  const validators = {
+    data: validatorsQuery.data ?? {},
+    loading: validatorsQuery.isPending || validatorsQuery.isLoading
+  }
+  const validatorsActive = {
+    data: validatorsActiveQuery.data ?? {},
+    loading: validatorsActiveQuery.isPending || validatorsActiveQuery.isLoading
+  }
+  const validatorsBanned = {
+    data: validatorsBannedQuery.data ?? {},
+    loading: validatorsBannedQuery.isPending || validatorsBannedQuery.isLoading
+  }
+  const validatorsInactive = {
+    data: validatorsInactiveQuery.data ?? {},
+    loading: validatorsInactiveQuery.isPending || validatorsInactiveQuery.isLoading
   }
 
-  useEffect(fetchData, [])
+  const currentEpochNumber = statusQuery.data?.epoch?.number
+  const epochNumbers = useMemo(() => epochNumbersOf(currentEpochNumber), [currentEpochNumber])
 
-  return (<>
+  // one query per epoch — results stream in independently (no Promise.all gate on the skeleton)
+  const epochQueries = useQueries({
+    queries: epochNumbers.map(n => ({
+      queryKey: ['home', 'epoch', n],
+      queryFn: () => Api.getEpoch(n),
+      staleTime: 30_000,
+      // live epoch refreshes with the status cadence; finalized epochs stay cached
+      refetchInterval: n === currentEpochNumber ? 60_000 : false
+    }))
+  })
+
+  // progressive list: whatever has arrived, in epoch order (partial wave is OK)
+  const epochDataStamp = epochQueries.map(q => `${q.dataUpdatedAt}:${q.fetchStatus}`).join('|')
+  const epochsBaseList = useMemo(() => (
+    epochNumbers
+      .map((n, i) => epochQueries[i]?.data)
+      .filter(Boolean)
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- stamp tracks per-query arrivals
+  ), [epochNumbers, epochDataStamp])
+
+  const epochsLoading = typeof currentEpochNumber !== 'number' ||
+    (epochsBaseList.length === 0 && epochQueries.some(q => q.isPending || q.isLoading))
+
+  // phase B: first-block meta only after an epoch exists (does not block the wave)
+  const blockQueries = useQueries({
+    queries: epochsBaseList.map(ep => {
+      const height = ep?.epoch?.firstBlockHeight
+      return {
+        queryKey: ['home', 'epoch-block', height],
+        queryFn: () => Api.getBlocks(1, 1, 'asc', { height_min: height, height_max: height }),
+        enabled: height != null,
+        staleTime: 60_000
+      }
+    })
+  })
+
+  const blockDataStamp = blockQueries.map(q => q.dataUpdatedAt).join('|')
+  const epochsList = useMemo(() => (
+    epochsBaseList.map((ep, i) => {
+      const blockRes = blockQueries[i]?.data
+      if (!blockRes) return ep
+      return {
+        ...ep,
+        protocolVersion: blockRes?.resultSet?.[0]?.header?.appVersion ?? null,
+        firstBlockHash: blockRes?.resultSet?.[0]?.header?.hash ?? null
+      }
+    })
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- stamp tracks block enrich arrivals
+  ), [epochsBaseList, blockDataStamp])
+
+  const currentEpochPayload = epochsList.find(e => e?.epoch?.number === currentEpochNumber) || null
+  const epochData = {
+    data: currentEpochPayload || {},
+    loading: typeof currentEpochNumber === 'number' && !currentEpochPayload && epochsLoading,
+    error: false
+  }
+
+  // gov + rate after status (parallel with epochs); keep them off wave 0 so validators keep bandwidth
+  useEffect(() => {
+    if (secondaryStarted.current) return
+    if (!statusQuery.isSuccess) return
+    secondaryStarted.current = true
+
+    Api.getContestedResourcesStats()
+      .then(res => fetchHandlerSuccess(setContested, res))
+      .catch(err => fetchHandlerError(setContested, err))
+
+    Api.getContestedResources(1, 10, 'desc', undefined, { voting_finished: false })
+      .then(res => fetchHandlerSuccess(setActiveContested, res))
+      .catch(err => fetchHandlerError(setActiveContested, err))
+
+    Api.getContestedResources(1, 5, 'desc')
+      .then(res => fetchHandlerSuccess(setLatestContested, res))
+      .catch(err => fetchHandlerError(setLatestContested, err))
+
+    Api.getMasternodeVotes(1, 10, 'desc')
+      .then(res => fetchHandlerSuccess(setLatestVotes, res))
+      .catch(err => fetchHandlerError(setLatestVotes, err))
+
+    Api.getRate()
+      .then(res => fetchHandlerSuccess(setRate, res))
+      .catch(err => fetchHandlerError(setRate, err))
+  }, [statusQuery.isSuccess])
+
+  // below-fold charts wait until the first epoch paints (or all epoch queries settle empty)
+  const epochsSettled = epochNumbers.length > 0 &&
+    epochQueries.length === epochNumbers.length &&
+    epochQueries.every(q => !q.isPending && !q.isLoading)
+  const belowFoldReady = epochsBaseList.length > 0 || epochsSettled
+
+  const avgBlockTimeSec = computeAvgBlockTime(blocksQuery.data?.resultSet)
+
+  return (
     <Container
+      className={'HomePage'}
       maxW={'container.maxPageW'}
       color={'white'}
-      px={3}
+      // mobile: tight gutter so card border/shadow aren't clipped; md+: standard 12px
+      px={{ base: 2, md: 3 }}
       py={0}
-      mt={blockOffset}
+      mt={gap}
+      mb={gap}
     >
-      <Intro/>
-    </Container>
+      <Flex direction={'column'} gap={gap}>
+        <HomeHero status={statusQuery.data ?? {}} loading={statusQuery.isLoading} avgBlockTimeSec={avgBlockTimeSec}/>
 
-    <Container
-      px={3}
-      py={0}
-      mt={blockOffset}
-      maxW={'container.maxPageW'}
-    >
-      <TotalInfo
-        blocks={status?.data?.api?.block?.height}
-        transactions={status.data?.transactionsCount}
-        dataContracts={status.data?.dataContractsCount}
-        documents={status.data?.documentsCount}
-        identities={status.data?.identitiesCount}
-        loading={status.loading}
-      />
-    </Container>
-
-    <Container
-      maxW={'container.maxPageW'}
-      color={'white'}
-      padding={3}
-      mt={blockOffset}
-      py={0}
-      mb={0}
-    >
-      <Container p={0} maxW={'container.maxPageW'} mb={blockOffset}>
-        <Flex
+        <Box
+          className={'InfoBlock InfoBlock--NoBorder HomeOverview'}
           w={'100%'}
-          justifyContent={'space-between'}
-          wrap={['wrap', 'wrap', 'wrap', 'nowrap']}
-          mb={blockOffset}
+          as={'section'}
+          aria-label={'Network overview'}
         >
-          <Container mb={0} p={0} maxW={blockMaxWidth}>
-            <TransactionsHistory blockBorders={false}/>
-          </Container>
+          <div className={'HomeOverview__Grid'}>
+            <div className={'HomeOverview__Sys'}>
+              <HeroMeta status={statusQuery.data ?? {}} loading={statusQuery.isLoading}/>
+            </div>
+            <div className={'HomeOverview__Tx'}>
+              <CompactTxList
+                transactions={txQuery.data?.resultSet}
+                limit={6}
+                loading={txQuery.isLoading}
+                moreHref={'/transactions'}
+                moreLabel={'View all transactions'}
+              />
+            </div>
+            <div className={'HomeOverview__Blocks'}>
+              <CompactBlocksList
+                blocks={blocksQuery.data?.resultSet}
+                limit={6}
+                loading={blocksQuery.isLoading}
+                moreHref={'/blocks'}
+                moreLabel={'View all blocks'}
+              />
+            </div>
+          </div>
+        </Box>
 
-          <Box flexShrink={'0'} w={blockOffset} h={blockOffset} />
+        <Box className={'InfoBlock InfoBlock--NoBorder HomeEpochs'} w={'100%'}>
+          <EpochsOverview
+            title={'Epochs'}
+            epochs={epochsList}
+            currentEpoch={epochData}
+            rate={rate}
+            loading={epochsLoading}
+            slotNumbers={epochNumbers}
+          />
+        </Box>
 
-          <Container m={0} p={0} maxW={blockMaxWidth}>
-            <Flex
-              maxW={'100%'}
-              m={0}
-              h={'100%'}
-              className={'InfoBlock InfoBlock--NoBorder'}
-              flexDirection={'column'}
-            >
-              <Heading className={'InfoBlock__Title'} as={'h2'}>Trending Data Contracts</Heading>
-              {!dataContracts.loading
-                ? !dataContracts.error
-                    ? <SimpleList
-                        items={dataContracts.data.resultSet.map((dataContract) => ({
-                          columns: [
-                            {
-                              value: dataContract.identifier,
-                              avatar: true,
-                              mono: true,
-                              dim: true,
-                              ellipsis: true,
-                              format: 'identifier'
-                            },
-                            {
-                              value: dataContract.documentsCount,
-                              mono: true
-                            }
-                          ],
-                          link: '/dataContract/' + dataContract.identifier
-                        }))}
-                        columns={['Identifier', 'Documents Count']}
-                        showMoreLink={'/dataContracts'}
-                      />
-                    : <ErrorMessageBlock/>
-                : <LoadingList itemsCount={dataContracts.props.printCount}/>}
-            </Flex>
-          </Container>
-        </Flex>
-
-        <Flex
-          w={'100%'}
-          justifyContent={'space-between'}
-          wrap={['wrap', 'wrap', 'wrap', 'nowrap']}
-          mb={0}
-        >
-          <Flex
-            maxW={blockMaxWidth}
-            w={'100%'}
-            order={[4, 4, 0]}
-            mb={0}
-            className={'InfoBlock InfoBlock--NoBorder'}
-            flexDirection={'column'}
-            flexGrow={1}
-          >
-            <Heading className={'InfoBlock__Title'} as={'h2'}>Transactions</Heading>
-            {!transactions.loading
-              ? !transactions.error
-                  ? <TransactionsList transactions={transactions.data.resultSet} showMoreLink={'/transactions'} rate={rate.data}/>
-                  : <ErrorMessageBlock/>
-              : <LoadingList itemsCount={Math.round(transactions.props.printCount * 1.5)}/>}
-          </Flex>
-
-          <Box flexShrink={'0'} w={blockOffset} h={blockOffset} order={[3, 3, 0]}/>
-
-          <Flex
-            flexDirection={'column'}
-            p={0}
-            maxW={blockMaxWidth}
-            width={'100%'}
-            flexShrink={0}
-          >
-            <Flex
-              maxW={'100%'}
-              className={'InfoBlock InfoBlock--NoBorder'}
-              flexGrow={'1'}
-              flexDirection={'column'}
-            >
-              <Heading className={'InfoBlock__Title'} as={'h2'}>Trending Identities</Heading>
-              {!trendingIdentities.loading
-                ? !trendingIdentities.error
-                    ? <SimpleList
-                        items={trendingIdentities.data.resultSet
-                          .filter((identity, i) => i < trendingIdentities.props.printCount)
-                          .map((identity) => {
-                            const activeAlias = identity?.aliases?.find(alias => alias.status === 'ok')
-                            const value = activeAlias?.alias || identity.identifier
-
-                            return {
-                              columns: [
-                                {
-                                  value,
-                                  avatar: true,
-                                  avatarSource: identity.identifier,
-                                  mono: true,
-                                  dim: !activeAlias,
-                                  ellipsis: true,
-                                  format: activeAlias ? 'alias' : 'identifier'
-                                },
-                                {
-                                  value: identity.totalTxs,
-                                  mono: true
-                                }
-                              ],
-                              link: '/identity/' + identity.identifier
-                            }
-                          })}
-                        columns={['Identifier', 'Tx Count']}
-                        showMoreLink={'/identities'}
-                      />
-                    : <ErrorMessageBlock/>
-                : <LoadingList itemsCount={trendingIdentities.props.printCount}/>}
-            </Flex>
-
-            <Box w={blockOffset} h={blockOffset}/>
-
-            <Flex
-              maxW={'none'}
-              className={'InfoBlock InfoBlock--NoBorder'}
-              flexGrow={'1'}
-              flexDirection={'column'}
-            >
-              <Heading className={'InfoBlock__Title'} as={'h2'}>Richlist</Heading>
-              {!richestIdentities.loading
-                ? !richestIdentities.error
-                    ? <SimpleList
-                        items={richestIdentities.data.resultSet
-                          .filter((_, i) => i < richestIdentities.props.printCount)
-                          .map((identity) => {
-                            const activeAlias = identity?.aliases?.find(alias => alias.status === 'ok')
-                            const value = activeAlias?.alias || identity.identifier
-
-                            return {
-                              columns: [
-                                {
-                                  value,
-                                  avatar: true,
-                                  avatarSource: identity.identifier,
-                                  mono: true,
-                                  dim: !activeAlias,
-                                  ellipsis: true,
-                                  format: activeAlias ? 'alias' : 'identifier'
-                                },
-                                {
-                                  value: identity.balance,
-                                  mono: true,
-                                  format: 'currency',
-                                  rate: !rate.loading && !rate.error ? rate.data : null
-                                }
-                              ],
-                              link: '/identity/' + identity.identifier
-                            }
-                          })}
-                        columns={['Identifier', 'Balance']}
-                        showMoreLink={'/identities'}
-                      />
-                    : <ErrorMessageBlock/>
-                : <LoadingList itemsCount={richestIdentities.props.printCount}/>}
-            </Flex>
-          </Flex>
-        </Flex>
-      </Container>
+        <SimpleGrid columns={{ base: 1, md: 2 }} spacing={gap} w={'100%'}>
+          <MetricChart title={'Transactions history'} type={'bar'} fetcher={Api.getTransactionsHistory} field={'txs'} yAbbr={'txs'} enabled={belowFoldReady}/>
+          <MetricChart title={'Identities growth'} type={'line'} fetcher={Api.getIdentitiesHistory} field={'registeredIdentities'} yAbbr={'identities'} enabled={belowFoldReady}/>
+          <TxTypesBar enabled={belowFoldReady}/>
+          <ShieldedPoolCard rate={rate} enabled={belowFoldReady}/>
+          <MasternodesDonut validators={validators} validatorsActive={validatorsActive} validatorsBanned={validatorsBanned} validatorsInactive={validatorsInactive} validatorsList={validatorsGeoQuery.data?.resultSet}/>
+          <Box className={'InfoBlock InfoBlock--NoBorder HomeGovCard'} w={'100%'}>
+            <CardHead title={'Governance'}/>
+            <StatusBar
+              contested={contested}
+              activeContested={activeContested}
+              latestContested={latestContested}
+              latestVotes={latestVotes}
+              epochData={epochData}
+            />
+          </Box>
+        </SimpleGrid>
+      </Flex>
     </Container>
-  </>)
+  )
 }
 
 export default Home

@@ -1,0 +1,233 @@
+@import '../../styles/variables.scss';
+
+.MasternodesDonut {
+  // query card width (not viewport): home md+ puts this in a half-width SimpleGrid cell
+  container-type: inline-size;
+
+  // status tiles fill the top, the stacked bar sits at the bottom — fills the paired card height
+  &__Body {
+    min-height: 200px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 16px;
+
+    @media screen and (max-width: $breakpoint-sm) {
+      height: auto;
+      gap: 14px;
+      padding: 2px 0;
+    }
+  }
+
+  &__Empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    font-size: 0.8125rem;
+    color: var(--chakra-colors-gray-500);
+  }
+
+  // four equal status cards (Total / In Quorum / Queued / Banned)
+  &__Tiles {
+    flex: 1;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 12px;
+
+    // ~1024 2-col home + phones: 4-up starves labels ("In Quorum"); 2×2 gives each tile room
+    @container (max-width: 560px) {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+  }
+
+  &__Tile {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 7px;
+    min-width: 0;
+    padding: 14px 12px;
+    border: 1px solid rgba(var(--chakra-colors-gray-800-rgb), 0.7);
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.015);
+
+    @container (max-width: 560px) {
+      padding: 12px 10px;
+    }
+  }
+
+  &__SkelGap { margin-top: 6px; }
+
+  &__TileLabel {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    min-width: 0;
+    max-width: 100%;
+    font-family: $font-mono;
+    font-size: 0.625rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--chakra-colors-gray-500);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  // (i) hint, same affordance as the epoch stat cells
+  &__TileInfo {
+    display: inline-flex;
+    flex-shrink: 0;
+    align-items: center;
+    color: var(--chakra-colors-gray-500);
+    cursor: pointer;
+    transition: color .15s;
+
+    &:hover { color: $color-brand-normal; }
+  }
+
+  // rotation glyph on Standby: a visual cue that these validators are awaiting rotation into the set
+  &__Rotate {
+    flex-shrink: 0;
+    width: 10px;
+    height: 10px;
+    color: var(--chakra-colors-gray-500);
+    animation: MasternodesRotate 9s linear infinite;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    &__Rotate { animation: none; }
+  }
+
+  &__TileValue {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 5px;
+    font-family: $font-heading;
+    font-weight: 800;
+    font-style: italic;
+    font-size: 1.5rem;
+    line-height: 1;
+    color: #fff;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+
+  &__TileOf {
+    font-size: 0.8125rem;
+    font-style: normal;
+    font-weight: 400;
+    color: var(--chakra-colors-gray-500);
+  }
+
+  &__TilePct {
+    font-family: $font-mono;
+    font-size: 0.625rem;
+    color: var(--chakra-colors-gray-500);
+    font-variant-numeric: tabular-nums;
+  }
+
+  // status bar + "by country" line sit together at the bottom of the card
+  &__Bottom {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  // stacked status bar (active | inactive | banned)
+  &__Bar {
+    display: flex;
+    align-items: stretch;
+    gap: 2px;
+    width: 100%;
+    height: 10px;
+    border-radius: 5px;
+    overflow: hidden;
+    background: rgba(255, 255, 255, 0.06);
+  }
+
+  &__Seg {
+    display: block;
+    height: 100%;
+    min-width: 2px;
+    transition: width 0.6s ease;
+
+    &--active { background: $color-brand-normal; }
+    &--inactive { background: rgba(255, 255, 255, 0.18); }
+    &--banned { background: var(--chakra-colors-red-default, #f45858); }
+  }
+
+  &__Dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    flex-shrink: 0;
+
+    &--total { background: rgba(255, 255, 255, 0.5); }
+    &--active { background: $color-brand-normal; }
+    &--inactive { background: rgba(255, 255, 255, 0.18); }
+    &--banned { background: var(--chakra-colors-red-default, #f45858); }
+  }
+
+  // validators by country (geoIpInfo, #822)
+  &__Geo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+    font-family: $font-mono;
+    font-size: 0.6875rem;
+  }
+
+  &__GeoLabel {
+    flex-shrink: 0;
+    font-size: 0.5625rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--chakra-colors-gray-500);
+  }
+
+  // spread the countries evenly across the block's full width; label stays level on the left
+  &__GeoList {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px 10px;
+    min-width: 0;
+    color: var(--chakra-colors-gray-250);
+    font-variant-numeric: tabular-nums;
+
+    b { color: #fff; font-weight: 700; }
+  }
+
+  &__GeoItem {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    cursor: default;
+  }
+
+  // round flag SVGs are self-hosted (CSP); border-radius is a safety net over the round art
+  &__Flag {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    display: block;
+    object-fit: cover;
+  }
+
+  &__GeoMore { color: var(--chakra-colors-gray-500); }
+
+  @media (prefers-reduced-motion: reduce) {
+    &__Seg { transition: none; }
+  }
+}
+
+@keyframes MasternodesRotate {
+  to { transform: rotate(360deg); }
+}

@@ -1,0 +1,4 @@
+Circle flag SVGs from HatScripts/circle-flags (npm: circle-flags), MIT License.
+https://github.com/HatScripts/circle-flags
+Self-hosted here (not loaded from a CDN) to satisfy the app's Content-Security-Policy.
+Only the country flags (ISO 3166-1 alpha-2, lowercase filenames) are vendored.

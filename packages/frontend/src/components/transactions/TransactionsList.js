@@ -16,9 +16,6 @@ import './TransactionsList.scss'
 const columnHelper = createColumnHelper()
 
 const columns = [
-  columnHelper.accessor('timestamp', {
-    header: 'Time'
-  }),
   columnHelper.accessor('status', {
     header: 'Status'
   }),
@@ -36,6 +33,9 @@ const columns = [
   }),
   columnHelper.accessor('type', {
     header: 'Type'
+  }),
+  columnHelper.accessor('timestamp', {
+    header: 'Timestamp'
   })
 ]
 
@@ -51,7 +51,8 @@ export default function TransactionsList ({
   rate,
   pagination,
   loading,
-  itemsCount = 10
+  itemsCount = 10,
+  absoluteDate = false
 }) {
   const table = useReactTable({
     data: transactions,
@@ -66,9 +67,6 @@ export default function TransactionsList ({
   return (
     <div className={'TransactionsList'}>
       <Grid className={`TransactionsList__ColumnTitles ${headerExtraClass[headerStyles] || ''}`}>
-        <GridItem className={'TransactionsList__ColumnTitle TransactionsList__ColumnTitle--Timestamp'}>
-          Time
-        </GridItem>
         <GridItem className={'TransactionsList__ColumnTitle TransactionsList__ColumnTitle--Status'}>
           Status
         </GridItem>
@@ -87,6 +85,9 @@ export default function TransactionsList ({
         <GridItem className={'TransactionsList__ColumnTitle TransactionsList__ColumnTitle--Type'}>
           Type
         </GridItem>
+        <GridItem className={'TransactionsList__ColumnTitle TransactionsList__ColumnTitle--Timestamp'}>
+          Timestamp
+        </GridItem>
       </Grid>
 
       {!loading
@@ -96,6 +97,7 @@ export default function TransactionsList ({
                 key={row.id}
                 transaction={row.original}
                 rate={rate}
+                absoluteDate={absoluteDate}
               />
             ))}
             {transactions?.length === 0 && <EmptyListMessage>There are no transactions yet.</EmptyListMessage>}

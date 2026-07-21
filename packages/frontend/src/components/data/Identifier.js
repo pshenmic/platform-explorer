@@ -11,6 +11,7 @@ import './Identifier.scss'
 export default function Identifier ({
   children,
   ellipsis = true,
+  middleEllipsis = false,
   avatar,
   styles = [],
   copyButton,
@@ -26,7 +27,7 @@ export default function Identifier ({
   const [windowWidth, setWindowWidth] = useState(0)
   const debouncedWindowWidth = useDebounce(windowWidth, 500)
 
-  if (ellipsis) linesAdjustment = false
+  if (ellipsis || middleEllipsis) linesAdjustment = false
 
   useResizeObserver(symbolsContainerRef, (entry) => {
     setContainerWidth(entry.contentRect.width)
@@ -87,7 +88,7 @@ export default function Identifier ({
   }, [])
 
   const measureCharWidth = useCallback(() => {
-    if (!symbolsContainerRef.current || !linesAdjustment) return 0
+    if (!symbolsContainerRef.current || !(linesAdjustment || middleEllipsis)) return 0
 
     const tempElement = document.createElement('span')
     const parentStyles = window.getComputedStyle(symbolsContainerRef.current)
@@ -104,10 +105,10 @@ export default function Identifier ({
     document.body.removeChild(tempElement)
 
     return width
-  }, [linesAdjustment])
+  }, [linesAdjustment, middleEllipsis])
 
   useEffect(() => {
-    if (!symbolsContainerRef.current || !linesAdjustment) return
+    if (!symbolsContainerRef.current || !(linesAdjustment || middleEllipsis)) return
 
     setCharWidth(measureCharWidth() || 'auto')
   }, [])
@@ -133,6 +134,25 @@ export default function Identifier ({
     ? styleToMode[styles.find(style => style in styleToMode)]
     : null
 
+  // start…end truncation sized to the available width (recomputed on resize); full value in title
+  const MiddleTruncated = ({ children }) => {
+    if (!children || typeof children !== 'string') return <NotActive/>
+
+    const minEdge = 4
+    const measured = charWidth && charWidth !== 'auto' && containerWidth
+    const maxChars = measured ? Math.floor(containerWidth / charWidth) : minEdge * 2 + 1
+
+    if (maxChars >= children.length) return children
+
+    const keep = Math.max(maxChars - 1, minEdge * 2)
+    const head = Math.max(Math.ceil(keep / 2), minEdge)
+    const tail = Math.max(Math.floor(keep / 2), minEdge)
+
+    if (head + tail >= children.length) return children
+
+    return `${children.slice(0, head)}…${children.slice(-tail)}`
+  }
+
   const HighlightedID = ({ children, mode }) => {
     if (!children || typeof children !== 'string') return <NotActive/>
 
@@ -152,7 +172,7 @@ export default function Identifier ({
   }
 
   return (
-    <div className={`Identifier ${ellipsis ? 'Identifier--Ellipsis' : ''} ${className || ''}`}>
+    <div className={`Identifier ${ellipsis && !middleEllipsis ? 'Identifier--Ellipsis' : ''} ${middleEllipsis ? 'Identifier--Middle' : ''} ${className || ''}`}>
       {avatar && children && (
         <ImageGenerator className={'Identifier__Avatar'} username={children} lightness={50} saturation={50} width={24} height={24} />
       )}
@@ -160,10 +180,13 @@ export default function Identifier ({
         className={'Identifier__SymbolsContainer'}
         style={{ maxWidth: widthIsCounted ? linesMaxWidth : 'none' }}
         ref={symbolsContainerRef}
+        title={middleEllipsis && typeof children === 'string' ? children : undefined}
       >
-        {children && highlightMode
-          ? <HighlightedID mode={highlightMode}>{children}</HighlightedID>
-          : children || <NotActive/>
+        {children && middleEllipsis
+          ? <MiddleTruncated>{children}</MiddleTruncated>
+          : children && highlightMode
+            ? <HighlightedID mode={highlightMode}>{children}</HighlightedID>
+            : children || <NotActive/>
         }
       </div>
       {copyButton && children && <CopyButton className={'Identifier__CopyButton'} text={children}/>}

@@ -5,7 +5,7 @@ import { Grid, GridItem } from '@chakra-ui/react'
 import TypeBadge from './TypeBadge'
 import BatchTypeBadge from './BatchTypeBadge'
 import TransactionStatusBadge from './TransactionStatusBadge'
-import { Identifier, BigNumber, Alias, TimeDelta, NotActive } from '../data'
+import { Identifier, BigNumber, Alias, TimeDelta, NotActive, DateBlock } from '../data'
 import { RateTooltip } from '../ui/Tooltips'
 import ImageGenerator from '../imageGenerator'
 import { useRouter } from 'next/navigation'
@@ -13,19 +13,13 @@ import { LinkContainer } from '../ui/containers'
 
 import './TransactionsListItem.scss'
 
-function TransactionsListItem ({ transaction, rate }) {
+function TransactionsListItem ({ transaction, rate, absoluteDate }) {
   const activeAlias = transaction?.owner?.aliases?.find(alias => alias.status === 'ok')
   const router = useRouter()
 
   return (
     <Link href={`/transaction/${transaction?.hash}`} className={'TransactionsListItem'}>
       <Grid className={'TransactionsListItem__Content'}>
-        <GridItem className={'TransactionsListItem__Column TransactionsListItem__Column--Timestamp'}>
-          {transaction?.timestamp
-            ? <TimeDelta endDate={new Date(transaction.timestamp)}/>
-            : <NotActive/>
-          }
-        </GridItem>
         <GridItem className={'TransactionsListItem__Column TransactionsListItem__Column--Status'}>
           {transaction?.status
             ? <TransactionStatusBadge status={transaction.status}/>
@@ -34,7 +28,7 @@ function TransactionsListItem ({ transaction, rate }) {
         </GridItem>
         <GridItem className={'TransactionsListItem__Column TransactionsListItem__Column--Hash'}>
           {transaction?.hash
-            ? <Identifier styles={['highlight-both']}>{transaction.hash}</Identifier>
+            ? <Identifier middleEllipsis={true} copyButton={true}>{transaction.hash}</Identifier>
             : <NotActive/>
           }
         </GridItem>
@@ -81,7 +75,7 @@ function TransactionsListItem ({ transaction, rate }) {
                                       lightness={50} saturation={50} width={24} height={24}/>
                       <Alias alias={activeAlias?.alias || activeAlias}/>
                     </div>
-                    : <Identifier avatar={true} styles={['highlight-both']}>{transaction?.owner?.identifier}</Identifier>
+                    : <Identifier avatar={true} copyButton={true} middleEllipsis={true}>{transaction?.owner?.identifier}</Identifier>
                   }
                 </LinkContainer>
               : <NotActive>-</NotActive>
@@ -93,6 +87,14 @@ function TransactionsListItem ({ transaction, rate }) {
             : transaction?.type !== undefined
               ? <TypeBadge className={'TransactionsListItem__TypeBadge'} type={transaction.type}/>
               : <NotActive/>
+          }
+        </GridItem>
+        <GridItem className={'TransactionsListItem__Column TransactionsListItem__Column--Timestamp'}>
+          {transaction?.timestamp
+            ? absoluteDate
+              ? <DateBlock format={'dateOnly'} showTime={true} timestamp={transaction.timestamp} showRelativeTooltip={true}/>
+              : <TimeDelta showTimestampTooltip={true} endDate={new Date(transaction.timestamp)}/>
+            : <NotActive/>
           }
         </GridItem>
       </Grid>

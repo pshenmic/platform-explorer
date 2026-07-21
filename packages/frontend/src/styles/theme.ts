@@ -62,7 +62,8 @@ export const theme = extendTheme({
   useSystemColorMode: false,
   colors,
   radii: {
-    block: '30px'
+    // must fit inside the corner-docked InfoBlock__Title badge (badge height ≥ 2×radius)
+    block: '20px'
   },
   styles: {
     global

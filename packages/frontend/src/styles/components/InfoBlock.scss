@@ -73,7 +73,8 @@ $border-radius: var(--chakra-radii-block);
     background-color: $color-brand-normal;
     font-size: 0.875rem !important;
     width: max-content;
-    padding: 10px 20px;
+    // padding keeps the badge >= 2x radius tall, or the browser rescales the corner arc
+    padding: 12px 20px;
     border-radius: $border-radius $border-radius $border-radius 0;
     position: relative;
     left: -32px;
@@ -81,11 +82,57 @@ $border-radius: var(--chakra-radii-block);
     margin: 0;
   }
 
+  // shared card header row (CardHead); the flag stays static so the slot centres on its box
+  &__Head {
+    display: flex;
+    align-items: center;
+    // the right slot drops under the title when it can't fit (phones); the slot owns its alignment
+    flex-wrap: wrap;
+    gap: 10px 12px;
+    // vertical bleed only: the flag docks via its own margin, so wrap never drags the slot left
+    margin: -20px 0 14px 0;
+
+    .InfoBlock__Title {
+      position: static;
+      // flag bleeds into the top-left corner without a ghost slot and without pulling siblings
+      margin-left: -32px;
+    }
+  }
+
+  // groups the flag with an inline counter/note on the row's left side
+  &__HeadLeft {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    min-width: 0;
+  }
+
+  // auto-margin keeps the slot on the right both inline and after a wrap
+  &__HeadSlot {
+    margin-left: auto;
+
+    @media screen and (max-width: $breakpoint-md) {
+      // full-width row on phones; the control inside (e.g. Presets) spreads across it
+      margin-left: 0;
+      width: 100%;
+    }
+  }
+
+  // ≤lg: 16px content inset — pairs with edge cards (page gutter 0 on Home mobile)
   @media screen and (max-width: $breakpoint-lg) {
-    padding: 20px 16px 16px 16px !important;
+    padding: 16px !important;
 
     &__Title {
       left: -16px;
+      top: -16px;
+    }
+
+    &__Head {
+      margin: -16px 0 14px 0;
+
+      .InfoBlock__Title {
+        margin-left: -16px;
+      }
     }
   }
 }

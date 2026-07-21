@@ -12,10 +12,6 @@ function BlocksList ({ blocks = [], size = 'l', headerStyles = 'default', absolu
   return (
     <div className={`BlocksList ${absoluteDate ? 'BlocksList--TimestampAbsolute' : ''}`}>
       <Grid className={`BlocksList__ColumnTitles ${headerExtraClass[headerStyles] || ''}`}>
-        <GridItem className={'BlocksList__ColumnTitle BlocksList__ColumnTitle--Timestamp'}>
-          Time
-        </GridItem>
-
         <GridItem className={'BlocksList__ColumnTitle BlocksList__ColumnTitle--Height'}>
           Height
         </GridItem>
@@ -34,6 +30,10 @@ function BlocksList ({ blocks = [], size = 'l', headerStyles = 'default', absolu
 
         <GridItem className={'BlocksList__ColumnTitle BlocksList__ColumnTitle--Txs'}>
           TXs count
+        </GridItem>
+
+        <GridItem className={'BlocksList__ColumnTitle BlocksList__ColumnTitle--Timestamp'}>
+          Timestamp
         </GridItem>
       </Grid>
 

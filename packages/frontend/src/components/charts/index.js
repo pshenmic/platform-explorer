@@ -32,7 +32,8 @@ const LineChart = ({
   yAxis = { title: '', type: { axis: 'number' } },
   width,
   height,
-  dataLoading
+  dataLoading,
+  type = 'line'
 }) => {
   const chartContainer = useRef()
   const [chartElement, setChartElement] = useState(null)
@@ -76,8 +77,9 @@ const LineChart = ({
       width={chartContainer.current.offsetWidth}
       height={chartContainer.current.offsetHeight}
       data={data}
+      type={type}
     />)
-  }, [chartElement, data, timespan, xAxis, yAxis])
+  }, [chartElement, data, timespan, xAxis, yAxis, type])
 
   return (
     <Container
@@ -99,7 +101,8 @@ const LineGraph = ({
   width = 460,
   height = 180,
   xAxis = { title: '', type: { axis: 'number' } },
-  yAxis = { title: '', type: { axis: 'number' } }
+  yAxis = { title: '', type: { axis: 'number' } },
+  type = 'line'
 }) => {
   const [loading, setLoading] = useState(true)
   const marginTop = yAxis.title ? 40 : 20
@@ -428,15 +431,44 @@ const LineGraph = ({
                     </clipPath>
                 </defs>
 
-                <path d={area(data)} fill={`url(#AreaFill-${uniqueComponentId})`} clipPath={`url(#clipPath-${uniqueComponentId})`}/>
+                {type === 'bar'
+                  ? (() => {
+                      const step = data.length > 1 ? Math.abs(x(data[1].x) - x(data[0].x)) : 12
+                      const barW = Math.max(1, Math.min(step * 0.6, 14))
+                      const baseY = y(0)
+                      return (
+                        <g clipPath={`url(#clipPath-${uniqueComponentId})`}>
+                          {data.map((d, i) => {
+                            const h = Math.max(0, baseY - y(d.y))
+                            return (
+                              <rect
+                                key={i}
+                                x={x(d.x) - barW / 2}
+                                y={y(d.y)}
+                                width={barW}
+                                height={h}
+                                rx={1}
+                                fill={`url(#AreaFill-${uniqueComponentId})`}
+                                stroke={'#008DE4'}
+                                strokeWidth={1}
+                                className={'Chart__Bar'}
+                              />
+                            )
+                          })}
+                        </g>
+                      )
+                    })()
+                  : <>
+                      <path d={area(data)} fill={`url(#AreaFill-${uniqueComponentId})`} clipPath={`url(#clipPath-${uniqueComponentId})`}/>
 
-                <g filter={`url(#shadow-${uniqueComponentId})`}>
-                    <path ref={graphicLine} d={line(data)} stroke={'#008DE4'} strokeWidth={2} fill={'none'} strokeLinejoin={'round'}/>
+                      <g filter={`url(#shadow-${uniqueComponentId})`}>
+                          <path ref={graphicLine} d={line(data)} stroke={'#008DE4'} strokeWidth={2} fill={'none'} strokeLinejoin={'round'}/>
 
-                    <g fill='#008DE4'>
-                        {data.map((d, i) => (<circle key={i} cx={x(d.x)} cy={y(d.y)} r={4} className={'Chart__Point'}/>))}
-                    </g>
-                </g>
+                          <g fill='#008DE4'>
+                              {data.map((d, i) => (<circle key={i} cx={x(d.x)} cy={y(d.y)} r={4} className={'Chart__Point'}/>))}
+                          </g>
+                      </g>
+                    </>}
 
                 <g ref={focusPoint} className={'Chart__FocusPoint'}>
                     <circle r={3}/>

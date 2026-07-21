@@ -29,14 +29,19 @@ type QueryFilters = Record<string, QueryValue>
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL
 
 const fetchWrapper = (url: string, options: RequestInit): Promise<Response> => {
+  const controller = new AbortController()
   return new Promise((resolve, reject) => {
-    setTimeout(() => {
+    const timer = setTimeout(() => {
       console.warn('fetching timeout error')
+      controller.abort()
       reject(new ResponseErrorTimeout())
     }, 30000)
-    fetch(url, options).catch(reject).then(value => {
-      if (value) resolve(value)
-    })
+    fetch(url, { ...options, signal: controller.signal })
+      .then(value => {
+        if (value) resolve(value)
+      })
+      .catch(reject)
+      .finally(() => clearTimeout(timer))
   })
 }
 
@@ -111,6 +116,56 @@ const getTransactionsHistory = (
 ): Promise<Array<SeriesData<TransactionsHistoryPoint>>> => {
   return call<Array<SeriesData<TransactionsHistoryPoint>>>(
     `transactions/history?timestamp_start=${start}&timestamp_end=${end}${intervalsCount ? `&intervalsCount=${intervalsCount}` : ''}`,
+    'GET'
+  )
+}
+
+interface TransactionsStatisticItem {
+  transactionType: string
+  count: number
+}
+
+const getTransactionsStatistic = (start?: string, end?: string): Promise<TransactionsStatisticItem[]> => {
+  const range = start && end ? `?timestamp_start=${start}&timestamp_end=${end}` : ''
+  return call<TransactionsStatisticItem[]>(`transactions/statistic${range}`, 'GET')
+}
+
+interface ShieldedStatistic {
+  totalShieldedIn: string
+  totalShieldedOut: string
+  poolBalance: string
+  transitionsCount: number
+  types: Array<{ transactionType: string, count: number, amount: string }>
+}
+
+const getShieldedStatistic = (): Promise<ShieldedStatistic> => {
+  return call<ShieldedStatistic>('transactions/shielded/statistic', 'GET')
+}
+
+interface ShieldHistoryPoint {
+  amount: number
+  blockHeight: number | null
+  blockHash: string | null
+}
+
+const getShieldHistory = (
+  start: string,
+  end: string,
+  intervalsCount?: number
+): Promise<Array<SeriesData<ShieldHistoryPoint>>> => {
+  return call<Array<SeriesData<ShieldHistoryPoint>>>(
+    `transactions/shield/history?timestamp_start=${start}&timestamp_end=${end}${intervalsCount ? `&intervalsCount=${intervalsCount}` : ''}`,
+    'GET'
+  )
+}
+
+const getUnshieldHistory = (
+  start: string,
+  end: string,
+  intervalsCount?: number
+): Promise<Array<SeriesData<ShieldHistoryPoint>>> => {
+  return call<Array<SeriesData<ShieldHistoryPoint>>>(
+    `transactions/unshield/history?timestamp_start=${start}&timestamp_end=${end}${intervalsCount ? `&intervalsCount=${intervalsCount}` : ''}`,
     'GET'
   )
 }
@@ -632,6 +687,10 @@ export {
   getContestedResourceVotes,
   getBlockByHash,
   getTransactionsHistory,
+  getTransactionsStatistic,
+  getShieldedStatistic,
+  getShieldHistory,
+  getUnshieldHistory,
   getTransactions,
   getTransaction,
   getTokens,

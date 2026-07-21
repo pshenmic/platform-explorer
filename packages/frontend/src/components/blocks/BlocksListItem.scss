@@ -6,6 +6,11 @@
   @include mixins.DefListItem;
   font-size: 0.75rem;
 
+  // copy button revealed only on row hover
+  .Identifier__CopyButton { opacity: 0; pointer-events: none; transition: opacity .15s; }
+  &:hover .Identifier__CopyButton,
+  &:focus-within .Identifier__CopyButton { opacity: 1; pointer-events: auto; }
+
   &__Content {
     @include blocks.Columns();
     align-items: center;
@@ -17,6 +22,8 @@
 
   &__LinkContainer {
     max-width: 100%;
+    flex: 1;
+    min-width: 0;
   }
 
   &__Column {

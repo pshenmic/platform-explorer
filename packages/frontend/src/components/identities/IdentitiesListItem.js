@@ -45,9 +45,9 @@ function IdentitiesListItem ({ identity, place }) {
                 />
               : <Identifier
                   className={'IdentitiesListItem__Identifier'}
-                  ellipsis={true}
-                  styles={['highlight-both']}
+                  middleEllipsis={true}
                   avatar={true}
+                  copyButton={true}
                 >
                   {identifier}
                 </Identifier>

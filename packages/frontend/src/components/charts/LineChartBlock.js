@@ -36,7 +36,8 @@ export default function LineChartBlock ({
   config,
   blockBorders = true,
   useInfoBlock = true,
-  className
+  className,
+  type = 'line'
 }) {
   const chartConfig = config || defaultChartConfig
   const [timespan, setTimespan] = useState(chartConfig.timespan.default)
@@ -107,6 +108,7 @@ export default function LineChartBlock ({
                   timespan={timespan}
                   xAxis={xAxis}
                   yAxis={yAxis}
+                  type={type}
               />
               : <ErrorMessageBlock/>
           : <Container

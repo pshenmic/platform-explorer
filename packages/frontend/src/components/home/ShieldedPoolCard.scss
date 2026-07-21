@@ -1,0 +1,164 @@
+@import '../../styles/variables.scss';
+
+.ShieldedPool {
+  &__Body {
+    min-height: 200px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 14px;
+  }
+
+  &__Empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    font-size: 0.8125rem;
+    color: var(--chakra-colors-gray-500);
+  }
+
+  &__Balance {
+    font-family: $font-heading;
+    font-weight: 800;
+    font-style: italic;
+    font-size: 1.75rem;
+    line-height: 1;
+    color: #fff;
+    cursor: pointer;
+    width: max-content;
+    border-bottom: 1px dotted rgba(var(--chakra-colors-gray-500-rgb, 122, 132, 137), 0.6);
+    transition: color .15s, border-color .15s;
+
+    &:hover {
+      color: $color-brand-light;
+      border-bottom-color: rgba(var(--chakra-colors-brand-light-rgb), 0.7);
+    }
+  }
+
+  &__BalanceUnit {
+    margin-left: 8px;
+    font-family: $font-mono;
+    font-style: normal;
+    font-weight: 400;
+    font-size: 0.6875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--chakra-colors-gray-500);
+  }
+
+  &__Rows {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  &__RowItem {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    font-family: $font-mono;
+    font-size: 0.6875rem;
+    color: var(--chakra-colors-gray-250);
+
+    span:first-child { color: var(--chakra-colors-gray-500); }
+  }
+
+  &__Spark {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  // diverging flow bars: shield up / unshield down from a midline, hover reads exact values
+  &__SparkWrap {
+    position: relative;
+    cursor: crosshair;
+  }
+
+  &__SparkSvg {
+    display: block;
+    width: 100%;
+    height: 56px;
+    transition: opacity .2s;
+
+    &.is-loading { opacity: 0.4; }
+  }
+
+  &__Baseline {
+    stroke: rgba(255, 255, 255, 0.12);
+    stroke-width: 1px;
+  }
+
+  &__Bar {
+    transition: opacity .12s;
+
+    &--in { fill: $color-brand-normal; }
+    &--out { fill: var(--chakra-colors-orange-default, #e68a19); opacity: 0.85; }
+  }
+
+  .is-dim .ShieldedPool__Bar { opacity: 0.35; }
+
+  &__Tip {
+    position: absolute;
+    top: -8px;
+    transform: translate(-50%, -100%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1px;
+    padding: 4px 8px;
+    border-radius: 6px;
+    white-space: nowrap;
+    background: var(--chakra-colors-gray-800);
+    border: 1px solid rgba(var(--chakra-colors-brand-normal-rgb), 0.4);
+    pointer-events: none;
+    z-index: 2;
+    font-family: $font-mono;
+    font-size: 0.6875rem;
+  }
+
+  &__TipDate {
+    font-size: 0.5625rem;
+    color: var(--chakra-colors-gray-500);
+  }
+
+  &__TipRow {
+    color: #fff;
+
+    &--in { color: $color-brand-light; }
+    &--out { color: var(--chakra-colors-orange-default, #e68a19); }
+  }
+
+  // actual covered span (after the empty lead-in is trimmed); the legend chip shows the preset
+  &__Axis {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+    font-family: $font-mono;
+    font-size: 0.5625rem;
+    color: var(--chakra-colors-gray-500);
+  }
+
+  &__SparkLegend {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    font-family: $font-mono;
+    font-size: 0.625rem;
+    color: var(--chakra-colors-gray-500);
+
+    span { display: inline-flex; align-items: center; gap: 5px; }
+  }
+
+  &__SparkWindow { margin-left: auto; }
+
+  &__Dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+
+    &--in { background: $color-brand-normal; }
+    &--out { background: var(--chakra-colors-orange-default, #e68a19); }
+  }
+}
