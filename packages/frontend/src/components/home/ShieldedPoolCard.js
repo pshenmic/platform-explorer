@@ -36,21 +36,27 @@ function fmtDash (dash) {
 
 // shielded pool overview: balance + in/out totals over diverging in/out flow bars
 export default function ShieldedPoolCard ({ rate, enabled = true }) {
-  const [stats, setStats] = useState({ loading: true, error: false, data: null })
+  const [pool, setPool] = useState({ loading: true, error: false, balance: null, notes: null })
+  const [period, setPeriod] = useState({ loading: true, in: 0, out: 0, transitions: 0 })
   const [flows, setFlows] = useState({ loading: true, buckets: [] })
   const [presetIdx, setPresetIdx] = useState(DEFAULT_PRESET)
   const [hover, setHover] = useState(null)
 
-  // pool balance and totals are all-time by nature: fetched once, unaffected by the preset
   useEffect(() => {
-    if (!enabled) {
-      setStats(s => ({ ...s, loading: true, error: false }))
-      return
-    }
-    Api.getShieldedStatistic()
-      .then(res => setStats({ loading: false, error: false, data: res }))
-      .catch(() => setStats({ loading: false, error: true, data: null }))
+    if (!enabled) { setPool(s => ({ ...s, loading: true, error: false })); return }
+    Api.getShieldedPool()
+      .then(res => setPool({ loading: false, error: false, balance: res?.poolBalance ?? null, notes: res?.notesCount ?? null }))
+      .catch(() => setPool({ loading: false, error: true, balance: null, notes: null }))
   }, [enabled])
+
+  useEffect(() => {
+    if (!enabled) { setPeriod(s => ({ ...s, loading: true })); return }
+    const { start, end } = presetRange(PRESETS[presetIdx])
+    setPeriod(s => ({ ...s, loading: true }))
+    Api.getShieldedStatistic(start, end)
+      .then(res => setPeriod({ loading: false, in: Number(res?.totalShieldedIn) || 0, out: Number(res?.totalShieldedOut) || 0, transitions: Number(res?.transitionsCount) || 0 }))
+      .catch(() => setPeriod({ loading: false, in: 0, out: 0, transitions: 0 }))
+  }, [presetIdx, enabled])
 
   useEffect(() => {
     if (!enabled) {
@@ -79,10 +85,9 @@ export default function ShieldedPoolCard ({ rate, enabled = true }) {
     })
   }, [presetIdx, enabled])
 
-  const data = stats.data
-  const balanceCredits = Number(data?.poolBalance) || 0
-  const inCredits = Number(data?.totalShieldedIn) || 0
-  const outCredits = Number(data?.totalShieldedOut) || 0
+  const balanceCredits = Number(pool.balance) || 0
+  const inCredits = period.in
+  const outCredits = period.out
 
   const buckets = flows.buckets
   const flowMax = buckets.reduce((max, b) => Math.max(max, b.inAmt, b.outAmt), 0)
@@ -110,7 +115,7 @@ export default function ShieldedPoolCard ({ rate, enabled = true }) {
       </CardHead>
 
       <div className={'ShieldedPool__Body'}>
-        {stats.loading
+        {pool.loading
           ? <>
               <Skeleton w={'140px'} h={'1.6em'}/>
               <div className={'ShieldedPool__Rows'}>
@@ -118,7 +123,7 @@ export default function ShieldedPoolCard ({ rate, enabled = true }) {
               </div>
               <Skeleton w={'100%'} h={`${SPARK_H}px`} radius={6}/>
             </>
-          : stats.error || !data
+          : pool.error
             ? <div className={'ShieldedPool__Empty'}>No data</div>
             : <>
                 <RateTooltip dash={creditsToDash(balanceCredits)} rate={rate?.data} placement={'top'}>
@@ -139,8 +144,13 @@ export default function ShieldedPoolCard ({ rate, enabled = true }) {
                   </div>
                   <div className={'ShieldedPool__RowItem'}>
                     <span>Transitions</span>
-                    <span>{compact(Number(data.transitionsCount) || 0)}</span>
+                    <span>{compact(period.transitions)}</span>
                   </div>
+                  {pool.notes != null &&
+                    <div className={'ShieldedPool__RowItem'}>
+                      <span>Notes</span>
+                      <span>{compact(pool.notes)}</span>
+                    </div>}
                 </div>
 
                 <div className={'ShieldedPool__Spark'}>
