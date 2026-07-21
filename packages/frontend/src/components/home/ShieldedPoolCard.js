@@ -27,6 +27,13 @@ function barH (amount, max) {
   return Math.max((amount / max) * (BASELINE - 3), 1.5)
 }
 
+// adaptive DASH precision: 2 decimals for normal amounts, significant digits for sub-cent flows
+// (a real 0.0046 DASH unshield otherwise rounds to "0.00" and reads as an empty bar)
+function fmtDash (dash) {
+  if (!dash) return '0'
+  return Math.abs(dash) >= 0.01 ? dash.toFixed(2) : Number(dash.toPrecision(2)).toString()
+}
+
 // shielded pool overview: balance + in/out totals over diverging in/out flow bars
 export default function ShieldedPoolCard ({ rate, enabled = true }) {
   const [stats, setStats] = useState({ loading: true, error: false, data: null })
@@ -88,7 +95,9 @@ export default function ShieldedPoolCard ({ rate, enabled = true }) {
     if (!buckets.length || flows.loading) return
     const rect = e.currentTarget.getBoundingClientRect()
     const frac = (e.clientX - rect.left) / rect.width
-    const idx = Math.min(buckets.length - 1, Math.max(0, Math.round(frac * (buckets.length - 1))))
+    // pick the bucket by its bar cell (width = barStep), not a point grid — otherwise the right half
+    // of a bar maps to the next (often empty) bucket and the tooltip reads 0 while hovering the bar
+    const idx = Math.min(buckets.length - 1, Math.max(0, Math.floor(frac * buckets.length)))
     setHover({ idx, xPct: (idx * barStep + barStep / 2) / SPARK_W * 100 })
   }
 
@@ -114,7 +123,7 @@ export default function ShieldedPoolCard ({ rate, enabled = true }) {
             : <>
                 <RateTooltip dash={creditsToDash(balanceCredits)} rate={rate?.data} placement={'top'}>
                   <div className={'ShieldedPool__Balance'}>
-                    {creditsToDash(balanceCredits).toFixed(2)}
+                    {fmtDash(creditsToDash(balanceCredits))}
                     <span className={'ShieldedPool__BalanceUnit'}>DASH</span>
                   </div>
                 </RateTooltip>
@@ -122,11 +131,11 @@ export default function ShieldedPoolCard ({ rate, enabled = true }) {
                 <div className={'ShieldedPool__Rows'}>
                   <div className={'ShieldedPool__RowItem'}>
                     <span>Shielded in</span>
-                    <span>{creditsToDash(inCredits).toFixed(2)} DASH</span>
+                    <span>{fmtDash(creditsToDash(inCredits))} DASH</span>
                   </div>
                   <div className={'ShieldedPool__RowItem'}>
                     <span>Shielded out</span>
-                    <span>{creditsToDash(outCredits).toFixed(2)} DASH</span>
+                    <span>{fmtDash(creditsToDash(outCredits))} DASH</span>
                   </div>
                   <div className={'ShieldedPool__RowItem'}>
                     <span>Transitions</span>
@@ -167,8 +176,8 @@ export default function ShieldedPoolCard ({ rate, enabled = true }) {
                         {hovered &&
                           <div className={'ShieldedPool__Tip'} style={{ left: `${hover.xPct}%` }}>
                             <span className={'ShieldedPool__TipDate'}>{hovered.ts ? tipFmt.format(new Date(hovered.ts)) : '—'}</span>
-                            <span className={'ShieldedPool__TipRow ShieldedPool__TipRow--in'}>In {creditsToDash(hovered.inAmt).toFixed(2)} DASH</span>
-                            <span className={'ShieldedPool__TipRow ShieldedPool__TipRow--out'}>Out {creditsToDash(hovered.outAmt).toFixed(2)} DASH</span>
+                            <span className={'ShieldedPool__TipRow ShieldedPool__TipRow--in'}>In {fmtDash(creditsToDash(hovered.inAmt))} DASH</span>
+                            <span className={'ShieldedPool__TipRow ShieldedPool__TipRow--out'}>Out {fmtDash(creditsToDash(hovered.outAmt))} DASH</span>
                           </div>}
                       </div>}
 
