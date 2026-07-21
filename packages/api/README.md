@@ -82,6 +82,7 @@ Reference:
 * [Transactions Unshield history](#transactions-unshield-history)
 * [Transactions Statistic](#transactions-statistic)
 * [Shielded Statistic](#shielded-statistic)
+* [Shielded Pool](#shielded-pool)
 * [Votes for contested resource](#votes-for-contested-resource)
 * [Contested Resource Value](#contested-resource-value)
 * [Contested Resources](#contested-resources)
@@ -2264,25 +2265,28 @@ Response codes:
 ```
 ___
 ### Shielded Statistic
-Return an aggregate overview of the shielded pool.
+Return shielded transition activity, aggregated by transaction type.
 
-* `totalShieldedIn` — total credits moved into the pool (`SHIELD` + `SHIELD_FROM_ASSET_LOCK`), as a string
-* `totalShieldedOut` — total credits moved out of the pool (`UNSHIELD` + `SHIELDED_WITHDRAWAL` + `IDENTITY_CREATE_FROM_SHIELDED_POOL`), as a string
-* `poolBalance` — `totalShieldedIn` − `totalShieldedOut`, an estimate of the current shielded pool size, as a string
-* `transitionsCount` — total number of shielded transitions
-* `notesCount` — total count of notes (leaves) in the shielded notes commitment tree, fetched from the platform; `null` when unavailable
+Optionally accepts a time interval. Without parameters the statistic is calculated over all time. The current pool size is available separately via [Shielded Pool](#shielded-pool).
+
+* `timestamp_start` and `timestamp_end` must be set together
+* When an interval is given, all fields are scoped to that interval
+
+Fields:
+
+* `totalShieldedIn` — credits moved into the pool (`SHIELD` + `SHIELD_FROM_ASSET_LOCK`), as a string
+* `totalShieldedOut` — credits moved out of the pool (`UNSHIELD` + `SHIELDED_WITHDRAWAL` + `IDENTITY_CREATE_FROM_SHIELDED_POOL`), as a string
+* `transitionsCount` — number of shielded transitions
 * `types` — per-type breakdown with `count` and summed `amount` (string)
 
 Note: `SHIELDED_TRANSFER` stays inside the pool and is counted in `types`/`transitionsCount` but excluded from `totalShieldedIn`/`totalShieldedOut`.
 
 ```
-GET /transactions/shielded/statistic
+GET /transactions/shielded/statistic?timestamp_start=2024-10-01T00:00:00.000Z&timestamp_end=2024-11-01T00:00:00.000Z
 {
     "totalShieldedIn": "300000000",
     "totalShieldedOut": "150000000",
-    "poolBalance": "150000000",
     "transitionsCount": 6,
-    "notesCount": 14,
     "types": [
         {
             "transactionType": "SHIELD",
@@ -2290,6 +2294,26 @@ GET /transactions/shielded/statistic
             "amount": "200000000"
         }, ...
     ]
+}
+```
+Response codes:
+```
+200: OK
+400: Invalid input, check start/end values
+500: Internal Server Error
+```
+___
+### Shielded Pool
+Return the current state of the shielded pool. Takes no parameters.
+
+* `poolBalance` — total balance currently held in the shielded pool, fetched (and cryptographically verified) from the platform, as a string; `null` when unavailable
+* `notesCount` — total count of notes (leaves) in the shielded notes commitment tree, fetched from the platform; `null` when unavailable
+
+```
+GET /transactions/shielded/pool
+{
+    "poolBalance": "150000000",
+    "notesCount": 14
 }
 ```
 Response codes:
