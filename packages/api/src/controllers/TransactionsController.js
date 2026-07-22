@@ -415,12 +415,31 @@ class TransactionsController {
   }
 
   getShieldedStatistic = async (request, response) => {
-    const info = await this.transactionsDAO.getShieldedStatistic()
+    const {
+      timestamp_start: timestampStart = null,
+      timestamp_end: timestampEnd = null
+    } = request.query
+
+    if ((timestampStart && !timestampEnd) || (!timestampStart && timestampEnd)) {
+      return response.status(400).send({ message: 'start and end must be set' })
+    }
+
+    if (new Date(timestampStart).getTime() > new Date(timestampEnd).getTime()) {
+      return response.status(400).send({ message: 'start timestamp cannot be more than end timestamp' })
+    }
+
+    const info = await this.transactionsDAO.getShieldedStatistic(timestampStart, timestampEnd)
+
+    response.send(info)
+  }
+
+  getShieldedPool = async (request, response) => {
+    const poolBalance = await this.sdk.shielded.getShieldedPoolState()
 
     const notesCount = await this.sdk.shielded.getShieldedNotesCount()
 
     response.send({
-      ...info,
+      poolBalance: poolBalance !== undefined ? String(poolBalance) : null,
       notesCount: notesCount !== undefined ? Number(notesCount) : null
     })
   }

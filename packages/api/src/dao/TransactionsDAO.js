@@ -623,12 +623,22 @@ module.exports = class TransactionsDAO {
     }))
   }
 
-  getShieldedStatistic = async () => {
-    const rows = await this.knex('shielded_transitions')
+  getShieldedStatistic = async (timestampStart, timestampEnd) => {
+    let query = this.knex('shielded_transitions')
       .select('state_transition_type as type')
       .sum('amount as total_amount')
       .count('* as count')
       .groupBy('state_transition_type')
+
+    if (timestampStart && timestampEnd) {
+      query = query
+        .leftJoin('state_transitions', 'state_transitions.id', 'shielded_transitions.state_transition_id')
+        .leftJoin('blocks', 'blocks.hash', 'state_transitions.block_hash')
+        .where('blocks.timestamp', '>=', new Date(timestampStart).toISOString())
+        .andWhere('blocks.timestamp', '<=', new Date(timestampEnd).toISOString())
+    }
+
+    const rows = await query
 
     let totalShieldedIn = 0n
     let totalShieldedOut = 0n
@@ -656,7 +666,6 @@ module.exports = class TransactionsDAO {
     return {
       totalShieldedIn: totalShieldedIn.toString(),
       totalShieldedOut: totalShieldedOut.toString(),
-      poolBalance: (totalShieldedIn - totalShieldedOut).toString(),
       transitionsCount,
       types
     }
