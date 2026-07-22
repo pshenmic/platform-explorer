@@ -7,7 +7,6 @@ import { CardHead, Presets } from '../cards'
 import { RateTooltip } from '../ui/Tooltips'
 import { creditsToDash } from '../../util'
 import { Skeleton } from './Skeleton'
-import { compact } from './utils'
 import { PRESETS, presetRange } from './MetricChart'
 import './ShieldedPoolCard.scss'
 
@@ -144,12 +143,12 @@ export default function ShieldedPoolCard ({ rate, enabled = true }) {
                   </div>
                   <div className={'ShieldedPool__RowItem'}>
                     <span>Transitions</span>
-                    <span>{compact(period.transitions)}</span>
+                    <span>{period.transitions.toLocaleString('en-US')}</span>
                   </div>
                   {pool.notes != null &&
                     <div className={'ShieldedPool__RowItem'}>
                       <span>Notes</span>
-                      <span>{compact(pool.notes)}</span>
+                      <span>{Number(pool.notes).toLocaleString('en-US')}</span>
                     </div>}
                 </div>
 
