@@ -133,13 +133,23 @@ const getTransactionsStatistic = (start?: string, end?: string): Promise<Transac
 interface ShieldedStatistic {
   totalShieldedIn: string
   totalShieldedOut: string
-  poolBalance: string
   transitionsCount: number
-  types: Array<{ transactionType: string, count: number, amount: string }>
+  types?: Array<{ transactionType: string, count: number, amount: string }>
 }
 
-const getShieldedStatistic = (): Promise<ShieldedStatistic> => {
-  return call<ShieldedStatistic>('transactions/shielded/statistic', 'GET')
+// optional time interval; omitted → all-time
+const getShieldedStatistic = (start?: string, end?: string): Promise<ShieldedStatistic> => {
+  const range = start != null && end != null ? `?timestamp_start=${start}&timestamp_end=${end}` : ''
+  return call<ShieldedStatistic>(`transactions/shielded/statistic${range}`, 'GET')
+}
+
+interface ShieldedPool {
+  poolBalance: string | null
+  notesCount: number | null
+}
+
+const getShieldedPool = (): Promise<ShieldedPool> => {
+  return call<ShieldedPool>('transactions/shielded/pool', 'GET')
 }
 
 interface ShieldHistoryPoint {
@@ -689,6 +699,7 @@ export {
   getTransactionsHistory,
   getTransactionsStatistic,
   getShieldedStatistic,
+  getShieldedPool,
   getShieldHistory,
   getUnshieldHistory,
   getTransactions,
