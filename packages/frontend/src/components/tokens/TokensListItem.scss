@@ -29,14 +29,6 @@
 
     &--Supply {
       justify-content: flex-end;
-
-      .Supply {
-        width: 100%;
-      }
-
-      &BigNumber {
-        font-size: 0.75rem;
-      }
     }
 
     &--OwnerIdentity {
@@ -55,17 +47,47 @@
     }
   }
 
+  // single-number supply for list density (CMC-style primary figure)
+  &__Supply {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 3px;
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  &__SupplyValue {
+    font-family: $font-mono;
+    font-size: 0.75rem;
+    font-variant-numeric: tabular-nums;
+    color: #fff;
+    white-space: nowrap;
+  }
+
+  &__SupplyBar {
+    width: 100%;
+    max-width: 4.5rem;
+    border-radius: 1px;
+    opacity: 0.85;
+  }
+
+  &__PriceEmpty {
+    opacity: 0.45;
+    font-size: 0.75rem;
+  }
+
+  &__PriceFrom {
+    white-space: nowrap;
+  }
+
   // phone: denser metric columns next to name
   @container (max-width: 40rem) {
+    &__SupplyValue {
+      font-size: 0.6875rem;
+    }
+
     &__Column {
-      &--Supply {
-        font-size: 0.6875rem;
-
-        &BigNumber {
-          font-size: 0.6875rem;
-        }
-      }
-
       &--Price {
         font-size: 0.6875rem;
       }
