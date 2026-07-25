@@ -28,6 +28,8 @@
     }
 
     &--Supply {
+      justify-content: flex-end;
+
       .Supply {
         width: 100%;
       }
@@ -49,6 +51,24 @@
     &--Balance, &--Price {
       font-size: 0.625rem;
       font-weight: 400;
+      justify-content: flex-end;
+    }
+  }
+
+  // phone: denser metric columns next to name
+  @container (max-width: 40rem) {
+    &__Column {
+      &--Supply {
+        font-size: 0.6875rem;
+
+        &BigNumber {
+          font-size: 0.6875rem;
+        }
+      }
+
+      &--Price {
+        font-size: 0.6875rem;
+      }
     }
   }
 

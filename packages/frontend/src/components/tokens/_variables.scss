@@ -1,7 +1,8 @@
 @import '../../styles/variables.scss';
 
-// Column tracks for /tokens list — keep Name + Supply on phones.
-// Drop Contract → Price → Owner first; never drop Name.
+// Column tracks for /tokens list — catalog mental model on phone:
+// Name · Supply · Price (Contract / Owner → detail / filters).
+// Drop Contract → Owner first; never drop Name. Price only on the narrowest strip.
 @mixin Columns() {
   display: grid;
   gap: 12px;
@@ -24,7 +25,7 @@
       minmax(0, 1fr);
   }
 
-  // drop Contract
+  // drop Contract — Name · Supply · Price · Owner
   @container (max-width: 64rem) {
     grid-template-columns:
       minmax(10rem, 1.5fr)
@@ -33,27 +34,21 @@
       minmax(0, 1fr);
   }
 
-  // drop Price — Name · Supply · Owner
+  // drop Owner — Name · Supply · Price (tablet / phone)
   @container (max-width: 48rem) {
     grid-template-columns:
       minmax(0, 1.4fr)
       7rem
-      minmax(0, 1fr);
-  }
-
-  // phone: Name · Supply (drop Owner; matches directory mental model)
-  @container (max-width: 40rem) {
-    grid-template-columns:
-      minmax(0, 1fr)
-      minmax(5.5rem, 8rem);
+      minmax(5.5rem, 7rem);
     gap: 10px;
   }
 
-  // very narrow: still Name · Supply
-  @container (max-width: 23rem) {
+  // phone (~390 / ~320 content): keep Name · Supply · Price
+  @container (max-width: 40rem) {
     grid-template-columns:
       minmax(0, 1fr)
-      minmax(4.5rem, 6.5rem);
+      minmax(4.75rem, 6.25rem)
+      minmax(4rem, 5.75rem);
     gap: 8px;
   }
 }
@@ -109,7 +104,7 @@
       6rem;
   }
 
-  // phone: Name · Balance (supply optional secondary — keep supply + balance if fits)
+  // phone balance: Name · Balance
   @container (max-width: 40rem) {
     grid-template-columns:
       minmax(0, 1fr)
@@ -135,12 +130,6 @@
   }
 
   @container (max-width: 48rem) {
-    &--Price {
-      display: none;
-    }
-  }
-
-  @container (max-width: 40rem) {
     &--OwnerIdentity {
       display: none;
     }
