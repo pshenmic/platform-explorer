@@ -93,7 +93,7 @@ function TransactionsListItem ({ transaction, rate, absoluteDate }) {
           {transaction?.timestamp
             ? absoluteDate
               ? <DateBlock format={'dateOnly'} showTime={true} timestamp={transaction.timestamp} showRelativeTooltip={true}/>
-              : <TimeDelta showTimestampTooltip={true} endDate={new Date(transaction.timestamp)}/>
+              : <TimeDelta showTimestampTooltip={true} format={'compact'} endDate={new Date(transaction.timestamp)}/>
             : <NotActive/>
           }
         </GridItem>

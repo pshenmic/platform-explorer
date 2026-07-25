@@ -46,4 +46,10 @@
       width: 100%;
     }
   }
+
+  @media screen and (max-width: $breakpoint-sm) {
+    &__InfoBlocks {
+      gap: 0.625rem;
+    }
+  }
 }

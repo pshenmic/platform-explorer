@@ -1,7 +1,7 @@
 'use client'
 
 import * as Api from '../../util/Api'
-import { DateBlock, Identifier, InfoLine } from '../data'
+import { Identifier, InfoLine, TimeDelta } from '../data'
 import { HorisontalSeparator } from '../ui/separators'
 import { ValueContainer } from '../ui/containers'
 import { BlockIcon, ChevronIcon } from '../ui/icons'
@@ -13,8 +13,8 @@ import './BlockTotalCard.scss'
 function BlockTotalCard ({ block, l1explorerBaseUrl, className }) {
   const [blocks, setBlocks] = useState({ data: {}, loading: true, error: false })
   const blockData = block?.data?.header
-  const [previousBlock] = blocks.data?.resultSet?.filter(block => block?.header?.height === blockData?.height - 1) || []
-  const [nextBlock] = blocks.data?.resultSet?.filter(block => block?.header?.height === blockData?.height + 1) || []
+  const [previousBlock] = blocks.data?.resultSet?.filter(b => b?.header?.height === blockData?.height - 1) || []
+  const [nextBlock] = blocks.data?.resultSet?.filter(b => b?.header?.height === blockData?.height + 1) || []
 
   const fetchData = () => {
     if (!blockData?.height) return
@@ -36,37 +36,27 @@ function BlockTotalCard ({ block, l1explorerBaseUrl, className }) {
         </div>
       }
 
-      <div className={'BlockTotalCard__Header'}>
-        <div className={'BlockTotalCard__HeaderLines'}>
-          <InfoLine
-            className={'BlockTotalCard__InfoLine--Hash'}
-            title={'Block Hash'}
-            loading={block.loading}
-            error={block.error || !block?.data?.header?.hash}
-            value={
-              <Identifier
-                copyButton={true}
-                styles={['highlight-both']}
-                ellipsis={false}
-              >
-                {block?.data?.header?.hash}
-              </Identifier>
-            }
-          />
-
-          <InfoLine
-            className={'BlockTotalCard__Owner'}
-            title={'L1 Locked Height'}
-            loading={block.loading}
-            error={block.error}
-            value={
-              <ValueContainer external={true} link={`${l1explorerBaseUrl}/block/${block.data?.header?.l1LockedHeight}`}>
-                {block.data?.header?.l1LockedHeight}
-              </ValueContainer>
-            }
-          />
+      {/* Height first — home/list mental model */}
+      <div className={'BlockTotalCard__Hero'}>
+        <div className={'BlockTotalCard__HeroMain'}>
+          <span className={'BlockTotalCard__HeroLabel'}>Height</span>
+          <div className={'BlockTotalCard__BlockHeight'}>
+            {previousBlock
+              ? <ValueCard link={`/block/${previousBlock.header?.hash}`}>
+                  <ChevronIcon transform={'rotate(180deg)'}/>
+                </ValueCard>
+              : <span className={'BlockTotalCard__NavSpacer'} aria-hidden={'true'}/>}
+            <span className={'BlockTotalCard__HeightValue'}>
+              {block.loading ? '…' : (blockData?.height ?? '—')}
+            </span>
+            {nextBlock
+              ? <ValueCard link={`/block/${nextBlock.header?.hash}`}>
+                  <ChevronIcon/>
+                </ValueCard>
+              : <span className={'BlockTotalCard__NavSpacer'} aria-hidden={'true'}/>}
+          </div>
         </div>
-        <div className={'BlockTotalCard__Avatar'}>
+        <div className={'BlockTotalCard__Avatar'} aria-hidden={'true'}>
           <BlockIcon/>
         </div>
       </div>
@@ -75,31 +65,38 @@ function BlockTotalCard ({ block, l1explorerBaseUrl, className }) {
 
       <div className={'BlockTotalCard__CommonInfo'}>
         <InfoLine
-          title={'Height'}
+          className={'BlockTotalCard__InfoLine--Hash'}
+          title={'Block Hash'}
+          loading={block.loading}
+          error={block.error || !block?.data?.header?.hash}
           value={
-            <div className={'BlockTotalCard__BlockHeight'}>
-              {previousBlock &&
-                <ValueCard link={`/block/${previousBlock.header?.hash}`}>
-                  <ChevronIcon transform={'rotate(180deg)'}/>
-                </ValueCard>
-              }
-              <div>{blockData?.height}</div>
-              {nextBlock &&
-                <ValueCard link={`/block/${nextBlock.header?.hash}`}>
-                  <ChevronIcon/>
-                </ValueCard>
-              }
-            </div>
+            <Identifier
+              copyButton={true}
+              styles={['highlight-both']}
+              middleEllipsis={true}
+            >
+              {block?.data?.header?.hash}
+            </Identifier>
           }
+        />
+
+        <InfoLine
+          className={'BlockTotalCard__Owner'}
+          title={'L1 Locked Height'}
           loading={block.loading}
           error={block.error}
+          value={
+            <ValueContainer external={true} link={`${l1explorerBaseUrl}/block/${block.data?.header?.l1LockedHeight}`}>
+              {block.data?.header?.l1LockedHeight}
+            </ValueContainer>
+          }
         />
 
         <InfoLine
           className={'BlockTotalCard__InfoLine BlockTotalCard__InfoLine--AppHash'}
           title={'App Hash'}
           value={
-            <Identifier styles={['highlight-both']} ellipsis={false}>
+            <Identifier styles={['highlight-both']} middleEllipsis={true} copyButton={true}>
               {blockData?.appHash}
             </Identifier>
           }
@@ -111,7 +108,7 @@ function BlockTotalCard ({ block, l1explorerBaseUrl, className }) {
           className={'BlockTotalCard__InfoLine BlockTotalCard__InfoLine--QuorumHash'}
           title={'Quorum Hash'}
           value={
-            <Identifier styles={['highlight-both']} ellipsis={false}>
+            <Identifier styles={['highlight-both']} middleEllipsis={true} copyButton={true}>
               {block?.data?.quorum?.quorumHash}
             </Identifier>
           }
@@ -127,8 +124,16 @@ function BlockTotalCard ({ block, l1explorerBaseUrl, className }) {
         />
 
         <InfoLine
-          title={'Timestamp'}
-          value={<DateBlock timestamp={blockData?.timestamp}/>}
+          title={'Time'}
+          value={
+            blockData?.timestamp
+              ? <TimeDelta
+                  showTimestampTooltip={true}
+                  format={'compact'}
+                  endDate={new Date(blockData.timestamp)}
+                />
+              : null
+          }
           loading={block.loading}
           error={block.error}
         />
