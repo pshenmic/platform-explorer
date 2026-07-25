@@ -5,24 +5,50 @@ import { Grid, GridItem } from '@chakra-ui/react'
 import TypeBadge from './TypeBadge'
 import BatchTypeBadge from './BatchTypeBadge'
 import TransactionStatusBadge from './TransactionStatusBadge'
+import StatusIcon from './StatusIcon'
 import { Identifier, BigNumber, Alias, TimeDelta, NotActive, DateBlock } from '../data'
-import { RateTooltip } from '../ui/Tooltips'
+import { RateTooltip, Tooltip } from '../ui/Tooltips'
+import { CheckmarkIcon, ErrorCircleIcon } from '../ui/icons'
 import ImageGenerator from '../imageGenerator'
 import { useRouter } from 'next/navigation'
 import { LinkContainer } from '../ui/containers'
 
 import './TransactionsListItem.scss'
 
+const STATUS_LABEL = {
+  SUCCESS: 'Success',
+  FAIL: 'Failed',
+  QUEUED: 'Queued',
+  POOLED: 'Pooled',
+  BROADCASTED: 'Broadcasted'
+}
+
 function TransactionsListItem ({ transaction, rate, absoluteDate }) {
   const activeAlias = transaction?.owner?.aliases?.find(alias => alias.status === 'ok')
   const router = useRouter()
+  const status = transaction?.status
 
   return (
     <Link href={`/transaction/${transaction?.hash}`} className={'TransactionsListItem'}>
       <Grid className={'TransactionsListItem__Content'}>
         <GridItem className={'TransactionsListItem__Column TransactionsListItem__Column--Status'}>
-          {transaction?.status
-            ? <TransactionStatusBadge status={transaction.status}/>
+          {status
+            ? <>
+                <span className={'TransactionsListItem__StatusBadge'}>
+                  <TransactionStatusBadge status={status}/>
+                </span>
+                <span className={'TransactionsListItem__StatusIcon'}>
+                  <Tooltip content={STATUS_LABEL[status] || status} placement={'top'}>
+                    <span className={'TransactionsListItem__StatusIconInner'}>
+                      {status === 'SUCCESS'
+                        ? <CheckmarkIcon w={'18px'} h={'18px'}/>
+                        : status === 'FAIL'
+                          ? <ErrorCircleIcon w={'18px'} h={'18px'}/>
+                          : <StatusIcon status={status} w={'18px'} h={'18px'}/>}
+                    </span>
+                  </Tooltip>
+                </span>
+              </>
             : <NotActive/>
           }
         </GridItem>
@@ -93,7 +119,7 @@ function TransactionsListItem ({ transaction, rate, absoluteDate }) {
           {transaction?.timestamp
             ? absoluteDate
               ? <DateBlock format={'dateOnly'} showTime={true} timestamp={transaction.timestamp} showRelativeTooltip={true}/>
-              : <TimeDelta showTimestampTooltip={true} endDate={new Date(transaction.timestamp)}/>
+              : <TimeDelta showTimestampTooltip={true} format={'compact'} endDate={new Date(transaction.timestamp)}/>
             : <NotActive/>
           }
         </GridItem>
