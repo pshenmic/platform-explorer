@@ -16,7 +16,7 @@ import './TokensList.scss'
 const columnHelper = createColumnHelper()
 
 const columns = [
-  columnHelper.accessor('name', { id: 'tokenName', header: 'Token Name' }),
+  columnHelper.accessor('name', { id: 'tokenName', header: 'Name' }),
   columnHelper.accessor('position', { id: 'position', header: 'Position' }),
   columnHelper.accessor('totalSupply', { id: 'supply', header: 'Supply' }),
   columnHelper.accessor('price', { id: 'price', header: 'Price' }),
@@ -51,7 +51,7 @@ function TokensList ({
     <div className={`TokensList ${variantClass}`}>
       <Grid className={`TokensList__ColumnTitles ${headerExtraClass[headerStyles] || ''}`}>
         <GridItem className={'TokensList__ColumnTitle TokensList__ColumnTitle--TokenName'}>
-          Token Name
+          Name
         </GridItem>
         <GridItem className={'TokensList__ColumnTitle TokensList__ColumnTitle--Supply'}>
           Supply
