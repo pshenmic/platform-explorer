@@ -5,6 +5,7 @@ import { forwardRef } from 'react'
 import { Container } from '@chakra-ui/react'
 import ImageGenerator from '../../imageGenerator'
 import ListColumnsHeader from './ListColumnsHeader'
+import DataList from './DataList/DataList'
 import { BigNumber, Identifier, Alias } from '../../data'
 import { RateTooltip } from '../Tooltips'
 
@@ -144,5 +145,6 @@ SimpleList.displayName = 'SimpleList'
 export {
   SimpleList,
   EmptyListMessage,
-  ListColumnsHeader
+  ListColumnsHeader,
+  DataList
 }
