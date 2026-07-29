@@ -17,7 +17,6 @@ export default function HomeHero ({ status, loading, avgBlockTimeSec, epochNumbe
   const live = isNetworkLive(status)
   const badgeState = !ready ? 'is-loading' : (live ? 'is-live' : 'is-down')
 
-  const epochInProgress = typeof epochEndTime === 'number' && epochEndTime > Date.now()
   const epochProgress = (() => {
     if (typeof epochStartTime !== 'number' || typeof epochEndTime !== 'number') return null
     const total = epochEndTime - epochStartTime
@@ -63,17 +62,20 @@ export default function HomeHero ({ status, loading, avgBlockTimeSec, epochNumbe
 
           <div className={'HomeHero__LiveStat HomeHero__LiveStat--Epoch'}>
             <Text className={'HomeHero__LiveLabel'}>Epoch</Text>
-            <div
-              className={'HomeHero__Height HomeHero__Height--Epoch'}
-              style={epochProgress !== null ? { '--epoch-progress': epochProgress } : undefined}
-            >
+            <div className={'HomeHero__Height'}>
               {typeof epochCount === 'number' ? <BigNumber>{epochCount}</BigNumber> : '—'}
             </div>
-            <Text className={'HomeHero__LiveMeta'}>
-              {epochEndTime
-                ? <>{!epochInProgress && <>ended </>}<TimeDelta endDate={new Date(epochEndTime)}/></>
-                : 'Live'}
-            </Text>
+            <div
+              className={'HomeHero__EpochProgress'}
+              style={epochProgress !== null ? { '--epoch-progress': epochProgress } : undefined}
+            >
+              <span className={'HomeHero__EpochProgressFill'}/>
+              <span className={'HomeHero__EpochProgressLabel'}>
+                {typeof epochStartTime === 'number'
+                  ? <>elapsed <TimeDelta endDate={new Date(epochStartTime)} format={'compact'}/></>
+                  : '—'}
+              </span>
+            </div>
           </div>
         </div>
       </Box>

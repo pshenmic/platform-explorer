@@ -665,15 +665,6 @@
     }
   }
 
-  // the epoch stat reads as a companion to block height: same language, smaller footprint
-  &__LiveStat--Epoch {
-    .HomeHero__Height--Epoch { font-size: 2rem; }
-
-    @media screen and (max-width: $breakpoint-lg) {
-      .HomeHero__Height--Epoch { font-size: 1.75rem; }
-    }
-  }
-
   &__LiveDivider {
     align-self: stretch;
     width: 1px;
@@ -753,25 +744,42 @@
     opacity: 0.4;
   }
 
-  // epoch progress ring: thin conic-gradient arc traces elapsed time toward the next epoch
-  &__Height--Epoch {
+  // epoch progress bar: same vertical slot as the block-height meta line, so both
+  // columns land on the same rhythm — fill tracks elapsed time toward the next epoch
+  &__EpochProgress {
     position: relative;
-    display: inline-flex;
-    padding: 10px 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    min-width: 120px;
+    height: 1.375rem;
+    margin: 10px 0 0;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(var(--chakra-colors-gray-800-rgb), 0.6);
+    overflow: hidden;
 
-    &::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      border-radius: 50%;
-      background: conic-gradient(
-        $color-brand-normal calc(var(--epoch-progress, 0) * 360deg),
-        rgba(255, 255, 255, 0.1) 0
-      );
-      -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 3px), #000 calc(100% - 3px));
-      mask: radial-gradient(farthest-side, transparent calc(100% - 3px), #000 calc(100% - 3px));
-      pointer-events: none;
+    @media screen and (max-width: $breakpoint-lg) {
+      width: auto;
     }
+  }
+
+  &__EpochProgressFill {
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: calc(var(--epoch-progress, 0) * 100%);
+    background: rgba(var(--chakra-colors-brand-normal-rgb), 0.4);
+    transition: width .3s ease;
+  }
+
+  &__EpochProgressLabel {
+    position: relative;
+    z-index: 1;
+    font-size: 0.6875rem;
+    font-family: $font-mono;
+    color: #fff;
+    white-space: nowrap;
   }
 }
 
