@@ -349,6 +349,22 @@ const getContestedResourceVotes = (
   return call<PaginatedResultSet<Vote>>(`contestedResource/${value}/votes?${params.toString()}`, 'GET')
 }
 
+interface DataContractRatingItem {
+  identifier: string
+  transitionsCount: number
+}
+
+const getDataContractsRating = (
+  page: number = 1,
+  limit: number = 10,
+  order: SortOrder = 'desc'
+): Promise<PaginatedResultSet<DataContractRatingItem>> => {
+  return call<PaginatedResultSet<DataContractRatingItem>>(
+    `dataContracts/rating?page=${page}&limit=${limit}&order=${order}`,
+    'GET'
+  )
+}
+
 const getDataContractByIdentifier = (identifier: string): Promise<DataContract> => {
   return call<DataContract>(`dataContract/${identifier}`, 'GET')
 }
@@ -750,6 +766,7 @@ export {
   getDocumentByIdentifier,
   getDocumentRevisions,
   getDataContractByIdentifier,
+  getDataContractsRating,
   getDataContracts,
   getIdentities,
   getIdentity,
