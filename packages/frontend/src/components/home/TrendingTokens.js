@@ -1,10 +1,8 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Box } from '@chakra-ui/react'
 import * as Api from '../../util/Api'
 import { getTokenName } from '../../util'
-import { CardHead } from '../cards'
 import { SimpleList, EmptyListMessage } from '../ui/lists'
 import { LoadingList } from '../loading'
 
@@ -33,24 +31,19 @@ export default function TrendingTokens ({ enabled = true }) {
 
   const { loading, error, items } = state
 
-  return (
-    <Box className={'InfoBlock InfoBlock--NoBorder TrendingTokens'} w={'100%'}>
-      <CardHead title={'Trending tokens'}/>
+  if (loading) return <LoadingList itemsCount={6}/>
+  if (error || !items.length) return <EmptyListMessage>No data</EmptyListMessage>
 
-      {loading
-        ? <LoadingList itemsCount={6}/>
-        : error || !items.length
-          ? <EmptyListMessage>No data</EmptyListMessage>
-          : <SimpleList
-              items={items.map(item => ({
-                columns: [
-                  { value: getTokenName(item.localizations), avatar: true, avatarSource: item.tokenIdentifier },
-                  { value: item.transitionCount }
-                ],
-                link: `/token/${item.tokenIdentifier}`
-              }))}
-              columns={['Token', 'Transitions']}
-            />}
-    </Box>
+  return (
+    <SimpleList
+      items={items.map(item => ({
+        columns: [
+          { value: getTokenName(item.localizations), avatar: true, avatarSource: item.tokenIdentifier },
+          { value: item.transitionCount }
+        ],
+        link: `/token/${item.tokenIdentifier}`
+      }))}
+      columns={['Token', 'Transitions']}
+    />
   )
 }

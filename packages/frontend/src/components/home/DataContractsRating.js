@@ -1,9 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Box } from '@chakra-ui/react'
 import * as Api from '../../util/Api'
-import { CardHead } from '../cards'
 import { SimpleList, EmptyListMessage } from '../ui/lists'
 import { LoadingList } from '../loading'
 
@@ -26,24 +24,19 @@ export default function DataContractsRating ({ enabled = true }) {
 
   const { loading, error, items } = state
 
-  return (
-    <Box className={'InfoBlock InfoBlock--NoBorder DataContractsRating'} w={'100%'}>
-      <CardHead title={'Data contracts rating'}/>
+  if (loading) return <LoadingList itemsCount={6}/>
+  if (error || !items.length) return <EmptyListMessage>No data</EmptyListMessage>
 
-      {loading
-        ? <LoadingList itemsCount={6}/>
-        : error || !items.length
-          ? <EmptyListMessage>No data</EmptyListMessage>
-          : <SimpleList
-              items={items.map(item => ({
-                columns: [
-                  { value: item.identifier, format: 'identifier' },
-                  { value: item.transitionsCount }
-                ],
-                link: `/dataContract/${item.identifier}`
-              }))}
-              columns={['Identifier', 'Transitions']}
-            />}
-    </Box>
+  return (
+    <SimpleList
+      items={items.map(item => ({
+        columns: [
+          { value: item.identifier, format: 'identifier', avatar: true, avatarSource: item.identifier },
+          { value: item.transitionsCount }
+        ],
+        link: `/dataContract/${item.identifier}`
+      }))}
+      columns={['Identifier', 'Transitions']}
+    />
   )
 }

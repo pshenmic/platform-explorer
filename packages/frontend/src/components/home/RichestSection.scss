@@ -1,0 +1,38 @@
+@import '../../styles/variables.scss';
+
+.HomeRichest {
+  &__Grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+
+    @media screen and (min-width: $breakpoint-lg) {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 0;
+    }
+  }
+
+  &__Col {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+
+    @media screen and (min-width: $breakpoint-lg) {
+      padding: 0 2rem;
+      border-right: 1px solid rgba(var(--chakra-colors-gray-800-rgb), 0.6);
+
+      &:first-child { padding-left: 0; }
+      &:last-child { padding-right: 0; border-right: none; }
+    }
+  }
+
+  &__ColTitle {
+    font-family: $font-heading;
+    font-weight: 700;
+    font-size: 0.6875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: #fff;
+    margin-bottom: 8px;
+  }
+}

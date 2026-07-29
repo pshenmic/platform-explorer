@@ -4,7 +4,7 @@ import { useState, useEffect, useMemo, useRef } from 'react'
 import { useQuery, useQueries } from '@tanstack/react-query'
 import * as Api from '../../util/Api'
 import HomeHero from './HomeHero.js'
-import { MetricChart, EpochsOverview, StatusBar, HeroMeta, MasternodesDonut, TxTypesBar, ShieldedPoolCard, CompactTxList, CompactBlocksList, DataContractsRating, RichestIdentities, TrendingTokens } from '../../components/home'
+import { MetricChart, EpochsOverview, StatusBar, HeroMeta, MasternodesDonut, TxTypesBar, ShieldedPoolCard, CompactTxList, CompactBlocksList, RichestSection } from '../../components/home'
 import { fetchHandlerSuccess, fetchHandlerError } from '../../util'
 import theme from '../../styles/theme'
 import { Box, Container, Flex, SimpleGrid } from '@chakra-ui/react'
@@ -244,13 +244,12 @@ function Home () {
           />
         </Box>
 
+        <RichestSection rate={rate} enabled={belowFoldReady}/>
+
         <SimpleGrid columns={{ base: 1, md: 2 }} spacing={gap} w={'100%'}>
           <MetricChart title={'Transactions history'} type={'bar'} fetcher={Api.getTransactionsHistory} field={'txs'} yAbbr={'txs'} enabled={belowFoldReady}/>
           <MetricChart title={'Identities growth'} type={'line'} fetcher={Api.getIdentitiesHistory} field={'registeredIdentities'} yAbbr={'identities'} enabled={belowFoldReady}/>
           <TxTypesBar enabled={belowFoldReady}/>
-          <DataContractsRating enabled={belowFoldReady}/>
-          <RichestIdentities rate={rate} enabled={belowFoldReady}/>
-          <TrendingTokens enabled={belowFoldReady}/>
           <ShieldedPoolCard rate={rate} enabled={belowFoldReady}/>
           <MasternodesDonut validators={validators} validatorsActive={validatorsActive} validatorsBanned={validatorsBanned} validatorsInactive={validatorsInactive} validatorsList={validatorsGeoQuery.data?.resultSet}/>
           <Box className={'InfoBlock InfoBlock--NoBorder HomeGovCard'} w={'100%'}>
