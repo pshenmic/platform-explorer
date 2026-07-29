@@ -631,20 +631,56 @@
 
   &__Live {
     display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 1.75rem;
+    min-width: 0;
+    padding-left: 2rem;
+
+    @media screen and (max-width: $breakpoint-lg) {
+      justify-content: flex-start;
+      padding-left: 0;
+      padding-top: 1.25rem;
+      border-left: none;
+      border-top: 1px solid rgba(var(--chakra-colors-gray-800-rgb), 0.6);
+    }
+
+    @media screen and (max-width: $breakpoint-md) {
+      gap: 1.25rem;
+    }
+  }
+
+  &__LiveStat {
+    display: flex;
     flex-direction: column;
     align-items: flex-end;
     justify-content: center;
     min-width: 0;
     text-align: right;
-    padding-left: 2rem;
 
     @media screen and (max-width: $breakpoint-lg) {
       align-items: flex-start;
       text-align: left;
-      padding-left: 0;
-      padding-top: 1.25rem;
-      border-left: none;
-      border-top: 1px solid rgba(var(--chakra-colors-gray-800-rgb), 0.6);
+    }
+  }
+
+  // the epoch stat reads as a companion to block height: same language, smaller footprint
+  &__LiveStat--Epoch {
+    .HomeHero__Height--Epoch { font-size: 2rem; }
+
+    @media screen and (max-width: $breakpoint-lg) {
+      .HomeHero__Height--Epoch { font-size: 1.75rem; }
+    }
+  }
+
+  &__LiveDivider {
+    align-self: stretch;
+    width: 1px;
+    background: rgba(var(--chakra-colors-gray-800-rgb), 0.6);
+
+    @media screen and (max-width: $breakpoint-lg) {
+      display: none;
     }
   }
 
@@ -715,6 +751,27 @@
 
   &__Live--Loading &__Height {
     opacity: 0.4;
+  }
+
+  // epoch progress ring: thin conic-gradient arc traces elapsed time toward the next epoch
+  &__Height--Epoch {
+    position: relative;
+    display: inline-flex;
+    padding: 10px 14px;
+
+    &::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      background: conic-gradient(
+        $color-brand-normal calc(var(--epoch-progress, 0) * 360deg),
+        rgba(255, 255, 255, 0.1) 0
+      );
+      -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 3px), #000 calc(100% - 3px));
+      mask: radial-gradient(farthest-side, transparent calc(100% - 3px), #000 calc(100% - 3px));
+      pointer-events: none;
+    }
   }
 }
 

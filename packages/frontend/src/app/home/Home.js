@@ -194,7 +194,14 @@ function Home () {
       mb={gap}
     >
       <Flex direction={'column'} gap={gap}>
-        <HomeHero status={statusQuery.data ?? {}} loading={statusQuery.isLoading} avgBlockTimeSec={avgBlockTimeSec}/>
+        <HomeHero
+          status={statusQuery.data ?? {}}
+          loading={statusQuery.isLoading}
+          avgBlockTimeSec={avgBlockTimeSec}
+          epochNumber={currentEpochNumber}
+          epochStartTime={currentEpochPayload?.epoch?.startTime}
+          epochEndTime={currentEpochPayload?.epoch?.endTime}
+        />
 
         <Box
           className={'InfoBlock InfoBlock--NoBorder HomeOverview'}
