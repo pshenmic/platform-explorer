@@ -11,8 +11,8 @@ serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 tokio = { version = "1.12.0", features = ["full"] }
 futures = "0.3"
-dpp = { git = "https://github.com/dashpay/platform", tag = "v4.0.0-rc.2" }
-data-contracts = { git = "https://github.com/dashpay/platform", tag = "v4.0.0-rc.2" }
+dpp = { git = "https://github.com/dashpay/platform", tag = "v4.1.0" }
+data-contracts = { git = "https://github.com/dashpay/platform", tag = "v4.1.0" }
 async-trait = { version = "0.1"}
 anyhow = { version = "1.0"}
 base64 = "0.21.2"
@@ -23,6 +23,6 @@ dotenv = "0.15.0"
 chrono = { version = "0.4.37", features = ["serde"] }
 tokio-postgres = { version="0.7.10", features=["with-chrono-0_4", "with-serde_json-1"] }
 time = { version="0.3.29", features=["serde"] }
-dashcore-rpc = { git = "https://github.com/owl352/rust-dashcore-rpc", rev = "bc6c4cdb1afbc00f1a4abb631bc5f33ae19e571a" }
+dashcore-rpc = { git = "https://github.com/dashpay/rust-dashcore", rev = "70d4bf8e36057c58e02d56769a6e9760f701dd06" }
 hex = "0.4.3"
 bincode_derive = "=2.0.1"

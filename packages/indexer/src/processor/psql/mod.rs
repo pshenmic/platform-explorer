@@ -184,6 +184,7 @@ impl PSQLProcessor {
             SystemDataContract::WalletUtils => {}
             SystemDataContract::TokenHistory => {}
             SystemDataContract::KeywordSearch => {}
+            SystemDataContract::DocumentHistory => {}
         }
     }
 }
