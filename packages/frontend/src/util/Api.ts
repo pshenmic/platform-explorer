@@ -120,23 +120,6 @@ const getTransactionsHistory = (
   )
 }
 
-interface GasHistoryPoint {
-  gas: number
-  blockHeight: number | null
-  blockHash: string | null
-}
-
-const getTransactionsGasHistory = (
-  start: string,
-  end: string,
-  intervalsCount?: number
-): Promise<Array<SeriesData<GasHistoryPoint>>> => {
-  return call<Array<SeriesData<GasHistoryPoint>>>(
-    `transactions/gas/history?timestamp_start=${start}&timestamp_end=${end}${intervalsCount ? `&intervalsCount=${intervalsCount}` : ''}`,
-    'GET'
-  )
-}
-
 interface TransactionsStatisticItem {
   transactionType: string
   count: number
@@ -743,7 +726,6 @@ export {
   getStatus,
   getBlocks,
   getAvgBlockTimeHistory,
-  getTransactionsGasHistory,
   getContestedResources,
   getContestedResourceByValue,
   getContestedResourceVotes,

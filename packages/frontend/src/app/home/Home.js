@@ -247,7 +247,6 @@ function Home () {
         <SimpleGrid columns={{ base: 1, md: 2 }} spacing={gap} w={'100%'}>
           <MetricChart title={'Transactions history'} type={'bar'} fetcher={Api.getTransactionsHistory} field={'txs'} yAbbr={'txs'} enabled={belowFoldReady}/>
           <MetricChart title={'Identities growth'} type={'line'} fetcher={Api.getIdentitiesHistory} field={'registeredIdentities'} yAbbr={'identities'} enabled={belowFoldReady}/>
-          <MetricChart title={'Gas usage'} type={'bar'} fetcher={Api.getTransactionsGasHistory} field={'gas'} yAbbr={'gas'} enabled={belowFoldReady}/>
           <TxTypesBar enabled={belowFoldReady}/>
           <DataContractsRating enabled={belowFoldReady}/>
           <ShieldedPoolCard rate={rate} enabled={belowFoldReady}/>
