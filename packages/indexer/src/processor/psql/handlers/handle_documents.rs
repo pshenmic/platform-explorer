@@ -153,30 +153,9 @@ impl PSQLProcessor {
                         .await
                         .unwrap();
                 }
-                DocumentTransition::Delete(_) => {
-                    let domain_document = self
-                        .dao
-                        .get_document_with_data_by_identifier(
-                            document_identifier.clone(),
-                            sql_transaction,
-                        )
-                        .await
-                        .unwrap()
-                        .expect(&format!(
-                            "Could not get DPNS domain document with identifier {} from the database",
-                            document_identifier
-                        ));
-
-                    self.dao
-                        .delete_identity_alias(
-                            build_dpns_alias(domain_document),
-                            st_hash.clone(),
-                            sql_transaction,
-                        )
-                        .await
-                        .unwrap();
-                }
-                DocumentTransition::UpdatePrice(_) => {}
+                // Delete and Replace of a DPNS domain document are rejected by a data trigger,
+                // and a price update does not move the alias anywhere
+                DocumentTransition::Delete(_) | DocumentTransition::UpdatePrice(_) => {}
             }
         }
 

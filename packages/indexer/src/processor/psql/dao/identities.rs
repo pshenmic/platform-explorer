@@ -110,23 +110,6 @@ impl PostgresDAO {
         Ok(())
     }
 
-    pub async fn delete_identity_alias(
-        &self,
-        alias: String,
-        st_hash: String,
-        sql_transaction: &Transaction<'_>,
-    ) -> Result<(), PoolError> {
-        let query = "DELETE FROM identity_aliases WHERE alias = $1;";
-
-        let stmt = sql_transaction.prepare_cached(query).await.unwrap();
-
-        sql_transaction.execute(&stmt, &[&alias]).await.unwrap();
-
-        println!("Deleted Identity Alias {} ({})", alias, &st_hash);
-
-        Ok(())
-    }
-
     pub async fn get_identity_by_identifier(
         &self,
         identifier: String,
