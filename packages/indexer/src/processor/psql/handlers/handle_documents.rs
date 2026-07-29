@@ -153,8 +153,6 @@ impl PSQLProcessor {
                         .await
                         .unwrap();
                 }
-                // Delete and Replace of a DPNS domain document are rejected by a data trigger,
-                // and a price update does not move the alias anywhere
                 DocumentTransition::Delete(_) | DocumentTransition::UpdatePrice(_) => {}
             }
         }
