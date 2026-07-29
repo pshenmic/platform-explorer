@@ -1,3 +1,4 @@
+use crate::entities::document::Document;
 use crate::entities::validator::Validator;
 use crate::models::{
     TenderdashRPCBlockResponse, TenderdashRPCBlockResultsResponse, TenderdashRPCStatusResponse,
@@ -91,6 +92,25 @@ impl TenderdashRpcApi {
 
         Ok(validators)
     }
+}
+
+pub fn build_dpns_alias(document: Document) -> String {
+    let data = document.data.expect(&format!(
+        "Could not find data of the DPNS domain document with identifier {}",
+        document.identifier
+    ));
+
+    let label = data
+        .get("label")
+        .and_then(|label| label.as_str())
+        .expect("Could not find DPNS domain document label");
+
+    let parent_domain_name = data
+        .get("parentDomainName")
+        .and_then(|parent_domain_name| parent_domain_name.as_str())
+        .expect("Could not find DPNS domain document parent domain name");
+
+    format!("{}.{}", label, parent_domain_name)
 }
 
 pub fn escape_null_character_string(s: String) -> String {

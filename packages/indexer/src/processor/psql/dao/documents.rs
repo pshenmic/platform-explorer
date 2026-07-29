@@ -109,6 +109,33 @@ impl PostgresDAO {
         Ok(())
     }
 
+    pub async fn get_document_with_data_by_identifier(
+        &self,
+        identifier: Identifier,
+        sql_transaction: &Transaction<'_>,
+    ) -> Result<Option<Document>, PoolError> {
+        let stmt = sql_transaction.prepare_cached("SELECT documents.id, documents.identifier,\
+        documents.document_type_name,documents.transition_type,data_contracts.identifier,documents.owner,documents.price,\
+        documents.deleted,documents.revision,documents.is_system,documents.prefunded_voting_balance,documents.data \
+        FROM documents \
+        LEFT JOIN data_contracts ON data_contracts.id = documents.data_contract_id \
+        WHERE documents.identifier = $1 AND documents.data IS NOT NULL \
+        ORDER by documents.id DESC \
+        LIMIT 1;").await.unwrap();
+
+        let rows: Vec<Row> = sql_transaction
+            .query(&stmt, &[&identifier.to_string(Base58)])
+            .await
+            .unwrap();
+
+        let documents: Vec<Document> = rows
+            .into_iter()
+            .map(|row| row.into())
+            .collect::<Vec<Document>>();
+
+        Ok(documents.first().cloned())
+    }
+
     pub async fn get_document_by_identifier(
         &self,
         identifier: Identifier,
