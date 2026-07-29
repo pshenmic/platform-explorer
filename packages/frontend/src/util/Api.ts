@@ -264,6 +264,23 @@ const getBlocks = (
   return call<PaginatedResultSet<Block>>(`blocks?${params.toString()}`, 'GET')
 }
 
+interface AvgBlockTimeHistoryPoint {
+  avgBlockTime: number
+  blockHeight: number | null
+  blockHash: string | null
+}
+
+const getAvgBlockTimeHistory = (
+  start: string,
+  end: string,
+  intervalsCount?: number
+): Promise<Array<SeriesData<AvgBlockTimeHistoryPoint>>> => {
+  return call<Array<SeriesData<AvgBlockTimeHistoryPoint>>>(
+    `blocks/avgBlockTime/history?timestamp_start=${start}&timestamp_end=${end}${intervalsCount ? `&intervalsCount=${intervalsCount}` : ''}`,
+    'GET'
+  )
+}
+
 const getBlocksByValidator = (
   proTxHash: string,
   page: number = 1,
@@ -692,6 +709,7 @@ const waitForStateTransitionResult = (hash: string): Promise<unknown> => {
 export {
   getStatus,
   getBlocks,
+  getAvgBlockTimeHistory,
   getContestedResources,
   getContestedResourceByValue,
   getContestedResourceVotes,

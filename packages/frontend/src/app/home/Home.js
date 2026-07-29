@@ -11,17 +11,6 @@ import { Box, Container, Flex, SimpleGrid } from '@chakra-ui/react'
 import { CardHead } from '../../components/cards'
 import './Home.scss'
 
-function computeAvgBlockTime (blocks) {
-  const stamps = (blocks || [])
-    .map(b => new Date(b?.header?.timestamp).getTime())
-    .filter(t => !Number.isNaN(t))
-    .sort((a, b) => b - a)
-  if (stamps.length < 2) return null
-  let total = 0
-  for (let i = 0; i < stamps.length - 1; i++) total += stamps[i] - stamps[i + 1]
-  return Math.round(total / (stamps.length - 1) / 1000)
-}
-
 function epochNumbersOf (current) {
   if (typeof current !== 'number') return []
   return [current - 3, current - 2, current - 1, current].filter(n => n >= 0)
@@ -41,6 +30,15 @@ function Home () {
   const statusQuery = useQuery({ queryKey: ['home', 'status'], queryFn: Api.getStatus, refetchInterval: 60000 })
   const txQuery = useQuery({ queryKey: ['home', 'transactions'], queryFn: () => Api.getTransactions(1, 10, 'desc'), refetchInterval: 30000 })
   const blocksQuery = useQuery({ queryKey: ['home', 'blocks'], queryFn: () => Api.getBlocks(1, 10, 'desc'), refetchInterval: 30000 })
+  const avgBlockTimeQuery = useQuery({
+    queryKey: ['home', 'avgBlockTime'],
+    queryFn: () => {
+      const end = new Date()
+      const start = new Date(end.getTime() - 3600000)
+      return Api.getAvgBlockTimeHistory(start.toISOString(), end.toISOString(), 1)
+    },
+    refetchInterval: 60000
+  })
   const validatorsQuery = useQuery({
     queryKey: ['home', 'validators', 'total'],
     queryFn: () => Api.getValidators(1, 1, 'desc'),
@@ -180,7 +178,8 @@ function Home () {
     epochQueries.every(q => !q.isPending && !q.isLoading)
   const belowFoldReady = epochsBaseList.length > 0 || epochsSettled
 
-  const avgBlockTimeSec = computeAvgBlockTime(blocksQuery.data?.resultSet)
+  const lastAvgBlockTime = [...(avgBlockTimeQuery.data || [])].reverse().find(p => typeof p?.data?.avgBlockTime === 'number')?.data?.avgBlockTime
+  const avgBlockTimeSec = typeof lastAvgBlockTime === 'number' ? Math.round(lastAvgBlockTime / 1000) : null
 
   return (
     <Container
