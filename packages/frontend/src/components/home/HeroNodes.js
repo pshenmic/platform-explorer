@@ -5,7 +5,7 @@ import { useEffect, useRef } from 'react'
 const LINK_DIST = 130
 const NODE_MIN = 12
 const NODE_MAX = 26
-// short drift after entering view, then freeze until the user hovers the hero
+// short drift + link animation after entering view, then freeze
 const INTRO_MS = 4000
 const BRAND = '0, 141, 228'
 const BRAND_LIGHT = '44, 187, 255'
@@ -26,10 +26,8 @@ export default function HeroNodes () {
     let nodes = []
     let raf = null
     let inView = true
-    let interactive = false
     let introUntil = 0
     let lastFrame = 0
-    const mouse = { x: -1, y: -1 }
 
     // center-weighted X: denser middle so the constellation sits behind the brand copy
     const centerBiasedX = (seed) => {
@@ -70,8 +68,8 @@ export default function HeroNodes () {
         }
       }
 
-      // O(n²) links are the hot path — only while the user is engaging the hero
-      if (interactive) {
+      // O(n²) links are the hot path — only while the intro drift is animating
+      if (animate) {
         for (let i = 0; i < nodes.length; i++) {
           for (let j = i + 1; j < nodes.length; j++) {
             const a = nodes[i]
@@ -86,19 +84,6 @@ export default function HeroNodes () {
               ctx.lineTo(b.x, b.y)
               ctx.stroke()
             }
-          }
-        }
-
-        for (const n of nodes) {
-          const dist = Math.hypot(n.x - mouse.x, n.y - mouse.y)
-          if (dist < LINK_DIST * 1.4) {
-            const alpha = (1 - dist / (LINK_DIST * 1.4)) * 0.4
-            ctx.strokeStyle = `rgba(${BRAND_LIGHT}, ${alpha})`
-            ctx.lineWidth = 1
-            ctx.beginPath()
-            ctx.moveTo(n.x, n.y)
-            ctx.lineTo(mouse.x, mouse.y)
-            ctx.stroke()
           }
         }
       }
@@ -127,7 +112,7 @@ export default function HeroNodes () {
       draw(performance.now(), false)
     }
 
-    const shouldRun = () => !reduced && !document.hidden && inView && (interactive || performance.now() < introUntil)
+    const shouldRun = () => !reduced && !document.hidden && inView && performance.now() < introUntil
 
     const stop = () => {
       if (raf != null) {
@@ -159,23 +144,6 @@ export default function HeroNodes () {
       else start()
     }
 
-    const onMove = (e) => {
-      const rect = canvas.getBoundingClientRect()
-      mouse.x = e.clientX - rect.left
-      mouse.y = e.clientY - rect.top
-      if (!interactive) {
-        interactive = true
-        start()
-      }
-    }
-
-    const onLeave = () => {
-      interactive = false
-      // freeze the last animated frame — no rAF while the cursor is away
-      stop()
-      draw(performance.now(), false)
-    }
-
     resize()
     const ro = new ResizeObserver(resize)
     ro.observe(parent)
@@ -197,8 +165,6 @@ export default function HeroNodes () {
       introUntil = performance.now() + INTRO_MS
       start()
       document.addEventListener('visibilitychange', onVisibility)
-      parent.addEventListener('mousemove', onMove)
-      parent.addEventListener('mouseleave', onLeave)
     }
 
     return () => {
@@ -206,8 +172,6 @@ export default function HeroNodes () {
       ro.disconnect()
       io.disconnect()
       document.removeEventListener('visibilitychange', onVisibility)
-      parent.removeEventListener('mousemove', onMove)
-      parent.removeEventListener('mouseleave', onLeave)
     }
   }, [])
 
