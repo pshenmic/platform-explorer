@@ -36,7 +36,7 @@ export default function RichestIdentities ({ rate, enabled = true }) {
         ],
         link: `/identity/${item.identifier}`
       }))}
-      columns={['Identifier', 'Balance']}
+      columns={['Identity', 'Balance']}
     />
   )
 }

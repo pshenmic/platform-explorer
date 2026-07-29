@@ -36,7 +36,7 @@ export default function DataContractsRating ({ enabled = true }) {
         ],
         link: `/dataContract/${item.identifier}`
       }))}
-      columns={['Identifier', 'Transitions']}
+      columns={['Contract', 'Transitions']}
     />
   )
 }
