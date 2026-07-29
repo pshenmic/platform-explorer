@@ -5,7 +5,7 @@ import * as Api from '../../util/Api'
 import { SimpleList, EmptyListMessage } from '../ui/lists'
 import { LoadingList } from '../loading'
 
-const LIMIT = 10
+const LIMIT = 5
 
 // top data contracts by state transitions count — a static leaderboard, no time-range presets
 export default function DataContractsRating ({ enabled = true }) {
@@ -24,7 +24,7 @@ export default function DataContractsRating ({ enabled = true }) {
 
   const { loading, error, items } = state
 
-  if (loading) return <LoadingList itemsCount={6}/>
+  if (loading) return <LoadingList itemsCount={LIMIT}/>
   if (error || !items.length) return <EmptyListMessage>No data</EmptyListMessage>
 
   return (

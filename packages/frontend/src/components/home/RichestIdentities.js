@@ -5,7 +5,7 @@ import * as Api from '../../util/Api'
 import { SimpleList, EmptyListMessage } from '../ui/lists'
 import { LoadingList } from '../loading'
 
-const LIMIT = 10
+const LIMIT = 5
 
 // top identities by balance — revives the pre-redesign Richlist widget
 export default function RichestIdentities ({ rate, enabled = true }) {
@@ -24,14 +24,14 @@ export default function RichestIdentities ({ rate, enabled = true }) {
 
   const { loading, error, items } = state
 
-  if (loading) return <LoadingList itemsCount={6}/>
+  if (loading) return <LoadingList itemsCount={LIMIT}/>
   if (error || !items.length) return <EmptyListMessage>No data</EmptyListMessage>
 
   return (
     <SimpleList
       items={items.map(item => ({
         columns: [
-          { value: item.identifier, format: 'identifier' },
+          { value: item.identifier, format: 'identifier', avatar: true, avatarSource: item.identifier },
           { value: item.balance, format: 'currency', rate: rate?.data }
         ],
         link: `/identity/${item.identifier}`
