@@ -1,6 +1,7 @@
 use crate::entities::identity::Identity;
 use crate::processor::psql::PostgresDAO;
 use deadpool_postgres::{PoolError, Transaction};
+use dpp::identifier::Identifier;
 use dpp::platform_value::string_encoding::Encoding::Base58;
 use tokio_postgres::Row;
 
@@ -73,6 +74,35 @@ impl PostgresDAO {
         println!(
             "Created Identity Alias {} -> {} ({})",
             identity.identifier.to_string(Base58),
+            alias,
+            &st_hash
+        );
+
+        Ok(())
+    }
+
+    pub async fn update_identity_alias(
+        &self,
+        identity_identifier: Identifier,
+        alias: String,
+        st_hash: String,
+        sql_transaction: &Transaction<'_>,
+    ) -> Result<(), PoolError> {
+        let query = "UPDATE identity_aliases SET identity_identifier = $1, state_transition_hash = $2 WHERE alias = $3;";
+
+        let stmt = sql_transaction.prepare_cached(query).await.unwrap();
+
+        sql_transaction
+            .execute(
+                &stmt,
+                &[&identity_identifier.to_string(Base58), &st_hash, &alias],
+            )
+            .await
+            .unwrap();
+
+        println!(
+            "Updated Identity Alias {} -> {} ({})",
+            identity_identifier.to_string(Base58),
             alias,
             &st_hash
         );

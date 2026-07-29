@@ -200,7 +200,7 @@ impl From<Row> for Document {
             price: price.map(|e| Credits::from(e as u64)),
             data_contract_identifier: Identifier::from_string(&data_contract_identifier, Base58)
                 .unwrap(),
-            data: None,
+            data: row.try_get("data").ok().flatten(),
             deleted,
             identifier: Identifier::from_string(identifier.as_str(), Base58).unwrap(),
             document_type_name,

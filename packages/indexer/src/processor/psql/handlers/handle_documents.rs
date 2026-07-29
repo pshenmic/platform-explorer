@@ -1,11 +1,13 @@
 use crate::entities::document::Document;
 use crate::entities::transfer::Transfer;
 use crate::processor::psql::PSQLProcessor;
+use crate::utils::build_dpns_alias;
 use data_contracts::SystemDataContract;
 use deadpool_postgres::Transaction;
 use dpp::identifier::Identifier;
 use dpp::platform_value::btreemap_extensions::BTreeValueMapPathHelper;
 use dpp::platform_value::string_encoding::Encoding::Base58;
+use dpp::state_transition::batch_transition::batched_transition::document_transfer_transition::v0::v0_methods::DocumentTransferTransitionV0Methods;
 use dpp::state_transition::batch_transition::batched_transition::document_transition::{
     DocumentTransition, DocumentTransitionV0Methods,
 };
@@ -61,45 +63,98 @@ impl PSQLProcessor {
         if document_type == "domain"
             && document_transition.data_contract_id() == SystemDataContract::DPNS.id()
         {
-            let label = document_transition
-                .data()
-                .unwrap()
-                .get_str_at_path("label")
-                .unwrap();
+            match &document_transition {
+                DocumentTransition::Create(_) | DocumentTransition::Replace(_) => {
+                    let label = document_transition
+                        .data()
+                        .unwrap()
+                        .get_str_at_path("label")
+                        .unwrap();
 
-            let normalized_parent_domain_name = document_transition
-                .data()
-                .unwrap()
-                .get_str_at_path("parentDomainName")
-                .unwrap();
+                    let normalized_parent_domain_name = document_transition
+                        .data()
+                        .unwrap()
+                        .get_str_at_path("parentDomainName")
+                        .unwrap();
 
-            let identity_identifier = document_transition
-                .data()
-                .unwrap()
-                .get_optional_at_path("records.identity")
-                .unwrap()
-                .expect("Could not find DPNS domain document identity identifier");
+                    let identity_identifier = document_transition
+                        .data()
+                        .unwrap()
+                        .get_optional_at_path("records.identity")
+                        .unwrap()
+                        .expect("Could not find DPNS domain document identity identifier");
 
-            let identity_identifier = Identifier::from_bytes(
-                &identity_identifier.clone().into_identifier_bytes().unwrap(),
-            )
-            .unwrap()
-            .to_string(Base58);
-            let identity = self
-                .dao
-                .get_identity_by_identifier(identity_identifier.clone(), sql_transaction)
-                .await
-                .unwrap()
-                .expect(&format!(
-                    "Could not find identity with identifier {}",
-                    identity_identifier
-                ));
-            let alias = format!("{}.{}", label, normalized_parent_domain_name);
+                    let identity_identifier = Identifier::from_bytes(
+                        &identity_identifier.clone().into_identifier_bytes().unwrap(),
+                    )
+                    .unwrap()
+                    .to_string(Base58);
+                    let identity = self
+                        .dao
+                        .get_identity_by_identifier(identity_identifier.clone(), sql_transaction)
+                        .await
+                        .unwrap()
+                        .expect(&format!(
+                            "Could not find identity with identifier {}",
+                            identity_identifier
+                        ));
+                    let alias = format!("{}.{}", label, normalized_parent_domain_name);
 
-            self.dao
-                .create_identity_alias(identity, alias, st_hash.clone(), sql_transaction)
-                .await
-                .unwrap();
+                    self.dao
+                        .create_identity_alias(identity, alias, st_hash.clone(), sql_transaction)
+                        .await
+                        .unwrap();
+                }
+                DocumentTransition::Transfer(transition) => {
+                    let domain_document = self
+                        .dao
+                        .get_document_with_data_by_identifier(
+                            document_identifier.clone(),
+                            sql_transaction,
+                        )
+                        .await
+                        .unwrap()
+                        .expect(&format!(
+                            "Could not get DPNS domain document with identifier {} from the database",
+                            document_identifier
+                        ));
+
+                    self.dao
+                        .update_identity_alias(
+                            transition.recipient_owner_id(),
+                            build_dpns_alias(domain_document),
+                            st_hash.clone(),
+                            sql_transaction,
+                        )
+                        .await
+                        .unwrap();
+                }
+                DocumentTransition::Purchase(_) => {
+                    let domain_document = self
+                        .dao
+                        .get_document_with_data_by_identifier(
+                            document_identifier.clone(),
+                            sql_transaction,
+                        )
+                        .await
+                        .unwrap()
+                        .expect(&format!(
+                            "Could not get DPNS domain document with identifier {} from the database",
+                            document_identifier
+                        ));
+
+                    self.dao
+                        .update_identity_alias(
+                            owner_id,
+                            build_dpns_alias(domain_document),
+                            st_hash.clone(),
+                            sql_transaction,
+                        )
+                        .await
+                        .unwrap();
+                }
+                DocumentTransition::Delete(_) | DocumentTransition::UpdatePrice(_) => {}
+            }
         }
 
         self.handle_data_contract_transition(

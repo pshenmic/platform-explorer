@@ -154,6 +154,7 @@ impl From<SystemDataContract> for DataContract {
             SystemDataContract::WalletUtils => "WalletUtils",
             SystemDataContract::TokenHistory => "TokenHistory",
             SystemDataContract::KeywordSearch => "KeywordSearch",
+            SystemDataContract::DocumentHistory => "DocumentHistory",
         };
         let identifier = data_contract.id();
         let source = data_contract.source(platform_version).ok();
