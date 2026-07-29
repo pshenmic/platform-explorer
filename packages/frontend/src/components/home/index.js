@@ -1,5 +1,4 @@
 export * from './MetricChart'
-export * from './HeroMeta'
 export * from './StatusBar'
 export { default as MasternodesDonut } from './MasternodesDonut'
 export { default as TxTypesBar } from './TxTypesBar'

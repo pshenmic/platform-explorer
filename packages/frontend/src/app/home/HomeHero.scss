@@ -42,7 +42,8 @@
     position: relative;
     z-index: 1;
     display: grid;
-    grid-template-columns: 1.4fr 1fr;
+    // Brand only ever needs as much as its capped description (520px); give the rest to the stat rail
+    grid-template-columns: minmax(320px, 560px) minmax(0, 1fr);
     align-items: center;
     gap: 2rem;
     padding: 32px 40px;
@@ -343,126 +344,22 @@
     transition: color .15s;
   }
 
-  // status ribbon: Network / API / Drive / Tenderdash
-  &__Meta {
-    position: relative;
-    z-index: 1;
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: space-between;
-    gap: 14px 28px;
-    padding: 11px 40px;
-    border-bottom: 1px solid rgba(var(--chakra-colors-gray-800-rgb), 0.6);
-
-    @media screen and (max-width: $breakpoint-lg) {
-      justify-content: flex-start;
-      padding: 11px 24px;
-    }
-
-    @media screen and (max-width: $breakpoint-md) {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 8px 16px;
-      padding: 11px 16px;
-    }
-  }
-
-  &__MetaItem {
-    display: inline-flex;
-    align-items: baseline;
-    gap: 7px;
-    min-width: 0;
-  }
-
-  &__MetaLabel {
-    font-size: 0.625rem;
-    font-family: $font-mono;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    color: var(--chakra-colors-gray-500);
-  }
-
-  &__MetaValue {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    min-width: 0;
-    font-size: 0.8125rem;
-    font-family: $font-mono;
-    font-variant-numeric: tabular-nums;
-    color: #fff;
-  }
-
-  // shared chip shell for status (Network/API) and versions (Drive/Tenderdash)
-  // radius matches system Badge / LiveBadge (full pill)
-  &__MetaChip {
-    padding: 4px 10px;
-    border-radius: 999px;
-    border: 1px solid rgba(var(--chakra-colors-gray-800-rgb), 0.9);
-    background: rgba(255, 255, 255, 0.03);
-    line-height: 1.3;
-    max-width: 100%;
-    transition: color .15s, border-color .15s, background .15s;
-
-    &--Loading {
-      color: var(--chakra-colors-gray-500);
-    }
-
-    // Network / API: same language as LiveBadge, but 6px radius like version chips
-    &--Status {
-      font-weight: 700;
-
-      &.is-ok {
-        // green.label — status Badge green
-        color: var(--chakra-colors-green-label);
-        border-color: rgba(var(--chakra-colors-green-label-rgb), 0.4);
-        background: rgba(var(--chakra-colors-green-label-rgb), 0.12);
-        animation: HeroLiveBreath 2.4s ease-in-out infinite;
-      }
-
-      // static alarm: blinking failure reads as noise, not urgency
-      &.is-down {
-        color: var(--chakra-colors-red-default);
-        border-color: rgba(var(--chakra-colors-red-default-rgb), 0.45);
-        background: rgba(var(--chakra-colors-red-default-rgb), 0.12);
-        box-shadow: 0 0 10px rgba(var(--chakra-colors-red-default-rgb), 0.25);
-      }
-
-      &.is-loading {
-        color: var(--chakra-colors-gray-500);
-        border-color: rgba(255, 255, 255, 0.15);
-        background: transparent;
-        animation: HeroMetaPulse 1.2s ease-in-out infinite;
-      }
-    }
-  }
-
-  &__MetaVer {
+  // sub-line link under Network/API stat cells: Drive/Tenderdash version, same shape as a dotted-underline value link
+  &__LiveSubLink {
+    color: inherit;
     text-decoration: none;
-    transition: color .15s, border-color .15s, background .15s;
-
-    .chakra-icon {
-      color: rgba(var(--chakra-colors-brand-normal-rgb), 0.7);
-      transition: color .15s;
-    }
+    border-bottom: 1px dotted rgba(var(--chakra-colors-gray-500-rgb, 122, 132, 137), 0.5);
+    transition: color .15s, border-color .15s;
 
     &:hover {
       color: $color-brand-light;
-      border-color: rgba(var(--chakra-colors-brand-normal-rgb), 0.55);
-      background: rgba(var(--chakra-colors-brand-normal-rgb), 0.1);
-      text-decoration: none;
-
-      .chakra-icon { color: $color-brand-light; }
+      border-color: rgba(var(--chakra-colors-brand-light-rgb), 0.7);
     }
   }
 
-  &__MetaValue--Muted { color: var(--chakra-colors-gray-500); }
-
   @media (prefers-reduced-motion: reduce) {
-    &__MetaChip--Status.is-ok,
-    &__MetaChip--Status.is-loading,
-    &__LiveBadge { animation: none; }
+    &__LiveBadge,
+    &__LiveDot { animation: none; }
   }
 
   // votes breakdown inside the Total-votes info tooltip
@@ -632,9 +529,10 @@
   &__Live {
     display: flex;
     flex-direction: row;
+    flex-wrap: wrap;
     align-items: center;
-    justify-content: flex-end;
-    gap: 1.75rem;
+    justify-content: space-between;
+    gap: 1.25rem 1.75rem;
     min-width: 0;
     padding-left: 2rem;
 
@@ -664,6 +562,8 @@
       text-align: left;
     }
   }
+
+  &__LiveStat--Compact { min-width: 0; }
 
   &__LiveDivider {
     align-self: stretch;
@@ -733,7 +633,44 @@
     }
   }
 
-  &__LiveMeta {
+  // Network/API value line: status dot + text, sized between the label and the big Height figure
+  &__LiveValue {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    font-family: $font-heading;
+    font-weight: 800;
+    font-style: italic;
+    font-size: 1.375rem;
+    line-height: 1.1;
+    color: #fff;
+    white-space: nowrap;
+  }
+
+  &__LiveDot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+
+    &.is-ok {
+      background: var(--chakra-colors-green-label);
+      animation: HeroLiveBreath 2.4s ease-in-out infinite;
+    }
+
+    // static alarm: a blinking failure state reads as noise, not urgency
+    &.is-down {
+      background: var(--chakra-colors-red-default);
+      box-shadow: 0 0 6px 1px rgba(var(--chakra-colors-red-default-rgb), 0.5);
+    }
+
+    &.is-loading {
+      background: var(--chakra-colors-gray-500);
+      animation: HeroMetaPulse 1.2s ease-in-out infinite;
+    }
+  }
+
+  &__LiveSub {
     font-size: 0.75rem;
     font-family: $font-mono;
     color: var(--chakra-colors-gray-500);

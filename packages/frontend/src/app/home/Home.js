@@ -4,7 +4,7 @@ import { useState, useEffect, useMemo, useRef } from 'react'
 import { useQuery, useQueries } from '@tanstack/react-query'
 import * as Api from '../../util/Api'
 import HomeHero from './HomeHero.js'
-import { MetricChart, EpochsOverview, StatusBar, HeroMeta, MasternodesDonut, TxTypesBar, ShieldedPoolCard, CompactTxList, CompactBlocksList, RichestSection } from '../../components/home'
+import { MetricChart, EpochsOverview, StatusBar, MasternodesDonut, TxTypesBar, ShieldedPoolCard, CompactTxList, CompactBlocksList, RichestSection } from '../../components/home'
 import { fetchHandlerSuccess, fetchHandlerError } from '../../util'
 import theme from '../../styles/theme'
 import { Box, Container, Flex, SimpleGrid } from '@chakra-ui/react'
@@ -209,9 +209,6 @@ function Home () {
           aria-label={'Network overview'}
         >
           <div className={'HomeOverview__Grid'}>
-            <div className={'HomeOverview__Sys'}>
-              <HeroMeta status={statusQuery.data ?? {}} loading={statusQuery.isLoading}/>
-            </div>
             <div className={'HomeOverview__Tx'}>
               <CompactTxList
                 transactions={txQuery.data?.resultSet}
