@@ -6,7 +6,7 @@ import { getTokenName } from '../../util'
 import { SimpleList, EmptyListMessage } from '../ui/lists'
 import { LoadingList } from '../loading'
 
-const LIMIT = 10
+const LIMIT = 5
 const WINDOW_MS = 30 * 24 * 60 * 60 * 1000 // 30 days, same window as tokens/TokensTrending
 
 // top tokens by transitions count over the trailing 30 days, SimpleList table (not the /tokens marquee)
@@ -25,13 +25,14 @@ export default function TrendingTokens ({ enabled = true }) {
       timestamp_start: start.toISOString(),
       timestamp_end: end.toISOString()
     })
-      .then(res => setState({ loading: false, error: false, items: res?.resultSet ?? [] }))
+      // defensive: /tokens/rating can return more rows than `limit` (backend join fan-out)
+      .then(res => setState({ loading: false, error: false, items: (res?.resultSet ?? []).slice(0, LIMIT) }))
       .catch(() => setState({ loading: false, error: true, items: [] }))
   }, [enabled])
 
   const { loading, error, items } = state
 
-  if (loading) return <LoadingList itemsCount={6}/>
+  if (loading) return <LoadingList itemsCount={LIMIT}/>
   if (error || !items.length) return <EmptyListMessage>No data</EmptyListMessage>
 
   return (
