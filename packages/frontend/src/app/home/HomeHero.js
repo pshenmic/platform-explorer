@@ -3,15 +3,17 @@
 import { Box, Heading, Text } from '@chakra-ui/react'
 import { TimeDelta, BigNumber } from '../../components/data'
 import { useCountUp } from '../../components/home/hooks'
-import { HeroNodes } from '../../components/home'
+import { HeroNodes, Skeleton } from '../../components/home'
 import { isNetworkLive, isApiOperational } from '../../components/home/utils'
 import './HomeHero.scss'
 
 export default function HomeHero ({ status, loading, avgBlockTimeSec, epochNumber, epochStartTime, epochEndTime }) {
   const height = status?.api?.block?.height
   const lastBlockTimestamp = status?.api?.block?.timestamp
-  const heightCount = useCountUp(typeof height === 'number' ? height : null)
-  const epochCount = useCountUp(typeof epochNumber === 'number' ? epochNumber : null)
+  const heightReady = typeof height === 'number'
+  const epochReady = typeof epochNumber === 'number'
+  const heightCount = useCountUp(heightReady ? height : null)
+  const epochCount = useCountUp(epochReady ? epochNumber : null)
   // neutral until status arrives, so the badge never flashes red on first paint
   const ready = !loading && status && Object.keys(status).length > 0
   const live = isNetworkLive(status)
@@ -51,16 +53,18 @@ export default function HomeHero ({ status, loading, avgBlockTimeSec, epochNumbe
           </Text>
         </div>
 
-        <div className={`HomeHero__Live ${loading ? 'HomeHero__Live--Loading' : ''}`}>
+        <div className={'HomeHero__Live'} aria-busy={!ready || !heightReady || !epochReady}>
           <div className={'HomeHero__LiveStat'}>
             <Text className={'HomeHero__LiveLabel'}>
               <span role={'status'} className={`HomeHero__LiveBadge ${badgeState}`}>
-                {ready && !live ? 'Offline' : 'Live'}
+                {!ready ? 'Live' : (live ? 'Live' : 'Offline')}
               </span>
               {' '}Block Height
             </Text>
             <div className={'HomeHero__Height'}>
-              {typeof heightCount === 'number' ? <BigNumber>{heightCount}</BigNumber> : '—'}
+              {heightReady && typeof heightCount === 'number'
+                ? <BigNumber>{heightCount}</BigNumber>
+                : <Skeleton className={'HomeHero__HeightSkeleton'} w={'9ch'} h={'1em'} radius={6}/>}
             </div>
             <div
               className={'HomeHero__EpochProgress'}
@@ -68,9 +72,9 @@ export default function HomeHero ({ status, loading, avgBlockTimeSec, epochNumbe
             >
               <span className={'HomeHero__EpochProgressFill'}/>
               <span className={'HomeHero__EpochProgressLabel'}>
-                {lastBlockTimestamp
+                {typeof lastBlockTimestamp === 'number'
                   ? <>last block <TimeDelta endDate={new Date(lastBlockTimestamp)} format={'compact'}/> ago</>
-                  : '—'}
+                  : <Skeleton w={'9ch'} h={'0.65em'} radius={4}/>}
               </span>
             </div>
           </div>
@@ -80,7 +84,9 @@ export default function HomeHero ({ status, loading, avgBlockTimeSec, epochNumbe
           <div className={'HomeHero__LiveStat HomeHero__LiveStat--Epoch'}>
             <Text className={'HomeHero__LiveLabel'}>Epoch</Text>
             <div className={'HomeHero__Height'}>
-              {typeof epochCount === 'number' ? <BigNumber>{epochCount}</BigNumber> : '—'}
+              {epochReady && typeof epochCount === 'number'
+                ? <BigNumber>{epochCount}</BigNumber>
+                : <Skeleton className={'HomeHero__HeightSkeleton'} w={'5ch'} h={'1em'} radius={6}/>}
             </div>
             <div
               className={'HomeHero__EpochProgress'}
@@ -90,7 +96,7 @@ export default function HomeHero ({ status, loading, avgBlockTimeSec, epochNumbe
               <span className={'HomeHero__EpochProgressLabel'}>
                 {typeof epochEndTime === 'number'
                   ? <>ends in <TimeDelta endDate={new Date(epochEndTime)} format={'compact'}/></>
-                  : '—'}
+                  : <Skeleton w={'8ch'} h={'0.65em'} radius={4}/>}
               </span>
             </div>
           </div>
@@ -101,19 +107,23 @@ export default function HomeHero ({ status, loading, avgBlockTimeSec, epochNumbe
             <Text className={'HomeHero__LiveLabel'}>Network</Text>
             <div className={'HomeHero__LiveValue'}>
               <span className={`HomeHero__LiveDot ${dotState(live)}`}/>
-              {status?.network || 'n/a'}
+              {ready
+                ? (status?.network || '—')
+                : <Skeleton w={'6ch'} h={'0.85em'} radius={4}/>}
             </div>
             <Text className={'HomeHero__LiveSub'}>
-              {drive
-                ? <a
-                    className={'HomeHero__LiveSubLink'}
-                    href={'https://github.com/dashpay/platform/releases'}
-                    target={'_blank'}
-                    rel={'noopener noreferrer'}
-                  >
-                    Drive v{drive}
-                  </a>
-                : '—'}
+              {ready
+                ? (drive
+                    ? <a
+                        className={'HomeHero__LiveSubLink'}
+                        href={'https://github.com/dashpay/platform/releases'}
+                        target={'_blank'}
+                        rel={'noopener noreferrer'}
+                      >
+                        Drive v{drive}
+                      </a>
+                    : '—')
+                : <Skeleton w={'7ch'} h={'0.7em'} radius={4}/>}
             </Text>
           </div>
 
@@ -123,19 +133,23 @@ export default function HomeHero ({ status, loading, avgBlockTimeSec, epochNumbe
             <Text className={'HomeHero__LiveLabel'}>API</Text>
             <div className={'HomeHero__LiveValue'}>
               <span className={`HomeHero__LiveDot ${dotState(apiOk)}`}/>
-              {apiOk ? 'operational' : 'disrupted'}
+              {ready
+                ? (apiOk ? 'operational' : 'disrupted')
+                : <Skeleton w={'7ch'} h={'0.85em'} radius={4}/>}
             </div>
             <Text className={'HomeHero__LiveSub'}>
-              {tenderdash
-                ? <a
-                    className={'HomeHero__LiveSubLink'}
-                    href={'https://github.com/dashpay/tenderdash/releases'}
-                    target={'_blank'}
-                    rel={'noopener noreferrer'}
-                  >
-                    Tenderdash v{tenderdash}
-                  </a>
-                : '—'}
+              {ready
+                ? (tenderdash
+                    ? <a
+                        className={'HomeHero__LiveSubLink'}
+                        href={'https://github.com/dashpay/tenderdash/releases'}
+                        target={'_blank'}
+                        rel={'noopener noreferrer'}
+                      >
+                        Tenderdash v{tenderdash}
+                      </a>
+                    : '—')
+                : <Skeleton w={'9ch'} h={'0.7em'} radius={4}/>}
             </Text>
           </div>
         </div>

@@ -622,6 +622,7 @@
     font-size: 3.25rem;
     line-height: 1;
     color: #fff;
+    min-height: 1em;
 
     // make the thousands separators visible at this large size
     .BigNumber__Space:not(:last-child) {
@@ -631,6 +632,12 @@
     @media screen and (max-width: $breakpoint-lg) {
       font-size: 2.5rem;
     }
+  }
+
+  // big-number slot: shimmer matches height em so swap doesn't collapse the rail
+  &__HeightSkeleton {
+    display: inline-block;
+    vertical-align: baseline;
   }
 
   // Network/API value line: status dot + text, sized between the label and the big Height figure
@@ -671,14 +678,13 @@
   }
 
   &__LiveSub {
+    display: flex;
+    align-items: center;
+    min-height: 1.125rem;
     font-size: 0.75rem;
     font-family: $font-mono;
     color: var(--chakra-colors-gray-500);
     margin: 10px 0 0;
-  }
-
-  &__Live--Loading &__Height {
-    opacity: 0.4;
   }
 
   // epoch progress bar: same vertical slot as the block-height meta line, so both
@@ -713,6 +719,9 @@
   &__EpochProgressLabel {
     position: relative;
     z-index: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     font-size: 0.6875rem;
     font-family: $font-mono;
     color: #fff;
