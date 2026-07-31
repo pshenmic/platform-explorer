@@ -7,13 +7,30 @@ import { HeroNodes, Skeleton } from '../../components/home'
 import { isNetworkLive, isApiOperational } from '../../components/home/utils'
 import './HomeHero.scss'
 
+// /status timestamps are ISO strings; epoch start/end are epoch-ms numbers — accept both
+function toMs (value) {
+  if (value == null) return null
+  if (typeof value === 'number' && Number.isFinite(value)) return value
+  const ms = new Date(value).getTime()
+  return Number.isFinite(ms) ? ms : null
+}
+
+function toNumber (value) {
+  if (typeof value === 'number' && Number.isFinite(value)) return value
+  if (typeof value === 'string' && value !== '' && Number.isFinite(Number(value))) return Number(value)
+  return null
+}
+
 export default function HomeHero ({ status, loading, avgBlockTimeSec, epochNumber, epochStartTime, epochEndTime }) {
-  const height = status?.api?.block?.height
-  const lastBlockTimestamp = status?.api?.block?.timestamp
-  const heightReady = typeof height === 'number'
-  const epochReady = typeof epochNumber === 'number'
+  const height = toNumber(status?.api?.block?.height)
+  const lastBlockMs = toMs(status?.api?.block?.timestamp)
+  const epochNum = toNumber(epochNumber)
+  const epochStartMs = toMs(epochStartTime)
+  const epochEndMs = toMs(epochEndTime)
+  const heightReady = height !== null
+  const epochReady = epochNum !== null
   const heightCount = useCountUp(heightReady ? height : null)
-  const epochCount = useCountUp(epochReady ? epochNumber : null)
+  const epochCount = useCountUp(epochReady ? epochNum : null)
   // neutral until status arrives, so the badge never flashes red on first paint
   const ready = !loading && status && Object.keys(status).length > 0
   const live = isNetworkLive(status)
@@ -24,17 +41,17 @@ export default function HomeHero ({ status, loading, avgBlockTimeSec, epochNumbe
   const dotState = ok => (!ready ? 'is-loading' : (ok ? 'is-ok' : 'is-down'))
 
   const epochProgress = (() => {
-    if (typeof epochStartTime !== 'number' || typeof epochEndTime !== 'number') return null
-    const total = epochEndTime - epochStartTime
+    if (epochStartMs === null || epochEndMs === null) return null
+    const total = epochEndMs - epochStartMs
     if (total <= 0) return null
-    return Math.min(1, Math.max(0, (Date.now() - epochStartTime) / total))
+    return Math.min(1, Math.max(0, (Date.now() - epochStartMs) / total))
   })()
 
   const blockProgress = (() => {
-    if (typeof lastBlockTimestamp !== 'number' || !avgBlockTimeSec) return null
+    if (lastBlockMs === null || !avgBlockTimeSec) return null
     const expectedMs = avgBlockTimeSec * 1000
     if (expectedMs <= 0) return null
-    return Math.min(1, Math.max(0, (Date.now() - lastBlockTimestamp) / expectedMs))
+    return Math.min(1, Math.max(0, (Date.now() - lastBlockMs) / expectedMs))
   })()
 
   return (
@@ -72,8 +89,8 @@ export default function HomeHero ({ status, loading, avgBlockTimeSec, epochNumbe
             >
               <span className={'HomeHero__EpochProgressFill'}/>
               <span className={'HomeHero__EpochProgressLabel'}>
-                {typeof lastBlockTimestamp === 'number'
-                  ? <>last block <TimeDelta endDate={new Date(lastBlockTimestamp)} format={'compact'}/> ago</>
+                {lastBlockMs !== null
+                  ? <>last block <TimeDelta endDate={new Date(lastBlockMs)} format={'compact'}/> ago</>
                   : <Skeleton w={'9ch'} h={'0.65em'} radius={4}/>}
               </span>
             </div>
@@ -94,8 +111,8 @@ export default function HomeHero ({ status, loading, avgBlockTimeSec, epochNumbe
             >
               <span className={'HomeHero__EpochProgressFill'}/>
               <span className={'HomeHero__EpochProgressLabel'}>
-                {typeof epochEndTime === 'number'
-                  ? <>ends in <TimeDelta endDate={new Date(epochEndTime)} format={'compact'}/></>
+                {epochEndMs !== null
+                  ? <>ends in <TimeDelta endDate={new Date(epochEndMs)} format={'compact'}/></>
                   : <Skeleton w={'8ch'} h={'0.65em'} radius={4}/>}
               </span>
             </div>
