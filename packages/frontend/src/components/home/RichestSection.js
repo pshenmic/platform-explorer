@@ -14,15 +14,12 @@ export default function RichestSection ({ rate, enabled = true }) {
       <CardHead title={'Richest'}/>
       <div className={'HomeRichest__Grid'}>
         <div className={'HomeRichest__Col'}>
-          <span className={'HomeRichest__ColTitle'}>Contracts</span>
           <DataContractsRating enabled={enabled}/>
         </div>
         <div className={'HomeRichest__Col'}>
-          <span className={'HomeRichest__ColTitle'}>Tokens</span>
           <TrendingTokens enabled={enabled}/>
         </div>
         <div className={'HomeRichest__Col'}>
-          <span className={'HomeRichest__ColTitle'}>Identities</span>
           <RichestIdentities rate={rate} enabled={enabled}/>
         </div>
       </div>
