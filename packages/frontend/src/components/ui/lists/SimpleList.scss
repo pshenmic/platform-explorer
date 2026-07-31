@@ -29,8 +29,9 @@
 
 .SimpleListItem {
   @include mixins.DefListItem;
-  
+
   display: block;
+  position: relative;
 
   &__Title {
     word-wrap: break-word;
@@ -54,6 +55,8 @@
     margin-right: 16px;
     display: flex;
     align-items: center;
+    gap: 0.4rem;
+    min-width: 0;
 
     &:last-child {
       overflow-wrap: normal;
@@ -76,5 +79,64 @@
     &--Dim {
       color: var(--chakra-colors-gray-250);
     }
+  }
+
+  // same width for medal (1–3) and #n (4–5) so columns don't jump after place 3
+  &__Rank {
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 18px;
+    height: 18px;
+  }
+
+  &__Medal {
+    width: 18px;
+    height: 18px;
+  }
+
+  &__RankNum {
+    font-family: $font-mono;
+    font-size: 0.625rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: var(--chakra-colors-gray-500);
+    line-height: 1;
+  }
+
+  // background-image (not background) and ::before (not box-shadow) match IdentitiesListItem
+  @mixin RankAccent($color) {
+    background-image: linear-gradient(90deg, rgba($color, 0.12) 0%, rgba($color, 0) 60%);
+
+    &::before {
+      content: '';
+      position: absolute;
+      left: 2px;
+      top: 6px;
+      bottom: 6px;
+      width: 3px;
+      border-radius: 3px;
+      background: $color;
+      opacity: 0.75;
+    }
+  }
+
+  &--Rank1 {
+    @include RankAccent(#FFD205);
+  }
+
+  &--Rank2 {
+    @include RankAccent(#c6cacd);
+  }
+
+  &--Rank3 {
+    @include RankAccent(#f49a58);
+  }
+
+  // 4–5: muted neutral — ranked, not podium
+  &--Rank4,
+  &--Rank5 {
+    @include RankAccent(#8b93a0);
   }
 }
