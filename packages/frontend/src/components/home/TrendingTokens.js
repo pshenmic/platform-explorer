@@ -37,7 +37,8 @@ export default function TrendingTokens ({ enabled = true }) {
 
   return (
     <SimpleList
-      items={items.map(item => ({
+      items={items.map((item, i) => ({
+        place: i + 1,
         columns: [
           { value: getTokenName(item.localizations), avatar: true, avatarSource: item.tokenIdentifier },
           { value: item.transitionCount }

@@ -29,7 +29,8 @@ export default function RichestIdentities ({ rate, enabled = true }) {
 
   return (
     <SimpleList
-      items={items.map(item => ({
+      items={items.map((item, i) => ({
+        place: i + 1,
         columns: [
           { value: item.identifier, format: 'identifier', avatar: true, avatarSource: item.identifier },
           { value: item.balance, format: 'currency', rate: rate?.data }
