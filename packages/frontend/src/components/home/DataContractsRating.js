@@ -1,13 +1,14 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import Link from 'next/link'
 import * as Api from '../../util/Api'
-import { SimpleList, EmptyListMessage } from '../ui/lists'
-import { LoadingList } from '../loading'
+import { Identifier, BigNumber } from '../data'
+import { DataList } from '../ui/lists'
+import RankMark, { placeOf, rankRowClassName } from './RankMark'
+import { HOME_RICH_LIST_LIMIT } from './listLimits'
 
-const LIMIT = 5
-
-// top data contracts by state transitions count — a static leaderboard, no time-range presets
+// contracts by transitions; API may return fewer than HOME_RICH_LIST_LIMIT
 export default function DataContractsRating ({ enabled = true }) {
   const [state, setState] = useState({ loading: true, error: false, items: [] })
 
@@ -17,27 +18,62 @@ export default function DataContractsRating ({ enabled = true }) {
       return
     }
     setState(s => ({ ...s, loading: true, error: false }))
-    Api.getDataContractsRating(1, LIMIT, 'desc')
-      .then(res => setState({ loading: false, error: false, items: res?.resultSet ?? [] }))
+    Api.getDataContractsRating(1, HOME_RICH_LIST_LIMIT, 'desc')
+      .then(res => setState({
+        loading: false,
+        error: false,
+        items: (res?.resultSet ?? []).slice(0, HOME_RICH_LIST_LIMIT)
+      }))
       .catch(() => setState({ loading: false, error: true, items: [] }))
   }, [enabled])
 
   const { loading, error, items } = state
+  const rows = error ? [] : items
 
-  if (loading) return <LoadingList itemsCount={LIMIT}/>
-  if (error || !items.length) return <EmptyListMessage>No data</EmptyListMessage>
+  const columns = [
+    {
+      key: 'contract',
+      header: 'Contract',
+      grow: true,
+      minWidth: 120,
+      cell: (item, i) => (
+        <span className={'DataList__Entity'}>
+          <RankMark place={placeOf(i)}/>
+          <Identifier
+            ellipsis={true}
+            avatar={true}
+            styles={['highlight-both']}
+          >
+            {item.identifier}
+          </Identifier>
+        </span>
+      )
+    },
+    {
+      key: 'transitions',
+      header: 'Transitions',
+      minWidth: 88,
+      align: 'right',
+      cell: (item) => <BigNumber>{item.transitionsCount}</BigNumber>
+    }
+  ]
 
   return (
-    <SimpleList
-      items={items.map((item, i) => ({
-        place: i + 1,
-        columns: [
-          { value: item.identifier, format: 'identifier', avatar: true, avatarSource: item.identifier },
-          { value: item.transitionsCount }
-        ],
-        link: `/dataContract/${item.identifier}`
-      }))}
-      columns={['Contract', 'Transitions']}
+    <DataList
+      className={'HomeRichestList'}
+      items={rows}
+      columns={columns}
+      loading={loading}
+      skeletonCount={HOME_RICH_LIST_LIMIT}
+      emptyMessage={'No data'}
+      rowHref={(item) => `/dataContract/${item.identifier}`}
+      rowKey={(item) => item.identifier}
+      rowClassName={rankRowClassName}
+      footer={
+        <Link href={'/dataContracts'} prefetch={false} className={'DataList__ShowMore'}>
+          View all data contracts
+        </Link>
+      }
     />
   )
 }

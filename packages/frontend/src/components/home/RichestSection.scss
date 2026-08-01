@@ -2,28 +2,20 @@
 
 .HomeRichest {
   &__Grid {
-    display: grid;
-    grid-template-columns: 1fr;
+    display: flex;
+    flex-direction: column;
     gap: 1.5rem;
-
-    @media screen and (min-width: $breakpoint-lg) {
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 0;
-    }
+    min-width: 0;
   }
 
   &__Col {
-    display: flex;
-    flex-direction: column;
     min-width: 0;
-
-    @media screen and (min-width: $breakpoint-lg) {
-      padding: 0 2rem;
-      border-right: 1px solid rgba(var(--chakra-colors-gray-800-rgb), 0.6);
-
-      &:first-child { padding-left: 0; }
-      &:last-child { padding-right: 0; border-right: none; }
-    }
+    flex: 0 0 auto;
   }
 
+  &--Embedded {
+    display: block;
+    min-width: 0;
+    width: 100%;
+  }
 }

@@ -1,14 +1,19 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import Link from 'next/link'
 import * as Api from '../../util/Api'
-import { SimpleList, EmptyListMessage } from '../ui/lists'
-import { LoadingList } from '../loading'
+import { Identifier, BigNumber } from '../data'
+import { RateTooltip } from '../ui/Tooltips'
+import { DataList } from '../ui/lists'
+import RankMark, { placeOf, rankRowClassName } from './RankMark'
+import { HOME_RICH_LIST_LIMIT } from './listLimits'
 
-const LIMIT = 5
+const DEFAULT_SORT = { order_by: 'balance', order: 'desc' }
 
-// top identities by balance — revives the pre-redesign Richlist widget
+// identities by balance or tx_count (server sort via column headers)
 export default function RichestIdentities ({ rate, enabled = true }) {
+  const [sort, setSort] = useState(DEFAULT_SORT)
   const [state, setState] = useState({ loading: true, error: false, items: [] })
 
   useEffect(() => {
@@ -17,27 +22,89 @@ export default function RichestIdentities ({ rate, enabled = true }) {
       return
     }
     setState(s => ({ ...s, loading: true, error: false }))
-    Api.getIdentities(1, LIMIT, 'desc', 'balance')
-      .then(res => setState({ loading: false, error: false, items: res?.resultSet ?? [] }))
+    Api.getIdentities(1, HOME_RICH_LIST_LIMIT, sort.order, sort.order_by)
+      .then(res => setState({
+        loading: false,
+        error: false,
+        items: (res?.resultSet ?? []).slice(0, HOME_RICH_LIST_LIMIT)
+      }))
       .catch(() => setState({ loading: false, error: true, items: [] }))
-  }, [enabled])
+  }, [enabled, sort.order, sort.order_by])
 
   const { loading, error, items } = state
+  const rows = error ? [] : items
+  const showRank = sort.order === 'desc' &&
+    (sort.order_by === 'balance' || sort.order_by === 'tx_count')
 
-  if (loading) return <LoadingList itemsCount={LIMIT}/>
-  if (error || !items.length) return <EmptyListMessage>No data</EmptyListMessage>
+  const columns = [
+    {
+      key: 'identity',
+      header: 'Identity',
+      grow: true,
+      minWidth: 100,
+      cell: (item, i) => (
+        <span className={'DataList__Entity'}>
+          {showRank ? <RankMark place={placeOf(i)}/> : null}
+          <Identifier
+            ellipsis={true}
+            avatar={true}
+            styles={['highlight-both']}
+          >
+            {item.identifier}
+          </Identifier>
+        </span>
+      )
+    },
+    {
+      key: 'balance',
+      header: 'Balance',
+      minWidth: 104,
+      align: 'right',
+      sortKey: 'balance',
+      cell: (item) => {
+        const credits = Number(item.balance)
+        return (
+          <RateTooltip credits={credits} rate={rate?.data}>
+            <span>
+              <BigNumber>{item.balance}</BigNumber>
+            </span>
+          </RateTooltip>
+        )
+      }
+    },
+    {
+      key: 'txs',
+      header: 'Txs',
+      minWidth: 72,
+      align: 'right',
+      sortKey: 'tx_count',
+      priority: 1,
+      cell: (item) => (
+        typeof item.totalTxs === 'number'
+          ? <BigNumber>{item.totalTxs}</BigNumber>
+          : '—'
+      )
+    }
+  ]
 
   return (
-    <SimpleList
-      items={items.map((item, i) => ({
-        place: i + 1,
-        columns: [
-          { value: item.identifier, format: 'identifier', avatar: true, avatarSource: item.identifier },
-          { value: item.balance, format: 'currency', rate: rate?.data }
-        ],
-        link: `/identity/${item.identifier}`
-      }))}
-      columns={['Identity', 'Balance']}
+    <DataList
+      className={'HomeRichestList HomeRichestList--Identities'}
+      items={rows}
+      columns={columns}
+      loading={loading}
+      skeletonCount={HOME_RICH_LIST_LIMIT}
+      emptyMessage={'No data'}
+      sort={sort}
+      onSortChange={setSort}
+      rowHref={(item) => `/identity/${item.identifier}`}
+      rowKey={(item) => item.identifier}
+      rowClassName={showRank ? rankRowClassName : undefined}
+      footer={
+        <Link href={'/identities'} prefetch={false} className={'DataList__ShowMore'}>
+          View all identities
+        </Link>
+      }
     />
   )
 }
