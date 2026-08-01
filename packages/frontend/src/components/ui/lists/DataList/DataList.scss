@@ -4,10 +4,6 @@
 .DataList {
   width: 100%;
 
-  // header and rows share one inline grid-template-columns (set in JS), plus the same 12px side
-  // padding here — so column tracks start at the same x and titles sit exactly over their data
-  // 8px gaps between rows regardless of the Link wrapper (DefListItem's own margin collapses because
-  // each row is an only-child of its link)
   &__Body {
     display: flex;
     flex-direction: column;
@@ -19,7 +15,6 @@
     gap: 16px;
     align-items: center;
 
-    // light variant: transparent header used inside cards (e.g. blocks on the validator page)
     &--light {
       background: transparent;
       font-weight: 500;
@@ -32,23 +27,110 @@
     display: flex;
     align-items: center;
     min-width: 0;
+    gap: 2px;
 
     &--center { justify-content: center; text-align: center; }
     &--right { justify-content: flex-end; text-align: right; }
+
+    &--Sortable {
+      appearance: none;
+      background: none;
+      border: 0;
+      padding: 0;
+      margin: 0;
+      font: inherit;
+      color: inherit;
+      letter-spacing: inherit;
+      text-transform: inherit;
+      cursor: pointer;
+      transition: color 0.15s ease;
+
+      @media (hover: hover) and (pointer: fine) {
+        &:hover { color: #fff; }
+      }
+    }
+
+    &--Active {
+      color: #fff;
+    }
   }
 
-  // rows keep the app's list-item look (bordered card + gap) so they read as separate rows without
-  // hover, matching the other lists; the grid template (set inline) overrides DefListItem's flex
+  &__SortIcon {
+    flex-shrink: 0;
+    opacity: 0.9;
+  }
+
+  // keeps inactive headers aligned with active chevron width
+  &__SortSpacer {
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    flex-shrink: 0;
+  }
+
   &__Row {
     @include mixins.DefListItem;
     display: grid;
     gap: 16px;
     align-items: center;
     font-size: 0.75rem;
+    position: relative;
 
-    // reveal copy buttons on row hover, like the old *ListItem rows
     .Identifier__CopyButton { opacity: 0; pointer-events: none; transition: opacity .15s; }
     &:hover .Identifier__CopyButton { opacity: 1; pointer-events: auto; }
+
+    @mixin RankAccent($color) {
+      background-image: linear-gradient(90deg, rgba($color, 0.12) 0%, rgba($color, 0) 60%);
+
+      &::before {
+        content: '';
+        position: absolute;
+        left: 2px;
+        top: 6px;
+        bottom: 6px;
+        width: 3px;
+        border-radius: 3px;
+        background: $color;
+        opacity: 0.75;
+      }
+    }
+
+    &--Rank1 { @include RankAccent(#FFD205); }
+    &--Rank2 { @include RankAccent(#c6cacd); }
+    &--Rank3 { @include RankAccent(#f49a58); }
+    &--Rank4,
+    &--Rank5 { @include RankAccent(#8b93a0); }
+  }
+
+  &__Rank {
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 18px;
+    height: 18px;
+  }
+
+  &__Medal {
+    width: 18px;
+    height: 18px;
+  }
+
+  &__RankNum {
+    font-family: $font-mono;
+    font-size: 0.625rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: var(--chakra-colors-gray-500);
+    line-height: 1;
+  }
+
+  &__Entity {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    min-width: 0;
+    max-width: 100%;
   }
 
   &__RowLink {
@@ -61,14 +143,9 @@
     display: flex;
     align-items: center;
     min-width: 0;
-    // values never wrap — long content clips/ellipsises on one line (applies to every DataList table)
     white-space: nowrap;
-    // clip content to the track so long identifiers truncate (end-ellipsis via Identifier) instead
-    // of overflowing into the next column
     overflow: hidden;
 
-    // let wrappers (LinkContainer) shrink so the Identifier's own ellipsis kicks in, mirroring the
-    // old `__LinkContainer { min-width:0; max-width:100% }`
     > * { min-width: 0; max-width: 100%; }
 
     &--center { justify-content: center; text-align: center; }
@@ -85,6 +162,43 @@
   }
 
   &__Footer { margin-top: 8px; }
+
+  &__ShowMore {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 7px 12px;
+    border-radius: 10px;
+    background-color: var(--chakra-colors-gray-800);
+    font-family: $font-heading;
+    font-weight: 700;
+    font-size: 12px;
+    line-height: 18px;
+    text-transform: uppercase;
+    text-align: center;
+    text-decoration: none;
+    color: var(--chakra-colors-white);
+    transition: background-color 0.15s ease, color 0.15s ease;
+
+    @media (hover: hover) and (pointer: fine) {
+      &:hover {
+        background-color: var(--chakra-colors-gray-750);
+        color: #fff;
+      }
+    }
+
+    &:active {
+      transform: translateY(1px);
+    }
+  }
+
+  // enter animation for newly polled rows (--stagger on the row)
+  &__Row.is-new {
+    animation: DataListRowIn .4s ease-out backwards, DataListRowGlow 1.4s ease-out backwards;
+    animation-delay: var(--stagger, 0ms);
+  }
 }
 
 @keyframes DataListPulse {
@@ -92,6 +206,18 @@
   50% { opacity: 1; }
 }
 
+@keyframes DataListRowIn {
+  from { opacity: 0; transform: translateY(-6px); }
+}
+
+@keyframes DataListRowGlow {
+  from { background-color: rgba(var(--chakra-colors-brand-normal-rgb), 0.12); }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .DataList__Skeleton { animation: none; }
+
+  .DataList__Row.is-new {
+    animation: DataListRowGlow 1.4s ease-out backwards;
+  }
 }
