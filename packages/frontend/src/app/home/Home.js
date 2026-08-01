@@ -4,7 +4,18 @@ import { useState, useEffect, useMemo, useRef } from 'react'
 import { useQuery, useQueries } from '@tanstack/react-query'
 import * as Api from '../../util/Api'
 import HomeHero from './HomeHero.js'
-import { MetricChart, EpochsOverview, StatusBar, MasternodesDonut, TxTypesBar, ShieldedPoolCard, CompactTxList, CompactBlocksList, RichestSection } from '../../components/home'
+import {
+  MetricChart,
+  EpochsOverview,
+  StatusBar,
+  MasternodesDonut,
+  TxTypesBar,
+  ShieldedPoolCard,
+  CompactTxList,
+  CompactBlocksList,
+  DataContractsRating,
+  RichestIdentities
+} from '../../components/home'
 import { fetchHandlerSuccess, fetchHandlerError } from '../../util'
 import theme from '../../styles/theme'
 import { Box, Container, Flex, SimpleGrid } from '@chakra-ui/react'
@@ -203,29 +214,55 @@ function Home () {
         />
 
         <Box
-          className={'InfoBlock InfoBlock--NoBorder HomeOverview'}
+          className={'InfoBlock InfoBlock--NoBorder HomeActivity'}
           w={'100%'}
           as={'section'}
           aria-label={'Network overview'}
         >
-          <div className={'HomeOverview__Grid'}>
-            <div className={'HomeOverview__Tx'}>
+          <div className={'HomeActivity__Grid'}>
+            <div className={'HomeActivity__Cell'}>
               <CompactTxList
                 transactions={txQuery.data?.resultSet}
-                limit={6}
                 loading={txQuery.isLoading}
                 moreHref={'/transactions'}
                 moreLabel={'View all transactions'}
               />
             </div>
-            <div className={'HomeOverview__Blocks'}>
+            <div className={'HomeActivity__Cell HomeActivity__Cell--Chart'}>
+              <MetricChart
+                type={'bar'}
+                fetcher={Api.getTransactionsHistory}
+                field={'txs'}
+                yAbbr={'txs'}
+                enabled={belowFoldReady}
+                embedded
+                fill
+              />
+            </div>
+            <div className={'HomeActivity__Cell'}>
               <CompactBlocksList
                 blocks={blocksQuery.data?.resultSet}
-                limit={6}
                 loading={blocksQuery.isLoading}
                 moreHref={'/blocks'}
                 moreLabel={'View all blocks'}
               />
+            </div>
+            <div className={'HomeActivity__Cell'}>
+              <DataContractsRating enabled={belowFoldReady}/>
+            </div>
+            <div className={'HomeActivity__Cell HomeActivity__Cell--Chart'}>
+              <MetricChart
+                type={'line'}
+                fetcher={Api.getIdentitiesHistory}
+                field={'registeredIdentities'}
+                yAbbr={'identities'}
+                enabled={belowFoldReady}
+                embedded
+                fill
+              />
+            </div>
+            <div className={'HomeActivity__Cell'}>
+              <RichestIdentities rate={rate} enabled={belowFoldReady}/>
             </div>
           </div>
         </Box>
@@ -241,11 +278,7 @@ function Home () {
           />
         </Box>
 
-        <RichestSection rate={rate} enabled={belowFoldReady}/>
-
         <SimpleGrid columns={{ base: 1, md: 2 }} spacing={gap} w={'100%'}>
-          <MetricChart title={'Transactions history'} type={'bar'} fetcher={Api.getTransactionsHistory} field={'txs'} yAbbr={'txs'} enabled={belowFoldReady}/>
-          <MetricChart title={'Identities growth'} type={'line'} fetcher={Api.getIdentitiesHistory} field={'registeredIdentities'} yAbbr={'identities'} enabled={belowFoldReady}/>
           <TxTypesBar enabled={belowFoldReady}/>
           <ShieldedPoolCard rate={rate} enabled={belowFoldReady}/>
           <MasternodesDonut validators={validators} validatorsActive={validatorsActive} validatorsBanned={validatorsBanned} validatorsInactive={validatorsInactive} validatorsList={validatorsGeoQuery.data?.resultSet}/>
