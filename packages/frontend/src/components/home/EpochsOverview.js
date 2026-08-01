@@ -14,8 +14,6 @@ import { compact, shortId } from './utils'
 const X_POSITIONS = [14, 38, 62, 86]
 // Ocean palette by slot (old -> new): deep blue -> bright aqua; encodes epoch recency.
 // The line flows through these; the selected slot's colour pours into the table below.
-const WAVE_RGB = ['10, 108, 184', '0, 141, 228', '44, 187, 255', '88, 225, 255']
-const slotRgb = (i) => WAVE_RGB[Math.min(Math.max(0, i), WAVE_RGB.length - 1)]
 // edge block-markers sit a breath off the wave rims; epoch segments end at these markers
 const EDGE_L = 1.2
 const EDGE_R = 98.8
@@ -159,7 +157,7 @@ function EpochBound ({ bound, longEpochs, showTag }) {
   )
 }
 
-function EpochPoint ({ epoch, metricLabel, x, y, colorRgb, selected, onSelect, showKind, durationLabel }) {
+function EpochPoint ({ epoch, metricLabel, x, y, selected, onSelect, showKind, durationLabel }) {
   // the in-progress epoch counts down ("36 min. left") instead of "ended X ago"
   const inProgress = epoch?.endTime > Date.now()
   // sync node pulse with the 5s left→right scan (same period as HomeHeroDash)
@@ -169,7 +167,7 @@ function EpochPoint ({ epoch, metricLabel, x, y, colorRgb, selected, onSelect, s
     <button
       type={'button'}
       className={`HomeHero__WavePoint EpochsWave__Point is-ready${selected ? ' is-selected' : ''}${inProgress ? ' is-live' : ''}`}
-      style={{ left: `${x}%`, top: `${y}%`, '--wave-c-rgb': colorRgb, '--scan-pulse-delay': scanPulseDelay }}
+      style={{ left: `${x}%`, top: `${y}%`, '--scan-pulse-delay': scanPulseDelay }}
       onClick={onSelect}
       aria-pressed={selected}
       aria-label={`Epoch ${epoch?.number}${inProgress ? ', in progress' : ''}${durationLabel ? `, every ${durationLabel}` : ''}`}
@@ -684,7 +682,7 @@ export function EpochsOverview ({ title, epochs, currentEpoch, rate, loading, sl
   return (
     <div
       className={'EpochsOverview'}
-      style={{ '--epoch-seg-l': seg.l, '--epoch-seg-w': seg.w, '--epoch-color-rgb': slotRgb(selIdx) }}
+      style={{ '--epoch-seg-l': seg.l, '--epoch-seg-w': seg.w }}
       aria-label={title || 'Epochs'}
     >
       <div
@@ -692,23 +690,10 @@ export function EpochsOverview ({ title, epochs, currentEpoch, rate, loading, sl
       >
         <svg className={'HomeHero__WaveSvg'} viewBox={'0 0 100 100'} preserveAspectRatio={'none'} aria-hidden={'true'}>
           <defs>
-            {/* area fill: subtle horizontal Ocean gradient (epochs flow into each other), evenly filled */}
-            <linearGradient id={'homeEpochFill'} x1={'0'} y1={'0'} x2={'1'} y2={'0'}>
-              <stop offset={'0%'} stopColor={`rgba(${WAVE_RGB[0]}, 0.16)`}/>
-              <stop offset={`${X_POSITIONS[0]}%`} stopColor={`rgba(${WAVE_RGB[0]}, 0.16)`}/>
-              <stop offset={`${X_POSITIONS[1]}%`} stopColor={`rgba(${WAVE_RGB[1]}, 0.16)`}/>
-              <stop offset={`${X_POSITIONS[2]}%`} stopColor={`rgba(${WAVE_RGB[2]}, 0.16)`}/>
-              <stop offset={`${X_POSITIONS[3]}%`} stopColor={`rgba(${WAVE_RGB[3]}, 0.16)`}/>
-              <stop offset={'100%'} stopColor={`rgba(${WAVE_RGB[3]}, 0.16)`}/>
-            </linearGradient>
-            {/* horizontal Ocean gradient: the line flows through the epoch-slot colours (old -> new) */}
-            <linearGradient id={'homeEpochStroke'} x1={'0'} y1={'0'} x2={'1'} y2={'0'}>
-              <stop offset={'0%'} stopColor={`rgb(${WAVE_RGB[0]})`}/>
-              <stop offset={`${X_POSITIONS[0]}%`} stopColor={`rgb(${WAVE_RGB[0]})`}/>
-              <stop offset={`${X_POSITIONS[1]}%`} stopColor={`rgb(${WAVE_RGB[1]})`}/>
-              <stop offset={`${X_POSITIONS[2]}%`} stopColor={`rgb(${WAVE_RGB[2]})`}/>
-              <stop offset={`${X_POSITIONS[3]}%`} stopColor={`rgb(${WAVE_RGB[3]})`}/>
-              <stop offset={'100%'} stopColor={`rgb(${WAVE_RGB[3]})`}/>
+
+            <linearGradient id={'homeEpochFill'} x1={'0'} y1={'0'} x2={'0'} y2={'1'}>
+              <stop offset={'0%'} stopColor={'var(--chakra-colors-brand-normal)'} stopOpacity={'0.28'}/>
+              <stop offset={'100%'} stopColor={'var(--chakra-colors-brand-normal)'} stopOpacity={'0'}/>
             </linearGradient>
             {/* vertical fade so the area dissolves toward the data block instead of a hard bottom edge */}
             <linearGradient id={'homeEpochFadeGrad'} x1={'0'} y1={'0'} x2={'0'} y2={'100'} gradientUnits={'userSpaceOnUse'}>
@@ -781,7 +766,6 @@ export function EpochsOverview ({ title, epochs, currentEpoch, rate, loading, sl
                 metricLabel={`${compact(Number(p.ep.totalTxCount) || 0)} tx`}
                 x={p.x}
                 y={p.y}
-                colorRgb={slotRgb(i)}
                 selected={i === selIdx}
                 onSelect={() => setSelected(i)}
                 // series label + duration once on the first slot (left → right scan)

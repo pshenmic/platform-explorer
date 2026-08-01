@@ -434,17 +434,15 @@
   }
 
   &__WaveLine {
-    // Ocean gradient flowing through the epoch slots (defined in the SVG defs)
-    stroke: url(#homeEpochStroke);
+    stroke: $color-brand-normal;
     stroke-width: 2px;
     stroke-linejoin: round;
     stroke-linecap: round;
   }
 
-  // soft ice-blue runner: same family as the ocean line, brighter so it still tracks on aqua
-  // pathLength=100 keeps the scanning dash uniform when the path is stretched
+  // pathLength=100 keeps the scan dash length stable under stretch
   &__WaveScan {
-    stroke: #b8ecff;
+    stroke: $color-brand-light;
     stroke-width: 2.5px;
     stroke-linecap: round;
     // short head + long gap reads as a bead, not a streak
@@ -459,7 +457,7 @@
 
   // cool blue halo — softer than white, still readable on deep + light stops
   &__WaveScanGlow {
-    stroke: rgba(120, 200, 255, 0.4);
+    stroke: rgba(var(--chakra-colors-brand-light-rgb), 0.4);
     stroke-width: 7px;
     stroke-linecap: round;
     stroke-dasharray: 2.5 97.5;
