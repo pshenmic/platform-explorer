@@ -1,0 +1,16 @@
+// TypeBadge + BatchTypeBadge: shrink/ellipsis inside DataList cells
+.TypeBadge {
+  max-width: 100%;
+  min-width: 0;
+  display: inline-flex !important;
+  align-items: center;
+  overflow: hidden;
+}
+
+.TypeBadge__Label {
+  display: block;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
