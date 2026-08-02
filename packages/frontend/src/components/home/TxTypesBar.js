@@ -71,7 +71,7 @@ export default function TxTypesBar ({ enabled = true }) {
   }
 
   return (
-    <Box className={'InfoBlock InfoBlock--NoBorder TxTypesBar'} w={'100%'} as={'section'} aria-label={'Transaction types'}>
+    <Box className={'InfoBlock InfoBlock--NoBorder TxTypesBar'} w={'100%'} h={'100%'} as={'section'} aria-label={'Transaction types'}>
       <header className={'TxTypesBar__Head'}>
         <div className={'TxTypesBar__HeadText'}>
           <span className={'TxTypesBar__Eyebrow'}>Network mix</span>
