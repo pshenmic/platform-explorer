@@ -1,233 +1,671 @@
 @import '../../styles/variables.scss';
 
+$mn-active: #2cffb4;
+$mn-queued: rgba(255, 255, 255, 0.22);
+$mn-banned: #ff5c7a;
+$mn-total: rgba(var(--chakra-colors-brand-light-rgb), 0.85);
+
 .MasternodesDonut {
-  // query card width (not viewport): home md+ puts this in a half-width SimpleGrid cell
-  container-type: inline-size;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+  contain: layout style;
 
-  // status tiles fill the top, the stacked bar sits at the bottom — fills the paired card height
-  &__Body {
-    min-height: 200px;
+  &__Glow {
+    position: absolute;
+    top: 20%;
+    left: 8%;
+    width: 180px;
+    height: 180px;
+    border-radius: 50%;
+    pointer-events: none;
+    background: radial-gradient(
+      circle,
+      rgba($mn-active, 0.12) 0%,
+      rgba(var(--chakra-colors-brand-normal-rgb), 0.06) 40%,
+      transparent 70%
+    );
+  }
+
+  &__Head {
     display: flex;
-    flex-direction: column;
+    align-items: flex-start;
     justify-content: space-between;
-    gap: 16px;
-
-    @media screen and (max-width: $breakpoint-sm) {
-      height: auto;
-      gap: 14px;
-      padding: 2px 0;
-    }
+    gap: 14px;
+    margin-bottom: 16px;
+    flex-shrink: 0;
   }
 
-  &__Empty {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 100%;
-    font-size: 0.8125rem;
-    color: var(--chakra-colors-gray-500);
-  }
-
-  // four equal status cards (Total / In Quorum / Queued / Banned)
-  &__Tiles {
-    flex: 1;
-    display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 12px;
-
-    // ~1024 2-col home + phones: 4-up starves labels ("In Quorum"); 2×2 gives each tile room
-    @container (max-width: 560px) {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 10px;
-    }
-  }
-
-  &__Tile {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    gap: 7px;
+  &__HeadText {
     min-width: 0;
-    padding: 14px 12px;
-    border: 1px solid rgba(var(--chakra-colors-gray-800-rgb), 0.7);
-    border-radius: 10px;
-    background: rgba(255, 255, 255, 0.015);
-
-    @container (max-width: 560px) {
-      padding: 12px 10px;
-    }
+    max-width: 28rem;
   }
 
-  &__SkelGap { margin-top: 6px; }
-
-  &__TileLabel {
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    min-width: 0;
-    max-width: 100%;
+  &__Eyebrow {
+    display: block;
     font-family: $font-mono;
-    font-size: 0.625rem;
+    font-size: 0.5625rem;
     text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: var(--chakra-colors-gray-500);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    letter-spacing: 0.2em;
+    color: rgba($mn-active, 0.9);
+    margin-bottom: 4px;
   }
 
-  // (i) hint, same affordance as the epoch stat cells
-  &__TileInfo {
-    display: inline-flex;
-    flex-shrink: 0;
-    align-items: center;
-    color: var(--chakra-colors-gray-500);
-    cursor: pointer;
-    transition: color .15s;
-
-    &:hover { color: $color-brand-normal; }
-  }
-
-  // rotation glyph on Standby: a visual cue that these validators are awaiting rotation into the set
-  &__Rotate {
-    flex-shrink: 0;
-    width: 10px;
-    height: 10px;
-    color: var(--chakra-colors-gray-500);
-    animation: MasternodesRotate 9s linear infinite;
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    &__Rotate { animation: none; }
-  }
-
-  &__TileValue {
-    display: inline-flex;
-    align-items: baseline;
-    gap: 5px;
+  &__Title {
     font-family: $font-heading;
     font-weight: 800;
     font-style: italic;
-    font-size: 1.5rem;
-    line-height: 1;
+    font-size: 1.375rem;
+    line-height: 1.1;
     color: #fff;
-    font-variant-numeric: tabular-nums;
-    white-space: nowrap;
+    margin: 0 0 6px;
   }
 
-  &__TileOf {
-    font-size: 0.8125rem;
-    font-style: normal;
-    font-weight: 400;
-    color: var(--chakra-colors-gray-500);
-  }
-
-  &__TilePct {
-    font-family: $font-mono;
-    font-size: 0.625rem;
-    color: var(--chakra-colors-gray-500);
-    font-variant-numeric: tabular-nums;
-  }
-
-  // status bar + "by country" line sit together at the bottom of the card
-  &__Bottom {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-  }
-
-  // stacked status bar (active | inactive | banned)
-  &__Bar {
-    display: flex;
-    align-items: stretch;
-    gap: 2px;
-    width: 100%;
-    height: 10px;
-    border-radius: 5px;
-    overflow: hidden;
-    background: rgba(255, 255, 255, 0.06);
-  }
-
-  &__Seg {
-    display: block;
-    height: 100%;
-    min-width: 2px;
-    transition: width 0.6s ease;
-
-    &--active { background: $color-brand-normal; }
-    &--inactive { background: rgba(255, 255, 255, 0.18); }
-    &--banned { background: var(--chakra-colors-red-default, #f45858); }
-  }
-
-  &__Dot {
-    width: 7px;
-    height: 7px;
-    border-radius: 50%;
-    flex-shrink: 0;
-
-    &--total { background: rgba(255, 255, 255, 0.5); }
-    &--active { background: $color-brand-normal; }
-    &--inactive { background: rgba(255, 255, 255, 0.18); }
-    &--banned { background: var(--chakra-colors-red-default, #f45858); }
-  }
-
-  // validators by country (geoIpInfo, #822)
-  &__Geo {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    min-width: 0;
+  &__Lede {
     font-family: $font-mono;
     font-size: 0.6875rem;
-  }
-
-  &__GeoLabel {
-    flex-shrink: 0;
-    font-size: 0.5625rem;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
+    line-height: 1.55;
     color: var(--chakra-colors-gray-500);
+    margin: 0;
   }
 
-  // spread the countries evenly across the block's full width; label stays level on the left
-  &__GeoList {
+  &__HeadTotal {
+    flex-shrink: 0;
+    font-family: $font-heading;
+    font-weight: 800;
+    font-style: italic;
+    font-size: 1.25rem;
+    color: #fff;
+    white-space: nowrap;
+    padding-top: 1.1rem;
+
+    i {
+      font-family: $font-mono;
+      font-style: normal;
+      font-weight: 400;
+      font-size: 0.5625rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--chakra-colors-gray-500);
+      margin-left: 4px;
+    }
+  }
+
+  &__Body {
+    flex: 1 1 auto;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  &__Empty {
     flex: 1;
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 8px 10px;
-    min-width: 0;
-    color: var(--chakra-colors-gray-250);
-    font-variant-numeric: tabular-nums;
-
-    b { color: #fff; font-weight: 700; }
+    justify-content: center;
+    color: var(--chakra-colors-gray-500);
+    font-size: 0.8125rem;
   }
 
-  &__GeoItem {
+  &__Stage {
+    flex: 1 1 auto;
+    min-height: 0;
+    display: grid;
+    grid-template-columns: minmax(148px, 0.9fr) minmax(0, 1.25fr);
+    gap: 12px 16px;
+    align-items: stretch;
+
+    @media screen and (max-width: $breakpoint-md) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  &__Col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+  }
+
+  &__Core {
+    position: relative;
+    width: min(100%, 200px);
+    aspect-ratio: 1;
+    flex-shrink: 0;
+  }
+
+  &__Ring {
+    display: block;
+    width: 100%;
+    height: 100%;
+    transform: rotate(-90deg);
+  }
+
+  &__RingTrack {
+    fill: none;
+    stroke: rgba(255, 255, 255, 0.06);
+    stroke-width: 10;
+  }
+
+  &__RingPulse {
+    fill: none;
+    stroke: rgba($mn-active, 0.22);
+    stroke-width: 1.25;
+    stroke-dasharray: 4 10;
+    animation: MnRingSpin 14s linear infinite;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    &__RingPulse { animation: none; opacity: 0.35; }
+  }
+
+  &__Arc {
+    fill: none;
+    stroke-width: 10;
+    stroke-linecap: butt;
+    cursor: pointer;
+    transition: opacity 0.12s ease, stroke-width 0.12s ease;
+    outline: none;
+
+    &--active {
+      stroke: $mn-active;
+      filter: drop-shadow(0 0 5px rgba($mn-active, 0.55));
+    }
+
+    &--inactive { stroke: $mn-queued; }
+
+    &--banned {
+      stroke: $mn-banned;
+      filter: drop-shadow(0 0 4px rgba($mn-banned, 0.45));
+    }
+
+    &:focus-visible {
+      stroke-width: 12;
+    }
+  }
+
+  &__Hub {
+    position: absolute;
+    inset: 20%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    pointer-events: none;
+  }
+
+  &__HubValue {
+    font-family: $font-heading;
+    font-weight: 800;
+    font-style: italic;
+    font-size: clamp(1.6rem, 3vw, 2.1rem);
+    line-height: 1;
+    color: #fff;
+    font-variant-numeric: tabular-nums;
+  }
+
+  &__HubLabel {
+    margin-top: 5px;
+    font-family: $font-mono;
+    font-size: 0.625rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: rgba($mn-active, 0.95);
+  }
+
+  &__HubSub {
+    margin-top: 3px;
+    font-family: $font-mono;
+    font-size: 0.625rem;
+    color: var(--chakra-colors-gray-500);
+  }
+
+  &__Rails {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-width: 0;
+    width: 100%;
+    align-self: stretch;
+  }
+
+  &__RingSkel {
+    margin: 0 auto;
+  }
+
+  &__Rail {
+    appearance: none;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    background: rgba(255, 255, 255, 0.03);
+    color: inherit;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    width: 100%;
+    flex: 1 1 0;
+    min-height: 0;
+    padding: 10px 12px;
+    border-radius: 12px;
+    text-align: left;
+    cursor: pointer;
+    opacity: 1;
+    transition: background 0.12s ease, border-color 0.12s ease, opacity 0.12s ease;
+
+    &:disabled {
+      cursor: default;
+      opacity: 0.55;
+    }
+
+    @media (hover: hover) and (pointer: fine) {
+      &:hover:not(:disabled) {
+        background: rgba(255, 255, 255, 0.05);
+        border-color: rgba(255, 255, 255, 0.1);
+      }
+    }
+
+    &:focus-visible {
+      outline: 1px solid rgba(var(--chakra-colors-brand-light-rgb), 0.5);
+      outline-offset: 0;
+    }
+  }
+
+  &__RailTop {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    min-width: 0;
+  }
+
+  &__RailId {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    min-width: 0;
+    font-family: $font-mono;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #fff;
+    white-space: nowrap;
+  }
+
+  &__Dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+
+    &--total { background: $mn-total; box-shadow: 0 0 6px rgba(var(--chakra-colors-brand-light-rgb), 0.4); }
+    &--active { background: $mn-active; box-shadow: 0 0 6px rgba($mn-active, 0.55); }
+    &--inactive { background: $mn-queued; }
+    &--banned { background: $mn-banned; box-shadow: 0 0 6px rgba($mn-banned, 0.45); }
+  }
+
+  &__RailNums {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 6px;
+    flex-shrink: 0;
+    font-variant-numeric: tabular-nums;
+
+    b {
+      font-family: $font-heading;
+      font-style: italic;
+      font-weight: 800;
+      font-size: 1.125rem;
+      color: #fff;
+    }
+
+    em {
+      font-family: $font-mono;
+      font-style: normal;
+      font-size: 0.6875rem;
+      color: var(--chakra-colors-gray-500);
+    }
+  }
+
+  &__RailHint {
+    font-family: $font-mono;
+    font-size: 0.6875rem;
+    line-height: 1.45;
+    color: var(--chakra-colors-gray-250);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  &__RailMeter {
+    display: block;
+    height: 4px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.06);
+    overflow: hidden;
+    margin-top: 3px;
+
+    i {
+      display: block;
+      height: 100%;
+      border-radius: 999px;
+      background: currentColor;
+    }
+  }
+
+  &__Rail--active { color: $mn-active; }
+  &__Rail--inactive { color: $mn-queued; }
+  &__Rail--banned { color: $mn-banned; }
+  &__Rail--total { color: $mn-total; }
+
+  &__Rail--active &__RailMeter i { background: $mn-active; }
+  &__Rail--inactive &__RailMeter i { background: $mn-queued; }
+  &__Rail--banned &__RailMeter i { background: $mn-banned; }
+
+  @media (hover: hover) and (pointer: fine) {
+    @each $name in active, inactive, banned {
+      &__Stage:not(.is-pinned):has([data-type='#{$name}']:hover) {
+        [data-type]:not([data-type='#{$name}']) { opacity: 0.28; }
+        [data-type='#{$name}'] { opacity: 1; }
+
+        .MasternodesDonut__Arc--#{$name} { stroke-width: 12; }
+      }
+    }
+  }
+
+  @each $name in active, inactive, banned, total {
+    &__Stage.is-pinned[data-pin='#{$name}'] {
+      [data-type]:not([data-type='#{$name}']) { opacity: 0.28; }
+      [data-type='#{$name}'] { opacity: 1; }
+
+      .MasternodesDonut__Rail--#{$name} {
+        border-color: rgba(255, 255, 255, 0.14);
+        background: rgba(255, 255, 255, 0.05);
+      }
+
+      @if $name != total {
+        .MasternodesDonut__Arc--#{$name} { stroke-width: 12; }
+      }
+    }
+  }
+
+  &__Geo {
+    width: 100%;
+    max-width: 220px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-width: 0;
+  }
+
+  &__GeoHead {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 0 2px;
+  }
+
+  &__GeoEyebrow {
+    font-family: $font-mono;
+    font-size: 0.5625rem;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--chakra-colors-gray-500);
+  }
+
+  &__GeoMeta {
+    font-family: $font-mono;
+    font-size: 0.5625rem;
+    color: var(--chakra-colors-gray-500);
+  }
+
+  &__GeoChips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    justify-content: center;
+  }
+
+  &__GeoChip {
     display: inline-flex;
     align-items: center;
     gap: 5px;
-    cursor: default;
+    padding: 3px 7px 3px 3px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    font-family: $font-mono;
+    font-size: 0.625rem;
+    font-variant-numeric: tabular-nums;
+    color: var(--chakra-colors-gray-250);
+    line-height: 1;
+
+    b {
+      color: #fff;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+    }
   }
 
-  // round flag SVGs are self-hosted (CSP); border-radius is a safety net over the round art
   &__Flag {
-    width: 16px;
-    height: 16px;
+    width: 18px;
+    height: 18px;
     border-radius: 50%;
-    flex-shrink: 0;
-    display: block;
     object-fit: cover;
+    display: block;
+    flex-shrink: 0;
   }
 
-  &__GeoMore { color: var(--chakra-colors-gray-500); }
+  &__Gov {
+    flex-shrink: 0;
+    min-width: 0;
+    margin-top: auto;
+    padding-top: 12px;
+    border-top: 1px solid rgba(var(--chakra-colors-gray-800-rgb), 0.55);
+  }
 
-  @media (prefers-reduced-motion: reduce) {
-    &__Seg { transition: none; }
+  .HomeHero__StatusBar {
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    align-items: stretch;
+    border-top: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    gap: 0 !important;
+  }
+
+  .HomeHero__StatusCell {
+    flex: 1 1 0 !important;
+    min-width: 0 !important;
+    display: flex !important;
+    flex-direction: column;
+    justify-content: flex-start;
+    padding: 4px 14px !important;
+    border-right: 1px solid rgba(var(--chakra-colors-gray-800-rgb), 0.5) !important;
+    border-bottom: none !important;
+
+    &:first-child {
+      padding-left: 0 !important;
+      flex-grow: 1 !important;
+    }
+
+    &:last-child {
+      border-right: none !important;
+      padding-right: 0 !important;
+    }
+  }
+
+  .HomeHero__StatusHead {
+    flex-shrink: 0;
+    margin-bottom: 10px;
+  }
+
+  .HomeHero__StatusValue {
+    flex: 1 1 auto;
+    display: flex;
+    min-height: 5.25rem;
+    align-items: stretch;
+    width: 100%;
+  }
+
+  .HomeHero__Gov {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    column-gap: 14px;
+    align-items: stretch;
+    width: 100%;
+    min-height: 5.25rem;
+  }
+
+  .HomeHero__GovLeft {
+    grid-row: 1 / -1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: flex-start;
+    align-self: stretch;
+    padding: 2px 0 4px;
+    min-height: 100%;
+  }
+
+  .HomeHero__GovCount {
+    font-size: 1.5rem;
+    line-height: 1;
+  }
+
+  .HomeHero__GovCountLabel {
+    margin-top: 0;
+    align-self: flex-start;
+  }
+
+  .HomeHero__GovFeed {
+    grid-column: 2;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 8px;
+    min-width: 0;
+    min-height: 100%;
+    text-align: right;
+  }
+
+  .HomeHero__GovTicker {
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-end;
+    min-height: 2.85rem;
+    max-width: 100%;
+    width: 100%;
+  }
+
+  .HomeHero__GovDots {
+    flex-shrink: 0;
+    height: 1.25rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: flex-end;
+  }
+
+  .HomeHero__ContestedName {
+    max-width: 100%;
+    width: 100%;
+    font-size: 1rem;
+  }
+
+  .HomeHero__VotesItem {
+    flex-direction: column;
+    align-items: flex-end;
+    justify-content: center;
+    gap: 5px;
+    max-width: 100%;
+    width: 100%;
+  }
+
+  .HomeHero__VotesChoice,
+  .HomeHero__VotesChoice .VoteBadge,
+  .HomeHero__VotesChoice .VoteBadge__Badge {
+    max-width: 100%;
+  }
+
+  .HomeHero__VotesVoter {
+    max-width: 100%;
+    width: 100%;
+    font-size: 1rem;
+    text-align: right;
+  }
+
+  .HomeHero__VotesChoiceText {
+    font-size: 0.6875rem;
+  }
+
+  @media screen and (max-width: $breakpoint-md) {
+    .HomeHero__StatusBar {
+      flex-direction: column !important;
+    }
+
+    .HomeHero__StatusCell {
+      flex: 1 1 auto !important;
+      padding: 12px 0 !important;
+      border-right: none !important;
+      border-bottom: 1px solid rgba(var(--chakra-colors-gray-800-rgb), 0.5) !important;
+
+      &:last-child {
+        border-bottom: none !important;
+        padding-bottom: 0 !important;
+      }
+
+      &:first-child {
+        padding-top: 0 !important;
+      }
+    }
+
+    .HomeHero__StatusValue {
+      min-height: 5.5rem;
+    }
+
+    .HomeHero__Gov {
+      min-height: 5.5rem;
+      column-gap: 16px;
+    }
+
+    .HomeHero__GovLeft {
+      padding: 4px 0 6px;
+      min-width: 3.25rem;
+    }
+
+    .HomeHero__GovCount {
+      font-size: 1.625rem;
+    }
+
+    .HomeHero__GovCountLabel {
+      margin-top: 2px;
+    }
+
+    .HomeHero__GovTicker {
+      min-height: 3.1rem;
+    }
+
+    .HomeHero__VotesItem {
+      gap: 6px;
+    }
+
+    .HomeHero__ContestedName,
+    .HomeHero__VotesVoter {
+      font-size: 1.0625rem;
+    }
+
+    .VoteBadge__Badge {
+      max-width: none;
+      white-space: nowrap;
+    }
   }
 }
 
-@keyframes MasternodesRotate {
-  to { transform: rotate(360deg); }
+@keyframes MnRingSpin {
+  to { stroke-dashoffset: -120; }
 }
