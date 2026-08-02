@@ -1,67 +1,282 @@
 @import '../../styles/variables.scss';
 
+$shield-in: #2cffb4;
+$shield-out: #ffb547;
+
 .ShieldedPool {
-  &__Body {
-    min-height: 200px;
+  position: relative;
+  overflow: hidden;
+
+  &__Scan {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: linear-gradient(
+      100deg,
+      transparent 42%,
+      rgba(var(--chakra-colors-brand-light-rgb), 0.05) 50%,
+      transparent 58%
+    );
+    background-size: 250% 100%;
+    animation: ShieldedScan 9s linear infinite;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    &__Scan { animation: none; opacity: 0; }
+  }
+
+  &__Head {
     display: flex;
-    flex-direction: column;
-    justify-content: center;
-    gap: 14px;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-bottom: 18px;
+  }
+
+  &__HeadText {
+    min-width: 0;
+    max-width: 460px;
+  }
+
+  &__Eyebrow {
+    display: inline-block;
+    font-family: $font-mono;
+    font-size: 0.5625rem;
+    text-transform: uppercase;
+    letter-spacing: 0.22em;
+    color: rgba($shield-in, 0.85);
+    text-shadow: 0 0 10px rgba($shield-in, 0.5);
+    margin-bottom: 4px;
+  }
+
+  &__Title {
+    font-family: $font-heading;
+    font-weight: 800;
+    font-style: italic;
+    font-size: 1.375rem;
+    line-height: 1.1;
+    color: #fff;
+    margin: 0 0 6px;
+  }
+
+  &__Lede {
+    font-family: $font-mono;
+    font-size: 0.6875rem;
+    line-height: 1.55;
+    color: var(--chakra-colors-gray-500);
+    margin: 0;
+  }
+
+  &__LedeMore {
+    margin-left: 6px;
+    color: $color-brand-light;
+    border-bottom: 1px dotted rgba(var(--chakra-colors-brand-light-rgb), 0.6);
+    cursor: help;
+    white-space: nowrap;
   }
 
   &__Empty {
     display: flex;
     align-items: center;
     justify-content: center;
-    height: 100%;
+    min-height: 160px;
     font-size: 0.8125rem;
     color: var(--chakra-colors-gray-500);
   }
 
-  &__Balance {
-    font-family: $font-heading;
-    font-weight: 800;
-    font-style: italic;
-    font-size: 1.75rem;
-    line-height: 1;
-    color: #fff;
-    cursor: pointer;
-    width: max-content;
-    border-bottom: 1px dotted rgba(var(--chakra-colors-gray-500-rgb, 122, 132, 137), 0.6);
-    transition: color .15s, border-color .15s;
+  &__Airlock {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: stretch;
+    gap: 14px;
+    margin-bottom: 18px;
 
-    &:hover {
-      color: $color-brand-light;
-      border-bottom-color: rgba(var(--chakra-colors-brand-light-rgb), 0.7);
+    @media screen and (max-width: $breakpoint-md) {
+      grid-template-columns: 1fr;
+      gap: 10px;
     }
   }
 
-  &__BalanceUnit {
-    margin-left: 8px;
+  &__Gate {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 5px;
+    padding: 12px 14px;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(var(--chakra-colors-gray-800-rgb), 0.7);
+    min-width: 0;
+    overflow: hidden;
+  }
+
+  &__Gate--in { text-align: right; align-items: flex-end; }
+  &__Gate--out { text-align: left; align-items: flex-start; }
+
+  @media screen and (max-width: $breakpoint-md) {
+    &__Gate--in,
+    &__Gate--out { text-align: left; align-items: flex-start; }
+  }
+
+  &__GateLabel {
     font-family: $font-mono;
-    font-style: normal;
-    font-weight: 400;
-    font-size: 0.6875rem;
+    font-size: 0.5625rem;
     text-transform: uppercase;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.14em;
     color: var(--chakra-colors-gray-500);
   }
 
-  &__Rows {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
+  &__GateValue {
+    font-family: $font-heading;
+    font-weight: 800;
+    font-style: italic;
+    font-size: 1.25rem;
+    line-height: 1;
+    color: #fff;
+    cursor: pointer;
+    white-space: nowrap;
+
+    i {
+      font-family: $font-mono;
+      font-style: normal;
+      font-weight: 400;
+      font-size: 0.625rem;
+      letter-spacing: 0.08em;
+      color: var(--chakra-colors-gray-500);
+    }
   }
 
-  &__RowItem {
-    display: flex;
-    justify-content: space-between;
-    gap: 16px;
-    font-family: $font-mono;
-    font-size: 0.6875rem;
-    color: var(--chakra-colors-gray-250);
+  &__Gate--in &__GateValue { text-shadow: 0 0 14px rgba($shield-in, 0.35); }
+  &__Gate--out &__GateValue { text-shadow: 0 0 14px rgba($shield-out, 0.35); }
 
-    span:first-child { color: var(--chakra-colors-gray-500); }
+  &__GateFlow {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    pointer-events: none;
+  }
+
+  &__Gate--in &__GateFlow {
+    right: 0;
+    background: linear-gradient(180deg, transparent, rgba($shield-in, 0.9), transparent);
+    background-size: 100% 220%;
+    animation: ShieldedFlowIn 2.6s linear infinite;
+    box-shadow: 0 0 10px rgba($shield-in, 0.5);
+  }
+
+  &__Gate--out &__GateFlow {
+    left: 0;
+    background: linear-gradient(180deg, transparent, rgba($shield-out, 0.9), transparent);
+    background-size: 100% 220%;
+    animation: ShieldedFlowOut 2.6s linear infinite;
+    box-shadow: 0 0 10px rgba($shield-out, 0.5);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    &__GateFlow { animation: none; opacity: 0.4; }
+  }
+
+  &__Chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+
+  &__Gate--in &__Chips { justify-content: flex-end; }
+
+  @media screen and (max-width: $breakpoint-md) {
+    &__Gate--in &__Chips { justify-content: flex-start; }
+  }
+
+  &__Chip {
+    font-family: $font-mono;
+    font-size: 0.5625rem;
+    padding: 2px 7px;
+    border-radius: 999px;
+    white-space: nowrap;
+    color: var(--chakra-colors-gray-250);
+    border: 1px solid rgba(var(--chakra-colors-gray-800-rgb), 0.9);
+    background: rgba(255, 255, 255, 0.03);
+
+    b { font-weight: 700; color: #fff; }
+  }
+
+  &__Chip--in b { color: $shield-in; }
+  &__Chip--out b { color: $shield-out; }
+
+  &__Vault {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    text-align: center;
+    padding: 16px 26px;
+    border-radius: 14px;
+    min-width: 200px;
+    z-index: 1;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  }
+
+  &__VaultRing {
+    position: absolute;
+    inset: 0;
+    border-radius: 14px;
+    pointer-events: none;
+    border: 1px solid rgba($shield-in, 0.22);
+    box-shadow: 0 0 0 0 rgba($shield-in, 0);
+    animation: ShieldedVaultBreath 3.6s ease-in-out infinite;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    &__VaultRing { animation: none; }
+  }
+
+  &__VaultLabel {
+    font-family: $font-mono;
+    font-size: 0.5625rem;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    color: rgba($shield-in, 0.9);
+  }
+
+  &__VaultValue {
+    position: relative;
+    z-index: 1;
+    font-family: $font-heading;
+    font-weight: 800;
+    font-style: italic;
+    font-size: 2rem;
+    line-height: 1;
+    color: #fff;
+    cursor: pointer;
+    white-space: nowrap;
+    text-shadow: none;
+    transition: color .15s;
+
+    &:hover { color: $shield-in; }
+
+    i {
+      font-family: $font-mono;
+      font-style: normal;
+      font-weight: 400;
+      font-size: 0.6875rem;
+      letter-spacing: 0.08em;
+      color: var(--chakra-colors-gray-500);
+    }
+  }
+
+  &__VaultMeta {
+    font-family: $font-mono;
+    font-size: 0.625rem;
+    color: var(--chakra-colors-gray-500);
+    min-height: 1em;
   }
 
   &__Spark {
@@ -70,7 +285,6 @@
     gap: 5px;
   }
 
-  // diverging flow bars: shield up / unshield down from a midline, hover reads exact values
   &__SparkWrap {
     position: relative;
     cursor: crosshair;
@@ -79,62 +293,52 @@
   &__SparkSvg {
     display: block;
     width: 100%;
-    height: 56px;
+    height: 64px;
     transition: opacity .2s;
 
-    &.is-loading { opacity: 0.4; }
+    &.is-loading { opacity: 0.45; }
   }
 
   &__Baseline {
-    stroke: rgba(255, 255, 255, 0.12);
+    stroke: rgba(255, 255, 255, 0.14);
     stroke-width: 1px;
+    stroke-dasharray: 3 4;
   }
 
   &__Bar {
-    transition: opacity .12s;
+    transition: opacity .15s;
 
-    &--in { fill: $color-brand-normal; }
-    &--out { fill: var(--chakra-colors-orange-default, #e68a19); opacity: 0.85; }
+    &--in { fill: rgba($shield-in, 0.8); }
+    &--out { fill: rgba($shield-out, 0.8); }
   }
 
-  .is-dim .ShieldedPool__Bar { opacity: 0.35; }
+  .is-dim &__Bar { opacity: 0.3; }
 
   &__Tip {
     position: absolute;
-    top: -8px;
-    transform: translate(-50%, -100%);
+    bottom: calc(100% + 6px);
+    transform: translateX(-50%);
     display: flex;
     flex-direction: column;
-    align-items: center;
-    gap: 1px;
-    padding: 4px 8px;
-    border-radius: 6px;
+    gap: 2px;
+    padding: 6px 9px;
+    border-radius: 8px;
+    background: rgba(10, 14, 16, 0.95);
+    border: 1px solid rgba(var(--chakra-colors-gray-800-rgb), 0.9);
+    font-family: $font-mono;
+    font-size: 0.625rem;
     white-space: nowrap;
-    background: var(--chakra-colors-gray-800);
-    border: 1px solid rgba(var(--chakra-colors-brand-normal-rgb), 0.4);
     pointer-events: none;
     z-index: 2;
-    font-family: $font-mono;
-    font-size: 0.6875rem;
   }
 
-  &__TipDate {
-    font-size: 0.5625rem;
-    color: var(--chakra-colors-gray-500);
-  }
+  &__TipDate { color: var(--chakra-colors-gray-500); }
+  &__TipRow--in { color: $shield-in; }
+  &__TipRow--out { color: $shield-out; }
 
-  &__TipRow {
-    color: #fff;
-
-    &--in { color: $color-brand-light; }
-    &--out { color: var(--chakra-colors-orange-default, #e68a19); }
-  }
-
-  // actual covered span (after the empty lead-in is trimmed); the legend chip shows the preset
   &__Axis {
     display: flex;
     justify-content: space-between;
-    gap: 8px;
     font-family: $font-mono;
     font-size: 0.5625rem;
     color: var(--chakra-colors-gray-500);
@@ -142,7 +346,6 @@
 
   &__SparkLegend {
     display: flex;
-    align-items: center;
     gap: 14px;
     font-family: $font-mono;
     font-size: 0.625rem;
@@ -151,14 +354,38 @@
     span { display: inline-flex; align-items: center; gap: 5px; }
   }
 
-  &__SparkWindow { margin-left: auto; }
-
   &__Dot {
     width: 7px;
     height: 7px;
-    border-radius: 50%;
+    border-radius: 2px;
 
-    &--in { background: $color-brand-normal; }
-    &--out { background: var(--chakra-colors-orange-default, #e68a19); }
+    &--in { background: $shield-in; box-shadow: 0 0 6px rgba($shield-in, 0.7); }
+    &--out { background: $shield-out; box-shadow: 0 0 6px rgba($shield-out, 0.7); }
+  }
+}
+
+@keyframes ShieldedScan {
+  from { background-position: 125% 0; }
+  to { background-position: -125% 0; }
+}
+
+@keyframes ShieldedFlowIn {
+  from { background-position: 0 220%; }
+  to { background-position: 0 -220%; }
+}
+
+@keyframes ShieldedFlowOut {
+  from { background-position: 0 -220%; }
+  to { background-position: 0 220%; }
+}
+
+@keyframes ShieldedVaultBreath {
+  0%, 100% {
+    border-color: rgba($shield-in, 0.18);
+    box-shadow: 0 0 0 0 rgba($shield-in, 0);
+  }
+  50% {
+    border-color: rgba($shield-in, 0.4);
+    box-shadow: 0 0 12px rgba($shield-in, 0.12);
   }
 }
