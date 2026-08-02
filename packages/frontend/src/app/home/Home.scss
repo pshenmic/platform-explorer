@@ -68,6 +68,43 @@
   }
 }
 
+.HomePair {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+  width: 100%;
+  min-width: 0;
+
+  @media screen and (min-width: $breakpoint-md) {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    align-items: start;
+  }
+
+  &__Tx {
+    min-width: 0;
+    min-height: 0;
+
+    @media screen and (min-width: $breakpoint-md) {
+      height: var(--consensus-h, auto);
+      max-height: var(--consensus-h, none);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+
+      > * {
+        flex: 1 1 auto;
+        min-height: 0;
+        height: 100%;
+        max-height: 100%;
+      }
+    }
+  }
+
+  &__Consensus {
+    min-width: 0;
+  }
+}
+
 // Governance card: restack the hero status strip vertically
 .HomeGovCard {
   display: flex;

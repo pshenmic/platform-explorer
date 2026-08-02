@@ -7,7 +7,6 @@ import HomeHero from './HomeHero.js'
 import {
   MetricChart,
   EpochsOverview,
-  StatusBar,
   MasternodesDonut,
   TxTypesBar,
   ShieldedPoolCard,
@@ -18,8 +17,7 @@ import {
 } from '../../components/home'
 import { fetchHandlerSuccess, fetchHandlerError } from '../../util'
 import theme from '../../styles/theme'
-import { Box, Container, Flex, SimpleGrid } from '@chakra-ui/react'
-import { CardHead } from '../../components/cards'
+import { Box, Container, Flex } from '@chakra-ui/react'
 import './Home.scss'
 
 function epochNumbersOf (current) {
@@ -28,6 +26,25 @@ function epochNumbersOf (current) {
 }
 
 function Home () {
+  const pairRef = useRef(null)
+  const consensusRef = useRef(null)
+
+  useEffect(() => {
+    const pair = pairRef.current
+    const consensus = consensusRef.current
+    if (!pair || !consensus || typeof ResizeObserver === 'undefined') return undefined
+
+    const sync = () => {
+      const h = Math.round(consensus.getBoundingClientRect().height)
+      if (h > 0) pair.style.setProperty('--consensus-h', `${h}px`)
+    }
+
+    sync()
+    const ro = new ResizeObserver(sync)
+    ro.observe(consensus)
+    return () => ro.disconnect()
+  }, [])
+
   const [contested, setContested] = useState({ data: {}, loading: true, error: false })
   const [activeContested, setActiveContested] = useState({ data: {}, loading: true, error: false })
   const [latestContested, setLatestContested] = useState({ data: {}, loading: true, error: false })
@@ -280,20 +297,25 @@ function Home () {
 
         <ShieldedPoolCard rate={rate} enabled={belowFoldReady}/>
 
-        <SimpleGrid columns={{ base: 1, md: 2 }} spacing={gap} w={'100%'}>
-          <TxTypesBar enabled={belowFoldReady}/>
-          <MasternodesDonut validators={validators} validatorsActive={validatorsActive} validatorsBanned={validatorsBanned} validatorsInactive={validatorsInactive} validatorsList={validatorsGeoQuery.data?.resultSet}/>
-          <Box className={'InfoBlock InfoBlock--NoBorder HomeGovCard'} w={'100%'} gridColumn={{ md: '1 / -1' }}>
-            <CardHead title={'Governance'}/>
-            <StatusBar
+        <div ref={pairRef} className={'HomePair'}>
+          <div className={'HomePair__Tx'}>
+            <TxTypesBar enabled={belowFoldReady}/>
+          </div>
+          <div ref={consensusRef} className={'HomePair__Consensus'}>
+            <MasternodesDonut
+              validators={validators}
+              validatorsActive={validatorsActive}
+              validatorsBanned={validatorsBanned}
+              validatorsInactive={validatorsInactive}
+              validatorsList={validatorsGeoQuery.data?.resultSet}
               contested={contested}
               activeContested={activeContested}
               latestContested={latestContested}
               latestVotes={latestVotes}
               epochData={epochData}
             />
-          </Box>
-        </SimpleGrid>
+          </div>
+        </div>
       </Flex>
     </Container>
   )
