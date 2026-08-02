@@ -278,11 +278,12 @@ function Home () {
           />
         </Box>
 
+        <ShieldedPoolCard rate={rate} enabled={belowFoldReady}/>
+
         <SimpleGrid columns={{ base: 1, md: 2 }} spacing={gap} w={'100%'}>
           <TxTypesBar enabled={belowFoldReady}/>
-          <ShieldedPoolCard rate={rate} enabled={belowFoldReady}/>
           <MasternodesDonut validators={validators} validatorsActive={validatorsActive} validatorsBanned={validatorsBanned} validatorsInactive={validatorsInactive} validatorsList={validatorsGeoQuery.data?.resultSet}/>
-          <Box className={'InfoBlock InfoBlock--NoBorder HomeGovCard'} w={'100%'}>
+          <Box className={'InfoBlock InfoBlock--NoBorder HomeGovCard'} w={'100%'} gridColumn={{ md: '1 / -1' }}>
             <CardHead title={'Governance'}/>
             <StatusBar
               contested={contested}
