@@ -1,9 +1,5 @@
 @import '../../styles/variables.scss';
 
-// ice-cyan neon — distinct from mint throughput bars
-$id-neon: #5ecbff;
-$id-deep: $color-brand-normal;
-
 .IdentityGrowthChart {
   display: flex;
   flex-direction: column;
@@ -33,7 +29,7 @@ $id-deep: $color-brand-normal;
     font-size: 0.5625rem;
     text-transform: uppercase;
     letter-spacing: 0.22em;
-    color: rgba($id-neon, 0.95);
+    color: rgba(var(--chakra-colors-brand-light-rgb), 0.9);
     margin-bottom: 6px;
   }
 
@@ -90,7 +86,7 @@ $id-deep: $color-brand-normal;
     line-height: 1;
     color: #fff;
     font-variant-numeric: tabular-nums;
-    text-shadow: 0 0 16px rgba($id-neon, 0.28);
+    text-shadow: 0 0 16px rgba(var(--chakra-colors-brand-light-rgb), 0.28);
     min-width: 4ch;
   }
 
@@ -114,11 +110,11 @@ $id-deep: $color-brand-normal;
   }
 
   &__Stat.is-on &__StatMeta {
-    color: rgba($id-neon, 0.95);
+    color: rgba(var(--chakra-colors-brand-light-rgb), 0.95);
   }
 
   &__Stat.is-pinned &__StatMeta {
-    color: $id-neon;
+    color: $color-brand-light;
   }
 
   &__Plot {
@@ -167,8 +163,8 @@ $id-deep: $color-brand-normal;
     &--X { text-anchor: middle; }
   }
 
-  &__AreaTop { stop-color: rgba($id-neon, 0.32); }
-  &__AreaBot { stop-color: rgba($id-neon, 0); }
+  &__AreaTop { stop-color: rgba(var(--chakra-colors-brand-normal-rgb), 0.28); }
+  &__AreaBot { stop-color: rgba(var(--chakra-colors-brand-normal-rgb), 0); }
 
   &__Area {
     stroke: none;
@@ -176,7 +172,7 @@ $id-deep: $color-brand-normal;
 
   &__Line {
     fill: none;
-    stroke: $id-neon;
+    stroke: $color-brand-normal;
     stroke-width: 2.25;
     stroke-linejoin: round;
     stroke-linecap: round;
@@ -198,7 +194,7 @@ $id-deep: $color-brand-normal;
   }
 
   &__Guide {
-    stroke: rgba($id-neon, 0.4);
+    stroke: rgba(var(--chakra-colors-brand-light-rgb), 0.5);
     stroke-width: 1;
     stroke-dasharray: 3 4;
     pointer-events: none;
@@ -206,17 +202,17 @@ $id-deep: $color-brand-normal;
 
   &__DotRing {
     fill: none;
-    stroke: rgba($id-neon, 0.45);
+    stroke: rgba(var(--chakra-colors-brand-light-rgb), 0.45);
     stroke-width: 1.5;
     pointer-events: none;
   }
 
   &__Dot {
-    fill: #fff;
-    stroke: $id-neon;
-    stroke-width: 2;
+    fill: $color-brand-light;
+    stroke: #fff;
+    stroke-width: 1.5;
     pointer-events: none;
-    filter: drop-shadow(0 0 6px rgba($id-neon, 0.8));
+    filter: drop-shadow(0 0 6px rgba(var(--chakra-colors-brand-normal-rgb), 0.55));
   }
 }
 

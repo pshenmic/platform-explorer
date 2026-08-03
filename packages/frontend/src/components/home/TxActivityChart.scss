@@ -1,8 +1,5 @@
 @import '../../styles/variables.scss';
 
-$tx-neon: #2cffb4;
-$tx-neon-deep: $color-brand-normal;
-
 .TxActivityChart {
   display: flex;
   flex-direction: column;
@@ -32,7 +29,7 @@ $tx-neon-deep: $color-brand-normal;
     font-size: 0.5625rem;
     text-transform: uppercase;
     letter-spacing: 0.22em;
-    color: rgba($tx-neon, 0.9);
+    color: rgba(var(--chakra-colors-brand-light-rgb), 0.9);
     margin-bottom: 6px;
   }
 
@@ -89,7 +86,7 @@ $tx-neon-deep: $color-brand-normal;
     line-height: 1;
     color: #fff;
     font-variant-numeric: tabular-nums;
-    text-shadow: 0 0 16px rgba($tx-neon, 0.25);
+    text-shadow: 0 0 16px rgba(var(--chakra-colors-brand-light-rgb), 0.28);
     min-width: 4ch;
   }
 
@@ -114,11 +111,11 @@ $tx-neon-deep: $color-brand-normal;
   }
 
   &__Stat.is-on &__StatMeta {
-    color: rgba($tx-neon, 0.9);
+    color: rgba(var(--chakra-colors-brand-light-rgb), 0.95);
   }
 
   &__Stat.is-pinned &__StatMeta {
-    color: $tx-neon;
+    color: $color-brand-light;
   }
 
   &__Plot {
@@ -166,7 +163,7 @@ $tx-neon-deep: $color-brand-normal;
   }
 
   &__Baseline {
-    stroke: rgba($tx-neon, 0.2);
+    stroke: rgba(var(--chakra-colors-brand-normal-rgb), 0.25);
     stroke-width: 1;
   }
 
@@ -179,26 +176,26 @@ $tx-neon-deep: $color-brand-normal;
     &--X { text-anchor: middle; }
   }
 
-  &__GradTop { stop-color: rgba($tx-neon, 0.95); }
-  &__GradBot { stop-color: rgba($tx-neon-deep, 0.35); }
+  &__GradTop { stop-color: rgba(var(--chakra-colors-brand-light-rgb), 0.85); }
+  &__GradBot { stop-color: rgba(var(--chakra-colors-brand-normal-rgb), 0.4); }
   &__GradOnTop { stop-color: #fff; }
-  &__GradOnBot { stop-color: rgba($tx-neon, 0.75); }
+  &__GradOnBot { stop-color: rgba(var(--chakra-colors-brand-light-rgb), 0.7); }
 
   &__Bar {
-    stroke: rgba($tx-neon, 0.55);
+    stroke: rgba(var(--chakra-colors-brand-normal-rgb), 0.55);
     stroke-width: 0.75;
     opacity: 1;
     transition: opacity 0.1s ease;
 
     &.is-dim { opacity: 0.22; }
     &.is-on {
-      stroke: rgba($tx-neon, 0.95);
+      stroke: rgba(var(--chakra-colors-brand-light-rgb), 0.95);
       stroke-width: 1;
     }
   }
 
   &__Guide {
-    stroke: rgba($tx-neon, 0.45);
+    stroke: rgba(var(--chakra-colors-brand-light-rgb), 0.5);
     stroke-width: 1;
     stroke-dasharray: 3 4;
     pointer-events: none;
