@@ -21,6 +21,22 @@ function toNumber (value) {
   return null
 }
 
+function formatNextEpochDay (date) {
+  const d = date.getDate()
+  const m = String(date.getMonth() + 1).padStart(2, '0')
+  return `${d}.${m}`
+}
+
+const nextEpochTitleFmt = new Intl.DateTimeFormat('en-GB', {
+  day: 'numeric',
+  month: 'numeric',
+  year: 'numeric',
+  hour: '2-digit',
+  minute: '2-digit',
+  hour12: false,
+  timeZoneName: 'short'
+})
+
 export default function HomeHero ({
   status,
   loading,
@@ -33,6 +49,7 @@ export default function HomeHero ({
 }) {
   const epochNum = toNumber(epochNumber)
   const epochEndMs = toMs(epochEndTime)
+  const epochEndDate = epochEndMs !== null ? new Date(epochEndMs) : null
   const epochReady = epochNum !== null
   const epochCount = useCountUp(epochReady ? epochNum : null)
   // neutral until status arrives, so the badge never flashes red on first paint
@@ -68,7 +85,9 @@ export default function HomeHero ({
               anyone watching the network.
             </Text>
           </div>
+        </div>
 
+        <div className={'HomeHero__Bottom'}>
           <div className={'HomeHero__Live'} aria-busy={!ready || !epochReady}>
             <div className={'HomeHero__LiveStat'}>
               <Text className={'HomeHero__LiveLabel'}>Epoch</Text>
@@ -77,14 +96,19 @@ export default function HomeHero ({
                   ? <BigNumber>{epochCount}</BigNumber>
                   : <Skeleton w={'4ch'} h={'0.85em'} radius={4}/>}
               </div>
-              <p className={'HomeHero__LiveSub'}>
-                {epochEndMs !== null
-                  ? <>
-                      <span className={'HomeHero__LiveFull'}>ends in</span>
-                      <span className={'HomeHero__LiveShort'} aria-hidden={'true'}>ends</span>
-                      <TimeDelta endDate={new Date(epochEndMs)} format={'compact'}/>
-                    </>
-                  : <Skeleton w={'6ch'} h={'0.7em'} radius={4}/>}
+              <p className={'HomeHero__LiveSub HomeHero__LiveSub--Epoch'}>
+                {epochEndDate
+                  ? <span
+                      className={'HomeHero__NextBadge'}
+                      title={nextEpochTitleFmt.format(epochEndDate)}
+                    >
+                      Next
+                      <span className={'HomeHero__NextBadgeSep'} aria-hidden={'true'}>·</span>
+                      <TimeDelta endDate={epochEndDate} format={'compact'} showTimestampTooltip={false}/>
+                      <span className={'HomeHero__NextBadgeSep'} aria-hidden={'true'}>·</span>
+                      <span className={'HomeHero__NextBadgeDate'}>{formatNextEpochDay(epochEndDate)}</span>
+                    </span>
+                  : <Skeleton w={'8ch'} h={'0.7em'} radius={4}/>}
               </p>
             </div>
 
@@ -98,11 +122,11 @@ export default function HomeHero ({
                   ? (status?.network || '—')
                   : <Skeleton w={'5ch'} h={'0.85em'} radius={4}/>}
               </div>
-              <p className={'HomeHero__LiveSub'}>
+              <p className={'HomeHero__LiveSub HomeHero__LiveSub--Badge'}>
                 {ready
                   ? (drive
                       ? <a
-                          className={'HomeHero__LiveSubLink'}
+                          className={'HomeHero__MetaBadge'}
                           href={'https://github.com/dashpay/platform/releases'}
                           target={'_blank'}
                           rel={'noopener noreferrer'}
@@ -128,11 +152,11 @@ export default function HomeHero ({
                     </>
                   : <Skeleton w={'5ch'} h={'0.85em'} radius={4}/>}
               </div>
-              <p className={'HomeHero__LiveSub'}>
+              <p className={'HomeHero__LiveSub HomeHero__LiveSub--Badge'}>
                 {ready
                   ? (tenderdash
                       ? <a
-                          className={'HomeHero__LiveSubLink'}
+                          className={'HomeHero__MetaBadge'}
                           href={'https://github.com/dashpay/tenderdash/releases'}
                           target={'_blank'}
                           rel={'noopener noreferrer'}
@@ -145,20 +169,20 @@ export default function HomeHero ({
               </p>
             </div>
           </div>
-        </div>
 
-        <div className={'HomeHero__Feeds'} aria-label={'Latest network activity'}>
-          <div className={'HomeHero__Feed'}>
-            <CompactTxList
-              transactions={transactions}
-              loading={transactionsLoading}
-            />
-          </div>
-          <div className={'HomeHero__Feed'}>
-            <CompactBlocksList
-              blocks={blocks}
-              loading={blocksLoading}
-            />
+          <div className={'HomeHero__Feeds'} aria-label={'Latest network activity'}>
+            <div className={'HomeHero__Feed'}>
+              <CompactTxList
+                transactions={transactions}
+                loading={transactionsLoading}
+              />
+            </div>
+            <div className={'HomeHero__Feed'}>
+              <CompactBlocksList
+                blocks={blocks}
+                loading={blocksLoading}
+              />
+            </div>
           </div>
         </div>
       </Box>

@@ -37,25 +37,76 @@
   &__Inner {
     position: relative;
     z-index: 1;
-    display: grid;
-    // brand + status left; latest tx + blocks right
-    // align start (not stretch): stretch + footer auto left a dead band under the tables
-    // side-by-side only when there is room for brand (~320+) and two feeds (~280 each)
-    grid-template-columns: minmax(280px, 0.85fr) minmax(0, 1.7fr);
-    align-items: start;
-    gap: 1.5rem 2rem;
-    // match InfoBlock / Shielded pool card rhythm (20 top · 32 side · 20 bottom)
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
     padding: 20px 32px 20px;
 
-    // 72em ≈ 1152px: at ~1020 the old lg(992) left a squeezed 2-col (brand ~320 + dual lists)
-    @media screen and (max-width: 72em) {
-      grid-template-columns: 1fr;
+    @media screen and (max-width: $breakpoint-lg) {
       gap: 1.25rem;
       padding: 20px 24px;
     }
 
     @media screen and (max-width: $breakpoint-md) {
       padding: 16px;
+    }
+  }
+
+  &__Bottom {
+    position: relative;
+    z-index: 2;
+    display: grid;
+    grid-template-columns: minmax(10rem, 12.5rem) minmax(0, 1fr);
+    align-items: start;
+    gap: 0 1.5rem;
+    min-width: 0;
+    padding-top: 1.25rem;
+    border-top: 1px solid rgba(var(--chakra-colors-gray-800-rgb), 0.55);
+
+    @media screen and (max-width: $breakpoint-lg) {
+      grid-template-columns: 1fr;
+      gap: 1.25rem;
+    }
+  }
+
+  &__Feeds {
+    min-width: 0;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 0;
+    align-items: start;
+
+    @media screen and (max-width: $breakpoint-md) {
+      grid-template-columns: 1fr;
+      gap: 1.25rem;
+    }
+  }
+
+  &__Feed {
+    min-width: 0;
+    max-width: 100%;
+    overflow: hidden;
+
+    > .DataList {
+      max-width: 100%;
+      min-width: 0;
+    }
+
+    > .DataList .DataList__RowLink,
+    > .DataList .DataList__Row {
+      max-width: 100%;
+      overflow: hidden;
+    }
+
+    @media screen and (min-width: $breakpoint-md) {
+      &:first-child {
+        padding-right: 1.25rem;
+        border-right: 1px solid rgba(var(--chakra-colors-gray-800-rgb), 0.55);
+      }
+
+      &:last-child {
+        padding-left: 1.25rem;
+      }
     }
   }
 
@@ -153,51 +204,6 @@
     position: relative;
     z-index: 1;
     min-width: 0;
-  }
-
-  // dual live feeds to the right of brand copy
-  &__Feeds {
-    position: relative;
-    z-index: 2;
-    min-width: 0;
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-    gap: 0;
-    align-items: start;
-
-    @media screen and (max-width: $breakpoint-md) {
-      grid-template-columns: 1fr;
-      gap: 1.25rem;
-    }
-  }
-
-  &__Feed {
-    min-width: 0;
-    max-width: 100%;
-    overflow: hidden;
-
-    // normal footer gap only — no stretch void under rows
-    > .DataList {
-      max-width: 100%;
-      min-width: 0;
-    }
-
-    > .DataList .DataList__RowLink,
-    > .DataList .DataList__Row {
-      max-width: 100%;
-      overflow: hidden;
-    }
-
-    @media screen and (min-width: $breakpoint-md) {
-      &:first-child {
-        padding-right: 1.25rem;
-        border-right: 1px solid rgba(var(--chakra-colors-gray-800-rgb), 0.55);
-      }
-
-      &:last-child {
-        padding-left: 1.25rem;
-      }
-    }
   }
 
   &__Welcome {
@@ -549,19 +555,6 @@
     transition: color .15s;
   }
 
-  // sub-line link under Network/API stat cells: Drive/Tenderdash version, same shape as a dotted-underline value link
-  &__LiveSubLink {
-    color: inherit;
-    text-decoration: none;
-    border-bottom: 1px dotted rgba(var(--chakra-colors-gray-500-rgb, 122, 132, 137), 0.5);
-    transition: color .15s, border-color .15s;
-
-    &:hover {
-      color: $color-brand-light;
-      border-color: rgba(var(--chakra-colors-brand-light-rgb), 0.7);
-    }
-  }
-
   @media (prefers-reduced-motion: reduce) {
     &__LiveBadge,
     &__LiveDot { animation: none; }
@@ -614,16 +607,14 @@
   &__Wave {
     position: relative;
     width: 100%;
-    // taller so the filled area reaches the data row; room for est.-end callout at top
+    // taller so the filled area reaches the data row; room for Next callout at top
     height: 200px;
     // HomeEpochs has no side pad — wave is already edge-to-edge
     margin: 16px 0 0;
     padding: 0;
-    // est. end may sit slightly above the wave box
     overflow: visible;
 
     @media screen and (max-width: $breakpoint-md) {
-      // extra top air so “est. end” can lift above the last epoch #
       margin-top: 28px;
       height: 180px;
     }
@@ -728,19 +719,27 @@
     &__WaveScan { animation: none; opacity: 0; }
   }
 
-  // Epoch / Network / API — always one row (3 equal cols); phone uses tighter type + short copy
   &__Live {
     position: relative;
-    z-index: 1;
+    z-index: 2;
     display: flex;
-    flex-direction: row;
-    flex-wrap: nowrap;
+    flex-direction: column;
     align-items: stretch;
     gap: 0;
     min-width: 0;
     max-width: 100%;
-    padding-top: 1rem;
-    border-top: 1px solid rgba(var(--chakra-colors-gray-800-rgb), 0.55);
+    padding: 0 1.25rem 0 0;
+    border-right: 1px solid rgba(var(--chakra-colors-gray-800-rgb), 0.55);
+
+    @media screen and (max-width: $breakpoint-lg) {
+      padding: 0 0 1rem;
+      border-right: none;
+      border-bottom: 1px solid rgba(var(--chakra-colors-gray-800-rgb), 0.55);
+      flex-direction: row;
+      flex-wrap: nowrap;
+      align-items: stretch;
+      gap: 0;
+    }
   }
 
   &__LiveStat {
@@ -748,21 +747,30 @@
     flex-direction: column;
     align-items: flex-start;
     justify-content: flex-start;
-    gap: 3px;
+    gap: 4px;
     min-width: 0;
-    flex: 1 1 0;
+    flex: 0 0 auto;
     text-align: left;
+    padding: 2px 0;
+
+    @media screen and (max-width: $breakpoint-lg) {
+      flex: 1 1 0;
+      padding: 0;
+    }
   }
 
   &__LiveDivider {
-    align-self: stretch;
-    width: 1px;
     flex-shrink: 0;
-    margin: 0 0.65rem;
+    width: 100%;
+    height: 1px;
+    margin: 0.75rem 0;
     background: rgba(var(--chakra-colors-gray-800-rgb), 0.6);
 
-    @media screen and (max-width: $breakpoint-md) {
-      margin: 0 0.35rem;
+    @media screen and (max-width: $breakpoint-lg) {
+      width: 1px;
+      height: auto;
+      align-self: stretch;
+      margin: 0 0.65rem;
     }
   }
 
@@ -806,16 +814,15 @@
     font-family: $font-heading;
     font-weight: 800;
     font-style: italic;
-    font-size: 1.125rem;
+    font-size: 1.35rem;
     line-height: 1.15;
     color: #fff;
     white-space: nowrap;
-    // desktop: show full “operational” / network name; phone may ellipsis as last resort
     overflow: visible;
 
     @media screen and (max-width: $breakpoint-md) {
       gap: 4px;
-      font-size: 0.9375rem;
+      font-size: 1.125rem;
       min-height: 1.125rem;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -849,7 +856,6 @@
     }
   }
 
-  // soft meta line — gap for "ends in" + TimeDelta (flex collapses bare spaces)
   &__LiveSub {
     display: flex;
     align-items: center;
@@ -871,6 +877,68 @@
       overflow: hidden;
       text-overflow: ellipsis;
     }
+
+    &--Epoch,
+    &--Badge {
+      gap: 0;
+    }
+  }
+
+  %HomeHeroMetaPill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35em;
+    flex-shrink: 0;
+    max-width: 100%;
+    padding: 3px 9px;
+    border-radius: 999px;
+    font-family: $font-heading;
+    font-size: 0.625rem;
+    font-weight: 800;
+    font-style: italic;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #fff;
+    background: rgba(var(--chakra-colors-brand-normal-rgb), 0.45);
+    border: 1px solid rgba(var(--chakra-colors-brand-light-rgb), 0.5);
+    line-height: 1.25;
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+    text-decoration: none;
+
+    @media screen and (max-width: $breakpoint-md) {
+      font-size: 0.5625rem;
+      padding: 2px 7px;
+    }
+  }
+
+  &__NextBadge {
+    @extend %HomeHeroMetaPill;
+  }
+
+  &__MetaBadge {
+    @extend %HomeHeroMetaPill;
+    transition: background 0.12s ease, border-color 0.12s ease, color 0.12s ease;
+
+    @media (hover: hover) and (pointer: fine) {
+      &:hover {
+        color: #fff;
+        background: rgba(var(--chakra-colors-brand-normal-rgb), 0.6);
+        border-color: rgba(var(--chakra-colors-brand-light-rgb), 0.75);
+      }
+    }
+  }
+
+  &__NextBadgeSep {
+    opacity: 0.65;
+    font-style: normal;
+    font-weight: 700;
+  }
+
+  &__NextBadgeDate {
+    font-style: italic;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.04em;
   }
 }
 
@@ -1165,7 +1233,6 @@
     height: 0.875rem !important;
   }
 
-  // “ends ~” pill on the projected right edge
   &__BoundTag {
     display: inline-block;
     padding: 2px 7px;
