@@ -117,7 +117,7 @@ function EpochBound ({ bound, longEpochs }) {
   const content = (
     <>
       {bound.approx &&
-        <span className={'EpochsWave__BoundTag'}>est. end</span>}
+        <span className={'EpochsWave__BoundTag'}>Next</span>}
       <span className={'EpochsWave__BoundBlock'}>
         <BlockIcon className={'EpochsWave__BoundIcon'} w={'0.875rem'} h={'0.875rem'} aria-hidden={'true'}/>
         {bound.approx ? '~' : ''}{bound.height}
@@ -146,7 +146,7 @@ function EpochBound ({ bound, longEpochs }) {
           </Link>
         : <span
             className={`EpochsWave__BoundLabel${bound.approx ? ' is-approx' : ''}`}
-            aria-label={bound.approx ? `Estimated epoch end ~ block ${bound.height}${label ? `, ${label}` : ''}` : undefined}
+            aria-label={bound.approx ? `Next epoch end ~ block ${bound.height}${label ? `, ${label}` : ''}` : undefined}
           >
             {content}
           </span>}
