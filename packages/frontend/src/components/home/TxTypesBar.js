@@ -65,13 +65,21 @@ export default function TxTypesBar ({ enabled = true }) {
 
   const total = segments.reduce((sum, s) => sum + s.count, 0)
   const pinned = pin ? segments.find(s => s.type === pin) : null
+  const top = segments[0] || null
+
+  const rangeTotal = state.loading ? '—' : total.toLocaleString('en-US')
+  const statMeta = pinned
+    ? `${pinned.label} · ${pinned.count.toLocaleString('en-US')} · ${pctOf(pinned.frac)}`
+    : (top
+        ? `#1 ${top.label} · ${pctOf(top.frac)} · ${rangeLabel}`
+        : (state.error ? '' : rangeLabel))
 
   const togglePin = (type) => {
     setPin(p => (p === type ? null : type))
   }
 
   return (
-    <Box className={'InfoBlock InfoBlock--NoBorder TxTypesBar'} w={'100%'} h={'100%'} as={'section'} aria-label={'Transaction types'}>
+    <Box className={'TxTypesBar'} w={'100%'} h={'100%'} as={'section'} aria-label={'Transaction types'}>
       <header className={'TxTypesBar__Head'}>
         <div className={'TxTypesBar__HeadText'}>
           <span className={'TxTypesBar__Eyebrow'}>Network mix</span>
@@ -80,13 +88,22 @@ export default function TxTypesBar ({ enabled = true }) {
             Share of state transitions. Batch is large because most document and token actions ride inside it.
           </p>
         </div>
-        <Presets options={PRESETS} value={presetIdx} onChange={setPresetIdx}/>
+        <div className={'TxTypesBar__Controls'}>
+          <Presets options={PRESETS} value={presetIdx} onChange={setPresetIdx}/>
+          <div className={`TxTypesBar__Stat${pinned ? ' is-on is-pinned' : ''}`}>
+            <div className={'TxTypesBar__StatMain'}>
+              <span className={'TxTypesBar__StatCount'}>{rangeTotal}</span>
+              <span className={'TxTypesBar__StatUnit'}>txs</span>
+            </div>
+            {statMeta &&
+              <span className={'TxTypesBar__StatMeta'}>{statMeta}</span>}
+          </div>
+        </div>
       </header>
 
       <div className={'TxTypesBar__Body'}>
         {state.loading
           ? <div className={'TxTypesBar__Stack'}>
-              <Skeleton w={'12ch'} h={'2em'}/>
               <Skeleton w={'100%'} h={'18px'} radius={9}/>
               <div className={'TxTypesBar__Rows'}>
                 {Array.from({ length: 6 }).map((_, i) => <Skeleton w={'100%'} h={'2.25rem'} key={i}/>)}
@@ -98,29 +115,6 @@ export default function TxTypesBar ({ enabled = true }) {
                 className={`TxTypesBar__Stack${pin ? ' is-pinned' : ''}`}
                 data-pin={pin || undefined}
               >
-                <div className={'TxTypesBar__Hero'}>
-                  <div className={'TxTypesBar__HeroMain'}>
-                    <span className={'TxTypesBar__HeroCount'}>{total.toLocaleString('en-US')}</span>
-                    <span className={'TxTypesBar__HeroUnit'}>txs · {rangeLabel}</span>
-                  </div>
-                  <div className={`TxTypesBar__Focus${pinned ? ' is-on' : ''}`}>
-                    <span
-                      className={`TxTypesBar__FocusDot${pinned ? ` TxTypesBar__Seg--${pinned.cls}` : ' is-idle'}`}
-                      aria-hidden={'true'}
-                    />
-                    <div className={'TxTypesBar__FocusCopy'}>
-                      <span className={'TxTypesBar__FocusLabel'}>
-                        {pinned ? pinned.label : 'Click a type to pin'}
-                      </span>
-                      <span className={'TxTypesBar__FocusMeta'}>
-                        {pinned
-                          ? `${pinned.count.toLocaleString('en-US')} · ${pctOf(pinned.frac)}`
-                          : `${segments.length} types · hover to compare`}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-
                 <div
                   className={'TxTypesBar__Bar'}
                   role={'list'}
