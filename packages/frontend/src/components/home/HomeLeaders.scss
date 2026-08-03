@@ -1,0 +1,243 @@
+@import '../../styles/variables.scss';
+
+$lead-contracts: #5ecbff;
+$lead-balance: #2cffb4;
+$lead-txs: #f4c14e;
+
+.HomeLeaders {
+  position: relative;
+  overflow: hidden;
+
+  &__Grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+
+    // tablet: 2 + 1 wrap; desktop: three equal rails
+    @media screen and (min-width: $breakpoint-md) {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 1.25rem 0;
+    }
+
+    @media screen and (min-width: $breakpoint-lg) {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 0;
+    }
+  }
+
+  &__Col {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    @media screen and (min-width: $breakpoint-md) {
+      padding: 0 1rem;
+    }
+
+    @media screen and (min-width: $breakpoint-lg) {
+      padding: 0 1.15rem;
+      border-right: 1px solid rgba(var(--chakra-colors-gray-800-rgb), 0.55);
+
+      &:first-child {
+        padding-left: 0;
+      }
+
+      &:last-child {
+        padding-right: 0;
+        border-right: none;
+      }
+    }
+
+    @media screen and (min-width: $breakpoint-md) and (max-width: #{$breakpoint-lg}) {
+      // 2-col: full-width third list
+      &:last-child {
+        grid-column: 1 / -1;
+        padding-left: 0;
+        padding-right: 0;
+        padding-top: 0.25rem;
+        border-top: 1px solid rgba(var(--chakra-colors-gray-800-rgb), 0.45);
+      }
+
+      &:nth-child(1) {
+        padding-left: 0;
+        padding-right: 1.15rem;
+        border-right: 1px solid rgba(var(--chakra-colors-gray-800-rgb), 0.55);
+      }
+
+      &:nth-child(2) {
+        padding-right: 0;
+        padding-left: 1.15rem;
+      }
+    }
+  }
+
+  &__ColHead {
+    flex-shrink: 0;
+  }
+
+  &__ColEyebrow {
+    display: block;
+    font-family: $font-mono;
+    font-size: 0.5625rem;
+    text-transform: uppercase;
+    letter-spacing: 0.22em;
+    margin-bottom: 4px;
+  }
+
+  &__Col:nth-child(1) &__ColEyebrow { color: rgba($lead-contracts, 0.95); }
+  &__Col:nth-child(2) &__ColEyebrow { color: rgba($lead-balance, 0.95); }
+  &__Col:nth-child(3) &__ColEyebrow { color: rgba($lead-txs, 0.95); }
+
+  // dual-column variant of the Shielded head (h3, slightly tighter title)
+  &__ColTitle {
+    font-family: $font-heading;
+    font-weight: 800;
+    font-style: italic;
+    font-size: 1.25rem;
+    line-height: 1.1;
+    color: #fff;
+    margin: 0 0 6px;
+  }
+
+  &__ColLede {
+    font-family: $font-mono;
+    font-size: 0.6875rem;
+    line-height: 1.55;
+    color: var(--chakra-colors-gray-500);
+    margin: 0;
+  }
+
+  &__Rails {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    flex: 1 1 auto;
+  }
+
+  &__Empty {
+    font-family: $font-mono;
+    font-size: 0.75rem;
+    color: var(--chakra-colors-gray-500);
+    padding: 1rem 0;
+  }
+
+  &__Rail {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1.75rem minmax(0, 1fr) auto;
+    grid-template-rows: auto auto;
+    column-gap: 8px;
+    row-gap: 5px;
+    align-items: center;
+    padding: 8px 10px;
+    border-radius: 12px;
+    text-decoration: none;
+    color: inherit;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    overflow: hidden;
+    transition: border-color 0.12s ease, background 0.12s ease;
+
+    @media (hover: hover) and (pointer: fine) {
+      &:hover {
+        background: rgba(255, 255, 255, 0.05);
+        border-color: rgba(255, 255, 255, 0.12);
+      }
+    }
+  }
+
+  &__Rank {
+    grid-row: 1;
+    grid-column: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  &__Entity {
+    grid-row: 1;
+    grid-column: 2;
+    min-width: 0;
+  }
+
+  &__Metric {
+    grid-row: 1;
+    grid-column: 3;
+    font-family: $font-mono;
+    font-size: 0.75rem;
+    font-variant-numeric: tabular-nums;
+    color: #fff;
+    white-space: nowrap;
+  }
+
+  &__Meter {
+    grid-row: 2;
+    grid-column: 1 / -1;
+    display: block;
+    height: 3px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.06);
+    overflow: hidden;
+
+    i {
+      display: block;
+      height: 100%;
+      width: var(--meter, 0%);
+      border-radius: 999px;
+      transition: width 0.4s ease;
+    }
+  }
+
+  &__Rail--contracts &__Meter i {
+    background: $lead-contracts;
+    box-shadow: 0 0 8px rgba($lead-contracts, 0.45);
+  }
+
+  &__Rail--balance &__Meter i {
+    background: $lead-balance;
+    box-shadow: 0 0 8px rgba($lead-balance, 0.45);
+  }
+
+  &__Rail--txs &__Meter i {
+    background: $lead-txs;
+    box-shadow: 0 0 8px rgba($lead-txs, 0.45);
+  }
+
+  &__Rail--p1 {
+    border-color: rgba(255, 210, 5, 0.22);
+    background: linear-gradient(90deg, rgba(255, 210, 5, 0.08), rgba(255, 255, 255, 0.02) 55%);
+  }
+
+  &__Rail--p2 {
+    border-color: rgba(198, 202, 205, 0.18);
+  }
+
+  &__Rail--p3 {
+    border-color: rgba(244, 154, 88, 0.2);
+  }
+
+  &__More {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: auto;
+    padding: 7px 12px;
+    border-radius: 10px;
+    background-color: var(--chakra-colors-gray-800);
+    font-family: $font-heading;
+    font-weight: 700;
+    font-size: 12px;
+    line-height: 18px;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: var(--chakra-colors-white);
+    transition: background-color 0.15s ease;
+
+    @media (hover: hover) and (pointer: fine) {
+      &:hover {
+        background-color: var(--chakra-colors-gray-750);
+      }
+    }
+  }
+}

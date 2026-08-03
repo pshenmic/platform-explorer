@@ -23,11 +23,17 @@ export default function RichestIdentities ({ rate, enabled = true }) {
     }
     setState(s => ({ ...s, loading: true, error: false }))
     Api.getIdentities(1, HOME_RICH_LIST_LIMIT, sort.order, sort.order_by)
-      .then(res => setState({
-        loading: false,
-        error: false,
-        items: (res?.resultSet ?? []).slice(0, HOME_RICH_LIST_LIMIT)
-      }))
+      .then(res => {
+        let items = (res?.resultSet ?? []).slice(0, HOME_RICH_LIST_LIMIT)
+        // re-sort by live balance (API ranks by transfer-sum)
+        if (sort.order_by === 'balance') {
+          const dir = sort.order === 'asc' ? 1 : -1
+          items = [...items].sort(
+            (a, b) => dir * ((Number(a.balance) || 0) - (Number(b.balance) || 0))
+          )
+        }
+        setState({ loading: false, error: false, items })
+      })
       .catch(() => setState({ loading: false, error: true, items: [] }))
   }, [enabled, sort.order, sort.order_by])
 
