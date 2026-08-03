@@ -33,7 +33,7 @@ function Home () {
     const consensus = consensusRef.current
     if (!pair || !consensus || typeof ResizeObserver === 'undefined') return undefined
 
-    const mq = window.matchMedia(`(min-width: 48em)`)
+    const mq = window.matchMedia('(min-width: 48em)')
     const clear = () => pair.style.removeProperty('--consensus-h')
     const sync = () => {
       if (!mq.matches) {

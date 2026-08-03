@@ -3,7 +3,6 @@
 import { useState, useEffect, useRef, useId, useMemo } from 'react'
 import * as d3 from 'd3'
 import useResizeObserver from '@react-hook/resize-observer'
-import { Box } from '@chakra-ui/react'
 import { Presets } from '../cards'
 import { getDaysBetweenDates, currencyRound } from '../../util'
 import { Skeleton } from './Skeleton'

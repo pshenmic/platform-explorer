@@ -46,7 +46,7 @@ function LeaderRail ({ place, href, title, metric, meterValue, meterMax, accent 
       href={href}
       prefetch={false}
       className={`HomeLeaders__Rail HomeLeaders__Rail--${accent} HomeLeaders__Rail--p${place}`}
-      style={{ ['--meter']: `${meterWidth(meterValue, meterMax)}%` }}
+      style={{ '--meter': `${meterWidth(meterValue, meterMax)}%` }}
     >
       <span className={'HomeLeaders__Rank'}>
         <RankMark place={place}/>
