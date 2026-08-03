@@ -24,39 +24,6 @@ function epochNumbersOf (current) {
 }
 
 function Home () {
-  const pairRef = useRef(null)
-  const consensusRef = useRef(null)
-
-  // match Tx types height to consensus only when paired (md+)
-  useEffect(() => {
-    const pair = pairRef.current
-    const consensus = consensusRef.current
-    if (!pair || !consensus || typeof ResizeObserver === 'undefined') return undefined
-
-    const mq = window.matchMedia('(min-width: 48em)')
-    const clear = () => pair.style.removeProperty('--consensus-h')
-    const sync = () => {
-      if (!mq.matches) {
-        clear()
-        return
-      }
-      const h = Math.round(consensus.getBoundingClientRect().height)
-      if (h > 0) pair.style.setProperty('--consensus-h', `${h}px`)
-    }
-
-    sync()
-    const ro = new ResizeObserver(sync)
-    ro.observe(consensus)
-    mq.addEventListener?.('change', sync)
-    mq.addListener?.(sync)
-    return () => {
-      ro.disconnect()
-      mq.removeEventListener?.('change', sync)
-      mq.removeListener?.(sync)
-      clear()
-    }
-  }, [])
-
   const [contested, setContested] = useState({ data: {}, loading: true, error: false })
   const [activeContested, setActiveContested] = useState({ data: {}, loading: true, error: false })
   const [latestContested, setLatestContested] = useState({ data: {}, loading: true, error: false })
@@ -239,21 +206,26 @@ function Home () {
           aria-label={'Network charts'}
         >
           <div className={'HomeActivity__Grid'}>
-            <div className={'HomeActivity__Cell HomeActivity__Cell--Chart'}>
-              <TxActivityChart
-                fetcher={Api.getTransactionsHistory}
-                field={'txs'}
-                yAbbr={'txs'}
-                enabled={belowFoldReady}
-              />
+            <div className={'HomeActivity__Types'}>
+              <TxTypesBar enabled={belowFoldReady}/>
             </div>
-            <div className={'HomeActivity__Cell HomeActivity__Cell--Chart'}>
-              <IdentityGrowthChart
-                fetcher={Api.getIdentitiesHistory}
-                field={'registeredIdentities'}
-                yAbbr={'identities'}
-                enabled={belowFoldReady}
-              />
+            <div className={'HomeActivity__Charts'}>
+              <div className={'HomeActivity__Chart'}>
+                <TxActivityChart
+                  fetcher={Api.getTransactionsHistory}
+                  field={'txs'}
+                  yAbbr={'txs'}
+                  enabled={belowFoldReady}
+                />
+              </div>
+              <div className={'HomeActivity__Chart'}>
+                <IdentityGrowthChart
+                  fetcher={Api.getIdentitiesHistory}
+                  field={'registeredIdentities'}
+                  yAbbr={'identities'}
+                  enabled={belowFoldReady}
+                />
+              </div>
             </div>
           </div>
         </Box>
@@ -271,13 +243,11 @@ function Home () {
           />
         </Box>
 
-        <ShieldedPoolCard rate={rate} enabled={belowFoldReady}/>
-
-        <div ref={pairRef} className={'HomePair'}>
-          <div className={'HomePair__Tx'}>
-            <TxTypesBar enabled={belowFoldReady}/>
+        <div className={'HomeShieldQuorum'}>
+          <div className={'HomeShieldQuorum__Cell'}>
+            <ShieldedPoolCard rate={rate} enabled={belowFoldReady}/>
           </div>
-          <div ref={consensusRef} className={'HomePair__Consensus'}>
+          <div className={'HomeShieldQuorum__Cell'}>
             <MasternodesDonut
               validators={validators}
               validatorsActive={validatorsActive}

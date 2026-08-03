@@ -10,48 +10,49 @@
   }
 }
 
-// paired 2-col activity grid (list | chart rows share height)
 .HomeActivity {
   $col-gutter: 1.5rem;
+  $chart-h: 300px;
 
   &__Grid {
     display: grid;
     grid-template-columns: 1fr;
     gap: 1.5rem;
     min-width: 0;
-    align-items: stretch;
+    align-items: start;
 
     @media screen and (min-width: $breakpoint-lg) {
-      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
       column-gap: 0;
-      row-gap: 1.5rem;
+      row-gap: 0;
+      align-items: stretch;
     }
   }
 
-  &__Cell {
+  &__Charts {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
     min-width: 0;
     min-height: 0;
 
     @media screen and (min-width: $breakpoint-lg) {
-      &:nth-child(odd) {
-        padding-right: $col-gutter;
-        border-right: 1px solid rgba(var(--chakra-colors-gray-800-rgb), 0.6);
-      }
-
-      &:nth-child(even) {
-        padding-left: $col-gutter;
-      }
+      padding-left: $col-gutter;
     }
   }
 
-  // charts row: both cells share height; give the plot room
-  &__Cell--Chart {
+  &__Chart {
     display: flex;
     flex-direction: column;
-    min-height: 280px;
+    min-width: 0;
+    height: $chart-h;
+    flex: 0 0 auto;
+    box-sizing: content-box;
 
-    @media screen and (min-width: $breakpoint-lg) {
-      min-height: 300px;
+    &:first-child {
+      padding-bottom: 1.5rem;
+      margin-bottom: 1.5rem;
+      border-bottom: 1px solid rgba(var(--chakra-colors-gray-800-rgb), 0.6);
     }
 
     .TxActivityChart,
@@ -63,46 +64,51 @@
     }
   }
 
+  &__Types {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    min-height: 0;
+
+    @media screen and (min-width: $breakpoint-lg) {
+      padding-right: $col-gutter;
+      height: 0;
+      min-height: 100%;
+      overflow: hidden;
+    }
+
+    .TxTypesBar {
+      flex: 1 1 auto;
+      min-height: 0;
+      width: 100%;
+      height: 100%;
+      box-shadow: none;
+      background: transparent;
+      padding: 0 !important;
+    }
+  }
+
   .DataList__Row {
     min-height: 40px;
     box-sizing: border-box;
   }
 }
 
-.HomePair {
+.HomeShieldQuorum {
   display: grid;
   grid-template-columns: 1fr;
   gap: 1.5rem;
   width: 100%;
   min-width: 0;
+  align-items: start;
 
   @media screen and (min-width: $breakpoint-md) {
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-    align-items: start;
   }
 
-  &__Tx {
+  &__Cell {
     min-width: 0;
-    min-height: 0;
-
-    @media screen and (min-width: $breakpoint-md) {
-      height: var(--consensus-h, auto);
-      max-height: var(--consensus-h, none);
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
-
-      > * {
-        flex: 1 1 auto;
-        min-height: 0;
-        height: 100%;
-        max-height: 100%;
-      }
-    }
-  }
-
-  &__Consensus {
-    min-width: 0;
+    width: 100%;
   }
 }
 
