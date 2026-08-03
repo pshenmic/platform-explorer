@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Box } from '@chakra-ui/react'
 import * as Api from '../../util/Api'
 import { Presets } from '../cards'
@@ -13,7 +13,7 @@ import './ShieldedPoolCard.scss'
 const SPARK_W = 100
 const SPARK_H = 64
 const BASELINE = SPARK_H / 2
-const DEFAULT_PRESET = 2
+const DEFAULT_PRESET = PRESETS.length - 1
 const SPARK_INTERVALS = { '24h': 24, '1W': 28, '1M': 30, '6M': 36, '1Y': 48, All: 48 }
 
 const dateFmt = new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric' })
@@ -60,6 +60,45 @@ export default function ShieldedPoolCard ({ rate, enabled = true }) {
   const [flows, setFlows] = useState({ loading: true, buckets: [] })
   const [presetIdx, setPresetIdx] = useState(DEFAULT_PRESET)
   const [hover, setHover] = useState(null)
+  const rootRef = useRef(null)
+
+  useEffect(() => {
+    const root = rootRef.current
+    if (!root || typeof ResizeObserver === 'undefined') return undefined
+
+    const pair = root.closest('.HomeShieldQuorum')
+    const quorum = pair?.querySelector('.MasternodesDonut')
+    if (!pair || !quorum) return undefined
+
+    const mq = window.matchMedia('(min-width: 48em)')
+    const clear = () => {
+      root.style.removeProperty('min-height')
+      root.classList.remove('is-height-matched')
+    }
+
+    const sync = () => {
+      if (!mq.matches) {
+        clear()
+        return
+      }
+      const qh = Math.round(quorum.getBoundingClientRect().height)
+      if (qh < 1) return
+      root.style.minHeight = `${qh}px`
+      root.classList.add('is-height-matched')
+    }
+
+    sync()
+    const ro = new ResizeObserver(sync)
+    ro.observe(quorum)
+    mq.addEventListener?.('change', sync)
+    mq.addListener?.(sync)
+    return () => {
+      ro.disconnect()
+      mq.removeEventListener?.('change', sync)
+      mq.removeListener?.(sync)
+      clear()
+    }
+  }, [])
 
   useEffect(() => {
     if (!enabled) { setPool(s => ({ ...s, loading: true, error: false })); return }
@@ -112,16 +151,18 @@ export default function ShieldedPoolCard ({ rate, enabled = true }) {
   const balanceDash = creditsToDash(Number(pool.balance) || 0)
   const inDash = creditsToDash(period.in)
   const outDash = creditsToDash(period.out)
+  const netCredits = period.in - period.out
+  const netDash = creditsToDash(netCredits)
   const transfersInside = (period.types || [])
     .filter(t => TYPE_INFO[t.transactionType]?.dir === 'inside')
     .reduce((sum, t) => sum + t.count, 0)
-  const windowLabel = PRESETS[presetIdx].label
+  const windowLabel = PRESETS[presetIdx].label === 'All' ? 'all time' : PRESETS[presetIdx].label
 
   const buckets = flows.buckets
   const flowMax = buckets.reduce((max, b) => Math.max(max, b.inAmt, b.outAmt), 0)
   const barStep = buckets.length ? SPARK_W / buckets.length : SPARK_W
   const barW = barStep * 0.62
-  const tipFmt = windowLabel === '24h' ? timeFmt : dateFmt
+  const tipFmt = PRESETS[presetIdx].label === '24h' ? timeFmt : dateFmt
 
   const handleMove = (e) => {
     if (!buckets.length || flows.loading) return
@@ -134,7 +175,13 @@ export default function ShieldedPoolCard ({ rate, enabled = true }) {
   const hovered = hover != null ? buckets[hover.idx] : null
 
   return (
-    <Box className={'InfoBlock InfoBlock--NoBorder ShieldedPool'} w={'100%'} as={'section'} aria-label={'Shielded pool'}>
+    <Box
+      ref={rootRef}
+      className={'InfoBlock InfoBlock--NoBorder ShieldedPool'}
+      w={'100%'}
+      as={'section'}
+      aria-label={'Shielded pool'}
+    >
       <div className={'ShieldedPool__Scan'} aria-hidden={'true'}/>
 
       <header className={'ShieldedPool__Head'}>
@@ -152,106 +199,136 @@ export default function ShieldedPoolCard ({ rate, enabled = true }) {
             </Tooltip>
           </p>
         </div>
-        <Presets options={PRESETS} value={presetIdx} onChange={setPresetIdx}/>
+        <div className={'ShieldedPool__Controls'}>
+          <Presets options={PRESETS} value={presetIdx} onChange={setPresetIdx}/>
+          <div className={'ShieldedPool__SparkLegend'} aria-hidden={'true'}>
+            <span><i className={'ShieldedPool__Dot ShieldedPool__Dot--in'}/> shield</span>
+            <span><i className={'ShieldedPool__Dot ShieldedPool__Dot--out'}/> unshield</span>
+          </div>
+          <div className={'ShieldedPool__Net'}>
+            {period.loading
+              ? <Skeleton w={'6ch'} h={'1.1em'}/>
+              : <RateTooltip dash={netDash} rate={rate?.data} placement={'top'}>
+                  <span className={`ShieldedPool__NetValue${netCredits >= 0 ? ' is-in' : ' is-out'}`}>
+                    {netCredits >= 0 ? '+' : '−'}{fmtDash(Math.abs(netDash))} <i>DASH</i>
+                  </span>
+                </RateTooltip>}
+          </div>
+        </div>
       </header>
 
       {pool.error
         ? <div className={'ShieldedPool__Empty'}>No data</div>
-        : <div className={'ShieldedPool__Airlock'}>
-            <div className={'ShieldedPool__Gate ShieldedPool__Gate--in'}>
-              <span className={'ShieldedPool__GateLabel'}>Shielded in · {windowLabel}</span>
-              {period.loading
-                ? <Skeleton w={'7ch'} h={'1.4em'}/>
-                : <RateTooltip dash={inDash} rate={rate?.data} placement={'top'}>
-                    <span className={'ShieldedPool__GateValue'}>
-                      +{fmtDash(inDash)} <i>DASH</i>
-                    </span>
-                  </RateTooltip>}
-              <TypeChips types={period.types} dir={'in'}/>
-              <span className={'ShieldedPool__GateFlow'} aria-hidden={'true'}/>
+        : <div className={'ShieldedPool__Body'}>
+            <div className={'ShieldedPool__Airlock'}>
+              <div className={'ShieldedPool__Gate ShieldedPool__Gate--in'}>
+                {period.loading
+                  ? <Skeleton w={'7ch'} h={'1.4em'}/>
+                  : <RateTooltip dash={inDash} rate={rate?.data} placement={'top'}>
+                      <span className={'ShieldedPool__GateValue'}>
+                        +{fmtDash(inDash)} <i>DASH</i>
+                      </span>
+                    </RateTooltip>}
+                <span className={'ShieldedPool__GateLabel'}>Deposits · {windowLabel}</span>
+                <TypeChips types={period.types} dir={'in'}/>
+                <span className={'ShieldedPool__GateFlow'} aria-hidden={'true'}/>
+              </div>
+
+              <div className={'ShieldedPool__Vault'}>
+                <div className={'ShieldedPool__VaultRing'} aria-hidden={'true'}/>
+                <span className={'ShieldedPool__VaultLabel'}>Locked in pool</span>
+                {pool.loading
+                  ? <Skeleton w={'9ch'} h={'1.6em'}/>
+                  : <RateTooltip dash={balanceDash} rate={rate?.data} placement={'top'}>
+                      <span className={'ShieldedPool__VaultValue'}>
+                        {fmtDash(balanceDash)} <i>DASH</i>
+                      </span>
+                    </RateTooltip>}
+                <div className={'ShieldedPool__VaultBadges'}>
+                  {pool.loading
+                    ? <>
+                        <Skeleton w={'9ch'} h={'1.35em'} radius={999}/>
+                        <Skeleton w={'7ch'} h={'1.35em'} radius={999}/>
+                      </>
+                    : <>
+                        {pool.notes != null &&
+                          <span className={'ShieldedPool__VaultBadge'}>
+                            <b>{Number(pool.notes).toLocaleString('en-US')}</b> notes
+                          </span>}
+                        {transfersInside > 0 &&
+                          <span className={'ShieldedPool__VaultBadge'}>
+                            <b>{transfersInside.toLocaleString('en-US')}</b> private
+                          </span>}
+                        {period.transitions > 0 &&
+                          <span className={'ShieldedPool__VaultBadge'}>
+                            <b>{Number(period.transitions).toLocaleString('en-US')}</b> txs
+                          </span>}
+                      </>}
+                </div>
+              </div>
+
+              <div className={'ShieldedPool__Gate ShieldedPool__Gate--out'}>
+                {period.loading
+                  ? <Skeleton w={'7ch'} h={'1.4em'}/>
+                  : <RateTooltip dash={outDash} rate={rate?.data} placement={'top'}>
+                      <span className={'ShieldedPool__GateValue'}>
+                        &minus;{fmtDash(outDash)} <i>DASH</i>
+                      </span>
+                    </RateTooltip>}
+                <span className={'ShieldedPool__GateLabel'}>Withdrawals · {windowLabel}</span>
+                <TypeChips types={period.types} dir={'out'}/>
+                <span className={'ShieldedPool__GateFlow'} aria-hidden={'true'}/>
+              </div>
             </div>
 
-            <div className={'ShieldedPool__Vault'}>
-              <div className={'ShieldedPool__VaultRing'} aria-hidden={'true'}/>
-              <span className={'ShieldedPool__VaultLabel'}>Locked in pool</span>
-              {pool.loading
-                ? <Skeleton w={'9ch'} h={'1.6em'}/>
-                : <RateTooltip dash={balanceDash} rate={rate?.data} placement={'top'}>
-                    <span className={'ShieldedPool__VaultValue'}>
-                      {fmtDash(balanceDash)} <i>DASH</i>
-                    </span>
-                  </RateTooltip>}
-              <span className={'ShieldedPool__VaultMeta'}>
-                {pool.notes != null && <>{Number(pool.notes).toLocaleString('en-US')} notes</>}
-                {pool.notes != null && transfersInside > 0 && ' · '}
-                {transfersInside > 0 && <>{transfersInside.toLocaleString('en-US')} private transfers · {windowLabel}</>}
-              </span>
-            </div>
-
-            <div className={'ShieldedPool__Gate ShieldedPool__Gate--out'}>
-              <span className={'ShieldedPool__GateLabel'}>Shielded out · {windowLabel}</span>
-              {period.loading
-                ? <Skeleton w={'7ch'} h={'1.4em'}/>
-                : <RateTooltip dash={outDash} rate={rate?.data} placement={'top'}>
-                    <span className={'ShieldedPool__GateValue'}>
-                      &minus;{fmtDash(outDash)} <i>DASH</i>
-                    </span>
-                  </RateTooltip>}
-              <TypeChips types={period.types} dir={'out'}/>
-              <span className={'ShieldedPool__GateFlow'} aria-hidden={'true'}/>
-            </div>
-          </div>}
-
-      <div className={'ShieldedPool__Spark'}>
-        {flows.loading && !buckets.length
-          ? <Skeleton w={'100%'} h={`${SPARK_H}px`} radius={6}/>
-          : <div
-              className={'ShieldedPool__SparkWrap'}
-              onMouseMove={handleMove}
-              onMouseLeave={() => setHover(null)}
-            >
-              <svg
-                className={`ShieldedPool__SparkSvg${flows.loading ? ' is-loading' : ''}`}
-                viewBox={`0 0 ${SPARK_W} ${SPARK_H}`}
-                preserveAspectRatio={'none'}
-                aria-hidden={'true'}
+            <div className={'ShieldedPool__Spark'}>
+              <div
+                className={'ShieldedPool__SparkWrap'}
+                onMouseMove={handleMove}
+                onMouseLeave={() => setHover(null)}
               >
-                <line className={'ShieldedPool__Baseline'} x1={0} x2={SPARK_W} y1={BASELINE} y2={BASELINE} vectorEffect={'non-scaling-stroke'}/>
-                {buckets.map((b, i) => {
-                  const x = i * barStep + (barStep - barW) / 2
-                  const dim = hover != null && hover.idx !== i
-                  const inH = barH(b.inAmt, flowMax)
-                  const outH = barH(b.outAmt, flowMax)
-                  return (
-                    <g key={i} className={dim ? 'is-dim' : undefined}>
-                      {inH > 0 && <rect className={'ShieldedPool__Bar ShieldedPool__Bar--in'} x={x} y={BASELINE - inH} width={barW} height={inH}/>}
-                      {outH > 0 && <rect className={'ShieldedPool__Bar ShieldedPool__Bar--out'} x={x} y={BASELINE} width={barW} height={outH}/>}
-                    </g>
-                  )
-                })}
-              </svg>
+                {flows.loading && !buckets.length
+                  ? <Skeleton className={'ShieldedPool__SparkSkel'} radius={6}/>
+                  : <>
+                      <svg
+                        className={`ShieldedPool__SparkSvg${flows.loading ? ' is-loading' : ''}`}
+                        viewBox={`0 0 ${SPARK_W} ${SPARK_H}`}
+                        preserveAspectRatio={'none'}
+                        aria-hidden={'true'}
+                      >
+                        <line className={'ShieldedPool__Baseline'} x1={0} x2={SPARK_W} y1={BASELINE} y2={BASELINE} vectorEffect={'non-scaling-stroke'}/>
+                        {buckets.map((b, i) => {
+                          const x = i * barStep + (barStep - barW) / 2
+                          const dim = hover != null && hover.idx !== i
+                          const inH = barH(b.inAmt, flowMax)
+                          const outH = barH(b.outAmt, flowMax)
+                          return (
+                            <g key={i} className={dim ? 'is-dim' : undefined}>
+                              {inH > 0 && <rect className={'ShieldedPool__Bar ShieldedPool__Bar--in'} x={x} y={BASELINE - inH} width={barW} height={inH}/>}
+                              {outH > 0 && <rect className={'ShieldedPool__Bar ShieldedPool__Bar--out'} x={x} y={BASELINE} width={barW} height={outH}/>}
+                            </g>
+                          )
+                        })}
+                      </svg>
 
-              {hovered &&
-                <div className={'ShieldedPool__Tip'} style={{ left: `${hover.xPct}%` }}>
-                  <span className={'ShieldedPool__TipDate'}>{hovered.ts ? tipFmt.format(new Date(hovered.ts)) : '—'}</span>
-                  <span className={'ShieldedPool__TipRow ShieldedPool__TipRow--in'}>In {fmtDash(creditsToDash(hovered.inAmt))} DASH</span>
-                  <span className={'ShieldedPool__TipRow ShieldedPool__TipRow--out'}>Out {fmtDash(creditsToDash(hovered.outAmt))} DASH</span>
+                      {hovered &&
+                        <div className={'ShieldedPool__Tip'} style={{ left: `${hover.xPct}%` }}>
+                          <span className={'ShieldedPool__TipDate'}>{hovered.ts ? tipFmt.format(new Date(hovered.ts)) : '—'}</span>
+                          <span className={'ShieldedPool__TipRow ShieldedPool__TipRow--in'}>In {fmtDash(creditsToDash(hovered.inAmt))} DASH</span>
+                          <span className={'ShieldedPool__TipRow ShieldedPool__TipRow--out'}>Out {fmtDash(creditsToDash(hovered.outAmt))} DASH</span>
+                        </div>}
+                    </>}
+              </div>
+
+              {!flows.loading && buckets.length >= 2 &&
+                <div className={'ShieldedPool__Axis'}>
+                  <span>{buckets[0].ts ? tipFmt.format(new Date(buckets[0].ts)) : ''}</span>
+                  {buckets.length >= 5 &&
+                    <span>{buckets[Math.floor(buckets.length / 2)].ts ? tipFmt.format(new Date(buckets[Math.floor(buckets.length / 2)].ts)) : ''}</span>}
+                  <span>{buckets[buckets.length - 1].ts ? tipFmt.format(new Date(buckets[buckets.length - 1].ts)) : ''}</span>
                 </div>}
-            </div>}
-
-        {!flows.loading && buckets.length >= 2 &&
-          <div className={'ShieldedPool__Axis'}>
-            <span>{buckets[0].ts ? tipFmt.format(new Date(buckets[0].ts)) : ''}</span>
-            {buckets.length >= 5 &&
-              <span>{buckets[Math.floor(buckets.length / 2)].ts ? tipFmt.format(new Date(buckets[Math.floor(buckets.length / 2)].ts)) : ''}</span>}
-            <span>{buckets[buckets.length - 1].ts ? tipFmt.format(new Date(buckets[buckets.length - 1].ts)) : ''}</span>
+            </div>
           </div>}
-
-        <div className={'ShieldedPool__SparkLegend'}>
-          <span><i className={'ShieldedPool__Dot ShieldedPool__Dot--in'}/> shield</span>
-          <span><i className={'ShieldedPool__Dot ShieldedPool__Dot--out'}/> unshield</span>
-        </div>
-      </div>
     </Box>
   )
 }
