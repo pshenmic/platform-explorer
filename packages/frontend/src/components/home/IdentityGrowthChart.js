@@ -9,7 +9,7 @@ import { Skeleton } from './Skeleton'
 import { PRESETS, presetRange } from './MetricChart'
 import './IdentityGrowthChart.scss'
 
-const DEFAULT_PRESET = 2
+const DEFAULT_PRESET = PRESETS.length - 1
 const M = { top: 12, right: 10, bottom: 22, left: 48 }
 
 const formatValue = (v) => Math.abs(v) >= 1e6 ? currencyRound(v) : d3.format(',')(Math.round(v))
@@ -21,13 +21,19 @@ export default function IdentityGrowthChart ({
   enabled = true
 }) {
   const [presetIdx, setPresetIdx] = useState(DEFAULT_PRESET)
-  const [state, setState] = useState({ loading: true, error: false, points: [] })
+  const [state, setState] = useState({
+    loading: true,
+    error: false,
+    points: [],
+    dataPresetIdx: DEFAULT_PRESET
+  })
   const [width, setWidth] = useState(0)
   const [plotH, setPlotH] = useState(160)
   const [hoverI, setHoverI] = useState(null)
   const [pinI, setPinI] = useState(null)
   const wrapRef = useRef(null)
   const gid = useId().replace(/:/g, '')
+  const fetchGen = useRef(0)
 
   useResizeObserver(wrapRef, entry => {
     const { width: w, height: hh } = entry.contentRect
@@ -48,22 +54,38 @@ export default function IdentityGrowthChart ({
     }
     const preset = PRESETS[presetIdx]
     const { start, end } = presetRange(preset)
+    const gen = ++fetchGen.current
     setState(s => ({ ...s, loading: true, error: false }))
     setHoverI(null)
     setPinI(null)
     fetcher(start, end, preset.intervals)
       .then(res => {
+        if (gen !== fetchGen.current) return
         const pts = (res || [])
           .map(item => ({ x: new Date(item.timestamp), y: item?.data?.[field] }))
           .filter(p => typeof p.y === 'number' && !isNaN(p.y))
         let s = 0
         while (s < pts.length - 1 && pts[s].y === 0) s++
-        setState({ loading: false, error: false, points: pts.slice(s) })
+        setState({
+          loading: false,
+          error: false,
+          points: pts.slice(s),
+          dataPresetIdx: presetIdx
+        })
       })
-      .catch(() => setState({ loading: false, error: true, points: [] }))
+      .catch(() => {
+        if (gen !== fetchGen.current) return
+        setState(s => ({
+          ...s,
+          loading: false,
+          error: true,
+          points: [],
+          dataPresetIdx: presetIdx
+        }))
+      })
   }, [presetIdx, fetcher, field, enabled])
 
-  const { loading, error, points } = state
+  const { loading, error, points, dataPresetIdx } = state
   const h = plotH
   const ready = width > 0 && h > 0 && points.length > 1
 
@@ -125,16 +147,30 @@ export default function IdentityGrowthChart ({
     setPinI(p => (p === hoverI ? null : hoverI))
   }
 
-  const rangeLabel = PRESETS[presetIdx].label === 'All' ? 'all time' : PRESETS[presetIdx].label
-  const focusValue = active
-    ? formatValue(active.value)
-    : (chart ? formatValue(chart.latest.y) : '—')
-  const focusMeta = active
-    ? chart.tipFmt(active.date)
-    : (chart ? `latest · ${rangeLabel}` : rangeLabel)
-  const deltaStr = chart
-    ? `${chart.delta >= 0 ? '+' : ''}${formatValue(chart.delta)}${chart.growthPct != null ? ` · ${chart.growthPct >= 0 ? '+' : ''}${chart.growthPct.toFixed(1)}%` : ''}`
-    : ''
+  const isAll = PRESETS[dataPresetIdx].label === 'All'
+  const rangeLabel = isAll ? 'all time' : PRESETS[dataPresetIdx].label
+  const rangeTotal = chart
+    ? (isAll
+        ? formatValue(chart.latest.y)
+        : `${chart.delta >= 0 ? '+' : ''}${formatValue(chart.delta)}`)
+    : '—'
+  const statMeta = active
+    ? `${chart.tipFmt(active.date)} · ${formatValue(active.value)} ${yAbbr}`
+    : (chart
+        ? (isAll
+            ? [
+                `${chart.delta >= 0 ? '+' : ''}${formatValue(chart.delta)} since start`,
+                chart.growthPct != null
+                  ? `${chart.growthPct >= 0 ? '+' : ''}${chart.growthPct.toFixed(1)}%`
+                  : null
+              ].filter(Boolean).join(' · ')
+            : [
+                `total ${formatValue(chart.latest.y)}`,
+                chart.growthPct != null
+                  ? `${chart.growthPct >= 0 ? '+' : ''}${chart.growthPct.toFixed(1)}% ${rangeLabel}`
+                  : null
+              ].filter(Boolean).join(' · '))
+        : '')
 
   return (
     <div className={'IdentityGrowthChart'} aria-label={'Identity growth'}>
@@ -143,25 +179,21 @@ export default function IdentityGrowthChart ({
           <span className={'IdentityGrowthChart__Eyebrow'}>Network growth</span>
           <h2 className={'IdentityGrowthChart__Title'}>Registered identities</h2>
           <p className={'IdentityGrowthChart__Lede'}>
-            Cumulative identity registrations over time. Hover the curve; click to pin.
+            Cumulative identity registrations over time.
           </p>
         </div>
-        <Presets options={PRESETS} value={presetIdx} onChange={setPresetIdx}/>
+        <div className={'IdentityGrowthChart__Controls'}>
+          <Presets options={PRESETS} value={presetIdx} onChange={setPresetIdx}/>
+          <div className={`IdentityGrowthChart__Stat${active ? ' is-on' : ''}${pinI != null ? ' is-pinned' : ''}`}>
+            <div className={'IdentityGrowthChart__StatMain'}>
+              <span className={'IdentityGrowthChart__StatCount'}>{rangeTotal}</span>
+              <span className={'IdentityGrowthChart__StatUnit'}>{yAbbr}</span>
+            </div>
+            {statMeta &&
+              <span className={'IdentityGrowthChart__StatMeta'}>{statMeta}</span>}
+          </div>
+        </div>
       </header>
-
-      <div className={'IdentityGrowthChart__Hero'}>
-        <div className={'IdentityGrowthChart__HeroMain'}>
-          <span className={'IdentityGrowthChart__HeroCount'}>{focusValue}</span>
-          <span className={'IdentityGrowthChart__HeroUnit'}>{yAbbr}</span>
-        </div>
-        <div className={`IdentityGrowthChart__Focus${active || pinI != null ? ' is-on' : ''}`}>
-          <span className={'IdentityGrowthChart__FocusMeta'}>{focusMeta}</span>
-          {chart &&
-            <span className={'IdentityGrowthChart__FocusStats'}>
-              {deltaStr} · {rangeLabel}
-            </span>}
-        </div>
-      </div>
 
       <div ref={wrapRef} className={'IdentityGrowthChart__Plot'}>
         {error
@@ -178,7 +210,11 @@ export default function IdentityGrowthChart ({
                     width={width}
                     height={h}
                     role={'img'}
-                    aria-label={`Registered identities, latest ${formatValue(chart.latest.y)}`}
+                    aria-label={
+                      isAll
+                        ? `Registered identities, total ${formatValue(chart.latest.y)}`
+                        : `Registered identities, ${chart.delta >= 0 ? '+' : ''}${formatValue(chart.delta)} in ${rangeLabel}`
+                    }
                     onMouseMove={onMove}
                     onMouseLeave={onLeave}
                     onClick={onClick}

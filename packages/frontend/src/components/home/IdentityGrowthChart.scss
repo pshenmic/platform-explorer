@@ -16,10 +16,10 @@ $id-deep: $color-brand-normal;
     display: flex;
     align-items: flex-start;
     justify-content: space-between;
-    gap: 12px;
+    gap: 16px 24px;
     flex-wrap: wrap;
     flex-shrink: 0;
-    margin-bottom: 12px;
+    margin-bottom: 16px;
   }
 
   &__HeadText {
@@ -34,7 +34,7 @@ $id-deep: $color-brand-normal;
     text-transform: uppercase;
     letter-spacing: 0.22em;
     color: rgba($id-neon, 0.95);
-    margin-bottom: 4px;
+    margin-bottom: 6px;
   }
 
   &__Title {
@@ -44,7 +44,7 @@ $id-deep: $color-brand-normal;
     font-size: 1.375rem;
     line-height: 1.1;
     color: #fff;
-    margin: 0 0 6px;
+    margin: 0 0 8px;
   }
 
   &__Lede {
@@ -55,24 +55,34 @@ $id-deep: $color-brand-normal;
     margin: 0;
   }
 
-  &__Hero {
+  // range chips → big number → meta (even vertical rhythm)
+  &__Controls {
     display: flex;
+    flex-direction: column;
     align-items: flex-end;
-    justify-content: space-between;
-    gap: 10px;
-    flex-wrap: wrap;
+    gap: 14px;
     flex-shrink: 0;
-    margin-bottom: 10px;
-  }
-
-  &__HeroMain {
-    display: flex;
-    align-items: baseline;
-    gap: 8px;
     min-width: 0;
   }
 
-  &__HeroCount {
+  &__Stat {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 8px;
+    min-width: 0;
+    text-align: right;
+  }
+
+  &__StatMain {
+    display: flex;
+    align-items: baseline;
+    justify-content: flex-end;
+    gap: 10px;
+    min-width: 0;
+  }
+
+  &__StatCount {
     font-family: $font-heading;
     font-weight: 800;
     font-style: italic;
@@ -84,7 +94,7 @@ $id-deep: $color-brand-normal;
     min-width: 4ch;
   }
 
-  &__HeroUnit {
+  &__StatUnit {
     font-family: $font-mono;
     font-size: 0.625rem;
     text-transform: uppercase;
@@ -92,43 +102,23 @@ $id-deep: $color-brand-normal;
     color: var(--chakra-colors-gray-500);
   }
 
-  &__Focus {
-    box-sizing: border-box;
-    min-width: min(13rem, 100%);
-    max-width: 100%;
-    height: 2.5rem;
-    padding: 0 12px;
-    border-radius: 999px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    gap: 1px;
-    background: rgba(255, 255, 255, 0.04);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-
-    &.is-on {
-      border-color: rgba($id-neon, 0.4);
-      background: rgba($id-neon, 0.07);
-      box-shadow: 0 0 14px rgba($id-neon, 0.12);
-    }
-  }
-
-  &__FocusMeta {
+  &__StatMeta {
     font-family: $font-mono;
-    font-size: 0.6875rem;
-    color: #fff;
+    font-size: 0.8125rem; // was 0.625 — hard to read at a glance
+    line-height: 1.35;
+    color: var(--chakra-colors-gray-400);
     white-space: nowrap;
+    max-width: 18rem;
     overflow: hidden;
     text-overflow: ellipsis;
   }
 
-  &__FocusStats {
-    font-family: $font-mono;
-    font-size: 0.5625rem;
-    color: var(--chakra-colors-gray-500);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+  &__Stat.is-on &__StatMeta {
+    color: rgba($id-neon, 0.95);
+  }
+
+  &__Stat.is-pinned &__StatMeta {
+    color: $id-neon;
   }
 
   &__Plot {
