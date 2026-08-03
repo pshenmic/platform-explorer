@@ -595,6 +595,51 @@ const getIdentitiesHistory = (
   )
 }
 
+interface ActiveIdentityItem {
+  identifier: string
+  transactionsCount: number
+  aliases?: Array<{ alias: string, status: string, contested: boolean }>
+}
+
+const getActiveIdentities = (
+  page: number = 1,
+  limit: number = 10,
+  order: SortOrder = 'desc',
+  timestampStart?: string,
+  timestampEnd?: string
+): Promise<PaginatedResultSet<ActiveIdentityItem>> => {
+  const params = prepareQueryParams({
+    page: Math.max(1, Number(page)),
+    limit: Math.max(1, Number(limit)),
+    order,
+    timestamp_start: timestampStart,
+    timestamp_end: timestampEnd
+  })
+  return call<PaginatedResultSet<ActiveIdentityItem>>(`identities/active?${params.toString()}`, 'GET')
+}
+
+interface ActiveDataContractItem {
+  identifier: string
+  transitionsCount: number
+}
+
+const getActiveDataContracts = (
+  page: number = 1,
+  limit: number = 10,
+  order: SortOrder = 'desc',
+  timestampStart?: string,
+  timestampEnd?: string
+): Promise<PaginatedResultSet<ActiveDataContractItem>> => {
+  const params = prepareQueryParams({
+    page: Math.max(1, Number(page)),
+    limit: Math.max(1, Number(limit)),
+    order,
+    timestamp_start: timestampStart,
+    timestamp_end: timestampEnd
+  })
+  return call<PaginatedResultSet<ActiveDataContractItem>>(`dataContracts/active?${params.toString()}`, 'GET')
+}
+
 const getValidators = (
   page: number = 1,
   limit: number = 30,
@@ -753,6 +798,8 @@ export {
   getIdentities,
   getIdentity,
   getIdentitiesHistory,
+  getActiveIdentities,
+  getActiveDataContracts,
   getTransactionsByIdentity,
   getDataContractsByIdentity,
   getDataContractTransactions,
