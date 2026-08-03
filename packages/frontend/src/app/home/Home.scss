@@ -144,6 +144,8 @@
   border-radius: var(--chakra-radii-block);
   padding: 20px 0 0 !important;
   overflow-x: hidden;
+  outline: none;
+  scroll-margin-top: 1.25rem;
 
   @media screen and (max-width: $breakpoint-md) {
     padding: 16px 0 0 !important;

@@ -96,17 +96,27 @@ export default function HomeHero ({
                   ? <BigNumber>{epochCount}</BigNumber>
                   : <Skeleton w={'4ch'} h={'0.85em'} radius={4}/>}
               </div>
-              <p className={'HomeHero__LiveSub HomeHero__LiveSub--Epoch'}>
+              <p className={'HomeHero__LiveSub'}>
                 {epochEndDate
-                  ? <span
-                      className={'HomeHero__NextBadge'}
-                      title={nextEpochTitleFmt.format(epochEndDate)}
-                    >
-                      Next
-                      <span className={'HomeHero__NextBadgeSep'} aria-hidden={'true'}>·</span>
+                  ? <span className={'HomeHero__LiveMeta'} title={nextEpochTitleFmt.format(epochEndDate)}>
+                      <a
+                        className={'HomeHero__LiveMetaLink HomeHero__LiveMetaLink--Next'}
+                        href={'#home-epochs'}
+                        aria-label={'Next epoch — scroll to Epochs'}
+                        onClick={(e) => {
+                          e.preventDefault()
+                          const el = document.getElementById('home-epochs')
+                          if (!el) return
+                          el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+                          try { el.focus({ preventScroll: true }) } catch (_) { /* noop */ }
+                        }}
+                      >
+                        Next
+                      </a>
+                      <span className={'HomeHero__LiveMetaSep'} aria-hidden={'true'}>·</span>
                       <TimeDelta endDate={epochEndDate} format={'compact'} showTimestampTooltip={false}/>
-                      <span className={'HomeHero__NextBadgeSep'} aria-hidden={'true'}>·</span>
-                      <span className={'HomeHero__NextBadgeDate'}>{formatNextEpochDay(epochEndDate)}</span>
+                      <span className={'HomeHero__LiveMetaSep'} aria-hidden={'true'}>·</span>
+                      <span>{formatNextEpochDay(epochEndDate)}</span>
                     </span>
                   : <Skeleton w={'8ch'} h={'0.7em'} radius={4}/>}
               </p>
@@ -122,11 +132,11 @@ export default function HomeHero ({
                   ? (status?.network || '—')
                   : <Skeleton w={'5ch'} h={'0.85em'} radius={4}/>}
               </div>
-              <p className={'HomeHero__LiveSub HomeHero__LiveSub--Badge'}>
+              <p className={'HomeHero__LiveSub'}>
                 {ready
                   ? (drive
                       ? <a
-                          className={'HomeHero__MetaBadge'}
+                          className={'HomeHero__LiveMetaLink'}
                           href={'https://github.com/dashpay/platform/releases'}
                           target={'_blank'}
                           rel={'noopener noreferrer'}
@@ -152,11 +162,11 @@ export default function HomeHero ({
                     </>
                   : <Skeleton w={'5ch'} h={'0.85em'} radius={4}/>}
               </div>
-              <p className={'HomeHero__LiveSub HomeHero__LiveSub--Badge'}>
+              <p className={'HomeHero__LiveSub'}>
                 {ready
                   ? (tenderdash
                       ? <a
-                          className={'HomeHero__MetaBadge'}
+                          className={'HomeHero__LiveMetaLink'}
                           href={'https://github.com/dashpay/tenderdash/releases'}
                           target={'_blank'}
                           rel={'noopener noreferrer'}

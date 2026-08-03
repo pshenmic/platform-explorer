@@ -865,7 +865,7 @@
     min-height: 1rem;
     margin: 0;
     font-size: 0.6875rem;
-    line-height: 1.2;
+    line-height: 1.25;
     font-family: $font-mono;
     color: var(--chakra-colors-gray-500);
     white-space: nowrap;
@@ -877,68 +877,59 @@
       overflow: hidden;
       text-overflow: ellipsis;
     }
-
-    &--Epoch,
-    &--Badge {
-      gap: 0;
-    }
   }
 
-  %HomeHeroMetaPill {
+  &__LiveMeta {
     display: inline-flex;
     align-items: center;
     gap: 0.35em;
-    flex-shrink: 0;
+    min-width: 0;
     max-width: 100%;
-    padding: 3px 9px;
-    border-radius: 999px;
-    font-family: $font-heading;
-    font-size: 0.625rem;
-    font-weight: 800;
-    font-style: italic;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: #fff;
-    background: rgba(var(--chakra-colors-brand-normal-rgb), 0.45);
-    border: 1px solid rgba(var(--chakra-colors-brand-light-rgb), 0.5);
-    line-height: 1.25;
-    white-space: nowrap;
     font-variant-numeric: tabular-nums;
+  }
+
+  &__LiveMetaSep {
+    opacity: 0.45;
+    user-select: none;
+  }
+
+  &__LiveMetaLink {
+    color: var(--chakra-colors-gray-400);
     text-decoration: none;
-
-    @media screen and (max-width: $breakpoint-md) {
-      font-size: 0.5625rem;
-      padding: 2px 7px;
-    }
-  }
-
-  &__NextBadge {
-    @extend %HomeHeroMetaPill;
-  }
-
-  &__MetaBadge {
-    @extend %HomeHeroMetaPill;
-    transition: background 0.12s ease, border-color 0.12s ease, color 0.12s ease;
+    border-bottom: 1px dotted rgba(var(--chakra-colors-gray-500-rgb, 122, 132, 137), 0.45);
+    transition: color 0.12s ease, border-color 0.12s ease;
 
     @media (hover: hover) and (pointer: fine) {
       &:hover {
-        color: #fff;
-        background: rgba(var(--chakra-colors-brand-normal-rgb), 0.6);
-        border-color: rgba(var(--chakra-colors-brand-light-rgb), 0.75);
+        color: $color-brand-light;
+        border-color: rgba(var(--chakra-colors-brand-light-rgb), 0.55);
       }
     }
-  }
 
-  &__NextBadgeSep {
-    opacity: 0.65;
-    font-style: normal;
-    font-weight: 700;
-  }
+    &:focus-visible {
+      outline: 1px solid rgba(var(--chakra-colors-brand-light-rgb), 0.55);
+      outline-offset: 2px;
+      border-radius: 2px;
+    }
 
-  &__NextBadgeDate {
-    font-style: italic;
-    font-variant-numeric: tabular-nums;
-    letter-spacing: 0.04em;
+    &--Next {
+      color: var(--chakra-colors-gray-250);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      font-size: 0.625rem;
+      font-weight: 700;
+      font-family: $font-heading;
+      font-style: italic;
+      border-bottom-style: solid;
+      border-bottom-color: rgba(var(--chakra-colors-gray-500-rgb, 122, 132, 137), 0.35);
+
+      @media (hover: hover) and (pointer: fine) {
+        &:hover {
+          color: $color-brand-light;
+          border-bottom-color: rgba(var(--chakra-colors-brand-light-rgb), 0.65);
+        }
+      }
+    }
   }
 }
 

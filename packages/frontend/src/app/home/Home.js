@@ -232,7 +232,12 @@ function Home () {
 
         <HomeLeaders rate={rate} enabled={belowFoldReady}/>
 
-        <Box className={'InfoBlock InfoBlock--NoBorder HomeEpochs'} w={'100%'}>
+        <Box
+          id={'home-epochs'}
+          className={'InfoBlock InfoBlock--NoBorder HomeEpochs'}
+          w={'100%'}
+          tabIndex={-1}
+        >
           <EpochsOverview
             title={'Epochs'}
             epochs={epochsList}
