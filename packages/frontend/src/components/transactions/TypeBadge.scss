@@ -4,6 +4,12 @@
   min-width: 0;
   display: inline-flex !important;
   align-items: center;
+  height: 1.25rem !important;
+  min-height: 1.25rem !important;
+  max-height: 1.25rem !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+  line-height: 1 !important;
   overflow: hidden;
 }
 
@@ -13,4 +19,6 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  line-height: 1;
+  font-size: 0.625rem;
 }

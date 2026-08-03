@@ -26,10 +26,10 @@ export function CompactBlocksList ({
       cell: (block) => {
         const height = block?.header?.height
         return (
-          <>
-            <BlockIcon w={'1.125rem'} h={'1.125rem'} mr={'0.35rem'} flexShrink={0}/>
+          <span className={'CompactBlocksList__Height'}>
+            <BlockIcon w={'1.125rem'} h={'1.125rem'} flexShrink={0}/>
             {typeof height === 'number' ? <BigNumber>{height}</BigNumber> : <NotActive/>}
-          </>
+          </span>
         )
       }
     },

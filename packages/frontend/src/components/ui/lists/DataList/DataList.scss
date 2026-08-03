@@ -75,6 +75,9 @@
     align-items: center;
     font-size: 0.75rem;
     position: relative;
+    margin-bottom: 0;
+    min-height: 2.375rem;
+    box-sizing: border-box;
 
     .Identifier__CopyButton { opacity: 0; pointer-events: none; transition: opacity .15s; }
     &:hover .Identifier__CopyButton { opacity: 1; pointer-events: auto; }
@@ -161,7 +164,7 @@
     animation: DataListPulse 1.4s ease-in-out infinite;
   }
 
-  &__Footer { margin-top: 8px; }
+  &__Footer { margin-top: 12px; }
 
   &__ShowMore {
     display: flex;

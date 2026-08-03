@@ -1,12 +1,24 @@
 @import '../../styles/variables.scss';
 
 .CompactBlocksList {
+  &__Height {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    min-width: 0;
+    line-height: 1;
+  }
+
   &__Txs {
-    display: inline-block;
-    padding: 1px 7px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 1.25rem;
+    padding: 0 7px;
     border-radius: 4px;
     font-family: $font-mono;
     font-size: 0.625rem;
+    line-height: 1;
     color: $color-brand-light;
     background: rgba(var(--chakra-colors-brand-normal-rgb), 0.12);
     white-space: nowrap;
