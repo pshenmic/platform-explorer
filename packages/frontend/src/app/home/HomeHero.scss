@@ -188,11 +188,6 @@
       overflow: hidden;
     }
 
-    > .DataList .DataList__Footer {
-      margin-top: 12px;
-      padding-top: 0;
-    }
-
     @media screen and (min-width: $breakpoint-md) {
       &:first-child {
         padding-right: 1.25rem;

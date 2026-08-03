@@ -1,7 +1,7 @@
 @import '../../styles/variables.scss';
 
 // rail-style rows — same language as HomeLeaders rich lists
-.CompactBlocksList {
+.CompactTxList {
   .DataList__Body {
     gap: 6px;
   }
@@ -46,29 +46,5 @@
   .DataList__Cell {
     font-family: $font-mono;
     font-size: 0.75rem;
-  }
-
-  &__Height {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.35rem;
-    min-width: 0;
-    line-height: 1;
-  }
-
-  &__Txs {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 1.25rem;
-    padding: 0 7px;
-    border-radius: 999px;
-    font-family: $font-mono;
-    font-size: 0.625rem;
-    line-height: 1;
-    color: #fff;
-    background: rgba(255, 255, 255, 0.06);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    white-space: nowrap;
   }
 }

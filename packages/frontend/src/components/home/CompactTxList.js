@@ -1,6 +1,5 @@
 'use client'
 
-import Link from 'next/link'
 import StatusIcon from '../transactions/StatusIcon'
 import TypeBadge from '../transactions/TypeBadge'
 import BatchTypeBadge from '../transactions/BatchTypeBadge'
@@ -10,6 +9,7 @@ import { Tooltip } from '../ui/Tooltips'
 import { DataList } from '../ui/lists'
 import { useLiveList } from './hooks'
 import { HOME_FEED_LIMIT } from './listLimits'
+import './CompactTxList.scss'
 
 const STATUS_LABEL = {
   SUCCESS: 'Success',
@@ -22,9 +22,7 @@ const STATUS_LABEL = {
 export function CompactTxList ({
   transactions,
   limit = HOME_FEED_LIMIT,
-  loading,
-  moreHref,
-  moreLabel
+  loading
 }) {
   const { shown, newKeys, hoverBind } = useLiveList(transactions, tx => tx?.hash)
   const rows = Array.isArray(shown) ? shown.slice(0, limit) : []
@@ -77,10 +75,6 @@ export function CompactTxList ({
     }
   ]
 
-  const footer = moreHref
-    ? <Link href={moreHref} prefetch={false} className={'DataList__ShowMore'}>{moreLabel || 'View all'}</Link>
-    : null
-
   return (
     <DataList
       className={'CompactTxList'}
@@ -94,7 +88,6 @@ export function CompactTxList ({
       rowClassName={(tx) => (newKeys.has(tx.hash) ? 'is-new' : '')}
       rowStyle={(tx, i) => (newKeys.has(tx.hash) ? { '--stagger': `${i * 50}ms` } : undefined)}
       wrapperProps={hoverBind}
-      footer={footer}
     />
   )
 }

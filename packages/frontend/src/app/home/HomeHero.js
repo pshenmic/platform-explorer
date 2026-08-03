@@ -152,16 +152,12 @@ export default function HomeHero ({
             <CompactTxList
               transactions={transactions}
               loading={transactionsLoading}
-              moreHref={'/transactions'}
-              moreLabel={'View all transactions'}
             />
           </div>
           <div className={'HomeHero__Feed'}>
             <CompactBlocksList
               blocks={blocks}
               loading={blocksLoading}
-              moreHref={'/blocks'}
-              moreLabel={'View all blocks'}
             />
           </div>
         </div>
