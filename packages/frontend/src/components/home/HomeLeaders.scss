@@ -49,6 +49,8 @@ $lead-inset: 32px; // = InfoBlock horizontal padding
     display: flex;
     width: max-content;
     will-change: transform;
+    padding-left: calc(#{$lead-inset} - 1.25rem);
+    padding-right: calc(#{$lead-inset} - 1.25rem);
   }
 
   &__Slide {
@@ -60,6 +62,9 @@ $lead-inset: 32px; // = InfoBlock horizontal padding
     display: flex;
     flex-direction: column;
     box-sizing: border-box;
+    padding-left: 1.25rem;
+    padding-right: 1.25rem;
+    border-right: 1px solid rgba(var(--chakra-colors-gray-800-rgb), 0.55);
 
     @media (min-width: 48em) {
       flex: 0 0 clamp(22rem, 46vw, 32rem);
@@ -79,21 +84,21 @@ $lead-inset: 32px; // = InfoBlock horizontal padding
     display: flex;
     flex-direction: column;
     gap: 10px;
-    padding: 2px 20px 0;
-
-    @media (min-width: 48em) {
-      padding-left: 24px;
-      padding-right: 24px;
-    }
-
-    @media (min-width: 62em) {
-      padding-left: 28px;
-      padding-right: 28px;
-    }
+    padding: 2px 0 0;
   }
 
   &__ColHead {
     flex-shrink: 0;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    min-width: 0;
+  }
+
+  &__ColCopy {
+    min-width: 0;
+    flex: 1 1 auto;
   }
 
   &__ColEyebrow {
@@ -128,6 +133,65 @@ $lead-inset: 32px; // = InfoBlock horizontal padding
     line-height: 1.5;
     color: var(--chakra-colors-gray-500);
     margin: 0;
+  }
+
+  &__Glyph {
+    flex: 0 0 auto;
+    display: grid;
+    place-items: center;
+    width: 3.25rem;
+    height: 3.25rem;
+    margin-top: 2px;
+    border-radius: 14px;
+    color: inherit;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.12);
+    pointer-events: none;
+    user-select: none;
+  }
+
+  &__GlyphSvg {
+    width: 1.85rem;
+    height: 1.85rem;
+    display: block;
+    opacity: 0.92;
+  }
+
+  &__Col--contracts &__Glyph {
+    color: $lead-contracts;
+    background: rgba($lead-contracts, 0.08);
+    border-color: rgba($lead-contracts, 0.22);
+  }
+
+  &__Col--balance &__Glyph {
+    color: $lead-balance;
+    background: rgba($lead-balance, 0.08);
+    border-color: rgba($lead-balance, 0.22);
+  }
+
+  &__Col--txs &__Glyph {
+    color: $lead-txs;
+    background: rgba($lead-txs, 0.09);
+    border-color: rgba($lead-txs, 0.24);
+  }
+
+  &__Col--activeContracts &__Glyph {
+    color: $lead-active-contracts;
+    background: rgba($lead-active-contracts, 0.08);
+    border-color: rgba($lead-active-contracts, 0.22);
+  }
+
+  &__Col--tokens &__Glyph {
+    color: $lead-tokens;
+    background: rgba($lead-tokens, 0.09);
+    border-color: rgba($lead-tokens, 0.24);
+  }
+
+  &__Col--activeIds &__Glyph {
+    color: $lead-active-ids;
+    background: rgba($lead-active-ids, 0.08);
+    border-color: rgba($lead-active-ids, 0.22);
   }
 
   &__Rails {

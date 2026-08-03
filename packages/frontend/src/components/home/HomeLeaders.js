@@ -71,6 +71,93 @@ function LeaderRail ({ place, href, title, metric, meterValue, meterMax, accent 
   )
 }
 
+function LeaderGlyph ({ accent }) {
+  const common = {
+    viewBox: '0 0 48 48',
+    fill: 'none',
+    xmlns: 'http://www.w3.org/2000/svg',
+    'aria-hidden': 'true',
+    focusable: 'false',
+    className: 'HomeLeaders__GlyphSvg'
+  }
+  const s = { stroke: 'currentColor', strokeWidth: 1.5, strokeLinecap: 'round', strokeLinejoin: 'round' }
+
+  let paths = null
+  switch (accent) {
+    case 'contracts':
+      paths = (
+        <>
+          <rect x='10' y='8' width='22' height='28' rx='3' {...s}/>
+          <path d='M16 16h10M16 22h8M16 28h6' {...s}/>
+          <rect x='16' y='12' width='22' height='28' rx='3' {...s} opacity='0.55'/>
+        </>
+      )
+      break
+    case 'balance':
+      paths = (
+        <>
+          <path d='M8 38h32' {...s}/>
+          <rect x='11' y='24' width='6' height='14' rx='1.5' {...s}/>
+          <rect x='21' y='16' width='6' height='22' rx='1.5' {...s}/>
+          <rect x='31' y='10' width='6' height='28' rx='1.5' {...s}/>
+          <path d='M14 20l6-6 6 4 8-10' {...s} opacity='0.7'/>
+        </>
+      )
+      break
+    case 'txs':
+      paths = (
+        <>
+          <path d='M6 28h6l4-12 6 20 5-14 4 8h11' {...s}/>
+          <circle cx='16' cy='16' r='2.2' fill='currentColor' stroke='none'/>
+          <circle cx='27' cy='36' r='2.2' fill='currentColor' stroke='none' opacity='0.7'/>
+          <circle cx='36' cy='22' r='2.2' fill='currentColor' stroke='none' opacity='0.45'/>
+        </>
+      )
+      break
+    case 'activeContracts':
+      paths = (
+        <>
+          <circle cx='24' cy='24' r='14' {...s}/>
+          <path d='M24 14v11l7 4' {...s}/>
+          <circle cx='24' cy='24' r='1.6' fill='currentColor' stroke='none'/>
+        </>
+      )
+      break
+    case 'tokens':
+      paths = (
+        <>
+          <circle cx='24' cy='24' r='14' {...s}/>
+          <path d='M24 13v22' {...s}/>
+          <path
+            d='M29 18.5c0-2.4-2.1-4-5-4s-5 1.5-5 3.6c0 2 1.6 3.1 5 3.9 3.4.8 5 2.1 5 4.1 0 2.3-2.2 4-5 4s-5-1.7-5-4'
+            {...s}
+          />
+        </>
+      )
+      break
+    case 'activeIds':
+      paths = (
+        <>
+          <circle cx='24' cy='22' r='5' {...s}/>
+          <path d='M14 36c2.5-5 7-8 10-8s7.5 3 10 8' {...s}/>
+          <circle cx='10' cy='14' r='2.5' {...s}/>
+          <circle cx='38' cy='16' r='2.5' {...s}/>
+          <circle cx='36' cy='34' r='2.5' {...s} opacity='0.7'/>
+          <path d='M14.5 16.5l5 3M33.5 18l-5 2M32 31.5l-4-5' {...s} opacity='0.55'/>
+        </>
+      )
+      break
+    default:
+      paths = <circle cx='24' cy='24' r='12' {...s}/>
+  }
+
+  return (
+    <span className={`HomeLeaders__Glyph HomeLeaders__Glyph--${accent}`} aria-hidden={'true'}>
+      <svg {...common}>{paths}</svg>
+    </span>
+  )
+}
+
 function LeaderColumn ({
   eyebrow,
   title,
@@ -85,9 +172,12 @@ function LeaderColumn ({
   return (
     <div className={`HomeLeaders__Col HomeLeaders__Col--${accent}`}>
       <div className={'HomeLeaders__ColHead'}>
-        <span className={'HomeLeaders__ColEyebrow'}>{eyebrow}</span>
-        <h3 className={'HomeLeaders__ColTitle'}>{title}</h3>
-        <p className={'HomeLeaders__ColLede'}>{lede}</p>
+        <div className={'HomeLeaders__ColCopy'}>
+          <span className={'HomeLeaders__ColEyebrow'}>{eyebrow}</span>
+          <h3 className={'HomeLeaders__ColTitle'}>{title}</h3>
+          <p className={'HomeLeaders__ColLede'}>{lede}</p>
+        </div>
+        <LeaderGlyph accent={accent}/>
       </div>
 
       <div className={'HomeLeaders__Rails'} role={'list'}>
