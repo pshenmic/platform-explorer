@@ -3,72 +3,92 @@
 $lead-contracts: #5ecbff;
 $lead-balance: #2cffb4;
 $lead-txs: #f4c14e;
+$lead-active-contracts: #7eb6ff;
+$lead-tokens: #c084fc;
+$lead-active-ids: #34d399;
+
+$lead-inset: 32px; // = InfoBlock horizontal padding
 
 .HomeLeaders {
   position: relative;
   overflow: hidden;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+  padding-top: 20px !important;
+  padding-bottom: 28px !important;
 
-  &__Grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 1.25rem;
+  &__Viewport {
+    overflow: hidden;
+    width: 100%;
+    cursor: grab;
+    touch-action: pan-y;
+    outline: none;
 
-    // tablet: 2 + 1 wrap; desktop: three equal rails
-    @media screen and (min-width: $breakpoint-md) {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 1.25rem 0;
+    &:focus-visible {
+      outline: 1px solid rgba(var(--chakra-colors-brand-light-rgb), 0.45);
+      outline-offset: 2px;
     }
 
-    @media screen and (min-width: $breakpoint-lg) {
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 0;
+    &.is-dragging {
+      cursor: grabbing;
+      user-select: none;
+
+      a { pointer-events: none; }
+    }
+
+    mask-image: linear-gradient(
+      90deg,
+      transparent 0,
+      #000 24px,
+      #000 calc(100% - 24px),
+      transparent 100%
+    );
+  }
+
+  &__Track {
+    display: flex;
+    width: max-content;
+    will-change: transform;
+  }
+
+  &__Slide {
+    flex: 0 0 clamp(20rem, 88vw, 28rem);
+    width: clamp(20rem, 88vw, 28rem);
+    min-height: 100%;
+    height: auto;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+
+    @media (min-width: 48em) {
+      flex: 0 0 clamp(22rem, 46vw, 32rem);
+      width: clamp(22rem, 46vw, 32rem);
+    }
+
+    @media (min-width: 62em) {
+      flex: 0 0 clamp(24rem, 32vw, 36rem);
+      width: clamp(24rem, 32vw, 36rem);
     }
   }
 
   &__Col {
     min-width: 0;
+    flex: 1 1 auto;
+    height: 100%;
     display: flex;
     flex-direction: column;
     gap: 10px;
+    padding: 2px 20px 0;
 
-    @media screen and (min-width: $breakpoint-md) {
-      padding: 0 1rem;
+    @media (min-width: 48em) {
+      padding-left: 24px;
+      padding-right: 24px;
     }
 
-    @media screen and (min-width: $breakpoint-lg) {
-      padding: 0 1.15rem;
-      border-right: 1px solid rgba(var(--chakra-colors-gray-800-rgb), 0.55);
-
-      &:first-child {
-        padding-left: 0;
-      }
-
-      &:last-child {
-        padding-right: 0;
-        border-right: none;
-      }
-    }
-
-    @media screen and (min-width: $breakpoint-md) and (max-width: #{$breakpoint-lg}) {
-      // 2-col: full-width third list
-      &:last-child {
-        grid-column: 1 / -1;
-        padding-left: 0;
-        padding-right: 0;
-        padding-top: 0.25rem;
-        border-top: 1px solid rgba(var(--chakra-colors-gray-800-rgb), 0.45);
-      }
-
-      &:nth-child(1) {
-        padding-left: 0;
-        padding-right: 1.15rem;
-        border-right: 1px solid rgba(var(--chakra-colors-gray-800-rgb), 0.55);
-      }
-
-      &:nth-child(2) {
-        padding-right: 0;
-        padding-left: 1.15rem;
-      }
+    @media (min-width: 62em) {
+      padding-left: 28px;
+      padding-right: 28px;
     }
   }
 
@@ -85,11 +105,13 @@ $lead-txs: #f4c14e;
     margin-bottom: 4px;
   }
 
-  &__Col:nth-child(1) &__ColEyebrow { color: rgba($lead-contracts, 0.95); }
-  &__Col:nth-child(2) &__ColEyebrow { color: rgba($lead-balance, 0.95); }
-  &__Col:nth-child(3) &__ColEyebrow { color: rgba($lead-txs, 0.95); }
+  &__Col--contracts &__ColEyebrow { color: rgba($lead-contracts, 0.95); }
+  &__Col--balance &__ColEyebrow { color: rgba($lead-balance, 0.95); }
+  &__Col--txs &__ColEyebrow { color: rgba($lead-txs, 0.95); }
+  &__Col--activeContracts &__ColEyebrow { color: rgba($lead-active-contracts, 0.95); }
+  &__Col--tokens &__ColEyebrow { color: rgba($lead-tokens, 0.95); }
+  &__Col--activeIds &__ColEyebrow { color: rgba($lead-active-ids, 0.95); }
 
-  // dual-column variant of the Shielded head (h3, slightly tighter title)
   &__ColTitle {
     font-family: $font-heading;
     font-weight: 800;
@@ -103,7 +125,7 @@ $lead-txs: #f4c14e;
   &__ColLede {
     font-family: $font-mono;
     font-size: 0.6875rem;
-    line-height: 1.55;
+    line-height: 1.5;
     color: var(--chakra-colors-gray-500);
     margin: 0;
   }
@@ -204,6 +226,21 @@ $lead-txs: #f4c14e;
     box-shadow: 0 0 8px rgba($lead-txs, 0.45);
   }
 
+  &__Rail--activeContracts &__Meter i {
+    background: $lead-active-contracts;
+    box-shadow: 0 0 8px rgba($lead-active-contracts, 0.45);
+  }
+
+  &__Rail--tokens &__Meter i {
+    background: $lead-tokens;
+    box-shadow: 0 0 8px rgba($lead-tokens, 0.45);
+  }
+
+  &__Rail--activeIds &__Meter i {
+    background: $lead-active-ids;
+    box-shadow: 0 0 8px rgba($lead-active-ids, 0.45);
+  }
+
   &__Rail--p1 {
     border-color: rgba(255, 210, 5, 0.22);
     background: linear-gradient(90deg, rgba(255, 210, 5, 0.08), rgba(255, 255, 255, 0.02) 55%);
@@ -217,27 +254,4 @@ $lead-txs: #f4c14e;
     border-color: rgba(244, 154, 88, 0.2);
   }
 
-  &__More {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-top: auto;
-    padding: 7px 12px;
-    border-radius: 10px;
-    background-color: var(--chakra-colors-gray-800);
-    font-family: $font-heading;
-    font-weight: 700;
-    font-size: 12px;
-    line-height: 18px;
-    text-transform: uppercase;
-    text-decoration: none;
-    color: var(--chakra-colors-white);
-    transition: background-color 0.15s ease;
-
-    @media (hover: hover) and (pointer: fine) {
-      &:hover {
-        background-color: var(--chakra-colors-gray-750);
-      }
-    }
-  }
 }
