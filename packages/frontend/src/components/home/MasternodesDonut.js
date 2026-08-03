@@ -6,9 +6,8 @@ import { Skeleton } from './Skeleton'
 import { StatusBar } from './StatusBar'
 import './MasternodesDonut.scss'
 
-const MAX_COUNTRIES = 10
-const R = 34
-const C = 2 * Math.PI * R
+const MAX_COUNTRIES = 12
+const MAX_CELLS = 324
 
 const regionNames = (() => {
   try { return new Intl.DisplayNames(['en'], { type: 'region' }) } catch { return null }
@@ -23,43 +22,78 @@ const STATS = [
     key: 'total',
     label: 'Total',
     hint: 'All Platform validators (evonodes) tracked on the network.',
-    ring: false
+    cells: false
   },
   {
     key: 'active',
     label: 'In quorum',
     hint: 'Proposing and validating Platform blocks right now. Rotates each epoch.',
-    ring: true
+    cells: true
   },
   {
     key: 'inactive',
     label: 'Queued',
     hint: 'Registered but not in the current quorum — waiting to rotate in.',
-    ring: true
+    cells: true
   },
   {
     key: 'banned',
     label: 'Banned',
     hint: 'PoSe-banned for failed service. Never enters the active quorum.',
-    ring: true
+    cells: true
   }
 ]
 
-function ringArcs (active, queued, banned, total) {
-  if (!total) return []
-  const parts = [
-    { key: 'active', n: active },
-    { key: 'inactive', n: queued },
-    { key: 'banned', n: banned }
-  ].filter(p => p.n > 0)
+/** Scale active/queued/banned into N cells; keep ≥1 cell for each non-zero group. */
+function buildCells (active, queued, banned, total) {
+  const n = Math.min(Math.max(0, total | 0), MAX_CELLS)
+  if (n <= 0) return []
 
-  let offset = 0
-  return parts.map(p => {
-    const len = (p.n / total) * C
-    const arc = { key: p.key, dash: `${len} ${C - len}`, offset }
-    offset -= len
-    return arc
-  })
+  const raw = [
+    { type: 'active', n: Math.max(0, active | 0) },
+    { type: 'inactive', n: Math.max(0, queued | 0) },
+    { type: 'banned', n: Math.max(0, banned | 0) }
+  ]
+  const sum = raw.reduce((s, p) => s + p.n, 0)
+
+  let alloc = raw.map(p => p.n)
+
+  if (sum > n) {
+    alloc = raw.map(p => (p.n > 0 ? Math.max(1, Math.floor((p.n / sum) * n)) : 0))
+    let used = alloc.reduce((s, v) => s + v, 0)
+    while (used > n) {
+      let i = 0
+      for (let j = 1; j < alloc.length; j++) {
+        if (alloc[j] > alloc[i]) i = j
+      }
+      if (alloc[i] <= 1) break
+      alloc[i]--
+      used--
+    }
+    let rem = n - used
+    const order = raw
+      .map((p, i) => ({ i, n: p.n }))
+      .filter(p => p.n > 0)
+      .sort((a, b) => b.n - a.n)
+    let k = 0
+    while (rem > 0 && order.length) {
+      alloc[order[k % order.length].i]++
+      rem--
+      k++
+    }
+  }
+
+  const cells = []
+  for (let i = 0; i < alloc[0]; i++) cells.push('active')
+  for (let i = 0; i < alloc[1]; i++) cells.push('inactive')
+  for (let i = 0; i < alloc[2]; i++) cells.push('banned')
+  while (cells.length < n) cells.push('idle')
+  return cells
+}
+
+function matrixCols (count) {
+  if (count <= 0) return 1
+  return Math.max(4, Math.ceil(Math.sqrt(count)))
 }
 
 export default function MasternodesDonut ({
@@ -98,10 +132,16 @@ export default function MasternodesDonut ({
     banned: typeof banned === 'number' ? banned : null
   }
 
-  const arcs = useMemo(
-    () => (hasTotal ? ringArcs(activeN, queuedN, bannedN, total) : []),
+  const cells = useMemo(
+    () => (hasTotal ? buildCells(activeN, queuedN, bannedN, total) : []),
     [hasTotal, activeN, queuedN, bannedN, total]
   )
+  const cols = useMemo(() => matrixCols(cells.length), [cells.length])
+  const rows = useMemo(
+    () => (cells.length ? Math.ceil(cells.length / cols) : 1),
+    [cells.length, cols]
+  )
+  const capped = hasTotal && total > MAX_CELLS
 
   const pct = (n) => (hasTotal && typeof n === 'number' ? Math.round((n / total) * 100) : null)
 
@@ -128,20 +168,6 @@ export default function MasternodesDonut ({
     }
   }, [validatorsList])
 
-  const pinned = pin ? STATS.find(s => s.key === pin) : null
-  const pinCount = pinned ? counts[pinned.key] : null
-  const pinPct = pinned && pinned.key !== 'total' ? pct(pinCount) : null
-
-  const centerMain = pin && typeof pinCount === 'number'
-    ? pinCount
-    : activeN
-  const centerLabel = pin
-    ? pinned.label
-    : 'In quorum'
-  const centerSub = pin
-    ? (pinPct != null ? `${pinPct}% of set` : 'validators')
-    : (hasTotal ? `${pct(activeN)}% of ${total}` : '')
-
   const togglePin = (key) => setPin(p => (p === key ? null : key))
 
   return (
@@ -163,17 +189,40 @@ export default function MasternodesDonut ({
             and how masternodes vote on contested names.
           </p>
         </div>
-        {hasTotal &&
-          <span className={'MasternodesDonut__HeadTotal'} title={'All tracked Platform evonodes'}>
-            {total.toLocaleString('en-US')} <i>evonodes</i>
-          </span>}
+        {geo.has &&
+          <div
+            className={'MasternodesDonut__Geo'}
+            role={'list'}
+            aria-label={`Validators by country${geo.sample ? `, ${geo.sample} with geo data` : ''}`}
+          >
+            {geo.top.map(g => (
+              <span
+                key={g.cc}
+                role={'listitem'}
+                className={'MasternodesDonut__GeoChip'}
+                title={`${g.name}: ${g.n}`}
+              >
+                <img
+                  className={'MasternodesDonut__Flag'}
+                  src={`/flags/circle/${g.cc.toLowerCase()}.svg`}
+                  alt={''}
+                  width={18}
+                  height={18}
+                  loading={'lazy'}
+                  onError={e => { e.currentTarget.style.display = 'none' }}
+                />
+                <b>{g.cc}</b>
+                <span>{g.n}</span>
+              </span>
+            ))}
+          </div>}
       </header>
 
       <div className={'MasternodesDonut__Body'}>
         {showSkeleton &&
           <>
             <div className={'MasternodesDonut__Stage'}>
-              <Skeleton className={'MasternodesDonut__RingSkel'} w={'180px'} circle/>
+              <Skeleton className={'MasternodesDonut__MatrixSkel'} w={'100%'} h={'11rem'} radius={12}/>
               <div className={'MasternodesDonut__Rails'}>
                 {Array.from({ length: 4 }).map((_, i) => (
                   <Skeleton key={i} w={'100%'} h={'4.25rem'} radius={12}/>
@@ -191,84 +240,38 @@ export default function MasternodesDonut ({
             data-pin={pin || undefined}
           >
             <div className={'MasternodesDonut__Col'}>
-              <div className={'MasternodesDonut__Core'}>
-                <svg
-                  className={'MasternodesDonut__Ring'}
-                  viewBox={'0 0 100 100'}
+              <div className={'MasternodesDonut__MatrixWrap'}>
+                <div
+                  className={'MasternodesDonut__Matrix'}
+                  style={{
+                    gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))`,
+                    gridTemplateRows: `repeat(${rows}, minmax(0, 1fr))`
+                  }}
                   role={'img'}
-                  aria-label={`${activeN} of ${total} in quorum`}
+                  aria-label={
+                    capped
+                      ? `${activeN} in quorum of ${total} (matrix shows first ${MAX_CELLS})`
+                      : `${activeN} of ${total} in quorum`
+                  }
                 >
-                  <circle className={'MasternodesDonut__RingTrack'} cx={'50'} cy={'50'} r={R}/>
-                  <circle className={'MasternodesDonut__RingPulse'} cx={'50'} cy={'50'} r={R + 6}/>
-                  {arcs.map(a => (
-                    <circle
-                      key={a.key}
-                      data-type={a.key}
-                      className={`MasternodesDonut__Arc MasternodesDonut__Arc--${a.key}`}
-                      cx={'50'}
-                      cy={'50'}
-                      r={R}
-                      strokeDasharray={a.dash}
-                      strokeDashoffset={a.offset}
-                      onClick={() => togglePin(a.key)}
-                      role={'button'}
-                      tabIndex={0}
-                      aria-label={STATS.find(s => s.key === a.key)?.label}
-                      aria-pressed={pin === a.key}
-                      onKeyDown={e => {
-                        if (e.key === 'Enter' || e.key === ' ') {
-                          e.preventDefault()
-                          togglePin(a.key)
-                        }
-                      }}
+                  {cells.map((type, i) => (
+                    <button
+                      key={i}
+                      type={'button'}
+                      data-type={type === 'idle' ? 'total' : type}
+                      className={`MasternodesDonut__Cell MasternodesDonut__Cell--${type}`}
+                      tabIndex={type === 'idle' ? -1 : 0}
+                      aria-label={
+                        type === 'idle'
+                          ? 'Other validators'
+                          : STATS.find(s => s.key === type)?.label
+                      }
+                      aria-pressed={pin === (type === 'idle' ? 'total' : type)}
+                      onClick={() => togglePin(type === 'idle' ? 'total' : type)}
                     />
                   ))}
-                </svg>
-                <div className={'MasternodesDonut__Hub'}>
-                  <span className={'MasternodesDonut__HubValue'}>
-                    {centerMain.toLocaleString('en-US')}
-                  </span>
-                  <span className={'MasternodesDonut__HubLabel'}>{centerLabel}</span>
-                  <span className={'MasternodesDonut__HubSub'}>{centerSub}</span>
                 </div>
               </div>
-
-              {geo.has &&
-                <div className={'MasternodesDonut__Geo'}>
-                  <div className={'MasternodesDonut__GeoHead'}>
-                    <span className={'MasternodesDonut__GeoEyebrow'}>Geo</span>
-                    <span className={'MasternodesDonut__GeoMeta'}>
-                      {geo.nations}
-                      {geo.more > 0 ? ` · +${geo.more}` : ''}
-                    </span>
-                  </div>
-                  <div
-                    className={'MasternodesDonut__GeoChips'}
-                    role={'list'}
-                    aria-label={`Validators by country, ${geo.sample} with geo data`}
-                  >
-                    {geo.top.map(g => (
-                      <span
-                        key={g.cc}
-                        role={'listitem'}
-                        className={'MasternodesDonut__GeoChip'}
-                        title={`${g.name}: ${g.n}`}
-                      >
-                        <img
-                          className={'MasternodesDonut__Flag'}
-                          src={`/flags/circle/${g.cc.toLowerCase()}.svg`}
-                          alt={''}
-                          width={18}
-                          height={18}
-                          loading={'lazy'}
-                          onError={e => { e.currentTarget.style.display = 'none' }}
-                        />
-                        <b>{g.cc}</b>
-                        <span>{g.n}</span>
-                      </span>
-                    ))}
-                  </div>
-                </div>}
             </div>
 
             <div className={'MasternodesDonut__Rails'} role={'list'}>
@@ -298,7 +301,7 @@ export default function MasternodesDonut ({
                       </span>
                     </span>
                     <span className={'MasternodesDonut__RailHint'}>{s.hint}</span>
-                    {s.ring && ready &&
+                    {s.cells && ready &&
                       <span className={'MasternodesDonut__RailMeter'} aria-hidden={'true'}>
                         <i style={{ width: `${Math.max(share || 0, 2)}%` }}/>
                       </span>}

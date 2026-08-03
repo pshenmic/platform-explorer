@@ -33,14 +33,20 @@ $mn-total: rgba(var(--chakra-colors-brand-light-rgb), 0.85);
     display: flex;
     align-items: flex-start;
     justify-content: space-between;
-    gap: 14px;
+    gap: 14px 18px;
     margin-bottom: 16px;
     flex-shrink: 0;
+
+    @media screen and (max-width: $breakpoint-md) {
+      flex-direction: column;
+      align-items: stretch;
+    }
   }
 
   &__HeadText {
     min-width: 0;
     max-width: 28rem;
+    flex: 0 1 auto;
   }
 
   &__Eyebrow {
@@ -48,7 +54,7 @@ $mn-total: rgba(var(--chakra-colors-brand-light-rgb), 0.85);
     font-family: $font-mono;
     font-size: 0.5625rem;
     text-transform: uppercase;
-    letter-spacing: 0.2em;
+    letter-spacing: 0.22em;
     color: rgba($mn-active, 0.9);
     margin-bottom: 4px;
   }
@@ -71,27 +77,7 @@ $mn-total: rgba(var(--chakra-colors-brand-light-rgb), 0.85);
     margin: 0;
   }
 
-  &__HeadTotal {
-    flex-shrink: 0;
-    font-family: $font-heading;
-    font-weight: 800;
-    font-style: italic;
-    font-size: 1.25rem;
-    color: #fff;
-    white-space: nowrap;
-    padding-top: 1.1rem;
 
-    i {
-      font-family: $font-mono;
-      font-style: normal;
-      font-weight: 400;
-      font-size: 0.5625rem;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: var(--chakra-colors-gray-500);
-      margin-left: 4px;
-    }
-  }
 
   &__Body {
     flex: 1 1 auto;
@@ -114,115 +100,117 @@ $mn-total: rgba(var(--chakra-colors-brand-light-rgb), 0.85);
     flex: 1 1 auto;
     min-height: 0;
     display: grid;
-    grid-template-columns: minmax(148px, 0.9fr) minmax(0, 1.25fr);
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
     gap: 12px 16px;
     align-items: stretch;
 
     @media screen and (max-width: $breakpoint-md) {
+      // stacked: matrix must not rely on stretch height (collapses to 0)
       grid-template-columns: 1fr;
+      flex: 0 0 auto;
+      min-height: auto;
     }
   }
 
   &__Col {
     display: flex;
     flex-direction: column;
-    align-items: center;
-    gap: 12px;
     min-width: 0;
+    min-height: 0;
+    height: 100%;
+
+    @media screen and (max-width: $breakpoint-md) {
+      height: auto;
+      min-height: 0;
+    }
   }
 
-  &__Core {
-    position: relative;
-    width: min(100%, 200px);
-    aspect-ratio: 1;
-    flex-shrink: 0;
+  // matrix fills the whole left column (no hub text — rails carry the numbers)
+  &__MatrixWrap {
+    flex: 1 1 auto;
+    display: flex;
+    min-width: 0;
+    min-height: 0;
+    height: 100%;
+    padding: 10px;
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+
+    @media screen and (max-width: $breakpoint-md) {
+      flex: 0 0 auto;
+      height: auto;
+      width: 100%;
+    }
   }
 
-  &__Ring {
-    display: block;
+  &__Matrix {
+    display: grid;
+    gap: 3px;
     width: 100%;
     height: 100%;
-    transform: rotate(-90deg);
+    min-height: 0;
+    flex: 1 1 auto;
+    align-content: stretch;
+
+    @media screen and (max-width: $breakpoint-md) {
+      // explicit square footprint so cells get real height on phone
+      height: auto;
+      aspect-ratio: 1;
+      min-height: 200px;
+      max-height: min(72vw, 280px);
+      flex: none;
+    }
   }
 
-  &__RingTrack {
-    fill: none;
-    stroke: rgba(255, 255, 255, 0.06);
-    stroke-width: 10;
-  }
-
-  &__RingPulse {
-    fill: none;
-    stroke: rgba($mn-active, 0.22);
-    stroke-width: 1.25;
-    stroke-dasharray: 4 10;
-    animation: MnRingSpin 14s linear infinite;
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    &__RingPulse { animation: none; opacity: 0.35; }
-  }
-
-  &__Arc {
-    fill: none;
-    stroke-width: 10;
-    stroke-linecap: butt;
+  &__Cell {
+    appearance: none;
+    border: 0;
+    padding: 0;
+    margin: 0;
+    min-width: 0;
+    min-height: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 2px;
     cursor: pointer;
-    transition: opacity 0.12s ease, stroke-width 0.12s ease;
+    transition: opacity 0.12s ease, transform 0.12s ease, box-shadow 0.12s ease;
     outline: none;
 
-    &--active {
-      stroke: $mn-active;
-      filter: drop-shadow(0 0 5px rgba($mn-active, 0.55));
+    @media screen and (max-width: $breakpoint-md) {
+      // with auto-height grid rows, keep tiles square
+      aspect-ratio: 1;
+      height: auto;
+      min-height: 6px;
     }
 
-    &--inactive { stroke: $mn-queued; }
+    &--active {
+      background: $mn-active;
+      box-shadow: 0 0 6px rgba($mn-active, 0.35);
+    }
+
+    &--inactive {
+      background: $mn-queued;
+    }
 
     &--banned {
-      stroke: $mn-banned;
-      filter: drop-shadow(0 0 4px rgba($mn-banned, 0.45));
+      background: $mn-banned;
+      box-shadow: 0 0 7px rgba($mn-banned, 0.55);
+      // slightly stronger so a few banned cells still read against the grid
+      outline: 1px solid rgba($mn-banned, 0.35);
+      outline-offset: -1px;
+    }
+
+    &--idle {
+      background: rgba(255, 255, 255, 0.06);
+      cursor: default;
     }
 
     &:focus-visible {
-      stroke-width: 12;
+      transform: scale(1.12);
+      box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.5);
+      z-index: 1;
     }
-  }
-
-  &__Hub {
-    position: absolute;
-    inset: 20%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    pointer-events: none;
-  }
-
-  &__HubValue {
-    font-family: $font-heading;
-    font-weight: 800;
-    font-style: italic;
-    font-size: clamp(1.6rem, 3vw, 2.1rem);
-    line-height: 1;
-    color: #fff;
-    font-variant-numeric: tabular-nums;
-  }
-
-  &__HubLabel {
-    margin-top: 5px;
-    font-family: $font-mono;
-    font-size: 0.625rem;
-    text-transform: uppercase;
-    letter-spacing: 0.12em;
-    color: rgba($mn-active, 0.95);
-  }
-
-  &__HubSub {
-    margin-top: 3px;
-    font-family: $font-mono;
-    font-size: 0.625rem;
-    color: var(--chakra-colors-gray-500);
   }
 
   &__Rails {
@@ -231,11 +219,25 @@ $mn-total: rgba(var(--chakra-colors-brand-light-rgb), 0.85);
     gap: 8px;
     min-width: 0;
     width: 100%;
+    height: 100%;
+    min-height: 0;
     align-self: stretch;
+
+    @media screen and (max-width: $breakpoint-md) {
+      height: auto;
+    }
   }
 
-  &__RingSkel {
-    margin: 0 auto;
+  &__MatrixSkel {
+    margin: 0;
+    height: 100%;
+    min-height: 12rem;
+
+    @media screen and (max-width: $breakpoint-md) {
+      height: auto;
+      min-height: 200px;
+      aspect-ratio: 1;
+    }
   }
 
   &__Rail {
@@ -255,6 +257,11 @@ $mn-total: rgba(var(--chakra-colors-brand-light-rgb), 0.85);
     cursor: pointer;
     opacity: 1;
     transition: background 0.12s ease, border-color 0.12s ease, opacity 0.12s ease;
+
+    @media screen and (max-width: $breakpoint-md) {
+      flex: 0 0 auto;
+      min-height: auto;
+    }
 
     &:disabled {
       cursor: default;
@@ -368,17 +375,24 @@ $mn-total: rgba(var(--chakra-colors-brand-light-rgb), 0.85);
   @media (hover: hover) and (pointer: fine) {
     @each $name in active, inactive, banned {
       &__Stage:not(.is-pinned):has([data-type='#{$name}']:hover) {
-        [data-type]:not([data-type='#{$name}']) { opacity: 0.28; }
+        [data-type]:not([data-type='#{$name}']) { opacity: 0.22; }
         [data-type='#{$name}'] { opacity: 1; }
 
-        .MasternodesDonut__Arc--#{$name} { stroke-width: 12; }
+        .MasternodesDonut__Cell[data-type='#{$name}'] {
+          transform: scale(1.08);
+        }
       }
+    }
+
+    // Total hover: keep whole matrix lit
+    &__Stage:not(.is-pinned):has([data-type='total']:hover) {
+      [data-type] { opacity: 1; }
     }
   }
 
-  @each $name in active, inactive, banned, total {
+  @each $name in active, inactive, banned {
     &__Stage.is-pinned[data-pin='#{$name}'] {
-      [data-type]:not([data-type='#{$name}']) { opacity: 0.28; }
+      [data-type]:not([data-type='#{$name}']) { opacity: 0.18; }
       [data-type='#{$name}'] { opacity: 1; }
 
       .MasternodesDonut__Rail--#{$name} {
@@ -386,48 +400,39 @@ $mn-total: rgba(var(--chakra-colors-brand-light-rgb), 0.85);
         background: rgba(255, 255, 255, 0.05);
       }
 
-      @if $name != total {
-        .MasternodesDonut__Arc--#{$name} { stroke-width: 12; }
+      .MasternodesDonut__Cell[data-type='#{$name}'] {
+        box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.12);
       }
     }
   }
 
+  &__Stage.is-pinned[data-pin='total'] {
+    [data-type] { opacity: 1; }
+
+    .MasternodesDonut__Rail--total {
+      border-color: rgba(255, 255, 255, 0.14);
+      background: rgba(255, 255, 255, 0.05);
+    }
+  }
+
+  // country chips — top-right of the card head (replaces “N evonodes”)
   &__Geo {
-    width: 100%;
-    max-width: 220px;
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    min-width: 0;
-  }
-
-  &__GeoHead {
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    gap: 8px;
-    padding: 0 2px;
-  }
-
-  &__GeoEyebrow {
-    font-family: $font-mono;
-    font-size: 0.5625rem;
-    text-transform: uppercase;
-    letter-spacing: 0.14em;
-    color: var(--chakra-colors-gray-500);
-  }
-
-  &__GeoMeta {
-    font-family: $font-mono;
-    font-size: 0.5625rem;
-    color: var(--chakra-colors-gray-500);
-  }
-
-  &__GeoChips {
+    flex: 1 1 auto;
     display: flex;
     flex-wrap: wrap;
+    align-content: flex-start;
+    justify-content: flex-end;
     gap: 5px;
-    justify-content: center;
+    min-width: 0;
+    max-width: min(52%, 22rem);
+    padding-top: 0.35rem;
+
+    @media screen and (max-width: $breakpoint-md) {
+      max-width: none;
+      width: 100%;
+      justify-content: flex-start;
+      padding-top: 0;
+    }
   }
 
   &__GeoChip {
@@ -664,8 +669,4 @@ $mn-total: rgba(var(--chakra-colors-brand-light-rgb), 0.85);
       white-space: nowrap;
     }
   }
-}
-
-@keyframes MnRingSpin {
-  to { stroke-dashoffset: -120; }
 }
