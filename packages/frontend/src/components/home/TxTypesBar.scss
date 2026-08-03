@@ -32,6 +32,12 @@ $txtype-colors: (
   height: 100%;
   contain: layout style;
 
+  // phone: not height-locked to Quorum — cap the type list so the card isn’t endless
+  @media screen and (max-width: $breakpoint-md) {
+    height: auto;
+    max-height: none;
+  }
+
   &__Head {
     display: flex;
     align-items: flex-start;
@@ -48,7 +54,7 @@ $txtype-colors: (
   }
 
   &__Eyebrow {
-    display: inline-block;
+    display: block;
     font-family: $font-mono;
     font-size: 0.5625rem;
     text-transform: uppercase;
@@ -73,6 +79,10 @@ $txtype-colors: (
     line-height: 1.55;
     color: var(--chakra-colors-gray-500);
     margin: 0;
+
+    @media screen and (max-width: $breakpoint-md) {
+      display: none; // free vertical space; title + spectrum carry the story
+    }
   }
 
   &__Body {
@@ -90,6 +100,12 @@ $txtype-colors: (
     flex-direction: column;
     gap: 16px;
     min-height: 0;
+
+    @media screen and (max-width: $breakpoint-md) {
+      flex: 0 1 auto;
+      min-height: 0;
+      gap: 12px;
+    }
   }
 
   &__Empty {
@@ -240,6 +256,12 @@ $txtype-colors: (
     scrollbar-gutter: stable;
     scrollbar-width: thin;
     scrollbar-color: rgba(255, 255, 255, 0.12) transparent;
+
+    // without a paired height budget, unconstrained flex lists every type (~20 rows)
+    @media screen and (max-width: $breakpoint-md) {
+      flex: 0 1 auto;
+      max-height: 14.5rem; // ~6 compact rows + scroll for the rest
+    }
   }
 
   &__Row {

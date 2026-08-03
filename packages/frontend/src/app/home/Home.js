@@ -5,15 +5,13 @@ import { useQuery, useQueries } from '@tanstack/react-query'
 import * as Api from '../../util/Api'
 import HomeHero from './HomeHero.js'
 import {
-  MetricChart,
   EpochsOverview,
   MasternodesDonut,
   TxTypesBar,
+  TxActivityChart,
+  IdentityGrowthChart,
   ShieldedPoolCard,
-  CompactTxList,
-  CompactBlocksList,
-  DataContractsRating,
-  RichestIdentities
+  HomeLeaders
 } from '../../components/home'
 import { fetchHandlerSuccess, fetchHandlerError } from '../../util'
 import theme from '../../styles/theme'
@@ -29,12 +27,19 @@ function Home () {
   const pairRef = useRef(null)
   const consensusRef = useRef(null)
 
+  // match Tx types height to consensus only when paired (md+)
   useEffect(() => {
     const pair = pairRef.current
     const consensus = consensusRef.current
     if (!pair || !consensus || typeof ResizeObserver === 'undefined') return undefined
 
+    const mq = window.matchMedia(`(min-width: 48em)`)
+    const clear = () => pair.style.removeProperty('--consensus-h')
     const sync = () => {
+      if (!mq.matches) {
+        clear()
+        return
+      }
       const h = Math.round(consensus.getBoundingClientRect().height)
       if (h > 0) pair.style.setProperty('--consensus-h', `${h}px`)
     }
@@ -42,7 +47,14 @@ function Home () {
     sync()
     const ro = new ResizeObserver(sync)
     ro.observe(consensus)
-    return () => ro.disconnect()
+    mq.addEventListener?.('change', sync)
+    mq.addListener?.(sync)
+    return () => {
+      ro.disconnect()
+      mq.removeEventListener?.('change', sync)
+      mq.removeListener?.(sync)
+      clear()
+    }
   }, [])
 
   const [contested, setContested] = useState({ data: {}, loading: true, error: false })
@@ -58,15 +70,6 @@ function Home () {
   const statusQuery = useQuery({ queryKey: ['home', 'status'], queryFn: Api.getStatus, refetchInterval: 60000 })
   const txQuery = useQuery({ queryKey: ['home', 'transactions'], queryFn: () => Api.getTransactions(1, 10, 'desc'), refetchInterval: 30000 })
   const blocksQuery = useQuery({ queryKey: ['home', 'blocks'], queryFn: () => Api.getBlocks(1, 10, 'desc'), refetchInterval: 30000 })
-  const avgBlockTimeQuery = useQuery({
-    queryKey: ['home', 'avgBlockTime'],
-    queryFn: () => {
-      const end = new Date()
-      const start = new Date(end.getTime() - 3600000)
-      return Api.getAvgBlockTimeHistory(start.toISOString(), end.toISOString(), 1)
-    },
-    refetchInterval: 60000
-  })
   const validatorsQuery = useQuery({
     queryKey: ['home', 'validators', 'total'],
     queryFn: () => Api.getValidators(1, 1, 'desc'),
@@ -206,9 +209,6 @@ function Home () {
     epochQueries.every(q => !q.isPending && !q.isLoading)
   const belowFoldReady = epochsBaseList.length > 0 || epochsSettled
 
-  const lastAvgBlockTime = [...(avgBlockTimeQuery.data || [])].reverse().find(p => typeof p?.data?.avgBlockTime === 'number')?.data?.avgBlockTime
-  const avgBlockTimeSec = typeof lastAvgBlockTime === 'number' ? Math.round(lastAvgBlockTime / 1000) : null
-
   return (
     <Container
       className={'HomePage'}
@@ -224,65 +224,41 @@ function Home () {
         <HomeHero
           status={statusQuery.data ?? {}}
           loading={statusQuery.isLoading}
-          avgBlockTimeSec={avgBlockTimeSec}
           epochNumber={currentEpochNumber}
-          epochStartTime={currentEpochPayload?.epoch?.startTime}
           epochEndTime={currentEpochPayload?.epoch?.endTime}
+          transactions={txQuery.data?.resultSet}
+          transactionsLoading={txQuery.isLoading}
+          blocks={blocksQuery.data?.resultSet}
+          blocksLoading={blocksQuery.isLoading}
         />
 
         <Box
           className={'InfoBlock InfoBlock--NoBorder HomeActivity'}
           w={'100%'}
           as={'section'}
-          aria-label={'Network overview'}
+          aria-label={'Network charts'}
         >
           <div className={'HomeActivity__Grid'}>
-            <div className={'HomeActivity__Cell'}>
-              <CompactTxList
-                transactions={txQuery.data?.resultSet}
-                loading={txQuery.isLoading}
-                moreHref={'/transactions'}
-                moreLabel={'View all transactions'}
-              />
-            </div>
             <div className={'HomeActivity__Cell HomeActivity__Cell--Chart'}>
-              <MetricChart
-                type={'bar'}
+              <TxActivityChart
                 fetcher={Api.getTransactionsHistory}
                 field={'txs'}
                 yAbbr={'txs'}
                 enabled={belowFoldReady}
-                embedded
-                fill
               />
-            </div>
-            <div className={'HomeActivity__Cell'}>
-              <CompactBlocksList
-                blocks={blocksQuery.data?.resultSet}
-                loading={blocksQuery.isLoading}
-                moreHref={'/blocks'}
-                moreLabel={'View all blocks'}
-              />
-            </div>
-            <div className={'HomeActivity__Cell'}>
-              <DataContractsRating enabled={belowFoldReady}/>
             </div>
             <div className={'HomeActivity__Cell HomeActivity__Cell--Chart'}>
-              <MetricChart
-                type={'line'}
+              <IdentityGrowthChart
                 fetcher={Api.getIdentitiesHistory}
                 field={'registeredIdentities'}
                 yAbbr={'identities'}
                 enabled={belowFoldReady}
-                embedded
-                fill
               />
-            </div>
-            <div className={'HomeActivity__Cell'}>
-              <RichestIdentities rate={rate} enabled={belowFoldReady}/>
             </div>
           </div>
         </Box>
+
+        <HomeLeaders rate={rate} enabled={belowFoldReady}/>
 
         <Box className={'InfoBlock InfoBlock--NoBorder HomeEpochs'} w={'100%'}>
           <EpochsOverview
