@@ -9,7 +9,7 @@ import { Skeleton } from './Skeleton'
 import { PRESETS, presetRange } from './MetricChart'
 import './TxActivityChart.scss'
 
-const DEFAULT_PRESET = 2
+const DEFAULT_PRESET = PRESETS.length - 1
 const M = { top: 12, right: 10, bottom: 22, left: 44 }
 
 const formatValue = (v) => Math.abs(v) >= 1e6 ? currencyRound(v) : d3.format(',')(Math.round(v))
@@ -122,40 +122,35 @@ export default function TxActivityChart ({
     setPinI(p => (p === hoverI ? null : hoverI))
   }
 
-  const rangeLabel = PRESETS[presetIdx].label === 'All' ? 'all time' : PRESETS[presetIdx].label
-  const focusValue = activeBar
-    ? formatValue(activeBar.value)
-    : (chart ? formatValue(chart.latest.y) : '—')
-  const focusMeta = activeBar
-    ? chart.tipFmt(activeBar.date)
-    : (chart ? `latest · ${rangeLabel}` : `${rangeLabel}`)
+  const rangeTotal = chart ? formatValue(chart.total) : '—'
+  const statMeta = activeBar
+    ? `${chart.tipFmt(activeBar.date)} · ${formatValue(activeBar.value)} ${yAbbr}`
+    : (chart
+        ? `peak ${formatValue(chart.peak)} · latest ${formatValue(chart.latest.y)}`
+        : '')
 
   return (
-    <div className={'TxActivityChart'} aria-label={'Transaction volume'}>
+    <div className={'TxActivityChart'} aria-label={'Volume'}>
       <header className={'TxActivityChart__Head'}>
         <div className={'TxActivityChart__HeadText'}>
           <span className={'TxActivityChart__Eyebrow'}>Throughput</span>
-          <h2 className={'TxActivityChart__Title'}>Transaction volume</h2>
+          <h2 className={'TxActivityChart__Title'}>Volume</h2>
           <p className={'TxActivityChart__Lede'}>
-            Platform state transitions per bucket. Hover a bar; click to pin.
+            Platform state transitions per bucket.
           </p>
         </div>
-        <Presets options={PRESETS} value={presetIdx} onChange={setPresetIdx}/>
+        <div className={'TxActivityChart__Controls'}>
+          <Presets options={PRESETS} value={presetIdx} onChange={setPresetIdx}/>
+          <div className={`TxActivityChart__Stat${activeBar ? ' is-on' : ''}${pinI != null ? ' is-pinned' : ''}`}>
+            <div className={'TxActivityChart__StatMain'}>
+              <span className={'TxActivityChart__StatCount'}>{rangeTotal}</span>
+              <span className={'TxActivityChart__StatUnit'}>{yAbbr}</span>
+            </div>
+            {statMeta &&
+              <span className={'TxActivityChart__StatMeta'}>{statMeta}</span>}
+          </div>
+        </div>
       </header>
-
-      <div className={'TxActivityChart__Hero'}>
-        <div className={'TxActivityChart__HeroMain'}>
-          <span className={'TxActivityChart__HeroCount'}>{focusValue}</span>
-          <span className={'TxActivityChart__HeroUnit'}>{yAbbr}</span>
-        </div>
-        <div className={`TxActivityChart__Focus${activeBar || pinI != null ? ' is-on' : ''}`}>
-          <span className={'TxActivityChart__FocusMeta'}>{focusMeta}</span>
-          {chart &&
-            <span className={'TxActivityChart__FocusStats'}>
-              peak {formatValue(chart.peak)} · sum {formatValue(chart.total)}
-            </span>}
-        </div>
-      </div>
 
       <div ref={wrapRef} className={'TxActivityChart__Plot'}>
         {error
@@ -180,7 +175,7 @@ export default function TxActivityChart ({
                     width={width}
                     height={h}
                     role={'img'}
-                    aria-label={`Transaction volume, latest ${formatValue(chart.latest.y)} ${yAbbr}`}
+                    aria-label={`Volume, sum ${formatValue(chart.total)} ${yAbbr}`}
                     onMouseMove={onMove}
                     onMouseLeave={onLeave}
                     onClick={onClick}
