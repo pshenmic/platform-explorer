@@ -44,17 +44,18 @@
     }
   }
 
-  // fill sibling list height; min-height is mobile-only fallback
+  // charts row: both cells share height; give the plot room
   &__Cell--Chart {
     display: flex;
     flex-direction: column;
-    min-height: 220px;
+    min-height: 280px;
 
     @media screen and (min-width: $breakpoint-lg) {
-      min-height: 0;
+      min-height: 300px;
     }
 
-    .MetricChart {
+    .TxActivityChart,
+    .IdentityGrowthChart {
       flex: 1 1 auto;
       min-height: 0;
       width: 100%;
@@ -132,17 +133,95 @@
   }
 }
 
-// extra top for taller first epoch stack (EPOCH + duration + #) and bound "block" labels
+// head keeps card inset; wave + KPI table go edge-to-edge (no side gutters)
 .HomeEpochs {
   border-radius: var(--chakra-radii-block);
-  padding: 40px 20px 0 20px !important;
+  padding: 20px 0 0 !important;
   overflow-x: hidden;
 
+  @media screen and (max-width: $breakpoint-md) {
+    padding: 16px 0 0 !important;
+  }
+}
+
+// same head recipe as ShieldedPool / TxTypes / Quorum
+.EpochsOverview__Head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+  // only the title block keeps horizontal inset
+  padding: 0 32px;
+
   @media screen and (max-width: $breakpoint-lg) {
-    padding: 36px 16px 0 16px !important;
+    padding: 0 24px;
   }
 
   @media screen and (max-width: $breakpoint-md) {
-    padding: 32px 16px 0 16px !important;
+    padding: 0 16px;
   }
+}
+
+.EpochsOverview__HeadText {
+  min-width: 0;
+  max-width: 36rem;
+}
+
+.EpochsOverview__Eyebrow {
+  display: block;
+  font-family: $font-mono;
+  font-size: 0.5625rem;
+  text-transform: uppercase;
+  letter-spacing: 0.22em;
+  color: rgba(var(--chakra-colors-brand-light-rgb), 0.9);
+  margin-bottom: 4px;
+}
+
+.EpochsOverview__TitleRow {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px 10px;
+  margin: 0 0 6px;
+  min-width: 0;
+}
+
+.EpochsOverview__Title {
+  font-family: $font-heading;
+  font-weight: 800;
+  font-style: italic;
+  font-size: 1.375rem;
+  line-height: 1.1;
+  color: #fff;
+  margin: 0;
+}
+
+.EpochsOverview__Lede {
+  font-family: $font-mono;
+  font-size: 0.6875rem;
+  line-height: 1.45;
+  color: var(--chakra-colors-gray-500);
+  margin: 0;
+  max-width: 34rem;
+}
+
+// sits on the title row: Epochs  [ every 1h ]
+.EpochsOverview__LedeMark {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+  padding: 3px 9px;
+  border-radius: 999px;
+  font-family: $font-mono;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  font-size: 0.625rem;
+  line-height: 1.2;
+  color: var(--chakra-colors-brand-light);
+  background: rgba(var(--chakra-colors-brand-normal-rgb), 0.14);
+  border: 1px solid rgba(var(--chakra-colors-brand-light-rgb), 0.28);
+  white-space: nowrap;
 }

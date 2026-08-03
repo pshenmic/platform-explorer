@@ -10,13 +10,10 @@ import { StatusCell } from './StatusCell'
 import { Skeleton } from './Skeleton'
 import { compact, shortId } from './utils'
 
-// 4 epoch points, ends pulled inward so the edge block-markers have room
-const X_POSITIONS = [14, 38, 62, 86]
-// Ocean palette by slot (old -> new): deep blue -> bright aqua; encodes epoch recency.
-// The line flows through these; the selected slot's colour pours into the table below.
-// edge block-markers sit a breath off the wave rims; epoch segments end at these markers
-const EDGE_L = 1.2
-const EDGE_R = 98.8
+// epoch slot centers (full-width quarters); segment fill is edge-to-edge
+const X_POSITIONS = [12.5, 37.5, 62.5, 87.5]
+const EDGE_L = 0
+const EDGE_R = 100
 const Y_HIGH = 22
 // taller wave: keep the dip higher so point captions clear the data row below
 const Y_LOW = 60
@@ -115,16 +112,14 @@ function avgBlockTimeLabel (ms) {
 const boundTimeFmt = new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit', hour12: false })
 const boundDateFmt = new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric' })
 
-// session-break marker between two epochs: the block (and moment) one epoch flowed into the next
-// showTag: "block" once on the left edge; approx right edge is ~#height only
-function EpochBound ({ bound, longEpochs, showTag }) {
+function EpochBound ({ bound, longEpochs }) {
   const label = bound.ts ? (longEpochs ? boundDateFmt : boundTimeFmt).format(new Date(bound.ts)) : null
-  // stack: optional "block" pill above height; icon matches CompactBlocks Height column (no #)
   const content = (
     <>
-      {showTag && <span className={'EpochsWave__BoundTag'}>block</span>}
+      {bound.approx &&
+        <span className={'EpochsWave__BoundTag'}>est. end</span>}
       <span className={'EpochsWave__BoundBlock'}>
-        <BlockIcon className={'EpochsWave__BoundIcon'} w={'0.75rem'} h={'0.75rem'} aria-hidden={'true'}/>
+        <BlockIcon className={'EpochsWave__BoundIcon'} w={'0.875rem'} h={'0.875rem'} aria-hidden={'true'}/>
         {bound.approx ? '~' : ''}{bound.height}
       </span>
       {label && <span className={'EpochsWave__BoundWhen'}>{label}</span>}
@@ -133,9 +128,12 @@ function EpochBound ({ bound, longEpochs, showTag }) {
   const edgeClass = bound.edge ? ` EpochsWave__Bound--edge${bound.edge.toUpperCase()}` : ''
   const approxClass = bound.approx ? ' is-approx' : ''
 
-  // only the label is a link; top tracks the wave height so it sits just above the line
+  const top = bound.approx
+    ? '0'
+    : `calc(${bound.y}% - 56px)`
+
   return (
-    <span className={`EpochsWave__Bound${edgeClass}${approxClass}`} style={{ left: `${bound.x}%`, top: `calc(${bound.y}% - 76px)` }}>
+    <span className={`EpochsWave__Bound${edgeClass}${approxClass}`} style={{ left: `${bound.x}%`, top }}>
       {bound.hash
         ? <Link
             href={`/block/${bound.hash}`}
@@ -148,8 +146,7 @@ function EpochBound ({ bound, longEpochs, showTag }) {
           </Link>
         : <span
             className={`EpochsWave__BoundLabel${bound.approx ? ' is-approx' : ''}`}
-            aria-label={bound.approx ? `Estimated final block ~#${bound.height}` : undefined}
-            aria-hidden={bound.approx ? undefined : 'true'}
+            aria-label={bound.approx ? `Estimated epoch end ~ block ${bound.height}${label ? `, ${label}` : ''}` : undefined}
           >
             {content}
           </span>}
@@ -157,7 +154,7 @@ function EpochBound ({ bound, longEpochs, showTag }) {
   )
 }
 
-function EpochPoint ({ epoch, metricLabel, x, y, selected, onSelect, showKind, durationLabel }) {
+function EpochPoint ({ epoch, metricLabel, x, y, selected, onSelect }) {
   // the in-progress epoch counts down ("36 min. left") instead of "ended X ago"
   const inProgress = epoch?.endTime > Date.now()
   // sync node pulse with the 5s left→right scan (same period as HomeHeroDash)
@@ -170,17 +167,9 @@ function EpochPoint ({ epoch, metricLabel, x, y, selected, onSelect, showKind, d
       style={{ left: `${x}%`, top: `${y}%`, '--scan-pulse-delay': scanPulseDelay }}
       onClick={onSelect}
       aria-pressed={selected}
-      aria-label={`Epoch ${epoch?.number}${inProgress ? ', in progress' : ''}${durationLabel ? `, every ${durationLabel}` : ''}`}
+      aria-label={`Epoch ${epoch?.number}${inProgress ? ', in progress' : ''}`}
     >
       <span className={'EpochsWave__Id'}>
-        {showKind &&
-          // visual only — button aria-label already carries "Epoch N, every 1h"
-          // stack is taller than other points: HomeEpochs top pad leaves room
-          <span className={'EpochsWave__KindStack'} aria-hidden={'true'}>
-            <span className={'EpochsWave__KindTitle'}>Epoch</span>
-            {durationLabel &&
-              <span className={'EpochsWave__Kind'}>every {durationLabel}</span>}
-          </span>}
         <span className={'HomeHero__WaveValue EpochsWave__Number'}>#{epoch?.number}</span>
       </span>
       <span className={'HomeHero__WaveDot'} aria-hidden={'true'}/>
@@ -196,7 +185,6 @@ function EpochPoint ({ epoch, metricLabel, x, y, selected, onSelect, showKind, d
   )
 }
 
-// tip bodies for the (i) icon — description + optional breakdown in one place (not on the value)
 function TipShell ({ blurb, children }) {
   return (
     <div className={'EpochsOverview__Tip'}>
@@ -502,9 +490,7 @@ function EpochCells ({ data, nextData, rate }) {
 
       <StatusCell label={'Top proposer'} hint={proposersHint(proposers)}>
         {data.bestValidator
-          ? <Link href={`/validator/${data.bestValidator}`} prefetch={false} className={'EpochsOverview__Proposer'}>
-              <span className={'EpochsOverview__Stat EpochsOverview__ProposerVal'}>{proposerAnim}</span>
-            </Link>
+          ? <span className={'EpochsOverview__Stat EpochsOverview__ProposerVal'}>{proposerAnim}</span>
           : <span className={'EpochsOverview__Stat'}>-</span>}
       </StatusCell>
     </div>
@@ -554,6 +540,17 @@ export function EpochsOverview ({ title, epochs, currentEpoch, rate, loading, sl
 
     return (
       <div className={'EpochsOverview'} aria-label={title || 'Epochs'}>
+        <header className={'EpochsOverview__Head'}>
+          <div className={'EpochsOverview__HeadText'}>
+            <span className={'EpochsOverview__Eyebrow'}>Time on Platform</span>
+            <div className={'EpochsOverview__TitleRow'}>
+              <h2 className={'EpochsOverview__Title'}>{title || 'Epochs'}</h2>
+            </div>
+            <p className={'EpochsOverview__Lede'}>
+              Tap a point on the wave for that epoch&apos;s KPIs.
+            </p>
+          </div>
+        </header>
         <div className={`HomeHero__Wave EpochsWave${loading ? ' EpochsWave--Skeleton' : ' EpochsWave--Empty'}`}>
           {loading
             ? <>
@@ -656,6 +653,7 @@ export function EpochsOverview ({ title, epochs, currentEpoch, rate, loading, sl
   }
 
   const longEpochs = arrived.some(e => (e.epoch?.endTime - e.epoch?.startTime) >= 86400000)
+  const epochDuration = durationLabelOf(currentEpoch?.data?.epoch || points.filter(p => p.ready).at(-1)?.ep?.epoch)
 
   const segments = points.map((p, i) => {
     const l = i === 0 ? EDGE_L : (points[i - 1].x + p.x) / 2
@@ -685,6 +683,21 @@ export function EpochsOverview ({ title, epochs, currentEpoch, rate, loading, sl
       style={{ '--epoch-seg-l': seg.l, '--epoch-seg-w': seg.w }}
       aria-label={title || 'Epochs'}
     >
+      <header className={'EpochsOverview__Head'}>
+        <div className={'EpochsOverview__HeadText'}>
+          <span className={'EpochsOverview__Eyebrow'}>Time on Platform</span>
+          <div className={'EpochsOverview__TitleRow'}>
+            <h2 className={'EpochsOverview__Title'}>{title || 'Epochs'}</h2>
+            {epochDuration &&
+              <span className={'EpochsOverview__LedeMark'} title={'Typical epoch length on this network'}>
+                every {epochDuration}
+              </span>}
+          </div>
+          <p className={'EpochsOverview__Lede'}>
+            Tap a point on the wave for that epoch&apos;s KPIs.
+          </p>
+        </div>
+      </header>
       <div
         className={`HomeHero__Wave EpochsWave${hasAny ? '' : ' EpochsWave--Skeleton'}`}
       >
@@ -743,7 +756,6 @@ export function EpochsOverview ({ title, epochs, currentEpoch, rate, loading, sl
             key={`${b.edge || 'mid'}-${b.height}`}
             bound={b}
             longEpochs={longEpochs}
-            showTag={b.edge === 'l'}
           />
         ))}
 
@@ -768,9 +780,6 @@ export function EpochsOverview ({ title, epochs, currentEpoch, rate, loading, sl
                 y={p.y}
                 selected={i === selIdx}
                 onSelect={() => setSelected(i)}
-                // series label + duration once on the first slot (left → right scan)
-                showKind={i === 0}
-                durationLabel={i === 0 ? durationLabelOf(currentEpoch?.data?.epoch || p.ep.epoch) : null}
               />
             : <span
                 key={`ghost-${p.num}`}
