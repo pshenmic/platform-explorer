@@ -11,6 +11,7 @@ import {
   TxActivityChart,
   IdentityGrowthChart,
   ShieldedPoolCard,
+  GovernanceCard,
   HomeLeaders
 } from '../../components/home'
 import { fetchHandlerSuccess, fetchHandlerError } from '../../util'
@@ -143,7 +144,14 @@ function Home () {
     error: false
   }
 
-  // gov + rate after status (parallel with epochs); keep them off wave 0 so validators keep bandwidth
+  // rate early — hero economy chips (DASH $, MN bond) shouldn't wait on gov/secondary
+  useEffect(() => {
+    Api.getRate()
+      .then(res => fetchHandlerSuccess(setRate, res))
+      .catch(err => fetchHandlerError(setRate, err))
+  }, [])
+
+  // gov after status (parallel with epochs); keep them off wave 0 so validators keep bandwidth
   useEffect(() => {
     if (secondaryStarted.current) return
     if (!statusQuery.isSuccess) return
@@ -164,10 +172,6 @@ function Home () {
     Api.getMasternodeVotes(1, 10, 'desc')
       .then(res => fetchHandlerSuccess(setLatestVotes, res))
       .catch(err => fetchHandlerError(setLatestVotes, err))
-
-    Api.getRate()
-      .then(res => fetchHandlerSuccess(setRate, res))
-      .catch(err => fetchHandlerError(setRate, err))
   }, [statusQuery.isSuccess])
 
   // below-fold charts wait until the first epoch paints (or all epoch queries settle empty)
@@ -191,6 +195,8 @@ function Home () {
         <HomeHero
           status={statusQuery.data ?? {}}
           loading={statusQuery.isLoading}
+          rate={rate?.data}
+          rateLoading={rate?.loading}
           epochNumber={currentEpochNumber}
           epochEndTime={currentEpochPayload?.epoch?.endTime}
           transactions={txQuery.data?.resultSet}
@@ -259,14 +265,17 @@ function Home () {
               validatorsBanned={validatorsBanned}
               validatorsInactive={validatorsInactive}
               validatorsList={validatorsGeoQuery.data?.resultSet}
-              contested={contested}
-              activeContested={activeContested}
-              latestContested={latestContested}
-              latestVotes={latestVotes}
-              epochData={epochData}
             />
           </div>
         </div>
+
+        <GovernanceCard
+          contested={contested}
+          activeContested={activeContested}
+          latestContested={latestContested}
+          latestVotes={latestVotes}
+          epochData={epochData}
+        />
       </Flex>
     </Container>
   )
