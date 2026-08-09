@@ -8,44 +8,19 @@ $shield-out: #ffb547;
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  height: auto;
+
   &.is-height-matched {
     .ShieldedPool__Body {
       flex: 1 1 auto;
-      min-height: 0;
-      justify-content: space-between;
-    }
-
-    .ShieldedPool__Airlock {
-      flex: 1 1 0;
-      min-height: 0;
-    }
-
-    .ShieldedPool__Spark {
-      flex: 1 1 0;
       min-height: 0;
       display: flex;
       flex-direction: column;
     }
 
-    .ShieldedPool__SparkWrap {
+    .ShieldedPool__Chart {
       flex: 1 1 auto;
+      min-height: 200px;
       height: auto;
-      min-height: 4.5rem;
-      max-height: none;
-      aspect-ratio: auto;
-    }
-
-    .ShieldedPool__SparkSvg {
-      position: absolute;
-      inset: 0;
-      height: 100%;
-    }
-
-    .ShieldedPool__SparkSkel {
-      position: absolute;
-      inset: 0;
-      height: 100% !important;
     }
   }
 
@@ -60,7 +35,7 @@ $shield-out: #ffb547;
       transparent 58%
     );
     background-size: 250% 100%;
-    animation: ShieldedScan 9s linear infinite;
+    animation: ShieldedPoolScan 9s linear infinite;
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -79,30 +54,7 @@ $shield-out: #ffb547;
 
   &__HeadText {
     min-width: 0;
-    max-width: 22rem;
-  }
-
-  &__Controls {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    gap: 10px;
-    flex-shrink: 0;
-    min-width: 0;
-  }
-
-  &__SparkLegend {
-    display: flex;
-    gap: 14px;
-    font-family: $font-mono;
-    font-size: 0.625rem;
-    color: var(--chakra-colors-gray-500);
-
-    span {
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-    }
+    max-width: 18rem;
   }
 
   &__Eyebrow {
@@ -112,7 +64,7 @@ $shield-out: #ffb547;
     text-transform: uppercase;
     letter-spacing: 0.22em;
     color: rgba($shield-in, 0.85);
-    text-shadow: 0 0 10px rgba($shield-in, 0.5);
+    text-shadow: 0 0 10px rgba($shield-in, 0.45);
     margin-bottom: 4px;
   }
 
@@ -142,11 +94,87 @@ $shield-out: #ffb547;
     white-space: nowrap;
   }
 
+  // range chips → big number → meta (same rhythm as IdentityGrowth / Volume)
+  &__Controls {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 14px;
+    flex-shrink: 0;
+    min-width: 0;
+  }
+
+  &__Stat {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 8px;
+    min-width: 0;
+    text-align: right;
+  }
+
+  &__StatMain {
+    display: flex;
+    align-items: baseline;
+    justify-content: flex-end;
+    gap: 10px;
+    min-width: 0;
+  }
+
+  &__StatCount {
+    font-family: $font-heading;
+    font-weight: 800;
+    font-style: italic;
+    font-size: clamp(1.5rem, 2.8vw, 2rem);
+    line-height: 1;
+    color: #fff;
+    font-variant-numeric: tabular-nums;
+    text-shadow: 0 0 16px rgba($shield-in, 0.28);
+    min-width: 4ch;
+
+    &.is-up { color: $shield-in; }
+    &.is-down { color: $shield-out; }
+  }
+
+  &__StatUnit {
+    font-family: $font-mono;
+    font-size: 0.625rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--chakra-colors-gray-500);
+  }
+
+  &__Flows {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    align-items: baseline;
+    gap: 4px 14px;
+    margin-top: 2px;
+  }
+
+  &__Flow {
+    font-family: $font-mono;
+    font-size: 0.6875rem;
+    line-height: 1.3;
+    color: var(--chakra-colors-gray-500);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+
+    b {
+      font-weight: 700;
+      margin-left: 0.35em;
+    }
+
+    &--in b { color: $shield-in; }
+    &--out b { color: $shield-out; }
+  }
+
   &__Empty {
     display: flex;
     align-items: center;
     justify-content: center;
-    min-height: 160px;
+    min-height: 180px;
     font-size: 0.8125rem;
     color: var(--chakra-colors-gray-500);
   }
@@ -154,334 +182,89 @@ $shield-out: #ffb547;
   &__Body {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 10px;
     flex: 0 0 auto;
   }
 
-  &__Airlock {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(11.5rem, 14rem) minmax(0, 1fr);
-    align-items: stretch;
-    gap: 14px;
-    flex: 0 0 auto;
-
-    @media screen and (max-width: $breakpoint-md) {
-      grid-template-columns: 1fr;
-      gap: 10px;
-    }
-  }
-
-  &__Gate {
+  &__Chart {
     position: relative;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    gap: 4px;
-    padding: 12px 14px;
-    border-radius: 12px;
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(var(--chakra-colors-gray-800-rgb), 0.7);
-    min-width: 0;
-    overflow: hidden;
-  }
-
-  &__Gate--in {
-    text-align: left;
-    align-items: flex-start;
-  }
-
-  &__Gate--out {
-    text-align: right;
-    align-items: flex-end;
-  }
-
-  @media screen and (max-width: $breakpoint-md) {
-    &__Gate--in,
-    &__Gate--out {
-      text-align: left;
-      align-items: flex-start;
-    }
-  }
-
-  &__GateLabel {
-    font-family: $font-mono;
-    font-size: 0.5625rem;
-    text-transform: uppercase;
-    letter-spacing: 0.14em;
-    color: var(--chakra-colors-gray-500);
-    order: 2;
-  }
-
-  &__GateValue {
-    order: 1;
-    font-family: $font-heading;
-    font-weight: 800;
-    font-style: italic;
-    font-size: 1.25rem;
-    line-height: 1;
-    color: #fff;
-    cursor: pointer;
-    white-space: nowrap;
-
-    i {
-      font-family: $font-mono;
-      font-style: normal;
-      font-weight: 400;
-      font-size: 0.625rem;
-      letter-spacing: 0.08em;
-      color: var(--chakra-colors-gray-500);
-    }
-  }
-
-  &__Chips { order: 3; }
-
-  &__Gate--in &__GateValue { text-shadow: 0 0 14px rgba($shield-in, 0.35); }
-  &__Gate--out &__GateValue { text-shadow: 0 0 14px rgba($shield-out, 0.35); }
-
-  &__GateFlow {
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    width: 2px;
-    pointer-events: none;
-  }
-
-  &__Gate--in &__GateFlow {
-    right: 0;
-    background: linear-gradient(180deg, transparent, rgba($shield-in, 0.9), transparent);
-    background-size: 100% 220%;
-    animation: ShieldedFlowIn 2.6s linear infinite;
-    box-shadow: 0 0 10px rgba($shield-in, 0.5);
-  }
-
-  &__Gate--out &__GateFlow {
-    left: 0;
-    background: linear-gradient(180deg, transparent, rgba($shield-out, 0.9), transparent);
-    background-size: 100% 220%;
-    animation: ShieldedFlowOut 2.6s linear infinite;
-    box-shadow: 0 0 10px rgba($shield-out, 0.5);
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    &__GateFlow { animation: none; opacity: 0.4; }
-  }
-
-  &__Chips {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 4px;
-  }
-
-  &__Gate--in &__Chips { justify-content: flex-start; }
-  &__Gate--out &__Chips { justify-content: flex-end; }
-
-  @media screen and (max-width: $breakpoint-md) {
-    &__Gate--out &__Chips { justify-content: flex-start; }
-  }
-
-  &__Chip {
-    font-family: $font-mono;
-    font-size: 0.5625rem;
-    padding: 2px 7px;
-    border-radius: 999px;
-    white-space: nowrap;
-    color: var(--chakra-colors-gray-250);
-    border: 1px solid rgba(var(--chakra-colors-gray-800-rgb), 0.9);
-    background: rgba(255, 255, 255, 0.03);
-
-    b { font-weight: 700; color: #fff; }
-  }
-
-  &__Chip--in b { color: $shield-in; }
-  &__Chip--out b { color: $shield-out; }
-
-  &__Vault {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    text-align: center;
-    padding: 16px 22px;
-    border-radius: 14px;
-    min-width: 11.5rem;
     width: 100%;
-    max-width: 16rem;
-    justify-self: center;
-    z-index: 1;
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
-  }
-
-  &__VaultRing {
-    position: absolute;
-    inset: 0;
-    border-radius: 14px;
-    pointer-events: none;
-    border: 1px solid rgba($shield-in, 0.22);
-    box-shadow: 0 0 0 0 rgba($shield-in, 0);
-    animation: ShieldedVaultBreath 3.6s ease-in-out infinite;
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    &__VaultRing { animation: none; }
-  }
-
-  &__VaultLabel {
-    font-family: $font-mono;
-    font-size: 0.5625rem;
-    text-transform: uppercase;
-    letter-spacing: 0.18em;
-    color: rgba($shield-in, 0.9);
-  }
-
-  &__VaultValue {
-    position: relative;
-    z-index: 1;
-    font-family: $font-heading;
-    font-weight: 800;
-    font-style: italic;
-    font-size: 2rem;
-    line-height: 1;
-    color: #fff;
-    cursor: pointer;
-    white-space: nowrap;
-    transition: color 0.15s;
-
-    &:hover { color: $shield-in; }
-
-    i {
-      font-family: $font-mono;
-      font-style: normal;
-      font-weight: 400;
-      font-size: 0.6875rem;
-      letter-spacing: 0.08em;
-      color: var(--chakra-colors-gray-500);
-    }
-  }
-
-  &__VaultBadges {
-    position: relative;
-    z-index: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
-    gap: 5px;
-    width: 100%;
-  }
-
-  &__VaultBadge {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.35em;
-    width: 100%;
-    box-sizing: border-box;
-    padding: 4px 10px;
-    border-radius: 999px;
-    font-family: $font-mono;
-    font-size: 0.625rem;
-    line-height: 1.3;
-    color: var(--chakra-colors-gray-400);
-    background: rgba(255, 255, 255, 0.04);
-    border: 1px solid rgba(255, 255, 255, 0.07);
-    white-space: nowrap;
-
-    b {
-      font-weight: 700;
-      color: #fff;
-      font-variant-numeric: tabular-nums;
-    }
-  }
-
-  &__Net {
-    display: flex;
-    justify-content: flex-end;
-  }
-
-  &__NetValue {
-    font-family: $font-heading;
-    font-weight: 800;
-    font-style: italic;
-    font-size: 1.125rem;
-    line-height: 1.15;
-    color: #fff;
-    font-variant-numeric: tabular-nums;
-    cursor: pointer;
-
-    i {
-      font-family: $font-mono;
-      font-style: normal;
-      font-weight: 400;
-      font-size: 0.625rem;
-      letter-spacing: 0.06em;
-      color: var(--chakra-colors-gray-500);
-    }
-
-    &.is-in {
-      color: $shield-in;
-      text-shadow: 0 0 12px rgba($shield-in, 0.25);
-    }
-
-    &.is-out {
-      color: $shield-out;
-      text-shadow: 0 0 12px rgba($shield-out, 0.25);
-    }
-  }
-
-  &__Spark {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    flex: 0 0 auto;
-    width: 100%;
-  }
-
-  &__SparkWrap {
-    position: relative;
+    height: 260px;
+    min-height: 200px;
     cursor: crosshair;
-    width: 100%;
-    aspect-ratio: 100 / 64; // matches viewBox
-    max-height: 7.5rem;
-    min-height: 4.5rem;
   }
 
-  &__SparkSvg {
-    position: absolute;
+  &__ChartSkel {
+    position: absolute !important;
     inset: 0;
+    width: 100% !important;
+    height: 100% !important;
+  }
+
+  &__Svg {
     display: block;
     width: 100%;
     height: 100%;
-    transition: opacity .2s;
-
-    &.is-loading { opacity: 0.45; }
   }
 
-  &__Baseline {
-    stroke: rgba(255, 255, 255, 0.14);
-    stroke-width: 1px;
-    stroke-dasharray: 3 4;
+  &__Grid {
+    stroke: rgba(255, 255, 255, 0.05);
+    stroke-width: 1;
+  }
+
+  &__YTick,
+  &__Tick,
+  &__AxisTitle {
+    fill: var(--chakra-colors-gray-500);
+    font-family: $font-mono;
+    font-size: 10px;
+  }
+
+  &__YTick--right {
+    fill: rgba(255, 255, 255, 0.38);
+  }
+
+  &__AxisTitle {
+    font-size: 9px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  &__Area { pointer-events: none; }
+
+  &__Line {
+    stroke-width: 2.25;
+    vector-effect: non-scaling-stroke;
+    filter: drop-shadow(0 0 6px rgba($shield-in, 0.4));
   }
 
   &__Bar {
-    transition: opacity .15s;
-
-    &--in { fill: rgba($shield-in, 0.8); }
-    &--out { fill: rgba($shield-out, 0.8); }
+    &--in { fill: rgba($shield-in, 0.55); }
+    &--out { fill: rgba($shield-out, 0.65); }
   }
 
-  .is-dim &__Bar { opacity: 0.3; }
+  &__Cross {
+    stroke: rgba(255, 255, 255, 0.28);
+    stroke-width: 1;
+    stroke-dasharray: 3 4;
+    pointer-events: none;
+  }
+
+  &__Dot {
+    fill: $shield-in;
+    stroke: rgba(10, 14, 16, 0.9);
+    stroke-width: 2;
+    filter: drop-shadow(0 0 8px rgba($shield-in, 0.7));
+  }
 
   &__Tip {
     position: absolute;
-    bottom: calc(100% + 6px);
+    top: 10px;
     transform: translateX(-50%);
     display: flex;
     flex-direction: column;
     gap: 2px;
-    padding: 6px 9px;
+    padding: 7px 10px;
     border-radius: 8px;
     background: rgba(10, 14, 16, 0.95);
     border: 1px solid rgba(var(--chakra-colors-gray-800-rgb), 0.9);
@@ -493,58 +276,26 @@ $shield-out: #ffb547;
   }
 
   &__TipDate { color: var(--chakra-colors-gray-500); }
-  &__TipRow--in { color: $shield-in; }
-  &__TipRow--out { color: $shield-out; }
 
-  &__Axis {
+  &__TipRow {
+    font-weight: 600;
+
+    &.is-tvl { color: #fff; }
+    &.is-in { color: $shield-in; }
+    &.is-out { color: $shield-out; }
+  }
+
+  &__EmptyChart {
     display: flex;
-    justify-content: space-between;
-    flex-shrink: 0;
-    font-family: $font-mono;
-    font-size: 0.5625rem;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    font-size: 0.8125rem;
     color: var(--chakra-colors-gray-500);
   }
-
-  &__SparkSkel {
-    position: absolute;
-    inset: 0;
-    width: 100% !important;
-    height: 100% !important;
-    border-radius: 6px;
-  }
-
-  &__Dot {
-    width: 7px;
-    height: 7px;
-    border-radius: 2px;
-
-    &--in { background: $shield-in; box-shadow: 0 0 6px rgba($shield-in, 0.7); }
-    &--out { background: $shield-out; box-shadow: 0 0 6px rgba($shield-out, 0.7); }
-  }
 }
 
-@keyframes ShieldedScan {
+@keyframes ShieldedPoolScan {
   from { background-position: 125% 0; }
   to { background-position: -125% 0; }
-}
-
-@keyframes ShieldedFlowIn {
-  from { background-position: 0 220%; }
-  to { background-position: 0 -220%; }
-}
-
-@keyframes ShieldedFlowOut {
-  from { background-position: 0 -220%; }
-  to { background-position: 0 220%; }
-}
-
-@keyframes ShieldedVaultBreath {
-  0%, 100% {
-    border-color: rgba($shield-in, 0.18);
-    box-shadow: 0 0 0 0 rgba($shield-in, 0);
-  }
-  50% {
-    border-color: rgba($shield-in, 0.4);
-    box-shadow: 0 0 12px rgba($shield-in, 0.12);
-  }
 }

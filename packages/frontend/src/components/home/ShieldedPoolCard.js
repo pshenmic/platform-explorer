@@ -1,36 +1,33 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+/**
+ * Shielded pool — combo chart
+ * - Line/area (left axis) = TVL locked in pool (stock)
+ * - Grouped bars (right axis) = deposit / withdrawal volume (flow)
+ *
+ * "All" densifies from first real activity so early empty years
+ * don't collapse every deposit into a few coarse buckets.
+ */
+
+import { useState, useEffect, useMemo, useRef, useId } from 'react'
+import * as d3 from 'd3'
+import useResizeObserver from '@react-hook/resize-observer'
 import { Box } from '@chakra-ui/react'
 import * as Api from '../../util/Api'
 import { Presets } from '../cards'
-import { RateTooltip, Tooltip } from '../ui/Tooltips'
+import { Tooltip } from '../ui/Tooltips'
 import { creditsToDash } from '../../util'
 import { Skeleton } from './Skeleton'
 import { PRESETS, presetRange } from './MetricChart'
 import './ShieldedPoolCard.scss'
 
-const SPARK_W = 100
-const SPARK_H = 64
-const BASELINE = SPARK_H / 2
 const DEFAULT_PRESET = PRESETS.length - 1
-const SPARK_INTERVALS = { '24h': 24, '1W': 28, '1M': 30, '6M': 36, '1Y': 48, All: 48 }
-
-const dateFmt = new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric' })
-const timeFmt = new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit', hour12: false })
-
-const TYPE_INFO = {
-  SHIELD: { label: 'Shield', dir: 'in' },
-  SHIELD_FROM_ASSET_LOCK: { label: 'Asset lock', dir: 'in' },
-  UNSHIELD: { label: 'Unshield', dir: 'out' },
-  SHIELDED_WITHDRAWAL: { label: 'Withdrawal', dir: 'out' },
-  IDENTITY_CREATE_FROM_SHIELDED_POOL: { label: 'Identity create', dir: 'out' },
-  SHIELDED_TRANSFER: { label: 'Private transfers', dir: 'inside' }
-}
-
-function barH (amount, max) {
-  if (!amount || max <= 0) return 0
-  return Math.max((amount / max) * (BASELINE - 3), 1.5)
+const DAY_MS = 24 * 60 * 60 * 1000
+const M = { top: 16, right: 48, bottom: 24, left: 48 }
+const COLOR = {
+  tvl: '#2cffb4',
+  in: '#3dffc0',
+  out: '#ffb547'
 }
 
 function fmtDash (dash) {
@@ -38,30 +35,95 @@ function fmtDash (dash) {
   return Math.abs(dash) >= 0.01 ? dash.toFixed(2) : Number(dash.toPrecision(2)).toString()
 }
 
-function TypeChips ({ types, dir }) {
-  const rows = (types || [])
-    .map(t => ({ ...TYPE_INFO[t.transactionType], count: t.count }))
-    .filter(t => t.dir === dir && t.count > 0)
-  if (!rows.length) return null
-  return (
-    <div className={'ShieldedPool__Chips'}>
-      {rows.map(t => (
-        <span key={t.label} className={`ShieldedPool__Chip ShieldedPool__Chip--${dir}`}>
-          {t.label} <b>{t.count.toLocaleString('en-US')}</b>
-        </span>
-      ))}
-    </div>
-  )
+function fmtCompact (dash) {
+  const n = Number(dash) || 0
+  if (Math.abs(n) >= 1e6) return `${(n / 1e6).toFixed(2)}M`
+  if (Math.abs(n) >= 1e3) return `${(n / 1e3).toFixed(1)}k`
+  if (Math.abs(n) >= 10) return n.toFixed(1)
+  return fmtDash(n)
 }
 
-export default function ShieldedPoolCard ({ rate, enabled = true }) {
-  const [pool, setPool] = useState({ loading: true, error: false, balance: null, notes: null })
-  const [period, setPeriod] = useState({ loading: true, in: 0, out: 0, transitions: 0, types: [] })
-  const [flows, setFlows] = useState({ loading: true, buckets: [] })
-  const [presetIdx, setPresetIdx] = useState(DEFAULT_PRESET)
-  const [hover, setHover] = useState(null)
-  const rootRef = useRef(null)
+function buildTvlSeries (buckets, balanceCredits) {
+  if (!buckets.length || balanceCredits == null) return []
+  const series = new Array(buckets.length)
+  let tvl = Number(balanceCredits) || 0
+  for (let i = buckets.length - 1; i >= 0; i--) {
+    const inAmt = Number(buckets[i].inAmt) || 0
+    const outAmt = Number(buckets[i].outAmt) || 0
+    series[i] = { ts: buckets[i].ts, tvl, inAmt, outAmt }
+    tvl -= (inAmt - outAmt)
+  }
+  return series
+}
 
+async function fetchFlowBuckets (start, end, intervals) {
+  const [shieldRes, unshieldRes] = await Promise.all([
+    Api.getShieldHistory(start, end, intervals).catch(() => []),
+    Api.getUnshieldHistory(start, end, intervals).catch(() => [])
+  ])
+  const count = Math.max(shieldRes?.length || 0, unshieldRes?.length || 0)
+  return Array.from({ length: count }, (_, i) => ({
+    ts: shieldRes?.[i]?.timestamp ?? unshieldRes?.[i]?.timestamp ?? null,
+    inAmt: Number(shieldRes?.[i]?.data?.amount) || 0,
+    outAmt: Number(unshieldRes?.[i]?.data?.amount) || 0
+  }))
+}
+
+function trimLeadingEmpty (buckets) {
+  if (buckets.length < 3) return buckets
+  let s = 0
+  while (s < buckets.length - 2 && !buckets[s].inAmt && !buckets[s].outAmt) s++
+  return buckets.slice(s)
+}
+
+/** Target bucket count for an active span — prefer ~daily up to 120 pts. */
+function intervalsForSpan (startIso, endIso) {
+  const start = new Date(startIso).getTime()
+  const end = new Date(endIso).getTime()
+  const days = Math.max(1, Math.ceil((end - start) / DAY_MS))
+  // short ranges: more resolution; long: daily-ish, cap 120
+  if (days <= 2) return 48
+  if (days <= 7) return Math.min(84, days * 8)
+  if (days <= 31) return Math.min(90, days * 2)
+  return Math.min(120, Math.max(60, days))
+}
+
+/**
+ * Load flows, then re-bucket from first activity so "All" does not
+ * smear every deposit into ~3 giant bars over empty history.
+ */
+async function loadDenseBuckets (rangeStart, rangeEnd) {
+  const scoutIntervals = 48
+  const raw = await fetchFlowBuckets(rangeStart, rangeEnd, scoutIntervals)
+  const scout = trimLeadingEmpty(raw)
+
+  if (!scout.length) {
+    return [{ ts: rangeEnd, inAmt: 0, outAmt: 0 }]
+  }
+
+  const firstTs = scout[0].ts || rangeStart
+  const denseStart = new Date(firstTs).toISOString()
+  const intervals = intervalsForSpan(denseStart, rangeEnd)
+  const dense = trimLeadingEmpty(await fetchFlowBuckets(denseStart, rangeEnd, intervals))
+  return dense.length ? dense : scout
+}
+
+export default function ShieldedPoolCard ({ enabled = true }) {
+  const [pool, setPool] = useState({ loading: true, error: false, balance: null })
+  const [series, setSeries] = useState({ loading: true, points: [] })
+  // Authoritative range totals from /shielded/statistic (not summed chart buckets)
+  const [period, setPeriod] = useState({ loading: true, in: 0, out: 0 })
+  const [presetIdx, setPresetIdx] = useState(DEFAULT_PRESET)
+  const [hoverI, setHoverI] = useState(null)
+  const [width, setWidth] = useState(0)
+  const [plotH, setPlotH] = useState(260)
+  const wrapRef = useRef(null)
+  const rootRef = useRef(null)
+  const gid = useId().replace(/:/g, '')
+  const fetchGen = useRef(0)
+  const periodGen = useRef(0)
+
+  // Match height with sibling MasternodesDonut on md+
   useEffect(() => {
     const root = rootRef.current
     if (!root || typeof ResizeObserver === 'undefined') return undefined
@@ -100,79 +162,217 @@ export default function ShieldedPoolCard ({ rate, enabled = true }) {
     }
   }, [])
 
-  useEffect(() => {
-    if (!enabled) { setPool(s => ({ ...s, loading: true, error: false })); return }
-    Api.getShieldedPool()
-      .then(res => setPool({ loading: false, error: false, balance: res?.poolBalance ?? null, notes: res?.notesCount ?? null }))
-      .catch(() => setPool({ loading: false, error: true, balance: null, notes: null }))
-  }, [enabled])
+  useResizeObserver(wrapRef, entry => {
+    const { width: w, height: hh } = entry.contentRect
+    setWidth(Math.max(0, Math.floor(w)))
+    setPlotH(Math.max(200, Math.floor(hh)))
+  })
 
   useEffect(() => {
-    if (!enabled) { setPeriod(s => ({ ...s, loading: true })); return }
-    const { start, end } = presetRange(PRESETS[presetIdx])
-    setPeriod(s => ({ ...s, loading: true }))
-    Api.getShieldedStatistic(start, end)
-      .then(res => setPeriod({
-        loading: false,
-        in: Number(res?.totalShieldedIn) || 0,
-        out: Number(res?.totalShieldedOut) || 0,
-        transitions: Number(res?.transitionsCount) || 0,
-        types: res?.types ?? []
-      }))
-      .catch(() => setPeriod({ loading: false, in: 0, out: 0, transitions: 0, types: [] }))
-  }, [presetIdx, enabled])
+    if (!wrapRef.current) return
+    setWidth(Math.max(0, Math.floor(wrapRef.current.clientWidth)))
+    setPlotH(Math.max(200, Math.floor(wrapRef.current.clientHeight || 260)))
+  }, [])
 
   useEffect(() => {
     if (!enabled) {
-      setFlows(s => ({ ...s, loading: true }))
+      setPool(s => ({ ...s, loading: true, error: false }))
       return
     }
-    const preset = PRESETS[presetIdx]
-    const { start, end } = presetRange(preset)
-    const intervals = SPARK_INTERVALS[preset.label] ?? 30
-    setFlows(s => ({ ...s, loading: true }))
-    setHover(null)
-    Promise.all([
-      Api.getShieldHistory(start, end, intervals).catch(() => []),
-      Api.getUnshieldHistory(start, end, intervals).catch(() => [])
-    ]).then(([shieldRes, unshieldRes]) => {
-      const count = Math.max(shieldRes?.length || 0, unshieldRes?.length || 0)
-      const buckets = Array.from({ length: count }, (_, i) => ({
-        ts: shieldRes?.[i]?.timestamp ?? unshieldRes?.[i]?.timestamp ?? null,
-        inAmt: Number(shieldRes?.[i]?.data?.amount) || 0,
-        outAmt: Number(unshieldRes?.[i]?.data?.amount) || 0
-      }))
-      let s = 0
-      while (s < buckets.length - 1 && !buckets[s].inAmt && !buckets[s].outAmt) s++
-      setFlows({ loading: false, buckets: buckets.slice(s) })
-    })
+    Api.getShieldedPool()
+      .then(res => setPool({ loading: false, error: false, balance: res?.poolBalance ?? null }))
+      .catch(() => setPool({ loading: false, error: true, balance: null }))
+  }, [enabled])
+
+  useEffect(() => {
+    if (!enabled || pool.loading || pool.error) {
+      if (!enabled) setSeries(s => ({ ...s, loading: true }))
+      return
+    }
+
+    const gen = ++fetchGen.current
+    const { start, end } = presetRange(PRESETS[presetIdx])
+    const balance = pool.balance ?? 0
+    setSeries(s => ({ ...s, loading: true }))
+    setHoverI(null)
+
+    loadDenseBuckets(start, end)
+      .then(buckets => {
+        if (gen !== fetchGen.current) return
+        setSeries({ loading: false, points: buildTvlSeries(buckets, balance) })
+      })
+      .catch(() => {
+        if (gen !== fetchGen.current) return
+        setSeries({
+          loading: false,
+          points: [{ ts: new Date().toISOString(), tvl: Number(balance) || 0, inAmt: 0, outAmt: 0 }]
+        })
+      })
+  }, [presetIdx, enabled, pool.loading, pool.error, pool.balance])
+
+  // Deposits / withdrawals for the selected range — exact period totals
+  useEffect(() => {
+    if (!enabled) {
+      setPeriod({ loading: true, in: 0, out: 0 })
+      return
+    }
+    const gen = ++periodGen.current
+    const { start, end } = presetRange(PRESETS[presetIdx])
+    setPeriod(s => ({ ...s, loading: true }))
+    Api.getShieldedStatistic(start, end)
+      .then(res => {
+        if (gen !== periodGen.current) return
+        setPeriod({
+          loading: false,
+          in: Number(res?.totalShieldedIn) || 0,
+          out: Number(res?.totalShieldedOut) || 0
+        })
+      })
+      .catch(() => {
+        if (gen !== periodGen.current) return
+        setPeriod({ loading: false, in: 0, out: 0 })
+      })
   }, [presetIdx, enabled])
 
   const balanceDash = creditsToDash(Number(pool.balance) || 0)
-  const inDash = creditsToDash(period.in)
-  const outDash = creditsToDash(period.out)
-  const netCredits = period.in - period.out
-  const netDash = creditsToDash(netCredits)
-  const transfersInside = (period.types || [])
-    .filter(t => TYPE_INFO[t.transactionType]?.dir === 'inside')
-    .reduce((sum, t) => sum + t.count, 0)
-  const windowLabel = PRESETS[presetIdx].label === 'All' ? 'all time' : PRESETS[presetIdx].label
+  const points = series.points
+  const isAll = PRESETS[presetIdx].label === 'All'
+  const windowLabel = isAll ? 'all time' : PRESETS[presetIdx].label
+  // Period flow totals from statistic API (0 when no activity in range)
+  const rangeInDash = creditsToDash(period.in)
+  const rangeOutDash = creditsToDash(period.out)
+  // Net change of the pool for the selected window: in − out
+  const rangeNetDash = rangeInDash - rangeOutDash
 
-  const buckets = flows.buckets
-  const flowMax = buckets.reduce((max, b) => Math.max(max, b.inAmt, b.outAmt), 0)
-  const barStep = buckets.length ? SPARK_W / buckets.length : SPARK_W
-  const barW = barStep * 0.62
-  const tipFmt = PRESETS[presetIdx].label === '24h' ? timeFmt : dateFmt
+  const ready = width > 0 && plotH > 0 && points.length >= 1 && !series.loading
+
+  const chart = useMemo(() => {
+    if (!ready) return null
+
+    let pts = points
+      .map(p => ({
+        x: p.ts ? new Date(p.ts) : null,
+        tvl: creditsToDash(p.tvl),
+        inDash: creditsToDash(p.inAmt),
+        outDash: creditsToDash(p.outAmt)
+      }))
+      .filter(p => p.x && !isNaN(p.x.getTime()))
+
+    if (!pts.length) return null
+    if (pts.length === 1) {
+      const only = pts[0]
+      pts = [{ ...only, x: new Date(+only.x - 3600000) }, only]
+    }
+
+    const x = d3.scaleTime(d3.extent(pts, p => p.x), [M.left, width - M.right])
+
+    const tvlMin = d3.min(pts, p => p.tvl) ?? 0
+    const tvlMax = d3.max(pts, p => p.tvl) ?? 1
+    const tvlPad = (tvlMax - tvlMin) * 0.12 || Math.max(tvlMax * 0.08, 0.01)
+    const yTvl = d3.scaleLinear(
+      [Math.max(0, tvlMin - tvlPad * 0.3), tvlMax + tvlPad],
+      [plotH - M.bottom, M.top]
+    ).nice()
+
+    const flowMax = d3.max(pts, p => Math.max(p.inDash, p.outDash)) || 0
+    const yFlow = d3.scaleLinear(
+      [0, flowMax > 0 ? flowMax * 1.2 : 1],
+      [plotH - M.bottom, M.top]
+    ).nice()
+
+    const line = d3.line()
+      .x(p => x(p.x))
+      .y(p => yTvl(p.tvl))
+      .curve(d3.curveMonotoneX)
+
+    const area = d3.area()
+      .x(p => x(p.x))
+      .y0(plotH - M.bottom)
+      .y1(p => yTvl(p.tvl))
+      .curve(d3.curveMonotoneX)
+
+    const spanMs = pts[pts.length - 1].x - pts[0].x
+    const tickFmt = d3.timeFormat(spanMs > 365 * DAY_MS ? '%b %Y' : spanMs > 3 * DAY_MS ? '%b %d' : '%H:%M')
+    const tipFmt = d3.timeFormat(spanMs > 365 * DAY_MS ? '%b %d, %Y' : spanMs > 3 * DAY_MS ? '%b %d' : '%b %d, %H:%M')
+
+    const xTickN = Math.max(2, Math.min(6, Math.floor((width - M.left - M.right) / 72)))
+    const xTicks = x.ticks(xTickN)
+    const yTvlTicks = yTvl.ticks(4)
+    const yFlowTicks = yFlow.ticks(4)
+
+    const step = pts.length > 1
+      ? Math.abs(x(pts[1].x) - x(pts[0].x))
+      : (width - M.left - M.right) / Math.max(pts.length, 1)
+    const groupW = Math.max(5, Math.min(20, step * 0.72))
+    const barW = Math.max(2, (groupW - 2) / 2)
+    const baseline = plotH - M.bottom
+
+    const bars = pts.map((p, i) => {
+      const cx = x(p.x)
+      const inH = Math.max(0, baseline - yFlow(p.inDash))
+      const outH = Math.max(0, baseline - yFlow(p.outDash))
+      return {
+        i,
+        cx,
+        inX: cx - groupW / 2,
+        outX: cx - groupW / 2 + barW + 1,
+        inY: baseline - inH,
+        outY: baseline - outH,
+        inH,
+        outH,
+        barW
+      }
+    })
+
+    return {
+      pts,
+      x,
+      yTvl,
+      yFlow,
+      line: line(pts),
+      area: area(pts),
+      tickFmt,
+      tipFmt,
+      xTicks,
+      yTvlTicks,
+      yFlowTicks,
+      bars,
+      baseline
+    }
+  }, [ready, points, width, plotH])
 
   const handleMove = (e) => {
-    if (!buckets.length || flows.loading) return
+    if (!chart) return
     const rect = e.currentTarget.getBoundingClientRect()
-    const frac = (e.clientX - rect.left) / rect.width
-    const idx = Math.min(buckets.length - 1, Math.max(0, Math.floor(frac * buckets.length)))
-    setHover({ idx, xPct: (idx * barStep + barStep / 2) / SPARK_W * 100 })
+    const mx = e.clientX - rect.left
+    const t = chart.x.invert(mx)
+    let best = 0
+    let bestDist = Infinity
+    chart.pts.forEach((p, i) => {
+      const d = Math.abs(p.x - t)
+      if (d < bestDist) { bestDist = d; best = i }
+    })
+    setHoverI(best)
   }
 
-  const hovered = hover != null ? buckets[hover.idx] : null
+  const hovered = chart && hoverI != null ? chart.pts[hoverI] : null
+
+  // Big number follows the selected range (same idea as identities/volume):
+  // · All  → current total locked in the pool
+  // · 24h… → net Δ for that window (deposits − withdrawals)
+  // Flows row stays the period totals; chart hover does not change these.
+  const statCount = (() => {
+    if (pool.loading) return null
+    if (isAll) return fmtDash(balanceDash)
+    if (period.loading) return null
+    if (!rangeNetDash) return '0'
+    return `${rangeNetDash >= 0 ? '+' : '−'}${fmtDash(Math.abs(rangeNetDash))}`
+  })()
+  const statUnit = isAll ? 'DASH locked' : 'DASH net'
+  const statTone = !isAll && !period.loading
+    ? (rangeNetDash > 0 ? ' is-up' : rangeNetDash < 0 ? ' is-down' : '')
+    : ''
+  const flowsLoading = period.loading
 
   return (
     <Box
@@ -189,30 +389,37 @@ export default function ShieldedPoolCard ({ rate, enabled = true }) {
           <span className={'ShieldedPool__Eyebrow'}>Privacy layer</span>
           <h2 className={'ShieldedPool__Title'}>Shielded pool</h2>
           <p className={'ShieldedPool__Lede'}>
-            DASH entering the pool disappears from public view; leaving makes it visible again.
+            Pool size over time; bars show deposit and withdrawal volume.
             <Tooltip
-              title={'How it works'}
-              content={'Shield converts public DASH into private notes inside the pool. Private transfers move value between owners without revealing amounts or parties. Unshield converts notes back to public DASH.'}
+              title={'How to read'}
+              content={'Line (left axis) is total DASH locked in the pool. Bars (right axis) are deposit and withdrawal volume in each time bucket. All starts from the first real pool activity so volumes are not merged into a few coarse columns.'}
               placement={'top'}
             >
-              <span className={'ShieldedPool__LedeMore'}>How it works</span>
+              <span className={'ShieldedPool__LedeMore'}>How to read</span>
             </Tooltip>
           </p>
         </div>
         <div className={'ShieldedPool__Controls'}>
           <Presets options={PRESETS} value={presetIdx} onChange={setPresetIdx}/>
-          <div className={'ShieldedPool__SparkLegend'} aria-hidden={'true'}>
-            <span><i className={'ShieldedPool__Dot ShieldedPool__Dot--in'}/> shield</span>
-            <span><i className={'ShieldedPool__Dot ShieldedPool__Dot--out'}/> unshield</span>
-          </div>
-          <div className={'ShieldedPool__Net'}>
-            {period.loading
-              ? <Skeleton w={'6ch'} h={'1.1em'}/>
-              : <RateTooltip dash={netDash} rate={rate?.data} placement={'top'}>
-                  <span className={`ShieldedPool__NetValue${netCredits >= 0 ? ' is-in' : ' is-out'}`}>
-                    {netCredits >= 0 ? '+' : '−'}{fmtDash(Math.abs(netDash))} <i>DASH</i>
-                  </span>
-                </RateTooltip>}
+          <div className={'ShieldedPool__Stat'}>
+            <div className={'ShieldedPool__StatMain'}>
+              {statCount == null
+                ? <Skeleton w={'7ch'} h={'1.6em'}/>
+                : <span className={`ShieldedPool__StatCount${statTone}`}>{statCount}</span>}
+              <span className={'ShieldedPool__StatUnit'}>{statUnit}</span>
+            </div>
+            <div className={'ShieldedPool__Flows'} aria-label={`Flows · ${windowLabel}`}>
+              {flowsLoading
+                ? <Skeleton w={'16ch'} h={'0.85em'}/>
+                : <>
+                    <span className={'ShieldedPool__Flow ShieldedPool__Flow--in'}>
+                      deposits <b>+{fmtDash(rangeInDash)}</b>
+                    </span>
+                    <span className={'ShieldedPool__Flow ShieldedPool__Flow--out'}>
+                      withdrawals <b>−{fmtDash(rangeOutDash)}</b>
+                    </span>
+                  </>}
+            </div>
           </div>
         </div>
       </header>
@@ -220,113 +427,149 @@ export default function ShieldedPoolCard ({ rate, enabled = true }) {
       {pool.error
         ? <div className={'ShieldedPool__Empty'}>No data</div>
         : <div className={'ShieldedPool__Body'}>
-            <div className={'ShieldedPool__Airlock'}>
-              <div className={'ShieldedPool__Gate ShieldedPool__Gate--in'}>
-                {period.loading
-                  ? <Skeleton w={'7ch'} h={'1.4em'}/>
-                  : <RateTooltip dash={inDash} rate={rate?.data} placement={'top'}>
-                      <span className={'ShieldedPool__GateValue'}>
-                        +{fmtDash(inDash)} <i>DASH</i>
-                      </span>
-                    </RateTooltip>}
-                <span className={'ShieldedPool__GateLabel'}>Deposits · {windowLabel}</span>
-                <TypeChips types={period.types} dir={'in'}/>
-                <span className={'ShieldedPool__GateFlow'} aria-hidden={'true'}/>
-              </div>
-
-              <div className={'ShieldedPool__Vault'}>
-                <div className={'ShieldedPool__VaultRing'} aria-hidden={'true'}/>
-                <span className={'ShieldedPool__VaultLabel'}>Locked in pool</span>
-                {pool.loading
-                  ? <Skeleton w={'9ch'} h={'1.6em'}/>
-                  : <RateTooltip dash={balanceDash} rate={rate?.data} placement={'top'}>
-                      <span className={'ShieldedPool__VaultValue'}>
-                        {fmtDash(balanceDash)} <i>DASH</i>
-                      </span>
-                    </RateTooltip>}
-                <div className={'ShieldedPool__VaultBadges'}>
-                  {pool.loading
-                    ? <>
-                        <Skeleton w={'9ch'} h={'1.35em'} radius={999}/>
-                        <Skeleton w={'7ch'} h={'1.35em'} radius={999}/>
-                      </>
-                    : <>
-                        {pool.notes != null &&
-                          <span className={'ShieldedPool__VaultBadge'}>
-                            <b>{Number(pool.notes).toLocaleString('en-US')}</b> notes
-                          </span>}
-                        {transfersInside > 0 &&
-                          <span className={'ShieldedPool__VaultBadge'}>
-                            <b>{transfersInside.toLocaleString('en-US')}</b> private
-                          </span>}
-                        {period.transitions > 0 &&
-                          <span className={'ShieldedPool__VaultBadge'}>
-                            <b>{Number(period.transitions).toLocaleString('en-US')}</b> txs
-                          </span>}
-                      </>}
-                </div>
-              </div>
-
-              <div className={'ShieldedPool__Gate ShieldedPool__Gate--out'}>
-                {period.loading
-                  ? <Skeleton w={'7ch'} h={'1.4em'}/>
-                  : <RateTooltip dash={outDash} rate={rate?.data} placement={'top'}>
-                      <span className={'ShieldedPool__GateValue'}>
-                        &minus;{fmtDash(outDash)} <i>DASH</i>
-                      </span>
-                    </RateTooltip>}
-                <span className={'ShieldedPool__GateLabel'}>Withdrawals · {windowLabel}</span>
-                <TypeChips types={period.types} dir={'out'}/>
-                <span className={'ShieldedPool__GateFlow'} aria-hidden={'true'}/>
-              </div>
-            </div>
-
-            <div className={'ShieldedPool__Spark'}>
-              <div
-                className={'ShieldedPool__SparkWrap'}
-                onMouseMove={handleMove}
-                onMouseLeave={() => setHover(null)}
-              >
-                {flows.loading && !buckets.length
-                  ? <Skeleton className={'ShieldedPool__SparkSkel'} radius={6}/>
-                  : <>
+            <div
+              ref={wrapRef}
+              className={'ShieldedPool__Chart'}
+              onMouseMove={handleMove}
+              onMouseLeave={() => setHoverI(null)}
+            >
+              {(pool.loading || series.loading) && !chart
+                ? <Skeleton className={'ShieldedPool__ChartSkel'} radius={8}/>
+                : chart
+                  ? <>
                       <svg
-                        className={`ShieldedPool__SparkSvg${flows.loading ? ' is-loading' : ''}`}
-                        viewBox={`0 0 ${SPARK_W} ${SPARK_H}`}
-                        preserveAspectRatio={'none'}
-                        aria-hidden={'true'}
+                        className={'ShieldedPool__Svg'}
+                        width={width}
+                        height={plotH}
+                        role={'img'}
+                        aria-label={'Shielded pool TVL with deposit and withdrawal volume'}
                       >
-                        <line className={'ShieldedPool__Baseline'} x1={0} x2={SPARK_W} y1={BASELINE} y2={BASELINE} vectorEffect={'non-scaling-stroke'}/>
-                        {buckets.map((b, i) => {
-                          const x = i * barStep + (barStep - barW) / 2
-                          const dim = hover != null && hover.idx !== i
-                          const inH = barH(b.inAmt, flowMax)
-                          const outH = barH(b.outAmt, flowMax)
+                        <defs>
+                          <linearGradient id={`pool-tvl-fill-${gid}`} x1={'0'} y1={'0'} x2={'0'} y2={'1'}>
+                            <stop offset={'0%'} stopColor={COLOR.tvl} stopOpacity={'0.28'}/>
+                            <stop offset={'100%'} stopColor={COLOR.tvl} stopOpacity={'0.02'}/>
+                          </linearGradient>
+                        </defs>
+
+                        {chart.yTvlTicks.map((v, i) => (
+                          <g key={`yl-${i}`}>
+                            <line
+                              className={'ShieldedPool__Grid'}
+                              x1={M.left}
+                              x2={width - M.right}
+                              y1={chart.yTvl(v)}
+                              y2={chart.yTvl(v)}
+                            />
+                            <text
+                              className={'ShieldedPool__YTick ShieldedPool__YTick--left'}
+                              x={M.left - 8}
+                              y={chart.yTvl(v)}
+                              dy={'0.35em'}
+                              textAnchor={'end'}
+                            >
+                              {fmtCompact(v)}
+                            </text>
+                          </g>
+                        ))}
+
+                        {chart.yFlowTicks.map((v, i) => (
+                          <text
+                            key={`yr-${i}`}
+                            className={'ShieldedPool__YTick ShieldedPool__YTick--right'}
+                            x={width - M.right + 8}
+                            y={chart.yFlow(v)}
+                            dy={'0.35em'}
+                            textAnchor={'start'}
+                          >
+                            {fmtCompact(v)}
+                          </text>
+                        ))}
+
+                        <text className={'ShieldedPool__AxisTitle'} x={M.left - 8} y={M.top - 4} textAnchor={'end'}>
+                          TVL
+                        </text>
+                        <text className={'ShieldedPool__AxisTitle'} x={width - M.right + 8} y={M.top - 4} textAnchor={'start'}>
+                          vol
+                        </text>
+
+                        {chart.bars.map(b => {
+                          const dim = hoverI != null && hoverI !== b.i
                           return (
-                            <g key={i} className={dim ? 'is-dim' : undefined}>
-                              {inH > 0 && <rect className={'ShieldedPool__Bar ShieldedPool__Bar--in'} x={x} y={BASELINE - inH} width={barW} height={inH}/>}
-                              {outH > 0 && <rect className={'ShieldedPool__Bar ShieldedPool__Bar--out'} x={x} y={BASELINE} width={barW} height={outH}/>}
+                            <g key={b.i} opacity={dim ? 0.25 : 0.9}>
+                              {b.inH > 0.5 &&
+                                <rect
+                                  className={'ShieldedPool__Bar ShieldedPool__Bar--in'}
+                                  x={b.inX}
+                                  y={b.inY}
+                                  width={b.barW}
+                                  height={b.inH}
+                                  rx={1}
+                                />}
+                              {b.outH > 0.5 &&
+                                <rect
+                                  className={'ShieldedPool__Bar ShieldedPool__Bar--out'}
+                                  x={b.outX}
+                                  y={b.outY}
+                                  width={b.barW}
+                                  height={b.outH}
+                                  rx={1}
+                                />}
                             </g>
                           )
                         })}
+
+                        <path d={chart.area} fill={`url(#pool-tvl-fill-${gid})`} className={'ShieldedPool__Area'}/>
+                        <path
+                          className={'ShieldedPool__Line'}
+                          d={chart.line}
+                          fill={'none'}
+                          stroke={COLOR.tvl}
+                        />
+
+                        {hovered &&
+                          <>
+                            <line
+                              className={'ShieldedPool__Cross'}
+                              x1={chart.x(hovered.x)}
+                              x2={chart.x(hovered.x)}
+                              y1={M.top}
+                              y2={chart.baseline}
+                            />
+                            <circle
+                              className={'ShieldedPool__Dot'}
+                              cx={chart.x(hovered.x)}
+                              cy={chart.yTvl(hovered.tvl)}
+                              r={4.5}
+                            />
+                          </>}
+
+                        {chart.xTicks.map((t, i) => (
+                          <text
+                            key={`x-${i}`}
+                            className={'ShieldedPool__Tick'}
+                            x={chart.x(t)}
+                            y={plotH - 6}
+                            textAnchor={'middle'}
+                          >
+                            {chart.tickFmt(t)}
+                          </text>
+                        ))}
                       </svg>
 
                       {hovered &&
-                        <div className={'ShieldedPool__Tip'} style={{ left: `${hover.xPct}%` }}>
-                          <span className={'ShieldedPool__TipDate'}>{hovered.ts ? tipFmt.format(new Date(hovered.ts)) : '—'}</span>
-                          <span className={'ShieldedPool__TipRow ShieldedPool__TipRow--in'}>In {fmtDash(creditsToDash(hovered.inAmt))} DASH</span>
-                          <span className={'ShieldedPool__TipRow ShieldedPool__TipRow--out'}>Out {fmtDash(creditsToDash(hovered.outAmt))} DASH</span>
+                        <div
+                          className={'ShieldedPool__Tip'}
+                          style={{
+                            left: `${Math.min(Math.max((chart.x(hovered.x) / width) * 100, 14), 86)}%`
+                          }}
+                        >
+                          <span className={'ShieldedPool__TipDate'}>{chart.tipFmt(hovered.x)}</span>
+                          <span className={'ShieldedPool__TipRow is-tvl'}>TVL {fmtDash(hovered.tvl)}</span>
+                          <span className={'ShieldedPool__TipRow is-in'}>In +{fmtDash(hovered.inDash)}</span>
+                          <span className={'ShieldedPool__TipRow is-out'}>Out −{fmtDash(hovered.outDash)}</span>
                         </div>}
-                    </>}
-              </div>
-
-              {!flows.loading && buckets.length >= 2 &&
-                <div className={'ShieldedPool__Axis'}>
-                  <span>{buckets[0].ts ? tipFmt.format(new Date(buckets[0].ts)) : ''}</span>
-                  {buckets.length >= 5 &&
-                    <span>{buckets[Math.floor(buckets.length / 2)].ts ? tipFmt.format(new Date(buckets[Math.floor(buckets.length / 2)].ts)) : ''}</span>}
-                  <span>{buckets[buckets.length - 1].ts ? tipFmt.format(new Date(buckets[buckets.length - 1].ts)) : ''}</span>
-                </div>}
+                    </>
+                  : <div className={'ShieldedPool__EmptyChart'}>Not enough history</div>}
             </div>
           </div>}
     </Box>
