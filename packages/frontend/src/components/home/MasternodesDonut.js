@@ -3,7 +3,6 @@
 import { useState, useMemo } from 'react'
 import { Box } from '@chakra-ui/react'
 import { Skeleton } from './Skeleton'
-import { StatusBar } from './StatusBar'
 import './MasternodesDonut.scss'
 
 const MAX_COUNTRIES = 12
@@ -101,12 +100,7 @@ export default function MasternodesDonut ({
   validatorsActive,
   validatorsBanned,
   validatorsInactive,
-  validatorsList,
-  contested,
-  activeContested,
-  latestContested,
-  latestVotes,
-  epochData
+  validatorsList
 }) {
   const [pin, setPin] = useState(null)
 
@@ -176,17 +170,16 @@ export default function MasternodesDonut ({
       w={'100%'}
       h={'100%'}
       as={'section'}
-      aria-label={'Consensus'}
+      aria-label={'Quorum'}
     >
       <div className={'MasternodesDonut__Glow'} aria-hidden={'true'}/>
 
       <header className={'MasternodesDonut__Head'}>
         <div className={'MasternodesDonut__HeadText'}>
           <span className={'MasternodesDonut__Eyebrow'}>Consensus</span>
-          <h2 className={'MasternodesDonut__Title'}>Quorum &amp; votes</h2>
+          <h2 className={'MasternodesDonut__Title'}>Quorum</h2>
           <p className={'MasternodesDonut__Lede'}>
-            Who is writing Platform blocks right now, who is waiting or banned,
-            and how masternodes vote on contested names.
+            Who is writing Platform blocks right now, who is waiting to rotate in, and who is banned.
           </p>
         </div>
         {geo.has &&
@@ -220,17 +213,14 @@ export default function MasternodesDonut ({
 
       <div className={'MasternodesDonut__Body'}>
         {showSkeleton &&
-          <>
-            <div className={'MasternodesDonut__Stage'}>
-              <Skeleton className={'MasternodesDonut__MatrixSkel'} w={'100%'} h={'11rem'} radius={12}/>
-              <div className={'MasternodesDonut__Rails'}>
-                {Array.from({ length: 4 }).map((_, i) => (
-                  <Skeleton key={i} w={'100%'} h={'4.25rem'} radius={12}/>
-                ))}
-              </div>
+          <div className={'MasternodesDonut__Stage'}>
+            <Skeleton className={'MasternodesDonut__MatrixSkel'} w={'100%'} h={'11rem'} radius={12}/>
+            <div className={'MasternodesDonut__Rails'}>
+              {Array.from({ length: 4 }).map((_, i) => (
+                <Skeleton key={i} w={'100%'} h={'4.25rem'} radius={12}/>
+              ))}
             </div>
-            <Skeleton w={'100%'} h={'5rem'} radius={12}/>
-          </>}
+          </div>}
 
         {showEmpty && <div className={'MasternodesDonut__Empty'}>No data</div>}
 
@@ -301,25 +291,11 @@ export default function MasternodesDonut ({
                       </span>
                     </span>
                     <span className={'MasternodesDonut__RailHint'}>{s.hint}</span>
-                    {s.cells && ready &&
-                      <span className={'MasternodesDonut__RailMeter'} aria-hidden={'true'}>
-                        <i style={{ width: `${Math.max(share || 0, 2)}%` }}/>
-                      </span>}
                   </button>
                 )
               })}
             </div>
           </div>}
-
-        <div className={'MasternodesDonut__Gov'}>
-          <StatusBar
-            contested={contested}
-            activeContested={activeContested}
-            latestContested={latestContested}
-            latestVotes={latestVotes}
-            epochData={epochData}
-          />
-        </div>
       </div>
     </Box>
   )
