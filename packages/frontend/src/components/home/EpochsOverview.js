@@ -419,7 +419,9 @@ function EpochCells ({ data, nextData, rate }) {
   const namesAnim = useCountUp(names != null ? Number(names) : null)
   const contestedAnim = useCountUp(contested != null ? Number(contested) : null)
   // full hash in the markup; CSS clips it to a leading slice ("20107EC…")
-  const proposerAnim = useScramble(data.bestValidator || null)
+  const proposerAnim = useScramble(
+    data.bestValidator ? shortId(data.bestValidator) : null
+  )
 
   return (
     // one flat KPI table: label over value, many columns, read left-to-right (no group headers)
