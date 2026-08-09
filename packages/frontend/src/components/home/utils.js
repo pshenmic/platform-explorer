@@ -36,6 +36,16 @@ export function isApiOperational (status) {
   return !Number.isNaN(a) && !Number.isNaN(t) && Math.abs(a - t) <= 10 * 60 * 1000
 }
 
+// Tenderdash chain id (evo1, dash-testnet-51, …) → human label for the hero
+export function formatNetworkLabel (network) {
+  if (network == null || network === '') return null
+  const n = String(network).toLowerCase()
+  if (n === 'evo1' || n === 'mainnet' || n.includes('mainnet')) return 'Mainnet'
+  if (n.includes('testnet') || n.includes('test-net') || n.startsWith('dash-test')) return 'Testnet'
+  if (n.includes('devnet') || n.includes('regtest') || n === 'local') return 'Devnet'
+  return String(network)
+}
+
 // middle-truncate a display name; the ".dash" suffix survives and can be styled separately
 export function trimName (name, head = 8, tail = 5) {
   const hasDash = typeof name === 'string' && name.endsWith('.dash')

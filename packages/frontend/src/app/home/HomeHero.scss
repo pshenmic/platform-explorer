@@ -4,9 +4,9 @@
 .HomeHero {
   @include mixins.Block(true);
   position: relative;
-  overflow: hidden;
-  // clip abspos glow + ellipsis paint that otherwise inflate scrollWidth on phones
+  // only x — full overflow:hidden was hard-clipping brand glow/title paint
   overflow-x: clip;
+  overflow-y: visible;
   width: 100%;
   max-width: 100%;
   padding: 0 !important;
@@ -15,20 +15,21 @@
   display: flex;
   flex-direction: column;
 
-  // soft brand wash — fully soft radial (transparent rim) so no hard left “cut” line
+  // soft brand wash — transparent rim so no hard cut against card chrome
   &__Glow {
     position: absolute;
-    top: -28%;
-    left: 0;
-    width: min(420px, 55%);
+    top: -20%;
+    left: -4%;
+    width: min(460px, 58%);
     aspect-ratio: 1;
     height: auto;
     border-radius: 50%;
     background: radial-gradient(
       circle at 40% 45%,
-      rgba(var(--chakra-colors-brand-normal-rgb), 0.2) 0%,
-      rgba(var(--chakra-colors-brand-normal-rgb), 0.08) 36%,
-      rgba(var(--chakra-colors-brand-normal-rgb), 0) 70%
+      rgba(var(--chakra-colors-brand-normal-rgb), 0.22) 0%,
+      rgba(var(--chakra-colors-brand-normal-rgb), 0.1) 32%,
+      rgba(var(--chakra-colors-brand-normal-rgb), 0.03) 55%,
+      rgba(var(--chakra-colors-brand-normal-rgb), 0) 72%
     );
     pointer-events: none;
     z-index: 0;
@@ -41,6 +42,7 @@
     flex-direction: column;
     gap: 1.5rem;
     padding: 20px 32px 20px;
+    overflow: visible;
 
     @media screen and (max-width: $breakpoint-lg) {
       gap: 1.25rem;
@@ -112,37 +114,36 @@
 
   &__Brand {
     position: relative;
+    z-index: 1;
     min-width: 0;
     display: flex;
     flex-direction: column;
     gap: 1.25rem;
-    isolation: isolate;
-    // do NOT overflow:hidden here — italic title glyphs clip ("Explorer" / left edge line)
+    // no isolation / no overflow — Brand is only layout for copy, not an FX clip box
+    overflow: visible;
+    width: 100%;
+
+    // desktop: copy | pulse share the full row evenly (no dead center)
+    @media screen and (min-width: $breakpoint-lg) {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: 1.5rem 2.5rem;
+      align-items: center;
+    }
+
+    @media screen and (min-width: 77.5em) {
+      gap: 1.75rem 3rem;
+    }
   }
 
-  // lightweight brand atmosphere: orbs + grid + grain (CSS only)
-  // soft mask only — no hard left crop line from overflow:hidden on a box edge
+  // fills entire Inner (hero content), not the Brand text box — no Brand-edge rectangle
   &__BrandFx {
     position: absolute;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
+    inset: 0;
     z-index: 0;
     pointer-events: none;
-    // fade all edges (esp. left) so fill does not read as a clipped panel
-    mask-image: radial-gradient(
-      ellipse 125% 115% at 32% 28%,
-      #000 0%,
-      #000 28%,
-      transparent 70%
-    );
-    -webkit-mask-image: radial-gradient(
-      ellipse 125% 115% at 32% 28%,
-      #000 0%,
-      #000 28%,
-      transparent 70%
-    );
+    overflow: hidden;
+    border-radius: inherit;
   }
 
   &__BrandOrb {
@@ -151,50 +152,53 @@
     will-change: transform;
 
     &--a {
-      top: -8%;
-      left: 0;
-      width: min(220px, 68%);
-      height: min(220px, 68%);
+      top: -6%;
+      left: -2%;
+      width: min(320px, 52%);
+      height: min(320px, 52%);
+      min-width: 200px;
+      min-height: 200px;
       background: radial-gradient(
         circle at 45% 45%,
-        rgba(var(--chakra-colors-brand-normal-rgb), 0.24) 0%,
-        rgba(var(--chakra-colors-brand-normal-rgb), 0.08) 42%,
-        transparent 72%
+        rgba(var(--chakra-colors-brand-normal-rgb), 0.22) 0%,
+        rgba(var(--chakra-colors-brand-normal-rgb), 0.08) 38%,
+        rgba(var(--chakra-colors-brand-normal-rgb), 0.02) 58%,
+        transparent 74%
       );
       animation: HomeHeroOrbA 14s ease-in-out infinite alternate;
     }
 
     &--b {
-      left: 18%;
-      bottom: 14%;
-      width: min(140px, 42%);
-      height: min(140px, 42%);
+      left: 12%;
+      top: 28%;
+      width: min(180px, 32%);
+      height: min(180px, 32%);
+      min-width: 120px;
+      min-height: 120px;
       background: radial-gradient(
         circle,
-        rgba(var(--chakra-colors-brand-light-rgb), 0.11) 0%,
-        rgba(var(--chakra-colors-brand-light-rgb), 0.04) 45%,
+        rgba(var(--chakra-colors-brand-light-rgb), 0.1) 0%,
+        rgba(var(--chakra-colors-brand-light-rgb), 0.035) 42%,
         transparent 72%
       );
       animation: HomeHeroOrbB 18s ease-in-out infinite alternate;
     }
   }
 
-  // soft tech lattice — popular “dashboard depth” cue, almost free
   &__BrandGrid {
     position: absolute;
     inset: 0;
-    opacity: 0.14;
+    opacity: 0.055;
     background-image:
-      linear-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(255, 255, 255, 0.035) 1px, transparent 1px);
+      linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
     background-size: 28px 28px;
   }
 
-  // film grain via tiny SVG noise (css-tricks grainy gradient family)
   &__BrandGrain {
     position: absolute;
     inset: 0;
-    opacity: 0.04;
+    opacity: 0.03;
     mix-blend-mode: soft-light;
     background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
     background-size: 160px 160px;
@@ -204,6 +208,7 @@
     position: relative;
     z-index: 1;
     min-width: 0;
+    width: 100%;
   }
 
   &__Welcome {
@@ -214,17 +219,17 @@
     font-style: italic;
     letter-spacing: 0.04em;
     color: $color-brand-normal;
-    margin: 0 0 6px;
+    margin: 0 0 10px;
   }
 
   &__Title {
     font-style: italic;
     font-size: 2.5rem !important;
     font-weight: 800;
-    line-height: 1.12;
+    // room for italic ascenders/descenders under background-clip:text
+    line-height: 1.22;
     margin: 0 0 12px;
-    // room for italic overhang + gradient clip (avoids cut last letters)
-    padding-right: 0.12em;
+    padding: 0.06em 0.14em 0.1em 0.02em;
     overflow: visible;
 
     @media screen and (max-width: 72em) {
@@ -233,35 +238,32 @@
 
     @media screen and (max-width: $breakpoint-md) {
       font-size: 1.75rem !important;
-      line-height: 1.15;
-      // allow wrap on very narrow phones so italic wordmark is never clipped
+      line-height: 1.25;
       overflow-wrap: anywhere;
       word-break: break-word;
     }
   }
 
-  // brand gradient on the wordmark — no extra font, stays on-system heading face
+  // solid fill + soft brand halo — background-clip:text always hard-cuts italic glyphs
   &__TitleShine {
-    display: inline;
-    padding-right: 0.06em;
-    background: linear-gradient(
-      105deg,
-      #fff 0%,
-      #fff 38%,
-      $color-brand-light 52%,
-      #fff 66%,
-      #fff 100%
-    );
-    background-size: 220% 100%;
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-    -webkit-text-fill-color: transparent;
-    animation: HomeHeroTitleShine 9s ease-in-out infinite;
+    display: inline-block;
+    max-width: 100%;
+    padding: 0.04em 0.1em 0.06em 0.04em;
+    color: #fff;
+    -webkit-text-fill-color: #fff;
+    background: none;
+    // diffuse brand wash behind the letters (not clipped to glyph outlines)
+    text-shadow:
+      0 0 28px rgba(var(--chakra-colors-brand-light-rgb), 0.45),
+      0 0 56px rgba(var(--chakra-colors-brand-normal-rgb), 0.28),
+      0 0 90px rgba(var(--chakra-colors-brand-normal-rgb), 0.12);
+    animation: HomeHeroTitlePulse 7s ease-in-out infinite;
 
     @media screen and (max-width: $breakpoint-md) {
-      // inline-block was a fixed 280px-ish line box; inline wraps cleanly on 360
-      display: inline;
+      display: inline-block;
+      text-shadow:
+        0 0 20px rgba(var(--chakra-colors-brand-light-rgb), 0.4),
+        0 0 40px rgba(var(--chakra-colors-brand-normal-rgb), 0.22);
     }
   }
 
@@ -285,7 +287,7 @@
     font-family: $font-mono;
     color: var(--chakra-colors-gray-500);
     line-height: 1.6;
-    max-width: 36rem;
+    max-width: 38rem;
     margin: 0;
     overflow-wrap: anywhere;
 
@@ -293,6 +295,155 @@
       font-size: 0.75rem;
       line-height: 1.55;
     }
+  }
+
+  // explore + economy: under copy on mobile; equal right half on desktop
+  &__Pulse {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.65rem;
+    min-width: 0;
+    width: 100%;
+    margin: 0;
+  }
+
+  &__PulseGroup {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.55rem;
+    min-width: 0;
+    width: 100%;
+
+    &--economy {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    @media screen and (max-width: $breakpoint-md) {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0.45rem;
+
+      &--economy {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    // wide desktop: economy as 4 equal cells so the right half feels filled
+    @media screen and (min-width: 77.5em) {
+      &--economy {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+      }
+    }
+  }
+
+  &__PulseSep {
+    display: none;
+    height: 1px;
+    width: 100%;
+    margin: 0.05rem 0;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(var(--chakra-colors-gray-800-rgb), 0.9) 12%,
+      rgba(var(--chakra-colors-brand-normal-rgb), 0.35) 50%,
+      rgba(var(--chakra-colors-gray-800-rgb), 0.9) 88%,
+      transparent 100%
+    );
+
+    @media screen and (min-width: $breakpoint-lg) {
+      display: block;
+    }
+  }
+
+  &__PulseChip {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 3px;
+    min-width: 0;
+    width: 100%;
+    min-height: 4.25rem;
+    padding: 0.65rem 0.75rem 0.6rem;
+    box-sizing: border-box;
+    border-radius: 10px;
+    border: 1px solid rgba(var(--chakra-colors-gray-800-rgb), 0.75);
+    background: rgba(0, 0, 0, 0.22);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    text-decoration: none;
+    color: inherit;
+    transition:
+      border-color 0.15s ease,
+      background 0.15s ease,
+      box-shadow 0.15s ease,
+      transform 0.15s ease;
+
+    &--link {
+      cursor: pointer;
+
+      @media (hover: hover) and (pointer: fine) {
+        &:hover {
+          border-color: rgba(var(--chakra-colors-brand-normal-rgb), 0.45);
+          background: rgba(var(--chakra-colors-brand-normal-rgb), 0.08);
+          box-shadow: 0 0 20px rgba(var(--chakra-colors-brand-normal-rgb), 0.12);
+          transform: translateY(-1px);
+
+          .HomeHero__PulseValue { color: $color-brand-light; }
+          .HomeHero__PulseHint { color: var(--chakra-colors-gray-400); }
+        }
+      }
+
+      &:focus-visible {
+        outline: 1px solid rgba(var(--chakra-colors-brand-light-rgb), 0.55);
+        outline-offset: 2px;
+      }
+    }
+  }
+
+  &__PulseLabel {
+    font-size: 0.5625rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-family: $font-mono;
+    color: var(--chakra-colors-gray-500);
+    line-height: 1.2;
+  }
+
+  &__PulseValue {
+    font-family: $font-heading;
+    font-weight: 800;
+    font-style: italic;
+    font-size: 1.2rem;
+    line-height: 1.15;
+    color: #fff;
+    min-height: 1.15em;
+    font-variant-numeric: tabular-nums;
+    transition: color 0.15s ease;
+
+    @media screen and (min-width: $breakpoint-lg) {
+      font-size: 1.35rem;
+    }
+
+    &--accent {
+      color: $color-brand-light;
+      text-shadow: 0 0 14px rgba(var(--chakra-colors-brand-normal-rgb), 0.35);
+    }
+  }
+
+  &__PulseHint {
+    font-size: 0.5625rem;
+    font-family: $font-mono;
+    color: var(--chakra-colors-gray-500);
+    line-height: 1.3;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    white-space: normal;
+    transition: color 0.15s ease;
   }
 
   &__StatusBar {
@@ -324,6 +475,7 @@
     gap: 4px;
     padding: 0 20px;
     border-right: 1px solid rgba(var(--chakra-colors-gray-800-rgb), 0.6);
+    box-sizing: border-box;
 
     // whole tile is the tip trigger (no (i) dots)
     &--Hint {
@@ -774,6 +926,13 @@
     }
   }
 
+  &__LiveLabelRow {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    min-height: 1.2em;
+  }
+
   // label · value · sub — same rhythm in all three columns
   &__LiveLabel {
     font-size: 0.625rem;
@@ -782,7 +941,6 @@
     color: var(--chakra-colors-gray-500);
     margin: 0;
     line-height: 1.2;
-    min-height: 1.2em;
 
     @media screen and (max-width: $breakpoint-md) {
       font-size: 0.5rem;
@@ -949,9 +1107,19 @@
   to { transform: translate3d(3%, -3%, 0) scale(1.05); }
 }
 
-@keyframes HomeHeroTitleShine {
-  0%, 100% { background-position: 100% 50%; }
-  50% { background-position: 0% 50%; }
+@keyframes HomeHeroTitlePulse {
+  0%, 100% {
+    text-shadow:
+      0 0 24px rgba(var(--chakra-colors-brand-light-rgb), 0.35),
+      0 0 48px rgba(var(--chakra-colors-brand-normal-rgb), 0.2),
+      0 0 80px rgba(var(--chakra-colors-brand-normal-rgb), 0.08);
+  }
+  50% {
+    text-shadow:
+      0 0 32px rgba(var(--chakra-colors-brand-light-rgb), 0.55),
+      0 0 64px rgba(var(--chakra-colors-brand-normal-rgb), 0.32),
+      0 0 100px rgba(var(--chakra-colors-brand-normal-rgb), 0.16);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -963,9 +1131,9 @@
     }
 
     &__TitleShine {
-      background: none;
-      color: #fff;
-      -webkit-text-fill-color: #fff;
+      text-shadow:
+        0 0 28px rgba(var(--chakra-colors-brand-light-rgb), 0.4),
+        0 0 56px rgba(var(--chakra-colors-brand-normal-rgb), 0.22);
     }
   }
 }
@@ -1599,11 +1767,11 @@
     gap: 0;
     align-items: stretch;
     min-width: 0;
-    // card has no side pad — table is flush to both edges
     margin: 0;
-    padding: 0;
-    // clip the outer right/bottom hairlines so the mesh doesn't double the card edge
-    overflow: hidden;
+    // soft inset so first/last tiles (Transactions / Top proposer) don't hug the card chrome
+    padding: 0 4px;
+    overflow-x: clip;
+    overflow-y: visible;
 
     // soft outer frame (same gray-800 language as CompactTx row rules)
     box-shadow: inset 0 0 0 1px rgba(var(--chakra-colors-gray-800-rgb), 0.4);
@@ -1651,15 +1819,24 @@
       box-shadow:
         inset -1px 0 0 0 rgba(var(--chakra-colors-gray-800-rgb), 0.5),
         inset 0 -1px 0 0 rgba(var(--chakra-colors-gray-800-rgb), 0.4);
-      padding: 12px 10px 14px;
+      padding: 12px 12px 14px;
 
       @media screen and (max-width: $breakpoint-md) {
-        padding: 10px 8px 12px;
+        padding: 10px 10px 12px;
       }
 
       &--Hint:hover {
         background: rgba(255, 255, 255, 0.045);
       }
+    }
+
+    // outer columns: air against card edge (StatusCell is the grid item again)
+    > .HomeHero__StatusCell:first-child {
+      padding-left: 16px;
+    }
+
+    > .HomeHero__StatusCell:last-child {
+      padding-right: 16px;
     }
 
     // label only — tip opens on the whole cell (no (i) icons)
@@ -1862,16 +2039,14 @@
     &:hover { color: $color-brand-normal; }
   }
 
-  // full hash in the markup; clip to leading slice — open cell tip for links
+  // shortId in cell; full hash lives in the tip content
   &__ProposerVal {
     font-family: $font-mono;
     font-style: normal;
     font-weight: 700;
     letter-spacing: 0.02em;
     display: inline-block;
-    max-width: 8ch;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    max-width: 100%;
     line-height: 1.25rem;
   }
 }
