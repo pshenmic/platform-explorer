@@ -38,7 +38,12 @@ interface TransactionsProps {
 
 function Transactions ({ defaultPage = 1, defaultPageSize }: TransactionsProps) {
   const [currentPage, setCurrentPage] = useState(defaultPage ? parseInt(String(defaultPage), 10) - 1 : 0)
-  const [pageSize, setPageSize] = useState(defaultPageSize != null ? defaultPageSize : paginateConfig.pageSize.default)
+  // Number(undefined) from page.tsx is NaN — treat as missing (NaN != null is true!)
+  const initialPageSize =
+    typeof defaultPageSize === 'number' && Number.isFinite(defaultPageSize) && defaultPageSize > 0
+      ? defaultPageSize
+      : paginateConfig.pageSize.default
+  const [pageSize, setPageSize] = useState(initialPageSize)
   const [total, setTotal] = useState(0)
   const [transactions, setTransactions] = useState<TransactionsState>({ data: [], loading: true, error: null })
   type QueryFilters = Record<string, string | number | boolean | string[] | null | undefined>
@@ -105,10 +110,11 @@ function Transactions ({ defaultPage = 1, defaultPageSize }: TransactionsProps) 
   }
 
   const handlePageSizeChange = (newSize: { value?: string | number } | string | number | null) => {
-    const size = typeof newSize === 'object' && newSize !== null
+    const raw = typeof newSize === 'object' && newSize !== null
       ? Number(newSize.value)
       : parseInt(String(newSize), 10)
-    setPageSize(Math.max(1, size))
+    const size = Number.isFinite(raw) && raw > 0 ? raw : paginateConfig.pageSize.default
+    setPageSize(size)
     setCurrentPage(0)
   }
 

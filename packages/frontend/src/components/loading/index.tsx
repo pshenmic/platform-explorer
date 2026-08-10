@@ -40,13 +40,18 @@ function LoadingBlock ({ children, loading, w = '100%', h = '100%', className = 
 }
 
 interface LoadingListProps {
-  itemsCount: number
+  itemsCount?: number
 }
 
 const LoadingList = ({ itemsCount }: LoadingListProps) => {
+  // Guard NaN/Infinity/negative — Array(NaN) throws RangeError: Invalid array length
+  const count = Number.isFinite(itemsCount) && (itemsCount as number) > 0
+    ? Math.min(Math.floor(itemsCount as number), 200)
+    : 0
+
   return (
     <div className={'LoadingList'}>
-        {Array.from(Array(itemsCount)).map((_e, i) => <LoadingLine h={9} className={'LoadingList__Item'} key={i}/>)}
+        {Array.from({ length: count }).map((_e, i) => <LoadingLine h={9} className={'LoadingList__Item'} key={i}/>)}
     </div>
   )
 }
