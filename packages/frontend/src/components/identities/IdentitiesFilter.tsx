@@ -1,4 +1,17 @@
-import { Filters } from '@components/filters'
+import type { ComponentType, ReactNode } from 'react'
+import type { Identity, Document } from '../../types'
+import { Filters as FiltersJs } from '@components/filters'
+
+// Untyped JS modules — cast until migrated
+const Filters = FiltersJs as ComponentType<{
+  filtersConfig?: Record<string, unknown>
+  initialFilters?: Record<string, unknown>
+  onFilterChange?: (filters: Record<string, unknown>) => void
+  isMobile?: boolean
+  className?: string
+  buttonText?: string
+  applyOnChange?: boolean
+}>
 
 const IdentityTypeEnum = {
   REGULAR: 'regular',
@@ -10,14 +23,14 @@ const identityTypeOptions = [
   { label: 'Masternode', title: 'Masternode identities', value: IdentityTypeEnum.MASTERNODE }
 ]
 
-const pickIdentityType = (values) => {
+const pickIdentityType = (values: unknown[] | null | undefined) => {
   if (!Array.isArray(values) || values.length === 0 || values.length === identityTypeOptions.length) {
     return undefined
   }
   return values[0]
 }
 
-const rangeFormat = ({ min, max }) => {
+const rangeFormat = ({ min, max }: { min?: string | number, max?: string | number }) => {
   if (min && max) return `${min} – ${max}`
   if (min) return `Min ${min}`
   if (max) return `Max ${max}`
@@ -31,8 +44,8 @@ const filtersConfig = {
     title: 'Filter by identity type',
     options: identityTypeOptions,
     defaultValue: [IdentityTypeEnum.REGULAR, IdentityTypeEnum.MASTERNODE],
-    formatValue: (values) => pickIdentityType(values) || undefined,
-    isAllSelected: (values) => values.length === identityTypeOptions.length
+    formatValue: (values: any) => pickIdentityType(values) || undefined,
+    isAllSelected: (values: unknown[]) => values.length === identityTypeOptions.length
   },
   balance: {
     type: 'range',
@@ -80,14 +93,21 @@ const filtersConfig = {
   }
 }
 
-export const IdentitiesFilter = ({ initialFilters, onFilterChange, isMobile, className }) => {
+interface IdentitiesFilterProps {
+  initialFilters?: Record<string, unknown>
+  onFilterChange?: (v: Record<string, unknown>) => void
+  isMobile?: boolean
+  className?: string
+}
+
+export const IdentitiesFilter = ({  initialFilters, onFilterChange, isMobile, className  }: IdentitiesFilterProps) => {
   return (
     <Filters
       filtersConfig={filtersConfig}
       initialFilters={initialFilters}
-      onFilterChange={(values) => {
+      onFilterChange={(values: Record<string, unknown>) => {
         const payload = {
-          identity_type: pickIdentityType(values.identity_type),
+          identity_type: pickIdentityType(values.identity_type as unknown[]),
           balance_min: values.balance_min || undefined,
           balance_max: values.balance_max || undefined,
           tx_count_min: values.tx_count_min || undefined,
@@ -97,7 +117,7 @@ export const IdentitiesFilter = ({ initialFilters, onFilterChange, isMobile, cla
           data_contracts_min: values.data_contracts_min || undefined,
           data_contracts_max: values.data_contracts_max || undefined
         }
-        onFilterChange && onFilterChange(payload)
+        onFilterChange && onFilterChange(payload as Record<string, unknown>)
       }}
       isMobile={isMobile}
       className={`IdentitiesFilter ${className || ''}`}

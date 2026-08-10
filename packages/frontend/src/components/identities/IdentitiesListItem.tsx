@@ -1,12 +1,43 @@
+import type { ComponentType, ReactNode } from 'react'
+import type { Identity, Document } from '../../types'
+import type { LoadableState } from '../../types/common'
 import Link from 'next/link'
-import { Identifier, Alias, DateBlock, BigNumber, NotActive } from '../data'
+import { Identifier as IdentifierJs, Alias as AliasJs, DateBlock as DateBlockJs, BigNumber as BigNumberJs, NotActive as NotActiveJs } from '../data'
 import { Grid, GridItem } from '@chakra-ui/react'
 import { FirstPlaceIcon, SecondPlaceIcon, ThirdPlaceIcon } from '../ui/icons'
 import './IdentitiesListItem.scss'
 
-const renderCount = (value) =>
+// Untyped JS modules — cast until migrated
+const Identifier = IdentifierJs as ComponentType<{
+  children?: ReactNode
+  className?: string
+  avatar?: boolean
+  ellipsis?: boolean
+  middleEllipsis?: boolean
+  copyButton?: boolean
+  styles?: string[]
+  clickable?: boolean
+  alias?: string
+}>
+const Alias = AliasJs as ComponentType<{
+  children?: ReactNode
+  className?: string
+  avatarSource?: string | null
+  alias?: string
+  ellipsis?: boolean
+}>
+const DateBlock = DateBlockJs as ComponentType<{
+  timestamp?: string | number | null
+  format?: string
+  showTime?: boolean
+  showRelativeTooltip?: boolean
+}>
+const BigNumber = BigNumberJs as ComponentType<{ children?: ReactNode, className?: string }>
+const NotActive = NotActiveJs as ComponentType<{ children?: ReactNode }>
+
+const renderCount = (value: unknown) =>
   value != null && Number.isFinite(Number(value))
-    ? <BigNumber>{value}</BigNumber>
+    ? <BigNumber>{String(value)}</BigNumber>
     : <NotActive>—</NotActive>
 
 const placeIcons = {
@@ -15,10 +46,15 @@ const placeIcons = {
   3: ThirdPlaceIcon
 }
 
-function IdentitiesListItem ({ identity, place }) {
-  const PlaceIcon = placeIcons[place]
+interface IdentitiesListItemProps {
+  identity: Identity
+  place?: number
+}
+
+function IdentitiesListItem ({  identity, place  }: IdentitiesListItemProps) {
+  const PlaceIcon = placeIcons[place as 1|2|3]
   const { aliases, identifier, timestamp, isSystem, balance, totalTxs, totalDocuments, totalDataContracts } = identity
-  const activeAlias = aliases?.find(alias => alias?.status === 'ok')
+  const activeAlias = aliases?.find((alias: { status?: string }) => alias?.status === 'ok')
 
   const rootClassName = [
     'IdentitiesListItem',
@@ -56,7 +92,7 @@ function IdentitiesListItem ({ identity, place }) {
         </GridItem>
 
         <GridItem className={'IdentitiesListItem__Column IdentitiesListItem__Column--Balance'}>
-          {balance != null ? <BigNumber>{balance}</BigNumber> : <NotActive>—</NotActive>}
+          {balance != null ? <BigNumber>{String(balance)}</BigNumber> : <NotActive>—</NotActive>}
         </GridItem>
 
         <GridItem className={'IdentitiesListItem__Column IdentitiesListItem__Column--Txs'}>

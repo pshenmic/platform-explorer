@@ -1,5 +1,6 @@
 'use client'
 
+import type { Identity, Document } from '../../types'
 import IdentitiesListItem from './IdentitiesListItem'
 import { EmptyListMessage } from '../ui/lists'
 import { Grid, GridItem } from '@chakra-ui/react'
@@ -17,9 +18,17 @@ const SORTABLE_HEADERS = [
   { key: 'timestamp', modifier: 'Timestamp', label: 'Timestamp' }
 ]
 
-function SortableHeader ({ headerKey, label, modifier, sort, onSortChange }) {
+interface SortableHeaderProps {
+  headerKey?: string
+  label?: string
+  modifier?: string
+  sort?: { order_by?: string, order?: string } | null
+  onSortChange?: (v: Record<string, unknown>) => void
+}
+
+function SortableHeader ({  headerKey, label, modifier, sort, onSortChange  }: SortableHeaderProps) {
   const isActive = sort?.order_by === headerKey
-  const direction = isActive ? sort.order : null
+  const direction = isActive ? sort?.order : null
   const className = [
     'IdentitiesList__ColumnTitle',
     `IdentitiesList__ColumnTitle--${modifier}`,
@@ -45,24 +54,35 @@ function SortableHeader ({ headerKey, label, modifier, sort, onSortChange }) {
   )
 }
 
-function IdentitiesList ({ identities, headerStyles = 'default', pagination, loading, itemsCount = 10, sort, onSortChange, page = 0 }) {
-  const headerExtraClass = {
+interface IdentitiesListProps {
+  identities?: Identity[]
+  headerStyles?: string
+  pagination?: { onPageChange?: (p: { selected: number }) => void, pageCount?: number, forcePage?: number } | null
+  loading?: boolean
+  itemsCount?: number
+  sort?: { order_by?: string, order?: string } | null
+  onSortChange?: (v: Record<string, unknown>) => void
+  page?: number
+}
+
+function IdentitiesList ({  identities, headerStyles = 'default', pagination, loading, itemsCount = 10, sort, onSortChange, page = 0  }: IdentitiesListProps) {
+  const headerExtraClass: Record<string, string> = {
     default: '',
     light: 'IdentitiesList__ColumnTitles--Light'
   }
 
   const showRank = sort?.order === 'desc' &&
-    ['balance', 'tx_count', 'documents_count'].includes(sort?.order_by) &&
+    ['balance', 'tx_count', 'documents_count'].includes(sort?.order_by as string) &&
     page === 0
 
-  const sortableProps = (key) => {
+  const sortableProps = (key: string) => {
     const header = SORTABLE_HEADERS.find(h => h.key === key)
-    return { headerKey: header.key, label: header.label, modifier: header.modifier, sort, onSortChange }
+    return { headerKey: header!.key, label: header!.label, modifier: header!.modifier, sort, onSortChange }
   }
 
   return (
     <div className={'IdentitiesList'}>
-      <Grid className={`IdentitiesList__ColumnTitles ${headerExtraClass[headerStyles] || ''}`}>
+      <Grid className={`IdentitiesList__ColumnTitles ${headerExtraClass[headerStyles ?? 'default'] || ''}`}>
         <GridItem className={'IdentitiesList__ColumnTitle IdentitiesList__ColumnTitle--Identifier'}>
           Identifier
         </GridItem>
@@ -96,8 +116,8 @@ function IdentitiesList ({ identities, headerStyles = 'default', pagination, loa
         <Pagination
           className={'IdentitiesList__Pagination'}
           onPageChange={pagination.onPageChange}
-          pageCount={pagination.pageCount}
-          forcePage={pagination.forcePage}
+          pageCount={pagination.pageCount ?? 0}
+          forcePage={pagination.forcePage ?? 0}
           justify={true}
         />
       }

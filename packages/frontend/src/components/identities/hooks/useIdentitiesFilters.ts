@@ -1,3 +1,4 @@
+import type { Identity } from '../../../types'
 import { useQueryState } from 'nuqs'
 
 export const useIdentitiesFilters = () => {
@@ -27,23 +28,23 @@ export const useIdentitiesFilters = () => {
     order: order === 'asc' || order === 'desc' ? order : undefined
   }
 
-  const setFilters = (next) => {
+  const setFilters = (next: Record<string, unknown>) => {
     if (!next) return
 
-    if ('identity_type' in next) setIdentityType(next.identity_type || null)
-    if ('balance_min' in next) setBalanceMin(next.balance_min || null)
-    if ('balance_max' in next) setBalanceMax(next.balance_max || null)
+    if ('identity_type' in next) setIdentityType((next.identity_type as string | undefined) || null)
+    if ('balance_min' in next) setBalanceMin((next.balance_min as string | undefined) || null)
+    if ('balance_max' in next) setBalanceMax((next.balance_max as string | undefined) || null)
 
-    if ('tx_count_min' in next) setTxCountMin(next.tx_count_min !== '' && next.tx_count_min != null ? String(next.tx_count_min) : null)
-    if ('tx_count_max' in next) setTxCountMax(next.tx_count_max !== '' && next.tx_count_max != null ? String(next.tx_count_max) : null)
+    if ('tx_count_min' in next) setTxCountMin(next.tx_count_min !== '' && next.tx_count_min != null ? String(next.tx_count_min as string | number) : null)
+    if ('tx_count_max' in next) setTxCountMax(next.tx_count_max !== '' && next.tx_count_max != null ? String(next.tx_count_max as string | number) : null)
 
-    if ('documents_count_min' in next) setDocsMin(next.documents_count_min !== '' && next.documents_count_min != null ? String(next.documents_count_min) : null)
-    if ('documents_count_max' in next) setDocsMax(next.documents_count_max !== '' && next.documents_count_max != null ? String(next.documents_count_max) : null)
+    if ('documents_count_min' in next) setDocsMin(next.documents_count_min !== '' && next.documents_count_min != null ? String(next.documents_count_min as string | number) : null)
+    if ('documents_count_max' in next) setDocsMax(next.documents_count_max !== '' && next.documents_count_max != null ? String(next.documents_count_max as string | number) : null)
 
-    if ('data_contracts_min' in next) setContractsMin(next.data_contracts_min !== '' && next.data_contracts_min != null ? String(next.data_contracts_min) : null)
-    if ('data_contracts_max' in next) setContractsMax(next.data_contracts_max !== '' && next.data_contracts_max != null ? String(next.data_contracts_max) : null)
+    if ('data_contracts_min' in next) setContractsMin(next.data_contracts_min !== '' && next.data_contracts_min != null ? String(next.data_contracts_min as string | number) : null)
+    if ('data_contracts_max' in next) setContractsMax(next.data_contracts_max !== '' && next.data_contracts_max != null ? String(next.data_contracts_max as string | number) : null)
 
-    if ('order_by' in next) setOrderBy(next.order_by || null)
+    if ('order_by' in next) setOrderBy((next.order_by as string | undefined) || null)
     if ('order' in next) setOrder(next.order === 'asc' || next.order === 'desc' ? next.order : null)
   }
 

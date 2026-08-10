@@ -1,4 +1,7 @@
-import { CreditsBlock, DateBlock, Identifier, InfoLine } from '../data'
+import type { ComponentType, ReactNode } from 'react'
+import type { Identity, Rate } from '../../types'
+import type { LoadableState } from '../../types/common'
+import { CreditsBlock as CreditsBlockJs, DateBlock as DateBlockJs, Identifier as IdentifierJs, InfoLine as InfoLineJs } from '../data'
 import Link from 'next/link'
 import { ValueContainer } from '../ui/containers'
 import { LoadingLine } from '../loading'
@@ -6,7 +9,40 @@ import { useActiveNetwork } from 'src/contexts'
 
 import './IdentityDigestCard.scss'
 
-function IdentityDigestCard ({ identity, rate, className }) {
+// Untyped JS modules — cast until migrated
+const CreditsBlock = CreditsBlockJs as ComponentType<{ credits?: number | string | null, rate?: Rate | null }>
+const DateBlock = DateBlockJs as ComponentType<{
+  timestamp?: string | number | null
+  format?: string
+  showTime?: boolean
+  showRelativeTooltip?: boolean
+}>
+const Identifier = IdentifierJs as ComponentType<{
+  children?: ReactNode
+  className?: string
+  avatar?: boolean
+  ellipsis?: boolean
+  middleEllipsis?: boolean
+  copyButton?: boolean
+  styles?: string[]
+  clickable?: boolean
+  alias?: string
+}>
+const InfoLine = InfoLineJs as ComponentType<{
+  className?: string
+  title?: ReactNode
+  value?: ReactNode
+  loading?: boolean
+  error?: boolean
+}>
+
+interface IdentityDigestCardProps {
+  identity: LoadableState<Identity>
+  rate?: Rate | null
+  className?: string
+}
+
+function IdentityDigestCard ({  identity, rate, className  }: IdentityDigestCardProps) {
   const { l1explorerBaseUrl } = useActiveNetwork()
 
   return (

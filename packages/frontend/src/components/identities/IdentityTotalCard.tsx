@@ -1,6 +1,9 @@
 'use client'
 
-import { Alias, AliasesList, CreditsBlock, DateBlock, Identifier, InfoLine } from '../data'
+import type { ComponentType, ReactNode } from 'react'
+import type { Identity, Rate } from '../../types'
+import type { LoadableState } from '../../types/common'
+import { Alias as AliasJs, AliasesList as AliasesListJs, CreditsBlock as CreditsBlockJs, DateBlock as DateBlockJs, Identifier as IdentifierJs, InfoLine as InfoLineJs } from '../data'
 import ImageGenerator from '../imageGenerator'
 import { HorisontalSeparator } from '../ui/separators'
 import { SmoothSize, ValueContainer } from '../ui/containers'
@@ -13,18 +16,64 @@ import { useState } from 'react'
 import { ValueCard } from '../cards'
 import './IdentityTotalCard.scss'
 
-const PublicKeys = ({ className, show, publicKeys = [] }) => (
+// Untyped JS modules — cast until migrated
+const Alias = AliasJs as ComponentType<{
+  children?: ReactNode
+  className?: string
+  avatarSource?: string | null
+  alias?: string
+  ellipsis?: boolean
+}>
+const AliasesList = AliasesListJs as ComponentType<{ aliases?: unknown[], className?: string }>
+const CreditsBlock = CreditsBlockJs as ComponentType<{ credits?: number | string | null, rate?: Rate | null }>
+const DateBlock = DateBlockJs as ComponentType<{
+  timestamp?: string | number | null
+  format?: string
+  showTime?: boolean
+  showRelativeTooltip?: boolean
+}>
+const Identifier = IdentifierJs as ComponentType<{
+  children?: ReactNode
+  className?: string
+  avatar?: boolean
+  ellipsis?: boolean
+  middleEllipsis?: boolean
+  copyButton?: boolean
+  styles?: string[]
+  clickable?: boolean
+  alias?: string
+}>
+const InfoLine = InfoLineJs as ComponentType<{
+  className?: string
+  title?: ReactNode
+  value?: ReactNode
+  loading?: boolean
+  error?: boolean
+}>
+
+interface PublicKeysProps {
+  className?: string
+  show?: boolean
+  publicKeys?: any[]
+}
+
+const PublicKeys = ({  className, show, publicKeys = []  }: PublicKeysProps) => (
   <SmoothSize className={className || ''}>
     {publicKeys.length > 0 &&
       <PublicKeysList
         className={`IdentityTotalCard__PublicKeysList ${show ? 'IdentityTotalCard__PublicKeysList--Show' : ''}`}
-        publicKeys={publicKeys}
+        publicKeys={publicKeys as any}
       />
     }
   </SmoothSize>
 )
 
-function IdentityTotalCard ({ identity, rate }) {
+interface IdentityTotalCardProps {
+  identity: LoadableState<Identity>
+  rate?: Rate | null
+}
+
+function IdentityTotalCard ({  identity, rate  }: IdentityTotalCardProps) {
   const activeAlias = findActiveAlias(identity.data?.aliases)
   const [showPublicKeys, setShowPublicKeys] = useState(false)
 
