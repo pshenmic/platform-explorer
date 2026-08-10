@@ -1,14 +1,45 @@
+import type { ComponentType, ReactNode } from 'react'
+import type { Document, Rate } from '../../../types'
 import { Grid, GridItem } from '@chakra-ui/react'
-import { Alias, BigNumber, Identifier, NotActive, TimeDelta } from '../../data'
+import { Alias as AliasJs, BigNumber as BigNumberJs, Identifier as IdentifierJs, NotActive as NotActiveJs, TimeDelta as TimeDeltaJs } from '../../data'
 import { LinkContainer } from '../../ui/containers'
 import { useRouter } from 'next/navigation'
 import { RateTooltip } from '../../ui/Tooltips'
 import Link from 'next/link'
 import { findActiveAlias } from '../../../util'
-import { BatchTypeBadge } from '../../transactions'
+import { BatchTypeBadge as BatchTypeBadgeJs } from '../../transactions'
 import './DocumentsRevisionsListItem.scss'
 
-function DocumentsRevisionsListItem ({ revision, rate }) {
+// Untyped JS modules — cast until migrated
+const Alias = AliasJs as ComponentType<{
+  children?: ReactNode
+  className?: string
+  avatarSource?: string | null
+  alias?: string
+  ellipsis?: boolean
+}>
+const BigNumber = BigNumberJs as ComponentType<{ children?: ReactNode, className?: string }>
+const Identifier = IdentifierJs as ComponentType<{
+  children?: ReactNode
+  className?: string
+  avatar?: boolean
+  ellipsis?: boolean
+  middleEllipsis?: boolean
+  copyButton?: boolean
+  styles?: string[]
+  clickable?: boolean
+  alias?: string
+}>
+const NotActive = NotActiveJs as ComponentType<{ children?: ReactNode }>
+const TimeDelta = TimeDeltaJs as ComponentType<{ endDate?: Date | string | null, showTimestampTooltip?: boolean }>
+const BatchTypeBadge = BatchTypeBadgeJs as ComponentType<{ batchType?: string | null, className?: string }>
+
+interface DocumentsRevisionsListItemProps {
+  revision?: any
+  rate?: Rate | null
+}
+
+function DocumentsRevisionsListItem ({  revision, rate  }: DocumentsRevisionsListItemProps) {
   const activeAlias = findActiveAlias(revision.owner?.aliases)
   const router = useRouter()
 

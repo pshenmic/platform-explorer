@@ -1,8 +1,33 @@
-import Identifier from '@components/data/Identifier'
-import { Filters } from '@components/filters'
-import BatchTypeBadge from '@components/transactions/BatchTypeBadge'
+import type { ComponentType, ReactNode } from 'react'
+import type { Document } from '../../types'
+import IdentifierJs from '@components/data/Identifier'
+import { Filters as FiltersJs } from '@components/filters'
+import BatchTypeBadgeJs from '@components/transactions/BatchTypeBadge'
 import { Badge } from '@chakra-ui/react'
 import { BatchActions } from '../../enums/batchTypes'
+
+// Untyped JS modules — cast until migrated
+const Identifier = IdentifierJs as ComponentType<{
+  children?: ReactNode
+  className?: string
+  avatar?: boolean
+  ellipsis?: boolean
+  middleEllipsis?: boolean
+  copyButton?: boolean
+  styles?: string[]
+  clickable?: boolean
+  alias?: string
+}>
+const Filters = FiltersJs as ComponentType<{
+  filtersConfig?: Record<string, unknown>
+  initialFilters?: Record<string, unknown>
+  onFilterChange?: (filters: Record<string, unknown>) => void
+  isMobile?: boolean
+  className?: string
+  buttonText?: string
+  applyOnChange?: boolean
+}>
+const BatchTypeBadge = BatchTypeBadgeJs as ComponentType<{ batchType?: string | null, className?: string }>
 
 const actionOptions = [
   {
@@ -42,7 +67,7 @@ const filtersConfig = {
     type: 'input',
     placeholder: 'ex. note',
     defaultValue: '',
-    formatValue: (value) => value || null
+    formatValue: (value: any) => value || null
   },
   transition_type: {
     type: 'multiselect',
@@ -50,12 +75,12 @@ const filtersConfig = {
     title: 'Action',
     options: actionOptions,
     defaultValue: actionOptions.map(a => a.value),
-    formatValue: (values) => {
+    formatValue: (values: any) => {
       if (values.length === actionOptions.length) return null
       if (values.length > 1) return `${values.length} actions`
       return actionOptions.find(a => a.value === values[0])?.title || values[0]
     },
-    isAllSelected: (values) => values.length === actionOptions.length
+    isAllSelected: (values: unknown[]) => values.length === actionOptions.length
   },
   status: {
     type: 'multiselect',
@@ -63,12 +88,12 @@ const filtersConfig = {
     title: 'Status',
     options: statusOptions,
     defaultValue: statusOptions.map(s => s.value),
-    formatValue: (values) => {
+    formatValue: (values: any) => {
       if (values.length === statusOptions.length) return null
       if (values.length > 1) return `${values.length} values`
       return statusOptions.find(s => s.value === values[0])?.title || values[0]
     },
-    isAllSelected: (values) => values.length === statusOptions.length
+    isAllSelected: (values: unknown[]) => values.length === statusOptions.length
   },
   owner: {
     label: 'Owner',
@@ -77,8 +102,8 @@ const filtersConfig = {
     entityType: 'identities',
     placeholder: 'OWNER ID OR IDENTITY',
     defaultValue: '',
-    formatValue: (value) => value || null,
-    mobileTagRenderer: (value) => (
+    formatValue: (value: any) => value || null,
+    mobileTagRenderer: (value: any) => (
       <Identifier avatar={true} ellipsis={true} styles={['highlight-both']}>
         {value}
       </Identifier>
@@ -93,7 +118,7 @@ const filtersConfig = {
     minPlaceholder: 'ex. 1',
     maxTitle: 'Maximum revision',
     maxPlaceholder: 'ex. 5',
-    formatValue: ({ min, max }) => {
+    formatValue: ({ min, max }: { min?: string | number, max?: string | number }) => {
       if (min && max) return `${min} - ${max}`
       if (min) return `Min ${min}`
       if (max) return `Max ${max}`
@@ -105,17 +130,24 @@ const filtersConfig = {
     title: 'Date range',
     type: 'daterange',
     defaultValue: null,
-    formatValue: (value) =>
+    formatValue: (value: any) =>
       `${value?.start ? `from ${value?.start?.toLocaleDateString()}` : ''} ${value?.end ? `to ${value?.end?.toLocaleDateString()}` : ''}`
   }
 }
 
-export const DocumentsFilter = ({
+interface DocumentsFilterProps {
+  onFilterChange?: (v: Record<string, unknown>) => void
+  isMobile?: boolean
+  className?: string
+  excludeFilters?: string[]
+}
+
+export const DocumentsFilter = ({ 
   onFilterChange,
   isMobile,
   className,
   excludeFilters = []
-}) => {
+ }: DocumentsFilterProps) => {
   const config = excludeFilters.length
     ? Object.fromEntries(Object.entries(filtersConfig).filter(([key]) => !excludeFilters.includes(key)))
     : filtersConfig
@@ -123,7 +155,7 @@ export const DocumentsFilter = ({
   return (
     <Filters
       filtersConfig={config}
-      onFilterChange={(values) => {
+      onFilterChange={(values: Record<string, unknown>) => {
         const statusValues = values.status
         let deleted
         if (Array.isArray(statusValues) && statusValues.length === 1) {
@@ -139,13 +171,13 @@ export const DocumentsFilter = ({
           revision_min: values.revision_min || undefined,
           revision_max: values.revision_max || undefined,
           timestamp_start: values.timestamp_start
-            ? new Date(values.timestamp_start).toISOString()
+            ? new Date(values.timestamp_start as string | number | Date).toISOString()
             : undefined,
           timestamp_end: values.timestamp_end
-            ? new Date(values.timestamp_end).toISOString()
+            ? new Date(values.timestamp_end as string | number | Date).toISOString()
             : undefined
         }
-        onFilterChange && onFilterChange(payload)
+        onFilterChange && onFilterChange(payload as Record<string, unknown>)
       }}
       isMobile={isMobile}
       className={`DocumentsFilter ${className || ''}`}

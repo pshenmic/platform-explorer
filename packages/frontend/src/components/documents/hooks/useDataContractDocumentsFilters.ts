@@ -1,3 +1,4 @@
+import type { Document } from '../../../types'
 import { decodeDateFromURL, encodeDateToURL } from '@utils/url'
 import { useQueryState } from 'nuqs'
 
@@ -47,21 +48,21 @@ export const useDataContractDocumentsFilters = () => {
     timestamp_end: tsEndISO
   }
 
-  const setFilters = (next) => {
+  const setFilters = (next: Record<string, unknown>) => {
     if (!next) return
 
     if ('document_type_name' in next) {
-      setDocumentTypeName(next.document_type_name || null)
+      setDocumentTypeName((next.document_type_name as string | undefined) || null)
     }
 
     if ('owner' in next) {
-      setOwner(next.owner || null)
+      setOwner((next.owner as string | undefined) || null)
     }
 
     if ('revision_min' in next) {
       setRevisionMin(
         next.revision_min !== '' && next.revision_min != null
-          ? String(next.revision_min)
+          ? String(next.revision_min as string | number)
           : null
       )
     }
@@ -69,17 +70,17 @@ export const useDataContractDocumentsFilters = () => {
     if ('revision_max' in next) {
       setRevisionMax(
         next.revision_max !== '' && next.revision_max != null
-          ? String(next.revision_max)
+          ? String(next.revision_max as string | number)
           : null
       )
     }
 
     if ('timestamp_start' in next) {
-      const encoded = encodeDateToURL(next.timestamp_start)
+      const encoded = encodeDateToURL(next.timestamp_start as string | number | Date | null | undefined)
       setTsStart(encoded ?? null)
     }
     if ('timestamp_end' in next) {
-      const encoded = encodeDateToURL(next.timestamp_end)
+      const encoded = encodeDateToURL(next.timestamp_end as string | number | Date | null | undefined)
       setTsEnd(encoded ?? null)
     }
   }

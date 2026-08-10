@@ -1,3 +1,4 @@
+import type { Document } from '../../types'
 import DocumentsListItem from './DocumentsListItem'
 import { EmptyListMessage } from '../ui/lists'
 import Pagination from '../pagination'
@@ -6,7 +7,18 @@ import { ErrorMessageBlock } from '../Errors'
 import { Grid, GridItem } from '@chakra-ui/react'
 import './DocumentsList.scss'
 
-export default function DocumentsList ({
+interface DocumentsListProps {
+  documents?: Array<Document & { gasUsed?: number }>
+  headerStyles?: string
+  pagination?: { onPageChange?: (p: { selected: number }) => void, pageCount?: number, forcePage?: number } | null
+  loading?: boolean
+  itemsCount?: number
+  showDataContract?: boolean
+  showAction?: boolean
+  showGas?: boolean
+}
+
+export default function DocumentsList ({ 
   documents = [],
   headerStyles,
   pagination,
@@ -15,8 +27,8 @@ export default function DocumentsList ({
   showDataContract = false,
   showAction = true,
   showGas = true
-}) {
-  const headerExtraClass = {
+ }: DocumentsListProps) {
+  const headerExtraClass: Record<string, string> = {
     default: '',
     light: 'DocumentsList__ColumnTitles--Light'
   }
@@ -26,7 +38,7 @@ export default function DocumentsList ({
   return (
     <div className={'DocumentsList'}>
       <div className={`DocumentsList__Table${compact ? ' DocumentsList__Table--Compact' : ''}`}>
-      <Grid className={`DocumentsList__ColumnTitles ${headerExtraClass?.[headerStyles] || ''}`}>
+      <Grid className={`DocumentsList__ColumnTitles ${headerExtraClass[headerStyles ?? 'default'] || ''}`}>
         <GridItem className={'DocumentsList__ColumnTitle DocumentsList__ColumnTitle--Timestamp'}>
           Time
         </GridItem>
@@ -75,8 +87,8 @@ export default function DocumentsList ({
         <Pagination
           className={'DocumentsList__Pagination'}
           onPageChange={pagination.onPageChange}
-          pageCount={pagination.pageCount}
-          forcePage={pagination.forcePage}
+          pageCount={pagination.pageCount ?? 0}
+          forcePage={pagination.forcePage ?? 0}
           justify={true}
         />
       }

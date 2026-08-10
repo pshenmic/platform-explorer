@@ -1,11 +1,36 @@
+import type { ComponentType, ReactNode } from 'react'
+import type { Identity, Document, Rate } from '../../types'
 import { ValueCard } from '../cards'
-import { CreditsBlock, Identifier, InfoLine, PrefundedBalance } from '../data'
-import BatchTypeBadge from '../transactions/BatchTypeBadge'
+import { CreditsBlock as CreditsBlockJs, Identifier as IdentifierJs, InfoLine as InfoLineJs, PrefundedBalance as PrefundedBalanceJs } from '../data'
+import BatchTypeBadgeJs from '../transactions/BatchTypeBadge'
 import { ValueContainer } from '../ui/containers'
 import { Code } from '@chakra-ui/react'
 import './DocumentTransitionCard.scss'
 
-const fieldsOfTypes = {
+// Untyped JS modules — cast until migrated
+const CreditsBlock = CreditsBlockJs as ComponentType<{ credits?: number | string | null, rate?: Rate | null }>
+const Identifier = IdentifierJs as ComponentType<{
+  children?: ReactNode
+  className?: string
+  avatar?: boolean
+  ellipsis?: boolean
+  middleEllipsis?: boolean
+  copyButton?: boolean
+  styles?: string[]
+  clickable?: boolean
+  alias?: string
+}>
+const InfoLine = InfoLineJs as ComponentType<{
+  className?: string
+  title?: ReactNode
+  value?: ReactNode
+  loading?: boolean
+  error?: boolean
+}>
+const PrefundedBalance = PrefundedBalanceJs as ComponentType<{ prefundedBalance?: unknown, rate?: Rate | null }>
+const BatchTypeBadge = BatchTypeBadgeJs as ComponentType<{ batchType?: string | null, className?: string }>
+
+const fieldsOfTypes: Record<string, string[]> = {
   DOCUMENT_CREATE: [
     'DataContractIdentifier',
     'DocumentIdentifier',
@@ -76,8 +101,15 @@ const fieldsOfTypes = {
   ]
 }
 
-const DocumentTransitionCard = ({ transition, owner, rate, className }) => {
-  const fields = fieldsOfTypes?.[transition?.action] || []
+interface DocumentTransitionCardProps {
+  transition: Record<string, any>
+  owner?: any
+  rate?: Rate | null
+  className?: string
+}
+
+const DocumentTransitionCard = ({  transition, owner, rate, className  }: DocumentTransitionCardProps) => {
+  const fields = fieldsOfTypes?.[String(transition?.action ?? "")] || []
 
   return (
     <div

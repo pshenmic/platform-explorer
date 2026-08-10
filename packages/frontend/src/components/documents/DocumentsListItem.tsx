@@ -1,13 +1,46 @@
+import type { ComponentType, ReactNode } from 'react'
+import type { Document } from '../../types'
+import type { LoadableState } from '../../types/common'
 import { Badge, GridItem } from '@chakra-ui/react'
-import { Alias, Identifier, NotActive, TimeDelta } from '../data'
+import { Alias as AliasJs, Identifier as IdentifierJs, NotActive as NotActiveJs, TimeDelta as TimeDeltaJs } from '../data'
 import { LinkContainer } from '../ui/containers'
-import BatchTypeBadge from '../transactions/BatchTypeBadge'
+import BatchTypeBadgeJs from '../transactions/BatchTypeBadge'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { findActiveAlias } from '../../util'
 import './DocumentsListItem.scss'
 
-function DocumentsListItem ({ document, showDataContract = false, showAction = true, showGas = true }) {
+// Untyped JS modules — cast until migrated
+const Alias = AliasJs as ComponentType<{
+  children?: ReactNode
+  className?: string
+  avatarSource?: string | null
+  alias?: string
+  ellipsis?: boolean
+}>
+const Identifier = IdentifierJs as ComponentType<{
+  children?: ReactNode
+  className?: string
+  avatar?: boolean
+  ellipsis?: boolean
+  middleEllipsis?: boolean
+  copyButton?: boolean
+  styles?: string[]
+  clickable?: boolean
+  alias?: string
+}>
+const NotActive = NotActiveJs as ComponentType<{ children?: ReactNode }>
+const TimeDelta = TimeDeltaJs as ComponentType<{ endDate?: Date | string | null, showTimestampTooltip?: boolean }>
+const BatchTypeBadge = BatchTypeBadgeJs as ComponentType<{ batchType?: string | null, className?: string }>
+
+interface DocumentsListItemProps {
+  document: Document & { gasUsed?: number }
+  showDataContract?: boolean
+  showAction?: boolean
+  showGas?: boolean
+}
+
+function DocumentsListItem ({  document, showDataContract = false, showAction = true, showGas = true  }: DocumentsListItemProps) {
   const activeAlias = findActiveAlias(document?.owner?.aliases)
   const router = useRouter()
 

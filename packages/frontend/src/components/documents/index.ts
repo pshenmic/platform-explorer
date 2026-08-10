@@ -1,3 +1,4 @@
+import type { Document } from '../../types'
 import DocumentTotalCard from './DocumentTotalCard'
 import DocumentsList from './DocumentsList'
 import DocumentsListItem from './DocumentsListItem'

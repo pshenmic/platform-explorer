@@ -1,12 +1,57 @@
+import type { ComponentType, ReactNode } from 'react'
+import type { Document, Rate } from '../../types'
+import type { LoadableState } from '../../types/common'
 import ImageGenerator from '../imageGenerator'
-import { Alias, CreditsBlock, DateBlock, Identifier, InfoLine, NotActive, PrefundedBalance } from '../data'
+import { Alias as AliasJs, CreditsBlock as CreditsBlockJs, DateBlock as DateBlockJs, Identifier as IdentifierJs, InfoLine as InfoLineJs, NotActive as NotActiveJs, PrefundedBalance as PrefundedBalanceJs } from '../data'
 import { HorisontalSeparator } from '../ui/separators'
 import { ValueCard } from '../cards'
 import { Badge } from '@chakra-ui/react'
 import { findActiveAlias } from '../../util'
 import './DocumentTotalCard.scss'
 
-function DocumentTotalCard ({ document, rate, className }) {
+// Untyped JS modules — cast until migrated
+const Alias = AliasJs as ComponentType<{
+  children?: ReactNode
+  className?: string
+  avatarSource?: string | null
+  alias?: string
+  ellipsis?: boolean
+}>
+const CreditsBlock = CreditsBlockJs as ComponentType<{ credits?: number | string | null, rate?: Rate | null }>
+const DateBlock = DateBlockJs as ComponentType<{
+  timestamp?: string | number | null
+  format?: string
+  showTime?: boolean
+  showRelativeTooltip?: boolean
+}>
+const Identifier = IdentifierJs as ComponentType<{
+  children?: ReactNode
+  className?: string
+  avatar?: boolean
+  ellipsis?: boolean
+  middleEllipsis?: boolean
+  copyButton?: boolean
+  styles?: string[]
+  clickable?: boolean
+  alias?: string
+}>
+const InfoLine = InfoLineJs as ComponentType<{
+  className?: string
+  title?: ReactNode
+  value?: ReactNode
+  loading?: boolean
+  error?: boolean
+}>
+const NotActive = NotActiveJs as ComponentType<{ children?: ReactNode }>
+const PrefundedBalance = PrefundedBalanceJs as ComponentType<{ prefundedBalance?: unknown, rate?: Rate | null }>
+
+interface DocumentTotalCardProps {
+  document: LoadableState<Document & { name?: string }>
+  rate?: Rate | null
+  className?: string
+}
+
+function DocumentTotalCard ({  document, rate, className  }: DocumentTotalCardProps) {
   const activeAlias = findActiveAlias(document.data?.owner?.aliases)
 
   return (

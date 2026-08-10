@@ -1,3 +1,4 @@
+import type { Document } from '../../../types'
 import DocumentsRevisionsListItem from './DocumentsRevisionsListItem'
 import { EmptyListMessage } from '../../ui/lists'
 import Pagination from '../../pagination'
@@ -6,21 +7,29 @@ import { ErrorMessageBlock } from '../../Errors'
 import { Grid, GridItem } from '@chakra-ui/react'
 import './DocumentsRevisionsList.scss'
 
-export default function DocumentsRevisionsList ({
+interface DocumentsRevisionsListProps {
+  revisions?: Array<Record<string, unknown>>
+  headerStyles?: string
+  pagination?: { onPageChange?: (p: { selected: number }) => void, pageCount?: number, forcePage?: number } | null
+  loading?: boolean
+  itemsCount?: number
+}
+
+export default function DocumentsRevisionsList ({ 
   revisions = [],
   headerStyles,
   pagination,
   loading,
   itemsCount = 10
-}) {
-  const headerExtraClass = {
+ }: DocumentsRevisionsListProps) {
+  const headerExtraClass: Record<string, string> = {
     default: '',
     light: 'DocumentsRevisionsList__ColumnTitles--Light'
   }
 
   return (
     <div className={'DocumentsRevisionsList'}>
-      <Grid className={`DocumentsRevisionsList__ColumnTitles ${headerExtraClass?.[headerStyles] || ''}`}>
+      <Grid className={`DocumentsRevisionsList__ColumnTitles ${headerExtraClass[headerStyles ?? 'default'] || ''}`}>
         <GridItem className={'DocumentsRevisionsList__ColumnTitle DocumentsRevisionsList__ColumnTitle--Timestamp'}>
           Time
         </GridItem>
@@ -58,8 +67,8 @@ export default function DocumentsRevisionsList ({
         <Pagination
           className={'DocumentsRevisionsList__Pagination'}
           onPageChange={pagination.onPageChange}
-          pageCount={pagination.pageCount}
-          forcePage={pagination.forcePage}
+          pageCount={pagination.pageCount ?? 0}
+          forcePage={pagination.forcePage ?? 0}
           justify={true}
         />
       }
