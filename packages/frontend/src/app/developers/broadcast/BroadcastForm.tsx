@@ -14,7 +14,35 @@ import TypeBadge from '../../../components/transactions/TypeBadge'
 import FeeMultiplier from '../../../components/transactions/FeeMultiplier'
 import { TransactionType } from '../../transaction/[hash]/components/TransactionType'
 import { explainConsensusError } from '../../../enums/consensusErrors'
+import type { ChangeEvent, RefObject } from 'react'
+import type { Rate } from '../../../types'
 import './BroadcastForm.scss'
+
+type FormState = typeof STATE[keyof typeof STATE]
+
+interface VerifyResult {
+  result?: 'ok' | 'error' | string
+  error?: string
+  code?: number | string
+  gasWanted?: number
+}
+
+interface DecodedTx {
+  typeString?: string
+  ownerId?: string
+  userFeeIncrease?: number | string
+  identityNonce?: number | string
+  signaturePublicKeyId?: number | string
+  signature?: string
+  [key: string]: unknown
+}
+
+interface SignedHexViewProps {
+  unsignedHex: string
+  signedHex: string
+  onEdit: () => void
+}
+
 
 const STATE = {
   EMPTY: 'EMPTY',
@@ -41,9 +69,9 @@ const SIGN_FIXABLE_ERRORS = new Set([
   'InvalidSignaturePublicKeyPurposeError' // 20011
 ])
 
-const isHex = (input) => /^[0-9a-fA-F]+$/.test(input.trim())
+const isHex = (input: string) => /^[0-9a-fA-F]+$/.test(input.trim())
 
-const computeSize = (trimmed) => {
+const computeSize = (trimmed: string) => {
   if (isHex(trimmed)) return Math.floor(trimmed.length / 2)
   try {
     return atob(trimmed).length
@@ -52,7 +80,7 @@ const computeSize = (trimmed) => {
   }
 }
 
-const parseStateTransition = async (trimmed) => {
+const parseStateTransition = async (trimmed: string) => {
   const { StateTransitionWASM } = await import('dash-platform-sdk/types')
   const tx = isHex(trimmed)
     ? StateTransitionWASM.fromHex(trimmed)
@@ -68,7 +96,7 @@ const parseStateTransition = async (trimmed) => {
   return { tx, hash: tx.hash(false), isSigned, ownerId }
 }
 
-const toBase64 = (trimmed) => {
+const toBase64 = (trimmed: string) => {
   if (!isHex(trimmed)) return trimmed
   // /transaction/decode accepts base64 only — re-encode hex first
   const bytes = new Uint8Array(trimmed.length / 2)
@@ -80,8 +108,8 @@ const toBase64 = (trimmed) => {
   return btoa(binary)
 }
 
-function SignedHexView ({ unsignedHex, signedHex, onEdit }) {
-  const bodyRef = useRef(null)
+function SignedHexView ({ unsignedHex, signedHex, onEdit }: SignedHexViewProps) {
+  const bodyRef = useRef<HTMLDivElement | null>(null)
   let diffStart = 0
   const min = Math.min(unsignedHex.length, signedHex.length)
   while (diffStart < min && unsignedHex[diffStart] === signedHex[diffStart]) diffStart++
@@ -109,16 +137,16 @@ function SignedHexView ({ unsignedHex, signedHex, onEdit }) {
 
 function BroadcastForm () {
   const [input, setInput] = useState('')
-  const [state, setState] = useState(STATE.EMPTY)
-  const [verify, setVerify] = useState(null)
-  const [decoded, setDecoded] = useState(null)
-  const [hash, setHash] = useState(null)
-  const [size, setSize] = useState(null)
-  const [rate, setRate] = useState({ data: null, loading: true, error: null })
-  const [errorText, setErrorText] = useState(null)
-  const [detectedOwnerId, setDetectedOwnerId] = useState(null)
-  const [unsignedSnapshot, setUnsignedSnapshot] = useState(null)
-  const textareaRef = useRef(null)
+  const [state, setState] = useState<FormState>(STATE.EMPTY)
+  const [verify, setVerify] = useState<VerifyResult | null>(null)
+  const [decoded, setDecoded] = useState<DecodedTx | null>(null)
+  const [hash, setHash] = useState<string | null>(null)
+  const [size, setSize] = useState<number | null>(null)
+  const [rate, setRate] = useState<{ data: Rate | null, loading: boolean, error: unknown }>({ data: null, loading: true, error: null })
+  const [errorText, setErrorText] = useState<string | null>(null)
+  const [detectedOwnerId, setDetectedOwnerId] = useState<string | null>(null)
+  const [unsignedSnapshot, setUnsignedSnapshot] = useState<string | null>(null)
+  const textareaRef = useRef<HTMLTextAreaElement | null>(null)
 
   const signerCtl = useSigner()
   const [wif, setWif] = useState('')
@@ -148,7 +176,7 @@ function BroadcastForm () {
     setState(STATE.EMPTY)
   }
 
-  const handleInputChange = (value) => {
+  const handleInputChange = (value: string) => {
     setInput(value)
     if (
       verify || decoded || errorText ||
@@ -162,7 +190,7 @@ function BroadcastForm () {
     }
   }, [detectedOwnerId, identityIdInput])
 
-  const verifyHex = async (rawHex) => {
+  const verifyHex = async (rawHex: string) => {
     const trimmed = rawHex.trim()
     if (!trimmed) return
 
@@ -182,22 +210,22 @@ function BroadcastForm () {
         Api.verifyTransaction(payload).catch((e) => { console.warn('verify failed:', e); return null })
       ])
 
-      setDecoded(decodedResult)
-      setVerify(verifyResult)
+      setDecoded(decodedResult as DecodedTx | null)
+      setVerify(verifyResult as VerifyResult | null)
 
       if (!parsed.isSigned) {
-        if (verifyResult?.result === 'error') {
-          const fixableBySigning = SIGN_FIXABLE_ERRORS.has(verifyResult.error)
+        if ((verifyResult as VerifyResult | null)?.result === 'error') {
+          const fixableBySigning = SIGN_FIXABLE_ERRORS.has(String((verifyResult as VerifyResult).error))
           setState(fixableBySigning ? STATE.UNSIGNED : STATE.VERIFIED_FAIL)
         } else {
           setState(STATE.UNSIGNED)
         }
       } else {
-        setState(verifyResult?.result === 'ok' ? STATE.VERIFIED_OK : STATE.VERIFIED_FAIL)
+        setState((verifyResult as VerifyResult | null)?.result === 'ok' ? STATE.VERIFIED_OK : STATE.VERIFIED_FAIL)
       }
     } catch (e) {
       console.error(e)
-      setErrorText(e?.message || 'Failed to parse or verify transaction')
+      setErrorText((e as Error)?.message || 'Failed to parse or verify transaction')
       setState(STATE.ERROR)
     }
   }
@@ -220,7 +248,7 @@ function BroadcastForm () {
       setState(STATE.SUCCESS)
     } catch (e) {
       console.error(e)
-      setErrorText(e?.message || 'Failed to broadcast transaction')
+      setErrorText((e as Error)?.message || 'Failed to broadcast transaction')
       setState(STATE.ERROR)
     }
   }
@@ -242,7 +270,7 @@ function BroadcastForm () {
     try {
       const trimmedInput = input.trim()
       const { tx } = await parseStateTransition(trimmedInput)
-      const signedTx = await activeSigner.sign(tx)
+      const signedTx = await activeSigner.sign(tx) as { hex: () => string, hash: (b: boolean) => string }
       const signedHex = signedTx.hex()
       setUnsignedSnapshot(trimmedInput)
       setInput(signedHex)
@@ -252,7 +280,7 @@ function BroadcastForm () {
       setState(STATE.SIGNED)
     } catch (e) {
       console.error(e)
-      setErrorText(e?.message || 'Failed to sign transaction')
+      setErrorText((e as Error)?.message || 'Failed to sign transaction')
       setState(STATE.ERROR)
     }
   }
@@ -273,22 +301,22 @@ function BroadcastForm () {
 
     try {
       const { tx } = await parseStateTransition(input.trim())
-      const signedTx = await activeSigner.signAndBroadcast(tx)
+      const signedTx = await activeSigner.signAndBroadcast(tx) as { hex: () => string, hash: (b: boolean) => string }
       setInput(signedTx.hex())
       setHash(signedTx.hash(false))
       setVerify({ result: 'ok' })
       setState(STATE.SUCCESS)
     } catch (e) {
       console.error(e)
-      const wasRejected = /reject/i.test(e?.message ?? '')
+      const wasRejected = /reject/i.test((e as Error)?.message ?? '')
       setErrorText(wasRejected
         ? 'Extension cached an earlier rejection. Disable/re-enable the Dash Platform Extension in chrome://extensions/ to reset its state, then try again.'
-        : (e?.message || 'Failed to sign & broadcast via extension'))
+        : ((e as Error)?.message || 'Failed to sign & broadcast via extension'))
       setState(STATE.ERROR)
     }
   }
 
-  const handleMethodChange = (newMethod) => {
+  const handleMethodChange = (newMethod: typeof signerCtl.method) => {
     setErrorText(null)
     signerCtl.setMethod(newMethod)
   }
@@ -351,7 +379,7 @@ function BroadcastForm () {
                   className={'BroadcastForm__Input'}
                   placeholder={'(HEX, base64) Input Transaction Data...'}
                   value={input}
-                  onChange={(e) => handleInputChange(e.target.value)}
+                  onChange={(e: ChangeEvent<HTMLTextAreaElement>) => handleInputChange(e.target.value)}
                   rows={3}
                 />
           }
@@ -409,7 +437,7 @@ function BroadcastForm () {
           <div className={'BroadcastForm__ButtonMessage'}>
             {verify?.result === 'error' && state !== STATE.UNSIGNED && (
               <span className={'BroadcastForm__ButtonMessage--error'}>
-                {explainConsensusError(verify.error, verify.code)}
+                {explainConsensusError(verify.error, typeof verify.code === 'number' ? verify.code : Number(verify.code))}
               </span>
             )}
             {errorText && (
@@ -473,13 +501,13 @@ function BroadcastForm () {
                 <InfoLine
                   title={'Fee'}
                   value={verify?.gasWanted != null
-                    ? <CreditsBlock credits={verify.gasWanted} rate={rate}/>
+                    ? <CreditsBlock credits={verify.gasWanted} rate={rate as never}/>
                     : <NotActive>—</NotActive>}
                 />
                 <InfoLine
                   title={'Fee Multiplier'}
                   value={decoded?.userFeeIncrease != null
-                    ? <FeeMultiplier value={Number(decoded.userFeeIncrease)}/>
+                    ? <FeeMultiplier value={Number(decoded.userFeeIncrease) as number}/>
                     : <NotActive>—</NotActive>}
                 />
                 <InfoLine
@@ -504,7 +532,10 @@ function BroadcastForm () {
               </div>
               <div className={'BroadcastForm__DecodedDivider'}/>
               {decoded
-                ? <TransactionType rate={rate} {...decoded}/>
+                ? (() => {
+                    const txProps = { rate, ...decoded } as Parameters<typeof TransactionType>[0]
+                    return <TransactionType {...txProps}/>
+                  })()
                 : (
                   <div className={'BroadcastForm__EmptyVariant'}>
                     Paste a signed transaction above and click Verify to decode it here.
