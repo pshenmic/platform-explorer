@@ -20,26 +20,86 @@ import { RateTooltip } from '../../../components/ui/Tooltips'
 import { WithdrawalsList } from '../../../components/transfers'
 import { useBreadcrumbs } from '../../../contexts/BreadcrumbsContext'
 import { defaultChartConfig } from '../../../components/charts/config'
+import type { TimespanValue } from '../../../components/charts/types'
 import {
   Badge,
   Tabs, TabList, TabPanels, Tab, TabPanel
 } from '@chakra-ui/react'
 import { useActiveNetwork } from 'src/contexts'
+import type {
+  Block,
+  LoadableState,
+  PaginatedResultSet,
+  Rate,
+  Transaction,
+  Validator as ValidatorType,
+  Withdrawal
+} from '../../../types'
 
 import './ValidatorPage.scss'
 
-function Validator ({ hash }) {
+/** API endpoint status may include a free-form message. */
+type EndpointStatus = {
+  host?: string
+  port?: number
+  status?: string
+  message?: string
+} | null
+
+/** Epoch fields used on the page (API may flatten Epoch onto epochInfo). */
+type EpochInfo = {
+  number?: number
+  endTime?: number | string
+} | null
+
+type ValidatorDetail = Omit<Partial<ValidatorType>, 'epochInfo' | 'endpoints' | 'proTxInfo'> & {
+  epochInfo?: EpochInfo
+  endpoints?: {
+    coreP2PPortStatus?: EndpointStatus
+    platformP2PPortStatus?: EndpointStatus
+    platformGrpcPortStatus?: EndpointStatus
+  } | null
+  proTxInfo?: {
+    collateralAddress?: string | null
+    state?: {
+      PoSeBanHeight?: number
+      PoSeRevivedHeight?: number
+      PoSePenalty?: number
+      ownerAddress?: string
+      votingAddress?: string
+      payoutAddress?: string
+      pubKeyOperator?: string
+    } | null
+  } | null
+}
+
+type PaginatedProps = { currentPage: number }
+
+interface ValidatorProps {
+  hash: string
+}
+
+function emptyPaginated<T> (): LoadableState<PaginatedResultSet<T>> {
+  return {
+    data: {} as PaginatedResultSet<T>,
+    props: { currentPage: 0 },
+    loading: true,
+    error: false
+  }
+}
+
+function Validator ({ hash }: ValidatorProps) {
   const { setBreadcrumbs } = useBreadcrumbs()
-  const [validator, setValidator] = useState({ data: {}, loading: true, error: false })
-  const [rate, setRate] = useState({ data: {}, loading: true, error: false })
-  const [proposedBlocks, setProposedBlocks] = useState({ data: {}, props: { currentPage: 0 }, loading: true, error: false })
+  const [validator, setValidator] = useState<LoadableState<ValidatorDetail>>({ data: {} as ValidatorDetail, loading: true, error: false })
+  const [rate, setRate] = useState<LoadableState<Rate>>({ data: {} as Rate, loading: true, error: false })
+  const [proposedBlocks, setProposedBlocks] = useState(emptyPaginated<Block>())
   const pageSize = 13
   const [currentPage, setCurrentPage] = useState(1)
-  const [transactions, setTransactions] = useState({ data: {}, props: { currentPage: 0 }, loading: true, error: false })
-  const [withdrawals, setWithdrawals] = useState({ data: {}, props: { currentPage: 0 }, loading: true, error: false })
+  const [transactions, setTransactions] = useState(emptyPaginated<Transaction>())
+  const [withdrawals, setWithdrawals] = useState(emptyPaginated<Withdrawal>())
   const [activeChartTab, setActiveChartTab] = useState(0)
   const { l1explorerBaseUrl } = useActiveNetwork()
-  const [timespan, setTimespan] = useState(defaultChartConfig.timespan.values[defaultChartConfig.timespan.defaultIndex])
+  const [timespan, setTimespan] = useState<TimespanValue>(defaultChartConfig.timespan.values[defaultChartConfig.timespan.defaultIndex])
 
   useEffect(() => {
     setBreadcrumbs([
@@ -49,16 +109,18 @@ function Validator ({ hash }) {
     ])
   }, [setBreadcrumbs, hash])
 
-  const poseStatusColor = (validator.data?.proTxInfo?.state?.PoSeBanHeight > 0 &&
+  const poseBanHeight = validator.data?.proTxInfo?.state?.PoSeBanHeight ?? 0
+  const posePenalty = validator.data?.proTxInfo?.state?.PoSePenalty ?? 0
+  const poseStatusColor = (poseBanHeight > 0 &&
     validator.data?.proTxInfo?.state?.PoSeRevivedHeight === -1)
     ? 'red.default'
-    : validator.data?.proTxInfo?.state?.PoSePenalty > 0
+    : posePenalty > 0
       ? 'yellow.default'
       : 'green.default'
 
   const fetchData = () => {
     Api.getValidatorByProTxHash(hash)
-      .then(res => fetchHandlerSuccess(setValidator, res))
+      .then(res => fetchHandlerSuccess(setValidator, res as Partial<ValidatorDetail>))
       .catch(err => fetchHandlerError(setValidator, err))
 
     Api.getRate()
@@ -71,20 +133,20 @@ function Validator ({ hash }) {
   useEffect(() => {
     setProposedBlocks(state => ({ ...state, loading: true }))
 
-    Api.getBlocksByValidator(hash, proposedBlocks.props.currentPage + 1, pageSize, 'desc')
+    Api.getBlocksByValidator(hash, Number((proposedBlocks.props as PaginatedProps).currentPage) + 1, pageSize, 'desc')
       .then((res) => fetchHandlerSuccess(setProposedBlocks, res))
       .catch(err => fetchHandlerError(setProposedBlocks, err))
-  }, [proposedBlocks.props.currentPage])
+  }, [(proposedBlocks.props as PaginatedProps).currentPage])
 
   useEffect(() => {
     if (!validator.data?.identity) return
 
     setTransactions(state => ({ ...state, loading: true }))
 
-    Api.getTransactionsByIdentity(validator.data.identity, transactions.props.currentPage + 1, pageSize, 'desc')
+    Api.getTransactionsByIdentity(validator.data.identity, Number((transactions.props as PaginatedProps).currentPage) + 1, pageSize, 'desc')
       .then(res => fetchHandlerSuccess(setTransactions, res))
       .catch(err => fetchHandlerError(setTransactions, err))
-  }, [validator, transactions.props.currentPage])
+  }, [validator, (transactions.props as PaginatedProps).currentPage])
 
   useEffect(() => {
     if (!validator.data?.identity) return
@@ -96,9 +158,10 @@ function Validator ({ hash }) {
       .catch(err => fetchHandlerError(setWithdrawals, err))
   }, [validator])
 
-  const handlePageClick = useCallback(({ selected }) => {
+  const handlePageClick = useCallback(({ selected }: { selected: number }) => {
     setCurrentPage(selected)
-    fetchData(selected + 1, pageSize)
+    // original called fetchData with page args even though fetchData ignores them
+    fetchData()
   }, [pageSize])
 
   useEffect(() => {
@@ -107,7 +170,7 @@ function Validator ({ hash }) {
   }, [pageSize, handlePageClick])
 
   const withdrawalsAll = withdrawals?.data?.resultSet || []
-  const withdrawalsPage = withdrawals.props.currentPage
+  const withdrawalsPage = Number((withdrawals.props as PaginatedProps).currentPage)
   const visibleWithdrawals = withdrawalsAll.slice(
     withdrawalsPage * pageSize,
     (withdrawalsPage + 1) * pageSize
@@ -122,7 +185,7 @@ function Validator ({ hash }) {
       <div className={'ValidatorPage__ContentContainer'}>
         <div className={'ValidatorPage__Column'}>
           <InfoContainer className={'ValidatorPage__GroupContainer'}>
-            <ValidatorCard validator={validator} rate={rate} className={'ValidatorPage__Card'}/>
+            <ValidatorCard validator={validator as LoadableState<ValidatorType>} rate={rate.data} className={'ValidatorPage__Card'}/>
 
             <div>
               <InfoLine
@@ -214,7 +277,7 @@ function Validator ({ hash }) {
                 className={'ValidatorPage__InfoLine'}
                 title={'Rewards This Epoch'}
                 value={(
-                  <RateTooltip credits={validator.data?.epochReward} rate={rate.data}>
+                  <RateTooltip credits={validator.data?.epochReward ?? undefined} rate={rate.data}>
                     <span>
                       <BigNumber>{validator.data?.epochReward}</BigNumber>
                     </span>
@@ -227,7 +290,7 @@ function Validator ({ hash }) {
                 className={'ValidatorPage__InfoLine'}
                 title={'Total Rewards Earned'}
                 value={(
-                  <RateTooltip credits={validator.data?.totalReward} rate={rate.data}>
+                  <RateTooltip credits={validator.data?.totalReward ?? undefined} rate={rate.data}>
                     <span>
                       <BigNumber>{validator.data?.totalReward}</BigNumber>
                     </span>
@@ -408,7 +471,7 @@ function Validator ({ hash }) {
 
         <div className={'ValidatorPage__Column'}>
           <InfoContainer styles={['tabs']} className={'ValidatorPage__ChartsContainer'}>
-            <Tabs onChange={(index) => setActiveChartTab(index)} index={activeChartTab}>
+            <Tabs onChange={(index: number) => setActiveChartTab(index)} index={activeChartTab}>
               <TabList>
                 <Tab>Proposed Blocks</Tab>
                 <Tab>Reward Earned</Tab>
@@ -467,7 +530,7 @@ function Validator ({ hash }) {
                     <div className={'ValidatorPage__ListPagination'}>
                       <Pagination
                         onPageChange={pagination => paginationHandler(setProposedBlocks, pagination.selected)}
-                        pageCount={Math.ceil(proposedBlocks.data?.pagination?.total / pageSize) || 1}
+                        pageCount={Math.ceil((proposedBlocks.data?.pagination?.total ?? 0) / pageSize) || 1}
                         forcePage={currentPage}
                         pageRangeDisplayed={0}
                       />
@@ -479,7 +542,7 @@ function Validator ({ hash }) {
                     ? <div className={'ValidatorPage__List'}>
                         {!transactions.loading
                           ? <TransactionsList
-                              transactions={transactions.data.resultSet}
+                              transactions={transactions.data?.resultSet}
                               headerStyles={'light'}
                             />
                           : <LoadingList itemsCount={pageSize}/>}
@@ -490,7 +553,7 @@ function Validator ({ hash }) {
                     <div className={'ValidatorPage__ListPagination'}>
                       <Pagination
                         onPageChange={pagination => paginationHandler(setTransactions, pagination.selected)}
-                        pageCount={Math.ceil(transactions.data?.pagination?.total / pageSize) || 1}
+                        pageCount={Math.ceil((transactions.data?.pagination?.total ?? 0) / pageSize) || 1}
                         forcePage={currentPage}
                         pageRangeDisplayed={0}
                       />

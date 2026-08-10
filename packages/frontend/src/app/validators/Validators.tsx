@@ -5,7 +5,7 @@ import Pagination from '../../components/pagination'
 import PageSizeSelector from '../../components/pageSizeSelector/PageSizeSelector'
 import { normalizePagination } from '../../util'
 import { Container, Box, useBreakpointValue } from '@chakra-ui/react'
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, keepPreviousData } from '@tanstack/react-query'
 import { parseAsInteger, useQueryState } from 'nuqs'
 import { useValidatorsFilters, ValidatorsFilter, ValidatorsList, ValidatorsStatsInline } from '@components/validators'
 import PageTitle from '../../components/intro/PageTitle'
@@ -15,7 +15,7 @@ import './ValidatorsPage.scss'
 const paginateConfig = {
   pageSize: {
     default: 25,
-    values: [10, 25, 50, 75, 100, 'All']
+    values: [10, 25, 50, 75, 100, 'All'] as Array<number | string>
   },
   defaultPage: 1
 }
@@ -44,14 +44,14 @@ function Validators () {
       'asc',
       filters
     ),
-    keepPreviousData: true,
+    placeholderData: keepPreviousData,
     select: ({ pagination, ...other }) => ({
       ...other,
       total: pagination?.total,
       pagination: normalizePagination({
+        ...pagination,
         page,
-        pageSize,
-        ...pagination
+        pageSize
       })
     })
   })
@@ -59,9 +59,9 @@ function Validators () {
   const pagination = validators.data?.pagination
   const totalValidators = validators.data?.total
 
-  const handleFiltersChange = (next) => {
+  const handleFiltersChange = (next: Record<string, unknown>) => {
     setFilters(next)
-    setPage(1)
+    void setPage(1)
   }
 
   return (
@@ -95,18 +95,18 @@ function Validators () {
           error={validators.isError}
           pageSize={pageSize}
         />
-        {validators.data?.resultSet?.length > 0 &&
+        {(validators.data?.resultSet?.length ?? 0) > 0 &&
           <div className={'ListNavigation'}>
             <Box display={['none', 'none', 'block']} width={'155px'} />
             <Pagination
-              onPageChange={({ selected }) => setPage((selected || 0) + 1)}
-              pageCount={pagination.pageCount}
-              forcePage={pagination.forcePage}
+              onPageChange={({ selected }) => { void setPage((selected || 0) + 1) }}
+              pageCount={pagination?.pageCount ?? 1}
+              forcePage={pagination?.forcePage}
             />
             <PageSizeSelector
               PageSizeSelectHandler={e => {
-                setPageSize(e.value)
-                setPage(1)
+                void setPageSize(Number(e?.value))
+                void setPage(1)
               }}
               value={pageSize}
               items={paginateConfig.pageSize.values}

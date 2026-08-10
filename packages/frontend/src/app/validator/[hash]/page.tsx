@@ -1,6 +1,11 @@
+import type { Metadata } from 'next'
 import Validator from './Validator'
 
-export function generateMetadata ({ params }) {
+interface ValidatorRouteProps {
+  params: { hash: string }
+}
+
+export function generateMetadata ({ params }: ValidatorRouteProps): Metadata {
   return {
     title: 'Validator #' + params.hash + ' — Dash Platform Explorer',
     description: 'Validator #' + params.hash + ' on dash platform. ProTxHash, Status, Proposed blocks',
@@ -9,7 +14,7 @@ export function generateMetadata ({ params }) {
   }
 }
 
-function ValidatorRoute ({ params }) {
+function ValidatorRoute ({ params }: ValidatorRouteProps) {
   return <Validator hash={params.hash}/>
 }
 
