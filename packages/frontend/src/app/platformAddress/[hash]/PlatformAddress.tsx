@@ -13,12 +13,13 @@ import { useBreadcrumbs } from '../../../contexts/BreadcrumbsContext'
 import { PlatformAddressTotalCard } from '../../../components/platformAddresses'
 import './PlatformAddress.scss'
 
-const tabs = ['transitions']
+const tabs = ['transitions'] as const
 
 const pageSize = 10
 
 function PlatformAddress () {
-  const { hash } = useParams()
+  const params = useParams()
+  const hash = String(params?.hash ?? '')
   const { setBreadcrumbs } = useBreadcrumbs()
   const [txPage, setTxPage] = useState(1)
 
@@ -41,12 +42,12 @@ function PlatformAddress () {
 
   const [activeTab, setActiveTab] = useQueryState(
     'tab',
-    parseAsStringEnum(tabs)
+    parseAsStringEnum([...tabs])
       .withDefault('transitions')
       .withOptions({ scroll: false, shallow: false })
   )
 
-  const handleTab = (index) => setActiveTab(tabs[index])
+  const handleTab = (index: number) => { void setActiveTab(tabs[index]) }
 
   useEffect(() => {
     setBreadcrumbs([
@@ -64,7 +65,7 @@ function PlatformAddress () {
       }
 
       <InfoContainer styles={['tabs']} id={'tabs'}>
-        <Tabs onChange={handleTab} index={tabs.indexOf(activeTab)}>
+        <Tabs onChange={handleTab} index={tabs.indexOf(activeTab as typeof tabs[number])}>
           <TabList>
             <Tab>
               Transitions {transitions.data?.pagination?.total != null

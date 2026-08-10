@@ -1,6 +1,11 @@
+import type { Metadata } from 'next'
 import PlatformAddress from './PlatformAddress'
 
-export function generateMetadata ({ params }) {
+interface PlatformAddressRouteProps {
+  params: { hash: string }
+}
+
+export function generateMetadata ({ params }: PlatformAddressRouteProps): Metadata {
   return {
     title: 'Platform Address ' + params.hash + ' — Dash Platform Explorer',
     description:
