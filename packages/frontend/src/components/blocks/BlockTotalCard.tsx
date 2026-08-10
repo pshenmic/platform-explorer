@@ -1,20 +1,53 @@
 'use client'
 
+import type { ComponentType, ReactNode } from 'react'
+import type { Block, PaginatedResultSet } from '../../types'
+import type { LoadableState, WithClassName } from '../../types/common'
 import * as Api from '../../util/Api'
-import { DateBlock, Identifier, InfoLine } from '../data'
+// Untyped JS components — loose wrappers until data/* is migrated
+import {
+  DateBlock as DateBlockJs,
+  Identifier as IdentifierJs,
+  InfoLine as InfoLineJs
+} from '../data'
 import { HorisontalSeparator } from '../ui/separators'
 import { ValueContainer } from '../ui/containers'
 import { BlockIcon, ChevronIcon } from '../ui/icons'
 import { ValueCard } from '../cards'
 import { fetchHandlerError, fetchHandlerSuccess } from '../../util'
 import { useEffect, useState } from 'react'
+import type { BlockDetail } from './BlockDigestCard'
 import './BlockTotalCard.scss'
 
-function BlockTotalCard ({ block, l1explorerBaseUrl, className }) {
-  const [blocks, setBlocks] = useState({ data: {}, loading: true, error: false })
+const DateBlock = DateBlockJs as ComponentType<{ timestamp?: string | number | null }>
+const Identifier = IdentifierJs as ComponentType<{
+  children?: ReactNode
+  copyButton?: boolean
+  styles?: string[]
+  ellipsis?: boolean
+}>
+const InfoLine = InfoLineJs as ComponentType<{
+  className?: string
+  title?: ReactNode
+  value?: ReactNode
+  loading?: boolean
+  error?: boolean
+}>
+
+interface BlockTotalCardProps extends WithClassName {
+  block: LoadableState<BlockDetail>
+  l1explorerBaseUrl?: string
+}
+
+function BlockTotalCard ({ block, l1explorerBaseUrl, className }: BlockTotalCardProps) {
+  const [blocks, setBlocks] = useState<LoadableState<Partial<PaginatedResultSet<Block>>>>({
+    data: {},
+    loading: true,
+    error: false
+  })
   const blockData = block?.data?.header
-  const [previousBlock] = blocks.data?.resultSet?.filter(block => block?.header?.height === blockData?.height - 1) || []
-  const [nextBlock] = blocks.data?.resultSet?.filter(block => block?.header?.height === blockData?.height + 1) || []
+  const [previousBlock] = blocks.data?.resultSet?.filter(b => b?.header?.height === (blockData?.height ?? 0) - 1) || []
+  const [nextBlock] = blocks.data?.resultSet?.filter(b => b?.header?.height === (blockData?.height ?? 0) + 1) || []
 
   const fetchData = () => {
     if (!blockData?.height) return

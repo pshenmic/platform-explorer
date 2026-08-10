@@ -1,14 +1,27 @@
+import type { Block } from '../../types'
 import BlocksListItem from './BlocksListItem'
 import { EmptyListMessage } from '../ui/lists'
 import { Grid, GridItem } from '@chakra-ui/react'
 import './BlocksList.scss'
 
-function BlocksList ({ blocks = [], size = 'l', headerStyles = 'default', absoluteDate }) {
-  const headerExtraClass = {
-    default: '',
-    light: 'BlocksList__ColumnTitles--Light'
-  }
+const headerExtraClass: Record<string, string> = {
+  default: '',
+  light: 'BlocksList__ColumnTitles--Light'
+}
 
+interface BlocksListProps {
+  blocks?: Array<Partial<Block>>
+  size?: string
+  headerStyles?: string
+  absoluteDate?: boolean
+}
+
+function BlocksList ({
+  blocks = [],
+  size = 'l',
+  headerStyles = 'default',
+  absoluteDate
+}: BlocksListProps) {
   return (
     <div className={`BlocksList ${absoluteDate ? 'BlocksList--TimestampAbsolute' : ''}`}>
       <Grid className={`BlocksList__ColumnTitles ${headerExtraClass[headerStyles] || ''}`}>

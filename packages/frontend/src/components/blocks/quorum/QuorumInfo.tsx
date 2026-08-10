@@ -1,9 +1,54 @@
-import { Identifier, InfoLine } from '../../data'
+import type { ComponentType, ReactNode } from 'react'
+// Untyped JS components — loose wrappers until data/* is migrated
+import {
+  Identifier as IdentifierJs,
+  InfoLine as InfoLineJs
+} from '../../data'
 import { ValueContainer } from '../../ui/containers'
 import { Badge } from '@chakra-ui/react'
+import type { QuorumMember } from './QuorumMembersListItem'
 import './QuorumInfo.scss'
 
-export default function QuorumInfo ({ quorum, loading, l1explorerBaseUrl, showQuorumMembers }) {
+const Identifier = IdentifierJs as ComponentType<{
+  children?: ReactNode
+  styles?: string[]
+  ellipsis?: boolean
+  copyButton?: boolean
+}>
+const InfoLine = InfoLineJs as ComponentType<{
+  className?: string
+  title?: ReactNode
+  value?: ReactNode
+  loading?: boolean
+  error?: boolean
+}>
+
+export interface QuorumInfoData {
+  quorumHash?: string | null
+  quorumIndex?: number | null
+  type?: string | null
+  blockHeight?: number | null
+  creationHeight?: number | null
+  minedBlockHash?: string | null
+  numValidMembers?: number | null
+  previousConsecutiveDKGFailures?: number | null
+  healthRatio?: number | null
+  members?: QuorumMember[] | null
+}
+
+interface QuorumInfoProps {
+  quorum?: QuorumInfoData | null
+  loading?: boolean
+  l1explorerBaseUrl?: string
+  showQuorumMembers?: () => void
+}
+
+export default function QuorumInfo ({
+  quorum,
+  loading,
+  l1explorerBaseUrl,
+  showQuorumMembers
+}: QuorumInfoProps) {
   return (
     <div className={'QuorumInfo'}>
       <div className={'QuorumInfo__LineContainer'}>
@@ -103,7 +148,7 @@ export default function QuorumInfo ({ quorum, loading, l1explorerBaseUrl, showQu
               >
                 {quorum?.numValidMembers}
               </ValueContainer>
-            : quorum.numValidMembers
+            : quorum?.numValidMembers
           }
           loading={loading}
           error={typeof quorum?.numValidMembers !== 'number'}
@@ -132,9 +177,9 @@ export default function QuorumInfo ({ quorum, loading, l1explorerBaseUrl, showQu
           value={
             <Badge
               colorScheme={(() => {
-                if (quorum?.healthRatio > 0.75) return 'green'
-                if (quorum?.healthRatio > 0.5) return 'yellow'
-                if (quorum?.healthRatio > 0.25) return 'orange'
+                if ((quorum?.healthRatio ?? 0) > 0.75) return 'green'
+                if ((quorum?.healthRatio ?? 0) > 0.5) return 'yellow'
+                if ((quorum?.healthRatio ?? 0) > 0.25) return 'orange'
                 return 'red'
               })()}
             >

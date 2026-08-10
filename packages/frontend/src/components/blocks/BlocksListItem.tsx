@@ -1,7 +1,16 @@
 'use client'
 
+import type { ComponentType, ReactNode } from 'react'
+import type { Block } from '../../types'
 import Link from 'next/link'
-import { Identifier, NotActive, TimeDelta, BigNumber, DateBlock } from '../data'
+// Untyped JS components — loose wrappers until data/* is migrated
+import {
+  Identifier as IdentifierJs,
+  NotActive as NotActiveJs,
+  TimeDelta as TimeDeltaJs,
+  BigNumber as BigNumberJs,
+  DateBlock as DateBlockJs
+} from '../data'
 import { Badge, Grid, GridItem } from '@chakra-ui/react'
 import { BlockIcon } from '../ui/icons'
 import { LinkContainer } from '../ui/containers'
@@ -9,7 +18,35 @@ import { useRouter } from 'next/navigation'
 
 import './BlocksListItem.scss'
 
-function BlocksListItem ({ block, absoluteDate }) {
+const Identifier = IdentifierJs as ComponentType<{
+  children?: ReactNode
+  className?: string
+  middleEllipsis?: boolean
+  copyButton?: boolean
+  avatar?: boolean
+  styles?: string[]
+  ellipsis?: boolean
+}>
+const NotActive = NotActiveJs as ComponentType<{ children?: ReactNode }>
+const TimeDelta = TimeDeltaJs as ComponentType<{
+  endDate?: Date | string | null
+  showTimestampTooltip?: boolean
+}>
+const BigNumber = BigNumberJs as ComponentType<{ children?: ReactNode }>
+const DateBlock = DateBlockJs as ComponentType<{
+  format?: string
+  showTime?: boolean
+  timestamp?: string | number | null
+  showRelativeTooltip?: boolean
+}>
+
+interface BlocksListItemProps {
+  block: Partial<Block> & { header?: Block['header'] | null, txs?: string[] | null }
+  absoluteDate?: boolean
+  size?: string
+}
+
+function BlocksListItem ({ block, absoluteDate }: BlocksListItemProps) {
   const router = useRouter()
   const { header, txs } = block
 
@@ -59,7 +96,7 @@ function BlocksListItem ({ block, absoluteDate }) {
         </GridItem>
 
         <GridItem className={'BlocksListItem__Column BlocksListItem__Column--Txs'}>
-          {(typeof txs.length === 'number') &&
+          {(typeof txs?.length === 'number') &&
             <Badge>
               {txs.length}
             </Badge>

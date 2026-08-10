@@ -1,18 +1,31 @@
 'use client'
 
 import QuorumMembersListItem from './QuorumMembersListItem'
+import type { QuorumMember } from './QuorumMembersListItem'
 import { EmptyListMessage } from '../../ui/lists'
 import { Grid, GridItem } from '@chakra-ui/react'
 import { ErrorMessageBlock } from '../../Errors'
 import { LoadingList } from '../../loading'
 import './QuorumMembersList.scss'
 
-function QuorumMembersList ({ members = [], loading, itemsCount = 10, headerStyles = 'default' }) {
-  const headerExtraClass = {
-    default: '',
-    light: 'QuorumMembersList__ColumnTitles--Light'
-  }
+const headerExtraClass: Record<string, string> = {
+  default: '',
+  light: 'QuorumMembersList__ColumnTitles--Light'
+}
 
+interface QuorumMembersListProps {
+  members?: QuorumMember[]
+  loading?: boolean
+  itemsCount?: number
+  headerStyles?: string
+}
+
+function QuorumMembersList ({
+  members = [],
+  loading,
+  itemsCount = 10,
+  headerStyles = 'default'
+}: QuorumMembersListProps) {
   return (
     <div className={'QuorumMembersList'}>
       <Grid className={`QuorumMembersList__ColumnTitles ${headerExtraClass[headerStyles] || ''}`}>

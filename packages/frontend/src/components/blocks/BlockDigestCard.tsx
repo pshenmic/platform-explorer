@@ -1,12 +1,50 @@
 'use client'
 
+import type { ComponentType, ReactNode } from 'react'
+import type { Block, Rate, Status } from '../../types'
+import type { LoadableState } from '../../types/common'
 import { DocumentIcon, MembersIcon, QueuePositionIcon, TransactionsIcon, InfoIcon } from '../ui/icons'
-import { CreditsBlock, Identifier, InfoLine } from '../data'
+// Untyped JS components — loose wrappers until data/* is migrated
+import {
+  CreditsBlock as CreditsBlockJs,
+  Identifier as IdentifierJs,
+  InfoLine as InfoLineJs
+} from '../data'
 import { ValueCard } from '../cards'
 import { EpochTooltip, Tooltip } from '../ui/Tooltips'
+import type { QuorumInfoData } from './quorum/QuorumInfo'
 import './BlockDigestCard.scss'
 
-function BlockDigestCard ({ block, rate, status }) {
+const CreditsBlock = CreditsBlockJs as ComponentType<{
+  credits?: number | string | null
+  rate?: Rate | null
+}>
+const Identifier = IdentifierJs as ComponentType<{
+  children?: ReactNode
+  avatar?: boolean
+  ellipsis?: boolean
+  styles?: string[]
+}>
+const InfoLine = InfoLineJs as ComponentType<{
+  className?: string
+  title?: ReactNode
+  value?: ReactNode
+  loading?: boolean
+  error?: boolean
+}>
+
+export type BlockDetail = Partial<Block> & {
+  name?: string | null
+  quorum?: QuorumInfoData | null
+}
+
+interface BlockDigestCardProps {
+  block: LoadableState<BlockDetail>
+  rate?: Rate | null
+  status: LoadableState<Partial<Status>>
+}
+
+function BlockDigestCard ({ block, rate, status }: BlockDigestCardProps) {
   return (
     <div className={`Block__InfoBlock Block__DigestCard BlockDigestCard ${block.loading ? 'BlockDigestCard--Loading' : ''}`}>
       <div className={'BlockDigestCard__RowContainer'}>
@@ -25,7 +63,7 @@ function BlockDigestCard ({ block, rate, status }) {
             className={'BlockDigestCard__InfoLine BlockDigestCard__InfoLine--Epoch'}
             title={(<span><DocumentIcon/>Epoch</span>)}
             value={
-              <EpochTooltip epoch={status?.data?.epoch}>
+              <EpochTooltip epoch={status?.data?.epoch ?? undefined}>
                 <span className={'BlockDigestCard__InfoLineValueContent'}>
                   #{status?.data?.epoch?.number}
                   <InfoIcon className={'BlockDigestCard__InfoIcon'}/>
