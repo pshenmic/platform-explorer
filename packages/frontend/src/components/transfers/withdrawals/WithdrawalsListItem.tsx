@@ -1,6 +1,11 @@
+import type { ComponentType, ReactNode, AnchorHTMLAttributes, HTMLAttributes, Ref } from 'react'
 import { Grid, GridItem } from '@chakra-ui/react'
 import { ArrowCornerIcon } from '../../ui/icons'
-import { Identifier, BigNumber } from '../../data'
+// Untyped JS components — loose wrappers until data/* is migrated
+import {
+  Identifier as IdentifierJs,
+  BigNumber as BigNumberJs
+} from '../../data'
 import { ValueContainer } from '../../ui/containers'
 import { RateTooltip } from '../../ui/Tooltips'
 import StatusIcon from './StatusIcon'
@@ -8,40 +13,79 @@ import Link from 'next/link'
 import './WithdrawalsListItem.scss'
 import { forwardRef, useRef, useState } from 'react'
 import useResizeObserver from '@react-hook/resize-observer'
+import type { Rate, Withdrawal } from '../../../types'
+
+const Identifier = IdentifierJs as ComponentType<{
+  children?: ReactNode
+  avatar?: boolean
+  styles?: string[]
+  clickable?: boolean
+  ellipsis?: boolean
+  copyButton?: boolean
+  className?: string
+}>
+const BigNumber = BigNumberJs as ComponentType<{ children?: ReactNode, className?: string }>
 
 const mobileWidth = 550
 
-function WithdrawalsListItem ({ withdrawal, rate, defaultPayoutAddress, l1explorerBaseUrl }) {
-  const containerRef = useRef(null)
+/** API withdrawal rows may include fields beyond the core Withdrawal model. */
+export interface WithdrawalListItem extends Withdrawal {
+  withdrawalAddress?: string | null
+  document?: string | null
+}
+
+interface WithdrawalsListItemProps {
+  withdrawal: WithdrawalListItem
+  rate?: Pick<Rate, 'usd'> | null
+  defaultPayoutAddress?: string | null
+  l1explorerBaseUrl?: string | null
+}
+
+function WithdrawalsListItem ({
+  withdrawal,
+  rate,
+  defaultPayoutAddress,
+  l1explorerBaseUrl
+}: WithdrawalsListItemProps) {
+  const containerRef = useRef<HTMLDivElement>(null)
   const [isMobile, setIsMobile] = useState(false)
-  const clickable = isMobile && withdrawal?.hash
+  const clickable = isMobile && Boolean(withdrawal?.hash)
   const withdrawalAddress = withdrawal?.withdrawalAddress || defaultPayoutAddress
 
   useResizeObserver(containerRef, () => {
-    const { offsetWidth } = containerRef.current
+    const offsetWidth = containerRef.current?.offsetWidth ?? 0
     setIsMobile(offsetWidth <= mobileWidth)
   })
 
-  const Wrapper = forwardRef(function Wrapper (props, ref) {
-    return clickable
-      ? <Link ref={ref} href={`/transaction/${withdrawal?.hash}`} className={props.className}>{props.children}</Link>
-      : <div ref={ref} className={props.className}>{props.children}</div>
-  })
+  const Wrapper = forwardRef<HTMLAnchorElement | HTMLDivElement, { className?: string, children?: ReactNode }>(
+    function Wrapper (props, ref) {
+      return clickable
+        ? <Link ref={ref as Ref<HTMLAnchorElement>} href={`/transaction/${withdrawal?.hash}`} className={props.className}>{props.children}</Link>
+        : <div ref={ref as Ref<HTMLDivElement>} className={props.className}>{props.children}</div>
+    }
+  )
 
-  const ItemWrapper = ({ isLocal, children, ...props }) => {
+  type ItemWrapperProps = {
+    isLocal?: boolean
+    children?: ReactNode
+  } & HTMLAttributes<HTMLElement> & AnchorHTMLAttributes<HTMLAnchorElement>
+
+  const ItemWrapper = ({ isLocal, children, ...props }: ItemWrapperProps) => {
     return clickable
-      ? <div {...props}>{children}</div>
+      ? <div {...(props as HTMLAttributes<HTMLDivElement>)}>{children}</div>
       : isLocal
-        ? <Link {...props}>{children}</Link>
+        ? <Link href={props.href ?? '#'} {...props}>{children}</Link>
         : <a {...props}>{children}</a>
   }
+
+  const amountCredits = withdrawal.amount != null ? Number(withdrawal.amount) : undefined
 
   return (
     <div ref={containerRef} className={`WithdrawalsListItem ${clickable ? 'WithdrawalsListItem--Clickable' : ''}`}>
       <Wrapper className={'WithdrawalsListItem__ContentWrapper'}>
         <Grid className={'WithdrawalsListItem__Content'}>
           <GridItem className={'WithdrawalsListItem__Column WithdrawalsListItem__Column--Timestamp'}>
-            {new Date(withdrawal.timestamp).toLocaleString()}
+            {withdrawal.timestamp ? new Date(withdrawal.timestamp).toLocaleString() : '-'}
           </GridItem>
 
           <GridItem className={'WithdrawalsListItem__Column WithdrawalsListItem__Column--TxHash'}>
@@ -86,7 +130,7 @@ function WithdrawalsListItem ({ withdrawal, rate, defaultPayoutAddress, l1explor
           </GridItem>
 
           <GridItem className={'WithdrawalsListItem__Column WithdrawalsListItem__Column--Amount'}>
-            <RateTooltip credits={withdrawal.amount} rate={rate}>
+            <RateTooltip credits={amountCredits} rate={rate}>
               <span><BigNumber>{withdrawal.amount}</BigNumber></span>
             </RateTooltip>
           </GridItem>

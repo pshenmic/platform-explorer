@@ -1,8 +1,16 @@
+import type { IconProps } from '@chakra-ui/react'
 import { SuccessIcon, ErrorIcon, QueuedIcon, PooledIcon, BroadcastedIcon } from '../../ui/icons'
 import { Tooltip } from '../../ui/Tooltips'
+import type { ReactElement } from 'react'
 
-function StatusIcon ({ status, ...props }) {
-  const StatusIcons = {
+interface StatusIconProps extends IconProps {
+  status?: string | null
+}
+
+function StatusIcon ({ status, ...props }: StatusIconProps) {
+  if (!status) return null
+
+  const StatusIcons: Record<string, ReactElement> = {
     QUEUED: <QueuedIcon {...props}/>,
     POOLED: <PooledIcon {...props}/>,
     BROADCASTED: <BroadcastedIcon {...props}/>,
@@ -10,7 +18,7 @@ function StatusIcon ({ status, ...props }) {
     EXPIRED: <ErrorIcon {...props}/>
   }
 
-  const tooltipTitle = {
+  const tooltipTitle: Record<string, string> = {
     QUEUED: 'Queued',
     POOLED: 'Pooled',
     BROADCASTED: 'Broadcasted',

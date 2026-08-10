@@ -4,10 +4,33 @@ import { Grid, GridItem } from '@chakra-ui/react'
 import { LoadingList } from '../loading'
 import Pagination from '../pagination'
 import { ErrorMessageBlock } from '../Errors'
+import type { Transfer } from '../../types'
 import './TransfersList.scss'
 
-function TransfersList ({ transfers = [], pagination, headerStyles, loading, itemsCount = 10 }) {
-  const headerExtraClass = {
+type HeaderStyles = 'default' | 'light'
+
+interface ListPagination {
+  onPageChange: (selectedItem: { selected: number }) => void
+  pageCount: number
+  forcePage?: number
+}
+
+interface TransfersListProps {
+  transfers?: Transfer[]
+  pagination?: ListPagination
+  headerStyles?: HeaderStyles
+  loading?: boolean
+  itemsCount?: number
+}
+
+function TransfersList ({
+  transfers = [],
+  pagination,
+  headerStyles,
+  loading,
+  itemsCount = 10
+}: TransfersListProps) {
+  const headerExtraClass: Record<HeaderStyles, string> = {
     default: '',
     light: 'BlocksList__ColumnTitles--Light'
   }
@@ -15,7 +38,7 @@ function TransfersList ({ transfers = [], pagination, headerStyles, loading, ite
   return (
     <div className={'TransfersList'}>
       <div className={'TransfersList__ContentContainer'}>
-        <Grid className={`TransfersList__ColumnTitles ${headerExtraClass?.[headerStyles] || ''}`}>
+        <Grid className={`TransfersList__ColumnTitles ${headerStyles ? headerExtraClass[headerStyles] || '' : ''}`}>
           <GridItem className={'TransfersList__ColumnTitle'}>
             Time
           </GridItem>

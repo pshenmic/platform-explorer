@@ -1,10 +1,28 @@
 import WithdrawalsListItem from './WithdrawalsListItem'
+import type { WithdrawalListItem } from './WithdrawalsListItem'
 import { EmptyListMessage } from '../../ui/lists'
 import { Grid, GridItem } from '@chakra-ui/react'
+import type { Rate } from '../../../types'
 import './WithdrawalsList.scss'
 
-function WithdrawalsList ({ withdrawals = [], headerStyles = 'default', defaultPayoutAddress, rate, l1explorerBaseUrl }) {
-  const headerExtraClass = {
+type HeaderStyles = 'default' | 'light'
+
+interface WithdrawalsListProps {
+  withdrawals?: WithdrawalListItem[]
+  headerStyles?: HeaderStyles
+  defaultPayoutAddress?: string | null
+  rate?: Pick<Rate, 'usd'> | null
+  l1explorerBaseUrl?: string | null
+}
+
+function WithdrawalsList ({
+  withdrawals = [],
+  headerStyles = 'default',
+  defaultPayoutAddress,
+  rate,
+  l1explorerBaseUrl
+}: WithdrawalsListProps) {
+  const headerExtraClass: Record<HeaderStyles, string> = {
     default: '',
     light: 'BlocksList__ColumnTitles--Light'
   }

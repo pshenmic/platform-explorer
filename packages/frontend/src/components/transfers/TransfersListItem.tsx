@@ -1,17 +1,50 @@
 'use client'
 
+import type { ComponentType, ReactNode } from 'react'
 import { Grid, GridItem } from '@chakra-ui/react'
 import { LinkContainer } from '../ui/containers'
-import { BigNumber, Identifier, NotActive, TimeDelta } from '../data'
+// Untyped JS components — loose wrappers until data/* is migrated
+import {
+  BigNumber as BigNumberJs,
+  Identifier as IdentifierJs,
+  NotActive as NotActiveJs,
+  TimeDelta as TimeDeltaJs
+} from '../data'
 import { RateTooltip } from '../ui/Tooltips'
 import Link from 'next/link'
 import { useRef } from 'react'
 import TypeBadge from './TypeBadge'
 import { useRouter } from 'next/navigation'
+import type { Rate, Transfer } from '../../types'
 import './TransfersListItem.scss'
 
-function TransfersListItem ({ transfer, rate }) {
-  const containerRef = useRef(null)
+const BigNumber = BigNumberJs as ComponentType<{ children?: ReactNode, className?: string }>
+const Identifier = IdentifierJs as ComponentType<{
+  children?: ReactNode
+  avatar?: boolean
+  styles?: string[]
+  clickable?: boolean
+  ellipsis?: boolean
+  copyButton?: boolean
+  middleEllipsis?: boolean
+  className?: string
+}>
+const NotActive = NotActiveJs as ComponentType<{ children?: ReactNode, className?: string }>
+const TimeDelta = TimeDeltaJs as ComponentType<{
+  endDate?: string | Date | null
+  startDate?: string | Date | null
+  showTimestampTooltip?: boolean
+  tooltipDate?: string | Date | null
+  format?: string
+}>
+
+interface TransfersListItemProps {
+  transfer: Transfer
+  rate?: Pick<Rate, 'usd'> | null
+}
+
+function TransfersListItem ({ transfer, rate }: TransfersListItemProps) {
+  const containerRef = useRef<HTMLAnchorElement>(null)
   const router = useRouter()
 
   const Recipient = () => {
