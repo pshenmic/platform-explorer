@@ -206,10 +206,18 @@ $txtype-colors: (
     cursor: pointer;
     flex-shrink: 1;
     opacity: 1;
+    transition: opacity 0.14s ease, filter 0.14s ease, transform 0.14s ease, box-shadow 0.14s ease;
+    transform-origin: center;
 
     &:focus-visible {
       outline: 1px solid #fff;
       outline-offset: -1px;
+    }
+
+    &.is-focus {
+      transform: scaleY(1.28);
+      box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.55), 0 0 14px currentColor;
+      z-index: 1;
     }
   }
 
@@ -250,17 +258,15 @@ $txtype-colors: (
     border-radius: 10px;
     text-align: left;
     cursor: pointer;
-    opacity: 1;
-
-    @media (hover: hover) and (pointer: fine) {
-      &:hover {
-        background: rgba(255, 255, 255, 0.04);
-      }
-    }
+    transition: background 0.12s ease;
 
     &:focus-visible {
       outline: 1px solid rgba(var(--chakra-colors-brand-light-rgb), 0.45);
       outline-offset: -1px;
+    }
+
+    &.is-focus {
+      background: rgba(255, 255, 255, 0.07);
     }
 
     @media screen and (max-width: $breakpoint-md) {
@@ -270,33 +276,60 @@ $txtype-colors: (
     }
   }
 
-  @media (hover: hover) and (pointer: fine) {
-    @each $name, $color in $txtype-colors {
-      &__Stack:not(.is-pinned):has([data-type='#{$name}']:hover) {
-        [data-type]:not([data-type='#{$name}']) {
-          opacity: 0.28;
-        }
+  // spotlight focus: dim chrome only so labels/counts stay readable
+  &__Stack.is-focusing {
+    .TxTypesBar__Seg:not(.is-focus) {
+      opacity: 0.42;
+      filter: saturate(0.55);
+    }
 
-        [data-type='#{$name}'] {
-          opacity: 1;
-        }
+    .TxTypesBar__Row:not(.is-focus) {
+      .TxTypesBar__Dot,
+      .TxTypesBar__MeterFill {
+        opacity: 0.4;
+        filter: saturate(0.5);
+      }
+
+      .TxTypesBar__Rank,
+      .TxTypesBar__RowLabel {
+        color: var(--chakra-colors-gray-500);
+      }
+
+      // counts/% are the list's job; never dim below readable
+      .TxTypesBar__RowCount {
+        color: rgba(255, 255, 255, 0.78);
+      }
+
+      .TxTypesBar__RowPct {
+        color: var(--chakra-colors-gray-500);
+        opacity: 0.9;
+      }
+    }
+
+    .TxTypesBar__Row.is-focus {
+      .TxTypesBar__RowLabel {
+        color: #fff;
+      }
+
+      .TxTypesBar__RowCount {
+        color: #fff;
+        font-weight: 600;
+      }
+
+      .TxTypesBar__RowPct {
+        color: rgba(var(--chakra-colors-brand-light-rgb), 0.95);
       }
     }
   }
 
-  @each $name, $color in $txtype-colors {
-    &__Stack.is-pinned[data-pin='#{$name}'] {
-      [data-type]:not([data-type='#{$name}']) {
-        opacity: 0.28;
-      }
+  // pin is a stronger cue than hover without blacking out neighbors
+  &__Stack.is-pinned.is-focusing {
+    .TxTypesBar__Seg:not(.is-focus) {
+      opacity: 0.36;
+    }
 
-      [data-type='#{$name}'] {
-        opacity: 1;
-      }
-
-      .TxTypesBar__Row[data-type='#{$name}'] {
-        background: rgba(255, 255, 255, 0.06);
-      }
+    .TxTypesBar__Row.is-focus {
+      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.1);
     }
   }
 

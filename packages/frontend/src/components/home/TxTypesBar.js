@@ -27,6 +27,7 @@ export default function TxTypesBar ({ enabled = true }) {
   const [state, setState] = useState({ loading: true, error: false, items: [] })
   const [presetIdx, setPresetIdx] = useState(PRESETS.length - 1)
   const [pin, setPin] = useState(null)
+  const [hover, setHover] = useState(null)
 
   useEffect(() => {
     if (!enabled) {
@@ -35,6 +36,7 @@ export default function TxTypesBar ({ enabled = true }) {
     }
     setState(s => ({ ...s, loading: true, error: false }))
     setPin(null)
+    setHover(null)
     const { start, end } = presetRange(PRESETS[presetIdx])
     Api.getTransactionsStatistic(start, end)
       .then(res => setState({ loading: false, error: false, items: Array.isArray(res) ? res : [] }))
@@ -64,33 +66,45 @@ export default function TxTypesBar ({ enabled = true }) {
   }, [state.items])
 
   const total = segments.reduce((sum, s) => sum + s.count, 0)
-  const pinned = pin ? segments.find(s => s.type === pin) : null
-  const top = segments[0] || null
+  // pin beats hover so the header number stays stable while inspecting a type
+  const focusType = pin || hover
+  const focused = focusType ? segments.find(s => s.type === focusType) : null
 
-  const rangeTotal = state.loading ? '—' : total.toLocaleString('en-US')
-  const statMeta = pinned
-    ? `${pinned.label} · ${pinned.count.toLocaleString('en-US')} · ${pctOf(pinned.frac)}`
-    : (top
-        ? `#1 ${top.label} · ${pctOf(top.frac)} · ${rangeLabel}`
-        : (state.error ? '' : rangeLabel))
+  const rangeTotal = state.loading
+    ? '—'
+    : (focused ? focused.count.toLocaleString('en-US') : total.toLocaleString('en-US'))
+  // idle shows range; focus shows name + % (count is the large header figure)
+  const focusLabel = focused
+    ? (focused.type === 'BATCH' ? 'Batch' : focused.label)
+    : null
+  const statMeta = focused
+    ? `${focusLabel} · ${pctOf(focused.frac)}`
+    : (state.error ? '' : rangeLabel)
 
   const togglePin = (type) => {
     setPin(p => (p === type ? null : type))
   }
 
+  const focusHandlers = (type) => ({
+    onMouseEnter: () => setHover(type),
+    onMouseLeave: () => setHover(h => (h === type ? null : h)),
+    onFocus: () => setHover(type),
+    onBlur: () => setHover(h => (h === type ? null : h))
+  })
+
   return (
-    <Box className={'TxTypesBar'} w={'100%'} h={'100%'} as={'section'} aria-label={'Transaction types'}>
+    <Box className={'TxTypesBar'} w={'100%'} h={'100%'} as={'section'} aria-label={'Transaction'}>
       <header className={'TxTypesBar__Head'}>
         <div className={'TxTypesBar__HeadText'}>
           <span className={'TxTypesBar__Eyebrow'}>Network mix</span>
-          <h2 className={'TxTypesBar__Title'}>Transaction types</h2>
+          <h2 className={'TxTypesBar__Title'}>Transaction</h2>
           <p className={'TxTypesBar__Lede'}>
             Share of state transitions. Batch is large because most document and token actions ride inside it.
           </p>
         </div>
         <div className={'TxTypesBar__Controls'}>
           <Presets options={PRESETS} value={presetIdx} onChange={setPresetIdx}/>
-          <div className={`TxTypesBar__Stat${pinned ? ' is-on is-pinned' : ''}`}>
+          <div className={`TxTypesBar__Stat${focused ? ' is-on' : ''}${pin ? ' is-pinned' : ''}`}>
             <div className={'TxTypesBar__StatMain'}>
               <span className={'TxTypesBar__StatCount'}>{rangeTotal}</span>
               <span className={'TxTypesBar__StatUnit'}>txs</span>
@@ -112,8 +126,9 @@ export default function TxTypesBar ({ enabled = true }) {
           : state.error || !total
             ? <div className={'TxTypesBar__Empty'}>No data</div>
             : <div
-                className={`TxTypesBar__Stack${pin ? ' is-pinned' : ''}`}
-                data-pin={pin || undefined}
+                className={`TxTypesBar__Stack${focusType ? ' is-focusing' : ''}${pin ? ' is-pinned' : ''}`}
+                data-focus={focusType || undefined}
+                onMouseLeave={() => { if (!pin) setHover(null) }}
               >
                 <div
                   className={'TxTypesBar__Bar'}
@@ -126,12 +141,13 @@ export default function TxTypesBar ({ enabled = true }) {
                       type={'button'}
                       role={'listitem'}
                       data-type={s.type}
-                      className={`TxTypesBar__Seg TxTypesBar__Seg--${s.cls}`}
+                      className={`TxTypesBar__Seg TxTypesBar__Seg--${s.cls}${focusType === s.type ? ' is-focus' : ''}`}
                       style={{ flexGrow: s.dFrac, flexBasis: 0 }}
                       title={`${s.label}: ${s.count.toLocaleString('en-US')} (${pctOf(s.frac)})`}
                       onClick={() => togglePin(s.type)}
                       aria-pressed={pin === s.type}
                       aria-label={s.label}
+                      {...focusHandlers(s.type)}
                     />
                   ))}
                 </div>
@@ -143,10 +159,11 @@ export default function TxTypesBar ({ enabled = true }) {
                       type={'button'}
                       role={'listitem'}
                       data-type={s.type}
-                      className={'TxTypesBar__Row'}
+                      className={`TxTypesBar__Row${focusType === s.type ? ' is-focus' : ''}`}
                       title={`${s.label}: ${s.count.toLocaleString('en-US')} (${pctOf(s.frac)})`}
                       onClick={() => togglePin(s.type)}
                       aria-pressed={pin === s.type}
+                      {...focusHandlers(s.type)}
                     >
                       <span className={'TxTypesBar__Rank'}>{s.rank}</span>
                       <span className={`TxTypesBar__Dot TxTypesBar__Dot--${s.cls}`}/>
