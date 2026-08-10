@@ -9,10 +9,17 @@ import {
   PopoverTrigger,
   Portal
 } from '@chakra-ui/react'
+import type { ReactNode } from 'react'
 import { InfoIcon } from '../ui/icons'
+import type { WithClassName } from '../../types/common'
 import './PageTitle.scss'
 
-function PageTitle ({ title, description, className }) {
+interface PageTitleProps extends WithClassName {
+  title?: ReactNode
+  description?: ReactNode
+}
+
+function PageTitle ({ title, description, className }: PageTitleProps) {
   return (
     <div className={`PageTitle ${className || ''}`}>
       <Heading className={'PageTitle__Title'} as={'h1'} size={'md'} m={0}>

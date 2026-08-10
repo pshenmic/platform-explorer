@@ -2,9 +2,17 @@ import {
   Box,
   Heading
 } from '@chakra-ui/react'
+import type { ReactNode } from 'react'
+import type { WithClassName } from '../../types/common'
 import './Intro.scss'
 
-function Intro ({ title, description, block, className }) {
+interface IntroProps extends WithClassName {
+  title?: ReactNode
+  description?: ReactNode
+  block?: ReactNode
+}
+
+function Intro ({ title, description, block, className }: IntroProps) {
   return (
     <div className={`Intro ${className || ''}`}>
       <div className={'Intro__Info'}>

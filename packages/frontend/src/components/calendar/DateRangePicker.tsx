@@ -3,8 +3,30 @@
 import { useState, useEffect } from 'react'
 import Calendar from 'react-calendar'
 import { ChevronIcon } from '../ui/icons'
+import type { WithClassName } from '../../types/common'
 import 'react-calendar/dist/Calendar.css'
 import './DateRangePicker.scss'
+
+type CalendarRange = [Date | null, Date | null]
+type CalendarValue = Date | null | CalendarRange
+
+interface MonthPair {
+  start1: Date
+  end1: Date
+  start2: Date
+  end2: Date
+  label: string
+  labelShort: string
+}
+
+interface DateRangePickerProps extends WithClassName {
+  disableFutureDates?: boolean
+  noTopNavigation?: boolean
+  noWeekDay?: boolean
+  changeHandler?: (dates: CalendarValue) => void
+  value?: CalendarRange | null
+  showSingleCalendar?: boolean
+}
 
 const DateRangePicker = ({
   disableFutureDates = false,
@@ -14,9 +36,9 @@ const DateRangePicker = ({
   className,
   value,
   showSingleCalendar
-}) => {
+}: DateRangePickerProps) => {
   const today = new Date()
-  const [range, setRange] = useState([null, null])
+  const [range, setRange] = useState<CalendarRange>([null, null])
   const monthsToShow = 12
   const [currentMonthIndex, setCurrentMonthIndex] = useState(
     disableFutureDates
@@ -28,12 +50,12 @@ const DateRangePicker = ({
   const [activeStartDate, setActiveStartDate] = useState(
     new Date(today.getFullYear(), today.getMonth() - 1, 1)
   )
-  const [displayedMonths, setDisplayedMonths] = useState([null, null])
-  const [monthPairs, setMonthPairs] = useState([])
+  const [displayedMonths, setDisplayedMonths] = useState<[string | null, string | null]>([null, null])
+  const [monthPairs, setMonthPairs] = useState<MonthPair[]>([])
 
   useEffect(() => {
-    const generateMonthPairs = () => {
-      const months = []
+    const generateMonthPairs = (): MonthPair[] => {
+      const months: MonthPair[] = []
       for (let i = 0; i < monthsToShow; i += showSingleCalendar ? 1 : 2) {
         const date1 = new Date(
           today.getFullYear(),
@@ -59,6 +81,7 @@ const DateRangePicker = ({
     }
     const newMonthPairs = generateMonthPairs()
     setMonthPairs(newMonthPairs)
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- matches original JS deps
   }, [monthsToShow, currentMonthIndex, showSingleCalendar])
 
   useEffect(() => {
@@ -79,9 +102,11 @@ const DateRangePicker = ({
     setDisplayedMonths([startMonthLabel, nextMonthLabel])
   }, [activeStartDate])
 
-  useEffect(() => setRange(value), [value])
+  useEffect(() => {
+    if (value) setRange(value)
+  }, [value])
 
-  const handleSetDisplayedMonths = (start1, end2) => {
+  const handleSetDisplayedMonths = (start1: Date, end2: Date) => {
     setDisplayedMonths([
       start1.toLocaleString('en-US', { month: 'long', year: 'numeric' }),
       end2.toLocaleString('en-US', { month: 'long', year: 'numeric' })
@@ -89,11 +114,11 @@ const DateRangePicker = ({
     setActiveStartDate(start1)
   }
 
-  const onDateChange = (dates) => {
+  const onDateChange = (dates: CalendarValue) => {
     if (typeof changeHandler === 'function') changeHandler(dates)
 
     if (Array.isArray(dates)) {
-      setRange(dates)
+      setRange(dates as CalendarRange)
     }
   }
 
@@ -105,7 +130,7 @@ const DateRangePicker = ({
     setCurrentMonthIndex((prev) => prev - (showSingleCalendar ? 1 : 2))
   }
 
-  const tileDisabled = ({ date }) => {
+  const tileDisabled = ({ date }: { date: Date }) => {
     if (disableFutureDates) return date > today
     return false
   }
@@ -161,7 +186,7 @@ const DateRangePicker = ({
                   : ''
               }`
             }
-            onClick={() => handleSetDisplayedMonths(pair.start1, pair.end2, i)}
+            onClick={() => handleSetDisplayedMonths(pair.start1, pair.end2)}
             disabled={disableFutureDates && pair.start1 > today}
           >
             {showSingleCalendar
