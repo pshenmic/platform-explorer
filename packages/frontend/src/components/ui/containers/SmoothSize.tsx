@@ -23,7 +23,7 @@ const SmoothSize = ({
   const containerRef = useRef<HTMLDivElement | null>(null)
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 })
 
-  useResizeObserver(containerRef, (entry) => {
+  useResizeObserver(containerRef as never, (entry) => {
     const { width, height } = entry.contentRect
     setDimensions({ width, height })
   })

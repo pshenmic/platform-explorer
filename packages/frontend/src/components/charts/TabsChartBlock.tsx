@@ -54,7 +54,7 @@ export default function TabsChartBlock ({
 
   useEffect(updateMenuHeight, [menuIsOpen, TimeframeMenuRef])
 
-  useResizeObserver(TimeframeMenuRef, updateMenuHeight)
+  useResizeObserver(TimeframeMenuRef as never, updateMenuHeight)
 
   if (error || (!loading && !data)) {
     return (<ErrorMessageBlock h={`${heightPx}px`}/>)
