@@ -1,1 +1,0 @@
-A block is an ordered batch of transactions added to the chain. Each one records its height, hash, timestamp, and the validator that proposed it, and references the previous block so the history stays verifiable.

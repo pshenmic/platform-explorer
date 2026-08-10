@@ -8,23 +8,6 @@ const __dirname = path.dirname(__filename)
 const nextConfig = {
   sassOptions: {
     includePaths: [path.join(__dirname, 'src/styles')]
-  },
-  webpack: function (config, { webpack }) {
-    config.module.rules.push({
-      test: /\.md$/,
-      use: 'raw-loader'
-    })
-
-    // Force `pshenmic-dpp` to resolve to its wasm build. The package's
-    // `"node"` conditional export still wins in Next.js SSR (webpack default
-    // `conditionNames` doesn't include `"browser"`), pulling a NAPI-native
-    // build that webpack can't bundle. Workaround for owl352/pshenmic-dpp#178.
-    config.resolve.alias = {
-      ...config.resolve.alias,
-      'pshenmic-dpp$': 'pshenmic-dpp/wasm'
-    }
-
-    return config
   }
 }
 
