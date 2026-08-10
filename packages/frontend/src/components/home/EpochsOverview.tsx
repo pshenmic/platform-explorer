@@ -1,8 +1,10 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import type { CSSProperties, ReactNode } from 'react'
+import type { ComponentType } from 'react'
 import Link from 'next/link'
-import { BigNumber, TimeDelta } from '../data'
+import { BigNumber as BigNumberJs, TimeDelta as TimeDeltaJs } from '../data'
 import { BlockIcon } from '../ui/icons'
 import { creditsToDash, removeTrailingZeros, roundUsd } from '../../util'
 import { useCountUp, useScramble } from './hooks'
@@ -10,12 +12,32 @@ import { StatusCell } from './StatusCell'
 import { Skeleton } from './Skeleton'
 import { compact, shortId } from './utils'
 
+// Untyped JS components — loose wrappers until data/* is migrated
+const BigNumber = BigNumberJs as ComponentType<{ children?: ReactNode, className?: string }>
+const TimeDelta = TimeDeltaJs as ComponentType<{
+  endDate?: Date | string | number
+  startDate?: Date | string | number
+  showTimestampTooltip?: boolean
+  format?: string
+  tooltipDate?: Date | string
+}>
+
+interface Point { x: number, y: number }
+interface ScanSeg { l: number, w: number }
+
+// Epoch overview binds many enriched API fields; keep shapes permissive.
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type Loose = any
+type BoundInfo = Loose
+type EpochSlot = Loose
+type EpochPayload = Loose
+
 // 4 epoch points, ends pulled inward so the edge block-markers have room
 const X_POSITIONS = [14, 38, 62, 86]
 // Ocean palette by slot (old -> new): deep blue -> bright aqua; encodes epoch recency.
 // The line flows through these; the selected slot's colour pours into the table below.
 const WAVE_RGB = ['10, 108, 184', '0, 141, 228', '44, 187, 255', '88, 225, 255']
-const slotRgb = (i) => WAVE_RGB[Math.min(Math.max(0, i), WAVE_RGB.length - 1)]
+const slotRgb = (i: number): string => WAVE_RGB[Math.min(Math.max(0, i), WAVE_RGB.length - 1)]
 // edge block-markers sit a breath off the wave rims; epoch segments end at these markers
 const EDGE_L = 1.2
 const EDGE_R = 98.8
@@ -28,7 +50,7 @@ const SCAN_BOTTOM_Y = 100
 const SCAN_MIN_WAVE_SPAN = 10
 
 // y on a polyline at a given x (viewBox coords)
-function yAtX (pts, x) {
+function yAtX (pts: Point[] | null | undefined, x: number): number {
   if (!pts?.length) return 50
   if (x <= pts[0].x) return pts[0].y
   if (x >= pts[pts.length - 1].x) return pts[pts.length - 1].y
@@ -43,20 +65,20 @@ function yAtX (pts, x) {
   return pts[pts.length - 1].y
 }
 
-function ptsToPathD (pts) {
+function ptsToPathD (pts: Point[] | null | undefined): string | null {
   if (!pts?.length) return null
   if (pts.length === 1) return `M ${pts[0].x} ${pts[0].y}`
   return `M ${pts.map(p => `${p.x} ${p.y}`).join(' L ')}`
 }
 
-function spanX (pts) {
+function spanX (pts: Point[] | null | undefined): number {
   if (!pts?.length) return 0
   return Math.abs(pts[pts.length - 1].x - pts[0].x)
 }
 
 // split scan: wave left/right of selection + vertical rails on the clicked epoch; the seam stays static
 // Tiny edge stubs omitted — pathLength=100 turns them into lines.
-function buildScanParts (linePts, seg) {
+function buildScanParts (linePts: Point[] | null | undefined, seg: ScanSeg | null | undefined) {
   if (!linePts?.length || !seg) {
     return { leftD: ptsToPathD(linePts), rightD: null, railDownD: null, railUpD: null }
   }
@@ -101,14 +123,15 @@ function Pending () {
 }
 
 // compact epoch length: fixed per network (1h on testnet, 9.125d on mainnet)
-function durationLabelOf (epoch) {
+function durationLabelOf (epoch: EpochSlot | null | undefined): string | null {
   if (!epoch?.startTime || !epoch?.endTime) return null
   const ms = epoch.endTime - epoch.startTime
   return ms >= 86400000 ? `${(ms / 86400000).toFixed(1)}d` : `${Math.round(ms / 3600000)}h`
 }
 
 // avgBlockTime arrives in ms: seconds under a minute, minutes above
-function avgBlockTimeLabel (ms) {
+function avgBlockTimeLabel (ms: number | null | undefined): string | null {
+  if (ms == null) return null
   const s = ms / 1000
   return s < 60 ? `${s.toFixed(1)}s` : `${(s / 60).toFixed(1)}m`
 }
@@ -119,7 +142,7 @@ const boundDateFmt = new Intl.DateTimeFormat('en-US', { month: 'short', day: 'nu
 
 // session-break marker between two epochs: the block (and moment) one epoch flowed into the next
 // showTag: "block" once on the left edge; approx right edge is ~#height only
-function EpochBound ({ bound, longEpochs, showTag }) {
+function EpochBound ({ bound, longEpochs, showTag }: { bound?: BoundInfo, longEpochs?: boolean, showTag?: boolean }) {
   const label = bound.ts ? (longEpochs ? boundDateFmt : boundTimeFmt).format(new Date(bound.ts)) : null
   // stack: optional "block" pill above height; icon matches CompactBlocks Height column (no #)
   const content = (
@@ -159,7 +182,7 @@ function EpochBound ({ bound, longEpochs, showTag }) {
   )
 }
 
-function EpochPoint ({ epoch, metricLabel, x, y, colorRgb, selected, onSelect, showKind, durationLabel }) {
+function EpochPoint ({ epoch, metricLabel, x, y, colorRgb, selected, onSelect, showKind, durationLabel }: { epoch?: EpochPayload, metricLabel?: ReactNode, x: number, y: number, colorRgb?: string, selected?: boolean, onSelect?: () => void, showKind?: boolean, durationLabel?: string | null }) {
   // the in-progress epoch counts down ("36 min. left") instead of "ended X ago"
   const inProgress = epoch?.endTime > Date.now()
   // sync node pulse with the 5s left→right scan (same period as HomeHeroDash)
@@ -169,7 +192,7 @@ function EpochPoint ({ epoch, metricLabel, x, y, colorRgb, selected, onSelect, s
     <button
       type={'button'}
       className={`HomeHero__WavePoint EpochsWave__Point is-ready${selected ? ' is-selected' : ''}${inProgress ? ' is-live' : ''}`}
-      style={{ left: `${x}%`, top: `${y}%`, '--wave-c-rgb': colorRgb, '--scan-pulse-delay': scanPulseDelay }}
+      style={{ left: `${x}%`, top: `${y}%`, '--wave-c-rgb': colorRgb, '--scan-pulse-delay': scanPulseDelay } as CSSProperties}
       onClick={onSelect}
       aria-pressed={selected}
       aria-label={`Epoch ${epoch?.number}${inProgress ? ', in progress' : ''}${durationLabel ? `, every ${durationLabel}` : ''}`}
@@ -199,7 +222,7 @@ function EpochPoint ({ epoch, metricLabel, x, y, colorRgb, selected, onSelect, s
 }
 
 // tip bodies for the (i) icon — description + optional breakdown in one place (not on the value)
-function TipShell ({ blurb, children }) {
+function TipShell ({ blurb, children }: { blurb?: ReactNode, children?: ReactNode }) {
   return (
     <div className={'EpochsOverview__Tip'}>
       {blurb && <div className={'EpochsOverview__TipBlurb'}>{blurb}</div>}
@@ -208,7 +231,7 @@ function TipShell ({ blurb, children }) {
   )
 }
 
-function feesHint (data, rate) {
+function feesHint (data?: EpochPayload | null, rate?: Loose) {
   const feesCredits = Number(data.totalCollectedFees) || 0
   const dash = creditsToDash(feesCredits)
   const usd = typeof rate?.data?.usd === 'number' ? dash * rate.data.usd : null
@@ -235,7 +258,7 @@ function feesHint (data, rate) {
   )
 }
 
-function votesHint (data) {
+function votesHint (data?: EpochPayload | null) {
   const resource = data.topVotedResource
   const voter = data.bestVoter?.identifier
 
@@ -262,7 +285,7 @@ function votesHint (data) {
   )
 }
 
-function proposersHint (proposers) {
+function proposersHint (proposers?: unknown) {
   const blurb = 'Validators that proposed Platform blocks this epoch (proposer rotates; similar counts mean even share). Click a row to open the validator.'
   if (!Array.isArray(proposers) || !proposers.length) {
     return 'Validator that proposed the most blocks this epoch. Full breakdown is available after the epoch finalizes.'
@@ -301,7 +324,7 @@ function proposersHint (proposers) {
   )
 }
 
-function blocksHint (epoch, endHeight, liveCount) {
+function blocksHint (epoch?: EpochSlot | null, endHeight?: number | null, liveCount?: number | null) {
   const blurb = 'Blocks produced in the epoch (finalized after it ends).'
   if (epoch?.firstBlockHeight == null) return blurb
 
@@ -333,7 +356,7 @@ function blocksHint (epoch, endHeight, liveCount) {
   )
 }
 
-function rewardsHint (rewards, rate) {
+function rewardsHint (rewards?: Loose, rate?: Loose) {
   const blurb = 'The evonode share (37.5%) of the masternode portion of Dash Core block rewards, pooled over this epoch and paid out to participating evonodes when it ends (finalized after the epoch).'
   if (rewards == null) return blurb
 
@@ -350,7 +373,7 @@ function rewardsHint (rewards, rate) {
   )
 }
 
-function documentsHint (created, deleted) {
+function documentsHint (created?: number | null, deleted?: number | null) {
   const blurb = 'Documents created and deleted during this epoch.'
   if (created == null && deleted == null) return blurb
 
@@ -375,7 +398,7 @@ function documentsHint (created, deleted) {
   )
 }
 
-function transactionsHint (data) {
+function transactionsHint (data?: EpochPayload | null) {
   const blurb = 'State transitions processed during this epoch.'
   const tps = data?.tps
   if (tps == null || Number.isNaN(Number(tps))) return blurb
@@ -400,7 +423,7 @@ function transactionsHint (data) {
 }
 
 // stat row for the shown epoch (the selected epoch's colour reaches it via the Beam column)
-function EpochCells ({ data, nextData, rate }) {
+function EpochCells ({ data, nextData, rate }: { data?: EpochPayload | null, nextData?: EpochPayload | null, rate?: Loose }) {
   const epoch = data.epoch
   // the epoch's last block is the one right before the NEXT epoch's first block
   const endHeight = nextData?.epoch?.number === epoch?.number + 1 && nextData?.epoch?.firstBlockHeight != null
@@ -514,22 +537,22 @@ function EpochCells ({ data, nextData, rate }) {
 }
 
 // fixed topology for progressive fill: always n-3…n (or whatever slotNumbers parent passes)
-function deriveSlots (slotNumbers, currentEpoch, arrived) {
+function deriveSlots (slotNumbers?: Loose, currentEpoch?: Loose, arrived?: Loose) {
   if (Array.isArray(slotNumbers) && slotNumbers.length) return slotNumbers
   const cur = currentEpoch?.data?.epoch?.number
   if (typeof cur === 'number') {
     return [cur - 3, cur - 2, cur - 1, cur].filter(n => n >= 0)
   }
   if (arrived.length) {
-    const max = Math.max(...arrived.map(e => e.epoch.number))
+    const max = Math.max(...arrived.map((e: Loose) => e.epoch.number))
     return [max - 3, max - 2, max - 1, max].filter(n => n >= 0)
   }
   return []
 }
 
-export function EpochsOverview ({ title, epochs, currentEpoch, rate, loading, slotNumbers }) {
-  const arrived = Array.isArray(epochs) ? epochs.filter(e => e?.epoch) : []
-  const byNumber = new Map(arrived.map(e => [e.epoch.number, e]))
+export function EpochsOverview ({ title, epochs, currentEpoch, rate, loading, slotNumbers }: { title?: ReactNode, epochs?: Loose, currentEpoch?: Loose, rate?: Loose, loading?: boolean, slotNumbers?: Loose }) {
+  const arrived = Array.isArray(epochs) ? epochs.filter((e: Loose) => e?.epoch) : []
+  const byNumber = new Map(arrived.map((e: Loose) => [e.epoch.number, e]))
   const slots = deriveSlots(slotNumbers, currentEpoch, arrived)
   const lastIdx = Math.max(0, slots.length - 1)
 
@@ -545,7 +568,7 @@ export function EpochsOverview ({ title, epochs, currentEpoch, rate, loading, sl
     }
     setSelected(lastIdx)
   // eslint-disable-next-line react-hooks/exhaustive-deps -- only when slot set or which epochs have data changes
-  }, [slots.join(','), arrived.map(e => e.epoch.number).join(',')])
+  }, [slots.join(','), arrived.map((e: Loose) => e.epoch.number).join(',')])
 
   // status not ready yet: fixed 4-slot ghost scaffold (same footprint as the live wave)
   if (!slots.length) {
@@ -555,7 +578,7 @@ export function EpochsOverview ({ title, epochs, currentEpoch, rate, loading, sl
     const ghostD = `M ${ghostLine.map(p => `${p.x} ${p.y}`).join(' L ')}`
 
     return (
-      <div className={'EpochsOverview'} aria-label={title || 'Epochs'}>
+      <div className={'EpochsOverview'} aria-label={typeof title === 'string' ? title : 'Epochs'}>
         <div className={`HomeHero__Wave EpochsWave${loading ? ' EpochsWave--Skeleton' : ' EpochsWave--Empty'}`}>
           {loading
             ? <>
@@ -592,11 +615,11 @@ export function EpochsOverview ({ title, epochs, currentEpoch, rate, loading, sl
   const knownTx = slots
     .map(n => byNumber.get(n))
     .filter(Boolean)
-    .map(e => Number(e.totalTxCount) || 0)
+    .map((e: Loose) => Number(e.totalTxCount) || 0)
   const tMin = knownTx.length ? Math.min(...knownTx) : 0
   const tMax = knownTx.length ? Math.max(...knownTx) : 1
   const midY = (Y_HIGH + Y_LOW) / 2
-  const yOf = (v) => {
+  const yOf = (v: number) => {
     if (!knownTx.length || tMax === tMin) return midY
     return Y_LOW - ((v - tMin) / (tMax - tMin)) * (Y_LOW - Y_HIGH)
   }
@@ -684,8 +707,12 @@ export function EpochsOverview ({ title, epochs, currentEpoch, rate, loading, sl
   return (
     <div
       className={'EpochsOverview'}
-      style={{ '--epoch-seg-l': seg.l, '--epoch-seg-w': seg.w, '--epoch-color-rgb': slotRgb(selIdx) }}
-      aria-label={title || 'Epochs'}
+      style={{
+        ['--epoch-seg-l' as string]: seg.l,
+        ['--epoch-seg-w' as string]: seg.w,
+        ['--epoch-color-rgb' as string]: slotRgb(selIdx)
+      } as CSSProperties}
+      aria-label={typeof title === 'string' ? title : 'Epochs'}
     >
       <div
         className={`HomeHero__Wave EpochsWave${hasAny ? '' : ' EpochsWave--Skeleton'}`}

@@ -1,17 +1,30 @@
 'use client'
 
+import type { ComponentType, CSSProperties, ReactNode } from 'react'
 import Link from 'next/link'
-import StatusIcon from '../transactions/StatusIcon'
-import TypeBadge from '../transactions/TypeBadge'
-import BatchTypeBadge from '../transactions/BatchTypeBadge'
-import { TimeDelta, NotActive } from '../data'
+import StatusIconJs from '../transactions/StatusIcon'
+import TypeBadgeJs from '../transactions/TypeBadge'
+import BatchTypeBadgeJs from '../transactions/BatchTypeBadge'
+import { TimeDelta as TimeDeltaJs, NotActive as NotActiveJs } from '../data'
 import { CheckmarkIcon, ErrorCircleIcon } from '../ui/icons'
 import { Tooltip } from '../ui/Tooltips'
 import { Skeleton } from './Skeleton'
 import { useLiveList } from './hooks'
+import type { Transaction } from '../../types'
 import './CompactTxList.scss'
 
-const STATUS_LABEL = {
+// Untyped JS components — loose wrappers until data/* / transactions/* are migrated
+const StatusIcon = StatusIconJs as ComponentType<{ status?: string, w?: string, h?: string, className?: string }>
+const TypeBadge = TypeBadgeJs as ComponentType<{ type?: string | number, className?: string }>
+const BatchTypeBadge = BatchTypeBadgeJs as ComponentType<{ batchType?: string, className?: string }>
+const TimeDelta = TimeDeltaJs as ComponentType<{
+  endDate?: Date
+  showTimestampTooltip?: boolean
+  format?: string
+}>
+const NotActive = NotActiveJs as ComponentType<{ children?: ReactNode, className?: string }>
+
+const STATUS_LABEL: Record<string, string> = {
   SUCCESS: 'Success',
   FAIL: 'Failed',
   QUEUED: 'Queued',
@@ -31,9 +44,28 @@ function CompactTxHead () {
   )
 }
 
+type CompactTx = Transaction & {
+  batchType?: string | null
+  hash: string
+}
+
+interface CompactTxListProps {
+  transactions?: CompactTx[] | null
+  limit?: number
+  loading?: boolean
+  moreHref?: string
+  moreLabel?: string
+}
+
 // dense latest-transactions list; refreshes are held back while hovered
-export function CompactTxList ({ transactions, limit = 6, loading, moreHref, moreLabel }) {
-  const { shown, newKeys, hoverBind } = useLiveList(transactions, tx => tx?.hash)
+export function CompactTxList ({
+  transactions,
+  limit = 6,
+  loading,
+  moreHref,
+  moreLabel
+}: CompactTxListProps) {
+  const { shown, newKeys, hoverBind } = useLiveList(transactions, tx => tx?.hash ?? '')
   const rows = Array.isArray(shown) ? shown.slice(0, limit) : []
 
   const footer = moreHref
@@ -65,15 +97,20 @@ export function CompactTxList ({ transactions, limit = 6, loading, moreHref, mor
   return (
     <div className={'CompactTx'} {...hoverBind}>
       <CompactTxHead/>
-      {rows.map((tx, i) => (
+      {rows.map((tx, i) => {
+        const isNew = newKeys.has(tx.hash as string)
+        const style = isNew
+          ? ({ '--stagger': `${i * 50}ms` } as CSSProperties)
+          : undefined
+        return (
         <Link
           key={tx.hash}
           href={`/transaction/${tx.hash}`}
           // rows churn every refresh tick; prefetching each new hash grows the router cache for the tab's lifetime
           prefetch={false}
-          className={`CompactTx__Row${newKeys.has(tx.hash) ? ' is-new' : ''}`}
+          className={`CompactTx__Row${isNew ? ' is-new' : ''}`}
           // fresh rows cascade in top-down instead of swapping in one frame
-          style={newKeys.has(tx.hash) ? { '--stagger': `${i * 50}ms` } : undefined}
+          style={style}
         >
           <span className={'CompactTx__Status'}>
             {tx.status
@@ -98,7 +135,7 @@ export function CompactTxList ({ transactions, limit = 6, loading, moreHref, mor
             {tx.batchType
               ? <BatchTypeBadge batchType={tx.batchType?.replace(/[\\""]/g, '')}/>
               : tx.type !== undefined
-                ? <TypeBadge type={tx.type}/>
+                ? <TypeBadge type={tx.type ?? undefined}/>
                 : <NotActive/>}
           </span>
 
@@ -106,7 +143,8 @@ export function CompactTxList ({ transactions, limit = 6, loading, moreHref, mor
             {tx.timestamp ? <TimeDelta showTimestampTooltip={true} format={'compact'} endDate={new Date(tx.timestamp)}/> : <NotActive/>}
           </span>
         </Link>
-      ))}
+        )
+      })}
       {footer}
     </div>
   )

@@ -3,8 +3,10 @@
 import { useState, useEffect, useRef } from 'react'
 
 // Eases a number from its previous value to target; snaps under reduced-motion / non-numbers.
-export function useCountUp (target, duration = 800) {
-  const [value, setValue] = useState(typeof target === 'number' ? 0 : target)
+export function useCountUp (target: number | string | null | undefined, duration = 800): number | string | null | undefined {
+  const [value, setValue] = useState<number | string | null | undefined>(
+    typeof target === 'number' ? 0 : target
+  )
   const fromRef = useRef(0)
 
   useEffect(() => {
@@ -24,9 +26,9 @@ export function useCountUp (target, duration = 800) {
 
     const from = fromRef.current
     const start = performance.now()
-    let raf
+    let raf: number
 
-    const tick = (now) => {
+    const tick = (now: number) => {
       const p = Math.min((now - start) / duration, 1)
       const eased = 1 - Math.pow(1 - p, 3)
       setValue(Math.round(from + (target - from) * eased))

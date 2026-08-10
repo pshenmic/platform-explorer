@@ -16,13 +16,30 @@ const MAX_COUNTRIES = 12
 const regionNames = (() => {
   try { return new Intl.DisplayNames(['en'], { type: 'region' }) } catch { return null }
 })()
-const countryName = cc => {
+const countryName = (cc: string): string => {
   try { return regionNames?.of(cc) || cc } catch { return cc }
+}
+
+interface PaginationTotal {
+  data?: { pagination?: { total?: number | null } | null } | null
+  loading?: boolean
+}
+
+interface ValidatorGeo {
+  geoIpInfo?: { countryCode?: string | null } | null
+}
+
+interface MasternodesDonutProps {
+  validators?: PaginationTotal | null
+  validatorsActive?: PaginationTotal | null
+  validatorsBanned?: PaginationTotal | null
+  validatorsInactive?: PaginationTotal | null
+  validatorsList?: ValidatorGeo[] | null
 }
 
 // composite "Validator set": status tiles over a stacked status bar;
 // every count is a backend /validators pagination total, no client-side arithmetic
-export default function MasternodesDonut ({ validators, validatorsActive, validatorsBanned, validatorsInactive, validatorsList }) {
+export default function MasternodesDonut ({ validators, validatorsActive, validatorsBanned, validatorsInactive, validatorsList }: MasternodesDonutProps) {
   const total = validators?.data?.pagination?.total
   const active = validatorsActive?.data?.pagination?.total
   const banned = validatorsBanned?.data?.pagination?.total
@@ -41,11 +58,11 @@ export default function MasternodesDonut ({ validators, validatorsActive, valida
   const activeCount = hasActive ? active : 0
   const bannedCount = hasBanned ? banned : 0
 
-  const pct = n => Math.round((n / total) * 100)
+  const pct = (n: number) => Math.round((n / Number(total || 1)) * 100)
 
   // display fractions for the bar: clamp banned so a 1% slice still shows; inactive soaks the rest
-  const activeFrac = hasActive ? Math.min(activeCount / total, 1) : 0
-  const bannedRaw = hasBanned ? bannedCount / total : 0
+  const activeFrac = hasActive ? Math.min(activeCount / Number(total), 1) : 0
+  const bannedRaw = hasBanned ? bannedCount / Number(total) : 0
   const bannedFrac = bannedRaw > 0 ? Math.max(bannedRaw, MIN_SEG_FRAC) : 0
   const inactiveFrac = Math.max(1 - activeFrac - bannedFrac, 0)
 
@@ -66,7 +83,7 @@ export default function MasternodesDonut ({ validators, validatorsActive, valida
 
   // "by country" from geoIpInfo (#822); aggregated on the client (no backend geo endpoint yet).
   // empty on networks that don't ship geoIpInfo yet → the row hides itself
-  const geoCounts = {}
+  const geoCounts: Record<string, number> = {}
   for (const v of Array.isArray(validatorsList) ? validatorsList : []) {
     const cc = v?.geoIpInfo?.countryCode
     if (cc) geoCounts[cc] = (geoCounts[cc] || 0) + 1
@@ -149,7 +166,7 @@ export default function MasternodesDonut ({ validators, validatorsActive, valida
                             width={16}
                             height={16}
                             loading={'lazy'}
-                            onError={e => { e.currentTarget.style.display = 'none' }}
+                            onError={(e) => { e.currentTarget.style.display = 'none' }}
                           />
                           <b>{cc}</b> {n}
                         </span>

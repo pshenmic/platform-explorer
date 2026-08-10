@@ -1,9 +1,17 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
+import type { Dispatch, SetStateAction } from 'react'
 
 // Cycles through items, pausing on hover; stays static under prefers-reduced-motion.
-export function useRotator (items, intervalMs = 4500) {
+export function useRotator<T> (items: T[] | null | undefined, intervalMs = 4500): {
+  item: T | null
+  index: number
+  length: number
+  setIndex: Dispatch<SetStateAction<number>>
+  onMouseEnter: () => void
+  onMouseLeave: () => void
+} {
   const [index, setIndex] = useState(0)
   const pausedRef = useRef(false)
   const length = items?.length || 0
@@ -24,7 +32,7 @@ export function useRotator (items, intervalMs = 4500) {
 
   const safeIndex = length ? index % length : 0
   return {
-    item: length ? items[safeIndex] : null,
+    item: length && items ? items[safeIndex] : null,
     index: safeIndex,
     length,
     setIndex,

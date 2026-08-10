@@ -1,11 +1,26 @@
 'use client'
 
+import type { ComponentType, CSSProperties, ReactNode } from 'react'
 import Link from 'next/link'
-import { BigNumber, TimeDelta, NotActive } from '../data'
+import {
+  BigNumber as BigNumberJs,
+  TimeDelta as TimeDeltaJs,
+  NotActive as NotActiveJs
+} from '../data'
 import { BlockIcon } from '../ui/icons'
 import { Skeleton } from './Skeleton'
 import { useLiveList } from './hooks'
+import type { Block } from '../../types'
 import './CompactBlocksList.scss'
+
+// Untyped JS components — loose wrappers until data/* is migrated
+const BigNumber = BigNumberJs as ComponentType<{ children?: ReactNode, className?: string }>
+const TimeDelta = TimeDeltaJs as ComponentType<{
+  endDate?: Date
+  showTimestampTooltip?: boolean
+  format?: string
+}>
+const NotActive = NotActiveJs as ComponentType<{ children?: ReactNode, className?: string }>
 
 // column-title row, same grid as the data rows, so the list reads like the full tables
 function CompactBlocksHead () {
@@ -19,9 +34,23 @@ function CompactBlocksHead () {
   )
 }
 
+interface CompactBlocksListProps {
+  blocks?: Block[] | null
+  limit?: number
+  loading?: boolean
+  moreHref?: string
+  moreLabel?: string
+}
+
 // dense latest-blocks list; refreshes are held back while hovered
-export function CompactBlocksList ({ blocks, limit = 6, loading, moreHref, moreLabel }) {
-  const { shown, newKeys, hoverBind } = useLiveList(blocks, b => b?.header?.hash)
+export function CompactBlocksList ({
+  blocks,
+  limit = 6,
+  loading,
+  moreHref,
+  moreLabel
+}: CompactBlocksListProps) {
+  const { shown, newKeys, hoverBind } = useLiveList(blocks, b => b?.header?.hash ?? '')
   const rows = Array.isArray(shown) ? shown.slice(0, limit) : []
 
   const footer = moreHref
@@ -59,15 +88,20 @@ export function CompactBlocksList ({ blocks, limit = 6, loading, moreHref, moreL
       {rows.map((block, i) => {
         const header = block?.header
         const txCount = Array.isArray(block?.txs) ? block.txs.length : 0
+        const hash = header?.hash
+        const isNew = hash ? newKeys.has(hash) : false
+        const style = isNew
+          ? ({ '--stagger': `${i * 50}ms` } as CSSProperties)
+          : undefined
         return (
           <Link
-            key={header?.hash}
-            href={`/block/${header?.hash}`}
+            key={hash}
+            href={`/block/${hash}`}
             // rows churn every refresh tick; prefetching each new hash grows the router cache for the tab's lifetime
             prefetch={false}
-            className={`CompactBlocks__Row${newKeys.has(header?.hash) ? ' is-new' : ''}`}
+            className={`CompactBlocks__Row${isNew ? ' is-new' : ''}`}
             // fresh rows cascade in top-down instead of swapping in one frame
-            style={newKeys.has(header?.hash) ? { '--stagger': `${i * 50}ms` } : undefined}
+            style={style}
           >
             <span className={'CompactBlocks__Height'}>
               <BlockIcon className={'CompactBlocks__Icon'} w={'1rem'} h={'1rem'}/>
@@ -75,7 +109,7 @@ export function CompactBlocksList ({ blocks, limit = 6, loading, moreHref, moreL
             </span>
 
             <span className={'CompactBlocks__HashCell'}>
-              {header?.hash ? <span className={'CompactBlocks__HashText'}>{header.hash}</span> : <NotActive/>}
+              {hash ? <span className={'CompactBlocks__HashText'}>{hash}</span> : <NotActive/>}
             </span>
 
             <span className={'CompactBlocks__Txs'}>{txCount} {txCount === 1 ? 'tx' : 'txs'}</span>

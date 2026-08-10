@@ -6,7 +6,7 @@ const HEX = '0123456789ABCDEF'
 
 // Text counterpart of useCountUp for hashes: on change, characters shuffle through random
 // hex digits and lock into the new value left to right. Snaps under reduced motion.
-export function useScramble (text, duration = 500) {
+export function useScramble (text: string | null | undefined, duration = 500): string | null | undefined {
   const [value, setValue] = useState(text)
   const firstRef = useRef(true)
 
@@ -26,9 +26,9 @@ export function useScramble (text, duration = 500) {
     }
 
     const start = performance.now()
-    let raf
+    let raf: number
 
-    const tick = (now) => {
+    const tick = (now: number) => {
       const p = Math.min((now - start) / duration, 1)
       const locked = Math.floor(text.length * p)
       const frame = text

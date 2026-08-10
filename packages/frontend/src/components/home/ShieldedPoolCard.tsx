@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import type { MouseEvent as ReactMouseEvent } from 'react'
 import { Box } from '@chakra-ui/react'
 import * as Api from '../../util/Api'
 import { CardHead, Presets } from '../cards'
@@ -21,25 +22,36 @@ const dateFmt = new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric
 const timeFmt = new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit', hour12: false })
 
 // bar height from the baseline, scaled to the window maximum (min 1.5 units when non-zero)
-function barH (amount, max) {
+function barH (amount: number, max: number): number {
   if (!amount || max <= 0) return 0
   return Math.max((amount / max) * (BASELINE - 3), 1.5)
 }
 
 // adaptive DASH precision: 2 decimals for normal amounts, significant digits for sub-cent flows
 // (a real 0.0046 DASH unshield otherwise rounds to "0.00" and reads as an empty bar)
-function fmtDash (dash) {
+function fmtDash (dash: number): string {
   if (!dash) return '0'
   return Math.abs(dash) >= 0.01 ? dash.toFixed(2) : Number(dash.toPrecision(2)).toString()
 }
 
+interface FlowBucket {
+  ts: string | null
+  inAmt: number
+  outAmt: number
+}
+
+interface ShieldedPoolCardProps {
+  rate?: { data?: { usd?: number } | null } | null
+  enabled?: boolean
+}
+
 // shielded pool overview: balance + in/out totals over diverging in/out flow bars
-export default function ShieldedPoolCard ({ rate, enabled = true }) {
-  const [pool, setPool] = useState({ loading: true, error: false, balance: null, notes: null })
-  const [period, setPeriod] = useState({ loading: true, in: 0, out: 0, transitions: 0 })
-  const [flows, setFlows] = useState({ loading: true, buckets: [] })
+export default function ShieldedPoolCard ({ rate, enabled = true }: ShieldedPoolCardProps) {
+  const [pool, setPool] = useState<{ loading: boolean, error: boolean, balance: string | number | null, notes: string | number | null }>({ loading: true, error: false, balance: null, notes: null })
+  const [period, setPeriod] = useState<{ loading: boolean, in: number, out: number, transitions: number }>({ loading: true, in: 0, out: 0, transitions: 0 })
+  const [flows, setFlows] = useState<{ loading: boolean, buckets: FlowBucket[] }>({ loading: true, buckets: [] })
   const [presetIdx, setPresetIdx] = useState(DEFAULT_PRESET)
-  const [hover, setHover] = useState(null)
+  const [hover, setHover] = useState<{ idx: number, xPct: number } | null>(null)
 
   useEffect(() => {
     if (!enabled) { setPool(s => ({ ...s, loading: true, error: false })); return }
@@ -64,7 +76,7 @@ export default function ShieldedPoolCard ({ rate, enabled = true }) {
     }
     const preset = PRESETS[presetIdx]
     const { start, end } = presetRange(preset)
-    const intervals = SPARK_INTERVALS[preset.label] ?? 30
+    const intervals = SPARK_INTERVALS[preset.label as keyof typeof SPARK_INTERVALS] ?? 30
     setFlows(s => ({ ...s, loading: true }))
     setHover(null)
     Promise.all([
@@ -95,7 +107,7 @@ export default function ShieldedPoolCard ({ rate, enabled = true }) {
   const tipFmt = PRESETS[presetIdx].label === '24h' ? timeFmt : dateFmt
 
   // nearest bucket under the cursor (the whole strip is hoverable, not just the bars)
-  const handleMove = (e) => {
+  const handleMove = (e: ReactMouseEvent<HTMLDivElement>) => {
     if (!buckets.length || flows.loading) return
     const rect = e.currentTarget.getBoundingClientRect()
     const frac = (e.clientX - rect.left) / rect.width
@@ -125,7 +137,7 @@ export default function ShieldedPoolCard ({ rate, enabled = true }) {
           : pool.error
             ? <div className={'ShieldedPool__Empty'}>No data</div>
             : <>
-                <RateTooltip dash={creditsToDash(balanceCredits)} rate={rate?.data} placement={'top'}>
+                <RateTooltip dash={creditsToDash(balanceCredits)} rate={rate?.data as { usd: number } | null | undefined} placement={'top'}>
                   <div className={'ShieldedPool__Balance'}>
                     {fmtDash(creditsToDash(balanceCredits))}
                     <span className={'ShieldedPool__BalanceUnit'}>DASH</span>
@@ -183,8 +195,8 @@ export default function ShieldedPoolCard ({ rate, enabled = true }) {
                         </svg>
 
                         {hovered &&
-                          <div className={'ShieldedPool__Tip'} style={{ left: `${hover.xPct}%` }}>
-                            <span className={'ShieldedPool__TipDate'}>{hovered.ts ? tipFmt.format(new Date(hovered.ts)) : '—'}</span>
+                          <div className={'ShieldedPool__Tip'} style={{ left: `${hover!.xPct}%` }}>
+                            <span className={'ShieldedPool__TipDate'}>{hovered.ts ? tipFmt.format(new Date(hovered.ts as string)) : '—'}</span>
                             <span className={'ShieldedPool__TipRow ShieldedPool__TipRow--in'}>In {fmtDash(creditsToDash(hovered.inAmt))} DASH</span>
                             <span className={'ShieldedPool__TipRow ShieldedPool__TipRow--out'}>Out {fmtDash(creditsToDash(hovered.outAmt))} DASH</span>
                           </div>}
@@ -192,10 +204,10 @@ export default function ShieldedPoolCard ({ rate, enabled = true }) {
 
                   {!flows.loading && buckets.length >= 2 &&
                     <div className={'ShieldedPool__Axis'}>
-                      <span>{buckets[0].ts ? tipFmt.format(new Date(buckets[0].ts)) : ''}</span>
+                      <span>{buckets[0].ts ? tipFmt.format(new Date(buckets[0].ts as string)) : ''}</span>
                       {buckets.length >= 5 &&
-                        <span>{buckets[Math.floor(buckets.length / 2)].ts ? tipFmt.format(new Date(buckets[Math.floor(buckets.length / 2)].ts)) : ''}</span>}
-                      <span>{buckets[buckets.length - 1].ts ? tipFmt.format(new Date(buckets[buckets.length - 1].ts)) : ''}</span>
+                        <span>{buckets[Math.floor(buckets.length / 2)].ts ? tipFmt.format(new Date(buckets[Math.floor(buckets.length / 2)].ts as string)) : ''}</span>}
+                      <span>{buckets[buckets.length - 1].ts ? tipFmt.format(new Date(buckets[buckets.length - 1].ts as string)) : ''}</span>
                     </div>}
 
                   <div className={'ShieldedPool__SparkLegend'}>

@@ -14,13 +14,27 @@ import './TxTypesBar.scss'
 // a sub-percent slice would collapse below the segment gap: clamp for display, chips keep exact counts
 const MIN_SEG_FRAC = 0.008
 
-function labelOf (type) {
-  return TransactionTypesInfo[type]?.title ?? type
+interface TxTypeStat {
+  transactionType?: string
+  count?: number
+}
+
+function labelOf (type?: string): string {
+  if (!type) return 'Unknown'
+  return (TransactionTypesInfo as Record<string, { title?: string }>)[type]?.title ?? type
+}
+
+interface TxTypesBarProps {
+  enabled?: boolean
 }
 
 // tx counts by state transition type for a chosen time range: one stacked share bar over chips
-export default function TxTypesBar ({ enabled = true }) {
-  const [state, setState] = useState({ loading: true, error: false, items: [] })
+export default function TxTypesBar ({ enabled = true }: TxTypesBarProps) {
+  const [state, setState] = useState<{ loading: boolean, error: boolean, items: TxTypeStat[] }>({
+    loading: true,
+    error: false,
+    items: []
+  })
   // default to "All" so the initial view stays the familiar all-time distribution
   const [presetIdx, setPresetIdx] = useState(PRESETS.length - 1)
 
@@ -32,7 +46,7 @@ export default function TxTypesBar ({ enabled = true }) {
     setState(s => ({ ...s, loading: true, error: false }))
     const { start, end } = presetRange(PRESETS[presetIdx])
     Api.getTransactionsStatistic(start, end)
-      .then(res => setState({ loading: false, error: false, items: Array.isArray(res) ? res : [] }))
+      .then(res => setState({ loading: false, error: false, items: Array.isArray(res) ? res as TxTypeStat[] : [] }))
       .catch(() => setState({ loading: false, error: true, items: [] }))
   }, [enabled, presetIdx])
 
@@ -54,11 +68,14 @@ export default function TxTypesBar ({ enabled = true }) {
     frac: rawFracs[i],
     dFrac: clamped[i] / clampedSum,
     // per-type shade of the badge family hue keeps segments tellable yet on-brand
-    cls: TransactionTypesInfo[t.transactionType] ? t.transactionType : 'UNKNOWN'
+    cls: t.transactionType && (TransactionTypesInfo as Record<string, unknown>)[t.transactionType]
+      ? t.transactionType
+      : 'UNKNOWN'
   }))
 
-  const pctOf = frac => (frac < 0.01 ? '<1%' : `${Math.round(frac * 100)}%`)
-  const tipOf = s => `${s.label} · ${s.count.toLocaleString('en-US')} · ${pctOf(s.frac)}`
+  const pctOf = (frac: number) => (frac < 0.01 ? '<1%' : `${Math.round(frac * 100)}%`)
+  const tipOf = (s: { label: string, count: number, frac: number }) =>
+    `${s.label} · ${s.count.toLocaleString('en-US')} · ${pctOf(s.frac)}`
 
   return (
     <Box className={'InfoBlock InfoBlock--NoBorder TxTypesBar'} w={'100%'}>

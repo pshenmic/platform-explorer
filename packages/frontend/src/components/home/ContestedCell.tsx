@@ -5,12 +5,23 @@ import contestedResources from '../../util/contestedResources'
 import { useRotator, useCountUp } from './hooks'
 import { contestedHref, trimName } from './utils'
 import { GovDots } from './GovDots'
+import type { ContestedResource, LoadableState, PaginatedResultSet } from '../../types'
 
 // the rotator and the dot pager must share one list, or the active dot runs off the pager
 const FEED_LIMIT = 6
 
+type ContestedFeedState = LoadableState<PaginatedResultSet<ContestedResource>> | {
+  data?: PaginatedResultSet<ContestedResource> | null
+}
+
+interface ContestedCellProps {
+  count?: number | null
+  active?: ContestedFeedState | null
+  latest?: ContestedFeedState | null
+}
+
 // Count + pill (left); rotating active/latest contested name over bullet dots (right).
-export function ContestedCell ({ count, active, latest }) {
+export function ContestedCell ({ count, active, latest }: ContestedCellProps) {
   const activeItems = active?.data?.resultSet || []
   const latestItems = latest?.data?.resultSet || []
   const feed = (activeItems.length > 0 ? activeItems : latestItems).slice(0, FEED_LIMIT)
@@ -38,7 +49,7 @@ export function ContestedCell ({ count, active, latest }) {
         >
           {/* key remounts the ticker so each rotation slides in; .dash TLD gets the brand accent */}
           <span key={rotator.index} className={'HomeHero__GovTicker'}>
-            <Link href={contestedHref(item.resourceValue)} className={'HomeHero__ContestedName'} title={name}>
+            <Link href={contestedHref(item.resourceValue)} className={'HomeHero__ContestedName'} title={name ?? undefined}>
               {(() => {
                 // middle-trim keeps both ends readable; the .dash suffix stays and is accented
                 const { text, dash } = trimName(name)

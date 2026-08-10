@@ -3,9 +3,9 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 
 // holds incoming rows while hovered (WCAG 2.2.2: no motion under the cursor) and flags new rows
-export function useLiveList (items, keyOf) {
-  const [shown, setShown] = useState(items)
-  const [newKeys, setNewKeys] = useState(() => new Set())
+export function useLiveList<T> (items: T[] | null | undefined, keyOf: (item: T) => string | number) {
+  const [shown, setShown] = useState<T[] | null | undefined>(items)
+  const [newKeys, setNewKeys] = useState<Set<string | number>>(() => new Set())
   const hoverRef = useRef(false)
   const latestRef = useRef(items)
   const shownRef = useRef(items)
@@ -13,7 +13,7 @@ export function useLiveList (items, keyOf) {
   latestRef.current = items
   keyRef.current = keyOf
 
-  const apply = useCallback((next) => {
+  const apply = useCallback((next: T[] | null | undefined) => {
     const prevKeys = new Set((shownRef.current || []).map(keyRef.current))
     shownRef.current = next
     // the very first payload isn't "new" — only rows appearing on later refreshes fade in

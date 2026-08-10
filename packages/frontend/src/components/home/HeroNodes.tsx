@@ -10,21 +10,32 @@ const INTRO_MS = 4000
 const BRAND = '0, 141, 228'
 const BRAND_LIGHT = '44, 187, 255'
 
+interface Node {
+  x: number
+  y: number
+  vx: number
+  vy: number
+  r: number
+  pulse: number
+}
+
 export default function HeroNodes () {
-  const canvasRef = useRef(null)
+  const canvasRef = useRef<HTMLCanvasElement | null>(null)
 
   useEffect(() => {
     const canvas = canvasRef.current
     if (!canvas) return
     const ctx = canvas.getContext('2d')
+    if (!ctx) return
     const parent = canvas.parentElement
+    if (!parent) return
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
     let width = 0
     let height = 0
     let dpr = 1
-    let nodes = []
-    let raf = null
+    let nodes: Node[] = []
+    let raf: number | null = null
     let inView = true
     let interactive = false
     let introUntil = 0
@@ -32,13 +43,13 @@ export default function HeroNodes () {
     const mouse = { x: -1, y: -1 }
 
     // center-weighted X: denser middle so the constellation sits behind the brand copy
-    const centerBiasedX = (seed) => {
+    const centerBiasedX = (seed: number) => {
       const u = ((Math.sin(seed * 12.9898) * 43758.5453) % 1 + 1) % 1
       const v = ((Math.sin(seed * 78.233) * 24634.6345) % 1 + 1) % 1
       const centered = 0.5 + (u - 0.5) * Math.pow(v, 0.55)
       return Math.min(0.98, Math.max(0.02, centered))
     }
-    const rand = (seed) => (((Math.sin(seed * 91.7) * 19273.1) % 1) + 1) % 1
+    const rand = (seed: number) => (((Math.sin(seed * 91.7) * 19273.1) % 1) + 1) % 1
 
     const build = () => {
       const count = Math.max(NODE_MIN, Math.min(NODE_MAX, Math.round(width / 42)))
@@ -56,7 +67,7 @@ export default function HeroNodes () {
     }
 
     // animate=false freezes positions (idle snapshot); links only while interactive
-    const draw = (t, animate) => {
+    const draw = (t: number, animate: boolean) => {
       ctx.clearRect(0, 0, width, height)
 
       if (animate) {
@@ -137,7 +148,7 @@ export default function HeroNodes () {
     }
 
     // ~24fps while moving; full stop (last frame kept) once idle
-    const loop = (t) => {
+    const loop = (t: number) => {
       if (!shouldRun()) {
         draw(t, false)
         raf = null
@@ -159,7 +170,7 @@ export default function HeroNodes () {
       else start()
     }
 
-    const onMove = (e) => {
+    const onMove = (e: MouseEvent) => {
       const rect = canvas.getBoundingClientRect()
       mouse.x = e.clientX - rect.left
       mouse.y = e.clientY - rect.top
