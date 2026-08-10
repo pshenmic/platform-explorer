@@ -1,9 +1,14 @@
 import { SignatureIcon, DocumentIcon } from '@components/ui/icons'
 import { FORM_MODE_ENUM } from './constants'
+import type { FormMode } from './constants'
 
 import styles from './InitialScreen.module.scss'
 
-export const InitialScreen = ({ setMode }) => (
+interface InitialScreenProps {
+  setMode: (mode: FormMode) => void
+}
+
+export const InitialScreen = ({ setMode }: InitialScreenProps) => (
   <div className={styles.root}>
     <span className={styles.description}>
       Select what information you would like to edit. You can change Data

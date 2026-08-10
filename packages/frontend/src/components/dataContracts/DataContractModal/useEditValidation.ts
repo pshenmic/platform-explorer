@@ -3,6 +3,7 @@ import {
   checkPlatformExtension,
   ExtensionStatusEnum
 } from '../../../util/extension'
+import type { WalletContextValue } from 'src/contexts'
 
 export const EditControlState = {
   INIT_INVALID: 'INIT_INVALID',
@@ -10,18 +11,25 @@ export const EditControlState = {
   USER_HAS_NO_WALLET: 'USER_HAS_NO_WALLET',
   USER_IS_NOT_OWNER: 'USER_IS_NOT_OWNER',
   VALID: 'VALID'
-}
+} as const
 
-const VISIBLE_STATES = [
+export type EditControlStateValue = (typeof EditControlState)[keyof typeof EditControlState]
+
+const VISIBLE_STATES: EditControlStateValue[] = [
   EditControlState.USER_HAS_NO_WALLET,
   EditControlState.VALID
 ]
 
-export const useEditValidation = ({ wallet, ownerIdentifier }) => {
+interface UseEditValidationParams {
+  wallet: WalletContextValue
+  ownerIdentifier: string | null | undefined
+}
+
+export const useEditValidation = ({ wallet, ownerIdentifier }: UseEditValidationParams) => {
   const isExtensionConnected =
     checkPlatformExtension() === ExtensionStatusEnum.CONNECTED
 
-  const [editValidateState, setEditValidate] = useState(
+  const [editValidateState, setEditValidate] = useState<EditControlStateValue>(
     EditControlState.INIT_INVALID
   )
 

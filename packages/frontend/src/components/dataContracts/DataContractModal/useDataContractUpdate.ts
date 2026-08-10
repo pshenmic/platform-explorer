@@ -3,17 +3,74 @@ import { useActiveNetwork, useWallet } from 'src/contexts'
 
 const DOCUMENT_TYPE = 'dataContracts'
 
-export const useDataContractUpdate = ({ owner, dataContractId }) => {
-  const sdk = window.dashPlatformSDK
-  const signer = window.dashPlatformExtension?.signer
+interface UseDataContractUpdateParams {
+  owner: string
+  dataContractId: string
+}
+
+interface DescriptionUpdate {
+  description?: string
+  keywords?: string[]
+}
+
+// Minimal SDK surface used by this hook (extension-injected window.dashPlatformSDK).
+interface DataContractSdkShape {
+  keywords?: string[]
+  description?: string
+  version: number
+}
+
+interface DashPlatformSdkDocuments {
+  create: (
+    dataContractId: string | undefined,
+    documentType: string,
+    fields: Record<string, unknown>,
+    owner: string
+  ) => Promise<unknown>
+  createStateTransition: (
+    document: unknown,
+    action: string,
+    params: { identityContractNonce: bigint }
+  ) => Promise<{ base64: () => string }>
+}
+
+interface DashPlatformSdkDataContracts {
+  getDataContractByIdentifier: (id: string) => Promise<DataContractSdkShape>
+  createStateTransition: (
+    dataContract: DataContractSdkShape,
+    action: string,
+    nonce: bigint
+  ) => Promise<{ base64: () => string }>
+}
+
+interface DashPlatformSdkIdentities {
+  getIdentityContractNonce: (owner: string, dataContractId: string | undefined) => Promise<bigint>
+}
+
+interface DataContractUpdateSdk {
+  documents: DashPlatformSdkDocuments
+  dataContracts: DashPlatformSdkDataContracts
+  identities: DashPlatformSdkIdentities
+}
+
+interface ExtensionSigner {
+  signAndBroadcast: (base64: string) => Promise<unknown>
+}
+
+export const useDataContractUpdate = ({ owner, dataContractId }: UseDataContractUpdateParams) => {
+  // Cast: window.dashPlatformSDK is declared minimally elsewhere; this hook needs a wider surface.
+  const sdk = window.dashPlatformSDK as unknown as DataContractUpdateSdk | undefined
+  const signer = window.dashPlatformExtension?.signer as ExtensionSigner | undefined
   const { connectWallet, connected } = useWallet()
   const { dataContractPE } = useActiveNetwork()
   const queryClient = useQueryClient()
 
-  const handleChangeName = async (name) => {
+  const handleChangeName = async (name: string) => {
     if (!connected.current) {
       await connectWallet()
     }
+
+    if (!sdk || !signer) return
 
     try {
       const dataContractsFields = {
@@ -51,10 +108,12 @@ export const useDataContractUpdate = ({ owner, dataContractId }) => {
     }
   }
 
-  const handleChangeDescription = async ({ description, keywords }) => {
+  const handleChangeDescription = async ({ description, keywords }: DescriptionUpdate) => {
     if (!connected.current) {
       await connectWallet()
     }
+
+    if (!sdk || !signer) return
 
     try {
       const dataContract =

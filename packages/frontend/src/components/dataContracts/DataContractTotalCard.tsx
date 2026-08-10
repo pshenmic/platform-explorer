@@ -1,17 +1,104 @@
-import ImageGenerator from '../imageGenerator'
-import { Alias, DateBlock, Identifier, InfoLine } from '../data'
-import { ValueCard } from '../cards'
+import type { ComponentType, ReactNode } from 'react'
+import ImageGeneratorJs from '../imageGenerator'
+import {
+  Alias as AliasJs,
+  DateBlock as DateBlockJs,
+  Identifier as IdentifierJs,
+  InfoLine as InfoLineJs
+} from '../data'
+import { ValueCard as ValueCardJs } from '../cards'
 import { findActiveAlias } from '../../util'
 import { DataContractTitle } from './DataContractTitle'
+import type { LoadableState, Owner, WithClassName } from '../../types'
 
 import './DataContractTotalCard.scss'
 
-function DataContractTotalCard ({ dataContract, className }) {
-  const activeAlias = findActiveAlias(dataContract?.data?.owner?.aliases)
+// Untyped JS components — loose wrappers until data/* and cards/* are migrated
+const ImageGenerator = ImageGeneratorJs as ComponentType<{
+  username?: string | null
+  className?: string
+  lightness?: number
+  saturation?: number
+  width?: number
+  height?: number
+}>
+const Alias = AliasJs as ComponentType<{
+  children?: ReactNode
+  avatarSource?: string | null
+  className?: string
+  ellipsis?: boolean
+}>
+const DateBlock = DateBlockJs as ComponentType<{
+  timestamp?: string | null
+  format?: string
+  showRelativeTooltip?: boolean
+}>
+const Identifier = IdentifierJs as ComponentType<{
+  children?: ReactNode
+  className?: string
+  avatar?: boolean
+  copyButton?: boolean
+  ellipsis?: boolean
+  styles?: string[]
+}>
+const InfoLine = InfoLineJs as ComponentType<{
+  title?: ReactNode
+  value?: ReactNode
+  icon?: ReactNode
+  loading?: boolean
+  error?: unknown
+  postfix?: string
+  className?: string
+  align?: string
+}>
+const ValueCard = ValueCardJs as ComponentType<{
+  children?: ReactNode
+  link?: string
+  className?: string
+  clickable?: boolean
+  loading?: boolean
+  colorScheme?: string
+  size?: string
+}>
+
+/** Enriched detail shape returned by GET /dataContract/:id (owner/topIdentity as objects). */
+interface DataContractDetail {
+  identifier?: string | null
+  name?: string | null
+  description?: string | null
+  keywords?: string[] | null
+  timestamp?: string | null
+  txHash?: string | null
+  owner?: Owner | string | null
+}
+
+interface DataContractTotalCardProps extends WithClassName {
+  dataContract: LoadableState<DataContractDetail> | {
+    data?: DataContractDetail | null
+    loading?: boolean
+    error?: unknown
+  }
+}
+
+function DataContractTotalCard ({ dataContract, className }: DataContractTotalCardProps) {
+  const owner = dataContract?.data?.owner
+  const ownerId = typeof owner === 'object' && owner !== null ? owner.identifier : owner
+  const ownerAliases = typeof owner === 'object' && owner !== null ? owner.aliases : undefined
+  const activeAlias = findActiveAlias(ownerAliases)
+
+  const titleData = dataContract.data && owner
+    ? {
+        identifier: dataContract.data.identifier ?? '',
+        name: dataContract.data.name,
+        description: dataContract.data.description,
+        keywords: dataContract.data.keywords,
+        owner
+      }
+    : null
 
   return (
     <div className={`InfoBlock InfoBlock--Gradient DataContractTotalCard ${dataContract.loading ? 'DataContractTotalCard--Loading' : ''} ${className || ''}`}>
-      <DataContractTitle dataContract={dataContract.data} />
+      <DataContractTitle dataContract={titleData} />
       <div className={'DataContractTotalCard__Header'}>
         <div className={'DataContractTotalCard__HeaderLines'}>
           <InfoLine
@@ -36,9 +123,9 @@ function DataContractTotalCard ({ dataContract, className }) {
             loading={dataContract.loading}
             error={dataContract.error}
             value={
-              <ValueCard link={`/identity/${dataContract.data?.owner?.identifier}`}>
+              <ValueCard link={`/identity/${ownerId}`}>
                 {activeAlias
-                  ? <Alias avatarSource={dataContract.data?.owner?.identifier}>{activeAlias.alias}</Alias>
+                  ? <Alias avatarSource={ownerId}>{activeAlias.alias}</Alias>
                   : <Identifier
                     avatar={true}
                     className={''}
@@ -46,7 +133,7 @@ function DataContractTotalCard ({ dataContract, className }) {
                     styles={['highlight-both']}
                     ellipsis={false}
                   >
-                    {dataContract.data?.owner?.identifier}
+                    {ownerId}
                   </Identifier>
                 }
               </ValueCard>

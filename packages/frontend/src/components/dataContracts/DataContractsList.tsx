@@ -1,4 +1,5 @@
 import DataContractsListItem from './DataContractsListItem'
+import type { DataContractsListItemData } from './DataContractsListItem'
 import { EmptyListMessage } from '../ui/lists'
 import Pagination from '../pagination'
 import { ErrorMessageBlock } from '../Errors'
@@ -15,7 +16,7 @@ import {
 
 import './DataContractsList.scss'
 
-const columnHelper = createColumnHelper()
+const columnHelper = createColumnHelper<DataContractsListItemData>()
 
 const columns = [
   columnHelper.accessor('identifier', {
@@ -37,12 +38,39 @@ const columns = [
     header: 'Timestamp'
   })
 ]
-const headerExtraClass = {
+const headerExtraClass: Record<string, string> = {
   default: '',
   light: 'DataContractsList__ColumnTitles--Light'
 }
 
-function DataContractsList ({ dataContracts = [], headerStyles, pagination, loading, itemsCount = 10, pinnedGroup = null }) {
+interface PaginationProps {
+  onPageChange: (selectedItem: { selected: number }) => void
+  pageCount: number
+  forcePage?: number
+}
+
+interface PinnedGroup {
+  label?: string
+  items?: DataContractsListItemData[]
+}
+
+interface DataContractsListProps {
+  dataContracts?: DataContractsListItemData[]
+  headerStyles?: string
+  pagination?: PaginationProps | null
+  loading?: boolean
+  itemsCount?: number
+  pinnedGroup?: PinnedGroup | null
+}
+
+function DataContractsList ({
+  dataContracts = [],
+  headerStyles,
+  pagination,
+  loading,
+  itemsCount = 10,
+  pinnedGroup = null
+}: DataContractsListProps) {
   const [groupOpen, setGroupOpen] = useState(true)
   const table = useReactTable({
     data: dataContracts,
@@ -55,7 +83,7 @@ function DataContractsList ({ dataContracts = [], headerStyles, pagination, load
 
   return (
     <div className={'DataContractsList'}>
-      <Grid className={`DataContractsList__ColumnTitles ${headerExtraClass?.[headerStyles] || ''}`}>
+      <Grid className={`DataContractsList__ColumnTitles ${headerExtraClass?.[headerStyles ?? ''] || ''}`}>
         <GridItem className={'DataContractsList__ColumnTitle DataContractsList__ColumnTitle--Identifier'}>
           Identifier
         </GridItem>
@@ -85,7 +113,7 @@ function DataContractsList ({ dataContracts = [], headerStyles, pagination, load
             aria-expanded={groupOpen}
           >
             <ChevronIcon className={`DataContractsList__GroupChevron ${groupOpen ? 'DataContractsList__GroupChevron--Open' : ''}`}/>
-            <span className={'DataContractsList__GroupLabel'}>{pinnedGroup.label}</span>
+            <span className={'DataContractsList__GroupLabel'}>{pinnedGroup?.label}</span>
             <span className={'DataContractsList__GroupCount'}>{pinnedItems.length}</span>
           </button>
 

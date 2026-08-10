@@ -1,22 +1,47 @@
 'use client'
 
 import { useState } from 'react'
+import type { ComponentType, ReactNode } from 'react'
 import { Flex, Box } from '@chakra-ui/react'
 import { InfoCard } from '../cards'
 import { ErrorMessageBlock } from '../Errors'
-import ImageGenerator from '../imageGenerator'
-import { Identifier } from '../data'
+import ImageGeneratorJs from '../imageGenerator'
+import { Identifier as IdentifierJs } from '../data'
 import { Slider, SliderElement } from '../ui/Slider'
 import { WheelControls } from '../ui/Slider/plugins'
+import type { KeenSliderPlugin } from 'keen-slider/react'
+import type { DataContract, LoadableState, PaginatedResultSet, WithClassName } from '../../types'
 import './DataContractCard.scss'
 import './DataContractCards.scss'
 
-function DataContractCard ({ dataContract, className, loading = false }) {
+// Untyped JS components — loose wrappers until data/* / imageGenerator are migrated
+const ImageGenerator = ImageGeneratorJs as ComponentType<{
+  username?: string | null
+  className?: string
+  lightness?: number
+  saturation?: number
+  width?: number
+  height?: number
+}>
+const Identifier = IdentifierJs as ComponentType<{
+  children?: ReactNode
+  className?: string
+  avatar?: boolean
+  ellipsis?: boolean
+  styles?: string[]
+}>
+
+interface DataContractCardProps extends WithClassName {
+  dataContract: Pick<DataContract, 'identifier' | 'name'>
+  loading?: boolean
+}
+
+function DataContractCard ({ dataContract, className, loading = false }: DataContractCardProps) {
   return (
     <InfoCard
       className={`DataContractCard ${className || ''}`}
       loading={loading}
-      link={!loading ? `/dataContract/${dataContract.identifier}` : null}
+      link={!loading ? `/dataContract/${dataContract.identifier}` : undefined}
       clickable={true}
     >
       {!loading
@@ -35,11 +60,19 @@ function DataContractCard ({ dataContract, className, loading = false }) {
   )
 }
 
-function DataContractCards ({ items, className }) {
+interface DataContractCardsProps extends WithClassName {
+  items: LoadableState<PaginatedResultSet<DataContract>> | {
+    data?: PaginatedResultSet<DataContract> | null
+    error?: unknown
+  }
+}
+
+function DataContractCards ({ items, className }: DataContractCardsProps) {
   const [sliderLoaded, setSliderLoaded] = useState(false)
 
-  const chunkArray = (array, chunkSize) => {
-    const result = []
+  const chunkArray = <T,>(array: T[] | undefined, chunkSize: number): T[][] => {
+    const result: T[][] = []
+    if (!array) return result
     for (let i = 0; i < array.length; i += chunkSize) {
       result.push(array.slice(i, i + chunkSize))
     }
@@ -67,18 +100,20 @@ function DataContractCards ({ items, className }) {
               slides: { perView: 2 }
             }}
             createdCallback={() => setSliderLoaded(true)}
-            plugins={[WheelControls]}
+            plugins={[WheelControls as unknown as KeenSliderPlugin]}
           >
             {columns.map((column, columnIndex) => (
-              <SliderElement className={'DataContractCards__CardsColumn'} key={columnIndex} style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                {column.map((dataContract, i) => (
-                  <DataContractCard
-                    className={'DataContractCards__Card'}
-                    dataContract={dataContract}
-                    loading={!sliderLoaded}
-                    key={i}
-                  />
-                ))}
+              <SliderElement className={'DataContractCards__CardsColumn'} key={columnIndex}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                  {column.map((dataContract, i) => (
+                    <DataContractCard
+                      className={'DataContractCards__Card'}
+                      dataContract={dataContract}
+                      loading={!sliderLoaded}
+                      key={i}
+                    />
+                  ))}
+                </div>
               </SliderElement>
             ))}
           </Slider>

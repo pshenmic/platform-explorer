@@ -1,18 +1,34 @@
 import { ValueContainer } from '../ui/containers'
+import type { WithClassName } from '../../types'
 import './InternalConfigCard.scss'
 
-const storageKeyRequirementsColors = {
+const storageKeyRequirementsColors: Record<string, 'green' | 'blue' | 'orange'> = {
   Unique: 'green',
   Multiple: 'blue',
   MultipleReferenceToLatest: 'orange'
 }
 
-const boolColors = {
+const boolColors: Record<string, 'green' | 'red'> = {
   true: 'green',
   false: 'red'
 }
 
-function InternalConfigCard ({ config, className }) {
+interface InternalConfig {
+  canBeDeleted?: boolean
+  readonly?: boolean
+  keepsHistory?: boolean
+  documentsKeepHistoryContractDefault?: boolean
+  documentsMutableContractDefault?: boolean
+  documentsCanBeDeletedContractDefault?: boolean
+  requiresIdentityEncryptionBoundedKey?: string | null
+  requiresIdentityDecryptionBoundedKey?: string | null
+}
+
+interface InternalConfigCardProps extends WithClassName {
+  config?: InternalConfig | null
+}
+
+function InternalConfigCard ({ config, className }: InternalConfigCardProps) {
   return (
     <div className={`InfoBlock InfoBlock--Gradient InternalConfigCard ${className || ''}`}>
 
@@ -23,7 +39,7 @@ function InternalConfigCard ({ config, className }) {
         <ValueContainer
           className={'InternalConfigCard__ValueContainer'}
           size={'sm'}
-          colorScheme={boolColors?.[config?.canBeDeleted]}
+          colorScheme={boolColors?.[String(config?.canBeDeleted)]}
         >
           {config?.canBeDeleted ? 'Yes' : 'No'}
         </ValueContainer>
@@ -36,7 +52,7 @@ function InternalConfigCard ({ config, className }) {
         <ValueContainer
           className={'InternalConfigCard__ValueContainer'}
           size={'sm'}
-          colorScheme={boolColors?.[config?.readonly]}
+          colorScheme={boolColors?.[String(config?.readonly)]}
         >
           {config?.readonly ? 'Yes' : 'No'}
         </ValueContainer>
@@ -49,7 +65,7 @@ function InternalConfigCard ({ config, className }) {
         <ValueContainer
           className={'InternalConfigCard__ValueContainer'}
           size={'sm'}
-          colorScheme={boolColors?.[config?.keepsHistory]}
+          colorScheme={boolColors?.[String(config?.keepsHistory)]}
         >
           {config?.keepsHistory ? 'Yes' : 'No'}
         </ValueContainer>
@@ -62,7 +78,7 @@ function InternalConfigCard ({ config, className }) {
         <ValueContainer
           className={'InternalConfigCard__ValueContainer'}
           size={'sm'}
-          colorScheme={boolColors?.[config?.documentsKeepHistoryContractDefault]}
+          colorScheme={boolColors?.[String(config?.documentsKeepHistoryContractDefault)]}
         >
           {config?.documentsKeepHistoryContractDefault ? 'Yes' : 'No'}
         </ValueContainer>
@@ -75,7 +91,7 @@ function InternalConfigCard ({ config, className }) {
         <ValueContainer
           className={'InternalConfigCard__ValueContainer'}
           size={'sm'}
-          colorScheme={boolColors?.[config?.documentsMutableContractDefault]}
+          colorScheme={boolColors?.[String(config?.documentsMutableContractDefault)]}
         >
           {config?.documentsMutableContractDefault ? 'Yes' : 'No'}
         </ValueContainer>
@@ -88,7 +104,7 @@ function InternalConfigCard ({ config, className }) {
         <ValueContainer
           className={'InternalConfigCard__ValueContainer'}
           size={'sm'}
-          colorScheme={boolColors?.[config?.documentsCanBeDeletedContractDefault]}
+          colorScheme={boolColors?.[String(config?.documentsCanBeDeletedContractDefault)]}
         >
           {config?.documentsCanBeDeletedContractDefault ? 'Yes' : 'No'}
         </ValueContainer>

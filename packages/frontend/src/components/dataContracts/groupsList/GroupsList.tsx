@@ -1,36 +1,60 @@
 import GroupsListItem from './GroupsListItem'
+import type { GroupMember } from './GroupsListItem'
 import { EmptyListMessage } from '../../ui/lists'
 import { ErrorMessageBlock } from '../../Errors'
 import { LoadingList } from '../../loading'
 import { SmoothSize } from '../../ui/containers'
 import { Button, Grid, GridItem } from '@chakra-ui/react'
 import { ChevronIcon } from '../../ui/icons'
+import type { DataContractGroup } from '../../../types'
 
 import './GroupsList.scss'
 
-const convertMembersToArray = (members) => {
+const convertMembersToArray = (members: unknown): GroupMember[] => {
   if (!members || typeof members !== 'object') {
     return []
   }
 
-  return Object.entries(members).map(([identifier, power]) => ({
+  return Object.entries(members as Record<string, number | string>).map(([identifier, power]) => ({
     identifier,
     power
   }))
 }
 
-function GroupsList ({ groups = {}, headerStyles = 'light', loading, itemsCount = 10, expandedGroup, onGroupToggle }) {
-  const headerExtraClass = {
+interface GroupEntry extends Partial<DataContractGroup> {
+  id: string
+  members?: unknown
+  requiredPower?: number
+}
+
+interface GroupsListProps {
+  groups?: Record<string, Partial<DataContractGroup>> | DataContractGroup[] | Record<string, unknown>
+  headerStyles?: string
+  loading?: boolean
+  itemsCount?: number
+  expandedGroup?: string | null
+  onGroupToggle?: (groupId: string) => void
+}
+
+function GroupsList ({
+  groups = {},
+  headerStyles = 'light',
+  loading,
+  itemsCount = 10,
+  expandedGroup,
+  onGroupToggle
+}: GroupsListProps) {
+  const headerExtraClass: Record<string, string> = {
     default: '',
     light: 'GroupsList__ColumnTitles--Light'
   }
 
-  const groupsArray = Object.entries(groups).map(([id, group]) => ({
+  const groupsArray: GroupEntry[] = Object.entries(groups as Record<string, Partial<DataContractGroup>>).map(([id, group]) => ({
     id,
     ...group
   }))
 
-  const toggleGroup = (groupId) => {
+  const toggleGroup = (groupId: string) => {
     if (typeof onGroupToggle === 'function') {
       onGroupToggle(groupId)
     }

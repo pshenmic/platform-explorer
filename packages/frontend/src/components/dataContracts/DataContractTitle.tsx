@@ -1,3 +1,4 @@
+import type { ComponentType } from 'react'
 import { useModal } from '@components/ui/Modal'
 import { useWallet } from 'src/contexts'
 import { DataContractModal } from './DataContractModal'
@@ -6,9 +7,26 @@ import {
   EditControlState,
   useEditValidation
 } from './DataContractModal/useEditValidation'
+import type { Owner } from '../../types'
 
-const withTitle = (Content) => {
-  const Title = (props) => {
+/** Detail payload used by the title edit controls (owner may be enriched). */
+interface DataContractTitleData {
+  identifier: string
+  name?: string | null
+  description?: string | null
+  keywords?: string[] | null
+  owner: Owner | string
+}
+
+interface DataContractTitleProps {
+  dataContract?: DataContractTitleData | null
+}
+
+const ownerIdentifier = (owner: Owner | string): string =>
+  typeof owner === 'string' ? owner : owner.identifier
+
+const withTitle = (Content: ComponentType<DataContractTitleProps>) => {
+  const Title = (props: DataContractTitleProps) => {
     if (!props.dataContract) {
       return null
     }
@@ -30,20 +48,20 @@ const withTitle = (Content) => {
 export const DataContractTitle = withTitle(({ dataContract }) => {
   const wallet = useWallet()
   const { connectWallet, isConnecting } = wallet
+  const ownerId = dataContract ? ownerIdentifier(dataContract.owner) : ''
   const { editValidateState } = useEditValidation({
     wallet,
-    ownerIdentifier: dataContract.owner.identifier
+    ownerIdentifier: ownerId
   })
 
   const { isOpen, handleOpen, handleClose } = useModal()
 
   const { handleChangeName, handleChangeDescription } = useDataContractUpdate({
-    owner: dataContract.owner.identifier,
-    dataContractId: dataContract.identifier,
-    defaultName: dataContract.name
+    owner: ownerId,
+    dataContractId: dataContract?.identifier ?? ''
   })
 
-  const handleDataContractChangeName = ({ name }) => {
+  const handleDataContractChangeName = ({ name }: { name: string }) => {
     try {
       handleChangeName(name)
       handleClose()
@@ -52,7 +70,10 @@ export const DataContractTitle = withTitle(({ dataContract }) => {
     }
   }
 
-  const handleDataContractChangeDescription = ({ keywords, description }) => {
+  const handleDataContractChangeDescription = ({
+    keywords,
+    description
+  }: { keywords: string[], description: string }) => {
     try {
       handleChangeDescription({ keywords, description })
       handleClose()
@@ -60,6 +81,8 @@ export const DataContractTitle = withTitle(({ dataContract }) => {
       console.log(e)
     }
   }
+
+  if (!dataContract) return null
 
   if (editValidateState === EditControlState.USER_HAS_NO_WALLET) {
     return (

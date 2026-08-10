@@ -1,6 +1,26 @@
 import { decodeDateFromURL, encodeDateToURL } from '@utils/url'
 import { useQueryState } from 'nuqs'
 
+export interface DataContractsFilters {
+  owner?: string
+  is_system: string | null
+  with_tokens: string | null
+  documents_count_min?: number
+  documents_count_max?: number
+  timestamp_start?: string
+  timestamp_end?: string
+}
+
+export type DataContractsFiltersUpdate = {
+  owner?: string | null
+  is_system?: string | null
+  with_tokens?: string | null
+  documents_count_min?: string | number | null
+  documents_count_max?: string | number | null
+  timestamp_start?: Date | string | null
+  timestamp_end?: Date | string | null
+}
+
 export const useDataContractsFilters = () => {
   const [owner, setOwner] = useQueryState('owner', {
     scroll: false,
@@ -40,7 +60,7 @@ export const useDataContractsFilters = () => {
     return d ? d.toISOString() : tsEnd || undefined
   })()
 
-  const filters = {
+  const filters: DataContractsFilters = {
     owner: owner || undefined,
     is_system: isSystem,
     with_tokens: withTokens,
@@ -52,7 +72,7 @@ export const useDataContractsFilters = () => {
     timestamp_end: tsEndISO
   }
 
-  const setFilters = (next) => {
+  const setFilters = (next: DataContractsFiltersUpdate | null | undefined) => {
     if (!next) return
 
     if ('owner' in next) {
@@ -60,19 +80,19 @@ export const useDataContractsFilters = () => {
     }
 
     if ('is_system' in next) {
-      const res = {
+      const res: Record<string, string> = {
         'non-system': 'false',
         system: 'true'
       }
-      setIsSystem(res[next.is_system] || null)
+      setIsSystem((next.is_system && res[next.is_system]) || null)
     }
 
     if ('with_tokens' in next) {
-      const res = {
+      const res: Record<string, string> = {
         'without-tokens': 'false',
         'with-tokens': 'true'
       }
-      setWithTokens(res[next.with_tokens] || null)
+      setWithTokens((next.with_tokens && res[next.with_tokens]) || null)
     }
 
     if ('documents_count_min' in next) {

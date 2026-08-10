@@ -1,8 +1,10 @@
 import { Divider, Input, Textarea, FormControl } from '@chakra-ui/react'
 import { useId, useState } from 'react'
+import type { FormEvent } from 'react'
 import { cva } from 'class-variance-authority'
 
 import { FORM_MODE_ENUM } from './constants'
+import type { FormMode } from './constants'
 import styles from './KeywordsScreen.module.scss'
 
 const button = cva([styles.btn])
@@ -13,15 +15,30 @@ const KEYWORD_MIN = 3
 const KEYWORD_MAX = 50
 const KEYWORDS_MAX_ITEMS = 20
 
-export const KeywordsScreen = ({ onChangeDescription, setMode, defaultDescription, defaultKeywords }) => {
+interface KeywordsScreenProps {
+  onChangeDescription: (payload: { description: string, keywords: string[] }) => void
+  setMode: (mode: FormMode) => void
+  defaultDescription?: string | null
+  defaultKeywords?: string[] | null
+}
+
+export const KeywordsScreen = ({
+  onChangeDescription,
+  setMode,
+  defaultDescription,
+  defaultKeywords
+}: KeywordsScreenProps) => {
   const [form, setForm] = useState({
     description: defaultDescription || '',
     keywords: Array.isArray(defaultKeywords) ? defaultKeywords.join(', ') : ''
   })
-  const [errors, setErrors] = useState({ description: null, keywords: null })
+  const [errors, setErrors] = useState<{ description: string | null, keywords: string | null }>({
+    description: null,
+    keywords: null
+  })
   const id = useId()
 
-  const validateDescription = (value) => {
+  const validateDescription = (value: string): string | null => {
     if (!value.trim()) {
       return null
     }
@@ -34,7 +51,7 @@ export const KeywordsScreen = ({ onChangeDescription, setMode, defaultDescriptio
     return null
   }
 
-  const validateKeywords = (value) => {
+  const validateKeywords = (value: string): string | null => {
     if (!value.trim()) {
       return null
     }
@@ -54,7 +71,7 @@ export const KeywordsScreen = ({ onChangeDescription, setMode, defaultDescriptio
       return `Maximum ${KEYWORDS_MAX_ITEMS} keywords allowed`
     }
 
-    const seen = new Set()
+    const seen = new Set<string>()
     for (const kw of keywordsArray) {
       const key = kw.toLowerCase()
       if (seen.has(key)) {
@@ -69,20 +86,20 @@ export const KeywordsScreen = ({ onChangeDescription, setMode, defaultDescriptio
     return null
   }
 
-  const handleDescriptionChange = (value) => {
+  const handleDescriptionChange = (value: string) => {
     setForm((prev) => ({ ...prev, description: value }))
     const error = validateDescription(value)
     setErrors((prev) => ({ ...prev, description: error }))
   }
 
-  const handleKeywordsChange = (value) => {
+  const handleKeywordsChange = (value: string) => {
     setForm((prev) => ({ ...prev, keywords: value }))
 
     const error = validateKeywords(value)
     setErrors((prev) => ({ ...prev, keywords: error }))
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: FormEvent) => {
     e.preventDefault()
 
     const descriptionError = validateDescription(form.description)

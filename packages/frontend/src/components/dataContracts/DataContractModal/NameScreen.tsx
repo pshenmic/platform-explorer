@@ -1,8 +1,10 @@
 import { Divider, Input, FormControl } from '@chakra-ui/react'
 import { useState } from 'react'
+import type { FormEvent } from 'react'
 import { cva } from 'class-variance-authority'
 
 import { FORM_MODE_ENUM } from './constants'
+import type { FormMode } from './constants'
 import styles from './NameScreen.module.scss'
 
 const button = cva([styles.btn])
@@ -10,11 +12,17 @@ const button = cva([styles.btn])
 const NAME_MIN = 3
 const NAME_MAX = 32
 
-export const NameScreen = ({ onChangeName, setMode, defaultName }) => {
-  const [form, setForm] = useState({ name: defaultName || '' })
-  const [error, setError] = useState(null)
+interface NameScreenProps {
+  onChangeName: (payload: { name: string }) => void
+  setMode: (mode: FormMode) => void
+  defaultName?: string | null
+}
 
-  const validateName = (value) => {
+export const NameScreen = ({ onChangeName, setMode, defaultName }: NameScreenProps) => {
+  const [form, setForm] = useState({ name: defaultName || '' })
+  const [error, setError] = useState<string | null>(null)
+
+  const validateName = (value: string): string | null => {
     const trimmed = value.trim()
     if (!trimmed) return 'Name is required'
     if (trimmed.length < NAME_MIN) return `Name must be at least ${NAME_MIN} characters`
@@ -22,12 +30,12 @@ export const NameScreen = ({ onChangeName, setMode, defaultName }) => {
     return null
   }
 
-  const handleNameChange = (value) => {
+  const handleNameChange = (value: string) => {
     setForm({ name: value })
     setError(validateName(value))
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: FormEvent) => {
     e.preventDefault()
     const err = validateName(form.name)
     if (err) {
