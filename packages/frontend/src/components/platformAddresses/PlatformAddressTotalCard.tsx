@@ -1,12 +1,45 @@
 'use client'
 
-import { CreditsBlock, Identifier, InfoLine } from '../data'
+import type { ComponentType, ReactNode } from 'react'
+import {
+  CreditsBlock as CreditsBlockJs,
+  Identifier as IdentifierJs,
+  InfoLine as InfoLineJs
+} from '../data'
 import ImageGenerator from '../imageGenerator'
 import { HorisontalSeparator } from '../ui/separators'
 import { PlatformAddressDigestCard } from './index'
+import type { PlatformAddressQueryLike } from './PlatformAddressDigestCard'
+import type { Rate } from '../../types'
 import './PlatformAddressTotalCard.scss'
 
-function PlatformAddressTotalCard ({ address, rate }) {
+const CreditsBlock = CreditsBlockJs as ComponentType<{
+  credits?: number | string | null
+  rate?: { data?: Pick<Rate, 'usd'> | null } | null
+}>
+
+const Identifier = IdentifierJs as ComponentType<{
+  children?: ReactNode
+  copyButton?: boolean
+  styles?: string[]
+  ellipsis?: boolean
+}>
+
+const InfoLine = InfoLineJs as ComponentType<{
+  title?: ReactNode
+  value?: ReactNode
+  loading?: boolean
+  error?: boolean
+  className?: string
+  icon?: ReactNode
+}>
+
+interface PlatformAddressTotalCardProps {
+  address: PlatformAddressQueryLike
+  rate?: { data?: Pick<Rate, 'usd'> | null } | null
+}
+
+function PlatformAddressTotalCard ({ address, rate }: PlatformAddressTotalCardProps) {
   return (
     <div className={`InfoBlock InfoBlock--Gradient PlatformAddressTotalCard ${address.isLoading ? 'PlatformAddressTotalCard--Loading' : ''}`}>
       <div className={'PlatformAddressTotalCard__ContentContainer'}>

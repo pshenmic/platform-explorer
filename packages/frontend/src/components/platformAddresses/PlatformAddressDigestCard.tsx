@@ -1,8 +1,28 @@
-import { CreditsBlock } from '../data'
+import type { ComponentType } from 'react'
+import { CreditsBlock as CreditsBlockJs } from '../data'
 import { LoadingLine } from '../loading'
+import type { PlatformAddress, Rate } from '../../types'
+import type { WithClassName } from '../../types/common'
 import './PlatformAddressDigestCard.scss'
 
-function PlatformAddressDigestCard ({ address, rate, className }) {
+// Untyped JS until data/* is migrated
+const CreditsBlock = CreditsBlockJs as ComponentType<{
+  credits?: number | string | null
+  rate?: { data?: Pick<Rate, 'usd'> | null } | null
+}>
+
+export interface PlatformAddressQueryLike {
+  data?: PlatformAddress | null
+  isLoading?: boolean
+  isError?: boolean
+}
+
+interface PlatformAddressDigestCardProps extends WithClassName {
+  address: PlatformAddressQueryLike
+  rate?: { data?: Pick<Rate, 'usd'> | null } | null
+}
+
+function PlatformAddressDigestCard ({ address, rate, className }: PlatformAddressDigestCardProps) {
   return (
     <div className={`PlatformAddressDigestCard ${className || ''} ${address.isLoading ? 'PlatformAddressDigestCard--Loading' : ''}`}>
       <div className={'PlatformAddressDigestCard__Transfers'}>
