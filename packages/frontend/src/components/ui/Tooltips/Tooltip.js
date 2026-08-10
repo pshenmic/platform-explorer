@@ -52,15 +52,23 @@ function placeFixed (rect, placement, tipW = 240, tipH = 80) {
 }
 
 // Fixed-position tip (no Chakra Popper). asChild keeps grid/flex layout intact.
+// Accepts legacy Chakra-style props (label, isOpen, isDisabled, bg, …) for call-site compat.
 export default function Tooltip ({
   title = '',
   content = '',
+  label,
   children,
-  className,
+  className = '',
   placement = 'top',
-  asChild = true
+  asChild = true,
+  isOpen: isOpenProp,
+  isDisabled = false,
+  // Chakra leftovers (bg, color, p, …) kept so old call sites type-check; styling is CSS-only
+  ..._legacy
 }) {
-  const extraClass = title && content ? 'Tooltip--Extended' : ''
+  // label is Chakra-era alias for content
+  const body = content || label || ''
+  const extraClass = title && body ? 'Tooltip--Extended' : ''
   const id = useId()
   const active = useTooltipActive()
   const [pinned, setPinned] = useState(false)
@@ -73,7 +81,10 @@ export default function Tooltip ({
   const [mounted, setMounted] = useState(false)
 
   const isMine = !active || active.activeId === id
-  const isOpen = isMine && (pinned || hovered)
+  // controlled isOpen (CopyButton) wins over hover/pin; isDisabled forces closed
+  const openByInteraction = pinned || hovered
+  const openByProp = typeof isOpenProp === 'boolean' ? isOpenProp : openByInteraction
+  const isOpen = !isDisabled && isMine && openByProp
 
   useEffect(() => { setMounted(true) }, [])
 
@@ -117,7 +128,7 @@ export default function Tooltip ({
       window.removeEventListener('scroll', onScroll, true)
       window.removeEventListener('resize', onScroll)
     }
-  }, [isOpen, updatePos, title, content])
+  }, [isOpen, updatePos, title, body])
 
   useOutsideClick({
     ref: triggerRef,
@@ -238,7 +249,7 @@ export default function Tooltip ({
       >
         <div className={'Tooltip__Body'}>
           {title ? <div className={'Tooltip__Title'}>{title}</div> : null}
-          {content ? <div className={'Tooltip__Content'}>{content}</div> : null}
+          {body ? <div className={'Tooltip__Content'}>{body}</div> : null}
         </div>
       </div>
       )
