@@ -4,7 +4,7 @@ const Validator = require('../models/Validator')
 const DashCoreRPC = require('../dashcoreRpc')
 const ProTxInfo = require('../models/ProTxInfo')
 const GeoIP = require('../geoip')
-const { checkTcpConnect, calculateInterval, iso8601duration, getFinalPoSeBanHeight } = require('../utils')
+const { checkTcpConnect, calculateInterval, iso8601duration, getFinalPoSeBanHeight, getPlatformQuorums } = require('../utils')
 const Epoch = require('../models/Epoch')
 const { base58 } = require('@scure/base')
 const Intervals = require('../enums/IntervalsEnum')
@@ -30,9 +30,11 @@ class ValidatorsController {
       return response.status(404).send({ message: 'not found' })
     }
 
-    const validators = await TenderdashRPC.getValidators()
+    const { validators } = await TenderdashRPC.getValidators()
 
-    const isActive = validators.some(validator => validator.pro_tx_hash === hash)
+    // Tenderdash and the indexer store proTxHashes upper case, but the hash can
+    // reach this handler lower case — the identity route decodes it from base58
+    const isActive = validators.some(validator => validator.pro_tx_hash === hash.toUpperCase())
 
     const cached = cache.get(`${VALIDATORS_CACHE_KEY}_${validator.proTxHash}`)
 
@@ -120,6 +122,23 @@ class ValidatorsController {
     )
   }
 
+  getValidatorQuorumsByProTxHash = async (request, response) => {
+    const { hash } = request.params
+
+    const validatorsHashes = await this.validatorsDAO.getValidatorsHashes()
+
+    if (!validatorsHashes.some(validatorHash => validatorHash.toUpperCase() === hash.toUpperCase())) {
+      return response.status(404).send({ message: 'not found' })
+    }
+
+    const { quorums } = await getPlatformQuorums()
+
+    response.send(
+      quorums.filter(quorum =>
+        (quorum.members ?? []).some(member => member.proTxHash === hash.toUpperCase()))
+    )
+  }
+
   getValidatorByMasternodeIdentifier = async (request, response) => {
     const { identifier } = request.params
 
@@ -157,7 +176,7 @@ class ValidatorsController {
       return response.status(400).send({ message: 'Bad last proposed block timestamp range' })
     }
 
-    const activeValidators = await TenderdashRPC.getValidators()
+    const { validators: activeValidators } = await TenderdashRPC.getValidators()
 
     const [currentEpoch] = await this.sdk.node.getEpochsInfo(1)
     const epochInfo = Epoch.fromObject(currentEpoch)
@@ -193,6 +212,8 @@ class ValidatorsController {
       lastProposedBlockHash
     )
 
+    const activeValidatorsHashes = new Set(activeValidators.map(validator => validator.pro_tx_hash))
+
     const resultSet = await Promise.all(
       validators.resultSet.map(async (validator) => {
         const cached = cache.get(`${VALIDATORS_CACHE_KEY}_${validator.proTxHash}`)
@@ -213,8 +234,7 @@ class ValidatorsController {
           validatorInfo = Validator.fromObject(
             {
               ...validator,
-              isActive: activeValidators.some(activeValidator =>
-                activeValidator.pro_tx_hash === validator.proTxHash),
+              isActive: activeValidatorsHashes.has(validator.proTxHash),
               proTxInfo: ProTxInfo.fromObject(proTxInfo),
               identity: identifier,
               identityBalance: String(identityBalance),
@@ -226,7 +246,12 @@ class ValidatorsController {
           cache.set(`${VALIDATORS_CACHE_KEY}_${validator.proTxHash}`, validatorInfo, VALIDATORS_CACHE_LIFE_INTERVAL)
         }
 
-        return validatorInfo
+        // isActive is applied outside the per-validator cache: the validator set
+        // rotates independently of the cached ProTx and identity data
+        return Validator.fromObject({
+          ...validatorInfo,
+          isActive: activeValidatorsHashes.has(validator.proTxHash)
+        })
       }))
 
     return response.send({

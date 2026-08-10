@@ -1749,18 +1749,6 @@ const getPlatformQuorums = async () => {
   return platformQuorums
 }
 
-// Members of every active quorum except the one currently in charge: they will
-// serve as validators once the set rotates to their quorum.
-const getUpcomingValidators = async () => {
-  const { quorums } = await getPlatformQuorums()
-
-  return [...new Set(
-    quorums
-      .filter(quorum => !quorum.isCurrent)
-      .flatMap(quorum => (quorum.members ?? []).map(member => member.proTxHash))
-  )]
-}
-
 // Calculating period and calculate the period
 // and find the interval with less than 2 periods
 // and take the previous interval
@@ -1995,7 +1983,6 @@ module.exports = {
   checkTcpConnect,
   getFinalPoSeBanHeight,
   getPlatformQuorums,
-  getUpcomingValidators,
   calculateInterval,
   iso8601duration,
   getAliasInfo,
