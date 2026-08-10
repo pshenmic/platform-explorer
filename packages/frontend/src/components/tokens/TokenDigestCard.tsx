@@ -1,4 +1,10 @@
-import { CreditsBlock, Identifier, InfoLine } from '../data'
+import type { ComponentType, ReactNode } from 'react'
+// Untyped JS components — loose wrappers until data/* is migrated
+import {
+  CreditsBlock as CreditsBlockJs,
+  Identifier as IdentifierJs,
+  InfoLine as InfoLineJs
+} from '../data'
 import { ValueContainer } from '../ui/containers'
 import { Supply } from './'
 import {
@@ -9,12 +15,58 @@ import {
   TransactionsIcon,
   InfoIcon
 } from '../ui/icons'
-import { ValueCard } from '../cards'
+import { ValueCard as ValueCardJs } from '../cards'
 import { Badge, Flex } from '@chakra-ui/react'
 import { Tooltip } from '../ui/Tooltips'
+import type { Alias, LoadableState, Owner, Rate, Token } from '../../types'
+import type { WithClassName } from '../../types/common'
 import './TokenDigestCard.scss'
 
-function TokenDigestCard ({ token, rate, className, loading, error }) {
+const CreditsBlock = CreditsBlockJs as ComponentType<{
+  credits?: string | number | null
+  rate?: Pick<Rate, 'usd'> | null
+}>
+const Identifier = IdentifierJs as ComponentType<{
+  children?: ReactNode
+  avatar?: boolean
+  styles?: string[]
+  copyButton?: boolean
+  ellipsis?: boolean
+}>
+const InfoLine = InfoLineJs as ComponentType<{
+  className?: string
+  title?: ReactNode
+  value?: ReactNode
+  icon?: ReactNode
+  loading?: boolean
+  error?: boolean | null
+}>
+const ValueCard = ValueCardJs as ComponentType<{
+  children?: ReactNode
+  link?: string
+  className?: string
+}>
+
+/** Detail view token may enrich owner as object and include aliases. */
+export type TokenDetailData = Omit<Token, 'owner'> & {
+  owner?: Owner | string | null
+  aliases?: Alias[] | null
+}
+
+export type TokenLoadable = Partial<LoadableState<TokenDetailData>> & {
+  data?: TokenDetailData | null
+  loading?: boolean
+  error?: boolean
+}
+
+interface TokenDigestCardProps extends WithClassName {
+  token?: TokenLoadable | null
+  rate?: Pick<Rate, 'usd'> | null
+  loading?: boolean
+  error?: boolean
+}
+
+function TokenDigestCard ({ token, rate, className, loading, error }: TokenDigestCardProps) {
   const {
     totalSupply,
     maxSupply,
@@ -34,6 +86,9 @@ function TokenDigestCard ({ token, rate, className, loading, error }) {
     totalBurnTransitionsCount,
     decimals
   } = token?.data || {}
+
+  const ownerId = typeof owner === 'object' && owner ? owner.identifier : owner
+
   return (
     <div
       className={`TokenDigestCard ${className || ''} ${token?.loading ? 'TokenDigestCard--Loading' : ''}`}
@@ -182,7 +237,7 @@ function TokenDigestCard ({ token, rate, className, loading, error }) {
         title={'Token Creator'}
         value={
           <ValueCard
-            link={`/identity/${owner?.identifier}`}
+            link={`/identity/${ownerId}`}
             className={'TokenDigestCard__ValueContainer'}
           >
             <Identifier
@@ -191,7 +246,7 @@ function TokenDigestCard ({ token, rate, className, loading, error }) {
               styles={['highlight-both']}
               ellipsis={false}
             >
-              {owner?.identifier}
+              {ownerId}
             </Identifier>
           </ValueCard>
         }

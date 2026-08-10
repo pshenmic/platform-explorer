@@ -1,14 +1,47 @@
+import type { ComponentType, ReactNode } from 'react'
 import { LinkContainer } from '../../ui/containers'
 import { StatusIcon } from '../../transactions'
-import { Identifier, NotActive, TimeDelta } from '../../data'
+import {
+  Identifier as IdentifierJs,
+  NotActive as NotActiveJs,
+  TimeDelta as TimeDeltaJs
+} from '../../data'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import BatchTypeBadge from '../../transactions/BatchTypeBadge'
 import { Tooltip } from '../../ui/Tooltips'
 import './ActivityListItem.scss'
 import { FormattedNumber } from '../../ui/FormattedNumber'
+import type { Owner } from '../../../types'
 
-export default function ActivityListItem ({ activity, decimals }) {
+const Identifier = IdentifierJs as ComponentType<{
+  children?: ReactNode
+  avatar?: boolean
+  styles?: string[]
+  clickable?: boolean
+  ellipsis?: boolean
+}>
+const NotActive = NotActiveJs as ComponentType<{ children?: ReactNode, className?: string }>
+const TimeDelta = TimeDeltaJs as ComponentType<{ endDate?: string | Date | null }>
+
+export interface TokenActivity {
+  stateTransitionHash?: string | null
+  status?: string | null
+  error?: string | null
+  timestamp?: string | Date | null
+  owner?: Owner | null
+  recipient?: string | null
+  amount?: string | number | null
+  action?: string | null
+}
+
+interface ActivityListItemProps {
+  activity: TokenActivity
+  decimals?: number | null
+  rate?: unknown
+}
+
+export default function ActivityListItem ({ activity, decimals }: ActivityListItemProps) {
   const router = useRouter()
 
   return (
@@ -88,7 +121,7 @@ export default function ActivityListItem ({ activity, decimals }) {
         </div>
 
         <div className={'ActivityListItem__Column ActivityListItem__Column--Amount ActivityListItem__Column--Number'}>
-          <FormattedNumber decimals={decimals}>{activity?.amount}</FormattedNumber>
+          <FormattedNumber decimals={decimals ?? undefined}>{activity?.amount}</FormattedNumber>
         </div>
 
         <div className={'ActivityListItem__Column ActivityListItem__Column--Type'}>

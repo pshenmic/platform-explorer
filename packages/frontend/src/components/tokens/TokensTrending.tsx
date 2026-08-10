@@ -1,17 +1,40 @@
 'use client'
 
+import type { ComponentType } from 'react'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import * as Api from '../../util/Api'
 import { fetchHandlerError, fetchHandlerSuccess, currencyRound, getTokenName } from '../../util'
-import ImageGenerator from '../imageGenerator'
+import ImageGeneratorJs from '../imageGenerator'
+import type { LoadableState, Localization, PaginatedResultSet } from '../../types'
+import type { WithClassName } from '../../types/common'
 import './TokensTrending.scss'
 
-const MIN_PER_HALF = 12
+const ImageGenerator = ImageGeneratorJs as ComponentType<{
+  username?: string | null
+  className?: string
+  lightness?: number
+  saturation?: number
+  width?: number
+  height?: number
+}>
 
+const MIN_PER_HALF = 12
 const SECONDS_PER_ITEM = 4.5
 
-function TrendingItem ({ token, rank }) {
+/** Tokens rating endpoint shape used by the trending marquee. */
+interface TrendingToken {
+  tokenIdentifier?: string | null
+  localizations?: Record<string, Localization | { singularForm?: string }> | null
+  transitionCount?: number | string | null
+}
+
+interface TrendingItemProps {
+  token: TrendingToken
+  rank: number
+}
+
+function TrendingItem ({ token, rank }: TrendingItemProps) {
   return (
     <Link href={`/token/${token?.tokenIdentifier}`} className={'TokensTrending__Item'}>
       <span className={'TokensTrending__Rank'}>#{rank}</span>
@@ -24,13 +47,17 @@ function TrendingItem ({ token, rank }) {
         height={18}
       />
       <span className={'TokensTrending__Name'}>{getTokenName(token?.localizations)}</span>
-      <span className={'TokensTrending__Txs'}>{currencyRound(token?.transitionCount)} txs</span>
+      <span className={'TokensTrending__Txs'}>{currencyRound(token?.transitionCount ?? 0)} txs</span>
     </Link>
   )
 }
 
-export default function TokensTrending ({ className }) {
-  const [tokens, setTokens] = useState({ data: {}, loading: true, error: false })
+export default function TokensTrending ({ className }: WithClassName) {
+  const [tokens, setTokens] = useState<LoadableState<PaginatedResultSet<TrendingToken>>>({
+    data: null,
+    loading: true,
+    error: false
+  })
 
   useEffect(() => {
     const endDate = new Date()
@@ -40,7 +67,7 @@ export default function TokensTrending ({ className }) {
       timestamp_start: startDate.toISOString(),
       timestamp_end: endDate.toISOString()
     })
-      .then(res => fetchHandlerSuccess(setTokens, res))
+      .then(res => fetchHandlerSuccess(setTokens, res as unknown as PaginatedResultSet<TrendingToken>))
       .catch(err => fetchHandlerError(setTokens, err))
   }, [])
 
@@ -48,7 +75,7 @@ export default function TokensTrending ({ className }) {
 
   if (tokens.loading || tokens.error || items.length === 0) return null
 
-  const half = []
+  const half: Array<{ token: TrendingToken, rank: number }> = []
   while (half.length < MIN_PER_HALF) {
     items.forEach((token, i) => half.push({ token, rank: i + 1 }))
   }

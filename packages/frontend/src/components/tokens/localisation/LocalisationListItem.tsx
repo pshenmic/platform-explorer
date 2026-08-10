@@ -1,8 +1,19 @@
+import type { ComponentType, ReactNode } from 'react'
 import { Badge, Grid, GridItem } from '@chakra-ui/react'
-import { NotActive } from '../../data'
+// Untyped JS components — loose wrappers until data/* is migrated
+import { NotActive as NotActiveJs } from '../../data'
+import type { Localization } from '../../../types'
+import type { WithClassName } from '../../../types/common'
 import './LocalisationListItem.scss'
 
-function LocalisationListItem ({ langCode, localisation, className }) {
+const NotActive = NotActiveJs as ComponentType<{ children?: ReactNode, className?: string }>
+
+interface LocalisationListItemProps extends WithClassName {
+  langCode?: string
+  localisation?: Partial<Localization> | null
+}
+
+function LocalisationListItem ({ langCode, localisation, className }: LocalisationListItemProps) {
   return (
     <div className={`LocalisationListItem ${className || ''}`}>
       <Grid className={'LocalisationListItem__Content'}>

@@ -1,13 +1,39 @@
 'use client'
 
-import { DashboardCards } from '../cards'
-import { TokenCardContent } from '../cards/dashboard'
+import type { ComponentType, ReactNode } from 'react'
+import { DashboardCards as DashboardCardsJs } from '../cards'
+import { TokenCardContent as TokenCardContentJs } from '../cards/dashboard'
 import { ErrorMessageBlock } from '../Errors'
-import { NotActive } from '../data'
+// Untyped JS components — loose wrappers until data/* is migrated
+import { NotActive as NotActiveJs } from '../data'
+import type { WithClassName } from '../../types/common'
 import './TokenDashboardCards.scss'
 import './TokenDashboardCard.scss'
 
-function TokenDashboardCards ({ items, error, loading, className }) {
+const NotActive = NotActiveJs as ComponentType<{ children?: ReactNode, className?: string }>
+const DashboardCards = DashboardCardsJs as ComponentType<{
+  cards?: Array<Record<string, unknown>>
+  columnLayout?: number[]
+  sliderMode?: string
+}>
+const TokenCardContent = TokenCardContentJs as ComponentType<{
+  token?: Record<string, unknown>
+  nullMessage?: string
+}>
+
+/** Dashboard token card payload (rating/trending shape). */
+export interface DashboardTokenItem {
+  tokenIdentifier?: string | null
+  [key: string]: unknown
+}
+
+interface TokenDashboardCardsProps extends WithClassName {
+  items?: DashboardTokenItem[] | null
+  error?: boolean
+  loading?: boolean
+}
+
+function TokenDashboardCards ({ items, error, loading, className }: TokenDashboardCardsProps) {
   const cards = items?.map(token => ({
     value: <TokenCardContent token={token} />,
     className: 'TokenDashboardCards__Card',

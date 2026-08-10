@@ -1,9 +1,34 @@
+import type { ComponentType, ReactNode } from 'react'
 import { Grid, GridItem } from '@chakra-ui/react'
-import { NotActive, BigNumber, CreditsBlock } from '../../data'
+// Untyped JS components — loose wrappers until data/* is migrated
+import {
+  NotActive as NotActiveJs,
+  BigNumber as BigNumberJs,
+  CreditsBlock as CreditsBlockJs
+} from '../../data'
 import { Tooltip } from '../../ui/Tooltips'
+import type { Rate } from '../../../types'
+import type { WithClassName } from '../../../types/common'
 import './PriceListItem.scss'
 
-function PriceListItem ({ priceData, rate, className }) {
+const NotActive = NotActiveJs as ComponentType<{ children?: ReactNode, className?: string }>
+const BigNumber = BigNumberJs as ComponentType<{ children?: ReactNode, className?: string }>
+const CreditsBlock = CreditsBlockJs as ComponentType<{
+  credits?: string | number | null
+  rate?: Pick<Rate, 'usd'> | null
+}>
+
+export interface PriceData {
+  amount?: string | number
+  price?: string | number
+}
+
+interface PriceListItemProps extends WithClassName {
+  priceData?: PriceData | null
+  rate?: Pick<Rate, 'usd'> | null
+}
+
+function PriceListItem ({ priceData, rate, className }: PriceListItemProps) {
   const { amount, price } = priceData || {}
 
   return (

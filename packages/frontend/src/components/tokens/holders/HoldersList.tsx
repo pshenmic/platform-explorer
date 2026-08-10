@@ -1,10 +1,37 @@
+import type { ComponentType } from 'react'
 import HoldersListItem from './HoldersListItem'
+import type { TokenHolder } from './HoldersListItem'
 import { EmptyListMessage } from '../../ui/lists'
-import Pagination from '../../pagination'
-import { LoadingList } from '../../loading'
+import PaginationJs from '../../pagination'
+import { LoadingList as LoadingListJs } from '../../loading'
 import { ErrorMessageBlock } from '../../Errors'
 import { Grid, GridItem } from '@chakra-ui/react'
 import './HoldersList.scss'
+
+const Pagination = PaginationJs as ComponentType<{
+  className?: string
+  onPageChange?: (selectedItem: { selected: number }) => void
+  pageCount?: number
+  forcePage?: number
+  justify?: boolean
+}>
+const LoadingList = LoadingListJs as ComponentType<{ itemsCount?: number }>
+
+type HeaderStyles = 'default' | 'light'
+
+interface ListPagination {
+  onPageChange: (selectedItem: { selected: number }) => void
+  pageCount: number
+  forcePage?: number
+}
+
+interface HoldersListProps {
+  holders?: TokenHolder[]
+  headerStyles?: HeaderStyles
+  pagination?: ListPagination
+  loading?: boolean
+  itemsCount?: number
+}
 
 export default function HoldersList ({
   holders = [],
@@ -12,15 +39,15 @@ export default function HoldersList ({
   pagination,
   loading,
   itemsCount = 10
-}) {
-  const headerExtraClass = {
+}: HoldersListProps) {
+  const headerExtraClass: Record<HeaderStyles, string> = {
     default: '',
     light: 'HoldersList__ColumnTitles--Light'
   }
 
   return (
     <div className={'HoldersList'}>
-      <Grid className={`HoldersList__ColumnTitles ${headerExtraClass?.[headerStyles] || ''}`}>
+      <Grid className={`HoldersList__ColumnTitles ${headerStyles ? headerExtraClass[headerStyles] || '' : ''}`}>
         <GridItem className={'HoldersList__ColumnTitle HoldersList__ColumnTitle--Holder'}>
           Holder
         </GridItem>

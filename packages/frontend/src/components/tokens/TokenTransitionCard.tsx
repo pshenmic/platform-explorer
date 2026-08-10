@@ -1,7 +1,14 @@
+import type { ComponentType, ReactNode } from 'react'
 import * as Api from '../../util/Api'
 import { useState, useEffect } from 'react'
-import { ValueCard } from '../cards'
-import { BigNumber, CreditsBlock, Identifier, InfoLine } from '../data'
+import { ValueCard as ValueCardJs } from '../cards'
+// Untyped JS components — loose wrappers until data/* is migrated
+import {
+  BigNumber as BigNumberJs,
+  CreditsBlock as CreditsBlockJs,
+  Identifier as IdentifierJs,
+  InfoLine as InfoLineJs
+} from '../data'
 import BatchTypeBadge from '../transactions/BatchTypeBadge'
 import TokenEmergencyActionBadge from './TokenEmergencyActionBadge'
 import { PriceList } from './prices'
@@ -9,9 +16,38 @@ import { Code, Badge, Flex } from '@chakra-ui/react'
 import { colors } from '../../styles/colors'
 import { getMinTokenPrice } from '../../util'
 import { FormattedNumber } from '../ui/FormattedNumber'
+import type { LoadableState, Rate, Token } from '../../types'
+import type { WithClassName } from '../../types/common'
+import type { PriceData } from './prices/PriceListItem'
 import './TokenTransitionCard.scss'
 
-const fieldsOfTypes = {
+const BigNumber = BigNumberJs as ComponentType<{ children?: ReactNode, className?: string }>
+const CreditsBlock = CreditsBlockJs as ComponentType<{
+  credits?: string | number | null
+  rate?: Pick<Rate, 'usd'> | null
+}>
+const Identifier = IdentifierJs as ComponentType<{
+  children?: ReactNode
+  avatar?: boolean
+  styles?: string[]
+  copyButton?: boolean
+  ellipsis?: boolean
+}>
+const InfoLine = InfoLineJs as ComponentType<{
+  className?: string
+  title?: ReactNode
+  value?: ReactNode
+  loading?: boolean
+  error?: boolean | null
+  icon?: ReactNode
+}>
+const ValueCard = ValueCardJs as ComponentType<{
+  children?: ReactNode
+  link?: string
+  className?: string
+}>
+
+const fieldsOfTypes: Record<string, string[]> = {
   TOKEN_MINT: [
     'Action',
     'Amount',
@@ -21,7 +57,6 @@ const fieldsOfTypes = {
     'IdentityContractNonce',
     'IssuedToIdentity',
     'PublicNote'
-    // 'GroupInfo'
   ],
   TOKEN_TRANSFER: [
     'Action',
@@ -32,9 +67,6 @@ const fieldsOfTypes = {
     'IdentityContractNonce',
     'Recipient',
     'PublicNote'
-    // 'SharedEncryptedNote',
-    // 'PrivateEncryptedNote',
-    // 'GroupInfo'
   ],
   TOKEN_BURN: [
     'Action',
@@ -43,7 +75,6 @@ const fieldsOfTypes = {
     'TokenContractPosition',
     'DataContractId',
     'IdentityContractNonce'
-    // 'BurnFromIdentity'
   ],
   TOKEN_FREEZE: [
     'Action',
@@ -95,7 +126,6 @@ const fieldsOfTypes = {
     'TokenContractPosition',
     'DataContractId',
     'IdentityContractNonce'
-    // 'ConfigChanges'
   ],
   TOKEN_DIRECT_PURCHASE: [
     'Action',
@@ -105,8 +135,6 @@ const fieldsOfTypes = {
     'DataContractId',
     'IdentityContractNonce',
     'Price'
-    // 'Buyer',
-    // 'Seller'
   ],
   TOKEN_SET_PRICE_FOR_DIRECT_PURCHASE: [
     'Action',
@@ -118,15 +146,44 @@ const fieldsOfTypes = {
   ]
 }
 
-const TokenTransitionCard = ({ transition, rate, className }) => {
-  const fields = fieldsOfTypes[transition?.action] || []
-  const [token, setToken] = useState({ data: {}, loading: true, error: false })
+/** Token transition payload embedded in state transitions (richer than TokenTransition model). */
+export interface TokenTransitionView {
+  action?: string | null
+  amount?: string | number | null
+  tokenId?: string | null
+  tokenSymbol?: string | null
+  recipient?: string | null
+  issuedToIdentityId?: string | null
+  identityContractNonce?: string | number | null
+  tokenContractPosition?: string | number | null
+  dataContractId?: string | null
+  price?: string | number | null
+  prices?: PriceData[] | null
+  publicNote?: string | null
+  emergencyAction?: string | null
+  data?: unknown
+  transitionType?: string | null
+  [key: string]: unknown
+}
+
+interface TokenTransitionCardProps extends WithClassName {
+  transition?: TokenTransitionView | null
+  owner?: string | null
+  rate?: Pick<Rate, 'usd'> | null
+}
+
+const TokenTransitionCard = ({ transition, rate, className }: TokenTransitionCardProps) => {
+  const action = transition?.action ?? undefined
+  const fields = (action && fieldsOfTypes[action]) || []
+  const [token, setToken] = useState<LoadableState<Token>>({ data: null, loading: true, error: false })
 
   useEffect(() => {
     const tokensInfo = () => {
       if (transition?.tokenId) {
         Api.getToken(transition.tokenId).then((res) => {
-          setToken(() => ({ data: res, loading: false, error: false }))
+          setToken({ data: res, loading: false, error: false })
+        }).catch(() => {
+          setToken(prev => ({ ...prev, loading: false, error: true }))
         })
       }
     }
@@ -135,21 +192,19 @@ const TokenTransitionCard = ({ transition, rate, className }) => {
 
   return (
     <div className={`InfoBlock InfoBlock--Gradient TokenTransitionCard ${className || ''}`}>
-       {/* Action Badge */}
        {fields.includes('Action') && (
         <InfoLine
           className={'TokenTransitionCard__InfoLine TokenTransitionCard__InfoLine--Action'}
           title={'Action'}
           value={
             <BatchTypeBadge
-              batchType={transition?.action !== undefined ? transition?.action : undefined}
+              batchType={transition?.action !== undefined && transition?.action !== null ? transition.action : undefined}
             />
           }
           error={transition?.action === undefined}
         />
        )}
 
-      {/* Action Badge */}
       {fields.includes('EmergencyAction') && (
         <InfoLine
           className={'TokenTransitionCard__InfoLine TokenTransitionCard__InfoLine--EmergencyAction'}
@@ -159,7 +214,6 @@ const TokenTransitionCard = ({ transition, rate, className }) => {
         />
       )}
 
-      {/* Amount */}
       {fields.includes('Amount') && (
         <InfoLine
           className={'TokenTransitionCard__InfoLine TokenTransitionCard__InfoLine--Amount'}
@@ -176,7 +230,7 @@ const TokenTransitionCard = ({ transition, rate, className }) => {
               maxWidth={'max-content'}
               color={`${colors.green.emeralds}`}
             >
-              <FormattedNumber decimals={token.data.decimals}>
+              <FormattedNumber decimals={token.data?.decimals ?? undefined}>
                 {transition?.amount || '0'}
               </FormattedNumber>
               <span>
@@ -189,7 +243,6 @@ const TokenTransitionCard = ({ transition, rate, className }) => {
         />
       )}
 
-      {/* Token ID */}
       {fields.includes('TokenId') && (
         <InfoLine
           className={'TokenTransitionCard__InfoLine TokenTransitionCard__InfoLine--TokenId'}
@@ -205,7 +258,6 @@ const TokenTransitionCard = ({ transition, rate, className }) => {
         />
       )}
 
-      {/* Recipient (for transfers) */}
       {fields.includes('Recipient') && transition?.recipient && (
         <InfoLine
           className={'TokenTransitionCard__InfoLine TokenTransitionCard__InfoLine--Recipient'}
@@ -220,7 +272,6 @@ const TokenTransitionCard = ({ transition, rate, className }) => {
         />
       )}
 
-      {/* Issued to Identity (for mints) */}
       {fields.includes('IssuedToIdentity') && (
         <InfoLine
           className={'TokenTransitionCard__InfoLine TokenTransitionCard__InfoLine--IssuedToIdentity'}
@@ -236,7 +287,6 @@ const TokenTransitionCard = ({ transition, rate, className }) => {
         />
       )}
 
-      {/* Identity Contract Nonce */}
       {fields.includes('IdentityContractNonce') && (
         <InfoLine
           className={'TokenTransitionCard__InfoLine TokenTransitionCard__InfoLine--Nonce'}
@@ -246,7 +296,6 @@ const TokenTransitionCard = ({ transition, rate, className }) => {
         />
       )}
 
-      {/* Token Contract Position */}
       {fields.includes('TokenContractPosition') && (
         <InfoLine
           className={'TokenTransitionCard__InfoLine TokenTransitionCard__InfoLine--TokenContractPosition'}
@@ -256,7 +305,6 @@ const TokenTransitionCard = ({ transition, rate, className }) => {
         />
       )}
 
-      {/* Data Contract ID */}
       {fields.includes('DataContractId') && (
         <InfoLine
           className={'TokenTransitionCard__InfoLine TokenTransitionCard__InfoLine--DataContractId'}
@@ -272,7 +320,6 @@ const TokenTransitionCard = ({ transition, rate, className }) => {
         />
       )}
 
-      {/* Price (for purchases) */}
       {fields.includes('Price') && (<>
         <InfoLine
           className={'TokenTransitionCard__InfoLine TokenTransitionCard__InfoLine--Price'}
@@ -281,7 +328,7 @@ const TokenTransitionCard = ({ transition, rate, className }) => {
             transition?.price != null
               ? <CreditsBlock credits={transition?.price} rate={rate}/>
               : transition?.prices != null && transition?.prices?.length > 0
-                ? <Flex gap={'0.25rem'}>From <BigNumber>{getMinTokenPrice(transition?.prices)}</BigNumber> Credits</Flex>
+                ? <Flex gap={'0.25rem'}>From <BigNumber>{getMinTokenPrice(transition?.prices as Array<{ price: string | number }> | null | undefined)}</BigNumber> Credits</Flex>
                 : 'none'
           }
           error={transition?.price === undefined && (!transition?.prices || transition?.prices?.length === 0)}
@@ -296,7 +343,6 @@ const TokenTransitionCard = ({ transition, rate, className }) => {
         }
       </>)}
 
-      {/* Public Note */}
       {fields.includes('PublicNote') && (
         <InfoLine
           className={'TokenTransitionCard__InfoLine TokenTransitionCard__InfoLine--PublicNote'}
@@ -306,8 +352,7 @@ const TokenTransitionCard = ({ transition, rate, className }) => {
         />
       )}
 
-      {/* Raw Data (for transitions that have direct data) */}
-      {transition?.data && (
+      {transition?.data != null && (
         <InfoLine
           className={'TokenTransitionCard__InfoLine TokenTransitionCard__InfoLine--Data'}
           title={'Data'}

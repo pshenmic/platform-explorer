@@ -1,13 +1,50 @@
+import type { ComponentType, ReactNode } from 'react'
 import { Grid, GridItem } from '@chakra-ui/react'
-import { Alias, BigNumber, Identifier, NotActive, TimeDelta } from '../../data'
+// Untyped JS components — loose wrappers until data/* is migrated
+import {
+  Alias as AliasJs,
+  BigNumber as BigNumberJs,
+  Identifier as IdentifierJs,
+  NotActive as NotActiveJs,
+  TimeDelta as TimeDeltaJs
+} from '../../data'
 import { LinkContainer } from '../../ui/containers'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { findActiveAlias } from '../../../util'
+import type { Alias } from '../../../types'
 import './HoldersListItem.scss'
 
-function HoldersListItem ({ holder }) {
-  const activeAlias = findActiveAlias(holder?.aliases)
+const AliasEl = AliasJs as ComponentType<{
+  children?: ReactNode
+  avatarSource?: string | null
+  alias?: string | null
+  ellipsis?: boolean
+}>
+const BigNumber = BigNumberJs as ComponentType<{ children?: ReactNode, className?: string }>
+const Identifier = IdentifierJs as ComponentType<{
+  children?: ReactNode
+  avatar?: boolean
+  styles?: string[]
+  ellipsis?: boolean
+}>
+const NotActive = NotActiveJs as ComponentType<{ children?: ReactNode, className?: string }>
+const TimeDelta = TimeDeltaJs as ComponentType<{ endDate?: string | Date | null }>
+
+export interface TokenHolder {
+  identifier?: string | null
+  aliases?: Alias[] | null
+  tokensAmount?: string | number | null
+  dashAmount?: string | number | null
+  lastActivity?: string | Date | null
+}
+
+interface HoldersListItemProps {
+  holder: TokenHolder
+}
+
+function HoldersListItem ({ holder }: HoldersListItemProps) {
+  const activeAlias = findActiveAlias(holder?.aliases || [])
   const router = useRouter()
 
   return (
@@ -24,7 +61,7 @@ function HoldersListItem ({ holder }) {
                 }}
               >
                 {activeAlias
-                  ? <Alias avatarSource={holder?.identifier || null}>{activeAlias?.alias}</Alias>
+                  ? <AliasEl avatarSource={holder?.identifier || null}>{activeAlias?.alias}</AliasEl>
                   : <Identifier ellipsis={true} avatar={true} styles={['highlight-both']}>{holder?.identifier}</Identifier>
                 }
               </LinkContainer>

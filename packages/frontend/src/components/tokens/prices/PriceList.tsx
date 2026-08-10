@@ -1,10 +1,20 @@
 import { Grid, GridItem } from '@chakra-ui/react'
 import PriceListItem from './PriceListItem'
+import type { PriceData } from './PriceListItem'
 import { EmptyListMessage } from '../../ui/lists'
+import type { Rate } from '../../../types'
+import type { WithClassName } from '../../../types/common'
 import './PriceList.scss'
 import './PriceListItem.scss'
 
-function PriceList ({ prices = [], rate, className }) {
+interface PriceListProps extends WithClassName {
+  prices?: PriceData[] | null
+  rate?: Pick<Rate, 'usd'> | null
+}
+
+function PriceList ({ prices = [], rate, className }: PriceListProps) {
+  const list = prices || []
+
   return (
     <div className={`PriceList ${className || ''}`}>
       <Grid className={'PriceList__ColumnTitles'}>
@@ -16,8 +26,8 @@ function PriceList ({ prices = [], rate, className }) {
         </GridItem>
       </Grid>
 
-      {prices?.length > 0 &&
-        prices.map((priceData, i) => (
+      {list.length > 0 &&
+        list.map((priceData, i) => (
           <PriceListItem
             key={i}
             priceData={priceData}
@@ -26,7 +36,7 @@ function PriceList ({ prices = [], rate, className }) {
         ))
       }
 
-      {prices?.length === 0 &&
+      {list.length === 0 &&
         <EmptyListMessage>There are no prices</EmptyListMessage>
       }
     </div>

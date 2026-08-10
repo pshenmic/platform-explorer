@@ -1,11 +1,17 @@
 import { Grid, GridItem } from '@chakra-ui/react'
 import LocalisationListItem from './LocalisationListItem'
 import { EmptyListMessage } from '../../ui/lists'
+import type { Localization } from '../../../types'
+import type { WithClassName } from '../../../types/common'
 import './LocalisationList.scss'
 import './LocalisationListItem.scss'
 
-function LocalisationList ({ localisations = {}, className }) {
-  const localisationEntries = Object.entries(localisations)
+interface LocalisationListProps extends WithClassName {
+  localisations?: Record<string, Partial<Localization>> | null
+}
+
+function LocalisationList ({ localisations = {}, className }: LocalisationListProps) {
+  const localisationEntries = Object.entries(localisations || {})
 
   return (
     <div className={`LocalisationList ${className || ''}`}>
@@ -26,7 +32,7 @@ function LocalisationList ({ localisations = {}, className }) {
         </Grid>
 
         {localisationEntries?.length > 0 &&
-          localisationEntries.map(([langCode, localisationData], i) => (
+          localisationEntries.map(([langCode, localisationData]) => (
             <LocalisationListItem
               key={langCode}
               langCode={langCode}

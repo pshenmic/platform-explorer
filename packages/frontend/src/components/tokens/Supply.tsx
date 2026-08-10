@@ -1,10 +1,26 @@
 'use client'
 
+import type { ReactNode } from 'react'
 import { Progress } from '@chakra-ui/react'
 import { LoadingLine } from '../loading'
 import { FormattedNumber } from '../ui/FormattedNumber'
+import type { WithClassName } from '../../types/common'
 
 import './Supply.scss'
+
+interface SupplyProps extends WithClassName {
+  currentSupply?: string | number | null
+  maxSupply?: string | number | null
+  decimals?: number | null
+  progressPosition?: 'top' | 'bottom'
+  showTitles?: boolean
+  showIcons?: boolean
+  minTitle?: ReactNode
+  maxTitle?: ReactNode
+  topIcon?: ReactNode
+  bottomIcon?: ReactNode
+  loading?: boolean
+}
 
 function Supply ({
   currentSupply,
@@ -19,9 +35,9 @@ function Supply ({
   topIcon,
   bottomIcon,
   loading
-}) {
+}: SupplyProps) {
   const progressClass = progressPosition === 'top' ? 'Supply--ProgressTop' : ''
-  const hasMaxSupply = maxSupply && Number(maxSupply) > 0
+  const hasMaxSupply = maxSupply != null && Number(maxSupply) > 0
 
   return (
     <div className={`Supply ${progressClass || ''} ${showTitles && 'Supply--WithIcons'} ${className || ''} ${loading ? 'Supply--Loading' : ''}`}>
@@ -38,12 +54,12 @@ function Supply ({
             ? <LoadingLine w='100%' h={'20px'}/>
             : <>
                 <div className={'Supply__SupplyTitles'}>
-                  <FormattedNumber decimals={decimals} className={'Supply__CurrentSupply'}>
+                  <FormattedNumber decimals={decimals ?? undefined} className={'Supply__CurrentSupply'}>
                     {currentSupply}
                   </FormattedNumber>
                   {
-                    maxSupply &&
-                      <FormattedNumber decimals={decimals} className={'Supply__MaxSupply'}>
+                    maxSupply != null &&
+                      <FormattedNumber decimals={decimals ?? undefined} className={'Supply__MaxSupply'}>
                         {maxSupply}
                       </FormattedNumber>
                   }

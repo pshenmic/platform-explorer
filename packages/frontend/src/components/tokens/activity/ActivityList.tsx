@@ -1,11 +1,42 @@
+import type { ComponentType } from 'react'
 import Link from 'next/link'
 import ActivityListItem from './ActivityListItem'
+import type { TokenActivity } from './ActivityListItem'
 import { EmptyListMessage } from '../../ui/lists'
 import { Grid, GridItem, useBreakpointValue } from '@chakra-ui/react'
-import { LoadingList } from '../../loading'
-import Pagination from '../../pagination'
+import { LoadingList as LoadingListJs } from '../../loading'
+import PaginationJs from '../../pagination'
 import { ErrorMessageBlock } from '../../Errors'
+import type { Rate } from '../../../types'
 import './ActivityList.scss'
+
+const LoadingList = LoadingListJs as ComponentType<{ itemsCount?: number }>
+const Pagination = PaginationJs as ComponentType<{
+  className?: string
+  onPageChange?: (selectedItem: { selected: number }) => void
+  pageCount?: number
+  forcePage?: number
+  justify?: boolean
+}>
+
+type HeaderStyles = 'default' | 'light'
+
+interface ListPagination {
+  onPageChange: (selectedItem: { selected: number }) => void
+  pageCount: number
+  forcePage?: number
+}
+
+interface ActivityListProps {
+  activities?: TokenActivity[]
+  showMoreLink?: string
+  headerStyles?: HeaderStyles
+  rate?: Pick<Rate, 'usd'> | null
+  pagination?: ListPagination
+  loading?: boolean
+  itemsCount?: number
+  decimals?: number | null
+}
 
 export default function ActivityList ({
   activities = [],
@@ -16,9 +47,9 @@ export default function ActivityList ({
   loading,
   itemsCount = 10,
   decimals
-}) {
+}: ActivityListProps) {
   const isLargeScreen = useBreakpointValue({ base: true, lg: false })
-  const headerExtraClass = {
+  const headerExtraClass: Record<HeaderStyles, string> = {
     default: '',
     light: 'ActivityList__ColumnTitles--Light'
   }

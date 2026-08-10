@@ -1,22 +1,34 @@
 'use client'
 
+import type { ComponentType } from 'react'
 import TokensListItem from './TokensListItem'
+import type { TokenListItemData } from './TokensListItem'
 import { EmptyListMessage } from '../ui/lists'
 import { Grid, GridItem } from '@chakra-ui/react'
-import Pagination from '../pagination'
+import PaginationJs from '../pagination'
 import { ErrorMessageBlock } from '../Errors'
-import { LoadingList } from '../loading'
+import { LoadingList as LoadingListJs } from '../loading'
 import {
   createColumnHelper,
   getCoreRowModel,
   useReactTable
 } from '@tanstack/react-table'
+import type { Rate } from '../../types'
 import './TokensList.scss'
 
-const columnHelper = createColumnHelper()
+const Pagination = PaginationJs as ComponentType<{
+  className?: string
+  onPageChange?: (selectedItem: { selected: number }) => void
+  pageCount?: number
+  forcePage?: number
+  justify?: boolean
+}>
+const LoadingList = LoadingListJs as ComponentType<{ itemsCount?: number }>
+
+const columnHelper = createColumnHelper<TokenListItemData>()
 
 const columns = [
-  columnHelper.accessor('name', { id: 'tokenName', header: 'Token Name' }),
+  columnHelper.accessor(row => row.localizations?.en?.singularForm, { id: 'tokenName', header: 'Token Name' }),
   columnHelper.accessor('position', { id: 'position', header: 'Position' }),
   columnHelper.accessor('totalSupply', { id: 'supply', header: 'Supply' }),
   columnHelper.accessor('price', { id: 'price', header: 'Price' }),
@@ -24,9 +36,27 @@ const columns = [
   columnHelper.accessor('owner', { id: 'owner', header: 'Owner' })
 ]
 
-const headerExtraClass = {
+type HeaderStyles = 'default' | 'light'
+
+const headerExtraClass: Record<HeaderStyles, string> = {
   default: '',
   light: 'TokensList__ColumnTitles--Light'
+}
+
+interface ListPagination {
+  onPageChange: (selectedItem: { selected: number }) => void
+  pageCount: number
+  forcePage?: number
+}
+
+interface TokensListProps {
+  tokens?: TokenListItemData[]
+  rate?: Pick<Rate, 'usd'> | null
+  headerStyles?: HeaderStyles
+  variant?: 'default' | 'balance'
+  pagination?: ListPagination
+  loading?: boolean
+  itemsCount?: number
 }
 
 function TokensList ({
@@ -37,7 +67,7 @@ function TokensList ({
   pagination,
   loading,
   itemsCount = 10
-}) {
+}: TokensListProps) {
   const table = useReactTable({
     data: tokens || [],
     columns,
