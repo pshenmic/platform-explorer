@@ -2,40 +2,52 @@ import { DateRangePicker } from '../calendar'
 import { useEffect, useState } from 'react'
 import { Button } from '@chakra-ui/react'
 import { defaultChartConfig } from '../charts/config'
+import type { ChartConfig, TimespanValue } from '../charts/types'
+import type { DateRangeFilterValue } from './types'
 import './DateRangeFilter.scss'
 import './RangeFilter.scss'
+
+type CalendarRange = [Date | null, Date | null]
+
+interface DateRangeFilterProps {
+  value?: DateRangeFilterValue
+  onChange: (value: DateRangeFilterValue | null) => void
+  onSubmit?: () => void
+  config?: ChartConfig
+}
 
 export const DateRangeFilter = ({
   value = { start: null, end: null },
   onChange,
   onSubmit,
   config = defaultChartConfig
-}) => {
-  const [timespan, setTimespan] = useState(null)
-  const [selectedRange, setSelectedRange] = useState(null)
-  const [calendarValue, setCalendarValue] = useState(null)
+}: DateRangeFilterProps) => {
+  const [timespan, setTimespan] = useState<TimespanValue | null>(null)
+  const [selectedRange, setSelectedRange] = useState<DateRangeFilterValue | null>(null)
+  const [calendarValue, setCalendarValue] = useState<CalendarRange | null>(null)
 
-  const timeframeButtonHandler = (value) => {
-    setTimespan(value)
+  const timeframeButtonHandler = (timespanValue: TimespanValue) => {
+    setTimespan(timespanValue)
     setSelectedRange({
-      start: value?.range?.start ? new Date(value.range.start) : null,
-      end: value?.range?.end ? new Date(value.range.end) : null
+      start: timespanValue?.range?.start ? new Date(timespanValue.range.start) : null,
+      end: timespanValue?.range?.end ? new Date(timespanValue.range.end) : null
     })
   }
 
-  const calendarHandler = (value) => {
-    setCalendarValue(value)
+  const calendarHandler = (nextValue: Date | null | CalendarRange) => {
+    const range = Array.isArray(nextValue) ? nextValue : [nextValue, null] as CalendarRange
+    setCalendarValue(range)
     setTimespan(null)
-    const [start, end] = value
+    const [start, end] = range
     setSelectedRange({ start, end })
   }
 
   useEffect(() => {
     onChange(selectedRange)
-  }, [selectedRange])
+  }, [selectedRange, onChange])
 
   useEffect(() => {
-    const formatedValue = [
+    const formatedValue: CalendarRange = [
       value?.start || null,
       value?.end || null
     ]
@@ -43,7 +55,7 @@ export const DateRangeFilter = ({
     if (JSON.stringify(formatedValue) !== JSON.stringify(calendarValue)) {
       setCalendarValue(formatedValue)
     }
-  }, [value])
+  }, [value, calendarValue])
 
   return (
     <div className={'DateRangeFilter'}>
@@ -75,7 +87,6 @@ export const DateRangeFilter = ({
 
       <DateRangePicker
         disableFutureDates={true}
-        monthsToShow={7}
         noTopNavigation={true}
         noWeekDay={true}
         changeHandler={calendarHandler}

@@ -1,16 +1,37 @@
 'use client'
 
 import { useCallback, useEffect, useRef, useState, useMemo } from 'react'
+import type { Dispatch, SetStateAction } from 'react'
 import { Button, useDisclosure } from '@chakra-ui/react'
 import { useFilters } from '../../hooks'
+import type { FilterValue, Filters as UseFiltersState } from '../../hooks/useFilters'
 import { MultiSelectFilter, InputFilter, RangeFilter, FilterGroup, ActiveFilters, SearchFilter } from './'
 import { BottomSheet } from '../ui/sheets'
 import { ChevronIcon } from '../ui/icons'
 import { MultiLevelMenu } from '../ui/menus'
 import { MobileFilterMenu } from './MobileFilterMenu'
 import { DateRangeFilter } from './DateRangeFilter'
+import type {
+  DateRangeFilterValue,
+  FilterMenuItem,
+  FilterState,
+  FilterStateValue,
+  FiltersConfig,
+  RangeFilterValue
+} from './types'
+import type { WithClassName } from '../../types/common'
 
 import './Filters.scss'
+
+interface FiltersProps extends WithClassName {
+  filtersConfig: FiltersConfig
+  initialFilters?: FilterState
+  onFilterChange?: (filters: Record<string, unknown>) => void
+  isMobile?: boolean
+  buttonText?: string
+  /** If true, filters apply immediately on change. If false, filters apply only on menu close/submit */
+  applyOnChange?: boolean
+}
 
 export const Filters = ({
   filtersConfig,
@@ -19,9 +40,9 @@ export const Filters = ({
   isMobile = false,
   buttonText = 'Add filter',
   className = '',
-  applyOnChange = false // If true, filters apply immediately on change. If false, filters apply only on menu close/submit
-}) => {
-  const defaultFilters = Object.fromEntries(
+  applyOnChange = false
+}: FiltersProps) => {
+  const defaultFilters: FilterState = Object.fromEntries(
     Object.keys(filtersConfig).map(key => [
       key,
       initialFilters?.[key] ?? filtersConfig[key].defaultValue
@@ -30,25 +51,28 @@ export const Filters = ({
 
   /** Menu filters - temporary state while user is selecting filters */
   const {
-    filters: menuFilters,
-    setFilters: setMenuFilters,
+    filters: menuFiltersRaw,
+    setFilters: setMenuFiltersRaw,
     handleFilterChange: baseHandleFilterChange,
     handleMultipleValuesChange: baseHandleMultipleValuesChange
-  } = useFilters(defaultFilters)
+  } = useFilters(defaultFilters as UseFiltersState)
+
+  const menuFilters = menuFiltersRaw as FilterState
+  const setMenuFilters = setMenuFiltersRaw as unknown as Dispatch<SetStateAction<FilterState>>
 
   /** Applied filters - actual filters that are applied and shown in ActiveFilters */
-  const [appliedFilters, setAppliedFilters] = useState(defaultFilters)
+  const [appliedFilters, setAppliedFilters] = useState<FilterState>(defaultFilters)
 
-  const previousAppliedFilters = useRef(appliedFilters)
+  const previousAppliedFilters = useRef<Record<string, unknown>>(appliedFilters as Record<string, unknown>)
 
-  const applyFilters = useCallback((filtersToApply = menuFilters) => {
+  const applyFilters = useCallback((filtersToApply: FilterState = menuFilters) => {
     if (typeof onFilterChange !== 'function') return
 
     const processedFilters = (() => {
-      return Object.entries(filtersToApply).reduce((result, [key, value]) => {
+      return Object.entries(filtersToApply).reduce<Record<string, unknown>>((result, [key, value]) => {
         const filterKeyConfig = filtersConfig[key]
 
-        if (filterKeyConfig.type === 'multiselect' && (filterKeyConfig.isAllSelected(value) || value?.length === 0)) {
+        if (filterKeyConfig.type === 'multiselect' && (filterKeyConfig.isAllSelected?.(value) || (Array.isArray(value) && value.length === 0))) {
           return result
         }
 
@@ -57,22 +81,24 @@ export const Filters = ({
         }
 
         if (filterKeyConfig.type === 'range') {
-          if (!value?.min && !value?.max) return result
+          const rangeValue = value as RangeFilterValue | undefined
+          if (!rangeValue?.min && !rangeValue?.max) return result
 
           return {
             ...result,
-            ...(value?.min && { [`${key}_min`]: value?.min }),
-            ...(value?.max && { [`${key}_max`]: value?.max })
+            ...(rangeValue?.min && { [`${key}_min`]: rangeValue?.min }),
+            ...(rangeValue?.max && { [`${key}_max`]: rangeValue?.max })
           }
         }
 
         if (filterKeyConfig.type === 'daterange') {
-          if (!value?.start && !value?.end) return result
+          const dateValue = value as DateRangeFilterValue | undefined
+          if (!dateValue?.start && !dateValue?.end) return result
 
           return {
             ...result,
-            ...(value?.start && { [`${key}_start`]: value?.start?.toISOString() }),
-            ...(value?.end && { [`${key}_end`]: value?.end?.toISOString() })
+            ...(dateValue?.start && { [`${key}_start`]: dateValue?.start?.toISOString() }),
+            ...(dateValue?.end && { [`${key}_end`]: dateValue?.end?.toISOString() })
           }
         }
 
@@ -132,16 +158,16 @@ export const Filters = ({
   }
 
   /** Handle single filter change in menu */
-  const handleFilterChange = useCallback((filterName, value) => {
-    baseHandleFilterChange(filterName, value)
+  const handleFilterChange = useCallback((filterName: string, value: FilterStateValue) => {
+    baseHandleFilterChange(filterName, value as FilterValue)
   }, [baseHandleFilterChange])
 
   /** Handle multiple values filter change in menu */
-  const handleMultipleValuesChange = useCallback((fieldName, value) => {
+  const handleMultipleValuesChange = useCallback((fieldName: string, value: string) => {
     baseHandleMultipleValuesChange(fieldName, value)
   }, [baseHandleMultipleValuesChange])
 
-  const handleToggleAll = useCallback((filterName, values) => {
+  const handleToggleAll = useCallback((filterName: string, values: string[]) => {
     setMenuFilters(prevFilters => ({
       ...prevFilters,
       [filterName]: values
@@ -149,7 +175,7 @@ export const Filters = ({
   }, [setMenuFilters])
 
   /** Clear a specific applied filter */
-  const clearAppliedFilter = useCallback((filterName) => {
+  const clearAppliedFilter = useCallback((filterName: string) => {
     const newAppliedFilters = {
       ...appliedFilters,
       [filterName]: filtersConfig[filterName].defaultValue
@@ -164,7 +190,7 @@ export const Filters = ({
   }, [appliedFilters, filtersConfig, setMenuFilters, applyFilters])
 
   const resetAllAppliedFilters = useCallback(() => {
-    const defaultFilters = Object.fromEntries(
+    const nextDefaultFilters: FilterState = Object.fromEntries(
       Object.keys(filtersConfig).map(key => [
         key,
         filtersConfig[key].defaultValue
@@ -172,8 +198,8 @@ export const Filters = ({
     )
 
     /** Update both applied and menu filters */
-    setAppliedFilters(defaultFilters)
-    setMenuFilters(defaultFilters)
+    setAppliedFilters(nextDefaultFilters)
+    setMenuFilters(nextDefaultFilters)
     setIsMenuInitialized(false)
 
     /** Apply empty filters immediately */
@@ -182,7 +208,7 @@ export const Filters = ({
     }
   }, [filtersConfig, setMenuFilters, onFilterChange])
 
-  const menuData = useMemo(() => Object.entries(filtersConfig).map(([key, config]) => {
+  const menuData: FilterMenuItem[] = useMemo(() => Object.entries(filtersConfig).map(([key, config]) => {
     let content
 
     switch (config.type) {
@@ -191,7 +217,7 @@ export const Filters = ({
           <FilterGroup title={config.title}>
             <MultiSelectFilter
               items={config.options}
-              selectedValues={menuFilters[key]}
+              selectedValues={(menuFilters[key] as string[] | undefined) ?? []}
               onItemClick={(value) => handleMultipleValuesChange(key, value)}
               onSelectAll={(values) => handleToggleAll(key, values)}
               showToggleAll={true}
@@ -205,7 +231,7 @@ export const Filters = ({
         content = (
           <FilterGroup title={config.title}>
             <RangeFilter
-              value={menuFilters[key]}
+              value={(menuFilters[key] as RangeFilterValue | undefined) ?? { min: '', max: '' }}
               onChange={(value) => handleFilterChange(key, value)}
               type={'number'}
               minTitle={config.minTitle}
@@ -222,7 +248,7 @@ export const Filters = ({
         content = (
           <FilterGroup title={config.title}>
             <InputFilter
-              value={menuFilters[key]}
+              value={menuFilters[key] as string | number | null | undefined}
               onChange={(value) => handleFilterChange(key, value)}
               placeholder={config.placeholder}
               showSubmitButton={true}
@@ -235,7 +261,7 @@ export const Filters = ({
         content = (
           <FilterGroup title={config?.title}>
             <SearchFilter
-              value={menuFilters[key]}
+              value={menuFilters[key] as string | null | undefined}
               onChange={(value) => handleFilterChange(key, value)}
               placeholder={config?.placeholder}
               showSubmitButton={true}
@@ -249,7 +275,7 @@ export const Filters = ({
         content = (
           <FilterGroup title={config?.title}>
             <DateRangeFilter
-              value={menuFilters[key]}
+              value={(menuFilters[key] as DateRangeFilterValue | undefined) ?? { start: null, end: null }}
               onChange={(value) => handleFilterChange(key, value)}
               onSubmit={submitHandler}
             />
@@ -276,7 +302,7 @@ export const Filters = ({
       options: config.options || null,
       mobileTagRenderer: config.mobileTagRenderer || null
     }
-  }), [filtersConfig, menuFilters, appliedFilters, isMobile, handleMultipleValuesChange, handleFilterChange, handleToggleAll, submitHandler])
+  }), [filtersConfig, menuFilters, appliedFilters, handleMultipleValuesChange, handleFilterChange, handleToggleAll])
 
   const TriggerButton = () => (
     <Button
@@ -296,7 +322,7 @@ export const Filters = ({
   const activeFiltersCount = menuData.filter(item => item.activeFilterValue).length
 
   return (
-    <div className={`Filters ${isMobile && 'Filters--Mobile'} ${className || ''}`}>
+    <div className={`Filters ${isMobile ? 'Filters--Mobile' : ''} ${className || ''}`}>
       <div className={'Filters__ButtonsContainer'}>
         <div className={'Filters__ControlButtons'}>
           {isMobile
@@ -327,7 +353,7 @@ export const Filters = ({
           filters={appliedFilters}
           onClearFilter={clearAppliedFilter}
           allValuesSelected={(key, value) => filtersConfig[key]?.isAllSelected?.(value) || false}
-          formatValue={(key, value) => filtersConfig[key]?.formatValue(value)}
+          formatValue={(key, value) => filtersConfig[key]?.formatValue?.(value)}
           getFilterLabel={(key) => filtersConfig[key]?.label || key}
         />
       </div>

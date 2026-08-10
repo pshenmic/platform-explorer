@@ -1,7 +1,18 @@
 import { Input } from '@chakra-ui/react'
+import type { ReactNode, ChangeEvent } from 'react'
 import { SubmitButton } from '../ui/forms'
 import FilterActions from './FilterActions'
 import './InputFilter.scss'
+
+interface InputFilterProps {
+  value?: string | number | null
+  onChange: (value: string) => void
+  placeholder?: string
+  type?: string
+  showSubmitButton?: boolean
+  onSubmit?: () => void
+  title?: ReactNode
+}
 
 export const InputFilter = ({
   value,
@@ -11,7 +22,7 @@ export const InputFilter = ({
   showSubmitButton = false,
   onSubmit,
   title
-}) => (
+}: InputFilterProps) => (
   <div className={'InputFilter'}>
     {title &&
       <div className={'InputFilter__Title'}>{title}</div>
@@ -21,7 +32,7 @@ export const InputFilter = ({
       className={'InputFilter__Input'}
       type={type}
       value={value || ''}
-      onChange={(e) => onChange(e.target.value)}
+      onChange={(e: ChangeEvent<HTMLInputElement>) => onChange(e.target.value)}
       placeholder={placeholder}
     />
 

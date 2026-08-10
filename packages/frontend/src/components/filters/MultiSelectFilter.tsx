@@ -1,7 +1,18 @@
 import { Button } from '@chakra-ui/react'
 import { Checkbox, SubmitButton } from '../ui/forms'
 import FilterActions from './FilterActions'
+import type { MultiSelectOption } from './types'
 import './MultiSelectFilter.scss'
+
+interface MultiSelectFilterProps {
+  items?: MultiSelectOption[]
+  selectedValues?: string[]
+  onItemClick: (value: string) => void
+  onSelectAll: (values: string[]) => void
+  showToggleAll?: boolean
+  showSubmitButton?: boolean
+  onSubmit?: () => void
+}
 
 export const MultiSelectFilter = ({
   items = [],
@@ -11,7 +22,7 @@ export const MultiSelectFilter = ({
   showToggleAll = false,
   showSubmitButton = false,
   onSubmit
-}) => {
+}: MultiSelectFilterProps) => {
   const isAllSelected = items.length === selectedValues.length
 
   const handleToggleAll = () => {

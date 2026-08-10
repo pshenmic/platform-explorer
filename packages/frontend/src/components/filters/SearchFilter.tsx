@@ -1,20 +1,46 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import type { ComponentType, ReactNode } from 'react'
 import { Button } from '@chakra-ui/react'
 import { SubmitButton } from '../ui/forms'
 import FilterActions from './FilterActions'
 import { SearchResultsList, GlobalSearchInput } from '../search'
-import { Identifier } from '../data'
+import type { SearchResultsData } from '../search/SearchResultsList'
+import type { SearchCategory } from '../search/constants'
+import type { LoadableState } from '../../types/common'
+import IdentifierJs from '../data/Identifier'
 import { ValueCard } from '../cards'
 import './SearchFilter.scss'
 
-const defaultSearchState = {
+const Identifier = IdentifierJs as ComponentType<{
+  children?: ReactNode
+  avatar?: boolean
+  ellipsis?: boolean
+  styles?: string[]
+  copyButton?: boolean
+}>
+
+interface SearchState {
+  results: LoadableState<SearchResultsData>
+  value: string
+}
+
+const defaultSearchState: SearchState = {
   results: { data: {}, loading: false, error: false },
   value: ''
 }
 
-const SelectedEntityElement = ({ entity, type }) => {
+interface SelectedEntityElementProps {
+  entity?: {
+    proTxHash?: string
+    identifier?: string
+    dataContracts?: string
+  } | null
+  type?: SearchCategory | string
+}
+
+const SelectedEntityElement = ({ entity, type }: SelectedEntityElementProps) => {
   switch (type) {
     case 'validators':
       return (
@@ -37,6 +63,16 @@ const SelectedEntityElement = ({ entity, type }) => {
   }
 }
 
+interface SearchFilterProps {
+  value?: string | null
+  onChange: (value: string | null) => void
+  placeholder?: string
+  showSubmitButton?: boolean
+  onSubmit?: () => void
+  title?: ReactNode
+  entityType?: SearchCategory
+}
+
 export const SearchFilter = ({
   value,
   onChange,
@@ -45,16 +81,21 @@ export const SearchFilter = ({
   onSubmit,
   title,
   entityType
-}) => {
-  const [searchState, setSearchState] = useState(defaultSearchState)
-  const [selectedEntity, setSelectedEntity] = useState(value || null)
+}: SearchFilterProps) => {
+  const [searchState, setSearchState] = useState<SearchState>(defaultSearchState)
+  const [selectedEntity, setSelectedEntity] = useState<SelectedEntityElementProps['entity']>(value ? { identifier: value, proTxHash: value } : null)
   const [searchFocused, setSearchFocused] = useState(false)
   const displayResults =
-    Object.keys(searchState.results?.data).length ||
+    Object.keys(searchState.results?.data || {}).length ||
     searchState.results?.loading ||
     searchState.results?.error
 
-  const selectEntity = (entity) => {
+  const selectEntity = (data: unknown) => {
+    const entity = data as {
+      proTxHash?: string
+      identifier?: string
+    } | null
+
     switch (entityType) {
       case 'validators':
         setSelectedEntity(entity || null)
@@ -95,9 +136,9 @@ export const SearchFilter = ({
         setSelectedEntity(value ? { dataContracts: value } : null)
         break
       default:
-        setSelectedEntity(value)
+        setSelectedEntity(value ? { identifier: value } : null)
     }
-  }, [value])
+  }, [value, entityType])
 
   return (
     <div className={'SearchFilter'}>
@@ -116,18 +157,20 @@ export const SearchFilter = ({
             <GlobalSearchInput
               forceValue={searchState.value}
               onResultChange={results => setSearchState(prevState => ({ ...prevState, results }))}
-              onChange={value => setSearchState(prevState => ({ ...prevState, value }))}
-              categoryFilters={[entityType]}
+              onChange={nextValue => setSearchState(prevState => ({ ...prevState, value: nextValue }))}
+              categoryFilters={entityType ? [entityType] : []}
               placeholder={placeholder}
             />
-            {displayResults &&
+            {displayResults
+              ? (
               <div className={'SearchFilter__ResultsContainer'}>
                 <SearchResultsList
                   results={searchState.results}
                   onItemClick={selectEntity}
                 />
               </div>
-            }
+                )
+              : null}
           </div>
       }
 

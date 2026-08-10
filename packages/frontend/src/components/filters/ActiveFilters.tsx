@@ -1,6 +1,16 @@
+import type { MouseEvent, ReactNode } from 'react'
 import { Button } from '@chakra-ui/react'
 import { CloseIcon } from '../ui/icons'
+import type { FilterState, FilterStateValue } from './types'
 import './ActiveFilters.scss'
+
+interface ActiveFiltersProps {
+  filters: FilterState
+  onClearFilter: (key: string) => void
+  formatValue?: (key: string, value: FilterStateValue) => ReactNode
+  allValuesSelected?: (key: string, value: FilterStateValue) => boolean
+  getFilterLabel?: (key: string) => ReactNode
+}
 
 export const ActiveFilters = ({
   filters,
@@ -8,7 +18,7 @@ export const ActiveFilters = ({
   formatValue,
   allValuesSelected = () => false,
   getFilterLabel = (key) => key
-}) => {
+}: ActiveFiltersProps) => {
   const activeFilters = Object.entries(filters).filter(([key, value]) => {
     if (Array.isArray(value)) {
       return value.length > 0 && !allValuesSelected(key, value)
@@ -34,7 +44,7 @@ export const ActiveFilters = ({
           rightIcon={
             <div
               className={'ActiveFilters__IconContainer'}
-              onClick={(e) => {
+              onClick={(e: MouseEvent) => {
                 e.stopPropagation()
                 onClearFilter(key)
               }}
@@ -43,7 +53,7 @@ export const ActiveFilters = ({
             </div>
           }
         >
-          {getFilterLabel(key)}: {formatValue ? formatValue(key, value) : value}
+          {getFilterLabel(key)}: {formatValue ? formatValue(key, value) : (value as ReactNode)}
         </Button>
       ))}
     </div>

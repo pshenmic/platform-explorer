@@ -3,14 +3,21 @@ import { Box, Button, Flex, Fade } from '@chakra-ui/react'
 import { ChevronIcon } from '../ui/icons'
 import { FilterValueTag } from './FilterValueTag'
 import { SubmitButton } from '../ui/forms'
+import type { FilterMenuItem } from './types'
 import './MobileFilterMenu.scss'
+
+interface MobileFilterMenuProps {
+  menuData?: FilterMenuItem[]
+  onSubmit?: () => void
+  onReset?: () => void
+}
 
 export const MobileFilterMenu = ({
   menuData = [],
   onSubmit,
   onReset
-}) => {
-  const [activeItem, setActiveItem] = useState(null)
+}: MobileFilterMenuProps) => {
+  const [activeItem, setActiveItem] = useState<FilterMenuItem | null>(null)
   const [renderDetails, setRenderDetails] = useState(false)
   const [renderList, setRenderList] = useState(true)
 
@@ -19,7 +26,7 @@ export const MobileFilterMenu = ({
     setRenderDetails(!!activeItem)
   }, [activeItem])
 
-  const getUpdatedMenuItem = useCallback((item) => {
+  const getUpdatedMenuItem = useCallback((item: FilterMenuItem) => {
     if (!item) return null
 
     const currentItem = menuData.find(menuItem => menuItem.label === item.label)
@@ -27,7 +34,7 @@ export const MobileFilterMenu = ({
   }, [menuData])
 
   const goToMainMenu = () => setActiveItem(null)
-  const selectMenuItem = (item) => setActiveItem(item)
+  const selectMenuItem = (item: FilterMenuItem) => setActiveItem(item)
 
   const hasActiveFilters = menuData.some(item => item.activeFilterValue)
 
