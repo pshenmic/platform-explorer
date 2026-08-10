@@ -1,12 +1,14 @@
-const formatNumber = (n) => {
+import type { TokenForm } from './TokenWizardContext'
+
+const formatNumber = (n: string | number | null | undefined): string | null => {
   if (n === '' || n == null) return null
   const value = String(n).replace(/\D/g, '')
   if (!value) return null
   return value.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
 }
 
-export const buildSummary = (form) => {
-  const bullets = []
+export const buildSummary = (form: TokenForm): string[] => {
+  const bullets: string[] = []
 
   const name = form.name?.trim() || 'Unnamed token'
   const supply = formatNumber(form.baseSupply)

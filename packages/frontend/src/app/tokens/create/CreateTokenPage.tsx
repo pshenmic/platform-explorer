@@ -8,12 +8,15 @@ import DeployBar from './components/DeployBar'
 import './CreateTokenPage.scss'
 import './components/Preview/Preview.scss'
 
+export type PreviewView = 'json' | 'faq'
+export type MobilePane = 'form' | 'preview'
+
 function CreateTokenPage () {
   // Flattened mobile nav (<=960px): one row of Form / JSON / FAQ, no nested tabs.
   // mobilePane picks the visible column; previewView drives the JSON/FAQ view
   // (shared with the desktop in-pane toggle). Ignored on desktop (both columns show).
-  const [mobilePane, setMobilePane] = useState('form')
-  const [previewView, setPreviewView] = useState('json')
+  const [mobilePane, setMobilePane] = useState<MobilePane>('form')
+  const [previewView, setPreviewView] = useState<PreviewView>('json')
 
   const MOBILE_TABS = [
     { id: 'form', label: 'Form', active: mobilePane === 'form', onClick: () => setMobilePane('form') },

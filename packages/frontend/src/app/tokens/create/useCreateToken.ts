@@ -1,15 +1,30 @@
 'use client'
 
 import { useState } from 'react'
+import type { Signer } from 'src/hooks/useSigner'
 import { buildTokenConfigurationWasm, calculateTokenId } from './buildTokenConfigurationWasm'
+import type { TokenForm } from './TokenWizardContext'
 import { humanizeDeployError } from './validation'
 
-export const useCreateToken = () => {
-  const [isLoading, setIsLoading] = useState(false)
-  const [error, setError] = useState(null)
-  const [result, setResult] = useState(null)
+export type CreateTokenResult = {
+  dataContractId: string
+  tokenId: string
+}
 
-  const submit = async ({ form, signer }) => {
+export type UseCreateTokenReturn = {
+  submit: (params: { form: TokenForm, signer: Signer | null | undefined }) => Promise<void>
+  reset: () => void
+  isLoading: boolean
+  error: string | null
+  result: CreateTokenResult | null
+}
+
+export const useCreateToken = (): UseCreateTokenReturn => {
+  const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const [result, setResult] = useState<CreateTokenResult | null>(null)
+
+  const submit = async ({ form, signer }: { form: TokenForm, signer: Signer | null | undefined }) => {
     setIsLoading(true)
     setError(null)
     setResult(null)
@@ -29,12 +44,13 @@ export const useCreateToken = () => {
       const schema = {}
 
       // create() arg order is (ownerId, nonce, schema, fullValidation, tokens[]) — see pshenmic/dash-platform-sdk#76.
+      // Cast tokens array: WASM config is built from pshenmic-dpp/wasm (weak types).
       const dataContract = sdk.dataContracts.create(
         signer.identityId,
         nextNonce,
         schema,
         true,
-        [{ position: 0, tokenConfiguration }]
+        [{ position: 0, tokenConfiguration }] as Parameters<typeof sdk.dataContracts.create>[4]
       )
 
       const stateTransition = sdk.dataContracts.createStateTransition(

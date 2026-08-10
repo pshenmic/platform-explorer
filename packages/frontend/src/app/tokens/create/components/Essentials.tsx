@@ -1,24 +1,32 @@
 'use client'
 
 import { useState } from 'react'
+import type { ChangeEvent, ReactNode } from 'react'
 import {
   FormControl, Input, FormHelperText, Textarea, Stack, HStack, Text,
   Popover, PopoverTrigger, PopoverContent, PopoverArrow, PopoverBody
 } from '@chakra-ui/react'
 import { YesNoBadge } from './FeatureRow'
 import { useTokenWizard } from '../TokenWizardContext'
+import type { TokenForm } from '../TokenWizardContext'
 import './Essentials.scss'
 
 // DPP caps name at 3–25 bytes and rejects whitespace/control chars.
 // ASCII letters/digits keep maxLength byte-accurate and pluralization sane.
-const sanitizeName = (s) => s.replace(/[^A-Za-z0-9]/g, '')
+const sanitizeName = (s: string): string => s.replace(/[^A-Za-z0-9]/g, '')
 
-const nameHint = (value) => {
+const nameHint = (value: string): string | null => {
   if (value && value.length < 3) return 'At least 3 characters'
   return null
 }
 
-const FieldLabel = ({ label, tooltip, rightSlot }) => (
+interface FieldLabelProps {
+  label: ReactNode
+  tooltip: ReactNode
+  rightSlot?: ReactNode
+}
+
+const FieldLabel = ({ label, tooltip, rightSlot }: FieldLabelProps) => (
   <HStack className='Essentials__LabelRow' justify='space-between' spacing={3}>
     <Popover trigger='click' placement='top' isLazy>
       <PopoverTrigger>
@@ -39,13 +47,17 @@ const FieldLabel = ({ label, tooltip, rightSlot }) => (
   </HStack>
 )
 
+type BooleanFormKey = {
+  [K in keyof TokenForm]: TokenForm[K] extends boolean ? K : never
+}[keyof TokenForm]
+
 function Essentials () {
   const { form, setField } = useTokenWizard()
-  const [touched, setTouched] = useState({ name: false })
+  const [touched, setTouched] = useState<{ name: boolean }>({ name: false })
 
-  const markTouched = (key) => () => setTouched((t) => ({ ...t, [key]: true }))
+  const markTouched = (key: 'name') => () => setTouched((t) => ({ ...t, [key]: true }))
 
-  const onNameChange = (e) => {
+  const onNameChange = (e: ChangeEvent<HTMLInputElement>) => {
     const next = sanitizeName(e.target.value)
     setField('name', next)
     // Plural auto-derives from singular; manual edits only via JSON tab.
@@ -57,12 +69,12 @@ function Essentials () {
   // Show hint only after blur — don't flag while user is still typing.
   const nameError = touched.name ? nameHint(form.name) : null
 
-  const onDigitsChange = (key) => (e) => {
+  const onDigitsChange = (key: 'baseSupply' | 'maxSupply') => (e: ChangeEvent<HTMLInputElement>) => {
     const next = e.target.value.replace(/\D/g, '')
     setField(key, next)
   }
 
-  const toggle = (key) => () => setField(key, !form[key])
+  const toggle = (key: BooleanFormKey) => () => setField(key, !form[key])
 
   return (
     <div className='Essentials'>

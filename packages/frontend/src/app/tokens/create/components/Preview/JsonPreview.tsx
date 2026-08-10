@@ -6,7 +6,9 @@ import { json } from '@codemirror/lang-json'
 import { oneDark } from '@codemirror/theme-one-dark'
 import { EditorView } from '@codemirror/view'
 import { useTokenWizard } from '../../TokenWizardContext'
+import type { HistoryFlags, IntervalUnit, PreProgrammedRow, TokenForm } from '../../TokenWizardContext'
 import { buildTokenConfiguration } from '../../buildTokenConfiguration'
+import type { PreviewView } from '../../CreateTokenPage'
 import FaqView from './FaqView'
 
 // Same palette override as /dataContract/create SchemaField — Platform Explorer dark.
@@ -43,20 +45,26 @@ const basicSetup = {
   indentOnInput: false
 }
 
-const TITLES = {
+const TITLES: Record<PreviewView, string> = {
   json: 'Token configuration',
   faq: 'FAQ'
 }
 
 // JSON → form. Supply fields aren't reversed: form scales by 10^decimals
 // before reaching JSON, so the round-trip would be lossy.
-const isOwnerRule = (rule) => rule?.authorizedToMakeChange === 'ContractOwner'
+const isOwnerRule = (rule: unknown): boolean =>
+  typeof rule === 'object' &&
+  rule != null &&
+  (rule as { authorizedToMakeChange?: string }).authorizedToMakeChange === 'ContractOwner'
 
-const parseFormUpdates = (config) => {
+type PartialFormUpdates = Partial<TokenForm>
+
+const parseFormUpdates = (config: unknown): PartialFormUpdates | null => {
   if (!config || typeof config !== 'object') return null
-  const updates = {}
+  const c = config as Record<string, any>
+  const updates: PartialFormUpdates = {}
 
-  const enLoc = config?.conventions?.localizations?.en
+  const enLoc = c?.conventions?.localizations?.en
   if (typeof enLoc?.singularForm === 'string') updates.name = enLoc.singularForm
   if (typeof enLoc?.pluralForm === 'string') {
     updates.pluralForm = enLoc.pluralForm
@@ -66,41 +74,41 @@ const parseFormUpdates = (config) => {
     updates.shouldCapitalize = enLoc.shouldCapitalize
   }
 
-  const decimals = config?.conventions?.decimals
+  const decimals = c?.conventions?.decimals
   if (typeof decimals === 'number') updates.decimals = decimals
 
-  if (typeof config.startAsPaused === 'boolean') {
-    updates.startAsPaused = config.startAsPaused
+  if (typeof c.startAsPaused === 'boolean') {
+    updates.startAsPaused = c.startAsPaused
   }
-  if (typeof config.allowTransferToFrozenBalance === 'boolean') {
-    updates.allowTransferToFrozenBalance = config.allowTransferToFrozenBalance
+  if (typeof c.allowTransferToFrozenBalance === 'boolean') {
+    updates.allowTransferToFrozenBalance = c.allowTransferToFrozenBalance
   }
 
-  if (config.manualMintingRules) updates.allowMint = isOwnerRule(config.manualMintingRules)
-  if (config.manualBurningRules) updates.allowBurn = isOwnerRule(config.manualBurningRules)
-  if (config.distributionRules?.changeDirectPurchasePricingRules) {
-    updates.allowDirectPurchase = isOwnerRule(config.distributionRules.changeDirectPurchasePricingRules)
+  if (c.manualMintingRules) updates.allowMint = isOwnerRule(c.manualMintingRules)
+  if (c.manualBurningRules) updates.allowBurn = isOwnerRule(c.manualBurningRules)
+  if (c.distributionRules?.changeDirectPurchasePricingRules) {
+    updates.allowDirectPurchase = isOwnerRule(c.distributionRules.changeDirectPurchasePricingRules)
   }
-  if (config.freezeRules) updates.allowFreeze = isOwnerRule(config.freezeRules)
-  if (config.destroyFrozenFundsRules) updates.allowDestroyFrozen = isOwnerRule(config.destroyFrozenFundsRules)
-  if (config.emergencyActionRules) updates.allowEmergency = isOwnerRule(config.emergencyActionRules)
+  if (c.freezeRules) updates.allowFreeze = isOwnerRule(c.freezeRules)
+  if (c.destroyFrozenFundsRules) updates.allowDestroyFrozen = isOwnerRule(c.destroyFrozenFundsRules)
+  if (c.emergencyActionRules) updates.allowEmergency = isOwnerRule(c.emergencyActionRules)
 
-  const dest = config?.distributionRules?.newTokensDestinationIdentity
+  const dest = c?.distributionRules?.newTokensDestinationIdentity
   if (typeof dest === 'string') updates.destinationIdentity = dest
   else if (dest === null) updates.destinationIdentity = ''
 
-  const pp = config?.distributionRules?.preProgrammedDistribution
+  const pp = c?.distributionRules?.preProgrammedDistribution
   if (pp && typeof pp === 'object' && pp.distributions && typeof pp.distributions === 'object') {
-    const rows = []
+    const rows: PreProgrammedRow[] = []
     let seq = 0
-    for (const [ts, perId] of Object.entries(pp.distributions)) {
+    for (const [ts, perId] of Object.entries(pp.distributions as Record<string, unknown>)) {
       const tsNum = Number(ts)
       if (!Number.isFinite(tsNum) || !perId || typeof perId !== 'object') continue
       // datetime-local is local wall-clock, so shift by the tz offset before
       // slicing — using raw toISOString() (UTC) would drift the round-trip.
       const local = new Date(tsNum - new Date(tsNum).getTimezoneOffset() * 60000)
       const iso = local.toISOString().slice(0, 16)
-      for (const [identity, amount] of Object.entries(perId)) {
+      for (const [identity, amount] of Object.entries(perId as Record<string, unknown>)) {
         rows.push({ id: `pp${++seq}`, time: iso, identity, amount: String(amount) })
       }
     }
@@ -110,14 +118,15 @@ const parseFormUpdates = (config) => {
   }
 
   // Perpetual: only Time + FixedAmount round-trips back to form; others ignored.
-  const pd = config?.distributionRules?.perpetualDistribution
+  const pd = c?.distributionRules?.perpetualDistribution
   if (pd && typeof pd === 'object') {
     const time = pd.distributionType?.TimeBasedDistribution
     const fixed = time?.function?.FixedAmount
     if (time && fixed && typeof time.interval === 'number') {
       updates.perpetualEnabled = true
-      const intervalMs = time.interval
-      let unit = 'days'; let value = intervalMs / 86_400_000
+      const intervalMs = time.interval as number
+      let unit: IntervalUnit = 'days'
+      let value = intervalMs / 86_400_000
       if (intervalMs % 86_400_000 !== 0) {
         unit = 'hours'; value = intervalMs / 3_600_000
         if (intervalMs % 3_600_000 !== 0) {
@@ -142,9 +151,9 @@ const parseFormUpdates = (config) => {
     updates.perpetualEnabled = false
   }
 
-  const kh = config?.keepsHistory
+  const kh = c?.keepsHistory
   if (kh && typeof kh === 'object') {
-    updates.keepsHistory = {
+    const history: HistoryFlags = {
       transfer: kh.keepsTransferHistory !== false,
       freezing: kh.keepsFreezingHistory !== false,
       minting: kh.keepsMintingHistory !== false,
@@ -152,15 +161,23 @@ const parseFormUpdates = (config) => {
       directPricing: kh.keepsDirectPricingHistory !== false,
       directPurchase: kh.keepsDirectPurchaseHistory !== false
     }
+    updates.keepsHistory = history
   }
 
-  if (typeof config.description === 'string') updates.description = config.description
-  else if (config.description === null) updates.description = ''
+  if (typeof c.description === 'string') updates.description = c.description
+  else if (c.description === null) updates.description = ''
 
   return updates
 }
 
-const TabButton = ({ id, label, view, onSelect }) => (
+interface TabButtonProps {
+  id: PreviewView
+  label: string
+  view: PreviewView
+  onSelect: (id: PreviewView) => void
+}
+
+const TabButton = ({ id, label, view, onSelect }: TabButtonProps) => (
   <button
     type='button'
     role='tab'
@@ -172,22 +189,27 @@ const TabButton = ({ id, label, view, onSelect }) => (
   </button>
 )
 
-function JsonPreview ({ view, onViewChange }) {
+interface JsonPreviewProps {
+  view: PreviewView
+  onViewChange: (view: PreviewView) => void
+}
+
+function JsonPreview ({ view, onViewChange }: JsonPreviewProps) {
   const { form, setField } = useTokenWizard()
   const configuration = useMemo(() => buildTokenConfiguration(form), [form])
   const code = useMemo(() => JSON.stringify(configuration, null, 2), [configuration])
 
   const [editorValue, setEditorValue] = useState(code)
-  const [parseError, setParseError] = useState(null)
+  const [parseError, setParseError] = useState<string | null>(null)
   // Kept here so FAQ open-state survives switching to the JSON tab and back.
-  const [faqOpen, setFaqOpen] = useState(() => new Set())
-  const toggleFaq = (key) => setFaqOpen((prev) => {
+  const [faqOpen, setFaqOpen] = useState(() => new Set<string>())
+  const toggleFaq = (key: string) => setFaqOpen((prev) => {
     const next = new Set(prev)
     next.has(key) ? next.delete(key) : next.add(key)
     return next
   })
   const isFocusedRef = useRef(false)
-  const debounceRef = useRef(null)
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   // Sync form → editor only on form change. Focus tracked via ref so blur
   // doesn't re-fire and snap the user's typed value back.
@@ -198,23 +220,23 @@ function JsonPreview ({ view, onViewChange }) {
     }
   }, [code])
 
-  const handleChange = (newValue) => {
+  const handleChange = (newValue: string) => {
     setEditorValue(newValue)
 
     if (debounceRef.current) clearTimeout(debounceRef.current)
     debounceRef.current = setTimeout(() => {
       try {
-        const parsed = JSON.parse(newValue)
+        const parsed: unknown = JSON.parse(newValue)
         setParseError(null)
         const updates = parseFormUpdates(parsed)
         if (updates) {
           for (const [key, value] of Object.entries(updates)) {
-            setField(key, value)
+            setField(key as keyof TokenForm, value as TokenForm[keyof TokenForm])
           }
         }
       } catch (e) {
         // Invalid JSON mid-typing — keep user's input, don't touch form.
-        setParseError(e?.message || 'Invalid JSON')
+        setParseError((e as Error)?.message || 'Invalid JSON')
       }
     }, 500)
   }

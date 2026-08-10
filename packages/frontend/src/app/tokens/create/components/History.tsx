@@ -3,11 +3,12 @@
 import { Stack } from '@chakra-ui/react'
 import { FeatureToggle } from './FeatureRow'
 import { useTokenWizard } from '../TokenWizardContext'
+import type { HistoryFlags } from '../TokenWizardContext'
 
 function History () {
   const { form, setField } = useTokenWizard()
 
-  const toggleHistory = (key) => () => {
+  const toggleHistory = (key: keyof HistoryFlags) => () => {
     setField('keepsHistory', { ...form.keepsHistory, [key]: !form.keepsHistory[key] })
   }
 

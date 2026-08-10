@@ -3,12 +3,17 @@
 import { Stack } from '@chakra-ui/react'
 import { FeatureToggle } from './FeatureRow'
 import { useTokenWizard } from '../TokenWizardContext'
+import type { TokenForm } from '../TokenWizardContext'
 import './Features.scss'
+
+type BooleanFormKey = {
+  [K in keyof TokenForm]: TokenForm[K] extends boolean ? K : never
+}[keyof TokenForm]
 
 function Features () {
   const { form, setField } = useTokenWizard()
 
-  const toggle = (key) => () => setField(key, !form[key])
+  const toggle = (key: BooleanFormKey) => () => setField(key, !form[key])
 
   return (
     <div className='Features'>

@@ -11,7 +11,7 @@ const LOCALIZATION = `${BASE}/token_configuration_localization/v0/mod.rs`
 
 export const STRUCT_URL = STRUCT
 
-export const FIELD_SOURCE = {
+export const FIELD_SOURCE: Record<string, string> = {
   conventions: `${STRUCT}#L37`,
   // decimals & names live in their own structs, not in TokenConfigurationV0.
   decimals: `${CONVENTION}#L39`,
@@ -37,7 +37,18 @@ export const FIELD_SOURCE = {
   description: `${STRUCT}#L115`
 }
 
-export const tokenFaqGroups = [
+export type TokenFaqItem = {
+  key: string
+  question: string
+  answer: string
+}
+
+export type TokenFaqGroup = {
+  title: string
+  items: TokenFaqItem[]
+}
+
+export const tokenFaqGroups: TokenFaqGroup[] = [
   {
     title: 'Basic Info',
     items: [

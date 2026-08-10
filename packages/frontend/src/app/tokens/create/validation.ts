@@ -1,13 +1,15 @@
 // Pre-flight form checks + a mapper for raw WASM/SDK errors. Returns messages; empty = valid.
 
+import type { TokenForm } from './TokenWizardContext'
+
 // Loose base58 length check — catches obviously-wrong ids, not strict parsing.
 const BASE58 = /^[1-9A-HJ-NP-Za-km-z]{40,46}$/
-const isIdentityId = (s) => BASE58.test((s || '').trim())
-const isWholeNumber = (s) => /^\d+$/.test((s || '').trim())
-const isPositive = (s) => isWholeNumber(s) && BigInt(s.trim()) > 0n
+const isIdentityId = (s: string | undefined | null): boolean => BASE58.test((s || '').trim())
+const isWholeNumber = (s: string | undefined | null): boolean => /^\d+$/.test((s || '').trim())
+const isPositive = (s: string | undefined | null): boolean => isWholeNumber(s) && BigInt((s || '').trim()) > 0n
 
-export const validateForm = (form) => {
-  const errors = []
+export const validateForm = (form: TokenForm): string[] => {
+  const errors: string[] = []
 
   const name = (form.name || '').trim()
   if (name.length < 3 || name.length > 25) {
@@ -50,8 +52,9 @@ export const validateForm = (form) => {
 }
 
 // Map common cryptic errors; keep the original as fallback.
-export const humanizeDeployError = (e) => {
-  const raw = (e?.message ?? String(e ?? '')).trim()
+export const humanizeDeployError = (e: unknown): string => {
+  const err = e as { message?: string } | null | undefined
+  const raw = (err?.message ?? String(e ?? '')).trim()
   const low = raw.toLowerCase()
   if (low.includes('no signer')) return 'Connect a wallet or enter a private key first.'
   if (low.includes('insufficient') || low.includes('not enough') || low.includes('credit') || low.includes('balance')) {

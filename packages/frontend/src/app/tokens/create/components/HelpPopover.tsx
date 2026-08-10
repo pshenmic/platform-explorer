@@ -1,12 +1,13 @@
 'use client'
 
+import type { ReactNode } from 'react'
 import {
   Popover, PopoverTrigger, PopoverContent, PopoverArrow, PopoverBody
 } from '@chakra-ui/react'
 import { InfoOutlineIcon } from '@chakra-ui/icons'
 
 // Click (not hover) so tooltip text is selectable / copyable.
-function HelpPopover ({ children }) {
+function HelpPopover ({ children }: { children?: ReactNode }) {
   return (
     <Popover trigger='click' placement='top' isLazy>
       <PopoverTrigger>

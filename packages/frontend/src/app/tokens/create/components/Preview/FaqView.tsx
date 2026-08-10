@@ -1,12 +1,13 @@
 'use client'
 
 import { Fragment } from 'react'
+import type { ReactNode } from 'react'
 import {
   tokenFaqGroups, FIELD_SOURCE, TOKEN_LIMITS_DOC_URL, STRUCT_URL
 } from '../../tokenFaq'
 
 // Field names in FIELD_SOURCE link to rs-dpp; bare value literals stay plain so the link affordance is honest.
-const renderAnswer = (text) =>
+const renderAnswer = (text: string): ReactNode[] =>
   text.split('`').map((part, i) => {
     if (i % 2 === 0) return <Fragment key={i}>{part}</Fragment>
     const href = FIELD_SOURCE[part]
@@ -25,9 +26,14 @@ const renderAnswer = (text) =>
       : <code key={i} className='Preview__FaqCode'>{part}</code>
   })
 
+interface FaqViewProps {
+  open: Set<string>
+  onToggle: (key: string) => void
+}
+
 // Companion to the JSON editor — docs.dash.org doesn't cover config fields.
 // open-state lives in the parent so it survives switching JSON <-> FAQ tabs.
-function FaqView ({ open, onToggle }) {
+function FaqView ({ open, onToggle }: FaqViewProps) {
   return (
     <div className='Preview__Faq'>
       <p className='Preview__FaqIntro'>

@@ -7,7 +7,15 @@ import {
 import { useTokenWizard } from '../TokenWizardContext'
 import { buildSummary } from '../buildSummary'
 
-function ReviewModal ({ isOpen, onClose, onConfirm, isDeploying, signerIdentityId }) {
+interface ReviewModalProps {
+  isOpen: boolean
+  onClose: () => void
+  onConfirm: () => void
+  isDeploying: boolean
+  signerIdentityId?: string
+}
+
+function ReviewModal ({ isOpen, onClose, onConfirm, isDeploying, signerIdentityId }: ReviewModalProps) {
   const { form } = useTokenWizard()
   const bullets = buildSummary(form)
 

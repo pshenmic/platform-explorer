@@ -1,13 +1,28 @@
 // v2 ctors move ownership of nested instances — rule slots use factory functions.
+// WASM types are weak; we only type the form input and return values via SDK Parameters.
 
-const INTERVAL_UNIT_MS = {
+import type { DashPlatformSDK, IdentifierWASM } from 'dash-platform-sdk/types'
+import type { IntervalUnit, TokenForm } from './TokenWizardContext'
+
+type CreateDataContract = DashPlatformSDK['dataContracts']['create']
+/** Token configuration entry accepted by `sdk.dataContracts.create` (5th arg item). */
+type TokenConfigEntry = NonNullable<Parameters<CreateDataContract>[4]>[number]
+/** Underlying WASM config object nested in a token entry. */
+export type TokenConfigurationWasm = TokenConfigEntry extends { tokenConfiguration: infer T }
+  ? T
+  : TokenConfigEntry
+
+const INTERVAL_UNIT_MS: Record<IntervalUnit, bigint> = {
   seconds: 1000n,
   minutes: 60_000n,
   hours: 3_600_000n,
   days: 86_400_000n
 }
 
-export async function buildTokenConfigurationWasm (form) {
+export async function buildTokenConfigurationWasm (form: TokenForm): Promise<TokenConfigurationWasm> {
+  // Dynamic import — pshenmic-dpp/wasm has no reliable .d.ts; treat module as loosely typed.
+  const wasm = await import('pshenmic-dpp/wasm') as Record<string, any>
+
   const {
     TokenConfigurationWASM,
     TokenConfigurationConventionWASM,
@@ -23,7 +38,7 @@ export async function buildTokenConfigurationWasm (form) {
     RewardDistributionTypeWASM,
     DistributionFunctionWASM,
     TokenDistributionRecipientWASM
-  } = await import('pshenmic-dpp/wasm')
+  } = wasm
 
   const ownerTaker = () => AuthorizedActionTakersWASM.ContractOwner()
   const noOneTaker = () => AuthorizedActionTakersWASM.NoOne()
@@ -72,12 +87,12 @@ export async function buildTokenConfigurationWasm (form) {
   const scale = 10n ** BigInt(decimalsForScale)
 
   let preProgrammedDist
-  const groupedPP = {}
+  const groupedPP: Record<string, Record<string, bigint>> = {}
   for (const row of form.preProgrammedRows || []) {
     if (!row.time || !row.identity?.trim() || !row.amount) continue
     const ts = Date.parse(row.time)
     if (Number.isNaN(ts)) continue
-    let scaled
+    let scaled: bigint
     try { scaled = BigInt(row.amount) * scale } catch { continue }
     const key = String(ts)
     if (!groupedPP[key]) groupedPP[key] = {}
@@ -90,7 +105,7 @@ export async function buildTokenConfigurationWasm (form) {
   let perpetualDist
   if (form.perpetualEnabled) {
     const intervalValue = Number(form.perpetualIntervalValue)
-    let amountScaled
+    let amountScaled: bigint
     try { amountScaled = BigInt(form.perpetualAmount || '0') * scale } catch { amountScaled = 0n }
     if (intervalValue > 0 && amountScaled > 0n) {
       const fn = DistributionFunctionWASM.FixedAmountDistribution(amountScaled)
@@ -159,10 +174,17 @@ export async function buildTokenConfigurationWasm (form) {
     maxSupply,
     undefined,
     form.description ? form.description.trim() : undefined
-  )
+  ) as TokenConfigurationWasm
 }
 
-export async function calculateTokenId (contractIdLike, position = 0) {
-  const { TokenConfigurationWASM } = await import('pshenmic-dpp/wasm')
+export async function calculateTokenId (
+  contractIdLike: IdentifierWASM | string,
+  position = 0
+): Promise<IdentifierWASM> {
+  const { TokenConfigurationWASM } = await import('pshenmic-dpp/wasm') as {
+    TokenConfigurationWASM: {
+      calculateTokenId: (id: IdentifierWASM | string, position: number) => IdentifierWASM
+    }
+  }
   return TokenConfigurationWASM.calculateTokenId(contractIdLike, position)
 }

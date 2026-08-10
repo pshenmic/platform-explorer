@@ -1,17 +1,23 @@
 'use client'
 
+import type { ChangeEvent } from 'react'
 import { Stack, Input } from '@chakra-ui/react'
 import { Row } from './AdvancedRow'
 import { FeatureToggle } from './FeatureRow'
 import History from './History'
 import { useTokenWizard } from '../TokenWizardContext'
+import type { TokenForm } from '../TokenWizardContext'
+
+type BooleanFormKey = {
+  [K in keyof TokenForm]: TokenForm[K] extends boolean ? K : never
+}[keyof TokenForm]
 
 function Advanced () {
   const { form, setField } = useTokenWizard()
-  const toggle = (key) => () => setField(key, !form[key])
+  const toggle = (key: BooleanFormKey) => () => setField(key, !form[key])
 
   // DPP caps decimals at 16; empty allowed mid-typing.
-  const onDecimalsChange = (e) => {
+  const onDecimalsChange = (e: ChangeEvent<HTMLInputElement>) => {
     const digits = e.target.value.replace(/\D/g, '')
     if (digits === '') return setField('decimals', '')
     setField('decimals', Math.min(16, Number(digits)))

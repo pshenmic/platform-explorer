@@ -1,18 +1,20 @@
 'use client'
 
+import type { ChangeEvent } from 'react'
 import { HStack, Stack, Input, Select, IconButton, Text } from '@chakra-ui/react'
 import { YesNoBadge } from './FeatureRow'
 import { Row, GroupHeader } from './AdvancedRow'
 import { useTokenWizard } from '../TokenWizardContext'
+import type { IntervalUnit, PerpetualRecipient, PerpetualType, TokenForm } from '../TokenWizardContext'
 import './Advanced.scss'
 
 let __rowSeq = 0
-const makeRowId = () => `pp${++__rowSeq}`
+const makeRowId = (): string => `pp${++__rowSeq}`
 
 // datetime-local is local wall-clock; show the resolved UTC instant (chain stores UTC ms).
-const pad = (n) => String(n).padStart(2, '0')
+const pad = (n: number): string => String(n).padStart(2, '0')
 
-const tzOffsetLabel = () => {
+const tzOffsetLabel = (): string => {
   const mins = -new Date().getTimezoneOffset()
   const sign = mins >= 0 ? '+' : '-'
   const h = Math.floor(Math.abs(mins) / 60)
@@ -20,17 +22,21 @@ const tzOffsetLabel = () => {
   return `UTC${sign}${h}${m ? ':' + pad(m) : ''}`
 }
 
-const toUtcPreview = (local) => {
+const toUtcPreview = (local: string): string | null => {
   const ts = Date.parse(local)
   if (Number.isNaN(ts)) return null
   const d = new Date(ts)
   return `${d.getUTCFullYear()}-${pad(d.getUTCMonth() + 1)}-${pad(d.getUTCDate())} ${pad(d.getUTCHours())}:${pad(d.getUTCMinutes())} UTC`
 }
 
+type BooleanFormKey = {
+  [K in keyof TokenForm]: TokenForm[K] extends boolean ? K : never
+}[keyof TokenForm]
+
 function Distribution () {
   const { form, setField } = useTokenWizard()
 
-  const toggleField = (key) => () => setField(key, !form[key])
+  const toggleField = (key: BooleanFormKey) => () => setField(key, !form[key])
 
   const addPreProgrammedRow = () => {
     const next = [...(form.preProgrammedRows || []), { id: makeRowId(), time: '', identity: '', amount: '' }]
@@ -87,7 +93,7 @@ function Distribution () {
                   variant='filled'
                   type='datetime-local'
                   value={row.time}
-                  onChange={(e) => {
+                  onChange={(e: ChangeEvent<HTMLInputElement>) => {
                     const next = [...form.preProgrammedRows]
                     next[idx] = { ...row, time: e.target.value }
                     setField('preProgrammedRows', next)
@@ -105,7 +111,7 @@ function Distribution () {
                   variant='filled'
                   placeholder='Identity ID'
                   value={row.identity}
-                  onChange={(e) => {
+                  onChange={(e: ChangeEvent<HTMLInputElement>) => {
                     const next = [...form.preProgrammedRows]
                     next[idx] = { ...row, identity: e.target.value }
                     setField('preProgrammedRows', next)
@@ -118,7 +124,7 @@ function Distribution () {
                   variant='filled'
                   placeholder='Amount'
                   value={row.amount}
-                  onChange={(e) => {
+                  onChange={(e: ChangeEvent<HTMLInputElement>) => {
                     const v = e.target.value.replace(/\D/g, '')
                     const next = [...form.preProgrammedRows]
                     next[idx] = { ...row, amount: v }
@@ -172,7 +178,7 @@ function Distribution () {
                 variant='filled'
                 value={form.perpetualType}
                 onChange={(e) => {
-                  const v = e.target.value
+                  const v = e.target.value as PerpetualType
                   setField('perpetualType', v)
                   if (v !== 'epoch' && form.perpetualRecipient === 'evonodes') setField('perpetualRecipient', 'owner')
                 }}
@@ -208,7 +214,7 @@ function Distribution () {
                       size='xs'
                       variant='filled'
                       value={form.perpetualIntervalUnit}
-                      onChange={(e) => setField('perpetualIntervalUnit', e.target.value)}
+                      onChange={(e) => setField('perpetualIntervalUnit', e.target.value as IntervalUnit)}
                       flex='1'
                       minW='0'
                       fontFamily='mono'
@@ -251,7 +257,7 @@ function Distribution () {
                 size='xs'
                 variant='filled'
                 value={form.perpetualRecipient}
-                onChange={(e) => setField('perpetualRecipient', e.target.value)}
+                onChange={(e) => setField('perpetualRecipient', e.target.value as PerpetualRecipient)}
                 flex='1'
                 minW='0'
                 maxW='180px'

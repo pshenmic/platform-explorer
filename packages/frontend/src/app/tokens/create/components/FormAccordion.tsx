@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import type { ComponentType } from 'react'
 import {
   Accordion, AccordionItem, AccordionButton, AccordionPanel, AccordionIcon, Box
 } from '@chakra-ui/react'
@@ -11,7 +12,7 @@ import Advanced from './Advanced'
 import './FormAccordion.scss'
 
 // Section names follow Dash Evo Tool. Groups / Document Schemas are Phase 2.
-const SECTIONS = [
+const SECTIONS: Array<{ id: string, label: string, Comp: ComponentType }> = [
   { id: 'basic', label: 'Basic Info', Comp: Essentials },
   { id: 'rules', label: 'Action Rules', Comp: Features },
   { id: 'distribution', label: 'Distribution', Comp: Distribution },
@@ -20,7 +21,7 @@ const SECTIONS = [
 
 function FormAccordion () {
   // Controlled so "expand all" can drive every panel; Basic Info open by default.
-  const [index, setIndex] = useState([0])
+  const [index, setIndex] = useState<number[]>([0])
   const allOpen = index.length === SECTIONS.length
 
   const toggleAll = () => setIndex(allOpen ? [] : SECTIONS.map((_, i) => i))
@@ -32,7 +33,7 @@ function FormAccordion () {
           {allOpen ? 'Collapse all' : 'Expand all'}
         </button>
       </div>
-      <Accordion allowMultiple index={index} onChange={setIndex}>
+      <Accordion allowMultiple index={index} onChange={(next) => setIndex(next as number[])}>
         {SECTIONS.map(({ id, label, Comp }) => (
           <AccordionItem key={id} className='FormAccordion__Item'>
             <AccordionButton className='FormAccordion__Header'>

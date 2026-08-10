@@ -1,27 +1,37 @@
-const ownerOnlyRule = {
+import type { IntervalUnit, PreProgrammedRow, TokenForm } from './TokenWizardContext'
+
+type ChangeRule = {
+  authorizedToMakeChange: 'ContractOwner' | 'NoOne'
+  authorizedToChangeChangeAuthorizedRules: 'ContractOwner' | 'NoOne'
+}
+
+const ownerOnlyRule: ChangeRule = {
   authorizedToMakeChange: 'ContractOwner',
   authorizedToChangeChangeAuthorizedRules: 'ContractOwner'
 }
 
-const noOneRule = {
+const noOneRule: ChangeRule = {
   authorizedToMakeChange: 'NoOne',
   authorizedToChangeChangeAuthorizedRules: 'NoOne'
 }
 
-const INTERVAL_UNIT_MS = {
+const INTERVAL_UNIT_MS: Record<IntervalUnit, number> = {
   seconds: 1000,
   minutes: 60_000,
   hours: 3_600_000,
   days: 86_400_000
 }
 
-const buildPreProgrammedDistribution = (rows, scale) => {
-  const distributions = {}
+const buildPreProgrammedDistribution = (
+  rows: PreProgrammedRow[] | undefined,
+  scale: bigint
+): { distributions: Record<string, Record<string, string>> } | null => {
+  const distributions: Record<string, Record<string, string>> = {}
   for (const row of rows || []) {
     if (!row.time || !row.identity || !row.amount) continue
     const ts = Date.parse(row.time)
     if (Number.isNaN(ts)) continue
-    let scaled
+    let scaled: string
     try { scaled = String(BigInt(row.amount) * scale) } catch { continue }
     const key = String(ts)
     if (!distributions[key]) distributions[key] = {}
@@ -30,17 +40,17 @@ const buildPreProgrammedDistribution = (rows, scale) => {
   return Object.keys(distributions).length ? { distributions } : null
 }
 
-const buildPerpetualDistribution = (form, scale) => {
+const buildPerpetualDistribution = (form: TokenForm, scale: bigint) => {
   if (!form.perpetualEnabled) return null
   const intervalValue = Number(form.perpetualIntervalValue)
   if (!intervalValue || intervalValue <= 0) return null
-  let amountScaled
+  let amountScaled: string
   try { amountScaled = String(BigInt(form.perpetualAmount || '0') * scale) } catch { return null }
   if (amountScaled === '0') return null
 
   const type = form.perpetualType || 'time'
   const fn = { FixedAmount: { amount: amountScaled } }
-  let distributionType
+  let distributionType: Record<string, unknown>
   if (type === 'block') {
     distributionType = { BlockBasedDistribution: { interval: intervalValue, function: fn } }
   } else if (type === 'epoch') {
@@ -50,7 +60,7 @@ const buildPerpetualDistribution = (form, scale) => {
     distributionType = { TimeBasedDistribution: { interval: intervalValue * unitMs, function: fn } }
   }
 
-  let recipient
+  let recipient: string | { Identity: string }
   if (type === 'epoch' && form.perpetualRecipient === 'evonodes') {
     recipient = 'EvonodesByParticipation'
   } else if (form.perpetualRecipient === 'identity' && form.perpetualRecipientIdentity?.trim()) {
@@ -62,7 +72,10 @@ const buildPerpetualDistribution = (form, scale) => {
   return { distributionType, distributionRecipient: recipient }
 }
 
-export const buildTokenConfiguration = (form) => {
+/** JSON preview shape of token config (not the WASM instance). */
+export type TokenConfigurationJson = ReturnType<typeof buildTokenConfiguration>
+
+export const buildTokenConfiguration = (form: TokenForm) => {
   // Supply is multiplied by 10^decimals before broadcast. DPP caps decimals at 16.
   const decimals = Math.min(16, Number(form.decimals) || 0)
   const scale = 10n ** BigInt(decimals)
@@ -107,7 +120,7 @@ export const buildTokenConfiguration = (form) => {
       changeDirectPurchasePricingRules: form.allowDirectPurchase ? ownerOnlyRule : noOneRule
     },
     marketplaceRules: {
-      tradeMode: 'NotTradeable',
+      tradeMode: 'NotTradeable' as const,
       tradeModeChangeRules: ownerOnlyRule
     },
     manualMintingRules: form.allowMint ? ownerOnlyRule : noOneRule,
@@ -117,7 +130,7 @@ export const buildTokenConfiguration = (form) => {
     destroyFrozenFundsRules: form.allowDestroyFrozen ? ownerOnlyRule : noOneRule,
     emergencyActionRules: form.allowEmergency ? ownerOnlyRule : noOneRule,
     mainControlGroup: null,
-    mainControlGroupCanBeModified: 'ContractOwner',
+    mainControlGroupCanBeModified: 'ContractOwner' as const,
     description: form.description || null
   }
 }

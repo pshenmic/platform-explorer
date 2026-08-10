@@ -1,12 +1,19 @@
 'use client'
 
+import type { KeyboardEvent, ReactNode } from 'react'
 import {
   HStack, Text,
   Popover, PopoverTrigger, PopoverContent, PopoverArrow, PopoverBody
 } from '@chakra-ui/react'
 import { ValueContainer } from '@components/ui/containers'
 
-export const RowLabel = ({ label, tooltip, width }) => (
+interface RowLabelProps {
+  label: ReactNode
+  tooltip: ReactNode
+  width?: string | number
+}
+
+export const RowLabel = ({ label, tooltip, width }: RowLabelProps) => (
   <HStack spacing={2} align='center' width={width} flexShrink={0}>
     <Popover trigger='click' placement='top' isLazy>
       <PopoverTrigger>
@@ -36,7 +43,12 @@ export const RowLabel = ({ label, tooltip, width }) => (
   </HStack>
 )
 
-export const YesNoBadge = ({ value, onToggle }) => (
+interface YesNoBadgeProps {
+  value: boolean
+  onToggle: () => void
+}
+
+export const YesNoBadge = ({ value, onToggle }: YesNoBadgeProps) => (
   <ValueContainer
     size='sm'
     colorScheme={value ? 'green' : 'red'}
@@ -45,7 +57,7 @@ export const YesNoBadge = ({ value, onToggle }) => (
     role='switch'
     aria-checked={!!value}
     tabIndex={0}
-    onKeyDown={(e) => {
+    onKeyDown={(e: KeyboardEvent) => {
       if (e.key === 'Enter' || e.key === ' ') {
         e.preventDefault()
         onToggle()
@@ -56,7 +68,14 @@ export const YesNoBadge = ({ value, onToggle }) => (
   </ValueContainer>
 )
 
-export const FeatureToggle = ({ label, tooltip, value, onToggle }) => (
+interface FeatureToggleProps {
+  label: ReactNode
+  tooltip: ReactNode
+  value: boolean
+  onToggle: () => void
+}
+
+export const FeatureToggle = ({ label, tooltip, value, onToggle }: FeatureToggleProps) => (
   <HStack className='Features__Row' justify='space-between' spacing={3}>
     <RowLabel label={label} tooltip={tooltip}/>
     <YesNoBadge value={value} onToggle={onToggle}/>
