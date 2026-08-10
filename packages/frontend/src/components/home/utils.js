@@ -36,13 +36,13 @@ export function isApiOperational (status) {
   return !Number.isNaN(a) && !Number.isNaN(t) && Math.abs(a - t) <= 10 * 60 * 1000
 }
 
-// Tenderdash chain id (evo1, dash-testnet-51, …) → human label for the hero
+// map Tenderdash chain ids to short display labels (mainnet/testnet/devnet)
 export function formatNetworkLabel (network) {
   if (network == null || network === '') return null
   const n = String(network).toLowerCase()
-  if (n === 'evo1' || n === 'mainnet' || n.includes('mainnet')) return 'Mainnet'
-  if (n.includes('testnet') || n.includes('test-net') || n.startsWith('dash-test')) return 'Testnet'
-  if (n.includes('devnet') || n.includes('regtest') || n === 'local') return 'Devnet'
+  if (n === 'evo1' || n === 'mainnet' || n.includes('mainnet')) return 'mainnet'
+  if (n.includes('testnet') || n.includes('test-net') || n.startsWith('dash-test')) return 'testnet'
+  if (n.includes('devnet') || n.includes('regtest') || n === 'local') return 'devnet'
   return String(network)
 }
 

@@ -112,31 +112,319 @@
     }
   }
 
+  // three equal story columns; bolts sit only in gutters so text stays clean
   &__Brand {
     position: relative;
     z-index: 1;
     min-width: 0;
+    width: 100%;
     display: flex;
     flex-direction: column;
-    gap: 1.25rem;
-    // no isolation / no overflow — Brand is only layout for copy, not an FX clip box
+    gap: 0;
     overflow: visible;
-    width: 100%;
+    border: none;
+    border-radius: 0;
+    background: transparent;
+    isolation: isolate;
 
-    // desktop: copy | pulse share the full row evenly (no dead center)
+    // faint grid for depth without card chrome
+    &::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      opacity: 0.04;
+      background-image:
+        linear-gradient(rgba(255, 255, 255, 0.55) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.55) 1px, transparent 1px);
+      background-size: 24px 24px;
+      mask-image: radial-gradient(
+        ellipse 95% 90% at 40% 30%,
+        #000 0%,
+        rgba(0, 0, 0, 0.5) 55%,
+        transparent 82%
+      );
+      -webkit-mask-image: radial-gradient(
+        ellipse 95% 90% at 40% 30%,
+        #000 0%,
+        rgba(0, 0, 0, 0.5) 55%,
+        transparent 82%
+      );
+    }
+
     @media screen and (min-width: $breakpoint-lg) {
       display: grid;
-      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-      gap: 1.5rem 2.5rem;
-      align-items: center;
+      grid-template-columns:
+        minmax(0, 1fr)
+        1.25rem
+        minmax(0, 1fr)
+        1.25rem
+        minmax(0, 1fr);
+      align-items: stretch;
+      gap: 0;
+      padding: 0.15rem 0 0.35rem;
     }
 
     @media screen and (min-width: 77.5em) {
-      gap: 1.75rem 3rem;
+      grid-template-columns:
+        minmax(0, 1fr)
+        1.5rem
+        minmax(0, 1fr)
+        1.5rem
+        minmax(0, 1fr);
     }
   }
 
-  // fills entire Inner (hero content), not the Brand text box — no Brand-edge rectangle
+  // separator between panels (vertical on desktop, horizontal when stacked)
+  &__Gutter {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: stretch;
+    justify-content: center;
+    pointer-events: none;
+    height: 1.1rem;
+    margin: 0.15rem 0 0.35rem;
+    width: 100%;
+
+    @media screen and (min-width: $breakpoint-lg) {
+      height: auto;
+      width: auto;
+      margin: 0;
+      min-height: 100%;
+      align-self: stretch;
+    }
+  }
+
+  &__GutterBolt {
+    display: none;
+    overflow: visible;
+
+    &--h {
+      display: block;
+      width: 100%;
+      height: 12px;
+    }
+
+    &--v {
+      display: none;
+    }
+
+    @media screen and (min-width: $breakpoint-lg) {
+      &--h { display: none; }
+
+      &--v {
+        display: block;
+        width: 100%;
+        height: 100%;
+        min-height: 8rem;
+      }
+    }
+  }
+
+  &__GutterBoltPath {
+    stroke: rgba(var(--chakra-colors-brand-normal-rgb), 0.5);
+    stroke-width: 1.35;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    filter: drop-shadow(0 0 5px rgba(var(--chakra-colors-brand-normal-rgb), 0.28));
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    &__GutterBoltPath {
+      filter: none;
+    }
+  }
+
+  &__Panel {
+    position: relative;
+    z-index: 1;
+    min-width: 0;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.55rem;
+    padding: 0.35rem 0.15rem 0.5rem;
+    border: none;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+    overflow: visible;
+
+    @media screen and (min-width: $breakpoint-lg) {
+      padding: 0.2rem 0.65rem 0.35rem;
+    }
+
+    &--story,
+    &--platform,
+    &--economy {
+      background: transparent;
+      border: none;
+    }
+  }
+
+  &__PanelMark {
+    position: relative;
+    z-index: 1;
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.4rem;
+    margin: 0;
+    line-height: 1;
+    flex-shrink: 0;
+  }
+
+  &__PanelNum {
+    font-family: $font-heading;
+    font-weight: 800;
+    font-style: italic;
+    font-size: 0.8125rem;
+    letter-spacing: 0.02em;
+    color: $color-brand-light;
+    text-shadow: 0 0 12px rgba(var(--chakra-colors-brand-normal-rgb), 0.4);
+  }
+
+  &__PanelTag {
+    font-family: $font-mono;
+    font-size: 0.5625rem;
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    color: var(--chakra-colors-gray-500);
+  }
+
+  &__PanelLede {
+    position: relative;
+    z-index: 1;
+    margin: 0;
+    font-family: $font-heading;
+    font-style: italic;
+    font-weight: 700;
+    font-size: 0.9375rem;
+    line-height: 1.3;
+    color: var(--chakra-colors-gray-250);
+    flex-shrink: 0;
+
+    @media screen and (max-width: $breakpoint-md) {
+      font-size: 0.875rem;
+    }
+  }
+
+  // flex-grow so metric rows share the equal panel height
+  &__PanelStats {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 0;
+    min-width: 0;
+    margin: 0;
+    flex: 1 1 auto;
+  }
+
+  // label/hint left, number right (scan path for dense KPIs)
+  &__PanelStat {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 0.5rem 0.75rem;
+    min-width: 0;
+    padding: 0.55rem 0.15rem;
+    border: none;
+    border-top: 1px solid rgba(var(--chakra-colors-gray-800-rgb), 0.55);
+    background: transparent;
+    border-radius: 0;
+    text-decoration: none;
+    color: inherit;
+    transition: background 0.12s ease, border-color 0.12s ease;
+
+    &:first-child {
+      border-top-color: rgba(var(--chakra-colors-gray-800-rgb), 0.35);
+    }
+
+    &--link {
+      cursor: pointer;
+      margin: 0 -0.35rem;
+      padding-left: 0.35rem;
+      padding-right: 0.35rem;
+      border-radius: 4px;
+
+      @media (hover: hover) and (pointer: fine) {
+        &:hover {
+          background: rgba(var(--chakra-colors-brand-normal-rgb), 0.08);
+
+          .HomeHero__PanelStatValue { color: $color-brand-light; }
+          .HomeHero__PanelStatHint { color: var(--chakra-colors-gray-400); }
+        }
+      }
+
+      &:focus-visible {
+        outline: 1px solid rgba(var(--chakra-colors-brand-light-rgb), 0.55);
+        outline-offset: 2px;
+      }
+    }
+  }
+
+  &__PanelStatMeta {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    min-width: 0;
+  }
+
+  &__PanelStatLabel {
+    font-size: 0.5625rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-family: $font-mono;
+    color: var(--chakra-colors-gray-500);
+    line-height: 1.2;
+  }
+
+  &__PanelStatValue {
+    font-family: $font-heading;
+    font-weight: 800;
+    font-style: italic;
+    font-size: 1.125rem;
+    line-height: 1.1;
+    color: #fff;
+    font-variant-numeric: tabular-nums;
+    text-align: right;
+    white-space: nowrap;
+    transition: color 0.12s ease;
+
+    @media screen and (min-width: $breakpoint-lg) {
+      font-size: 1.2rem;
+    }
+
+    &--accent {
+      color: $color-brand-light;
+      text-shadow: 0 0 12px rgba(var(--chakra-colors-brand-normal-rgb), 0.3);
+    }
+  }
+
+  &__PanelStatHint {
+    font-size: 0.9375rem;
+    font-family: $font-mono;
+    color: var(--chakra-colors-gray-400);
+    line-height: 1.35;
+    max-width: 100%;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    white-space: normal;
+    transition: color 0.12s ease;
+
+    @media screen and (max-width: $breakpoint-md) {
+      font-size: 0.875rem;
+    }
+  }
+
+  // hero-wide atmosphere so glow is not clipped to the title box
   &__BrandFx {
     position: absolute;
     inset: 0;
@@ -209,36 +497,42 @@
     z-index: 1;
     min-width: 0;
     width: 100%;
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
+    gap: 0;
+    justify-content: flex-start;
   }
 
   &__Welcome {
-    font-size: 0.8125rem;
+    font-size: 0.75rem;
     text-transform: uppercase;
     font-family: $font-heading;
     font-weight: 800;
     font-style: italic;
-    letter-spacing: 0.04em;
+    letter-spacing: 0.06em;
     color: $color-brand-normal;
-    margin: 0 0 10px;
+    margin: 0 0 5px;
+    line-height: 1.15;
   }
 
   &__Title {
     font-style: italic;
-    font-size: 2.5rem !important;
+    font-size: 1.95rem !important;
     font-weight: 800;
     // room for italic ascenders/descenders under background-clip:text
-    line-height: 1.22;
-    margin: 0 0 12px;
-    padding: 0.06em 0.14em 0.1em 0.02em;
+    line-height: 1.12;
+    margin: 0 0 8px;
+    padding: 0.02em 0.08em 0.04em 0;
     overflow: visible;
 
     @media screen and (max-width: 72em) {
-      font-size: 2.125rem !important;
+      font-size: 1.7rem !important;
     }
 
     @media screen and (max-width: $breakpoint-md) {
-      font-size: 1.75rem !important;
-      line-height: 1.25;
+      font-size: 1.55rem !important;
+      line-height: 1.15;
       overflow-wrap: anywhere;
       word-break: break-word;
     }
@@ -271,159 +565,70 @@
     font-family: $font-heading;
     font-style: italic;
     font-weight: 700;
-    font-size: 1.125rem;
+    font-size: 0.9375rem;
     line-height: 1.3;
     color: #fff;
-    margin: 0 0 12px;
+    margin: 0 0 10px;
 
     @media screen and (max-width: $breakpoint-md) {
-      font-size: 1rem;
+      font-size: 0.875rem;
       overflow-wrap: anywhere;
     }
   }
 
-  &__Description {
-    font-size: 0.8125rem;
+  // shows fixed lock ratio Core DASH → Platform credits (fills flex gap under tagline)
+  &__Bridge {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.45rem 0.55rem;
+    width: 100%;
+    margin-top: auto;
+    margin-bottom: 0.75rem;
+    padding: 0.55rem 0.65rem;
+    border-radius: 8px;
+    border: 1px solid rgba(var(--chakra-colors-brand-normal-rgb), 0.22);
+    background:
+      linear-gradient(
+        105deg,
+        rgba(var(--chakra-colors-brand-normal-rgb), 0.1) 0%,
+        rgba(0, 0, 0, 0.18) 48%,
+        rgba(var(--chakra-colors-brand-light-rgb), 0.08) 100%
+      );
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  }
+
+  &__BridgeSide {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+  }
+
+  &__BridgeLayer {
     font-family: $font-mono;
-    color: var(--chakra-colors-gray-500);
-    line-height: 1.6;
-    max-width: 38rem;
-    margin: 0;
-    overflow-wrap: anywhere;
-
-    @media screen and (max-width: $breakpoint-md) {
-      font-size: 0.75rem;
-      line-height: 1.55;
-    }
-  }
-
-  // explore + economy: under copy on mobile; equal right half on desktop
-  &__Pulse {
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
-    gap: 0.65rem;
-    min-width: 0;
-    width: 100%;
-    margin: 0;
-  }
-
-  &__PulseGroup {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 0.55rem;
-    min-width: 0;
-    width: 100%;
-
-    &--economy {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-
-    @media screen and (max-width: $breakpoint-md) {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 0.45rem;
-
-      &--economy {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-      }
-    }
-
-    // wide desktop: economy as 4 equal cells so the right half feels filled
-    @media screen and (min-width: 77.5em) {
-      &--economy {
-        grid-template-columns: repeat(4, minmax(0, 1fr));
-      }
-    }
-  }
-
-  &__PulseSep {
-    display: none;
-    height: 1px;
-    width: 100%;
-    margin: 0.05rem 0;
-    background: linear-gradient(
-      90deg,
-      transparent 0%,
-      rgba(var(--chakra-colors-gray-800-rgb), 0.9) 12%,
-      rgba(var(--chakra-colors-brand-normal-rgb), 0.35) 50%,
-      rgba(var(--chakra-colors-gray-800-rgb), 0.9) 88%,
-      transparent 100%
-    );
-
-    @media screen and (min-width: $breakpoint-lg) {
-      display: block;
-    }
-  }
-
-  &__PulseChip {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    justify-content: center;
-    gap: 3px;
-    min-width: 0;
-    width: 100%;
-    min-height: 4.25rem;
-    padding: 0.65rem 0.75rem 0.6rem;
-    box-sizing: border-box;
-    border-radius: 10px;
-    border: 1px solid rgba(var(--chakra-colors-gray-800-rgb), 0.75);
-    background: rgba(0, 0, 0, 0.22);
-    backdrop-filter: blur(6px);
-    -webkit-backdrop-filter: blur(6px);
-    text-decoration: none;
-    color: inherit;
-    transition:
-      border-color 0.15s ease,
-      background 0.15s ease,
-      box-shadow 0.15s ease,
-      transform 0.15s ease;
-
-    &--link {
-      cursor: pointer;
-
-      @media (hover: hover) and (pointer: fine) {
-        &:hover {
-          border-color: rgba(var(--chakra-colors-brand-normal-rgb), 0.45);
-          background: rgba(var(--chakra-colors-brand-normal-rgb), 0.08);
-          box-shadow: 0 0 20px rgba(var(--chakra-colors-brand-normal-rgb), 0.12);
-          transform: translateY(-1px);
-
-          .HomeHero__PulseValue { color: $color-brand-light; }
-          .HomeHero__PulseHint { color: var(--chakra-colors-gray-400); }
-        }
-      }
-
-      &:focus-visible {
-        outline: 1px solid rgba(var(--chakra-colors-brand-light-rgb), 0.55);
-        outline-offset: 2px;
-      }
-    }
-  }
-
-  &__PulseLabel {
-    font-size: 0.5625rem;
+    font-size: 0.5rem;
     text-transform: uppercase;
-    letter-spacing: 0.1em;
-    font-family: $font-mono;
+    letter-spacing: 0.14em;
     color: var(--chakra-colors-gray-500);
     line-height: 1.2;
   }
 
-  &__PulseValue {
+  &__BridgeUnit {
+    display: inline-flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.3em 0.4em;
     font-family: $font-heading;
     font-weight: 800;
     font-style: italic;
-    font-size: 1.2rem;
+    font-size: 0.9375rem;
     line-height: 1.15;
     color: #fff;
-    min-height: 1.15em;
     font-variant-numeric: tabular-nums;
-    transition: color 0.15s ease;
-
-    @media screen and (min-width: $breakpoint-lg) {
-      font-size: 1.35rem;
-    }
 
     &--accent {
       color: $color-brand-light;
@@ -431,19 +636,66 @@
     }
   }
 
-  &__PulseHint {
-    font-size: 0.5625rem;
+  &__BridgeFiat {
     font-family: $font-mono;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 0.6875rem;
+    color: var(--chakra-colors-gray-400);
+    letter-spacing: 0.02em;
+  }
+
+  &__BridgeUnitSuffix {
+    font-family: $font-mono;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 0.625rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: rgba(var(--chakra-colors-brand-light-rgb), 0.85);
+  }
+
+  &__BridgeFlow {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1px;
+    flex: 1 1 auto;
+    min-width: 2.5rem;
+    max-width: 4.5rem;
+    color: $color-brand-normal;
+  }
+
+  &__BridgeFlowLabel {
+    font-family: $font-mono;
+    font-size: 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
     color: var(--chakra-colors-gray-500);
-    line-height: 1.3;
-    max-width: 100%;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    white-space: normal;
-    transition: color 0.15s ease;
+  }
+
+  &__BridgeBolt {
+    display: block;
+    width: 100%;
+    max-width: 3.25rem;
+    height: 14px;
+    color: rgba(var(--chakra-colors-brand-normal-rgb), 0.85);
+    filter: drop-shadow(0 0 6px rgba(var(--chakra-colors-brand-normal-rgb), 0.4));
+  }
+
+  &__Description {
+    font-size: 0.9375rem;
+    font-family: $font-mono;
+    color: var(--chakra-colors-gray-400);
+    line-height: 1.45;
+    max-width: none;
+    margin: 0;
+    overflow-wrap: anywhere;
+
+    @media screen and (max-width: $breakpoint-md) {
+      font-size: 0.875rem;
+      line-height: 1.4;
+    }
   }
 
   &__StatusBar {
@@ -782,36 +1034,37 @@
 
   &__WaveLine {
     stroke: $color-brand-normal;
-    stroke-width: 2px;
+    stroke-width: 2.25px; // match IdentityGrowth line weight
     stroke-linejoin: round;
     stroke-linecap: round;
   }
 
-  // pathLength=100 keeps the scan dash length stable under stretch
+  // pathLength=100 keeps dash length stable when the path stretches
   &__WaveScan {
-    stroke: $color-brand-light;
+    stroke: #fff;
     stroke-width: 2.5px;
     stroke-linecap: round;
-    // short head + long gap reads as a bead, not a streak
-    stroke-dasharray: 2.5 97.5;
-    animation: HomeHeroDash 5s linear infinite;
+    stroke-dasharray: 3 97;
+    opacity: 0.85;
+    animation: HomeHeroDash 5.5s linear infinite;
 
     // second wave segment runs offset so left/right of selection both stay “alive”
     &--Phase {
-      animation-delay: -2.5s;
+      animation-delay: -2.75s;
     }
   }
 
-  // cool blue halo — softer than white, still readable on deep + light stops
+  // soft halo so the bead reads on dark and light chart stops
   &__WaveScanGlow {
-    stroke: rgba(var(--chakra-colors-brand-light-rgb), 0.4);
-    stroke-width: 7px;
+    stroke: rgba(255, 255, 255, 0.28);
+    stroke-width: 5px;
     stroke-linecap: round;
-    stroke-dasharray: 2.5 97.5;
-    animation: HomeHeroDash 5s linear infinite;
+    stroke-dasharray: 3 97;
+    opacity: 0.7;
+    animation: HomeHeroDash 5.5s linear infinite;
 
     &.HomeHero__WaveScan--Phase {
-      animation-delay: -2.5s;
+      animation-delay: -2.75s;
     }
   }
 
@@ -1426,13 +1679,15 @@
     }
   }
 
-  // steady opacity like the wave scan; the dash leaving a short path reads clearly on its own
+  // quieter than the main wave bead so rails stay secondary
   &__RailScan {
     opacity: 0.85;
   }
 
   @media (prefers-reduced-motion: reduce) {
     &__RailScan { animation: none !important; opacity: 0; }
+    .HomeHero__WaveScan,
+    .HomeHero__WaveScanGlow { animation: none !important; opacity: 0; }
   }
 
   // loading state: ghost outline of the coming chart instead of a solid placeholder box
@@ -1444,11 +1699,12 @@
   }
 
   &__GhostScan {
-    stroke: rgba(var(--chakra-colors-brand-light-rgb), 0.5);
-    stroke-width: 1.5px;
+    stroke: rgba(255, 255, 255, 0.45);
+    stroke-width: 2px;
     stroke-linecap: round;
-    stroke-dasharray: 12 88;
-    animation: HomeHeroDash 5s linear infinite;
+    stroke-dasharray: 3 97;
+    opacity: 0.75;
+    animation: HomeHeroDash 5.5s linear infinite;
   }
 
   &__GhostDot {
