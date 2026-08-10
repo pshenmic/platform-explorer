@@ -2,27 +2,24 @@ import { ValueContainer } from '@ui/containers'
 import { InfoLine, Identifier, CreditsBlock } from '@components/data'
 import { ValueCard } from '@components/cards'
 import { PayoutAddress } from '../../PayoutAddress'
+import type { WithLoading, WithRate } from '../../types'
 
-const poolingColors = {
+const poolingColors: Record<string, 'green' | 'red' | 'orange'> = {
   Standard: 'green',
   Never: 'red',
   'If Available': 'orange'
 }
 
-/**
- * Displays details for an Identity Credit Withdrawal transition.
- *
- * @param {Object} props
- * @param {number|string} [props.amount] - Credits amount to withdraw.
- * @param {string} [props.senderId] - Identity performing the withdrawal.
- * @param {number} [props.rate] - Fiat/DASH conversion rate used by nested components.
- * @param {number} [props.identityNonce] - Identity nonce for the transition.
- * @param {number} [props.signaturePublicKeyId] - Public key id used to sign the transition.
- * @param {'Standard'|'Never'|'If Available'} [props.pooling] - Pooling preference.
- * @param {string} [props.outputScript] - Core output script for the payout.
- * @param {boolean} [props.loading] - Loading state flag.
- * @returns {JSX.Element}
- */
+interface IdentityCreditWithdrawalProps extends WithLoading, WithRate {
+  amount?: number | string | null
+  senderId?: string | null
+  identityNonce?: number | string | null
+  signaturePublicKeyId?: number | string | null
+  pooling?: string | number | null
+  outputScript?: string | null
+  proTxHash?: string | null
+}
+
 export const IdentityCreditWithdrawal = ({
   amount,
   senderId,
@@ -31,9 +28,8 @@ export const IdentityCreditWithdrawal = ({
   signaturePublicKeyId,
   pooling,
   outputScript,
-  proTxHash,
   loading
-}) => (
+}: IdentityCreditWithdrawalProps) => (
   <>
     <InfoLine
       className={'TransactionPage__InfoLine'}
@@ -82,7 +78,10 @@ export const IdentityCreditWithdrawal = ({
       className={'TransactionPage__InfoLine TransactionPage__InfoLine--Pooling'}
       title={'Pooling'}
       value={
-        <ValueContainer colorScheme={poolingColors?.[pooling]} size={'sm'}>
+        <ValueContainer
+          colorScheme={pooling != null ? poolingColors[String(pooling)] : undefined}
+          size={'sm'}
+        >
           {pooling}
         </ValueContainer>
       }

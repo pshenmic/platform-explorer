@@ -26,12 +26,29 @@ import { useBreadcrumbs } from '../../../../contexts/BreadcrumbsContext'
 import { useDecodedSTQuery, useRateQuery, useTransactionQuery } from './hooks'
 import { useParams, usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { useActiveNetwork } from 'src/contexts'
+import type { Transaction as TransactionModel } from '../../../../types'
 
 import './transaction.scss'
 
+/** Duplicates may include blockHash at runtime even if domain type is partial. */
+type TransactionOccurrence = TransactionModel & {
+  blockHash?: string | null
+  blockHeight?: number | null
+  timestamp?: string | null
+  index?: number | null
+  type?: string | null
+  status?: string | null
+  error?: string | null
+  data?: string | null
+  gasUsed?: number | null
+  owner?: { identifier?: string } | null
+}
+
 export const Transaction = () => {
   const { l1explorerBaseUrl } = useActiveNetwork()
-  const { hash } = useParams()
+  const params = useParams()
+  const hashParam = params?.hash
+  const hash = Array.isArray(hashParam) ? hashParam[0] : hashParam
   const { setBreadcrumbs } = useBreadcrumbs()
   const transaction = useTransactionQuery()
   const decodedST = useDecodedSTQuery(transaction.data)
@@ -41,14 +58,17 @@ export const Transaction = () => {
   const searchParams = useSearchParams()
 
   // Occurrences = canonical + duplicates; the selected one is driven by ?block=
-  const occurrences = transaction.data
-    ? [transaction.data, ...(transaction.data.duplicates ?? [])]
+  const occurrences: TransactionOccurrence[] = transaction.data
+    ? [
+        transaction.data,
+        ...((transaction.data.duplicates ?? []) as TransactionOccurrence[])
+      ]
     : []
   const selectedBlockHash = searchParams.get('block')
-  const selected =
+  const selected: TransactionOccurrence | null =
     occurrences.find((o) => o?.blockHash === selectedBlockHash) || transaction.data
 
-  const handleSelectOccurrence = (blockHash) => {
+  const handleSelectOccurrence = (blockHash?: string | null): void => {
     if (!blockHash || blockHash === selected?.blockHash) {
       router.replace(pathname, { scroll: false })
     } else {
@@ -60,7 +80,7 @@ export const Transaction = () => {
     setBreadcrumbs([
       { label: 'Home', path: '/' },
       { label: 'Transactions', path: '/transactions' },
-      { label: hash }
+      { label: hash ?? '' }
     ])
   }, [setBreadcrumbs, hash])
 
@@ -68,7 +88,7 @@ export const Transaction = () => {
     <PageDataContainer className={'TransactionPage'} title={'Transaction Info'}>
       {transaction.error && <ErrorMessageBlock h={'450px'} />}
 
-      {!transaction.error && transaction.data?.duplicates?.length > 0 && (
+      {!transaction.error && (transaction.data?.duplicates?.length ?? 0) > 0 && (
         <DuplicatedTransactions
           transaction={transaction.data}
           selectedBlockHash={selected?.blockHash}
@@ -245,7 +265,7 @@ export const Transaction = () => {
             value={
               <ValueCard className={'TransactionPage__Signature'}>
                 {decodedST.data?.signature}
-                <CopyButton text={decodedST.data?.signature} />
+                <CopyButton text={decodedST.data?.signature ?? undefined} />
               </ValueCard>
             }
             loading={transaction.loading || decodedST.loading}
@@ -282,7 +302,11 @@ export const Transaction = () => {
                 <a
                   href={
                     l1explorerBaseUrl
-                      ? `${l1explorerBaseUrl}/address/${decodedST.data?.outputAddress}`
+                      ? `${l1explorerBaseUrl}/address/${
+                          typeof decodedST.data?.outputAddress === 'string'
+                            ? decodedST.data.outputAddress
+                            : ''
+                        }`
                       : '#'
                   }
                   target={'_blank'}
@@ -294,7 +318,9 @@ export const Transaction = () => {
                       ellipsis={false}
                       styles={['highlight-both']}
                     >
-                      {decodedST.data?.outputAddress}
+                      {typeof decodedST.data?.outputAddress === 'string'
+                        ? decodedST.data.outputAddress
+                        : null}
                     </Identifier>
                   </ValueContainer>
                 </a>

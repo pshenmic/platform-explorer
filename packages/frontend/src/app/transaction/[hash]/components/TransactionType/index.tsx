@@ -21,92 +21,98 @@ import {
   ShieldedWithdrawal,
   IdentityCreateFromShieldedPool
 } from './variants'
+import type { DecodedStateTransition, WithRate } from '../types'
 
-export const TransactionType = ({ typeString: type, ...other }) => {
+export type TransactionTypeProps = DecodedStateTransition & WithRate
+
+export const TransactionType = ({ typeString: type, ...other }: TransactionTypeProps) => {
   if (other.data === null) return <></>
 
+  // Variants are still largely JS with JSDoc props; cast until all are migrated.
+  const props = other as Record<string, unknown>
+
   if (type === 'MASTERNODE_VOTE') {
-    return <MasterNodeVote {...other} />
+    return <MasterNodeVote {...props} />
   }
 
   if (type === 'DATA_CONTRACT_CREATE') {
-    return <DataContractCreate {...other} />
+    return <DataContractCreate {...props} />
   }
 
   if (type === 'BATCH') {
-    return <Batch {...other} />
+    return <Batch {...props} />
   }
 
   if (type === 'IDENTITY_CREATE') {
-    return <IdentityCreate {...other} />
+    return <IdentityCreate {...props} />
   }
 
   if (type === 'IDENTITY_TOP_UP') {
-    return <IdentityTopUp {...other} />
+    return <IdentityTopUp {...props} />
   }
 
   if (type === 'DATA_CONTRACT_UPDATE') {
-    return <DataContractUpdate {...other} />
+    return <DataContractUpdate {...props} />
   }
 
   if (type === 'IDENTITY_UPDATE') {
-    return <IdentityUpdate {...other} />
+    return <IdentityUpdate {...props} />
   }
 
   if (type === 'IDENTITY_CREDIT_WITHDRAWAL') {
-    return <IdentityCreditWithdrawal {...other} />
+    return <IdentityCreditWithdrawal {...props} />
   }
 
   if (type === 'IDENTITY_CREDIT_TRANSFER') {
-    return <IdentityCreditTransfer {...other} />
+    return <IdentityCreditTransfer {...props} />
   }
 
   if (type === 'IDENTITY_CREDIT_TRANSFER_TO_ADDRESS') {
-    return <IdentityCreditTransferToAddress {...other} />
+    return <IdentityCreditTransferToAddress {...props} />
   }
 
   if (type === 'IDENTITY_CREATE_FROM_ADDRESSES') {
-    return <IdentityCreateFromAddresses {...other} />
+    return <IdentityCreateFromAddresses {...props} />
   }
 
   if (type === 'IDENTITY_TOP_UP_FROM_ADDRESSES') {
-    return <IdentityTopUpFromAddresses {...other} /> // +
+    return <IdentityTopUpFromAddresses {...props} />
   }
 
   if (type === 'ADDRESS_FUNDS_TRANSFER') {
-    return <AddressFundsTransfer {...other} />
+    return <AddressFundsTransfer {...props} />
   }
 
   if (type === 'ADDRESS_FUNDING_FROM_ASSET_LOCK') {
-    return <AddressFundingFromAssetLock {...other} />
+    return <AddressFundingFromAssetLock {...props} />
   }
 
   if (type === 'ADDRESS_CREDIT_WITHDRAWAL') {
-    return <AddressCreditWithdrawal {...other} />
+    return <AddressCreditWithdrawal {...props} />
   }
 
   if (type === 'SHIELD') {
-    return <Shield {...other} />
+    return <Shield {...props} />
   }
 
   if (type === 'SHIELDED_TRANSFER') {
-    return <ShieldedTransfer {...other} />
+    return <ShieldedTransfer {...props} />
   }
 
   if (type === 'UNSHIELD') {
-    return <Unshield {...other} />
+    return <Unshield {...props} />
   }
 
   if (type === 'SHIELD_FROM_ASSET_LOCK') {
-    return <ShieldFromAssetLock {...other} />
+    return <ShieldFromAssetLock {...props} />
   }
 
   if (type === 'SHIELDED_WITHDRAWAL') {
-    return <ShieldedWithdrawal {...other} />
+    return <ShieldedWithdrawal {...props} />
   }
 
   if (type === 'IDENTITY_CREATE_FROM_SHIELDED_POOL') {
-    return <IdentityCreateFromShieldedPool {...other} />
+    return <IdentityCreateFromShieldedPool {...props} />
   }
 
   return <></>

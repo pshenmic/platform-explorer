@@ -1,37 +1,55 @@
 import { Flex, Grid, GridItem, Stack, Text } from '@chakra-ui/react'
 import { ValueCard } from '@components/cards'
 import { InfoLine, Identifier } from '@components/data'
-import { PublicKeyCard } from '@components/transactions'
+import type {
+  DecodedFeeStrategy,
+  DecodedInputWitness,
+  DecodedTxInput,
+  DecodedTxOutput
+} from '../../types'
 
-/**
- * Displays details for an Identity Create From Addresses transition.
- *
- * @param {Object} props
- * @param {string} [props.identityId] - Created identity identifier.
- * @param {Array<Object>} [props.publicKeys] - Public keys bound to the identity.
- * @param {number} [props.userFeeIncrease] - User fee increase amount.
- * @param {Array} [props.inputs] - Transaction inputs array.
- * @param {Array} [props.inputWitness] - Transaction witness array.
- * @param {Array} [props.outputs] - Transaction outputs array.
- * @param {Array} [props.feeStrategy] - Fee strategy array.
- * @param {boolean} [props.loading] - Loading state flag.
- * @returns {JSX.Element}
- */
-export const IdentityCreateFromAddresses = ({
-  publicKeys,
+interface IdentityTopUpFromAddressesProps {
+  userFeeIncrease?: number | null
+  inputs?: DecodedTxInput[]
+  inputWitness?: DecodedInputWitness[]
+  outputs?: DecodedTxOutput[]
+  feeStrategy?: DecodedFeeStrategy[]
+}
+
+export const IdentityTopUpFromAddresses = ({
   userFeeIncrease,
   inputs = [],
   inputWitness = [],
   outputs = [],
-  loading
-}) => (
+  feeStrategy = []
+}: IdentityTopUpFromAddressesProps) => (
   <>
-    <InfoLine
-      className={'TransactionPage__InfoLine TransactionPage__InfoLine--Inline'}
-      title={'User Fee Increase'}
-      value={userFeeIncrease}
-      error={userFeeIncrease === undefined}
-    />
+    {userFeeIncrease != null && (
+      <InfoLine
+        className={'TransactionPage__InfoLine TransactionPage__InfoLine--Inline'}
+        title={'User Fee Increase'}
+        value={userFeeIncrease}
+        error={userFeeIncrease === undefined}
+      />
+    )}
+
+    {feeStrategy && feeStrategy.length > 0 && (
+      <InfoLine
+        className={'TransactionPage__InfoLine TransactionPage__InfoLine--FullWidth'}
+        title={'Fee Strategy'}
+        align={feeStrategy.length !== 1 ? 'top' : undefined}
+        value={
+          <div>
+            {feeStrategy.map((strategy, index) => (
+              <Flex gap={4} key={index}>
+                <div>{strategy.type}</div>
+                <div>{strategy.value}</div>
+              </Flex>
+            ))}
+          </div>
+        }
+      />
+    )}
 
     {inputs && inputs.length > 0 && (
       <InfoLine
@@ -140,23 +158,5 @@ export const IdentityCreateFromAddresses = ({
         }
       />
     )}
-
-    <InfoLine
-      className={'TransactionPage__InfoLine TransactionPage__InfoLine--PublicKeys'}
-      title={`Public Keys${publicKeys !== undefined ? ` (${publicKeys?.length})` : ''}`}
-      value={
-        <>
-          {publicKeys?.map((publicKey, i) => (
-            <PublicKeyCard
-              className={'TransactionPage__PublicKeyCard'}
-              publicKey={publicKey}
-              key={i}
-            />
-          ))}
-        </>
-      }
-      loading={loading}
-      error={publicKeys === undefined}
-    />
   </>
 )

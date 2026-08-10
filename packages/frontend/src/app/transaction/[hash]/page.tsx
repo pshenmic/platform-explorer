@@ -1,6 +1,10 @@
 import { Transaction } from './components/Transaction'
 
-export function generateMetadata ({ params }) {
+interface TransactionPageParams {
+  hash: string
+}
+
+export function generateMetadata ({ params }: { params: TransactionPageParams }) {
   return {
     title: 'Transaction #' + params.hash + ' — Dash Platform Explorer',
     description:

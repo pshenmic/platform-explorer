@@ -1,17 +1,14 @@
 import { ShieldedActions, AmountInfoLine, HashInfoLine } from '../ShieldedCommon'
+import type { ShieldedAction, WithRate } from '../../types'
 
-/**
- * Displays details for a Shielded Transfer transaction (private -> private).
- *
- * @param {Object} props
- * @param {Array} [props.actions]
- * @param {number} [props.valueBalance]
- * @param {string} [props.anchor]
- * @param {string} [props.proof]
- * @param {string} [props.bindingsSignature]
- * @param {Object} [props.rate]
- * @returns {JSX.Element}
- */
+interface ShieldedTransferProps extends WithRate {
+  actions?: ShieldedAction[]
+  valueBalance?: number | string | null
+  anchor?: string | null
+  proof?: string | null
+  bindingsSignature?: string | null
+}
+
 export const ShieldedTransfer = ({
   actions = [],
   valueBalance,
@@ -19,7 +16,7 @@ export const ShieldedTransfer = ({
   proof,
   bindingsSignature,
   rate
-}) => (
+}: ShieldedTransferProps) => (
   <>
     <AmountInfoLine title='Value Balance' amount={valueBalance} rate={rate} />
     <ShieldedActions actions={actions} />

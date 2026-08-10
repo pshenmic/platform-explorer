@@ -4,23 +4,18 @@ import {
   AmountInfoLine,
   HashInfoLine
 } from '../ShieldedCommon'
+import type { AssetLockProofData, ShieldedAction, WithRate } from '../../types'
 
-/**
- * Displays details for a Shield From Asset Lock transaction
- * (Core L1 asset lock -> shielded pool).
- *
- * @param {Object} props
- * @param {Object} [props.assetLockProof]
- * @param {Array} [props.actions]
- * @param {number} [props.valueBalance]
- * @param {string} [props.anchor]
- * @param {string} [props.proof]
- * @param {string} [props.bindingsSignature]
- * @param {Object} [props.surplusOutput]
- * @param {string} [props.signature]
- * @param {Object} [props.rate]
- * @returns {JSX.Element}
- */
+interface ShieldFromAssetLockProps extends WithRate {
+  assetLockProof?: AssetLockProofData | null
+  actions?: ShieldedAction[]
+  valueBalance?: number | string | null
+  anchor?: string | null
+  proof?: string | null
+  bindingsSignature?: string | null
+  signature?: string | null
+}
+
 export const ShieldFromAssetLock = ({
   assetLockProof,
   actions = [],
@@ -30,7 +25,7 @@ export const ShieldFromAssetLock = ({
   bindingsSignature,
   signature,
   rate
-}) => (
+}: ShieldFromAssetLockProps) => (
   <>
     <AmountInfoLine title='Value Balance' amount={valueBalance} rate={rate} />
     {assetLockProof && <AssetLockProof assetLockProof={assetLockProof} />}

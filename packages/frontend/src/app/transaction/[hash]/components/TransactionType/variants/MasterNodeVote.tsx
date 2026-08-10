@@ -1,22 +1,19 @@
 import { ValueCard } from '@components/cards'
 import { InfoLine, Identifier, VoteChoice } from '@components/data'
 import { VoteIndexValues } from '@components/transactions'
+import type { WithLoading } from '../../types'
 
-/**
- * Displays details for a Masternode Vote transition.
- *
- * @param {Object} props
- * @param {string} [props.proTxHash] - ProTxHash of the voting masternode.
- * @param {string} [props.contractId] - Target data contract identifier.
- * @param {string} [props.ownerId] - Voter identity identifier.
- * @param {number} [props.identityNonce] - Voter identity nonce.
- * @param {string} [props.choice] - Vote choice string.
- * @param {string} [props.documentTypeName] - Target document type.
- * @param {string} [props.indexName] - Target index name.
- * @param {Array<Object>|Object} [props.indexValues] - Values for the targeted index.
- * @param {boolean} [props.loading] - Loading state flag.
- * @returns {JSX.Element}
- */
+interface MasterNodeVoteProps extends WithLoading {
+  proTxHash?: string | null
+  contractId?: string | null
+  ownerId?: string | null
+  identityNonce?: number | string | null
+  choice?: string | null
+  documentTypeName?: string | null
+  indexName?: string | null
+  indexValues?: string[] | null
+}
+
 export const MasterNodeVote = ({
   proTxHash,
   contractId,
@@ -27,7 +24,7 @@ export const MasterNodeVote = ({
   indexName,
   indexValues,
   loading
-}) => (
+}: MasterNodeVoteProps) => (
   <>
     <InfoLine
       className={'TransactionPage__InfoLine'}

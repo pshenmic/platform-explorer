@@ -2,20 +2,19 @@ import { ValueCard } from '@components/cards'
 import { InfoLine, Identifier, JsonViewer } from '@components/data'
 import { InternalConfigCard } from '@components/dataContracts'
 import { TokenConfiguration } from '../TokenConfiguration'
+import type { TokenConfigurationData } from '../../types'
 
-/**
- * Displays details for a Data Contract Create transition.
- *
- * @param {Object} props
- * @param {string} [props.dataContractId] - Created data contract identifier.
- * @param {string} [props.ownerId] - Identity identifier of the contract owner.
- * @param {number} [props.version] - Contract version.
- * @param {number} [props.identityNonce] - Owner identity nonce used for the transition.
- * @param {number} [props.signaturePublicKeyId] - Public key id used to sign the transition.
- * @param {Object} [props.internalConfig] - Platform internal config associated with the contract.
- * @param {Object} [props.schema] - Contract JSON schema.
- * @returns {JSX.Element}
- */
+interface DataContractCreateProps {
+  dataContractId?: string | null
+  ownerId?: string | null
+  version?: number | string | null
+  identityNonce?: number | string | null
+  signaturePublicKeyId?: number | string | null
+  internalConfig?: Record<string, unknown> | null
+  schema?: unknown
+  tokens?: TokenConfigurationData[] | null
+}
+
 export const DataContractCreate = ({
   dataContractId,
   ownerId,
@@ -25,7 +24,7 @@ export const DataContractCreate = ({
   internalConfig,
   schema,
   tokens
-}) => (
+}: DataContractCreateProps) => (
   <>
     <InfoLine
       className={'TransactionPage__InfoLine'}

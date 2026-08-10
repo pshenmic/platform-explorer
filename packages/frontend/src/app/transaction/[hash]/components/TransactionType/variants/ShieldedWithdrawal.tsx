@@ -5,24 +5,20 @@ import {
   OutputAddressLine,
   HashInfoLine
 } from '../ShieldedCommon'
+import type { DecodedOutputAddress, ShieldedAction, WithRate } from '../../types'
 
-/**
- * Displays details for a Shielded Withdrawal transaction
- * (shielded pool -> Core L1 Dash address).
- *
- * @param {Object} props
- * @param {Array} [props.actions]
- * @param {number} [props.unshieldingAmount]
- * @param {string} [props.anchor]
- * @param {string} [props.proof]
- * @param {string} [props.bindingsSignature]
- * @param {number} [props.coreFeePerByte]
- * @param {string} [props.pooling]
- * @param {string} [props.outputAddress] - Plain address string.
- * @param {string} [props.outputScript]
- * @param {Object} [props.rate]
- * @returns {JSX.Element}
- */
+interface ShieldedWithdrawalProps extends WithRate {
+  actions?: ShieldedAction[]
+  unshieldingAmount?: number | string | null
+  anchor?: string | null
+  proof?: string | null
+  bindingsSignature?: string | null
+  coreFeePerByte?: number | null
+  pooling?: string | number | null
+  outputAddress?: DecodedOutputAddress
+  outputScript?: string | null
+}
+
 export const ShieldedWithdrawal = ({
   actions = [],
   unshieldingAmount,
@@ -34,7 +30,7 @@ export const ShieldedWithdrawal = ({
   outputAddress,
   outputScript,
   rate
-}) => (
+}: ShieldedWithdrawalProps) => (
   <>
     <AmountInfoLine title='Unshielding Amount' amount={unshieldingAmount} rate={rate} />
 

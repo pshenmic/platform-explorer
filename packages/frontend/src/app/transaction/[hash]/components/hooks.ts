@@ -1,104 +1,97 @@
 import { useState, useEffect } from 'react'
 import { useParams } from 'next/navigation'
 import * as Api from '@utils/Api'
-import { fetchHandlerSuccess, fetchHandlerError } from '@utils'
+import type { Transaction, Rate } from '../../../../types'
+import type { LoadableState } from '../../../../types/common'
+import type { DecodedStateTransition } from './types'
 
-export const useTransactionQuery = () => {
-  const { hash } = useParams()
-  const [state, setState] = useState({
-    data: null,
-    loading: true,
-    error: null
-  })
+const initialLoading = <T,>(loading = true): LoadableState<T> => ({
+  data: null,
+  loading,
+  error: false
+})
+
+export const useTransactionQuery = (): LoadableState<Transaction> => {
+  const params = useParams()
+  const hashParam = params?.hash
+  const hash = Array.isArray(hashParam) ? hashParam[0] : hashParam
+
+  const [state, setState] = useState<LoadableState<Transaction>>(initialLoading())
 
   useEffect(() => {
     if (!hash) return
 
-    const fetchData = async () => {
-      setState((state) => ({ ...state, loading: true, error: null }))
+    const fetchData = async (): Promise<void> => {
+      setState((prev) => ({ ...prev, loading: true, error: false }))
 
       try {
         const data = await Api.getTransaction(hash)
-        fetchHandlerSuccess(
-          () => setState({ data, loading: false, error: null }),
-          data
-        )
+        setState({ data, loading: false, error: false })
       } catch (error) {
-        fetchHandlerError(
-          () => setState({ data: null, loading: false, error }),
-          error
-        )
+        console.error(error)
+        setState({ data: null, loading: false, error: true })
       }
     }
 
-    fetchData()
+    void fetchData()
   }, [hash])
 
   return state
 }
 
-export const useDecodedSTQuery = (transaction) => {
-  const [state, setState] = useState({
-    data: null,
-    loading: false,
-    error: null
-  })
+export const useDecodedSTQuery = (
+  transaction: Transaction | null | undefined
+): LoadableState<DecodedStateTransition> => {
+  const [state, setState] = useState<LoadableState<DecodedStateTransition>>(
+    initialLoading(false)
+  )
 
   useEffect(() => {
     if (!transaction) {
-      setState({ data: null, loading: false, error: null })
+      setState({ data: null, loading: false, error: false })
       return
     }
 
-    const fetchData = async () => {
-      setState((state) => ({ ...state, loading: true, error: null }))
-      const { data: tx } = transaction
+    const fetchData = async (): Promise<void> => {
+      setState((prev) => ({ ...prev, loading: true, error: false }))
+      const tx = transaction.data
+      if (!tx) {
+        setState({ data: null, loading: false, error: true })
+        return
+      }
+
       try {
-        const data = await Api.decodeTx(tx)
-        fetchHandlerSuccess(
-          () => setState({ data, loading: false, error: null }),
-          data
-        )
+        const data = (await Api.decodeTx(tx)) as DecodedStateTransition
+        setState({ data, loading: false, error: false })
       } catch (error) {
-        fetchHandlerError(
-          () => setState({ data: null, loading: false, error }),
-          error
-        )
+        console.error(error)
+        setState({ data: null, loading: false, error: true })
       }
     }
 
-    fetchData()
+    void fetchData()
   }, [transaction])
 
   return state
 }
 
-export const useRateQuery = () => {
-  const [state, setState] = useState({
-    data: null,
-    loading: true,
-    error: null
-  })
+export const useRateQuery = (): LoadableState<Rate> => {
+  const [state, setState] = useState<LoadableState<Rate>>(initialLoading())
 
   useEffect(() => {
-    const fetchData = async () => {
-      setState((state) => ({ ...state, loading: true, error: null }))
+    const fetchData = async (): Promise<void> => {
+      setState((prev) => ({ ...prev, loading: true, error: false }))
 
       try {
         const data = await Api.getRate()
-        fetchHandlerSuccess(
-          () => setState({ data, loading: false, error: null }),
-          data
-        )
+        setState({ data, loading: false, error: false })
       } catch (error) {
-        fetchHandlerError(
-          () => setState({ data: null, loading: false, error }),
-          error
-        )
+        console.error(error)
+        setState({ data: null, loading: false, error: true })
       }
     }
 
-    fetchData()
+    void fetchData()
   }, [])
 
   return state

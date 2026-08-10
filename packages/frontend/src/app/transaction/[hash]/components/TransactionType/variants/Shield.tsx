@@ -7,23 +7,26 @@ import {
   AmountInfoLine,
   HashInfoLine
 } from '../ShieldedCommon'
+import type {
+  DecodedFeeStrategy,
+  DecodedInputWitness,
+  DecodedTxInput,
+  ShieldedAction,
+  WithRate
+} from '../../types'
 
-/**
- * Displays details for a Shield transaction (transparent -> shielded pool).
- *
- * @param {Object} props
- * @param {number} [props.userFeeIncrease]
- * @param {Array} [props.inputs]
- * @param {Array} [props.inputWitnesses]
- * @param {Array} [props.actions]
- * @param {number} [props.amount]
- * @param {string} [props.anchor]
- * @param {string} [props.proof]
- * @param {string} [props.bindingsSignature]
- * @param {Array} [props.feeStrategy]
- * @param {Object} [props.rate]
- * @returns {JSX.Element}
- */
+interface ShieldProps extends WithRate {
+  userFeeIncrease?: number | null
+  inputs?: DecodedTxInput[]
+  inputWitnesses?: DecodedInputWitness[]
+  actions?: ShieldedAction[]
+  amount?: number | string | null
+  anchor?: string | null
+  proof?: string | null
+  bindingsSignature?: string | null
+  feeStrategy?: DecodedFeeStrategy[]
+}
+
 export const Shield = ({
   userFeeIncrease,
   inputs = [],
@@ -35,7 +38,7 @@ export const Shield = ({
   bindingsSignature,
   feeStrategy = [],
   rate
-}) => (
+}: ShieldProps) => (
   <>
     <InfoLine
       className='TransactionPage__InfoLine TransactionPage__InfoLine--Inline'

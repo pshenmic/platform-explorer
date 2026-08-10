@@ -1,20 +1,17 @@
 import { InternalConfigCard } from '@components/dataContracts'
 import { InfoLine, Identifier, JsonViewer } from '@components/data'
 import { ValueCard } from '@components/cards'
+import type { WithLoading } from '../../types'
 
-/**
- * Displays details for a Data Contract Update transition.
- *
- * @param {Object} props
- * @param {string} [props.dataContractId] - Updated data contract identifier.
- * @param {string} [props.ownerId] - Identity identifier of the contract owner.
- * @param {number} [props.version] - New contract version.
- * @param {number} [props.identityContractNonce] - Identity contract nonce related to the update.
- * @param {Object} [props.schema] - Updated contract JSON schema.
- * @param {Object} [props.internalConfig] - Platform internal config associated with the contract.
- * @param {boolean} [props.loading] - Loading state flag.
- * @returns {JSX.Element}
- */
+interface DataContractUpdateProps extends WithLoading {
+  dataContractId?: string | null
+  ownerId?: string | null
+  version?: number | string | null
+  identityContractNonce?: number | string | null
+  schema?: unknown
+  internalConfig?: Record<string, unknown> | null
+}
+
 export const DataContractUpdate = ({
   dataContractId,
   ownerId,
@@ -23,7 +20,7 @@ export const DataContractUpdate = ({
   schema,
   internalConfig,
   loading
-}) => (
+}: DataContractUpdateProps) => (
   <>
     <InfoLine
       className={'TransactionPage__InfoLine'}

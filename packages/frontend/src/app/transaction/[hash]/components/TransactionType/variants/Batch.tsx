@@ -1,17 +1,20 @@
 import { InfoLine } from '@components/data'
 import { TransitionCard } from '@components/transactions'
+import type { TransitionData } from 'src/components/transactions/TransitionCard'
+import type { WithLoading, WithRate } from '../../types'
 
-/**
- * Renders a batch of document transitions within a transaction.
- *
- * @param {Object} props
- * @param {Array<Object>} [props.transitions] - List of state transitions to display.
- * @param {string} [props.ownerId] - Identity identifier of the transaction owner.
- * @param {number} [props.rate] - Fiat/DASH conversion rate used by nested components.
- * @param {boolean} [props.loading] - Loading state flag.
- * @returns {JSX.Element}
- */
-export const Batch = ({ transitions, ownerId, rate, loading }) => (
+interface BatchProps extends WithLoading, WithRate {
+  transitions?: TransitionData[] | null
+  ownerId?: string | null
+}
+
+export const Batch = ({ transitions, ownerId, rate, loading }: BatchProps) => {
+  const rateValue =
+    rate && typeof rate === 'object' && 'data' in rate
+      ? rate.data
+      : (rate as { usd?: number } | null | undefined)
+
+  return (
   <>
     <InfoLine
       className={
@@ -25,7 +28,7 @@ export const Batch = ({ transitions, ownerId, rate, loading }) => (
               className={'TransactionPage__TransitionCard'}
               transition={transition}
               owner={ownerId}
-              rate={rate}
+              rate={(rateValue ?? null) as { usd: number } | null}
               key={i}
             />
           ))}
@@ -35,4 +38,5 @@ export const Batch = ({ transitions, ownerId, rate, loading }) => (
       error={transitions === undefined}
     />
   </>
-)
+  )
+}

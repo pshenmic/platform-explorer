@@ -1,24 +1,24 @@
 import { Flex, Grid, GridItem, Text } from '@chakra-ui/react'
 import { ValueCard } from '@components/cards'
 import { InfoLine, Identifier } from '@components/data'
+import type {
+  DecodedFeeStrategy,
+  DecodedInputWitness,
+  DecodedTxInput
+} from '../../types'
 
-/**
- * Displays details for an Address Credit Withdrawal transaction.
- *
- * @param {Object} props
- * @param {number} [props.type] - Transaction type number.
- * @param {string} [props.typeString] - Transaction type string.
- * @param {number} [props.userFeeIncrease] - User fee increase amount.
- * @param {Array} [props.inputs] - Transaction inputs array.
- * @param {Array} [props.inputWitness] - Transaction witness array.
- * @param {Object} [props.output] - Transaction output (null for this type).
- * @param {Array} [props.feeStrategy] - Fee strategy array.
- * @param {number} [props.pooling] - Pooling value.
- * @param {string} [props.outputAddress] - Output address.
- * @param {string} [props.outputScript] - Output script.
- * @param {string} [props.raw] - Raw transaction data.
- * @returns {JSX.Element}
- */
+interface AddressCreditWithdrawalProps {
+  userFeeIncrease?: number | null
+  inputs?: DecodedTxInput[]
+  inputWitness?: DecodedInputWitness[]
+  output?: unknown
+  feeStrategy?: DecodedFeeStrategy[]
+  pooling?: number | string | null
+  outputAddress?: string | null
+  outputScript?: string | null
+  raw?: string | null
+}
+
 export const AddressCreditWithdrawal = ({
   userFeeIncrease,
   inputs = [],
@@ -29,7 +29,7 @@ export const AddressCreditWithdrawal = ({
   outputAddress,
   outputScript,
   raw
-}) => (
+}: AddressCreditWithdrawalProps) => (
   <>
     <InfoLine
       className='TransactionPage__InfoLine TransactionPage__InfoLine--Inline'
@@ -93,7 +93,7 @@ export const AddressCreditWithdrawal = ({
                   <Text>Signature:</Text>
                   <ValueCard>
                     <Identifier copyButton ellipsis styles={['highlight-both']}>
-                      {witness.value.signature}
+                      {witness.value?.signature}
                     </Identifier>
                   </ValueCard>
                 </Grid>

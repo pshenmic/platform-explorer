@@ -1,21 +1,31 @@
-import { CopyButton } from '../../../../../components/ui/Buttons'
+import { CopyButton } from 'src/components/ui/Buttons'
 import { InfoLine, Identifier } from '@components/data'
 import { ValueCard } from '@components/cards'
 import { ValueContainer } from '@components/ui/containers'
 import { useActiveNetwork } from 'src/contexts'
+import type { AssetLockProofData, WithLoading } from '../types'
+
+interface AssetLockProofProps extends WithLoading {
+  assetLockProof?: AssetLockProofData | null
+  rate?: unknown
+}
 
 export const AssetLockProof = ({
-  assetLockProof: {
+  assetLockProof,
+  loading
+}: AssetLockProofProps) => {
+  const { l1explorerBaseUrl } = useActiveNetwork()
+
+  if (!assetLockProof) return null
+
+  const {
     fundingCoreTx,
     instantLock,
     type,
     fundingAmount,
     vout,
     coreChainLockedHeight
-  },
-  loading
-}) => {
-  const { l1explorerBaseUrl } = useActiveNetwork()
+  } = assetLockProof
 
   return (
   <>

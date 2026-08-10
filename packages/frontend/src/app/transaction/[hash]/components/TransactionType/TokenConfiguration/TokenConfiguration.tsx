@@ -6,6 +6,7 @@ import { DistType } from './DistType'
 
 import styles from './TokenConfiguration.module.scss'
 import { ValueCard } from '@components/cards'
+import type { TokenConfigurationData } from '../../types'
 
 /**
  * Token configuration block with flat props.
@@ -22,30 +23,13 @@ import { ValueCard } from '@components/cards'
 export const TokenConfiguration = ({
   position,
   conventions,
-  keepsHistory,
-  baseSupply,
-  maxSupply,
-  startAsPaused,
-  isAllowedTransferToFrozenBalance,
-  maxSupplyChangeRules,
-  distributionRules,
-  perpetualDistribution,
-  marketplaceRules,
-  manualMintingRules,
-  manualBurningRules,
-  freezeRules,
-  unfreezeRules,
-  destroyFrozenFundsRules,
-  emergencyActionRules,
-  mainControlGroup,
-  mainControlGroupCanBeModified,
-  description
-}) => {
+  distributionRules
+}: TokenConfigurationData) => {
   return (
     <div className={'InfoBlock'}>
       <div className={styles.title}>TOKEN CONFIGURATION</div>
       <div className={styles.container}>
-        {!isNaN(position) && (
+        {position != null && !Number.isNaN(Number(position)) && (
           <InfoLine
             title={'Token Position'}
             value={
@@ -78,13 +62,13 @@ export const TokenConfiguration = ({
           />
         )}
 
-        {!isNaN(conventions?.decimals) && (
+        {conventions?.decimals != null && !Number.isNaN(Number(conventions.decimals)) && (
           <InfoLine
             title={'Decimals'}
             value={conventions.decimals}
           />
         )}
-        {conventions.localizations && (
+        {conventions?.localizations && (
           <InfoLine
             className={styles.localization}
             title={<b>Localization:</b>}

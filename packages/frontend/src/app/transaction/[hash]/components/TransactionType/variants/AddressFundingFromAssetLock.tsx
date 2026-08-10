@@ -2,29 +2,27 @@ import { Flex, Grid, GridItem, Text } from '@chakra-ui/react'
 import { ValueCard } from '@components/cards'
 import { InfoLine, Identifier } from '@components/data'
 import { CopyButton } from '@components/ui/Buttons'
+import type {
+  AssetLockProofData,
+  DecodedFeeStrategy,
+  DecodedTxOutput
+} from '../../types'
 
-/**
- * Displays details for an Address Funding from Asset Lock transaction.
- *
- * @param {Object} props
- * @param {number} [props.type] - Transaction type number.
- * @param {string} [props.typeString] - Transaction type string.
- * @param {Object} [props.assetLockProof] - Asset lock proof details.
- * @param {number} [props.userFeeIncrease] - User fee increase amount.
- * @param {Array} [props.inputs] - Transaction inputs array.
- * @param {Array} [props.inputWitness] - Transaction witness array.
- * @param {Array} [props.outputs] - Transaction outputs array.
- * @param {Array} [props.feeStrategy] - Fee strategy array.
- * @param {string} [props.signature] - Transaction signature.
- * @returns {JSX.Element}
- */
+interface AddressFundingFromAssetLockProps {
+  assetLockProof?: AssetLockProofData | null
+  userFeeIncrease?: number | null
+  outputs?: DecodedTxOutput[]
+  feeStrategy?: DecodedFeeStrategy[]
+  signature?: string | null
+}
+
 export const AddressFundingFromAssetLock = ({
   assetLockProof,
   userFeeIncrease,
   outputs = [],
   feeStrategy = [],
   signature
-}) => (
+}: AddressFundingFromAssetLockProps) => (
   <>
     <InfoLine
       className='TransactionPage__InfoLine TransactionPage__InfoLine--Inline'
@@ -82,7 +80,7 @@ export const AddressFundingFromAssetLock = ({
               <Text>Funding Core Transaction:</Text>
             </GridItem>
             <GridItem>
-              <ValueCard mb={2}>
+              <ValueCard>
                 <Identifier
                   copyButton={true}
                   ellipsis={true}
@@ -102,7 +100,7 @@ export const AddressFundingFromAssetLock = ({
               <ValueCard className={'TransactionPage__RawTransaction'}>
                 <div>
                   {assetLockProof.instantLock}
-                  <CopyButton text={assetLockProof.instantLock} />
+                  <CopyButton text={assetLockProof.instantLock ?? undefined} />
                 </div>
               </ValueCard>
             </GridItem>

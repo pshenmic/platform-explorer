@@ -1,26 +1,23 @@
 import { InfoLine, Identifier } from '@components/data'
 import { PublicKeyCard } from '@components/transactions'
+import type { PublicKeyData } from 'src/components/transactions/PublicKeyCard'
 import { AssetLockProof } from '../AssetLockProof'
 import { ValueCard } from '@components/cards'
+import type { AssetLockProofData, WithLoading, WithRate } from '../../types'
 
-/**
- * Displays details for an Identity Create transition.
- *
- * @param {Object} props
- * @param {string} [props.identityId] - Created identity identifier.
- * @param {Object} [props.assetLockProof] - Asset lock proof data.
- * @param {number} [props.rate] - Fiat/DASH conversion rate used by nested components.
- * @param {Array<Object>} [props.publicKeys] - Public keys bound to the identity.
- * @param {boolean} [props.loading] - Loading state flag.
- * @returns {JSX.Element}
- */
+interface IdentityCreateProps extends WithLoading, WithRate {
+  identityId?: string | null
+  assetLockProof?: AssetLockProofData | null
+  publicKeys?: PublicKeyData[] | null
+}
+
 export const IdentityCreate = ({
   identityId,
   assetLockProof,
   rate,
   publicKeys,
   loading
-}) => (
+}: IdentityCreateProps) => (
   <>
     <InfoLine
       className={'TransactionPage__InfoLine'}

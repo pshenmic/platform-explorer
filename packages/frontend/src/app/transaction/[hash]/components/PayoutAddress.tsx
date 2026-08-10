@@ -5,20 +5,29 @@ import * as Api from '@utils/Api'
 import { fetchHandlerSuccess, fetchHandlerError } from '@utils'
 import { ValueContainer } from '@components/ui/containers'
 import { useActiveNetwork } from 'src/contexts'
+import type { Validator } from '../../../../types'
+import type { LoadableState } from '../../../../types/common'
 
 import styles from './PayoutAddress.module.scss'
 
-export const PayoutAddress = ({ outputScript, loading, identity }) => {
+interface PayoutAddressProps {
+  outputScript?: string | null
+  loading?: boolean
+  identity?: string | null
+}
+
+export const PayoutAddress = ({ outputScript, loading, identity }: PayoutAddressProps) => {
   const { l1explorerBaseUrl } = useActiveNetwork()
 
-  const [validator, setValidator] = useState({
-    data: {},
+  const [validator, setValidator] = useState<LoadableState<Validator>>({
+    data: null,
     loading: true,
     error: false
   })
 
   useEffect(() => {
-    const getData = () => {
+    const getData = (): void => {
+      if (!identity) return
       Api.getValidatorByMasternodeIdentity(identity)
         .then((res) => {
           fetchHandlerSuccess(setValidator, res)
@@ -51,6 +60,9 @@ export const PayoutAddress = ({ outputScript, loading, identity }) => {
     )
   }
 
+  const payoutAddress = (validator.data?.proTxInfo?.state as { payoutAddress?: string } | null | undefined)
+    ?.payoutAddress
+
   return (
     <InfoLine
       className={styles.root}
@@ -59,7 +71,7 @@ export const PayoutAddress = ({ outputScript, loading, identity }) => {
         <a
           href={
             l1explorerBaseUrl
-              ? `${l1explorerBaseUrl}/address/${validator.data?.proTxInfo?.state?.payoutAddress}`
+              ? `${l1explorerBaseUrl}/address/${payoutAddress}`
               : '#'
           }
           target={'_blank'}
@@ -74,15 +86,13 @@ export const PayoutAddress = ({ outputScript, loading, identity }) => {
               styles={['highlight-both']}
               ellipsis={false}
             >
-              {validator.data?.proTxInfo?.state?.payoutAddress || ''}
+              {payoutAddress || ''}
             </Identifier>
           </ValueContainer>
         </a>
       }
       loading={validator.loading}
-      error={
-        validator.error || !validator.data?.proTxInfo?.state?.payoutAddress
-      }
+      error={validator.error || !payoutAddress}
     />
   )
 }

@@ -2,15 +2,28 @@ import { InfoLine } from '@components/data'
 import { ValueContainer } from '@ui/containers'
 
 import { InfoIcon } from '@components/ui/icons'
-import { distDataByType } from './serialaze'
+import { distDataByType, type DistField } from './serialaze'
 
 import styles from './DistType.module.scss'
 
-export const DistType = ({ details }) => {
-  const { title, ...fields } = distDataByType({
+interface DistTypeDetails {
+  functionName?: string | null
+  functionValue?: Record<string, unknown> | null
+}
+
+interface DistTypeProps {
+  details: DistTypeDetails
+}
+
+export const DistType = ({ details }: DistTypeProps) => {
+  const result = distDataByType({
     type: details.functionName,
     functionValue: details.functionValue
   })
+
+  if (!result) return null
+
+  const { title, ...fields } = result
   const keys = Object.keys(fields)
 
   return (
@@ -43,18 +56,19 @@ export const DistType = ({ details }) => {
                   />
                 </div>
                 <div className={styles.list}>
-                  {keys.map((name) =>
-                    fields[name].value
+                  {keys.map((name) => {
+                    const field = fields[name] as DistField
+                    return field?.value
                       ? (
                       <p
                         key={name}
                         className={styles.field}
                       >
-                        {fields[name].title}: <b>{fields[name].value}</b>
+                        {field.title}: <b>{String(field.value)}</b>
                       </p>
                         )
                       : null
-                  )}
+                  })}
                 </div>
               </ValueContainer>
             </ValueContainer>

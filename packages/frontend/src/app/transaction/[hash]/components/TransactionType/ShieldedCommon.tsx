@@ -1,17 +1,21 @@
 import { Flex, Grid, GridItem, Text } from '@chakra-ui/react'
 import { ValueCard } from '@components/cards'
 import { InfoLine, Identifier, CreditsBlock } from '@components/data'
+import type {
+  DecodedFeeStrategy,
+  DecodedInputWitness,
+  DecodedOutputAddress,
+  DecodedTxInput,
+  ShieldedAction,
+  WithRate
+} from '../types'
 
-/**
- * Renders a long hex / opaque value (anchor, proof, bindingsSignature, raw,
- * outputScript) inside a full-width InfoLine.
- *
- * @param {Object} props
- * @param {string} props.title
- * @param {string} [props.value]
- * @returns {JSX.Element|null}
- */
-export const HashInfoLine = ({ title, value }) => {
+interface HashInfoLineProps {
+  title: string
+  value?: string | null
+}
+
+export const HashInfoLine = ({ title, value }: HashInfoLineProps) => {
   if (value === undefined || value === null || value === '') return null
 
   return (
@@ -31,17 +35,12 @@ export const HashInfoLine = ({ title, value }) => {
   )
 }
 
-/**
- * Renders a credits amount (amount / valueBalance / unshieldingAmount) as an
- * inline InfoLine using the shared CreditsBlock component.
- *
- * @param {Object} props
- * @param {string} props.title
- * @param {number|string} [props.amount]
- * @param {Object} [props.rate]
- * @returns {JSX.Element|null}
- */
-export const AmountInfoLine = ({ title, amount, rate }) => {
+interface AmountInfoLineProps extends WithRate {
+  title: string
+  amount?: number | string | null
+}
+
+export const AmountInfoLine = ({ title, amount, rate }: AmountInfoLineProps) => {
   if (amount === undefined || amount === null) return null
 
   return (
@@ -53,18 +52,14 @@ export const AmountInfoLine = ({ title, amount, rate }) => {
   )
 }
 
-/**
- * Renders the shielded actions array (private spend/output descriptions:
- * nullifier, rk, cmx, encryptedNote, cvNet, spendAuthSig).
- *
- * @param {Object} props
- * @param {Array} [props.actions]
- * @returns {JSX.Element|null}
- */
-export const ShieldedActions = ({ actions = [] }) => {
+interface ShieldedActionsProps {
+  actions?: ShieldedAction[] | null
+}
+
+export const ShieldedActions = ({ actions = [] }: ShieldedActionsProps) => {
   if (!actions || actions.length === 0) return null
 
-  const fields = [
+  const fields: Array<[string, keyof ShieldedAction]> = [
     ['Nullifier', 'nullifier'],
     ['Randomized Key (rk)', 'rk'],
     ['Note Commitment (cmx)', 'cmx'],
@@ -96,7 +91,7 @@ export const ShieldedActions = ({ actions = [] }) => {
                       <Text>{label}:</Text>
                       <ValueCard className='TransactionPage__RawTransaction'>
                         <Identifier copyButton ellipsis styles={['highlight-both']}>
-                          {action[key]}
+                          {String(action[key])}
                         </Identifier>
                       </ValueCard>
                     </GridItem>
@@ -111,14 +106,11 @@ export const ShieldedActions = ({ actions = [] }) => {
   )
 }
 
-/**
- * Renders the transparent inputs array (Platform addresses funding the pool).
- *
- * @param {Object} props
- * @param {Array} [props.inputs]
- * @returns {JSX.Element|null}
- */
-export const InputsLine = ({ inputs = [] }) => {
+interface InputsLineProps {
+  inputs?: DecodedTxInput[] | null
+}
+
+export const InputsLine = ({ inputs = [] }: InputsLineProps) => {
   if (!inputs || inputs.length === 0) return null
 
   return (
@@ -147,14 +139,11 @@ export const InputsLine = ({ inputs = [] }) => {
   )
 }
 
-/**
- * Renders the input witnesses array.
- *
- * @param {Object} props
- * @param {Array} [props.inputWitnesses]
- * @returns {JSX.Element|null}
- */
-export const InputWitnessesLine = ({ inputWitnesses = [] }) => {
+interface InputWitnessesLineProps {
+  inputWitnesses?: DecodedInputWitness[] | null
+}
+
+export const InputWitnessesLine = ({ inputWitnesses = [] }: InputWitnessesLineProps) => {
   if (!inputWitnesses || inputWitnesses.length === 0) return null
 
   return (
@@ -190,14 +179,11 @@ export const InputWitnessesLine = ({ inputWitnesses = [] }) => {
   )
 }
 
-/**
- * Renders the fee strategy array.
- *
- * @param {Object} props
- * @param {Array} [props.feeStrategy]
- * @returns {JSX.Element|null}
- */
-export const FeeStrategyLine = ({ feeStrategy = [] }) => {
+interface FeeStrategyLineProps {
+  feeStrategy?: DecodedFeeStrategy[] | null
+}
+
+export const FeeStrategyLine = ({ feeStrategy = [] }: FeeStrategyLineProps) => {
   if (!feeStrategy || feeStrategy.length === 0) return null
 
   return (
@@ -218,18 +204,17 @@ export const FeeStrategyLine = ({ feeStrategy = [] }) => {
   )
 }
 
-/**
- * Renders an output address that may be either a plain string (SHIELDED_WITHDRAWAL)
- * or an object with a nested platformAddress (UNSHIELD).
- *
- * @param {Object} props
- * @param {Object|string} [props.outputAddress]
- * @returns {JSX.Element|null}
- */
-export const OutputAddressLine = ({ outputAddress }) => {
+interface OutputAddressLineProps {
+  outputAddress?: DecodedOutputAddress
+}
+
+export const OutputAddressLine = ({ outputAddress }: OutputAddressLineProps) => {
   if (outputAddress === undefined || outputAddress === null) return null
 
-  const bech32m = outputAddress?.platformAddress?.bech32m
+  const bech32m =
+    typeof outputAddress === 'object'
+      ? outputAddress?.platformAddress?.bech32m
+      : undefined
   const link = bech32m ? `/platformAddress/${bech32m}` : undefined
   const value = bech32m ?? (typeof outputAddress === 'string' ? outputAddress : null)
 

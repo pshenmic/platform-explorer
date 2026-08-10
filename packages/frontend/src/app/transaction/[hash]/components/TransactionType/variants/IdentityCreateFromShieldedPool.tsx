@@ -6,24 +6,20 @@ import {
   AmountInfoLine,
   HashInfoLine
 } from '../ShieldedCommon'
+import type { AssetLockProofData, ShieldedAction, WithRate } from '../../types'
 
-/**
- * Displays details for an Identity Create From Shielded Pool transaction.
- * Renders only the fields that are present.
- *
- * @param {Object} props
- * @param {string} [props.identityId]
- * @param {Object} [props.assetLockProof]
- * @param {Array} [props.actions]
- * @param {number} [props.amount]
- * @param {number} [props.valueBalance]
- * @param {string} [props.anchor]
- * @param {string} [props.proof]
- * @param {string} [props.bindingsSignature]
- * @param {string} [props.signature]
- * @param {Object} [props.rate]
- * @returns {JSX.Element}
- */
+interface IdentityCreateFromShieldedPoolProps extends WithRate {
+  identityId?: string | null
+  assetLockProof?: AssetLockProofData | null
+  actions?: ShieldedAction[]
+  amount?: number | string | null
+  valueBalance?: number | string | null
+  anchor?: string | null
+  proof?: string | null
+  bindingsSignature?: string | null
+  signature?: string | null
+}
+
 export const IdentityCreateFromShieldedPool = ({
   identityId,
   assetLockProof,
@@ -35,7 +31,7 @@ export const IdentityCreateFromShieldedPool = ({
   bindingsSignature,
   signature,
   rate
-}) => (
+}: IdentityCreateFromShieldedPoolProps) => (
   <>
     {identityId && (
       <InfoLine

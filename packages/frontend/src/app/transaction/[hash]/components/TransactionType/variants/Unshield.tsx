@@ -4,20 +4,17 @@ import {
   OutputAddressLine,
   HashInfoLine
 } from '../ShieldedCommon'
+import type { DecodedOutputAddress, ShieldedAction, WithRate } from '../../types'
 
-/**
- * Displays details for an Unshield transaction (shielded pool -> transparent).
- *
- * @param {Object} props
- * @param {Object} [props.outputAddress] - Object with nested platformAddress.
- * @param {Array} [props.actions]
- * @param {number} [props.unshieldingAmount]
- * @param {string} [props.anchor]
- * @param {string} [props.proof]
- * @param {string} [props.bindingsSignature]
- * @param {Object} [props.rate]
- * @returns {JSX.Element}
- */
+interface UnshieldProps extends WithRate {
+  outputAddress?: DecodedOutputAddress
+  actions?: ShieldedAction[]
+  unshieldingAmount?: number | string | null
+  anchor?: string | null
+  proof?: string | null
+  bindingsSignature?: string | null
+}
+
 export const Unshield = ({
   outputAddress,
   actions = [],
@@ -26,7 +23,7 @@ export const Unshield = ({
   proof,
   bindingsSignature,
   rate
-}) => (
+}: UnshieldProps) => (
   <>
     <AmountInfoLine title='Unshielding Amount' amount={unshieldingAmount} rate={rate} />
     <OutputAddressLine outputAddress={outputAddress} />

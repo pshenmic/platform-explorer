@@ -1,21 +1,19 @@
 import { ValueCard } from '@components/cards'
 import { InfoLine, Identifier } from '@components/data'
 import { PublicKeyCard } from '@components/transactions'
+import type { PublicKeyData } from 'src/components/transactions/PublicKeyCard'
+import type { WithLoading } from '../../types'
 
-/**
- * Displays details for an Identity Update transition.
- *
- * @param {Object} props
- * @param {string} [props.identityId] - Identity identifier being updated.
- * @param {number} [props.revision] - Identity revision after update.
- * @param {number} [props.identityContractNonce] - Identity contract nonce related to the update.
- * @param {Array<Object>} [props.publicKeysToAdd] - Public keys to be added.
- * @param {Array<Object>} [props.publicKeys] - Current public keys (used for counts/titles).
- * @param {Array<number>} [props.publicKeyIdsToDisable] - Public key IDs to disable.
- * @param {number} [props.identityNonce] - Identity nonce.
- * @param {boolean} [props.loading] - Loading state flag.
- * @returns {JSX.Element}
- */
+interface IdentityUpdateProps extends WithLoading {
+  identityId?: string | null
+  revision?: number | string | null
+  identityContractNonce?: number | string | null
+  publicKeysToAdd?: PublicKeyData[] | null
+  publicKeys?: PublicKeyData[] | null
+  publicKeyIdsToDisable?: Array<number | string> | null
+  identityNonce?: number | string | null
+}
+
 export const IdentityUpdate = ({
   identityId,
   revision,
@@ -25,7 +23,7 @@ export const IdentityUpdate = ({
   publicKeyIdsToDisable,
   identityNonce,
   loading
-}) => (
+}: IdentityUpdateProps) => (
   <>
     <InfoLine
       className={'TransactionPage__InfoLine'}
@@ -74,7 +72,7 @@ export const IdentityUpdate = ({
       />
     )}
 
-    {publicKeysToAdd?.length > 0 && (
+    {(publicKeysToAdd?.length ?? 0) > 0 && (
       <InfoLine
         className={
           'TransactionPage__InfoLine TransactionPage__InfoLine--PublicKeys'
@@ -98,7 +96,7 @@ export const IdentityUpdate = ({
       />
     )}
 
-    {publicKeyIdsToDisable?.length > 0 && (
+    {(publicKeyIdsToDisable?.length ?? 0) > 0 && (
       <InfoLine
         className={
           'TransactionPage__InfoLine TransactionPage__InfoLine--PublicKeys'
