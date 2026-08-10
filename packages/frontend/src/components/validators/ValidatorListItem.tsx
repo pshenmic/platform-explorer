@@ -31,7 +31,7 @@ interface ValidatorListItemProps {
   validator: Validator
 }
 
-export const ValidatorListItem = ({  validator  }: ValidatorListItemProps) => {
+export const ValidatorListItem = ({ validator }: ValidatorListItemProps) => {
   return (
     <Link
         href={`/validator/${validator.proTxHash}`}

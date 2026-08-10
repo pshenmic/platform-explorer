@@ -142,12 +142,12 @@ interface DocumentsFilterProps {
   excludeFilters?: string[]
 }
 
-export const DocumentsFilter = ({ 
+export const DocumentsFilter = ({
   onFilterChange,
   isMobile,
   className,
   excludeFilters = []
- }: DocumentsFilterProps) => {
+}: DocumentsFilterProps) => {
   const config = excludeFilters.length
     ? Object.fromEntries(Object.entries(filtersConfig).filter(([key]) => !excludeFilters.includes(key)))
     : filtersConfig

@@ -100,7 +100,7 @@ interface IdentitiesFilterProps {
   className?: string
 }
 
-export const IdentitiesFilter = ({  initialFilters, onFilterChange, isMobile, className  }: IdentitiesFilterProps) => {
+export const IdentitiesFilter = ({ initialFilters, onFilterChange, isMobile, className }: IdentitiesFilterProps) => {
   return (
     <Filters
       filtersConfig={filtersConfig}

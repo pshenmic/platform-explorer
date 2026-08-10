@@ -41,7 +41,7 @@ interface TableWrapperProps {
   children?: ReactNode
 }
 
-const TableWrapper = ({  children  }: TableWrapperProps) => (
+const TableWrapper = ({ children }: TableWrapperProps) => (
   <div className={'ValidatorsList'}>
     <div className={'ValidatorsList__ContentContainer'}>
         {children}
@@ -71,7 +71,7 @@ interface ValidatorsListProps {
   error?: boolean
 }
 
-export const ValidatorsList = ({  loading, list, pageSize, error  }: ValidatorsListProps) => {
+export const ValidatorsList = ({ loading, list, pageSize, error }: ValidatorsListProps) => {
   const table = useReactTable({
     data: list ?? [],
     columns,

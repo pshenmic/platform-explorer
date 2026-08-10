@@ -84,7 +84,7 @@ function DataContractsLayout () {
 
   const handleFiltersChange = (next: Parameters<typeof setFilters>[0]) => {
     setFilters(next)
-    void setPage(1)
+    setPage(1)
   }
 
   return (
@@ -124,12 +124,12 @@ function DataContractsLayout () {
               <div className={'ListNavigation'}>
                 <Box display={['none', 'none', 'block']} width={'155px'}/>
                 <Pagination
-                  onPageChange={({ selected }) => { void setPage((selected || 0) + 1) }}
+                  onPageChange={({ selected }) => { setPage((selected || 0) + 1) }}
                   pageCount={pagination?.pageCount ?? 1}
                   forcePage={pagination?.forcePage}
                 />
                 <PageSizeSelector
-                  PageSizeSelectHandler={e => { void setPageSize(Number(e?.value)) }}
+                  PageSizeSelectHandler={e => { setPageSize(Number(e?.value)) }}
                   value={pageSize}
                   items={paginateConfig.pageSize.values}
                 />

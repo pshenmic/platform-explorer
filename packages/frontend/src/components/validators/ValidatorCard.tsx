@@ -34,7 +34,7 @@ interface ValidatorCardProps {
   className?: string
 }
 
-export default function ValidatorCard ({  validator, rate, className  }: ValidatorCardProps) {
+export default function ValidatorCard ({ validator, rate, className }: ValidatorCardProps) {
   return (
     <div className={`InfoBlock InfoBlock--Gradient ValidatorCard ${validator.loading ? 'ValidatorCard--Loading' : ''} ${className || ''}`}>
       <div className={'ValidatorCard__Header'}>

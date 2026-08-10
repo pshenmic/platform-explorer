@@ -20,8 +20,8 @@ export const useTokensSorting = () => {
   }
 
   const setSorting = (next: TokensSortingUpdate | null | undefined) => {
-    if (next?.order !== undefined) void setOrder(next.order || null)
-    if (next?.order_by !== undefined) void setOrderBy(next.order_by || null)
+    if (next?.order !== undefined) setOrder(next.order || null)
+    if (next?.order_by !== undefined) setOrderBy(next.order_by || null)
   }
 
   return { sorting, setSorting }

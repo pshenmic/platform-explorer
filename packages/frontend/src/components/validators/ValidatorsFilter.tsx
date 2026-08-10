@@ -115,7 +115,7 @@ interface ValidatorsFilterProps {
   className?: string
 }
 
-export const ValidatorsFilter = ({  onFilterChange, isMobile, className  }: ValidatorsFilterProps) => {
+export const ValidatorsFilter = ({ onFilterChange, isMobile, className }: ValidatorsFilterProps) => {
   return (
     <Filters
       filtersConfig={filtersConfig}

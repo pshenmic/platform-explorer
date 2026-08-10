@@ -42,7 +42,7 @@ interface IdentityDigestCardProps {
   className?: string
 }
 
-function IdentityDigestCard ({  identity, rate, className  }: IdentityDigestCardProps) {
+function IdentityDigestCard ({ identity, rate, className }: IdentityDigestCardProps) {
   const { l1explorerBaseUrl } = useActiveNetwork()
 
   return (

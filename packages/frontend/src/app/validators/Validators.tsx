@@ -61,7 +61,7 @@ function Validators () {
 
   const handleFiltersChange = (next: Record<string, unknown>) => {
     setFilters(next)
-    void setPage(1)
+    setPage(1)
   }
 
   return (
@@ -99,14 +99,14 @@ function Validators () {
           <div className={'ListNavigation'}>
             <Box display={['none', 'none', 'block']} width={'155px'} />
             <Pagination
-              onPageChange={({ selected }) => { void setPage((selected || 0) + 1) }}
+              onPageChange={({ selected }) => { setPage((selected || 0) + 1) }}
               pageCount={pagination?.pageCount ?? 1}
               forcePage={pagination?.forcePage}
             />
             <PageSizeSelector
               PageSizeSelectHandler={e => {
-                void setPageSize(Number(e?.value))
-                void setPage(1)
+                setPageSize(Number(e?.value))
+                setPage(1)
               }}
               value={pageSize}
               items={paginateConfig.pageSize.values}

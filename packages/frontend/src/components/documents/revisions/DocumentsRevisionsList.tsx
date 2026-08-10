@@ -15,13 +15,13 @@ interface DocumentsRevisionsListProps {
   itemsCount?: number
 }
 
-export default function DocumentsRevisionsList ({ 
+export default function DocumentsRevisionsList ({
   revisions = [],
   headerStyles,
   pagination,
   loading,
   itemsCount = 10
- }: DocumentsRevisionsListProps) {
+}: DocumentsRevisionsListProps) {
   const headerExtraClass: Record<string, string> = {
     default: '',
     light: 'DocumentsRevisionsList__ColumnTitles--Light'

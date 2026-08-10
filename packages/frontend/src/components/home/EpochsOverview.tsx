@@ -1,8 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import type { CSSProperties, ReactNode } from 'react'
-import type { ComponentType } from 'react'
+import type { CSSProperties, ReactNode, ComponentType } from 'react'
 import Link from 'next/link'
 import { BigNumber as BigNumberJs, TimeDelta as TimeDeltaJs } from '../data'
 import { BlockIcon } from '../ui/icons'

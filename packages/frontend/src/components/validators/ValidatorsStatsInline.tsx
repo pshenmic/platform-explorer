@@ -16,7 +16,7 @@ interface ValidatorsStatsInlineProps {
   className?: string
 }
 
-export default function ValidatorsStatsInline ({  total, className  }: ValidatorsStatsInlineProps) {
+export default function ValidatorsStatsInline ({ total, className }: ValidatorsStatsInlineProps) {
   const [status, setStatus] = useState<LoadableState<Status>>({ data: null, loading: true, error: false })
   const [epoch, setEpoch] = useState<LoadableState<EpochData>>({ data: null, loading: true, error: false })
 

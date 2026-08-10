@@ -72,9 +72,6 @@ const buildPerpetualDistribution = (form: TokenForm, scale: bigint) => {
   return { distributionType, distributionRecipient: recipient }
 }
 
-/** JSON preview shape of token config (not the WASM instance). */
-export type TokenConfigurationJson = ReturnType<typeof buildTokenConfiguration>
-
 export const buildTokenConfiguration = (form: TokenForm) => {
   // Supply is multiplied by 10^decimals before broadcast. DPP caps decimals at 16.
   const decimals = Math.min(16, Number(form.decimals) || 0)
@@ -134,3 +131,6 @@ export const buildTokenConfiguration = (form: TokenForm) => {
     description: form.description || null
   }
 }
+
+/** JSON preview shape of token config (not the WASM instance). */
+export type TokenConfigurationJson = ReturnType<typeof buildTokenConfiguration>

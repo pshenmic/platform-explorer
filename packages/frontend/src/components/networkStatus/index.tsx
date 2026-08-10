@@ -10,9 +10,8 @@ import { fetchHandlerSuccess, fetchHandlerError } from '../../util'
 import { TimeDelta as TimeDeltaJs } from '../data'
 import { EpochTooltip } from '../ui/Tooltips'
 import Link from 'next/link'
-import type { LoadableState } from '../../types/common'
+import type { LoadableState, WithClassName } from '../../types/common'
 import type { Status } from '../../types'
-import type { WithClassName } from '../../types/common'
 import './NetworkStatus.scss'
 
 // Untyped JS component — props optional until data/* is migrated

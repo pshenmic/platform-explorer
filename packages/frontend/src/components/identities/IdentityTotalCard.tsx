@@ -57,7 +57,7 @@ interface PublicKeysProps {
   publicKeys?: any[]
 }
 
-const PublicKeys = ({  className, show, publicKeys = []  }: PublicKeysProps) => (
+const PublicKeys = ({ className, show, publicKeys = [] }: PublicKeysProps) => (
   <SmoothSize className={className || ''}>
     {publicKeys.length > 0 &&
       <PublicKeysList
@@ -73,7 +73,7 @@ interface IdentityTotalCardProps {
   rate?: Rate | null
 }
 
-function IdentityTotalCard ({  identity, rate  }: IdentityTotalCardProps) {
+function IdentityTotalCard ({ identity, rate }: IdentityTotalCardProps) {
   const activeAlias = findActiveAlias(identity.data?.aliases)
   const [showPublicKeys, setShowPublicKeys] = useState(false)
 

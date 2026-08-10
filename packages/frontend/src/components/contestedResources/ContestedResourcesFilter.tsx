@@ -1,5 +1,4 @@
-import type { ReactNode } from 'react'
-import type { ComponentType } from 'react'
+import type { ReactNode, ComponentType } from 'react'
 import { Filters } from '../filters'
 import type { FilterState, FilterStateValue, FiltersConfig } from '../filters/types'
 import { Identifier as IdentifierJs } from '../data'

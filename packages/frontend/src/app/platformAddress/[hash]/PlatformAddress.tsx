@@ -47,7 +47,7 @@ function PlatformAddress () {
       .withOptions({ scroll: false, shallow: false })
   )
 
-  const handleTab = (index: number) => { void setActiveTab(tabs[index]) }
+  const handleTab = (index: number) => { setActiveTab(tabs[index]) }
 
   useEffect(() => {
     setBreadcrumbs([

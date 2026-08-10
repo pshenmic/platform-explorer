@@ -108,8 +108,8 @@ interface DocumentTransitionCardProps {
   className?: string
 }
 
-const DocumentTransitionCard = ({  transition, owner, rate, className  }: DocumentTransitionCardProps) => {
-  const fields = fieldsOfTypes?.[String(transition?.action ?? "")] || []
+const DocumentTransitionCard = ({ transition, owner, rate, className }: DocumentTransitionCardProps) => {
+  const fields = fieldsOfTypes?.[String(transition?.action ?? '')] || []
 
   return (
     <div

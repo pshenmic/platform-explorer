@@ -1,7 +1,6 @@
 import { useState, forwardRef, useEffect } from 'react'
-import type { Ref } from 'react'
+import type { Ref, ComponentType } from 'react'
 import { Button } from '@chakra-ui/react'
-import type { ComponentType } from 'react'
 // Untyped JS component — loose wrapper until calendar/* is migrated
 import { DateRangePicker as DateRangePickerJs } from '../calendar'
 import { defaultIntervalsCount } from './config'

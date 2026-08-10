@@ -51,7 +51,7 @@ interface IdentitiesListItemProps {
   place?: number
 }
 
-function IdentitiesListItem ({  identity, place  }: IdentitiesListItemProps) {
+function IdentitiesListItem ({ identity, place }: IdentitiesListItemProps) {
   const PlaceIcon = placeIcons[place as 1|2|3]
   const { aliases, identifier, timestamp, isSystem, balance, totalTxs, totalDocuments, totalDataContracts } = identity
   const activeAlias = aliases?.find((alias: { status?: string }) => alias?.status === 'ok')

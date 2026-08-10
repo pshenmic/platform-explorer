@@ -5,7 +5,7 @@ import type { Transaction, Rate } from '../../../../types'
 import type { LoadableState } from '../../../../types/common'
 import type { DecodedStateTransition } from './types'
 
-const initialLoading = <T,>(loading = true): LoadableState<T> => ({
+const initialLoading = <T, >(loading = true): LoadableState<T> => ({
   data: null,
   loading,
   error: false
@@ -33,7 +33,7 @@ export const useTransactionQuery = (): LoadableState<Transaction> => {
       }
     }
 
-    void fetchData()
+    fetchData()
   }, [hash])
 
   return state
@@ -69,7 +69,7 @@ export const useDecodedSTQuery = (
       }
     }
 
-    void fetchData()
+    fetchData()
   }, [transaction])
 
   return state
@@ -91,7 +91,7 @@ export const useRateQuery = (): LoadableState<Rate> => {
       }
     }
 
-    void fetchData()
+    fetchData()
   }, [])
 
   return state

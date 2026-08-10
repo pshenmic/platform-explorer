@@ -65,20 +65,20 @@ export default function Tooltip ({ title = '', content = '', children, className
 
   const element = isValidElement(children)
     ? cloneElement(children, {
-        ref,
-        onMouseEnter: (e: MouseEvent) => {
-          children.props?.onMouseEnter?.(e)
-          hoverIn()
-        },
-        onMouseLeave: (e: MouseEvent) => {
-          children.props?.onMouseLeave?.(e)
-          hoverOut()
-        },
-        onClick: (e: MouseEvent) => {
-          children.props?.onClick?.(e)
-          setIsOpen(prev => !prev)
-        }
-      })
+      ref,
+      onMouseEnter: (e: MouseEvent) => {
+        children.props?.onMouseEnter?.(e)
+        hoverIn()
+      },
+      onMouseLeave: (e: MouseEvent) => {
+        children.props?.onMouseLeave?.(e)
+        hoverOut()
+      },
+      onClick: (e: MouseEvent) => {
+        children.props?.onClick?.(e)
+        setIsOpen(prev => !prev)
+      }
+    })
     : children
 
   const resolvedLabel = label ?? (

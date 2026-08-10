@@ -39,7 +39,7 @@ interface DocumentsRevisionsListItemProps {
   rate?: Rate | null
 }
 
-function DocumentsRevisionsListItem ({  revision, rate  }: DocumentsRevisionsListItemProps) {
+function DocumentsRevisionsListItem ({ revision, rate }: DocumentsRevisionsListItemProps) {
   const activeAlias = findActiveAlias(revision.owner?.aliases)
   const router = useRouter()
 

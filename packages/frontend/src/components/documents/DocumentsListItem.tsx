@@ -40,7 +40,7 @@ interface DocumentsListItemProps {
   showGas?: boolean
 }
 
-function DocumentsListItem ({  document, showDataContract = false, showAction = true, showGas = true  }: DocumentsListItemProps) {
+function DocumentsListItem ({ document, showDataContract = false, showAction = true, showGas = true }: DocumentsListItemProps) {
   const activeAlias = findActiveAlias(document?.owner?.aliases)
   const router = useRouter()
 

@@ -70,7 +70,7 @@ interface DataContractCardsProps extends WithClassName {
 function DataContractCards ({ items, className }: DataContractCardsProps) {
   const [sliderLoaded, setSliderLoaded] = useState(false)
 
-  const chunkArray = <T,>(array: T[] | undefined, chunkSize: number): T[][] => {
+  const chunkArray = <T, >(array: T[] | undefined, chunkSize: number): T[][] => {
     const result: T[][] = []
     if (!array) return result
     for (let i = 0; i < array.length; i += chunkSize) {

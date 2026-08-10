@@ -4,9 +4,8 @@ import * as Api from '../../util/Api'
 import { useState, useEffect } from 'react'
 import type { CSSProperties, ReactNode } from 'react'
 import { fetchHandlerSuccess, fetchHandlerError, formatFullNumber } from '../../util'
-import type { LoadableState } from '../../types/common'
+import type { LoadableState, WithClassName } from '../../types/common'
 import type { Status, EpochData } from '../../types'
-import type { WithClassName } from '../../types/common'
 import './NetworkStatsInline.scss'
 
 interface NetworkStatsItem {

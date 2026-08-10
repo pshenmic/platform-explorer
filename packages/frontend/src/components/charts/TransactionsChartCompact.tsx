@@ -1,9 +1,8 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import type { LoadableState } from '../../types/common'
+import type { LoadableState, WithClassName } from '../../types/common'
 import type { SeriesData } from '../../types'
-import type { WithClassName } from '../../types/common'
 import * as Api from '../../util/Api'
 import { fetchHandlerSuccess, fetchHandlerError, getDaysBetweenDates } from '../../util'
 import { defaultChartConfig } from './config'

@@ -51,7 +51,7 @@ interface DocumentTotalCardProps {
   className?: string
 }
 
-function DocumentTotalCard ({  document, rate, className  }: DocumentTotalCardProps) {
+function DocumentTotalCard ({ document, rate, className }: DocumentTotalCardProps) {
   const activeAlias = findActiveAlias(document.data?.owner?.aliases)
 
   return (

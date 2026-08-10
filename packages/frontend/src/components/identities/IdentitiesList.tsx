@@ -26,7 +26,7 @@ interface SortableHeaderProps {
   onSortChange?: (v: Record<string, unknown>) => void
 }
 
-function SortableHeader ({  headerKey, label, modifier, sort, onSortChange  }: SortableHeaderProps) {
+function SortableHeader ({ headerKey, label, modifier, sort, onSortChange }: SortableHeaderProps) {
   const isActive = sort?.order_by === headerKey
   const direction = isActive ? sort?.order : null
   const className = [
@@ -65,7 +65,7 @@ interface IdentitiesListProps {
   page?: number
 }
 
-function IdentitiesList ({  identities, headerStyles = 'default', pagination, loading, itemsCount = 10, sort, onSortChange, page = 0  }: IdentitiesListProps) {
+function IdentitiesList ({ identities, headerStyles = 'default', pagination, loading, itemsCount = 10, sort, onSortChange, page = 0 }: IdentitiesListProps) {
   const headerExtraClass: Record<string, string> = {
     default: '',
     light: 'IdentitiesList__ColumnTitles--Light'

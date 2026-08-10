@@ -18,7 +18,7 @@ interface DocumentsListProps {
   showGas?: boolean
 }
 
-export default function DocumentsList ({ 
+export default function DocumentsList ({
   documents = [],
   headerStyles,
   pagination,
@@ -27,7 +27,7 @@ export default function DocumentsList ({
   showDataContract = false,
   showAction = true,
   showGas = true
- }: DocumentsListProps) {
+}: DocumentsListProps) {
   const headerExtraClass: Record<string, string> = {
     default: '',
     light: 'DocumentsList__ColumnTitles--Light'

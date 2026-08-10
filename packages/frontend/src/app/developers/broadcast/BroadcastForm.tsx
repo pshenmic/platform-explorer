@@ -18,6 +18,20 @@ import type { ChangeEvent, RefObject } from 'react'
 import type { Rate } from '../../../types'
 import './BroadcastForm.scss'
 
+const STATE = {
+  EMPTY: 'EMPTY',
+  VERIFYING: 'VERIFYING',
+  VERIFIED_OK: 'VERIFIED_OK',
+  VERIFIED_FAIL: 'VERIFIED_FAIL',
+  UNSIGNED: 'UNSIGNED',
+  SIGNING: 'SIGNING',
+  SIGNED: 'SIGNED',
+  BROADCASTING: 'BROADCASTING',
+  WAITING: 'WAITING',
+  SUCCESS: 'SUCCESS',
+  ERROR: 'ERROR'
+} as const
+
 type FormState = typeof STATE[keyof typeof STATE]
 
 interface VerifyResult {
@@ -41,21 +55,6 @@ interface SignedHexViewProps {
   unsignedHex: string
   signedHex: string
   onEdit: () => void
-}
-
-
-const STATE = {
-  EMPTY: 'EMPTY',
-  VERIFYING: 'VERIFYING',
-  VERIFIED_OK: 'VERIFIED_OK',
-  VERIFIED_FAIL: 'VERIFIED_FAIL',
-  UNSIGNED: 'UNSIGNED',
-  SIGNING: 'SIGNING',
-  SIGNED: 'SIGNED',
-  BROADCASTING: 'BROADCASTING',
-  WAITING: 'WAITING',
-  SUCCESS: 'SUCCESS',
-  ERROR: 'ERROR'
 }
 
 // Signature-related errors only: signing fixes these. Nonce/schema/state errors are not in this set.
