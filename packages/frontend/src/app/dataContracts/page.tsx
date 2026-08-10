@@ -1,7 +1,8 @@
+import type { Metadata } from 'next'
 import { Suspense } from 'react'
 import DataContracts from './DataContracts'
 
-export const metadata = {
+export const metadata: Metadata = {
   title: 'Data Contracts — Dash Platform Explorer',
   description: 'Data Contracts on Dash Platform. The Identifier, Date of Creation.',
   keywords: ['Dash', 'platform', 'explorer', 'blockchain', 'data contrancts', 'Datacontract', 'Identifier', 'Date of Creation'],

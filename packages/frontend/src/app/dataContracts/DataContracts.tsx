@@ -5,7 +5,7 @@ import DataContractsList from '../../components/dataContracts/DataContractsList'
 import Pagination from '../../components/pagination'
 import { ErrorMessageBlock } from '@components/Errors'
 import PageSizeSelector from '../../components/pageSizeSelector/PageSizeSelector'
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, keepPreviousData } from '@tanstack/react-query'
 import { useQueryState, parseAsInteger } from 'nuqs'
 import { normalizePagination } from '@utils/table'
 
@@ -54,25 +54,25 @@ function DataContractsLayout () {
     queryFn: () => Api.getDataContracts(
       page,
       pageSize,
-      sorting.order,
+      sorting.order as 'asc' | 'desc',
       sorting.orderBy,
-      listFilters
+      listFilters as never
     ),
-    keepPreviousData: true,
+    placeholderData: keepPreviousData,
     select: ({ pagination, ...other }) => ({
       ...other,
       pagination: normalizePagination({
+        ...pagination,
         page,
-        pageSize,
-        ...pagination
+        pageSize
       })
     })
   })
 
   const systemContracts = useQuery({
     queryKey: ['dataContracts', 'system', sorting.order, sorting.orderBy],
-    queryFn: () => Api.getDataContracts(1, 12, sorting.order, sorting.orderBy, { is_system: 'true' }),
-    keepPreviousData: true,
+    queryFn: () => Api.getDataContracts(1, 12, sorting.order as 'asc' | 'desc', sorting.orderBy, { is_system: 'true' }),
+    placeholderData: keepPreviousData,
     enabled: showPinnedSystem
   })
 
@@ -82,9 +82,9 @@ function DataContractsLayout () {
 
   const pagination = dataContracts.data?.pagination
 
-  const handleFiltersChange = (next) => {
+  const handleFiltersChange = (next: Parameters<typeof setFilters>[0]) => {
     setFilters(next)
-    setPage(1)
+    void setPage(1)
   }
 
   return (
@@ -115,21 +115,21 @@ function DataContractsLayout () {
                   dataContracts={dataContracts.data?.resultSet}
                   loading={dataContracts.isLoading}
                   itemsCount={pageSize}
-                  pinnedGroup={pinnedGroup}
+                  pinnedGroup={pinnedGroup as never}
                 />
               : <Container h={20}><ErrorMessageBlock/></Container>
             }
 
-            {dataContracts.data?.resultSet?.length > 0 &&
+            {(dataContracts.data?.resultSet?.length ?? 0) > 0 &&
               <div className={'ListNavigation'}>
                 <Box display={['none', 'none', 'block']} width={'155px'}/>
                 <Pagination
-                  onPageChange={({ selected }) => setPage((selected || 0) + 1)}
-                  pageCount={pagination.pageCount}
-                  forcePage={pagination.forcePage}
+                  onPageChange={({ selected }) => { void setPage((selected || 0) + 1) }}
+                  pageCount={pagination?.pageCount ?? 1}
+                  forcePage={pagination?.forcePage}
                 />
                 <PageSizeSelector
-                  PageSizeSelectHandler={e => setPageSize(e.value)}
+                  PageSizeSelectHandler={e => { void setPageSize(Number(e?.value)) }}
                   value={pageSize}
                   items={paginateConfig.pageSize.values}
                 />

@@ -1,9 +1,10 @@
 'use client'
 
 import { DataContractCards } from '../../components/dataContracts'
+import type { DataContract, LoadableState, PaginatedResultSet } from '../../types'
 
 export default function Cards () {
-  const dataContracts = {
+  const dataContracts: LoadableState<PaginatedResultSet<Pick<DataContract, 'identifier' | 'name'>>> = {
     data: {
       resultSet: [
         {
@@ -30,13 +31,14 @@ export default function Cards () {
           identifier: '4fJLR2GYTPFdomuTVvNy3VRrvWgvkKPzqehEBpNf2nk6',
           name: 'Withdrawals'
         }
-      ]
+      ],
+      pagination: { page: 1, limit: 6, total: 6 }
     },
     loading: false,
     error: false
   }
 
   return (
-    <DataContractCards items={dataContracts}/>
+    <DataContractCards items={dataContracts as never}/>
   )
 }
