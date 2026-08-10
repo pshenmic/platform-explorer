@@ -58,10 +58,8 @@ export default function Tooltip ({
   children,
   className,
   placement = 'top',
-  asChild = true,
-  ...rest
+  asChild = true
 }) {
-  void rest
   const extraClass = title && content ? 'Tooltip--Extended' : ''
   const id = useId()
   const active = useTooltipActive()
@@ -222,35 +220,34 @@ export default function Tooltip ({
     )
   }
 
-  const tip = isOpen && mounted && pos
-    ? createPortal(
-        <div
-          ref={tipRef}
-          className={`Tooltip ${extraClass}${className ? ` ${className}` : ''}`}
-          role={'tooltip'}
-          style={{
-            position: 'fixed',
-            top: pos.top,
-            left: pos.left,
-            transform: pos.transform,
-            zIndex: 1800
-          }}
-          onMouseEnter={hoverIn}
-          onMouseLeave={hoverOut}
-        >
-          <div className={'Tooltip__Body'}>
-            {title ? <div className={'Tooltip__Title'}>{title}</div> : null}
-            {content ? <div className={'Tooltip__Content'}>{content}</div> : null}
-          </div>
-        </div>,
-        document.body
+  const tipNode = isOpen && mounted && pos
+    ? (
+      <div
+        ref={tipRef}
+        className={`Tooltip ${extraClass}${className ? ` ${className}` : ''}`}
+        role={'tooltip'}
+        style={{
+          position: 'fixed',
+          top: pos.top,
+          left: pos.left,
+          transform: pos.transform,
+          zIndex: 1800
+        }}
+        onMouseEnter={hoverIn}
+        onMouseLeave={hoverOut}
+      >
+        <div className={'Tooltip__Body'}>
+          {title ? <div className={'Tooltip__Title'}>{title}</div> : null}
+          {content ? <div className={'Tooltip__Content'}>{content}</div> : null}
+        </div>
+      </div>
       )
     : null
 
   return (
     <>
       {trigger}
-      {tip}
+      {tipNode ? createPortal(tipNode, document.body) : null}
     </>
   )
 }
