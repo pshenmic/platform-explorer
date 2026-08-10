@@ -2,6 +2,17 @@ import './TotalInfo.scss'
 import './TotalInfoItem.scss'
 import { Container, Flex } from '@chakra-ui/react'
 import Link from 'next/link'
+import type { ReactNode } from 'react'
+
+interface TotalInfoProps {
+  blocks?: ReactNode
+  transactions?: ReactNode
+  dataContracts?: ReactNode
+  documents?: ReactNode
+  identities?: ReactNode
+  loading?: boolean
+  event?: string | null
+}
 
 export default function TotalInfo ({
   blocks,
@@ -11,14 +22,14 @@ export default function TotalInfo ({
   identities,
   loading,
   event = null
-}) {
-  const eventClasses = {
+}: TotalInfoProps) {
+  const eventClasses: Record<string, string> = {
     christmas: 'TotalInfo--Christmas'
   }
 
   return (
     <Container
-      className={`TotalInfo ${event ? eventClasses?.[event] : ''}`}
+      className={`TotalInfo ${event ? eventClasses[event] || '' : ''}`}
       maxW={'none'}
       borderColor={'gray.800'}
       p={0}
