@@ -2,10 +2,11 @@ import type { Metadata } from 'next'
 import Block from './Block'
 
 interface BlockRouteProps {
-  params: { hash: string }
+  params: Promise<{ hash: string }>
 }
 
-export async function generateMetadata ({ params }: BlockRouteProps): Promise<Metadata> {
+export async function generateMetadata(props: BlockRouteProps): Promise<Metadata> {
+  const params = await props.params;
   return {
     title: 'Block #' + params.hash + ' — Dash Platform Explorer',
     description: 'Dash Platform Block Hash ' + params.hash + '. The Timestamp, Transactions count, Block Version.',
@@ -14,7 +15,8 @@ export async function generateMetadata ({ params }: BlockRouteProps): Promise<Me
   }
 }
 
-async function BlockRoute ({ params }: BlockRouteProps) {
+async function BlockRoute(props: BlockRouteProps) {
+  const params = await props.params;
   return <Block hash={params.hash}/>
 }
 
