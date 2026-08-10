@@ -9,7 +9,7 @@ import {
 } from '../../data'
 import { TransactionsIcon } from '../../ui/icons'
 import { BaseSearchItem, BaseSearchItemContent } from './BaseSearchItem'
-import { TransactionStatusBadge as TransactionStatusBadgeJs } from '../../transactions'
+import TransactionStatusBadge from '../../transactions/TransactionStatusBadge'
 
 const Identifier = IdentifierJs as ComponentType<{
   children?: ReactNode
@@ -17,7 +17,6 @@ const Identifier = IdentifierJs as ComponentType<{
   styles?: string[]
 }>
 const TimeDelta = TimeDeltaJs as ComponentType<{ endDate?: string | Date | null }>
-const TransactionStatusBadge = TransactionStatusBadgeJs as ComponentType<{ status?: string | null }>
 
 type SearchTransaction = Partial<Transaction> & {
   isDuplicate?: boolean

@@ -1,6 +1,6 @@
 import type { ComponentType, ReactNode } from 'react'
 import { LinkContainer } from '../../ui/containers'
-import { StatusIcon } from '../../transactions'
+import StatusIcon from '../../transactions/StatusIcon'
 import {
   Identifier as IdentifierJs,
   NotActive as NotActiveJs,

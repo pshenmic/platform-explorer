@@ -1,6 +1,6 @@
-import type { ComponentType } from 'react'
-import TokenTransitionCardJs from '../tokens/TokenTransitionCard'
-import { DocumentTransitionCard as DocumentTransitionCardJs } from '../documents'
+// Direct paths — do not import documents/tokens barrels (circular with transactions/index)
+import TokenTransitionCard from '../tokens/TokenTransitionCard'
+import DocumentTransitionCard from '../documents/DocumentTransitionCard'
 import type { Rate } from '../../types'
 import type { WithClassName } from '../../types/common'
 import './TransitionCard.scss'
@@ -11,20 +11,6 @@ export interface TransitionData {
   action?: string | null
   [key: string]: unknown
 }
-
-const DocumentTransitionCard = DocumentTransitionCardJs as ComponentType<{
-  transition?: TransitionData | null
-  owner?: string | null
-  rate?: Pick<Rate, 'usd'> | null
-  className?: string
-}>
-
-const TokenTransitionCard = TokenTransitionCardJs as ComponentType<{
-  transition?: TransitionData | null
-  owner?: string | null
-  rate?: Pick<Rate, 'usd'> | null
-  className?: string
-}>
 
 interface TransitionCardProps extends WithClassName {
   transition?: TransitionData | null
@@ -46,9 +32,9 @@ const TransitionCard = ({ transition, owner, rate, className }: TransitionCardPr
 
   return (
     <DocumentTransitionCard
-      transition={transition}
+      transition={(transition ?? {}) as Record<string, unknown>}
       owner={owner}
-      rate={rate}
+      rate={rate as Rate | null | undefined}
       className={`TransitionCard ${className || ''}`}
     />
   )

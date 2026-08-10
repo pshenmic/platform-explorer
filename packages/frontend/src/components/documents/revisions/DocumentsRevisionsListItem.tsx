@@ -7,10 +7,11 @@ import { useRouter } from 'next/navigation'
 import { RateTooltip } from '../../ui/Tooltips'
 import Link from 'next/link'
 import { findActiveAlias } from '../../../util'
-import { BatchTypeBadge as BatchTypeBadgeJs } from '../../transactions'
+// Direct path — avoid transactions/index barrel (cycles via TransitionCard → documents)
+import BatchTypeBadge from '../../transactions/BatchTypeBadge'
 import './DocumentsRevisionsListItem.scss'
 
-// Untyped JS modules — cast until migrated
+// Loose casts for data/* props used here
 const Alias = AliasJs as ComponentType<{
   children?: ReactNode
   className?: string
@@ -32,7 +33,6 @@ const Identifier = IdentifierJs as ComponentType<{
 }>
 const NotActive = NotActiveJs as ComponentType<{ children?: ReactNode }>
 const TimeDelta = TimeDeltaJs as ComponentType<{ endDate?: Date | string | null, showTimestampTooltip?: boolean }>
-const BatchTypeBadge = BatchTypeBadgeJs as ComponentType<{ batchType?: string | null, className?: string }>
 
 interface DocumentsRevisionsListItemProps {
   revision?: any
