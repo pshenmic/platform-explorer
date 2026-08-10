@@ -1,11 +1,30 @@
 import { useState } from 'react'
+import type { Signer } from 'src/hooks/useSigner'
 
-export const useDataContractCreate = () => {
+export type DataContractCreateResult = {
+  dataContractId: string
+}
+
+export type UseDataContractCreateReturn = {
+  submit: (params: { schemaString: string, signer: Signer | null | undefined }) => Promise<void>
+  reset: () => void
+  isLoading: boolean
+  error: string | null
+  result: DataContractCreateResult | null
+}
+
+export const useDataContractCreate = (): UseDataContractCreateReturn => {
   const [isLoading, setIsLoading] = useState(false)
-  const [error, setError] = useState(null)
-  const [result, setResult] = useState(null)
+  const [error, setError] = useState<string | null>(null)
+  const [result, setResult] = useState<DataContractCreateResult | null>(null)
 
-  const submit = async ({ schemaString, signer }) => {
+  const submit = async ({
+    schemaString,
+    signer
+  }: {
+    schemaString: string
+    signer: Signer | null | undefined
+  }) => {
     setIsLoading(true)
     setError(null)
     setResult(null)
@@ -15,9 +34,9 @@ export const useDataContractCreate = () => {
         throw new Error('No signer connected')
       }
 
-      let schema
+      let schema: object
       try {
-        schema = JSON.parse(schemaString)
+        schema = JSON.parse(schemaString) as object
       } catch {
         throw new Error('Schema must be valid JSON')
       }
@@ -45,8 +64,9 @@ export const useDataContractCreate = () => {
       setResult({ dataContractId: dataContract.id.base58() })
     } catch (e) {
       console.error('Data contract deploy failed:', e)
+      const err = e as { message?: string, toString?: () => string }
       const message =
-        e?.message ?? e?.toString?.() ?? 'Failed to deploy contract'
+        err?.message ?? err?.toString?.() ?? 'Failed to deploy contract'
       setError(typeof message === 'string' ? message : 'Failed to deploy contract')
     } finally {
       setIsLoading(false)

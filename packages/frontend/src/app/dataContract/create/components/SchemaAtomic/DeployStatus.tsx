@@ -1,6 +1,7 @@
 import { Link, Text } from '@chakra-ui/react'
 import { useDeploy } from '../../DeployContext'
 import { SignerMethod } from '../../useSigner'
+import type { Signer } from '../../useSigner'
 
 export const DeployStatus = () => {
   const { schemaError, signer, deploy } = useDeploy()
@@ -33,9 +34,10 @@ export const DeployStatus = () => {
   }
 
   if (signer.isConnected) {
+    const connected = signer.signer as Signer
     return (
       <Text color='gray.500' fontSize='sm'>
-        Signing as: {signer.signer.identityId}
+        Signing as: {connected.identityId}
       </Text>
     )
   }

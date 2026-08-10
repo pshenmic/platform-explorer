@@ -35,7 +35,11 @@ const platformTheme = EditorView.theme({
   }
 })
 
-export const SchemaField = ({ className }) => {
+interface SchemaFieldProps {
+  className?: string
+}
+
+export const SchemaField = ({ className }: SchemaFieldProps) => {
   const { value, handleChange } = useSchema()
 
   return (

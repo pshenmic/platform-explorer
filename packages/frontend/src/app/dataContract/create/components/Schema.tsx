@@ -7,7 +7,7 @@ import styles from './Schema.module.scss'
 
 const DOCS_URL = 'https://docs.dash.org/projects/platform/en/stable/docs/explanations/platform-protocol-data-contract.html'
 
-const formatBytes = (value) => {
+const formatBytes = (value: string | undefined | null): number => {
   try {
     return new Blob([value ?? '']).size
   } catch {

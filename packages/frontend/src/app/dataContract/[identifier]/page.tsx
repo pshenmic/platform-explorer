@@ -1,6 +1,14 @@
 import DataContract from './DataContract'
 
-export async function generateMetadata ({ params }) {
+interface PageParams {
+  identifier: string
+}
+
+interface PageProps {
+  params: PageParams
+}
+
+export async function generateMetadata ({ params }: PageProps) {
   return {
     title: 'Data Contract #' + params.identifier + ' — Dash Platform Explorer',
     description: 'Data Contract ' + params.identifier + 'on Dash Platform. The Schema, Documents, Date of Creation, Revision, Transaction.',
@@ -9,7 +17,7 @@ export async function generateMetadata ({ params }) {
   }
 }
 
-function DataContractRoute ({ params }) {
+function DataContractRoute ({ params }: PageProps) {
   return <DataContract identifier={params.identifier}/>
 }
 

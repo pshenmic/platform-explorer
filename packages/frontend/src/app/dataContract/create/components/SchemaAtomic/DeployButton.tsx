@@ -8,7 +8,7 @@ export const DeployButton = () => {
   const isBusy = signer.isConnecting || deploy.isLoading
   const hasResult = deploy.result != null
 
-  let label
+  let label: string
   if (!signer.isConnected) {
     label = signer.method === SignerMethod.PRIVATE_KEY
       ? 'Use Private Key'
