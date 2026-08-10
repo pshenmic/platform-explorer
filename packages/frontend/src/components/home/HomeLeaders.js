@@ -71,93 +71,6 @@ function LeaderRail ({ place, href, title, metric, meterValue, meterMax, accent 
   )
 }
 
-function LeaderGlyph ({ accent }) {
-  const common = {
-    viewBox: '0 0 48 48',
-    fill: 'none',
-    xmlns: 'http://www.w3.org/2000/svg',
-    'aria-hidden': 'true',
-    focusable: 'false',
-    className: 'HomeLeaders__GlyphSvg'
-  }
-  const s = { stroke: 'currentColor', strokeWidth: 1.5, strokeLinecap: 'round', strokeLinejoin: 'round' }
-
-  let paths = null
-  switch (accent) {
-    case 'contracts':
-      paths = (
-        <>
-          <rect x='10' y='8' width='22' height='28' rx='3' {...s}/>
-          <path d='M16 16h10M16 22h8M16 28h6' {...s}/>
-          <rect x='16' y='12' width='22' height='28' rx='3' {...s} opacity='0.55'/>
-        </>
-      )
-      break
-    case 'balance':
-      paths = (
-        <>
-          <path d='M8 38h32' {...s}/>
-          <rect x='11' y='24' width='6' height='14' rx='1.5' {...s}/>
-          <rect x='21' y='16' width='6' height='22' rx='1.5' {...s}/>
-          <rect x='31' y='10' width='6' height='28' rx='1.5' {...s}/>
-          <path d='M14 20l6-6 6 4 8-10' {...s} opacity='0.7'/>
-        </>
-      )
-      break
-    case 'txs':
-      paths = (
-        <>
-          <path d='M6 28h6l4-12 6 20 5-14 4 8h11' {...s}/>
-          <circle cx='16' cy='16' r='2.2' fill='currentColor' stroke='none'/>
-          <circle cx='27' cy='36' r='2.2' fill='currentColor' stroke='none' opacity='0.7'/>
-          <circle cx='36' cy='22' r='2.2' fill='currentColor' stroke='none' opacity='0.45'/>
-        </>
-      )
-      break
-    case 'activeContracts':
-      paths = (
-        <>
-          <circle cx='24' cy='24' r='14' {...s}/>
-          <path d='M24 14v11l7 4' {...s}/>
-          <circle cx='24' cy='24' r='1.6' fill='currentColor' stroke='none'/>
-        </>
-      )
-      break
-    case 'tokens':
-      paths = (
-        <>
-          <circle cx='24' cy='24' r='14' {...s}/>
-          <path d='M24 13v22' {...s}/>
-          <path
-            d='M29 18.5c0-2.4-2.1-4-5-4s-5 1.5-5 3.6c0 2 1.6 3.1 5 3.9 3.4.8 5 2.1 5 4.1 0 2.3-2.2 4-5 4s-5-1.7-5-4'
-            {...s}
-          />
-        </>
-      )
-      break
-    case 'activeIds':
-      paths = (
-        <>
-          <circle cx='24' cy='22' r='5' {...s}/>
-          <path d='M14 36c2.5-5 7-8 10-8s7.5 3 10 8' {...s}/>
-          <circle cx='10' cy='14' r='2.5' {...s}/>
-          <circle cx='38' cy='16' r='2.5' {...s}/>
-          <circle cx='36' cy='34' r='2.5' {...s} opacity='0.7'/>
-          <path d='M14.5 16.5l5 3M33.5 18l-5 2M32 31.5l-4-5' {...s} opacity='0.55'/>
-        </>
-      )
-      break
-    default:
-      paths = <circle cx='24' cy='24' r='12' {...s}/>
-  }
-
-  return (
-    <span className={`HomeLeaders__Glyph HomeLeaders__Glyph--${accent}`} aria-hidden={'true'}>
-      <svg {...common}>{paths}</svg>
-    </span>
-  )
-}
-
 function LeaderColumn ({
   eyebrow,
   title,
@@ -171,15 +84,13 @@ function LeaderColumn ({
 }) {
   return (
     <div className={`HomeLeaders__Col HomeLeaders__Col--${accent}`}>
-      <div className={'HomeLeaders__ColHead'}>
-        <div className={'HomeLeaders__ColCopy'}>
-          <span className={'HomeLeaders__ColEyebrow'}>{eyebrow}</span>
-          <h3 className={'HomeLeaders__ColTitle'}>{title}</h3>
-          <p className={'HomeLeaders__ColLede'}>{lede}</p>
-        </div>
-        <LeaderGlyph accent={accent}/>
-      </div>
-
+      <p className={'HomeLeaders__Caption'} title={`${eyebrow} · ${title} · ${lede}`}>
+        <span className={'HomeLeaders__CaptionPart'}>{eyebrow}</span>
+        <span className={'HomeLeaders__CaptionSep'} aria-hidden={'true'}>·</span>
+        <span className={'HomeLeaders__CaptionPart'}>{title}</span>
+        <span className={'HomeLeaders__CaptionSep'} aria-hidden={'true'}>·</span>
+        <span className={'HomeLeaders__CaptionPart HomeLeaders__CaptionPart--muted'}>{lede}</span>
+      </p>
       <div className={'HomeLeaders__Rails'} role={'list'}>
         {loading &&
           Array.from({ length: HOME_RICH_LIST_LIMIT }).map((_, i) => (
@@ -301,6 +212,10 @@ export default function HomeLeaders ({ rate, enabled = true }) {
   const panels = useMemo(() => [
     {
       key: 'contracts',
+      label: 'Activity',
+      eyebrow: 'Contracts',
+      title: 'By activity',
+      lede: 'Usage volume · last 30 days',
       node: (
         <LeaderColumn
           accent={'contracts'}
@@ -334,6 +249,10 @@ export default function HomeLeaders ({ rate, enabled = true }) {
     },
     {
       key: 'balance',
+      label: 'Balance',
+      eyebrow: 'Identities',
+      title: 'Highest balance',
+      lede: 'Most credits held',
       node: (
         <LeaderColumn
           accent={'balance'}
@@ -367,6 +286,10 @@ export default function HomeLeaders ({ rate, enabled = true }) {
     },
     {
       key: 'txs',
+      label: 'Most txs',
+      eyebrow: 'Identities',
+      title: 'Most activity',
+      lede: 'All-time transaction count',
       node: (
         <LeaderColumn
           accent={'txs'}
@@ -396,6 +319,10 @@ export default function HomeLeaders ({ rate, enabled = true }) {
     },
     {
       key: 'activeContracts',
+      label: 'Recent',
+      eyebrow: 'Contracts',
+      title: 'Recently used',
+      lede: 'At least one tx · last 90 days',
       node: (
         <LeaderColumn
           accent={'activeContracts'}
@@ -429,6 +356,10 @@ export default function HomeLeaders ({ rate, enabled = true }) {
     },
     {
       key: 'tokens',
+      label: 'Tokens',
+      eyebrow: 'Tokens',
+      title: 'Trending',
+      lede: 'Token activity · last 30 days',
       node: (
         <LeaderColumn
           accent={'tokens'}
@@ -465,6 +396,10 @@ export default function HomeLeaders ({ rate, enabled = true }) {
     },
     {
       key: 'activeIds',
+      label: 'Active',
+      eyebrow: 'Identities',
+      title: 'Active this week',
+      lede: 'Sent at least one tx · last 7 days',
       node: (
         <LeaderColumn
           accent={'activeIds'}
@@ -498,148 +433,288 @@ export default function HomeLeaders ({ rate, enabled = true }) {
     rate
   ])
 
-  const loopPanels = useMemo(
-    () => [...panels, ...panels.map(p => ({ ...p, key: `${p.key}-dup` }))],
-    [panels]
-  )
-
   const viewportRef = useRef(null)
-  const trackRef = useRef(null)
+  // React state only for tab index; slide chrome updates via DOM class
+  const [active, setActive] = useState(0)
+  const activeRef = useRef(0)
+  // true while we own scrollLeft so user scroll handlers do not thrash
+  const busy = useRef(false)
+  const n = panels.length
+
+  // three copies so the loop always has neighbors on both sides
+  const loopPanels = useMemo(() => {
+    if (!n) return []
+    return [0, 1, 2].flatMap(copy =>
+      panels.map((p, i) => ({
+        ...p,
+        key: `${p.key}__c${copy}`,
+        realIndex: i,
+        copy
+      }))
+    )
+  }, [panels, n])
+
+  const slideLabels = useMemo(() => panels.map(p => p.label), [panels])
+
+  const getSlides = () => {
+    const vp = viewportRef.current
+    if (!vp) return []
+    return [...vp.querySelectorAll('.HomeLeaders__Slide')]
+  }
+
+  const nearestDomIndex = () => {
+    const vp = viewportRef.current
+    const slides = getSlides()
+    if (!vp || !slides.length) return n // middle first
+    const midX = vp.getBoundingClientRect().left + vp.clientWidth / 2
+    let best = 0
+    let bestDist = Infinity
+    slides.forEach((el, i) => {
+      const r = el.getBoundingClientRect()
+      const d = Math.abs(r.left + r.width / 2 - midX)
+      if (d < bestDist) {
+        bestDist = d
+        best = i
+      }
+    })
+    return best
+  }
+
+  // DOM class only: avoids re-rendering three cloned lists each scroll tick
+  const markActiveDom = (domIndex) => {
+    getSlides().forEach((el, i) => {
+      el.classList.toggle('is-active', i === domIndex)
+    })
+  }
+
+  const setLogical = (real) => {
+    const i = ((real % n) + n) % n
+    if (activeRef.current !== i) {
+      activeRef.current = i
+      setActive(i)
+    }
+  }
+
+  // centers slide; is-programmatic disables CSS scroll-snap mid-move
+  const centerEl = (el, smooth) => {
+    const vp = viewportRef.current
+    if (!vp || !el) return
+    const vpRect = vp.getBoundingClientRect()
+    const elRect = el.getBoundingClientRect()
+    const delta = (elRect.left + elRect.width / 2) - (vpRect.left + vpRect.width / 2)
+    if (Math.abs(delta) < 0.5) return
+    vp.classList.add('is-programmatic')
+    if (smooth) {
+      vp.scrollBy({ left: delta, behavior: 'smooth' })
+    } else {
+      vp.scrollLeft += delta
+    }
+  }
+
+  // if scroll landed on a side clone, jump to the middle copy without a second smooth scroll
+  const normalizeLoop = () => {
+    if (!n || busy.current) return
+    const slides = getSlides()
+    if (slides.length < n * 3) return
+    const dom = nearestDomIndex()
+    const real = dom % n
+    const copy = Math.floor(dom / n)
+    setLogical(real)
+    markActiveDom(dom)
+    if (copy === 1) {
+      viewportRef.current?.classList.remove('is-programmatic')
+      return
+    }
+    const mid = slides[n + real]
+    if (!mid) return
+    busy.current = true
+    viewportRef.current?.classList.add('is-programmatic')
+    centerEl(mid, false)
+    markActiveDom(n + real)
+    // double rAF waits for layout so the next user scroll is not dropped
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        busy.current = false
+        viewportRef.current?.classList.remove('is-programmatic')
+      })
+    })
+  }
+
+  const goToDom = (domIndex, { smooth = true, thenNormalize = true } = {}) => {
+    if (!n) return
+    const slides = getSlides()
+    const el = slides[domIndex]
+    if (!el) return
+    const real = domIndex % n
+    setLogical(real)
+    markActiveDom(domIndex)
+    busy.current = true
+    centerEl(el, smooth)
+    const finish = () => {
+      busy.current = false
+      if (thenNormalize) normalizeLoop()
+      else viewportRef.current?.classList.remove('is-programmatic')
+    }
+    if (smooth) {
+      const vp = viewportRef.current
+      let done = false
+      const once = () => {
+        if (done) return
+        done = true
+        vp?.removeEventListener('scrollend', once)
+        window.clearTimeout(fallback)
+        finish()
+      }
+      const fallback = window.setTimeout(once, 420)
+      vp?.addEventListener('scrollend', once, { once: true })
+    } else {
+      finish()
+    }
+  }
+
+  // tabs always target the middle deck so both directions still have neighbors
+  const scrollToLogical = (realIndex) => {
+    if (!n || busy.current) return
+    const real = ((realIndex % n) + n) % n
+    goToDom(n + real, { smooth: true, thenNormalize: false })
+  }
+
+  // step one slide; landing on a clone is OK, normalizeLoop re-centers after settle
+  const scrollByDir = (dir) => {
+    if (!n || busy.current) return
+    const dom = nearestDomIndex()
+    let next = dom + dir
+    if (next < 0) next = n * 3 - 1
+    if (next >= n * 3) next = 0
+    goToDom(next, { smooth: true, thenNormalize: true })
+  }
+
   useEffect(() => {
-    const viewport = viewportRef.current
-    const track = trackRef.current
-    if (!viewport || !track) return undefined
+    const vp = viewportRef.current
+    if (!vp || !n) return undefined
 
-    const reduced = typeof window !== 'undefined' &&
-      window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    // land on middle copy of list 0 (room to scroll either way)
+    requestAnimationFrame(() => {
+      const slides = getSlides()
+      const el = slides[n]
+      if (!el) return
+      busy.current = true
+      vp.classList.add('is-programmatic')
+      centerEl(el, false)
+      setLogical(0)
+      markActiveDom(n)
+      requestAnimationFrame(() => {
+        busy.current = false
+        vp.classList.remove('is-programmatic')
+      })
+    })
 
-    let offset = 0
-    let raf = 0
-    let lastT = 0
-    let paused = false
-    let dragging = false
-    let dragStartX = 0
-    let dragStartOffset = 0
-    let dragMoved = 0
-    const SPEED = 42 // px / s
-
-    const halfWidth = () => {
-      const w = track.scrollWidth / 2
-      return w > 0 ? w : 0
+    let settleTimer = 0
+    const onScroll = () => {
+      if (busy.current) return
+      const dom = nearestDomIndex()
+      setLogical(dom % n)
+      markActiveDom(dom)
+      window.clearTimeout(settleTimer)
+      settleTimer = window.setTimeout(normalizeLoop, 160)
     }
 
-    const wrap = (v) => {
-      const half = halfWidth()
-      if (half <= 0) return 0
-      let x = v % half
-      if (x < 0) x += half
-      return x
-    }
+    vp.addEventListener('scroll', onScroll, { passive: true })
 
-    const paint = () => {
-      offset = wrap(offset)
-      track.style.transform = `translate3d(${-offset}px, 0, 0)`
-    }
-
-    const tick = (now) => {
-      if (!lastT) lastT = now
-      const dt = Math.min(0.05, (now - lastT) / 1000)
-      lastT = now
-      if (!reduced && !paused && !dragging) {
-        offset += SPEED * dt
-        paint()
+    const onKey = (e) => {
+      if (e.key === 'ArrowRight') {
+        e.preventDefault()
+        scrollByDir(1)
+      } else if (e.key === 'ArrowLeft') {
+        e.preventDefault()
+        scrollByDir(-1)
       }
-      raf = requestAnimationFrame(tick)
     }
-
-    const onEnter = () => { paused = true }
-    const onLeave = () => {
-      if (!dragging) paused = false
-      lastT = 0
-    }
-
-    const onPointerDown = (e) => {
-      if (e.pointerType === 'mouse' && e.button !== 0) return
-      dragging = true
-      paused = true
-      dragStartX = e.clientX
-      dragStartOffset = offset
-      dragMoved = 0
-      viewport.classList.add('is-dragging')
-      try { viewport.setPointerCapture(e.pointerId) } catch (_) { /* noop */ }
-    }
-
-    const onPointerMove = (e) => {
-      if (!dragging) return
-      const dx = e.clientX - dragStartX
-      dragMoved = Math.max(dragMoved, Math.abs(dx))
-      offset = wrap(dragStartOffset - dx)
-      paint()
-    }
-
-    const endDrag = (e) => {
-      if (!dragging) return
-      dragging = false
-      viewport.classList.remove('is-dragging')
-      try { viewport.releasePointerCapture(e.pointerId) } catch (_) { /* noop */ }
-      if (dragMoved > 6) {
-        const block = (ev) => {
-          ev.preventDefault()
-          ev.stopPropagation()
-          viewport.removeEventListener('click', block, true)
-        }
-        viewport.addEventListener('click', block, true)
-        setTimeout(() => viewport.removeEventListener('click', block, true), 0)
-      }
-      const over = viewport.matches(':hover')
-      paused = over
-      lastT = 0
-    }
-
-    viewport.addEventListener('pointerenter', onEnter)
-    viewport.addEventListener('pointerleave', onLeave)
-    viewport.addEventListener('pointerdown', onPointerDown)
-    viewport.addEventListener('pointermove', onPointerMove)
-    viewport.addEventListener('pointerup', endDrag)
-    viewport.addEventListener('pointercancel', endDrag)
-
-    paint()
-    raf = requestAnimationFrame(tick)
+    vp.addEventListener('keydown', onKey)
 
     return () => {
-      cancelAnimationFrame(raf)
-      viewport.removeEventListener('pointerenter', onEnter)
-      viewport.removeEventListener('pointerleave', onLeave)
-      viewport.removeEventListener('pointerdown', onPointerDown)
-      viewport.removeEventListener('pointermove', onPointerMove)
-      viewport.removeEventListener('pointerup', endDrag)
-      viewport.removeEventListener('pointercancel', endDrag)
+      window.clearTimeout(settleTimer)
+      vp.removeEventListener('scroll', onScroll)
+      vp.removeEventListener('keydown', onKey)
     }
-  }, [loopPanels])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [n, loopPanels.length])
 
   return (
     <Box
       className={'InfoBlock InfoBlock--NoBorder HomeLeaders'}
       w={'100%'}
       as={'section'}
-      aria-label={'Platform leaders carousel'}
+      aria-label={'Platform leaders'}
     >
+      <header className={'HomeLeaders__Head'}>
+        <div className={'HomeLeaders__HeadText'}>
+          <span className={'HomeLeaders__Eyebrow'}>Leaderboards</span>
+          <h2 className={'HomeLeaders__Title'}>Platform leaders</h2>
+        </div>
+        <div className={'HomeLeaders__Nav'} aria-label={'Carousel controls'}>
+          <button
+            type={'button'}
+            className={'HomeLeaders__Arrow'}
+            aria-label={'Previous lists'}
+            onClick={() => scrollByDir(-1)}
+          >
+            <svg viewBox={'0 0 16 16'} width={'14'} height={'14'} aria-hidden={'true'}>
+              <path d={'M10 3L5 8l5 5'} fill={'none'} stroke={'currentColor'} strokeWidth={'1.6'} strokeLinecap={'round'} strokeLinejoin={'round'}/>
+            </svg>
+          </button>
+          <div className={'HomeLeaders__Tabs'} role={'tablist'} aria-label={'Leader lists'}>
+            {slideLabels.map((label, i) => (
+              <button
+                key={panels[i].key}
+                type={'button'}
+                role={'tab'}
+                aria-selected={active === i}
+                className={`HomeLeaders__Tab${active === i ? ' is-on' : ''}`}
+                onClick={() => scrollToLogical(i)}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+          <button
+            type={'button'}
+            className={'HomeLeaders__Arrow'}
+            aria-label={'Next lists'}
+            onClick={() => scrollByDir(1)}
+          >
+            <svg viewBox={'0 0 16 16'} width={'14'} height={'14'} aria-hidden={'true'}>
+              <path d={'M6 3l5 5-5 5'} fill={'none'} stroke={'currentColor'} strokeWidth={'1.6'} strokeLinecap={'round'} strokeLinejoin={'round'}/>
+            </svg>
+          </button>
+        </div>
+      </header>
+
       <div
         ref={viewportRef}
-        className={'HomeLeaders__Viewport'}
+        className={'HomeLeaders__Viewport HomeLeaders__Viewport--loop'}
         tabIndex={0}
         role={'region'}
         aria-roledescription={'carousel'}
-        aria-label={'Leaders lists — drag to browse, auto-moves when idle'}
+        aria-label={'Leaders lists — infinite carousel'}
       >
-        <div ref={trackRef} className={'HomeLeaders__Track'}>
-          {loopPanels.map(panel => (
-            <div key={panel.key} className={'HomeLeaders__Slide'}>
+        <div className={'HomeLeaders__Track'}>
+          {loopPanels.map((panel) => (
+            <div
+              key={panel.key}
+              className={'HomeLeaders__Slide'}
+              data-real={panel.realIndex}
+              data-copy={panel.copy}
+              role={'group'}
+              aria-roledescription={'slide'}
+              aria-label={`${panel.realIndex + 1} of ${n}`}
+            >
               {panel.node}
             </div>
           ))}
         </div>
       </div>
+
     </Box>
   )
 }
