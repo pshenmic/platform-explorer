@@ -1,5 +1,8 @@
 'use client'
 
+import type { ReactNode } from 'react'
+
+import type { Validator } from '../../types'
 import { ListColumnsHeader } from '../ui/lists'
 import { ValidatorListItem } from './ValidatorListItem'
 import { Container } from '@chakra-ui/react'
@@ -9,7 +12,7 @@ import { LoadingLine } from '@components/loading'
 
 import './ValidatorsList.scss'
 
-const columnHelper = createColumnHelper()
+const columnHelper = createColumnHelper<Validator>()
 
 const columns = [
   columnHelper.accessor('proTxHash', {
@@ -28,13 +31,17 @@ const columns = [
     id: 'proposedBlocksAmount',
     header: 'Blocks proposed'
   }),
-  columnHelper.accessor(row => row?.timestamp ?? null, {
+  columnHelper.accessor(row => row?.lastProposedBlockHeader?.timestamp ?? null, {
     id: 'timestamp',
     header: 'Timestamp'
   })
 ]
 
-const TableWrapper = ({ children }) => (
+interface TableWrapperProps {
+  children?: ReactNode
+}
+
+const TableWrapper = ({  children  }: TableWrapperProps) => (
   <div className={'ValidatorsList'}>
     <div className={'ValidatorsList__ContentContainer'}>
         {children}
@@ -57,9 +64,16 @@ export const ValidatorsListSceleton = () => (
   </TableWrapper>
 )
 
-export const ValidatorsList = ({ loading, list, pageSize, error }) => {
+interface ValidatorsListProps {
+  loading?: boolean
+  list?: Validator[]
+  pageSize?: number | string
+  error?: boolean
+}
+
+export const ValidatorsList = ({  loading, list, pageSize, error  }: ValidatorsListProps) => {
   const table = useReactTable({
-    data: list,
+    data: list ?? [],
     columns,
     getCoreRowModel: getCoreRowModel(),
     manualPagination: true
@@ -74,9 +88,7 @@ export const ValidatorsList = ({ loading, list, pageSize, error }) => {
       <TableWrapper>
         {
           Array.from({
-            length: String(pageSize).toLowerCase() === 'all'
-              ? 50
-              : pageSize
+            length: String(pageSize).toLowerCase() === 'all' ? 50 : Number(pageSize) || 25
           }, (x, i) => <LoadingLine key={i} loading={loading} className={'ValidatorListItem ValidatorListItem--Loading'}/>)
         }
       </TableWrapper>
@@ -86,7 +98,7 @@ export const ValidatorsList = ({ loading, list, pageSize, error }) => {
   return (
     <TableWrapper>
       <ListColumnsHeader
-        headers={table.getHeaderGroups().flatMap(({ headers }) => headers)}
+        headers={table.getHeaderGroups().flatMap(({ headers }) => headers) as any}
 
         className={'ValidatorsList__ColumnTitles'}
         columnClassName={'ValidatorsList__ColumnTitle'}

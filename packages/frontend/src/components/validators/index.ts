@@ -1,3 +1,4 @@
+import type { Validator } from '../../types'
 import { ValidatorsList, ValidatorsListSceleton } from './ValidatorsList'
 import ValidatorCard from './ValidatorCard'
 import ValidatorsStatsInline from './ValidatorsStatsInline'

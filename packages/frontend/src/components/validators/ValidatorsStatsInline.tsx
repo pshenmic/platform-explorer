@@ -1,23 +1,31 @@
 'use client'
 
+import type { ReactNode } from 'react'
+import type { LoadableState } from '../../types/common'
+import type { Status, EpochData } from '../../types'
 import Link from 'next/link'
 import * as Api from '../../util/Api'
 import { useState, useEffect } from 'react'
 import { fetchHandlerSuccess, fetchHandlerError, formatFullNumber } from '../../util'
 import NetworkStatsInline from '../stats/NetworkStatsInline'
 
-const shortHash = (hash) => `${hash.slice(0, 6)}…${hash.slice(-4)}`
+const shortHash = (hash: string) => `${hash.slice(0, 6)}…${hash.slice(-4)}`
 
-export default function ValidatorsStatsInline ({ total, className }) {
-  const [status, setStatus] = useState({ data: {}, loading: true, error: false })
-  const [epoch, setEpoch] = useState({ data: {}, loading: true, error: false })
+interface ValidatorsStatsInlineProps {
+  total?: number
+  className?: string
+}
+
+export default function ValidatorsStatsInline ({  total, className  }: ValidatorsStatsInlineProps) {
+  const [status, setStatus] = useState<LoadableState<Status>>({ data: null, loading: true, error: false })
+  const [epoch, setEpoch] = useState<LoadableState<EpochData>>({ data: null, loading: true, error: false })
 
   useEffect(() => {
     Api.getStatus()
       .then(res => {
         fetchHandlerSuccess(setStatus, res)
 
-        Api.getEpoch(res?.epoch?.number)
+        Api.getEpoch(res?.epoch?.number as number)
           .then(res => fetchHandlerSuccess(setEpoch, res))
           .catch(err => fetchHandlerError(setEpoch, err))
       })
@@ -26,10 +34,10 @@ export default function ValidatorsStatsInline ({ total, className }) {
 
   const bestValidator = epoch.data?.bestValidator
 
-  const items = [
+  const items: Array<{ label: string, value?: ReactNode, loading?: boolean, color?: string }> = [
     {
       label: 'Total',
-      value: typeof total === 'number' ? formatFullNumber(total) : null,
+      value: typeof total === 'number' ? String(formatFullNumber(total)) : null,
       loading: total == null
     },
     {
@@ -40,7 +48,7 @@ export default function ValidatorsStatsInline ({ total, className }) {
     },
     {
       label: 'Fees',
-      value: typeof epoch.data?.totalCollectedFees === 'number' ? formatFullNumber(epoch.data.totalCollectedFees) : null,
+      value: typeof epoch.data?.totalCollectedFees === 'number' ? String(formatFullNumber(epoch.data.totalCollectedFees)) : null,
       color: 'var(--chakra-colors-brand-light)',
       loading: epoch.loading
     },

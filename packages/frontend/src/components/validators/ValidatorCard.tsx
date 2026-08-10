@@ -1,10 +1,40 @@
-import { Identifier, InfoLine, CreditsBlock } from '../data'
+import type { ComponentType, ReactNode } from 'react'
+import type { Identity, Validator, Rate } from '../../types'
+import type { LoadableState } from '../../types/common'
+import { Identifier as IdentifierJs, InfoLine as InfoLineJs, CreditsBlock as CreditsBlockJs } from '../data'
 import ImageGenerator from '../imageGenerator'
 import { HorisontalSeparator } from '../ui/separators'
 import Link from 'next/link'
 import './ValidatorCard.scss'
 
-export default function ValidatorCard ({ validator, rate, className }) {
+// Untyped JS modules — cast until migrated
+const Identifier = IdentifierJs as ComponentType<{
+  children?: ReactNode
+  className?: string
+  avatar?: boolean
+  ellipsis?: boolean
+  middleEllipsis?: boolean
+  copyButton?: boolean
+  styles?: string[]
+  clickable?: boolean
+  alias?: string
+}>
+const InfoLine = InfoLineJs as ComponentType<{
+  className?: string
+  title?: ReactNode
+  value?: ReactNode
+  loading?: boolean
+  error?: boolean
+}>
+const CreditsBlock = CreditsBlockJs as ComponentType<{ credits?: number | string | null, rate?: Rate | null }>
+
+interface ValidatorCardProps {
+  validator: LoadableState<Validator>
+  rate?: Rate | null
+  className?: string
+}
+
+export default function ValidatorCard ({  validator, rate, className  }: ValidatorCardProps) {
   return (
     <div className={`InfoBlock InfoBlock--Gradient ValidatorCard ${validator.loading ? 'ValidatorCard--Loading' : ''} ${className || ''}`}>
       <div className={'ValidatorCard__Header'}>
@@ -21,7 +51,7 @@ export default function ValidatorCard ({ validator, rate, className }) {
                   styles={['highlight-both']}
                   ellipsis={false}
                 >
-                  {validator.data.proTxHash}
+                  {validator.data?.proTxHash}
                 </Identifier>
               : 'n/a'
             )}
@@ -36,7 +66,7 @@ export default function ValidatorCard ({ validator, rate, className }) {
         <div className={'ValidatorCard__Avatar'}>
           {!validator.error
             ? <ImageGenerator
-              username={validator.data.proTxHash}
+              username={validator.data?.proTxHash}
               lightness={50}
               saturation={50}
               width={88}
@@ -101,7 +131,7 @@ export default function ValidatorCard ({ validator, rate, className }) {
               styles={['highlight-both']}
               ellipsis={false}
             >
-              {validator.data?.proTxInfo?.state?.platformNodeID}
+              {validator.data?.proTxInfo?.state?.platformNodeID as ReactNode}
             </Identifier>
           )}
           loading={validator.loading}
