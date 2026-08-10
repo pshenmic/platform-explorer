@@ -1,9 +1,16 @@
+import type { ReactNode } from 'react'
 import { Container } from '@chakra-ui/react'
 import { ChevronIcon2 } from '../icons'
 import BackButton from '../Buttons/BackButton'
+import type { WithChildren, WithClassName } from '../../../types/common'
 import './PageDataContainer.scss'
 
-function PageDataContainer ({ className, title, children, isChevronHidden = false }) {
+interface PageDataContainerProps extends WithChildren, WithClassName {
+  title?: ReactNode
+  isChevronHidden?: boolean
+}
+
+function PageDataContainer ({ className, title, children, isChevronHidden = false }: PageDataContainerProps) {
   return (
     <Container
       className={`PageDataContainer ${className || ''}`}

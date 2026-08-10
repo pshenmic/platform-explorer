@@ -1,10 +1,26 @@
 'use client'
 
+import type { ReactNode } from 'react'
 import { useState, useRef } from 'react'
 import useResizeObserver from '@react-hook/resize-observer'
+import type { WithChildren, WithClassName } from '../../../types/common'
 
-const SmoothSize = ({ className, children, duration = 0.3, smoothHeight = true, smoothWidth = false, easing = 'ease' }) => {
-  const containerRef = useRef(null)
+interface SmoothSizeProps extends WithChildren, WithClassName {
+  duration?: number
+  smoothHeight?: boolean
+  smoothWidth?: boolean
+  easing?: string
+}
+
+const SmoothSize = ({
+  className,
+  children,
+  duration = 0.3,
+  smoothHeight = true,
+  smoothWidth = false,
+  easing = 'ease'
+}: SmoothSizeProps) => {
+  const containerRef = useRef<HTMLDivElement | null>(null)
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 })
 
   useResizeObserver(containerRef, (entry) => {
@@ -24,7 +40,7 @@ const SmoothSize = ({ className, children, duration = 0.3, smoothHeight = true, 
       }}
     >
       <div ref={containerRef}>
-        {children}
+        {children as ReactNode}
       </div>
     </div>
   )

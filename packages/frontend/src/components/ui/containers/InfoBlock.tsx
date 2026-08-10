@@ -1,7 +1,15 @@
+import type { WithChildren, WithClassName } from '../../../types/common'
 import '../../../styles/components/InfoBlock.scss'
 
-function InfoBlock ({ children, colorScheme = 'blue', gradient, className }) {
-  const schemeClasses = {
+type ColorScheme = 'blue' | 'green' | 'red'
+
+interface InfoBlockProps extends WithChildren, WithClassName {
+  colorScheme?: ColorScheme
+  gradient?: boolean
+}
+
+function InfoBlock ({ children, colorScheme = 'blue', gradient, className }: InfoBlockProps) {
+  const schemeClasses: Record<ColorScheme, string> = {
     blue: '',
     green: 'InfoBlock--Green',
     red: 'InfoBlock--Red'

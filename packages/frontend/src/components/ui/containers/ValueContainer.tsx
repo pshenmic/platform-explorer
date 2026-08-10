@@ -1,8 +1,30 @@
+import type { ComponentPropsWithoutRef, ReactNode } from 'react'
 import { ArrowCornerIcon } from '../icons'
 import Link from 'next/link'
+import type { WithChildren, WithClassName } from '../../../types/common'
 import './ValueContainer.scss'
 
-const Wrapper = ({ external, link, children, className, ...otherProps }) => {
+type ColorScheme =
+  | 'default'
+  | 'red'
+  | 'green'
+  | 'emeralds'
+  | 'blue'
+  | 'brand'
+  | 'lightGray'
+  | 'darkGray'
+  | 'gray'
+  | 'orange'
+
+type Size = 'default' | 'xl' | 'lg' | 'md' | 'sm' | 'xs' | 'xxs'
+
+interface WrapperProps extends WithChildren, WithClassName {
+  external?: boolean
+  link?: string
+  [key: string]: unknown
+}
+
+const Wrapper = ({ external, link, children, className, ...otherProps }: WrapperProps) => {
   return typeof link === 'string'
     ? <Link
         href={link}
@@ -14,7 +36,18 @@ const Wrapper = ({ external, link, children, className, ...otherProps }) => {
       >
         {children}
       </Link>
-    : <div className={className} {...otherProps}>{children}</div>
+    : <div className={className} {...otherProps as ComponentPropsWithoutRef<'div'>}>{children}</div>
+}
+
+interface ValueContainerProps extends WithChildren, WithClassName {
+  clickable?: boolean
+  link?: string
+  elipsed?: boolean
+  colorScheme?: ColorScheme
+  size?: Size
+  external?: boolean
+  light?: boolean
+  [key: string]: unknown
 }
 
 function ValueContainer ({
@@ -28,8 +61,8 @@ function ValueContainer ({
   light,
   className,
   ...props
-}) {
-  const colorClasses = {
+}: ValueContainerProps) {
+  const colorClasses: Record<ColorScheme, string> = {
     default: '',
     red: 'ValueContainer--Red',
     green: 'ValueContainer--Green',
@@ -42,7 +75,7 @@ function ValueContainer ({
     orange: 'ValueContainer--Orange'
   }
 
-  const sizeClasses = {
+  const sizeClasses: Record<Size, string> = {
     default: '',
     xl: 'ValueContainer--SizeXl',
     lg: 'ValueContainer--SizeLg',
@@ -59,8 +92,8 @@ function ValueContainer ({
   if (light) extraClass += ' ValueContainer--Light'
   if (elipsed) extraClass += ' ValueContainer--Elipsed'
 
-  extraClass += ' ' + colorClasses?.[colorScheme] || colorClasses.default
-  extraClass += ' ' + sizeClasses?.[size] || sizeClasses.default
+  extraClass += ' ' + (colorClasses?.[colorScheme] || colorClasses.default)
+  extraClass += ' ' + (sizeClasses?.[size] || sizeClasses.default)
 
   return (
     <Wrapper link={link} external={external} className={`ValueContainer ${extraClass || ''} ${className || ''}`} {...props}>
@@ -70,7 +103,7 @@ function ValueContainer ({
         </div>
       )}
       <div className={'ValueContainer__Value'}>
-        {children}
+        {children as ReactNode}
       </div>
     </Wrapper>
   )
