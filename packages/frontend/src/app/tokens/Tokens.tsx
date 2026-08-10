@@ -6,7 +6,7 @@ import TokensTrending from '../../components/tokens/TokensTrending'
 import Pagination from '../../components/pagination'
 import { ErrorMessageBlock } from '@components/Errors'
 import PageSizeSelector from '../../components/pageSizeSelector/PageSizeSelector'
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, keepPreviousData } from '@tanstack/react-query'
 import { useQueryState, parseAsInteger } from 'nuqs'
 import { normalizePagination } from '@utils/table'
 import {
@@ -53,16 +53,16 @@ function Tokens () {
       page,
       pageSize,
       'asc',
-      filters
+      filters as never
     ),
-    keepPreviousData: true,
+    placeholderData: keepPreviousData,
     select: ({ pagination, ...other }) => ({
       ...other,
       total: pagination?.total,
       pagination: normalizePagination({
+        ...pagination,
         page,
-        pageSize,
-        ...pagination
+        pageSize
       })
     })
   })
@@ -70,9 +70,9 @@ function Tokens () {
   const pagination = tokens.data?.pagination
   const totalTokens = tokens.data?.total
 
-  const handleFiltersChange = (next) => {
+  const handleFiltersChange = (next: Parameters<typeof setFilters>[0]) => {
     setFilters(next)
-    setPage(1)
+    void setPage(1)
   }
 
   return (
@@ -90,7 +90,7 @@ function Tokens () {
 
           <NetworkStatsInline
             className={'Tokens__Stats'}
-            items={[{ label: 'Total', value: typeof totalTokens === 'number' ? formatFullNumber(totalTokens) : null, loading: tokens.isLoading }]}
+            items={[{ label: 'Total', value: typeof totalTokens === 'number' ? formatFullNumber(totalTokens) as string | number : null, loading: tokens.isLoading }]}
           />
 
           <TokensTrending className={'Tokens__Trending'}/>
@@ -104,25 +104,25 @@ function Tokens () {
 
         {!tokens.isError
           ? <TokensList
-              tokens={tokens.data?.resultSet}
+              tokens={tokens.data?.resultSet as never}
               loading={tokens.isLoading}
               itemsCount={pageSize}
             />
           : <Container h={20}><ErrorMessageBlock/></Container>
         }
 
-        {tokens.data?.resultSet?.length > 0 &&
+        {(tokens.data?.resultSet?.length ?? 0) > 0 &&
           <div className={'ListNavigation'}>
             <Box display={['none', 'none', 'block']} width={'155px'}/>
             <Pagination
-              onPageChange={({ selected }) => setPage((selected || 0) + 1)}
-              pageCount={pagination.pageCount}
-              forcePage={pagination.forcePage}
+              onPageChange={({ selected }) => { void setPage((selected || 0) + 1) }}
+              pageCount={pagination?.pageCount ?? 1}
+              forcePage={pagination?.forcePage}
             />
             <PageSizeSelector
               PageSizeSelectHandler={e => {
-                setPageSize(e.value)
-                setPage(1)
+                void setPageSize(Number(e?.value))
+                void setPage(1)
               }}
               value={pageSize}
               items={paginateConfig.pageSize.values}
