@@ -108,7 +108,7 @@ class TenderdashRPC {
   }
 
   static async getValidators () {
-    const { validators } = await call('validators', 'GET')
+    const { validators } = await call('validators?limit=100', 'GET')
 
     return validators
   }
