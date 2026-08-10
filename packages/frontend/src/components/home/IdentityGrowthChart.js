@@ -177,7 +177,7 @@ export default function IdentityGrowthChart ({
       <header className={'IdentityGrowthChart__Head'}>
         <div className={'IdentityGrowthChart__HeadText'}>
           <span className={'IdentityGrowthChart__Eyebrow'}>Network growth</span>
-          <h2 className={'IdentityGrowthChart__Title'}>Registered identities</h2>
+          <h2 className={'IdentityGrowthChart__Title'}>Identities</h2>
           <p className={'IdentityGrowthChart__Lede'}>
             Cumulative identity registrations over time.
           </p>
@@ -212,8 +212,8 @@ export default function IdentityGrowthChart ({
                     role={'img'}
                     aria-label={
                       isAll
-                        ? `Registered identities, total ${formatValue(chart.latest.y)}`
-                        : `Registered identities, ${chart.delta >= 0 ? '+' : ''}${formatValue(chart.delta)} in ${rangeLabel}`
+                        ? `Identities, total ${formatValue(chart.latest.y)}`
+                        : `Identities, ${chart.delta >= 0 ? '+' : ''}${formatValue(chart.delta)} in ${rangeLabel}`
                     }
                     onMouseMove={onMove}
                     onMouseLeave={onLeave}
