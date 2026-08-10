@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
+import { readFile } from 'fs/promises'
+import path from 'path'
 import Markdown from '../../components/markdown'
-import content from './content'
 import './Api.scss'
 
 import {
@@ -16,6 +17,12 @@ export const metadata: Metadata = {
 }
 
 async function ApiRoute () {
+  // Server Component: load markdown as content data (no webpack raw-loader)
+  const content = await readFile(
+    path.join(process.cwd(), 'src/app/api/content.md'),
+    'utf8'
+  )
+
   return (
     <Container
         maxW={'container.lg'}
