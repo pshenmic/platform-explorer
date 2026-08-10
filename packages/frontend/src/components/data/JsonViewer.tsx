@@ -4,6 +4,8 @@ import CodeMirror from '@uiw/react-codemirror'
 import { json } from '@codemirror/lang-json'
 import { oneDark } from '@codemirror/theme-one-dark'
 import { EditorView, placeholder as cmPlaceholder } from '@codemirror/view'
+import type { Extension } from '@codemirror/state'
+import type { WithClassName } from '../../types/common'
 import { CopyButton } from '../ui/Buttons'
 import './JsonViewer.scss'
 
@@ -26,14 +28,31 @@ const editorTheme = EditorView.theme({
   '&.cm-focused': { outline: 'none' }
 })
 
-function JsonViewer ({ value, minHeight = '100px', maxHeight = '500px', fill = false, showCopy = true, placeholder, className = '' }) {
+interface JsonViewerProps extends WithClassName {
+  value?: unknown
+  minHeight?: string
+  maxHeight?: string
+  fill?: boolean
+  showCopy?: boolean
+  placeholder?: string
+}
+
+function JsonViewer ({
+  value,
+  minHeight = '100px',
+  maxHeight = '500px',
+  fill = false,
+  showCopy = true,
+  placeholder,
+  className = ''
+}: JsonViewerProps) {
   const text = value == null
     ? ''
     : typeof value === 'string'
       ? value
       : JSON.stringify(value, null, 2)
 
-  const extensions = [json(), editorTheme, EditorView.editable.of(false)]
+  const extensions: Extension[] = [json(), editorTheme, EditorView.editable.of(false)]
   if (!text && placeholder) extensions.push(cmPlaceholder(placeholder))
 
   return (

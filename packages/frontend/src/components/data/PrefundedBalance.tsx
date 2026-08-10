@@ -1,3 +1,5 @@
+import type { Rate } from '../../types'
+import type { LoadableState } from '../../types/common'
 import { RateTooltip } from '../ui/Tooltips'
 import { ValueCard } from '../cards'
 import { ValueContainer } from '../ui/containers'
@@ -5,8 +7,13 @@ import { Flex } from '@chakra-ui/react'
 import NotActive from './NotActive'
 import './PrefundedBalance.scss'
 
-function PrefundedBalance ({ prefundedBalance, rate }) {
-  if (typeof prefundedBalance !== 'object') return <NotActive/>
+interface PrefundedBalanceProps {
+  prefundedBalance?: Record<string, string | number> | null
+  rate?: LoadableState<Rate> | { data?: Pick<Rate, 'usd'> | null } | null
+}
+
+function PrefundedBalance ({ prefundedBalance, rate }: PrefundedBalanceProps) {
+  if (typeof prefundedBalance !== 'object' || prefundedBalance === null) return <NotActive/>
 
   const elements = []
 

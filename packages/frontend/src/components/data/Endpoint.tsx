@@ -1,21 +1,31 @@
+import type { ReactNode, ComponentPropsWithoutRef } from 'react'
 import { CircleIcon, ArrowCornerIcon } from '../ui/icons'
 import { Tooltip } from '../ui/Tooltips'
 import './Endpoint.scss'
 
-function Endpoint ({ value, status, message, link }) {
-  const iconColors = {
+type EndpointStatus = 'OK' | 'UNKNOWN' | 'ERROR' | 'ERR_CONNECTION_REFUSED' | string
+
+interface EndpointProps {
+  value?: ReactNode
+  status?: EndpointStatus
+  message?: ReactNode
+  link?: string
+}
+
+function Endpoint ({ value, status, message, link }: EndpointProps) {
+  const iconColors: Record<string, string> = {
     OK: 'green.label',
     UNKNOWN: 'yellow.default',
     ERROR: 'red.default',
     ERR_CONNECTION_REFUSED: 'red.default'
   }
 
-  const Wrapper = ({ children, ...props }) => {
+  const Wrapper = ({ children, ...props }: ComponentPropsWithoutRef<'a'> & ComponentPropsWithoutRef<'div'> & { children?: ReactNode }) => {
     if (link) return <a href={link} target={'_blank'} rel={'noopener noreferrer'} {...props}>{children}</a>
     return <div {...props}>{children}</div>
   }
 
-  const StatusWrapper = ({ children, ...props }) => {
+  const StatusWrapper = ({ children }: { children: ReactNode }) => {
     if (status !== 'OK' && status !== 'UNKNOWN') {
       return (
         <Tooltip
@@ -28,7 +38,7 @@ function Endpoint ({ value, status, message, link }) {
       )
     }
 
-    return children
+    return <>{children}</>
   }
 
   return (

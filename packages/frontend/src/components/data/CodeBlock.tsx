@@ -2,38 +2,46 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { Code, Button } from '@chakra-ui/react'
+import type { WithClassName } from '../../types/common'
 import { CopyButton } from '../ui/Buttons'
 import { SmoothSize } from '../ui/containers'
 import './CodeBlock.scss'
 
-function CodeBlock ({ code, smoothSize = true, className = '' }) {
+interface CodeBlockProps extends WithClassName {
+  code?: string | null
+  smoothSize?: boolean
+}
+
+function CodeBlock ({ code, smoothSize = true, className = '' }: CodeBlockProps) {
   const [isAnimating, setIsAnimating] = useState(false)
   const [fullSize, setFullSize] = useState(false)
   const [isOverflowing, setIsOverflowing] = useState(false)
   const parsedCode = code ? JSON.stringify(JSON.parse(code), null, 2) : ''
-  const codeContainerRef = useRef(null)
-  const codeRef = useRef(null)
+  const codeContainerRef = useRef<HTMLDivElement | null>(null)
+  const codeRef = useRef<HTMLDivElement | null>(null)
 
   useEffect(() => {
-    let timer
+    let timer: ReturnType<typeof setTimeout> | undefined
     if (!smoothSize) setIsAnimating(false)
     else timer = setTimeout(() => setIsAnimating(true), 10)
-    return () => clearTimeout(timer)
+    return () => {
+      if (timer) clearTimeout(timer)
+    }
   }, [smoothSize])
 
   useEffect(() => {
     const container = codeContainerRef?.current
-    const code = codeRef?.current
+    const codeEl = codeRef?.current
 
     const checkOverflow = () => {
-      if (container && code) {
-        setIsOverflowing(code.clientHeight > container.clientHeight)
+      if (container && codeEl) {
+        setIsOverflowing(codeEl.clientHeight > container.clientHeight)
       }
     }
 
     const observer = new ResizeObserver(checkOverflow)
-    if (codeContainerRef) observer.observe(container)
-    if (codeRef) observer.observe(code)
+    if (container) observer.observe(container)
+    if (codeEl) observer.observe(codeEl)
 
     checkOverflow()
 

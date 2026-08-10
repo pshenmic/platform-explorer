@@ -1,13 +1,21 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import type { ReactNode } from 'react'
 import { getTimeDelta } from '../../util'
 import { NotActive } from './index'
 import { Tooltip } from '../ui/Tooltips'
 import './TimeDelta.scss'
 
-const Wrapper = ({ children, tooltipDate, showTimestampTooltip, format }) => (
-  showTimestampTooltip && format !== 'detailed' && !isNaN(tooltipDate)
+interface WrapperProps {
+  children?: ReactNode
+  tooltipDate?: Date
+  showTimestampTooltip?: boolean
+  format?: string
+}
+
+const Wrapper = ({ children, tooltipDate, showTimestampTooltip, format }: WrapperProps) => (
+  showTimestampTooltip && format !== 'detailed' && tooltipDate != null && !isNaN(tooltipDate.getTime())
     ? <Tooltip
       placement={'top'}
       content={
@@ -21,9 +29,17 @@ const Wrapper = ({ children, tooltipDate, showTimestampTooltip, format }) => (
     : <>{children}</>
 )
 
-function TimeDelta ({ startDate, endDate, showTimestampTooltip = true, tooltipDate, format = 'default' }) {
-  const [timeDelta, setTimeDelta] = useState(null)
-  tooltipDate = new Date(tooltipDate || endDate)
+interface TimeDeltaProps {
+  startDate?: string | number | Date | null
+  endDate?: string | number | Date | null
+  showTimestampTooltip?: boolean
+  tooltipDate?: string | number | Date | null
+  format?: string
+}
+
+function TimeDelta ({ startDate, endDate, showTimestampTooltip = true, tooltipDate, format = 'default' }: TimeDeltaProps) {
+  const [timeDelta, setTimeDelta] = useState<string | null>(null)
+  const resolvedTooltipDate = new Date(tooltipDate || endDate || 0)
 
   useEffect(() => {
     if (!endDate) {
@@ -31,12 +47,12 @@ function TimeDelta ({ startDate, endDate, showTimestampTooltip = true, tooltipDa
       return
     }
 
-    let timeout
+    let timeout: ReturnType<typeof setTimeout>
 
     const updateDelta = () => {
       const adjustedStartDate = startDate ? new Date(startDate) : new Date()
       const now = new Date()
-      const diff = new Date(endDate) - now
+      const diff = new Date(endDate).getTime() - now.getTime()
 
       setTimeDelta(getTimeDelta(adjustedStartDate, endDate, format))
 
@@ -57,7 +73,7 @@ function TimeDelta ({ startDate, endDate, showTimestampTooltip = true, tooltipDa
 
   return timeDelta
     ? <Wrapper
-        tooltipDate={tooltipDate}
+        tooltipDate={resolvedTooltipDate}
         showTimestampTooltip={showTimestampTooltip}
         format={format}
       >

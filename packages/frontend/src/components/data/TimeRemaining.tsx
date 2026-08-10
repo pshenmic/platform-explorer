@@ -5,7 +5,13 @@ import { useEffect, useMemo, useState } from 'react'
 import { getTimeDelta } from '../../util'
 import './TimeRemaining.scss'
 
-function TimeRemaining ({ startTime, endTime, displayProgress = true }) {
+interface TimeRemainingProps {
+  startTime: string | number | Date
+  endTime: string | number | Date
+  displayProgress?: boolean
+}
+
+function TimeRemaining ({ startTime, endTime, displayProgress = true }: TimeRemainingProps) {
   const startDate = useMemo(() => new Date(startTime), [startTime])
   const endDate = useMemo(() => new Date(endTime), [endTime])
   const [progress, setProgress] = useState(0)
@@ -13,8 +19,8 @@ function TimeRemaining ({ startTime, endTime, displayProgress = true }) {
 
   useEffect(() => {
     const updateProgress = () => {
-      const totalDuration = endDate - startDate
-      const elapsedTime = new Date() - startDate
+      const totalDuration = endDate.getTime() - startDate.getTime()
+      const elapsedTime = new Date().getTime() - startDate.getTime()
       const percentage = (elapsedTime / totalDuration) * 100
       setProgress(Math.min(percentage, 100))
       setTimeLeft(getTimeDelta(new Date(), endDate))

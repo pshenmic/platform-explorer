@@ -1,6 +1,7 @@
 'use client'
 
 import { useMemo } from 'react'
+import type { ReactNode, ComponentPropsWithoutRef } from 'react'
 
 import { CalendarIcon } from '../ui/icons'
 import { TimeDelta } from './index'
@@ -9,7 +10,9 @@ import { formatDate } from '../../util'
 
 import './DateBlock.scss'
 
-const formats = {
+type DateBlockFormat = 'all' | 'deltaOnly' | 'dateOnly'
+
+const formats: Record<DateBlockFormat, { calendarIcon: boolean, date: boolean, delta: boolean }> = {
   all: {
     calendarIcon: true,
     date: true,
@@ -27,7 +30,12 @@ const formats = {
   }
 }
 
-const Wrapper = ({ children, tooltipContent, props }) => (
+interface WrapperProps extends ComponentPropsWithoutRef<'div'> {
+  children?: ReactNode
+  tooltipContent?: ReactNode
+}
+
+const Wrapper = ({ children, tooltipContent, ...props }: WrapperProps) => (
   tooltipContent
     ? <Tooltip
         placement={'top'}
@@ -38,20 +46,30 @@ const Wrapper = ({ children, tooltipContent, props }) => (
     : <div {...props}>{children}</div>
 )
 
+interface DateBlockProps {
+  timestamp?: string | number | Date | null
+  format?: DateBlockFormat
+  showTime?: boolean
+  showRelativeTooltip?: boolean
+}
+
 function DateBlock ({
   timestamp,
   format = 'all',
   showTime = false,
   showRelativeTooltip
-}) {
+}: DateBlockProps) {
   const { calendarIcon, date, delta } = formats[format]
 
   const formattedDate = useMemo(
-    () =>
-      formatDate(timestamp, ({ hour, minute, ...other }) => ({
+    () => {
+      if (timestamp == null) return null
+      const ts = timestamp instanceof Date ? timestamp.getTime() : timestamp
+      return formatDate(ts, ({ hour, minute, ...other }) => ({
         ...other,
         ...(showTime && { hour: '2-digit', minute: '2-digit' })
-      })),
+      }))
+    },
     [showTime, timestamp]
   )
 

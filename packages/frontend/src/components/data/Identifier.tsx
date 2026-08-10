@@ -3,10 +3,24 @@
 import ImageGenerator from '../imageGenerator'
 import { CopyButton } from '../ui/Buttons'
 import { useRef, useState, useEffect, useCallback } from 'react'
+import type { ReactNode } from 'react'
 import useResizeObserver from '@react-hook/resize-observer'
+import type { WithChildren, WithClassName } from '../../types/common'
 import NotActive from './NotActive'
 import { useDebounce } from '../../hooks'
 import './Identifier.scss'
+
+type HighlightStyle = 'dim' | 'highlight' | 'highlight-first' | 'highlight-last' | 'highlight-both' | string
+type HighlightMode = 'dim' | 'highlight' | 'first' | 'last' | 'both' | 'default'
+
+interface IdentifierProps extends WithChildren, WithClassName {
+  ellipsis?: boolean
+  middleEllipsis?: boolean
+  avatar?: boolean
+  styles?: HighlightStyle[]
+  copyButton?: boolean
+  linesAdjustment?: boolean
+}
 
 export default function Identifier ({
   children,
@@ -17,13 +31,13 @@ export default function Identifier ({
   copyButton,
   linesAdjustment = true,
   className
-}) {
-  const symbolsContainerRef = useRef(null)
+}: IdentifierProps) {
+  const symbolsContainerRef = useRef<HTMLDivElement | null>(null)
   const [containerWidth, setContainerWidth] = useState(0)
-  const [charWidth, setCharWidth] = useState(0)
-  const [linesMaxWidth, setLinesMaxWidth] = useState('none')
+  const [charWidth, setCharWidth] = useState<number | 'auto'>(0)
+  const [linesMaxWidth, setLinesMaxWidth] = useState<string | number>('none')
   const [widthIsCounted, setWidthIsCounted] = useState(false)
-  const prevWidthRef = useRef(null)
+  const prevWidthRef = useRef<number | null>(null)
   const [windowWidth, setWindowWidth] = useState(0)
   const debouncedWindowWidth = useDebounce(windowWidth, 500)
 
@@ -36,9 +50,9 @@ export default function Identifier ({
   const updateSize = () => {
     if (widthIsCounted) return
 
-    const charCount = children?.length
+    const charCount = typeof children === 'string' ? children.length : 0
 
-    if (!charWidth || !containerWidth || !charCount) {
+    if (!charWidth || charWidth === 'auto' || !containerWidth || !charCount) {
       setLinesMaxWidth('none')
       return
     }
@@ -66,7 +80,7 @@ export default function Identifier ({
       updateSize()
     }
     prevWidthRef.current = debouncedWindowWidth
-  }, [charWidth, containerWidth, debouncedWindowWidth])
+  }, [charWidth, containerWidth, debouncedWindowWidth, linesAdjustment, widthIsCounted])
 
   useEffect(() => {
     if (!linesAdjustment) return
@@ -85,7 +99,7 @@ export default function Identifier ({
 
     window.addEventListener('resize', resizeHandler)
     return () => window.removeEventListener('resize', resizeHandler)
-  }, [])
+  }, [linesAdjustment])
 
   const measureCharWidth = useCallback(() => {
     if (!symbolsContainerRef.current || !(linesAdjustment || middleEllipsis)) return 0
@@ -111,9 +125,9 @@ export default function Identifier ({
     if (!symbolsContainerRef.current || !(linesAdjustment || middleEllipsis)) return
 
     setCharWidth(measureCharWidth() || 'auto')
-  }, [])
+  }, [measureCharWidth, linesAdjustment, middleEllipsis])
 
-  const highlightModes = {
+  const highlightModes: Record<HighlightMode, { first: boolean, middle: boolean, last: boolean }> = {
     dim: { first: false, middle: false, last: false },
     highlight: { first: true, middle: true, last: true },
     first: { first: true, middle: false, last: false },
@@ -122,7 +136,7 @@ export default function Identifier ({
     default: { first: true, middle: false, last: true }
   }
 
-  const styleToMode = {
+  const styleToMode: Record<string, HighlightMode> = {
     dim: 'dim',
     highlight: 'highlight',
     'highlight-first': 'first',
@@ -130,36 +144,35 @@ export default function Identifier ({
     'highlight-both': 'both'
   }
 
-  const highlightMode = styles.find(style => style in styleToMode)
-    ? styleToMode[styles.find(style => style in styleToMode)]
-    : null
+  const matchedStyle = styles.find(style => style in styleToMode)
+  const highlightMode = matchedStyle ? styleToMode[matchedStyle] : null
 
   // start…end truncation sized to the available width (recomputed on resize); full value in title
-  const MiddleTruncated = ({ children }) => {
-    if (!children || typeof children !== 'string') return <NotActive/>
+  const MiddleTruncated = ({ children: middleChildren }: { children?: ReactNode }) => {
+    if (!middleChildren || typeof middleChildren !== 'string') return <NotActive/>
 
     const minEdge = 4
     const measured = charWidth && charWidth !== 'auto' && containerWidth
-    const maxChars = measured ? Math.floor(containerWidth / charWidth) : minEdge * 2 + 1
+    const maxChars = measured ? Math.floor(containerWidth / (charWidth as number)) : minEdge * 2 + 1
 
-    if (maxChars >= children.length) return children
+    if (maxChars >= middleChildren.length) return <>{middleChildren}</>
 
     const keep = Math.max(maxChars - 1, minEdge * 2)
     const head = Math.max(Math.ceil(keep / 2), minEdge)
     const tail = Math.max(Math.floor(keep / 2), minEdge)
 
-    if (head + tail >= children.length) return children
+    if (head + tail >= middleChildren.length) return <>{middleChildren}</>
 
-    return `${children.slice(0, head)}…${children.slice(-tail)}`
+    return <>{`${middleChildren.slice(0, head)}…${middleChildren.slice(-tail)}`}</>
   }
 
-  const HighlightedID = ({ children, mode }) => {
-    if (!children || typeof children !== 'string') return <NotActive/>
+  const HighlightedID = ({ children: idChildren, mode }: { children?: ReactNode, mode: HighlightMode }) => {
+    if (!idChildren || typeof idChildren !== 'string') return <NotActive/>
 
     const highlightedCount = 5
-    const firstPart = children.slice(0, highlightedCount)
-    const middlePart = children.slice(highlightedCount, children.length - highlightedCount)
-    const lastPart = children.slice(children.length - highlightedCount)
+    const firstPart = idChildren.slice(0, highlightedCount)
+    const middlePart = idChildren.slice(highlightedCount, idChildren.length - highlightedCount)
+    const lastPart = idChildren.slice(idChildren.length - highlightedCount)
     const dimConfig = highlightModes?.[mode] || highlightModes?.default
 
     return (
@@ -174,7 +187,7 @@ export default function Identifier ({
   return (
     <div className={`Identifier ${ellipsis && !middleEllipsis ? 'Identifier--Ellipsis' : ''} ${middleEllipsis ? 'Identifier--Middle' : ''} ${className || ''}`}>
       {avatar && children && (
-        <ImageGenerator className={'Identifier__Avatar'} username={children} lightness={50} saturation={50} width={24} height={24} />
+        <ImageGenerator className={'Identifier__Avatar'} username={typeof children === 'string' ? children : String(children)} lightness={50} saturation={50} width={24} height={24} />
       )}
       <div
         className={'Identifier__SymbolsContainer'}
@@ -189,7 +202,7 @@ export default function Identifier ({
             : children || <NotActive/>
         }
       </div>
-      {copyButton && children && <CopyButton className={'Identifier__CopyButton'} text={children}/>}
+      {copyButton && children && <CopyButton className={'Identifier__CopyButton'} text={String(children)}/>}
     </div>
   )
 }

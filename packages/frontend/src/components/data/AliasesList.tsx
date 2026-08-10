@@ -1,13 +1,19 @@
 'use client'
 
 import { useState } from 'react'
+import type { Alias as AliasModel } from '../../types'
 import { Alias, DateBlock } from './index'
 import { Button } from '@chakra-ui/react'
 import { ChevronIcon } from '../ui/icons'
 import { SmoothSize } from '../ui/containers'
 import './AliasesList.scss'
 
-function AliasesList ({ aliases = [], smallCount = 5 }) {
+interface AliasesListProps {
+  aliases?: Array<Pick<AliasModel, 'alias' | 'status'> & { timestamp?: string | number | null }>
+  smallCount?: number
+}
+
+function AliasesList ({ aliases = [], smallCount = 5 }: AliasesListProps) {
   const [showAll, setShowAll] = useState(false)
 
   const filteredArray = showAll
