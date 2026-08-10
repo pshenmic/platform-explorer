@@ -1,10 +1,17 @@
 import { Flex, Text } from '@chakra-ui/react'
+import type { EpochData, Rate, Status } from '../../../types'
 import { RateTooltip } from '../../ui/Tooltips'
 import { currencyRound } from '../../../util'
 import { InfoIcon } from '@chakra-ui/icons'
 import './FeesCollectedCardContent.scss'
 
-export function FeesCollectedCardContent ({ epoch, status, rate }) {
+interface FeesCollectedCardContentProps {
+  epoch?: Pick<EpochData, 'totalCollectedFees'> | null
+  status?: Pick<Status, 'totalCollectedFeesDay'> | null
+  rate?: Pick<Rate, 'usd'> | null
+}
+
+export function FeesCollectedCardContent ({ epoch, status, rate }: FeesCollectedCardContentProps) {
   return (
     <div className={'FeesCollectedCardContent'}>
       <div className={'FeesCollectedCardContent__TotalCollectedFees'}>

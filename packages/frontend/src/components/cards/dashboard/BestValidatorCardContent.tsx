@@ -1,8 +1,22 @@
+import type { ComponentType, ReactNode } from 'react'
+import type { EpochData } from '../../../types'
 import { ValueCard } from '../index'
-import { Identifier } from '../../data'
+import IdentifierJs from '../../data/Identifier'
 import './BestValidatorCardContent.scss'
 
-export function BestValidatorCardContent ({ epoch }) {
+const Identifier = IdentifierJs as ComponentType<{
+  children?: ReactNode
+  avatar?: boolean
+  copyButton?: boolean
+  styles?: string[]
+  ellipsis?: boolean
+}>
+
+interface BestValidatorCardContentProps {
+  epoch?: Pick<EpochData, 'bestValidator'> | null
+}
+
+export function BestValidatorCardContent ({ epoch }: BestValidatorCardContentProps) {
   return (
     <div className={'BestValidatorCardContent'}>
       {epoch?.bestValidator

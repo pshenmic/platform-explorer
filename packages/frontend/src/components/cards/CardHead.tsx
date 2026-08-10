@@ -1,7 +1,14 @@
+import type { ReactNode } from 'react'
 import { Heading } from '@chakra-ui/react'
+import type { WithChildren, WithClassName } from '../../types/common'
+
+interface CardHeadProps extends WithChildren, WithClassName {
+  title?: ReactNode
+  extra?: ReactNode
+}
 
 // title flag docked to the corner, `extra` beside it, `children` in the right slot (.InfoBlock__Head)
-export default function CardHead ({ title, extra, children, className = '' }) {
+export default function CardHead ({ title, extra, children, className = '' }: CardHeadProps) {
   const heading = <Heading className={'InfoBlock__Title'} as={'h2'}>{title}</Heading>
 
   return (

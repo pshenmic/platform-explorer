@@ -1,10 +1,38 @@
-import { Alias, TimeRemaining } from '../../data'
+import type { ComponentType, ReactNode } from 'react'
+import type { ContestedResource } from '../../../types'
+import AliasJs from '../../data/Alias'
+import TimeRemainingJs from '../../data/TimeRemaining'
 import contestedResources from '../../../util/contestedResources'
 import { Badge } from '@chakra-ui/react'
-import VoteBadges from '../../contestedResources/VoteBadges'
+import VoteBadgesJs from '../../contestedResources/VoteBadges'
 import './ContestedResourceContent.scss'
 
-export function ContestedResourceContent ({ contestedResource, nullMessage = 'All completed' }) {
+const Alias = AliasJs as ComponentType<{
+  children?: ReactNode
+  className?: string
+  ellipsis?: boolean
+}>
+
+const TimeRemaining = TimeRemainingJs as ComponentType<{
+  startTime?: string | number | Date | null
+  endTime?: string | number | Date | null
+}>
+
+const VoteBadges = VoteBadgesJs as ComponentType<{
+  className?: string
+  totalCountAbstain?: number
+  totalCountLock?: number
+  totalCountTowardsIdentity?: number
+}>
+
+interface ContestedResourceContentProps {
+  contestedResource?: Partial<ContestedResource> & {
+    contenders?: ReactNode
+  } | null
+  nullMessage?: string
+}
+
+export function ContestedResourceContent ({ contestedResource, nullMessage = 'All completed' }: ContestedResourceContentProps) {
   const resourceValue = contestedResources.getResourceValue(contestedResource?.resourceValue)
 
   return (

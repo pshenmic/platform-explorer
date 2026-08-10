@@ -1,10 +1,34 @@
+import type { ComponentType, ReactNode } from 'react'
 import { Badge, Flex } from '@chakra-ui/react'
-import { Identifier, NotActive } from '../../data'
+import type { Localization } from '../../../types'
+import IdentifierJs from '../../data/Identifier'
+import NotActiveJs from '../../data/NotActive'
 import { currencyRound, getTokenName } from '../../../util'
 import ImageGenerator from '../../imageGenerator'
 import './TokenCardContent.scss'
 
-export function TokenCardContent ({ token = {}, nullMessage = 'No data' }) {
+const Identifier = IdentifierJs as ComponentType<{
+  children?: ReactNode
+  ellipsis?: boolean
+  styles?: string[]
+  avatar?: boolean
+  copyButton?: boolean
+}>
+
+const NotActive = NotActiveJs as ComponentType<{ children?: ReactNode }>
+
+export interface TokenCardToken {
+  tokenIdentifier?: string | null
+  localizations?: Record<string, Localization> | null
+  transitionCount?: number | string | null
+}
+
+interface TokenCardContentProps {
+  token?: TokenCardToken | null
+  nullMessage?: string
+}
+
+export function TokenCardContent ({ token = {}, nullMessage = 'No data' }: TokenCardContentProps) {
   const {
     tokenIdentifier,
     localizations,
@@ -15,7 +39,7 @@ export function TokenCardContent ({ token = {}, nullMessage = 'No data' }) {
     return <NotActive>{nullMessage}</NotActive>
   }
 
-  const txsCount = currencyRound(transitionCount)
+  const txsCount = currencyRound(transitionCount as number | string)
 
   return (
     <div className={'TokenCardContent'}>

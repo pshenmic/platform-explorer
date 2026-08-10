@@ -1,24 +1,31 @@
 'use client'
 
+import type { KeenSliderPlugin } from 'keen-slider/react'
 import { Slider, SliderElement } from '../ui/Slider'
 import { WheelControls } from '../ui/Slider/plugins'
+import type { WithClassName } from '../../types/common'
 import DashboardCard from './DashboardCard'
+import type { DashboardCardData } from './DashboardCard'
 import './DashboardCards.scss'
 import './InfoCard.scss'
 
+type SliderMode = 'responsive' | 'always' | 'never'
+
+interface PerViewConfig {
+  mobile?: number
+  desktop?: number
+}
+
+interface DashboardCardsProps extends WithClassName {
+  cards?: DashboardCardData[]
+  columnLayout?: number[]
+  sliderMode?: SliderMode
+  breakpoint?: number
+  perView?: PerViewConfig
+}
+
 /**
  * DashboardCards component displays cards in a slider or grid layout
- *
- * @param {Object} props
- * @param {Array<Object>} props.cards - Array of card objects to display
- * @param {Array<number>} [props.columnLayout=[2,2]] - How many cards per column in slider mode
- * @param {'responsive'|'always'|'never'} [props.sliderMode='responsive'] - Slider behavior mode
- * @param {number} [props.breakpoint=600] - Screen width breakpoint for responsive mode
- * @param {Object} [props.perView] - Slides visible in viewport configuration
- * @param {number} [props.perView.mobile=1.1] - Slides visible on mobile
- * @param {number} [props.perView.desktop=2] - Slides visible on desktop
- * @param {string} [props.className=''] - Additional CSS class names
- * @returns {JSX.Element}
  */
 export default function DashboardCards ({
   cards = [],
@@ -30,18 +37,18 @@ export default function DashboardCards ({
     desktop: 2
   },
   className = ''
-}) {
-  const renderColumns = (cards, columnLayout) => {
-    if (!cards || !columnLayout?.length) return null
+}: DashboardCardsProps) {
+  const renderColumns = (cardsList: DashboardCardData[], layout: number[]) => {
+    if (!cardsList || !layout?.length) return null
 
     const columns = []
     let cardIndex = 0
 
-    for (let i = 0; i < columnLayout.length; i++) {
-      const cardsInColumn = []
+    for (let i = 0; i < layout.length; i++) {
+      const cardsInColumn: DashboardCardData[] = []
 
-      for (let j = 0; j < columnLayout[i] && cardIndex < cards.length; j++) {
-        cardsInColumn.push(cards[cardIndex])
+      for (let j = 0; j < layout[i] && cardIndex < cardsList.length; j++) {
+        cardsInColumn.push(cardsList[cardIndex])
         cardIndex++
       }
 
@@ -81,7 +88,7 @@ export default function DashboardCards ({
               perView: perView.mobile
             }
           }}
-          plugins={[WheelControls]}
+          plugins={[WheelControls as unknown as KeenSliderPlugin]}
         >
           {renderColumns(cards, columnLayout)}
         </Slider>

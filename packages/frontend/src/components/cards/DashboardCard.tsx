@@ -1,10 +1,27 @@
 'use client'
 
+import type { ComponentType, ReactNode } from 'react'
+import type { IconProps } from '@chakra-ui/react'
+import type { WithClassName } from '../../types/common'
 import { InfoCard } from './'
 import './InfoCard.scss'
 import './DashboardCard.scss'
 
-const DashboardCard = ({ card, className: extraClass }) => {
+export interface DashboardCardData {
+  title?: ReactNode
+  value?: ReactNode
+  icon?: ComponentType<IconProps> | null
+  error?: boolean
+  loading?: boolean
+  className?: string
+  link?: string
+}
+
+interface DashboardCardProps extends WithClassName {
+  card: DashboardCardData
+}
+
+const DashboardCard = ({ card, className: extraClass }: DashboardCardProps) => {
   const {
     title,
     value,

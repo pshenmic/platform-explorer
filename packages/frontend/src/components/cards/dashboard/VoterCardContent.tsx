@@ -1,9 +1,31 @@
+import type { ComponentType, ReactNode } from 'react'
 import { Flex } from '@chakra-ui/react'
-import { Identifier } from '../../data'
-import VoteBadges from '../../contestedResources/VoteBadges'
+import type { BestVoter } from '../../../types'
+import IdentifierJs from '../../data/Identifier'
+import VoteBadgesJs from '../../contestedResources/VoteBadges'
 import './TotalValidatorsCardContent.scss'
 
-export function VoterCardContent ({ voter = {}, nullMessage = 'None' }) {
+const Identifier = IdentifierJs as ComponentType<{
+  children?: ReactNode
+  avatar?: boolean
+  copyButton?: boolean
+  styles?: string[]
+  ellipsis?: boolean
+}>
+
+const VoteBadges = VoteBadgesJs as ComponentType<{
+  className?: string
+  totalCountAbstain?: number
+  totalCountLock?: number
+  totalCountTowardsIdentity?: number
+}>
+
+interface VoterCardContentProps {
+  voter?: Partial<BestVoter> | null
+  nullMessage?: ReactNode
+}
+
+export function VoterCardContent ({ voter = {}, nullMessage = 'None' }: VoterCardContentProps) {
   const {
     identifier,
     totalCountAbstain,

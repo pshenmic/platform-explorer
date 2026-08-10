@@ -1,10 +1,22 @@
+import type { ComponentType, ReactNode } from 'react'
+import type { Status } from '../../../types'
 import { EpochTooltip } from '../../ui/Tooltips'
 import { InfoIcon } from '@chakra-ui/icons'
-import { NotActive } from '../../data'
-import EpochProgress from '../../networkStatus/EpochProgress'
+import NotActiveJs from '../../data/NotActive'
+import EpochProgressJs from '../../networkStatus/EpochProgress'
 import './EpochCardContent.scss'
 
-export function EpochCardContent ({ status }) {
+const NotActive = NotActiveJs as ComponentType<{ children?: ReactNode }>
+const EpochProgress = EpochProgressJs as ComponentType<{
+  epoch?: Status['epoch']
+  className?: string
+}>
+
+interface EpochCardContentProps {
+  status?: Pick<Status, 'epoch'> | null
+}
+
+export function EpochCardContent ({ status }: EpochCardContentProps) {
   return (
     <div className={'EpochCardContent'}>
       {typeof status?.epoch?.number === 'number'
