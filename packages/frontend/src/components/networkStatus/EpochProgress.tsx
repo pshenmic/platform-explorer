@@ -1,9 +1,15 @@
 import { useState, useEffect, useMemo } from 'react'
 import { Progress } from '@chakra-ui/react'
 import { getTimeDelta } from '../../util'
+import type { Epoch } from '../../types'
+import type { WithClassName } from '../../types/common'
 import './EpochProgress.scss'
 
-function EpochProgress ({ epoch, className }) {
+interface EpochProgressProps extends WithClassName {
+  epoch: Pick<Epoch, 'startTime' | 'endTime'>
+}
+
+function EpochProgress ({ epoch, className }: EpochProgressProps) {
   const startDate = useMemo(() => new Date(epoch.startTime), [epoch.startTime])
   const endDate = useMemo(() => new Date(epoch.endTime), [epoch.endTime])
   const [progress, setProgress] = useState(0)
@@ -11,8 +17,8 @@ function EpochProgress ({ epoch, className }) {
 
   useEffect(() => {
     const updateProgress = () => {
-      const totalDuration = endDate - startDate
-      const elapsedTime = new Date() - startDate
+      const totalDuration = endDate.getTime() - startDate.getTime()
+      const elapsedTime = Date.now() - startDate.getTime()
       const percentage = (elapsedTime / totalDuration) * 100
       setProgress(Math.min(percentage, 100))
       setTimeLeft(getTimeDelta(new Date(), endDate))

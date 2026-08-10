@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import type { Dispatch, SetStateAction } from 'react'
 import { Flex, FormControl, IconButton, Input, InputGroup, InputRightElement } from '@chakra-ui/react'
 import { ViewIcon, ViewOffIcon } from '@chakra-ui/icons'
 
@@ -10,9 +11,25 @@ const noAutofillProps = {
   'data-1p-ignore': 'true',
   'data-lpignore': 'true',
   'data-form-type': 'other'
+} as const
+
+interface PrivateKeyFormProps {
+  wif: string
+  setWif: Dispatch<SetStateAction<string>> | ((value: string) => void)
+  identityId: string
+  setIdentityId: Dispatch<SetStateAction<string>> | ((value: string) => void)
+  isInactive?: boolean
+  identityIdPlaceholder?: string
 }
 
-export const PrivateKeyForm = ({ wif, setWif, identityId, setIdentityId, isInactive, identityIdPlaceholder = 'Identity ID (optional)' }) => {
+export const PrivateKeyForm = ({
+  wif,
+  setWif,
+  identityId,
+  setIdentityId,
+  isInactive,
+  identityIdPlaceholder = 'Identity ID (optional)'
+}: PrivateKeyFormProps) => {
   const [showWif, setShowWif] = useState(false)
 
   return (

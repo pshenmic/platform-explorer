@@ -2,13 +2,28 @@
 
 import * as Api from '../../util/Api'
 import { useState, useEffect } from 'react'
+import type { CSSProperties, ReactNode } from 'react'
 import { fetchHandlerSuccess, fetchHandlerError, formatFullNumber } from '../../util'
+import type { LoadableState } from '../../types/common'
+import type { Status, EpochData } from '../../types'
+import type { WithClassName } from '../../types/common'
 import './NetworkStatsInline.scss'
 
-export default function NetworkStatsInline ({ className, items: itemsProp }) {
+interface NetworkStatsItem {
+  label: ReactNode
+  value?: ReactNode
+  loading?: boolean
+  color?: string
+}
+
+interface NetworkStatsInlineProps extends WithClassName {
+  items?: NetworkStatsItem[]
+}
+
+export default function NetworkStatsInline ({ className, items: itemsProp }: NetworkStatsInlineProps) {
   const useDefault = !itemsProp
-  const [status, setStatus] = useState({ data: {}, loading: true, error: false })
-  const [epoch, setEpoch] = useState({ data: {}, loading: true, error: false })
+  const [status, setStatus] = useState<LoadableState<Status>>({ data: null, loading: true, error: false })
+  const [epoch, setEpoch] = useState<LoadableState<EpochData>>({ data: null, loading: true, error: false })
 
   useEffect(() => {
     if (!useDefault) return
@@ -24,7 +39,7 @@ export default function NetworkStatsInline ({ className, items: itemsProp }) {
       .catch(err => fetchHandlerError(setStatus, err))
   }, [useDefault])
 
-  const items = itemsProp || [
+  const items: NetworkStatsItem[] = itemsProp || [
     {
       label: 'Epoch',
       value: typeof status.data?.epoch?.number === 'number' ? `#${status.data.epoch.number}` : null,
@@ -37,26 +52,29 @@ export default function NetworkStatsInline ({ className, items: itemsProp }) {
     },
     {
       label: 'Blocks',
-      value: formatFullNumber(status.data?.api?.block?.height),
+      value: formatFullNumber(status.data?.api?.block?.height) as ReactNode,
       loading: status.loading
     },
     {
       label: 'Transactions',
-      value: formatFullNumber(status.data?.transactionsCount),
+      value: formatFullNumber(status.data?.transactionsCount) as ReactNode,
       loading: status.loading
     }
   ]
 
   return (
     <div className={`NetworkStatsInline ${className || ''}`}>
-      {items.map((item, index) => (
-        <div className={'NetworkStatsInline__Item'} key={index}>
-          <span className={'NetworkStatsInline__Label'}>{item.label}</span>
-          <span className={'NetworkStatsInline__Value'} style={item.color ? { color: item.color } : undefined}>
-            {item.loading ? '…' : (item.value ?? 'N/A')}
-          </span>
-        </div>
-      ))}
+      {items.map((item, index) => {
+        const valueStyle: CSSProperties | undefined = item.color ? { color: item.color } : undefined
+        return (
+          <div className={'NetworkStatsInline__Item'} key={index}>
+            <span className={'NetworkStatsInline__Label'}>{item.label}</span>
+            <span className={'NetworkStatsInline__Value'} style={valueStyle}>
+              {item.loading ? '…' : (item.value ?? 'N/A')}
+            </span>
+          </div>
+        )
+      })}
     </div>
   )
 }
