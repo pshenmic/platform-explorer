@@ -2,7 +2,7 @@ import Markdown from 'react-markdown'
 import type { Components } from 'react-markdown'
 import rehypeRaw from 'rehype-raw'
 import remarkGfm from 'remark-gfm'
-import type { ReactNode } from 'react'
+import type { ComponentPropsWithoutRef, ReactNode } from 'react'
 import HeadingRenderer from './HeadingRenderer'
 import './Markdown.scss'
 
@@ -18,7 +18,7 @@ export default function CustomMarkdown ({ children }: CustomMarkdownProps) {
     h4: HeadingRenderer as Components['h4'],
     h5: HeadingRenderer as Components['h5'],
     h6: HeadingRenderer as Components['h6'],
-    table: ({ children: tableChildren, ...props }) => (
+    table: ({ children: tableChildren, ...props }: { children?: ReactNode } & ComponentPropsWithoutRef<'table'>) => (
       <div className='Markdown__TableWrapper'>
         <table {...props}>{tableChildren}</table>
       </div>
