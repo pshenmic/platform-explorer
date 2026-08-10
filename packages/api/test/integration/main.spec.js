@@ -7,6 +7,7 @@ const fixtures = require('../utils/fixtures')
 const StateTransitionEnum = require('../../src/enums/StateTransitionEnum')
 const { getKnex } = require('../../src/utils')
 const tenderdashRpc = require('../../src/tenderdashRpc')
+const DashCoreRPC = require('../../src/dashcoreRpc')
 const { IdentifierWASM, TokenConfigurationWASM, IdentityWASM } = require('pshenmic-dpp')
 const BatchEnum = require('../../src/enums/BatchEnum')
 const { IdentitiesController } = require('dash-platform-sdk/src/identities')
@@ -1035,6 +1036,116 @@ describe('Other routes', () => {
       }
 
       assert.deepEqual(body, expectedStats)
+    })
+  })
+
+  describe('quorums()', async () => {
+    const currentQuorumHash = '0'.repeat(63) + '1'
+    const upcomingQuorumHash = '0'.repeat(63) + '2'
+
+    const members = ['a'.repeat(64), 'b'.repeat(64)]
+
+    before(() => {
+      mock.method(tenderdashRpc, 'getValidators', async () => ({
+        quorumHash: currentQuorumHash,
+        quorumType: 6,
+        validators: [{ pro_tx_hash: members[0].toUpperCase() }]
+      }))
+
+      mock.method(DashCoreRPC, 'getQuorumsListExtended', async () => ({
+        llmq_25_67: [
+          {
+            [currentQuorumHash]: {
+              creationHeight: 2,
+              minedBlockHash: 'c'.repeat(64),
+              numValidMembers: 1,
+              healthRatio: '1.00'
+            }
+          },
+          {
+            [upcomingQuorumHash]: {
+              creationHeight: 1,
+              minedBlockHash: 'd'.repeat(64),
+              numValidMembers: 1,
+              healthRatio: '0.50'
+            }
+          }
+        ]
+      }))
+
+      mock.method(DashCoreRPC, 'getQuorumInfo', async (quorumHash) => ({
+        height: 1,
+        type: 'llmq_25_67',
+        quorumHash,
+        quorumIndex: 0,
+        minedBlock: 'c'.repeat(64),
+        quorumPublicKey: 'e'.repeat(96),
+        members: [{
+          proTxHash: quorumHash.toUpperCase() === currentQuorumHash ? members[0] : members[1],
+          valid: true
+        }]
+      }))
+    })
+
+    it('should return active platform quorums newest first, without members', async () => {
+      const { body } = await client.get('/quorums')
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      assert.deepEqual(body, [
+        {
+          blockHeight: 1,
+          creationHeight: 2,
+          minedBlockHash: 'c'.repeat(64),
+          numValidMembers: 1,
+          healthRatio: '1.00',
+          type: 'llmq_25_67',
+          quorumHash: currentQuorumHash,
+          quorumIndex: 0,
+          quorumPublicKey: 'e'.repeat(96),
+          previousConsecutiveDKGFailures: null,
+          isCurrent: true
+        },
+        {
+          blockHeight: 1,
+          creationHeight: 1,
+          minedBlockHash: 'd'.repeat(64),
+          numValidMembers: 1,
+          healthRatio: '0.50',
+          type: 'llmq_25_67',
+          quorumHash: upcomingQuorumHash,
+          quorumIndex: 0,
+          quorumPublicKey: 'e'.repeat(96),
+          previousConsecutiveDKGFailures: null,
+          isCurrent: false
+        }
+      ])
+    })
+
+    it('should return the quorum currently holding the validator set', async () => {
+      const { body } = await client.get('/quorums/current')
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      assert.equal(body.quorumHash, currentQuorumHash)
+      assert.equal(body.isCurrent, true)
+      assert.deepEqual(body.members, [{ proTxHash: members[0].toUpperCase(), valid: true }])
+    })
+
+    it('should return quorum by hash with its members', async () => {
+      const { body } = await client.get(`/quorum/${upcomingQuorumHash}`)
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      assert.equal(body.quorumHash, upcomingQuorumHash)
+      assert.equal(body.isCurrent, false)
+      assert.deepEqual(body.members, [{ proTxHash: members[1].toUpperCase(), valid: true }])
+    })
+
+    it('should return 404 for a quorum that is not active', async () => {
+      await client.get(`/quorum/${'f'.repeat(64)}`)
+        .expect(404)
+        .expect('Content-Type', 'application/json; charset=utf-8')
     })
   })
 })
