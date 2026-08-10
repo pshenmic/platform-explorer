@@ -12,7 +12,22 @@ import {
   Box,
   useOutsideClick
 } from '@chakra-ui/react'
+import type { PopoverProps, PopoverContentProps } from '@chakra-ui/react'
 import { useEffect, useRef } from 'react'
+import type { ReactNode } from 'react'
+import type { WithChildren, WithClassName } from '../../../types/common'
+
+interface CustomPopoverProps extends WithChildren, WithClassName {
+  trigger?: ReactNode
+  header?: ReactNode
+  placement?: PopoverProps['placement']
+  closeOnBlur?: boolean
+  hasArrow?: boolean
+  showCloseButton?: boolean
+  popoverProps?: Partial<PopoverProps>
+  contentProps?: Partial<PopoverContentProps>
+  stateCallback?: (isOpen: boolean) => void
+}
 
 const CustomPopover = ({
   trigger,
@@ -26,11 +41,11 @@ const CustomPopover = ({
   contentProps = {},
   stateCallback,
   className
-}) => {
+}: CustomPopoverProps) => {
   const { isOpen, onOpen, onClose } = useDisclosure()
   const handleToggle = () => (isOpen ? onClose() : onOpen())
-  const popoverRef = useRef()
-  const triggerRef = useRef()
+  const popoverRef = useRef<HTMLElement | null>(null)
+  const triggerRef = useRef<HTMLDivElement | null>(null)
 
   useEffect(() => {
     typeof stateCallback === 'function' && stateCallback(isOpen)
@@ -39,11 +54,12 @@ const CustomPopover = ({
   useOutsideClick({
     ref: popoverRef,
     handler: (event) => {
+      const target = event.target as Node
       if (
         popoverRef?.current &&
-        !popoverRef?.current?.contains(event.target) &&
+        !popoverRef?.current?.contains(target) &&
         triggerRef?.current &&
-        !triggerRef?.current?.contains(event.target)
+        !triggerRef?.current?.contains(target)
       ) {
         onClose()
       }

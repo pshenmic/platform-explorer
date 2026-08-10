@@ -1,17 +1,40 @@
 'use client'
 
 import { Tooltip as ChakraTooltip, useOutsideClick } from '@chakra-ui/react'
-import { useState, useRef, useEffect, cloneElement } from 'react'
+import type { TooltipProps as ChakraTooltipProps } from '@chakra-ui/react'
+import {
+  useState,
+  useRef,
+  useEffect,
+  cloneElement,
+  isValidElement
+} from 'react'
+import type { ReactElement, ReactNode, MouseEvent, Ref } from 'react'
+import type { WithClassName } from '../../../types/common'
 import './Tooltip.scss'
+
+type TooltipChildProps = {
+  ref?: Ref<HTMLElement>
+  onMouseEnter?: (e: MouseEvent) => void
+  onMouseLeave?: (e: MouseEvent) => void
+  onClick?: (e: MouseEvent) => void
+}
+
+interface TooltipProps extends WithClassName, Omit<ChakraTooltipProps, 'children' | 'label' | 'className' | 'title' | 'content'> {
+  title?: ReactNode
+  content?: ReactNode
+  label?: ReactNode
+  children: ReactElement<TooltipChildProps>
+}
 
 // Interactive-friendly tooltip: delayed close so the pointer can move from the
 // trigger into the tip body (links, richer content) without the tip vanishing.
-export default function Tooltip ({ title = '', content = '', children, className, ...props }) {
+export default function Tooltip ({ title = '', content = '', children, className, label, ...props }: TooltipProps) {
   const extraClass = title && content ? 'Tooltip--Extended' : ''
   const [isOpen, setIsOpen] = useState(false)
   const [isHovered, setIsHovered] = useState(false)
-  const ref = useRef()
-  const leaveTimer = useRef(null)
+  const ref = useRef<HTMLElement | null>(null)
+  const leaveTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   useOutsideClick({
     ref,
@@ -40,35 +63,39 @@ export default function Tooltip ({ title = '', content = '', children, className
     leaveTimer.current = setTimeout(() => setIsHovered(false), 280)
   }
 
-  const element = cloneElement(children, {
-    ref,
-    onMouseEnter: (e) => {
-      children.props?.onMouseEnter?.(e)
-      hoverIn()
-    },
-    onMouseLeave: (e) => {
-      children.props?.onMouseLeave?.(e)
-      hoverOut()
-    },
-    onClick: (e) => {
-      children.props?.onClick?.(e)
-      setIsOpen(prev => !prev)
-    }
-  })
+  const element = isValidElement(children)
+    ? cloneElement(children, {
+        ref,
+        onMouseEnter: (e: MouseEvent) => {
+          children.props?.onMouseEnter?.(e)
+          hoverIn()
+        },
+        onMouseLeave: (e: MouseEvent) => {
+          children.props?.onMouseLeave?.(e)
+          hoverOut()
+        },
+        onClick: (e: MouseEvent) => {
+          children.props?.onClick?.(e)
+          setIsOpen(prev => !prev)
+        }
+      })
+    : children
+
+  const resolvedLabel = label ?? (
+    <div
+      className={'Tooltip__Body'}
+      onMouseEnter={hoverIn}
+      onMouseLeave={hoverOut}
+    >
+      {title ? <div className={'Tooltip__Title'}>{title}</div> : null}
+      <div className={'Tooltip__Content'}>{content}</div>
+    </div>
+  )
 
   return (
     <ChakraTooltip
       className={`Tooltip ${extraClass}${className ? ` ${className}` : ''}`}
-      label={
-        <div
-          className={'Tooltip__Body'}
-          onMouseEnter={hoverIn}
-          onMouseLeave={hoverOut}
-        >
-          {title ? <div className={'Tooltip__Title'}>{title}</div> : null}
-          <div className={'Tooltip__Content'}>{content}</div>
-        </div>
-      }
+      label={resolvedLabel}
       isOpen={isOpen || isHovered}
       onClose={() => setIsOpen(false)}
       closeOnClick={false}
