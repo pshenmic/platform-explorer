@@ -8,6 +8,7 @@ const StateTransitionEnum = require('../../src/enums/StateTransitionEnum')
 const { getKnex } = require('../../src/utils')
 const tenderdashRpc = require('../../src/tenderdashRpc')
 const DashCoreRPC = require('../../src/dashcoreRpc')
+const cache = require('../../src/cache')
 const { IdentifierWASM, TokenConfigurationWASM, IdentityWASM } = require('pshenmic-dpp')
 const BatchEnum = require('../../src/enums/BatchEnum')
 const { IdentitiesController } = require('dash-platform-sdk/src/identities')
@@ -42,6 +43,10 @@ describe('Other routes', () => {
 
   before(async () => {
     aliasTimestamp = new Date()
+
+    // no-op so cached entries do not arm an eviction timer that keeps the test
+    // process alive after the suite finishes
+    mock.method(cache, 'set', () => {})
 
     mock.method(IdentitiesController.prototype, 'getIdentityBalance', async () => 0)
     mock.method(NodeController.prototype, 'totalCredits', async () => 0)
