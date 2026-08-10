@@ -8,6 +8,13 @@ const __dirname = path.dirname(__filename)
 const nextConfig = {
   sassOptions: {
     includePaths: [path.join(__dirname, 'src/styles')]
+  },
+  // Next 16 uses Turbopack by default. Force WASM build of pshenmic-dpp so SSR
+  // does not resolve the Node/NAPI entry (native.js). Replaces old webpack alias.
+  turbopack: {
+    resolveAlias: {
+      'pshenmic-dpp': 'pshenmic-dpp/wasm'
+    }
   }
 }
 
