@@ -1,18 +1,52 @@
 import { Grid, GridItem } from '@chakra-ui/react'
-import { ValueCard } from '../../components/cards'
+import type { ComponentType, ReactNode } from 'react'
+import { ValueCard as ValueCardJs } from '../../components/cards'
 import PublicKeyBoundCard from './PublicKeyBoundCard'
+import type { PublicKeyBounds } from './PublicKeyBoundCard'
 import { ValueContainer } from '../ui/containers'
 import { CopyButton } from '../ui/Buttons'
 import * as pkEnums from '../../enums/publicKey'
-import { NotActive } from '../data'
+import { NotActive as NotActiveJs } from '../data'
 import './PublicKeysListItem.scss'
 import './PublicKeyBoundCard.scss'
 import { Tooltip } from '../ui/Tooltips'
 import { formatDate } from '../../util'
+import type { WithClassName } from '../../types/common'
 
-function PublicKeysListItem ({ publicKey, className }) {
-  const securityLevel = pkEnums.SecurityLevelInfo?.[publicKey?.securityLevel]
-  const purpose = pkEnums.KeyPurposeInfo?.[publicKey?.purpose]
+const ValueCard = ValueCardJs as ComponentType<{
+  children?: ReactNode
+  className?: string
+  colorScheme?: string
+  size?: string
+}>
+
+const NotActive = NotActiveJs as ComponentType<{
+  children?: ReactNode
+  className?: string
+}>
+
+export interface PublicKey {
+  keyId?: number | string
+  publicKeyHash?: string
+  keyType?: string | number
+  purpose?: string | number
+  securityLevel?: string | number
+  disabledAt?: string | number | null
+  readOnly?: boolean
+  data?: string
+  contractBounds?: PublicKeyBounds | null
+}
+
+interface PublicKeysListItemProps extends WithClassName {
+  publicKey?: PublicKey | null
+}
+
+function PublicKeysListItem ({ publicKey, className }: PublicKeysListItemProps) {
+  const securityLevelKey = publicKey?.securityLevel as keyof typeof pkEnums.SecurityLevelInfo | undefined
+  const purposeKey = publicKey?.purpose as keyof typeof pkEnums.KeyPurposeInfo | undefined
+  const securityLevel = securityLevelKey != null ? pkEnums.SecurityLevelInfo[securityLevelKey] : undefined
+  const purpose = purposeKey != null ? pkEnums.KeyPurposeInfo[purposeKey] : undefined
+
   return (
     <div className={`PublicKeysListItem ${className || ''}`}>
       <Grid className={'PublicKeysListItem__Content'}>
@@ -38,7 +72,7 @@ function PublicKeysListItem ({ publicKey, className }) {
         </GridItem>
         <GridItem className={'PublicKeysListItem__Column PublicKeysListItem__Column--Purpose'}>
           {purpose?.title !== undefined
-            ? <ValueContainer colorScheme={purpose?.colorScheme} size={'sm'}>
+            ? <ValueContainer colorScheme={purpose?.colorScheme as 'blue' | 'green' | 'orange' | 'gray' | 'red'} size={'sm'}>
                 {purpose?.title}
               </ValueContainer>
             : <NotActive/>
@@ -46,7 +80,7 @@ function PublicKeysListItem ({ publicKey, className }) {
         </GridItem>
         <GridItem className={'PublicKeysListItem__Column PublicKeysListItem__Column--SecurityLevel'}>
           {securityLevel?.title !== undefined
-            ? <ValueContainer colorScheme={securityLevel?.colorScheme} size={'sm'}>
+            ? <ValueContainer colorScheme={securityLevel?.colorScheme as 'blue' | 'green' | 'orange' | 'gray' | 'red'} size={'sm'}>
                 {securityLevel?.title}
               </ValueContainer>
             : <NotActive/>
@@ -54,7 +88,7 @@ function PublicKeysListItem ({ publicKey, className }) {
         </GridItem>
         <GridItem className={'PublicKeysListItem__Column PublicKeysListItem__Column--Disabled'}>
           {publicKey?.disabledAt
-            ? <Tooltip placement={'top'} title={'Disabled at'} content={formatDate(publicKey.disabledAt).formatted}>
+            ? <Tooltip placement={'top'} title={'Disabled at'} content={formatDate(publicKey.disabledAt)?.formatted}>
                 <span>
                   <ValueContainer colorScheme={publicKey?.disabledAt ? 'red' : 'green'} size={'sm'}>
                     True

@@ -1,8 +1,26 @@
+import type { ComponentType, ReactNode } from 'react'
 import { ValueContainer } from '../ui/containers'
-import { ValueCard } from '../cards'
+import { ValueCard as ValueCardJs } from '../cards'
+import type { WithClassName } from '../../types/common'
 import './PublicKeyBoundCard.scss'
 
-function PublicKeyBoundCard ({ publicKeyBounds, className }) {
+const ValueCard = ValueCardJs as ComponentType<{
+  children?: ReactNode
+  className?: string
+  colorScheme?: string
+  size?: string
+}>
+
+export interface PublicKeyBounds {
+  identifier?: string
+  documentTypeName?: string | null
+}
+
+interface PublicKeyBoundCardProps extends WithClassName {
+  publicKeyBounds?: PublicKeyBounds | null
+}
+
+function PublicKeyBoundCard ({ publicKeyBounds, className }: PublicKeyBoundCardProps) {
   return (
     <ValueCard className={`PublicKeyBoundCard ${className || ''}`} colorScheme={'transparent'}>
       <div className={'PublicKeyBoundCard__Title'}>Bound to</div>

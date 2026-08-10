@@ -1,11 +1,17 @@
 import { Grid, GridItem } from '@chakra-ui/react'
 import PublicKeysListItem from './PublicKeysListItem'
+import type { PublicKey } from './PublicKeysListItem'
 import { EmptyListMessage } from '../ui/lists'
+import type { WithClassName } from '../../types/common'
 import './PublicKeysList.scss'
 import './PublicKeysListItem.scss'
 import './PublicKeyBoundCard.scss'
 
-function PublicKeysList ({ publicKeys = [], className }) {
+interface PublicKeysListProps extends WithClassName {
+  publicKeys?: PublicKey[]
+}
+
+function PublicKeysList ({ publicKeys = [], className }: PublicKeysListProps) {
   return (
     <div className={`PublicKeysList ${className || ''}`}>
       <div className={'PublicKeysList__ScrollZone'}>
