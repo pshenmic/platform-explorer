@@ -9,14 +9,21 @@ import LocalTime from './LocalTime'
 import Link from 'next/link'
 import './Footer.scss'
 
-const socialNetwork = [
+interface SocialNetworkItem {
+  img: string
+  href: string
+  alt: string
+  ariaLabel: string
+}
+
+const socialNetwork: SocialNetworkItem[] = [
   { img: '/images/icons/github.svg', href: 'https://github.com/pshenmic/platform-explorer/', alt: 'github', ariaLabel: 'Go to GitHub' },
   { img: '/images/icons/twitter.svg', href: 'https://x.com/Dashpay', alt: 'twitter', ariaLabel: 'Go to X(twitter)' },
   { img: '/images/icons/discord.svg', href: 'https://discord.gg/KrPbKUN8Ug', alt: 'discord', ariaLabel: 'Go to Discord' }
 ]
 
 function Footer () {
-  const [currentYear, setCurrentYear] = useState(null)
+  const [currentYear, setCurrentYear] = useState<number | null>(null)
   useEffect(() => setCurrentYear(new Date().getFullYear()), [])
 
   return (

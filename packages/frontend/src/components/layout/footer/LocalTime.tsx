@@ -1,12 +1,13 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import type { WithClassName } from '../../../types/common'
 import './LocalTime.scss'
 
-function LocalTime ({ className }) {
-  const [time, setTime] = useState(null)
-  const [date, setDate] = useState(null)
-  const [timeZone, setTimeZone] = useState(null)
+function LocalTime ({ className }: WithClassName) {
+  const [time, setTime] = useState<string | null>(null)
+  const [date, setDate] = useState<string | null>(null)
+  const [timeZone, setTimeZone] = useState<string | null>(null)
 
   useEffect(() => {
     const updateTime = () => {
@@ -32,13 +33,16 @@ function LocalTime ({ className }) {
     const now = new Date()
     const millisecondsUntilNextMinute = (60 - now.getSeconds()) * 1000 - now.getMilliseconds()
 
+    let interval: ReturnType<typeof setInterval> | undefined
     const timeout = setTimeout(() => {
       updateTime()
-      const interval = setInterval(updateTime, 60000)
-      return () => clearInterval(interval)
+      interval = setInterval(updateTime, 60000)
     }, millisecondsUntilNextMinute)
 
-    return () => clearTimeout(timeout)
+    return () => {
+      clearTimeout(timeout)
+      if (interval) clearInterval(interval)
+    }
   }, [])
 
   return (

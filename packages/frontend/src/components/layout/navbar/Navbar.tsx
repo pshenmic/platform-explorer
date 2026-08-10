@@ -7,12 +7,16 @@ import { Breadcrumbs, breadcrumbsActiveRoutes } from '../../breadcrumbs/Breadcru
 import NetworkSelect from './NetworkSelect'
 import { usePathname } from 'next/navigation'
 import { useEffect, useState, useRef, useMemo } from 'react'
+import type { MouseEvent } from 'react'
 import { SearchResultsList } from '../../search'
 import NavItem from './NavItem'
 import NavbarMobileMenu from './NavbarMobileMenu'
+import type { BreakpointKey, BreakpointVisibility, NavMenuItem } from './types'
+import type { LoadableState } from '../../../types/common'
+import type { SearchResultsData } from '../../search/SearchResultsList'
 import './Navbar.scss'
 
-const menuItems = [
+const menuItems: NavMenuItem[] = [
   { title: 'Home', href: '/' },
   {
     title: 'Blockchain',
@@ -70,19 +74,36 @@ const menuItems = [
   }
 ]
 
-const defaultBreakpoints = { base: true, sm: true, md: true, lg: true, xl: true, '2xl': true, '3xl': true }
+const defaultBreakpoints: BreakpointVisibility = {
+  base: true,
+  sm: true,
+  md: true,
+  lg: true,
+  xl: true,
+  '2xl': true,
+  '3xl': true
+}
 
 // Filter submenuItems by breakpoints
-const filterSubmenuItems = (submenuItems, currentBreakpoint) => {
+const filterSubmenuItems = (
+  submenuItems: NavMenuItem[] | undefined,
+  currentBreakpoint: BreakpointKey
+): NavMenuItem[] | undefined => {
   if (!submenuItems) return submenuItems
 
   return submenuItems.filter(subItem => {
-    const breakpoints = subItem.breakpoints || defaultBreakpoints
+    const breakpoints = { ...defaultBreakpoints, ...subItem.breakpoints }
     return breakpoints[currentBreakpoint]
   })
 }
 
-const defaultSearchState = {
+interface SearchState {
+  results: LoadableState<SearchResultsData>
+  focused: boolean
+  value: string
+}
+
+const defaultSearchState: SearchState = {
   results: { data: {}, loading: false, error: false },
   focused: false,
   value: ''
@@ -101,9 +122,9 @@ function Navbar () {
     onClose: closeMobileMenu
   } = useDisclosure()
 
-  const [searchState, setSearchState] = useState(defaultSearchState)
+  const [searchState, setSearchState] = useState<SearchState>(defaultSearchState)
 
-  const currentBreakpoint = useBreakpointValue({
+  const currentBreakpoint = (useBreakpointValue({
     base: 'base',
     sm: 'sm',
     md: 'md',
@@ -111,11 +132,11 @@ function Navbar () {
     xl: 'xl',
     '2xl': '2xl',
     '3xl': '3xl'
-  }) || 'base'
+  }) || 'base') as BreakpointKey
 
   const visibleMenuItems = useMemo(() => {
     return menuItems.filter(item => {
-      const breakpoints = item.breakpoints || defaultBreakpoints
+      const breakpoints = { ...defaultBreakpoints, ...item.breakpoints }
       return breakpoints[currentBreakpoint]
     }).map(item => ({
       ...item,
@@ -124,10 +145,10 @@ function Navbar () {
   }, [currentBreakpoint])
 
   const mobileMenuItems = useMemo(() => {
-    const isMobileBreakpoint = ['base', 'sm', 'md'].includes(currentBreakpoint)
+    const isMobileBreakpoint = (['base', 'sm', 'md'] as BreakpointKey[]).includes(currentBreakpoint)
 
     return menuItems.filter(item => {
-      const breakpoints = item.breakpoints || defaultBreakpoints
+      const breakpoints = { ...defaultBreakpoints, ...item.breakpoints }
       return isMobileBreakpoint ? breakpoints[currentBreakpoint] : breakpoints.base
     }).map(item => ({
       ...item,
@@ -138,9 +159,9 @@ function Navbar () {
   const searchResultIsDisplay = searchState.focused &&
     (Object.entries(searchState.results.data || {})?.length || searchState.results.loading || searchState.results.error)
 
-  const searchContainerRef = useRef(null)
+  const searchContainerRef = useRef<HTMLDivElement | null>(null)
   const searchTransitionTime = useBreakpointValue({ base: 0.2, md: 0.1 })
-  const burgerRef = useRef(null)
+  const burgerRef = useRef<HTMLButtonElement | null>(null)
 
   const hideSearch = () => setSearchState(defaultSearchState)
 
@@ -166,7 +187,7 @@ function Navbar () {
   }, [searchState.focused])
 
   useEffect(() => {
-    const handleKeyDown = (e) => {
+    const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
         hideSearch()
         closeMobileMenu()
@@ -180,7 +201,7 @@ function Navbar () {
     }
   }, [closeMobileMenu])
 
-  const handleMobileMenuToggle = (e) => {
+  const handleMobileMenuToggle = (e: MouseEvent) => {
     e.stopPropagation()
     if (isMobileMenuOpen) {
       closeMobileMenu()
@@ -220,9 +241,9 @@ function Navbar () {
             style={{
               visibility: searchState.focused ? 'hidden' : 'visible',
               opacity: searchState.focused ? 0 : 1,
-              transition: `${searchTransitionTime / 2}s`,
+              transition: `${(searchTransitionTime ?? 0.1) / 2}s`,
               width: searchState.focused ? '0' : '100%',
-              transitionDelay: searchState.focused ? '0s' : `${searchTransitionTime / 2}s`
+              transitionDelay: searchState.focused ? '0s' : `${(searchTransitionTime ?? 0.1) / 2}s`
             }}
           >
             {visibleMenuItems.map((menuItem) => (
@@ -235,7 +256,7 @@ function Navbar () {
           className={'Navbar__Right'}
           style={{
             gap: searchState.focused ? 0 : '0.5rem',
-            transition: `gap ${searchTransitionTime / 4}s`
+            transition: `gap ${(searchTransitionTime ?? 0.1) / 4}s`
           }}
         >
           <div
@@ -243,8 +264,8 @@ function Navbar () {
             style={{
               visibility: searchState.focused ? 'hidden' : 'visible',
               opacity: searchState.focused ? 0 : 1,
-              transition: `${searchTransitionTime / 4}s`,
-              transitionDelay: searchState.focused ? '0s' : `${searchTransitionTime}s`,
+              transition: `${(searchTransitionTime ?? 0.1) / 4}s`,
+              transitionDelay: searchState.focused ? '0s' : `${searchTransitionTime ?? 0.1}s`,
               alignItems: searchState.focused ? 'baseline' : 'center',
               ...(searchState.focused && { width: 0 })
             }}
@@ -258,13 +279,13 @@ function Navbar () {
             onClick={() => setSearchState(prevState => ({ ...prevState, focused: true }))}
             style={{
               ...(searchState.focused && { width: '100%' }),
-              transition: `${searchTransitionTime}s`,
+              transition: `${searchTransitionTime ?? 0.1}s`,
               flexWrap: searchState.focused ? 'wrap' : 'nowrap'
             }}
           >
             <div
               className={'Navbar__SearchInputContainer'}
-              style={{ transition: `width ${searchTransitionTime}s` }}
+              style={{ transition: `width ${searchTransitionTime ?? 0.1}s` }}
             >
               <GlobalSearchInput
                 forceValue={searchState.value}

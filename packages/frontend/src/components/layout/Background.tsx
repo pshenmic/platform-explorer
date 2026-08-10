@@ -4,7 +4,11 @@ import { usePathname } from 'next/navigation'
 import Snow from './Snow'
 import './Background.scss'
 
-function Background ({ snow }) {
+interface BackgroundProps {
+  snow?: boolean
+}
+
+function Background ({ snow }: BackgroundProps) {
   const pathname = usePathname()
   const showOnRoutes = [
     '/',

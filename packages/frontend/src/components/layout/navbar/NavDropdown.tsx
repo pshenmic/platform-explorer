@@ -1,30 +1,36 @@
 'use client'
 
 import { useRef, useState } from 'react'
+import type { MouseEvent } from 'react'
 import { useMediaQuery } from '@chakra-ui/react'
 import { usePathname } from 'next/navigation'
 import MultiLevelMenu from '../../ui/menus/MultiLevelMenu'
 import { ArrowButton } from '../../ui/Buttons'
+import type { NavMenuItem } from './types'
 import './NavDropdown.scss'
 
-const NavDropdown = ({ item }) => {
+interface NavDropdownProps {
+  item: NavMenuItem
+}
+
+const NavDropdown = ({ item }: NavDropdownProps) => {
   const { title, href, submenuItems } = item
   const pathname = usePathname()
-  const isActive = pathname === href || pathname.startsWith(href)
+  const isActive = pathname === href || (href != null && pathname.startsWith(href))
   const [isHoverable] = useMediaQuery('(hover: hover) and (pointer: fine)')
   const [isOpen, setIsOpen] = useState(false)
-  const timeoutRef = useRef(null)
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
-  const menuData = submenuItems.map(item => ({
-    label: item.title,
-    disabled: item?.disabled,
-    link: item?.href
+  const menuData = (submenuItems ?? []).map(subItem => ({
+    label: subItem.title,
+    disabled: subItem?.disabled,
+    link: subItem?.href
   }))
 
   const handleMouseEnter = () => {
     if (!isHoverable) return
 
-    clearTimeout(timeoutRef.current)
+    if (timeoutRef.current) clearTimeout(timeoutRef.current)
     timeoutRef.current = setTimeout(() => {
       setIsOpen(true)
     }, 100)
@@ -33,13 +39,13 @@ const NavDropdown = ({ item }) => {
   const handleMouseLeave = () => {
     if (!isHoverable) return
 
-    clearTimeout(timeoutRef.current)
+    if (timeoutRef.current) clearTimeout(timeoutRef.current)
     timeoutRef.current = setTimeout(() => {
       setIsOpen(false)
     }, 100)
   }
 
-  const handleClick = (e) => {
+  const handleClick = (e: MouseEvent) => {
     if (!isHoverable || !isOpen) {
       e.preventDefault()
       setIsOpen(!isOpen)
