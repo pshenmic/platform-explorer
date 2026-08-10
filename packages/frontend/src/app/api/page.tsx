@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import Markdown from '../../components/markdown'
 import content from './content.md'
 import './Api.scss'
@@ -7,7 +8,7 @@ import {
   Heading
 } from '@chakra-ui/react'
 
-export const metadata = {
+export const metadata: Metadata = {
   title: 'API — Dash Platform Explorer',
   description: '',
   keywords: ['Dash', 'platform', 'explorer', 'blockchain', 'block', 'Timestamp', 'Transactions', 'Block'],

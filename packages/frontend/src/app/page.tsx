@@ -1,6 +1,7 @@
+import type { Metadata } from 'next'
 import Home from './home/Home'
 
-export const metadata = {
+export const metadata: Metadata = {
   title: 'Dashboard — Dash Platform Explorer',
   description: 'Dashboard of Dash Platform. The Last Transactions, Blocks, Data contracts, Documents, Transfers, Average block time.',
   keywords: ['Dash', 'platform', 'explorer', 'blockchain', 'Transactions', 'Blocks', ' Data contracts', 'Documents', 'Transfers', 'platform dash money'],

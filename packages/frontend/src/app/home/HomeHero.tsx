@@ -1,5 +1,6 @@
 'use client'
 
+import type { Status } from '../../types'
 import { Box, Heading, Text } from '@chakra-ui/react'
 import { TimeDelta, BigNumber } from '../../components/data'
 import { useCountUp } from '../../components/home/hooks'
@@ -7,13 +8,19 @@ import { HeroNodes } from '../../components/home'
 import { isNetworkLive } from '../../components/home/utils'
 import './HomeHero.scss'
 
-export default function HomeHero ({ status, loading, avgBlockTimeSec }) {
+interface HomeHeroProps {
+  status?: Status | Partial<Status> | null
+  loading?: boolean
+  avgBlockTimeSec?: number | null
+}
+
+export default function HomeHero ({ status, loading, avgBlockTimeSec }: HomeHeroProps) {
   const height = status?.api?.block?.height
   const lastBlockTimestamp = status?.api?.block?.timestamp
   const heightCount = useCountUp(typeof height === 'number' ? height : null)
   // neutral until status arrives, so the badge never flashes red on first paint
   const ready = !loading && status && Object.keys(status).length > 0
-  const live = isNetworkLive(status)
+  const live = isNetworkLive(status as Status | null | undefined)
   const badgeState = !ready ? 'is-loading' : (live ? 'is-live' : 'is-down')
 
   return (

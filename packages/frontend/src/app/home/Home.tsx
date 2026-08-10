@@ -3,15 +3,31 @@
 import { useState, useEffect, useMemo, useRef } from 'react'
 import { useQuery, useQueries } from '@tanstack/react-query'
 import * as Api from '../../util/Api'
-import HomeHero from './HomeHero.js'
+import HomeHero from './HomeHero'
 import { MetricChart, EpochsOverview, StatusBar, HeroMeta, MasternodesDonut, TxTypesBar, ShieldedPoolCard, CompactTxList, CompactBlocksList } from '../../components/home'
 import { fetchHandlerSuccess, fetchHandlerError } from '../../util'
 import theme from '../../styles/theme'
 import { Box, Container, Flex, SimpleGrid } from '@chakra-ui/react'
 import { CardHead } from '../../components/cards'
+import type {
+  Block,
+  ContestedResource,
+  ContestedResourcesStatus,
+  EpochData,
+  LoadableState,
+  PaginatedResultSet,
+  Rate,
+  Status,
+  Vote
+} from '../../types'
 import './Home.scss'
 
-function computeAvgBlockTime (blocks) {
+type EpochPayload = EpochData & {
+  protocolVersion?: number | null
+  firstBlockHash?: string | null
+}
+
+function computeAvgBlockTime (blocks?: Block[] | null): number | null {
   const stamps = (blocks || [])
     .map(b => new Date(b?.header?.timestamp).getTime())
     .filter(t => !Number.isNaN(t))
@@ -22,19 +38,19 @@ function computeAvgBlockTime (blocks) {
   return Math.round(total / (stamps.length - 1) / 1000)
 }
 
-function epochNumbersOf (current) {
+function epochNumbersOf (current: number | undefined): number[] {
   if (typeof current !== 'number') return []
   return [current - 3, current - 2, current - 1, current].filter(n => n >= 0)
 }
 
 function Home () {
-  const [contested, setContested] = useState({ data: {}, loading: true, error: false })
-  const [activeContested, setActiveContested] = useState({ data: {}, loading: true, error: false })
-  const [latestContested, setLatestContested] = useState({ data: {}, loading: true, error: false })
-  const [latestVotes, setLatestVotes] = useState({ data: {}, loading: true, error: false })
-  const [rate, setRate] = useState({ data: {}, loading: true, error: false })
+  const [contested, setContested] = useState<LoadableState<ContestedResourcesStatus>>({ data: {} as ContestedResourcesStatus, loading: true, error: false })
+  const [activeContested, setActiveContested] = useState<LoadableState<PaginatedResultSet<ContestedResource>>>({ data: {} as PaginatedResultSet<ContestedResource>, loading: true, error: false })
+  const [latestContested, setLatestContested] = useState<LoadableState<PaginatedResultSet<ContestedResource>>>({ data: {} as PaginatedResultSet<ContestedResource>, loading: true, error: false })
+  const [latestVotes, setLatestVotes] = useState<LoadableState<PaginatedResultSet<Vote>>>({ data: {} as PaginatedResultSet<Vote>, loading: true, error: false })
+  const [rate, setRate] = useState<LoadableState<Rate>>({ data: {} as Rate, loading: true, error: false })
 
-  const gap = theme.blockOffset
+  const gap = (theme as typeof theme & { blockOffset: number | string | Array<number | string> }).blockOffset
   const secondaryStarted = useRef(false)
 
   // wave 0: hero + overview + validator totals (independent; RQ dedupes Strict Mode double-mount)
@@ -93,11 +109,11 @@ function Home () {
   // one query per epoch — results stream in independently (no Promise.all gate on the skeleton)
   const epochQueries = useQueries({
     queries: epochNumbers.map(n => ({
-      queryKey: ['home', 'epoch', n],
+      queryKey: ['home', 'epoch', n] as const,
       queryFn: () => Api.getEpoch(n),
       staleTime: 30_000,
       // live epoch refreshes with the status cadence; finalized epochs stay cached
-      refetchInterval: n === currentEpochNumber ? 60_000 : false
+      refetchInterval: (n === currentEpochNumber ? 60_000 : false) as number | false
     }))
   })
 
@@ -106,7 +122,7 @@ function Home () {
   const epochsBaseList = useMemo(() => (
     epochNumbers
       .map((n, i) => epochQueries[i]?.data)
-      .filter(Boolean)
+      .filter((ep): ep is EpochData => Boolean(ep))
   // eslint-disable-next-line react-hooks/exhaustive-deps -- stamp tracks per-query arrivals
   ), [epochNumbers, epochDataStamp])
 
@@ -127,7 +143,7 @@ function Home () {
   })
 
   const blockDataStamp = blockQueries.map(q => q.dataUpdatedAt).join('|')
-  const epochsList = useMemo(() => (
+  const epochsList: EpochPayload[] = useMemo(() => (
     epochsBaseList.map((ep, i) => {
       const blockRes = blockQueries[i]?.data
       if (!blockRes) return ep
@@ -141,8 +157,8 @@ function Home () {
   ), [epochsBaseList, blockDataStamp])
 
   const currentEpochPayload = epochsList.find(e => e?.epoch?.number === currentEpochNumber) || null
-  const epochData = {
-    data: currentEpochPayload || {},
+  const epochData: LoadableState<EpochPayload> = {
+    data: currentEpochPayload || ({} as EpochPayload),
     loading: typeof currentEpochNumber === 'number' && !currentEpochPayload && epochsLoading,
     error: false
   }
@@ -182,6 +198,8 @@ function Home () {
 
   const avgBlockTimeSec = computeAvgBlockTime(blocksQuery.data?.resultSet)
 
+  const statusData: Status | Partial<Status> = statusQuery.data ?? {}
+
   return (
     <Container
       className={'HomePage'}
@@ -192,9 +210,9 @@ function Home () {
       py={0}
       mt={gap}
       mb={gap}
-    >
+      >
       <Flex direction={'column'} gap={gap}>
-        <HomeHero status={statusQuery.data ?? {}} loading={statusQuery.isLoading} avgBlockTimeSec={avgBlockTimeSec}/>
+        <HomeHero status={statusData} loading={statusQuery.isLoading} avgBlockTimeSec={avgBlockTimeSec}/>
 
         <Box
           className={'InfoBlock InfoBlock--NoBorder HomeOverview'}
@@ -204,11 +222,11 @@ function Home () {
         >
           <div className={'HomeOverview__Grid'}>
             <div className={'HomeOverview__Sys'}>
-              <HeroMeta status={statusQuery.data ?? {}} loading={statusQuery.isLoading}/>
+              <HeroMeta status={statusData as Status} loading={statusQuery.isLoading}/>
             </div>
             <div className={'HomeOverview__Tx'}>
               <CompactTxList
-                transactions={txQuery.data?.resultSet}
+                transactions={txQuery.data?.resultSet as Parameters<typeof CompactTxList>[0]['transactions']}
                 limit={6}
                 loading={txQuery.isLoading}
                 moreHref={'/transactions'}
@@ -239,11 +257,11 @@ function Home () {
         </Box>
 
         <SimpleGrid columns={{ base: 1, md: 2 }} spacing={gap} w={'100%'}>
-          <MetricChart title={'Transactions history'} type={'bar'} fetcher={Api.getTransactionsHistory} field={'txs'} yAbbr={'txs'} enabled={belowFoldReady}/>
-          <MetricChart title={'Identities growth'} type={'line'} fetcher={Api.getIdentitiesHistory} field={'registeredIdentities'} yAbbr={'identities'} enabled={belowFoldReady}/>
+          <MetricChart title={'Transactions history'} type={'bar'} fetcher={Api.getTransactionsHistory as unknown as Parameters<typeof MetricChart>[0]['fetcher']} field={'txs'} yAbbr={'txs'} enabled={belowFoldReady}/>
+          <MetricChart title={'Identities growth'} type={'line'} fetcher={Api.getIdentitiesHistory as unknown as Parameters<typeof MetricChart>[0]['fetcher']} field={'registeredIdentities'} yAbbr={'identities'} enabled={belowFoldReady}/>
           <TxTypesBar enabled={belowFoldReady}/>
           <ShieldedPoolCard rate={rate} enabled={belowFoldReady}/>
-          <MasternodesDonut validators={validators} validatorsActive={validatorsActive} validatorsBanned={validatorsBanned} validatorsInactive={validatorsInactive} validatorsList={validatorsGeoQuery.data?.resultSet}/>
+          <MasternodesDonut validators={validators} validatorsActive={validatorsActive} validatorsBanned={validatorsBanned} validatorsInactive={validatorsInactive} validatorsList={validatorsGeoQuery.data?.resultSet as Parameters<typeof MasternodesDonut>[0]['validatorsList']}/>
           <Box className={'InfoBlock InfoBlock--NoBorder HomeGovCard'} w={'100%'}>
             <CardHead title={'Governance'}/>
             <StatusBar
