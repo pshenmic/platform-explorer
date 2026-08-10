@@ -35,7 +35,7 @@ export default function BlocksDashboardCards () {
       cards={[
         {
           title: 'Epoch',
-          value: <EpochCardContent status={status?.data}/>,
+          value: <EpochCardContent status={status?.data ? { epoch: status.data.epoch ?? null } : null}/>,
           error: typeof status?.data?.epoch?.number !== 'number' && typeof status?.data?.epoch?.number !== 'string',
           loading: status.loading
         },
