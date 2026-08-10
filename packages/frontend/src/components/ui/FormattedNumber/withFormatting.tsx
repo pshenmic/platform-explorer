@@ -1,4 +1,5 @@
 import { forwardRef } from 'react'
+import type { ComponentType, ReactNode, Ref } from 'react'
 import {
   concatDecimal,
   sliceNumberByDecimals,
@@ -10,23 +11,31 @@ import { currencyRound } from '../../../util'
 
 import styles from './FormattedNumber.module.scss'
 
-export const withFormatting = (Component) => {
-  const FormattedNumberWithTooltip = forwardRef(
-    ({ children, decimals, threshold = 999999999, ...props }, ref) => {
+interface FormattingProps {
+  children?: ReactNode
+  decimals?: number
+  threshold?: number
+  className?: string
+}
+
+export const withFormatting = (Component: ComponentType<Record<string, unknown>>) => {
+  const FormattedNumberWithTooltip = forwardRef<HTMLElement, FormattingProps>(
+    function FormattedNumberWithTooltip (props, ref) {
+      const { children, decimals, threshold = 999999999, ...rest } = props
       const value = String(children)
-      const { integer, fractional } = sliceNumberByDecimals(value, decimals)
+      const { integer, fractional } = sliceNumberByDecimals(value, decimals ?? 0)
 
       const trimmedFractional = trimEndZeros(fractional)
 
-      const Child = ({ children: content }) => (
+      const Child = ({ children: content }: { children?: ReactNode }) => (
         <Tooltip
           placement={'top'}
           content={value}
         >
           <span>
             <Component
-              {...props}
-              ref={ref}
+              {...(rest as Record<string, unknown>)}
+              ref={ref as Ref<HTMLElement>}
             >
               {content}
             </Component>
@@ -38,7 +47,7 @@ export const withFormatting = (Component) => {
         return <Child>0,{trimmedFractional}</Child>
       }
 
-      if (threshold <= integer) {
+      if (threshold <= Number(integer)) {
         return (
           <Child>
             {concatDecimal(currencyRound(integer), trimmedFractional)}
@@ -46,7 +55,7 @@ export const withFormatting = (Component) => {
         )
       }
 
-      if (integer > 0) {
+      if (Number(integer) > 0) {
         return (
           <Child>
             {splitNum(integer).map((num, i) => (

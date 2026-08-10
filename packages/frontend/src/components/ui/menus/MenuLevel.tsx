@@ -1,16 +1,45 @@
 import { useEffect, useState } from 'react'
+import type { ReactNode } from 'react'
 import { Popover, PopoverTrigger, PopoverContent, PopoverBody, Link } from '@chakra-ui/react'
+import type { PlacementWithLogical } from '@chakra-ui/react'
 import { ChevronIcon } from '../icons'
 import './MenuLevel.scss'
 
-function MenuLevel ({ items = [], onMenuItemClick, placement = 'right-start', onLevelClose, forceClose, activeItemId, onActiveItemChange }) {
-  const [openSubMenuId, setOpenSubMenuId] = useState(null)
+export interface MenuItem {
+  label?: ReactNode
+  link?: string
+  disabled?: boolean
+  onClick?: () => void
+  subMenu?: MenuItem[]
+  content?: ReactNode
+}
+
+interface MenuLevelProps {
+  items?: MenuItem[]
+  onMenuItemClick?: () => void
+  placement?: PlacementWithLogical
+  onLevelClose?: () => void
+  forceClose?: boolean
+  activeItemId?: number | null
+  onActiveItemChange?: (id: number | null) => void
+}
+
+function MenuLevel ({
+  items = [],
+  onMenuItemClick,
+  placement = 'right-start',
+  onLevelClose,
+  forceClose,
+  activeItemId,
+  onActiveItemChange
+}: MenuLevelProps) {
+  const [openSubMenuId, setOpenSubMenuId] = useState<number | null>(null)
 
   useEffect(() => {
     if (forceClose) setOpenSubMenuId(null)
   }, [forceClose])
 
-  const handleItemClick = (item, index) => {
+  const handleItemClick = (item: MenuItem, index: number) => {
     if (item?.subMenu?.length || item?.content) {
       setOpenSubMenuId(prev => prev === index ? null : index)
       return
@@ -23,7 +52,7 @@ function MenuLevel ({ items = [], onMenuItemClick, placement = 'right-start', on
   }
 
   const handleSubMenuClose = () => {
-    onActiveItemChange(null)
+    onActiveItemChange?.(null)
     setOpenSubMenuId(null)
     if (typeof onLevelClose === 'function') onLevelClose()
   }
@@ -67,14 +96,13 @@ function MenuLevel ({ items = [], onMenuItemClick, placement = 'right-start', on
               key={index}
               isOpen={openSubMenuId === index}
               onClose={handleSubMenuClose}
-              onOpen={() => onActiveItemChange(index)}
+              onOpen={() => onActiveItemChange?.(index)}
               placement={placement}
               closeOnBlur={true}
               autoFocus={false}
               strategy={'fixed'}
               variant={'menu'}
               offset={[0, 25]}
-              overflow={'visible'}
               boundary={'scrollParent'}
             >
               <PopoverTrigger>

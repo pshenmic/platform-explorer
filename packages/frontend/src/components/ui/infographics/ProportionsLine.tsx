@@ -1,7 +1,16 @@
+import type { CSSProperties, ReactNode } from 'react'
 import { Tooltip } from '../Tooltips'
 import './ProportionsLine.scss'
 
-const Wrapper = ({ children, tooltipContent, tooltipTitle, ...props }) => {
+interface WrapperProps {
+  children?: ReactNode
+  tooltipContent?: ReactNode
+  tooltipTitle?: ReactNode
+  className?: string
+  style?: CSSProperties
+}
+
+const Wrapper = ({ children, tooltipContent, tooltipTitle, ...props }: WrapperProps) => {
   return (tooltipContent || tooltipTitle)
     ? <Tooltip
         title={tooltipTitle}
@@ -15,7 +24,18 @@ const Wrapper = ({ children, tooltipContent, tooltipTitle, ...props }) => {
     : <div {...props}>{children}</div>
 }
 
-function ProportionsLine ({ items = [] }) {
+export interface ProportionsLineItem {
+  count: number
+  color?: string
+  tooltipTitle?: ReactNode
+  tooltipContent?: ReactNode
+}
+
+interface ProportionsLineProps {
+  items?: ProportionsLineItem[]
+}
+
+function ProportionsLine ({ items = [] }: ProportionsLineProps) {
   const totalCount = items.reduce((total, item) => total + item.count, 0) || 1
   const allZero = items.length > 0 && items.every(item => item.count === 0)
 

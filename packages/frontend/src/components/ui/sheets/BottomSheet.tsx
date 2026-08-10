@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
+import type { ReactNode } from 'react'
 import { Box, Drawer, DrawerBody, DrawerHeader, DrawerOverlay, Text, useOutsideClick } from '@chakra-ui/react'
 import { useSpring, animated } from 'react-spring'
 import { useDrag } from '@use-gesture/react'
@@ -9,6 +10,15 @@ const DRAWER_HEIGHT = '70vh'
 const FULL_HEIGHT = '90vh'
 const DRAG_THRESHOLD = 100
 
+interface BottomSheetProps {
+  isOpen: boolean
+  onClose: () => void
+  onOpen: () => void
+  title?: ReactNode
+  children?: ReactNode
+  fullHeightOnly?: boolean
+}
+
 export const BottomSheet = ({
   isOpen,
   onClose,
@@ -16,11 +26,11 @@ export const BottomSheet = ({
   title,
   children,
   fullHeightOnly = false
-}) => {
+}: BottomSheetProps) => {
   const { height: windowHeight } = useWindowSize()
   const [{ y }, api] = useSpring(() => ({ y: 0 }))
   const [isExpanded, setIsExpanded] = useState(fullHeightOnly)
-  const drawerRef = useRef(null)
+  const drawerRef = useRef<HTMLDivElement | null>(null)
 
   const handleOpen = useCallback(() => {
     api.start({ y: 0 })
@@ -44,7 +54,7 @@ export const BottomSheet = ({
   }, [isOpen, handleOpen, handleClose])
 
   const bind = useDrag(
-    ({ down, movement: [_, my], velocity: [, vy], direction: [, dy] }) => {
+    ({ down, movement: [, my], velocity: [, vy], direction: [, dy] }) => {
       const maxDrag = -windowHeight * 0.4
       const shouldClose = !down && dy > 0 && (my > DRAG_THRESHOLD || vy > 0.5)
       const shouldExpand = !down && dy < 0 && (Math.abs(my) > DRAG_THRESHOLD || vy > 0.5)

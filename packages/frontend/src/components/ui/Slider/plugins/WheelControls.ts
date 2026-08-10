@@ -1,12 +1,32 @@
-const WheelControls = (slider) => {
-  let touchTimeout
-  let position
-  let wheelActive
+interface KeenSliderInstance {
+  container?: HTMLElement | null
+  track?: {
+    details?: {
+      slides?: unknown[]
+    }
+  }
+  options?: {
+    slides?: {
+      perView?: number
+    }
+  }
+  on: (event: string, callback: () => void) => void
+}
 
-  function dispatch (e, name) {
+interface WheelPosition {
+  x: number
+  y: number
+}
+
+const WheelControls = (slider: KeenSliderInstance) => {
+  let touchTimeout: ReturnType<typeof setTimeout>
+  let position: WheelPosition
+  let wheelActive: boolean
+
+  function dispatch (e: WheelEvent, name: string) {
     position.x -= e.deltaX
     position.y -= e.deltaY
-    slider.container.dispatchEvent(
+    slider.container?.dispatchEvent(
       new CustomEvent(name, {
         detail: {
           x: position.x,
@@ -16,7 +36,7 @@ const WheelControls = (slider) => {
     )
   }
 
-  function wheelStart (e) {
+  function wheelStart (e: WheelEvent) {
     position = {
       x: e.pageX,
       y: e.pageY
@@ -24,15 +44,15 @@ const WheelControls = (slider) => {
     dispatch(e, 'ksDragStart')
   }
 
-  function wheel (e) {
+  function wheel (e: WheelEvent) {
     dispatch(e, 'ksDrag')
   }
 
-  function wheelEnd (e) {
+  function wheelEnd (e: WheelEvent) {
     dispatch(e, 'ksDragEnd')
   }
 
-  function eventWheel (e) {
+  function eventWheel (e: WheelEvent) {
     e.preventDefault()
     if (!wheelActive) {
       wheelStart(e)

@@ -1,12 +1,21 @@
 import React, { useState, useEffect, useCallback, memo } from 'react'
+import type { ReactNode } from 'react'
 import { Progress } from '@chakra-ui/react'
 import { useKeenSlider } from 'keen-slider/react'
+import type { KeenSliderOptions, KeenSliderPlugin } from 'keen-slider/react'
 import { ChevronLeftIcon, ChevronRightIcon } from '@chakra-ui/icons'
 import 'keen-slider/keen-slider.min.css'
 import './Slider.scss'
 import './SliderNavigation.scss'
+import type { WithChildren, WithClassName } from '../../../types/common'
 
-const SliderProgressBar = memo(function SliderProgressBar ({ isActive, autoPlaySpeed, onComplete }) {
+interface SliderProgressBarProps {
+  isActive: boolean
+  autoPlaySpeed: number
+  onComplete: () => void
+}
+
+const SliderProgressBar = memo(function SliderProgressBar ({ isActive, autoPlaySpeed, onComplete }: SliderProgressBarProps) {
   const [progress, setProgress] = useState(0)
   const transitionInterval = 1000
 
@@ -46,6 +55,15 @@ const SliderProgressBar = memo(function SliderProgressBar ({ isActive, autoPlayS
   )
 })
 
+interface SliderProps extends WithChildren, WithClassName {
+  settings?: KeenSliderOptions
+  plugins?: KeenSliderPlugin[]
+  showProgressBar?: boolean
+  showNavButtons?: boolean
+  autoPlaySpeed?: number
+  createdCallback?: (created: boolean) => void
+}
+
 function Slider ({
   children,
   settings = {},
@@ -55,7 +73,7 @@ function Slider ({
   showNavButtons = true,
   autoPlaySpeed = 5000,
   createdCallback
-}) {
+}: SliderProps) {
   const [currentSlide, setCurrentSlide] = useState(0)
   const totalSlides = React.Children.count(children)
 
@@ -126,7 +144,9 @@ function Slider ({
   )
 }
 
-function SliderElement ({ children, className }) {
+interface SliderElementProps extends WithChildren, WithClassName {}
+
+function SliderElement ({ children, className }: SliderElementProps) {
   return (
     <div className={`keen-slider__slide ${className || ''}`}>{children}</div>
   )
@@ -136,3 +156,5 @@ export {
   Slider,
   SliderElement
 }
+
+export type { SliderProps, SliderElementProps }

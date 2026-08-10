@@ -2,24 +2,55 @@ import './SimpleList.scss'
 import './EmptyListMessage.scss'
 import Link from 'next/link'
 import { forwardRef } from 'react'
+import type { ComponentType, ReactNode, Ref } from 'react'
 import { Container } from '@chakra-ui/react'
 import ImageGenerator from '../../imageGenerator'
 import ListColumnsHeader from './ListColumnsHeader'
-import { BigNumber, Identifier, Alias } from '../../data'
+// Untyped JS components — loose wrappers until data/* is migrated
+import { BigNumber as BigNumberJs, Identifier as IdentifierJs, Alias as AliasJs } from '../../data'
 import { RateTooltip } from '../Tooltips'
+import type { Rate } from '../../../types'
+import type { WithChildren } from '../../../types/common'
 
-function EmptyListMessage ({ children }) {
+const BigNumber = BigNumberJs as ComponentType<{ children?: ReactNode, className?: string }>
+const Identifier = IdentifierJs as ComponentType<{ children?: ReactNode, styles?: string[] }>
+const Alias = AliasJs as ComponentType<{ children?: ReactNode, className?: string }>
+
+function EmptyListMessage ({ children }: WithChildren) {
   return (
     <Container className={'EmptyListMessage'}>{children}</Container>
   )
 }
 
-function SimpleListItem ({ item }) {
-  const ItemContainer = ({ link, children }) => link
+interface ListColumn {
+  value?: ReactNode
+  format?: string
+  mono?: boolean
+  dim?: boolean
+  ellipsis?: boolean
+  avatar?: boolean
+  avatarSource?: string
+  rate?: Pick<Rate, 'usd'> | null
+}
+
+interface SimpleListItemData {
+  link?: string
+  monospaceTitles?: ReactNode[]
+  titles?: ReactNode[]
+  monospaceColumns?: ReactNode[]
+  columns?: Array<ListColumn | ReactNode>
+}
+
+interface SimpleListItemProps {
+  item: SimpleListItemData
+}
+
+function SimpleListItem ({ item }: SimpleListItemProps) {
+  const ItemContainer = ({ link, children }: { link?: string, children?: ReactNode }) => link
     ? <Link href={link} className={'SimpleListItem'}>{children}</Link>
     : <div className={'SimpleListItem'}>{children}</div>
 
-  const ValueContainer = ({ column, children }) => {
+  const ValueContainer = ({ column, children }: { column: ListColumn, children?: ReactNode }) => {
     if (column.format === 'currency') {
       const credits = Number(column.value)
 
@@ -37,10 +68,7 @@ function SimpleListItem ({ item }) {
   }
 
   return (
-    <ItemContainer
-      link={item.link}
-      className={'SimpleListItem'}
-    >
+    <ItemContainer link={item.link}>
       {item.monospaceTitles &&
         <div className={'SimpleListItem__TitlesContainer SimpleListItem__TitlesContainer--Mono'}>
           {item.monospaceTitles.map((title, key) =>
@@ -68,34 +96,35 @@ function SimpleListItem ({ item }) {
       {item.columns &&
         <div className={'SimpleListItem__ColumnsContainer'}>
           {item.columns.map((column, key) => {
-            if (typeof column === 'object') {
+            if (typeof column === 'object' && column !== null && !Array.isArray(column) && !('$$typeof' in (column as object))) {
+              const col = column as ListColumn
               return (
                 <div
                   key={key}
                   className={`SimpleListItem__Column ${
-                      column?.mono ? 'SimpleListItem__Column--Mono' : ''
+                      col?.mono ? 'SimpleListItem__Column--Mono' : ''
                     } ${
-                      column?.dim ? 'SimpleListItem__Column--Dim' : ''
+                      col?.dim ? 'SimpleListItem__Column--Dim' : ''
                     } ${
-                      column?.ellipsis ? 'SimpleListItem__Column--Ellipsis' : ''
+                      col?.ellipsis ? 'SimpleListItem__Column--Ellipsis' : ''
                     }`}
                 >
-                  {column?.avatar &&
+                  {col?.avatar &&
                     <ImageGenerator
                       className={'SimpleListItem__Avatar'}
-                      username={column.avatarSource || column.value}
+                      username={col.avatarSource || String(col.value ?? '')}
                       lightness={50}
                       saturation={50}
                       width={15}
                       height={15}
                     />
                   }
-                  <ValueContainer column={column} format={column?.format}>{column.value}</ValueContainer>
+                  <ValueContainer column={col}>{col.value}</ValueContainer>
                 </div>
               )
             }
 
-            return <div className={'SimpleListItem__Column'} key={key}>{column}</div>
+            return <div className={'SimpleListItem__Column'} key={key}>{column as ReactNode}</div>
           })}
         </div>
       }
@@ -103,21 +132,27 @@ function SimpleListItem ({ item }) {
   )
 }
 
-const SimpleList = forwardRef(function (props, ref) {
+interface SimpleListProps {
+  items: SimpleListItemData[]
+  columns?: Array<ListColumn | ReactNode>
+  showMoreLink?: string
+}
+
+const SimpleList = forwardRef(function SimpleList (props: SimpleListProps, ref: Ref<HTMLDivElement>) {
   const { items, columns, showMoreLink } = props
 
   return (
     <div className={'SimpleList'} ref={ref}>
-      {columns?.length > 0 &&
+      {columns && columns.length > 0 &&
         <div className={'SimpleList__ColumnTitles'}>
           {columns.map((column, key) => {
-            if (typeof column === 'object') {
+            if (typeof column === 'object' && column !== null && !Array.isArray(column) && !('$$typeof' in (column as object))) {
               return (
-                <div key={key} className={'SimpleList__ColumnTitle'}>{column.value}</div>
+                <div key={key} className={'SimpleList__ColumnTitle'}>{(column as ListColumn).value}</div>
               )
             }
 
-            return <div key={key} className={'SimpleList__ColumnTitle'}>{column}</div>
+            return <div key={key} className={'SimpleList__ColumnTitle'}>{column as ReactNode}</div>
           }
           )}
         </div>

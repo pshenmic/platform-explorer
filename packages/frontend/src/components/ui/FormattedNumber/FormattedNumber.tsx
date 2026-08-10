@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react'
 import { withFormatting } from './withFormatting'
 import { cva } from 'class-variance-authority'
 
@@ -5,7 +6,12 @@ import styles from './FormattedNumber.module.scss'
 
 const BigNumberStyles = cva(styles.root)
 
-const ViewNumber = ({ children, className }) => (
+interface ViewNumberProps {
+  children?: ReactNode
+  className?: string
+}
+
+const ViewNumber = ({ children, className }: ViewNumberProps) => (
   <span className={BigNumberStyles({ className })}>{children}</span>
 )
 
