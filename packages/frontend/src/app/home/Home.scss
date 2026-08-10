@@ -104,11 +104,20 @@
 
   @media screen and (min-width: $breakpoint-md) {
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    // start-align so JS height-match to Quorum does not stretch the row
+    align-items: start;
   }
 
   &__Cell {
     min-width: 0;
     width: 100%;
+    display: flex;
+    flex-direction: column;
+
+    > * {
+      width: 100%;
+      min-width: 0;
+    }
   }
 }
 

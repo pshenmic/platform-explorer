@@ -23,12 +23,8 @@ import './ShieldedPoolCard.scss'
 
 const DEFAULT_PRESET = PRESETS.length - 1
 const DAY_MS = 24 * 60 * 60 * 1000
-const M = { top: 16, right: 48, bottom: 24, left: 48 }
-const COLOR = {
-  tvl: '#2cffb4',
-  in: '#3dffc0',
-  out: '#ffb547'
-}
+// margins keep vol label and flow ticks from overlapping
+const M = { top: 22, right: 54, bottom: 24, left: 48 }
 
 function fmtDash (dash) {
   if (!dash) return '0'
@@ -111,19 +107,22 @@ async function loadDenseBuckets (rangeStart, rangeEnd) {
 export default function ShieldedPoolCard ({ enabled = true }) {
   const [pool, setPool] = useState({ loading: true, error: false, balance: null })
   const [series, setSeries] = useState({ loading: true, points: [] })
-  // Authoritative range totals from /shielded/statistic (not summed chart buckets)
+  // period in/out from /shielded/statistic (exact range totals, not chart-bucket sums)
   const [period, setPeriod] = useState({ loading: true, in: 0, out: 0 })
   const [presetIdx, setPresetIdx] = useState(DEFAULT_PRESET)
   const [hoverI, setHoverI] = useState(null)
+  // TVL line always on; bars can be toggled
+  const [showDeposits, setShowDeposits] = useState(true)
+  const [showWithdrawals, setShowWithdrawals] = useState(true)
   const [width, setWidth] = useState(0)
-  const [plotH, setPlotH] = useState(260)
+  const [plotH, setPlotH] = useState(180)
   const wrapRef = useRef(null)
   const rootRef = useRef(null)
   const gid = useId().replace(/:/g, '')
   const fetchGen = useRef(0)
   const periodGen = useRef(0)
 
-  // Match height with sibling MasternodesDonut on md+
+  // match Quorum card height on md+ so the pair reads as one band
   useEffect(() => {
     const root = rootRef.current
     if (!root || typeof ResizeObserver === 'undefined') return undefined
@@ -134,6 +133,8 @@ export default function ShieldedPoolCard ({ enabled = true }) {
 
     const mq = window.matchMedia('(min-width: 48em)')
     const clear = () => {
+      root.style.removeProperty('height')
+      root.style.removeProperty('max-height')
       root.style.removeProperty('min-height')
       root.classList.remove('is-height-matched')
     }
@@ -145,6 +146,8 @@ export default function ShieldedPoolCard ({ enabled = true }) {
       }
       const qh = Math.round(quorum.getBoundingClientRect().height)
       if (qh < 1) return
+      root.style.height = `${qh}px`
+      root.style.maxHeight = `${qh}px`
       root.style.minHeight = `${qh}px`
       root.classList.add('is-height-matched')
     }
@@ -165,13 +168,14 @@ export default function ShieldedPoolCard ({ enabled = true }) {
   useResizeObserver(wrapRef, entry => {
     const { width: w, height: hh } = entry.contentRect
     setWidth(Math.max(0, Math.floor(w)))
-    setPlotH(Math.max(200, Math.floor(hh)))
+    // when height-matched, plot may shrink below the default min
+    setPlotH(Math.max(120, Math.floor(hh) || 180))
   })
 
   useEffect(() => {
     if (!wrapRef.current) return
     setWidth(Math.max(0, Math.floor(wrapRef.current.clientWidth)))
-    setPlotH(Math.max(200, Math.floor(wrapRef.current.clientHeight || 260)))
+    setPlotH(Math.max(120, Math.floor(wrapRef.current.clientHeight || 180)))
   }, [])
 
   useEffect(() => {
@@ -210,7 +214,7 @@ export default function ShieldedPoolCard ({ enabled = true }) {
       })
   }, [presetIdx, enabled, pool.loading, pool.error, pool.balance])
 
-  // Deposits / withdrawals for the selected range — exact period totals
+  // exact deposit/withdraw totals for the selected range
   useEffect(() => {
     if (!enabled) {
       setPeriod({ loading: true, in: 0, out: 0 })
@@ -238,10 +242,9 @@ export default function ShieldedPoolCard ({ enabled = true }) {
   const points = series.points
   const isAll = PRESETS[presetIdx].label === 'All'
   const windowLabel = isAll ? 'all time' : PRESETS[presetIdx].label
-  // Period flow totals from statistic API (0 when no activity in range)
+  // period totals from statistic API; net is deposits minus withdrawals
   const rangeInDash = creditsToDash(period.in)
   const rangeOutDash = creditsToDash(period.out)
-  // Net change of the pool for the selected window: in − out
   const rangeNetDash = rangeInDash - rangeOutDash
 
   const ready = width > 0 && plotH > 0 && points.length >= 1 && !series.loading
@@ -274,7 +277,13 @@ export default function ShieldedPoolCard ({ enabled = true }) {
       [plotH - M.bottom, M.top]
     ).nice()
 
-    const flowMax = d3.max(pts, p => Math.max(p.inDash, p.outDash)) || 0
+    const flowVisible = showDeposits || showWithdrawals
+    const flowMax = flowVisible
+      ? (d3.max(pts, p => Math.max(
+          showDeposits ? p.inDash : 0,
+          showWithdrawals ? p.outDash : 0
+        )) || 0)
+      : 0
     const yFlow = d3.scaleLinear(
       [0, flowMax > 0 ? flowMax * 1.2 : 1],
       [plotH - M.bottom, M.top]
@@ -298,24 +307,42 @@ export default function ShieldedPoolCard ({ enabled = true }) {
     const xTickN = Math.max(2, Math.min(6, Math.floor((width - M.left - M.right) / 72)))
     const xTicks = x.ticks(xTickN)
     const yTvlTicks = yTvl.ticks(4)
-    const yFlowTicks = yFlow.ticks(4)
+    // skip top flow tick so it does not collide with the vol caption
+    const yFlowTicks = flowVisible
+      ? yFlow.ticks(4).filter(v => yFlow(v) > M.top + 14)
+      : []
 
     const step = pts.length > 1
       ? Math.abs(x(pts[1].x) - x(pts[0].x))
       : (width - M.left - M.right) / Math.max(pts.length, 1)
+    const both = showDeposits && showWithdrawals
     const groupW = Math.max(5, Math.min(20, step * 0.72))
-    const barW = Math.max(2, (groupW - 2) / 2)
+    const barW = both
+      ? Math.max(2, (groupW - 2) / 2)
+      : Math.max(2, groupW * 0.7)
     const baseline = plotH - M.bottom
 
     const bars = pts.map((p, i) => {
       const cx = x(p.x)
-      const inH = Math.max(0, baseline - yFlow(p.inDash))
-      const outH = Math.max(0, baseline - yFlow(p.outDash))
+      const inH = showDeposits ? Math.max(0, baseline - yFlow(p.inDash)) : 0
+      const outH = showWithdrawals ? Math.max(0, baseline - yFlow(p.outDash)) : 0
+      let inX
+      let outX
+      if (both) {
+        inX = cx - groupW / 2
+        outX = cx - groupW / 2 + barW + 1
+      } else if (showDeposits) {
+        inX = cx - barW / 2
+        outX = cx
+      } else {
+        inX = cx
+        outX = cx - barW / 2
+      }
       return {
         i,
         cx,
-        inX: cx - groupW / 2,
-        outX: cx - groupW / 2 + barW + 1,
+        inX,
+        outX,
         inY: baseline - inH,
         outY: baseline - outH,
         inH,
@@ -337,9 +364,10 @@ export default function ShieldedPoolCard ({ enabled = true }) {
       yTvlTicks,
       yFlowTicks,
       bars,
-      baseline
+      baseline,
+      flowVisible
     }
-  }, [ready, points, width, plotH])
+  }, [ready, points, width, plotH, showDeposits, showWithdrawals])
 
   const handleMove = (e) => {
     if (!chart) return
@@ -357,10 +385,7 @@ export default function ShieldedPoolCard ({ enabled = true }) {
 
   const hovered = chart && hoverI != null ? chart.pts[hoverI] : null
 
-  // Big number follows the selected range (same idea as identities/volume):
-  // · All  → current total locked in the pool
-  // · 24h… → net Δ for that window (deposits − withdrawals)
-  // Flows row stays the period totals; chart hover does not change these.
+  // All = locked total; ranged presets = net Δ for that window (hover does not change this)
   const statCount = (() => {
     if (pool.loading) return null
     if (isAll) return fmtDash(balanceDash)
@@ -382,8 +407,6 @@ export default function ShieldedPoolCard ({ enabled = true }) {
       as={'section'}
       aria-label={'Shielded pool'}
     >
-      <div className={'ShieldedPool__Scan'} aria-hidden={'true'}/>
-
       <header className={'ShieldedPool__Head'}>
         <div className={'ShieldedPool__HeadText'}>
           <span className={'ShieldedPool__Eyebrow'}>Privacy layer</span>
@@ -412,12 +435,26 @@ export default function ShieldedPoolCard ({ enabled = true }) {
               {flowsLoading
                 ? <Skeleton w={'16ch'} h={'0.85em'}/>
                 : <>
-                    <span className={'ShieldedPool__Flow ShieldedPool__Flow--in'}>
+                    <button
+                      type={'button'}
+                      className={`ShieldedPool__Flow ShieldedPool__Flow--in${showDeposits ? ' is-on' : ' is-off'}`}
+                      aria-pressed={showDeposits}
+                      title={showDeposits ? 'Hide deposits on chart' : 'Show deposits on chart'}
+                      onClick={() => setShowDeposits(v => !v)}
+                    >
+                      <i className={'ShieldedPool__FlowSwatch'} aria-hidden={'true'}/>
                       deposits <b>+{fmtDash(rangeInDash)}</b>
-                    </span>
-                    <span className={'ShieldedPool__Flow ShieldedPool__Flow--out'}>
+                    </button>
+                    <button
+                      type={'button'}
+                      className={`ShieldedPool__Flow ShieldedPool__Flow--out${showWithdrawals ? ' is-on' : ' is-off'}`}
+                      aria-pressed={showWithdrawals}
+                      title={showWithdrawals ? 'Hide withdrawals on chart' : 'Show withdrawals on chart'}
+                      onClick={() => setShowWithdrawals(v => !v)}
+                    >
+                      <i className={'ShieldedPool__FlowSwatch'} aria-hidden={'true'}/>
                       withdrawals <b>−{fmtDash(rangeOutDash)}</b>
-                    </span>
+                    </button>
                   </>}
             </div>
           </div>
@@ -438,7 +475,7 @@ export default function ShieldedPoolCard ({ enabled = true }) {
                 : chart
                   ? <>
                       <svg
-                        className={'ShieldedPool__Svg'}
+                        className={`ShieldedPool__Svg${series.loading ? ' is-stale' : ''}`}
                         width={width}
                         height={plotH}
                         role={'img'}
@@ -446,9 +483,24 @@ export default function ShieldedPoolCard ({ enabled = true }) {
                       >
                         <defs>
                           <linearGradient id={`pool-tvl-fill-${gid}`} x1={'0'} y1={'0'} x2={'0'} y2={'1'}>
-                            <stop offset={'0%'} stopColor={COLOR.tvl} stopOpacity={'0.28'}/>
-                            <stop offset={'100%'} stopColor={COLOR.tvl} stopOpacity={'0.02'}/>
+                            <stop className={'ShieldedPool__AreaTop'} offset={'0%'}/>
+                            <stop className={'ShieldedPool__AreaBot'} offset={'100%'}/>
                           </linearGradient>
+                          <linearGradient id={`pool-bar-in-${gid}`} x1={'0'} y1={'0'} x2={'0'} y2={'1'}>
+                            <stop className={'ShieldedPool__BarInTop'} offset={'0%'}/>
+                            <stop className={'ShieldedPool__BarInBot'} offset={'100%'}/>
+                          </linearGradient>
+                          <linearGradient id={`pool-bar-out-${gid}`} x1={'0'} y1={'0'} x2={'0'} y2={'1'}>
+                            <stop className={'ShieldedPool__BarOutTop'} offset={'0%'}/>
+                            <stop className={'ShieldedPool__BarOutBot'} offset={'100%'}/>
+                          </linearGradient>
+                          <filter id={`pool-glow-${gid}`} x={'-40%'} y={'-40%'} width={'180%'} height={'180%'}>
+                            <feGaussianBlur stdDeviation={'2'} result={'b'}/>
+                            <feMerge>
+                              <feMergeNode in={'b'}/>
+                              <feMergeNode in={'SourceGraphic'}/>
+                            </feMerge>
+                          </filter>
                         </defs>
 
                         {chart.yTvlTicks.map((v, i) => (
@@ -462,9 +514,9 @@ export default function ShieldedPoolCard ({ enabled = true }) {
                             />
                             <text
                               className={'ShieldedPool__YTick ShieldedPool__YTick--left'}
-                              x={M.left - 8}
+                              x={M.left - 6}
                               y={chart.yTvl(v)}
-                              dy={'0.35em'}
+                              dy={'0.32em'}
                               textAnchor={'end'}
                             >
                               {fmtCompact(v)}
@@ -478,36 +530,49 @@ export default function ShieldedPoolCard ({ enabled = true }) {
                             className={'ShieldedPool__YTick ShieldedPool__YTick--right'}
                             x={width - M.right + 8}
                             y={chart.yFlow(v)}
-                            dy={'0.35em'}
+                            dy={'0.32em'}
                             textAnchor={'start'}
                           >
                             {fmtCompact(v)}
                           </text>
                         ))}
 
-                        <text className={'ShieldedPool__AxisTitle'} x={M.left - 8} y={M.top - 4} textAnchor={'end'}>
+                        <text
+                          className={'ShieldedPool__AxisTitle ShieldedPool__AxisTitle--left'}
+                          x={M.left - 6}
+                          y={10}
+                          textAnchor={'end'}
+                        >
                           TVL
                         </text>
-                        <text className={'ShieldedPool__AxisTitle'} x={width - M.right + 8} y={M.top - 4} textAnchor={'start'}>
-                          vol
-                        </text>
+                        {chart.flowVisible &&
+                          <text
+                            className={'ShieldedPool__AxisTitle ShieldedPool__AxisTitle--right'}
+                            x={width - 4}
+                            y={10}
+                            textAnchor={'end'}
+                          >
+                            vol
+                          </text>}
 
-                        {chart.bars.map(b => {
+                        {chart.flowVisible && chart.bars.map(b => {
                           const dim = hoverI != null && hoverI !== b.i
                           return (
-                            <g key={b.i} opacity={dim ? 0.25 : 0.9}>
-                              {b.inH > 0.5 &&
+                            <g key={b.i} opacity={dim ? 0.22 : 1}>
+                              {showDeposits && b.inH > 0.5 &&
                                 <rect
                                   className={'ShieldedPool__Bar ShieldedPool__Bar--in'}
+                                  fill={`url(#pool-bar-in-${gid})`}
                                   x={b.inX}
                                   y={b.inY}
                                   width={b.barW}
                                   height={b.inH}
                                   rx={1}
                                 />}
-                              {b.outH > 0.5 &&
+                              {showWithdrawals && b.outH > 0.5 &&
                                 <rect
                                   className={'ShieldedPool__Bar ShieldedPool__Bar--out'}
+                                  fill={`url(#pool-bar-out-${gid})`}
                                   x={b.outX}
                                   y={b.outY}
                                   width={b.barW}
@@ -518,12 +583,15 @@ export default function ShieldedPoolCard ({ enabled = true }) {
                           )
                         })}
 
-                        <path d={chart.area} fill={`url(#pool-tvl-fill-${gid})`} className={'ShieldedPool__Area'}/>
+                        <path
+                          className={'ShieldedPool__Area'}
+                          d={chart.area}
+                          fill={`url(#pool-tvl-fill-${gid})`}
+                        />
                         <path
                           className={'ShieldedPool__Line'}
                           d={chart.line}
-                          fill={'none'}
-                          stroke={COLOR.tvl}
+                          filter={`url(#pool-glow-${gid})`}
                         />
 
                         {hovered &&
@@ -536,10 +604,16 @@ export default function ShieldedPoolCard ({ enabled = true }) {
                               y2={chart.baseline}
                             />
                             <circle
+                              className={'ShieldedPool__DotRing'}
+                              cx={chart.x(hovered.x)}
+                              cy={chart.yTvl(hovered.tvl)}
+                              r={8}
+                            />
+                            <circle
                               className={'ShieldedPool__Dot'}
                               cx={chart.x(hovered.x)}
                               cy={chart.yTvl(hovered.tvl)}
-                              r={4.5}
+                              r={4}
                             />
                           </>}
 
@@ -547,9 +621,15 @@ export default function ShieldedPoolCard ({ enabled = true }) {
                           <text
                             key={`x-${i}`}
                             className={'ShieldedPool__Tick'}
+                            style={{
+                              textAnchor: i === 0
+                                ? 'start'
+                                : i === chart.xTicks.length - 1
+                                  ? 'end'
+                                  : 'middle'
+                            }}
                             x={chart.x(t)}
-                            y={plotH - 6}
-                            textAnchor={'middle'}
+                            y={plotH - 4}
                           >
                             {chart.tickFmt(t)}
                           </text>
@@ -565,8 +645,10 @@ export default function ShieldedPoolCard ({ enabled = true }) {
                         >
                           <span className={'ShieldedPool__TipDate'}>{chart.tipFmt(hovered.x)}</span>
                           <span className={'ShieldedPool__TipRow is-tvl'}>TVL {fmtDash(hovered.tvl)}</span>
-                          <span className={'ShieldedPool__TipRow is-in'}>In +{fmtDash(hovered.inDash)}</span>
-                          <span className={'ShieldedPool__TipRow is-out'}>Out −{fmtDash(hovered.outDash)}</span>
+                          {showDeposits &&
+                            <span className={'ShieldedPool__TipRow is-in'}>In +{fmtDash(hovered.inDash)}</span>}
+                          {showWithdrawals &&
+                            <span className={'ShieldedPool__TipRow is-out'}>Out −{fmtDash(hovered.outDash)}</span>}
                         </div>}
                     </>
                   : <div className={'ShieldedPool__EmptyChart'}>Not enough history</div>}
