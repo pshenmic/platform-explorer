@@ -1,6 +1,19 @@
+import type { FormEventHandler } from 'react'
 import './GoToHeightForm.scss'
 
-export default function GoToHeightForm ({ isValid, goToHeightHandler, goToHeightChangeHandle, disabled = false }) {
+interface GoToHeightFormProps {
+  isValid: () => boolean
+  goToHeightHandler: FormEventHandler<HTMLFormElement>
+  goToHeightChangeHandle: FormEventHandler<HTMLInputElement>
+  disabled?: boolean
+}
+
+export default function GoToHeightForm ({
+  isValid,
+  goToHeightHandler,
+  goToHeightChangeHandle,
+  disabled = false
+}: GoToHeightFormProps) {
   return (
     <form className={'GoToHeightForm'} onSubmit={goToHeightHandler}>
         <div className={'GoToHeightForm__Title'}>Go to height</div>

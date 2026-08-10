@@ -1,0 +1,58 @@
+import { Container } from '@chakra-ui/react'
+import type { ComponentPropsWithoutRef } from 'react'
+import type { WithChildren, WithClassName } from '../../types/common'
+import './LoadingLine.scss'
+import './LoadingBlock.scss'
+import './LoadingList.scss'
+
+interface LoadingLineProps extends WithChildren, WithClassName {
+  colorScheme?: string
+  loading?: boolean
+  w?: string | number
+  h?: string | number
+}
+
+function LoadingLine ({ children, colorScheme, loading, w = '100%', h = '20px', className = '' }: LoadingLineProps) {
+  const schemes: Record<string, string> = {
+    gray: 'LoadingLine--Gray'
+  }
+  const colorSchemeClass = (colorScheme && schemes[colorScheme]) || ''
+
+  if (children === undefined || loading) {
+    return <Container p={0} w={w} h={h} maxW={'none'} className={`LoadingLine ${colorSchemeClass} ${className || ''}`}></Container>
+  }
+
+  return <>{children}</>
+}
+
+interface LoadingBlockProps extends WithChildren, WithClassName, Omit<ComponentPropsWithoutRef<typeof Container>, 'children' | 'className'> {
+  loading?: boolean
+  w?: string | number
+  h?: string | number
+}
+
+function LoadingBlock ({ children, loading, w = '100%', h = '100%', className = '', ...props }: LoadingBlockProps) {
+  if (children === undefined || loading) {
+    return <Container w={w} h={h} maxW={'none'} className={`LoadingBlock ${className}`} {...props}></Container>
+  }
+
+  return <>{children}</>
+}
+
+interface LoadingListProps {
+  itemsCount: number
+}
+
+const LoadingList = ({ itemsCount }: LoadingListProps) => {
+  return (
+    <div className={'LoadingList'}>
+        {Array.from(Array(itemsCount)).map((_e, i) => <LoadingLine h={9} className={'LoadingList__Item'} key={i}/>)}
+    </div>
+  )
+}
+
+export {
+  LoadingLine,
+  LoadingBlock,
+  LoadingList
+}

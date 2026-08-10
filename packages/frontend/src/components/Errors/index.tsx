@@ -1,7 +1,15 @@
 import { WarningTwoIcon } from '@chakra-ui/icons'
 import { Flex } from '@chakra-ui/react'
+import type { ReactNode } from 'react'
 
-function ErrorMessageBlock ({ w = '100%', h = '100%', text, warningIcon = true }) {
+interface ErrorMessageBlockProps {
+  w?: string | number
+  h?: string | number
+  text?: ReactNode
+  warningIcon?: boolean
+}
+
+function ErrorMessageBlock ({ w = '100%', h = '100%', text, warningIcon = true }: ErrorMessageBlockProps) {
   return (
     <Flex
       flexGrow={1}
