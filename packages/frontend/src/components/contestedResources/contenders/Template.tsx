@@ -1,8 +1,18 @@
+import type { ReactNode } from 'react'
 import { Grid, GridItem } from '@chakra-ui/react'
+import type { WithChildren, WithClassName } from '../../../types'
 
 import './Template.scss'
 
-export const ContendersTemplate = ({ children, isVoteVisible, className = '' }) => (
+interface ContendersTemplateProps extends WithChildren, WithClassName {
+  isVoteVisible?: boolean
+}
+
+export const ContendersTemplate = ({
+  children,
+  isVoteVisible,
+  className = ''
+}: ContendersTemplateProps) => (
     <div className={`ContendersList ${className}`}>
       <div className={'ContendersList__ScrollZone'}>
         <Grid className={`ContendersList__ColumnTitles ${isVoteVisible ? '' : 'ContendersList__ColumnTitles--Hidden'}`}>
@@ -29,7 +39,7 @@ export const ContendersTemplate = ({ children, isVoteVisible, className = '' }) 
           }
         </Grid>
          <div className={'VotesList__Items'}>
-            { children }
+            {children as ReactNode}
          </div>
       </div>
     </div>

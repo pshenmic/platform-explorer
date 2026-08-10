@@ -1,8 +1,13 @@
 import { Badge } from '@chakra-ui/react'
 import { Tooltip } from '../ui/Tooltips'
+import type { WithClassName } from '../../types'
 import './VoteBadges.scss'
 
-function ContendersBadges ({ contenders, className }) {
+interface ContendersBadgeProps extends WithClassName {
+  contenders?: number | string | unknown[] | null
+}
+
+function ContendersBadges ({ contenders, className }: ContendersBadgeProps) {
   if (typeof contenders !== 'number' && typeof contenders !== 'string') return null
 
   return (

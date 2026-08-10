@@ -1,12 +1,34 @@
+import type { ComponentType, ReactNode, MouseEvent } from 'react'
 import { Badge, Grid, GridItem } from '@chakra-ui/react'
-import { Identifier, NotActive, TimeDelta } from '../../data'
+import {
+  Identifier as IdentifierJs,
+  NotActive as NotActiveJs,
+  TimeDelta as TimeDeltaJs
+} from '../../data'
 import Link from 'next/link'
 import { LinkContainer } from '../../ui/containers'
 import { useRouter } from 'next/navigation'
 import ChoiceBadge from '../ChoiceBadge'
+import type { Vote } from '../../../types'
 import './VotesListItem.scss'
 
-function VotesListItem ({ vote, showDataContract = true }) {
+// Untyped JS components — loose wrappers until data/* is migrated
+const Identifier = IdentifierJs as ComponentType<{
+  children?: ReactNode
+  avatar?: boolean
+  ellipsis?: boolean
+  styles?: string[]
+  className?: string
+}>
+const NotActive = NotActiveJs as ComponentType<{ children?: ReactNode, className?: string }>
+const TimeDelta = TimeDeltaJs as ComponentType<{ endDate?: Date }>
+
+interface VotesListItemProps {
+  vote: Vote
+  showDataContract?: boolean
+}
+
+function VotesListItem ({ vote, showDataContract = true }: VotesListItemProps) {
   const router = useRouter()
 
   return (
@@ -14,7 +36,7 @@ function VotesListItem ({ vote, showDataContract = true }) {
       <Grid className={`VotesListItem__Content ${!showDataContract ? 'VotesListItem__Content--NoDataContract' : ''}`}>
         <GridItem className={'VotesListItem__Column VotesListItem__Column--Timestamp'}>
           {(vote?.timestamp ?? null)
-            ? <TimeDelta endDate={new Date(vote?.timestamp)}/>
+            ? <TimeDelta endDate={new Date(vote?.timestamp ?? '')}/>
             : <NotActive>-</NotActive>
           }
         </GridItem>
@@ -23,7 +45,7 @@ function VotesListItem ({ vote, showDataContract = true }) {
           {(vote?.proTxHash ?? null) &&
               <LinkContainer
               className={'BlocksListItem__LinkContainer'}
-              onClick={e => {
+              onClick={(e: MouseEvent) => {
                 e.stopPropagation()
                 e.preventDefault()
                 router.push(`/validator/${vote?.proTxHash?.toUpperCase()}`)
@@ -45,7 +67,7 @@ function VotesListItem ({ vote, showDataContract = true }) {
             {(vote?.dataContractIdentifier ?? null) &&
               <LinkContainer
                 className={'BlocksListItem__LinkContainer'}
-                onClick={e => {
+                onClick={(e: MouseEvent) => {
                   e.stopPropagation()
                   e.preventDefault()
                   router.push(`/dataContract/${vote?.dataContractIdentifier}`)
@@ -67,7 +89,7 @@ function VotesListItem ({ vote, showDataContract = true }) {
           {(vote?.documentIdentifier ?? null) &&
             <LinkContainer
               className={'BlocksListItem__LinkContainer'}
-              onClick={e => {
+              onClick={(e: MouseEvent) => {
                 e.stopPropagation()
                 e.preventDefault()
                 router.push(`/document/${vote?.documentIdentifier}`)
@@ -88,7 +110,7 @@ function VotesListItem ({ vote, showDataContract = true }) {
           {(vote?.towardsIdentity ?? null) &&
             <LinkContainer
               className={'BlocksListItem__LinkContainer'}
-              onClick={e => {
+              onClick={(e: MouseEvent) => {
                 e.stopPropagation()
                 e.preventDefault()
                 router.push(`/identity/${vote?.towardsIdentity}`)

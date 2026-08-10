@@ -1,15 +1,62 @@
 import { memo, useMemo } from 'react'
-import { Alias, CreditsBlock, DateBlock, Identifier, InfoLine } from '../data'
+import type { ComponentType, ReactNode } from 'react'
+import {
+  Alias as AliasJs,
+  CreditsBlock as CreditsBlockJs,
+  DateBlock as DateBlockJs,
+  Identifier as IdentifierJs,
+  InfoLine as InfoLineJs
+} from '../data'
 import { HorisontalSeparator } from '../ui/separators'
 import { SignatureIcon } from '../ui/icons'
 import contestedResources from '../../util/contestedResources'
-import { ValueCard } from '../cards'
+import { ValueCard as ValueCardJs } from '../cards'
 import { Badge } from '@chakra-ui/react'
 import ContestedResourcesDigestCard from './ContestedResourceDigestCard'
 import { ContendersList } from './contenders'
+import type { Contender } from './contenders/ContendersListItem'
 import { InfoBlock } from '../ui/containers'
 import { colors } from '../../styles/colors'
+import type { ContestedResource, LoadableState, Rate, WithClassName } from '../../types'
 import './ContestedResourceTotalCard.scss'
+
+// Untyped JS components — loose wrappers until data/* / cards/* are migrated
+const Alias = AliasJs as ComponentType<{ children?: ReactNode, className?: string, ellipsis?: boolean }>
+const CreditsBlock = CreditsBlockJs as ComponentType<{ credits?: string | number | null, rate?: unknown }>
+const DateBlock = DateBlockJs as ComponentType<{ timestamp?: string | null, showTime?: boolean }>
+const Identifier = IdentifierJs as ComponentType<{
+  children?: ReactNode
+  avatar?: boolean
+  ellipsis?: boolean
+  styles?: string[]
+  className?: string
+}>
+const InfoLine = InfoLineJs as ComponentType<{
+  title?: ReactNode
+  value?: ReactNode
+  icon?: ReactNode
+  loading?: boolean
+  error?: unknown
+  className?: string
+}>
+const ValueCard = ValueCardJs as ComponentType<{ children?: ReactNode, link?: string, className?: string }>
+
+/** Enriched contenders / prefunded balance shapes used by this card. */
+interface ContestedResourceDetail extends Omit<ContestedResource, 'contenders' | 'prefundedVotingBalance'> {
+  contenders?: Contender[] | null
+  prefundedVotingBalance?: Record<string, string | number | null> | string | null
+}
+
+interface ContestedResourceTotalCardProps extends WithClassName {
+  contestedResource: LoadableState<ContestedResourceDetail> | {
+    data?: ContestedResourceDetail | null
+    loading?: boolean
+    error?: unknown
+  }
+  rate?: LoadableState<Rate> | { data?: Rate | null } | null
+  refresh?: () => void
+  isPollingAfterVote?: boolean
+}
 
 function ContestedResourceTotalCard ({
   contestedResource,
@@ -17,7 +64,7 @@ function ContestedResourceTotalCard ({
   className,
   refresh,
   isPollingAfterVote
-}) {
+}: ContestedResourceTotalCardProps) {
   const { data, loading, error } = contestedResource
 
   const isEnded = data?.status === 'finished' || data?.finished === true
@@ -30,9 +77,9 @@ function ContestedResourceTotalCard ({
         : null
   }, [data?.towardsIdentity, data?.contenders, data?.totalCountVotes])
 
-  const colorScheme = useMemo(() => {
+  const colorScheme = useMemo((): 'green' | 'red' | 'blue' => {
     return isEnded ? (winner ? 'green' : 'red') : 'blue'
-  }, [data?.status, winner])
+  }, [isEnded, winner])
 
   const signIconColor = useMemo(
     () => ({
@@ -42,6 +89,10 @@ function ContestedResourceTotalCard ({
     }),
     []
   )
+
+  const prefundedBalance = typeof data?.prefundedVotingBalance === 'object' && data?.prefundedVotingBalance !== null
+    ? data.prefundedVotingBalance[data.indexName]
+    : null
 
   return (
     <InfoBlock
@@ -137,15 +188,15 @@ function ContestedResourceTotalCard ({
               title={'Prefunding Voting Balance'}
               value={
                 <CreditsBlock
-                  credits={data?.prefundedVotingBalance?.[data?.indexName]}
+                  credits={prefundedBalance}
                   rate={rate}
                 />
               }
               loading={loading}
               error={
                 error ||
-                data?.prefundedVotingBalance?.[data?.indexName] === null ||
-                data?.prefundedVotingBalance?.[data?.indexName] === undefined
+                prefundedBalance === null ||
+                prefundedBalance === undefined
               }
             />
 
@@ -164,7 +215,7 @@ function ContestedResourceTotalCard ({
 
         <div className={'ContestedResourcesTotalCard__Column'}>
           <ContestedResourcesDigestCard
-            contestedResource={contestedResource}
+            contestedResource={contestedResource as LoadableState<ContestedResource>}
             winner={winner}
             isEnded={isEnded}
           />

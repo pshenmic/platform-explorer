@@ -4,10 +4,33 @@ import { ErrorMessageBlock } from '../../Errors'
 import { LoadingList } from '../../loading'
 import Pagination from '../../pagination'
 import { VotesListItem } from './'
+import type { Vote } from '../../../types'
 import './VotesList.scss'
 
-function VotesList ({ votes = [], headerStyles, pagination, loading, itemsCount = 10, showDataContract = true }) {
-  const headerExtraClass = {
+interface PaginationProps {
+  onPageChange: (selectedItem: { selected: number }) => void
+  pageCount: number
+  forcePage?: number
+}
+
+interface VotesListProps {
+  votes?: Vote[]
+  headerStyles?: string
+  pagination?: PaginationProps | null
+  loading?: boolean
+  itemsCount?: number
+  showDataContract?: boolean
+}
+
+function VotesList ({
+  votes = [],
+  headerStyles,
+  pagination,
+  loading,
+  itemsCount = 10,
+  showDataContract = true
+}: VotesListProps) {
+  const headerExtraClass: Record<string, string> = {
     default: '',
     light: 'VotesList__ColumnTitles--Light',
     noDataContract: 'VotesList__ColumnTitles--NoDataContract'
@@ -17,7 +40,7 @@ function VotesList ({ votes = [], headerStyles, pagination, loading, itemsCount 
     <div className={'VotesList'}>
       <div className={'VotesList__ListContainer'}>
         <div className={'VotesList__ScrollZone'}>
-          <Grid className={`VotesList__ColumnTitles ${headerExtraClass?.[headerStyles] || ''} ${!showDataContract ? headerExtraClass.noDataContract : ''}`}>
+          <Grid className={`VotesList__ColumnTitles ${headerExtraClass?.[headerStyles ?? ''] || ''} ${!showDataContract ? headerExtraClass.noDataContract : ''}`}>
             <GridItem className={'VotesList__ColumnTitle VotesList__ColumnTitle--Timestamp'}>
               Time
             </GridItem>

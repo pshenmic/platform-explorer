@@ -1,20 +1,41 @@
+import { Grid, GridItem } from '@chakra-ui/react'
 import { EmptyListMessage } from '../ui/lists'
-import Pagination from '../pagination'
 import { ErrorMessageBlock } from '../Errors'
 import { LoadingList } from '../loading'
-import { Grid, GridItem } from '@chakra-ui/react'
-import './ContestedResourcesList.scss'
+import Pagination from '../pagination'
 import { ContestedResourcesListItem } from './ContestedResourcesListItem'
+import type { ContestedResourcesListItemData } from './ContestedResourcesListItem'
+import './ContestedResourcesList.scss'
 
-function ContestedResourcesList ({ contestedResources = [], headerStyles, pagination, loading, itemsCount = 10 }) {
-  const headerExtraClass = {
+interface PaginationProps {
+  onPageChange: (selectedItem: { selected: number }) => void
+  pageCount: number
+  forcePage?: number
+}
+
+interface ContestedResourcesListProps {
+  contestedResources?: ContestedResourcesListItemData[]
+  headerStyles?: string
+  pagination?: PaginationProps | null
+  loading?: boolean
+  itemsCount?: number
+}
+
+function ContestedResourcesList ({
+  contestedResources = [],
+  headerStyles,
+  pagination,
+  loading,
+  itemsCount = 10
+}: ContestedResourcesListProps) {
+  const headerExtraClass: Record<string, string> = {
     default: '',
     light: 'ContestedResourcesList__ColumnTitles--Light'
   }
 
   return (
     <div className={'ContestedResourcesList'}>
-      <Grid className={`ContestedResourcesList__ColumnTitles ${headerExtraClass?.[headerStyles] || ''}`}>
+      <Grid className={`ContestedResourcesList__ColumnTitles ${headerExtraClass?.[headerStyles ?? ''] || ''}`}>
         <GridItem className={'ContestedResourcesList__ColumnTitle'}>
           Time
         </GridItem>

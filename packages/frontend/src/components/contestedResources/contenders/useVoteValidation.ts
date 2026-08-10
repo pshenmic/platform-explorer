@@ -6,6 +6,8 @@ import {
 } from '../../../util/extension'
 import { useParams } from 'next/navigation'
 import { API_VOTE_ENUM, VOTING_CAPABLE_TYPES } from './constants'
+import type { VoteEnumValue } from './constants'
+import type { WalletContextValue, WalletInfo } from 'src/contexts'
 
 export const VoteControlState = {
   INIT_INVALID: 'INIT_INVALID',
@@ -14,18 +16,37 @@ export const VoteControlState = {
   USER_IS_NOT_ALLOWED_TO_VOTE: 'USER_IS_NOT_ALLOWED_TO_VOTE',
   VOTING_IS_FINISHED: 'VOTING_IS_FINISHED',
   CAN_VOTE: 'CAN_VOTE'
-}
+} as const
 
-const HIDDEN_STATES = [
+export type VoteControlStateValue = (typeof VoteControlState)[keyof typeof VoteControlState]
+
+const HIDDEN_STATES: VoteControlStateValue[] = [
   VoteControlState.INIT_INVALID,
   VoteControlState.VOTING_IS_FINISHED
 ]
 
-const getLastVoteByProTxHash = ({ resourceValue, proTxHash }) => {
+interface UseVoteValidationParams {
+  wallet: WalletContextValue
+  isFinished?: boolean
+}
+
+interface IdentityWithType {
+  identifier: string
+  type?: string
+  proTxHash?: string
+}
+
+const getLastVoteByProTxHash = ({
+  resourceValue,
+  proTxHash
+}: {
+  resourceValue: string
+  proTxHash: string
+}) => {
   const defaultOptions = {
     page: 1,
     size: 1,
-    order: 'desc'
+    order: 'desc' as const
   }
 
   return Api.getContestedResourceVotes(
@@ -37,22 +58,27 @@ const getLastVoteByProTxHash = ({ resourceValue, proTxHash }) => {
   )
 }
 
-export const useVoteValidation = ({ wallet, isFinished }) => {
+export const useVoteValidation = ({ wallet, isFinished }: UseVoteValidationParams) => {
   const proTxHash = wallet.walletInfo?.proTxHash
-  const { resourceValue } = useParams()
+  const params = useParams()
+  const resourceValue = typeof params?.resourceValue === 'string'
+    ? params.resourceValue
+    : Array.isArray(params?.resourceValue)
+      ? params.resourceValue[0]
+      : undefined
   const isExtensionConnected =
     checkPlatformExtension() === ExtensionStatusEnum.CONNECTED
-  const [prevVote, setPrevVote] = useState(null)
-  const [voteValidateState, setVoteValidate] = useState(
+  const [prevVote, setPrevVote] = useState<VoteEnumValue | null>(null)
+  const [voteValidateState, setVoteValidate] = useState<VoteControlStateValue>(
     VoteControlState.INIT_INVALID
   )
 
-  const identities = wallet.walletInfo?.identities ?? []
+  const identities = (wallet.walletInfo?.identities ?? []) as IdentityWithType[]
   const currentIdentityInfo = identities.find(
     ({ identifier }) => identifier === wallet.currentIdentity
   )
   const currentCanVote = VOTING_CAPABLE_TYPES.includes(
-    currentIdentityInfo?.type
+    currentIdentityInfo?.type as (typeof VOTING_CAPABLE_TYPES)[number]
   )
 
   useEffect(() => {
@@ -87,15 +113,22 @@ export const useVoteValidation = ({ wallet, isFinished }) => {
 
   useEffect(() => {
     const getPrevVote = async () => {
-      const { proTxHash } = wallet.walletInfo
+      const info = wallet.walletInfo as WalletInfo | null
+      if (!info?.proTxHash || !resourceValue) return
 
       try {
         const {
           resultSet: [prev]
-        } = await getLastVoteByProTxHash({ resourceValue, proTxHash })
+        } = await getLastVoteByProTxHash({
+          resourceValue,
+          proTxHash: info.proTxHash
+        })
 
         if (prev) {
-          const choice = API_VOTE_ENUM[prev.choice]
+          const choiceIndex = typeof prev.choice === 'number'
+            ? prev.choice
+            : Number(prev.choice)
+          const choice = API_VOTE_ENUM[choiceIndex]
 
           setPrevVote(choice)
         }

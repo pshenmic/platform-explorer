@@ -1,17 +1,58 @@
+import type { ComponentType, ReactNode, MouseEvent } from 'react'
 import { Grid, GridItem, Badge } from '@chakra-ui/react'
-import { Alias, Identifier, NotActive, TimeDelta, TimeRemaining } from '../data'
+import {
+  Alias as AliasJs,
+  Identifier as IdentifierJs,
+  NotActive as NotActiveJs,
+  TimeDelta as TimeDeltaJs,
+  TimeRemaining as TimeRemainingJs
+} from '../data'
 import ValueContainer from '../ui/containers/ValueContainer'
 import Link from 'next/link'
 import { Tooltip } from '../ui/Tooltips'
-import StatusIcon from '../transactions/StatusIcon'
+import StatusIconJs from '../transactions/StatusIcon'
 import contestedResources from '../../util/contestedResources'
 import VoteBadges from './VoteBadges'
 import ContendersBadge from './ContendersBadge'
 import { LinkContainer } from '../ui/containers'
 import { useRouter } from 'next/navigation'
+import type { ContestedResource } from '../../types'
 import './ContestedResourcesListItem.scss'
 
-export function ContestedResourcesListItem ({ contestedResource }) {
+// Untyped JS components — loose wrappers until data/* / transactions/* are migrated
+const Alias = AliasJs as ComponentType<{ children?: ReactNode, ellipsis?: boolean, className?: string }>
+const Identifier = IdentifierJs as ComponentType<{
+  children?: ReactNode
+  avatar?: boolean
+  ellipsis?: boolean
+  styles?: string[]
+  className?: string
+}>
+const NotActive = NotActiveJs as ComponentType<{ children?: ReactNode, className?: string }>
+const TimeDelta = TimeDeltaJs as ComponentType<{ endDate?: Date }>
+const TimeRemaining = TimeRemainingJs as ComponentType<{
+  startTime?: string | null
+  endTime?: string | null
+  displayProgress?: boolean
+}>
+const StatusIcon = StatusIconJs as ComponentType<{
+  className?: string
+  status?: string | null
+  w?: string
+  h?: string
+  mr?: string
+}>
+
+export type ContestedResourcesListItemData = ContestedResource & {
+  error?: string | null
+  contenders?: number | string | unknown[] | null
+}
+
+interface ContestedResourcesListItemProps {
+  contestedResource: ContestedResourcesListItemData
+}
+
+export function ContestedResourcesListItem ({ contestedResource }: ContestedResourcesListItemProps) {
   const isEnded = new Date() > new Date(contestedResource?.endTimestamp)
   const router = useRouter()
   const resourceValueBase64 = btoa(JSON.stringify(contestedResource?.resourceValue))
@@ -58,7 +99,7 @@ export function ContestedResourcesListItem ({ contestedResource }) {
         <GridItem className={'ContestedResourcesListItem__Column ContestedResourcesListItem__Column--DataContract'}>
           <LinkContainer
             className={'BlocksListItem__LinkContainer'}
-            onClick={e => {
+            onClick={(e: MouseEvent) => {
               e.stopPropagation()
               e.preventDefault()
               router.push(`/dataContract/${contestedResource?.dataContractIdentifier}`)

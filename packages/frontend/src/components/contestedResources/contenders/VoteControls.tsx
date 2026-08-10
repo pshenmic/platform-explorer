@@ -5,6 +5,8 @@ import {
   CloseIcon
 } from '../../ui/icons'
 import { VoteEnum } from './constants'
+import type { VoteEnumValue } from './constants'
+import type { WalletInfo } from 'src/contexts'
 
 import './VoteControls.scss'
 import { useState, useEffect } from 'react'
@@ -14,6 +16,41 @@ const VOTING_DATA_CONTRACT_ID =
   'GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec'
 const DOCUMENT_TYPE = 'domain'
 const INDEX_NAME = 'parentNameAndLabel'
+
+// Minimal SDK surface used for casting votes
+interface VotingSdk {
+  identities: {
+    getIdentityByIdentifier: (id: string) => Promise<{ id: string }>
+    getIdentityNonce: (id: string) => Promise<bigint>
+  }
+  voting: {
+    createVote: (
+      dataContractId: string,
+      documentType: string,
+      indexName: string,
+      resourceValue: string[] | unknown,
+      choice: string
+    ) => unknown
+    createStateTransition: (
+      vote: unknown,
+      proTxHash: string | undefined,
+      voterId: string,
+      nonce: bigint
+    ) => unknown
+  }
+}
+
+interface VoteControlsProps {
+  currentIdentity?: string | null
+  contender?: string
+  resourceValue?: string[] | unknown
+  walletInfo?: WalletInfo | null
+  prevVote?: VoteEnumValue | null
+  refresh?: () => void
+  isPollingAfterVote?: boolean
+  isDisabled?: boolean
+  disabledTooltip?: string
+}
 
 export const VoteControls = ({
   currentIdentity,
@@ -25,9 +62,9 @@ export const VoteControls = ({
   isPollingAfterVote,
   isDisabled = false,
   disabledTooltip
-}) => {
+}: VoteControlsProps) => {
   const [isLoading, setIsLoading] = useState(false)
-  const [activeChoice, setActiveChoice] = useState(null)
+  const [activeChoice, setActiveChoice] = useState<string | null>(null)
 
   useEffect(() => {
     if (!isPollingAfterVote) {
@@ -36,19 +73,19 @@ export const VoteControls = ({
     }
   }, [isPollingAfterVote])
 
-  const castVote = async ({ choice }) => {
-    if (!window.dashPlatformExtension) return
+  const castVote = async ({ choice }: { choice: string }) => {
+    if (!window.dashPlatformExtension || !currentIdentity) return
 
     setActiveChoice(choice)
     setIsLoading(true)
     try {
-      const sdk = window.dashPlatformSDK
+      const sdk = window.dashPlatformSDK as unknown as VotingSdk
       const voterIdentity =
         await sdk.identities.getIdentityByIdentifier(currentIdentity)
       const identityNonce = await sdk.identities.getIdentityNonce(
         voterIdentity.id
       )
-      const { proTxHash } = walletInfo
+      const { proTxHash } = walletInfo ?? {}
 
       const vote = sdk.voting.createVote(
         VOTING_DATA_CONTRACT_ID,
@@ -64,9 +101,12 @@ export const VoteControls = ({
         identityNonce + BigInt(1)
       )
 
-      await window.dashPlatformExtension.signer.signAndBroadcast(stateTransition)
+      // Extension may accept base64 string or WASM ST depending on version — keep runtime call identical.
+      await (window.dashPlatformExtension.signer.signAndBroadcast as (st: unknown) => Promise<unknown>)(
+        stateTransition
+      )
 
-      refresh()
+      refresh?.()
     } catch (e) {
       console.error(e)
       setIsLoading(false)
@@ -91,7 +131,7 @@ export const VoteControls = ({
           aria-label='vote'
           p={0}
           icon={<PrimalPostitiveIcon width='18px' height='10px' />}
-          onClick={() => castVote({ choice: contender })}
+          onClick={() => contender && castVote({ choice: contender })}
         />
         <IconButton
           color='#F49A58'

@@ -1,14 +1,69 @@
-import { DateBlock, Identifier, InfoLine, TimeRemaining } from '../data'
+import type { ComponentType, ReactNode } from 'react'
+import {
+  DateBlock as DateBlockJs,
+  Identifier as IdentifierJs,
+  InfoLine as InfoLineJs,
+  TimeRemaining as TimeRemainingJs
+} from '../data'
 import { LoadingLine } from '../loading'
-import { VoteStatusValue } from './'
-import { ValueCard } from '../cards'
+import VoteStatusValue from './VoteStatusValue'
+import { ValueCard as ValueCardJs } from '../cards'
 import ChoiceBadge from './ChoiceBadge'
 import { ValueContainer } from '../ui/containers'
 import { LockIcon } from '../ui/icons'
 import { Flex } from '@chakra-ui/react'
+import type { ContestedResource, LoadableState, WithClassName } from '../../types'
 import './ContestedResourceDigestCard.scss'
 
-function ContestedResourceDigestCard ({ contestedResource, winner, isEnded, className }) {
+// Untyped JS components — loose wrappers until data/* / cards/* are migrated
+const DateBlock = DateBlockJs as ComponentType<{
+  timestamp?: string | null
+  showTime?: boolean
+  showRelativeTooltip?: boolean
+  format?: string
+}>
+const Identifier = IdentifierJs as ComponentType<{
+  children?: ReactNode
+  avatar?: boolean
+  ellipsis?: boolean
+  styles?: string[]
+  className?: string
+}>
+const InfoLine = InfoLineJs as ComponentType<{
+  title?: ReactNode
+  value?: ReactNode
+  icon?: ReactNode
+  loading?: boolean
+  error?: unknown
+  className?: string
+}>
+const TimeRemaining = TimeRemainingJs as ComponentType<{
+  startTime?: string | null
+  endTime?: string | null
+  displayProgress?: boolean
+}>
+const ValueCard = ValueCardJs as ComponentType<{
+  children?: ReactNode
+  link?: string
+  className?: string
+}>
+
+interface ContestedResourceDigestCardProps extends WithClassName {
+  contestedResource: LoadableState<ContestedResource> | {
+    data?: ContestedResource | null
+    loading?: boolean
+    error?: unknown
+  }
+  winner?: string | null
+  isEnded?: boolean
+}
+
+function ContestedResourceDigestCard ({
+  contestedResource,
+  winner,
+  isEnded,
+  className
+}: ContestedResourceDigestCardProps) {
   return (
     <div className={`ContestedResourcesDigestCard ${className || ''} ${contestedResource?.loading ? 'ContestedResourcesDigestCard--Loading' : ''}`}>
       <div className={'ContestedResourcesDigestCard__Cards'}>

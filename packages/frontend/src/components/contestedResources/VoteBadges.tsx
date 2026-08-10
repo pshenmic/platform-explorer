@@ -1,8 +1,20 @@
 import { Badge } from '@chakra-ui/react'
 import { Tooltip } from '../ui/Tooltips'
+import type { WithClassName } from '../../types'
 import './VoteBadges.scss'
 
-function VoteBadges ({ totalCountAbstain, totalCountLock, totalCountTowardsIdentity, className }) {
+interface VoteBadgesProps extends WithClassName {
+  totalCountAbstain?: number | null
+  totalCountLock?: number | null
+  totalCountTowardsIdentity?: number | null
+}
+
+function VoteBadges ({
+  totalCountAbstain,
+  totalCountLock,
+  totalCountTowardsIdentity,
+  className
+}: VoteBadgesProps) {
   return (
     <div className={`VoteBadges ${className || ''}`}>
       <Tooltip

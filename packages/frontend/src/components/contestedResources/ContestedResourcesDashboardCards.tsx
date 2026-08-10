@@ -6,10 +6,15 @@ import { fetchHandlerSuccess, fetchHandlerError } from '../../util'
 import { DashboardCards } from '../cards'
 import { SignatureIcon, ListIcon, CalendarGradientIcon } from '../ui/icons'
 import { ContestedResourceContent } from '../cards/dashboard'
+import type { ContestedResourcesStatus, LoadableState } from '../../types'
 import './ContestedResourcesDashboardCards.scss'
 
 function ContestedResourcesDashboardCards () {
-  const [stats, setStats] = useState({ data: {}, loading: true, error: false })
+  const [stats, setStats] = useState<LoadableState<ContestedResourcesStatus | Record<string, unknown>>>({
+    data: {},
+    loading: true,
+    error: false
+  })
 
   const fetchData = () => {
     Api.getContestedResourcesStats()
@@ -19,12 +24,14 @@ function ContestedResourcesDashboardCards () {
 
   useEffect(fetchData, [])
 
+  const data = stats.data as ContestedResourcesStatus | null
+
   return (
     <DashboardCards
       cards={[
         {
           title: 'Total Contested Resources',
-          value: stats.data?.totalContestedResources,
+          value: data?.totalContestedResources,
           className: 'ContestedResourcesDashboardCards__Card',
           error: stats.error,
           loading: stats.loading,
@@ -32,7 +39,7 @@ function ContestedResourcesDashboardCards () {
         },
         {
           title: 'Total Votes Casted',
-          value: stats.data?.totalVotesCount,
+          value: data?.totalVotesCount,
           className: 'ContestedResourcesDashboardCards__Card',
           error: stats.error,
           loading: stats.loading,
@@ -40,7 +47,7 @@ function ContestedResourcesDashboardCards () {
         },
         {
           title: 'Pending Contested Resources',
-          value: stats.data?.totalPendingContestedResources,
+          value: data?.totalPendingContestedResources,
           className: 'ContestedResourcesDashboardCards__Card',
           error: stats.error,
           loading: stats.loading,
@@ -48,7 +55,7 @@ function ContestedResourcesDashboardCards () {
         },
         {
           title: 'Ending soon',
-          value: <ContestedResourceContent contestedResource={stats.data?.expiringContestedResource}/>,
+          value: <ContestedResourceContent contestedResource={data?.expiringContestedResource as Parameters<typeof ContestedResourceContent>[0]['contestedResource']}/>,
           className: 'ContestedResourcesDashboardCards__Card',
           error: stats.error,
           loading: stats.loading,
