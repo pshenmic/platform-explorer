@@ -11,6 +11,7 @@ import { DocumentTotalCard, DocumentsRevisionsList } from '../../../components/d
 import { LoadingBlock } from '../../../components/loading'
 import { CodeBlock } from '../../../components/data'
 import { useBreadcrumbs } from '../../../contexts/BreadcrumbsContext'
+import type { Document as DocumentType, LoadableState, PaginatedResultSet, Rate } from '../../../types'
 import './Document.scss'
 
 const pagintationConfig = {
@@ -21,11 +22,30 @@ const pagintationConfig = {
   defaultPage: 1
 }
 
-function Document ({ identifier }) {
+type DocumentDetail = DocumentType & {
+  name?: string
+  data?: unknown
+  deleted?: boolean
+  dataContractIdentifier?: string
+  documentTypeName?: string
+}
+
+type PaginatedProps = { currentPage: number }
+
+interface DocumentProps {
+  identifier: string
+}
+
+function Document ({ identifier }: DocumentProps) {
   const { setBreadcrumbs } = useBreadcrumbs()
-  const [document, setDocument] = useState({ data: {}, loading: true, error: false })
-  const [revisions, setRevisions] = useState({ data: {}, props: { currentPage: 0 }, loading: true, error: false })
-  const [rate, setRate] = useState({ data: {}, loading: true, error: false })
+  const [document, setDocument] = useState<LoadableState<DocumentDetail>>({ data: {} as DocumentDetail, loading: true, error: false })
+  const [revisions, setRevisions] = useState<LoadableState<PaginatedResultSet<DocumentDetail>>>({
+    data: {} as PaginatedResultSet<DocumentDetail>,
+    props: { currentPage: 0 },
+    loading: true,
+    error: false
+  })
+  const [rate, setRate] = useState<LoadableState<Rate>>({ data: {} as Rate, loading: true, error: false })
   const searchParams = useSearchParams()
   const DocumentId = searchParams.get('contract-id') || null
   const typeName = searchParams.get('document-type-name') || null
@@ -36,12 +56,11 @@ function Document ({ identifier }) {
       { label: 'Home', path: '/' },
       { label: 'Data Contracts', path: '/dataContracts' },
       {
-        label: document?.data?.dataContractIdentifier,
+        label: document?.data?.dataContractIdentifier ?? '',
         path: `/dataContract/${document?.data?.dataContractIdentifier}`,
-        avatar: true,
-        shrink: true
+        avatar: true
       },
-      { label: document?.data?.documentTypeName },
+      { label: document?.data?.documentTypeName ?? '' },
       { label: identifier, avatar: true }
     ])
   }, [setBreadcrumbs, identifier, document])
@@ -49,8 +68,8 @@ function Document ({ identifier }) {
   const fetchData = () => {
     setDocument(state => ({ ...state, loading: true }))
 
-    Api.getDocumentByIdentifier(identifier, DocumentId, typeName)
-      .then(document => fetchHandlerSuccess(setDocument, document))
+    Api.getDocumentByIdentifier(identifier, DocumentId ?? undefined, typeName ?? undefined)
+      .then(doc => fetchHandlerSuccess(setDocument, doc as Partial<DocumentDetail>))
       .catch(err => fetchHandlerError(setDocument, err))
 
     Api.getRate()
@@ -64,10 +83,10 @@ function Document ({ identifier }) {
     if (!identifier) return
     setLoadingProp(setRevisions)
 
-    Api.getDocumentRevisions(identifier, revisions.props.currentPage + 1, pageSize, 'desc')
-      .then(paginatedDataContracts => fetchHandlerSuccess(setRevisions, paginatedDataContracts))
+    Api.getDocumentRevisions(identifier, Number((revisions.props as PaginatedProps).currentPage) + 1, pageSize, 'desc')
+      .then(paginatedDataContracts => fetchHandlerSuccess(setRevisions, paginatedDataContracts as never))
       .catch(err => fetchHandlerError(setRevisions, err))
-  }, [identifier, revisions.props.currentPage])
+  }, [identifier, (revisions.props as PaginatedProps).currentPage])
 
   return (
     <PageDataContainer
@@ -75,14 +94,14 @@ function Document ({ identifier }) {
       title={'Document info'}
     >
       <div className={'Document__InfoBlocks'}>
-        <DocumentTotalCard className={'Document__InfoBlock'} document={document} rate={rate}/>
+        <DocumentTotalCard className={'Document__InfoBlock'} document={document} rate={rate.data}/>
 
         <div className={'Document__InfoBlock Document__Data'}>
           <div className={'Document__DataTitle'}>Data</div>
           {!document.error
             ? <LoadingBlock h={'100%'} minH={'200px'} loading={document.loading}>
                 {document.data?.data
-                  ? <CodeBlock className={'DataContract__DataBlock'} code={document.data?.data}/>
+                  ? <CodeBlock className={'DataContract__DataBlock'} code={document.data?.data as never}/>
                   : <Container h={20}>
                       {document.data?.deleted
                         ? <ErrorMessageBlock warningIcon={false} text={'Document is deleted'}/>
@@ -109,12 +128,12 @@ function Document ({ identifier }) {
             <TabPanel position={'relative'}>
               {!revisions.error
                 ? <DocumentsRevisionsList
-                    revisions={revisions.data?.resultSet}
+                    revisions={revisions.data?.resultSet as never}
                     loading={revisions.loading}
                     pagination={{
                       onPageChange: pagination => paginationHandler(setRevisions, pagination.selected),
-                      pageCount: Math.ceil(revisions.data?.pagination?.total / pageSize) || 1,
-                      forcePage: revisions.props.currentPage
+                      pageCount: Math.ceil((revisions.data?.pagination?.total ?? 0) / pageSize) || 1,
+                      forcePage: (revisions.props as PaginatedProps).currentPage
                     }}
                   />
                 : <Container h={20}><ErrorMessageBlock/></Container>

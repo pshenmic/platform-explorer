@@ -1,6 +1,11 @@
+import type { Metadata } from 'next'
 import Document from './Document'
 
-export async function generateMetadata ({ params }) {
+interface DocumentRouteProps {
+  params: { identifier: string }
+}
+
+export async function generateMetadata ({ params }: DocumentRouteProps): Promise<Metadata> {
   return {
     title: 'Document #' + params.identifier + ' — Dash Platform Explorer',
     description: 'Document ' + params.identifier + ' on Dash Platform. The Data, Identifier, Revision.',
@@ -9,7 +14,7 @@ export async function generateMetadata ({ params }) {
   }
 }
 
-function DocumentRoute ({ params }) {
+function DocumentRoute ({ params }: DocumentRouteProps) {
   return <Document identifier={params.identifier}/>
 }
 
