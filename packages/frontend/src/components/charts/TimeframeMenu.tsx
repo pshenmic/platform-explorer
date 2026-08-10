@@ -1,25 +1,52 @@
 import { useState, forwardRef, useEffect } from 'react'
+import type { Ref } from 'react'
 import { Button } from '@chakra-ui/react'
-import { DateRangePicker } from '../calendar'
+import type { ComponentType } from 'react'
+// Untyped JS component — loose wrapper until calendar/* is migrated
+import { DateRangePicker as DateRangePickerJs } from '../calendar'
 import { defaultIntervalsCount } from './config'
+import type { ChartConfig, TimespanValue } from './types'
+import type { WithClassName } from '../../types/common'
 import './TimeframeMenu.scss'
 
-const TimeframeMenu = forwardRef(function TimeframeMenu ({ config, forceTimespan, changeCallback, className }, ref) {
-  const [timespan, setTimespan] = useState(config.timespan.values[config.timespan.defaultIndex])
-  const [selectedRange, setSelectedRange] = useState(null)
-  const [calendarValue, setCalendarValue] = useState(null)
+const DateRangePicker = DateRangePickerJs as ComponentType<{
+  disableFutureDates?: boolean
+  monthsToShow?: number
+  noTopNavigation?: boolean
+  noWeekDay?: boolean
+  changeHandler?: (value: [Date | null, Date | null]) => void
+  value?: [Date | null, Date | null] | null
+}>
 
-  useEffect(() => setTimespan(forceTimespan), [forceTimespan])
+interface TimeframeMenuProps extends WithClassName {
+  config: ChartConfig
+  forceTimespan?: TimespanValue | null
+  changeCallback?: (value: TimespanValue) => void
+}
 
-  const changeHandler = (value) => {
+const TimeframeMenu = forwardRef(function TimeframeMenu (
+  { config, forceTimespan, changeCallback, className }: TimeframeMenuProps,
+  ref: Ref<HTMLDivElement>
+) {
+  const [timespan, setTimespan] = useState<TimespanValue | undefined>(
+    config.timespan.values[config.timespan.defaultIndex]
+  )
+  const [selectedRange, setSelectedRange] = useState<{ start: Date, end: Date } | null>(null)
+  const [calendarValue, setCalendarValue] = useState<[Date | null, Date | null] | null>(null)
+
+  useEffect(() => {
+    if (forceTimespan) setTimespan(forceTimespan)
+  }, [forceTimespan])
+
+  const changeHandler = (value: TimespanValue) => {
     setTimespan(value)
     if (typeof changeCallback === 'function') changeCallback(value)
   }
 
-  const calendarHandler = (value) => {
+  const calendarHandler = (value: [Date | null, Date | null]) => {
     setCalendarValue(value)
     const [start, end] = value
-    setSelectedRange({ start, end })
+    if (start && end) setSelectedRange({ start, end })
   }
 
   const clearCalendarRange = () => {
@@ -29,11 +56,11 @@ const TimeframeMenu = forwardRef(function TimeframeMenu ({ config, forceTimespan
 
   const submitHandler = () => {
     if (!selectedRange?.start || !selectedRange?.end) {
-      if (typeof changeCallback === 'function') changeCallback(timespan)
+      if (typeof changeCallback === 'function' && timespan) changeCallback(timespan)
       return
     }
 
-    function labelFormatDate (date) {
+    function labelFormatDate (date: Date) {
       const day = String(date.getDate()).padStart(2, '0')
       const month = String(date.getMonth() + 1).padStart(2, '0')
       const year = date.getFullYear()

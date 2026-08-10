@@ -5,7 +5,26 @@ import useResizeObserver from '@react-hook/resize-observer'
 import { LineChart, TimeframeSelector } from './'
 import { ErrorMessageBlock } from '../Errors'
 import { defaultChartConfig } from './config'
+import type {
+  ChartAxis,
+  ChartConfig,
+  ChartDataPoint,
+  TimespanValue
+} from './types'
 import './TabsChartBlock.scss'
+
+interface TabsChartBlockProps {
+  menuIsActive?: boolean
+  timespanChangeCallback?: (value: TimespanValue) => void
+  loading?: boolean
+  error?: boolean
+  data?: ChartDataPoint[] | null
+  xAxis?: ChartAxis
+  yAxis?: ChartAxis
+  timespan?: TimespanValue
+  chartConfig?: ChartConfig
+  heightPx?: number
+}
 
 export default function TabsChartBlock ({
   menuIsActive = true,
@@ -18,16 +37,16 @@ export default function TabsChartBlock ({
   timespan,
   chartConfig = defaultChartConfig,
   heightPx = 350
-}) {
+}: TabsChartBlockProps) {
   const [menuIsOpen, setMenuIsOpen] = useState(false)
-  const TimeframeMenuRef = useRef(null)
+  const TimeframeMenuRef = useRef<HTMLDivElement>(null)
   const [selectorHeight, setSelectorHeight] = useState(0)
 
   const updateMenuHeight = () => {
     if (menuIsOpen && TimeframeMenuRef?.current) {
       const element = TimeframeMenuRef.current
-      const height = element.getBoundingClientRect().height
-      setSelectorHeight(height)
+      const h = element.getBoundingClientRect().height
+      setSelectorHeight(h)
     } else {
       setSelectorHeight(0)
     }
@@ -57,7 +76,7 @@ export default function TabsChartBlock ({
       />
       <div className={`TabsChartBlock__ChartContainer ${menuIsOpen ? 'TabsChartBlock__ChartContainer--Hidden' : ''}`}>
         <LineChart
-          data={data}
+          data={data ?? undefined}
           dataLoading={loading}
           timespan={timespan}
           xAxis={xAxis}

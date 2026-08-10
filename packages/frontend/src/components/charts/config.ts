@@ -1,8 +1,9 @@
 import { getDynamicRange } from '../../util'
+import type { ChartConfig } from './types'
 
 export const defaultIntervalsCount = 100
 
-export const defaultChartConfig = {
+export const defaultChartConfig: ChartConfig = {
   timespan: {
     defaultIndex: 3,
     values: [

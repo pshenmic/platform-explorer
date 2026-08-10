@@ -1,20 +1,36 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import type { LoadableState } from '../../types/common'
+import type { SeriesData } from '../../types'
+import type { WithClassName } from '../../types/common'
 import * as Api from '../../util/Api'
 import { fetchHandlerSuccess, fetchHandlerError, getDaysBetweenDates } from '../../util'
 import { defaultChartConfig } from './config'
+import type { TimespanValue } from './types'
 import { LineChart } from './index'
 import './TransactionsChartCompact.scss'
 
-const timeframes = defaultChartConfig.timespan.values.map((value, index) => ({
+interface TxHistoryPoint {
+  txs: number
+  blockHeight: number | null
+  blockHash: string | null
+}
+
+const timeframes: TimespanValue[] = defaultChartConfig.timespan.values.map((value, index) => ({
   ...value,
-  short: ['24H', '3D', '1W', '1M'][index] || value.label
+  short: (['24H', '3D', '1W', '1M'] as const)[index] || value.label
 }))
 
-export default function TransactionsChartCompact ({ className }) {
-  const [history, setHistory] = useState({ data: {}, loading: true, error: false })
-  const [timespan, setTimespan] = useState(timeframes[defaultChartConfig.timespan.defaultIndex])
+export default function TransactionsChartCompact ({ className }: WithClassName) {
+  const [history, setHistory] = useState<LoadableState<{ resultSet?: Array<SeriesData<TxHistoryPoint>> }>>({
+    data: {},
+    loading: true,
+    error: false
+  })
+  const [timespan, setTimespan] = useState<TimespanValue>(
+    timeframes[defaultChartConfig.timespan.defaultIndex]
+  )
 
   useEffect(() => {
     const { start = null, end = null } = timespan?.range || {}
@@ -28,22 +44,22 @@ export default function TransactionsChartCompact ({ className }) {
   }, [timespan])
 
   const data = history.data?.resultSet?.map(item => ({
-    x: new Date(item.timestamp),
-    y: item.data.txs
+    x: new Date(item.timestamp ?? 0),
+    y: item.data?.txs ?? 0
   })) || []
 
   const xAxis = {
     type: (() => {
       const days = getDaysBetweenDates(timespan.range.start, timespan.range.end)
-      if (days > 7) return { axis: 'date' }
-      if (days > 3) return { axis: 'date', tooltip: 'datetime' }
-      return { axis: 'time' }
+      if (days > 7) return { axis: 'date' as const }
+      if (days > 3) return { axis: 'date' as const, tooltip: 'datetime' as const }
+      return { axis: 'time' as const }
     })(),
     abbreviation: '',
     title: ''
   }
 
-  const yAxis = { type: 'number', title: '', abbreviation: 'txs' }
+  const yAxis = { type: 'number' as const, title: '', abbreviation: 'txs' }
 
   return (
     <div className={`TransactionsChartCompact ${className || ''}`}>

@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
+import type { ReactElement, RefObject } from 'react'
 import useResizeObserver from '@react-hook/resize-observer'
 import * as d3 from 'd3'
 import './charts.scss'
@@ -6,16 +7,23 @@ import { Container } from '@chakra-ui/react'
 import theme from '../../styles/theme'
 import TimeframeMenu from './TimeframeMenu'
 import TimeframeSelector from './TimeframeSelector'
+import type {
+  AxisFormatCode,
+  ChartAxis,
+  ChartDataPoint,
+  ChartRenderType,
+  TimespanValue
+} from './types'
 
-function getDatesTicks (dates, numTicks) {
+function getDatesTicks (dates: Array<Date | number>, numTicks: number): Date[] {
   if (!dates.length) return []
 
-  const sortedDates = dates.map(d => new Date(d)).sort((a, b) => a - b)
+  const sortedDates = dates.map(d => new Date(d)).sort((a, b) => a.getTime() - b.getTime())
   const [firstDate] = sortedDates
   const lastDate = sortedDates[sortedDates.length - 1]
-  const totalDuration = lastDate - firstDate
+  const totalDuration = lastDate.getTime() - firstDate.getTime()
   const intervalDuration = totalDuration / (numTicks + 1)
-  const rangeDates = []
+  const rangeDates: Date[] = []
 
   for (let i = 1; i <= numTicks; i++) {
     const tickDate = new Date(firstDate.getTime() + intervalDuration * i)
@@ -23,6 +31,17 @@ function getDatesTicks (dates, numTicks) {
   }
 
   return [firstDate, ...rangeDates, lastDate]
+}
+
+interface LineChartProps {
+  data?: ChartDataPoint[]
+  timespan?: TimespanValue | string
+  xAxis?: ChartAxis
+  yAxis?: ChartAxis
+  width?: string | number
+  height?: string | number
+  dataLoading?: boolean
+  type?: ChartRenderType
 }
 
 const LineChart = ({
@@ -34,9 +53,9 @@ const LineChart = ({
   height,
   dataLoading,
   type = 'line'
-}) => {
-  const chartContainer = useRef()
-  const [chartElement, setChartElement] = useState(null)
+}: LineChartProps) => {
+  const chartContainer = useRef<HTMLDivElement>(null)
+  const [chartElement, setChartElement] = useState<ReactElement | null>(null)
   const [loading, setLoading] = useState(true)
   const [skeleton, setSkeleton] = useState(true)
   const previousDataRef = useRef(data)
@@ -55,7 +74,7 @@ const LineChart = ({
     }
   }, [data, render])
 
-  useResizeObserver(chartContainer.current, render)
+  useResizeObserver(chartContainer as RefObject<HTMLElement>, render)
 
   useEffect(() => {
     if (!data?.length) {
@@ -69,6 +88,8 @@ const LineChart = ({
       setSkeleton(false)
       return
     }
+
+    if (!chartContainer.current) return
 
     setChartElement(<LineGraph
       xAxis={xAxis}
@@ -95,6 +116,16 @@ const LineChart = ({
   )
 }
 
+interface LineGraphProps {
+  data?: ChartDataPoint[]
+  timespan?: TimespanValue | string
+  width?: number
+  height?: number
+  xAxis?: ChartAxis
+  yAxis?: ChartAxis
+  type?: ChartRenderType
+}
+
 const LineGraph = ({
   data = [],
   timespan,
@@ -103,19 +134,19 @@ const LineGraph = ({
   xAxis = { title: '', type: { axis: 'number' } },
   yAxis = { title: '', type: { axis: 'number' } },
   type = 'line'
-}) => {
+}: LineGraphProps) => {
   const [loading, setLoading] = useState(true)
   const marginTop = yAxis.title ? 40 : 20
   const marginRight = 40
   const marginBottom = xAxis.title ? 45 : 20
   const marginLeft = 40
   const chartInnerOffset = 15
-  const xAxisFormatCode = typeof xAxis.type === 'string' ? xAxis.type : xAxis.type.axis
+  const xAxisFormatCode: AxisFormatCode = (typeof xAxis.type === 'string' ? xAxis.type : xAxis.type.axis) as AxisFormatCode
   const [chartWidth, setChartWidth] = useState(0)
-  const svgRef = useRef(null)
+  const svgRef = useRef<SVGSVGElement | null>(null)
   const uniqueComponentId = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
 
-  const tickFormats = {
+  const tickFormats: Record<AxisFormatCode, (d: Date | number) => string> = {
     number: d3.format(',.0f'),
     date: d3.timeFormat('%B %d'),
     datetime: d3.timeFormat('%B %d, %H:%M'),
@@ -124,12 +155,15 @@ const LineGraph = ({
 
   const xTickFormat = tickFormats[xAxisFormatCode]
   const filteredData = data.filter(d => typeof d.y === 'number' && !isNaN(d.y))
-  const y = d3.scaleLinear(d3.extent(filteredData, d => d.y), [height - marginBottom, marginTop])
+  const y = d3.scaleLinear(d3.extent(filteredData, (d: ChartDataPoint) => d.y), [height - marginBottom, marginTop])
 
   const [x, setX] = useState(() => {
-    if (xAxisFormatCode === 'number') return d3.scaleLinear(d3.extent(data, d => d.x), [marginLeft, width - marginRight])
-    if (xAxisFormatCode === 'date' || xAxisFormatCode === 'time' || xAxisFormatCode === 'datetime') return d3.scaleTime(d3.extent(data, d => d.x), [marginLeft, width - marginRight])
+    if (xAxisFormatCode === 'number') return d3.scaleLinear(d3.extent(data, (d: ChartDataPoint) => d.x), [marginLeft, width - marginRight])
+    if (xAxisFormatCode === 'date' || xAxisFormatCode === 'time' || xAxisFormatCode === 'datetime') return d3.scaleTime(d3.extent(data, (d: ChartDataPoint) => d.x), [marginLeft, width - marginRight])
+    return d3.scaleLinear(d3.extent(data, (d: ChartDataPoint) => d.x), [marginLeft, width - marginRight])
   })
+
+  const timespanKey = typeof timespan === 'string' ? timespan : timespan?.label
 
   const xTicksCount = (() => {
     const isSmallScreen = chartWidth < 500
@@ -137,10 +171,10 @@ const LineGraph = ({
     if (xAxisFormatCode === 'number') return isSmallScreen ? 4 : 6
     if (xAxisFormatCode === 'time') return isSmallScreen ? 4 : 6
     if (xAxisFormatCode === 'date' || xAxisFormatCode === 'datetime') {
-      if (timespan === '1w') return isSmallScreen ? 4 : 6
-      if (timespan === '3d') return isSmallScreen ? 3 : 4
-      if (timespan === '24h') return isSmallScreen ? 4 : 6
-      if (timespan === '1h') return isSmallScreen ? 4 : 6
+      if (timespanKey === '1w') return isSmallScreen ? 4 : 6
+      if (timespanKey === '3d') return isSmallScreen ? 3 : 4
+      if (timespanKey === '24h') return isSmallScreen ? 4 : 6
+      if (timespanKey === '1h') return isSmallScreen ? 4 : 6
       return isSmallScreen ? 4 : 6
     }
 
@@ -154,24 +188,24 @@ const LineGraph = ({
     }
   }, [svgRef.current])
 
-  const gx = useRef()
-  const gy = useRef()
-  const tooltip = useRef()
-  const graphicLine = useRef()
-  const focusPoint = useRef()
+  const gx = useRef<SVGGElement | null>(null)
+  const gy = useRef<SVGGElement | null>(null)
+  const tooltip = useRef<SVGGElement | null>(null)
+  const graphicLine = useRef<SVGPathElement | null>(null)
+  const focusPoint = useRef<SVGGElement | null>(null)
 
   const [line, setLine] = useState(() => d3.line()
-    .x(d => x(d.x))
-    .y(d => y(d.y))
+    .x((d: ChartDataPoint) => x(d.x))
+    .y((d: ChartDataPoint) => y(d.y))
     .curve(d3.curveLinear))
 
   const [area, setArea] = useState(() => d3.area()
     .curve(d3.curveLinear)
-    .x((d) => x(d.x))
+    .x((d: ChartDataPoint) => x(d.x))
     .y0(y(0))
-    .y1((d) => y(d.y)))
+    .y1((d: ChartDataPoint) => y(d.y)))
 
-  const valuesFormat = (value) => {
+  const valuesFormat = (value: number | string | null | undefined) => {
     if (typeof value !== 'number' || isNaN(value)) return value
 
     if (value >= 1e9) return `${(value / 1e9).toFixed(1)}B`
@@ -182,7 +216,7 @@ const LineGraph = ({
 
   useEffect(() => {
     d3.select(gx.current)
-      .call((axis) => {
+      .call((axis: { select: (s: string) => { call: (c: unknown) => unknown, node: () => { getBBox: () => DOMRect }, attr: (k: string, v: string) => unknown } }) => {
         axis.select('.Axis__TickContainer')
           .call(d3.axisBottom(x)
             .tickSize(0)
@@ -191,23 +225,23 @@ const LineGraph = ({
             .tickValues(getDatesTicks(data.map((d) => d.x), xTicksCount - 2))
           )
       })
-      .call((axis) => {
+      .call((axis: { select: (s: string) => { call: (c: unknown) => unknown, node: () => { getBBox: () => DOMRect }, attr: (k: string, v: string) => unknown } }) => {
         const labelSize = axis.select('.Axis__Label').node().getBBox()
 
         axis.select('.Axis__Label')
           .attr('transform', `translate(${width - labelSize.width / 2 - marginRight}, ${marginBottom})`)
       })
 
-    setLine((d) => d3.line()
-      .x(d => x(d.x))
-      .y(d => y(d.y))
+    setLine(() => d3.line()
+      .x((d: ChartDataPoint) => x(d.x))
+      .y((d: ChartDataPoint) => y(d.y))
       .curve(d3.curveLinear))
 
-    setArea((d) => d3.area()
+    setArea(() => d3.area()
       .curve(d3.curveLinear)
-      .x((d) => x(d.x))
+      .x((d: ChartDataPoint) => x(d.x))
       .y0(y(0))
-      .y1((d) => y(d.y)))
+      .y1((d: ChartDataPoint) => y(d.y)))
   }, [gx, x, data, width, xTicksCount, marginBottom])
 
   useEffect(() => {
@@ -260,8 +294,9 @@ const LineGraph = ({
       .attr('transform', `translate(${yAxisTicksWidth}, 0)`)
 
     setX(() => {
-      if (xAxisFormatCode === 'number') return d3.scaleLinear(d3.extent(data, d => d.x), [yAxisTicksWidth, width - marginRight])
-      if (xAxisFormatCode === 'date' || xAxisFormatCode === 'time' || xAxisFormatCode === 'datetime') return d3.scaleTime(d3.extent(data, d => d.x), [yAxisTicksWidth, width - marginRight])
+      if (xAxisFormatCode === 'number') return d3.scaleLinear(d3.extent(data, (d: ChartDataPoint) => d.x), [yAxisTicksWidth, width - marginRight])
+      if (xAxisFormatCode === 'date' || xAxisFormatCode === 'time' || xAxisFormatCode === 'datetime') return d3.scaleTime(d3.extent(data, (d: ChartDataPoint) => d.x), [yAxisTicksWidth, width - marginRight])
+      return d3.scaleLinear(d3.extent(data, (d: ChartDataPoint) => d.x), [yAxisTicksWidth, width - marginRight])
     })
 
     if (loading) setLoading(false)
@@ -269,9 +304,9 @@ const LineGraph = ({
 
   useEffect(updateSize, [data, loading, marginTop, width, xAxisFormatCode])
 
-  const bisect = d3.bisector(d => d.x).center
+  const bisect = d3.bisector((d: ChartDataPoint) => d.x).center
 
-  function tooltipPosition (point) {
+  function tooltipPosition (point: number) {
     const tooltipElement = d3.select(tooltip.current)
     const { width: tooltipWidth } = tooltipElement.node().getBoundingClientRect()
 
@@ -288,7 +323,7 @@ const LineGraph = ({
       .style('visibility', 'visible')
   }
 
-  function pointermoved (event) {
+  function pointermoved (event: MouseEvent) {
     const i = bisect(data, x.invert(d3.pointer(event)[0] - chartInnerOffset))
 
     d3.select(focusPoint.current)
@@ -305,7 +340,7 @@ const LineGraph = ({
       .attr('opacity', '1')
       .attr('stroke', theme.colors.gray['700'])
 
-    const lineClass = (styles) => {
+    const lineClass = (styles: string | string[]) => {
       if (typeof styles === 'string') styles = [styles]
 
       let classStr = ''
@@ -320,8 +355,10 @@ const LineGraph = ({
       return classStr
     }
 
-    const infoLines = []
-    const xFormatCode = typeof xAxis.type.tooltip === 'string' ? xAxis.type.tooltip : xAxis.type.axis
+    const infoLines: Array<{ styles: string[], value: string }> = []
+    const xFormatCode: AxisFormatCode = (typeof xAxis.type === 'object' && xAxis.type.tooltip
+      ? xAxis.type.tooltip
+      : (typeof xAxis.type === 'string' ? xAxis.type : xAxis.type.axis)) as AxisFormatCode
     const xFormat = tickFormats[xFormatCode]
 
     infoLines.push({
@@ -329,10 +366,10 @@ const LineGraph = ({
       value: `${xFormat(data[i].x)}: `
     }, {
       styles: ['inline', 'bold'],
-      value: ` ${new Intl.NumberFormat('fr-FR', { useGrouping: true, grouping: [3], minimumFractionDigits: 0 }).format(data[i].y)} `
+      value: ` ${new Intl.NumberFormat('fr-FR', { useGrouping: true, minimumFractionDigits: 0 }).format(data[i].y)} `
     }, {
       styles: ['inline', 'tiny'],
-      value: ` ${yAxis.abbreviation}`
+      value: ` ${yAxis.abbreviation ?? ''}`
     })
 
     const text = d3.select(tooltip.current)
@@ -340,13 +377,25 @@ const LineGraph = ({
       .data([''])
       .join('text')
       .attr('class', 'ChartTooltip__TextContainer')
-      .call(t => t
+      .call((t: {
+        selectAll: (s: string) => {
+          data: (d: unknown) => {
+            join: (s: string) => {
+              attr: (k: string, v: string | ((d: { styles: string[] }) => string)) => {
+                attr: (k: string, v: string | ((d: { styles: string[] }) => string)) => {
+                  text: (fn: (d: { value: string }) => string) => unknown
+                }
+              }
+            }
+          }
+        }
+      }) => t
         .selectAll('tspan')
         .data(infoLines)
         .join('tspan')
-        .attr('class', (infoLine, i) => `ChartTooltip__InfoLine ${lineClass(infoLine.styles)}`)
-        .attr('fill', (infoLine, i) => `${!infoLine.styles.includes('tiny') ? '#fff' : theme.colors.gray['100']}`)
-        .text(d => d.value))
+        .attr('class', (infoLine: { styles: string[] }) => `ChartTooltip__InfoLine ${lineClass(infoLine.styles)}`)
+        .attr('fill', (infoLine: { styles: string[] }) => `${!infoLine.styles.includes('tiny') ? '#fff' : theme.colors.gray['100']}`)
+        .text((d: { value: string }) => d.value))
 
     const { width: textW, height: textH } = text.node().getBBox()
 
@@ -377,9 +426,9 @@ const LineGraph = ({
     <div className={`Chart ${!loading ? 'loaded' : ''}`}>
         <svg
             ref={svgRef}
-            onMouseEnter = {pointermoved}
-            onMouseMove = {pointermoved}
-            onMouseLeave = {pointerleft}
+            onMouseEnter={pointermoved as unknown as React.MouseEventHandler<SVGSVGElement>}
+            onMouseMove={pointermoved as unknown as React.MouseEventHandler<SVGSVGElement>}
+            onMouseLeave={pointerleft}
             overflow={'visible'}
             viewBox={`0 0 ${width} ${height}`}
         >
@@ -459,10 +508,10 @@ const LineGraph = ({
                       )
                     })()
                   : <>
-                      <path d={area(data)} fill={`url(#AreaFill-${uniqueComponentId})`} clipPath={`url(#clipPath-${uniqueComponentId})`}/>
+                      <path d={area(data) ?? undefined} fill={`url(#AreaFill-${uniqueComponentId})`} clipPath={`url(#clipPath-${uniqueComponentId})`}/>
 
                       <g filter={`url(#shadow-${uniqueComponentId})`}>
-                          <path ref={graphicLine} d={line(data)} stroke={'#008DE4'} strokeWidth={2} fill={'none'} strokeLinejoin={'round'}/>
+                          <path ref={graphicLine} d={line(data) ?? undefined} stroke={'#008DE4'} strokeWidth={2} fill={'none'} strokeLinejoin={'round'}/>
 
                           <g fill='#008DE4'>
                               {data.map((d, i) => (<circle key={i} cx={x(d.x)} cy={y(d.y)} r={4} className={'Chart__Point'}/>))}

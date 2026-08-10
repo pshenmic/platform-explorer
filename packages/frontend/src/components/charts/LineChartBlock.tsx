@@ -1,12 +1,21 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
-import { LineChart, TimeframeSelector } from '../../components/charts/index.js'
+import type { ReactNode } from 'react'
+import { LineChart, TimeframeSelector } from './index'
 import { Container, Heading, Flex } from '@chakra-ui/react'
 import { WarningTwoIcon } from '@chakra-ui/icons'
 import './ChartBlock.scss'
 import useResizeObserver from '@react-hook/resize-observer'
 import { defaultChartConfig } from './config'
+import type {
+  ChartAxis,
+  ChartConfig,
+  ChartDataPoint,
+  ChartRenderType,
+  TimespanValue
+} from './types'
+import type { WithClassName } from '../../types/common'
 
 function ErrorMessageBlock () {
   return (
@@ -23,6 +32,24 @@ function ErrorMessageBlock () {
   )
 }
 
+interface LineChartBlockProps extends WithClassName {
+  heightPx?: number
+  menuIsActive?: boolean
+  data?: ChartDataPoint[]
+  xAxis?: ChartAxis
+  yAxis?: ChartAxis
+  loading?: boolean
+  error?: boolean
+  timespanChange?: (value: TimespanValue) => void
+  title?: ReactNode
+  config?: ChartConfig
+  blockBorders?: boolean
+  useInfoBlock?: boolean
+  type?: ChartRenderType
+  /** Accepted for callers that pass CSS height; preferred prop is heightPx. */
+  height?: string | number
+}
+
 export default function LineChartBlock ({
   heightPx = 300,
   menuIsActive = true,
@@ -37,25 +64,32 @@ export default function LineChartBlock ({
   blockBorders = true,
   useInfoBlock = true,
   className,
-  type = 'line'
-}) {
-  const chartConfig = config || defaultChartConfig
-  const [timespan, setTimespan] = useState(chartConfig.timespan.default)
+  type = 'line',
+  height
+}: LineChartBlockProps) {
+  const resolvedHeightPx = typeof height === 'number'
+    ? height
+    : (typeof height === 'string' && height.endsWith('px')
+        ? parseInt(height, 10) || heightPx
+        : heightPx)
 
-  function timespanChangeHandler (value) {
+  const chartConfig = config || defaultChartConfig
+  const [timespan, setTimespan] = useState<TimespanValue | undefined>(chartConfig.timespan.default)
+
+  function timespanChangeHandler (value: TimespanValue) {
     setTimespan(value)
     if (typeof timespanChange === 'function') timespanChange(value)
   }
 
   const [menuIsOpen, setMenuIsOpen] = useState(false)
-  const TimeframeMenuRef = useRef(null)
+  const TimeframeMenuRef = useRef<HTMLDivElement>(null)
   const [selectorHeight, setSelectorHeight] = useState(0)
 
   const updateMenuHeight = () => {
     if (menuIsOpen && TimeframeMenuRef?.current) {
       const element = TimeframeMenuRef.current
-      const height = element.getBoundingClientRect().height
-      setSelectorHeight(height)
+      const h = element.getBoundingClientRect().height
+      setSelectorHeight(h)
     } else {
       setSelectorHeight(0)
     }
@@ -74,7 +108,7 @@ export default function LineChartBlock ({
         borderRadius={useInfoBlock ? 'block' : 'none'}
         direction={'column'}
         style={{
-          height: menuIsOpen ? `${Math.max(selectorHeight, heightPx)}px` : `${heightPx}px`,
+          height: menuIsOpen ? `${Math.max(selectorHeight, resolvedHeightPx)}px` : `${resolvedHeightPx}px`,
           minHeight: '100%'
         }}
     >
