@@ -8,9 +8,21 @@ export const entityTypes = {
   token: 'token',
   platformAddress: 'platformAddress',
   loading: 'loading'
-}
+} as const
 
-export const categoryMap = {
+export type EntityType = (typeof entityTypes)[keyof typeof entityTypes]
+
+export type SearchCategory =
+  | 'transactions'
+  | 'dataContracts'
+  | 'documents'
+  | 'identities'
+  | 'blocks'
+  | 'validators'
+  | 'tokens'
+  | 'platformAddresses'
+
+export const categoryMap: Record<SearchCategory, EntityType> = {
   transactions: entityTypes.transaction,
   dataContracts: entityTypes.dataContract,
   documents: entityTypes.document,
@@ -21,7 +33,7 @@ export const categoryMap = {
   platformAddresses: entityTypes.platformAddress
 }
 
-export const singularCategoryNames = {
+export const singularCategoryNames: Record<EntityType, string> = {
   [entityTypes.transaction]: 'Transaction',
   [entityTypes.dataContract]: 'Data Contract',
   [entityTypes.document]: 'Document',
@@ -29,10 +41,11 @@ export const singularCategoryNames = {
   [entityTypes.block]: 'Block',
   [entityTypes.validator]: 'Validator',
   [entityTypes.token]: 'Token',
-  [entityTypes.platformAddress]: 'Platform Address'
+  [entityTypes.platformAddress]: 'Platform Address',
+  [entityTypes.loading]: 'Loading'
 }
 
-export const pluralCategoryNames = {
+export const pluralCategoryNames: Record<SearchCategory, string> = {
   transactions: 'Transactions',
   dataContracts: 'Data Contracts',
   documents: 'Documents',
@@ -43,7 +56,7 @@ export const pluralCategoryNames = {
   platformAddresses: 'Platform Addresses'
 }
 
-export const modifierMap = {
+export const modifierMap: Partial<Record<EntityType, string>> = {
   [entityTypes.transaction]: 'Transaction',
   [entityTypes.dataContract]: 'DataContract',
   [entityTypes.document]: 'Document',

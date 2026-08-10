@@ -1,6 +1,15 @@
+import type { ReactNode } from 'react'
+import type { WithChildren, WithClassName } from '../../../types/common'
 import { Button, Grid, GridItem } from '@chakra-ui/react'
 import { ChevronIcon } from '../../ui/icons'
 import Link from 'next/link'
+
+interface BaseSearchItemProps extends WithChildren, WithClassName {
+  href?: string
+  gridClassModifier?: string
+  onClick?: (data: unknown) => void
+  data?: unknown
+}
 
 export function BaseSearchItem ({
   href,
@@ -9,10 +18,18 @@ export function BaseSearchItem ({
   gridClassModifier,
   onClick,
   data
-}) {
-  const Container = ({ children, ...props }) => typeof onClick === 'function'
-    ? <div onClick={() => onClick(data)} {...props}>{children}</div>
-    : <Link href={props?.href} {...props}>{children}</Link>
+}: BaseSearchItemProps) {
+  const Container = ({
+    children: content,
+    href: linkHref,
+    className: containerClassName
+  }: {
+    children?: ReactNode
+    href?: string
+    className?: string
+  }) => typeof onClick === 'function'
+    ? <div onClick={() => onClick(data)} className={containerClassName}>{content}</div>
+    : <Link href={linkHref ?? '#'} className={containerClassName}>{content}</Link>
 
   return (
     <Container href={href} className={`SearchResultsListItem ${className || ''}`}>
@@ -28,7 +45,13 @@ export function BaseSearchItem ({
   )
 }
 
-export function BaseSearchItemContent ({ mainContent, additionalContent, timestamp }) {
+interface BaseSearchItemContentProps {
+  mainContent?: ReactNode
+  additionalContent?: ReactNode
+  timestamp?: ReactNode
+}
+
+export function BaseSearchItemContent ({ mainContent, additionalContent, timestamp }: BaseSearchItemContentProps) {
   return (
     <>
       <GridItem className={'SearchResultsListItem__Column'}>{mainContent}</GridItem>

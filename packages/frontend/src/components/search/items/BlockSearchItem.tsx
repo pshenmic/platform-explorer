@@ -1,9 +1,31 @@
+import type { ComponentType, ReactNode } from 'react'
+import type { Block } from '../../../types'
+import type { WithClassName } from '../../../types/common'
 import { Badge, Flex } from '@chakra-ui/react'
 import { BlockIcon } from '../../ui/icons'
-import { Identifier, NotActive, TimeDelta } from '../../data'
+// Untyped JS components — loose wrappers until data/* is migrated
+import {
+  Identifier as IdentifierJs,
+  NotActive as NotActiveJs,
+  TimeDelta as TimeDeltaJs
+} from '../../data'
 import { BaseSearchItem, BaseSearchItemContent } from './BaseSearchItem'
 
-export function BlockSearchItem ({ block, className, onClick }) {
+const Identifier = IdentifierJs as ComponentType<{
+  children?: ReactNode
+  avatar?: boolean
+  ellipsis?: boolean
+  styles?: string[]
+}>
+const NotActive = NotActiveJs as ComponentType<{ children?: ReactNode }>
+const TimeDelta = TimeDeltaJs as ComponentType<{ endDate?: string | Date | null }>
+
+interface BlockSearchItemProps extends WithClassName {
+  block?: Partial<Block> | null
+  onClick?: (data: unknown) => void
+}
+
+export function BlockSearchItem ({ block, className, onClick }: BlockSearchItemProps) {
   return (
     <BaseSearchItem
       href={`/block/${block?.header?.hash}`}

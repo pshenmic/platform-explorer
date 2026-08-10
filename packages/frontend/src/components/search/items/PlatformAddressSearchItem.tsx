@@ -1,8 +1,27 @@
+import type { ComponentType, ReactNode } from 'react'
+import type { PlatformAddress } from '../../../types'
+import type { WithClassName } from '../../../types/common'
 import { GridItem } from '@chakra-ui/react'
-import { Identifier, NotActive } from '../../data'
+// Untyped JS components — loose wrappers until data/* is migrated
+import {
+  Identifier as IdentifierJs,
+  NotActive as NotActiveJs
+} from '../../data'
 import { BaseSearchItem } from './BaseSearchItem'
 
-export function PlatformAddressSearchItem ({ platformAddress, className, onClick }) {
+const Identifier = IdentifierJs as ComponentType<{
+  children?: ReactNode
+  ellipsis?: boolean
+  styles?: string[]
+}>
+const NotActive = NotActiveJs as ComponentType<{ children?: ReactNode }>
+
+interface PlatformAddressSearchItemProps extends WithClassName {
+  platformAddress?: Partial<PlatformAddress> | null
+  onClick?: (data: unknown) => void
+}
+
+export function PlatformAddressSearchItem ({ platformAddress, className, onClick }: PlatformAddressSearchItemProps) {
   const address = platformAddress?.bech32mAddress || platformAddress?.base58Address
 
   return (

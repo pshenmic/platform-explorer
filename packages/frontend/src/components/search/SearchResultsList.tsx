@@ -1,15 +1,24 @@
+import type { Transaction } from '../../types'
+import type { LoadableState } from '../../types/common'
 import SearchResultsListItem from './SearchResultsListItem'
 import './SearchResultsList.scss'
 import { Grid, GridItem } from '@chakra-ui/react'
-import { categoryMap, entityTypes, singularCategoryNames, pluralCategoryNames, modifierMap } from './constants'
+import {
+  categoryMap,
+  entityTypes,
+  singularCategoryNames,
+  pluralCategoryNames,
+  modifierMap,
+  type SearchCategory
+} from './constants'
 
 // Flatten each tx into its occurrences so duplicates render as their own rows
-const expandOccurrences = (entity) => [
+const expandOccurrences = (entity: Transaction & { isDuplicate?: boolean }) => [
   entity,
-  ...(entity?.duplicates ?? []).map((duplicate) => ({ ...duplicate, isDuplicate: true }))
+  ...(entity?.duplicates ?? []).map((duplicate) => ({ ...duplicate, isDuplicate: true as const }))
 ]
 
-const COLUMN_TITLES = {
+const COLUMN_TITLES: Partial<Record<string, string[]>> = {
   [categoryMap.validators]: ['Identity', 'Balance'],
   [categoryMap.identities]: ['Status', 'Time'],
   [categoryMap.dataContracts]: ['Owner', 'Time'],
@@ -20,13 +29,21 @@ const COLUMN_TITLES = {
   [categoryMap.platformAddresses]: ['Txs']
 }
 
-function ListCategory ({ type, data, onItemClick }) {
+export type SearchResultsData = Partial<Record<SearchCategory, unknown[]>>
+
+interface ListCategoryProps {
+  type: SearchCategory
+  data: unknown[]
+  onItemClick?: (data: unknown) => void
+}
+
+function ListCategory ({ type, data, onItemClick }: ListCategoryProps) {
   const titles = COLUMN_TITLES[categoryMap[type]]
 
   if (!titles) return null
 
   const displayData = categoryMap[type] === entityTypes.transaction
-    ? data.flatMap(expandOccurrences)
+    ? (data as Array<Transaction & { isDuplicate?: boolean }>).flatMap(expandOccurrences)
     : data
 
   return (
@@ -56,7 +73,12 @@ function ListCategory ({ type, data, onItemClick }) {
   )
 }
 
-function SearchResultsList ({ results, onItemClick }) {
+interface SearchResultsListProps {
+  results: LoadableState<SearchResultsData>
+  onItemClick?: (data: unknown) => void
+}
+
+function SearchResultsList ({ results, onItemClick }: SearchResultsListProps) {
   return (
     <div className={'SearchResultsList'}>
       {results.loading && (
@@ -71,7 +93,12 @@ function SearchResultsList ({ results, onItemClick }) {
 
       {results.data && Object.entries(results.data)?.length > 0 && (
         Object.entries(results.data).map(([category, items]) => (
-          <ListCategory key={category} type={category} data={items} onItemClick={onItemClick}/>
+          <ListCategory
+            key={category}
+            type={category as SearchCategory}
+            data={(items as unknown[]) ?? []}
+            onItemClick={onItemClick}
+          />
         ))
       )}
     </div>

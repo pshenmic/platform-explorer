@@ -1,10 +1,34 @@
+import type { ComponentType, ReactNode } from 'react'
+import type { Transaction } from '../../../types'
+import type { WithClassName } from '../../../types/common'
 import { Flex } from '@chakra-ui/react'
-import { Identifier, TimeDelta } from '../../data'
+// Untyped JS components — loose wrappers until data/* / transactions/* are migrated
+import {
+  Identifier as IdentifierJs,
+  TimeDelta as TimeDeltaJs
+} from '../../data'
 import { TransactionsIcon } from '../../ui/icons'
 import { BaseSearchItem, BaseSearchItemContent } from './BaseSearchItem'
-import { TransactionStatusBadge } from '../../transactions'
+import { TransactionStatusBadge as TransactionStatusBadgeJs } from '../../transactions'
 
-export function TransactionSearchItem ({ transaction, className, onClick }) {
+const Identifier = IdentifierJs as ComponentType<{
+  children?: ReactNode
+  ellipsis?: boolean
+  styles?: string[]
+}>
+const TimeDelta = TimeDeltaJs as ComponentType<{ endDate?: string | Date | null }>
+const TransactionStatusBadge = TransactionStatusBadgeJs as ComponentType<{ status?: string | null }>
+
+type SearchTransaction = Partial<Transaction> & {
+  isDuplicate?: boolean
+}
+
+interface TransactionSearchItemProps extends WithClassName {
+  transaction?: SearchTransaction | null
+  onClick?: (data: unknown) => void
+}
+
+export function TransactionSearchItem ({ transaction, className, onClick }: TransactionSearchItemProps) {
   // Duplicate rows deep-link to the same tx with that occurrence preselected (?block=)
   const href = transaction?.isDuplicate
     ? `/transaction/${transaction?.hash}?block=${transaction?.blockHash}`
