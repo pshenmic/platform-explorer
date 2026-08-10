@@ -1,0 +1,171 @@
+'use client'
+
+import { useState, useEffect } from 'react'
+import * as Api from '../../../util/Api'
+import TransactionsList from '../../../components/transactions/TransactionsList'
+import { ErrorMessageBlock } from '../../../components/Errors'
+import { fetchHandlerSuccess, fetchHandlerError } from '../../../util'
+import { InfoContainer, PageDataContainer } from '../../../components/ui/containers'
+import { Container, Tabs, TabList, Tab, TabPanels, TabPanel } from '@chakra-ui/react'
+import { BlockDigestCard, BlockTotalCard, QuorumMembersList } from '../../../components/blocks'
+import type { BlockDetail } from '../../../components/blocks/BlockDigestCard'
+import { useBreadcrumbs } from '../../../contexts/BreadcrumbsContext'
+import { usePathname, useRouter, useSearchParams } from 'next/navigation'
+import { QuorumInfo } from '../../../components/blocks/quorum'
+import { useActiveNetwork } from 'src/contexts'
+import type { LoadableState, Rate, Status } from '../../../types'
+
+import './Block.scss'
+
+const tabs = [
+  'transactions',
+  'quorum-members',
+  'quorum-info'
+] as const
+
+const defaultTabName = 'transactions'
+
+interface BlockProps {
+  hash: string
+}
+
+function Block ({ hash }: BlockProps) {
+  const { setBreadcrumbs } = useBreadcrumbs()
+  const [block, setBlock] = useState<LoadableState<BlockDetail>>({ data: {} as BlockDetail, loading: true, error: false })
+  const [rate, setRate] = useState<LoadableState<Rate>>({ data: {} as Rate, loading: true, error: false })
+  const [status, setStatus] = useState<LoadableState<Partial<Status>>>({ data: {} as Partial<Status>, loading: true, error: false })
+  const [activeTab, setActiveTab] = useState(
+    tabs.indexOf(defaultTabName.toLowerCase() as typeof tabs[number]) !== -1
+      ? tabs.indexOf(defaultTabName.toLowerCase() as typeof tabs[number])
+      : 0
+  )
+  const { l1explorerBaseUrl } = useActiveNetwork()
+  const router = useRouter()
+  const pathname = usePathname()
+  const searchParams = useSearchParams()
+
+  useEffect(() => {
+    Api.getStatus()
+      .then(res => fetchHandlerSuccess(setStatus, res))
+      .catch(err => fetchHandlerError(setStatus, err))
+  }, [])
+
+  useEffect(() => {
+    setBreadcrumbs([
+      { label: 'Home', path: '/' },
+      { label: 'Blocks', path: '/blocks' },
+      { label: hash }
+    ])
+  }, [setBreadcrumbs, hash])
+
+  useEffect(() => {
+    const tab = searchParams.get('tab')
+
+    if (tab && tabs.indexOf(tab.toLowerCase() as typeof tabs[number]) !== -1) {
+      setActiveTab(tabs.indexOf(tab.toLowerCase() as typeof tabs[number]))
+      return
+    }
+
+    setActiveTab(tabs.indexOf(defaultTabName.toLowerCase() as typeof tabs[number]) !== -1 ? tabs.indexOf(defaultTabName.toLowerCase() as typeof tabs[number]) : 0)
+  }, [searchParams])
+
+  useEffect(() => {
+    const urlParameters = new URLSearchParams(Array.from(searchParams.entries()))
+
+    if (activeTab === tabs.indexOf(defaultTabName.toLowerCase() as typeof tabs[number]) ||
+      (tabs.indexOf(defaultTabName.toLowerCase() as typeof tabs[number]) === -1 && activeTab === 0)) {
+      urlParameters.delete('tab')
+    } else {
+      urlParameters.set('tab', tabs[activeTab])
+    }
+
+    router.replace(`${pathname}?${urlParameters.toString()}`, { scroll: false })
+  }, [activeTab, pathname, router, searchParams])
+
+  const fetchData = () => {
+    setBlock(state => ({ ...state, loading: true }))
+
+    Api.getBlockByHash(hash)
+      .then(res => fetchHandlerSuccess(setBlock, res))
+      .catch(err => fetchHandlerError(setBlock, err))
+
+    Api.getRate()
+      .then(res => fetchHandlerSuccess(setRate, res))
+      .catch(err => fetchHandlerError(setRate, err))
+  }
+
+  useEffect(fetchData, [hash])
+
+  return (
+    <PageDataContainer
+      className={'Block'}
+      title={'Block info'}
+    >
+      <div className={'Block__InfoBlocks'}>
+        <BlockTotalCard
+          className={'Block__InfoBlock'}
+          l1explorerBaseUrl={l1explorerBaseUrl}
+          block={block}
+        />
+        <BlockDigestCard
+          block={block}
+          rate={rate.data}
+          status={status}
+        />
+      </div>
+
+      <InfoContainer styles={['tabs']}>
+        <Tabs onChange={(index) => setActiveTab(index)} index={activeTab}>
+          <TabList>
+            <Tab>Transactions {block.data?.txs?.length !== undefined
+              ? <span
+                className={`Tabs__TabItemsCount ${block.data?.txs?.length === 0 ? 'Tabs__TabItemsCount--Empty' : ''}`}>
+                  {block.data?.txs?.length}
+                </span>
+              : ''}
+            </Tab>
+            <Tab>Quorum Members {block?.data?.quorum?.members?.length !== undefined
+              ? <span
+                className={`Tabs__TabItemsCount ${block?.data?.quorum?.members?.length === 0 ? 'Tabs__TabItemsCount--Empty' : ''}`}>
+                  {block?.data?.quorum?.members?.length}
+                </span>
+              : ''}
+            </Tab>
+            <Tab>Quorum Info</Tab>
+          </TabList>
+          <TabPanels>
+            <TabPanel>
+              {!block.error
+                ? <TransactionsList
+                    transactions={block.data?.txs as never}
+                    rate={rate.data}
+                    loading={block.loading}
+                  />
+                : <Container h={20}><ErrorMessageBlock/></Container>
+              }
+            </TabPanel>
+            <TabPanel>
+              {!block.error
+                ? <QuorumMembersList
+                    members={block?.data?.quorum?.members ?? undefined}
+                    loading={block.loading}
+                  />
+                : <Container h={20}><ErrorMessageBlock/></Container>
+              }
+            </TabPanel>
+            <TabPanel>
+              <QuorumInfo
+                quorum={block?.data?.quorum}
+                l1explorerBaseUrl={l1explorerBaseUrl}
+                loading={block?.loading}
+                showQuorumMembers={() => setActiveTab(tabs.indexOf('quorum-members'))}
+              />
+            </TabPanel>
+          </TabPanels>
+        </Tabs>
+      </InfoContainer>
+    </PageDataContainer>
+  )
+}
+
+export default Block
