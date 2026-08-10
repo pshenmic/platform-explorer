@@ -2,8 +2,11 @@ const crypto = require('crypto')
 const StateTransitionEnum = require('./enums/StateTransitionEnum')
 const DocumentActionEnum = require('./enums/DocumentActionEnum')
 const net = require('net')
-const { TCP_CONNECT_TIMEOUT, NETWORK, DPNS_CONTRACT, BANNED_STATE_CACHE_KEY } = require('./constants')
+const { TCP_CONNECT_TIMEOUT, NETWORK, DPNS_CONTRACT, BANNED_STATE_CACHE_KEY, PLATFORM_QUORUMS_CACHE_KEY, VALIDATORS_CACHE_LIFE_INTERVAL } = require('./constants')
 const DashCoreRPC = require('./dashcoreRpc')
+const TenderdashRPC = require('./tenderdashRpc')
+const Quorum = require('./models/Quorum')
+const QuorumTypeEnum = require('./enums/QuorumTypeEnum')
 const cache = require('./cache')
 const { base58 } = require('@scure/base')
 const Intervals = require('./enums/IntervalsEnum')
@@ -1697,6 +1700,67 @@ const getFinalPoSeBanHeight = async (proTxHash) => {
   return finalPoSeBanHeight
 }
 
+// The Platform validator set is not elected per block: it rotates between the
+// signing-active quorums of the platform LLMQ type, so every member of every
+// active quorum serves as a validator within its quorum's lifetime. Core owns
+// the quorum list, Tenderdash reports which of them is in charge right now.
+// Rebuilding costs one `quorum info` call per quorum, and quorums only change
+// once per DKG interval, so the result is cached alongside the validators.
+const getPlatformQuorums = async () => {
+  const cached = cache.get(PLATFORM_QUORUMS_CACHE_KEY)
+
+  if (cached) {
+    return cached
+  }
+
+  const { quorumHash: currentQuorumHash, quorumType } = await TenderdashRPC.getValidators()
+
+  const quorumsList = await DashCoreRPC.getQuorumsListExtended()
+
+  const quorums = await Promise.all(
+    (quorumsList[QuorumTypeEnum[quorumType]] ?? []).map(async (quorumEntry) => {
+      const [quorumHash] = Object.keys(quorumEntry)
+
+      const quorumInfo = await DashCoreRPC.getQuorumInfo(quorumHash, quorumType)
+
+      return Quorum.fromObject({
+        ...quorumInfo,
+        ...quorumEntry[quorumHash],
+        // Core reports quorum and member hashes in lower case, while Tenderdash
+        // and the indexer both use upper case
+        quorumHash: quorumHash.toUpperCase(),
+        members: (quorumInfo?.members ?? []).map(member => ({
+          ...member,
+          proTxHash: member.proTxHash.toUpperCase()
+        })),
+        isCurrent: quorumHash.toUpperCase() === currentQuorumHash?.toUpperCase()
+      })
+    })
+  )
+
+  const platformQuorums = {
+    quorumType,
+    currentQuorumHash: currentQuorumHash?.toUpperCase() ?? null,
+    quorums: quorums.sort((a, b) => b.creationHeight - a.creationHeight)
+  }
+
+  cache.set(PLATFORM_QUORUMS_CACHE_KEY, platformQuorums, VALIDATORS_CACHE_LIFE_INTERVAL)
+
+  return platformQuorums
+}
+
+// Members of every active quorum except the one currently in charge: they will
+// serve as validators once the set rotates to their quorum.
+const getUpcomingValidators = async () => {
+  const { quorums } = await getPlatformQuorums()
+
+  return [...new Set(
+    quorums
+      .filter(quorum => !quorum.isCurrent)
+      .flatMap(quorum => (quorum.members ?? []).map(member => member.proTxHash))
+  )]
+}
+
 // Calculating period and calculate the period
 // and find the interval with less than 2 periods
 // and take the previous interval
@@ -1930,6 +1994,8 @@ module.exports = {
   sleep,
   checkTcpConnect,
   getFinalPoSeBanHeight,
+  getPlatformQuorums,
+  getUpcomingValidators,
   calculateInterval,
   iso8601duration,
   getAliasInfo,
