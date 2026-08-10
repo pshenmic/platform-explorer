@@ -1,19 +1,31 @@
+import type { ComponentType, ReactNode } from 'react'
 import Link from 'next/link'
 import TransactionsListItem from './TransactionsListItem'
 import { EmptyListMessage } from '@ui/lists'
 import { Grid, GridItem } from '@chakra-ui/react'
-import { LoadingList } from '../loading'
-import Pagination from '../pagination'
+import { LoadingList as LoadingListJs } from '../loading'
+import PaginationJs from '../pagination'
 import { ErrorMessageBlock } from '../Errors'
 import {
   createColumnHelper,
   getCoreRowModel,
   useReactTable
 } from '@tanstack/react-table'
+import type { Rate, Transaction } from '../../types'
 
 import './TransactionsList.scss'
 
-const columnHelper = createColumnHelper()
+const LoadingList = LoadingListJs as ComponentType<{ itemsCount?: number }>
+const Pagination = PaginationJs as ComponentType<{
+  className?: string
+  onPageChange?: (selectedItem: { selected: number }) => void
+  pageCount?: number
+  forcePage?: number
+  justify?: boolean
+  children?: ReactNode
+}>
+
+const columnHelper = createColumnHelper<Transaction>()
 
 const columns = [
   columnHelper.accessor('status', {
@@ -39,9 +51,28 @@ const columns = [
   })
 ]
 
-const headerExtraClass = {
+type HeaderStyles = 'default' | 'light'
+
+const headerExtraClass: Record<HeaderStyles, string> = {
   default: '',
   light: 'TransactionsList__ColumnTitles--Light'
+}
+
+interface ListPagination {
+  onPageChange: (selectedItem: { selected: number }) => void
+  pageCount: number
+  forcePage?: number
+}
+
+interface TransactionsListProps {
+  transactions?: Transaction[]
+  showMoreLink?: string
+  headerStyles?: HeaderStyles
+  rate?: Pick<Rate, 'usd'> | null
+  pagination?: ListPagination
+  loading?: boolean
+  itemsCount?: number
+  absoluteDate?: boolean
 }
 
 export default function TransactionsList ({
@@ -53,7 +84,7 @@ export default function TransactionsList ({
   loading,
   itemsCount = 10,
   absoluteDate = false
-}) {
+}: TransactionsListProps) {
   const table = useReactTable({
     data: transactions,
     columns,

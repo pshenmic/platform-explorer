@@ -1,8 +1,13 @@
 import { Badge } from '@chakra-ui/react'
 import { ErrorCircleIcon, CheckmarkIcon } from '../ui/icons'
+import type { TransactionStatus } from '../../types'
 import './TransactionStatusBadge.scss'
 
-function TransactionStatusBadge ({ status }) {
+interface TransactionStatusBadgeProps {
+  status?: TransactionStatus | string | null
+}
+
+function TransactionStatusBadge ({ status }: TransactionStatusBadgeProps) {
   const StatusIcon = status === 'SUCCESS'
     ? <CheckmarkIcon w={'12px'} h={'12px'} mr={'5px'}/>
     : <ErrorCircleIcon w={'12px'} h={'12px'} mr={'5px'}/>

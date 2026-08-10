@@ -1,8 +1,41 @@
-import { ValueCard } from '../cards'
-import { InfoLine } from '../data'
+import type { ComponentType, ReactNode } from 'react'
+import { ValueCard as ValueCardJs } from '../cards'
+// Untyped JS components — loose wrappers until data/* is migrated
+import { InfoLine as InfoLineJs } from '../data'
+import type { WithClassName } from '../../types/common'
 import './PublicKeyCard.scss'
 
-function PublicKeyCard ({ publicKey, className }) {
+const InfoLine = InfoLineJs as ComponentType<{
+  className?: string
+  title?: ReactNode
+  value?: ReactNode
+  error?: boolean
+  loading?: boolean
+  icon?: ReactNode
+}>
+const ValueCard = ValueCardJs as ComponentType<{
+  children?: ReactNode
+  link?: string
+  className?: string
+  clickable?: boolean
+  loading?: boolean
+}>
+
+export interface PublicKeyData {
+  id?: number | string | null
+  publicKeyHash?: string | null
+  type?: string | number | null
+  purpose?: string | number | null
+  securityLevel?: string | number | null
+  data?: string | null
+  readOnly?: boolean | null
+}
+
+interface PublicKeyCardProps extends WithClassName {
+  publicKey?: PublicKeyData | null
+}
+
+function PublicKeyCard ({ publicKey, className }: PublicKeyCardProps) {
   return (
     <div className={`InfoBlock InfoBlock--Gradient PublicKeyCard ${className || ''}`}>
 

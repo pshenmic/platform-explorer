@@ -1,6 +1,11 @@
+import type { WithClassName } from '../../types/common'
 import './VoteIndexValues.scss'
 
-function VoteIndexValues ({ indexValues, className }) {
+interface VoteIndexValuesProps extends WithClassName {
+  indexValues?: string[] | null
+}
+
+function VoteIndexValues ({ indexValues, className }: VoteIndexValuesProps) {
   return (
     <div className={`VoteIndexValues ${className || ''}`}>
       <div className={'VoteIndexValues__Titles'}>

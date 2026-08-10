@@ -1,20 +1,56 @@
 'use client'
 
+import type { ComponentType, ReactNode, KeyboardEvent } from 'react'
 import { useState } from 'react'
 import Link from 'next/link'
 import { Button } from '@chakra-ui/react'
 import { WarningTwoIcon } from '@chakra-ui/icons'
-import { Identifier, TimeDelta, NotActive } from '../data'
+// Untyped JS components — loose wrappers until data/* is migrated
+import {
+  Identifier as IdentifierJs,
+  TimeDelta as TimeDeltaJs,
+  NotActive as NotActiveJs
+} from '../data'
 import TypeBadge from './TypeBadge'
 import BatchTypeBadge from './BatchTypeBadge'
 import TransactionStatusBadge from './TransactionStatusBadge'
 import { TransactionsIcon, ChevronIcon } from '../ui/icons'
+import type { Transaction } from '../../types'
 
 import './DuplicatedTransactions.scss'
 
+const Identifier = IdentifierJs as ComponentType<{
+  children?: ReactNode
+  ellipsis?: boolean
+  styles?: string[]
+  avatar?: boolean
+  copyButton?: boolean
+  className?: string
+}>
+const TimeDelta = TimeDeltaJs as ComponentType<{
+  endDate?: string | Date | null
+  showTimestampTooltip?: boolean
+}>
+const NotActive = NotActiveJs as ComponentType<{ children?: ReactNode, className?: string }>
+
 const VISIBLE_COUNT = 3
 
-function TypeBadgeCell ({ occurrence }) {
+/** Duplicates may be partial rows; occurrences include the primary transaction. */
+type TransactionOccurrence = {
+  hash?: string | null
+  blockHash?: string | null
+  blockHeight?: number | null
+  batchType?: string | null
+  type?: string | null
+  timestamp?: string | null
+  status?: string | null
+}
+
+interface TypeBadgeCellProps {
+  occurrence: TransactionOccurrence
+}
+
+function TypeBadgeCell ({ occurrence }: TypeBadgeCellProps) {
   if (occurrence?.batchType) {
     return (
       <BatchTypeBadge
@@ -31,7 +67,13 @@ function TypeBadgeCell ({ occurrence }) {
   return <NotActive/>
 }
 
-function OccurrenceRow ({ occurrence, selected, onSelect }) {
+interface OccurrenceRowProps {
+  occurrence: TransactionOccurrence
+  selected?: boolean
+  onSelect?: (blockHash?: string | null) => void
+}
+
+function OccurrenceRow ({ occurrence, selected, onSelect }: OccurrenceRowProps) {
   const handleSelect = () => onSelect?.(occurrence?.blockHash)
 
   return (
@@ -40,7 +82,7 @@ function OccurrenceRow ({ occurrence, selected, onSelect }) {
       tabIndex={0}
       aria-pressed={selected}
       onClick={handleSelect}
-      onKeyDown={(e) => {
+      onKeyDown={(e: KeyboardEvent) => {
         if (e.key === 'Enter' || e.key === ' ') {
           e.preventDefault()
           handleSelect()
@@ -93,13 +135,19 @@ function OccurrenceRow ({ occurrence, selected, onSelect }) {
   )
 }
 
-function DuplicatedTransactions ({ transaction, selectedBlockHash, onSelect }) {
+interface DuplicatedTransactionsProps {
+  transaction?: Transaction | null
+  selectedBlockHash?: string | null
+  onSelect?: (blockHash?: string | null) => void
+}
+
+function DuplicatedTransactions ({ transaction, selectedBlockHash, onSelect }: DuplicatedTransactionsProps) {
   const [showAll, setShowAll] = useState(false)
   const duplicates = transaction?.duplicates
 
   if (!Array.isArray(duplicates) || duplicates.length === 0) return null
 
-  const occurrences = [transaction, ...duplicates]
+  const occurrences: TransactionOccurrence[] = [transaction as Transaction, ...duplicates]
   const visibleOccurrences = showAll ? occurrences : occurrences.slice(0, VISIBLE_COUNT)
   const hasMore = occurrences.length > VISIBLE_COUNT
 

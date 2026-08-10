@@ -1,19 +1,69 @@
 'use client'
 
+import type { ComponentType, ReactNode } from 'react'
 import Link from 'next/link'
 import { Grid, GridItem } from '@chakra-ui/react'
 import TypeBadge from './TypeBadge'
 import BatchTypeBadge from './BatchTypeBadge'
 import TransactionStatusBadge from './TransactionStatusBadge'
-import { Identifier, BigNumber, Alias, TimeDelta, NotActive, DateBlock } from '../data'
+// Untyped JS components — loose wrappers until data/* is migrated
+import {
+  Identifier as IdentifierJs,
+  BigNumber as BigNumberJs,
+  Alias as AliasJs,
+  TimeDelta as TimeDeltaJs,
+  NotActive as NotActiveJs,
+  DateBlock as DateBlockJs
+} from '../data'
 import { RateTooltip } from '../ui/Tooltips'
 import ImageGenerator from '../imageGenerator'
 import { useRouter } from 'next/navigation'
 import { LinkContainer } from '../ui/containers'
+import type { Rate, Transaction } from '../../types'
 
 import './TransactionsListItem.scss'
 
-function TransactionsListItem ({ transaction, rate, absoluteDate }) {
+const Identifier = IdentifierJs as ComponentType<{
+  children?: ReactNode
+  avatar?: boolean
+  styles?: string[]
+  clickable?: boolean
+  ellipsis?: boolean
+  middleEllipsis?: boolean
+  copyButton?: boolean
+  className?: string
+}>
+const BigNumber = BigNumberJs as ComponentType<{ children?: ReactNode, className?: string }>
+const Alias = AliasJs as ComponentType<{
+  children?: ReactNode
+  alias?: string | { alias?: string } | null
+  status?: string
+  avatarSource?: string | null
+  ellipsis?: boolean
+  className?: string
+}>
+const TimeDelta = TimeDeltaJs as ComponentType<{
+  endDate?: string | Date | null
+  startDate?: string | Date | null
+  showTimestampTooltip?: boolean
+  tooltipDate?: string | Date | null
+  format?: string
+}>
+const NotActive = NotActiveJs as ComponentType<{ children?: ReactNode, className?: string }>
+const DateBlock = DateBlockJs as ComponentType<{
+  timestamp?: string | number | Date | null
+  format?: string
+  showTime?: boolean
+  showRelativeTooltip?: boolean
+}>
+
+interface TransactionsListItemProps {
+  transaction: Transaction
+  rate?: Pick<Rate, 'usd'> | null
+  absoluteDate?: boolean
+}
+
+function TransactionsListItem ({ transaction, rate, absoluteDate }: TransactionsListItemProps) {
   const activeAlias = transaction?.owner?.aliases?.find(alias => alias.status === 'ok')
   const router = useRouter()
 

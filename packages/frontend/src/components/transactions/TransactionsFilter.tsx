@@ -1,11 +1,36 @@
+import type { ComponentType, ReactNode } from 'react'
 import { TransactionTypesInfo } from '../../enums/state.transition.type'
 import { TransactionStatusBadge, TypeBadge } from './index'
 import BatchTypeBadge from './BatchTypeBadge'
 import { BatchActions } from '../../enums/batchTypes'
-import { Filters } from '../filters'
-import { Identifier } from '../data'
+import { Filters as FiltersJs } from '../filters'
+// Untyped JS components — loose wrappers until data/* is migrated
+import { Identifier as IdentifierJs } from '../data'
+import type { WithClassName } from '../../types/common'
 
-const transactionOptions = [
+const Identifier = IdentifierJs as ComponentType<{
+  children?: ReactNode
+  avatar?: boolean
+  ellipsis?: boolean
+  styles?: string[]
+}>
+const Filters = FiltersJs as ComponentType<{
+  filtersConfig?: Record<string, unknown>
+  onFilterChange?: (values: Record<string, unknown>) => void
+  isMobile?: boolean
+  className?: string
+  buttonText?: string
+  applyOnChange?: boolean
+  initialFilters?: Record<string, unknown>
+}>
+
+interface FilterOption {
+  label: ReactNode
+  title: string
+  value: string
+}
+
+const transactionOptions: FilterOption[] = [
   {
     label: <TypeBadge type={'DATA_CONTRACT_CREATE'} />,
     title: TransactionTypesInfo.DATA_CONTRACT_CREATE.title,
@@ -108,7 +133,7 @@ const transactionOptions = [
   }
 ]
 
-const batchOptions = [
+const batchOptions: FilterOption[] = [
   {
     label: <BatchTypeBadge batchType={'DOCUMENT_CREATE'} />,
     title: BatchActions.DOCUMENT_CREATE.title,
@@ -196,7 +221,7 @@ const batchOptions = [
   }
 ]
 
-const statusOptions = [
+const statusOptions: FilterOption[] = [
   {
     label: <TransactionStatusBadge status={'SUCCESS'} />,
     title: 'Success',
@@ -216,12 +241,12 @@ const filtersConfig = {
     title: 'Transaction Types',
     options: transactionOptions,
     defaultValue: transactionOptions.map(t => t.value),
-    formatValue: (values) => {
+    formatValue: (values: string[]) => {
       if (values.length === transactionOptions.length) return null
       if (values.length > 1) return `${values.length} categories`
       return transactionOptions.find(t => t.value === values[0])?.title || values[0]
     },
-    isAllSelected: (values) => values.length === transactionOptions.length
+    isAllSelected: (values: string[]) => values.length === transactionOptions.length
   },
   batch_type: {
     type: 'multiselect',
@@ -229,12 +254,12 @@ const filtersConfig = {
     title: 'Batch Types',
     options: batchOptions,
     defaultValue: batchOptions.map(t => t.value),
-    formatValue: (values) => {
+    formatValue: (values: string[]) => {
       if (values.length === batchOptions.length) return null
       if (values.length > 1) return `${values.length} categories`
       return batchOptions.find(t => t.value === values[0])?.title || values[0]
     },
-    isAllSelected: (values) => values.length === batchOptions.length
+    isAllSelected: (values: string[]) => values.length === batchOptions.length
   },
   status: {
     type: 'multiselect',
@@ -242,12 +267,12 @@ const filtersConfig = {
     title: 'Status',
     options: statusOptions,
     defaultValue: statusOptions.map(s => s.value),
-    formatValue: (values) => {
+    formatValue: (values: string[]) => {
       if (values.length === statusOptions.length) return null
       if (values.length > 1) return `${values.length} values`
       return statusOptions.find(s => s.value === values[0])?.title || values[0]
     },
-    isAllSelected: (values) => values.length === statusOptions.length
+    isAllSelected: (values: string[]) => values.length === statusOptions.length
   },
   gas: {
     type: 'range',
@@ -258,7 +283,7 @@ const filtersConfig = {
     minPlaceholder: 'ex. 0...',
     maxTitle: 'Maximum amount',
     maxPlaceholder: 'ex. 10000000...',
-    formatValue: ({ min, max }) => {
+    formatValue: ({ min, max }: { min?: string, max?: string }) => {
       if (min && max) return `${min} - ${max} Credits`
       if (min) return `Min ${min} Credits`
       if (max) return `Max ${max} Credits`
@@ -272,8 +297,8 @@ const filtersConfig = {
     entityType: 'identities',
     placeholder: 'OWNER ID OR IDENTITY',
     defaultValue: '',
-    formatValue: (value) => value || null,
-    mobileTagRenderer: (value) => (
+    formatValue: (value: string) => value || null,
+    mobileTagRenderer: (value: string) => (
       <Identifier avatar={true} ellipsis={true} styles={['highlight-both']}>{value}</Identifier>
     )
   },
@@ -282,13 +307,24 @@ const filtersConfig = {
     title: 'Date range',
     type: 'daterange',
     defaultValue: null,
-    formatValue: (value) => {
+    formatValue: (value: { start?: Date | null, end?: Date | null } | null) => {
       return `${value?.start ? `from ${value?.start?.toLocaleDateString()}` : ''} ${value?.end ? `to ${value?.end?.toLocaleDateString()}` : ''}`
     }
   }
 }
 
-export default function TransactionsFilter ({ onFilterChange, isMobile, className, excludeFilters = [] }) {
+interface TransactionsFilterProps extends WithClassName {
+  onFilterChange?: (values: Record<string, unknown>) => void
+  isMobile?: boolean
+  excludeFilters?: string[]
+}
+
+export default function TransactionsFilter ({
+  onFilterChange,
+  isMobile,
+  className,
+  excludeFilters = []
+}: TransactionsFilterProps) {
   const config = excludeFilters.length
     ? Object.fromEntries(Object.entries(filtersConfig).filter(([key]) => !excludeFilters.includes(key)))
     : filtersConfig
