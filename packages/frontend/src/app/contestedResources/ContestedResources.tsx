@@ -16,6 +16,7 @@ import {
 import { ContestedResourcesList, ContestedResourcesFilter, useContestedResourcesFilters } from '../../components/contestedResources'
 import ContestedResourcesStatsInline from '../../components/contestedResources/ContestedResourcesStatsInline'
 import PageTitle from '../../components/intro/PageTitle'
+import type { ContestedResource, LoadableState, PaginatedResultSet } from '../../types'
 import introContent from './intro.md'
 import './ContestedResourcesPage.scss'
 
@@ -27,8 +28,17 @@ const paginateConfig = {
   defaultPage: 1
 }
 
-function ContestedResources ({ defaultPage = 1, defaultPageSize }) {
-  const [contestedResources, setContestedResources] = useState({ data: {}, loading: true, error: false })
+interface ContestedResourcesProps {
+  defaultPage?: number
+  defaultPageSize?: number
+}
+
+function ContestedResources ({ defaultPage = 1, defaultPageSize }: ContestedResourcesProps) {
+  const [contestedResources, setContestedResources] = useState<LoadableState<PaginatedResultSet<ContestedResource>>>({
+    data: {} as PaginatedResultSet<ContestedResource>,
+    loading: true,
+    error: false
+  })
   const [total, setTotal] = useState(1)
   const [pageSize, setPageSize] = useState(defaultPageSize || paginateConfig.pageSize.default)
   const [currentPage, setCurrentPage] = useState(defaultPage ? defaultPage - 1 : 0)
@@ -38,10 +48,10 @@ function ContestedResources ({ defaultPage = 1, defaultPageSize }) {
   const pathname = usePathname()
   const searchParams = useSearchParams()
 
-  const fetchData = (page, count, currentFilters) => {
+  const fetchData = (page: number, count: number, currentFilters: Record<string, unknown>) => {
     setContestedResources(state => ({ ...state, loading: true }))
 
-    Api.getContestedResources(page, count, 'desc', undefined, currentFilters)
+    Api.getContestedResources(page, count, 'desc', undefined, currentFilters as never)
       .then(res => {
         if (res.pagination.total === -1) {
           setCurrentPage(0)
@@ -53,15 +63,15 @@ function ContestedResources ({ defaultPage = 1, defaultPageSize }) {
   }
 
   useEffect(
-    () => fetchData(currentPage + 1, pageSize, filters),
+    () => fetchData(currentPage + 1, pageSize, filters as Record<string, unknown>),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [pageSize, currentPage, JSON.stringify(filters)]
   )
 
   useEffect(() => {
-    const page = parseInt(searchParams.get('page')) || paginateConfig.defaultPage
+    const page = parseInt(searchParams.get('page') || '', 10) || paginateConfig.defaultPage
     setCurrentPage(Math.max(page - 1, 0))
-    setPageSize(parseInt(searchParams.get('page-size')) || paginateConfig.pageSize.default)
+    setPageSize(parseInt(searchParams.get('page-size') || '', 10) || paginateConfig.pageSize.default)
   }, [searchParams, pathname])
 
   useEffect(() => {
@@ -71,11 +81,12 @@ function ContestedResources ({ defaultPage = 1, defaultPageSize }) {
       urlParameters.delete('page')
       urlParameters.delete('page-size')
     } else {
-      urlParameters.set('page', currentPage + 1)
-      urlParameters.set('page-size', pageSize)
+      urlParameters.set('page', String(currentPage + 1))
+      urlParameters.set('page-size', String(pageSize))
     }
 
     router.push(`${pathname}?${urlParameters.toString()}`, { scroll: false })
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentPage, pageSize])
 
   return (
@@ -90,10 +101,10 @@ function ContestedResources ({ defaultPage = 1, defaultPageSize }) {
         <ContestedResourcesStatsInline className={'ContestedResourcesPage__Stats'}/>
 
         <ContestedResourcesFilter
-          initialFilters={filters}
+          initialFilters={filters as never}
           className={'ContestedResourcesPage__Filters'}
           onFilterChange={(next) => {
-            setFilters(next)
+            setFilters(next as never)
             setCurrentPage(0)
           }}
         />
@@ -102,13 +113,13 @@ function ContestedResources ({ defaultPage = 1, defaultPageSize }) {
       {!contestedResources.error
         ? <>
           {!contestedResources.loading
-            ? <ContestedResourcesList contestedResources={contestedResources.data.resultSet}/>
+            ? <ContestedResourcesList contestedResources={contestedResources.data?.resultSet}/>
             : <LoadingList itemsCount={pageSize}/>
           }
         </>
         : <Container h={20}><ErrorMessageBlock/></Container>}
 
-      {contestedResources.data?.resultSet?.length > 0 &&
+      {(contestedResources.data?.resultSet?.length ?? 0) > 0 &&
         <div className={'ListNavigation'}>
           <Box w={'210px'}/>
           <Pagination
@@ -117,7 +128,7 @@ function ContestedResources ({ defaultPage = 1, defaultPageSize }) {
             forcePage={currentPage}
           />
           <PageSizeSelector
-            PageSizeSelectHandler={e => setPageSize(e.value)}
+            PageSizeSelectHandler={e => setPageSize(Number(e?.value))}
             value={pageSize}
             items={paginateConfig.pageSize.values}
           />

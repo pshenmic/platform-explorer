@@ -1,10 +1,15 @@
+import type { Metadata } from 'next'
 import ContestedResource from './ContestedResource'
 import contestedResources from '../../../util/contestedResources'
 
-export const generateMetadata = async ({ params }) => {
+interface ContestedResourceRouteProps {
+  params: { resourceValue: string }
+}
+
+export const generateMetadata = async ({ params }: ContestedResourceRouteProps): Promise<Metadata> => {
   const resourceValue = decodeURIComponent(params.resourceValue)
   const decodedValue = contestedResources.decodeValue(resourceValue)
-  const readableValue = contestedResources.getResourceValue(decodedValue)
+  const readableValue = contestedResources.getResourceValue(decodedValue as never)
 
   return {
     title: `${readableValue} — Contested Resource — Dash Platform Explorer`,
@@ -28,7 +33,7 @@ export const generateMetadata = async ({ params }) => {
   }
 }
 
-const ContestedResourceRoute = ({ params }) => {
+const ContestedResourceRoute = ({ params }: ContestedResourceRouteProps) => {
   return <ContestedResource resourceValue={params.resourceValue} />
 }
 

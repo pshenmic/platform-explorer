@@ -10,6 +10,7 @@ import { useBreadcrumbs } from '../../../contexts/BreadcrumbsContext'
 import { ContestedResourceTotalCard } from '../../../components/contestedResources'
 import { VotesList } from '../../../components/contestedResources/votes'
 import contestedResources from '../../../util/contestedResources'
+import type { ContestedResource as ContestedResourceType, LoadableState, PaginatedResultSet, Rate, Vote } from '../../../types'
 
 const pagintationConfig = {
   itemsOnPage: {
@@ -24,19 +25,36 @@ const tabs = [
   'towards_identity',
   'abstain',
   'locked'
-]
+] as const
 
 const defaultTabName = 'all_votes'
 
-function ContestedResource ({ resourceValue }) {
+type Refreshable<T> = LoadableState<T> & { refreshing?: boolean }
+type PaginatedProps = { currentPage: number }
+
+function emptyVotes (): Refreshable<PaginatedResultSet<Vote>> {
+  return {
+    data: {} as PaginatedResultSet<Vote>,
+    props: { currentPage: 0 },
+    loading: true,
+    error: false,
+    refreshing: true
+  }
+}
+
+interface ContestedResourceProps {
+  resourceValue: string
+}
+
+function ContestedResource ({ resourceValue }: ContestedResourceProps) {
   const { setBreadcrumbs } = useBreadcrumbs()
-  const [contestedResource, setContestedResource] = useState({ data: {}, loading: true, error: false, refreshing: true })
-  const [votes, setVotes] = useState({ data: {}, props: { currentPage: 0 }, loading: true, error: false, refreshing: true })
-  const [towardsIdentityVotes, setTowardsIdentityVotes] = useState({ data: {}, props: { currentPage: 0 }, loading: true, error: false, refreshing: true })
-  const [abstainVotes, setAbstainVotes] = useState({ data: {}, props: { currentPage: 0 }, loading: true, error: false, refreshing: true })
-  const [lockedVotes, setLockedVotes] = useState({ data: {}, props: { currentPage: 0 }, loading: true, error: false, refreshing: true })
-  const [activeTab, setActiveTab] = useState(tabs.indexOf(defaultTabName.toLowerCase()) !== -1 ? tabs.indexOf(defaultTabName.toLowerCase()) : 0)
-  const [rate, setRate] = useState({ data: {}, loading: true, error: false, refreshing: true })
+  const [contestedResource, setContestedResource] = useState<Refreshable<ContestedResourceType>>({ data: {} as ContestedResourceType, loading: true, error: false, refreshing: true })
+  const [votes, setVotes] = useState(emptyVotes())
+  const [towardsIdentityVotes, setTowardsIdentityVotes] = useState(emptyVotes())
+  const [abstainVotes, setAbstainVotes] = useState(emptyVotes())
+  const [lockedVotes, setLockedVotes] = useState(emptyVotes())
+  const [activeTab, setActiveTab] = useState(tabs.indexOf(defaultTabName as typeof tabs[number]) !== -1 ? tabs.indexOf(defaultTabName as typeof tabs[number]) : 0)
+  const [rate, setRate] = useState<Refreshable<Rate>>({ data: {} as Rate, loading: true, error: false, refreshing: true })
   const pageSize = pagintationConfig.itemsOnPage.default
   const router = useRouter()
   const pathname = usePathname()
@@ -44,7 +62,7 @@ function ContestedResource ({ resourceValue }) {
   const decodedValue = contestedResources.decodeValue(decodeURIComponent(resourceValue))
 
   const [isPollingAfterVote, setIsPollingAfterVote] = useState(false)
-  const initialVoteCountRef = useRef(null)
+  const initialVoteCountRef = useRef<number | null>(null)
 
   const refreshAfterVote = () => {
     initialVoteCountRef.current = contestedResource.data?.totalCountVotes ?? 0
@@ -85,26 +103,26 @@ function ContestedResource ({ resourceValue }) {
     setBreadcrumbs([
       { label: 'Home', path: '/' },
       { label: 'Contested Resources', path: '/contestedResources' },
-      { label: contestedResources.getResourceValue(decodedValue) || resourceValue }
+      { label: contestedResources.getResourceValue(decodedValue as never) || resourceValue }
     ])
   }, [setBreadcrumbs, resourceValue, contestedResource])
 
   useEffect(() => {
     const tab = searchParams.get('tab')
 
-    if (tab && tabs.indexOf(tab.toLowerCase()) !== -1) {
-      setActiveTab(tabs.indexOf(tab.toLowerCase()))
+    if (tab && tabs.indexOf(tab.toLowerCase() as typeof tabs[number]) !== -1) {
+      setActiveTab(tabs.indexOf(tab.toLowerCase() as typeof tabs[number]))
       return
     }
 
-    setActiveTab(tabs.indexOf(defaultTabName.toLowerCase()) !== -1 ? tabs.indexOf(defaultTabName.toLowerCase()) : 0)
+    setActiveTab(tabs.indexOf(defaultTabName.toLowerCase() as typeof tabs[number]) !== -1 ? tabs.indexOf(defaultTabName.toLowerCase() as typeof tabs[number]) : 0)
   }, [searchParams])
 
   useEffect(() => {
     const urlParameters = new URLSearchParams(Array.from(searchParams.entries()))
 
-    if (activeTab === tabs.indexOf(defaultTabName.toLowerCase()) ||
-      (tabs.indexOf(defaultTabName.toLowerCase()) === -1 && activeTab === 0)) {
+    if (activeTab === tabs.indexOf(defaultTabName.toLowerCase() as typeof tabs[number]) ||
+      (tabs.indexOf(defaultTabName.toLowerCase() as typeof tabs[number]) === -1 && activeTab === 0)) {
       urlParameters.delete('tab')
     } else {
       urlParameters.set('tab', tabs[activeTab])
@@ -141,51 +159,51 @@ function ContestedResource ({ resourceValue }) {
     const isInitialLoad = votes.data == null || Object.keys(votes.data).length === 0
     if (isInitialLoad) setLoadingProp(setVotes)
 
-    Api.getContestedResourceVotes(resourceValue, votes.props.currentPage + 1, pageSize, 'desc')
+    Api.getContestedResourceVotes(resourceValue, (votes.props as PaginatedProps).currentPage + 1, pageSize, 'desc')
       .then(res => fetchHandlerSuccess(setVotes, res))
       .catch(err => fetchHandlerError(setVotes, err))
       .finally(() => setVotes(state => ({ ...state, refreshing: false })))
-  }, [resourceValue, votes.props.currentPage, votes.refreshing])
+  }, [resourceValue, (votes.props as PaginatedProps).currentPage, votes.refreshing])
 
   useEffect(() => {
     if (!resourceValue || !towardsIdentityVotes.refreshing) return
 
     setLoadingProp(setTowardsIdentityVotes)
-    Api.getContestedResourceVotes(resourceValue, towardsIdentityVotes.props.currentPage + 1, pageSize, 'desc', { choice: 0 })
+    Api.getContestedResourceVotes(resourceValue, (towardsIdentityVotes.props as PaginatedProps).currentPage + 1, pageSize, 'desc', { choice: 0 })
       .then(res => fetchHandlerSuccess(setTowardsIdentityVotes, res))
       .catch(err => fetchHandlerError(setTowardsIdentityVotes, err))
       .finally(() => setTowardsIdentityVotes(state => ({ ...state, refreshing: false })))
-  }, [resourceValue, towardsIdentityVotes.props.currentPage, towardsIdentityVotes.refreshing])
+  }, [resourceValue, (towardsIdentityVotes.props as PaginatedProps).currentPage, towardsIdentityVotes.refreshing])
 
   useEffect(() => {
     if (!resourceValue || !abstainVotes.refreshing) return
 
     setLoadingProp(setAbstainVotes)
-    Api.getContestedResourceVotes(resourceValue, abstainVotes.props.currentPage + 1, pageSize, 'desc', { choice: 1 })
+    Api.getContestedResourceVotes(resourceValue, (abstainVotes.props as PaginatedProps).currentPage + 1, pageSize, 'desc', { choice: 1 })
       .then(res => fetchHandlerSuccess(setAbstainVotes, res))
       .catch(err => fetchHandlerError(setAbstainVotes, err))
       .finally(() => setAbstainVotes(state => ({ ...state, refreshing: false })))
-  }, [resourceValue, abstainVotes.props.currentPage, abstainVotes.refreshing])
+  }, [resourceValue, (abstainVotes.props as PaginatedProps).currentPage, abstainVotes.refreshing])
 
   useEffect(() => {
     if (!resourceValue || !lockedVotes.refreshing) return
 
     setLoadingProp(setLockedVotes)
-    Api.getContestedResourceVotes(resourceValue, lockedVotes.props.currentPage + 1, pageSize, 'desc', { choice: 2 })
+    Api.getContestedResourceVotes(resourceValue, (lockedVotes.props as PaginatedProps).currentPage + 1, pageSize, 'desc', { choice: 2 })
       .then(res => fetchHandlerSuccess(setLockedVotes, res))
       .catch(err => fetchHandlerError(setLockedVotes, err))
       .finally(() => setLockedVotes(state => ({ ...state, refreshing: false })))
-  }, [resourceValue, lockedVotes.props.currentPage, lockedVotes.refreshing])
+  }, [resourceValue, (lockedVotes.props as PaginatedProps).currentPage, lockedVotes.refreshing])
 
   useEffect(() => {
     const tab = searchParams.get('tab')
 
-    if (tab && tabs.indexOf(tab.toLowerCase()) !== -1) {
-      setActiveTab(tabs.indexOf(tab.toLowerCase()))
+    if (tab && tabs.indexOf(tab.toLowerCase() as typeof tabs[number]) !== -1) {
+      setActiveTab(tabs.indexOf(tab.toLowerCase() as typeof tabs[number]))
       return
     }
 
-    setActiveTab(tabs.indexOf(defaultTabName.toLowerCase()) !== -1 ? tabs.indexOf(defaultTabName.toLowerCase()) : 0)
+    setActiveTab(tabs.indexOf(defaultTabName.toLowerCase() as typeof tabs[number]) !== -1 ? tabs.indexOf(defaultTabName.toLowerCase() as typeof tabs[number]) : 0)
   }, [searchParams])
 
   return (
@@ -193,10 +211,10 @@ function ContestedResource ({ resourceValue }) {
       className={'ContestedResource'}
       title={'Contested Resource info'}
     >
-      <ContestedResourceTotalCard refresh={refreshAfterVote} isPollingAfterVote={isPollingAfterVote} contestedResource={contestedResource} rate={rate}/>
+      <ContestedResourceTotalCard refresh={refreshAfterVote} isPollingAfterVote={isPollingAfterVote} contestedResource={contestedResource as never} rate={rate as never}/>
 
       <InfoContainer styles={['tabs']}>
-        <Tabs onChange={(index) => setActiveTab(index)} index={activeTab}>
+        <Tabs onChange={(index: number) => setActiveTab(index)} index={activeTab}>
           <TabList>
             <Tab>
               All votes
@@ -234,58 +252,50 @@ function ContestedResource ({ resourceValue }) {
           <TabPanels>
             <TabPanel position={'relative'}>
               <VotesList
-                votes={votes.data?.resultSet}
-                showDataContract={false}
+                votes={votes.data?.resultSet as never}
                 pagination={{
                   onPageChange: pagination => paginationHandler(setVotes, pagination.selected),
-                  pageCount: Math.ceil(votes.data?.pagination?.total / pageSize) || 1,
-                  forcePage: votes.props.currentPage
+                  pageCount: Math.ceil((votes.data?.pagination?.total ?? 0) / pageSize) || 1,
+                  forcePage: (votes.props as PaginatedProps).currentPage
                 }}
                 itemsCount={10}
                 loading={votes.loading}
-                error={votes.error}
               />
             </TabPanel>
             <TabPanel position={'relative'}>
               <VotesList
-                votes={towardsIdentityVotes.data?.resultSet}
-                showDataContract={false}
+                votes={towardsIdentityVotes.data?.resultSet as never}
                 pagination={{
                   onPageChange: pagination => paginationHandler(setTowardsIdentityVotes, pagination.selected),
-                  pageCount: Math.ceil(towardsIdentityVotes.data?.pagination?.total / pageSize) || 1,
-                  forcePage: towardsIdentityVotes.props.currentPage
+                  pageCount: Math.ceil((towardsIdentityVotes.data?.pagination?.total ?? 0) / pageSize) || 1,
+                  forcePage: (towardsIdentityVotes.props as PaginatedProps).currentPage
                 }}
                 itemsCount={10}
                 loading={towardsIdentityVotes.loading}
-                error={towardsIdentityVotes.error}
               />
             </TabPanel>
             <TabPanel position={'relative'}>
               <VotesList
-                votes={abstainVotes.data?.resultSet}
-                showDataContract={false}
+                votes={abstainVotes.data?.resultSet as never}
                 pagination={{
                   onPageChange: pagination => paginationHandler(setAbstainVotes, pagination.selected),
-                  pageCount: Math.ceil(abstainVotes.data?.pagination?.total / pageSize) || 1,
-                  forcePage: abstainVotes.props.currentPage
+                  pageCount: Math.ceil((abstainVotes.data?.pagination?.total ?? 0) / pageSize) || 1,
+                  forcePage: (abstainVotes.props as PaginatedProps).currentPage
                 }}
                 itemsCount={10}
                 loading={abstainVotes.loading}
-                error={abstainVotes.error}
               />
             </TabPanel>
             <TabPanel position={'relative'}>
               <VotesList
-                votes={lockedVotes.data?.resultSet}
-                showDataContract={false}
+                votes={lockedVotes.data?.resultSet as never}
                 pagination={{
                   onPageChange: pagination => paginationHandler(setLockedVotes, pagination.selected),
-                  pageCount: Math.ceil(lockedVotes.data?.pagination?.total / pageSize) || 1,
-                  forcePage: lockedVotes.props.currentPage
+                  pageCount: Math.ceil((lockedVotes.data?.pagination?.total ?? 0) / pageSize) || 1,
+                  forcePage: (lockedVotes.props as PaginatedProps).currentPage
                 }}
                 itemsCount={10}
                 loading={lockedVotes.loading}
-                error={lockedVotes.error}
               />
             </TabPanel>
           </TabPanels>
