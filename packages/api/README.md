@@ -53,6 +53,7 @@ Reference:
 * [Validator Rewards Statistic](#validator-rewards-stats-by-protxhash)
 * [Validator Income Statistic](#validator-income-stats-by-protxhash)
 * [Validator Blocks Statistic](#validator-stats-by-protxhash)
+* [Validator Quorums](#validator-quorums)
 * [Transaction by hash](#transaction-by-hash)
 * [Transactions](#transactions)
 * [Duplicated Transactions](#duplicated-transactions)
@@ -102,6 +103,9 @@ Reference:
 * [Broadcast Transaction](#broadcast-transaction)
 * [Wait for State Transition Result](#wait-for-state-transition-result)
 * [Quorum Info](#quorum-info)
+* [Quorums](#quorums)
+* [Current Quorum](#current-quorum)
+* [Quorum by Hash](#quorum-by-hash)
 * [Platform Addresses](#platform-addresses)
 * [Platform Address Info](#platform-address-info)
 * [Platform Address Transactions](#platform-address-transactions)
@@ -4202,6 +4206,151 @@ GET /quorum/info?type=6&hash=000001148d84a95dd1dbbe309900f3ed434c10039dcc824b185
 Response codes:
 ```
 200: OK
+500: Internal Server Error
+503: Service Temporarily Unavailable
+```
+___
+### Quorums
+Returns the signing-active quorums of the platform LLMQ type, newest first.
+
+The Platform validator set rotates between these quorums, so the one flagged `isCurrent` holds the set right now and the members of the others become validators once the set rotates to their quorum. Members are omitted here — use [Current Quorum](#current-quorum) or [Quorum by Hash](#quorum-by-hash) for them.
+
+* `healthRatio` is Core's health rating of the quorum
+* `isCurrent` marks the quorum currently holding the validator set
+```
+GET /quorums
+
+[
+    {
+        "blockHeight": 1531632,
+        "creationHeight": 1531632,
+        "minedBlockHash": "000000957bb996961c507e605f15950a7d54672a7a96c84984707ef8f1438cee",
+        "numValidMembers": 25,
+        "healthRatio": "1.00",
+        "type": "llmq_25_67",
+        "quorumHash": "000000153FE56C83B62D35897F3B05DCB60CFE95715EFB3014F7D2C8997C70F1",
+        "quorumIndex": 0,
+        "quorumPublicKey": "907d2a1582d1f36eed08bced7016c30749be66d6ae44b4e00a21ffbf5803a02889beada556335532f05e3569d03bfd22",
+        "previousConsecutiveDKGFailures": null,
+        "isCurrent": true
+    }
+]
+```
+Response codes:
+```
+200: OK
+500: Internal Server Error
+503: Service Temporarily Unavailable
+```
+___
+### Current Quorum
+Returns the quorum currently holding the Platform validator set, with its members.
+```
+GET /quorums/current
+
+{
+    "blockHeight": 1531632,
+    "creationHeight": 1531632,
+    "minedBlockHash": "000000957bb996961c507e605f15950a7d54672a7a96c84984707ef8f1438cee",
+    "numValidMembers": 25,
+    "healthRatio": "1.00",
+    "type": "llmq_25_67",
+    "quorumHash": "000000153FE56C83B62D35897F3B05DCB60CFE95715EFB3014F7D2C8997C70F1",
+    "quorumIndex": 0,
+    "quorumPublicKey": "907d2a1582d1f36eed08bced7016c30749be66d6ae44b4e00a21ffbf5803a02889beada556335532f05e3569d03bfd22",
+    "previousConsecutiveDKGFailures": null,
+    "isCurrent": true,
+    "members": [
+        {
+            "proTxHash": "87075234AC47353B42BB97CE46330CB67CD4648C01F0B2393D7E729B0D678918",
+            "service": "68.67.122.7:19999",
+            "addresses": {
+                "core_p2p": ["68.67.122.7:19999"],
+                "platform_https": ["68.67.122.7:1443"],
+                "platform_p2p": ["68.67.122.7:36656"]
+            },
+            "pubKeyOperator": "a7afe7674de986aff5e2e0a173be8c29abed8b5d6f878389ea18be0d43c62ad1ba66a59e9e8d8453aa0ed1a696976758",
+            "valid": true
+        }
+    ]
+}
+```
+Response codes:
+```
+200: OK
+404: Not Found
+500: Internal Server Error
+503: Service Temporarily Unavailable
+```
+___
+### Quorum by Hash
+Returns a single active platform quorum with its members. Responds 404 for a quorum that is no longer signing-active.
+```
+GET /quorum/000000153FE56C83B62D35897F3B05DCB60CFE95715EFB3014F7D2C8997C70F1
+
+{
+    "blockHeight": 1531632,
+    "creationHeight": 1531632,
+    "minedBlockHash": "000000957bb996961c507e605f15950a7d54672a7a96c84984707ef8f1438cee",
+    "numValidMembers": 25,
+    "healthRatio": "1.00",
+    "type": "llmq_25_67",
+    "quorumHash": "000000153FE56C83B62D35897F3B05DCB60CFE95715EFB3014F7D2C8997C70F1",
+    "quorumIndex": 0,
+    "quorumPublicKey": "907d2a1582d1f36eed08bced7016c30749be66d6ae44b4e00a21ffbf5803a02889beada556335532f05e3569d03bfd22",
+    "previousConsecutiveDKGFailures": null,
+    "isCurrent": true,
+    "members": [
+        {
+            "proTxHash": "87075234AC47353B42BB97CE46330CB67CD4648C01F0B2393D7E729B0D678918",
+            "service": "68.67.122.7:19999",
+            "pubKeyOperator": "a7afe7674de986aff5e2e0a173be8c29abed8b5d6f878389ea18be0d43c62ad1ba66a59e9e8d8453aa0ed1a696976758",
+            "valid": true
+        }
+    ]
+}
+```
+Response codes:
+```
+200: OK
+404: Not Found
+500: Internal Server Error
+503: Service Temporarily Unavailable
+```
+___
+### Validator Quorums
+Returns every active platform quorum the validator is a member of, newest first. An empty array means the validator is in no quorum and will not propose blocks until it is included in one.
+```
+GET /validator/87075234AC47353B42BB97CE46330CB67CD4648C01F0B2393D7E729B0D678918/quorums
+
+[
+    {
+        "blockHeight": 1531632,
+        "creationHeight": 1531632,
+        "minedBlockHash": "000000957bb996961c507e605f15950a7d54672a7a96c84984707ef8f1438cee",
+        "numValidMembers": 25,
+        "healthRatio": "1.00",
+        "type": "llmq_25_67",
+        "quorumHash": "000000153FE56C83B62D35897F3B05DCB60CFE95715EFB3014F7D2C8997C70F1",
+        "quorumIndex": 0,
+        "quorumPublicKey": "907d2a1582d1f36eed08bced7016c30749be66d6ae44b4e00a21ffbf5803a02889beada556335532f05e3569d03bfd22",
+        "previousConsecutiveDKGFailures": null,
+        "isCurrent": true,
+        "members": [
+            {
+                "proTxHash": "87075234AC47353B42BB97CE46330CB67CD4648C01F0B2393D7E729B0D678918",
+                "service": "68.67.122.7:19999",
+                "pubKeyOperator": "a7afe7674de986aff5e2e0a173be8c29abed8b5d6f878389ea18be0d43c62ad1ba66a59e9e8d8453aa0ed1a696976758",
+                "valid": true
+            }
+        ]
+    }
+]
+```
+Response codes:
+```
+200: OK
+404: Not Found
 500: Internal Server Error
 503: Service Temporarily Unavailable
 ```
