@@ -108,9 +108,9 @@ class TenderdashRPC {
   }
 
   static async getValidators () {
-    const { validators } = await call('validators', 'GET')
+    const { validators, quorum_hash: quorumHash, quorum_type: quorumType } = await call('validators?per_page=100', 'GET')
 
-    return validators
+    return { quorumHash, quorumType, validators }
   }
 
   static async verifyTransaction (hex) {

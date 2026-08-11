@@ -2,8 +2,11 @@ const crypto = require('crypto')
 const StateTransitionEnum = require('./enums/StateTransitionEnum')
 const DocumentActionEnum = require('./enums/DocumentActionEnum')
 const net = require('net')
-const { TCP_CONNECT_TIMEOUT, NETWORK, DPNS_CONTRACT, BANNED_STATE_CACHE_KEY } = require('./constants')
+const { TCP_CONNECT_TIMEOUT, NETWORK, DPNS_CONTRACT, BANNED_STATE_CACHE_KEY, PLATFORM_QUORUMS_CACHE_KEY, VALIDATORS_CACHE_LIFE_INTERVAL } = require('./constants')
 const DashCoreRPC = require('./dashcoreRpc')
+const TenderdashRPC = require('./tenderdashRpc')
+const Quorum = require('./models/Quorum')
+const QuorumTypeEnum = require('./enums/QuorumTypeEnum')
 const cache = require('./cache')
 const { base58 } = require('@scure/base')
 const Intervals = require('./enums/IntervalsEnum')
@@ -1697,6 +1700,47 @@ const getFinalPoSeBanHeight = async (proTxHash) => {
   return finalPoSeBanHeight
 }
 
+const getPlatformQuorums = async () => {
+  const cached = cache.get(PLATFORM_QUORUMS_CACHE_KEY)
+
+  if (cached) {
+    return cached
+  }
+
+  const { quorumHash: currentQuorumHash, quorumType } = await TenderdashRPC.getValidators()
+
+  const quorumsList = await DashCoreRPC.getQuorumsListExtended()
+
+  const quorums = await Promise.all(
+    (quorumsList[QuorumTypeEnum[quorumType]] ?? []).map(async (quorumEntry) => {
+      const [quorumHash] = Object.keys(quorumEntry)
+
+      const quorumInfo = await DashCoreRPC.getQuorumInfo(quorumHash, quorumType)
+
+      return Quorum.fromObject({
+        ...quorumInfo,
+        ...quorumEntry[quorumHash],
+        quorumHash: quorumHash.toUpperCase(),
+        members: (quorumInfo?.members ?? []).map(member => ({
+          ...member,
+          proTxHash: member.proTxHash.toUpperCase()
+        })),
+        isCurrent: quorumHash.toUpperCase() === currentQuorumHash?.toUpperCase()
+      })
+    })
+  )
+
+  const platformQuorums = {
+    quorumType,
+    currentQuorumHash: currentQuorumHash?.toUpperCase() ?? null,
+    quorums: quorums.sort((a, b) => b.creationHeight - a.creationHeight)
+  }
+
+  cache.set(PLATFORM_QUORUMS_CACHE_KEY, platformQuorums, VALIDATORS_CACHE_LIFE_INTERVAL)
+
+  return platformQuorums
+}
+
 // Calculating period and calculate the period
 // and find the interval with less than 2 periods
 // and take the previous interval
@@ -1930,6 +1974,7 @@ module.exports = {
   sleep,
   checkTcpConnect,
   getFinalPoSeBanHeight,
+  getPlatformQuorums,
   calculateInterval,
   iso8601duration,
   getAliasInfo,

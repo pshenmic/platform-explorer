@@ -18,6 +18,9 @@ const cache = require('../../src/cache')
 const { NodeController } = require('dash-platform-sdk/src/node')
 const { IdentitiesController } = require('dash-platform-sdk/src/identities')
 
+const currentQuorumHash = '0'.repeat(63) + '1'
+const upcomingQuorumHash = '0'.repeat(63) + '2'
+
 describe('Validators routes', () => {
   let app
   let client
@@ -25,6 +28,7 @@ describe('Validators routes', () => {
 
   let validators
   let activeValidators
+  let upcomingValidators
   let inactiveValidators
   let blocks
   let identities
@@ -118,7 +122,7 @@ describe('Validators routes', () => {
 
     await fixtures.cleanup(knex)
 
-    mock.method(tenderdashRpc, 'getValidators', async () => [])
+    mock.method(tenderdashRpc, 'getValidators', async () => ({ validators: [] }))
 
     mock.method(cache, 'set', () => {})
 
@@ -164,6 +168,9 @@ describe('Validators routes', () => {
     }
 
     activeValidators = validators.sort((a, b) => a.id - b.id).slice(0, 30)
+    // the inactive half splits again: the first ten sit in a quorum that has not
+    // taken over yet ("upcoming"), the rest are in no quorum at all ("queued")
+    upcomingValidators = validators.sort((a, b) => a.id - b.id).slice(30, 40)
     inactiveValidators = validators.sort((a, b) => a.id - b.id).slice(30, 50)
 
     for (let i = 0; i < 10; i++) {
@@ -198,10 +205,44 @@ describe('Validators routes', () => {
 
     fullEpochInfo = Epoch.fromObject(epochInfo()[0])
 
-    mock.method(tenderdashRpc, 'getValidators',
-      async () =>
-        Promise.resolve(activeValidators.map(activeValidator =>
-          ({ pro_tx_hash: activeValidator.pro_tx_hash }))))
+    mock.method(tenderdashRpc, 'getValidators', async () => ({
+      quorumHash: currentQuorumHash,
+      quorumType: 6,
+      validators: activeValidators.map(activeValidator =>
+        ({ pro_tx_hash: activeValidator.pro_tx_hash }))
+    }))
+
+    mock.method(DashCoreRPC, 'getQuorumsListExtended', async () => ({
+      llmq_25_67: [
+        {
+          [currentQuorumHash.toLowerCase()]: {
+            creationHeight: 2,
+            minedBlockHash: 'a'.repeat(64),
+            numValidMembers: activeValidators.length,
+            healthRatio: '1.00'
+          }
+        },
+        {
+          [upcomingQuorumHash.toLowerCase()]: {
+            creationHeight: 1,
+            minedBlockHash: 'b'.repeat(64),
+            numValidMembers: upcomingValidators.length,
+            healthRatio: '1.00'
+          }
+        }
+      ]
+    }))
+
+    mock.method(DashCoreRPC, 'getQuorumInfo', async (quorumHash) => ({
+      height: 1,
+      type: 'llmq_25_67',
+      quorumHash,
+      quorumIndex: 0,
+      minedBlock: 'a'.repeat(64),
+      quorumPublicKey: 'c'.repeat(96),
+      members: (quorumHash.toUpperCase() === currentQuorumHash ? activeValidators : upcomingValidators)
+        .map(validator => ({ proTxHash: validator.pro_tx_hash.toLowerCase(), valid: true }))
+    }))
 
     mock.method(DashCoreRPC, 'getProTxInfo', async () => dashCoreRpcResponse)
 
@@ -375,7 +416,7 @@ describe('Validators routes', () => {
 
       const expectedValidator = {
         proTxHash: validator.pro_tx_hash,
-        isActive: false,
+        isActive: true,
         proposedBlocksAmount: blocks.filter((block) => block.validator === validator.pro_tx_hash).length,
         lastProposedBlockHeader: blocks
           .filter((block) => block.validator === validator.pro_tx_hash)
@@ -2092,10 +2133,12 @@ describe('Validators routes', () => {
 
       before(() => {
         // restore the healthy mocks (preceding describes leave some throwing)
-        mock.method(tenderdashRpc, 'getValidators',
-          async () =>
-            Promise.resolve(activeValidators.map(activeValidator =>
-              ({ pro_tx_hash: activeValidator.pro_tx_hash }))))
+        mock.method(tenderdashRpc, 'getValidators', async () => ({
+          quorumHash: currentQuorumHash,
+          quorumType: 6,
+          validators: activeValidators.map(activeValidator =>
+            ({ pro_tx_hash: activeValidator.pro_tx_hash }))
+        }))
 
         mock.method(DashCoreRPC, 'getProTxInfo', async () => dashCoreRpcResponse)
 
@@ -2148,6 +2191,48 @@ describe('Validators routes', () => {
           assert.equal(returnedHashes.includes(banned.pro_tx_hash), false)
         }
       })
+    })
+  })
+
+  describe('getValidatorQuorumsByProTxHash()', async () => {
+    it('should return the current quorum for an active validator', async () => {
+      const [validator] = activeValidators
+
+      const { body } = await client.get(`/validator/${validator.pro_tx_hash}/quorums`)
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      assert.equal(body.length, 1)
+      assert.equal(body[0].quorumHash, currentQuorumHash)
+      assert.equal(body[0].isCurrent, true)
+    })
+
+    it('should return the upcoming quorum for an upcoming validator', async () => {
+      const [validator] = upcomingValidators
+
+      const { body } = await client.get(`/validator/${validator.pro_tx_hash}/quorums`)
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      assert.equal(body.length, 1)
+      assert.equal(body[0].quorumHash, upcomingQuorumHash)
+      assert.equal(body[0].isCurrent, false)
+    })
+
+    it('should return an empty list for a validator in no quorum', async () => {
+      const validator = inactiveValidators[inactiveValidators.length - 1]
+
+      const { body } = await client.get(`/validator/${validator.pro_tx_hash}/quorums`)
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      assert.deepEqual(body, [])
+    })
+
+    it('should return 404 for an unknown validator', async () => {
+      await client.get(`/validator/${'F'.repeat(64)}/quorums`)
+        .expect(404)
+        .expect('Content-Type', 'application/json; charset=utf-8')
     })
   })
 
