@@ -7,7 +7,10 @@ const __dirname = path.dirname(__filename)
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   sassOptions: {
-    includePaths: [path.join(__dirname, 'src/styles')]
+    includePaths: [path.join(__dirname, 'src/styles')],
+    // Mute Dart Sass 1.7x deprecations so Vercel/build logs surface real errors.
+    // Full @import / if() migrator is a separate styles PR.
+    silenceDeprecations: ['import', 'global-builtin', 'if-function']
   },
   // Next 16 uses Turbopack by default. Force WASM build of pshenmic-dpp so SSR
   // does not resolve the Node/NAPI entry (native.js). Replaces old webpack alias.
