@@ -1700,12 +1700,6 @@ const getFinalPoSeBanHeight = async (proTxHash) => {
   return finalPoSeBanHeight
 }
 
-// The Platform validator set is not elected per block: it rotates between the
-// signing-active quorums of the platform LLMQ type, so every member of every
-// active quorum serves as a validator within its quorum's lifetime. Core owns
-// the quorum list, Tenderdash reports which of them is in charge right now.
-// Rebuilding costs one `quorum info` call per quorum, and quorums only change
-// once per DKG interval, so the result is cached alongside the validators.
 const getPlatformQuorums = async () => {
   const cached = cache.get(PLATFORM_QUORUMS_CACHE_KEY)
 
@@ -1726,8 +1720,6 @@ const getPlatformQuorums = async () => {
       return Quorum.fromObject({
         ...quorumInfo,
         ...quorumEntry[quorumHash],
-        // Core reports quorum and member hashes in lower case, while Tenderdash
-        // and the indexer both use upper case
         quorumHash: quorumHash.toUpperCase(),
         members: (quorumInfo?.members ?? []).map(member => ({
           ...member,

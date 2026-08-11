@@ -32,8 +32,6 @@ class ValidatorsController {
 
     const { validators } = await TenderdashRPC.getValidators()
 
-    // Tenderdash and the indexer store proTxHashes upper case, but the hash can
-    // reach this handler lower case — the identity route decodes it from base58
     const isActive = validators.some(validator => validator.pro_tx_hash === hash.toUpperCase())
 
     const cached = cache.get(`${VALIDATORS_CACHE_KEY}_${validator.proTxHash}`)
