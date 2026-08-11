@@ -1537,24 +1537,62 @@ describe('Transaction routes', () => {
   })
 
   describe('getTransactionStatistic()', async () => {
+    // both the expected statistic and the response are sorted by name so the
+    // assertion does not depend on grouping order
+    const buildExpectedStatistic = (txs) => {
+      const countsByType = txs.reduce((acc, { transaction }) => {
+        acc[transaction.type] = acc[transaction.type] ?? { count: 0, batchTypes: {} }
+        acc[transaction.type].count += 1
+
+        if (transaction.batch_type !== null && transaction.batch_type !== undefined) {
+          acc[transaction.type].batchTypes[transaction.batch_type] =
+            (acc[transaction.type].batchTypes[transaction.batch_type] ?? 0) + 1
+        }
+
+        return acc
+      }, {})
+
+      return Object.entries(countsByType)
+        .map(([type, { count, batchTypes }]) => ({
+          transactionType: StateTransitionEnum[type],
+          count,
+          batchTypes: Object.keys(batchTypes).length > 0
+            ? Object.entries(batchTypes)
+              .map(([batchType, count]) => ({ batchType: BatchTypeEnum[batchType], count }))
+              .sort((a, b) => a.batchType.localeCompare(b.batchType))
+            : null
+        }))
+        .sort((a, b) => a.transactionType.localeCompare(b.transactionType))
+    }
+
+    const sortStatistic = (statistic) => statistic
+      .map(entry => ({
+        ...entry,
+        batchTypes: entry.batchTypes?.sort((a, b) => a.batchType.localeCompare(b.batchType)) ?? null
+      }))
+      .sort((a, b) => a.transactionType.localeCompare(b.transactionType))
+
     it('should return transaction count grouped by type', async () => {
       const { body } = await client.get('/transactions/statistic')
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
-      const countsByType = transactions.reduce((acc, { transaction }) => {
-        acc[transaction.type] = (acc[transaction.type] ?? 0) + 1
-        return acc
-      }, {})
+      assert.deepEqual(sortStatistic(body), buildExpectedStatistic(transactions))
+    })
 
-      const expectedStatistic = Object.entries(countsByType)
-        .map(([type, count]) => ({ transactionType: StateTransitionEnum[type], count }))
-        .sort((a, b) => a.transactionType.localeCompare(b.transactionType))
+    it('should return a batch type breakdown only for the BATCH entry', async () => {
+      const { body } = await client.get('/transactions/statistic')
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
 
-      assert.deepEqual(
-        body.sort((a, b) => a.transactionType.localeCompare(b.transactionType)),
-        expectedStatistic
-      )
+      const batchEntry = body.find(({ transactionType }) => transactionType === 'BATCH')
+
+      assert.notEqual(batchEntry, undefined)
+      assert.deepEqual(batchEntry.batchTypes, [{ batchType: 'TOKEN_CLAIM', count: batchEntry.count }])
+
+      body
+        .filter(({ transactionType }) => transactionType !== 'BATCH')
+        .forEach(entry => assert.equal(entry.batchTypes, null))
     })
 
     it('should return transaction count grouped by type in the given interval', async () => {
@@ -1565,24 +1603,13 @@ describe('Transaction routes', () => {
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
-      const countsByType = transactions
+      const transactionsInInterval = transactions
         .filter(({ block }) =>
           new Date(block.timestamp).getTime() >= start.getTime() &&
           new Date(block.timestamp).getTime() <= end.getTime()
         )
-        .reduce((acc, { transaction }) => {
-          acc[transaction.type] = (acc[transaction.type] ?? 0) + 1
-          return acc
-        }, {})
 
-      const expectedStatistic = Object.entries(countsByType)
-        .map(([type, count]) => ({ transactionType: StateTransitionEnum[type], count }))
-        .sort((a, b) => a.transactionType.localeCompare(b.transactionType))
-
-      assert.deepEqual(
-        body.sort((a, b) => a.transactionType.localeCompare(b.transactionType)),
-        expectedStatistic
-      )
+      assert.deepEqual(sortStatistic(body), buildExpectedStatistic(transactionsInInterval))
     })
 
     it('should return error if only one of start and end is set', async () => {
