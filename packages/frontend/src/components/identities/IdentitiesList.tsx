@@ -43,7 +43,7 @@ function SortableHeader ({ headerKey, label, modifier, sort, onSortChange }: Sor
   }
 
   return (
-    <GridItem as={'button'} type={'button'} className={className} onClick={handleClick}>
+    <GridItem as={'button'} className={className} onClick={handleClick} {...({ type: 'button' } as object)}>
       {isActive
         ? direction === 'asc'
           ? <ChevronUpIcon w={4} h={4}/>

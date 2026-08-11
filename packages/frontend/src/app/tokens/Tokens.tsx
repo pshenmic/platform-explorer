@@ -18,7 +18,7 @@ import { useTokensFilters, TokenFilters } from '@components/tokens'
 import PageTitle from '../../components/intro/PageTitle'
 import NetworkStatsInline from '../../components/stats/NetworkStatsInline'
 import { formatFullNumber } from '../../util'
-import introContent from './intro.md'
+import introContent from './introContent'
 
 import './Tokens.scss'
 

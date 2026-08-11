@@ -2,10 +2,11 @@ import type { Metadata } from 'next'
 import PlatformAddress from './PlatformAddress'
 
 interface PlatformAddressRouteProps {
-  params: { hash: string }
+  params: Promise<{ hash: string }>
 }
 
-export function generateMetadata ({ params }: PlatformAddressRouteProps): Metadata {
+export async function generateMetadata(props: PlatformAddressRouteProps): Promise<Metadata> {
+  const params = await props.params;
   return {
     title: 'Platform Address ' + params.hash + ' — Dash Platform Explorer',
     description:

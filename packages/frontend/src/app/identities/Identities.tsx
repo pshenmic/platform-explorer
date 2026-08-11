@@ -14,7 +14,7 @@ import { fetchHandlerSuccess, fetchHandlerError, formatFullNumber } from '../../
 import PageTitle from '../../components/intro/PageTitle'
 import NetworkStatsInline from '../../components/stats/NetworkStatsInline'
 import type { Identity, LoadableState, PaginatedResultSet } from '../../types'
-import introContent from './intro.md'
+import introContent from './introContent'
 
 import {
   Container,

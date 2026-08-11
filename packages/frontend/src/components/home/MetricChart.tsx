@@ -125,7 +125,7 @@ export function MetricChart ({
   const wrapRef = useRef<HTMLDivElement | null>(null)
   const gradientId = useId()
 
-  useResizeObserver(wrapRef, entry => setWidth(entry.contentRect.width))
+  useResizeObserver(wrapRef as never, entry => setWidth(entry.contentRect.width))
   useEffect(() => {
     if (wrapRef.current) setWidth(wrapRef.current.clientWidth)
   }, [])
