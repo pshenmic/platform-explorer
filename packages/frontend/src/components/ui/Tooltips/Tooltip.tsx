@@ -1,6 +1,7 @@
 'use client'
 
-import { Tooltip as ChakraTooltip, useOutsideClick } from '@chakra-ui/react'
+import { useOutsideClick } from '../../../hooks/useOutsideClick'
+import { Tooltip as ChakraTooltip } from '@chakra-ui/react'
 import type { TooltipProps as ChakraTooltipProps } from '@chakra-ui/react'
 import {
   useState,
