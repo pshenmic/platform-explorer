@@ -2210,6 +2210,7 @@ Return the count of state transitions grouped by transaction type.
 Optionally accepts a time interval. Without parameters the statistic is calculated over all time.
 
 * `timestamp_start` and `timestamp_end` must be set together
+* `batchTypes` — per-batch-type breakdown, present only on the `BATCH` entry, `null` for every other transaction type. Counts sum to the entry's `count`
 
 ```
 GET /transactions/statistic?timestamp_start=2024-10-01T00:00:00.000Z&timestamp_end=2024-11-01T00:00:00.000Z
@@ -2219,8 +2220,22 @@ GET /transactions/statistic?timestamp_start=2024-10-01T00:00:00.000Z&timestamp_e
         "count": 39
     },
     {
-        "transactionType": "DOCUMENTS_BATCH",
-        "count": 115
+        "transactionType": "BATCH",
+        "count": 115,
+        "batchTypes": [
+            {
+                "batchType": "DOCUMENT_CREATE",
+                "count": 80
+            },
+            {
+                "batchType": "DOCUMENT_REPLACE",
+                "count": 25
+            },
+            {
+                "batchType": "TOKEN_TRANSFER",
+                "count": 10
+            }, ...
+        ]
     }, ...
 ]
 ```
