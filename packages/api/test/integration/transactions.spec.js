@@ -1587,12 +1587,24 @@ describe('Transaction routes', () => {
 
       const batchEntry = body.find(({ transactionType }) => transactionType === 'BATCH')
 
+      const expectedClaims = transactions.filter(({ transaction }) =>
+        transaction.batch_type === BatchTypeEnum.TOKEN_CLAIM
+      ).length
+
       assert.notEqual(batchEntry, undefined)
-      assert.deepEqual(batchEntry.batchTypes, [{ batchType: 'TOKEN_CLAIM', count: batchEntry.count }])
+      assert.deepEqual(batchEntry.batchTypes, [{ batchType: 'TOKEN_CLAIM', count: expectedClaims }])
+
+      // the error tx fixture is a BATCH whose batch type could not be resolved,
+      // so it is counted in `count` but gets no bucket in the breakdown
+      const expectedUntyped = transactions.filter(({ transaction }) =>
+        transaction.type === StateTransitionEnum.BATCH && transaction.batch_type === null
+      ).length
+
+      assert.equal(batchEntry.count, expectedClaims + expectedUntyped)
 
       body
         .filter(({ transactionType }) => transactionType !== 'BATCH')
-        .forEach(entry => assert.equal(entry.batchTypes, null))
+        .forEach(entry => assert.equal(entry.batchTypes, undefined))
     })
 
     it('should return transaction count grouped by type in the given interval', async () => {
