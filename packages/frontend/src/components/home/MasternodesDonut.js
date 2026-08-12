@@ -188,6 +188,26 @@ function buildPoolCells ({ list, currentSet, nextSet, memberMeta, bannedSet }) {
   return cells
 }
 
+function TipRow ({ label, href, children, mono }) {
+  const value = <b className={mono ? 'MasternodesDonut__TipMono' : undefined}>{children}</b>
+  return (
+    <div className={'MasternodesDonut__TipRow'}>
+      <span>{label}</span>
+      {href
+        ? (
+          <Link
+            href={href}
+            className={'MasternodesDonut__TipLink'}
+            onClick={e => e.stopPropagation()}
+          >
+            {value}
+          </Link>
+          )
+        : value}
+    </div>
+  )
+}
+
 function NodeTooltipBody ({ cell }) {
   const v = cell.validator
   const status = (() => {
@@ -206,6 +226,8 @@ function NodeTooltipBody ({ cell }) {
   const cc = v?.geoIpInfo?.countryCode
   const ccName = cc ? countryName(cc) : null
   const proposed = v?.proposedBlocksAmount
+  const validatorHref = cell.proTxHash ? `/validator/${cell.proTxHash}` : null
+  const identityHref = v?.identity ? `/identity/${v.identity}` : null
 
   return (
     <div className={'MasternodesDonut__Tip'}>
@@ -226,31 +248,25 @@ function NodeTooltipBody ({ cell }) {
             <div className={'MasternodesDonut__TipCountry'}>{ccName} · {cc}</div>}
         </div>
       </div>
-      <div className={'MasternodesDonut__TipRow'}>
-        <span>proTx</span>
-        <b>{shortHash(cell.proTxHash, 6, 6)}</b>
-      </div>
+      <TipRow label={'proTx'} href={validatorHref}>
+        {shortHash(cell.proTxHash, 6, 6)}
+      </TipRow>
       {cell.service &&
-        <div className={'MasternodesDonut__TipRow'}>
-          <span>Host</span>
-          <b className={'MasternodesDonut__TipMono'}>{cell.service}</b>
-        </div>}
+        <TipRow label={'Host'} mono>
+          {cell.service}
+        </TipRow>}
       {typeof proposed === 'number' &&
-        <div className={'MasternodesDonut__TipRow'}>
-          <span>Proposed</span>
-          <b>{proposed.toLocaleString('en-US')} blocks</b>
-        </div>}
-      {v?.identity &&
-        <div className={'MasternodesDonut__TipRow'}>
-          <span>Identity</span>
-          <b>{shortHash(v.identity, 4, 4)}</b>
-        </div>}
+        <TipRow label={'Proposed'} href={validatorHref}>
+          {proposed.toLocaleString('en-US')} blocks
+        </TipRow>}
+      {identityHref &&
+        <TipRow label={'Identity'} href={identityHref}>
+          {shortHash(v.identity, 4, 4)}
+        </TipRow>}
       {!cc &&
-        <div className={'MasternodesDonut__TipRow'}>
-          <span>Country</span>
-          <b>Unknown</b>
-        </div>}
-      <div className={'MasternodesDonut__TipCta'}>Open validator →</div>
+        <TipRow label={'Country'}>
+          Unknown
+        </TipRow>}
     </div>
   )
 }
@@ -268,7 +284,6 @@ export default function MasternodesDonut ({
   nextQuorum
 }) {
   const [pin, setPin] = useState(null)
-  const [helpOpen, setHelpOpen] = useState(false)
 
   const total = validators?.data?.pagination?.total
   const active = validatorsActive?.data?.pagination?.total
@@ -416,37 +431,29 @@ export default function MasternodesDonut ({
 
       <header className={'MasternodesDonut__Head'}>
         <div className={'MasternodesDonut__HeadText'}>
-          <div className={'MasternodesDonut__TitleRow'}>
-            <span className={'MasternodesDonut__Eyebrow'}>Consensus</span>
-            <button
-              type={'button'}
-              className={`MasternodesDonut__HelpBtn${helpOpen ? ' is-open' : ''}`}
-              aria-expanded={helpOpen}
-              aria-controls={'masternodes-donut-help'}
-              onClick={() => setHelpOpen(o => !o)}
-            >
-              ?
-            </button>
-          </div>
+          <span className={'MasternodesDonut__Eyebrow'}>Consensus</span>
           <h2 className={'MasternodesDonut__Title'}>Quorum</h2>
           <p className={'MasternodesDonut__Lede'}>
-            Full validator pool: who is in the signing set, who joins next, who is waiting or banned.
+            Only a
+            <Tooltip
+              placement={'top'}
+              content={
+                <div className={'MasternodesDonut__HelpTip'}>
+                  <p>
+                    Platform blocks are signed by a small rotating group of evonodes, not the
+                    whole validator list.
+                  </p>
+                  <p className={'MasternodesDonut__HelpFoot'}>
+                    Who comes next is picked by the protocol, not a vote. Identity is the node's
+                    Platform account, not the validator page.
+                  </p>
+                </div>
+              }
+            >
+              <span className={'MasternodesDonut__LedeMore'}>rotating set</span>
+            </Tooltip>
+            {' '}of evonodes signs Platform blocks. The rest wait or sit banned.
           </p>
-          {helpOpen &&
-            <div id={'masternodes-donut-help'} className={'MasternodesDonut__Help'} role={'region'}>
-              <p>
-                Each square is one Platform validator. <b>Color</b> is the only signal on the grid:
-                role in the signing set. Country, host, and identity live in the <b>tooltip</b>.
-              </p>
-              <p>
-                <b>Green</b> = current · <b>Yellow</b> = leaving next ·
-                <b>Gray + blue ring</b> = queued and joining next · <b>Gray</b> = queued only ·
-                <b>Red</b> = banned.
-              </p>
-              <p>
-                Next set is formed by deterministic rules, not a vote. Click opens the validator page.
-              </p>
-            </div>}
         </div>
 
         {(hasRoster || currentQuorumLoading || geoSummary.has) &&
