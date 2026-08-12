@@ -1,32 +1,20 @@
 'use client'
 
-import TokensListItem from './TokensListItem'
-import { EmptyListMessage } from '../ui/lists'
-import { Grid, GridItem } from '@chakra-ui/react'
-import Pagination from '../pagination'
+import { useRouter } from 'next/navigation'
+import { Flex } from '@chakra-ui/react'
+import { Alias, Identifier, NotActive, CreditsBlock } from '../data'
+import { Supply } from './index'
+import { LinkContainer, ValueContainer } from '../ui/containers'
+import { Tooltip } from '../ui/Tooltips'
+import { FormattedNumber } from '../ui/FormattedNumber'
+import { DataList } from '../ui/lists'
 import { ErrorMessageBlock } from '../Errors'
-import { LoadingList } from '../loading'
-import {
-  createColumnHelper,
-  getCoreRowModel,
-  useReactTable
-} from '@tanstack/react-table'
-import './TokensList.scss'
+import Pagination from '../pagination'
+import { findActiveAlias, getMinTokenPrice } from '../../util'
 
-const columnHelper = createColumnHelper()
-
-const columns = [
-  columnHelper.accessor('name', { id: 'tokenName', header: 'Token Name' }),
-  columnHelper.accessor('position', { id: 'position', header: 'Position' }),
-  columnHelper.accessor('totalSupply', { id: 'supply', header: 'Supply' }),
-  columnHelper.accessor('price', { id: 'price', header: 'Price' }),
-  columnHelper.accessor('dataContractIdentifier', { id: 'contract', header: 'Contract' }),
-  columnHelper.accessor('owner', { id: 'owner', header: 'Owner' })
-]
-
-const headerExtraClass = {
-  default: '',
-  light: 'TokensList__ColumnTitles--Light'
+function tokenName (token) {
+  return token?.localizations?.en?.singularForm ||
+    Object.values(token?.localizations || {})[0]?.singularForm || ''
 }
 
 function TokensList ({
@@ -35,71 +23,130 @@ function TokensList ({
   headerStyles = 'default',
   variant = 'default',
   pagination,
-  loading,
-  itemsCount = 10
+  loading
 }) {
-  const table = useReactTable({
-    data: tokens || [],
-    columns,
-    getCoreRowModel: getCoreRowModel(),
-    manualPagination: true
-  })
+  const router = useRouter()
 
-  const variantClass = variant === 'balance' ? 'TokensList--Balance' : ''
+  const columns = [
+    {
+      key: 'tokenName',
+      header: 'Token Name',
+      grow: true,
+      minWidth: 150,
+      cell: (token) => {
+        const name = tokenName(token)
+        return name
+          ? <Alias avatarSource={token.identifier}>{name}</Alias>
+          : <Identifier ellipsis={true} avatar={true} styles={['highlight-both']}>{token.identifier}</Identifier>
+      }
+    },
+    {
+      key: 'supply',
+      header: 'Supply',
+      minWidth: 120,
+      priority: 3,
+      cell: (token) => (token.maxSupply
+        ? <Supply currentSupply={token.totalSupply} maxSupply={token.maxSupply || token.totalSupply} decimals={token.decimals}/>
+        : <FormattedNumber decimals={token.decimals}>{token.totalSupply}</FormattedNumber>)
+    },
+    {
+      key: 'price',
+      header: 'Price',
+      minWidth: 92,
+      align: 'right',
+      cell: (token) => {
+        if (token.price != null) {
+          return (
+            <Tooltip placement={'top'} maxW={'none'} content={<CreditsBlock credits={token.price} rate={rate}/>}>
+              <div>
+                <ValueContainer colorScheme={'emeralds'} size={'sm'}>
+                  <FormattedNumber decimals={token.decimals}>{token.price}</FormattedNumber>
+                </ValueContainer>
+              </div>
+            </Tooltip>
+          )
+        }
+        if (token.prices != null && token.prices.length > 0) {
+          return (
+            <Tooltip placement={'top'} maxW={'none'} content={<CreditsBlock credits={getMinTokenPrice(token.prices)} rate={rate}/>}>
+              <Flex gap={'0.25rem'} fontSize={'0.75rem'} fontWeight={500}>
+                From <FormattedNumber decimals={token.decimals}>{getMinTokenPrice(token.prices)}</FormattedNumber>
+              </Flex>
+            </Tooltip>
+          )
+        }
+        return null
+      }
+    },
+    {
+      key: 'contract',
+      header: 'Contract',
+      grow: true,
+      minWidth: 130,
+      priority: 1,
+      cell: (token) => (
+        <LinkContainer
+          onClick={e => { e.stopPropagation(); e.preventDefault(); router.push(`/dataContract/${token.dataContractIdentifier}`) }}
+        >
+          <Identifier ellipsis={true} styles={['highlight-both']} avatar={true}>{token.dataContractIdentifier}</Identifier>
+        </LinkContainer>
+      )
+    },
+    {
+      key: 'owner',
+      header: 'Owner',
+      grow: true,
+      minWidth: 130,
+      priority: 2,
+      cell: (token) => {
+        const ownerId = typeof token.owner === 'object' ? token.owner?.identifier : token.owner
+        const ownerName = typeof token.owner === 'object' ? findActiveAlias(token.owner?.aliases) : null
+        return (
+          <LinkContainer
+            onClick={e => { e.stopPropagation(); e.preventDefault(); router.push(`/identity/${ownerId}`) }}
+          >
+            {ownerName
+              ? <Alias avatarSource={ownerId} alias={ownerName?.alias}/>
+              : <Identifier ellipsis={true} avatar={true} styles={['highlight-both']}>{ownerId}</Identifier>}
+          </LinkContainer>
+        )
+      }
+    }
+  ]
+
+  if (variant === 'balance') {
+    columns.push({
+      key: 'balance',
+      header: 'Balance',
+      minWidth: 100,
+      align: 'right',
+      cell: (token) => (typeof token.balance === 'number' || typeof token.balance === 'string'
+        ? <ValueContainer colorScheme={'emeralds'} size={'sm'}><FormattedNumber decimals={token.decimals} threshold={0}>{token.balance}</FormattedNumber></ValueContainer>
+        : <NotActive/>)
+    })
+  }
+
+  if (tokens === undefined) return <ErrorMessageBlock/>
 
   return (
-    <div className={`TokensList ${variantClass}`}>
-      <Grid className={`TokensList__ColumnTitles ${headerExtraClass[headerStyles] || ''}`}>
-        <GridItem className={'TokensList__ColumnTitle TokensList__ColumnTitle--TokenName'}>
-          Token Name
-        </GridItem>
-        <GridItem className={'TokensList__ColumnTitle TokensList__ColumnTitle--Supply'}>
-          Supply
-        </GridItem>
-        <GridItem className={'TokensList__ColumnTitle TokensList__ColumnTitle--Price'}>
-          Price
-        </GridItem>
-        <GridItem className={'TokensList__ColumnTitle TokensList__ColumnTitle--DataContract'}>
-          Contract
-        </GridItem>
-        <GridItem className={'TokensList__ColumnTitle TokensList__ColumnTitle--OwnerIdentity'}>
-          Owner
-        </GridItem>
-        {variant === 'balance' && (
-          <GridItem className={'TokensList__ColumnTitle TokensList__ColumnTitle--Balance'}>
-            Balance
-          </GridItem>
-        )}
-      </Grid>
-
-      {!loading
-        ? <div className={'TokensList__Items'}>
-            {table.getRowModel().rows.map((row) => (
-              <TokensListItem
-                key={row.id}
-                token={row.original}
-                rate={rate}
-                variant={variant}
-              />
-            ))}
-            {tokens?.length === 0 && (
-              <EmptyListMessage>There are no tokens yet.</EmptyListMessage>
-            )}
-            {tokens === undefined && <ErrorMessageBlock />}
-          </div>
-        : <LoadingList itemsCount={itemsCount} />
-      }
-
-      {pagination && (
+    <DataList
+      className={'TokensList'}
+      items={tokens}
+      columns={columns}
+      loading={loading}
+      rowHref={(token) => `/token/${token.identifier}`}
+      rowKey={(token) => token.identifier}
+      headerVariant={headerStyles === 'light' ? 'light' : 'default'}
+      emptyMessage={'There are no tokens yet.'}
+      footer={pagination && (
         <Pagination
-          className={'TokensList__Pagination'}
           onPageChange={pagination.onPageChange}
           pageCount={pagination.pageCount}
           forcePage={pagination.forcePage}
           justify={true}
         />
       )}
-    </div>
+    />
   )
 }
 
