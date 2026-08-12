@@ -7,6 +7,7 @@ import { Presets } from '../cards'
 import { TransactionTypesInfo } from '../../enums/state.transition.type'
 import { BatchActions } from '../../enums/batchTypes'
 import { Skeleton } from './Skeleton'
+import { Tooltip } from '../ui/Tooltips'
 import { formatFullNumber } from '../../util'
 import { PRESETS, presetRange } from './MetricChart'
 import './TxTypesBar.scss'
@@ -22,12 +23,6 @@ function clsOf (type) {
   if (BatchActions[type]) return type
   if (TransactionTypesInfo[type]) return type
   return 'UNKNOWN'
-}
-
-function pctOf (frac) {
-  if (frac <= 0) return '0%'
-  if (frac < 0.01) return '<1%'
-  return `${Math.round(frac * 100)}%`
 }
 
 /** Expand BATCH.batchTypes when present; otherwise keep the BATCH row. */
@@ -101,7 +96,7 @@ export default function TxTypesBar ({ enabled = true }) {
     ? '—'
     : (focused ? focused.count.toLocaleString('en-US') : total.toLocaleString('en-US'))
   const statMeta = focused
-    ? `${focused.label} · ${pctOf(focused.frac)}`
+    ? focused.label
     : (state.error ? '' : rangeLabel)
 
   const togglePin = (type) => {
@@ -122,7 +117,28 @@ export default function TxTypesBar ({ enabled = true }) {
           <span className={'TxTypesBar__Eyebrow'}>Network mix</span>
           <h2 className={'TxTypesBar__Title'}>Transaction</h2>
           <p className={'TxTypesBar__Lede'}>
-            Share of state transitions. Document and token actions are expanded from batch (first action per ST).
+            Who is joining, writing data, or moving credits
+            <br/>
+            and using
+            {' '}
+            <Tooltip
+              placement={'top'}
+              content={
+                <div className={'TxTypesBar__HelpTip'}>
+                  <p>
+                    Use this mix to see what Platform is for right now: new people,
+                    app data, tokens, credit flows, votes, and privacy.
+                  </p>
+                  <p className={'TxTypesBar__HelpFoot'}>
+                    Pick a type to see its count. A document or token row is one write
+                    on chain, not a raw batch dump.
+                  </p>
+                </div>
+              }
+            >
+              <span className={'TxTypesBar__LedeMore'}>tokens</span>
+            </Tooltip>
+            .
           </p>
         </div>
         <div className={'TxTypesBar__Controls'}>
@@ -149,24 +165,23 @@ export default function TxTypesBar ({ enabled = true }) {
           : state.error || !total
             ? <div className={'TxTypesBar__Empty'}>No data</div>
             : <div
-                className={`TxTypesBar__Stack${focusType ? ' is-focusing' : ''}${pin ? ' is-pinned' : ''}`}
+                className={`TxTypesBar__Stack${pin ? ' is-pinned' : ''}`}
                 data-focus={focusType || undefined}
                 onMouseLeave={() => { if (!pin) setHover(null) }}
               >
                 <div
                   className={'TxTypesBar__Bar'}
-                  role={'list'}
+                  role={'group'}
                   aria-label={`${total} transactions by type`}
                 >
                   {segments.map(s => (
                     <button
                       key={s.type}
                       type={'button'}
-                      role={'listitem'}
                       data-type={s.type}
                       className={`TxTypesBar__Seg TxTypesBar__Seg--${s.cls}${focusType === s.type ? ' is-focus' : ''}`}
                       style={{ flexGrow: s.dFrac, flexBasis: 0 }}
-                      title={`${s.label}: ${s.count.toLocaleString('en-US')} (${pctOf(s.frac)})`}
+                      title={`${s.label}: ${s.count.toLocaleString('en-US')}`}
                       onClick={() => togglePin(s.type)}
                       aria-pressed={pin === s.type}
                       aria-label={s.label}
@@ -175,15 +190,14 @@ export default function TxTypesBar ({ enabled = true }) {
                   ))}
                 </div>
 
-                <div className={'TxTypesBar__Rows'} role={'list'}>
+                <div className={'TxTypesBar__Rows'} role={'group'} aria-label={'Transaction types'}>
                   {segments.map(s => (
                     <button
                       key={s.type}
                       type={'button'}
-                      role={'listitem'}
                       data-type={s.type}
                       className={`TxTypesBar__Row${focusType === s.type ? ' is-focus' : ''}`}
-                      title={`${s.label}: ${s.count.toLocaleString('en-US')} (${pctOf(s.frac)})`}
+                      title={`${s.label}: ${s.count.toLocaleString('en-US')}`}
                       onClick={() => togglePin(s.type)}
                       aria-pressed={pin === s.type}
                       {...focusHandlers(s.type)}
@@ -198,7 +212,6 @@ export default function TxTypesBar ({ enabled = true }) {
                         />
                       </span>
                       <span className={'TxTypesBar__RowCount'}>{formatFullNumber(s.count)}</span>
-                      <span className={'TxTypesBar__RowPct'}>{pctOf(s.frac)}</span>
                     </button>
                   ))}
                 </div>

@@ -70,7 +70,7 @@ $txtype-colors: (
 
   &__HeadText {
     min-width: 0;
-    max-width: 18rem;
+    max-width: 22rem;
   }
 
   &__Eyebrow {
@@ -103,6 +103,29 @@ $txtype-colors: (
     @media screen and (max-width: $breakpoint-md) {
       display: none; // free vertical space; title + spectrum carry the story
     }
+  }
+
+  &__LedeMore {
+    color: var(--chakra-colors-brand-light);
+    border-bottom: 1px dotted rgba(var(--chakra-colors-brand-light-rgb), 0.6);
+    cursor: help;
+    white-space: nowrap;
+  }
+
+  &__HelpTip {
+    max-width: 16rem;
+    font-size: 0.75rem;
+    line-height: 1.5;
+    text-align: left;
+
+    p { margin: 0 0 0.55em; }
+  }
+
+  &__HelpFoot {
+    margin: 0 !important;
+    color: rgba(255, 255, 255, 0.55);
+    font-size: 0.6875rem;
+    line-height: 1.45;
   }
 
   &__Controls {
@@ -226,8 +249,7 @@ $txtype-colors: (
     cursor: pointer;
     flex-shrink: 1;
     opacity: 1;
-    transition: opacity 0.14s ease, filter 0.14s ease, transform 0.14s ease, box-shadow 0.14s ease;
-    transform-origin: center;
+    transition: filter 0.12s ease, box-shadow 0.12s ease;
 
     &:focus-visible {
       outline: 1px solid #fff;
@@ -235,8 +257,8 @@ $txtype-colors: (
     }
 
     &.is-focus {
-      transform: scaleY(1.28);
-      box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.55), 0 0 14px currentColor;
+      filter: brightness(1.12);
+      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.5);
       z-index: 1;
     }
   }
@@ -268,7 +290,7 @@ $txtype-colors: (
     color: inherit;
     display: grid;
     // wider count col for full grouped numbers (e.g. 124,069)
-    grid-template-columns: 1.5rem 10px minmax(0, 1.1fr) minmax(40px, 1fr) minmax(4.5rem, auto) 2.75rem;
+    grid-template-columns: 1.5rem 10px minmax(0, 1.1fr) minmax(40px, 1fr) minmax(4.5rem, auto);
     align-items: center;
     gap: 8px;
     width: 100%;
@@ -276,10 +298,10 @@ $txtype-colors: (
     flex-shrink: 0;
     box-sizing: border-box;
     padding: 0 8px;
-    border-radius: 10px;
+    border-radius: 0;
     text-align: left;
     cursor: pointer;
-    transition: background 0.12s ease;
+    transition: box-shadow 0.12s ease, color 0.12s ease;
 
     &:focus-visible {
       outline: 1px solid rgba(var(--chakra-colors-brand-light-rgb), 0.45);
@@ -287,70 +309,26 @@ $txtype-colors: (
     }
 
     &.is-focus {
-      background: rgba(255, 255, 255, 0.07);
+      .TxTypesBar__RowLabel,
+      .TxTypesBar__RowCount {
+        color: #fff;
+      }
+
+      .TxTypesBar__Dot {
+        box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.22);
+      }
     }
 
     @media screen and (max-width: $breakpoint-md) {
-      grid-template-columns: 1.25rem 8px minmax(0, 1fr) minmax(3.75rem, auto) 2.5rem;
+      grid-template-columns: 1.25rem 8px minmax(0, 1fr) minmax(3.75rem, auto);
       gap: 6px;
       padding: 0 6px;
     }
   }
 
-  // spotlight focus: dim chrome only so labels/counts stay readable
-  &__Stack.is-focusing {
-    .TxTypesBar__Seg:not(.is-focus) {
-      opacity: 0.42;
-      filter: saturate(0.55);
-    }
-
-    .TxTypesBar__Row:not(.is-focus) {
-      .TxTypesBar__Dot,
-      .TxTypesBar__MeterFill {
-        opacity: 0.4;
-        filter: saturate(0.5);
-      }
-
-      .TxTypesBar__Rank,
-      .TxTypesBar__RowLabel {
-        color: var(--chakra-colors-gray-500);
-      }
-
-      // counts/% are the list's job; never dim below readable
-      .TxTypesBar__RowCount {
-        color: rgba(255, 255, 255, 0.78);
-      }
-
-      .TxTypesBar__RowPct {
-        color: var(--chakra-colors-gray-500);
-        opacity: 0.9;
-      }
-    }
-
+  &__Stack.is-pinned {
     .TxTypesBar__Row.is-focus {
-      .TxTypesBar__RowLabel {
-        color: #fff;
-      }
-
-      .TxTypesBar__RowCount {
-        color: #fff;
-        font-weight: 600;
-      }
-
-      .TxTypesBar__RowPct {
-        color: rgba(var(--chakra-colors-brand-light-rgb), 0.95);
-      }
-    }
-  }
-
-  // pin is a stronger cue than hover without blacking out neighbors
-  &__Stack.is-pinned.is-focusing {
-    .TxTypesBar__Seg:not(.is-focus) {
-      opacity: 0.36;
-    }
-
-    .TxTypesBar__Row.is-focus {
-      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+      box-shadow: inset 2px 0 0 rgba(var(--chakra-colors-brand-light-rgb), 0.95);
     }
   }
 
@@ -397,16 +375,13 @@ $txtype-colors: (
     border-radius: 999px;
   }
 
-  &__RowCount,
-  &__RowPct {
+  &__RowCount {
     font-family: $font-mono;
     font-size: 0.6875rem;
     text-align: right;
     white-space: nowrap;
+    color: #fff;
   }
-
-  &__RowCount { color: #fff; }
-  &__RowPct { color: var(--chakra-colors-gray-500); }
 
   @each $name, $color in $txtype-colors {
     &__Seg--#{$name} {
