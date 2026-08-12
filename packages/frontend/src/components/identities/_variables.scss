@@ -1,22 +1,26 @@
-@import '../../styles/variables.scss';
+@use '../../styles/list-grid' as grid;
 
-@mixin Columns () {
-  display: grid;
-  gap: 1rem;
+@mixin Columns() {
+  @include grid.list-grid(1rem);
+
   grid-template-columns: minmax(0, 1fr) 12rem 7rem 7rem 8rem 11rem;
 
   @container (max-width: 72rem) {
     grid-template-columns: minmax(0, 1fr) 12rem 7rem 7rem 11rem;
 
     .IdentitiesList__ColumnTitle--Contracts,
-    .IdentitiesListItem__Column--Contracts { display: none; }
+    .IdentitiesListItem__Column--Contracts {
+      display: none;
+    }
   }
 
   @container (max-width: 56rem) {
     grid-template-columns: minmax(0, 1fr) 12rem 7rem 11rem;
 
     .IdentitiesList__ColumnTitle--Documents,
-    .IdentitiesListItem__Column--Documents { display: none; }
+    .IdentitiesListItem__Column--Documents {
+      display: none;
+    }
   }
 
   @container (max-width: 44rem) {
@@ -25,20 +29,18 @@
     .IdentitiesList__ColumnTitle--Balance,
     .IdentitiesListItem__Column--Balance,
     .IdentitiesList__ColumnTitle--Txs,
-    .IdentitiesListItem__Column--Txs { display: none; }
+    .IdentitiesListItem__Column--Txs {
+      display: none;
+    }
   }
 }
 
-@mixin Column () {
-  display: flex;
-  align-items: center;
+@mixin Column() {
+  @include grid.list-grid-cell;
   white-space: nowrap;
-  justify-content: center;
-  text-align: center;
 
   &--Identifier {
-    justify-content: flex-start;
-    text-align: left;
+    @include grid.list-grid-cell-start;
   }
 
   &--Balance,
@@ -49,7 +51,6 @@
   }
 
   &--Timestamp {
-    justify-content: flex-end;
-    text-align: right;
+    @include grid.list-grid-cell-end;
   }
 }
