@@ -1,0 +1,31 @@
+.PublicKeyBoundCard {
+  display: flex;
+  gap: 4px;
+  font-size: 0.75rem;
+}
+.PublicKeyBoundCard__Title {
+  white-space: nowrap;
+  color: var(--pe-color-fg-muted);
+}
+.PublicKeyBoundCard__Id {
+  overflow: hidden;
+  font-size: 0.75rem;
+}
+.PublicKeyBoundCard__Id .ValueContainer__Value {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.PublicKeyBoundCard__Type {
+  display: flex;
+  flex-wrap: nowrap;
+  white-space: nowrap;
+  gap: 6px;
+}
+.PublicKeyBoundCard__TypeTitle {
+  white-space: nowrap;
+  color: var(--pe-color-fg-muted);
+}
+.PublicKeyBoundCard__TypeValue {
+  color: #ffffff;
+}

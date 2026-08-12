@@ -1,0 +1,191 @@
+.WithdrawalsListItem {
+  display: flex;
+  width: 100%;
+  text-decoration: none;
+  padding: var(--pe-list-row-pad-y) var(--pe-list-row-pad-x);
+  margin-bottom: 8px;
+  line-height: 24px;
+  color: var(--pe-color-gray-100);
+  font-family: var(--pe-font-mono);
+  font-size: 12pt;
+  border-radius: var(--pe-list-row-radius);
+  border: 1px solid var(--pe-color-gray-750);
+  background-color: rgba(var(--pe-color-gray-800-rgb), 0.5);
+  transition: all 0.1s;
+}
+.WithdrawalsListItem:last-child {
+  margin-bottom: 0;
+}
+.WithdrawalsListItem__Column--Credits, .WithdrawalsListItem__Column--Number {
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+.WithdrawalsListItem__IdentifierContainer {
+  display: flex;
+  align-items: center;
+  min-width: 50px;
+}
+.WithdrawalsListItem__Avatar {
+  height: 24px;
+  width: 24px;
+  flex-shrink: 0;
+  margin-right: 12px;
+}
+.WithdrawalsListItem--Timestamp, .WithdrawalsListItem__Column--Timestamp {
+  font-family: var(--pe-font-mono);
+  white-space: nowrap;
+  color: #fff;
+}
+.WithdrawalsListItem--Timestamp,
+.WithdrawalsListItem--Timestamp .DateBlock__Date, .WithdrawalsListItem__Column--Timestamp,
+.WithdrawalsListItem__Column--Timestamp .DateBlock__Date {
+  font-size: 0.75rem;
+}
+.WithdrawalsListItem {
+  flex-wrap: wrap;
+}
+.WithdrawalsListItem.WithdrawalsListItem--Clickable {
+  display: flex;
+  width: 100%;
+  text-decoration: none;
+  padding: var(--pe-list-row-pad-y) var(--pe-list-row-pad-x);
+  margin-bottom: 8px;
+  line-height: 24px;
+  color: var(--pe-color-gray-100);
+  font-family: var(--pe-font-mono);
+  font-size: 12pt;
+  border-radius: var(--pe-list-row-radius);
+  border: 1px solid var(--pe-color-gray-750);
+  background-color: rgba(var(--pe-color-gray-800-rgb), 0.5);
+  transition: all 0.1s;
+}
+@media (hover: hover) and (pointer: fine) {
+  .WithdrawalsListItem.WithdrawalsListItem--Clickable:hover {
+    background-color: var(--pe-color-gray-750);
+    text-decoration: none;
+    cursor: pointer;
+  }
+}
+.WithdrawalsListItem.WithdrawalsListItem--Clickable:active {
+  transform: translateY(1px);
+  box-shadow: 0 0 9999px 0 rgba(0, 0, 0, 0.25) inset;
+}
+.WithdrawalsListItem.WithdrawalsListItem--Clickable:last-child {
+  margin-bottom: 0;
+}
+.WithdrawalsListItem.WithdrawalsListItem--Clickable__Column--Credits, .WithdrawalsListItem.WithdrawalsListItem--Clickable__Column--Number {
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+.WithdrawalsListItem.WithdrawalsListItem--Clickable__IdentifierContainer {
+  display: flex;
+  align-items: center;
+  min-width: 50px;
+}
+.WithdrawalsListItem.WithdrawalsListItem--Clickable__Avatar {
+  height: 24px;
+  width: 24px;
+  flex-shrink: 0;
+  margin-right: 12px;
+}
+.WithdrawalsListItem.WithdrawalsListItem--Clickable--Timestamp, .WithdrawalsListItem.WithdrawalsListItem--Clickable__Column--Timestamp {
+  font-family: var(--pe-font-mono);
+  white-space: nowrap;
+  color: #fff;
+}
+.WithdrawalsListItem.WithdrawalsListItem--Clickable--Timestamp,
+.WithdrawalsListItem.WithdrawalsListItem--Clickable--Timestamp .DateBlock__Date, .WithdrawalsListItem.WithdrawalsListItem--Clickable__Column--Timestamp,
+.WithdrawalsListItem.WithdrawalsListItem--Clickable__Column--Timestamp .DateBlock__Date {
+  font-size: 0.75rem;
+}
+.WithdrawalsListItem:hover {
+  cursor: default;
+}
+.WithdrawalsListItem__Content {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: 133px minmax(0, 400px) minmax(0, 400px) minmax(0, 400px) minmax(0, 200px) 44px;
+}
+@container (max-width: 700px) {
+  .WithdrawalsListItem__Content {
+    grid-template-columns: 133px minmax(0, 400px) minmax(0, 400px) minmax(0, 400px) minmax(50px, 200px) 44px;
+  }
+}
+@container (max-width: 550px) {
+  .WithdrawalsListItem__Content {
+    grid-template-columns: 133px minmax(0, 400px) minmax(0, 200px) 44px;
+  }
+}
+@container (max-width: 420px) {
+  .WithdrawalsListItem__Content {
+    grid-template-columns: 133px minmax(0, 300px) 44px;
+  }
+}
+.WithdrawalsListItem__Column {
+  display: flex;
+  align-items: center;
+}
+.WithdrawalsListItem__Column:last-child {
+  justify-content: flex-end;
+}
+.WithdrawalsListItem__Column, .WithdrawalsListItem__Column a {
+  overflow: hidden;
+}
+.WithdrawalsListItem__Column--TxHash {
+  max-width: 600px;
+}
+.WithdrawalsListItem__Column--Sender {
+  max-width: 400px;
+  width: 100%;
+}
+.WithdrawalsListItem__Column--Type {
+  justify-content: flex-end;
+  white-space: nowrap;
+}
+.WithdrawalsListItem__Column--Amount {
+  width: 100%;
+  overflow: visible;
+}
+@container (max-width: 550px) {
+  .WithdrawalsListItem__Column--Document {
+    display: none;
+  }
+  .WithdrawalsListItem__Column--TxHash {
+    display: none;
+  }
+}
+@container (max-width: 420px) {
+  .WithdrawalsListItem__Column--Address {
+    display: none;
+  }
+}
+.WithdrawalsListItem__Column, .WithdrawalsListItem__Column .Identifier {
+  font-size: 0.688rem;
+}
+.WithdrawalsListItem__Column .ValueContainer {
+  padding: 2px 6px;
+  border-radius: 4px;
+  width: 100%;
+}
+.WithdrawalsListItem__Column--Timestamp {
+  font-size: 0.688rem;
+}
+.WithdrawalsListItem__Column--TxHash .Identifier {
+  font-size: 0.688rem;
+}
+.WithdrawalsListItem__Column--Address .Identifier {
+  font-size: 0.688rem;
+}
+.WithdrawalsListItem__Column--Address a {
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+}
+.WithdrawalsListItem__Column--Amount {
+  font-weight: 700;
+}
+.WithdrawalsListItem__ColumnContent {
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+}

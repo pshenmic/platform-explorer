@@ -1,0 +1,130 @@
+.PublicKeysListItem {
+  display: flex;
+  width: 100%;
+  text-decoration: none;
+  padding: var(--pe-list-row-pad-y) var(--pe-list-row-pad-x);
+  margin-bottom: 8px;
+  line-height: 24px;
+  color: var(--pe-color-gray-100);
+  font-family: var(--pe-font-mono);
+  font-size: 12pt;
+  border-radius: var(--pe-list-row-radius);
+  border: 1px solid var(--pe-color-gray-750);
+  background-color: rgba(var(--pe-color-gray-800-rgb), 0.5);
+  transition: all 0.1s;
+}
+.PublicKeysListItem:last-child {
+  margin-bottom: 0;
+}
+.PublicKeysListItem__Column--Credits, .PublicKeysListItem__Column--Number {
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+.PublicKeysListItem__IdentifierContainer {
+  display: flex;
+  align-items: center;
+  min-width: 50px;
+}
+.PublicKeysListItem__Avatar {
+  height: 24px;
+  width: 24px;
+  flex-shrink: 0;
+  margin-right: 12px;
+}
+.PublicKeysListItem--Timestamp, .PublicKeysListItem__Column--Timestamp {
+  font-family: var(--pe-font-mono);
+  white-space: nowrap;
+  color: #fff;
+}
+.PublicKeysListItem--Timestamp,
+.PublicKeysListItem--Timestamp .DateBlock__Date, .PublicKeysListItem__Column--Timestamp,
+.PublicKeysListItem__Column--Timestamp .DateBlock__Date {
+  font-size: 0.75rem;
+}
+.PublicKeysListItem {
+  display: block;
+}
+.PublicKeysListItem__Content {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: minmax(45px, 45px) minmax(180px, 180px) minmax(120px, 113px) minmax(113px, 113px) minmax(115px, 115px) minmax(90px, 90px) minmax(78px, 78px) auto;
+}
+@container (max-width: 800px) {
+  .PublicKeysListItem__Content {
+    gap: 8px;
+  }
+}
+.PublicKeysListItem__Content {
+  align-items: center;
+}
+.PublicKeysListItem__Content--Inline {
+  display: inline !important;
+}
+.PublicKeysListItem__Column {
+  display: flex;
+  align-items: center;
+}
+.PublicKeysListItem__Column--Id {
+  max-width: 88px;
+  width: 100%;
+}
+.PublicKeysListItem__Column--PublicKeyHash {
+  max-width: 180px;
+  width: 100%;
+}
+.PublicKeysListItem__Column--Type {
+  max-width: 113px;
+  width: 100%;
+}
+.PublicKeysListItem__Column--Purpose {
+  max-width: 113px;
+  width: 100%;
+}
+.PublicKeysListItem__Column--SecurityLevel {
+  max-width: 115px;
+  width: 100%;
+}
+.PublicKeysListItem__Column--ReadOnly {
+  max-width: 78px;
+  width: 100%;
+}
+.PublicKeysListItem__Column--Data {
+  min-width: 380px;
+  width: 100%;
+}
+.PublicKeysListItem__Column {
+  font-size: 0.688rem;
+}
+.PublicKeysListItem__Column--Id {
+  font-size: 0.75rem;
+  color: #fff;
+}
+.PublicKeysListItem__Column--Data {
+  flex-direction: column;
+  align-items: flex-start;
+  overflow: hidden;
+  display: flex;
+  gap: 4px;
+}
+.PublicKeysListItem__Column--PublicKeyHash {
+  font-size: 0.688rem;
+  color: var(--pe-color-fg-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.PublicKeysListItem__Data, .PublicKeysListItem__PublicKeyHash {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  word-break: break-all;
+  white-space: break-spaces;
+  min-width: 100px;
+  width: 100%;
+}
+.PublicKeysListItem__Data .CopyButton, .PublicKeysListItem__PublicKeyHash .CopyButton {
+  margin-left: 8px;
+}
+.PublicKeysListItem__PublicKeyBounds {
+  max-width: 100%;
+}

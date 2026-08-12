@@ -1,0 +1,180 @@
+.TransfersListItem {
+  display: flex;
+  width: 100%;
+  text-decoration: none;
+  padding: var(--pe-list-row-pad-y) var(--pe-list-row-pad-x);
+  margin-bottom: 8px;
+  line-height: 24px;
+  color: var(--pe-color-gray-100);
+  font-family: var(--pe-font-mono);
+  font-size: 12pt;
+  border-radius: var(--pe-list-row-radius);
+  border: 1px solid var(--pe-color-gray-750);
+  background-color: rgba(var(--pe-color-gray-800-rgb), 0.5);
+  transition: all 0.1s;
+}
+.TransfersListItem:last-child {
+  margin-bottom: 0;
+}
+.TransfersListItem__Column--Credits, .TransfersListItem__Column--Number {
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+.TransfersListItem__IdentifierContainer {
+  display: flex;
+  align-items: center;
+  min-width: 50px;
+}
+.TransfersListItem__Avatar {
+  height: 24px;
+  width: 24px;
+  flex-shrink: 0;
+  margin-right: 12px;
+}
+.TransfersListItem--Timestamp, .TransfersListItem__Column--Timestamp {
+  font-family: var(--pe-font-mono);
+  white-space: nowrap;
+  color: #fff;
+}
+.TransfersListItem--Timestamp,
+.TransfersListItem--Timestamp .DateBlock__Date, .TransfersListItem__Column--Timestamp,
+.TransfersListItem__Column--Timestamp .DateBlock__Date {
+  font-size: 0.75rem;
+}
+.TransfersListItem--Clickable {
+  display: flex;
+  width: 100%;
+  text-decoration: none;
+  padding: var(--pe-list-row-pad-y) var(--pe-list-row-pad-x);
+  margin-bottom: 8px;
+  line-height: 24px;
+  color: var(--pe-color-gray-100);
+  font-family: var(--pe-font-mono);
+  font-size: 12pt;
+  border-radius: var(--pe-list-row-radius);
+  border: 1px solid var(--pe-color-gray-750);
+  background-color: rgba(var(--pe-color-gray-800-rgb), 0.5);
+  transition: all 0.1s;
+}
+@media (hover: hover) and (pointer: fine) {
+  .TransfersListItem--Clickable:hover {
+    background-color: var(--pe-color-gray-750);
+    text-decoration: none;
+    cursor: pointer;
+  }
+}
+.TransfersListItem--Clickable:active {
+  transform: translateY(1px);
+  box-shadow: 0 0 9999px 0 rgba(0, 0, 0, 0.25) inset;
+}
+.TransfersListItem--Clickable:last-child {
+  margin-bottom: 0;
+}
+.TransfersListItem--Clickable__Column--Credits, .TransfersListItem--Clickable__Column--Number {
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+.TransfersListItem--Clickable__IdentifierContainer {
+  display: flex;
+  align-items: center;
+  min-width: 50px;
+}
+.TransfersListItem--Clickable__Avatar {
+  height: 24px;
+  width: 24px;
+  flex-shrink: 0;
+  margin-right: 12px;
+}
+.TransfersListItem--Clickable--Timestamp, .TransfersListItem--Clickable__Column--Timestamp {
+  font-family: var(--pe-font-mono);
+  white-space: nowrap;
+  color: #fff;
+}
+.TransfersListItem--Clickable--Timestamp,
+.TransfersListItem--Clickable--Timestamp .DateBlock__Date, .TransfersListItem--Clickable__Column--Timestamp,
+.TransfersListItem--Clickable__Column--Timestamp .DateBlock__Date {
+  font-size: 0.75rem;
+}
+.TransfersListItem__Content {
+  width: 100%;
+  display: grid;
+  gap: 16px;
+  grid-template-columns: 70px minmax(0, 400px) minmax(0, 500rem) minmax(185px, 185px) minmax(100px, 100px) 128px;
+}
+@container (max-width: 90em) {
+  .TransfersListItem__Content {
+    grid-template-columns: 70px minmax(0, 400px) minmax(0, 400px) minmax(185px, 185px) minmax(100px, 100px) 128px;
+  }
+}
+@container (max-width: 50em) {
+  .TransfersListItem__Content {
+    grid-template-columns: 70px minmax(0, 400px) minmax(0, 300px) minmax(185px, 185px) 128px;
+  }
+}
+@container (max-width: 44em) {
+  .TransfersListItem__Content {
+    grid-template-columns: 70px minmax(0px, 300px) minmax(185px, 185px) 128px;
+  }
+}
+@container (max-width: 580px) {
+  .TransfersListItem__Content {
+    gap: 8px;
+    grid-template-columns: 70px auto 128px;
+  }
+}
+.TransfersListItem__Column {
+  display: flex;
+  align-items: center;
+}
+.TransfersListItem__Column:last-child {
+  justify-content: flex-end;
+}
+.TransfersListItem__Column, .TransfersListItem__Column a {
+  overflow: hidden;
+}
+.TransfersListItem__Column--TxHash {
+  max-width: 400px;
+  width: 100%;
+}
+.TransfersListItem__Column--Recipient {
+  max-width: 400px;
+  width: 100%;
+}
+.TransfersListItem__Column--Amount {
+  width: 100%;
+  overflow: visible;
+}
+.TransfersListItem__Column--GasUsed {
+  width: 100%;
+  overflow: visible;
+}
+.TransfersListItem__Column--Type {
+  width: 100%;
+  min-width: max-content;
+}
+@container (max-width: 50em) {
+  .TransfersListItem__Column--GasUsed {
+    display: none;
+  }
+}
+@container (max-width: 44em) {
+  .TransfersListItem__Column--Amount {
+    width: 100%;
+    overflow: visible;
+  }
+  .TransfersListItem__Column--Recipient {
+    display: none;
+  }
+}
+@container (max-width: 580px) {
+  .TransfersListItem__Column--TxHash {
+    display: none;
+  }
+}
+.TransfersListItem__Column--Amount, .TransfersListItem__Column--GasUsed {
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+.TransfersListItem__ContentWrapper {
+  width: 100%;
+}
