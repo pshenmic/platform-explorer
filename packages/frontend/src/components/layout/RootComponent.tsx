@@ -7,6 +7,7 @@ import Navbar from './navbar/Navbar'
 import Footer from './footer'
 import Background from './Background'
 
+import '../../styles/tokens/index.css'
 import '../../styles/theme.scss'
 
 interface RootComponentProps {
