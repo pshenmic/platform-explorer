@@ -1,0 +1,57 @@
+.DashboardCard {
+  padding: 30px;
+  height: 180px;
+}
+.DashboardCard__ContentWrapper {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+.DashboardCard__ContentWrapper--Icon {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  height: 100%;
+}
+.DashboardCard__Content {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  overflow: hidden;
+}
+.DashboardCard__ContentWrapper--Icon .DashboardCard__Content {
+  display: block;
+  height: auto;
+}
+.DashboardCard__Title {
+  margin-bottom: 12px;
+  color: var(--pe-color-brand-normal);
+  font-family: var(--pe-font-heading);
+  font-style: italic;
+  font-size: 0.875rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+.DashboardCard__Value {
+  font-family: var(--pe-font-heading);
+  font-weight: 800;
+  font-size: 1.25rem;
+  height: 100%;
+}
+@media screen and (max-width: 62em) {
+  .DashboardCard {
+    padding: 28px;
+  }
+}
+@media screen and (max-width: 48em) {
+  .DashboardCard {
+    padding: 16px;
+    height: 120px;
+  }
+  .DashboardCard__Title {
+    margin-bottom: 4px;
+  }
+}

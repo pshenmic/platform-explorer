@@ -1,0 +1,41 @@
+.CardsGrid__Header {
+  margin-bottom: 14px;
+}
+.CardsGrid__Items {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  margin: -10px 0;
+}
+.CardsGrid__Item {
+  width: calc(50% - 10px);
+  margin: 10px 0;
+}
+.CardsGrid--DivideBy3 {
+  overflow: hidden;
+  max-width: 100%;
+}
+@media screen and (max-width: 62em) {
+  .CardsGrid__Item {
+    width: calc(25% - 10px);
+  }
+  .CardsGrid--DivideBy3 .CardsGrid__Item {
+    width: calc(33.3333333333% - 10px);
+  }
+}
+@media screen and (max-width: 48em) {
+  .CardsGrid__Item {
+    width: calc(50% - 10px);
+  }
+  .CardsGrid--DivideBy3 .CardsGrid__Item {
+    width: calc(50% - 10px);
+  }
+}
+@media screen and (max-width: 30em) {
+  .CardsGrid__Item {
+    width: 100%;
+  }
+  .CardsGrid--DivideBy3 .CardsGrid__Item {
+    width: 100%;
+  }
+}

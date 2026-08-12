@@ -1,0 +1,36 @@
+.TokenCardContent {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.TokenCardContent__NameContainer {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  overflow: hidden;
+}
+.TokenCardContent__Name {
+  font-family: var(--pe-font-heading);
+  font-size: 1rem;
+  font-weight: 800;
+  color: var(--pe-color-fg);
+  padding-right: 0.25rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-style: italic;
+}
+.TokenCardContent__Avatar {
+  width: 1.5rem;
+  flex-shrink: 0;
+}
+.TokenCardContent__Count {
+  font-family: var(--pe-font-mono);
+  font-size: 0.75rem;
+  white-space: nowrap;
+  gap: 0.25rem;
+}
+.TokenCardContent__CountValue {
+  font-weight: 500;
+  color: var(--pe-color-brand-light);
+}

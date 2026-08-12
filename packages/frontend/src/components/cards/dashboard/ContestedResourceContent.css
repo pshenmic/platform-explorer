@@ -1,0 +1,24 @@
+.ContestedResourceContent {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  width: max-content;
+  max-width: 100%;
+}
+.ContestedResourceContent__ValueContainer {
+  display: inline-flex;
+  flex-wrap: wrap;
+  width: 100%;
+  gap: 0.25rem;
+  font-weight: 400;
+}
+.ContestedResourceContent__ValueContainer .Alias__SymbolsContainer {
+  display: flex;
+  flex-wrap: wrap;
+}
+.ContestedResourceContent__VoteBadges {
+  margin-bottom: 0.25rem;
+}
+.ContestedResourceContent__ContendersBadge {
+  display: inline-block;
+}

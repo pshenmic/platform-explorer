@@ -4,7 +4,7 @@ import { useState, createRef, forwardRef } from 'react'
 import type { MouseEvent, ForwardedRef } from 'react'
 import Link from 'next/link'
 import type { WithChildren, WithClassName } from '../../types/common'
-import './InfoCard.scss'
+import './InfoCard.css'
 
 interface WrapperProps extends WithChildren, WithClassName {
   link?: string
