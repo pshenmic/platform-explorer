@@ -1,3 +1,5 @@
+'use client'
+
 import { DateRangePicker } from '../calendar'
 import { useEffect, useState } from 'react'
 import { Button } from '@chakra-ui/react'
@@ -16,6 +18,24 @@ interface DateRangeFilterProps {
   config?: ChartConfig
 }
 
+function sameDay (a: Date | null | undefined, b: Date | null | undefined): boolean {
+  if (a == null && b == null) return true
+  if (a == null || b == null) return false
+  return a.getTime() === b.getTime()
+}
+
+function sameRange (
+  a: DateRangeFilterValue | null | undefined,
+  b: DateRangeFilterValue | null | undefined
+): boolean {
+  return sameDay(a?.start, b?.start) && sameDay(a?.end, b?.end)
+}
+
+/**
+ * Date range filter panel.
+ * Calls onChange only from user actions (not from useEffect) to avoid
+ * Filters menuData remount loops / Maximum update depth.
+ */
 export const DateRangeFilter = ({
   value = { start: null, end: null },
   onChange,
@@ -23,39 +43,41 @@ export const DateRangeFilter = ({
   config = defaultChartConfig
 }: DateRangeFilterProps) => {
   const [timespan, setTimespan] = useState<TimespanValue | null>(null)
-  const [selectedRange, setSelectedRange] = useState<DateRangeFilterValue | null>(null)
-  const [calendarValue, setCalendarValue] = useState<CalendarRange | null>(null)
+  const [calendarValue, setCalendarValue] = useState<CalendarRange>([
+    value?.start ?? null,
+    value?.end ?? null
+  ])
+
+  // Sync from parent when applied filters change (open menu snapshot) — do not call onChange here
+  useEffect(() => {
+    setCalendarValue(prev => {
+      const next: CalendarRange = [value?.start ?? null, value?.end ?? null]
+      if (sameDay(prev[0], next[0]) && sameDay(prev[1], next[1])) return prev
+      return next
+    })
+  }, [value?.start, value?.end])
+
+  const emitChange = (next: DateRangeFilterValue | null) => {
+    if (sameRange(next, value)) return
+    onChange(next)
+  }
 
   const timeframeButtonHandler = (timespanValue: TimespanValue) => {
     setTimespan(timespanValue)
-    setSelectedRange({
+    const next: DateRangeFilterValue = {
       start: timespanValue?.range?.start ? new Date(timespanValue.range.start) : null,
       end: timespanValue?.range?.end ? new Date(timespanValue.range.end) : null
-    })
+    }
+    setCalendarValue([next.start ?? null, next.end ?? null])
+    emitChange(next)
   }
 
   const calendarHandler = (nextValue: Date | null | CalendarRange) => {
-    const range = Array.isArray(nextValue) ? nextValue : [nextValue, null] as CalendarRange
+    const range = (Array.isArray(nextValue) ? nextValue : [nextValue, null]) as CalendarRange
     setCalendarValue(range)
     setTimespan(null)
-    const [start, end] = range
-    setSelectedRange({ start, end })
+    emitChange({ start: range[0], end: range[1] })
   }
-
-  useEffect(() => {
-    onChange(selectedRange)
-  }, [selectedRange, onChange])
-
-  useEffect(() => {
-    const formatedValue: CalendarRange = [
-      value?.start || null,
-      value?.end || null
-    ]
-
-    if (JSON.stringify(formatedValue) !== JSON.stringify(calendarValue)) {
-      setCalendarValue(formatedValue)
-    }
-  }, [value, calendarValue])
 
   return (
     <div className={'DateRangeFilter'}>

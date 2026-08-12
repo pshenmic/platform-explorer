@@ -341,7 +341,8 @@ export const Filters = ({
           {isMobile
             ? filterTriggerButton
             : <MultiLevelMenu
-                placement={'bottom-start'}
+                // Button is usually on the right of the page — open toward free space (left)
+                placement={'bottom-end'}
                 trigger={filterTriggerButton}
                 menuData={menuData}
                 onClose={handleMenuClose}

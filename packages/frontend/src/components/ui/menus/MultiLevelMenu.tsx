@@ -56,13 +56,31 @@ function MultiLevelMenu ({
         onOpen={handleOpen}
         onClose={handleClose}
         closeOnBlur
+        // Filters sit on the right of the toolbar: grow left into free space (end = right edge of trigger)
         placement={placement}
         variant={'menu'}
         isLazy
         autoFocus={false}
         returnFocusOnClose={false}
-        gutter={8}
-        strategy='fixed'
+        gutter={4}
+        strategy='absolute'
+        modifiers={[
+          {
+            name: 'preventOverflow',
+            options: {
+              padding: 12,
+              altAxis: true,
+              tether: false,
+              boundary: 'clippingParents'
+            }
+          },
+          {
+            name: 'flip',
+            options: {
+              fallbackPlacements: ['bottom-end', 'bottom-start', 'top-end', 'top-start', 'left-start']
+            }
+          }
+        ]}
         {...props}
       >
         <PopoverTrigger>
@@ -72,6 +90,7 @@ function MultiLevelMenu ({
           className={`MultiLevelMenu__Content${showPanel ? ' MultiLevelMenu__Content--WithPanel' : ''}`}
           width='auto'
           maxW='min(960px, calc(100vw - 24px))'
+          rootProps={{ style: { zIndex: 1500 } }}
         >
           <PopoverBody p={0} className={'MultiLevelMenu__Body'}>
             <div className={'MultiLevelMenu__Layout'}>
