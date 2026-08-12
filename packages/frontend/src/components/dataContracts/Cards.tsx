@@ -11,8 +11,8 @@ import { Slider, SliderElement } from '../ui/Slider'
 import { WheelControls } from '../ui/Slider/plugins'
 import type { KeenSliderPlugin } from 'keen-slider/react'
 import type { DataContract, LoadableState, PaginatedResultSet, WithClassName } from '../../types'
-import './DataContractCard.scss'
-import './DataContractCards.scss'
+import './DataContractCard.css'
+import './DataContractCards.css'
 
 // Untyped JS components — loose wrappers until data/* / imageGenerator are migrated
 const ImageGenerator = ImageGeneratorJs as ComponentType<{

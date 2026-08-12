@@ -1,0 +1,41 @@
+.DataContractCards {
+  width: 100%;
+}
+.DataContractCards__CardsColumn {
+  width: 90%;
+  padding: 10px;
+}
+.DataContractCards__Card {
+  margin-bottom: 20px;
+}
+.DataContractCards__Card:last-child {
+  margin-bottom: 0;
+}
+.DataContractCards .SliderNavigation {
+  display: none;
+}
+@media screen and (max-width: 48em) {
+  .DataContractCards .SliderNavigation {
+    display: block;
+  }
+  .DataContractCards__Slider {
+    width: calc(100% + 20px);
+  }
+  .DataContractCards .Slider__Carousel {
+    width: 110%;
+    margin: 0 -5%;
+    overflow: visible;
+  }
+  .DataContractCards__CardsColumnContainer {
+    padding: 10px 4px;
+  }
+  .DataContractCards__CardsColumn {
+    padding: 10px 4px;
+  }
+  .DataContractCards__Card {
+    margin-bottom: 8px;
+  }
+  .DataContractCards__Card:last-child {
+    margin-bottom: 0;
+  }
+}

@@ -1,0 +1,42 @@
+.root .description {
+  font-family: var(--pe-font-mono);
+  color: var(--pe-color-fg-muted);
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 110%;
+}
+.root .controls {
+  margin-top: 24px;
+  display: flex;
+  gap: 12px;
+}
+.root .controls .card {
+  max-width: 294px;
+  width: 100%;
+  height: 125px;
+  background-color: var(--pe-color-gray-800);
+  border-radius: 24px;
+  border: rgba(46, 57, 61, 0.5019607843) solid 1px;
+  padding: 24px 24px 27px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  transition: background-color ease-in 0.2;
+}
+.root .controls .card:hover {
+  background-color: var(--pe-color-gray-700);
+}
+.root .controls .card:active {
+  background-color: var(--chakra-colors-gray-600);
+}
+.root .controls .card .name {
+  width: fit-content;
+  font-family: var(--pe-font-mono);
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 130%;
+}
+.root .controls .card .name .mark {
+  font-weight: 400;
+  color: var(--pe-color-brand-normal);
+}

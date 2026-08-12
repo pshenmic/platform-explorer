@@ -1,0 +1,76 @@
+.root {
+  max-width: 648px;
+  width: 100%;
+}
+.root .divider {
+  padding: 20px 0;
+}
+.root .form {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  margin-top: 14px;
+}
+.root .form .field {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+}
+.root .form .field .label {
+  grid-column: 1;
+  grid-row: 1;
+  font-family: var(--pe-font-mono);
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 110%;
+  color: var(--pe-color-fg-muted);
+}
+.root .form .field .input {
+  grid-column: 2;
+  grid-row: 1;
+  max-width: 396px;
+}
+.root .form .field .errorSlot {
+  grid-column: 2;
+  grid-row: 2;
+  min-height: 40px;
+  margin-top: 4px;
+}
+.root .form .field .errorText {
+  color: var(--chakra-colors-red-500);
+  font-size: 14px;
+  line-height: 130%;
+}
+.root .controls {
+  margin-top: 24px;
+  margin-bottom: 6px;
+  display: flex;
+  gap: 12px;
+  justify-content: space-between;
+}
+.root .controls .btn {
+  max-width: 294px;
+  width: 100%;
+  border-radius: var(--pe-radius-def);
+  padding: 12px;
+  transition: all ease-in 0.2;
+}
+.root .controls .btn.cancel {
+  background-color: rgba(var(--pe-color-gray-250-rgb), 0.1);
+}
+.root .controls .btn.cancel:hover {
+  background-color: rgba(var(--pe-color-gray-250-rgb), 0.3);
+}
+.root .controls .btn.cancel:active {
+  background-color: rgba(var(--pe-color-gray-250-rgb), 0.5);
+}
+.root .controls .btn.submit {
+  background-color: var(--pe-color-brand-normal);
+}
+.root .controls .btn.submit:hover {
+  background-color: var(--pe-color-brand-light);
+}
+.root .controls .btn.submit:active {
+  background-color: var(--pe-color-gray-50);
+  color: var(--pe-color-brand-normal);
+}

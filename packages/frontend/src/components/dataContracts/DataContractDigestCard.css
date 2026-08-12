@@ -1,0 +1,91 @@
+.DataContractDigestCard {
+  padding: calc(var(--pe-space-3) + 0px);
+}
+@media screen and (min-width: 48em) {
+  .DataContractDigestCard {
+    padding: calc(var(--pe-space-4) + 0px);
+  }
+}
+@media screen and (min-width: 62em) {
+  .DataContractDigestCard {
+    padding: calc(var(--pe-space-5) + 0px);
+  }
+}
+@media screen and (min-width: 80em) {
+  .DataContractDigestCard {
+    padding: calc(var(--pe-space-6) + 0px);
+  }
+}
+.DataContractDigestCard {
+  font-family: var(--pe-font-mono);
+  font-size: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.875rem;
+  background: rgba(var(--pe-color-gray-800-rgb), 0.5);
+  border-radius: var(--pe-radius-def);
+  container-type: inline-size;
+}
+.DataContractDigestCard--Loading .InfoLine__Value {
+  height: 1.5rem;
+}
+.DataContractDigestCard--Loading .DataContractDigestCard__InfoContainer {
+  overflow: hidden;
+}
+.DataContractDigestCard--Loading .DataContractDigestCard__InfoContainerValue {
+  width: 100px;
+  max-width: 100%;
+}
+.DataContractDigestCard__RowContainer {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.875rem;
+}
+.DataContractDigestCard__InfoContainer {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px;
+  padding: 24px;
+  background: rgba(var(--pe-color-gray-800-rgb), 0.5);
+  border-radius: var(--pe-radius-def);
+  width: 100%;
+}
+.DataContractDigestCard__InfoContainer .InfoLine__Title svg {
+  width: 1.75rem;
+  height: 1.75rem;
+}
+.DataContractDigestCard__LinesContainer {
+  flex-direction: column;
+}
+.DataContractDigestCard {
+  border-radius: var(--pe-radius-block);
+  container-type: inline-size;
+}
+.DataContractDigestCard__InfoLine--TopIdentity .InfoLine__Value {
+  overflow: hidden;
+}
+.DataContractDigestCard__InfoLine--TotalTransactions, .DataContractDigestCard__InfoLine--DocumentsCount {
+  width: 100%;
+}
+.DataContractDigestCard__InfoLine--TotalTransactions .InfoLine__Title, .DataContractDigestCard__InfoLine--TotalTransactions .InfoLine__Title span, .DataContractDigestCard__InfoLine--DocumentsCount .InfoLine__Title, .DataContractDigestCard__InfoLine--DocumentsCount .InfoLine__Title span {
+  align-items: center;
+  display: flex;
+}
+.DataContractDigestCard__InfoLine--TotalTransactions .InfoLine__Title span, .DataContractDigestCard__InfoLine--DocumentsCount .InfoLine__Title span {
+  gap: 0.75rem;
+}
+.DataContractDigestCard__InfoLine--TotalTransactions .InfoLine__Value, .DataContractDigestCard__InfoLine--DocumentsCount .InfoLine__Value {
+  font-size: 0.813rem;
+}
+@container (max-width: 37.5rem) and (max-width: 37.5rem) {
+  .DataContractDigestCard__RowContainer {
+    flex-wrap: wrap;
+  }
+}
+@media screen and (max-width: 30em) {
+  .DataContractDigestCard__InfoLine {
+    flex-wrap: wrap;
+  }
+}

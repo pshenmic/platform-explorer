@@ -1,0 +1,269 @@
+.DataContractTotalCard__Title {
+  white-space: break-spaces;
+  word-break: break-all;
+}
+.DataContractTotalCard__Title .Alias__Name,
+.DataContractTotalCard__Title .Alias__Domain {
+  font-family: var(--pe-font-heading);
+  font-size: 0.875rem;
+  font-weight: 700;
+}
+.DataContractTotalCard__Title .Alias__Domain {
+  color: var(--pe-color-brand-light);
+  opacity: 1;
+}
+.DataContractTotalCard--Loading .InfoLine__Value {
+  height: 1.5rem;
+}
+.DataContractTotalCard__ContentContainer {
+  display: flex;
+  gap: 2.5rem;
+}
+.DataContractTotalCard__Column {
+  position: relative;
+  width: 50%;
+}
+.DataContractTotalCard__Header {
+  position: relative;
+  display: flex;
+  width: 100%;
+  align-items: center;
+}
+.DataContractTotalCard__Avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--pe-font-mono);
+  font-size: 0.75rem;
+  color: var(--chakra-colors-gray-500);
+  width: 88px;
+  height: 88px;
+  border: 1px solid rgba(137, 126, 126, 0.1);
+  flex-shrink: 0;
+  margin-left: 24px;
+}
+.DataContractTotalCard__HeaderLines {
+  display: flex;
+  gap: 20px;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 100%;
+  padding: 6px 0;
+  overflow: hidden;
+}
+.DataContractTotalCard__InfoLine {
+  gap: 14px;
+}
+.DataContractTotalCard__CommonInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+.DataContractTotalCard__CommonInfo .HorisontalSeparator {
+  margin: 0;
+}
+@media screen and (max-width: 62em) {
+  .DataContractTotalCard__ContentContainer {
+    gap: 1.5rem;
+  }
+}
+@media screen and (max-width: 48em) {
+  .DataContractTotalCard__ContentContainer {
+    flex-direction: column;
+  }
+  .DataContractTotalCard__ContentContainer, .DataContractTotalCard__CommonLines {
+    gap: 0.75rem;
+  }
+  .DataContractTotalCard__Column {
+    position: static;
+    width: 100%;
+  }
+}
+.DataContractTotalCard__TitleContainer {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+.DataContractTotalCard__Edit {
+  background: rgba(var(--pe-color-brand-normal-rgb), 0.2);
+  color: var(--pe-color-brand-normal);
+  font-family: var(--pe-font-mono);
+  border-radius: 10px;
+  padding: 0.5rem 1rem;
+  min-width: 140px;
+  text-align: center;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 130%;
+  transition: all ease-in 0.2;
+}
+.DataContractTotalCard__Edit:hover {
+  background: rgba(var(--pe-color-brand-normal-rgb), 0.5);
+  color: var(--chakra-colors-white-50);
+}
+.DataContractTotalCard__Edit:active {
+  background: rgba(var(--pe-color-brand-normal-rgb), 1);
+  color: var(--chakra-colors-white-50);
+}
+.DataContractTotalCard__Edit:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+.DataContractTotalCard__NoName {
+  font-style: italic;
+  font-weight: 400;
+  text-transform: none;
+  color: var(--chakra-colors-gray-500);
+}
+.DataContractTotalCard__KeywordsList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: flex-end;
+}
+.DataContractTotalCard__InfoLine--Description {
+  align-items: flex-start;
+}
+.DataContractTotalCard__DescriptionValue {
+  text-align: left;
+}
+.DataContractTotalCard__Title {
+  font-weight: 700;
+  font-size: 0.875rem;
+  margin-bottom: 0.875rem;
+  font-family: var(--font-montserrat);
+  font-weight: 800;
+  font-style: Italic;
+  font-size: 14px;
+  line-height: 120%;
+  text-transform: uppercase;
+  margin: 0 0 22px;
+}
+.DataContractTotalCard__HeaderLines {
+  width: 100%;
+}
+.DataContractTotalCard__Identifier .InfoLine__Value, .DataContractTotalCard__Owner .InfoLine__Value {
+  width: 100%;
+  text-align: right;
+  overflow: hidden;
+}
+.DataContractTotalCard__Identifier .InfoLine__Value .Identifier, .DataContractTotalCard__Owner .InfoLine__Value .Identifier {
+  justify-content: flex-end;
+}
+.DataContractTotalCard__Owner .ValueCard {
+  max-width: max-content;
+  margin-left: auto;
+}
+@media screen and (max-width: 48em) {
+  .DataContractTotalCard__Title {
+    white-space: break-spaces;
+    word-break: break-all;
+  }
+  .DataContractTotalCard__Title .Alias__Name,
+  .DataContractTotalCard__Title .Alias__Domain {
+    font-family: var(--pe-font-heading);
+    font-size: 0.875rem;
+    font-weight: 700;
+  }
+  .DataContractTotalCard__Title .Alias__Domain {
+    color: var(--pe-color-brand-light);
+    opacity: 1;
+  }
+  .DataContractTotalCard--Loading .InfoLine__Value {
+    height: 1.5rem;
+  }
+  .DataContractTotalCard__ContentContainer {
+    display: flex;
+    gap: 2.5rem;
+  }
+  .DataContractTotalCard__Column {
+    position: relative;
+    width: 50%;
+  }
+  .DataContractTotalCard__Header {
+    position: relative;
+    display: flex;
+    width: 100%;
+    align-items: center;
+  }
+  .DataContractTotalCard__Avatar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--pe-font-mono);
+    font-size: 0.75rem;
+    color: var(--chakra-colors-gray-500);
+    width: 88px;
+    height: 88px;
+    border: 1px solid rgba(137, 126, 126, 0.1);
+    flex-shrink: 0;
+    margin-left: 24px;
+    position: absolute;
+    right: 0;
+    top: 0;
+    margin: 0;
+  }
+  .DataContractTotalCard__HeaderLines {
+    display: flex;
+    gap: 20px;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 100%;
+    padding: 6px 0;
+    overflow: hidden;
+  }
+  .DataContractTotalCard__InfoLine {
+    gap: 14px;
+  }
+  .DataContractTotalCard__CommonInfo {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  .DataContractTotalCard__CommonInfo .HorisontalSeparator {
+    margin: 0;
+  }
+}
+@media screen and (max-width: 48em) and (max-width: 62em) {
+  .DataContractTotalCard__ContentContainer {
+    gap: 1.5rem;
+  }
+}
+@media screen and (max-width: 48em) and (max-width: 48em) {
+  .DataContractTotalCard__ContentContainer {
+    flex-direction: column;
+  }
+  .DataContractTotalCard__ContentContainer, .DataContractTotalCard__CommonLines {
+    gap: 0.75rem;
+  }
+  .DataContractTotalCard__Column {
+    position: static;
+    width: 100%;
+  }
+}
+@media screen and (max-width: 48em) {
+  .DataContractTotalCard__Header .InfoLine {
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    gap: 5px;
+  }
+  .DataContractTotalCard__Header .InfoLine__Title {
+    width: 100%;
+  }
+  .DataContractTotalCard__Header .InfoLine__Value {
+    width: 100%;
+    justify-content: flex-start;
+    text-align: left;
+  }
+  .DataContractTotalCard__Identifier .Identifier {
+    justify-content: flex-start !important;
+  }
+  .DataContractTotalCard__Identifier {
+    padding-right: 100px;
+  }
+  .DataContractTotalCard__Owner .ValueCard {
+    width: max-content;
+    max-width: 100%;
+    margin-left: 0;
+  }
+}

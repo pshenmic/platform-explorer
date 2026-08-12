@@ -1,0 +1,165 @@
+.DataContractsList__Pagination {
+  margin-top: 2rem !important;
+}
+.DataContractsList__ScrollZone {
+  width: fit-content;
+  min-width: 100%;
+}
+@media screen and (max-width: 48em) {
+  .DataContractsList__Pagination {
+    margin-top: 1.5rem !important;
+  }
+}
+@media screen and (max-width: 30em) {
+  .DataContractsList__Pagination {
+    margin-top: 1rem !important;
+  }
+}
+.DataContractsList {
+  container-type: inline-size;
+}
+.DataContractsList__ColumnTitles {
+  display: grid;
+  padding: var(--pe-list-row-pad-y) var(--pe-list-row-pad-x);
+  border-radius: var(--pe-list-row-radius);
+  background-color: var(--pe-color-gray-800);
+  margin-bottom: 8px;
+  font-family: var(--pe-font-heading);
+  font-weight: 700;
+  font-size: 12px;
+  text-transform: uppercase;
+  color: var(--pe-color-fg);
+}
+.DataContractsList__ColumnTitles--Light {
+  background: transparent !important;
+  font-weight: 500 !important;
+  color: #fff !important;
+  text-transform: none !important;
+}
+.DataContractsList__ColumnTitles {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) 7rem 7rem 7rem minmax(10.5rem, max-content); /* Timestamp */
+}
+@container (max-width: 48rem) {
+  .DataContractsList__ColumnTitles {
+    grid-template-columns: minmax(0, 1fr) minmax(10.5rem, max-content); /* Timestamp */
+  }
+}
+.DataContractsList__ColumnTitle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+.DataContractsList__ColumnTitle--Timestamp {
+  justify-content: flex-end;
+  text-align: right;
+}
+.DataContractsList__ColumnTitle--Identifier, .DataContractsList__ColumnTitle--Owner {
+  justify-content: flex-start;
+  text-align: left;
+}
+.DataContractsList__ColumnTitle--Identifier {
+  width: 100%;
+  overflow: hidden;
+}
+.DataContractsList__ColumnTitle--Owner {
+  min-width: 0;
+  overflow: hidden;
+}
+.DataContractsList__ColumnTitle--DocumentsCount {
+  min-width: 0;
+  overflow: hidden;
+  font-variant-numeric: tabular-nums;
+}
+@container (max-width: 48rem) {
+  .DataContractsList__ColumnTitle--DocumentsCount, .DataContractsList__ColumnTitle--Owner, .DataContractsList__ColumnTitle--WithTokens, .DataContractsList__ColumnTitle--System {
+    display: none;
+  }
+}
+.DataContractsList__ColumnTitle {
+  word-break: normal;
+  white-space: normal;
+  overflow-wrap: break-word;
+}
+.DataContractsList__ColumnTitle:last-child {
+  text-align: right;
+}
+.DataContractsList__ColumnTitle--Sortable {
+  cursor: pointer;
+  user-select: none;
+  background: none;
+  border: 0;
+  padding: 0;
+  font: inherit;
+  color: inherit;
+  text-align: inherit;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  transition: color 0.15s ease;
+}
+.DataContractsList__ColumnTitle--Sortable:hover {
+  color: var(--pe-color-brand-normal);
+}
+.DataContractsList__ColumnTitle--Sortable:focus-visible {
+  outline: 1px solid var(--pe-color-brand-normal);
+  outline-offset: 2px;
+}
+.DataContractsList__ColumnTitle--Active {
+  color: var(--pe-color-brand-normal);
+}
+@container (max-width: 48rem) {
+  .DataContractsList__ColumnTitle--DocumentsCount {
+    display: none;
+  }
+}
+.DataContractsList__SortSpacer {
+  display: inline-block;
+  width: 1rem;
+  height: 1rem;
+}
+.DataContractsList__Group {
+  border-radius: var(--pe-radius-def);
+  background: rgba(var(--pe-color-brand-normal-rgb), 0.05);
+  margin-bottom: 0.5rem;
+}
+.DataContractsList__GroupHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  cursor: pointer;
+  color: var(--pe-color-brand-normal);
+  font-family: var(--pe-font-heading);
+  font-style: italic;
+  font-weight: 800;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+.DataContractsList__GroupChevron {
+  width: 8px;
+  height: 8px;
+  transition: transform var(--pe-transition-def) ease;
+}
+.DataContractsList__GroupChevron--Open {
+  transform: rotate(90deg);
+}
+.DataContractsList__GroupCount {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 6px;
+  border-radius: 9px;
+  background: var(--pe-color-brand-normal);
+  color: #fff;
+  font-size: 0.6875rem;
+}
+.DataContractsList__Items--Pinned {
+  padding: 0 0.25rem 0.25rem;
+}

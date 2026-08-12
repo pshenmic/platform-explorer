@@ -1,6 +1,6 @@
 import { ValueContainer } from '../ui/containers'
 import type { WithClassName } from '../../types'
-import './InternalConfigCard.scss'
+import './InternalConfigCard.css'
 
 const storageKeyRequirementsColors: Record<string, 'green' | 'blue' | 'orange'> = {
   Unique: 'green',

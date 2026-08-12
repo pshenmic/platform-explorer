@@ -1,0 +1,25 @@
+.DataContractCard {
+  padding: 24px 30px;
+}
+.DataContractCard__Img {
+  margin-right: 8px;
+  width: 2rem;
+  height: 2rem;
+  flex-shrink: 0;
+}
+.DataContractCard__Name {
+  font-size: 1rem;
+  font-weight: 800;
+  font-family: var(--pe-font-heading);
+  font-style: italic;
+}
+@media screen and (min-width: 600px) {
+  .DataContractCard .SliderNavigation {
+    display: none;
+  }
+}
+@media screen and (max-width: 48em) {
+  .DataContractCard {
+    padding: 14px 16px;
+  }
+}
