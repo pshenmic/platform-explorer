@@ -1,5 +1,5 @@
-import './TotalInfo.scss'
-import './TotalInfoItem.scss'
+import './TotalInfo.css'
+import './TotalInfoItem.css'
 import { Container, Flex } from '@chakra-ui/react'
 import Link from 'next/link'
 import type { ReactNode } from 'react'
