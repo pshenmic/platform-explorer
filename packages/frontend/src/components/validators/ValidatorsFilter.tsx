@@ -54,7 +54,7 @@ const filtersConfig = {
     title: 'Filter by active state',
     options: isActiveOptions,
     defaultValue: [ActiveOptionsEnum.CURRENT, ActiveOptionsEnum.QUEUED],
-    formatValue: (value: any) => checkActive(value) ? value : undefined,
+    formatValue: (value: any) => (checkActive(value) ? value : undefined),
     isAllSelected: (values: unknown[]) => values.length === isActiveOptions.length
   },
   blocks_proposed: {
@@ -66,7 +66,7 @@ const filtersConfig = {
     minPlaceholder: 'ex. 0',
     maxTitle: 'Max',
     maxPlaceholder: 'ex. 100',
-    formatValue: ({ min, max }: { min?: string | number, max?: string | number }) => {
+    formatValue: ({ min, max }: { min?: string | number; max?: string | number }) => {
       if (min && max) return `${min} - ${max}`
       if (min) return `Min ${min}`
       if (max) return `Max ${max}`
@@ -82,7 +82,7 @@ const filtersConfig = {
     minPlaceholder: 'ex. 1',
     maxTitle: 'Max height',
     maxPlaceholder: 'ex. 100000',
-    formatValue: ({ min, max }: { min?: string | number, max?: string | number }) => {
+    formatValue: ({ min, max }: { min?: string | number; max?: string | number }) => {
       if (min && max) return `${min} - ${max}`
       if (min) return `Min ${min}`
       if (max) return `Max ${max}`
@@ -94,7 +94,8 @@ const filtersConfig = {
     title: 'Date range',
     type: 'daterange',
     defaultValue: null,
-    formatValue: (value: any) => `${value?.start ? `from ${value?.start?.toLocaleDateString()}` : ''} ${value?.end ? `to ${value?.end?.toLocaleDateString()}` : ''}`
+    formatValue: (value: any) =>
+      `${value?.start ? `from ${value?.start?.toLocaleDateString()}` : ''} ${value?.end ? `to ${value?.end?.toLocaleDateString()}` : ''}`
   },
   last_proposed_block_hash: {
     label: 'Block hash',
@@ -104,7 +105,9 @@ const filtersConfig = {
     defaultValue: '',
     formatValue: (value: any) => value || null,
     mobileTagRenderer: (value: any) => (
-      <Identifier avatar={false} ellipsis={true} styles={['highlight-both']}>{value}</Identifier>
+      <Identifier avatar={false} ellipsis={true} styles={['highlight-both']}>
+        {value}
+      </Identifier>
     )
   }
 }
@@ -115,7 +118,11 @@ interface ValidatorsFilterProps {
   className?: string
 }
 
-export const ValidatorsFilter = ({ onFilterChange, isMobile, className }: ValidatorsFilterProps) => {
+export const ValidatorsFilter = ({
+  onFilterChange,
+  isMobile,
+  className
+}: ValidatorsFilterProps) => {
   return (
     <Filters
       filtersConfig={filtersConfig}
@@ -127,10 +134,14 @@ export const ValidatorsFilter = ({ onFilterChange, isMobile, className }: Valida
           last_proposed_block_height_min: values.last_proposed_block_height_min || undefined,
           last_proposed_block_height_max: values.last_proposed_block_height_max || undefined,
           last_proposed_block_timestamp_start: values.last_proposed_block_timestamp_start
-            ? new Date(values.last_proposed_block_timestamp_start as string | number | Date).toISOString()
+            ? new Date(
+                values.last_proposed_block_timestamp_start as string | number | Date
+              ).toISOString()
             : undefined,
           last_proposed_block_timestamp_end: values.last_proposed_block_timestamp_end
-            ? new Date(values.last_proposed_block_timestamp_end as string | number | Date).toISOString()
+            ? new Date(
+                values.last_proposed_block_timestamp_end as string | number | Date
+              ).toISOString()
             : undefined,
           last_proposed_block_hash: values.last_proposed_block_hash || undefined
         }

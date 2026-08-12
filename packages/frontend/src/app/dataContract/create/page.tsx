@@ -6,11 +6,11 @@ import { Schema, Deploy } from './components'
 import { SchemaProvider } from './SchemaProvider'
 import { DeployProvider } from './DeployContext'
 
-function DataContractCreate () {
+function DataContractCreate() {
   return (
     <SchemaProvider>
       <DeployProvider>
-        <PageDataContainer title='DATA CONTRACT CREATION'>
+        <PageDataContainer title="DATA CONTRACT CREATION">
           <Stack spacing={4}>
             <Schema />
             <Deploy />

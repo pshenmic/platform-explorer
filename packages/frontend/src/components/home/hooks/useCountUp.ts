@@ -3,7 +3,10 @@
 import { useState, useEffect, useRef } from 'react'
 
 // Eases a number from its previous value to target; snaps under reduced-motion / non-numbers.
-export function useCountUp (target: number | string | null | undefined, duration = 800): number | string | null | undefined {
+export function useCountUp(
+  target: number | string | null | undefined,
+  duration = 800
+): number | string | null | undefined {
   const [value, setValue] = useState<number | string | null | undefined>(
     typeof target === 'number' ? 0 : target
   )
@@ -15,7 +18,8 @@ export function useCountUp (target: number | string | null | undefined, duration
       return
     }
 
-    const reduce = typeof window !== 'undefined' &&
+    const reduce =
+      typeof window !== 'undefined' &&
       window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches
 
     if (reduce) {

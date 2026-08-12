@@ -11,7 +11,10 @@ interface MasternodeVotesStatsInlineProps extends WithClassName {
   total?: number | null
 }
 
-export default function MasternodeVotesStatsInline ({ total, className }: MasternodeVotesStatsInlineProps) {
+export default function MasternodeVotesStatsInline({
+  total,
+  className
+}: MasternodeVotesStatsInlineProps) {
   const [epoch, setEpoch] = useState<LoadableState<EpochData | Record<string, unknown>>>({
     data: {},
     loading: true,
@@ -35,17 +38,21 @@ export default function MasternodeVotesStatsInline ({ total, className }: Master
     },
     {
       label: 'Epoch votes',
-      value: (typeof data?.totalVotesCount === 'number' ? formatFullNumber(data.totalVotesCount) : null) as ReactNode,
+      value: (typeof data?.totalVotesCount === 'number'
+        ? formatFullNumber(data.totalVotesCount)
+        : null) as ReactNode,
       color: 'var(--chakra-colors-brand-light)',
       loading: epoch.loading
     },
     {
       label: 'Fees',
-      value: (typeof data?.totalCollectedFees === 'number' ? formatFullNumber(data.totalCollectedFees) : null) as ReactNode,
+      value: (typeof data?.totalCollectedFees === 'number'
+        ? formatFullNumber(data.totalCollectedFees)
+        : null) as ReactNode,
       color: 'var(--chakra-colors-brand-light)',
       loading: epoch.loading
     }
   ]
 
-  return <NetworkStatsInline className={className} items={items}/>
+  return <NetworkStatsInline className={className} items={items} />
 }

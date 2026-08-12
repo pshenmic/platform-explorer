@@ -3,7 +3,7 @@ import Identifier from './Identifier'
 import { ValueCard } from '../cards'
 import './VoteChoice.css'
 
-function transformTypeString (input: unknown): string | null {
+function transformTypeString(input: unknown): string | null {
   if (typeof input !== 'string') return null
   return input?.trim()?.replace(/ /g, '_')?.toUpperCase()
 }
@@ -14,7 +14,7 @@ interface VoteChoiceProps {
   choiceStr?: string | null
 }
 
-function VoteChoice ({ choiceStr }: VoteChoiceProps) {
+function VoteChoice({ choiceStr }: VoteChoiceProps) {
   if (typeof choiceStr !== 'string') return 'n/a'
   const [choice, parameter] = choiceStr.split(/[()]/)
   const type = transformTypeString(choice)
@@ -35,7 +35,7 @@ function VoteChoice ({ choiceStr }: VoteChoiceProps) {
   if (parameter) {
     return (
       <ValueContainer
-        className={`VoteChoice ${type ? (choiceClasses?.[type] || '') : ''}`}
+        className={`VoteChoice ${type ? choiceClasses?.[type] || '' : ''}`}
         colorScheme={resolvedColor}
       >
         <span>{choice}:</span>
@@ -53,11 +53,7 @@ function VoteChoice ({ choiceStr }: VoteChoiceProps) {
   }
 
   return (
-    <ValueContainer
-      className={'VoteChoice'}
-      colorScheme={resolvedColor}
-      size={'sm'}
-    >
+    <ValueContainer className={'VoteChoice'} colorScheme={resolvedColor} size={'sm'}>
       {choice}
     </ValueContainer>
   )

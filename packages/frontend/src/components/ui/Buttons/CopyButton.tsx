@@ -14,7 +14,7 @@ interface CopyButtonProps {
   className?: string
 }
 
-function CopyButton ({ text, className }: CopyButtonProps) {
+function CopyButton({ text, className }: CopyButtonProps) {
   const [messageState, setMessageState] = useState({
     active: false,
     text: copyMessageSuccess

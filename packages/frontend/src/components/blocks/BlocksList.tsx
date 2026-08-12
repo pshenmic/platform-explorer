@@ -16,7 +16,7 @@ interface BlocksListProps {
   absoluteDate?: boolean
 }
 
-function BlocksList ({
+function BlocksList({
   blocks = [],
   size = 'l',
   headerStyles = 'default',
@@ -50,18 +50,11 @@ function BlocksList ({
         </GridItem>
       </Grid>
 
-      {blocks.map((block, i) =>
-        <BlocksListItem
-          key={i}
-          block={block}
-          size={size}
-          absoluteDate={absoluteDate}
-        />
-      )}
+      {blocks.map((block, i) => (
+        <BlocksListItem key={i} block={block} size={size} absoluteDate={absoluteDate} />
+      ))}
 
-      {blocks.length === 0 &&
-        <EmptyListMessage>There are no blocks yet.</EmptyListMessage>
-      }
+      {blocks.length === 0 && <EmptyListMessage>There are no blocks yet.</EmptyListMessage>}
     </div>
   )
 }

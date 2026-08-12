@@ -14,10 +14,18 @@ const MAX_COUNTRIES = 12
 
 // ISO-2 -> English country name via the platform's Intl (no dependency); falls back to the code
 const regionNames = (() => {
-  try { return new Intl.DisplayNames(['en'], { type: 'region' }) } catch { return null }
+  try {
+    return new Intl.DisplayNames(['en'], { type: 'region' })
+  } catch {
+    return null
+  }
 })()
 const countryName = (cc: string): string => {
-  try { return regionNames?.of(cc) || cc } catch { return cc }
+  try {
+    return regionNames?.of(cc) || cc
+  } catch {
+    return cc
+  }
 }
 
 interface PaginationTotal {
@@ -39,7 +47,13 @@ interface MasternodesDonutProps {
 
 // composite "Validator set": status tiles over a stacked status bar;
 // every count is a backend /validators pagination total, no client-side arithmetic
-export default function MasternodesDonut ({ validators, validatorsActive, validatorsBanned, validatorsInactive, validatorsList }: MasternodesDonutProps) {
+export default function MasternodesDonut({
+  validators,
+  validatorsActive,
+  validatorsBanned,
+  validatorsInactive,
+  validatorsList
+}: MasternodesDonutProps) {
   const total = validators?.data?.pagination?.total
   const active = validatorsActive?.data?.pagination?.total
   const banned = validatorsBanned?.data?.pagination?.total
@@ -69,10 +83,32 @@ export default function MasternodesDonut ({ validators, validatorsActive, valida
   const inactiveCount = hasInactive ? inactive : 0
 
   const tiles = [
-    { key: 'total', label: 'Total', count: total, noPct: true, hint: 'All Platform validators (evonodes) tracked on the network.' },
-    { key: 'active', label: 'In Quorum', count: hasActive ? activeCount : null, hint: 'Evonodes in the current validator quorum — proposing and validating Platform blocks right now. The quorum rotates.' },
-    { key: 'inactive', label: 'Queued', count: hasInactive ? inactiveCount : null, rotate: true, hint: 'Registered evonode not in the current quorum — waiting to rotate in.' },
-    { key: 'banned', label: 'Banned', count: hasBanned ? bannedCount : null, hint: 'PoSe-banned (failed to provide service). Never in the active quorum.' }
+    {
+      key: 'total',
+      label: 'Total',
+      count: total,
+      noPct: true,
+      hint: 'All Platform validators (evonodes) tracked on the network.'
+    },
+    {
+      key: 'active',
+      label: 'In Quorum',
+      count: hasActive ? activeCount : null,
+      hint: 'Evonodes in the current validator quorum — proposing and validating Platform blocks right now. The quorum rotates.'
+    },
+    {
+      key: 'inactive',
+      label: 'Queued',
+      count: hasInactive ? inactiveCount : null,
+      rotate: true,
+      hint: 'Registered evonode not in the current quorum — waiting to rotate in.'
+    },
+    {
+      key: 'banned',
+      label: 'Banned',
+      count: hasBanned ? bannedCount : null,
+      hint: 'PoSe-banned (failed to provide service). Never in the active quorum.'
+    }
   ]
 
   const segs = [
@@ -95,39 +131,49 @@ export default function MasternodesDonut ({ validators, validatorsActive, valida
 
   return (
     <Box className={'InfoBlock InfoBlock--NoBorder MasternodesDonut'} w={'100%'}>
-      <CardHead title={'Validator set'}/>
+      <CardHead title={'Validator set'} />
 
       <div className={'MasternodesDonut__Body'}>
-        {showSkeleton &&
+        {showSkeleton && (
           <>
             <div className={'MasternodesDonut__Tiles'}>
               {Array.from({ length: 4 }).map((_, i) => (
                 <div className={'MasternodesDonut__Tile'} key={i}>
-                  <Skeleton w={'52px'} h={'0.6em'}/>
-                  <Skeleton w={'56px'} h={'1.4em'} className={'MasternodesDonut__SkelGap'}/>
+                  <Skeleton w={'52px'} h={'0.6em'} />
+                  <Skeleton w={'56px'} h={'1.4em'} className={'MasternodesDonut__SkelGap'} />
                 </div>
               ))}
             </div>
-            <Skeleton w={'100%'} h={'10px'} radius={5}/>
-          </>}
+            <Skeleton w={'100%'} h={'10px'} radius={5} />
+          </>
+        )}
 
         {showEmpty && <div className={'MasternodesDonut__Empty'}>No data</div>}
 
-        {showContent &&
+        {showContent && (
           <>
             <div className={'MasternodesDonut__Tiles'}>
               {tiles.map(t => (
-                <div className={`MasternodesDonut__Tile MasternodesDonut__Tile--${t.key}`} key={t.key}>
+                <div
+                  className={`MasternodesDonut__Tile MasternodesDonut__Tile--${t.key}`}
+                  key={t.key}
+                >
                   <span className={'MasternodesDonut__TileLabel'}>
-                    <i className={`MasternodesDonut__Dot MasternodesDonut__Dot--${t.key}`}/>
+                    <i className={`MasternodesDonut__Dot MasternodesDonut__Dot--${t.key}`} />
                     {t.label}
-                    {t.rotate && <RepeatIcon className={'MasternodesDonut__Rotate'} aria-hidden={'true'}/>}
-                    {t.hint &&
+                    {t.rotate && (
+                      <RepeatIcon className={'MasternodesDonut__Rotate'} aria-hidden={'true'} />
+                    )}
+                    {t.hint && (
                       <Tooltip content={t.hint} placement={'top'}>
-                        <span className={'MasternodesDonut__TileInfo'} aria-label={`About ${t.label}`}>
-                          <InfoIcon boxSize={2.5}/>
+                        <span
+                          className={'MasternodesDonut__TileInfo'}
+                          aria-label={`About ${t.label}`}
+                        >
+                          <InfoIcon boxSize={2.5} />
                         </span>
-                      </Tooltip>}
+                      </Tooltip>
+                    )}
                   </span>
                   <span className={'MasternodesDonut__TileValue'}>
                     {typeof t.count === 'number' ? t.count : '—'}
@@ -141,9 +187,21 @@ export default function MasternodesDonut ({ validators, validatorsActive, valida
             </div>
 
             <div className={'MasternodesDonut__Bottom'}>
-              <div className={'MasternodesDonut__Bar'} role={'img'} aria-label={hasActive ? `${activeCount} of ${total} evonodes in quorum` : `${total} validators`}>
+              <div
+                className={'MasternodesDonut__Bar'}
+                role={'img'}
+                aria-label={
+                  hasActive
+                    ? `${activeCount} of ${total} evonodes in quorum`
+                    : `${total} validators`
+                }
+              >
                 {segs.map(s => (
-                  <Tooltip key={s.key} content={`${s.label} · ${s.count.toLocaleString('en-US')} · ${pct(s.count)}%`} placement={'top'}>
+                  <Tooltip
+                    key={s.key}
+                    content={`${s.label} · ${s.count.toLocaleString('en-US')} · ${pct(s.count)}%`}
+                    placement={'top'}
+                  >
                     <span
                       className={`MasternodesDonut__Seg MasternodesDonut__Seg--${s.key}`}
                       style={{ width: `${s.frac * 100}%` }}
@@ -152,7 +210,7 @@ export default function MasternodesDonut ({ validators, validatorsActive, valida
                 ))}
               </div>
 
-              {hasGeo &&
+              {hasGeo && (
                 <div className={'MasternodesDonut__Geo'}>
                   <span className={'MasternodesDonut__GeoLabel'}>By country</span>
                   <span className={'MasternodesDonut__GeoList'}>
@@ -166,17 +224,23 @@ export default function MasternodesDonut ({ validators, validatorsActive, valida
                             width={16}
                             height={16}
                             loading={'lazy'}
-                            onError={(e) => { e.currentTarget.style.display = 'none' }}
+                            onError={e => {
+                              e.currentTarget.style.display = 'none'
+                            }}
                           />
                           <b>{cc}</b> {n}
                         </span>
                       </Tooltip>
                     ))}
-                    {moreCountries > 0 && <span className={'MasternodesDonut__GeoMore'}>+{moreCountries}</span>}
+                    {moreCountries > 0 && (
+                      <span className={'MasternodesDonut__GeoMore'}>+{moreCountries}</span>
+                    )}
                   </span>
-                </div>}
+                </div>
+              )}
             </div>
-          </>}
+          </>
+        )}
       </div>
     </Box>
   )

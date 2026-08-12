@@ -6,7 +6,7 @@ export type DataContractCreateResult = {
 }
 
 export type UseDataContractCreateReturn = {
-  submit: (params: { schemaString: string, signer: Signer | null | undefined }) => Promise<void>
+  submit: (params: { schemaString: string; signer: Signer | null | undefined }) => Promise<void>
   reset: () => void
   isLoading: boolean
   error: string | null
@@ -47,11 +47,7 @@ export const useDataContractCreate = (): UseDataContractCreateReturn => {
       const identityNonce = await sdk.identities.getIdentityNonce(identity.id)
       const nextNonce = identityNonce + BigInt(1)
 
-      const dataContract = sdk.dataContracts.create(
-        identity.id,
-        nextNonce,
-        schema
-      )
+      const dataContract = sdk.dataContracts.create(identity.id, nextNonce, schema)
 
       const stateTransition = sdk.dataContracts.createStateTransition(
         dataContract,
@@ -64,9 +60,8 @@ export const useDataContractCreate = (): UseDataContractCreateReturn => {
       setResult({ dataContractId: dataContract.id.base58() })
     } catch (e) {
       console.error('Data contract deploy failed:', e)
-      const err = e as { message?: string, toString?: () => string }
-      const message =
-        err?.message ?? err?.toString?.() ?? 'Failed to deploy contract'
+      const err = e as { message?: string; toString?: () => string }
+      const message = err?.message ?? err?.toString?.() ?? 'Failed to deploy contract'
       setError(typeof message === 'string' ? message : 'Failed to deploy contract')
     } finally {
       setIsLoading(false)

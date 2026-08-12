@@ -7,7 +7,7 @@ interface NavigationButtonProps extends Omit<ComponentPropsWithoutRef<'button'>,
   subName?: ReactNode
 }
 
-function NavigationButton ({ active, name, subName, disabled, ...props }: NavigationButtonProps) {
+function NavigationButton({ active, name, subName, disabled, ...props }: NavigationButtonProps) {
   return (
     <button
       className={`NavigationButton ${disabled ? 'NavigationButton__NoActive' : ''} ${active ? 'NavigationButton__Active' : ''}`}
@@ -15,11 +15,7 @@ function NavigationButton ({ active, name, subName, disabled, ...props }: Naviga
       {...props}
     >
       {name}
-      {subName && (
-        <span className={'NavigationButton__SubName'}>
-          {subName}
-        </span>
-      )}
+      {subName && <span className={'NavigationButton__SubName'}>{subName}</span>}
     </button>
   )
 }

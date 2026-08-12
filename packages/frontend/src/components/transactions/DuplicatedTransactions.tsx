@@ -31,7 +31,7 @@ const TimeDelta = TimeDeltaJs as ComponentType<{
   endDate?: string | Date | null
   showTimestampTooltip?: boolean
 }>
-const NotActive = NotActiveJs as ComponentType<{ children?: ReactNode, className?: string }>
+const NotActive = NotActiveJs as ComponentType<{ children?: ReactNode; className?: string }>
 
 const VISIBLE_COUNT = 3
 
@@ -50,7 +50,7 @@ interface TypeBadgeCellProps {
   occurrence: TransactionOccurrence
 }
 
-function TypeBadgeCell ({ occurrence }: TypeBadgeCellProps) {
+function TypeBadgeCell({ occurrence }: TypeBadgeCellProps) {
   if (occurrence?.batchType) {
     return (
       <BatchTypeBadge
@@ -61,10 +61,10 @@ function TypeBadgeCell ({ occurrence }: TypeBadgeCellProps) {
   }
 
   if (occurrence?.type !== undefined && occurrence?.type !== null) {
-    return <TypeBadge className={'DuplicatedTransactions__TypeBadge'} type={occurrence.type}/>
+    return <TypeBadge className={'DuplicatedTransactions__TypeBadge'} type={occurrence.type} />
   }
 
-  return <NotActive/>
+  return <NotActive />
 }
 
 interface OccurrenceRowProps {
@@ -73,7 +73,7 @@ interface OccurrenceRowProps {
   onSelect?: (blockHash?: string | null) => void
 }
 
-function OccurrenceRow ({ occurrence, selected, onSelect }: OccurrenceRowProps) {
+function OccurrenceRow({ occurrence, selected, onSelect }: OccurrenceRowProps) {
   const handleSelect = () => onSelect?.(occurrence?.blockHash)
 
   return (
@@ -91,43 +91,46 @@ function OccurrenceRow ({ occurrence, selected, onSelect }: OccurrenceRowProps) 
       className={`DuplicatedTransactions__Row ${selected ? 'DuplicatedTransactions__Row--Selected' : ''}`}
     >
       <div className={'DuplicatedTransactions__Main'}>
-        <TransactionsIcon className={'DuplicatedTransactions__Icon'}/>
-        <Identifier ellipsis={true} styles={['highlight-both']}>{occurrence?.hash}</Identifier>
+        <TransactionsIcon className={'DuplicatedTransactions__Icon'} />
+        <Identifier ellipsis={true} styles={['highlight-both']}>
+          {occurrence?.hash}
+        </Identifier>
       </div>
 
       <div className={'DuplicatedTransactions__Height'}>
-        {occurrence?.blockHeight != null
-          ? <span className={'DuplicatedTransactions__HeightChip'}>Height: {occurrence.blockHeight}</span>
-          : <NotActive/>
-        }
+        {occurrence?.blockHeight != null ? (
+          <span className={'DuplicatedTransactions__HeightChip'}>
+            Height: {occurrence.blockHeight}
+          </span>
+        ) : (
+          <NotActive />
+        )}
       </div>
 
       <div className={'DuplicatedTransactions__Type'}>
-        <TypeBadgeCell occurrence={occurrence}/>
+        <TypeBadgeCell occurrence={occurrence} />
       </div>
 
       <div className={'DuplicatedTransactions__Time'}>
-        {occurrence?.timestamp
-          ? <TimeDelta endDate={new Date(occurrence.timestamp)}/>
-          : <NotActive/>
-        }
+        {occurrence?.timestamp ? (
+          <TimeDelta endDate={new Date(occurrence.timestamp)} />
+        ) : (
+          <NotActive />
+        )}
       </div>
 
       <div className={'DuplicatedTransactions__Status'}>
-        {occurrence?.status
-          ? <TransactionStatusBadge status={occurrence.status}/>
-          : <NotActive/>
-        }
+        {occurrence?.status ? <TransactionStatusBadge status={occurrence.status} /> : <NotActive />}
       </div>
 
       <div className={'DuplicatedTransactions__Action'}>
         <Link
           href={`/block/${occurrence?.blockHash}`}
-          onClick={(e) => e.stopPropagation()}
+          onClick={e => e.stopPropagation()}
           className={'DuplicatedTransactions__ArrowLink'}
         >
           <Button className={'DuplicatedTransactions__ArrowButton'} size={'xxs'} variant={'blue'}>
-            <ChevronIcon w={'0.5rem'} h={'0.5rem'}/>
+            <ChevronIcon w={'0.5rem'} h={'0.5rem'} />
           </Button>
         </Link>
       </div>
@@ -141,7 +144,11 @@ interface DuplicatedTransactionsProps {
   onSelect?: (blockHash?: string | null) => void
 }
 
-function DuplicatedTransactions ({ transaction, selectedBlockHash, onSelect }: DuplicatedTransactionsProps) {
+function DuplicatedTransactions({
+  transaction,
+  selectedBlockHash,
+  onSelect
+}: DuplicatedTransactionsProps) {
   const [showAll, setShowAll] = useState(false)
   const duplicates = transaction?.duplicates
 
@@ -155,10 +162,8 @@ function DuplicatedTransactions ({ transaction, selectedBlockHash, onSelect }: D
     <div className={'DuplicatedTransactions'}>
       <div className={'DuplicatedTransactions__Title'}>Duplicated Transactions</div>
       <div className={'DuplicatedTransactions__Notice'}>
-        <WarningTwoIcon className={'DuplicatedTransactions__NoticeIcon'}/>
-        <span>
-          This transaction was included in more than one block
-        </span>
+        <WarningTwoIcon className={'DuplicatedTransactions__NoticeIcon'} />
+        <span>This transaction was included in more than one block</span>
       </div>
       <div className={'DuplicatedTransactions__List'}>
         {visibleOccurrences.map((occurrence, i) => (
@@ -179,7 +184,12 @@ function DuplicatedTransactions ({ transaction, selectedBlockHash, onSelect }: D
           size={'sm'}
         >
           {showAll ? 'Show less' : 'Show more'}
-          <ChevronIcon ml={'4px'} h={'10px'} w={'10px'} transform={`rotate(${showAll ? '-90deg' : '90deg'})`}/>
+          <ChevronIcon
+            ml={'4px'}
+            h={'10px'}
+            w={'10px'}
+            transform={`rotate(${showAll ? '-90deg' : '90deg'})`}
+          />
         </Button>
       )}
     </div>

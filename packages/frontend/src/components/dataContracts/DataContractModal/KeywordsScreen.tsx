@@ -16,7 +16,7 @@ const KEYWORD_MAX = 50
 const KEYWORDS_MAX_ITEMS = 20
 
 interface KeywordsScreenProps {
-  onChangeDescription: (payload: { description: string, keywords: string[] }) => void
+  onChangeDescription: (payload: { description: string; keywords: string[] }) => void
   setMode: (mode: FormMode) => void
   defaultDescription?: string | null
   defaultKeywords?: string[] | null
@@ -32,7 +32,7 @@ export const KeywordsScreen = ({
     description: defaultDescription || '',
     keywords: Array.isArray(defaultKeywords) ? defaultKeywords.join(', ') : ''
   })
-  const [errors, setErrors] = useState<{ description: string | null, keywords: string | null }>({
+  const [errors, setErrors] = useState<{ description: string | null; keywords: string | null }>({
     description: null,
     keywords: null
   })
@@ -87,16 +87,16 @@ export const KeywordsScreen = ({
   }
 
   const handleDescriptionChange = (value: string) => {
-    setForm((prev) => ({ ...prev, description: value }))
+    setForm(prev => ({ ...prev, description: value }))
     const error = validateDescription(value)
-    setErrors((prev) => ({ ...prev, description: error }))
+    setErrors(prev => ({ ...prev, description: error }))
   }
 
   const handleKeywordsChange = (value: string) => {
-    setForm((prev) => ({ ...prev, keywords: value }))
+    setForm(prev => ({ ...prev, keywords: value }))
 
     const error = validateKeywords(value)
-    setErrors((prev) => ({ ...prev, keywords: error }))
+    setErrors(prev => ({ ...prev, keywords: error }))
   }
 
   const handleSubmit = (e: FormEvent) => {
@@ -130,64 +130,50 @@ export const KeywordsScreen = ({
       <div className={styles.divider}>
         <Divider />
       </div>
-      <form
-        id='data-contract-keywords-form'
-        className={styles.form}
-        onSubmit={handleSubmit}
-      >
+      <form id="data-contract-keywords-form" className={styles.form} onSubmit={handleSubmit}>
         <div className={styles.field}>
-          <label
-            className={styles.label}
-            htmlFor={`${id}-description`}
-          >
+          <label className={styles.label} htmlFor={`${id}-description`}>
             Description:
           </label>
 
           <FormControl className={styles.input} isInvalid={!!errors.description}>
             <Textarea
-              placeholder='Enter Description...'
+              placeholder="Enter Description..."
               id={`${id}-description`}
               value={form.description}
-              onChange={(e) => handleDescriptionChange(e.target.value)}
+              onChange={e => handleDescriptionChange(e.target.value)}
               onBlur={() => {
                 const error = validateDescription(form.description)
-                setErrors((prev) => ({ ...prev, description: error }))
+                setErrors(prev => ({ ...prev, description: error }))
               }}
-              resize='none'
+              resize="none"
               rows={4}
             />
           </FormControl>
 
           <div className={styles.errorSlot}>
-            {errors.description && (
-              <span className={styles.errorText}>{errors.description}</span>
-            )}
+            {errors.description && <span className={styles.errorText}>{errors.description}</span>}
           </div>
         </div>
         <div className={styles.field}>
-          <label
-            className={styles.label}
-            htmlFor={`${id}-keywords`}
-          >
+          <label className={styles.label} htmlFor={`${id}-keywords`}>
             Keywords:
           </label>
           <FormControl className={styles.input} isInvalid={!!errors.keywords}>
             <Input
-              placeholder='keyword1, keyword2 (Latin only, max 20)'
+              placeholder="keyword1, keyword2 (Latin only, max 20)"
               id={`${id}-keywords`}
               value={form.keywords}
-              onChange={(e) => handleKeywordsChange(e.target.value)}
+              onChange={e => handleKeywordsChange(e.target.value)}
               onBlur={() => {
                 const error = validateKeywords(form.keywords)
-                setErrors((prev) => ({ ...prev, keywords: error }))
+                setErrors(prev => ({ ...prev, keywords: error }))
               }}
             />
           </FormControl>
 
           <div className={styles.errorSlot}>
-            {errors.keywords && (
-              <span className={styles.errorText}>{errors.keywords}</span>
-            )}
+            {errors.keywords && <span className={styles.errorText}>{errors.keywords}</span>}
           </div>
         </div>
       </form>
@@ -201,7 +187,7 @@ export const KeywordsScreen = ({
         </button>
         <button
           className={button({ className: styles.submit })}
-          form='data-contract-keywords-form'
+          form="data-contract-keywords-form"
           type="submit"
           disabled={isSubmitDisabled}
         >

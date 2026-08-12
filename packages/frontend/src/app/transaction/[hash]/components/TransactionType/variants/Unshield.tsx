@@ -1,9 +1,4 @@
-import {
-  ShieldedActions,
-  AmountInfoLine,
-  OutputAddressLine,
-  HashInfoLine
-} from '../ShieldedCommon'
+import { ShieldedActions, AmountInfoLine, OutputAddressLine, HashInfoLine } from '../ShieldedCommon'
 import type { DecodedOutputAddress, ShieldedAction, WithRate } from '../../types'
 
 interface UnshieldProps extends WithRate {
@@ -25,11 +20,11 @@ export const Unshield = ({
   rate
 }: UnshieldProps) => (
   <>
-    <AmountInfoLine title='Unshielding Amount' amount={unshieldingAmount} rate={rate} />
+    <AmountInfoLine title="Unshielding Amount" amount={unshieldingAmount} rate={rate} />
     <OutputAddressLine outputAddress={outputAddress} />
     <ShieldedActions actions={actions} />
-    <HashInfoLine title='Anchor' value={anchor} />
-    <HashInfoLine title='Bindings Signature' value={bindingsSignature} />
-    <HashInfoLine title='Proof' value={proof} />
+    <HashInfoLine title="Anchor" value={anchor} />
+    <HashInfoLine title="Bindings Signature" value={bindingsSignature} />
+    <HashInfoLine title="Proof" value={proof} />
   </>
 )

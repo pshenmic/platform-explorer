@@ -28,14 +28,11 @@ interface InternalConfigCardProps extends WithClassName {
   config?: InternalConfig | null
 }
 
-function InternalConfigCard ({ config, className }: InternalConfigCardProps) {
+function InternalConfigCard({ config, className }: InternalConfigCardProps) {
   return (
     <div className={`InfoBlock InfoBlock--Gradient InternalConfigCard ${className || ''}`}>
-
       <div className={'InternalConfigCard__Line'}>
-        <div className={'InternalConfigCard__Title'}>
-          Can Contract Be Deleted
-        </div>
+        <div className={'InternalConfigCard__Title'}>Can Contract Be Deleted</div>
         <ValueContainer
           className={'InternalConfigCard__ValueContainer'}
           size={'sm'}
@@ -46,9 +43,7 @@ function InternalConfigCard ({ config, className }: InternalConfigCardProps) {
       </div>
 
       <div className={'InternalConfigCard__Line'}>
-        <div className={'InternalConfigCard__Title'}>
-          Is Contract Read-Only
-        </div>
+        <div className={'InternalConfigCard__Title'}>Is Contract Read-Only</div>
         <ValueContainer
           className={'InternalConfigCard__ValueContainer'}
           size={'sm'}
@@ -59,9 +54,7 @@ function InternalConfigCard ({ config, className }: InternalConfigCardProps) {
       </div>
 
       <div className={'InternalConfigCard__Line'}>
-        <div className={'InternalConfigCard__Title'}>
-          Track Contract Changes
-        </div>
+        <div className={'InternalConfigCard__Title'}>Track Contract Changes</div>
         <ValueContainer
           className={'InternalConfigCard__ValueContainer'}
           size={'sm'}
@@ -72,9 +65,7 @@ function InternalConfigCard ({ config, className }: InternalConfigCardProps) {
       </div>
 
       <div className={'InternalConfigCard__Line'}>
-        <div className={'InternalConfigCard__Title'}>
-          Track Document Changes By Default
-        </div>
+        <div className={'InternalConfigCard__Title'}>Track Document Changes By Default</div>
         <ValueContainer
           className={'InternalConfigCard__ValueContainer'}
           size={'sm'}
@@ -85,9 +76,7 @@ function InternalConfigCard ({ config, className }: InternalConfigCardProps) {
       </div>
 
       <div className={'InternalConfigCard__Line'}>
-        <div className={'InternalConfigCard__Title'}>
-          Are Documents Editable By Default
-        </div>
+        <div className={'InternalConfigCard__Title'}>Are Documents Editable By Default</div>
         <ValueContainer
           className={'InternalConfigCard__ValueContainer'}
           size={'sm'}
@@ -98,9 +87,7 @@ function InternalConfigCard ({ config, className }: InternalConfigCardProps) {
       </div>
 
       <div className={'InternalConfigCard__Line'}>
-        <div className={'InternalConfigCard__Title'}>
-          Can Documents Be Deleted By Default
-        </div>
+        <div className={'InternalConfigCard__Title'}>Can Documents Be Deleted By Default</div>
         <ValueContainer
           className={'InternalConfigCard__ValueContainer'}
           size={'sm'}
@@ -110,35 +97,35 @@ function InternalConfigCard ({ config, className }: InternalConfigCardProps) {
         </ValueContainer>
       </div>
 
-      {config?.requiresIdentityEncryptionBoundedKey &&
+      {config?.requiresIdentityEncryptionBoundedKey && (
         <div className={'InternalConfigCard__Line'}>
-          <div className={'InternalConfigCard__Title'}>
-            Encryption Key Requirements
-          </div>
+          <div className={'InternalConfigCard__Title'}>Encryption Key Requirements</div>
           <ValueContainer
             className={'InternalConfigCard__ValueContainer'}
             size={'sm'}
-            colorScheme={storageKeyRequirementsColors?.[config?.requiresIdentityEncryptionBoundedKey] || 'gray'}
+            colorScheme={
+              storageKeyRequirementsColors?.[config?.requiresIdentityEncryptionBoundedKey] || 'gray'
+            }
           >
             {config?.requiresIdentityEncryptionBoundedKey}
           </ValueContainer>
         </div>
-      }
+      )}
 
-      {config?.requiresIdentityDecryptionBoundedKey &&
+      {config?.requiresIdentityDecryptionBoundedKey && (
         <div className={'InternalConfigCard__Line'}>
-          <div className={'InternalConfigCard__Title'}>
-            Decryption Key Requirements
-          </div>
+          <div className={'InternalConfigCard__Title'}>Decryption Key Requirements</div>
           <ValueContainer
             className={'InternalConfigCard__ValueContainer'}
             size={'sm'}
-            colorScheme={storageKeyRequirementsColors?.[config?.requiresIdentityDecryptionBoundedKey] || 'gray'}
+            colorScheme={
+              storageKeyRequirementsColors?.[config?.requiresIdentityDecryptionBoundedKey] || 'gray'
+            }
           >
             {config?.requiresIdentityDecryptionBoundedKey}
           </ValueContainer>
         </div>
-      }
+      )}
     </div>
   )
 }

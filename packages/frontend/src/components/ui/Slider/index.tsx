@@ -15,7 +15,11 @@ interface SliderProgressBarProps {
   onComplete: () => void
 }
 
-const SliderProgressBar = memo(function SliderProgressBar ({ isActive, autoPlaySpeed, onComplete }: SliderProgressBarProps) {
+const SliderProgressBar = memo(function SliderProgressBar({
+  isActive,
+  autoPlaySpeed,
+  onComplete
+}: SliderProgressBarProps) {
   const [progress, setProgress] = useState(0)
   const transitionInterval = 1000
 
@@ -31,7 +35,7 @@ const SliderProgressBar = memo(function SliderProgressBar ({ isActive, autoPlayS
           onComplete()
           return 0
         }
-        return prev + (100 / (autoPlaySpeed / transitionInterval))
+        return prev + 100 / (autoPlaySpeed / transitionInterval)
       })
     }
 
@@ -64,7 +68,7 @@ interface SliderProps extends WithChildren, WithClassName {
   createdCallback?: (created: boolean) => void
 }
 
-function Slider ({
+function Slider({
   children,
   settings = {},
   plugins = [],
@@ -77,15 +81,18 @@ function Slider ({
   const [currentSlide, setCurrentSlide] = useState(0)
   const totalSlides = React.Children.count(children)
 
-  const [sliderRef, slider] = useKeenSlider({
-    ...settings,
-    slideChanged (s) {
-      setCurrentSlide(s.track.details.rel)
+  const [sliderRef, slider] = useKeenSlider(
+    {
+      ...settings,
+      slideChanged(s) {
+        setCurrentSlide(s.track.details.rel)
+      },
+      created() {
+        if (typeof createdCallback === 'function') createdCallback(true)
+      }
     },
-    created () {
-      if (typeof createdCallback === 'function') createdCallback(true)
-    }
-  }, plugins)
+    plugins
+  )
 
   const handleNextSlide = useCallback(() => {
     if (currentSlide !== totalSlides - 1) {
@@ -103,7 +110,9 @@ function Slider ({
 
   return (
     <div className={'Slider'}>
-      <div ref={sliderRef} className={`Slider__Carousel keen-slider ${className || ''}`}>{children}</div>
+      <div ref={sliderRef} className={`Slider__Carousel keen-slider ${className || ''}`}>
+        {children}
+      </div>
 
       <div className={'Slider__Navigation SliderNavigation'}>
         {showProgressBar && (
@@ -127,7 +136,7 @@ function Slider ({
               }`}
               onClick={handlePrevSlide}
             >
-              <ChevronLeftIcon color={'#ddd'}/>
+              <ChevronLeftIcon color={'#ddd'} />
             </button>
             <button
               className={`SliderNavigation__Button SliderNavigation__Button--Next ${
@@ -135,7 +144,7 @@ function Slider ({
               }`}
               onClick={handleNextSlide}
             >
-              <ChevronRightIcon color={'#ddd'}/>
+              <ChevronRightIcon color={'#ddd'} />
             </button>
           </div>
         )}
@@ -146,15 +155,10 @@ function Slider ({
 
 interface SliderElementProps extends WithChildren, WithClassName {}
 
-function SliderElement ({ children, className }: SliderElementProps) {
-  return (
-    <div className={`keen-slider__slide ${className || ''}`}>{children}</div>
-  )
+function SliderElement({ children, className }: SliderElementProps) {
+  return <div className={`keen-slider__slide ${className || ''}`}>{children}</div>
 }
 
-export {
-  Slider,
-  SliderElement
-}
+export { Slider, SliderElement }
 
 export type { SliderProps, SliderElementProps }

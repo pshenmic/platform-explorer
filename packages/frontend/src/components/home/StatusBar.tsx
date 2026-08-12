@@ -19,42 +19,55 @@ interface VotesHintProps {
   topVotedResource?: VotingTotals | null
 }
 
-function VotesHint ({ topVotedResource }: VotesHintProps) {
+function VotesHint({ topVotedResource }: VotesHintProps) {
   const t = topVotedResource
   const hasBreakdown = t && typeof t.totalCountTowardsIdentity === 'number'
   return (
     <span className={'HomeHero__VotesHint'}>
       Votes cast by masternodes (servers securing the network) to settle contested names.
-      {hasBreakdown && t &&
+      {hasBreakdown && t && (
         <span className={'HomeHero__VotesBreakdown'}>
           <span className={'HomeHero__VotesBreakdownLabel'}>Most-voted resource this epoch</span>
           <span className={'HomeHero__VotesBreakdownRow'}>
-            <b className={'HomeHero__Vote HomeHero__Vote--towards'}>{t.totalCountTowardsIdentity}</b> Towards
+            <b className={'HomeHero__Vote HomeHero__Vote--towards'}>
+              {t.totalCountTowardsIdentity}
+            </b>{' '}
+            Towards
             <span className={'HomeHero__VoteSep'}>·</span>
-            <b className={'HomeHero__Vote HomeHero__Vote--abstain'}>{t.totalCountAbstain}</b> Abstain
+            <b className={'HomeHero__Vote HomeHero__Vote--abstain'}>{t.totalCountAbstain}</b>{' '}
+            Abstain
             <span className={'HomeHero__VoteSep'}>·</span>
             <b className={'HomeHero__Vote HomeHero__Vote--lock'}>{t.totalCountLock}</b> Lock
           </span>
-        </span>}
+        </span>
+      )}
     </span>
   )
 }
 
-type ContestedStatsState = LoadableState<ContestedResourcesStatus> | {
-  data?: ContestedResourcesStatus | null
-}
+type ContestedStatsState =
+  | LoadableState<ContestedResourcesStatus>
+  | {
+      data?: ContestedResourcesStatus | null
+    }
 
-type ContestedFeedState = LoadableState<PaginatedResultSet<ContestedResource>> | {
-  data?: PaginatedResultSet<ContestedResource> | null
-}
+type ContestedFeedState =
+  | LoadableState<PaginatedResultSet<ContestedResource>>
+  | {
+      data?: PaginatedResultSet<ContestedResource> | null
+    }
 
-type VotesFeedState = LoadableState<PaginatedResultSet<Vote>> | {
-  data?: PaginatedResultSet<Vote> | null
-}
+type VotesFeedState =
+  | LoadableState<PaginatedResultSet<Vote>>
+  | {
+      data?: PaginatedResultSet<Vote> | null
+    }
 
-type EpochState = LoadableState<EpochData> | {
-  data?: EpochData | null
-}
+type EpochState =
+  | LoadableState<EpochData>
+  | {
+      data?: EpochData | null
+    }
 
 interface StatusBarProps {
   contested?: ContestedStatsState | null
@@ -64,7 +77,7 @@ interface StatusBarProps {
   epochData?: EpochState | null
 }
 
-export function StatusBar ({
+export function StatusBar({
   contested,
   activeContested,
   latestContested,
@@ -78,16 +91,18 @@ export function StatusBar ({
     <Flex className={'HomeHero__StatusBar'}>
       <StatusCell
         label={'Contested'}
-        hint={'Usernames/resources more than one identity is claiming; masternodes vote to decide the owner.'}
+        hint={
+          'Usernames/resources more than one identity is claiming; masternodes vote to decide the owner.'
+        }
       >
-        <ContestedCell count={contestedCount} active={activeContested} latest={latestContested}/>
+        <ContestedCell count={contestedCount} active={activeContested} latest={latestContested} />
       </StatusCell>
 
       <StatusCell
         label={'Total votes'}
-        hint={<VotesHint topVotedResource={epochData?.data?.topVotedResource}/> as ReactNode}
+        hint={(<VotesHint topVotedResource={epochData?.data?.topVotedResource} />) as ReactNode}
       >
-        <TotalVotesCell count={votesCount} votes={latestVotes}/>
+        <TotalVotesCell count={votesCount} votes={latestVotes} />
       </StatusCell>
     </Flex>
   )

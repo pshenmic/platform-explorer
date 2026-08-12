@@ -4,10 +4,10 @@ import type { ComponentPropsWithoutRef } from 'react'
 import { ChevronIcon } from '../icons'
 import './ArrowButton.css'
 
-function ArrowButton ({ children, className, ...props }: ComponentPropsWithoutRef<'button'>) {
+function ArrowButton({ children, className, ...props }: ComponentPropsWithoutRef<'button'>) {
   return (
     <button className={`ArrowButton ${className || ''}`} {...props}>
-      <ChevronIcon/>
+      <ChevronIcon />
     </button>
   )
 }

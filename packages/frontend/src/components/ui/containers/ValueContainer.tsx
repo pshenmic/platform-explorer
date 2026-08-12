@@ -25,18 +25,20 @@ interface WrapperProps extends WithChildren, WithClassName {
 }
 
 const Wrapper = ({ external, link, children, className, ...otherProps }: WrapperProps) => {
-  return typeof link === 'string'
-    ? <Link
-        href={link}
-        {...(external &&
-          { target: '_blank', rel: 'noreferrer' }
-        )}
-        className={className}
-        {...otherProps}
-      >
-        {children}
-      </Link>
-    : <div className={className} {...otherProps as ComponentPropsWithoutRef<'div'>}>{children}</div>
+  return typeof link === 'string' ? (
+    <Link
+      href={link}
+      {...(external && { target: '_blank', rel: 'noreferrer' })}
+      className={className}
+      {...otherProps}
+    >
+      {children}
+    </Link>
+  ) : (
+    <div className={className} {...(otherProps as ComponentPropsWithoutRef<'div'>)}>
+      {children}
+    </div>
+  )
 }
 
 interface ValueContainerProps extends WithChildren, WithClassName {
@@ -50,7 +52,7 @@ interface ValueContainerProps extends WithChildren, WithClassName {
   [key: string]: unknown
 }
 
-function ValueContainer ({
+function ValueContainer({
   children,
   clickable,
   link,
@@ -96,15 +98,18 @@ function ValueContainer ({
   extraClass += ' ' + (sizeClasses?.[size] || sizeClasses.default)
 
   return (
-    <Wrapper link={link} external={external} className={`ValueContainer ${extraClass || ''} ${className || ''}`} {...props}>
+    <Wrapper
+      link={link}
+      external={external}
+      className={`ValueContainer ${extraClass || ''} ${className || ''}`}
+      {...props}
+    >
       {external && (
         <div className={'ValueContainer__ExternalIcon'}>
-          <ArrowCornerIcon color={'brand.normal'} w={'10px'} h={'10px'} mr={'12px'}/>
+          <ArrowCornerIcon color={'brand.normal'} w={'10px'} h={'10px'} mr={'12px'} />
         </div>
       )}
-      <div className={'ValueContainer__Value'}>
-        {children as ReactNode}
-      </div>
+      <div className={'ValueContainer__Value'}>{children as ReactNode}</div>
     </Wrapper>
   )
 }

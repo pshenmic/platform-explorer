@@ -9,8 +9,10 @@ import { ContestedResourceContent } from '../cards/dashboard'
 import type { ContestedResourcesStatus, LoadableState } from '../../types'
 import './ContestedResourcesDashboardCards.css'
 
-function ContestedResourcesDashboardCards () {
-  const [stats, setStats] = useState<LoadableState<ContestedResourcesStatus | Record<string, unknown>>>({
+function ContestedResourcesDashboardCards() {
+  const [stats, setStats] = useState<
+    LoadableState<ContestedResourcesStatus | Record<string, unknown>>
+  >({
     data: {},
     loading: true,
     error: false
@@ -55,7 +57,15 @@ function ContestedResourcesDashboardCards () {
         },
         {
           title: 'Ending soon',
-          value: <ContestedResourceContent contestedResource={data?.expiringContestedResource as Parameters<typeof ContestedResourceContent>[0]['contestedResource']}/>,
+          value: (
+            <ContestedResourceContent
+              contestedResource={
+                data?.expiringContestedResource as Parameters<
+                  typeof ContestedResourceContent
+                >[0]['contestedResource']
+              }
+            />
+          ),
           className: 'ContestedResourcesDashboardCards__Card',
           error: stats.error,
           loading: stats.loading,

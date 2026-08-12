@@ -100,7 +100,9 @@ const filtersConfig = {
     defaultValue: '',
     formatValue: (value: string) => value || null,
     mobileTagRenderer: (value: string) => (
-      <Identifier avatar={true} ellipsis={true} styles={['highlight-both']}>{value}</Identifier>
+      <Identifier avatar={true} ellipsis={true} styles={['highlight-both']}>
+        {value}
+      </Identifier>
     )
   },
   timestamp: {
@@ -108,7 +110,7 @@ const filtersConfig = {
     title: 'Date range',
     type: 'daterange',
     defaultValue: null,
-    formatValue: (value: { start?: Date | null, end?: Date | null } | null) => {
+    formatValue: (value: { start?: Date | null; end?: Date | null } | null) => {
       return `${value?.start ? `from ${value?.start?.toLocaleDateString()}` : ''} ${value?.end ? `to ${value?.end?.toLocaleDateString()}` : ''}`
     }
   }
@@ -120,7 +122,7 @@ interface BlocksFilterProps extends WithClassName {
   isMobile?: boolean
 }
 
-export default function BlocksFilter ({
+export default function BlocksFilter({
   initialFilters,
   onFilterChange,
   isMobile,

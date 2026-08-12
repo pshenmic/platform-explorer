@@ -12,7 +12,7 @@ interface CodeBlockProps extends WithClassName {
   smoothSize?: boolean
 }
 
-function CodeBlock ({ code, smoothSize = true, className = '' }: CodeBlockProps) {
+function CodeBlock({ code, smoothSize = true, className = '' }: CodeBlockProps) {
   const [isAnimating, setIsAnimating] = useState(false)
   const [fullSize, setFullSize] = useState(false)
   const [isOverflowing, setIsOverflowing] = useState(false)
@@ -45,7 +45,9 @@ function CodeBlock ({ code, smoothSize = true, className = '' }: CodeBlockProps)
 
     checkOverflow()
 
-    return () => { if (observer) observer.disconnect() }
+    return () => {
+      if (observer) observer.disconnect()
+    }
   }, [])
 
   return (
@@ -63,10 +65,10 @@ function CodeBlock ({ code, smoothSize = true, className = '' }: CodeBlockProps)
           </Code>
         </SmoothSize>
 
-        <CopyButton className={'CodeBlock__CopyButton'} text={parsedCode}/>
+        <CopyButton className={'CodeBlock__CopyButton'} text={parsedCode} />
       </div>
 
-      {(isOverflowing || fullSize) &&
+      {(isOverflowing || fullSize) && (
         <Button
           size={'sm'}
           onClick={() => setFullSize(state => !state)}
@@ -74,7 +76,7 @@ function CodeBlock ({ code, smoothSize = true, className = '' }: CodeBlockProps)
         >
           {fullSize ? 'Hide code' : 'Show full code'}
         </Button>
-      }
+      )}
     </div>
   )
 }

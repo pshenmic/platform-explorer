@@ -9,7 +9,7 @@ interface VoteBadgesProps extends WithClassName {
   totalCountTowardsIdentity?: number | null
 }
 
-function VoteBadges ({
+function VoteBadges({
   totalCountAbstain,
   totalCountLock,
   totalCountTowardsIdentity,
@@ -17,10 +17,7 @@ function VoteBadges ({
 }: VoteBadgesProps) {
   return (
     <div className={`VoteBadges ${className || ''}`}>
-      <Tooltip
-        title={'Total Towards Identity'}
-        placement={'top'}
-      >
+      <Tooltip title={'Total Towards Identity'} placement={'top'}>
         <Badge
           className={'VoteBadges__Badge'}
           style={{ opacity: totalCountTowardsIdentity === 0 ? 0.4 : 1 }}
@@ -31,10 +28,7 @@ function VoteBadges ({
         </Badge>
       </Tooltip>
 
-      <Tooltip
-        title={'Total Abstain'}
-        placement={'top'}
-      >
+      <Tooltip title={'Total Abstain'} placement={'top'}>
         <Badge
           className={'VoteBadges__Badge'}
           style={{ opacity: totalCountAbstain === 0 ? 0.4 : 1 }}
@@ -45,10 +39,7 @@ function VoteBadges ({
         </Badge>
       </Tooltip>
 
-      <Tooltip
-        title={'Total Lock'}
-        placement={'top'}
-      >
+      <Tooltip title={'Total Lock'} placement={'top'}>
         <Badge
           className={'VoteBadges__Badge'}
           style={{ opacity: totalCountLock === 0 ? 0.4 : 1 }}

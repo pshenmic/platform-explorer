@@ -283,7 +283,7 @@ const filtersConfig = {
     minPlaceholder: 'ex. 0...',
     maxTitle: 'Maximum amount',
     maxPlaceholder: 'ex. 10000000...',
-    formatValue: ({ min, max }: { min?: string, max?: string }) => {
+    formatValue: ({ min, max }: { min?: string; max?: string }) => {
       if (min && max) return `${min} - ${max} Credits`
       if (min) return `Min ${min} Credits`
       if (max) return `Max ${max} Credits`
@@ -299,7 +299,9 @@ const filtersConfig = {
     defaultValue: '',
     formatValue: (value: string) => value || null,
     mobileTagRenderer: (value: string) => (
-      <Identifier avatar={true} ellipsis={true} styles={['highlight-both']}>{value}</Identifier>
+      <Identifier avatar={true} ellipsis={true} styles={['highlight-both']}>
+        {value}
+      </Identifier>
     )
   },
   timestamp: {
@@ -307,7 +309,7 @@ const filtersConfig = {
     title: 'Date range',
     type: 'daterange',
     defaultValue: null,
-    formatValue: (value: { start?: Date | null, end?: Date | null } | null) => {
+    formatValue: (value: { start?: Date | null; end?: Date | null } | null) => {
       return `${value?.start ? `from ${value?.start?.toLocaleDateString()}` : ''} ${value?.end ? `to ${value?.end?.toLocaleDateString()}` : ''}`
     }
   }
@@ -319,14 +321,16 @@ interface TransactionsFilterProps extends WithClassName {
   excludeFilters?: string[]
 }
 
-export default function TransactionsFilter ({
+export default function TransactionsFilter({
   onFilterChange,
   isMobile,
   className,
   excludeFilters = []
 }: TransactionsFilterProps) {
   const config = excludeFilters.length
-    ? Object.fromEntries(Object.entries(filtersConfig).filter(([key]) => !excludeFilters.includes(key)))
+    ? Object.fromEntries(
+        Object.entries(filtersConfig).filter(([key]) => !excludeFilters.includes(key))
+      )
     : filtersConfig
 
   return (

@@ -26,27 +26,29 @@ const VoteBadges = VoteBadgesJs as ComponentType<{
 }>
 
 interface ContestedResourceContentProps {
-  contestedResource?: Partial<ContestedResource> & {
-    contenders?: ReactNode
-  } | null
+  contestedResource?:
+    | (Partial<ContestedResource> & {
+        contenders?: ReactNode
+      })
+    | null
   nullMessage?: string
 }
 
-export function ContestedResourceContent ({ contestedResource, nullMessage = 'All completed' }: ContestedResourceContentProps) {
+export function ContestedResourceContent({
+  contestedResource,
+  nullMessage = 'All completed'
+}: ContestedResourceContentProps) {
   const resourceValue = contestedResources.getResourceValue(contestedResource?.resourceValue)
 
   return (
     <div className={'ContestedResourceContent'}>
-      {contestedResource && resourceValue?.length
-        ? <>
+      {contestedResource && resourceValue?.length ? (
+        <>
           <div className={'ContestedResourceContent__ValueContainer'}>
-            <Alias
-              className={'ContestedResourceContent__Value'}
-              ellipsis={false}
-            >
+            <Alias className={'ContestedResourceContent__Value'} ellipsis={false}>
               {resourceValue}
             </Alias>
-            {contestedResource?.contenders &&
+            {contestedResource?.contenders && (
               <Badge
                 className={'ContestedResourceContent__ContendersBadge'}
                 colorScheme={'blue'}
@@ -55,27 +57,28 @@ export function ContestedResourceContent ({ contestedResource, nullMessage = 'Al
               >
                 {contestedResource.contenders}
               </Badge>
-            }
+            )}
           </div>
 
-          {contestedResource?.resourceValue &&
+          {contestedResource?.resourceValue && (
             <VoteBadges
               className={'ContestedResourceContent__VoteBadges'}
               totalCountAbstain={contestedResource?.totalCountAbstain}
               totalCountLock={contestedResource?.totalCountLock}
               totalCountTowardsIdentity={contestedResource?.totalCountTowardsIdentity}
             />
-          }
+          )}
 
-          {(contestedResource?.timestamp && contestedResource?.endTimestamp) &&
+          {contestedResource?.timestamp && contestedResource?.endTimestamp && (
             <TimeRemaining
               startTime={contestedResource?.timestamp}
               endTime={contestedResource?.endTimestamp}
             />
-          }
+          )}
         </>
-        : <div className={'ContestedResourceContent__NullMessage'}>{nullMessage}</div>
-      }
+      ) : (
+        <div className={'ContestedResourceContent__NullMessage'}>{nullMessage}</div>
+      )}
     </div>
   )
 }

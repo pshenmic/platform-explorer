@@ -7,7 +7,7 @@ import { fetchHandlerSuccess, fetchHandlerError, formatFullNumber } from '../../
 import NetworkStatsInline from '../stats/NetworkStatsInline'
 import type { LoadableState, Status, WithClassName } from '../../types'
 
-export default function DataContractsStatsInline ({ className }: WithClassName) {
+export default function DataContractsStatsInline({ className }: WithClassName) {
   const [status, setStatus] = useState<LoadableState<Status>>({
     data: null,
     loading: true,
@@ -28,5 +28,5 @@ export default function DataContractsStatsInline ({ className }: WithClassName) 
     }
   ]
 
-  return <NetworkStatsInline className={className} items={items}/>
+  return <NetworkStatsInline className={className} items={items} />
 }

@@ -11,8 +11,8 @@ interface RowProps {
 }
 
 export const Row = ({ label, tooltip, children }: RowProps) => (
-  <HStack className='Advanced__Row' justify='space-between' spacing={3} align='center'>
-    <RowLabel label={label} tooltip={tooltip}/>
+  <HStack className="Advanced__Row" justify="space-between" spacing={3} align="center">
+    <RowLabel label={label} tooltip={tooltip} />
     {children}
   </HStack>
 )
@@ -24,12 +24,12 @@ interface GroupHeaderProps {
 }
 
 export const GroupHeader = ({ label, tooltip, onAdd }: GroupHeaderProps) => (
-  <HStack className='Advanced__GroupHeader' justify='space-between' spacing={3} align='center'>
-    <RowLabel label={label} tooltip={tooltip}/>
+  <HStack className="Advanced__GroupHeader" justify="space-between" spacing={3} align="center">
+    <RowLabel label={label} tooltip={tooltip} />
     {onAdd && (
       <IconButton
-        size='xs'
-        variant='outline'
+        size="xs"
+        variant="outline"
         aria-label={`Add ${String(label)} row`}
         icon={<span style={{ fontSize: '14px', lineHeight: 1 }}>+</span>}
         onClick={onAdd}

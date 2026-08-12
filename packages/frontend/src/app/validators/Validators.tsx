@@ -7,7 +7,12 @@ import { normalizePagination } from '../../util'
 import { Container, Box, useBreakpointValue } from '@chakra-ui/react'
 import { useQuery, keepPreviousData } from '@tanstack/react-query'
 import { parseAsInteger, useQueryState } from 'nuqs'
-import { useValidatorsFilters, ValidatorsFilter, ValidatorsList, ValidatorsStatsInline } from '@components/validators'
+import {
+  useValidatorsFilters,
+  ValidatorsFilter,
+  ValidatorsList,
+  ValidatorsStatsInline
+} from '@components/validators'
 import PageTitle from '../../components/intro/PageTitle'
 import introContent from './introContent'
 import './ValidatorsPage.css'
@@ -20,7 +25,7 @@ const paginateConfig = {
   defaultPage: 1
 }
 
-function Validators () {
+function Validators() {
   const isMobile = useBreakpointValue({ base: true, md: false })
   const { filters, setFilters } = useValidatorsFilters()
   const [page, setPage] = useQueryState(
@@ -38,12 +43,7 @@ function Validators () {
 
   const validators = useQuery({
     queryKey: ['validators', page, pageSize, ...Object.values(filters)],
-    queryFn: () => Api.getValidators(
-      page,
-      pageSize,
-      'asc',
-      filters
-    ),
+    queryFn: () => Api.getValidators(page, pageSize, 'asc', filters),
     placeholderData: keepPreviousData,
     select: ({ pagination, ...other }) => ({
       ...other,
@@ -65,22 +65,16 @@ function Validators () {
   }
 
   return (
-    <Container
-      maxW={'container.maxPageW'}
-      mt={8}
-      className={'Validators'}
-    >
-      <Container
-        maxW={'container.maxPageW'}
-        className={'InfoBlock'}
-      >
+    <Container maxW={'container.maxPageW'} mt={8} className={'Validators'}>
+      <Container maxW={'container.maxPageW'} className={'InfoBlock'}>
         <div className={'Validators__Controls'}>
-          <PageTitle title={'Validators'} description={introContent} className={'Validators__Title'}/>
-
-          <ValidatorsStatsInline
-            className={'Validators__Stats'}
-            total={totalValidators}
+          <PageTitle
+            title={'Validators'}
+            description={introContent}
+            className={'Validators__Title'}
           />
+
+          <ValidatorsStatsInline className={'Validators__Stats'} total={totalValidators} />
 
           <ValidatorsFilter
             onFilterChange={handleFiltersChange}
@@ -95,11 +89,13 @@ function Validators () {
           error={validators.isError}
           pageSize={pageSize}
         />
-        {(validators.data?.resultSet?.length ?? 0) > 0 &&
+        {(validators.data?.resultSet?.length ?? 0) > 0 && (
           <div className={'ListNavigation'}>
             <Box display={['none', 'none', 'block']} width={'155px'} />
             <Pagination
-              onPageChange={({ selected }) => { setPage((selected || 0) + 1) }}
+              onPageChange={({ selected }) => {
+                setPage((selected || 0) + 1)
+              }}
               pageCount={pagination?.pageCount ?? 1}
               forcePage={pagination?.forcePage}
             />
@@ -112,7 +108,7 @@ function Validators () {
               items={paginateConfig.pageSize.values}
             />
           </div>
-        }
+        )}
       </Container>
     </Container>
   )

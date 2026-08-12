@@ -3,8 +3,10 @@
 import { DataContractCards } from '../../components/dataContracts'
 import type { DataContract, LoadableState, PaginatedResultSet } from '../../types'
 
-export default function Cards () {
-  const dataContracts: LoadableState<PaginatedResultSet<Pick<DataContract, 'identifier' | 'name'>>> = {
+export default function Cards() {
+  const dataContracts: LoadableState<
+    PaginatedResultSet<Pick<DataContract, 'identifier' | 'name'>>
+  > = {
     data: {
       resultSet: [
         {
@@ -38,7 +40,5 @@ export default function Cards () {
     error: false
   }
 
-  return (
-    <DataContractCards items={dataContracts as never}/>
-  )
+  return <DataContractCards items={dataContracts as never} />
 }

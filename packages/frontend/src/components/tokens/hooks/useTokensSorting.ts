@@ -11,8 +11,16 @@ export interface TokensSortingUpdate {
 }
 
 export const useTokensSorting = () => {
-  const [order, setOrder] = useQueryState('order', { defaultValue: 'desc', scroll: false, shallow: true })
-  const [orderBy, setOrderBy] = useQueryState('order_by', { defaultValue: 'timestamp', scroll: false, shallow: true })
+  const [order, setOrder] = useQueryState('order', {
+    defaultValue: 'desc',
+    scroll: false,
+    shallow: true
+  })
+  const [orderBy, setOrderBy] = useQueryState('order_by', {
+    defaultValue: 'timestamp',
+    scroll: false,
+    shallow: true
+  })
 
   const sorting: TokensSorting = {
     order: order ?? 'desc',

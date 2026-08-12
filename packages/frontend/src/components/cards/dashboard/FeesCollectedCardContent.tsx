@@ -11,32 +11,33 @@ interface FeesCollectedCardContentProps {
   rate?: Pick<Rate, 'usd'> | null
 }
 
-export function FeesCollectedCardContent ({ epoch, status, rate }: FeesCollectedCardContentProps) {
+export function FeesCollectedCardContent({ epoch, status, rate }: FeesCollectedCardContentProps) {
   return (
     <div className={'FeesCollectedCardContent'}>
       <div className={'FeesCollectedCardContent__TotalCollectedFees'}>
-        {typeof epoch?.totalCollectedFees === 'number'
-          ? <RateTooltip
-            credits={epoch.totalCollectedFees}
-            rate={rate}
-          >
+        {typeof epoch?.totalCollectedFees === 'number' ? (
+          <RateTooltip credits={epoch.totalCollectedFees} rate={rate}>
             <span className={'FeesCollectedCardContent__FeesContainer'}>
               {currencyRound(epoch.totalCollectedFees)}
-              <InfoIcon ml={2} color={'brand.light'} boxSize={4}/>
+              <InfoIcon ml={2} color={'brand.light'} boxSize={4} />
             </span>
           </RateTooltip>
-          : 'n/a'}
+        ) : (
+          'n/a'
+        )}
       </div>
-      {status?.totalCollectedFeesDay &&
+      {status?.totalCollectedFeesDay && (
         <Flex fontFamily={'mono'} fontSize={'0.75rem'} fontWeight={'normal'}>
-          <Text color={'gray.500'} mr={'8px'}>Last 24h: </Text>
+          <Text color={'gray.500'} mr={'8px'}>
+            Last 24h:{' '}
+          </Text>
           <Text>
             {typeof status?.totalCollectedFeesDay === 'number'
               ? currencyRound(status?.totalCollectedFeesDay)
               : 'n/a'}
           </Text>
         </Flex>
-      }
+      )}
     </div>
   )
 }

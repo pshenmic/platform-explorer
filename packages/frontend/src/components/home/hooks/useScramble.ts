@@ -6,7 +6,10 @@ const HEX = '0123456789ABCDEF'
 
 // Text counterpart of useCountUp for hashes: on change, characters shuffle through random
 // hex digits and lock into the new value left to right. Snaps under reduced motion.
-export function useScramble (text: string | null | undefined, duration = 500): string | null | undefined {
+export function useScramble(
+  text: string | null | undefined,
+  duration = 500
+): string | null | undefined {
   const [value, setValue] = useState(text)
   const firstRef = useRef(true)
 
@@ -16,7 +19,8 @@ export function useScramble (text: string | null | undefined, duration = 500): s
       return
     }
 
-    const reduce = typeof window !== 'undefined' &&
+    const reduce =
+      typeof window !== 'undefined' &&
       window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches
 
     if (reduce || firstRef.current) {

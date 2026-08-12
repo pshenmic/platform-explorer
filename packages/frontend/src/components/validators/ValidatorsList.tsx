@@ -43,24 +43,15 @@ interface TableWrapperProps {
 
 const TableWrapper = ({ children }: TableWrapperProps) => (
   <div className={'ValidatorsList'}>
-    <div className={'ValidatorsList__ContentContainer'}>
-        {children}
-    </div>
+    <div className={'ValidatorsList__ContentContainer'}>{children}</div>
   </div>
 )
 
 export const ValidatorsListSceleton = () => (
   <TableWrapper>
-    {Array.from(
-      { length: 25 },
-      (x, i) => (
-        <LoadingLine
-          key={i}
-          loading
-          className={'ValidatorListItem ValidatorListItem--Loading'}
-        />
-      )
-    )}
+    {Array.from({ length: 25 }, (x, i) => (
+      <LoadingLine key={i} loading className={'ValidatorListItem ValidatorListItem--Loading'} />
+    ))}
   </TableWrapper>
 )
 
@@ -80,17 +71,28 @@ export const ValidatorsList = ({ loading, list, pageSize, error }: ValidatorsLis
   })
 
   if (error) {
-    return <Container h={20}><ErrorMessageBlock /></Container>
+    return (
+      <Container h={20}>
+        <ErrorMessageBlock />
+      </Container>
+    )
   }
 
   if (loading) {
     return (
       <TableWrapper>
-        {
-          Array.from({
+        {Array.from(
+          {
             length: String(pageSize).toLowerCase() === 'all' ? 50 : Number(pageSize) || 25
-          }, (x, i) => <LoadingLine key={i} loading={loading} className={'ValidatorListItem ValidatorListItem--Loading'}/>)
-        }
+          },
+          (x, i) => (
+            <LoadingLine
+              key={i}
+              loading={loading}
+              className={'ValidatorListItem ValidatorListItem--Loading'}
+            />
+          )
+        )}
       </TableWrapper>
     )
   }
@@ -99,11 +101,12 @@ export const ValidatorsList = ({ loading, list, pageSize, error }: ValidatorsLis
     <TableWrapper>
       <ListColumnsHeader
         headers={table.getHeaderGroups().flatMap(({ headers }) => headers) as any}
-
         className={'ValidatorsList__ColumnTitles'}
         columnClassName={'ValidatorsList__ColumnTitle'}
       />
-       {table.getRowModel().rows.map((row) => <ValidatorListItem key={row.id} validator={row.original} />)}
-  </TableWrapper>
+      {table.getRowModel().rows.map(row => (
+        <ValidatorListItem key={row.id} validator={row.original} />
+      ))}
+    </TableWrapper>
   )
 }

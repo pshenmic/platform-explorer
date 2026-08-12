@@ -2,10 +2,7 @@ import type { ComponentType, ReactNode } from 'react'
 import type { Document } from '../../../types'
 import type { WithClassName } from '../../../types/common'
 // Untyped JS components — loose wrappers until data/* is migrated
-import {
-  Identifier as IdentifierJs,
-  TimeDelta as TimeDeltaJs
-} from '../../data'
+import { Identifier as IdentifierJs, TimeDelta as TimeDeltaJs } from '../../data'
 import { BaseSearchItem, BaseSearchItemContent } from './BaseSearchItem'
 
 const Identifier = IdentifierJs as ComponentType<{
@@ -21,7 +18,7 @@ interface DocumentSearchItemProps extends WithClassName {
   onClick?: (data: unknown) => void
 }
 
-export function DocumentSearchItem ({ document, className, onClick }: DocumentSearchItemProps) {
+export function DocumentSearchItem({ document, className, onClick }: DocumentSearchItemProps) {
   return (
     <BaseSearchItem
       href={`/document/${document?.identifier}`}
@@ -32,12 +29,16 @@ export function DocumentSearchItem ({ document, className, onClick }: DocumentSe
     >
       <BaseSearchItemContent
         mainContent={
-          <Identifier avatar={true} ellipsis={true} styles={['highlight-both']}>{document?.identifier}</Identifier>
+          <Identifier avatar={true} ellipsis={true} styles={['highlight-both']}>
+            {document?.identifier}
+          </Identifier>
         }
         additionalContent={
-          <Identifier avatar={!!document?.owner?.identifier} ellipsis={true}>{document?.owner?.identifier || '-'}</Identifier>
+          <Identifier avatar={!!document?.owner?.identifier} ellipsis={true}>
+            {document?.owner?.identifier || '-'}
+          </Identifier>
         }
-        timestamp={<TimeDelta endDate={document?.timestamp}/>}
+        timestamp={<TimeDelta endDate={document?.timestamp} />}
       />
     </BaseSearchItem>
   )

@@ -21,9 +21,11 @@ const filtersConfig: FiltersConfig = {
     entityType: 'identities',
     placeholder: 'Voter Identity',
     defaultValue: '',
-    formatValue: (value) => (typeof value === 'string' ? value : null) || null,
-    mobileTagRenderer: (value) => (
-      <Identifier avatar={true} ellipsis={true} styles={['highlight-both']}>{value as ReactNode}</Identifier>
+    formatValue: value => (typeof value === 'string' ? value : null) || null,
+    mobileTagRenderer: value => (
+      <Identifier avatar={true} ellipsis={true} styles={['highlight-both']}>
+        {value as ReactNode}
+      </Identifier>
     )
   },
   towards_identity: {
@@ -33,9 +35,11 @@ const filtersConfig: FiltersConfig = {
     entityType: 'identities',
     placeholder: 'Towards Identity',
     defaultValue: '',
-    formatValue: (value) => (typeof value === 'string' ? value : null) || null,
-    mobileTagRenderer: (value) => (
-      <Identifier avatar={true} ellipsis={true} styles={['highlight-both']}>{value as ReactNode}</Identifier>
+    formatValue: value => (typeof value === 'string' ? value : null) || null,
+    mobileTagRenderer: value => (
+      <Identifier avatar={true} ellipsis={true} styles={['highlight-both']}>
+        {value as ReactNode}
+      </Identifier>
     )
   },
   timestamp: {
@@ -43,8 +47,8 @@ const filtersConfig: FiltersConfig = {
     title: 'Date range',
     type: 'daterange',
     defaultValue: null,
-    formatValue: (value) => {
-      const range = value as { start?: Date | null, end?: Date | null } | null
+    formatValue: value => {
+      const range = value as { start?: Date | null; end?: Date | null } | null
       return `${range?.start ? `from ${range?.start?.toLocaleDateString()}` : ''} ${range?.end ? `to ${range?.end?.toLocaleDateString()}` : ''}`
     }
   }
@@ -56,7 +60,7 @@ interface MasternodeVotesFiltersProps extends WithClassName {
   isMobile?: boolean
 }
 
-export default function MasternodeVotesFilters ({
+export default function MasternodeVotesFilters({
   initialFilters,
   onFilterChange,
   isMobile,

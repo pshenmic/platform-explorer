@@ -10,9 +10,11 @@ import type { LoadableState, PaginatedResultSet, Vote } from '../../types'
 // the rotator and the dot pager must share one list, or the active dot runs off the pager
 const FEED_LIMIT = 6
 
-type VotesFeedState = LoadableState<PaginatedResultSet<Vote>> | {
-  data?: PaginatedResultSet<Vote> | null
-}
+type VotesFeedState =
+  | LoadableState<PaginatedResultSet<Vote>>
+  | {
+      data?: PaginatedResultSet<Vote> | null
+    }
 
 interface TotalVotesCellProps {
   count?: number | null
@@ -20,7 +22,7 @@ interface TotalVotesCellProps {
 }
 
 // Count + pill (left); rotating latest vote (choice badge + voter) over bullet dots (right).
-export function TotalVotesCell ({ count, votes }: TotalVotesCellProps) {
+export function TotalVotesCell({ count, votes }: TotalVotesCellProps) {
   const items = (votes?.data?.resultSet || []).slice(0, FEED_LIMIT)
   const rotator = useRotator(items)
   const countAnimated = useCountUp(typeof count === 'number' ? count : null)
@@ -37,7 +39,7 @@ export function TotalVotesCell ({ count, votes }: TotalVotesCellProps) {
         <span className={'HomeHero__GovCountLabel'}>casted</span>
       </div>
 
-      {item &&
+      {item && (
         <div
           className={'HomeHero__GovFeed'}
           onMouseEnter={rotator.onMouseEnter}
@@ -50,21 +52,29 @@ export function TotalVotesCell ({ count, votes }: TotalVotesCellProps) {
               href={item.indexValues ? contestedHref(item.indexValues) : '/masternodeVotes'}
               className={'HomeHero__VotesItem'}
             >
-              {typeof item.choice === 'number'
-                ? <ChoiceBadge className={'HomeHero__VotesChoice'} choice={item.choice}/>
-                : <span className={'HomeHero__VotesChoiceText'}>{String(item.choice ?? 'vote')}</span>}
+              {typeof item.choice === 'number' ? (
+                <ChoiceBadge className={'HomeHero__VotesChoice'} choice={item.choice} />
+              ) : (
+                <span className={'HomeHero__VotesChoiceText'}>{String(item.choice ?? 'vote')}</span>
+              )}
               <span className={'HomeHero__VotesVoter'}>
                 {(() => {
                   // middle-trim; aliases keep the accented .dash suffix, raw ids get the same shape
                   const alias = item.identityAliases?.[0]?.alias
                   const { text, dash } = trimName(alias || item.voterIdentifier)
-                  return <>{text}{dash && <span className={'HomeHero__GovTld'}>.dash</span>}</>
+                  return (
+                    <>
+                      {text}
+                      {dash && <span className={'HomeHero__GovTld'}>.dash</span>}
+                    </>
+                  )
                 })()}
               </span>
             </Link>
           </span>
-          <GovDots count={dotCount} index={rotator.index} setIndex={rotator.setIndex}/>
-        </div>}
+          <GovDots count={dotCount} index={rotator.index} setIndex={rotator.setIndex} />
+        </div>
+      )}
     </div>
   )
 }

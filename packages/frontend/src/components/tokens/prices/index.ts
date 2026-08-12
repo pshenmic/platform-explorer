@@ -1,5 +1,3 @@
 import PriceList from './PriceList'
 
-export {
-  PriceList
-}
+export { PriceList }

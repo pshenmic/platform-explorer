@@ -1,11 +1,7 @@
 import { Flex, Grid, GridItem, Text } from '@chakra-ui/react'
 import { ValueCard } from '@components/cards'
 import { InfoLine, Identifier } from '@components/data'
-import type {
-  DecodedFeeStrategy,
-  DecodedInputWitness,
-  DecodedTxInput
-} from '../../types'
+import type { DecodedFeeStrategy, DecodedInputWitness, DecodedTxInput } from '../../types'
 
 interface AddressCreditWithdrawalProps {
   userFeeIncrease?: number | null
@@ -32,15 +28,15 @@ export const AddressCreditWithdrawal = ({
 }: AddressCreditWithdrawalProps) => (
   <>
     <InfoLine
-      className='TransactionPage__InfoLine TransactionPage__InfoLine--Inline'
-      title='User Fee Increase'
+      className="TransactionPage__InfoLine TransactionPage__InfoLine--Inline"
+      title="User Fee Increase"
       value={userFeeIncrease}
       error={userFeeIncrease === undefined}
     />
 
     {inputs && inputs.length > 0 && (
       <InfoLine
-        className='TransactionPage__InfoLine TransactionPage__InfoLine--FullWidth'
+        className="TransactionPage__InfoLine TransactionPage__InfoLine--FullWidth"
         title={`Inputs (${inputs.length})`}
         value={
           <div>
@@ -48,12 +44,7 @@ export const AddressCreditWithdrawal = ({
               <ValueCard key={index}>
                 <Flex gap={4} direction={{ base: 'column', lg: 'row' }}>
                   <ValueCard link={`/platformAddress/${input.platformAddress.bech32m}`}>
-                    <Identifier
-                      avatar
-                      copyButton
-                      ellipsis
-                      styles={['highlight-both']}
-                    >
+                    <Identifier avatar copyButton ellipsis styles={['highlight-both']}>
                       {input.platformAddress.bech32m}
                     </Identifier>
                   </ValueCard>
@@ -71,9 +62,9 @@ export const AddressCreditWithdrawal = ({
 
     {inputWitness && inputWitness.length > 0 && (
       <InfoLine
-        className='TransactionPage__InfoLine TransactionPage__InfoLine--FullWidth'
+        className="TransactionPage__InfoLine TransactionPage__InfoLine--FullWidth"
         title={`Input Witness (${inputWitness.length})`}
-        align='top'
+        align="top"
         value={
           <div>
             {inputWitness.map((witness, index) => (
@@ -86,7 +77,7 @@ export const AddressCreditWithdrawal = ({
                   gap={4}
                 >
                   <Text>Type:</Text>
-                  <GridItem width='fit-content'>
+                  <GridItem width="fit-content">
                     <ValueCard>{witness.type}</ValueCard>
                   </GridItem>
 
@@ -105,25 +96,19 @@ export const AddressCreditWithdrawal = ({
     )}
 
     <InfoLine
-      className={
-        'TransactionPage__InfoLine TransactionPage__InfoLine--FullWidth'
-      }
+      className={'TransactionPage__InfoLine TransactionPage__InfoLine--FullWidth'}
       title={'Output'}
-      value={
-        <ValueCard>
-          {output === null ? 'No output (null)' : JSON.stringify(output)}
-        </ValueCard>
-      }
+      value={<ValueCard>{output === null ? 'No output (null)' : JSON.stringify(output)}</ValueCard>}
     />
 
     {feeStrategy && feeStrategy.length > 0 && (
       <InfoLine
-        className='TransactionPage__InfoLine TransactionPage__InfoLine--FullWidth'
+        className="TransactionPage__InfoLine TransactionPage__InfoLine--FullWidth"
         title={'Fee Strategy'}
         value={
           <div>
             {feeStrategy.map((strategy, index) => (
-              <Flex key={index} align='center' gap={6}>
+              <Flex key={index} align="center" gap={6}>
                 <ValueCard>{strategy.type}</ValueCard>
                 <ValueCard>Value: {strategy.value}</ValueCard>
               </Flex>
@@ -134,16 +119,16 @@ export const AddressCreditWithdrawal = ({
     )}
 
     <InfoLine
-      className='TransactionPage__InfoLine TransactionPage__InfoLine--Inline'
-      title='Pooling'
+      className="TransactionPage__InfoLine TransactionPage__InfoLine--Inline"
+      title="Pooling"
       value={pooling}
       error={pooling === undefined}
     />
 
     {outputAddress && (
       <InfoLine
-        className='TransactionPage__InfoLine TransactionPage__InfoLine--FullWidth'
-        title='Output Address'
+        className="TransactionPage__InfoLine TransactionPage__InfoLine--FullWidth"
+        title="Output Address"
         value={
           <ValueCard>
             <Identifier copyButton ellipsis styles={['highlight-both']}>
@@ -156,10 +141,10 @@ export const AddressCreditWithdrawal = ({
 
     {outputScript && (
       <InfoLine
-        className='TransactionPage__InfoLine TransactionPage__InfoLine--FullWidth'
-        title='Output Script'
+        className="TransactionPage__InfoLine TransactionPage__InfoLine--FullWidth"
+        title="Output Script"
         value={
-          <ValueCard className='TransactionPage__RawTransaction'>
+          <ValueCard className="TransactionPage__RawTransaction">
             <Identifier copyButton ellipsis styles={['highlight-both']}>
               {outputScript}
             </Identifier>
@@ -170,11 +155,11 @@ export const AddressCreditWithdrawal = ({
 
     {raw && (
       <InfoLine
-        className='TransactionPage__InfoLine TransactionPage__InfoLine--FullWidth'
-        title='Raw Transaction'
+        className="TransactionPage__InfoLine TransactionPage__InfoLine--FullWidth"
+        title="Raw Transaction"
         value={
-          <Grid templateColumns='minmax(300px, auto)'>
-            <ValueCard className='TransactionPage__RawTransaction'>
+          <Grid templateColumns="minmax(300px, auto)">
+            <ValueCard className="TransactionPage__RawTransaction">
               <Identifier copyButton ellipsis styles={['highlight-both']}>
                 {raw}
               </Identifier>

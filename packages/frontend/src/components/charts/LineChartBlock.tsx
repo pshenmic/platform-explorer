@@ -17,7 +17,7 @@ import type {
 } from './types'
 import type { WithClassName } from '../../types/common'
 
-function ErrorMessageBlock () {
+function ErrorMessageBlock() {
   return (
     <Flex
       flexGrow={1}
@@ -27,7 +27,10 @@ function ErrorMessageBlock () {
       flexDirection={'column'}
       opacity={0.5}
     >
-      <div><WarningTwoIcon color={'#ddd'} mr={2} mt={-1}/>Error loading data</div>
+      <div>
+        <WarningTwoIcon color={'#ddd'} mr={2} mt={-1} />
+        Error loading data
+      </div>
     </Flex>
   )
 }
@@ -50,7 +53,7 @@ interface LineChartBlockProps extends WithClassName {
   height?: string | number
 }
 
-export default function LineChartBlock ({
+export default function LineChartBlock({
   heightPx = 300,
   menuIsActive = true,
   data,
@@ -67,16 +70,17 @@ export default function LineChartBlock ({
   type = 'line',
   height
 }: LineChartBlockProps) {
-  const resolvedHeightPx = typeof height === 'number'
-    ? height
-    : (typeof height === 'string' && height.endsWith('px')
+  const resolvedHeightPx =
+    typeof height === 'number'
+      ? height
+      : typeof height === 'string' && height.endsWith('px')
         ? parseInt(height, 10) || heightPx
-        : heightPx)
+        : heightPx
 
   const chartConfig = config || defaultChartConfig
   const [timespan, setTimespan] = useState<TimespanValue | undefined>(chartConfig.timespan.default)
 
-  function timespanChangeHandler (value: TimespanValue) {
+  function timespanChangeHandler(value: TimespanValue) {
     setTimespan(value)
     if (typeof timespanChange === 'function') timespanChange(value)
   }
@@ -99,8 +103,9 @@ export default function LineChartBlock ({
 
   useResizeObserver(TimeframeMenuRef as never, updateMenuHeight)
 
-  return (<>
-    <Flex
+  return (
+    <>
+      <Flex
         className={`ChartBlock ${useInfoBlock ? `InfoBlock ${!blockBorders ? 'InfoBlock--NoBorder' : ''}` : ''} ${menuIsOpen ? 'ChartBlock--MenuIsOpen' : ''} ${className ?? ''}`}
         maxW={'none'}
         width={'100%'}
@@ -108,50 +113,53 @@ export default function LineChartBlock ({
         borderRadius={useInfoBlock ? 'block' : 'none'}
         direction={'column'}
         style={{
-          height: menuIsOpen ? `${Math.max(selectorHeight, resolvedHeightPx)}px` : `${resolvedHeightPx}px`,
+          height: menuIsOpen
+            ? `${Math.max(selectorHeight, resolvedHeightPx)}px`
+            : `${resolvedHeightPx}px`,
           minHeight: '100%'
         }}
-    >
-      {useInfoBlock &&
-        <Heading className={'InfoBlock__Title'} as={'h1'}>{title}</Heading>
-      }
-
-      <TimeframeSelector
-        menuRef={TimeframeMenuRef}
-        className={'ChartBlock__TimeframeSelector'}
-        config={chartConfig}
-        changeCallback={timespanChangeHandler}
-        menuIsActive={menuIsActive}
-        openStateCallback={setMenuIsOpen}
-      />
-
-      <Flex
-        className={`ChartBlock__ChartContainer ${menuIsOpen ? 'ChartBlock__ChartContainer--Hidden' : ''}`}
-        height={'100%'}
-        maxW={'none'}
-        flexGrow={'1'}
-        mt={2}
-        mb={4}
-        p={0}
-        flexDirection={'column'}
       >
-        {!loading
-          ? (!error && data?.length)
-              ? <LineChart
-                  data={data}
-                  timespan={timespan}
-                  xAxis={xAxis}
-                  yAxis={yAxis}
-                  type={type}
-              />
-              : <ErrorMessageBlock/>
-          : <Container
+        {useInfoBlock && (
+          <Heading className={'InfoBlock__Title'} as={'h1'}>
+            {title}
+          </Heading>
+        )}
+
+        <TimeframeSelector
+          menuRef={TimeframeMenuRef}
+          className={'ChartBlock__TimeframeSelector'}
+          config={chartConfig}
+          changeCallback={timespanChangeHandler}
+          menuIsActive={menuIsActive}
+          openStateCallback={setMenuIsOpen}
+        />
+
+        <Flex
+          className={`ChartBlock__ChartContainer ${menuIsOpen ? 'ChartBlock__ChartContainer--Hidden' : ''}`}
+          height={'100%'}
+          maxW={'none'}
+          flexGrow={'1'}
+          mt={2}
+          mb={4}
+          p={0}
+          flexDirection={'column'}
+        >
+          {!loading ? (
+            !error && data?.length ? (
+              <LineChart data={data} timespan={timespan} xAxis={xAxis} yAxis={yAxis} type={type} />
+            ) : (
+              <ErrorMessageBlock />
+            )
+          ) : (
+            <Container
               w={'100%'}
               h={'100%'}
               maxW={'none'}
-              className={'ChartBlock__Loader'}>
-            </Container>}
+              className={'ChartBlock__Loader'}
+            ></Container>
+          )}
+        </Flex>
       </Flex>
-    </Flex>
-  </>)
+    </>
+  )
 }

@@ -3,10 +3,7 @@ import { useModal } from '@components/ui/Modal'
 import { useWallet } from 'src/contexts'
 import { DataContractModal } from './DataContractModal'
 import { useDataContractUpdate } from './DataContractModal/useDataContractUpdate'
-import {
-  EditControlState,
-  useEditValidation
-} from './DataContractModal/useEditValidation'
+import { EditControlState, useEditValidation } from './DataContractModal/useEditValidation'
 import type { Owner } from '../../types'
 
 /** Detail payload used by the title edit controls (owner may be enriched). */
@@ -31,7 +28,7 @@ const withTitle = (Content: ComponentType<DataContractTitleProps>) => {
       return null
     }
     return (
-      <div className='DataContractTotalCard__TitleContainer'>
+      <div className="DataContractTotalCard__TitleContainer">
         <div className={'DataContractTotalCard__Title'}>
           {props.dataContract.name || (
             <span className={'DataContractTotalCard__NoName'}>No name</span>
@@ -73,7 +70,10 @@ export const DataContractTitle = withTitle(({ dataContract }) => {
   const handleDataContractChangeDescription = ({
     keywords,
     description
-  }: { keywords: string[], description: string }) => {
+  }: {
+    keywords: string[]
+    description: string
+  }) => {
     try {
       handleChangeDescription({ keywords, description })
       handleClose()
@@ -99,10 +99,7 @@ export const DataContractTitle = withTitle(({ dataContract }) => {
   if (editValidateState === EditControlState.VALID) {
     return (
       <>
-        <button
-          className={'DataContractTotalCard__Edit'}
-          onClick={handleOpen}
-        >
+        <button className={'DataContractTotalCard__Edit'} onClick={handleOpen}>
           Edit
         </button>
         <DataContractModal

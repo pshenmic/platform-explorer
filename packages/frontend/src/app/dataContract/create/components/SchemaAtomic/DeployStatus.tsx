@@ -7,25 +7,37 @@ export const DeployStatus = () => {
   const { schemaError, signer, deploy } = useDeploy()
 
   if (schemaError != null) {
-    return <Text color='red.500' fontSize='sm'>{schemaError}</Text>
+    return (
+      <Text color="red.500" fontSize="sm">
+        {schemaError}
+      </Text>
+    )
   }
 
   if (signer.error != null) {
-    return <Text color='red.500' fontSize='sm'>{signer.error}</Text>
+    return (
+      <Text color="red.500" fontSize="sm">
+        {signer.error}
+      </Text>
+    )
   }
 
   if (deploy.error != null) {
-    return <Text color='red.500' fontSize='sm'>{deploy.error}</Text>
+    return (
+      <Text color="red.500" fontSize="sm">
+        {deploy.error}
+      </Text>
+    )
   }
 
   if (deploy.result != null) {
     return (
-      <Text color='green.500' fontSize='sm'>
+      <Text color="green.500" fontSize="sm">
         ✓ Contract deployed:{' '}
         <Link
           href={`/dataContract/${deploy.result.dataContractId}`}
-          color='green.500'
-          textDecoration='underline'
+          color="green.500"
+          textDecoration="underline"
         >
           {deploy.result.dataContractId}
         </Link>
@@ -36,15 +48,23 @@ export const DeployStatus = () => {
   if (signer.isConnected) {
     const connected = signer.signer as Signer
     return (
-      <Text color='gray.500' fontSize='sm'>
+      <Text color="gray.500" fontSize="sm">
         Signing as: {connected.identityId}
       </Text>
     )
   }
 
   if (signer.method === SignerMethod.PRIVATE_KEY) {
-    return <Text color='gray.500' fontSize='sm'>Enter your private key from your Identity</Text>
+    return (
+      <Text color="gray.500" fontSize="sm">
+        Enter your private key from your Identity
+      </Text>
+    )
   }
 
-  return <Text color='gray.500' fontSize='sm'>Connect a wallet to deploy</Text>
+  return (
+    <Text color="gray.500" fontSize="sm">
+      Connect a wallet to deploy
+    </Text>
+  )
 }

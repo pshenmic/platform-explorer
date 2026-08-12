@@ -102,12 +102,7 @@ export const BottomSheet = ({
   )
 
   return (
-    <Drawer
-      isOpen={isOpen}
-      placement={'bottom'}
-      onClose={handleClose}
-      size={'full'}
-    >
+    <Drawer isOpen={isOpen} placement={'bottom'} onClose={handleClose} size={'full'}>
       <DrawerOverlay />
       <AnimatedDiv
         ref={drawerRef}
@@ -118,7 +113,7 @@ export const BottomSheet = ({
           left: 0,
           right: 0,
           zIndex: 1400,
-          height: fullHeightOnly ? FULL_HEIGHT : (isExpanded ? FULL_HEIGHT : DRAWER_HEIGHT),
+          height: fullHeightOnly ? FULL_HEIGHT : isExpanded ? FULL_HEIGHT : DRAWER_HEIGHT,
           transform: y.to(value => `translateY(${value}px)`) as unknown as string,
           transition: 'height 0.2s ease-out'
         }}
@@ -131,11 +126,8 @@ export const BottomSheet = ({
           }}
           className={'BottomSheet__ContentContainer'}
         >
-          <DrawerHeader
-            {...bind()}
-            className={'BottomSheet__DragHandle'}
-          >
-            <div className={'BottomSheet__DragHandleLine'}/>
+          <DrawerHeader {...bind()} className={'BottomSheet__DragHandle'}>
+            <div className={'BottomSheet__DragHandleLine'} />
           </DrawerHeader>
 
           {title && <Text className={'BottomSheet__Title'}>{title}</Text>}

@@ -58,55 +58,49 @@ const ContendersListItem = ({
   isVoteVisible,
   ...props
 }: ContendersListItemProps) => (
-    <div className={`ContendersListItem ${className || ''} ${isVoteVisible ? '' : 'ContendersListItem__Content--Hidden'}`}>
-      <div className={'ContendersListItem__ScrollZone'}>
-        <Grid className={`ContendersListItem__Content ${isVoteVisible ? '' : 'ContendersListItem__Content--Hidden'}`}>
-          <GridItem className={'ContendersListItem__Column--Timestamp'}>
-            <TimeDelta endDate={new Date(contender.timestamp ?? '')}/>
-          </GridItem>
-          <GridItem className={'ContendersListItem__Column ContendersListItem__Column--Hash'}>
-            <LinkContainer
-              className={'ContendersListItem__LinkContainer'}
-              href={`/transaction/${contender.documentStateTransition}`}
-            >
-              <Identifier
-                ellipsis={false}
-                styles={['highlight-both']}
-              >
-                {contender.documentStateTransition}
-              </Identifier>
-            </LinkContainer>
-          </GridItem>
-          <GridItem className={'ContendersListItem__Column ContendersListItem__Column--Identity'}>
-            <LinkContainer
-              className={'ContendersListItem__LinkContainer'}
-              href={`/identity/${contender.identifier}`}
-            >
-              <Identifier
-                avatar={true}
-                ellipsis={false}
-                styles={['highlight-both']}
-              >
-                {contender.identifier}
-              </Identifier>
-            </LinkContainer>
-          </GridItem>
-          <GridItem className={'ContendersListItem__Column ContendersListItem__Column--Document'}>
-            <LinkContainer
-              className={'ContendersListItem__LinkContainer'}
-              href={`/document/${contender.documentIdentifier}`}
-            >
-              <Identifier
-                avatar={true}
-                ellipsis={false}
-                styles={['highlight-both']}
-              >
-                {contender.documentIdentifier}
-              </Identifier>
-            </LinkContainer>
-          </GridItem>
-          <GridItem className={'ContendersListItem__Column ContendersListItem__Column--Votes'}>
-            <ProportionsLine items={[
+  <div
+    className={`ContendersListItem ${className || ''} ${isVoteVisible ? '' : 'ContendersListItem__Content--Hidden'}`}
+  >
+    <div className={'ContendersListItem__ScrollZone'}>
+      <Grid
+        className={`ContendersListItem__Content ${isVoteVisible ? '' : 'ContendersListItem__Content--Hidden'}`}
+      >
+        <GridItem className={'ContendersListItem__Column--Timestamp'}>
+          <TimeDelta endDate={new Date(contender.timestamp ?? '')} />
+        </GridItem>
+        <GridItem className={'ContendersListItem__Column ContendersListItem__Column--Hash'}>
+          <LinkContainer
+            className={'ContendersListItem__LinkContainer'}
+            href={`/transaction/${contender.documentStateTransition}`}
+          >
+            <Identifier ellipsis={false} styles={['highlight-both']}>
+              {contender.documentStateTransition}
+            </Identifier>
+          </LinkContainer>
+        </GridItem>
+        <GridItem className={'ContendersListItem__Column ContendersListItem__Column--Identity'}>
+          <LinkContainer
+            className={'ContendersListItem__LinkContainer'}
+            href={`/identity/${contender.identifier}`}
+          >
+            <Identifier avatar={true} ellipsis={false} styles={['highlight-both']}>
+              {contender.identifier}
+            </Identifier>
+          </LinkContainer>
+        </GridItem>
+        <GridItem className={'ContendersListItem__Column ContendersListItem__Column--Document'}>
+          <LinkContainer
+            className={'ContendersListItem__LinkContainer'}
+            href={`/document/${contender.documentIdentifier}`}
+          >
+            <Identifier avatar={true} ellipsis={false} styles={['highlight-both']}>
+              {contender.documentIdentifier}
+            </Identifier>
+          </LinkContainer>
+        </GridItem>
+        <GridItem className={'ContendersListItem__Column ContendersListItem__Column--Votes'}>
+          <ProportionsLine
+            items={[
               {
                 count: contender?.towardsIdentityVotes ?? 0,
                 color: colors.green.emeralds,
@@ -125,19 +119,18 @@ const ContendersListItem = ({
                 tooltipTitle: 'Lock',
                 tooltipContent: <span>{contender.lockVotes} Lock votes</span>
               }
-            ]} />
+            ]}
+          />
+        </GridItem>
+
+        {isVoteVisible && (
+          <GridItem className={'ContendersListItem__Column ContendersListItem__Column--Votes'}>
+            <VoteManeger {...contender} {...props} />
           </GridItem>
-
-          {
-            isVoteVisible &&
-              <GridItem className={'ContendersListItem__Column ContendersListItem__Column--Votes'}>
-                <VoteManeger {...contender} {...props} />
-              </GridItem>
-          }
-
-        </Grid>
-      </div>
+        )}
+      </Grid>
     </div>
+  </div>
 )
 
 export default ContendersListItem

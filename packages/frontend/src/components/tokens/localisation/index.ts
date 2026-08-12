@@ -1,5 +1,3 @@
 import LocalisationList from './LocalisationList'
 
-export {
-  LocalisationList
-}
+export { LocalisationList }

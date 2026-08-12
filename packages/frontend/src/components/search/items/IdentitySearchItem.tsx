@@ -45,7 +45,7 @@ interface IdentitySearchItemProps extends WithClassName {
   onClick?: (data: unknown) => void
 }
 
-export function IdentitySearchItem ({ identity, className, onClick }: IdentitySearchItemProps) {
+export function IdentitySearchItem({ identity, className, onClick }: IdentitySearchItemProps) {
   return (
     <BaseSearchItem
       href={`/identity/${identity?.identifier}`}
@@ -56,18 +56,36 @@ export function IdentitySearchItem ({ identity, className, onClick }: IdentitySe
     >
       <BaseSearchItemContent
         mainContent={
-          identity?.alias
-            ? <Alias avatarSource={identity?.identifier} ellipsis={true}>{identity?.alias}</Alias>
-            : <Identifier avatar={true} ellipsis={true} styles={['highlight-both']}>{identity?.identifier}</Identifier>
+          identity?.alias ? (
+            <Alias avatarSource={identity?.identifier} ellipsis={true}>
+              {identity?.alias}
+            </Alias>
+          ) : (
+            <Identifier avatar={true} ellipsis={true} styles={['highlight-both']}>
+              {identity?.identifier}
+            </Identifier>
+          )
         }
         additionalContent={
-          identity?.status?.status
-            ? <Badge size={'xs'} colorScheme={STATUS_COLORS[identity?.status?.status] || 'gray'}>
-                {identity?.status?.status}
-              </Badge>
-            : <NotActive>-</NotActive>
+          identity?.status?.status ? (
+            <Badge size={'xs'} colorScheme={STATUS_COLORS[identity?.status?.status] || 'gray'}>
+              {identity?.status?.status}
+            </Badge>
+          ) : (
+            <NotActive>-</NotActive>
+          )
         }
-        timestamp={<TimeDelta endDate={identity?.status?.timestamp ? new Date(identity?.status?.timestamp) : (identity?.timestamp ? new Date(identity.timestamp) : undefined)}/>}
+        timestamp={
+          <TimeDelta
+            endDate={
+              identity?.status?.timestamp
+                ? new Date(identity?.status?.timestamp)
+                : identity?.timestamp
+                  ? new Date(identity.timestamp)
+                  : undefined
+            }
+          />
+        }
       />
     </BaseSearchItem>
   )

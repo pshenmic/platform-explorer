@@ -9,7 +9,7 @@ interface EpochProgressProps extends WithClassName {
   epoch: Pick<Epoch, 'startTime' | 'endTime'>
 }
 
-function EpochProgress ({ epoch, className }: EpochProgressProps) {
+function EpochProgress({ epoch, className }: EpochProgressProps) {
   const startDate = useMemo(() => new Date(epoch.startTime), [epoch.startTime])
   const endDate = useMemo(() => new Date(epoch.endTime), [epoch.endTime])
   const [progress, setProgress] = useState(0)
@@ -31,15 +31,11 @@ function EpochProgress ({ epoch, className }: EpochProgressProps) {
 
   return (
     <div className={`EpochProgress ${className || ''}`}>
-      <Progress value={progress} height={'1px'}/>
+      <Progress value={progress} height={'1px'} />
 
       <div className={'EpochProgress__Info'}>
-        <div className={'EpochProgress__InfoTitle'}>
-          Next Epoch:
-        </div>
-        <div className={'EpochProgress__InfoValue'}>
-          {timeLeft}
-        </div>
+        <div className={'EpochProgress__InfoTitle'}>Next Epoch:</div>
+        <div className={'EpochProgress__InfoValue'}>{timeLeft}</div>
       </div>
     </div>
   )

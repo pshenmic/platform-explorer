@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import type { WithClassName } from '../../../types/common'
 import './LocalTime.css'
 
-function LocalTime ({ className }: WithClassName) {
+function LocalTime({ className }: WithClassName) {
   const [time, setTime] = useState<string | null>(null)
   const [date, setDate] = useState<string | null>(null)
   const [timeZone, setTimeZone] = useState<string | null>(null)

@@ -61,28 +61,41 @@ interface DataContractDigestData {
 }
 
 interface DataContractDigestCardProps {
-  dataContract: LoadableState<DataContractDigestData> | {
-    data?: DataContractDigestData | null
-    loading?: boolean
-    error?: unknown
-  }
+  dataContract:
+    | LoadableState<DataContractDigestData>
+    | {
+        data?: DataContractDigestData | null
+        loading?: boolean
+        error?: unknown
+      }
   rate?: LoadableState<Rate> | { data?: Rate | null } | null
   txCount?: number | null
 }
 
-function DataContractDigestCard ({ dataContract, rate, txCount }: DataContractDigestCardProps) {
+function DataContractDigestCard({ dataContract, rate, txCount }: DataContractDigestCardProps) {
   const topIdentity = dataContract?.data?.topIdentity
-  const topIdentityObj = typeof topIdentity === 'object' && topIdentity !== null ? topIdentity : null
-  const topIdentityId = topIdentityObj?.identifier ?? (typeof topIdentity === 'string' ? topIdentity : null)
+  const topIdentityObj =
+    typeof topIdentity === 'object' && topIdentity !== null ? topIdentity : null
+  const topIdentityId =
+    topIdentityObj?.identifier ?? (typeof topIdentity === 'string' ? topIdentity : null)
   const topIdentityActiveAlias = findActiveAlias(topIdentityObj?.aliases)
 
   return (
-    <div className={`DataContract__InfoBlock DataContract__DigestCard DataContractDigestCard ${dataContract.loading ? 'DataContractDigestCard--Loading' : ''}`}>
+    <div
+      className={`DataContract__InfoBlock DataContract__DigestCard DataContractDigestCard ${dataContract.loading ? 'DataContractDigestCard--Loading' : ''}`}
+    >
       <div className={'DataContractDigestCard__RowContainer'}>
         <div className={'DataContractDigestCard__InfoContainer'}>
           <InfoLine
-            className={'DataContractDigestCard__InfoLine DataContractDigestCard__InfoLine--TotalTransactions'}
-            title={(<span><TransactionsIcon/>Total transactions</span>)}
+            className={
+              'DataContractDigestCard__InfoLine DataContractDigestCard__InfoLine--TotalTransactions'
+            }
+            title={
+              <span>
+                <TransactionsIcon />
+                Total transactions
+              </span>
+            }
             value={txCount}
             loading={dataContract.loading}
             error={dataContract.error || txCount === undefined}
@@ -91,8 +104,15 @@ function DataContractDigestCard ({ dataContract, rate, txCount }: DataContractDi
 
         <div className={'DataContractDigestCard__InfoContainer'}>
           <InfoLine
-            className={'DataContractDigestCard__InfoLine DataContractDigestCard__InfoLine--DocumentsCount'}
-            title={(<span><DocumentIcon/>Total Documents</span>)}
+            className={
+              'DataContractDigestCard__InfoLine DataContractDigestCard__InfoLine--DocumentsCount'
+            }
+            title={
+              <span>
+                <DocumentIcon />
+                Total Documents
+              </span>
+            }
             value={dataContract.data?.documentsCount}
             loading={dataContract.loading}
             error={dataContract.error || dataContract.data?.documentsCount === undefined}
@@ -103,16 +123,22 @@ function DataContractDigestCard ({ dataContract, rate, txCount }: DataContractDi
       <InfoLine
         className={'DataContractDigestCard__InfoLine DataContractDigestCard__InfoLine--TopIdentity'}
         title={'Top Identity'}
-        value={(
+        value={
           <ValueCard link={`/identity/${topIdentityId}`}>
-            {topIdentityActiveAlias
-              ? <Alias avatarSource={topIdentityId}>{topIdentityActiveAlias.alias}</Alias>
-              : <Identifier avatar={true} copyButton={true} ellipsis={true} styles={['highlight-both']}>
+            {topIdentityActiveAlias ? (
+              <Alias avatarSource={topIdentityId}>{topIdentityActiveAlias.alias}</Alias>
+            ) : (
+              <Identifier
+                avatar={true}
+                copyButton={true}
+                ellipsis={true}
+                styles={['highlight-both']}
+              >
                 {topIdentityId}
               </Identifier>
-            }
+            )}
           </ValueCard>
-        )}
+        }
         loading={dataContract.loading}
         error={dataContract.error || !dataContract.data?.topIdentity}
       />
@@ -128,7 +154,7 @@ function DataContractDigestCard ({ dataContract, rate, txCount }: DataContractDi
       <InfoLine
         className={'DataContractDigestCard__InfoLine'}
         title={'Total Gas Spent'}
-        value={<CreditsBlock credits={dataContract.data?.totalGasUsed} rate={rate}/>}
+        value={<CreditsBlock credits={dataContract.data?.totalGasUsed} rate={rate} />}
         loading={dataContract.loading}
         error={dataContract.error}
       />
@@ -136,7 +162,7 @@ function DataContractDigestCard ({ dataContract, rate, txCount }: DataContractDi
       <InfoLine
         className={'DataContractDigestCard__InfoLine'}
         title={'Average Gas Spent'}
-        value={<CreditsBlock credits={dataContract.data?.averageGasUsed} rate={rate}/>}
+        value={<CreditsBlock credits={dataContract.data?.averageGasUsed} rate={rate} />}
         loading={dataContract.loading}
         error={dataContract.error}
       />

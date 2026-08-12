@@ -38,7 +38,7 @@ interface ActivityListProps {
   decimals?: number | null
 }
 
-export default function ActivityList ({
+export default function ActivityList({
   activities = [],
   showMoreLink,
   headerStyles = 'default',
@@ -78,26 +78,22 @@ export default function ActivityList ({
           </GridItem>
         </Grid>
 
-        {!loading
-          ? <div className={'ActivityList__Items'}>
-              {activities?.map((activity, key) => (
-                <ActivityListItem
-                  key={key}
-                  activity={activity}
-                  rate={rate}
-                  decimals={decimals}
-                />
-              ))}
-              {activities?.length === 0 &&
-                <EmptyListMessage>There are no activities yet.</EmptyListMessage>
-              }
-              {activities === undefined && <ErrorMessageBlock/>}
-            </div>
-          : <LoadingList itemsCount={itemsCount}/>
-        }
+        {!loading ? (
+          <div className={'ActivityList__Items'}>
+            {activities?.map((activity, key) => (
+              <ActivityListItem key={key} activity={activity} rate={rate} decimals={decimals} />
+            ))}
+            {activities?.length === 0 && (
+              <EmptyListMessage>There are no activities yet.</EmptyListMessage>
+            )}
+            {activities === undefined && <ErrorMessageBlock />}
+          </div>
+        ) : (
+          <LoadingList itemsCount={itemsCount} />
+        )}
       </div>
 
-      {pagination &&
+      {pagination && (
         <Pagination
           className={'ActivityList__Pagination'}
           onPageChange={pagination.onPageChange}
@@ -105,11 +101,13 @@ export default function ActivityList ({
           forcePage={pagination.forcePage}
           justify={true}
         />
-      }
+      )}
 
-      {showMoreLink &&
-        <Link href={showMoreLink} className={'SimpleList__ShowMoreButton'}>Show more</Link>
-      }
+      {showMoreLink && (
+        <Link href={showMoreLink} className={'SimpleList__ShowMoreButton'}>
+          Show more
+        </Link>
+      )}
     </div>
   )
 }
