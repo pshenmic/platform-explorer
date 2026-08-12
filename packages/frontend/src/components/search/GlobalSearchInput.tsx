@@ -9,7 +9,7 @@ import { useDebounce } from '../../hooks'
 import { useRouter } from 'next/navigation'
 import type { SearchResultsData } from './SearchResultsList'
 import type { SearchCategory } from './constants'
-import './GlobalSearchInput.scss'
+import './GlobalSearchInput.css'
 
 function filterResultByCategories (obj: SearchResultsData = {}, categories: SearchCategory[]): SearchResultsData {
   return categories.reduce<SearchResultsData>((filtered, key) => {

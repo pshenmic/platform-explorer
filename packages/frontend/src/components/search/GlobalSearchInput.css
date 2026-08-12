@@ -1,0 +1,8 @@
+.GlobalSearchInput__Field {
+  font-family: var(--pe-font-mono);
+  border-radius: var(--pe-radius-def) !important;
+  color: #fff;
+}
+.GlobalSearchInput__Field:hover, .GlobalSearchInput__Field:focus {
+  background-color: rgba(46, 57, 61, 0.6) !important;
+}
