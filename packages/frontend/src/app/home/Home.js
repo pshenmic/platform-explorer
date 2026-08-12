@@ -59,11 +59,48 @@ function Home () {
     queryFn: () => Api.getValidators(1, 1, 'desc', { isActive: 'false', isBanned: 'false' }),
     staleTime: 60_000
   })
-  // one page for geoIpInfo (#822): full set on testnet, a sample on large networks
+  // API max limit 100; enough for full testnet pool, sample on larger networks
   const validatorsGeoQuery = useQuery({
-    queryKey: ['home', 'validators', 'geo'],
+    queryKey: ['home', 'validators', 'pool'],
     queryFn: () => Api.getValidators(1, 100, 'desc'),
-    staleTime: 300_000
+    staleTime: 60_000,
+    refetchInterval: 120_000
+  })
+
+  const currentQuorumQuery = useQuery({
+    queryKey: ['home', 'quorums', 'current'],
+    queryFn: () => Api.getCurrentQuorum(),
+    staleTime: 60_000,
+    refetchInterval: 60_000,
+    retry: 1
+  })
+  const quorumsListQuery = useQuery({
+    queryKey: ['home', 'quorums', 'list'],
+    queryFn: () => Api.getQuorums(),
+    staleTime: 60_000,
+    refetchInterval: 60_000,
+    retry: 1
+  })
+
+  // next formed quorum: lowest blockHeight above current (list omits members)
+  const nextQuorumMeta = useMemo(() => {
+    const list = quorumsListQuery.data
+    const current = currentQuorumQuery.data
+    if (!Array.isArray(list) || !current) return null
+    const curH = typeof current.blockHeight === 'number' ? current.blockHeight : null
+    if (curH == null) return null
+    const ahead = list
+      .filter(q => typeof q?.blockHeight === 'number' && q.blockHeight > curH)
+      .sort((a, b) => a.blockHeight - b.blockHeight)
+    return ahead[0] ?? null
+  }, [quorumsListQuery.data, currentQuorumQuery.data])
+
+  const nextQuorumQuery = useQuery({
+    queryKey: ['home', 'quorums', 'next', nextQuorumMeta?.quorumHash],
+    queryFn: () => Api.getQuorumByHash(nextQuorumMeta.quorumHash),
+    enabled: Boolean(nextQuorumMeta?.quorumHash),
+    staleTime: 60_000,
+    retry: 1
   })
 
   // shape expected by MasternodesDonut ({ data, loading })
@@ -265,6 +302,11 @@ function Home () {
               validatorsBanned={validatorsBanned}
               validatorsInactive={validatorsInactive}
               validatorsList={validatorsGeoQuery.data?.resultSet}
+              currentQuorum={currentQuorumQuery.data}
+              currentQuorumLoading={currentQuorumQuery.isPending || currentQuorumQuery.isLoading}
+              currentQuorumError={currentQuorumQuery.isError}
+              nextQuorum={nextQuorumQuery.data}
+              nextQuorumLoading={Boolean(nextQuorumMeta?.quorumHash) && (nextQuorumQuery.isPending || nextQuorumQuery.isLoading)}
             />
           </div>
         </div>

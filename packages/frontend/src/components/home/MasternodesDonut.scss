@@ -33,8 +33,8 @@ $mn-total: rgba(var(--chakra-colors-brand-light-rgb), 0.85);
     display: flex;
     align-items: flex-start;
     justify-content: space-between;
-    gap: 14px 18px;
-    margin-bottom: 16px;
+    gap: 12px 16px;
+    margin-bottom: 14px;
     flex-shrink: 0;
 
     @media screen and (max-width: $breakpoint-md) {
@@ -46,7 +46,14 @@ $mn-total: rgba(var(--chakra-colors-brand-light-rgb), 0.85);
   &__HeadText {
     min-width: 0;
     max-width: 28rem;
-    flex: 0 1 auto;
+    flex: 1 1 auto;
+  }
+
+  &__TitleRow {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 4px;
   }
 
   &__Eyebrow {
@@ -56,7 +63,55 @@ $mn-total: rgba(var(--chakra-colors-brand-light-rgb), 0.85);
     text-transform: uppercase;
     letter-spacing: 0.22em;
     color: rgba($mn-active, 0.9);
-    margin-bottom: 4px;
+    margin-bottom: 0;
+  }
+
+  &__HelpBtn {
+    appearance: none;
+    width: 1.25rem;
+    height: 1.25rem;
+    padding: 0;
+    border-radius: 50%;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    background: rgba(255, 255, 255, 0.04);
+    color: var(--chakra-colors-gray-250);
+    font-family: $font-mono;
+    font-size: 0.625rem;
+    font-weight: 700;
+    line-height: 1;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: border-color 0.12s ease, color 0.12s ease, background 0.12s ease;
+
+    &:hover,
+    &.is-open {
+      color: #fff;
+      border-color: rgba($mn-active, 0.55);
+      background: rgba($mn-active, 0.1);
+    }
+  }
+
+  &__Help {
+    margin-top: 10px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    background: rgba(0, 0, 0, 0.28);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    font-family: $font-mono;
+    font-size: 0.6875rem;
+    line-height: 1.55;
+    color: var(--chakra-colors-gray-250);
+
+    p {
+      margin: 0 0 0.55em;
+
+      &:last-child { margin-bottom: 0; }
+    }
+
+    b {
+      color: #fff;
+      font-weight: 700;
+    }
   }
 
   &__Title {
@@ -77,7 +132,203 @@ $mn-total: rgba(var(--chakra-colors-brand-light-rgb), 0.85);
     margin: 0;
   }
 
+  &__Status {
+    flex: 0 1 auto;
+    display: flex;
+    flex-wrap: wrap;
+    align-content: flex-start;
+    justify-content: flex-end;
+    gap: 5px;
+    min-width: 0;
+    max-width: min(52%, 20rem);
+    padding-top: 0.2rem;
 
+    @media screen and (max-width: $breakpoint-md) {
+      max-width: none;
+      width: 100%;
+      justify-content: flex-start;
+      padding-top: 0;
+    }
+  }
+
+  &__Chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 8px;
+    border-radius: 999px;
+    font-family: $font-mono;
+    font-size: 0.625rem;
+    font-variant-numeric: tabular-nums;
+    line-height: 1.2;
+    color: #fff;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    white-space: nowrap;
+
+    i {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: currentColor;
+      flex-shrink: 0;
+    }
+
+    &--good {
+      color: $mn-active;
+      border-color: rgba($mn-active, 0.35);
+      background: rgba($mn-active, 0.08);
+    }
+
+    &--warn {
+      color: #ffc857;
+      border-color: rgba(#ffc857, 0.35);
+      background: rgba(#ffc857, 0.08);
+    }
+
+    &--bad,
+    &--critical {
+      color: $mn-banned;
+      border-color: rgba($mn-banned, 0.4);
+      background: rgba($mn-banned, 0.1);
+    }
+
+    &--muted {
+      color: var(--chakra-colors-gray-250);
+    }
+
+    &--live {
+      color: $mn-active;
+
+      i {
+        box-shadow: 0 0 6px rgba($mn-active, 0.7);
+        animation: mn-live-pulse 1.8s ease-in-out infinite;
+      }
+    }
+  }
+
+  &__FallbackNote {
+    margin: -6px 0 10px;
+    font-family: $font-mono;
+    font-size: 0.6875rem;
+    color: var(--chakra-colors-gray-500);
+
+    &--inline {
+      margin: 8px 0 0;
+    }
+  }
+
+  &__Diff {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px 10px;
+    margin: -2px 0 12px;
+    font-family: $font-mono;
+    font-size: 0.625rem;
+    font-variant-numeric: tabular-nums;
+    color: var(--chakra-colors-gray-250);
+    flex-shrink: 0;
+  }
+
+  &__DiffItem {
+    padding: 2px 7px;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.03);
+
+    &--stay { color: #fff; }
+    &--join {
+      color: #7ad7ff;
+      border-color: rgba(#7ad7ff, 0.3);
+      background: rgba(#7ad7ff, 0.08);
+    }
+    &--leave {
+      color: rgba(255, 255, 255, 0.55);
+      border-style: dashed;
+    }
+  }
+
+  &__DiffNote {
+    color: var(--chakra-colors-gray-500);
+  }
+
+  &__Tip {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    min-width: 12rem;
+    max-width: 17rem;
+    text-align: left;
+  }
+
+  &__TipHead {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 4px;
+  }
+
+  &__TipFlag {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.15);
+  }
+
+  &__TipHeadText {
+    min-width: 0;
+    flex: 1 1 auto;
+  }
+
+  &__TipStatus {
+    font-weight: 700;
+    color: #fff;
+    line-height: 1.25;
+  }
+
+  &__TipCountry {
+    margin-top: 2px;
+    font-size: 0.6875rem;
+    color: rgba(255, 255, 255, 0.65);
+    line-height: 1.3;
+  }
+
+  &__TipRow {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    font-size: 0.6875rem;
+    line-height: 1.35;
+
+    span {
+      color: rgba(255, 255, 255, 0.55);
+      flex-shrink: 0;
+    }
+
+    b {
+      font-weight: 600;
+      color: #fff;
+      text-align: right;
+      word-break: break-all;
+    }
+  }
+
+  &__TipMono {
+    font-family: $font-mono;
+    font-size: 0.625rem;
+  }
+
+  &__TipCta {
+    margin-top: 4px;
+    padding-top: 6px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    font-size: 0.6875rem;
+    font-weight: 700;
+    color: $mn-active;
+  }
 
   &__Body {
     flex: 1 1 auto;
@@ -125,7 +376,7 @@ $mn-total: rgba(var(--chakra-colors-brand-light-rgb), 0.85);
     }
   }
 
-  // matrix fills the whole left column (no hub text — rails carry the numbers)
+  // matrix fills the left column (dashboard widgets should use the card, not letterbox)
   &__MatrixWrap {
     flex: 1 1 auto;
     display: flex;
@@ -146,15 +397,19 @@ $mn-total: rgba(var(--chakra-colors-brand-light-rgb), 0.85);
 
   &__Matrix {
     display: grid;
-    gap: 3px;
+    // gutters stay open so large cells (small N / tall card) do not visually merge
+    gap: 5px;
     width: 100%;
     height: 100%;
     min-height: 0;
     flex: 1 1 auto;
     align-content: stretch;
+    // contain focus rings / brightness without outer scale bleed
+    overflow: hidden;
+    border-radius: 4px;
 
     @media screen and (max-width: $breakpoint-md) {
-      // explicit square footprint so cells get real height on phone
+      // square footprint on phone so cells get real height
       height: auto;
       aspect-ratio: 1;
       min-height: 200px;
@@ -162,6 +417,8 @@ $mn-total: rgba(var(--chakra-colors-brand-light-rgb), 0.85);
       flex: none;
     }
   }
+
+  $mn-join: #7ad7ff;
 
   &__Cell {
     appearance: none;
@@ -172,13 +429,17 @@ $mn-total: rgba(var(--chakra-colors-brand-light-rgb), 0.85);
     min-height: 0;
     width: 100%;
     height: 100%;
-    border-radius: 2px;
+    border-radius: 3px;
     cursor: pointer;
-    transition: opacity 0.12s ease, transform 0.12s ease, box-shadow 0.12s ease;
+    position: relative;
+    z-index: 0;
+    transition: opacity 0.12s ease, filter 0.12s ease, box-shadow 0.12s ease;
     outline: none;
+    text-decoration: none;
+    display: block;
+    box-sizing: border-box;
 
     @media screen and (max-width: $breakpoint-md) {
-      // with auto-height grid rows, keep tiles square
       aspect-ratio: 1;
       height: auto;
       min-height: 6px;
@@ -186,19 +447,23 @@ $mn-total: rgba(var(--chakra-colors-brand-light-rgb), 0.85);
 
     &--active {
       background: $mn-active;
-      box-shadow: 0 0 6px rgba($mn-active, 0.35);
+      box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.12);
+    }
+
+    &--join {
+      background: $mn-join;
+      box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.12);
     }
 
     &--inactive {
       background: $mn-queued;
+      box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.1);
     }
 
-    &--banned {
+    &--banned,
+    &--invalid {
       background: $mn-banned;
-      box-shadow: 0 0 7px rgba($mn-banned, 0.55);
-      // slightly stronger so a few banned cells still read against the grid
-      outline: 1px solid rgba($mn-banned, 0.35);
-      outline-offset: -1px;
+      box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.15);
     }
 
     &--idle {
@@ -206,11 +471,28 @@ $mn-total: rgba(var(--chakra-colors-brand-light-rgb), 0.85);
       cursor: default;
     }
 
-    &:focus-visible {
-      transform: scale(1.12);
-      box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.5);
-      z-index: 1;
+    &.is-leaving {
+      background: rgba($mn-active, 0.45);
+      box-shadow: inset 0 0 0 1px rgba($mn-active, 0.5);
     }
+
+    &.is-dimmed {
+      opacity: 0.22;
+      filter: none;
+    }
+
+    &:not(.MasternodesDonut__Cell--idle):hover,
+    &:not(.MasternodesDonut__Cell--idle):focus-visible {
+      z-index: 2;
+      filter: brightness(1.16);
+      box-shadow:
+        inset 0 0 0 1px rgba(255, 255, 255, 0.35),
+        0 0 0 1px rgba(255, 255, 255, 0.1);
+    }
+  }
+
+  &__Matrix--roster {
+    gap: 5px;
   }
 
   &__Rails {
@@ -348,27 +630,10 @@ $mn-total: rgba(var(--chakra-colors-brand-light-rgb), 0.85);
   &__Rail--banned { color: $mn-banned; }
   &__Rail--total { color: $mn-total; }
 
-  @media (hover: hover) and (pointer: fine) {
-    @each $name in active, inactive, banned {
-      &__Stage:not(.is-pinned):has([data-type='#{$name}']:hover) {
-        [data-type]:not([data-type='#{$name}']) { opacity: 0.22; }
-        [data-type='#{$name}'] { opacity: 1; }
-
-        .MasternodesDonut__Cell[data-type='#{$name}'] {
-          transform: scale(1.08);
-        }
-      }
-    }
-
-    // Total hover: keep whole matrix lit
-    &__Stage:not(.is-pinned):has([data-type='total']:hover) {
-      [data-type] { opacity: 1; }
-    }
-  }
-
+  // Rail pin dims other role groups; cell hover does not
   @each $name in active, inactive, banned {
     &__Stage.is-pinned[data-pin='#{$name}'] {
-      [data-type]:not([data-type='#{$name}']) { opacity: 0.18; }
+      [data-type]:not([data-type='#{$name}']) { opacity: 0.22; }
       [data-type='#{$name}'] { opacity: 1; }
 
       .MasternodesDonut__Rail--#{$name} {
@@ -377,7 +642,8 @@ $mn-total: rgba(var(--chakra-colors-brand-light-rgb), 0.85);
       }
 
       .MasternodesDonut__Cell[data-type='#{$name}'] {
-        box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.12);
+        filter: brightness(1.06);
+        box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.18);
       }
     }
   }
@@ -391,53 +657,16 @@ $mn-total: rgba(var(--chakra-colors-brand-light-rgb), 0.85);
     }
   }
 
-  // country chips — top-right of the card head (replaces “N evonodes”)
-  &__Geo {
-    flex: 1 1 auto;
-    display: flex;
-    flex-wrap: wrap;
-    align-content: flex-start;
-    justify-content: flex-end;
-    gap: 5px;
-    min-width: 0;
-    max-width: min(52%, 22rem);
-    padding-top: 0.35rem;
+}
 
-    @media screen and (max-width: $breakpoint-md) {
-      max-width: none;
-      width: 100%;
-      justify-content: flex-start;
-      padding-top: 0;
-    }
-  }
+@keyframes mn-live-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.35; }
+}
 
-  &__GeoChip {
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    padding: 3px 7px 3px 3px;
-    border-radius: 999px;
-    background: rgba(255, 255, 255, 0.04);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    font-family: $font-mono;
-    font-size: 0.625rem;
-    font-variant-numeric: tabular-nums;
-    color: var(--chakra-colors-gray-250);
-    line-height: 1;
-
-    b {
-      color: #fff;
-      font-weight: 700;
-      letter-spacing: 0.03em;
-    }
-  }
-
-  &__Flag {
-    width: 18px;
-    height: 18px;
-    border-radius: 50%;
-    object-fit: cover;
-    display: block;
-    flex-shrink: 0;
+@media (prefers-reduced-motion: reduce) {
+  .MasternodesDonut__Chip--live i {
+    animation: none;
   }
 }
+
