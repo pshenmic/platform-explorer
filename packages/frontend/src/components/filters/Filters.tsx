@@ -130,25 +130,23 @@ export const Filters = ({
   const { isOpen: menuIsOpen, onOpen: menuOnOpen, onClose: menuOnClose } = useDisclosure()
   const [isMenuInitialized, setIsMenuInitialized] = useState(false)
 
-  /** Sync menu filters with applied filters when menu opens */
+  /**
+   * Open / close the filter menu.
+   * Parent owns open state (controlled Popover). Handlers must be idempotent:
+   * Chakra may call onOpen/onClose more than once for one transition.
+   */
   const handleMenuOpen = useCallback(() => {
-    // Controlled Popover may re-fire onOpen while already open — do not setState again
-    // (was causing "Maximum update depth exceeded" with MultiLevelMenu).
     if (menuIsOpen) return
 
-    // Desktop: always copy applied → menu on each open. Mobile sheet: once per session.
-    if (!isMenuInitialized || !isMobile) {
-      setMenuFilters(appliedFilters)
-      setIsMenuInitialized(true)
-    }
-
+    // Snapshot applied filters into draft menu state once per open
+    setMenuFilters(appliedFilters)
+    setIsMenuInitialized(true)
     menuOnOpen()
-  }, [menuIsOpen, appliedFilters, setMenuFilters, menuOnOpen, isMenuInitialized, isMobile])
+  }, [menuIsOpen, appliedFilters, setMenuFilters, menuOnOpen])
 
   const handleMenuClose = useCallback(() => {
     if (!menuIsOpen) return
 
-    /** Apply filters when menu closes (if not applying on change) */
     if (!applyOnChange) {
       applyFilters()
     }
@@ -156,12 +154,11 @@ export const Filters = ({
     menuOnClose()
   }, [menuIsOpen, applyFilters, applyOnChange, menuOnClose])
 
-  const submitHandler = () => {
-    /** Always apply filters when submit is pressed */
+  const submitHandler = useCallback(() => {
     applyFilters()
     setIsMenuInitialized(false)
     menuOnClose()
-  }
+  }, [applyFilters, menuOnClose])
 
   /** Handle single filter change in menu */
   const handleFilterChange = useCallback((filterName: string, value: FilterStateValue) => {
@@ -308,12 +305,14 @@ export const Filters = ({
       options: config.options || null,
       mobileTagRenderer: config.mobileTagRenderer || null
     }
-  }), [filtersConfig, menuFilters, appliedFilters, handleMultipleValuesChange, handleFilterChange, handleToggleAll])
+  }), [filtersConfig, menuFilters, appliedFilters, handleMultipleValuesChange, handleFilterChange, handleToggleAll, submitHandler])
 
-  const TriggerButton = () => (
+  /** Mobile: we own the click. Desktop: PopoverTrigger owns the click — no onClick here. */
+  const filterTriggerButton = useMemo(() => (
     <Button
+      type='button'
       className={'Filters__Button Filters__Button--ToggleFilters '}
-      onClick={() => menuIsOpen ? handleMenuClose() : handleMenuOpen()}
+      onClick={isMobile ? () => { menuIsOpen ? handleMenuClose() : handleMenuOpen() } : undefined}
       variant={'brand'}
       size={'sm'}
     >
@@ -323,7 +322,7 @@ export const Filters = ({
         transform: menuIsOpen ? 'rotate(-90deg)' : 'rotate(90deg)'
       }} />
     </Button>
-  )
+  ), [isMobile, menuIsOpen, handleMenuClose, handleMenuOpen, buttonText])
 
   const activeFiltersCount = menuData.filter(item => item.activeFilterValue).length
 
@@ -332,10 +331,10 @@ export const Filters = ({
       <div className={'Filters__ButtonsContainer'}>
         <div className={'Filters__ControlButtons'}>
           {isMobile
-            ? <TriggerButton />
+            ? filterTriggerButton
             : <MultiLevelMenu
                 placement={'bottom-start'}
-                trigger={TriggerButton()}
+                trigger={filterTriggerButton}
                 menuData={menuData}
                 onClose={handleMenuClose}
                 isOpen={menuIsOpen}

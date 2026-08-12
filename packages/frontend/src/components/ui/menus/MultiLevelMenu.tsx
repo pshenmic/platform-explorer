@@ -1,84 +1,80 @@
-import { useOutsideClick } from '../../../hooks/useOutsideClick'
+'use client'
+
 import { Button, Popover, PopoverTrigger, PopoverContent, PopoverBody } from '@chakra-ui/react'
 import type { PopoverProps } from '@chakra-ui/react'
 import MenuLevel from './MenuLevel'
 import type { MenuItem } from './MenuLevel'
-import { useState, useRef } from 'react'
-import type { ReactNode } from 'react'
+import { useCallback, useState } from 'react'
+import type { ReactElement, ReactNode } from 'react'
 import './MultiLevelMenu.css'
 
 interface MultiLevelMenuProps extends Omit<PopoverProps, 'children' | 'trigger'> {
   menuData?: MenuItem[]
-  trigger?: ReactNode
+  /** Must be a single element (PopoverTrigger clones it). Prefer a stable element. */
+  trigger?: ReactElement
   placement?: PopoverProps['placement']
   onClose?: () => void
   onOpen?: () => void
   isOpen?: boolean
 }
 
+/**
+ * Desktop multi-level filter menu.
+ * Controlled mode: pass isOpen + onOpen + onClose from the parent.
+ * Do not put a second open-toggle onClick on the trigger — PopoverTrigger owns the click.
+ */
 function MultiLevelMenu ({
   menuData = [],
   trigger,
   placement = 'right-start',
   onClose,
   onOpen,
-  isOpen: forceIsOpen,
+  isOpen,
   ...props
 }: MultiLevelMenuProps) {
-  const [forceClose, setForceClose] = useState(false)
   const [activeItemId, setActiveItemId] = useState<number | null>(null)
-  const menuRef = useRef<HTMLElement | null>(null)
 
-  const closeMenuHandler = () => {
-    setForceClose(true)
+  const handleOpen = useCallback(() => {
+    onOpen?.()
+  }, [onOpen])
+
+  const handleClose = useCallback(() => {
     setActiveItemId(null)
-    if (typeof onClose === 'function') onClose()
-  }
+    onClose?.()
+  }, [onClose])
 
-  const openMenuHandler = () => {
-    // Avoid re-entrant open while parent already keeps Popover open (controlled isOpen)
-    if (forceIsOpen) {
-      setForceClose(false)
-      return
-    }
-    setForceClose(false)
-    if (typeof onOpen === 'function') onOpen()
-  }
-
-  const handleActiveItemChange = (id: number | null) => {
+  const handleActiveItemChange = useCallback((id: number | null) => {
     setActiveItemId(prev => (prev === id ? prev : id))
-  }
+  }, [])
 
-  useOutsideClick({
-    ref: menuRef,
-    handler: closeMenuHandler
-  })
+  const handleMenuItemClick = useCallback(() => {
+    handleClose()
+  }, [handleClose])
 
   return (
     <Popover
-      onClose={closeMenuHandler}
-      onOpen={openMenuHandler}
-      closeOnBlur={true}
+      isOpen={isOpen}
+      onOpen={handleOpen}
+      onClose={handleClose}
+      closeOnBlur
       placement={placement}
       variant={'menu'}
       isLazy
-      isOpen={forceIsOpen}
+      autoFocus={false}
+      returnFocusOnClose={false}
       {...props}
     >
       <PopoverTrigger>
-        {trigger ||
-          <Button>
-            Open menu
-          </Button>
-        }
+        {trigger ?? <Button type='button'>Open menu</Button>}
       </PopoverTrigger>
-      <PopoverContent width={'auto'} minWidth={'180px'} ref={menuRef}>
-        <PopoverBody overflow={'visible'}>
+      <PopoverContent width={'auto'} minWidth={'180px'}>
+        <PopoverBody overflow={'visible'} p={0}>
           <MenuLevel
             items={menuData}
-            forceClose={forceClose}
+            forceClose={isOpen === false}
             activeItemId={activeItemId}
             onActiveItemChange={handleActiveItemChange}
+            onMenuItemClick={handleMenuItemClick}
           />
         </PopoverBody>
       </PopoverContent>
