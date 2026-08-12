@@ -15,7 +15,7 @@ import NetworkStatsInline from '../../components/stats/NetworkStatsInline'
 import PageTitle from '../../components/intro/PageTitle'
 import type { Block, LoadableState, PaginatedResultSet } from '../../types'
 import introContent from './introContent'
-import './Blocks.scss'
+import './Blocks.css'
 
 const paginateConfig = {
   pageSize: {
