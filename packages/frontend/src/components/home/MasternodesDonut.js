@@ -67,12 +67,12 @@ const STATS = [
   {
     key: 'inactive',
     label: 'Queued',
-    hint: 'Registered but not in the current signing set, waiting to rotate in.'
+    hint: 'Not active and not banned. Gray with a blue ring means joining the next set.'
   },
   {
     key: 'banned',
     label: 'Banned',
-    hint: 'PoSe-banned for failed service. Does not enter the signing set.'
+    hint: 'Not in the registered unbanned set (PoSe ban or left the masternode list).'
   }
 ]
 
@@ -129,17 +129,19 @@ function matrixCols (count) {
   return Math.max(10, Math.ceil(Math.sqrt(count)))
 }
 
-function isBannedValidator (v) {
+function isPoSeBannedValidator (v) {
   const ban = v?.proTxInfo?.state?.PoSeBanHeight
   return typeof ban === 'number' && ban >= 0
 }
 
-function buildPoolCells ({ list, currentSet, nextSet, memberMeta }) {
+function buildPoolCells ({ list, currentSet, nextSet, memberMeta, bannedSet }) {
   if (!Array.isArray(list) || list.length === 0) return []
 
   const cells = list.slice(0, MAX_CELLS).map((v, index) => {
     const key = memberKey(v.proTxHash)
-    const banned = isBannedValidator(v)
+    const banned = bannedSet?.size
+      ? bannedSet.has(key)
+      : isPoSeBannedValidator(v)
     const inCurrent = currentSet?.has(key)
     const inNext = nextSet?.has(key)
     const meta = memberMeta?.get(key)
@@ -151,10 +153,16 @@ function buildPoolCells ({ list, currentSet, nextSet, memberMeta }) {
       type = 'banned'
       role = 'banned'
     } else if (inCurrent) {
-      type = meta?.valid === false ? 'invalid' : 'active'
-      role = inNext === false && nextSet?.size
-        ? 'leave'
-        : (meta?.valid === false ? 'invalid' : 'current')
+      if (meta?.valid === false) {
+        type = 'invalid'
+        role = 'invalid'
+      } else if (nextSet?.size && !inNext) {
+        type = 'leave'
+        role = 'leave'
+      } else {
+        type = 'active'
+        role = 'current'
+      }
     } else if (inNext) {
       type = 'join'
       role = 'join'
@@ -175,7 +183,7 @@ function buildPoolCells ({ list, currentSet, nextSet, memberMeta }) {
     }
   })
 
-  const rank = { active: 0, invalid: 1, join: 2, inactive: 3, banned: 4, idle: 5 }
+  const rank = { active: 0, leave: 1, join: 2, invalid: 3, inactive: 4, banned: 5, idle: 6 }
   cells.sort((a, b) => (rank[a.type] ?? 9) - (rank[b.type] ?? 9))
   return cells
 }
@@ -183,11 +191,15 @@ function buildPoolCells ({ list, currentSet, nextSet, memberMeta }) {
 function NodeTooltipBody ({ cell }) {
   const v = cell.validator
   const status = (() => {
-    if (cell.role === 'banned') return 'PoSe banned'
+    if (cell.role === 'banned') {
+      return isPoSeBannedValidator(cell.validator)
+        ? 'Banned (PoSe)'
+        : 'Banned / not in registered set'
+    }
     if (cell.role === 'invalid') return 'In current quorum · invalid'
-    if (cell.role === 'leave') return 'In current signing set'
+    if (cell.role === 'leave') return 'Leaving next · still in current set'
     if (cell.role === 'current' || cell.role === 'active') return 'In current signing set'
-    if (cell.role === 'join') return 'In the next formed signing set'
+    if (cell.role === 'join') return 'Queued now · joining the next signing set'
     return 'Queued · not in the current signing set'
   })()
 
@@ -249,6 +261,7 @@ export default function MasternodesDonut ({
   validatorsBanned,
   validatorsInactive,
   validatorsList,
+  bannedValidatorsList,
   currentQuorum,
   currentQuorumLoading,
   currentQuorumError,
@@ -323,6 +336,13 @@ export default function MasternodesDonut ({
     () => (Array.isArray(validatorsList) ? validatorsList : []),
     [validatorsList]
   )
+  const bannedSet = useMemo(() => {
+    const set = new Set()
+    for (const v of Array.isArray(bannedValidatorsList) ? bannedValidatorsList : []) {
+      if (v?.proTxHash) set.add(memberKey(v.proTxHash))
+    }
+    return set
+  }, [bannedValidatorsList])
   const hasNodeList = list.length > 0
 
   const cells = useMemo(() => {
@@ -331,12 +351,13 @@ export default function MasternodesDonut ({
         list,
         currentSet,
         nextSet,
-        memberMeta
+        memberMeta,
+        bannedSet
       })
     }
     if (!hasTotal) return []
     return buildProportionalCells(activeN, queuedN, bannedN, total)
-  }, [hasNodeList, list, currentSet, nextSet, memberMeta, hasTotal, activeN, queuedN, bannedN, total])
+  }, [hasNodeList, list, currentSet, nextSet, memberMeta, bannedSet, hasTotal, activeN, queuedN, bannedN, total])
 
   const cols = useMemo(() => matrixCols(cells.length), [cells.length])
   const rows = useMemo(
@@ -418,7 +439,8 @@ export default function MasternodesDonut ({
                 role in the signing set. Country, host, and identity live in the <b>tooltip</b>.
               </p>
               <p>
-                <b>Green</b> = current quorum · <b>Blue</b> = in next formed set · <b>Gray</b> = queued ·
+                <b>Green</b> = current · <b>Yellow</b> = leaving next ·
+                <b>Gray + blue ring</b> = queued and joining next · <b>Gray</b> = queued only ·
                 <b>Red</b> = banned.
               </p>
               <p>
@@ -530,28 +552,30 @@ export default function MasternodesDonut ({
                       )
                     }
 
-                    const dataType = cell.type === 'join'
+                    const dataType = cell.type === 'leave' || cell.type === 'invalid'
                       ? 'active'
-                      : cell.type === 'invalid'
-                        ? 'active'
+                      : cell.type === 'join'
+                        ? 'inactive'
                         : cell.type === 'idle'
                           ? 'total'
                           : cell.type
 
                     const cc = cell.validator?.geoIpInfo?.countryCode
                     const ccName = cc ? countryName(cc) : null
+                    const roleHint = cell.role === 'leave'
+                      ? 'leaving next'
+                      : cell.role === 'join'
+                        ? 'joining next'
+                        : cell.role
 
                     const link = (
                       <Link
                         href={`/validator/${cell.proTxHash}`}
                         data-type={dataType}
                         data-role={cell.role}
-                        className={
-                          `MasternodesDonut__Cell MasternodesDonut__Cell--${cell.type}` +
-                          (cell.role === 'leave' ? ' is-leaving' : '')
-                        }
+                        className={`MasternodesDonut__Cell MasternodesDonut__Cell--${cell.type}`}
                         aria-label={
-                          `${shortHash(cell.proTxHash)}, ${cell.role}` +
+                          `${shortHash(cell.proTxHash)}, ${roleHint}` +
                           (ccName ? `, ${ccName}` : '')
                         }
                       />

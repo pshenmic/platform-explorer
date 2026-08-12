@@ -66,6 +66,13 @@ function Home () {
     staleTime: 60_000,
     refetchInterval: 120_000
   })
+  // API isBanned set for matrix coloring (broader than PoSeBanHeight alone)
+  const validatorsBannedListQuery = useQuery({
+    queryKey: ['home', 'validators', 'banned-list'],
+    queryFn: () => Api.getValidators(1, 100, 'desc', { isBanned: 'true' }),
+    staleTime: 60_000,
+    refetchInterval: 120_000
+  })
 
   const currentQuorumQuery = useQuery({
     queryKey: ['home', 'quorums', 'current'],
@@ -302,11 +309,11 @@ function Home () {
               validatorsBanned={validatorsBanned}
               validatorsInactive={validatorsInactive}
               validatorsList={validatorsGeoQuery.data?.resultSet}
+              bannedValidatorsList={validatorsBannedListQuery.data?.resultSet}
               currentQuorum={currentQuorumQuery.data}
               currentQuorumLoading={currentQuorumQuery.isPending || currentQuorumQuery.isLoading}
               currentQuorumError={currentQuorumQuery.isError}
               nextQuorum={nextQuorumQuery.data}
-              nextQuorumLoading={Boolean(nextQuorumMeta?.quorumHash) && (nextQuorumQuery.isPending || nextQuorumQuery.isLoading)}
             />
           </div>
         </div>

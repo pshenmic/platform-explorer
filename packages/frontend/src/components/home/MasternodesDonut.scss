@@ -1,6 +1,8 @@
 @import '../../styles/variables.scss';
 
 $mn-active: #2cffb4;
+$mn-join: #7ad7ff;
+$mn-leave: #ffc857;
 $mn-queued: rgba(255, 255, 255, 0.22);
 $mn-banned: #ff5c7a;
 $mn-total: rgba(var(--chakra-colors-brand-light-rgb), 0.85);
@@ -418,8 +420,6 @@ $mn-total: rgba(var(--chakra-colors-brand-light-rgb), 0.85);
     }
   }
 
-  $mn-join: #7ad7ff;
-
   &__Cell {
     appearance: none;
     border: 0;
@@ -450,9 +450,16 @@ $mn-total: rgba(var(--chakra-colors-brand-light-rgb), 0.85);
       box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.12);
     }
 
+    &--leave {
+      background: $mn-leave;
+      box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.14);
+    }
+
     &--join {
-      background: $mn-join;
-      box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.12);
+      background: rgba(255, 255, 255, 0.28);
+      box-shadow:
+        inset 0 0 0 2px $mn-join,
+        0 0 0 1px rgba($mn-join, 0.35);
     }
 
     &--inactive {
@@ -471,11 +478,6 @@ $mn-total: rgba(var(--chakra-colors-brand-light-rgb), 0.85);
       cursor: default;
     }
 
-    &.is-leaving {
-      background: rgba($mn-active, 0.45);
-      box-shadow: inset 0 0 0 1px rgba($mn-active, 0.5);
-    }
-
     &.is-dimmed {
       opacity: 0.22;
       filter: none;
@@ -488,6 +490,15 @@ $mn-total: rgba(var(--chakra-colors-brand-light-rgb), 0.85);
       box-shadow:
         inset 0 0 0 1px rgba(255, 255, 255, 0.35),
         0 0 0 1px rgba(255, 255, 255, 0.1);
+    }
+
+    &--join:hover,
+    &--join:focus-visible {
+      filter: brightness(1.12);
+      box-shadow:
+        inset 0 0 0 2px $mn-join,
+        0 0 0 1px rgba($mn-join, 0.55),
+        0 0 8px rgba($mn-join, 0.35);
     }
   }
 
@@ -641,10 +652,29 @@ $mn-total: rgba(var(--chakra-colors-brand-light-rgb), 0.85);
         background: rgba(255, 255, 255, 0.05);
       }
 
-      .MasternodesDonut__Cell[data-type='#{$name}'] {
+      .MasternodesDonut__Cell[data-type='#{$name}']:not(.MasternodesDonut__Cell--join):not(.MasternodesDonut__Cell--leave) {
         filter: brightness(1.06);
         box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.18);
       }
+    }
+  }
+
+  &__Stage.is-pinned[data-pin='inactive'] {
+    .MasternodesDonut__Cell--join {
+      opacity: 1;
+      filter: brightness(1.06);
+      box-shadow:
+        inset 0 0 0 2px $mn-join,
+        0 0 0 1px rgba($mn-join, 0.55),
+        0 0 8px rgba($mn-join, 0.3);
+    }
+  }
+
+  &__Stage.is-pinned[data-pin='active'] {
+    .MasternodesDonut__Cell--leave {
+      opacity: 1;
+      filter: brightness(1.06);
+      box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.2);
     }
   }
 
