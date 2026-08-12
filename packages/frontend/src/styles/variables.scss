@@ -1,9 +1,8 @@
-$breakpoint-sm: '30em';
-$breakpoint-md: '48em';
-$breakpoint-lg: '62em';
-$breakpoint-xl: '80em';
-$breakpoint-2xl: '96em';
-$breakpoint-3xl: '120em';
+// Design tokens for Sass. Colors/fonts bridge to Chakra CSS variables (theme.ts).
+// Breakpoints: see breakpoints.scss (only definition site).
+
+@forward 'breakpoints';
+@use 'breakpoints' as *;
 
 $border-radius-def: 10px;
 $border-radius-medium: 20px;
@@ -21,9 +20,15 @@ $color-brand-pressed: var(--chakra-colors-brand-pressed);
 $color-red-default: var(--chakra-colors-red-default);
 $color-green-default: var(--chakra-colors-green-default);
 
-$transition-time-def: .15s;
+$transition-time-def: 0.15s;
 
 $blockBackgroundBlur: blur(44px);
 
 $scrollColor: $color-brand-normal;
-$scrollBackgroundColor: rgba(255, 255, 255, .05);
+$scrollBackgroundColor: rgba(255, 255, 255, 0.05);
+
+// List chrome (shared by list mixins / headers)
+$list-row-pad-y: 7px;
+$list-row-pad-x: 12px;
+$list-row-gap: 16px;
+$list-row-radius: 10px;

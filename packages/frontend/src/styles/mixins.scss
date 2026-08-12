@@ -1,123 +1,21 @@
-@import './variables.scss';
-@import './mixins/BaseTransitionCard.scss';
+// Public mixin entry. Prefer @use '…/mixins' as mixins; @include mixins.Name.
+// Split: _list (rows/titles/grid), _spacing (page chrome), rest below.
+// Variables/breakpoints are forwarded so existing `mixins.$color-*` / `$breakpoint-*` keep working.
 
-@mixin AvatarSize($important: false) {
-  height: 24px#{if($important, ' !important', '')};
-  width: 24px#{if($important, ' !important', '')};
-}
+@forward 'variables';
+@forward 'mixins/list';
+@forward 'mixins/spacing';
+@forward 'breakpoints' show bp-max, bp-min;
 
-@mixin NotActiveText() {
-  font-size: 0.75rem !important;
-  color: var(--chakra-colors-gray-250) !important;
-  text-transform: lowercase !important;
-  font-weight: 400 !important;
-}
+@use 'breakpoints' as bp;
+@use 'variables' as *;
+@use 'sass:map';
+@use 'mixins/BaseTransitionCard' as btc;
+@use 'mixins/spacing' as spacing;
+@use 'mixins/list' as list;
 
-@mixin List() {
-  &__Pagination {
-    margin-top: 2rem !important;
-  }
-
-  &__ScrollZone {
-    width: fit-content;
-    min-width: 100%;
-  }
-
-  @media screen and (max-width: $breakpoint-md) {
-    &__Pagination {
-      margin-top: 1.5rem !important;
-    }
-  }
-
-  @media screen and (max-width: $breakpoint-sm) {
-    &__Pagination {
-      margin-top: 1rem !important;
-    }
-  }
-}
-
-@mixin DefListItem($clickable: true) {
-  display: flex;
-  width: 100%;
-  text-decoration: none;
-  padding: 7px 12px;
-  margin-bottom: 8px;
-  line-height: 24px;
-  color: var(--chakra-colors-gray-100);
-  font-family: $font-mono;
-  font-size: 12pt;
-  border-radius: 10px;
-  border: 1px solid var(--chakra-colors-gray-750);
-  background-color: rgba(var(--chakra-colors-gray-800-rgb), .5);
-  transition: all .1s;
-
-  @if $clickable {
-    @media (hover: hover) and (pointer: fine) {
-      &:hover {
-        background-color: var(--chakra-colors-gray-750);
-        text-decoration: none;
-        cursor: pointer;
-      }
-    }
-
-    &:active {
-      transform: translateY(1px);
-      box-shadow: 0 0 9999px 0 rgba(0, 0, 0, .25) inset;
-    }
-  }
-
-  &:last-child {
-    margin-bottom: 0;
-  }
-
-  &__Column {
-    &--Credits, &--Number {
-      font-size: 0.75rem;
-      font-weight: 700;
-    }
-  }
-
-  &__IdentifierContainer {
-    display: flex;
-    align-items: center;
-    min-width: 50px;
-  }
-
-  &__Avatar {
-    @include AvatarSize;
-    flex-shrink: 0;
-    margin-right: 12px;
-  }
-
-  &--Timestamp, &__Column--Timestamp {
-    font-family: $font-mono;
-    white-space: nowrap;
-    color: #fff;
-
-    &, .DateBlock__Date {
-      font-size: 0.75rem;
-    }
-  }
-}
-
-@mixin defListTitles {
-  display: grid;
-  padding: 7px 12px;
-  border-radius: 10px;
-  background-color: var(--chakra-colors-gray-800);
-  margin-bottom: 8px;
-  font-family: $font-heading;
-  font-weight: 700;
-  font-size: 12px;
-  text-transform: uppercase;
-  color: var(--chakra-colors-white);
-
-  &--Light {
-    background: transparent !important;
-    font-weight: 500 !important;
-    color: #fff !important;
-    text-transform: none !important;
-  }
+@mixin BaseTransitionCard() {
+  @include btc.BaseTransitionCard;
 }
 
 @mixin LoadingLine($delay: 0, $colorScheme: 'default') {
@@ -131,7 +29,7 @@
     ),
     'gray': (
       'before': rgba(var(--chakra-colors-gray-800-rgb), 5),
-      'after': rgba(255, 255, 255, .3)
+      'after': rgba(255, 255, 255, 0.3)
     )
   );
 
@@ -157,7 +55,7 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: map-get(map-get($colorSchemes, $colorScheme), 'before');
+    background-color: map.get(map.get($colorSchemes, $colorScheme), 'before');
     border-radius: 5px;
     opacity: 1;
   }
@@ -170,16 +68,16 @@
     left: -50%;
     width: 40%;
     height: 100%;
-    background: map-get(map-get($colorSchemes, $colorScheme), 'after');
+    background: map.get(map.get($colorSchemes, $colorScheme), 'after');
     border-radius: 100px;
-    opacity: .1;
+    opacity: 0.1;
     animation: LoadingLine linear 3s infinite;
   }
 
   Tr & {
     &::before {
       background-color: var(--chakra-colors-gray-800);
-      opacity: .2;
+      opacity: 0.2;
     }
   }
 
@@ -193,9 +91,9 @@
     }
 
     Tr:nth-child(#{$i}n) & {
-        &::after {
-            animation-delay: ($i - 2) * $timeOffset + ($delay * 0.15s);
-        }
+      &::after {
+        animation-delay: ($i - 2) * $timeOffset + ($delay * 0.15s);
+      }
     }
   }
 }
@@ -208,14 +106,14 @@
       z-index: 6;
     }
     50% {
-      opacity: .25;
+      opacity: 0.25;
     }
     to {
       z-index: 6;
       left: 100%;
     }
   }
-  
+
   @keyframes LoadingContainer {
     from {
       overflow: hidden;
@@ -238,8 +136,9 @@
     animation: 1s loading-process infinite;
     z-index: 6;
   }
-  
-  &::before, &::after {
+
+  &::before,
+  &::after {
     content: '';
     position: absolute;
     width: 100%;
@@ -262,7 +161,7 @@
 
 @mixin AvatarContainer {
   border-radius: $border-radius-def;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, .3);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
   background-color: var(--chakra-colors-gray-900);
   border: 1px solid var(--chakra-colors-whiteAlpha-100);
   overflow: hidden;
@@ -289,8 +188,9 @@
   overflow: hidden;
   background-color: transparent;
   transition: all 0.5s;
-  
-  &::before, &::after {
+
+  &::before,
+  &::after {
     content: '';
     display: block;
     position: absolute;
@@ -308,10 +208,10 @@
 
   &::after {
     width: 300px;
-    background: linear-gradient(90deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, .1), rgba(255, 255, 255, 0));
+    background: linear-gradient(90deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0));
     transform: translateX(-100%);
     opacity: 0;
-    transition: all .5s;
+    transition: all 0.5s;
   }
 
   @keyframes flash {
@@ -326,11 +226,12 @@
     }
   }
 
-  &:hover, &:focus-within {
+  &:hover,
+  &:focus-within {
     background-color: $color-brand-normal;
 
     &::before {
-      opacity: .85;
+      opacity: 0.85;
     }
 
     &::after {
@@ -341,72 +242,7 @@
   }
 }
 
-@mixin BlockSpacing ($property) {
-  #{$property}: var(--chakra-space-10);
-
-  @media screen and (max-width: $breakpoint-xl) {
-    #{$property}: var(--chakra-space-5);
-  }
-
-  @media screen and (max-width: $breakpoint-lg) {
-    #{$property}: var(--chakra-space-5);
-  }
-
-  @media screen and (max-width: $breakpoint-md) {
-    #{$property}: var(--chakra-space-4);
-  }
-
-  @media screen and (max-width: $breakpoint-sm) {
-    #{$property}: var(--chakra-space-3);
-  }
-}
-
-@mixin InfoContainerPadding($property, $adjustment: 0px, $important: false, $invert: false) {
-  $base-value: if($invert, 'calc(0px - var(--chakra-space-3))', 'var(--chakra-space-3)');
-
-  #{$property}: calc(#{$base-value} + #{$adjustment})#{if($important, ' !important', '')};
-
-  @media screen and (min-width: $breakpoint-md) {
-    $base-value: if($invert, 'calc(0px - var(--chakra-space-4))', 'var(--chakra-space-4)');
-    #{$property}: calc(#{$base-value} + #{$adjustment})#{if($important, ' !important', '')};
-  }
-
-  @media screen and (min-width: $breakpoint-lg) {
-    $base-value: if($invert, 'calc(0px - var(--chakra-space-5))', 'var(--chakra-space-5)');
-    #{$property}: calc(#{$base-value} + #{$adjustment})#{if($important, ' !important', '')};
-  }
-
-  @media screen and (min-width: $breakpoint-xl) {
-    $base-value: if($invert, 'calc(0px - var(--chakra-space-6))', 'var(--chakra-space-6)');
-    #{$property}: calc(#{$base-value} + #{$adjustment})#{if($important, ' !important', '')};
-  }
-}
-
-@mixin navContainerPadding ($property, $important: false) {
-  #{$property}: var(--chakra-space-3)#{if($important, ' !important', '')};
-}
-
-@mixin pageDataPadding($property, $important: false, $invert: false) {
-  $base-value: if($invert, 'calc(0px - var(--chakra-space-3))', 'var(--chakra-space-3)');
-  #{$property}: #{$base-value}#{if($important, ' !important', '')};
-
-  @media screen and (min-width: $breakpoint-md) {
-    $base-value: if($invert, 'calc(0px - var(--chakra-space-4))', 'var(--chakra-space-4)');
-    #{$property}: #{$base-value}#{if($important, ' !important', '')};
-  }
-
-  @media screen and (min-width: $breakpoint-lg) {
-    $base-value: if($invert, 'calc(0px - var(--chakra-space-6))', 'var(--chakra-space-6)');
-    #{$property}: #{$base-value}#{if($important, ' !important', '')};
-  }
-
-  @media screen and (min-width: $breakpoint-xl) {
-    $base-value: if($invert, 'calc(0px - var(--chakra-space-8))', 'var(--chakra-space-8)');
-    #{$property}: #{$base-value}#{if($important, ' !important', '')};
-  }
-}
-
-@mixin Block ($border: false, $borderColor: $color-brand-normal) {
+@mixin Block($border: false, $borderColor: $color-brand-normal) {
   backdrop-filter: $blockBackgroundBlur;
   border-radius: var(--chakra-radii-block);
   border: 1px solid rgba(255, 255, 255, 0.1);
@@ -417,9 +253,10 @@
   }
 }
 
-@mixin TooltipElement () {
-  &, .chakra-icon {
-    transition: .2s;
+@mixin TooltipElement() {
+  &,
+  .chakra-icon {
+    transition: 0.2s;
   }
 
   .chakra-icon {
@@ -428,7 +265,7 @@
 
   &:hover {
     color: $color-brand-light;
-    cursor:  default;
+    cursor: default;
 
     .chakra-icon {
       color: $color-brand-light;
@@ -436,12 +273,13 @@
   }
 }
 
-@mixin TotalCard ($avatarAbsolute: false) {
+@mixin TotalCard($avatarAbsolute: false) {
   &__Title {
     white-space: break-spaces;
     word-break: break-all;
 
-    .Alias__Name, .Alias__Domain {
+    .Alias__Name,
+    .Alias__Domain {
       font-family: $font-heading;
       font-size: 0.875rem;
       font-weight: 700;
@@ -521,20 +359,21 @@
     }
   }
 
-  @media screen and (max-width: $breakpoint-lg) {
+  @include bp.bp-max('lg') {
     &__ContentContainer {
       gap: 1.5rem;
     }
   }
 
-  @media screen and (max-width: $breakpoint-md) {
+  @include bp.bp-max('md') {
     $gap: 0.75rem;
 
     &__ContentContainer {
       flex-direction: column;
     }
 
-    &__ContentContainer, &__CommonLines {
+    &__ContentContainer,
+    &__CommonLines {
       gap: $gap;
     }
 
@@ -545,14 +384,14 @@
   }
 }
 
-@mixin DigestCard () {
-  @include InfoContainerPadding(padding, 0px, false);
+@mixin DigestCard() {
+  @include spacing.InfoContainerPadding(padding, 0px, false);
   font-family: $font-mono;
   font-size: 0.75rem;
   display: flex;
   flex-direction: column;
   gap: 0.875rem;
-  background: rgba(var(--chakra-colors-gray-800-rgb), .5);
+  background: rgba(var(--chakra-colors-gray-800-rgb), 0.5);
   border-radius: $border-radius-def;
   container-type: inline-size;
 
@@ -586,7 +425,7 @@
     justify-content: space-between;
     gap: 4px;
     padding: 24px;
-    background: rgba(var(--chakra-colors-gray-800-rgb), .5);
+    background: rgba(var(--chakra-colors-gray-800-rgb), 0.5);
     border-radius: $border-radius-def;
     width: 100%;
 
@@ -603,12 +442,11 @@
   }
 }
 
-@mixin BrandScroll () {
+@mixin BrandScroll() {
   scroll-behavior: smooth;
   scrollbar-width: thin;
   scrollbar-color: $scrollColor transparent;
 
-  // WebKit: rounded, inset thumb via transparent border + background-clip.
   &::-webkit-scrollbar {
     height: 8px;
     width: 8px;

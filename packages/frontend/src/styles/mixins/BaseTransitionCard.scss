@@ -1,5 +1,5 @@
-@use '../../components/transactions/variables' as txs;
-@import '../variables';
+@use '../breakpoints' as bp;
+@use '../variables' as *;
 
 @mixin BaseTransitionCard() {
   container-type: inline-size;
@@ -22,7 +22,8 @@
         max-width: max-content;
       }
 
-      .Identifier, .Identifier__SymbolsContainer {
+      .Identifier,
+      .Identifier__SymbolsContainer {
         flex-grow: 1;
       }
     }
@@ -38,7 +39,8 @@
 
   @container (max-width: 600px) {
     &__InfoLine {
-      &--Data, &--PrefundedBalance {
+      &--Data,
+      &--PrefundedBalance {
         flex-wrap: wrap;
       }
 
@@ -51,7 +53,7 @@
     }
   }
 
-  @media screen and (max-width: $breakpoint-md) {
+  @include bp.bp-max('md') {
     &__InfoLine {
       &:not(&--Revision):not(&--Action) {
         .InfoLine {
@@ -63,7 +65,7 @@
     }
   }
 
-  @media screen and (max-width: $breakpoint-sm) {
+  @include bp.bp-max('sm') {
     &__InfoLine {
       flex-wrap: wrap;
       justify-content: space-between;
@@ -75,10 +77,12 @@
         }
       }
 
-      &--Revision, &--Action {
+      &--Revision,
+      &--Action {
         justify-content: space-between;
 
-        .InfoLine__Title, .InfoLine__Value {
+        .InfoLine__Title,
+        .InfoLine__Value {
           width: max-content !important;
         }
 

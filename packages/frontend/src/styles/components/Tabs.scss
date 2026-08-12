@@ -1,11 +1,12 @@
-@import './../variables.scss';
+@use '../variables' as *;
+@use '../breakpoints' as bp;
 
 .Tabs {
   &__TabItemsCount {
     display: inline-block;
     padding: 6px 12px;
     color: $color-brand-normal;
-    background: rgba(var(--chakra-colors-brand-normal-rgb), .2);
+    background: rgba(var(--chakra-colors-brand-normal-rgb), 0.2);
     margin-left: 12px;
     border-radius: 10px;
     font-weight: 500;
@@ -14,27 +15,27 @@
     transition: all $transition-time-def;
 
     &--Empty {
-      opacity: .3;
+      opacity: 0.3;
     }
 
-    .chakra-tabs__tab[aria-selected="true"] & {
-      background: rgba(var(--chakra-colors-brand-normal-rgb), .2);
+    .chakra-tabs__tab[aria-selected='true'] & {
+      background: rgba(var(--chakra-colors-brand-normal-rgb), 0.2);
       color: $color-brand-normal;
     }
 
-    .chakra-tabs__tab[aria-selected="false"] & {
+    .chakra-tabs__tab[aria-selected='false'] & {
       color: var(--chakra-colors-gray-250);
-      background-color: rgba(var(--chakra-colors-gray-250-rgb), .2);
+      background-color: rgba(var(--chakra-colors-gray-250-rgb), 0.2);
     }
   }
 
-  @media screen and (max-width: $breakpoint-lg) {
+  @include bp.bp-max('lg') {
     &__TabItemsCount {
       padding: 4px 12px;
     }
   }
 
-  @media screen and (max-width: $breakpoint-sm) {
+  @include bp.bp-max('sm') {
     &__TabItemsCount {
       padding: 2px 8px;
     }

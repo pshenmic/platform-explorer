@@ -1,5 +1,6 @@
-@use './../mixins.scss';
-@import './../variables.scss';
+@use '../mixins.scss' as mixins;
+@use '../variables' as *;
+@use '../breakpoints' as bp;
 
 $border-radius: var(--chakra-radii-block);
 
@@ -111,7 +112,7 @@ $border-radius: var(--chakra-radii-block);
   &__HeadSlot {
     margin-left: auto;
 
-    @media screen and (max-width: $breakpoint-md) {
+    @include bp.bp-max('md') {
       // full-width row on phones; the control inside (e.g. Presets) spreads across it
       margin-left: 0;
       width: 100%;
@@ -119,7 +120,7 @@ $border-radius: var(--chakra-radii-block);
   }
 
   // ≤lg: 16px content inset — pairs with edge cards (page gutter 0 on Home mobile)
-  @media screen and (max-width: $breakpoint-lg) {
+  @include bp.bp-max('lg') {
     padding: 16px !important;
 
     &__Title {
