@@ -27,7 +27,7 @@ import type {
   Transaction,
   Transfer
 } from '../../../types'
-import './Identity.scss'
+import './Identity.css'
 
 const tabs = [
   'transactions',

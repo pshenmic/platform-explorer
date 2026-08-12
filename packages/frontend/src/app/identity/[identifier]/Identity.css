@@ -1,0 +1,7 @@
+.IdentityPage__Alias {
+  width: max-content;
+  margin-left: auto;
+}
+.IdentityPage__TransactionsFilter, .IdentityPage__DocumentsFilter {
+  margin: 0.75rem 0 1.5rem;
+}

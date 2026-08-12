@@ -1,0 +1,157 @@
+.IdentityDigestCard {
+  padding: calc(var(--pe-space-3) + 0px);
+}
+@media screen and (min-width: 48em) {
+  .IdentityDigestCard {
+    padding: calc(var(--pe-space-4) + 0px);
+  }
+}
+@media screen and (min-width: 62em) {
+  .IdentityDigestCard {
+    padding: calc(var(--pe-space-5) + 0px);
+  }
+}
+@media screen and (min-width: 80em) {
+  .IdentityDigestCard {
+    padding: calc(var(--pe-space-6) + 0px);
+  }
+}
+.IdentityDigestCard {
+  font-family: var(--pe-font-mono);
+  font-size: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.875rem;
+  background: rgba(var(--pe-color-gray-800-rgb), 0.5);
+  border-radius: var(--pe-radius-def);
+  container-type: inline-size;
+}
+.IdentityDigestCard--Loading .InfoLine__Value {
+  height: 1.5rem;
+}
+.IdentityDigestCard--Loading .IdentityDigestCard__InfoContainer {
+  overflow: hidden;
+}
+.IdentityDigestCard--Loading .IdentityDigestCard__InfoContainerValue {
+  width: 100px;
+  max-width: 100%;
+}
+.IdentityDigestCard__RowContainer {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.875rem;
+}
+.IdentityDigestCard__InfoContainer {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px;
+  padding: 24px;
+  background: rgba(var(--pe-color-gray-800-rgb), 0.5);
+  border-radius: var(--pe-radius-def);
+  width: 100%;
+}
+.IdentityDigestCard__InfoContainer .InfoLine__Title svg {
+  width: 1.75rem;
+  height: 1.75rem;
+}
+.IdentityDigestCard__LinesContainer {
+  flex-direction: column;
+}
+.IdentityDigestCard, .IdentityDigestCard__Transfers, .IdentityDigestCard__LinesContainer {
+  display: flex;
+  gap: 14px;
+}
+.IdentityDigestCard--Loading .IdentityDigestCard__Transfers .LoadingLine {
+  height: 24px;
+}
+.IdentityDigestCard__Transfer {
+  width: 50%;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 24px;
+  background: rgba(var(--pe-color-gray-800-rgb), 0.5);
+  border-radius: var(--pe-radius-def);
+}
+.IdentityDigestCard__Transfer .CreditsBlock {
+  display: flex;
+  flex-direction: column;
+}
+.IdentityDigestCard__Transfer .CreditsBlock .CreditsBlock__Usd {
+  margin-top: 0.25rem;
+  margin-left: auto;
+}
+.IdentityDigestCard__Transfer--Withdrawals .CreditsBlock__Usd {
+  background-color: rgba(var(--pe-color-red-default-rgb), 0.2);
+  color: var(--pe-color-red-default);
+}
+.IdentityDigestCard__TransferTitle {
+  font-size: 0.75rem;
+  color: var(--pe-color-fg-muted);
+}
+.IdentityDigestCard__ValueContainer {
+  display: flex;
+  justify-content: flex-end;
+  overflow: hidden;
+}
+.IdentityDigestCard__ValueContainer .DateBlock {
+  margin-bottom: 4px;
+}
+.IdentityDigestCard__InfoLine {
+  gap: 4px;
+  column-gap: 8px;
+}
+.IdentityDigestCard__InfoLine .DateBlock__InfoContainer {
+  justify-content: flex-end;
+}
+.IdentityDigestCard__InfoLine--LastWithdrawal .Identifier__SymbolsContainer {
+  max-width: 14.75rem;
+}
+@media screen and (min-width: 48em) and (max-width: 62em), screen and (max-width: 30em) {
+  .IdentityDigestCard--Loading .InfoLine__Value {
+    width: 100% !important;
+  }
+  .IdentityDigestCard__Transfers {
+    flex-direction: column;
+  }
+  .IdentityDigestCard__Transfer {
+    width: 100%;
+  }
+  .IdentityDigestCard__Transfer .CreditsBlock {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .IdentityDigestCard__Transfer .CreditsBlock .CreditsBlock__Usd {
+    margin-top: 0.25rem;
+    margin-bottom: 0.25rem;
+  }
+}
+@container (max-width: 24em) {
+  .IdentityDigestCard--Loading .InfoLine__Value {
+    width: 100% !important;
+  }
+  .IdentityDigestCard__InfoLine {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .IdentityDigestCard__InfoLine .InfoLine__Value {
+    width: 100%;
+    text-align: left;
+  }
+  .IdentityDigestCard__InfoLine .InfoLine__Value .DateBlock__InfoContainer {
+    justify-content: flex-start;
+  }
+  .IdentityDigestCard__InfoLine .CreditsBlock {
+    display: flex;
+    flex-wrap: wrap;
+  }
+  .IdentityDigestCard__InfoLine .CreditsBlock__Usd {
+    margin-left: auto;
+  }
+  .IdentityDigestCard__InfoLine--LastWithdrawal .Identifier__SymbolsContainer {
+    max-width: none;
+  }
+}
