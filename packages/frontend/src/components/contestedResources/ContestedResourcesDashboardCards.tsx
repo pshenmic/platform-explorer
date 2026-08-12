@@ -7,7 +7,7 @@ import { DashboardCards } from '../cards'
 import { SignatureIcon, ListIcon, CalendarGradientIcon } from '../ui/icons'
 import { ContestedResourceContent } from '../cards/dashboard'
 import type { ContestedResourcesStatus, LoadableState } from '../../types'
-import './ContestedResourcesDashboardCards.scss'
+import './ContestedResourcesDashboardCards.css'
 
 function ContestedResourcesDashboardCards () {
   const [stats, setStats] = useState<LoadableState<ContestedResourcesStatus | Record<string, unknown>>>({
