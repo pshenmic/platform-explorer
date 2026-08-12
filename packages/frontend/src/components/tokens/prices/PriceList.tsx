@@ -12,7 +12,7 @@ interface PriceListProps extends WithClassName {
   rate?: Pick<Rate, 'usd'> | null
 }
 
-function PriceList ({ prices = [], rate, className }: PriceListProps) {
+function PriceList({ prices = [], rate, className }: PriceListProps) {
   const list = prices || []
 
   return (
@@ -27,18 +27,9 @@ function PriceList ({ prices = [], rate, className }: PriceListProps) {
       </Grid>
 
       {list.length > 0 &&
-        list.map((priceData, i) => (
-          <PriceListItem
-            key={i}
-            priceData={priceData}
-            rate={rate}
-          />
-        ))
-      }
+        list.map((priceData, i) => <PriceListItem key={i} priceData={priceData} rate={rate} />)}
 
-      {list.length === 0 &&
-        <EmptyListMessage>There are no prices</EmptyListMessage>
-      }
+      {list.length === 0 && <EmptyListMessage>There are no prices</EmptyListMessage>}
     </div>
   )
 }

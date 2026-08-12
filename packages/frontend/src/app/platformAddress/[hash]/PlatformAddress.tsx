@@ -17,7 +17,7 @@ const tabs = ['transitions'] as const
 
 const pageSize = 10
 
-function PlatformAddress () {
+function PlatformAddress() {
   const params = useParams()
   const hash = String(params?.hash ?? '')
   const { setBreadcrumbs } = useBreadcrumbs()
@@ -47,7 +47,9 @@ function PlatformAddress () {
       .withOptions({ scroll: false, shallow: false })
   )
 
-  const handleTab = (index: number) => { setActiveTab(tabs[index]) }
+  const handleTab = (index: number) => {
+    setActiveTab(tabs[index])
+  }
 
   useEffect(() => {
     setBreadcrumbs([
@@ -59,36 +61,46 @@ function PlatformAddress () {
 
   return (
     <PageDataContainer className={'PlatformAddress'} title={'Platform Address Info'}>
-      {address.isError
-        ? <ErrorMessageBlock h={'450px'} />
-        : <PlatformAddressTotalCard address={address} rate={rate} />
-      }
+      {address.isError ? (
+        <ErrorMessageBlock h={'450px'} />
+      ) : (
+        <PlatformAddressTotalCard address={address} rate={rate} />
+      )}
 
       <InfoContainer styles={['tabs']} id={'tabs'}>
-        <Tabs onChange={handleTab} index={tabs.indexOf(activeTab as typeof tabs[number])}>
+        <Tabs onChange={handleTab} index={tabs.indexOf(activeTab as (typeof tabs)[number])}>
           <TabList>
             <Tab>
-              Transitions {transitions.data?.pagination?.total != null
-              ? <span className={`Tabs__TabItemsCount ${transitions.data.pagination.total === 0 ? 'Tabs__TabItemsCount--Empty' : ''}`}>
+              Transitions{' '}
+              {transitions.data?.pagination?.total != null ? (
+                <span
+                  className={`Tabs__TabItemsCount ${transitions.data.pagination.total === 0 ? 'Tabs__TabItemsCount--Empty' : ''}`}
+                >
                   {transitions.data.pagination.total}
                 </span>
-              : ''}
+              ) : (
+                ''
+              )}
             </Tab>
           </TabList>
           <TabPanels>
             <TabPanel position={'relative'}>
-              {!transitions.isError
-                ? <TransactionsList
-                    transactions={transitions.data?.resultSet}
-                    loading={transitions.isLoading}
-                    pagination={{
-                      onPageChange: (pagination) => setTxPage(pagination.selected + 1),
-                      pageCount: Math.ceil((transitions.data?.pagination?.total || 0) / pageSize) || 1,
-                      forcePage: txPage - 1
-                    }}
-                  />
-                : <Container h={20}><ErrorMessageBlock /></Container>
-              }
+              {!transitions.isError ? (
+                <TransactionsList
+                  transactions={transitions.data?.resultSet}
+                  loading={transitions.isLoading}
+                  pagination={{
+                    onPageChange: pagination => setTxPage(pagination.selected + 1),
+                    pageCount:
+                      Math.ceil((transitions.data?.pagination?.total || 0) / pageSize) || 1,
+                    forcePage: txPage - 1
+                  }}
+                />
+              ) : (
+                <Container h={20}>
+                  <ErrorMessageBlock />
+                </Container>
+              )}
             </TabPanel>
           </TabPanels>
         </Tabs>

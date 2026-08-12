@@ -42,7 +42,7 @@ export const useSigner = () => {
   }
 
   const cacheSigner = (signerObj: Signer): Signer => {
-    setSigners((prev) => ({ ...prev, [signerObj.method]: signerObj }))
+    setSigners(prev => ({ ...prev, [signerObj.method]: signerObj }))
     return signerObj
   }
 
@@ -104,19 +104,25 @@ export const useSigner = () => {
       const trimmedIdentityId = identityId?.trim()
       if (!trimmedWif) throw new Error('Private key is required')
 
-      const { DashPlatformSDK, PrivateKeyWASM, StateTransitionWASM } = await import('dash-platform-sdk/types')
+      const { DashPlatformSDK, PrivateKeyWASM, StateTransitionWASM } = await import(
+        'dash-platform-sdk/types'
+      )
 
       // Try WIF first (self-validating via fromWIF throw), then 64-char hex, then 32-byte base64.
       const parsePrivateKey = () => {
-        try { return PrivateKeyWASM.fromWIF(trimmedWif) } catch {}
+        try {
+          return PrivateKeyWASM.fromWIF(trimmedWif)
+        } catch {}
 
         if (/^[0-9a-fA-F]{64}$/.test(trimmedWif)) {
-          try { return PrivateKeyWASM.fromHex(trimmedWif, network.name) } catch {}
+          try {
+            return PrivateKeyWASM.fromHex(trimmedWif, network.name)
+          } catch {}
         }
 
         if (/^[A-Za-z0-9+/]+={0,2}$/.test(trimmedWif)) {
           try {
-            const bytes = Uint8Array.from(atob(trimmedWif), (c) => c.charCodeAt(0))
+            const bytes = Uint8Array.from(atob(trimmedWif), c => c.charCodeAt(0))
             if (bytes.length === 32) return PrivateKeyWASM.fromBytes(bytes, network.name)
           } catch {}
         }
@@ -145,7 +151,7 @@ export const useSigner = () => {
 
       const matchingKey = identity
         .getPublicKeys()
-        .find((pk) => pk.getPublicKeyHash() === publicKeyHash)
+        .find(pk => pk.getPublicKeyHash() === publicKeyHash)
       if (!matchingKey) {
         throw new Error('Private key does not match this identity')
       }
@@ -154,9 +160,9 @@ export const useSigner = () => {
 
       const refreshKey = async () => {
         const freshIdentity = await sdk.identities.getIdentityByIdentifier(identityIdStr)
-        const freshKey = freshIdentity.getPublicKeys().find(
-          (pk) => pk.getPublicKeyHash() === publicKeyHash
-        )
+        const freshKey = freshIdentity
+          .getPublicKeys()
+          .find(pk => pk.getPublicKeyHash() === publicKeyHash)
         if (!freshKey) {
           throw new Error('Could not locate signing key on identity')
         }

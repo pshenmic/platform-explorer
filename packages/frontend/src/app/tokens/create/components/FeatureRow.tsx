@@ -2,8 +2,13 @@
 
 import type { KeyboardEvent, ReactNode } from 'react'
 import {
-  HStack, Text,
-  Popover, PopoverTrigger, PopoverContent, PopoverArrow, PopoverBody
+  HStack,
+  Text,
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+  PopoverArrow,
+  PopoverBody
 } from '@chakra-ui/react'
 import { ValueContainer } from '@components/ui/containers'
 
@@ -14,15 +19,15 @@ interface RowLabelProps {
 }
 
 export const RowLabel = ({ label, tooltip, width }: RowLabelProps) => (
-  <HStack spacing={2} align='center' width={width} flexShrink={0}>
-    <Popover trigger='click' placement='top' isLazy>
+  <HStack spacing={2} align="center" width={width} flexShrink={0}>
+    <Popover trigger="click" placement="top" isLazy>
       <PopoverTrigger>
         <Text
-          as='button'
-          fontSize='0.75rem'
-          fontWeight='600'
-          fontFamily='var(--font-body)'
-          color='var(--chakra-colors-white-100)'
+          as="button"
+          fontSize="0.75rem"
+          fontWeight="600"
+          fontFamily="var(--font-body)"
+          color="var(--chakra-colors-white-100)"
           sx={{
             background: 'transparent',
             border: 'none',
@@ -35,8 +40,8 @@ export const RowLabel = ({ label, tooltip, width }: RowLabelProps) => (
           {label}
         </Text>
       </PopoverTrigger>
-      <PopoverContent maxW='280px' fontSize='0.75rem' fontFamily='var(--font-body)'>
-        <PopoverArrow/>
+      <PopoverContent maxW="280px" fontSize="0.75rem" fontFamily="var(--font-body)">
+        <PopoverArrow />
         <PopoverBody>{tooltip}</PopoverBody>
       </PopoverContent>
     </Popover>
@@ -50,11 +55,11 @@ interface YesNoBadgeProps {
 
 export const YesNoBadge = ({ value, onToggle }: YesNoBadgeProps) => (
   <ValueContainer
-    size='sm'
+    size="sm"
     colorScheme={value ? 'green' : 'red'}
     clickable
     onClick={onToggle}
-    role='switch'
+    role="switch"
     aria-checked={!!value}
     tabIndex={0}
     onKeyDown={(e: KeyboardEvent) => {
@@ -76,8 +81,8 @@ interface FeatureToggleProps {
 }
 
 export const FeatureToggle = ({ label, tooltip, value, onToggle }: FeatureToggleProps) => (
-  <HStack className='Features__Row' justify='space-between' spacing={3}>
-    <RowLabel label={label} tooltip={tooltip}/>
-    <YesNoBadge value={value} onToggle={onToggle}/>
+  <HStack className="Features__Row" justify="space-between" spacing={3}>
+    <RowLabel label={label} tooltip={tooltip} />
+    <YesNoBadge value={value} onToggle={onToggle} />
   </HStack>
 )

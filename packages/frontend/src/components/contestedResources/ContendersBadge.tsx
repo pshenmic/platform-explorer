@@ -7,15 +7,12 @@ interface ContendersBadgeProps extends WithClassName {
   contenders?: number | string | unknown[] | null
 }
 
-function ContendersBadges ({ contenders, className }: ContendersBadgeProps) {
+function ContendersBadges({ contenders, className }: ContendersBadgeProps) {
   if (typeof contenders !== 'number' && typeof contenders !== 'string') return null
 
   return (
     <div className={`VoteBadges ${className || ''}`}>
-      <Tooltip
-        title={'Contenders'}
-        placement={'top'}
-      >
+      <Tooltip title={'Contenders'} placement={'top'}>
         <Badge
           colorScheme={'blue'}
           size={'xs'}

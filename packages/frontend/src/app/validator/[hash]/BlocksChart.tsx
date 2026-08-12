@@ -17,8 +17,16 @@ interface BlocksChartProps {
   timespanChangeCallback?: (value: TimespanValue) => void
 }
 
-export default function BlocksChart ({ hash, isActive, loading, timespan, timespanChangeCallback }: BlocksChartProps) {
-  const [blocksHistory, setBlocksHistory] = useState<LoadableState<{ resultSet?: Array<SeriesData<BlocksStatsPoint>> }>>({
+export default function BlocksChart({
+  hash,
+  isActive,
+  loading,
+  timespan,
+  timespanChangeCallback
+}: BlocksChartProps) {
+  const [blocksHistory, setBlocksHistory] = useState<
+    LoadableState<{ resultSet?: Array<SeriesData<BlocksStatsPoint>> }>
+  >({
     data: {},
     loading: true,
     error: false
@@ -40,17 +48,21 @@ export default function BlocksChart ({ hash, isActive, loading, timespan, timesp
       menuIsActive={isActive}
       timespanChangeCallback={timespanChangeCallback}
       timespan={timespan}
-      data={blocksHistory.data?.resultSet?.map((item) => ({
-        x: new Date(item.timestamp ?? 0),
-        y: item.data?.blocksCount ?? 0
-      })) || []}
+      data={
+        blocksHistory.data?.resultSet?.map(item => ({
+          x: new Date(item.timestamp ?? 0),
+          y: item.data?.blocksCount ?? 0
+        })) || []
+      }
       loading={loading || blocksHistory.loading}
       error={!hash || blocksHistory.error}
       xAxis={{
         type: (() => {
           if (!timespan?.range?.start || !timespan?.range?.end) return { axis: 'time' as const }
-          if (getDaysBetweenDates(timespan.range.start, timespan.range.end) > 7) return { axis: 'date' as const }
-          if (getDaysBetweenDates(timespan.range.start, timespan.range.end) > 3) return { axis: 'date' as const, tooltip: 'datetime' as const }
+          if (getDaysBetweenDates(timespan.range.start, timespan.range.end) > 7)
+            return { axis: 'date' as const }
+          if (getDaysBetweenDates(timespan.range.start, timespan.range.end) > 3)
+            return { axis: 'date' as const, tooltip: 'datetime' as const }
           return { axis: 'time' as const }
         })()
       }}

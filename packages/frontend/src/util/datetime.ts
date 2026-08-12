@@ -1,6 +1,6 @@
 type DateInput = string | number | Date
 
-function getDaysBetweenDates (startDate: DateInput, endDate: DateInput): number {
+function getDaysBetweenDates(startDate: DateInput, endDate: DateInput): number {
   if (!startDate || !endDate) return 0
   const start = new Date(startDate)
   const end = new Date(endDate)
@@ -9,14 +9,14 @@ function getDaysBetweenDates (startDate: DateInput, endDate: DateInput): number 
   return daysDifference
 }
 
-const getDynamicRange = (duration: number): { start: string, end: string } => {
+const getDynamicRange = (duration: number): { start: string; end: string } => {
   const now = new Date()
   const end = now.toISOString()
   const start = new Date(now.getTime() - duration).toISOString()
   return { start, end }
 }
 
-function getTimeDelta (startDate: DateInput, endDate: DateInput, format?: string): string {
+function getTimeDelta(startDate: DateInput, endDate: DateInput, format?: string): string {
   if (
     !startDate ||
     !endDate ||
@@ -30,9 +30,7 @@ function getTimeDelta (startDate: DateInput, endDate: DateInput, format?: string
   const isFuture = diff > 0
   const absoluteDiff = Math.abs(diff)
   const days = Math.floor(absoluteDiff / (1000 * 60 * 60 * 24))
-  const hours = Math.floor(
-    (absoluteDiff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
-  )
+  const hours = Math.floor((absoluteDiff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
   const minutes = Math.floor((absoluteDiff % (1000 * 60 * 60)) / (1000 * 60))
   const seconds = Math.floor((absoluteDiff % (1000 * 60)) / 1000)
 
@@ -77,8 +75,8 @@ type DateOptionsTransform = (options: Intl.DateTimeFormatOptions) => Intl.DateTi
 
 export const formatDate = (
   timestamp: string | number,
-  setOptions: DateOptionsTransform = (options) => options
-): { formatted: string, date: Date } | null => {
+  setOptions: DateOptionsTransform = options => options
+): { formatted: string; date: Date } | null => {
   const validatedValue = isNaN(Number(timestamp)) ? timestamp : parseInt(String(timestamp))
   const date = new Date(validatedValue)
 

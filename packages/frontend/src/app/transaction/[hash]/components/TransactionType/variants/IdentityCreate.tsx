@@ -24,12 +24,7 @@ export const IdentityCreate = ({
       title={'Identity Address'}
       value={
         <ValueCard link={`/identity/${identityId}`}>
-          <Identifier
-            avatar={true}
-            copyButton={true}
-            ellipsis={true}
-            styles={['highlight-both']}
-          >
+          <Identifier avatar={true} copyButton={true} ellipsis={true} styles={['highlight-both']}>
             {identityId}
           </Identifier>
         </ValueCard>
@@ -38,16 +33,10 @@ export const IdentityCreate = ({
       error={!identityId}
     />
 
-    <AssetLockProof
-      assetLockProof={assetLockProof}
-      rate={rate}
-      loading={loading}
-    />
+    <AssetLockProof assetLockProof={assetLockProof} rate={rate} loading={loading} />
 
     <InfoLine
-      className={
-        'TransactionPage__InfoLine TransactionPage__InfoLine--PublicKeys'
-      }
+      className={'TransactionPage__InfoLine TransactionPage__InfoLine--PublicKeys'}
       title={`Public Keys ${publicKeys !== undefined ? `(${publicKeys?.length})` : ''}`}
       value={
         <>

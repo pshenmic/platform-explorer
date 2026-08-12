@@ -23,14 +23,14 @@ interface TimeframeMenuProps extends WithClassName {
   changeCallback?: (value: TimespanValue) => void
 }
 
-const TimeframeMenu = forwardRef(function TimeframeMenu (
+const TimeframeMenu = forwardRef(function TimeframeMenu(
   { config, forceTimespan, changeCallback, className }: TimeframeMenuProps,
   ref: Ref<HTMLDivElement>
 ) {
   const [timespan, setTimespan] = useState<TimespanValue | undefined>(
     config.timespan.values[config.timespan.defaultIndex]
   )
-  const [selectedRange, setSelectedRange] = useState<{ start: Date, end: Date } | null>(null)
+  const [selectedRange, setSelectedRange] = useState<{ start: Date; end: Date } | null>(null)
   const [calendarValue, setCalendarValue] = useState<[Date | null, Date | null] | null>(null)
 
   useEffect(() => {
@@ -59,7 +59,7 @@ const TimeframeMenu = forwardRef(function TimeframeMenu (
       return
     }
 
-    function labelFormatDate (date: Date) {
+    function labelFormatDate(date: Date) {
       const day = String(date.getDate()).padStart(2, '0')
       const month = String(date.getMonth() + 1).padStart(2, '0')
       const year = date.getFullYear()
@@ -96,14 +96,14 @@ const TimeframeMenu = forwardRef(function TimeframeMenu (
               {iTimespan.label}
             </Button>
           ))}
-            <Button
-              className={'TimeframeMenu__ValueButton'}
-              onClick={submitHandler}
-              size={'xs'}
-              variant={'customGreen'}
-            >
-              ok
-            </Button>
+          <Button
+            className={'TimeframeMenu__ValueButton'}
+            onClick={submitHandler}
+            size={'xs'}
+            variant={'customGreen'}
+          >
+            ok
+          </Button>
         </div>
       </div>
 

@@ -41,32 +41,23 @@ const DateRangePicker = ({
   const [range, setRange] = useState<CalendarRange>([null, null])
   const monthsToShow = 12
   const [currentMonthIndex, setCurrentMonthIndex] = useState(
-    disableFutureDates
-      ? showSingleCalendar
-        ? -monthsToShow
-        : -monthsToShow + 1
-      : 0
+    disableFutureDates ? (showSingleCalendar ? -monthsToShow : -monthsToShow + 1) : 0
   )
   const [activeStartDate, setActiveStartDate] = useState(
     new Date(today.getFullYear(), today.getMonth() - 1, 1)
   )
-  const [displayedMonths, setDisplayedMonths] = useState<[string | null, string | null]>([null, null])
+  const [displayedMonths, setDisplayedMonths] = useState<[string | null, string | null]>([
+    null,
+    null
+  ])
   const [monthPairs, setMonthPairs] = useState<MonthPair[]>([])
 
   useEffect(() => {
     const generateMonthPairs = (): MonthPair[] => {
       const months: MonthPair[] = []
       for (let i = 0; i < monthsToShow; i += showSingleCalendar ? 1 : 2) {
-        const date1 = new Date(
-          today.getFullYear(),
-          today.getMonth() + currentMonthIndex + i,
-          1
-        )
-        const date2 = new Date(
-          today.getFullYear(),
-          today.getMonth() + currentMonthIndex + i + 1,
-          1
-        )
+        const date1 = new Date(today.getFullYear(), today.getMonth() + currentMonthIndex + i, 1)
+        const date2 = new Date(today.getFullYear(), today.getMonth() + currentMonthIndex + i + 1, 1)
 
         months.push({
           start1: new Date(date1.getFullYear(), date1.getMonth(), 1),
@@ -89,11 +80,7 @@ const DateRangePicker = ({
       month: 'long',
       year: 'numeric'
     })
-    const nextMonth = new Date(
-      activeStartDate.getFullYear(),
-      activeStartDate.getMonth() + 1,
-      1
-    )
+    const nextMonth = new Date(activeStartDate.getFullYear(), activeStartDate.getMonth() + 1, 1)
     const nextMonthLabel = nextMonth.toLocaleString('en-US', {
       month: 'long',
       year: 'numeric'
@@ -123,11 +110,11 @@ const DateRangePicker = ({
   }
 
   const handleNext = () => {
-    setCurrentMonthIndex((prev) => prev + (showSingleCalendar ? 1 : 2))
+    setCurrentMonthIndex(prev => prev + (showSingleCalendar ? 1 : 2))
   }
 
   const handlePrev = () => {
-    setCurrentMonthIndex((prev) => prev - (showSingleCalendar ? 1 : 2))
+    setCurrentMonthIndex(prev => prev - (showSingleCalendar ? 1 : 2))
   }
 
   const tileDisabled = ({ date }: { date: Date }) => {
@@ -145,13 +132,9 @@ const DateRangePicker = ({
       }
     >
       <div className={'DateRangePicker__Header'}>
-        <div className={'DateRangePicker__HeaderMonth'}>
-          {displayedMonths[0]}
-        </div>
+        <div className={'DateRangePicker__HeaderMonth'}>{displayedMonths[0]}</div>
         {!showSingleCalendar && (
-          <div className={'DateRangePicker__HeaderMonth'}>
-            {displayedMonths[1]}
-          </div>
+          <div className={'DateRangePicker__HeaderMonth'}>{displayedMonths[1]}</div>
         )}
       </div>
 
@@ -167,7 +150,7 @@ const DateRangePicker = ({
         />
       </div>
 
-      <div className='DateRangePicker__MonthSelector'>
+      <div className="DateRangePicker__MonthSelector">
         <button
           className={'DateRangePicker__Arrow DateRangePicker__Arrow--Left'}
           onClick={handlePrev}
@@ -189,9 +172,7 @@ const DateRangePicker = ({
             onClick={() => handleSetDisplayedMonths(pair.start1, pair.end2)}
             disabled={disableFutureDates && pair.start1 > today}
           >
-            {showSingleCalendar
-              ? pair.labelShort.split('-')[0]
-              : pair.labelShort}
+            {showSingleCalendar ? pair.labelShort.split('-')[0] : pair.labelShort}
           </button>
         ))}
 

@@ -19,9 +19,11 @@ const INTERVAL_UNIT_MS: Record<IntervalUnit, bigint> = {
   days: 86_400_000n
 }
 
-export async function buildTokenConfigurationWasm (form: TokenForm): Promise<TokenConfigurationWasm> {
+export async function buildTokenConfigurationWasm(
+  form: TokenForm
+): Promise<TokenConfigurationWasm> {
   // Dynamic import — pshenmic-dpp/wasm has no reliable .d.ts; treat module as loosely typed.
-  const wasm = await import('pshenmic-dpp/wasm') as Record<string, any>
+  const wasm = (await import('pshenmic-dpp/wasm')) as Record<string, any>
 
   const {
     TokenConfigurationWASM,
@@ -43,20 +45,10 @@ export async function buildTokenConfigurationWasm (form: TokenForm): Promise<Tok
   const ownerTaker = () => AuthorizedActionTakersWASM.ContractOwner()
   const noOneTaker = () => AuthorizedActionTakersWASM.NoOne()
 
-  const ownerOnlyRule = () => new ChangeControlRulesWASM(
-    ownerTaker(),
-    ownerTaker(),
-    false,
-    false,
-    false
-  )
-  const noOneRule = () => new ChangeControlRulesWASM(
-    noOneTaker(),
-    noOneTaker(),
-    false,
-    false,
-    false
-  )
+  const ownerOnlyRule = () =>
+    new ChangeControlRulesWASM(ownerTaker(), ownerTaker(), false, false, false)
+  const noOneRule = () =>
+    new ChangeControlRulesWASM(noOneTaker(), noOneTaker(), false, false, false)
 
   const name = (form.name || 'Token').trim()
   const pluralForm = (form.pluralForm || `${name}s`).trim()
@@ -93,7 +85,11 @@ export async function buildTokenConfigurationWasm (form: TokenForm): Promise<Tok
     const ts = Date.parse(row.time)
     if (Number.isNaN(ts)) continue
     let scaled: bigint
-    try { scaled = BigInt(row.amount) * scale } catch { continue }
+    try {
+      scaled = BigInt(row.amount) * scale
+    } catch {
+      continue
+    }
     const key = String(ts)
     if (!groupedPP[key]) groupedPP[key] = {}
     groupedPP[key][row.identity.trim()] = scaled
@@ -106,7 +102,11 @@ export async function buildTokenConfigurationWasm (form: TokenForm): Promise<Tok
   if (form.perpetualEnabled) {
     const intervalValue = Number(form.perpetualIntervalValue)
     let amountScaled: bigint
-    try { amountScaled = BigInt(form.perpetualAmount || '0') * scale } catch { amountScaled = 0n }
+    try {
+      amountScaled = BigInt(form.perpetualAmount || '0') * scale
+    } catch {
+      amountScaled = 0n
+    }
     if (intervalValue > 0 && amountScaled > 0n) {
       const fn = DistributionFunctionWASM.FixedAmountDistribution(amountScaled)
       const type = form.perpetualType || 'time'
@@ -117,12 +117,18 @@ export async function buildTokenConfigurationWasm (form: TokenForm): Promise<Tok
         rewardType = RewardDistributionTypeWASM.EpochBasedDistribution(intervalValue, fn)
       } else {
         const unitMs = INTERVAL_UNIT_MS[form.perpetualIntervalUnit] || INTERVAL_UNIT_MS.days
-        rewardType = RewardDistributionTypeWASM.TimeBasedDistribution(BigInt(intervalValue) * unitMs, fn)
+        rewardType = RewardDistributionTypeWASM.TimeBasedDistribution(
+          BigInt(intervalValue) * unitMs,
+          fn
+        )
       }
       let recipient
       if (type === 'epoch' && form.perpetualRecipient === 'evonodes') {
         recipient = TokenDistributionRecipientWASM.EvonodesByParticipation()
-      } else if (form.perpetualRecipient === 'identity' && form.perpetualRecipientIdentity?.trim()) {
+      } else if (
+        form.perpetualRecipient === 'identity' &&
+        form.perpetualRecipientIdentity?.trim()
+      ) {
         recipient = TokenDistributionRecipientWASM.Identity(form.perpetualRecipientIdentity.trim())
       } else {
         recipient = TokenDistributionRecipientWASM.ContractOwner()
@@ -149,9 +155,7 @@ export async function buildTokenConfigurationWasm (form: TokenForm): Promise<Tok
   )
 
   const baseSupply = BigInt(form.baseSupply || '0') * scale
-  const maxSupply = form.hasMaxSupply && form.maxSupply
-    ? BigInt(form.maxSupply) * scale
-    : undefined
+  const maxSupply = form.hasMaxSupply && form.maxSupply ? BigInt(form.maxSupply) * scale : undefined
 
   // Positional ctor — arg order per pshenmic-dpp TokenConfigurationWASM v2 (see #76).
   return new TokenConfigurationWASM(
@@ -177,11 +181,11 @@ export async function buildTokenConfigurationWasm (form: TokenForm): Promise<Tok
   ) as TokenConfigurationWasm
 }
 
-export async function calculateTokenId (
+export async function calculateTokenId(
   contractIdLike: IdentifierWASM | string,
   position = 0
 ): Promise<IdentifierWASM> {
-  const { TokenConfigurationWASM } = await import('pshenmic-dpp/wasm') as {
+  const { TokenConfigurationWASM } = (await import('pshenmic-dpp/wasm')) as {
     TokenConfigurationWASM: {
       calculateTokenId: (id: IdentifierWASM | string, position: number) => IdentifierWASM
     }

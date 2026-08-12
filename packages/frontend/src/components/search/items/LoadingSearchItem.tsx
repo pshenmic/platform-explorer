@@ -6,21 +6,21 @@ import { LoadingLine as LoadingLineJs } from '../../loading'
 
 const LoadingLine = LoadingLineJs as ComponentType<{ colorScheme?: string }>
 
-export function LoadingSearchItem ({ className }: WithClassName) {
+export function LoadingSearchItem({ className }: WithClassName) {
   return (
     <div className={`SearchResultsListItem SearchResultsListItem--Loading ${className || ''}`}>
       <Grid className={'SearchResultsListItem__Content'}>
         <GridItem>
-          <LoadingLine colorScheme={'gray'}/>
+          <LoadingLine colorScheme={'gray'} />
         </GridItem>
         <GridItem>
-          <LoadingLine colorScheme={'gray'}/>
+          <LoadingLine colorScheme={'gray'} />
         </GridItem>
         <GridItem>
-          <LoadingLine colorScheme={'gray'}/>
+          <LoadingLine colorScheme={'gray'} />
         </GridItem>
         <GridItem className={'SearchResultsListItem__ArrowButtonContainer'}>
-          <Button className={'SearchResultsListItem__ArrowButton'} size={'xxs'} variant={'gray'}/>
+          <Button className={'SearchResultsListItem__ArrowButton'} size={'xxs'} variant={'gray'} />
         </GridItem>
       </Grid>
     </div>

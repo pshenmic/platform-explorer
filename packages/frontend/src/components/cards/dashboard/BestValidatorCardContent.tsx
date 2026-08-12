@@ -16,19 +16,21 @@ interface BestValidatorCardContentProps {
   epoch?: Pick<EpochData, 'bestValidator'> | null
 }
 
-export function BestValidatorCardContent ({ epoch }: BestValidatorCardContentProps) {
+export function BestValidatorCardContent({ epoch }: BestValidatorCardContentProps) {
   return (
     <div className={'BestValidatorCardContent'}>
-      {epoch?.bestValidator
-        ? <ValueCard
-            link={epoch.bestValidator ? `/validator/${epoch.bestValidator}` : undefined}
-            className={'ValidatorsTotalCard__Value'}
-          >
+      {epoch?.bestValidator ? (
+        <ValueCard
+          link={epoch.bestValidator ? `/validator/${epoch.bestValidator}` : undefined}
+          className={'ValidatorsTotalCard__Value'}
+        >
           <Identifier avatar={true} copyButton={true} styles={['highlight-both']}>
             {epoch.bestValidator}
           </Identifier>
         </ValueCard>
-        : 'n/a'}
+      ) : (
+        'n/a'
+      )}
     </div>
   )
 }

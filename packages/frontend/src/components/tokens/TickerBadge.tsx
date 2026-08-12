@@ -9,7 +9,7 @@ interface TickerBadgeProps extends WithClassName {
   [key: string]: unknown
 }
 
-function TickerBadge ({ children, className, size = 'sm', ...props }: TickerBadgeProps) {
+function TickerBadge({ children, className, size = 'sm', ...props }: TickerBadgeProps) {
   return (
     <ValueContainer size={size} className={`TickerBadge ${className || ''}`} {...props}>
       {children}

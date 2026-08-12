@@ -10,18 +10,18 @@ interface SkeletonProps extends WithClassName {
 }
 
 // pulsing placeholder; size it to match the real element so the swap causes no layout shift
-export function Skeleton ({ w, h = '0.7em', radius = 4, circle = false, className = '' }: SkeletonProps) {
+export function Skeleton({
+  w,
+  h = '0.7em',
+  radius = 4,
+  circle = false,
+  className = ''
+}: SkeletonProps) {
   const style: CSSProperties = {
     width: w,
     height: circle ? w : h,
     borderRadius: circle ? '50%' : radius
   }
 
-  return (
-    <span
-      className={`Skeleton ${className}`}
-      aria-hidden={'true'}
-      style={style}
-    />
-  )
+  return <span className={`Skeleton ${className}`} aria-hidden={'true'} style={style} />
 }

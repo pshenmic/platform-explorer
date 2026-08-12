@@ -17,7 +17,7 @@ export const ActiveFilters = ({
   onClearFilter,
   formatValue,
   allValuesSelected = () => false,
-  getFilterLabel = (key) => key
+  getFilterLabel = key => key
 }: ActiveFiltersProps) => {
   const activeFilters = Object.entries(filters).filter(([key, value]) => {
     if (Array.isArray(value)) {
@@ -49,7 +49,7 @@ export const ActiveFilters = ({
                 onClearFilter(key)
               }}
             >
-              <CloseIcon/>
+              <CloseIcon />
             </div>
           }
         >

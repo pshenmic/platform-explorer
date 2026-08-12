@@ -17,11 +17,7 @@ import type { LoadableState, Rate, Status } from '../../../types'
 
 import './Block.css'
 
-const tabs = [
-  'transactions',
-  'quorum-members',
-  'quorum-info'
-] as const
+const tabs = ['transactions', 'quorum-members', 'quorum-info'] as const
 
 const defaultTabName = 'transactions'
 
@@ -29,14 +25,26 @@ interface BlockProps {
   hash: string
 }
 
-function Block ({ hash }: BlockProps) {
+function Block({ hash }: BlockProps) {
   const { setBreadcrumbs } = useBreadcrumbs()
-  const [block, setBlock] = useState<LoadableState<BlockDetail>>({ data: {} as BlockDetail, loading: true, error: false })
-  const [rate, setRate] = useState<LoadableState<Rate>>({ data: {} as Rate, loading: true, error: false })
-  const [status, setStatus] = useState<LoadableState<Partial<Status>>>({ data: {} as Partial<Status>, loading: true, error: false })
+  const [block, setBlock] = useState<LoadableState<BlockDetail>>({
+    data: {} as BlockDetail,
+    loading: true,
+    error: false
+  })
+  const [rate, setRate] = useState<LoadableState<Rate>>({
+    data: {} as Rate,
+    loading: true,
+    error: false
+  })
+  const [status, setStatus] = useState<LoadableState<Partial<Status>>>({
+    data: {} as Partial<Status>,
+    loading: true,
+    error: false
+  })
   const [activeTab, setActiveTab] = useState(
-    tabs.indexOf(defaultTabName.toLowerCase() as typeof tabs[number]) !== -1
-      ? tabs.indexOf(defaultTabName.toLowerCase() as typeof tabs[number])
+    tabs.indexOf(defaultTabName.toLowerCase() as (typeof tabs)[number]) !== -1
+      ? tabs.indexOf(defaultTabName.toLowerCase() as (typeof tabs)[number])
       : 0
   )
   const { l1explorerBaseUrl } = useActiveNetwork()
@@ -61,19 +69,26 @@ function Block ({ hash }: BlockProps) {
   useEffect(() => {
     const tab = searchParams.get('tab')
 
-    if (tab && tabs.indexOf(tab.toLowerCase() as typeof tabs[number]) !== -1) {
-      setActiveTab(tabs.indexOf(tab.toLowerCase() as typeof tabs[number]))
+    if (tab && tabs.indexOf(tab.toLowerCase() as (typeof tabs)[number]) !== -1) {
+      setActiveTab(tabs.indexOf(tab.toLowerCase() as (typeof tabs)[number]))
       return
     }
 
-    setActiveTab(tabs.indexOf(defaultTabName.toLowerCase() as typeof tabs[number]) !== -1 ? tabs.indexOf(defaultTabName.toLowerCase() as typeof tabs[number]) : 0)
+    setActiveTab(
+      tabs.indexOf(defaultTabName.toLowerCase() as (typeof tabs)[number]) !== -1
+        ? tabs.indexOf(defaultTabName.toLowerCase() as (typeof tabs)[number])
+        : 0
+    )
   }, [searchParams])
 
   useEffect(() => {
     const urlParameters = new URLSearchParams(Array.from(searchParams.entries()))
 
-    if (activeTab === tabs.indexOf(defaultTabName.toLowerCase() as typeof tabs[number]) ||
-      (tabs.indexOf(defaultTabName.toLowerCase() as typeof tabs[number]) === -1 && activeTab === 0)) {
+    if (
+      activeTab === tabs.indexOf(defaultTabName.toLowerCase() as (typeof tabs)[number]) ||
+      (tabs.indexOf(defaultTabName.toLowerCase() as (typeof tabs)[number]) === -1 &&
+        activeTab === 0)
+    ) {
       urlParameters.delete('tab')
     } else {
       urlParameters.set('tab', tabs[activeTab])
@@ -97,61 +112,70 @@ function Block ({ hash }: BlockProps) {
   useEffect(fetchData, [hash])
 
   return (
-    <PageDataContainer
-      className={'Block'}
-      title={'Block info'}
-    >
+    <PageDataContainer className={'Block'} title={'Block info'}>
       <div className={'Block__InfoBlocks'}>
         <BlockTotalCard
           className={'Block__InfoBlock'}
           l1explorerBaseUrl={l1explorerBaseUrl}
           block={block}
         />
-        <BlockDigestCard
-          block={block}
-          rate={rate.data}
-          status={status}
-        />
+        <BlockDigestCard block={block} rate={rate.data} status={status} />
       </div>
 
       <InfoContainer styles={['tabs']}>
-        <Tabs onChange={(index) => setActiveTab(index)} index={activeTab}>
+        <Tabs onChange={index => setActiveTab(index)} index={activeTab}>
           <TabList>
-            <Tab>Transactions {block.data?.txs?.length !== undefined
-              ? <span
-                className={`Tabs__TabItemsCount ${block.data?.txs?.length === 0 ? 'Tabs__TabItemsCount--Empty' : ''}`}>
+            <Tab>
+              Transactions{' '}
+              {block.data?.txs?.length !== undefined ? (
+                <span
+                  className={`Tabs__TabItemsCount ${block.data?.txs?.length === 0 ? 'Tabs__TabItemsCount--Empty' : ''}`}
+                >
                   {block.data?.txs?.length}
                 </span>
-              : ''}
+              ) : (
+                ''
+              )}
             </Tab>
-            <Tab>Quorum Members {block?.data?.quorum?.members?.length !== undefined
-              ? <span
-                className={`Tabs__TabItemsCount ${block?.data?.quorum?.members?.length === 0 ? 'Tabs__TabItemsCount--Empty' : ''}`}>
+            <Tab>
+              Quorum Members{' '}
+              {block?.data?.quorum?.members?.length !== undefined ? (
+                <span
+                  className={`Tabs__TabItemsCount ${block?.data?.quorum?.members?.length === 0 ? 'Tabs__TabItemsCount--Empty' : ''}`}
+                >
                   {block?.data?.quorum?.members?.length}
                 </span>
-              : ''}
+              ) : (
+                ''
+              )}
             </Tab>
             <Tab>Quorum Info</Tab>
           </TabList>
           <TabPanels>
             <TabPanel>
-              {!block.error
-                ? <TransactionsList
-                    transactions={block.data?.txs as never}
-                    rate={rate.data}
-                    loading={block.loading}
-                  />
-                : <Container h={20}><ErrorMessageBlock/></Container>
-              }
+              {!block.error ? (
+                <TransactionsList
+                  transactions={block.data?.txs as never}
+                  rate={rate.data}
+                  loading={block.loading}
+                />
+              ) : (
+                <Container h={20}>
+                  <ErrorMessageBlock />
+                </Container>
+              )}
             </TabPanel>
             <TabPanel>
-              {!block.error
-                ? <QuorumMembersList
-                    members={block?.data?.quorum?.members ?? undefined}
-                    loading={block.loading}
-                  />
-                : <Container h={20}><ErrorMessageBlock/></Container>
-              }
+              {!block.error ? (
+                <QuorumMembersList
+                  members={block?.data?.quorum?.members ?? undefined}
+                  loading={block.loading}
+                />
+              ) : (
+                <Container h={20}>
+                  <ErrorMessageBlock />
+                </Container>
+              )}
             </TabPanel>
             <TabPanel>
               <QuorumInfo

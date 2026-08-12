@@ -11,8 +11,16 @@ export type DataContractsSortingUpdate = {
 }
 
 export const useDataContractsSorting = () => {
-  const [order, setOrder] = useQueryState('order', { defaultValue: 'desc', scroll: false, shallow: true })
-  const [orderBy, setOrderBy] = useQueryState('order_by', { defaultValue: 'block_height', scroll: false, shallow: true })
+  const [order, setOrder] = useQueryState('order', {
+    defaultValue: 'desc',
+    scroll: false,
+    shallow: true
+  })
+  const [orderBy, setOrderBy] = useQueryState('order_by', {
+    defaultValue: 'block_height',
+    scroll: false,
+    shallow: true
+  })
 
   const sorting: DataContractsSorting = {
     order: order ?? 'desc',

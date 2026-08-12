@@ -10,11 +10,11 @@ interface VersionValueProps {
   loading?: boolean
 }
 
-function VersionValue ({ version, href, loading }: VersionValueProps) {
+function VersionValue({ version, href, loading }: VersionValueProps) {
   if (loading) {
     return (
       <span className={'HomeHero__MetaValue HomeHero__MetaChip HomeHero__MetaChip--Loading'}>
-        <Skeleton w={'54px'} h={'0.8em'}/>
+        <Skeleton w={'54px'} h={'0.8em'} />
       </span>
     )
   }
@@ -30,7 +30,7 @@ function VersionValue ({ version, href, loading }: VersionValueProps) {
       aria-label={`v${version} release notes, opens in a new tab`}
     >
       v{version}
-      <ArrowCornerIcon w={'8px'} h={'8px'}/>
+      <ArrowCornerIcon w={'8px'} h={'8px'} />
     </a>
   )
 }
@@ -41,11 +41,11 @@ interface StatusValueProps {
   children?: ReactNode
 }
 
-function StatusValue ({ ok, loading, children }: StatusValueProps) {
-  const state = loading ? 'is-loading' : (ok ? 'is-ok' : 'is-down')
+function StatusValue({ ok, loading, children }: StatusValueProps) {
+  const state = loading ? 'is-loading' : ok ? 'is-ok' : 'is-down'
   return (
     <span className={`HomeHero__MetaValue HomeHero__MetaChip HomeHero__MetaChip--Status ${state}`}>
-      {loading ? <Skeleton w={'82px'} h={'0.8em'}/> : children}
+      {loading ? <Skeleton w={'82px'} h={'0.8em'} /> : children}
     </span>
   )
 }
@@ -55,7 +55,7 @@ interface MetaItemProps {
   children?: ReactNode
 }
 
-function MetaItem ({ label, children }: MetaItemProps) {
+function MetaItem({ label, children }: MetaItemProps) {
   return (
     <div className={'HomeHero__MetaItem'}>
       <span className={'HomeHero__MetaLabel'}>{label}</span>
@@ -70,7 +70,7 @@ interface HeroMetaProps {
 }
 
 // Network / API status + Drive / Tenderdash versions as label-over-value mini-cells
-export function HeroMeta ({ status, loading }: HeroMetaProps) {
+export function HeroMeta({ status, loading }: HeroMetaProps) {
   // until status data arrives, render neutral placeholders (no red "down" flash)
   const ready = !loading && status && Object.keys(status).length > 0
   const live = isNetworkLive(status)
@@ -81,16 +81,28 @@ export function HeroMeta ({ status, loading }: HeroMetaProps) {
   return (
     <div className={'HomeHero__Meta'}>
       <MetaItem label={'Network'}>
-        <StatusValue ok={live} loading={!ready}>{status?.network || 'n/a'}</StatusValue>
+        <StatusValue ok={live} loading={!ready}>
+          {status?.network || 'n/a'}
+        </StatusValue>
       </MetaItem>
       <MetaItem label={'API'}>
-        <StatusValue ok={apiOk} loading={!ready}>{apiOk ? 'operational' : 'disrupted'}</StatusValue>
+        <StatusValue ok={apiOk} loading={!ready}>
+          {apiOk ? 'operational' : 'disrupted'}
+        </StatusValue>
       </MetaItem>
       <MetaItem label={'Drive'}>
-        <VersionValue version={drive} href={'https://github.com/dashpay/platform/releases'} loading={!ready}/>
+        <VersionValue
+          version={drive}
+          href={'https://github.com/dashpay/platform/releases'}
+          loading={!ready}
+        />
       </MetaItem>
       <MetaItem label={'Tenderdash'}>
-        <VersionValue version={tenderdash} href={'https://github.com/dashpay/tenderdash/releases'} loading={!ready}/>
+        <VersionValue
+          version={tenderdash}
+          href={'https://github.com/dashpay/tenderdash/releases'}
+          loading={!ready}
+        />
       </MetaItem>
     </div>
   )

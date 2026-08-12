@@ -30,12 +30,7 @@ export const IdentityUpdate = ({
       title={'Identity'}
       value={
         <ValueCard link={`/identity/${identityId}`}>
-          <Identifier
-            avatar={true}
-            copyButton={true}
-            ellipsis={true}
-            styles={['highlight-both']}
-          >
+          <Identifier avatar={true} copyButton={true} ellipsis={true} styles={['highlight-both']}>
             {identityId}
           </Identifier>
         </ValueCard>
@@ -62,9 +57,7 @@ export const IdentityUpdate = ({
 
     {identityContractNonce !== undefined && (
       <InfoLine
-        className={
-          'TransactionPage__InfoLine TransactionPage__InfoLine--Inline'
-        }
+        className={'TransactionPage__InfoLine TransactionPage__InfoLine--Inline'}
         title={'Identity Nonce'}
         value={identityNonce}
         loading={loading}
@@ -74,12 +67,8 @@ export const IdentityUpdate = ({
 
     {(publicKeysToAdd?.length ?? 0) > 0 && (
       <InfoLine
-        className={
-          'TransactionPage__InfoLine TransactionPage__InfoLine--PublicKeys'
-        }
-        title={`Add Public Keys ${
-          publicKeys !== undefined ? `(${publicKeysToAdd?.length})` : ''
-        }`}
+        className={'TransactionPage__InfoLine TransactionPage__InfoLine--PublicKeys'}
+        title={`Add Public Keys ${publicKeys !== undefined ? `(${publicKeysToAdd?.length})` : ''}`}
         value={
           <>
             {publicKeysToAdd?.map((publicKey, i) => (
@@ -98,13 +87,9 @@ export const IdentityUpdate = ({
 
     {(publicKeyIdsToDisable?.length ?? 0) > 0 && (
       <InfoLine
-        className={
-          'TransactionPage__InfoLine TransactionPage__InfoLine--PublicKeys'
-        }
+        className={'TransactionPage__InfoLine TransactionPage__InfoLine--PublicKeys'}
         title={`Disable Public Keys ${
-          publicKeyIdsToDisable !== undefined
-            ? `(${publicKeyIdsToDisable?.length})`
-            : ''
+          publicKeyIdsToDisable !== undefined ? `(${publicKeyIdsToDisable?.length})` : ''
         }`}
         value={
           <>

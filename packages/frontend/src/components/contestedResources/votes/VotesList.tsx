@@ -22,7 +22,7 @@ interface VotesListProps {
   showDataContract?: boolean
 }
 
-function VotesList ({
+function VotesList({
   votes = [],
   headerStyles,
   pagination,
@@ -40,18 +40,20 @@ function VotesList ({
     <div className={'VotesList'}>
       <div className={'VotesList__ListContainer'}>
         <div className={'VotesList__ScrollZone'}>
-          <Grid className={`VotesList__ColumnTitles ${headerExtraClass?.[headerStyles ?? ''] || ''} ${!showDataContract ? headerExtraClass.noDataContract : ''}`}>
+          <Grid
+            className={`VotesList__ColumnTitles ${headerExtraClass?.[headerStyles ?? ''] || ''} ${!showDataContract ? headerExtraClass.noDataContract : ''}`}
+          >
             <GridItem className={'VotesList__ColumnTitle VotesList__ColumnTitle--Timestamp'}>
               Time
             </GridItem>
             <GridItem className={'VotesList__ColumnTitle VotesList__ColumnTitle--ProTxHash'}>
               Voter Pro Tx Hash
             </GridItem>
-            {showDataContract &&
+            {showDataContract && (
               <GridItem className={'VotesList__ColumnTitle VotesList__ColumnTitle--DataContract'}>
                 Data Contract
               </GridItem>
-            }
+            )}
             <GridItem className={'VotesList__ColumnTitle VotesList__ColumnTitle--Document'}>
               Document
             </GridItem>
@@ -66,22 +68,21 @@ function VotesList ({
             </GridItem>
           </Grid>
 
-          {!loading
-            ? <div className={'VotesList__Items'}>
-              {votes?.map((vote, i) =>
+          {!loading ? (
+            <div className={'VotesList__Items'}>
+              {votes?.map((vote, i) => (
                 <VotesListItem vote={vote} showDataContract={showDataContract} key={i} />
-              )}
-              {votes?.length === 0 &&
-                <EmptyListMessage>There are no votes yet.</EmptyListMessage>
-              }
-              {votes === undefined && <ErrorMessageBlock/>}
+              ))}
+              {votes?.length === 0 && <EmptyListMessage>There are no votes yet.</EmptyListMessage>}
+              {votes === undefined && <ErrorMessageBlock />}
             </div>
-            : <LoadingList itemsCount={itemsCount} />
-          }
+          ) : (
+            <LoadingList itemsCount={itemsCount} />
+          )}
         </div>
       </div>
 
-      {pagination &&
+      {pagination && (
         <Pagination
           className={'VotesList__Pagination'}
           onPageChange={pagination.onPageChange}
@@ -89,7 +90,7 @@ function VotesList ({
           forcePage={pagination.forcePage}
           justify={true}
         />
-      }
+      )}
     </div>
   )
 }

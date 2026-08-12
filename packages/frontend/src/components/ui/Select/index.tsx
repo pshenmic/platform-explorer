@@ -21,7 +21,7 @@ interface SelectProps extends WithClassName {
   usePortal?: boolean
 }
 
-function normalize (option: SelectValue): SelectOption {
+function normalize(option: SelectValue): SelectOption {
   if (option != null && typeof option === 'object') {
     return {
       value: option.value ?? '',
@@ -31,7 +31,7 @@ function normalize (option: SelectValue): SelectOption {
   return { value: (option as string | number) ?? '', label: String(option ?? '') }
 }
 
-export default function Select ({
+export default function Select({
   value,
   onChange,
   options,
@@ -40,9 +40,10 @@ export default function Select ({
   usePortal = false,
   className
 }: SelectProps) {
-  const portalTarget = usePortal || menuPortalTarget
-    ? menuPortalTarget ?? (typeof window !== 'undefined' ? document.body : null)
-    : null
+  const portalTarget =
+    usePortal || menuPortalTarget
+      ? (menuPortalTarget ?? (typeof window !== 'undefined' ? document.body : null))
+      : null
 
   return (
     <ReactSelect<SelectOption>
@@ -52,9 +53,7 @@ export default function Select ({
       menuPlacement={menuPlacement}
       menuPortalTarget={portalTarget}
       onChange={onChange}
-      {...(value
-        ? { value: normalize(value) }
-        : {})}
+      {...(value ? { value: normalize(value) } : {})}
       options={options?.map(normalize)}
     />
   )

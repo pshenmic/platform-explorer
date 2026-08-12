@@ -19,10 +19,21 @@ interface NetworkStatsInlineProps extends WithClassName {
   items?: NetworkStatsItem[]
 }
 
-export default function NetworkStatsInline ({ className, items: itemsProp }: NetworkStatsInlineProps) {
+export default function NetworkStatsInline({
+  className,
+  items: itemsProp
+}: NetworkStatsInlineProps) {
   const useDefault = !itemsProp
-  const [status, setStatus] = useState<LoadableState<Status>>({ data: null, loading: true, error: false })
-  const [epoch, setEpoch] = useState<LoadableState<EpochData>>({ data: null, loading: true, error: false })
+  const [status, setStatus] = useState<LoadableState<Status>>({
+    data: null,
+    loading: true,
+    error: false
+  })
+  const [epoch, setEpoch] = useState<LoadableState<EpochData>>({
+    data: null,
+    loading: true,
+    error: false
+  })
 
   useEffect(() => {
     if (!useDefault) return

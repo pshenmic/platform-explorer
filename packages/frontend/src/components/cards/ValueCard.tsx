@@ -9,9 +9,15 @@ interface WrapperProps extends WithChildren, WithClassName {
 }
 
 const Wrapper = (props: WrapperProps) => {
-  return props?.link
-    ? <Link onMouseMove={props.onMouseMove} href={props.link} className={props.className}>{props.children}</Link>
-    : <div onMouseMove={props.onMouseMove} className={props.className}>{props.children}</div>
+  return props?.link ? (
+    <Link onMouseMove={props.onMouseMove} href={props.link} className={props.className}>
+      {props.children}
+    </Link>
+  ) : (
+    <div onMouseMove={props.onMouseMove} className={props.className}>
+      {props.children}
+    </div>
+  )
 }
 
 type ValueCardColorScheme = 'default' | 'transparent' | 'green'
@@ -25,7 +31,7 @@ interface ValueCardProps extends WithChildren, WithClassName {
   size?: ValueCardSize
 }
 
-export default function ValueCard ({
+export default function ValueCard({
   link,
   clickable,
   loading,

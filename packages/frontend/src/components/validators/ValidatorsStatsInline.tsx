@@ -16,9 +16,17 @@ interface ValidatorsStatsInlineProps {
   className?: string
 }
 
-export default function ValidatorsStatsInline ({ total, className }: ValidatorsStatsInlineProps) {
-  const [status, setStatus] = useState<LoadableState<Status>>({ data: null, loading: true, error: false })
-  const [epoch, setEpoch] = useState<LoadableState<EpochData>>({ data: null, loading: true, error: false })
+export default function ValidatorsStatsInline({ total, className }: ValidatorsStatsInlineProps) {
+  const [status, setStatus] = useState<LoadableState<Status>>({
+    data: null,
+    loading: true,
+    error: false
+  })
+  const [epoch, setEpoch] = useState<LoadableState<EpochData>>({
+    data: null,
+    loading: true,
+    error: false
+  })
 
   useEffect(() => {
     Api.getStatus()
@@ -34,7 +42,7 @@ export default function ValidatorsStatsInline ({ total, className }: ValidatorsS
 
   const bestValidator = epoch.data?.bestValidator
 
-  const items: Array<{ label: string, value?: ReactNode, loading?: boolean, color?: string }> = [
+  const items: Array<{ label: string; value?: ReactNode; loading?: boolean; color?: string }> = [
     {
       label: 'Total',
       value: typeof total === 'number' ? String(formatFullNumber(total)) : null,
@@ -48,24 +56,27 @@ export default function ValidatorsStatsInline ({ total, className }: ValidatorsS
     },
     {
       label: 'Fees',
-      value: typeof epoch.data?.totalCollectedFees === 'number' ? String(formatFullNumber(epoch.data.totalCollectedFees)) : null,
+      value:
+        typeof epoch.data?.totalCollectedFees === 'number'
+          ? String(formatFullNumber(epoch.data.totalCollectedFees))
+          : null,
       color: 'var(--chakra-colors-brand-light)',
       loading: epoch.loading
     },
     {
       label: 'Best validator',
-      value: bestValidator
-        ? <Link
-            href={`/validator/${bestValidator}`}
-            style={{ color: 'inherit', fontFamily: 'var(--chakra-fonts-mono)', whiteSpace: 'nowrap' }}
-          >
-            {shortHash(bestValidator)}
-          </Link>
-        : null,
+      value: bestValidator ? (
+        <Link
+          href={`/validator/${bestValidator}`}
+          style={{ color: 'inherit', fontFamily: 'var(--chakra-fonts-mono)', whiteSpace: 'nowrap' }}
+        >
+          {shortHash(bestValidator)}
+        </Link>
+      ) : null,
       color: 'var(--chakra-colors-brand-light)',
       loading: epoch.loading
     }
   ]
 
-  return <NetworkStatsInline className={className} items={items}/>
+  return <NetworkStatsInline className={className} items={items} />
 }

@@ -1,17 +1,20 @@
 export const TransactionTypesInfo = {
   DATA_CONTRACT_CREATE: {
     title: 'Data Contract Create',
-    description: 'Creates a new data contract. This contract defines the schema for storing data on the platform.',
+    description:
+      'Creates a new data contract. This contract defines the schema for storing data on the platform.',
     colorScheme: 'blue'
   },
   IDENTITY_CREATE: {
     title: 'Identity Create',
-    description: 'Creates a new decentralized identity (DID) to manage digital assets and make actions.',
+    description:
+      'Creates a new decentralized identity (DID) to manage digital assets and make actions.',
     colorScheme: 'blue'
   },
   BATCH: {
     title: 'Batch',
-    description: 'Creates a new document or token transitions. It is used to make create, modify, delete other document or token actions on the platform.',
+    description:
+      'Creates a new document or token transitions. It is used to make create, modify, delete other document or token actions on the platform.',
     colorScheme: 'gray'
   },
   IDENTITY_TOP_UP: {
@@ -21,7 +24,8 @@ export const TransactionTypesInfo = {
   },
   DATA_CONTRACT_UPDATE: {
     title: 'Data Contract Update',
-    description: 'Updates an existing data contract. Increments the version and updates the schema of the data contract',
+    description:
+      'Updates an existing data contract. Increments the version and updates the schema of the data contract',
     colorScheme: 'yellow'
   },
   IDENTITY_UPDATE: {
@@ -76,7 +80,8 @@ export const TransactionTypesInfo = {
   },
   SHIELD: {
     title: 'Shield',
-    description: 'Moves credits from a transparent Platform address into the shielded (private) pool.',
+    description:
+      'Moves credits from a transparent Platform address into the shielded (private) pool.',
     colorScheme: 'green'
   },
   SHIELDED_TRANSFER: {

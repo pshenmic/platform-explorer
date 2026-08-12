@@ -6,42 +6,36 @@ import type { Localization } from '../../../types'
 import type { WithClassName } from '../../../types/common'
 import './LocalisationListItem.css'
 
-const NotActive = NotActiveJs as ComponentType<{ children?: ReactNode, className?: string }>
+const NotActive = NotActiveJs as ComponentType<{ children?: ReactNode; className?: string }>
 
 interface LocalisationListItemProps extends WithClassName {
   langCode?: string
   localisation?: Partial<Localization> | null
 }
 
-function LocalisationListItem ({ langCode, localisation, className }: LocalisationListItemProps) {
+function LocalisationListItem({ langCode, localisation, className }: LocalisationListItemProps) {
   return (
     <div className={`LocalisationListItem ${className || ''}`}>
       <Grid className={'LocalisationListItem__Content'}>
         <GridItem className={'LocalisationListItem__Column LocalisationListItem__Column--Language'}>
-          {langCode !== undefined
-            ? langCode
-            : <NotActive>-</NotActive>
-          }
+          {langCode !== undefined ? langCode : <NotActive>-</NotActive>}
         </GridItem>
         <GridItem className={'LocalisationListItem__Column LocalisationListItem__Column--Singular'}>
-          {localisation?.singularForm !== undefined
-            ? localisation?.singularForm
-            : <NotActive/>
-          }
+          {localisation?.singularForm !== undefined ? localisation?.singularForm : <NotActive />}
         </GridItem>
         <GridItem className={'LocalisationListItem__Column LocalisationListItem__Column--Plural'}>
-          {localisation?.pluralForm !== undefined
-            ? localisation?.pluralForm
-            : <NotActive/>
-          }
+          {localisation?.pluralForm !== undefined ? localisation?.pluralForm : <NotActive />}
         </GridItem>
-        <GridItem className={'LocalisationListItem__Column LocalisationListItem__Column--Capitalize'}>
-          {localisation?.shouldCapitalize !== undefined
-            ? <Badge colorScheme={localisation?.shouldCapitalize ? 'orange' : 'gray'}>
-                {localisation?.shouldCapitalize ? 'true' : 'false'}
-              </Badge>
-            : <NotActive/>
-          }
+        <GridItem
+          className={'LocalisationListItem__Column LocalisationListItem__Column--Capitalize'}
+        >
+          {localisation?.shouldCapitalize !== undefined ? (
+            <Badge colorScheme={localisation?.shouldCapitalize ? 'orange' : 'gray'}>
+              {localisation?.shouldCapitalize ? 'true' : 'false'}
+            </Badge>
+          ) : (
+            <NotActive />
+          )}
         </GridItem>
       </Grid>
     </div>

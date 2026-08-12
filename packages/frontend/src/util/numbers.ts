@@ -1,7 +1,7 @@
 export const sliceNumberByDecimals = (
   str: string | null | undefined,
   decimalPlaces: number | string
-): { integer: string, fractional: string } => {
+): { integer: string; fractional: string } => {
   if (str === undefined || str === null) return { integer: '0', fractional: '' }
 
   if (str === '') return { integer: '0', fractional: '' }

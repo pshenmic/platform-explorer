@@ -2,11 +2,7 @@ import type { ComponentType, ReactNode } from 'react'
 import type { Localization, Owner, Token } from '../../../types'
 import type { WithClassName } from '../../../types/common'
 // Untyped JS components — loose wrappers until data/* is migrated
-import {
-  Alias as AliasJs,
-  Identifier as IdentifierJs,
-  TimeDelta as TimeDeltaJs
-} from '../../data'
+import { Alias as AliasJs, Identifier as IdentifierJs, TimeDelta as TimeDeltaJs } from '../../data'
 import { BaseSearchItem, BaseSearchItemContent } from './BaseSearchItem'
 
 const Alias = AliasJs as ComponentType<{
@@ -34,11 +30,14 @@ interface TokenSearchItemProps extends WithClassName {
   onClick?: (data: unknown) => void
 }
 
-export function TokenSearchItem ({ token, className, onClick }: TokenSearchItemProps) {
+export function TokenSearchItem({ token, className, onClick }: TokenSearchItemProps) {
   const tokenName = token?.localizations?.en?.singularForm || token?.name
-  const ownerId = typeof token?.owner === 'object' && token.owner
-    ? token.owner.identifier
-    : (typeof token?.owner === 'string' ? token.owner : undefined)
+  const ownerId =
+    typeof token?.owner === 'object' && token.owner
+      ? token.owner.identifier
+      : typeof token?.owner === 'string'
+        ? token.owner
+        : undefined
 
   return (
     <BaseSearchItem
@@ -50,14 +49,22 @@ export function TokenSearchItem ({ token, className, onClick }: TokenSearchItemP
     >
       <BaseSearchItemContent
         mainContent={
-          tokenName
-            ? <Alias avatarSource={token?.identifier ?? undefined} ellipsis={true}>{tokenName}</Alias>
-            : <Identifier avatar={true} ellipsis={true} styles={['highlight-both']}>{token?.identifier}</Identifier>
+          tokenName ? (
+            <Alias avatarSource={token?.identifier ?? undefined} ellipsis={true}>
+              {tokenName}
+            </Alias>
+          ) : (
+            <Identifier avatar={true} ellipsis={true} styles={['highlight-both']}>
+              {token?.identifier}
+            </Identifier>
+          )
         }
         additionalContent={
-          <Identifier avatar={!!ownerId} ellipsis={true}>{ownerId || '-'}</Identifier>
+          <Identifier avatar={!!ownerId} ellipsis={true}>
+            {ownerId || '-'}
+          </Identifier>
         }
-        timestamp={<TimeDelta endDate={token?.timestamp}/>}
+        timestamp={<TimeDelta endDate={token?.timestamp} />}
       />
     </BaseSearchItem>
   )

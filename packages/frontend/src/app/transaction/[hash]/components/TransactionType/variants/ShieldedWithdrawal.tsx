@@ -1,10 +1,5 @@
 import { InfoLine } from '@components/data'
-import {
-  ShieldedActions,
-  AmountInfoLine,
-  OutputAddressLine,
-  HashInfoLine
-} from '../ShieldedCommon'
+import { ShieldedActions, AmountInfoLine, OutputAddressLine, HashInfoLine } from '../ShieldedCommon'
 import type { DecodedOutputAddress, ShieldedAction, WithRate } from '../../types'
 
 interface ShieldedWithdrawalProps extends WithRate {
@@ -32,27 +27,27 @@ export const ShieldedWithdrawal = ({
   rate
 }: ShieldedWithdrawalProps) => (
   <>
-    <AmountInfoLine title='Unshielding Amount' amount={unshieldingAmount} rate={rate} />
+    <AmountInfoLine title="Unshielding Amount" amount={unshieldingAmount} rate={rate} />
 
     <InfoLine
-      className='TransactionPage__InfoLine TransactionPage__InfoLine--Inline'
-      title='Core Fee Per Byte'
+      className="TransactionPage__InfoLine TransactionPage__InfoLine--Inline"
+      title="Core Fee Per Byte"
       value={coreFeePerByte}
       error={coreFeePerByte === undefined}
     />
 
     <InfoLine
-      className='TransactionPage__InfoLine TransactionPage__InfoLine--Inline'
-      title='Pooling'
+      className="TransactionPage__InfoLine TransactionPage__InfoLine--Inline"
+      title="Pooling"
       value={pooling}
       error={pooling === undefined}
     />
 
     <OutputAddressLine outputAddress={outputAddress} />
-    <HashInfoLine title='Output Script' value={outputScript} />
+    <HashInfoLine title="Output Script" value={outputScript} />
     <ShieldedActions actions={actions} />
-    <HashInfoLine title='Anchor' value={anchor} />
-    <HashInfoLine title='Bindings Signature' value={bindingsSignature} />
-    <HashInfoLine title='Proof' value={proof} />
+    <HashInfoLine title="Anchor" value={anchor} />
+    <HashInfoLine title="Bindings Signature" value={bindingsSignature} />
+    <HashInfoLine title="Proof" value={proof} />
   </>
 )

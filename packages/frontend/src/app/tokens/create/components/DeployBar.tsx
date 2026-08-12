@@ -20,28 +20,55 @@ interface DeployStatusProps {
 }
 
 const DeployStatus = ({ signer, deploy }: DeployStatusProps) => {
-  if (deploy.error != null) return <Text color='red.500' fontSize='sm'>{deploy.error}</Text>
-  if (signer.error != null) return <Text color='red.500' fontSize='sm'>{signer.error}</Text>
+  if (deploy.error != null)
+    return (
+      <Text color="red.500" fontSize="sm">
+        {deploy.error}
+      </Text>
+    )
+  if (signer.error != null)
+    return (
+      <Text color="red.500" fontSize="sm">
+        {signer.error}
+      </Text>
+    )
   if (deploy.result != null) {
     return (
-      <Text color='green.500' fontSize='sm'>
+      <Text color="green.500" fontSize="sm">
         ✓ Token deployed:{' '}
-        <Link href={`/dataContract/${deploy.result.dataContractId}`} color='green.500' textDecoration='underline'>
+        <Link
+          href={`/dataContract/${deploy.result.dataContractId}`}
+          color="green.500"
+          textDecoration="underline"
+        >
           {deploy.result.dataContractId}
-        </Link>
-        {' '}· {deploy.result.tokenId}
+        </Link>{' '}
+        · {deploy.result.tokenId}
       </Text>
     )
   }
   if (signer.isConnected) {
     const connected = signer.signer as Signer
-    return <Text color='gray.500' fontSize='sm'>Signing as: {connected.identityId}</Text>
+    return (
+      <Text color="gray.500" fontSize="sm">
+        Signing as: {connected.identityId}
+      </Text>
+    )
   }
-  if (signer.method === SignerMethod.PRIVATE_KEY) return <Text color='gray.500' fontSize='sm'>Enter your private key from your Identity</Text>
-  return <Text color='gray.500' fontSize='sm'>Connect a wallet to deploy</Text>
+  if (signer.method === SignerMethod.PRIVATE_KEY)
+    return (
+      <Text color="gray.500" fontSize="sm">
+        Enter your private key from your Identity
+      </Text>
+    )
+  return (
+    <Text color="gray.500" fontSize="sm">
+      Connect a wallet to deploy
+    </Text>
+  )
 }
 
-function DeployBar () {
+function DeployBar() {
   const { form } = useTokenWizard()
   const signerCtl = useSigner()
   const deploy = useCreateToken()
@@ -58,14 +85,20 @@ function DeployBar () {
   const errors = validateForm(form)
 
   const handlePrimary = () => {
-    if (deploy.result) { deploy.reset(); return }
+    if (deploy.result) {
+      deploy.reset()
+      return
+    }
     if (!isConnected) {
       if (isPK) signerCtl.connect({ wif, identityId: identityIdInput })
       else signerCtl.connect()
       return
     }
     // Surface errors only on a deploy attempt — no nagging on the empty form.
-    if (errors.length) { setShowErrors(true); return }
+    if (errors.length) {
+      setShowErrors(true)
+      return
+    }
     setShowErrors(false)
     setIsReviewOpen(true)
   }
@@ -85,7 +118,7 @@ function DeployBar () {
   const isDisabled = isBusy || (!isConnected && isPK && !wif.trim())
 
   return (
-    <CardWrapper title='Deploy'>
+    <CardWrapper title="Deploy">
       <Stack spacing={3}>
         <MethodSelect
           value={signerCtl.method}
@@ -101,21 +134,23 @@ function DeployBar () {
             isInactive={isBusy}
           />
         )}
-        <Box minH='20px'>
-          <DeployStatus signer={signerCtl} deploy={deploy}/>
+        <Box minH="20px">
+          <DeployStatus signer={signerCtl} deploy={deploy} />
         </Box>
         {showErrors && errors.length > 0 && !deploy.result && (
-          <Stack spacing={1} as='ul' pl={4} sx={{ listStyle: 'disc' }}>
+          <Stack spacing={1} as="ul" pl={4} sx={{ listStyle: 'disc' }}>
             {errors.map((msg, i) => (
-              <Text as='li' key={i} color='red.500' fontSize='sm'>{msg}</Text>
+              <Text as="li" key={i} color="red.500" fontSize="sm">
+                {msg}
+              </Text>
             ))}
           </Stack>
         )}
         <Button
-          variant='blue'
-          size='sm'
-          minW='160px'
-          alignSelf='flex-start'
+          variant="blue"
+          size="sm"
+          minW="160px"
+          alignSelf="flex-start"
           onClick={handlePrimary}
           isLoading={isBusy}
           isDisabled={isDisabled}

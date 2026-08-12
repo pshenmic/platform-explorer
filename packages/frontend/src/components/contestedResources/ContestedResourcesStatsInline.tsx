@@ -7,8 +7,10 @@ import { fetchHandlerSuccess, fetchHandlerError, formatFullNumber } from '../../
 import NetworkStatsInline from '../stats/NetworkStatsInline'
 import type { ContestedResourcesStatus, LoadableState, WithClassName } from '../../types'
 
-export default function ContestedResourcesStatsInline ({ className }: WithClassName) {
-  const [stats, setStats] = useState<LoadableState<ContestedResourcesStatus | Record<string, unknown>>>({
+export default function ContestedResourcesStatsInline({ className }: WithClassName) {
+  const [stats, setStats] = useState<
+    LoadableState<ContestedResourcesStatus | Record<string, unknown>>
+  >({
     data: {},
     loading: true,
     error: false
@@ -43,5 +45,5 @@ export default function ContestedResourcesStatsInline ({ className }: WithClassN
     }
   ]
 
-  return <NetworkStatsInline className={className} items={items}/>
+  return <NetworkStatsInline className={className} items={items} />
 }

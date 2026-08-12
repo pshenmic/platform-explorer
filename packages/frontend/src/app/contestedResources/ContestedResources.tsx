@@ -9,11 +9,12 @@ import { ErrorMessageBlock } from '../../components/Errors'
 import { fetchHandlerSuccess, fetchHandlerError } from '../../util'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 
+import { Box, Container } from '@chakra-ui/react'
 import {
-  Box,
-  Container
-} from '@chakra-ui/react'
-import { ContestedResourcesList, ContestedResourcesFilter, useContestedResourcesFilters } from '../../components/contestedResources'
+  ContestedResourcesList,
+  ContestedResourcesFilter,
+  useContestedResourcesFilters
+} from '../../components/contestedResources'
 import ContestedResourcesStatsInline from '../../components/contestedResources/ContestedResourcesStatsInline'
 import PageTitle from '../../components/intro/PageTitle'
 import type { ContestedResource, LoadableState, PaginatedResultSet } from '../../types'
@@ -33,8 +34,10 @@ interface ContestedResourcesProps {
   defaultPageSize?: number
 }
 
-function ContestedResources ({ defaultPage = 1, defaultPageSize }: ContestedResourcesProps) {
-  const [contestedResources, setContestedResources] = useState<LoadableState<PaginatedResultSet<ContestedResource>>>({
+function ContestedResources({ defaultPage = 1, defaultPageSize }: ContestedResourcesProps) {
+  const [contestedResources, setContestedResources] = useState<
+    LoadableState<PaginatedResultSet<ContestedResource>>
+  >({
     data: {} as PaginatedResultSet<ContestedResource>,
     loading: true,
     error: false
@@ -71,13 +74,18 @@ function ContestedResources ({ defaultPage = 1, defaultPageSize }: ContestedReso
   useEffect(() => {
     const page = parseInt(searchParams.get('page') || '', 10) || paginateConfig.defaultPage
     setCurrentPage(Math.max(page - 1, 0))
-    setPageSize(parseInt(searchParams.get('page-size') || '', 10) || paginateConfig.pageSize.default)
+    setPageSize(
+      parseInt(searchParams.get('page-size') || '', 10) || paginateConfig.pageSize.default
+    )
   }, [searchParams, pathname])
 
   useEffect(() => {
     const urlParameters = new URLSearchParams(Array.from(searchParams.entries()))
 
-    if (currentPage + 1 === paginateConfig.defaultPage && pageSize === paginateConfig.pageSize.default) {
+    if (
+      currentPage + 1 === paginateConfig.defaultPage &&
+      pageSize === paginateConfig.pageSize.default
+    ) {
       urlParameters.delete('page')
       urlParameters.delete('page-size')
     } else {
@@ -86,7 +94,7 @@ function ContestedResources ({ defaultPage = 1, defaultPageSize }: ContestedReso
     }
 
     router.push(`${pathname}?${urlParameters.toString()}`, { scroll: false })
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentPage, pageSize])
 
   return (
@@ -96,32 +104,41 @@ function ContestedResources ({ defaultPage = 1, defaultPageSize }: ContestedReso
       my={8}
     >
       <div className={'ContestedResourcesPage__Controls'}>
-        <PageTitle title={'Contested Resources'} description={introContent} className={'ContestedResourcesPage__Title'}/>
+        <PageTitle
+          title={'Contested Resources'}
+          description={introContent}
+          className={'ContestedResourcesPage__Title'}
+        />
 
-        <ContestedResourcesStatsInline className={'ContestedResourcesPage__Stats'}/>
+        <ContestedResourcesStatsInline className={'ContestedResourcesPage__Stats'} />
 
         <ContestedResourcesFilter
           initialFilters={filters as never}
           className={'ContestedResourcesPage__Filters'}
-          onFilterChange={(next) => {
+          onFilterChange={next => {
             setFilters(next as never)
             setCurrentPage(0)
           }}
         />
       </div>
 
-      {!contestedResources.error
-        ? <>
-          {!contestedResources.loading
-            ? <ContestedResourcesList contestedResources={contestedResources.data?.resultSet}/>
-            : <LoadingList itemsCount={pageSize}/>
-          }
+      {!contestedResources.error ? (
+        <>
+          {!contestedResources.loading ? (
+            <ContestedResourcesList contestedResources={contestedResources.data?.resultSet} />
+          ) : (
+            <LoadingList itemsCount={pageSize} />
+          )}
         </>
-        : <Container h={20}><ErrorMessageBlock/></Container>}
+      ) : (
+        <Container h={20}>
+          <ErrorMessageBlock />
+        </Container>
+      )}
 
-      {(contestedResources.data?.resultSet?.length ?? 0) > 0 &&
+      {(contestedResources.data?.resultSet?.length ?? 0) > 0 && (
         <div className={'ListNavigation'}>
-          <Box w={'210px'}/>
+          <Box w={'210px'} />
           <Pagination
             onPageChange={({ selected }) => setCurrentPage(selected)}
             pageCount={pageCount}
@@ -133,7 +150,7 @@ function ContestedResources ({ defaultPage = 1, defaultPageSize }: ContestedReso
             items={paginateConfig.pageSize.values}
           />
         </div>
-      }
+      )}
     </Container>
   )
 }

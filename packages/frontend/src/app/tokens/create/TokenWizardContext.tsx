@@ -113,7 +113,7 @@ export const TokenWizardProvider = ({ children }: { children: ReactNode }) => {
   const [form, setFormState] = useState<TokenForm>(buildInitialForm)
 
   const setField = <K extends keyof TokenForm>(key: K, value: TokenForm[K]) => {
-    setFormState((prev) => ({ ...prev, [key]: value }))
+    setFormState(prev => ({ ...prev, [key]: value }))
   }
 
   const value = useMemo(
@@ -122,9 +122,5 @@ export const TokenWizardProvider = ({ children }: { children: ReactNode }) => {
     [form]
   )
 
-  return (
-    <TokenWizardContext.Provider value={value}>
-      {children}
-    </TokenWizardContext.Provider>
-  )
+  return <TokenWizardContext.Provider value={value}>{children}</TokenWizardContext.Provider>
 }

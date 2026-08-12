@@ -15,10 +15,7 @@ export const ThemeProvider = ({ children }: ThemeProviderProps) => {
   }, [])
 
   return (
-    <ChakraProvider
-      theme={theme}
-      colorModeManager={localStorageManager}
-    >
+    <ChakraProvider theme={theme} colorModeManager={localStorageManager}>
       {children}
     </ChakraProvider>
   )

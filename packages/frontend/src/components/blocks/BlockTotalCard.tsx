@@ -39,22 +39,27 @@ interface BlockTotalCardProps extends WithClassName {
   l1explorerBaseUrl?: string
 }
 
-function BlockTotalCard ({ block, l1explorerBaseUrl, className }: BlockTotalCardProps) {
+function BlockTotalCard({ block, l1explorerBaseUrl, className }: BlockTotalCardProps) {
   const [blocks, setBlocks] = useState<LoadableState<Partial<PaginatedResultSet<Block>>>>({
     data: {},
     loading: true,
     error: false
   })
   const blockData = block?.data?.header
-  const [previousBlock] = blocks.data?.resultSet?.filter(b => b?.header?.height === (blockData?.height ?? 0) - 1) || []
-  const [nextBlock] = blocks.data?.resultSet?.filter(b => b?.header?.height === (blockData?.height ?? 0) + 1) || []
+  const [previousBlock] =
+    blocks.data?.resultSet?.filter(b => b?.header?.height === (blockData?.height ?? 0) - 1) || []
+  const [nextBlock] =
+    blocks.data?.resultSet?.filter(b => b?.header?.height === (blockData?.height ?? 0) + 1) || []
 
   const fetchData = () => {
     if (!blockData?.height) return
 
     setBlocks(state => ({ ...state, loading: true }))
 
-    Api.getBlocks(1, 3, 'desc', { height_min: Math.max(blockData?.height - 1, 1), height_max: blockData?.height + 1 })
+    Api.getBlocks(1, 3, 'desc', {
+      height_min: Math.max(blockData?.height - 1, 1),
+      height_max: blockData?.height + 1
+    })
       .then(res => fetchHandlerSuccess(setBlocks, res))
       .catch(err => fetchHandlerError(setBlocks, err))
   }
@@ -62,12 +67,10 @@ function BlockTotalCard ({ block, l1explorerBaseUrl, className }: BlockTotalCard
   useEffect(fetchData, [blockData])
 
   return (
-    <div className={`InfoBlock InfoBlock--Gradient BlockTotalCard ${block?.loading ? 'BlockTotalCard--Loading' : ''} ${className || ''}`}>
-      {block.data?.name &&
-        <div className={'BlockTotalCard__Title'}>
-          {block.data.name}
-        </div>
-      }
+    <div
+      className={`InfoBlock InfoBlock--Gradient BlockTotalCard ${block?.loading ? 'BlockTotalCard--Loading' : ''} ${className || ''}`}
+    >
+      {block.data?.name && <div className={'BlockTotalCard__Title'}>{block.data.name}</div>}
 
       <div className={'BlockTotalCard__Header'}>
         <div className={'BlockTotalCard__HeaderLines'}>
@@ -77,11 +80,7 @@ function BlockTotalCard ({ block, l1explorerBaseUrl, className }: BlockTotalCard
             loading={block.loading}
             error={block.error || !block?.data?.header?.hash}
             value={
-              <Identifier
-                copyButton={true}
-                styles={['highlight-both']}
-                ellipsis={false}
-              >
+              <Identifier copyButton={true} styles={['highlight-both']} ellipsis={false}>
                 {block?.data?.header?.hash}
               </Identifier>
             }
@@ -93,35 +92,38 @@ function BlockTotalCard ({ block, l1explorerBaseUrl, className }: BlockTotalCard
             loading={block.loading}
             error={block.error}
             value={
-              <ValueContainer external={true} link={`${l1explorerBaseUrl}/block/${block.data?.header?.l1LockedHeight}`}>
+              <ValueContainer
+                external={true}
+                link={`${l1explorerBaseUrl}/block/${block.data?.header?.l1LockedHeight}`}
+              >
                 {block.data?.header?.l1LockedHeight}
               </ValueContainer>
             }
           />
         </div>
         <div className={'BlockTotalCard__Avatar'}>
-          <BlockIcon/>
+          <BlockIcon />
         </div>
       </div>
 
-      <HorisontalSeparator className={'BlockTotalCard__Separator'}/>
+      <HorisontalSeparator className={'BlockTotalCard__Separator'} />
 
       <div className={'BlockTotalCard__CommonInfo'}>
         <InfoLine
           title={'Height'}
           value={
             <div className={'BlockTotalCard__BlockHeight'}>
-              {previousBlock &&
+              {previousBlock && (
                 <ValueCard link={`/block/${previousBlock.header?.hash}`}>
-                  <ChevronIcon transform={'rotate(180deg)'}/>
+                  <ChevronIcon transform={'rotate(180deg)'} />
                 </ValueCard>
-              }
+              )}
               <div>{blockData?.height}</div>
-              {nextBlock &&
+              {nextBlock && (
                 <ValueCard link={`/block/${nextBlock.header?.hash}`}>
-                  <ChevronIcon/>
+                  <ChevronIcon />
                 </ValueCard>
-              }
+              )}
             </div>
           }
           loading={block.loading}
@@ -161,7 +163,7 @@ function BlockTotalCard ({ block, l1explorerBaseUrl, className }: BlockTotalCard
 
         <InfoLine
           title={'Timestamp'}
-          value={<DateBlock timestamp={blockData?.timestamp}/>}
+          value={<DateBlock timestamp={blockData?.timestamp} />}
           loading={block.loading}
           error={block.error}
         />

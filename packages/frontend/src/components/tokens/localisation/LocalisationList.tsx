@@ -10,23 +10,31 @@ interface LocalisationListProps extends WithClassName {
   localisations?: Record<string, Partial<Localization>> | null
 }
 
-function LocalisationList ({ localisations = {}, className }: LocalisationListProps) {
+function LocalisationList({ localisations = {}, className }: LocalisationListProps) {
   const localisationEntries = Object.entries(localisations || {})
 
   return (
     <div className={`LocalisationList ${className || ''}`}>
       <div className={'LocalisationList__ScrollZone'}>
         <Grid className={'LocalisationList__ColumnTitles'}>
-          <GridItem className={'LocalisationList__ColumnTitle LocalisationList__ColumnTitle--Language'}>
+          <GridItem
+            className={'LocalisationList__ColumnTitle LocalisationList__ColumnTitle--Language'}
+          >
             Language
           </GridItem>
-          <GridItem className={'LocalisationList__ColumnTitle LocalisationList__ColumnTitle--Singular'}>
+          <GridItem
+            className={'LocalisationList__ColumnTitle LocalisationList__ColumnTitle--Singular'}
+          >
             Singular
           </GridItem>
-          <GridItem className={'LocalisationList__ColumnTitle LocalisationList__ColumnTitle--Plural'}>
+          <GridItem
+            className={'LocalisationList__ColumnTitle LocalisationList__ColumnTitle--Plural'}
+          >
             Plural
           </GridItem>
-          <GridItem className={'LocalisationList__ColumnTitle LocalisationList__ColumnTitle--Capitalize'}>
+          <GridItem
+            className={'LocalisationList__ColumnTitle LocalisationList__ColumnTitle--Capitalize'}
+          >
             Capitalize
           </GridItem>
         </Grid>
@@ -38,12 +46,11 @@ function LocalisationList ({ localisations = {}, className }: LocalisationListPr
               langCode={langCode}
               localisation={localisationData}
             />
-          ))
-        }
+          ))}
 
-        {localisationEntries?.length === 0 &&
+        {localisationEntries?.length === 0 && (
           <EmptyListMessage>There are no localisations</EmptyListMessage>
-        }
+        )}
       </div>
     </div>
   )

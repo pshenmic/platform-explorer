@@ -21,14 +21,14 @@ const AliasEl = AliasJs as ComponentType<{
   alias?: string | null
   ellipsis?: boolean
 }>
-const BigNumber = BigNumberJs as ComponentType<{ children?: ReactNode, className?: string }>
+const BigNumber = BigNumberJs as ComponentType<{ children?: ReactNode; className?: string }>
 const Identifier = IdentifierJs as ComponentType<{
   children?: ReactNode
   avatar?: boolean
   styles?: string[]
   ellipsis?: boolean
 }>
-const NotActive = NotActiveJs as ComponentType<{ children?: ReactNode, className?: string }>
+const NotActive = NotActiveJs as ComponentType<{ children?: ReactNode; className?: string }>
 const TimeDelta = TimeDeltaJs as ComponentType<{ endDate?: string | Date | null }>
 
 export interface TokenHolder {
@@ -43,7 +43,7 @@ interface HoldersListItemProps {
   holder: TokenHolder
 }
 
-function HoldersListItem ({ holder }: HoldersListItemProps) {
+function HoldersListItem({ holder }: HoldersListItemProps) {
   const activeAlias = findActiveAlias(holder?.aliases || [])
   const router = useRouter()
 
@@ -51,38 +51,54 @@ function HoldersListItem ({ holder }: HoldersListItemProps) {
     <Link href={`/identity/${holder?.identifier}`} className={'HoldersListItem'}>
       <Grid className={'HoldersListItem__Content'}>
         <GridItem className={'HoldersListItem__Column HoldersListItem__Column--Holder'}>
-          {holder?.identifier
-            ? <LinkContainer
-                className={'HoldersListItem__ColumnContent'}
-                onClick={e => {
-                  e.stopPropagation()
-                  e.preventDefault()
-                  router.push(`/identity/${holder?.identifier}`)
-                }}
-              >
-                {activeAlias
-                  ? <AliasEl avatarSource={holder?.identifier || null}>{activeAlias?.alias}</AliasEl>
-                  : <Identifier ellipsis={true} avatar={true} styles={['highlight-both']}>{holder?.identifier}</Identifier>
-                }
-              </LinkContainer>
-            : <NotActive/>
-          }
+          {holder?.identifier ? (
+            <LinkContainer
+              className={'HoldersListItem__ColumnContent'}
+              onClick={e => {
+                e.stopPropagation()
+                e.preventDefault()
+                router.push(`/identity/${holder?.identifier}`)
+              }}
+            >
+              {activeAlias ? (
+                <AliasEl avatarSource={holder?.identifier || null}>{activeAlias?.alias}</AliasEl>
+              ) : (
+                <Identifier ellipsis={true} avatar={true} styles={['highlight-both']}>
+                  {holder?.identifier}
+                </Identifier>
+              )}
+            </LinkContainer>
+          ) : (
+            <NotActive />
+          )}
         </GridItem>
 
-        <GridItem className={'HoldersListItem__Column HoldersListItem__Column--TokensAmount HoldersListItem__Column--Number'}>
+        <GridItem
+          className={
+            'HoldersListItem__Column HoldersListItem__Column--TokensAmount HoldersListItem__Column--Number'
+          }
+        >
           <div className={'HoldersListItem__ColumnContent'}>
             <BigNumber>{holder.tokensAmount}</BigNumber>
           </div>
         </GridItem>
 
-        <GridItem className={'HoldersListItem__Column HoldersListItem__Column--DashAmount HoldersListItem__Column--Number'}>
+        <GridItem
+          className={
+            'HoldersListItem__Column HoldersListItem__Column--DashAmount HoldersListItem__Column--Number'
+          }
+        >
           <div className={'HoldersListItem__ColumnContent'}>
             <BigNumber>{holder.dashAmount}</BigNumber>
           </div>
         </GridItem>
 
-        <GridItem className={'HoldersListItem__Column HoldersListItem__Column--LastActivity HoldersListItem__Column--Timestamp'}>
-          <TimeDelta endDate={holder?.lastActivity}/>
+        <GridItem
+          className={
+            'HoldersListItem__Column HoldersListItem__Column--LastActivity HoldersListItem__Column--Timestamp'
+          }
+        >
+          <TimeDelta endDate={holder?.lastActivity} />
         </GridItem>
       </Grid>
     </Link>

@@ -12,10 +12,8 @@ interface LabelProps {
 }
 
 export const Label = ({ label, children, className }: LabelProps) => (
-    <label className={labelStyles({ className })}>
-        <p className={styles.text}>{label}</p>
-        <div className={styles.input}>
-            {children}
-        </div>
-    </label>
+  <label className={labelStyles({ className })}>
+    <p className={styles.text}>{label}</p>
+    <div className={styles.input}>{children}</div>
+  </label>
 )

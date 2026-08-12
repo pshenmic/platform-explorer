@@ -11,17 +11,13 @@ interface WrapperProps {
 }
 
 const Wrapper = ({ children, tooltipContent, tooltipTitle, ...props }: WrapperProps) => {
-  return (tooltipContent || tooltipTitle)
-    ? <Tooltip
-        title={tooltipTitle}
-        content={tooltipContent}
-        placement={'top'}
-      >
-        <div {...props}>
-          {children}
-        </div>
-      </Tooltip>
-    : <div {...props}>{children}</div>
+  return tooltipContent || tooltipTitle ? (
+    <Tooltip title={tooltipTitle} content={tooltipContent} placement={'top'}>
+      <div {...props}>{children}</div>
+    </Tooltip>
+  ) : (
+    <div {...props}>{children}</div>
+  )
 }
 
 export interface ProportionsLineItem {
@@ -35,16 +31,14 @@ interface ProportionsLineProps {
   items?: ProportionsLineItem[]
 }
 
-function ProportionsLine ({ items = [] }: ProportionsLineProps) {
+function ProportionsLine({ items = [] }: ProportionsLineProps) {
   const totalCount = items.reduce((total, item) => total + item.count, 0) || 1
   const allZero = items.length > 0 && items.every(item => item.count === 0)
 
   return (
     <div className={'ProportionsLine'}>
       {items.map((item, index) => {
-        const widthPercentage = allZero
-          ? 100 / items.length
-          : (item.count / totalCount) * 100
+        const widthPercentage = allZero ? 100 / items.length : (item.count / totalCount) * 100
 
         return (
           <Wrapper

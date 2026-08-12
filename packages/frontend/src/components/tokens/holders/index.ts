@@ -1,5 +1,3 @@
 import HoldersList from './HoldersList'
 
-export {
-  HoldersList
-}
+export { HoldersList }

@@ -19,18 +19,18 @@ interface PageTitleProps extends WithClassName {
   description?: ReactNode
 }
 
-function PageTitle ({ title, description, className }: PageTitleProps) {
+function PageTitle({ title, description, className }: PageTitleProps) {
   return (
     <div className={`PageTitle ${className || ''}`}>
       <Heading className={'PageTitle__Title'} as={'h1'} size={'md'} m={0}>
         {title}
       </Heading>
 
-      {description &&
+      {description && (
         <Popover trigger={'click'} placement={'bottom-start'} isLazy>
           <PopoverTrigger>
             <button type={'button'} className={'PageTitle__InfoButton'} aria-label={'About'}>
-              <InfoIcon boxSize={'16px'}/>
+              <InfoIcon boxSize={'16px'} />
             </button>
           </PopoverTrigger>
           <Portal>
@@ -45,14 +45,14 @@ function PageTitle ({ title, description, className }: PageTitleProps) {
               zIndex={'popover'}
               _focus={{ outline: 'none', boxShadow: '0 1.25rem 2rem rgba(0, 0, 0, 0.35)' }}
             >
-              <PopoverArrow bg={'gray.800'}/>
+              <PopoverArrow bg={'gray.800'} />
               <PopoverBody fontFamily={'body'} p={4}>
                 <p className={'PageTitle__DescriptionText'}>{description}</p>
               </PopoverBody>
             </PopoverContent>
           </Portal>
         </Popover>
-      }
+      )}
     </div>
   )
 }

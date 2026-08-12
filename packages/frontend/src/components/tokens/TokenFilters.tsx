@@ -30,7 +30,9 @@ const filtersConfig = {
     defaultValue: '',
     formatValue: (value: string) => value || null,
     mobileTagRenderer: (value: string) => (
-      <Identifier avatar={true} ellipsis={true} styles={['highlight-both']}>{value}</Identifier>
+      <Identifier avatar={true} ellipsis={true} styles={['highlight-both']}>
+        {value}
+      </Identifier>
     )
   },
   data_contract: {
@@ -42,7 +44,9 @@ const filtersConfig = {
     defaultValue: '',
     formatValue: (value: string) => value || null,
     mobileTagRenderer: (value: string) => (
-      <Identifier avatar={true} ellipsis={true} styles={['highlight-both']}>{value}</Identifier>
+      <Identifier avatar={true} ellipsis={true} styles={['highlight-both']}>
+        {value}
+      </Identifier>
     )
   }
 }
@@ -58,12 +62,17 @@ interface TokenFiltersProps extends WithClassName {
   isMobile?: boolean
 }
 
-export default function TokenFilters ({ initialFilters, onFilterChange, isMobile, className }: TokenFiltersProps) {
+export default function TokenFilters({
+  initialFilters,
+  onFilterChange,
+  isMobile,
+  className
+}: TokenFiltersProps) {
   return (
     <Filters
       filtersConfig={filtersConfig}
       initialFilters={initialFilters}
-      onFilterChange={(values) => {
+      onFilterChange={values => {
         const payload: TokenFilterPayload = {
           owner: (values.owner as string) || undefined,
           contract_id: (values.data_contract as string) || undefined

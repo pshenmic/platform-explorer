@@ -60,20 +60,18 @@ const NavDropdown = ({ item }: NavDropdownProps) => {
       onClick={handleClick}
     >
       {title}
-      <ArrowButton className={`NavItem__DropdownIcon ${isOpen ? 'NavItem__DropdownIcon--Open' : ''}`}/>
+      <ArrowButton
+        className={`NavItem__DropdownIcon ${isOpen ? 'NavItem__DropdownIcon--Open' : ''}`}
+      />
     </div>
   )
 
   return (
-    <div
-      className={'NavDropdown'}
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
-    >
+    <div className={'NavDropdown'} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
       <MultiLevelMenu
         menuData={menuData}
         trigger={trigger}
-        placement='bottom-start'
+        placement="bottom-start"
         isOpen={isOpen}
         onClose={() => setIsOpen(false)}
         onOpen={() => setIsOpen(true)}

@@ -19,7 +19,7 @@ interface Node {
   pulse: number
 }
 
-export default function HeroNodes () {
+export default function HeroNodes() {
   const canvasRef = useRef<HTMLCanvasElement | null>(null)
 
   useEffect(() => {
@@ -44,8 +44,8 @@ export default function HeroNodes () {
 
     // center-weighted X: denser middle so the constellation sits behind the brand copy
     const centerBiasedX = (seed: number) => {
-      const u = ((Math.sin(seed * 12.9898) * 43758.5453) % 1 + 1) % 1
-      const v = ((Math.sin(seed * 78.233) * 24634.6345) % 1 + 1) % 1
+      const u = (((Math.sin(seed * 12.9898) * 43758.5453) % 1) + 1) % 1
+      const v = (((Math.sin(seed * 78.233) * 24634.6345) % 1) + 1) % 1
       const centered = 0.5 + (u - 0.5) * Math.pow(v, 0.55)
       return Math.min(0.98, Math.max(0.02, centered))
     }
@@ -138,7 +138,8 @@ export default function HeroNodes () {
       draw(performance.now(), false)
     }
 
-    const shouldRun = () => !reduced && !document.hidden && inView && (interactive || performance.now() < introUntil)
+    const shouldRun = () =>
+      !reduced && !document.hidden && inView && (interactive || performance.now() < introUntil)
 
     const stop = () => {
       if (raf != null) {
@@ -222,5 +223,5 @@ export default function HeroNodes () {
     }
   }, [])
 
-  return <canvas ref={canvasRef} className={'HomeHero__Nodes'} aria-hidden={'true'}/>
+  return <canvas ref={canvasRef} className={'HomeHero__Nodes'} aria-hidden={'true'} />
 }

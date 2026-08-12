@@ -32,7 +32,7 @@ const Alias = AliasJs as ComponentType<{
   ellipsis?: boolean
   className?: string
 }>
-const BigNumber = BigNumberJs as ComponentType<{ children?: ReactNode, className?: string }>
+const BigNumber = BigNumberJs as ComponentType<{ children?: ReactNode; className?: string }>
 const DateBlock = DateBlockJs as ComponentType<{
   timestamp?: string | number | Date | null
   showTime?: boolean
@@ -76,14 +76,18 @@ interface LocalisationTranslationsProps {
   localisations?: Record<string, Partial<Localization>> | null
 }
 
-const LocalisationTranslations = ({ className, show, localisations = {} }: LocalisationTranslationsProps) => (
+const LocalisationTranslations = ({
+  className,
+  show,
+  localisations = {}
+}: LocalisationTranslationsProps) => (
   <SmoothSize className={className || ''}>
-    {Object.keys(localisations || {}).length > 0 &&
+    {Object.keys(localisations || {}).length > 0 && (
       <LocalisationList
         className={`TokenTotalCard__LocalisationList ${show ? 'TokenTotalCard__LocalisationList--Show' : ''}`}
         localisations={localisations}
       />
-    }
+    )}
   </SmoothSize>
 )
 
@@ -96,13 +100,13 @@ interface PriceTableProps {
 
 const PriceTable = ({ className, show, prices = [], rate }: PriceTableProps) => (
   <SmoothSize className={className || ''}>
-    {prices && prices.length > 0 &&
+    {prices && prices.length > 0 && (
       <PriceList
         className={`TokenTotalCard__PriceList ${show ? 'TokenTotalCard__PriceList--Show' : ''}`}
         prices={prices}
         rate={rate}
       />
-    }
+    )}
   </SmoothSize>
 )
 
@@ -112,11 +116,14 @@ interface TokenTotalCardProps {
   loading?: boolean
 }
 
-function TokenTotalCard ({ token, rate, loading }: TokenTotalCardProps) {
-  const data = token?.data as (TokenDetailData & {
-    prices?: PriceData[] | null
-    localizations?: Record<string, Partial<Localization>> | null
-  }) | null | undefined
+function TokenTotalCard({ token, rate, loading }: TokenTotalCardProps) {
+  const data = token?.data as
+    | (TokenDetailData & {
+        prices?: PriceData[] | null
+        localizations?: Record<string, Partial<Localization>> | null
+      })
+    | null
+    | undefined
 
   const activeAlias = findActiveAlias(data?.aliases || [])
   const [showLocalisations, setShowLocalisations] = useState(false)
@@ -137,12 +144,14 @@ function TokenTotalCard ({ token, rate, loading }: TokenTotalCardProps) {
   const minPrice = getMinTokenPrice(prices as Array<{ price: string | number }> | null | undefined)
 
   return (
-    <div className={`InfoBlock InfoBlock--Gradient tokenPage__CommonInfo TokenTotalCard ${loading ? 'TokenTotalCard--Loading' : ''} `}>
-      {activeAlias &&
+    <div
+      className={`InfoBlock InfoBlock--Gradient tokenPage__CommonInfo TokenTotalCard ${loading ? 'TokenTotalCard--Loading' : ''} `}
+    >
+      {activeAlias && (
         <div className={'TokenTotalCard__Title'}>
           <Alias ellipsis={false}>{activeAlias.alias}</Alias>
         </div>
-      }
+      )}
 
       <div className={'TokenTotalCard__ContentContainer'}>
         <div className={'TokenTotalCard__Column'}>
@@ -153,15 +162,11 @@ function TokenTotalCard ({ token, rate, loading }: TokenTotalCardProps) {
                 title={'Identifier'}
                 loading={loading}
                 error={token?.error || (!loading && !token?.data?.identifier)}
-                value={(
-                  <Identifier
-                    copyButton={true}
-                    styles={['highlight-both']}
-                    ellipsis={false}
-                  >
+                value={
+                  <Identifier copyButton={true} styles={['highlight-both']} ellipsis={false}>
                     {identifier}
                   </Identifier>
-                )}
+                }
               />
               <InfoLine
                 className={'TokenTotalCard__InfoLine TokenTotalCard__InfoLine--Balance'}
@@ -182,33 +187,38 @@ function TokenTotalCard ({ token, rate, loading }: TokenTotalCardProps) {
             </div>
           </div>
 
-          <HorisontalSeparator className={'TokenTotalCard__Separator'}/>
+          <HorisontalSeparator className={'TokenTotalCard__Separator'} />
 
           <div className={'TokenTotalCard__CommonLines'}>
             <InfoLine
               className={'TokenTotalCard__InfoLine'}
               title={'Price'}
-              value={price != null
-                ? <CreditsBlock credits={price} rate={rate}/>
-                : prices && prices?.length > 0
-                  ? <Button
-                      className={'TokenTotalCard__PriceShowButton'}
-                      size={'sm'}
-                      variant={showPrices ? 'gray' : 'blue'}
-                      onClick={() => setShowPrices(prev => !prev)}
-                    >
-                      <Flex gap={'0.5rem'}>
-                        <div>From</div>
-                        <BigNumber>{minPrice}</BigNumber>
-                      </Flex>
-                      <ChevronIcon
-                        ml={'4px'}
-                        h={'10px'}
-                        w={'10px'}
-                        transform={`rotate(${showPrices ? '-90deg' : '90deg'})`}
-                      />
-                    </Button>
-                  : <ValueContainer size={'md'} className={'TokenTotalCard__ZeroListBadge'}>none</ValueContainer>
+              value={
+                price != null ? (
+                  <CreditsBlock credits={price} rate={rate} />
+                ) : prices && prices?.length > 0 ? (
+                  <Button
+                    className={'TokenTotalCard__PriceShowButton'}
+                    size={'sm'}
+                    variant={showPrices ? 'gray' : 'blue'}
+                    onClick={() => setShowPrices(prev => !prev)}
+                  >
+                    <Flex gap={'0.5rem'}>
+                      <div>From</div>
+                      <BigNumber>{minPrice}</BigNumber>
+                    </Flex>
+                    <ChevronIcon
+                      ml={'4px'}
+                      h={'10px'}
+                      w={'10px'}
+                      transform={`rotate(${showPrices ? '-90deg' : '90deg'})`}
+                    />
+                  </Button>
+                ) : (
+                  <ValueContainer size={'md'} className={'TokenTotalCard__ZeroListBadge'}>
+                    none
+                  </ValueContainer>
+                )
               }
               loading={loading}
               error={token?.error || (!loading && price == null && prices == null)}
@@ -216,9 +226,11 @@ function TokenTotalCard ({ token, rate, loading }: TokenTotalCardProps) {
             <PriceTable
               prices={prices}
               show={showPrices}
-              className={`TokenTotalCard__PriceListContainer ${showPrices
-                ? ' TokenTotalCard__PriceListContainer--Opened'
-                : ' TokenTotalCard__PriceListContainer--Hidden'}`}
+              className={`TokenTotalCard__PriceListContainer ${
+                showPrices
+                  ? ' TokenTotalCard__PriceListContainer--Opened'
+                  : ' TokenTotalCard__PriceListContainer--Hidden'
+              }`}
               rate={rate}
             />
             <InfoLine
@@ -245,9 +257,16 @@ function TokenTotalCard ({ token, rate, loading }: TokenTotalCardProps) {
             <InfoLine
               className={'TokenTotalCard__InfoLine'}
               title={'Main Group'}
-              value={dataContractIdentifier
-                ? <ValueCard link={`/dataContract/${dataContractIdentifier}?tab=groups&group=${mainGroup}#tabs`}>{mainGroup}</ValueCard>
-                : mainGroup
+              value={
+                dataContractIdentifier ? (
+                  <ValueCard
+                    link={`/dataContract/${dataContractIdentifier}?tab=groups&group=${mainGroup}#tabs`}
+                  >
+                    {mainGroup}
+                  </ValueCard>
+                ) : (
+                  mainGroup
+                )
               }
               loading={loading}
               error={token?.error || (!loading && mainGroup == null)}
@@ -257,7 +276,12 @@ function TokenTotalCard ({ token, rate, loading }: TokenTotalCardProps) {
               title={'Data Contract'}
               value={
                 <ValueCard link={`/dataContract/${dataContractIdentifier}`}>
-                  <Identifier avatar={true} copyButton={true} ellipsis={false} styles={['highlight-both']}>
+                  <Identifier
+                    avatar={true}
+                    copyButton={true}
+                    ellipsis={false}
+                    styles={['highlight-both']}
+                  >
                     {dataContractIdentifier}
                   </Identifier>
                 </ValueCard>
@@ -268,25 +292,32 @@ function TokenTotalCard ({ token, rate, loading }: TokenTotalCardProps) {
             <InfoLine
               className={'TokenTotalCard__InfoLine'}
               title={'Creation date'}
-              value={<DateBlock timestamp={timestamp || null} showTime={true}/>}
+              value={<DateBlock timestamp={timestamp || null} showTime={true} />}
               loading={loading}
               error={token?.error || (!loading && !timestamp)}
             />
             <InfoLine
               className={'TokenTotalCard__InfoLine TokenTotalCard__InfoLine--Localisation'}
               title={'Localisation'}
-              value={localizationsCount > 0
-                ? <Button
+              value={
+                localizationsCount > 0 ? (
+                  <Button
                     className={'TokenTotalCard__LocalisationShowButton'}
                     size={'sm'}
                     variant={showLocalisations && localizationsCount > 0 ? 'gray' : 'blue'}
                     onClick={() => setShowLocalisations(prev => !prev)}
                   >
                     {localizationsCount} translations
-                    <ChevronIcon ml={'4px'} h={'10px'} w={'10px'}
-                                 transform={`rotate(${showLocalisations ? '-90deg' : '90deg'})`}/>
+                    <ChevronIcon
+                      ml={'4px'}
+                      h={'10px'}
+                      w={'10px'}
+                      transform={`rotate(${showLocalisations ? '-90deg' : '90deg'})`}
+                    />
                   </Button>
-                : <ValueContainer className={'TokenTotalCard__ZeroListBadge'}>none</ValueContainer>
+                ) : (
+                  <ValueContainer className={'TokenTotalCard__ZeroListBadge'}>none</ValueContainer>
+                )
               }
               loading={loading}
               error={token?.error}
@@ -294,27 +325,27 @@ function TokenTotalCard ({ token, rate, loading }: TokenTotalCardProps) {
             <LocalisationTranslations
               localisations={localizations}
               show={showLocalisations}
-              className={`TokenTotalCard__LocalisationListContainer TokenTotalCard__LocalisationListContainer--Mobile ${showLocalisations
-                ? ' TokenTotalCard__LocalisationListContainer--Opened'
-                : ' TokenTotalCard__LocalisationListContainer--Hidden'}`}
+              className={`TokenTotalCard__LocalisationListContainer TokenTotalCard__LocalisationListContainer--Mobile ${
+                showLocalisations
+                  ? ' TokenTotalCard__LocalisationListContainer--Opened'
+                  : ' TokenTotalCard__LocalisationListContainer--Hidden'
+              }`}
             />
           </div>
         </div>
 
         <div className={'TokenTotalCard__Column'}>
-          <TokenDigestCard
-            token={token}
-            rate={rate}
-            loading={loading}
-          />
+          <TokenDigestCard token={token} rate={rate} loading={loading} />
         </div>
       </div>
       <LocalisationTranslations
         localisations={localizations}
         show={showLocalisations}
-        className={`TokenTotalCard__LocalisationListContainer TokenTotalCard__LocalisationListContainer--Desktop ${showLocalisations
-          ? ' TokenTotalCard__LocalisationListContainer--Opened'
-          : ' TokenTotalCard__LocalisationListContainer--Hidden'}`}
+        className={`TokenTotalCard__LocalisationListContainer TokenTotalCard__LocalisationListContainer--Desktop ${
+          showLocalisations
+            ? ' TokenTotalCard__LocalisationListContainer--Opened'
+            : ' TokenTotalCard__LocalisationListContainer--Hidden'
+        }`}
       />
     </div>
   )

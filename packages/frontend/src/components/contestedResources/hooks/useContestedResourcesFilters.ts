@@ -17,18 +17,31 @@ export type ContestedResourcesFiltersUpdate = {
 }
 
 export const useContestedResourcesFilters = () => {
-  const [timestampStart, setTimestampStart] = useQueryState('timestamp_start', { scroll: false, shallow: true })
-  const [timestampEnd, setTimestampEnd] = useQueryState('timestamp_end', { scroll: false, shallow: true })
-  const [documentTypeName, setDocumentTypeName] = useQueryState('document_type_name', { scroll: false, shallow: true })
+  const [timestampStart, setTimestampStart] = useQueryState('timestamp_start', {
+    scroll: false,
+    shallow: true
+  })
+  const [timestampEnd, setTimestampEnd] = useQueryState('timestamp_end', {
+    scroll: false,
+    shallow: true
+  })
+  const [documentTypeName, setDocumentTypeName] = useQueryState('document_type_name', {
+    scroll: false,
+    shallow: true
+  })
   const [contractId, setContractId] = useQueryState('contract_id', { scroll: false, shallow: true })
-  const [isVotingFinished, setIsVotingFinished] = useQueryState('is_voting_finished', { scroll: false, shallow: true })
+  const [isVotingFinished, setIsVotingFinished] = useQueryState('is_voting_finished', {
+    scroll: false,
+    shallow: true
+  })
 
   const filters: ContestedResourcesFilters = {
     timestamp_start: timestampStart || undefined,
     timestamp_end: timestampEnd || undefined,
     document_type_name: documentTypeName || undefined,
     contract_id: contractId || undefined,
-    is_voting_finished: isVotingFinished === 'true' ? true : isVotingFinished === 'false' ? false : undefined
+    is_voting_finished:
+      isVotingFinished === 'true' ? true : isVotingFinished === 'false' ? false : undefined
   }
 
   const setFilters = (next: ContestedResourcesFiltersUpdate | null | undefined) => {

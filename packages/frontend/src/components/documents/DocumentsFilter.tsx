@@ -27,7 +27,10 @@ const Filters = FiltersJs as ComponentType<{
   buttonText?: string
   applyOnChange?: boolean
 }>
-const BatchTypeBadge = BatchTypeBadgeJs as ComponentType<{ batchType?: string | null, className?: string }>
+const BatchTypeBadge = BatchTypeBadgeJs as ComponentType<{
+  batchType?: string | null
+  className?: string
+}>
 
 const actionOptions = [
   {
@@ -118,7 +121,7 @@ const filtersConfig = {
     minPlaceholder: 'ex. 1',
     maxTitle: 'Maximum revision',
     maxPlaceholder: 'ex. 5',
-    formatValue: ({ min, max }: { min?: string | number, max?: string | number }) => {
+    formatValue: ({ min, max }: { min?: string | number; max?: string | number }) => {
       if (min && max) return `${min} - ${max}`
       if (min) return `Min ${min}`
       if (max) return `Max ${max}`
@@ -149,7 +152,9 @@ export const DocumentsFilter = ({
   excludeFilters = []
 }: DocumentsFilterProps) => {
   const config = excludeFilters.length
-    ? Object.fromEntries(Object.entries(filtersConfig).filter(([key]) => !excludeFilters.includes(key)))
+    ? Object.fromEntries(
+        Object.entries(filtersConfig).filter(([key]) => !excludeFilters.includes(key))
+      )
     : filtersConfig
 
   return (

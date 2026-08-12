@@ -30,7 +30,7 @@ interface BlocksProps {
   defaultPageSize?: number
 }
 
-function Blocks ({ defaultPage = 1, defaultPageSize }: BlocksProps) {
+function Blocks({ defaultPage = 1, defaultPageSize }: BlocksProps) {
   const [blocks, setBlocks] = useState<LoadableState<PaginatedResultSet<Block>>>({
     data: {} as PaginatedResultSet<Block>,
     loading: true,
@@ -56,18 +56,15 @@ function Blocks ({ defaultPage = 1, defaultPageSize }: BlocksProps) {
     setBlocks(prev => ({ ...prev, loading: true, error: false }))
 
     const fetchData = async () => {
-      Api.getBlocks(
-        Math.max(1, currentPage + 1),
-        Math.max(1, pageSize),
-        'desc',
-        filters
-      ).then(res => {
-        setTotal(res.pagination.total)
-        fetchHandlerSuccess(setBlocks, res)
-      }).catch(err => {
-        setTotal(0)
-        fetchHandlerError(setBlocks, err)
-      })
+      Api.getBlocks(Math.max(1, currentPage + 1), Math.max(1, pageSize), 'desc', filters)
+        .then(res => {
+          setTotal(res.pagination.total)
+          fetchHandlerSuccess(setBlocks, res)
+        })
+        .catch(err => {
+          setTotal(0)
+          fetchHandlerError(setBlocks, err)
+        })
     }
 
     fetchData()
@@ -76,13 +73,18 @@ function Blocks ({ defaultPage = 1, defaultPageSize }: BlocksProps) {
   useEffect(() => {
     const page = parseInt(searchParams.get('page') || '', 10) || paginateConfig.defaultPage
     setCurrentPage(Math.max(page - 1, 0))
-    setPageSize(parseInt(searchParams.get('page-size') || '', 10) || paginateConfig.pageSize.default)
+    setPageSize(
+      parseInt(searchParams.get('page-size') || '', 10) || paginateConfig.pageSize.default
+    )
   }, [searchParams, pathname])
 
   useEffect(() => {
     const urlParameters = new URLSearchParams(Array.from(searchParams.entries()))
 
-    if (currentPage + 1 === paginateConfig.defaultPage && pageSize === paginateConfig.pageSize.default) {
+    if (
+      currentPage + 1 === paginateConfig.defaultPage &&
+      pageSize === paginateConfig.pageSize.default
+    ) {
       urlParameters.delete('page')
       urlParameters.delete('page-size')
     } else {
@@ -91,26 +93,16 @@ function Blocks ({ defaultPage = 1, defaultPageSize }: BlocksProps) {
     }
 
     router.push(`${pathname}?${urlParameters.toString()}`, { scroll: false })
-  // eslint-disable-next-line react-hooks/exhaustive-deps -- mirror original deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- mirror original deps
   }, [currentPage, pageSize])
 
   return (
-    <Container
-      maxW={'container.maxPageW'}
-      color={'white'}
-      mt={8}
-      mb={8}
-      className={'Blocks'}
-    >
-      <Container
-        maxW={'container.maxPageW'}
-        _dark={{ color: 'white' }}
-        className={'InfoBlock'}
-      >
+    <Container maxW={'container.maxPageW'} color={'white'} mt={8} mb={8} className={'Blocks'}>
+      <Container maxW={'container.maxPageW'} _dark={{ color: 'white' }} className={'InfoBlock'}>
         <div className={'Blocks__Controls'}>
-          <PageTitle title={'Blocks'} description={introContent} className={'Blocks__Title'}/>
+          <PageTitle title={'Blocks'} description={introContent} className={'Blocks__Title'} />
 
-          <NetworkStatsInline className={'Blocks__Stats'}/>
+          <NetworkStatsInline className={'Blocks__Stats'} />
 
           <BlocksFilter
             onFilterChange={filtersChangeHandler}
@@ -119,18 +111,23 @@ function Blocks ({ defaultPage = 1, defaultPageSize }: BlocksProps) {
           />
         </div>
 
-        {!blocks.error
-          ? <>
-              {!blocks.loading
-                ? <BlocksList blocks={blocks.data?.resultSet}/>
-                : <LoadingList itemsCount={pageSize}/>
-              }
-            </>
-          : <Container h={20}><ErrorMessageBlock/></Container>}
+        {!blocks.error ? (
+          <>
+            {!blocks.loading ? (
+              <BlocksList blocks={blocks.data?.resultSet} />
+            ) : (
+              <LoadingList itemsCount={pageSize} />
+            )}
+          </>
+        ) : (
+          <Container h={20}>
+            <ErrorMessageBlock />
+          </Container>
+        )}
 
-        {(blocks.data?.resultSet?.length ?? 0) > 0 &&
+        {(blocks.data?.resultSet?.length ?? 0) > 0 && (
           <div className={'ListNavigation'}>
-            <Box display={['none', 'none', 'block']} width={'210px'}/>
+            <Box display={['none', 'none', 'block']} width={'210px'} />
             <Pagination
               onPageChange={({ selected }) => setCurrentPage(selected)}
               pageCount={pageCount}
@@ -142,7 +139,7 @@ function Blocks ({ defaultPage = 1, defaultPageSize }: BlocksProps) {
               items={paginateConfig.pageSize.values}
             />
           </div>
-        }
+        )}
       </Container>
     </Container>
   )

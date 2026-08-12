@@ -1,9 +1,5 @@
 import { IconButton, Tooltip } from '@chakra-ui/react'
-import {
-  PrimalPostitiveIcon,
-  PrimalNegativeIcon,
-  CloseIcon
-} from '../../ui/icons'
+import { PrimalPostitiveIcon, PrimalNegativeIcon, CloseIcon } from '../../ui/icons'
 import { VoteEnum } from './constants'
 import type { VoteEnumValue } from './constants'
 import type { WalletInfo } from 'src/contexts'
@@ -12,8 +8,7 @@ import './VoteControls.css'
 import { useState, useEffect } from 'react'
 
 const VOTING_DATA_CONTRACT_ID =
-  process.env.NEXT_PUBLIC_VOTING_DATA_CONTRACT_ID ??
-  'GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec'
+  process.env.NEXT_PUBLIC_VOTING_DATA_CONTRACT_ID ?? 'GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec'
 const DOCUMENT_TYPE = 'domain'
 const INDEX_NAME = 'parentNameAndLabel'
 
@@ -80,11 +75,8 @@ export const VoteControls = ({
     setIsLoading(true)
     try {
       const sdk = window.dashPlatformSDK as unknown as VotingSdk
-      const voterIdentity =
-        await sdk.identities.getIdentityByIdentifier(currentIdentity)
-      const identityNonce = await sdk.identities.getIdentityNonce(
-        voterIdentity.id
-      )
+      const voterIdentity = await sdk.identities.getIdentityByIdentifier(currentIdentity)
+      const identityNonce = await sdk.identities.getIdentityNonce(voterIdentity.id)
       const { proTxHash } = walletInfo ?? {}
 
       const vote = sdk.voting.createVote(
@@ -102,9 +94,9 @@ export const VoteControls = ({
       )
 
       // Extension may accept base64 string or WASM ST depending on version — keep runtime call identical.
-      await (window.dashPlatformExtension.signer.signAndBroadcast as (st: unknown) => Promise<unknown>)(
-        stateTransition
-      )
+      await (
+        window.dashPlatformExtension.signer.signAndBroadcast as (st: unknown) => Promise<unknown>
+      )(stateTransition)
 
       refresh?.()
     } catch (e) {
@@ -119,44 +111,44 @@ export const VoteControls = ({
 
   return (
     <Tooltip isDisabled={!showTooltip} label={disabledTooltip}>
-      <div className='VoteControls'>
+      <div className="VoteControls">
         <IconButton
-          color='#58F4BC'
-          bg='#58F4BC26'
+          color="#58F4BC"
+          bg="#58F4BC26"
           _hover={{ bg: '#58F4BC4D' }}
           _active={{ bg: '#58F4BC', color: '#21272C' }}
           isDisabled={buttonDisabled || prevVote === VoteEnum.TO_APPROVE}
           isLoading={isLoading && activeChoice === contender}
-          size='30px'
-          aria-label='vote'
+          size="30px"
+          aria-label="vote"
           p={0}
-          icon={<PrimalPostitiveIcon width='18px' height='10px' />}
+          icon={<PrimalPostitiveIcon width="18px" height="10px" />}
           onClick={() => contender && castVote({ choice: contender })}
         />
         <IconButton
-          color='#F49A58'
-          bg='#F49A5826'
+          color="#F49A58"
+          bg="#F49A5826"
           _hover={{ bg: '#F49A584D' }}
           _active={{ bg: '#F49A58', color: '#21272C' }}
           isDisabled={buttonDisabled || prevVote === VoteEnum.TO_ABSTAIN}
           isLoading={isLoading && activeChoice === VoteEnum.TO_ABSTAIN}
-          size='30px'
-          aria-label='vote'
+          size="30px"
+          aria-label="vote"
           p={0}
-          icon={<PrimalNegativeIcon width='11px' height='10px' />}
+          icon={<PrimalNegativeIcon width="11px" height="10px" />}
           onClick={() => castVote({ choice: VoteEnum.TO_ABSTAIN })}
         />
         <IconButton
-          color='#F45858'
-          bg='#F4585826'
+          color="#F45858"
+          bg="#F4585826"
           _hover={{ bg: '#F458584D' }}
           _active={{ bg: '#F45858', color: '#21272C' }}
           isDisabled={buttonDisabled || prevVote === VoteEnum.TO_REJECT}
           isLoading={isLoading && activeChoice === VoteEnum.TO_REJECT}
-          size='30px'
-          aria-label='vote'
+          size="30px"
+          aria-label="vote"
           p={0}
-          icon={<CloseIcon width='8px' height='8px' />}
+          icon={<CloseIcon width="8px" height="8px" />}
           onClick={() => castVote({ choice: VoteEnum.TO_REJECT })}
         />
       </div>

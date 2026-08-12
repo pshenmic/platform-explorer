@@ -1,9 +1,5 @@
 import { AssetLockProof } from '../AssetLockProof'
-import {
-  ShieldedActions,
-  AmountInfoLine,
-  HashInfoLine
-} from '../ShieldedCommon'
+import { ShieldedActions, AmountInfoLine, HashInfoLine } from '../ShieldedCommon'
 import type { AssetLockProofData, ShieldedAction, WithRate } from '../../types'
 
 interface ShieldFromAssetLockProps extends WithRate {
@@ -27,12 +23,12 @@ export const ShieldFromAssetLock = ({
   rate
 }: ShieldFromAssetLockProps) => (
   <>
-    <AmountInfoLine title='Value Balance' amount={valueBalance} rate={rate} />
+    <AmountInfoLine title="Value Balance" amount={valueBalance} rate={rate} />
     {assetLockProof && <AssetLockProof assetLockProof={assetLockProof} />}
     <ShieldedActions actions={actions} />
-    <HashInfoLine title='Anchor' value={anchor} />
-    <HashInfoLine title='Bindings Signature' value={bindingsSignature} />
-    <HashInfoLine title='Signature' value={signature} />
-    <HashInfoLine title='Proof' value={proof} />
+    <HashInfoLine title="Anchor" value={anchor} />
+    <HashInfoLine title="Bindings Signature" value={bindingsSignature} />
+    <HashInfoLine title="Signature" value={signature} />
+    <HashInfoLine title="Proof" value={proof} />
   </>
 )
