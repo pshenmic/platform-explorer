@@ -10,7 +10,7 @@ import './MultiLevelMenu.css'
 
 interface MultiLevelMenuProps extends Omit<PopoverProps, 'children' | 'trigger'> {
   menuData?: MenuItem[]
-  /** Single React element — PopoverTrigger will clone it. Do not put a competing onClick. */
+  /** Single element for PopoverTrigger (no competing onClick). */
   trigger?: ReactElement
   placement?: PopoverProps['placement']
   onClose?: () => void
@@ -19,28 +19,35 @@ interface MultiLevelMenuProps extends Omit<PopoverProps, 'children' | 'trigger'>
 }
 
 /**
- * Root filter menu: one Chakra Popover only.
- * Nested levels are CSS flyouts inside MenuLevel (no nested Popovers).
+ * One Chakra Popover + optional split layout:
+ * - left: item list
+ * - right: selected item.content (or nested links)
+ *
+ * Used by Filters (forms) and NavDropdown (links only — no panel).
  */
 function MultiLevelMenu ({
   menuData = [],
   trigger,
-  placement = 'right-start',
+  placement = 'bottom-start',
   onClose,
   onOpen,
   isOpen,
   ...props
 }: MultiLevelMenuProps) {
-  const [activeItemId, setActiveItemId] = useState<number | null>(null)
+  const [selectedIndex, setSelectedIndex] = useState<number | null>(null)
 
   const handleOpen = useCallback(() => {
+    setSelectedIndex(null)
     onOpen?.()
   }, [onOpen])
 
   const handleClose = useCallback(() => {
-    setActiveItemId(null)
+    setSelectedIndex(null)
     onClose?.()
   }, [onClose])
+
+  const selected = selectedIndex != null ? menuData[selectedIndex] : undefined
+  const showPanel = Boolean(selected?.content || selected?.subMenu?.length)
 
   return (
     <div className={'MultiLevelMenu'}>
@@ -55,20 +62,41 @@ function MultiLevelMenu ({
         autoFocus={false}
         returnFocusOnClose={false}
         gutter={8}
+        strategy='fixed'
         {...props}
       >
         <PopoverTrigger>
           {trigger ?? <Button type='button'>Open menu</Button>}
         </PopoverTrigger>
-        <PopoverContent className={'MultiLevelMenu__Content'} width={'auto'} minWidth={'180px'}>
-          <PopoverBody overflow={'visible'} p={2}>
-            <MenuLevel
-              items={menuData}
-              forceClose={isOpen === false}
-              activeItemId={activeItemId}
-              onActiveItemChange={setActiveItemId}
-              onMenuItemClick={handleClose}
-            />
+        <PopoverContent
+          className={`MultiLevelMenu__Content${showPanel ? ' MultiLevelMenu__Content--WithPanel' : ''}`}
+          width='auto'
+          maxW='min(960px, calc(100vw - 24px))'
+        >
+          <PopoverBody p={0} className={'MultiLevelMenu__Body'}>
+            <div className={'MultiLevelMenu__Layout'}>
+              <div className={'MultiLevelMenu__Nav'}>
+                <MenuLevel
+                  items={menuData}
+                  selectedIndex={selectedIndex}
+                  onSelectIndex={setSelectedIndex}
+                  onMenuItemClick={handleClose}
+                />
+              </div>
+              {showPanel && (
+                <div className={'MultiLevelMenu__Panel'}>
+                  {selected?.content}
+                  {selected?.subMenu?.length
+                    ? (
+                      <MenuLevel
+                        items={selected.subMenu}
+                        onMenuItemClick={handleClose}
+                      />
+                      )
+                    : null}
+                </div>
+              )}
+            </div>
           </PopoverBody>
         </PopoverContent>
       </Popover>

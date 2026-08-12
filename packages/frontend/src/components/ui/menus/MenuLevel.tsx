@@ -1,9 +1,7 @@
 'use client'
 
-import { useEffect, useState } from 'react'
 import type { ReactNode } from 'react'
 import { Link } from '@chakra-ui/react'
-import { ChevronIcon } from '../icons'
 import './MenuLevel.css'
 
 export interface MenuItem {
@@ -18,63 +16,31 @@ export interface MenuItem {
 interface MenuLevelProps {
   items?: MenuItem[]
   onMenuItemClick?: () => void
-  /** kept for API compat; flyouts are always right of the item */
-  placement?: string
-  onLevelClose?: () => void
-  forceClose?: boolean
-  activeItemId?: number | null
-  onActiveItemChange?: (id: number | null) => void
+  /** Selected row index — owned by MultiLevelMenu only */
+  selectedIndex?: number | null
+  onSelectIndex?: (index: number) => void
 }
 
 /**
- * One column of a multi-level menu.
- * Submenus / filter panels use CSS flyouts — not nested Chakra Popovers
- * (nested controlled Popovers caused Maximum update depth with Filters).
+ * Flat menu list. No nested Popovers, no parent setState during render.
+ * Items with content/subMenu ask the parent to show a side panel via onSelectIndex.
  */
 function MenuLevel ({
   items = [],
   onMenuItemClick,
-  onLevelClose,
-  forceClose,
-  activeItemId,
-  onActiveItemChange
+  selectedIndex = null,
+  onSelectIndex
 }: MenuLevelProps) {
-  const [openSubMenuId, setOpenSubMenuId] = useState<number | null>(null)
-
-  useEffect(() => {
-    if (forceClose) setOpenSubMenuId(null)
-  }, [forceClose])
-
-  const openFlyout = (index: number) => {
-    setOpenSubMenuId(prev => {
-      const next = prev === index ? null : index
-      onActiveItemChange?.(next)
-      return next
-    })
-  }
-
-  const closeFlyout = () => {
-    setOpenSubMenuId(null)
-    onActiveItemChange?.(null)
-    onLevelClose?.()
-  }
-
-  const handleLeafClick = (item: MenuItem) => {
-    item.onClick?.()
-    onMenuItemClick?.()
-  }
-
   return (
     <div className={'MenuLevel'}>
       {items.map((item, index) => {
-        const isActive = activeItemId === index || openSubMenuId === index
-        const hasFlyout = Boolean(item?.subMenu?.length || item?.content)
+        const isSelected = selectedIndex === index
+        const opensPanel = Boolean(item.content || item.subMenu?.length)
 
-        if (item?.disabled) {
+        if (item.disabled) {
           return (
             <div
               key={index}
-              onClick={() => onMenuItemClick?.()}
               className={'MenuLevel__Item MenuLevel__Item--Disabled'}
             >
               <span>{item.label}</span>
@@ -82,7 +48,7 @@ function MenuLevel ({
           )
         }
 
-        if (item?.link) {
+        if (item.link) {
           return (
             <Link
               key={index}
@@ -91,48 +57,30 @@ function MenuLevel ({
               textDecoration={'none'}
               _hover={{ textDecoration: 'none' }}
               onClick={() => onMenuItemClick?.()}
-              className={`MenuLevel__Item ${isActive ? 'MenuLevel__Item--Active' : ''}`}
+              className={`MenuLevel__Item ${isSelected ? 'MenuLevel__Item--Active' : ''}`}
             >
               <span>{item.label}</span>
             </Link>
           )
         }
 
-        if (hasFlyout) {
-          const open = openSubMenuId === index
+        if (opensPanel) {
           return (
-            <div key={index} className={'MenuLevel__ItemWrap'}>
-              <div
-                className={`MenuLevel__Item MenuLevel__Item--Submenu ${open ? 'MenuLevel__Item--Active' : ''}`}
-                onClick={() => openFlyout(index)}
-                role='button'
-                tabIndex={0}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' || e.key === ' ') {
-                    e.preventDefault()
-                    openFlyout(index)
-                  }
-                }}
-              >
-                <span>{item.label}</span>
-                <div className={'MenuLevel__ItemIcon'}>
-                  <ChevronIcon />
-                </div>
-              </div>
-              {open && (
-                <div className={'MenuLevel__Flyout'}>
-                  {item.subMenu
-                    ? (
-                      <MenuLevel
-                        items={item.subMenu}
-                        onMenuItemClick={onMenuItemClick}
-                        onLevelClose={closeFlyout}
-                        forceClose={forceClose}
-                      />
-                      )
-                    : item.content}
-                </div>
-              )}
+            <div
+              key={index}
+              role='button'
+              tabIndex={0}
+              className={`MenuLevel__Item MenuLevel__Item--Submenu ${isSelected ? 'MenuLevel__Item--Active' : ''}`}
+              onClick={() => onSelectIndex?.(index)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault()
+                  onSelectIndex?.(index)
+                }
+              }}
+            >
+              <span>{item.label}</span>
+              <span className={'MenuLevel__ItemChevron'} aria-hidden>›</span>
             </div>
           )
         }
@@ -140,8 +88,11 @@ function MenuLevel ({
         return (
           <div
             key={index}
-            className={`MenuLevel__Item ${isActive ? 'MenuLevel__Item--Active' : ''}`}
-            onClick={() => handleLeafClick(item)}
+            className={`MenuLevel__Item ${isSelected ? 'MenuLevel__Item--Active' : ''}`}
+            onClick={() => {
+              item.onClick?.()
+              onMenuItemClick?.()
+            }}
           >
             <span>{item.label}</span>
           </div>
