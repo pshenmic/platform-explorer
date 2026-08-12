@@ -1,0 +1,115 @@
+/* Shared loading shimmer (replaces mixins.LoadingLine) */
+
+@keyframes pe-LoadingLine {
+  0% {
+    left: -100%;
+    width: 100%;
+  }
+  50% {
+    left: 100%;
+    width: 100%;
+  }
+  100% {
+    left: 100%;
+    width: 100%;
+  }
+}
+
+.pe-LoadingLine,
+.LoadingLine {
+  overflow: hidden;
+  position: relative;
+}
+
+.pe-LoadingLine::before,
+.LoadingLine::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: var(--pe-color-gray-900);
+  border-radius: 5px;
+  opacity: 1;
+}
+
+.pe-LoadingLine::after,
+.LoadingLine::after {
+  content: '';
+  position: absolute;
+  z-index: 2;
+  top: 0;
+  left: -50%;
+  width: 40%;
+  height: 100%;
+  background: linear-gradient(90deg, rgb(14 117 181) 0%, rgb(22 82 120) 100%);
+  border-radius: 100px;
+  opacity: 0.1;
+  animation: pe-LoadingLine linear 3s infinite;
+}
+
+.LoadingLine--Gray::before {
+  background-color: rgba(var(--pe-color-gray-800-rgb), 0.05);
+}
+
+.LoadingLine--Gray::after {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+@keyframes pe-loading-process {
+  from {
+    opacity: 0;
+    left: -100%;
+    z-index: 6;
+  }
+  50% {
+    opacity: 0.25;
+  }
+  to {
+    z-index: 6;
+    left: 100%;
+  }
+}
+
+@keyframes pe-LoadingContainer {
+  from {
+    overflow: hidden;
+  }
+  to {
+    overflow: hidden;
+  }
+}
+
+.pe-LoadingContainer,
+.LoadingBlock {
+  overflow: hidden;
+  position: relative;
+  animation: 1s pe-LoadingContainer infinite;
+}
+
+.pe-LoadingContainer::before,
+.LoadingBlock::before {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  z-index: 5 !important;
+  opacity: 1 !important;
+  background-color: var(--pe-color-gray-900);
+}
+
+.pe-LoadingContainer::after,
+.LoadingBlock::after {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  z-index: 6;
+  animation: 1s pe-loading-process infinite;
+  background: linear-gradient(90deg, transparent 0%, rgb(14 117 181) 50%, transparent 100%) !important;
+}
