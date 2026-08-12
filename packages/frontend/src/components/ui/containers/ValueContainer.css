@@ -39,7 +39,7 @@
     color: var(--pe-color-fg);
     background: #404e53;
   }
-  &--LightGray.ValueContainer--Clickable:hover {
+  &:is(.ValueContainer--LightGray.ValueContainer--Clickable):hover {
     background: rgba(255, 255, 255, 0.15);
   }
   &--DarkGray {
@@ -99,7 +99,7 @@
   &--Light {
     background: rgba(255, 255, 255, 0.1);
   }
-  &--Light.ValueContainer--Clickable:hover {
+  &:is(.ValueContainer--Light.ValueContainer--Clickable):hover {
     background: rgba(255, 255, 255, 0.15);
   }
   &--External {

@@ -39,7 +39,7 @@
   &__Editor {
     width: 100%;
   }
-  &__CopyButton.JsonViewer__CopyButton {
+  &__CopyButton {
     position: absolute;
     top: var(--pe-space-2_5);
     right: var(--pe-space-2_5);

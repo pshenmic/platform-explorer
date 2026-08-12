@@ -57,10 +57,10 @@
     background: rgba(24, 31, 34, 0.2);
     box-shadow: 2px 2px var(--pe-color-red-default);
   }
-  &--Gradient.InfoBlock--Green::after {
+  &:is(.InfoBlock--Gradient.InfoBlock--Green)::after {
     background: radial-gradient(var(--pe-color-green-default), transparent 50%);
   }
-  &--Gradient.InfoBlock--Red::after {
+  &:is(.InfoBlock--Gradient.InfoBlock--Red)::after {
     background: radial-gradient(var(--pe-color-red-default), transparent 50%);
   }
   &__Title {

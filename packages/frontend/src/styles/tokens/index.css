@@ -12,7 +12,7 @@
  * - Opacity: var(--pe-opacity-*)
  * - Prefer scale steps over raw px/rem
  * - Prefer native CSS nesting for BEM (&.__El, &--Mod, nested @media)
- * - Compound mods: &--A.Block--B (not &--A&--B) for Lightning/PostCSS
+ * - Compound mods: &:is(.Block--A.Block--B) (not &--A&--B / &--A.Block--B) for Turbopack
  * - Do not reintroduce Sass or var(--chakra-colors-*)
  */
 

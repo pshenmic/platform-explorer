@@ -45,7 +45,7 @@
     background: url("/images/icons/star-check.svg") no-repeat center;
     background-size: contain;
   }
-  &--Christmas.ValueBlock--Blocks::before {
+  &:is(.ValueBlock--Christmas.ValueBlock--Blocks)::before {
     background: url("/images/icons/block-present.svg") no-repeat center;
     background-size: contain;
     width: 30px;

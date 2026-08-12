@@ -150,7 +150,7 @@ Tr:nth-child(10n) .ValueCard--Loading::after {
     background: rgba(var(--pe-color-green-default-rgb), 0.2);
     border-color: rgba(var(--pe-color-green-default-rgb), 0.4);
   }
-  &--Green.ValueCard--Clickable:hover {
+  &:is(.ValueCard--Green.ValueCard--Clickable):hover {
     background: rgba(var(--pe-color-green-default-rgb), 0.3);
   }
 }

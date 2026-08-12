@@ -592,7 +592,7 @@
     stroke-dasharray: 2.5 97.5;
     animation: HomeHeroDash 5s linear infinite;
   }
-  &__WaveScanGlow.HomeHero__WaveScan--Phase {
+  &:is(.HomeHero__WaveScanGlow.HomeHero__WaveScan--Phase) {
     animation-delay: -2.5s;
   }
   &__WavePoint {
