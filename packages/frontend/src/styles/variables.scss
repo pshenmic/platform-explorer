@@ -1,34 +1,33 @@
-// Design tokens for Sass. Colors/fonts bridge to Chakra CSS variables (theme.ts).
-// Breakpoints: see breakpoints.scss (only definition site).
+// Sass bridge to CSS design tokens (styles/tokens/*).
+// Prefer var(--pe-*) directly in new CSS; these aliases keep existing SCSS compiling.
 
 @forward 'breakpoints';
 @use 'breakpoints' as *;
 
-$border-radius-def: 10px;
-$border-radius-medium: 20px;
+$border-radius-def: var(--pe-radius-def);
+$border-radius-medium: var(--pe-radius-block);
 
-$font-heading: var(--chakra-fonts-heading);
-$font-body: var(--chakra-fonts-body);
-$font-mono: var(--chakra-fonts-mono);
+$font-heading: var(--pe-font-heading);
+$font-body: var(--pe-font-body);
+$font-mono: var(--pe-font-mono);
 
-$color-brand-normal: var(--chakra-colors-brand-normal);
-$color-brand-deep: var(--chakra-colors-brand-deep);
-$color-brand-shaded: var(--chakra-colors-brand-shaded);
-$color-brand-light: var(--chakra-colors-brand-light);
-$color-brand-pressed: var(--chakra-colors-brand-pressed);
+$color-brand-normal: var(--pe-color-brand-normal);
+$color-brand-deep: var(--pe-color-brand-deep);
+$color-brand-shaded: var(--pe-color-brand-shaded);
+$color-brand-light: var(--pe-color-brand-light);
+$color-brand-pressed: var(--pe-color-brand-pressed);
 
-$color-red-default: var(--chakra-colors-red-default);
-$color-green-default: var(--chakra-colors-green-default);
+$color-red-default: var(--pe-color-red-default);
+$color-green-default: var(--pe-color-green-default);
 
-$transition-time-def: 0.15s;
+$transition-time-def: var(--pe-transition-def);
 
 $blockBackgroundBlur: blur(44px);
 
 $scrollColor: $color-brand-normal;
 $scrollBackgroundColor: rgba(255, 255, 255, 0.05);
 
-// List chrome (shared by list mixins / headers)
-$list-row-pad-y: 7px;
-$list-row-pad-x: 12px;
-$list-row-gap: 16px;
-$list-row-radius: 10px;
+$list-row-pad-y: var(--pe-list-row-pad-y);
+$list-row-pad-x: var(--pe-list-row-pad-x);
+$list-row-gap: var(--pe-list-row-gap);
+$list-row-radius: var(--pe-list-row-radius);
