@@ -1,0 +1,48 @@
+// Shared list grid primitives. Per-feature `_variables.scss` only defines
+// column templates + hide rules; shell styles live here.
+
+@use '../variables' as *;
+
+@mixin list-grid($gap: $list-row-gap) {
+  display: grid;
+  gap: $gap;
+  width: 100%;
+}
+
+@mixin list-grid-cell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+@mixin list-grid-cell-start {
+  justify-content: flex-start;
+  text-align: left;
+}
+
+@mixin list-grid-cell-end {
+  justify-content: flex-end;
+  text-align: right;
+  white-space: nowrap;
+}
+
+@mixin list-grid-titles {
+  display: grid;
+  padding: $list-row-pad-y $list-row-pad-x;
+  border-radius: $list-row-radius;
+  background-color: var(--chakra-colors-gray-800);
+  margin-bottom: 8px;
+  font-family: $font-heading;
+  font-weight: 700;
+  font-size: 12px;
+  text-transform: uppercase;
+  color: var(--chakra-colors-white);
+
+  &--Light {
+    background: transparent !important;
+    font-weight: 500 !important;
+    color: #fff !important;
+    text-transform: none !important;
+  }
+}

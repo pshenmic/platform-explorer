@@ -1,0 +1,128 @@
+// List chrome: rows, titles, pagination. Column templates stay in feature `_variables.scss`.
+
+@use '../breakpoints' as bp;
+@use '../variables' as *;
+@use 'list-grid' as grid;
+
+@mixin AvatarSize($important: false) {
+  height: 24px#{if($important, ' !important', '')};
+  width: 24px#{if($important, ' !important', '')};
+}
+
+@mixin NotActiveText() {
+  font-size: 0.75rem !important;
+  color: var(--chakra-colors-gray-250) !important;
+  text-transform: lowercase !important;
+  font-weight: 400 !important;
+}
+
+@mixin List() {
+  &__Pagination {
+    margin-top: 2rem !important;
+  }
+
+  &__ScrollZone {
+    width: fit-content;
+    min-width: 100%;
+  }
+
+  @include bp.bp-max('md') {
+    &__Pagination {
+      margin-top: 1.5rem !important;
+    }
+  }
+
+  @include bp.bp-max('sm') {
+    &__Pagination {
+      margin-top: 1rem !important;
+    }
+  }
+}
+
+@mixin DefListItem($clickable: true) {
+  display: flex;
+  width: 100%;
+  text-decoration: none;
+  padding: $list-row-pad-y $list-row-pad-x;
+  margin-bottom: 8px;
+  line-height: 24px;
+  color: var(--chakra-colors-gray-100);
+  font-family: $font-mono;
+  font-size: 12pt;
+  border-radius: $list-row-radius;
+  border: 1px solid var(--chakra-colors-gray-750);
+  background-color: rgba(var(--chakra-colors-gray-800-rgb), 0.5);
+  transition: all 0.1s;
+
+  @if $clickable {
+    @media (hover: hover) and (pointer: fine) {
+      &:hover {
+        background-color: var(--chakra-colors-gray-750);
+        text-decoration: none;
+        cursor: pointer;
+      }
+    }
+
+    &:active {
+      transform: translateY(1px);
+      box-shadow: 0 0 9999px 0 rgba(0, 0, 0, 0.25) inset;
+    }
+  }
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+
+  &__Column {
+    &--Credits,
+    &--Number {
+      font-size: 0.75rem;
+      font-weight: 700;
+    }
+  }
+
+  &__IdentifierContainer {
+    display: flex;
+    align-items: center;
+    min-width: 50px;
+  }
+
+  &__Avatar {
+    @include AvatarSize;
+    flex-shrink: 0;
+    margin-right: 12px;
+  }
+
+  &--Timestamp,
+  &__Column--Timestamp {
+    font-family: $font-mono;
+    white-space: nowrap;
+    color: #fff;
+
+    &,
+    .DateBlock__Date {
+      font-size: 0.75rem;
+    }
+  }
+}
+
+@mixin defListTitles {
+  @include grid.list-grid-titles;
+}
+
+// Re-export grid helpers under mixins.* namespace for feature files
+@mixin list-grid($gap: $list-row-gap) {
+  @include grid.list-grid($gap);
+}
+
+@mixin list-grid-cell {
+  @include grid.list-grid-cell;
+}
+
+@mixin list-grid-cell-start {
+  @include grid.list-grid-cell-start;
+}
+
+@mixin list-grid-cell-end {
+  @include grid.list-grid-cell-end;
+}
