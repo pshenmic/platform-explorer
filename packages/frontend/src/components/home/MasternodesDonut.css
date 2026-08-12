@@ -6,12 +6,12 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  gap: 16px;
+  gap: var(--pe-space-4);
 }
 @media screen and (max-width: 30em) {
   .MasternodesDonut__Body {
     height: auto;
-    gap: 14px;
+    gap: var(--pe-space-3_5);
     padding: 2px 0;
   }
 }
@@ -27,12 +27,12 @@
   flex: 1;
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 12px;
+  gap: var(--pe-space-3);
 }
 @container (max-width: 560px) {
   .MasternodesDonut__Tiles {
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 10px;
+    gap: var(--pe-space-2_5);
   }
 }
 .MasternodesDonut__Tile {
@@ -41,18 +41,18 @@
   justify-content: center;
   gap: 7px;
   min-width: 0;
-  padding: 14px 12px;
+  padding: var(--pe-space-3_5) var(--pe-space-3);
   border: 1px solid rgba(var(--pe-color-gray-800-rgb), 0.7);
-  border-radius: 10px;
+  border-radius: var(--pe-radius-def);
   background: rgba(255, 255, 255, 0.015);
 }
 @container (max-width: 560px) {
   .MasternodesDonut__Tile {
-    padding: 12px 10px;
+    padding: var(--pe-space-3) var(--pe-space-2_5);
   }
 }
 .MasternodesDonut__SkelGap {
-  margin-top: 6px;
+  margin-top: var(--pe-space-1_5);
 }
 .MasternodesDonut__TileLabel {
   display: inline-flex;
@@ -61,7 +61,7 @@
   min-width: 0;
   max-width: 100%;
   font-family: var(--pe-font-mono);
-  font-size: 0.625rem;
+  font-size: var(--pe-text-2xs);
   text-transform: uppercase;
   letter-spacing: 0.08em;
   color: var(--pe-color-gray-500);
@@ -82,8 +82,8 @@
 }
 .MasternodesDonut__Rotate {
   flex-shrink: 0;
-  width: 10px;
-  height: 10px;
+  width: var(--pe-space-2_5);
+  height: var(--pe-space-2_5);
   color: var(--pe-color-gray-500);
   animation: MasternodesRotate 9s linear infinite;
 }
@@ -97,9 +97,9 @@
   align-items: baseline;
   gap: 5px;
   font-family: var(--pe-font-heading);
-  font-weight: 800;
+  font-weight: var(--pe-font-weight-extrabold);
   font-style: italic;
-  font-size: 1.5rem;
+  font-size: var(--pe-text-2xl);
   line-height: 1;
   color: var(--pe-color-fg);
   font-variant-numeric: tabular-nums;
@@ -108,26 +108,26 @@
 .MasternodesDonut__TileOf {
   font-size: 0.8125rem;
   font-style: normal;
-  font-weight: 400;
+  font-weight: var(--pe-font-weight-normal);
   color: var(--pe-color-gray-500);
 }
 .MasternodesDonut__TilePct {
   font-family: var(--pe-font-mono);
-  font-size: 0.625rem;
+  font-size: var(--pe-text-2xs);
   color: var(--pe-color-gray-500);
   font-variant-numeric: tabular-nums;
 }
 .MasternodesDonut__Bottom {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: var(--pe-space-2_5);
 }
 .MasternodesDonut__Bar {
   display: flex;
   align-items: stretch;
   gap: 2px;
   width: 100%;
-  height: 10px;
+  height: var(--pe-space-2_5);
   border-radius: 5px;
   overflow: hidden;
   background: rgba(255, 255, 255, 0.06);
@@ -168,10 +168,10 @@
 .MasternodesDonut__Geo {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: var(--pe-space-3);
   min-width: 0;
   font-family: var(--pe-font-mono);
-  font-size: 0.6875rem;
+  font-size: var(--pe-text-xs);
 }
 .MasternodesDonut__GeoLabel {
   flex-shrink: 0;
@@ -186,14 +186,14 @@
   align-items: center;
   justify-content: space-between;
   flex-wrap: wrap;
-  gap: 8px 10px;
+  gap: var(--pe-space-2) var(--pe-space-2_5);
   min-width: 0;
   color: var(--pe-color-fg-muted);
   font-variant-numeric: tabular-nums;
 }
 .MasternodesDonut__GeoList b {
   color: var(--pe-color-fg);
-  font-weight: 700;
+  font-weight: var(--pe-font-weight-bold);
 }
 .MasternodesDonut__GeoItem {
   display: inline-flex;
@@ -202,8 +202,8 @@
   cursor: default;
 }
 .MasternodesDonut__Flag {
-  width: 16px;
-  height: 16px;
+  width: var(--pe-space-4);
+  height: var(--pe-space-4);
   border-radius: 50%;
   flex-shrink: 0;
   display: block;

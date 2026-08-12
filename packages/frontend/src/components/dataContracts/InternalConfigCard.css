@@ -1,33 +1,33 @@
 .InternalConfigCard {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: var(--pe-space-2);
   font-family: var(--pe-font-mono);
-  padding: 2.5rem !important;
+  padding: var(--pe-space-10) !important;
 }
 .InternalConfigCard__Line {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: var(--pe-space-2);
 }
 .InternalConfigCard__Title {
   white-space: break-spaces;
   width: 16.875rem;
   color: var(--pe-color-fg-muted);
-  font-size: 0.75rem;
+  font-size: var(--pe-text-sm);
 }
 .InternalConfigCard__Title:after {
   content: ":";
 }
 .InternalConfigCard__ValueContainer {
-  font-size: 0.688rem;
+  font-size: var(--pe-text-xs);
 }
 .InternalConfigCard__ValueContainer {
   max-width: max-content;
 }
 @media screen and (max-width: 48em) {
   .InternalConfigCard {
-    padding: 1rem !important;
+    padding: var(--pe-space-4) !important;
   }
   .InternalConfigCard__Line {
     justify-content: space-between;

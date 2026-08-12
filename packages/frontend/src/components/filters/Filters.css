@@ -1,17 +1,17 @@
 .Filters__ButtonsContainer, .Filters__ControlButtons {
   display: flex;
-  gap: 0.5rem;
+  gap: var(--pe-space-2);
   flex-wrap: wrap;
 }
 .Filters__Button {
   display: flex !important;
-  gap: 0.5rem;
-  font-weight: 400 !important;
+  gap: var(--pe-space-2);
+  font-weight: var(--pe-font-weight-normal) !important;
   text-transform: capitalize !important;
 }
 .Filters__Button--ToggleFilters svg {
-  width: 0.625rem;
-  height: 0.625rem;
+  width: var(--pe-space-2_5);
+  height: var(--pe-space-2_5);
 }
 .Filters--Mobile .Filters__ButtonsContainer {
   flex-direction: column;

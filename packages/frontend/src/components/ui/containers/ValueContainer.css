@@ -4,7 +4,7 @@
   flex-wrap: nowrap;
   border-radius: var(--pe-radius-def);
   background-color: rgba(var(--pe-color-gray-800-rgb), 0.5);
-  padding: 12px;
+  padding: var(--pe-space-3);
   transition: all 0.1s;
 }
 .ValueContainer--Elipsed {
@@ -56,29 +56,29 @@
   background: rgba(244, 154, 88, 0.2);
 }
 .ValueContainer--SizeXl {
-  padding: 1.5rem;
-  border-radius: 0.625rem;
+  padding: var(--pe-space-6);
+  border-radius: var(--pe-radius-def);
 }
 .ValueContainer--SizeLg {
-  padding: 0.438rem 0.75rem;
+  padding: 0.438rem var(--pe-space-3);
   border-radius: 0.688rem;
 }
 .ValueContainer--SizeMd {
-  padding: 0.5rem 0.75rem;
+  padding: var(--pe-space-2) var(--pe-space-3);
 }
 .ValueContainer--SizeSm {
-  padding: 6px 10px;
-  line-height: 14px;
-  border-radius: 8px;
+  padding: var(--pe-space-1_5) var(--pe-space-2_5);
+  line-height: var(--pe-space-3_5);
+  border-radius: var(--pe-radius-md);
 }
 .ValueContainer--SizeXs {
-  padding: 4px 6px;
-  line-height: 16px;
-  border-radius: 8px;
+  padding: var(--pe-space-1) var(--pe-space-1_5);
+  line-height: var(--pe-space-4);
+  border-radius: var(--pe-radius-md);
 }
 .ValueContainer--SizeXxs {
-  padding: 2px 4px;
-  line-height: 16px;
+  padding: 2px var(--pe-space-1);
+  line-height: var(--pe-space-4);
   border-radius: 3px;
 }
 @media (hover: hover) and (pointer: fine) {

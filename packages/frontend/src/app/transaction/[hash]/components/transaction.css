@@ -7,7 +7,7 @@
   width: 100% !important;
 }
 .TransactionPage__InfoLine {
-  margin-bottom: 14px;
+  margin-bottom: var(--pe-space-3_5);
   justify-content: flex-start !important;
 }
 .TransactionPage__InfoLine--Outputs .InfoLine__Value {
@@ -59,11 +59,11 @@
 .TransactionPage__InfoLine .InfoLine__Title {
   width: 200px;
   max-width: 200px;
-  line-height: 20px;
+  line-height: var(--pe-space-5);
 }
 .TransactionPage__InfoLine .InfoLine__Value {
   text-align: left;
-  font-size: 0.75rem;
+  font-size: var(--pe-text-sm);
 }
 .TransactionPage .HorisontalSeparator {
   margin: 0;
@@ -75,11 +75,11 @@
   max-width: 510px;
 }
 .TransactionPage__Signature .CopyButton, .TransactionPage__AssetLockProof .CopyButton, .TransactionPage__OutputScript .CopyButton {
-  margin-left: 4px;
+  margin-left: var(--pe-space-1);
 }
 .TransactionPage__ErrorContainer {
-  margin-top: 8px;
-  font-size: 0.688rem;
+  margin-top: var(--pe-space-2);
+  font-size: var(--pe-text-xs);
 }
 .TransactionPage__ErrorContainer .ValueContainer__Value {
   overflow: hidden;
@@ -87,19 +87,19 @@
   word-break: break-word;
 }
 .TransactionPage__BlockHeight {
-  padding: 2px 8px;
+  padding: 2px var(--pe-space-2);
   border-radius: 3px;
-  font-size: 0.625rem;
-  margin-right: 12px;
+  font-size: var(--pe-text-2xs);
+  margin-right: var(--pe-space-3);
   white-space: nowrap;
 }
 .TransactionPage__DetailsInfoTitle {
   font-family: var(--pe-font-heading);
-  font-size: 0.75rem;
-  letter-spacing: 0.4px;
+  font-size: var(--pe-text-sm);
+  letter-spacing: 0.var(--pe-space-1);
   text-transform: uppercase;
-  font-weight: 700;
-  margin-bottom: 14px;
+  font-weight: var(--pe-font-weight-bold);
+  margin-bottom: var(--pe-space-3_5);
 }
 .TransactionPage__RawTransaction {
   align-items: flex-start;
@@ -107,10 +107,10 @@
   word-break: break-word;
 }
 .TransactionPage__RawTransaction .CopyButton {
-  margin-left: 12px;
+  margin-left: var(--pe-space-3);
 }
 .TransactionPage__PublicKeyCard, .TransactionPage__TransitionCard {
-  margin-bottom: 14px;
+  margin-bottom: var(--pe-space-3_5);
 }
 .TransactionPage__PublicKeyCard:last-child, .TransactionPage__TransitionCard:last-child {
   margin-bottom: 0;
@@ -139,7 +139,7 @@
 }
 @media screen and (max-width: 48em) {
   .TransactionPage__InfoLine {
-    margin-bottom: 12px;
+    margin-bottom: var(--pe-space-3);
     justify-content: space-between !important;
     flex-wrap: wrap;
   }
@@ -150,7 +150,7 @@
   }
   .TransactionPage__InfoLine:not(.TransactionPage__InfoLine--Inline):not(.TransactionPage__InfoLine--Index):not(.TransactionPage__InfoLine--Type):not(.TransactionPage__InfoLine--FeeMultiplier):not(.InfoLine--Error):not(.TransactionPage__InfoLine--CoreFeePerByte):not(.TransactionPage__InfoLine--Status):not(.TransactionPage__InfoLine--Pooling) > .InfoLine__Title {
     width: 100%;
-    margin-bottom: 4px;
+    margin-bottom: var(--pe-space-1);
     margin-right: 0;
   }
   .TransactionPage__InfoLine:not(.TransactionPage__InfoLine--Inline):not(.TransactionPage__InfoLine--Index):not(.TransactionPage__InfoLine--Type):not(.TransactionPage__InfoLine--FeeMultiplier):not(.InfoLine--Error):not(.TransactionPage__InfoLine--CoreFeePerByte):not(.TransactionPage__InfoLine--Status):not(.TransactionPage__InfoLine--Pooling) > .InfoLine__Value {
@@ -201,7 +201,7 @@
     margin-top: 0;
   }
   .TransactionPage__DetailsInfoTitle {
-    margin-bottom: 12px;
+    margin-bottom: var(--pe-space-3);
   }
   .TransactionPage__RawTransaction, .TransactionPage__Signature, .TransactionPage__AssetLockProof, .TransactionPage__OutputScript {
     max-width: none;

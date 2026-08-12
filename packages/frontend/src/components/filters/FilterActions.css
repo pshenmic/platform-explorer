@@ -1,4 +1,4 @@
 .FilterActions {
   display: flex;
-  gap: 0.5rem;
+  gap: var(--pe-space-2);
 }

@@ -7,7 +7,7 @@
 .HomeOverview__Grid {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 1.5rem;
+  gap: var(--pe-space-6);
   margin-top: 0;
 }
 @media screen and (min-width: 62em) {
@@ -23,8 +23,8 @@
 }
 .HomeOverview__Sys .HomeHero__MetaLabel {
   font-family: var(--pe-font-heading);
-  font-weight: 700;
-  font-size: 0.6875rem;
+  font-weight: var(--pe-font-weight-bold);
+  font-size: var(--pe-text-xs);
   text-transform: uppercase;
   letter-spacing: 0.04em;
   color: var(--pe-color-fg);
@@ -35,7 +35,7 @@
   flex: 1;
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 12px 16px;
+  gap: var(--pe-space-3) var(--pe-space-4);
   padding: 0;
   border-bottom: none;
   min-height: 0;
@@ -45,11 +45,11 @@
   flex-direction: column;
   justify-content: flex-start;
   align-items: flex-start;
-  gap: 8px;
+  gap: var(--pe-space-2);
   width: 100%;
   min-width: 0;
   min-height: 0;
-  padding: 4px 0;
+  padding: var(--pe-space-1) 0;
 }
 .HomeOverview__Sys .HomeHero__MetaValue {
   font-size: 0.8125rem;
@@ -59,7 +59,7 @@
 @media screen and (min-width: 62em) {
   .HomeOverview__Sys {
     border-right: 1px solid rgba(var(--pe-color-gray-800-rgb), 0.6);
-    padding-right: 2rem;
+    padding-right: var(--pe-space-8);
   }
   .HomeOverview__Sys .HomeHero__Meta {
     display: flex;
@@ -70,18 +70,18 @@
   .HomeOverview__Sys .HomeHero__MetaItem {
     min-height: 0;
     padding: 0;
-    gap: 8px;
+    gap: var(--pe-space-2);
   }
   .HomeOverview__Sys .HomeHero__MetaItem:first-child {
     flex: 0 0 auto;
-    padding-bottom: 8px;
+    padding-bottom: var(--pe-space-2);
   }
   .HomeOverview__Sys .HomeHero__MetaItem:first-child .HomeHero__MetaLabel {
     display: flex;
     align-items: center;
-    min-height: calc(0.825rem + 12px);
-    padding: 6px 0;
-    margin-bottom: 4px;
+    min-height: calc(0.825rem + var(--pe-space-3));
+    padding: var(--pe-space-1_5) 0;
+    margin-bottom: var(--pe-space-1);
     width: 100%;
   }
   .HomeOverview__Sys .HomeHero__MetaItem:not(:first-child) {
@@ -99,7 +99,7 @@
   gap: 5px;
   flex-shrink: 0;
   font-family: var(--pe-font-mono);
-  font-size: 0.6875rem;
+  font-size: var(--pe-text-xs);
   color: var(--pe-color-gray-500);
   white-space: nowrap;
   transition: color 0.2s;
@@ -109,11 +109,11 @@
 }
 @media screen and (min-width: 62em) {
   .HomeOverview__Tx {
-    padding: 0 2rem;
+    padding: 0 var(--pe-space-8);
     border-right: 1px solid rgba(var(--pe-color-gray-800-rgb), 0.6);
   }
   .HomeOverview__Blocks {
-    padding-left: 2rem;
+    padding-left: var(--pe-space-8);
   }
 }
 
@@ -133,13 +133,13 @@
 .HomeGovCard .HomeHero__StatusCell {
   flex: 1 1 auto;
   justify-content: center;
-  padding: 14px 0;
+  padding: var(--pe-space-3_5) 0;
   border-right: none;
   border-bottom: 1px solid rgba(var(--pe-color-gray-800-rgb), 0.6);
 }
 .HomeGovCard .HomeHero__StatusCell:first-child {
   flex-grow: 1;
-  padding-top: 4px;
+  padding-top: var(--pe-space-1);
 }
 .HomeGovCard .HomeHero__StatusCell:last-child {
   border-bottom: none;
@@ -148,16 +148,16 @@
 
 .HomeEpochs {
   border-radius: var(--pe-radius-block);
-  padding: 40px 20px 0 20px !important;
+  padding: var(--pe-space-10) var(--pe-space-5) 0 var(--pe-space-5) !important;
   overflow-x: hidden;
 }
 @media screen and (max-width: 62em) {
   .HomeEpochs {
-    padding: 36px 16px 0 16px !important;
+    padding: 36px var(--pe-space-4) 0 var(--pe-space-4) !important;
   }
 }
 @media screen and (max-width: 48em) {
   .HomeEpochs {
-    padding: 32px 16px 0 16px !important;
+    padding: var(--pe-space-8) var(--pe-space-4) 0 var(--pe-space-4) !important;
   }
 }

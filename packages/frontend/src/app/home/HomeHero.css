@@ -36,19 +36,19 @@
   display: grid;
   grid-template-columns: 1.4fr 1fr;
   align-items: center;
-  gap: 2rem;
-  padding: 32px 40px;
+  gap: var(--pe-space-8);
+  padding: var(--pe-space-8) var(--pe-space-10);
 }
 @media screen and (max-width: 62em) {
   .HomeHero__Inner {
     grid-template-columns: 1fr;
-    gap: 1.5rem;
-    padding: 32px 24px;
+    gap: var(--pe-space-6);
+    padding: var(--pe-space-8) var(--pe-space-6);
   }
 }
 @media screen and (max-width: 48em) {
   .HomeHero__Inner {
-    padding: 24px 16px;
+    padding: var(--pe-space-6) var(--pe-space-4);
   }
 }
 .HomeHero__Brand {
@@ -58,27 +58,27 @@
   font-size: 0.8125rem;
   text-transform: uppercase;
   font-family: var(--pe-font-heading);
-  font-weight: 800;
+  font-weight: var(--pe-font-weight-extrabold);
   font-style: italic;
   letter-spacing: 0.04em;
   color: var(--pe-color-brand-normal);
-  margin: 0 0 6px;
+  margin: 0 0 var(--pe-space-1_5);
 }
 .HomeHero__Title {
   font-style: italic;
-  font-size: 2.5rem !important;
-  font-weight: 800;
+  font-size: var(--pe-space-10) !important;
+  font-weight: var(--pe-font-weight-extrabold);
   line-height: 1.05;
-  margin: 0 0 12px;
+  margin: 0 0 var(--pe-space-3);
 }
 .HomeHero__Tagline {
   font-family: var(--pe-font-heading);
   font-style: italic;
-  font-weight: 700;
-  font-size: 1.125rem;
+  font-weight: var(--pe-font-weight-bold);
+  font-size: var(--pe-text-xl);
   line-height: 1.3;
   color: var(--pe-color-fg);
-  margin: 0 0 12px;
+  margin: 0 0 var(--pe-space-3);
 }
 .HomeHero__Description {
   font-size: 0.8125rem;
@@ -95,14 +95,14 @@
   align-items: stretch;
   gap: 0;
   border-top: 1px solid rgba(var(--pe-color-gray-800-rgb), 0.6);
-  margin-top: 10px;
+  margin-top: var(--pe-space-2_5);
   padding: 22px 0 0;
 }
 @media screen and (max-width: 62em) {
   .HomeHero__StatusBar {
-    margin-top: 10px;
+    margin-top: var(--pe-space-2_5);
     padding: 22px 0 0;
-    gap: 16px 28px;
+    gap: var(--pe-space-4) 28px;
   }
 }
 @media screen and (max-width: 48em) {
@@ -115,8 +115,8 @@
   min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: 4px;
-  padding: 0 20px;
+  gap: var(--pe-space-1);
+  padding: 0 var(--pe-space-5);
   border-right: 1px solid rgba(var(--pe-color-gray-800-rgb), 0.6);
 }
 .HomeHero__StatusCell:first-child {
@@ -139,7 +139,7 @@
 @media screen and (max-width: 48em) {
   .HomeHero__StatusCell {
     flex: 1 1 100%;
-    padding: 12px 0;
+    padding: var(--pe-space-3) 0;
     border-bottom: 1px solid rgba(var(--pe-color-gray-800-rgb), 0.6);
   }
   .HomeHero__StatusCell:first-child {
@@ -156,7 +156,7 @@
   gap: 5px;
 }
 .HomeHero__StatusLabel {
-  font-size: 0.625rem;
+  font-size: var(--pe-text-2xs);
   text-transform: uppercase;
   letter-spacing: 0.1em;
   color: var(--pe-color-gray-500);
@@ -182,7 +182,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 14px;
+  gap: var(--pe-space-3_5);
   width: 100%;
   min-width: 0;
 }
@@ -194,26 +194,26 @@
 }
 .HomeHero__GovCount {
   font-family: var(--pe-font-heading);
-  font-weight: 800;
+  font-weight: var(--pe-font-weight-extrabold);
   font-style: italic;
-  font-size: 1.5rem;
+  font-size: var(--pe-text-2xl);
   line-height: 1;
   color: var(--pe-color-fg);
-  text-shadow: 0 0 12px rgba(var(--pe-color-brand-normal-rgb), 0.45);
+  text-shadow: 0 0 var(--pe-space-3) rgba(var(--pe-color-brand-normal-rgb), 0.45);
   transition: color 0.15s, text-shadow 0.15s;
 }
 .HomeHero__GovCount:hover {
   color: var(--pe-color-brand-light);
-  text-shadow: 0 0 14px rgba(var(--pe-color-brand-normal-rgb), 0.65);
+  text-shadow: 0 0 var(--pe-space-3_5) rgba(var(--pe-color-brand-normal-rgb), 0.65);
 }
 .HomeHero__GovCountLabel {
   align-self: flex-start;
   margin-top: 5px;
-  font-size: 0.5rem;
+  font-size: var(--pe-space-2);
   text-transform: uppercase;
   letter-spacing: 0.08em;
   padding: 1px 5px;
-  border-radius: 4px;
+  border-radius: var(--pe-radius-sm);
   color: var(--pe-color-brand-light);
   background: rgba(var(--pe-color-brand-normal-rgb), 0.14);
   border: 1px solid rgba(var(--pe-color-brand-normal-rgb), 0.3);
@@ -224,7 +224,7 @@
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-  gap: 6px;
+  gap: var(--pe-space-1_5);
   text-align: right;
 }
 .HomeHero__GovDots {
@@ -237,11 +237,11 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 8px 4px;
+  padding: var(--pe-space-2) var(--pe-space-1);
 }
 .HomeHero__GovSeg i {
-  width: 12px;
-  height: 4px;
+  width: var(--pe-space-3);
+  height: var(--pe-space-1);
   border-radius: 2px;
   background: rgba(var(--pe-color-gray-500-rgb), 0.45);
   transition: background 0.15s, width 0.2s ease;
@@ -271,9 +271,9 @@
   display: block;
   max-width: min(240px, 100%);
   font-family: var(--pe-font-heading);
-  font-weight: 800;
+  font-weight: var(--pe-font-weight-extrabold);
   font-style: italic;
-  font-size: 1.125rem;
+  font-size: var(--pe-text-xl);
   line-height: 1.15;
   color: var(--pe-color-fg);
   overflow: hidden;
@@ -289,7 +289,7 @@
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-  gap: 4px;
+  gap: var(--pe-space-1);
   max-width: 100%;
   overflow: hidden;
 }
@@ -301,7 +301,7 @@
 }
 .HomeHero__VotesChoiceText {
   flex-shrink: 0;
-  font-size: 0.75rem;
+  font-size: var(--pe-text-sm);
   font-family: var(--pe-font-mono);
   color: var(--pe-color-fg-muted);
 }
@@ -309,9 +309,9 @@
   min-width: 0;
   max-width: min(240px, 100%);
   font-family: var(--pe-font-heading);
-  font-weight: 800;
+  font-weight: var(--pe-font-weight-extrabold);
   font-style: italic;
-  font-size: 1.125rem;
+  font-size: var(--pe-text-xl);
   line-height: 1.15;
   color: var(--pe-color-fg);
   overflow: hidden;
@@ -327,22 +327,22 @@
   flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  gap: 14px 28px;
-  padding: 11px 40px;
+  gap: var(--pe-space-3_5) 28px;
+  padding: 11px var(--pe-space-10);
   border-bottom: 1px solid rgba(var(--pe-color-gray-800-rgb), 0.6);
 }
 @media screen and (max-width: 62em) {
   .HomeHero__Meta {
     justify-content: flex-start;
-    padding: 11px 24px;
+    padding: 11px var(--pe-space-6);
   }
 }
 @media screen and (max-width: 48em) {
   .HomeHero__Meta {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 8px 16px;
-    padding: 11px 16px;
+    gap: var(--pe-space-2) var(--pe-space-4);
+    padding: 11px var(--pe-space-4);
   }
 }
 .HomeHero__MetaItem {
@@ -352,7 +352,7 @@
   min-width: 0;
 }
 .HomeHero__MetaLabel {
-  font-size: 0.625rem;
+  font-size: var(--pe-text-2xs);
   font-family: var(--pe-font-mono);
   text-transform: uppercase;
   letter-spacing: 0.1em;
@@ -361,7 +361,7 @@
 .HomeHero__MetaValue {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: var(--pe-space-1_5);
   min-width: 0;
   font-size: 0.8125rem;
   font-family: var(--pe-font-mono);
@@ -369,7 +369,7 @@
   color: var(--pe-color-fg);
 }
 .HomeHero__MetaChip {
-  padding: 4px 10px;
+  padding: var(--pe-space-1) var(--pe-space-2_5);
   border-radius: 999px;
   border: 1px solid rgba(var(--pe-color-gray-800-rgb), 0.9);
   background: rgba(255, 255, 255, 0.03);
@@ -381,7 +381,7 @@
   color: var(--pe-color-gray-500);
 }
 .HomeHero__MetaChip--Status {
-  font-weight: 700;
+  font-weight: var(--pe-font-weight-bold);
 }
 .HomeHero__MetaChip--Status.is-ok {
   color: var(--pe-color-green-label);
@@ -393,7 +393,7 @@
   color: var(--pe-color-red-default);
   border-color: rgba(var(--pe-color-red-default-rgb), 0.45);
   background: rgba(var(--pe-color-red-default-rgb), 0.12);
-  box-shadow: 0 0 10px rgba(var(--pe-color-red-default-rgb), 0.25);
+  box-shadow: 0 0 var(--pe-space-2_5) rgba(var(--pe-color-red-default-rgb), 0.25);
 }
 .HomeHero__MetaChip--Status.is-loading {
   color: var(--pe-color-gray-500);
@@ -428,13 +428,13 @@
 }
 .HomeHero__VotesBreakdown {
   display: block;
-  margin-top: 6px;
-  padding-top: 6px;
+  margin-top: var(--pe-space-1_5);
+  padding-top: var(--pe-space-1_5);
   border-top: 1px solid rgba(255, 255, 255, 0.12);
 }
 .HomeHero__VotesBreakdownLabel {
   display: block;
-  font-size: 0.625rem;
+  font-size: var(--pe-text-2xs);
   text-transform: uppercase;
   letter-spacing: 0.06em;
   opacity: 0.6;
@@ -442,10 +442,10 @@
 }
 .HomeHero__VotesBreakdownRow {
   font-family: var(--pe-font-mono);
-  font-size: 0.6875rem;
+  font-size: var(--pe-text-xs);
 }
 .HomeHero__Vote {
-  font-weight: 700;
+  font-weight: var(--pe-font-weight-bold);
 }
 .HomeHero__Vote--towards {
   color: var(--pe-color-green-400);
@@ -471,17 +471,17 @@
   position: relative;
   width: auto;
   height: 200px;
-  margin: 20px -20px 0;
+  margin: var(--pe-space-5) -var(--pe-space-5) 0;
   padding: 0;
 }
 @media screen and (max-width: 62em) {
   .HomeHero__Wave {
-    margin: 18px -16px 0;
+    margin: 18px -var(--pe-space-4) 0;
   }
 }
 @media screen and (max-width: 48em) {
   .HomeHero__Wave {
-    margin: 16px -16px 0;
+    margin: var(--pe-space-4) -var(--pe-space-4) 0;
   }
 }
 .HomeHero__WaveSvg {
@@ -523,30 +523,30 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 12px;
+  gap: var(--pe-space-3);
   cursor: default;
   outline: none;
 }
 .HomeHero__WaveValue {
   font-family: var(--pe-font-heading);
-  font-weight: 800;
+  font-weight: var(--pe-font-weight-extrabold);
   font-style: italic;
-  font-size: 1.75rem;
+  font-size: var(--pe-space-7);
   line-height: 1;
   color: var(--pe-color-fg);
-  text-shadow: 0 0 12px rgba(var(--pe-color-brand-normal-rgb), 0.45);
+  text-shadow: 0 0 var(--pe-space-3) rgba(var(--pe-color-brand-normal-rgb), 0.45);
   transition: color 0.15s;
 }
 .HomeHero__WaveDot {
-  width: 10px;
-  height: 10px;
+  width: var(--pe-space-2_5);
+  height: var(--pe-space-2_5);
   border-radius: 50%;
   background: rgb(var(--wave-c-rgb, var(--pe-color-brand-light-rgb)));
   box-shadow: 0 0 0 3px rgba(var(--wave-c-rgb, var(--pe-color-brand-normal-rgb)), 0.18);
   transition: transform 0.15s, box-shadow 0.15s;
 }
 .HomeHero__WaveLabel {
-  font-size: 0.625rem;
+  font-size: var(--pe-text-2xs);
   font-family: var(--pe-font-mono);
   text-transform: uppercase;
   letter-spacing: 0.1em;
@@ -558,7 +558,7 @@
 }
 .HomeHero__WavePoint:hover .HomeHero__WaveDot, .HomeHero__WavePoint:focus-within .HomeHero__WaveDot {
   transform: scale(1.5);
-  box-shadow: 0 0 12px 3px rgba(var(--wave-c-rgb, var(--pe-color-brand-light-rgb)), 0.9);
+  box-shadow: 0 0 var(--pe-space-3) 3px rgba(var(--wave-c-rgb, var(--pe-color-brand-light-rgb)), 0.9);
 }
 @media (prefers-reduced-motion: reduce) {
   .HomeHero__WaveScan {
@@ -573,32 +573,32 @@
   justify-content: center;
   min-width: 0;
   text-align: right;
-  padding-left: 2rem;
+  padding-left: var(--pe-space-8);
 }
 @media screen and (max-width: 62em) {
   .HomeHero__Live {
     align-items: flex-start;
     text-align: left;
     padding-left: 0;
-    padding-top: 1.25rem;
+    padding-top: var(--pe-space-5);
     border-left: none;
     border-top: 1px solid rgba(var(--pe-color-gray-800-rgb), 0.6);
   }
 }
 .HomeHero__LiveLabel {
-  font-size: 0.6875rem;
+  font-size: var(--pe-text-xs);
   text-transform: uppercase;
   letter-spacing: 0.12em;
   color: var(--pe-color-gray-500);
-  margin: 0 0 6px;
+  margin: 0 0 var(--pe-space-1_5);
 }
 .HomeHero__LiveBadge {
   display: inline-block;
-  padding: 3px 10px;
-  margin-right: 8px;
+  padding: 3px var(--pe-space-2_5);
+  margin-right: var(--pe-space-2);
   border-radius: 999px;
   border: 1px solid;
-  font-weight: 700;
+  font-weight: var(--pe-font-weight-bold);
 }
 .HomeHero__LiveBadge.is-live {
   color: var(--pe-color-green-label);
@@ -610,7 +610,7 @@
   color: var(--pe-color-red-default);
   border-color: rgba(var(--pe-color-red-default-rgb), 0.45);
   background: rgba(var(--pe-color-red-default-rgb), 0.12);
-  box-shadow: 0 0 10px rgba(var(--pe-color-red-default-rgb), 0.25);
+  box-shadow: 0 0 var(--pe-space-2_5) rgba(var(--pe-color-red-default-rgb), 0.25);
 }
 .HomeHero__LiveBadge.is-loading {
   color: var(--pe-color-gray-500);
@@ -619,7 +619,7 @@
 }
 .HomeHero__Height {
   font-family: var(--pe-font-heading);
-  font-weight: 800;
+  font-weight: var(--pe-font-weight-extrabold);
   font-style: italic;
   font-size: 3.25rem;
   line-height: 1;
@@ -630,14 +630,14 @@
 }
 @media screen and (max-width: 62em) {
   .HomeHero__Height {
-    font-size: 2.5rem;
+    font-size: var(--pe-space-10);
   }
 }
 .HomeHero__LiveMeta {
-  font-size: 0.75rem;
+  font-size: var(--pe-text-sm);
   font-family: var(--pe-font-mono);
   color: var(--pe-color-gray-500);
-  margin: 10px 0 0;
+  margin: var(--pe-space-2_5) 0 0;
 }
 .HomeHero__Live--Loading .HomeHero__Height {
   opacity: 0.4;
@@ -661,24 +661,24 @@
 }
 @keyframes HeroLiveBreath {
   0%, 100% {
-    box-shadow: 0 0 4px rgba(var(--pe-color-green-label-rgb), 0.15);
+    box-shadow: 0 0 var(--pe-space-1) rgba(var(--pe-color-green-label-rgb), 0.15);
   }
   50% {
-    box-shadow: 0 0 12px rgba(var(--pe-color-green-label-rgb), 0.45);
+    box-shadow: 0 0 var(--pe-space-3) rgba(var(--pe-color-green-label-rgb), 0.45);
   }
 }
 @keyframes GovTickerIn {
   from {
     opacity: 0;
-    transform: translateY(-4px);
+    transform: translateY(-var(--pe-space-1));
   }
 }
 @keyframes EpochDotBreath {
   0%, 100% {
-    box-shadow: 0 0 8px 2px rgba(var(--pe-color-brand-light-rgb), 0.55);
+    box-shadow: 0 0 var(--pe-space-2) 2px rgba(var(--pe-color-brand-light-rgb), 0.55);
   }
   50% {
-    box-shadow: 0 0 16px 5px rgba(var(--pe-color-brand-light-rgb), 0.95);
+    box-shadow: 0 0 var(--pe-space-4) 5px rgba(var(--pe-color-brand-light-rgb), 0.95);
   }
 }
 @keyframes EpochFlowPulse {
@@ -708,7 +708,7 @@
     opacity: 1;
   }
   100% {
-    top: calc(100% - 12px);
+    top: calc(100% - var(--pe-space-3));
     opacity: 0;
   }
 }
@@ -758,8 +758,8 @@
   content: "";
   flex: 1;
   width: 1px;
-  margin-top: 12px;
-  background: repeating-linear-gradient(180deg, rgba(255, 255, 255, 0.14) 0 4px, transparent 4px 9px);
+  margin-top: var(--pe-space-3);
+  background: repeating-linear-gradient(180deg, rgba(255, 255, 255, 0.14) 0 var(--pe-space-1), transparent var(--pe-space-1) 9px);
 }
 .EpochsWave__Bound.is-approx::after {
   animation: HeroMetaPulse 2.4s ease-in-out infinite;
@@ -782,12 +782,12 @@
   flex-direction: column;
   align-items: center;
   text-align: center;
-  gap: 6px;
+  gap: var(--pe-space-1_5);
   text-decoration: none;
   pointer-events: auto;
 }
 .EpochsWave__BoundLabel.is-approx {
-  opacity: 0.75;
+  opacity: var(--pe-opacity-soft);
 }
 .EpochsWave__BoundLabel.is-approx .EpochsWave__BoundBlock {
   border-bottom: none;
@@ -802,9 +802,9 @@
 .EpochsWave__BoundBlock {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
+  gap: var(--pe-space-1);
   font-family: var(--pe-font-mono);
-  font-size: 0.625rem;
+  font-size: var(--pe-text-2xs);
   color: var(--pe-color-fg-muted);
   white-space: nowrap;
   text-align: center;
@@ -817,11 +817,11 @@
 }
 .EpochsWave__BoundTag {
   display: inline-block;
-  padding: 2px 6px;
-  border-radius: 4px;
+  padding: 2px var(--pe-space-1_5);
+  border-radius: var(--pe-radius-sm);
   font-family: var(--pe-font-heading);
   font-size: 0.5625rem;
-  font-weight: 700;
+  font-weight: var(--pe-font-weight-bold);
   text-transform: uppercase;
   letter-spacing: 0.08em;
   color: var(--pe-color-brand-light);
@@ -843,7 +843,7 @@
   }
 }
 .EpochsWave__RailScan {
-  opacity: 0.85;
+  opacity: var(--pe-opacity-strong);
 }
 @media (prefers-reduced-motion: reduce) {
   .EpochsWave__RailScan {
@@ -867,8 +867,8 @@
 .EpochsWave__GhostDot {
   position: absolute;
   transform: translate(-50%, -50%);
-  width: 6px;
-  height: 6px;
+  width: var(--pe-space-1_5);
+  height: var(--pe-space-1_5);
   border-radius: 50%;
   background: rgba(255, 255, 255, 0.2);
   pointer-events: none;
@@ -929,18 +929,18 @@
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 .EpochsWave__Point .HomeHero__WaveValue {
-  font-size: 1.5rem;
+  font-size: var(--pe-text-2xl);
 }
 .EpochsWave__Point .EpochsWave__Id {
   position: absolute;
-  bottom: calc(100% + 12px);
+  bottom: calc(100% + var(--pe-space-3));
   left: 50%;
   transform: translateX(-50%);
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
-  gap: 6px;
+  gap: var(--pe-space-1_5);
   white-space: nowrap;
   pointer-events: none;
 }
@@ -948,11 +948,11 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 4px;
+  gap: var(--pe-space-1);
 }
 .EpochsWave__Point .EpochsWave__KindTitle {
   font-family: var(--pe-font-heading);
-  font-weight: 700;
+  font-weight: var(--pe-font-weight-bold);
   font-size: 0.5625rem;
   text-transform: uppercase;
   letter-spacing: 0.08em;
@@ -961,11 +961,11 @@
 }
 .EpochsWave__Point .EpochsWave__Kind {
   display: inline-block;
-  padding: 3px 8px;
-  border-radius: 4px;
+  padding: 3px var(--pe-space-2);
+  border-radius: var(--pe-radius-sm);
   font-family: var(--pe-font-heading);
-  font-weight: 700;
-  font-size: 0.625rem;
+  font-weight: var(--pe-font-weight-bold);
+  font-size: var(--pe-text-2xs);
   text-transform: uppercase;
   letter-spacing: 0.06em;
   color: var(--pe-color-brand-light);
@@ -983,23 +983,23 @@
 }
 @media screen and (max-width: 48em) {
   .EpochsWave__Point .EpochsWave__Kind {
-    padding: 2px 6px;
+    padding: 2px var(--pe-space-1_5);
     font-size: 0.5625rem;
   }
 }
 .EpochsWave__Point .EpochsWave__Meta {
   position: absolute;
-  top: calc(100% + 12px);
+  top: calc(100% + var(--pe-space-3));
   left: 50%;
   transform: translateX(-50%);
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 6px;
+  gap: var(--pe-space-1_5);
   white-space: nowrap;
 }
 .EpochsWave__Point .HomeHero__WaveLabel {
-  font-size: 0.6875rem;
+  font-size: var(--pe-text-xs);
   transition: color 0.2s, transform 0.2s;
 }
 .EpochsWave__Point .HomeHero__WaveDot {
@@ -1019,10 +1019,10 @@
 }
 @media screen and (max-width: 62em) {
   .EpochsWave__Point .HomeHero__WaveValue {
-    font-size: 0.875rem;
+    font-size: var(--pe-text-md);
   }
   .EpochsWave__Point .HomeHero__WaveLabel {
-    font-size: 0.625rem;
+    font-size: var(--pe-text-2xs);
   }
 }
 .EpochsWave__Point.is-selected {
@@ -1033,7 +1033,7 @@
   animation: EpochDotBreath 2.4s ease-in-out infinite;
 }
 .EpochsWave__Point.is-selected .HomeHero__WaveDot::before {
-  inset: -6px;
+  inset: -var(--pe-space-1_5);
 }
 .EpochsWave__Point.is-selected .HomeHero__WaveLabel {
   color: var(--pe-color-brand-light);
@@ -1059,10 +1059,10 @@
   position: absolute;
   top: 0;
   width: 3px;
-  height: 12px;
+  height: var(--pe-space-3);
   border-radius: 2px;
   background: rgb(var(--epoch-color-rgb, var(--pe-color-brand-light-rgb)));
-  box-shadow: 0 0 8px 2px rgba(var(--epoch-color-rgb, var(--pe-color-brand-light-rgb)), 0.8);
+  box-shadow: 0 0 var(--pe-space-2) 2px rgba(var(--epoch-color-rgb, var(--pe-color-brand-light-rgb)), 0.8);
   animation: EpochBeamDrop 0.45s ease-in forwards;
 }
 .EpochsWave__BeamPulse--l {
@@ -1074,7 +1074,7 @@
 @media (prefers-reduced-motion: reduce) {
   .EpochsWave__Point.is-selected .HomeHero__WaveDot {
     animation: none;
-    box-shadow: 0 0 12px 3px rgba(var(--wave-c-rgb, var(--pe-color-brand-light-rgb)), 0.9);
+    box-shadow: 0 0 var(--pe-space-3) 3px rgba(var(--wave-c-rgb, var(--pe-color-brand-light-rgb)), 0.9);
   }
   .EpochsWave__Point .HomeHero__WaveDot::before {
     animation: none;
@@ -1089,7 +1089,7 @@
   }
 }
 .EpochsWave__When {
-  font-size: 0.625rem;
+  font-size: var(--pe-text-2xs);
   font-family: var(--pe-font-mono);
   color: var(--pe-color-gray-500);
   white-space: nowrap;
@@ -1099,10 +1099,10 @@
   display: inline;
 }
 .EpochsWave__Live {
-  margin-left: 6px;
+  margin-left: var(--pe-space-1_5);
   padding: 1px 5px;
-  border-radius: 4px;
-  font-size: 0.5rem;
+  border-radius: var(--pe-radius-sm);
+  font-size: var(--pe-space-2);
   letter-spacing: 0.08em;
   color: var(--pe-color-brand-light);
   background: rgba(var(--pe-color-brand-normal-rgb), 0.16);
@@ -1134,7 +1134,7 @@
   gap: 0;
   align-items: stretch;
   min-width: 0;
-  margin: 0 -20px;
+  margin: 0 -var(--pe-space-5);
   padding: 0;
   overflow: hidden;
   box-shadow: inset 0 0 0 1px rgba(var(--pe-color-gray-800-rgb), 0.4);
@@ -1151,12 +1151,12 @@
 }
 @media screen and (max-width: 62em) {
   .EpochsOverview__Cells {
-    margin: 0 -16px;
+    margin: 0 -var(--pe-space-4);
   }
 }
 @media screen and (max-width: 48em) {
   .EpochsOverview__Cells {
-    margin: 0 -16px;
+    margin: 0 -var(--pe-space-4);
   }
 }
 .EpochsOverview__Cells::before {
@@ -1181,11 +1181,11 @@
   border: none;
   text-align: center;
   box-shadow: inset -1px 0 0 0 rgba(var(--pe-color-gray-800-rgb), 0.5), inset 0 -1px 0 0 rgba(var(--pe-color-gray-800-rgb), 0.4);
-  padding: 12px 10px 14px;
+  padding: var(--pe-space-3) var(--pe-space-2_5) var(--pe-space-3_5);
 }
 @media screen and (max-width: 48em) {
   .EpochsOverview__Cells .HomeHero__StatusCell {
-    padding: 10px 8px 14px;
+    padding: var(--pe-space-2_5) var(--pe-space-2) var(--pe-space-3_5);
   }
 }
 .EpochsOverview__Cells .HomeHero__StatusHead {
@@ -1208,21 +1208,21 @@
 }
 .EpochsOverview__Cells .HomeHero__StatusLabel {
   font-family: var(--pe-font-heading);
-  font-weight: 700;
-  font-size: 0.6875rem;
+  font-weight: var(--pe-font-weight-bold);
+  font-size: var(--pe-text-xs);
   text-transform: uppercase;
   letter-spacing: 0.04em;
   color: var(--pe-color-fg);
   line-height: 1.15;
   flex: 1 1 auto;
   min-width: 0;
-  max-width: calc(100% - 14px);
+  max-width: calc(100% - var(--pe-space-3_5));
   text-align: center;
   white-space: normal;
 }
 @media screen and (max-width: 48em) {
   .EpochsOverview__Cells .HomeHero__StatusLabel {
-    font-size: 0.625rem;
+    font-size: var(--pe-text-2xs);
     letter-spacing: 0.03em;
     max-width: 100%;
   }
@@ -1239,11 +1239,11 @@
 @media screen and (max-width: 48em) {
   .EpochsOverview__Cells .HomeHero__StatusInfo {
     position: absolute;
-    right: 4px;
-    bottom: 4px;
+    right: var(--pe-space-1);
+    bottom: var(--pe-space-1);
     z-index: 2;
     margin-top: 0;
-    padding: 4px;
+    padding: var(--pe-space-1);
     color: var(--pe-color-gray-500);
   }
 }
@@ -1268,7 +1268,7 @@
 .EpochsOverview__DocStat {
   display: inline-flex;
   align-items: baseline;
-  gap: 6px;
+  gap: var(--pe-space-1_5);
   white-space: nowrap;
 }
 .EpochsOverview__DocDel {
@@ -1277,11 +1277,11 @@
 .EpochsOverview__Stat {
   display: inline-flex;
   align-items: center;
-  height: 1.25rem;
+  height: var(--pe-space-5);
   font-family: var(--pe-font-heading);
-  font-weight: 800;
+  font-weight: var(--pe-font-weight-extrabold);
   font-style: italic;
-  font-size: 1.25rem;
+  font-size: var(--pe-space-5);
   line-height: 1;
   color: var(--pe-color-fg);
   font-variant-numeric: tabular-nums;
@@ -1296,17 +1296,17 @@
   max-width: 280px;
 }
 .EpochsOverview__TipBlurb {
-  font-size: 0.6875rem;
+  font-size: var(--pe-text-xs);
   line-height: 1.35;
   color: var(--pe-color-fg-muted);
-  margin-bottom: 4px;
-  padding-bottom: 6px;
+  margin-bottom: var(--pe-space-1);
+  padding-bottom: var(--pe-space-1_5);
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 .EpochsOverview__TipMain {
   font-family: var(--pe-font-mono);
   color: var(--pe-color-fg);
-  padding-bottom: 4px;
+  padding-bottom: var(--pe-space-1);
   margin-bottom: 2px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.12);
 }
@@ -1316,8 +1316,8 @@
 .EpochsOverview__TipRow {
   display: flex;
   justify-content: space-between;
-  gap: 16px;
-  font-size: 0.6875rem;
+  gap: var(--pe-space-4);
+  font-size: var(--pe-text-xs);
   font-family: var(--pe-font-mono);
   color: var(--pe-color-fg-muted);
 }
@@ -1344,18 +1344,18 @@
   text-overflow: ellipsis;
   white-space: nowrap;
   font-family: var(--pe-font-mono);
-  font-weight: 700;
+  font-weight: var(--pe-font-weight-bold);
   letter-spacing: 0.02em;
   vertical-align: bottom;
   border-bottom: 1px dotted rgba(var(--pe-color-brand-light-rgb), 0.45);
   transition: border-color 0.15s;
 }
 .EpochsOverview__Unit {
-  margin-left: 6px;
+  margin-left: var(--pe-space-1_5);
   font-family: var(--pe-font-mono);
   font-style: normal;
-  font-weight: 600;
-  font-size: 0.625rem;
+  font-weight: var(--pe-font-weight-semibold);
+  font-size: var(--pe-text-2xs);
   text-transform: uppercase;
   letter-spacing: 0.08em;
   color: var(--pe-color-brand-light);
@@ -1363,9 +1363,9 @@
 .EpochsOverview__Pending {
   display: inline-flex;
   align-items: center;
-  height: 1.25rem;
+  height: var(--pe-space-5);
   font-family: var(--pe-font-mono);
-  font-size: 0.6875rem;
+  font-size: var(--pe-text-xs);
   text-transform: uppercase;
   letter-spacing: 0.08em;
   color: var(--pe-color-gray-500);
@@ -1374,7 +1374,7 @@
   display: block;
   margin-top: 5px;
   max-width: 100%;
-  font-size: 0.6875rem;
+  font-size: var(--pe-text-xs);
   font-family: var(--pe-font-mono);
   color: var(--pe-color-fg-muted);
   overflow: hidden;
@@ -1399,13 +1399,13 @@
 .EpochsOverview__ProposerVal {
   font-family: var(--pe-font-mono);
   font-style: normal;
-  font-weight: 700;
+  font-weight: var(--pe-font-weight-bold);
   letter-spacing: 0.02em;
   display: inline-block;
   max-width: 8ch;
   overflow: hidden;
   text-overflow: ellipsis;
-  line-height: 1.25rem;
+  line-height: var(--pe-space-5);
   border-bottom: 1px dotted rgba(var(--pe-color-gray-500-rgb), 0.6);
   transition: color 0.15s, border-color 0.15s;
 }

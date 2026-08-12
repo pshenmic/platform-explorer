@@ -2,17 +2,17 @@
   position: relative;
   display: flex;
   align-items: center;
-  height: 40px;
-  padding: 0 12px;
+  height: var(--pe-space-10);
+  padding: 0 var(--pe-space-3);
 }
 .PageDataContainer__Header::before {
   content: "";
   display: block;
   position: absolute;
-  height: 40px;
+  height: var(--pe-space-10);
   width: 100%;
   left: 0;
-  border-radius: 20px 20px 0 0;
+  border-radius: var(--pe-radius-def) var(--pe-space-5) 0 0;
   background-color: var(--pe-color-gray-800);
   opacity: 1;
   top: 0;
@@ -21,12 +21,12 @@
 .PageDataContainer__Content {
   display: flex;
   flex-direction: column;
-  gap: 1.25rem;
-  padding-top: 32px;
-  padding-bottom: 32px;
+  gap: var(--pe-space-5);
+  padding-top: var(--pe-space-8);
+  padding-bottom: var(--pe-space-8);
   position: relative;
   overflow: hidden;
-  border-radius: 0 0 20px 20px;
+  border-radius: 0 0 var(--pe-space-5) var(--pe-space-5);
   background: var(--pe-color-gray-675);
   padding-left: var(--pe-space-3) !important;
 }
@@ -66,11 +66,11 @@
 .PageDataContainer__BackLink {
   position: relative;
   z-index: 2;
-  width: 32px;
-  height: 24px;
-  margin-right: 10px;
+  width: var(--pe-space-8);
+  height: var(--pe-space-6);
+  margin-right: var(--pe-space-2_5);
   background-color: rgba(24, 167, 255, 0.1);
-  border-radius: 10px;
+  border-radius: var(--pe-radius-def);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -92,15 +92,15 @@
   position: relative;
   z-index: 2;
   font-family: var(--pe-font-heading);
-  font-size: 0.75rem;
-  font-weight: 700;
+  font-size: var(--pe-text-sm);
+  font-weight: var(--pe-font-weight-bold);
   text-transform: uppercase;
 }
 @media screen and (max-width: 62em) {
   .PageDataContainer__Content {
     padding-top: var(--pe-space-3) !important;
     padding-bottom: var(--pe-space-3) !important;
-    border-radius: 20px;
+    border-radius: var(--pe-radius-def);
   }
 }
 @media screen and (max-width: 62em) and (min-width: 48em) {
@@ -135,7 +135,7 @@
 }
 @media screen and (max-width: 62em) {
   .PageDataContainer__Header {
-    margin-bottom: 12px;
+    margin-bottom: var(--pe-space-3);
   }
   .PageDataContainer__Header::before {
     border-radius: var(--pe-radius-block);
@@ -143,7 +143,7 @@
 }
 @media screen and (max-width: 48em) {
   .PageDataContainer__Content {
-    gap: 0.75rem;
+    gap: var(--pe-space-3);
   }
 }
 @media screen and (max-width: 420px) {

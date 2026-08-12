@@ -6,8 +6,8 @@
 }
 
 .pe-BrandScroll::-webkit-scrollbar {
-  height: 8px;
-  width: 8px;
+  height: var(--pe-space-2);
+  width: var(--pe-space-2);
 }
 
 .pe-BrandScroll::-webkit-scrollbar-track {
@@ -16,7 +16,7 @@
 
 .pe-BrandScroll::-webkit-scrollbar-thumb {
   background-color: var(--pe-color-brand-normal);
-  border-radius: 8px;
+  border-radius: var(--pe-radius-md);
   border: 2px solid transparent;
   background-clip: padding-box;
 }

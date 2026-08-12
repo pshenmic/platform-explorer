@@ -4,15 +4,15 @@
   scrollbar-color: var(--pe-color-brand-normal) transparent;
 }
 .VotesList::-webkit-scrollbar {
-  height: 8px;
-  width: 8px;
+  height: var(--pe-space-2);
+  width: var(--pe-space-2);
 }
 .VotesList::-webkit-scrollbar-track {
   background: transparent;
 }
 .VotesList::-webkit-scrollbar-thumb {
   background-color: var(--pe-color-brand-normal);
-  border-radius: 8px;
+  border-radius: var(--pe-radius-md);
   border: 2px solid transparent;
   background-clip: padding-box;
 }
@@ -20,7 +20,7 @@
   background-color: var(--pe-color-brand-light);
 }
 .VotesList__Pagination {
-  margin-top: 2rem !important;
+  margin-top: var(--pe-space-8) !important;
 }
 .VotesList__ScrollZone {
   width: fit-content;
@@ -28,12 +28,12 @@
 }
 @media screen and (max-width: 48em) {
   .VotesList__Pagination {
-    margin-top: 1.5rem !important;
+    margin-top: var(--pe-space-6) !important;
   }
 }
 @media screen and (max-width: 30em) {
   .VotesList__Pagination {
-    margin-top: 1rem !important;
+    margin-top: var(--pe-space-4) !important;
   }
 }
 .VotesList {
@@ -47,22 +47,22 @@
   padding: var(--pe-list-row-pad-y) var(--pe-list-row-pad-x);
   border-radius: var(--pe-list-row-radius);
   background-color: var(--pe-color-gray-800);
-  margin-bottom: 8px;
+  margin-bottom: var(--pe-space-2);
   font-family: var(--pe-font-heading);
-  font-weight: 700;
-  font-size: 12px;
+  font-weight: var(--pe-font-weight-bold);
+  font-size: var(--pe-text-sm);
   text-transform: uppercase;
   color: var(--pe-color-fg);
 }
 .VotesList__ColumnTitles--Light {
   background: transparent !important;
-  font-weight: 500 !important;
+  font-weight: var(--pe-font-weight-medium) !important;
   color: var(--pe-color-fg) !important;
   text-transform: none !important;
 }
 .VotesList__ColumnTitles {
   display: grid;
-  gap: 1rem;
+  gap: var(--pe-space-4);
   grid-template-columns: 4rem minmax(8.125rem, 30rem) minmax(8.125rem, 30rem) minmax(8.125rem, 30rem) minmax(8.125rem, 500rem) 4.5rem 3.5rem;
 }
 @container (max-width: 62rem) {
@@ -82,7 +82,7 @@
 }
 @container (max-width: 27rem) {
   .VotesList__ColumnTitles {
-    gap: 0.5rem;
+    gap: var(--pe-space-2);
   }
 }
 @container (max-width: 24rem) {
@@ -92,7 +92,7 @@
 }
 .VotesList__ColumnTitles--NoDataContract {
   display: grid;
-  gap: 1rem;
+  gap: var(--pe-space-4);
   grid-template-columns: 4rem minmax(9rem, 30rem) minmax(9rem, 30rem) minmax(9rem, 500rem) 4.5rem 3.5rem;
 }
 @container (max-width: 55rem) {
@@ -107,7 +107,7 @@
 }
 @container (max-width: 27rem) {
   .VotesList__ColumnTitles--NoDataContract {
-    gap: 0.5rem;
+    gap: var(--pe-space-2);
   }
 }
 @container (max-width: 24rem) {

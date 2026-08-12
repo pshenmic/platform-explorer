@@ -1,11 +1,11 @@
 .PageTitle {
   display: inline-flex;
   align-items: center;
-  gap: 0.625rem;
+  gap: var(--pe-space-2_5);
 }
 .PageTitle__Title {
   font-style: italic;
-  font-weight: 800;
+  font-weight: var(--pe-font-weight-extrabold);
   white-space: nowrap;
 }
 .PageTitle__InfoButton {
@@ -13,8 +13,8 @@
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  width: 20px;
-  height: 20px;
+  width: var(--pe-space-5);
+  height: var(--pe-space-5);
   border-radius: 50%;
   opacity: 0.55;
   transition: opacity var(--pe-transition-def) ease, transform var(--pe-transition-def) ease;

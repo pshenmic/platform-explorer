@@ -55,7 +55,7 @@
 }
 
 .Identifier:not(.Identifier--Ellipsis) .Identifier__SymbolsContainer {
-  line-height: 1rem;
+  line-height: var(--pe-space-4);
 }
 
 /* container queries without nesting for broader tooling */
@@ -137,13 +137,13 @@
 }
 
 .Identifier__Avatar {
-  height: 24px;
-  width: 24px;
+  height: var(--pe-space-6);
+  width: var(--pe-space-6);
   flex-shrink: 0;
-  margin-right: 0.5rem;
+  margin-right: var(--pe-space-2);
 }
 
 .Identifier__CopyButton {
-  margin-left: 12px;
+  margin-left: var(--pe-space-3);
   flex-shrink: 0;
 }

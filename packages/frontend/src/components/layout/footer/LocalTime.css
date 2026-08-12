@@ -1,6 +1,6 @@
 .LocalTime {
   font-family: var(--pe-font-mono);
-  font-size: 0.75rem;
+  font-size: var(--pe-text-sm);
 }
 .LocalTime__Time, .LocalTime__Date, .LocalTime__TimeZone {
   margin-right: 0.5em;

@@ -1,12 +1,12 @@
 .PlatformAddress {
   display: flex;
   flex-direction: column;
-  gap: 1.25rem;
+  gap: var(--pe-space-5);
 }
 .PlatformAddress__CommonInfo {
   display: flex;
   flex-direction: column;
-  gap: 1.25rem;
+  gap: var(--pe-space-5);
 }
 .PlatformAddress__CommonInfo .InfoLine {
   justify-content: flex-start !important;

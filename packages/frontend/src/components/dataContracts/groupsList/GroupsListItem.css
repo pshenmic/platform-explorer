@@ -3,8 +3,8 @@
   width: 100%;
   text-decoration: none;
   padding: var(--pe-list-row-pad-y) var(--pe-list-row-pad-x);
-  margin-bottom: 8px;
-  line-height: 24px;
+  margin-bottom: var(--pe-space-2);
+  line-height: var(--pe-space-6);
   color: var(--pe-color-gray-100);
   font-family: var(--pe-font-mono);
   font-size: 12pt;
@@ -28,8 +28,8 @@
   margin-bottom: 0;
 }
 .GroupsListItem__Column--Credits, .GroupsListItem__Column--Number {
-  font-size: 0.75rem;
-  font-weight: 700;
+  font-size: var(--pe-text-sm);
+  font-weight: var(--pe-font-weight-bold);
 }
 .GroupsListItem__IdentifierContainer {
   display: flex;
@@ -37,10 +37,10 @@
   min-width: 50px;
 }
 .GroupsListItem__Avatar {
-  height: 24px;
-  width: 24px;
+  height: var(--pe-space-6);
+  width: var(--pe-space-6);
   flex-shrink: 0;
-  margin-right: 12px;
+  margin-right: var(--pe-space-3);
 }
 .GroupsListItem--Timestamp, .GroupsListItem__Column--Timestamp {
   font-family: var(--pe-font-mono);
@@ -50,14 +50,14 @@
 .GroupsListItem--Timestamp,
 .GroupsListItem--Timestamp .DateBlock__Date, .GroupsListItem__Column--Timestamp,
 .GroupsListItem__Column--Timestamp .DateBlock__Date {
-  font-size: 0.75rem;
+  font-size: var(--pe-text-sm);
 }
 .GroupsListItem {
   display: block;
 }
 .GroupsListItem__Content {
   display: grid;
-  gap: 1rem;
+  gap: var(--pe-space-4);
   grid-template-columns: minmax(0, 999rem) auto;
 }
 @container (max-width: 22.5rem) {
@@ -83,13 +83,13 @@
   }
 }
 .GroupsListItem__Column {
-  font-size: 0.75rem;
+  font-size: var(--pe-text-sm);
 }
 .GroupsListItem__Column--Power {
   text-align: right;
 }
 .GroupsListItem__Column--Power .ValueContainer {
-  padding: 0.25rem 0.5rem;
+  padding: var(--pe-space-1) var(--pe-space-2);
   border-radius: var(--pe-radius-def);
 }
 .GroupsListItem__Column--Identifier .Identifier {

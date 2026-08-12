@@ -18,7 +18,7 @@
 }
 
 .CodeBlock__Code {
-  padding: 10px 30px !important;
+  padding: var(--pe-space-2_5) 30px !important;
   margin: 0;
   white-space: break-spaces;
   word-wrap: break-word;
@@ -38,12 +38,12 @@
 
 .CodeBlock__FullSizeButton {
   display: block !important;
-  margin: 10px auto 0;
+  margin: var(--pe-space-2_5) auto 0;
 }
 
 .CodeBlock__CopyButton {
   position: absolute !important;
-  top: 10px;
+  top: var(--pe-space-2_5);
   right: 22px;
 }
 

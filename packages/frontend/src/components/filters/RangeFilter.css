@@ -1,29 +1,29 @@
 .RangeFilter {
   display: flex;
   flex-direction: column;
-  gap: 1.25rem;
+  gap: var(--pe-space-5);
 }
 .RangeFilter__InputContainer {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: var(--pe-space-2);
 }
 .RangeFilter__InputTitle {
   font-family: var(--pe-font-mono);
-  font-size: 0.75rem;
-  font-weight: 400;
+  font-size: var(--pe-text-sm);
+  font-weight: var(--pe-font-weight-normal);
   color: rgba(255, 255, 255, 0.5);
 }
 .MobileFilterMenu .RangeFilter {
   width: 100%;
-  gap: 1rem;
+  gap: var(--pe-space-4);
 }
 .MobileFilterMenu .RangeFilter__InputTitle {
   font-family: var(--pe-font-heading);
-  font-weight: 700;
-  font-size: 0.875rem;
+  font-weight: var(--pe-font-weight-bold);
+  font-size: var(--pe-text-md);
 }
 .MobileFilterMenu .RangeFilter__Input {
   min-height: 3rem;
-  padding: 0.75rem 1rem;
+  padding: var(--pe-space-3) var(--pe-space-4);
 }

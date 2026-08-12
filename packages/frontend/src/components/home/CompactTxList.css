@@ -1,10 +1,10 @@
 .CompactTx {
   display: grid;
-  column-gap: 12px;
+  column-gap: var(--pe-space-3);
   grid-template-columns: 3.5rem minmax(8ch, 1fr) minmax(0, 10rem) 5ch;
 }
 .CompactTx__Empty {
-  padding: 14px 0;
+  padding: var(--pe-space-3_5) 0;
   color: var(--pe-color-gray-500);
   font-family: var(--pe-font-mono);
   font-size: 0.8125rem;
@@ -14,14 +14,14 @@
   grid-template-columns: subgrid;
   grid-column: 1/-1;
   align-items: center;
-  padding: 6px;
-  margin-bottom: 4px;
+  padding: var(--pe-space-1_5);
+  margin-bottom: var(--pe-space-1);
   border-bottom: 1px solid rgba(var(--pe-color-gray-800-rgb), 0.6);
 }
 .CompactTx__HeadCell {
   font-family: var(--pe-font-heading);
-  font-weight: 700;
-  font-size: 0.6875rem;
+  font-weight: var(--pe-font-weight-bold);
+  font-size: var(--pe-text-xs);
   text-transform: uppercase;
   letter-spacing: 0.04em;
   color: var(--pe-color-fg);
@@ -41,11 +41,11 @@
   z-index: 1;
   text-align: center;
   font-family: var(--pe-font-heading);
-  font-size: 12px;
-  font-weight: 700;
+  font-size: var(--pe-text-sm);
+  font-weight: var(--pe-font-weight-bold);
   text-transform: uppercase;
-  padding: 12px;
-  border-radius: 10px;
+  padding: var(--pe-space-3);
+  border-radius: var(--pe-radius-def);
   overflow: hidden;
   background-color: transparent;
   transition: all 0.5s;
@@ -85,7 +85,7 @@
   background-color: var(--pe-color-brand-normal);
 }
 .CompactTx__More:hover::before, .CompactTx__More:focus-within::before {
-  opacity: 0.85;
+  opacity: var(--pe-opacity-strong);
 }
 .CompactTx__More:hover::after, .CompactTx__More:focus-within::after {
   animation: flash 1s backwards;
@@ -95,7 +95,7 @@
 .CompactTx__More {
   grid-column: 1/-1;
   width: 100%;
-  margin-top: 8px;
+  margin-top: var(--pe-space-2);
 }
 .CompactTx__More::before {
   content: "";
@@ -106,9 +106,9 @@
   grid-column: 1/-1;
   align-items: center;
   min-height: 44px;
-  padding: 0 6px;
+  padding: 0 var(--pe-space-1_5);
   border-bottom: 1px solid rgba(var(--pe-color-gray-800-rgb), 0.5);
-  border-radius: 6px;
+  border-radius: var(--pe-radius-sm);
   transition: background 0.15s;
 }
 .CompactTx__Row:last-child {
@@ -142,7 +142,7 @@
   text-overflow: ellipsis;
   white-space: nowrap;
   font-family: var(--pe-font-mono);
-  font-size: 0.75rem;
+  font-size: var(--pe-text-sm);
 }
 .CompactTx__Type {
   white-space: nowrap;
@@ -157,7 +157,7 @@
 }
 .CompactTx__Time {
   font-family: var(--pe-font-mono);
-  font-size: 0.6875rem;
+  font-size: var(--pe-text-xs);
   color: var(--pe-color-gray-500);
   white-space: nowrap;
   text-align: right;
@@ -181,7 +181,7 @@
 @keyframes CompactRowIn {
   from {
     opacity: 0;
-    transform: translateY(-6px);
+    transform: translateY(-var(--pe-space-1_5));
   }
 }
 @keyframes CompactRowGlow {

@@ -5,7 +5,7 @@
   padding: var(--pe-list-row-pad-y) var(--pe-list-row-pad-x);
   border-radius: var(--pe-list-row-radius);
   background-color: var(--pe-color-gray-800);
-  margin-bottom: 8px;
+  margin-bottom: var(--pe-space-2);
   font-family: var(--pe-font-heading);
   font-weight: var(--pe-font-weight-bold);
   font-size: var(--pe-text-sm);
@@ -17,7 +17,7 @@
 .SimpleList__ColumnTitle {
   word-wrap: break-word;
   overflow-wrap: anywhere;
-  letter-spacing: 0.4px;
+  letter-spacing: 0.var(--pe-space-1);
 }
 
 /* ex-DefButton */
@@ -30,13 +30,13 @@
   font-size: var(--pe-text-sm);
   font-weight: var(--pe-font-weight-bold);
   text-transform: uppercase;
-  padding: 12px;
+  padding: var(--pe-space-3);
   border-radius: var(--pe-radius-def);
   overflow: hidden;
   background-color: transparent;
   transition: all 0.5s;
   width: 100%;
-  margin-top: 8px;
+  margin-top: var(--pe-space-2);
 }
 
 .SimpleList__ShowMoreButton::before,
@@ -88,7 +88,7 @@
 
 .SimpleList__ShowMoreButton:hover::before,
 .SimpleList__ShowMoreButton:focus-within::before {
-  opacity: 0.85;
+  opacity: var(--pe-opacity-strong);
 }
 
 .SimpleList__ShowMoreButton:hover::after,
@@ -104,7 +104,7 @@
   width: 100%;
   text-decoration: none;
   padding: var(--pe-list-row-pad-y) var(--pe-list-row-pad-x);
-  margin-bottom: 8px;
+  margin-bottom: var(--pe-space-2);
   line-height: var(--pe-leading-list);
   color: var(--pe-color-gray-100);
   font-family: var(--pe-font-mono);
@@ -151,7 +151,7 @@
   max-width: 100%;
   word-wrap: break-word;
   overflow-wrap: anywhere;
-  margin-right: 16px;
+  margin-right: var(--pe-space-4);
   display: flex;
   align-items: center;
 }

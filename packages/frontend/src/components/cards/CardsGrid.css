@@ -1,15 +1,15 @@
 .CardsGrid__Header {
-  margin-bottom: 14px;
+  margin-bottom: var(--pe-space-3_5);
 }
 .CardsGrid__Items {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
-  margin: -10px 0;
+  margin: -var(--pe-space-2_5) 0;
 }
 .CardsGrid__Item {
-  width: calc(50% - 10px);
-  margin: 10px 0;
+  width: calc(50% - var(--pe-space-2_5));
+  margin: var(--pe-space-2_5) 0;
 }
 .CardsGrid--DivideBy3 {
   overflow: hidden;
@@ -17,18 +17,18 @@
 }
 @media screen and (max-width: 62em) {
   .CardsGrid__Item {
-    width: calc(25% - 10px);
+    width: calc(25% - var(--pe-space-2_5));
   }
   .CardsGrid--DivideBy3 .CardsGrid__Item {
-    width: calc(33.3333333333% - 10px);
+    width: calc(33.3333333333% - var(--pe-space-2_5));
   }
 }
 @media screen and (max-width: 48em) {
   .CardsGrid__Item {
-    width: calc(50% - 10px);
+    width: calc(50% - var(--pe-space-2_5));
   }
   .CardsGrid--DivideBy3 .CardsGrid__Item {
-    width: calc(50% - 10px);
+    width: calc(50% - var(--pe-space-2_5));
   }
 }
 @media screen and (max-width: 30em) {

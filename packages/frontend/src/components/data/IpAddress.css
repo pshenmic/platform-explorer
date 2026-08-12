@@ -14,7 +14,7 @@
 
 .IpAddress__Port {
   color: var(--pe-color-brand-pressed);
-  font-weight: 600;
+  font-weight: var(--pe-font-weight-semibold);
 }
 
 a:hover .IpAddress--Clickable .IpAddress__Host,

@@ -55,8 +55,8 @@
   visibility: hidden;
   opacity: 0;
   transition: all 1s;
-  margin: 0 -10px !important;
-  padding: 0 10px !important;
+  margin: 0 -var(--pe-space-2_5) !important;
+  padding: 0 var(--pe-space-2_5) !important;
   overflow-x: clip;
 }
 .loading .Chart {
@@ -67,7 +67,7 @@
   opacity: 1;
 }
 .Chart__Tooltip {
-  font-size: 0.875rem;
+  font-size: var(--pe-text-md);
   font-family: var(--pe-font-body);
 }
 .Chart__FocusPoint {
@@ -85,7 +85,7 @@
   stroke-opacity: 0.03;
 }
 .Chart .grid .tick:nth-child(even) line {
-  stroke-opacity: 0.1;
+  stroke-opacity: var(--pe-opacity-faint);
 }
 .Chart .grid path {
   display: none;
@@ -95,8 +95,8 @@
   opacity: 0.7;
 }
 .ChartTooltip__InfoLine--Bold {
-  font-weight: bold;
-  font-size: 1rem;
+  font-weight: var(--pe-font-weight-bold);
+  font-size: var(--pe-text-lg);
 }
 .ChartTooltip__InfoLine--Tiny {
   font-size: 0.813rem;
@@ -104,25 +104,25 @@
 
 .Axis {
   font-family: var(--pe-font-heading);
-  font-weight: 700;
-  font-size: 0.75rem;
+  font-weight: var(--pe-font-weight-bold);
+  font-size: var(--pe-text-sm);
 }
 .Axis .domain {
   opacity: 0;
 }
 .Axis__Label {
-  font-size: 0.75rem;
-  opacity: 0.5;
+  font-size: var(--pe-text-sm);
+  opacity: var(--pe-opacity-muted);
 }
 .Axis__TickContainer {
-  font-size: 0.75rem;
+  font-size: var(--pe-text-sm);
 }
 .Axis--X .Axis__TickContainer {
-  font-weight: normal;
-  opacity: 0.5;
+  font-weight: var(--pe-font-weight-normal);
+  opacity: var(--pe-opacity-muted);
 }
 .Axis__Line {
-  opacity: 0.5;
+  opacity: var(--pe-opacity-muted);
   stroke-width: 1px;
   stroke: var(--pe-color-fg);
 }

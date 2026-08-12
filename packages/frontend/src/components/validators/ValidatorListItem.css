@@ -3,8 +3,8 @@
   width: 100%;
   text-decoration: none;
   padding: var(--pe-list-row-pad-y) var(--pe-list-row-pad-x);
-  margin-bottom: 8px;
-  line-height: 24px;
+  margin-bottom: var(--pe-space-2);
+  line-height: var(--pe-space-6);
   color: var(--pe-color-gray-100);
   font-family: var(--pe-font-mono);
   font-size: 12pt;
@@ -28,8 +28,8 @@
   margin-bottom: 0;
 }
 .ValidatorListItem__Column--Credits, .ValidatorListItem__Column--Number {
-  font-size: 0.75rem;
-  font-weight: 700;
+  font-size: var(--pe-text-sm);
+  font-weight: var(--pe-font-weight-bold);
 }
 .ValidatorListItem__IdentifierContainer {
   display: flex;
@@ -37,10 +37,10 @@
   min-width: 50px;
 }
 .ValidatorListItem__Avatar {
-  height: 24px;
-  width: 24px;
+  height: var(--pe-space-6);
+  width: var(--pe-space-6);
   flex-shrink: 0;
-  margin-right: 12px;
+  margin-right: var(--pe-space-3);
 }
 .ValidatorListItem--Timestamp, .ValidatorListItem__Column--Timestamp {
   font-family: var(--pe-font-mono);
@@ -50,7 +50,7 @@
 .ValidatorListItem--Timestamp,
 .ValidatorListItem--Timestamp .DateBlock__Date, .ValidatorListItem__Column--Timestamp,
 .ValidatorListItem__Column--Timestamp .DateBlock__Date {
-  font-size: 0.75rem;
+  font-size: var(--pe-text-sm);
 }
 .ValidatorListItem {
   display: block;
@@ -65,7 +65,7 @@
   display: grid;
   grid-template-columns: minmax(0, 40rem) 150px 150px 250px 150px;
   justify-content: space-between;
-  gap: 12px;
+  gap: var(--pe-space-3);
 }
 .ValidatorListItem__Content--Inline {
   display: inline !important;
@@ -74,7 +74,7 @@
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  font-size: 0.75rem;
+  font-size: var(--pe-text-sm);
   font-family: var(--pe-font-mono);
   color: var(--pe-color-fg);
 }
@@ -94,14 +94,14 @@
   display: flex;
   align-items: center;
   border-bottom: 0;
-  margin: -12px 0;
+  margin: -var(--pe-space-3) 0;
 }
 .ValidatorListItem .ValidatorListItem__IdentifierContainer:hover {
   cursor: pointer;
 }
 .ValidatorListItem__Identifier {
   font-family: var(--pe-font-mono);
-  font-size: 1rem;
+  font-size: var(--pe-text-lg);
   text-transform: uppercase;
   max-width: 100%;
   overflow: hidden;

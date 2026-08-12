@@ -6,22 +6,22 @@
   padding: var(--pe-list-row-pad-y) var(--pe-list-row-pad-x);
   border-radius: var(--pe-list-row-radius);
   background-color: var(--pe-color-gray-800);
-  margin-bottom: 8px;
+  margin-bottom: var(--pe-space-2);
   font-family: var(--pe-font-heading);
-  font-weight: 700;
-  font-size: 12px;
+  font-weight: var(--pe-font-weight-bold);
+  font-size: var(--pe-text-sm);
   text-transform: uppercase;
   color: var(--pe-color-fg);
 }
 .WithdrawalsList__ColumnTitles--Light {
   background: transparent !important;
-  font-weight: 500 !important;
+  font-weight: var(--pe-font-weight-medium) !important;
   color: var(--pe-color-fg) !important;
   text-transform: none !important;
 }
 .WithdrawalsList__ColumnTitles {
   display: grid;
-  gap: 16px;
+  gap: var(--pe-space-4);
   grid-template-columns: 133px minmax(0, 400px) minmax(0, 400px) minmax(0, 400px) minmax(0, 200px) 44px;
 }
 @container (max-width: 700px) {

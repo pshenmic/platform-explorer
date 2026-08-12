@@ -21,7 +21,7 @@
 
 .TableHeader--Name {
   box-sizing: content-box;
-  min-height: 32px;
+  min-height: var(--pe-space-8);
 }
 .TableHeader--Name .TableHeader__Content {
   display: flex;
@@ -29,9 +29,9 @@
   justify-content: flex-end;
 }
 .TableHeader__Avatar {
-  margin-left: 8px;
-  width: 32px;
-  height: 32px;
+  margin-left: var(--pe-space-2);
+  width: var(--pe-space-8);
+  height: var(--pe-space-8);
 }
 .TableHeader__SortDirection {
   display: inline-block;
@@ -45,7 +45,7 @@
   box-shadow: 2px 2px var(--pe-color-brand-normal);
   position: relative;
   z-index: 1;
-  padding: 20px 32px 32px 32px !important;
+  padding: var(--pe-space-5) var(--pe-space-8) var(--pe-space-8) var(--pe-space-8) !important;
 }
 .InfoBlock--NoBorder {
   box-shadow: none;
@@ -54,7 +54,7 @@
   overflow: hidden;
   background-color: transparent;
   border-radius: var(--pe-radius-block);
-  padding: 20px 24px !important;
+  padding: var(--pe-space-5) var(--pe-space-6) !important;
 }
 .InfoBlock--Gradient::before {
   content: "";
@@ -66,7 +66,7 @@
   top: 0;
   left: 0;
   background-color: #181F22;
-  opacity: 0.2;
+  opacity: var(--pe-opacity-subtle);
 }
 .InfoBlock--Gradient::after {
   content: "";
@@ -81,7 +81,7 @@
   left: 0;
   transform: translate(-50%, -50%);
   background: radial-gradient(var(--pe-color-brand-normal), transparent 50%);
-  opacity: 0.2;
+  opacity: var(--pe-opacity-subtle);
 }
 .InfoBlock--Green {
   backdrop-filter: blur(44px);
@@ -105,30 +105,30 @@
 }
 .InfoBlock__Title {
   background-color: var(--pe-color-brand-normal);
-  font-size: 0.875rem !important;
+  font-size: var(--pe-text-md) !important;
   width: max-content;
-  padding: 12px 20px;
+  padding: var(--pe-space-3) var(--pe-space-5);
   border-radius: var(--pe-radius-block) var(--pe-radius-block) var(--pe-radius-block) 0;
   position: relative;
-  left: -32px;
-  top: -20px;
+  left: -var(--pe-space-8);
+  top: -var(--pe-space-5);
   margin: 0;
 }
 .InfoBlock__Head {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
-  gap: 10px 12px;
-  margin: -20px 0 14px 0;
+  gap: var(--pe-space-2_5) var(--pe-space-3);
+  margin: -var(--pe-space-5) 0 var(--pe-space-3_5) 0;
 }
 .InfoBlock__Head .InfoBlock__Title {
   position: static;
-  margin-left: -32px;
+  margin-left: -var(--pe-space-8);
 }
 .InfoBlock__HeadLeft {
   display: flex;
   align-items: baseline;
-  gap: 10px;
+  gap: var(--pe-space-2_5);
   min-width: 0;
 }
 .InfoBlock__HeadSlot {
@@ -142,29 +142,29 @@
 }
 @media screen and (max-width: 62em) {
   .InfoBlock {
-    padding: 16px !important;
+    padding: var(--pe-space-4) !important;
   }
   .InfoBlock__Title {
-    left: -16px;
-    top: -16px;
+    left: -var(--pe-space-4);
+    top: -var(--pe-space-4);
   }
   .InfoBlock__Head {
-    margin: -16px 0 14px 0;
+    margin: -var(--pe-space-4) 0 var(--pe-space-3_5) 0;
   }
   .InfoBlock__Head .InfoBlock__Title {
-    margin-left: -16px;
+    margin-left: -var(--pe-space-4);
   }
 }
 
 .Tabs__TabItemsCount {
   display: inline-block;
-  padding: 6px 12px;
+  padding: var(--pe-space-1_5) var(--pe-space-3);
   color: var(--pe-color-brand-normal);
   background: rgba(var(--pe-color-brand-normal-rgb), 0.2);
-  margin-left: 12px;
-  border-radius: 10px;
-  font-weight: 500;
-  margin-top: -4px;
+  margin-left: var(--pe-space-3);
+  border-radius: var(--pe-radius-def);
+  font-weight: var(--pe-font-weight-medium);
+  margin-top: -var(--pe-space-1);
   margin-bottom: -2px;
   transition: all var(--pe-transition-def);
 }
@@ -181,12 +181,12 @@
 }
 @media screen and (max-width: 62em) {
   .Tabs__TabItemsCount {
-    padding: 4px 12px;
+    padding: var(--pe-space-1) var(--pe-space-3);
   }
 }
 @media screen and (max-width: 30em) {
   .Tabs__TabItemsCount {
-    padding: 2px 8px;
+    padding: 2px var(--pe-space-2);
   }
 }
 
@@ -214,8 +214,8 @@
 .ListNavigation .PageSizeSelector,
 .ListNavigation .Pagination,
 .ListNavigation .GoToHeightForm {
-  margin-top: 6px;
-  margin-bottom: 6px;
+  margin-top: var(--pe-space-1_5);
+  margin-bottom: var(--pe-space-1_5);
 }
 .ListNavigation .PageSizeSelector {
   width: 150px;

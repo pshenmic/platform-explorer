@@ -1,10 +1,10 @@
 .FeeMultiplier {
-  font-size: 0.688rem;
-  font-weight: 400;
+  font-size: var(--pe-text-xs);
+  font-weight: var(--pe-font-weight-normal);
   font-family: var(--pe-font-mono);
   text-align: center;
-  padding: 6px 10px;
-  border-radius: 8px;
+  padding: var(--pe-space-1_5) var(--pe-space-2_5);
+  border-radius: var(--pe-radius-md);
   display: inline-block;
 }
 .FeeMultiplier--Green {

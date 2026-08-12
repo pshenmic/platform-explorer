@@ -3,8 +3,8 @@
   width: 100%;
   text-decoration: none;
   padding: var(--pe-list-row-pad-y) var(--pe-list-row-pad-x);
-  margin-bottom: 8px;
-  line-height: 24px;
+  margin-bottom: var(--pe-space-2);
+  line-height: var(--pe-space-6);
   color: var(--pe-color-gray-100);
   font-family: var(--pe-font-mono);
   font-size: 12pt;
@@ -28,8 +28,8 @@
   margin-bottom: 0;
 }
 .VotesListItem__Column--Credits, .VotesListItem__Column--Number {
-  font-size: 0.75rem;
-  font-weight: 700;
+  font-size: var(--pe-text-sm);
+  font-weight: var(--pe-font-weight-bold);
 }
 .VotesListItem__IdentifierContainer {
   display: flex;
@@ -37,10 +37,10 @@
   min-width: 50px;
 }
 .VotesListItem__Avatar {
-  height: 24px;
-  width: 24px;
+  height: var(--pe-space-6);
+  width: var(--pe-space-6);
   flex-shrink: 0;
-  margin-right: 12px;
+  margin-right: var(--pe-space-3);
 }
 .VotesListItem--Timestamp, .VotesListItem__Column--Timestamp {
   font-family: var(--pe-font-mono);
@@ -50,11 +50,11 @@
 .VotesListItem--Timestamp,
 .VotesListItem--Timestamp .DateBlock__Date, .VotesListItem__Column--Timestamp,
 .VotesListItem__Column--Timestamp .DateBlock__Date {
-  font-size: 0.75rem;
+  font-size: var(--pe-text-sm);
 }
 .VotesListItem__Content {
   display: grid;
-  gap: 1rem;
+  gap: var(--pe-space-4);
   grid-template-columns: 4rem minmax(8.125rem, 30rem) minmax(8.125rem, 30rem) minmax(8.125rem, 30rem) minmax(8.125rem, 500rem) 4.5rem 3.5rem;
 }
 @container (max-width: 62rem) {
@@ -74,7 +74,7 @@
 }
 @container (max-width: 27rem) {
   .VotesListItem__Content {
-    gap: 0.5rem;
+    gap: var(--pe-space-2);
   }
 }
 @container (max-width: 24rem) {
@@ -87,7 +87,7 @@
 }
 .VotesListItem__Content--NoDataContract {
   display: grid;
-  gap: 1rem;
+  gap: var(--pe-space-4);
   grid-template-columns: 4rem minmax(9rem, 30rem) minmax(9rem, 30rem) minmax(9rem, 500rem) 4.5rem 3.5rem;
 }
 @container (max-width: 55rem) {
@@ -102,7 +102,7 @@
 }
 @container (max-width: 27rem) {
   .VotesListItem__Content--NoDataContract {
-    gap: 0.5rem;
+    gap: var(--pe-space-2);
   }
 }
 @container (max-width: 24rem) {
@@ -152,8 +152,8 @@
 .VotesListItem__Column--Choice .VoteBadge span {
   white-space: wrap;
   width: min-content;
-  border-radius: 6px;
+  border-radius: var(--pe-radius-sm);
   text-align: center;
-  padding: 0.188rem 0.625rem;
+  padding: 0.188rem var(--pe-space-2_5);
   line-height: 0.8rem;
 }

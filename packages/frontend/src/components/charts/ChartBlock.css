@@ -11,7 +11,7 @@
   z-index: 555;
 }
 .ChartBlock--MenuIsOpen {
-  padding-bottom: 24px !important;
+  padding-bottom: var(--pe-space-6) !important;
 }
 .ChartBlock__TimeframeTitle {
   margin: 5px 5px 5px 0;
@@ -21,7 +21,7 @@
   flex-wrap: wrap;
   align-items: center;
   margin-left: auto;
-  margin-top: -20px;
+  margin-top: -var(--pe-space-5);
 }
 .ChartBlock__ChartContainer {
   height: 100%;
@@ -39,14 +39,14 @@
   top: 0;
 }
 .ChartBlock .TimeframeSelector .TimeframeMenu {
-  padding-bottom: 12px !important;
+  padding-bottom: var(--pe-space-3) !important;
 }
 .ChartBlock .TimeframeSelector .TimeframeMenu__ValuesContainer {
   margin-top: 52px;
 }
 .ChartBlock .TimeframeSelector__Button {
-  top: 12px;
-  right: 16px;
+  top: var(--pe-space-3);
+  right: var(--pe-space-4);
 }
 @container (max-width: 400px) {
   .ChartBlock .TimeframeSelector .TimeframeMenu__ValuesContainer {
@@ -60,7 +60,7 @@
     transition: width 0.2s;
   }
   .ChartBlock .TimeframeSelector__Button--Active {
-    width: calc(100% - 24px);
+    width: calc(100% - var(--pe-space-6));
   }
 }
 .ChartBlock__TimeframeButtons {
@@ -69,7 +69,7 @@
 }
 .ChartBlock__TimeframeButton {
   font-family: var(--pe-font-heading);
-  font-size: 12px;
+  font-size: var(--pe-text-sm);
   height: 27px !important;
   margin: 5px;
 }

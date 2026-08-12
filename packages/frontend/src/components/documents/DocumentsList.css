@@ -1,5 +1,5 @@
 .DocumentsList__Pagination {
-  margin-top: 2rem !important;
+  margin-top: var(--pe-space-8) !important;
 }
 .DocumentsList__ScrollZone {
   width: fit-content;
@@ -7,12 +7,12 @@
 }
 @media screen and (max-width: 48em) {
   .DocumentsList__Pagination {
-    margin-top: 1.5rem !important;
+    margin-top: var(--pe-space-6) !important;
   }
 }
 @media screen and (max-width: 30em) {
   .DocumentsList__Pagination {
-    margin-top: 1rem !important;
+    margin-top: var(--pe-space-4) !important;
   }
 }
 .DocumentsList {
@@ -20,7 +20,7 @@
 }
 .DocumentsList__Table {
   display: grid;
-  column-gap: 12px;
+  column-gap: var(--pe-space-3);
   grid-template-columns: 70px 150px fit-content(220px) 50px minmax(0, 1fr) minmax(0, 1fr) 100px 80px;
 }
 @container (max-width: 64rem) {
@@ -64,16 +64,16 @@
   padding: var(--pe-list-row-pad-y) var(--pe-list-row-pad-x);
   border-radius: var(--pe-list-row-radius);
   background-color: var(--pe-color-gray-800);
-  margin-bottom: 8px;
+  margin-bottom: var(--pe-space-2);
   font-family: var(--pe-font-heading);
-  font-weight: 700;
-  font-size: 12px;
+  font-weight: var(--pe-font-weight-bold);
+  font-size: var(--pe-text-sm);
   text-transform: uppercase;
   color: var(--pe-color-fg);
 }
 .DocumentsList__ColumnTitles--Light {
   background: transparent !important;
-  font-weight: 500 !important;
+  font-weight: var(--pe-font-weight-medium) !important;
   color: var(--pe-color-fg) !important;
   text-transform: none !important;
 }
@@ -81,12 +81,12 @@
   display: grid;
   grid-column: 1/-1;
   grid-template-columns: subgrid;
-  column-gap: 12px;
+  column-gap: var(--pe-space-3);
 }
 .DocumentsList__ColumnTitle {
   display: flex;
   align-items: center;
-  font-size: 0.75rem;
+  font-size: var(--pe-text-sm);
 }
 .DocumentsList__ColumnTitle--Timestamp {
   max-width: 70px;
@@ -117,8 +117,8 @@
 .DocumentsList__ColumnTitle--Gas {
   justify-content: flex-end;
   font-variant-numeric: tabular-nums;
-  font-size: 0.75rem;
-  opacity: 0.85;
+  font-size: var(--pe-text-sm);
+  opacity: var(--pe-opacity-strong);
 }
 .DocumentsList__ColumnTitle--Status {
   justify-content: flex-end;

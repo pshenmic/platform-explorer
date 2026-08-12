@@ -3,8 +3,8 @@
   width: 100%;
   text-decoration: none;
   padding: var(--pe-list-row-pad-y) var(--pe-list-row-pad-x);
-  margin-bottom: 8px;
-  line-height: 24px;
+  margin-bottom: var(--pe-space-2);
+  line-height: var(--pe-space-6);
   color: var(--pe-color-gray-100);
   font-family: var(--pe-font-mono);
   font-size: 12pt;
@@ -17,8 +17,8 @@
   margin-bottom: 0;
 }
 .TransfersListItem__Column--Credits, .TransfersListItem__Column--Number {
-  font-size: 0.75rem;
-  font-weight: 700;
+  font-size: var(--pe-text-sm);
+  font-weight: var(--pe-font-weight-bold);
 }
 .TransfersListItem__IdentifierContainer {
   display: flex;
@@ -26,10 +26,10 @@
   min-width: 50px;
 }
 .TransfersListItem__Avatar {
-  height: 24px;
-  width: 24px;
+  height: var(--pe-space-6);
+  width: var(--pe-space-6);
   flex-shrink: 0;
-  margin-right: 12px;
+  margin-right: var(--pe-space-3);
 }
 .TransfersListItem--Timestamp, .TransfersListItem__Column--Timestamp {
   font-family: var(--pe-font-mono);
@@ -39,15 +39,15 @@
 .TransfersListItem--Timestamp,
 .TransfersListItem--Timestamp .DateBlock__Date, .TransfersListItem__Column--Timestamp,
 .TransfersListItem__Column--Timestamp .DateBlock__Date {
-  font-size: 0.75rem;
+  font-size: var(--pe-text-sm);
 }
 .TransfersListItem--Clickable {
   display: flex;
   width: 100%;
   text-decoration: none;
   padding: var(--pe-list-row-pad-y) var(--pe-list-row-pad-x);
-  margin-bottom: 8px;
-  line-height: 24px;
+  margin-bottom: var(--pe-space-2);
+  line-height: var(--pe-space-6);
   color: var(--pe-color-gray-100);
   font-family: var(--pe-font-mono);
   font-size: 12pt;
@@ -71,8 +71,8 @@
   margin-bottom: 0;
 }
 .TransfersListItem--Clickable__Column--Credits, .TransfersListItem--Clickable__Column--Number {
-  font-size: 0.75rem;
-  font-weight: 700;
+  font-size: var(--pe-text-sm);
+  font-weight: var(--pe-font-weight-bold);
 }
 .TransfersListItem--Clickable__IdentifierContainer {
   display: flex;
@@ -80,10 +80,10 @@
   min-width: 50px;
 }
 .TransfersListItem--Clickable__Avatar {
-  height: 24px;
-  width: 24px;
+  height: var(--pe-space-6);
+  width: var(--pe-space-6);
   flex-shrink: 0;
-  margin-right: 12px;
+  margin-right: var(--pe-space-3);
 }
 .TransfersListItem--Clickable--Timestamp, .TransfersListItem--Clickable__Column--Timestamp {
   font-family: var(--pe-font-mono);
@@ -93,12 +93,12 @@
 .TransfersListItem--Clickable--Timestamp,
 .TransfersListItem--Clickable--Timestamp .DateBlock__Date, .TransfersListItem--Clickable__Column--Timestamp,
 .TransfersListItem--Clickable__Column--Timestamp .DateBlock__Date {
-  font-size: 0.75rem;
+  font-size: var(--pe-text-sm);
 }
 .TransfersListItem__Content {
   width: 100%;
   display: grid;
-  gap: 16px;
+  gap: var(--pe-space-4);
   grid-template-columns: 70px minmax(0, 400px) minmax(0, 500rem) minmax(185px, 185px) minmax(100px, 100px) 128px;
 }
 @container (max-width: 90em) {
@@ -118,7 +118,7 @@
 }
 @container (max-width: 580px) {
   .TransfersListItem__Content {
-    gap: 8px;
+    gap: var(--pe-space-2);
     grid-template-columns: 70px auto 128px;
   }
 }
@@ -172,8 +172,8 @@
   }
 }
 .TransfersListItem__Column--Amount, .TransfersListItem__Column--GasUsed {
-  font-size: 0.75rem;
-  font-weight: 700;
+  font-size: var(--pe-text-sm);
+  font-weight: var(--pe-font-weight-bold);
 }
 .TransfersListItem__ContentWrapper {
   width: 100%;

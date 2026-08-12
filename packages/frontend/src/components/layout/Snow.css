@@ -82,10 +82,10 @@
 }
 @keyframes fall {
   0% {
-    top: -10px;
+    top: -var(--pe-space-2_5);
   }
   100% {
-    top: calc(100% + 10px);
+    top: calc(100% + var(--pe-space-2_5));
   }
 }
 @keyframes drift {
@@ -93,7 +93,7 @@
     margin-left: 0;
   }
   50% {
-    margin-left: 40px;
+    margin-left: var(--pe-space-10);
   }
   100% {
     margin-left: 0;

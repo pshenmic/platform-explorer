@@ -3,8 +3,8 @@
   width: 100%;
   text-decoration: none;
   padding: var(--pe-list-row-pad-y) var(--pe-list-row-pad-x);
-  margin-bottom: 8px;
-  line-height: 24px;
+  margin-bottom: var(--pe-space-2);
+  line-height: var(--pe-space-6);
   color: var(--pe-color-gray-100);
   font-family: var(--pe-font-mono);
   font-size: 12pt;
@@ -28,8 +28,8 @@
   margin-bottom: 0;
 }
 .DocumentsRevisionsListItem__Column--Credits, .DocumentsRevisionsListItem__Column--Number {
-  font-size: 0.75rem;
-  font-weight: 700;
+  font-size: var(--pe-text-sm);
+  font-weight: var(--pe-font-weight-bold);
 }
 .DocumentsRevisionsListItem__IdentifierContainer {
   display: flex;
@@ -37,10 +37,10 @@
   min-width: 50px;
 }
 .DocumentsRevisionsListItem__Avatar {
-  height: 24px;
-  width: 24px;
+  height: var(--pe-space-6);
+  width: var(--pe-space-6);
   flex-shrink: 0;
-  margin-right: 12px;
+  margin-right: var(--pe-space-3);
 }
 .DocumentsRevisionsListItem--Timestamp, .DocumentsRevisionsListItem__Column--Timestamp {
   font-family: var(--pe-font-mono);
@@ -50,14 +50,14 @@
 .DocumentsRevisionsListItem--Timestamp,
 .DocumentsRevisionsListItem--Timestamp .DateBlock__Date, .DocumentsRevisionsListItem__Column--Timestamp,
 .DocumentsRevisionsListItem__Column--Timestamp .DateBlock__Date {
-  font-size: 0.75rem;
+  font-size: var(--pe-text-sm);
 }
 .DocumentsRevisionsListItem {
   display: block;
 }
 .DocumentsRevisionsListItem__Content {
   display: grid;
-  gap: 16px;
+  gap: var(--pe-space-4);
   grid-template-columns: 70px minmax(0, 600px) minmax(0, 400px) minmax(0, 150px) minmax(120px, 150px) 65px;
 }
 @container (max-width: 38rem) {

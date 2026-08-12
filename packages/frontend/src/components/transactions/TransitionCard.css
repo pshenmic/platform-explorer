@@ -1,13 +1,13 @@
 .TransitionCard {
-  padding: 40px !important;
+  padding: var(--pe-space-10) !important;
 }
 @media screen and (max-width: 48em) {
   .TransitionCard {
-    padding: 32px !important;
+    padding: var(--pe-space-8) !important;
   }
 }
 @media screen and (max-width: 30em) {
   .TransitionCard {
-    padding: 16px !important;
+    padding: var(--pe-space-4) !important;
   }
 }

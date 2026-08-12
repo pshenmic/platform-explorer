@@ -1,5 +1,5 @@
 .RateTooltip {
-  font-size: 0.75rem;
+  font-size: var(--pe-text-sm);
 }
 .RateTooltip__Dash {
   font-family: var(--pe-font-heading);

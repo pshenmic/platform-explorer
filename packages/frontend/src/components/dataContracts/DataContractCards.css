@@ -3,10 +3,10 @@
 }
 .DataContractCards__CardsColumn {
   width: 90%;
-  padding: 10px;
+  padding: var(--pe-space-2_5);
 }
 .DataContractCards__Card {
-  margin-bottom: 20px;
+  margin-bottom: var(--pe-space-5);
 }
 .DataContractCards__Card:last-child {
   margin-bottom: 0;
@@ -19,7 +19,7 @@
     display: block;
   }
   .DataContractCards__Slider {
-    width: calc(100% + 20px);
+    width: calc(100% + var(--pe-space-5));
   }
   .DataContractCards .Slider__Carousel {
     width: 110%;
@@ -27,13 +27,13 @@
     overflow: visible;
   }
   .DataContractCards__CardsColumnContainer {
-    padding: 10px 4px;
+    padding: var(--pe-space-2_5) var(--pe-space-1);
   }
   .DataContractCards__CardsColumn {
-    padding: 10px 4px;
+    padding: var(--pe-space-2_5) var(--pe-space-1);
   }
   .DataContractCards__Card {
-    margin-bottom: 8px;
+    margin-bottom: var(--pe-space-2);
   }
   .DataContractCards__Card:last-child {
     margin-bottom: 0;

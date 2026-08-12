@@ -5,7 +5,7 @@
   flex-direction: column;
   padding: 30px !important;
   font-family: var(--pe-font-heading);
-  font-weight: 800;
+  font-weight: var(--pe-font-weight-extrabold);
   font-style: italic;
 }
 .TotalInfoItem::before {
@@ -13,7 +13,7 @@
   display: block;
   width: 44px;
   height: 44px;
-  margin-bottom: 20px;
+  margin-bottom: var(--pe-space-5);
 }
 .TotalInfoItem--Clikable {
   transition: all 0.2s;
@@ -56,17 +56,17 @@
   background-size: contain;
   height: 48px;
   width: 48px;
-  margin-bottom: 16px;
+  margin-bottom: var(--pe-space-4);
 }
 .TotalInfoItem__Title {
   color: var(--pe-color-brand-normal);
-  font-size: 0.875rem;
+  font-size: var(--pe-text-md);
   text-transform: uppercase;
   text-align: center;
   position: relative;
 }
 a .TotalInfoItem__Title {
-  padding-right: 24px;
+  padding-right: var(--pe-space-6);
 }
 a .TotalInfoItem__Title::after {
   content: "";
@@ -75,11 +75,11 @@ a .TotalInfoItem__Title::after {
   top: 50%;
   transform: translateY(-50%);
   display: block;
-  width: 16px;
-  height: 16px;
+  width: var(--pe-space-4);
+  height: var(--pe-space-4);
   background: url("/images/icons/chevron-right.svg") no-repeat center;
   background-color: rgba(0, 141, 228, 0.2);
-  border-radius: 4px;
+  border-radius: var(--pe-radius-sm);
 }
 a:hover .TotalInfoItem__Title::after {
   background-color: rgba(0, 141, 228, 0.3);
@@ -126,12 +126,12 @@ a:hover .TotalInfoItem__Title::after {
   height: 100%;
   background: linear-gradient(90deg, rgb(14, 117, 181) 0%, rgb(22, 82, 120) 100%);
   border-radius: 100px;
-  opacity: 0.1;
+  opacity: var(--pe-opacity-faint);
   animation: LoadingLine linear 3s infinite;
 }
 Tr .TotalInfoItem__Value--Loading::before {
   background-color: var(--pe-color-gray-800);
-  opacity: 0.2;
+  opacity: var(--pe-opacity-subtle);
 }
 .TotalInfoItem__Value--Loading:nth-child(1n)::after {
   animation-delay: -0.5s;
@@ -194,7 +194,7 @@ Tr:nth-child(10n) .TotalInfoItem__Value--Loading::after {
   animation-delay: 4s;
 }
 .TotalInfoItem__Value--Loading {
-  opacity: 0.5;
+  opacity: var(--pe-opacity-muted);
   border-radius: 5px;
   animation-delay: 100ms;
   width: 100%;
@@ -202,7 +202,7 @@ Tr:nth-child(10n) .TotalInfoItem__Value--Loading::after {
 }
 @media screen and (max-width: 1140px) {
   .TotalInfoItem {
-    padding: 20px !important;
+    padding: var(--pe-space-5) !important;
   }
 }
 @media screen and (max-width: 62em) {
@@ -210,11 +210,11 @@ Tr:nth-child(10n) .TotalInfoItem__Value--Loading::after {
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 20px 0 !important;
+    padding: var(--pe-space-5) 0 !important;
   }
   .TotalInfoItem::before {
     transform: none;
-    margin-bottom: 8px;
+    margin-bottom: var(--pe-space-2);
   }
   .TotalInfoItem__Title {
     text-align: center;

@@ -22,14 +22,14 @@
 }
 
 .PageItem {
-  margin: 0 6px;
+  margin: 0 var(--pe-space-1_5);
   background-color: rgba(var(--pe-color-gray-800-rgb), 0.5);
   border-radius: var(--pe-radius-def);
   border: 1px solid var(--pe-color-calendar-border);
 }
 .PageItem--Next svg, .PageItem--Previous svg {
-  width: 6px;
-  height: 12px;
+  width: var(--pe-space-1_5);
+  height: var(--pe-space-3);
 }
 .PageItem--Next:hover:not(.disabled), .PageItem--Previous:hover:not(.disabled) {
   background-color: rgba(255, 255, 255, 0.1);
@@ -63,8 +63,8 @@
   -webkit-user-select: none;
   -ms-user-select: none;
   text-align: center;
-  padding: 10px 12px;
-  font-size: 0.75rem;
+  padding: var(--pe-space-2_5) var(--pe-space-3);
+  font-size: var(--pe-text-sm);
   min-width: 55px;
 }
 

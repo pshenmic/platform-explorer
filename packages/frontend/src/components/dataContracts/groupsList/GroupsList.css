@@ -1,5 +1,5 @@
 .GroupsList__Pagination {
-  margin-top: 2rem !important;
+  margin-top: var(--pe-space-8) !important;
 }
 .GroupsList__ScrollZone {
   width: fit-content;
@@ -7,12 +7,12 @@
 }
 @media screen and (max-width: 48em) {
   .GroupsList__Pagination {
-    margin-top: 1.5rem !important;
+    margin-top: var(--pe-space-6) !important;
   }
 }
 @media screen and (max-width: 30em) {
   .GroupsList__Pagination {
-    margin-top: 1rem !important;
+    margin-top: var(--pe-space-4) !important;
   }
 }
 .GroupsList {
@@ -23,22 +23,22 @@
   padding: var(--pe-list-row-pad-y) var(--pe-list-row-pad-x);
   border-radius: var(--pe-list-row-radius);
   background-color: var(--pe-color-gray-800);
-  margin-bottom: 8px;
+  margin-bottom: var(--pe-space-2);
   font-family: var(--pe-font-heading);
-  font-weight: 700;
-  font-size: 12px;
+  font-weight: var(--pe-font-weight-bold);
+  font-size: var(--pe-text-sm);
   text-transform: uppercase;
   color: var(--pe-color-fg);
 }
 .GroupsList__ColumnTitles--Light {
   background: transparent !important;
-  font-weight: 500 !important;
+  font-weight: var(--pe-font-weight-medium) !important;
   color: var(--pe-color-fg) !important;
   text-transform: none !important;
 }
 .GroupsList__ColumnTitles {
   display: grid;
-  gap: 1rem;
+  gap: var(--pe-space-4);
   grid-template-columns: minmax(0, 999rem) auto;
 }
 @container (max-width: 22.5rem) {
@@ -74,7 +74,7 @@
   text-align: right;
 }
 .GroupsList__Group {
-  margin-bottom: 1rem;
+  margin-bottom: var(--pe-space-4);
   border: 1px solid var(--pe-color-gray-750);
   border-radius: var(--pe-radius-def);
   background: rgba(var(--pe-color-gray-800-rgb), 0.5);
@@ -83,8 +83,8 @@
 .GroupsList__GroupHeader {
   display: grid;
   grid-template-columns: 1fr auto;
-  gap: 1rem;
-  padding: 1rem;
+  gap: var(--pe-space-4);
+  padding: var(--pe-space-4);
   background: var(--pe-color-gray-800);
   border-bottom: 1px solid transparent;
   transition: var(--pe-transition-def);
@@ -93,25 +93,25 @@
   border-bottom: 1px solid var(--pe-color-gray-700);
 }
 .GroupsList__GroupTitle {
-  font-size: 0.875rem;
-  font-weight: 500;
+  font-size: var(--pe-text-md);
+  font-weight: var(--pe-font-weight-medium);
   color: var(--pe-color-gray-100);
   font-family: var(--pe-font-heading);
 }
 .GroupsList__GroupHeaderColumn {
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: var(--pe-space-4);
 }
 .GroupsList__GroupHeaderColumn--Button {
   justify-content: flex-end;
 }
 .GroupsList__RequiredPower {
-  font-size: 0.75rem;
+  font-size: var(--pe-text-sm);
   color: var(--pe-color-gray-400);
 }
 .GroupsList__ToggleButton {
-  font-weight: 500 !important;
+  font-weight: var(--pe-font-weight-medium) !important;
   text-transform: capitalize !important;
 }
 .GroupsList__ToggleButton svg {
@@ -121,5 +121,5 @@
   width: 100%;
 }
 .GroupsList__MembersList {
-  padding: 0.5rem 1rem 1rem 1rem;
+  padding: var(--pe-space-2) var(--pe-space-4) var(--pe-space-4) var(--pe-space-4);
 }

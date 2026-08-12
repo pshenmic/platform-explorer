@@ -5,19 +5,19 @@
 .DocumentTotalCard__Title .Alias__Name,
 .DocumentTotalCard__Title .Alias__Domain {
   font-family: var(--pe-font-heading);
-  font-size: 0.875rem;
-  font-weight: 700;
+  font-size: var(--pe-text-md);
+  font-weight: var(--pe-font-weight-bold);
 }
 .DocumentTotalCard__Title .Alias__Domain {
   color: var(--pe-color-brand-light);
   opacity: 1;
 }
 .DocumentTotalCard--Loading .InfoLine__Value {
-  height: 1.5rem;
+  height: var(--pe-space-6);
 }
 .DocumentTotalCard__ContentContainer {
   display: flex;
-  gap: 2.5rem;
+  gap: var(--pe-space-10);
 }
 .DocumentTotalCard__Column {
   position: relative;
@@ -34,37 +34,37 @@
   align-items: center;
   justify-content: center;
   font-family: var(--pe-font-mono);
-  font-size: 0.75rem;
+  font-size: var(--pe-text-sm);
   color: var(--pe-color-gray-500);
   width: 88px;
   height: 88px;
   border: 1px solid rgba(137, 126, 126, 0.1);
   flex-shrink: 0;
-  margin-left: 24px;
+  margin-left: var(--pe-space-6);
 }
 .DocumentTotalCard__HeaderLines {
   display: flex;
-  gap: 20px;
+  gap: var(--pe-space-5);
   flex-direction: column;
   justify-content: space-between;
   width: 100%;
-  padding: 6px 0;
+  padding: var(--pe-space-1_5) 0;
   overflow: hidden;
 }
 .DocumentTotalCard__InfoLine {
-  gap: 14px;
+  gap: var(--pe-space-3_5);
 }
 .DocumentTotalCard__CommonInfo {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: var(--pe-space-6);
 }
 .DocumentTotalCard__CommonInfo .HorisontalSeparator {
   margin: 0;
 }
 @media screen and (max-width: 62em) {
   .DocumentTotalCard__ContentContainer {
-    gap: 1.5rem;
+    gap: var(--pe-space-6);
   }
 }
 @media screen and (max-width: 48em) {
@@ -72,7 +72,7 @@
     flex-direction: column;
   }
   .DocumentTotalCard__ContentContainer, .DocumentTotalCard__CommonLines {
-    gap: 0.75rem;
+    gap: var(--pe-space-3);
   }
   .DocumentTotalCard__Column {
     position: static;
@@ -80,8 +80,8 @@
   }
 }
 .DocumentTotalCard__Header {
-  gap: 1.5rem;
-  margin-bottom: 1.5rem;
+  gap: var(--pe-space-6);
+  margin-bottom: var(--pe-space-6);
 }
 .DocumentTotalCard__Avatar {
   margin: 0;
@@ -108,19 +108,19 @@
   .DocumentTotalCard__Title .Alias__Name,
   .DocumentTotalCard__Title .Alias__Domain {
     font-family: var(--pe-font-heading);
-    font-size: 0.875rem;
-    font-weight: 700;
+    font-size: var(--pe-text-md);
+    font-weight: var(--pe-font-weight-bold);
   }
   .DocumentTotalCard__Title .Alias__Domain {
     color: var(--pe-color-brand-light);
     opacity: 1;
   }
   .DocumentTotalCard--Loading .InfoLine__Value {
-    height: 1.5rem;
+    height: var(--pe-space-6);
   }
   .DocumentTotalCard__ContentContainer {
     display: flex;
-    gap: 2.5rem;
+    gap: var(--pe-space-10);
   }
   .DocumentTotalCard__Column {
     position: relative;
@@ -137,13 +137,13 @@
     align-items: center;
     justify-content: center;
     font-family: var(--pe-font-mono);
-    font-size: 0.75rem;
+    font-size: var(--pe-text-sm);
     color: var(--pe-color-gray-500);
     width: 88px;
     height: 88px;
     border: 1px solid rgba(137, 126, 126, 0.1);
     flex-shrink: 0;
-    margin-left: 24px;
+    margin-left: var(--pe-space-6);
     position: absolute;
     right: 0;
     top: 0;
@@ -151,20 +151,20 @@
   }
   .DocumentTotalCard__HeaderLines {
     display: flex;
-    gap: 20px;
+    gap: var(--pe-space-5);
     flex-direction: column;
     justify-content: space-between;
     width: 100%;
-    padding: 6px 0;
+    padding: var(--pe-space-1_5) 0;
     overflow: hidden;
   }
   .DocumentTotalCard__InfoLine {
-    gap: 14px;
+    gap: var(--pe-space-3_5);
   }
   .DocumentTotalCard__CommonInfo {
     display: flex;
     flex-direction: column;
-    gap: 1.5rem;
+    gap: var(--pe-space-6);
   }
   .DocumentTotalCard__CommonInfo .HorisontalSeparator {
     margin: 0;
@@ -172,7 +172,7 @@
 }
 @media screen and (max-width: 48em) and (max-width: 62em) {
   .DocumentTotalCard__ContentContainer {
-    gap: 1.5rem;
+    gap: var(--pe-space-6);
   }
 }
 @media screen and (max-width: 48em) and (max-width: 48em) {
@@ -180,7 +180,7 @@
     flex-direction: column;
   }
   .DocumentTotalCard__ContentContainer, .DocumentTotalCard__CommonLines {
-    gap: 0.75rem;
+    gap: var(--pe-space-3);
   }
   .DocumentTotalCard__Column {
     position: static;

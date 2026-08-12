@@ -3,8 +3,8 @@
   width: 100%;
   text-decoration: none;
   padding: var(--pe-list-row-pad-y) var(--pe-list-row-pad-x);
-  margin-bottom: 8px;
-  line-height: 24px;
+  margin-bottom: var(--pe-space-2);
+  line-height: var(--pe-space-6);
   color: var(--pe-color-gray-100);
   font-family: var(--pe-font-mono);
   font-size: 12pt;
@@ -17,8 +17,8 @@
   margin-bottom: 0;
 }
 .PublicKeysListItem__Column--Credits, .PublicKeysListItem__Column--Number {
-  font-size: 0.75rem;
-  font-weight: 700;
+  font-size: var(--pe-text-sm);
+  font-weight: var(--pe-font-weight-bold);
 }
 .PublicKeysListItem__IdentifierContainer {
   display: flex;
@@ -26,10 +26,10 @@
   min-width: 50px;
 }
 .PublicKeysListItem__Avatar {
-  height: 24px;
-  width: 24px;
+  height: var(--pe-space-6);
+  width: var(--pe-space-6);
   flex-shrink: 0;
-  margin-right: 12px;
+  margin-right: var(--pe-space-3);
 }
 .PublicKeysListItem--Timestamp, .PublicKeysListItem__Column--Timestamp {
   font-family: var(--pe-font-mono);
@@ -39,19 +39,19 @@
 .PublicKeysListItem--Timestamp,
 .PublicKeysListItem--Timestamp .DateBlock__Date, .PublicKeysListItem__Column--Timestamp,
 .PublicKeysListItem__Column--Timestamp .DateBlock__Date {
-  font-size: 0.75rem;
+  font-size: var(--pe-text-sm);
 }
 .PublicKeysListItem {
   display: block;
 }
 .PublicKeysListItem__Content {
   display: grid;
-  gap: 16px;
+  gap: var(--pe-space-4);
   grid-template-columns: minmax(45px, 45px) minmax(180px, 180px) minmax(120px, 113px) minmax(113px, 113px) minmax(115px, 115px) minmax(90px, 90px) minmax(78px, 78px) auto;
 }
 @container (max-width: 800px) {
   .PublicKeysListItem__Content {
-    gap: 8px;
+    gap: var(--pe-space-2);
   }
 }
 .PublicKeysListItem__Content {
@@ -93,10 +93,10 @@
   width: 100%;
 }
 .PublicKeysListItem__Column {
-  font-size: 0.688rem;
+  font-size: var(--pe-text-xs);
 }
 .PublicKeysListItem__Column--Id {
-  font-size: 0.75rem;
+  font-size: var(--pe-text-sm);
   color: var(--pe-color-fg);
 }
 .PublicKeysListItem__Column--Data {
@@ -104,10 +104,10 @@
   align-items: flex-start;
   overflow: hidden;
   display: flex;
-  gap: 4px;
+  gap: var(--pe-space-1);
 }
 .PublicKeysListItem__Column--PublicKeyHash {
-  font-size: 0.688rem;
+  font-size: var(--pe-text-xs);
   color: var(--pe-color-fg-muted);
   overflow: hidden;
   text-overflow: ellipsis;
@@ -123,7 +123,7 @@
   width: 100%;
 }
 .PublicKeysListItem__Data .CopyButton, .PublicKeysListItem__PublicKeyHash .CopyButton {
-  margin-left: 8px;
+  margin-left: var(--pe-space-2);
 }
 .PublicKeysListItem__PublicKeyBounds {
   max-width: 100%;

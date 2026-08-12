@@ -5,19 +5,19 @@
 .IdentityTotalCard__Title .Alias__Name,
 .IdentityTotalCard__Title .Alias__Domain {
   font-family: var(--pe-font-heading);
-  font-size: 0.875rem;
-  font-weight: 700;
+  font-size: var(--pe-text-md);
+  font-weight: var(--pe-font-weight-bold);
 }
 .IdentityTotalCard__Title .Alias__Domain {
   color: var(--pe-color-brand-light);
   opacity: 1;
 }
 .IdentityTotalCard--Loading .InfoLine__Value {
-  height: 1.5rem;
+  height: var(--pe-space-6);
 }
 .IdentityTotalCard__ContentContainer {
   display: flex;
-  gap: 2.5rem;
+  gap: var(--pe-space-10);
 }
 .IdentityTotalCard__Column {
   position: relative;
@@ -34,37 +34,37 @@
   align-items: center;
   justify-content: center;
   font-family: var(--pe-font-mono);
-  font-size: 0.75rem;
+  font-size: var(--pe-text-sm);
   color: var(--pe-color-gray-500);
   width: 88px;
   height: 88px;
   border: 1px solid rgba(137, 126, 126, 0.1);
   flex-shrink: 0;
-  margin-left: 24px;
+  margin-left: var(--pe-space-6);
 }
 .IdentityTotalCard__HeaderLines {
   display: flex;
-  gap: 20px;
+  gap: var(--pe-space-5);
   flex-direction: column;
   justify-content: space-between;
   width: 100%;
-  padding: 6px 0;
+  padding: var(--pe-space-1_5) 0;
   overflow: hidden;
 }
 .IdentityTotalCard__InfoLine {
-  gap: 14px;
+  gap: var(--pe-space-3_5);
 }
 .IdentityTotalCard__CommonInfo {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: var(--pe-space-6);
 }
 .IdentityTotalCard__CommonInfo .HorisontalSeparator {
   margin: 0;
 }
 @media screen and (max-width: 62em) {
   .IdentityTotalCard__ContentContainer {
-    gap: 1.5rem;
+    gap: var(--pe-space-6);
   }
 }
 @media screen and (max-width: 48em) {
@@ -72,7 +72,7 @@
     flex-direction: column;
   }
   .IdentityTotalCard__ContentContainer, .IdentityTotalCard__CommonLines {
-    gap: 0.75rem;
+    gap: var(--pe-space-3);
   }
   .IdentityTotalCard__Column {
     position: static;
@@ -100,10 +100,10 @@
 .IdentityTotalCard {
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: var(--pe-space-3_5);
 }
 .IdentityTotalCard--Loading .IdentityTotalCard__InfoLine .InfoLine__Value {
-  height: 24px;
+  height: var(--pe-space-6);
 }
 @keyframes loading-process {
   from {
@@ -167,14 +167,14 @@
   width: 100%;
 }
 .IdentityTotalCard__ZeroListBadge {
-  padding: 4px 10px;
+  padding: var(--pe-space-1) var(--pe-space-2_5);
   font-family: var(--pe-font-mono);
   color: var(--pe-color-fg-muted);
 }
 .IdentityTotalCard__CommonLines {
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: var(--pe-space-6);
 }
 .IdentityTotalCard__InfoLine--Names {
   align-items: baseline;
@@ -198,7 +198,7 @@
 }
 .IdentityTotalCard__PublicKeysShowButton {
   width: max-content;
-  font-weight: 500 !important;
+  font-weight: var(--pe-font-weight-medium) !important;
   text-transform: capitalize !important;
 }
 .IdentityTotalCard__PublicKeysShowButton svg {
@@ -219,13 +219,13 @@
   transition: 0.3s !important;
 }
 .IdentityTotalCard__PublicKeysListContainer--Hidden {
-  margin-top: -14px !important;
+  margin-top: -var(--pe-space-3_5) !important;
 }
 .IdentityTotalCard__PublicKeysListContainer--Mobile {
   display: none !important;
 }
 .IdentityTotalCard__Separator {
-  margin: 20px 0;
+  margin: var(--pe-space-5) 0;
 }
 @media screen and (max-width: 62em) {
   .IdentityTotalCard__InfoLine--Names {
@@ -245,7 +245,7 @@
 }
 @media screen and (min-width: 48em) and (max-width: 62em), screen and (max-width: 48em) {
   .IdentityTotalCard__InfoLine {
-    gap: 0.25rem;
+    gap: var(--pe-space-1);
   }
   .IdentityTotalCard__InfoLine--Identifier .Identifier__SymbolsContainer {
     margin-left: 0;
@@ -259,19 +259,19 @@
   .IdentityTotalCard__Title .Alias__Name,
   .IdentityTotalCard__Title .Alias__Domain {
     font-family: var(--pe-font-heading);
-    font-size: 0.875rem;
-    font-weight: 700;
+    font-size: var(--pe-text-md);
+    font-weight: var(--pe-font-weight-bold);
   }
   .IdentityTotalCard__Title .Alias__Domain {
     color: var(--pe-color-brand-light);
     opacity: 1;
   }
   .IdentityTotalCard--Loading .InfoLine__Value {
-    height: 1.5rem;
+    height: var(--pe-space-6);
   }
   .IdentityTotalCard__ContentContainer {
     display: flex;
-    gap: 2.5rem;
+    gap: var(--pe-space-10);
   }
   .IdentityTotalCard__Column {
     position: relative;
@@ -288,13 +288,13 @@
     align-items: center;
     justify-content: center;
     font-family: var(--pe-font-mono);
-    font-size: 0.75rem;
+    font-size: var(--pe-text-sm);
     color: var(--pe-color-gray-500);
     width: 88px;
     height: 88px;
     border: 1px solid rgba(137, 126, 126, 0.1);
     flex-shrink: 0;
-    margin-left: 24px;
+    margin-left: var(--pe-space-6);
     position: absolute;
     right: 0;
     top: 0;
@@ -302,20 +302,20 @@
   }
   .IdentityTotalCard__HeaderLines {
     display: flex;
-    gap: 20px;
+    gap: var(--pe-space-5);
     flex-direction: column;
     justify-content: space-between;
     width: 100%;
-    padding: 6px 0;
+    padding: var(--pe-space-1_5) 0;
     overflow: hidden;
   }
   .IdentityTotalCard__InfoLine {
-    gap: 14px;
+    gap: var(--pe-space-3_5);
   }
   .IdentityTotalCard__CommonInfo {
     display: flex;
     flex-direction: column;
-    gap: 1.5rem;
+    gap: var(--pe-space-6);
   }
   .IdentityTotalCard__CommonInfo .HorisontalSeparator {
     margin: 0;
@@ -323,7 +323,7 @@
 }
 @media screen and (max-width: 48em) and (max-width: 62em) {
   .IdentityTotalCard__ContentContainer {
-    gap: 1.5rem;
+    gap: var(--pe-space-6);
   }
 }
 @media screen and (max-width: 48em) and (max-width: 48em) {
@@ -331,7 +331,7 @@
     flex-direction: column;
   }
   .IdentityTotalCard__ContentContainer, .IdentityTotalCard__CommonLines {
-    gap: 0.75rem;
+    gap: var(--pe-space-3);
   }
   .IdentityTotalCard__Column {
     position: static;
@@ -340,7 +340,7 @@
 }
 @media screen and (max-width: 48em) {
   .IdentityTotalCard__Avatar {
-    right: 4px;
+    right: var(--pe-space-1);
     top: 0;
   }
   .IdentityTotalCard__Separator {
@@ -380,7 +380,7 @@
 }
 @media screen and (max-width: 48em) {
   .IdentityTotalCard__PublicKeysListContainer--Hidden {
-    margin-top: -0.75rem !important;
+    margin-top: -var(--pe-space-3) !important;
   }
   .IdentityTotalCard__PublicKeysListContainer--Mobile {
     display: block !important;
@@ -455,7 +455,7 @@
 }
 @media screen and (max-width: 30em) {
   .IdentityTotalCard__InfoLine--Balance {
-    margin-top: 8px;
+    margin-top: var(--pe-space-2);
     padding-right: 0;
   }
 }

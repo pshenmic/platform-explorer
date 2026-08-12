@@ -1,19 +1,19 @@
 .FilterGroup {
   display: flex;
   flex-direction: column;
-  gap: 1.25rem;
+  gap: var(--pe-space-5);
 }
 .FilterGroup__Title {
   font-family: var(--pe-font-heading);
-  font-weight: 700;
+  font-weight: var(--pe-font-weight-bold);
   color: var(--pe-color-fg);
   text-transform: uppercase;
-  font-size: 0.75rem;
-  letter-spacing: 0.4px;
+  font-size: var(--pe-text-sm);
+  letter-spacing: 0.var(--pe-space-1);
 }
 .FilterGroup__Content {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 1.25rem;
+  gap: var(--pe-space-5);
 }

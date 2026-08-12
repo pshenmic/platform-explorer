@@ -5,19 +5,19 @@
 .PlatformAddressTotalCard__Title .Alias__Name,
 .PlatformAddressTotalCard__Title .Alias__Domain {
   font-family: var(--pe-font-heading);
-  font-size: 0.875rem;
-  font-weight: 700;
+  font-size: var(--pe-text-md);
+  font-weight: var(--pe-font-weight-bold);
 }
 .PlatformAddressTotalCard__Title .Alias__Domain {
   color: var(--pe-color-brand-light);
   opacity: 1;
 }
 .PlatformAddressTotalCard--Loading .InfoLine__Value {
-  height: 1.5rem;
+  height: var(--pe-space-6);
 }
 .PlatformAddressTotalCard__ContentContainer {
   display: flex;
-  gap: 2.5rem;
+  gap: var(--pe-space-10);
 }
 .PlatformAddressTotalCard__Column {
   position: relative;
@@ -34,37 +34,37 @@
   align-items: center;
   justify-content: center;
   font-family: var(--pe-font-mono);
-  font-size: 0.75rem;
+  font-size: var(--pe-text-sm);
   color: var(--pe-color-gray-500);
   width: 88px;
   height: 88px;
   border: 1px solid rgba(137, 126, 126, 0.1);
   flex-shrink: 0;
-  margin-left: 24px;
+  margin-left: var(--pe-space-6);
 }
 .PlatformAddressTotalCard__HeaderLines {
   display: flex;
-  gap: 20px;
+  gap: var(--pe-space-5);
   flex-direction: column;
   justify-content: space-between;
   width: 100%;
-  padding: 6px 0;
+  padding: var(--pe-space-1_5) 0;
   overflow: hidden;
 }
 .PlatformAddressTotalCard__InfoLine {
-  gap: 14px;
+  gap: var(--pe-space-3_5);
 }
 .PlatformAddressTotalCard__CommonInfo {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: var(--pe-space-6);
 }
 .PlatformAddressTotalCard__CommonInfo .HorisontalSeparator {
   margin: 0;
 }
 @media screen and (max-width: 62em) {
   .PlatformAddressTotalCard__ContentContainer {
-    gap: 1.5rem;
+    gap: var(--pe-space-6);
   }
 }
 @media screen and (max-width: 48em) {
@@ -72,7 +72,7 @@
     flex-direction: column;
   }
   .PlatformAddressTotalCard__ContentContainer, .PlatformAddressTotalCard__CommonLines {
-    gap: 0.75rem;
+    gap: var(--pe-space-3);
   }
   .PlatformAddressTotalCard__Column {
     position: static;
@@ -100,10 +100,10 @@
 .PlatformAddressTotalCard {
   display: flex;
   flex-direction: column;
-  gap: 0.875rem;
+  gap: var(--pe-space-3_5);
 }
 .PlatformAddressTotalCard--Loading .PlatformAddressTotalCard__InfoLine .InfoLine__Value {
-  height: 1.5rem;
+  height: var(--pe-space-6);
 }
 @keyframes loading-process {
   from {
@@ -169,7 +169,7 @@
 .PlatformAddressTotalCard__CommonLines {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: var(--pe-space-6);
 }
 .PlatformAddressTotalCard__InfoLine {
   align-items: flex-start !important;
@@ -187,7 +187,7 @@
   }
 }
 .PlatformAddressTotalCard__Separator {
-  margin: 1.25rem 0;
+  margin: var(--pe-space-5) 0;
 }
 @media screen and (max-width: 62em) {
   .PlatformAddressTotalCard__InfoLine--Address, .PlatformAddressTotalCard__InfoLine--Balance {
@@ -200,7 +200,7 @@
 }
 @media screen and (min-width: 48em) and (max-width: 62em), screen and (max-width: 48em) {
   .PlatformAddressTotalCard__InfoLine {
-    gap: 0.25rem;
+    gap: var(--pe-space-1);
   }
   .PlatformAddressTotalCard__InfoLine--Address .Identifier__SymbolsContainer {
     margin-left: 0;
@@ -214,19 +214,19 @@
   .PlatformAddressTotalCard__Title .Alias__Name,
   .PlatformAddressTotalCard__Title .Alias__Domain {
     font-family: var(--pe-font-heading);
-    font-size: 0.875rem;
-    font-weight: 700;
+    font-size: var(--pe-text-md);
+    font-weight: var(--pe-font-weight-bold);
   }
   .PlatformAddressTotalCard__Title .Alias__Domain {
     color: var(--pe-color-brand-light);
     opacity: 1;
   }
   .PlatformAddressTotalCard--Loading .InfoLine__Value {
-    height: 1.5rem;
+    height: var(--pe-space-6);
   }
   .PlatformAddressTotalCard__ContentContainer {
     display: flex;
-    gap: 2.5rem;
+    gap: var(--pe-space-10);
   }
   .PlatformAddressTotalCard__Column {
     position: relative;
@@ -243,13 +243,13 @@
     align-items: center;
     justify-content: center;
     font-family: var(--pe-font-mono);
-    font-size: 0.75rem;
+    font-size: var(--pe-text-sm);
     color: var(--pe-color-gray-500);
     width: 88px;
     height: 88px;
     border: 1px solid rgba(137, 126, 126, 0.1);
     flex-shrink: 0;
-    margin-left: 24px;
+    margin-left: var(--pe-space-6);
     position: absolute;
     right: 0;
     top: 0;
@@ -257,20 +257,20 @@
   }
   .PlatformAddressTotalCard__HeaderLines {
     display: flex;
-    gap: 20px;
+    gap: var(--pe-space-5);
     flex-direction: column;
     justify-content: space-between;
     width: 100%;
-    padding: 6px 0;
+    padding: var(--pe-space-1_5) 0;
     overflow: hidden;
   }
   .PlatformAddressTotalCard__InfoLine {
-    gap: 14px;
+    gap: var(--pe-space-3_5);
   }
   .PlatformAddressTotalCard__CommonInfo {
     display: flex;
     flex-direction: column;
-    gap: 1.5rem;
+    gap: var(--pe-space-6);
   }
   .PlatformAddressTotalCard__CommonInfo .HorisontalSeparator {
     margin: 0;
@@ -278,7 +278,7 @@
 }
 @media screen and (max-width: 48em) and (max-width: 62em) {
   .PlatformAddressTotalCard__ContentContainer {
-    gap: 1.5rem;
+    gap: var(--pe-space-6);
   }
 }
 @media screen and (max-width: 48em) and (max-width: 48em) {
@@ -286,7 +286,7 @@
     flex-direction: column;
   }
   .PlatformAddressTotalCard__ContentContainer, .PlatformAddressTotalCard__CommonLines {
-    gap: 0.75rem;
+    gap: var(--pe-space-3);
   }
   .PlatformAddressTotalCard__Column {
     position: static;
@@ -295,7 +295,7 @@
 }
 @media screen and (max-width: 48em) {
   .PlatformAddressTotalCard__Avatar {
-    right: 0.25rem;
+    right: var(--pe-space-1);
     top: 0;
   }
   .PlatformAddressTotalCard__Separator {
@@ -398,7 +398,7 @@
 }
 @media screen and (max-width: 30em) {
   .PlatformAddressTotalCard__InfoLine--Balance {
-    margin-top: 0.5rem;
+    margin-top: var(--pe-space-2);
     padding-right: 0;
   }
 }

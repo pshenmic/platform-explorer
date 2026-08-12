@@ -1,5 +1,5 @@
 .LoadingList__Item {
-  opacity: 0.5;
+  opacity: var(--pe-opacity-muted);
   border-radius: 5px;
-  margin-bottom: 8px;
+  margin-bottom: var(--pe-space-2);
 }

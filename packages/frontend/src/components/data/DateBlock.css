@@ -7,16 +7,16 @@
   flex-wrap: wrap;
   align-items: center;
   white-space: nowrap;
-  margin-top: -4px;
-  margin-bottom: -4px;
+  margin-top: -var(--pe-space-1);
+  margin-bottom: -var(--pe-space-1);
 }
 
 .DateBlock__CalendarIcon,
 .DateBlock__Date,
 .DateBlock__Delta {
-  margin-top: 4px;
-  margin-bottom: 4px;
-  margin-right: 8px;
+  margin-top: var(--pe-space-1);
+  margin-bottom: var(--pe-space-1);
+  margin-right: var(--pe-space-2);
 }
 
 .DateBlock__CalendarIcon:last-child,
@@ -36,9 +36,9 @@
 
 .DateBlock__Delta {
   display: inline-block;
-  padding: 3px 10px;
+  padding: 3px var(--pe-space-2_5);
   border: 1px solid rgba(147, 170, 178, 0.4);
-  border-radius: 4px;
+  border-radius: var(--pe-radius-sm);
   color: var(--pe-color-fg-muted);
   font-size: var(--pe-text-xs);
 }

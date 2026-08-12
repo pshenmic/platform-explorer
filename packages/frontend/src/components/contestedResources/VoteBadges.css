@@ -1,6 +1,6 @@
 .VoteBadges {
   display: flex;
-  gap: 0.5rem;
+  gap: var(--pe-space-2);
 }
 .VoteBadges__Badge {
   transition: 0.1s;

@@ -3,8 +3,8 @@
   width: 100%;
   text-decoration: none;
   padding: var(--pe-list-row-pad-y) var(--pe-list-row-pad-x);
-  margin-bottom: 8px;
-  line-height: 24px;
+  margin-bottom: var(--pe-space-2);
+  line-height: var(--pe-space-6);
   color: var(--pe-color-gray-100);
   font-family: var(--pe-font-mono);
   font-size: 12pt;
@@ -28,8 +28,8 @@
   margin-bottom: 0;
 }
 .BlocksListItem__Column--Credits, .BlocksListItem__Column--Number {
-  font-size: 0.75rem;
-  font-weight: 700;
+  font-size: var(--pe-text-sm);
+  font-weight: var(--pe-font-weight-bold);
 }
 .BlocksListItem__IdentifierContainer {
   display: flex;
@@ -37,10 +37,10 @@
   min-width: 50px;
 }
 .BlocksListItem__Avatar {
-  height: 24px;
-  width: 24px;
+  height: var(--pe-space-6);
+  width: var(--pe-space-6);
   flex-shrink: 0;
-  margin-right: 12px;
+  margin-right: var(--pe-space-3);
 }
 .BlocksListItem--Timestamp, .BlocksListItem__Column--Timestamp {
   font-family: var(--pe-font-mono);
@@ -50,10 +50,10 @@
 .BlocksListItem--Timestamp,
 .BlocksListItem--Timestamp .DateBlock__Date, .BlocksListItem__Column--Timestamp,
 .BlocksListItem__Column--Timestamp .DateBlock__Date {
-  font-size: 0.75rem;
+  font-size: var(--pe-text-sm);
 }
 .BlocksListItem {
-  font-size: 0.75rem;
+  font-size: var(--pe-text-sm);
 }
 .BlocksListItem .Identifier__CopyButton {
   opacity: 0;
@@ -66,7 +66,7 @@
 }
 .BlocksListItem__Content {
   display: grid;
-  gap: 16px;
+  gap: var(--pe-space-4);
   width: 100%;
 }
 @container (min-width: 90em) {
@@ -112,7 +112,7 @@
 }
 .BlocksListItem--TimestampAbsolute .BlocksListItem__Content {
   display: grid;
-  gap: 16px;
+  gap: var(--pe-space-4);
   width: 100%;
 }
 @container (min-width: 90em) {

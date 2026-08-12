@@ -1,6 +1,6 @@
 .Presets {
   display: inline-flex;
-  gap: 4px;
+  gap: var(--pe-space-1);
   flex-shrink: 0;
 }
 @media screen and (max-width: 48em) {
@@ -11,9 +11,9 @@
 }
 .Presets__Chip {
   padding: 3px 9px;
-  border-radius: 6px;
+  border-radius: var(--pe-radius-sm);
   font-family: var(--pe-font-mono);
-  font-size: 0.6875rem;
+  font-size: var(--pe-text-xs);
   color: var(--pe-color-gray-500);
   background: rgba(255, 255, 255, 0.04);
   transition: color 0.15s, background-color 0.15s;

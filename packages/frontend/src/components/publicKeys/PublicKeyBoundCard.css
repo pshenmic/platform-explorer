@@ -1,7 +1,7 @@
 .PublicKeyBoundCard {
   display: flex;
-  gap: 4px;
-  font-size: 0.75rem;
+  gap: var(--pe-space-1);
+  font-size: var(--pe-text-sm);
 }
 .PublicKeyBoundCard__Title {
   white-space: nowrap;
@@ -9,7 +9,7 @@
 }
 .PublicKeyBoundCard__Id {
   overflow: hidden;
-  font-size: 0.75rem;
+  font-size: var(--pe-text-sm);
 }
 .PublicKeyBoundCard__Id .ValueContainer__Value {
   overflow: hidden;
@@ -20,7 +20,7 @@
   display: flex;
   flex-wrap: nowrap;
   white-space: nowrap;
-  gap: 6px;
+  gap: var(--pe-space-1_5);
 }
 .PublicKeyBoundCard__TypeTitle {
   white-space: nowrap;

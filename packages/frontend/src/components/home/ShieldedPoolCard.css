@@ -3,7 +3,7 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: 14px;
+  gap: var(--pe-space-3_5);
 }
 .ShieldedPool__Empty {
   display: flex;
@@ -15,9 +15,9 @@
 }
 .ShieldedPool__Balance {
   font-family: var(--pe-font-heading);
-  font-weight: 800;
+  font-weight: var(--pe-font-weight-extrabold);
   font-style: italic;
-  font-size: 1.75rem;
+  font-size: var(--pe-space-7);
   line-height: 1;
   color: var(--pe-color-fg);
   cursor: pointer;
@@ -30,11 +30,11 @@
   border-bottom-color: rgba(var(--pe-color-brand-light-rgb), 0.7);
 }
 .ShieldedPool__BalanceUnit {
-  margin-left: 8px;
+  margin-left: var(--pe-space-2);
   font-family: var(--pe-font-mono);
   font-style: normal;
-  font-weight: 400;
-  font-size: 0.6875rem;
+  font-weight: var(--pe-font-weight-normal);
+  font-size: var(--pe-text-xs);
   text-transform: uppercase;
   letter-spacing: 0.08em;
   color: var(--pe-color-gray-500);
@@ -42,14 +42,14 @@
 .ShieldedPool__Rows {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: var(--pe-space-1_5);
 }
 .ShieldedPool__RowItem {
   display: flex;
   justify-content: space-between;
-  gap: 16px;
+  gap: var(--pe-space-4);
   font-family: var(--pe-font-mono);
-  font-size: 0.6875rem;
+  font-size: var(--pe-text-xs);
   color: var(--pe-color-fg-muted);
 }
 .ShieldedPool__RowItem span:first-child {
@@ -85,28 +85,28 @@
 }
 .ShieldedPool__Bar--out {
   fill: var(--pe-color-orange-default);
-  opacity: 0.85;
+  opacity: var(--pe-opacity-strong);
 }
 .ShieldedPool .is-dim .ShieldedPool__Bar {
   opacity: 0.35;
 }
 .ShieldedPool__Tip {
   position: absolute;
-  top: -8px;
+  top: -var(--pe-space-2);
   transform: translate(-50%, -100%);
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 1px;
-  padding: 4px 8px;
-  border-radius: 6px;
+  padding: var(--pe-space-1) var(--pe-space-2);
+  border-radius: var(--pe-radius-sm);
   white-space: nowrap;
   background: var(--pe-color-gray-800);
   border: 1px solid rgba(var(--pe-color-brand-normal-rgb), 0.4);
   pointer-events: none;
   z-index: 2;
   font-family: var(--pe-font-mono);
-  font-size: 0.6875rem;
+  font-size: var(--pe-text-xs);
 }
 .ShieldedPool__TipDate {
   font-size: 0.5625rem;
@@ -124,7 +124,7 @@
 .ShieldedPool__Axis {
   display: flex;
   justify-content: space-between;
-  gap: 8px;
+  gap: var(--pe-space-2);
   font-family: var(--pe-font-mono);
   font-size: 0.5625rem;
   color: var(--pe-color-gray-500);
@@ -132,9 +132,9 @@
 .ShieldedPool__SparkLegend {
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: var(--pe-space-3_5);
   font-family: var(--pe-font-mono);
-  font-size: 0.625rem;
+  font-size: var(--pe-text-2xs);
   color: var(--pe-color-gray-500);
 }
 .ShieldedPool__SparkLegend span {

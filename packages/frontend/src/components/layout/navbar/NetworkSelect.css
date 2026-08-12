@@ -2,26 +2,26 @@
   position: relative;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--pe-space-2);
   font-family: var(--pe-font-heading);
 }
 .NetworkSelect__Title {
-  font-weight: 400;
-  font-size: 0.75rem;
+  font-weight: var(--pe-font-weight-normal);
+  font-size: var(--pe-text-sm);
   color: var(--pe-color-fg-muted);
 }
 .NetworkSelect__Button {
   position: relative;
-  padding: 6px 12px;
+  padding: var(--pe-space-1_5) var(--pe-space-3);
   background-color: var(--pe-color-brand-normal);
-  border-radius: 10px;
+  border-radius: var(--pe-radius-def);
   cursor: pointer;
-  font-weight: 500;
-  font-size: 0.75rem;
+  font-weight: var(--pe-font-weight-medium);
+  font-size: var(--pe-text-sm);
   letter-spacing: 0.025rem;
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: var(--pe-space-2_5);
   z-index: 11;
   transition: var(--pe-transition-def);
 }
@@ -65,12 +65,12 @@
 .InternalNavigation {
   position: relative;
   width: auto;
-  border-bottom: 4px solid var(--pe-color-gray-600);
-  border-top: 4px solid var(--pe-color-gray-600);
-  border-radius: 10px;
-  padding: 8px 4px;
+  border-bottom: var(--pe-space-1) solid var(--pe-color-gray-600);
+  border-top: var(--pe-space-1) solid var(--pe-color-gray-600);
+  border-radius: var(--pe-radius-def);
+  padding: var(--pe-space-2) var(--pe-space-1);
   background: #24282b;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: var(--pe-space-1);
 }

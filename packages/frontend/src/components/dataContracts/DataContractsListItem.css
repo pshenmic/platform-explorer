@@ -3,8 +3,8 @@
   width: 100%;
   text-decoration: none;
   padding: var(--pe-list-row-pad-y) var(--pe-list-row-pad-x);
-  margin-bottom: 8px;
-  line-height: 24px;
+  margin-bottom: var(--pe-space-2);
+  line-height: var(--pe-space-6);
   color: var(--pe-color-gray-100);
   font-family: var(--pe-font-mono);
   font-size: 12pt;
@@ -28,8 +28,8 @@
   margin-bottom: 0;
 }
 .DataContractsListItem__Column--Credits, .DataContractsListItem__Column--Number {
-  font-size: 0.75rem;
-  font-weight: 700;
+  font-size: var(--pe-text-sm);
+  font-weight: var(--pe-font-weight-bold);
 }
 .DataContractsListItem__IdentifierContainer {
   display: flex;
@@ -37,10 +37,10 @@
   min-width: 50px;
 }
 .DataContractsListItem__Avatar {
-  height: 24px;
-  width: 24px;
+  height: var(--pe-space-6);
+  width: var(--pe-space-6);
   flex-shrink: 0;
-  margin-right: 12px;
+  margin-right: var(--pe-space-3);
 }
 .DataContractsListItem--Timestamp, .DataContractsListItem__Column--Timestamp {
   font-family: var(--pe-font-mono);
@@ -50,14 +50,14 @@
 .DataContractsListItem--Timestamp,
 .DataContractsListItem--Timestamp .DateBlock__Date, .DataContractsListItem__Column--Timestamp,
 .DataContractsListItem__Column--Timestamp .DateBlock__Date {
-  font-size: 0.75rem;
+  font-size: var(--pe-text-sm);
 }
 .DataContractsListItem {
   display: block;
 }
 .DataContractsListItem__Content {
   display: grid;
-  gap: 1rem;
+  gap: var(--pe-space-4);
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) 7rem 7rem 7rem minmax(10.5rem, max-content); /* Timestamp */
 }
 @container (max-width: 48rem) {
@@ -98,13 +98,13 @@
   }
 }
 .DataContractsListItem__Column {
-  font-size: 0.75rem;
+  font-size: var(--pe-text-sm);
 }
 .DataContractsListItem__Column--Timestamp {
   text-align: right;
 }
 .DataContractsListItem__Column--DocumentsCount .ValueContainer {
-  padding: 4px 8px;
+  padding: var(--pe-space-1) var(--pe-space-2);
   border-radius: 11px;
 }
 .DataContractsListItem__ColumnContent {

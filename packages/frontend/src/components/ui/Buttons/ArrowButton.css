@@ -2,14 +2,14 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 1rem;
-  height: 1rem;
-  border-radius: 0.25rem;
+  width: var(--pe-space-4);
+  height: var(--pe-space-4);
+  border-radius: var(--pe-radius-sm);
   background: rgba(var(--pe-color-brand-normal-rgb), 0.2);
 }
 .ArrowButton svg {
-  width: 0.5rem;
-  height: 0.5rem;
+  width: var(--pe-space-2);
+  height: var(--pe-space-2);
 }
 .ArrowButton:hover {
   color: var(--pe-color-fg);

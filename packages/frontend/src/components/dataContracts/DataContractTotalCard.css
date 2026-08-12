@@ -5,19 +5,19 @@
 .DataContractTotalCard__Title .Alias__Name,
 .DataContractTotalCard__Title .Alias__Domain {
   font-family: var(--pe-font-heading);
-  font-size: 0.875rem;
-  font-weight: 700;
+  font-size: var(--pe-text-md);
+  font-weight: var(--pe-font-weight-bold);
 }
 .DataContractTotalCard__Title .Alias__Domain {
   color: var(--pe-color-brand-light);
   opacity: 1;
 }
 .DataContractTotalCard--Loading .InfoLine__Value {
-  height: 1.5rem;
+  height: var(--pe-space-6);
 }
 .DataContractTotalCard__ContentContainer {
   display: flex;
-  gap: 2.5rem;
+  gap: var(--pe-space-10);
 }
 .DataContractTotalCard__Column {
   position: relative;
@@ -34,37 +34,37 @@
   align-items: center;
   justify-content: center;
   font-family: var(--pe-font-mono);
-  font-size: 0.75rem;
+  font-size: var(--pe-text-sm);
   color: var(--pe-color-gray-500);
   width: 88px;
   height: 88px;
   border: 1px solid rgba(137, 126, 126, 0.1);
   flex-shrink: 0;
-  margin-left: 24px;
+  margin-left: var(--pe-space-6);
 }
 .DataContractTotalCard__HeaderLines {
   display: flex;
-  gap: 20px;
+  gap: var(--pe-space-5);
   flex-direction: column;
   justify-content: space-between;
   width: 100%;
-  padding: 6px 0;
+  padding: var(--pe-space-1_5) 0;
   overflow: hidden;
 }
 .DataContractTotalCard__InfoLine {
-  gap: 14px;
+  gap: var(--pe-space-3_5);
 }
 .DataContractTotalCard__CommonInfo {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: var(--pe-space-6);
 }
 .DataContractTotalCard__CommonInfo .HorisontalSeparator {
   margin: 0;
 }
 @media screen and (max-width: 62em) {
   .DataContractTotalCard__ContentContainer {
-    gap: 1.5rem;
+    gap: var(--pe-space-6);
   }
 }
 @media screen and (max-width: 48em) {
@@ -72,7 +72,7 @@
     flex-direction: column;
   }
   .DataContractTotalCard__ContentContainer, .DataContractTotalCard__CommonLines {
-    gap: 0.75rem;
+    gap: var(--pe-space-3);
   }
   .DataContractTotalCard__Column {
     position: static;
@@ -88,12 +88,12 @@
   background: rgba(var(--pe-color-brand-normal-rgb), 0.2);
   color: var(--pe-color-brand-normal);
   font-family: var(--pe-font-mono);
-  border-radius: 10px;
-  padding: 0.5rem 1rem;
+  border-radius: var(--pe-radius-def);
+  padding: var(--pe-space-2) var(--pe-space-4);
   min-width: 140px;
   text-align: center;
-  font-weight: 400;
-  font-size: 12px;
+  font-weight: var(--pe-font-weight-normal);
+  font-size: var(--pe-text-sm);
   line-height: 130%;
   transition: all ease-in 0.2;
 }
@@ -111,14 +111,14 @@
 }
 .DataContractTotalCard__NoName {
   font-style: italic;
-  font-weight: 400;
+  font-weight: var(--pe-font-weight-normal);
   text-transform: none;
   color: var(--pe-color-gray-500);
 }
 .DataContractTotalCard__KeywordsList {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: var(--pe-space-2);
   justify-content: flex-end;
 }
 .DataContractTotalCard__InfoLine--Description {
@@ -128,13 +128,13 @@
   text-align: left;
 }
 .DataContractTotalCard__Title {
-  font-weight: 700;
-  font-size: 0.875rem;
-  margin-bottom: 0.875rem;
+  font-weight: var(--pe-font-weight-bold);
+  font-size: var(--pe-text-md);
+  margin-bottom: var(--pe-space-3_5);
   font-family: var(--font-montserrat);
-  font-weight: 800;
+  font-weight: var(--pe-font-weight-extrabold);
   font-style: Italic;
-  font-size: 14px;
+  font-size: var(--pe-text-md);
   line-height: 120%;
   text-transform: uppercase;
   margin: 0 0 22px;
@@ -162,19 +162,19 @@
   .DataContractTotalCard__Title .Alias__Name,
   .DataContractTotalCard__Title .Alias__Domain {
     font-family: var(--pe-font-heading);
-    font-size: 0.875rem;
-    font-weight: 700;
+    font-size: var(--pe-text-md);
+    font-weight: var(--pe-font-weight-bold);
   }
   .DataContractTotalCard__Title .Alias__Domain {
     color: var(--pe-color-brand-light);
     opacity: 1;
   }
   .DataContractTotalCard--Loading .InfoLine__Value {
-    height: 1.5rem;
+    height: var(--pe-space-6);
   }
   .DataContractTotalCard__ContentContainer {
     display: flex;
-    gap: 2.5rem;
+    gap: var(--pe-space-10);
   }
   .DataContractTotalCard__Column {
     position: relative;
@@ -191,13 +191,13 @@
     align-items: center;
     justify-content: center;
     font-family: var(--pe-font-mono);
-    font-size: 0.75rem;
+    font-size: var(--pe-text-sm);
     color: var(--pe-color-gray-500);
     width: 88px;
     height: 88px;
     border: 1px solid rgba(137, 126, 126, 0.1);
     flex-shrink: 0;
-    margin-left: 24px;
+    margin-left: var(--pe-space-6);
     position: absolute;
     right: 0;
     top: 0;
@@ -205,20 +205,20 @@
   }
   .DataContractTotalCard__HeaderLines {
     display: flex;
-    gap: 20px;
+    gap: var(--pe-space-5);
     flex-direction: column;
     justify-content: space-between;
     width: 100%;
-    padding: 6px 0;
+    padding: var(--pe-space-1_5) 0;
     overflow: hidden;
   }
   .DataContractTotalCard__InfoLine {
-    gap: 14px;
+    gap: var(--pe-space-3_5);
   }
   .DataContractTotalCard__CommonInfo {
     display: flex;
     flex-direction: column;
-    gap: 1.5rem;
+    gap: var(--pe-space-6);
   }
   .DataContractTotalCard__CommonInfo .HorisontalSeparator {
     margin: 0;
@@ -226,7 +226,7 @@
 }
 @media screen and (max-width: 48em) and (max-width: 62em) {
   .DataContractTotalCard__ContentContainer {
-    gap: 1.5rem;
+    gap: var(--pe-space-6);
   }
 }
 @media screen and (max-width: 48em) and (max-width: 48em) {
@@ -234,7 +234,7 @@
     flex-direction: column;
   }
   .DataContractTotalCard__ContentContainer, .DataContractTotalCard__CommonLines {
-    gap: 0.75rem;
+    gap: var(--pe-space-3);
   }
   .DataContractTotalCard__Column {
     position: static;

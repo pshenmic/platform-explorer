@@ -1,5 +1,5 @@
 .DataContractsList__Pagination {
-  margin-top: 2rem !important;
+  margin-top: var(--pe-space-8) !important;
 }
 .DataContractsList__ScrollZone {
   width: fit-content;
@@ -7,12 +7,12 @@
 }
 @media screen and (max-width: 48em) {
   .DataContractsList__Pagination {
-    margin-top: 1.5rem !important;
+    margin-top: var(--pe-space-6) !important;
   }
 }
 @media screen and (max-width: 30em) {
   .DataContractsList__Pagination {
-    margin-top: 1rem !important;
+    margin-top: var(--pe-space-4) !important;
   }
 }
 .DataContractsList {
@@ -23,22 +23,22 @@
   padding: var(--pe-list-row-pad-y) var(--pe-list-row-pad-x);
   border-radius: var(--pe-list-row-radius);
   background-color: var(--pe-color-gray-800);
-  margin-bottom: 8px;
+  margin-bottom: var(--pe-space-2);
   font-family: var(--pe-font-heading);
-  font-weight: 700;
-  font-size: 12px;
+  font-weight: var(--pe-font-weight-bold);
+  font-size: var(--pe-text-sm);
   text-transform: uppercase;
   color: var(--pe-color-fg);
 }
 .DataContractsList__ColumnTitles--Light {
   background: transparent !important;
-  font-weight: 500 !important;
+  font-weight: var(--pe-font-weight-medium) !important;
   color: var(--pe-color-fg) !important;
   text-transform: none !important;
 }
 .DataContractsList__ColumnTitles {
   display: grid;
-  gap: 1rem;
+  gap: var(--pe-space-4);
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) 7rem 7rem 7rem minmax(10.5rem, max-content); /* Timestamp */
 }
 @container (max-width: 48rem) {
@@ -97,7 +97,7 @@
   text-align: inherit;
   display: flex;
   align-items: center;
-  gap: 0.25rem;
+  gap: var(--pe-space-1);
   transition: color 0.15s ease;
 }
 .DataContractsList__ColumnTitle--Sortable:hover {
@@ -117,32 +117,32 @@
 }
 .DataContractsList__SortSpacer {
   display: inline-block;
-  width: 1rem;
-  height: 1rem;
+  width: var(--pe-space-4);
+  height: var(--pe-space-4);
 }
 .DataContractsList__Group {
   border-radius: var(--pe-radius-def);
   background: rgba(var(--pe-color-brand-normal-rgb), 0.05);
-  margin-bottom: 0.5rem;
+  margin-bottom: var(--pe-space-2);
 }
 .DataContractsList__GroupHeader {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: var(--pe-space-2);
   width: 100%;
-  padding: 0.5rem 0.75rem;
+  padding: var(--pe-space-2) var(--pe-space-3);
   cursor: pointer;
   color: var(--pe-color-brand-normal);
   font-family: var(--pe-font-heading);
   font-style: italic;
-  font-weight: 800;
-  font-size: 0.75rem;
+  font-weight: var(--pe-font-weight-extrabold);
+  font-size: var(--pe-text-sm);
   text-transform: uppercase;
   letter-spacing: 0.02em;
 }
 .DataContractsList__GroupChevron {
-  width: 8px;
-  height: 8px;
+  width: var(--pe-space-2);
+  height: var(--pe-space-2);
   transition: transform var(--pe-transition-def) ease;
 }
 .DataContractsList__GroupChevron--Open {
@@ -154,12 +154,12 @@
   justify-content: center;
   min-width: 18px;
   height: 18px;
-  padding: 0 6px;
+  padding: 0 var(--pe-space-1_5);
   border-radius: 9px;
   background: var(--pe-color-brand-normal);
   color: var(--pe-color-fg);
-  font-size: 0.6875rem;
+  font-size: var(--pe-text-xs);
 }
 .DataContractsList__Items--Pinned {
-  padding: 0 0.25rem 0.25rem;
+  padding: 0 var(--pe-space-1) var(--pe-space-1);
 }

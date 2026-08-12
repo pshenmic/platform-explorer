@@ -1,15 +1,15 @@
 .DataContractCard {
-  padding: 24px 30px;
+  padding: var(--pe-space-6) 30px;
 }
 .DataContractCard__Img {
-  margin-right: 8px;
-  width: 2rem;
-  height: 2rem;
+  margin-right: var(--pe-space-2);
+  width: var(--pe-space-8);
+  height: var(--pe-space-8);
   flex-shrink: 0;
 }
 .DataContractCard__Name {
-  font-size: 1rem;
-  font-weight: 800;
+  font-size: var(--pe-text-lg);
+  font-weight: var(--pe-font-weight-extrabold);
   font-family: var(--pe-font-heading);
   font-style: italic;
 }
@@ -20,6 +20,6 @@
 }
 @media screen and (max-width: 48em) {
   .DataContractCard {
-    padding: 14px 16px;
+    padding: var(--pe-space-3_5) var(--pe-space-4);
   }
 }

@@ -18,16 +18,16 @@
 }
 .PlatformAddressDigestCard {
   font-family: var(--pe-font-mono);
-  font-size: 0.75rem;
+  font-size: var(--pe-text-sm);
   display: flex;
   flex-direction: column;
-  gap: 0.875rem;
+  gap: var(--pe-space-3_5);
   background: rgba(var(--pe-color-gray-800-rgb), 0.5);
   border-radius: var(--pe-radius-def);
   container-type: inline-size;
 }
 .PlatformAddressDigestCard--Loading .InfoLine__Value {
-  height: 1.5rem;
+  height: var(--pe-space-6);
 }
 .PlatformAddressDigestCard--Loading .PlatformAddressDigestCard__InfoContainer {
   overflow: hidden;
@@ -39,39 +39,39 @@
 .PlatformAddressDigestCard__RowContainer {
   display: flex;
   justify-content: space-between;
-  gap: 0.875rem;
+  gap: var(--pe-space-3_5);
 }
 .PlatformAddressDigestCard__InfoContainer {
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
-  gap: 4px;
-  padding: 24px;
+  gap: var(--pe-space-1);
+  padding: var(--pe-space-6);
   background: rgba(var(--pe-color-gray-800-rgb), 0.5);
   border-radius: var(--pe-radius-def);
   width: 100%;
 }
 .PlatformAddressDigestCard__InfoContainer .InfoLine__Title svg {
-  width: 1.75rem;
-  height: 1.75rem;
+  width: var(--pe-space-7);
+  height: var(--pe-space-7);
 }
 .PlatformAddressDigestCard__LinesContainer {
   flex-direction: column;
 }
 .PlatformAddressDigestCard, .PlatformAddressDigestCard__Transfers {
   display: flex;
-  gap: 0.875rem;
+  gap: var(--pe-space-3_5);
 }
 .PlatformAddressDigestCard--Loading .PlatformAddressDigestCard__Transfers .LoadingLine {
-  height: 1.5rem;
+  height: var(--pe-space-6);
 }
 .PlatformAddressDigestCard__Transfer {
   width: 50%;
   display: flex;
   flex-direction: column;
-  gap: 0.25rem;
-  padding: 1.5rem;
+  gap: var(--pe-space-1);
+  padding: var(--pe-space-6);
   background: rgba(var(--pe-color-gray-800-rgb), 0.5);
   border-radius: var(--pe-radius-def);
 }
@@ -80,7 +80,7 @@
   flex-direction: column;
 }
 .PlatformAddressDigestCard__Transfer .CreditsBlock .CreditsBlock__Usd {
-  margin-top: 0.25rem;
+  margin-top: var(--pe-space-1);
   margin-left: auto;
 }
 .PlatformAddressDigestCard__Transfer--Outgoing .CreditsBlock__Usd {
@@ -88,7 +88,7 @@
   color: var(--pe-color-red-default);
 }
 .PlatformAddressDigestCard__TransferTitle {
-  font-size: 0.75rem;
+  font-size: var(--pe-text-sm);
   color: var(--pe-color-fg-muted);
 }
 @media screen and (min-width: 48em) and (max-width: 62em), screen and (max-width: 30em) {
@@ -107,8 +107,8 @@
     align-items: center;
   }
   .PlatformAddressDigestCard__Transfer .CreditsBlock .CreditsBlock__Usd {
-    margin-top: 0.25rem;
-    margin-bottom: 0.25rem;
+    margin-top: var(--pe-space-1);
+    margin-bottom: var(--pe-space-1);
   }
 }
 @container (max-width: 24em) {

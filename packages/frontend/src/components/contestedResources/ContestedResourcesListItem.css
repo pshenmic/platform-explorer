@@ -3,8 +3,8 @@
   width: 100%;
   text-decoration: none;
   padding: var(--pe-list-row-pad-y) var(--pe-list-row-pad-x);
-  margin-bottom: 8px;
-  line-height: 24px;
+  margin-bottom: var(--pe-space-2);
+  line-height: var(--pe-space-6);
   color: var(--pe-color-gray-100);
   font-family: var(--pe-font-mono);
   font-size: 12pt;
@@ -28,8 +28,8 @@
   margin-bottom: 0;
 }
 .ContestedResourcesListItem__Column--Credits, .ContestedResourcesListItem__Column--Number {
-  font-size: 0.75rem;
-  font-weight: 700;
+  font-size: var(--pe-text-sm);
+  font-weight: var(--pe-font-weight-bold);
 }
 .ContestedResourcesListItem__IdentifierContainer {
   display: flex;
@@ -37,10 +37,10 @@
   min-width: 50px;
 }
 .ContestedResourcesListItem__Avatar {
-  height: 24px;
-  width: 24px;
+  height: var(--pe-space-6);
+  width: var(--pe-space-6);
   flex-shrink: 0;
-  margin-right: 12px;
+  margin-right: var(--pe-space-3);
 }
 .ContestedResourcesListItem--Timestamp, .ContestedResourcesListItem__Column--Timestamp {
   font-family: var(--pe-font-mono);
@@ -50,11 +50,11 @@
 .ContestedResourcesListItem--Timestamp,
 .ContestedResourcesListItem--Timestamp .DateBlock__Date, .ContestedResourcesListItem__Column--Timestamp,
 .ContestedResourcesListItem__Column--Timestamp .DateBlock__Date {
-  font-size: 0.75rem;
+  font-size: var(--pe-text-sm);
 }
 .ContestedResourcesListItem__Content {
   display: grid;
-  gap: 1rem;
+  gap: var(--pe-space-4);
 }
 @container (min-width: 90em) {
   .ContestedResourcesListItem__Content {
@@ -117,16 +117,16 @@
   }
 }
 .ContestedResourcesListItem__Column--IndexName {
-  font-size: 0.688rem;
+  font-size: var(--pe-text-xs);
 }
 .ContestedResourcesListItem__Column--Timestamp {
   font-family: var(--pe-font-mono);
-  font-size: 0.75rem;
+  font-size: var(--pe-text-sm);
   white-space: nowrap;
   color: var(--pe-color-fg);
 }
 .ContestedResourcesListItem__Column--ResourceValue .Alias__SymbolsContainer {
   display: flex;
   flex-wrap: wrap;
-  line-height: 1rem;
+  line-height: var(--pe-space-4);
 }

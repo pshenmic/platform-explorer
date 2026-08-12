@@ -1,15 +1,15 @@
 .root {
-  margin-bottom: 14px;
+  margin-bottom: var(--pe-space-3_5);
   justify-content: flex-start !important;
 }
 .root :global(.InfoLine__Title) {
   width: 200px;
   max-width: 200px;
-  line-height: 20px;
+  line-height: var(--pe-space-5);
 }
 .root :global(.InfoLine__Value) {
   text-align: left;
-  font-size: 0.75rem;
+  font-size: var(--pe-text-sm);
 }
 .root .card {
   overflow-wrap: break-word;
@@ -18,7 +18,7 @@
   max-width: 510px;
 }
 .root .card :global(.CopyButton) {
-  margin-left: 4px;
+  margin-left: var(--pe-space-1);
 }
 .root .value {
   display: flex;

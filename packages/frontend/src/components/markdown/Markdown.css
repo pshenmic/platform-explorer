@@ -40,8 +40,8 @@
 }
 .Markdown th, .Markdown td {
   border: 1px solid var(--pe-color-gray-800);
-  padding: 8px;
+  padding: var(--pe-space-2);
 }
 .Markdown th {
-  font-weight: bold;
+  font-weight: var(--pe-font-weight-bold);
 }

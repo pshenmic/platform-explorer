@@ -1,5 +1,5 @@
 .HorisontalSeparator {
-  margin: 24px 0;
+  margin: var(--pe-space-6) 0;
 }
 .HorisontalSeparator::before, .HorisontalSeparator::after {
   content: "";
@@ -11,5 +11,5 @@
   position: absolute;
   left: 0;
   background-color: var(--pe-color-fg-muted);
-  opacity: 0.2;
+  opacity: var(--pe-opacity-subtle);
 }

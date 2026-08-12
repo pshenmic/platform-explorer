@@ -2,7 +2,7 @@
   container-type: inline-size;
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: var(--pe-space-3);
 }
 .DocumentTransitionCard .InfoLine {
   justify-content: flex-start;
@@ -44,7 +44,7 @@
     justify-content: space-between;
   }
   .DocumentTransitionCard__InfoLine:not(.DocumentTransitionCard__InfoLine--Revision):not(.DocumentTransitionCard__InfoLine--Action) .InfoLine__Title {
-    margin-bottom: 4px;
+    margin-bottom: var(--pe-space-1);
     margin-right: 0;
   }
   .DocumentTransitionCard__InfoLine--Revision, .DocumentTransitionCard__InfoLine--Action {
@@ -70,10 +70,10 @@
   display: flex;
   justify-content: start;
   align-items: flex-start;
-  gap: 8px;
+  gap: var(--pe-space-2);
 }
 .DocumentTransitionCard__InfoLine .InfoLine__Value {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: var(--pe-space-2);
 }

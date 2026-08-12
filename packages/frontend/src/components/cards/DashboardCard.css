@@ -27,18 +27,18 @@
   height: auto;
 }
 .DashboardCard__Title {
-  margin-bottom: 12px;
+  margin-bottom: var(--pe-space-3);
   color: var(--pe-color-brand-normal);
   font-family: var(--pe-font-heading);
   font-style: italic;
-  font-size: 0.875rem;
-  font-weight: 800;
+  font-size: var(--pe-text-md);
+  font-weight: var(--pe-font-weight-extrabold);
   text-transform: uppercase;
 }
 .DashboardCard__Value {
   font-family: var(--pe-font-heading);
-  font-weight: 800;
-  font-size: 1.25rem;
+  font-weight: var(--pe-font-weight-extrabold);
+  font-size: var(--pe-space-5);
   height: 100%;
 }
 @media screen and (max-width: 62em) {
@@ -48,10 +48,10 @@
 }
 @media screen and (max-width: 48em) {
   .DashboardCard {
-    padding: 16px;
+    padding: var(--pe-space-4);
     height: 120px;
   }
   .DashboardCard__Title {
-    margin-bottom: 4px;
+    margin-bottom: var(--pe-space-1);
   }
 }

@@ -2,14 +2,14 @@
   background-color: var(--pe-color-gray-650);
   border: 1px solid #404E53;
   border-radius: var(--pe-radius-def);
-  font-size: 0.75rem;
+  font-size: var(--pe-text-sm);
   font-family: var(--pe-font-mono);
 }
 .VoteIndexValues__Row, .VoteIndexValues__Titles {
   display: flex;
   justify-content: space-between;
-  gap: 8px;
-  padding: 0.75rem;
+  gap: var(--pe-space-2);
+  padding: var(--pe-space-3);
   border-bottom: 1px solid #404E53;
 }
 .VoteIndexValues__Row:last-child, .VoteIndexValues__Titles:last-child {

@@ -2,15 +2,15 @@
   position: relative;
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: var(--pe-space-3);
   justify-content: space-between;
   width: 100%;
-  padding: 12px 20px;
+  padding: var(--pe-space-3) var(--pe-space-5);
   background-color: transparent;
-  border-radius: 10px;
+  border-radius: var(--pe-radius-def);
   white-space: nowrap;
-  font-weight: 500;
-  font-size: 0.75rem;
+  font-weight: var(--pe-font-weight-medium);
+  font-size: var(--pe-text-sm);
   letter-spacing: 0.025rem;
   transition: background-color ease 0.5s;
   font-family: var(--pe-font-heading);
@@ -23,13 +23,13 @@
 }
 .NavigationButton__SubName {
   border-radius: 5px;
-  padding: 4px 10px;
+  padding: var(--pe-space-1) var(--pe-space-2_5);
   background-color: var(--pe-color-gray-600);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: 400;
-  font-size: 0.625rem;
+  font-weight: var(--pe-font-weight-normal);
+  font-size: var(--pe-text-2xs);
   letter-spacing: 0.04em;
   transition: background-color ease 0.5s;
 }

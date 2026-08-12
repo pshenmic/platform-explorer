@@ -2,6 +2,6 @@
   font-family: var(--pe-font-mono);
   height: calc(100vh - 720px);
   min-height: 200px;
-  font-size: 12px;
+  font-size: var(--pe-text-sm);
   line-height: 133%;
 }

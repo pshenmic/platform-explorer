@@ -1,8 +1,8 @@
 .Navbar {
   padding-left: var(--pe-space-3);
   padding-right: var(--pe-space-3);
-  padding-top: 0.75rem;
-  padding-bottom: 0.75rem;
+  padding-top: var(--pe-space-3);
+  padding-bottom: var(--pe-space-3);
   position: fixed;
   z-index: 100;
   top: 0;
@@ -26,7 +26,7 @@
   display: flex;
   align-items: center;
   width: 0;
-  gap: 0.5rem;
+  gap: var(--pe-space-2);
 }
 .Navbar__Right {
   position: relative;
@@ -64,7 +64,7 @@
   width: auto;
   height: auto;
   box-sizing: border-box;
-  border-radius: 0 0 20px 20px;
+  border-radius: 0 0 var(--pe-space-5) var(--pe-space-5);
   background: rgba(24, 31, 34, 0.8);
   backdrop-filter: blur(44px);
   border: 1px solid rgba(255, 255, 255, 0.07);
@@ -76,8 +76,8 @@
   flex-shrink: 0;
 }
 .Navbar__Menu {
-  gap: 40px !important;
-  padding: 0 0.75rem;
+  gap: var(--pe-space-10) !important;
+  padding: 0 var(--pe-space-3);
 }
 @media screen and (min-width: 80rem) and (max-width: 87rem) {
   .Navbar__NetworkSelectContainer .NetworkSelect__Title {
@@ -99,7 +99,7 @@
 }
 @media screen and (max-width: 80em) {
   .Navbar__Menu {
-    gap: 24px !important;
+    gap: var(--pe-space-6) !important;
   }
   .Navbar__SearchContainer {
     width: 10rem;
@@ -115,13 +115,13 @@
     width: 15rem;
   }
   .Navbar__Menu {
-    gap: 16px !important;
+    gap: var(--pe-space-4) !important;
   }
 }
 @media screen and (max-width: 30em) {
   .Navbar__WrapperNetworkSelect {
-    gap: 8px;
-    margin-left: 8px;
+    gap: var(--pe-space-2);
+    margin-left: var(--pe-space-2);
   }
   .Navbar__SearchContainer {
     width: 10rem;

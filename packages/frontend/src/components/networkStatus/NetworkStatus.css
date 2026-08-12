@@ -2,7 +2,7 @@
   display: grid;
   width: 100%;
   flex-wrap: wrap;
-  gap: 1.25rem;
+  gap: var(--pe-space-5);
   grid-template-columns: repeat(3, 1fr);
 }
 .NetworkStatus__Stat {
@@ -49,12 +49,12 @@
   height: 100%;
   background: linear-gradient(90deg, rgb(14, 117, 181) 0%, rgb(22, 82, 120) 100%);
   border-radius: 100px;
-  opacity: 0.1;
+  opacity: var(--pe-opacity-faint);
   animation: LoadingLine linear 3s infinite;
 }
 Tr .NetworkStatus__Stat--Loading:nth-of-type(1) .NetworkStatus__InfoValue::before {
   background-color: var(--pe-color-gray-800);
-  opacity: 0.2;
+  opacity: var(--pe-opacity-subtle);
 }
 .NetworkStatus__Stat--Loading:nth-of-type(1) .NetworkStatus__InfoValue:nth-child(1n)::after {
   animation-delay: -0.35s;
@@ -158,12 +158,12 @@ Tr:nth-child(10n) .NetworkStatus__Stat--Loading:nth-of-type(1) .NetworkStatus__I
   height: 100%;
   background: linear-gradient(90deg, rgb(14, 117, 181) 0%, rgb(22, 82, 120) 100%);
   border-radius: 100px;
-  opacity: 0.1;
+  opacity: var(--pe-opacity-faint);
   animation: LoadingLine linear 3s infinite;
 }
 Tr .NetworkStatus__Stat--Loading:nth-of-type(2) .NetworkStatus__InfoValue::before {
   background-color: var(--pe-color-gray-800);
-  opacity: 0.2;
+  opacity: var(--pe-opacity-subtle);
 }
 .NetworkStatus__Stat--Loading:nth-of-type(2) .NetworkStatus__InfoValue:nth-child(1n)::after {
   animation-delay: -0.2s;
@@ -267,12 +267,12 @@ Tr:nth-child(10n) .NetworkStatus__Stat--Loading:nth-of-type(2) .NetworkStatus__I
   height: 100%;
   background: linear-gradient(90deg, rgb(14, 117, 181) 0%, rgb(22, 82, 120) 100%);
   border-radius: 100px;
-  opacity: 0.1;
+  opacity: var(--pe-opacity-faint);
   animation: LoadingLine linear 3s infinite;
 }
 Tr .NetworkStatus__Stat--Loading:nth-of-type(3) .NetworkStatus__InfoValue::before {
   background-color: var(--pe-color-gray-800);
-  opacity: 0.2;
+  opacity: var(--pe-opacity-subtle);
 }
 .NetworkStatus__Stat--Loading:nth-of-type(3) .NetworkStatus__InfoValue:nth-child(1n)::after {
   animation-delay: -0.05s;
@@ -376,12 +376,12 @@ Tr:nth-child(10n) .NetworkStatus__Stat--Loading:nth-of-type(3) .NetworkStatus__I
   height: 100%;
   background: linear-gradient(90deg, rgb(14, 117, 181) 0%, rgb(22, 82, 120) 100%);
   border-radius: 100px;
-  opacity: 0.1;
+  opacity: var(--pe-opacity-faint);
   animation: LoadingLine linear 3s infinite;
 }
 Tr .NetworkStatus__Stat--Loading:nth-of-type(4) .NetworkStatus__InfoValue::before {
   background-color: var(--pe-color-gray-800);
-  opacity: 0.2;
+  opacity: var(--pe-opacity-subtle);
 }
 .NetworkStatus__Stat--Loading:nth-of-type(4) .NetworkStatus__InfoValue:nth-child(1n)::after {
   animation-delay: 0.1s;
@@ -485,12 +485,12 @@ Tr:nth-child(10n) .NetworkStatus__Stat--Loading:nth-of-type(4) .NetworkStatus__I
   height: 100%;
   background: linear-gradient(90deg, rgb(14, 117, 181) 0%, rgb(22, 82, 120) 100%);
   border-radius: 100px;
-  opacity: 0.1;
+  opacity: var(--pe-opacity-faint);
   animation: LoadingLine linear 3s infinite;
 }
 Tr .NetworkStatus__Stat--Loading:nth-of-type(5) .NetworkStatus__InfoValue::before {
   background-color: var(--pe-color-gray-800);
-  opacity: 0.2;
+  opacity: var(--pe-opacity-subtle);
 }
 .NetworkStatus__Stat--Loading:nth-of-type(5) .NetworkStatus__InfoValue:nth-child(1n)::after {
   animation-delay: 0.25s;
@@ -594,12 +594,12 @@ Tr:nth-child(10n) .NetworkStatus__Stat--Loading:nth-of-type(5) .NetworkStatus__I
   height: 100%;
   background: linear-gradient(90deg, rgb(14, 117, 181) 0%, rgb(22, 82, 120) 100%);
   border-radius: 100px;
-  opacity: 0.1;
+  opacity: var(--pe-opacity-faint);
   animation: LoadingLine linear 3s infinite;
 }
 Tr .NetworkStatus__Stat--Loading:nth-of-type(6) .NetworkStatus__InfoValue::before {
   background-color: var(--pe-color-gray-800);
-  opacity: 0.2;
+  opacity: var(--pe-opacity-subtle);
 }
 .NetworkStatus__Stat--Loading:nth-of-type(6) .NetworkStatus__InfoValue:nth-child(1n)::after {
   animation-delay: 0.4s;
@@ -703,12 +703,12 @@ Tr:nth-child(10n) .NetworkStatus__Stat--Loading:nth-of-type(6) .NetworkStatus__I
   height: 100%;
   background: linear-gradient(90deg, rgb(14, 117, 181) 0%, rgb(22, 82, 120) 100%);
   border-radius: 100px;
-  opacity: 0.1;
+  opacity: var(--pe-opacity-faint);
   animation: LoadingLine linear 3s infinite;
 }
 Tr .NetworkStatus__Stat--Loading:nth-of-type(7) .NetworkStatus__InfoValue::before {
   background-color: var(--pe-color-gray-800);
-  opacity: 0.2;
+  opacity: var(--pe-opacity-subtle);
 }
 .NetworkStatus__Stat--Loading:nth-of-type(7) .NetworkStatus__InfoValue:nth-child(1n)::after {
   animation-delay: 0.55s;
@@ -812,12 +812,12 @@ Tr:nth-child(10n) .NetworkStatus__Stat--Loading:nth-of-type(7) .NetworkStatus__I
   height: 100%;
   background: linear-gradient(90deg, rgb(14, 117, 181) 0%, rgb(22, 82, 120) 100%);
   border-radius: 100px;
-  opacity: 0.1;
+  opacity: var(--pe-opacity-faint);
   animation: LoadingLine linear 3s infinite;
 }
 Tr .NetworkStatus__Stat--Loading:nth-of-type(8) .NetworkStatus__InfoValue::before {
   background-color: var(--pe-color-gray-800);
-  opacity: 0.2;
+  opacity: var(--pe-opacity-subtle);
 }
 .NetworkStatus__Stat--Loading:nth-of-type(8) .NetworkStatus__InfoValue:nth-child(1n)::after {
   animation-delay: 0.7s;
@@ -921,12 +921,12 @@ Tr:nth-child(10n) .NetworkStatus__Stat--Loading:nth-of-type(8) .NetworkStatus__I
   height: 100%;
   background: linear-gradient(90deg, rgb(14, 117, 181) 0%, rgb(22, 82, 120) 100%);
   border-radius: 100px;
-  opacity: 0.1;
+  opacity: var(--pe-opacity-faint);
   animation: LoadingLine linear 3s infinite;
 }
 Tr .NetworkStatus__Stat--Loading:nth-of-type(9) .NetworkStatus__InfoValue::before {
   background-color: var(--pe-color-gray-800);
-  opacity: 0.2;
+  opacity: var(--pe-opacity-subtle);
 }
 .NetworkStatus__Stat--Loading:nth-of-type(9) .NetworkStatus__InfoValue:nth-child(1n)::after {
   animation-delay: 0.85s;
@@ -1030,12 +1030,12 @@ Tr:nth-child(10n) .NetworkStatus__Stat--Loading:nth-of-type(9) .NetworkStatus__I
   height: 100%;
   background: linear-gradient(90deg, rgb(14, 117, 181) 0%, rgb(22, 82, 120) 100%);
   border-radius: 100px;
-  opacity: 0.1;
+  opacity: var(--pe-opacity-faint);
   animation: LoadingLine linear 3s infinite;
 }
 Tr .NetworkStatus__Stat--Loading:nth-of-type(10) .NetworkStatus__InfoValue::before {
   background-color: var(--pe-color-gray-800);
-  opacity: 0.2;
+  opacity: var(--pe-opacity-subtle);
 }
 .NetworkStatus__Stat--Loading:nth-of-type(10) .NetworkStatus__InfoValue:nth-child(1n)::after {
   animation-delay: 1s;
@@ -1102,20 +1102,20 @@ Tr:nth-child(10n) .NetworkStatus__Stat--Loading:nth-of-type(10) .NetworkStatus__
 }
 .NetworkStatus__EpochProgress {
   width: 100%;
-  margin-top: 14px;
+  margin-top: var(--pe-space-3_5);
 }
 .NetworkStatus__InfoTitle {
-  font-size: 0.75rem;
+  font-size: var(--pe-text-sm);
   color: var(--pe-color-gray-500);
   font-family: var(--pe-font-mono);
   white-space: nowrap;
-  margin-bottom: 14px;
+  margin-bottom: var(--pe-space-3_5);
 }
 .NetworkStatus__InfoValue {
-  font-size: 0.75rem;
-  font-weight: bold;
+  font-size: var(--pe-text-sm);
+  font-weight: var(--pe-font-weight-bold);
   font-family: var(--pe-font-heading);
-  letter-spacing: 0.4px;
+  letter-spacing: 0.var(--pe-space-1);
 }
 .NetworkStatus__InfoValue, .NetworkStatus__InfoValue span {
   display: flex;

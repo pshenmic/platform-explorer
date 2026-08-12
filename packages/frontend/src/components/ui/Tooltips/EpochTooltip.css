@@ -1,9 +1,9 @@
 .EpochTooltip {
   font-family: var(--pe-font-heading);
-  font-size: 0.75rem;
+  font-size: var(--pe-text-sm);
 }
 .EpochTooltip__Line {
-  margin-bottom: 14px;
+  margin-bottom: var(--pe-space-3_5);
 }
 .EpochTooltip__Line:last-child {
   margin-bottom: 0;

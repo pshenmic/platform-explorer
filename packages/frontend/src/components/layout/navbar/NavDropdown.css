@@ -3,13 +3,13 @@
 }
 .NavDropdown .MenuLevel__Item {
   font-family: var(--pe-font-heading);
-  font-size: 0.75rem;
-  letter-spacing: 0.4px;
+  font-size: var(--pe-text-sm);
+  letter-spacing: 0.var(--pe-space-1);
   text-transform: uppercase;
   color: var(--pe-color-gray-100);
 }
 .NavDropdown .MenuLevel__Item--Disabled {
-  opacity: 0.5;
+  opacity: var(--pe-opacity-muted);
   color: var(--pe-color-fg-muted) !important;
 }
 .NavDropdown .MenuLevel__Item--Disabled:hover, .NavDropdown .MenuLevel__Item--Disabled:active {

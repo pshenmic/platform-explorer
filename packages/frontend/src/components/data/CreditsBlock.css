@@ -5,14 +5,14 @@
 
 .CreditsBlock__Credits,
 .CreditsBlock__Dash {
-  margin-top: 4px;
-  margin-bottom: 4px;
+  margin-top: var(--pe-space-1);
+  margin-bottom: var(--pe-space-1);
 }
 
 .CreditsBlock__Credits,
 .CreditsBlock__Dash,
 .CreditsBlock__Usd {
-  margin-right: 6px;
+  margin-right: var(--pe-space-1_5);
 }
 
 .CreditsBlock__Credits:last-child,
@@ -32,9 +32,9 @@
 
 .CreditsBlock__Usd {
   display: inline-block;
-  padding: 6px 8px;
+  padding: var(--pe-space-1_5) var(--pe-space-2);
   font-size: var(--pe-text-xs);
   color: var(--pe-color-green-emeralds);
   background-color: rgba(var(--pe-color-green-emeralds-rgb), 0.2);
-  border-radius: 8px;
+  border-radius: var(--pe-radius-md);
 }

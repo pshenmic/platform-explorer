@@ -18,16 +18,16 @@
 }
 .ContestedResourcesDigestCard {
   font-family: var(--pe-font-mono);
-  font-size: 0.75rem;
+  font-size: var(--pe-text-sm);
   display: flex;
   flex-direction: column;
-  gap: 0.875rem;
+  gap: var(--pe-space-3_5);
   background: rgba(var(--pe-color-gray-800-rgb), 0.5);
   border-radius: var(--pe-radius-def);
   container-type: inline-size;
 }
 .ContestedResourcesDigestCard--Loading .InfoLine__Value {
-  height: 1.5rem;
+  height: var(--pe-space-6);
 }
 .ContestedResourcesDigestCard--Loading .ContestedResourcesDigestCard__InfoContainer {
   overflow: hidden;
@@ -39,28 +39,28 @@
 .ContestedResourcesDigestCard__RowContainer {
   display: flex;
   justify-content: space-between;
-  gap: 0.875rem;
+  gap: var(--pe-space-3_5);
 }
 .ContestedResourcesDigestCard__InfoContainer {
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
-  gap: 4px;
-  padding: 24px;
+  gap: var(--pe-space-1);
+  padding: var(--pe-space-6);
   background: rgba(var(--pe-color-gray-800-rgb), 0.5);
   border-radius: var(--pe-radius-def);
   width: 100%;
 }
 .ContestedResourcesDigestCard__InfoContainer .InfoLine__Title svg {
-  width: 1.75rem;
-  height: 1.75rem;
+  width: var(--pe-space-7);
+  height: var(--pe-space-7);
 }
 .ContestedResourcesDigestCard__LinesContainer {
   flex-direction: column;
 }
 .ContestedResourcesDigestCard__InfoLine .InfoLine__Value {
-  font-size: 0.75rem;
+  font-size: var(--pe-text-sm);
 }
 .ContestedResourcesDigestCard__InfoLine--Winner {
   max-width: 100%;
@@ -75,24 +75,24 @@
 }
 .ContestedResourcesDigestCard, .ContestedResourcesDigestCard__Cards, .ContestedResourcesDigestCard__LinesContainer {
   display: flex;
-  gap: 14px;
+  gap: var(--pe-space-3_5);
   flex-wrap: wrap;
 }
 .ContestedResourcesDigestCard--Loading .ContestedResourcesDigestCard__Cards .LoadingLine {
-  height: 24px;
+  height: var(--pe-space-6);
 }
 .ContestedResourcesDigestCard__Card {
   width: calc(33.3333333333% - 0.5833333333rem);
   display: flex;
   flex-direction: column;
-  gap: 4px;
-  padding: 24px;
+  gap: var(--pe-space-1);
+  padding: var(--pe-space-6);
   background: rgba(var(--pe-color-gray-800-rgb), 0.5);
   border-radius: var(--pe-radius-def);
   flex-shrink: 0;
 }
 .ContestedResourcesDigestCard__CardTitle {
-  font-size: 0.75rem;
+  font-size: var(--pe-text-sm);
   color: var(--pe-color-fg-muted);
 }
 .ContestedResourcesDigestCard__CardValue {
@@ -107,11 +107,11 @@
   overflow: hidden;
 }
 .ContestedResourcesDigestCard__ValueContainer .DateBlock {
-  margin-bottom: 4px;
+  margin-bottom: var(--pe-space-1);
 }
 .ContestedResourcesDigestCard__InfoLine {
-  gap: 4px;
-  column-gap: 8px;
+  gap: var(--pe-space-1);
+  column-gap: var(--pe-space-2);
 }
 .ContestedResourcesDigestCard__InfoLine .DateBlock__InfoContainer {
   justify-content: flex-end;
@@ -121,7 +121,7 @@
 }
 .ContestedResourcesDigestCard__StatusContainer {
   display: flex;
-  gap: 0.75rem;
+  gap: var(--pe-space-3);
   justify-content: flex-end;
   flex-wrap: wrap;
 }
@@ -140,8 +140,8 @@
     align-items: center;
   }
   .ContestedResourcesDigestCard__Card .CreditsBlock .CreditsBlock__Usd {
-    margin-top: 0.25rem;
-    margin-bottom: 0.25rem;
+    margin-top: var(--pe-space-1);
+    margin-bottom: var(--pe-space-1);
   }
 }
 @media screen and (max-width: 30em) {

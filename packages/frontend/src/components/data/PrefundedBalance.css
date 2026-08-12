@@ -2,11 +2,11 @@
   max-width: max-content;
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: var(--pe-space-2);
 }
 
 .PrefundedBalance__Title,
 .PrefundedBalance__Value {
-  padding: 3px 10px;
-  border-radius: 4px;
+  padding: 3px var(--pe-space-2_5);
+  border-radius: var(--pe-radius-sm);
 }

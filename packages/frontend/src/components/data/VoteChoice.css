@@ -1,12 +1,12 @@
 .VoteChoice {
   max-width: max-content;
-  padding: 0.375rem 0.75rem;
+  padding: var(--pe-space-1_5) var(--pe-space-3);
 }
 
 .VoteChoice--TowardsIdentity .ValueContainer__Value {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--pe-space-2);
 }
 
 .VoteChoice--TowardsIdentity .VoteChoice__Parameter {
@@ -16,5 +16,5 @@
 .VoteChoice__Parameter {
   max-width: 100%;
   overflow: hidden;
-  padding: 0.125rem 0.625rem;
+  padding: 0.125rem var(--pe-space-2_5);
 }

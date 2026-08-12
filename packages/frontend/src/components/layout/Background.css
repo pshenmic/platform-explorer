@@ -16,7 +16,7 @@
   background-image: url("/images/grain-texture.png");
   background-position: left;
   background-repeat: repeat;
-  opacity: 0.5;
+  opacity: var(--pe-opacity-muted);
   z-index: -1;
 }
 .Background--Light::before {

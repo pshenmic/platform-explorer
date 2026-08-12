@@ -1,12 +1,12 @@
 .Tabs__TabItemsCount {
   display: inline-block;
-  padding: 6px 12px;
+  padding: var(--pe-space-1_5) var(--pe-space-3);
   color: var(--pe-color-brand-normal);
   background: rgba(var(--pe-color-brand-normal-rgb), 0.2);
-  margin-left: 12px;
-  border-radius: 10px;
-  font-weight: 500;
-  margin-top: -4px;
+  margin-left: var(--pe-space-3);
+  border-radius: var(--pe-radius-def);
+  font-weight: var(--pe-font-weight-medium);
+  margin-top: -var(--pe-space-1);
   margin-bottom: -2px;
   transition: all var(--pe-transition-def);
 }
@@ -23,11 +23,11 @@
 }
 @media screen and (max-width: 62em) {
   .Tabs__TabItemsCount {
-    padding: 4px 12px;
+    padding: var(--pe-space-1) var(--pe-space-3);
   }
 }
 @media screen and (max-width: 30em) {
   .Tabs__TabItemsCount {
-    padding: 2px 8px;
+    padding: 2px var(--pe-space-2);
   }
 }

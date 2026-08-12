@@ -3,16 +3,16 @@
   overflow: hidden;
   max-width: 100%;
   font-family: var(--pe-font-mono);
-  font-size: 0.75rem;
+  font-size: var(--pe-text-sm);
   color: var(--pe-color-fg);
-  font-weight: 400;
+  font-weight: var(--pe-font-weight-normal);
   text-transform: capitalize;
 }
 .FilterValueTag--Multiselect {
   display: flex;
-  gap: 0.5rem;
+  gap: var(--pe-space-2);
 }
 .FilterValueTag__MultipleContainer {
   display: flex;
-  gap: 4px;
+  gap: var(--pe-space-1);
 }

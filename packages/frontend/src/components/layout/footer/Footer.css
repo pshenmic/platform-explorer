@@ -5,31 +5,31 @@
   right: 0;
   z-index: 22;
   background-color: var(--pe-color-gray-650);
-  padding: 10px 16px;
+  padding: var(--pe-space-2_5) var(--pe-space-4);
   padding-left: var(--pe-space-3);
   padding-right: var(--pe-space-3);
-  border-radius: 10px 10px 0 0;
+  border-radius: var(--pe-radius-def) var(--pe-space-2_5) 0 0;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 16px;
+  gap: var(--pe-space-4);
 }
 .Footer > * {
   flex: 1;
 }
 .Footer > p, .Footer a {
-  font-size: 0.75rem;
+  font-size: var(--pe-text-sm);
   color: var(--pe-color-fg-muted);
-  font-weight: 400;
+  font-weight: var(--pe-font-weight-normal);
 }
 .Footer__CopyrightBlock {
   display: flex;
   justify-content: flex-end;
   align-items: center;
-  gap: 0.75rem;
+  gap: var(--pe-space-3);
 }
 .Footer__Copyright {
-  font-size: 0.75rem;
+  font-size: var(--pe-text-sm);
   text-align: right;
   color: var(--pe-color-fg-muted);
   margin: 0;
@@ -43,13 +43,13 @@
   position: relative;
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: var(--pe-space-3);
   justify-content: center;
 }
 .Footer__Network {
   position: relative;
-  border-radius: 10px;
-  padding: 10px 20px;
+  border-radius: var(--pe-radius-def);
+  padding: var(--pe-space-2_5) var(--pe-space-5);
   background-color: var(--pe-color-gray-800);
   transition: background-color ease 0.5s;
 }
@@ -58,8 +58,8 @@
 }
 .Footer__Network > img {
   position: relative;
-  width: 20px;
-  height: 20px;
+  width: var(--pe-space-5);
+  height: var(--pe-space-5);
 }
 .Footer__PshenmicLogo {
   transition: color 0.1s;
@@ -76,12 +76,12 @@
   align-items: center;
 }
 .Footer__ClockIcon {
-  margin-right: 0.75rem;
+  margin-right: var(--pe-space-3);
 }
 @media screen and (max-width: 62em) {
   .Footer {
     flex-direction: column;
-    gap: 12px;
+    gap: var(--pe-space-3);
   }
   .Footer__Logo {
     display: none;

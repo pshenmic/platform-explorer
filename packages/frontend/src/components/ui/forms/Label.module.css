@@ -1,7 +1,7 @@
 .label {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 12px;
+  gap: var(--pe-space-3);
   width: 100%;
   align-items: center;
   justify-content: center;
@@ -9,8 +9,8 @@
 .label .text {
   color: #93AAB2;
   font-family: var(--pe-font-mono);
-  font-weight: 400;
-  font-size: 12px;
+  font-weight: var(--pe-font-weight-normal);
+  font-size: var(--pe-text-sm);
   line-height: 110%;
   margin: 0;
 }

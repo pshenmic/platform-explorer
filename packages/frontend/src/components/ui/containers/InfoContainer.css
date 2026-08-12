@@ -38,11 +38,11 @@
 }
 .InfoContainer::after {
   background: radial-gradient(circle at 0% 100%, var(--pe-color-gray-800) 0, transparent);
-  opacity: 0.5;
+  opacity: var(--pe-opacity-muted);
   z-index: -1;
 }
 .InfoContainer--TranslucentBg::before {
-  opacity: 0.2;
+  opacity: var(--pe-opacity-subtle);
 }
 .InfoContainer--TranslucentBg::after {
   opacity: 0.3;
@@ -66,13 +66,13 @@
   }
 }
 .InfoContainer--Tabs {
-  padding: 10px 0 24px 0;
+  padding: var(--pe-space-2_5) 0 var(--pe-space-6) 0;
   overflow: hidden;
 }
 .InfoContainer--Tabs .chakra-tabs__tab {
-  font-size: 0.75rem;
+  font-size: var(--pe-text-sm);
   white-space: nowrap;
-  font-weight: 700;
+  font-weight: var(--pe-font-weight-bold);
   font-family: var(--pe-font-heading);
   text-transform: uppercase;
 }
@@ -82,15 +82,15 @@
   scrollbar-color: var(--pe-color-brand-normal) transparent;
 }
 .InfoContainer--Tabs .chakra-tabs__tablist::-webkit-scrollbar {
-  height: 8px;
-  width: 8px;
+  height: var(--pe-space-2);
+  width: var(--pe-space-2);
 }
 .InfoContainer--Tabs .chakra-tabs__tablist::-webkit-scrollbar-track {
   background: transparent;
 }
 .InfoContainer--Tabs .chakra-tabs__tablist::-webkit-scrollbar-thumb {
   background-color: var(--pe-color-brand-normal);
-  border-radius: 8px;
+  border-radius: var(--pe-radius-md);
   border: 2px solid transparent;
   background-clip: padding-box;
 }
@@ -98,39 +98,39 @@
   background-color: var(--pe-color-brand-light);
 }
 .InfoContainer--Tabs .chakra-tabs__tablist {
-  padding-left: calc(var(--pe-space-3) + -8px)  !important;
+  padding-left: calc(var(--pe-space-3) + -var(--pe-space-2))  !important;
 }
 @media screen and (min-width: 48em) {
   .InfoContainer--Tabs .chakra-tabs__tablist {
-    padding-left: calc(var(--pe-space-4) + -8px)  !important;
+    padding-left: calc(var(--pe-space-4) + -var(--pe-space-2))  !important;
   }
 }
 @media screen and (min-width: 62em) {
   .InfoContainer--Tabs .chakra-tabs__tablist {
-    padding-left: calc(var(--pe-space-5) + -8px)  !important;
+    padding-left: calc(var(--pe-space-5) + -var(--pe-space-2))  !important;
   }
 }
 @media screen and (min-width: 80em) {
   .InfoContainer--Tabs .chakra-tabs__tablist {
-    padding-left: calc(var(--pe-space-6) + -8px)  !important;
+    padding-left: calc(var(--pe-space-6) + -var(--pe-space-2))  !important;
   }
 }
 .InfoContainer--Tabs .chakra-tabs__tablist {
-  padding-right: calc(var(--pe-space-3) + -8px)  !important;
+  padding-right: calc(var(--pe-space-3) + -var(--pe-space-2))  !important;
 }
 @media screen and (min-width: 48em) {
   .InfoContainer--Tabs .chakra-tabs__tablist {
-    padding-right: calc(var(--pe-space-4) + -8px)  !important;
+    padding-right: calc(var(--pe-space-4) + -var(--pe-space-2))  !important;
   }
 }
 @media screen and (min-width: 62em) {
   .InfoContainer--Tabs .chakra-tabs__tablist {
-    padding-right: calc(var(--pe-space-5) + -8px)  !important;
+    padding-right: calc(var(--pe-space-5) + -var(--pe-space-2))  !important;
   }
 }
 @media screen and (min-width: 80em) {
   .InfoContainer--Tabs .chakra-tabs__tablist {
-    padding-right: calc(var(--pe-space-6) + -8px)  !important;
+    padding-right: calc(var(--pe-space-6) + -var(--pe-space-2))  !important;
   }
 }
 .InfoContainer--Tabs .chakra-tabs__tablist {
@@ -175,42 +175,42 @@
 }
 @media screen and (max-width: 30em) {
   .InfoContainer--Tabs .chakra-tabs__tablist {
-    padding-left: calc(var(--pe-space-3) + -4px)  !important;
-    padding-right: calc(var(--pe-space-3) + -4px)  !important;
+    padding-left: calc(var(--pe-space-3) + -var(--pe-space-1))  !important;
+    padding-right: calc(var(--pe-space-3) + -var(--pe-space-1))  !important;
   }
 }
 @media screen and (max-width: 30em) and (min-width: 48em) {
   .InfoContainer--Tabs .chakra-tabs__tablist {
-    padding-left: calc(var(--pe-space-4) + -4px)  !important;
+    padding-left: calc(var(--pe-space-4) + -var(--pe-space-1))  !important;
   }
 }
 @media screen and (max-width: 30em) and (min-width: 62em) {
   .InfoContainer--Tabs .chakra-tabs__tablist {
-    padding-left: calc(var(--pe-space-5) + -4px)  !important;
+    padding-left: calc(var(--pe-space-5) + -var(--pe-space-1))  !important;
   }
 }
 @media screen and (max-width: 30em) and (min-width: 80em) {
   .InfoContainer--Tabs .chakra-tabs__tablist {
-    padding-left: calc(var(--pe-space-6) + -4px)  !important;
+    padding-left: calc(var(--pe-space-6) + -var(--pe-space-1))  !important;
   }
 }
 @media screen and (max-width: 30em) and (min-width: 48em) {
   .InfoContainer--Tabs .chakra-tabs__tablist {
-    padding-right: calc(var(--pe-space-4) + -4px)  !important;
+    padding-right: calc(var(--pe-space-4) + -var(--pe-space-1))  !important;
   }
 }
 @media screen and (max-width: 30em) and (min-width: 62em) {
   .InfoContainer--Tabs .chakra-tabs__tablist {
-    padding-right: calc(var(--pe-space-5) + -4px)  !important;
+    padding-right: calc(var(--pe-space-5) + -var(--pe-space-1))  !important;
   }
 }
 @media screen and (max-width: 30em) and (min-width: 80em) {
   .InfoContainer--Tabs .chakra-tabs__tablist {
-    padding-right: calc(var(--pe-space-6) + -4px)  !important;
+    padding-right: calc(var(--pe-space-6) + -var(--pe-space-1))  !important;
   }
 }
 @media screen and (max-width: 30em) {
   .InfoContainer--Tabs .chakra-tabs__tab {
-    padding: 8px 4px;
+    padding: var(--pe-space-2) var(--pe-space-1);
   }
 }

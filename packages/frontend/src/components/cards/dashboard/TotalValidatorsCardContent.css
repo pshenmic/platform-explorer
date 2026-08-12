@@ -4,15 +4,15 @@
   flex-direction: column;
 }
 .TotalValidatorsCardContent__Avatars .ImageGenerator {
-  max-width: 2.5rem;
-  max-height: 2.5rem;
+  max-width: var(--pe-space-10);
+  max-height: var(--pe-space-10);
 }
 .TotalValidatorsCardContent__Count {
   flex-grow: 1;
 }
 @media screen and (max-width: 48em) {
   .TotalValidatorsCardContent__Avatars .ImageGenerator {
-    width: 2rem;
-    height: 2rem;
+    width: var(--pe-space-8);
+    height: var(--pe-space-8);
   }
 }

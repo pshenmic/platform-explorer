@@ -1,5 +1,5 @@
 .TransactionsList__Pagination {
-  margin-top: 2rem !important;
+  margin-top: var(--pe-space-8) !important;
 }
 .TransactionsList__ScrollZone {
   width: fit-content;
@@ -7,12 +7,12 @@
 }
 @media screen and (max-width: 48em) {
   .TransactionsList__Pagination {
-    margin-top: 1.5rem !important;
+    margin-top: var(--pe-space-6) !important;
   }
 }
 @media screen and (max-width: 30em) {
   .TransactionsList__Pagination {
-    margin-top: 1rem !important;
+    margin-top: var(--pe-space-4) !important;
   }
 }
 .TransactionsList {
@@ -23,22 +23,22 @@
   padding: var(--pe-list-row-pad-y) var(--pe-list-row-pad-x);
   border-radius: var(--pe-list-row-radius);
   background-color: var(--pe-color-gray-800);
-  margin-bottom: 8px;
+  margin-bottom: var(--pe-space-2);
   font-family: var(--pe-font-heading);
-  font-weight: 700;
-  font-size: 12px;
+  font-weight: var(--pe-font-weight-bold);
+  font-size: var(--pe-text-sm);
   text-transform: uppercase;
   color: var(--pe-color-fg);
 }
 .TransactionsList__ColumnTitles--Light {
   background: transparent !important;
-  font-weight: 500 !important;
+  font-weight: var(--pe-font-weight-medium) !important;
   color: var(--pe-color-fg) !important;
   text-transform: none !important;
 }
 .TransactionsList__ColumnTitles {
   display: grid;
-  gap: 16px;
+  gap: var(--pe-space-4);
   width: 100%;
   grid-template-columns: 6.5rem minmax(0, 1fr) 6rem 11rem minmax(0, 1fr) 10rem 10.5rem;
 }
@@ -49,12 +49,12 @@
 }
 @container (max-width: 660px) {
   .TransactionsList__ColumnTitles {
-    grid-template-columns: minmax(0, 1fr) 20px 10rem 10.5rem;
+    grid-template-columns: minmax(0, 1fr) var(--pe-space-5) 10rem 10.5rem;
   }
 }
 @container (max-width: 430px) {
   .TransactionsList__ColumnTitles {
-    gap: 12px;
+    gap: var(--pe-space-3);
     grid-template-columns: minmax(0, 1fr) 8rem 9rem;
   }
 }
@@ -113,7 +113,7 @@
 @container (max-width: 660px) {
   .TransactionsList__ColumnTitle--Owner {
     white-space: nowrap;
-    width: 20px;
+    width: var(--pe-space-5);
   }
   .TransactionsList__ColumnTitle--Type {
     width: 145px;

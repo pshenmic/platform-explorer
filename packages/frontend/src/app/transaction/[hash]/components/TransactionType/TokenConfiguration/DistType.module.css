@@ -18,40 +18,40 @@
 }
 .root .subcategory .container {
   width: fit-content;
-  padding: 6px 10px;
+  padding: var(--pe-space-1_5) var(--pe-space-2_5);
   background-color: var(--pe-color-gray-800);
 }
 .root .subcategory .container .title {
   font-family: var(--pe-font-mono);
-  font-size: 0.688rem;
+  font-size: var(--pe-text-xs);
 }
 .root .subcategory .container .card {
-  margin-top: 8px;
+  margin-top: var(--pe-space-2);
   width: fit-content;
-  padding: 6px 10px;
+  padding: var(--pe-space-1_5) var(--pe-space-2_5);
   background-color: rgba(88, 244, 188, 0.2);
 }
 .root .subcategory .container .card .title {
   color: #58f4bc;
   font-family: var(--pe-font-mono);
-  font-size: 0.688rem;
+  font-size: var(--pe-text-xs);
 }
 .root .subcategory .container .card .header {
   display: flex;
   align-items: center;
-  gap: 8px;
-  font-weight: 400;
+  gap: var(--pe-space-2);
+  font-weight: var(--pe-font-weight-normal);
 }
 .root .subcategory .container .card .list {
-  margin-top: 8px;
+  margin-top: var(--pe-space-2);
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: var(--pe-space-2);
 }
 .root .subcategory .container .card .list .field {
   margin: 0;
   font-family: var(--pe-font-mono);
   line-height: 140%;
-  font-size: 0.688rem;
-  font-weight: 400;
+  font-size: var(--pe-text-xs);
+  font-weight: var(--pe-font-weight-normal);
 }

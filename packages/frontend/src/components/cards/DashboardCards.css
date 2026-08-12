@@ -2,15 +2,15 @@
   width: 100%;
 }
 .DashboardCards__Slider {
-  margin-top: -10px;
-  margin-bottom: -10px;
+  margin-top: -var(--pe-space-2_5);
+  margin-bottom: -var(--pe-space-2_5);
 }
 .DashboardCards__CardsColumn {
   width: 90%;
-  padding: 10px;
+  padding: var(--pe-space-2_5);
 }
 .DashboardCards__Card {
-  margin-bottom: 20px;
+  margin-bottom: var(--pe-space-5);
 }
 .DashboardCards__Card:last-child {
   margin-bottom: 0;
@@ -22,10 +22,10 @@
 }
 @media screen and (max-width: 48em) {
   .DashboardCards__CardsColumn {
-    padding: 10px 4px;
+    padding: var(--pe-space-2_5) var(--pe-space-1);
   }
   .DashboardCards__Card {
-    margin-bottom: 8px;
+    margin-bottom: var(--pe-space-2);
   }
   .DashboardCards__Card:last-child {
     margin-bottom: 0;
@@ -33,18 +33,18 @@
 }
 @media screen and (max-width: 600px) {
   .DashboardCards__Slider {
-    width: calc(100% + 20px);
+    width: calc(100% + var(--pe-space-5));
   }
   .DashboardCards .Slider__Carousel {
     width: 110%;
-    margin: 0 calc(-5% - 4px);
+    margin: 0 calc(-5% - var(--pe-space-1));
     overflow: visible;
   }
 }
 .DashboardCards--NoSlider .DashboardCards__Grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 20px;
+  gap: var(--pe-space-5);
   width: 100%;
 }
 @media screen and (min-width: 48em) {
@@ -53,18 +53,18 @@
   }
 }
 .DashboardCards__Title {
-  margin-bottom: 12px;
+  margin-bottom: var(--pe-space-3);
   color: var(--pe-color-brand-normal);
   font-family: var(--pe-font-heading);
   font-style: italic;
-  font-size: 0.875rem;
-  font-weight: 800;
+  font-size: var(--pe-text-md);
+  font-weight: var(--pe-font-weight-extrabold);
   text-transform: uppercase;
   white-space: nowrap;
 }
 .DashboardCards__Value {
   font-family: var(--pe-font-heading);
-  font-weight: 800;
-  font-size: 1.25rem;
+  font-weight: var(--pe-font-weight-extrabold);
+  font-size: var(--pe-space-5);
   flex-grow: 1;
 }

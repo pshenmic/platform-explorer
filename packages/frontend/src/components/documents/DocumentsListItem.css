@@ -3,8 +3,8 @@
   width: 100%;
   text-decoration: none;
   padding: var(--pe-list-row-pad-y) var(--pe-list-row-pad-x);
-  margin-bottom: 8px;
-  line-height: 24px;
+  margin-bottom: var(--pe-space-2);
+  line-height: var(--pe-space-6);
   color: var(--pe-color-gray-100);
   font-family: var(--pe-font-mono);
   font-size: 12pt;
@@ -28,8 +28,8 @@
   margin-bottom: 0;
 }
 .DocumentsListItem__Column--Credits, .DocumentsListItem__Column--Number {
-  font-size: 0.75rem;
-  font-weight: 700;
+  font-size: var(--pe-text-sm);
+  font-weight: var(--pe-font-weight-bold);
 }
 .DocumentsListItem__IdentifierContainer {
   display: flex;
@@ -37,10 +37,10 @@
   min-width: 50px;
 }
 .DocumentsListItem__Avatar {
-  height: 24px;
-  width: 24px;
+  height: var(--pe-space-6);
+  width: var(--pe-space-6);
   flex-shrink: 0;
-  margin-right: 12px;
+  margin-right: var(--pe-space-3);
 }
 .DocumentsListItem--Timestamp, .DocumentsListItem__Column--Timestamp {
   font-family: var(--pe-font-mono);
@@ -50,18 +50,18 @@
 .DocumentsListItem--Timestamp,
 .DocumentsListItem--Timestamp .DateBlock__Date, .DocumentsListItem__Column--Timestamp,
 .DocumentsListItem__Column--Timestamp .DateBlock__Date {
-  font-size: 0.75rem;
+  font-size: var(--pe-text-sm);
 }
 .DocumentsListItem {
   display: grid;
   grid-column: 1/-1;
   grid-template-columns: subgrid;
-  column-gap: 12px;
+  column-gap: var(--pe-space-3);
 }
 .DocumentsListItem__Column {
   display: flex;
   align-items: center;
-  font-size: 0.75rem;
+  font-size: var(--pe-text-sm);
 }
 .DocumentsListItem__Column--Timestamp {
   max-width: 70px;
@@ -92,8 +92,8 @@
 .DocumentsListItem__Column--Gas {
   justify-content: flex-end;
   font-variant-numeric: tabular-nums;
-  font-size: 0.75rem;
-  opacity: 0.85;
+  font-size: var(--pe-text-sm);
+  opacity: var(--pe-opacity-strong);
 }
 .DocumentsListItem__Column--Status {
   justify-content: flex-end;

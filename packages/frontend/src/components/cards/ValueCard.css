@@ -1,5 +1,5 @@
 .ValueCard {
-  padding: 8px 12px;
+  padding: var(--pe-space-2) var(--pe-space-3);
   border-radius: var(--pe-radius-def);
   background-color: rgba(var(--pe-color-gray-800-rgb), 0.5);
   border: 1px solid var(--pe-color-gray-550);
@@ -46,12 +46,12 @@
   height: 100%;
   background: linear-gradient(90deg, rgb(14, 117, 181) 0%, rgb(22, 82, 120) 100%);
   border-radius: 100px;
-  opacity: 0.1;
+  opacity: var(--pe-opacity-faint);
   animation: LoadingLine linear 3s infinite;
 }
 Tr .ValueCard--Loading::before {
   background-color: var(--pe-color-gray-800);
-  opacity: 0.2;
+  opacity: var(--pe-opacity-subtle);
 }
 .ValueCard--Loading:nth-child(1n)::after {
   animation-delay: -0.5s;
@@ -114,9 +114,9 @@ Tr:nth-child(10n) .ValueCard--Loading::after {
   animation-delay: 4s;
 }
 .ValueCard--SizeSm {
-  padding: 5px 10px;
-  line-height: 14px;
-  border-radius: 4px;
+  padding: 5px var(--pe-space-2_5);
+  line-height: var(--pe-space-3_5);
+  border-radius: var(--pe-radius-sm);
 }
 .ValueCard--BgTransparent {
   background: transparent;

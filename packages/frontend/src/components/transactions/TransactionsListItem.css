@@ -3,8 +3,8 @@
   width: 100%;
   text-decoration: none;
   padding: var(--pe-list-row-pad-y) var(--pe-list-row-pad-x);
-  margin-bottom: 8px;
-  line-height: 24px;
+  margin-bottom: var(--pe-space-2);
+  line-height: var(--pe-space-6);
   color: var(--pe-color-gray-100);
   font-family: var(--pe-font-mono);
   font-size: 12pt;
@@ -28,8 +28,8 @@
   margin-bottom: 0;
 }
 .TransactionsListItem__Column--Credits, .TransactionsListItem__Column--Number {
-  font-size: 0.75rem;
-  font-weight: 700;
+  font-size: var(--pe-text-sm);
+  font-weight: var(--pe-font-weight-bold);
 }
 .TransactionsListItem__IdentifierContainer {
   display: flex;
@@ -37,10 +37,10 @@
   min-width: 50px;
 }
 .TransactionsListItem__Avatar {
-  height: 24px;
-  width: 24px;
+  height: var(--pe-space-6);
+  width: var(--pe-space-6);
   flex-shrink: 0;
-  margin-right: 12px;
+  margin-right: var(--pe-space-3);
 }
 .TransactionsListItem--Timestamp, .TransactionsListItem__Column--Timestamp {
   font-family: var(--pe-font-mono);
@@ -50,7 +50,7 @@
 .TransactionsListItem--Timestamp,
 .TransactionsListItem--Timestamp .DateBlock__Date, .TransactionsListItem__Column--Timestamp,
 .TransactionsListItem__Column--Timestamp .DateBlock__Date {
-  font-size: 0.75rem;
+  font-size: var(--pe-text-sm);
 }
 .TransactionsListItem {
   display: block;
@@ -66,7 +66,7 @@
 }
 .TransactionsListItem__Content {
   display: grid;
-  gap: 16px;
+  gap: var(--pe-space-4);
   width: 100%;
   grid-template-columns: 6.5rem minmax(0, 1fr) 6rem 11rem minmax(0, 1fr) 10rem 10.5rem;
 }
@@ -77,12 +77,12 @@
 }
 @container (max-width: 660px) {
   .TransactionsListItem__Content {
-    grid-template-columns: minmax(0, 1fr) 20px 10rem 10.5rem;
+    grid-template-columns: minmax(0, 1fr) var(--pe-space-5) 10rem 10.5rem;
   }
 }
 @container (max-width: 430px) {
   .TransactionsListItem__Content {
-    gap: 12px;
+    gap: var(--pe-space-3);
     grid-template-columns: minmax(0, 1fr) 8rem 9rem;
   }
 }
@@ -129,7 +129,7 @@
 }
 .TransactionsListItem__Column--Timestamp {
   font-family: var(--pe-font-mono);
-  font-size: 0.75rem;
+  font-size: var(--pe-text-sm);
   white-space: nowrap;
   color: var(--pe-color-fg);
   justify-content: flex-end;
@@ -139,7 +139,7 @@
   color: var(--pe-color-fg-muted);
   font-family: var(--pe-font-mono);
   flex-grow: 1;
-  font-size: 0.75rem;
+  font-size: var(--pe-text-sm);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -154,7 +154,7 @@
   min-width: 0;
 }
 .TransactionsListItem__Column--GasUsed {
-  font-size: 0.75rem;
+  font-size: var(--pe-text-sm);
   text-transform: uppercase;
   color: var(--pe-color-fg);
   white-space: nowrap;
@@ -162,7 +162,7 @@
 }
 .TransactionsListItem__Column--Block {
   font-family: var(--pe-font-mono);
-  font-size: 0.75rem;
+  font-size: var(--pe-text-sm);
   color: var(--pe-color-fg-muted);
   white-space: nowrap;
 }
@@ -170,7 +170,7 @@
   position: relative;
   z-index: 2;
   transition: var(--pe-transition-def);
-  border-radius: 4px;
+  border-radius: var(--pe-radius-sm);
 }
 .TransactionsListItem__BlockLink:hover {
   background: rgba(255, 255, 255, 0.1);
@@ -194,7 +194,7 @@
   z-index: 2;
   transition: var(--pe-transition-def);
   overflow: hidden;
-  border-radius: 4px;
+  border-radius: var(--pe-radius-sm);
   flex: 1;
   min-width: 0;
 }
@@ -231,7 +231,7 @@
 }
 @container (max-width: 400px) {
   .TransactionsListItem {
-    padding: 5px 8px;
+    padding: 5px var(--pe-space-2);
   }
   .TransactionsListItem__Column, .TransactionsListItem__Column .Identifier {
     font-size: 0.563rem;

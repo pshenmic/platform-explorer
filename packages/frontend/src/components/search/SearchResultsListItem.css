@@ -3,8 +3,8 @@
   width: 100%;
   text-decoration: none;
   padding: var(--pe-list-row-pad-y) var(--pe-list-row-pad-x);
-  margin-bottom: 8px;
-  line-height: 24px;
+  margin-bottom: var(--pe-space-2);
+  line-height: var(--pe-space-6);
   color: var(--pe-color-gray-100);
   font-family: var(--pe-font-mono);
   font-size: 12pt;
@@ -28,8 +28,8 @@
   margin-bottom: 0;
 }
 .SearchResultsListItem__Column--Credits, .SearchResultsListItem__Column--Number {
-  font-size: 0.75rem;
-  font-weight: 700;
+  font-size: var(--pe-text-sm);
+  font-weight: var(--pe-font-weight-bold);
 }
 .SearchResultsListItem__IdentifierContainer {
   display: flex;
@@ -37,10 +37,10 @@
   min-width: 50px;
 }
 .SearchResultsListItem__Avatar {
-  height: 24px;
-  width: 24px;
+  height: var(--pe-space-6);
+  width: var(--pe-space-6);
   flex-shrink: 0;
-  margin-right: 12px;
+  margin-right: var(--pe-space-3);
 }
 .SearchResultsListItem--Timestamp, .SearchResultsListItem__Column--Timestamp {
   font-family: var(--pe-font-mono);
@@ -50,43 +50,43 @@
 .SearchResultsListItem--Timestamp,
 .SearchResultsListItem--Timestamp .DateBlock__Date, .SearchResultsListItem__Column--Timestamp,
 .SearchResultsListItem__Column--Timestamp .DateBlock__Date {
-  font-size: 0.75rem;
+  font-size: var(--pe-text-sm);
 }
 .SearchResultsListItem {
   align-items: center;
-  padding: 8px 16px;
+  padding: var(--pe-space-2) var(--pe-space-4);
   display: block;
 }
 .SearchResultsListItem__Content {
   display: grid;
-  gap: 16px;
+  gap: var(--pe-space-4);
   width: 100%;
-  grid-template-columns: minmax(0, 80rem) minmax(0, 80rem) 5rem 1rem;
+  grid-template-columns: minmax(0, 80rem) minmax(0, 80rem) 5rem var(--pe-space-4);
 }
 .SearchResultsListItem__Content--Validator {
-  grid-template-columns: minmax(0, 80rem) minmax(0, 80rem) 6rem 1rem;
+  grid-template-columns: minmax(0, 80rem) minmax(0, 80rem) 6rem var(--pe-space-4);
 }
 .SearchResultsListItem__Content--PlatformAddress {
-  grid-template-columns: minmax(0, 80rem) 5rem 1rem;
+  grid-template-columns: minmax(0, 80rem) 5rem var(--pe-space-4);
 }
 @container (max-width: 48rem) {
   .SearchResultsListItem__Content--Document, .SearchResultsListItem__Content--DataContract, .SearchResultsListItem__Content--Token, .SearchResultsListItem__Content--PlatformAddress {
-    grid-template-columns: minmax(0, 80rem) 4.5rem 1rem;
+    grid-template-columns: minmax(0, 80rem) 4.5rem var(--pe-space-4);
   }
   .SearchResultsListItem__Content--Validator {
-    grid-template-columns: minmax(0, 80rem) 6rem 1rem;
+    grid-template-columns: minmax(0, 80rem) 6rem var(--pe-space-4);
   }
 }
 @container (max-width: 24rem) {
   .SearchResultsListItem__Content--Block, .SearchResultsListItem__Content--Identity, .SearchResultsListItem__Content--Transaction {
-    grid-template-columns: minmax(0, 80rem) 4.5rem 1rem;
+    grid-template-columns: minmax(0, 80rem) 4.5rem var(--pe-space-4);
   }
 }
 .SearchResultsListItem__Column {
   display: flex;
   align-items: center;
   font-family: var(--pe-font-mono);
-  font-size: 0.75rem;
+  font-size: var(--pe-text-sm);
   color: var(--pe-color-fg-muted);
   width: 100%;
 }
@@ -125,12 +125,12 @@
   }
 }
 .SearchResultsListItem__Column--Timestamp {
-  font-size: 0.75rem;
+  font-size: var(--pe-text-sm);
   color: var(--pe-color-fg-muted);
   text-align: right;
 }
 .SearchResultsListItem .Alias__Avatar, .SearchResultsListItem .Identifier__Avatar, .SearchResultsListItem__Icon {
-  margin-right: 4px;
+  margin-right: var(--pe-space-1);
 }
 .SearchResultsListItem__ArrowButtonContainer {
   display: flex;
@@ -139,18 +139,18 @@
 }
 .SearchResultsListItem__ArrowButton {
   margin-left: auto;
-  width: 1rem;
-  height: 1rem;
+  width: var(--pe-space-4);
+  height: var(--pe-space-4);
 }
 .SearchResultsListItem__Icon {
-  height: 24px  !important;
-  width: 24px  !important;
+  height: var(--pe-space-6)  !important;
+  width: var(--pe-space-6)  !important;
 }
 .SearchResultsListItem .Badge {
-  font-size: 0.75rem;
+  font-size: var(--pe-text-sm);
 }
 .SearchResultsListItem .Identifier {
-  font-size: 0.75rem;
+  font-size: var(--pe-text-sm);
 }
 .SearchResultsListItem--Loading {
   background-color: rgba(var(--pe-color-gray-800-rgb), 0.5) !important;
@@ -159,7 +159,7 @@
   cursor: default;
 }
 .SearchResultsListItem--Loading .LoadingLine {
-  height: 1rem;
+  height: var(--pe-space-4);
   width: 100%;
   margin: 0;
 }
@@ -168,6 +168,6 @@
 }
 @container (max-width: 768px) {
   .SearchResultsListItem {
-    padding: 8px 12px;
+    padding: var(--pe-space-2) var(--pe-space-3);
   }
 }

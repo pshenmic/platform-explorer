@@ -1,7 +1,7 @@
 .QuorumInfo {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: var(--pe-space-2);
 }
 .QuorumInfo__LineContainer {
   display: flex;
@@ -9,8 +9,8 @@
   min-height: 3rem;
   border-radius: var(--pe-radius-def);
   background-color: rgba(var(--pe-color-gray-800-rgb), 0.5);
-  gap: 0.5rem;
-  padding: 0.5rem 1.25rem;
+  gap: var(--pe-space-2);
+  padding: var(--pe-space-2) var(--pe-space-5);
 }
 .QuorumInfo__InfoLine {
   width: 100%;
@@ -27,7 +27,7 @@
 }
 @media screen and (max-width: 62em) {
   .QuorumInfo__LineContainer {
-    padding: 0.5rem 1rem;
+    padding: var(--pe-space-2) var(--pe-space-4);
   }
 }
 @media screen and (max-width: 48em) {
@@ -38,7 +38,7 @@
     width: 11rem;
   }
   .QuorumInfo__LineContainer {
-    padding: 0.5rem 0.75rem;
+    padding: var(--pe-space-2) var(--pe-space-3);
   }
 }
 @media screen and (max-width: 30em) {

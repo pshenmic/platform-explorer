@@ -3,8 +3,8 @@
   width: 100%;
   text-decoration: none;
   padding: var(--pe-list-row-pad-y) var(--pe-list-row-pad-x);
-  margin-bottom: 8px;
-  line-height: 24px;
+  margin-bottom: var(--pe-space-2);
+  line-height: var(--pe-space-6);
   color: var(--pe-color-gray-100);
   font-family: var(--pe-font-mono);
   font-size: 12pt;
@@ -28,8 +28,8 @@
   margin-bottom: 0;
 }
 .IdentitiesListItem__Column--Credits, .IdentitiesListItem__Column--Number {
-  font-size: 0.75rem;
-  font-weight: 700;
+  font-size: var(--pe-text-sm);
+  font-weight: var(--pe-font-weight-bold);
 }
 .IdentitiesListItem__IdentifierContainer {
   display: flex;
@@ -37,10 +37,10 @@
   min-width: 50px;
 }
 .IdentitiesListItem__Avatar {
-  height: 24px;
-  width: 24px;
+  height: var(--pe-space-6);
+  width: var(--pe-space-6);
   flex-shrink: 0;
-  margin-right: 12px;
+  margin-right: var(--pe-space-3);
 }
 .IdentitiesListItem--Timestamp, .IdentitiesListItem__Column--Timestamp {
   font-family: var(--pe-font-mono);
@@ -50,7 +50,7 @@
 .IdentitiesListItem--Timestamp,
 .IdentitiesListItem--Timestamp .DateBlock__Date, .IdentitiesListItem__Column--Timestamp,
 .IdentitiesListItem__Column--Timestamp .DateBlock__Date {
-  font-size: 0.75rem;
+  font-size: var(--pe-text-sm);
 }
 .IdentitiesListItem {
   display: block;
@@ -58,7 +58,7 @@
 }
 .IdentitiesListItem__Content {
   display: grid;
-  gap: 1rem;
+  gap: var(--pe-space-4);
   width: 100%;
   grid-template-columns: minmax(0, 1fr) 12rem 7rem 7rem 8rem 11rem;
 }
@@ -115,13 +115,13 @@
 }
 .IdentitiesListItem__Column--Balance, .IdentitiesListItem__Column--Txs, .IdentitiesListItem__Column--Documents, .IdentitiesListItem__Column--Contracts {
   font-family: var(--pe-font-mono);
-  font-size: 0.75rem;
+  font-size: var(--pe-text-sm);
   color: var(--pe-color-white-50);
 }
 .IdentitiesListItem__IdentifierContainer {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: var(--pe-space-2);
   min-width: 0;
 }
 .IdentitiesListItem__Medal {
@@ -136,12 +136,12 @@
   content: "";
   position: absolute;
   left: 2px;
-  top: 8px;
-  bottom: 8px;
+  top: var(--pe-space-2);
+  bottom: var(--pe-space-2);
   width: 3px;
   border-radius: 3px;
   background: #FFD205;
-  opacity: 0.75;
+  opacity: var(--pe-opacity-soft);
 }
 .IdentitiesListItem--Rank2 {
   background-image: linear-gradient(90deg, rgba(198, 202, 205, 0.12) 0%, rgba(198, 202, 205, 0) 60%);
@@ -150,12 +150,12 @@
   content: "";
   position: absolute;
   left: 2px;
-  top: 8px;
-  bottom: 8px;
+  top: var(--pe-space-2);
+  bottom: var(--pe-space-2);
   width: 3px;
   border-radius: 3px;
   background: #c6cacd;
-  opacity: 0.75;
+  opacity: var(--pe-opacity-soft);
 }
 .IdentitiesListItem--Rank3 {
   background-image: linear-gradient(90deg, rgba(244, 154, 88, 0.12) 0%, rgba(244, 154, 88, 0) 60%);
@@ -164,10 +164,10 @@
   content: "";
   position: absolute;
   left: 2px;
-  top: 8px;
-  bottom: 8px;
+  top: var(--pe-space-2);
+  bottom: var(--pe-space-2);
   width: 3px;
   border-radius: 3px;
   background: var(--pe-color-orange-default);
-  opacity: 0.75;
+  opacity: var(--pe-opacity-soft);
 }

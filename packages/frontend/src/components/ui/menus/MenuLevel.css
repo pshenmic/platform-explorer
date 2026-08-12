@@ -1,19 +1,19 @@
 .MenuLevel {
-  width: calc(100% + 0.5rem);
+  width: calc(100% + var(--pe-space-2));
   scroll-behavior: smooth;
   scrollbar-width: thin;
   scrollbar-color: var(--pe-color-brand-normal) transparent;
 }
 .MenuLevel::-webkit-scrollbar {
-  height: 8px;
-  width: 8px;
+  height: var(--pe-space-2);
+  width: var(--pe-space-2);
 }
 .MenuLevel::-webkit-scrollbar-track {
   background: transparent;
 }
 .MenuLevel::-webkit-scrollbar-thumb {
   background-color: var(--pe-color-brand-normal);
-  border-radius: 8px;
+  border-radius: var(--pe-radius-md);
   border: 2px solid transparent;
   background-clip: padding-box;
 }
@@ -23,21 +23,21 @@
 .MenuLevel {
   display: flex;
   flex-direction: column;
-  gap: 0.25rem;
-  margin: -0.25rem;
+  gap: var(--pe-space-1);
+  margin: -var(--pe-space-1);
 }
 .MenuLevel__Item {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 1rem;
-  padding: 0.5rem 0.625rem;
+  gap: var(--pe-space-4);
+  padding: var(--pe-space-2) var(--pe-space-2_5);
   position: relative;
   font-family: var(--pe-font-heading);
-  font-weight: 700;
+  font-weight: var(--pe-font-weight-bold);
   text-transform: uppercase;
-  font-size: 0.75rem;
-  letter-spacing: 0.4px;
+  font-size: var(--pe-text-sm);
+  letter-spacing: 0.var(--pe-space-1);
   border-radius: var(--pe-radius-def);
   transition: background-color var(--pe-transition-def);
   color: var(--pe-color-fg-muted);
@@ -66,23 +66,23 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 1rem;
-  height: 1rem;
-  border-radius: 0.25rem;
+  width: var(--pe-space-4);
+  height: var(--pe-space-4);
+  border-radius: var(--pe-radius-sm);
   background: rgba(var(--pe-color-brand-normal-rgb), 0.2);
 }
 .MenuLevel__ItemIcon svg {
-  width: 0.5rem;
-  height: 0.5rem;
+  width: var(--pe-space-2);
+  height: var(--pe-space-2);
 }
 .MenuLevel__Item--Submenu:after {
   content: "";
   position: absolute;
-  right: 8px;
+  right: var(--pe-space-2);
   top: 50%;
   transform: translateY(-50%);
-  width: 12px;
-  height: 12px;
+  width: var(--pe-space-3);
+  height: var(--pe-space-3);
   border-radius: 50%;
   background-color: transparent;
   transition: background-color var(--pe-transition-def);

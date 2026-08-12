@@ -9,10 +9,10 @@
   opacity: 0;
   box-shadow: none;
   background-color: var(--pe-color-gray-650);
-  border-radius: 0 0 20px 20px;
+  border-radius: 0 0 var(--pe-space-5) var(--pe-space-5);
   max-height: 100%;
   min-height: 10rem;
-  transform: translateY(calc(-20px - 100%));
+  transform: translateY(calc(-var(--pe-space-5) - 100%));
   transition: all 0.15s;
   padding-left: var(--pe-space-3);
   padding-right: var(--pe-space-3);
@@ -22,11 +22,11 @@
   opacity: 1;
   visibility: visible;
   transform: translateY(0);
-  box-shadow: 0 20px 32px 0 var(--pe-color-gray-900);
+  box-shadow: 0 var(--pe-space-5) var(--pe-space-8) 0 var(--pe-color-gray-900);
   overflow-y: auto;
 }
 .NavbarMobileMenu__Content {
-  padding: 20px 0;
+  padding: var(--pe-space-5) 0;
   width: 100%;
 }
 .NavbarMobileMenu__Header {
@@ -34,8 +34,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0.5rem 0;
-  margin-bottom: 1rem;
+  padding: var(--pe-space-2) 0;
+  margin-bottom: var(--pe-space-4);
 }
 .NavbarMobileMenu__BackButton {
   position: absolute;
@@ -45,8 +45,8 @@
   cursor: pointer;
   color: rgba(var(--pe-color-brand-normal-rgb), 0.8);
   transition: color 0.2s;
-  border-radius: 0.25rem;
-  padding: 0.5rem;
+  border-radius: var(--pe-radius-sm);
+  padding: var(--pe-space-2);
 }
 .NavbarMobileMenu__BackButton:hover {
   cursor: pointer;
@@ -55,26 +55,26 @@
 }
 .NavbarMobileMenu__Title {
   font-family: var(--pe-font-heading);
-  font-weight: 800;
-  font-size: 1rem;
+  font-weight: var(--pe-font-weight-extrabold);
+  font-size: var(--pe-text-lg);
   line-height: 100%;
   text-align: center;
   margin: 0 auto;
 }
 .NavbarMobileMenu__Items {
   width: 100%;
-  gap: 0.5rem;
+  gap: var(--pe-space-2);
 }
 .NavbarMobileMenu__Item {
   font-family: var(--pe-font-heading);
-  font-size: 0.75rem;
-  letter-spacing: 0.4px;
+  font-size: var(--pe-text-sm);
+  letter-spacing: 0.var(--pe-space-1);
   text-transform: uppercase;
-  font-weight: bold;
+  font-weight: var(--pe-font-weight-bold);
   color: var(--pe-color-fg-muted);
   background: rgba(255, 255, 255, 0.08);
-  border-radius: 10px;
-  padding: 1.25rem;
+  border-radius: var(--pe-radius-def);
+  padding: var(--pe-space-5);
   border: 1px solid rgba(255, 255, 255, 0.07);
   transition: all 0.1s;
   cursor: pointer;
@@ -85,7 +85,7 @@
   background: rgba(255, 255, 255, 0.02);
 }
 .NavbarMobileMenu__Item--Disabled {
-  opacity: 0.5;
+  opacity: var(--pe-opacity-muted);
   cursor: not-allowed;
 }
 .NavbarMobileMenu__Item--Disabled:hover {

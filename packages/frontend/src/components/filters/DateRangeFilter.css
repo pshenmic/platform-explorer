@@ -1,23 +1,23 @@
 .DateRangeFilter {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: var(--pe-space-6);
   min-width: 650px;
 }
 .DateRangeFilter__ValuesContainer {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 1rem;
+  gap: var(--pe-space-4);
 }
 .DateRangeFilter__ValuesTitle {
-  font-size: 0.688rem;
+  font-size: var(--pe-text-xs);
   font-family: var(--pe-font-mono);
-  opacity: 0.5;
+  opacity: var(--pe-opacity-muted);
 }
 .DateRangeFilter__Values {
   display: flex;
-  gap: 0.5rem;
+  gap: var(--pe-space-2);
   margin-left: auto;
 }
 .MobileFilterMenu .DateRangeFilter {

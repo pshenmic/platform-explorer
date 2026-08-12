@@ -1,13 +1,13 @@
 .Validators__Controls {
   display: flex;
   align-items: center;
-  gap: 1rem;
-  margin: 0.75rem 0 1.5rem;
+  gap: var(--pe-space-4);
+  margin: var(--pe-space-3) 0 var(--pe-space-6);
   flex-wrap: wrap;
 }
 .Validators__Title {
   flex-shrink: 0;
-  margin-right: 0.5rem;
+  margin-right: var(--pe-space-2);
 }
 .Validators__Stats {
   flex: 1 1 auto;
@@ -18,13 +18,13 @@
   margin-left: auto;
 }
 .Validators .ValidatorsTotal {
-  margin-bottom: 1.5rem;
+  margin-bottom: var(--pe-space-6);
 }
 @media screen and (max-width: 48em) {
   .Validators__Controls {
     flex-direction: column;
     align-items: flex-start;
-    gap: 1rem;
+    gap: var(--pe-space-4);
   }
   .Validators__Filters {
     margin-left: 0;

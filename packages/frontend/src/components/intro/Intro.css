@@ -7,11 +7,11 @@
   display: flex;
   padding: 64px;
   width: 100%;
-  gap: 2.5rem;
+  gap: var(--pe-space-10);
 }
 .Intro__Title {
   font-style: italic;
-  font-weight: 800;
+  font-weight: var(--pe-font-weight-extrabold);
 }
 .Intro__Info {
   width: 480px;
@@ -33,8 +33,8 @@
 @media screen and (max-width: 75em) {
   .Intro {
     flex-wrap: wrap;
-    padding: 2.5rem;
-    gap: 2.5rem;
+    padding: var(--pe-space-10);
+    gap: var(--pe-space-10);
   }
   .Intro__Info, .Intro__Block {
     width: 100%;
@@ -45,7 +45,7 @@
 }
 @media screen and (max-width: 62em) {
   .Intro {
-    gap: 1.5rem;
-    padding: 1.5rem;
+    gap: var(--pe-space-6);
+    padding: var(--pe-space-6);
   }
 }

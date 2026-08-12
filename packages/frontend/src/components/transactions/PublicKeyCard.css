@@ -1,19 +1,19 @@
 .PublicKeyCard {
-  padding: 40px !important;
+  padding: var(--pe-space-10) !important;
 }
 @media screen and (max-width: 48em) {
   .PublicKeyCard {
-    padding: 32px !important;
+    padding: var(--pe-space-8) !important;
   }
 }
 @media screen and (max-width: 30em) {
   .PublicKeyCard {
-    padding: 16px !important;
+    padding: var(--pe-space-4) !important;
   }
 }
 .PublicKeyCard__InfoLine {
   justify-content: flex-start;
-  margin-bottom: 14px;
+  margin-bottom: var(--pe-space-3_5);
 }
 .PublicKeyCard__InfoLine:last-child {
   margin-bottom: 0;
@@ -42,7 +42,7 @@
     flex-wrap: wrap;
   }
   .PublicKeyCard__InfoLine--Data .InfoLine__Title {
-    margin-bottom: 8px;
+    margin-bottom: var(--pe-space-2);
   }
   .PublicKeyCard__InfoLine--Data .InfoLine__Value {
     width: 100%;

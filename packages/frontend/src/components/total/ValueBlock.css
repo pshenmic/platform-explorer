@@ -55,12 +55,12 @@
 }
 .ValueBlock__Title {
   color: var(--pe-color-brand-deep);
-  font-size: 1rem;
-  margin-right: 10px;
+  font-size: var(--pe-text-lg);
+  margin-right: var(--pe-space-2_5);
   white-space: nowrap;
 }
 .ValueBlock__Value {
-  font-size: 1.125rem;
+  font-size: var(--pe-text-xl);
 }
 .ValueBlock__Value--Loading {
   overflow: hidden;
@@ -101,12 +101,12 @@
   height: 100%;
   background: linear-gradient(90deg, rgb(14, 117, 181) 0%, rgb(22, 82, 120) 100%);
   border-radius: 100px;
-  opacity: 0.1;
+  opacity: var(--pe-opacity-faint);
   animation: LoadingLine linear 3s infinite;
 }
 Tr .ValueBlock__Value--Loading::before {
   background-color: var(--pe-color-gray-800);
-  opacity: 0.2;
+  opacity: var(--pe-opacity-subtle);
 }
 .ValueBlock__Value--Loading:nth-child(1n)::after {
   animation-delay: -0.5s;
@@ -169,7 +169,7 @@ Tr:nth-child(10n) .ValueBlock__Value--Loading::after {
   animation-delay: 4s;
 }
 .ValueBlock__Value--Loading {
-  opacity: 0.5;
+  opacity: var(--pe-opacity-muted);
   border-radius: 5px;
   animation-delay: 100ms;
 }

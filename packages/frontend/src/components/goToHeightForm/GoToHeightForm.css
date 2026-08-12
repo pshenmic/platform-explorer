@@ -3,20 +3,20 @@
   align-items: center;
 }
 .GoToHeightForm__Title {
-  margin-right: 8px;
+  margin-right: var(--pe-space-2);
   white-space: nowrap;
   font-family: var(--pe-font-mono);
   color: var(--pe-color-fg-muted);
-  font-size: 0.75rem;
+  font-size: var(--pe-text-sm);
 }
 .GoToHeightForm__Input {
   font-family: var(--pe-font-mono);
-  font-size: 0.75rem;
+  font-size: var(--pe-text-sm);
 }
 .GoToHeightForm__Input, .GoToHeightForm__Input:focus {
   width: 80px;
-  padding: 0 8px;
-  margin-right: 6px;
+  padding: 0 var(--pe-space-2);
+  margin-right: var(--pe-space-1_5);
   height: 29px;
   box-sizing: border-box;
   border: 1px solid var(--pe-color-white-alpha-400);
@@ -37,7 +37,7 @@
   border-radius: 5px;
   height: 29px;
   color: var(--pe-color-fg);
-  padding: 0 4px;
+  padding: 0 var(--pe-space-1);
   font-family: var(--pe-font-mono);
 }
 .GoToHeightForm__Button:disabled {

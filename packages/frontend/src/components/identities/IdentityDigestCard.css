@@ -18,16 +18,16 @@
 }
 .IdentityDigestCard {
   font-family: var(--pe-font-mono);
-  font-size: 0.75rem;
+  font-size: var(--pe-text-sm);
   display: flex;
   flex-direction: column;
-  gap: 0.875rem;
+  gap: var(--pe-space-3_5);
   background: rgba(var(--pe-color-gray-800-rgb), 0.5);
   border-radius: var(--pe-radius-def);
   container-type: inline-size;
 }
 .IdentityDigestCard--Loading .InfoLine__Value {
-  height: 1.5rem;
+  height: var(--pe-space-6);
 }
 .IdentityDigestCard--Loading .IdentityDigestCard__InfoContainer {
   overflow: hidden;
@@ -39,39 +39,39 @@
 .IdentityDigestCard__RowContainer {
   display: flex;
   justify-content: space-between;
-  gap: 0.875rem;
+  gap: var(--pe-space-3_5);
 }
 .IdentityDigestCard__InfoContainer {
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
-  gap: 4px;
-  padding: 24px;
+  gap: var(--pe-space-1);
+  padding: var(--pe-space-6);
   background: rgba(var(--pe-color-gray-800-rgb), 0.5);
   border-radius: var(--pe-radius-def);
   width: 100%;
 }
 .IdentityDigestCard__InfoContainer .InfoLine__Title svg {
-  width: 1.75rem;
-  height: 1.75rem;
+  width: var(--pe-space-7);
+  height: var(--pe-space-7);
 }
 .IdentityDigestCard__LinesContainer {
   flex-direction: column;
 }
 .IdentityDigestCard, .IdentityDigestCard__Transfers, .IdentityDigestCard__LinesContainer {
   display: flex;
-  gap: 14px;
+  gap: var(--pe-space-3_5);
 }
 .IdentityDigestCard--Loading .IdentityDigestCard__Transfers .LoadingLine {
-  height: 24px;
+  height: var(--pe-space-6);
 }
 .IdentityDigestCard__Transfer {
   width: 50%;
   display: flex;
   flex-direction: column;
-  gap: 4px;
-  padding: 24px;
+  gap: var(--pe-space-1);
+  padding: var(--pe-space-6);
   background: rgba(var(--pe-color-gray-800-rgb), 0.5);
   border-radius: var(--pe-radius-def);
 }
@@ -80,7 +80,7 @@
   flex-direction: column;
 }
 .IdentityDigestCard__Transfer .CreditsBlock .CreditsBlock__Usd {
-  margin-top: 0.25rem;
+  margin-top: var(--pe-space-1);
   margin-left: auto;
 }
 .IdentityDigestCard__Transfer--Withdrawals .CreditsBlock__Usd {
@@ -88,7 +88,7 @@
   color: var(--pe-color-red-default);
 }
 .IdentityDigestCard__TransferTitle {
-  font-size: 0.75rem;
+  font-size: var(--pe-text-sm);
   color: var(--pe-color-fg-muted);
 }
 .IdentityDigestCard__ValueContainer {
@@ -97,11 +97,11 @@
   overflow: hidden;
 }
 .IdentityDigestCard__ValueContainer .DateBlock {
-  margin-bottom: 4px;
+  margin-bottom: var(--pe-space-1);
 }
 .IdentityDigestCard__InfoLine {
-  gap: 4px;
-  column-gap: 8px;
+  gap: var(--pe-space-1);
+  column-gap: var(--pe-space-2);
 }
 .IdentityDigestCard__InfoLine .DateBlock__InfoContainer {
   justify-content: flex-end;
@@ -125,8 +125,8 @@
     align-items: center;
   }
   .IdentityDigestCard__Transfer .CreditsBlock .CreditsBlock__Usd {
-    margin-top: 0.25rem;
-    margin-bottom: 0.25rem;
+    margin-top: var(--pe-space-1);
+    margin-bottom: var(--pe-space-1);
   }
 }
 @container (max-width: 24em) {

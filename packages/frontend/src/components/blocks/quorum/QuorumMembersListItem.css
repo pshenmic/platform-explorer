@@ -3,8 +3,8 @@
   width: 100%;
   text-decoration: none;
   padding: var(--pe-list-row-pad-y) var(--pe-list-row-pad-x);
-  margin-bottom: 8px;
-  line-height: 24px;
+  margin-bottom: var(--pe-space-2);
+  line-height: var(--pe-space-6);
   color: var(--pe-color-gray-100);
   font-family: var(--pe-font-mono);
   font-size: 12pt;
@@ -28,8 +28,8 @@
   margin-bottom: 0;
 }
 .QuorumListItem__Column--Credits, .QuorumListItem__Column--Number {
-  font-size: 0.75rem;
-  font-weight: 700;
+  font-size: var(--pe-text-sm);
+  font-weight: var(--pe-font-weight-bold);
 }
 .QuorumListItem__IdentifierContainer {
   display: flex;
@@ -37,10 +37,10 @@
   min-width: 50px;
 }
 .QuorumListItem__Avatar {
-  height: 24px;
-  width: 24px;
+  height: var(--pe-space-6);
+  width: var(--pe-space-6);
   flex-shrink: 0;
-  margin-right: 12px;
+  margin-right: var(--pe-space-3);
 }
 .QuorumListItem--Timestamp, .QuorumListItem__Column--Timestamp {
   font-family: var(--pe-font-mono);
@@ -50,15 +50,15 @@
 .QuorumListItem--Timestamp,
 .QuorumListItem--Timestamp .DateBlock__Date, .QuorumListItem__Column--Timestamp,
 .QuorumListItem__Column--Timestamp .DateBlock__Date {
-  font-size: 0.75rem;
+  font-size: var(--pe-text-sm);
 }
 .QuorumListItem {
   display: block;
-  font-size: 0.75rem;
+  font-size: var(--pe-text-sm);
 }
 .QuorumListItem__Content {
   display: grid;
-  gap: 1rem;
+  gap: var(--pe-space-4);
   grid-template-columns: minmax(0, 600px) minmax(140px, 200px) minmax(26rem, 26rem) 3.375rem;
 }
 @container (max-width: 77rem) {
@@ -111,7 +111,7 @@
   }
 }
 .QuorumListItem__Column {
-  line-height: 0.75rem;
+  line-height: var(--pe-space-3);
 }
 .QuorumListItem__Column--ProtxHash {
   overflow: hidden;

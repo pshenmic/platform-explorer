@@ -5,7 +5,7 @@
   overflow: hidden;
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: var(--pe-radius-def);
-  padding: 16px;
+  padding: var(--pe-space-4);
   box-shadow: 0 0 0 rgba(0, 0, 0, 0);
 }
 .InfoCard--Clickable {
@@ -14,13 +14,13 @@
 @media (hover: hover) and (pointer: fine) {
   .InfoCard--Clickable:hover {
     cursor: pointer;
-    box-shadow: 4px 4px 5px rgba(0, 0, 0, 0.2);
+    box-shadow: var(--pe-space-1) var(--pe-space-1) 5px rgba(0, 0, 0, 0.2);
   }
   .InfoCard--Clickable:hover::after {
-    opacity: 0.5;
+    opacity: var(--pe-opacity-muted);
   }
   .InfoCard--Clickable:hover::before {
-    opacity: 0.5;
+    opacity: var(--pe-opacity-muted);
   }
 }
 .InfoCard--Clickable:active {
@@ -122,7 +122,7 @@
   z-index: -3;
   background: linear-gradient(135deg, var(--pe-color-gray-900), var(--pe-color-gray-900));
   background: var(--pe-color-gray-800);
-  opacity: 0.1;
+  opacity: var(--pe-opacity-faint);
 }
 .InfoCard__HoverBg {
   position: absolute;

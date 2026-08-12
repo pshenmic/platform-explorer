@@ -1,7 +1,7 @@
 .ContestedResourceContent {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: var(--pe-space-2);
   width: max-content;
   max-width: 100%;
 }
@@ -9,15 +9,15 @@
   display: inline-flex;
   flex-wrap: wrap;
   width: 100%;
-  gap: 0.25rem;
-  font-weight: 400;
+  gap: var(--pe-space-1);
+  font-weight: var(--pe-font-weight-normal);
 }
 .ContestedResourceContent__ValueContainer .Alias__SymbolsContainer {
   display: flex;
   flex-wrap: wrap;
 }
 .ContestedResourceContent__VoteBadges {
-  margin-bottom: 0.25rem;
+  margin-bottom: var(--pe-space-1);
 }
 .ContestedResourceContent__ContendersBadge {
   display: inline-block;

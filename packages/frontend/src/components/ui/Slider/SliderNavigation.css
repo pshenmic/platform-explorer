@@ -8,8 +8,8 @@
 }
 .SliderNavigation__Button {
   display: flex;
-  width: 32px;
-  height: 32px;
+  width: var(--pe-space-8);
+  height: var(--pe-space-8);
   border-radius: var(--pe-radius-def);
   align-items: center;
   justify-content: center;
@@ -41,7 +41,7 @@
 }
 .SliderNavigation__ProgressBar {
   width: 100%;
-  margin-right: 16px;
+  margin-right: var(--pe-space-4);
 }
 .SliderNavigation__ProgressBar:last-child {
   margin-right: 0;

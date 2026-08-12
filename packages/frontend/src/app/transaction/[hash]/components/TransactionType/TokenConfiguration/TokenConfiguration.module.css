@@ -1,10 +1,10 @@
 .title {
   font-family: var(--pe-font-heading);
-  font-size: 0.75rem;
-  letter-spacing: 0.4px;
+  font-size: var(--pe-text-sm);
+  letter-spacing: 0.var(--pe-space-1);
   text-transform: uppercase;
-  font-weight: 700;
-  margin-bottom: 14px;
+  font-weight: var(--pe-font-weight-bold);
+  margin-bottom: var(--pe-space-3_5);
 }
 
 .container {
@@ -13,13 +13,13 @@
   gap: 17px;
 }
 .container .position {
-  padding: 8px 10px;
+  padding: var(--pe-space-2) var(--pe-space-2_5);
   width: fit-content;
   font-family: var(--pe-font-mono);
   color: var(--pe-color-fg);
-  font-weight: 400;
+  font-weight: var(--pe-font-weight-normal);
   font-style: Regular;
-  font-size: 12px;
+  font-size: var(--pe-text-sm);
   line-height: 100%;
   letter-spacing: 0%;
 }

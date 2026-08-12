@@ -18,16 +18,16 @@
 }
 .DataContractDigestCard {
   font-family: var(--pe-font-mono);
-  font-size: 0.75rem;
+  font-size: var(--pe-text-sm);
   display: flex;
   flex-direction: column;
-  gap: 0.875rem;
+  gap: var(--pe-space-3_5);
   background: rgba(var(--pe-color-gray-800-rgb), 0.5);
   border-radius: var(--pe-radius-def);
   container-type: inline-size;
 }
 .DataContractDigestCard--Loading .InfoLine__Value {
-  height: 1.5rem;
+  height: var(--pe-space-6);
 }
 .DataContractDigestCard--Loading .DataContractDigestCard__InfoContainer {
   overflow: hidden;
@@ -39,22 +39,22 @@
 .DataContractDigestCard__RowContainer {
   display: flex;
   justify-content: space-between;
-  gap: 0.875rem;
+  gap: var(--pe-space-3_5);
 }
 .DataContractDigestCard__InfoContainer {
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
-  gap: 4px;
-  padding: 24px;
+  gap: var(--pe-space-1);
+  padding: var(--pe-space-6);
   background: rgba(var(--pe-color-gray-800-rgb), 0.5);
   border-radius: var(--pe-radius-def);
   width: 100%;
 }
 .DataContractDigestCard__InfoContainer .InfoLine__Title svg {
-  width: 1.75rem;
-  height: 1.75rem;
+  width: var(--pe-space-7);
+  height: var(--pe-space-7);
 }
 .DataContractDigestCard__LinesContainer {
   flex-direction: column;
@@ -74,7 +74,7 @@
   display: flex;
 }
 .DataContractDigestCard__InfoLine--TotalTransactions .InfoLine__Title span, .DataContractDigestCard__InfoLine--DocumentsCount .InfoLine__Title span {
-  gap: 0.75rem;
+  gap: var(--pe-space-3);
 }
 .DataContractDigestCard__InfoLine--TotalTransactions .InfoLine__Value, .DataContractDigestCard__InfoLine--DocumentsCount .InfoLine__Value {
   font-size: 0.813rem;

@@ -18,16 +18,16 @@
 }
 .BlockDigestCard {
   font-family: var(--pe-font-mono);
-  font-size: 0.75rem;
+  font-size: var(--pe-text-sm);
   display: flex;
   flex-direction: column;
-  gap: 0.875rem;
+  gap: var(--pe-space-3_5);
   background: rgba(var(--pe-color-gray-800-rgb), 0.5);
   border-radius: var(--pe-radius-def);
   container-type: inline-size;
 }
 .BlockDigestCard--Loading .InfoLine__Value {
-  height: 1.5rem;
+  height: var(--pe-space-6);
 }
 .BlockDigestCard--Loading .BlockDigestCard__InfoContainer {
   overflow: hidden;
@@ -39,22 +39,22 @@
 .BlockDigestCard__RowContainer {
   display: flex;
   justify-content: space-between;
-  gap: 0.875rem;
+  gap: var(--pe-space-3_5);
 }
 .BlockDigestCard__InfoContainer {
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
-  gap: 4px;
-  padding: 24px;
+  gap: var(--pe-space-1);
+  padding: var(--pe-space-6);
   background: rgba(var(--pe-color-gray-800-rgb), 0.5);
   border-radius: var(--pe-radius-def);
   width: 100%;
 }
 .BlockDigestCard__InfoContainer .InfoLine__Title svg {
-  width: 1.75rem;
-  height: 1.75rem;
+  width: var(--pe-space-7);
+  height: var(--pe-space-7);
 }
 .BlockDigestCard__LinesContainer {
   flex-direction: column;
@@ -64,21 +64,21 @@
   container-type: inline-size;
 }
 .BlockDigestCard__InfoContainer > .InfoLine > .InfoLine__Title svg {
-  margin-right: 0.75rem;
+  margin-right: var(--pe-space-3);
 }
 .BlockDigestCard__InfoContainer > .InfoLine > .InfoLine__Value {
   font-size: 0.813rem;
 }
 .BlockDigestCard .BlockDigestCard__InfoLineValueContent {
   display: flex;
-  gap: 0.25rem;
+  gap: var(--pe-space-1);
   align-items: center;
 }
 .BlockDigestCard__InfoIcon {
   cursor: pointer;
   transition: var(--pe-transition-def);
-  width: 1rem !important;
-  height: 1rem !important;
+  width: var(--pe-space-4) !important;
+  height: var(--pe-space-4) !important;
 }
 .BlockDigestCard__InfoIcon:hover {
   cursor: pointer;
@@ -96,7 +96,7 @@
   display: flex;
 }
 .BlockDigestCard__InfoLine--TotalTransactions > .InfoLine .InfoLine__Title span, .BlockDigestCard__InfoLine--QuorumIndex > .InfoLine .InfoLine__Title span, .BlockDigestCard__InfoLine--Epoch > .InfoLine .InfoLine__Title span, .BlockDigestCard__InfoLine--QuorumMembers > .InfoLine .InfoLine__Title span {
-  gap: 0.75rem;
+  gap: var(--pe-space-3);
 }
 .BlockDigestCard__InfoLine--TotalTransactions > .InfoLine .InfoLine__Value, .BlockDigestCard__InfoLine--QuorumIndex > .InfoLine .InfoLine__Value, .BlockDigestCard__InfoLine--Epoch > .InfoLine .InfoLine__Value, .BlockDigestCard__InfoLine--QuorumMembers > .InfoLine .InfoLine__Value {
   font-size: 0.813rem;

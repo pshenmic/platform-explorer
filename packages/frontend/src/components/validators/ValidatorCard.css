@@ -5,19 +5,19 @@
 .ValidatorCard__Title .Alias__Name,
 .ValidatorCard__Title .Alias__Domain {
   font-family: var(--pe-font-heading);
-  font-size: 0.875rem;
-  font-weight: 700;
+  font-size: var(--pe-text-md);
+  font-weight: var(--pe-font-weight-bold);
 }
 .ValidatorCard__Title .Alias__Domain {
   color: var(--pe-color-brand-light);
   opacity: 1;
 }
 .ValidatorCard--Loading .InfoLine__Value {
-  height: 1.5rem;
+  height: var(--pe-space-6);
 }
 .ValidatorCard__ContentContainer {
   display: flex;
-  gap: 2.5rem;
+  gap: var(--pe-space-10);
 }
 .ValidatorCard__Column {
   position: relative;
@@ -34,37 +34,37 @@
   align-items: center;
   justify-content: center;
   font-family: var(--pe-font-mono);
-  font-size: 0.75rem;
+  font-size: var(--pe-text-sm);
   color: var(--pe-color-gray-500);
   width: 88px;
   height: 88px;
   border: 1px solid rgba(137, 126, 126, 0.1);
   flex-shrink: 0;
-  margin-left: 24px;
+  margin-left: var(--pe-space-6);
 }
 .ValidatorCard__HeaderLines {
   display: flex;
-  gap: 20px;
+  gap: var(--pe-space-5);
   flex-direction: column;
   justify-content: space-between;
   width: 100%;
-  padding: 6px 0;
+  padding: var(--pe-space-1_5) 0;
   overflow: hidden;
 }
 .ValidatorCard__InfoLine {
-  gap: 14px;
+  gap: var(--pe-space-3_5);
 }
 .ValidatorCard__CommonInfo {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: var(--pe-space-6);
 }
 .ValidatorCard__CommonInfo .HorisontalSeparator {
   margin: 0;
 }
 @media screen and (max-width: 62em) {
   .ValidatorCard__ContentContainer {
-    gap: 1.5rem;
+    gap: var(--pe-space-6);
   }
 }
 @media screen and (max-width: 48em) {
@@ -72,7 +72,7 @@
     flex-direction: column;
   }
   .ValidatorCard__ContentContainer, .ValidatorCard__CommonLines {
-    gap: 0.75rem;
+    gap: var(--pe-space-3);
   }
   .ValidatorCard__Column {
     position: static;
@@ -87,7 +87,7 @@
 .ValidatorCard__CommonInfo {
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: var(--pe-space-3_5);
 }
 .ValidatorCard__InfoLine--IdentityAddress .InfoLine__Value, .ValidatorCard__InfoLine--NodeId .InfoLine__Value {
   width: 100%;
@@ -109,7 +109,7 @@
 }
 @container (max-width: 20rem) {
   .ValidatorCard__InfoLine--NodeId .Identifier__SymbolsContainer {
-    max-width: 9.2rem;
+    max-width: 9.var(--pe-space-8);
   }
 }
 .ValidatorCard .InfoLine--Loading .InfoLine__Value {
@@ -168,7 +168,7 @@
   height: 100%;
 }
 .ValidatorCard__Separator {
-  margin: 12px 0;
+  margin: var(--pe-space-3) 0;
 }
 .ValidatorCard__BlockHeighValue {
   font-size: 0.813rem;
@@ -184,19 +184,19 @@
   .ValidatorCard__Title .Alias__Name,
   .ValidatorCard__Title .Alias__Domain {
     font-family: var(--pe-font-heading);
-    font-size: 0.875rem;
-    font-weight: 700;
+    font-size: var(--pe-text-md);
+    font-weight: var(--pe-font-weight-bold);
   }
   .ValidatorCard__Title .Alias__Domain {
     color: var(--pe-color-brand-light);
     opacity: 1;
   }
   .ValidatorCard--Loading .InfoLine__Value {
-    height: 1.5rem;
+    height: var(--pe-space-6);
   }
   .ValidatorCard__ContentContainer {
     display: flex;
-    gap: 2.5rem;
+    gap: var(--pe-space-10);
   }
   .ValidatorCard__Column {
     position: relative;
@@ -213,13 +213,13 @@
     align-items: center;
     justify-content: center;
     font-family: var(--pe-font-mono);
-    font-size: 0.75rem;
+    font-size: var(--pe-text-sm);
     color: var(--pe-color-gray-500);
     width: 88px;
     height: 88px;
     border: 1px solid rgba(137, 126, 126, 0.1);
     flex-shrink: 0;
-    margin-left: 24px;
+    margin-left: var(--pe-space-6);
     position: absolute;
     right: 0;
     top: 0;
@@ -227,20 +227,20 @@
   }
   .ValidatorCard__HeaderLines {
     display: flex;
-    gap: 20px;
+    gap: var(--pe-space-5);
     flex-direction: column;
     justify-content: space-between;
     width: 100%;
-    padding: 6px 0;
+    padding: var(--pe-space-1_5) 0;
     overflow: hidden;
   }
   .ValidatorCard__InfoLine {
-    gap: 14px;
+    gap: var(--pe-space-3_5);
   }
   .ValidatorCard__CommonInfo {
     display: flex;
     flex-direction: column;
-    gap: 1.5rem;
+    gap: var(--pe-space-6);
   }
   .ValidatorCard__CommonInfo .HorisontalSeparator {
     margin: 0;
@@ -248,7 +248,7 @@
 }
 @media screen and (max-width: 62em) and (max-width: 62em) {
   .ValidatorCard__ContentContainer {
-    gap: 1.5rem;
+    gap: var(--pe-space-6);
   }
 }
 @media screen and (max-width: 62em) and (max-width: 48em) {
@@ -256,7 +256,7 @@
     flex-direction: column;
   }
   .ValidatorCard__ContentContainer, .ValidatorCard__CommonLines {
-    gap: 0.75rem;
+    gap: var(--pe-space-3);
   }
   .ValidatorCard__Column {
     position: static;
@@ -292,7 +292,7 @@
     justify-content: start;
   }
   .ValidatorCard__CommonInfo .InfoLine--Loading .InfoLine__Value {
-    min-width: 40px;
+    min-width: var(--pe-space-10);
     width: 100% !important;
   }
   .ValidatorCard__InfoLine--IdentityAddress .Identifier, .ValidatorCard__InfoLine--NodeId .Identifier {

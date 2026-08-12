@@ -3,13 +3,13 @@
   width: 100%;
 }
 .root .divider {
-  padding: 20px 0;
+  padding: var(--pe-space-5) 0;
 }
 .root .form {
   display: flex;
   flex-direction: column;
-  gap: 24px;
-  margin-top: 14px;
+  gap: var(--pe-space-6);
+  margin-top: var(--pe-space-3_5);
 }
 .root .form .field {
   display: grid;
@@ -20,8 +20,8 @@
   grid-column: 1;
   grid-row: 1;
   font-family: var(--pe-font-mono);
-  font-weight: 400;
-  font-size: 12px;
+  font-weight: var(--pe-font-weight-normal);
+  font-size: var(--pe-text-sm);
   line-height: 110%;
   color: var(--pe-color-fg-muted);
 }
@@ -33,26 +33,26 @@
 .root .form .field .errorSlot {
   grid-column: 2;
   grid-row: 2;
-  min-height: 40px;
-  margin-top: 4px;
+  min-height: var(--pe-space-10);
+  margin-top: var(--pe-space-1);
 }
 .root .form .field .errorText {
   color: var(--pe-color-red-500);
-  font-size: 14px;
+  font-size: var(--pe-text-md);
   line-height: 130%;
 }
 .root .controls {
-  margin-top: 24px;
-  margin-bottom: 6px;
+  margin-top: var(--pe-space-6);
+  margin-bottom: var(--pe-space-1_5);
   display: flex;
-  gap: 12px;
+  gap: var(--pe-space-3);
   justify-content: space-between;
 }
 .root .controls .btn {
   max-width: 294px;
   width: 100%;
   border-radius: var(--pe-radius-def);
-  padding: 12px;
+  padding: var(--pe-space-3);
   transition: all ease-in 0.2;
 }
 .root .controls .btn.cancel {

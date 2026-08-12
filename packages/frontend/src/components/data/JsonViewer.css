@@ -9,8 +9,8 @@
 
 .JsonViewer__CopyButton.JsonViewer__CopyButton {
   position: absolute;
-  top: 10px;
-  right: 10px;
+  top: var(--pe-space-2_5);
+  right: var(--pe-space-2_5);
   z-index: 1;
 }
 
@@ -21,8 +21,8 @@
 }
 
 .JsonViewer .cm-scroller::-webkit-scrollbar {
-  height: 8px;
-  width: 8px;
+  height: var(--pe-space-2);
+  width: var(--pe-space-2);
 }
 
 .JsonViewer .cm-scroller::-webkit-scrollbar-track {
@@ -31,7 +31,7 @@
 
 .JsonViewer .cm-scroller::-webkit-scrollbar-thumb {
   background-color: var(--pe-color-brand-normal);
-  border-radius: 8px;
+  border-radius: var(--pe-radius-md);
   border: 2px solid transparent;
   background-clip: padding-box;
 }
