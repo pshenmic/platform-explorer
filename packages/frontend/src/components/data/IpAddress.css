@@ -1,0 +1,23 @@
+.IpAddress {
+  font-family: var(--pe-font-mono);
+  font-size: var(--pe-text-sm);
+}
+
+.IpAddress--Dim .IpAddress__Port {
+  color: var(--pe-color-fg-muted);
+}
+
+.IpAddress__Host,
+.IpAddress__Port {
+  transition: all 0.1s;
+}
+
+.IpAddress__Port {
+  color: var(--pe-color-brand-pressed);
+  font-weight: 600;
+}
+
+a:hover .IpAddress--Clickable .IpAddress__Host,
+a:hover .IpAddress--Clickable .IpAddress__Port {
+  color: var(--pe-color-brand-light);
+}

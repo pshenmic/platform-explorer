@@ -1,0 +1,29 @@
+.AliasesList,
+.AliasesList__ItemsContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.25rem;
+}
+
+.AliasesList__Item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  justify-content: flex-end;
+  max-width: 100%;
+}
+
+.AliasesList__ShowMoreButton {
+  width: max-content;
+  font-weight: var(--pe-font-weight-medium) !important;
+  text-transform: capitalize !important;
+}
+
+.AliasesList__ShowMoreButton svg {
+  transition: 0.2s;
+}
+
+.AliasesList__SmoothSize {
+  max-width: 100%;
+}

@@ -5,7 +5,7 @@ import { Code, Button } from '@chakra-ui/react'
 import type { WithClassName } from '../../types/common'
 import { CopyButton } from '../ui/Buttons'
 import { SmoothSize } from '../ui/containers'
-import './CodeBlock.scss'
+import './CodeBlock.css'
 
 interface CodeBlockProps extends WithClassName {
   code?: string | null

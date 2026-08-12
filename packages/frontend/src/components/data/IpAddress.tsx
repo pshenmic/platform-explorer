@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react'
 import type { WithChildren, WithClassName } from '../../types/common'
-import './IpAddress.scss'
+import './IpAddress.css'
 
 function splitIpAndPort (address: string | null | undefined): { host: string | null, port: string | null } {
   if (!address) return { host: null, port: null }

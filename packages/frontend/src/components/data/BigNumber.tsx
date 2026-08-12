@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react'
 import type { WithClassName } from '../../types/common'
-import './BigNumber.scss'
+import './BigNumber.css'
 import { splitNum } from '../../util/numbers'
 
 interface BigNumberProps extends WithClassName {

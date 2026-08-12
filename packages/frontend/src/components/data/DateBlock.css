@@ -1,0 +1,44 @@
+.DateBlock {
+  font-family: var(--pe-font-mono);
+}
+
+.DateBlock__InfoContainer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  white-space: nowrap;
+  margin-top: -4px;
+  margin-bottom: -4px;
+}
+
+.DateBlock__CalendarIcon,
+.DateBlock__Date,
+.DateBlock__Delta {
+  margin-top: 4px;
+  margin-bottom: 4px;
+  margin-right: 8px;
+}
+
+.DateBlock__CalendarIcon:last-child,
+.DateBlock__Date:last-child,
+.DateBlock__Delta:last-child {
+  margin-right: 0;
+}
+
+.DateBlock__CalendarIcon {
+  width: 50px;
+  height: 50px;
+}
+
+.DateBlock__Date {
+  font-size: 0.813rem;
+}
+
+.DateBlock__Delta {
+  display: inline-block;
+  padding: 3px 10px;
+  border: 1px solid rgba(147, 170, 178, 0.4);
+  border-radius: 4px;
+  color: var(--pe-color-fg-muted);
+  font-size: var(--pe-text-xs);
+}
