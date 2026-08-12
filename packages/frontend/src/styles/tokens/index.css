@@ -1,4 +1,16 @@
-/* Design tokens entry — import once from app shell */
+/**
+ * Design tokens entry (import once from app shell).
+ *
+ * Order: palette → typography → shared utils.
+ * See palette.css / typography.css headers for naming conventions.
+ *
+ * New component CSS:
+ * - Use var(--pe-*) only for color, type, space, radius
+ * - Prefer semantic tokens (bg, fg, fg-muted, border, surface) for surfaces
+ * - Native CSS nesting is OK (&, nested @media)
+ * - Do not reintroduce Sass or var(--chakra-colors-*)
+ */
+
 @import './palette.css';
 @import './typography.css';
 @import '../utils/loading-line.css';

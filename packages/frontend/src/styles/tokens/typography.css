@@ -1,16 +1,21 @@
 /**
- * Design tokens: typography + breakpoints + space scale.
- * Font families are filled by Next/Chakra at runtime via --chakra-fonts-*;
- * --pe-font-* aliases them so CSS and theme share one semantic API.
+ * Design tokens — typography, space, breakpoints, motion.
+ *
+ * Conventions:
+ * - Fonts: --pe-font-* (fallback to Next/Chakra injected --chakra-fonts-* when present)
+ * - Type: --pe-text-*, --pe-font-weight-*, --pe-leading-*
+ * - Space: --pe-space-* (align with Chakra space scale used in app)
+ * - Breakpoints: --pe-bp-* for docs/JS; prefer literal em in @media for max compatibility
+ * - Components: var(--pe-…); do not hardcode font stacks outside this file
  */
 
 :root {
-  /* Fonts (resolved after Chakra injects --chakra-fonts-*) */
+  /* Fonts */
   --pe-font-heading: var(--chakra-fonts-heading, 'Montserrat', system-ui, sans-serif);
   --pe-font-body: var(--chakra-fonts-body, 'Open Sans', system-ui, sans-serif);
   --pe-font-mono: var(--chakra-fonts-mono, 'Roboto Mono', ui-monospace, monospace);
 
-  /* Type scale (common UI sizes) */
+  /* Type scale */
   --pe-text-2xs: 0.625rem; /* 10px */
   --pe-text-xs: 0.6875rem; /* 11px */
   --pe-text-sm: 0.75rem; /* 12px */
@@ -28,7 +33,7 @@
   --pe-leading-normal: 1.45;
   --pe-leading-list: 24px;
 
-  /* Breakpoints — match Chakra theme (sm…3xl; media often needs literal em) */
+  /* Breakpoints — match Chakra (sm…3xl) */
   --pe-bp-sm: 30em;
   --pe-bp-md: 48em;
   --pe-bp-lg: 62em;
@@ -36,7 +41,7 @@
   --pe-bp-2xl: 96em;
   --pe-bp-3xl: 120em;
 
-  /* Space scale (aligned with Chakra space keys used in app) */
+  /* Space scale */
   --pe-space-px: 1px;
   --pe-space-0: 0;
   --pe-space-1: 0.25rem;
@@ -55,6 +60,11 @@
   --pe-list-row-pad-x: 12px;
   --pe-list-row-gap: 16px;
   --pe-list-row-radius: var(--pe-radius-def);
+
+  /* Layout sizes (ex-Chakra sizes.container) */
+  --pe-size-container-xl: 1310px;
+  --pe-size-container-max-page: 1920px;
+  --pe-size-container-max-navigation: none;
 
   /* Motion */
   --pe-transition-def: 0.15s;
