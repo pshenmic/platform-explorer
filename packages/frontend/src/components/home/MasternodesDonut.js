@@ -2,6 +2,7 @@
 
 import { useState, useMemo } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { Box } from '@chakra-ui/react'
 import { Skeleton } from './Skeleton'
 import { Tooltip } from '../ui/Tooltips'
@@ -233,13 +234,13 @@ function NodeTooltipBody ({ cell }) {
     <div className={'MasternodesDonut__Tip'}>
       <div className={'MasternodesDonut__TipHead'}>
         {cc &&
-          <img
+          <Image
             className={'MasternodesDonut__TipFlag'}
             src={`/flags/circle/${cc.toLowerCase()}.svg`}
             alt={''}
             width={22}
             height={22}
-            loading={'lazy'}
+            unoptimized
             onError={e => { e.currentTarget.style.display = 'none' }}
           />}
         <div className={'MasternodesDonut__TipHeadText'}>
@@ -444,7 +445,7 @@ export default function MasternodesDonut ({
                     whole validator list.
                   </p>
                   <p className={'MasternodesDonut__HelpFoot'}>
-                    Who comes next is picked by the protocol, not a vote. Identity is the node's
+                    Who comes next is picked by the protocol, not a vote. Identity is the
                     Platform account, not the validator page.
                   </p>
                 </div>
@@ -611,7 +612,7 @@ export default function MasternodesDonut ({
                 </p>}
             </div>
 
-            <div className={'MasternodesDonut__Rails'} role={'list'}>
+            <div className={'MasternodesDonut__Rails'} role={'group'} aria-label={'Validator groups'}>
               {STATS.map(s => {
                 const n = counts[s.key]
                 const ready = typeof n === 'number'
@@ -621,7 +622,6 @@ export default function MasternodesDonut ({
                   <button
                     key={s.key}
                     type={'button'}
-                    role={'listitem'}
                     data-type={s.key}
                     className={`MasternodesDonut__Rail MasternodesDonut__Rail--${s.key}`}
                     onClick={() => togglePin(s.key)}
