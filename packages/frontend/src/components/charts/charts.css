@@ -100,53 +100,60 @@
   margin: 0 -var(--pe-space-2_5) !important;
   padding: 0 var(--pe-space-2_5) !important;
   overflow-x: clip;
-  &__Tooltip {
-    font-size: var(--pe-text-md);
-    font-family: var(--pe-font-body);
-  }
-  &__FocusPoint {
-    display: none;
-    fill: var(--pe-color-fg);
-    stroke: var(--pe-color-brand-normal);
-    stroke-width: 2px;
-  }
-  &__Point {
-    fill: var(--pe-color-brand-normal);
-    opacity: 0;
-  }
 }
 
-.ChartTooltip {
-  &__InfoLine--Blocks {
-    opacity: 0.7;
-  }
-  &__InfoLine--Bold {
-    font-weight: var(--pe-font-weight-bold);
-    font-size: var(--pe-text-lg);
-  }
-  &__InfoLine--Tiny {
-    font-size: 0.813rem;
-  }
+.Chart__Tooltip {
+  font-size: var(--pe-text-md);
+  font-family: var(--pe-font-body);
+}
+
+.Chart__FocusPoint {
+  display: none;
+  fill: var(--pe-color-fg);
+  stroke: var(--pe-color-brand-normal);
+  stroke-width: 2px;
+}
+
+.Chart__Point {
+  fill: var(--pe-color-brand-normal);
+  opacity: 0;
+}
+
+.ChartTooltip__InfoLine--Blocks {
+  opacity: 0.7;
+}
+
+.ChartTooltip__InfoLine--Bold {
+  font-weight: var(--pe-font-weight-bold);
+  font-size: var(--pe-text-lg);
+}
+
+.ChartTooltip__InfoLine--Tiny {
+  font-size: 0.813rem;
 }
 
 .Axis {
   font-family: var(--pe-font-heading);
   font-weight: var(--pe-font-weight-bold);
   font-size: var(--pe-text-sm);
-  &__Label {
-    font-size: var(--pe-text-sm);
-    opacity: var(--pe-opacity-muted);
-  }
-  &__TickContainer {
-    font-size: var(--pe-text-sm);
-  }
-  &--X &__TickContainer {
-    font-weight: var(--pe-font-weight-normal);
-    opacity: var(--pe-opacity-muted);
-  }
-  &__Line {
-    opacity: var(--pe-opacity-muted);
-    stroke-width: 1px;
-    stroke: var(--pe-color-fg);
-  }
+}
+
+.Axis__Label {
+  font-size: var(--pe-text-sm);
+  opacity: var(--pe-opacity-muted);
+}
+
+.Axis__TickContainer {
+  font-size: var(--pe-text-sm);
+}
+
+.Axis--X .Axis__TickContainer {
+  font-weight: var(--pe-font-weight-normal);
+  opacity: var(--pe-opacity-muted);
+}
+
+.Axis__Line {
+  opacity: var(--pe-opacity-muted);
+  stroke-width: 1px;
+  stroke: var(--pe-color-fg);
 }

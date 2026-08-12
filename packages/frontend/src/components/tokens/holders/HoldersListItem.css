@@ -13,6 +13,7 @@
   background-color: rgba(var(--pe-color-gray-800-rgb), 0.5);
   transition: all 0.1s;
 }
+
 @media (hover: hover) and (pointer: fine) {
   .HoldersListItem:hover {
     background-color: var(--pe-color-gray-750);
@@ -20,82 +21,99 @@
     cursor: pointer;
   }
 }
+
 .HoldersListItem:active {
   transform: translateY(1px);
   box-shadow: 0 0 9999px 0 rgba(0, 0, 0, 0.25) inset;
 }
+
 .HoldersListItem:last-child {
   margin-bottom: 0;
 }
+
 .HoldersListItem__Column--Credits,
 .HoldersListItem__Column--Number {
   font-size: 0.75rem;
   font-weight: 700;
 }
+
 .HoldersListItem__IdentifierContainer {
   display: flex;
   align-items: center;
   min-width: 50px;
 }
+
 .HoldersListItem__Avatar {
   height: 24px;
   width: 24px;
   flex-shrink: 0;
   margin-right: 12px;
 }
+
 .HoldersListItem--Timestamp,
 .HoldersListItem__Column--Timestamp {
   font-family: var(--pe-font-mono);
   white-space: nowrap;
   color: #fff;
 }
+
 .HoldersListItem--Timestamp,
 .HoldersListItem--Timestamp .DateBlock__Date,
 .HoldersListItem__Column--Timestamp,
 .HoldersListItem__Column--Timestamp .DateBlock__Date {
   font-size: 0.75rem;
 }
+
 .HoldersListItem {
   display: block;
 }
+
 .HoldersListItem__Content {
   display: grid;
   gap: 1rem;
   grid-template-columns: 8fr 2.5fr 2.5fr 2fr;
 }
+
 @container (max-width: 65rem) {
   .HoldersListItem__Content {
     grid-template-columns: minmax(0, 125rem) 10rem 10rem 7.5rem;
   }
 }
+
 @container (max-width: 45rem) {
   .HoldersListItem__Content {
     grid-template-columns: minmax(0, 125rem) auto 7.5rem;
   }
 }
+
 @container (max-width: 30rem) {
   .HoldersListItem__Content {
     grid-template-columns: minmax(0, 125rem) auto;
   }
 }
+
 .HoldersListItem__Column {
   display: flex;
   width: 100%;
 }
+
 .HoldersListItem__Column:last-child {
   justify-content: flex-end;
   text-align: right;
 }
+
 @container (max-width: 45rem) {
   .HoldersListItem__Column--DashAmount {
     display: none;
   }
 }
+
 @container (max-width: 30rem) {
   .HoldersListItem__Column--LastActivity {
     display: none;
   }
 }
+
 .HoldersListItem__Column .LinkContainer {
   overflow: hidden;
 }

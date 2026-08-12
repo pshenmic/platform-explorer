@@ -1,23 +1,28 @@
 .PriceList__Pagination {
   margin-top: 2rem !important;
 }
+
 .PriceList__ScrollZone {
   width: fit-content;
   min-width: 100%;
 }
+
 @media screen and (max-width: 48em) {
   .PriceList__Pagination {
     margin-top: 1.5rem !important;
   }
 }
+
 @media screen and (max-width: 30em) {
   .PriceList__Pagination {
     margin-top: 1rem !important;
   }
 }
+
 .PriceList {
   container-type: inline-size;
 }
+
 .PriceList__ColumnTitles {
   display: grid;
   padding: var(--pe-list-row-pad-y) var(--pe-list-row-pad-x);
@@ -30,22 +35,26 @@
   text-transform: uppercase;
   color: var(--pe-color-fg);
 }
+
 .PriceList__ColumnTitles--Light {
   background: transparent !important;
   font-weight: 500 !important;
   color: #fff !important;
   text-transform: none !important;
 }
+
 .PriceList__ColumnTitles {
   display: grid;
   gap: 1rem;
   grid-template-columns: minmax(6.25rem, 1000rem) auto;
 }
+
 .PriceList__ColumnTitle {
   display: flex;
   align-items: center;
   width: 100%;
 }
+
 .PriceList__ColumnTitle--Price {
   margin-left: auto;
   text-align: right;

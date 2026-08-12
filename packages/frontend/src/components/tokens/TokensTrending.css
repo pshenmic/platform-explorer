@@ -5,6 +5,7 @@
   min-width: 0;
   overflow: hidden;
 }
+
 .TokensTrending__Label {
   flex-shrink: 0;
   font-family: var(--pe-font-heading);
@@ -15,6 +16,7 @@
   letter-spacing: 0.02em;
   color: var(--pe-color-brand-normal);
 }
+
 .TokensTrending__Viewport {
   position: relative;
   flex: 1 1 auto;
@@ -28,6 +30,7 @@
     transparent
   );
 }
+
 .TokensTrending__Track {
   display: inline-flex;
   align-items: center;
@@ -35,9 +38,11 @@
   width: max-content;
   animation: TokensTrending-scroll 60s linear infinite;
 }
+
 .TokensTrending:hover .TokensTrending__Track {
   animation-play-state: paused;
 }
+
 .TokensTrending__Item {
   display: inline-flex;
   align-items: center;
@@ -48,13 +53,16 @@
   color: var(--pe-color-gray-100);
   transition: color var(--pe-transition-def) ease;
 }
+
 .TokensTrending__Item:hover {
   color: #fff;
 }
+
 .TokensTrending__Rank {
   color: var(--pe-color-brand-normal);
   font-weight: 700;
 }
+
 .TokensTrending__Avatar.ImageGenerator {
   width: 18px;
   height: 18px;
@@ -64,13 +72,16 @@
   flex-shrink: 0;
   line-height: 0;
 }
+
 .TokensTrending__Avatar .ImageGenerator__Image {
   width: 18px;
   height: 18px;
 }
+
 .TokensTrending__Name {
   font-weight: 600;
 }
+
 .TokensTrending__Txs {
   color: var(--pe-color-fg-muted);
 }
@@ -83,11 +94,13 @@
     transform: translateX(-50%);
   }
 }
+
 @media (prefers-reduced-motion: reduce) {
   .TokensTrending__Viewport {
     overflow-x: auto;
     mask-image: none;
   }
+
   .TokensTrending__Track {
     animation: none;
   }

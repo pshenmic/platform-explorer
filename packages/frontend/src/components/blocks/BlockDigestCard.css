@@ -79,60 +79,67 @@
   container-type: inline-size;
   border-radius: var(--pe-radius-block);
   container-type: inline-size;
-  &--Loading &__InfoContainer {
-    overflow: hidden;
-  }
-  &--Loading &__InfoContainerValue {
-    width: 100px;
-    max-width: 100%;
-  }
-  &__RowContainer {
-    display: flex;
-    justify-content: space-between;
-    gap: var(--pe-space-3_5);
-  }
-  &__InfoContainer {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-    gap: var(--pe-space-1);
-    padding: var(--pe-space-6);
-    background: rgba(var(--pe-color-gray-800-rgb), 0.5);
-    border-radius: var(--pe-radius-def);
-    width: 100%;
-  }
-  &__LinesContainer {
-    flex-direction: column;
-  }
-  & &__InfoLineValueContent {
-    display: flex;
-    gap: var(--pe-space-1);
-    align-items: center;
-  }
-  &__InfoIcon {
-    cursor: pointer;
-    transition: var(--pe-transition-def);
-    width: var(--pe-space-4) !important;
-    height: var(--pe-space-4) !important;
-  }
-  &__InfoIcon:hover {
-    cursor: pointer;
-    color: var(--pe-color-fg);
-  }
-  &__InfoLine--TotalTransactions,
-  &__InfoLine--QuorumIndex,
-  &__InfoLine--Epoch,
-  &__InfoLine--QuorumMembers {
-    width: 100%;
-  }
+}
+
+.BlockDigestCard--Loading .BlockDigestCard__InfoContainer {
+  overflow: hidden;
+}
+
+.BlockDigestCard--Loading .BlockDigestCard__InfoContainerValue {
+  width: 100px;
+  max-width: 100%;
+}
+
+.BlockDigestCard__RowContainer {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--pe-space-3_5);
+}
+
+.BlockDigestCard__InfoContainer {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--pe-space-1);
+  padding: var(--pe-space-6);
+  background: rgba(var(--pe-color-gray-800-rgb), 0.5);
+  border-radius: var(--pe-radius-def);
+  width: 100%;
+}
+
+.BlockDigestCard__LinesContainer {
+  flex-direction: column;
+}
+
+.BlockDigestCard .BlockDigestCard__InfoLineValueContent {
+  display: flex;
+  gap: var(--pe-space-1);
+  align-items: center;
+}
+
+.BlockDigestCard__InfoIcon {
+  cursor: pointer;
+  transition: var(--pe-transition-def);
+  width: var(--pe-space-4) !important;
+  height: var(--pe-space-4) !important;
+}
+
+.BlockDigestCard__InfoIcon:hover {
+  cursor: pointer;
+  color: var(--pe-color-fg);
+}
+
+.BlockDigestCard__InfoLine--TotalTransactions,
+.BlockDigestCard__InfoLine--QuorumIndex,
+.BlockDigestCard__InfoLine--Epoch,
+.BlockDigestCard__InfoLine--QuorumMembers {
+  width: 100%;
 }
 
 @container (max-width: 35rem) {
-  .BlockDigestCard {
-    &__RowContainer {
-      flex-wrap: wrap;
-    }
+  .BlockDigestCard__RowContainer {
+    flex-wrap: wrap;
   }
 }
 
@@ -146,9 +153,7 @@
     justify-content: space-between;
   }
 
-  .BlockDigestCard {
-    &__InfoLine {
-      flex-wrap: wrap;
-    }
+  .BlockDigestCard__InfoLine {
+    flex-wrap: wrap;
   }
 }

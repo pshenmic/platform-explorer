@@ -18,78 +18,81 @@
   margin: 0;
 }
 
-.DocumentTotalCard {
-  &__Title {
-    white-space: break-spaces;
-    word-break: break-all;
-  }
-  &__ContentContainer {
-    display: flex;
-    gap: var(--pe-space-10);
-  }
-  &__Column {
-    position: relative;
-    width: 50%;
-  }
-  &__Header {
-    position: relative;
-    display: flex;
-    width: 100%;
-    align-items: center;
-  }
-  &__Avatar {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: var(--pe-font-mono);
-    font-size: var(--pe-text-sm);
-    color: var(--pe-color-gray-500);
-    width: 88px;
-    height: 88px;
-    border: 1px solid rgba(137, 126, 126, 0.1);
-    flex-shrink: 0;
-    margin-left: var(--pe-space-6);
-  }
-  &__HeaderLines {
-    display: flex;
-    gap: var(--pe-space-5);
-    flex-direction: column;
-    justify-content: space-between;
-    width: 100%;
-    padding: var(--pe-space-1_5) 0;
-    overflow: hidden;
-  }
-  &__InfoLine {
-    gap: var(--pe-space-3_5);
-  }
-  &__CommonInfo {
-    display: flex;
-    flex-direction: column;
+.DocumentTotalCard__Title {
+  white-space: break-spaces;
+  word-break: break-all;
+}
+
+.DocumentTotalCard__ContentContainer {
+  display: flex;
+  gap: var(--pe-space-10);
+}
+
+.DocumentTotalCard__Column {
+  position: relative;
+  width: 50%;
+}
+
+.DocumentTotalCard__Header {
+  position: relative;
+  display: flex;
+  width: 100%;
+  align-items: center;
+}
+
+.DocumentTotalCard__Avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--pe-font-mono);
+  font-size: var(--pe-text-sm);
+  color: var(--pe-color-gray-500);
+  width: 88px;
+  height: 88px;
+  border: 1px solid rgba(137, 126, 126, 0.1);
+  flex-shrink: 0;
+  margin-left: var(--pe-space-6);
+}
+
+.DocumentTotalCard__HeaderLines {
+  display: flex;
+  gap: var(--pe-space-5);
+  flex-direction: column;
+  justify-content: space-between;
+  width: 100%;
+  padding: var(--pe-space-1_5) 0;
+  overflow: hidden;
+}
+
+.DocumentTotalCard__InfoLine {
+  gap: var(--pe-space-3_5);
+}
+
+.DocumentTotalCard__CommonInfo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--pe-space-6);
+}
+
+@media screen and (max-width: 62em) {
+  .DocumentTotalCard__ContentContainer {
     gap: var(--pe-space-6);
   }
 }
 
-@media screen and (max-width: 62em) {
-  .DocumentTotalCard {
-    &__ContentContainer {
-      gap: var(--pe-space-6);
-    }
-  }
-}
-
 @media screen and (max-width: 48em) {
-  .DocumentTotalCard {
-    &__ContentContainer {
-      flex-direction: column;
-    }
-    &__ContentContainer,
-    &__CommonLines {
-      gap: var(--pe-space-3);
-    }
-    &__Column {
-      position: static;
-      width: 100%;
-    }
+  .DocumentTotalCard__ContentContainer {
+    flex-direction: column;
+  }
+
+  .DocumentTotalCard__ContentContainer,
+  .DocumentTotalCard__CommonLines {
+    gap: var(--pe-space-3);
+  }
+
+  .DocumentTotalCard__Column {
+    position: static;
+    width: 100%;
   }
 }
 
@@ -108,18 +111,18 @@
   justify-content: flex-end;
 }
 
-.DocumentTotalCard {
-  &__Header {
-    gap: var(--pe-space-6);
-    margin-bottom: var(--pe-space-6);
-  }
-  &__Avatar {
-    margin: 0;
-    position: static !important;
-  }
-  &__InfoLine--Timestamp {
-    align-items: baseline;
-  }
+.DocumentTotalCard__Header {
+  gap: var(--pe-space-6);
+  margin-bottom: var(--pe-space-6);
+}
+
+.DocumentTotalCard__Avatar {
+  margin: 0;
+  position: static !important;
+}
+
+.DocumentTotalCard__InfoLine--Timestamp {
+  align-items: baseline;
 }
 
 @media screen and (max-width: 48em) {
@@ -143,83 +146,86 @@
     margin: 0;
   }
 
-  .DocumentTotalCard {
-    &__Title {
-      white-space: break-spaces;
-      word-break: break-all;
-    }
-    &__ContentContainer {
-      display: flex;
-      gap: var(--pe-space-10);
-    }
-    &__Column {
-      position: relative;
-      width: 50%;
-    }
-    &__Header {
-      position: relative;
-      display: flex;
-      width: 100%;
-      align-items: center;
-    }
-    &__Avatar {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-family: var(--pe-font-mono);
-      font-size: var(--pe-text-sm);
-      color: var(--pe-color-gray-500);
-      width: 88px;
-      height: 88px;
-      border: 1px solid rgba(137, 126, 126, 0.1);
-      flex-shrink: 0;
-      margin-left: var(--pe-space-6);
-      position: absolute;
-      right: 0;
-      top: 0;
-      margin: 0;
-    }
-    &__HeaderLines {
-      display: flex;
-      gap: var(--pe-space-5);
-      flex-direction: column;
-      justify-content: space-between;
-      width: 100%;
-      padding: var(--pe-space-1_5) 0;
-      overflow: hidden;
-    }
-    &__InfoLine {
-      gap: var(--pe-space-3_5);
-    }
-    &__CommonInfo {
-      display: flex;
-      flex-direction: column;
-      gap: var(--pe-space-6);
-    }
+  .DocumentTotalCard__Title {
+    white-space: break-spaces;
+    word-break: break-all;
+  }
+
+  .DocumentTotalCard__ContentContainer {
+    display: flex;
+    gap: var(--pe-space-10);
+  }
+
+  .DocumentTotalCard__Column {
+    position: relative;
+    width: 50%;
+  }
+
+  .DocumentTotalCard__Header {
+    position: relative;
+    display: flex;
+    width: 100%;
+    align-items: center;
+  }
+
+  .DocumentTotalCard__Avatar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--pe-font-mono);
+    font-size: var(--pe-text-sm);
+    color: var(--pe-color-gray-500);
+    width: 88px;
+    height: 88px;
+    border: 1px solid rgba(137, 126, 126, 0.1);
+    flex-shrink: 0;
+    margin-left: var(--pe-space-6);
+    position: absolute;
+    right: 0;
+    top: 0;
+    margin: 0;
+  }
+
+  .DocumentTotalCard__HeaderLines {
+    display: flex;
+    gap: var(--pe-space-5);
+    flex-direction: column;
+    justify-content: space-between;
+    width: 100%;
+    padding: var(--pe-space-1_5) 0;
+    overflow: hidden;
+  }
+
+  .DocumentTotalCard__InfoLine {
+    gap: var(--pe-space-3_5);
+  }
+
+  .DocumentTotalCard__CommonInfo {
+    display: flex;
+    flex-direction: column;
+    gap: var(--pe-space-6);
   }
 }
 
 @media screen and (max-width: 48em) and (max-width: 62em) {
-  .DocumentTotalCard {
-    &__ContentContainer {
-      gap: var(--pe-space-6);
-    }
+  .DocumentTotalCard__ContentContainer {
+    gap: var(--pe-space-6);
   }
 }
 
 @media screen and (max-width: 48em) and (max-width: 48em) {
-  .DocumentTotalCard {
-    &__ContentContainer {
-      flex-direction: column;
-    }
-    &__ContentContainer,
-    &__CommonLines {
-      gap: var(--pe-space-3);
-    }
-    &__Column {
-      position: static;
-      width: 100%;
-    }
+  .DocumentTotalCard__ContentContainer {
+    flex-direction: column;
+  }
+
+  .DocumentTotalCard__ContentContainer,
+  .DocumentTotalCard__CommonLines {
+    gap: var(--pe-space-3);
+  }
+
+  .DocumentTotalCard__Column {
+    position: static;
+    width: 100%;
   }
 }
 
@@ -251,20 +257,17 @@
     justify-content: flex-start !important;
   }
 
-  .DocumentTotalCard {
-    &__InfoLine--Revision {
-      flex-direction: row !important;
-    }
+  .DocumentTotalCard__InfoLine--Revision {
+    flex-direction: row !important;
   }
 }
 
 @media screen and (max-width: 31em) {
-  .DocumentTotalCard {
-    &__InfoLine--Revision {
-      width: 100%;
-    }
-    &__HeaderLines {
-      padding-right: 0;
-    }
+  .DocumentTotalCard__InfoLine--Revision {
+    width: 100%;
+  }
+
+  .DocumentTotalCard__HeaderLines {
+    padding-right: 0;
   }
 }

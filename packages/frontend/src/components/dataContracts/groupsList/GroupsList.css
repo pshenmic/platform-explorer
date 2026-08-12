@@ -1,146 +1,150 @@
-.GroupsList {
-  &__Pagination {
-    margin-top: var(--pe-space-8) !important;
-  }
-  &__ScrollZone {
-    width: fit-content;
-    min-width: 100%;
-  }
+.GroupsList__Pagination {
+  margin-top: var(--pe-space-8) !important;
+}
+
+.GroupsList__ScrollZone {
+  width: fit-content;
+  min-width: 100%;
 }
 
 @media screen and (max-width: 48em) {
-  .GroupsList {
-    &__Pagination {
-      margin-top: var(--pe-space-6) !important;
-    }
+  .GroupsList__Pagination {
+    margin-top: var(--pe-space-6) !important;
   }
 }
 
 @media screen and (max-width: 30em) {
-  .GroupsList {
-    &__Pagination {
-      margin-top: var(--pe-space-4) !important;
-    }
+  .GroupsList__Pagination {
+    margin-top: var(--pe-space-4) !important;
   }
 }
 
 .GroupsList {
   container-type: inline-size;
-  &__ColumnTitles {
-    display: grid;
-    padding: var(--pe-list-row-pad-y) var(--pe-list-row-pad-x);
-    border-radius: var(--pe-list-row-radius);
-    background-color: var(--pe-color-gray-800);
-    margin-bottom: var(--pe-space-2);
-    font-family: var(--pe-font-heading);
-    font-weight: var(--pe-font-weight-bold);
-    font-size: var(--pe-text-sm);
-    text-transform: uppercase;
-    color: var(--pe-color-fg);
-  }
-  &__ColumnTitles--Light {
-    background: transparent !important;
-    font-weight: var(--pe-font-weight-medium) !important;
-    color: var(--pe-color-fg) !important;
-    text-transform: none !important;
-  }
-  &__ColumnTitles {
-    display: grid;
-    gap: var(--pe-space-4);
-    grid-template-columns: minmax(0, 999rem) auto;
-  }
+}
+
+.GroupsList__ColumnTitles {
+  display: grid;
+  padding: var(--pe-list-row-pad-y) var(--pe-list-row-pad-x);
+  border-radius: var(--pe-list-row-radius);
+  background-color: var(--pe-color-gray-800);
+  margin-bottom: var(--pe-space-2);
+  font-family: var(--pe-font-heading);
+  font-weight: var(--pe-font-weight-bold);
+  font-size: var(--pe-text-sm);
+  text-transform: uppercase;
+  color: var(--pe-color-fg);
+}
+
+.GroupsList__ColumnTitles--Light {
+  background: transparent !important;
+  font-weight: var(--pe-font-weight-medium) !important;
+  color: var(--pe-color-fg) !important;
+  text-transform: none !important;
+}
+
+.GroupsList__ColumnTitles {
+  display: grid;
+  gap: var(--pe-space-4);
+  grid-template-columns: minmax(0, 999rem) auto;
 }
 
 @container (max-width: 22.5rem) {
-  .GroupsList {
-    &__ColumnTitles {
-      grid-template-columns: minmax(0, 999rem);
-    }
+  .GroupsList__ColumnTitles {
+    grid-template-columns: minmax(0, 999rem);
   }
 }
 
-.GroupsList {
-  &__ColumnTitle {
-    display: flex;
-    align-items: center;
-  }
-  &__ColumnTitle--Identifier {
-    width: 100%;
-    overflow: hidden;
-  }
-  &__ColumnTitle--Power {
-    width: max-content;
-    text-align: right;
-  }
+.GroupsList__ColumnTitle {
+  display: flex;
+  align-items: center;
+}
+
+.GroupsList__ColumnTitle--Identifier {
+  width: 100%;
+  overflow: hidden;
+}
+
+.GroupsList__ColumnTitle--Power {
+  width: max-content;
+  text-align: right;
 }
 
 @container (max-width: 22.5rem) {
-  .GroupsList {
-    &__ColumnTitle--Power {
-      display: none;
-    }
+  .GroupsList__ColumnTitle--Power {
+    display: none;
   }
 }
 
-.GroupsList {
-  &__ColumnTitle {
-    width: 100%;
-    display: block;
-    word-break: normal;
-    white-space: normal;
-    overflow-wrap: break-word;
-  }
-  &__ColumnTitle:last-child {
-    text-align: right;
-  }
-  &__Group {
-    margin-bottom: var(--pe-space-4);
-    border: 1px solid var(--pe-color-gray-750);
-    border-radius: var(--pe-radius-def);
-    background: rgba(var(--pe-color-gray-800-rgb), 0.5);
-    overflow: hidden;
-  }
-  &__GroupHeader {
-    display: grid;
-    grid-template-columns: 1fr auto;
-    gap: var(--pe-space-4);
-    padding: var(--pe-space-4);
-    background: var(--pe-color-gray-800);
-    border-bottom: 1px solid transparent;
-    transition: var(--pe-transition-def);
-  }
-  &__Group--Expanded &__GroupHeader {
-    border-bottom: 1px solid var(--pe-color-gray-700);
-  }
-  &__GroupTitle {
-    font-size: var(--pe-text-md);
-    font-weight: var(--pe-font-weight-medium);
-    color: var(--pe-color-gray-100);
-    font-family: var(--pe-font-heading);
-  }
-  &__GroupHeaderColumn {
-    display: flex;
-    align-items: center;
-    gap: var(--pe-space-4);
-  }
-  &__GroupHeaderColumn--Button {
-    justify-content: flex-end;
-  }
-  &__RequiredPower {
-    font-size: var(--pe-text-sm);
-    color: var(--pe-color-gray-400);
-  }
-  &__ToggleButton {
-    font-weight: var(--pe-font-weight-medium) !important;
-    text-transform: capitalize !important;
-  }
-  &__ToggleButton svg {
-    transition: transform 0.2s;
-  }
-  &__MembersContainer {
-    width: 100%;
-  }
-  &__MembersList {
-    padding: var(--pe-space-2) var(--pe-space-4) var(--pe-space-4) var(--pe-space-4);
-  }
+.GroupsList__ColumnTitle {
+  width: 100%;
+  display: block;
+  word-break: normal;
+  white-space: normal;
+  overflow-wrap: break-word;
+}
+
+.GroupsList__ColumnTitle:last-child {
+  text-align: right;
+}
+
+.GroupsList__Group {
+  margin-bottom: var(--pe-space-4);
+  border: 1px solid var(--pe-color-gray-750);
+  border-radius: var(--pe-radius-def);
+  background: rgba(var(--pe-color-gray-800-rgb), 0.5);
+  overflow: hidden;
+}
+
+.GroupsList__GroupHeader {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: var(--pe-space-4);
+  padding: var(--pe-space-4);
+  background: var(--pe-color-gray-800);
+  border-bottom: 1px solid transparent;
+  transition: var(--pe-transition-def);
+}
+
+.GroupsList__Group--Expanded .GroupsList__GroupHeader {
+  border-bottom: 1px solid var(--pe-color-gray-700);
+}
+
+.GroupsList__GroupTitle {
+  font-size: var(--pe-text-md);
+  font-weight: var(--pe-font-weight-medium);
+  color: var(--pe-color-gray-100);
+  font-family: var(--pe-font-heading);
+}
+
+.GroupsList__GroupHeaderColumn {
+  display: flex;
+  align-items: center;
+  gap: var(--pe-space-4);
+}
+
+.GroupsList__GroupHeaderColumn--Button {
+  justify-content: flex-end;
+}
+
+.GroupsList__RequiredPower {
+  font-size: var(--pe-text-sm);
+  color: var(--pe-color-gray-400);
+}
+
+.GroupsList__ToggleButton {
+  font-weight: var(--pe-font-weight-medium) !important;
+  text-transform: capitalize !important;
+}
+
+.GroupsList__ToggleButton svg {
+  transition: transform 0.2s;
+}
+
+.GroupsList__MembersContainer {
+  width: 100%;
+}
+
+.GroupsList__MembersList {
+  padding: var(--pe-space-2) var(--pe-space-4) var(--pe-space-4) var(--pe-space-4);
 }

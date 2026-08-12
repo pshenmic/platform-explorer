@@ -1,19 +1,23 @@
 .DashboardCards {
   width: 100%;
-  &__Slider {
-    margin-top: -var(--pe-space-2_5);
-    margin-bottom: -var(--pe-space-2_5);
-  }
-  &__CardsColumn {
-    width: 90%;
-    padding: var(--pe-space-2_5);
-  }
-  &__Card {
-    margin-bottom: var(--pe-space-5);
-  }
-  &__Card:last-child {
-    margin-bottom: 0;
-  }
+}
+
+.DashboardCards__Slider {
+  margin-top: -var(--pe-space-2_5);
+  margin-bottom: -var(--pe-space-2_5);
+}
+
+.DashboardCards__CardsColumn {
+  width: 90%;
+  padding: var(--pe-space-2_5);
+}
+
+.DashboardCards__Card {
+  margin-bottom: var(--pe-space-5);
+}
+
+.DashboardCards__Card:last-child {
+  margin-bottom: 0;
 }
 
 @media screen and (min-width: 600px) {
@@ -23,16 +27,16 @@
 }
 
 @media screen and (max-width: 48em) {
-  .DashboardCards {
-    &__CardsColumn {
-      padding: var(--pe-space-2_5) var(--pe-space-1);
-    }
-    &__Card {
-      margin-bottom: var(--pe-space-2);
-    }
-    &__Card:last-child {
-      margin-bottom: 0;
-    }
+  .DashboardCards__CardsColumn {
+    padding: var(--pe-space-2_5) var(--pe-space-1);
+  }
+
+  .DashboardCards__Card {
+    margin-bottom: var(--pe-space-2);
+  }
+
+  .DashboardCards__Card:last-child {
+    margin-bottom: 0;
   }
 }
 
@@ -43,20 +47,16 @@
     overflow: visible;
   }
 
-  .DashboardCards {
-    &__Slider {
-      width: calc(100% + var(--pe-space-5));
-    }
+  .DashboardCards__Slider {
+    width: calc(100% + var(--pe-space-5));
   }
 }
 
-.DashboardCards {
-  &--NoSlider &__Grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: var(--pe-space-5);
-    width: 100%;
-  }
+.DashboardCards--NoSlider .DashboardCards__Grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: var(--pe-space-5);
+  width: 100%;
 }
 
 @media screen and (min-width: 48em) {
@@ -65,21 +65,20 @@
   }
 }
 
-.DashboardCards {
-  &__Title {
-    margin-bottom: var(--pe-space-3);
-    color: var(--pe-color-brand-normal);
-    font-family: var(--pe-font-heading);
-    font-style: italic;
-    font-size: var(--pe-text-md);
-    font-weight: var(--pe-font-weight-extrabold);
-    text-transform: uppercase;
-    white-space: nowrap;
-  }
-  &__Value {
-    font-family: var(--pe-font-heading);
-    font-weight: var(--pe-font-weight-extrabold);
-    font-size: var(--pe-space-5);
-    flex-grow: 1;
-  }
+.DashboardCards__Title {
+  margin-bottom: var(--pe-space-3);
+  color: var(--pe-color-brand-normal);
+  font-family: var(--pe-font-heading);
+  font-style: italic;
+  font-size: var(--pe-text-md);
+  font-weight: var(--pe-font-weight-extrabold);
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.DashboardCards__Value {
+  font-family: var(--pe-font-heading);
+  font-weight: var(--pe-font-weight-extrabold);
+  font-size: var(--pe-space-5);
+  flex-grow: 1;
 }

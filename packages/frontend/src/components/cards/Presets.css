@@ -11,24 +11,24 @@
   }
 }
 
-.Presets {
-  &__Chip {
-    padding: 3px 9px;
-    border-radius: var(--pe-radius-sm);
-    font-family: var(--pe-font-mono);
-    font-size: var(--pe-text-xs);
-    color: var(--pe-color-gray-500);
-    background: rgba(255, 255, 255, 0.04);
-    transition:
-      color 0.15s,
-      background-color 0.15s;
-  }
-  &__Chip:hover {
-    color: var(--pe-color-fg);
-  }
-  &__Chip--active {
-    color: var(--pe-color-fg);
-    background: rgba(var(--pe-color-brand-normal-rgb), 0.18);
-    box-shadow: inset 0 0 0 1px rgba(var(--pe-color-brand-normal-rgb), 0.45);
-  }
+.Presets__Chip {
+  padding: 3px 9px;
+  border-radius: var(--pe-radius-sm);
+  font-family: var(--pe-font-mono);
+  font-size: var(--pe-text-xs);
+  color: var(--pe-color-gray-500);
+  background: rgba(255, 255, 255, 0.04);
+  transition:
+    color 0.15s,
+    background-color 0.15s;
+}
+
+.Presets__Chip:hover {
+  color: var(--pe-color-fg);
+}
+
+.Presets__Chip--active {
+  color: var(--pe-color-fg);
+  background: rgba(var(--pe-color-brand-normal-rgb), 0.18);
+  box-shadow: inset 0 0 0 1px rgba(var(--pe-color-brand-normal-rgb), 0.45);
 }

@@ -3,9 +3,10 @@
   display: flex;
   flex-wrap: wrap;
   gap: var(--pe-space-2);
-  &__Title,
-  &__Value {
-    padding: 3px var(--pe-space-2_5);
-    border-radius: var(--pe-radius-sm);
-  }
+}
+
+.PrefundedBalance__Title,
+.PrefundedBalance__Value {
+  padding: 3px var(--pe-space-2_5);
+  border-radius: var(--pe-radius-sm);
 }

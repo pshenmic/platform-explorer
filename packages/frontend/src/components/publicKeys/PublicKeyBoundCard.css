@@ -8,25 +8,30 @@
   display: flex;
   gap: var(--pe-space-1);
   font-size: var(--pe-text-sm);
-  &__Title {
-    white-space: nowrap;
-    color: var(--pe-color-fg-muted);
-  }
-  &__Id {
-    overflow: hidden;
-    font-size: var(--pe-text-sm);
-  }
-  &__Type {
-    display: flex;
-    flex-wrap: nowrap;
-    white-space: nowrap;
-    gap: var(--pe-space-1_5);
-  }
-  &__TypeTitle {
-    white-space: nowrap;
-    color: var(--pe-color-fg-muted);
-  }
-  &__TypeValue {
-    color: var(--pe-color-fg);
-  }
+}
+
+.PublicKeyBoundCard__Title {
+  white-space: nowrap;
+  color: var(--pe-color-fg-muted);
+}
+
+.PublicKeyBoundCard__Id {
+  overflow: hidden;
+  font-size: var(--pe-text-sm);
+}
+
+.PublicKeyBoundCard__Type {
+  display: flex;
+  flex-wrap: nowrap;
+  white-space: nowrap;
+  gap: var(--pe-space-1_5);
+}
+
+.PublicKeyBoundCard__TypeTitle {
+  white-space: nowrap;
+  color: var(--pe-color-fg-muted);
+}
+
+.PublicKeyBoundCard__TypeValue {
+  color: var(--pe-color-fg);
 }

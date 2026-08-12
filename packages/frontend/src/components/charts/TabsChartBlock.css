@@ -7,17 +7,19 @@
   container-type: inline-size;
   height: 100%;
   transition: all 0.2s;
-  &__ChartContainer {
-    height: 100%;
-    visibility: visible;
-    opacity: 1;
-    transition: all 0.2s;
-  }
-  &__ChartContainer--Hidden {
-    visibility: hidden;
-    opacity: 0;
-    transition-delay: 0s;
-  }
+}
+
+.TabsChartBlock__ChartContainer {
+  height: 100%;
+  visibility: visible;
+  opacity: 1;
+  transition: all 0.2s;
+}
+
+.TabsChartBlock__ChartContainer--Hidden {
+  visibility: hidden;
+  opacity: 0;
+  transition-delay: 0s;
 }
 
 @container (max-width: 500px) {

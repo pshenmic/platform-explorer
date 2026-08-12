@@ -7,46 +7,50 @@
   border-radius: var(--pe-radius-def);
   padding: var(--pe-space-4);
   box-shadow: 0 0 0 rgba(0, 0, 0, 0);
-  &--Clickable {
-    transition: box-shadow 0.1s;
-  }
+}
+
+.InfoCard--Clickable {
+  transition: box-shadow 0.1s;
 }
 
 @media (hover: hover) and (pointer: fine) {
-  .InfoCard {
-    &--Clickable:hover {
-      cursor: pointer;
-      box-shadow: var(--pe-space-1) var(--pe-space-1) 5px rgba(0, 0, 0, 0.2);
-    }
-    &--Clickable:hover::after {
-      opacity: var(--pe-opacity-muted);
-    }
-    &--Clickable:hover::before {
-      opacity: var(--pe-opacity-muted);
-    }
+  .InfoCard--Clickable:hover {
+    cursor: pointer;
+    box-shadow: var(--pe-space-1) var(--pe-space-1) 5px rgba(0, 0, 0, 0.2);
+  }
+
+  .InfoCard--Clickable:hover::after {
+    opacity: var(--pe-opacity-muted);
+  }
+
+  .InfoCard--Clickable:hover::before {
+    opacity: var(--pe-opacity-muted);
   }
 }
 
-.InfoCard {
-  &--Clickable:active {
-    transform: translateY(1px);
-    box-shadow: 0 0 3px rgba(0, 0, 0, 0) !important;
-  }
-  &--Clickable:active::after {
-    opacity: 0;
-  }
-  &--Clickable:active::before {
-    opacity: 0.25;
-  }
-  &--Clickable:hover &__HoverBg {
-    opacity: 0.15;
-  }
-  &--Clickable:active &__HoverBg {
-    opacity: 0;
-  }
-  &__LoadingStub {
-    display: none;
-  }
+.InfoCard--Clickable:active {
+  transform: translateY(1px);
+  box-shadow: 0 0 3px rgba(0, 0, 0, 0) !important;
+}
+
+.InfoCard--Clickable:active::after {
+  opacity: 0;
+}
+
+.InfoCard--Clickable:active::before {
+  opacity: 0.25;
+}
+
+.InfoCard--Clickable:hover .InfoCard__HoverBg {
+  opacity: 0.15;
+}
+
+.InfoCard--Clickable:active .InfoCard__HoverBg {
+  opacity: 0;
+}
+
+.InfoCard__LoadingStub {
+  display: none;
 }
 
 @keyframes loading-process {
@@ -76,82 +80,90 @@
   }
 }
 
-.InfoCard {
-  &--Loading &__LoadingStub {
-    overflow: hidden;
-    position: relative;
-    animation: 1s LoadingContainer infinite;
-  }
-  &--Loading &__LoadingStub::before {
-    z-index: 5 !important;
-    opacity: 1 !important;
-  }
-  &--Loading &__LoadingStub::after {
-    animation: 1s loading-process infinite;
-    z-index: 6;
-  }
-  &--Loading &__LoadingStub::before,
-  &--Loading &__LoadingStub::after {
-    content: "";
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    top: 0;
-    left: 0;
-    z-index: -1;
-  }
-  &--Loading &__LoadingStub::before {
-    background-color: var(--pe-color-gray-900);
-  }
-  &--Loading &__LoadingStub::after {
-    background: linear-gradient(
-      90deg,
-      transparent 0%,
-      rgb(14, 117, 181) 50%,
-      transparent 100%
-    ) !important;
-    width: 100%;
-    height: 100%;
-  }
-  &--Loading &__LoadingStub {
-    transition: all var(--pe-transition-def);
-    display: block;
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-  }
-  &::before,
-  &::after {
-    content: "";
-    position: absolute;
-    z-index: -1;
-    width: 100%;
-    height: 100%;
-    top: 0;
-    left: 0;
-    transition: var(--pe-transition-def);
-  }
-  &::after {
-    opacity: 1;
-    background: radial-gradient(circle at 70% 0%, rgba(46, 57, 61, 0) 0, rgba(46, 57, 61, 0.5));
-    transition: opacity 0.1s;
-  }
-  &::before {
-    z-index: -3;
-    background: linear-gradient(135deg, var(--pe-color-gray-900), var(--pe-color-gray-900));
-    background: var(--pe-color-gray-800);
-    opacity: var(--pe-opacity-faint);
-  }
-  &__HoverBg {
-    position: absolute;
-    z-index: -2;
-    background: radial-gradient(circle at center, var(--pe-color-brand-deep) 0, transparent 50%);
-    transform: translate(-50%, -50%);
-    width: 400px;
-    height: 400px;
-    opacity: 0;
-    transition: opacity 0.3s;
-  }
+.InfoCard--Loading .InfoCard__LoadingStub {
+  overflow: hidden;
+  position: relative;
+  animation: 1s LoadingContainer infinite;
+}
+
+.InfoCard--Loading .InfoCard__LoadingStub::before {
+  z-index: 5 !important;
+  opacity: 1 !important;
+}
+
+.InfoCard--Loading .InfoCard__LoadingStub::after {
+  animation: 1s loading-process infinite;
+  z-index: 6;
+}
+
+.InfoCard--Loading .InfoCard__LoadingStub::before,
+.InfoCard--Loading .InfoCard__LoadingStub::after {
+  content: "";
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  z-index: -1;
+}
+
+.InfoCard--Loading .InfoCard__LoadingStub::before {
+  background-color: var(--pe-color-gray-900);
+}
+
+.InfoCard--Loading .InfoCard__LoadingStub::after {
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgb(14, 117, 181) 50%,
+    transparent 100%
+  ) !important;
+  width: 100%;
+  height: 100%;
+}
+
+.InfoCard--Loading .InfoCard__LoadingStub {
+  transition: all var(--pe-transition-def);
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.InfoCard::before,
+.InfoCard::after {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  transition: var(--pe-transition-def);
+}
+
+.InfoCard::after {
+  opacity: 1;
+  background: radial-gradient(circle at 70% 0%, rgba(46, 57, 61, 0) 0, rgba(46, 57, 61, 0.5));
+  transition: opacity 0.1s;
+}
+
+.InfoCard::before {
+  z-index: -3;
+  background: linear-gradient(135deg, var(--pe-color-gray-900), var(--pe-color-gray-900));
+  background: var(--pe-color-gray-800);
+  opacity: var(--pe-opacity-faint);
+}
+
+.InfoCard__HoverBg {
+  position: absolute;
+  z-index: -2;
+  background: radial-gradient(circle at center, var(--pe-color-brand-deep) 0, transparent 50%);
+  transform: translate(-50%, -50%);
+  width: 400px;
+  height: 400px;
+  opacity: 0;
+  transition: opacity 0.3s;
 }

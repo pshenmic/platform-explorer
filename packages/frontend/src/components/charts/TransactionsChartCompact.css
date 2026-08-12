@@ -1,68 +1,76 @@
 .TransactionsChartCompact {
   width: 100%;
-  &__Header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: var(--pe-space-2);
-    margin-bottom: var(--pe-space-2);
-  }
-  &__Title {
-    font-family: var(--pe-font-heading);
-    font-style: italic;
-    font-weight: var(--pe-font-weight-extrabold);
-    font-size: 0.8125rem;
-    text-transform: uppercase;
-    letter-spacing: 0.02em;
-    color: var(--pe-color-brand-normal);
-    white-space: nowrap;
-  }
-  &__Timeframes {
-    display: inline-flex;
-    align-items: center;
-    gap: 2px;
-    padding: 2px;
-    border-radius: var(--pe-radius-def);
-    background: rgba(var(--pe-color-gray-800-rgb), 0.6);
-    border: 1px solid var(--pe-color-gray-700);
-    flex-wrap: wrap;
-  }
-  &__Pill {
-    appearance: none;
-    border: none;
-    background: transparent;
-    color: var(--pe-color-fg-muted);
-    font-family: var(--pe-font-mono);
-    font-size: var(--pe-text-xs);
-    font-weight: var(--pe-font-weight-semibold);
-    letter-spacing: 0.02em;
-    padding: var(--pe-space-1) var(--pe-space-2_5);
-    border-radius: calc(var(--pe-radius-def) - 2px);
-    cursor: pointer;
-    transition:
-      background var(--pe-transition-def) ease,
-      color var(--pe-transition-def) ease;
-  }
-  &__Pill:hover {
-    color: var(--pe-color-fg);
-  }
-  &__Pill--Active {
-    background: var(--pe-color-brand-normal);
-    color: var(--pe-color-fg);
-  }
-  &__Chart {
-    position: relative;
-    width: 100%;
-    height: 150px;
-  }
-  &__Loader {
-    width: 100%;
-    height: 100%;
-    border-radius: var(--pe-radius-def);
-    overflow: hidden;
-    position: relative;
-  }
+}
+
+.TransactionsChartCompact__Header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--pe-space-2);
+  margin-bottom: var(--pe-space-2);
+}
+
+.TransactionsChartCompact__Title {
+  font-family: var(--pe-font-heading);
+  font-style: italic;
+  font-weight: var(--pe-font-weight-extrabold);
+  font-size: 0.8125rem;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  color: var(--pe-color-brand-normal);
+  white-space: nowrap;
+}
+
+.TransactionsChartCompact__Timeframes {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 2px;
+  border-radius: var(--pe-radius-def);
+  background: rgba(var(--pe-color-gray-800-rgb), 0.6);
+  border: 1px solid var(--pe-color-gray-700);
+  flex-wrap: wrap;
+}
+
+.TransactionsChartCompact__Pill {
+  appearance: none;
+  border: none;
+  background: transparent;
+  color: var(--pe-color-fg-muted);
+  font-family: var(--pe-font-mono);
+  font-size: var(--pe-text-xs);
+  font-weight: var(--pe-font-weight-semibold);
+  letter-spacing: 0.02em;
+  padding: var(--pe-space-1) var(--pe-space-2_5);
+  border-radius: calc(var(--pe-radius-def) - 2px);
+  cursor: pointer;
+  transition:
+    background var(--pe-transition-def) ease,
+    color var(--pe-transition-def) ease;
+}
+
+.TransactionsChartCompact__Pill:hover {
+  color: var(--pe-color-fg);
+}
+
+.TransactionsChartCompact__Pill--Active {
+  background: var(--pe-color-brand-normal);
+  color: var(--pe-color-fg);
+}
+
+.TransactionsChartCompact__Chart {
+  position: relative;
+  width: 100%;
+  height: 150px;
+}
+
+.TransactionsChartCompact__Loader {
+  width: 100%;
+  height: 100%;
+  border-radius: var(--pe-radius-def);
+  overflow: hidden;
+  position: relative;
 }
 
 @keyframes LoadingLine {
@@ -127,76 +135,84 @@ Tr:nth-child(10n) .TransactionsChartCompact__Loader::after {
   animation-delay: 4s;
 }
 
-.TransactionsChartCompact {
-  &__Loader::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: var(--pe-color-gray-900);
-    border-radius: 5px;
-    opacity: 1;
-  }
-  &__Loader::after {
-    content: "";
-    position: absolute;
-    z-index: 2;
-    top: 0;
-    left: -50%;
-    width: 40%;
-    height: 100%;
-    background: linear-gradient(90deg, rgb(14, 117, 181) 0%, rgb(22, 82, 120) 100%);
-    border-radius: 100px;
-    opacity: var(--pe-opacity-faint);
-    animation: LoadingLine linear 3s infinite;
-  }
-  &__Loader:nth-child(1n)::after {
-    animation-delay: -0.5s;
-  }
-  &__Loader:nth-child(2n)::after {
-    animation-delay: 0s;
-  }
-  &__Loader:nth-child(3n)::after {
-    animation-delay: 0.5s;
-  }
-  &__Loader:nth-child(4n)::after {
-    animation-delay: 1s;
-  }
-  &__Loader:nth-child(5n)::after {
-    animation-delay: 1.5s;
-  }
-  &__Loader:nth-child(6n)::after {
-    animation-delay: 2s;
-  }
-  &__Loader:nth-child(7n)::after {
-    animation-delay: 2.5s;
-  }
-  &__Loader:nth-child(8n)::after {
-    animation-delay: 3s;
-  }
-  &__Loader:nth-child(9n)::after {
-    animation-delay: 3.5s;
-  }
-  &__Loader:nth-child(10n)::after {
-    animation-delay: 4s;
-  }
-  &__Empty {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    height: 100%;
-    color: var(--pe-color-gray-500);
-    font-size: var(--pe-text-sm);
-  }
+.TransactionsChartCompact__Loader::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: var(--pe-color-gray-900);
+  border-radius: 5px;
+  opacity: 1;
+}
+
+.TransactionsChartCompact__Loader::after {
+  content: "";
+  position: absolute;
+  z-index: 2;
+  top: 0;
+  left: -50%;
+  width: 40%;
+  height: 100%;
+  background: linear-gradient(90deg, rgb(14, 117, 181) 0%, rgb(22, 82, 120) 100%);
+  border-radius: 100px;
+  opacity: var(--pe-opacity-faint);
+  animation: LoadingLine linear 3s infinite;
+}
+
+.TransactionsChartCompact__Loader:nth-child(1n)::after {
+  animation-delay: -0.5s;
+}
+
+.TransactionsChartCompact__Loader:nth-child(2n)::after {
+  animation-delay: 0s;
+}
+
+.TransactionsChartCompact__Loader:nth-child(3n)::after {
+  animation-delay: 0.5s;
+}
+
+.TransactionsChartCompact__Loader:nth-child(4n)::after {
+  animation-delay: 1s;
+}
+
+.TransactionsChartCompact__Loader:nth-child(5n)::after {
+  animation-delay: 1.5s;
+}
+
+.TransactionsChartCompact__Loader:nth-child(6n)::after {
+  animation-delay: 2s;
+}
+
+.TransactionsChartCompact__Loader:nth-child(7n)::after {
+  animation-delay: 2.5s;
+}
+
+.TransactionsChartCompact__Loader:nth-child(8n)::after {
+  animation-delay: 3s;
+}
+
+.TransactionsChartCompact__Loader:nth-child(9n)::after {
+  animation-delay: 3.5s;
+}
+
+.TransactionsChartCompact__Loader:nth-child(10n)::after {
+  animation-delay: 4s;
+}
+
+.TransactionsChartCompact__Empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  color: var(--pe-color-gray-500);
+  font-size: var(--pe-text-sm);
 }
 
 @media screen and (max-width: 48em) {
-  .TransactionsChartCompact {
-    &__Chart {
-      height: 130px;
-    }
+  .TransactionsChartCompact__Chart {
+    height: 130px;
   }
 }

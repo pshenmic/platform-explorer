@@ -1,6 +1,4 @@
-.BigNumber {
-  &__Space:not(:last-child) {
-    display: inline-block;
-    border-right: transparent solid 3px;
-  }
+.BigNumber__Space:not(:last-child) {
+  display: inline-block;
+  border-right: transparent solid 3px;
 }

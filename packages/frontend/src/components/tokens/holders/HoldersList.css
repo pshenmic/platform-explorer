@@ -1,23 +1,28 @@
 .HoldersList__Pagination {
   margin-top: 2rem !important;
 }
+
 .HoldersList__ScrollZone {
   width: fit-content;
   min-width: 100%;
 }
+
 @media screen and (max-width: 48em) {
   .HoldersList__Pagination {
     margin-top: 1.5rem !important;
   }
 }
+
 @media screen and (max-width: 30em) {
   .HoldersList__Pagination {
     margin-top: 1rem !important;
   }
 }
+
 .HoldersList {
   container-type: inline-size;
 }
+
 .HoldersList__ColumnTitles {
   display: grid;
   padding: var(--pe-list-row-pad-y) var(--pe-list-row-pad-x);
@@ -30,50 +35,60 @@
   text-transform: uppercase;
   color: var(--pe-color-fg);
 }
+
 .HoldersList__ColumnTitles--Light {
   background: transparent !important;
   font-weight: 500 !important;
   color: #fff !important;
   text-transform: none !important;
 }
+
 .HoldersList__ColumnTitles {
   display: grid;
   gap: 1rem;
   grid-template-columns: 8fr 2.5fr 2.5fr 2fr;
 }
+
 @container (max-width: 65rem) {
   .HoldersList__ColumnTitles {
     grid-template-columns: minmax(0, 125rem) 10rem 10rem 7.5rem;
   }
 }
+
 @container (max-width: 45rem) {
   .HoldersList__ColumnTitles {
     grid-template-columns: minmax(0, 125rem) auto 7.5rem;
   }
 }
+
 @container (max-width: 30rem) {
   .HoldersList__ColumnTitles {
     grid-template-columns: minmax(0, 125rem) auto;
   }
 }
+
 .HoldersList__ColumnTitle {
   display: flex;
   width: 100%;
 }
+
 .HoldersList__ColumnTitle:last-child {
   justify-content: flex-end;
   text-align: right;
 }
+
 @container (max-width: 45rem) {
   .HoldersList__ColumnTitle--DashAmount {
     display: none;
   }
 }
+
 @container (max-width: 30rem) {
   .HoldersList__ColumnTitle--LastActivity {
     display: none;
   }
 }
+
 .HoldersList__ColumnTitle {
   display: block;
   word-break: normal;

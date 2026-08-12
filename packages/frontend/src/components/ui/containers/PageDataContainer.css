@@ -1,264 +1,215 @@
-.PageDataContainer {
-  &__Header {
-    position: relative;
-    display: flex;
-    align-items: center;
-    height: var(--pe-space-10);
-    padding: 0 var(--pe-space-3);
-  }
-  &__Header::before {
-    content: "";
-    display: block;
-    position: absolute;
-    height: var(--pe-space-10);
-    width: 100%;
-    left: 0;
-    border-radius: var(--pe-radius-def) var(--pe-space-5) 0 0;
-    background-color: var(--pe-color-gray-800);
-    opacity: 1;
-    top: 0;
-    z-index: 0;
-  }
-  &__Content {
-    display: flex;
-    flex-direction: column;
-    gap: var(--pe-space-5);
-    padding-top: var(--pe-space-8);
-    padding-bottom: var(--pe-space-8);
-    position: relative;
-    overflow: hidden;
-    border-radius: 0 0 var(--pe-space-5) var(--pe-space-5);
-    background: var(--pe-color-gray-675);
-    padding-left: var(--pe-space-3) !important;
-  }
+.PageDataContainer__Header {
+  position: relative;
+  display: flex;
+  align-items: center;
+  height: var(--pe-space-10);
+  padding: 0 var(--pe-space-3);
+}
+
+.PageDataContainer__Header::before {
+  content: "";
+  display: block;
+  position: absolute;
+  height: var(--pe-space-10);
+  width: 100%;
+  left: 0;
+  border-radius: var(--pe-radius-def) var(--pe-space-5) 0 0;
+  background-color: var(--pe-color-gray-800);
+  opacity: 1;
+  top: 0;
+  z-index: 0;
+}
+
+.PageDataContainer__Content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--pe-space-5);
+  padding-top: var(--pe-space-8);
+  padding-bottom: var(--pe-space-8);
+  position: relative;
+  overflow: hidden;
+  border-radius: 0 0 var(--pe-space-5) var(--pe-space-5);
+  background: var(--pe-color-gray-675);
+  padding-left: var(--pe-space-3) !important;
 }
 
 @media screen and (min-width: 48em) {
-  .PageDataContainer {
-    &__Content {
-      padding-left: var(--pe-space-4) !important;
-    }
+  .PageDataContainer__Content {
+    padding-left: var(--pe-space-4) !important;
   }
 }
 
 @media screen and (min-width: 62em) {
-  .PageDataContainer {
-    &__Content {
-      padding-left: var(--pe-space-6) !important;
-    }
+  .PageDataContainer__Content {
+    padding-left: var(--pe-space-6) !important;
   }
 }
 
 @media screen and (min-width: 80em) {
-  .PageDataContainer {
-    &__Content {
-      padding-left: var(--pe-space-8) !important;
-    }
+  .PageDataContainer__Content {
+    padding-left: var(--pe-space-8) !important;
   }
 }
 
-.PageDataContainer {
-  &__Content {
-    padding-right: var(--pe-space-3) !important;
-  }
+.PageDataContainer__Content {
+  padding-right: var(--pe-space-3) !important;
 }
 
 @media screen and (min-width: 48em) {
-  .PageDataContainer {
-    &__Content {
-      padding-right: var(--pe-space-4) !important;
-    }
+  .PageDataContainer__Content {
+    padding-right: var(--pe-space-4) !important;
   }
 }
 
 @media screen and (min-width: 62em) {
-  .PageDataContainer {
-    &__Content {
-      padding-right: var(--pe-space-6) !important;
-    }
+  .PageDataContainer__Content {
+    padding-right: var(--pe-space-6) !important;
   }
 }
 
 @media screen and (min-width: 80em) {
-  .PageDataContainer {
-    &__Content {
-      padding-right: var(--pe-space-8) !important;
-    }
+  .PageDataContainer__Content {
+    padding-right: var(--pe-space-8) !important;
   }
 }
 
-.PageDataContainer {
-  &__BackLink {
-    position: relative;
-    z-index: 2;
-    width: var(--pe-space-8);
-    height: var(--pe-space-6);
-    margin-right: var(--pe-space-2_5);
-    background-color: rgba(24, 167, 255, 0.1);
-    border-radius: var(--pe-radius-def);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.1s;
-  }
-  &__BackLink svg {
-    transform: rotate(180deg);
-  }
+.PageDataContainer__BackLink {
+  position: relative;
+  z-index: 2;
+  width: var(--pe-space-8);
+  height: var(--pe-space-6);
+  margin-right: var(--pe-space-2_5);
+  background-color: rgba(24, 167, 255, 0.1);
+  border-radius: var(--pe-radius-def);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.1s;
+}
+
+.PageDataContainer__BackLink svg {
+  transform: rotate(180deg);
 }
 
 @media (hover: hover) and (pointer: fine) {
-  .PageDataContainer {
-    &__BackLink:hover {
-      background-color: rgba(24, 167, 255, 0.2);
-    }
+  .PageDataContainer__BackLink:hover {
+    background-color: rgba(24, 167, 255, 0.2);
   }
 }
 
-.PageDataContainer {
-  &__BackLink:active {
-    transform: translateY(1px);
-    background-color: rgba(24, 167, 255, 0.15);
-  }
-  &__Title {
-    position: relative;
-    z-index: 2;
-    font-family: var(--pe-font-heading);
-    font-size: var(--pe-text-sm);
-    font-weight: var(--pe-font-weight-bold);
-    text-transform: uppercase;
-  }
+.PageDataContainer__BackLink:active {
+  transform: translateY(1px);
+  background-color: rgba(24, 167, 255, 0.15);
+}
+
+.PageDataContainer__Title {
+  position: relative;
+  z-index: 2;
+  font-family: var(--pe-font-heading);
+  font-size: var(--pe-text-sm);
+  font-weight: var(--pe-font-weight-bold);
+  text-transform: uppercase;
 }
 
 @media screen and (max-width: 62em) {
-  .PageDataContainer {
-    &__Content {
-      padding-top: var(--pe-space-3) !important;
-      padding-bottom: var(--pe-space-3) !important;
-      border-radius: var(--pe-radius-def);
-    }
+  .PageDataContainer__Content {
+    padding-top: var(--pe-space-3) !important;
+    padding-bottom: var(--pe-space-3) !important;
+    border-radius: var(--pe-radius-def);
   }
 }
 
 @media screen and (max-width: 62em) and (min-width: 48em) {
-  .PageDataContainer {
-    &__Content {
-      padding-top: var(--pe-space-4) !important;
-    }
+  .PageDataContainer__Content {
+    padding-top: var(--pe-space-4) !important;
   }
 }
 
 @media screen and (max-width: 62em) and (min-width: 62em) {
-  .PageDataContainer {
-    &__Content {
-      padding-top: var(--pe-space-6) !important;
-    }
+  .PageDataContainer__Content {
+    padding-top: var(--pe-space-6) !important;
   }
 }
 
 @media screen and (max-width: 62em) and (min-width: 80em) {
-  .PageDataContainer {
-    &__Content {
-      padding-top: var(--pe-space-8) !important;
-    }
+  .PageDataContainer__Content {
+    padding-top: var(--pe-space-8) !important;
   }
 }
 
 @media screen and (max-width: 62em) and (min-width: 48em) {
-  .PageDataContainer {
-    &__Content {
-      padding-bottom: var(--pe-space-4) !important;
-    }
+  .PageDataContainer__Content {
+    padding-bottom: var(--pe-space-4) !important;
   }
 }
 
 @media screen and (max-width: 62em) and (min-width: 62em) {
-  .PageDataContainer {
-    &__Content {
-      padding-bottom: var(--pe-space-6) !important;
-    }
+  .PageDataContainer__Content {
+    padding-bottom: var(--pe-space-6) !important;
   }
 }
 
 @media screen and (max-width: 62em) and (min-width: 80em) {
-  .PageDataContainer {
-    &__Content {
-      padding-bottom: var(--pe-space-8) !important;
-    }
+  .PageDataContainer__Content {
+    padding-bottom: var(--pe-space-8) !important;
   }
 }
 
 @media screen and (max-width: 62em) {
-  .PageDataContainer {
-    &__Header {
-      margin-bottom: var(--pe-space-3);
-    }
-    &__Header::before {
-      border-radius: var(--pe-radius-block);
-    }
+  .PageDataContainer__Header {
+    margin-bottom: var(--pe-space-3);
+  }
+
+  .PageDataContainer__Header::before {
+    border-radius: var(--pe-radius-block);
   }
 }
 
 @media screen and (max-width: 48em) {
-  .PageDataContainer {
-    &__Content {
-      gap: var(--pe-space-3);
-    }
+  .PageDataContainer__Content {
+    gap: var(--pe-space-3);
   }
 }
 
 @media screen and (max-width: 420px) {
-  .PageDataContainer {
-    &__ContentContainer {
-      margin-right: calc(0px - var(--pe-space-3)) !important;
-      margin-left: calc(0px - var(--pe-space-3)) !important;
-    }
+  .PageDataContainer__ContentContainer {
+    margin-right: calc(0px - var(--pe-space-3)) !important;
+    margin-left: calc(0px - var(--pe-space-3)) !important;
   }
 }
 
 @media screen and (max-width: 420px) and (min-width: 48em) {
-  .PageDataContainer {
-    &__ContentContainer {
-      margin-right: calc(0px - var(--pe-space-4)) !important;
-    }
+  .PageDataContainer__ContentContainer {
+    margin-right: calc(0px - var(--pe-space-4)) !important;
   }
 }
 
 @media screen and (max-width: 420px) and (min-width: 62em) {
-  .PageDataContainer {
-    &__ContentContainer {
-      margin-right: calc(0px - var(--pe-space-6)) !important;
-    }
+  .PageDataContainer__ContentContainer {
+    margin-right: calc(0px - var(--pe-space-6)) !important;
   }
 }
 
 @media screen and (max-width: 420px) and (min-width: 80em) {
-  .PageDataContainer {
-    &__ContentContainer {
-      margin-right: calc(0px - var(--pe-space-8)) !important;
-    }
+  .PageDataContainer__ContentContainer {
+    margin-right: calc(0px - var(--pe-space-8)) !important;
   }
 }
 
 @media screen and (max-width: 420px) and (min-width: 48em) {
-  .PageDataContainer {
-    &__ContentContainer {
-      margin-left: calc(0px - var(--pe-space-4)) !important;
-    }
+  .PageDataContainer__ContentContainer {
+    margin-left: calc(0px - var(--pe-space-4)) !important;
   }
 }
 
 @media screen and (max-width: 420px) and (min-width: 62em) {
-  .PageDataContainer {
-    &__ContentContainer {
-      margin-left: calc(0px - var(--pe-space-6)) !important;
-    }
+  .PageDataContainer__ContentContainer {
+    margin-left: calc(0px - var(--pe-space-6)) !important;
   }
 }
 
 @media screen and (max-width: 420px) and (min-width: 80em) {
-  .PageDataContainer {
-    &__ContentContainer {
-      margin-left: calc(0px - var(--pe-space-8)) !important;
-    }
+  .PageDataContainer__ContentContainer {
+    margin-left: calc(0px - var(--pe-space-8)) !important;
   }
 }

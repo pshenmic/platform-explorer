@@ -13,166 +13,186 @@
   font-size: var(--pe-text-sm);
   font-family: var(--pe-font-mono);
   container-type: inline-size;
-  &__Header {
-    display: flex;
-    justify-content: center;
-    width: 100%;
-    margin-bottom: var(--pe-space-5);
-  }
-  &--SingleCalendar &__HeaderMonth {
-    width: 100%;
-    max-width: none;
-  }
-  &__HeaderMonth {
-    width: 50%;
-    text-align: center;
-    font-family: var(--pe-font-heading);
-    font-size: var(--pe-text-md);
-    font-weight: var(--pe-font-weight-bold);
-    max-width: 350px;
-  }
-  &__Calendar {
-    width: 100%;
-  }
-  &__Calendar {
-    margin-bottom: var(--pe-space-2_5);
-  }
-  &__MonthSelector {
-    display: flex;
-    justify-content: space-between;
-    width: 100%;
-    margin-top: var(--pe-space-2_5);
-  }
-  &__MonthButton,
-  &__Arrow {
-    color: var(--pe-color-fg);
-    border: 1px solid var(--pe-color-calendar-border);
-    border-radius: var(--pe-radius-def);
-    background-color: rgba(var(--pe-color-gray-800-rgb), 0.3);
-    cursor: pointer;
-    transition: all 0.1s;
-    margin: 0 var(--pe-space-1);
-  }
-  &__MonthButton:hover,
-  &__Arrow:hover {
-    background-color: rgba(var(--pe-color-gray-800-rgb), 0.5);
-  }
-  &__MonthButton:disabled,
-  &__Arrow:disabled {
-    opacity: 0.4;
-    cursor: not-allowed;
-  }
-  &__MonthButton {
-    color: var(--pe-color-fg-muted);
-    padding: var(--pe-space-2_5) var(--pe-space-4);
-    text-transform: uppercase;
-  }
-  &__MonthButton:hover {
-    color: var(--pe-color-gray-100);
-  }
-  &__MonthButton--Active {
-    color: var(--pe-color-fg);
-    background-color: var(--pe-color-brand-normal);
-  }
-  &__MonthButton--Active:hover {
-    background-color: var(--pe-color-brand-normal);
-    cursor: default;
-  }
-  &__Arrow {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 28px;
-  }
-  &__Arrow svg {
-    width: var(--pe-space-2);
-    height: var(--pe-space-2);
-  }
-  &__Arrow--Left {
-    margin-right: auto;
-    margin-left: 0;
-  }
-  &__Arrow--Left svg {
-    transform: rotate(180deg);
-  }
-  &__Arrow--Right {
-    margin-left: auto;
-    margin-right: 0;
-  }
+}
+
+.DateRangePicker__Header {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  margin-bottom: var(--pe-space-5);
+}
+
+.DateRangePicker--SingleCalendar .DateRangePicker__HeaderMonth {
+  width: 100%;
+  max-width: none;
+}
+
+.DateRangePicker__HeaderMonth {
+  width: 50%;
+  text-align: center;
+  font-family: var(--pe-font-heading);
+  font-size: var(--pe-text-md);
+  font-weight: var(--pe-font-weight-bold);
+  max-width: 350px;
+}
+
+.DateRangePicker__Calendar {
+  width: 100%;
+}
+
+.DateRangePicker__Calendar {
+  margin-bottom: var(--pe-space-2_5);
+}
+
+.DateRangePicker__MonthSelector {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  margin-top: var(--pe-space-2_5);
+}
+
+.DateRangePicker__MonthButton,
+.DateRangePicker__Arrow {
+  color: var(--pe-color-fg);
+  border: 1px solid var(--pe-color-calendar-border);
+  border-radius: var(--pe-radius-def);
+  background-color: rgba(var(--pe-color-gray-800-rgb), 0.3);
+  cursor: pointer;
+  transition: all 0.1s;
+  margin: 0 var(--pe-space-1);
+}
+
+.DateRangePicker__MonthButton:hover,
+.DateRangePicker__Arrow:hover {
+  background-color: rgba(var(--pe-color-gray-800-rgb), 0.5);
+}
+
+.DateRangePicker__MonthButton:disabled,
+.DateRangePicker__Arrow:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.DateRangePicker__MonthButton {
+  color: var(--pe-color-fg-muted);
+  padding: var(--pe-space-2_5) var(--pe-space-4);
+  text-transform: uppercase;
+}
+
+.DateRangePicker__MonthButton:hover {
+  color: var(--pe-color-gray-100);
+}
+
+.DateRangePicker__MonthButton--Active {
+  color: var(--pe-color-fg);
+  background-color: var(--pe-color-brand-normal);
+}
+
+.DateRangePicker__MonthButton--Active:hover {
+  background-color: var(--pe-color-brand-normal);
+  cursor: default;
+}
+
+.DateRangePicker__Arrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+}
+
+.DateRangePicker__Arrow svg {
+  width: var(--pe-space-2);
+  height: var(--pe-space-2);
+}
+
+.DateRangePicker__Arrow--Left {
+  margin-right: auto;
+  margin-left: 0;
+}
+
+.DateRangePicker__Arrow--Left svg {
+  transform: rotate(180deg);
+}
+
+.DateRangePicker__Arrow--Right {
+  margin-left: auto;
+  margin-right: 0;
 }
 
 @container (max-width: 640px) {
-  .DateRangePicker {
-    &__MonthButton {
-      font-size: var(--pe-text-2xs);
-      padding: var(--pe-space-2_5) var(--pe-space-3_5);
-    }
-    &__Arrow {
-      width: var(--pe-space-6);
-    }
+  .DateRangePicker__MonthButton {
+    font-size: var(--pe-text-2xs);
+    padding: var(--pe-space-2_5) var(--pe-space-3_5);
+  }
+
+  .DateRangePicker__Arrow {
+    width: var(--pe-space-6);
   }
 }
 
 @container (max-width: 570px) {
-  .DateRangePicker {
-    &__MonthButton,
-    &__Arrow {
-      border-radius: var(--pe-radius-md);
-    }
-    &__MonthButton {
-      font-size: var(--pe-space-2);
-      padding: var(--pe-space-2) var(--pe-space-2_5);
-      margin: 0 var(--pe-space-1);
-    }
-    &__Arrow {
-      width: var(--pe-space-5);
-    }
-    &__Arrow svg {
-      width: var(--pe-space-1);
-      height: var(--pe-space-1_5);
-    }
+  .DateRangePicker__MonthButton,
+  .DateRangePicker__Arrow {
+    border-radius: var(--pe-radius-md);
+  }
+
+  .DateRangePicker__MonthButton {
+    font-size: var(--pe-space-2);
+    padding: var(--pe-space-2) var(--pe-space-2_5);
+    margin: 0 var(--pe-space-1);
+  }
+
+  .DateRangePicker__Arrow {
+    width: var(--pe-space-5);
+  }
+
+  .DateRangePicker__Arrow svg {
+    width: var(--pe-space-1);
+    height: var(--pe-space-1_5);
   }
 }
 
 @container (max-width: 450px) {
-  .DateRangePicker {
-    &__MonthButton,
-    &__Arrow {
-      border-radius: var(--pe-radius-sm);
-    }
-    &__MonthButton {
-      font-size: var(--pe-space-2);
-      padding: var(--pe-space-1_5);
-      margin: 0 2px;
-    }
-    &__Arrow {
-      width: var(--pe-space-4);
-    }
-    &__Arrow svg {
-      width: var(--pe-space-1);
-      height: var(--pe-space-1_5);
-    }
+  .DateRangePicker__MonthButton,
+  .DateRangePicker__Arrow {
+    border-radius: var(--pe-radius-sm);
+  }
+
+  .DateRangePicker__MonthButton {
+    font-size: var(--pe-space-2);
+    padding: var(--pe-space-1_5);
+    margin: 0 2px;
+  }
+
+  .DateRangePicker__Arrow {
+    width: var(--pe-space-4);
+  }
+
+  .DateRangePicker__Arrow svg {
+    width: var(--pe-space-1);
+    height: var(--pe-space-1_5);
   }
 }
 
 @container (max-width: 400px) {
-  .DateRangePicker {
-    &__MonthButton,
-    &__Arrow {
-      border-radius: 5px;
-    }
-    &__MonthButton {
-      font-size: 0.438rem;
-      padding: 5px;
-      margin: 0px 1px;
-    }
-    &__Arrow {
-      width: var(--pe-space-3_5);
-    }
-    &__Arrow svg {
-      width: 3px;
-      height: 5px;
-    }
+  .DateRangePicker__MonthButton,
+  .DateRangePicker__Arrow {
+    border-radius: 5px;
+  }
+
+  .DateRangePicker__MonthButton {
+    font-size: 0.438rem;
+    padding: 5px;
+    margin: 0px 1px;
+  }
+
+  .DateRangePicker__Arrow {
+    width: var(--pe-space-3_5);
+  }
+
+  .DateRangePicker__Arrow svg {
+    width: 3px;
+    height: 5px;
   }
 }
 

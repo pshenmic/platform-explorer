@@ -1,6 +1,7 @@
 .TokenDashboardCard {
   padding: 24px 30px;
 }
+
 .TokenDashboardCard__Name,
 .TokenDashboardCard__Ticker {
   font-size: 1rem;
@@ -9,17 +10,20 @@
   font-style: italic;
   color: #fff;
 }
+
 .TokenDashboardCard__Name {
   font-family: var(--pe-font-heading);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
+
 @media screen and (min-width: 600px) {
   .TokenDashboardCard .SliderNavigation {
     display: none;
   }
 }
+
 @media screen and (max-width: 48em) {
   .TokenDashboardCard {
     padding: 14px 16px;

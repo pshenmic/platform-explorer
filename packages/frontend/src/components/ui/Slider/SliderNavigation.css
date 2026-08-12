@@ -1,48 +1,57 @@
 .SliderNavigation {
   position: relative;
   width: 100%;
-  &__Buttons {
-    display: flex;
-    justify-content: space-between;
-  }
-  &__Button {
-    display: flex;
-    width: var(--pe-space-8);
-    height: var(--pe-space-8);
-    border-radius: var(--pe-radius-def);
-    align-items: center;
-    justify-content: center;
-    background-color: var(--pe-color-brand-normal);
-  }
-  &__Button:hover {
-    cursor: pointer;
-    background-color: var(--pe-color-brand-light);
-  }
-  &__Button--Disabled {
-    background-color: var(--pe-color-gray-800);
-  }
-  &__Button--Disabled:hover {
-    background-color: var(--pe-color-gray-800);
-    cursor: default;
-  }
-  &__Button--Next {
-    position: absolute;
-    right: 0;
-  }
-  &__ProgressBars {
-    position: absolute;
-    display: flex;
-    width: calc(100% - 120px);
-    margin: 0 auto;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-  }
-  &__ProgressBar {
-    width: 100%;
-    margin-right: var(--pe-space-4);
-  }
-  &__ProgressBar:last-child {
-    margin-right: 0;
-  }
+}
+
+.SliderNavigation__Buttons {
+  display: flex;
+  justify-content: space-between;
+}
+
+.SliderNavigation__Button {
+  display: flex;
+  width: var(--pe-space-8);
+  height: var(--pe-space-8);
+  border-radius: var(--pe-radius-def);
+  align-items: center;
+  justify-content: center;
+  background-color: var(--pe-color-brand-normal);
+}
+
+.SliderNavigation__Button:hover {
+  cursor: pointer;
+  background-color: var(--pe-color-brand-light);
+}
+
+.SliderNavigation__Button--Disabled {
+  background-color: var(--pe-color-gray-800);
+}
+
+.SliderNavigation__Button--Disabled:hover {
+  background-color: var(--pe-color-gray-800);
+  cursor: default;
+}
+
+.SliderNavigation__Button--Next {
+  position: absolute;
+  right: 0;
+}
+
+.SliderNavigation__ProgressBars {
+  position: absolute;
+  display: flex;
+  width: calc(100% - 120px);
+  margin: 0 auto;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.SliderNavigation__ProgressBar {
+  width: 100%;
+  margin-right: var(--pe-space-4);
+}
+
+.SliderNavigation__ProgressBar:last-child {
+  margin-right: 0;
 }

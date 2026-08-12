@@ -10,50 +10,58 @@
   display: flex;
   flex-direction: column;
   gap: var(--pe-space-5);
-  &__List {
-    margin: -0.75em;
-    display: flex;
-    flex-direction: column;
-    gap: var(--pe-space-1);
-    width: fit-content;
-    max-height: 380px;
-    overflow-y: auto;
-    scroll-behavior: smooth;
-    scrollbar-width: thin;
-    scrollbar-color: var(--pe-color-brand-normal) transparent;
-  }
-  &__List::-webkit-scrollbar {
-    height: var(--pe-space-2);
-    width: var(--pe-space-2);
-  }
-  &__List::-webkit-scrollbar-track {
-    background: transparent;
-  }
-  &__List::-webkit-scrollbar-thumb {
-    background-color: var(--pe-color-brand-normal);
-    border-radius: var(--pe-radius-md);
-    border: 2px solid transparent;
-    background-clip: padding-box;
-  }
-  &__List::-webkit-scrollbar-thumb:hover {
-    background-color: var(--pe-color-brand-light);
-  }
-  &__Item {
-    display: flex;
-    align-items: center;
-    gap: var(--pe-space-3);
-    cursor: pointer;
-    padding: var(--pe-space-2);
-    margin: 0;
-    border-radius: var(--pe-radius-def);
-    transition: background-color var(--pe-transition-def);
-  }
-  &__Item:hover {
-    cursor: pointer;
-    color: var(--pe-color-fg);
-    background: var(--pe-color-gray-800);
-  }
-  &__Item:active {
-    background-color: var(--pe-color-gray-700) !important;
-  }
+}
+
+.MultiSelectFilter__List {
+  margin: -0.75em;
+  display: flex;
+  flex-direction: column;
+  gap: var(--pe-space-1);
+  width: fit-content;
+  max-height: 380px;
+  overflow-y: auto;
+  scroll-behavior: smooth;
+  scrollbar-width: thin;
+  scrollbar-color: var(--pe-color-brand-normal) transparent;
+}
+
+.MultiSelectFilter__List::-webkit-scrollbar {
+  height: var(--pe-space-2);
+  width: var(--pe-space-2);
+}
+
+.MultiSelectFilter__List::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.MultiSelectFilter__List::-webkit-scrollbar-thumb {
+  background-color: var(--pe-color-brand-normal);
+  border-radius: var(--pe-radius-md);
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+
+.MultiSelectFilter__List::-webkit-scrollbar-thumb:hover {
+  background-color: var(--pe-color-brand-light);
+}
+
+.MultiSelectFilter__Item {
+  display: flex;
+  align-items: center;
+  gap: var(--pe-space-3);
+  cursor: pointer;
+  padding: var(--pe-space-2);
+  margin: 0;
+  border-radius: var(--pe-radius-def);
+  transition: background-color var(--pe-transition-def);
+}
+
+.MultiSelectFilter__Item:hover {
+  cursor: pointer;
+  color: var(--pe-color-fg);
+  background: var(--pe-color-gray-800);
+}
+
+.MultiSelectFilter__Item:active {
+  background-color: var(--pe-color-gray-700) !important;
 }

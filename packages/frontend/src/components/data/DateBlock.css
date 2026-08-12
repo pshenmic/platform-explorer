@@ -1,38 +1,44 @@
 .DateBlock {
   font-family: var(--pe-font-mono);
-  &__InfoContainer {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    white-space: nowrap;
-    margin-top: -var(--pe-space-1);
-    margin-bottom: -var(--pe-space-1);
-  }
-  &__CalendarIcon,
-  &__Date,
-  &__Delta {
-    margin-top: var(--pe-space-1);
-    margin-bottom: var(--pe-space-1);
-    margin-right: var(--pe-space-2);
-  }
-  &__CalendarIcon:last-child,
-  &__Date:last-child,
-  &__Delta:last-child {
-    margin-right: 0;
-  }
-  &__CalendarIcon {
-    width: 50px;
-    height: 50px;
-  }
-  &__Date {
-    font-size: 0.813rem;
-  }
-  &__Delta {
-    display: inline-block;
-    padding: 3px var(--pe-space-2_5);
-    border: 1px solid rgba(147, 170, 178, 0.4);
-    border-radius: var(--pe-radius-sm);
-    color: var(--pe-color-fg-muted);
-    font-size: var(--pe-text-xs);
-  }
+}
+
+.DateBlock__InfoContainer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  white-space: nowrap;
+  margin-top: -var(--pe-space-1);
+  margin-bottom: -var(--pe-space-1);
+}
+
+.DateBlock__CalendarIcon,
+.DateBlock__Date,
+.DateBlock__Delta {
+  margin-top: var(--pe-space-1);
+  margin-bottom: var(--pe-space-1);
+  margin-right: var(--pe-space-2);
+}
+
+.DateBlock__CalendarIcon:last-child,
+.DateBlock__Date:last-child,
+.DateBlock__Delta:last-child {
+  margin-right: 0;
+}
+
+.DateBlock__CalendarIcon {
+  width: 50px;
+  height: 50px;
+}
+
+.DateBlock__Date {
+  font-size: 0.813rem;
+}
+
+.DateBlock__Delta {
+  display: inline-block;
+  padding: 3px var(--pe-space-2_5);
+  border: 1px solid rgba(147, 170, 178, 0.4);
+  border-radius: var(--pe-radius-sm);
+  color: var(--pe-color-fg-muted);
+  font-size: var(--pe-text-xs);
 }

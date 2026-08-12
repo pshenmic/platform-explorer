@@ -28,31 +28,36 @@
   padding-bottom: 0 !important;
   overflow: hidden;
   transition: 0.1s;
-  &--MenuIsOpen {
-    padding-bottom: var(--pe-space-6) !important;
-  }
-  &__TimeframeTitle {
-    margin: 5px 5px 5px 0;
-  }
-  &__TimeframeContainer {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    margin-left: auto;
-    margin-top: -var(--pe-space-5);
-  }
-  &__ChartContainer {
-    height: 100%;
-    visibility: visible;
-    opacity: 1;
-    transition: all 0.2s;
-    transition-delay: 0.2s;
-  }
-  &__ChartContainer--Hidden {
-    visibility: hidden;
-    opacity: 0;
-    transition-delay: 0s;
-  }
+}
+
+.ChartBlock--MenuIsOpen {
+  padding-bottom: var(--pe-space-6) !important;
+}
+
+.ChartBlock__TimeframeTitle {
+  margin: 5px 5px 5px 0;
+}
+
+.ChartBlock__TimeframeContainer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  margin-left: auto;
+  margin-top: -var(--pe-space-5);
+}
+
+.ChartBlock__ChartContainer {
+  height: 100%;
+  visibility: visible;
+  opacity: 1;
+  transition: all 0.2s;
+  transition-delay: 0.2s;
+}
+
+.ChartBlock__ChartContainer--Hidden {
+  visibility: hidden;
+  opacity: 0;
+  transition-delay: 0s;
 }
 
 @container (max-width: 400px) {
@@ -73,26 +78,28 @@
   }
 }
 
-.ChartBlock {
-  &__TimeframeButtons {
-    display: flex;
-    flex-wrap: wrap;
-  }
-  &__TimeframeButton {
-    font-family: var(--pe-font-heading);
-    font-size: var(--pe-text-sm);
-    height: 27px !important;
-    margin: 5px;
-  }
-  &__TimeframeButton:last-child {
-    margin-right: 0;
-  }
-  &__TimeframeButton--Active {
-    background-color: var(--pe-color-brand-normal) !important;
-  }
-  &__Loader {
-    width: 100%;
-  }
+.ChartBlock__TimeframeButtons {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.ChartBlock__TimeframeButton {
+  font-family: var(--pe-font-heading);
+  font-size: var(--pe-text-sm);
+  height: 27px !important;
+  margin: 5px;
+}
+
+.ChartBlock__TimeframeButton:last-child {
+  margin-right: 0;
+}
+
+.ChartBlock__TimeframeButton--Active {
+  background-color: var(--pe-color-brand-normal) !important;
+}
+
+.ChartBlock__Loader {
+  width: 100%;
 }
 
 @keyframes loading-process {
@@ -122,49 +129,50 @@
   }
 }
 
-.ChartBlock {
-  &__Loader {
-    overflow: hidden;
-    position: relative;
-    animation: 1s LoadingContainer infinite;
-  }
-  &__Loader::before {
-    z-index: 5 !important;
-    opacity: 1 !important;
-  }
-  &__Loader::after {
-    animation: 1s loading-process infinite;
-    z-index: 6;
-  }
-  &__Loader::before,
-  &__Loader::after {
-    content: "";
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    top: 0;
-    left: 0;
-    z-index: -1;
-  }
-  &__Loader::before {
-    background-color: var(--pe-color-gray-900);
-  }
-  &__Loader::after {
-    background: linear-gradient(
-      90deg,
-      transparent 0%,
-      rgb(14, 117, 181) 50%,
-      transparent 100%
-    ) !important;
-    width: 100%;
-    height: 100%;
-  }
+.ChartBlock__Loader {
+  overflow: hidden;
+  position: relative;
+  animation: 1s LoadingContainer infinite;
+}
+
+.ChartBlock__Loader::before {
+  z-index: 5 !important;
+  opacity: 1 !important;
+}
+
+.ChartBlock__Loader::after {
+  animation: 1s loading-process infinite;
+  z-index: 6;
+}
+
+.ChartBlock__Loader::before,
+.ChartBlock__Loader::after {
+  content: "";
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  z-index: -1;
+}
+
+.ChartBlock__Loader::before {
+  background-color: var(--pe-color-gray-900);
+}
+
+.ChartBlock__Loader::after {
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgb(14, 117, 181) 50%,
+    transparent 100%
+  ) !important;
+  width: 100%;
+  height: 100%;
 }
 
 @media screen and (max-width: 640px) {
-  .ChartBlock {
-    &__TimeframeContainer {
-      margin-top: 0;
-    }
+  .ChartBlock__TimeframeContainer {
+    margin-top: 0;
   }
 }

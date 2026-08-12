@@ -7,9 +7,10 @@
   height: 100%;
   display: flex;
   flex-direction: column;
-  &__Count {
-    flex-grow: 1;
-  }
+}
+
+.TotalValidatorsCardContent__Count {
+  flex-grow: 1;
 }
 
 @media screen and (max-width: 48em) {

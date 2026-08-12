@@ -18,78 +18,81 @@
   margin: 0;
 }
 
-.PlatformAddressTotalCard {
-  &__Title {
-    white-space: break-spaces;
-    word-break: break-all;
-  }
-  &__ContentContainer {
-    display: flex;
-    gap: var(--pe-space-10);
-  }
-  &__Column {
-    position: relative;
-    width: 50%;
-  }
-  &__Header {
-    position: relative;
-    display: flex;
-    width: 100%;
-    align-items: center;
-  }
-  &__Avatar {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: var(--pe-font-mono);
-    font-size: var(--pe-text-sm);
-    color: var(--pe-color-gray-500);
-    width: 88px;
-    height: 88px;
-    border: 1px solid rgba(137, 126, 126, 0.1);
-    flex-shrink: 0;
-    margin-left: var(--pe-space-6);
-  }
-  &__HeaderLines {
-    display: flex;
-    gap: var(--pe-space-5);
-    flex-direction: column;
-    justify-content: space-between;
-    width: 100%;
-    padding: var(--pe-space-1_5) 0;
-    overflow: hidden;
-  }
-  &__InfoLine {
-    gap: var(--pe-space-3_5);
-  }
-  &__CommonInfo {
-    display: flex;
-    flex-direction: column;
+.PlatformAddressTotalCard__Title {
+  white-space: break-spaces;
+  word-break: break-all;
+}
+
+.PlatformAddressTotalCard__ContentContainer {
+  display: flex;
+  gap: var(--pe-space-10);
+}
+
+.PlatformAddressTotalCard__Column {
+  position: relative;
+  width: 50%;
+}
+
+.PlatformAddressTotalCard__Header {
+  position: relative;
+  display: flex;
+  width: 100%;
+  align-items: center;
+}
+
+.PlatformAddressTotalCard__Avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--pe-font-mono);
+  font-size: var(--pe-text-sm);
+  color: var(--pe-color-gray-500);
+  width: 88px;
+  height: 88px;
+  border: 1px solid rgba(137, 126, 126, 0.1);
+  flex-shrink: 0;
+  margin-left: var(--pe-space-6);
+}
+
+.PlatformAddressTotalCard__HeaderLines {
+  display: flex;
+  gap: var(--pe-space-5);
+  flex-direction: column;
+  justify-content: space-between;
+  width: 100%;
+  padding: var(--pe-space-1_5) 0;
+  overflow: hidden;
+}
+
+.PlatformAddressTotalCard__InfoLine {
+  gap: var(--pe-space-3_5);
+}
+
+.PlatformAddressTotalCard__CommonInfo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--pe-space-6);
+}
+
+@media screen and (max-width: 62em) {
+  .PlatformAddressTotalCard__ContentContainer {
     gap: var(--pe-space-6);
   }
 }
 
-@media screen and (max-width: 62em) {
-  .PlatformAddressTotalCard {
-    &__ContentContainer {
-      gap: var(--pe-space-6);
-    }
-  }
-}
-
 @media screen and (max-width: 48em) {
-  .PlatformAddressTotalCard {
-    &__ContentContainer {
-      flex-direction: column;
-    }
-    &__ContentContainer,
-    &__CommonLines {
-      gap: var(--pe-space-3);
-    }
-    &__Column {
-      position: static;
-      width: 100%;
-    }
+  .PlatformAddressTotalCard__ContentContainer {
+    flex-direction: column;
+  }
+
+  .PlatformAddressTotalCard__ContentContainer,
+  .PlatformAddressTotalCard__CommonLines {
+    gap: var(--pe-space-3);
+  }
+
+  .PlatformAddressTotalCard__Column {
+    position: static;
+    width: 100%;
   }
 }
 
@@ -165,57 +168,63 @@
   margin-left: auto;
 }
 
-.PlatformAddressTotalCard {
-  &--Loading &__Avatar {
-    overflow: hidden;
-    position: relative;
-    animation: 1s LoadingContainer infinite;
-  }
-  &--Loading &__Avatar::before {
-    z-index: 5 !important;
-    opacity: 1 !important;
-  }
-  &--Loading &__Avatar::after {
-    animation: 1s loading-process infinite;
-    z-index: 6;
-  }
-  &--Loading &__Avatar::before,
-  &--Loading &__Avatar::after {
-    content: "";
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    top: 0;
-    left: 0;
-    z-index: -1;
-  }
-  &--Loading &__Avatar::before {
-    background-color: var(--pe-color-gray-900);
-  }
-  &--Loading &__Avatar::after {
-    background: linear-gradient(
-      90deg,
-      transparent 0%,
-      rgb(14, 117, 181) 50%,
-      transparent 100%
-    ) !important;
-    width: 100%;
-    height: 100%;
-  }
-  &__Header {
-    position: relative;
-    display: flex;
-    align-items: flex-start;
-    width: 100%;
-  }
-  &__CommonLines {
-    display: flex;
-    flex-direction: column;
-    gap: var(--pe-space-6);
-  }
-  &__InfoLine {
-    align-items: flex-start !important;
-  }
+.PlatformAddressTotalCard--Loading .PlatformAddressTotalCard__Avatar {
+  overflow: hidden;
+  position: relative;
+  animation: 1s LoadingContainer infinite;
+}
+
+.PlatformAddressTotalCard--Loading .PlatformAddressTotalCard__Avatar::before {
+  z-index: 5 !important;
+  opacity: 1 !important;
+}
+
+.PlatformAddressTotalCard--Loading .PlatformAddressTotalCard__Avatar::after {
+  animation: 1s loading-process infinite;
+  z-index: 6;
+}
+
+.PlatformAddressTotalCard--Loading .PlatformAddressTotalCard__Avatar::before,
+.PlatformAddressTotalCard--Loading .PlatformAddressTotalCard__Avatar::after {
+  content: "";
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  z-index: -1;
+}
+
+.PlatformAddressTotalCard--Loading .PlatformAddressTotalCard__Avatar::before {
+  background-color: var(--pe-color-gray-900);
+}
+
+.PlatformAddressTotalCard--Loading .PlatformAddressTotalCard__Avatar::after {
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgb(14, 117, 181) 50%,
+    transparent 100%
+  ) !important;
+  width: 100%;
+  height: 100%;
+}
+
+.PlatformAddressTotalCard__Header {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  width: 100%;
+}
+
+.PlatformAddressTotalCard__CommonLines {
+  display: flex;
+  flex-direction: column;
+  gap: var(--pe-space-6);
+}
+
+.PlatformAddressTotalCard__InfoLine {
+  align-items: flex-start !important;
 }
 
 @container (max-width: 22rem) {
@@ -224,10 +233,8 @@
   }
 }
 
-.PlatformAddressTotalCard {
-  &__Separator {
-    margin: var(--pe-space-5) 0;
-  }
+.PlatformAddressTotalCard__Separator {
+  margin: var(--pe-space-5) 0;
 }
 
 @media screen and (max-width: 62em) {
@@ -236,12 +243,10 @@
     text-align: left;
   }
 
-  .PlatformAddressTotalCard {
-    &__InfoLine--Address,
-    &__InfoLine--Balance {
-      flex-direction: column;
-      align-items: flex-start;
-    }
+  .PlatformAddressTotalCard__InfoLine--Address,
+  .PlatformAddressTotalCard__InfoLine--Balance {
+    flex-direction: column;
+    align-items: flex-start;
   }
 }
 
@@ -250,10 +255,8 @@
     margin-left: 0;
   }
 
-  .PlatformAddressTotalCard {
-    &__InfoLine {
-      gap: var(--pe-space-1);
-    }
+  .PlatformAddressTotalCard__InfoLine {
+    gap: var(--pe-space-1);
   }
 }
 
@@ -278,144 +281,134 @@
     margin: 0;
   }
 
-  .PlatformAddressTotalCard {
-    &__Title {
-      white-space: break-spaces;
-      word-break: break-all;
-    }
-    &__ContentContainer {
-      display: flex;
-      gap: var(--pe-space-10);
-    }
-    &__Column {
-      position: relative;
-      width: 50%;
-    }
-    &__Header {
-      position: relative;
-      display: flex;
-      width: 100%;
-      align-items: center;
-    }
-    &__Avatar {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-family: var(--pe-font-mono);
-      font-size: var(--pe-text-sm);
-      color: var(--pe-color-gray-500);
-      width: 88px;
-      height: 88px;
-      border: 1px solid rgba(137, 126, 126, 0.1);
-      flex-shrink: 0;
-      margin-left: var(--pe-space-6);
-      position: absolute;
-      right: 0;
-      top: 0;
-      margin: 0;
-    }
-    &__HeaderLines {
-      display: flex;
-      gap: var(--pe-space-5);
-      flex-direction: column;
-      justify-content: space-between;
-      width: 100%;
-      padding: var(--pe-space-1_5) 0;
-      overflow: hidden;
-    }
-    &__InfoLine {
-      gap: var(--pe-space-3_5);
-    }
-    &__CommonInfo {
-      display: flex;
-      flex-direction: column;
-      gap: var(--pe-space-6);
-    }
+  .PlatformAddressTotalCard__Title {
+    white-space: break-spaces;
+    word-break: break-all;
+  }
+
+  .PlatformAddressTotalCard__ContentContainer {
+    display: flex;
+    gap: var(--pe-space-10);
+  }
+
+  .PlatformAddressTotalCard__Column {
+    position: relative;
+    width: 50%;
+  }
+
+  .PlatformAddressTotalCard__Header {
+    position: relative;
+    display: flex;
+    width: 100%;
+    align-items: center;
+  }
+
+  .PlatformAddressTotalCard__Avatar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--pe-font-mono);
+    font-size: var(--pe-text-sm);
+    color: var(--pe-color-gray-500);
+    width: 88px;
+    height: 88px;
+    border: 1px solid rgba(137, 126, 126, 0.1);
+    flex-shrink: 0;
+    margin-left: var(--pe-space-6);
+    position: absolute;
+    right: 0;
+    top: 0;
+    margin: 0;
+  }
+
+  .PlatformAddressTotalCard__HeaderLines {
+    display: flex;
+    gap: var(--pe-space-5);
+    flex-direction: column;
+    justify-content: space-between;
+    width: 100%;
+    padding: var(--pe-space-1_5) 0;
+    overflow: hidden;
+  }
+
+  .PlatformAddressTotalCard__InfoLine {
+    gap: var(--pe-space-3_5);
+  }
+
+  .PlatformAddressTotalCard__CommonInfo {
+    display: flex;
+    flex-direction: column;
+    gap: var(--pe-space-6);
   }
 }
 
 @media screen and (max-width: 48em) and (max-width: 62em) {
-  .PlatformAddressTotalCard {
-    &__ContentContainer {
-      gap: var(--pe-space-6);
-    }
+  .PlatformAddressTotalCard__ContentContainer {
+    gap: var(--pe-space-6);
   }
 }
 
 @media screen and (max-width: 48em) and (max-width: 48em) {
-  .PlatformAddressTotalCard {
-    &__ContentContainer {
-      flex-direction: column;
-    }
-    &__ContentContainer,
-    &__CommonLines {
-      gap: var(--pe-space-3);
-    }
-    &__Column {
-      position: static;
-      width: 100%;
-    }
+  .PlatformAddressTotalCard__ContentContainer {
+    flex-direction: column;
+  }
+
+  .PlatformAddressTotalCard__ContentContainer,
+  .PlatformAddressTotalCard__CommonLines {
+    gap: var(--pe-space-3);
+  }
+
+  .PlatformAddressTotalCard__Column {
+    position: static;
+    width: 100%;
   }
 }
 
 @media screen and (max-width: 48em) {
-  .PlatformAddressTotalCard {
-    &__Avatar {
-      right: var(--pe-space-1);
-      top: 0;
-    }
-    &__Separator {
-      margin-top: calc(var(--pe-space-3) + 0px) !important;
-      margin-bottom: calc(var(--pe-space-3) + 0px) !important;
-    }
+  .PlatformAddressTotalCard__Avatar {
+    right: var(--pe-space-1);
+    top: 0;
+  }
+
+  .PlatformAddressTotalCard__Separator {
+    margin-top: calc(var(--pe-space-3) + 0px) !important;
+    margin-bottom: calc(var(--pe-space-3) + 0px) !important;
   }
 }
 
 @media screen and (max-width: 48em) and (min-width: 48em) {
-  .PlatformAddressTotalCard {
-    &__Separator {
-      margin-top: calc(var(--pe-space-4) + 0px) !important;
-    }
+  .PlatformAddressTotalCard__Separator {
+    margin-top: calc(var(--pe-space-4) + 0px) !important;
   }
 }
 
 @media screen and (max-width: 48em) and (min-width: 62em) {
-  .PlatformAddressTotalCard {
-    &__Separator {
-      margin-top: calc(var(--pe-space-5) + 0px) !important;
-    }
+  .PlatformAddressTotalCard__Separator {
+    margin-top: calc(var(--pe-space-5) + 0px) !important;
   }
 }
 
 @media screen and (max-width: 48em) and (min-width: 80em) {
-  .PlatformAddressTotalCard {
-    &__Separator {
-      margin-top: calc(var(--pe-space-6) + 0px) !important;
-    }
+  .PlatformAddressTotalCard__Separator {
+    margin-top: calc(var(--pe-space-6) + 0px) !important;
   }
 }
 
 @media screen and (max-width: 48em) and (min-width: 48em) {
-  .PlatformAddressTotalCard {
-    &__Separator {
-      margin-bottom: calc(var(--pe-space-4) + 0px) !important;
-    }
+  .PlatformAddressTotalCard__Separator {
+    margin-bottom: calc(var(--pe-space-4) + 0px) !important;
   }
 }
 
 @media screen and (max-width: 48em) and (min-width: 62em) {
-  .PlatformAddressTotalCard {
-    &__Separator {
-      margin-bottom: calc(var(--pe-space-5) + 0px) !important;
-    }
+  .PlatformAddressTotalCard__Separator {
+    margin-bottom: calc(var(--pe-space-5) + 0px) !important;
   }
 }
 
 @media screen and (max-width: 48em) and (min-width: 80em) {
-  .PlatformAddressTotalCard {
-    &__Separator {
-      margin-bottom: calc(var(--pe-space-6) + 0px) !important;
-    }
+  .PlatformAddressTotalCard__Separator {
+    margin-bottom: calc(var(--pe-space-6) + 0px) !important;
   }
 }
 
@@ -424,104 +417,81 @@
     width: 100% !important;
   }
 
-  .PlatformAddressTotalCard {
-    &__InfoLine {
-      flex-wrap: wrap;
-    }
-    &__InfoLine--Address,
-    &__InfoLine--Balance {
-      padding-right: 6.25rem;
-    }
+  .PlatformAddressTotalCard__InfoLine {
+    flex-wrap: wrap;
+  }
+
+  .PlatformAddressTotalCard__InfoLine--Address,
+  .PlatformAddressTotalCard__InfoLine--Balance {
+    padding-right: 6.25rem;
   }
 }
 
 @media screen and (max-width: 30em) {
-  .PlatformAddressTotalCard {
-    &__Digest {
-      margin-left: calc(calc(0px - var(--pe-space-3)) + 0px) !important;
-      margin-right: calc(calc(0px - var(--pe-space-3)) + 0px) !important;
-      margin-bottom: calc(calc(0px - var(--pe-space-3)) + 0px) !important;
-    }
+  .PlatformAddressTotalCard__Digest {
+    margin-left: calc(calc(0px - var(--pe-space-3)) + 0px) !important;
+    margin-right: calc(calc(0px - var(--pe-space-3)) + 0px) !important;
+    margin-bottom: calc(calc(0px - var(--pe-space-3)) + 0px) !important;
   }
 }
 
 @media screen and (max-width: 30em) and (min-width: 48em) {
-  .PlatformAddressTotalCard {
-    &__Digest {
-      margin-left: calc(calc(0px - var(--pe-space-4)) + 0px) !important;
-    }
+  .PlatformAddressTotalCard__Digest {
+    margin-left: calc(calc(0px - var(--pe-space-4)) + 0px) !important;
   }
 }
 
 @media screen and (max-width: 30em) and (min-width: 62em) {
-  .PlatformAddressTotalCard {
-    &__Digest {
-      margin-left: calc(calc(0px - var(--pe-space-5)) + 0px) !important;
-    }
+  .PlatformAddressTotalCard__Digest {
+    margin-left: calc(calc(0px - var(--pe-space-5)) + 0px) !important;
   }
 }
 
 @media screen and (max-width: 30em) and (min-width: 80em) {
-  .PlatformAddressTotalCard {
-    &__Digest {
-      margin-left: calc(calc(0px - var(--pe-space-6)) + 0px) !important;
-    }
+  .PlatformAddressTotalCard__Digest {
+    margin-left: calc(calc(0px - var(--pe-space-6)) + 0px) !important;
   }
 }
 
 @media screen and (max-width: 30em) and (min-width: 48em) {
-  .PlatformAddressTotalCard {
-    &__Digest {
-      margin-right: calc(calc(0px - var(--pe-space-4)) + 0px) !important;
-    }
+  .PlatformAddressTotalCard__Digest {
+    margin-right: calc(calc(0px - var(--pe-space-4)) + 0px) !important;
   }
 }
 
 @media screen and (max-width: 30em) and (min-width: 62em) {
-  .PlatformAddressTotalCard {
-    &__Digest {
-      margin-right: calc(calc(0px - var(--pe-space-5)) + 0px) !important;
-    }
+  .PlatformAddressTotalCard__Digest {
+    margin-right: calc(calc(0px - var(--pe-space-5)) + 0px) !important;
   }
 }
 
 @media screen and (max-width: 30em) and (min-width: 80em) {
-  .PlatformAddressTotalCard {
-    &__Digest {
-      margin-right: calc(calc(0px - var(--pe-space-6)) + 0px) !important;
-    }
+  .PlatformAddressTotalCard__Digest {
+    margin-right: calc(calc(0px - var(--pe-space-6)) + 0px) !important;
   }
 }
 
 @media screen and (max-width: 30em) and (min-width: 48em) {
-  .PlatformAddressTotalCard {
-    &__Digest {
-      margin-bottom: calc(calc(0px - var(--pe-space-4)) + 0px) !important;
-    }
+  .PlatformAddressTotalCard__Digest {
+    margin-bottom: calc(calc(0px - var(--pe-space-4)) + 0px) !important;
   }
 }
 
 @media screen and (max-width: 30em) and (min-width: 62em) {
-  .PlatformAddressTotalCard {
-    &__Digest {
-      margin-bottom: calc(calc(0px - var(--pe-space-5)) + 0px) !important;
-    }
+  .PlatformAddressTotalCard__Digest {
+    margin-bottom: calc(calc(0px - var(--pe-space-5)) + 0px) !important;
   }
 }
 
 @media screen and (max-width: 30em) and (min-width: 80em) {
-  .PlatformAddressTotalCard {
-    &__Digest {
-      margin-bottom: calc(calc(0px - var(--pe-space-6)) + 0px) !important;
-    }
+  .PlatformAddressTotalCard__Digest {
+    margin-bottom: calc(calc(0px - var(--pe-space-6)) + 0px) !important;
   }
 }
 
 @media screen and (max-width: 30em) {
-  .PlatformAddressTotalCard {
-    &__InfoLine--Balance {
-      margin-top: var(--pe-space-2);
-      padding-right: 0;
-    }
+  .PlatformAddressTotalCard__InfoLine--Balance {
+    margin-top: var(--pe-space-2);
+    padding-right: 0;
   }
 }

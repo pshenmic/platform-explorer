@@ -21,24 +21,25 @@
   display: flex;
   flex-direction: column;
   gap: var(--pe-space-3);
-  &__InfoLine--Data {
-    align-items: flex-start;
-  }
-  &__InfoLine--Data code {
-    max-width: 100%;
-  }
+}
+
+.DocumentTransitionCard__InfoLine--Data {
+  align-items: flex-start;
+}
+
+.DocumentTransitionCard__InfoLine--Data code {
+  max-width: 100%;
 }
 
 @container (max-width: 600px) {
-  .DocumentTransitionCard {
-    &__InfoLine--Data,
-    &__InfoLine--PrefundedBalance {
-      flex-wrap: wrap;
-    }
-    &__InfoLine--Data code {
-      width: 100%;
-      margin: 0;
-    }
+  .DocumentTransitionCard__InfoLine--Data,
+  .DocumentTransitionCard__InfoLine--PrefundedBalance {
+    flex-wrap: wrap;
+  }
+
+  .DocumentTransitionCard__InfoLine--Data code {
+    width: 100%;
+    margin: 0;
   }
 }
 
@@ -74,15 +75,14 @@
     text-align: right !important;
   }
 
-  .DocumentTransitionCard {
-    &__InfoLine {
-      flex-wrap: wrap;
-      justify-content: space-between;
-    }
-    &__InfoLine--Revision,
-    &__InfoLine--Action {
-      justify-content: space-between;
-    }
+  .DocumentTransitionCard__InfoLine {
+    flex-wrap: wrap;
+    justify-content: space-between;
+  }
+
+  .DocumentTransitionCard__InfoLine--Revision,
+  .DocumentTransitionCard__InfoLine--Action {
+    justify-content: space-between;
   }
 }
 
@@ -96,14 +96,13 @@
   gap: var(--pe-space-2);
 }
 
-.DocumentTransitionCard {
-  &__InfoLine__Badge {
-    width: fit-content;
-  }
-  &__InfoLine--PaymentInfo {
-    display: flex;
-    justify-content: start;
-    align-items: flex-start;
-    gap: var(--pe-space-2);
-  }
+.DocumentTransitionCard__InfoLine__Badge {
+  width: fit-content;
+}
+
+.DocumentTransitionCard__InfoLine--PaymentInfo {
+  display: flex;
+  justify-content: start;
+  align-items: flex-start;
+  gap: var(--pe-space-2);
 }

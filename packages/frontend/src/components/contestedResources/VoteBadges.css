@@ -1,12 +1,14 @@
 .VoteBadges {
   display: flex;
   gap: var(--pe-space-2);
-  &__Badge {
-    transition: 0.1s;
-  }
-  &__Badge:hover {
-    cursor: pointer;
-    transform: scale(1.05);
-    opacity: 1 !important;
-  }
+}
+
+.VoteBadges__Badge {
+  transition: 0.1s;
+}
+
+.VoteBadges__Badge:hover {
+  cursor: pointer;
+  transform: scale(1.05);
+  opacity: 1 !important;
 }

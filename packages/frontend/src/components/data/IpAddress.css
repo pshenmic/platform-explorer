@@ -6,15 +6,18 @@ a:hover .IpAddress--Clickable .IpAddress__Port {
 .IpAddress {
   font-family: var(--pe-font-mono);
   font-size: var(--pe-text-sm);
-  &--Dim &__Port {
-    color: var(--pe-color-fg-muted);
-  }
-  &__Host,
-  &__Port {
-    transition: all 0.1s;
-  }
-  &__Port {
-    color: var(--pe-color-brand-pressed);
-    font-weight: var(--pe-font-weight-semibold);
-  }
+}
+
+.IpAddress--Dim .IpAddress__Port {
+  color: var(--pe-color-fg-muted);
+}
+
+.IpAddress__Host,
+.IpAddress__Port {
+  transition: all 0.1s;
+}
+
+.IpAddress__Port {
+  color: var(--pe-color-brand-pressed);
+  font-weight: var(--pe-font-weight-semibold);
 }

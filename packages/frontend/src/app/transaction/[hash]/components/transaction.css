@@ -92,71 +92,84 @@
 
 .TransactionPage {
   position: relative;
-  &__InfoLine {
-    margin-bottom: var(--pe-space-3_5);
-    justify-content: flex-start !important;
-  }
-  &__InfoLine--Schema {
-    align-items: flex-start !important;
-  }
-  &__InfoLine--InternalConfig {
-    width: 100%;
-  }
-  &__InfoLine--Baseline,
-  &__InfoLine--RawTransaction,
-  &__InfoLine--Status,
-  &__InfoLine--Transitions,
-  &__InfoLine--PublicKeys {
-    align-items: baseline !important;
-  }
-  &__Signature,
-  &__AssetLockProof,
-  &__OutputScript {
-    overflow-wrap: break-word;
-    word-break: break-word;
-    color: var(--pe-color-fg-muted);
-    max-width: 510px;
-  }
-  &__ErrorContainer {
-    margin-top: var(--pe-space-2);
-    font-size: var(--pe-text-xs);
-  }
-  &__BlockHeight {
-    padding: 2px var(--pe-space-2);
-    border-radius: 3px;
-    font-size: var(--pe-text-2xs);
-    margin-right: var(--pe-space-3);
-    white-space: nowrap;
-  }
-  &__DetailsInfoTitle {
-    font-family: var(--pe-font-heading);
-    font-size: var(--pe-text-sm);
-    letter-spacing: 0.4px;
-    text-transform: uppercase;
-    font-weight: var(--pe-font-weight-bold);
-    margin-bottom: var(--pe-space-3_5);
-  }
-  &__RawTransaction {
-    align-items: flex-start;
-    overflow-wrap: break-word;
-    word-break: break-word;
-  }
-  &__PublicKeyCard,
-  &__TransitionCard {
-    margin-bottom: var(--pe-space-3_5);
-  }
-  &__PublicKeyCard:last-child,
-  &__TransitionCard:last-child {
-    margin-bottom: 0;
-  }
-  &__AddressCard {
-    overflow: hidden;
-  }
-  &__VoteIndexValuesContainer {
-    container-type: inline-size;
-    width: 100%;
-    overflow: hidden;
-  }
+}
+
+.TransactionPage__InfoLine {
+  margin-bottom: var(--pe-space-3_5);
+  justify-content: flex-start !important;
+}
+
+.TransactionPage__InfoLine--Schema {
+  align-items: flex-start !important;
+}
+
+.TransactionPage__InfoLine--InternalConfig {
+  width: 100%;
+}
+
+.TransactionPage__InfoLine--Baseline,
+.TransactionPage__InfoLine--RawTransaction,
+.TransactionPage__InfoLine--Status,
+.TransactionPage__InfoLine--Transitions,
+.TransactionPage__InfoLine--PublicKeys {
+  align-items: baseline !important;
+}
+
+.TransactionPage__Signature,
+.TransactionPage__AssetLockProof,
+.TransactionPage__OutputScript {
+  overflow-wrap: break-word;
+  word-break: break-word;
+  color: var(--pe-color-fg-muted);
+  max-width: 510px;
+}
+
+.TransactionPage__ErrorContainer {
+  margin-top: var(--pe-space-2);
+  font-size: var(--pe-text-xs);
+}
+
+.TransactionPage__BlockHeight {
+  padding: 2px var(--pe-space-2);
+  border-radius: 3px;
+  font-size: var(--pe-text-2xs);
+  margin-right: var(--pe-space-3);
+  white-space: nowrap;
+}
+
+.TransactionPage__DetailsInfoTitle {
+  font-family: var(--pe-font-heading);
+  font-size: var(--pe-text-sm);
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  font-weight: var(--pe-font-weight-bold);
+  margin-bottom: var(--pe-space-3_5);
+}
+
+.TransactionPage__RawTransaction {
+  align-items: flex-start;
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
+.TransactionPage__PublicKeyCard,
+.TransactionPage__TransitionCard {
+  margin-bottom: var(--pe-space-3_5);
+}
+
+.TransactionPage__PublicKeyCard:last-child,
+.TransactionPage__TransitionCard:last-child {
+  margin-bottom: 0;
+}
+
+.TransactionPage__AddressCard {
+  overflow: hidden;
+}
+
+.TransactionPage__VoteIndexValuesContainer {
+  container-type: inline-size;
+  width: 100%;
+  overflow: hidden;
 }
 
 @container (max-width: 34.25rem) {
@@ -246,36 +259,40 @@
     width: 100%;
   }
 
-  .TransactionPage {
-    &__InfoLine {
-      margin-bottom: var(--pe-space-3);
-      justify-content: space-between !important;
-      flex-wrap: wrap;
-    }
-    &__InfoLine--Status {
-      position: relative;
-    }
-    &__VoteIndexValuesContainer {
-      container-type: inline-size;
-      width: 100%;
-      overflow: hidden;
-    }
-    &__StatusBadge {
-      position: absolute;
-      top: 0;
-      right: 0;
-    }
-    &__ErrorContainer {
-      margin-top: 0;
-    }
-    &__DetailsInfoTitle {
-      margin-bottom: var(--pe-space-3);
-    }
-    &__RawTransaction,
-    &__Signature,
-    &__AssetLockProof,
-    &__OutputScript {
-      max-width: none;
-    }
+  .TransactionPage__InfoLine {
+    margin-bottom: var(--pe-space-3);
+    justify-content: space-between !important;
+    flex-wrap: wrap;
+  }
+
+  .TransactionPage__InfoLine--Status {
+    position: relative;
+  }
+
+  .TransactionPage__VoteIndexValuesContainer {
+    container-type: inline-size;
+    width: 100%;
+    overflow: hidden;
+  }
+
+  .TransactionPage__StatusBadge {
+    position: absolute;
+    top: 0;
+    right: 0;
+  }
+
+  .TransactionPage__ErrorContainer {
+    margin-top: 0;
+  }
+
+  .TransactionPage__DetailsInfoTitle {
+    margin-bottom: var(--pe-space-3);
+  }
+
+  .TransactionPage__RawTransaction,
+  .TransactionPage__Signature,
+  .TransactionPage__AssetLockProof,
+  .TransactionPage__OutputScript {
+    max-width: none;
   }
 }

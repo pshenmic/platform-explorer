@@ -4,16 +4,19 @@
 
 .DataContractCards {
   width: 100%;
-  &__CardsColumn {
-    width: 90%;
-    padding: var(--pe-space-2_5);
-  }
-  &__Card {
-    margin-bottom: var(--pe-space-5);
-  }
-  &__Card:last-child {
-    margin-bottom: 0;
-  }
+}
+
+.DataContractCards__CardsColumn {
+  width: 90%;
+  padding: var(--pe-space-2_5);
+}
+
+.DataContractCards__Card {
+  margin-bottom: var(--pe-space-5);
+}
+
+.DataContractCards__Card:last-child {
+  margin-bottom: 0;
 }
 
 @media screen and (max-width: 48em) {
@@ -27,21 +30,23 @@
     overflow: visible;
   }
 
-  .DataContractCards {
-    &__Slider {
-      width: calc(100% + var(--pe-space-5));
-    }
-    &__CardsColumnContainer {
-      padding: var(--pe-space-2_5) var(--pe-space-1);
-    }
-    &__CardsColumn {
-      padding: var(--pe-space-2_5) var(--pe-space-1);
-    }
-    &__Card {
-      margin-bottom: var(--pe-space-2);
-    }
-    &__Card:last-child {
-      margin-bottom: 0;
-    }
+  .DataContractCards__Slider {
+    width: calc(100% + var(--pe-space-5));
+  }
+
+  .DataContractCards__CardsColumnContainer {
+    padding: var(--pe-space-2_5) var(--pe-space-1);
+  }
+
+  .DataContractCards__CardsColumn {
+    padding: var(--pe-space-2_5) var(--pe-space-1);
+  }
+
+  .DataContractCards__Card {
+    margin-bottom: var(--pe-space-2);
+  }
+
+  .DataContractCards__Card:last-child {
+    margin-bottom: 0;
   }
 }

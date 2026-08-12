@@ -63,45 +63,52 @@
   background: rgba(var(--pe-color-gray-800-rgb), 0.5);
   border-radius: var(--pe-radius-def);
   container-type: inline-size;
-  &--Loading &__InfoContainer {
-    overflow: hidden;
-  }
-  &--Loading &__InfoContainerValue {
-    width: 100px;
-    max-width: 100%;
-  }
-  &__RowContainer {
-    display: flex;
-    justify-content: space-between;
-    gap: var(--pe-space-3_5);
-  }
-  &__InfoContainer {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-    gap: var(--pe-space-1);
-    padding: var(--pe-space-6);
-    background: rgba(var(--pe-color-gray-800-rgb), 0.5);
-    border-radius: var(--pe-radius-def);
-    width: 100%;
-  }
-  &__LinesContainer {
-    flex-direction: column;
-  }
-  &__Transfer {
-    width: 50%;
-    display: flex;
-    flex-direction: column;
-    gap: var(--pe-space-1);
-    padding: var(--pe-space-6);
-    background: rgba(var(--pe-color-gray-800-rgb), 0.5);
-    border-radius: var(--pe-radius-def);
-  }
-  &__TransferTitle {
-    font-size: var(--pe-text-sm);
-    color: var(--pe-color-fg-muted);
-  }
+}
+
+.PlatformAddressDigestCard--Loading .PlatformAddressDigestCard__InfoContainer {
+  overflow: hidden;
+}
+
+.PlatformAddressDigestCard--Loading .PlatformAddressDigestCard__InfoContainerValue {
+  width: 100px;
+  max-width: 100%;
+}
+
+.PlatformAddressDigestCard__RowContainer {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--pe-space-3_5);
+}
+
+.PlatformAddressDigestCard__InfoContainer {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--pe-space-1);
+  padding: var(--pe-space-6);
+  background: rgba(var(--pe-color-gray-800-rgb), 0.5);
+  border-radius: var(--pe-radius-def);
+  width: 100%;
+}
+
+.PlatformAddressDigestCard__LinesContainer {
+  flex-direction: column;
+}
+
+.PlatformAddressDigestCard__Transfer {
+  width: 50%;
+  display: flex;
+  flex-direction: column;
+  gap: var(--pe-space-1);
+  padding: var(--pe-space-6);
+  background: rgba(var(--pe-color-gray-800-rgb), 0.5);
+  border-radius: var(--pe-radius-def);
+}
+
+.PlatformAddressDigestCard__TransferTitle {
+  font-size: var(--pe-text-sm);
+  color: var(--pe-color-fg-muted);
 }
 
 @media screen and (min-width: 48em) and (max-width: 62em), screen and (max-width: 30em) {
@@ -120,13 +127,12 @@
     margin-bottom: var(--pe-space-1);
   }
 
-  .PlatformAddressDigestCard {
-    &__Transfers {
-      flex-direction: column;
-    }
-    &__Transfer {
-      width: 100%;
-    }
+  .PlatformAddressDigestCard__Transfers {
+    flex-direction: column;
+  }
+
+  .PlatformAddressDigestCard__Transfer {
+    width: 100%;
   }
 }
 
@@ -149,10 +155,8 @@
     margin-left: auto;
   }
 
-  .PlatformAddressDigestCard {
-    &__InfoLine {
-      flex-direction: column;
-      align-items: flex-start;
-    }
+  .PlatformAddressDigestCard__InfoLine {
+    flex-direction: column;
+    align-items: flex-start;
   }
 }

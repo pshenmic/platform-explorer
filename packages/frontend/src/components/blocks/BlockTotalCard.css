@@ -18,78 +18,81 @@
   margin: 0;
 }
 
-.BlockTotalCard {
-  &__Title {
-    white-space: break-spaces;
-    word-break: break-all;
-  }
-  &__ContentContainer {
-    display: flex;
-    gap: var(--pe-space-10);
-  }
-  &__Column {
-    position: relative;
-    width: 50%;
-  }
-  &__Header {
-    position: relative;
-    display: flex;
-    width: 100%;
-    align-items: center;
-  }
-  &__Avatar {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: var(--pe-font-mono);
-    font-size: var(--pe-text-sm);
-    color: var(--pe-color-gray-500);
-    width: 88px;
-    height: 88px;
-    border: 1px solid rgba(137, 126, 126, 0.1);
-    flex-shrink: 0;
-    margin-left: var(--pe-space-6);
-  }
-  &__HeaderLines {
-    display: flex;
-    gap: var(--pe-space-5);
-    flex-direction: column;
-    justify-content: space-between;
-    width: 100%;
-    padding: var(--pe-space-1_5) 0;
-    overflow: hidden;
-  }
-  &__InfoLine {
-    gap: var(--pe-space-3_5);
-  }
-  &__CommonInfo {
-    display: flex;
-    flex-direction: column;
+.BlockTotalCard__Title {
+  white-space: break-spaces;
+  word-break: break-all;
+}
+
+.BlockTotalCard__ContentContainer {
+  display: flex;
+  gap: var(--pe-space-10);
+}
+
+.BlockTotalCard__Column {
+  position: relative;
+  width: 50%;
+}
+
+.BlockTotalCard__Header {
+  position: relative;
+  display: flex;
+  width: 100%;
+  align-items: center;
+}
+
+.BlockTotalCard__Avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--pe-font-mono);
+  font-size: var(--pe-text-sm);
+  color: var(--pe-color-gray-500);
+  width: 88px;
+  height: 88px;
+  border: 1px solid rgba(137, 126, 126, 0.1);
+  flex-shrink: 0;
+  margin-left: var(--pe-space-6);
+}
+
+.BlockTotalCard__HeaderLines {
+  display: flex;
+  gap: var(--pe-space-5);
+  flex-direction: column;
+  justify-content: space-between;
+  width: 100%;
+  padding: var(--pe-space-1_5) 0;
+  overflow: hidden;
+}
+
+.BlockTotalCard__InfoLine {
+  gap: var(--pe-space-3_5);
+}
+
+.BlockTotalCard__CommonInfo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--pe-space-6);
+}
+
+@media screen and (max-width: 62em) {
+  .BlockTotalCard__ContentContainer {
     gap: var(--pe-space-6);
   }
 }
 
-@media screen and (max-width: 62em) {
-  .BlockTotalCard {
-    &__ContentContainer {
-      gap: var(--pe-space-6);
-    }
-  }
-}
-
 @media screen and (max-width: 48em) {
-  .BlockTotalCard {
-    &__ContentContainer {
-      flex-direction: column;
-    }
-    &__ContentContainer,
-    &__CommonLines {
-      gap: var(--pe-space-3);
-    }
-    &__Column {
-      position: static;
-      width: 100%;
-    }
+  .BlockTotalCard__ContentContainer {
+    flex-direction: column;
+  }
+
+  .BlockTotalCard__ContentContainer,
+  .BlockTotalCard__CommonLines {
+    gap: var(--pe-space-3);
+  }
+
+  .BlockTotalCard__Column {
+    position: static;
+    width: 100%;
   }
 }
 
@@ -116,21 +119,21 @@
   height: var(--pe-space-2);
 }
 
-.BlockTotalCard {
-  &__Header {
-    align-items: flex-start;
-  }
-  &__Avatar svg {
-    width: 54px;
-    height: 54px;
-  }
-  &__BlockHeight {
-    display: flex;
-    gap: var(--pe-space-4);
-    font-size: var(--pe-text-sm);
-    justify-content: space-between;
-    align-items: center;
-  }
+.BlockTotalCard__Header {
+  align-items: flex-start;
+}
+
+.BlockTotalCard__Avatar svg {
+  width: 54px;
+  height: 54px;
+}
+
+.BlockTotalCard__BlockHeight {
+  display: flex;
+  gap: var(--pe-space-4);
+  font-size: var(--pe-text-sm);
+  justify-content: space-between;
+  align-items: center;
 }
 
 @media screen and (max-width: 30em) {
@@ -154,83 +157,86 @@
     margin: 0;
   }
 
-  .BlockTotalCard {
-    &__Title {
-      white-space: break-spaces;
-      word-break: break-all;
-    }
-    &__ContentContainer {
-      display: flex;
-      gap: var(--pe-space-10);
-    }
-    &__Column {
-      position: relative;
-      width: 50%;
-    }
-    &__Header {
-      position: relative;
-      display: flex;
-      width: 100%;
-      align-items: center;
-    }
-    &__Avatar {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-family: var(--pe-font-mono);
-      font-size: var(--pe-text-sm);
-      color: var(--pe-color-gray-500);
-      width: 88px;
-      height: 88px;
-      border: 1px solid rgba(137, 126, 126, 0.1);
-      flex-shrink: 0;
-      margin-left: var(--pe-space-6);
-      position: absolute;
-      right: 0;
-      top: 0;
-      margin: 0;
-    }
-    &__HeaderLines {
-      display: flex;
-      gap: var(--pe-space-5);
-      flex-direction: column;
-      justify-content: space-between;
-      width: 100%;
-      padding: var(--pe-space-1_5) 0;
-      overflow: hidden;
-    }
-    &__InfoLine {
-      gap: var(--pe-space-3_5);
-    }
-    &__CommonInfo {
-      display: flex;
-      flex-direction: column;
-      gap: var(--pe-space-6);
-    }
+  .BlockTotalCard__Title {
+    white-space: break-spaces;
+    word-break: break-all;
+  }
+
+  .BlockTotalCard__ContentContainer {
+    display: flex;
+    gap: var(--pe-space-10);
+  }
+
+  .BlockTotalCard__Column {
+    position: relative;
+    width: 50%;
+  }
+
+  .BlockTotalCard__Header {
+    position: relative;
+    display: flex;
+    width: 100%;
+    align-items: center;
+  }
+
+  .BlockTotalCard__Avatar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--pe-font-mono);
+    font-size: var(--pe-text-sm);
+    color: var(--pe-color-gray-500);
+    width: 88px;
+    height: 88px;
+    border: 1px solid rgba(137, 126, 126, 0.1);
+    flex-shrink: 0;
+    margin-left: var(--pe-space-6);
+    position: absolute;
+    right: 0;
+    top: 0;
+    margin: 0;
+  }
+
+  .BlockTotalCard__HeaderLines {
+    display: flex;
+    gap: var(--pe-space-5);
+    flex-direction: column;
+    justify-content: space-between;
+    width: 100%;
+    padding: var(--pe-space-1_5) 0;
+    overflow: hidden;
+  }
+
+  .BlockTotalCard__InfoLine {
+    gap: var(--pe-space-3_5);
+  }
+
+  .BlockTotalCard__CommonInfo {
+    display: flex;
+    flex-direction: column;
+    gap: var(--pe-space-6);
   }
 }
 
 @media screen and (max-width: 30em) and (max-width: 62em) {
-  .BlockTotalCard {
-    &__ContentContainer {
-      gap: var(--pe-space-6);
-    }
+  .BlockTotalCard__ContentContainer {
+    gap: var(--pe-space-6);
   }
 }
 
 @media screen and (max-width: 30em) and (max-width: 48em) {
-  .BlockTotalCard {
-    &__ContentContainer {
-      flex-direction: column;
-    }
-    &__ContentContainer,
-    &__CommonLines {
-      gap: var(--pe-space-3);
-    }
-    &__Column {
-      position: static;
-      width: 100%;
-    }
+  .BlockTotalCard__ContentContainer {
+    flex-direction: column;
+  }
+
+  .BlockTotalCard__ContentContainer,
+  .BlockTotalCard__CommonLines {
+    gap: var(--pe-space-3);
+  }
+
+  .BlockTotalCard__Column {
+    position: static;
+    width: 100%;
   }
 }
 
@@ -244,9 +250,7 @@
     text-align: left;
   }
 
-  .BlockTotalCard {
-    &__InfoLine--Hash {
-      padding-right: 100px;
-    }
+  .BlockTotalCard__InfoLine--Hash {
+    padding-right: 100px;
   }
 }

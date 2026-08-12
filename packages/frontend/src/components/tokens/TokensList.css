@@ -1,23 +1,28 @@
 .TokensList__Pagination {
   margin-top: 2rem !important;
 }
+
 .TokensList__ScrollZone {
   width: fit-content;
   min-width: 100%;
 }
+
 @media screen and (max-width: 48em) {
   .TokensList__Pagination {
     margin-top: 1.5rem !important;
   }
 }
+
 @media screen and (max-width: 30em) {
   .TokensList__Pagination {
     margin-top: 1rem !important;
   }
 }
+
 .TokensList {
   container-type: inline-size;
 }
+
 .TokensList__ColumnTitles {
   display: grid;
   padding: var(--pe-list-row-pad-y) var(--pe-list-row-pad-x);
@@ -30,96 +35,117 @@
   text-transform: uppercase;
   color: var(--pe-color-fg);
 }
+
 .TokensList__ColumnTitles--Light {
   background: transparent !important;
   font-weight: 500 !important;
   color: #fff !important;
   text-transform: none !important;
 }
+
 .TokensList__ColumnTitles {
   display: grid;
   gap: 1rem;
   grid-template-columns: 3fr 10rem 2fr 3fr 3fr;
   justify-content: space-between;
 }
+
 @container (max-width: 80rem) {
   .TokensList__ColumnTitles {
     grid-template-columns: 10rem 6rem 8rem 8rem 18rem;
   }
 }
+
 @container (max-width: 64rem) {
   .TokensList__ColumnTitles {
     grid-template-columns: minmax(10rem, 22rem) 50px 10rem minmax(0, 22rem);
   }
 }
+
 @container (max-width: 48rem) {
   .TokensList__ColumnTitles {
     grid-template-columns: minmax(10rem, 16rem) 50px minmax(0, 22rem);
   }
 }
+
 @container (max-width: 40rem) {
   .TokensList__ColumnTitles {
     grid-template-columns: minmax(10rem, 18rem) minmax(0, 22rem);
   }
 }
+
 @container (max-width: 30rem) {
   .TokensList__ColumnTitles {
     grid-template-columns: 10rem minmax(0, 22rem);
   }
 }
+
 @container (max-width: 23rem) {
   .TokensList__ColumnTitles {
     grid-template-columns: 8rem minmax(0, 22rem);
   }
 }
+
 .TokensList__ColumnTitle {
   display: flex;
   align-items: center;
   width: 100%;
 }
+
 .TokensList__ColumnTitle:last-child {
   justify-content: flex-end;
 }
+
 @container (max-width: 64rem) {
   .TokensList__ColumnTitle--DataContract {
     display: none;
   }
 }
+
 @container (max-width: 48rem) {
   .TokensList__ColumnTitle--Price {
     display: none;
   }
 }
+
 @container (max-width: 40rem) {
   .TokensList__ColumnTitle--Supply {
     display: none;
   }
 }
+
 .TokensList__ColumnTitle {
   word-break: normal;
   white-space: normal;
   overflow-wrap: break-word;
 }
+
 .TokensList__ColumnTitle--TokenName {
   justify-content: flex-start;
 }
+
 .TokensList__ColumnTitle--Contract {
   justify-content: flex-start;
 }
+
 .TokensList__ColumnTitle--OwnerIdentity {
   justify-content: flex-end;
 }
+
 .TokensList__ColumnTitle:last-child {
   text-align: right;
 }
+
 .TokensList__EmptyMessage {
   text-align: center;
 }
+
 .TokensList--Balance .TokensList__ColumnTitles {
   display: grid;
   gap: 1rem;
   grid-template-columns: 3fr 10rem 2fr 3fr 3fr 2fr;
 }
+
 @container (max-width: 100rem) {
   .TokensList--Balance .TokensList__ColumnTitles {
     grid-template-columns: minmax(10rem, 26rem) 10rem 10rem minmax(10rem, 22rem) minmax(
@@ -128,51 +154,61 @@
       ) 8rem;
   }
 }
+
 @container (max-width: 90rem) {
   .TokensList--Balance .TokensList__ColumnTitles {
     grid-template-columns: minmax(12rem, 18rem) 10rem 10rem minmax(6rem, 18rem) minmax(6rem, 18rem) 8rem;
   }
 }
+
 @container (max-width: 80rem) {
   .TokensList--Balance .TokensList__ColumnTitles {
     grid-template-columns: minmax(12rem, 26rem) 10rem 10rem minmax(8rem, 26rem) 8rem;
   }
 }
+
 @container (max-width: 64rem) {
   .TokensList--Balance .TokensList__ColumnTitles {
     grid-template-columns: minmax(8rem, 26rem) 10rem 8rem minmax(8rem, 18rem);
   }
 }
+
 @container (max-width: 48rem) {
   .TokensList--Balance .TokensList__ColumnTitles {
     grid-template-columns: minmax(8rem, 16rem) 10rem auto;
   }
 }
+
 @container (max-width: 40rem) {
   .TokensList--Balance .TokensList__ColumnTitles {
     grid-template-columns: minmax(8rem, 16rem) auto;
   }
 }
+
 @container (max-width: 30rem) {
   .TokensList--Balance .TokensList__ColumnTitles {
     grid-template-columns: 8rem minmax(0, 18rem);
   }
 }
+
 @container (max-width: 80rem) {
   .TokensList--Balance .TokensList__ColumnTitle--OwnerIdentity {
     display: none;
   }
 }
+
 @container (max-width: 64rem) {
   .TokensList--Balance .TokensList__ColumnTitle--DataContract {
     display: none;
   }
 }
+
 @container (max-width: 48rem) {
   .TokensList--Balance .TokensList__ColumnTitle--Price {
     display: none;
   }
 }
+
 @container (max-width: 40rem) {
   .TokensList--Balance .TokensList__ColumnTitle--Supply {
     display: none;

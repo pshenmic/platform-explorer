@@ -15,12 +15,10 @@
 }
 
 @media (hover: hover) and (pointer: fine) {
-  .VotesListItem {
-    &:hover {
-      background-color: var(--pe-color-gray-750);
-      text-decoration: none;
-      cursor: pointer;
-    }
+  .VotesListItem:hover {
+    background-color: var(--pe-color-gray-750);
+    text-decoration: none;
+    cursor: pointer;
   }
 }
 
@@ -31,174 +29,151 @@
   font-size: var(--pe-text-sm);
 }
 
-.VotesListItem {
-  &:active {
-    transform: translateY(1px);
-    box-shadow: 0 0 9999px 0 rgba(0, 0, 0, 0.25) inset;
-  }
-  &:last-child {
-    margin-bottom: 0;
-  }
-  &__Column--Credits,
-  &__Column--Number {
-    font-size: var(--pe-text-sm);
-    font-weight: var(--pe-font-weight-bold);
-  }
-  &__IdentifierContainer {
-    display: flex;
-    align-items: center;
-    min-width: 50px;
-  }
-  &__Avatar {
-    height: var(--pe-space-6);
-    width: var(--pe-space-6);
-    flex-shrink: 0;
-    margin-right: var(--pe-space-3);
-  }
-  &--Timestamp,
-  &__Column--Timestamp {
-    font-family: var(--pe-font-mono);
-    white-space: nowrap;
-    color: var(--pe-color-fg);
-  }
-  &__Content {
-    display: grid;
-    gap: var(--pe-space-4);
+.VotesListItem:active {
+  transform: translateY(1px);
+  box-shadow: 0 0 9999px 0 rgba(0, 0, 0, 0.25) inset;
+}
+
+.VotesListItem:last-child {
+  margin-bottom: 0;
+}
+
+.VotesListItem__Column--Credits,
+.VotesListItem__Column--Number {
+  font-size: var(--pe-text-sm);
+  font-weight: var(--pe-font-weight-bold);
+}
+
+.VotesListItem__IdentifierContainer {
+  display: flex;
+  align-items: center;
+  min-width: 50px;
+}
+
+.VotesListItem__Avatar {
+  height: var(--pe-space-6);
+  width: var(--pe-space-6);
+  flex-shrink: 0;
+  margin-right: var(--pe-space-3);
+}
+
+.VotesListItem--Timestamp,
+.VotesListItem__Column--Timestamp {
+  font-family: var(--pe-font-mono);
+  white-space: nowrap;
+  color: var(--pe-color-fg);
+}
+
+.VotesListItem__Content {
+  display: grid;
+  gap: var(--pe-space-4);
+  grid-template-columns: 4rem minmax(8.125rem, 30rem) minmax(8.125rem, 30rem) minmax(
+      8.125rem,
+      30rem
+    ) minmax(8.125rem, 500rem) 4.5rem 3.5rem;
+}
+
+@container (max-width: 62rem) {
+  .VotesListItem__Content {
     grid-template-columns: 4rem minmax(8.125rem, 30rem) minmax(8.125rem, 30rem) minmax(
         8.125rem,
         30rem
-      ) minmax(8.125rem, 500rem) 4.5rem 3.5rem;
+      ) 4.5rem 3.5rem;
   }
+}
+
+@container (max-width: 55rem) {
+  .VotesListItem__Content {
+    grid-template-columns: 4rem minmax(8.125rem, 30rem) minmax(8.125rem, 30rem) 4.5rem 3.5rem;
+  }
+}
+
+@container (max-width: 37rem) {
+  .VotesListItem__Content {
+    grid-template-columns: 4rem minmax(0rem, 30rem) 4.5rem 3.5rem;
+  }
+}
+
+@container (max-width: 27rem) {
+  .VotesListItem__Content {
+    gap: var(--pe-space-2);
+  }
+}
+
+@container (max-width: 24rem) {
+  .VotesListItem__Content {
+    grid-template-columns: 4rem minmax(0rem, 30rem) 4.5rem;
+  }
+}
+
+.VotesListItem__Content {
+  align-items: center;
+}
+
+.VotesListItem__Content--NoDataContract {
+  display: grid;
+  gap: var(--pe-space-4);
+  grid-template-columns: 4rem minmax(9rem, 30rem) minmax(9rem, 30rem) minmax(9rem, 500rem) 4.5rem 3.5rem;
+}
+
+@container (max-width: 55rem) {
+  .VotesListItem__Content--NoDataContract {
+    grid-template-columns: 4rem minmax(8.125rem, 30rem) minmax(8.125rem, 30rem) 4.5rem 3.5rem;
+  }
+}
+
+@container (max-width: 37rem) {
+  .VotesListItem__Content--NoDataContract {
+    grid-template-columns: 4rem minmax(0rem, 30rem) 4.5rem 3.5rem;
+  }
+}
+
+@container (max-width: 27rem) {
+  .VotesListItem__Content--NoDataContract {
+    gap: var(--pe-space-2);
+  }
+}
+
+@container (max-width: 24rem) {
+  .VotesListItem__Content--NoDataContract {
+    grid-template-columns: 4rem minmax(0rem, 30rem) 4.5rem;
+  }
+}
+
+.VotesListItem__Column {
+  display: flex;
+  align-items: center;
+}
+
+.VotesListItem__Column:last-child {
+  justify-content: flex-end;
 }
 
 @container (max-width: 62rem) {
-  .VotesListItem {
-    &__Content {
-      grid-template-columns: 4rem minmax(8.125rem, 30rem) minmax(8.125rem, 30rem) minmax(
-          8.125rem,
-          30rem
-        ) 4.5rem 3.5rem;
-    }
+  .VotesListItem__Column--DataContract {
+    display: none;
   }
 }
 
 @container (max-width: 55rem) {
-  .VotesListItem {
-    &__Content {
-      grid-template-columns: 4rem minmax(8.125rem, 30rem) minmax(8.125rem, 30rem) 4.5rem 3.5rem;
-    }
+  .VotesListItem__Column--Document {
+    display: none;
   }
 }
 
 @container (max-width: 37rem) {
-  .VotesListItem {
-    &__Content {
-      grid-template-columns: 4rem minmax(0rem, 30rem) 4.5rem 3.5rem;
-    }
-  }
-}
-
-@container (max-width: 27rem) {
-  .VotesListItem {
-    &__Content {
-      gap: var(--pe-space-2);
-    }
+  .VotesListItem__Column--TowardsIdentity {
+    display: none;
   }
 }
 
 @container (max-width: 24rem) {
-  .VotesListItem {
-    &__Content {
-      grid-template-columns: 4rem minmax(0rem, 30rem) 4.5rem;
-    }
+  .VotesListItem__Column--Power {
+    display: none;
   }
-}
 
-.VotesListItem {
-  &__Content {
-    align-items: center;
-  }
-  &__Content--NoDataContract {
-    display: grid;
-    gap: var(--pe-space-4);
-    grid-template-columns: 4rem minmax(9rem, 30rem) minmax(9rem, 30rem) minmax(9rem, 500rem) 4.5rem 3.5rem;
-  }
-}
-
-@container (max-width: 55rem) {
-  .VotesListItem {
-    &__Content--NoDataContract {
-      grid-template-columns: 4rem minmax(8.125rem, 30rem) minmax(8.125rem, 30rem) 4.5rem 3.5rem;
-    }
-  }
-}
-
-@container (max-width: 37rem) {
-  .VotesListItem {
-    &__Content--NoDataContract {
-      grid-template-columns: 4rem minmax(0rem, 30rem) 4.5rem 3.5rem;
-    }
-  }
-}
-
-@container (max-width: 27rem) {
-  .VotesListItem {
-    &__Content--NoDataContract {
-      gap: var(--pe-space-2);
-    }
-  }
-}
-
-@container (max-width: 24rem) {
-  .VotesListItem {
-    &__Content--NoDataContract {
-      grid-template-columns: 4rem minmax(0rem, 30rem) 4.5rem;
-    }
-  }
-}
-
-.VotesListItem {
-  &__Column {
-    display: flex;
-    align-items: center;
-  }
-  &__Column:last-child {
+  .VotesListItem__Column--Choice {
     justify-content: flex-end;
-  }
-}
-
-@container (max-width: 62rem) {
-  .VotesListItem {
-    &__Column--DataContract {
-      display: none;
-    }
-  }
-}
-
-@container (max-width: 55rem) {
-  .VotesListItem {
-    &__Column--Document {
-      display: none;
-    }
-  }
-}
-
-@container (max-width: 37rem) {
-  .VotesListItem {
-    &__Column--TowardsIdentity {
-      display: none;
-    }
-  }
-}
-
-@container (max-width: 24rem) {
-  .VotesListItem {
-    &__Column--Power {
-      display: none;
-    }
-    &__Column--Choice {
-      justify-content: flex-end;
-    }
   }
 }
 
@@ -219,8 +194,6 @@
   line-height: 0.8rem;
 }
 
-.VotesListItem {
-  &__Column {
-    overflow: hidden;
-  }
+.VotesListItem__Column {
+  overflow: hidden;
 }

@@ -15,12 +15,10 @@
 }
 
 @media (hover: hover) and (pointer: fine) {
-  .QuorumListItem {
-    &:hover {
-      background-color: var(--pe-color-gray-750);
-      text-decoration: none;
-      cursor: pointer;
-    }
+  .QuorumListItem:hover {
+    background-color: var(--pe-color-gray-750);
+    text-decoration: none;
+    cursor: pointer;
   }
 }
 
@@ -34,117 +32,113 @@
 .QuorumListItem {
   display: block;
   font-size: var(--pe-text-sm);
-  &:active {
-    transform: translateY(1px);
-    box-shadow: 0 0 9999px 0 rgba(0, 0, 0, 0.25) inset;
-  }
-  &:last-child {
-    margin-bottom: 0;
-  }
-  &__Column--Credits,
-  &__Column--Number {
-    font-size: var(--pe-text-sm);
-    font-weight: var(--pe-font-weight-bold);
-  }
-  &__IdentifierContainer {
-    display: flex;
-    align-items: center;
-    min-width: 50px;
-  }
-  &__Avatar {
-    height: var(--pe-space-6);
-    width: var(--pe-space-6);
-    flex-shrink: 0;
-    margin-right: var(--pe-space-3);
-  }
-  &--Timestamp,
-  &__Column--Timestamp {
-    font-family: var(--pe-font-mono);
-    white-space: nowrap;
-    color: var(--pe-color-fg);
-  }
-  &__Content {
-    display: grid;
-    gap: var(--pe-space-4);
-    grid-template-columns: minmax(0, 600px) minmax(140px, 200px) minmax(26rem, 26rem) 3.375rem;
-  }
+}
+
+.QuorumListItem:active {
+  transform: translateY(1px);
+  box-shadow: 0 0 9999px 0 rgba(0, 0, 0, 0.25) inset;
+}
+
+.QuorumListItem:last-child {
+  margin-bottom: 0;
+}
+
+.QuorumListItem__Column--Credits,
+.QuorumListItem__Column--Number {
+  font-size: var(--pe-text-sm);
+  font-weight: var(--pe-font-weight-bold);
+}
+
+.QuorumListItem__IdentifierContainer {
+  display: flex;
+  align-items: center;
+  min-width: 50px;
+}
+
+.QuorumListItem__Avatar {
+  height: var(--pe-space-6);
+  width: var(--pe-space-6);
+  flex-shrink: 0;
+  margin-right: var(--pe-space-3);
+}
+
+.QuorumListItem--Timestamp,
+.QuorumListItem__Column--Timestamp {
+  font-family: var(--pe-font-mono);
+  white-space: nowrap;
+  color: var(--pe-color-fg);
+}
+
+.QuorumListItem__Content {
+  display: grid;
+  gap: var(--pe-space-4);
+  grid-template-columns: minmax(0, 600px) minmax(140px, 200px) minmax(26rem, 26rem) 3.375rem;
 }
 
 @container (max-width: 77rem) {
-  .QuorumListItem {
-    &__Content {
-      grid-template-columns: auto minmax(9.375rem, 9.375rem) minmax(24.5rem, 24.5rem) 3.375rem;
-    }
+  .QuorumListItem__Content {
+    grid-template-columns: auto minmax(9.375rem, 9.375rem) minmax(24.5rem, 24.5rem) 3.375rem;
   }
 }
 
 @container (max-width: 62.5rem) {
-  .QuorumListItem {
-    &__Content {
-      grid-template-columns: auto minmax(9.375rem, 9.375rem) minmax(24.5rem, 24.5rem) 3.375rem;
-    }
+  .QuorumListItem__Content {
+    grid-template-columns: auto minmax(9.375rem, 9.375rem) minmax(24.5rem, 24.5rem) 3.375rem;
   }
 }
 
 @container (max-width: 49rem) {
-  .QuorumListItem {
-    &__Content {
-      grid-template-columns: auto minmax(9.375rem, 9.375rem) 3.375rem;
-    }
+  .QuorumListItem__Content {
+    grid-template-columns: auto minmax(9.375rem, 9.375rem) 3.375rem;
   }
 }
 
 @container (max-width: 27.5rem) {
-  .QuorumListItem {
-    &__Content {
-      grid-template-columns: auto 3.375rem;
-    }
+  .QuorumListItem__Content {
+    grid-template-columns: auto 3.375rem;
   }
 }
 
-.QuorumListItem {
-  &__Column {
-    display: flex;
-    align-items: center;
-  }
-  &__Column--ProtxHash {
-    max-width: 600px;
-  }
-  &__Column--Service {
-    max-width: 140px;
-    width: 100%;
-  }
-  &__Column--OperatorPubKey {
-    max-width: 37.5rem;
-    overflow: hidden;
-  }
-  &__Column--Valid {
-    justify-content: flex-end;
-    white-space: nowrap;
-  }
+.QuorumListItem__Column {
+  display: flex;
+  align-items: center;
+}
+
+.QuorumListItem__Column--ProtxHash {
+  max-width: 600px;
+}
+
+.QuorumListItem__Column--Service {
+  max-width: 140px;
+  width: 100%;
+}
+
+.QuorumListItem__Column--OperatorPubKey {
+  max-width: 37.5rem;
+  overflow: hidden;
+}
+
+.QuorumListItem__Column--Valid {
+  justify-content: flex-end;
+  white-space: nowrap;
 }
 
 @container (max-width: 49rem) {
-  .QuorumListItem {
-    &__Column--OperatorPubKey {
-      display: none;
-    }
+  .QuorumListItem__Column--OperatorPubKey {
+    display: none;
   }
 }
 
 @container (max-width: 27.5rem) {
-  .QuorumListItem {
-    &__Column--Service {
-      display: none;
-    }
+  .QuorumListItem__Column--Service {
+    display: none;
   }
 }
 
-.QuorumListItem {
-  &__Column {
-    line-height: var(--pe-space-3);
-  }
-  &__Column--ProtxHash {
-    overflow: hidden;
-  }
+.QuorumListItem__Column {
+  line-height: var(--pe-space-3);
+}
+
+.QuorumListItem__Column--ProtxHash {
+  overflow: hidden;
 }

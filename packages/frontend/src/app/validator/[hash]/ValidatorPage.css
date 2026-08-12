@@ -1,141 +1,111 @@
-.ValidatorPage {
-  &__Card {
-    margin-bottom: var(--pe-space-6);
-  }
-  &__ContentContainer {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: var(--pe-space-3);
-  }
+.ValidatorPage__Card {
+  margin-bottom: var(--pe-space-6);
+}
+
+.ValidatorPage__ContentContainer {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--pe-space-3);
 }
 
 @media screen and (min-width: 48em) {
-  .ValidatorPage {
-    &__ContentContainer {
-      gap: var(--pe-space-4);
-    }
+  .ValidatorPage__ContentContainer {
+    gap: var(--pe-space-4);
   }
 }
 
 @media screen and (min-width: 62em) {
-  .ValidatorPage {
-    &__ContentContainer {
-      gap: var(--pe-space-5);
-    }
+  .ValidatorPage__ContentContainer {
+    gap: var(--pe-space-5);
   }
 }
 
 @media screen and (min-width: 80em) {
-  .ValidatorPage {
-    &__ContentContainer {
-      gap: var(--pe-space-6);
-    }
+  .ValidatorPage__ContentContainer {
+    gap: var(--pe-space-6);
   }
 }
 
-.ValidatorPage {
-  &__Column {
-    display: flex;
-    flex-direction: column;
-    position: relative;
-    overflow: hidden;
-    flex-shrink: 0;
+.ValidatorPage__Column {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.ValidatorPage__Lists {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  margin-top: var(--pe-space-6);
+  margin-top: var(--pe-space-3);
+}
+
+@media screen and (min-width: 48em) {
+  .ValidatorPage__Lists {
+    margin-top: var(--pe-space-4);
   }
-  &__Lists {
-    display: flex;
-    flex-direction: column;
-    flex-grow: 1;
+}
+
+@media screen and (min-width: 62em) {
+  .ValidatorPage__Lists {
+    margin-top: var(--pe-space-5);
+  }
+}
+
+@media screen and (min-width: 80em) {
+  .ValidatorPage__Lists {
     margin-top: var(--pe-space-6);
-    margin-top: var(--pe-space-3);
   }
 }
 
+.ValidatorPage__ListContainer {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  padding-top: var(--pe-space-3) !important;
+  padding-bottom: 0 !important;
+  padding-left: calc(var(--pe-space-3) + 0px) !important;
+}
+
 @media screen and (min-width: 48em) {
-  .ValidatorPage {
-    &__Lists {
-      margin-top: var(--pe-space-4);
-    }
+  .ValidatorPage__ListContainer {
+    padding-left: calc(var(--pe-space-4) + 0px) !important;
   }
 }
 
 @media screen and (min-width: 62em) {
-  .ValidatorPage {
-    &__Lists {
-      margin-top: var(--pe-space-5);
-    }
+  .ValidatorPage__ListContainer {
+    padding-left: calc(var(--pe-space-5) + 0px) !important;
   }
 }
 
 @media screen and (min-width: 80em) {
-  .ValidatorPage {
-    &__Lists {
-      margin-top: var(--pe-space-6);
-    }
+  .ValidatorPage__ListContainer {
+    padding-left: calc(var(--pe-space-6) + 0px) !important;
   }
 }
 
-.ValidatorPage {
-  &__ListContainer {
-    display: flex;
-    flex-direction: column;
-    flex-grow: 1;
-    padding-top: var(--pe-space-3) !important;
-    padding-bottom: 0 !important;
-    padding-left: calc(var(--pe-space-3) + 0px) !important;
-  }
+.ValidatorPage__ListContainer {
+  padding-right: calc(var(--pe-space-3) + 0px) !important;
 }
 
 @media screen and (min-width: 48em) {
-  .ValidatorPage {
-    &__ListContainer {
-      padding-left: calc(var(--pe-space-4) + 0px) !important;
-    }
+  .ValidatorPage__ListContainer {
+    padding-right: calc(var(--pe-space-4) + 0px) !important;
   }
 }
 
 @media screen and (min-width: 62em) {
-  .ValidatorPage {
-    &__ListContainer {
-      padding-left: calc(var(--pe-space-5) + 0px) !important;
-    }
+  .ValidatorPage__ListContainer {
+    padding-right: calc(var(--pe-space-5) + 0px) !important;
   }
 }
 
 @media screen and (min-width: 80em) {
-  .ValidatorPage {
-    &__ListContainer {
-      padding-left: calc(var(--pe-space-6) + 0px) !important;
-    }
-  }
-}
-
-.ValidatorPage {
-  &__ListContainer {
-    padding-right: calc(var(--pe-space-3) + 0px) !important;
-  }
-}
-
-@media screen and (min-width: 48em) {
-  .ValidatorPage {
-    &__ListContainer {
-      padding-right: calc(var(--pe-space-4) + 0px) !important;
-    }
-  }
-}
-
-@media screen and (min-width: 62em) {
-  .ValidatorPage {
-    &__ListContainer {
-      padding-right: calc(var(--pe-space-5) + 0px) !important;
-    }
-  }
-}
-
-@media screen and (min-width: 80em) {
-  .ValidatorPage {
-    &__ListContainer {
-      padding-right: calc(var(--pe-space-6) + 0px) !important;
-    }
+  .ValidatorPage__ListContainer {
+    padding-right: calc(var(--pe-space-6) + 0px) !important;
   }
 }
 
@@ -143,37 +113,30 @@
   overflow: visible !important;
 }
 
-.ValidatorPage {
-  &__ChartsContainer {
-    padding-bottom: 0;
-    overflow-x: hidden;
-  }
-  &__ListPagination {
-    margin-top: calc(var(--pe-space-3) + 0px);
-  }
+.ValidatorPage__ChartsContainer {
+  padding-bottom: 0;
+  overflow-x: hidden;
+}
+
+.ValidatorPage__ListPagination {
+  margin-top: calc(var(--pe-space-3) + 0px);
 }
 
 @media screen and (min-width: 48em) {
-  .ValidatorPage {
-    &__ListPagination {
-      margin-top: calc(var(--pe-space-4) + 0px);
-    }
+  .ValidatorPage__ListPagination {
+    margin-top: calc(var(--pe-space-4) + 0px);
   }
 }
 
 @media screen and (min-width: 62em) {
-  .ValidatorPage {
-    &__ListPagination {
-      margin-top: calc(var(--pe-space-5) + 0px);
-    }
+  .ValidatorPage__ListPagination {
+    margin-top: calc(var(--pe-space-5) + 0px);
   }
 }
 
 @media screen and (min-width: 80em) {
-  .ValidatorPage {
-    &__ListPagination {
-      margin-top: calc(var(--pe-space-6) + 0px);
-    }
+  .ValidatorPage__ListPagination {
+    margin-top: calc(var(--pe-space-6) + 0px);
   }
 }
 
@@ -204,27 +167,29 @@
   margin-bottom: var(--pe-space-1);
 }
 
-.ValidatorPage {
-  &__List {
-    flex-grow: 1;
-  }
-  &__GroupContainer {
-    flex-grow: 1;
-    border-radius: 18px;
-    border: 1px solid var(--pe-color-gray-800);
-  }
-  &__InfoLine {
-    margin-bottom: var(--pe-space-3_5);
-  }
-  &__ValueContainer {
-    display: flex;
-    justify-content: flex-end;
-    overflow: hidden;
-  }
-  &__PoseScroreValue {
-    display: flex;
-    align-items: center;
-  }
+.ValidatorPage__List {
+  flex-grow: 1;
+}
+
+.ValidatorPage__GroupContainer {
+  flex-grow: 1;
+  border-radius: 18px;
+  border: 1px solid var(--pe-color-gray-800);
+}
+
+.ValidatorPage__InfoLine {
+  margin-bottom: var(--pe-space-3_5);
+}
+
+.ValidatorPage__ValueContainer {
+  display: flex;
+  justify-content: flex-end;
+  overflow: hidden;
+}
+
+.ValidatorPage__PoseScroreValue {
+  display: flex;
+  align-items: center;
 }
 
 @media screen and (max-width: 62em) {
@@ -233,10 +198,8 @@
     background: transparent;
   }
 
-  .ValidatorPage {
-    &__ContentContainer {
-      grid-template-columns: 1fr;
-    }
+  .ValidatorPage__ContentContainer {
+    grid-template-columns: 1fr;
   }
 }
 

@@ -21,9 +21,10 @@ a.Endpoint .Endpoint__Value::after {
 .Endpoint {
   display: flex;
   align-items: center;
-  &__Status {
-    margin-left: var(--pe-space-2);
-  }
+}
+
+.Endpoint__Status {
+  margin-left: var(--pe-space-2);
 }
 
 @media (hover: hover) and (pointer: fine) {

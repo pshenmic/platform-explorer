@@ -2,35 +2,40 @@
   display: flex;
   flex-direction: column;
   gap: var(--pe-space-2);
-  &__NameContainer {
-    display: flex;
-    align-items: center;
-    gap: var(--pe-space-2);
-    overflow: hidden;
-  }
-  &__Name {
-    font-family: var(--pe-font-heading);
-    font-size: var(--pe-text-lg);
-    font-weight: var(--pe-font-weight-extrabold);
-    color: var(--pe-color-fg);
-    padding-right: var(--pe-space-1);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    font-style: italic;
-  }
-  &__Avatar {
-    width: var(--pe-space-6);
-    flex-shrink: 0;
-  }
-  &__Count {
-    font-family: var(--pe-font-mono);
-    font-size: var(--pe-text-sm);
-    white-space: nowrap;
-    gap: var(--pe-space-1);
-  }
-  &__CountValue {
-    font-weight: var(--pe-font-weight-medium);
-    color: var(--pe-color-brand-light);
-  }
+}
+
+.TokenCardContent__NameContainer {
+  display: flex;
+  align-items: center;
+  gap: var(--pe-space-2);
+  overflow: hidden;
+}
+
+.TokenCardContent__Name {
+  font-family: var(--pe-font-heading);
+  font-size: var(--pe-text-lg);
+  font-weight: var(--pe-font-weight-extrabold);
+  color: var(--pe-color-fg);
+  padding-right: var(--pe-space-1);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-style: italic;
+}
+
+.TokenCardContent__Avatar {
+  width: var(--pe-space-6);
+  flex-shrink: 0;
+}
+
+.TokenCardContent__Count {
+  font-family: var(--pe-font-mono);
+  font-size: var(--pe-text-sm);
+  white-space: nowrap;
+  gap: var(--pe-space-1);
+}
+
+.TokenCardContent__CountValue {
+  font-weight: var(--pe-font-weight-medium);
+  color: var(--pe-color-brand-light);
 }

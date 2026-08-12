@@ -25,20 +25,23 @@
   flex-direction: column;
   gap: var(--pe-space-5);
   min-width: 25rem;
-  &__InputTitle {
-    font-family: var(--pe-font-mono);
-    font-size: var(--pe-text-sm);
-    font-weight: var(--pe-font-weight-normal);
-    color: rgba(255, 255, 255, 0.5);
-  }
-  &__ResultsContainer {
-    max-height: 300px;
-    overflow-x: hidden;
-    overflow-y: auto;
-  }
-  &__SearchContainer {
-    display: flex;
-    flex-direction: column;
-    gap: var(--pe-space-4);
-  }
+}
+
+.SearchFilter__InputTitle {
+  font-family: var(--pe-font-mono);
+  font-size: var(--pe-text-sm);
+  font-weight: var(--pe-font-weight-normal);
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.SearchFilter__ResultsContainer {
+  max-height: 300px;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.SearchFilter__SearchContainer {
+  display: flex;
+  flex-direction: column;
+  gap: var(--pe-space-4);
 }

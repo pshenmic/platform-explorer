@@ -36,19 +36,22 @@
 .JsonViewer {
   position: relative;
   width: 100%;
-  &__Editor {
-    width: 100%;
-  }
-  &__CopyButton {
-    position: absolute;
-    top: var(--pe-space-2_5);
-    right: var(--pe-space-2_5);
-    z-index: 1;
-  }
-  &--Fill {
-    flex: 1;
-    min-height: 0;
-    display: flex;
-    flex-direction: column;
-  }
+}
+
+.JsonViewer__Editor {
+  width: 100%;
+}
+
+.JsonViewer__CopyButton {
+  position: absolute;
+  top: var(--pe-space-2_5);
+  right: var(--pe-space-2_5);
+  z-index: 1;
+}
+
+.JsonViewer--Fill {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
 }

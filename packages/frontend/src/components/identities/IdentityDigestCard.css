@@ -76,54 +76,63 @@
   background: rgba(var(--pe-color-gray-800-rgb), 0.5);
   border-radius: var(--pe-radius-def);
   container-type: inline-size;
-  &--Loading &__InfoContainer {
-    overflow: hidden;
-  }
-  &--Loading &__InfoContainerValue {
-    width: 100px;
-    max-width: 100%;
-  }
-  &__RowContainer {
-    display: flex;
-    justify-content: space-between;
-    gap: var(--pe-space-3_5);
-  }
-  &__InfoContainer {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-    gap: var(--pe-space-1);
-    padding: var(--pe-space-6);
-    background: rgba(var(--pe-color-gray-800-rgb), 0.5);
-    border-radius: var(--pe-radius-def);
-    width: 100%;
-  }
-  &__LinesContainer {
-    flex-direction: column;
-  }
-  &__Transfer {
-    width: 50%;
-    display: flex;
-    flex-direction: column;
-    gap: var(--pe-space-1);
-    padding: var(--pe-space-6);
-    background: rgba(var(--pe-color-gray-800-rgb), 0.5);
-    border-radius: var(--pe-radius-def);
-  }
-  &__TransferTitle {
-    font-size: var(--pe-text-sm);
-    color: var(--pe-color-fg-muted);
-  }
-  &__ValueContainer {
-    display: flex;
-    justify-content: flex-end;
-    overflow: hidden;
-  }
-  &__InfoLine {
-    gap: var(--pe-space-1);
-    column-gap: var(--pe-space-2);
-  }
+}
+
+.IdentityDigestCard--Loading .IdentityDigestCard__InfoContainer {
+  overflow: hidden;
+}
+
+.IdentityDigestCard--Loading .IdentityDigestCard__InfoContainerValue {
+  width: 100px;
+  max-width: 100%;
+}
+
+.IdentityDigestCard__RowContainer {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--pe-space-3_5);
+}
+
+.IdentityDigestCard__InfoContainer {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--pe-space-1);
+  padding: var(--pe-space-6);
+  background: rgba(var(--pe-color-gray-800-rgb), 0.5);
+  border-radius: var(--pe-radius-def);
+  width: 100%;
+}
+
+.IdentityDigestCard__LinesContainer {
+  flex-direction: column;
+}
+
+.IdentityDigestCard__Transfer {
+  width: 50%;
+  display: flex;
+  flex-direction: column;
+  gap: var(--pe-space-1);
+  padding: var(--pe-space-6);
+  background: rgba(var(--pe-color-gray-800-rgb), 0.5);
+  border-radius: var(--pe-radius-def);
+}
+
+.IdentityDigestCard__TransferTitle {
+  font-size: var(--pe-text-sm);
+  color: var(--pe-color-fg-muted);
+}
+
+.IdentityDigestCard__ValueContainer {
+  display: flex;
+  justify-content: flex-end;
+  overflow: hidden;
+}
+
+.IdentityDigestCard__InfoLine {
+  gap: var(--pe-space-1);
+  column-gap: var(--pe-space-2);
 }
 
 @media screen and (min-width: 48em) and (max-width: 62em), screen and (max-width: 30em) {
@@ -142,13 +151,12 @@
     margin-bottom: var(--pe-space-1);
   }
 
-  .IdentityDigestCard {
-    &__Transfers {
-      flex-direction: column;
-    }
-    &__Transfer {
-      width: 100%;
-    }
+  .IdentityDigestCard__Transfers {
+    flex-direction: column;
+  }
+
+  .IdentityDigestCard__Transfer {
+    width: 100%;
   }
 }
 
@@ -179,10 +187,8 @@
     max-width: none;
   }
 
-  .IdentityDigestCard {
-    &__InfoLine {
-      flex-direction: column;
-      align-items: flex-start;
-    }
+  .IdentityDigestCard__InfoLine {
+    flex-direction: column;
+    align-items: flex-start;
   }
 }

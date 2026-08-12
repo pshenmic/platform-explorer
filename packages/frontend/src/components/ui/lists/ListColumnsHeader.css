@@ -11,14 +11,16 @@
   font-size: var(--pe-text-sm);
   text-transform: uppercase;
   color: var(--pe-color-fg);
-  &--Light {
-    background: transparent !important;
-    font-weight: var(--pe-font-weight-medium) !important;
-    color: var(--pe-color-fg) !important;
-    text-transform: none !important;
-  }
-  &__Column {
-    display: flex;
-    align-items: center;
-  }
+}
+
+.ListColumnsHeader--Light {
+  background: transparent !important;
+  font-weight: var(--pe-font-weight-medium) !important;
+  color: var(--pe-color-fg) !important;
+  text-transform: none !important;
+}
+
+.ListColumnsHeader__Column {
+  display: flex;
+  align-items: center;
 }

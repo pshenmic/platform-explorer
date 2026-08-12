@@ -1,34 +1,34 @@
-.DataContractsPage {
-  &__Controls {
-    display: flex;
-    align-items: center;
-    gap: var(--pe-space-4);
-    margin: var(--pe-space-3) 0 var(--pe-space-6);
-    flex-wrap: wrap;
-  }
-  &__Title {
-    flex-shrink: 0;
-    margin-right: var(--pe-space-2);
-  }
-  &__Stats {
-    flex: 1 1 auto;
-    min-width: 0;
-  }
-  &__Filters {
-    flex-shrink: 0;
-    margin-left: auto;
-  }
+.DataContractsPage__Controls {
+  display: flex;
+  align-items: center;
+  gap: var(--pe-space-4);
+  margin: var(--pe-space-3) 0 var(--pe-space-6);
+  flex-wrap: wrap;
+}
+
+.DataContractsPage__Title {
+  flex-shrink: 0;
+  margin-right: var(--pe-space-2);
+}
+
+.DataContractsPage__Stats {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.DataContractsPage__Filters {
+  flex-shrink: 0;
+  margin-left: auto;
 }
 
 @media screen and (max-width: 48em) {
-  .DataContractsPage {
-    &__Controls {
-      flex-direction: column;
-      align-items: flex-start;
-      gap: var(--pe-space-4);
-    }
-    &__Filters {
-      margin-left: 0;
-    }
+  .DataContractsPage__Controls {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--pe-space-4);
+  }
+
+  .DataContractsPage__Filters {
+    margin-left: 0;
   }
 }

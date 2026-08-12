@@ -4,22 +4,18 @@
   background: rgba(24, 31, 34, 0.88);
 }
 
-.HomeOverview {
-  &__Grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: var(--pe-space-6);
-    margin-top: 0;
-  }
+.HomeOverview__Grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--pe-space-6);
+  margin-top: 0;
 }
 
 @media screen and (min-width: 62em) {
-  .HomeOverview {
-    &__Grid {
-      grid-template-columns: 250px minmax(0, 1fr) minmax(0, 1fr);
-      gap: 0;
-      align-items: stretch;
-    }
+  .HomeOverview__Grid {
+    grid-template-columns: 250px minmax(0, 1fr) minmax(0, 1fr);
+    gap: 0;
+    align-items: stretch;
   }
 }
 
@@ -62,11 +58,9 @@
   max-width: 100%;
 }
 
-.HomeOverview {
-  &__Sys {
-    display: flex;
-    flex-direction: column;
-  }
+.HomeOverview__Sys {
+  display: flex;
+  flex-direction: column;
 }
 
 @media screen and (min-width: 62em) {
@@ -107,40 +101,36 @@
     white-space: nowrap;
   }
 
-  .HomeOverview {
-    &__Sys {
-      border-right: 1px solid rgba(var(--pe-color-gray-800-rgb), 0.6);
-      padding-right: var(--pe-space-8);
-    }
+  .HomeOverview__Sys {
+    border-right: 1px solid rgba(var(--pe-color-gray-800-rgb), 0.6);
+    padding-right: var(--pe-space-8);
   }
 }
 
-.HomeOverview {
-  &__More {
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    flex-shrink: 0;
-    font-family: var(--pe-font-mono);
-    font-size: var(--pe-text-xs);
-    color: var(--pe-color-gray-500);
-    white-space: nowrap;
-    transition: color 0.2s;
-  }
-  &__More:hover {
-    color: var(--pe-color-fg);
-  }
+.HomeOverview__More {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  flex-shrink: 0;
+  font-family: var(--pe-font-mono);
+  font-size: var(--pe-text-xs);
+  color: var(--pe-color-gray-500);
+  white-space: nowrap;
+  transition: color 0.2s;
+}
+
+.HomeOverview__More:hover {
+  color: var(--pe-color-fg);
 }
 
 @media screen and (min-width: 62em) {
-  .HomeOverview {
-    &__Tx {
-      padding: 0 var(--pe-space-8);
-      border-right: 1px solid rgba(var(--pe-color-gray-800-rgb), 0.6);
-    }
-    &__Blocks {
-      padding-left: var(--pe-space-8);
-    }
+  .HomeOverview__Tx {
+    padding: 0 var(--pe-space-8);
+    border-right: 1px solid rgba(var(--pe-color-gray-800-rgb), 0.6);
+  }
+
+  .HomeOverview__Blocks {
+    padding-left: var(--pe-space-8);
   }
 }
 

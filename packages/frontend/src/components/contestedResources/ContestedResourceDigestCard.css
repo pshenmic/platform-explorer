@@ -70,75 +70,89 @@
   background: rgba(var(--pe-color-gray-800-rgb), 0.5);
   border-radius: var(--pe-radius-def);
   container-type: inline-size;
-  &--Loading &__InfoContainer {
-    overflow: hidden;
-  }
-  &--Loading &__InfoContainerValue {
-    width: 100px;
-    max-width: 100%;
-  }
-  &__RowContainer {
-    display: flex;
-    justify-content: space-between;
-    gap: var(--pe-space-3_5);
-  }
-  &__InfoContainer {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-    gap: var(--pe-space-1);
-    padding: var(--pe-space-6);
-    background: rgba(var(--pe-color-gray-800-rgb), 0.5);
-    border-radius: var(--pe-radius-def);
-    width: 100%;
-  }
-  &__LinesContainer {
-    flex-direction: column;
-  }
-  &__InfoLine--Winner {
-    max-width: 100%;
-    overflow: hidden;
-  }
-  &__LinesContainer {
-    overflow: hidden;
-    max-width: 100%;
-  }
-  &__Card {
-    width: calc(33.3333333333% - 0.5833333333rem);
-    display: flex;
-    flex-direction: column;
-    gap: var(--pe-space-1);
-    padding: var(--pe-space-6);
-    background: rgba(var(--pe-color-gray-800-rgb), 0.5);
-    border-radius: var(--pe-radius-def);
-    flex-shrink: 0;
-  }
-  &__CardTitle {
-    font-size: var(--pe-text-sm);
-    color: var(--pe-color-fg-muted);
-  }
-  &__CardValue {
-    font-size: 0.813rem;
-  }
-  &__ValueContainer {
-    display: flex;
-    justify-content: flex-end;
-    overflow: hidden;
-  }
-  &__InfoLine {
-    gap: var(--pe-space-1);
-    column-gap: var(--pe-space-2);
-  }
-  &__InfoLine--Status {
-    align-items: baseline;
-  }
-  &__StatusContainer {
-    display: flex;
-    gap: var(--pe-space-3);
-    justify-content: flex-end;
-    flex-wrap: wrap;
-  }
+}
+
+.ContestedResourcesDigestCard--Loading .ContestedResourcesDigestCard__InfoContainer {
+  overflow: hidden;
+}
+
+.ContestedResourcesDigestCard--Loading .ContestedResourcesDigestCard__InfoContainerValue {
+  width: 100px;
+  max-width: 100%;
+}
+
+.ContestedResourcesDigestCard__RowContainer {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--pe-space-3_5);
+}
+
+.ContestedResourcesDigestCard__InfoContainer {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--pe-space-1);
+  padding: var(--pe-space-6);
+  background: rgba(var(--pe-color-gray-800-rgb), 0.5);
+  border-radius: var(--pe-radius-def);
+  width: 100%;
+}
+
+.ContestedResourcesDigestCard__LinesContainer {
+  flex-direction: column;
+}
+
+.ContestedResourcesDigestCard__InfoLine--Winner {
+  max-width: 100%;
+  overflow: hidden;
+}
+
+.ContestedResourcesDigestCard__LinesContainer {
+  overflow: hidden;
+  max-width: 100%;
+}
+
+.ContestedResourcesDigestCard__Card {
+  width: calc(33.3333333333% - 0.5833333333rem);
+  display: flex;
+  flex-direction: column;
+  gap: var(--pe-space-1);
+  padding: var(--pe-space-6);
+  background: rgba(var(--pe-color-gray-800-rgb), 0.5);
+  border-radius: var(--pe-radius-def);
+  flex-shrink: 0;
+}
+
+.ContestedResourcesDigestCard__CardTitle {
+  font-size: var(--pe-text-sm);
+  color: var(--pe-color-fg-muted);
+}
+
+.ContestedResourcesDigestCard__CardValue {
+  font-size: 0.813rem;
+}
+
+.ContestedResourcesDigestCard__ValueContainer {
+  display: flex;
+  justify-content: flex-end;
+  overflow: hidden;
+}
+
+.ContestedResourcesDigestCard__InfoLine {
+  gap: var(--pe-space-1);
+  column-gap: var(--pe-space-2);
+}
+
+.ContestedResourcesDigestCard__InfoLine--Status {
+  align-items: baseline;
+}
+
+.ContestedResourcesDigestCard__StatusContainer {
+  display: flex;
+  gap: var(--pe-space-3);
+  justify-content: flex-end;
+  flex-wrap: wrap;
 }
 
 @container (max-width: 44em) {
@@ -153,15 +167,14 @@
     margin-bottom: var(--pe-space-1);
   }
 
-  .ContestedResourcesDigestCard {
-    &__Cards {
-      flex-direction: column;
-    }
-    &__Card {
-      width: 100%;
-      flex-direction: row;
-      justify-content: space-between;
-    }
+  .ContestedResourcesDigestCard__Cards {
+    flex-direction: column;
+  }
+
+  .ContestedResourcesDigestCard__Card {
+    width: 100%;
+    flex-direction: row;
+    justify-content: space-between;
   }
 }
 
@@ -189,10 +202,8 @@
     justify-content: flex-start;
   }
 
-  .ContestedResourcesDigestCard {
-    &__InfoLine {
-      flex-direction: column;
-      align-items: flex-start;
-    }
+  .ContestedResourcesDigestCard__InfoLine {
+    flex-direction: column;
+    align-items: flex-start;
   }
 }

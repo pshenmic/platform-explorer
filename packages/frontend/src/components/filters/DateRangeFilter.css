@@ -8,22 +8,25 @@
   flex-direction: column;
   gap: var(--pe-space-6);
   min-width: 650px;
-  &__ValuesContainer {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: var(--pe-space-4);
-  }
-  &__ValuesTitle {
-    font-size: var(--pe-text-xs);
-    font-family: var(--pe-font-mono);
-    opacity: var(--pe-opacity-muted);
-  }
-  &__Values {
-    display: flex;
-    gap: var(--pe-space-2);
-    margin-left: auto;
-  }
+}
+
+.DateRangeFilter__ValuesContainer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--pe-space-4);
+}
+
+.DateRangeFilter__ValuesTitle {
+  font-size: var(--pe-text-xs);
+  font-family: var(--pe-font-mono);
+  opacity: var(--pe-opacity-muted);
+}
+
+.DateRangeFilter__Values {
+  display: flex;
+  gap: var(--pe-space-2);
+  margin-left: auto;
 }
 
 @media screen and (max-width: 55em) {
@@ -41,18 +44,18 @@
     margin-left: unset;
   }
 
-  .DateRangeFilter {
-    &__CalendarTitle,
-    &__ValuesTitle {
-      display: none;
-    }
-    &__ValueButton--Submit {
-      margin-left: auto;
-    }
-    &__Values {
-      width: 100%;
-      flex-wrap: wrap;
-    }
+  .DateRangeFilter__CalendarTitle,
+  .DateRangeFilter__ValuesTitle {
+    display: none;
+  }
+
+  .DateRangeFilter__ValueButton--Submit {
+    margin-left: auto;
+  }
+
+  .DateRangeFilter__Values {
+    width: 100%;
+    flex-wrap: wrap;
   }
 }
 

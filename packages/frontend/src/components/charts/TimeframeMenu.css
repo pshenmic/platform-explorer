@@ -8,75 +8,80 @@
 .TimeframeMenu {
   padding: var(--pe-space-3);
   border-radius: var(--pe-radius-block);
-  &__ValuesContainer {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-  }
-  &__Values {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: flex-end;
-    gap: var(--pe-space-2);
-  }
-  &__ValueButton {
-    font-size: var(--pe-text-sm);
-    height: 28px !important;
-    padding: 3px var(--pe-space-3) !important;
-  }
-  &__ValueButton--Active {
-    background-color: var(--pe-color-brand-normal) !important;
-    color: var(--pe-color-fg) !important;
-  }
-  &__Calendar {
-    width: 100%;
-    margin-top: var(--pe-space-6);
-  }
-  &__Calendar--Stub {
-    position: relative;
-  }
-  &__Calendar--Stub::before {
-    content: "";
-    position: absolute;
-    z-index: 20;
-    width: 100%;
-    height: 100%;
-    top: 0;
-    left: 0;
-    backdrop-filter: blur(2px);
-  }
-  &__Calendar--Stub::after {
-    content: "Coming soon";
-    text-transform: uppercase;
-    font-size: var(--pe-text-md);
-    font-family: var(--pe-font-heading);
-    opacity: 0.8;
-    display: block;
-    position: absolute;
-    z-index: 22;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-  }
+}
+
+.TimeframeMenu__ValuesContainer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.TimeframeMenu__Values {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: var(--pe-space-2);
+}
+
+.TimeframeMenu__ValueButton {
+  font-size: var(--pe-text-sm);
+  height: 28px !important;
+  padding: 3px var(--pe-space-3) !important;
+}
+
+.TimeframeMenu__ValueButton--Active {
+  background-color: var(--pe-color-brand-normal) !important;
+  color: var(--pe-color-fg) !important;
+}
+
+.TimeframeMenu__Calendar {
+  width: 100%;
+  margin-top: var(--pe-space-6);
+}
+
+.TimeframeMenu__Calendar--Stub {
+  position: relative;
+}
+
+.TimeframeMenu__Calendar--Stub::before {
+  content: "";
+  position: absolute;
+  z-index: 20;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  backdrop-filter: blur(2px);
+}
+
+.TimeframeMenu__Calendar--Stub::after {
+  content: "Coming soon";
+  text-transform: uppercase;
+  font-size: var(--pe-text-md);
+  font-family: var(--pe-font-heading);
+  opacity: 0.8;
+  display: block;
+  position: absolute;
+  z-index: 22;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 
 @media screen and (max-width: 555px) {
-  .TimeframeMenu {
-    &__Values {
-      flex-wrap: wrap;
-    }
-    &__ValueButton {
-      font-size: 0.6rem !important;
-      height: var(--pe-space-6) !important;
-    }
+  .TimeframeMenu__Values {
+    flex-wrap: wrap;
+  }
+
+  .TimeframeMenu__ValueButton {
+    font-size: 0.6rem !important;
+    height: var(--pe-space-6) !important;
   }
 }
 
 @media screen and (max-width: 350px) {
-  .TimeframeMenu {
-    &__ValueButton {
-      font-size: var(--pe-space-2) !important;
-      height: 22px !important;
-    }
+  .TimeframeMenu__ValueButton {
+    font-size: var(--pe-space-2) !important;
+    height: 22px !important;
   }
 }

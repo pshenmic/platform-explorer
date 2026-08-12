@@ -1,116 +1,106 @@
-.DocumentsRevisionsList {
-  &__Pagination {
-    margin-top: var(--pe-space-8) !important;
-  }
-  &__ScrollZone {
-    width: fit-content;
-    min-width: 100%;
-  }
+.DocumentsRevisionsList__Pagination {
+  margin-top: var(--pe-space-8) !important;
+}
+
+.DocumentsRevisionsList__ScrollZone {
+  width: fit-content;
+  min-width: 100%;
 }
 
 @media screen and (max-width: 48em) {
-  .DocumentsRevisionsList {
-    &__Pagination {
-      margin-top: var(--pe-space-6) !important;
-    }
+  .DocumentsRevisionsList__Pagination {
+    margin-top: var(--pe-space-6) !important;
   }
 }
 
 @media screen and (max-width: 30em) {
-  .DocumentsRevisionsList {
-    &__Pagination {
-      margin-top: var(--pe-space-4) !important;
-    }
+  .DocumentsRevisionsList__Pagination {
+    margin-top: var(--pe-space-4) !important;
   }
 }
 
 .DocumentsRevisionsList {
   container-type: inline-size;
-  &__ColumnTitles {
-    display: grid;
-    padding: var(--pe-list-row-pad-y) var(--pe-list-row-pad-x);
-    border-radius: var(--pe-list-row-radius);
-    background-color: var(--pe-color-gray-800);
-    margin-bottom: var(--pe-space-2);
-    font-family: var(--pe-font-heading);
-    font-weight: var(--pe-font-weight-bold);
-    font-size: var(--pe-text-sm);
-    text-transform: uppercase;
-    color: var(--pe-color-fg);
-  }
-  &__ColumnTitles--Light {
-    background: transparent !important;
-    font-weight: var(--pe-font-weight-medium) !important;
-    color: var(--pe-color-fg) !important;
-    text-transform: none !important;
-  }
-  &__ColumnTitles {
-    display: grid;
-    gap: var(--pe-space-4);
-    grid-template-columns: 70px minmax(0, 600px) minmax(0, 400px) minmax(0, 150px) minmax(
-        120px,
-        150px
-      ) 65px;
-  }
+}
+
+.DocumentsRevisionsList__ColumnTitles {
+  display: grid;
+  padding: var(--pe-list-row-pad-y) var(--pe-list-row-pad-x);
+  border-radius: var(--pe-list-row-radius);
+  background-color: var(--pe-color-gray-800);
+  margin-bottom: var(--pe-space-2);
+  font-family: var(--pe-font-heading);
+  font-weight: var(--pe-font-weight-bold);
+  font-size: var(--pe-text-sm);
+  text-transform: uppercase;
+  color: var(--pe-color-fg);
+}
+
+.DocumentsRevisionsList__ColumnTitles--Light {
+  background: transparent !important;
+  font-weight: var(--pe-font-weight-medium) !important;
+  color: var(--pe-color-fg) !important;
+  text-transform: none !important;
+}
+
+.DocumentsRevisionsList__ColumnTitles {
+  display: grid;
+  gap: var(--pe-space-4);
+  grid-template-columns: 70px minmax(0, 600px) minmax(0, 400px) minmax(0, 150px) minmax(
+      120px,
+      150px
+    ) 65px;
 }
 
 @container (max-width: 38rem) {
-  .DocumentsRevisionsList {
-    &__ColumnTitles {
-      grid-template-columns: 70px minmax(0, 600px) minmax(0, 400px) 65px;
-    }
+  .DocumentsRevisionsList__ColumnTitles {
+    grid-template-columns: 70px minmax(0, 600px) minmax(0, 400px) 65px;
   }
 }
 
 @container (max-width: 24rem) {
-  .DocumentsRevisionsList {
-    &__ColumnTitles {
-      grid-template-columns: 70px minmax(0, 600px) 65px;
-    }
+  .DocumentsRevisionsList__ColumnTitles {
+    grid-template-columns: 70px minmax(0, 600px) 65px;
   }
 }
 
-.DocumentsRevisionsList {
-  &__ColumnTitle {
-    display: flex;
-    align-items: center;
-  }
-  &__ColumnTitle--Timestamp {
-    max-width: 70px;
-  }
-  &__ColumnTitle--Owner {
-    overflow: hidden;
-  }
+.DocumentsRevisionsList__ColumnTitle {
+  display: flex;
+  align-items: center;
+}
+
+.DocumentsRevisionsList__ColumnTitle--Timestamp {
+  max-width: 70px;
+}
+
+.DocumentsRevisionsList__ColumnTitle--Owner {
+  overflow: hidden;
 }
 
 @container (max-width: 38rem) {
-  .DocumentsRevisionsList {
-    &__ColumnTitle--GasUsed {
-      display: none;
-    }
-    &__ColumnTitle--TransitionType {
-      display: none;
-    }
+  .DocumentsRevisionsList__ColumnTitle--GasUsed {
+    display: none;
+  }
+
+  .DocumentsRevisionsList__ColumnTitle--TransitionType {
+    display: none;
   }
 }
 
 @container (max-width: 24rem) {
-  .DocumentsRevisionsList {
-    &__ColumnTitle--Owner {
-      display: none;
-    }
+  .DocumentsRevisionsList__ColumnTitle--Owner {
+    display: none;
   }
 }
 
-.DocumentsRevisionsList {
-  &__ColumnTitle {
-    width: 100%;
-    display: block;
-    word-break: normal;
-    white-space: normal;
-    overflow-wrap: break-word;
-  }
-  &__ColumnTitle:last-child {
-    text-align: right;
-  }
+.DocumentsRevisionsList__ColumnTitle {
+  width: 100%;
+  display: block;
+  word-break: normal;
+  white-space: normal;
+  overflow-wrap: break-word;
+}
+
+.DocumentsRevisionsList__ColumnTitle:last-child {
+  text-align: right;
 }

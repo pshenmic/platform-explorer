@@ -1,149 +1,171 @@
 .DuplicatedTransactions {
   margin-bottom: var(--pe-space-5);
-  &__Title {
-    font-family: var(--pe-font-heading);
-    font-size: var(--pe-text-sm);
-    letter-spacing: 0.4px;
-    text-transform: uppercase;
-    font-weight: var(--pe-font-weight-bold);
-    margin-bottom: var(--pe-space-3_5);
-  }
-  &__Notice {
-    display: flex;
-    align-items: flex-start;
-    gap: var(--pe-space-2);
-    margin-bottom: var(--pe-space-3_5);
-    padding: var(--pe-space-2_5) var(--pe-space-3_5);
-    border-radius: var(--pe-radius-md);
-    font-size: 0.8125rem;
-    line-height: 1.4;
-    color: var(--pe-color-orange-default);
-    background-color: rgba(244, 154, 88, 0.2);
-  }
-  &__NoticeIcon {
-    flex-shrink: 0;
-    margin-top: 2px;
-    color: var(--pe-color-orange-default);
-  }
-  &__List {
-    display: flex;
-    flex-direction: column;
-    gap: var(--pe-space-2);
-    container-type: inline-size;
-  }
-  &__Row {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) auto auto 90px 92px var(--pe-space-8);
-    align-items: center;
-    gap: var(--pe-space-4);
-    padding: var(--pe-space-2_5) var(--pe-space-4);
-    border-radius: var(--pe-radius-md);
-    background-color: var(--pe-color-gray-900);
-    border: 1px solid transparent;
-    cursor: pointer;
-    transition:
-      border-color 0.1s ease-in-out,
-      background-color 0.1s ease-in-out;
-  }
-  &__Row:hover {
-    border-color: var(--pe-color-brand-normal);
-  }
-  &__Row--Selected {
-    background-color: var(--pe-color-gray-800);
-    border-color: var(--pe-color-brand-normal);
-  }
-  &__Main {
-    display: flex;
-    align-items: center;
-    min-width: 0;
-    overflow: hidden;
-  }
-  &__Icon {
-    flex-shrink: 0;
-    margin-right: var(--pe-space-2);
-    width: var(--pe-space-4);
-    height: var(--pe-space-4);
-    color: var(--pe-color-fg-muted);
-  }
-  &__Height {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-  }
-  &__HeightChip {
-    display: inline-block;
-    padding: 2px var(--pe-space-2);
-    border-radius: 3px;
-    font-size: var(--pe-text-2xs);
-    white-space: nowrap;
-    color: var(--pe-color-fg-muted);
-    background-color: var(--pe-color-gray-800);
-  }
-  &__Type {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-  }
-  &__Time {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    font-size: var(--pe-text-sm);
-    white-space: nowrap;
-    color: var(--pe-color-fg-muted);
-  }
-  &__Status {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-  }
-  &__Action {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-  }
-  &__ArrowLink {
-    display: inline-flex;
-  }
-  &__ArrowButton {
-    width: var(--pe-space-6);
-    height: var(--pe-space-6);
-    min-width: auto;
-  }
-  &__ShowMoreButton {
-    width: 100%;
-    margin-top: var(--pe-space-2);
-  }
+}
+
+.DuplicatedTransactions__Title {
+  font-family: var(--pe-font-heading);
+  font-size: var(--pe-text-sm);
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  font-weight: var(--pe-font-weight-bold);
+  margin-bottom: var(--pe-space-3_5);
+}
+
+.DuplicatedTransactions__Notice {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--pe-space-2);
+  margin-bottom: var(--pe-space-3_5);
+  padding: var(--pe-space-2_5) var(--pe-space-3_5);
+  border-radius: var(--pe-radius-md);
+  font-size: 0.8125rem;
+  line-height: 1.4;
+  color: var(--pe-color-orange-default);
+  background-color: rgba(244, 154, 88, 0.2);
+}
+
+.DuplicatedTransactions__NoticeIcon {
+  flex-shrink: 0;
+  margin-top: 2px;
+  color: var(--pe-color-orange-default);
+}
+
+.DuplicatedTransactions__List {
+  display: flex;
+  flex-direction: column;
+  gap: var(--pe-space-2);
+  container-type: inline-size;
+}
+
+.DuplicatedTransactions__Row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto 90px 92px var(--pe-space-8);
+  align-items: center;
+  gap: var(--pe-space-4);
+  padding: var(--pe-space-2_5) var(--pe-space-4);
+  border-radius: var(--pe-radius-md);
+  background-color: var(--pe-color-gray-900);
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition:
+    border-color 0.1s ease-in-out,
+    background-color 0.1s ease-in-out;
+}
+
+.DuplicatedTransactions__Row:hover {
+  border-color: var(--pe-color-brand-normal);
+}
+
+.DuplicatedTransactions__Row--Selected {
+  background-color: var(--pe-color-gray-800);
+  border-color: var(--pe-color-brand-normal);
+}
+
+.DuplicatedTransactions__Main {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.DuplicatedTransactions__Icon {
+  flex-shrink: 0;
+  margin-right: var(--pe-space-2);
+  width: var(--pe-space-4);
+  height: var(--pe-space-4);
+  color: var(--pe-color-fg-muted);
+}
+
+.DuplicatedTransactions__Height {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.DuplicatedTransactions__HeightChip {
+  display: inline-block;
+  padding: 2px var(--pe-space-2);
+  border-radius: 3px;
+  font-size: var(--pe-text-2xs);
+  white-space: nowrap;
+  color: var(--pe-color-fg-muted);
+  background-color: var(--pe-color-gray-800);
+}
+
+.DuplicatedTransactions__Type {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.DuplicatedTransactions__Time {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  font-size: var(--pe-text-sm);
+  white-space: nowrap;
+  color: var(--pe-color-fg-muted);
+}
+
+.DuplicatedTransactions__Status {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.DuplicatedTransactions__Action {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.DuplicatedTransactions__ArrowLink {
+  display: inline-flex;
+}
+
+.DuplicatedTransactions__ArrowButton {
+  width: var(--pe-space-6);
+  height: var(--pe-space-6);
+  min-width: auto;
+}
+
+.DuplicatedTransactions__ShowMoreButton {
+  width: 100%;
+  margin-top: var(--pe-space-2);
 }
 
 @container (max-width: 720px) {
-  .DuplicatedTransactions {
-    &__Row {
-      grid-template-columns: minmax(0, 1fr) auto auto;
-      grid-template-areas: "main main action" "height type time" "status status status";
-      row-gap: var(--pe-space-2);
-    }
-    &__Main {
-      grid-area: main;
-    }
-    &__Height {
-      grid-area: height;
-      justify-content: flex-start;
-    }
-    &__Type {
-      grid-area: type;
-      justify-content: center;
-    }
-    &__Time {
-      grid-area: time;
-      justify-content: flex-end;
-    }
-    &__Status {
-      grid-area: status;
-      justify-content: flex-start;
-    }
-    &__Action {
-      grid-area: action;
-    }
+  .DuplicatedTransactions__Row {
+    grid-template-columns: minmax(0, 1fr) auto auto;
+    grid-template-areas: "main main action" "height type time" "status status status";
+    row-gap: var(--pe-space-2);
+  }
+
+  .DuplicatedTransactions__Main {
+    grid-area: main;
+  }
+
+  .DuplicatedTransactions__Height {
+    grid-area: height;
+    justify-content: flex-start;
+  }
+
+  .DuplicatedTransactions__Type {
+    grid-area: type;
+    justify-content: center;
+  }
+
+  .DuplicatedTransactions__Time {
+    grid-area: time;
+    justify-content: flex-end;
+  }
+
+  .DuplicatedTransactions__Status {
+    grid-area: status;
+    justify-content: flex-start;
+  }
+
+  .DuplicatedTransactions__Action {
+    grid-area: action;
   }
 }

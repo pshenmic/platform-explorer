@@ -32,298 +32,350 @@
   flex-direction: column;
   gap: var(--pe-space-6);
   width: 100%;
-  &__Section {
-    background: var(--pe-color-gray-675);
-    border: 1px solid var(--pe-color-gray-550);
-    border-radius: var(--pe-radius-block);
-    padding: var(--pe-space-8);
-    display: flex;
-    flex-direction: column;
-    gap: var(--pe-space-3_5);
-    width: 100%;
-  }
-  &__SectionTitle {
-    font-family: var(--font-montserrat);
-    font-weight: var(--pe-font-weight-bold);
-    font-size: var(--pe-text-sm);
-    line-height: 110%;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
-    color: var(--pe-color-white-50);
-  }
-  &__SectionHeader {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: var(--pe-space-3);
-    width: 100%;
-  }
-  &__ButtonsRow {
-    display: flex;
-    gap: var(--pe-space-4);
-    align-items: center;
-  }
-  &__ButtonMessage {
-    flex: 1;
-    min-width: 0;
-    font-family: var(--pe-font-mono);
-    font-size: 13px;
-    line-height: 130%;
-    word-break: break-word;
-  }
-  &__ButtonMessage--error {
-    color: var(--pe-color-red-default);
-  }
-  &__ButtonMessage--success {
-    color: var(--pe-color-fg-muted);
-  }
-  &__ButtonMessage--success a {
-    color: var(--pe-color-brand-normal);
-  }
-  &__ButtonMessage--success a:hover {
-    text-decoration: underline;
-  }
-  &__Section--Json {
-    padding: var(--pe-space-6);
-  }
-  &__Section--Json &__Tabs {
-    flex: 1;
-    min-height: 0;
-    display: flex;
-    flex-direction: column;
-  }
-  &__Section--Json &__TabPanels {
-    flex: 1;
-    min-height: 0;
-  }
-  &__Section--Json &__TabPanel {
-    height: 100%;
-    padding: var(--pe-space-3_5) 0 0 0;
-    display: flex;
-    flex-direction: column;
-  }
-  &__Section--Json &__TabPanel--Variant {
-    overflow-y: auto;
-    gap: var(--pe-space-3);
-    padding: var(--pe-space-3_5) var(--pe-space-1) var(--pe-space-1) 0;
-    scroll-behavior: smooth;
-    scrollbar-width: thin;
-    scrollbar-color: var(--pe-color-brand-normal) transparent;
-  }
-  &__Section--Json &__TabPanel--Variant::-webkit-scrollbar {
-    height: var(--pe-space-2);
-    width: var(--pe-space-2);
-  }
-  &__Section--Json &__TabPanel--Variant::-webkit-scrollbar-track {
-    background: transparent;
-  }
-  &__Section--Json &__TabPanel--Variant::-webkit-scrollbar-thumb {
-    background-color: var(--pe-color-brand-normal);
-    border-radius: var(--pe-radius-md);
-    border: 2px solid transparent;
-    background-clip: padding-box;
-  }
-  &__Section--Json &__TabPanel--Variant::-webkit-scrollbar-thumb:hover {
-    background-color: var(--pe-color-brand-light);
-  }
-  &__EmptyVariant {
-    padding: var(--pe-space-6);
-    text-align: center;
-    color: var(--pe-color-fg-muted);
-    font-family: var(--pe-font-mono);
-    font-size: var(--pe-text-sm);
-    line-height: 140%;
-  }
-  &__Signature {
-    font-family: var(--pe-font-mono);
-    font-size: var(--pe-text-sm);
-    word-break: break-all;
-    color: var(--pe-color-fg-muted);
-    position: relative;
-    padding-right: var(--pe-space-8);
-  }
-  &__Input {
-    width: 100%;
-    box-sizing: border-box;
-    font-family: var(--pe-font-mono);
-    font-size: var(--pe-text-sm);
-    background: rgba(var(--pe-color-gray-800-rgb), 0.5);
-    border: 1px solid var(--pe-color-gray-750);
-    border-radius: var(--pe-radius-def);
-    padding: var(--pe-space-2_5) var(--pe-space-3);
-    color: var(--pe-color-white-50);
-    min-height: var(--pe-space-10);
-    max-height: 200px;
-    resize: none;
-    overflow-y: auto;
-    line-height: 130%;
-    word-break: break-all;
-    white-space: pre-wrap;
-    scroll-behavior: smooth;
-    scrollbar-width: thin;
-    scrollbar-color: var(--pe-color-brand-normal) transparent;
-  }
-  &__Input::-webkit-scrollbar {
-    height: var(--pe-space-2);
-    width: var(--pe-space-2);
-  }
-  &__Input::-webkit-scrollbar-track {
-    background: transparent;
-  }
-  &__Input::-webkit-scrollbar-thumb {
-    background-color: var(--pe-color-brand-normal);
-    border-radius: var(--pe-radius-md);
-    border: 2px solid transparent;
-    background-clip: padding-box;
-  }
-  &__Input::-webkit-scrollbar-thumb:hover {
-    background-color: var(--pe-color-brand-light);
-  }
-  &__Input:focus {
-    outline: none;
-    border-color: var(--pe-color-brand-normal);
-  }
-  &__Input::placeholder {
-    color: rgba(var(--pe-color-white-50-rgb), 0.2);
-  }
-  &__Size {
-    font-family: var(--pe-font-mono);
-    font-size: var(--pe-text-sm);
-    color: var(--pe-color-white-50);
-  }
-  &__SizeUnit {
-    opacity: var(--pe-opacity-muted);
-  }
-  &__ErrorMessage {
-    color: var(--pe-color-red-default);
-    font-family: var(--pe-font-mono);
-    font-size: 13px;
-    line-height: 130%;
-  }
-  &__HashRow {
-    font-family: var(--pe-font-mono);
-    font-size: var(--pe-text-sm);
-    color: var(--pe-color-fg-muted);
-    word-break: break-all;
-  }
-  &__HashRow a {
-    color: var(--pe-color-brand-normal);
-  }
-  &__HashRow a:hover {
-    text-decoration: underline;
-  }
-  &__SignPanel {
-    display: flex;
-    flex-direction: column;
-    gap: var(--pe-space-3_5);
-    padding: var(--pe-space-4);
-    background: rgba(var(--pe-color-gray-800-rgb), 0.4);
-    border: 1px solid var(--pe-color-gray-700);
-    border-radius: var(--pe-radius-def);
-  }
-  &__SignPanelHeader {
-    font-family: var(--font-montserrat);
-    font-weight: var(--pe-font-weight-semibold);
-    font-size: 13px;
-    color: var(--pe-color-white-50);
-  }
-  &__SignPanelMethod {
-    display: flex;
-    flex-direction: column;
-    gap: var(--pe-space-1_5);
-  }
-  &__SignPanelHint {
-    font-family: var(--pe-font-mono);
-    font-size: 11px;
-    color: var(--pe-color-fg-muted);
-    line-height: 140%;
-  }
-  &__SignPanelForm {
-    display: flex;
-    flex-direction: column;
-    gap: var(--pe-space-2);
-  }
-  &__SignPanelDetectedOwner {
-    font-family: var(--pe-font-mono);
-    font-size: 11px;
-    color: var(--pe-color-fg-muted);
-    word-break: break-all;
-  }
-  &__SignPanelDetectedOwner code {
-    color: var(--pe-color-white-50);
-  }
-  &__SignPanelActions {
-    display: flex;
-    gap: var(--pe-space-2);
-  }
-  &__SignedHexView {
-    display: flex;
-    flex-direction: column;
-    gap: var(--pe-space-2);
-    width: 100%;
-  }
-  &__SignedHexHeader {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: var(--pe-space-3);
-    font-family: var(--font-montserrat);
-    font-size: var(--pe-text-sm);
-    color: var(--pe-color-white-50);
-  }
-  &__SignedHexActions {
-    display: flex;
-    gap: var(--pe-space-2);
-    align-items: center;
-  }
-  &__SignedHexBody {
-    font-family: var(--pe-font-mono);
-    font-size: var(--pe-text-sm);
-    line-height: 130%;
-    color: var(--pe-color-white-50);
-    background: rgba(var(--pe-color-gray-800-rgb), 0.5);
-    border: 1px solid var(--pe-color-gray-750);
-    border-radius: var(--pe-radius-def);
-    padding: var(--pe-space-2_5) var(--pe-space-3);
-    max-height: 200px;
-    overflow-y: auto;
-    word-break: break-all;
-    white-space: pre-wrap;
-    scroll-behavior: smooth;
-    scrollbar-width: thin;
-    scrollbar-color: var(--pe-color-brand-normal) transparent;
-  }
-  &__SignedHexBody::-webkit-scrollbar {
-    height: var(--pe-space-2);
-    width: var(--pe-space-2);
-  }
-  &__SignedHexBody::-webkit-scrollbar-track {
-    background: transparent;
-  }
-  &__SignedHexBody::-webkit-scrollbar-thumb {
-    background-color: var(--pe-color-brand-normal);
-    border-radius: var(--pe-radius-md);
-    border: 2px solid transparent;
-    background-clip: padding-box;
-  }
-  &__SignedHexBody::-webkit-scrollbar-thumb:hover {
-    background-color: var(--pe-color-brand-light);
-  }
-  &__SignedHexAppended {
-    background: rgba(0, 141, 228, 0.45);
-    color: var(--pe-color-white-100);
-    font-weight: var(--pe-font-weight-semibold);
-    border-radius: 2px;
-    padding: 1px 0;
-    box-shadow: 0 0 0 1px rgba(0, 141, 228, 0.6);
-  }
-  &__DecodedMeta {
-    display: flex;
-    flex-direction: column;
-    gap: var(--pe-space-2);
-  }
-  &__DecodedDivider {
-    border-top: 1px solid var(--pe-color-gray-700);
-    margin: var(--pe-space-3) 0;
-  }
+}
+
+.BroadcastForm__Section {
+  background: var(--pe-color-gray-675);
+  border: 1px solid var(--pe-color-gray-550);
+  border-radius: var(--pe-radius-block);
+  padding: var(--pe-space-8);
+  display: flex;
+  flex-direction: column;
+  gap: var(--pe-space-3_5);
+  width: 100%;
+}
+
+.BroadcastForm__SectionTitle {
+  font-family: var(--font-montserrat);
+  font-weight: var(--pe-font-weight-bold);
+  font-size: var(--pe-text-sm);
+  line-height: 110%;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--pe-color-white-50);
+}
+
+.BroadcastForm__SectionHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--pe-space-3);
+  width: 100%;
+}
+
+.BroadcastForm__ButtonsRow {
+  display: flex;
+  gap: var(--pe-space-4);
+  align-items: center;
+}
+
+.BroadcastForm__ButtonMessage {
+  flex: 1;
+  min-width: 0;
+  font-family: var(--pe-font-mono);
+  font-size: 13px;
+  line-height: 130%;
+  word-break: break-word;
+}
+
+.BroadcastForm__ButtonMessage--error {
+  color: var(--pe-color-red-default);
+}
+
+.BroadcastForm__ButtonMessage--success {
+  color: var(--pe-color-fg-muted);
+}
+
+.BroadcastForm__ButtonMessage--success a {
+  color: var(--pe-color-brand-normal);
+}
+
+.BroadcastForm__ButtonMessage--success a:hover {
+  text-decoration: underline;
+}
+
+.BroadcastForm__Section--Json {
+  padding: var(--pe-space-6);
+}
+
+.BroadcastForm__Section--Json .BroadcastForm__Tabs {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.BroadcastForm__Section--Json .BroadcastForm__TabPanels {
+  flex: 1;
+  min-height: 0;
+}
+
+.BroadcastForm__Section--Json .BroadcastForm__TabPanel {
+  height: 100%;
+  padding: var(--pe-space-3_5) 0 0 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.BroadcastForm__Section--Json .BroadcastForm__TabPanel--Variant {
+  overflow-y: auto;
+  gap: var(--pe-space-3);
+  padding: var(--pe-space-3_5) var(--pe-space-1) var(--pe-space-1) 0;
+  scroll-behavior: smooth;
+  scrollbar-width: thin;
+  scrollbar-color: var(--pe-color-brand-normal) transparent;
+}
+
+.BroadcastForm__Section--Json .BroadcastForm__TabPanel--Variant::-webkit-scrollbar {
+  height: var(--pe-space-2);
+  width: var(--pe-space-2);
+}
+
+.BroadcastForm__Section--Json .BroadcastForm__TabPanel--Variant::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.BroadcastForm__Section--Json .BroadcastForm__TabPanel--Variant::-webkit-scrollbar-thumb {
+  background-color: var(--pe-color-brand-normal);
+  border-radius: var(--pe-radius-md);
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+
+.BroadcastForm__Section--Json .BroadcastForm__TabPanel--Variant::-webkit-scrollbar-thumb:hover {
+  background-color: var(--pe-color-brand-light);
+}
+
+.BroadcastForm__EmptyVariant {
+  padding: var(--pe-space-6);
+  text-align: center;
+  color: var(--pe-color-fg-muted);
+  font-family: var(--pe-font-mono);
+  font-size: var(--pe-text-sm);
+  line-height: 140%;
+}
+
+.BroadcastForm__Signature {
+  font-family: var(--pe-font-mono);
+  font-size: var(--pe-text-sm);
+  word-break: break-all;
+  color: var(--pe-color-fg-muted);
+  position: relative;
+  padding-right: var(--pe-space-8);
+}
+
+.BroadcastForm__Input {
+  width: 100%;
+  box-sizing: border-box;
+  font-family: var(--pe-font-mono);
+  font-size: var(--pe-text-sm);
+  background: rgba(var(--pe-color-gray-800-rgb), 0.5);
+  border: 1px solid var(--pe-color-gray-750);
+  border-radius: var(--pe-radius-def);
+  padding: var(--pe-space-2_5) var(--pe-space-3);
+  color: var(--pe-color-white-50);
+  min-height: var(--pe-space-10);
+  max-height: 200px;
+  resize: none;
+  overflow-y: auto;
+  line-height: 130%;
+  word-break: break-all;
+  white-space: pre-wrap;
+  scroll-behavior: smooth;
+  scrollbar-width: thin;
+  scrollbar-color: var(--pe-color-brand-normal) transparent;
+}
+
+.BroadcastForm__Input::-webkit-scrollbar {
+  height: var(--pe-space-2);
+  width: var(--pe-space-2);
+}
+
+.BroadcastForm__Input::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.BroadcastForm__Input::-webkit-scrollbar-thumb {
+  background-color: var(--pe-color-brand-normal);
+  border-radius: var(--pe-radius-md);
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+
+.BroadcastForm__Input::-webkit-scrollbar-thumb:hover {
+  background-color: var(--pe-color-brand-light);
+}
+
+.BroadcastForm__Input:focus {
+  outline: none;
+  border-color: var(--pe-color-brand-normal);
+}
+
+.BroadcastForm__Input::placeholder {
+  color: rgba(var(--pe-color-white-50-rgb), 0.2);
+}
+
+.BroadcastForm__Size {
+  font-family: var(--pe-font-mono);
+  font-size: var(--pe-text-sm);
+  color: var(--pe-color-white-50);
+}
+
+.BroadcastForm__SizeUnit {
+  opacity: var(--pe-opacity-muted);
+}
+
+.BroadcastForm__ErrorMessage {
+  color: var(--pe-color-red-default);
+  font-family: var(--pe-font-mono);
+  font-size: 13px;
+  line-height: 130%;
+}
+
+.BroadcastForm__HashRow {
+  font-family: var(--pe-font-mono);
+  font-size: var(--pe-text-sm);
+  color: var(--pe-color-fg-muted);
+  word-break: break-all;
+}
+
+.BroadcastForm__HashRow a {
+  color: var(--pe-color-brand-normal);
+}
+
+.BroadcastForm__HashRow a:hover {
+  text-decoration: underline;
+}
+
+.BroadcastForm__SignPanel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--pe-space-3_5);
+  padding: var(--pe-space-4);
+  background: rgba(var(--pe-color-gray-800-rgb), 0.4);
+  border: 1px solid var(--pe-color-gray-700);
+  border-radius: var(--pe-radius-def);
+}
+
+.BroadcastForm__SignPanelHeader {
+  font-family: var(--font-montserrat);
+  font-weight: var(--pe-font-weight-semibold);
+  font-size: 13px;
+  color: var(--pe-color-white-50);
+}
+
+.BroadcastForm__SignPanelMethod {
+  display: flex;
+  flex-direction: column;
+  gap: var(--pe-space-1_5);
+}
+
+.BroadcastForm__SignPanelHint {
+  font-family: var(--pe-font-mono);
+  font-size: 11px;
+  color: var(--pe-color-fg-muted);
+  line-height: 140%;
+}
+
+.BroadcastForm__SignPanelForm {
+  display: flex;
+  flex-direction: column;
+  gap: var(--pe-space-2);
+}
+
+.BroadcastForm__SignPanelDetectedOwner {
+  font-family: var(--pe-font-mono);
+  font-size: 11px;
+  color: var(--pe-color-fg-muted);
+  word-break: break-all;
+}
+
+.BroadcastForm__SignPanelDetectedOwner code {
+  color: var(--pe-color-white-50);
+}
+
+.BroadcastForm__SignPanelActions {
+  display: flex;
+  gap: var(--pe-space-2);
+}
+
+.BroadcastForm__SignedHexView {
+  display: flex;
+  flex-direction: column;
+  gap: var(--pe-space-2);
+  width: 100%;
+}
+
+.BroadcastForm__SignedHexHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--pe-space-3);
+  font-family: var(--font-montserrat);
+  font-size: var(--pe-text-sm);
+  color: var(--pe-color-white-50);
+}
+
+.BroadcastForm__SignedHexActions {
+  display: flex;
+  gap: var(--pe-space-2);
+  align-items: center;
+}
+
+.BroadcastForm__SignedHexBody {
+  font-family: var(--pe-font-mono);
+  font-size: var(--pe-text-sm);
+  line-height: 130%;
+  color: var(--pe-color-white-50);
+  background: rgba(var(--pe-color-gray-800-rgb), 0.5);
+  border: 1px solid var(--pe-color-gray-750);
+  border-radius: var(--pe-radius-def);
+  padding: var(--pe-space-2_5) var(--pe-space-3);
+  max-height: 200px;
+  overflow-y: auto;
+  word-break: break-all;
+  white-space: pre-wrap;
+  scroll-behavior: smooth;
+  scrollbar-width: thin;
+  scrollbar-color: var(--pe-color-brand-normal) transparent;
+}
+
+.BroadcastForm__SignedHexBody::-webkit-scrollbar {
+  height: var(--pe-space-2);
+  width: var(--pe-space-2);
+}
+
+.BroadcastForm__SignedHexBody::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.BroadcastForm__SignedHexBody::-webkit-scrollbar-thumb {
+  background-color: var(--pe-color-brand-normal);
+  border-radius: var(--pe-radius-md);
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+
+.BroadcastForm__SignedHexBody::-webkit-scrollbar-thumb:hover {
+  background-color: var(--pe-color-brand-light);
+}
+
+.BroadcastForm__SignedHexAppended {
+  background: rgba(0, 141, 228, 0.45);
+  color: var(--pe-color-white-100);
+  font-weight: var(--pe-font-weight-semibold);
+  border-radius: 2px;
+  padding: 1px 0;
+  box-shadow: 0 0 0 1px rgba(0, 141, 228, 0.6);
+}
+
+.BroadcastForm__DecodedMeta {
+  display: flex;
+  flex-direction: column;
+  gap: var(--pe-space-2);
+}
+
+.BroadcastForm__DecodedDivider {
+  border-top: 1px solid var(--pe-color-gray-700);
+  margin: var(--pe-space-3) 0;
 }

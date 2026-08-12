@@ -6,23 +6,24 @@
   gap: var(--pe-space-1);
 }
 
-.AliasesList {
-  &__Item {
-    display: flex;
-    align-items: center;
-    gap: var(--pe-space-2);
-    justify-content: flex-end;
-    max-width: 100%;
-  }
-  &__ShowMoreButton {
-    width: max-content;
-    font-weight: var(--pe-font-weight-medium) !important;
-    text-transform: capitalize !important;
-  }
-  &__ShowMoreButton svg {
-    transition: 0.2s;
-  }
-  &__SmoothSize {
-    max-width: 100%;
-  }
+.AliasesList__Item {
+  display: flex;
+  align-items: center;
+  gap: var(--pe-space-2);
+  justify-content: flex-end;
+  max-width: 100%;
+}
+
+.AliasesList__ShowMoreButton {
+  width: max-content;
+  font-weight: var(--pe-font-weight-medium) !important;
+  text-transform: capitalize !important;
+}
+
+.AliasesList__ShowMoreButton svg {
+  transition: 0.2s;
+}
+
+.AliasesList__SmoothSize {
+  max-width: 100%;
 }

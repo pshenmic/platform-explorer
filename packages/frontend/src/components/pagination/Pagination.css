@@ -56,14 +56,16 @@
   background-color: rgba(var(--pe-color-gray-800-rgb), 0.5);
   border-radius: var(--pe-radius-def);
   border: 1px solid var(--pe-color-calendar-border);
-  &--Next svg,
-  &--Previous svg {
-    width: var(--pe-space-1_5);
-    height: var(--pe-space-3);
-  }
-  &--Previous svg {
-    transform: rotate(180deg);
-  }
+}
+
+.PageItem--Next svg,
+.PageItem--Previous svg {
+  width: var(--pe-space-1_5);
+  height: var(--pe-space-3);
+}
+
+.PageItem--Previous svg {
+  transform: rotate(180deg);
 }
 
 .PageLink {

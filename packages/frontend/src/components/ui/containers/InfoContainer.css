@@ -26,57 +26,57 @@
   overflow: hidden;
   border-radius: 18px;
   border: 1px solid var(--pe-color-gray-800);
-  &::before,
-  &::after {
-    content: "";
-    display: block;
-    position: absolute;
-    height: 100%;
-    width: 100%;
-    left: 0;
-    top: 0;
-  }
-  &::before {
-    background: var(--pe-color-gray-675);
-    z-index: -2;
-  }
-  &::after {
-    background: radial-gradient(circle at 0% 100%, var(--pe-color-gray-800) 0, transparent);
-    opacity: var(--pe-opacity-muted);
-    z-index: -1;
-  }
-  &--TranslucentBg::before {
-    opacity: var(--pe-opacity-subtle);
-  }
-  &--TranslucentBg::after {
-    opacity: 0.3;
-  }
-  &--Tabs {
-    padding-bottom: calc(var(--pe-space-3) + 0px);
-  }
+}
+
+.InfoContainer::before,
+.InfoContainer::after {
+  content: "";
+  display: block;
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  left: 0;
+  top: 0;
+}
+
+.InfoContainer::before {
+  background: var(--pe-color-gray-675);
+  z-index: -2;
+}
+
+.InfoContainer::after {
+  background: radial-gradient(circle at 0% 100%, var(--pe-color-gray-800) 0, transparent);
+  opacity: var(--pe-opacity-muted);
+  z-index: -1;
+}
+
+.InfoContainer--TranslucentBg::before {
+  opacity: var(--pe-opacity-subtle);
+}
+
+.InfoContainer--TranslucentBg::after {
+  opacity: 0.3;
+}
+
+.InfoContainer--Tabs {
+  padding-bottom: calc(var(--pe-space-3) + 0px);
 }
 
 @media screen and (min-width: 48em) {
-  .InfoContainer {
-    &--Tabs {
-      padding-bottom: calc(var(--pe-space-4) + 0px);
-    }
+  .InfoContainer--Tabs {
+    padding-bottom: calc(var(--pe-space-4) + 0px);
   }
 }
 
 @media screen and (min-width: 62em) {
-  .InfoContainer {
-    &--Tabs {
-      padding-bottom: calc(var(--pe-space-5) + 0px);
-    }
+  .InfoContainer--Tabs {
+    padding-bottom: calc(var(--pe-space-5) + 0px);
   }
 }
 
 @media screen and (min-width: 80em) {
-  .InfoContainer {
-    &--Tabs {
-      padding-bottom: calc(var(--pe-space-6) + 0px);
-    }
+  .InfoContainer--Tabs {
+    padding-bottom: calc(var(--pe-space-6) + 0px);
   }
 }
 
@@ -118,11 +118,9 @@
   padding-left: calc(var(--pe-space-3) + -var(--pe-space-2)) !important;
 }
 
-.InfoContainer {
-  &--Tabs {
-    padding: var(--pe-space-2_5) 0 var(--pe-space-6) 0;
-    overflow: hidden;
-  }
+.InfoContainer--Tabs {
+  padding: var(--pe-space-2_5) 0 var(--pe-space-6) 0;
+  overflow: hidden;
 }
 
 @media screen and (min-width: 48em) {

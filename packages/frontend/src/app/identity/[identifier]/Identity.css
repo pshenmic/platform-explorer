@@ -1,10 +1,9 @@
-.IdentityPage {
-  &__Alias {
-    width: max-content;
-    margin-left: auto;
-  }
-  &__TransactionsFilter,
-  &__DocumentsFilter {
-    margin: var(--pe-space-3) 0 var(--pe-space-6);
-  }
+.IdentityPage__Alias {
+  width: max-content;
+  margin-left: auto;
+}
+
+.IdentityPage__TransactionsFilter,
+.IdentityPage__DocumentsFilter {
+  margin: var(--pe-space-3) 0 var(--pe-space-6);
 }

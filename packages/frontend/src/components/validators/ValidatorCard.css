@@ -18,78 +18,81 @@
   margin: 0;
 }
 
-.ValidatorCard {
-  &__Title {
-    white-space: break-spaces;
-    word-break: break-all;
-  }
-  &__ContentContainer {
-    display: flex;
-    gap: var(--pe-space-10);
-  }
-  &__Column {
-    position: relative;
-    width: 50%;
-  }
-  &__Header {
-    position: relative;
-    display: flex;
-    width: 100%;
-    align-items: center;
-  }
-  &__Avatar {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: var(--pe-font-mono);
-    font-size: var(--pe-text-sm);
-    color: var(--pe-color-gray-500);
-    width: 88px;
-    height: 88px;
-    border: 1px solid rgba(137, 126, 126, 0.1);
-    flex-shrink: 0;
-    margin-left: var(--pe-space-6);
-  }
-  &__HeaderLines {
-    display: flex;
-    gap: var(--pe-space-5);
-    flex-direction: column;
-    justify-content: space-between;
-    width: 100%;
-    padding: var(--pe-space-1_5) 0;
-    overflow: hidden;
-  }
-  &__InfoLine {
-    gap: var(--pe-space-3_5);
-  }
-  &__CommonInfo {
-    display: flex;
-    flex-direction: column;
+.ValidatorCard__Title {
+  white-space: break-spaces;
+  word-break: break-all;
+}
+
+.ValidatorCard__ContentContainer {
+  display: flex;
+  gap: var(--pe-space-10);
+}
+
+.ValidatorCard__Column {
+  position: relative;
+  width: 50%;
+}
+
+.ValidatorCard__Header {
+  position: relative;
+  display: flex;
+  width: 100%;
+  align-items: center;
+}
+
+.ValidatorCard__Avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--pe-font-mono);
+  font-size: var(--pe-text-sm);
+  color: var(--pe-color-gray-500);
+  width: 88px;
+  height: 88px;
+  border: 1px solid rgba(137, 126, 126, 0.1);
+  flex-shrink: 0;
+  margin-left: var(--pe-space-6);
+}
+
+.ValidatorCard__HeaderLines {
+  display: flex;
+  gap: var(--pe-space-5);
+  flex-direction: column;
+  justify-content: space-between;
+  width: 100%;
+  padding: var(--pe-space-1_5) 0;
+  overflow: hidden;
+}
+
+.ValidatorCard__InfoLine {
+  gap: var(--pe-space-3_5);
+}
+
+.ValidatorCard__CommonInfo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--pe-space-6);
+}
+
+@media screen and (max-width: 62em) {
+  .ValidatorCard__ContentContainer {
     gap: var(--pe-space-6);
   }
 }
 
-@media screen and (max-width: 62em) {
-  .ValidatorCard {
-    &__ContentContainer {
-      gap: var(--pe-space-6);
-    }
-  }
-}
-
 @media screen and (max-width: 48em) {
-  .ValidatorCard {
-    &__ContentContainer {
-      flex-direction: column;
-    }
-    &__ContentContainer,
-    &__CommonLines {
-      gap: var(--pe-space-3);
-    }
-    &__Column {
-      position: static;
-      width: 100%;
-    }
+  .ValidatorCard__ContentContainer {
+    flex-direction: column;
+  }
+
+  .ValidatorCard__ContentContainer,
+  .ValidatorCard__CommonLines {
+    gap: var(--pe-space-3);
+  }
+
+  .ValidatorCard__Column {
+    position: static;
+    width: 100%;
   }
 }
 
@@ -105,17 +108,16 @@
   justify-content: flex-end;
 }
 
-.ValidatorCard {
-  &__Header {
-    display: flex;
-    width: 100%;
-    align-items: flex-start;
-  }
-  &__CommonInfo {
-    display: flex;
-    flex-direction: column;
-    gap: var(--pe-space-3_5);
-  }
+.ValidatorCard__Header {
+  display: flex;
+  width: 100%;
+  align-items: flex-start;
+}
+
+.ValidatorCard__CommonInfo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--pe-space-3_5);
 }
 
 @container (max-width: 22rem) {
@@ -171,49 +173,54 @@
   max-width: 232px;
 }
 
-.ValidatorCard {
-  &--Loading &__Avatar {
-    overflow: hidden;
-    position: relative;
-    animation: 1s LoadingContainer infinite;
-  }
-  &--Loading &__Avatar::before {
-    z-index: 5 !important;
-    opacity: 1 !important;
-  }
-  &--Loading &__Avatar::after {
-    animation: 1s loading-process infinite;
-    z-index: 6;
-  }
-  &--Loading &__Avatar::before,
-  &--Loading &__Avatar::after {
-    content: "";
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    top: 0;
-    left: 0;
-    z-index: -1;
-  }
-  &--Loading &__Avatar::before {
-    background-color: var(--pe-color-gray-900);
-  }
-  &--Loading &__Avatar::after {
-    background: linear-gradient(
-      90deg,
-      transparent 0%,
-      rgb(14, 117, 181) 50%,
-      transparent 100%
-    ) !important;
-    width: 100%;
-    height: 100%;
-  }
-  &__Separator {
-    margin: var(--pe-space-3) 0;
-  }
-  &__BlockHeighValue {
-    font-size: 0.813rem;
-  }
+.ValidatorCard--Loading .ValidatorCard__Avatar {
+  overflow: hidden;
+  position: relative;
+  animation: 1s LoadingContainer infinite;
+}
+
+.ValidatorCard--Loading .ValidatorCard__Avatar::before {
+  z-index: 5 !important;
+  opacity: 1 !important;
+}
+
+.ValidatorCard--Loading .ValidatorCard__Avatar::after {
+  animation: 1s loading-process infinite;
+  z-index: 6;
+}
+
+.ValidatorCard--Loading .ValidatorCard__Avatar::before,
+.ValidatorCard--Loading .ValidatorCard__Avatar::after {
+  content: "";
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  z-index: -1;
+}
+
+.ValidatorCard--Loading .ValidatorCard__Avatar::before {
+  background-color: var(--pe-color-gray-900);
+}
+
+.ValidatorCard--Loading .ValidatorCard__Avatar::after {
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgb(14, 117, 181) 50%,
+    transparent 100%
+  ) !important;
+  width: 100%;
+  height: 100%;
+}
+
+.ValidatorCard__Separator {
+  margin: var(--pe-space-3) 0;
+}
+
+.ValidatorCard__BlockHeighValue {
+  font-size: 0.813rem;
 }
 
 @media screen and (max-width: 62em) {
@@ -237,83 +244,86 @@
     margin: 0;
   }
 
-  .ValidatorCard {
-    &__Title {
-      white-space: break-spaces;
-      word-break: break-all;
-    }
-    &__ContentContainer {
-      display: flex;
-      gap: var(--pe-space-10);
-    }
-    &__Column {
-      position: relative;
-      width: 50%;
-    }
-    &__Header {
-      position: relative;
-      display: flex;
-      width: 100%;
-      align-items: center;
-    }
-    &__Avatar {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-family: var(--pe-font-mono);
-      font-size: var(--pe-text-sm);
-      color: var(--pe-color-gray-500);
-      width: 88px;
-      height: 88px;
-      border: 1px solid rgba(137, 126, 126, 0.1);
-      flex-shrink: 0;
-      margin-left: var(--pe-space-6);
-      position: absolute;
-      right: 0;
-      top: 0;
-      margin: 0;
-    }
-    &__HeaderLines {
-      display: flex;
-      gap: var(--pe-space-5);
-      flex-direction: column;
-      justify-content: space-between;
-      width: 100%;
-      padding: var(--pe-space-1_5) 0;
-      overflow: hidden;
-    }
-    &__InfoLine {
-      gap: var(--pe-space-3_5);
-    }
-    &__CommonInfo {
-      display: flex;
-      flex-direction: column;
-      gap: var(--pe-space-6);
-    }
+  .ValidatorCard__Title {
+    white-space: break-spaces;
+    word-break: break-all;
+  }
+
+  .ValidatorCard__ContentContainer {
+    display: flex;
+    gap: var(--pe-space-10);
+  }
+
+  .ValidatorCard__Column {
+    position: relative;
+    width: 50%;
+  }
+
+  .ValidatorCard__Header {
+    position: relative;
+    display: flex;
+    width: 100%;
+    align-items: center;
+  }
+
+  .ValidatorCard__Avatar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--pe-font-mono);
+    font-size: var(--pe-text-sm);
+    color: var(--pe-color-gray-500);
+    width: 88px;
+    height: 88px;
+    border: 1px solid rgba(137, 126, 126, 0.1);
+    flex-shrink: 0;
+    margin-left: var(--pe-space-6);
+    position: absolute;
+    right: 0;
+    top: 0;
+    margin: 0;
+  }
+
+  .ValidatorCard__HeaderLines {
+    display: flex;
+    gap: var(--pe-space-5);
+    flex-direction: column;
+    justify-content: space-between;
+    width: 100%;
+    padding: var(--pe-space-1_5) 0;
+    overflow: hidden;
+  }
+
+  .ValidatorCard__InfoLine {
+    gap: var(--pe-space-3_5);
+  }
+
+  .ValidatorCard__CommonInfo {
+    display: flex;
+    flex-direction: column;
+    gap: var(--pe-space-6);
   }
 }
 
 @media screen and (max-width: 62em) and (max-width: 62em) {
-  .ValidatorCard {
-    &__ContentContainer {
-      gap: var(--pe-space-6);
-    }
+  .ValidatorCard__ContentContainer {
+    gap: var(--pe-space-6);
   }
 }
 
 @media screen and (max-width: 62em) and (max-width: 48em) {
-  .ValidatorCard {
-    &__ContentContainer {
-      flex-direction: column;
-    }
-    &__ContentContainer,
-    &__CommonLines {
-      gap: var(--pe-space-3);
-    }
-    &__Column {
-      position: static;
-      width: 100%;
-    }
+  .ValidatorCard__ContentContainer {
+    flex-direction: column;
+  }
+
+  .ValidatorCard__ContentContainer,
+  .ValidatorCard__CommonLines {
+    gap: var(--pe-space-3);
+  }
+
+  .ValidatorCard__Column {
+    position: static;
+    width: 100%;
   }
 }
 
@@ -334,18 +344,14 @@
     text-align: left;
   }
 
-  .ValidatorCard {
-    &__ProTxHash {
-      padding-right: 170px;
-    }
+  .ValidatorCard__ProTxHash {
+    padding-right: 170px;
   }
 }
 
 @media screen and (max-width: 48em) {
-  .ValidatorCard {
-    &__ProTxHash {
-      padding-right: 100px;
-    }
+  .ValidatorCard__ProTxHash {
+    padding-right: 100px;
   }
 }
 

@@ -15,12 +15,10 @@
 }
 
 @media (hover: hover) and (pointer: fine) {
-  .TransactionsListItem {
-    &:hover {
-      background-color: var(--pe-color-gray-750);
-      text-decoration: none;
-      cursor: pointer;
-    }
+  .TransactionsListItem:hover {
+    background-color: var(--pe-color-gray-750);
+    text-decoration: none;
+    cursor: pointer;
   }
 }
 
@@ -45,206 +43,215 @@
 
 .TransactionsListItem {
   display: block;
-  &:active {
-    transform: translateY(1px);
-    box-shadow: 0 0 9999px 0 rgba(0, 0, 0, 0.25) inset;
-  }
-  &:last-child {
-    margin-bottom: 0;
-  }
-  &__Column--Credits,
-  &__Column--Number {
-    font-size: var(--pe-text-sm);
-    font-weight: var(--pe-font-weight-bold);
-  }
-  &__IdentifierContainer {
-    display: flex;
-    align-items: center;
-    min-width: 50px;
-  }
-  &__Avatar {
-    height: var(--pe-space-6);
-    width: var(--pe-space-6);
-    flex-shrink: 0;
-    margin-right: var(--pe-space-3);
-  }
-  &--Timestamp,
-  &__Column--Timestamp {
-    font-family: var(--pe-font-mono);
-    white-space: nowrap;
-    color: var(--pe-color-fg);
-  }
-  &__Content {
-    display: grid;
-    gap: var(--pe-space-4);
-    width: 100%;
-    grid-template-columns: 6.5rem minmax(0, 1fr) 6rem 11rem minmax(0, 1fr) 10rem 10.5rem;
-  }
+}
+
+.TransactionsListItem:active {
+  transform: translateY(1px);
+  box-shadow: 0 0 9999px 0 rgba(0, 0, 0, 0.25) inset;
+}
+
+.TransactionsListItem:last-child {
+  margin-bottom: 0;
+}
+
+.TransactionsListItem__Column--Credits,
+.TransactionsListItem__Column--Number {
+  font-size: var(--pe-text-sm);
+  font-weight: var(--pe-font-weight-bold);
+}
+
+.TransactionsListItem__IdentifierContainer {
+  display: flex;
+  align-items: center;
+  min-width: 50px;
+}
+
+.TransactionsListItem__Avatar {
+  height: var(--pe-space-6);
+  width: var(--pe-space-6);
+  flex-shrink: 0;
+  margin-right: var(--pe-space-3);
+}
+
+.TransactionsListItem--Timestamp,
+.TransactionsListItem__Column--Timestamp {
+  font-family: var(--pe-font-mono);
+  white-space: nowrap;
+  color: var(--pe-color-fg);
+}
+
+.TransactionsListItem__Content {
+  display: grid;
+  gap: var(--pe-space-4);
+  width: 100%;
+  grid-template-columns: 6.5rem minmax(0, 1fr) 6rem 11rem minmax(0, 1fr) 10rem 10.5rem;
 }
 
 @container (max-width: 810px) {
-  .TransactionsListItem {
-    &__Content {
-      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) 10rem 10.5rem;
-    }
+  .TransactionsListItem__Content {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) 10rem 10.5rem;
   }
 }
 
 @container (max-width: 660px) {
-  .TransactionsListItem {
-    &__Content {
-      grid-template-columns: minmax(0, 1fr) var(--pe-space-5) 10rem 10.5rem;
-    }
+  .TransactionsListItem__Content {
+    grid-template-columns: minmax(0, 1fr) var(--pe-space-5) 10rem 10.5rem;
   }
 }
 
 @container (max-width: 430px) {
-  .TransactionsListItem {
-    &__Content {
-      gap: var(--pe-space-3);
-      grid-template-columns: minmax(0, 1fr) 8rem 9rem;
-    }
+  .TransactionsListItem__Content {
+    gap: var(--pe-space-3);
+    grid-template-columns: minmax(0, 1fr) 8rem 9rem;
   }
 }
 
 @container (max-width: 400px) {
-  .TransactionsListItem {
-    &__Content {
-      grid-template-columns: minmax(0, 1fr) 7rem 8rem;
-    }
+  .TransactionsListItem__Content {
+    grid-template-columns: minmax(0, 1fr) 7rem 8rem;
   }
 }
 
-.TransactionsListItem {
-  &__Column {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-  }
-  &__Column--Status,
-  &__Column--Hash,
-  &__Column--Owner {
-    justify-content: flex-start;
-    text-align: left;
-  }
-  &__Column--Owner {
-    min-width: 0;
-    width: 100%;
-  }
-  &__Column--Type {
-    white-space: nowrap;
-  }
-  &__Column--GasUsed {
-    white-space: nowrap;
-    font-variant-numeric: tabular-nums;
-  }
-  &__Column--Timestamp {
-    justify-content: flex-end;
-    text-align: right;
-    white-space: nowrap;
-  }
+.TransactionsListItem__Column {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.TransactionsListItem__Column--Status,
+.TransactionsListItem__Column--Hash,
+.TransactionsListItem__Column--Owner {
+  justify-content: flex-start;
+  text-align: left;
+}
+
+.TransactionsListItem__Column--Owner {
+  min-width: 0;
+  width: 100%;
+}
+
+.TransactionsListItem__Column--Type {
+  white-space: nowrap;
+}
+
+.TransactionsListItem__Column--GasUsed {
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.TransactionsListItem__Column--Timestamp {
+  justify-content: flex-end;
+  text-align: right;
+  white-space: nowrap;
 }
 
 @container (max-width: 810px) {
-  .TransactionsListItem {
-    &__Column--GasUsed,
-    &__Column--Status,
-    &__Column--Block {
-      display: none;
-    }
+  .TransactionsListItem__Column--GasUsed,
+  .TransactionsListItem__Column--Status,
+  .TransactionsListItem__Column--Block {
+    display: none;
   }
 }
 
 @container (max-width: 430px) {
-  .TransactionsListItem {
-    &__Column--Owner {
-      display: none;
-    }
+  .TransactionsListItem__Column--Owner {
+    display: none;
   }
 }
 
-.TransactionsListItem {
-  &__Column--Timestamp {
-    font-family: var(--pe-font-mono);
-    font-size: var(--pe-text-sm);
-    white-space: nowrap;
-    color: var(--pe-color-fg);
-    justify-content: flex-end;
-    text-align: right;
-  }
-  &__Column--Hash,
-  &__Column--Owner {
-    color: var(--pe-color-fg-muted);
-    font-family: var(--pe-font-mono);
-    flex-grow: 1;
-    font-size: var(--pe-text-sm);
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-  &__Column--Hash span,
-  &__Column--Owner span {
-    text-overflow: ellipsis;
-    overflow: hidden;
-    white-space: nowrap;
-  }
-  &__Column--Type {
-    white-space: nowrap;
-    min-width: 0;
-  }
-  &__Column--GasUsed {
-    font-size: var(--pe-text-sm);
-    text-transform: uppercase;
-    color: var(--pe-color-fg);
-    white-space: nowrap;
-    text-align: center;
-  }
-  &__Column--Block {
-    font-family: var(--pe-font-mono);
-    font-size: var(--pe-text-sm);
-    color: var(--pe-color-fg-muted);
-    white-space: nowrap;
-  }
-  &__BlockLink {
-    position: relative;
-    z-index: 2;
-    transition: var(--pe-transition-def);
-    border-radius: var(--pe-radius-sm);
-  }
-  &__BlockLink:hover {
-    background: rgba(255, 255, 255, 0.1);
-  }
-  &__AliasContainer {
-    display: flex;
-  }
-  &__TypeBadge {
-    max-width: 100%;
-    min-width: 0;
-  }
-  &__TypeBadgeLabel {
-    display: block;
-    min-width: 0;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-  &__OwnerLink {
-    position: relative;
-    z-index: 2;
-    transition: var(--pe-transition-def);
-    overflow: hidden;
-    border-radius: var(--pe-radius-sm);
-    flex: 1;
-    min-width: 0;
-  }
-  &__StatusIcon {
-    transition: var(--pe-transition-def);
-  }
-  &__StatusIcon:hover,
-  &__StatusIcon:active {
-    transform: scale(1.07);
-  }
+.TransactionsListItem__Column--Timestamp {
+  font-family: var(--pe-font-mono);
+  font-size: var(--pe-text-sm);
+  white-space: nowrap;
+  color: var(--pe-color-fg);
+  justify-content: flex-end;
+  text-align: right;
+}
+
+.TransactionsListItem__Column--Hash,
+.TransactionsListItem__Column--Owner {
+  color: var(--pe-color-fg-muted);
+  font-family: var(--pe-font-mono);
+  flex-grow: 1;
+  font-size: var(--pe-text-sm);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.TransactionsListItem__Column--Hash span,
+.TransactionsListItem__Column--Owner span {
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.TransactionsListItem__Column--Type {
+  white-space: nowrap;
+  min-width: 0;
+}
+
+.TransactionsListItem__Column--GasUsed {
+  font-size: var(--pe-text-sm);
+  text-transform: uppercase;
+  color: var(--pe-color-fg);
+  white-space: nowrap;
+  text-align: center;
+}
+
+.TransactionsListItem__Column--Block {
+  font-family: var(--pe-font-mono);
+  font-size: var(--pe-text-sm);
+  color: var(--pe-color-fg-muted);
+  white-space: nowrap;
+}
+
+.TransactionsListItem__BlockLink {
+  position: relative;
+  z-index: 2;
+  transition: var(--pe-transition-def);
+  border-radius: var(--pe-radius-sm);
+}
+
+.TransactionsListItem__BlockLink:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.TransactionsListItem__AliasContainer {
+  display: flex;
+}
+
+.TransactionsListItem__TypeBadge {
+  max-width: 100%;
+  min-width: 0;
+}
+
+.TransactionsListItem__TypeBadgeLabel {
+  display: block;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.TransactionsListItem__OwnerLink {
+  position: relative;
+  z-index: 2;
+  transition: var(--pe-transition-def);
+  overflow: hidden;
+  border-radius: var(--pe-radius-sm);
+  flex: 1;
+  min-width: 0;
+}
+
+.TransactionsListItem__StatusIcon {
+  transition: var(--pe-transition-def);
+}
+
+.TransactionsListItem__StatusIcon:hover,
+.TransactionsListItem__StatusIcon:active {
+  transform: scale(1.07);
 }
 
 @container (max-width: 660px) {
@@ -261,19 +268,20 @@
     margin: 0;
   }
 
-  .TransactionsListItem {
-    &__Column--Owner {
-      width: max-content;
-    }
-    &__Column--Owner * {
-      display: none;
-    }
-    &__OwnerLink:after {
-      display: none;
-    }
-    &__OwnerLink:hover {
-      background: rgba(255, 255, 255, 0.1);
-    }
+  .TransactionsListItem__Column--Owner {
+    width: max-content;
+  }
+
+  .TransactionsListItem__Column--Owner * {
+    display: none;
+  }
+
+  .TransactionsListItem__OwnerLink:after {
+    display: none;
+  }
+
+  .TransactionsListItem__OwnerLink:hover {
+    background: rgba(255, 255, 255, 0.1);
   }
 }
 
@@ -285,12 +293,14 @@
 
   .TransactionsListItem {
     padding: 5px var(--pe-space-2);
-    &__TypeBadge {
-      font-size: 0.438rem !important;
-      line-height: 15px;
-    }
-    &__StatusIcon {
-      display: none !important;
-    }
+  }
+
+  .TransactionsListItem__TypeBadge {
+    font-size: 0.438rem !important;
+    line-height: 15px;
+  }
+
+  .TransactionsListItem__StatusIcon {
+    display: none !important;
   }
 }

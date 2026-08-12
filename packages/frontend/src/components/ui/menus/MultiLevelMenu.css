@@ -12,50 +12,55 @@
 .MultiLevelMenu {
   display: inline-flex;
   position: relative;
-  &__Body {
-    overflow: hidden !important;
-    padding: 0 !important;
-  }
-  &__Layout {
-    display: flex;
-    flex-direction: row;
-    align-items: stretch;
-    min-height: 120px;
-    max-height: min(70vh, 480px);
-  }
-  &__Nav {
-    flex: 0 0 auto;
-    min-width: 180px;
-    max-width: 240px;
-    padding: var(--pe-space-2);
-    overflow-y: auto;
-    border-right: 1px solid transparent;
-  }
-  &__Content--WithPanel &__Nav {
-    border-right-color: var(--pe-color-border-subtle);
-  }
-  &__Panel {
-    flex: 1 1 auto;
-    min-width: 220px;
-    max-width: min(520px, calc(100vw - 220px));
-    padding: var(--pe-space-3);
-    overflow: auto;
-  }
+}
+
+.MultiLevelMenu__Body {
+  overflow: hidden !important;
+  padding: 0 !important;
+}
+
+.MultiLevelMenu__Layout {
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  min-height: 120px;
+  max-height: min(70vh, 480px);
+}
+
+.MultiLevelMenu__Nav {
+  flex: 0 0 auto;
+  min-width: 180px;
+  max-width: 240px;
+  padding: var(--pe-space-2);
+  overflow-y: auto;
+  border-right: 1px solid transparent;
+}
+
+.MultiLevelMenu__Content--WithPanel .MultiLevelMenu__Nav {
+  border-right-color: var(--pe-color-border-subtle);
+}
+
+.MultiLevelMenu__Panel {
+  flex: 1 1 auto;
+  min-width: 220px;
+  max-width: min(520px, calc(100vw - 220px));
+  padding: var(--pe-space-3);
+  overflow: auto;
 }
 
 @media (max-width: 30em) {
-  .MultiLevelMenu {
-    &__Layout {
-      flex-direction: column;
-      max-height: min(80vh, 560px);
-    }
-    &__Nav {
-      max-width: none;
-      border-right: none;
-      border-bottom: 1px solid var(--pe-color-border-subtle);
-    }
-    &__Panel {
-      max-width: none;
-    }
+  .MultiLevelMenu__Layout {
+    flex-direction: column;
+    max-height: min(80vh, 560px);
+  }
+
+  .MultiLevelMenu__Nav {
+    max-width: none;
+    border-right: none;
+    border-bottom: 1px solid var(--pe-color-border-subtle);
+  }
+
+  .MultiLevelMenu__Panel {
+    max-width: none;
   }
 }

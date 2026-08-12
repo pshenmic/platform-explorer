@@ -13,53 +13,64 @@
   background-color: rgba(var(--pe-color-gray-800-rgb), 0.5);
   transition: all 0.1s;
 }
+
 .LocalisationListItem:last-child {
   margin-bottom: 0;
 }
+
 .LocalisationListItem__Column--Credits,
 .LocalisationListItem__Column--Number {
   font-size: 0.75rem;
   font-weight: 700;
 }
+
 .LocalisationListItem__IdentifierContainer {
   display: flex;
   align-items: center;
   min-width: 50px;
 }
+
 .LocalisationListItem__Avatar {
   height: 24px;
   width: 24px;
   flex-shrink: 0;
   margin-right: 12px;
 }
+
 .LocalisationListItem--Timestamp,
 .LocalisationListItem__Column--Timestamp {
   font-family: var(--pe-font-mono);
   white-space: nowrap;
   color: #fff;
 }
+
 .LocalisationListItem--Timestamp,
 .LocalisationListItem--Timestamp .DateBlock__Date,
 .LocalisationListItem__Column--Timestamp,
 .LocalisationListItem__Column--Timestamp .DateBlock__Date {
   font-size: 0.75rem;
 }
+
 .LocalisationListItem {
   display: block;
 }
+
 .LocalisationListItem__Content {
   display: grid;
   gap: 1.5rem;
   grid-template-columns: minmax(6.25rem, 6.25rem) minmax(7.75rem, 7.75rem) minmax(14rem, 100rem) auto;
 }
+
 @container (max-width: 800px) {
   .LocalisationListItem__Content {
     gap: 1rem;
   }
 }
+
 .LocalisationListItem__Content {
   align-items: center;
 }
+
 .LocalisationListItem__Column {
   display: flex;
   align-items: center;
@@ -67,6 +78,7 @@
   color: #ffffff;
   font-size: 0.75rem;
 }
+
 .LocalisationListItem__Column--Capitalize {
   justify-content: flex-end;
 }

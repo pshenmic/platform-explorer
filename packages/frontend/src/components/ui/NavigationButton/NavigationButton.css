@@ -18,28 +18,33 @@
   letter-spacing: 0.025rem;
   transition: background-color ease 0.5s;
   font-family: var(--pe-font-heading);
-  &:hover {
-    background-color: var(--pe-color-gray-550);
-  }
-  &__SubName {
-    border-radius: 5px;
-    padding: var(--pe-space-1) var(--pe-space-2_5);
-    background-color: var(--pe-color-gray-600);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: var(--pe-font-weight-normal);
-    font-size: var(--pe-text-2xs);
-    letter-spacing: 0.04em;
-    transition: background-color ease 0.5s;
-  }
-  &__Active {
-    background-color: var(--pe-color-brand-normal) !important;
-  }
-  &__Active:hover {
-    cursor: default;
-  }
-  &__NoActive {
-    cursor: no-drop !important;
-  }
+}
+
+.NavigationButton:hover {
+  background-color: var(--pe-color-gray-550);
+}
+
+.NavigationButton__SubName {
+  border-radius: 5px;
+  padding: var(--pe-space-1) var(--pe-space-2_5);
+  background-color: var(--pe-color-gray-600);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: var(--pe-font-weight-normal);
+  font-size: var(--pe-text-2xs);
+  letter-spacing: 0.04em;
+  transition: background-color ease 0.5s;
+}
+
+.NavigationButton__Active {
+  background-color: var(--pe-color-brand-normal) !important;
+}
+
+.NavigationButton__Active:hover {
+  cursor: default;
+}
+
+.NavigationButton__NoActive {
+  cursor: no-drop !important;
 }

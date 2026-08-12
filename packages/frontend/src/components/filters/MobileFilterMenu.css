@@ -22,29 +22,33 @@
   display: flex;
   flex-direction: column;
   min-height: 300px;
-  &__Header {
-    display: flex;
-    align-items: center;
-    position: relative;
-    justify-content: center;
-  }
-  &__ClearButton {
-    position: absolute !important;
-    right: 0;
-  }
-  &__Title {
-    font-family: var(--pe-font-heading);
-    font-weight: var(--pe-font-weight-extrabold);
-    font-size: var(--pe-space-5);
-    line-height: 100%;
-    text-align: center;
-  }
-  &__List {
-    display: flex;
-    flex-direction: column;
-    gap: var(--pe-space-2);
-    width: 100%;
-  }
+}
+
+.MobileFilterMenu__Header {
+  display: flex;
+  align-items: center;
+  position: relative;
+  justify-content: center;
+}
+
+.MobileFilterMenu__ClearButton {
+  position: absolute !important;
+  right: 0;
+}
+
+.MobileFilterMenu__Title {
+  font-family: var(--pe-font-heading);
+  font-weight: var(--pe-font-weight-extrabold);
+  font-size: var(--pe-space-5);
+  line-height: 100%;
+  text-align: center;
+}
+
+.MobileFilterMenu__List {
+  display: flex;
+  flex-direction: column;
+  gap: var(--pe-space-2);
+  width: 100%;
 }
 
 @media (hover: hover) and (pointer: fine) {
@@ -128,64 +132,72 @@
   width: 50%;
 }
 
-.MobileFilterMenu {
-  &__Item {
-    display: flex;
-    flex-direction: column;
-    gap: var(--pe-space-2);
-    color: var(--pe-color-fg-muted);
-    text-transform: uppercase;
-    font-weight: var(--pe-font-weight-bold);
-    font-family: var(--pe-font-heading);
-  }
-  &__Item:hover &__ItemIcon {
-    color: var(--pe-color-fg);
-    background-color: rgba(255, 255, 255, 0.25);
-  }
-  &__ItemIcon {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: var(--pe-space-4);
-    height: var(--pe-space-4);
-    border-radius: var(--pe-radius-sm);
-    background: rgba(var(--pe-color-brand-normal-rgb), 0.2);
-    color: var(--pe-color-brand-normal);
-  }
-  &__ItemIcon svg {
-    width: var(--pe-space-2);
-    height: var(--pe-space-2);
-  }
-  &__SubmitButton {
-    margin: 0 auto;
-  }
-  &__Content {
-    display: flex;
-    flex-direction: column;
-    gap: var(--pe-space-4);
-  }
-  &__DetailView {
-    width: 100%;
-  }
-  &__BackButton {
-    position: absolute;
-    left: 0;
-    transition: var(--pe-transition-def);
-    align-items: center;
-    padding: var(--pe-space-2);
-    border-radius: var(--pe-radius-sm);
-    color: rgba(var(--pe-color-brand-normal-rgb), 0.8);
-  }
-  &__BackButton:hover {
-    cursor: pointer;
-    background-color: rgba(49, 130, 206, 0.1);
-    color: rgba(var(--pe-color-brand-normal-rgb), 1);
-  }
-  &__Content {
-    padding: var(--pe-space-2) 0;
-  }
-  &__ApplyButton {
-    margin-top: var(--pe-space-6);
-    width: 100%;
-  }
+.MobileFilterMenu__Item {
+  display: flex;
+  flex-direction: column;
+  gap: var(--pe-space-2);
+  color: var(--pe-color-fg-muted);
+  text-transform: uppercase;
+  font-weight: var(--pe-font-weight-bold);
+  font-family: var(--pe-font-heading);
+}
+
+.MobileFilterMenu__Item:hover .MobileFilterMenu__ItemIcon {
+  color: var(--pe-color-fg);
+  background-color: rgba(255, 255, 255, 0.25);
+}
+
+.MobileFilterMenu__ItemIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--pe-space-4);
+  height: var(--pe-space-4);
+  border-radius: var(--pe-radius-sm);
+  background: rgba(var(--pe-color-brand-normal-rgb), 0.2);
+  color: var(--pe-color-brand-normal);
+}
+
+.MobileFilterMenu__ItemIcon svg {
+  width: var(--pe-space-2);
+  height: var(--pe-space-2);
+}
+
+.MobileFilterMenu__SubmitButton {
+  margin: 0 auto;
+}
+
+.MobileFilterMenu__Content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--pe-space-4);
+}
+
+.MobileFilterMenu__DetailView {
+  width: 100%;
+}
+
+.MobileFilterMenu__BackButton {
+  position: absolute;
+  left: 0;
+  transition: var(--pe-transition-def);
+  align-items: center;
+  padding: var(--pe-space-2);
+  border-radius: var(--pe-radius-sm);
+  color: rgba(var(--pe-color-brand-normal-rgb), 0.8);
+}
+
+.MobileFilterMenu__BackButton:hover {
+  cursor: pointer;
+  background-color: rgba(49, 130, 206, 0.1);
+  color: rgba(var(--pe-color-brand-normal-rgb), 1);
+}
+
+.MobileFilterMenu__Content {
+  padding: var(--pe-space-2) 0;
+}
+
+.MobileFilterMenu__ApplyButton {
+  margin-top: var(--pe-space-6);
+  width: 100%;
 }
