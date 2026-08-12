@@ -50,6 +50,7 @@
     "start": "next start",
     "lint": "biome check .",
     "lint:fix": "biome check --write .",
+    "format:css": "biome format --write src",
     "typecheck": "tsc --noEmit",
     "test": "jest"
   },
