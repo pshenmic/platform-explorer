@@ -81,7 +81,9 @@ export default function TokensTrending({ className }: WithClassName) {
 
   const half: Array<{ token: TrendingToken; rank: number }> = []
   while (half.length < MIN_PER_HALF) {
-    items.forEach((token, i) => half.push({ token, rank: i + 1 }))
+    for (let i = 0; i < items.length; i++) {
+      half.push({ token: items[i], rank: i + 1 })
+    }
   }
   const track = [...half, ...half]
 

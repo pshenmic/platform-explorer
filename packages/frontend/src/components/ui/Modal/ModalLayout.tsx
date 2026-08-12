@@ -18,13 +18,7 @@ export const ModalLayout = forwardRef(function ModalLayout(
   ref: Ref<HTMLDialogElement>
 ) {
   return (
-    <dialog
-      role="dialog"
-      aria-labelledby="modal-title"
-      aria-modal="true"
-      className={modalStyles()}
-      ref={ref}
-    >
+    <dialog aria-labelledby="modal-title" aria-modal="true" className={modalStyles()} ref={ref}>
       <div className={styles.header}>
         <h2 id="modal-title" className={styles.title}>
           {title}

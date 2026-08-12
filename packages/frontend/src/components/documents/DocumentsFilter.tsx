@@ -162,7 +162,7 @@ export const DocumentsFilter = ({
       filtersConfig={config}
       onFilterChange={(values: Record<string, unknown>) => {
         const statusValues = values.status
-        let deleted
+        let deleted: string | undefined
         if (Array.isArray(statusValues) && statusValues.length === 1) {
           // 'true' / 'false' as strings — prepareQueryParams drops falsy values
           deleted = statusValues[0] === 'deleted' ? 'true' : 'false'

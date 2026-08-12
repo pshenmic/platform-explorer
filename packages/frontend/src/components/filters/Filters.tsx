@@ -1,7 +1,7 @@
 'use client'
 
 import { useCallback, useEffect, useRef, useState, useMemo } from 'react'
-import type { Dispatch, SetStateAction } from 'react'
+import type { Dispatch, ReactNode, SetStateAction } from 'react'
 import { Button, useDisclosure } from '@chakra-ui/react'
 import { useFilters } from '../../hooks'
 import type { FilterValue, Filters as UseFiltersState } from '../../hooks/useFilters'
@@ -250,7 +250,7 @@ export const Filters = ({
   const menuData: FilterMenuItem[] = useMemo(
     () =>
       Object.entries(filtersConfig).map(([key, config]) => {
-        let content
+        let content: ReactNode
 
         switch (config.type) {
           case 'multiselect':

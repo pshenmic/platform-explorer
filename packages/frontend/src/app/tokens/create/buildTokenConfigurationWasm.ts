@@ -78,7 +78,7 @@ export async function buildTokenConfigurationWasm(
   const decimalsForScale = Math.min(16, Number(form.decimals) || 0)
   const scale = 10n ** BigInt(decimalsForScale)
 
-  let preProgrammedDist
+  let preProgrammedDist: InstanceType<typeof TokenPreProgrammedDistributionWASM> | undefined
   const groupedPP: Record<string, Record<string, bigint>> = {}
   for (const row of form.preProgrammedRows || []) {
     if (!row.time || !row.identity?.trim() || !row.amount) continue
@@ -98,7 +98,7 @@ export async function buildTokenConfigurationWasm(
     preProgrammedDist = new TokenPreProgrammedDistributionWASM(groupedPP)
   }
 
-  let perpetualDist
+  let perpetualDist: InstanceType<typeof TokenPerpetualDistributionWASM> | undefined
   if (form.perpetualEnabled) {
     const intervalValue = Number(form.perpetualIntervalValue)
     let amountScaled: bigint
@@ -110,7 +110,11 @@ export async function buildTokenConfigurationWasm(
     if (intervalValue > 0 && amountScaled > 0n) {
       const fn = DistributionFunctionWASM.FixedAmountDistribution(amountScaled)
       const type = form.perpetualType || 'time'
-      let rewardType
+      let rewardType: ReturnType<
+        | typeof RewardDistributionTypeWASM.BlockBasedDistribution
+        | typeof RewardDistributionTypeWASM.EpochBasedDistribution
+        | typeof RewardDistributionTypeWASM.TimeBasedDistribution
+      >
       if (type === 'block') {
         rewardType = RewardDistributionTypeWASM.BlockBasedDistribution(BigInt(intervalValue), fn)
       } else if (type === 'epoch') {
@@ -122,7 +126,11 @@ export async function buildTokenConfigurationWasm(
           fn
         )
       }
-      let recipient
+      let recipient: ReturnType<
+        | typeof TokenDistributionRecipientWASM.EvonodesByParticipation
+        | typeof TokenDistributionRecipientWASM.Identity
+        | typeof TokenDistributionRecipientWASM.ContractOwner
+      >
       if (type === 'epoch' && form.perpetualRecipient === 'evonodes') {
         recipient = TokenDistributionRecipientWASM.EvonodesByParticipation()
       } else if (

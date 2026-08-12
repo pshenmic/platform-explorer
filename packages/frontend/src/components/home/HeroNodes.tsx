@@ -223,5 +223,5 @@ export default function HeroNodes() {
     }
   }, [])
 
-  return <canvas ref={canvasRef} className={'HomeHero__Nodes'} aria-hidden={'true'} />
+  return <canvas ref={canvasRef} className={'HomeHero__Nodes'} />
 }

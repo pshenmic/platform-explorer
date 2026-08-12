@@ -135,7 +135,7 @@ export const useSigner = () => {
       const sdk = new DashPlatformSDK({ network: network.name })
       const publicKeyHash = privateKey.getPublicKeyHash()
 
-      let identity
+      let identity: Awaited<ReturnType<typeof sdk.identities.getIdentityByIdentifier>>
       if (trimmedIdentityId) {
         identity = await sdk.identities.getIdentityByIdentifier(trimmedIdentityId)
       } else {
