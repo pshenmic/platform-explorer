@@ -11,7 +11,7 @@ import type {
   ChartDataPoint,
   TimespanValue
 } from './types'
-import './TabsChartBlock.scss'
+import './TabsChartBlock.css'
 
 interface TabsChartBlockProps {
   menuIsActive?: boolean

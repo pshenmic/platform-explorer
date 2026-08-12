@@ -5,7 +5,7 @@ import TimeRemainingJs from '../../data/TimeRemaining'
 import contestedResources from '../../../util/contestedResources'
 import { Badge } from '@chakra-ui/react'
 import VoteBadgesJs from '../../contestedResources/VoteBadges'
-import './ContestedResourceContent.scss'
+import './ContestedResourceContent.css'
 
 const Alias = AliasJs as ComponentType<{
   children?: ReactNode

@@ -1,7 +1,7 @@
 import type { ReactNode, HTMLAttributes } from 'react'
 import type { WithClassName } from '../../types/common'
 import type { FilterType, FilterStateValue, MultiSelectOption } from './types'
-import './FilterValueTag.scss'
+import './FilterValueTag.css'
 
 interface FilterValueTagProps extends WithClassName {
   value?: ReactNode

@@ -1,0 +1,38 @@
+.chakra-tabs__tab[aria-selected="true"] .Tabs__TabItemsCount {
+  background: rgba(var(--pe-color-brand-normal-rgb), 0.2);
+  color: var(--pe-color-brand-normal);
+}
+
+.chakra-tabs__tab[aria-selected="false"] .Tabs__TabItemsCount {
+  color: var(--pe-color-fg-muted);
+  background-color: rgba(var(--pe-color-gray-250-rgb), 0.2);
+}
+
+.Tabs__TabItemsCount {
+  display: inline-block;
+  padding: var(--pe-space-1_5) var(--pe-space-3);
+  color: var(--pe-color-brand-normal);
+  background: rgba(var(--pe-color-brand-normal-rgb), 0.2);
+  margin-left: var(--pe-space-3);
+  border-radius: var(--pe-radius-def);
+  font-weight: var(--pe-font-weight-medium);
+  margin-top: -var(--pe-space-1);
+  margin-bottom: -2px;
+  transition: all var(--pe-transition-def);
+}
+
+.Tabs__TabItemsCount--Empty {
+  opacity: 0.3;
+}
+
+@media screen and (max-width: 62em) {
+  .Tabs__TabItemsCount {
+    padding: var(--pe-space-1) var(--pe-space-3);
+  }
+}
+
+@media screen and (max-width: 30em) {
+  .Tabs__TabItemsCount {
+    padding: 2px var(--pe-space-2);
+  }
+}

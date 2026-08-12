@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react'
 import type { WithClassName } from '../../types/common'
-import './ValueBlock.scss'
+import './ValueBlock.css'
 
 interface ValueBlockProps extends WithClassName {
   title?: ReactNode

@@ -1,0 +1,48 @@
+.MenuLevel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--pe-space-1);
+  min-width: 160px;
+}
+
+.MenuLevel__Item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--pe-space-4);
+  padding: var(--pe-space-2) var(--pe-space-3);
+  font-family: var(--pe-font-heading);
+  font-weight: var(--pe-font-weight-bold);
+  text-transform: uppercase;
+  font-size: var(--pe-text-sm);
+  letter-spacing: 0.4px;
+  border-radius: var(--pe-radius-def);
+  transition:
+    background-color var(--pe-transition-def),
+    color var(--pe-transition-def);
+  color: var(--pe-color-fg-muted);
+  cursor: pointer;
+  user-select: none;
+}
+
+.MenuLevel__Item:hover {
+  background-color: var(--pe-color-gray-800);
+  color: var(--pe-color-fg);
+}
+
+.MenuLevel__Item--Active {
+  color: var(--pe-color-fg);
+  background-color: var(--pe-color-gray-800);
+}
+
+.MenuLevel__Item--Disabled {
+  opacity: var(--pe-opacity-muted);
+  cursor: default;
+  pointer-events: none;
+}
+
+.MenuLevel__ItemChevron {
+  font-size: var(--pe-text-lg);
+  line-height: 1;
+  opacity: 0.7;
+}

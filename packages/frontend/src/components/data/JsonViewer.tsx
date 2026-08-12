@@ -7,7 +7,7 @@ import { EditorView, placeholder as cmPlaceholder } from '@codemirror/view'
 import type { Extension } from '@codemirror/state'
 import type { WithClassName } from '../../types/common'
 import { CopyButton } from '../ui/Buttons'
-import './JsonViewer.scss'
+import './JsonViewer.css'
 
 const editorTheme = EditorView.theme({
   '&': {

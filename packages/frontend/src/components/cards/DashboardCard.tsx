@@ -4,8 +4,8 @@ import type { ComponentType, ReactNode } from 'react'
 import type { IconProps } from '@chakra-ui/react'
 import type { WithClassName } from '../../types/common'
 import { InfoCard } from './'
-import './InfoCard.scss'
-import './DashboardCard.scss'
+import './InfoCard.css'
+import './DashboardCard.css'
 
 export interface DashboardCardData {
   title?: ReactNode

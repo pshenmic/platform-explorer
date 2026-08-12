@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { DateBlock as DateBlockJs, Identifier as IdentifierJs, NotActive as NotActiveJs } from '../data'
 import { Badge, Grid, GridItem } from '@chakra-ui/react'
 
-import './ValidatorListItem.scss'
+import './ValidatorListItem.css'
 
 // Untyped JS modules — cast until migrated
 const DateBlock = DateBlockJs as ComponentType<{

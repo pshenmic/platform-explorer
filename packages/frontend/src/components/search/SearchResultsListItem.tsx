@@ -11,7 +11,7 @@ import {
   PlatformAddressSearchItem
 } from './items'
 import { entityTypes, type EntityType } from './constants'
-import './SearchResultsListItem.scss'
+import './SearchResultsListItem.css'
 
 interface SearchResultsListItemProps extends WithClassName {
   entity?: unknown

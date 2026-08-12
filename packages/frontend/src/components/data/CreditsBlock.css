@@ -1,0 +1,40 @@
+.CreditsBlock {
+  font-family: var(--pe-font-mono);
+  font-size: 0.813rem;
+}
+
+.CreditsBlock__Credits,
+.CreditsBlock__Dash {
+  margin-top: var(--pe-space-1);
+  margin-bottom: var(--pe-space-1);
+}
+
+.CreditsBlock__Credits,
+.CreditsBlock__Dash,
+.CreditsBlock__Usd {
+  margin-right: var(--pe-space-1_5);
+}
+
+.CreditsBlock__Credits:last-child,
+.CreditsBlock__Dash:last-child,
+.CreditsBlock__Usd:last-child {
+  margin-right: 0;
+}
+
+.CreditsBlock__Credits {
+  display: inline-block;
+}
+
+.CreditsBlock__Dash {
+  display: inline-block;
+  color: var(--pe-color-fg-muted);
+}
+
+.CreditsBlock__Usd {
+  display: inline-block;
+  padding: var(--pe-space-1_5) var(--pe-space-2);
+  font-size: var(--pe-text-xs);
+  color: var(--pe-color-green-emeralds);
+  background-color: rgba(var(--pe-color-green-emeralds-rgb), 0.2);
+  border-radius: var(--pe-radius-md);
+}

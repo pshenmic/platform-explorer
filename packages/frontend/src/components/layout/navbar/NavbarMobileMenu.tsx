@@ -10,7 +10,7 @@ import { ArrowButton } from '../../ui/Buttons'
 import Link from 'next/link'
 import { SmoothSize } from '../../ui/containers'
 import type { NavMenuItem } from './types'
-import './NavbarMobileMenu.scss'
+import './NavbarMobileMenu.css'
 
 interface NavbarMobileMenuProps {
   items: NavMenuItem[]

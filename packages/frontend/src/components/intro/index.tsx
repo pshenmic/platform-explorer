@@ -4,7 +4,7 @@ import {
 } from '@chakra-ui/react'
 import type { ReactNode } from 'react'
 import type { WithClassName } from '../../types/common'
-import './Intro.scss'
+import './Intro.css'
 
 interface IntroProps extends WithClassName {
   title?: ReactNode

@@ -2,7 +2,7 @@
 
 import type { ComponentPropsWithoutRef } from 'react'
 import { ChevronIcon } from '../icons'
-import './ArrowButton.scss'
+import './ArrowButton.css'
 
 function ArrowButton ({ children, className, ...props }: ComponentPropsWithoutRef<'button'>) {
   return (

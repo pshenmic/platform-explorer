@@ -2,7 +2,7 @@ import type { ComponentType, ReactNode } from 'react'
 import { InfoCard as InfoCardJs } from '../cards'
 import ValueBlock from './ValueBlock'
 import { Box } from '@chakra-ui/react'
-import './TotalCards.scss'
+import './TotalCards.css'
 
 const InfoCard = InfoCardJs as ComponentType<{
   children?: ReactNode

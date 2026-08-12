@@ -1,0 +1,188 @@
+.ShieldedPool__SparkSvg.is-loading {
+  opacity: 0.4;
+}
+
+.ShieldedPool .is-dim .ShieldedPool__Bar {
+  opacity: 0.35;
+}
+
+.ShieldedPool__Body {
+  min-height: 200px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: var(--pe-space-3_5);
+}
+
+.ShieldedPool__Empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  font-size: 0.8125rem;
+  color: var(--pe-color-gray-500);
+}
+
+.ShieldedPool__Balance {
+  font-family: var(--pe-font-heading);
+  font-weight: var(--pe-font-weight-extrabold);
+  font-style: italic;
+  font-size: var(--pe-space-7);
+  line-height: 1;
+  color: var(--pe-color-fg);
+  cursor: pointer;
+  width: max-content;
+  border-bottom: 1px dotted rgba(var(--pe-color-gray-500-rgb), 0.6);
+  transition:
+    color 0.15s,
+    border-color 0.15s;
+}
+
+.ShieldedPool__Balance:hover {
+  color: var(--pe-color-brand-light);
+  border-bottom-color: rgba(var(--pe-color-brand-light-rgb), 0.7);
+}
+
+.ShieldedPool__BalanceUnit {
+  margin-left: var(--pe-space-2);
+  font-family: var(--pe-font-mono);
+  font-style: normal;
+  font-weight: var(--pe-font-weight-normal);
+  font-size: var(--pe-text-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--pe-color-gray-500);
+}
+
+.ShieldedPool__Rows {
+  display: flex;
+  flex-direction: column;
+  gap: var(--pe-space-1_5);
+}
+
+.ShieldedPool__RowItem {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--pe-space-4);
+  font-family: var(--pe-font-mono);
+  font-size: var(--pe-text-xs);
+  color: var(--pe-color-fg-muted);
+}
+
+.ShieldedPool__RowItem span:first-child {
+  color: var(--pe-color-gray-500);
+}
+
+.ShieldedPool__Spark {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.ShieldedPool__SparkWrap {
+  position: relative;
+  cursor: crosshair;
+}
+
+.ShieldedPool__SparkSvg {
+  display: block;
+  width: 100%;
+  height: 56px;
+  transition: opacity 0.2s;
+}
+
+.ShieldedPool__Baseline {
+  stroke: rgba(255, 255, 255, 0.12);
+  stroke-width: 1px;
+}
+
+.ShieldedPool__Bar {
+  transition: opacity 0.12s;
+}
+
+.ShieldedPool__Bar--in {
+  fill: var(--pe-color-brand-normal);
+}
+
+.ShieldedPool__Bar--out {
+  fill: var(--pe-color-orange-default);
+  opacity: var(--pe-opacity-strong);
+}
+
+.ShieldedPool__Tip {
+  position: absolute;
+  top: -var(--pe-space-2);
+  transform: translate(-50%, -100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+  padding: var(--pe-space-1) var(--pe-space-2);
+  border-radius: var(--pe-radius-sm);
+  white-space: nowrap;
+  background: var(--pe-color-gray-800);
+  border: 1px solid rgba(var(--pe-color-brand-normal-rgb), 0.4);
+  pointer-events: none;
+  z-index: 2;
+  font-family: var(--pe-font-mono);
+  font-size: var(--pe-text-xs);
+}
+
+.ShieldedPool__TipDate {
+  font-size: 0.5625rem;
+  color: var(--pe-color-gray-500);
+}
+
+.ShieldedPool__TipRow {
+  color: var(--pe-color-fg);
+}
+
+.ShieldedPool__TipRow--in {
+  color: var(--pe-color-brand-light);
+}
+
+.ShieldedPool__TipRow--out {
+  color: var(--pe-color-orange-default);
+}
+
+.ShieldedPool__Axis {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--pe-space-2);
+  font-family: var(--pe-font-mono);
+  font-size: 0.5625rem;
+  color: var(--pe-color-gray-500);
+}
+
+.ShieldedPool__SparkLegend {
+  display: flex;
+  align-items: center;
+  gap: var(--pe-space-3_5);
+  font-family: var(--pe-font-mono);
+  font-size: var(--pe-text-2xs);
+  color: var(--pe-color-gray-500);
+}
+
+.ShieldedPool__SparkLegend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.ShieldedPool__SparkWindow {
+  margin-left: auto;
+}
+
+.ShieldedPool__Dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+}
+
+.ShieldedPool__Dot--in {
+  background: var(--pe-color-brand-normal);
+}
+
+.ShieldedPool__Dot--out {
+  background: var(--pe-color-orange-default);
+}

@@ -8,7 +8,7 @@ import useResizeObserver from '@react-hook/resize-observer'
 import type { WithChildren, WithClassName } from '../../types/common'
 import NotActive from './NotActive'
 import { useDebounce } from '../../hooks'
-import './Identifier.scss'
+import './Identifier.css'
 
 type HighlightStyle = 'dim' | 'highlight' | 'highlight-first' | 'highlight-last' | 'highlight-both' | string
 type HighlightMode = 'dim' | 'highlight' | 'first' | 'last' | 'both' | 'default'

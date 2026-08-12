@@ -5,8 +5,8 @@ import { useKeenSlider } from 'keen-slider/react'
 import type { KeenSliderOptions, KeenSliderPlugin } from 'keen-slider/react'
 import { ChevronLeftIcon, ChevronRightIcon } from '@chakra-ui/icons'
 import 'keen-slider/keen-slider.min.css'
-import './Slider.scss'
-import './SliderNavigation.scss'
+import './Slider.css'
+import './SliderNavigation.css'
 import type { WithChildren, WithClassName } from '../../../types/common'
 
 interface SliderProgressBarProps {

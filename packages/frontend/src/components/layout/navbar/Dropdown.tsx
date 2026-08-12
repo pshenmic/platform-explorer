@@ -3,7 +3,7 @@
 import type { ReactNode } from 'react'
 import type { NetworkOption } from '../../../constants/networks'
 import NavigationButton from '../../ui/NavigationButton/NavigationButton'
-import './NetworkSelect.scss'
+import './NetworkSelect.css'
 
 interface DropdownProps {
   active?: string

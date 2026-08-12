@@ -2,7 +2,7 @@ import { SignatureIcon, DocumentIcon } from '@components/ui/icons'
 import { FORM_MODE_ENUM } from './constants'
 import type { FormMode } from './constants'
 
-import styles from './InitialScreen.module.scss'
+import styles from './InitialScreen.module.css'
 
 interface InitialScreenProps {
   setMode: (mode: FormMode) => void

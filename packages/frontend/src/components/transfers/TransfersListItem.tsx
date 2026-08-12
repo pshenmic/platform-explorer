@@ -16,7 +16,7 @@ import { useRef } from 'react'
 import TypeBadge from './TypeBadge'
 import { useRouter } from 'next/navigation'
 import type { Rate, Transfer } from '../../types'
-import './TransfersListItem.scss'
+import './TransfersListItem.css'
 
 const BigNumber = BigNumberJs as ComponentType<{ children?: ReactNode, className?: string }>
 const Identifier = IdentifierJs as ComponentType<{

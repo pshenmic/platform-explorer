@@ -2,7 +2,7 @@ import type { ReactNode } from 'react'
 import { Grid, GridItem } from '@chakra-ui/react'
 import type { WithChildren, WithClassName } from '../../../types'
 
-import './Template.scss'
+import './Template.css'
 
 interface ContendersTemplateProps extends WithChildren, WithClassName {
   isVoteVisible?: boolean

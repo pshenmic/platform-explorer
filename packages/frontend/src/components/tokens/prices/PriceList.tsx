@@ -4,8 +4,8 @@ import type { PriceData } from './PriceListItem'
 import { EmptyListMessage } from '../../ui/lists'
 import type { Rate } from '../../../types'
 import type { WithClassName } from '../../../types/common'
-import './PriceList.scss'
-import './PriceListItem.scss'
+import './PriceList.css'
+import './PriceListItem.css'
 
 interface PriceListProps extends WithClassName {
   prices?: PriceData[] | null

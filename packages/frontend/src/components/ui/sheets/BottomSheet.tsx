@@ -14,7 +14,7 @@ const AnimatedDiv = animated.div as unknown as ComponentType<{
 }>
 import { useDrag } from '@use-gesture/react'
 import { useWindowSize } from '../../../hooks'
-import './BottomSheet.scss'
+import './BottomSheet.css'
 
 const DRAWER_HEIGHT = '70vh'
 const FULL_HEIGHT = '90vh'

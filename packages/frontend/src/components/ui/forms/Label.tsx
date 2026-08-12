@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react'
 import { cva } from 'class-variance-authority'
 
-import styles from './Label.module.scss'
+import styles from './Label.module.css'
 
 const labelStyles = cva(styles.label)
 

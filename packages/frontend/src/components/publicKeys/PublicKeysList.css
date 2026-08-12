@@ -1,0 +1,107 @@
+.PublicKeysList {
+  scroll-behavior: smooth;
+  scrollbar-width: thin;
+  scrollbar-color: var(--pe-color-brand-normal) transparent;
+  overflow-x: auto;
+  container-type: inline-size;
+}
+
+.PublicKeysList::-webkit-scrollbar {
+  height: var(--pe-space-2);
+  width: var(--pe-space-2);
+}
+
+.PublicKeysList::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.PublicKeysList::-webkit-scrollbar-thumb {
+  background-color: var(--pe-color-brand-normal);
+  border-radius: var(--pe-radius-md);
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+
+.PublicKeysList::-webkit-scrollbar-thumb:hover {
+  background-color: var(--pe-color-brand-light);
+}
+
+.PublicKeysList__ScrollZone {
+  width: fit-content;
+  min-width: 100%;
+}
+
+.PublicKeysList__ColumnTitles {
+  display: grid;
+  padding: var(--pe-list-row-pad-y) var(--pe-list-row-pad-x);
+  border-radius: var(--pe-list-row-radius);
+  background-color: var(--pe-color-gray-800);
+  margin-bottom: var(--pe-space-2);
+  font-family: var(--pe-font-heading);
+  font-weight: var(--pe-font-weight-bold);
+  font-size: var(--pe-text-sm);
+  text-transform: uppercase;
+  color: var(--pe-color-fg);
+}
+
+.PublicKeysList__ColumnTitles--Light {
+  background: transparent !important;
+  font-weight: var(--pe-font-weight-medium) !important;
+  color: var(--pe-color-fg) !important;
+  text-transform: none !important;
+}
+
+.PublicKeysList__ColumnTitles {
+  display: grid;
+  gap: var(--pe-space-4);
+  grid-template-columns: minmax(45px, 45px) minmax(180px, 180px) minmax(120px, 113px) minmax(
+      113px,
+      113px
+    ) minmax(115px, 115px) minmax(90px, 90px) minmax(78px, 78px) auto;
+}
+
+@container (max-width: 800px) {
+  .PublicKeysList__ColumnTitles {
+    gap: var(--pe-space-2);
+  }
+}
+
+.PublicKeysList__ColumnTitle {
+  display: flex;
+  align-items: center;
+}
+
+.PublicKeysList__ColumnTitle--Id {
+  max-width: 88px;
+  width: 100%;
+}
+
+.PublicKeysList__ColumnTitle--PublicKeyHash {
+  max-width: 180px;
+  width: 100%;
+}
+
+.PublicKeysList__ColumnTitle--Type {
+  max-width: 113px;
+  width: 100%;
+}
+
+.PublicKeysList__ColumnTitle--Purpose {
+  max-width: 113px;
+  width: 100%;
+}
+
+.PublicKeysList__ColumnTitle--SecurityLevel {
+  max-width: 115px;
+  width: 100%;
+}
+
+.PublicKeysList__ColumnTitle--ReadOnly {
+  max-width: 78px;
+  width: 100%;
+}
+
+.PublicKeysList__ColumnTitle--Data {
+  min-width: 380px;
+  width: 100%;
+}

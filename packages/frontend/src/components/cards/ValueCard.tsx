@@ -1,7 +1,7 @@
 import type { ReactNode, MouseEvent } from 'react'
 import Link from 'next/link'
 import type { WithChildren, WithClassName } from '../../types/common'
-import './ValueCard.scss'
+import './ValueCard.css'
 
 interface WrapperProps extends WithChildren, WithClassName {
   link?: string

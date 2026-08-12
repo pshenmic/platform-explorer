@@ -11,7 +11,7 @@ import { Tooltip } from '../ui/Tooltips'
 import { Skeleton } from './Skeleton'
 import { useLiveList } from './hooks'
 import type { Transaction } from '../../types'
-import './CompactTxList.scss'
+import './CompactTxList.css'
 
 // Untyped JS components — loose wrappers until data/* / transactions/* are migrated
 const StatusIcon = StatusIconJs as ComponentType<{ status?: string, w?: string, h?: string, className?: string }>

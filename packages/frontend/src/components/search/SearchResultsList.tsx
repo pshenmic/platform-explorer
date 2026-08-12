@@ -1,7 +1,7 @@
 import type { Transaction } from '../../types'
 import type { LoadableState } from '../../types/common'
 import SearchResultsListItem from './SearchResultsListItem'
-import './SearchResultsList.scss'
+import './SearchResultsList.css'
 import { Grid, GridItem } from '@chakra-ui/react'
 import {
   categoryMap,

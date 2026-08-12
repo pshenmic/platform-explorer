@@ -1,5 +1,5 @@
 import type { WithChildren, WithClassName } from '../../../types/common'
-import '../../../styles/components/InfoBlock.scss'
+import '../../../styles/components/InfoBlock.css'
 
 type ColorScheme = 'blue' | 'green' | 'red'
 

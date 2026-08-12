@@ -1,0 +1,19 @@
+.EpochProgress__Info {
+  display: flex;
+  font-family: var(--pe-font-mono);
+  font-size: var(--pe-text-sm);
+  font-weight: var(--pe-font-weight-normal);
+  text-transform: none;
+  margin-top: var(--pe-space-1_5);
+}
+
+.EpochProgress__InfoTitle {
+  color: var(--pe-color-gray-500);
+  margin-right: var(--pe-space-2);
+  white-space: nowrap;
+}
+
+.EpochProgress__InfoValue {
+  color: var(--pe-color-fg);
+  white-space: nowrap;
+}

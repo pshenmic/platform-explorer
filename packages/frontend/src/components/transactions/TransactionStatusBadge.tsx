@@ -1,7 +1,7 @@
 import { Badge } from '@chakra-ui/react'
 import { ErrorCircleIcon, CheckmarkIcon } from '../ui/icons'
 import type { TransactionStatus } from '../../types'
-import './TransactionStatusBadge.scss'
+import './TransactionStatusBadge.css'
 
 interface TransactionStatusBadgeProps {
   status?: TransactionStatus | string | null

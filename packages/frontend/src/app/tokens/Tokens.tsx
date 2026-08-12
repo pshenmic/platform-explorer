@@ -20,7 +20,7 @@ import NetworkStatsInline from '../../components/stats/NetworkStatsInline'
 import { formatFullNumber } from '../../util'
 import introContent from './introContent'
 
-import './Tokens.scss'
+import './Tokens.css'
 
 const paginateConfig = {
   pageSize: {

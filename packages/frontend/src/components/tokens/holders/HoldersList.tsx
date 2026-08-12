@@ -6,7 +6,7 @@ import PaginationJs from '../../pagination'
 import { LoadingList as LoadingListJs } from '../../loading'
 import { ErrorMessageBlock } from '../../Errors'
 import { Grid, GridItem } from '@chakra-ui/react'
-import './HoldersList.scss'
+import './HoldersList.css'
 
 const Pagination = PaginationJs as ComponentType<{
   className?: string

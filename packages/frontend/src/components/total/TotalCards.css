@@ -1,0 +1,18 @@
+.TotalCards {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.TotalCards__Item {
+  width: calc(50% - var(--pe-space-2_5));
+  margin: var(--pe-space-2_5) 0;
+  padding: var(--pe-space-6);
+}
+
+@media screen and (max-width: 48em) {
+  .TotalCards__Item {
+    width: 100%;
+  }
+}

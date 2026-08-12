@@ -5,7 +5,7 @@ import { LoadingList } from '../loading'
 import Pagination from '../pagination'
 import { ContestedResourcesListItem } from './ContestedResourcesListItem'
 import type { ContestedResourcesListItemData } from './ContestedResourcesListItem'
-import './ContestedResourcesList.scss'
+import './ContestedResourcesList.css'
 
 interface PaginationProps {
   onPageChange: (selectedItem: { selected: number }) => void

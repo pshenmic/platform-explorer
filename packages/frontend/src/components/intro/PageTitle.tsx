@@ -12,7 +12,7 @@ import {
 import type { ReactNode } from 'react'
 import { InfoIcon } from '../ui/icons'
 import type { WithClassName } from '../../types/common'
-import './PageTitle.scss'
+import './PageTitle.css'
 
 interface PageTitleProps extends WithClassName {
   title?: ReactNode

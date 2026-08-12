@@ -20,7 +20,7 @@ import { Badge, Flex } from '@chakra-ui/react'
 import { Tooltip } from '../ui/Tooltips'
 import type { Alias, LoadableState, Owner, Rate, Token } from '../../types'
 import type { WithClassName } from '../../types/common'
-import './TokenDigestCard.scss'
+import './TokenDigestCard.css'
 
 const CreditsBlock = CreditsBlockJs as ComponentType<{
   credits?: string | number | null

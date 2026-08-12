@@ -1,7 +1,7 @@
 import Select from '../ui/Select'
 import type { SelectOption } from '../ui/Select'
 import type { MenuPlacement, SingleValue } from 'react-select'
-import './PageSizeSelector.scss'
+import './PageSizeSelector.css'
 
 interface PageSizeSelectorProps {
   PageSizeSelectHandler?: (option: SingleValue<SelectOption>) => void
