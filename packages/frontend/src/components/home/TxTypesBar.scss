@@ -1,5 +1,6 @@
 @import '../../styles/variables.scss';
 
+// ST types + batch action kinds (BATCH is expanded away when batchTypes exist)
 $txtype-colors: (
   'BATCH': rgba(255, 255, 255, 0.45),
   'MASTERNODE_VOTE': #f49a58,
@@ -22,6 +23,25 @@ $txtype-colors: (
   'IDENTITY_CREDIT_TRANSFER_TO_ADDRESS': #86979e,
   'IDENTITY_CREATE_FROM_ADDRESSES': #9fb3ba,
   'IDENTITY_TOP_UP_FROM_ADDRESSES': #8ba0a8,
+  // batch document actions
+  'DOCUMENT_CREATE': #4fd4a8,
+  'DOCUMENT_REPLACE': #e8a04a,
+  'DOCUMENT_DELETE': #e85a6a,
+  'DOCUMENT_TRANSFER': #d4883c,
+  'DOCUMENT_UPDATE_PRICE': #5ab8f0,
+  'DOCUMENT_PURCHASE': #3ecf8e,
+  // batch token actions
+  'TOKEN_MINT': #58e8d0,
+  'TOKEN_TRANSFER': #f0b060,
+  'TOKEN_BURN': #e05050,
+  'TOKEN_FREEZE': #6a9ee0,
+  'TOKEN_UNFREEZE': #e8c060,
+  'TOKEN_DESTROY_FROZEN_FUNDS': #c87848,
+  'TOKEN_CLAIM': #68d898,
+  'TOKEN_EMERGENCY_ACTION': #f06070,
+  'TOKEN_CONFIG_UPDATE': #98a0a8,
+  'TOKEN_DIRECT_PURCHASE': #48c880,
+  'TOKEN_SET_PRICE_FOR_DIRECT_PURCHASE': #70a8e8,
   'UNKNOWN': rgba(255, 255, 255, 0.25)
 );
 
@@ -247,7 +267,8 @@ $txtype-colors: (
     background: transparent;
     color: inherit;
     display: grid;
-    grid-template-columns: 1.5rem 10px minmax(0, 1.1fr) minmax(48px, 1fr) 3.25rem 2.75rem;
+    // wider count col for full grouped numbers (e.g. 124,069)
+    grid-template-columns: 1.5rem 10px minmax(0, 1.1fr) minmax(40px, 1fr) minmax(4.5rem, auto) 2.75rem;
     align-items: center;
     gap: 8px;
     width: 100%;
@@ -270,7 +291,7 @@ $txtype-colors: (
     }
 
     @media screen and (max-width: $breakpoint-md) {
-      grid-template-columns: 1.25rem 8px minmax(0, 1fr) 2.75rem 2.5rem;
+      grid-template-columns: 1.25rem 8px minmax(0, 1fr) minmax(3.75rem, auto) 2.5rem;
       gap: 6px;
       padding: 0 6px;
     }
@@ -348,13 +369,13 @@ $txtype-colors: (
   }
 
   &__RowLabel {
+    min-width: 0;
     font-family: $font-mono;
     font-size: 0.6875rem;
     color: var(--chakra-colors-gray-250);
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    min-width: 0;
   }
 
   &__Meter {

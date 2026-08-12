@@ -5,22 +5,49 @@ import { Box } from '@chakra-ui/react'
 import * as Api from '../../util/Api'
 import { Presets } from '../cards'
 import { TransactionTypesInfo } from '../../enums/state.transition.type'
+import { BatchActions } from '../../enums/batchTypes'
 import { Skeleton } from './Skeleton'
-import { compact } from './utils'
+import { formatFullNumber } from '../../util'
 import { PRESETS, presetRange } from './MetricChart'
 import './TxTypesBar.scss'
 
 const MIN_SEG_FRAC = 0.008
 
 function labelOf (type) {
-  if (type === 'BATCH') return 'Batch · docs & tokens'
+  if (BatchActions[type]?.title) return BatchActions[type].title
   return TransactionTypesInfo[type]?.title ?? type
+}
+
+function clsOf (type) {
+  if (BatchActions[type]) return type
+  if (TransactionTypesInfo[type]) return type
+  return 'UNKNOWN'
 }
 
 function pctOf (frac) {
   if (frac <= 0) return '0%'
   if (frac < 0.01) return '<1%'
   return `${Math.round(frac * 100)}%`
+}
+
+/** Expand BATCH.batchTypes when present; otherwise keep the BATCH row. */
+function flattenStatisticItems (items) {
+  const flat = []
+  for (const t of items || []) {
+    const count = t.count || 0
+    if (count <= 0) continue
+    const kind = t.transactionType || 'UNKNOWN'
+    if (kind === 'BATCH' && Array.isArray(t.batchTypes) && t.batchTypes.length > 0) {
+      for (const bt of t.batchTypes) {
+        const n = bt.count || 0
+        if (n <= 0) continue
+        flat.push({ type: bt.batchType || 'UNKNOWN', count: n, fromBatch: true })
+      }
+      continue
+    }
+    flat.push({ type: kind, count, fromBatch: false })
+  }
+  return flat
 }
 
 export default function TxTypesBar ({ enabled = true }) {
@@ -47,21 +74,21 @@ export default function TxTypesBar ({ enabled = true }) {
   const rangeLabel = preset.label === 'All' ? 'all time' : preset.label
 
   const segments = useMemo(() => {
-    const sorted = [...state.items]
-      .filter(t => (t.count || 0) > 0)
-      .sort((a, b) => (b.count || 0) - (a.count || 0))
-    const total = sorted.reduce((sum, t) => sum + (t.count || 0), 0)
-    const rawFracs = sorted.map(t => (total > 0 ? (t.count || 0) / total : 0))
+    const flat = flattenStatisticItems(state.items)
+      .sort((a, b) => b.count - a.count)
+    const total = flat.reduce((sum, t) => sum + t.count, 0)
+    const rawFracs = flat.map(t => (total > 0 ? t.count / total : 0))
     const clamped = rawFracs.map(f => (f > 0 ? Math.max(f, MIN_SEG_FRAC) : 0))
     const clampedSum = clamped.reduce((sum, f) => sum + f, 0) || 1
-    return sorted.map((t, i) => ({
-      type: t.transactionType || 'UNKNOWN',
-      label: labelOf(t.transactionType),
-      count: t.count || 0,
+    return flat.map((t, i) => ({
+      type: t.type,
+      label: labelOf(t.type),
+      count: t.count,
       frac: rawFracs[i],
       dFrac: clamped[i] / clampedSum,
-      cls: TransactionTypesInfo[t.transactionType] ? t.transactionType : 'UNKNOWN',
-      rank: i + 1
+      cls: clsOf(t.type),
+      rank: i + 1,
+      fromBatch: t.fromBatch
     }))
   }, [state.items])
 
@@ -73,12 +100,8 @@ export default function TxTypesBar ({ enabled = true }) {
   const rangeTotal = state.loading
     ? '—'
     : (focused ? focused.count.toLocaleString('en-US') : total.toLocaleString('en-US'))
-  // idle shows range; focus shows name + % (count is the large header figure)
-  const focusLabel = focused
-    ? (focused.type === 'BATCH' ? 'Batch' : focused.label)
-    : null
   const statMeta = focused
-    ? `${focusLabel} · ${pctOf(focused.frac)}`
+    ? `${focused.label} · ${pctOf(focused.frac)}`
     : (state.error ? '' : rangeLabel)
 
   const togglePin = (type) => {
@@ -99,7 +122,7 @@ export default function TxTypesBar ({ enabled = true }) {
           <span className={'TxTypesBar__Eyebrow'}>Network mix</span>
           <h2 className={'TxTypesBar__Title'}>Transaction</h2>
           <p className={'TxTypesBar__Lede'}>
-            Share of state transitions. Batch is large because most document and token actions ride inside it.
+            Share of state transitions. Document and token actions are expanded from batch (first action per ST).
           </p>
         </div>
         <div className={'TxTypesBar__Controls'}>
@@ -174,7 +197,7 @@ export default function TxTypesBar ({ enabled = true }) {
                           style={{ width: `${Math.max(s.frac * 100, 1.5)}%` }}
                         />
                       </span>
-                      <span className={'TxTypesBar__RowCount'}>{compact(s.count)}</span>
+                      <span className={'TxTypesBar__RowCount'}>{formatFullNumber(s.count)}</span>
                       <span className={'TxTypesBar__RowPct'}>{pctOf(s.frac)}</span>
                     </button>
                   ))}
