@@ -233,7 +233,6 @@ export default function Tooltip ({
     )
   }
 
-
   const tipNode = isOpen && mounted
     ? (
       <div
