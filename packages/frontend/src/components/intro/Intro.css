@@ -1,0 +1,51 @@
+.Intro {
+  backdrop-filter: blur(44px);
+  border-radius: var(--pe-radius-block);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(24, 31, 34, 0.2);
+  box-shadow: 2px 2px var(--pe-color-brand-normal);
+  display: flex;
+  padding: 64px;
+  width: 100%;
+  gap: 2.5rem;
+}
+.Intro__Title {
+  font-style: italic;
+  font-weight: 800;
+}
+.Intro__Info {
+  width: 480px;
+  flex-shrink: 0;
+}
+.Intro__Block {
+  display: flex;
+  align-items: center;
+  flex-grow: 1;
+  flex-shrink: 1;
+  min-width: 0;
+  overflow: hidden;
+}
+@media screen and (min-width: 96em) {
+  .Intro__Info {
+    min-width: 40%;
+  }
+}
+@media screen and (max-width: 75em) {
+  .Intro {
+    flex-wrap: wrap;
+    padding: 2.5rem;
+    gap: 2.5rem;
+  }
+  .Intro__Info, .Intro__Block {
+    width: 100%;
+  }
+  .Intro__Block {
+    margin-left: 0;
+  }
+}
+@media screen and (max-width: 62em) {
+  .Intro {
+    gap: 1.5rem;
+    padding: 1.5rem;
+  }
+}

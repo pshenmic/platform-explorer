@@ -1,0 +1,32 @@
+.PageTitle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.625rem;
+}
+.PageTitle__Title {
+  font-style: italic;
+  font-weight: 800;
+  white-space: nowrap;
+}
+.PageTitle__InfoButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  opacity: 0.55;
+  transition: opacity var(--pe-transition-def) ease, transform var(--pe-transition-def) ease;
+  cursor: pointer;
+}
+.PageTitle__InfoButton:hover {
+  opacity: 1;
+}
+
+.PageTitle__DescriptionPopover .PageTitle__DescriptionText {
+  margin: 0;
+  font-size: 0.8125rem;
+  line-height: 1.55;
+  color: var(--pe-color-gray-100);
+}
