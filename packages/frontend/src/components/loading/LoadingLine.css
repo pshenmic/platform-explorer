@@ -1,0 +1,4 @@
+/* Uses global .LoadingLine from styles/utils/loading-line.css */
+.LoadingLine--Gray {
+  /* marker class; base rules in utils/loading-line.css */
+}
