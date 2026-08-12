@@ -1,0 +1,216 @@
+.InfoContainer {
+  padding: calc(var(--pe-space-3) + 0px);
+}
+@media screen and (min-width: 48em) {
+  .InfoContainer {
+    padding: calc(var(--pe-space-4) + 0px);
+  }
+}
+@media screen and (min-width: 62em) {
+  .InfoContainer {
+    padding: calc(var(--pe-space-5) + 0px);
+  }
+}
+@media screen and (min-width: 80em) {
+  .InfoContainer {
+    padding: calc(var(--pe-space-6) + 0px);
+  }
+}
+.InfoContainer {
+  position: relative;
+  z-index: 1;
+  overflow: hidden;
+  border-radius: 18px;
+  border: 1px solid var(--pe-color-gray-800);
+}
+.InfoContainer::before, .InfoContainer::after {
+  content: "";
+  display: block;
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  left: 0;
+  top: 0;
+}
+.InfoContainer::before {
+  background: var(--pe-color-gray-675);
+  z-index: -2;
+}
+.InfoContainer::after {
+  background: radial-gradient(circle at 0% 100%, var(--pe-color-gray-800) 0, transparent);
+  opacity: 0.5;
+  z-index: -1;
+}
+.InfoContainer--TranslucentBg::before {
+  opacity: 0.2;
+}
+.InfoContainer--TranslucentBg::after {
+  opacity: 0.3;
+}
+.InfoContainer--Tabs {
+  padding-bottom: calc(var(--pe-space-3) + 0px);
+}
+@media screen and (min-width: 48em) {
+  .InfoContainer--Tabs {
+    padding-bottom: calc(var(--pe-space-4) + 0px);
+  }
+}
+@media screen and (min-width: 62em) {
+  .InfoContainer--Tabs {
+    padding-bottom: calc(var(--pe-space-5) + 0px);
+  }
+}
+@media screen and (min-width: 80em) {
+  .InfoContainer--Tabs {
+    padding-bottom: calc(var(--pe-space-6) + 0px);
+  }
+}
+.InfoContainer--Tabs {
+  padding: 10px 0 24px 0;
+  overflow: hidden;
+}
+.InfoContainer--Tabs .chakra-tabs__tab {
+  font-size: 0.75rem;
+  white-space: nowrap;
+  font-weight: 700;
+  font-family: var(--pe-font-heading);
+  text-transform: uppercase;
+}
+.InfoContainer--Tabs .chakra-tabs__tablist {
+  scroll-behavior: smooth;
+  scrollbar-width: thin;
+  scrollbar-color: var(--pe-color-brand-normal) transparent;
+}
+.InfoContainer--Tabs .chakra-tabs__tablist::-webkit-scrollbar {
+  height: 8px;
+  width: 8px;
+}
+.InfoContainer--Tabs .chakra-tabs__tablist::-webkit-scrollbar-track {
+  background: transparent;
+}
+.InfoContainer--Tabs .chakra-tabs__tablist::-webkit-scrollbar-thumb {
+  background-color: var(--pe-color-brand-normal);
+  border-radius: 8px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+.InfoContainer--Tabs .chakra-tabs__tablist::-webkit-scrollbar-thumb:hover {
+  background-color: var(--pe-color-brand-light);
+}
+.InfoContainer--Tabs .chakra-tabs__tablist {
+  padding-left: calc(var(--pe-space-3) + -8px)  !important;
+}
+@media screen and (min-width: 48em) {
+  .InfoContainer--Tabs .chakra-tabs__tablist {
+    padding-left: calc(var(--pe-space-4) + -8px)  !important;
+  }
+}
+@media screen and (min-width: 62em) {
+  .InfoContainer--Tabs .chakra-tabs__tablist {
+    padding-left: calc(var(--pe-space-5) + -8px)  !important;
+  }
+}
+@media screen and (min-width: 80em) {
+  .InfoContainer--Tabs .chakra-tabs__tablist {
+    padding-left: calc(var(--pe-space-6) + -8px)  !important;
+  }
+}
+.InfoContainer--Tabs .chakra-tabs__tablist {
+  padding-right: calc(var(--pe-space-3) + -8px)  !important;
+}
+@media screen and (min-width: 48em) {
+  .InfoContainer--Tabs .chakra-tabs__tablist {
+    padding-right: calc(var(--pe-space-4) + -8px)  !important;
+  }
+}
+@media screen and (min-width: 62em) {
+  .InfoContainer--Tabs .chakra-tabs__tablist {
+    padding-right: calc(var(--pe-space-5) + -8px)  !important;
+  }
+}
+@media screen and (min-width: 80em) {
+  .InfoContainer--Tabs .chakra-tabs__tablist {
+    padding-right: calc(var(--pe-space-6) + -8px)  !important;
+  }
+}
+.InfoContainer--Tabs .chakra-tabs__tablist {
+  overflow-y: hidden;
+  overflow-x: auto;
+}
+.InfoContainer--Tabs .chakra-tabs__tab-panel {
+  padding-left: calc(var(--pe-space-3) + 0px)  !important;
+}
+@media screen and (min-width: 48em) {
+  .InfoContainer--Tabs .chakra-tabs__tab-panel {
+    padding-left: calc(var(--pe-space-4) + 0px)  !important;
+  }
+}
+@media screen and (min-width: 62em) {
+  .InfoContainer--Tabs .chakra-tabs__tab-panel {
+    padding-left: calc(var(--pe-space-5) + 0px)  !important;
+  }
+}
+@media screen and (min-width: 80em) {
+  .InfoContainer--Tabs .chakra-tabs__tab-panel {
+    padding-left: calc(var(--pe-space-6) + 0px)  !important;
+  }
+}
+.InfoContainer--Tabs .chakra-tabs__tab-panel {
+  padding-right: calc(var(--pe-space-3) + 0px)  !important;
+}
+@media screen and (min-width: 48em) {
+  .InfoContainer--Tabs .chakra-tabs__tab-panel {
+    padding-right: calc(var(--pe-space-4) + 0px)  !important;
+  }
+}
+@media screen and (min-width: 62em) {
+  .InfoContainer--Tabs .chakra-tabs__tab-panel {
+    padding-right: calc(var(--pe-space-5) + 0px)  !important;
+  }
+}
+@media screen and (min-width: 80em) {
+  .InfoContainer--Tabs .chakra-tabs__tab-panel {
+    padding-right: calc(var(--pe-space-6) + 0px)  !important;
+  }
+}
+@media screen and (max-width: 30em) {
+  .InfoContainer--Tabs .chakra-tabs__tablist {
+    padding-left: calc(var(--pe-space-3) + -4px)  !important;
+    padding-right: calc(var(--pe-space-3) + -4px)  !important;
+  }
+}
+@media screen and (max-width: 30em) and (min-width: 48em) {
+  .InfoContainer--Tabs .chakra-tabs__tablist {
+    padding-left: calc(var(--pe-space-4) + -4px)  !important;
+  }
+}
+@media screen and (max-width: 30em) and (min-width: 62em) {
+  .InfoContainer--Tabs .chakra-tabs__tablist {
+    padding-left: calc(var(--pe-space-5) + -4px)  !important;
+  }
+}
+@media screen and (max-width: 30em) and (min-width: 80em) {
+  .InfoContainer--Tabs .chakra-tabs__tablist {
+    padding-left: calc(var(--pe-space-6) + -4px)  !important;
+  }
+}
+@media screen and (max-width: 30em) and (min-width: 48em) {
+  .InfoContainer--Tabs .chakra-tabs__tablist {
+    padding-right: calc(var(--pe-space-4) + -4px)  !important;
+  }
+}
+@media screen and (max-width: 30em) and (min-width: 62em) {
+  .InfoContainer--Tabs .chakra-tabs__tablist {
+    padding-right: calc(var(--pe-space-5) + -4px)  !important;
+  }
+}
+@media screen and (max-width: 30em) and (min-width: 80em) {
+  .InfoContainer--Tabs .chakra-tabs__tablist {
+    padding-right: calc(var(--pe-space-6) + -4px)  !important;
+  }
+}
+@media screen and (max-width: 30em) {
+  .InfoContainer--Tabs .chakra-tabs__tab {
+    padding: 8px 4px;
+  }
+}

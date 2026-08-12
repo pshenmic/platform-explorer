@@ -1,0 +1,114 @@
+.ValueContainer {
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap;
+  border-radius: var(--pe-radius-def);
+  background-color: rgba(var(--pe-color-gray-800-rgb), 0.5);
+  padding: 12px;
+  transition: all 0.1s;
+}
+.ValueContainer--Elipsed {
+  max-width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.ValueContainer--Elipsed .ValueContainer__Value {
+  overflow: hidden;
+}
+.ValueContainer--Red {
+  color: var(--pe-color-red-default);
+  background: rgba(var(--pe-color-red-default-rgb), 0.2);
+}
+.ValueContainer--Green {
+  color: var(--pe-color-green-label);
+  background: rgba(var(--pe-color-green-label-rgb), 0.2);
+}
+.ValueContainer--Emeralds {
+  color: var(--pe-color-green-emeralds);
+  background: rgba(var(--pe-color-green-emeralds-rgb), 0.2);
+}
+.ValueContainer--Blue {
+  color: var(--pe-color-brand-light);
+  background: rgba(var(--pe-color-brand-normal-rgb), 0.2);
+}
+.ValueContainer--Brand {
+  color: #fff;
+  background: var(--pe-color-brand-normal);
+}
+.ValueContainer--LightGray {
+  color: #fff;
+  background: #404E53;
+}
+.ValueContainer--LightGray.ValueContainer--Clickable:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+.ValueContainer--DarkGray {
+  color: #fff;
+  background: var(--pe-color-gray-800);
+}
+.ValueContainer--Gray {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.2);
+}
+.ValueContainer--Orange {
+  color: rgb(244, 154, 88);
+  background: rgba(244, 154, 88, 0.2);
+}
+.ValueContainer--SizeXl {
+  padding: 1.5rem;
+  border-radius: 0.625rem;
+}
+.ValueContainer--SizeLg {
+  padding: 0.438rem 0.75rem;
+  border-radius: 0.688rem;
+}
+.ValueContainer--SizeMd {
+  padding: 0.5rem 0.75rem;
+}
+.ValueContainer--SizeSm {
+  padding: 6px 10px;
+  line-height: 14px;
+  border-radius: 8px;
+}
+.ValueContainer--SizeXs {
+  padding: 4px 6px;
+  line-height: 16px;
+  border-radius: 8px;
+}
+.ValueContainer--SizeXxs {
+  padding: 2px 4px;
+  line-height: 16px;
+  border-radius: 3px;
+}
+@media (hover: hover) and (pointer: fine) {
+  .ValueContainer--Clickable:hover {
+    cursor: pointer;
+    background-color: var(--pe-color-gray-800);
+  }
+}
+.ValueContainer--Clickable:active {
+  transform: translateY(1px);
+  background-color: var(--pe-color-gray-650);
+}
+.ValueContainer--Light {
+  background: rgba(255, 255, 255, 0.1);
+}
+.ValueContainer--Light.ValueContainer--Clickable:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+.ValueContainer--External {
+  background: rgba(var(--pe-color-brand-normal-rgb), 0.2);
+}
+@media (hover: hover) and (pointer: fine) {
+  .ValueContainer--External:hover {
+    background: rgba(var(--pe-color-brand-light-rgb), 0.2);
+  }
+}
+.ValueContainer--External:active {
+  transform: translateY(1px);
+  background: rgba(var(--pe-color-brand-light-rgb), 0.15);
+}
+.ValueContainer__Value {
+  width: 100%;
+}

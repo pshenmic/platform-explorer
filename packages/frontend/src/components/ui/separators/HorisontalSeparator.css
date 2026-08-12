@@ -1,0 +1,15 @@
+.HorisontalSeparator {
+  margin: 24px 0;
+}
+.HorisontalSeparator::before, .HorisontalSeparator::after {
+  content: "";
+  display: block;
+  height: 1px;
+  width: 100%;
+}
+.HorisontalSeparator::after {
+  position: absolute;
+  left: 0;
+  background-color: var(--pe-color-fg-muted);
+  opacity: 0.2;
+}
