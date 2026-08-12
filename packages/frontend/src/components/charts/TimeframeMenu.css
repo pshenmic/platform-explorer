@@ -1,0 +1,75 @@
+.TimeframeMenu {
+  padding: 12px;
+  border-radius: var(--pe-radius-block);
+}
+.TimeframeMenu__ValuesContainer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+.TimeframeMenu__Values {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+}
+.TimeframeMenu__ValueButton {
+  font-size: 0.75rem;
+  height: 28px !important;
+  padding: 3px 12px !important;
+}
+.TimeframeMenu__ValueButton--Active {
+  background-color: var(--pe-color-brand-normal) !important;
+  color: #fff !important;
+}
+.TimeframeMenu__Calendar {
+  width: 100%;
+  margin-top: 24px;
+}
+.TimeframeMenu__Calendar--Stub {
+  position: relative;
+}
+.TimeframeMenu__Calendar--Stub .DateRangePicker {
+  opacity: 0.05;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+.TimeframeMenu__Calendar--Stub::before {
+  content: "";
+  position: absolute;
+  z-index: 20;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  backdrop-filter: blur(2px);
+}
+.TimeframeMenu__Calendar--Stub::after {
+  content: "Coming soon";
+  text-transform: uppercase;
+  font-size: 0.875rem;
+  font-family: var(--pe-font-heading);
+  opacity: 0.8;
+  display: block;
+  position: absolute;
+  z-index: 22;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+@media screen and (max-width: 555px) {
+  .TimeframeMenu__Values {
+    flex-wrap: wrap;
+  }
+  .TimeframeMenu__ValueButton {
+    font-size: 0.6rem !important;
+    height: 24px !important;
+  }
+}
+@media screen and (max-width: 350px) {
+  .TimeframeMenu__ValueButton {
+    font-size: 0.5rem !important;
+    height: 22px !important;
+  }
+}

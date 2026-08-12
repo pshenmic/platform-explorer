@@ -6,7 +6,7 @@ import { DateRangePicker as DateRangePickerJs } from '../calendar'
 import { defaultIntervalsCount } from './config'
 import type { ChartConfig, TimespanValue } from './types'
 import type { WithClassName } from '../../types/common'
-import './TimeframeMenu.scss'
+import './TimeframeMenu.css'
 
 const DateRangePicker = DateRangePickerJs as ComponentType<{
   disableFutureDates?: boolean

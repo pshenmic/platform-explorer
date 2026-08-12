@@ -1,0 +1,128 @@
+@keyframes loading-process {
+  from {
+    opacity: 0;
+    left: -100%;
+    z-index: 6;
+  }
+  50% {
+    opacity: 0.25;
+  }
+  to {
+    z-index: 6;
+    left: 100%;
+  }
+}
+@keyframes LoadingContainer {
+  from {
+    overflow: hidden;
+  }
+  to {
+    overflow: hidden;
+  }
+}
+.ChartContainer.loading {
+  overflow: hidden;
+  position: relative;
+  animation: 1s LoadingContainer infinite;
+}
+.ChartContainer.loading::before {
+  z-index: 5 !important;
+  opacity: 1 !important;
+}
+.ChartContainer.loading::after {
+  animation: 1s loading-process infinite;
+  z-index: 6;
+}
+.ChartContainer.loading::before, .ChartContainer.loading::after {
+  content: "";
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  z-index: -1;
+}
+.ChartContainer.loading::before {
+  background-color: var(--pe-color-gray-900);
+}
+.ChartContainer.loading::after {
+  background: linear-gradient(90deg, transparent 0%, rgb(14, 117, 181) 50%, transparent 100%) !important;
+  width: 100%;
+  height: 100%;
+}
+
+.Chart {
+  visibility: hidden;
+  opacity: 0;
+  transition: all 1s;
+  margin: 0 -10px !important;
+  padding: 0 10px !important;
+  overflow-x: clip;
+}
+.loading .Chart {
+  opacity: 0;
+}
+.Chart.loaded {
+  visibility: visible;
+  opacity: 1;
+}
+.Chart__Tooltip {
+  font-size: 0.875rem;
+  font-family: var(--pe-font-body);
+}
+.Chart__FocusPoint {
+  display: none;
+  fill: #fff;
+  stroke: var(--pe-color-brand-normal);
+  stroke-width: 2px;
+}
+.Chart__Point {
+  fill: var(--pe-color-brand-normal);
+  opacity: 0;
+}
+.Chart .grid line {
+  stroke: #ccc;
+  stroke-opacity: 0.03;
+}
+.Chart .grid .tick:nth-child(even) line {
+  stroke-opacity: 0.1;
+}
+.Chart .grid path {
+  display: none;
+}
+
+.ChartTooltip__InfoLine--Blocks {
+  opacity: 0.7;
+}
+.ChartTooltip__InfoLine--Bold {
+  font-weight: bold;
+  font-size: 1rem;
+}
+.ChartTooltip__InfoLine--Tiny {
+  font-size: 0.813rem;
+}
+
+.Axis {
+  font-family: var(--pe-font-heading);
+  font-weight: 700;
+  font-size: 0.75rem;
+}
+.Axis .domain {
+  opacity: 0;
+}
+.Axis__Label {
+  font-size: 0.75rem;
+  opacity: 0.5;
+}
+.Axis__TickContainer {
+  font-size: 0.75rem;
+}
+.Axis--X .Axis__TickContainer {
+  font-weight: normal;
+  opacity: 0.5;
+}
+.Axis__Line {
+  opacity: 0.5;
+  stroke-width: 1px;
+  stroke: #fff;
+}
