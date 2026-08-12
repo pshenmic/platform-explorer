@@ -1,0 +1,178 @@
+/* BEM: SimpleList / SimpleListItem — plain CSS + design tokens (no Sass mixins) */
+
+.SimpleList__ColumnTitles {
+  display: grid;
+  padding: var(--pe-list-row-pad-y) var(--pe-list-row-pad-x);
+  border-radius: var(--pe-list-row-radius);
+  background-color: var(--pe-color-gray-800);
+  margin-bottom: 8px;
+  font-family: var(--pe-font-heading);
+  font-weight: var(--pe-font-weight-bold);
+  font-size: var(--pe-text-sm);
+  text-transform: uppercase;
+  color: var(--pe-color-fg);
+  justify-content: space-between;
+}
+
+.SimpleList__ColumnTitle {
+  word-wrap: break-word;
+  overflow-wrap: anywhere;
+  letter-spacing: 0.4px;
+}
+
+/* ex-DefButton */
+.SimpleList__ShowMoreButton {
+  display: block;
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  font-family: var(--pe-font-heading);
+  font-size: var(--pe-text-sm);
+  font-weight: var(--pe-font-weight-bold);
+  text-transform: uppercase;
+  padding: 12px;
+  border-radius: var(--pe-radius-def);
+  overflow: hidden;
+  background-color: transparent;
+  transition: all 0.5s;
+  width: 100%;
+  margin-top: 8px;
+}
+
+.SimpleList__ShowMoreButton::before,
+.SimpleList__ShowMoreButton::after {
+  content: '';
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+}
+
+.SimpleList__ShowMoreButton::before {
+  background-color: var(--pe-color-gray-800);
+  width: 100%;
+  z-index: -1;
+  transition: all 1s;
+}
+
+.SimpleList__ShowMoreButton::after {
+  width: 300px;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0),
+    rgba(255, 255, 255, 0.1),
+    rgba(255, 255, 255, 0)
+  );
+  transform: translateX(-100%);
+  opacity: 0;
+  transition: all 0.5s;
+}
+
+@keyframes SimpleList-flash {
+  from {
+    left: 0;
+    transform: translateX(-100%);
+  }
+
+  to {
+    left: 100%;
+    transform: translateX(0);
+  }
+}
+
+.SimpleList__ShowMoreButton:hover,
+.SimpleList__ShowMoreButton:focus-within {
+  background-color: var(--pe-color-brand-normal);
+}
+
+.SimpleList__ShowMoreButton:hover::before,
+.SimpleList__ShowMoreButton:focus-within::before {
+  opacity: 0.85;
+}
+
+.SimpleList__ShowMoreButton:hover::after,
+.SimpleList__ShowMoreButton:focus-within::after {
+  animation: SimpleList-flash 1s backwards;
+  pointer-events: none;
+  opacity: 1;
+}
+
+/* ex-DefListItem */
+.SimpleListItem {
+  display: block;
+  width: 100%;
+  text-decoration: none;
+  padding: var(--pe-list-row-pad-y) var(--pe-list-row-pad-x);
+  margin-bottom: 8px;
+  line-height: var(--pe-leading-list);
+  color: var(--pe-color-gray-100);
+  font-family: var(--pe-font-mono);
+  font-size: 12pt;
+  border-radius: var(--pe-list-row-radius);
+  border: 1px solid var(--pe-color-gray-750);
+  background-color: rgba(var(--pe-color-gray-800-rgb), 0.5);
+  transition: all 0.1s;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .SimpleListItem:hover {
+    background-color: var(--pe-color-gray-750);
+    text-decoration: none;
+    cursor: pointer;
+  }
+}
+
+.SimpleListItem:active {
+  transform: translateY(1px);
+  box-shadow: 0 0 9999px 0 rgba(0, 0, 0, 0.25) inset;
+}
+
+.SimpleListItem:last-child {
+  margin-bottom: 0;
+}
+
+.SimpleListItem__Title {
+  word-wrap: break-word;
+  overflow-wrap: anywhere;
+}
+
+.SimpleListItem__Title--Mono {
+  font-family: var(--pe-font-mono);
+  color: var(--pe-color-fg-muted);
+}
+
+.SimpleListItem__ColumnsContainer {
+  display: flex;
+  justify-content: space-between;
+}
+
+.SimpleListItem__Column {
+  max-width: 100%;
+  word-wrap: break-word;
+  overflow-wrap: anywhere;
+  margin-right: 16px;
+  display: flex;
+  align-items: center;
+}
+
+.SimpleListItem__Column:last-child {
+  overflow-wrap: normal;
+  margin-right: 0;
+}
+
+.SimpleListItem__Column--Mono {
+  font-family: var(--pe-font-mono);
+  font-size: var(--pe-text-sm);
+}
+
+.SimpleListItem__Column--Ellipsis,
+.SimpleListItem__Column--Ellipsis span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.SimpleListItem__Column--Dim {
+  color: var(--pe-color-fg-muted);
+}
