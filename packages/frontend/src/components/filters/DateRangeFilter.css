@@ -1,0 +1,64 @@
+.DateRangeFilter {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  min-width: 650px;
+}
+.DateRangeFilter__ValuesContainer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+.DateRangeFilter__ValuesTitle {
+  font-size: 0.688rem;
+  font-family: var(--pe-font-mono);
+  opacity: 0.5;
+}
+.DateRangeFilter__Values {
+  display: flex;
+  gap: 0.5rem;
+  margin-left: auto;
+}
+.MobileFilterMenu .DateRangeFilter {
+  min-width: unset !important;
+  width: 100%;
+}
+@media screen and (max-width: 55em) {
+  .DateRangeFilter__CalendarTitle, .DateRangeFilter__ValuesTitle {
+    display: none;
+  }
+  .DateRangeFilter__ValueButton--Submit {
+    margin-left: auto;
+  }
+  .DateRangeFilter__Values {
+    width: 100%;
+    flex-wrap: wrap;
+  }
+  .MobileFilterMenu .DateRangeFilter__CalendarTitle, .MobileFilterMenu .DateRangeFilter__ValuesTitle {
+    display: block;
+  }
+  .MobileFilterMenu .DateRangeFilter__Values {
+    width: auto;
+    flex-wrap: nowrap;
+  }
+  .MobileFilterMenu .DateRangeFilter__ValueButton--Submit {
+    margin-left: unset;
+  }
+}
+@media screen and (max-width: 30em) {
+  .MobileFilterMenu .DateRangeFilter__ValuesContainer {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .MobileFilterMenu .DateRangeFilter__Values {
+    width: 100%;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+}
+@media screen and (max-width: 62em) {
+  .DateRangeFilter {
+    min-width: 500px;
+  }
+}

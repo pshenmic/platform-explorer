@@ -1,0 +1,40 @@
+.SearchFilter {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  min-width: 25rem;
+}
+.SearchFilter__InputTitle {
+  font-family: var(--pe-font-mono);
+  font-size: 0.75rem;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.5);
+}
+.SearchFilter__ResultsContainer {
+  max-height: 300px;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+.SearchFilter__SearchContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.MobileFilterMenu .SearchFilter {
+  width: 100%;
+  min-width: 0;
+}
+.MobileFilterMenu .SearchFilter__Title {
+  font-family: var(--pe-font-heading);
+  font-weight: 700;
+  font-size: 0.875rem;
+}
+.MobileFilterMenu .SearchFilter input {
+  min-height: 3rem;
+  padding: 0.75rem 1rem;
+}
+.MobileFilterMenu .SearchFilter .chakra-input__right-element {
+  top: 50%;
+  transform: translateY(-50%);
+  right: 4px;
+}

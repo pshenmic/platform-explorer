@@ -4,8 +4,8 @@ import { Button } from '@chakra-ui/react'
 import { defaultChartConfig } from '../charts/config'
 import type { ChartConfig, TimespanValue } from '../charts/types'
 import type { DateRangeFilterValue } from './types'
-import './DateRangeFilter.scss'
-import './RangeFilter.scss'
+import './DateRangeFilter.css'
+import './RangeFilter.css'
 
 type CalendarRange = [Date | null, Date | null]
 

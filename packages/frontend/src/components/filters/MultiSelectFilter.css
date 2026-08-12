@@ -1,0 +1,57 @@
+.MultiSelectFilter {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+.MultiSelectFilter__List {
+  margin: -0.75em;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  width: fit-content;
+  max-height: 380px;
+  overflow-y: auto;
+  scroll-behavior: smooth;
+  scrollbar-width: thin;
+  scrollbar-color: var(--pe-color-brand-normal) transparent;
+}
+.MultiSelectFilter__List::-webkit-scrollbar {
+  height: 8px;
+  width: 8px;
+}
+.MultiSelectFilter__List::-webkit-scrollbar-track {
+  background: transparent;
+}
+.MultiSelectFilter__List::-webkit-scrollbar-thumb {
+  background-color: var(--pe-color-brand-normal);
+  border-radius: 8px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+.MultiSelectFilter__List::-webkit-scrollbar-thumb:hover {
+  background-color: var(--pe-color-brand-light);
+}
+.MultiSelectFilter__Item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  cursor: pointer;
+  padding: 0.5rem;
+  margin: 0;
+  border-radius: var(--pe-radius-def);
+  transition: background-color var(--pe-transition-def);
+}
+.MultiSelectFilter__Item:hover {
+  cursor: pointer;
+  color: #FFFFFF;
+  background: var(--pe-color-gray-800);
+}
+.MultiSelectFilter__Item:active {
+  background-color: var(--pe-color-gray-700) !important;
+}
+.MobileFilterMenu .MultiSelectFilter__ItemCheckbox {
+  order: 2;
+}
+.MobileFilterMenu .MultiSelectFilter__ItemTitle {
+  flex-grow: 1;
+}

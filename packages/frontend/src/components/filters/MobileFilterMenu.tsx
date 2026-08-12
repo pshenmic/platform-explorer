@@ -4,7 +4,7 @@ import { ChevronIcon } from '../ui/icons'
 import { FilterValueTag } from './FilterValueTag'
 import { SubmitButton } from '../ui/forms'
 import type { FilterMenuItem } from './types'
-import './MobileFilterMenu.scss'
+import './MobileFilterMenu.css'
 
 interface MobileFilterMenuProps {
   menuData?: FilterMenuItem[]

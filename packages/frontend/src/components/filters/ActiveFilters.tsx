@@ -2,7 +2,7 @@ import type { MouseEvent, ReactNode } from 'react'
 import { Button } from '@chakra-ui/react'
 import { CloseIcon } from '../ui/icons'
 import type { FilterState, FilterStateValue } from './types'
-import './ActiveFilters.scss'
+import './ActiveFilters.css'
 
 interface ActiveFiltersProps {
   filters: FilterState

@@ -1,0 +1,19 @@
+.FilterGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+.FilterGroup__Title {
+  font-family: var(--pe-font-heading);
+  font-weight: 700;
+  color: #fff;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 0.4px;
+}
+.FilterGroup__Content {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1.25rem;
+}

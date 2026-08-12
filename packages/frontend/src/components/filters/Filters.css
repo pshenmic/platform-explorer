@@ -1,0 +1,22 @@
+.Filters__ButtonsContainer, .Filters__ControlButtons {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+.Filters__Button {
+  display: flex !important;
+  gap: 0.5rem;
+  font-weight: 400 !important;
+  text-transform: capitalize !important;
+}
+.Filters__Button--ToggleFilters svg {
+  width: 0.625rem;
+  height: 0.625rem;
+}
+.Filters--Mobile .Filters__ButtonsContainer {
+  flex-direction: column;
+}
+.Filters--Mobile .Filters__ControlButtons {
+  width: 100%;
+  justify-content: space-between;
+}

@@ -1,0 +1,29 @@
+.RangeFilter {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+.RangeFilter__InputContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.RangeFilter__InputTitle {
+  font-family: var(--pe-font-mono);
+  font-size: 0.75rem;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.5);
+}
+.MobileFilterMenu .RangeFilter {
+  width: 100%;
+  gap: 1rem;
+}
+.MobileFilterMenu .RangeFilter__InputTitle {
+  font-family: var(--pe-font-heading);
+  font-weight: 700;
+  font-size: 0.875rem;
+}
+.MobileFilterMenu .RangeFilter__Input {
+  min-height: 3rem;
+  padding: 0.75rem 1rem;
+}

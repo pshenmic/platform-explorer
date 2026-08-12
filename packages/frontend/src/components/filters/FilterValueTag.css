@@ -1,0 +1,18 @@
+.FilterValueTag {
+  white-space: nowrap;
+  overflow: hidden;
+  max-width: 100%;
+  font-family: var(--pe-font-mono);
+  font-size: 0.75rem;
+  color: #fff;
+  font-weight: 400;
+  text-transform: capitalize;
+}
+.FilterValueTag--Multiselect {
+  display: flex;
+  gap: 0.5rem;
+}
+.FilterValueTag__MultipleContainer {
+  display: flex;
+  gap: 4px;
+}

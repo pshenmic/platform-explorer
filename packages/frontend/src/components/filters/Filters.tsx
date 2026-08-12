@@ -21,7 +21,7 @@ import type {
 } from './types'
 import type { WithClassName } from '../../types/common'
 
-import './Filters.scss'
+import './Filters.css'
 
 interface FiltersProps extends WithClassName {
   filtersConfig: FiltersConfig
