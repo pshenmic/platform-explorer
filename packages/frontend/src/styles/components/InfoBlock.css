@@ -1,0 +1,118 @@
+.InfoBlock {
+  backdrop-filter: blur(44px);
+  border-radius: var(--pe-radius-block);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(24, 31, 34, 0.2);
+  box-shadow: 2px 2px var(--pe-color-brand-normal);
+  position: relative;
+  z-index: 1;
+  padding: 20px 32px 32px 32px !important;
+}
+.InfoBlock--NoBorder {
+  box-shadow: none;
+}
+.InfoBlock--Gradient {
+  overflow: hidden;
+  background-color: transparent;
+  border-radius: var(--pe-radius-block);
+  padding: 20px 24px !important;
+}
+.InfoBlock--Gradient::before {
+  content: "";
+  position: absolute;
+  z-index: -2;
+  display: block;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  background-color: #181F22;
+  opacity: 0.2;
+}
+.InfoBlock--Gradient::after {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  display: block;
+  width: 500px;
+  height: 500px;
+  min-width: 100%;
+  min-height: 100%;
+  top: 0;
+  left: 0;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(var(--pe-color-brand-normal), transparent 50%);
+  opacity: 0.2;
+}
+.InfoBlock--Green {
+  backdrop-filter: blur(44px);
+  border-radius: var(--pe-radius-block);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(24, 31, 34, 0.2);
+  box-shadow: 2px 2px var(--pe-color-green-default);
+}
+.InfoBlock--Red {
+  backdrop-filter: blur(44px);
+  border-radius: var(--pe-radius-block);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(24, 31, 34, 0.2);
+  box-shadow: 2px 2px var(--pe-color-red-default);
+}
+.InfoBlock--Gradient.InfoBlock--Green::after {
+  background: radial-gradient(var(--pe-color-green-default), transparent 50%);
+}
+.InfoBlock--Gradient.InfoBlock--Red::after {
+  background: radial-gradient(var(--pe-color-red-default), transparent 50%);
+}
+.InfoBlock__Title {
+  background-color: var(--pe-color-brand-normal);
+  font-size: 0.875rem !important;
+  width: max-content;
+  padding: 12px 20px;
+  border-radius: var(--pe-radius-block) var(--pe-radius-block) var(--pe-radius-block) 0;
+  position: relative;
+  left: -32px;
+  top: -20px;
+  margin: 0;
+}
+.InfoBlock__Head {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px 12px;
+  margin: -20px 0 14px 0;
+}
+.InfoBlock__Head .InfoBlock__Title {
+  position: static;
+  margin-left: -32px;
+}
+.InfoBlock__HeadLeft {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  min-width: 0;
+}
+.InfoBlock__HeadSlot {
+  margin-left: auto;
+}
+@media screen and (max-width: 48em) {
+  .InfoBlock__HeadSlot {
+    margin-left: 0;
+    width: 100%;
+  }
+}
+@media screen and (max-width: 62em) {
+  .InfoBlock {
+    padding: 16px !important;
+  }
+  .InfoBlock__Title {
+    left: -16px;
+    top: -16px;
+  }
+  .InfoBlock__Head {
+    margin: -16px 0 14px 0;
+  }
+  .InfoBlock__Head .InfoBlock__Title {
+    margin-left: -16px;
+  }
+}

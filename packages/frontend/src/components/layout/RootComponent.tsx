@@ -8,7 +8,7 @@ import Footer from './footer'
 import Background from './Background'
 
 import '../../styles/tokens/index.css'
-import '../../styles/theme.scss'
+import '../../styles/theme.css'
 
 interface RootComponentProps {
   children?: ReactNode

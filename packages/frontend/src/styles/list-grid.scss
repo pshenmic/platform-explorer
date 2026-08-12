@@ -1,4 +1,0 @@
-// Shared list grid shell — safe to @use from feature `_variables.scss` without
-// pulling the full mixins barrel (avoids circular loads with mixins.scss).
-
-@forward 'mixins/list-grid';

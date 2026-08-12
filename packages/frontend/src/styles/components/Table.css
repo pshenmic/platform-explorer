@@ -1,0 +1,38 @@
+.Table a {
+  position: relative;
+  display: inline-block;
+  margin-bottom: -1px;
+  border-bottom: 1px solid;
+}
+.Table a:hover {
+  color: var(--pe-color-gray-200);
+  border-bottom: none;
+}
+.Table tr:last-child td {
+  border-bottom: none;
+}
+.Table__Cell--BreakWord {
+  white-space: break-spaces;
+  word-break: break-all;
+}
+.Table__Cell--Mono {
+  font-family: var(--pe-font-mono);
+}
+
+.TableHeader--Name {
+  box-sizing: content-box;
+  min-height: 32px;
+}
+.TableHeader--Name .TableHeader__Content {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+.TableHeader__Avatar {
+  margin-left: 8px;
+  width: 32px;
+  height: 32px;
+}
+.TableHeader__SortDirection {
+  display: inline-block;
+}

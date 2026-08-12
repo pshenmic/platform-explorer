@@ -28,7 +28,7 @@
   --pe-leading-normal: 1.45;
   --pe-leading-list: 24px;
 
-  /* Breakpoints — match Chakra / styles/breakpoints.scss (docs + JS; media often needs literal) */
+  /* Breakpoints — match Chakra theme (sm…3xl; media often needs literal em) */
   --pe-bp-sm: 30em;
   --pe-bp-md: 48em;
   --pe-bp-lg: 62em;
