@@ -4,7 +4,7 @@
   max-width: 100%;
   font-family: var(--pe-font-mono);
   font-size: 0.75rem;
-  color: #fff;
+  color: var(--pe-color-fg);
   font-weight: 400;
   text-transform: capitalize;
 }

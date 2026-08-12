@@ -13,5 +13,5 @@
   display: inline-block;
 }
 .EpochTooltip__Value {
-  color: #fff;
+  color: var(--pe-color-fg);
 }

@@ -43,7 +43,7 @@
 }
 .MultiSelectFilter__Item:hover {
   cursor: pointer;
-  color: #FFFFFF;
+  color: var(--pe-color-fg);
   background: var(--pe-color-gray-800);
 }
 .MultiSelectFilter__Item:active {

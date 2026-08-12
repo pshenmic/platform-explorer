@@ -45,7 +45,7 @@
 .IdentitiesListItem--Timestamp, .IdentitiesListItem__Column--Timestamp {
   font-family: var(--pe-font-mono);
   white-space: nowrap;
-  color: #fff;
+  color: var(--pe-color-fg);
 }
 .IdentitiesListItem--Timestamp,
 .IdentitiesListItem--Timestamp .DateBlock__Date, .IdentitiesListItem__Column--Timestamp,
@@ -116,7 +116,7 @@
 .IdentitiesListItem__Column--Balance, .IdentitiesListItem__Column--Txs, .IdentitiesListItem__Column--Documents, .IdentitiesListItem__Column--Contracts {
   font-family: var(--pe-font-mono);
   font-size: 0.75rem;
-  color: var(--chakra-colors-white-50);
+  color: var(--pe-color-white-50);
 }
 .IdentitiesListItem__IdentifierContainer {
   display: flex;
@@ -168,6 +168,6 @@
   bottom: 8px;
   width: 3px;
   border-radius: 3px;
-  background: #f49a58;
+  background: var(--pe-color-orange-default);
   opacity: 0.75;
 }

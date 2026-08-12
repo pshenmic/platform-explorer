@@ -82,7 +82,7 @@
 }
 .BlockDigestCard__InfoIcon:hover {
   cursor: pointer;
-  color: #FFF;
+  color: var(--pe-color-fg);
 }
 .BlockDigestCard__InfoLine--Validator .InfoLine__Value {
   max-width: 20rem;

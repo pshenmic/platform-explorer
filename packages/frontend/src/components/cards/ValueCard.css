@@ -2,7 +2,7 @@
   padding: 8px 12px;
   border-radius: var(--pe-radius-def);
   background-color: rgba(var(--pe-color-gray-800-rgb), 0.5);
-  border: 1px solid var(--chakra-colors-gray-550);
+  border: 1px solid var(--pe-color-gray-550);
   display: flex;
   align-items: center;
   transition: all var(--pe-transition-def);
@@ -130,7 +130,7 @@ Tr:nth-child(10n) .ValueCard--Loading::after {
   color: rgba(255, 255, 255, 0.85);
 }
 .ValueCard--Green .CopyButton:hover svg {
-  color: #fff;
+  color: var(--pe-color-fg);
 }
 .ValueCard--Green.ValueCard--Clickable:hover {
   background: rgba(var(--pe-color-green-default-rgb), 0.3);

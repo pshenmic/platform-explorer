@@ -25,7 +25,7 @@
   height: 28px !important;
 }
 .TimeframeSelector__Button--Active {
-  background-color: #fff !important;
+  background-color: var(--pe-color-fg) !important;
   color: var(--pe-color-brand-normal) !important;
 }
 @media screen and (max-width: 555px) {

@@ -45,7 +45,7 @@
 .SearchResultsListItem--Timestamp, .SearchResultsListItem__Column--Timestamp {
   font-family: var(--pe-font-mono);
   white-space: nowrap;
-  color: #fff;
+  color: var(--pe-color-fg);
 }
 .SearchResultsListItem--Timestamp,
 .SearchResultsListItem--Timestamp .DateBlock__Date, .SearchResultsListItem__Column--Timestamp,
@@ -101,7 +101,7 @@
 .SearchResultsListItem__Column--Timestamp {
   justify-content: flex-end;
   white-space: nowrap;
-  color: #fff;
+  color: var(--pe-color-fg);
 }
 .SearchResultsListItem__Column--Arrow {
   justify-content: flex-end;

@@ -12,7 +12,7 @@ body > .react-select__menu-portal > .react-select__control {
   gap: 4px;
   border: none;
   border-radius: var(--pe-radius-def);
-  color: #fff;
+  color: var(--pe-color-fg);
   background-color: var(--pe-color-brand-normal);
   width: max-content;
   min-height: 0;
@@ -67,20 +67,20 @@ body > .react-select__menu-portal > .react-select__dropdown-indicator svg {
   height: 16px;
   display: block;
   flex-shrink: 0;
-  fill: #fff;
-  stroke: #fff;
+  fill: var(--pe-color-fg);
+  stroke: var(--pe-color-fg);
 }
 .Select .react-select__input-container,
 body > .react-select__input-container,
 body > .react-select__menu-portal > .react-select__input-container {
-  color: #fff;
+  color: var(--pe-color-fg);
 }
 .Select .react-select__placeholder, .Select .react-select__single-value,
 body > .react-select__placeholder,
 body > .react-select__single-value,
 body > .react-select__menu-portal > .react-select__placeholder,
 body > .react-select__menu-portal > .react-select__single-value {
-  color: #fff;
+  color: var(--pe-color-fg);
   font-size: 0.75rem;
   font-weight: 500;
   font-family: var(--pe-font-heading);
@@ -89,7 +89,7 @@ body > .react-select__menu-portal > .react-select__single-value {
 body > .react-select__menu,
 body > .react-select__menu-portal > .react-select__menu {
   z-index: 1000;
-  background-color: #fff;
+  background-color: var(--pe-color-fg);
   color: var(--pe-color-brand-normal);
   border-radius: var(--pe-radius-def);
   overflow: hidden;
@@ -140,7 +140,7 @@ body > .react-select__menu-portal > .react-select__option:hover {
 body > .react-select__option--is-selected,
 body > .react-select__menu-portal > .react-select__option--is-selected {
   background-color: var(--pe-color-brand-light) !important;
-  color: #fff !important;
+  color: var(--pe-color-fg) !important;
 }
 .Select .react-select__option--is-selected:hover,
 body > .react-select__option--is-selected:hover,

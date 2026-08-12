@@ -34,5 +34,5 @@ input:checked ~ .Switcher__OptionTitle::after {
 }
 .Switcher__OptionTitle:hover {
   cursor: pointer;
-  color: var(--chakra-colors-gray-500);
+  color: var(--pe-color-gray-500);
 }

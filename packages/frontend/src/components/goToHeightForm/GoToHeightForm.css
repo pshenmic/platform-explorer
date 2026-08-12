@@ -19,7 +19,7 @@
   margin-right: 6px;
   height: 29px;
   box-sizing: border-box;
-  border: 1px solid var(--chakra-colors-whiteAlpha-400);
+  border: 1px solid var(--pe-color-white-alpha-400);
   border-radius: 5px;
   -webkit-appearance: none;
   -moz-appearance: textfield;
@@ -28,15 +28,15 @@
   -webkit-appearance: none;
 }
 .GoToHeightForm__Input--Incorrect {
-  border: 1px solid var(--chakra-colors-whiteAlpha-200);
+  border: 1px solid var(--pe-color-white-alpha-200);
   color: gray;
 }
 .GoToHeightForm__Button {
   background-color: transparent;
-  border: 1px solid var(--chakra-colors-whiteAlpha-400);
+  border: 1px solid var(--pe-color-white-alpha-400);
   border-radius: 5px;
   height: 29px;
-  color: #fff;
+  color: var(--pe-color-fg);
   padding: 0 4px;
   font-family: var(--pe-font-mono);
 }

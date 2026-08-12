@@ -74,7 +74,7 @@
 .DocumentsList__ColumnTitles--Light {
   background: transparent !important;
   font-weight: 500 !important;
-  color: #fff !important;
+  color: var(--pe-color-fg) !important;
   text-transform: none !important;
 }
 .DocumentsList__ColumnTitles {

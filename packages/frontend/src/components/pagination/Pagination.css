@@ -25,7 +25,7 @@
   margin: 0 6px;
   background-color: rgba(var(--pe-color-gray-800-rgb), 0.5);
   border-radius: var(--pe-radius-def);
-  border: 1px solid #343F44;
+  border: 1px solid var(--pe-color-calendar-border);
 }
 .PageItem--Next svg, .PageItem--Previous svg {
   width: 6px;

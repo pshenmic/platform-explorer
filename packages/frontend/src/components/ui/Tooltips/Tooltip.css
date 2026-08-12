@@ -8,7 +8,7 @@
   max-width: 100%;
 }
 .Tooltip__Title {
-  color: #fff;
+  color: var(--pe-color-fg);
   font-weight: 800;
   font-size: 0.75rem;
   white-space: normal;
@@ -19,7 +19,7 @@
   text-transform: uppercase;
 }
 .Tooltip__Content {
-  color: #fff;
+  color: var(--pe-color-fg);
   font-size: 0.688rem;
   white-space: normal;
   word-break: break-word;

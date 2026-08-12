@@ -45,21 +45,21 @@
 .MenuLevel__Item:hover {
   background-color: var(--pe-color-gray-800);
   cursor: pointer;
-  color: #FFFFFF;
+  color: var(--pe-color-fg);
 }
 .MenuLevel__Item:active {
   background-color: var(--pe-color-gray-700) !important;
 }
 .MenuLevel__Item--Active {
-  color: #fff;
+  color: var(--pe-color-fg);
   background-color: var(--pe-color-gray-800);
 }
 .MenuLevel__Item--Active .MenuLevel__ItemIcon {
-  color: #fff;
+  color: var(--pe-color-fg);
   background-color: rgba(255, 255, 255, 0.25);
 }
 .MenuLevel__Item:hover .MenuLevel__ItemIcon {
-  color: #fff;
+  color: var(--pe-color-fg);
   background-color: rgba(255, 255, 255, 0.25);
 }
 .MenuLevel__ItemIcon {
@@ -88,5 +88,5 @@
   transition: background-color var(--pe-transition-def);
 }
 .MenuLevel__Item--Submenu:hover:after {
-  background-color: rgba(var(--chakra-colors-whiteAlpha-300-rgb), 0.3);
+  background-color: rgba(var(--pe-color-white-alpha-300-rgb), 0.3);
 }

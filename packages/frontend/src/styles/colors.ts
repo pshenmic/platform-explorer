@@ -87,7 +87,7 @@ export const badgeColors = {
   yellow: {
     bg: 'rgba(244, 228, 88, 0.2)',
     bgHover: '',
-    text: '#F4E458'
+    text: 'var(--pe-color-yellow-badge)'
   },
   orange: {
     bg: 'rgba(var(--pe-color-orange-default-rgb), .2)',

@@ -43,8 +43,8 @@
   margin-top: 10px;
 }
 .DateRangePicker__MonthButton, .DateRangePicker__Arrow {
-  color: #fff;
-  border: 1px solid #343F44;
+  color: var(--pe-color-fg);
+  border: 1px solid var(--pe-color-calendar-border);
   border-radius: 10px;
   background-color: rgba(var(--pe-color-gray-800-rgb), 0.3);
   cursor: pointer;
@@ -67,7 +67,7 @@
   color: var(--pe-color-gray-100);
 }
 .DateRangePicker__MonthButton--Active {
-  color: #fff;
+  color: var(--pe-color-fg);
   background-color: var(--pe-color-brand-normal);
 }
 .DateRangePicker__MonthButton--Active:hover {
@@ -186,7 +186,7 @@
 .DateRangePicker .react-calendar__tile--rangeStart, .DateRangePicker .react-calendar__tile--rangeEnd {
   transition: border-radius 0.2s;
   background-color: var(--pe-color-brand-normal) !important;
-  color: #fff;
+  color: var(--pe-color-fg);
 }
 .DateRangePicker .react-calendar__tile--rangeStart:hover, .DateRangePicker .react-calendar__tile--rangeEnd:hover {
   background-color: var(--pe-color-brand-light) !important;
@@ -216,7 +216,7 @@
   text-decoration: none;
 }
 .DateRangePicker .react-calendar__month-view__days__day--weekend:not(.react-calendar__month-view__days__day--neighboringMonth) {
-  color: #fff;
+  color: var(--pe-color-fg);
 }
 .DateRangePicker:not(.DateRangePicker--SingleCalendar) .react-calendar__month-view__days__day--neighboringMonth.react-calendar__tile--rangeEnd, .DateRangePicker:not(.DateRangePicker--SingleCalendar) .react-calendar__month-view__days__day--neighboringMonth.react-calendar__tile--rangeStart {
   background: rgba(var(--pe-color-gray-800-rgb), 0.5) !important;

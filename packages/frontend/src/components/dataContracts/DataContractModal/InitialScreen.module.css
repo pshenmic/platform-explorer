@@ -27,7 +27,7 @@
   background-color: var(--pe-color-gray-700);
 }
 .root .controls .card:active {
-  background-color: var(--chakra-colors-gray-600);
+  background-color: var(--pe-color-gray-600);
 }
 .root .controls .card .name {
   width: fit-content;

@@ -8,7 +8,7 @@
 }
 .Advanced__Subsection {
   padding-bottom: 8px;
-  border-bottom: 1px solid var(--chakra-colors-gray-700);
+  border-bottom: 1px solid var(--pe-color-gray-700);
 }
 .Advanced__Subsection:last-child {
   border-bottom: 0;
@@ -17,7 +17,7 @@
 .Advanced__GroupHeader {
   margin-top: 8px;
   padding-top: 8px;
-  border-top: 1px solid var(--chakra-colors-gray-700);
+  border-top: 1px solid var(--pe-color-gray-700);
 }
 .Advanced__Row {
   padding: 4px 0;

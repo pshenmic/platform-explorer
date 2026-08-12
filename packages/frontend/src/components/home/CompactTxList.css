@@ -5,7 +5,7 @@
 }
 .CompactTx__Empty {
   padding: 14px 0;
-  color: var(--chakra-colors-gray-500);
+  color: var(--pe-color-gray-500);
   font-family: var(--pe-font-mono);
   font-size: 0.8125rem;
 }
@@ -24,7 +24,7 @@
   font-size: 0.6875rem;
   text-transform: uppercase;
   letter-spacing: 0.04em;
-  color: #fff;
+  color: var(--pe-color-fg);
   white-space: nowrap;
   min-width: 0;
 }
@@ -158,7 +158,7 @@
 .CompactTx__Time {
   font-family: var(--pe-font-mono);
   font-size: 0.6875rem;
-  color: var(--chakra-colors-gray-500);
+  color: var(--pe-color-gray-500);
   white-space: nowrap;
   text-align: right;
   min-width: 5ch;

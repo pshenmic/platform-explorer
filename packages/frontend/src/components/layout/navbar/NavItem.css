@@ -34,7 +34,7 @@
 }
 @media (pointer: fine), screen and (min-width: 62em) {
   .NavItem:hover {
-    color: #fff;
+    color: var(--pe-color-fg);
   }
 }
 @media screen and (max-width: calc(62em - 1px)) {
@@ -61,7 +61,7 @@
 }
 @media screen and (max-width: calc(62em - 1px)) {
   .NavItem:active {
-    color: #fff;
+    color: var(--pe-color-fg);
     transform: translateY(1px);
     background: rgba(255, 255, 255, 0.1) !important;
   }

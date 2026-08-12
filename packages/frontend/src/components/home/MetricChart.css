@@ -15,7 +15,7 @@
   justify-content: center;
   height: 100%;
   font-size: 0.8125rem;
-  color: var(--chakra-colors-gray-500);
+  color: var(--pe-color-gray-500);
 }
 .MetricChart__Svg {
   display: block;
@@ -34,7 +34,7 @@
   stroke-width: 1px;
 }
 .MetricChart__GhostLine {
-  stroke: rgba(var(--chakra-colors-gray-500-rgb, 122, 132, 137), 0.25);
+  stroke: rgba(var(--pe-color-gray-500-rgb), 0.25);
   stroke-width: 1.5px;
   stroke-linejoin: round;
   stroke-linecap: round;
@@ -67,7 +67,7 @@
 .MetricChart__Tick {
   font-family: var(--pe-font-mono);
   font-size: 0.625rem;
-  fill: var(--chakra-colors-gray-500);
+  fill: var(--pe-color-gray-500);
 }
 .MetricChart__Tick--Y {
   text-anchor: end;
@@ -103,7 +103,7 @@
 }
 .MetricChart__HoverDot {
   fill: var(--pe-color-brand-light);
-  stroke: #fff;
+  stroke: var(--pe-color-fg);
   stroke-width: 1.5;
 }
 .MetricChart__Tooltip {
@@ -124,11 +124,11 @@
 .MetricChart__TipValue {
   font-family: var(--pe-font-mono);
   font-size: 0.75rem;
-  color: #fff;
+  color: var(--pe-color-fg);
 }
 .MetricChart__TipDate {
   font-size: 0.5625rem;
-  color: var(--chakra-colors-gray-500);
+  color: var(--pe-color-gray-500);
 }
 
 @keyframes MetricChartGhostDash {

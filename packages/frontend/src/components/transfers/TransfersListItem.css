@@ -34,7 +34,7 @@
 .TransfersListItem--Timestamp, .TransfersListItem__Column--Timestamp {
   font-family: var(--pe-font-mono);
   white-space: nowrap;
-  color: #fff;
+  color: var(--pe-color-fg);
 }
 .TransfersListItem--Timestamp,
 .TransfersListItem--Timestamp .DateBlock__Date, .TransfersListItem__Column--Timestamp,
@@ -88,7 +88,7 @@
 .TransfersListItem--Clickable--Timestamp, .TransfersListItem--Clickable__Column--Timestamp {
   font-family: var(--pe-font-mono);
   white-space: nowrap;
-  color: #fff;
+  color: var(--pe-color-fg);
 }
 .TransfersListItem--Clickable--Timestamp,
 .TransfersListItem--Clickable--Timestamp .DateBlock__Date, .TransfersListItem--Clickable__Column--Timestamp,

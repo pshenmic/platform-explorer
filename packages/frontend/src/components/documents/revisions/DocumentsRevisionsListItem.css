@@ -45,7 +45,7 @@
 .DocumentsRevisionsListItem--Timestamp, .DocumentsRevisionsListItem__Column--Timestamp {
   font-family: var(--pe-font-mono);
   white-space: nowrap;
-  color: #fff;
+  color: var(--pe-color-fg);
 }
 .DocumentsRevisionsListItem--Timestamp,
 .DocumentsRevisionsListItem--Timestamp .DateBlock__Date, .DocumentsRevisionsListItem__Column--Timestamp,

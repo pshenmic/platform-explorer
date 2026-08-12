@@ -21,7 +21,7 @@
   justify-content: center;
   height: 100%;
   font-size: 0.8125rem;
-  color: var(--chakra-colors-gray-500);
+  color: var(--pe-color-gray-500);
 }
 .MasternodesDonut__Tiles {
   flex: 1;
@@ -64,7 +64,7 @@
   font-size: 0.625rem;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: var(--chakra-colors-gray-500);
+  color: var(--pe-color-gray-500);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -73,7 +73,7 @@
   display: inline-flex;
   flex-shrink: 0;
   align-items: center;
-  color: var(--chakra-colors-gray-500);
+  color: var(--pe-color-gray-500);
   cursor: pointer;
   transition: color 0.15s;
 }
@@ -84,7 +84,7 @@
   flex-shrink: 0;
   width: 10px;
   height: 10px;
-  color: var(--chakra-colors-gray-500);
+  color: var(--pe-color-gray-500);
   animation: MasternodesRotate 9s linear infinite;
 }
 @media (prefers-reduced-motion: reduce) {
@@ -101,7 +101,7 @@
   font-style: italic;
   font-size: 1.5rem;
   line-height: 1;
-  color: #fff;
+  color: var(--pe-color-fg);
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
 }
@@ -109,12 +109,12 @@
   font-size: 0.8125rem;
   font-style: normal;
   font-weight: 400;
-  color: var(--chakra-colors-gray-500);
+  color: var(--pe-color-gray-500);
 }
 .MasternodesDonut__TilePct {
   font-family: var(--pe-font-mono);
   font-size: 0.625rem;
-  color: var(--chakra-colors-gray-500);
+  color: var(--pe-color-gray-500);
   font-variant-numeric: tabular-nums;
 }
 .MasternodesDonut__Bottom {
@@ -145,7 +145,7 @@
   background: rgba(255, 255, 255, 0.18);
 }
 .MasternodesDonut__Seg--banned {
-  background: var(--chakra-colors-red-default, #f45858);
+  background: var(--pe-color-red-default);
 }
 .MasternodesDonut__Dot {
   width: 7px;
@@ -163,7 +163,7 @@
   background: rgba(255, 255, 255, 0.18);
 }
 .MasternodesDonut__Dot--banned {
-  background: var(--chakra-colors-red-default, #f45858);
+  background: var(--pe-color-red-default);
 }
 .MasternodesDonut__Geo {
   display: flex;
@@ -178,7 +178,7 @@
   font-size: 0.5625rem;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: var(--chakra-colors-gray-500);
+  color: var(--pe-color-gray-500);
 }
 .MasternodesDonut__GeoList {
   flex: 1;
@@ -192,7 +192,7 @@
   font-variant-numeric: tabular-nums;
 }
 .MasternodesDonut__GeoList b {
-  color: #fff;
+  color: var(--pe-color-fg);
   font-weight: 700;
 }
 .MasternodesDonut__GeoItem {
@@ -210,7 +210,7 @@
   object-fit: cover;
 }
 .MasternodesDonut__GeoMore {
-  color: var(--chakra-colors-gray-500);
+  color: var(--pe-color-gray-500);
 }
 @media (prefers-reduced-motion: reduce) {
   .MasternodesDonut__Seg {

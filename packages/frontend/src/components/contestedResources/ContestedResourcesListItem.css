@@ -45,7 +45,7 @@
 .ContestedResourcesListItem--Timestamp, .ContestedResourcesListItem__Column--Timestamp {
   font-family: var(--pe-font-mono);
   white-space: nowrap;
-  color: #fff;
+  color: var(--pe-color-fg);
 }
 .ContestedResourcesListItem--Timestamp,
 .ContestedResourcesListItem--Timestamp .DateBlock__Date, .ContestedResourcesListItem__Column--Timestamp,
@@ -123,7 +123,7 @@
   font-family: var(--pe-font-mono);
   font-size: 0.75rem;
   white-space: nowrap;
-  color: #fff;
+  color: var(--pe-color-fg);
 }
 .ContestedResourcesListItem__Column--ResourceValue .Alias__SymbolsContainer {
   display: flex;

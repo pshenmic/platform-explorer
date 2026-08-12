@@ -10,7 +10,7 @@
 }
 .LocalTime__Time {
   position: relative;
-  color: #ffffff;
+  color: var(--pe-color-fg);
 }
 .LocalTime__Time:after {
   content: "·";

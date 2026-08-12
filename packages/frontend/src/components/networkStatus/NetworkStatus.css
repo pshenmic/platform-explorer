@@ -1106,7 +1106,7 @@ Tr:nth-child(10n) .NetworkStatus__Stat--Loading:nth-of-type(10) .NetworkStatus__
 }
 .NetworkStatus__InfoTitle {
   font-size: 0.75rem;
-  color: var(--chakra-colors-gray-500);
+  color: var(--pe-color-gray-500);
   font-family: var(--pe-font-mono);
   white-space: nowrap;
   margin-bottom: 14px;

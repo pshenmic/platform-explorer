@@ -33,22 +33,22 @@
   background: rgba(var(--pe-color-brand-normal-rgb), 0.2);
 }
 .ValueContainer--Brand {
-  color: #fff;
+  color: var(--pe-color-fg);
   background: var(--pe-color-brand-normal);
 }
 .ValueContainer--LightGray {
-  color: #fff;
+  color: var(--pe-color-fg);
   background: #404E53;
 }
 .ValueContainer--LightGray.ValueContainer--Clickable:hover {
   background: rgba(255, 255, 255, 0.15);
 }
 .ValueContainer--DarkGray {
-  color: #fff;
+  color: var(--pe-color-fg);
   background: var(--pe-color-gray-800);
 }
 .ValueContainer--Gray {
-  color: #fff;
+  color: var(--pe-color-fg);
   background: rgba(255, 255, 255, 0.2);
 }
 .ValueContainer--Orange {

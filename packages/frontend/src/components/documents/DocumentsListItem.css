@@ -45,7 +45,7 @@
 .DocumentsListItem--Timestamp, .DocumentsListItem__Column--Timestamp {
   font-family: var(--pe-font-mono);
   white-space: nowrap;
-  color: #fff;
+  color: var(--pe-color-fg);
 }
 .DocumentsListItem--Timestamp,
 .DocumentsListItem--Timestamp .DateBlock__Date, .DocumentsListItem__Column--Timestamp,

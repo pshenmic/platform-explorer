@@ -6,7 +6,7 @@
 .FilterGroup__Title {
   font-family: var(--pe-font-heading);
   font-weight: 700;
-  color: #fff;
+  color: var(--pe-color-fg);
   text-transform: uppercase;
   font-size: 0.75rem;
   letter-spacing: 0.4px;

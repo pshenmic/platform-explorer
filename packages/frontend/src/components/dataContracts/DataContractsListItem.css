@@ -45,7 +45,7 @@
 .DataContractsListItem--Timestamp, .DataContractsListItem__Column--Timestamp {
   font-family: var(--pe-font-mono);
   white-space: nowrap;
-  color: #fff;
+  color: var(--pe-color-fg);
 }
 .DataContractsListItem--Timestamp,
 .DataContractsListItem--Timestamp .DateBlock__Date, .DataContractsListItem__Column--Timestamp,
@@ -112,6 +112,6 @@
   overflow: hidden;
 }
 .DataContractsListItem__Genesis {
-  color: var(--chakra-colors-gray-400);
+  color: var(--pe-color-gray-400);
   font-style: italic;
 }

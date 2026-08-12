@@ -33,7 +33,7 @@
 .DataContractsList__ColumnTitles--Light {
   background: transparent !important;
   font-weight: 500 !important;
-  color: #fff !important;
+  color: var(--pe-color-fg) !important;
   text-transform: none !important;
 }
 .DataContractsList__ColumnTitles {
@@ -157,7 +157,7 @@
   padding: 0 6px;
   border-radius: 9px;
   background: var(--pe-color-brand-normal);
-  color: #fff;
+  color: var(--pe-color-fg);
   font-size: 0.6875rem;
 }
 .DataContractsList__Items--Pinned {

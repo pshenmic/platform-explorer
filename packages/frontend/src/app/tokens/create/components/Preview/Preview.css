@@ -6,7 +6,7 @@
 .Preview__JsonError {
   font-family: var(--pe-font-mono);
   font-size: 11px;
-  color: var(--chakra-colors-red-default);
+  color: var(--pe-color-red-default);
 }
 .Preview__SummaryTitle, .Preview__JsonTitle {
   font-family: var(--font-montserrat);
@@ -15,7 +15,7 @@
   line-height: 110%;
   letter-spacing: 0.04em;
   text-transform: uppercase;
-  color: var(--chakra-colors-white-50);
+  color: var(--pe-color-white-50);
   flex-shrink: 0;
 }
 .Preview__JsonTitle {
@@ -55,13 +55,13 @@
   letter-spacing: 0;
   padding: 2px 10px;
   border-radius: 0.25rem;
-  color: var(--chakra-colors-white-50);
+  color: var(--pe-color-white-50);
   background: transparent;
   cursor: pointer;
   transition: background 0.12s, color 0.12s;
 }
 .Preview__ViewToggleBtn:hover {
-  color: var(--chakra-colors-white-100);
+  color: var(--pe-color-white-100);
 }
 .Preview__ViewToggleBtn--active {
   color: var(--pe-color-brand-normal);
@@ -77,7 +77,7 @@
   font-family: var(--pe-font-mono);
   font-size: 11px;
   line-height: 150%;
-  color: var(--chakra-colors-white-50);
+  color: var(--pe-color-white-50);
   margin: 0;
 }
 .Preview__FaqGroup {
@@ -91,7 +91,7 @@
   line-height: 110%;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: var(--chakra-colors-white-50);
+  color: var(--pe-color-white-50);
   margin-bottom: 6px;
 }
 .Preview__FaqItem {
@@ -111,7 +111,7 @@
   font-weight: 600;
   font-size: 12px;
   line-height: 130%;
-  color: var(--chakra-colors-white-100);
+  color: var(--pe-color-white-100);
 }
 .Preview__FaqQ:hover {
   color: var(--pe-color-brand-normal);
@@ -119,13 +119,13 @@
 .Preview__FaqMarker {
   flex-shrink: 0;
   width: 10px;
-  color: var(--chakra-colors-white-50);
+  color: var(--pe-color-white-50);
 }
 .Preview__FaqAnswer {
   font-family: var(--pe-font-mono);
   font-size: 12px;
   line-height: 150%;
-  color: var(--chakra-colors-white-75);
+  color: var(--pe-color-white-75);
   margin: 0 0 8px 16px;
 }
 .Preview__FaqCode {
@@ -134,7 +134,7 @@
   padding: 1px 4px;
   border-radius: 0.25rem;
   background: #1f2528;
-  color: var(--chakra-colors-white-75);
+  color: var(--pe-color-white-75);
 }
 .Preview__FaqFieldLink {
   font-family: var(--pe-font-mono);
@@ -169,5 +169,5 @@
   font-family: var(--pe-font-mono);
   font-size: 12px;
   line-height: 150%;
-  color: var(--chakra-colors-white-100);
+  color: var(--pe-color-white-100);
 }

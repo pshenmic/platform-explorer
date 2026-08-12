@@ -49,7 +49,7 @@
   }
 }
 .MobileFilterMenu__Item:not(.MobileFilterMenu__Item--Active, .MobileFilterMenu .MultiSelectFilter__Item--Active):not(.MobileFilterMenu__Item--Selected, .MobileFilterMenu .MultiSelectFilter__Item--Selected):hover .Checkbox path, .MobileFilterMenu .MultiSelectFilter__Item:not(.MobileFilterMenu__Item--Active, .MobileFilterMenu .MultiSelectFilter__Item--Active):not(.MobileFilterMenu__Item--Selected, .MobileFilterMenu .MultiSelectFilter__Item--Selected):hover .Checkbox path {
-  fill: var(--chakra-colors-gray-600);
+  fill: var(--pe-color-gray-600);
 }
 .MobileFilterMenu__Item:active, .MobileFilterMenu .MultiSelectFilter__Item:active {
   transform: translateY(1px);
@@ -78,7 +78,7 @@
   font-family: var(--pe-font-heading);
 }
 .MobileFilterMenu__Item:hover .MobileFilterMenu__ItemIcon {
-  color: #fff;
+  color: var(--pe-color-fg);
   background-color: rgba(255, 255, 255, 0.25);
 }
 .MobileFilterMenu__ItemIcon {

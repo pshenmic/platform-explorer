@@ -34,7 +34,7 @@
 .WithdrawalsListItem--Timestamp, .WithdrawalsListItem__Column--Timestamp {
   font-family: var(--pe-font-mono);
   white-space: nowrap;
-  color: #fff;
+  color: var(--pe-color-fg);
 }
 .WithdrawalsListItem--Timestamp,
 .WithdrawalsListItem--Timestamp .DateBlock__Date, .WithdrawalsListItem__Column--Timestamp,
@@ -91,7 +91,7 @@
 .WithdrawalsListItem.WithdrawalsListItem--Clickable--Timestamp, .WithdrawalsListItem.WithdrawalsListItem--Clickable__Column--Timestamp {
   font-family: var(--pe-font-mono);
   white-space: nowrap;
-  color: #fff;
+  color: var(--pe-color-fg);
 }
 .WithdrawalsListItem.WithdrawalsListItem--Clickable--Timestamp,
 .WithdrawalsListItem.WithdrawalsListItem--Clickable--Timestamp .DateBlock__Date, .WithdrawalsListItem.WithdrawalsListItem--Clickable__Column--Timestamp,

@@ -1,5 +1,5 @@
 .Breadcrumbs {
-  max-width: var(--chakra-sizes-container-maxNavigationW);
+  max-width: var(--pe-size-container-max-navigation);
   background: rgba(var(--pe-color-gray-675-rgb), 0.5);
   border-radius: 0 0 20px 20px;
   margin: -31.25rem auto 0;
@@ -53,7 +53,7 @@
 }
 .Breadcrumbs__Link span {
   background: rgba(255, 255, 255, 0.1);
-  color: #ffffff;
+  color: var(--pe-color-fg);
   cursor: default;
 }
 .Breadcrumbs__Avatar, .Breadcrumbs__IconContainer svg {

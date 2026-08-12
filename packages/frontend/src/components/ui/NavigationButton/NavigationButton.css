@@ -16,15 +16,15 @@
   font-family: var(--pe-font-heading);
 }
 .NavigationButton:hover {
-  background-color: var(--chakra-colors-gray-550);
+  background-color: var(--pe-color-gray-550);
 }
 .NavigationButton:hover .NavigationButton__SubName {
-  background-color: var(--chakra-colors-gray-525) !important;
+  background-color: var(--pe-color-gray-525) !important;
 }
 .NavigationButton__SubName {
   border-radius: 5px;
   padding: 4px 10px;
-  background-color: var(--chakra-colors-gray-600);
+  background-color: var(--pe-color-gray-600);
   display: flex;
   align-items: center;
   justify-content: center;

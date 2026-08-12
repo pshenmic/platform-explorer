@@ -72,7 +72,7 @@
 }
 .Chart__FocusPoint {
   display: none;
-  fill: #fff;
+  fill: var(--pe-color-fg);
   stroke: var(--pe-color-brand-normal);
   stroke-width: 2px;
 }
@@ -124,5 +124,5 @@
 .Axis__Line {
   opacity: 0.5;
   stroke-width: 1px;
-  stroke: #fff;
+  stroke: var(--pe-color-fg);
 }

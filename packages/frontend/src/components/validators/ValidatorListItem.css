@@ -45,7 +45,7 @@
 .ValidatorListItem--Timestamp, .ValidatorListItem__Column--Timestamp {
   font-family: var(--pe-font-mono);
   white-space: nowrap;
-  color: #fff;
+  color: var(--pe-color-fg);
 }
 .ValidatorListItem--Timestamp,
 .ValidatorListItem--Timestamp .DateBlock__Date, .ValidatorListItem__Column--Timestamp,
@@ -76,7 +76,7 @@
   justify-content: flex-start;
   font-size: 0.75rem;
   font-family: var(--pe-font-mono);
-  color: #fff;
+  color: var(--pe-color-fg);
 }
 .ValidatorListItem__Column--Active {
   width: 54px;

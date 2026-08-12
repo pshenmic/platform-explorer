@@ -45,7 +45,7 @@
 .QuorumListItem--Timestamp, .QuorumListItem__Column--Timestamp {
   font-family: var(--pe-font-mono);
   white-space: nowrap;
-  color: #fff;
+  color: var(--pe-color-fg);
 }
 .QuorumListItem--Timestamp,
 .QuorumListItem--Timestamp .DateBlock__Date, .QuorumListItem__Column--Timestamp,

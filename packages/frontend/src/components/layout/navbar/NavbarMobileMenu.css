@@ -96,7 +96,7 @@
   background: rgba(255, 255, 255, 0.15);
 }
 .NavbarMobileMenu__Item:active:not(.NavbarMobileMenu__Item--Disabled) {
-  color: #fff;
+  color: var(--pe-color-fg);
   transform: translateY(1px);
   background: rgba(255, 255, 255, 0.1) !important;
 }

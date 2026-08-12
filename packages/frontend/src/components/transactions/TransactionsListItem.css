@@ -45,7 +45,7 @@
 .TransactionsListItem--Timestamp, .TransactionsListItem__Column--Timestamp {
   font-family: var(--pe-font-mono);
   white-space: nowrap;
-  color: #fff;
+  color: var(--pe-color-fg);
 }
 .TransactionsListItem--Timestamp,
 .TransactionsListItem--Timestamp .DateBlock__Date, .TransactionsListItem__Column--Timestamp,
@@ -131,7 +131,7 @@
   font-family: var(--pe-font-mono);
   font-size: 0.75rem;
   white-space: nowrap;
-  color: #fff;
+  color: var(--pe-color-fg);
   justify-content: flex-end;
   text-align: right;
 }
@@ -156,7 +156,7 @@
 .TransactionsListItem__Column--GasUsed {
   font-size: 0.75rem;
   text-transform: uppercase;
-  color: #fff;
+  color: var(--pe-color-fg);
   white-space: nowrap;
   text-align: center;
 }

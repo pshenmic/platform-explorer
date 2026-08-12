@@ -16,7 +16,7 @@
   padding: 8px 10px;
   width: fit-content;
   font-family: var(--pe-font-mono);
-  color: #ffffff;
+  color: var(--pe-color-fg);
   font-weight: 400;
   font-style: Regular;
   font-size: 12px;

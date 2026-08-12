@@ -29,7 +29,7 @@
 }
 .ActiveFilters__IconContainer:hover {
   cursor: pointer;
-  background-color: var(--chakra-colors-gray-600);
+  background-color: var(--pe-color-gray-600);
 }
 .ActiveFilters__IconContainer svg {
   width: 0.4rem;

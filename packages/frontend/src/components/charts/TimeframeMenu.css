@@ -20,7 +20,7 @@
 }
 .TimeframeMenu__ValueButton--Active {
   background-color: var(--pe-color-brand-normal) !important;
-  color: #fff !important;
+  color: var(--pe-color-fg) !important;
 }
 .TimeframeMenu__Calendar {
   width: 100%;
