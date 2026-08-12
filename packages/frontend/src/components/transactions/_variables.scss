@@ -1,8 +1,8 @@
-@import '../../styles/variables.scss';
+@use '../../styles/list-grid' as grid;
+@use '../../styles/breakpoints' as bp;
 
-@mixin Columns () {
-  display: grid;
-  gap: 16px;
+@mixin Columns() {
+  @include grid.list-grid(16px);
 
   grid-template-columns:
     6.5rem // status
@@ -45,17 +45,13 @@
   }
 }
 
-@mixin Column () {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
+@mixin Column() {
+  @include grid.list-grid-cell;
 
   &--Status,
   &--Hash,
   &--Owner {
-    justify-content: flex-start;
-    text-align: left;
+    @include grid.list-grid-cell-start;
   }
 
   &--Owner {
@@ -73,8 +69,7 @@
   }
 
   &--Timestamp {
-    justify-content: flex-end;
-    text-align: right;
+    @include grid.list-grid-cell-end;
   }
 
   @container (max-width: 810px) {
@@ -92,14 +87,14 @@
   }
 }
 
-@mixin CardPaddings ($property) {
+@mixin CardPaddings($property) {
   #{$property}: 40px !important;
 
-  @media screen and (max-width: $breakpoint-md) {
+  @include bp.bp-max('md') {
     #{$property}: 32px !important;
   }
 
-  @media screen and (max-width: $breakpoint-sm) {
+  @include bp.bp-max('sm') {
     #{$property}: 16px !important;
   }
 }
