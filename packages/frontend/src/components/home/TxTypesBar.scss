@@ -247,6 +247,7 @@ $txtype-colors: (
     border-radius: 999px;
     min-width: 3px;
     cursor: pointer;
+    text-decoration: none;
     flex-shrink: 1;
     opacity: 1;
     transition: filter 0.12s ease, box-shadow 0.12s ease;
@@ -354,6 +355,17 @@ $txtype-colors: (
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+  }
+
+  &__RowLabelLink {
+    color: inherit;
+    text-decoration: none;
+    border-bottom: 1px dotted rgba(255, 255, 255, 0.22);
+
+    &:hover {
+      color: #fff;
+      border-bottom-color: rgba(var(--chakra-colors-brand-light-rgb), 0.7);
+    }
   }
 
   &__Meter {

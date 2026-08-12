@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useMemo } from 'react'
+import Link from 'next/link'
 import { Box } from '@chakra-ui/react'
 import * as Api from '../../util/Api'
 import { Presets } from '../cards'
@@ -8,6 +9,7 @@ import { TransactionTypesInfo } from '../../enums/state.transition.type'
 import { BatchActions } from '../../enums/batchTypes'
 import { Skeleton } from './Skeleton'
 import { Tooltip } from '../ui/Tooltips'
+import { transactionsListHref } from '../transactions/transactionsListHref'
 import { formatFullNumber } from '../../util'
 import { PRESETS, presetRange } from './MetricChart'
 import './TxTypesBar.scss'
@@ -175,16 +177,14 @@ export default function TxTypesBar ({ enabled = true }) {
                   aria-label={`${total} transactions by type`}
                 >
                   {segments.map(s => (
-                    <button
+                    <Link
                       key={s.type}
-                      type={'button'}
+                      href={transactionsListHref({ type: s.type, fromBatch: s.fromBatch })}
                       data-type={s.type}
                       className={`TxTypesBar__Seg TxTypesBar__Seg--${s.cls}${focusType === s.type ? ' is-focus' : ''}`}
                       style={{ flexGrow: s.dFrac, flexBasis: 0 }}
                       title={`${s.label}: ${s.count.toLocaleString('en-US')}`}
-                      onClick={() => togglePin(s.type)}
-                      aria-pressed={pin === s.type}
-                      aria-label={s.label}
+                      aria-label={`${s.label}, open filtered transactions`}
                       {...focusHandlers(s.type)}
                     />
                   ))}
@@ -204,7 +204,13 @@ export default function TxTypesBar ({ enabled = true }) {
                     >
                       <span className={'TxTypesBar__Rank'}>{s.rank}</span>
                       <span className={`TxTypesBar__Dot TxTypesBar__Dot--${s.cls}`}/>
-                      <span className={'TxTypesBar__RowLabel'}>{s.label}</span>
+                      <Link
+                        href={transactionsListHref({ type: s.type, fromBatch: s.fromBatch })}
+                        className={'TxTypesBar__RowLabel TxTypesBar__RowLabelLink'}
+                        onClick={e => e.stopPropagation()}
+                      >
+                        {s.label}
+                      </Link>
                       <span className={'TxTypesBar__Meter'} aria-hidden={'true'}>
                         <i
                           className={`TxTypesBar__MeterFill TxTypesBar__Seg--${s.cls}`}
