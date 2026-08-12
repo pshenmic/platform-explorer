@@ -252,8 +252,7 @@ export default function MasternodesDonut ({
   currentQuorum,
   currentQuorumLoading,
   currentQuorumError,
-  nextQuorum,
-  nextQuorumLoading
+  nextQuorum
 }) {
   const [pin, setPin] = useState(null)
   const [helpOpen, setHelpOpen] = useState(false)
@@ -283,7 +282,6 @@ export default function MasternodesDonut ({
   const currentMembers = Array.isArray(currentQuorum?.members) ? currentQuorum.members : null
   const nextMembers = Array.isArray(nextQuorum?.members) ? nextQuorum.members : null
   const hasRoster = Boolean(currentMembers && currentMembers.length > 0)
-  const hasNext = Boolean(nextMembers && nextMembers.length > 0)
 
   const currentSet = useMemo(() => {
     if (!currentMembers) return null
@@ -321,7 +319,10 @@ export default function MasternodesDonut ({
   const dkgFailures = currentQuorum?.previousConsecutiveDKGFailures
   const showDkg = typeof dkgFailures === 'number' && dkgFailures > 0
 
-  const list = Array.isArray(validatorsList) ? validatorsList : []
+  const list = useMemo(
+    () => (Array.isArray(validatorsList) ? validatorsList : []),
+    [validatorsList]
+  )
   const hasNodeList = list.length > 0
 
   const cells = useMemo(() => {
