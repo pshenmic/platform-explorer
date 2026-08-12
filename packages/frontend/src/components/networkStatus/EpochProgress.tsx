@@ -3,7 +3,7 @@ import { Progress } from '@chakra-ui/react'
 import { getTimeDelta } from '../../util'
 import type { Epoch } from '../../types'
 import type { WithClassName } from '../../types/common'
-import './EpochProgress.scss'
+import './EpochProgress.css'
 
 interface EpochProgressProps extends WithClassName {
   epoch: Pick<Epoch, 'startTime' | 'endTime'>
