@@ -1,0 +1,52 @@
+.Background {
+  background-color: #171E21;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: -1;
+}
+.Background, .Background:after {
+  position: fixed;
+  height: 100%;
+  width: 100%;
+  top: 0;
+  left: 0;
+}
+.Background::after {
+  content: "";
+  background-image: url("/images/grain-texture.png");
+  background-position: left;
+  background-repeat: repeat;
+  opacity: 0.5;
+  z-index: -1;
+}
+.Background--Light::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  transform: translate(-50%, -50%);
+  border-radius: 10000px;
+  padding-top: 50%;
+  aspect-ratio: 1/1;
+  width: 1000px;
+  height: 1000px;
+  background: radial-gradient(circle, rgba(0, 141, 228, 0.9) 0%, rgba(0, 141, 228, 0) 60%);
+  filter: blur(50px);
+  z-index: -2;
+}
+@media screen and (min-width: 3200px) {
+  .Background--Light::before {
+    width: 50%;
+    max-width: none;
+  }
+}
+@media screen and (min-width: 4500px) {
+  .Background--Light::before {
+    width: 80%;
+  }
+}
+@media screen and (min-width: 5500px) {
+  .Background--Light::before {
+    width: 100%;
+  }
+}

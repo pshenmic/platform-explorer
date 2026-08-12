@@ -1,0 +1,120 @@
+.Footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 22;
+  background-color: var(--pe-color-gray-650);
+  padding: 10px 16px;
+  padding-left: var(--pe-space-3);
+  padding-right: var(--pe-space-3);
+  border-radius: 10px 10px 0 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+.Footer > * {
+  flex: 1;
+}
+.Footer > p, .Footer a {
+  font-size: 0.75rem;
+  color: var(--pe-color-fg-muted);
+  font-weight: 400;
+}
+.Footer__CopyrightBlock {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 0.75rem;
+}
+.Footer__Copyright {
+  font-size: 0.75rem;
+  text-align: right;
+  color: var(--pe-color-fg-muted);
+  margin: 0;
+}
+@media screen and (max-width: 62em) {
+  .Footer__Copyright {
+    text-align: center;
+  }
+}
+.Footer__WrapperNetwork {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  justify-content: center;
+}
+.Footer__Network {
+  position: relative;
+  border-radius: 10px;
+  padding: 10px 20px;
+  background-color: var(--pe-color-gray-800);
+  transition: background-color ease 0.5s;
+}
+.Footer__Network:hover {
+  background-color: var(--pe-color-brand-deep);
+}
+.Footer__Network > img {
+  position: relative;
+  width: 20px;
+  height: 20px;
+}
+.Footer__PshenmicLogo {
+  transition: color 0.1s;
+  width: max-content;
+}
+.Footer__PshenmicLogo:hover {
+  color: #fff;
+}
+.Footer__PshenmicLogo:active, .Footer__PshenmicLogo a:active {
+  color: rgba(255, 255, 255, 0.8);
+}
+.Footer__TimezoneContainer {
+  display: flex;
+  align-items: center;
+}
+.Footer__ClockIcon {
+  margin-right: 0.75rem;
+}
+@media screen and (max-width: 62em) {
+  .Footer {
+    flex-direction: column;
+    gap: 12px;
+  }
+  .Footer__Logo {
+    display: none;
+  }
+  .Footer__WrapperNetwork {
+    order: 1;
+  }
+  .Footer__TimezoneContainer {
+    order: 2;
+  }
+  .Footer__Copyright {
+    order: 3;
+  }
+}
+@media screen and (max-width: 62em) {
+  .Footer {
+    position: static;
+  }
+}
+@media screen and (max-width: 30em) {
+  .Footer__LocalTime span {
+    display: block;
+  }
+  .Footer__LocalTime .LocalTime__Time:after {
+    display: none !important;
+  }
+}
+
+.FooterStub {
+  height: 66px;
+}
+@media screen and (max-width: 62em) {
+  .FooterStub {
+    display: none;
+  }
+}

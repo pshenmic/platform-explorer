@@ -7,7 +7,7 @@ import version from './version'
 import { BigClockIcon, PlatformExplorerLogoStroke, PshenmicLogoIcon } from '../../ui/icons'
 import LocalTime from './LocalTime'
 import Link from 'next/link'
-import './Footer.scss'
+import './Footer.css'
 
 interface SocialNetworkItem {
   img: string

@@ -1,0 +1,24 @@
+.LocalTime {
+  font-family: var(--pe-font-mono);
+  font-size: 0.75rem;
+}
+.LocalTime__Time, .LocalTime__Date, .LocalTime__TimeZone {
+  margin-right: 0.5em;
+}
+.LocalTime__Time:last-child, .LocalTime__Date:last-child, .LocalTime__TimeZone:last-child {
+  margin-right: 0;
+}
+.LocalTime__Time {
+  position: relative;
+  color: #ffffff;
+}
+.LocalTime__Time:after {
+  content: "·";
+  padding-left: 0.5em;
+}
+.LocalTime__Date {
+  color: var(--pe-color-fg-muted);
+}
+.LocalTime__TimeZone {
+  color: var(--pe-color-fg-muted);
+}

@@ -1,6 +1,6 @@
 'use client'
 
-import './Snow.scss'
+import './Snow.css'
 
 function Snow () {
   return (
