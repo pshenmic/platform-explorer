@@ -1,0 +1,163 @@
+.HomePage .InfoBlock {
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  background: rgba(24, 31, 34, 0.88);
+}
+
+.HomeOverview__Grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+  margin-top: 0;
+}
+@media screen and (min-width: 62em) {
+  .HomeOverview__Grid {
+    grid-template-columns: 250px minmax(0, 1fr) minmax(0, 1fr);
+    gap: 0;
+    align-items: stretch;
+  }
+}
+.HomeOverview__Sys {
+  display: flex;
+  flex-direction: column;
+}
+.HomeOverview__Sys .HomeHero__MetaLabel {
+  font-family: var(--pe-font-heading);
+  font-weight: 700;
+  font-size: 0.6875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #fff;
+  white-space: nowrap;
+  text-align: left;
+}
+.HomeOverview__Sys .HomeHero__Meta {
+  flex: 1;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px 16px;
+  padding: 0;
+  border-bottom: none;
+  min-height: 0;
+}
+.HomeOverview__Sys .HomeHero__MetaItem {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  gap: 8px;
+  width: 100%;
+  min-width: 0;
+  min-height: 0;
+  padding: 4px 0;
+}
+.HomeOverview__Sys .HomeHero__MetaValue {
+  font-size: 0.8125rem;
+  white-space: nowrap;
+  max-width: 100%;
+}
+@media screen and (min-width: 62em) {
+  .HomeOverview__Sys {
+    border-right: 1px solid rgba(var(--pe-color-gray-800-rgb), 0.6);
+    padding-right: 2rem;
+  }
+  .HomeOverview__Sys .HomeHero__Meta {
+    display: flex;
+    flex-direction: column;
+    grid-template-columns: none;
+    gap: 0;
+  }
+  .HomeOverview__Sys .HomeHero__MetaItem {
+    min-height: 0;
+    padding: 0;
+    gap: 8px;
+  }
+  .HomeOverview__Sys .HomeHero__MetaItem:first-child {
+    flex: 0 0 auto;
+    padding-bottom: 8px;
+  }
+  .HomeOverview__Sys .HomeHero__MetaItem:first-child .HomeHero__MetaLabel {
+    display: flex;
+    align-items: center;
+    min-height: calc(0.825rem + 12px);
+    padding: 6px 0;
+    margin-bottom: 4px;
+    width: 100%;
+  }
+  .HomeOverview__Sys .HomeHero__MetaItem:not(:first-child) {
+    flex: 1 1 0;
+    justify-content: center;
+  }
+  .HomeOverview__Sys .HomeHero__MetaLabel,
+  .HomeOverview__Sys .HomeHero__MetaValue {
+    white-space: nowrap;
+  }
+}
+.HomeOverview__More {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  flex-shrink: 0;
+  font-family: var(--pe-font-mono);
+  font-size: 0.6875rem;
+  color: var(--chakra-colors-gray-500);
+  white-space: nowrap;
+  transition: color 0.2s;
+}
+.HomeOverview__More:hover {
+  color: #fff;
+}
+@media screen and (min-width: 62em) {
+  .HomeOverview__Tx {
+    padding: 0 2rem;
+    border-right: 1px solid rgba(var(--pe-color-gray-800-rgb), 0.6);
+  }
+  .HomeOverview__Blocks {
+    padding-left: 2rem;
+  }
+}
+
+.HomeGovCard {
+  display: flex;
+  flex-direction: column;
+}
+.HomeGovCard .HomeHero__StatusBar {
+  flex: 1;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  align-items: stretch;
+  border-top: none;
+  margin-top: 0;
+  padding: 0;
+}
+.HomeGovCard .HomeHero__StatusCell {
+  flex: 1 1 auto;
+  justify-content: center;
+  padding: 14px 0;
+  border-right: none;
+  border-bottom: 1px solid rgba(var(--pe-color-gray-800-rgb), 0.6);
+}
+.HomeGovCard .HomeHero__StatusCell:first-child {
+  flex-grow: 1;
+  padding-top: 4px;
+}
+.HomeGovCard .HomeHero__StatusCell:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.HomeEpochs {
+  border-radius: var(--pe-radius-block);
+  padding: 40px 20px 0 20px !important;
+  overflow-x: hidden;
+}
+@media screen and (max-width: 62em) {
+  .HomeEpochs {
+    padding: 36px 16px 0 16px !important;
+  }
+}
+@media screen and (max-width: 48em) {
+  .HomeEpochs {
+    padding: 32px 16px 0 16px !important;
+  }
+}

@@ -1,0 +1,191 @@
+.CompactTx {
+  display: grid;
+  column-gap: 12px;
+  grid-template-columns: 3.5rem minmax(8ch, 1fr) minmax(0, 10rem) 5ch;
+}
+.CompactTx__Empty {
+  padding: 14px 0;
+  color: var(--chakra-colors-gray-500);
+  font-family: var(--pe-font-mono);
+  font-size: 0.8125rem;
+}
+.CompactTx__Head {
+  display: grid;
+  grid-template-columns: subgrid;
+  grid-column: 1/-1;
+  align-items: center;
+  padding: 6px;
+  margin-bottom: 4px;
+  border-bottom: 1px solid rgba(var(--pe-color-gray-800-rgb), 0.6);
+}
+.CompactTx__HeadCell {
+  font-family: var(--pe-font-heading);
+  font-weight: 700;
+  font-size: 0.6875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #fff;
+  white-space: nowrap;
+  min-width: 0;
+}
+.CompactTx__HeadCell--status {
+  text-align: center;
+  overflow: hidden;
+}
+.CompactTx__HeadCell--time {
+  text-align: right;
+}
+.CompactTx__More {
+  display: block;
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  font-family: var(--pe-font-heading);
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  padding: 12px;
+  border-radius: 10px;
+  overflow: hidden;
+  background-color: transparent;
+  transition: all 0.5s;
+}
+.CompactTx__More::before, .CompactTx__More::after {
+  content: "";
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+}
+.CompactTx__More::before {
+  background-color: var(--pe-color-gray-800);
+  width: 100%;
+  z-index: -1;
+  transition: all 1s;
+}
+.CompactTx__More::after {
+  width: 300px;
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0));
+  transform: translateX(-100%);
+  opacity: 0;
+  transition: all 0.5s;
+}
+@keyframes flash {
+  from {
+    left: 0;
+    transform: translateX(-100%);
+  }
+  to {
+    left: 100%;
+    transform: translateX(0);
+  }
+}
+.CompactTx__More:hover, .CompactTx__More:focus-within {
+  background-color: var(--pe-color-brand-normal);
+}
+.CompactTx__More:hover::before, .CompactTx__More:focus-within::before {
+  opacity: 0.85;
+}
+.CompactTx__More:hover::after, .CompactTx__More:focus-within::after {
+  animation: flash 1s backwards;
+  pointer-events: none;
+  opacity: 1;
+}
+.CompactTx__More {
+  grid-column: 1/-1;
+  width: 100%;
+  margin-top: 8px;
+}
+.CompactTx__More::before {
+  content: "";
+}
+.CompactTx__Row {
+  display: grid;
+  grid-template-columns: subgrid;
+  grid-column: 1/-1;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 6px;
+  border-bottom: 1px solid rgba(var(--pe-color-gray-800-rgb), 0.5);
+  border-radius: 6px;
+  transition: background 0.15s;
+}
+.CompactTx__Row:last-child {
+  border-bottom: none;
+}
+.CompactTx__Row:hover {
+  background: rgba(var(--pe-color-brand-normal-rgb), 0.07);
+}
+.CompactTx__Row--skeleton {
+  cursor: default;
+}
+.CompactTx__Row--skeleton:hover {
+  background: none;
+}
+.CompactTx__Status {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.CompactTx__StatusIcon {
+  display: flex;
+}
+.CompactTx__Hash {
+  min-width: 0;
+  font-size: 0.8125rem;
+}
+.CompactTx__HashText {
+  display: block;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-family: var(--pe-font-mono);
+  font-size: 0.75rem;
+}
+.CompactTx__Type {
+  white-space: nowrap;
+  min-width: 0;
+  overflow: hidden;
+}
+.CompactTx__Type .chakra-badge {
+  display: inline-flex;
+  min-width: 0;
+  max-width: 100%;
+  overflow: hidden;
+}
+.CompactTx__Time {
+  font-family: var(--pe-font-mono);
+  font-size: 0.6875rem;
+  color: var(--chakra-colors-gray-500);
+  white-space: nowrap;
+  text-align: right;
+  min-width: 5ch;
+}
+@media screen and (max-width: 30em) {
+  .CompactTx {
+    grid-template-columns: 3.25rem minmax(6ch, 1.1fr) minmax(0, 0.9fr) 5ch;
+  }
+}
+.CompactTx__Row.is-new {
+  animation: CompactRowIn 0.4s ease-out backwards, CompactRowGlow 1.4s ease-out backwards;
+  animation-delay: var(--stagger, 0ms);
+}
+@media (prefers-reduced-motion: reduce) {
+  .CompactTx__Row.is-new {
+    animation: CompactRowGlow 1.4s ease-out backwards;
+  }
+}
+
+@keyframes CompactRowIn {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+}
+@keyframes CompactRowGlow {
+  from {
+    background-color: rgba(var(--pe-color-brand-normal-rgb), 0.12);
+  }
+}

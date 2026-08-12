@@ -9,7 +9,7 @@ import { Tooltip } from '../ui/Tooltips'
 import { Skeleton } from './Skeleton'
 import { compact } from './utils'
 import { PRESETS, presetRange } from './MetricChart'
-import './TxTypesBar.scss'
+import './TxTypesBar.css'
 
 // a sub-percent slice would collapse below the segment gap: clamp for display, chips keep exact counts
 const MIN_SEG_FRAC = 0.008

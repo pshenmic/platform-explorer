@@ -1,0 +1,225 @@
+.MasternodesDonut {
+  container-type: inline-size;
+}
+.MasternodesDonut__Body {
+  min-height: 200px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 16px;
+}
+@media screen and (max-width: 30em) {
+  .MasternodesDonut__Body {
+    height: auto;
+    gap: 14px;
+    padding: 2px 0;
+  }
+}
+.MasternodesDonut__Empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  font-size: 0.8125rem;
+  color: var(--chakra-colors-gray-500);
+}
+.MasternodesDonut__Tiles {
+  flex: 1;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+@container (max-width: 560px) {
+  .MasternodesDonut__Tiles {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+}
+.MasternodesDonut__Tile {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 7px;
+  min-width: 0;
+  padding: 14px 12px;
+  border: 1px solid rgba(var(--pe-color-gray-800-rgb), 0.7);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.015);
+}
+@container (max-width: 560px) {
+  .MasternodesDonut__Tile {
+    padding: 12px 10px;
+  }
+}
+.MasternodesDonut__SkelGap {
+  margin-top: 6px;
+}
+.MasternodesDonut__TileLabel {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  min-width: 0;
+  max-width: 100%;
+  font-family: var(--pe-font-mono);
+  font-size: 0.625rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--chakra-colors-gray-500);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.MasternodesDonut__TileInfo {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  color: var(--chakra-colors-gray-500);
+  cursor: pointer;
+  transition: color 0.15s;
+}
+.MasternodesDonut__TileInfo:hover {
+  color: var(--pe-color-brand-normal);
+}
+.MasternodesDonut__Rotate {
+  flex-shrink: 0;
+  width: 10px;
+  height: 10px;
+  color: var(--chakra-colors-gray-500);
+  animation: MasternodesRotate 9s linear infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .MasternodesDonut__Rotate {
+    animation: none;
+  }
+}
+.MasternodesDonut__TileValue {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 5px;
+  font-family: var(--pe-font-heading);
+  font-weight: 800;
+  font-style: italic;
+  font-size: 1.5rem;
+  line-height: 1;
+  color: #fff;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.MasternodesDonut__TileOf {
+  font-size: 0.8125rem;
+  font-style: normal;
+  font-weight: 400;
+  color: var(--chakra-colors-gray-500);
+}
+.MasternodesDonut__TilePct {
+  font-family: var(--pe-font-mono);
+  font-size: 0.625rem;
+  color: var(--chakra-colors-gray-500);
+  font-variant-numeric: tabular-nums;
+}
+.MasternodesDonut__Bottom {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.MasternodesDonut__Bar {
+  display: flex;
+  align-items: stretch;
+  gap: 2px;
+  width: 100%;
+  height: 10px;
+  border-radius: 5px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.06);
+}
+.MasternodesDonut__Seg {
+  display: block;
+  height: 100%;
+  min-width: 2px;
+  transition: width 0.6s ease;
+}
+.MasternodesDonut__Seg--active {
+  background: var(--pe-color-brand-normal);
+}
+.MasternodesDonut__Seg--inactive {
+  background: rgba(255, 255, 255, 0.18);
+}
+.MasternodesDonut__Seg--banned {
+  background: var(--chakra-colors-red-default, #f45858);
+}
+.MasternodesDonut__Dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.MasternodesDonut__Dot--total {
+  background: rgba(255, 255, 255, 0.5);
+}
+.MasternodesDonut__Dot--active {
+  background: var(--pe-color-brand-normal);
+}
+.MasternodesDonut__Dot--inactive {
+  background: rgba(255, 255, 255, 0.18);
+}
+.MasternodesDonut__Dot--banned {
+  background: var(--chakra-colors-red-default, #f45858);
+}
+.MasternodesDonut__Geo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+  font-family: var(--pe-font-mono);
+  font-size: 0.6875rem;
+}
+.MasternodesDonut__GeoLabel {
+  flex-shrink: 0;
+  font-size: 0.5625rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--chakra-colors-gray-500);
+}
+.MasternodesDonut__GeoList {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px 10px;
+  min-width: 0;
+  color: var(--pe-color-fg-muted);
+  font-variant-numeric: tabular-nums;
+}
+.MasternodesDonut__GeoList b {
+  color: #fff;
+  font-weight: 700;
+}
+.MasternodesDonut__GeoItem {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  cursor: default;
+}
+.MasternodesDonut__Flag {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  display: block;
+  object-fit: cover;
+}
+.MasternodesDonut__GeoMore {
+  color: var(--chakra-colors-gray-500);
+}
+@media (prefers-reduced-motion: reduce) {
+  .MasternodesDonut__Seg {
+    transition: none;
+  }
+}
+
+@keyframes MasternodesRotate {
+  to {
+    transform: rotate(360deg);
+  }
+}

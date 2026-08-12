@@ -7,7 +7,7 @@ import useResizeObserver from '@react-hook/resize-observer'
 import { Box } from '@chakra-ui/react'
 import { CardHead, Presets } from '../cards'
 import { getDaysBetweenDates, currencyRound } from '../../util'
-import './MetricChart.scss'
+import './MetricChart.css'
 
 const DAY = 24 * 60 * 60 * 1000
 
