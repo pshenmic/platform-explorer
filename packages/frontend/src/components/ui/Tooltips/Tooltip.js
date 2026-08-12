@@ -106,19 +106,21 @@ export default function Tooltip ({
 
   const updatePos = useCallback(() => {
     const el = triggerRef.current
-    if (!el) return
+    const tipEl = tipRef.current
+    if (!el || !tipEl) return
     const rect = el.getBoundingClientRect()
     if (rect.width === 0 && rect.height === 0) return
-    const tipR = tipRef.current?.getBoundingClientRect()
-    const tipW = tipR?.width || 260
-    const tipH = tipR?.height || 90
-    setPos(placeFixed(rect, placement, tipW, tipH))
+    const tipR = tipEl.getBoundingClientRect()
+    if (tipR.width === 0 && tipR.height === 0) return
+    setPos(placeFixed(rect, placement, tipR.width, tipR.height))
   }, [placement])
 
   useLayoutEffect(() => {
-    if (!isOpen) return undefined
+    if (!isOpen) {
+      setPos(null)
+      return undefined
+    }
     updatePos()
-    // remeasure after tip paints (size known)
     const raf = requestAnimationFrame(() => updatePos())
     const onScroll = () => updatePos()
     window.addEventListener('scroll', onScroll, true)
@@ -231,7 +233,8 @@ export default function Tooltip ({
     )
   }
 
-  const tipNode = isOpen && mounted && pos
+
+  const tipNode = isOpen && mounted
     ? (
       <div
         ref={tipRef}
@@ -239,10 +242,12 @@ export default function Tooltip ({
         role={'tooltip'}
         style={{
           position: 'fixed',
-          top: pos.top,
-          left: pos.left,
-          transform: pos.transform,
-          zIndex: 1800
+          top: pos ? pos.top : 0,
+          left: pos ? pos.left : 0,
+          transform: pos ? pos.transform : 'translate(-50%, -100%)',
+          zIndex: 1800,
+          visibility: pos ? 'visible' : 'hidden',
+          pointerEvents: pos ? 'auto' : 'none'
         }}
         onMouseEnter={hoverIn}
         onMouseLeave={hoverOut}
