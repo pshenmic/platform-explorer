@@ -1,20 +1,18 @@
-@import '../../styles/variables.scss';
+@use '../../styles/list-grid' as grid;
 
-@mixin Columns ($absoluteTimespan: false) {
+@mixin Columns($absoluteTimespan: false) {
   $timeSpanWidth: #{if($absoluteTimespan, '9rem', '6rem')};
 
-  display: grid;
-  gap: 16px;
-  width: 100%;
+  @include grid.list-grid(16px);
 
   @container (min-width: 90em) {
     grid-template-columns:
-    5.3rem // height
-    minmax(0, 1fr) // hash
-    minmax(0, 1fr) // proposed by
-    minmax(5rem, 15rem) // fees
-    4.75rem // tx count
-    $timeSpanWidth; // time
+      5.3rem // height
+      minmax(0, 1fr) // hash
+      minmax(0, 1fr) // proposed by
+      minmax(5rem, 15rem) // fees
+      4.75rem // tx count
+      $timeSpanWidth; // time
   }
 
   grid-template-columns:
@@ -73,23 +71,17 @@
   }
 }
 
-@mixin Column () {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
+@mixin Column() {
+  @include grid.list-grid-cell;
 
   &--Height,
   &--Hash,
   &--Validator {
-    justify-content: flex-start;
-    text-align: left;
+    @include grid.list-grid-cell-start;
   }
 
   &:last-child {
-    text-align: right;
-    justify-content: flex-end;
-    white-space: nowrap;
+    @include grid.list-grid-cell-end;
   }
 
   &--Fees {
