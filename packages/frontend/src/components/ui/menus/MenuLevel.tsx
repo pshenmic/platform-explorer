@@ -96,7 +96,9 @@ function MenuLevel ({
               key={index}
               isOpen={openSubMenuId === index}
               onClose={handleSubMenuClose}
-              onOpen={() => onActiveItemChange?.(index)}
+              onOpen={() => {
+                if (activeItemId !== index) onActiveItemChange?.(index)
+              }}
               placement={placement}
               closeOnBlur={true}
               autoFocus={false}

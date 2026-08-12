@@ -132,23 +132,29 @@ export const Filters = ({
 
   /** Sync menu filters with applied filters when menu opens */
   const handleMenuOpen = useCallback(() => {
-    // Only sync on first open or in desktop mode
+    // Controlled Popover may re-fire onOpen while already open — do not setState again
+    // (was causing "Maximum update depth exceeded" with MultiLevelMenu).
+    if (menuIsOpen) return
+
+    // Desktop: always copy applied → menu on each open. Mobile sheet: once per session.
     if (!isMenuInitialized || !isMobile) {
       setMenuFilters(appliedFilters)
       setIsMenuInitialized(true)
     }
 
     menuOnOpen()
-  }, [appliedFilters, setMenuFilters, menuOnOpen, isMenuInitialized, isMobile])
+  }, [menuIsOpen, appliedFilters, setMenuFilters, menuOnOpen, isMenuInitialized, isMobile])
 
   const handleMenuClose = useCallback(() => {
+    if (!menuIsOpen) return
+
     /** Apply filters when menu closes (if not applying on change) */
     if (!applyOnChange) {
       applyFilters()
     }
     setIsMenuInitialized(false)
     menuOnClose()
-  }, [applyFilters, applyOnChange, menuOnClose])
+  }, [menuIsOpen, applyFilters, applyOnChange, menuOnClose])
 
   const submitHandler = () => {
     /** Always apply filters when submit is pressed */

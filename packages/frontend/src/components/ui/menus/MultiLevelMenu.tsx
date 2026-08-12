@@ -36,12 +36,17 @@ function MultiLevelMenu ({
   }
 
   const openMenuHandler = () => {
+    // Avoid re-entrant open while parent already keeps Popover open (controlled isOpen)
+    if (forceIsOpen) {
+      setForceClose(false)
+      return
+    }
     setForceClose(false)
     if (typeof onOpen === 'function') onOpen()
   }
 
   const handleActiveItemChange = (id: number | null) => {
-    setActiveItemId(id)
+    setActiveItemId(prev => (prev === id ? prev : id))
   }
 
   useOutsideClick({
