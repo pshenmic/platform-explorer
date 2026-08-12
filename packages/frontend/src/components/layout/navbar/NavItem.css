@@ -1,0 +1,68 @@
+.NavItem {
+  position: relative;
+  font-family: var(--pe-font-heading);
+  font-size: 0.75rem;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  font-weight: bold;
+  color: var(--pe-color-fg-muted);
+  transition: var(--pe-transition-def);
+  white-space: nowrap;
+  padding: 4px 0;
+}
+.NavItem--WithDropdown {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  cursor: default;
+}
+.NavItem--WithDropdown:hover {
+  cursor: default;
+}
+.NavItem__DropdownIcon {
+  transition: transform var(--pe-transition-def);
+}
+.NavItem__DropdownIcon svg {
+  transition: transform var(--pe-transition-def);
+  transform: rotate(90deg);
+}
+.NavItem__DropdownIcon--Open svg {
+  transform: rotate(-90deg);
+}
+.NavItem--Active {
+  color: var(--pe-color-brand-normal);
+}
+@media (pointer: fine), screen and (min-width: 62em) {
+  .NavItem:hover {
+    color: #fff;
+  }
+}
+@media screen and (max-width: calc(62em - 1px)) {
+  .NavItem {
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 10px;
+    padding: 20px;
+    text-align: center;
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    top: 0;
+    transition: all 0.1s;
+  }
+  .NavItem--Active {
+    border: 1px solid var(--pe-color-brand-normal);
+    color: var(--pe-color-brand-normal) !important;
+    background: rgba(255, 255, 255, 0.02);
+    cursor: default;
+  }
+}
+@media screen and (max-width: calc(62em - 1px)) and (hover: hover) and (pointer: fine) {
+  .NavItem:not(.NavItem--Active):hover {
+    background: rgba(255, 255, 255, 0.15);
+  }
+}
+@media screen and (max-width: calc(62em - 1px)) {
+  .NavItem:active {
+    color: #fff;
+    transform: translateY(1px);
+    background: rgba(255, 255, 255, 0.1) !important;
+  }
+}

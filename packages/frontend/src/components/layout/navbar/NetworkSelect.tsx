@@ -5,7 +5,7 @@ import Dropdown from './Dropdown'
 import { networks } from '../../../constants/networks'
 import { useActiveNetwork } from 'src/contexts'
 
-import './NetworkSelect.scss'
+import './NetworkSelect.css'
 
 function NetworkSelect () {
   const { name: network } = useActiveNetwork()
