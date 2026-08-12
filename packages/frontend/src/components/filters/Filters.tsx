@@ -66,11 +66,10 @@ export const Filters = ({
   const previousAppliedFilters = useRef<Record<string, unknown>>(appliedFilters as Record<string, unknown>)
 
   const applyFilters = useCallback((filtersToApply: FilterState = menuFilters) => {
-    if (typeof onFilterChange !== 'function') return
-
     const processedFilters = (() => {
       return Object.entries(filtersToApply).reduce<Record<string, unknown>>((result, [key, value]) => {
         const filterKeyConfig = filtersConfig[key]
+        if (!filterKeyConfig) return result
 
         if (filterKeyConfig.type === 'multiselect' && (filterKeyConfig.isAllSelected?.(value) || (Array.isArray(value) && value.length === 0))) {
           return result
@@ -109,8 +108,17 @@ export const Filters = ({
       }, {})
     })()
 
-    /** Update applied filters state */
-    setAppliedFilters(filtersToApply)
+    setAppliedFilters(prev => {
+      // Avoid extra renders when closing the menu with unchanged draft filters
+      try {
+        if (JSON.stringify(prev) === JSON.stringify(filtersToApply)) return prev
+      } catch {
+        /* fall through */
+      }
+      return filtersToApply
+    })
+
+    if (typeof onFilterChange !== 'function') return
 
     if (JSON.stringify(previousAppliedFilters.current) === JSON.stringify(processedFilters)) {
       return

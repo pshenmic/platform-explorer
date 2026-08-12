@@ -3,6 +3,29 @@
   scroll-behavior: smooth;
   scrollbar-width: thin;
   scrollbar-color: var(--pe-color-brand-normal) transparent;
+  position: relative;
+}
+
+.MenuLevel__ItemWrap {
+  position: relative;
+}
+
+.MenuLevel__Flyout {
+  position: absolute;
+  left: 100%;
+  top: 0;
+  z-index: 2;
+  margin-left: var(--pe-space-2);
+  min-width: 180px;
+  max-height: 300px;
+  overflow-x: hidden;
+  overflow-y: auto;
+  padding: var(--pe-space-2);
+  backdrop-filter: blur(8px);
+  border-radius: var(--pe-radius-block);
+  border: 1px solid var(--pe-color-border-subtle);
+  background: rgba(24, 31, 34, 0.95);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
 }
 .MenuLevel::-webkit-scrollbar {
   height: var(--pe-space-2);
@@ -37,7 +60,7 @@
   font-weight: var(--pe-font-weight-bold);
   text-transform: uppercase;
   font-size: var(--pe-text-sm);
-  letter-spacing: 0.var(--pe-space-1);
+  letter-spacing: 0.4px;
   border-radius: var(--pe-radius-def);
   transition: background-color var(--pe-transition-def);
   color: var(--pe-color-fg-muted);

@@ -5,12 +5,12 @@ import type { PopoverProps } from '@chakra-ui/react'
 import MenuLevel from './MenuLevel'
 import type { MenuItem } from './MenuLevel'
 import { useCallback, useState } from 'react'
-import type { ReactElement, ReactNode } from 'react'
+import type { ReactElement } from 'react'
 import './MultiLevelMenu.css'
 
 interface MultiLevelMenuProps extends Omit<PopoverProps, 'children' | 'trigger'> {
   menuData?: MenuItem[]
-  /** Must be a single element (PopoverTrigger clones it). Prefer a stable element. */
+  /** Single React element — PopoverTrigger will clone it. Do not put a competing onClick. */
   trigger?: ReactElement
   placement?: PopoverProps['placement']
   onClose?: () => void
@@ -19,9 +19,8 @@ interface MultiLevelMenuProps extends Omit<PopoverProps, 'children' | 'trigger'>
 }
 
 /**
- * Desktop multi-level filter menu.
- * Controlled mode: pass isOpen + onOpen + onClose from the parent.
- * Do not put a second open-toggle onClick on the trigger — PopoverTrigger owns the click.
+ * Root filter menu: one Chakra Popover only.
+ * Nested levels are CSS flyouts inside MenuLevel (no nested Popovers).
  */
 function MultiLevelMenu ({
   menuData = [],
@@ -43,42 +42,37 @@ function MultiLevelMenu ({
     onClose?.()
   }, [onClose])
 
-  const handleActiveItemChange = useCallback((id: number | null) => {
-    setActiveItemId(prev => (prev === id ? prev : id))
-  }, [])
-
-  const handleMenuItemClick = useCallback(() => {
-    handleClose()
-  }, [handleClose])
-
   return (
-    <Popover
-      isOpen={isOpen}
-      onOpen={handleOpen}
-      onClose={handleClose}
-      closeOnBlur
-      placement={placement}
-      variant={'menu'}
-      isLazy
-      autoFocus={false}
-      returnFocusOnClose={false}
-      {...props}
-    >
-      <PopoverTrigger>
-        {trigger ?? <Button type='button'>Open menu</Button>}
-      </PopoverTrigger>
-      <PopoverContent width={'auto'} minWidth={'180px'}>
-        <PopoverBody overflow={'visible'} p={0}>
-          <MenuLevel
-            items={menuData}
-            forceClose={isOpen === false}
-            activeItemId={activeItemId}
-            onActiveItemChange={handleActiveItemChange}
-            onMenuItemClick={handleMenuItemClick}
-          />
-        </PopoverBody>
-      </PopoverContent>
-    </Popover>
+    <div className={'MultiLevelMenu'}>
+      <Popover
+        isOpen={isOpen}
+        onOpen={handleOpen}
+        onClose={handleClose}
+        closeOnBlur
+        placement={placement}
+        variant={'menu'}
+        isLazy
+        autoFocus={false}
+        returnFocusOnClose={false}
+        gutter={8}
+        {...props}
+      >
+        <PopoverTrigger>
+          {trigger ?? <Button type='button'>Open menu</Button>}
+        </PopoverTrigger>
+        <PopoverContent className={'MultiLevelMenu__Content'} width={'auto'} minWidth={'180px'}>
+          <PopoverBody overflow={'visible'} p={2}>
+            <MenuLevel
+              items={menuData}
+              forceClose={isOpen === false}
+              activeItemId={activeItemId}
+              onActiveItemChange={setActiveItemId}
+              onMenuItemClick={handleClose}
+            />
+          </PopoverBody>
+        </PopoverContent>
+      </Popover>
+    </div>
   )
 }
 

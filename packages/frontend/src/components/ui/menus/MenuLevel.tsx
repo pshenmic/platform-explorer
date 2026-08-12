@@ -1,7 +1,8 @@
+'use client'
+
 import { useEffect, useState } from 'react'
 import type { ReactNode } from 'react'
-import { Popover, PopoverTrigger, PopoverContent, PopoverBody, Link } from '@chakra-ui/react'
-import type { PlacementWithLogical } from '@chakra-ui/react'
+import { Link } from '@chakra-ui/react'
 import { ChevronIcon } from '../icons'
 import './MenuLevel.css'
 
@@ -17,17 +18,22 @@ export interface MenuItem {
 interface MenuLevelProps {
   items?: MenuItem[]
   onMenuItemClick?: () => void
-  placement?: PlacementWithLogical
+  /** kept for API compat; flyouts are always right of the item */
+  placement?: string
   onLevelClose?: () => void
   forceClose?: boolean
   activeItemId?: number | null
   onActiveItemChange?: (id: number | null) => void
 }
 
+/**
+ * One column of a multi-level menu.
+ * Submenus / filter panels use CSS flyouts — not nested Chakra Popovers
+ * (nested controlled Popovers caused Maximum update depth with Filters).
+ */
 function MenuLevel ({
   items = [],
   onMenuItemClick,
-  placement = 'right-start',
   onLevelClose,
   forceClose,
   activeItemId,
@@ -39,34 +45,36 @@ function MenuLevel ({
     if (forceClose) setOpenSubMenuId(null)
   }, [forceClose])
 
-  const handleItemClick = (item: MenuItem, index: number) => {
-    if (item?.subMenu?.length || item?.content) {
-      setOpenSubMenuId(prev => prev === index ? null : index)
-      return
-    }
-
-    if (item?.onClick) {
-      item?.onClick()
-      onMenuItemClick && onMenuItemClick()
-    }
+  const openFlyout = (index: number) => {
+    setOpenSubMenuId(prev => {
+      const next = prev === index ? null : index
+      onActiveItemChange?.(next)
+      return next
+    })
   }
 
-  const handleSubMenuClose = () => {
-    onActiveItemChange?.(null)
+  const closeFlyout = () => {
     setOpenSubMenuId(null)
-    if (typeof onLevelClose === 'function') onLevelClose()
+    onActiveItemChange?.(null)
+    onLevelClose?.()
+  }
+
+  const handleLeafClick = (item: MenuItem) => {
+    item.onClick?.()
+    onMenuItemClick?.()
   }
 
   return (
     <div className={'MenuLevel'}>
       {items.map((item, index) => {
-        const isActive = activeItemId === index
+        const isActive = activeItemId === index || openSubMenuId === index
+        const hasFlyout = Boolean(item?.subMenu?.length || item?.content)
 
         if (item?.disabled) {
           return (
             <div
               key={index}
-              onClick={() => onMenuItemClick && onMenuItemClick()}
+              onClick={() => onMenuItemClick?.()}
               className={'MenuLevel__Item MenuLevel__Item--Disabled'}
             >
               <span>{item.label}</span>
@@ -82,68 +90,60 @@ function MenuLevel ({
               w={'100%'}
               textDecoration={'none'}
               _hover={{ textDecoration: 'none' }}
-              onClick={() => onMenuItemClick && onMenuItemClick()}
-              className={`MenuLevel__Item ${isActive ? 'active' : ''}`}
+              onClick={() => onMenuItemClick?.()}
+              className={`MenuLevel__Item ${isActive ? 'MenuLevel__Item--Active' : ''}`}
             >
               <span>{item.label}</span>
             </Link>
           )
         }
 
-        if (item?.subMenu?.length || item?.content) {
+        if (hasFlyout) {
+          const open = openSubMenuId === index
           return (
-            <Popover
-              key={index}
-              isOpen={openSubMenuId === index}
-              onClose={handleSubMenuClose}
-              onOpen={() => {
-                if (activeItemId !== index) onActiveItemChange?.(index)
-              }}
-              placement={placement}
-              closeOnBlur={true}
-              autoFocus={false}
-              strategy={'fixed'}
-              variant={'menu'}
-              offset={[0, 25]}
-              boundary={'scrollParent'}
-            >
-              <PopoverTrigger>
-                <div
-                  className={`MenuLevel__Item MenuLevel__Item--Submenu ${isActive ? 'MenuLevel__Item--Active' : ''}`}
-                  onClick={() => handleItemClick(item, index)}
-                >
-                  {<span>{item.label}</span>}
-                  <div className={'MenuLevel__ItemIcon'}>
-                    <ChevronIcon />
-                  </div>
+            <div key={index} className={'MenuLevel__ItemWrap'}>
+              <div
+                className={`MenuLevel__Item MenuLevel__Item--Submenu ${open ? 'MenuLevel__Item--Active' : ''}`}
+                onClick={() => openFlyout(index)}
+                role='button'
+                tabIndex={0}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault()
+                    openFlyout(index)
+                  }
+                }}
+              >
+                <span>{item.label}</span>
+                <div className={'MenuLevel__ItemIcon'}>
+                  <ChevronIcon />
                 </div>
-              </PopoverTrigger>
-              <PopoverContent width={'auto'} minWidth={'180px'}>
-                <PopoverBody overflow={'visible'} p={0}>
+              </div>
+              {open && (
+                <div className={'MenuLevel__Flyout'}>
                   {item.subMenu
-                    ? <MenuLevel
+                    ? (
+                      <MenuLevel
                         items={item.subMenu}
                         onMenuItemClick={onMenuItemClick}
-                        placement={placement}
-                        onLevelClose={handleSubMenuClose}
-                        activeItemId={activeItemId}
-                        onActiveItemChange={onActiveItemChange}
+                        onLevelClose={closeFlyout}
+                        forceClose={forceClose}
                       />
-                    : item.content
-                  }
-                </PopoverBody>
-              </PopoverContent>
-            </Popover>
+                      )
+                    : item.content}
+                </div>
+              )}
+            </div>
           )
         }
 
         return (
           <div
-            className={`MenuLevel__Item ${isActive ? 'active' : ''}`}
-            onClick={() => handleItemClick(item, index)}
             key={index}
+            className={`MenuLevel__Item ${isActive ? 'MenuLevel__Item--Active' : ''}`}
+            onClick={() => handleLeafClick(item)}
           >
-            {<span>{item.label}</span>}
+            <span>{item.label}</span>
           </div>
         )
       })}
