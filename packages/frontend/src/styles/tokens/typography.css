@@ -1,0 +1,61 @@
+/**
+ * Design tokens: typography + breakpoints + space scale.
+ * Font families are filled by Next/Chakra at runtime via --chakra-fonts-*;
+ * --pe-font-* aliases them so CSS and theme share one semantic API.
+ */
+
+:root {
+  /* Fonts (resolved after Chakra injects --chakra-fonts-*) */
+  --pe-font-heading: var(--chakra-fonts-heading, 'Montserrat', system-ui, sans-serif);
+  --pe-font-body: var(--chakra-fonts-body, 'Open Sans', system-ui, sans-serif);
+  --pe-font-mono: var(--chakra-fonts-mono, 'Roboto Mono', ui-monospace, monospace);
+
+  /* Type scale (common UI sizes) */
+  --pe-text-2xs: 0.625rem; /* 10px */
+  --pe-text-xs: 0.6875rem; /* 11px */
+  --pe-text-sm: 0.75rem; /* 12px */
+  --pe-text-md: 0.875rem; /* 14px */
+  --pe-text-lg: 1rem; /* 16px */
+  --pe-text-xl: 1.125rem; /* 18px */
+  --pe-text-2xl: 1.5rem; /* 24px */
+
+  --pe-font-weight-normal: 400;
+  --pe-font-weight-medium: 500;
+  --pe-font-weight-bold: 700;
+  --pe-font-weight-extrabold: 800;
+
+  --pe-leading-tight: 1.25;
+  --pe-leading-normal: 1.45;
+  --pe-leading-list: 24px;
+
+  /* Breakpoints — match Chakra / styles/breakpoints.scss (docs + JS; media often needs literal) */
+  --pe-bp-sm: 30em;
+  --pe-bp-md: 48em;
+  --pe-bp-lg: 62em;
+  --pe-bp-xl: 80em;
+  --pe-bp-2xl: 96em;
+  --pe-bp-3xl: 120em;
+
+  /* Space scale (aligned with Chakra space keys used in app) */
+  --pe-space-px: 1px;
+  --pe-space-0: 0;
+  --pe-space-1: 0.25rem;
+  --pe-space-2: 0.5rem;
+  --pe-space-3: 0.75rem;
+  --pe-space-4: 1rem;
+  --pe-space-5: 1.25rem;
+  --pe-space-6: 1.5rem;
+  --pe-space-7: 1.75rem;
+  --pe-space-8: 2rem;
+  --pe-space-9: 2.375rem;
+  --pe-space-10: 2.5rem;
+
+  /* List chrome */
+  --pe-list-row-pad-y: 7px;
+  --pe-list-row-pad-x: 12px;
+  --pe-list-row-gap: 16px;
+  --pe-list-row-radius: var(--pe-radius-def);
+
+  /* Motion */
+  --pe-transition-def: 0.15s;
+}

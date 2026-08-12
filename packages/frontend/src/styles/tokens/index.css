@@ -1,0 +1,3 @@
+/* Design tokens entry — import once from app shell */
+@import './palette.css';
+@import './typography.css';
