@@ -3,7 +3,7 @@ import type { ReactNode } from 'react'
 import { Popover, PopoverTrigger, PopoverContent, PopoverBody, Link } from '@chakra-ui/react'
 import type { PlacementWithLogical } from '@chakra-ui/react'
 import { ChevronIcon } from '../icons'
-import './MenuLevel.scss'
+import './MenuLevel.css'
 
 export interface MenuItem {
   label?: ReactNode

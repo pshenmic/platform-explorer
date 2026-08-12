@@ -1,0 +1,11 @@
+.RateTooltip {
+  font-size: 0.75rem;
+}
+.RateTooltip__Dash {
+  font-family: var(--pe-font-heading);
+  color: #fff;
+}
+.RateTooltip__Usd {
+  font-family: var(--pe-font-mono);
+  color: rgba(255, 255, 255, 0.6);
+}

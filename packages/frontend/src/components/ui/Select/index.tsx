@@ -3,7 +3,7 @@
 import ReactSelect from 'react-select'
 import type { MenuPlacement, SingleValue } from 'react-select'
 import type { WithClassName } from '../../../types/common'
-import './Select.scss'
+import './Select.css'
 
 export interface SelectOption {
   value: string | number

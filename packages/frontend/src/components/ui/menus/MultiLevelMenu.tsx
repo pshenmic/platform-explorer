@@ -5,7 +5,7 @@ import MenuLevel from './MenuLevel'
 import type { MenuItem } from './MenuLevel'
 import { useState, useRef } from 'react'
 import type { ReactNode } from 'react'
-import './MultiLevelMenu.scss'
+import './MultiLevelMenu.css'
 
 interface MultiLevelMenuProps extends Omit<PopoverProps, 'children' | 'trigger'> {
   menuData?: MenuItem[]

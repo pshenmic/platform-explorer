@@ -1,6 +1,6 @@
 import type { CSSProperties, ReactNode } from 'react'
 import { Tooltip } from '../Tooltips'
-import './ProportionsLine.scss'
+import './ProportionsLine.css'
 
 interface WrapperProps {
   children?: ReactNode

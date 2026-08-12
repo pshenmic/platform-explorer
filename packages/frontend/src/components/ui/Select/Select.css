@@ -1,0 +1,155 @@
+.Select .react-select,
+body > .react-select,
+body > .react-select__menu-portal > .react-select {
+  font-size: 0.75rem;
+  font-weight: 500;
+  font-family: var(--pe-font-heading);
+}
+.Select .react-select__control,
+body > .react-select__control,
+body > .react-select__menu-portal > .react-select__control {
+  padding: 4px 12px;
+  gap: 4px;
+  border: none;
+  border-radius: var(--pe-radius-def);
+  color: #fff;
+  background-color: var(--pe-color-brand-normal);
+  width: max-content;
+  min-height: 0;
+  box-shadow: none;
+}
+.Select .react-select__control:hover,
+body > .react-select__control:hover,
+body > .react-select__menu-portal > .react-select__control:hover {
+  cursor: pointer;
+  background-color: var(--pe-color-brand-light);
+}
+.Select .react-select__control--menu-is-open,
+body > .react-select__control--menu-is-open,
+body > .react-select__menu-portal > .react-select__control--menu-is-open {
+  background-color: var(--pe-color-brand-light);
+}
+.Select .react-select__value-container,
+body > .react-select__value-container,
+body > .react-select__menu-portal > .react-select__value-container {
+  padding: 0;
+  line-height: 16px;
+}
+.Select .react-select__single-value,
+body > .react-select__single-value,
+body > .react-select__menu-portal > .react-select__single-value {
+  margin: 0;
+  width: max-content;
+}
+.Select .react-select__input-container,
+body > .react-select__input-container,
+body > .react-select__menu-portal > .react-select__input-container {
+  margin: 0;
+  padding: 0;
+}
+.Select .react-select__control--menu-is-open .react-select__dropdown-indicator,
+body > .react-select__control--menu-is-open .react-select__dropdown-indicator,
+body > .react-select__menu-portal > .react-select__control--menu-is-open .react-select__dropdown-indicator {
+  transform: rotate(-180deg);
+}
+.Select .react-select__dropdown-indicator,
+body > .react-select__dropdown-indicator,
+body > .react-select__menu-portal > .react-select__dropdown-indicator {
+  width: 1rem;
+  height: 1rem;
+  padding: 0;
+  transition: transform 0.15s;
+}
+.Select .react-select__dropdown-indicator svg,
+body > .react-select__dropdown-indicator svg,
+body > .react-select__menu-portal > .react-select__dropdown-indicator svg {
+  width: 16px;
+  height: 16px;
+  display: block;
+  flex-shrink: 0;
+  fill: #fff;
+  stroke: #fff;
+}
+.Select .react-select__input-container,
+body > .react-select__input-container,
+body > .react-select__menu-portal > .react-select__input-container {
+  color: #fff;
+}
+.Select .react-select__placeholder, .Select .react-select__single-value,
+body > .react-select__placeholder,
+body > .react-select__single-value,
+body > .react-select__menu-portal > .react-select__placeholder,
+body > .react-select__menu-portal > .react-select__single-value {
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: 500;
+  font-family: var(--pe-font-heading);
+}
+.Select .react-select__menu,
+body > .react-select__menu,
+body > .react-select__menu-portal > .react-select__menu {
+  z-index: 1000;
+  background-color: #fff;
+  color: var(--pe-color-brand-normal);
+  border-radius: var(--pe-radius-def);
+  overflow: hidden;
+  font-size: 0.75rem;
+  font-family: var(--pe-font-heading);
+  width: 100%;
+}
+.Select .react-select__indicator-separator,
+body > .react-select__indicator-separator,
+body > .react-select__menu-portal > .react-select__indicator-separator {
+  display: none;
+}
+.Select .react-select__menu-list,
+body > .react-select__menu-list,
+body > .react-select__menu-portal > .react-select__menu-list {
+  padding: 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.Select .react-select__option,
+body > .react-select__option,
+body > .react-select__menu-portal > .react-select__option {
+  width: 100%;
+  min-width: max-content;
+  border-radius: 4px;
+  line-height: 16px;
+  padding: 4px 8px;
+  transition: 0.1s;
+}
+.Select .react-select__option:hover,
+body > .react-select__option:hover,
+body > .react-select__menu-portal > .react-select__option:hover {
+  cursor: pointer;
+}
+.Select .react-select__option--is-focused,
+body > .react-select__option--is-focused,
+body > .react-select__menu-portal > .react-select__option--is-focused {
+  background-color: transparent;
+}
+.Select .react-select__option:hover,
+body > .react-select__option:hover,
+body > .react-select__menu-portal > .react-select__option:hover {
+  background-color: rgba(var(--pe-color-gray-675-rgb), 0.09);
+  color: var(--pe-color-gray-900);
+}
+.Select .react-select__option--is-selected,
+body > .react-select__option--is-selected,
+body > .react-select__menu-portal > .react-select__option--is-selected {
+  background-color: var(--pe-color-brand-light) !important;
+  color: #fff !important;
+}
+.Select .react-select__option--is-selected:hover,
+body > .react-select__option--is-selected:hover,
+body > .react-select__menu-portal > .react-select__option--is-selected:hover {
+  background-color: var(--pe-color-brand-light);
+  cursor: default !important;
+}
+.Select .react-select__menu-portal,
+body > .react-select__menu-portal,
+body > .react-select__menu-portal > .react-select__menu-portal {
+  z-index: 50 !important;
+}

@@ -1,0 +1,133 @@
+.PlatformAddressDigestCard {
+  padding: calc(var(--pe-space-3) + 0px);
+}
+@media screen and (min-width: 48em) {
+  .PlatformAddressDigestCard {
+    padding: calc(var(--pe-space-4) + 0px);
+  }
+}
+@media screen and (min-width: 62em) {
+  .PlatformAddressDigestCard {
+    padding: calc(var(--pe-space-5) + 0px);
+  }
+}
+@media screen and (min-width: 80em) {
+  .PlatformAddressDigestCard {
+    padding: calc(var(--pe-space-6) + 0px);
+  }
+}
+.PlatformAddressDigestCard {
+  font-family: var(--pe-font-mono);
+  font-size: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.875rem;
+  background: rgba(var(--pe-color-gray-800-rgb), 0.5);
+  border-radius: var(--pe-radius-def);
+  container-type: inline-size;
+}
+.PlatformAddressDigestCard--Loading .InfoLine__Value {
+  height: 1.5rem;
+}
+.PlatformAddressDigestCard--Loading .PlatformAddressDigestCard__InfoContainer {
+  overflow: hidden;
+}
+.PlatformAddressDigestCard--Loading .PlatformAddressDigestCard__InfoContainerValue {
+  width: 100px;
+  max-width: 100%;
+}
+.PlatformAddressDigestCard__RowContainer {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.875rem;
+}
+.PlatformAddressDigestCard__InfoContainer {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px;
+  padding: 24px;
+  background: rgba(var(--pe-color-gray-800-rgb), 0.5);
+  border-radius: var(--pe-radius-def);
+  width: 100%;
+}
+.PlatformAddressDigestCard__InfoContainer .InfoLine__Title svg {
+  width: 1.75rem;
+  height: 1.75rem;
+}
+.PlatformAddressDigestCard__LinesContainer {
+  flex-direction: column;
+}
+.PlatformAddressDigestCard, .PlatformAddressDigestCard__Transfers {
+  display: flex;
+  gap: 0.875rem;
+}
+.PlatformAddressDigestCard--Loading .PlatformAddressDigestCard__Transfers .LoadingLine {
+  height: 1.5rem;
+}
+.PlatformAddressDigestCard__Transfer {
+  width: 50%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 1.5rem;
+  background: rgba(var(--pe-color-gray-800-rgb), 0.5);
+  border-radius: var(--pe-radius-def);
+}
+.PlatformAddressDigestCard__Transfer .CreditsBlock {
+  display: flex;
+  flex-direction: column;
+}
+.PlatformAddressDigestCard__Transfer .CreditsBlock .CreditsBlock__Usd {
+  margin-top: 0.25rem;
+  margin-left: auto;
+}
+.PlatformAddressDigestCard__Transfer--Outgoing .CreditsBlock__Usd {
+  background-color: rgba(var(--pe-color-red-default-rgb), 0.2);
+  color: var(--pe-color-red-default);
+}
+.PlatformAddressDigestCard__TransferTitle {
+  font-size: 0.75rem;
+  color: var(--pe-color-fg-muted);
+}
+@media screen and (min-width: 48em) and (max-width: 62em), screen and (max-width: 30em) {
+  .PlatformAddressDigestCard--Loading .InfoLine__Value {
+    width: 100% !important;
+  }
+  .PlatformAddressDigestCard__Transfers {
+    flex-direction: column;
+  }
+  .PlatformAddressDigestCard__Transfer {
+    width: 100%;
+  }
+  .PlatformAddressDigestCard__Transfer .CreditsBlock {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .PlatformAddressDigestCard__Transfer .CreditsBlock .CreditsBlock__Usd {
+    margin-top: 0.25rem;
+    margin-bottom: 0.25rem;
+  }
+}
+@container (max-width: 24em) {
+  .PlatformAddressDigestCard--Loading .InfoLine__Value {
+    width: 100% !important;
+  }
+  .PlatformAddressDigestCard__InfoLine {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .PlatformAddressDigestCard__InfoLine .InfoLine__Value {
+    width: 100%;
+    text-align: left;
+  }
+  .PlatformAddressDigestCard__InfoLine .CreditsBlock {
+    display: flex;
+    flex-wrap: wrap;
+  }
+  .PlatformAddressDigestCard__InfoLine .CreditsBlock__Usd {
+    margin-left: auto;
+  }
+}

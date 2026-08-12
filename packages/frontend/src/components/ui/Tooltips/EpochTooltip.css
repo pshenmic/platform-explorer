@@ -1,0 +1,17 @@
+.EpochTooltip {
+  font-family: var(--pe-font-heading);
+  font-size: 0.75rem;
+}
+.EpochTooltip__Line {
+  margin-bottom: 14px;
+}
+.EpochTooltip__Line:last-child {
+  margin-bottom: 0;
+}
+.EpochTooltip__Title {
+  color: rgba(255, 255, 255, 0.6);
+  display: inline-block;
+}
+.EpochTooltip__Value {
+  color: #fff;
+}

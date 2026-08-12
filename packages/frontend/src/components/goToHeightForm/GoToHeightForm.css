@@ -1,0 +1,50 @@
+.GoToHeightForm {
+  display: flex;
+  align-items: center;
+}
+.GoToHeightForm__Title {
+  margin-right: 8px;
+  white-space: nowrap;
+  font-family: var(--pe-font-mono);
+  color: var(--pe-color-fg-muted);
+  font-size: 0.75rem;
+}
+.GoToHeightForm__Input {
+  font-family: var(--pe-font-mono);
+  font-size: 0.75rem;
+}
+.GoToHeightForm__Input, .GoToHeightForm__Input:focus {
+  width: 80px;
+  padding: 0 8px;
+  margin-right: 6px;
+  height: 29px;
+  box-sizing: border-box;
+  border: 1px solid var(--chakra-colors-whiteAlpha-400);
+  border-radius: 5px;
+  -webkit-appearance: none;
+  -moz-appearance: textfield;
+}
+.GoToHeightForm__Input::-webkit-outer-spin-button, .GoToHeightForm__Input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+}
+.GoToHeightForm__Input--Incorrect {
+  border: 1px solid var(--chakra-colors-whiteAlpha-200);
+  color: gray;
+}
+.GoToHeightForm__Button {
+  background-color: transparent;
+  border: 1px solid var(--chakra-colors-whiteAlpha-400);
+  border-radius: 5px;
+  height: 29px;
+  color: #fff;
+  padding: 0 4px;
+  font-family: var(--pe-font-mono);
+}
+.GoToHeightForm__Button:disabled {
+  color: gray;
+  cursor: default;
+}
+.GoToHeightForm__Button:hover:not(:disabled) {
+  background-color: rgba(255, 255, 255, 0.0823529412);
+  cursor: pointer;
+}

@@ -1,7 +1,7 @@
 import type { ReactElement, ReactNode } from 'react'
 import Tooltip from './Tooltip'
 import type { Epoch } from '../../../types'
-import './EpochTooltip.scss'
+import './EpochTooltip.css'
 
 function formatDate (timestamp: number) {
   const date = new Date(timestamp)

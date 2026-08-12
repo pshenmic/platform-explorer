@@ -1,5 +1,5 @@
 import type { ComponentPropsWithoutRef, ReactNode } from 'react'
-import './NavigationButton.scss'
+import './NavigationButton.css'
 
 interface NavigationButtonProps extends Omit<ComponentPropsWithoutRef<'button'>, 'name'> {
   active?: boolean

@@ -1,0 +1,7 @@
+.Slider__Navigation {
+  margin-top: 15px;
+}
+.Slider__Carousel {
+  user-select: auto !important;
+  -webkit-user-select: auto !important;
+}

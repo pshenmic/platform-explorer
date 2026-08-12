@@ -1,0 +1,20 @@
+.PlatformAddress {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+.PlatformAddress__CommonInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+.PlatformAddress__CommonInfo .InfoLine {
+  justify-content: flex-start !important;
+}
+.PlatformAddress__CommonInfo .InfoLine__Title {
+  width: 200px;
+  flex-grow: 0;
+}
+.PlatformAddress__CommonInfo .InfoLine__Value {
+  text-align: left;
+}

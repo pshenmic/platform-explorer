@@ -16,7 +16,7 @@ import { TransactionType } from '../../transaction/[hash]/components/Transaction
 import { explainConsensusError } from '../../../enums/consensusErrors'
 import type { ChangeEvent, RefObject } from 'react'
 import type { Rate } from '../../../types'
-import './BroadcastForm.scss'
+import './BroadcastForm.css'
 
 const STATE = {
   EMPTY: 'EMPTY',

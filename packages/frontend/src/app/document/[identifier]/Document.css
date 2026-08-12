@@ -1,0 +1,96 @@
+.Document__Data {
+  padding: calc(var(--pe-space-3) + 0px);
+}
+@media screen and (min-width: 48em) {
+  .Document__Data {
+    padding: calc(var(--pe-space-4) + 0px);
+  }
+}
+@media screen and (min-width: 62em) {
+  .Document__Data {
+    padding: calc(var(--pe-space-5) + 0px);
+  }
+}
+@media screen and (min-width: 80em) {
+  .Document__Data {
+    padding: calc(var(--pe-space-6) + 0px);
+  }
+}
+.Document__Data {
+  font-family: var(--pe-font-mono);
+  font-size: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.875rem;
+  background: rgba(var(--pe-color-gray-800-rgb), 0.5);
+  border-radius: var(--pe-radius-def);
+  container-type: inline-size;
+}
+.Document__Data--Loading .InfoLine__Value {
+  height: 1.5rem;
+}
+.Document__Data--Loading .Document__Data__InfoContainer {
+  overflow: hidden;
+}
+.Document__Data--Loading .Document__Data__InfoContainerValue {
+  width: 100px;
+  max-width: 100%;
+}
+.Document__Data__RowContainer {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.875rem;
+}
+.Document__Data__InfoContainer {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px;
+  padding: 24px;
+  background: rgba(var(--pe-color-gray-800-rgb), 0.5);
+  border-radius: var(--pe-radius-def);
+  width: 100%;
+}
+.Document__Data__InfoContainer .InfoLine__Title svg {
+  width: 1.75rem;
+  height: 1.75rem;
+}
+.Document__Data__LinesContainer {
+  flex-direction: column;
+}
+.Document__Data {
+  border-radius: var(--pe-radius-block);
+  gap: 0.5rem;
+}
+.Document__DataTitle {
+  font-family: var(--pe-font-heading);
+  font-weight: 700;
+  font-size: 0.75rem;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+}
+.Document__InfoBlocks {
+  display: flex;
+  gap: 1.25rem;
+}
+.Document__InfoBlock {
+  width: 50%;
+}
+@media screen and (max-width: 62em) {
+  .Document__InfoBlocks {
+    flex-direction: column;
+  }
+  .Document__InfoBlock {
+    width: 100%;
+  }
+}
+@media screen and (max-width: 48em) {
+  .Document__InfoBlocks {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+  .Document__InfoBlock {
+    width: 100%;
+  }
+}

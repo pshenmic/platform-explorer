@@ -12,7 +12,7 @@ import {
 } from 'react'
 import type { ReactElement, ReactNode, MouseEvent, Ref } from 'react'
 import type { WithClassName } from '../../../types/common'
-import './Tooltip.scss'
+import './Tooltip.css'
 
 type TooltipChildProps = {
   ref?: Ref<HTMLElement>

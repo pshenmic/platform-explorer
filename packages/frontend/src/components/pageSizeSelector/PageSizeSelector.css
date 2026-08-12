@@ -1,0 +1,22 @@
+.PageSizeSelector {
+  display: flex;
+  font-family: var(--pe-font-mono);
+  align-items: center;
+}
+.PageSizeSelector__Title {
+  margin-right: 8px;
+  white-space: nowrap;
+  color: var(--pe-color-fg-muted);
+  font-size: 0.75rem;
+}
+.PageSizeSelector select {
+  font-size: 0.75rem;
+  padding: 6px 12px;
+  max-width: 100%;
+  height: 29px;
+  box-sizing: border-box;
+  border: 1px solid var(--chakra-colors-whiteAlpha-200);
+  border-radius: 5px;
+  padding: 0 4px;
+  background-color: var(--pe-color-brand-normal);
+}

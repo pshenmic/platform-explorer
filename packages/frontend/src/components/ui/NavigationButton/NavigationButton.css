@@ -1,0 +1,46 @@
+.NavigationButton {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  justify-content: space-between;
+  width: 100%;
+  padding: 12px 20px;
+  background-color: transparent;
+  border-radius: 10px;
+  white-space: nowrap;
+  font-weight: 500;
+  font-size: 0.75rem;
+  letter-spacing: 0.025rem;
+  transition: background-color ease 0.5s;
+  font-family: var(--pe-font-heading);
+}
+.NavigationButton:hover {
+  background-color: var(--chakra-colors-gray-550);
+}
+.NavigationButton:hover .NavigationButton__SubName {
+  background-color: var(--chakra-colors-gray-525) !important;
+}
+.NavigationButton__SubName {
+  border-radius: 5px;
+  padding: 4px 10px;
+  background-color: var(--chakra-colors-gray-600);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 400;
+  font-size: 0.625rem;
+  letter-spacing: 0.04em;
+  transition: background-color ease 0.5s;
+}
+
+.NavigationButton__Active {
+  background-color: var(--pe-color-brand-normal) !important;
+}
+.NavigationButton__Active:hover {
+  cursor: default;
+}
+
+.NavigationButton__NoActive {
+  cursor: no-drop !important;
+}

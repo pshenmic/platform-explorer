@@ -1,0 +1,324 @@
+.BroadcastForm {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  width: 100%;
+}
+.BroadcastForm__Section {
+  background: var(--pe-color-gray-675);
+  border: 1px solid var(--chakra-colors-gray-550);
+  border-radius: var(--pe-radius-block);
+  padding: 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  width: 100%;
+}
+.BroadcastForm__SectionTitle {
+  font-family: var(--font-montserrat);
+  font-weight: 700;
+  font-size: 12px;
+  line-height: 110%;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--chakra-colors-white-50);
+}
+.BroadcastForm__SectionHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+}
+.BroadcastForm__ButtonsRow {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+.BroadcastForm__ButtonMessage {
+  flex: 1;
+  min-width: 0;
+  font-family: var(--pe-font-mono);
+  font-size: 13px;
+  line-height: 130%;
+  word-break: break-word;
+}
+.BroadcastForm__ButtonMessage--error {
+  color: var(--chakra-colors-red-default);
+}
+.BroadcastForm__ButtonMessage--success {
+  color: var(--pe-color-fg-muted);
+}
+.BroadcastForm__ButtonMessage--success a {
+  color: var(--pe-color-brand-normal);
+}
+.BroadcastForm__ButtonMessage--success a:hover {
+  text-decoration: underline;
+}
+.BroadcastForm__Section--Json {
+  padding: 24px;
+}
+.BroadcastForm__Section--Json .BroadcastForm__Tabs {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+.BroadcastForm__Section--Json .BroadcastForm__TabPanels {
+  flex: 1;
+  min-height: 0;
+}
+.BroadcastForm__Section--Json .BroadcastForm__TabPanel {
+  height: 100%;
+  padding: 14px 0 0 0;
+  display: flex;
+  flex-direction: column;
+}
+.BroadcastForm__Section--Json .BroadcastForm__TabPanel--Variant {
+  overflow-y: auto;
+  gap: 12px;
+  padding: 14px 4px 4px 0;
+  scroll-behavior: smooth;
+  scrollbar-width: thin;
+  scrollbar-color: var(--pe-color-brand-normal) transparent;
+}
+.BroadcastForm__Section--Json .BroadcastForm__TabPanel--Variant::-webkit-scrollbar {
+  height: 8px;
+  width: 8px;
+}
+.BroadcastForm__Section--Json .BroadcastForm__TabPanel--Variant::-webkit-scrollbar-track {
+  background: transparent;
+}
+.BroadcastForm__Section--Json .BroadcastForm__TabPanel--Variant::-webkit-scrollbar-thumb {
+  background-color: var(--pe-color-brand-normal);
+  border-radius: 8px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+.BroadcastForm__Section--Json .BroadcastForm__TabPanel--Variant::-webkit-scrollbar-thumb:hover {
+  background-color: var(--pe-color-brand-light);
+}
+.BroadcastForm__EmptyVariant {
+  padding: 24px;
+  text-align: center;
+  color: var(--pe-color-fg-muted);
+  font-family: var(--pe-font-mono);
+  font-size: 12px;
+  line-height: 140%;
+}
+.BroadcastForm__Signature {
+  font-family: var(--pe-font-mono);
+  font-size: 12px;
+  word-break: break-all;
+  color: var(--pe-color-fg-muted);
+  position: relative;
+  padding-right: 32px;
+}
+.BroadcastForm__Signature .CopyButton {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+}
+.BroadcastForm .InfoLine {
+  justify-content: flex-start !important;
+}
+.BroadcastForm .InfoLine .InfoLine__Title {
+  width: 200px;
+  max-width: 200px;
+  line-height: 20px;
+  flex-grow: 0;
+  flex-shrink: 0;
+}
+.BroadcastForm .InfoLine .InfoLine__Value {
+  text-align: left;
+  font-size: 0.75rem;
+  flex: 1;
+  min-width: 0;
+}
+.BroadcastForm__InputLine .InfoLine__Value {
+  flex: 1;
+}
+.BroadcastForm__Input {
+  width: 100%;
+  box-sizing: border-box;
+  font-family: var(--pe-font-mono);
+  font-size: 12px;
+  background: rgba(var(--pe-color-gray-800-rgb), 0.5);
+  border: 1px solid var(--pe-color-gray-750);
+  border-radius: var(--pe-radius-def);
+  padding: 10px 12px;
+  color: var(--chakra-colors-white-50);
+  min-height: 40px;
+  max-height: 200px;
+  resize: none;
+  overflow-y: auto;
+  line-height: 130%;
+  word-break: break-all;
+  white-space: pre-wrap;
+  scroll-behavior: smooth;
+  scrollbar-width: thin;
+  scrollbar-color: var(--pe-color-brand-normal) transparent;
+}
+.BroadcastForm__Input::-webkit-scrollbar {
+  height: 8px;
+  width: 8px;
+}
+.BroadcastForm__Input::-webkit-scrollbar-track {
+  background: transparent;
+}
+.BroadcastForm__Input::-webkit-scrollbar-thumb {
+  background-color: var(--pe-color-brand-normal);
+  border-radius: 8px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+.BroadcastForm__Input::-webkit-scrollbar-thumb:hover {
+  background-color: var(--pe-color-brand-light);
+}
+.BroadcastForm__Input:focus {
+  outline: none;
+  border-color: var(--pe-color-brand-normal);
+}
+.BroadcastForm__Input::placeholder {
+  color: rgba(var(--chakra-colors-white-50-rgb, 255, 255, 255), 0.2);
+}
+.BroadcastForm__Size {
+  font-family: var(--pe-font-mono);
+  font-size: 12px;
+  color: var(--chakra-colors-white-50);
+}
+.BroadcastForm__SizeUnit {
+  opacity: 0.5;
+}
+.BroadcastForm__ErrorMessage {
+  color: var(--chakra-colors-red-default);
+  font-family: var(--pe-font-mono);
+  font-size: 13px;
+  line-height: 130%;
+}
+.BroadcastForm__HashRow {
+  font-family: var(--pe-font-mono);
+  font-size: 12px;
+  color: var(--pe-color-fg-muted);
+  word-break: break-all;
+}
+.BroadcastForm__HashRow a {
+  color: var(--pe-color-brand-normal);
+}
+.BroadcastForm__HashRow a:hover {
+  text-decoration: underline;
+}
+.BroadcastForm__SignPanel {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 16px;
+  background: rgba(var(--pe-color-gray-800-rgb), 0.4);
+  border: 1px solid var(--chakra-colors-gray-700);
+  border-radius: var(--pe-radius-def);
+}
+.BroadcastForm__SignPanelHeader {
+  font-family: var(--font-montserrat);
+  font-weight: 600;
+  font-size: 13px;
+  color: var(--chakra-colors-white-50);
+}
+.BroadcastForm__SignPanelMethod {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.BroadcastForm__SignPanelHint {
+  font-family: var(--pe-font-mono);
+  font-size: 11px;
+  color: var(--pe-color-fg-muted);
+  line-height: 140%;
+}
+.BroadcastForm__SignPanelForm {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.BroadcastForm__SignPanelDetectedOwner {
+  font-family: var(--pe-font-mono);
+  font-size: 11px;
+  color: var(--pe-color-fg-muted);
+  word-break: break-all;
+}
+.BroadcastForm__SignPanelDetectedOwner code {
+  color: var(--chakra-colors-white-50);
+}
+.BroadcastForm__SignPanelActions {
+  display: flex;
+  gap: 8px;
+}
+.BroadcastForm__SignedHexView {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+.BroadcastForm__SignedHexHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  font-family: var(--font-montserrat);
+  font-size: 12px;
+  color: var(--chakra-colors-white-50);
+}
+.BroadcastForm__SignedHexActions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.BroadcastForm__SignedHexBody {
+  font-family: var(--pe-font-mono);
+  font-size: 12px;
+  line-height: 130%;
+  color: var(--chakra-colors-white-50);
+  background: rgba(var(--pe-color-gray-800-rgb), 0.5);
+  border: 1px solid var(--pe-color-gray-750);
+  border-radius: var(--pe-radius-def);
+  padding: 10px 12px;
+  max-height: 200px;
+  overflow-y: auto;
+  word-break: break-all;
+  white-space: pre-wrap;
+  scroll-behavior: smooth;
+  scrollbar-width: thin;
+  scrollbar-color: var(--pe-color-brand-normal) transparent;
+}
+.BroadcastForm__SignedHexBody::-webkit-scrollbar {
+  height: 8px;
+  width: 8px;
+}
+.BroadcastForm__SignedHexBody::-webkit-scrollbar-track {
+  background: transparent;
+}
+.BroadcastForm__SignedHexBody::-webkit-scrollbar-thumb {
+  background-color: var(--pe-color-brand-normal);
+  border-radius: 8px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+.BroadcastForm__SignedHexBody::-webkit-scrollbar-thumb:hover {
+  background-color: var(--pe-color-brand-light);
+}
+.BroadcastForm__SignedHexAppended {
+  background: rgba(0, 141, 228, 0.45);
+  color: var(--chakra-colors-white-100);
+  font-weight: 600;
+  border-radius: 2px;
+  padding: 1px 0;
+  box-shadow: 0 0 0 1px rgba(0, 141, 228, 0.6);
+}
+.BroadcastForm__DecodedMeta {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.BroadcastForm__DecodedDivider {
+  border-top: 1px solid var(--chakra-colors-gray-700);
+  margin: 12px 0;
+}

@@ -1,0 +1,42 @@
+.ProportionsLine {
+  display: flex;
+  width: 100%;
+  border-radius: 0.25rem;
+  height: 1.5rem;
+  gap: 0.25rem;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+.ProportionsLine:hover .ProportionsLine__Item {
+  opacity: 0.1;
+  transition: opacity 0.2s ease;
+}
+.ProportionsLine__Item {
+  transition: width 0.3s ease, opacity 0.2s ease;
+  min-width: min-content;
+}
+.ProportionsLine__Item:hover {
+  opacity: 1 !important;
+}
+.ProportionsLine__Item--Empty {
+  opacity: 0.3;
+}
+.ProportionsLine__Item--Empty:hover {
+  opacity: 0.9;
+}
+.ProportionsLine__Item:hover .ProportionsLine__ItemLine {
+  height: 0.438rem;
+}
+.ProportionsLine__ItemLine {
+  border-radius: 0.25rem;
+  width: 100%;
+  height: 0.313rem;
+  transition: 0.1s;
+}
+.ProportionsLine__ItemValue {
+  color: white;
+  font-weight: 500;
+  text-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
+  font-size: 0.75rem;
+}
