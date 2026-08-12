@@ -16,7 +16,7 @@ import { Tooltip } from '../ui/Tooltips'
 import { FormattedNumber } from '../ui/FormattedNumber'
 import type { Localization, Owner, Rate, Token } from '../../types'
 
-import './TokensListItem.scss'
+import './TokensListItem.css'
 
 const Alias = AliasJs as ComponentType<{
   children?: ReactNode

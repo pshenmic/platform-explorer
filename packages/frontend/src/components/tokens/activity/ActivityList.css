@@ -1,0 +1,119 @@
+.ActivityList__Pagination {
+  margin-top: 2rem !important;
+}
+.ActivityList__ScrollZone {
+  width: fit-content;
+  min-width: 100%;
+}
+@media screen and (max-width: 48em) {
+  .ActivityList__Pagination {
+    margin-top: 1.5rem !important;
+  }
+}
+@media screen and (max-width: 30em) {
+  .ActivityList__Pagination {
+    margin-top: 1rem !important;
+  }
+}
+.ActivityList {
+  container-type: inline-size;
+}
+@container (max-width: 58rem) {
+  .ActivityList {
+    scroll-behavior: smooth;
+    scrollbar-width: thin;
+    scrollbar-color: var(--pe-color-brand-normal) transparent;
+  }
+  .ActivityList::-webkit-scrollbar {
+    height: 8px;
+    width: 8px;
+  }
+  .ActivityList::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .ActivityList::-webkit-scrollbar-thumb {
+    background-color: var(--pe-color-brand-normal);
+    border-radius: 8px;
+    border: 2px solid transparent;
+    background-clip: padding-box;
+  }
+  .ActivityList::-webkit-scrollbar-thumb:hover {
+    background-color: var(--pe-color-brand-light);
+  }
+  .ActivityList {
+    overflow-x: auto;
+  }
+}
+@media (max-width: 62rem) {
+  .ActivityList {
+    scroll-behavior: smooth;
+    scrollbar-width: thin;
+    scrollbar-color: var(--pe-color-brand-normal) transparent;
+  }
+  .ActivityList::-webkit-scrollbar {
+    height: 8px;
+    width: 8px;
+  }
+  .ActivityList::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .ActivityList::-webkit-scrollbar-thumb {
+    background-color: var(--pe-color-brand-normal);
+    border-radius: 8px;
+    border: 2px solid transparent;
+    background-clip: padding-box;
+  }
+  .ActivityList::-webkit-scrollbar-thumb:hover {
+    background-color: var(--pe-color-brand-light);
+  }
+  .ActivityList {
+    overflow-x: auto;
+  }
+}
+.ActivityList__ScrollZone {
+  width: fit-content;
+  min-width: 100%;
+}
+.ActivityList__ColumnTitles {
+  display: grid;
+  padding: var(--pe-list-row-pad-y) var(--pe-list-row-pad-x);
+  border-radius: var(--pe-list-row-radius);
+  background-color: var(--pe-color-gray-800);
+  margin-bottom: 8px;
+  font-family: var(--pe-font-heading);
+  font-weight: 700;
+  font-size: 12px;
+  text-transform: uppercase;
+  color: var(--pe-color-fg);
+}
+.ActivityList__ColumnTitles--Light {
+  background: transparent !important;
+  font-weight: 500 !important;
+  color: #fff !important;
+  text-transform: none !important;
+}
+.ActivityList__ColumnTitles {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: 8rem minmax(0, 2fr) minmax(0, 2fr) minmax(0, 2fr) 8rem 9rem;
+}
+@container (max-width: 104rem) {
+  .ActivityList__ColumnTitles {
+    grid-template-columns: 7.5rem minmax(0, 25rem) minmax(0, 25rem) minmax(0, 25rem) minmax(0, 10rem) 9rem;
+  }
+}
+@container (max-width: 48rem) {
+  .ActivityList__ColumnTitles {
+    grid-template-columns: 7.5rem minmax(6.5rem, 25rem) minmax(6.5rem, 25rem) minmax(6.5rem, 25rem) minmax(10rem, 10rem) 5rem;
+  }
+}
+.ActivityList__ColumnTitle {
+  display: flex;
+  width: 100%;
+}
+.ActivityList__ColumnTitle:last-child {
+  justify-content: flex-end;
+  white-space: nowrap;
+  margin-left: auto;
+  text-align: right;
+}

@@ -1,0 +1,96 @@
+.ActivityListItem {
+  display: flex;
+  width: 100%;
+  text-decoration: none;
+  padding: var(--pe-list-row-pad-y) var(--pe-list-row-pad-x);
+  margin-bottom: 8px;
+  line-height: 24px;
+  color: var(--pe-color-gray-100);
+  font-family: var(--pe-font-mono);
+  font-size: 12pt;
+  border-radius: var(--pe-list-row-radius);
+  border: 1px solid var(--pe-color-gray-750);
+  background-color: rgba(var(--pe-color-gray-800-rgb), 0.5);
+  transition: all 0.1s;
+}
+@media (hover: hover) and (pointer: fine) {
+  .ActivityListItem:hover {
+    background-color: var(--pe-color-gray-750);
+    text-decoration: none;
+    cursor: pointer;
+  }
+}
+.ActivityListItem:active {
+  transform: translateY(1px);
+  box-shadow: 0 0 9999px 0 rgba(0, 0, 0, 0.25) inset;
+}
+.ActivityListItem:last-child {
+  margin-bottom: 0;
+}
+.ActivityListItem__Column--Credits, .ActivityListItem__Column--Number {
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+.ActivityListItem__IdentifierContainer {
+  display: flex;
+  align-items: center;
+  min-width: 50px;
+}
+.ActivityListItem__Avatar {
+  height: 24px;
+  width: 24px;
+  flex-shrink: 0;
+  margin-right: 12px;
+}
+.ActivityListItem--Timestamp, .ActivityListItem__Column--Timestamp {
+  font-family: var(--pe-font-mono);
+  white-space: nowrap;
+  color: #fff;
+}
+.ActivityListItem--Timestamp,
+.ActivityListItem--Timestamp .DateBlock__Date, .ActivityListItem__Column--Timestamp,
+.ActivityListItem__Column--Timestamp .DateBlock__Date {
+  font-size: 0.75rem;
+}
+.ActivityListItem {
+  gap: 12px;
+}
+.ActivityListItem__Content {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: 8rem minmax(0, 2fr) minmax(0, 2fr) minmax(0, 2fr) 8rem 9rem;
+}
+@container (max-width: 104rem) {
+  .ActivityListItem__Content {
+    grid-template-columns: 7.5rem minmax(0, 25rem) minmax(0, 25rem) minmax(0, 25rem) minmax(0, 10rem) 9rem;
+  }
+}
+@container (max-width: 48rem) {
+  .ActivityListItem__Content {
+    grid-template-columns: 7.5rem minmax(6.5rem, 25rem) minmax(6.5rem, 25rem) minmax(6.5rem, 25rem) minmax(10rem, 10rem) 5rem;
+  }
+}
+.ActivityListItem__Content {
+  flex: 1;
+}
+.ActivityListItem__Column {
+  display: flex;
+  width: 100%;
+}
+.ActivityListItem__Column:last-child {
+  justify-content: flex-end;
+  white-space: nowrap;
+  margin-left: auto;
+  text-align: right;
+}
+.ActivityListItem__Column--Timestamp {
+  align-items: center;
+  gap: 0.5rem;
+}
+.ActivityListItem .LinkContainer {
+  overflow: hidden;
+}
+.ActivityListItem__StatusIcon {
+  transition: var(--pe-transition-def);
+  flex-shrink: 0;
+}

@@ -9,7 +9,7 @@ import Essentials from './Essentials'
 import Features from './Features'
 import Distribution from './Distribution'
 import Advanced from './Advanced'
-import './FormAccordion.scss'
+import './FormAccordion.css'
 
 // Section names follow Dash Evo Tool. Groups / Document Schemas are Phase 2.
 const SECTIONS: Array<{ id: string, label: string, Comp: ComponentType }> = [

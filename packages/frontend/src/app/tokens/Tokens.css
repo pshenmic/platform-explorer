@@ -1,0 +1,42 @@
+.Tokens__Controls {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin: 0.75rem 0 1.5rem;
+  flex-wrap: nowrap;
+}
+.Tokens__Title {
+  flex-shrink: 0;
+  margin-right: 0.5rem;
+}
+.Tokens__Stats {
+  flex: 0 0 auto;
+  min-width: 0;
+}
+.Tokens__Trending {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  padding-left: 1rem;
+  border-left: 1px solid var(--pe-color-gray-700);
+}
+.Tokens__Filters {
+  flex-shrink: 0;
+  margin-left: auto;
+}
+@media screen and (max-width: 48em) {
+  .Tokens__Controls {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+  .Tokens__Trending {
+    flex: 0 0 auto;
+    max-width: 100%;
+    padding-left: 0;
+    border-left: none;
+  }
+  .Tokens__Filters {
+    margin-left: 0;
+  }
+}

@@ -1,0 +1,29 @@
+.Advanced {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.Advanced__Body {
+  padding: 0;
+}
+.Advanced__Subsection {
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--chakra-colors-gray-700);
+}
+.Advanced__Subsection:last-child {
+  border-bottom: 0;
+  padding-bottom: 0;
+}
+.Advanced__GroupHeader {
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid var(--chakra-colors-gray-700);
+}
+.Advanced__Row {
+  padding: 4px 0;
+  font-size: 0.75rem;
+}
+.Advanced__RepeaterRow {
+  padding: 4px 0;
+  font-size: 0.75rem;
+}

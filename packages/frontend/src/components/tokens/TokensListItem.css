@@ -1,0 +1,218 @@
+.TokensListItem {
+  display: flex;
+  width: 100%;
+  text-decoration: none;
+  padding: var(--pe-list-row-pad-y) var(--pe-list-row-pad-x);
+  margin-bottom: 8px;
+  line-height: 24px;
+  color: var(--pe-color-gray-100);
+  font-family: var(--pe-font-mono);
+  font-size: 12pt;
+  border-radius: var(--pe-list-row-radius);
+  border: 1px solid var(--pe-color-gray-750);
+  background-color: rgba(var(--pe-color-gray-800-rgb), 0.5);
+  transition: all 0.1s;
+}
+@media (hover: hover) and (pointer: fine) {
+  .TokensListItem:hover {
+    background-color: var(--pe-color-gray-750);
+    text-decoration: none;
+    cursor: pointer;
+  }
+}
+.TokensListItem:active {
+  transform: translateY(1px);
+  box-shadow: 0 0 9999px 0 rgba(0, 0, 0, 0.25) inset;
+}
+.TokensListItem:last-child {
+  margin-bottom: 0;
+}
+.TokensListItem__Column--Credits, .TokensListItem__Column--Number {
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+.TokensListItem__IdentifierContainer {
+  display: flex;
+  align-items: center;
+  min-width: 50px;
+}
+.TokensListItem__Avatar {
+  height: 24px;
+  width: 24px;
+  flex-shrink: 0;
+  margin-right: 12px;
+}
+.TokensListItem--Timestamp, .TokensListItem__Column--Timestamp {
+  font-family: var(--pe-font-mono);
+  white-space: nowrap;
+  color: #fff;
+}
+.TokensListItem--Timestamp,
+.TokensListItem--Timestamp .DateBlock__Date, .TokensListItem__Column--Timestamp,
+.TokensListItem__Column--Timestamp .DateBlock__Date {
+  font-size: 0.75rem;
+}
+.TokensListItem {
+  display: block;
+}
+.TokensListItem__Content {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: 3fr 10rem 2fr 3fr 3fr;
+  justify-content: space-between;
+}
+@container (max-width: 80rem) {
+  .TokensListItem__Content {
+    grid-template-columns: 10rem 6rem 8rem 8rem 18rem;
+  }
+}
+@container (max-width: 64rem) {
+  .TokensListItem__Content {
+    grid-template-columns: minmax(10rem, 22rem) 50px 10rem minmax(0, 22rem);
+  }
+}
+@container (max-width: 48rem) {
+  .TokensListItem__Content {
+    grid-template-columns: minmax(10rem, 16rem) 50px minmax(0, 22rem);
+  }
+}
+@container (max-width: 40rem) {
+  .TokensListItem__Content {
+    grid-template-columns: minmax(10rem, 18rem) minmax(0, 22rem);
+  }
+}
+@container (max-width: 30rem) {
+  .TokensListItem__Content {
+    grid-template-columns: 10rem minmax(0, 22rem);
+  }
+}
+@container (max-width: 23rem) {
+  .TokensListItem__Content {
+    grid-template-columns: 8rem minmax(0, 22rem);
+  }
+}
+.TokensListItem__Column {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+.TokensListItem__Column:last-child {
+  justify-content: flex-end;
+}
+@container (max-width: 64rem) {
+  .TokensListItem__Column--DataContract {
+    display: none;
+  }
+}
+@container (max-width: 48rem) {
+  .TokensListItem__Column--Price {
+    display: none;
+  }
+}
+@container (max-width: 40rem) {
+  .TokensListItem__Column--Supply {
+    display: none;
+  }
+}
+.TokensListItem__Column--TokenName {
+  overflow: hidden;
+  justify-content: flex-start;
+}
+.TokensListItem__Column--Position {
+  font-size: 0.75rem;
+}
+.TokensListItem__Column--DataContract {
+  overflow: hidden;
+  justify-content: flex-start;
+}
+.TokensListItem__Column--Supply .Supply {
+  width: 100%;
+}
+.TokensListItem__Column--SupplyBigNumber {
+  font-size: 0.75rem;
+}
+.TokensListItem__Column--OwnerIdentity {
+  overflow: hidden;
+  justify-content: flex-end;
+}
+.TokensListItem__Column--Position {
+  width: 80px;
+}
+.TokensListItem__Column--Balance, .TokensListItem__Column--Price {
+  font-size: 0.625rem;
+  font-weight: 400;
+}
+.TokensListItem__TokenNameContainer {
+  width: 100px;
+}
+.TokensListItem__TokenName {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.TokensListItem__DataContractLink, .TokensListItem__OwnerLink {
+  max-width: 100%;
+}
+.TokensListItem__OwnerIdentifier {
+  overflow: hidden;
+}
+.TokensListItem--Balance .TokensListItem__Content {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: 3fr 10rem 2fr 3fr 3fr 2fr;
+}
+@container (max-width: 100rem) {
+  .TokensListItem--Balance .TokensListItem__Content {
+    grid-template-columns: minmax(10rem, 26rem) 10rem 10rem minmax(10rem, 22rem) minmax(10rem, 22rem) 8rem;
+  }
+}
+@container (max-width: 90rem) {
+  .TokensListItem--Balance .TokensListItem__Content {
+    grid-template-columns: minmax(12rem, 18rem) 10rem 10rem minmax(6rem, 18rem) minmax(6rem, 18rem) 8rem;
+  }
+}
+@container (max-width: 80rem) {
+  .TokensListItem--Balance .TokensListItem__Content {
+    grid-template-columns: minmax(12rem, 26rem) 10rem 10rem minmax(8rem, 26rem) 8rem;
+  }
+}
+@container (max-width: 64rem) {
+  .TokensListItem--Balance .TokensListItem__Content {
+    grid-template-columns: minmax(8rem, 26rem) 10rem 8rem minmax(8rem, 18rem);
+  }
+}
+@container (max-width: 48rem) {
+  .TokensListItem--Balance .TokensListItem__Content {
+    grid-template-columns: minmax(8rem, 16rem) 10rem auto;
+  }
+}
+@container (max-width: 40rem) {
+  .TokensListItem--Balance .TokensListItem__Content {
+    grid-template-columns: minmax(8rem, 16rem) auto;
+  }
+}
+@container (max-width: 30rem) {
+  .TokensListItem--Balance .TokensListItem__Content {
+    grid-template-columns: 8rem minmax(0, 18rem);
+  }
+}
+@container (max-width: 80rem) {
+  .TokensListItem--Balance .TokensListItem__Column--OwnerIdentity {
+    display: none;
+  }
+}
+@container (max-width: 64rem) {
+  .TokensListItem--Balance .TokensListItem__Column--DataContract {
+    display: none;
+  }
+}
+@container (max-width: 48rem) {
+  .TokensListItem--Balance .TokensListItem__Column--Price {
+    display: none;
+  }
+}
+@container (max-width: 40rem) {
+  .TokensListItem--Balance .TokensListItem__Column--Supply {
+    display: none;
+  }
+}

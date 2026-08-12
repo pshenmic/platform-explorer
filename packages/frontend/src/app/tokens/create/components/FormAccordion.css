@@ -1,0 +1,47 @@
+.FormAccordion {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.FormAccordion__Toolbar {
+  display: flex;
+  justify-content: flex-end;
+}
+.FormAccordion__ToggleAll {
+  font-family: var(--pe-font-body);
+  font-size: 0.75rem;
+  color: var(--chakra-colors-white-50);
+  background: transparent;
+  border: 0;
+  padding: 0.25rem 0;
+  cursor: pointer;
+  transition: color var(--pe-transition-def);
+}
+.FormAccordion__ToggleAll:hover {
+  color: var(--chakra-colors-white-100);
+}
+.FormAccordion__Item {
+  border: 0;
+  border-top: 1px solid var(--chakra-colors-gray-550);
+}
+.FormAccordion__Item:last-of-type {
+  border-bottom: 1px solid var(--chakra-colors-gray-550);
+}
+.FormAccordion__Header {
+  padding: 0.75rem 0;
+}
+.FormAccordion__Header:hover {
+  background: transparent;
+}
+.FormAccordion__Title {
+  font-family: var(--pe-font-heading);
+  font-weight: 700;
+  font-size: 0.75rem;
+  line-height: 110%;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--chakra-colors-white-100);
+}
+.FormAccordion__Panel {
+  padding: 0 0 1rem;
+}

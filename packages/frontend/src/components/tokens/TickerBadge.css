@@ -1,0 +1,7 @@
+.TickerBadge {
+  font-weight: 500;
+  font-family: var(--pe-font-mono);
+  font-size: 0.75rem;
+  color: var(--pe-color-fg-muted);
+  letter-spacing: 0.4px;
+}
