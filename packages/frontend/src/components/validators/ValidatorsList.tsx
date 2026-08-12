@@ -10,7 +10,7 @@ import { ErrorMessageBlock } from '@components/Errors'
 import { createColumnHelper, getCoreRowModel, useReactTable } from '@tanstack/react-table'
 import { LoadingLine } from '@components/loading'
 
-import './ValidatorsList.scss'
+import './ValidatorsList.css'
 
 const columnHelper = createColumnHelper<Validator>()
 

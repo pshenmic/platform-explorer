@@ -1,0 +1,32 @@
+.Validators__Controls {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin: 0.75rem 0 1.5rem;
+  flex-wrap: wrap;
+}
+.Validators__Title {
+  flex-shrink: 0;
+  margin-right: 0.5rem;
+}
+.Validators__Stats {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+.Validators__Filters {
+  flex-shrink: 0;
+  margin-left: auto;
+}
+.Validators .ValidatorsTotal {
+  margin-bottom: 1.5rem;
+}
+@media screen and (max-width: 48em) {
+  .Validators__Controls {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+  .Validators__Filters {
+    margin-left: 0;
+  }
+}

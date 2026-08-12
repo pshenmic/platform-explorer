@@ -1,0 +1,304 @@
+.ValidatorCard__Title {
+  white-space: break-spaces;
+  word-break: break-all;
+}
+.ValidatorCard__Title .Alias__Name,
+.ValidatorCard__Title .Alias__Domain {
+  font-family: var(--pe-font-heading);
+  font-size: 0.875rem;
+  font-weight: 700;
+}
+.ValidatorCard__Title .Alias__Domain {
+  color: var(--pe-color-brand-light);
+  opacity: 1;
+}
+.ValidatorCard--Loading .InfoLine__Value {
+  height: 1.5rem;
+}
+.ValidatorCard__ContentContainer {
+  display: flex;
+  gap: 2.5rem;
+}
+.ValidatorCard__Column {
+  position: relative;
+  width: 50%;
+}
+.ValidatorCard__Header {
+  position: relative;
+  display: flex;
+  width: 100%;
+  align-items: center;
+}
+.ValidatorCard__Avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--pe-font-mono);
+  font-size: 0.75rem;
+  color: var(--chakra-colors-gray-500);
+  width: 88px;
+  height: 88px;
+  border: 1px solid rgba(137, 126, 126, 0.1);
+  flex-shrink: 0;
+  margin-left: 24px;
+}
+.ValidatorCard__HeaderLines {
+  display: flex;
+  gap: 20px;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 100%;
+  padding: 6px 0;
+  overflow: hidden;
+}
+.ValidatorCard__InfoLine {
+  gap: 14px;
+}
+.ValidatorCard__CommonInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+.ValidatorCard__CommonInfo .HorisontalSeparator {
+  margin: 0;
+}
+@media screen and (max-width: 62em) {
+  .ValidatorCard__ContentContainer {
+    gap: 1.5rem;
+  }
+}
+@media screen and (max-width: 48em) {
+  .ValidatorCard__ContentContainer {
+    flex-direction: column;
+  }
+  .ValidatorCard__ContentContainer, .ValidatorCard__CommonLines {
+    gap: 0.75rem;
+  }
+  .ValidatorCard__Column {
+    position: static;
+    width: 100%;
+  }
+}
+.ValidatorCard__Header {
+  display: flex;
+  width: 100%;
+  align-items: flex-start;
+}
+.ValidatorCard__CommonInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.ValidatorCard__InfoLine--IdentityAddress .InfoLine__Value, .ValidatorCard__InfoLine--NodeId .InfoLine__Value {
+  width: 100%;
+}
+.ValidatorCard__InfoLine--IdentityAddress .Identifier, .ValidatorCard__InfoLine--NodeId .Identifier {
+  container-type: inline-size;
+  width: 100%;
+  justify-content: flex-end;
+}
+@container (max-width: 22rem) {
+  .ValidatorCard__InfoLine--IdentityAddress .Identifier__SymbolsContainer {
+    max-width: 10rem;
+  }
+}
+@container (max-width: 11.5rem) {
+  .ValidatorCard__InfoLine--IdentityAddress .Identifier__SymbolsContainer {
+    max-width: 7rem;
+  }
+}
+@container (max-width: 20rem) {
+  .ValidatorCard__InfoLine--NodeId .Identifier__SymbolsContainer {
+    max-width: 9.2rem;
+  }
+}
+.ValidatorCard .InfoLine--Loading .InfoLine__Value {
+  height: 26px !important;
+}
+@keyframes loading-process {
+  from {
+    opacity: 0;
+    left: -100%;
+    z-index: 6;
+  }
+  50% {
+    opacity: 0.25;
+  }
+  to {
+    z-index: 6;
+    left: 100%;
+  }
+}
+@keyframes LoadingContainer {
+  from {
+    overflow: hidden;
+  }
+  to {
+    overflow: hidden;
+  }
+}
+.ValidatorCard--Loading .ValidatorCard__Avatar {
+  overflow: hidden;
+  position: relative;
+  animation: 1s LoadingContainer infinite;
+}
+.ValidatorCard--Loading .ValidatorCard__Avatar::before {
+  z-index: 5 !important;
+  opacity: 1 !important;
+}
+.ValidatorCard--Loading .ValidatorCard__Avatar::after {
+  animation: 1s loading-process infinite;
+  z-index: 6;
+}
+.ValidatorCard--Loading .ValidatorCard__Avatar::before, .ValidatorCard--Loading .ValidatorCard__Avatar::after {
+  content: "";
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  z-index: -1;
+}
+.ValidatorCard--Loading .ValidatorCard__Avatar::before {
+  background-color: var(--pe-color-gray-900);
+}
+.ValidatorCard--Loading .ValidatorCard__Avatar::after {
+  background: linear-gradient(90deg, transparent 0%, rgb(14, 117, 181) 50%, transparent 100%) !important;
+  width: 100%;
+  height: 100%;
+}
+.ValidatorCard__Separator {
+  margin: 12px 0;
+}
+.ValidatorCard__BlockHeighValue {
+  font-size: 0.813rem;
+}
+.ValidatorCard__ProTxHash .Identifier__SymbolsContainer {
+  max-width: 232px;
+}
+@media screen and (max-width: 62em) {
+  .ValidatorCard__Title {
+    white-space: break-spaces;
+    word-break: break-all;
+  }
+  .ValidatorCard__Title .Alias__Name,
+  .ValidatorCard__Title .Alias__Domain {
+    font-family: var(--pe-font-heading);
+    font-size: 0.875rem;
+    font-weight: 700;
+  }
+  .ValidatorCard__Title .Alias__Domain {
+    color: var(--pe-color-brand-light);
+    opacity: 1;
+  }
+  .ValidatorCard--Loading .InfoLine__Value {
+    height: 1.5rem;
+  }
+  .ValidatorCard__ContentContainer {
+    display: flex;
+    gap: 2.5rem;
+  }
+  .ValidatorCard__Column {
+    position: relative;
+    width: 50%;
+  }
+  .ValidatorCard__Header {
+    position: relative;
+    display: flex;
+    width: 100%;
+    align-items: center;
+  }
+  .ValidatorCard__Avatar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--pe-font-mono);
+    font-size: 0.75rem;
+    color: var(--chakra-colors-gray-500);
+    width: 88px;
+    height: 88px;
+    border: 1px solid rgba(137, 126, 126, 0.1);
+    flex-shrink: 0;
+    margin-left: 24px;
+    position: absolute;
+    right: 0;
+    top: 0;
+    margin: 0;
+  }
+  .ValidatorCard__HeaderLines {
+    display: flex;
+    gap: 20px;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 100%;
+    padding: 6px 0;
+    overflow: hidden;
+  }
+  .ValidatorCard__InfoLine {
+    gap: 14px;
+  }
+  .ValidatorCard__CommonInfo {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  .ValidatorCard__CommonInfo .HorisontalSeparator {
+    margin: 0;
+  }
+}
+@media screen and (max-width: 62em) and (max-width: 62em) {
+  .ValidatorCard__ContentContainer {
+    gap: 1.5rem;
+  }
+}
+@media screen and (max-width: 62em) and (max-width: 48em) {
+  .ValidatorCard__ContentContainer {
+    flex-direction: column;
+  }
+  .ValidatorCard__ContentContainer, .ValidatorCard__CommonLines {
+    gap: 0.75rem;
+  }
+  .ValidatorCard__Column {
+    position: static;
+    width: 100%;
+  }
+}
+@media screen and (max-width: 62em) {
+  .ValidatorCard__Header .InfoLine {
+    flex-wrap: wrap;
+    justify-content: start;
+    gap: 5px;
+  }
+  .ValidatorCard__Header .InfoLine__Title {
+    width: 100%;
+  }
+  .ValidatorCard__Header .InfoLine__Value {
+    width: 100%;
+    justify-content: flex-start;
+    text-align: left;
+  }
+  .ValidatorCard__ProTxHash {
+    padding-right: 170px;
+  }
+}
+@media screen and (max-width: 48em) {
+  .ValidatorCard__ProTxHash {
+    padding-right: 100px;
+  }
+}
+@media screen and (max-width: 30em) {
+  .ValidatorCard__CommonInfo .InfoLine {
+    flex-wrap: wrap;
+    justify-content: start;
+  }
+  .ValidatorCard__CommonInfo .InfoLine--Loading .InfoLine__Value {
+    min-width: 40px;
+    width: 100% !important;
+  }
+  .ValidatorCard__InfoLine--IdentityAddress .Identifier, .ValidatorCard__InfoLine--NodeId .Identifier {
+    justify-content: flex-start;
+  }
+  .ValidatorCard__InfoLine .InfoLine__Title {
+    margin-right: auto;
+  }
+}
