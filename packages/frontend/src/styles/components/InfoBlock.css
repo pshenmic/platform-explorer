@@ -7,112 +7,116 @@
   position: relative;
   z-index: 1;
   padding: var(--pe-space-5) var(--pe-space-8) var(--pe-space-8) var(--pe-space-8) !important;
-}
-.InfoBlock--NoBorder {
-  box-shadow: none;
-}
-.InfoBlock--Gradient {
-  overflow: hidden;
-  background-color: transparent;
-  border-radius: var(--pe-radius-block);
-  padding: var(--pe-space-5) var(--pe-space-6) !important;
-}
-.InfoBlock--Gradient::before {
-  content: "";
-  position: absolute;
-  z-index: -2;
-  display: block;
-  width: 100%;
-  height: 100%;
-  top: 0;
-  left: 0;
-  background-color: #181F22;
-  opacity: var(--pe-opacity-subtle);
-}
-.InfoBlock--Gradient::after {
-  content: "";
-  position: absolute;
-  z-index: -1;
-  display: block;
-  width: 500px;
-  height: 500px;
-  min-width: 100%;
-  min-height: 100%;
-  top: 0;
-  left: 0;
-  transform: translate(-50%, -50%);
-  background: radial-gradient(var(--pe-color-brand-normal), transparent 50%);
-  opacity: var(--pe-opacity-subtle);
-}
-.InfoBlock--Green {
-  backdrop-filter: blur(44px);
-  border-radius: var(--pe-radius-block);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  background: rgba(24, 31, 34, 0.2);
-  box-shadow: 2px 2px var(--pe-color-green-default);
-}
-.InfoBlock--Red {
-  backdrop-filter: blur(44px);
-  border-radius: var(--pe-radius-block);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  background: rgba(24, 31, 34, 0.2);
-  box-shadow: 2px 2px var(--pe-color-red-default);
-}
-.InfoBlock--Gradient.InfoBlock--Green::after {
-  background: radial-gradient(var(--pe-color-green-default), transparent 50%);
-}
-.InfoBlock--Gradient.InfoBlock--Red::after {
-  background: radial-gradient(var(--pe-color-red-default), transparent 50%);
-}
-.InfoBlock__Title {
-  background-color: var(--pe-color-brand-normal);
-  font-size: var(--pe-text-md) !important;
-  width: max-content;
-  padding: var(--pe-space-3) var(--pe-space-5);
-  border-radius: var(--pe-radius-block) var(--pe-radius-block) var(--pe-radius-block) 0;
-  position: relative;
-  left: -var(--pe-space-8);
-  top: -var(--pe-space-5);
-  margin: 0;
-}
-.InfoBlock__Head {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: var(--pe-space-2_5) var(--pe-space-3);
-  margin: -var(--pe-space-5) 0 var(--pe-space-3_5) 0;
-}
-.InfoBlock__Head .InfoBlock__Title {
-  position: static;
-  margin-left: -var(--pe-space-8);
-}
-.InfoBlock__HeadLeft {
-  display: flex;
-  align-items: baseline;
-  gap: var(--pe-space-2_5);
-  min-width: 0;
-}
-.InfoBlock__HeadSlot {
-  margin-left: auto;
-}
-@media screen and (max-width: 48em) {
-  .InfoBlock__HeadSlot {
-    margin-left: 0;
+  &--NoBorder {
+    box-shadow: none;
+  }
+  &--Gradient {
+    overflow: hidden;
+    background-color: transparent;
+    border-radius: var(--pe-radius-block);
+    padding: var(--pe-space-5) var(--pe-space-6) !important;
+  }
+  &--Gradient::before {
+    content: "";
+    position: absolute;
+    z-index: -2;
+    display: block;
     width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    background-color: #181F22;
+    opacity: var(--pe-opacity-subtle);
+  }
+  &--Gradient::after {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    display: block;
+    width: 500px;
+    height: 500px;
+    min-width: 100%;
+    min-height: 100%;
+    top: 0;
+    left: 0;
+    transform: translate(-50%, -50%);
+    background: radial-gradient(var(--pe-color-brand-normal), transparent 50%);
+    opacity: var(--pe-opacity-subtle);
+  }
+  &--Green {
+    backdrop-filter: blur(44px);
+    border-radius: var(--pe-radius-block);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(24, 31, 34, 0.2);
+    box-shadow: 2px 2px var(--pe-color-green-default);
+  }
+  &--Red {
+    backdrop-filter: blur(44px);
+    border-radius: var(--pe-radius-block);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(24, 31, 34, 0.2);
+    box-shadow: 2px 2px var(--pe-color-red-default);
+  }
+  &--Gradient.InfoBlock--Green::after {
+    background: radial-gradient(var(--pe-color-green-default), transparent 50%);
+  }
+  &--Gradient.InfoBlock--Red::after {
+    background: radial-gradient(var(--pe-color-red-default), transparent 50%);
+  }
+  &__Title {
+    background-color: var(--pe-color-brand-normal);
+    font-size: var(--pe-text-md) !important;
+    width: max-content;
+    padding: var(--pe-space-3) var(--pe-space-5);
+    border-radius: var(--pe-radius-block) var(--pe-radius-block) var(--pe-radius-block) 0;
+    position: relative;
+    left: -var(--pe-space-8);
+    top: -var(--pe-space-5);
+    margin: 0;
+  }
+  &__Head {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: var(--pe-space-2_5) var(--pe-space-3);
+    margin: -var(--pe-space-5) 0 var(--pe-space-3_5) 0;
+  }
+  &__Head &__Title {
+    position: static;
+    margin-left: -var(--pe-space-8);
+  }
+  &__HeadLeft {
+    display: flex;
+    align-items: baseline;
+    gap: var(--pe-space-2_5);
+    min-width: 0;
+  }
+  &__HeadSlot {
+    margin-left: auto;
   }
 }
+
+@media screen and (max-width: 48em) {
+  .InfoBlock {
+    &__HeadSlot {
+      margin-left: 0;
+      width: 100%;
+    }
+  }
+}
+
 @media screen and (max-width: 62em) {
   .InfoBlock {
     padding: var(--pe-space-4) !important;
-  }
-  .InfoBlock__Title {
-    left: -var(--pe-space-4);
-    top: -var(--pe-space-4);
-  }
-  .InfoBlock__Head {
-    margin: -var(--pe-space-4) 0 var(--pe-space-3_5) 0;
-  }
-  .InfoBlock__Head .InfoBlock__Title {
-    margin-left: -var(--pe-space-4);
+    &__Title {
+      left: -var(--pe-space-4);
+      top: -var(--pe-space-4);
+    }
+    &__Head {
+      margin: -var(--pe-space-4) 0 var(--pe-space-3_5) 0;
+    }
+    &__Head &__Title {
+      margin-left: -var(--pe-space-4);
+    }
   }
 }

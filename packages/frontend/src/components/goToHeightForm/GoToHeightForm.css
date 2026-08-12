@@ -1,50 +1,52 @@
 .GoToHeightForm {
   display: flex;
   align-items: center;
-}
-.GoToHeightForm__Title {
-  margin-right: var(--pe-space-2);
-  white-space: nowrap;
-  font-family: var(--pe-font-mono);
-  color: var(--pe-color-fg-muted);
-  font-size: var(--pe-text-sm);
-}
-.GoToHeightForm__Input {
-  font-family: var(--pe-font-mono);
-  font-size: var(--pe-text-sm);
-}
-.GoToHeightForm__Input, .GoToHeightForm__Input:focus {
-  width: 80px;
-  padding: 0 var(--pe-space-2);
-  margin-right: var(--pe-space-1_5);
-  height: 29px;
-  box-sizing: border-box;
-  border: 1px solid var(--pe-color-white-alpha-400);
-  border-radius: 5px;
-  -webkit-appearance: none;
-  -moz-appearance: textfield;
-}
-.GoToHeightForm__Input::-webkit-outer-spin-button, .GoToHeightForm__Input::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-}
-.GoToHeightForm__Input--Incorrect {
-  border: 1px solid var(--pe-color-white-alpha-200);
-  color: gray;
-}
-.GoToHeightForm__Button {
-  background-color: transparent;
-  border: 1px solid var(--pe-color-white-alpha-400);
-  border-radius: 5px;
-  height: 29px;
-  color: var(--pe-color-fg);
-  padding: 0 var(--pe-space-1);
-  font-family: var(--pe-font-mono);
-}
-.GoToHeightForm__Button:disabled {
-  color: gray;
-  cursor: default;
-}
-.GoToHeightForm__Button:hover:not(:disabled) {
-  background-color: rgba(255, 255, 255, 0.0823529412);
-  cursor: pointer;
+  &__Title {
+    margin-right: var(--pe-space-2);
+    white-space: nowrap;
+    font-family: var(--pe-font-mono);
+    color: var(--pe-color-fg-muted);
+    font-size: var(--pe-text-sm);
+  }
+  &__Input {
+    font-family: var(--pe-font-mono);
+    font-size: var(--pe-text-sm);
+  }
+  &__Input,
+  &__Input:focus {
+    width: 80px;
+    padding: 0 var(--pe-space-2);
+    margin-right: var(--pe-space-1_5);
+    height: 29px;
+    box-sizing: border-box;
+    border: 1px solid var(--pe-color-white-alpha-400);
+    border-radius: 5px;
+    -webkit-appearance: none;
+    -moz-appearance: textfield;
+  }
+  &__Input::-webkit-outer-spin-button,
+  &__Input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+  }
+  &__Input--Incorrect {
+    border: 1px solid var(--pe-color-white-alpha-200);
+    color: gray;
+  }
+  &__Button {
+    background-color: transparent;
+    border: 1px solid var(--pe-color-white-alpha-400);
+    border-radius: 5px;
+    height: 29px;
+    color: var(--pe-color-fg);
+    padding: 0 var(--pe-space-1);
+    font-family: var(--pe-font-mono);
+  }
+  &__Button:disabled {
+    color: gray;
+    cursor: default;
+  }
+  &__Button:hover:not(:disabled) {
+    background-color: rgba(255, 255, 255, 0.0823529412);
+    cursor: pointer;
+  }
 }

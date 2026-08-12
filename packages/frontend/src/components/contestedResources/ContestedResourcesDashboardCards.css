@@ -1,11 +1,13 @@
 .ContestedResourcesDashboardCards__Card .DashboardCard__Content {
   height: 100%;
-  display: flex;
-  flex-direction: column;
+    display: flex;
+    flex-direction: column;
 }
+
 .ContestedResourcesDashboardCards__Card .DashboardCard__Title {
   flex-grow: 1;
 }
+
 .ContestedResourcesDashboardCards__Card .DashboardCard__Value {
   height: auto;
 }

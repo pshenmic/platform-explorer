@@ -1,62 +1,73 @@
+.MobileFilterMenu .DateRangeFilter {
+  min-width: unset !important;
+    width: 100%;
+}
+
 .DateRangeFilter {
   display: flex;
   flex-direction: column;
   gap: var(--pe-space-6);
   min-width: 650px;
-}
-.DateRangeFilter__ValuesContainer {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: var(--pe-space-4);
-}
-.DateRangeFilter__ValuesTitle {
-  font-size: var(--pe-text-xs);
-  font-family: var(--pe-font-mono);
-  opacity: var(--pe-opacity-muted);
-}
-.DateRangeFilter__Values {
-  display: flex;
-  gap: var(--pe-space-2);
-  margin-left: auto;
-}
-.MobileFilterMenu .DateRangeFilter {
-  min-width: unset !important;
-  width: 100%;
-}
-@media screen and (max-width: 55em) {
-  .DateRangeFilter__CalendarTitle, .DateRangeFilter__ValuesTitle {
-    display: none;
+  &__ValuesContainer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--pe-space-4);
   }
-  .DateRangeFilter__ValueButton--Submit {
+  &__ValuesTitle {
+    font-size: var(--pe-text-xs);
+    font-family: var(--pe-font-mono);
+    opacity: var(--pe-opacity-muted);
+  }
+  &__Values {
+    display: flex;
+    gap: var(--pe-space-2);
     margin-left: auto;
   }
-  .DateRangeFilter__Values {
-    width: 100%;
-    flex-wrap: wrap;
-  }
+}
+
+@media screen and (max-width: 55em) {
   .MobileFilterMenu .DateRangeFilter__CalendarTitle, .MobileFilterMenu .DateRangeFilter__ValuesTitle {
     display: block;
   }
+
   .MobileFilterMenu .DateRangeFilter__Values {
     width: auto;
-    flex-wrap: nowrap;
+        flex-wrap: nowrap;
   }
+
   .MobileFilterMenu .DateRangeFilter__ValueButton--Submit {
     margin-left: unset;
   }
+
+  .DateRangeFilter {
+    &__CalendarTitle,
+    &__ValuesTitle {
+      display: none;
+    }
+    &__ValueButton--Submit {
+      margin-left: auto;
+    }
+    &__Values {
+      width: 100%;
+      flex-wrap: wrap;
+    }
+  }
 }
+
 @media screen and (max-width: 30em) {
   .MobileFilterMenu .DateRangeFilter__ValuesContainer {
     flex-wrap: wrap;
-    justify-content: center;
+        justify-content: center;
   }
+
   .MobileFilterMenu .DateRangeFilter__Values {
     width: 100%;
-    flex-wrap: wrap;
-    justify-content: center;
+        flex-wrap: wrap;
+        justify-content: center;
   }
 }
+
 @media screen and (max-width: 62em) {
   .DateRangeFilter {
     min-width: 500px;

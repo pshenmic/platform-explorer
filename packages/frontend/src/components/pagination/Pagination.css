@@ -1,3 +1,44 @@
+.Pagination--Justify .PageItem--Previous {
+  margin-right: auto;
+    margin-left: 0;
+}
+
+.Pagination--Justify .PageItem--Next {
+  margin-left: auto;
+    margin-right: 0;
+}
+
+.Pagination--Justify .PageItem--Previous, .Pagination--Justify .PageItem--Next {
+  display: block;
+}
+
+.Pagination--Justify .PageItem.disabled {
+  cursor: default;
+    opacity: 0.3;
+}
+
+.PageItem--Next:hover:not(.disabled), .PageItem--Previous:hover:not(.disabled) {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.PageItem.disabled {
+  cursor: default;
+    opacity: 0.3;
+}
+
+.PageItem:not(.active):hover:not(.disabled) {
+  background-color: var(--pe-color-gray-750);
+}
+
+.PageItem.active, .PageItem.active a {
+  cursor: default;
+}
+
+.PageItem.active, .PageItem.active:hover {
+  background-color: var(--pe-color-brand-normal);
+    border-color: var(--pe-color-brand-normal);
+}
+
 .Pagination {
   display: flex;
   justify-content: center;
@@ -5,51 +46,20 @@
   padding: 0;
   margin: 0;
 }
-.Pagination--Justify .PageItem--Previous {
-  margin-right: auto;
-  margin-left: 0;
-}
-.Pagination--Justify .PageItem--Next {
-  margin-left: auto;
-  margin-right: 0;
-}
-.Pagination--Justify .PageItem--Previous, .Pagination--Justify .PageItem--Next {
-  display: block;
-}
-.Pagination--Justify .PageItem.disabled {
-  cursor: default;
-  opacity: 0.3;
-}
 
 .PageItem {
   margin: 0 var(--pe-space-1_5);
   background-color: rgba(var(--pe-color-gray-800-rgb), 0.5);
   border-radius: var(--pe-radius-def);
   border: 1px solid var(--pe-color-calendar-border);
-}
-.PageItem--Next svg, .PageItem--Previous svg {
-  width: var(--pe-space-1_5);
-  height: var(--pe-space-3);
-}
-.PageItem--Next:hover:not(.disabled), .PageItem--Previous:hover:not(.disabled) {
-  background-color: rgba(255, 255, 255, 0.1);
-}
-.PageItem--Previous svg {
-  transform: rotate(180deg);
-}
-.PageItem.disabled {
-  cursor: default;
-  opacity: 0.3;
-}
-.PageItem:not(.active):hover:not(.disabled) {
-  background-color: var(--pe-color-gray-750);
-}
-.PageItem.active, .PageItem.active a {
-  cursor: default;
-}
-.PageItem.active, .PageItem.active:hover {
-  background-color: var(--pe-color-brand-normal);
-  border-color: var(--pe-color-brand-normal);
+  &--Next svg,
+  &--Previous svg {
+    width: var(--pe-space-1_5);
+    height: var(--pe-space-3);
+  }
+  &--Previous svg {
+    transform: rotate(180deg);
+  }
 }
 
 .PageLink {

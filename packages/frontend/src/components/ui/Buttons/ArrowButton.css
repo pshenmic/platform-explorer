@@ -6,19 +6,19 @@
   height: var(--pe-space-4);
   border-radius: var(--pe-radius-sm);
   background: rgba(var(--pe-color-brand-normal-rgb), 0.2);
-}
-.ArrowButton svg {
-  width: var(--pe-space-2);
-  height: var(--pe-space-2);
-}
-.ArrowButton:hover {
-  color: var(--pe-color-fg);
-  background-color: rgba(255, 255, 255, 0.25);
-}
-.ArrowButton:active {
-  background-color: var(--pe-color-gray-700) !important;
-}
-.ArrowButton--Active {
-  color: var(--pe-color-fg);
-  background-color: rgba(255, 255, 255, 0.25);
+  & svg {
+    width: var(--pe-space-2);
+    height: var(--pe-space-2);
+  }
+  &:hover {
+    color: var(--pe-color-fg);
+    background-color: rgba(255, 255, 255, 0.25);
+  }
+  &:active {
+    background-color: var(--pe-color-gray-700) !important;
+  }
+  &--Active {
+    color: var(--pe-color-fg);
+    background-color: rgba(255, 255, 255, 0.25);
+  }
 }

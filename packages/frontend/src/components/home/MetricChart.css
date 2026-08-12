@@ -1,148 +1,165 @@
-.MetricChart__Plot {
-  position: relative;
-  width: calc(100% + var(--pe-space-8));
-  margin-right: -var(--pe-space-8);
+.MetricChart {
+  &__Plot {
+    position: relative;
+    width: calc(100% + var(--pe-space-8));
+    margin-right: -var(--pe-space-8);
+  }
 }
+
 @media screen and (max-width: 62em) {
-  .MetricChart__Plot {
-    width: calc(100% + var(--pe-space-4));
-    margin-right: -var(--pe-space-4);
+  .MetricChart {
+    &__Plot {
+      width: calc(100% + var(--pe-space-4));
+      margin-right: -var(--pe-space-4);
+    }
   }
 }
-.MetricChart__Empty {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 100%;
-  font-size: 0.8125rem;
-  color: var(--pe-color-gray-500);
+
+.MetricChart {
+  &__Empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    font-size: 0.8125rem;
+    color: var(--pe-color-gray-500);
+  }
+  &__Svg {
+    display: block;
+  }
+  &__Svg--Stale {
+    opacity: 0.4;
+    transition: opacity 0.2s;
+  }
+  &__Ghost {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+  &__GhostGrid {
+    stroke: rgba(255, 255, 255, 0.06);
+    stroke-width: 1px;
+  }
+  &__GhostLine {
+    stroke: rgba(var(--pe-color-gray-500-rgb), 0.25);
+    stroke-width: 1.5px;
+    stroke-linejoin: round;
+    stroke-linecap: round;
+  }
+  &__GhostScan {
+    stroke: rgba(var(--pe-color-brand-light-rgb), 0.5);
+    stroke-width: 1.5px;
+    stroke-linecap: round;
+    stroke-dasharray: 12 88;
+    animation: MetricChartGhostDash 5s linear infinite;
+  }
+  &__GhostBar {
+    fill: rgba(var(--pe-color-brand-normal-rgb), 0.14);
+    animation: MetricChartGhostBar 1.6s ease-in-out infinite;
+  }
 }
-.MetricChart__Svg {
-  display: block;
-}
-.MetricChart__Svg--Stale {
-  opacity: 0.4;
-  transition: opacity 0.2s;
-}
-.MetricChart__Ghost {
-  display: block;
-  width: 100%;
-  height: 100%;
-}
-.MetricChart__GhostGrid {
-  stroke: rgba(255, 255, 255, 0.06);
-  stroke-width: 1px;
-}
-.MetricChart__GhostLine {
-  stroke: rgba(var(--pe-color-gray-500-rgb), 0.25);
-  stroke-width: 1.5px;
-  stroke-linejoin: round;
-  stroke-linecap: round;
-}
-.MetricChart__GhostScan {
-  stroke: rgba(var(--pe-color-brand-light-rgb), 0.5);
-  stroke-width: 1.5px;
-  stroke-linecap: round;
-  stroke-dasharray: 12 88;
-  animation: MetricChartGhostDash 5s linear infinite;
-}
-.MetricChart__GhostBar {
-  fill: rgba(var(--pe-color-brand-normal-rgb), 0.14);
-  animation: MetricChartGhostBar 1.6s ease-in-out infinite;
-}
+
 @media (prefers-reduced-motion: reduce) {
-  .MetricChart__GhostScan {
-    animation: none;
-    stroke-dasharray: none;
-    opacity: 0.3;
+  .MetricChart {
+    &__GhostScan {
+      animation: none;
+      stroke-dasharray: none;
+      opacity: 0.3;
+    }
+    &__GhostBar {
+      animation: none;
+    }
   }
-  .MetricChart__GhostBar {
-    animation: none;
+}
+
+.MetricChart {
+  &__Grid {
+    stroke: rgba(255, 255, 255, 0.06);
+    stroke-width: 1;
   }
-}
-.MetricChart__Grid {
-  stroke: rgba(255, 255, 255, 0.06);
-  stroke-width: 1;
-}
-.MetricChart__Tick {
-  font-family: var(--pe-font-mono);
-  font-size: var(--pe-text-2xs);
-  fill: var(--pe-color-gray-500);
-}
-.MetricChart__Tick--Y {
-  text-anchor: end;
-}
-.MetricChart__Tick--X {
-  text-anchor: middle;
-}
-.MetricChart__Area {
-  stroke: none;
-}
-.MetricChart__AreaTop {
-  stop-color: rgba(var(--pe-color-brand-normal-rgb), 0.28);
-}
-.MetricChart__AreaBottom {
-  stop-color: rgba(var(--pe-color-brand-normal-rgb), 0);
-}
-.MetricChart__Line {
-  fill: none;
-  stroke: var(--pe-color-brand-normal);
-  stroke-width: 2;
-  stroke-linejoin: round;
-  stroke-linecap: round;
-}
-.MetricChart__Bar {
-  fill: rgba(var(--pe-color-brand-normal-rgb), 0.55);
-  stroke: var(--pe-color-brand-normal);
-  stroke-width: 1;
-}
-.MetricChart__HoverLine {
-  stroke: rgba(var(--pe-color-brand-light-rgb), 0.5);
-  stroke-width: 1;
-  stroke-dasharray: 2 2;
-}
-.MetricChart__HoverDot {
-  fill: var(--pe-color-brand-light);
-  stroke: var(--pe-color-fg);
-  stroke-width: 1.5;
-}
-.MetricChart__Tooltip {
-  position: absolute;
-  transform: translate(-50%, calc(-100% - var(--pe-space-2_5)));
-  pointer-events: none;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 1px;
-  padding: var(--pe-space-1) var(--pe-space-2);
-  border-radius: var(--pe-radius-sm);
-  white-space: nowrap;
-  background: var(--pe-color-gray-800);
-  border: 1px solid rgba(var(--pe-color-brand-normal-rgb), 0.4);
-  z-index: 2;
-}
-.MetricChart__TipValue {
-  font-family: var(--pe-font-mono);
-  font-size: var(--pe-text-sm);
-  color: var(--pe-color-fg);
-}
-.MetricChart__TipDate {
-  font-size: 0.5625rem;
-  color: var(--pe-color-gray-500);
+  &__Tick {
+    font-family: var(--pe-font-mono);
+    font-size: var(--pe-text-2xs);
+    fill: var(--pe-color-gray-500);
+  }
+  &__Tick--Y {
+    text-anchor: end;
+  }
+  &__Tick--X {
+    text-anchor: middle;
+  }
+  &__Area {
+    stroke: none;
+  }
+  &__AreaTop {
+    stop-color: rgba(var(--pe-color-brand-normal-rgb), 0.28);
+  }
+  &__AreaBottom {
+    stop-color: rgba(var(--pe-color-brand-normal-rgb), 0);
+  }
+  &__Line {
+    fill: none;
+    stroke: var(--pe-color-brand-normal);
+    stroke-width: 2;
+    stroke-linejoin: round;
+    stroke-linecap: round;
+  }
+  &__Bar {
+    fill: rgba(var(--pe-color-brand-normal-rgb), 0.55);
+    stroke: var(--pe-color-brand-normal);
+    stroke-width: 1;
+  }
+  &__HoverLine {
+    stroke: rgba(var(--pe-color-brand-light-rgb), 0.5);
+    stroke-width: 1;
+    stroke-dasharray: 2 2;
+  }
+  &__HoverDot {
+    fill: var(--pe-color-brand-light);
+    stroke: var(--pe-color-fg);
+    stroke-width: 1.5;
+  }
+  &__Tooltip {
+    position: absolute;
+    transform: translate(-50%, calc(-100% - var(--pe-space-2_5)));
+    pointer-events: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1px;
+    padding: var(--pe-space-1) var(--pe-space-2);
+    border-radius: var(--pe-radius-sm);
+    white-space: nowrap;
+    background: var(--pe-color-gray-800);
+    border: 1px solid rgba(var(--pe-color-brand-normal-rgb), 0.4);
+    z-index: 2;
+  }
+  &__TipValue {
+    font-family: var(--pe-font-mono);
+    font-size: var(--pe-text-sm);
+    color: var(--pe-color-fg);
+  }
+  &__TipDate {
+    font-size: 0.5625rem;
+    color: var(--pe-color-gray-500);
+  }
 }
 
 @keyframes MetricChartGhostDash {
   from {
     stroke-dashoffset: 0;
   }
+
   to {
     stroke-dashoffset: -100;
   }
 }
+
 @keyframes MetricChartGhostBar {
   0%, 100% {
     opacity: var(--pe-opacity-muted);
   }
+
   50% {
     opacity: 1;
   }

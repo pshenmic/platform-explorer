@@ -1,5 +1,7 @@
-.LoadingList__Item {
-  opacity: var(--pe-opacity-muted);
-  border-radius: 5px;
-  margin-bottom: var(--pe-space-2);
+.LoadingList {
+  &__Item {
+    opacity: var(--pe-opacity-muted);
+    border-radius: 5px;
+    margin-bottom: var(--pe-space-2);
+  }
 }

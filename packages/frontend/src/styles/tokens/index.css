@@ -11,7 +11,8 @@
  * - Radius: var(--pe-radius-*), not space tokens
  * - Opacity: var(--pe-opacity-*)
  * - Prefer scale steps over raw px/rem
- * - Native CSS nesting is OK (&, nested @media)
+ * - Prefer native CSS nesting for BEM (&.__El, &--Mod, nested @media)
+ * - Compound mods: &--A.Block--B (not &--A&--B) for Lightning/PostCSS
  * - Do not reintroduce Sass or var(--chakra-colors-*)
  */
 

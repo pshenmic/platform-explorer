@@ -1,53 +1,68 @@
 .PublicKeyCard {
   padding: var(--pe-space-10) !important;
 }
+
 @media screen and (max-width: 48em) {
   .PublicKeyCard {
     padding: var(--pe-space-8) !important;
   }
 }
+
 @media screen and (max-width: 30em) {
   .PublicKeyCard {
     padding: var(--pe-space-4) !important;
   }
 }
-.PublicKeyCard__InfoLine {
-  justify-content: flex-start;
-  margin-bottom: var(--pe-space-3_5);
-}
-.PublicKeyCard__InfoLine:last-child {
-  margin-bottom: 0;
-}
-.PublicKeyCard__InfoLine--Data, .PublicKeyCard__InfoLine--Hash {
-  white-space: wrap;
-  word-break: break-all;
-}
+
 .PublicKeyCard__InfoLine .InfoLine__Title {
   width: 150px !important;
 }
+
+.PublicKeyCard {
+  &__InfoLine {
+    justify-content: flex-start;
+    margin-bottom: var(--pe-space-3_5);
+  }
+  &__InfoLine:last-child {
+    margin-bottom: 0;
+  }
+  &__InfoLine--Data,
+  &__InfoLine--Hash {
+    white-space: wrap;
+    word-break: break-all;
+  }
+}
+
 @media screen and (max-width: 48em) {
   .PublicKeyCard__InfoLine .InfoLine .InfoLine__Value {
     flex-grow: 1;
   }
 }
+
 @media screen and (max-width: 30em) {
-  .PublicKeyCard__InfoLine {
-    flex-wrap: wrap;
-    justify-content: space-between;
-  }
   .PublicKeyCard__InfoLine .InfoLine__Title {
     width: auto !important;
   }
-  .PublicKeyCard__InfoLine--Data {
-    flex-wrap: wrap;
-  }
+
   .PublicKeyCard__InfoLine--Data .InfoLine__Title {
     margin-bottom: var(--pe-space-2);
   }
+
   .PublicKeyCard__InfoLine--Data .InfoLine__Value {
     width: 100%;
   }
+
   .PublicKeyCard__InfoLine--Data .ValueCard {
     width: 100%;
+  }
+
+  .PublicKeyCard {
+    &__InfoLine {
+      flex-wrap: wrap;
+      justify-content: space-between;
+    }
+    &__InfoLine--Data {
+      flex-wrap: wrap;
+    }
   }
 }

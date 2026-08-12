@@ -1,18 +1,20 @@
+.TotalValidatorsCardContent__Avatars .ImageGenerator {
+  max-width: var(--pe-space-10);
+    max-height: var(--pe-space-10);
+}
+
 .TotalValidatorsCardContent {
   height: 100%;
   display: flex;
   flex-direction: column;
+  &__Count {
+    flex-grow: 1;
+  }
 }
-.TotalValidatorsCardContent__Avatars .ImageGenerator {
-  max-width: var(--pe-space-10);
-  max-height: var(--pe-space-10);
-}
-.TotalValidatorsCardContent__Count {
-  flex-grow: 1;
-}
+
 @media screen and (max-width: 48em) {
   .TotalValidatorsCardContent__Avatars .ImageGenerator {
     width: var(--pe-space-8);
-    height: var(--pe-space-8);
+        height: var(--pe-space-8);
   }
 }

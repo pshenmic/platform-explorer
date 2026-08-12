@@ -1,3 +1,9 @@
+.PublicKeysListItem--Timestamp,
+.PublicKeysListItem--Timestamp .DateBlock__Date, .PublicKeysListItem__Column--Timestamp,
+.PublicKeysListItem__Column--Timestamp .DateBlock__Date {
+  font-size: var(--pe-text-sm);
+}
+
 .PublicKeysListItem {
   display: flex;
   width: 100%;
@@ -12,119 +18,122 @@
   border: 1px solid var(--pe-color-gray-750);
   background-color: rgba(var(--pe-color-gray-800-rgb), 0.5);
   transition: all 0.1s;
-}
-.PublicKeysListItem:last-child {
-  margin-bottom: 0;
-}
-.PublicKeysListItem__Column--Credits, .PublicKeysListItem__Column--Number {
-  font-size: var(--pe-text-sm);
-  font-weight: var(--pe-font-weight-bold);
-}
-.PublicKeysListItem__IdentifierContainer {
-  display: flex;
-  align-items: center;
-  min-width: 50px;
-}
-.PublicKeysListItem__Avatar {
-  height: var(--pe-space-6);
-  width: var(--pe-space-6);
-  flex-shrink: 0;
-  margin-right: var(--pe-space-3);
-}
-.PublicKeysListItem--Timestamp, .PublicKeysListItem__Column--Timestamp {
-  font-family: var(--pe-font-mono);
-  white-space: nowrap;
-  color: var(--pe-color-fg);
-}
-.PublicKeysListItem--Timestamp,
-.PublicKeysListItem--Timestamp .DateBlock__Date, .PublicKeysListItem__Column--Timestamp,
-.PublicKeysListItem__Column--Timestamp .DateBlock__Date {
-  font-size: var(--pe-text-sm);
-}
-.PublicKeysListItem {
   display: block;
-}
-.PublicKeysListItem__Content {
-  display: grid;
-  gap: var(--pe-space-4);
-  grid-template-columns: minmax(45px, 45px) minmax(180px, 180px) minmax(120px, 113px) minmax(113px, 113px) minmax(115px, 115px) minmax(90px, 90px) minmax(78px, 78px) auto;
-}
-@container (max-width: 800px) {
-  .PublicKeysListItem__Content {
-    gap: var(--pe-space-2);
+  &:last-child {
+    margin-bottom: 0;
+  }
+  &__Column--Credits,
+  &__Column--Number {
+    font-size: var(--pe-text-sm);
+    font-weight: var(--pe-font-weight-bold);
+  }
+  &__IdentifierContainer {
+    display: flex;
+    align-items: center;
+    min-width: 50px;
+  }
+  &__Avatar {
+    height: var(--pe-space-6);
+    width: var(--pe-space-6);
+    flex-shrink: 0;
+    margin-right: var(--pe-space-3);
+  }
+  &--Timestamp,
+  &__Column--Timestamp {
+    font-family: var(--pe-font-mono);
+    white-space: nowrap;
+    color: var(--pe-color-fg);
+  }
+  &__Content {
+    display: grid;
+    gap: var(--pe-space-4);
+    grid-template-columns: minmax(45px, 45px) minmax(180px, 180px) minmax(120px, 113px) minmax(113px, 113px) minmax(115px, 115px) minmax(90px, 90px) minmax(78px, 78px) auto;
   }
 }
-.PublicKeysListItem__Content {
-  align-items: center;
+
+@container (max-width: 800px) {
+  .PublicKeysListItem {
+    &__Content {
+      gap: var(--pe-space-2);
+    }
+  }
 }
-.PublicKeysListItem__Content--Inline {
-  display: inline !important;
-}
-.PublicKeysListItem__Column {
-  display: flex;
-  align-items: center;
-}
-.PublicKeysListItem__Column--Id {
-  max-width: 88px;
-  width: 100%;
-}
-.PublicKeysListItem__Column--PublicKeyHash {
-  max-width: 180px;
-  width: 100%;
-}
-.PublicKeysListItem__Column--Type {
-  max-width: 113px;
-  width: 100%;
-}
-.PublicKeysListItem__Column--Purpose {
-  max-width: 113px;
-  width: 100%;
-}
-.PublicKeysListItem__Column--SecurityLevel {
-  max-width: 115px;
-  width: 100%;
-}
-.PublicKeysListItem__Column--ReadOnly {
-  max-width: 78px;
-  width: 100%;
-}
-.PublicKeysListItem__Column--Data {
-  min-width: 380px;
-  width: 100%;
-}
-.PublicKeysListItem__Column {
-  font-size: var(--pe-text-xs);
-}
-.PublicKeysListItem__Column--Id {
-  font-size: var(--pe-text-sm);
-  color: var(--pe-color-fg);
-}
-.PublicKeysListItem__Column--Data {
-  flex-direction: column;
-  align-items: flex-start;
-  overflow: hidden;
-  display: flex;
-  gap: var(--pe-space-1);
-}
-.PublicKeysListItem__Column--PublicKeyHash {
-  font-size: var(--pe-text-xs);
-  color: var(--pe-color-fg-muted);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-.PublicKeysListItem__Data, .PublicKeysListItem__PublicKeyHash {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  word-break: break-all;
-  white-space: break-spaces;
-  min-width: 100px;
-  width: 100%;
-}
+
 .PublicKeysListItem__Data .CopyButton, .PublicKeysListItem__PublicKeyHash .CopyButton {
   margin-left: var(--pe-space-2);
 }
-.PublicKeysListItem__PublicKeyBounds {
-  max-width: 100%;
+
+.PublicKeysListItem {
+  &__Content {
+    align-items: center;
+  }
+  &__Content--Inline {
+    display: inline !important;
+  }
+  &__Column {
+    display: flex;
+    align-items: center;
+  }
+  &__Column--Id {
+    max-width: 88px;
+    width: 100%;
+  }
+  &__Column--PublicKeyHash {
+    max-width: 180px;
+    width: 100%;
+  }
+  &__Column--Type {
+    max-width: 113px;
+    width: 100%;
+  }
+  &__Column--Purpose {
+    max-width: 113px;
+    width: 100%;
+  }
+  &__Column--SecurityLevel {
+    max-width: 115px;
+    width: 100%;
+  }
+  &__Column--ReadOnly {
+    max-width: 78px;
+    width: 100%;
+  }
+  &__Column--Data {
+    min-width: 380px;
+    width: 100%;
+  }
+  &__Column {
+    font-size: var(--pe-text-xs);
+  }
+  &__Column--Id {
+    font-size: var(--pe-text-sm);
+    color: var(--pe-color-fg);
+  }
+  &__Column--Data {
+    flex-direction: column;
+    align-items: flex-start;
+    overflow: hidden;
+    display: flex;
+    gap: var(--pe-space-1);
+  }
+  &__Column--PublicKeyHash {
+    font-size: var(--pe-text-xs);
+    color: var(--pe-color-fg-muted);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  &__Data,
+  &__PublicKeyHash {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    word-break: break-all;
+    white-space: break-spaces;
+    min-width: 100px;
+    width: 100%;
+  }
+  &__PublicKeyBounds {
+    max-width: 100%;
+  }
 }

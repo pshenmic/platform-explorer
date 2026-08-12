@@ -4,9 +4,9 @@
   flex-direction: column;
   justify-content: space-between;
   height: 100%;
-}
-.FeesCollectedCardContent__FeesContainer {
-  display: flex;
-  align-items: center;
-  width: max-content;
+  &__FeesContainer {
+    display: flex;
+    align-items: center;
+    width: max-content;
+  }
 }

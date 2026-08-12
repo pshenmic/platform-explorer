@@ -13,105 +13,129 @@
   background-color: rgba(var(--pe-color-gray-800-rgb), 0.5);
   transition: all 0.1s;
 }
+
 @media (hover: hover) and (pointer: fine) {
-  .DataContractsListItem:hover {
-    background-color: var(--pe-color-gray-750);
-    text-decoration: none;
-    cursor: pointer;
+  .DataContractsListItem {
+    &:hover {
+      background-color: var(--pe-color-gray-750);
+      text-decoration: none;
+      cursor: pointer;
+    }
   }
 }
-.DataContractsListItem:active {
-  transform: translateY(1px);
-  box-shadow: 0 0 9999px 0 rgba(0, 0, 0, 0.25) inset;
-}
-.DataContractsListItem:last-child {
-  margin-bottom: 0;
-}
-.DataContractsListItem__Column--Credits, .DataContractsListItem__Column--Number {
-  font-size: var(--pe-text-sm);
-  font-weight: var(--pe-font-weight-bold);
-}
-.DataContractsListItem__IdentifierContainer {
-  display: flex;
-  align-items: center;
-  min-width: 50px;
-}
-.DataContractsListItem__Avatar {
-  height: var(--pe-space-6);
-  width: var(--pe-space-6);
-  flex-shrink: 0;
-  margin-right: var(--pe-space-3);
-}
-.DataContractsListItem--Timestamp, .DataContractsListItem__Column--Timestamp {
-  font-family: var(--pe-font-mono);
-  white-space: nowrap;
-  color: var(--pe-color-fg);
-}
+
 .DataContractsListItem--Timestamp,
 .DataContractsListItem--Timestamp .DateBlock__Date, .DataContractsListItem__Column--Timestamp,
 .DataContractsListItem__Column--Timestamp .DateBlock__Date {
   font-size: var(--pe-text-sm);
 }
+
 .DataContractsListItem {
   display: block;
-}
-.DataContractsListItem__Content {
-  display: grid;
-  gap: var(--pe-space-4);
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) 7rem 7rem 7rem minmax(10.5rem, max-content); /* Timestamp */
-}
-@container (max-width: 48rem) {
-  .DataContractsListItem__Content {
-    grid-template-columns: minmax(0, 1fr) minmax(10.5rem, max-content); /* Timestamp */
+  &:active {
+    transform: translateY(1px);
+    box-shadow: 0 0 9999px 0 rgba(0, 0, 0, 0.25) inset;
+  }
+  &:last-child {
+    margin-bottom: 0;
+  }
+  &__Column--Credits,
+  &__Column--Number {
+    font-size: var(--pe-text-sm);
+    font-weight: var(--pe-font-weight-bold);
+  }
+  &__IdentifierContainer {
+    display: flex;
+    align-items: center;
+    min-width: 50px;
+  }
+  &__Avatar {
+    height: var(--pe-space-6);
+    width: var(--pe-space-6);
+    flex-shrink: 0;
+    margin-right: var(--pe-space-3);
+  }
+  &--Timestamp,
+  &__Column--Timestamp {
+    font-family: var(--pe-font-mono);
+    white-space: nowrap;
+    color: var(--pe-color-fg);
+  }
+  &__Content {
+    display: grid;
+    gap: var(--pe-space-4);
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) 7rem 7rem 7rem minmax(10.5rem, max-content); /* Timestamp */
   }
 }
-.DataContractsListItem__Column {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-}
-.DataContractsListItem__Column--Timestamp {
-  justify-content: flex-end;
-  text-align: right;
-}
-.DataContractsListItem__Column--Identifier, .DataContractsListItem__Column--Owner {
-  justify-content: flex-start;
-  text-align: left;
-}
-.DataContractsListItem__Column--Identifier {
-  width: 100%;
-  overflow: hidden;
-}
-.DataContractsListItem__Column--Owner {
-  min-width: 0;
-  overflow: hidden;
-}
-.DataContractsListItem__Column--DocumentsCount {
-  min-width: 0;
-  overflow: hidden;
-  font-variant-numeric: tabular-nums;
-}
+
 @container (max-width: 48rem) {
-  .DataContractsListItem__Column--DocumentsCount, .DataContractsListItem__Column--Owner, .DataContractsListItem__Column--WithTokens, .DataContractsListItem__Column--System {
-    display: none;
+  .DataContractsListItem {
+    &__Content {
+      grid-template-columns: minmax(0, 1fr) minmax(10.5rem, max-content); /* Timestamp */
+    }
   }
 }
-.DataContractsListItem__Column {
-  font-size: var(--pe-text-sm);
+
+.DataContractsListItem {
+  &__Column {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+  }
+  &__Column--Timestamp {
+    justify-content: flex-end;
+    text-align: right;
+  }
+  &__Column--Identifier,
+  &__Column--Owner {
+    justify-content: flex-start;
+    text-align: left;
+  }
+  &__Column--Identifier {
+    width: 100%;
+    overflow: hidden;
+  }
+  &__Column--Owner {
+    min-width: 0;
+    overflow: hidden;
+  }
+  &__Column--DocumentsCount {
+    min-width: 0;
+    overflow: hidden;
+    font-variant-numeric: tabular-nums;
+  }
 }
-.DataContractsListItem__Column--Timestamp {
-  text-align: right;
+
+@container (max-width: 48rem) {
+  .DataContractsListItem {
+    &__Column--DocumentsCount,
+    &__Column--Owner,
+    &__Column--WithTokens,
+    &__Column--System {
+      display: none;
+    }
+  }
 }
+
 .DataContractsListItem__Column--DocumentsCount .ValueContainer {
   padding: var(--pe-space-1) var(--pe-space-2);
-  border-radius: 11px;
+    border-radius: 11px;
 }
-.DataContractsListItem__ColumnContent {
-  margin-left: auto;
-  overflow: hidden;
-}
-.DataContractsListItem__Genesis {
-  color: var(--pe-color-gray-400);
-  font-style: italic;
+
+.DataContractsListItem {
+  &__Column {
+    font-size: var(--pe-text-sm);
+  }
+  &__Column--Timestamp {
+    text-align: right;
+  }
+  &__ColumnContent {
+    margin-left: auto;
+    overflow: hidden;
+  }
+  &__Genesis {
+    color: var(--pe-color-gray-400);
+    font-style: italic;
+  }
 }

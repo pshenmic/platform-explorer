@@ -1,7 +1,9 @@
-.Slider__Navigation {
-  margin-top: 15px;
-}
-.Slider__Carousel {
-  user-select: auto !important;
-  -webkit-user-select: auto !important;
+.Slider {
+  &__Navigation {
+    margin-top: 15px;
+  }
+  &__Carousel {
+    user-select: auto !important;
+    -webkit-user-select: auto !important;
+  }
 }

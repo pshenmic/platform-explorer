@@ -4,31 +4,32 @@
   flex-wrap: wrap;
   gap: var(--pe-space-1_5) var(--pe-space-4);
   font-family: var(--pe-font-mono);
+  &__Item {
+    display: inline-flex;
+    align-items: baseline;
+    gap: var(--pe-space-1_5);
+    white-space: nowrap;
+    position: relative;
+  }
+  &__Item:not(:last-child)::after {
+    content: "·";
+    position: absolute;
+    right: -var(--pe-space-2_5);
+    color: var(--pe-color-gray-500);
+  }
+  &__Label {
+    font-size: var(--pe-text-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    color: var(--pe-color-fg-muted);
+  }
+  &__Value {
+    font-size: 0.8125rem;
+    font-weight: var(--pe-font-weight-bold);
+    color: var(--pe-color-fg);
+  }
 }
-.NetworkStatsInline__Item {
-  display: inline-flex;
-  align-items: baseline;
-  gap: var(--pe-space-1_5);
-  white-space: nowrap;
-  position: relative;
-}
-.NetworkStatsInline__Item:not(:last-child)::after {
-  content: "·";
-  position: absolute;
-  right: -var(--pe-space-2_5);
-  color: var(--pe-color-gray-500);
-}
-.NetworkStatsInline__Label {
-  font-size: var(--pe-text-xs);
-  text-transform: uppercase;
-  letter-spacing: 0.02em;
-  color: var(--pe-color-fg-muted);
-}
-.NetworkStatsInline__Value {
-  font-size: 0.8125rem;
-  font-weight: var(--pe-font-weight-bold);
-  color: var(--pe-color-fg);
-}
+
 @media screen and (max-width: 48em) {
   .NetworkStatsInline {
     gap: var(--pe-space-1_5) var(--pe-space-3_5);

@@ -1,79 +1,100 @@
+.DocumentTransitionCard .InfoLine {
+  justify-content: flex-start;
+}
+
+.DocumentTransitionCard__InfoLine .InfoLine__Title {
+  width: 200px;
+}
+
+.DocumentTransitionCard__InfoLine--IdContainer .InfoLine__Value {
+  flex-grow: 0;
+    max-width: max-content;
+}
+
+.DocumentTransitionCard__InfoLine--IdContainer .Identifier,
+.DocumentTransitionCard__InfoLine--IdContainer .Identifier__SymbolsContainer {
+  flex-grow: 1;
+}
+
 .DocumentTransitionCard {
   container-type: inline-size;
   display: flex;
   flex-direction: column;
   gap: var(--pe-space-3);
+  &__InfoLine--Data {
+    align-items: flex-start;
+  }
+  &__InfoLine--Data code {
+    max-width: 100%;
+  }
 }
-.DocumentTransitionCard .InfoLine {
-  justify-content: flex-start;
-}
-.DocumentTransitionCard__InfoLine .InfoLine__Title {
-  width: 200px;
-}
-.DocumentTransitionCard__InfoLine--IdContainer .InfoLine__Value {
-  flex-grow: 0;
-  max-width: max-content;
-}
-.DocumentTransitionCard__InfoLine--IdContainer .Identifier,
-.DocumentTransitionCard__InfoLine--IdContainer .Identifier__SymbolsContainer {
-  flex-grow: 1;
-}
-.DocumentTransitionCard__InfoLine--Data {
-  align-items: flex-start;
-}
-.DocumentTransitionCard__InfoLine--Data code {
-  max-width: 100%;
-}
+
 @container (max-width: 600px) {
-  .DocumentTransitionCard__InfoLine--Data, .DocumentTransitionCard__InfoLine--PrefundedBalance {
-    flex-wrap: wrap;
-  }
-  .DocumentTransitionCard__InfoLine--Data code {
-    width: 100%;
-    margin: 0;
+  .DocumentTransitionCard {
+    &__InfoLine--Data,
+    &__InfoLine--PrefundedBalance {
+      flex-wrap: wrap;
+    }
+    &__InfoLine--Data code {
+      width: 100%;
+      margin: 0;
+    }
   }
 }
+
 @media screen and (max-width: 48em) {
   .DocumentTransitionCard__InfoLine:not(.DocumentTransitionCard__InfoLine--Revision):not(.DocumentTransitionCard__InfoLine--Action) .InfoLine .InfoLine__Value {
     flex-grow: 1;
   }
 }
+
 @media screen and (max-width: 30em) {
-  .DocumentTransitionCard__InfoLine {
-    flex-wrap: wrap;
-    justify-content: space-between;
-  }
   .DocumentTransitionCard__InfoLine:not(.DocumentTransitionCard__InfoLine--Revision):not(.DocumentTransitionCard__InfoLine--Action) .InfoLine__Title {
     margin-bottom: var(--pe-space-1);
-    margin-right: 0;
+        margin-right: 0;
   }
-  .DocumentTransitionCard__InfoLine--Revision, .DocumentTransitionCard__InfoLine--Action {
-    justify-content: space-between;
-  }
+
   .DocumentTransitionCard__InfoLine--Revision .InfoLine__Title,
-  .DocumentTransitionCard__InfoLine--Revision .InfoLine__Value, .DocumentTransitionCard__InfoLine--Action .InfoLine__Title,
-  .DocumentTransitionCard__InfoLine--Action .InfoLine__Value {
+    .DocumentTransitionCard__InfoLine--Revision .InfoLine__Value, .DocumentTransitionCard__InfoLine--Action .InfoLine__Title,
+    .DocumentTransitionCard__InfoLine--Action .InfoLine__Value {
     width: max-content !important;
   }
+
   .DocumentTransitionCard__InfoLine--Revision .InfoLine__Value, .DocumentTransitionCard__InfoLine--Action .InfoLine__Value {
     width: max-content;
-    text-align: right !important;
+        text-align: right !important;
+  }
+
+  .DocumentTransitionCard {
+    &__InfoLine {
+      flex-wrap: wrap;
+      justify-content: space-between;
+    }
+    &__InfoLine--Revision,
+    &__InfoLine--Action {
+      justify-content: space-between;
+    }
   }
 }
+
 .DocumentTransitionCard__InfoLine--DocumentType .ValueContainer {
   max-width: max-content;
 }
-.DocumentTransitionCard__InfoLine__Badge {
-  width: fit-content;
-}
-.DocumentTransitionCard__InfoLine--PaymentInfo {
-  display: flex;
-  justify-content: start;
-  align-items: flex-start;
-  gap: var(--pe-space-2);
-}
+
 .DocumentTransitionCard__InfoLine .InfoLine__Value {
   display: flex;
-  flex-direction: column;
-  gap: var(--pe-space-2);
+    flex-direction: column;
+    gap: var(--pe-space-2);
+}
+
+.DocumentTransitionCard {
+  &__InfoLine__Badge {
+    width: fit-content;
+  }
+  &__InfoLine--PaymentInfo {
+    display: flex;
+    justify-content: start;
+    align-items: flex-start;
+    gap: var(--pe-space-2);
+  }
 }

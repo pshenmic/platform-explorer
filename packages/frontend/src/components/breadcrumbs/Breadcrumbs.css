@@ -7,77 +7,81 @@
   padding-bottom: var(--pe-space-3);
   padding-left: var(--pe-space-3);
   padding-right: var(--pe-space-3);
+  &__LinksContainer {
+    display: flex;
+    align-items: center;
+    list-style: none;
+    margin: 0;
+  }
+  &__Link {
+    margin: 0;
+    display: flex;
+    align-items: center;
+    max-width: 100%;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+  &__Link--Shrink {
+    flex-shrink: 1;
+  }
+  &__Link--Shrink a,
+  &__Link--Shrink span {
+    flex-shrink: 1;
+    min-width: 0;
+  }
+  &__Link:last-child {
+    flex-shrink: 0;
+  }
+  &__Link a,
+  &__Link span {
+    display: flex;
+    align-items: center;
+    padding: var(--pe-space-2) var(--pe-space-3);
+    background: rgba(var(--pe-color-brand-normal-rgb), 0.2);
+    color: var(--pe-color-brand-normal);
+    transition: var(--pe-transition-def);
+    border-radius: var(--pe-radius-def);
+    font-size: var(--pe-text-sm);
+    font-family: var(--pe-font-mono);
+    white-space: nowrap;
+    max-width: 100%;
+  }
+  &__Link a {
+    background: rgba(var(--pe-color-brand-normal-rgb), 0.2);
+  }
+  &__Link a:hover {
+    background: rgba(var(--pe-color-brand-normal-rgb), 0.25);
+  }
+  &__Link span {
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--pe-color-fg);
+    cursor: default;
+  }
+  &__Avatar,
+  &__IconContainer svg {
+    margin-right: var(--pe-space-1);
+    width: var(--pe-space-4);
+    height: var(--pe-space-4);
+    flex-shrink: 0;
+  }
+  &__Icon--Block {
+    margin-top: -3px;
+  }
+  &__Label {
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  &__Separator {
+    margin: 0 var(--pe-space-2_5);
+    flex-shrink: 0;
+  }
+  &__Separator svg {
+    width: var(--pe-space-1_5);
+    height: var(--pe-space-2_5);
+  }
 }
-.Breadcrumbs__LinksContainer {
-  display: flex;
-  align-items: center;
-  list-style: none;
-  margin: 0;
-}
-.Breadcrumbs__Link {
-  margin: 0;
-  display: flex;
-  align-items: center;
-  max-width: 100%;
-  overflow: hidden;
-  flex-shrink: 0;
-}
-.Breadcrumbs__Link--Shrink {
-  flex-shrink: 1;
-}
-.Breadcrumbs__Link--Shrink a, .Breadcrumbs__Link--Shrink span {
-  flex-shrink: 1;
-  min-width: 0;
-}
-.Breadcrumbs__Link:last-child {
-  flex-shrink: 0;
-}
-.Breadcrumbs__Link a, .Breadcrumbs__Link span {
-  display: flex;
-  align-items: center;
-  padding: var(--pe-space-2) var(--pe-space-3);
-  background: rgba(var(--pe-color-brand-normal-rgb), 0.2);
-  color: var(--pe-color-brand-normal);
-  transition: var(--pe-transition-def);
-  border-radius: var(--pe-radius-def);
-  font-size: var(--pe-text-sm);
-  font-family: var(--pe-font-mono);
-  white-space: nowrap;
-  max-width: 100%;
-}
-.Breadcrumbs__Link a {
-  background: rgba(var(--pe-color-brand-normal-rgb), 0.2);
-}
-.Breadcrumbs__Link a:hover {
-  background: rgba(var(--pe-color-brand-normal-rgb), 0.25);
-}
-.Breadcrumbs__Link span {
-  background: rgba(255, 255, 255, 0.1);
-  color: var(--pe-color-fg);
-  cursor: default;
-}
-.Breadcrumbs__Avatar, .Breadcrumbs__IconContainer svg {
-  margin-right: var(--pe-space-1);
-  width: var(--pe-space-4);
-  height: var(--pe-space-4);
-  flex-shrink: 0;
-}
-.Breadcrumbs__Icon--Block {
-  margin-top: -3px;
-}
-.Breadcrumbs__Label {
-  max-width: 100%;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-.Breadcrumbs__Separator {
-  margin: 0 var(--pe-space-2_5);
-  flex-shrink: 0;
-}
-.Breadcrumbs__Separator svg {
-  width: var(--pe-space-1_5);
-  height: var(--pe-space-2_5);
-}
+
 @media screen and (max-width: 62em) {
   .Breadcrumbs {
     display: none;

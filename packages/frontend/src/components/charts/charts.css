@@ -1,54 +1,90 @@
 @keyframes loading-process {
   from {
     opacity: 0;
-    left: -100%;
-    z-index: 6;
+        left: -100%;
+        z-index: 6;
   }
+
   50% {
     opacity: 0.25;
   }
+
   to {
     z-index: 6;
-    left: 100%;
+        left: 100%;
   }
 }
+
 @keyframes LoadingContainer {
   from {
     overflow: hidden;
   }
+
   to {
     overflow: hidden;
   }
 }
+
 .ChartContainer.loading {
   overflow: hidden;
-  position: relative;
-  animation: 1s LoadingContainer infinite;
+    position: relative;
+    animation: 1s LoadingContainer infinite;
 }
+
 .ChartContainer.loading::before {
   z-index: 5 !important;
-  opacity: 1 !important;
+    opacity: 1 !important;
 }
+
 .ChartContainer.loading::after {
   animation: 1s loading-process infinite;
-  z-index: 6;
+    z-index: 6;
 }
+
 .ChartContainer.loading::before, .ChartContainer.loading::after {
   content: "";
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  top: 0;
-  left: 0;
-  z-index: -1;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    z-index: -1;
 }
+
 .ChartContainer.loading::before {
   background-color: var(--pe-color-gray-900);
 }
+
 .ChartContainer.loading::after {
   background: linear-gradient(90deg, transparent 0%, rgb(14, 117, 181) 50%, transparent 100%) !important;
-  width: 100%;
-  height: 100%;
+    width: 100%;
+    height: 100%;
+}
+
+.loading .Chart {
+  opacity: 0;
+}
+
+.Chart.loaded {
+  visibility: visible;
+    opacity: 1;
+}
+
+.Chart .grid line {
+  stroke: #ccc;
+    stroke-opacity: 0.03;
+}
+
+.Chart .grid .tick:nth-child(even) line {
+  stroke-opacity: var(--pe-opacity-faint);
+}
+
+.Chart .grid path {
+  display: none;
+}
+
+.Axis .domain {
+  opacity: 0;
 }
 
 .Chart {
@@ -58,71 +94,53 @@
   margin: 0 -var(--pe-space-2_5) !important;
   padding: 0 var(--pe-space-2_5) !important;
   overflow-x: clip;
-}
-.loading .Chart {
-  opacity: 0;
-}
-.Chart.loaded {
-  visibility: visible;
-  opacity: 1;
-}
-.Chart__Tooltip {
-  font-size: var(--pe-text-md);
-  font-family: var(--pe-font-body);
-}
-.Chart__FocusPoint {
-  display: none;
-  fill: var(--pe-color-fg);
-  stroke: var(--pe-color-brand-normal);
-  stroke-width: 2px;
-}
-.Chart__Point {
-  fill: var(--pe-color-brand-normal);
-  opacity: 0;
-}
-.Chart .grid line {
-  stroke: #ccc;
-  stroke-opacity: 0.03;
-}
-.Chart .grid .tick:nth-child(even) line {
-  stroke-opacity: var(--pe-opacity-faint);
-}
-.Chart .grid path {
-  display: none;
+  &__Tooltip {
+    font-size: var(--pe-text-md);
+    font-family: var(--pe-font-body);
+  }
+  &__FocusPoint {
+    display: none;
+    fill: var(--pe-color-fg);
+    stroke: var(--pe-color-brand-normal);
+    stroke-width: 2px;
+  }
+  &__Point {
+    fill: var(--pe-color-brand-normal);
+    opacity: 0;
+  }
 }
 
-.ChartTooltip__InfoLine--Blocks {
-  opacity: 0.7;
-}
-.ChartTooltip__InfoLine--Bold {
-  font-weight: var(--pe-font-weight-bold);
-  font-size: var(--pe-text-lg);
-}
-.ChartTooltip__InfoLine--Tiny {
-  font-size: 0.813rem;
+.ChartTooltip {
+  &__InfoLine--Blocks {
+    opacity: 0.7;
+  }
+  &__InfoLine--Bold {
+    font-weight: var(--pe-font-weight-bold);
+    font-size: var(--pe-text-lg);
+  }
+  &__InfoLine--Tiny {
+    font-size: 0.813rem;
+  }
 }
 
 .Axis {
   font-family: var(--pe-font-heading);
   font-weight: var(--pe-font-weight-bold);
   font-size: var(--pe-text-sm);
-}
-.Axis .domain {
-  opacity: 0;
-}
-.Axis__Label {
-  font-size: var(--pe-text-sm);
-  opacity: var(--pe-opacity-muted);
-}
-.Axis__TickContainer {
-  font-size: var(--pe-text-sm);
-}
-.Axis--X .Axis__TickContainer {
-  font-weight: var(--pe-font-weight-normal);
-  opacity: var(--pe-opacity-muted);
-}
-.Axis__Line {
-  opacity: var(--pe-opacity-muted);
-  stroke-width: 1px;
-  stroke: var(--pe-color-fg);
+  &__Label {
+    font-size: var(--pe-text-sm);
+    opacity: var(--pe-opacity-muted);
+  }
+  &__TickContainer {
+    font-size: var(--pe-text-sm);
+  }
+  &--X &__TickContainer {
+    font-weight: var(--pe-font-weight-normal);
+    opacity: var(--pe-opacity-muted);
+  }
+  &__Line {
+    opacity: var(--pe-opacity-muted);
+    stroke-width: 1px;
+    stroke: var(--pe-color-fg);
+  }
 }

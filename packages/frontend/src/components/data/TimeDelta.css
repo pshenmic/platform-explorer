@@ -1,7 +1,6 @@
 .TimeDelta {
   display: inline !important;
-}
-
-.TimeDelta__TooltipContent {
-  letter-spacing: 0.var(--pe-space-2);
+  &__TooltipContent {
+    letter-spacing: 0.var(--pe-space-2);
+  }
 }

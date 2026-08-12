@@ -1,3 +1,19 @@
+.container .position {
+  padding: var(--pe-space-2) var(--pe-space-2_5);
+    width: fit-content;
+    font-family: var(--pe-font-mono);
+    color: var(--pe-color-fg);
+    font-weight: var(--pe-font-weight-normal);
+    font-style: Regular;
+    font-size: var(--pe-text-sm);
+    line-height: 100%;
+    letter-spacing: 0%;
+}
+
+.container .localization {
+  align-items: start;
+}
+
 .title {
   font-family: var(--pe-font-heading);
   font-size: var(--pe-text-sm);
@@ -12,20 +28,7 @@
   flex-direction: column;
   gap: 17px;
 }
-.container .position {
-  padding: var(--pe-space-2) var(--pe-space-2_5);
-  width: fit-content;
-  font-family: var(--pe-font-mono);
-  color: var(--pe-color-fg);
-  font-weight: var(--pe-font-weight-normal);
-  font-style: Regular;
-  font-size: var(--pe-text-sm);
-  line-height: 100%;
-  letter-spacing: 0%;
-}
-.container .localization {
-  align-items: start;
-}
+
 @media screen and (max-width: 1200px) {
   .container .localization {
     flex-wrap: wrap;

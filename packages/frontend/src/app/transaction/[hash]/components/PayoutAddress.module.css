@@ -1,27 +1,32 @@
-.root {
-  margin-bottom: var(--pe-space-3_5);
-  justify-content: flex-start !important;
-}
 .root :global(.InfoLine__Title) {
   width: 200px;
-  max-width: 200px;
-  line-height: var(--pe-space-5);
+    max-width: 200px;
+    line-height: var(--pe-space-5);
 }
+
 .root :global(.InfoLine__Value) {
   text-align: left;
-  font-size: var(--pe-text-sm);
+    font-size: var(--pe-text-sm);
 }
+
 .root .card {
   overflow-wrap: break-word;
-  word-break: break-word;
-  color: var(--pe-color-fg-muted);
-  max-width: 510px;
+    word-break: break-word;
+    color: var(--pe-color-fg-muted);
+    max-width: 510px;
 }
+
 .root .card :global(.CopyButton) {
   margin-left: var(--pe-space-1);
 }
+
 .root .value {
   display: flex;
-  justify-content: flex-end;
-  overflow: hidden;
+    justify-content: flex-end;
+    overflow: hidden;
+}
+
+.root {
+  margin-bottom: var(--pe-space-3_5);
+  justify-content: flex-start !important;
 }

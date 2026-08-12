@@ -6,28 +6,28 @@
   padding: var(--pe-space-1_5) var(--pe-space-2_5);
   border-radius: var(--pe-radius-md);
   display: inline-block;
-}
-.FeeMultiplier--Green {
-  background-color: rgba(91, 244, 88, 0.2);
-  color: #5BF458;
-}
-.FeeMultiplier--Yellow {
-  background-color: rgba(223, 244, 88, 0.2);
-  color: #DFF458;
-}
-.FeeMultiplier--LightOrange {
-  background-color: rgba(244, 210, 88, 0.2);
-  color: #F4D258;
-}
-.FeeMultiplier--Orange {
-  background-color: rgba(228, 152, 0, 0.2);
-  color: #E49800;
-}
-.FeeMultiplier--RedOrange {
-  background-color: rgba(244, 135, 88, 0.2);
-  color: #F48758;
-}
-.FeeMultiplier--Red {
-  background-color: rgba(244, 88, 144, 0.2);
-  color: #F45890;
+  &--Green {
+    background-color: rgba(91, 244, 88, 0.2);
+    color: #5BF458;
+  }
+  &--Yellow {
+    background-color: rgba(223, 244, 88, 0.2);
+    color: #DFF458;
+  }
+  &--LightOrange {
+    background-color: rgba(244, 210, 88, 0.2);
+    color: #F4D258;
+  }
+  &--Orange {
+    background-color: rgba(228, 152, 0, 0.2);
+    color: #E49800;
+  }
+  &--RedOrange {
+    background-color: rgba(244, 135, 88, 0.2);
+    color: #F48758;
+  }
+  &--Red {
+    background-color: rgba(244, 88, 144, 0.2);
+    color: #F45890;
+  }
 }

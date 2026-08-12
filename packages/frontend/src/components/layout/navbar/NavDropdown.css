@@ -1,28 +1,32 @@
+.NavDropdown .MenuLevel__Item {
+  font-family: var(--pe-font-heading);
+    font-size: var(--pe-text-sm);
+    letter-spacing: 0.var(--pe-space-1);
+    text-transform: uppercase;
+    color: var(--pe-color-gray-100);
+}
+
+.NavDropdown .MenuLevel__Item--Disabled {
+  opacity: var(--pe-opacity-muted);
+    color: var(--pe-color-fg-muted) !important;
+}
+
+.NavDropdown .MenuLevel__Item--Disabled:hover, .NavDropdown .MenuLevel__Item--Disabled:active {
+  color: inherit;
+    background: transparent !important;
+    cursor: not-allowed;
+}
+
 .NavDropdown {
   position: relative;
 }
-.NavDropdown .MenuLevel__Item {
-  font-family: var(--pe-font-heading);
-  font-size: var(--pe-text-sm);
-  letter-spacing: 0.var(--pe-space-1);
-  text-transform: uppercase;
-  color: var(--pe-color-gray-100);
-}
-.NavDropdown .MenuLevel__Item--Disabled {
-  opacity: var(--pe-opacity-muted);
-  color: var(--pe-color-fg-muted) !important;
-}
-.NavDropdown .MenuLevel__Item--Disabled:hover, .NavDropdown .MenuLevel__Item--Disabled:active {
-  color: inherit;
-  background: transparent !important;
-  cursor: not-allowed;
-}
 
 @media screen and (max-width: calc(62em - 1px)) {
-  .NavDropdown {
+  .NavDropdown .MenuLevel {
     width: 100%;
   }
-  .NavDropdown .MenuLevel {
+
+  .NavDropdown {
     width: 100%;
   }
 }

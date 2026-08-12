@@ -1,73 +1,88 @@
-.root {
-  max-width: 648px;
-  width: 100%;
-}
 .root .divider {
   padding: var(--pe-space-5) 0;
 }
+
 .root .form {
   margin-top: var(--pe-space-3_5);
 }
+
 .root .form .field {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  align-items: center;
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
 }
+
 .root .form .field .label {
   grid-column: 1;
-  grid-row: 1;
-  font-family: var(--pe-font-mono);
-  font-weight: var(--pe-font-weight-normal);
-  font-size: var(--pe-text-sm);
-  line-height: 110%;
-  color: var(--pe-color-fg-muted);
+    grid-row: 1;
+    font-family: var(--pe-font-mono);
+    font-weight: var(--pe-font-weight-normal);
+    font-size: var(--pe-text-sm);
+    line-height: 110%;
+    color: var(--pe-color-fg-muted);
 }
+
 .root .form .field .input {
   grid-column: 2;
-  grid-row: 1;
-  max-width: 396px;
+    grid-row: 1;
+    max-width: 396px;
 }
+
 .root .form .field .errorSlot {
   grid-column: 2;
-  grid-row: 2;
-  min-height: var(--pe-space-10);
-  margin-top: var(--pe-space-1);
+    grid-row: 2;
+    min-height: var(--pe-space-10);
+    margin-top: var(--pe-space-1);
 }
+
 .root .form .field .errorText {
   color: var(--pe-color-red-500);
-  font-size: var(--pe-text-md);
-  line-height: 130%;
+    font-size: var(--pe-text-md);
+    line-height: 130%;
 }
+
 .root .controls {
   margin-top: var(--pe-space-6);
-  margin-bottom: var(--pe-space-1_5);
-  display: flex;
-  gap: var(--pe-space-3);
-  justify-content: space-between;
+    margin-bottom: var(--pe-space-1_5);
+    display: flex;
+    gap: var(--pe-space-3);
+    justify-content: space-between;
 }
+
 .root .controls .btn {
   max-width: 294px;
-  width: 100%;
-  border-radius: var(--pe-radius-def);
-  padding: var(--pe-space-3);
-  transition: all ease-in 0.2;
+    width: 100%;
+    border-radius: var(--pe-radius-def);
+    padding: var(--pe-space-3);
+    transition: all ease-in 0.2;
 }
+
 .root .controls .btn.cancel {
   background-color: rgba(var(--pe-color-gray-250-rgb), 0.1);
 }
+
 .root .controls .btn.cancel:hover {
   background-color: rgba(var(--pe-color-gray-250-rgb), 0.3);
 }
+
 .root .controls .btn.cancel:active {
   background-color: rgba(var(--pe-color-gray-250-rgb), 0.5);
 }
+
 .root .controls .btn.submit {
   background-color: var(--pe-color-brand-normal);
 }
+
 .root .controls .btn.submit:hover {
   background-color: var(--pe-color-brand-light);
 }
+
 .root .controls .btn.submit:active {
   background-color: var(--pe-color-gray-50);
-  color: var(--pe-color-brand-normal);
+    color: var(--pe-color-brand-normal);
+}
+
+.root {
+  max-width: 648px;
+  width: 100%;
 }

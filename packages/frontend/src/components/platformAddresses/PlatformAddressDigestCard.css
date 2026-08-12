@@ -1,21 +1,58 @@
 .PlatformAddressDigestCard {
   padding: calc(var(--pe-space-3) + 0px);
 }
+
 @media screen and (min-width: 48em) {
   .PlatformAddressDigestCard {
     padding: calc(var(--pe-space-4) + 0px);
   }
 }
+
 @media screen and (min-width: 62em) {
   .PlatformAddressDigestCard {
     padding: calc(var(--pe-space-5) + 0px);
   }
 }
+
 @media screen and (min-width: 80em) {
   .PlatformAddressDigestCard {
     padding: calc(var(--pe-space-6) + 0px);
   }
 }
+
+.PlatformAddressDigestCard--Loading .InfoLine__Value {
+  height: var(--pe-space-6);
+}
+
+.PlatformAddressDigestCard__InfoContainer .InfoLine__Title svg {
+  width: var(--pe-space-7);
+    height: var(--pe-space-7);
+}
+
+.PlatformAddressDigestCard, .PlatformAddressDigestCard__Transfers {
+  display: flex;
+    gap: var(--pe-space-3_5);
+}
+
+.PlatformAddressDigestCard--Loading .PlatformAddressDigestCard__Transfers .LoadingLine {
+  height: var(--pe-space-6);
+}
+
+.PlatformAddressDigestCard__Transfer .CreditsBlock {
+  display: flex;
+    flex-direction: column;
+}
+
+.PlatformAddressDigestCard__Transfer .CreditsBlock .CreditsBlock__Usd {
+  margin-top: var(--pe-space-1);
+    margin-left: auto;
+}
+
+.PlatformAddressDigestCard__Transfer--Outgoing .CreditsBlock__Usd {
+  background-color: rgba(var(--pe-color-red-default-rgb), 0.2);
+    color: var(--pe-color-red-default);
+}
+
 .PlatformAddressDigestCard {
   font-family: var(--pe-font-mono);
   font-size: var(--pe-text-sm);
@@ -25,109 +62,96 @@
   background: rgba(var(--pe-color-gray-800-rgb), 0.5);
   border-radius: var(--pe-radius-def);
   container-type: inline-size;
+  &--Loading &__InfoContainer {
+    overflow: hidden;
+  }
+  &--Loading &__InfoContainerValue {
+    width: 100px;
+    max-width: 100%;
+  }
+  &__RowContainer {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--pe-space-3_5);
+  }
+  &__InfoContainer {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--pe-space-1);
+    padding: var(--pe-space-6);
+    background: rgba(var(--pe-color-gray-800-rgb), 0.5);
+    border-radius: var(--pe-radius-def);
+    width: 100%;
+  }
+  &__LinesContainer {
+    flex-direction: column;
+  }
+  &__Transfer {
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+    gap: var(--pe-space-1);
+    padding: var(--pe-space-6);
+    background: rgba(var(--pe-color-gray-800-rgb), 0.5);
+    border-radius: var(--pe-radius-def);
+  }
+  &__TransferTitle {
+    font-size: var(--pe-text-sm);
+    color: var(--pe-color-fg-muted);
+  }
 }
-.PlatformAddressDigestCard--Loading .InfoLine__Value {
-  height: var(--pe-space-6);
-}
-.PlatformAddressDigestCard--Loading .PlatformAddressDigestCard__InfoContainer {
-  overflow: hidden;
-}
-.PlatformAddressDigestCard--Loading .PlatformAddressDigestCard__InfoContainerValue {
-  width: 100px;
-  max-width: 100%;
-}
-.PlatformAddressDigestCard__RowContainer {
-  display: flex;
-  justify-content: space-between;
-  gap: var(--pe-space-3_5);
-}
-.PlatformAddressDigestCard__InfoContainer {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--pe-space-1);
-  padding: var(--pe-space-6);
-  background: rgba(var(--pe-color-gray-800-rgb), 0.5);
-  border-radius: var(--pe-radius-def);
-  width: 100%;
-}
-.PlatformAddressDigestCard__InfoContainer .InfoLine__Title svg {
-  width: var(--pe-space-7);
-  height: var(--pe-space-7);
-}
-.PlatformAddressDigestCard__LinesContainer {
-  flex-direction: column;
-}
-.PlatformAddressDigestCard, .PlatformAddressDigestCard__Transfers {
-  display: flex;
-  gap: var(--pe-space-3_5);
-}
-.PlatformAddressDigestCard--Loading .PlatformAddressDigestCard__Transfers .LoadingLine {
-  height: var(--pe-space-6);
-}
-.PlatformAddressDigestCard__Transfer {
-  width: 50%;
-  display: flex;
-  flex-direction: column;
-  gap: var(--pe-space-1);
-  padding: var(--pe-space-6);
-  background: rgba(var(--pe-color-gray-800-rgb), 0.5);
-  border-radius: var(--pe-radius-def);
-}
-.PlatformAddressDigestCard__Transfer .CreditsBlock {
-  display: flex;
-  flex-direction: column;
-}
-.PlatformAddressDigestCard__Transfer .CreditsBlock .CreditsBlock__Usd {
-  margin-top: var(--pe-space-1);
-  margin-left: auto;
-}
-.PlatformAddressDigestCard__Transfer--Outgoing .CreditsBlock__Usd {
-  background-color: rgba(var(--pe-color-red-default-rgb), 0.2);
-  color: var(--pe-color-red-default);
-}
-.PlatformAddressDigestCard__TransferTitle {
-  font-size: var(--pe-text-sm);
-  color: var(--pe-color-fg-muted);
-}
+
 @media screen and (min-width: 48em) and (max-width: 62em), screen and (max-width: 30em) {
   .PlatformAddressDigestCard--Loading .InfoLine__Value {
     width: 100% !important;
   }
-  .PlatformAddressDigestCard__Transfers {
-    flex-direction: column;
-  }
-  .PlatformAddressDigestCard__Transfer {
-    width: 100%;
-  }
+
   .PlatformAddressDigestCard__Transfer .CreditsBlock {
     flex-direction: row;
-    flex-wrap: wrap;
-    align-items: center;
+        flex-wrap: wrap;
+        align-items: center;
   }
+
   .PlatformAddressDigestCard__Transfer .CreditsBlock .CreditsBlock__Usd {
     margin-top: var(--pe-space-1);
-    margin-bottom: var(--pe-space-1);
+        margin-bottom: var(--pe-space-1);
+  }
+
+  .PlatformAddressDigestCard {
+    &__Transfers {
+      flex-direction: column;
+    }
+    &__Transfer {
+      width: 100%;
+    }
   }
 }
+
 @container (max-width: 24em) {
   .PlatformAddressDigestCard--Loading .InfoLine__Value {
     width: 100% !important;
   }
-  .PlatformAddressDigestCard__InfoLine {
-    flex-direction: column;
-    align-items: flex-start;
-  }
+
   .PlatformAddressDigestCard__InfoLine .InfoLine__Value {
     width: 100%;
-    text-align: left;
+        text-align: left;
   }
+
   .PlatformAddressDigestCard__InfoLine .CreditsBlock {
     display: flex;
-    flex-wrap: wrap;
+        flex-wrap: wrap;
   }
+
   .PlatformAddressDigestCard__InfoLine .CreditsBlock__Usd {
     margin-left: auto;
+  }
+
+  .PlatformAddressDigestCard {
+    &__InfoLine {
+      flex-direction: column;
+      align-items: flex-start;
+    }
   }
 }

@@ -1,220 +1,247 @@
 .MasternodesDonut {
   container-type: inline-size;
-}
-.MasternodesDonut__Body {
-  min-height: 200px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  gap: var(--pe-space-4);
-}
-@media screen and (max-width: 30em) {
-  .MasternodesDonut__Body {
-    height: auto;
-    gap: var(--pe-space-3_5);
-    padding: 2px 0;
+  &__Body {
+    min-height: 200px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: var(--pe-space-4);
   }
 }
-.MasternodesDonut__Empty {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 100%;
-  font-size: 0.8125rem;
-  color: var(--pe-color-gray-500);
+
+@media screen and (max-width: 30em) {
+  .MasternodesDonut {
+    &__Body {
+      height: auto;
+      gap: var(--pe-space-3_5);
+      padding: 2px 0;
+    }
+  }
 }
-.MasternodesDonut__Tiles {
-  flex: 1;
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: var(--pe-space-3);
+
+.MasternodesDonut {
+  &__Empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    font-size: 0.8125rem;
+    color: var(--pe-color-gray-500);
+  }
+  &__Tiles {
+    flex: 1;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: var(--pe-space-3);
+  }
 }
+
 @container (max-width: 560px) {
-  .MasternodesDonut__Tiles {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+  .MasternodesDonut {
+    &__Tiles {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: var(--pe-space-2_5);
+    }
+  }
+}
+
+.MasternodesDonut {
+  &__Tile {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 7px;
+    min-width: 0;
+    padding: var(--pe-space-3_5) var(--pe-space-3);
+    border: 1px solid rgba(var(--pe-color-gray-800-rgb), 0.7);
+    border-radius: var(--pe-radius-def);
+    background: rgba(255, 255, 255, 0.015);
+  }
+}
+
+@container (max-width: 560px) {
+  .MasternodesDonut {
+    &__Tile {
+      padding: var(--pe-space-3) var(--pe-space-2_5);
+    }
+  }
+}
+
+.MasternodesDonut {
+  &__SkelGap {
+    margin-top: var(--pe-space-1_5);
+  }
+  &__TileLabel {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    min-width: 0;
+    max-width: 100%;
+    font-family: var(--pe-font-mono);
+    font-size: var(--pe-text-2xs);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--pe-color-gray-500);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  &__TileInfo {
+    display: inline-flex;
+    flex-shrink: 0;
+    align-items: center;
+    color: var(--pe-color-gray-500);
+    cursor: pointer;
+    transition: color 0.15s;
+  }
+  &__TileInfo:hover {
+    color: var(--pe-color-brand-normal);
+  }
+  &__Rotate {
+    flex-shrink: 0;
+    width: var(--pe-space-2_5);
+    height: var(--pe-space-2_5);
+    color: var(--pe-color-gray-500);
+    animation: MasternodesRotate 9s linear infinite;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .MasternodesDonut {
+    &__Rotate {
+      animation: none;
+    }
+  }
+}
+
+.MasternodesDonut {
+  &__TileValue {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 5px;
+    font-family: var(--pe-font-heading);
+    font-weight: var(--pe-font-weight-extrabold);
+    font-style: italic;
+    font-size: var(--pe-text-2xl);
+    line-height: 1;
+    color: var(--pe-color-fg);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+  &__TileOf {
+    font-size: 0.8125rem;
+    font-style: normal;
+    font-weight: var(--pe-font-weight-normal);
+    color: var(--pe-color-gray-500);
+  }
+  &__TilePct {
+    font-family: var(--pe-font-mono);
+    font-size: var(--pe-text-2xs);
+    color: var(--pe-color-gray-500);
+    font-variant-numeric: tabular-nums;
+  }
+  &__Bottom {
+    display: flex;
+    flex-direction: column;
     gap: var(--pe-space-2_5);
   }
-}
-.MasternodesDonut__Tile {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  gap: 7px;
-  min-width: 0;
-  padding: var(--pe-space-3_5) var(--pe-space-3);
-  border: 1px solid rgba(var(--pe-color-gray-800-rgb), 0.7);
-  border-radius: var(--pe-radius-def);
-  background: rgba(255, 255, 255, 0.015);
-}
-@container (max-width: 560px) {
-  .MasternodesDonut__Tile {
-    padding: var(--pe-space-3) var(--pe-space-2_5);
+  &__Bar {
+    display: flex;
+    align-items: stretch;
+    gap: 2px;
+    width: 100%;
+    height: var(--pe-space-2_5);
+    border-radius: 5px;
+    overflow: hidden;
+    background: rgba(255, 255, 255, 0.06);
+  }
+  &__Seg {
+    display: block;
+    height: 100%;
+    min-width: 2px;
+    transition: width 0.6s ease;
+  }
+  &__Seg--active {
+    background: var(--pe-color-brand-normal);
+  }
+  &__Seg--inactive {
+    background: rgba(255, 255, 255, 0.18);
+  }
+  &__Seg--banned {
+    background: var(--pe-color-red-default);
+  }
+  &__Dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  &__Dot--total {
+    background: rgba(255, 255, 255, 0.5);
+  }
+  &__Dot--active {
+    background: var(--pe-color-brand-normal);
+  }
+  &__Dot--inactive {
+    background: rgba(255, 255, 255, 0.18);
+  }
+  &__Dot--banned {
+    background: var(--pe-color-red-default);
+  }
+  &__Geo {
+    display: flex;
+    align-items: center;
+    gap: var(--pe-space-3);
+    min-width: 0;
+    font-family: var(--pe-font-mono);
+    font-size: var(--pe-text-xs);
+  }
+  &__GeoLabel {
+    flex-shrink: 0;
+    font-size: 0.5625rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--pe-color-gray-500);
+  }
+  &__GeoList {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: var(--pe-space-2) var(--pe-space-2_5);
+    min-width: 0;
+    color: var(--pe-color-fg-muted);
+    font-variant-numeric: tabular-nums;
+  }
+  &__GeoList b {
+    color: var(--pe-color-fg);
+    font-weight: var(--pe-font-weight-bold);
+  }
+  &__GeoItem {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    cursor: default;
+  }
+  &__Flag {
+    width: var(--pe-space-4);
+    height: var(--pe-space-4);
+    border-radius: 50%;
+    flex-shrink: 0;
+    display: block;
+    object-fit: cover;
+  }
+  &__GeoMore {
+    color: var(--pe-color-gray-500);
   }
 }
-.MasternodesDonut__SkelGap {
-  margin-top: var(--pe-space-1_5);
-}
-.MasternodesDonut__TileLabel {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  min-width: 0;
-  max-width: 100%;
-  font-family: var(--pe-font-mono);
-  font-size: var(--pe-text-2xs);
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--pe-color-gray-500);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-.MasternodesDonut__TileInfo {
-  display: inline-flex;
-  flex-shrink: 0;
-  align-items: center;
-  color: var(--pe-color-gray-500);
-  cursor: pointer;
-  transition: color 0.15s;
-}
-.MasternodesDonut__TileInfo:hover {
-  color: var(--pe-color-brand-normal);
-}
-.MasternodesDonut__Rotate {
-  flex-shrink: 0;
-  width: var(--pe-space-2_5);
-  height: var(--pe-space-2_5);
-  color: var(--pe-color-gray-500);
-  animation: MasternodesRotate 9s linear infinite;
-}
+
 @media (prefers-reduced-motion: reduce) {
-  .MasternodesDonut__Rotate {
-    animation: none;
-  }
-}
-.MasternodesDonut__TileValue {
-  display: inline-flex;
-  align-items: baseline;
-  gap: 5px;
-  font-family: var(--pe-font-heading);
-  font-weight: var(--pe-font-weight-extrabold);
-  font-style: italic;
-  font-size: var(--pe-text-2xl);
-  line-height: 1;
-  color: var(--pe-color-fg);
-  font-variant-numeric: tabular-nums;
-  white-space: nowrap;
-}
-.MasternodesDonut__TileOf {
-  font-size: 0.8125rem;
-  font-style: normal;
-  font-weight: var(--pe-font-weight-normal);
-  color: var(--pe-color-gray-500);
-}
-.MasternodesDonut__TilePct {
-  font-family: var(--pe-font-mono);
-  font-size: var(--pe-text-2xs);
-  color: var(--pe-color-gray-500);
-  font-variant-numeric: tabular-nums;
-}
-.MasternodesDonut__Bottom {
-  display: flex;
-  flex-direction: column;
-  gap: var(--pe-space-2_5);
-}
-.MasternodesDonut__Bar {
-  display: flex;
-  align-items: stretch;
-  gap: 2px;
-  width: 100%;
-  height: var(--pe-space-2_5);
-  border-radius: 5px;
-  overflow: hidden;
-  background: rgba(255, 255, 255, 0.06);
-}
-.MasternodesDonut__Seg {
-  display: block;
-  height: 100%;
-  min-width: 2px;
-  transition: width 0.6s ease;
-}
-.MasternodesDonut__Seg--active {
-  background: var(--pe-color-brand-normal);
-}
-.MasternodesDonut__Seg--inactive {
-  background: rgba(255, 255, 255, 0.18);
-}
-.MasternodesDonut__Seg--banned {
-  background: var(--pe-color-red-default);
-}
-.MasternodesDonut__Dot {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  flex-shrink: 0;
-}
-.MasternodesDonut__Dot--total {
-  background: rgba(255, 255, 255, 0.5);
-}
-.MasternodesDonut__Dot--active {
-  background: var(--pe-color-brand-normal);
-}
-.MasternodesDonut__Dot--inactive {
-  background: rgba(255, 255, 255, 0.18);
-}
-.MasternodesDonut__Dot--banned {
-  background: var(--pe-color-red-default);
-}
-.MasternodesDonut__Geo {
-  display: flex;
-  align-items: center;
-  gap: var(--pe-space-3);
-  min-width: 0;
-  font-family: var(--pe-font-mono);
-  font-size: var(--pe-text-xs);
-}
-.MasternodesDonut__GeoLabel {
-  flex-shrink: 0;
-  font-size: 0.5625rem;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--pe-color-gray-500);
-}
-.MasternodesDonut__GeoList {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: var(--pe-space-2) var(--pe-space-2_5);
-  min-width: 0;
-  color: var(--pe-color-fg-muted);
-  font-variant-numeric: tabular-nums;
-}
-.MasternodesDonut__GeoList b {
-  color: var(--pe-color-fg);
-  font-weight: var(--pe-font-weight-bold);
-}
-.MasternodesDonut__GeoItem {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  cursor: default;
-}
-.MasternodesDonut__Flag {
-  width: var(--pe-space-4);
-  height: var(--pe-space-4);
-  border-radius: 50%;
-  flex-shrink: 0;
-  display: block;
-  object-fit: cover;
-}
-.MasternodesDonut__GeoMore {
-  color: var(--pe-color-gray-500);
-}
-@media (prefers-reduced-motion: reduce) {
-  .MasternodesDonut__Seg {
-    transition: none;
+  .MasternodesDonut {
+    &__Seg {
+      transition: none;
+    }
   }
 }
 

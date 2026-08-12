@@ -1,22 +1,25 @@
-.Filters__ButtonsContainer, .Filters__ControlButtons {
-  display: flex;
-  gap: var(--pe-space-2);
-  flex-wrap: wrap;
-}
-.Filters__Button {
-  display: flex !important;
-  gap: var(--pe-space-2);
-  font-weight: var(--pe-font-weight-normal) !important;
-  text-transform: capitalize !important;
-}
-.Filters__Button--ToggleFilters svg {
-  width: var(--pe-space-2_5);
-  height: var(--pe-space-2_5);
-}
-.Filters--Mobile .Filters__ButtonsContainer {
-  flex-direction: column;
-}
-.Filters--Mobile .Filters__ControlButtons {
-  width: 100%;
-  justify-content: space-between;
+.Filters {
+  &__ButtonsContainer,
+  &__ControlButtons {
+    display: flex;
+    gap: var(--pe-space-2);
+    flex-wrap: wrap;
+  }
+  &__Button {
+    display: flex !important;
+    gap: var(--pe-space-2);
+    font-weight: var(--pe-font-weight-normal) !important;
+    text-transform: capitalize !important;
+  }
+  &__Button--ToggleFilters svg {
+    width: var(--pe-space-2_5);
+    height: var(--pe-space-2_5);
+  }
+  &--Mobile &__ButtonsContainer {
+    flex-direction: column;
+  }
+  &--Mobile &__ControlButtons {
+    width: 100%;
+    justify-content: space-between;
+  }
 }

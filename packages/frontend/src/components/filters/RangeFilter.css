@@ -1,29 +1,32 @@
+.MobileFilterMenu .RangeFilter {
+  width: 100%;
+    gap: var(--pe-space-4);
+}
+
+.MobileFilterMenu .RangeFilter__InputTitle {
+  font-family: var(--pe-font-heading);
+    font-weight: var(--pe-font-weight-bold);
+    font-size: var(--pe-text-md);
+}
+
+.MobileFilterMenu .RangeFilter__Input {
+  min-height: 3rem;
+    padding: var(--pe-space-3) var(--pe-space-4);
+}
+
 .RangeFilter {
   display: flex;
   flex-direction: column;
   gap: var(--pe-space-5);
-}
-.RangeFilter__InputContainer {
-  display: flex;
-  flex-direction: column;
-  gap: var(--pe-space-2);
-}
-.RangeFilter__InputTitle {
-  font-family: var(--pe-font-mono);
-  font-size: var(--pe-text-sm);
-  font-weight: var(--pe-font-weight-normal);
-  color: rgba(255, 255, 255, 0.5);
-}
-.MobileFilterMenu .RangeFilter {
-  width: 100%;
-  gap: var(--pe-space-4);
-}
-.MobileFilterMenu .RangeFilter__InputTitle {
-  font-family: var(--pe-font-heading);
-  font-weight: var(--pe-font-weight-bold);
-  font-size: var(--pe-text-md);
-}
-.MobileFilterMenu .RangeFilter__Input {
-  min-height: 3rem;
-  padding: var(--pe-space-3) var(--pe-space-4);
+  &__InputContainer {
+    display: flex;
+    flex-direction: column;
+    gap: var(--pe-space-2);
+  }
+  &__InputTitle {
+    font-family: var(--pe-font-mono);
+    font-size: var(--pe-text-sm);
+    font-weight: var(--pe-font-weight-normal);
+    color: rgba(255, 255, 255, 0.5);
+  }
 }

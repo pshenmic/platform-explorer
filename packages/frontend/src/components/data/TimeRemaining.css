@@ -2,11 +2,10 @@
   display: flex;
   flex-direction: column;
   gap: var(--pe-space-1);
-}
-
-.TimeRemaining__TimeLeft {
-  font-family: var(--pe-font-mono);
-  font-weight: var(--pe-font-weight-normal);
-  font-size: var(--pe-text-sm);
-  line-height: var(--pe-space-4);
+  &__TimeLeft {
+    font-family: var(--pe-font-mono);
+    font-weight: var(--pe-font-weight-normal);
+    font-size: var(--pe-text-sm);
+    line-height: var(--pe-space-4);
+  }
 }

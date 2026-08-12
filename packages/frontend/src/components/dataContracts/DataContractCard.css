@@ -1,23 +1,25 @@
 .DataContractCard {
   padding: var(--pe-space-6) 30px;
+  &__Img {
+    margin-right: var(--pe-space-2);
+    width: var(--pe-space-8);
+    height: var(--pe-space-8);
+    flex-shrink: 0;
+  }
+  &__Name {
+    font-size: var(--pe-text-lg);
+    font-weight: var(--pe-font-weight-extrabold);
+    font-family: var(--pe-font-heading);
+    font-style: italic;
+  }
 }
-.DataContractCard__Img {
-  margin-right: var(--pe-space-2);
-  width: var(--pe-space-8);
-  height: var(--pe-space-8);
-  flex-shrink: 0;
-}
-.DataContractCard__Name {
-  font-size: var(--pe-text-lg);
-  font-weight: var(--pe-font-weight-extrabold);
-  font-family: var(--pe-font-heading);
-  font-style: italic;
-}
+
 @media screen and (min-width: 600px) {
   .DataContractCard .SliderNavigation {
     display: none;
   }
 }
+
 @media screen and (max-width: 48em) {
   .DataContractCard {
     padding: var(--pe-space-3_5) var(--pe-space-4);

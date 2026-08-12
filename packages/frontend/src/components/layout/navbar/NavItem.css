@@ -9,34 +9,38 @@
   transition: var(--pe-transition-def);
   white-space: nowrap;
   padding: var(--pe-space-1) 0;
-}
-.NavItem--WithDropdown {
-  display: flex;
-  align-items: center;
-  gap: var(--pe-space-1_5);
-  cursor: default;
-}
-.NavItem--WithDropdown:hover {
-  cursor: default;
-}
-.NavItem__DropdownIcon {
-  transition: transform var(--pe-transition-def);
-}
-.NavItem__DropdownIcon svg {
-  transition: transform var(--pe-transition-def);
-  transform: rotate(90deg);
-}
-.NavItem__DropdownIcon--Open svg {
-  transform: rotate(-90deg);
-}
-.NavItem--Active {
-  color: var(--pe-color-brand-normal);
-}
-@media (pointer: fine), screen and (min-width: 62em) {
-  .NavItem:hover {
-    color: var(--pe-color-fg);
+  &--WithDropdown {
+    display: flex;
+    align-items: center;
+    gap: var(--pe-space-1_5);
+    cursor: default;
+  }
+  &--WithDropdown:hover {
+    cursor: default;
+  }
+  &__DropdownIcon {
+    transition: transform var(--pe-transition-def);
+  }
+  &__DropdownIcon svg {
+    transition: transform var(--pe-transition-def);
+    transform: rotate(90deg);
+  }
+  &__DropdownIcon--Open svg {
+    transform: rotate(-90deg);
+  }
+  &--Active {
+    color: var(--pe-color-brand-normal);
   }
 }
+
+@media (pointer: fine), screen and (min-width: 62em) {
+  .NavItem {
+    &:hover {
+      color: var(--pe-color-fg);
+    }
+  }
+}
+
 @media screen and (max-width: calc(62em - 1px)) {
   .NavItem {
     background: rgba(255, 255, 255, 0.08);
@@ -46,23 +50,27 @@
     border: 1px solid rgba(255, 255, 255, 0.07);
     top: 0;
     transition: all 0.1s;
-  }
-  .NavItem--Active {
-    border: 1px solid var(--pe-color-brand-normal);
-    color: var(--pe-color-brand-normal) !important;
-    background: rgba(255, 255, 255, 0.02);
-    cursor: default;
+    &--Active {
+      border: 1px solid var(--pe-color-brand-normal);
+      color: var(--pe-color-brand-normal) !important;
+      background: rgba(255, 255, 255, 0.02);
+      cursor: default;
+    }
   }
 }
+
 @media screen and (max-width: calc(62em - 1px)) and (hover: hover) and (pointer: fine) {
   .NavItem:not(.NavItem--Active):hover {
     background: rgba(255, 255, 255, 0.15);
   }
 }
+
 @media screen and (max-width: calc(62em - 1px)) {
-  .NavItem:active {
-    color: var(--pe-color-fg);
-    transform: translateY(1px);
-    background: rgba(255, 255, 255, 0.1) !important;
+  .NavItem {
+    &:active {
+      color: var(--pe-color-fg);
+      transform: translateY(1px);
+      background: rgba(255, 255, 255, 0.1) !important;
+    }
   }
 }

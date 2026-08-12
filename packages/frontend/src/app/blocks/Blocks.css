@@ -1,59 +1,70 @@
-.Blocks__Controls {
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
-  gap: var(--pe-space-4);
-  margin: var(--pe-space-3) 0 var(--pe-space-6);
-  flex-wrap: wrap;
-}
-.Blocks__Title {
-  flex-shrink: 0;
-  margin-right: var(--pe-space-2);
-}
-.Blocks__Stats {
-  flex: 1 1 auto;
-  min-width: 0;
-}
-.Blocks__Filters {
-  width: auto;
-  flex-shrink: 0;
-  margin-left: auto;
-}
 .Blocks .PageSizeSelector, .Blocks .GoToHeightForm {
   width: 210px;
 }
+
+.Blocks {
+  &__Controls {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: var(--pe-space-4);
+    margin: var(--pe-space-3) 0 var(--pe-space-6);
+    flex-wrap: wrap;
+  }
+  &__Title {
+    flex-shrink: 0;
+    margin-right: var(--pe-space-2);
+  }
+  &__Stats {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+  &__Filters {
+    width: auto;
+    flex-shrink: 0;
+    margin-left: auto;
+  }
+}
+
 @media screen and (max-width: 1268px) {
   .Blocks .GoToHeightForm {
     order: 2;
   }
+
   .Blocks .Pagination {
     flex-grow: 1;
-    width: 100%;
-    display: flex;
+        width: 100%;
+        display: flex;
   }
+
   .Blocks .PageSizeSelector {
     order: 3;
-    text-align: left;
+        text-align: left;
   }
 }
+
 @media screen and (max-width: 680px) {
   .Blocks .PageSizeSelector {
     width: auto;
   }
+
   .Blocks .Pagination {
     order: -1;
-    width: 100%;
-    justify-content: center;
-    margin-bottom: var(--pe-space-2);
+        width: 100%;
+        justify-content: center;
+        margin-bottom: var(--pe-space-2);
   }
 }
+
 @media screen and (max-width: 48em) {
-  .Blocks__Controls {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: var(--pe-space-4);
-  }
-  .Blocks__Filters {
-    margin-left: 0;
+  .Blocks {
+    &__Controls {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: var(--pe-space-4);
+    }
+    &__Filters {
+      margin-left: 0;
+    }
   }
 }

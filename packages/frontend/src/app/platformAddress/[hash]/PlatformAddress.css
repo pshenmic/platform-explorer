@@ -1,20 +1,23 @@
+.PlatformAddress__CommonInfo .InfoLine {
+  justify-content: flex-start !important;
+}
+
+.PlatformAddress__CommonInfo .InfoLine__Title {
+  width: 200px;
+    flex-grow: 0;
+}
+
+.PlatformAddress__CommonInfo .InfoLine__Value {
+  text-align: left;
+}
+
 .PlatformAddress {
   display: flex;
   flex-direction: column;
   gap: var(--pe-space-5);
-}
-.PlatformAddress__CommonInfo {
-  display: flex;
-  flex-direction: column;
-  gap: var(--pe-space-5);
-}
-.PlatformAddress__CommonInfo .InfoLine {
-  justify-content: flex-start !important;
-}
-.PlatformAddress__CommonInfo .InfoLine__Title {
-  width: 200px;
-  flex-grow: 0;
-}
-.PlatformAddress__CommonInfo .InfoLine__Value {
-  text-align: left;
+  &__CommonInfo {
+    display: flex;
+    flex-direction: column;
+    gap: var(--pe-space-5);
+  }
 }

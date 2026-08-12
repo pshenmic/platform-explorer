@@ -1,21 +1,51 @@
 .DataContractDigestCard {
   padding: calc(var(--pe-space-3) + 0px);
 }
+
 @media screen and (min-width: 48em) {
   .DataContractDigestCard {
     padding: calc(var(--pe-space-4) + 0px);
   }
 }
+
 @media screen and (min-width: 62em) {
   .DataContractDigestCard {
     padding: calc(var(--pe-space-5) + 0px);
   }
 }
+
 @media screen and (min-width: 80em) {
   .DataContractDigestCard {
     padding: calc(var(--pe-space-6) + 0px);
   }
 }
+
+.DataContractDigestCard--Loading .InfoLine__Value {
+  height: var(--pe-space-6);
+}
+
+.DataContractDigestCard__InfoContainer .InfoLine__Title svg {
+  width: var(--pe-space-7);
+    height: var(--pe-space-7);
+}
+
+.DataContractDigestCard__InfoLine--TopIdentity .InfoLine__Value {
+  overflow: hidden;
+}
+
+.DataContractDigestCard__InfoLine--TotalTransactions .InfoLine__Title, .DataContractDigestCard__InfoLine--TotalTransactions .InfoLine__Title span, .DataContractDigestCard__InfoLine--DocumentsCount .InfoLine__Title, .DataContractDigestCard__InfoLine--DocumentsCount .InfoLine__Title span {
+  align-items: center;
+    display: flex;
+}
+
+.DataContractDigestCard__InfoLine--TotalTransactions .InfoLine__Title span, .DataContractDigestCard__InfoLine--DocumentsCount .InfoLine__Title span {
+  gap: var(--pe-space-3);
+}
+
+.DataContractDigestCard__InfoLine--TotalTransactions .InfoLine__Value, .DataContractDigestCard__InfoLine--DocumentsCount .InfoLine__Value {
+  font-size: 0.813rem;
+}
+
 .DataContractDigestCard {
   font-family: var(--pe-font-mono);
   font-size: var(--pe-text-sm);
@@ -25,67 +55,52 @@
   background: rgba(var(--pe-color-gray-800-rgb), 0.5);
   border-radius: var(--pe-radius-def);
   container-type: inline-size;
-}
-.DataContractDigestCard--Loading .InfoLine__Value {
-  height: var(--pe-space-6);
-}
-.DataContractDigestCard--Loading .DataContractDigestCard__InfoContainer {
-  overflow: hidden;
-}
-.DataContractDigestCard--Loading .DataContractDigestCard__InfoContainerValue {
-  width: 100px;
-  max-width: 100%;
-}
-.DataContractDigestCard__RowContainer {
-  display: flex;
-  justify-content: space-between;
-  gap: var(--pe-space-3_5);
-}
-.DataContractDigestCard__InfoContainer {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--pe-space-1);
-  padding: var(--pe-space-6);
-  background: rgba(var(--pe-color-gray-800-rgb), 0.5);
-  border-radius: var(--pe-radius-def);
-  width: 100%;
-}
-.DataContractDigestCard__InfoContainer .InfoLine__Title svg {
-  width: var(--pe-space-7);
-  height: var(--pe-space-7);
-}
-.DataContractDigestCard__LinesContainer {
-  flex-direction: column;
-}
-.DataContractDigestCard {
   border-radius: var(--pe-radius-block);
   container-type: inline-size;
-}
-.DataContractDigestCard__InfoLine--TopIdentity .InfoLine__Value {
-  overflow: hidden;
-}
-.DataContractDigestCard__InfoLine--TotalTransactions, .DataContractDigestCard__InfoLine--DocumentsCount {
-  width: 100%;
-}
-.DataContractDigestCard__InfoLine--TotalTransactions .InfoLine__Title, .DataContractDigestCard__InfoLine--TotalTransactions .InfoLine__Title span, .DataContractDigestCard__InfoLine--DocumentsCount .InfoLine__Title, .DataContractDigestCard__InfoLine--DocumentsCount .InfoLine__Title span {
-  align-items: center;
-  display: flex;
-}
-.DataContractDigestCard__InfoLine--TotalTransactions .InfoLine__Title span, .DataContractDigestCard__InfoLine--DocumentsCount .InfoLine__Title span {
-  gap: var(--pe-space-3);
-}
-.DataContractDigestCard__InfoLine--TotalTransactions .InfoLine__Value, .DataContractDigestCard__InfoLine--DocumentsCount .InfoLine__Value {
-  font-size: 0.813rem;
-}
-@container (max-width: 37.5rem) and (max-width: 37.5rem) {
-  .DataContractDigestCard__RowContainer {
-    flex-wrap: wrap;
+  &--Loading &__InfoContainer {
+    overflow: hidden;
+  }
+  &--Loading &__InfoContainerValue {
+    width: 100px;
+    max-width: 100%;
+  }
+  &__RowContainer {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--pe-space-3_5);
+  }
+  &__InfoContainer {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--pe-space-1);
+    padding: var(--pe-space-6);
+    background: rgba(var(--pe-color-gray-800-rgb), 0.5);
+    border-radius: var(--pe-radius-def);
+    width: 100%;
+  }
+  &__LinesContainer {
+    flex-direction: column;
+  }
+  &__InfoLine--TotalTransactions,
+  &__InfoLine--DocumentsCount {
+    width: 100%;
   }
 }
+
+@container (max-width: 37.5rem) and (max-width: 37.5rem) {
+  .DataContractDigestCard {
+    &__RowContainer {
+      flex-wrap: wrap;
+    }
+  }
+}
+
 @media screen and (max-width: 30em) {
-  .DataContractDigestCard__InfoLine {
-    flex-wrap: wrap;
+  .DataContractDigestCard {
+    &__InfoLine {
+      flex-wrap: wrap;
+    }
   }
 }

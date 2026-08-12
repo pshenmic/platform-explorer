@@ -6,142 +6,167 @@
   display: flex;
   align-items: center;
   transition: all var(--pe-transition-def);
+  &--Loading {
+    overflow: hidden;
+    position: relative;
+  }
 }
-.ValueCard--Loading {
-  overflow: hidden;
-  position: relative;
-}
+
 @keyframes LoadingLine {
   0% {
     left: -100%;
-    width: 100%;
+        width: 100%;
   }
+
   50% {
     left: 100%;
-    width: 100%;
+        width: 100%;
   }
+
   100% {
     left: 100%;
-    width: 100%;
+        width: 100%;
   }
 }
-.ValueCard--Loading::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: var(--pe-color-gray-900);
-  border-radius: 5px;
-  opacity: 1;
-}
-.ValueCard--Loading::after {
-  content: "";
-  position: absolute;
-  z-index: 2;
-  top: 0;
-  left: -50%;
-  width: 40%;
-  height: 100%;
-  background: linear-gradient(90deg, rgb(14, 117, 181) 0%, rgb(22, 82, 120) 100%);
-  border-radius: 100px;
-  opacity: var(--pe-opacity-faint);
-  animation: LoadingLine linear 3s infinite;
-}
+
 Tr .ValueCard--Loading::before {
   background-color: var(--pe-color-gray-800);
-  opacity: var(--pe-opacity-subtle);
+    opacity: var(--pe-opacity-subtle);
 }
-.ValueCard--Loading:nth-child(1n)::after {
-  animation-delay: -0.5s;
-}
+
 Tr:nth-child(1n) .ValueCard--Loading::after {
   animation-delay: -0.5s;
 }
-.ValueCard--Loading:nth-child(2n)::after {
-  animation-delay: 0s;
-}
+
 Tr:nth-child(2n) .ValueCard--Loading::after {
   animation-delay: 0s;
 }
-.ValueCard--Loading:nth-child(3n)::after {
-  animation-delay: 0.5s;
-}
+
 Tr:nth-child(3n) .ValueCard--Loading::after {
   animation-delay: 0.5s;
 }
-.ValueCard--Loading:nth-child(4n)::after {
-  animation-delay: 1s;
-}
+
 Tr:nth-child(4n) .ValueCard--Loading::after {
   animation-delay: 1s;
 }
-.ValueCard--Loading:nth-child(5n)::after {
-  animation-delay: 1.5s;
-}
+
 Tr:nth-child(5n) .ValueCard--Loading::after {
   animation-delay: 1.5s;
 }
-.ValueCard--Loading:nth-child(6n)::after {
-  animation-delay: 2s;
-}
+
 Tr:nth-child(6n) .ValueCard--Loading::after {
   animation-delay: 2s;
 }
-.ValueCard--Loading:nth-child(7n)::after {
-  animation-delay: 2.5s;
-}
+
 Tr:nth-child(7n) .ValueCard--Loading::after {
   animation-delay: 2.5s;
 }
-.ValueCard--Loading:nth-child(8n)::after {
-  animation-delay: 3s;
-}
+
 Tr:nth-child(8n) .ValueCard--Loading::after {
   animation-delay: 3s;
 }
-.ValueCard--Loading:nth-child(9n)::after {
-  animation-delay: 3.5s;
-}
+
 Tr:nth-child(9n) .ValueCard--Loading::after {
   animation-delay: 3.5s;
 }
-.ValueCard--Loading:nth-child(10n)::after {
-  animation-delay: 4s;
-}
+
 Tr:nth-child(10n) .ValueCard--Loading::after {
   animation-delay: 4s;
 }
-.ValueCard--SizeSm {
-  padding: 5px var(--pe-space-2_5);
-  line-height: var(--pe-space-3_5);
-  border-radius: var(--pe-radius-sm);
-}
-.ValueCard--BgTransparent {
-  background: transparent;
-}
-.ValueCard--Green {
-  color: var(--pe-color-green-default);
-  background: rgba(var(--pe-color-green-default-rgb), 0.2);
-  border-color: rgba(var(--pe-color-green-default-rgb), 0.4);
-}
+
 .ValueCard--Green .CopyButton svg {
   color: rgba(255, 255, 255, 0.85);
 }
+
 .ValueCard--Green .CopyButton:hover svg {
   color: var(--pe-color-fg);
 }
-.ValueCard--Green.ValueCard--Clickable:hover {
-  background: rgba(var(--pe-color-green-default-rgb), 0.3);
-}
-@media (hover: hover) and (pointer: fine) {
-  .ValueCard--Clickable:hover {
-    background-color: var(--pe-color-gray-800);
-    cursor: pointer;
+
+.ValueCard {
+  &--Loading::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: var(--pe-color-gray-900);
+    border-radius: 5px;
+    opacity: 1;
+  }
+  &--Loading::after {
+    content: "";
+    position: absolute;
+    z-index: 2;
+    top: 0;
+    left: -50%;
+    width: 40%;
+    height: 100%;
+    background: linear-gradient(90deg, rgb(14, 117, 181) 0%, rgb(22, 82, 120) 100%);
+    border-radius: 100px;
+    opacity: var(--pe-opacity-faint);
+    animation: LoadingLine linear 3s infinite;
+  }
+  &--Loading:nth-child(1n)::after {
+    animation-delay: -0.5s;
+  }
+  &--Loading:nth-child(2n)::after {
+    animation-delay: 0s;
+  }
+  &--Loading:nth-child(3n)::after {
+    animation-delay: 0.5s;
+  }
+  &--Loading:nth-child(4n)::after {
+    animation-delay: 1s;
+  }
+  &--Loading:nth-child(5n)::after {
+    animation-delay: 1.5s;
+  }
+  &--Loading:nth-child(6n)::after {
+    animation-delay: 2s;
+  }
+  &--Loading:nth-child(7n)::after {
+    animation-delay: 2.5s;
+  }
+  &--Loading:nth-child(8n)::after {
+    animation-delay: 3s;
+  }
+  &--Loading:nth-child(9n)::after {
+    animation-delay: 3.5s;
+  }
+  &--Loading:nth-child(10n)::after {
+    animation-delay: 4s;
+  }
+  &--SizeSm {
+    padding: 5px var(--pe-space-2_5);
+    line-height: var(--pe-space-3_5);
+    border-radius: var(--pe-radius-sm);
+  }
+  &--BgTransparent {
+    background: transparent;
+  }
+  &--Green {
+    color: var(--pe-color-green-default);
+    background: rgba(var(--pe-color-green-default-rgb), 0.2);
+    border-color: rgba(var(--pe-color-green-default-rgb), 0.4);
+  }
+  &--Green.ValueCard--Clickable:hover {
+    background: rgba(var(--pe-color-green-default-rgb), 0.3);
   }
 }
-.ValueCard--Clickable:active {
-  transform: translateY(1px);
-  background-color: var(--pe-color-gray-650);
+
+@media (hover: hover) and (pointer: fine) {
+  .ValueCard {
+    &--Clickable:hover {
+      background-color: var(--pe-color-gray-800);
+      cursor: pointer;
+    }
+  }
+}
+
+.ValueCard {
+  &--Clickable:active {
+    transform: translateY(1px);
+    background-color: var(--pe-color-gray-650);
+  }
 }

@@ -4,1181 +4,1357 @@
   flex-wrap: wrap;
   gap: var(--pe-space-5);
   grid-template-columns: repeat(3, 1fr);
+  &__Stat {
+    display: flex;
+    flex-direction: column;
+    align-items: baseline;
+  }
+  &__Stat--Loading:nth-of-type(1) &__InfoValue {
+    overflow: hidden;
+    position: relative;
+  }
 }
-.NetworkStatus__Stat {
-  display: flex;
-  flex-direction: column;
-  align-items: baseline;
-}
-.NetworkStatus__Stat--Loading:nth-of-type(1) .NetworkStatus__InfoValue {
-  overflow: hidden;
-  position: relative;
-}
+
 @keyframes LoadingLine {
   0% {
     left: -100%;
-    width: 100%;
+        width: 100%;
   }
+
   50% {
     left: 100%;
-    width: 100%;
+        width: 100%;
   }
+
   100% {
     left: 100%;
-    width: 100%;
+        width: 100%;
   }
 }
-.NetworkStatus__Stat--Loading:nth-of-type(1) .NetworkStatus__InfoValue::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: var(--pe-color-gray-900);
-  border-radius: 5px;
-  opacity: 1;
-}
-.NetworkStatus__Stat--Loading:nth-of-type(1) .NetworkStatus__InfoValue::after {
-  content: "";
-  position: absolute;
-  z-index: 2;
-  top: 0;
-  left: -50%;
-  width: 40%;
-  height: 100%;
-  background: linear-gradient(90deg, rgb(14, 117, 181) 0%, rgb(22, 82, 120) 100%);
-  border-radius: 100px;
-  opacity: var(--pe-opacity-faint);
-  animation: LoadingLine linear 3s infinite;
-}
+
 Tr .NetworkStatus__Stat--Loading:nth-of-type(1) .NetworkStatus__InfoValue::before {
   background-color: var(--pe-color-gray-800);
-  opacity: var(--pe-opacity-subtle);
+    opacity: var(--pe-opacity-subtle);
 }
-.NetworkStatus__Stat--Loading:nth-of-type(1) .NetworkStatus__InfoValue:nth-child(1n)::after {
-  animation-delay: -0.35s;
-}
+
 Tr:nth-child(1n) .NetworkStatus__Stat--Loading:nth-of-type(1) .NetworkStatus__InfoValue::after {
   animation-delay: -0.35s;
 }
-.NetworkStatus__Stat--Loading:nth-of-type(1) .NetworkStatus__InfoValue:nth-child(2n)::after {
-  animation-delay: 0.15s;
-}
+
 Tr:nth-child(2n) .NetworkStatus__Stat--Loading:nth-of-type(1) .NetworkStatus__InfoValue::after {
   animation-delay: 0.15s;
 }
-.NetworkStatus__Stat--Loading:nth-of-type(1) .NetworkStatus__InfoValue:nth-child(3n)::after {
-  animation-delay: 0.65s;
-}
+
 Tr:nth-child(3n) .NetworkStatus__Stat--Loading:nth-of-type(1) .NetworkStatus__InfoValue::after {
   animation-delay: 0.65s;
 }
-.NetworkStatus__Stat--Loading:nth-of-type(1) .NetworkStatus__InfoValue:nth-child(4n)::after {
-  animation-delay: 1.15s;
-}
+
 Tr:nth-child(4n) .NetworkStatus__Stat--Loading:nth-of-type(1) .NetworkStatus__InfoValue::after {
   animation-delay: 1.15s;
 }
-.NetworkStatus__Stat--Loading:nth-of-type(1) .NetworkStatus__InfoValue:nth-child(5n)::after {
-  animation-delay: 1.65s;
-}
+
 Tr:nth-child(5n) .NetworkStatus__Stat--Loading:nth-of-type(1) .NetworkStatus__InfoValue::after {
   animation-delay: 1.65s;
 }
-.NetworkStatus__Stat--Loading:nth-of-type(1) .NetworkStatus__InfoValue:nth-child(6n)::after {
-  animation-delay: 2.15s;
-}
+
 Tr:nth-child(6n) .NetworkStatus__Stat--Loading:nth-of-type(1) .NetworkStatus__InfoValue::after {
   animation-delay: 2.15s;
 }
-.NetworkStatus__Stat--Loading:nth-of-type(1) .NetworkStatus__InfoValue:nth-child(7n)::after {
-  animation-delay: 2.65s;
-}
+
 Tr:nth-child(7n) .NetworkStatus__Stat--Loading:nth-of-type(1) .NetworkStatus__InfoValue::after {
   animation-delay: 2.65s;
 }
-.NetworkStatus__Stat--Loading:nth-of-type(1) .NetworkStatus__InfoValue:nth-child(8n)::after {
-  animation-delay: 3.15s;
-}
+
 Tr:nth-child(8n) .NetworkStatus__Stat--Loading:nth-of-type(1) .NetworkStatus__InfoValue::after {
   animation-delay: 3.15s;
 }
-.NetworkStatus__Stat--Loading:nth-of-type(1) .NetworkStatus__InfoValue:nth-child(9n)::after {
-  animation-delay: 3.65s;
-}
+
 Tr:nth-child(9n) .NetworkStatus__Stat--Loading:nth-of-type(1) .NetworkStatus__InfoValue::after {
   animation-delay: 3.65s;
 }
-.NetworkStatus__Stat--Loading:nth-of-type(1) .NetworkStatus__InfoValue:nth-child(10n)::after {
-  animation-delay: 4.15s;
-}
+
 Tr:nth-child(10n) .NetworkStatus__Stat--Loading:nth-of-type(1) .NetworkStatus__InfoValue::after {
   animation-delay: 4.15s;
 }
-.NetworkStatus__Stat--Loading:nth-of-type(1) .NetworkStatus__InfoValue {
-  width: 100%;
+
+.NetworkStatus {
+  &__Stat--Loading:nth-of-type(1) &__InfoValue::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: var(--pe-color-gray-900);
+    border-radius: 5px;
+    opacity: 1;
+  }
+  &__Stat--Loading:nth-of-type(1) &__InfoValue::after {
+    content: "";
+    position: absolute;
+    z-index: 2;
+    top: 0;
+    left: -50%;
+    width: 40%;
+    height: 100%;
+    background: linear-gradient(90deg, rgb(14, 117, 181) 0%, rgb(22, 82, 120) 100%);
+    border-radius: 100px;
+    opacity: var(--pe-opacity-faint);
+    animation: LoadingLine linear 3s infinite;
+  }
+  &__Stat--Loading:nth-of-type(1) &__InfoValue:nth-child(1n)::after {
+    animation-delay: -0.35s;
+  }
+  &__Stat--Loading:nth-of-type(1) &__InfoValue:nth-child(2n)::after {
+    animation-delay: 0.15s;
+  }
+  &__Stat--Loading:nth-of-type(1) &__InfoValue:nth-child(3n)::after {
+    animation-delay: 0.65s;
+  }
+  &__Stat--Loading:nth-of-type(1) &__InfoValue:nth-child(4n)::after {
+    animation-delay: 1.15s;
+  }
+  &__Stat--Loading:nth-of-type(1) &__InfoValue:nth-child(5n)::after {
+    animation-delay: 1.65s;
+  }
+  &__Stat--Loading:nth-of-type(1) &__InfoValue:nth-child(6n)::after {
+    animation-delay: 2.15s;
+  }
+  &__Stat--Loading:nth-of-type(1) &__InfoValue:nth-child(7n)::after {
+    animation-delay: 2.65s;
+  }
+  &__Stat--Loading:nth-of-type(1) &__InfoValue:nth-child(8n)::after {
+    animation-delay: 3.15s;
+  }
+  &__Stat--Loading:nth-of-type(1) &__InfoValue:nth-child(9n)::after {
+    animation-delay: 3.65s;
+  }
+  &__Stat--Loading:nth-of-type(1) &__InfoValue:nth-child(10n)::after {
+    animation-delay: 4.15s;
+  }
+  &__Stat--Loading:nth-of-type(1) &__InfoValue {
+    width: 100%;
+  }
+  &__Stat--Loading:nth-of-type(2) &__InfoValue {
+    overflow: hidden;
+    position: relative;
+  }
 }
-.NetworkStatus__Stat--Loading:nth-of-type(2) .NetworkStatus__InfoValue {
-  overflow: hidden;
-  position: relative;
-}
+
 @keyframes LoadingLine {
   0% {
     left: -100%;
-    width: 100%;
+        width: 100%;
   }
+
   50% {
     left: 100%;
-    width: 100%;
+        width: 100%;
   }
+
   100% {
     left: 100%;
-    width: 100%;
+        width: 100%;
   }
 }
-.NetworkStatus__Stat--Loading:nth-of-type(2) .NetworkStatus__InfoValue::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: var(--pe-color-gray-900);
-  border-radius: 5px;
-  opacity: 1;
-}
-.NetworkStatus__Stat--Loading:nth-of-type(2) .NetworkStatus__InfoValue::after {
-  content: "";
-  position: absolute;
-  z-index: 2;
-  top: 0;
-  left: -50%;
-  width: 40%;
-  height: 100%;
-  background: linear-gradient(90deg, rgb(14, 117, 181) 0%, rgb(22, 82, 120) 100%);
-  border-radius: 100px;
-  opacity: var(--pe-opacity-faint);
-  animation: LoadingLine linear 3s infinite;
-}
+
 Tr .NetworkStatus__Stat--Loading:nth-of-type(2) .NetworkStatus__InfoValue::before {
   background-color: var(--pe-color-gray-800);
-  opacity: var(--pe-opacity-subtle);
+    opacity: var(--pe-opacity-subtle);
 }
-.NetworkStatus__Stat--Loading:nth-of-type(2) .NetworkStatus__InfoValue:nth-child(1n)::after {
-  animation-delay: -0.2s;
-}
+
 Tr:nth-child(1n) .NetworkStatus__Stat--Loading:nth-of-type(2) .NetworkStatus__InfoValue::after {
   animation-delay: -0.2s;
 }
-.NetworkStatus__Stat--Loading:nth-of-type(2) .NetworkStatus__InfoValue:nth-child(2n)::after {
-  animation-delay: 0.3s;
-}
+
 Tr:nth-child(2n) .NetworkStatus__Stat--Loading:nth-of-type(2) .NetworkStatus__InfoValue::after {
   animation-delay: 0.3s;
 }
-.NetworkStatus__Stat--Loading:nth-of-type(2) .NetworkStatus__InfoValue:nth-child(3n)::after {
-  animation-delay: 0.8s;
-}
+
 Tr:nth-child(3n) .NetworkStatus__Stat--Loading:nth-of-type(2) .NetworkStatus__InfoValue::after {
   animation-delay: 0.8s;
 }
-.NetworkStatus__Stat--Loading:nth-of-type(2) .NetworkStatus__InfoValue:nth-child(4n)::after {
-  animation-delay: 1.3s;
-}
+
 Tr:nth-child(4n) .NetworkStatus__Stat--Loading:nth-of-type(2) .NetworkStatus__InfoValue::after {
   animation-delay: 1.3s;
 }
-.NetworkStatus__Stat--Loading:nth-of-type(2) .NetworkStatus__InfoValue:nth-child(5n)::after {
-  animation-delay: 1.8s;
-}
+
 Tr:nth-child(5n) .NetworkStatus__Stat--Loading:nth-of-type(2) .NetworkStatus__InfoValue::after {
   animation-delay: 1.8s;
 }
-.NetworkStatus__Stat--Loading:nth-of-type(2) .NetworkStatus__InfoValue:nth-child(6n)::after {
-  animation-delay: 2.3s;
-}
+
 Tr:nth-child(6n) .NetworkStatus__Stat--Loading:nth-of-type(2) .NetworkStatus__InfoValue::after {
   animation-delay: 2.3s;
 }
-.NetworkStatus__Stat--Loading:nth-of-type(2) .NetworkStatus__InfoValue:nth-child(7n)::after {
-  animation-delay: 2.8s;
-}
+
 Tr:nth-child(7n) .NetworkStatus__Stat--Loading:nth-of-type(2) .NetworkStatus__InfoValue::after {
   animation-delay: 2.8s;
 }
-.NetworkStatus__Stat--Loading:nth-of-type(2) .NetworkStatus__InfoValue:nth-child(8n)::after {
-  animation-delay: 3.3s;
-}
+
 Tr:nth-child(8n) .NetworkStatus__Stat--Loading:nth-of-type(2) .NetworkStatus__InfoValue::after {
   animation-delay: 3.3s;
 }
-.NetworkStatus__Stat--Loading:nth-of-type(2) .NetworkStatus__InfoValue:nth-child(9n)::after {
-  animation-delay: 3.8s;
-}
+
 Tr:nth-child(9n) .NetworkStatus__Stat--Loading:nth-of-type(2) .NetworkStatus__InfoValue::after {
   animation-delay: 3.8s;
 }
-.NetworkStatus__Stat--Loading:nth-of-type(2) .NetworkStatus__InfoValue:nth-child(10n)::after {
-  animation-delay: 4.3s;
-}
+
 Tr:nth-child(10n) .NetworkStatus__Stat--Loading:nth-of-type(2) .NetworkStatus__InfoValue::after {
   animation-delay: 4.3s;
 }
-.NetworkStatus__Stat--Loading:nth-of-type(2) .NetworkStatus__InfoValue {
-  width: 100%;
+
+.NetworkStatus {
+  &__Stat--Loading:nth-of-type(2) &__InfoValue::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: var(--pe-color-gray-900);
+    border-radius: 5px;
+    opacity: 1;
+  }
+  &__Stat--Loading:nth-of-type(2) &__InfoValue::after {
+    content: "";
+    position: absolute;
+    z-index: 2;
+    top: 0;
+    left: -50%;
+    width: 40%;
+    height: 100%;
+    background: linear-gradient(90deg, rgb(14, 117, 181) 0%, rgb(22, 82, 120) 100%);
+    border-radius: 100px;
+    opacity: var(--pe-opacity-faint);
+    animation: LoadingLine linear 3s infinite;
+  }
+  &__Stat--Loading:nth-of-type(2) &__InfoValue:nth-child(1n)::after {
+    animation-delay: -0.2s;
+  }
+  &__Stat--Loading:nth-of-type(2) &__InfoValue:nth-child(2n)::after {
+    animation-delay: 0.3s;
+  }
+  &__Stat--Loading:nth-of-type(2) &__InfoValue:nth-child(3n)::after {
+    animation-delay: 0.8s;
+  }
+  &__Stat--Loading:nth-of-type(2) &__InfoValue:nth-child(4n)::after {
+    animation-delay: 1.3s;
+  }
+  &__Stat--Loading:nth-of-type(2) &__InfoValue:nth-child(5n)::after {
+    animation-delay: 1.8s;
+  }
+  &__Stat--Loading:nth-of-type(2) &__InfoValue:nth-child(6n)::after {
+    animation-delay: 2.3s;
+  }
+  &__Stat--Loading:nth-of-type(2) &__InfoValue:nth-child(7n)::after {
+    animation-delay: 2.8s;
+  }
+  &__Stat--Loading:nth-of-type(2) &__InfoValue:nth-child(8n)::after {
+    animation-delay: 3.3s;
+  }
+  &__Stat--Loading:nth-of-type(2) &__InfoValue:nth-child(9n)::after {
+    animation-delay: 3.8s;
+  }
+  &__Stat--Loading:nth-of-type(2) &__InfoValue:nth-child(10n)::after {
+    animation-delay: 4.3s;
+  }
+  &__Stat--Loading:nth-of-type(2) &__InfoValue {
+    width: 100%;
+  }
+  &__Stat--Loading:nth-of-type(3) &__InfoValue {
+    overflow: hidden;
+    position: relative;
+  }
 }
-.NetworkStatus__Stat--Loading:nth-of-type(3) .NetworkStatus__InfoValue {
-  overflow: hidden;
-  position: relative;
-}
+
 @keyframes LoadingLine {
   0% {
     left: -100%;
-    width: 100%;
+        width: 100%;
   }
+
   50% {
     left: 100%;
-    width: 100%;
+        width: 100%;
   }
+
   100% {
     left: 100%;
-    width: 100%;
+        width: 100%;
   }
 }
-.NetworkStatus__Stat--Loading:nth-of-type(3) .NetworkStatus__InfoValue::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: var(--pe-color-gray-900);
-  border-radius: 5px;
-  opacity: 1;
-}
-.NetworkStatus__Stat--Loading:nth-of-type(3) .NetworkStatus__InfoValue::after {
-  content: "";
-  position: absolute;
-  z-index: 2;
-  top: 0;
-  left: -50%;
-  width: 40%;
-  height: 100%;
-  background: linear-gradient(90deg, rgb(14, 117, 181) 0%, rgb(22, 82, 120) 100%);
-  border-radius: 100px;
-  opacity: var(--pe-opacity-faint);
-  animation: LoadingLine linear 3s infinite;
-}
+
 Tr .NetworkStatus__Stat--Loading:nth-of-type(3) .NetworkStatus__InfoValue::before {
   background-color: var(--pe-color-gray-800);
-  opacity: var(--pe-opacity-subtle);
+    opacity: var(--pe-opacity-subtle);
 }
-.NetworkStatus__Stat--Loading:nth-of-type(3) .NetworkStatus__InfoValue:nth-child(1n)::after {
-  animation-delay: -0.05s;
-}
+
 Tr:nth-child(1n) .NetworkStatus__Stat--Loading:nth-of-type(3) .NetworkStatus__InfoValue::after {
   animation-delay: -0.05s;
 }
-.NetworkStatus__Stat--Loading:nth-of-type(3) .NetworkStatus__InfoValue:nth-child(2n)::after {
-  animation-delay: 0.45s;
-}
+
 Tr:nth-child(2n) .NetworkStatus__Stat--Loading:nth-of-type(3) .NetworkStatus__InfoValue::after {
   animation-delay: 0.45s;
 }
-.NetworkStatus__Stat--Loading:nth-of-type(3) .NetworkStatus__InfoValue:nth-child(3n)::after {
-  animation-delay: 0.95s;
-}
+
 Tr:nth-child(3n) .NetworkStatus__Stat--Loading:nth-of-type(3) .NetworkStatus__InfoValue::after {
   animation-delay: 0.95s;
 }
-.NetworkStatus__Stat--Loading:nth-of-type(3) .NetworkStatus__InfoValue:nth-child(4n)::after {
-  animation-delay: 1.45s;
-}
+
 Tr:nth-child(4n) .NetworkStatus__Stat--Loading:nth-of-type(3) .NetworkStatus__InfoValue::after {
   animation-delay: 1.45s;
 }
-.NetworkStatus__Stat--Loading:nth-of-type(3) .NetworkStatus__InfoValue:nth-child(5n)::after {
-  animation-delay: 1.95s;
-}
+
 Tr:nth-child(5n) .NetworkStatus__Stat--Loading:nth-of-type(3) .NetworkStatus__InfoValue::after {
   animation-delay: 1.95s;
 }
-.NetworkStatus__Stat--Loading:nth-of-type(3) .NetworkStatus__InfoValue:nth-child(6n)::after {
-  animation-delay: 2.45s;
-}
+
 Tr:nth-child(6n) .NetworkStatus__Stat--Loading:nth-of-type(3) .NetworkStatus__InfoValue::after {
   animation-delay: 2.45s;
 }
-.NetworkStatus__Stat--Loading:nth-of-type(3) .NetworkStatus__InfoValue:nth-child(7n)::after {
-  animation-delay: 2.95s;
-}
+
 Tr:nth-child(7n) .NetworkStatus__Stat--Loading:nth-of-type(3) .NetworkStatus__InfoValue::after {
   animation-delay: 2.95s;
 }
-.NetworkStatus__Stat--Loading:nth-of-type(3) .NetworkStatus__InfoValue:nth-child(8n)::after {
-  animation-delay: 3.45s;
-}
+
 Tr:nth-child(8n) .NetworkStatus__Stat--Loading:nth-of-type(3) .NetworkStatus__InfoValue::after {
   animation-delay: 3.45s;
 }
-.NetworkStatus__Stat--Loading:nth-of-type(3) .NetworkStatus__InfoValue:nth-child(9n)::after {
-  animation-delay: 3.95s;
-}
+
 Tr:nth-child(9n) .NetworkStatus__Stat--Loading:nth-of-type(3) .NetworkStatus__InfoValue::after {
   animation-delay: 3.95s;
 }
-.NetworkStatus__Stat--Loading:nth-of-type(3) .NetworkStatus__InfoValue:nth-child(10n)::after {
-  animation-delay: 4.45s;
-}
+
 Tr:nth-child(10n) .NetworkStatus__Stat--Loading:nth-of-type(3) .NetworkStatus__InfoValue::after {
   animation-delay: 4.45s;
 }
-.NetworkStatus__Stat--Loading:nth-of-type(3) .NetworkStatus__InfoValue {
-  width: 100%;
+
+.NetworkStatus {
+  &__Stat--Loading:nth-of-type(3) &__InfoValue::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: var(--pe-color-gray-900);
+    border-radius: 5px;
+    opacity: 1;
+  }
+  &__Stat--Loading:nth-of-type(3) &__InfoValue::after {
+    content: "";
+    position: absolute;
+    z-index: 2;
+    top: 0;
+    left: -50%;
+    width: 40%;
+    height: 100%;
+    background: linear-gradient(90deg, rgb(14, 117, 181) 0%, rgb(22, 82, 120) 100%);
+    border-radius: 100px;
+    opacity: var(--pe-opacity-faint);
+    animation: LoadingLine linear 3s infinite;
+  }
+  &__Stat--Loading:nth-of-type(3) &__InfoValue:nth-child(1n)::after {
+    animation-delay: -0.05s;
+  }
+  &__Stat--Loading:nth-of-type(3) &__InfoValue:nth-child(2n)::after {
+    animation-delay: 0.45s;
+  }
+  &__Stat--Loading:nth-of-type(3) &__InfoValue:nth-child(3n)::after {
+    animation-delay: 0.95s;
+  }
+  &__Stat--Loading:nth-of-type(3) &__InfoValue:nth-child(4n)::after {
+    animation-delay: 1.45s;
+  }
+  &__Stat--Loading:nth-of-type(3) &__InfoValue:nth-child(5n)::after {
+    animation-delay: 1.95s;
+  }
+  &__Stat--Loading:nth-of-type(3) &__InfoValue:nth-child(6n)::after {
+    animation-delay: 2.45s;
+  }
+  &__Stat--Loading:nth-of-type(3) &__InfoValue:nth-child(7n)::after {
+    animation-delay: 2.95s;
+  }
+  &__Stat--Loading:nth-of-type(3) &__InfoValue:nth-child(8n)::after {
+    animation-delay: 3.45s;
+  }
+  &__Stat--Loading:nth-of-type(3) &__InfoValue:nth-child(9n)::after {
+    animation-delay: 3.95s;
+  }
+  &__Stat--Loading:nth-of-type(3) &__InfoValue:nth-child(10n)::after {
+    animation-delay: 4.45s;
+  }
+  &__Stat--Loading:nth-of-type(3) &__InfoValue {
+    width: 100%;
+  }
+  &__Stat--Loading:nth-of-type(4) &__InfoValue {
+    overflow: hidden;
+    position: relative;
+  }
 }
-.NetworkStatus__Stat--Loading:nth-of-type(4) .NetworkStatus__InfoValue {
-  overflow: hidden;
-  position: relative;
-}
+
 @keyframes LoadingLine {
   0% {
     left: -100%;
-    width: 100%;
+        width: 100%;
   }
+
   50% {
     left: 100%;
-    width: 100%;
+        width: 100%;
   }
+
   100% {
     left: 100%;
-    width: 100%;
+        width: 100%;
   }
 }
-.NetworkStatus__Stat--Loading:nth-of-type(4) .NetworkStatus__InfoValue::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: var(--pe-color-gray-900);
-  border-radius: 5px;
-  opacity: 1;
-}
-.NetworkStatus__Stat--Loading:nth-of-type(4) .NetworkStatus__InfoValue::after {
-  content: "";
-  position: absolute;
-  z-index: 2;
-  top: 0;
-  left: -50%;
-  width: 40%;
-  height: 100%;
-  background: linear-gradient(90deg, rgb(14, 117, 181) 0%, rgb(22, 82, 120) 100%);
-  border-radius: 100px;
-  opacity: var(--pe-opacity-faint);
-  animation: LoadingLine linear 3s infinite;
-}
+
 Tr .NetworkStatus__Stat--Loading:nth-of-type(4) .NetworkStatus__InfoValue::before {
   background-color: var(--pe-color-gray-800);
-  opacity: var(--pe-opacity-subtle);
+    opacity: var(--pe-opacity-subtle);
 }
-.NetworkStatus__Stat--Loading:nth-of-type(4) .NetworkStatus__InfoValue:nth-child(1n)::after {
-  animation-delay: 0.1s;
-}
+
 Tr:nth-child(1n) .NetworkStatus__Stat--Loading:nth-of-type(4) .NetworkStatus__InfoValue::after {
   animation-delay: 0.1s;
 }
-.NetworkStatus__Stat--Loading:nth-of-type(4) .NetworkStatus__InfoValue:nth-child(2n)::after {
-  animation-delay: 0.6s;
-}
+
 Tr:nth-child(2n) .NetworkStatus__Stat--Loading:nth-of-type(4) .NetworkStatus__InfoValue::after {
   animation-delay: 0.6s;
 }
-.NetworkStatus__Stat--Loading:nth-of-type(4) .NetworkStatus__InfoValue:nth-child(3n)::after {
-  animation-delay: 1.1s;
-}
+
 Tr:nth-child(3n) .NetworkStatus__Stat--Loading:nth-of-type(4) .NetworkStatus__InfoValue::after {
   animation-delay: 1.1s;
 }
-.NetworkStatus__Stat--Loading:nth-of-type(4) .NetworkStatus__InfoValue:nth-child(4n)::after {
-  animation-delay: 1.6s;
-}
+
 Tr:nth-child(4n) .NetworkStatus__Stat--Loading:nth-of-type(4) .NetworkStatus__InfoValue::after {
   animation-delay: 1.6s;
 }
-.NetworkStatus__Stat--Loading:nth-of-type(4) .NetworkStatus__InfoValue:nth-child(5n)::after {
-  animation-delay: 2.1s;
-}
+
 Tr:nth-child(5n) .NetworkStatus__Stat--Loading:nth-of-type(4) .NetworkStatus__InfoValue::after {
   animation-delay: 2.1s;
 }
-.NetworkStatus__Stat--Loading:nth-of-type(4) .NetworkStatus__InfoValue:nth-child(6n)::after {
-  animation-delay: 2.6s;
-}
+
 Tr:nth-child(6n) .NetworkStatus__Stat--Loading:nth-of-type(4) .NetworkStatus__InfoValue::after {
   animation-delay: 2.6s;
 }
-.NetworkStatus__Stat--Loading:nth-of-type(4) .NetworkStatus__InfoValue:nth-child(7n)::after {
-  animation-delay: 3.1s;
-}
+
 Tr:nth-child(7n) .NetworkStatus__Stat--Loading:nth-of-type(4) .NetworkStatus__InfoValue::after {
   animation-delay: 3.1s;
 }
-.NetworkStatus__Stat--Loading:nth-of-type(4) .NetworkStatus__InfoValue:nth-child(8n)::after {
-  animation-delay: 3.6s;
-}
+
 Tr:nth-child(8n) .NetworkStatus__Stat--Loading:nth-of-type(4) .NetworkStatus__InfoValue::after {
   animation-delay: 3.6s;
 }
-.NetworkStatus__Stat--Loading:nth-of-type(4) .NetworkStatus__InfoValue:nth-child(9n)::after {
-  animation-delay: 4.1s;
-}
+
 Tr:nth-child(9n) .NetworkStatus__Stat--Loading:nth-of-type(4) .NetworkStatus__InfoValue::after {
   animation-delay: 4.1s;
 }
-.NetworkStatus__Stat--Loading:nth-of-type(4) .NetworkStatus__InfoValue:nth-child(10n)::after {
-  animation-delay: 4.6s;
-}
+
 Tr:nth-child(10n) .NetworkStatus__Stat--Loading:nth-of-type(4) .NetworkStatus__InfoValue::after {
   animation-delay: 4.6s;
 }
-.NetworkStatus__Stat--Loading:nth-of-type(4) .NetworkStatus__InfoValue {
-  width: 100%;
+
+.NetworkStatus {
+  &__Stat--Loading:nth-of-type(4) &__InfoValue::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: var(--pe-color-gray-900);
+    border-radius: 5px;
+    opacity: 1;
+  }
+  &__Stat--Loading:nth-of-type(4) &__InfoValue::after {
+    content: "";
+    position: absolute;
+    z-index: 2;
+    top: 0;
+    left: -50%;
+    width: 40%;
+    height: 100%;
+    background: linear-gradient(90deg, rgb(14, 117, 181) 0%, rgb(22, 82, 120) 100%);
+    border-radius: 100px;
+    opacity: var(--pe-opacity-faint);
+    animation: LoadingLine linear 3s infinite;
+  }
+  &__Stat--Loading:nth-of-type(4) &__InfoValue:nth-child(1n)::after {
+    animation-delay: 0.1s;
+  }
+  &__Stat--Loading:nth-of-type(4) &__InfoValue:nth-child(2n)::after {
+    animation-delay: 0.6s;
+  }
+  &__Stat--Loading:nth-of-type(4) &__InfoValue:nth-child(3n)::after {
+    animation-delay: 1.1s;
+  }
+  &__Stat--Loading:nth-of-type(4) &__InfoValue:nth-child(4n)::after {
+    animation-delay: 1.6s;
+  }
+  &__Stat--Loading:nth-of-type(4) &__InfoValue:nth-child(5n)::after {
+    animation-delay: 2.1s;
+  }
+  &__Stat--Loading:nth-of-type(4) &__InfoValue:nth-child(6n)::after {
+    animation-delay: 2.6s;
+  }
+  &__Stat--Loading:nth-of-type(4) &__InfoValue:nth-child(7n)::after {
+    animation-delay: 3.1s;
+  }
+  &__Stat--Loading:nth-of-type(4) &__InfoValue:nth-child(8n)::after {
+    animation-delay: 3.6s;
+  }
+  &__Stat--Loading:nth-of-type(4) &__InfoValue:nth-child(9n)::after {
+    animation-delay: 4.1s;
+  }
+  &__Stat--Loading:nth-of-type(4) &__InfoValue:nth-child(10n)::after {
+    animation-delay: 4.6s;
+  }
+  &__Stat--Loading:nth-of-type(4) &__InfoValue {
+    width: 100%;
+  }
+  &__Stat--Loading:nth-of-type(5) &__InfoValue {
+    overflow: hidden;
+    position: relative;
+  }
 }
-.NetworkStatus__Stat--Loading:nth-of-type(5) .NetworkStatus__InfoValue {
-  overflow: hidden;
-  position: relative;
-}
+
 @keyframes LoadingLine {
   0% {
     left: -100%;
-    width: 100%;
+        width: 100%;
   }
+
   50% {
     left: 100%;
-    width: 100%;
+        width: 100%;
   }
+
   100% {
     left: 100%;
-    width: 100%;
+        width: 100%;
   }
 }
-.NetworkStatus__Stat--Loading:nth-of-type(5) .NetworkStatus__InfoValue::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: var(--pe-color-gray-900);
-  border-radius: 5px;
-  opacity: 1;
-}
-.NetworkStatus__Stat--Loading:nth-of-type(5) .NetworkStatus__InfoValue::after {
-  content: "";
-  position: absolute;
-  z-index: 2;
-  top: 0;
-  left: -50%;
-  width: 40%;
-  height: 100%;
-  background: linear-gradient(90deg, rgb(14, 117, 181) 0%, rgb(22, 82, 120) 100%);
-  border-radius: 100px;
-  opacity: var(--pe-opacity-faint);
-  animation: LoadingLine linear 3s infinite;
-}
+
 Tr .NetworkStatus__Stat--Loading:nth-of-type(5) .NetworkStatus__InfoValue::before {
   background-color: var(--pe-color-gray-800);
-  opacity: var(--pe-opacity-subtle);
+    opacity: var(--pe-opacity-subtle);
 }
-.NetworkStatus__Stat--Loading:nth-of-type(5) .NetworkStatus__InfoValue:nth-child(1n)::after {
-  animation-delay: 0.25s;
-}
+
 Tr:nth-child(1n) .NetworkStatus__Stat--Loading:nth-of-type(5) .NetworkStatus__InfoValue::after {
   animation-delay: 0.25s;
 }
-.NetworkStatus__Stat--Loading:nth-of-type(5) .NetworkStatus__InfoValue:nth-child(2n)::after {
-  animation-delay: 0.75s;
-}
+
 Tr:nth-child(2n) .NetworkStatus__Stat--Loading:nth-of-type(5) .NetworkStatus__InfoValue::after {
   animation-delay: 0.75s;
 }
-.NetworkStatus__Stat--Loading:nth-of-type(5) .NetworkStatus__InfoValue:nth-child(3n)::after {
-  animation-delay: 1.25s;
-}
+
 Tr:nth-child(3n) .NetworkStatus__Stat--Loading:nth-of-type(5) .NetworkStatus__InfoValue::after {
   animation-delay: 1.25s;
 }
-.NetworkStatus__Stat--Loading:nth-of-type(5) .NetworkStatus__InfoValue:nth-child(4n)::after {
-  animation-delay: 1.75s;
-}
+
 Tr:nth-child(4n) .NetworkStatus__Stat--Loading:nth-of-type(5) .NetworkStatus__InfoValue::after {
   animation-delay: 1.75s;
 }
-.NetworkStatus__Stat--Loading:nth-of-type(5) .NetworkStatus__InfoValue:nth-child(5n)::after {
-  animation-delay: 2.25s;
-}
+
 Tr:nth-child(5n) .NetworkStatus__Stat--Loading:nth-of-type(5) .NetworkStatus__InfoValue::after {
   animation-delay: 2.25s;
 }
-.NetworkStatus__Stat--Loading:nth-of-type(5) .NetworkStatus__InfoValue:nth-child(6n)::after {
-  animation-delay: 2.75s;
-}
+
 Tr:nth-child(6n) .NetworkStatus__Stat--Loading:nth-of-type(5) .NetworkStatus__InfoValue::after {
   animation-delay: 2.75s;
 }
-.NetworkStatus__Stat--Loading:nth-of-type(5) .NetworkStatus__InfoValue:nth-child(7n)::after {
-  animation-delay: 3.25s;
-}
+
 Tr:nth-child(7n) .NetworkStatus__Stat--Loading:nth-of-type(5) .NetworkStatus__InfoValue::after {
   animation-delay: 3.25s;
 }
-.NetworkStatus__Stat--Loading:nth-of-type(5) .NetworkStatus__InfoValue:nth-child(8n)::after {
-  animation-delay: 3.75s;
-}
+
 Tr:nth-child(8n) .NetworkStatus__Stat--Loading:nth-of-type(5) .NetworkStatus__InfoValue::after {
   animation-delay: 3.75s;
 }
-.NetworkStatus__Stat--Loading:nth-of-type(5) .NetworkStatus__InfoValue:nth-child(9n)::after {
-  animation-delay: 4.25s;
-}
+
 Tr:nth-child(9n) .NetworkStatus__Stat--Loading:nth-of-type(5) .NetworkStatus__InfoValue::after {
   animation-delay: 4.25s;
 }
-.NetworkStatus__Stat--Loading:nth-of-type(5) .NetworkStatus__InfoValue:nth-child(10n)::after {
-  animation-delay: 4.75s;
-}
+
 Tr:nth-child(10n) .NetworkStatus__Stat--Loading:nth-of-type(5) .NetworkStatus__InfoValue::after {
   animation-delay: 4.75s;
 }
-.NetworkStatus__Stat--Loading:nth-of-type(5) .NetworkStatus__InfoValue {
-  width: 100%;
+
+.NetworkStatus {
+  &__Stat--Loading:nth-of-type(5) &__InfoValue::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: var(--pe-color-gray-900);
+    border-radius: 5px;
+    opacity: 1;
+  }
+  &__Stat--Loading:nth-of-type(5) &__InfoValue::after {
+    content: "";
+    position: absolute;
+    z-index: 2;
+    top: 0;
+    left: -50%;
+    width: 40%;
+    height: 100%;
+    background: linear-gradient(90deg, rgb(14, 117, 181) 0%, rgb(22, 82, 120) 100%);
+    border-radius: 100px;
+    opacity: var(--pe-opacity-faint);
+    animation: LoadingLine linear 3s infinite;
+  }
+  &__Stat--Loading:nth-of-type(5) &__InfoValue:nth-child(1n)::after {
+    animation-delay: 0.25s;
+  }
+  &__Stat--Loading:nth-of-type(5) &__InfoValue:nth-child(2n)::after {
+    animation-delay: 0.75s;
+  }
+  &__Stat--Loading:nth-of-type(5) &__InfoValue:nth-child(3n)::after {
+    animation-delay: 1.25s;
+  }
+  &__Stat--Loading:nth-of-type(5) &__InfoValue:nth-child(4n)::after {
+    animation-delay: 1.75s;
+  }
+  &__Stat--Loading:nth-of-type(5) &__InfoValue:nth-child(5n)::after {
+    animation-delay: 2.25s;
+  }
+  &__Stat--Loading:nth-of-type(5) &__InfoValue:nth-child(6n)::after {
+    animation-delay: 2.75s;
+  }
+  &__Stat--Loading:nth-of-type(5) &__InfoValue:nth-child(7n)::after {
+    animation-delay: 3.25s;
+  }
+  &__Stat--Loading:nth-of-type(5) &__InfoValue:nth-child(8n)::after {
+    animation-delay: 3.75s;
+  }
+  &__Stat--Loading:nth-of-type(5) &__InfoValue:nth-child(9n)::after {
+    animation-delay: 4.25s;
+  }
+  &__Stat--Loading:nth-of-type(5) &__InfoValue:nth-child(10n)::after {
+    animation-delay: 4.75s;
+  }
+  &__Stat--Loading:nth-of-type(5) &__InfoValue {
+    width: 100%;
+  }
+  &__Stat--Loading:nth-of-type(6) &__InfoValue {
+    overflow: hidden;
+    position: relative;
+  }
 }
-.NetworkStatus__Stat--Loading:nth-of-type(6) .NetworkStatus__InfoValue {
-  overflow: hidden;
-  position: relative;
-}
+
 @keyframes LoadingLine {
   0% {
     left: -100%;
-    width: 100%;
+        width: 100%;
   }
+
   50% {
     left: 100%;
-    width: 100%;
+        width: 100%;
   }
+
   100% {
     left: 100%;
-    width: 100%;
+        width: 100%;
   }
 }
-.NetworkStatus__Stat--Loading:nth-of-type(6) .NetworkStatus__InfoValue::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: var(--pe-color-gray-900);
-  border-radius: 5px;
-  opacity: 1;
-}
-.NetworkStatus__Stat--Loading:nth-of-type(6) .NetworkStatus__InfoValue::after {
-  content: "";
-  position: absolute;
-  z-index: 2;
-  top: 0;
-  left: -50%;
-  width: 40%;
-  height: 100%;
-  background: linear-gradient(90deg, rgb(14, 117, 181) 0%, rgb(22, 82, 120) 100%);
-  border-radius: 100px;
-  opacity: var(--pe-opacity-faint);
-  animation: LoadingLine linear 3s infinite;
-}
+
 Tr .NetworkStatus__Stat--Loading:nth-of-type(6) .NetworkStatus__InfoValue::before {
   background-color: var(--pe-color-gray-800);
-  opacity: var(--pe-opacity-subtle);
+    opacity: var(--pe-opacity-subtle);
 }
-.NetworkStatus__Stat--Loading:nth-of-type(6) .NetworkStatus__InfoValue:nth-child(1n)::after {
-  animation-delay: 0.4s;
-}
+
 Tr:nth-child(1n) .NetworkStatus__Stat--Loading:nth-of-type(6) .NetworkStatus__InfoValue::after {
   animation-delay: 0.4s;
 }
-.NetworkStatus__Stat--Loading:nth-of-type(6) .NetworkStatus__InfoValue:nth-child(2n)::after {
-  animation-delay: 0.9s;
-}
+
 Tr:nth-child(2n) .NetworkStatus__Stat--Loading:nth-of-type(6) .NetworkStatus__InfoValue::after {
   animation-delay: 0.9s;
 }
-.NetworkStatus__Stat--Loading:nth-of-type(6) .NetworkStatus__InfoValue:nth-child(3n)::after {
-  animation-delay: 1.4s;
-}
+
 Tr:nth-child(3n) .NetworkStatus__Stat--Loading:nth-of-type(6) .NetworkStatus__InfoValue::after {
   animation-delay: 1.4s;
 }
-.NetworkStatus__Stat--Loading:nth-of-type(6) .NetworkStatus__InfoValue:nth-child(4n)::after {
-  animation-delay: 1.9s;
-}
+
 Tr:nth-child(4n) .NetworkStatus__Stat--Loading:nth-of-type(6) .NetworkStatus__InfoValue::after {
   animation-delay: 1.9s;
 }
-.NetworkStatus__Stat--Loading:nth-of-type(6) .NetworkStatus__InfoValue:nth-child(5n)::after {
-  animation-delay: 2.4s;
-}
+
 Tr:nth-child(5n) .NetworkStatus__Stat--Loading:nth-of-type(6) .NetworkStatus__InfoValue::after {
   animation-delay: 2.4s;
 }
-.NetworkStatus__Stat--Loading:nth-of-type(6) .NetworkStatus__InfoValue:nth-child(6n)::after {
-  animation-delay: 2.9s;
-}
+
 Tr:nth-child(6n) .NetworkStatus__Stat--Loading:nth-of-type(6) .NetworkStatus__InfoValue::after {
   animation-delay: 2.9s;
 }
-.NetworkStatus__Stat--Loading:nth-of-type(6) .NetworkStatus__InfoValue:nth-child(7n)::after {
-  animation-delay: 3.4s;
-}
+
 Tr:nth-child(7n) .NetworkStatus__Stat--Loading:nth-of-type(6) .NetworkStatus__InfoValue::after {
   animation-delay: 3.4s;
 }
-.NetworkStatus__Stat--Loading:nth-of-type(6) .NetworkStatus__InfoValue:nth-child(8n)::after {
-  animation-delay: 3.9s;
-}
+
 Tr:nth-child(8n) .NetworkStatus__Stat--Loading:nth-of-type(6) .NetworkStatus__InfoValue::after {
   animation-delay: 3.9s;
 }
-.NetworkStatus__Stat--Loading:nth-of-type(6) .NetworkStatus__InfoValue:nth-child(9n)::after {
-  animation-delay: 4.4s;
-}
+
 Tr:nth-child(9n) .NetworkStatus__Stat--Loading:nth-of-type(6) .NetworkStatus__InfoValue::after {
   animation-delay: 4.4s;
 }
-.NetworkStatus__Stat--Loading:nth-of-type(6) .NetworkStatus__InfoValue:nth-child(10n)::after {
-  animation-delay: 4.9s;
-}
+
 Tr:nth-child(10n) .NetworkStatus__Stat--Loading:nth-of-type(6) .NetworkStatus__InfoValue::after {
   animation-delay: 4.9s;
 }
-.NetworkStatus__Stat--Loading:nth-of-type(6) .NetworkStatus__InfoValue {
-  width: 100%;
+
+.NetworkStatus {
+  &__Stat--Loading:nth-of-type(6) &__InfoValue::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: var(--pe-color-gray-900);
+    border-radius: 5px;
+    opacity: 1;
+  }
+  &__Stat--Loading:nth-of-type(6) &__InfoValue::after {
+    content: "";
+    position: absolute;
+    z-index: 2;
+    top: 0;
+    left: -50%;
+    width: 40%;
+    height: 100%;
+    background: linear-gradient(90deg, rgb(14, 117, 181) 0%, rgb(22, 82, 120) 100%);
+    border-radius: 100px;
+    opacity: var(--pe-opacity-faint);
+    animation: LoadingLine linear 3s infinite;
+  }
+  &__Stat--Loading:nth-of-type(6) &__InfoValue:nth-child(1n)::after {
+    animation-delay: 0.4s;
+  }
+  &__Stat--Loading:nth-of-type(6) &__InfoValue:nth-child(2n)::after {
+    animation-delay: 0.9s;
+  }
+  &__Stat--Loading:nth-of-type(6) &__InfoValue:nth-child(3n)::after {
+    animation-delay: 1.4s;
+  }
+  &__Stat--Loading:nth-of-type(6) &__InfoValue:nth-child(4n)::after {
+    animation-delay: 1.9s;
+  }
+  &__Stat--Loading:nth-of-type(6) &__InfoValue:nth-child(5n)::after {
+    animation-delay: 2.4s;
+  }
+  &__Stat--Loading:nth-of-type(6) &__InfoValue:nth-child(6n)::after {
+    animation-delay: 2.9s;
+  }
+  &__Stat--Loading:nth-of-type(6) &__InfoValue:nth-child(7n)::after {
+    animation-delay: 3.4s;
+  }
+  &__Stat--Loading:nth-of-type(6) &__InfoValue:nth-child(8n)::after {
+    animation-delay: 3.9s;
+  }
+  &__Stat--Loading:nth-of-type(6) &__InfoValue:nth-child(9n)::after {
+    animation-delay: 4.4s;
+  }
+  &__Stat--Loading:nth-of-type(6) &__InfoValue:nth-child(10n)::after {
+    animation-delay: 4.9s;
+  }
+  &__Stat--Loading:nth-of-type(6) &__InfoValue {
+    width: 100%;
+  }
+  &__Stat--Loading:nth-of-type(7) &__InfoValue {
+    overflow: hidden;
+    position: relative;
+  }
 }
-.NetworkStatus__Stat--Loading:nth-of-type(7) .NetworkStatus__InfoValue {
-  overflow: hidden;
-  position: relative;
-}
+
 @keyframes LoadingLine {
   0% {
     left: -100%;
-    width: 100%;
+        width: 100%;
   }
+
   50% {
     left: 100%;
-    width: 100%;
+        width: 100%;
   }
+
   100% {
     left: 100%;
-    width: 100%;
+        width: 100%;
   }
 }
-.NetworkStatus__Stat--Loading:nth-of-type(7) .NetworkStatus__InfoValue::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: var(--pe-color-gray-900);
-  border-radius: 5px;
-  opacity: 1;
-}
-.NetworkStatus__Stat--Loading:nth-of-type(7) .NetworkStatus__InfoValue::after {
-  content: "";
-  position: absolute;
-  z-index: 2;
-  top: 0;
-  left: -50%;
-  width: 40%;
-  height: 100%;
-  background: linear-gradient(90deg, rgb(14, 117, 181) 0%, rgb(22, 82, 120) 100%);
-  border-radius: 100px;
-  opacity: var(--pe-opacity-faint);
-  animation: LoadingLine linear 3s infinite;
-}
+
 Tr .NetworkStatus__Stat--Loading:nth-of-type(7) .NetworkStatus__InfoValue::before {
   background-color: var(--pe-color-gray-800);
-  opacity: var(--pe-opacity-subtle);
+    opacity: var(--pe-opacity-subtle);
 }
-.NetworkStatus__Stat--Loading:nth-of-type(7) .NetworkStatus__InfoValue:nth-child(1n)::after {
-  animation-delay: 0.55s;
-}
+
 Tr:nth-child(1n) .NetworkStatus__Stat--Loading:nth-of-type(7) .NetworkStatus__InfoValue::after {
   animation-delay: 0.55s;
 }
-.NetworkStatus__Stat--Loading:nth-of-type(7) .NetworkStatus__InfoValue:nth-child(2n)::after {
-  animation-delay: 1.05s;
-}
+
 Tr:nth-child(2n) .NetworkStatus__Stat--Loading:nth-of-type(7) .NetworkStatus__InfoValue::after {
   animation-delay: 1.05s;
 }
-.NetworkStatus__Stat--Loading:nth-of-type(7) .NetworkStatus__InfoValue:nth-child(3n)::after {
-  animation-delay: 1.55s;
-}
+
 Tr:nth-child(3n) .NetworkStatus__Stat--Loading:nth-of-type(7) .NetworkStatus__InfoValue::after {
   animation-delay: 1.55s;
 }
-.NetworkStatus__Stat--Loading:nth-of-type(7) .NetworkStatus__InfoValue:nth-child(4n)::after {
-  animation-delay: 2.05s;
-}
+
 Tr:nth-child(4n) .NetworkStatus__Stat--Loading:nth-of-type(7) .NetworkStatus__InfoValue::after {
   animation-delay: 2.05s;
 }
-.NetworkStatus__Stat--Loading:nth-of-type(7) .NetworkStatus__InfoValue:nth-child(5n)::after {
-  animation-delay: 2.55s;
-}
+
 Tr:nth-child(5n) .NetworkStatus__Stat--Loading:nth-of-type(7) .NetworkStatus__InfoValue::after {
   animation-delay: 2.55s;
 }
-.NetworkStatus__Stat--Loading:nth-of-type(7) .NetworkStatus__InfoValue:nth-child(6n)::after {
-  animation-delay: 3.05s;
-}
+
 Tr:nth-child(6n) .NetworkStatus__Stat--Loading:nth-of-type(7) .NetworkStatus__InfoValue::after {
   animation-delay: 3.05s;
 }
-.NetworkStatus__Stat--Loading:nth-of-type(7) .NetworkStatus__InfoValue:nth-child(7n)::after {
-  animation-delay: 3.55s;
-}
+
 Tr:nth-child(7n) .NetworkStatus__Stat--Loading:nth-of-type(7) .NetworkStatus__InfoValue::after {
   animation-delay: 3.55s;
 }
-.NetworkStatus__Stat--Loading:nth-of-type(7) .NetworkStatus__InfoValue:nth-child(8n)::after {
-  animation-delay: 4.05s;
-}
+
 Tr:nth-child(8n) .NetworkStatus__Stat--Loading:nth-of-type(7) .NetworkStatus__InfoValue::after {
   animation-delay: 4.05s;
 }
-.NetworkStatus__Stat--Loading:nth-of-type(7) .NetworkStatus__InfoValue:nth-child(9n)::after {
-  animation-delay: 4.55s;
-}
+
 Tr:nth-child(9n) .NetworkStatus__Stat--Loading:nth-of-type(7) .NetworkStatus__InfoValue::after {
   animation-delay: 4.55s;
 }
-.NetworkStatus__Stat--Loading:nth-of-type(7) .NetworkStatus__InfoValue:nth-child(10n)::after {
-  animation-delay: 5.05s;
-}
+
 Tr:nth-child(10n) .NetworkStatus__Stat--Loading:nth-of-type(7) .NetworkStatus__InfoValue::after {
   animation-delay: 5.05s;
 }
-.NetworkStatus__Stat--Loading:nth-of-type(7) .NetworkStatus__InfoValue {
-  width: 100%;
+
+.NetworkStatus {
+  &__Stat--Loading:nth-of-type(7) &__InfoValue::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: var(--pe-color-gray-900);
+    border-radius: 5px;
+    opacity: 1;
+  }
+  &__Stat--Loading:nth-of-type(7) &__InfoValue::after {
+    content: "";
+    position: absolute;
+    z-index: 2;
+    top: 0;
+    left: -50%;
+    width: 40%;
+    height: 100%;
+    background: linear-gradient(90deg, rgb(14, 117, 181) 0%, rgb(22, 82, 120) 100%);
+    border-radius: 100px;
+    opacity: var(--pe-opacity-faint);
+    animation: LoadingLine linear 3s infinite;
+  }
+  &__Stat--Loading:nth-of-type(7) &__InfoValue:nth-child(1n)::after {
+    animation-delay: 0.55s;
+  }
+  &__Stat--Loading:nth-of-type(7) &__InfoValue:nth-child(2n)::after {
+    animation-delay: 1.05s;
+  }
+  &__Stat--Loading:nth-of-type(7) &__InfoValue:nth-child(3n)::after {
+    animation-delay: 1.55s;
+  }
+  &__Stat--Loading:nth-of-type(7) &__InfoValue:nth-child(4n)::after {
+    animation-delay: 2.05s;
+  }
+  &__Stat--Loading:nth-of-type(7) &__InfoValue:nth-child(5n)::after {
+    animation-delay: 2.55s;
+  }
+  &__Stat--Loading:nth-of-type(7) &__InfoValue:nth-child(6n)::after {
+    animation-delay: 3.05s;
+  }
+  &__Stat--Loading:nth-of-type(7) &__InfoValue:nth-child(7n)::after {
+    animation-delay: 3.55s;
+  }
+  &__Stat--Loading:nth-of-type(7) &__InfoValue:nth-child(8n)::after {
+    animation-delay: 4.05s;
+  }
+  &__Stat--Loading:nth-of-type(7) &__InfoValue:nth-child(9n)::after {
+    animation-delay: 4.55s;
+  }
+  &__Stat--Loading:nth-of-type(7) &__InfoValue:nth-child(10n)::after {
+    animation-delay: 5.05s;
+  }
+  &__Stat--Loading:nth-of-type(7) &__InfoValue {
+    width: 100%;
+  }
+  &__Stat--Loading:nth-of-type(8) &__InfoValue {
+    overflow: hidden;
+    position: relative;
+  }
 }
-.NetworkStatus__Stat--Loading:nth-of-type(8) .NetworkStatus__InfoValue {
-  overflow: hidden;
-  position: relative;
-}
+
 @keyframes LoadingLine {
   0% {
     left: -100%;
-    width: 100%;
+        width: 100%;
   }
+
   50% {
     left: 100%;
-    width: 100%;
+        width: 100%;
   }
+
   100% {
     left: 100%;
-    width: 100%;
+        width: 100%;
   }
 }
-.NetworkStatus__Stat--Loading:nth-of-type(8) .NetworkStatus__InfoValue::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: var(--pe-color-gray-900);
-  border-radius: 5px;
-  opacity: 1;
-}
-.NetworkStatus__Stat--Loading:nth-of-type(8) .NetworkStatus__InfoValue::after {
-  content: "";
-  position: absolute;
-  z-index: 2;
-  top: 0;
-  left: -50%;
-  width: 40%;
-  height: 100%;
-  background: linear-gradient(90deg, rgb(14, 117, 181) 0%, rgb(22, 82, 120) 100%);
-  border-radius: 100px;
-  opacity: var(--pe-opacity-faint);
-  animation: LoadingLine linear 3s infinite;
-}
+
 Tr .NetworkStatus__Stat--Loading:nth-of-type(8) .NetworkStatus__InfoValue::before {
   background-color: var(--pe-color-gray-800);
-  opacity: var(--pe-opacity-subtle);
+    opacity: var(--pe-opacity-subtle);
 }
-.NetworkStatus__Stat--Loading:nth-of-type(8) .NetworkStatus__InfoValue:nth-child(1n)::after {
-  animation-delay: 0.7s;
-}
+
 Tr:nth-child(1n) .NetworkStatus__Stat--Loading:nth-of-type(8) .NetworkStatus__InfoValue::after {
   animation-delay: 0.7s;
 }
-.NetworkStatus__Stat--Loading:nth-of-type(8) .NetworkStatus__InfoValue:nth-child(2n)::after {
-  animation-delay: 1.2s;
-}
+
 Tr:nth-child(2n) .NetworkStatus__Stat--Loading:nth-of-type(8) .NetworkStatus__InfoValue::after {
   animation-delay: 1.2s;
 }
-.NetworkStatus__Stat--Loading:nth-of-type(8) .NetworkStatus__InfoValue:nth-child(3n)::after {
-  animation-delay: 1.7s;
-}
+
 Tr:nth-child(3n) .NetworkStatus__Stat--Loading:nth-of-type(8) .NetworkStatus__InfoValue::after {
   animation-delay: 1.7s;
 }
-.NetworkStatus__Stat--Loading:nth-of-type(8) .NetworkStatus__InfoValue:nth-child(4n)::after {
-  animation-delay: 2.2s;
-}
+
 Tr:nth-child(4n) .NetworkStatus__Stat--Loading:nth-of-type(8) .NetworkStatus__InfoValue::after {
   animation-delay: 2.2s;
 }
-.NetworkStatus__Stat--Loading:nth-of-type(8) .NetworkStatus__InfoValue:nth-child(5n)::after {
-  animation-delay: 2.7s;
-}
+
 Tr:nth-child(5n) .NetworkStatus__Stat--Loading:nth-of-type(8) .NetworkStatus__InfoValue::after {
   animation-delay: 2.7s;
 }
-.NetworkStatus__Stat--Loading:nth-of-type(8) .NetworkStatus__InfoValue:nth-child(6n)::after {
-  animation-delay: 3.2s;
-}
+
 Tr:nth-child(6n) .NetworkStatus__Stat--Loading:nth-of-type(8) .NetworkStatus__InfoValue::after {
   animation-delay: 3.2s;
 }
-.NetworkStatus__Stat--Loading:nth-of-type(8) .NetworkStatus__InfoValue:nth-child(7n)::after {
-  animation-delay: 3.7s;
-}
+
 Tr:nth-child(7n) .NetworkStatus__Stat--Loading:nth-of-type(8) .NetworkStatus__InfoValue::after {
   animation-delay: 3.7s;
 }
-.NetworkStatus__Stat--Loading:nth-of-type(8) .NetworkStatus__InfoValue:nth-child(8n)::after {
-  animation-delay: 4.2s;
-}
+
 Tr:nth-child(8n) .NetworkStatus__Stat--Loading:nth-of-type(8) .NetworkStatus__InfoValue::after {
   animation-delay: 4.2s;
 }
-.NetworkStatus__Stat--Loading:nth-of-type(8) .NetworkStatus__InfoValue:nth-child(9n)::after {
-  animation-delay: 4.7s;
-}
+
 Tr:nth-child(9n) .NetworkStatus__Stat--Loading:nth-of-type(8) .NetworkStatus__InfoValue::after {
   animation-delay: 4.7s;
 }
-.NetworkStatus__Stat--Loading:nth-of-type(8) .NetworkStatus__InfoValue:nth-child(10n)::after {
-  animation-delay: 5.2s;
-}
+
 Tr:nth-child(10n) .NetworkStatus__Stat--Loading:nth-of-type(8) .NetworkStatus__InfoValue::after {
   animation-delay: 5.2s;
 }
-.NetworkStatus__Stat--Loading:nth-of-type(8) .NetworkStatus__InfoValue {
-  width: 100%;
+
+.NetworkStatus {
+  &__Stat--Loading:nth-of-type(8) &__InfoValue::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: var(--pe-color-gray-900);
+    border-radius: 5px;
+    opacity: 1;
+  }
+  &__Stat--Loading:nth-of-type(8) &__InfoValue::after {
+    content: "";
+    position: absolute;
+    z-index: 2;
+    top: 0;
+    left: -50%;
+    width: 40%;
+    height: 100%;
+    background: linear-gradient(90deg, rgb(14, 117, 181) 0%, rgb(22, 82, 120) 100%);
+    border-radius: 100px;
+    opacity: var(--pe-opacity-faint);
+    animation: LoadingLine linear 3s infinite;
+  }
+  &__Stat--Loading:nth-of-type(8) &__InfoValue:nth-child(1n)::after {
+    animation-delay: 0.7s;
+  }
+  &__Stat--Loading:nth-of-type(8) &__InfoValue:nth-child(2n)::after {
+    animation-delay: 1.2s;
+  }
+  &__Stat--Loading:nth-of-type(8) &__InfoValue:nth-child(3n)::after {
+    animation-delay: 1.7s;
+  }
+  &__Stat--Loading:nth-of-type(8) &__InfoValue:nth-child(4n)::after {
+    animation-delay: 2.2s;
+  }
+  &__Stat--Loading:nth-of-type(8) &__InfoValue:nth-child(5n)::after {
+    animation-delay: 2.7s;
+  }
+  &__Stat--Loading:nth-of-type(8) &__InfoValue:nth-child(6n)::after {
+    animation-delay: 3.2s;
+  }
+  &__Stat--Loading:nth-of-type(8) &__InfoValue:nth-child(7n)::after {
+    animation-delay: 3.7s;
+  }
+  &__Stat--Loading:nth-of-type(8) &__InfoValue:nth-child(8n)::after {
+    animation-delay: 4.2s;
+  }
+  &__Stat--Loading:nth-of-type(8) &__InfoValue:nth-child(9n)::after {
+    animation-delay: 4.7s;
+  }
+  &__Stat--Loading:nth-of-type(8) &__InfoValue:nth-child(10n)::after {
+    animation-delay: 5.2s;
+  }
+  &__Stat--Loading:nth-of-type(8) &__InfoValue {
+    width: 100%;
+  }
+  &__Stat--Loading:nth-of-type(9) &__InfoValue {
+    overflow: hidden;
+    position: relative;
+  }
 }
-.NetworkStatus__Stat--Loading:nth-of-type(9) .NetworkStatus__InfoValue {
-  overflow: hidden;
-  position: relative;
-}
+
 @keyframes LoadingLine {
   0% {
     left: -100%;
-    width: 100%;
+        width: 100%;
   }
+
   50% {
     left: 100%;
-    width: 100%;
+        width: 100%;
   }
+
   100% {
     left: 100%;
-    width: 100%;
+        width: 100%;
   }
 }
-.NetworkStatus__Stat--Loading:nth-of-type(9) .NetworkStatus__InfoValue::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: var(--pe-color-gray-900);
-  border-radius: 5px;
-  opacity: 1;
-}
-.NetworkStatus__Stat--Loading:nth-of-type(9) .NetworkStatus__InfoValue::after {
-  content: "";
-  position: absolute;
-  z-index: 2;
-  top: 0;
-  left: -50%;
-  width: 40%;
-  height: 100%;
-  background: linear-gradient(90deg, rgb(14, 117, 181) 0%, rgb(22, 82, 120) 100%);
-  border-radius: 100px;
-  opacity: var(--pe-opacity-faint);
-  animation: LoadingLine linear 3s infinite;
-}
+
 Tr .NetworkStatus__Stat--Loading:nth-of-type(9) .NetworkStatus__InfoValue::before {
   background-color: var(--pe-color-gray-800);
-  opacity: var(--pe-opacity-subtle);
+    opacity: var(--pe-opacity-subtle);
 }
-.NetworkStatus__Stat--Loading:nth-of-type(9) .NetworkStatus__InfoValue:nth-child(1n)::after {
-  animation-delay: 0.85s;
-}
+
 Tr:nth-child(1n) .NetworkStatus__Stat--Loading:nth-of-type(9) .NetworkStatus__InfoValue::after {
   animation-delay: 0.85s;
 }
-.NetworkStatus__Stat--Loading:nth-of-type(9) .NetworkStatus__InfoValue:nth-child(2n)::after {
-  animation-delay: 1.35s;
-}
+
 Tr:nth-child(2n) .NetworkStatus__Stat--Loading:nth-of-type(9) .NetworkStatus__InfoValue::after {
   animation-delay: 1.35s;
 }
-.NetworkStatus__Stat--Loading:nth-of-type(9) .NetworkStatus__InfoValue:nth-child(3n)::after {
-  animation-delay: 1.85s;
-}
+
 Tr:nth-child(3n) .NetworkStatus__Stat--Loading:nth-of-type(9) .NetworkStatus__InfoValue::after {
   animation-delay: 1.85s;
 }
-.NetworkStatus__Stat--Loading:nth-of-type(9) .NetworkStatus__InfoValue:nth-child(4n)::after {
-  animation-delay: 2.35s;
-}
+
 Tr:nth-child(4n) .NetworkStatus__Stat--Loading:nth-of-type(9) .NetworkStatus__InfoValue::after {
   animation-delay: 2.35s;
 }
-.NetworkStatus__Stat--Loading:nth-of-type(9) .NetworkStatus__InfoValue:nth-child(5n)::after {
-  animation-delay: 2.85s;
-}
+
 Tr:nth-child(5n) .NetworkStatus__Stat--Loading:nth-of-type(9) .NetworkStatus__InfoValue::after {
   animation-delay: 2.85s;
 }
-.NetworkStatus__Stat--Loading:nth-of-type(9) .NetworkStatus__InfoValue:nth-child(6n)::after {
-  animation-delay: 3.35s;
-}
+
 Tr:nth-child(6n) .NetworkStatus__Stat--Loading:nth-of-type(9) .NetworkStatus__InfoValue::after {
   animation-delay: 3.35s;
 }
-.NetworkStatus__Stat--Loading:nth-of-type(9) .NetworkStatus__InfoValue:nth-child(7n)::after {
-  animation-delay: 3.85s;
-}
+
 Tr:nth-child(7n) .NetworkStatus__Stat--Loading:nth-of-type(9) .NetworkStatus__InfoValue::after {
   animation-delay: 3.85s;
 }
-.NetworkStatus__Stat--Loading:nth-of-type(9) .NetworkStatus__InfoValue:nth-child(8n)::after {
-  animation-delay: 4.35s;
-}
+
 Tr:nth-child(8n) .NetworkStatus__Stat--Loading:nth-of-type(9) .NetworkStatus__InfoValue::after {
   animation-delay: 4.35s;
 }
-.NetworkStatus__Stat--Loading:nth-of-type(9) .NetworkStatus__InfoValue:nth-child(9n)::after {
-  animation-delay: 4.85s;
-}
+
 Tr:nth-child(9n) .NetworkStatus__Stat--Loading:nth-of-type(9) .NetworkStatus__InfoValue::after {
   animation-delay: 4.85s;
 }
-.NetworkStatus__Stat--Loading:nth-of-type(9) .NetworkStatus__InfoValue:nth-child(10n)::after {
-  animation-delay: 5.35s;
-}
+
 Tr:nth-child(10n) .NetworkStatus__Stat--Loading:nth-of-type(9) .NetworkStatus__InfoValue::after {
   animation-delay: 5.35s;
 }
-.NetworkStatus__Stat--Loading:nth-of-type(9) .NetworkStatus__InfoValue {
-  width: 100%;
+
+.NetworkStatus {
+  &__Stat--Loading:nth-of-type(9) &__InfoValue::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: var(--pe-color-gray-900);
+    border-radius: 5px;
+    opacity: 1;
+  }
+  &__Stat--Loading:nth-of-type(9) &__InfoValue::after {
+    content: "";
+    position: absolute;
+    z-index: 2;
+    top: 0;
+    left: -50%;
+    width: 40%;
+    height: 100%;
+    background: linear-gradient(90deg, rgb(14, 117, 181) 0%, rgb(22, 82, 120) 100%);
+    border-radius: 100px;
+    opacity: var(--pe-opacity-faint);
+    animation: LoadingLine linear 3s infinite;
+  }
+  &__Stat--Loading:nth-of-type(9) &__InfoValue:nth-child(1n)::after {
+    animation-delay: 0.85s;
+  }
+  &__Stat--Loading:nth-of-type(9) &__InfoValue:nth-child(2n)::after {
+    animation-delay: 1.35s;
+  }
+  &__Stat--Loading:nth-of-type(9) &__InfoValue:nth-child(3n)::after {
+    animation-delay: 1.85s;
+  }
+  &__Stat--Loading:nth-of-type(9) &__InfoValue:nth-child(4n)::after {
+    animation-delay: 2.35s;
+  }
+  &__Stat--Loading:nth-of-type(9) &__InfoValue:nth-child(5n)::after {
+    animation-delay: 2.85s;
+  }
+  &__Stat--Loading:nth-of-type(9) &__InfoValue:nth-child(6n)::after {
+    animation-delay: 3.35s;
+  }
+  &__Stat--Loading:nth-of-type(9) &__InfoValue:nth-child(7n)::after {
+    animation-delay: 3.85s;
+  }
+  &__Stat--Loading:nth-of-type(9) &__InfoValue:nth-child(8n)::after {
+    animation-delay: 4.35s;
+  }
+  &__Stat--Loading:nth-of-type(9) &__InfoValue:nth-child(9n)::after {
+    animation-delay: 4.85s;
+  }
+  &__Stat--Loading:nth-of-type(9) &__InfoValue:nth-child(10n)::after {
+    animation-delay: 5.35s;
+  }
+  &__Stat--Loading:nth-of-type(9) &__InfoValue {
+    width: 100%;
+  }
+  &__Stat--Loading:nth-of-type(10) &__InfoValue {
+    overflow: hidden;
+    position: relative;
+  }
 }
-.NetworkStatus__Stat--Loading:nth-of-type(10) .NetworkStatus__InfoValue {
-  overflow: hidden;
-  position: relative;
-}
+
 @keyframes LoadingLine {
   0% {
     left: -100%;
-    width: 100%;
+        width: 100%;
   }
+
   50% {
     left: 100%;
-    width: 100%;
+        width: 100%;
   }
+
   100% {
     left: 100%;
-    width: 100%;
+        width: 100%;
   }
 }
-.NetworkStatus__Stat--Loading:nth-of-type(10) .NetworkStatus__InfoValue::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: var(--pe-color-gray-900);
-  border-radius: 5px;
-  opacity: 1;
-}
-.NetworkStatus__Stat--Loading:nth-of-type(10) .NetworkStatus__InfoValue::after {
-  content: "";
-  position: absolute;
-  z-index: 2;
-  top: 0;
-  left: -50%;
-  width: 40%;
-  height: 100%;
-  background: linear-gradient(90deg, rgb(14, 117, 181) 0%, rgb(22, 82, 120) 100%);
-  border-radius: 100px;
-  opacity: var(--pe-opacity-faint);
-  animation: LoadingLine linear 3s infinite;
-}
+
 Tr .NetworkStatus__Stat--Loading:nth-of-type(10) .NetworkStatus__InfoValue::before {
   background-color: var(--pe-color-gray-800);
-  opacity: var(--pe-opacity-subtle);
+    opacity: var(--pe-opacity-subtle);
 }
-.NetworkStatus__Stat--Loading:nth-of-type(10) .NetworkStatus__InfoValue:nth-child(1n)::after {
-  animation-delay: 1s;
-}
+
 Tr:nth-child(1n) .NetworkStatus__Stat--Loading:nth-of-type(10) .NetworkStatus__InfoValue::after {
   animation-delay: 1s;
 }
-.NetworkStatus__Stat--Loading:nth-of-type(10) .NetworkStatus__InfoValue:nth-child(2n)::after {
-  animation-delay: 1.5s;
-}
+
 Tr:nth-child(2n) .NetworkStatus__Stat--Loading:nth-of-type(10) .NetworkStatus__InfoValue::after {
   animation-delay: 1.5s;
 }
-.NetworkStatus__Stat--Loading:nth-of-type(10) .NetworkStatus__InfoValue:nth-child(3n)::after {
-  animation-delay: 2s;
-}
+
 Tr:nth-child(3n) .NetworkStatus__Stat--Loading:nth-of-type(10) .NetworkStatus__InfoValue::after {
   animation-delay: 2s;
 }
-.NetworkStatus__Stat--Loading:nth-of-type(10) .NetworkStatus__InfoValue:nth-child(4n)::after {
-  animation-delay: 2.5s;
-}
+
 Tr:nth-child(4n) .NetworkStatus__Stat--Loading:nth-of-type(10) .NetworkStatus__InfoValue::after {
   animation-delay: 2.5s;
 }
-.NetworkStatus__Stat--Loading:nth-of-type(10) .NetworkStatus__InfoValue:nth-child(5n)::after {
-  animation-delay: 3s;
-}
+
 Tr:nth-child(5n) .NetworkStatus__Stat--Loading:nth-of-type(10) .NetworkStatus__InfoValue::after {
   animation-delay: 3s;
 }
-.NetworkStatus__Stat--Loading:nth-of-type(10) .NetworkStatus__InfoValue:nth-child(6n)::after {
-  animation-delay: 3.5s;
-}
+
 Tr:nth-child(6n) .NetworkStatus__Stat--Loading:nth-of-type(10) .NetworkStatus__InfoValue::after {
   animation-delay: 3.5s;
 }
-.NetworkStatus__Stat--Loading:nth-of-type(10) .NetworkStatus__InfoValue:nth-child(7n)::after {
-  animation-delay: 4s;
-}
+
 Tr:nth-child(7n) .NetworkStatus__Stat--Loading:nth-of-type(10) .NetworkStatus__InfoValue::after {
   animation-delay: 4s;
 }
-.NetworkStatus__Stat--Loading:nth-of-type(10) .NetworkStatus__InfoValue:nth-child(8n)::after {
-  animation-delay: 4.5s;
-}
+
 Tr:nth-child(8n) .NetworkStatus__Stat--Loading:nth-of-type(10) .NetworkStatus__InfoValue::after {
   animation-delay: 4.5s;
 }
-.NetworkStatus__Stat--Loading:nth-of-type(10) .NetworkStatus__InfoValue:nth-child(9n)::after {
-  animation-delay: 5s;
-}
+
 Tr:nth-child(9n) .NetworkStatus__Stat--Loading:nth-of-type(10) .NetworkStatus__InfoValue::after {
   animation-delay: 5s;
 }
-.NetworkStatus__Stat--Loading:nth-of-type(10) .NetworkStatus__InfoValue:nth-child(10n)::after {
-  animation-delay: 5.5s;
-}
+
 Tr:nth-child(10n) .NetworkStatus__Stat--Loading:nth-of-type(10) .NetworkStatus__InfoValue::after {
   animation-delay: 5.5s;
 }
-.NetworkStatus__Stat--Loading:nth-of-type(10) .NetworkStatus__InfoValue {
-  width: 100%;
-}
-.NetworkStatus__EpochProgress {
-  width: 100%;
-  margin-top: var(--pe-space-3_5);
-}
-.NetworkStatus__InfoTitle {
-  font-size: var(--pe-text-sm);
-  color: var(--pe-color-gray-500);
-  font-family: var(--pe-font-mono);
-  white-space: nowrap;
-  margin-bottom: var(--pe-space-3_5);
-}
-.NetworkStatus__InfoValue {
-  font-size: var(--pe-text-sm);
-  font-weight: var(--pe-font-weight-bold);
-  font-family: var(--pe-font-heading);
-  letter-spacing: 0.var(--pe-space-1);
-}
-.NetworkStatus__InfoValue, .NetworkStatus__InfoValue span {
-  display: flex;
-  align-items: center;
-}
-.NetworkStatus__InfoValue--Epoch {
-  flex-wrap: wrap;
-  width: 100%;
-}
+
 .NetworkStatus__InfoValue--Epoch span,
 .NetworkStatus__InfoValue--Epoch span .chakra-icon {
   transition: 0.2s;
 }
+
 .NetworkStatus__InfoValue--Epoch span .chakra-icon {
   color: var(--pe-color-brand-normal);
 }
-.NetworkStatus__InfoValue--Epoch span:hover {
-  color: var(--pe-color-brand-light);
-  cursor: default;
-}
+
 .NetworkStatus__InfoValue--Epoch span:hover .chakra-icon {
   color: var(--pe-color-brand-light);
 }
-.NetworkStatus__InfoValue--Epoch span {
-  width: max-content;
+
+.NetworkStatus {
+  &__Stat--Loading:nth-of-type(10) &__InfoValue::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: var(--pe-color-gray-900);
+    border-radius: 5px;
+    opacity: 1;
+  }
+  &__Stat--Loading:nth-of-type(10) &__InfoValue::after {
+    content: "";
+    position: absolute;
+    z-index: 2;
+    top: 0;
+    left: -50%;
+    width: 40%;
+    height: 100%;
+    background: linear-gradient(90deg, rgb(14, 117, 181) 0%, rgb(22, 82, 120) 100%);
+    border-radius: 100px;
+    opacity: var(--pe-opacity-faint);
+    animation: LoadingLine linear 3s infinite;
+  }
+  &__Stat--Loading:nth-of-type(10) &__InfoValue:nth-child(1n)::after {
+    animation-delay: 1s;
+  }
+  &__Stat--Loading:nth-of-type(10) &__InfoValue:nth-child(2n)::after {
+    animation-delay: 1.5s;
+  }
+  &__Stat--Loading:nth-of-type(10) &__InfoValue:nth-child(3n)::after {
+    animation-delay: 2s;
+  }
+  &__Stat--Loading:nth-of-type(10) &__InfoValue:nth-child(4n)::after {
+    animation-delay: 2.5s;
+  }
+  &__Stat--Loading:nth-of-type(10) &__InfoValue:nth-child(5n)::after {
+    animation-delay: 3s;
+  }
+  &__Stat--Loading:nth-of-type(10) &__InfoValue:nth-child(6n)::after {
+    animation-delay: 3.5s;
+  }
+  &__Stat--Loading:nth-of-type(10) &__InfoValue:nth-child(7n)::after {
+    animation-delay: 4s;
+  }
+  &__Stat--Loading:nth-of-type(10) &__InfoValue:nth-child(8n)::after {
+    animation-delay: 4.5s;
+  }
+  &__Stat--Loading:nth-of-type(10) &__InfoValue:nth-child(9n)::after {
+    animation-delay: 5s;
+  }
+  &__Stat--Loading:nth-of-type(10) &__InfoValue:nth-child(10n)::after {
+    animation-delay: 5.5s;
+  }
+  &__Stat--Loading:nth-of-type(10) &__InfoValue {
+    width: 100%;
+  }
+  &__EpochProgress {
+    width: 100%;
+    margin-top: var(--pe-space-3_5);
+  }
+  &__InfoTitle {
+    font-size: var(--pe-text-sm);
+    color: var(--pe-color-gray-500);
+    font-family: var(--pe-font-mono);
+    white-space: nowrap;
+    margin-bottom: var(--pe-space-3_5);
+  }
+  &__InfoValue {
+    font-size: var(--pe-text-sm);
+    font-weight: var(--pe-font-weight-bold);
+    font-family: var(--pe-font-heading);
+    letter-spacing: 0.var(--pe-space-1);
+  }
+  &__InfoValue,
+  &__InfoValue span {
+    display: flex;
+    align-items: center;
+  }
+  &__InfoValue--Epoch {
+    flex-wrap: wrap;
+    width: 100%;
+  }
+  &__InfoValue--Epoch span:hover {
+    color: var(--pe-color-brand-light);
+    cursor: default;
+  }
+  &__InfoValue--Epoch span {
+    width: max-content;
+  }
+  &__BadgeIcon {
+    margin-right: 5px;
+  }
 }
-.NetworkStatus__BadgeIcon {
-  margin-right: 5px;
-}
+
 @media screen and (max-width: 600px) {
   .NetworkStatus {
     grid-template-columns: repeat(2, 1fr);
-  }
-  .NetworkStatus__Stat--Epoch {
-    grid-row: 1;
-  }
-  .NetworkStatus__Stat--PlatformVersion {
-    grid-row: 1;
-  }
-  .NetworkStatus__Stat--TenderdashVersion {
-    grid-row: 2;
-    grid-column: 2;
-  }
-  .NetworkStatus__Stat--Network {
-    grid-row: 2;
-    grid-column: 1;
-  }
-  .NetworkStatus__Stat--Api {
-    grid-row: 3;
-  }
-  .NetworkStatus__Stat--LatestBlock {
-    grid-row: 3;
+    &__Stat--Epoch {
+      grid-row: 1;
+    }
+    &__Stat--PlatformVersion {
+      grid-row: 1;
+    }
+    &__Stat--TenderdashVersion {
+      grid-row: 2;
+      grid-column: 2;
+    }
+    &__Stat--Network {
+      grid-row: 2;
+      grid-column: 1;
+    }
+    &__Stat--Api {
+      grid-row: 3;
+    }
+    &__Stat--LatestBlock {
+      grid-row: 3;
+    }
   }
 }
+
 @media screen and (max-width: 420px) {
   .NetworkStatus {
     grid-template-columns: repeat(1, 1fr);
-  }
-  .NetworkStatus__Stat {
-    grid-row: auto;
-    grid-column: auto;
-  }
-  .NetworkStatus__Badge {
-    width: 100%;
+    &__Stat {
+      grid-row: auto;
+      grid-column: auto;
+    }
+    &__Badge {
+      width: 100%;
+    }
   }
 }

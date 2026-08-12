@@ -1,126 +1,169 @@
-.TransactionsList__Pagination {
-  margin-top: var(--pe-space-8) !important;
+.TransactionsList {
+  &__Pagination {
+    margin-top: var(--pe-space-8) !important;
+  }
+  &__ScrollZone {
+    width: fit-content;
+    min-width: 100%;
+  }
 }
-.TransactionsList__ScrollZone {
-  width: fit-content;
-  min-width: 100%;
-}
+
 @media screen and (max-width: 48em) {
-  .TransactionsList__Pagination {
-    margin-top: var(--pe-space-6) !important;
+  .TransactionsList {
+    &__Pagination {
+      margin-top: var(--pe-space-6) !important;
+    }
   }
 }
+
 @media screen and (max-width: 30em) {
-  .TransactionsList__Pagination {
-    margin-top: var(--pe-space-4) !important;
+  .TransactionsList {
+    &__Pagination {
+      margin-top: var(--pe-space-4) !important;
+    }
   }
 }
+
 .TransactionsList {
   container-type: inline-size;
+  &__ColumnTitles {
+    display: grid;
+    padding: var(--pe-list-row-pad-y) var(--pe-list-row-pad-x);
+    border-radius: var(--pe-list-row-radius);
+    background-color: var(--pe-color-gray-800);
+    margin-bottom: var(--pe-space-2);
+    font-family: var(--pe-font-heading);
+    font-weight: var(--pe-font-weight-bold);
+    font-size: var(--pe-text-sm);
+    text-transform: uppercase;
+    color: var(--pe-color-fg);
+  }
+  &__ColumnTitles--Light {
+    background: transparent !important;
+    font-weight: var(--pe-font-weight-medium) !important;
+    color: var(--pe-color-fg) !important;
+    text-transform: none !important;
+  }
+  &__ColumnTitles {
+    display: grid;
+    gap: var(--pe-space-4);
+    width: 100%;
+    grid-template-columns: 6.5rem minmax(0, 1fr) 6rem 11rem minmax(0, 1fr) 10rem 10.5rem;
+  }
 }
-.TransactionsList__ColumnTitles {
-  display: grid;
-  padding: var(--pe-list-row-pad-y) var(--pe-list-row-pad-x);
-  border-radius: var(--pe-list-row-radius);
-  background-color: var(--pe-color-gray-800);
-  margin-bottom: var(--pe-space-2);
-  font-family: var(--pe-font-heading);
-  font-weight: var(--pe-font-weight-bold);
-  font-size: var(--pe-text-sm);
-  text-transform: uppercase;
-  color: var(--pe-color-fg);
-}
-.TransactionsList__ColumnTitles--Light {
-  background: transparent !important;
-  font-weight: var(--pe-font-weight-medium) !important;
-  color: var(--pe-color-fg) !important;
-  text-transform: none !important;
-}
-.TransactionsList__ColumnTitles {
-  display: grid;
-  gap: var(--pe-space-4);
-  width: 100%;
-  grid-template-columns: 6.5rem minmax(0, 1fr) 6rem 11rem minmax(0, 1fr) 10rem 10.5rem;
-}
+
 @container (max-width: 810px) {
-  .TransactionsList__ColumnTitles {
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) 10rem 10.5rem;
+  .TransactionsList {
+    &__ColumnTitles {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) 10rem 10.5rem;
+    }
   }
 }
+
 @container (max-width: 660px) {
-  .TransactionsList__ColumnTitles {
-    grid-template-columns: minmax(0, 1fr) var(--pe-space-5) 10rem 10.5rem;
+  .TransactionsList {
+    &__ColumnTitles {
+      grid-template-columns: minmax(0, 1fr) var(--pe-space-5) 10rem 10.5rem;
+    }
   }
 }
+
 @container (max-width: 430px) {
-  .TransactionsList__ColumnTitles {
-    gap: var(--pe-space-3);
-    grid-template-columns: minmax(0, 1fr) 8rem 9rem;
+  .TransactionsList {
+    &__ColumnTitles {
+      gap: var(--pe-space-3);
+      grid-template-columns: minmax(0, 1fr) 8rem 9rem;
+    }
   }
 }
+
 @container (max-width: 400px) {
-  .TransactionsList__ColumnTitles {
-    grid-template-columns: minmax(0, 1fr) 7rem 8rem;
+  .TransactionsList {
+    &__ColumnTitles {
+      grid-template-columns: minmax(0, 1fr) 7rem 8rem;
+    }
   }
 }
-.TransactionsList__ColumnTitle {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-}
-.TransactionsList__ColumnTitle--Status, .TransactionsList__ColumnTitle--Hash, .TransactionsList__ColumnTitle--Owner {
-  justify-content: flex-start;
-  text-align: left;
-}
-.TransactionsList__ColumnTitle--Owner {
-  min-width: 0;
-  width: 100%;
-}
-.TransactionsList__ColumnTitle--Type {
-  white-space: nowrap;
-}
-.TransactionsList__ColumnTitle--GasUsed {
-  white-space: nowrap;
-  font-variant-numeric: tabular-nums;
-}
-.TransactionsList__ColumnTitle--Timestamp {
-  justify-content: flex-end;
-  text-align: right;
-  white-space: nowrap;
-}
-@container (max-width: 810px) {
-  .TransactionsList__ColumnTitle--GasUsed, .TransactionsList__ColumnTitle--Status, .TransactionsList__ColumnTitle--Block {
-    display: none;
+
+.TransactionsList {
+  &__ColumnTitle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
   }
-}
-@container (max-width: 430px) {
-  .TransactionsList__ColumnTitle--Owner {
-    display: none;
+  &__ColumnTitle--Status,
+  &__ColumnTitle--Hash,
+  &__ColumnTitle--Owner {
+    justify-content: flex-start;
+    text-align: left;
   }
-}
-.TransactionsList__ColumnTitle {
-  word-break: normal;
-  white-space: normal;
-  overflow-wrap: break-word;
-}
-.TransactionsList__ColumnTitle--Hash {
-  white-space: nowrap;
-}
-.TransactionsList__ColumnTitle:last-child {
-  text-align: right;
-}
-@container (max-width: 660px) {
-  .TransactionsList__ColumnTitle--Owner {
+  &__ColumnTitle--Owner {
+    min-width: 0;
+    width: 100%;
+  }
+  &__ColumnTitle--Type {
     white-space: nowrap;
-    width: var(--pe-space-5);
   }
-  .TransactionsList__ColumnTitle--Type {
-    width: 145px;
+  &__ColumnTitle--GasUsed {
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+  }
+  &__ColumnTitle--Timestamp {
+    justify-content: flex-end;
+    text-align: right;
+    white-space: nowrap;
   }
 }
+
+@container (max-width: 810px) {
+  .TransactionsList {
+    &__ColumnTitle--GasUsed,
+    &__ColumnTitle--Status,
+    &__ColumnTitle--Block {
+      display: none;
+    }
+  }
+}
+
+@container (max-width: 430px) {
+  .TransactionsList {
+    &__ColumnTitle--Owner {
+      display: none;
+    }
+  }
+}
+
+.TransactionsList {
+  &__ColumnTitle {
+    word-break: normal;
+    white-space: normal;
+    overflow-wrap: break-word;
+  }
+  &__ColumnTitle--Hash {
+    white-space: nowrap;
+  }
+  &__ColumnTitle:last-child {
+    text-align: right;
+  }
+}
+
+@container (max-width: 660px) {
+  .TransactionsList {
+    &__ColumnTitle--Owner {
+      white-space: nowrap;
+      width: var(--pe-space-5);
+    }
+    &__ColumnTitle--Type {
+      width: 145px;
+    }
+  }
+}
+
 @container (max-width: 350px) {
-  .TransactionsList__ColumnTitle--Type {
-    width: max-content;
+  .TransactionsList {
+    &__ColumnTitle--Type {
+      width: max-content;
+    }
   }
 }

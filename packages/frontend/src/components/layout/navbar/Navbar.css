@@ -14,117 +14,137 @@
   min-height: 0;
   align-items: center;
   justify-content: space-between;
+  &__NetworkSelectContainer {
+    display: flex;
+    justify-content: flex-end;
+    width: 10rem;
+    flex-shrink: 0;
+    margin-left: auto;
+  }
+  &__Left {
+    display: flex;
+    align-items: center;
+    width: 0;
+    gap: var(--pe-space-2);
+  }
+  &__Right {
+    position: relative;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    width: 100%;
+    z-index: -1;
+  }
+  &__SearchContainer {
+    position: relative;
+    width: 15rem;
+    margin: 0;
+    display: flex;
+    align-items: center;
+  }
+  &__SearchInputContainer {
+    position: relative;
+    width: 100%;
+    z-index: 20;
+    right: 0;
+    top: 0;
+  }
+  &__SearchResults {
+    position: relative;
+    overflow-y: auto;
+    max-height: calc(100vh - 10rem);
+  }
+  &::before {
+    content: "";
+    position: absolute;
+    display: block;
+    z-index: -1;
+    inset: 0;
+    width: auto;
+    height: auto;
+    box-sizing: border-box;
+    border-radius: 0 0 var(--pe-space-5) var(--pe-space-5);
+    background: rgba(24, 31, 34, 0.8);
+    backdrop-filter: blur(44px);
+    border: 1px solid rgba(255, 255, 255, 0.07);
+  }
+  &__Burger {
+    position: relative;
+    z-index: 20;
+    transition: background-color 0.1s !important;
+    flex-shrink: 0;
+  }
+  &__Menu {
+    gap: var(--pe-space-10) !important;
+    padding: 0 var(--pe-space-3);
+  }
 }
-.Navbar__NetworkSelectContainer {
-  display: flex;
-  justify-content: flex-end;
-  width: 10rem;
-  flex-shrink: 0;
-  margin-left: auto;
-}
-.Navbar__Left {
-  display: flex;
-  align-items: center;
-  width: 0;
-  gap: var(--pe-space-2);
-}
-.Navbar__Right {
-  position: relative;
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  width: 100%;
-  z-index: -1;
-}
-.Navbar__SearchContainer {
-  position: relative;
-  width: 15rem;
-  margin: 0;
-  display: flex;
-  align-items: center;
-}
-.Navbar__SearchInputContainer {
-  position: relative;
-  width: 100%;
-  z-index: 20;
-  right: 0;
-  top: 0;
-}
-.Navbar__SearchResults {
-  position: relative;
-  overflow-y: auto;
-  max-height: calc(100vh - 10rem);
-}
-.Navbar::before {
-  content: "";
-  position: absolute;
-  display: block;
-  z-index: -1;
-  inset: 0;
-  width: auto;
-  height: auto;
-  box-sizing: border-box;
-  border-radius: 0 0 var(--pe-space-5) var(--pe-space-5);
-  background: rgba(24, 31, 34, 0.8);
-  backdrop-filter: blur(44px);
-  border: 1px solid rgba(255, 255, 255, 0.07);
-}
-.Navbar__Burger {
-  position: relative;
-  z-index: 20;
-  transition: background-color 0.1s !important;
-  flex-shrink: 0;
-}
-.Navbar__Menu {
-  gap: var(--pe-space-10) !important;
-  padding: 0 var(--pe-space-3);
-}
+
 @media screen and (min-width: 80rem) and (max-width: 87rem) {
   .Navbar__NetworkSelectContainer .NetworkSelect__Title {
     display: none;
   }
 }
+
 @media screen and (min-width: 80rem) and (max-width: 87rem) and (max-width: 85rem) {
-  .Navbar__SearchContainer {
-    width: 12.5rem;
+  .Navbar {
+    &__SearchContainer {
+      width: 12.5rem;
+    }
   }
 }
+
 @media screen and (max-width: 72.5rem) {
-  .Navbar__NetworkSelectContainer {
-    width: 5rem;
-  }
   .Navbar__NetworkSelectContainer .NetworkSelect__Title {
     display: none;
   }
+
+  .Navbar {
+    &__NetworkSelectContainer {
+      width: 5rem;
+    }
+  }
 }
+
 @media screen and (max-width: 80em) {
-  .Navbar__Menu {
-    gap: var(--pe-space-6) !important;
-  }
-  .Navbar__SearchContainer {
-    width: 10rem;
+  .Navbar {
+    &__Menu {
+      gap: var(--pe-space-6) !important;
+    }
+    &__SearchContainer {
+      width: 10rem;
+    }
   }
 }
+
 @media screen and (max-width: 64rem) {
-  .Navbar__Logo {
-    display: none;
+  .Navbar {
+    &__Logo {
+      display: none;
+    }
   }
 }
+
 @media screen and (max-width: 48em) {
-  .Navbar__SearchContainer {
-    width: 15rem;
-  }
-  .Navbar__Menu {
-    gap: var(--pe-space-4) !important;
+  .Navbar {
+    &__SearchContainer {
+      width: 15rem;
+    }
+    &__Menu {
+      gap: var(--pe-space-4) !important;
+    }
   }
 }
+
 @media screen and (max-width: 30em) {
-  .Navbar__WrapperNetworkSelect {
-    gap: var(--pe-space-2);
-    margin-left: var(--pe-space-2);
-  }
-  .Navbar__SearchContainer {
-    width: 10rem;
+  .Navbar {
+    &__WrapperNetworkSelect {
+      gap: var(--pe-space-2);
+      margin-left: var(--pe-space-2);
+    }
+    &__SearchContainer {
+      width: 10rem;
+    }
   }
 }
 

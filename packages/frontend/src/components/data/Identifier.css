@@ -1,3 +1,7 @@
+.Identifier:not(.Identifier--Ellipsis) .Identifier__SymbolsContainer {
+  line-height: var(--pe-space-4);
+}
+
 .Identifier {
   display: flex;
   align-items: center;
@@ -6,144 +10,168 @@
   font-weight: var(--pe-font-weight-normal);
   white-space: wrap;
   word-break: break-all;
-}
-
-.Identifier__SymbolsContainer {
-  text-align: left;
-  color: var(--pe-color-fg-muted);
-}
-
-.Identifier--Size32,
-.Identifier--Size44,
-.Identifier--Size64,
-.Identifier--Size96 {
-  container-type: inline-size;
-  width: 100%;
-  overflow: hidden;
-}
-
-.Identifier--Size32 .Identifier__SymbolsContainer,
-.Identifier--Size44 .Identifier__SymbolsContainer,
-.Identifier--Size64 .Identifier__SymbolsContainer,
-.Identifier--Size96 .Identifier__SymbolsContainer {
-  width: max-content;
-}
-
-.Identifier--Ellipsis {
-  overflow: hidden;
-}
-
-.Identifier--Ellipsis .Identifier__SymbolsContainer {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.Identifier--Middle {
-  width: 100%;
-  min-width: 0;
-  overflow: hidden;
-  white-space: nowrap;
-}
-
-.Identifier--Middle .Identifier__SymbolsContainer {
-  flex: 1;
-  min-width: 0;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: clip;
-}
-
-.Identifier:not(.Identifier--Ellipsis) .Identifier__SymbolsContainer {
-  line-height: var(--pe-space-4);
+  &__SymbolsContainer {
+    text-align: left;
+    color: var(--pe-color-fg-muted);
+  }
+  &--Size32,
+  &--Size44,
+  &--Size64,
+  &--Size96 {
+    container-type: inline-size;
+    width: 100%;
+    overflow: hidden;
+  }
+  &--Size32 &__SymbolsContainer,
+  &--Size44 &__SymbolsContainer,
+  &--Size64 &__SymbolsContainer,
+  &--Size96 &__SymbolsContainer {
+    width: max-content;
+  }
+  &--Ellipsis {
+    overflow: hidden;
+  }
+  &--Ellipsis &__SymbolsContainer {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  &--Middle {
+    width: 100%;
+    min-width: 0;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+  &--Middle &__SymbolsContainer {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: clip;
+  }
 }
 
 /* container queries without nesting for broader tooling */
+
 @container (max-width: 45rem) {
-  .Identifier--Size96:not(.Identifier--Ellipsis) .Identifier__SymbolsContainer {
-    width: 48ch;
+  .Identifier {
+    &--Size96:not(.Identifier--Ellipsis) &__SymbolsContainer {
+      width: 48ch;
+    }
   }
 }
+
 @container (max-width: 24rem) {
-  .Identifier--Size96:not(.Identifier--Ellipsis) .Identifier__SymbolsContainer {
-    width: 32ch;
+  .Identifier {
+    &--Size96:not(.Identifier--Ellipsis) &__SymbolsContainer {
+      width: 32ch;
+    }
   }
 }
+
 @container (max-width: 17rem) {
-  .Identifier--Size96:not(.Identifier--Ellipsis) .Identifier__SymbolsContainer {
-    width: 24ch;
+  .Identifier {
+    &--Size96:not(.Identifier--Ellipsis) &__SymbolsContainer {
+      width: 24ch;
+    }
   }
 }
+
 @container (max-width: 13rem) {
-  .Identifier--Size96:not(.Identifier--Ellipsis) .Identifier__SymbolsContainer {
-    width: 16ch;
+  .Identifier {
+    &--Size96:not(.Identifier--Ellipsis) &__SymbolsContainer {
+      width: 16ch;
+    }
   }
 }
+
 @container (max-width: 9rem) {
-  .Identifier--Size96:not(.Identifier--Ellipsis) .Identifier__SymbolsContainer {
-    width: 11ch;
+  .Identifier {
+    &--Size96:not(.Identifier--Ellipsis) &__SymbolsContainer {
+      width: 11ch;
+    }
   }
 }
 
 @container (max-width: 31rem) {
-  .Identifier--Size64:not(.Identifier--Ellipsis) .Identifier__SymbolsContainer {
-    width: 32ch;
+  .Identifier {
+    &--Size64:not(.Identifier--Ellipsis) &__SymbolsContainer {
+      width: 32ch;
+    }
   }
 }
+
 @container (max-width: 17rem) {
-  .Identifier--Size64:not(.Identifier--Ellipsis) .Identifier__SymbolsContainer {
-    width: 22ch;
+  .Identifier {
+    &--Size64:not(.Identifier--Ellipsis) &__SymbolsContainer {
+      width: 22ch;
+    }
   }
 }
+
 @container (max-width: 12rem) {
-  .Identifier--Size64:not(.Identifier--Ellipsis) .Identifier__SymbolsContainer {
-    width: 16ch;
+  .Identifier {
+    &--Size64:not(.Identifier--Ellipsis) &__SymbolsContainer {
+      width: 16ch;
+    }
   }
 }
+
 @container (max-width: 9rem) {
-  .Identifier--Size64:not(.Identifier--Ellipsis) .Identifier__SymbolsContainer {
-    width: 11ch;
+  .Identifier {
+    &--Size64:not(.Identifier--Ellipsis) &__SymbolsContainer {
+      width: 11ch;
+    }
   }
 }
 
 @container (max-width: 22rem) {
-  .Identifier--Size44:not(.Identifier--Ellipsis) .Identifier__SymbolsContainer {
-    width: 22ch;
+  .Identifier {
+    &--Size44:not(.Identifier--Ellipsis) &__SymbolsContainer {
+      width: 22ch;
+    }
   }
 }
+
 @container (max-width: 12rem) {
-  .Identifier--Size44:not(.Identifier--Ellipsis) .Identifier__SymbolsContainer {
-    width: 15ch;
+  .Identifier {
+    &--Size44:not(.Identifier--Ellipsis) &__SymbolsContainer {
+      width: 15ch;
+    }
   }
 }
 
 @container (max-width: 20rem) {
-  .Identifier--Size32:not(.Identifier--Ellipsis) .Identifier__SymbolsContainer {
-    width: 16ch;
+  .Identifier {
+    &--Size32:not(.Identifier--Ellipsis) &__SymbolsContainer {
+      width: 16ch;
+    }
   }
 }
+
 @container (max-width: 13rem) {
-  .Identifier--Size32:not(.Identifier--Ellipsis) .Identifier__SymbolsContainer {
-    width: 11ch;
+  .Identifier {
+    &--Size32:not(.Identifier--Ellipsis) &__SymbolsContainer {
+      width: 11ch;
+    }
   }
 }
 
-.Identifier__Symbols {
-  color: var(--pe-color-fg);
-}
-
-.Identifier__Symbols--Dim {
-  color: var(--pe-color-fg-muted);
-}
-
-.Identifier__Avatar {
-  height: var(--pe-space-6);
-  width: var(--pe-space-6);
-  flex-shrink: 0;
-  margin-right: var(--pe-space-2);
-}
-
-.Identifier__CopyButton {
-  margin-left: var(--pe-space-3);
-  flex-shrink: 0;
+.Identifier {
+  &__Symbols {
+    color: var(--pe-color-fg);
+  }
+  &__Symbols--Dim {
+    color: var(--pe-color-fg-muted);
+  }
+  &__Avatar {
+    height: var(--pe-space-6);
+    width: var(--pe-space-6);
+    flex-shrink: 0;
+    margin-right: var(--pe-space-2);
+  }
+  &__CopyButton {
+    margin-left: var(--pe-space-3);
+    flex-shrink: 0;
+  }
 }

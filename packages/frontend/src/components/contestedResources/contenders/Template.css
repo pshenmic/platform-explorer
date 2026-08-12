@@ -1,123 +1,145 @@
-.ContendersList__Pagination {
-  margin-top: var(--pe-space-8) !important;
+.ContendersList {
+  &__Pagination {
+    margin-top: var(--pe-space-8) !important;
+  }
+  &__ScrollZone {
+    width: fit-content;
+    min-width: 100%;
+  }
 }
-.ContendersList__ScrollZone {
-  width: fit-content;
-  min-width: 100%;
-}
+
 @media screen and (max-width: 48em) {
-  .ContendersList__Pagination {
-    margin-top: var(--pe-space-6) !important;
+  .ContendersList {
+    &__Pagination {
+      margin-top: var(--pe-space-6) !important;
+    }
   }
 }
+
 @media screen and (max-width: 30em) {
-  .ContendersList__Pagination {
-    margin-top: var(--pe-space-4) !important;
+  .ContendersList {
+    &__Pagination {
+      margin-top: var(--pe-space-4) !important;
+    }
   }
 }
+
 .ContendersList {
   scroll-behavior: smooth;
   scrollbar-width: thin;
   scrollbar-color: var(--pe-color-brand-normal) transparent;
-}
-.ContendersList::-webkit-scrollbar {
-  height: var(--pe-space-2);
-  width: var(--pe-space-2);
-}
-.ContendersList::-webkit-scrollbar-track {
-  background: transparent;
-}
-.ContendersList::-webkit-scrollbar-thumb {
-  background-color: var(--pe-color-brand-normal);
-  border-radius: var(--pe-radius-md);
-  border: 2px solid transparent;
-  background-clip: padding-box;
-}
-.ContendersList::-webkit-scrollbar-thumb:hover {
-  background-color: var(--pe-color-brand-light);
-}
-.ContendersList {
   overflow-x: auto;
   container-type: inline-size;
+  &::-webkit-scrollbar {
+    height: var(--pe-space-2);
+    width: var(--pe-space-2);
+  }
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  &::-webkit-scrollbar-thumb {
+    background-color: var(--pe-color-brand-normal);
+    border-radius: var(--pe-radius-md);
+    border: 2px solid transparent;
+    background-clip: padding-box;
+  }
+  &::-webkit-scrollbar-thumb:hover {
+    background-color: var(--pe-color-brand-light);
+  }
+  &__ScrollZone {
+    width: fit-content;
+    min-width: 100%;
+  }
+  &__ColumnTitles {
+    display: grid;
+    padding: var(--pe-list-row-pad-y) var(--pe-list-row-pad-x);
+    border-radius: var(--pe-list-row-radius);
+    background-color: var(--pe-color-gray-800);
+    margin-bottom: var(--pe-space-2);
+    font-family: var(--pe-font-heading);
+    font-weight: var(--pe-font-weight-bold);
+    font-size: var(--pe-text-sm);
+    text-transform: uppercase;
+    color: var(--pe-color-fg);
+  }
+  &__ColumnTitles--Light {
+    background: transparent !important;
+    font-weight: var(--pe-font-weight-medium) !important;
+    color: var(--pe-color-fg) !important;
+    text-transform: none !important;
+  }
+  &__ColumnTitles {
+    display: grid;
+    gap: var(--pe-space-4);
+    justify-content: space-between;
+  }
+  &__ColumnTitles--Hidden {
+    grid-template-columns: 3rem minmax(5.875rem, 30rem) 16.5rem 16.5rem 8rem;
+  }
+  &__ColumnTitles {
+    grid-template-columns: 3rem minmax(5.875rem, 30rem) 16.5rem 16.5rem 8rem 100px;
+  }
 }
-.ContendersList__ScrollZone {
-  width: fit-content;
-  min-width: 100%;
-}
-.ContendersList__ColumnTitles {
-  display: grid;
-  padding: var(--pe-list-row-pad-y) var(--pe-list-row-pad-x);
-  border-radius: var(--pe-list-row-radius);
-  background-color: var(--pe-color-gray-800);
-  margin-bottom: var(--pe-space-2);
-  font-family: var(--pe-font-heading);
-  font-weight: var(--pe-font-weight-bold);
-  font-size: var(--pe-text-sm);
-  text-transform: uppercase;
-  color: var(--pe-color-fg);
-}
-.ContendersList__ColumnTitles--Light {
-  background: transparent !important;
-  font-weight: var(--pe-font-weight-medium) !important;
-  color: var(--pe-color-fg) !important;
-  text-transform: none !important;
-}
-.ContendersList__ColumnTitles {
-  display: grid;
-  gap: var(--pe-space-4);
-  justify-content: space-between;
-}
-.ContendersList__ColumnTitles--Hidden {
-  grid-template-columns: 3rem minmax(5.875rem, 30rem) 16.5rem 16.5rem 8rem;
-}
-.ContendersList__ColumnTitles {
-  grid-template-columns: 3rem minmax(5.875rem, 30rem) 16.5rem 16.5rem 8rem 100px;
-}
+
 @container (max-width: 66rem) {
-  .ContendersList__ColumnTitles {
-    grid-template-columns: 3rem minmax(5.875rem, 46rem) 14.5rem 14.5rem 8rem 100px;
-  }
-  .ContendersList__ColumnTitles--Hidden {
-    grid-template-columns: 3rem minmax(5.875rem, 46rem) 14.5rem 14.5rem 8rem;
+  .ContendersList {
+    &__ColumnTitles {
+      grid-template-columns: 3rem minmax(5.875rem, 46rem) 14.5rem 14.5rem 8rem 100px;
+    }
+    &__ColumnTitles--Hidden {
+      grid-template-columns: 3rem minmax(5.875rem, 46rem) 14.5rem 14.5rem 8rem;
+    }
   }
 }
+
 @container (max-width: 62rem) {
-  .ContendersList__ColumnTitles {
-    grid-template-columns: 3rem 6rem 12.5rem 12.5rem 6rem 100px;
-  }
-  .ContendersList__ColumnTitles--Hidden {
-    grid-template-columns: 3rem 6rem 12.5rem 12.5rem 6rem;
+  .ContendersList {
+    &__ColumnTitles {
+      grid-template-columns: 3rem 6rem 12.5rem 12.5rem 6rem 100px;
+    }
+    &__ColumnTitles--Hidden {
+      grid-template-columns: 3rem 6rem 12.5rem 12.5rem 6rem;
+    }
   }
 }
+
 @container (max-width: 50rem) {
-  .ContendersList__ColumnTitles {
-    grid-template-columns: 3rem 12rem 12rem 12rem 5rem 100px;
+  .ContendersList {
+    &__ColumnTitles {
+      grid-template-columns: 3rem 12rem 12rem 12rem 5rem 100px;
+    }
   }
 }
-.ContendersList__ColumnTitles--Hidden {
-  grid-template-columns: 3rem 12rem 12rem 12rem 5rem;
+
+.ContendersList {
+  &__ColumnTitles--Hidden {
+    grid-template-columns: 3rem 12rem 12rem 12rem 5rem;
+  }
+  &__ColumnTitle {
+    display: flex;
+    align-items: center;
+  }
+  &__ColumnTitle:last-child {
+    justify-content: flex-end;
+  }
 }
-.ContendersList__ColumnTitle {
-  display: flex;
-  align-items: center;
-}
-.ContendersList__ColumnTitle:last-child {
-  justify-content: flex-end;
-}
+
 @container (max-width: 50rem) {
-  .ContendersList__ColumnTitle--Identity {
-    order: 1;
-  }
-  .ContendersList__ColumnTitle--Hash {
-    order: 2;
-  }
-  .ContendersList__ColumnTitle--Document {
-    order: 3;
-  }
-  .ContendersList__ColumnTitle--Votes {
-    order: 4;
-  }
-  .ContendersList__ColumnTitle--Actions {
-    order: 5;
+  .ContendersList {
+    &__ColumnTitle--Identity {
+      order: 1;
+    }
+    &__ColumnTitle--Hash {
+      order: 2;
+    }
+    &__ColumnTitle--Document {
+      order: 3;
+    }
+    &__ColumnTitle--Votes {
+      order: 4;
+    }
+    &__ColumnTitle--Actions {
+      order: 5;
+    }
   }
 }

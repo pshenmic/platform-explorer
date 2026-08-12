@@ -13,92 +13,118 @@
   background-color: rgba(var(--pe-color-gray-800-rgb), 0.5);
   transition: all 0.1s;
 }
+
 @media (hover: hover) and (pointer: fine) {
-  .DocumentsRevisionsListItem:hover {
-    background-color: var(--pe-color-gray-750);
-    text-decoration: none;
-    cursor: pointer;
+  .DocumentsRevisionsListItem {
+    &:hover {
+      background-color: var(--pe-color-gray-750);
+      text-decoration: none;
+      cursor: pointer;
+    }
   }
 }
-.DocumentsRevisionsListItem:active {
-  transform: translateY(1px);
-  box-shadow: 0 0 9999px 0 rgba(0, 0, 0, 0.25) inset;
-}
-.DocumentsRevisionsListItem:last-child {
-  margin-bottom: 0;
-}
-.DocumentsRevisionsListItem__Column--Credits, .DocumentsRevisionsListItem__Column--Number {
-  font-size: var(--pe-text-sm);
-  font-weight: var(--pe-font-weight-bold);
-}
-.DocumentsRevisionsListItem__IdentifierContainer {
-  display: flex;
-  align-items: center;
-  min-width: 50px;
-}
-.DocumentsRevisionsListItem__Avatar {
-  height: var(--pe-space-6);
-  width: var(--pe-space-6);
-  flex-shrink: 0;
-  margin-right: var(--pe-space-3);
-}
-.DocumentsRevisionsListItem--Timestamp, .DocumentsRevisionsListItem__Column--Timestamp {
-  font-family: var(--pe-font-mono);
-  white-space: nowrap;
-  color: var(--pe-color-fg);
-}
+
 .DocumentsRevisionsListItem--Timestamp,
 .DocumentsRevisionsListItem--Timestamp .DateBlock__Date, .DocumentsRevisionsListItem__Column--Timestamp,
 .DocumentsRevisionsListItem__Column--Timestamp .DateBlock__Date {
   font-size: var(--pe-text-sm);
 }
+
 .DocumentsRevisionsListItem {
   display: block;
+  &:active {
+    transform: translateY(1px);
+    box-shadow: 0 0 9999px 0 rgba(0, 0, 0, 0.25) inset;
+  }
+  &:last-child {
+    margin-bottom: 0;
+  }
+  &__Column--Credits,
+  &__Column--Number {
+    font-size: var(--pe-text-sm);
+    font-weight: var(--pe-font-weight-bold);
+  }
+  &__IdentifierContainer {
+    display: flex;
+    align-items: center;
+    min-width: 50px;
+  }
+  &__Avatar {
+    height: var(--pe-space-6);
+    width: var(--pe-space-6);
+    flex-shrink: 0;
+    margin-right: var(--pe-space-3);
+  }
+  &--Timestamp,
+  &__Column--Timestamp {
+    font-family: var(--pe-font-mono);
+    white-space: nowrap;
+    color: var(--pe-color-fg);
+  }
+  &__Content {
+    display: grid;
+    gap: var(--pe-space-4);
+    grid-template-columns: 70px minmax(0, 600px) minmax(0, 400px) minmax(0, 150px) minmax(120px, 150px) 65px;
+  }
 }
-.DocumentsRevisionsListItem__Content {
-  display: grid;
-  gap: var(--pe-space-4);
-  grid-template-columns: 70px minmax(0, 600px) minmax(0, 400px) minmax(0, 150px) minmax(120px, 150px) 65px;
-}
+
 @container (max-width: 38rem) {
-  .DocumentsRevisionsListItem__Content {
-    grid-template-columns: 70px minmax(0, 600px) minmax(0, 400px) 65px;
+  .DocumentsRevisionsListItem {
+    &__Content {
+      grid-template-columns: 70px minmax(0, 600px) minmax(0, 400px) 65px;
+    }
   }
 }
+
 @container (max-width: 24rem) {
-  .DocumentsRevisionsListItem__Content {
-    grid-template-columns: 70px minmax(0, 600px) 65px;
+  .DocumentsRevisionsListItem {
+    &__Content {
+      grid-template-columns: 70px minmax(0, 600px) 65px;
+    }
   }
 }
-.DocumentsRevisionsListItem__Column {
-  display: flex;
-  align-items: center;
+
+.DocumentsRevisionsListItem {
+  &__Column {
+    display: flex;
+    align-items: center;
+  }
+  &__Column--Timestamp {
+    max-width: 70px;
+  }
+  &__Column--Owner {
+    overflow: hidden;
+  }
 }
-.DocumentsRevisionsListItem__Column--Timestamp {
-  max-width: 70px;
-}
-.DocumentsRevisionsListItem__Column--Owner {
-  overflow: hidden;
-}
+
 @container (max-width: 38rem) {
-  .DocumentsRevisionsListItem__Column--GasUsed {
-    display: none;
-  }
-  .DocumentsRevisionsListItem__Column--TransitionType {
-    display: none;
+  .DocumentsRevisionsListItem {
+    &__Column--GasUsed {
+      display: none;
+    }
+    &__Column--TransitionType {
+      display: none;
+    }
   }
 }
+
 @container (max-width: 24rem) {
-  .DocumentsRevisionsListItem__Column--Owner {
-    display: none;
+  .DocumentsRevisionsListItem {
+    &__Column--Owner {
+      display: none;
+    }
   }
 }
-.DocumentsRevisionsListItem__Column--Revision {
-  justify-content: flex-end;
-}
+
 .DocumentsRevisionsListItem__Column .ValueContainer {
   max-width: 100%;
 }
-.DocumentsRevisionsListItem__ColumnContent {
-  overflow: hidden;
+
+.DocumentsRevisionsListItem {
+  &__Column--Revision {
+    justify-content: flex-end;
+  }
+  &__ColumnContent {
+    overflow: hidden;
+  }
 }

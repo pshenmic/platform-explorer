@@ -1,47 +1,50 @@
-.Markdown a {
-  color: var(--pe-color-brand-normal);
-  transition: color 0.1s;
-}
-.Markdown a:hover {
-  color: var(--pe-color-brand-light);
-}
-.Markdown li {
-  font-family: var(--pe-font-mono);
-}
-.Markdown small {
-  font-size: 100%;
-  color: var(--pe-color-fg-muted);
-}
-.Markdown__TableWrapper {
-  border: 1px solid var(--pe-color-gray-800);
-  border-radius: var(--pe-radius-lg);
-  overflow-x: auto;
-}
-.Markdown__TableWrapper th:first-child,
-.Markdown__TableWrapper td:first-child {
-  border-left: none;
-}
-.Markdown__TableWrapper th:last-child,
-.Markdown__TableWrapper td:last-child {
-  border-right: none;
-}
-.Markdown__TableWrapper tr:first-child th,
-.Markdown__TableWrapper tr:first-child td {
-  border-top: none;
-}
-.Markdown__TableWrapper tr:last-child th,
-.Markdown__TableWrapper tr:last-child td {
-  border-bottom: none;
-}
-.Markdown table {
-  width: 100%;
-  border-collapse: collapse;
-  border: none;
-}
-.Markdown th, .Markdown td {
-  border: 1px solid var(--pe-color-gray-800);
-  padding: var(--pe-space-2);
-}
-.Markdown th {
-  font-weight: var(--pe-font-weight-bold);
+.Markdown {
+  & a {
+    color: var(--pe-color-brand-normal);
+    transition: color 0.1s;
+  }
+  & a:hover {
+    color: var(--pe-color-brand-light);
+  }
+  & li {
+    font-family: var(--pe-font-mono);
+  }
+  & small {
+    font-size: 100%;
+    color: var(--pe-color-fg-muted);
+  }
+  &__TableWrapper {
+    border: 1px solid var(--pe-color-gray-800);
+    border-radius: var(--pe-radius-lg);
+    overflow-x: auto;
+  }
+  &__TableWrapper th:first-child,
+  &__TableWrapper td:first-child {
+    border-left: none;
+  }
+  &__TableWrapper th:last-child,
+  &__TableWrapper td:last-child {
+    border-right: none;
+  }
+  &__TableWrapper tr:first-child th,
+  &__TableWrapper tr:first-child td {
+    border-top: none;
+  }
+  &__TableWrapper tr:last-child th,
+  &__TableWrapper tr:last-child td {
+    border-bottom: none;
+  }
+  & table {
+    width: 100%;
+    border-collapse: collapse;
+    border: none;
+  }
+  & th,
+  & td {
+    border: 1px solid var(--pe-color-gray-800);
+    padding: var(--pe-space-2);
+  }
+  & th {
+    font-weight: var(--pe-font-weight-bold);
+  }
 }

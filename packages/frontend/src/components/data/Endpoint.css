@@ -1,12 +1,3 @@
-.Endpoint {
-  display: flex;
-  align-items: center;
-}
-
-.Endpoint__Status {
-  margin-left: var(--pe-space-2);
-}
-
 a.Endpoint:hover {
   color: var(--pe-color-brand-light) !important;
 }
@@ -17,21 +8,29 @@ a.Endpoint .Endpoint__Value {
 
 a.Endpoint .Endpoint__Value::after {
   content: '';
-  position: absolute;
-  display: block;
-  width: 100%;
-  height: 0;
-  bottom: 0;
-  background-color: var(--pe-color-brand-light);
-  opacity: 0;
-  transition: all 0.1s;
+    position: absolute;
+    display: block;
+    width: 100%;
+    height: 0;
+    bottom: 0;
+    background-color: var(--pe-color-brand-light);
+    opacity: 0;
+    transition: all 0.1s;
+}
+
+.Endpoint {
+  display: flex;
+  align-items: center;
+  &__Status {
+    margin-left: var(--pe-space-2);
+  }
 }
 
 @media (hover: hover) and (pointer: fine) {
   a.Endpoint:hover .Endpoint__Value::after {
     height: 2px;
-    bottom: -2px;
-    opacity: 0.44;
+        bottom: -2px;
+        opacity: 0.44;
   }
 }
 
@@ -41,5 +40,5 @@ a.Endpoint:active .Endpoint__Value {
 
 a.Endpoint:active .Endpoint__Value::after {
   height: 0;
-  bottom: 0;
+    bottom: 0;
 }
