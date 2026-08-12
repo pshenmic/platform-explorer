@@ -120,9 +120,15 @@ const getTransactionsHistory = (
   )
 }
 
+interface TransactionsStatisticBatchType {
+  batchType: string
+  count: number
+}
+
 interface TransactionsStatisticItem {
   transactionType: string
   count: number
+  batchTypes?: TransactionsStatisticBatchType[] | null
 }
 
 const getTransactionsStatistic = (start?: string, end?: string): Promise<TransactionsStatisticItem[]> => {
@@ -661,6 +667,41 @@ const getValidatorByProTxHash = (proTxHash: string): Promise<Validator> => {
   return call<Validator>(`validator/${proTxHash}`, 'GET')
 }
 
+export interface QuorumMember {
+  proTxHash: string
+  service?: string | null
+  pubKeyOperator?: string | null
+  valid?: boolean | null
+}
+
+/** Members are present on /quorums/current and /quorum/:hash, not on /quorums. */
+export interface PlatformQuorum {
+  blockHeight?: number | null
+  creationHeight?: number | null
+  minedBlockHash?: string | null
+  numValidMembers?: number | null
+  healthRatio?: string | number | null
+  type?: string | null
+  quorumHash?: string | null
+  quorumIndex?: number | null
+  quorumPublicKey?: string | null
+  previousConsecutiveDKGFailures?: number | null
+  isCurrent?: boolean | null
+  members?: QuorumMember[] | null
+}
+
+const getQuorums = (): Promise<PlatformQuorum[]> => {
+  return call<PlatformQuorum[]>('quorums', 'GET')
+}
+
+const getCurrentQuorum = (): Promise<PlatformQuorum> => {
+  return call<PlatformQuorum>('quorums/current', 'GET')
+}
+
+const getQuorumByHash = (quorumHash: string): Promise<PlatformQuorum> => {
+  return call<PlatformQuorum>(`quorum/${quorumHash}`, 'GET')
+}
+
 const getValidatorByMasternodeIdentity = (identity: string): Promise<Validator> => {
   return call<Validator>(`validator/identity/${identity}`, 'GET')
 }
@@ -809,6 +850,9 @@ export {
   getTokensByIdentity,
   getValidators,
   getValidatorByProTxHash,
+  getQuorums,
+  getCurrentQuorum,
+  getQuorumByHash,
   getBlocksByValidator,
   getBlocksStatsByValidator,
   getRewardsStatsByValidator,
