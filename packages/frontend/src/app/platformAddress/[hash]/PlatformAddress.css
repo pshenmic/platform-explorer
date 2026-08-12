@@ -4,7 +4,7 @@
 
 .PlatformAddress__CommonInfo .InfoLine__Title {
   width: 200px;
-    flex-grow: 0;
+  flex-grow: 0;
 }
 
 .PlatformAddress__CommonInfo .InfoLine__Value {

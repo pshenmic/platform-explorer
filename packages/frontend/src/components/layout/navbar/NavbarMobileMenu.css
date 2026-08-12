@@ -67,7 +67,7 @@
   &__Item {
     font-family: var(--pe-font-heading);
     font-size: var(--pe-text-sm);
-    letter-spacing: 0.var(--pe-space-1);
+    letter-spacing: 0.4px;
     text-transform: uppercase;
     font-weight: var(--pe-font-weight-bold);
     color: var(--pe-color-fg-muted);

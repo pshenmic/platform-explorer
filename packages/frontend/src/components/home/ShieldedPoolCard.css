@@ -32,7 +32,9 @@
     cursor: pointer;
     width: max-content;
     border-bottom: 1px dotted rgba(var(--pe-color-gray-500-rgb), 0.6);
-    transition: color 0.15s, border-color 0.15s;
+    transition:
+      color 0.15s,
+      border-color 0.15s;
   }
   &__Balance:hover {
     color: var(--pe-color-brand-light);

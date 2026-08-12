@@ -22,7 +22,9 @@
     font-size: 1em;
     color: white;
     opacity: 0.8;
-    animation: fall linear infinite, drift infinite ease-in-out;
+    animation:
+      fall linear infinite,
+      drift infinite ease-in-out;
   }
   &__Snowflake:nth-child(odd) {
     font-size: 1.5em;

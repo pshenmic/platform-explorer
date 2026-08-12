@@ -1,42 +1,46 @@
 .Pagination--Justify .PageItem--Previous {
   margin-right: auto;
-    margin-left: 0;
+  margin-left: 0;
 }
 
 .Pagination--Justify .PageItem--Next {
   margin-left: auto;
-    margin-right: 0;
+  margin-right: 0;
 }
 
-.Pagination--Justify .PageItem--Previous, .Pagination--Justify .PageItem--Next {
+.Pagination--Justify .PageItem--Previous,
+.Pagination--Justify .PageItem--Next {
   display: block;
 }
 
 .Pagination--Justify .PageItem.disabled {
   cursor: default;
-    opacity: 0.3;
+  opacity: 0.3;
 }
 
-.PageItem--Next:hover:not(.disabled), .PageItem--Previous:hover:not(.disabled) {
+.PageItem--Next:hover:not(.disabled),
+.PageItem--Previous:hover:not(.disabled) {
   background-color: rgba(255, 255, 255, 0.1);
 }
 
 .PageItem.disabled {
   cursor: default;
-    opacity: 0.3;
+  opacity: 0.3;
 }
 
 .PageItem:not(.active):hover:not(.disabled) {
   background-color: var(--pe-color-gray-750);
 }
 
-.PageItem.active, .PageItem.active a {
+.PageItem.active,
+.PageItem.active a {
   cursor: default;
 }
 
-.PageItem.active, .PageItem.active:hover {
+.PageItem.active,
+.PageItem.active:hover {
   background-color: var(--pe-color-brand-normal);
-    border-color: var(--pe-color-brand-normal);
+  border-color: var(--pe-color-brand-normal);
 }
 
 .Pagination {

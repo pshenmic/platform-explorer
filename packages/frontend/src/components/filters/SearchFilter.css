@@ -1,23 +1,23 @@
 .MobileFilterMenu .SearchFilter {
   width: 100%;
-    min-width: 0;
+  min-width: 0;
 }
 
 .MobileFilterMenu .SearchFilter__Title {
   font-family: var(--pe-font-heading);
-    font-weight: var(--pe-font-weight-bold);
-    font-size: var(--pe-text-md);
+  font-weight: var(--pe-font-weight-bold);
+  font-size: var(--pe-text-md);
 }
 
 .MobileFilterMenu .SearchFilter input {
   min-height: 3rem;
-    padding: var(--pe-space-3) var(--pe-space-4);
+  padding: var(--pe-space-3) var(--pe-space-4);
 }
 
 .MobileFilterMenu .SearchFilter .chakra-input__right-element {
   top: 50%;
-    transform: translateY(-50%);
-    right: var(--pe-space-1);
+  transform: translateY(-50%);
+  right: var(--pe-space-1);
 }
 
 .SearchFilter {

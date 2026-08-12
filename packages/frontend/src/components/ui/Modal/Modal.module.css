@@ -1,18 +1,18 @@
 .dialog .header {
   width: 100%;
-    display: flex;
-    justify-content: space-between;
-    align-items: baseline;
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
 }
 
 .dialog .header .title,
 .dialog .header #modal-title {
   font-family: var(--font-montserrat);
-    font-weight: var(--pe-font-weight-bold);
-    font-style: Bold;
-    font-size: var(--pe-text-md);
-    line-height: 120%;
-    margin: 0;
+  font-weight: var(--pe-font-weight-bold);
+  font-style: Bold;
+  font-size: var(--pe-text-md);
+  line-height: 120%;
+  margin: 0;
 }
 
 .dialog .content {

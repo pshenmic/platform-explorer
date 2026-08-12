@@ -26,7 +26,7 @@
 
 .BlockDigestCard__InfoContainer .InfoLine__Title svg {
   width: var(--pe-space-7);
-    height: var(--pe-space-7);
+  height: var(--pe-space-7);
 }
 
 .BlockDigestCard__InfoContainer > .InfoLine > .InfoLine__Title svg {
@@ -39,19 +39,32 @@
 
 .BlockDigestCard__InfoLine--Validator .InfoLine__Value {
   max-width: 20rem;
-    overflow: hidden;
+  overflow: hidden;
 }
 
-.BlockDigestCard__InfoLine--TotalTransactions > .InfoLine .InfoLine__Title, .BlockDigestCard__InfoLine--TotalTransactions > .InfoLine .InfoLine__Title span, .BlockDigestCard__InfoLine--QuorumIndex > .InfoLine .InfoLine__Title, .BlockDigestCard__InfoLine--QuorumIndex > .InfoLine .InfoLine__Title span, .BlockDigestCard__InfoLine--Epoch > .InfoLine .InfoLine__Title, .BlockDigestCard__InfoLine--Epoch > .InfoLine .InfoLine__Title span, .BlockDigestCard__InfoLine--QuorumMembers > .InfoLine .InfoLine__Title, .BlockDigestCard__InfoLine--QuorumMembers > .InfoLine .InfoLine__Title span {
+.BlockDigestCard__InfoLine--TotalTransactions > .InfoLine .InfoLine__Title,
+.BlockDigestCard__InfoLine--TotalTransactions > .InfoLine .InfoLine__Title span,
+.BlockDigestCard__InfoLine--QuorumIndex > .InfoLine .InfoLine__Title,
+.BlockDigestCard__InfoLine--QuorumIndex > .InfoLine .InfoLine__Title span,
+.BlockDigestCard__InfoLine--Epoch > .InfoLine .InfoLine__Title,
+.BlockDigestCard__InfoLine--Epoch > .InfoLine .InfoLine__Title span,
+.BlockDigestCard__InfoLine--QuorumMembers > .InfoLine .InfoLine__Title,
+.BlockDigestCard__InfoLine--QuorumMembers > .InfoLine .InfoLine__Title span {
   align-items: center;
-    display: flex;
+  display: flex;
 }
 
-.BlockDigestCard__InfoLine--TotalTransactions > .InfoLine .InfoLine__Title span, .BlockDigestCard__InfoLine--QuorumIndex > .InfoLine .InfoLine__Title span, .BlockDigestCard__InfoLine--Epoch > .InfoLine .InfoLine__Title span, .BlockDigestCard__InfoLine--QuorumMembers > .InfoLine .InfoLine__Title span {
+.BlockDigestCard__InfoLine--TotalTransactions > .InfoLine .InfoLine__Title span,
+.BlockDigestCard__InfoLine--QuorumIndex > .InfoLine .InfoLine__Title span,
+.BlockDigestCard__InfoLine--Epoch > .InfoLine .InfoLine__Title span,
+.BlockDigestCard__InfoLine--QuorumMembers > .InfoLine .InfoLine__Title span {
   gap: var(--pe-space-3);
 }
 
-.BlockDigestCard__InfoLine--TotalTransactions > .InfoLine .InfoLine__Value, .BlockDigestCard__InfoLine--QuorumIndex > .InfoLine .InfoLine__Value, .BlockDigestCard__InfoLine--Epoch > .InfoLine .InfoLine__Value, .BlockDigestCard__InfoLine--QuorumMembers > .InfoLine .InfoLine__Value {
+.BlockDigestCard__InfoLine--TotalTransactions > .InfoLine .InfoLine__Value,
+.BlockDigestCard__InfoLine--QuorumIndex > .InfoLine .InfoLine__Value,
+.BlockDigestCard__InfoLine--Epoch > .InfoLine .InfoLine__Value,
+.BlockDigestCard__InfoLine--QuorumMembers > .InfoLine .InfoLine__Value {
   font-size: 0.813rem;
 }
 
@@ -130,7 +143,7 @@
 
   .BlockDigestCard__InfoLine--Validator .InfoLine__Value .Identifier {
     width: 100%;
-        justify-content: space-between;
+    justify-content: space-between;
   }
 
   .BlockDigestCard {

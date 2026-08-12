@@ -1,13 +1,13 @@
 .ValidatorCard__Title .Alias__Name,
 .ValidatorCard__Title .Alias__Domain {
   font-family: var(--pe-font-heading);
-    font-size: var(--pe-text-md);
-    font-weight: var(--pe-font-weight-bold);
+  font-size: var(--pe-text-md);
+  font-weight: var(--pe-font-weight-bold);
 }
 
 .ValidatorCard__Title .Alias__Domain {
   color: var(--pe-color-brand-light);
-    opacity: 1;
+  opacity: 1;
 }
 
 .ValidatorCard--Loading .InfoLine__Value {
@@ -93,14 +93,16 @@
   }
 }
 
-.ValidatorCard__InfoLine--IdentityAddress .InfoLine__Value, .ValidatorCard__InfoLine--NodeId .InfoLine__Value {
+.ValidatorCard__InfoLine--IdentityAddress .InfoLine__Value,
+.ValidatorCard__InfoLine--NodeId .InfoLine__Value {
   width: 100%;
 }
 
-.ValidatorCard__InfoLine--IdentityAddress .Identifier, .ValidatorCard__InfoLine--NodeId .Identifier {
+.ValidatorCard__InfoLine--IdentityAddress .Identifier,
+.ValidatorCard__InfoLine--NodeId .Identifier {
   container-type: inline-size;
-    width: 100%;
-    justify-content: flex-end;
+  width: 100%;
+  justify-content: flex-end;
 }
 
 .ValidatorCard {
@@ -130,7 +132,7 @@
 
 @container (max-width: 20rem) {
   .ValidatorCard__InfoLine--NodeId .Identifier__SymbolsContainer {
-    max-width: 9.var(--pe-space-8);
+    max-width: 9.2rem;
   }
 }
 
@@ -141,8 +143,8 @@
 @keyframes loading-process {
   from {
     opacity: 0;
-        left: -100%;
-        z-index: 6;
+    left: -100%;
+    z-index: 6;
   }
 
   50% {
@@ -151,7 +153,7 @@
 
   to {
     z-index: 6;
-        left: 100%;
+    left: 100%;
   }
 }
 
@@ -197,7 +199,12 @@
     background-color: var(--pe-color-gray-900);
   }
   &--Loading &__Avatar::after {
-    background: linear-gradient(90deg, transparent 0%, rgb(14, 117, 181) 50%, transparent 100%) !important;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgb(14, 117, 181) 50%,
+      transparent 100%
+    ) !important;
     width: 100%;
     height: 100%;
   }
@@ -211,15 +218,15 @@
 
 @media screen and (max-width: 62em) {
   .ValidatorCard__Title .Alias__Name,
-    .ValidatorCard__Title .Alias__Domain {
+  .ValidatorCard__Title .Alias__Domain {
     font-family: var(--pe-font-heading);
-        font-size: var(--pe-text-md);
-        font-weight: var(--pe-font-weight-bold);
+    font-size: var(--pe-text-md);
+    font-weight: var(--pe-font-weight-bold);
   }
 
   .ValidatorCard__Title .Alias__Domain {
     color: var(--pe-color-brand-light);
-        opacity: 1;
+    opacity: 1;
   }
 
   .ValidatorCard--Loading .InfoLine__Value {
@@ -313,8 +320,8 @@
 @media screen and (max-width: 62em) {
   .ValidatorCard__Header .InfoLine {
     flex-wrap: wrap;
-        justify-content: start;
-        gap: 5px;
+    justify-content: start;
+    gap: 5px;
   }
 
   .ValidatorCard__Header .InfoLine__Title {
@@ -323,8 +330,8 @@
 
   .ValidatorCard__Header .InfoLine__Value {
     width: 100%;
-        justify-content: flex-start;
-        text-align: left;
+    justify-content: flex-start;
+    text-align: left;
   }
 
   .ValidatorCard {
@@ -345,15 +352,16 @@
 @media screen and (max-width: 30em) {
   .ValidatorCard__CommonInfo .InfoLine {
     flex-wrap: wrap;
-        justify-content: start;
+    justify-content: start;
   }
 
   .ValidatorCard__CommonInfo .InfoLine--Loading .InfoLine__Value {
     min-width: var(--pe-space-10);
-        width: 100% !important;
+    width: 100% !important;
   }
 
-  .ValidatorCard__InfoLine--IdentityAddress .Identifier, .ValidatorCard__InfoLine--NodeId .Identifier {
+  .ValidatorCard__InfoLine--IdentityAddress .Identifier,
+  .ValidatorCard__InfoLine--NodeId .Identifier {
     justify-content: flex-start;
   }
 

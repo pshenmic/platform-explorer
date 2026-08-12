@@ -1,13 +1,14 @@
-.Background, .Background:after {
+.Background,
+.Background:after {
   position: fixed;
-    height: 100%;
-    width: 100%;
-    top: 0;
-    left: 0;
+  height: 100%;
+  width: 100%;
+  top: 0;
+  left: 0;
 }
 
 .Background {
-  background-color: #171E21;
+  background-color: #171e21;
   overflow: hidden;
   pointer-events: none;
   z-index: -1;
@@ -27,7 +28,7 @@
     transform: translate(-50%, -50%);
     border-radius: 10000px;
     padding-top: 50%;
-    aspect-ratio: 1/1;
+    aspect-ratio: 1 / 1;
     width: 1000px;
     height: 1000px;
     background: radial-gradient(circle, rgba(0, 141, 228, 0.9) 0%, rgba(0, 141, 228, 0) 60%);

@@ -1,13 +1,13 @@
 .ContestedResourcesTotalCard__Title .Alias__Name,
 .ContestedResourcesTotalCard__Title .Alias__Domain {
   font-family: var(--pe-font-heading);
-    font-size: var(--pe-text-md);
-    font-weight: var(--pe-font-weight-bold);
+  font-size: var(--pe-text-md);
+  font-weight: var(--pe-font-weight-bold);
 }
 
 .ContestedResourcesTotalCard__Title .Alias__Domain {
   color: var(--pe-color-brand-light);
-    opacity: 1;
+  opacity: 1;
 }
 
 .ContestedResourcesTotalCard--Loading .InfoLine__Value {
@@ -128,15 +128,15 @@
 
 @media screen and (max-width: 62em) {
   .ContestedResourcesTotalCard__Title .Alias__Name,
-    .ContestedResourcesTotalCard__Title .Alias__Domain {
+  .ContestedResourcesTotalCard__Title .Alias__Domain {
     font-family: var(--pe-font-heading);
-        font-size: var(--pe-text-md);
-        font-weight: var(--pe-font-weight-bold);
+    font-size: var(--pe-text-md);
+    font-weight: var(--pe-font-weight-bold);
   }
 
   .ContestedResourcesTotalCard__Title .Alias__Domain {
     color: var(--pe-color-brand-light);
-        opacity: 1;
+    opacity: 1;
   }
 
   .ContestedResourcesTotalCard--Loading .InfoLine__Value {

@@ -40,7 +40,9 @@
     padding: var(--pe-space-1) var(--pe-space-2_5);
     border-radius: calc(var(--pe-radius-def) - 2px);
     cursor: pointer;
-    transition: background var(--pe-transition-def) ease, color var(--pe-transition-def) ease;
+    transition:
+      background var(--pe-transition-def) ease,
+      color var(--pe-transition-def) ease;
   }
   &__Pill:hover {
     color: var(--pe-color-fg);
@@ -66,23 +68,23 @@
 @keyframes LoadingLine {
   0% {
     left: -100%;
-        width: 100%;
+    width: 100%;
   }
 
   50% {
     left: 100%;
-        width: 100%;
+    width: 100%;
   }
 
   100% {
     left: 100%;
-        width: 100%;
+    width: 100%;
   }
 }
 
 Tr .TransactionsChartCompact__Loader::before {
   background-color: var(--pe-color-gray-800);
-    opacity: var(--pe-opacity-subtle);
+  opacity: var(--pe-opacity-subtle);
 }
 
 Tr:nth-child(1n) .TransactionsChartCompact__Loader::after {

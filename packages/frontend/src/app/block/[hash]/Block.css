@@ -1,7 +1,7 @@
 .Block .PageDataContainer__Content {
   display: flex;
-    flex-direction: column;
-    overflow: visible;
+  flex-direction: column;
+  overflow: visible;
 }
 
 .Block__InfoBlock .InfoLine--Loading {

@@ -22,7 +22,9 @@
   color: var(--pe-color-white-50);
   background: transparent;
   cursor: pointer;
-  transition: background var(--pe-transition-def), color var(--pe-transition-def);
+  transition:
+    background var(--pe-transition-def),
+    color var(--pe-transition-def);
 }
 .CreateTokenPage__MobileTab--active {
   color: var(--pe-color-brand-normal);
@@ -50,7 +52,8 @@
     display: none;
   }
 }
-.CreateTokenPage__FormPane, .CreateTokenPage__PreviewPane {
+.CreateTokenPage__FormPane,
+.CreateTokenPage__PreviewPane {
   background: var(--pe-color-gray-675);
   border: 1px solid var(--pe-color-gray-550);
   border-radius: var(--pe-radius-block);

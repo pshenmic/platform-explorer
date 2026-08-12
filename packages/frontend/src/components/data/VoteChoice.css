@@ -1,7 +1,7 @@
 .VoteChoice--TowardsIdentity .ValueContainer__Value {
   display: flex;
-    align-items: center;
-    gap: var(--pe-space-2);
+  align-items: center;
+  gap: var(--pe-space-2);
 }
 
 .VoteChoice {

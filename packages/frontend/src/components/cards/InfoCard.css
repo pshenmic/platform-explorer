@@ -52,8 +52,8 @@
 @keyframes loading-process {
   from {
     opacity: 0;
-        left: -100%;
-        z-index: 6;
+    left: -100%;
+    z-index: 6;
   }
 
   50% {
@@ -62,7 +62,7 @@
 
   to {
     z-index: 6;
-        left: 100%;
+    left: 100%;
   }
 }
 
@@ -104,7 +104,12 @@
     background-color: var(--pe-color-gray-900);
   }
   &--Loading &__LoadingStub::after {
-    background: linear-gradient(90deg, transparent 0%, rgb(14, 117, 181) 50%, transparent 100%) !important;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgb(14, 117, 181) 50%,
+      transparent 100%
+    ) !important;
     width: 100%;
     height: 100%;
   }

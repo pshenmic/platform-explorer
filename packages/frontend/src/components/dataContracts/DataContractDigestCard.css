@@ -26,23 +26,28 @@
 
 .DataContractDigestCard__InfoContainer .InfoLine__Title svg {
   width: var(--pe-space-7);
-    height: var(--pe-space-7);
+  height: var(--pe-space-7);
 }
 
 .DataContractDigestCard__InfoLine--TopIdentity .InfoLine__Value {
   overflow: hidden;
 }
 
-.DataContractDigestCard__InfoLine--TotalTransactions .InfoLine__Title, .DataContractDigestCard__InfoLine--TotalTransactions .InfoLine__Title span, .DataContractDigestCard__InfoLine--DocumentsCount .InfoLine__Title, .DataContractDigestCard__InfoLine--DocumentsCount .InfoLine__Title span {
+.DataContractDigestCard__InfoLine--TotalTransactions .InfoLine__Title,
+.DataContractDigestCard__InfoLine--TotalTransactions .InfoLine__Title span,
+.DataContractDigestCard__InfoLine--DocumentsCount .InfoLine__Title,
+.DataContractDigestCard__InfoLine--DocumentsCount .InfoLine__Title span {
   align-items: center;
-    display: flex;
+  display: flex;
 }
 
-.DataContractDigestCard__InfoLine--TotalTransactions .InfoLine__Title span, .DataContractDigestCard__InfoLine--DocumentsCount .InfoLine__Title span {
+.DataContractDigestCard__InfoLine--TotalTransactions .InfoLine__Title span,
+.DataContractDigestCard__InfoLine--DocumentsCount .InfoLine__Title span {
   gap: var(--pe-space-3);
 }
 
-.DataContractDigestCard__InfoLine--TotalTransactions .InfoLine__Value, .DataContractDigestCard__InfoLine--DocumentsCount .InfoLine__Value {
+.DataContractDigestCard__InfoLine--TotalTransactions .InfoLine__Value,
+.DataContractDigestCard__InfoLine--DocumentsCount .InfoLine__Value {
   font-size: 0.813rem;
 }
 

@@ -99,12 +99,18 @@
 }
 @container (max-width: 104rem) {
   .ActivityList__ColumnTitles {
-    grid-template-columns: 7.5rem minmax(0, 25rem) minmax(0, 25rem) minmax(0, 25rem) minmax(0, 10rem) 9rem;
+    grid-template-columns: 7.5rem minmax(0, 25rem) minmax(0, 25rem) minmax(0, 25rem) minmax(
+        0,
+        10rem
+      ) 9rem;
   }
 }
 @container (max-width: 48rem) {
   .ActivityList__ColumnTitles {
-    grid-template-columns: 7.5rem minmax(6.5rem, 25rem) minmax(6.5rem, 25rem) minmax(6.5rem, 25rem) minmax(10rem, 10rem) 5rem;
+    grid-template-columns: 7.5rem minmax(6.5rem, 25rem) minmax(6.5rem, 25rem) minmax(6.5rem, 25rem) minmax(
+        10rem,
+        10rem
+      ) 5rem;
   }
 }
 .ActivityList__ColumnTitle {

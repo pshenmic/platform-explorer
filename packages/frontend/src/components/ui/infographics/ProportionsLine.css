@@ -1,6 +1,6 @@
 .ProportionsLine:hover .ProportionsLine__Item {
   opacity: var(--pe-opacity-faint);
-    transition: opacity 0.2s ease;
+  transition: opacity 0.2s ease;
 }
 
 .ProportionsLine {
@@ -13,7 +13,9 @@
   -ms-user-select: none;
   user-select: none;
   &__Item {
-    transition: width 0.3s ease, opacity 0.2s ease;
+    transition:
+      width 0.3s ease,
+      opacity 0.2s ease;
     min-width: min-content;
   }
   &__Item:hover {

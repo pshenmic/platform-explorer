@@ -25,20 +25,22 @@
 }
 
 .BlocksListItem--Timestamp,
-.BlocksListItem--Timestamp .DateBlock__Date, .BlocksListItem__Column--Timestamp,
+.BlocksListItem--Timestamp .DateBlock__Date,
+.BlocksListItem__Column--Timestamp,
 .BlocksListItem__Column--Timestamp .DateBlock__Date {
   font-size: var(--pe-text-sm);
 }
 
 .BlocksListItem .Identifier__CopyButton {
   opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.15s;
+  pointer-events: none;
+  transition: opacity 0.15s;
 }
 
-.BlocksListItem:hover .Identifier__CopyButton, .BlocksListItem:focus-within .Identifier__CopyButton {
+.BlocksListItem:hover .Identifier__CopyButton,
+.BlocksListItem:focus-within .Identifier__CopyButton {
   opacity: 1;
-    pointer-events: auto;
+  pointer-events: auto;
 }
 
 .BlocksListItem {
@@ -291,13 +293,13 @@
 
 .BlocksListItem__Column--Validator .Identifier__SymbolsContainer {
   display: -webkit-box;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 2;
-    line-height: 0.8rem;
-    max-height: 1.6rem;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: normal !important;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-height: 0.8rem;
+  max-height: 1.6rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: normal !important;
 }
 
 .BlocksListItem {
@@ -313,6 +315,6 @@
 @container (max-width: 56em) {
   .BlocksListItem__Column--Validator .Identifier__SymbolsContainer {
     -webkit-line-clamp: 1;
-        max-height: 0.8rem;
+    max-height: 0.8rem;
   }
 }

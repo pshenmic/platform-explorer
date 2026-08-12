@@ -16,7 +16,8 @@
 .PriceListItem:last-child {
   margin-bottom: 0;
 }
-.PriceListItem__Column--Credits, .PriceListItem__Column--Number {
+.PriceListItem__Column--Credits,
+.PriceListItem__Column--Number {
   font-size: 0.75rem;
   font-weight: 700;
 }
@@ -31,13 +32,15 @@
   flex-shrink: 0;
   margin-right: 12px;
 }
-.PriceListItem--Timestamp, .PriceListItem__Column--Timestamp {
+.PriceListItem--Timestamp,
+.PriceListItem__Column--Timestamp {
   font-family: var(--pe-font-mono);
   white-space: nowrap;
   color: #fff;
 }
 .PriceListItem--Timestamp,
-.PriceListItem--Timestamp .DateBlock__Date, .PriceListItem__Column--Timestamp,
+.PriceListItem--Timestamp .DateBlock__Date,
+.PriceListItem__Column--Timestamp,
 .PriceListItem__Column--Timestamp .DateBlock__Date {
   font-size: 0.75rem;
 }

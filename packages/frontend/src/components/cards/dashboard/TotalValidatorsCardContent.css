@@ -1,6 +1,6 @@
 .TotalValidatorsCardContent__Avatars .ImageGenerator {
   max-width: var(--pe-space-10);
-    max-height: var(--pe-space-10);
+  max-height: var(--pe-space-10);
 }
 
 .TotalValidatorsCardContent {
@@ -15,6 +15,6 @@
 @media screen and (max-width: 48em) {
   .TotalValidatorsCardContent__Avatars .ImageGenerator {
     width: var(--pe-space-8);
-        height: var(--pe-space-8);
+    height: var(--pe-space-8);
   }
 }

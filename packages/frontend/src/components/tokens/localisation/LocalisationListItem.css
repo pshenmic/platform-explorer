@@ -16,7 +16,8 @@
 .LocalisationListItem:last-child {
   margin-bottom: 0;
 }
-.LocalisationListItem__Column--Credits, .LocalisationListItem__Column--Number {
+.LocalisationListItem__Column--Credits,
+.LocalisationListItem__Column--Number {
   font-size: 0.75rem;
   font-weight: 700;
 }
@@ -31,13 +32,15 @@
   flex-shrink: 0;
   margin-right: 12px;
 }
-.LocalisationListItem--Timestamp, .LocalisationListItem__Column--Timestamp {
+.LocalisationListItem--Timestamp,
+.LocalisationListItem__Column--Timestamp {
   font-family: var(--pe-font-mono);
   white-space: nowrap;
   color: #fff;
 }
 .LocalisationListItem--Timestamp,
-.LocalisationListItem--Timestamp .DateBlock__Date, .LocalisationListItem__Column--Timestamp,
+.LocalisationListItem--Timestamp .DateBlock__Date,
+.LocalisationListItem__Column--Timestamp,
 .LocalisationListItem__Column--Timestamp .DateBlock__Date {
   font-size: 0.75rem;
 }

@@ -20,7 +20,13 @@
   flex: 1 1 auto;
   min-width: 0;
   overflow: hidden;
-  mask-image: linear-gradient(to right, transparent, #000 1.5rem, #000 calc(100% - 1.5rem), transparent);
+  mask-image: linear-gradient(
+    to right,
+    transparent,
+    #000 1.5rem,
+    #000 calc(100% - 1.5rem),
+    transparent
+  );
 }
 .TokensTrending__Track {
   display: inline-flex;

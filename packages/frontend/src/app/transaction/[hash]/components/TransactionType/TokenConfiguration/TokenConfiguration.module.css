@@ -1,13 +1,13 @@
 .container .position {
   padding: var(--pe-space-2) var(--pe-space-2_5);
-    width: fit-content;
-    font-family: var(--pe-font-mono);
-    color: var(--pe-color-fg);
-    font-weight: var(--pe-font-weight-normal);
-    font-style: Regular;
-    font-size: var(--pe-text-sm);
-    line-height: 100%;
-    letter-spacing: 0%;
+  width: fit-content;
+  font-family: var(--pe-font-mono);
+  color: var(--pe-color-fg);
+  font-weight: var(--pe-font-weight-normal);
+  font-style: Regular;
+  font-size: var(--pe-text-sm);
+  line-height: 100%;
+  letter-spacing: 0%;
 }
 
 .container .localization {
@@ -17,7 +17,7 @@
 .title {
   font-family: var(--pe-font-heading);
   font-size: var(--pe-text-sm);
-  letter-spacing: 0.var(--pe-space-1);
+  letter-spacing: 0.4px;
   text-transform: uppercase;
   font-weight: var(--pe-font-weight-bold);
   margin-bottom: var(--pe-space-3_5);

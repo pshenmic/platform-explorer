@@ -28,7 +28,10 @@
 @container (max-width: 700px) {
   .WithdrawalsList {
     &__ColumnTitles {
-      grid-template-columns: 133px minmax(0, 400px) minmax(0, 400px) minmax(0, 400px) minmax(50px, 200px) 44px;
+      grid-template-columns: 133px minmax(0, 400px) minmax(0, 400px) minmax(0, 400px) minmax(
+          50px,
+          200px
+        ) 44px;
     }
   }
 }

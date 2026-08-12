@@ -17,7 +17,7 @@
   &__ColumnTitle {
     word-wrap: break-word;
     overflow-wrap: anywhere;
-    letter-spacing: 0.var(--pe-space-1);
+    letter-spacing: 0.4px;
   }
 }
 
@@ -43,7 +43,7 @@
   }
   &__ShowMoreButton::before,
   &__ShowMoreButton::after {
-    content: '';
+    content: "";
     display: block;
     position: absolute;
     top: 0;
@@ -59,10 +59,10 @@
   &__ShowMoreButton::after {
     width: 300px;
     background: linear-gradient(
-    90deg,
-    rgba(255, 255, 255, 0),
-    rgba(255, 255, 255, 0.1),
-    rgba(255, 255, 255, 0)
+      90deg,
+      rgba(255, 255, 255, 0),
+      rgba(255, 255, 255, 0.1),
+      rgba(255, 255, 255, 0)
     );
     transform: translateX(-100%);
     opacity: 0;
@@ -73,12 +73,12 @@
 @keyframes SimpleList-flash {
   from {
     left: 0;
-        transform: translateX(-100%);
+    transform: translateX(-100%);
   }
 
   to {
     left: 100%;
-        transform: translateX(0);
+    transform: translateX(0);
   }
 }
 

@@ -54,7 +54,7 @@
 
 @container (max-width: 72rem) {
   .IdentitiesList__ColumnTitles .IdentitiesList__ColumnTitle--Contracts,
-    .IdentitiesList__ColumnTitles .IdentitiesListItem__Column--Contracts {
+  .IdentitiesList__ColumnTitles .IdentitiesListItem__Column--Contracts {
     display: none;
   }
 
@@ -67,7 +67,7 @@
 
 @container (max-width: 56rem) {
   .IdentitiesList__ColumnTitles .IdentitiesList__ColumnTitle--Documents,
-    .IdentitiesList__ColumnTitles .IdentitiesListItem__Column--Documents {
+  .IdentitiesList__ColumnTitles .IdentitiesListItem__Column--Documents {
     display: none;
   }
 
@@ -80,9 +80,9 @@
 
 @container (max-width: 44rem) {
   .IdentitiesList__ColumnTitles .IdentitiesList__ColumnTitle--Balance,
-    .IdentitiesList__ColumnTitles .IdentitiesListItem__Column--Balance,
-    .IdentitiesList__ColumnTitles .IdentitiesList__ColumnTitle--Txs,
-    .IdentitiesList__ColumnTitles .IdentitiesListItem__Column--Txs {
+  .IdentitiesList__ColumnTitles .IdentitiesListItem__Column--Balance,
+  .IdentitiesList__ColumnTitles .IdentitiesList__ColumnTitle--Txs,
+  .IdentitiesList__ColumnTitles .IdentitiesListItem__Column--Txs {
     display: none;
   }
 

@@ -25,20 +25,22 @@
 }
 
 .TransactionsListItem--Timestamp,
-.TransactionsListItem--Timestamp .DateBlock__Date, .TransactionsListItem__Column--Timestamp,
+.TransactionsListItem--Timestamp .DateBlock__Date,
+.TransactionsListItem__Column--Timestamp,
 .TransactionsListItem__Column--Timestamp .DateBlock__Date {
   font-size: var(--pe-text-sm);
 }
 
 .TransactionsListItem .Identifier__CopyButton {
   opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.15s;
+  pointer-events: none;
+  transition: opacity 0.15s;
 }
 
-.TransactionsListItem:hover .Identifier__CopyButton, .TransactionsListItem:focus-within .Identifier__CopyButton {
+.TransactionsListItem:hover .Identifier__CopyButton,
+.TransactionsListItem:focus-within .Identifier__CopyButton {
   opacity: 1;
-    pointer-events: auto;
+  pointer-events: auto;
 }
 
 .TransactionsListItem {
@@ -247,11 +249,11 @@
 
 @container (max-width: 660px) {
   .TransactionsListItem__Column--Owner .TransactionsListItem__OwnerLink,
-    .TransactionsListItem__Column--Owner .Identifier,
-    .TransactionsListItem__Column--Owner .TransactionsListItem__AliasContainer,
-    .TransactionsListItem__Column--Owner .Identifier__Avatar,
-    .TransactionsListItem__Column--Owner img,
-    .TransactionsListItem__Column--Owner a {
+  .TransactionsListItem__Column--Owner .Identifier,
+  .TransactionsListItem__Column--Owner .TransactionsListItem__AliasContainer,
+  .TransactionsListItem__Column--Owner .Identifier__Avatar,
+  .TransactionsListItem__Column--Owner img,
+  .TransactionsListItem__Column--Owner a {
     display: block !important;
   }
 
@@ -276,7 +278,8 @@
 }
 
 @container (max-width: 400px) {
-  .TransactionsListItem__Column, .TransactionsListItem__Column .Identifier {
+  .TransactionsListItem__Column,
+  .TransactionsListItem__Column .Identifier {
     font-size: 0.563rem;
   }
 

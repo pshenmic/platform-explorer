@@ -1,13 +1,13 @@
 .PlatformAddressTotalCard__Title .Alias__Name,
 .PlatformAddressTotalCard__Title .Alias__Domain {
   font-family: var(--pe-font-heading);
-    font-size: var(--pe-text-md);
-    font-weight: var(--pe-font-weight-bold);
+  font-size: var(--pe-text-md);
+  font-weight: var(--pe-font-weight-bold);
 }
 
 .PlatformAddressTotalCard__Title .Alias__Domain {
   color: var(--pe-color-brand-light);
-    opacity: 1;
+  opacity: 1;
 }
 
 .PlatformAddressTotalCard--Loading .InfoLine__Value {
@@ -94,24 +94,24 @@
 }
 
 .PlatformAddressTotalCard {
-  padding: calc(var(--pe-space-3) + 0px)  !important;
+  padding: calc(var(--pe-space-3) + 0px) !important;
 }
 
 @media screen and (min-width: 48em) {
   .PlatformAddressTotalCard {
-    padding: calc(var(--pe-space-4) + 0px)  !important;
+    padding: calc(var(--pe-space-4) + 0px) !important;
   }
 }
 
 @media screen and (min-width: 62em) {
   .PlatformAddressTotalCard {
-    padding: calc(var(--pe-space-5) + 0px)  !important;
+    padding: calc(var(--pe-space-5) + 0px) !important;
   }
 }
 
 @media screen and (min-width: 80em) {
   .PlatformAddressTotalCard {
-    padding: calc(var(--pe-space-6) + 0px)  !important;
+    padding: calc(var(--pe-space-6) + 0px) !important;
   }
 }
 
@@ -128,8 +128,8 @@
 @keyframes loading-process {
   from {
     opacity: 0;
-        left: -100%;
-        z-index: 6;
+    left: -100%;
+    z-index: 6;
   }
 
   50% {
@@ -138,7 +138,7 @@
 
   to {
     z-index: 6;
-        left: 100%;
+    left: 100%;
   }
 }
 
@@ -158,7 +158,7 @@
 
 .PlatformAddressTotalCard__InfoLine--Address .InfoLine__Value {
   container-type: inline-size;
-    width: 100%;
+  width: 100%;
 }
 
 .PlatformAddressTotalCard__InfoLine--Address .Identifier__SymbolsContainer {
@@ -193,7 +193,12 @@
     background-color: var(--pe-color-gray-900);
   }
   &--Loading &__Avatar::after {
-    background: linear-gradient(90deg, transparent 0%, rgb(14, 117, 181) 50%, transparent 100%) !important;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgb(14, 117, 181) 50%,
+      transparent 100%
+    ) !important;
     width: 100%;
     height: 100%;
   }
@@ -226,7 +231,8 @@
 }
 
 @media screen and (max-width: 62em) {
-  .PlatformAddressTotalCard__InfoLine--Address .InfoLine__Value, .PlatformAddressTotalCard__InfoLine--Balance .InfoLine__Value {
+  .PlatformAddressTotalCard__InfoLine--Address .InfoLine__Value,
+  .PlatformAddressTotalCard__InfoLine--Balance .InfoLine__Value {
     text-align: left;
   }
 
@@ -253,15 +259,15 @@
 
 @media screen and (max-width: 48em) {
   .PlatformAddressTotalCard__Title .Alias__Name,
-    .PlatformAddressTotalCard__Title .Alias__Domain {
+  .PlatformAddressTotalCard__Title .Alias__Domain {
     font-family: var(--pe-font-heading);
-        font-size: var(--pe-text-md);
-        font-weight: var(--pe-font-weight-bold);
+    font-size: var(--pe-text-md);
+    font-weight: var(--pe-font-weight-bold);
   }
 
   .PlatformAddressTotalCard__Title .Alias__Domain {
     color: var(--pe-color-brand-light);
-        opacity: 1;
+    opacity: 1;
   }
 
   .PlatformAddressTotalCard--Loading .InfoLine__Value {
@@ -359,8 +365,8 @@
       top: 0;
     }
     &__Separator {
-      margin-top: calc(var(--pe-space-3) + 0px)  !important;
-      margin-bottom: calc(var(--pe-space-3) + 0px)  !important;
+      margin-top: calc(var(--pe-space-3) + 0px) !important;
+      margin-bottom: calc(var(--pe-space-3) + 0px) !important;
     }
   }
 }
@@ -368,7 +374,7 @@
 @media screen and (max-width: 48em) and (min-width: 48em) {
   .PlatformAddressTotalCard {
     &__Separator {
-      margin-top: calc(var(--pe-space-4) + 0px)  !important;
+      margin-top: calc(var(--pe-space-4) + 0px) !important;
     }
   }
 }
@@ -376,7 +382,7 @@
 @media screen and (max-width: 48em) and (min-width: 62em) {
   .PlatformAddressTotalCard {
     &__Separator {
-      margin-top: calc(var(--pe-space-5) + 0px)  !important;
+      margin-top: calc(var(--pe-space-5) + 0px) !important;
     }
   }
 }
@@ -384,7 +390,7 @@
 @media screen and (max-width: 48em) and (min-width: 80em) {
   .PlatformAddressTotalCard {
     &__Separator {
-      margin-top: calc(var(--pe-space-6) + 0px)  !important;
+      margin-top: calc(var(--pe-space-6) + 0px) !important;
     }
   }
 }
@@ -392,7 +398,7 @@
 @media screen and (max-width: 48em) and (min-width: 48em) {
   .PlatformAddressTotalCard {
     &__Separator {
-      margin-bottom: calc(var(--pe-space-4) + 0px)  !important;
+      margin-bottom: calc(var(--pe-space-4) + 0px) !important;
     }
   }
 }
@@ -400,7 +406,7 @@
 @media screen and (max-width: 48em) and (min-width: 62em) {
   .PlatformAddressTotalCard {
     &__Separator {
-      margin-bottom: calc(var(--pe-space-5) + 0px)  !important;
+      margin-bottom: calc(var(--pe-space-5) + 0px) !important;
     }
   }
 }
@@ -408,7 +414,7 @@
 @media screen and (max-width: 48em) and (min-width: 80em) {
   .PlatformAddressTotalCard {
     &__Separator {
-      margin-bottom: calc(var(--pe-space-6) + 0px)  !important;
+      margin-bottom: calc(var(--pe-space-6) + 0px) !important;
     }
   }
 }
@@ -432,9 +438,9 @@
 @media screen and (max-width: 30em) {
   .PlatformAddressTotalCard {
     &__Digest {
-      margin-left: calc(calc(0px - var(--pe-space-3)) + 0px)  !important;
-      margin-right: calc(calc(0px - var(--pe-space-3)) + 0px)  !important;
-      margin-bottom: calc(calc(0px - var(--pe-space-3)) + 0px)  !important;
+      margin-left: calc(calc(0px - var(--pe-space-3)) + 0px) !important;
+      margin-right: calc(calc(0px - var(--pe-space-3)) + 0px) !important;
+      margin-bottom: calc(calc(0px - var(--pe-space-3)) + 0px) !important;
     }
   }
 }
@@ -442,7 +448,7 @@
 @media screen and (max-width: 30em) and (min-width: 48em) {
   .PlatformAddressTotalCard {
     &__Digest {
-      margin-left: calc(calc(0px - var(--pe-space-4)) + 0px)  !important;
+      margin-left: calc(calc(0px - var(--pe-space-4)) + 0px) !important;
     }
   }
 }
@@ -450,7 +456,7 @@
 @media screen and (max-width: 30em) and (min-width: 62em) {
   .PlatformAddressTotalCard {
     &__Digest {
-      margin-left: calc(calc(0px - var(--pe-space-5)) + 0px)  !important;
+      margin-left: calc(calc(0px - var(--pe-space-5)) + 0px) !important;
     }
   }
 }
@@ -458,7 +464,7 @@
 @media screen and (max-width: 30em) and (min-width: 80em) {
   .PlatformAddressTotalCard {
     &__Digest {
-      margin-left: calc(calc(0px - var(--pe-space-6)) + 0px)  !important;
+      margin-left: calc(calc(0px - var(--pe-space-6)) + 0px) !important;
     }
   }
 }
@@ -466,7 +472,7 @@
 @media screen and (max-width: 30em) and (min-width: 48em) {
   .PlatformAddressTotalCard {
     &__Digest {
-      margin-right: calc(calc(0px - var(--pe-space-4)) + 0px)  !important;
+      margin-right: calc(calc(0px - var(--pe-space-4)) + 0px) !important;
     }
   }
 }
@@ -474,7 +480,7 @@
 @media screen and (max-width: 30em) and (min-width: 62em) {
   .PlatformAddressTotalCard {
     &__Digest {
-      margin-right: calc(calc(0px - var(--pe-space-5)) + 0px)  !important;
+      margin-right: calc(calc(0px - var(--pe-space-5)) + 0px) !important;
     }
   }
 }
@@ -482,7 +488,7 @@
 @media screen and (max-width: 30em) and (min-width: 80em) {
   .PlatformAddressTotalCard {
     &__Digest {
-      margin-right: calc(calc(0px - var(--pe-space-6)) + 0px)  !important;
+      margin-right: calc(calc(0px - var(--pe-space-6)) + 0px) !important;
     }
   }
 }
@@ -490,7 +496,7 @@
 @media screen and (max-width: 30em) and (min-width: 48em) {
   .PlatformAddressTotalCard {
     &__Digest {
-      margin-bottom: calc(calc(0px - var(--pe-space-4)) + 0px)  !important;
+      margin-bottom: calc(calc(0px - var(--pe-space-4)) + 0px) !important;
     }
   }
 }
@@ -498,7 +504,7 @@
 @media screen and (max-width: 30em) and (min-width: 62em) {
   .PlatformAddressTotalCard {
     &__Digest {
-      margin-bottom: calc(calc(0px - var(--pe-space-5)) + 0px)  !important;
+      margin-bottom: calc(calc(0px - var(--pe-space-5)) + 0px) !important;
     }
   }
 }
@@ -506,7 +512,7 @@
 @media screen and (max-width: 30em) and (min-width: 80em) {
   .PlatformAddressTotalCard {
     &__Digest {
-      margin-bottom: calc(calc(0px - var(--pe-space-6)) + 0px)  !important;
+      margin-bottom: calc(calc(0px - var(--pe-space-6)) + 0px) !important;
     }
   }
 }

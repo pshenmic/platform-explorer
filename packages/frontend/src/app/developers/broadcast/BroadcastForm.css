@@ -1,7 +1,7 @@
 .BroadcastForm__Signature .CopyButton {
   position: absolute;
-    top: var(--pe-space-2);
-    right: var(--pe-space-2);
+  top: var(--pe-space-2);
+  right: var(--pe-space-2);
 }
 
 .BroadcastForm .InfoLine {
@@ -10,17 +10,17 @@
 
 .BroadcastForm .InfoLine .InfoLine__Title {
   width: 200px;
-    max-width: 200px;
-    line-height: var(--pe-space-5);
-    flex-grow: 0;
-    flex-shrink: 0;
+  max-width: 200px;
+  line-height: var(--pe-space-5);
+  flex-grow: 0;
+  flex-shrink: 0;
 }
 
 .BroadcastForm .InfoLine .InfoLine__Value {
   text-align: left;
-    font-size: var(--pe-text-sm);
-    flex: 1;
-    min-width: 0;
+  font-size: var(--pe-text-sm);
+  flex: 1;
+  min-width: 0;
 }
 
 .BroadcastForm__InputLine .InfoLine__Value {

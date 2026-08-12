@@ -25,7 +25,8 @@
 }
 
 .QuorumListItem--Timestamp,
-.QuorumListItem--Timestamp .DateBlock__Date, .QuorumListItem__Column--Timestamp,
+.QuorumListItem--Timestamp .DateBlock__Date,
+.QuorumListItem__Column--Timestamp,
 .QuorumListItem__Column--Timestamp .DateBlock__Date {
   font-size: var(--pe-text-sm);
 }

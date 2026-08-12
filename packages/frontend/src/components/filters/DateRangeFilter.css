@@ -1,6 +1,6 @@
 .MobileFilterMenu .DateRangeFilter {
   min-width: unset !important;
-    width: 100%;
+  width: 100%;
 }
 
 .DateRangeFilter {
@@ -27,13 +27,14 @@
 }
 
 @media screen and (max-width: 55em) {
-  .MobileFilterMenu .DateRangeFilter__CalendarTitle, .MobileFilterMenu .DateRangeFilter__ValuesTitle {
+  .MobileFilterMenu .DateRangeFilter__CalendarTitle,
+  .MobileFilterMenu .DateRangeFilter__ValuesTitle {
     display: block;
   }
 
   .MobileFilterMenu .DateRangeFilter__Values {
     width: auto;
-        flex-wrap: nowrap;
+    flex-wrap: nowrap;
   }
 
   .MobileFilterMenu .DateRangeFilter__ValueButton--Submit {
@@ -58,13 +59,13 @@
 @media screen and (max-width: 30em) {
   .MobileFilterMenu .DateRangeFilter__ValuesContainer {
     flex-wrap: wrap;
-        justify-content: center;
+    justify-content: center;
   }
 
   .MobileFilterMenu .DateRangeFilter__Values {
     width: 100%;
-        flex-wrap: wrap;
-        justify-content: center;
+    flex-wrap: wrap;
+    justify-content: center;
   }
 }
 

@@ -5,7 +5,7 @@
     margin: 0 -15px;
   }
   &__CodeContainer::before {
-    content: '';
+    content: "";
     position: absolute;
     z-index: -1;
     width: calc(100% - 30px);

@@ -2,29 +2,29 @@
 body > .react-select,
 body > .react-select__menu-portal > .react-select {
   font-size: var(--pe-text-sm);
-    font-weight: var(--pe-font-weight-medium);
-    font-family: var(--pe-font-heading);
+  font-weight: var(--pe-font-weight-medium);
+  font-family: var(--pe-font-heading);
 }
 
 .Select .react-select__control,
 body > .react-select__control,
 body > .react-select__menu-portal > .react-select__control {
   padding: var(--pe-space-1) var(--pe-space-3);
-    gap: var(--pe-space-1);
-    border: none;
-    border-radius: var(--pe-radius-def);
-    color: var(--pe-color-fg);
-    background-color: var(--pe-color-brand-normal);
-    width: max-content;
-    min-height: 0;
-    box-shadow: none;
+  gap: var(--pe-space-1);
+  border: none;
+  border-radius: var(--pe-radius-def);
+  color: var(--pe-color-fg);
+  background-color: var(--pe-color-brand-normal);
+  width: max-content;
+  min-height: 0;
+  box-shadow: none;
 }
 
 .Select .react-select__control:hover,
 body > .react-select__control:hover,
 body > .react-select__menu-portal > .react-select__control:hover {
   cursor: pointer;
-    background-color: var(--pe-color-brand-light);
+  background-color: var(--pe-color-brand-light);
 }
 
 .Select .react-select__control--menu-is-open,
@@ -37,26 +37,29 @@ body > .react-select__menu-portal > .react-select__control--menu-is-open {
 body > .react-select__value-container,
 body > .react-select__menu-portal > .react-select__value-container {
   padding: 0;
-    line-height: var(--pe-space-4);
+  line-height: var(--pe-space-4);
 }
 
 .Select .react-select__single-value,
 body > .react-select__single-value,
 body > .react-select__menu-portal > .react-select__single-value {
   margin: 0;
-    width: max-content;
+  width: max-content;
 }
 
 .Select .react-select__input-container,
 body > .react-select__input-container,
 body > .react-select__menu-portal > .react-select__input-container {
   margin: 0;
-    padding: 0;
+  padding: 0;
 }
 
 .Select .react-select__control--menu-is-open .react-select__dropdown-indicator,
 body > .react-select__control--menu-is-open .react-select__dropdown-indicator,
-body > .react-select__menu-portal > .react-select__control--menu-is-open .react-select__dropdown-indicator {
+body
+  > .react-select__menu-portal
+  > .react-select__control--menu-is-open
+  .react-select__dropdown-indicator {
   transform: rotate(-180deg);
 }
 
@@ -64,20 +67,20 @@ body > .react-select__menu-portal > .react-select__control--menu-is-open .react-
 body > .react-select__dropdown-indicator,
 body > .react-select__menu-portal > .react-select__dropdown-indicator {
   width: var(--pe-space-4);
-    height: var(--pe-space-4);
-    padding: 0;
-    transition: transform 0.15s;
+  height: var(--pe-space-4);
+  padding: 0;
+  transition: transform 0.15s;
 }
 
 .Select .react-select__dropdown-indicator svg,
 body > .react-select__dropdown-indicator svg,
 body > .react-select__menu-portal > .react-select__dropdown-indicator svg {
   width: var(--pe-space-4);
-    height: var(--pe-space-4);
-    display: block;
-    flex-shrink: 0;
-    fill: var(--pe-color-fg);
-    stroke: var(--pe-color-fg);
+  height: var(--pe-space-4);
+  display: block;
+  flex-shrink: 0;
+  fill: var(--pe-color-fg);
+  stroke: var(--pe-color-fg);
 }
 
 .Select .react-select__input-container,
@@ -86,28 +89,29 @@ body > .react-select__menu-portal > .react-select__input-container {
   color: var(--pe-color-fg);
 }
 
-.Select .react-select__placeholder, .Select .react-select__single-value,
+.Select .react-select__placeholder,
+.Select .react-select__single-value,
 body > .react-select__placeholder,
 body > .react-select__single-value,
 body > .react-select__menu-portal > .react-select__placeholder,
 body > .react-select__menu-portal > .react-select__single-value {
   color: var(--pe-color-fg);
-    font-size: var(--pe-text-sm);
-    font-weight: var(--pe-font-weight-medium);
-    font-family: var(--pe-font-heading);
+  font-size: var(--pe-text-sm);
+  font-weight: var(--pe-font-weight-medium);
+  font-family: var(--pe-font-heading);
 }
 
 .Select .react-select__menu,
 body > .react-select__menu,
 body > .react-select__menu-portal > .react-select__menu {
   z-index: 1000;
-    background-color: var(--pe-color-fg);
-    color: var(--pe-color-brand-normal);
-    border-radius: var(--pe-radius-def);
-    overflow: hidden;
-    font-size: var(--pe-text-sm);
-    font-family: var(--pe-font-heading);
-    width: 100%;
+  background-color: var(--pe-color-fg);
+  color: var(--pe-color-brand-normal);
+  border-radius: var(--pe-radius-def);
+  overflow: hidden;
+  font-size: var(--pe-text-sm);
+  font-family: var(--pe-font-heading);
+  width: 100%;
 }
 
 .Select .react-select__indicator-separator,
@@ -120,20 +124,20 @@ body > .react-select__menu-portal > .react-select__indicator-separator {
 body > .react-select__menu-list,
 body > .react-select__menu-portal > .react-select__menu-list {
   padding: var(--pe-space-1);
-    display: flex;
-    flex-direction: column;
-    gap: var(--pe-space-1);
+  display: flex;
+  flex-direction: column;
+  gap: var(--pe-space-1);
 }
 
 .Select .react-select__option,
 body > .react-select__option,
 body > .react-select__menu-portal > .react-select__option {
   width: 100%;
-    min-width: max-content;
-    border-radius: var(--pe-radius-sm);
-    line-height: var(--pe-space-4);
-    padding: var(--pe-space-1) var(--pe-space-2);
-    transition: 0.1s;
+  min-width: max-content;
+  border-radius: var(--pe-radius-sm);
+  line-height: var(--pe-space-4);
+  padding: var(--pe-space-1) var(--pe-space-2);
+  transition: 0.1s;
 }
 
 .Select .react-select__option:hover,
@@ -152,21 +156,21 @@ body > .react-select__menu-portal > .react-select__option--is-focused {
 body > .react-select__option:hover,
 body > .react-select__menu-portal > .react-select__option:hover {
   background-color: rgba(var(--pe-color-gray-675-rgb), 0.09);
-    color: var(--pe-color-gray-900);
+  color: var(--pe-color-gray-900);
 }
 
 .Select .react-select__option--is-selected,
 body > .react-select__option--is-selected,
 body > .react-select__menu-portal > .react-select__option--is-selected {
   background-color: var(--pe-color-brand-light) !important;
-    color: var(--pe-color-fg) !important;
+  color: var(--pe-color-fg) !important;
 }
 
 .Select .react-select__option--is-selected:hover,
 body > .react-select__option--is-selected:hover,
 body > .react-select__menu-portal > .react-select__option--is-selected:hover {
   background-color: var(--pe-color-brand-light);
-    cursor: default !important;
+  cursor: default !important;
 }
 
 .Select .react-select__menu-portal,

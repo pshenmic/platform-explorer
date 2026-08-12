@@ -1,8 +1,8 @@
 .TimeframeMenu__Calendar--Stub .DateRangePicker {
   opacity: 0.05;
-    -webkit-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }
 
 .TimeframeMenu {

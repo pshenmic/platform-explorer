@@ -26,7 +26,7 @@
 
 .ContestedResourcesDigestCard__InfoContainer .InfoLine__Title svg {
   width: var(--pe-space-7);
-    height: var(--pe-space-7);
+  height: var(--pe-space-7);
 }
 
 .ContestedResourcesDigestCard__InfoLine .InfoLine__Value {
@@ -37,10 +37,12 @@
   overflow: hidden;
 }
 
-.ContestedResourcesDigestCard, .ContestedResourcesDigestCard__Cards, .ContestedResourcesDigestCard__LinesContainer {
+.ContestedResourcesDigestCard,
+.ContestedResourcesDigestCard__Cards,
+.ContestedResourcesDigestCard__LinesContainer {
   display: flex;
-    gap: var(--pe-space-3_5);
-    flex-wrap: wrap;
+  gap: var(--pe-space-3_5);
+  flex-wrap: wrap;
 }
 
 .ContestedResourcesDigestCard--Loading .ContestedResourcesDigestCard__Cards .LoadingLine {
@@ -142,13 +144,13 @@
 @container (max-width: 44em) {
   .ContestedResourcesDigestCard__Card .CreditsBlock {
     flex-direction: row;
-        flex-wrap: wrap;
-        align-items: center;
+    flex-wrap: wrap;
+    align-items: center;
   }
 
   .ContestedResourcesDigestCard__Card .CreditsBlock .CreditsBlock__Usd {
     margin-top: var(--pe-space-1);
-        margin-bottom: var(--pe-space-1);
+    margin-bottom: var(--pe-space-1);
   }
 
   .ContestedResourcesDigestCard {
@@ -180,7 +182,7 @@
 
   .ContestedResourcesDigestCard__InfoLine .InfoLine__Value {
     width: 100%;
-        text-align: left;
+    text-align: left;
   }
 
   .ContestedResourcesDigestCard__InfoLine .InfoLine__Value .DateBlock__InfoContainer {

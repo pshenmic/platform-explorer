@@ -1,18 +1,19 @@
 .MobileFilterMenu .MultiSelectFilter {
   width: 100%;
-    gap: var(--pe-space-2);
+  gap: var(--pe-space-2);
 }
 
 .MobileFilterMenu .FilterGroup__Title {
   display: none;
 }
 
-.MobileFilterMenu__Item, .MobileFilterMenu .MultiSelectFilter__Item {
+.MobileFilterMenu__Item,
+.MobileFilterMenu .MultiSelectFilter__Item {
   background-color: var(--pe-color-gray-800);
-    border-radius: var(--pe-radius-def);
-    padding: var(--pe-space-4);
-    transition: 0.1s;
-    margin: 0;
+  border-radius: var(--pe-radius-def);
+  padding: var(--pe-space-4);
+  transition: 0.1s;
+  margin: 0;
 }
 
 .MobileFilterMenu {
@@ -47,40 +48,70 @@
 }
 
 @media (hover: hover) and (pointer: fine) {
-  .MobileFilterMenu__Item:hover, .MobileFilterMenu .MultiSelectFilter__Item:hover {
+  .MobileFilterMenu__Item:hover,
+  .MobileFilterMenu .MultiSelectFilter__Item:hover {
     cursor: pointer;
-        background-color: var(--pe-color-gray-700);
+    background-color: var(--pe-color-gray-700);
   }
 }
 
-.MobileFilterMenu__Item:not(.MobileFilterMenu__Item--Active, .MobileFilterMenu .MultiSelectFilter__Item--Active):not(.MobileFilterMenu__Item--Selected, .MobileFilterMenu .MultiSelectFilter__Item--Selected):hover .Checkbox path, .MobileFilterMenu .MultiSelectFilter__Item:not(.MobileFilterMenu__Item--Active, .MobileFilterMenu .MultiSelectFilter__Item--Active):not(.MobileFilterMenu__Item--Selected, .MobileFilterMenu .MultiSelectFilter__Item--Selected):hover .Checkbox path {
+.MobileFilterMenu__Item:not(
+    .MobileFilterMenu__Item--Active,
+    .MobileFilterMenu .MultiSelectFilter__Item--Active
+  ):not(
+    .MobileFilterMenu__Item--Selected,
+    .MobileFilterMenu .MultiSelectFilter__Item--Selected
+  ):hover
+  .Checkbox
+  path,
+.MobileFilterMenu
+  .MultiSelectFilter__Item:not(
+    .MobileFilterMenu__Item--Active,
+    .MobileFilterMenu .MultiSelectFilter__Item--Active
+  ):not(
+    .MobileFilterMenu__Item--Selected,
+    .MobileFilterMenu .MultiSelectFilter__Item--Selected
+  ):hover
+  .Checkbox
+  path {
   fill: var(--pe-color-gray-600);
 }
 
-.MobileFilterMenu__Item:active, .MobileFilterMenu .MultiSelectFilter__Item:active {
+.MobileFilterMenu__Item:active,
+.MobileFilterMenu .MultiSelectFilter__Item:active {
   transform: translateY(1px);
-    background-color: var(--pe-color-gray-700);
+  background-color: var(--pe-color-gray-700);
 }
 
-.MobileFilterMenu__Item--Active, .MobileFilterMenu__Item--Selected, .MobileFilterMenu .MultiSelectFilter__Item--Active, .MobileFilterMenu .MultiSelectFilter__Item--Selected {
+.MobileFilterMenu__Item--Active,
+.MobileFilterMenu__Item--Selected,
+.MobileFilterMenu .MultiSelectFilter__Item--Active,
+.MobileFilterMenu .MultiSelectFilter__Item--Selected {
   background-color: rgba(var(--pe-color-brand-normal-rgb), 0.1);
 }
 
 @media (hover: hover) and (pointer: fine) {
-  .MobileFilterMenu__Item--Active:hover, .MobileFilterMenu__Item--Selected:hover, .MobileFilterMenu .MultiSelectFilter__Item--Active:hover, .MobileFilterMenu .MultiSelectFilter__Item--Selected:hover {
+  .MobileFilterMenu__Item--Active:hover,
+  .MobileFilterMenu__Item--Selected:hover,
+  .MobileFilterMenu .MultiSelectFilter__Item--Active:hover,
+  .MobileFilterMenu .MultiSelectFilter__Item--Selected:hover {
     cursor: pointer;
-        background-color: rgba(var(--pe-color-brand-light-rgb), 0.2);
+    background-color: rgba(var(--pe-color-brand-light-rgb), 0.2);
   }
 }
 
-.MobileFilterMenu__Item--Active:active, .MobileFilterMenu__Item--Selected:active, .MobileFilterMenu .MultiSelectFilter__Item--Active:active, .MobileFilterMenu .MultiSelectFilter__Item--Selected:active {
+.MobileFilterMenu__Item--Active:active,
+.MobileFilterMenu__Item--Selected:active,
+.MobileFilterMenu .MultiSelectFilter__Item--Active:active,
+.MobileFilterMenu .MultiSelectFilter__Item--Selected:active {
   transform: translateY(1px);
-    background-color: rgba(var(--pe-color-brand-normal-rgb), 0.8);
+  background-color: rgba(var(--pe-color-brand-normal-rgb), 0.8);
 }
 
-.MobileFilterMenu__SubmitButton, .MobileFilterMenu .FilterActions Button {
+.MobileFilterMenu__SubmitButton,
+.MobileFilterMenu .FilterActions Button {
   padding: var(--pe-space-4) var(--pe-space-8) !important;
-    height: auto !important;
+  height: auto !important;
 }
 
 .MobileFilterMenu .InputFilter .FilterActions {
@@ -89,8 +120,8 @@
 
 .MobileFilterMenu .FilterActions {
   justify-content: center;
-    gap: var(--pe-space-2);
-    margin-top: var(--pe-space-2);
+  gap: var(--pe-space-2);
+  margin-top: var(--pe-space-2);
 }
 
 .MobileFilterMenu .FilterActions .MultiSelectFilter__ActionButton {

@@ -1,7 +1,7 @@
 .HomePage .InfoBlock {
   backdrop-filter: none;
-    -webkit-backdrop-filter: none;
-    background: rgba(24, 31, 34, 0.88);
+  -webkit-backdrop-filter: none;
+  background: rgba(24, 31, 34, 0.88);
 }
 
 .HomeOverview {
@@ -25,41 +25,41 @@
 
 .HomeOverview__Sys .HomeHero__MetaLabel {
   font-family: var(--pe-font-heading);
-    font-weight: var(--pe-font-weight-bold);
-    font-size: var(--pe-text-xs);
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-    color: var(--pe-color-fg);
-    white-space: nowrap;
-    text-align: left;
+  font-weight: var(--pe-font-weight-bold);
+  font-size: var(--pe-text-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--pe-color-fg);
+  white-space: nowrap;
+  text-align: left;
 }
 
 .HomeOverview__Sys .HomeHero__Meta {
   flex: 1;
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: var(--pe-space-3) var(--pe-space-4);
-    padding: 0;
-    border-bottom: none;
-    min-height: 0;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--pe-space-3) var(--pe-space-4);
+  padding: 0;
+  border-bottom: none;
+  min-height: 0;
 }
 
 .HomeOverview__Sys .HomeHero__MetaItem {
   display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    align-items: flex-start;
-    gap: var(--pe-space-2);
-    width: 100%;
-    min-width: 0;
-    min-height: 0;
-    padding: var(--pe-space-1) 0;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  gap: var(--pe-space-2);
+  width: 100%;
+  min-width: 0;
+  min-height: 0;
+  padding: var(--pe-space-1) 0;
 }
 
 .HomeOverview__Sys .HomeHero__MetaValue {
   font-size: 0.8125rem;
-    white-space: nowrap;
-    max-width: 100%;
+  white-space: nowrap;
+  max-width: 100%;
 }
 
 .HomeOverview {
@@ -72,38 +72,38 @@
 @media screen and (min-width: 62em) {
   .HomeOverview__Sys .HomeHero__Meta {
     display: flex;
-        flex-direction: column;
-        grid-template-columns: none;
-        gap: 0;
+    flex-direction: column;
+    grid-template-columns: none;
+    gap: 0;
   }
 
   .HomeOverview__Sys .HomeHero__MetaItem {
     min-height: 0;
-        padding: 0;
-        gap: var(--pe-space-2);
+    padding: 0;
+    gap: var(--pe-space-2);
   }
 
   .HomeOverview__Sys .HomeHero__MetaItem:first-child {
     flex: 0 0 auto;
-        padding-bottom: var(--pe-space-2);
+    padding-bottom: var(--pe-space-2);
   }
 
   .HomeOverview__Sys .HomeHero__MetaItem:first-child .HomeHero__MetaLabel {
     display: flex;
-        align-items: center;
-        min-height: calc(0.825rem + var(--pe-space-3));
-        padding: var(--pe-space-1_5) 0;
-        margin-bottom: var(--pe-space-1);
-        width: 100%;
+    align-items: center;
+    min-height: calc(0.825rem + var(--pe-space-3));
+    padding: var(--pe-space-1_5) 0;
+    margin-bottom: var(--pe-space-1);
+    width: 100%;
   }
 
   .HomeOverview__Sys .HomeHero__MetaItem:not(:first-child) {
     flex: 1 1 0;
-        justify-content: center;
+    justify-content: center;
   }
 
   .HomeOverview__Sys .HomeHero__MetaLabel,
-    .HomeOverview__Sys .HomeHero__MetaValue {
+  .HomeOverview__Sys .HomeHero__MetaValue {
     white-space: nowrap;
   }
 
@@ -146,30 +146,30 @@
 
 .HomeGovCard .HomeHero__StatusBar {
   flex: 1;
-    flex-direction: column;
-    flex-wrap: nowrap;
-    align-items: stretch;
-    border-top: none;
-    margin-top: 0;
-    padding: 0;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  align-items: stretch;
+  border-top: none;
+  margin-top: 0;
+  padding: 0;
 }
 
 .HomeGovCard .HomeHero__StatusCell {
   flex: 1 1 auto;
-    justify-content: center;
-    padding: var(--pe-space-3_5) 0;
-    border-right: none;
-    border-bottom: 1px solid rgba(var(--pe-color-gray-800-rgb), 0.6);
+  justify-content: center;
+  padding: var(--pe-space-3_5) 0;
+  border-right: none;
+  border-bottom: 1px solid rgba(var(--pe-color-gray-800-rgb), 0.6);
 }
 
 .HomeGovCard .HomeHero__StatusCell:first-child {
   flex-grow: 1;
-    padding-top: var(--pe-space-1);
+  padding-top: var(--pe-space-1);
 }
 
 .HomeGovCard .HomeHero__StatusCell:last-child {
   border-bottom: none;
-    padding-bottom: 0;
+  padding-bottom: 0;
 }
 
 .HomeGovCard {

@@ -25,7 +25,8 @@
 }
 
 .ValidatorListItem--Timestamp,
-.ValidatorListItem--Timestamp .DateBlock__Date, .ValidatorListItem__Column--Timestamp,
+.ValidatorListItem--Timestamp .DateBlock__Date,
+.ValidatorListItem__Column--Timestamp,
 .ValidatorListItem__Column--Timestamp .DateBlock__Date {
   font-size: var(--pe-text-sm);
 }

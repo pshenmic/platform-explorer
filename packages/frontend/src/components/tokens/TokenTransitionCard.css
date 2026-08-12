@@ -25,7 +25,8 @@
   max-width: 100%;
 }
 @container (max-width: 600px) {
-  .TokenTransitionCard__InfoLine--Data, .TokenTransitionCard__InfoLine--PrefundedBalance {
+  .TokenTransitionCard__InfoLine--Data,
+  .TokenTransitionCard__InfoLine--PrefundedBalance {
     flex-wrap: wrap;
   }
   .TokenTransitionCard__InfoLine--Data code {
@@ -34,7 +35,11 @@
   }
 }
 @media screen and (max-width: 48em) {
-  .TokenTransitionCard__InfoLine:not(.TokenTransitionCard__InfoLine--Revision):not(.TokenTransitionCard__InfoLine--Action) .InfoLine .InfoLine__Value {
+  .TokenTransitionCard__InfoLine:not(.TokenTransitionCard__InfoLine--Revision):not(
+      .TokenTransitionCard__InfoLine--Action
+    )
+    .InfoLine
+    .InfoLine__Value {
     flex-grow: 1;
   }
 }
@@ -43,19 +48,25 @@
     flex-wrap: wrap;
     justify-content: space-between;
   }
-  .TokenTransitionCard__InfoLine:not(.TokenTransitionCard__InfoLine--Revision):not(.TokenTransitionCard__InfoLine--Action) .InfoLine__Title {
+  .TokenTransitionCard__InfoLine:not(.TokenTransitionCard__InfoLine--Revision):not(
+      .TokenTransitionCard__InfoLine--Action
+    )
+    .InfoLine__Title {
     margin-bottom: 4px;
     margin-right: 0;
   }
-  .TokenTransitionCard__InfoLine--Revision, .TokenTransitionCard__InfoLine--Action {
+  .TokenTransitionCard__InfoLine--Revision,
+  .TokenTransitionCard__InfoLine--Action {
     justify-content: space-between;
   }
   .TokenTransitionCard__InfoLine--Revision .InfoLine__Title,
-  .TokenTransitionCard__InfoLine--Revision .InfoLine__Value, .TokenTransitionCard__InfoLine--Action .InfoLine__Title,
+  .TokenTransitionCard__InfoLine--Revision .InfoLine__Value,
+  .TokenTransitionCard__InfoLine--Action .InfoLine__Title,
   .TokenTransitionCard__InfoLine--Action .InfoLine__Value {
     width: max-content !important;
   }
-  .TokenTransitionCard__InfoLine--Revision .InfoLine__Value, .TokenTransitionCard__InfoLine--Action .InfoLine__Value {
+  .TokenTransitionCard__InfoLine--Revision .InfoLine__Value,
+  .TokenTransitionCard__InfoLine--Action .InfoLine__Value {
     width: max-content;
     text-align: right !important;
   }

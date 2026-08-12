@@ -25,14 +25,15 @@
 }
 
 .DocumentsListItem--Timestamp,
-.DocumentsListItem--Timestamp .DateBlock__Date, .DocumentsListItem__Column--Timestamp,
+.DocumentsListItem--Timestamp .DateBlock__Date,
+.DocumentsListItem__Column--Timestamp,
 .DocumentsListItem__Column--Timestamp .DateBlock__Date {
   font-size: var(--pe-text-sm);
 }
 
 .DocumentsListItem {
   display: grid;
-  grid-column: 1/-1;
+  grid-column: 1 / -1;
   grid-template-columns: subgrid;
   column-gap: var(--pe-space-3);
   &:active {

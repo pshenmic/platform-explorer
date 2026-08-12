@@ -39,8 +39,8 @@
 @media screen and (max-width: 600px) {
   .DashboardCards .Slider__Carousel {
     width: 110%;
-        margin: 0 calc(-5% - var(--pe-space-1));
-        overflow: visible;
+    margin: 0 calc(-5% - var(--pe-space-1));
+    overflow: visible;
   }
 
   .DashboardCards {

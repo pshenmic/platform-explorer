@@ -31,7 +31,7 @@
     max-width: 100%;
   }
   &--Loading &__Value::before {
-    content: '';
+    content: "";
     position: absolute;
     top: 0;
     left: 0;
@@ -42,7 +42,7 @@
     opacity: 1;
   }
   &--Loading &__Value::after {
-    content: '';
+    content: "";
     position: absolute;
     z-index: 2;
     top: 0;

@@ -1,6 +1,6 @@
 .VoteIndexValues {
   background-color: var(--pe-color-gray-650);
-  border: 1px solid #404E53;
+  border: 1px solid #404e53;
   border-radius: var(--pe-radius-def);
   font-size: var(--pe-text-sm);
   font-family: var(--pe-font-mono);
@@ -10,7 +10,7 @@
     justify-content: space-between;
     gap: var(--pe-space-2);
     padding: var(--pe-space-3);
-    border-bottom: 1px solid #404E53;
+    border-bottom: 1px solid #404e53;
   }
   &__Row:last-child,
   &__Titles:last-child {

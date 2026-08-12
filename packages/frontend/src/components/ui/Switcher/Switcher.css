@@ -1,16 +1,16 @@
 input:checked ~ .Switcher__OptionTitle {
   color: var(--pe-color-brand-normal);
-    position: relative;
+  position: relative;
 }
 
 input:checked ~ .Switcher__OptionTitle::after {
   content: "";
-    width: 100%;
-    height: 1px;
-    background-color: var(--pe-color-brand-normal);
-    position: absolute;
-    bottom: 0px;
-    left: 0;
+  width: 100%;
+  height: 1px;
+  background-color: var(--pe-color-brand-normal);
+  position: absolute;
+  bottom: 0px;
+  left: 0;
 }
 
 .Switcher {

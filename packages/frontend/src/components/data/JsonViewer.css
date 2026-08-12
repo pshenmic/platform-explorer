@@ -1,12 +1,12 @@
 .JsonViewer .cm-scroller {
   scroll-behavior: smooth;
-    scrollbar-width: thin;
-    scrollbar-color: var(--pe-color-brand-normal) transparent;
+  scrollbar-width: thin;
+  scrollbar-color: var(--pe-color-brand-normal) transparent;
 }
 
 .JsonViewer .cm-scroller::-webkit-scrollbar {
   height: var(--pe-space-2);
-    width: var(--pe-space-2);
+  width: var(--pe-space-2);
 }
 
 .JsonViewer .cm-scroller::-webkit-scrollbar-track {
@@ -15,9 +15,9 @@
 
 .JsonViewer .cm-scroller::-webkit-scrollbar-thumb {
   background-color: var(--pe-color-brand-normal);
-    border-radius: var(--pe-radius-md);
-    border: 2px solid transparent;
-    background-clip: padding-box;
+  border-radius: var(--pe-radius-md);
+  border: 2px solid transparent;
+  background-clip: padding-box;
 }
 
 .JsonViewer .cm-scroller::-webkit-scrollbar-thumb:hover {
@@ -26,7 +26,7 @@
 
 .JsonViewer--Fill > .cm-theme {
   flex: 1;
-    min-height: 0;
+  min-height: 0;
 }
 
 .JsonViewer--Fill .cm-editor {

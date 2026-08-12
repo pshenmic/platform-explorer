@@ -156,7 +156,8 @@
 }
 
 @keyframes MetricChartGhostBar {
-  0%, 100% {
+  0%,
+  100% {
     opacity: var(--pe-opacity-muted);
   }
 

@@ -17,7 +17,12 @@
     width: 520px;
     height: 520px;
     border-radius: 50%;
-    background: radial-gradient(circle, rgba(var(--pe-color-brand-normal-rgb), 0.22) 0%, rgba(var(--pe-color-brand-normal-rgb), 0.08) 38%, rgba(var(--pe-color-brand-normal-rgb), 0) 68%);
+    background: radial-gradient(
+      circle,
+      rgba(var(--pe-color-brand-normal-rgb), 0.22) 0%,
+      rgba(var(--pe-color-brand-normal-rgb), 0.08) 38%,
+      rgba(var(--pe-color-brand-normal-rgb), 0) 68%
+    );
     pointer-events: none;
     z-index: 0;
   }
@@ -177,7 +182,7 @@
 
 .HomeHero__GovSeg.is-active i {
   width: 18px;
-    background: var(--pe-color-brand-normal);
+  background: var(--pe-color-brand-normal);
 }
 
 .HomeHero {
@@ -231,7 +236,9 @@
     line-height: 1;
     color: var(--pe-color-fg);
     text-shadow: 0 0 var(--pe-space-3) rgba(var(--pe-color-brand-normal-rgb), 0.45);
-    transition: color 0.15s, text-shadow 0.15s;
+    transition:
+      color 0.15s,
+      text-shadow 0.15s;
   }
   &__GovCount:hover {
     color: var(--pe-color-brand-light);
@@ -275,7 +282,9 @@
     height: var(--pe-space-1);
     border-radius: 2px;
     background: rgba(var(--pe-color-gray-500-rgb), 0.45);
-    transition: background 0.15s, width 0.2s ease;
+    transition:
+      background 0.15s,
+      width 0.2s ease;
   }
   &__GovSeg:hover i {
     background: rgba(255, 255, 255, 0.55);
@@ -389,28 +398,28 @@
 
 .HomeHero__MetaChip--Status.is-ok {
   color: var(--pe-color-green-label);
-    border-color: rgba(var(--pe-color-green-label-rgb), 0.4);
-    background: rgba(var(--pe-color-green-label-rgb), 0.12);
-    animation: HeroLiveBreath 2.4s ease-in-out infinite;
+  border-color: rgba(var(--pe-color-green-label-rgb), 0.4);
+  background: rgba(var(--pe-color-green-label-rgb), 0.12);
+  animation: HeroLiveBreath 2.4s ease-in-out infinite;
 }
 
 .HomeHero__MetaChip--Status.is-down {
   color: var(--pe-color-red-default);
-    border-color: rgba(var(--pe-color-red-default-rgb), 0.45);
-    background: rgba(var(--pe-color-red-default-rgb), 0.12);
-    box-shadow: 0 0 var(--pe-space-2_5) rgba(var(--pe-color-red-default-rgb), 0.25);
+  border-color: rgba(var(--pe-color-red-default-rgb), 0.45);
+  background: rgba(var(--pe-color-red-default-rgb), 0.12);
+  box-shadow: 0 0 var(--pe-space-2_5) rgba(var(--pe-color-red-default-rgb), 0.25);
 }
 
 .HomeHero__MetaChip--Status.is-loading {
   color: var(--pe-color-gray-500);
-    border-color: rgba(255, 255, 255, 0.15);
-    background: transparent;
-    animation: HeroMetaPulse 1.2s ease-in-out infinite;
+  border-color: rgba(255, 255, 255, 0.15);
+  background: transparent;
+  animation: HeroMetaPulse 1.2s ease-in-out infinite;
 }
 
 .HomeHero__MetaVer .chakra-icon {
   color: rgba(var(--pe-color-brand-normal-rgb), 0.7);
-    transition: color 0.15s;
+  transition: color 0.15s;
 }
 
 .HomeHero__MetaVer:hover .chakra-icon {
@@ -448,7 +457,10 @@
     background: rgba(255, 255, 255, 0.03);
     line-height: 1.3;
     max-width: 100%;
-    transition: color 0.15s, border-color 0.15s, background 0.15s;
+    transition:
+      color 0.15s,
+      border-color 0.15s,
+      background 0.15s;
   }
   &__MetaChip--Loading {
     color: var(--pe-color-gray-500);
@@ -458,7 +470,10 @@
   }
   &__MetaVer {
     text-decoration: none;
-    transition: color 0.15s, border-color 0.15s, background 0.15s;
+    transition:
+      color 0.15s,
+      border-color 0.15s,
+      background 0.15s;
   }
   &__MetaVer:hover {
     color: var(--pe-color-brand-light);
@@ -472,7 +487,9 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .HomeHero__MetaChip--Status.is-ok, .HomeHero__MetaChip--Status.is-loading, .HomeHero__LiveBadge {
+  .HomeHero__MetaChip--Status.is-ok,
+  .HomeHero__MetaChip--Status.is-loading,
+  .HomeHero__LiveBadge {
     animation: none;
   }
 }
@@ -604,7 +621,9 @@
     border-radius: 50%;
     background: rgb(var(--wave-c-rgb, var(--pe-color-brand-light-rgb)));
     box-shadow: 0 0 0 3px rgba(var(--wave-c-rgb, var(--pe-color-brand-normal-rgb)), 0.18);
-    transition: transform 0.15s, box-shadow 0.15s;
+    transition:
+      transform 0.15s,
+      box-shadow 0.15s;
   }
   &__WaveLabel {
     font-size: var(--pe-text-2xs);
@@ -621,7 +640,8 @@
   &__WavePoint:hover &__WaveDot,
   &__WavePoint:focus-within &__WaveDot {
     transform: scale(1.5);
-    box-shadow: 0 0 var(--pe-space-3) 3px rgba(var(--wave-c-rgb, var(--pe-color-brand-light-rgb)), 0.9);
+    box-shadow: 0 0 var(--pe-space-3) 3px
+      rgba(var(--wave-c-rgb, var(--pe-color-brand-light-rgb)), 0.9);
   }
 }
 
@@ -661,22 +681,22 @@
 
 .HomeHero__LiveBadge.is-live {
   color: var(--pe-color-green-label);
-    border-color: rgba(var(--pe-color-green-label-rgb), 0.4);
-    background: rgba(var(--pe-color-green-label-rgb), 0.12);
-    animation: HeroLiveBreath 2.4s ease-in-out infinite;
+  border-color: rgba(var(--pe-color-green-label-rgb), 0.4);
+  background: rgba(var(--pe-color-green-label-rgb), 0.12);
+  animation: HeroLiveBreath 2.4s ease-in-out infinite;
 }
 
 .HomeHero__LiveBadge.is-down {
   color: var(--pe-color-red-default);
-    border-color: rgba(var(--pe-color-red-default-rgb), 0.45);
-    background: rgba(var(--pe-color-red-default-rgb), 0.12);
-    box-shadow: 0 0 var(--pe-space-2_5) rgba(var(--pe-color-red-default-rgb), 0.25);
+  border-color: rgba(var(--pe-color-red-default-rgb), 0.45);
+  background: rgba(var(--pe-color-red-default-rgb), 0.12);
+  box-shadow: 0 0 var(--pe-space-2_5) rgba(var(--pe-color-red-default-rgb), 0.25);
 }
 
 .HomeHero__LiveBadge.is-loading {
   color: var(--pe-color-gray-500);
-    border-color: rgba(255, 255, 255, 0.15);
-    animation: HeroMetaPulse 1.2s ease-in-out infinite;
+  border-color: rgba(255, 255, 255, 0.15);
+  animation: HeroMetaPulse 1.2s ease-in-out infinite;
 }
 
 .HomeHero__Height .BigNumber__Space:not(:last-child) {
@@ -740,7 +760,8 @@
 }
 
 @keyframes HeroMetaPulse {
-  0%, 100% {
+  0%,
+  100% {
     opacity: 0.4;
   }
 
@@ -750,7 +771,8 @@
 }
 
 @keyframes HeroLiveBreath {
-  0%, 100% {
+  0%,
+  100% {
     box-shadow: 0 0 var(--pe-space-1) rgba(var(--pe-color-green-label-rgb), 0.15);
   }
 
@@ -762,12 +784,13 @@
 @keyframes GovTickerIn {
   from {
     opacity: 0;
-        transform: translateY(-var(--pe-space-1));
+    transform: translateY(-var(--pe-space-1));
   }
 }
 
 @keyframes EpochDotBreath {
-  0%, 100% {
+  0%,
+  100% {
     box-shadow: 0 0 var(--pe-space-2) 2px rgba(var(--pe-color-brand-light-rgb), 0.55);
   }
 
@@ -779,29 +802,29 @@
 @keyframes EpochFlowPulse {
   0% {
     opacity: 0;
-        transform: scale(0.5);
+    transform: scale(0.5);
   }
 
   2% {
     opacity: 1;
-        transform: scale(1.1);
+    transform: scale(1.1);
   }
 
   10% {
     opacity: 0;
-        transform: scale(2.4);
+    transform: scale(2.4);
   }
 
   100% {
     opacity: 0;
-        transform: scale(2.4);
+    transform: scale(2.4);
   }
 }
 
 @keyframes EpochBeamDrop {
   0% {
     top: 0;
-        opacity: 1;
+    opacity: 1;
   }
 
   75% {
@@ -810,36 +833,36 @@
 
   100% {
     top: calc(100% - var(--pe-space-3));
-        opacity: 0;
+    opacity: 0;
   }
 }
 
 @keyframes EpochWashPour {
   0% {
     opacity: 0;
-        transform: scale(0.08, 0.2);
+    transform: scale(0.08, 0.2);
   }
 
   35% {
     opacity: 0.9;
-        transform: scale(0.16, 1);
+    transform: scale(0.16, 1);
   }
 
   100% {
     opacity: 1;
-        transform: scale(1, 1);
+    transform: scale(1, 1);
   }
 }
 
 @keyframes EpochPointIn {
   from {
     opacity: 0;
-        transform: translate(-50%, -50%) scale(0.85);
+    transform: translate(-50%, -50%) scale(0.85);
   }
 
   to {
     opacity: 0.8;
-        transform: translate(-50%, -50%) scale(1);
+    transform: translate(-50%, -50%) scale(1);
   }
 }
 
@@ -871,7 +894,11 @@
     flex: 1;
     width: 1px;
     margin-top: var(--pe-space-3);
-    background: repeating-linear-gradient(180deg, rgba(255, 255, 255, 0.14) 0 var(--pe-space-1), transparent var(--pe-space-1) 9px);
+    background: repeating-linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.14) 0 var(--pe-space-1),
+      transparent var(--pe-space-1) 9px
+    );
   }
 }
 
@@ -925,7 +952,9 @@
     white-space: nowrap;
     text-align: center;
     border-bottom: 1px dotted rgba(var(--pe-color-gray-500-rgb), 0.5);
-    transition: color 0.15s, border-color 0.15s;
+    transition:
+      color 0.15s,
+      border-color 0.15s;
   }
   &__BoundIcon {
     flex-shrink: 0;
@@ -1043,7 +1072,9 @@
 }
 
 .EpochsWave__Point .HomeHero__WaveDot {
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 .EpochsWave__Point .HomeHero__WaveValue {
@@ -1054,7 +1085,9 @@
   &__GhostDot--slot {
     animation: none;
     opacity: 0.35;
-    transition: top 0.35s ease, opacity 0.2s ease;
+    transition:
+      top 0.35s ease,
+      opacity 0.2s ease;
   }
   &__Line,
   &__Area {
@@ -1067,7 +1100,9 @@
     font: inherit;
     cursor: pointer;
     opacity: 0.8;
-    transition: opacity 0.2s ease, top 0.35s ease;
+    transition:
+      opacity 0.2s ease,
+      top 0.35s ease;
     width: 28px;
     height: 28px;
     display: flex;
@@ -1138,7 +1173,9 @@
 
 .EpochsWave__Point .HomeHero__WaveLabel {
   font-size: var(--pe-text-xs);
-    transition: color 0.2s, transform 0.2s;
+  transition:
+    color 0.2s,
+    transform 0.2s;
 }
 
 .EpochsWave__Point .HomeHero__WaveDot {
@@ -1147,15 +1184,20 @@
 
 .EpochsWave__Point .HomeHero__WaveDot::before {
   content: "";
-    position: absolute;
-    inset: -5px;
-    border-radius: 50%;
-    background: radial-gradient(circle, rgba(184, 236, 255, 0.9) 0%, rgba(120, 200, 255, 0.35) 45%, transparent 70%);
-    opacity: 0;
-    transform: scale(0.5);
-    animation: EpochFlowPulse 5s linear infinite;
-    animation-delay: var(--scan-pulse-delay, 0s);
-    pointer-events: none;
+  position: absolute;
+  inset: -5px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(184, 236, 255, 0.9) 0%,
+    rgba(120, 200, 255, 0.35) 45%,
+    transparent 70%
+  );
+  opacity: 0;
+  transform: scale(0.5);
+  animation: EpochFlowPulse 5s linear infinite;
+  animation-delay: var(--scan-pulse-delay, 0s);
+  pointer-events: none;
 }
 
 .EpochsWave {
@@ -1188,7 +1230,7 @@
 
 .EpochsWave__Point.is-selected .HomeHero__WaveDot {
   transform: scale(1.5);
-    animation: EpochDotBreath 2.4s ease-in-out infinite;
+  animation: EpochDotBreath 2.4s ease-in-out infinite;
 }
 
 .EpochsWave__Point.is-selected .HomeHero__WaveDot::before {
@@ -1197,7 +1239,7 @@
 
 .EpochsWave__Point.is-selected .HomeHero__WaveLabel {
   color: var(--pe-color-brand-light);
-    transform: scale(1.12);
+  transform: scale(1.12);
 }
 
 .EpochsWave__Point.is-live .HomeHero__WaveDot {
@@ -1216,8 +1258,15 @@
   &__Beam {
     position: absolute;
     bottom: 0;
-    background: linear-gradient(180deg, transparent, rgba(var(--epoch-color-rgb, var(--pe-color-brand-light-rgb)), 0.24));
-    transition: left 0.3s ease, width 0.3s ease, top 0.3s ease;
+    background: linear-gradient(
+      180deg,
+      transparent,
+      rgba(var(--epoch-color-rgb, var(--pe-color-brand-light-rgb)), 0.24)
+    );
+    transition:
+      left 0.3s ease,
+      width 0.3s ease,
+      top 0.3s ease;
     pointer-events: none;
   }
   &__BeamPulse {
@@ -1227,7 +1276,8 @@
     height: var(--pe-space-3);
     border-radius: 2px;
     background: rgb(var(--epoch-color-rgb, var(--pe-color-brand-light-rgb)));
-    box-shadow: 0 0 var(--pe-space-2) 2px rgba(var(--epoch-color-rgb, var(--pe-color-brand-light-rgb)), 0.8);
+    box-shadow: 0 0 var(--pe-space-2) 2px
+      rgba(var(--epoch-color-rgb, var(--pe-color-brand-light-rgb)), 0.8);
     animation: EpochBeamDrop 0.45s ease-in forwards;
   }
   &__BeamPulse--l {
@@ -1241,12 +1291,13 @@
 @media (prefers-reduced-motion: reduce) {
   .EpochsWave__Point.is-selected .HomeHero__WaveDot {
     animation: none;
-        box-shadow: 0 0 var(--pe-space-3) 3px rgba(var(--wave-c-rgb, var(--pe-color-brand-light-rgb)), 0.9);
+    box-shadow: 0 0 var(--pe-space-3) 3px
+      rgba(var(--wave-c-rgb, var(--pe-color-brand-light-rgb)), 0.9);
   }
 
   .EpochsWave__Point .HomeHero__WaveDot::before {
     animation: none;
-        opacity: 0;
+    opacity: 0;
   }
 
   .EpochsWave {
@@ -1291,7 +1342,12 @@
   &__Wash {
     position: absolute;
     inset: 0;
-    background: radial-gradient(ellipse 60% 150% at calc(100% * (var(--epoch-seg-l, 0) + var(--epoch-seg-w, 1) / 2)) 0%, rgba(var(--epoch-color-rgb, var(--pe-color-brand-normal-rgb)), 0.2), rgba(var(--epoch-color-rgb, var(--pe-color-brand-normal-rgb)), 0.06) 55%, transparent 90%);
+    background: radial-gradient(
+      ellipse 60% 150% at calc(100% * (var(--epoch-seg-l, 0) + var(--epoch-seg-w, 1) / 2)) 0%,
+      rgba(var(--epoch-color-rgb, var(--pe-color-brand-normal-rgb)), 0.2),
+      rgba(var(--epoch-color-rgb, var(--pe-color-brand-normal-rgb)), 0.06) 55%,
+      transparent 90%
+    );
     transform-origin: calc(100% * (var(--epoch-seg-l, 0) + var(--epoch-seg-w, 1) / 2)) top;
     transition: background 0.35s ease;
     pointer-events: none;
@@ -1357,15 +1413,17 @@
 
 .EpochsOverview__Cells .HomeHero__StatusCell {
   position: relative;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
-    gap: 5px;
-    min-width: 0;
-    border: none;
-    text-align: center;
-    box-shadow: inset -1px 0 0 0 rgba(var(--pe-color-gray-800-rgb), 0.5), inset 0 -1px 0 0 rgba(var(--pe-color-gray-800-rgb), 0.4);
-    padding: var(--pe-space-3) var(--pe-space-2_5) var(--pe-space-3_5);
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 5px;
+  min-width: 0;
+  border: none;
+  text-align: center;
+  box-shadow:
+    inset -1px 0 0 0 rgba(var(--pe-color-gray-800-rgb), 0.5),
+    inset 0 -1px 0 0 rgba(var(--pe-color-gray-800-rgb), 0.4);
+  padding: var(--pe-space-3) var(--pe-space-2_5) var(--pe-space-3_5);
 }
 
 .EpochsOverview {
@@ -1376,8 +1434,15 @@
     left: calc(100% * var(--epoch-seg-l, 0));
     width: calc(100% * var(--epoch-seg-w, 1));
     height: 2px;
-    background: linear-gradient(90deg, transparent, rgba(var(--epoch-color-rgb, var(--pe-color-brand-light-rgb)), 0.75), transparent);
-    transition: left 0.3s ease, width 0.3s ease;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(var(--epoch-color-rgb, var(--pe-color-brand-light-rgb)), 0.75),
+      transparent
+    );
+    transition:
+      left 0.3s ease,
+      width 0.3s ease;
     pointer-events: none;
     z-index: 1;
   }
@@ -1391,16 +1456,16 @@
 
 .EpochsOverview__Cells .HomeHero__StatusHead {
   position: relative;
-    display: flex;
-    align-items: flex-start;
-    justify-content: center;
-    gap: 3px;
-    width: 100%;
-    max-width: 100%;
-    min-width: 0;
-    flex-shrink: 1;
-    white-space: normal;
-    box-sizing: border-box;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 3px;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  flex-shrink: 1;
+  white-space: normal;
+  box-sizing: border-box;
 }
 
 @media screen and (max-width: 48em) {
@@ -1411,55 +1476,55 @@
 
 .EpochsOverview__Cells .HomeHero__StatusLabel {
   font-family: var(--pe-font-heading);
-    font-weight: var(--pe-font-weight-bold);
-    font-size: var(--pe-text-xs);
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-    color: var(--pe-color-fg);
-    line-height: 1.15;
-    flex: 1 1 auto;
-    min-width: 0;
-    max-width: calc(100% - var(--pe-space-3_5));
-    text-align: center;
-    white-space: normal;
+  font-weight: var(--pe-font-weight-bold);
+  font-size: var(--pe-text-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--pe-color-fg);
+  line-height: 1.15;
+  flex: 1 1 auto;
+  min-width: 0;
+  max-width: calc(100% - var(--pe-space-3_5));
+  text-align: center;
+  white-space: normal;
 }
 
 @media screen and (max-width: 48em) {
   .EpochsOverview__Cells .HomeHero__StatusLabel {
     font-size: var(--pe-text-2xs);
-        letter-spacing: 0.03em;
-        max-width: 100%;
+    letter-spacing: 0.03em;
+    max-width: 100%;
   }
 }
 
 .EpochsOverview__Cells .HomeHero__StatusInfo {
   position: static;
-    flex: 0 0 auto;
-    margin-left: 0;
-    margin-top: 1px;
-    padding: 2px;
-    line-height: 0;
-    transform: none;
+  flex: 0 0 auto;
+  margin-left: 0;
+  margin-top: 1px;
+  padding: 2px;
+  line-height: 0;
+  transform: none;
 }
 
 @media screen and (max-width: 48em) {
   .EpochsOverview__Cells .HomeHero__StatusInfo {
     position: absolute;
-        right: var(--pe-space-1);
-        bottom: var(--pe-space-1);
-        z-index: 2;
-        margin-top: 0;
-        padding: var(--pe-space-1);
-        color: var(--pe-color-gray-500);
+    right: var(--pe-space-1);
+    bottom: var(--pe-space-1);
+    z-index: 2;
+    margin-top: 0;
+    padding: var(--pe-space-1);
+    color: var(--pe-color-gray-500);
   }
 }
 
 .EpochsOverview__Cells .HomeHero__StatusValue {
   min-width: 0;
-    text-align: center;
-    width: 100%;
-    display: flex;
-    justify-content: center;
+  text-align: center;
+  width: 100%;
+  display: flex;
+  justify-content: center;
 }
 
 .EpochsOverview {
@@ -1616,6 +1681,8 @@
     text-overflow: ellipsis;
     line-height: var(--pe-space-5);
     border-bottom: 1px dotted rgba(var(--pe-color-gray-500-rgb), 0.6);
-    transition: color 0.15s, border-color 0.15s;
+    transition:
+      color 0.15s,
+      border-color 0.15s;
   }
 }

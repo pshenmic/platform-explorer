@@ -47,7 +47,10 @@
   &__ColumnTitles {
     display: grid;
     gap: var(--pe-space-4);
-    grid-template-columns: 70px minmax(0, 600px) minmax(0, 400px) minmax(0, 150px) minmax(120px, 150px) 65px;
+    grid-template-columns: 70px minmax(0, 600px) minmax(0, 400px) minmax(0, 150px) minmax(
+        120px,
+        150px
+      ) 65px;
   }
 }
 

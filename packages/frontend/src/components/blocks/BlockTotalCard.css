@@ -1,13 +1,13 @@
 .BlockTotalCard__Title .Alias__Name,
 .BlockTotalCard__Title .Alias__Domain {
   font-family: var(--pe-font-heading);
-    font-size: var(--pe-text-md);
-    font-weight: var(--pe-font-weight-bold);
+  font-size: var(--pe-text-md);
+  font-weight: var(--pe-font-weight-bold);
 }
 
 .BlockTotalCard__Title .Alias__Domain {
   color: var(--pe-color-brand-light);
-    opacity: 1;
+  opacity: 1;
 }
 
 .BlockTotalCard--Loading .InfoLine__Value {
@@ -93,19 +93,23 @@
   }
 }
 
-.BlockTotalCard__InfoLine--QuorumHash .InfoLine__Value, .BlockTotalCard__InfoLine--AppHash .InfoLine__Value, .BlockTotalCard__InfoLine--Hash .InfoLine__Value {
+.BlockTotalCard__InfoLine--QuorumHash .InfoLine__Value,
+.BlockTotalCard__InfoLine--AppHash .InfoLine__Value,
+.BlockTotalCard__InfoLine--Hash .InfoLine__Value {
   width: 100%;
 }
 
-.BlockTotalCard__InfoLine--QuorumHash .Identifier, .BlockTotalCard__InfoLine--AppHash .Identifier, .BlockTotalCard__InfoLine--Hash .Identifier {
+.BlockTotalCard__InfoLine--QuorumHash .Identifier,
+.BlockTotalCard__InfoLine--AppHash .Identifier,
+.BlockTotalCard__InfoLine--Hash .Identifier {
   justify-content: flex-end;
 }
 
 .BlockTotalCard__BlockHeight .ValueCard {
   justify-content: space-between;
-    align-items: center;
-    gap: var(--pe-space-1);
-    width: max-content;
+  align-items: center;
+  gap: var(--pe-space-1);
+  width: max-content;
 }
 
 .BlockTotalCard__BlockHeight .ValueCard svg {
@@ -131,15 +135,15 @@
 
 @media screen and (max-width: 30em) {
   .BlockTotalCard__Title .Alias__Name,
-    .BlockTotalCard__Title .Alias__Domain {
+  .BlockTotalCard__Title .Alias__Domain {
     font-family: var(--pe-font-heading);
-        font-size: var(--pe-text-md);
-        font-weight: var(--pe-font-weight-bold);
+    font-size: var(--pe-text-md);
+    font-weight: var(--pe-font-weight-bold);
   }
 
   .BlockTotalCard__Title .Alias__Domain {
     color: var(--pe-color-brand-light);
-        opacity: 1;
+    opacity: 1;
   }
 
   .BlockTotalCard--Loading .InfoLine__Value {
@@ -237,7 +241,7 @@
 
   .BlockTotalCard__InfoLine--Hash .Identifier {
     justify-content: flex-start;
-        text-align: left;
+    text-align: left;
   }
 
   .BlockTotalCard {

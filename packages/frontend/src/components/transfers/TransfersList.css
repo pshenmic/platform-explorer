@@ -68,14 +68,20 @@
     width: 100%;
     display: grid;
     gap: var(--pe-space-4);
-    grid-template-columns: 70px minmax(0, 400px) minmax(0, 500rem) minmax(185px, 185px) minmax(100px, 100px) 128px;
+    grid-template-columns: 70px minmax(0, 400px) minmax(0, 500rem) minmax(185px, 185px) minmax(
+        100px,
+        100px
+      ) 128px;
   }
 }
 
 @container (max-width: 90em) {
   .TransfersList {
     &__ColumnTitles {
-      grid-template-columns: 70px minmax(0, 400px) minmax(0, 400px) minmax(185px, 185px) minmax(100px, 100px) 128px;
+      grid-template-columns: 70px minmax(0, 400px) minmax(0, 400px) minmax(185px, 185px) minmax(
+          100px,
+          100px
+        ) 128px;
     }
   }
 }

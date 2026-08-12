@@ -1,13 +1,13 @@
 .DocumentTotalCard__Title .Alias__Name,
 .DocumentTotalCard__Title .Alias__Domain {
   font-family: var(--pe-font-heading);
-    font-size: var(--pe-text-md);
-    font-weight: var(--pe-font-weight-bold);
+  font-size: var(--pe-text-md);
+  font-weight: var(--pe-font-weight-bold);
 }
 
 .DocumentTotalCard__Title .Alias__Domain {
   color: var(--pe-color-brand-light);
-    opacity: 1;
+  opacity: 1;
 }
 
 .DocumentTotalCard--Loading .InfoLine__Value {
@@ -97,12 +97,14 @@
   justify-content: flex-end;
 }
 
-.DocumentTotalCard__Identifier .InfoLine__Value, .DocumentTotalCard__Entropy .InfoLine__Value {
+.DocumentTotalCard__Identifier .InfoLine__Value,
+.DocumentTotalCard__Entropy .InfoLine__Value {
   width: 100%;
-    text-align: right;
+  text-align: right;
 }
 
-.DocumentTotalCard__Identifier .InfoLine__Value .Identifier, .DocumentTotalCard__Entropy .InfoLine__Value .Identifier {
+.DocumentTotalCard__Identifier .InfoLine__Value .Identifier,
+.DocumentTotalCard__Entropy .InfoLine__Value .Identifier {
   justify-content: flex-end;
 }
 
@@ -122,15 +124,15 @@
 
 @media screen and (max-width: 48em) {
   .DocumentTotalCard__Title .Alias__Name,
-    .DocumentTotalCard__Title .Alias__Domain {
+  .DocumentTotalCard__Title .Alias__Domain {
     font-family: var(--pe-font-heading);
-        font-size: var(--pe-text-md);
-        font-weight: var(--pe-font-weight-bold);
+    font-size: var(--pe-text-md);
+    font-weight: var(--pe-font-weight-bold);
   }
 
   .DocumentTotalCard__Title .Alias__Domain {
     color: var(--pe-color-brand-light);
-        opacity: 1;
+    opacity: 1;
   }
 
   .DocumentTotalCard--Loading .InfoLine__Value {
@@ -224,19 +226,25 @@
 @media screen and (max-width: 48em) {
   .DocumentTotalCard__Header .InfoLine {
     gap: 5px;
-        flex-wrap: wrap;
-        justify-content: flex-start;
-        flex-direction: column;
-        align-items: flex-start;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    flex-direction: column;
+    align-items: flex-start;
   }
 
-  .DocumentTotalCard__Header .InfoLine:not(.DocumentTotalCard__InfoLine--Revision) .DocumentTotalCard__Header .InfoLine__Title {
+  .DocumentTotalCard__Header
+    .InfoLine:not(.DocumentTotalCard__InfoLine--Revision)
+    .DocumentTotalCard__Header
+    .InfoLine__Title {
     width: 100%;
   }
 
-  .DocumentTotalCard__Header .InfoLine:not(.DocumentTotalCard__InfoLine--Revision) .DocumentTotalCard__Header .InfoLine__Value {
+  .DocumentTotalCard__Header
+    .InfoLine:not(.DocumentTotalCard__InfoLine--Revision)
+    .DocumentTotalCard__Header
+    .InfoLine__Value {
     justify-content: flex-start;
-        text-align: left;
+    text-align: left;
   }
 
   .DocumentTotalCard__Identifier .Identifier {

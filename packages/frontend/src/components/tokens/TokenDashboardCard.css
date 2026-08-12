@@ -1,7 +1,8 @@
 .TokenDashboardCard {
   padding: 24px 30px;
 }
-.TokenDashboardCard__Name, .TokenDashboardCard__Ticker {
+.TokenDashboardCard__Name,
+.TokenDashboardCard__Ticker {
   font-size: 1rem;
   font-weight: 800;
   font-family: var(--pe-font-heading);

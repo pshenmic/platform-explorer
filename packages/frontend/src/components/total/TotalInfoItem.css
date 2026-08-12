@@ -29,10 +29,10 @@
 
 .TotalInfo--Christmas .TotalInfoItem--Blocks::before {
   background: url("/images/icons/block-present.svg") no-repeat center;
-    background-size: contain;
-    height: 48px;
-    width: 48px;
-    margin-bottom: var(--pe-space-4);
+  background-size: contain;
+  height: 48px;
+  width: 48px;
+  margin-bottom: var(--pe-space-4);
 }
 
 a .TotalInfoItem__Title {
@@ -41,16 +41,16 @@ a .TotalInfoItem__Title {
 
 a .TotalInfoItem__Title::after {
   content: "";
-    position: absolute;
-    right: 0px;
-    top: 50%;
-    transform: translateY(-50%);
-    display: block;
-    width: var(--pe-space-4);
-    height: var(--pe-space-4);
-    background: url("/images/icons/chevron-right.svg") no-repeat center;
-    background-color: rgba(0, 141, 228, 0.2);
-    border-radius: var(--pe-radius-sm);
+  position: absolute;
+  right: 0px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: block;
+  width: var(--pe-space-4);
+  height: var(--pe-space-4);
+  background: url("/images/icons/chevron-right.svg") no-repeat center;
+  background-color: rgba(0, 141, 228, 0.2);
+  border-radius: var(--pe-radius-sm);
 }
 
 a:hover .TotalInfoItem__Title::after {
@@ -105,23 +105,23 @@ a:hover .TotalInfoItem__Title::after {
 @keyframes LoadingLine {
   0% {
     left: -100%;
-        width: 100%;
+    width: 100%;
   }
 
   50% {
     left: 100%;
-        width: 100%;
+    width: 100%;
   }
 
   100% {
     left: 100%;
-        width: 100%;
+    width: 100%;
   }
 }
 
 Tr .TotalInfoItem__Value--Loading::before {
   background-color: var(--pe-color-gray-800);
-    opacity: var(--pe-opacity-subtle);
+  opacity: var(--pe-opacity-subtle);
 }
 
 Tr:nth-child(1n) .TotalInfoItem__Value--Loading::after {

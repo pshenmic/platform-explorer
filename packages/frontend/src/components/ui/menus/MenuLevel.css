@@ -15,7 +15,9 @@
     font-size: var(--pe-text-sm);
     letter-spacing: 0.4px;
     border-radius: var(--pe-radius-def);
-    transition: background-color var(--pe-transition-def), color var(--pe-transition-def);
+    transition:
+      background-color var(--pe-transition-def),
+      color var(--pe-transition-def);
     color: var(--pe-color-fg-muted);
     cursor: pointer;
     user-select: none;

@@ -27,7 +27,8 @@
 .HoldersListItem:last-child {
   margin-bottom: 0;
 }
-.HoldersListItem__Column--Credits, .HoldersListItem__Column--Number {
+.HoldersListItem__Column--Credits,
+.HoldersListItem__Column--Number {
   font-size: 0.75rem;
   font-weight: 700;
 }
@@ -42,13 +43,15 @@
   flex-shrink: 0;
   margin-right: 12px;
 }
-.HoldersListItem--Timestamp, .HoldersListItem__Column--Timestamp {
+.HoldersListItem--Timestamp,
+.HoldersListItem__Column--Timestamp {
   font-family: var(--pe-font-mono);
   white-space: nowrap;
   color: #fff;
 }
 .HoldersListItem--Timestamp,
-.HoldersListItem--Timestamp .DateBlock__Date, .HoldersListItem__Column--Timestamp,
+.HoldersListItem--Timestamp .DateBlock__Date,
+.HoldersListItem__Column--Timestamp,
 .HoldersListItem__Column--Timestamp .DateBlock__Date {
   font-size: 0.75rem;
 }

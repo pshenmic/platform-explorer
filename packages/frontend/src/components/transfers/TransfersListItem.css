@@ -1,5 +1,6 @@
 .TransfersListItem--Timestamp,
-.TransfersListItem--Timestamp .DateBlock__Date, .TransfersListItem__Column--Timestamp,
+.TransfersListItem--Timestamp .DateBlock__Date,
+.TransfersListItem__Column--Timestamp,
 .TransfersListItem__Column--Timestamp .DateBlock__Date {
   font-size: var(--pe-text-sm);
 }
@@ -71,7 +72,8 @@
 }
 
 .TransfersListItem--Clickable--Timestamp,
-.TransfersListItem--Clickable--Timestamp .DateBlock__Date, .TransfersListItem--Clickable__Column--Timestamp,
+.TransfersListItem--Clickable--Timestamp .DateBlock__Date,
+.TransfersListItem--Clickable__Column--Timestamp,
 .TransfersListItem--Clickable__Column--Timestamp .DateBlock__Date {
   font-size: var(--pe-text-sm);
 }
@@ -110,14 +112,20 @@
     width: 100%;
     display: grid;
     gap: var(--pe-space-4);
-    grid-template-columns: 70px minmax(0, 400px) minmax(0, 500rem) minmax(185px, 185px) minmax(100px, 100px) 128px;
+    grid-template-columns: 70px minmax(0, 400px) minmax(0, 500rem) minmax(185px, 185px) minmax(
+        100px,
+        100px
+      ) 128px;
   }
 }
 
 @container (max-width: 90em) {
   .TransfersListItem {
     &__Content {
-      grid-template-columns: 70px minmax(0, 400px) minmax(0, 400px) minmax(185px, 185px) minmax(100px, 100px) 128px;
+      grid-template-columns: 70px minmax(0, 400px) minmax(0, 400px) minmax(185px, 185px) minmax(
+          100px,
+          100px
+        ) 128px;
     }
   }
 }

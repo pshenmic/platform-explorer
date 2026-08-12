@@ -27,7 +27,8 @@
 .TokensListItem:last-child {
   margin-bottom: 0;
 }
-.TokensListItem__Column--Credits, .TokensListItem__Column--Number {
+.TokensListItem__Column--Credits,
+.TokensListItem__Column--Number {
   font-size: 0.75rem;
   font-weight: 700;
 }
@@ -42,13 +43,15 @@
   flex-shrink: 0;
   margin-right: 12px;
 }
-.TokensListItem--Timestamp, .TokensListItem__Column--Timestamp {
+.TokensListItem--Timestamp,
+.TokensListItem__Column--Timestamp {
   font-family: var(--pe-font-mono);
   white-space: nowrap;
   color: #fff;
 }
 .TokensListItem--Timestamp,
-.TokensListItem--Timestamp .DateBlock__Date, .TokensListItem__Column--Timestamp,
+.TokensListItem--Timestamp .DateBlock__Date,
+.TokensListItem__Column--Timestamp,
 .TokensListItem__Column--Timestamp .DateBlock__Date {
   font-size: 0.75rem;
 }
@@ -138,7 +141,8 @@
 .TokensListItem__Column--Position {
   width: 80px;
 }
-.TokensListItem__Column--Balance, .TokensListItem__Column--Price {
+.TokensListItem__Column--Balance,
+.TokensListItem__Column--Price {
   font-size: 0.625rem;
   font-weight: 400;
 }
@@ -150,7 +154,8 @@
   overflow: hidden;
   text-overflow: ellipsis;
 }
-.TokensListItem__DataContractLink, .TokensListItem__OwnerLink {
+.TokensListItem__DataContractLink,
+.TokensListItem__OwnerLink {
   max-width: 100%;
 }
 .TokensListItem__OwnerIdentifier {
@@ -163,7 +168,10 @@
 }
 @container (max-width: 100rem) {
   .TokensListItem--Balance .TokensListItem__Content {
-    grid-template-columns: minmax(10rem, 26rem) 10rem 10rem minmax(10rem, 22rem) minmax(10rem, 22rem) 8rem;
+    grid-template-columns: minmax(10rem, 26rem) 10rem 10rem minmax(10rem, 22rem) minmax(
+        10rem,
+        22rem
+      ) 8rem;
   }
 }
 @container (max-width: 90rem) {

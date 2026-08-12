@@ -11,7 +11,7 @@
   &__Head {
     display: grid;
     grid-template-columns: subgrid;
-    grid-column: 1/-1;
+    grid-column: 1 / -1;
     align-items: center;
     padding: var(--pe-space-1_5);
     margin-bottom: var(--pe-space-1);
@@ -64,7 +64,12 @@
   }
   &__More::after {
     width: 300px;
-    background: linear-gradient(90deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0));
+    background: linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0),
+      rgba(255, 255, 255, 0.1),
+      rgba(255, 255, 255, 0)
+    );
     transform: translateX(-100%);
     opacity: 0;
     transition: all 0.5s;
@@ -74,18 +79,20 @@
 @keyframes flash {
   from {
     left: 0;
-        transform: translateX(-100%);
+    transform: translateX(-100%);
   }
 
   to {
     left: 100%;
-        transform: translateX(0);
+    transform: translateX(0);
   }
 }
 
 .CompactBlocks__Row.is-new {
-  animation: CompactRowIn 0.4s ease-out backwards, CompactRowGlow 1.4s ease-out backwards;
-    animation-delay: var(--stagger, 0ms);
+  animation:
+    CompactRowIn 0.4s ease-out backwards,
+    CompactRowGlow 1.4s ease-out backwards;
+  animation-delay: var(--stagger, 0ms);
 }
 
 .CompactBlocks {
@@ -104,7 +111,7 @@
     opacity: 1;
   }
   &__More {
-    grid-column: 1/-1;
+    grid-column: 1 / -1;
     width: 100%;
     margin-top: var(--pe-space-2);
   }
@@ -114,7 +121,7 @@
   &__Row {
     display: grid;
     grid-template-columns: subgrid;
-    grid-column: 1/-1;
+    grid-column: 1 / -1;
     align-items: center;
     min-height: 44px;
     padding: 0 var(--pe-space-1_5);

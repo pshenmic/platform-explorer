@@ -26,12 +26,13 @@
 
 .PlatformAddressDigestCard__InfoContainer .InfoLine__Title svg {
   width: var(--pe-space-7);
-    height: var(--pe-space-7);
+  height: var(--pe-space-7);
 }
 
-.PlatformAddressDigestCard, .PlatformAddressDigestCard__Transfers {
+.PlatformAddressDigestCard,
+.PlatformAddressDigestCard__Transfers {
   display: flex;
-    gap: var(--pe-space-3_5);
+  gap: var(--pe-space-3_5);
 }
 
 .PlatformAddressDigestCard--Loading .PlatformAddressDigestCard__Transfers .LoadingLine {
@@ -40,17 +41,17 @@
 
 .PlatformAddressDigestCard__Transfer .CreditsBlock {
   display: flex;
-    flex-direction: column;
+  flex-direction: column;
 }
 
 .PlatformAddressDigestCard__Transfer .CreditsBlock .CreditsBlock__Usd {
   margin-top: var(--pe-space-1);
-    margin-left: auto;
+  margin-left: auto;
 }
 
 .PlatformAddressDigestCard__Transfer--Outgoing .CreditsBlock__Usd {
   background-color: rgba(var(--pe-color-red-default-rgb), 0.2);
-    color: var(--pe-color-red-default);
+  color: var(--pe-color-red-default);
 }
 
 .PlatformAddressDigestCard {
@@ -110,13 +111,13 @@
 
   .PlatformAddressDigestCard__Transfer .CreditsBlock {
     flex-direction: row;
-        flex-wrap: wrap;
-        align-items: center;
+    flex-wrap: wrap;
+    align-items: center;
   }
 
   .PlatformAddressDigestCard__Transfer .CreditsBlock .CreditsBlock__Usd {
     margin-top: var(--pe-space-1);
-        margin-bottom: var(--pe-space-1);
+    margin-bottom: var(--pe-space-1);
   }
 
   .PlatformAddressDigestCard {
@@ -136,12 +137,12 @@
 
   .PlatformAddressDigestCard__InfoLine .InfoLine__Value {
     width: 100%;
-        text-align: left;
+    text-align: left;
   }
 
   .PlatformAddressDigestCard__InfoLine .CreditsBlock {
     display: flex;
-        flex-wrap: wrap;
+    flex-wrap: wrap;
   }
 
   .PlatformAddressDigestCard__InfoLine .CreditsBlock__Usd {

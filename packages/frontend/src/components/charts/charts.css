@@ -1,8 +1,8 @@
 @keyframes loading-process {
   from {
     opacity: 0;
-        left: -100%;
-        z-index: 6;
+    left: -100%;
+    z-index: 6;
   }
 
   50% {
@@ -11,7 +11,7 @@
 
   to {
     z-index: 6;
-        left: 100%;
+    left: 100%;
   }
 }
 
@@ -27,28 +27,29 @@
 
 .ChartContainer.loading {
   overflow: hidden;
-    position: relative;
-    animation: 1s LoadingContainer infinite;
+  position: relative;
+  animation: 1s LoadingContainer infinite;
 }
 
 .ChartContainer.loading::before {
   z-index: 5 !important;
-    opacity: 1 !important;
+  opacity: 1 !important;
 }
 
 .ChartContainer.loading::after {
   animation: 1s loading-process infinite;
-    z-index: 6;
+  z-index: 6;
 }
 
-.ChartContainer.loading::before, .ChartContainer.loading::after {
+.ChartContainer.loading::before,
+.ChartContainer.loading::after {
   content: "";
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    top: 0;
-    left: 0;
-    z-index: -1;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  z-index: -1;
 }
 
 .ChartContainer.loading::before {
@@ -56,9 +57,14 @@
 }
 
 .ChartContainer.loading::after {
-  background: linear-gradient(90deg, transparent 0%, rgb(14, 117, 181) 50%, transparent 100%) !important;
-    width: 100%;
-    height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgb(14, 117, 181) 50%,
+    transparent 100%
+  ) !important;
+  width: 100%;
+  height: 100%;
 }
 
 .loading .Chart {
@@ -67,12 +73,12 @@
 
 .Chart.loaded {
   visibility: visible;
-    opacity: 1;
+  opacity: 1;
 }
 
 .Chart .grid line {
   stroke: #ccc;
-    stroke-opacity: 0.03;
+  stroke-opacity: 0.03;
 }
 
 .Chart .grid .tick:nth-child(even) line {

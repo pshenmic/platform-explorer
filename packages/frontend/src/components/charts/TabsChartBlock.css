@@ -1,6 +1,6 @@
 .TabsChartBlock .TimeframeSelector__Button {
   top: -36px;
-    right: var(--pe-space-2_5);
+  right: var(--pe-space-2_5);
 }
 
 .TabsChartBlock {
@@ -23,11 +23,11 @@
 @container (max-width: 500px) {
   .TabsChartBlock .TimeframeSelector__Button {
     top: var(--pe-space-2_5);
-        right: var(--pe-space-3);
-        z-index: 11;
-        width: 100px;
-        min-width: max-content;
-        transition: width 0.2s;
+    right: var(--pe-space-3);
+    z-index: 11;
+    width: 100px;
+    min-width: max-content;
+    transition: width 0.2s;
   }
 
   .TabsChartBlock .TimeframeSelector__Button--Active {

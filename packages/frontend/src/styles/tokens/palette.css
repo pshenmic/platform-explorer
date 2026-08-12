@@ -13,7 +13,7 @@
  */
 
 :root,
-[data-theme='dark'] {
+[data-theme="dark"] {
   /* ── Brand ─────────────────────────────────────────── */
   --pe-color-brand-normal: #008de4;
   --pe-color-brand-normal-rgb: 0, 141, 228;
@@ -97,7 +97,7 @@
 }
 
 /* Light theme: override semantic tokens only (scale stays for charts/badges). */
-[data-theme='light'] {
+[data-theme="light"] {
   --pe-color-bg: var(--pe-color-white-50);
   --pe-color-fg: var(--pe-color-gray-900);
   --pe-color-fg-muted: var(--pe-color-gray-600);

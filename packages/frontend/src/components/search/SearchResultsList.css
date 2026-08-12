@@ -103,13 +103,19 @@
 }
 
 @container (max-width: 48rem) {
-  [class*="--Document"] .SearchResultsList__ColumnTitle:nth-child(2), [class*="--DataContract"] .SearchResultsList__ColumnTitle:nth-child(2), [class*="--Validator"] .SearchResultsList__ColumnTitle:nth-child(2), [class*="--Token"] .SearchResultsList__ColumnTitle:nth-child(2), [class*="--PlatformAddress"] .SearchResultsList__ColumnTitle:nth-child(2) {
+  [class*="--Document"] .SearchResultsList__ColumnTitle:nth-child(2),
+  [class*="--DataContract"] .SearchResultsList__ColumnTitle:nth-child(2),
+  [class*="--Validator"] .SearchResultsList__ColumnTitle:nth-child(2),
+  [class*="--Token"] .SearchResultsList__ColumnTitle:nth-child(2),
+  [class*="--PlatformAddress"] .SearchResultsList__ColumnTitle:nth-child(2) {
     display: none;
   }
 }
 
 @container (max-width: 24rem) {
-  [class*="--Block"] .SearchResultsList__ColumnTitle:nth-child(2), [class*="--Identity"] .SearchResultsList__ColumnTitle:nth-child(2), [class*="--Transaction"] .SearchResultsList__ColumnTitle:nth-child(2) {
+  [class*="--Block"] .SearchResultsList__ColumnTitle:nth-child(2),
+  [class*="--Identity"] .SearchResultsList__ColumnTitle:nth-child(2),
+  [class*="--Transaction"] .SearchResultsList__ColumnTitle:nth-child(2) {
     display: none;
   }
 }
@@ -118,7 +124,7 @@
   &__ColumnTitle {
     font-family: var(--pe-font-heading);
     font-size: var(--pe-text-sm);
-    letter-spacing: 0.var(--pe-space-1);
+    letter-spacing: 0.4px;
     font-weight: var(--pe-font-weight-bold);
     text-transform: uppercase;
     color: var(--pe-color-gray-100);

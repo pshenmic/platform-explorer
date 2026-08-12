@@ -25,7 +25,8 @@
 }
 
 .SearchResultsListItem--Timestamp,
-.SearchResultsListItem--Timestamp .DateBlock__Date, .SearchResultsListItem__Column--Timestamp,
+.SearchResultsListItem--Timestamp .DateBlock__Date,
+.SearchResultsListItem__Column--Timestamp,
 .SearchResultsListItem__Column--Timestamp .DateBlock__Date {
   font-size: var(--pe-text-sm);
 }
@@ -140,18 +141,26 @@
 }
 
 @container (max-width: 48rem) {
-  [class*="--Document"] .SearchResultsListItem__Column:nth-child(2), [class*="--DataContract"] .SearchResultsListItem__Column:nth-child(2), [class*="--Validator"] .SearchResultsListItem__Column:nth-child(2), [class*="--Token"] .SearchResultsListItem__Column:nth-child(2), [class*="--PlatformAddress"] .SearchResultsListItem__Column:nth-child(2) {
+  [class*="--Document"] .SearchResultsListItem__Column:nth-child(2),
+  [class*="--DataContract"] .SearchResultsListItem__Column:nth-child(2),
+  [class*="--Validator"] .SearchResultsListItem__Column:nth-child(2),
+  [class*="--Token"] .SearchResultsListItem__Column:nth-child(2),
+  [class*="--PlatformAddress"] .SearchResultsListItem__Column:nth-child(2) {
     display: none;
   }
 }
 
 @container (max-width: 24rem) {
-  [class*="--Block"] .SearchResultsListItem__Column:nth-child(2), [class*="--Identity"] .SearchResultsListItem__Column:nth-child(2), [class*="--Transaction"] .SearchResultsListItem__Column:nth-child(2) {
+  [class*="--Block"] .SearchResultsListItem__Column:nth-child(2),
+  [class*="--Identity"] .SearchResultsListItem__Column:nth-child(2),
+  [class*="--Transaction"] .SearchResultsListItem__Column:nth-child(2) {
     display: none;
   }
 }
 
-.SearchResultsListItem .Alias__Avatar, .SearchResultsListItem .Identifier__Avatar, .SearchResultsListItem__Icon {
+.SearchResultsListItem .Alias__Avatar,
+.SearchResultsListItem .Identifier__Avatar,
+.SearchResultsListItem__Icon {
   margin-right: var(--pe-space-1);
 }
 
@@ -165,8 +174,8 @@
 
 .SearchResultsListItem--Loading .LoadingLine {
   height: var(--pe-space-4);
-    width: 100%;
-    margin: 0;
+  width: 100%;
+  margin: 0;
 }
 
 .SearchResultsListItem {
@@ -186,8 +195,8 @@
     height: var(--pe-space-4);
   }
   &__Icon {
-    height: var(--pe-space-6)  !important;
-    width: var(--pe-space-6)  !important;
+    height: var(--pe-space-6) !important;
+    width: var(--pe-space-6) !important;
   }
   &--Loading {
     background-color: rgba(var(--pe-color-gray-800-rgb), 0.5) !important;

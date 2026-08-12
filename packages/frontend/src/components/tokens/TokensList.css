@@ -122,7 +122,10 @@
 }
 @container (max-width: 100rem) {
   .TokensList--Balance .TokensList__ColumnTitles {
-    grid-template-columns: minmax(10rem, 26rem) 10rem 10rem minmax(10rem, 22rem) minmax(10rem, 22rem) 8rem;
+    grid-template-columns: minmax(10rem, 26rem) 10rem 10rem minmax(10rem, 22rem) minmax(
+        10rem,
+        22rem
+      ) 8rem;
   }
 }
 @container (max-width: 90rem) {

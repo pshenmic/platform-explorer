@@ -19,7 +19,9 @@
     font-size: var(--pe-text-xs);
     color: var(--pe-color-gray-500);
     background: rgba(255, 255, 255, 0.04);
-    transition: color 0.15s, background-color 0.15s;
+    transition:
+      color 0.15s,
+      background-color 0.15s;
   }
   &__Chip:hover {
     color: var(--pe-color-fg);

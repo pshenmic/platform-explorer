@@ -70,23 +70,23 @@
 @keyframes LoadingLine {
   0% {
     left: -100%;
-        width: 100%;
+    width: 100%;
   }
 
   50% {
     left: 100%;
-        width: 100%;
+    width: 100%;
   }
 
   100% {
     left: 100%;
-        width: 100%;
+    width: 100%;
   }
 }
 
 Tr .ValueBlock__Value--Loading::before {
   background-color: var(--pe-color-gray-800);
-    opacity: var(--pe-opacity-subtle);
+  opacity: var(--pe-opacity-subtle);
 }
 
 Tr:nth-child(1n) .ValueBlock__Value--Loading::after {

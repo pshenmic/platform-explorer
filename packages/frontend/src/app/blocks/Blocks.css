@@ -1,4 +1,5 @@
-.Blocks .PageSizeSelector, .Blocks .GoToHeightForm {
+.Blocks .PageSizeSelector,
+.Blocks .GoToHeightForm {
   width: 210px;
 }
 
@@ -33,13 +34,13 @@
 
   .Blocks .Pagination {
     flex-grow: 1;
-        width: 100%;
-        display: flex;
+    width: 100%;
+    display: flex;
   }
 
   .Blocks .PageSizeSelector {
     order: 3;
-        text-align: left;
+    text-align: left;
   }
 }
 
@@ -50,9 +51,9 @@
 
   .Blocks .Pagination {
     order: -1;
-        width: 100%;
-        justify-content: center;
-        margin-bottom: var(--pe-space-2);
+    width: 100%;
+    justify-content: center;
+    margin-bottom: var(--pe-space-2);
   }
 }
 

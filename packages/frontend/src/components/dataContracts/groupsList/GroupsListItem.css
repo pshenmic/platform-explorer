@@ -25,7 +25,8 @@
 }
 
 .GroupsListItem--Timestamp,
-.GroupsListItem--Timestamp .DateBlock__Date, .GroupsListItem__Column--Timestamp,
+.GroupsListItem--Timestamp .DateBlock__Date,
+.GroupsListItem__Column--Timestamp,
 .GroupsListItem__Column--Timestamp .DateBlock__Date {
   font-size: var(--pe-text-sm);
 }
@@ -101,7 +102,7 @@
 
 .GroupsListItem__Column--Power .ValueContainer {
   padding: var(--pe-space-1) var(--pe-space-2);
-    border-radius: var(--pe-radius-def);
+  border-radius: var(--pe-radius-def);
 }
 
 .GroupsListItem__Column--Identifier .Identifier {

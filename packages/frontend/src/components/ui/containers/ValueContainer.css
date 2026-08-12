@@ -37,7 +37,7 @@
   }
   &--LightGray {
     color: var(--pe-color-fg);
-    background: #404E53;
+    background: #404e53;
   }
   &--LightGray.ValueContainer--Clickable:hover {
     background: rgba(255, 255, 255, 0.15);

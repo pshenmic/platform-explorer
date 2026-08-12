@@ -1,23 +1,24 @@
 .WithdrawalsListItem--Timestamp,
-.WithdrawalsListItem--Timestamp .DateBlock__Date, .WithdrawalsListItem__Column--Timestamp,
+.WithdrawalsListItem--Timestamp .DateBlock__Date,
+.WithdrawalsListItem__Column--Timestamp,
 .WithdrawalsListItem__Column--Timestamp .DateBlock__Date {
   font-size: var(--pe-text-sm);
 }
 
 .WithdrawalsListItem.WithdrawalsListItem--Clickable {
   display: flex;
-    width: 100%;
-    text-decoration: none;
-    padding: var(--pe-list-row-pad-y) var(--pe-list-row-pad-x);
-    margin-bottom: var(--pe-space-2);
-    line-height: var(--pe-space-6);
-    color: var(--pe-color-gray-100);
-    font-family: var(--pe-font-mono);
-    font-size: 12pt;
-    border-radius: var(--pe-list-row-radius);
-    border: 1px solid var(--pe-color-gray-750);
-    background-color: rgba(var(--pe-color-gray-800-rgb), 0.5);
-    transition: all 0.1s;
+  width: 100%;
+  text-decoration: none;
+  padding: var(--pe-list-row-pad-y) var(--pe-list-row-pad-x);
+  margin-bottom: var(--pe-space-2);
+  line-height: var(--pe-space-6);
+  color: var(--pe-color-gray-100);
+  font-family: var(--pe-font-mono);
+  font-size: 12pt;
+  border-radius: var(--pe-list-row-radius);
+  border: 1px solid var(--pe-color-gray-750);
+  background-color: rgba(var(--pe-color-gray-800-rgb), 0.5);
+  transition: all 0.1s;
 }
 
 .WithdrawalsListItem {
@@ -65,46 +66,49 @@
 @media (hover: hover) and (pointer: fine) {
   .WithdrawalsListItem.WithdrawalsListItem--Clickable:hover {
     background-color: var(--pe-color-gray-750);
-        text-decoration: none;
-        cursor: pointer;
+    text-decoration: none;
+    cursor: pointer;
   }
 }
 
 .WithdrawalsListItem.WithdrawalsListItem--Clickable:active {
   transform: translateY(1px);
-    box-shadow: 0 0 9999px 0 rgba(0, 0, 0, 0.25) inset;
+  box-shadow: 0 0 9999px 0 rgba(0, 0, 0, 0.25) inset;
 }
 
 .WithdrawalsListItem.WithdrawalsListItem--Clickable:last-child {
   margin-bottom: 0;
 }
 
-.WithdrawalsListItem.WithdrawalsListItem--Clickable__Column--Credits, .WithdrawalsListItem.WithdrawalsListItem--Clickable__Column--Number {
+.WithdrawalsListItem.WithdrawalsListItem--Clickable__Column--Credits,
+.WithdrawalsListItem.WithdrawalsListItem--Clickable__Column--Number {
   font-size: var(--pe-text-sm);
-    font-weight: var(--pe-font-weight-bold);
+  font-weight: var(--pe-font-weight-bold);
 }
 
 .WithdrawalsListItem.WithdrawalsListItem--Clickable__IdentifierContainer {
   display: flex;
-    align-items: center;
-    min-width: 50px;
+  align-items: center;
+  min-width: 50px;
 }
 
 .WithdrawalsListItem.WithdrawalsListItem--Clickable__Avatar {
   height: var(--pe-space-6);
-    width: var(--pe-space-6);
-    flex-shrink: 0;
-    margin-right: var(--pe-space-3);
-}
-
-.WithdrawalsListItem.WithdrawalsListItem--Clickable--Timestamp, .WithdrawalsListItem.WithdrawalsListItem--Clickable__Column--Timestamp {
-  font-family: var(--pe-font-mono);
-    white-space: nowrap;
-    color: var(--pe-color-fg);
+  width: var(--pe-space-6);
+  flex-shrink: 0;
+  margin-right: var(--pe-space-3);
 }
 
 .WithdrawalsListItem.WithdrawalsListItem--Clickable--Timestamp,
-.WithdrawalsListItem.WithdrawalsListItem--Clickable--Timestamp .DateBlock__Date, .WithdrawalsListItem.WithdrawalsListItem--Clickable__Column--Timestamp,
+.WithdrawalsListItem.WithdrawalsListItem--Clickable__Column--Timestamp {
+  font-family: var(--pe-font-mono);
+  white-space: nowrap;
+  color: var(--pe-color-fg);
+}
+
+.WithdrawalsListItem.WithdrawalsListItem--Clickable--Timestamp,
+.WithdrawalsListItem.WithdrawalsListItem--Clickable--Timestamp .DateBlock__Date,
+.WithdrawalsListItem.WithdrawalsListItem--Clickable__Column--Timestamp,
 .WithdrawalsListItem.WithdrawalsListItem--Clickable__Column--Timestamp .DateBlock__Date {
   font-size: var(--pe-text-sm);
 }
@@ -123,7 +127,10 @@
 @container (max-width: 700px) {
   .WithdrawalsListItem {
     &__Content {
-      grid-template-columns: 133px minmax(0, 400px) minmax(0, 400px) minmax(0, 400px) minmax(50px, 200px) 44px;
+      grid-template-columns: 133px minmax(0, 400px) minmax(0, 400px) minmax(0, 400px) minmax(
+          50px,
+          200px
+        ) 44px;
     }
   }
 }
@@ -192,14 +199,15 @@
   }
 }
 
-.WithdrawalsListItem__Column, .WithdrawalsListItem__Column .Identifier {
+.WithdrawalsListItem__Column,
+.WithdrawalsListItem__Column .Identifier {
   font-size: var(--pe-text-xs);
 }
 
 .WithdrawalsListItem__Column .ValueContainer {
   padding: 2px var(--pe-space-1_5);
-    border-radius: var(--pe-radius-sm);
-    width: 100%;
+  border-radius: var(--pe-radius-sm);
+  width: 100%;
 }
 
 .WithdrawalsListItem__Column--TxHash .Identifier {

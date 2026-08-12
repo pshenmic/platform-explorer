@@ -1,6 +1,6 @@
 .DataContract .PageDataContainer__Content {
   display: flex;
-    flex-direction: column;
+  flex-direction: column;
 }
 
 .DataContract {

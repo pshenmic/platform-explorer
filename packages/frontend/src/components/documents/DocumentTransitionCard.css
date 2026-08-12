@@ -8,7 +8,7 @@
 
 .DocumentTransitionCard__InfoLine--IdContainer .InfoLine__Value {
   flex-grow: 0;
-    max-width: max-content;
+  max-width: max-content;
 }
 
 .DocumentTransitionCard__InfoLine--IdContainer .Identifier,
@@ -43,26 +43,35 @@
 }
 
 @media screen and (max-width: 48em) {
-  .DocumentTransitionCard__InfoLine:not(.DocumentTransitionCard__InfoLine--Revision):not(.DocumentTransitionCard__InfoLine--Action) .InfoLine .InfoLine__Value {
+  .DocumentTransitionCard__InfoLine:not(.DocumentTransitionCard__InfoLine--Revision):not(
+      .DocumentTransitionCard__InfoLine--Action
+    )
+    .InfoLine
+    .InfoLine__Value {
     flex-grow: 1;
   }
 }
 
 @media screen and (max-width: 30em) {
-  .DocumentTransitionCard__InfoLine:not(.DocumentTransitionCard__InfoLine--Revision):not(.DocumentTransitionCard__InfoLine--Action) .InfoLine__Title {
+  .DocumentTransitionCard__InfoLine:not(.DocumentTransitionCard__InfoLine--Revision):not(
+      .DocumentTransitionCard__InfoLine--Action
+    )
+    .InfoLine__Title {
     margin-bottom: var(--pe-space-1);
-        margin-right: 0;
+    margin-right: 0;
   }
 
   .DocumentTransitionCard__InfoLine--Revision .InfoLine__Title,
-    .DocumentTransitionCard__InfoLine--Revision .InfoLine__Value, .DocumentTransitionCard__InfoLine--Action .InfoLine__Title,
-    .DocumentTransitionCard__InfoLine--Action .InfoLine__Value {
+  .DocumentTransitionCard__InfoLine--Revision .InfoLine__Value,
+  .DocumentTransitionCard__InfoLine--Action .InfoLine__Title,
+  .DocumentTransitionCard__InfoLine--Action .InfoLine__Value {
     width: max-content !important;
   }
 
-  .DocumentTransitionCard__InfoLine--Revision .InfoLine__Value, .DocumentTransitionCard__InfoLine--Action .InfoLine__Value {
+  .DocumentTransitionCard__InfoLine--Revision .InfoLine__Value,
+  .DocumentTransitionCard__InfoLine--Action .InfoLine__Value {
     width: max-content;
-        text-align: right !important;
+    text-align: right !important;
   }
 
   .DocumentTransitionCard {
@@ -83,8 +92,8 @@
 
 .DocumentTransitionCard__InfoLine .InfoLine__Value {
   display: flex;
-    flex-direction: column;
-    gap: var(--pe-space-2);
+  flex-direction: column;
+  gap: var(--pe-space-2);
 }
 
 .DocumentTransitionCard {

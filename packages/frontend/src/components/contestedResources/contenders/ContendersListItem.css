@@ -1,5 +1,6 @@
 .ContendersListItem--Timestamp,
-.ContendersListItem--Timestamp .DateBlock__Date, .ContendersListItem__Column--Timestamp,
+.ContendersListItem--Timestamp .DateBlock__Date,
+.ContendersListItem__Column--Timestamp,
 .ContendersListItem__Column--Timestamp .DateBlock__Date {
   font-size: var(--pe-text-sm);
 }
@@ -123,19 +124,20 @@
   }
 }
 
-.ContendersListItem__Column--Identity .Identifier, .ContendersListItem__Column--Document .Identifier {
+.ContendersListItem__Column--Identity .Identifier,
+.ContendersListItem__Column--Document .Identifier {
   max-width: 12rem;
 }
 
 .ContendersListItem__Column--Hash .Identifier__SymbolsContainer {
   display: -webkit-box;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 2;
-    line-height: var(--pe-space-4);
-    max-height: var(--pe-space-8);
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: normal !important;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-height: var(--pe-space-4);
+  max-height: var(--pe-space-8);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: normal !important;
 }
 
 .ContendersListItem {

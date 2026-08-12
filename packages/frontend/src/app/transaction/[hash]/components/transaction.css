@@ -1,7 +1,8 @@
-.TransactionPage__CommonInfo > .InfoLine--Loading .InfoLine__Value, .TransactionPage__DetailsInfo > .InfoLine--Loading .InfoLine__Value {
+.TransactionPage__CommonInfo > .InfoLine--Loading .InfoLine__Value,
+.TransactionPage__DetailsInfo > .InfoLine--Loading .InfoLine__Value {
   height: 28px;
-    flex-grow: 1;
-    width: 100% !important;
+  flex-grow: 1;
+  width: 100% !important;
 }
 
 .TransactionPage__InfoLine--Outputs .InfoLine__Value {
@@ -10,7 +11,7 @@
 
 .TransactionPage__InfoLine--VoteIndexValues .InfoLine__Value {
   width: 100%;
-    overflow: hidden;
+  overflow: hidden;
 }
 
 .TransactionPage__InfoLine--VoteChoice .InfoLine__Value {
@@ -25,55 +26,58 @@
   width: 100%;
 }
 
-.TransactionPage__InfoLine--Pooling .ValueContainer, .TransactionPage__InfoLine--Pooling .ValueCard {
+.TransactionPage__InfoLine--Pooling .ValueContainer,
+.TransactionPage__InfoLine--Pooling .ValueCard {
   max-width: max-content;
 }
 
 .TransactionPage__InfoLine--RawTransaction .InfoLine__Value {
   min-width: 0;
-    overflow: hidden;
+  overflow: hidden;
 }
 
 .TransactionPage__InfoLine--RawTransaction .ValueCard {
   min-width: 0;
-    max-width: 100%;
+  max-width: 100%;
 }
 
 .TransactionPage__InfoLine--RawTransaction .Identifier {
   min-width: 0;
-    max-width: 100%;
+  max-width: 100%;
 }
 
 .TransactionPage__InfoLine--Transitions .InfoLine__Value {
   flex-grow: 1;
-    overflow: hidden;
-    padding-bottom: 2px;
-    padding-right: 2px;
+  overflow: hidden;
+  padding-bottom: 2px;
+  padding-right: 2px;
 }
 
 .TransactionPage__InfoLine .InfoLine__Title {
   width: 200px;
-    max-width: 200px;
-    line-height: var(--pe-space-5);
+  max-width: 200px;
+  line-height: var(--pe-space-5);
 }
 
 .TransactionPage__InfoLine .InfoLine__Value {
   text-align: left;
-    font-size: var(--pe-text-sm);
+  font-size: var(--pe-text-sm);
 }
 
 .TransactionPage .HorisontalSeparator {
   margin: 0;
 }
 
-.TransactionPage__Signature .CopyButton, .TransactionPage__AssetLockProof .CopyButton, .TransactionPage__OutputScript .CopyButton {
+.TransactionPage__Signature .CopyButton,
+.TransactionPage__AssetLockProof .CopyButton,
+.TransactionPage__OutputScript .CopyButton {
   margin-left: var(--pe-space-1);
 }
 
 .TransactionPage__ErrorContainer .ValueContainer__Value {
   overflow: hidden;
-    overflow-wrap: break-word;
-    word-break: break-word;
+  overflow-wrap: break-word;
+  word-break: break-word;
 }
 
 .TransactionPage__RawTransaction .CopyButton {
@@ -82,8 +86,8 @@
 
 .TransactionPage__VoteIndexValuesContainer .VoteIndexValues {
   min-width: 34.25rem;
-    width: max-content;
-    max-width: 100%;
+  width: max-content;
+  max-width: 100%;
 }
 
 .TransactionPage {
@@ -127,7 +131,7 @@
   &__DetailsInfoTitle {
     font-family: var(--pe-font-heading);
     font-size: var(--pe-text-sm);
-    letter-spacing: 0.var(--pe-space-1);
+    letter-spacing: 0.4px;
     text-transform: uppercase;
     font-weight: var(--pe-font-weight-bold);
     margin-bottom: var(--pe-space-3_5);
@@ -158,7 +162,7 @@
 @container (max-width: 34.25rem) {
   .TransactionPage__VoteIndexValuesContainer .VoteIndexValues {
     min-width: auto;
-        width: auto;
+    width: auto;
   }
 }
 
@@ -167,19 +171,39 @@
 }
 
 @media screen and (max-width: 48em) {
-  .TransactionPage__InfoLine:not(.TransactionPage__InfoLine--Inline):not(.TransactionPage__InfoLine--Index):not(.TransactionPage__InfoLine--Type):not(.TransactionPage__InfoLine--FeeMultiplier):not(.InfoLine--Error):not(.TransactionPage__InfoLine--CoreFeePerByte):not(.TransactionPage__InfoLine--Status):not(.TransactionPage__InfoLine--Pooling) {
+  .TransactionPage__InfoLine:not(.TransactionPage__InfoLine--Inline):not(
+    .TransactionPage__InfoLine--Index
+  ):not(.TransactionPage__InfoLine--Type):not(.TransactionPage__InfoLine--FeeMultiplier):not(
+    .InfoLine--Error
+  ):not(.TransactionPage__InfoLine--CoreFeePerByte):not(.TransactionPage__InfoLine--Status):not(
+    .TransactionPage__InfoLine--Pooling
+  ) {
     flex-direction: column;
-        align-items: flex-start;
-        justify-content: flex-start !important;
+    align-items: flex-start;
+    justify-content: flex-start !important;
   }
 
-  .TransactionPage__InfoLine:not(.TransactionPage__InfoLine--Inline):not(.TransactionPage__InfoLine--Index):not(.TransactionPage__InfoLine--Type):not(.TransactionPage__InfoLine--FeeMultiplier):not(.InfoLine--Error):not(.TransactionPage__InfoLine--CoreFeePerByte):not(.TransactionPage__InfoLine--Status):not(.TransactionPage__InfoLine--Pooling) > .InfoLine__Title {
+  .TransactionPage__InfoLine:not(.TransactionPage__InfoLine--Inline):not(
+      .TransactionPage__InfoLine--Index
+    ):not(.TransactionPage__InfoLine--Type):not(.TransactionPage__InfoLine--FeeMultiplier):not(
+      .InfoLine--Error
+    ):not(.TransactionPage__InfoLine--CoreFeePerByte):not(.TransactionPage__InfoLine--Status):not(
+      .TransactionPage__InfoLine--Pooling
+    )
+    > .InfoLine__Title {
     width: 100%;
-        margin-bottom: var(--pe-space-1);
-        margin-right: 0;
+    margin-bottom: var(--pe-space-1);
+    margin-right: 0;
   }
 
-  .TransactionPage__InfoLine:not(.TransactionPage__InfoLine--Inline):not(.TransactionPage__InfoLine--Index):not(.TransactionPage__InfoLine--Type):not(.TransactionPage__InfoLine--FeeMultiplier):not(.InfoLine--Error):not(.TransactionPage__InfoLine--CoreFeePerByte):not(.TransactionPage__InfoLine--Status):not(.TransactionPage__InfoLine--Pooling) > .InfoLine__Value {
+  .TransactionPage__InfoLine:not(.TransactionPage__InfoLine--Inline):not(
+      .TransactionPage__InfoLine--Index
+    ):not(.TransactionPage__InfoLine--Type):not(.TransactionPage__InfoLine--FeeMultiplier):not(
+      .InfoLine--Error
+    ):not(.TransactionPage__InfoLine--CoreFeePerByte):not(.TransactionPage__InfoLine--Status):not(
+      .TransactionPage__InfoLine--Pooling
+    )
+    > .InfoLine__Value {
     width: 100%;
   }
 
@@ -189,7 +213,7 @@
 
   .TransactionPage__InfoLine--GasUsed .CreditsBlock {
     display: flex;
-        flex-wrap: wrap;
+    flex-wrap: wrap;
   }
 
   .TransactionPage__InfoLine--GasUsed .CreditsBlock .CreditsBlock__Usd {
@@ -208,11 +232,13 @@
     justify-content: space-between;
   }
 
-  .TransactionPage__InfoLine .ValueCard .Identifier, .TransactionPage__InfoLine .ValueContainer .Identifier {
+  .TransactionPage__InfoLine .ValueCard .Identifier,
+  .TransactionPage__InfoLine .ValueContainer .Identifier {
     flex-grow: 1;
   }
 
-  .TransactionPage__InfoLine .ValueCard .Identifier .Identifier__SymbolsContainer, .TransactionPage__InfoLine .ValueContainer .Identifier .Identifier__SymbolsContainer {
+  .TransactionPage__InfoLine .ValueCard .Identifier .Identifier__SymbolsContainer,
+  .TransactionPage__InfoLine .ValueContainer .Identifier .Identifier__SymbolsContainer {
     flex-grow: 1;
   }
 

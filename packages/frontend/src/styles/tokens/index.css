@@ -16,7 +16,7 @@
  * - Do not reintroduce Sass or var(--chakra-colors-*)
  */
 
-@import './palette.css';
-@import './typography.css';
-@import '../utils/loading-line.css';
-@import '../utils/brand-scroll.css';
+@import "./palette.css";
+@import "./typography.css";
+@import "../utils/loading-line.css";
+@import "../utils/brand-scroll.css";

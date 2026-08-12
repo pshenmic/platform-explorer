@@ -18,23 +18,23 @@
 @keyframes LoadingLine {
   0% {
     left: -100%;
-        width: 100%;
+    width: 100%;
   }
 
   50% {
     left: 100%;
-        width: 100%;
+    width: 100%;
   }
 
   100% {
     left: 100%;
-        width: 100%;
+    width: 100%;
   }
 }
 
 Tr .NetworkStatus__Stat--Loading:nth-of-type(1) .NetworkStatus__InfoValue::before {
   background-color: var(--pe-color-gray-800);
-    opacity: var(--pe-opacity-subtle);
+  opacity: var(--pe-opacity-subtle);
 }
 
 Tr:nth-child(1n) .NetworkStatus__Stat--Loading:nth-of-type(1) .NetworkStatus__InfoValue::after {
@@ -144,23 +144,23 @@ Tr:nth-child(10n) .NetworkStatus__Stat--Loading:nth-of-type(1) .NetworkStatus__I
 @keyframes LoadingLine {
   0% {
     left: -100%;
-        width: 100%;
+    width: 100%;
   }
 
   50% {
     left: 100%;
-        width: 100%;
+    width: 100%;
   }
 
   100% {
     left: 100%;
-        width: 100%;
+    width: 100%;
   }
 }
 
 Tr .NetworkStatus__Stat--Loading:nth-of-type(2) .NetworkStatus__InfoValue::before {
   background-color: var(--pe-color-gray-800);
-    opacity: var(--pe-opacity-subtle);
+  opacity: var(--pe-opacity-subtle);
 }
 
 Tr:nth-child(1n) .NetworkStatus__Stat--Loading:nth-of-type(2) .NetworkStatus__InfoValue::after {
@@ -270,23 +270,23 @@ Tr:nth-child(10n) .NetworkStatus__Stat--Loading:nth-of-type(2) .NetworkStatus__I
 @keyframes LoadingLine {
   0% {
     left: -100%;
-        width: 100%;
+    width: 100%;
   }
 
   50% {
     left: 100%;
-        width: 100%;
+    width: 100%;
   }
 
   100% {
     left: 100%;
-        width: 100%;
+    width: 100%;
   }
 }
 
 Tr .NetworkStatus__Stat--Loading:nth-of-type(3) .NetworkStatus__InfoValue::before {
   background-color: var(--pe-color-gray-800);
-    opacity: var(--pe-opacity-subtle);
+  opacity: var(--pe-opacity-subtle);
 }
 
 Tr:nth-child(1n) .NetworkStatus__Stat--Loading:nth-of-type(3) .NetworkStatus__InfoValue::after {
@@ -396,23 +396,23 @@ Tr:nth-child(10n) .NetworkStatus__Stat--Loading:nth-of-type(3) .NetworkStatus__I
 @keyframes LoadingLine {
   0% {
     left: -100%;
-        width: 100%;
+    width: 100%;
   }
 
   50% {
     left: 100%;
-        width: 100%;
+    width: 100%;
   }
 
   100% {
     left: 100%;
-        width: 100%;
+    width: 100%;
   }
 }
 
 Tr .NetworkStatus__Stat--Loading:nth-of-type(4) .NetworkStatus__InfoValue::before {
   background-color: var(--pe-color-gray-800);
-    opacity: var(--pe-opacity-subtle);
+  opacity: var(--pe-opacity-subtle);
 }
 
 Tr:nth-child(1n) .NetworkStatus__Stat--Loading:nth-of-type(4) .NetworkStatus__InfoValue::after {
@@ -522,23 +522,23 @@ Tr:nth-child(10n) .NetworkStatus__Stat--Loading:nth-of-type(4) .NetworkStatus__I
 @keyframes LoadingLine {
   0% {
     left: -100%;
-        width: 100%;
+    width: 100%;
   }
 
   50% {
     left: 100%;
-        width: 100%;
+    width: 100%;
   }
 
   100% {
     left: 100%;
-        width: 100%;
+    width: 100%;
   }
 }
 
 Tr .NetworkStatus__Stat--Loading:nth-of-type(5) .NetworkStatus__InfoValue::before {
   background-color: var(--pe-color-gray-800);
-    opacity: var(--pe-opacity-subtle);
+  opacity: var(--pe-opacity-subtle);
 }
 
 Tr:nth-child(1n) .NetworkStatus__Stat--Loading:nth-of-type(5) .NetworkStatus__InfoValue::after {
@@ -648,23 +648,23 @@ Tr:nth-child(10n) .NetworkStatus__Stat--Loading:nth-of-type(5) .NetworkStatus__I
 @keyframes LoadingLine {
   0% {
     left: -100%;
-        width: 100%;
+    width: 100%;
   }
 
   50% {
     left: 100%;
-        width: 100%;
+    width: 100%;
   }
 
   100% {
     left: 100%;
-        width: 100%;
+    width: 100%;
   }
 }
 
 Tr .NetworkStatus__Stat--Loading:nth-of-type(6) .NetworkStatus__InfoValue::before {
   background-color: var(--pe-color-gray-800);
-    opacity: var(--pe-opacity-subtle);
+  opacity: var(--pe-opacity-subtle);
 }
 
 Tr:nth-child(1n) .NetworkStatus__Stat--Loading:nth-of-type(6) .NetworkStatus__InfoValue::after {
@@ -774,23 +774,23 @@ Tr:nth-child(10n) .NetworkStatus__Stat--Loading:nth-of-type(6) .NetworkStatus__I
 @keyframes LoadingLine {
   0% {
     left: -100%;
-        width: 100%;
+    width: 100%;
   }
 
   50% {
     left: 100%;
-        width: 100%;
+    width: 100%;
   }
 
   100% {
     left: 100%;
-        width: 100%;
+    width: 100%;
   }
 }
 
 Tr .NetworkStatus__Stat--Loading:nth-of-type(7) .NetworkStatus__InfoValue::before {
   background-color: var(--pe-color-gray-800);
-    opacity: var(--pe-opacity-subtle);
+  opacity: var(--pe-opacity-subtle);
 }
 
 Tr:nth-child(1n) .NetworkStatus__Stat--Loading:nth-of-type(7) .NetworkStatus__InfoValue::after {
@@ -900,23 +900,23 @@ Tr:nth-child(10n) .NetworkStatus__Stat--Loading:nth-of-type(7) .NetworkStatus__I
 @keyframes LoadingLine {
   0% {
     left: -100%;
-        width: 100%;
+    width: 100%;
   }
 
   50% {
     left: 100%;
-        width: 100%;
+    width: 100%;
   }
 
   100% {
     left: 100%;
-        width: 100%;
+    width: 100%;
   }
 }
 
 Tr .NetworkStatus__Stat--Loading:nth-of-type(8) .NetworkStatus__InfoValue::before {
   background-color: var(--pe-color-gray-800);
-    opacity: var(--pe-opacity-subtle);
+  opacity: var(--pe-opacity-subtle);
 }
 
 Tr:nth-child(1n) .NetworkStatus__Stat--Loading:nth-of-type(8) .NetworkStatus__InfoValue::after {
@@ -1026,23 +1026,23 @@ Tr:nth-child(10n) .NetworkStatus__Stat--Loading:nth-of-type(8) .NetworkStatus__I
 @keyframes LoadingLine {
   0% {
     left: -100%;
-        width: 100%;
+    width: 100%;
   }
 
   50% {
     left: 100%;
-        width: 100%;
+    width: 100%;
   }
 
   100% {
     left: 100%;
-        width: 100%;
+    width: 100%;
   }
 }
 
 Tr .NetworkStatus__Stat--Loading:nth-of-type(9) .NetworkStatus__InfoValue::before {
   background-color: var(--pe-color-gray-800);
-    opacity: var(--pe-opacity-subtle);
+  opacity: var(--pe-opacity-subtle);
 }
 
 Tr:nth-child(1n) .NetworkStatus__Stat--Loading:nth-of-type(9) .NetworkStatus__InfoValue::after {
@@ -1152,23 +1152,23 @@ Tr:nth-child(10n) .NetworkStatus__Stat--Loading:nth-of-type(9) .NetworkStatus__I
 @keyframes LoadingLine {
   0% {
     left: -100%;
-        width: 100%;
+    width: 100%;
   }
 
   50% {
     left: 100%;
-        width: 100%;
+    width: 100%;
   }
 
   100% {
     left: 100%;
-        width: 100%;
+    width: 100%;
   }
 }
 
 Tr .NetworkStatus__Stat--Loading:nth-of-type(10) .NetworkStatus__InfoValue::before {
   background-color: var(--pe-color-gray-800);
-    opacity: var(--pe-opacity-subtle);
+  opacity: var(--pe-opacity-subtle);
 }
 
 Tr:nth-child(1n) .NetworkStatus__Stat--Loading:nth-of-type(10) .NetworkStatus__InfoValue::after {
@@ -1297,7 +1297,7 @@ Tr:nth-child(10n) .NetworkStatus__Stat--Loading:nth-of-type(10) .NetworkStatus__
     font-size: var(--pe-text-sm);
     font-weight: var(--pe-font-weight-bold);
     font-family: var(--pe-font-heading);
-    letter-spacing: 0.var(--pe-space-1);
+    letter-spacing: 0.4px;
   }
   &__InfoValue,
   &__InfoValue span {

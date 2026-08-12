@@ -25,7 +25,8 @@
 }
 
 .VotesListItem--Timestamp,
-.VotesListItem--Timestamp .DateBlock__Date, .VotesListItem__Column--Timestamp,
+.VotesListItem--Timestamp .DateBlock__Date,
+.VotesListItem__Column--Timestamp,
 .VotesListItem__Column--Timestamp .DateBlock__Date {
   font-size: var(--pe-text-sm);
 }
@@ -63,14 +64,20 @@
   &__Content {
     display: grid;
     gap: var(--pe-space-4);
-    grid-template-columns: 4rem minmax(8.125rem, 30rem) minmax(8.125rem, 30rem) minmax(8.125rem, 30rem) minmax(8.125rem, 500rem) 4.5rem 3.5rem;
+    grid-template-columns: 4rem minmax(8.125rem, 30rem) minmax(8.125rem, 30rem) minmax(
+        8.125rem,
+        30rem
+      ) minmax(8.125rem, 500rem) 4.5rem 3.5rem;
   }
 }
 
 @container (max-width: 62rem) {
   .VotesListItem {
     &__Content {
-      grid-template-columns: 4rem minmax(8.125rem, 30rem) minmax(8.125rem, 30rem) minmax(8.125rem, 30rem) 4.5rem 3.5rem;
+      grid-template-columns: 4rem minmax(8.125rem, 30rem) minmax(8.125rem, 30rem) minmax(
+          8.125rem,
+          30rem
+        ) 4.5rem 3.5rem;
     }
   }
 }
@@ -205,11 +212,11 @@
 
 .VotesListItem__Column--Choice .VoteBadge span {
   white-space: wrap;
-    width: min-content;
-    border-radius: var(--pe-radius-sm);
-    text-align: center;
-    padding: 0.188rem var(--pe-space-2_5);
-    line-height: 0.8rem;
+  width: min-content;
+  border-radius: var(--pe-radius-sm);
+  text-align: center;
+  padding: 0.188rem var(--pe-space-2_5);
+  line-height: 0.8rem;
 }
 
 .VotesListItem {

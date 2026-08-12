@@ -27,7 +27,8 @@
 .ActivityListItem:last-child {
   margin-bottom: 0;
 }
-.ActivityListItem__Column--Credits, .ActivityListItem__Column--Number {
+.ActivityListItem__Column--Credits,
+.ActivityListItem__Column--Number {
   font-size: 0.75rem;
   font-weight: 700;
 }
@@ -42,13 +43,15 @@
   flex-shrink: 0;
   margin-right: 12px;
 }
-.ActivityListItem--Timestamp, .ActivityListItem__Column--Timestamp {
+.ActivityListItem--Timestamp,
+.ActivityListItem__Column--Timestamp {
   font-family: var(--pe-font-mono);
   white-space: nowrap;
   color: #fff;
 }
 .ActivityListItem--Timestamp,
-.ActivityListItem--Timestamp .DateBlock__Date, .ActivityListItem__Column--Timestamp,
+.ActivityListItem--Timestamp .DateBlock__Date,
+.ActivityListItem__Column--Timestamp,
 .ActivityListItem__Column--Timestamp .DateBlock__Date {
   font-size: 0.75rem;
 }
@@ -62,12 +65,18 @@
 }
 @container (max-width: 104rem) {
   .ActivityListItem__Content {
-    grid-template-columns: 7.5rem minmax(0, 25rem) minmax(0, 25rem) minmax(0, 25rem) minmax(0, 10rem) 9rem;
+    grid-template-columns: 7.5rem minmax(0, 25rem) minmax(0, 25rem) minmax(0, 25rem) minmax(
+        0,
+        10rem
+      ) 9rem;
   }
 }
 @container (max-width: 48rem) {
   .ActivityListItem__Content {
-    grid-template-columns: 7.5rem minmax(6.5rem, 25rem) minmax(6.5rem, 25rem) minmax(6.5rem, 25rem) minmax(10rem, 10rem) 5rem;
+    grid-template-columns: 7.5rem minmax(6.5rem, 25rem) minmax(6.5rem, 25rem) minmax(6.5rem, 25rem) minmax(
+        10rem,
+        10rem
+      ) 5rem;
   }
 }
 .ActivityListItem__Content {

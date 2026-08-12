@@ -1,17 +1,17 @@
 .MobileFilterMenu .RangeFilter {
   width: 100%;
-    gap: var(--pe-space-4);
+  gap: var(--pe-space-4);
 }
 
 .MobileFilterMenu .RangeFilter__InputTitle {
   font-family: var(--pe-font-heading);
-    font-weight: var(--pe-font-weight-bold);
-    font-size: var(--pe-text-md);
+  font-weight: var(--pe-font-weight-bold);
+  font-size: var(--pe-text-md);
 }
 
 .MobileFilterMenu .RangeFilter__Input {
   min-height: 3rem;
-    padding: var(--pe-space-3) var(--pe-space-4);
+  padding: var(--pe-space-3) var(--pe-space-4);
 }
 
 .RangeFilter {

@@ -25,7 +25,7 @@
     height: 100%;
     top: 0;
     left: 0;
-    background-color: #181F22;
+    background-color: #181f22;
     opacity: var(--pe-opacity-subtle);
   }
   &--Gradient::after {

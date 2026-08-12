@@ -16,7 +16,9 @@
     height: var(--pe-space-5);
     border-radius: 50%;
     opacity: 0.55;
-    transition: opacity var(--pe-transition-def) ease, transform var(--pe-transition-def) ease;
+    transition:
+      opacity var(--pe-transition-def) ease,
+      transform var(--pe-transition-def) ease;
     cursor: pointer;
   }
   &__InfoButton:hover {

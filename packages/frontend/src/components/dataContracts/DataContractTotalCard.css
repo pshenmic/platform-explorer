@@ -1,13 +1,13 @@
 .DataContractTotalCard__Title .Alias__Name,
 .DataContractTotalCard__Title .Alias__Domain {
   font-family: var(--pe-font-heading);
-    font-size: var(--pe-text-md);
-    font-weight: var(--pe-font-weight-bold);
+  font-size: var(--pe-text-md);
+  font-weight: var(--pe-font-weight-bold);
 }
 
 .DataContractTotalCard__Title .Alias__Domain {
   color: var(--pe-color-brand-light);
-    opacity: 1;
+  opacity: 1;
 }
 
 .DataContractTotalCard--Loading .InfoLine__Value {
@@ -93,19 +93,21 @@
   }
 }
 
-.DataContractTotalCard__Identifier .InfoLine__Value, .DataContractTotalCard__Owner .InfoLine__Value {
+.DataContractTotalCard__Identifier .InfoLine__Value,
+.DataContractTotalCard__Owner .InfoLine__Value {
   width: 100%;
-    text-align: right;
-    overflow: hidden;
+  text-align: right;
+  overflow: hidden;
 }
 
-.DataContractTotalCard__Identifier .InfoLine__Value .Identifier, .DataContractTotalCard__Owner .InfoLine__Value .Identifier {
+.DataContractTotalCard__Identifier .InfoLine__Value .Identifier,
+.DataContractTotalCard__Owner .InfoLine__Value .Identifier {
   justify-content: flex-end;
 }
 
 .DataContractTotalCard__Owner .ValueCard {
   max-width: max-content;
-    margin-left: auto;
+  margin-left: auto;
 }
 
 .DataContractTotalCard {
@@ -176,15 +178,15 @@
 
 @media screen and (max-width: 48em) {
   .DataContractTotalCard__Title .Alias__Name,
-    .DataContractTotalCard__Title .Alias__Domain {
+  .DataContractTotalCard__Title .Alias__Domain {
     font-family: var(--pe-font-heading);
-        font-size: var(--pe-text-md);
-        font-weight: var(--pe-font-weight-bold);
+    font-size: var(--pe-text-md);
+    font-weight: var(--pe-font-weight-bold);
   }
 
   .DataContractTotalCard__Title .Alias__Domain {
     color: var(--pe-color-brand-light);
-        opacity: 1;
+    opacity: 1;
   }
 
   .DataContractTotalCard--Loading .InfoLine__Value {
@@ -278,8 +280,8 @@
 @media screen and (max-width: 48em) {
   .DataContractTotalCard__Header .InfoLine {
     flex-wrap: wrap;
-        justify-content: flex-start;
-        gap: 5px;
+    justify-content: flex-start;
+    gap: 5px;
   }
 
   .DataContractTotalCard__Header .InfoLine__Title {
@@ -288,8 +290,8 @@
 
   .DataContractTotalCard__Header .InfoLine__Value {
     width: 100%;
-        justify-content: flex-start;
-        text-align: left;
+    justify-content: flex-start;
+    text-align: left;
   }
 
   .DataContractTotalCard__Identifier .Identifier {
@@ -298,8 +300,8 @@
 
   .DataContractTotalCard__Owner .ValueCard {
     width: max-content;
-        max-width: 100%;
-        margin-left: 0;
+    max-width: 100%;
+    margin-left: 0;
   }
 
   .DataContractTotalCard {

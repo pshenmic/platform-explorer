@@ -58,7 +58,7 @@
 }
 
 .DocumentsList__Table > *:not(.DocumentsList__ColumnTitles):not(.DocumentsListItem) {
-  grid-column: 1/-1;
+  grid-column: 1 / -1;
 }
 
 .DocumentsList {
@@ -112,7 +112,7 @@
   }
   &__ColumnTitles {
     display: grid;
-    grid-column: 1/-1;
+    grid-column: 1 / -1;
     grid-template-columns: subgrid;
     column-gap: var(--pe-space-3);
   }

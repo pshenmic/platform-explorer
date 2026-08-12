@@ -34,7 +34,7 @@
 
 .Document__Data__InfoContainer .InfoLine__Title svg {
   width: var(--pe-space-7);
-    height: var(--pe-space-7);
+  height: var(--pe-space-7);
 }
 
 .Document {
@@ -82,7 +82,7 @@
     font-family: var(--pe-font-heading);
     font-weight: var(--pe-font-weight-bold);
     font-size: var(--pe-text-sm);
-    letter-spacing: 0.var(--pe-space-1);
+    letter-spacing: 0.4px;
     text-transform: uppercase;
   }
   &__InfoBlocks {

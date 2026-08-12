@@ -1,9 +1,9 @@
 .AliasesList,
 .AliasesList__ItemsContainer {
   display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    gap: var(--pe-space-1);
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--pe-space-1);
 }
 
 .AliasesList {

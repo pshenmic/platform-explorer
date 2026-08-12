@@ -25,7 +25,8 @@
 }
 
 .ContestedResourcesListItem--Timestamp,
-.ContestedResourcesListItem--Timestamp .DateBlock__Date, .ContestedResourcesListItem__Column--Timestamp,
+.ContestedResourcesListItem--Timestamp .DateBlock__Date,
+.ContestedResourcesListItem__Column--Timestamp,
 .ContestedResourcesListItem__Column--Timestamp .DateBlock__Date {
   font-size: var(--pe-text-sm);
 }
@@ -165,8 +166,8 @@
 
 .ContestedResourcesListItem__Column--ResourceValue .Alias__SymbolsContainer {
   display: flex;
-    flex-wrap: wrap;
-    line-height: var(--pe-space-4);
+  flex-wrap: wrap;
+  line-height: var(--pe-space-4);
 }
 
 .ContestedResourcesListItem {

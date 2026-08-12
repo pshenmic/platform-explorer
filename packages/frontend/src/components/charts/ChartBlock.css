@@ -1,6 +1,7 @@
-.ChartBlock .InfoBlock__Title, .ChartBlock .TimeframeSelector__Button {
+.ChartBlock .InfoBlock__Title,
+.ChartBlock .TimeframeSelector__Button {
   position: relative;
-    z-index: 555;
+  z-index: 555;
 }
 
 .ChartBlock .TimeframeSelector__Menu {
@@ -17,7 +18,7 @@
 
 .ChartBlock .TimeframeSelector__Button {
   top: var(--pe-space-3);
-    right: var(--pe-space-4);
+  right: var(--pe-space-4);
 }
 
 .ChartBlock {
@@ -61,10 +62,10 @@
 
   .ChartBlock .TimeframeSelector__Button {
     top: 50px;
-        z-index: 11;
-        width: 100px;
-        min-width: max-content;
-        transition: width 0.2s;
+    z-index: 11;
+    width: 100px;
+    min-width: max-content;
+    transition: width 0.2s;
   }
 
   .ChartBlock .TimeframeSelector__Button--Active {
@@ -97,8 +98,8 @@
 @keyframes loading-process {
   from {
     opacity: 0;
-        left: -100%;
-        z-index: 6;
+    left: -100%;
+    z-index: 6;
   }
 
   50% {
@@ -107,7 +108,7 @@
 
   to {
     z-index: 6;
-        left: 100%;
+    left: 100%;
   }
 }
 
@@ -149,7 +150,12 @@
     background-color: var(--pe-color-gray-900);
   }
   &__Loader::after {
-    background: linear-gradient(90deg, transparent 0%, rgb(14, 117, 181) 50%, transparent 100%) !important;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgb(14, 117, 181) 50%,
+      transparent 100%
+    ) !important;
     width: 100%;
     height: 100%;
   }

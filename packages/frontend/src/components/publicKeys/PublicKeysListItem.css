@@ -1,5 +1,6 @@
 .PublicKeysListItem--Timestamp,
-.PublicKeysListItem--Timestamp .DateBlock__Date, .PublicKeysListItem__Column--Timestamp,
+.PublicKeysListItem--Timestamp .DateBlock__Date,
+.PublicKeysListItem__Column--Timestamp,
 .PublicKeysListItem__Column--Timestamp .DateBlock__Date {
   font-size: var(--pe-text-sm);
 }
@@ -47,7 +48,10 @@
   &__Content {
     display: grid;
     gap: var(--pe-space-4);
-    grid-template-columns: minmax(45px, 45px) minmax(180px, 180px) minmax(120px, 113px) minmax(113px, 113px) minmax(115px, 115px) minmax(90px, 90px) minmax(78px, 78px) auto;
+    grid-template-columns: minmax(45px, 45px) minmax(180px, 180px) minmax(120px, 113px) minmax(
+        113px,
+        113px
+      ) minmax(115px, 115px) minmax(90px, 90px) minmax(78px, 78px) auto;
   }
 }
 
@@ -59,7 +63,8 @@
   }
 }
 
-.PublicKeysListItem__Data .CopyButton, .PublicKeysListItem__PublicKeyHash .CopyButton {
+.PublicKeysListItem__Data .CopyButton,
+.PublicKeysListItem__PublicKeyHash .CopyButton {
   margin-left: var(--pe-space-2);
 }
 

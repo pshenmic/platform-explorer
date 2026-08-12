@@ -4,13 +4,13 @@
 
 .MobileFilterMenu .InputFilter__Title {
   font-family: var(--pe-font-heading);
-    font-weight: var(--pe-font-weight-bold);
-    font-size: var(--pe-text-md);
+  font-weight: var(--pe-font-weight-bold);
+  font-size: var(--pe-text-md);
 }
 
 .MobileFilterMenu .InputFilter__Input {
   min-height: 3rem;
-    padding: var(--pe-space-3) var(--pe-space-4);
+  padding: var(--pe-space-3) var(--pe-space-4);
 }
 
 .InputFilter {

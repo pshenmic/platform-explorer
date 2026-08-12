@@ -8,26 +8,26 @@
   display: inline-block;
   &--Green {
     background-color: rgba(91, 244, 88, 0.2);
-    color: #5BF458;
+    color: #5bf458;
   }
   &--Yellow {
     background-color: rgba(223, 244, 88, 0.2);
-    color: #DFF458;
+    color: #dff458;
   }
   &--LightOrange {
     background-color: rgba(244, 210, 88, 0.2);
-    color: #F4D258;
+    color: #f4d258;
   }
   &--Orange {
     background-color: rgba(228, 152, 0, 0.2);
-    color: #E49800;
+    color: #e49800;
   }
   &--RedOrange {
     background-color: rgba(244, 135, 88, 0.2);
-    color: #F48758;
+    color: #f48758;
   }
   &--Red {
     background-color: rgba(244, 88, 144, 0.2);
-    color: #F45890;
+    color: #f45890;
   }
 }

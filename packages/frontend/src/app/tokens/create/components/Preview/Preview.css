@@ -1,4 +1,5 @@
-.Preview__Summary, .Preview__Json {
+.Preview__Summary,
+.Preview__Json {
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -8,7 +9,8 @@
   font-size: 11px;
   color: var(--pe-color-red-default);
 }
-.Preview__SummaryTitle, .Preview__JsonTitle {
+.Preview__SummaryTitle,
+.Preview__JsonTitle {
   font-family: var(--font-montserrat);
   font-weight: 700;
   font-size: 12px;
@@ -58,7 +60,9 @@
   color: var(--pe-color-white-50);
   background: transparent;
   cursor: pointer;
-  transition: background 0.12s, color 0.12s;
+  transition:
+    background 0.12s,
+    color 0.12s;
 }
 .Preview__ViewToggleBtn:hover {
   color: var(--pe-color-white-100);

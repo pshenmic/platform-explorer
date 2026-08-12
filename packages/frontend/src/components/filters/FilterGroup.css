@@ -8,7 +8,7 @@
     color: var(--pe-color-fg);
     text-transform: uppercase;
     font-size: var(--pe-text-sm);
-    letter-spacing: 0.var(--pe-space-1);
+    letter-spacing: 0.4px;
   }
   &__Content {
     display: flex;

@@ -69,14 +69,20 @@
   &__ColumnTitles {
     display: grid;
     gap: var(--pe-space-4);
-    grid-template-columns: 4rem minmax(8.125rem, 30rem) minmax(8.125rem, 30rem) minmax(8.125rem, 30rem) minmax(8.125rem, 500rem) 4.5rem 3.5rem;
+    grid-template-columns: 4rem minmax(8.125rem, 30rem) minmax(8.125rem, 30rem) minmax(
+        8.125rem,
+        30rem
+      ) minmax(8.125rem, 500rem) 4.5rem 3.5rem;
   }
 }
 
 @container (max-width: 62rem) {
   .VotesList {
     &__ColumnTitles {
-      grid-template-columns: 4rem minmax(8.125rem, 30rem) minmax(8.125rem, 30rem) minmax(8.125rem, 30rem) 4.5rem 3.5rem;
+      grid-template-columns: 4rem minmax(8.125rem, 30rem) minmax(8.125rem, 30rem) minmax(
+          8.125rem,
+          30rem
+        ) 4.5rem 3.5rem;
     }
   }
 }
