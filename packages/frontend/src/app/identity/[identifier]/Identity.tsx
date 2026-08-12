@@ -212,7 +212,6 @@ function Identity({ identifier }: IdentityProps) {
     }
 
     router.replace(`${pathname}?${urlParameters.toString()}`, { scroll: false })
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- mirror original deps
   }, [activeTab, router, pathname])
 
   return (

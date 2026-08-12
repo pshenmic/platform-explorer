@@ -187,9 +187,7 @@ export function MetricChart({
 
   const ready = width > 0 && points.length > 1
   // d3 ships without ambient types in this package — keep scales loosely typed
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let x: any
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let y: any
   let areaD: string | null | undefined
   let lineD: string | null | undefined

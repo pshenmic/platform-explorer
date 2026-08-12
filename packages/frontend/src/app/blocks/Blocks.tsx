@@ -93,7 +93,6 @@ function Blocks({ defaultPage = 1, defaultPageSize }: BlocksProps) {
     }
 
     router.push(`${pathname}?${urlParameters.toString()}`, { scroll: false })
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- mirror original deps
   }, [currentPage, pageSize])
 
   return (

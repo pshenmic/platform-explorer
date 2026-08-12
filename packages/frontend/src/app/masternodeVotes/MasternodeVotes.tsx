@@ -94,7 +94,6 @@ function MasternodeVotes({ defaultPage = 1, defaultPageSize }: MasternodeVotesPr
     }
 
     router.push(`${pathname}?${urlParameters.toString()}`, { scroll: false })
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentPage, pageSize])
 
   return (

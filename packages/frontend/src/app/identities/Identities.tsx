@@ -72,7 +72,6 @@ function Identities({ defaultPage = 1, defaultPageSize, defaultShowAll = false }
 
   useEffect(
     () => fetchData(currentPage + 1, pageSize, showAll, filters),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     [pageSize, currentPage, showAll, JSON.stringify(filters)]
   )
 
@@ -106,7 +105,6 @@ function Identities({ defaultPage = 1, defaultPageSize, defaultShowAll = false }
     }
 
     router.push(`${pathname}?${urlParameters.toString()}`, { scroll: false })
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- mirror original deps
   }, [currentPage, pageSize, showAll])
 
   const handleShowAllChange = (e: ChangeEvent<HTMLInputElement>) => {

@@ -163,7 +163,6 @@ function Home() {
       epochNumbers
         .map((n, i) => epochQueries[i]?.data)
         .filter((ep): ep is EpochData => Boolean(ep)),
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- stamp tracks per-query arrivals
     [epochNumbers, epochDataStamp]
   )
 
@@ -196,7 +195,6 @@ function Home() {
           firstBlockHash: blockRes?.resultSet?.[0]?.header?.hash ?? null
         }
       }),
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- stamp tracks block enrich arrivals
     [epochsBaseList, blockDataStamp]
   )
 

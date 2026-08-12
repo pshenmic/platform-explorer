@@ -1,4 +1,3 @@
-// @ts-nocheck — incomplete concurrent migration; another agent owns this path
 'use client'
 
 import { useState, useEffect } from 'react'

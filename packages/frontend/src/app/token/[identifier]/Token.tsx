@@ -87,7 +87,6 @@ function Token({ identifier }: TokenProps) {
     Api.getRate()
       .then(res => fetchHandlerSuccess(setRate, res))
       .catch(err => fetchHandlerError(setRate, err))
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [identifier])
 
   useEffect(() => {
@@ -119,7 +118,6 @@ function Token({ identifier }: TokenProps) {
     }
 
     router.replace(`${pathname}?${urlParameters.toString()}`, { scroll: false })
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeTab, router, pathname])
 
   return (

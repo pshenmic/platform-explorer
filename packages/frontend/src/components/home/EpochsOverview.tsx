@@ -31,7 +31,6 @@ interface ScanSeg {
 }
 
 // Epoch overview binds many enriched API fields; keep shapes permissive.
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Loose = any
 type BoundInfo = Loose
 type EpochSlot = Loose
@@ -709,7 +708,6 @@ export function EpochsOverview({
       }
     }
     setSelected(lastIdx)
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- only when slot set or which epochs have data changes
   }, [slots.join(','), arrived.map((e: Loose) => e.epoch.number).join(',')])
 
   // status not ready yet: fixed 4-slot ghost scaffold (same footprint as the live wave)

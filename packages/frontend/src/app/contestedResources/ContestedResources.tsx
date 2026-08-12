@@ -67,7 +67,6 @@ function ContestedResources({ defaultPage = 1, defaultPageSize }: ContestedResou
 
   useEffect(
     () => fetchData(currentPage + 1, pageSize, filters as Record<string, unknown>),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     [pageSize, currentPage, JSON.stringify(filters)]
   )
 
@@ -94,7 +93,6 @@ function ContestedResources({ defaultPage = 1, defaultPageSize }: ContestedResou
     }
 
     router.push(`${pathname}?${urlParameters.toString()}`, { scroll: false })
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentPage, pageSize])
 
   return (

@@ -72,7 +72,6 @@ const DateRangePicker = ({
     }
     const newMonthPairs = generateMonthPairs()
     setMonthPairs(newMonthPairs)
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- matches original JS deps
   }, [monthsToShow, currentMonthIndex, showSingleCalendar])
 
   useEffect(() => {

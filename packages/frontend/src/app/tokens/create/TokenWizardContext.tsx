@@ -118,7 +118,6 @@ export const TokenWizardProvider = ({ children }: { children: ReactNode }) => {
 
   const value = useMemo(
     () => ({ form, setField }),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     [form]
   )
 
