@@ -1,0 +1,12 @@
+.VoteBadges {
+  display: flex;
+  gap: 0.5rem;
+}
+.VoteBadges__Badge {
+  transition: 0.1s;
+}
+.VoteBadges__Badge:hover {
+  cursor: pointer;
+  transform: scale(1.05);
+  opacity: 1 !important;
+}

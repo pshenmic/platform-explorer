@@ -1,0 +1,220 @@
+.ContestedResourcesTotalCard__Title {
+  white-space: break-spaces;
+  word-break: break-all;
+}
+.ContestedResourcesTotalCard__Title .Alias__Name,
+.ContestedResourcesTotalCard__Title .Alias__Domain {
+  font-family: var(--pe-font-heading);
+  font-size: 0.875rem;
+  font-weight: 700;
+}
+.ContestedResourcesTotalCard__Title .Alias__Domain {
+  color: var(--pe-color-brand-light);
+  opacity: 1;
+}
+.ContestedResourcesTotalCard--Loading .InfoLine__Value {
+  height: 1.5rem;
+}
+.ContestedResourcesTotalCard__ContentContainer {
+  display: flex;
+  gap: 2.5rem;
+}
+.ContestedResourcesTotalCard__Column {
+  position: relative;
+  width: 50%;
+}
+.ContestedResourcesTotalCard__Header {
+  position: relative;
+  display: flex;
+  width: 100%;
+  align-items: center;
+}
+.ContestedResourcesTotalCard__Avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--pe-font-mono);
+  font-size: 0.75rem;
+  color: var(--chakra-colors-gray-500);
+  width: 88px;
+  height: 88px;
+  border: 1px solid rgba(137, 126, 126, 0.1);
+  flex-shrink: 0;
+  margin-left: 24px;
+}
+.ContestedResourcesTotalCard__HeaderLines {
+  display: flex;
+  gap: 20px;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 100%;
+  padding: 6px 0;
+  overflow: hidden;
+}
+.ContestedResourcesTotalCard__InfoLine {
+  gap: 14px;
+}
+.ContestedResourcesTotalCard__CommonInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+.ContestedResourcesTotalCard__CommonInfo .HorisontalSeparator {
+  margin: 0;
+}
+@media screen and (max-width: 62em) {
+  .ContestedResourcesTotalCard__ContentContainer {
+    gap: 1.5rem;
+  }
+}
+@media screen and (max-width: 48em) {
+  .ContestedResourcesTotalCard__ContentContainer {
+    flex-direction: column;
+  }
+  .ContestedResourcesTotalCard__ContentContainer, .ContestedResourcesTotalCard__CommonLines {
+    gap: 0.75rem;
+  }
+  .ContestedResourcesTotalCard__Column {
+    position: static;
+    width: 100%;
+  }
+}
+.ContestedResourcesTotalCard {
+  display: flex;
+  flex-direction: column;
+}
+.ContestedResourcesTotalCard__Title {
+  font-weight: 700;
+  font-size: 0.875rem;
+  margin-bottom: 0.875rem;
+}
+.ContestedResourcesTotalCard__Header {
+  align-items: flex-start;
+}
+.ContestedResourcesTotalCard__Avatar svg {
+  width: 48px;
+  height: 48px;
+}
+.ContestedResourcesTotalCard__HeaderLines {
+  width: 100%;
+}
+.ContestedResourcesTotalCard__ContendersListContainer {
+  margin-top: 1.5rem;
+}
+.ContestedResourcesTotalCard__ContendersListTitle {
+  font-size: 0.875rem;
+  margin-bottom: 0.875rem;
+  font-weight: 700;
+  font-family: var(--pe-font-heading);
+}
+.ContestedResourcesTotalCard__CommonInfo .DateBlock__InfoContainer {
+  justify-content: flex-end;
+}
+@media screen and (max-width: 62em) {
+  .ContestedResourcesTotalCard__Title {
+    white-space: break-spaces;
+    word-break: break-all;
+  }
+  .ContestedResourcesTotalCard__Title .Alias__Name,
+  .ContestedResourcesTotalCard__Title .Alias__Domain {
+    font-family: var(--pe-font-heading);
+    font-size: 0.875rem;
+    font-weight: 700;
+  }
+  .ContestedResourcesTotalCard__Title .Alias__Domain {
+    color: var(--pe-color-brand-light);
+    opacity: 1;
+  }
+  .ContestedResourcesTotalCard--Loading .InfoLine__Value {
+    height: 1.5rem;
+  }
+  .ContestedResourcesTotalCard__ContentContainer {
+    display: flex;
+    gap: 2.5rem;
+  }
+  .ContestedResourcesTotalCard__Column {
+    position: relative;
+    width: 50%;
+  }
+  .ContestedResourcesTotalCard__Header {
+    position: relative;
+    display: flex;
+    width: 100%;
+    align-items: center;
+  }
+  .ContestedResourcesTotalCard__Avatar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--pe-font-mono);
+    font-size: 0.75rem;
+    color: var(--chakra-colors-gray-500);
+    width: 88px;
+    height: 88px;
+    border: 1px solid rgba(137, 126, 126, 0.1);
+    flex-shrink: 0;
+    margin-left: 24px;
+    position: absolute;
+    right: 0;
+    top: 0;
+    margin: 0;
+  }
+  .ContestedResourcesTotalCard__HeaderLines {
+    display: flex;
+    gap: 20px;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 100%;
+    padding: 6px 0;
+    overflow: hidden;
+  }
+  .ContestedResourcesTotalCard__InfoLine {
+    gap: 14px;
+  }
+  .ContestedResourcesTotalCard__CommonInfo {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  .ContestedResourcesTotalCard__CommonInfo .HorisontalSeparator {
+    margin: 0;
+  }
+}
+@media screen and (max-width: 62em) and (max-width: 62em) {
+  .ContestedResourcesTotalCard__ContentContainer {
+    gap: 1.5rem;
+  }
+}
+@media screen and (max-width: 62em) and (max-width: 48em) {
+  .ContestedResourcesTotalCard__ContentContainer {
+    flex-direction: column;
+  }
+  .ContestedResourcesTotalCard__ContentContainer, .ContestedResourcesTotalCard__CommonLines {
+    gap: 0.75rem;
+  }
+  .ContestedResourcesTotalCard__Column {
+    position: static;
+    width: 100%;
+  }
+}
+@media screen and (max-width: 62em) {
+  .ContestedResourcesTotalCard__Avatar {
+    right: 1rem;
+    top: 1rem;
+  }
+  .ContestedResourcesTotalCard__Header, .ContestedResourcesTotalCard__Column {
+    position: static;
+  }
+  .ContestedResourcesTotalCard__Column {
+    width: 100%;
+  }
+  .ContestedResourcesTotalCard__ContentContainer {
+    flex-direction: column;
+  }
+  .ContestedResourcesTotalCard__InfoLine--Hash, .ContestedResourcesTotalCard__InfoLine--IndexName, .ContestedResourcesTotalCard__InfoLine--DocumentType {
+    padding-right: 6.5rem;
+  }
+  .ContestedResourcesTotalCard__InfoLine--DataContract {
+    order: 4;
+  }
+}
