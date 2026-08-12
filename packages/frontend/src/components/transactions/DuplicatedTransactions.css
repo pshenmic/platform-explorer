@@ -1,0 +1,144 @@
+.DuplicatedTransactions {
+  margin-bottom: 20px;
+}
+.DuplicatedTransactions__Title {
+  font-family: var(--pe-font-heading);
+  font-size: 0.75rem;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  font-weight: 700;
+  margin-bottom: 14px;
+}
+.DuplicatedTransactions__Notice {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin-bottom: 14px;
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-size: 0.8125rem;
+  line-height: 1.4;
+  color: #f49a58;
+  background-color: rgba(244, 154, 88, 0.2);
+}
+.DuplicatedTransactions__NoticeIcon {
+  flex-shrink: 0;
+  margin-top: 2px;
+  color: #f49a58;
+}
+.DuplicatedTransactions__List {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  container-type: inline-size;
+}
+.DuplicatedTransactions__Row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto 90px 92px 2rem;
+  align-items: center;
+  gap: 16px;
+  padding: 10px 16px;
+  border-radius: 8px;
+  background-color: var(--pe-color-gray-900);
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: border-color 0.1s ease-in-out, background-color 0.1s ease-in-out;
+}
+.DuplicatedTransactions__Row:hover {
+  border-color: var(--pe-color-brand-normal);
+}
+.DuplicatedTransactions__Row--Selected {
+  background-color: var(--pe-color-gray-800);
+  border-color: var(--pe-color-brand-normal);
+}
+.DuplicatedTransactions__Main {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  overflow: hidden;
+}
+.DuplicatedTransactions__Icon {
+  flex-shrink: 0;
+  margin-right: 8px;
+  width: 1rem;
+  height: 1rem;
+  color: var(--pe-color-fg-muted);
+}
+.DuplicatedTransactions__Height {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+.DuplicatedTransactions__HeightChip {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 3px;
+  font-size: 0.625rem;
+  white-space: nowrap;
+  color: var(--pe-color-fg-muted);
+  background-color: var(--pe-color-gray-800);
+}
+.DuplicatedTransactions__Type {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+.DuplicatedTransactions__Time {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  font-size: 0.75rem;
+  white-space: nowrap;
+  color: var(--pe-color-fg-muted);
+}
+.DuplicatedTransactions__Status {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+.DuplicatedTransactions__Action {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+.DuplicatedTransactions__ArrowLink {
+  display: inline-flex;
+}
+.DuplicatedTransactions__ArrowButton {
+  width: 1.5rem;
+  height: 1.5rem;
+  min-width: auto;
+}
+.DuplicatedTransactions__ShowMoreButton {
+  width: 100%;
+  margin-top: 8px;
+}
+@container (max-width: 720px) {
+  .DuplicatedTransactions__Row {
+    grid-template-columns: minmax(0, 1fr) auto auto;
+    grid-template-areas: "main main action" "height type time" "status status status";
+    row-gap: 8px;
+  }
+  .DuplicatedTransactions__Main {
+    grid-area: main;
+  }
+  .DuplicatedTransactions__Height {
+    grid-area: height;
+    justify-content: flex-start;
+  }
+  .DuplicatedTransactions__Type {
+    grid-area: type;
+    justify-content: center;
+  }
+  .DuplicatedTransactions__Time {
+    grid-area: time;
+    justify-content: flex-end;
+  }
+  .DuplicatedTransactions__Status {
+    grid-area: status;
+    justify-content: flex-start;
+  }
+  .DuplicatedTransactions__Action {
+    grid-area: action;
+  }
+}

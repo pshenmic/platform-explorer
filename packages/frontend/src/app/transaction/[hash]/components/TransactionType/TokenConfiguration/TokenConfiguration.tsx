@@ -4,7 +4,7 @@ import { LocalisationGrid } from '@components/tokens/localisation/LocalisationGr
 
 import { DistType } from './DistType'
 
-import styles from './TokenConfiguration.module.scss'
+import styles from './TokenConfiguration.module.css'
 import { ValueCard } from '@components/cards'
 import type { TokenConfigurationData } from '../../types'
 

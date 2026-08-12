@@ -21,7 +21,7 @@ import { useRouter } from 'next/navigation'
 import { LinkContainer } from '../ui/containers'
 import type { Rate, Transaction } from '../../types'
 
-import './TransactionsListItem.scss'
+import './TransactionsListItem.css'
 
 const Identifier = IdentifierJs as ComponentType<{
   children?: ReactNode

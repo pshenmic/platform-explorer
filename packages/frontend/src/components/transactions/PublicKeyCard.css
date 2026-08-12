@@ -1,0 +1,53 @@
+.PublicKeyCard {
+  padding: 40px !important;
+}
+@media screen and (max-width: 48em) {
+  .PublicKeyCard {
+    padding: 32px !important;
+  }
+}
+@media screen and (max-width: 30em) {
+  .PublicKeyCard {
+    padding: 16px !important;
+  }
+}
+.PublicKeyCard__InfoLine {
+  justify-content: flex-start;
+  margin-bottom: 14px;
+}
+.PublicKeyCard__InfoLine:last-child {
+  margin-bottom: 0;
+}
+.PublicKeyCard__InfoLine--Data, .PublicKeyCard__InfoLine--Hash {
+  white-space: wrap;
+  word-break: break-all;
+}
+.PublicKeyCard__InfoLine .InfoLine__Title {
+  width: 150px !important;
+}
+@media screen and (max-width: 48em) {
+  .PublicKeyCard__InfoLine .InfoLine .InfoLine__Value {
+    flex-grow: 1;
+  }
+}
+@media screen and (max-width: 30em) {
+  .PublicKeyCard__InfoLine {
+    flex-wrap: wrap;
+    justify-content: space-between;
+  }
+  .PublicKeyCard__InfoLine .InfoLine__Title {
+    width: auto !important;
+  }
+  .PublicKeyCard__InfoLine--Data {
+    flex-wrap: wrap;
+  }
+  .PublicKeyCard__InfoLine--Data .InfoLine__Title {
+    margin-bottom: 8px;
+  }
+  .PublicKeyCard__InfoLine--Data .InfoLine__Value {
+    width: 100%;
+  }
+  .PublicKeyCard__InfoLine--Data .ValueCard {
+    width: 100%;
+  }
+}

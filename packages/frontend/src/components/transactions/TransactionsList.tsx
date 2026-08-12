@@ -13,7 +13,7 @@ import {
 } from '@tanstack/react-table'
 import type { Rate, Transaction } from '../../types'
 
-import './TransactionsList.scss'
+import './TransactionsList.css'
 
 const LoadingList = LoadingListJs as ComponentType<{ itemsCount?: number }>
 const Pagination = PaginationJs as ComponentType<{

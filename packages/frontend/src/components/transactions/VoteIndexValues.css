@@ -1,0 +1,27 @@
+.VoteIndexValues {
+  background-color: var(--pe-color-gray-650);
+  border: 1px solid #404E53;
+  border-radius: var(--pe-radius-def);
+  font-size: 0.75rem;
+  font-family: var(--pe-font-mono);
+}
+.VoteIndexValues__Row, .VoteIndexValues__Titles {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 0.75rem;
+  border-bottom: 1px solid #404E53;
+}
+.VoteIndexValues__Row:last-child, .VoteIndexValues__Titles:last-child {
+  border-bottom: none;
+}
+.VoteIndexValues__Col, .VoteIndexValues__Title {
+  white-space: wrap;
+  word-break: break-all;
+}
+.VoteIndexValues__Col:nth-child(2), .VoteIndexValues__Title:nth-child(2) {
+  flex-shrink: 0;
+}
+.VoteIndexValues__Titles {
+  color: var(--pe-color-fg-muted);
+}
