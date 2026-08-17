@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useMemo, useRef } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { useQuery, useQueries } from '@tanstack/react-query'
 import * as Api from '../../util/Api'
 import HomeHero from './HomeHero.js'
@@ -11,7 +11,6 @@ import {
   TxActivityChart,
   IdentityGrowthChart,
   ShieldedPoolCard,
-  GovernanceCard,
   HomeLeaders
 } from '../../components/home'
 import { fetchHandlerSuccess, fetchHandlerError } from '../../util'
@@ -25,14 +24,9 @@ function epochNumbersOf (current) {
 }
 
 function Home () {
-  const [contested, setContested] = useState({ data: {}, loading: true, error: false })
-  const [activeContested, setActiveContested] = useState({ data: {}, loading: true, error: false })
-  const [latestContested, setLatestContested] = useState({ data: {}, loading: true, error: false })
-  const [latestVotes, setLatestVotes] = useState({ data: {}, loading: true, error: false })
   const [rate, setRate] = useState({ data: {}, loading: true, error: false })
 
   const gap = theme.blockOffset
-  const secondaryStarted = useRef(false)
 
   // wave 0: hero + overview + validator totals (independent; RQ dedupes Strict Mode double-mount)
   const statusQuery = useQuery({ queryKey: ['home', 'status'], queryFn: Api.getStatus, refetchInterval: 60000 })
@@ -188,35 +182,11 @@ function Home () {
     error: false
   }
 
-  // rate early — leaders / shielded cards shouldn't wait on gov/secondary
   useEffect(() => {
     Api.getRate()
       .then(res => fetchHandlerSuccess(setRate, res))
       .catch(err => fetchHandlerError(setRate, err))
   }, [])
-
-  // gov after status (parallel with epochs); keep them off wave 0 so validators keep bandwidth
-  useEffect(() => {
-    if (secondaryStarted.current) return
-    if (!statusQuery.isSuccess) return
-    secondaryStarted.current = true
-
-    Api.getContestedResourcesStats()
-      .then(res => fetchHandlerSuccess(setContested, res))
-      .catch(err => fetchHandlerError(setContested, err))
-
-    Api.getContestedResources(1, 10, 'desc', undefined, { voting_finished: false })
-      .then(res => fetchHandlerSuccess(setActiveContested, res))
-      .catch(err => fetchHandlerError(setActiveContested, err))
-
-    Api.getContestedResources(1, 5, 'desc')
-      .then(res => fetchHandlerSuccess(setLatestContested, res))
-      .catch(err => fetchHandlerError(setLatestContested, err))
-
-    Api.getMasternodeVotes(1, 10, 'desc')
-      .then(res => fetchHandlerSuccess(setLatestVotes, res))
-      .catch(err => fetchHandlerError(setLatestVotes, err))
-  }, [statusQuery.isSuccess])
 
   // below-fold charts wait until the first epoch paints (or all epoch queries settle empty)
   const epochsSettled = epochNumbers.length > 0 &&
@@ -317,14 +287,6 @@ function Home () {
             />
           </div>
         </div>
-
-        <GovernanceCard
-          contested={contested}
-          activeContested={activeContested}
-          latestContested={latestContested}
-          latestVotes={latestVotes}
-          epochData={epochData}
-        />
       </Flex>
     </Container>
   )
