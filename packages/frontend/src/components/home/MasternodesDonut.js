@@ -24,30 +24,11 @@ function shortHash (h, head = 4, tail = 4) {
   return `${h.slice(0, head)}…${h.slice(-tail)}`
 }
 
-function parseHealth (raw) {
-  if (raw == null || raw === '') return null
-  const n = typeof raw === 'number' ? raw : Number(raw)
-  return Number.isFinite(n) ? n : null
-}
-
 function parseLlmqType (type) {
   if (!type || typeof type !== 'string') return null
   const m = type.match(/llmq_(\d+)_(\d+)/i)
   if (!m) return { raw: type, size: null, threshold: null }
   return { raw: type, size: Number(m[1]), threshold: Number(m[2]) }
-}
-
-function healthTone (ratio) {
-  if (ratio == null) return 'unknown'
-  if (ratio > 0.75) return 'good'
-  if (ratio > 0.5) return 'warn'
-  if (ratio > 0.25) return 'bad'
-  return 'critical'
-}
-
-function healthLabel (ratio) {
-  if (ratio == null) return '—'
-  return `${Math.round(ratio * 100)}%`
 }
 
 function memberKey (proTx) {
@@ -58,22 +39,27 @@ const STATS = [
   {
     key: 'total',
     label: 'Total',
-    hint: 'All Platform validators (evonodes) tracked on the network.'
+    hint: 'All evonodes on Platform'
   },
   {
     key: 'active',
-    label: 'In quorum',
-    hint: 'In the current Platform signing set right now.'
+    label: 'Now',
+    hint: 'Signing this block'
+  },
+  {
+    key: 'next',
+    label: 'Next',
+    hint: 'Orange · signs the next rotation'
   },
   {
     key: 'inactive',
     label: 'Queued',
-    hint: 'Not active and not banned. Gray with a blue ring means joining the next set.'
+    hint: 'Waiting, not in Now or Next'
   },
   {
     key: 'banned',
     label: 'Banned',
-    hint: 'Not in the registered unbanned set (PoSe ban or left the masternode list).'
+    hint: 'PoSe banned or left the list'
   }
 ]
 
@@ -127,7 +113,7 @@ function matrixCols (count) {
   if (count <= 0) return 1
   if (count <= 36) return Math.max(6, Math.ceil(Math.sqrt(count)))
   if (count <= 100) return Math.max(8, Math.ceil(Math.sqrt(count)))
-  return Math.max(10, Math.ceil(Math.sqrt(count)))
+  return Math.max(12, Math.ceil(Math.sqrt(count)))
 }
 
 function isPoSeBannedValidator (v) {
@@ -138,7 +124,7 @@ function isPoSeBannedValidator (v) {
 function buildPoolCells ({ list, currentSet, nextSet, memberMeta, bannedSet }) {
   if (!Array.isArray(list) || list.length === 0) return []
 
-  const cells = list.slice(0, MAX_CELLS).map((v, index) => {
+  const cells = list.map((v, index) => {
     const key = memberKey(v.proTxHash)
     const banned = bannedSet?.size
       ? bannedSet.has(key)
@@ -154,19 +140,11 @@ function buildPoolCells ({ list, currentSet, nextSet, memberMeta, bannedSet }) {
       type = 'banned'
       role = 'banned'
     } else if (inCurrent) {
-      if (meta?.valid === false) {
-        type = 'invalid'
-        role = 'invalid'
-      } else if (nextSet?.size && !inNext) {
-        type = 'leave'
-        role = 'leave'
-      } else {
-        type = 'active'
-        role = 'current'
-      }
+      type = meta?.valid === false ? 'invalid' : 'active'
+      role = meta?.valid === false ? 'invalid' : 'current'
     } else if (inNext) {
-      type = 'join'
-      role = 'join'
+      type = 'next'
+      role = 'next'
     } else if (v.isActive && !currentSet) {
       type = 'active'
       role = 'active'
@@ -184,7 +162,7 @@ function buildPoolCells ({ list, currentSet, nextSet, memberMeta, bannedSet }) {
     }
   })
 
-  const rank = { active: 0, leave: 1, join: 2, invalid: 3, inactive: 4, banned: 5, idle: 6 }
+  const rank = { active: 0, next: 1, invalid: 2, inactive: 3, banned: 4, idle: 5 }
   cells.sort((a, b) => (rank[a.type] ?? 9) - (rank[b.type] ?? 9))
   return cells
 }
@@ -209,8 +187,18 @@ function TipRow ({ label, href, children, mono }) {
   )
 }
 
+function formatQuorumIds (ids) {
+  if (!ids?.length) return null
+  return ids.map(n => {
+    if (n === 0) return 'Now'
+    if (n === 1) return 'Next'
+    return `+${n}`
+  }).join(' · ')
+}
+
 function NodeTooltipBody ({ cell }) {
   const v = cell.validator
+  const quorumLabel = formatQuorumIds(cell.quorumIndexes)
   const status = (() => {
     if (cell.role === 'banned') {
       return isPoSeBannedValidator(cell.validator)
@@ -218,10 +206,10 @@ function NodeTooltipBody ({ cell }) {
         : 'Banned / not in registered set'
     }
     if (cell.role === 'invalid') return 'In current quorum · invalid'
-    if (cell.role === 'leave') return 'Leaving next · still in current set'
-    if (cell.role === 'current' || cell.role === 'active') return 'In current signing set'
-    if (cell.role === 'join') return 'Queued now · joining the next signing set'
-    return 'Queued · not in the current signing set'
+    if (cell.role === 'next') return 'Signs next'
+    if (cell.role === 'current' || cell.role === 'active') return 'In the live signing set'
+    if (quorumLabel) return `In quorum ${quorumLabel}`
+    return 'Not in a loaded Platform quorum'
   })()
 
   const cc = v?.geoIpInfo?.countryCode
@@ -252,6 +240,10 @@ function NodeTooltipBody ({ cell }) {
       <TipRow label={'proTx'} href={validatorHref}>
         {shortHash(cell.proTxHash, 6, 6)}
       </TipRow>
+      {quorumLabel &&
+        <TipRow label={'Signs'}>
+          {quorumLabel}
+        </TipRow>}
       {cell.service &&
         <TipRow label={'Host'} mono>
           {cell.service}
@@ -282,9 +274,10 @@ export default function MasternodesDonut ({
   currentQuorum,
   currentQuorumLoading,
   currentQuorumError,
-  nextQuorum
+  quorums
 }) {
   const [pin, setPin] = useState(null)
+  const [focusKey, setFocusKey] = useState(null)
 
   const total = validators?.data?.pagination?.total
   const active = validatorsActive?.data?.pagination?.total
@@ -301,15 +294,7 @@ export default function MasternodesDonut ({
   const bannedN = typeof banned === 'number' ? banned : 0
   const queuedN = typeof inactive === 'number' ? inactive : 0
 
-  const counts = {
-    total: hasTotal ? total : null,
-    active: typeof active === 'number' ? active : null,
-    inactive: typeof inactive === 'number' ? inactive : null,
-    banned: typeof banned === 'number' ? banned : null
-  }
-
   const currentMembers = Array.isArray(currentQuorum?.members) ? currentQuorum.members : null
-  const nextMembers = Array.isArray(nextQuorum?.members) ? nextQuorum.members : null
   const hasRoster = Boolean(currentMembers && currentMembers.length > 0)
 
   const currentSet = useMemo(() => {
@@ -317,36 +302,70 @@ export default function MasternodesDonut ({
     return new Set(currentMembers.map(m => memberKey(m.proTxHash)))
   }, [currentMembers])
 
-  const nextSet = useMemo(() => {
-    if (!nextMembers) return null
-    return new Set(nextMembers.map(m => memberKey(m.proTxHash)))
-  }, [nextMembers])
+  const sortedQuorums = useMemo(() => {
+    const list = [...(Array.isArray(quorums) ? quorums : [])]
+      .filter(q => q?.quorumHash)
+      .sort((a, b) => (a.blockHeight ?? 0) - (b.blockHeight ?? 0))
+    if (!list.length) return []
+    const liveHash = currentQuorum?.quorumHash
+    const liveI = list.findIndex(q =>
+      Boolean(q.isCurrent) || (liveHash && q.quorumHash === liveHash)
+    )
+    const start = liveI >= 0 ? liveI : 0
+    return list.map((_, i) => {
+      const q = list[(start + i) % list.length]
+      return {
+        ...q,
+        offset: i,
+        isLive: i === 0 && liveI >= 0
+      }
+    })
+  }, [quorums, currentQuorum?.quorumHash])
+
+  const rosterIndex = useMemo(() => {
+    const byNode = new Map()
+    const membersOf = new Map()
+    for (const q of sortedQuorums) {
+      const hash = q.quorumHash
+      const set = new Set()
+      for (const m of q.members || []) {
+        const k = memberKey(m.proTxHash)
+        if (!k) continue
+        set.add(k)
+        const arr = byNode.get(k) || []
+        arr.push({ hash, index: q.offset, isCurrent: q.isLive })
+        byNode.set(k, arr)
+      }
+      membersOf.set(hash, set)
+    }
+    for (const arr of byNode.values()) {
+      arr.sort((a, b) => {
+        if (a.isCurrent !== b.isCurrent) return a.isCurrent ? -1 : 1
+        return a.index - b.index
+      })
+    }
+    return { byNode, membersOf }
+  }, [sortedQuorums])
 
   const memberMeta = useMemo(() => {
     const map = new Map()
-    for (const m of currentMembers || []) {
-      map.set(memberKey(m.proTxHash), {
-        valid: m.valid !== false,
-        service: m.service || null
-      })
-    }
-    for (const m of nextMembers || []) {
-      const k = memberKey(m.proTxHash)
-      if (!map.has(k)) {
+    for (const q of Array.isArray(quorums) ? quorums : []) {
+      for (const m of q.members || []) {
+        const k = memberKey(m.proTxHash)
+        if (!k || map.has(k)) continue
         map.set(k, { valid: m.valid !== false, service: m.service || null })
       }
     }
+    for (const m of currentMembers || []) {
+      const k = memberKey(m.proTxHash)
+      if (!k) continue
+      map.set(k, { valid: m.valid !== false, service: m.service || null })
+    }
     return map
-  }, [currentMembers, nextMembers])
+  }, [quorums, currentMembers])
 
-  const health = parseHealth(currentQuorum?.healthRatio)
   const llmq = parseLlmqType(currentQuorum?.type)
-  const validCount = typeof currentQuorum?.numValidMembers === 'number'
-    ? currentQuorum.numValidMembers
-    : (currentMembers ? currentMembers.filter(m => m?.valid !== false).length : null)
   const rosterSize = currentMembers?.length ?? llmq?.size ?? null
-  const dkgFailures = currentQuorum?.previousConsecutiveDKGFailures
-  const showDkg = typeof dkgFailures === 'number' && dkgFailures > 0
 
   const list = useMemo(
     () => (Array.isArray(validatorsList) ? validatorsList : []),
@@ -362,18 +381,40 @@ export default function MasternodesDonut ({
   const hasNodeList = list.length > 0
 
   const cells = useMemo(() => {
-    if (hasNodeList) {
-      return buildPoolCells({
+    const raw = hasNodeList
+      ? buildPoolCells({
         list,
         currentSet,
-        nextSet,
+        nextSet: rosterIndex.membersOf.get(sortedQuorums.find(q => q.offset === 1)?.quorumHash) || null,
         memberMeta,
         bannedSet
       })
-    }
-    if (!hasTotal) return []
-    return buildProportionalCells(activeN, queuedN, bannedN, total)
-  }, [hasNodeList, list, currentSet, nextSet, memberMeta, bannedSet, hasTotal, activeN, queuedN, bannedN, total])
+      : (hasTotal ? buildProportionalCells(activeN, queuedN, bannedN, total) : [])
+    return raw.map(cell => {
+      if (cell.kind !== 'node' || !cell.proTxHash) return cell
+      const qs = rosterIndex.byNode.get(memberKey(cell.proTxHash)) || []
+      return {
+        ...cell,
+        quorumHashes: qs.map(q => q.hash),
+        quorumIndexes: qs.map(q => q.index).filter(n => typeof n === 'number')
+      }
+    })
+  }, [hasNodeList, list, currentSet, memberMeta, bannedSet, hasTotal, activeN, queuedN, bannedN, total, rosterIndex, sortedQuorums])
+
+  const nextN = useMemo(
+    () => cells.filter(c => c.type === 'next').length,
+    [cells]
+  )
+
+  const counts = {
+    total: hasTotal ? total : null,
+    active: typeof active === 'number' ? active : null,
+    next: hasNodeList ? nextN : null,
+    inactive: typeof inactive === 'number'
+      ? Math.max(0, inactive - (hasNodeList ? nextN : 0))
+      : null,
+    banned: typeof banned === 'number' ? banned : null
+  }
 
   const cols = useMemo(() => matrixCols(cells.length), [cells.length])
   const rows = useMemo(
@@ -381,29 +422,49 @@ export default function MasternodesDonut ({
     [cells.length, cols]
   )
   const capped = hasTotal && cells.length < total
-  const abstractMode = !hasNodeList
 
   const pct = (n) => (hasTotal && typeof n === 'number' ? Math.round((n / total) * 100) : null)
 
-  const geoSummary = useMemo(() => {
-    const codes = new Set()
-    let withGeo = 0
-    for (const v of list) {
-      const cc = v?.geoIpInfo?.countryCode
-      if (cc) {
-        codes.add(cc)
-        withGeo++
-      }
-    }
-    return {
-      nations: codes.size,
-      withGeo,
-      listSize: list.length,
-      has: codes.size > 0
-    }
-  }, [list])
-
   const togglePin = (key) => setPin(p => (p === key ? null : key))
+
+  const cycleNodeQuorum = (hashes, proTx) => {
+    const key = memberKey(proTx)
+    if (key) setFocusKey(key)
+    if (!hashes?.length) return
+    const ordered = hashes
+      .map(h => sortedQuorums.find(q => q.quorumHash === h))
+      .filter(Boolean)
+      .sort((a, b) => a.offset - b.offset)
+    if (!ordered.length) return
+    const keys = ordered.map(q => q.quorumHash)
+    if (typeof pin === 'string' && pin.startsWith('q:')) {
+      const cur = pin.slice(2)
+      const i = keys.indexOf(cur)
+      if (i === -1) {
+        setPin(`q:${keys[0]}`)
+        return
+      }
+      if (i + 1 < keys.length) {
+        setPin(`q:${keys[i + 1]}`)
+        return
+      }
+      setPin(null)
+      return
+    }
+    setPin(`q:${keys[0]}`)
+  }
+
+  const turnLabel = (offset, isLive) => {
+    if (isLive || offset === 0) return 'Now'
+    if (offset === 1) return 'Next'
+    return `+${offset}`
+  }
+
+  const pinnedQuorumHash = typeof pin === 'string' && pin.startsWith('q:') ? pin.slice(2) : null
+  const pinnedQuorumSet = pinnedQuorumHash ? rosterIndex.membersOf.get(pinnedQuorumHash) : null
+  const pinnedQuorumMeta = pinnedQuorumHash
+    ? (sortedQuorums.find(q => q.quorumHash === pinnedQuorumHash) || null)
+    : null
 
   const matrixAria = hasNodeList
     ? `${list.length} validators` +
@@ -412,13 +473,6 @@ export default function MasternodesDonut ({
     : capped
       ? `${activeN} in quorum of ${total} (matrix capped)`
       : `${activeN} of ${total} in active / queued / banned pool`
-
-  const activeHint = hasRoster && rosterSize != null
-    ? `Current signing set: ${rosterSize}` +
-      (validCount != null ? ` · ${validCount} valid` : '') +
-      (health != null ? ` · health ${healthLabel(health)}` : '') +
-      '.'
-    : STATS.find(s => s.key === 'active')?.hint
 
   return (
     <Box
@@ -441,67 +495,73 @@ export default function MasternodesDonut ({
               content={
                 <div className={'MasternodesDonut__HelpTip'}>
                   <p>
-                    Platform blocks are signed by a small rotating group of evonodes, not the
-                    whole validator list.
+                    Mainnet keeps 24 formed Platform quorums (LLMQ 100/67). Only one signs
+                    the current block.
                   </p>
                   <p className={'MasternodesDonut__HelpFoot'}>
-                    Who comes next is picked by the protocol, not a vote. Identity is the
-                    Platform account, not the validator page.
+                    Click a square to see that node&apos;s soonest turn. Click again to
+                    cycle its other quorums.
                   </p>
                 </div>
               }
             >
               <span className={'MasternodesDonut__LedeMore'}>rotating set</span>
             </Tooltip>
-            {' '}of evonodes signs Platform blocks. The rest wait or sit banned.
+            {' '}of 100 evonodes signs each block.
           </p>
         </div>
 
-        {(hasRoster || currentQuorumLoading || geoSummary.has) &&
-          <div className={'MasternodesDonut__Status'} aria-label={'Current quorum status'}>
-            {hasRoster &&
-              <>
-                <span
-                  className={`MasternodesDonut__Chip MasternodesDonut__Chip--${healthTone(health)}`}
-                  title={'Share of valid members in the current signing set'}
-                >
-                  <i/> {healthLabel(health)}
-                </span>
-                {rosterSize != null &&
-                  <span className={'MasternodesDonut__Chip'} title={'Valid members / roster size'}>
-                    {validCount != null ? `${validCount}/${rosterSize}` : rosterSize}
-                  </span>}
-                {llmq && llmq.size != null && llmq.threshold != null &&
-                  <span className={'MasternodesDonut__Chip'} title={llmq.raw || 'Quorum type'}>
-                    {llmq.size}·{llmq.threshold}%
-                  </span>}
-                {typeof currentQuorum?.blockHeight === 'number' &&
-                  <span
-                    className={'MasternodesDonut__Chip MasternodesDonut__Chip--muted'}
-                    title={'Core height of this quorum'}
+        {sortedQuorums.length > 0 &&
+          <div className={'MasternodesDonut__QBar'} aria-label={'Platform quorums'}>
+            <p className={'MasternodesDonut__QCaption'}>
+              {pinnedQuorumMeta
+                ? <>
+                    <b>{turnLabel(pinnedQuorumMeta.offset, pinnedQuorumMeta.isLive)}</b>
+                    <span>
+                      {(pinnedQuorumMeta.members?.length || pinnedQuorumSet?.size || 0)} signers
+                    </span>
+                    {pinnedQuorumMeta.isLive
+                      ? <em>signing now</em>
+                      : <span>
+                          {pinnedQuorumMeta.offset === 1
+                            ? 'signs next'
+                            : `in ${pinnedQuorumMeta.offset} rotations`}
+                        </span>}
+                  </>
+                : <>
+                    <b>When does it sign?</b>
+                    <span>pick a node or a turn</span>
+                  </>}
+            </p>
+            <div className={'MasternodesDonut__QPick'} role={'group'} aria-label={'Signing rotation'}>
+              {sortedQuorums.map(q => {
+                const selected = q.quorumHash === pinnedQuorumHash
+                const label = turnLabel(q.offset, q.isLive)
+                return (
+                  <button
+                    key={q.quorumHash}
+                    type={'button'}
+                    className={
+                      `MasternodesDonut__QBtn${q.offset < 2 ? ' is-word' : ''}${selected ? ' is-on' : ''}${q.isLive ? ' is-live' : ''}${q.offset === 1 ? ' is-next' : ''}`
+                    }
+                    aria-pressed={selected}
+                    title={
+                      (q.isLive
+                        ? 'Signing this Platform block'
+                        : q.offset === 1
+                          ? 'Next signing set'
+                          : `Signing set in ${q.offset} rotations`) +
+                      (typeof q.blockHeight === 'number'
+                        ? ` · formed at #${q.blockHeight.toLocaleString('en-US')}`
+                        : '')
+                    }
+                    onClick={() => togglePin(`q:${q.quorumHash}`)}
                   >
-                    #{currentQuorum.blockHeight.toLocaleString('en-US')}
-                  </span>}
-                <span className={'MasternodesDonut__Chip MasternodesDonut__Chip--live'} title={'Live signing set'}>
-                  <i/> Live
-                </span>
-                {showDkg &&
-                  <span
-                    className={'MasternodesDonut__Chip MasternodesDonut__Chip--critical'}
-                    title={'Previous consecutive DKG failures'}
-                  >
-                    DKG {dkgFailures}
-                  </span>}
-              </>}
-            {!hasRoster && currentQuorumLoading &&
-              <span className={'MasternodesDonut__Chip MasternodesDonut__Chip--muted'}>…</span>}
-            {geoSummary.has &&
-              <span
-                className={'MasternodesDonut__Chip MasternodesDonut__Chip--muted'}
-                title={`${geoSummary.withGeo} of ${geoSummary.listSize} validators have geo IP; country is in each tile tooltip`}
-              >
-                {geoSummary.nations} {geoSummary.nations === 1 ? 'country' : 'countries'}
-              </span>}
+                    {label}
+                  </button>
+                )
+              })}
+            </div>
           </div>}
       </header>
 
@@ -525,8 +585,8 @@ export default function MasternodesDonut ({
 
         {showContent &&
           <div
-            className={`MasternodesDonut__Stage${pin ? ' is-pinned' : ''}`}
-            data-pin={pin || undefined}
+            className={`MasternodesDonut__Stage${pin ? ' is-pinned' : ''}${pinnedQuorumHash ? ' is-pinned-quorum' : ''}`}
+            data-pin={pinnedQuorumHash ? 'quorum' : (pin || undefined)}
           >
             <div className={'MasternodesDonut__Col'}>
               <div className={'MasternodesDonut__MatrixWrap'}>
@@ -534,7 +594,8 @@ export default function MasternodesDonut ({
                   className={`MasternodesDonut__Matrix${hasNodeList ? ' MasternodesDonut__Matrix--roster' : ''}`}
                   style={{
                     gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))`,
-                    gridTemplateRows: `repeat(${rows}, minmax(0, 1fr))`
+                    gridTemplateRows: `repeat(${rows}, minmax(0, 1fr))`,
+                    gap: cells.length > 200 ? 2 : cells.length > 80 ? 3 : 5
                   }}
                   role={'img'}
                   aria-label={matrixAria}
@@ -560,32 +621,42 @@ export default function MasternodesDonut ({
                       )
                     }
 
-                    const dataType = cell.type === 'leave' || cell.type === 'invalid'
+                    const dataType = cell.type === 'invalid'
                       ? 'active'
-                      : cell.type === 'join'
-                        ? 'inactive'
-                        : cell.type === 'idle'
-                          ? 'total'
-                          : cell.type
+                      : cell.type === 'idle'
+                        ? 'total'
+                        : cell.type
 
                     const cc = cell.validator?.geoIpInfo?.countryCode
                     const ccName = cc ? countryName(cc) : null
-                    const roleHint = cell.role === 'leave'
-                      ? 'leaving next'
-                      : cell.role === 'join'
-                        ? 'joining next'
-                        : cell.role
+                    const roleHint = cell.role === 'current'
+                      ? 'signing now'
+                      : cell.role === 'next'
+                        ? 'signs next'
+                        : (cell.quorumIndexes?.length
+                            ? `signs ${formatQuorumIds(cell.quorumIndexes)}`
+                            : cell.role)
 
-                    const link = (
-                      <Link
-                        href={`/validator/${cell.proTxHash}`}
+                    const nodeKey = memberKey(cell.proTxHash)
+                    const inPinned = Boolean(pinnedQuorumSet && pinnedQuorumSet.has(nodeKey))
+                    const isFocus = Boolean(focusKey && focusKey === nodeKey)
+
+                    const tile = (
+                      <button
+                        type={'button'}
                         data-type={dataType}
                         data-role={cell.role}
-                        className={`MasternodesDonut__Cell MasternodesDonut__Cell--${cell.type}`}
+                        className={
+                          `MasternodesDonut__Cell MasternodesDonut__Cell--${cell.type}` +
+                          (inPinned ? ' is-in-pin' : '') +
+                          (isFocus ? ' is-focus' : '')
+                        }
                         aria-label={
                           `${shortHash(cell.proTxHash)}, ${roleHint}` +
                           (ccName ? `, ${ccName}` : '')
                         }
+                        aria-pressed={inPinned || undefined}
+                        onClick={() => cycleNodeQuorum(cell.quorumHashes, cell.proTxHash)}
                       />
                     )
 
@@ -595,20 +666,15 @@ export default function MasternodesDonut ({
                         placement={'top'}
                         content={<NodeTooltipBody cell={cell}/>}
                       >
-                        {link}
+                        {tile}
                       </Tooltip>
                     )
                   })}
                 </div>
               </div>
-              {abstractMode &&
-                <p className={'MasternodesDonut__FallbackNote MasternodesDonut__FallbackNote--inline'}>
-                  Loading per-node list… squares are proportional for now.
-                </p>}
               {capped && hasNodeList &&
                 <p className={'MasternodesDonut__FallbackNote MasternodesDonut__FallbackNote--inline'}>
-                  Showing {cells.length.toLocaleString('en-US')} of {total.toLocaleString('en-US')} validators
-                  (API page limit).
+                  Loaded {cells.length.toLocaleString('en-US')} of {total.toLocaleString('en-US')} validators
                 </p>}
             </div>
 
@@ -617,7 +683,6 @@ export default function MasternodesDonut ({
                 const n = counts[s.key]
                 const ready = typeof n === 'number'
                 const share = s.key !== 'total' ? pct(n) : null
-                const hint = s.key === 'active' ? activeHint : s.hint
                 return (
                   <button
                     key={s.key}
@@ -627,18 +692,17 @@ export default function MasternodesDonut ({
                     onClick={() => togglePin(s.key)}
                     aria-pressed={pin === s.key}
                     disabled={!ready}
+                    title={s.hint}
                   >
-                    <span className={'MasternodesDonut__RailTop'}>
-                      <span className={'MasternodesDonut__RailId'}>
-                        <i className={`MasternodesDonut__Dot MasternodesDonut__Dot--${s.key}`}/>
-                        {s.label}
-                      </span>
-                      <span className={'MasternodesDonut__RailNums'}>
-                        <b>{ready ? n.toLocaleString('en-US') : '—'}</b>
-                        {share != null && <em>{share}%</em>}
-                      </span>
+                    <span className={'MasternodesDonut__RailId'}>
+                      <i className={`MasternodesDonut__Dot MasternodesDonut__Dot--${s.key}`}/>
+                      {s.label}
                     </span>
-                    <span className={'MasternodesDonut__RailHint'}>{hint}</span>
+                    <span className={'MasternodesDonut__RailHint'}>{s.hint}</span>
+                    <span className={'MasternodesDonut__RailNums'}>
+                      <b>{ready ? n.toLocaleString('en-US') : '—'}</b>
+                      {share != null && <em>{share}%</em>}
+                    </span>
                   </button>
                 )
               })}
