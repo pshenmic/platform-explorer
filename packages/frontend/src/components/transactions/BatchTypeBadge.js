@@ -1,12 +1,18 @@
 import { Badge } from '@chakra-ui/react'
 import { BatchActions } from '../../enums/batchTypes'
 import { Tooltip } from '../ui/Tooltips'
+import './TypeBadge.scss'
 
-function BatchTypeBadge ({ batchType, ...props }) {
+function BatchTypeBadge ({ batchType, className = '', ...props }) {
   const batchInfo = BatchActions?.[batchType]
+  const badgeClass = `TypeBadge ${className}`.trim()
 
   if (!batchInfo) {
-    return <Badge colorScheme='gray' {...props}><span className={'TransactionsListItem__TypeBadgeLabel'}>{batchType}</span></Badge>
+    return (
+      <Badge className={badgeClass} colorScheme='gray' {...props}>
+        <span className={'TypeBadge__Label'}>{batchType}</span>
+      </Badge>
+    )
   }
 
   return (
@@ -15,8 +21,8 @@ function BatchTypeBadge ({ batchType, ...props }) {
       content={batchInfo.description}
       placement={'top'}
     >
-      <Badge colorScheme={batchInfo.colorScheme} {...props}>
-        <span className={'TransactionsListItem__TypeBadgeLabel'}>{batchInfo.title}</span>
+      <Badge className={badgeClass} colorScheme={batchInfo.colorScheme} {...props}>
+        <span className={'TypeBadge__Label'}>{batchInfo.title}</span>
       </Badge>
     </Tooltip>
   )

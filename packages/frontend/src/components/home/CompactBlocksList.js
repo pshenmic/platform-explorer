@@ -1,92 +1,78 @@
 'use client'
 
-import Link from 'next/link'
-import { BigNumber, TimeDelta, NotActive } from '../data'
+import { BigNumber, TimeDelta, NotActive, Identifier } from '../data'
 import { BlockIcon } from '../ui/icons'
-import { Skeleton } from './Skeleton'
+import { DataList } from '../ui/lists'
 import { useLiveList } from './hooks'
+import { HOME_FEED_LIMIT } from './listLimits'
 import './CompactBlocksList.scss'
 
-// column-title row, same grid as the data rows, so the list reads like the full tables
-function CompactBlocksHead () {
-  return (
-    <div className={'CompactBlocks__Head'} aria-hidden={'true'}>
-      <span className={'CompactBlocks__HeadCell'}>Height</span>
-      <span className={'CompactBlocks__HeadCell'}>Hash</span>
-      <span className={'CompactBlocks__HeadCell CompactBlocks__HeadCell--txs'}>Txs</span>
-      <span className={'CompactBlocks__HeadCell CompactBlocks__HeadCell--time'}>Time</span>
-    </div>
-  )
-}
-
-// dense latest-blocks list; refreshes are held back while hovered
-export function CompactBlocksList ({ blocks, limit = 6, loading, moreHref, moreLabel }) {
+export function CompactBlocksList ({
+  blocks,
+  limit = HOME_FEED_LIMIT,
+  loading
+}) {
   const { shown, newKeys, hoverBind } = useLiveList(blocks, b => b?.header?.hash)
   const rows = Array.isArray(shown) ? shown.slice(0, limit) : []
 
-  const footer = moreHref
-    ? <Link href={moreHref} prefetch={false} className={'CompactBlocks__More'}>{moreLabel || 'View all'}</Link>
-    : null
-
-  // skeleton mirrors the real row grid so there's no layout shift
-  if (loading && !rows.length) {
-    return (
-      <div className={'CompactBlocks'}>
-        <CompactBlocksHead/>
-        {Array.from({ length: limit }).map((_, i) => (
-          <div className={'CompactBlocks__Row CompactBlocks__Row--skeleton'} key={i}>
-            <span className={'CompactBlocks__Height'}>
-              <Skeleton w={'1rem'} h={'1rem'} radius={4}/>
-              <Skeleton w={'46px'} h={'0.8em'}/>
-            </span>
-            <span className={'CompactBlocks__HashCell'}><Skeleton w={'72%'} h={'0.8em'}/></span>
-            <span className={'CompactBlocks__Txs'}><Skeleton w={'40px'} h={'1.05em'} radius={4}/></span>
-            <span className={'CompactBlocks__Time'}><Skeleton w={'42px'} h={'0.7em'}/></span>
-          </div>
-        ))}
-        {footer}
-      </div>
-    )
-  }
-
-  if (!rows.length) {
-    return <div className={'CompactBlocks__Empty'}>No blocks</div>
-  }
+  const columns = [
+    {
+      key: 'height',
+      header: 'Height',
+      minWidth: 88,
+      cell: (block) => {
+        const height = block?.header?.height
+        return (
+          <span className={'CompactBlocksList__Height'}>
+            <BlockIcon w={'1.125rem'} h={'1.125rem'} flexShrink={0}/>
+            {typeof height === 'number' ? <BigNumber>{height}</BigNumber> : <NotActive/>}
+          </span>
+        )
+      }
+    },
+    {
+      key: 'hash',
+      header: 'Hash',
+      grow: true,
+      minWidth: 96,
+      cell: (block) => (block?.header?.hash
+        ? <Identifier ellipsis={true} styles={['highlight-both']}>{block.header.hash}</Identifier>
+        : <NotActive/>)
+    },
+    {
+      key: 'txs',
+      header: 'Txs',
+      minWidth: 56,
+      align: 'center',
+      cell: (block) => {
+        const txCount = Array.isArray(block?.txs) ? block.txs.length : 0
+        return <span className={'CompactBlocksList__Txs'}>{txCount}</span>
+      }
+    },
+    {
+      key: 'time',
+      header: 'Time',
+      minWidth: 48,
+      align: 'right',
+      cell: (block) => (block?.header?.timestamp
+        ? <TimeDelta showTimestampTooltip={true} format={'compact'} endDate={new Date(block.header.timestamp)}/>
+        : <NotActive/>)
+    }
+  ]
 
   return (
-    <div className={'CompactBlocks'} {...hoverBind}>
-      <CompactBlocksHead/>
-      {rows.map((block, i) => {
-        const header = block?.header
-        const txCount = Array.isArray(block?.txs) ? block.txs.length : 0
-        return (
-          <Link
-            key={header?.hash}
-            href={`/block/${header?.hash}`}
-            // rows churn every refresh tick; prefetching each new hash grows the router cache for the tab's lifetime
-            prefetch={false}
-            className={`CompactBlocks__Row${newKeys.has(header?.hash) ? ' is-new' : ''}`}
-            // fresh rows cascade in top-down instead of swapping in one frame
-            style={newKeys.has(header?.hash) ? { '--stagger': `${i * 50}ms` } : undefined}
-          >
-            <span className={'CompactBlocks__Height'}>
-              <BlockIcon className={'CompactBlocks__Icon'} w={'1rem'} h={'1rem'}/>
-              {typeof header?.height === 'number' ? <BigNumber>{header.height}</BigNumber> : <NotActive/>}
-            </span>
-
-            <span className={'CompactBlocks__HashCell'}>
-              {header?.hash ? <span className={'CompactBlocks__HashText'}>{header.hash}</span> : <NotActive/>}
-            </span>
-
-            <span className={'CompactBlocks__Txs'}>{txCount} {txCount === 1 ? 'tx' : 'txs'}</span>
-
-            <span className={'CompactBlocks__Time'}>
-              {header?.timestamp ? <TimeDelta showTimestampTooltip={true} format={'compact'} endDate={new Date(header.timestamp)}/> : <NotActive/>}
-            </span>
-          </Link>
-        )
-      })}
-      {footer}
-    </div>
+    <DataList
+      className={'CompactBlocksList'}
+      items={rows}
+      columns={columns}
+      loading={loading && !rows.length}
+      skeletonCount={limit}
+      emptyMessage={'No blocks'}
+      rowHref={(block) => `/block/${block?.header?.hash}`}
+      rowKey={(block) => block?.header?.hash}
+      rowClassName={(block) => (newKeys.has(block?.header?.hash) ? 'is-new' : '')}
+      rowStyle={(block, i) => (newKeys.has(block?.header?.hash) ? { '--stagger': `${i * 50}ms` } : undefined)}
+      wrapperProps={hoverBind}
+    />
   )
 }

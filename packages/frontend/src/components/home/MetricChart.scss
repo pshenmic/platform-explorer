@@ -1,13 +1,72 @@
 @import '../../styles/variables.scss';
 
 .MetricChart {
-  // preset chips now live in the shared `Presets` block (components/cards/Presets)
+  // no card chrome when nested inside HomeActivity
+  &--Embedded {
+    background: transparent;
+    width: 100%;
 
+    .InfoBlock__Head {
+      margin: 0 0 8px;
+      flex-wrap: nowrap;
+      align-items: center;
+      justify-content: space-between;
+      min-width: 0;
+      flex-shrink: 0;
+    }
+
+    .InfoBlock__Title {
+      position: static !important;
+      left: auto !important;
+      top: auto !important;
+      margin-left: 0 !important;
+      margin-top: 0 !important;
+    }
+
+    .InfoBlock__HeadSlot {
+      flex-shrink: 0;
+      margin-left: auto;
+    }
+
+    .MetricChart__Plot {
+      width: 100%;
+      margin-right: 0;
+    }
+  }
+
+  // plot height follows the flex cell (paired lists)
+  &--Fill {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    height: 100%;
+    width: 100%;
+
+    .MetricChart__Plot {
+      flex: 1 1 0;
+      min-height: 0;
+      width: 100%;
+      margin-right: 0;
+      overflow: visible;
+    }
+
+    .MetricChart__Svg {
+      display: block;
+      overflow: visible;
+    }
+
+    .MetricChart__Ghost,
+    .MetricChart__Empty {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+    }
+  }
+
+  // bleed right into card padding so the series reaches the edge
   &__Plot {
     position: relative;
-    // grow right by the card's side padding so bars/line reach the card border; the left keeps
-    // its padding for the Y-axis numbers. ResizeObserver widens the SVG; CardHead stays inset.
-    // (width:100% + neg margin would only shift, not widen — the spec recomputes the right margin.)
     width: calc(100% + 32px);
     margin-right: -32px;
 
@@ -15,6 +74,11 @@
       width: calc(100% + 16px);
       margin-right: -16px;
     }
+  }
+
+  &--Embedded &__Plot {
+    width: 100%;
+    margin-right: 0;
   }
 
   &__Empty {
@@ -28,13 +92,13 @@
 
   &__Svg { display: block; }
 
-  // preset switch: the stale chart dims until fresh points land (no skeleton flash)
+  // dim series while a preset refetch is in flight
   &__Svg--Stale {
     opacity: 0.4;
     transition: opacity .2s;
   }
 
-  // first-load ghost: outline of the coming chart instead of a "Loading…" label
+
   &__Ghost {
     display: block;
     width: 100%;

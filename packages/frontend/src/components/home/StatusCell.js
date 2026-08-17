@@ -1,25 +1,42 @@
+'use client'
+
 import Link from 'next/link'
-import { InfoIcon } from '@chakra-ui/icons'
 import { Tooltip } from '../ui/Tooltips'
 
-// One cell of the hero status bar: label (+ optional i-tooltip) over a value (+ optional link).
+// KPI tile: whole cell opens tip when `hint` is set.
 export function StatusCell ({ label, hint, href, children }) {
-  return (
-    <div className={'HomeHero__StatusCell'}>
+  const onKeyDown = (e) => {
+    if (!hint) return
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault()
+      e.currentTarget.click()
+    }
+  }
+
+  const cell = (
+    <div
+      className={`HomeHero__StatusCell${hint ? ' HomeHero__StatusCell--Hint' : ''}`}
+      role={hint ? 'button' : undefined}
+      tabIndex={hint ? 0 : undefined}
+      aria-label={hint ? `${label}, show details` : undefined}
+      onKeyDown={onKeyDown}
+    >
       <span className={'HomeHero__StatusHead'}>
         <span className={'HomeHero__StatusLabel'}>{label}</span>
-        {hint &&
-          <Tooltip title={label} content={hint} placement={'top'}>
-            <span className={'HomeHero__StatusInfo'} aria-label={`About ${label}`}>
-              <InfoIcon boxSize={2.5}/>
-            </span>
-          </Tooltip>}
       </span>
       <span className={'HomeHero__StatusValue'}>
         {href
-          ? <Link href={href} className={'HomeHero__StatusLink'}>{children}</Link>
+          ? <Link href={href} className={'HomeHero__StatusLink'} onClick={e => e.stopPropagation()}>{children}</Link>
           : children}
       </span>
     </div>
+  )
+
+  if (!hint) return cell
+
+  return (
+    <Tooltip title={label} content={hint} placement={'top'}>
+      {cell}
+    </Tooltip>
   )
 }

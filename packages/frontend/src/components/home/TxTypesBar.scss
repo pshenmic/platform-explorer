@@ -1,6 +1,6 @@
 @import '../../styles/variables.scss';
 
-// badge family hues with lightness steps: distinct color per category; BATCH stays muted
+// ST types + batch action kinds (BATCH is expanded away when batchTypes exist)
 $txtype-colors: (
   'BATCH': rgba(255, 255, 255, 0.45),
   'MASTERNODE_VOTE': #f49a58,
@@ -23,45 +23,194 @@ $txtype-colors: (
   'IDENTITY_CREDIT_TRANSFER_TO_ADDRESS': #86979e,
   'IDENTITY_CREATE_FROM_ADDRESSES': #9fb3ba,
   'IDENTITY_TOP_UP_FROM_ADDRESSES': #8ba0a8,
+  // batch document actions
+  'DOCUMENT_CREATE': #4fd4a8,
+  'DOCUMENT_REPLACE': #e8a04a,
+  'DOCUMENT_DELETE': #e85a6a,
+  'DOCUMENT_TRANSFER': #d4883c,
+  'DOCUMENT_UPDATE_PRICE': #5ab8f0,
+  'DOCUMENT_PURCHASE': #3ecf8e,
+  // batch token actions
+  'TOKEN_MINT': #58e8d0,
+  'TOKEN_TRANSFER': #f0b060,
+  'TOKEN_BURN': #e05050,
+  'TOKEN_FREEZE': #6a9ee0,
+  'TOKEN_UNFREEZE': #e8c060,
+  'TOKEN_DESTROY_FROZEN_FUNDS': #c87848,
+  'TOKEN_CLAIM': #68d898,
+  'TOKEN_EMERGENCY_ACTION': #f06070,
+  'TOKEN_CONFIG_UPDATE': #98a0a8,
+  'TOKEN_DIRECT_PURCHASE': #48c880,
+  'TOKEN_SET_PRICE_FOR_DIRECT_PURCHASE': #70a8e8,
   'UNKNOWN': rgba(255, 255, 255, 0.25)
 );
 
 .TxTypesBar {
-  &__Total {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  contain: layout style;
+
+  // phone / stacked: natural height (not locked to the two-chart column)
+  @media screen and (max-width: $breakpoint-lg) {
+    height: auto;
+    max-height: none;
+  }
+
+  &__Head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px 24px;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+    flex-shrink: 0;
+  }
+
+  &__HeadText {
+    min-width: 0;
+    max-width: 22rem;
+  }
+
+  &__Eyebrow {
+    display: block;
+    font-family: $font-mono;
+    font-size: 0.5625rem;
+    text-transform: uppercase;
+    letter-spacing: 0.22em;
+    color: rgba(var(--chakra-colors-brand-light-rgb), 0.9);
+    margin-bottom: 6px;
+  }
+
+  &__Title {
     font-family: $font-heading;
     font-weight: 800;
     font-style: italic;
-    font-size: 1.125rem;
+    font-size: 1.375rem;
+    line-height: 1.1;
     color: #fff;
+    margin: 0 0 8px;
+  }
+
+  &__Lede {
+    font-family: $font-mono;
+    font-size: 0.6875rem;
+    line-height: 1.55;
+    color: var(--chakra-colors-gray-500);
+    margin: 0;
+
+    @media screen and (max-width: $breakpoint-md) {
+      display: none; // free vertical space; title + spectrum carry the story
+    }
+  }
+
+  &__LedeMore {
+    color: var(--chakra-colors-brand-light);
+    border-bottom: 1px dotted rgba(var(--chakra-colors-brand-light-rgb), 0.6);
+    cursor: help;
     white-space: nowrap;
   }
 
-  &__TotalLabel {
+  &__HelpTip {
+    max-width: 16rem;
+    font-size: 0.75rem;
+    line-height: 1.5;
+    text-align: left;
+
+    p { margin: 0 0 0.55em; }
+  }
+
+  &__HelpFoot {
+    margin: 0 !important;
+    color: rgba(255, 255, 255, 0.55);
+    font-size: 0.6875rem;
+    line-height: 1.45;
+  }
+
+  &__Controls {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 14px;
+    flex-shrink: 0;
+    min-width: 0;
+  }
+
+  &__Stat {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 8px;
+    min-width: 0;
+    text-align: right;
+  }
+
+  &__StatMain {
+    display: flex;
+    align-items: baseline;
+    justify-content: flex-end;
+    gap: 10px;
+    min-width: 0;
+  }
+
+  &__StatCount {
+    font-family: $font-heading;
+    font-weight: 800;
+    font-style: italic;
+    font-size: clamp(1.5rem, 2.8vw, 2rem);
+    line-height: 1;
+    color: #fff;
+    font-variant-numeric: tabular-nums;
+    text-shadow: 0 0 16px rgba(var(--chakra-colors-brand-light-rgb), 0.28);
+    min-width: 4ch;
+  }
+
+  &__StatUnit {
     font-family: $font-mono;
-    font-style: normal;
-    font-weight: 400;
     font-size: 0.625rem;
     text-transform: uppercase;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.1em;
     color: var(--chakra-colors-gray-500);
   }
 
-  &__Body {
-    // min-height: the "All" chip legend can outgrow 200px
-    min-height: 200px;
-    display: flex;
-    align-items: center;
+  &__StatMeta {
+    font-family: $font-mono;
+    font-size: 0.8125rem;
+    line-height: 1.35;
+    color: var(--chakra-colors-gray-400);
+    white-space: nowrap;
+    max-width: 18rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
 
-    @media screen and (max-width: $breakpoint-md) {
-      padding: 6px 0 2px;
-    }
+  &__Stat.is-on &__StatMeta,
+  &__Stat.is-pinned &__StatMeta {
+    color: rgba(var(--chakra-colors-brand-light-rgb), 0.95);
+  }
+
+  &__Body {
+    flex: 1 1 auto;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
   }
 
   &__Stack {
     width: 100%;
+    flex: 1 1 auto;
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 16px;
+    min-height: 0;
+
+    @media screen and (max-width: $breakpoint-md) {
+      flex: 0 1 auto;
+      min-height: 0;
+      gap: 12px;
+    }
   }
 
   &__Empty {
@@ -69,7 +218,7 @@ $txtype-colors: (
     align-items: center;
     justify-content: center;
     width: 100%;
-    height: 100%;
+    min-height: 160px;
     font-size: 0.8125rem;
     color: var(--chakra-colors-gray-500);
   }
@@ -78,63 +227,117 @@ $txtype-colors: (
     display: flex;
     gap: 2px;
     width: 100%;
-    height: 14px;
-    border-radius: 7px;
+    height: 18px;
+    flex-shrink: 0;
+    border-radius: 999px;
     overflow: hidden;
+    padding: 2px;
+    box-sizing: border-box;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.06);
   }
 
   &__Seg {
+    appearance: none;
+    border: 0;
+    padding: 0;
+    margin: 0;
     display: block;
     height: 100%;
-    transition: width 0.6s ease;
+    border-radius: 999px;
+    min-width: 3px;
+    cursor: pointer;
+    text-decoration: none;
+    flex-shrink: 1;
+    opacity: 1;
+    transition: filter 0.12s ease, box-shadow 0.12s ease;
 
-    &:hover { filter: brightness(1.25); }
+    &:focus-visible {
+      outline: 1px solid #fff;
+      outline-offset: -1px;
+    }
+
+    &.is-focus {
+      filter: brightness(1.12);
+      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.5);
+      z-index: 1;
+    }
   }
 
-  &__Chips {
+  &__Rows {
     display: flex;
-    flex-wrap: wrap;
-    gap: 10px 22px;
-    font-family: $font-mono;
-    font-size: 0.6875rem;
-    color: var(--chakra-colors-gray-250);
+    flex-direction: column;
+    gap: 0;
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-x: hidden;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-gutter: stable;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.12) transparent;
 
-    // even two-column grid on phones; tail names clip, the tooltip keeps the full name
+    // without a paired height budget, unconstrained flex lists every type (~20 rows)
     @media screen and (max-width: $breakpoint-md) {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 10px 14px;
+      flex: 0 1 auto;
+      max-height: 14.5rem; // ~6 compact rows + scroll for the rest
     }
   }
 
-  &__Chip {
-    display: inline-flex;
+  &__Row {
+    appearance: none;
+    border: 0;
+    background: transparent;
+    color: inherit;
+    display: grid;
+    // wider count col for full grouped numbers (e.g. 124,069)
+    grid-template-columns: 1.5rem 10px minmax(0, 1.1fr) minmax(40px, 1fr) minmax(4.5rem, auto);
     align-items: center;
-    gap: 6px;
-    white-space: nowrap;
+    gap: 8px;
+    width: 100%;
+    height: 2.25rem;
+    flex-shrink: 0;
+    box-sizing: border-box;
+    padding: 0 8px;
+    border-radius: 0;
+    text-align: left;
+    cursor: pointer;
+    transition: box-shadow 0.12s ease, color 0.12s ease;
+
+    &:focus-visible {
+      outline: 1px solid rgba(var(--chakra-colors-brand-light-rgb), 0.45);
+      outline-offset: -1px;
+    }
+
+    &.is-focus {
+      .TxTypesBar__RowLabel,
+      .TxTypesBar__RowCount {
+        color: #fff;
+      }
+
+      .TxTypesBar__Dot {
+        box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.22);
+      }
+    }
 
     @media screen and (max-width: $breakpoint-md) {
-      display: flex;
-      min-width: 0;
+      grid-template-columns: 1.25rem 8px minmax(0, 1fr) minmax(3.75rem, auto);
+      gap: 6px;
+      padding: 0 6px;
     }
   }
 
-  &__ChipLabel {
-    overflow: hidden;
-    text-overflow: ellipsis;
-
-    @media screen and (max-width: $breakpoint-md) {
-      flex: 1;
-      min-width: 0;
+  &__Stack.is-pinned {
+    .TxTypesBar__Row.is-focus {
+      box-shadow: inset 2px 0 0 rgba(var(--chakra-colors-brand-light-rgb), 0.95);
     }
   }
 
-  &__ChipCount {
+  &__Rank {
+    font-family: $font-mono;
+    font-size: 0.625rem;
     color: var(--chakra-colors-gray-500);
-
-    @media screen and (max-width: $breakpoint-md) {
-      margin-left: auto;
-    }
+    text-align: right;
   }
 
   &__Dot {
@@ -144,12 +347,63 @@ $txtype-colors: (
     flex-shrink: 0;
   }
 
-  @each $name, $color in $txtype-colors {
-    &__Seg--#{$name} { background: $color; }
-    &__Dot--#{$name} { background: $color; }
+  &__RowLabel {
+    min-width: 0;
+    font-family: $font-mono;
+    font-size: 0.6875rem;
+    color: var(--chakra-colors-gray-250);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
-  @media (prefers-reduced-motion: reduce) {
-    &__Seg { transition: none; }
+  &__RowLabelLink {
+    color: inherit;
+    text-decoration: none;
+    border-bottom: 1px dotted rgba(255, 255, 255, 0.22);
+
+    &:hover {
+      color: #fff;
+      border-bottom-color: rgba(var(--chakra-colors-brand-light-rgb), 0.7);
+    }
+  }
+
+  &__Meter {
+    display: block;
+    height: 4px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.06);
+    overflow: hidden;
+    min-width: 0;
+
+    @media screen and (max-width: $breakpoint-md) {
+      display: none;
+    }
+  }
+
+  &__MeterFill {
+    display: block;
+    height: 100%;
+    border-radius: 999px;
+  }
+
+  &__RowCount {
+    font-family: $font-mono;
+    font-size: 0.6875rem;
+    text-align: right;
+    white-space: nowrap;
+    color: #fff;
+  }
+
+  @each $name, $color in $txtype-colors {
+    &__Seg--#{$name} {
+      background: $color;
+      color: $color;
+    }
+
+    &__Dot--#{$name} {
+      background: $color;
+      color: $color;
+    }
   }
 }

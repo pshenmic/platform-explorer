@@ -1,41 +1,51 @@
 'use client'
 
-import { useState, useEffect, useMemo, useRef } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { useQuery, useQueries } from '@tanstack/react-query'
 import * as Api from '../../util/Api'
 import HomeHero from './HomeHero.js'
-import { MetricChart, EpochsOverview, StatusBar, HeroMeta, MasternodesDonut, TxTypesBar, ShieldedPoolCard, CompactTxList, CompactBlocksList } from '../../components/home'
+import {
+  EpochsOverview,
+  MasternodesDonut,
+  TxTypesBar,
+  TxActivityChart,
+  IdentityGrowthChart,
+  ShieldedPoolCard,
+  HomeLeaders
+} from '../../components/home'
 import { fetchHandlerSuccess, fetchHandlerError } from '../../util'
 import theme from '../../styles/theme'
-import { Box, Container, Flex, SimpleGrid } from '@chakra-ui/react'
-import { CardHead } from '../../components/cards'
+import { Box, Container, Flex } from '@chakra-ui/react'
 import './Home.scss'
-
-function computeAvgBlockTime (blocks) {
-  const stamps = (blocks || [])
-    .map(b => new Date(b?.header?.timestamp).getTime())
-    .filter(t => !Number.isNaN(t))
-    .sort((a, b) => b - a)
-  if (stamps.length < 2) return null
-  let total = 0
-  for (let i = 0; i < stamps.length - 1; i++) total += stamps[i] - stamps[i + 1]
-  return Math.round(total / (stamps.length - 1) / 1000)
-}
 
 function epochNumbersOf (current) {
   if (typeof current !== 'number') return []
   return [current - 3, current - 2, current - 1, current].filter(n => n >= 0)
 }
 
+const VALIDATORS_PAGE = 100
+
+async function fetchAllValidators (filters) {
+  const first = await Api.getValidators(1, VALIDATORS_PAGE, 'desc', filters)
+  const rows = Array.isArray(first?.resultSet) ? [...first.resultSet] : []
+  const total = typeof first?.pagination?.total === 'number' ? first.pagination.total : rows.length
+  const pages = Math.max(1, Math.ceil(total / VALIDATORS_PAGE))
+  if (pages === 1) return rows
+  const rest = await Promise.all(
+    Array.from({ length: pages - 1 }, (_, i) =>
+      Api.getValidators(i + 2, VALIDATORS_PAGE, 'desc', filters)
+    )
+  )
+  for (const page of rest) {
+    if (Array.isArray(page?.resultSet)) rows.push(...page.resultSet)
+  }
+  return rows
+}
+
 function Home () {
-  const [contested, setContested] = useState({ data: {}, loading: true, error: false })
-  const [activeContested, setActiveContested] = useState({ data: {}, loading: true, error: false })
-  const [latestContested, setLatestContested] = useState({ data: {}, loading: true, error: false })
-  const [latestVotes, setLatestVotes] = useState({ data: {}, loading: true, error: false })
   const [rate, setRate] = useState({ data: {}, loading: true, error: false })
 
   const gap = theme.blockOffset
-  const secondaryStarted = useRef(false)
 
   // wave 0: hero + overview + validator totals (independent; RQ dedupes Strict Mode double-mount)
   const statusQuery = useQuery({ queryKey: ['home', 'status'], queryFn: Api.getStatus, refetchInterval: 60000 })
@@ -62,12 +72,71 @@ function Home () {
     queryFn: () => Api.getValidators(1, 1, 'desc', { isActive: 'false', isBanned: 'false' }),
     staleTime: 60_000
   })
-  // one page for geoIpInfo (#822): full set on testnet, a sample on large networks
   const validatorsGeoQuery = useQuery({
-    queryKey: ['home', 'validators', 'geo'],
-    queryFn: () => Api.getValidators(1, 100, 'desc'),
-    staleTime: 300_000
+    queryKey: ['home', 'validators', 'pool'],
+    queryFn: () => fetchAllValidators(),
+    staleTime: 60_000,
+    refetchInterval: 120_000
   })
+  const validatorsBannedListQuery = useQuery({
+    queryKey: ['home', 'validators', 'banned-list'],
+    queryFn: () => fetchAllValidators({ isBanned: 'true' }),
+    staleTime: 60_000,
+    refetchInterval: 120_000
+  })
+
+  const currentQuorumQuery = useQuery({
+    queryKey: ['home', 'quorums', 'current'],
+    queryFn: () => Api.getCurrentQuorum(),
+    staleTime: 60_000,
+    refetchInterval: 60_000,
+    retry: 1
+  })
+  const quorumsListQuery = useQuery({
+    queryKey: ['home', 'quorums', 'list'],
+    queryFn: () => Api.getQuorums(),
+    staleTime: 60_000,
+    refetchInterval: 60_000,
+    retry: 1
+  })
+
+  const quorumHashes = useMemo(() => {
+    const list = quorumsListQuery.data
+    if (!Array.isArray(list)) return []
+    return list.map(q => q?.quorumHash).filter(Boolean)
+  }, [quorumsListQuery.data])
+
+  const quorumDetailQueries = useQueries({
+    queries: quorumHashes.map(hash => ({
+      queryKey: ['home', 'quorums', 'detail', hash],
+      queryFn: () => Api.getQuorumByHash(hash),
+      staleTime: 60_000,
+      retry: 1,
+      enabled: quorumHashes.length > 0
+    }))
+  })
+
+  const quorumRosters = useMemo(() => {
+    const byHash = new Map(
+      (Array.isArray(quorumsListQuery.data) ? quorumsListQuery.data : [])
+        .filter(q => q?.quorumHash)
+        .map(q => [q.quorumHash, q])
+    )
+    return quorumDetailQueries
+      .map((q, i) => {
+        const hash = quorumHashes[i]
+        const detail = q.data
+        const meta = byHash.get(hash) || {}
+        if (!detail && !meta.quorumHash) return null
+        return {
+          ...meta,
+          ...detail,
+          quorumHash: detail?.quorumHash || hash,
+          members: Array.isArray(detail?.members) ? detail.members : []
+        }
+      })
+      .filter(Boolean)
+  }, [quorumDetailQueries, quorumHashes, quorumsListQuery.data])
 
   // shape expected by MasternodesDonut ({ data, loading })
   const validators = {
@@ -147,40 +216,17 @@ function Home () {
     error: false
   }
 
-  // gov + rate after status (parallel with epochs); keep them off wave 0 so validators keep bandwidth
   useEffect(() => {
-    if (secondaryStarted.current) return
-    if (!statusQuery.isSuccess) return
-    secondaryStarted.current = true
-
-    Api.getContestedResourcesStats()
-      .then(res => fetchHandlerSuccess(setContested, res))
-      .catch(err => fetchHandlerError(setContested, err))
-
-    Api.getContestedResources(1, 10, 'desc', undefined, { voting_finished: false })
-      .then(res => fetchHandlerSuccess(setActiveContested, res))
-      .catch(err => fetchHandlerError(setActiveContested, err))
-
-    Api.getContestedResources(1, 5, 'desc')
-      .then(res => fetchHandlerSuccess(setLatestContested, res))
-      .catch(err => fetchHandlerError(setLatestContested, err))
-
-    Api.getMasternodeVotes(1, 10, 'desc')
-      .then(res => fetchHandlerSuccess(setLatestVotes, res))
-      .catch(err => fetchHandlerError(setLatestVotes, err))
-
     Api.getRate()
       .then(res => fetchHandlerSuccess(setRate, res))
       .catch(err => fetchHandlerError(setRate, err))
-  }, [statusQuery.isSuccess])
+  }, [])
 
   // below-fold charts wait until the first epoch paints (or all epoch queries settle empty)
   const epochsSettled = epochNumbers.length > 0 &&
     epochQueries.length === epochNumbers.length &&
     epochQueries.every(q => !q.isPending && !q.isLoading)
   const belowFoldReady = epochsBaseList.length > 0 || epochsSettled
-
-  const avgBlockTimeSec = computeAvgBlockTime(blocksQuery.data?.resultSet)
 
   return (
     <Container
@@ -194,40 +240,58 @@ function Home () {
       mb={gap}
     >
       <Flex direction={'column'} gap={gap}>
-        <HomeHero status={statusQuery.data ?? {}} loading={statusQuery.isLoading} avgBlockTimeSec={avgBlockTimeSec}/>
+        <HomeHero
+          status={statusQuery.data ?? {}}
+          loading={statusQuery.isLoading}
+          rate={rate?.data}
+          rateLoading={rate?.loading}
+          epochNumber={currentEpochNumber}
+          epochEndTime={currentEpochPayload?.epoch?.endTime}
+          transactions={txQuery.data?.resultSet}
+          transactionsLoading={txQuery.isLoading}
+          blocks={blocksQuery.data?.resultSet}
+          blocksLoading={blocksQuery.isLoading}
+        />
 
         <Box
-          className={'InfoBlock InfoBlock--NoBorder HomeOverview'}
+          className={'InfoBlock InfoBlock--NoBorder HomeActivity'}
           w={'100%'}
           as={'section'}
-          aria-label={'Network overview'}
+          aria-label={'Network charts'}
         >
-          <div className={'HomeOverview__Grid'}>
-            <div className={'HomeOverview__Sys'}>
-              <HeroMeta status={statusQuery.data ?? {}} loading={statusQuery.isLoading}/>
+          <div className={'HomeActivity__Grid'}>
+            <div className={'HomeActivity__Types'}>
+              <TxTypesBar enabled={belowFoldReady}/>
             </div>
-            <div className={'HomeOverview__Tx'}>
-              <CompactTxList
-                transactions={txQuery.data?.resultSet}
-                limit={6}
-                loading={txQuery.isLoading}
-                moreHref={'/transactions'}
-                moreLabel={'View all transactions'}
-              />
-            </div>
-            <div className={'HomeOverview__Blocks'}>
-              <CompactBlocksList
-                blocks={blocksQuery.data?.resultSet}
-                limit={6}
-                loading={blocksQuery.isLoading}
-                moreHref={'/blocks'}
-                moreLabel={'View all blocks'}
-              />
+            <div className={'HomeActivity__Charts'}>
+              <div className={'HomeActivity__Chart'}>
+                <TxActivityChart
+                  fetcher={Api.getTransactionsHistory}
+                  field={'txs'}
+                  yAbbr={'txs'}
+                  enabled={belowFoldReady}
+                />
+              </div>
+              <div className={'HomeActivity__Chart'}>
+                <IdentityGrowthChart
+                  fetcher={Api.getIdentitiesHistory}
+                  field={'registeredIdentities'}
+                  yAbbr={'identities'}
+                  enabled={belowFoldReady}
+                />
+              </div>
             </div>
           </div>
         </Box>
 
-        <Box className={'InfoBlock InfoBlock--NoBorder HomeEpochs'} w={'100%'}>
+        <HomeLeaders rate={rate} enabled={belowFoldReady}/>
+
+        <Box
+          id={'home-epochs'}
+          className={'InfoBlock InfoBlock--NoBorder HomeEpochs'}
+          w={'100%'}
+          tabIndex={-1}
+        >
           <EpochsOverview
             title={'Epochs'}
             epochs={epochsList}
@@ -238,23 +302,25 @@ function Home () {
           />
         </Box>
 
-        <SimpleGrid columns={{ base: 1, md: 2 }} spacing={gap} w={'100%'}>
-          <MetricChart title={'Transactions history'} type={'bar'} fetcher={Api.getTransactionsHistory} field={'txs'} yAbbr={'txs'} enabled={belowFoldReady}/>
-          <MetricChart title={'Identities growth'} type={'line'} fetcher={Api.getIdentitiesHistory} field={'registeredIdentities'} yAbbr={'identities'} enabled={belowFoldReady}/>
-          <TxTypesBar enabled={belowFoldReady}/>
-          <ShieldedPoolCard rate={rate} enabled={belowFoldReady}/>
-          <MasternodesDonut validators={validators} validatorsActive={validatorsActive} validatorsBanned={validatorsBanned} validatorsInactive={validatorsInactive} validatorsList={validatorsGeoQuery.data?.resultSet}/>
-          <Box className={'InfoBlock InfoBlock--NoBorder HomeGovCard'} w={'100%'}>
-            <CardHead title={'Governance'}/>
-            <StatusBar
-              contested={contested}
-              activeContested={activeContested}
-              latestContested={latestContested}
-              latestVotes={latestVotes}
-              epochData={epochData}
+        <div className={'HomeShieldQuorum'}>
+          <div className={'HomeShieldQuorum__Cell'}>
+            <ShieldedPoolCard rate={rate} enabled={belowFoldReady}/>
+          </div>
+          <div className={'HomeShieldQuorum__Cell'}>
+            <MasternodesDonut
+              validators={validators}
+              validatorsActive={validatorsActive}
+              validatorsBanned={validatorsBanned}
+              validatorsInactive={validatorsInactive}
+              validatorsList={validatorsGeoQuery.data}
+              bannedValidatorsList={validatorsBannedListQuery.data}
+              currentQuorum={currentQuorumQuery.data}
+              currentQuorumLoading={currentQuorumQuery.isPending || currentQuorumQuery.isLoading}
+              currentQuorumError={currentQuorumQuery.isError}
+              quorums={quorumRosters}
             />
-          </Box>
-        </SimpleGrid>
+          </div>
+        </div>
       </Flex>
     </Container>
   )

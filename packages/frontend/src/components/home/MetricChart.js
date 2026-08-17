@@ -20,7 +20,7 @@ export const PRESETS = [
 const DEFAULT_PRESET = 2
 
 export function presetRange (preset) {
-  // full-hour end: the history API drops trailing buckets (and their data) for sub-hour ends
+  // floor end to hour: history API drops partial trailing buckets
   const endMs = Math.ceil(Date.now() / 3600000) * 3600000
   return {
     start: preset.start ?? new Date(endMs - preset.ms).toISOString(),
@@ -28,13 +28,11 @@ export function presetRange (preset) {
   }
 }
 
-// full grouped numbers (3,361) so narrow ranges read precisely; k/M only when huge
 const formatValue = (v) => Math.abs(v) >= 1e6 ? currencyRound(v) : d3.format(',')(Math.round(v))
 
-const M = { top: 10, right: 8, bottom: 18, left: 46 }
+const M = { top: 10, right: 12, bottom: 18, left: 52 }
 const HEIGHT = 200
 
-// first-load placeholder: ghost outline of the coming chart (grid + neutral series shape)
 const GHOST_LINE_D = 'M 0 62 L 12 50 L 25 58 L 38 42 L 50 48 L 62 34 L 75 42 L 88 26 L 100 32'
 const GHOST_BARS = [38, 52, 30, 60, 45, 66, 40, 56, 34, 62, 48, 58]
 
@@ -64,21 +62,36 @@ function ChartGhost ({ type }) {
   )
 }
 
-export function MetricChart ({ title, type = 'line', fetcher, field, yAbbr = '', enabled = true }) {
+export function MetricChart ({
+  title,
+  type = 'line',
+  fetcher,
+  field,
+  yAbbr = '',
+  enabled = true,
+  embedded = false,
+  fill = false
+}) {
   const [presetIdx, setPresetIdx] = useState(DEFAULT_PRESET)
   const [state, setState] = useState({ loading: true, error: false, points: [] })
   const [width, setWidth] = useState(0)
+  const [plotH, setPlotH] = useState(HEIGHT)
   const [hover, setHover] = useState(null)
   const wrapRef = useRef(null)
   const gradientId = useId()
 
-  useResizeObserver(wrapRef, entry => setWidth(entry.contentRect.width))
+  useResizeObserver(wrapRef, entry => {
+    const { width: w, height: hh } = entry.contentRect
+    setWidth(Math.max(0, Math.floor(w)))
+    if (fill) setPlotH(Math.max(96, Math.floor(hh)))
+  })
   useEffect(() => {
-    if (wrapRef.current) setWidth(wrapRef.current.clientWidth)
-  }, [])
+    if (!wrapRef.current) return
+    setWidth(Math.max(0, Math.floor(wrapRef.current.clientWidth)))
+    if (fill) setPlotH(Math.max(96, Math.floor(wrapRef.current.clientHeight || HEIGHT)))
+  }, [fill])
 
   useEffect(() => {
-    // below-fold: stay skeleton until parent prioritizes above-fold status/epochs
     if (!enabled) {
       setState(s => ({ ...s, loading: true, error: false }))
       return
@@ -91,7 +104,7 @@ export function MetricChart ({ title, type = 'line', fetcher, field, yAbbr = '',
         const pts = (res || [])
           .map(item => ({ x: new Date(item.timestamp), y: item?.data?.[field] }))
           .filter(p => typeof p.y === 'number' && !isNaN(p.y))
-        // drop leading zero buckets (before first activity) so the range isn't compressed
+        // drop leading empty buckets so the series starts at first activity
         let s = 0
         while (s < pts.length - 1 && pts[s].y === 0) s++
         setState({ loading: false, error: false, points: pts.slice(s) })
@@ -101,28 +114,27 @@ export function MetricChart ({ title, type = 'line', fetcher, field, yAbbr = '',
 
   const { loading, error, points } = state
 
-  const ready = width > 0 && points.length > 1
+  const h = fill ? plotH : HEIGHT
+  const ready = width > 0 && h > 0 && points.length > 1
   let x, y, areaD, lineD, bars, xTicks, yTicks, tipFmt
   if (ready) {
     x = d3.scaleTime(d3.extent(points, p => p.x), [M.left, width - M.right])
-    // format and density follow the actual data window and width, not the preset span
     const dataSpanDays = getDaysBetweenDates(points[0].x, points[points.length - 1].x)
     const tickFmt = d3.timeFormat(dataSpanDays > 365 ? '%b %Y' : dataSpanDays > 7 ? '%b %d' : '%H:%M')
     tipFmt = d3.timeFormat(dataSpanDays > 365 ? '%b %d, %Y' : dataSpanDays > 3 ? '%b %d' : '%b %d, %H:%M')
     const maxY = d3.max(points, p => p.y) || 1
     const minY = d3.min(points, p => p.y) || 0
-    // bars read from a 0 baseline; a level line (cumulative) auto-zooms to its range
+    // bars from 0; line charts pad the domain around the series range
     const yDomain = type === 'bar'
       ? [0, maxY]
       : [minY - ((maxY - minY) * 0.12 || maxY * 0.05 || 1), maxY + ((maxY - minY) * 0.12 || maxY * 0.05 || 1)]
-    y = d3.scaleLinear(yDomain, [HEIGHT - M.bottom, M.top]).nice()
-    const baseline = HEIGHT - M.bottom
+    y = d3.scaleLinear(yDomain, [h - M.bottom, M.top]).nice()
+    const baseline = h - M.bottom
     lineD = d3.line().x(p => x(p.x)).y(p => y(p.y)).curve(d3.curveMonotoneX)(points)
     areaD = d3.area().x(p => x(p.x)).y0(baseline).y1(p => y(p.y)).curve(d3.curveMonotoneX)(points)
     const step = points.length > 1 ? Math.abs(x(points[1].x) - x(points[0].x)) : 8
     const bw = Math.max(1, Math.min(step * 0.65, 16))
     bars = points.map(p => ({ x: x(p.x) - bw / 2, y: y(p.y), w: bw, h: Math.max(0, y(0) - y(p.y)) }))
-    // one label per ~72px so narrow phones/"All" don't crowd or overlap the axis
     const tickCount = Math.max(2, Math.min(6, Math.floor((width - M.left - M.right) / 72)))
     xTicks = x.ticks(tickCount).map(d => ({ v: x(d), label: tickFmt(d) }))
     yTicks = y.ticks(4).map(v => ({ v: y(v), label: formatValue(v) }))
@@ -136,13 +148,26 @@ export function MetricChart ({ title, type = 'line', fetcher, field, yAbbr = '',
     if (p) setHover({ i, cx: x(p.x), cy: y(p.y), value: p.y, date: p.x })
   }
 
+  const shellClass = [
+    embedded ? 'MetricChart MetricChart--Embedded' : 'InfoBlock InfoBlock--NoBorder MetricChart',
+    fill ? 'MetricChart--Fill' : ''
+  ].filter(Boolean).join(' ')
+
   return (
-    <Box className={'InfoBlock InfoBlock--NoBorder MetricChart'} w={'100%'}>
-      <CardHead title={title}>
+    <Box
+      className={shellClass}
+      w={'100%'}
+      aria-label={title || undefined}
+    >
+      <CardHead title={title || null}>
         <Presets options={PRESETS} value={presetIdx} onChange={setPresetIdx}/>
       </CardHead>
 
-      <div ref={wrapRef} className={'MetricChart__Plot'} style={{ height: HEIGHT }}>
+      <div
+        ref={wrapRef}
+        className={'MetricChart__Plot'}
+        style={fill ? undefined : { height: HEIGHT }}
+      >
         {error
           ? <div className={'MetricChart__Empty'}>Error loading data</div>
           : loading && !ready
@@ -150,11 +175,10 @@ export function MetricChart ({ title, type = 'line', fetcher, field, yAbbr = '',
             : !ready
                 ? <div className={'MetricChart__Empty'}>No data</div>
                 : <svg
-                  // preset switch keeps the stale chart dimmed instead of flashing a skeleton
                   className={`MetricChart__Svg${loading ? ' MetricChart__Svg--Stale' : ''}`}
-                  viewBox={`0 0 ${width} ${HEIGHT}`}
+                  viewBox={`0 0 ${width} ${h}`}
                   width={width}
-                  height={HEIGHT}
+                  height={h}
                   role={'img'}
                   aria-label={`${title}: latest ${formatValue(points[points.length - 1].y)} ${yAbbr}`}
                   onMouseMove={onMove}
@@ -178,10 +202,9 @@ export function MetricChart ({ title, type = 'line', fetcher, field, yAbbr = '',
                     <text
                       key={i}
                       className={'MetricChart__Tick MetricChart__Tick--X'}
-                      // first/last anchor inward (inline beats the CSS middle) so edge labels don't clip
                       style={{ textAnchor: i === 0 ? 'start' : i === xTicks.length - 1 ? 'end' : 'middle' }}
                       x={t.v}
-                      y={HEIGHT - 4}
+                      y={h - 4}
                     >{t.label}</text>
                   ))}
 
@@ -196,7 +219,7 @@ export function MetricChart ({ title, type = 'line', fetcher, field, yAbbr = '',
 
                   {hover &&
                     <g className={'MetricChart__Hover'}>
-                      <line className={'MetricChart__HoverLine'} x1={hover.cx} x2={hover.cx} y1={M.top} y2={HEIGHT - M.bottom}/>
+                      <line className={'MetricChart__HoverLine'} x1={hover.cx} x2={hover.cx} y1={M.top} y2={h - M.bottom}/>
                       <circle className={'MetricChart__HoverDot'} cx={hover.cx} cy={hover.cy} r={3.5}/>
                     </g>}
                 </svg>}
