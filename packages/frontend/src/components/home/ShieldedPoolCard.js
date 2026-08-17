@@ -139,9 +139,17 @@ export default function ShieldedPoolCard ({ enabled = true }) {
       root.classList.remove('is-height-matched')
     }
 
+    const measurePlot = () => {
+      const el = wrapRef.current
+      if (!el) return
+      setWidth(Math.max(0, Math.floor(el.clientWidth)))
+      setPlotH(Math.max(120, Math.floor(el.clientHeight || 180)))
+    }
+
     const sync = () => {
       if (!mq.matches) {
         clear()
+        measurePlot()
         return
       }
       const qh = Math.round(quorum.getBoundingClientRect().height)
@@ -150,6 +158,7 @@ export default function ShieldedPoolCard ({ enabled = true }) {
       root.style.maxHeight = `${qh}px`
       root.style.minHeight = `${qh}px`
       root.classList.add('is-height-matched')
+      measurePlot()
     }
 
     sync()
@@ -476,6 +485,7 @@ export default function ShieldedPoolCard ({ enabled = true }) {
                   ? <>
                       <svg
                         className={`ShieldedPool__Svg${series.loading ? ' is-stale' : ''}`}
+                        viewBox={`0 0 ${width} ${plotH}`}
                         width={width}
                         height={plotH}
                         role={'img'}
