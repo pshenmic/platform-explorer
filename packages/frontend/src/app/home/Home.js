@@ -23,6 +23,25 @@ function epochNumbersOf (current) {
   return [current - 3, current - 2, current - 1, current].filter(n => n >= 0)
 }
 
+const VALIDATORS_PAGE = 100
+
+async function fetchAllValidators (filters) {
+  const first = await Api.getValidators(1, VALIDATORS_PAGE, 'desc', filters)
+  const rows = Array.isArray(first?.resultSet) ? [...first.resultSet] : []
+  const total = typeof first?.pagination?.total === 'number' ? first.pagination.total : rows.length
+  const pages = Math.max(1, Math.ceil(total / VALIDATORS_PAGE))
+  if (pages === 1) return rows
+  const rest = await Promise.all(
+    Array.from({ length: pages - 1 }, (_, i) =>
+      Api.getValidators(i + 2, VALIDATORS_PAGE, 'desc', filters)
+    )
+  )
+  for (const page of rest) {
+    if (Array.isArray(page?.resultSet)) rows.push(...page.resultSet)
+  }
+  return rows
+}
+
 function Home () {
   const [rate, setRate] = useState({ data: {}, loading: true, error: false })
 
@@ -53,17 +72,15 @@ function Home () {
     queryFn: () => Api.getValidators(1, 1, 'desc', { isActive: 'false', isBanned: 'false' }),
     staleTime: 60_000
   })
-  // API max limit 100; enough for full testnet pool, sample on larger networks
   const validatorsGeoQuery = useQuery({
     queryKey: ['home', 'validators', 'pool'],
-    queryFn: () => Api.getValidators(1, 100, 'desc'),
+    queryFn: () => fetchAllValidators(),
     staleTime: 60_000,
     refetchInterval: 120_000
   })
-  // API isBanned set for matrix coloring (broader than PoSeBanHeight alone)
   const validatorsBannedListQuery = useQuery({
     queryKey: ['home', 'validators', 'banned-list'],
-    queryFn: () => Api.getValidators(1, 100, 'desc', { isBanned: 'true' }),
+    queryFn: () => fetchAllValidators({ isBanned: 'true' }),
     staleTime: 60_000,
     refetchInterval: 120_000
   })
@@ -83,26 +100,43 @@ function Home () {
     retry: 1
   })
 
-  // next formed quorum: lowest blockHeight above current (list omits members)
-  const nextQuorumMeta = useMemo(() => {
+  const quorumHashes = useMemo(() => {
     const list = quorumsListQuery.data
-    const current = currentQuorumQuery.data
-    if (!Array.isArray(list) || !current) return null
-    const curH = typeof current.blockHeight === 'number' ? current.blockHeight : null
-    if (curH == null) return null
-    const ahead = list
-      .filter(q => typeof q?.blockHeight === 'number' && q.blockHeight > curH)
-      .sort((a, b) => a.blockHeight - b.blockHeight)
-    return ahead[0] ?? null
-  }, [quorumsListQuery.data, currentQuorumQuery.data])
+    if (!Array.isArray(list)) return []
+    return list.map(q => q?.quorumHash).filter(Boolean)
+  }, [quorumsListQuery.data])
 
-  const nextQuorumQuery = useQuery({
-    queryKey: ['home', 'quorums', 'next', nextQuorumMeta?.quorumHash],
-    queryFn: () => Api.getQuorumByHash(nextQuorumMeta.quorumHash),
-    enabled: Boolean(nextQuorumMeta?.quorumHash),
-    staleTime: 60_000,
-    retry: 1
+  const quorumDetailQueries = useQueries({
+    queries: quorumHashes.map(hash => ({
+      queryKey: ['home', 'quorums', 'detail', hash],
+      queryFn: () => Api.getQuorumByHash(hash),
+      staleTime: 60_000,
+      retry: 1,
+      enabled: quorumHashes.length > 0
+    }))
   })
+
+  const quorumRosters = useMemo(() => {
+    const byHash = new Map(
+      (Array.isArray(quorumsListQuery.data) ? quorumsListQuery.data : [])
+        .filter(q => q?.quorumHash)
+        .map(q => [q.quorumHash, q])
+    )
+    return quorumDetailQueries
+      .map((q, i) => {
+        const hash = quorumHashes[i]
+        const detail = q.data
+        const meta = byHash.get(hash) || {}
+        if (!detail && !meta.quorumHash) return null
+        return {
+          ...meta,
+          ...detail,
+          quorumHash: detail?.quorumHash || hash,
+          members: Array.isArray(detail?.members) ? detail.members : []
+        }
+      })
+      .filter(Boolean)
+  }, [quorumDetailQueries, quorumHashes, quorumsListQuery.data])
 
   // shape expected by MasternodesDonut ({ data, loading })
   const validators = {
@@ -278,12 +312,12 @@ function Home () {
               validatorsActive={validatorsActive}
               validatorsBanned={validatorsBanned}
               validatorsInactive={validatorsInactive}
-              validatorsList={validatorsGeoQuery.data?.resultSet}
-              bannedValidatorsList={validatorsBannedListQuery.data?.resultSet}
+              validatorsList={validatorsGeoQuery.data}
+              bannedValidatorsList={validatorsBannedListQuery.data}
               currentQuorum={currentQuorumQuery.data}
               currentQuorumLoading={currentQuorumQuery.isPending || currentQuorumQuery.isLoading}
               currentQuorumError={currentQuorumQuery.isError}
-              nextQuorum={nextQuorumQuery.data}
+              quorums={quorumRosters}
             />
           </div>
         </div>
