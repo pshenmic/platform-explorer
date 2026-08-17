@@ -188,7 +188,7 @@ function Home () {
     error: false
   }
 
-  // rate early — hero economy chips (DASH $, MN bond) shouldn't wait on gov/secondary
+  // rate early — leaders / shielded cards shouldn't wait on gov/secondary
   useEffect(() => {
     Api.getRate()
       .then(res => fetchHandlerSuccess(setRate, res))
