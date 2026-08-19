@@ -45,7 +45,12 @@
         "useButtonType": "off",
         "noSvgWithoutTitle": "off",
         "useAltText": "off",
-        "useValidAnchor": "off"
+        "useValidAnchor": "off",
+        "noStaticElementInteractions": "off",
+        "useAriaPropsSupportedByRole": "off",
+        "useSemanticElements": "off",
+        "noNoninteractiveTabindex": "off",
+        "noLabelWithoutControl": "off"
       }
     }
   },
