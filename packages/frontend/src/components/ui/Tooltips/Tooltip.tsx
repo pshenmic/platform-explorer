@@ -20,18 +20,18 @@ const LEAVE_GRACE_MS = 280
 const GUTTER = 8
 const VIEW_PAD = 12
 
-type TipPos = { top: number, left: number, transform: string, placement: string }
+type TipPos = { top: number; left: number; transform: string; placement: string }
 
-function placeFixed (rect: DOMRect, placement: string, tipW = 240, tipH = 80): TipPos {
+function placeFixed(rect: DOMRect, placement: string, tipW = 240, tipH = 80): TipPos {
   const cx = rect.left + rect.width / 2
   let next = placement || 'top'
 
   if (next === 'top' && rect.top < tipH + GUTTER + VIEW_PAD) next = 'bottom'
   if (next === 'bottom' && window.innerHeight - rect.bottom < tipH + GUTTER + VIEW_PAD) next = 'top'
 
-  let top
+  let top = 0
   let left = cx
-  let transform
+  let transform = ''
 
   if (next === 'bottom') {
     top = rect.bottom + GUTTER
@@ -69,7 +69,7 @@ interface TooltipProps {
   [key: string]: unknown
 }
 
-export default function Tooltip ({
+export default function Tooltip({
   title = '',
   content = '',
   label,
@@ -101,7 +101,9 @@ export default function Tooltip ({
   const openByProp = typeof isOpenProp === 'boolean' ? isOpenProp : openByInteraction
   const isOpen = !isDisabled && isMine && openByProp
 
-  useEffect(() => { setMounted(true) }, [])
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   const clearLeave = () => {
     if (leaveTimer.current) {
@@ -149,18 +151,21 @@ export default function Tooltip ({
 
   useOutsideClick({
     ref: triggerRef,
-    handler: (e) => {
+    handler: e => {
       if (!pinnedRef.current) return
       if (tipRef.current?.contains(e.target as Node | null)) return
       release()
     }
   })
 
-  useEffect(() => () => {
-    clearLeave()
-    active?.deactivate(id)
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [id])
+  useEffect(
+    () => () => {
+      clearLeave()
+      active?.deactivate(id)
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    },
+    [id]
+  )
 
   useEffect(() => {
     if (active && active.activeId != null && active.activeId !== id) {
@@ -190,7 +195,11 @@ export default function Tooltip ({
   }
 
   const onTriggerClick = (e: MouseEvent) => {
-    if (e.target !== e.currentTarget && (e.target as HTMLElement).closest?.('a, button, [role="link"]')) return
+    if (
+      e.target !== e.currentTarget &&
+      (e.target as HTMLElement).closest?.('a, button, [role="link"]')
+    )
+      return
     const next = !pinnedRef.current
     pinnedRef.current = next
     clearLeave()
@@ -209,7 +218,7 @@ export default function Tooltip ({
     triggerRef.current = node
   }, [])
 
-  let trigger
+  let trigger: ReactNode
   if (asChild && isValidElement(children)) {
     const child = children as ReactElement<{
       onMouseEnter?: (e: MouseEvent) => void
@@ -222,7 +231,7 @@ export default function Tooltip ({
         const r = child.ref
         if (typeof r === 'function') r(node)
         else if (r && typeof r === 'object' && 'current' in r) {
-          (r as { current: HTMLElement | null }).current = node
+          ;(r as { current: HTMLElement | null }).current = node
         }
       },
       onMouseEnter: (e: MouseEvent) => {
@@ -252,8 +261,8 @@ export default function Tooltip ({
     )
   }
 
-  const tipNode = isOpen && mounted
-    ? (
+  const tipNode =
+    isOpen && mounted ? (
       <div
         ref={tipRef}
         className={`Tooltip ${extraClass}${className ? ` ${className}` : ''}`}
@@ -275,8 +284,7 @@ export default function Tooltip ({
           {body ? <div className={'Tooltip__Content'}>{body}</div> : null}
         </div>
       </div>
-      )
-    : null
+    ) : null
 
   return (
     <>
