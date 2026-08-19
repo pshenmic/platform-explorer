@@ -1,6 +1,6 @@
 'use client'
 
-import { useRef, useState, type CSSProperties, type ReactNode } from 'react'
+import { useRef, useState, type CSSProperties, type ReactNode, type RefObject } from 'react'
 import Link from 'next/link'
 import { ChevronUpIcon, ChevronDownIcon } from '@chakra-ui/icons'
 import useResizeObserver from '@react-hook/resize-observer'
@@ -142,7 +142,7 @@ export default function DataList<T = any>({
 }: DataListProps<T>) {
   const wrapRef = useRef<HTMLDivElement | null>(null)
   const [width, setWidth] = useState(0)
-  useResizeObserver(wrapRef, entry => setWidth(entry.contentRect.width))
+  useResizeObserver(wrapRef as RefObject<HTMLElement>, entry => setWidth(entry.contentRect.width))
 
   const cols = visibleColumns(columns, width)
   const template = templateFor(cols)
