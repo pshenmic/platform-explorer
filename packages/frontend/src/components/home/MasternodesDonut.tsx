@@ -593,9 +593,8 @@ export default function MasternodesDonut ({
                 <div
                   className={`MasternodesDonut__Matrix${hasNodeList ? ' MasternodesDonut__Matrix--roster' : ''}`}
                   style={{
-                    gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))`,
-                    gridTemplateRows: `repeat(${rows}, minmax(0, 1fr))`,
-                    gap: cells.length > 200 ? 2 : cells.length > 80 ? 3 : 5
+                    gridTemplateColumns: `repeat(${cols}, minmax(10px, 1fr))`,
+                    gridTemplateRows: `repeat(${rows}, minmax(10px, 1fr))`
                   }}
                   role={'img'}
                   aria-label={matrixAria}
