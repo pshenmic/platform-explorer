@@ -4,7 +4,7 @@ import { Box } from '@chakra-ui/react'
 import DataContractsRating from './DataContractsRating'
 import TrendingTokens from './TrendingTokens'
 import RichestIdentities from './RichestIdentities'
-import './RichestSection.scss'
+import './RichestSection.css'
 
 // contracts / tokens / identities; embedded skips outer InfoBlock chrome
 export default function RichestSection ({ rate, enabled = true, embedded = false }) {

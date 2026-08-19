@@ -2,7 +2,7 @@
 
 import { Box } from '@chakra-ui/react'
 import { StatusBar } from './StatusBar'
-import './GovernanceCard.scss'
+import './GovernanceCard.css'
 
 export default function GovernanceCard ({
   contested,

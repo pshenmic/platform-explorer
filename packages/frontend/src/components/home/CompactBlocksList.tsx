@@ -5,7 +5,7 @@ import { BlockIcon } from '../ui/icons'
 import { DataList } from '../ui/lists'
 import { useLiveList } from './hooks'
 import { HOME_FEED_LIMIT } from './listLimits'
-import './CompactBlocksList.scss'
+import './CompactBlocksList.css'
 
 export function CompactBlocksList ({
   blocks,

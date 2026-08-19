@@ -5,7 +5,7 @@ import { TimeDelta, BigNumber } from '../../components/data'
 import { useCountUp } from '../../components/home/hooks'
 import { Skeleton, CompactTxList, CompactBlocksList } from '../../components/home'
 import { isNetworkLive, isApiOperational, formatNetworkLabel } from '../../components/home/utils'
-import './HomeHero.scss'
+import './HomeHero.css'
 
 const EVONODE_COLLATERAL_DASH = 4000
 const CREDITS_PER_DASH = 100000000000

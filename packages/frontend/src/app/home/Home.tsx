@@ -16,7 +16,7 @@ import {
 import { fetchHandlerSuccess, fetchHandlerError } from '../../util'
 import theme from '../../styles/theme'
 import { Box, Container, Flex } from '@chakra-ui/react'
-import './Home.scss'
+import './Home.css'
 
 function epochNumbersOf (current) {
   if (typeof current !== 'number') return []

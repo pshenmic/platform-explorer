@@ -7,7 +7,7 @@ import { Presets } from '../cards'
 import { getDaysBetweenDates, currencyRound } from '../../util'
 import { Skeleton } from './Skeleton'
 import { PRESETS, presetRange } from './MetricChart'
-import './IdentityGrowthChart.scss'
+import './IdentityGrowthChart.css'
 
 const DEFAULT_PRESET = PRESETS.length - 1
 const M = { top: 12, right: 10, bottom: 22, left: 48 }

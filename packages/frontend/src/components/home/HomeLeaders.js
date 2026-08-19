@@ -10,7 +10,7 @@ import { RateTooltip } from '../ui/Tooltips'
 import RankMark, { placeOf } from './RankMark'
 import { Skeleton } from './Skeleton'
 import { HOME_RICH_LIST_LIMIT } from './listLimits'
-import './HomeLeaders.scss'
+import './HomeLeaders.css'
 
 const DAY = 24 * 60 * 60 * 1000
 const WEEK = 7 * DAY

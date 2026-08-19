@@ -1,0 +1,189 @@
+.TxActivityChart {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  contain: layout style;
+}
+.TxActivityChart__Head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px 24px;
+  flex-wrap: wrap;
+  flex-shrink: 0;
+  margin-bottom: 16px;
+}
+.TxActivityChart__HeadText {
+  min-width: 0;
+  max-width: 18rem;
+}
+.TxActivityChart__Eyebrow {
+  display: block;
+  font-family: var(--pe-font-mono);
+  font-size: 0.5625rem;
+  text-transform: uppercase;
+  letter-spacing: 0.22em;
+  color: rgba(var(--pe-color-brand-light-rgb), 0.9);
+  margin-bottom: 6px;
+}
+.TxActivityChart__Title {
+  font-family: var(--pe-font-heading);
+  font-weight: 800;
+  font-style: italic;
+  font-size: 1.375rem;
+  line-height: 1.1;
+  color: #fff;
+  margin: 0 0 8px;
+}
+.TxActivityChart__Lede {
+  font-family: var(--pe-font-mono);
+  font-size: 0.6875rem;
+  line-height: 1.55;
+  color: var(--pe-color-gray-500);
+  margin: 0;
+}
+.TxActivityChart__Controls {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 14px;
+  flex-shrink: 0;
+  min-width: 0;
+}
+.TxActivityChart__Stat {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+  min-width: 0;
+  text-align: right;
+}
+.TxActivityChart__StatMain {
+  display: flex;
+  align-items: baseline;
+  justify-content: flex-end;
+  gap: 10px;
+  min-width: 0;
+}
+.TxActivityChart__StatCount {
+  font-family: var(--pe-font-heading);
+  font-weight: 800;
+  font-style: italic;
+  font-size: clamp(1.5rem, 2.8vw, 2rem);
+  line-height: 1;
+  color: #fff;
+  font-variant-numeric: tabular-nums;
+  text-shadow: 0 0 16px rgba(var(--pe-color-brand-light-rgb), 0.28);
+  min-width: 4ch;
+}
+.TxActivityChart__StatUnit {
+  font-family: var(--pe-font-mono);
+  font-size: 0.625rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--pe-color-gray-500);
+}
+.TxActivityChart__StatMeta {
+  font-family: var(--pe-font-mono);
+  font-size: 0.8125rem;
+  line-height: 1.35;
+  color: var(--pe-color-gray-400);
+  white-space: nowrap;
+  max-width: 18rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-align: right;
+}
+.TxActivityChart__Stat.is-on .TxActivityChart__StatMeta {
+  color: rgba(var(--pe-color-brand-light-rgb), 0.95);
+}
+.TxActivityChart__Stat.is-pinned .TxActivityChart__StatMeta {
+  color: var(--pe-color-brand-light);
+}
+.TxActivityChart__Plot {
+  position: relative;
+  flex: 1 1 auto;
+  min-height: 120px;
+  width: 100%;
+}
+.TxActivityChart__Empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  font-size: 0.8125rem;
+  color: var(--pe-color-gray-500);
+}
+.TxActivityChart__Ghost {
+  display: flex;
+  align-items: flex-end;
+  gap: 4px;
+  height: 100%;
+  padding: 8px 4px 20px;
+  box-sizing: border-box;
+}
+.TxActivityChart__GhostBar {
+  flex: 1 1 0;
+  min-width: 0;
+  opacity: 0.55;
+}
+.TxActivityChart__Svg {
+  display: block;
+  cursor: crosshair;
+  overflow: visible;
+}
+.TxActivityChart__Svg.is-stale {
+  opacity: 0.45;
+}
+.TxActivityChart__Grid {
+  stroke: rgba(255, 255, 255, 0.05);
+  stroke-width: 1;
+}
+.TxActivityChart__Baseline {
+  stroke: rgba(var(--pe-color-brand-normal-rgb), 0.25);
+  stroke-width: 1;
+}
+.TxActivityChart__Tick {
+  font-family: var(--pe-font-mono);
+  font-size: 0.5625rem;
+  fill: var(--pe-color-gray-500);
+}
+.TxActivityChart__Tick--Y {
+  text-anchor: end;
+}
+.TxActivityChart__Tick--X {
+  text-anchor: middle;
+}
+.TxActivityChart__GradTop {
+  stop-color: rgba(var(--pe-color-brand-light-rgb), 0.85);
+}
+.TxActivityChart__GradBot {
+  stop-color: rgba(var(--pe-color-brand-normal-rgb), 0.4);
+}
+.TxActivityChart__GradOnTop {
+  stop-color: #fff;
+}
+.TxActivityChart__GradOnBot {
+  stop-color: rgba(var(--pe-color-brand-light-rgb), 0.7);
+}
+.TxActivityChart__Bar {
+  stroke: rgba(var(--pe-color-brand-normal-rgb), 0.55);
+  stroke-width: 0.75;
+  opacity: 1;
+  transition: opacity 0.1s ease;
+}
+.TxActivityChart__Bar.is-dim {
+  opacity: 0.22;
+}
+.TxActivityChart__Bar.is-on {
+  stroke: rgba(var(--pe-color-brand-light-rgb), 0.95);
+  stroke-width: 1;
+}
+.TxActivityChart__Guide {
+  stroke: rgba(var(--pe-color-brand-light-rgb), 0.5);
+  stroke-width: 1;
+  stroke-dasharray: 3 4;
+  pointer-events: none;
+}

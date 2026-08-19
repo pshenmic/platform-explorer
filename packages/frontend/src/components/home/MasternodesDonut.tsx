@@ -6,7 +6,7 @@ import Image from 'next/image'
 import { Box } from '@chakra-ui/react'
 import { Skeleton } from './Skeleton'
 import { Tooltip } from '../ui/Tooltips'
-import './MasternodesDonut.scss'
+import './MasternodesDonut.css'
 
 const MAX_CELLS = 324
 

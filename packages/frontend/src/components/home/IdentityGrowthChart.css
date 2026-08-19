@@ -1,0 +1,206 @@
+.IdentityGrowthChart {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  contain: layout style;
+}
+.IdentityGrowthChart__Head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px 24px;
+  flex-wrap: wrap;
+  flex-shrink: 0;
+  margin-bottom: 16px;
+}
+.IdentityGrowthChart__HeadText {
+  min-width: 0;
+  max-width: 18rem;
+}
+.IdentityGrowthChart__Eyebrow {
+  display: block;
+  font-family: var(--pe-font-mono);
+  font-size: 0.5625rem;
+  text-transform: uppercase;
+  letter-spacing: 0.22em;
+  color: rgba(var(--pe-color-brand-light-rgb), 0.9);
+  margin-bottom: 6px;
+}
+.IdentityGrowthChart__Title {
+  font-family: var(--pe-font-heading);
+  font-weight: 800;
+  font-style: italic;
+  font-size: 1.375rem;
+  line-height: 1.1;
+  color: #fff;
+  margin: 0 0 8px;
+}
+.IdentityGrowthChart__Lede {
+  font-family: var(--pe-font-mono);
+  font-size: 0.6875rem;
+  line-height: 1.55;
+  color: var(--pe-color-gray-500);
+  margin: 0;
+}
+.IdentityGrowthChart__Controls {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 14px;
+  flex-shrink: 0;
+  min-width: 0;
+}
+.IdentityGrowthChart__Stat {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+  min-width: 0;
+  text-align: right;
+}
+.IdentityGrowthChart__StatMain {
+  display: flex;
+  align-items: baseline;
+  justify-content: flex-end;
+  gap: 10px;
+  min-width: 0;
+}
+.IdentityGrowthChart__StatCount {
+  font-family: var(--pe-font-heading);
+  font-weight: 800;
+  font-style: italic;
+  font-size: clamp(1.5rem, 2.8vw, 2rem);
+  line-height: 1;
+  color: #fff;
+  font-variant-numeric: tabular-nums;
+  text-shadow: 0 0 16px rgba(var(--pe-color-brand-light-rgb), 0.28);
+  min-width: 4ch;
+}
+.IdentityGrowthChart__StatUnit {
+  font-family: var(--pe-font-mono);
+  font-size: 0.625rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--pe-color-gray-500);
+}
+.IdentityGrowthChart__StatMeta {
+  font-family: var(--pe-font-mono);
+  font-size: 0.8125rem;
+  line-height: 1.35;
+  color: var(--pe-color-gray-400);
+  white-space: nowrap;
+  max-width: 18rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.IdentityGrowthChart__Stat.is-on .IdentityGrowthChart__StatMeta {
+  color: rgba(var(--pe-color-brand-light-rgb), 0.95);
+}
+.IdentityGrowthChart__Stat.is-pinned .IdentityGrowthChart__StatMeta {
+  color: var(--pe-color-brand-light);
+}
+.IdentityGrowthChart__Plot {
+  position: relative;
+  flex: 1 1 auto;
+  min-height: 120px;
+  width: 100%;
+}
+.IdentityGrowthChart__Empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  font-size: 0.8125rem;
+  color: var(--pe-color-gray-500);
+}
+.IdentityGrowthChart__Ghost {
+  display: flex;
+  align-items: flex-end;
+  height: 100%;
+  padding: 12px 8px 20px;
+  box-sizing: border-box;
+}
+.IdentityGrowthChart__Svg {
+  display: block;
+  cursor: crosshair;
+  overflow: visible;
+}
+.IdentityGrowthChart__Svg.is-stale {
+  opacity: 0.45;
+}
+.IdentityGrowthChart__Grid {
+  stroke: rgba(255, 255, 255, 0.05);
+  stroke-width: 1;
+}
+.IdentityGrowthChart__Tick {
+  font-family: var(--pe-font-mono);
+  font-size: 0.5625rem;
+  fill: var(--pe-color-gray-500);
+}
+.IdentityGrowthChart__Tick--Y {
+  text-anchor: end;
+}
+.IdentityGrowthChart__Tick--X {
+  text-anchor: middle;
+}
+.IdentityGrowthChart__AreaTop {
+  stop-color: rgba(var(--pe-color-brand-normal-rgb), 0.28);
+}
+.IdentityGrowthChart__AreaBot {
+  stop-color: rgba(var(--pe-color-brand-normal-rgb), 0);
+}
+.IdentityGrowthChart__Area {
+  stroke: none;
+}
+.IdentityGrowthChart__Line {
+  fill: none;
+  stroke: var(--pe-color-brand-normal);
+  stroke-width: 2.25;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+.IdentityGrowthChart__Scan {
+  fill: none;
+  stroke: #fff;
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  stroke-dasharray: 3 97;
+  opacity: 0.85;
+  animation: IdGrowthScan 5.5s linear infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .IdentityGrowthChart__Scan {
+    animation: none;
+    opacity: 0;
+  }
+}
+.IdentityGrowthChart__Guide {
+  stroke: rgba(var(--pe-color-brand-light-rgb), 0.5);
+  stroke-width: 1;
+  stroke-dasharray: 3 4;
+  pointer-events: none;
+}
+.IdentityGrowthChart__DotRing {
+  fill: none;
+  stroke: rgba(var(--pe-color-brand-light-rgb), 0.45);
+  stroke-width: 1.5;
+  pointer-events: none;
+}
+.IdentityGrowthChart__Dot {
+  fill: var(--pe-color-brand-light);
+  stroke: #fff;
+  stroke-width: 1.5;
+  pointer-events: none;
+  filter: drop-shadow(0 0 6px rgba(var(--pe-color-brand-normal-rgb), 0.55));
+}
+
+@keyframes IdGrowthScan {
+  from {
+    stroke-dashoffset: 0;
+  }
+  to {
+    stroke-dashoffset: -100;
+  }
+}

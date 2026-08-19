@@ -9,7 +9,7 @@ import { Tooltip } from '../ui/Tooltips'
 import { DataList } from '../ui/lists'
 import { useLiveList } from './hooks'
 import { HOME_FEED_LIMIT } from './listLimits'
-import './CompactTxList.scss'
+import './CompactTxList.css'
 
 const STATUS_LABEL = {
   SUCCESS: 'Success',

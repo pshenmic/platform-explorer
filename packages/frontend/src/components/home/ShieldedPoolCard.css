@@ -1,188 +1,354 @@
-.ShieldedPool__SparkSvg.is-loading {
-  opacity: 0.4;
-}
-
-.ShieldedPool .is-dim .ShieldedPool__Bar {
-  opacity: 0.35;
-}
-
-.ShieldedPool__Body {
-  min-height: 200px;
+.ShieldedPool {
+  position: relative;
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  gap: var(--pe-space-3_5);
+  width: 100%;
+  min-height: 0;
+  overflow: hidden;
+  contain: layout style;
 }
-
+.ShieldedPool.is-height-matched .ShieldedPool__Body {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.ShieldedPool.is-height-matched .ShieldedPool__Chart {
+  flex: 1 1 auto;
+  min-height: 0;
+  height: auto;
+  max-height: none;
+}
+.ShieldedPool__Head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px 24px;
+  flex-wrap: wrap;
+  flex-shrink: 0;
+  margin-bottom: 16px;
+}
+.ShieldedPool__HeadText {
+  min-width: 0;
+  max-width: 18rem;
+}
+.ShieldedPool__Eyebrow {
+  display: block;
+  font-family: var(--pe-font-mono);
+  font-size: 0.5625rem;
+  text-transform: uppercase;
+  letter-spacing: 0.22em;
+  color: rgba(var(--pe-color-brand-light-rgb), 0.9);
+  margin-bottom: 6px;
+}
+.ShieldedPool__Title {
+  font-family: var(--pe-font-heading);
+  font-weight: 800;
+  font-style: italic;
+  font-size: 1.375rem;
+  line-height: 1.1;
+  color: #fff;
+  margin: 0 0 8px;
+}
+.ShieldedPool__Lede {
+  font-family: var(--pe-font-mono);
+  font-size: 0.6875rem;
+  line-height: 1.55;
+  color: var(--pe-color-gray-500);
+  margin: 0;
+}
+.ShieldedPool__LedeMore {
+  margin-left: 6px;
+  color: var(--pe-color-brand-light);
+  border-bottom: 1px dotted rgba(var(--pe-color-brand-light-rgb), 0.6);
+  cursor: help;
+  white-space: nowrap;
+}
+.ShieldedPool__Controls {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 14px;
+  flex-shrink: 0;
+  min-width: 0;
+}
+.ShieldedPool__Stat {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+  min-width: 0;
+  text-align: right;
+}
+.ShieldedPool__StatMain {
+  display: flex;
+  align-items: baseline;
+  justify-content: flex-end;
+  gap: 10px;
+  min-width: 0;
+}
+.ShieldedPool__StatCount {
+  font-family: var(--pe-font-heading);
+  font-weight: 800;
+  font-style: italic;
+  font-size: clamp(1.5rem, 2.8vw, 2rem);
+  line-height: 1;
+  color: #fff;
+  font-variant-numeric: tabular-nums;
+  text-shadow: 0 0 16px rgba(var(--pe-color-brand-light-rgb), 0.28);
+  min-width: 4ch;
+}
+.ShieldedPool__StatCount.is-up {
+  color: #2cffb4;
+}
+.ShieldedPool__StatCount.is-down {
+  color: #ff5c7a;
+}
+.ShieldedPool__StatUnit {
+  font-family: var(--pe-font-mono);
+  font-size: 0.625rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--pe-color-gray-500);
+}
+.ShieldedPool__Flows {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  align-items: baseline;
+  gap: 4px 14px;
+}
+.ShieldedPool__Flow {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  margin: 0;
+  padding: 2px 0;
+  border: 0;
+  background: transparent;
+  font-family: var(--pe-font-mono);
+  font-size: 0.6875rem;
+  line-height: 1.3;
+  color: var(--pe-color-gray-500);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: opacity 0.15s ease, color 0.15s ease;
+}
+.ShieldedPool__Flow b {
+  font-weight: 700;
+  margin-left: 0.15em;
+  color: #fff;
+}
+.ShieldedPool__Flow--in b {
+  color: #2cffb4;
+}
+.ShieldedPool__Flow--out b {
+  color: #ff5c7a;
+}
+.ShieldedPool__Flow.is-off {
+  opacity: 0.38;
+}
+.ShieldedPool__Flow.is-off b {
+  color: var(--pe-color-gray-500);
+}
+.ShieldedPool__Flow.is-off .ShieldedPool__FlowSwatch {
+  background: transparent;
+  box-shadow: none;
+}
+.ShieldedPool__Flow.is-off.ShieldedPool__Flow--in .ShieldedPool__FlowSwatch {
+  border-color: rgba(44, 255, 180, 0.45);
+}
+.ShieldedPool__Flow.is-off.ShieldedPool__Flow--out .ShieldedPool__FlowSwatch {
+  border-color: rgba(255, 92, 122, 0.45);
+}
+.ShieldedPool__Flow:hover {
+  opacity: 1;
+}
+.ShieldedPool__Flow:focus-visible {
+  outline: 1px solid rgba(var(--pe-color-brand-light-rgb), 0.6);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+.ShieldedPool__FlowSwatch {
+  width: 8px;
+  height: 8px;
+  border-radius: 2px;
+  border: 1px solid transparent;
+  flex-shrink: 0;
+}
+.ShieldedPool__Flow--in .ShieldedPool__FlowSwatch {
+  background: rgba(44, 255, 180, 0.75);
+  box-shadow: 0 0 5px rgba(44, 255, 180, 0.35);
+}
+.ShieldedPool__Flow--out .ShieldedPool__FlowSwatch {
+  background: rgba(255, 92, 122, 0.75);
+  box-shadow: 0 0 5px rgba(255, 92, 122, 0.3);
+}
+.ShieldedPool__Flow.is-on .ShieldedPool__FlowSwatch {
+  opacity: 1;
+}
 .ShieldedPool__Empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 180px;
+  font-size: 0.8125rem;
+  color: var(--pe-color-gray-500);
+}
+.ShieldedPool__Body {
+  display: flex;
+  flex-direction: column;
+  flex: 0 0 auto;
+  min-height: 0;
+}
+.ShieldedPool__Chart {
+  position: relative;
+  width: 100%;
+  height: 200px;
+  min-height: 140px;
+  max-height: 220px;
+  cursor: crosshair;
+}
+.ShieldedPool__ChartSkel {
+  position: absolute !important;
+  inset: 0;
+  width: 100% !important;
+  height: 100% !important;
+}
+.ShieldedPool__Svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+.ShieldedPool__Svg.is-stale {
+  opacity: 0.45;
+}
+.ShieldedPool__Grid {
+  stroke: rgba(255, 255, 255, 0.05);
+  stroke-width: 1;
+}
+.ShieldedPool__YTick, .ShieldedPool__Tick, .ShieldedPool__AxisTitle {
+  font-family: var(--pe-font-mono);
+  font-size: 0.5625rem;
+  fill: var(--pe-color-gray-500);
+}
+.ShieldedPool__YTick--right {
+  fill: var(--pe-color-gray-500);
+  opacity: 0.85;
+}
+.ShieldedPool__AxisTitle {
+  font-size: 0.5rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  fill: var(--pe-color-gray-500);
+}
+.ShieldedPool__AxisTitle--right {
+  fill: var(--pe-color-gray-500);
+  opacity: 0.9;
+}
+.ShieldedPool__AreaTop {
+  stop-color: rgba(var(--pe-color-brand-normal-rgb), 0.28);
+}
+.ShieldedPool__AreaBot {
+  stop-color: rgba(var(--pe-color-brand-normal-rgb), 0);
+}
+.ShieldedPool__Area {
+  stroke: none;
+  pointer-events: none;
+}
+.ShieldedPool__Line {
+  fill: none;
+  stroke: var(--pe-color-brand-light);
+  stroke-width: 2.5;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+.ShieldedPool__BarInTop {
+  stop-color: rgba(44, 255, 180, 0.42);
+}
+.ShieldedPool__BarInBot {
+  stop-color: rgba(44, 255, 180, 0.12);
+}
+.ShieldedPool__BarOutTop {
+  stop-color: rgba(255, 92, 122, 0.42);
+}
+.ShieldedPool__BarOutBot {
+  stop-color: rgba(255, 92, 122, 0.12);
+}
+.ShieldedPool__Bar {
+  stroke-width: 0.5;
+  opacity: 0.72;
+  transition: opacity 0.12s ease;
+}
+.ShieldedPool__Bar--in {
+  stroke: rgba(44, 255, 180, 0.28);
+}
+.ShieldedPool__Bar--out {
+  stroke: rgba(255, 92, 122, 0.28);
+}
+.ShieldedPool__Chart:has(.ShieldedPool__Bar--in):not(:has(.ShieldedPool__Bar--out)) .ShieldedPool__Bar, .ShieldedPool__Chart:has(.ShieldedPool__Bar--out):not(:has(.ShieldedPool__Bar--in)) .ShieldedPool__Bar {
+  opacity: 0.88;
+}
+.ShieldedPool__Cross {
+  stroke: rgba(var(--pe-color-brand-light-rgb), 0.5);
+  stroke-width: 1;
+  stroke-dasharray: 3 4;
+  pointer-events: none;
+}
+.ShieldedPool__DotRing {
+  fill: none;
+  stroke: rgba(var(--pe-color-brand-light-rgb), 0.45);
+  stroke-width: 1.5;
+  pointer-events: none;
+}
+.ShieldedPool__Dot {
+  fill: var(--pe-color-brand-light);
+  stroke: #fff;
+  stroke-width: 1.5;
+  pointer-events: none;
+  filter: drop-shadow(0 0 6px rgba(var(--pe-color-brand-normal-rgb), 0.55));
+}
+.ShieldedPool__Tip {
+  position: absolute;
+  top: 10px;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 7px 10px;
+  border-radius: 8px;
+  background: rgba(10, 14, 16, 0.95);
+  border: 1px solid rgba(var(--pe-color-gray-800-rgb), 0.9);
+  font-family: var(--pe-font-mono);
+  font-size: 0.625rem;
+  white-space: nowrap;
+  pointer-events: none;
+  z-index: 2;
+}
+.ShieldedPool__TipDate {
+  color: var(--pe-color-gray-500);
+}
+.ShieldedPool__TipRow {
+  font-weight: 600;
+  color: #fff;
+}
+.ShieldedPool__TipRow.is-tvl {
+  color: var(--pe-color-brand-light);
+}
+.ShieldedPool__TipRow.is-in {
+  color: #2cffb4;
+}
+.ShieldedPool__TipRow.is-out {
+  color: #ff5c7a;
+}
+.ShieldedPool__EmptyChart {
   display: flex;
   align-items: center;
   justify-content: center;
   height: 100%;
   font-size: 0.8125rem;
   color: var(--pe-color-gray-500);
-}
-
-.ShieldedPool__Balance {
-  font-family: var(--pe-font-heading);
-  font-weight: var(--pe-font-weight-extrabold);
-  font-style: italic;
-  font-size: var(--pe-space-7);
-  line-height: 1;
-  color: var(--pe-color-fg);
-  cursor: pointer;
-  width: max-content;
-  border-bottom: 1px dotted rgba(var(--pe-color-gray-500-rgb), 0.6);
-  transition:
-    color 0.15s,
-    border-color 0.15s;
-}
-
-.ShieldedPool__Balance:hover {
-  color: var(--pe-color-brand-light);
-  border-bottom-color: rgba(var(--pe-color-brand-light-rgb), 0.7);
-}
-
-.ShieldedPool__BalanceUnit {
-  margin-left: var(--pe-space-2);
-  font-family: var(--pe-font-mono);
-  font-style: normal;
-  font-weight: var(--pe-font-weight-normal);
-  font-size: var(--pe-text-xs);
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--pe-color-gray-500);
-}
-
-.ShieldedPool__Rows {
-  display: flex;
-  flex-direction: column;
-  gap: var(--pe-space-1_5);
-}
-
-.ShieldedPool__RowItem {
-  display: flex;
-  justify-content: space-between;
-  gap: var(--pe-space-4);
-  font-family: var(--pe-font-mono);
-  font-size: var(--pe-text-xs);
-  color: var(--pe-color-fg-muted);
-}
-
-.ShieldedPool__RowItem span:first-child {
-  color: var(--pe-color-gray-500);
-}
-
-.ShieldedPool__Spark {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-}
-
-.ShieldedPool__SparkWrap {
-  position: relative;
-  cursor: crosshair;
-}
-
-.ShieldedPool__SparkSvg {
-  display: block;
-  width: 100%;
-  height: 56px;
-  transition: opacity 0.2s;
-}
-
-.ShieldedPool__Baseline {
-  stroke: rgba(255, 255, 255, 0.12);
-  stroke-width: 1px;
-}
-
-.ShieldedPool__Bar {
-  transition: opacity 0.12s;
-}
-
-.ShieldedPool__Bar--in {
-  fill: var(--pe-color-brand-normal);
-}
-
-.ShieldedPool__Bar--out {
-  fill: var(--pe-color-orange-default);
-  opacity: var(--pe-opacity-strong);
-}
-
-.ShieldedPool__Tip {
-  position: absolute;
-  top: -var(--pe-space-2);
-  transform: translate(-50%, -100%);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 1px;
-  padding: var(--pe-space-1) var(--pe-space-2);
-  border-radius: var(--pe-radius-sm);
-  white-space: nowrap;
-  background: var(--pe-color-gray-800);
-  border: 1px solid rgba(var(--pe-color-brand-normal-rgb), 0.4);
-  pointer-events: none;
-  z-index: 2;
-  font-family: var(--pe-font-mono);
-  font-size: var(--pe-text-xs);
-}
-
-.ShieldedPool__TipDate {
-  font-size: 0.5625rem;
-  color: var(--pe-color-gray-500);
-}
-
-.ShieldedPool__TipRow {
-  color: var(--pe-color-fg);
-}
-
-.ShieldedPool__TipRow--in {
-  color: var(--pe-color-brand-light);
-}
-
-.ShieldedPool__TipRow--out {
-  color: var(--pe-color-orange-default);
-}
-
-.ShieldedPool__Axis {
-  display: flex;
-  justify-content: space-between;
-  gap: var(--pe-space-2);
-  font-family: var(--pe-font-mono);
-  font-size: 0.5625rem;
-  color: var(--pe-color-gray-500);
-}
-
-.ShieldedPool__SparkLegend {
-  display: flex;
-  align-items: center;
-  gap: var(--pe-space-3_5);
-  font-family: var(--pe-font-mono);
-  font-size: var(--pe-text-2xs);
-  color: var(--pe-color-gray-500);
-}
-
-.ShieldedPool__SparkLegend span {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-}
-
-.ShieldedPool__SparkWindow {
-  margin-left: auto;
-}
-
-.ShieldedPool__Dot {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-}
-
-.ShieldedPool__Dot--in {
-  background: var(--pe-color-brand-normal);
-}
-
-.ShieldedPool__Dot--out {
-  background: var(--pe-color-orange-default);
 }
