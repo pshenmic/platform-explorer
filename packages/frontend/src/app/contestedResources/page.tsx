@@ -24,13 +24,14 @@ export async function generateMetadata (): Promise<Metadata> {
 }
 
 interface ContestedResourcesRouteProps {
-  searchParams: {
+  searchParams: Promise<{
     page?: string
     'page-size'?: string
-  }
+  }>
 }
 
-function ContestedResourcesRoute ({ searchParams }: ContestedResourcesRouteProps) {
+async function ContestedResourcesRoute(props: ContestedResourcesRouteProps) {
+  const searchParams = await props.searchParams;
   const page = Number(searchParams.page) || 1
   const pageSize = Number(searchParams['page-size'])
 

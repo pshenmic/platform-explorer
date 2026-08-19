@@ -7,24 +7,17 @@ const __dirname = path.dirname(__filename)
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   sassOptions: {
-    includePaths: [path.join(__dirname, 'src/styles')]
+    includePaths: [path.join(__dirname, 'src/styles')],
+    // Mute Dart Sass 1.7x deprecations so Vercel/build logs surface real errors.
+    // Full @import / if() migrator is a separate styles PR.
+    silenceDeprecations: ['import', 'global-builtin', 'if-function']
   },
-  webpack: function (config, { webpack }) {
-    config.module.rules.push({
-      test: /\.md$/,
-      use: 'raw-loader'
-    })
-
-    // Force `pshenmic-dpp` to resolve to its wasm build. The package's
-    // `"node"` conditional export still wins in Next.js SSR (webpack default
-    // `conditionNames` doesn't include `"browser"`), pulling a NAPI-native
-    // build that webpack can't bundle. Workaround for owl352/pshenmic-dpp#178.
-    config.resolve.alias = {
-      ...config.resolve.alias,
-      'pshenmic-dpp$': 'pshenmic-dpp/wasm'
+  // Next 16 uses Turbopack by default. Force WASM build of pshenmic-dpp so SSR
+  // does not resolve the Node/NAPI entry (native.js). Replaces old webpack alias.
+  turbopack: {
+    resolveAlias: {
+      'pshenmic-dpp': 'pshenmic-dpp/wasm'
     }
-
-    return config
   }
 }
 

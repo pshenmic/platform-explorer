@@ -32,8 +32,9 @@ const FieldLabel = ({ label, tooltip, rightSlot }: FieldLabelProps) => (
       <PopoverTrigger>
         <Text
           as='button'
-          type='button'
           className='Essentials__Label'
+          // Chakra polymorphic `as` does not narrow props under React 19 types
+          {...({ type: 'button' } as object)}
         >
           {label}
         </Text>

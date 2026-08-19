@@ -10,14 +10,15 @@ export const metadata: Metadata = {
 }
 
 interface IdentitiesRouteProps {
-  searchParams: {
+  searchParams: Promise<{
     page?: string
     'page-size'?: string
     'show-all'?: string
-  }
+  }>
 }
 
-function IdentitiesRoute ({ searchParams }: IdentitiesRouteProps) {
+async function IdentitiesRoute(props: IdentitiesRouteProps) {
+  const searchParams = await props.searchParams;
   const page = Number(searchParams.page) || 1
   const pageSize = Number(searchParams['page-size'])
   const showAll = searchParams['show-all'] === 'true'

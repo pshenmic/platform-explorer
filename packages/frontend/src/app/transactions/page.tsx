@@ -9,13 +9,14 @@ export const metadata: Metadata = {
 }
 
 interface TransactionsRouteProps {
-  searchParams: {
+  searchParams: Promise<{
     page?: string
     'page-size'?: string
-  }
+  }>
 }
 
-function TransactionsRoute ({ searchParams }: TransactionsRouteProps) {
+async function TransactionsRoute(props: TransactionsRouteProps) {
+  const searchParams = await props.searchParams;
   const page = Number(searchParams.page) || 1
   const pageSize = Number(searchParams['page-size'])
 

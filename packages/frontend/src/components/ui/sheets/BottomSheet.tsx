@@ -2,6 +2,15 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import type { ReactNode } from 'react'
 import { Box, Drawer, DrawerBody, DrawerHeader, DrawerOverlay, Text, useOutsideClick } from '@chakra-ui/react'
 import { useSpring, animated } from 'react-spring'
+import type { ComponentType, CSSProperties, ReactNode as RN } from 'react'
+
+// react-spring + React 19: AnimatedProps omit children; loosen for host elements
+const AnimatedDiv = animated.div as unknown as ComponentType<{
+  children?: RN
+  ref?: React.Ref<HTMLDivElement>
+  className?: string
+  style?: CSSProperties
+}>
 import { useDrag } from '@use-gesture/react'
 import { useWindowSize } from '../../../hooks'
 import './BottomSheet.scss'
@@ -99,7 +108,7 @@ export const BottomSheet = ({
       size={'full'}
     >
       <DrawerOverlay />
-      <animated.div
+      <AnimatedDiv
         ref={drawerRef}
         className={'BottomSheet'}
         style={{
@@ -109,7 +118,7 @@ export const BottomSheet = ({
           right: 0,
           zIndex: 1400,
           height: fullHeightOnly ? FULL_HEIGHT : (isExpanded ? FULL_HEIGHT : DRAWER_HEIGHT),
-          transform: y.to(value => `translateY(${value}px)`),
+          transform: y.to(value => `translateY(${value}px)`) as unknown as string,
           transition: 'height 0.2s ease-out'
         }}
       >
@@ -136,7 +145,7 @@ export const BottomSheet = ({
             </Box>
           </DrawerBody>
         </Box>
-      </animated.div>
+      </AnimatedDiv>
     </Drawer>
   )
 }
