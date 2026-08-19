@@ -3,7 +3,7 @@
 import { useState, useEffect, useMemo } from 'react'
 import { useQuery, useQueries } from '@tanstack/react-query'
 import * as Api from '../../util/Api'
-import HomeHero from './HomeHero.js'
+import HomeHero from './HomeHero'
 import {
   EpochsOverview,
   MasternodesDonut,
