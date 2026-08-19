@@ -7,7 +7,15 @@ import RichestIdentities from './RichestIdentities'
 import './RichestSection.css'
 
 // contracts / tokens / identities; embedded skips outer InfoBlock chrome
-export default function RichestSection ({ rate, enabled = true, embedded = false }) {
+export default function RichestSection ({
+  rate,
+  enabled = true,
+  embedded = false
+}: {
+  rate?: unknown
+  enabled?: boolean
+  embedded?: boolean
+}) {
   const body = (
     <div className={'HomeRichest__Grid'}>
       <div className={'HomeRichest__Col'}>

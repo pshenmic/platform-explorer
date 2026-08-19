@@ -12,9 +12,9 @@ import { HOME_RICH_LIST_LIMIT } from './listLimits'
 const DEFAULT_SORT = { order_by: 'balance', order: 'desc' }
 
 // identities by balance or tx_count (server sort via column headers)
-export default function RichestIdentities ({ rate, enabled = true }) {
+export default function RichestIdentities ({ rate, enabled = true }: { rate?: any, enabled?: boolean }) {
   const [sort, setSort] = useState(DEFAULT_SORT)
-  const [state, setState] = useState({ loading: true, error: false, items: [] })
+  const [state, setState] = useState<{ loading: boolean, error: boolean, items: any[] }>({ loading: true, error: false, items: [] })
 
   useEffect(() => {
     if (!enabled) {
@@ -22,7 +22,7 @@ export default function RichestIdentities ({ rate, enabled = true }) {
       return
     }
     setState(s => ({ ...s, loading: true, error: false }))
-    Api.getIdentities(1, HOME_RICH_LIST_LIMIT, sort.order, sort.order_by)
+    Api.getIdentities(1, HOME_RICH_LIST_LIMIT, sort.order as any, sort.order_by)
       .then(res => {
         let items = (res?.resultSet ?? []).slice(0, HOME_RICH_LIST_LIMIT)
         // re-sort by live balance (API ranks by transfer-sum)
@@ -48,7 +48,7 @@ export default function RichestIdentities ({ rate, enabled = true }) {
       header: 'Identity',
       grow: true,
       minWidth: 100,
-      cell: (item, i) => (
+      cell: (item: any, i: any) => (
         <span className={'DataList__Entity'}>
           {showRank ? <RankMark place={placeOf(i)}/> : null}
           <Identifier
@@ -67,7 +67,7 @@ export default function RichestIdentities ({ rate, enabled = true }) {
       minWidth: 104,
       align: 'right',
       sortKey: 'balance',
-      cell: (item) => {
+      cell: (item: any) => {
         const credits = Number(item.balance)
         return (
           <RateTooltip credits={credits} rate={rate?.data}>
@@ -85,7 +85,7 @@ export default function RichestIdentities ({ rate, enabled = true }) {
       align: 'right',
       sortKey: 'tx_count',
       priority: 1,
-      cell: (item) => (
+      cell: (item: any) => (
         typeof item.totalTxs === 'number'
           ? <BigNumber>{item.totalTxs}</BigNumber>
           : '—'
@@ -103,8 +103,8 @@ export default function RichestIdentities ({ rate, enabled = true }) {
       emptyMessage={'No data'}
       sort={sort}
       onSortChange={setSort}
-      rowHref={(item) => `/identity/${item.identifier}`}
-      rowKey={(item) => item.identifier}
+      rowHref={(item: any) => `/identity/${item.identifier}`}
+      rowKey={(item: any) => item.identifier}
       rowClassName={showRank ? rankRowClassName : undefined}
       footer={
         <Link href={'/identities'} prefetch={false} className={'DataList__ShowMore'}>

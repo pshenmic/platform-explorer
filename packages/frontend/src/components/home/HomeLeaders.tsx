@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useMemo, useRef } from 'react'
+import { useState, useEffect, useMemo, useRef, type CSSProperties } from 'react'
 import Link from 'next/link'
 import { Box } from '@chakra-ui/react'
 import * as Api from '../../util/Api'
@@ -17,8 +17,8 @@ const WEEK = 7 * DAY
 const MONTH = 30 * DAY
 const QUARTER = 90 * DAY
 
-function useRatingList (enabled, load) {
-  const [state, setState] = useState({ loading: true, error: false, items: [] })
+function useRatingList (enabled: boolean, load: () => Promise<any[]>) {
+  const [state, setState] = useState<{ loading: boolean, error: boolean, items: any[] }>({ loading: true, error: false, items: [] })
 
   useEffect(() => {
     if (!enabled) {
@@ -40,24 +40,24 @@ function useRatingList (enabled, load) {
   return state
 }
 
-function meterWidth (value, max) {
+function meterWidth (value: number, max: number) {
   if (!(max > 0) || !(value > 0)) return 0
   return Math.max(Math.sqrt(value / max) * 100, 1.5)
 }
 
-function rangeIso (ms) {
+function rangeIso (ms: number) {
   const end = new Date()
   const start = new Date(end.getTime() - ms)
   return { start: start.toISOString(), end: end.toISOString() }
 }
 
-function LeaderRail ({ place, href, title, metric, meterValue, meterMax, accent }) {
+function LeaderRail ({ place, href, title, metric, meterValue, meterMax, accent }: any) {
   return (
     <Link
       href={href}
       prefetch={false}
       className={`HomeLeaders__Rail HomeLeaders__Rail--${accent} HomeLeaders__Rail--p${place}`}
-      style={{ '--meter': `${meterWidth(meterValue, meterMax)}%` }}
+      style={{ ['--meter']: `${meterWidth(meterValue, meterMax)}%` } as CSSProperties}
     >
       <span className={'HomeLeaders__Rank'}>
         <RankMark place={place}/>
@@ -81,7 +81,7 @@ function LeaderColumn ({
   empty,
   accent,
   renderRail
-}) {
+}: any) {
   return (
     <div className={`HomeLeaders__Col HomeLeaders__Col--${accent}`}>
       <p className={'HomeLeaders__Caption'} title={`${eyebrow} · ${title} · ${lede}`}>
@@ -100,7 +100,7 @@ function LeaderColumn ({
           <div className={'HomeLeaders__Empty'}>No data</div>}
         {!loading && !error && items.length === 0 &&
           <div className={'HomeLeaders__Empty'}>{empty}</div>}
-        {!loading && !error && items.map((item, i) => (
+        {!loading && !error && items.map((item: any, i: any) => (
           <div key={item.identifier || item.tokenIdentifier || i} role={'listitem'}>
             {renderRail(item, i)}
           </div>
@@ -110,7 +110,7 @@ function LeaderColumn ({
   )
 }
 
-function identityTitle (item) {
+function identityTitle (item: any) {
   return (
     <Identifier ellipsis avatar styles={['highlight-both']}>
       {item.identifier}
@@ -118,7 +118,7 @@ function identityTitle (item) {
   )
 }
 
-export default function HomeLeaders ({ rate, enabled = true }) {
+export default function HomeLeaders ({ rate, enabled = true }: { rate?: any, enabled?: boolean }) {
   const loadContracts = useMemo(
     () => () => Api.getDataContractsRating(1, HOME_RICH_LIST_LIMIT, 'desc')
       .then(res => (res?.resultSet ?? []).slice(0, HOME_RICH_LIST_LIMIT)),
@@ -157,7 +157,7 @@ export default function HomeLeaders ({ rate, enabled = true }) {
         const seen = new Set()
         const unique = []
         for (const item of raw) {
-          const id = item?.tokenIdentifier
+          const id = (item as any)?.tokenIdentifier || (item as any)?.identifier
           if (!id || seen.has(id)) continue
           seen.add(id)
           unique.push(item)
@@ -226,7 +226,7 @@ export default function HomeLeaders ({ rate, enabled = true }) {
           error={contracts.error}
           items={contracts.items}
           empty={'No contracts yet'}
-          renderRail={(item, i) => {
+          renderRail={(item: any, i: any) => {
             const n = Number(item.transitionsCount) || 0
             return (
               <LeaderRail
@@ -263,7 +263,7 @@ export default function HomeLeaders ({ rate, enabled = true }) {
           error={byBalance.error}
           items={byBalance.items}
           empty={'No identities yet'}
-          renderRail={(item, i) => {
+          renderRail={(item: any, i: any) => {
             const credits = Number(item.balance) || 0
             return (
               <LeaderRail
@@ -300,7 +300,7 @@ export default function HomeLeaders ({ rate, enabled = true }) {
           error={byTxs.error}
           items={byTxs.items}
           empty={'No identities yet'}
-          renderRail={(item, i) => {
+          renderRail={(item: any, i: any) => {
             const n = Number(item.totalTxs) || 0
             return (
               <LeaderRail
@@ -333,7 +333,7 @@ export default function HomeLeaders ({ rate, enabled = true }) {
           error={activeContracts.error}
           items={activeContracts.items}
           empty={'No active contracts in this window'}
-          renderRail={(item, i) => {
+          renderRail={(item: any, i: any) => {
             const n = Number(item.transitionsCount) || 0
             return (
               <LeaderRail
@@ -370,7 +370,7 @@ export default function HomeLeaders ({ rate, enabled = true }) {
           error={tokens.error}
           items={tokens.items}
           empty={'No token activity yet'}
-          renderRail={(item, i) => {
+          renderRail={(item: any, i: any) => {
             const n = Number(item.transitionCount) || 0
             const name = getTokenName(item.localizations)
             return (
@@ -410,7 +410,7 @@ export default function HomeLeaders ({ rate, enabled = true }) {
           error={activeIds.error}
           items={activeIds.items}
           empty={'No active identities in this window'}
-          renderRail={(item, i) => {
+          renderRail={(item: any, i: any) => {
             const n = Number(item.transactionsCount) || 0
             return (
               <LeaderRail
@@ -433,7 +433,7 @@ export default function HomeLeaders ({ rate, enabled = true }) {
     rate
   ])
 
-  const viewportRef = useRef(null)
+  const viewportRef = useRef<HTMLDivElement | null>(null)
   // React state only for tab index; slide chrome updates via DOM class
   const [active, setActive] = useState(0)
   const activeRef = useRef(0)
@@ -481,13 +481,13 @@ export default function HomeLeaders ({ rate, enabled = true }) {
   }
 
   // DOM class only: avoids re-rendering three cloned lists each scroll tick
-  const markActiveDom = (domIndex) => {
+  const markActiveDom = (domIndex: any) => {
     getSlides().forEach((el, i) => {
       el.classList.toggle('is-active', i === domIndex)
     })
   }
 
-  const setLogical = (real) => {
+  const setLogical = (real: any) => {
     const i = ((real % n) + n) % n
     if (activeRef.current !== i) {
       activeRef.current = i
@@ -496,7 +496,7 @@ export default function HomeLeaders ({ rate, enabled = true }) {
   }
 
   // centers slide; is-programmatic disables CSS scroll-snap mid-move
-  const centerEl = (el, smooth) => {
+  const centerEl = (el: any, smooth: any) => {
     const vp = viewportRef.current
     if (!vp || !el) return
     const vpRect = vp.getBoundingClientRect()
@@ -540,7 +540,7 @@ export default function HomeLeaders ({ rate, enabled = true }) {
     })
   }
 
-  const goToDom = (domIndex, { smooth = true, thenNormalize = true } = {}) => {
+  const goToDom = (domIndex: any, { smooth = true, thenNormalize = true } = {}) => {
     if (!n) return
     const slides = getSlides()
     const el = slides[domIndex]
@@ -573,14 +573,14 @@ export default function HomeLeaders ({ rate, enabled = true }) {
   }
 
   // tabs always target the middle deck so both directions still have neighbors
-  const scrollToLogical = (realIndex) => {
+  const scrollToLogical = (realIndex: any) => {
     if (!n || busy.current) return
     const real = ((realIndex % n) + n) % n
     goToDom(n + real, { smooth: true, thenNormalize: false })
   }
 
   // step one slide; landing on a clone is OK, normalizeLoop re-centers after settle
-  const scrollByDir = (dir) => {
+  const scrollByDir = (dir: any) => {
     if (!n || busy.current) return
     const dom = nearestDomIndex()
     let next = dom + dir
@@ -621,7 +621,7 @@ export default function HomeLeaders ({ rate, enabled = true }) {
 
     vp.addEventListener('scroll', onScroll, { passive: true })
 
-    const onKey = (e) => {
+    const onKey = (e: any) => {
       if (e.key === 'ArrowRight') {
         e.preventDefault()
         scrollByDir(1)

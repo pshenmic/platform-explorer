@@ -9,8 +9,8 @@ import RankMark, { placeOf, rankRowClassName } from './RankMark'
 import { HOME_RICH_LIST_LIMIT } from './listLimits'
 
 // contracts by transitions; API may return fewer than HOME_RICH_LIST_LIMIT
-export default function DataContractsRating ({ enabled = true }) {
-  const [state, setState] = useState({ loading: true, error: false, items: [] })
+export default function DataContractsRating ({ enabled = true }: { enabled?: boolean }) {
+  const [state, setState] = useState<{ loading: boolean, error: boolean, items: any[] }>({ loading: true, error: false, items: [] })
 
   useEffect(() => {
     if (!enabled) {
@@ -36,7 +36,7 @@ export default function DataContractsRating ({ enabled = true }) {
       header: 'Contract',
       grow: true,
       minWidth: 120,
-      cell: (item, i) => (
+      cell: (item: any, i: any) => (
         <span className={'DataList__Entity'}>
           <RankMark place={placeOf(i)}/>
           <Identifier
@@ -54,7 +54,7 @@ export default function DataContractsRating ({ enabled = true }) {
       header: 'Transitions',
       minWidth: 88,
       align: 'right',
-      cell: (item) => <BigNumber>{item.transitionsCount}</BigNumber>
+      cell: (item: any) => <BigNumber>{item.transitionsCount}</BigNumber>
     }
   ]
 
@@ -66,8 +66,8 @@ export default function DataContractsRating ({ enabled = true }) {
       loading={loading}
       skeletonCount={HOME_RICH_LIST_LIMIT}
       emptyMessage={'No data'}
-      rowHref={(item) => `/dataContract/${item.identifier}`}
-      rowKey={(item) => item.identifier}
+      rowHref={(item: any) => `/dataContract/${item.identifier}`}
+      rowKey={(item: any) => item.identifier}
       rowClassName={rankRowClassName}
       footer={
         <Link href={'/dataContracts'} prefetch={false} className={'DataList__ShowMore'}>

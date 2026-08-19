@@ -6,9 +6,9 @@ const placeIcons = {
   3: ThirdPlaceIcon
 }
 
-export default function RankMark ({ place }) {
+export default function RankMark ({ place }: { place?: number | null }) {
   if (place == null) return null
-  const PlaceIcon = placeIcons[place]
+  const PlaceIcon = placeIcons[place as keyof typeof placeIcons]
   return (
     <span className={'DataList__Rank'}>
       {PlaceIcon
@@ -18,11 +18,11 @@ export default function RankMark ({ place }) {
   )
 }
 
-export function placeOf (index) {
+export function placeOf (index: number) {
   return index + 1
 }
 
-export function rankRowClassName (_item, index) {
+export function rankRowClassName (_item: unknown, index: number) {
   const place = placeOf(index)
   return place >= 1 && place <= 5 ? `DataList__Row--Rank${place}` : ''
 }

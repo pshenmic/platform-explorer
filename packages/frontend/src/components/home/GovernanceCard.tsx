@@ -4,13 +4,8 @@ import { Box } from '@chakra-ui/react'
 import { StatusBar } from './StatusBar'
 import './GovernanceCard.css'
 
-export default function GovernanceCard ({
-  contested,
-  activeContested,
-  latestContested,
-  latestVotes,
-  epochData
-}) {
+export default function GovernanceCard (props: any) {
+  const { contested, activeContested, latestContested, latestVotes, epochData } = props
   return (
     <Box
       className={'InfoBlock InfoBlock--NoBorder GovernanceCard'}

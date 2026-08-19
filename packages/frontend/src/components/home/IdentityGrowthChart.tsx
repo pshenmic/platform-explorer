@@ -12,16 +12,21 @@ import './IdentityGrowthChart.css'
 const DEFAULT_PRESET = PRESETS.length - 1
 const M = { top: 12, right: 10, bottom: 22, left: 48 }
 
-const formatValue = (v) => Math.abs(v) >= 1e6 ? currencyRound(v) : d3.format(',')(Math.round(v))
+const formatValue = (v: number) => Math.abs(v) >= 1e6 ? currencyRound(v) : d3.format(',')(Math.round(v))
 
 export default function IdentityGrowthChart ({
   fetcher,
   field = 'registeredIdentities',
   yAbbr = 'identities',
   enabled = true
+}: {
+  fetcher?: any
+  field?: string
+  yAbbr?: string
+  enabled?: boolean
 }) {
   const [presetIdx, setPresetIdx] = useState(DEFAULT_PRESET)
-  const [state, setState] = useState({
+  const [state, setState] = useState<{ loading: boolean, error: boolean, points: any[], dataPresetIdx: number }>({
     loading: true,
     error: false,
     points: [],
@@ -29,9 +34,9 @@ export default function IdentityGrowthChart ({
   })
   const [width, setWidth] = useState(0)
   const [plotH, setPlotH] = useState(160)
-  const [hoverI, setHoverI] = useState(null)
-  const [pinI, setPinI] = useState(null)
-  const wrapRef = useRef(null)
+  const [hoverI, setHoverI] = useState<number | null>(null)
+  const [pinI, setPinI] = useState<number | null>(null)
+  const wrapRef = useRef<HTMLDivElement | null>(null)
   const gid = useId().replace(/:/g, '')
   const fetchGen = useRef(0)
 
@@ -59,11 +64,11 @@ export default function IdentityGrowthChart ({
     setHoverI(null)
     setPinI(null)
     fetcher(start, end, preset.intervals)
-      .then(res => {
+      .then((res: any) => {
         if (gen !== fetchGen.current) return
         const pts = (res || [])
-          .map(item => ({ x: new Date(item.timestamp), y: item?.data?.[field] }))
-          .filter(p => typeof p.y === 'number' && !isNaN(p.y))
+          .map((item: any) => ({ x: new Date(item.timestamp), y: item?.data?.[field] }))
+          .filter((p: any) => typeof p.y === 'number' && !isNaN(p.y))
         let s = 0
         while (s < pts.length - 1 && pts[s].y === 0) s++
         setState({
@@ -91,20 +96,20 @@ export default function IdentityGrowthChart ({
 
   const chart = useMemo(() => {
     if (!ready) return null
-    const x = d3.scaleTime(d3.extent(points, p => p.x), [M.left, width - M.right])
+    const x = d3.scaleTime(d3.extent(points, (p: any) => p.x), [M.left, width - M.right])
     const dataSpanDays = getDaysBetweenDates(points[0].x, points[points.length - 1].x)
     const tickFmt = d3.timeFormat(dataSpanDays > 365 ? '%b %Y' : dataSpanDays > 7 ? '%b %d' : '%H:%M')
     const tipFmt = d3.timeFormat(dataSpanDays > 365 ? '%b %d, %Y' : dataSpanDays > 3 ? '%b %d' : '%b %d, %H:%M')
-    const maxY = d3.max(points, p => p.y) || 1
-    const minY = d3.min(points, p => p.y) || 0
+    const maxY = d3.max(points, (p: any) => p.y) || 1
+    const minY = d3.min(points, (p: any) => p.y) || 0
     const pad = (maxY - minY) * 0.12 || maxY * 0.05 || 1
     const y = d3.scaleLinear(
       [Math.max(0, minY - pad), maxY + pad],
       [h - M.bottom, M.top]
     ).nice()
     const baseline = h - M.bottom
-    const lineD = d3.line().x(p => x(p.x)).y(p => y(p.y)).curve(d3.curveMonotoneX)(points)
-    const areaD = d3.area().x(p => x(p.x)).y0(baseline).y1(p => y(p.y)).curve(d3.curveMonotoneX)(points)
+    const lineD = d3.line().x((p: any) => x(p.x)).y((p: any) => y(p.y)).curve(d3.curveMonotoneX)(points)
+    const areaD = d3.area().x((p: any) => x(p.x)).y0(baseline).y1((p: any) => y(p.y)).curve(d3.curveMonotoneX)(points)
     const nodes = points.map((p, i) => ({
       i,
       cx: x(p.x),
@@ -113,8 +118,8 @@ export default function IdentityGrowthChart ({
       date: p.x
     }))
     const tickCount = Math.max(2, Math.min(6, Math.floor((width - M.left - M.right) / 72)))
-    const xTicks = x.ticks(tickCount).map(d => ({ v: x(d), label: tickFmt(d) }))
-    const yTicks = y.ticks(4).map(v => ({ v: y(v), label: formatValue(v) }))
+    const xTicks = x.ticks(tickCount).map((d: any) => ({ v: x(d), label: tickFmt(d) }))
+    const yTicks = y.ticks(4).map((v: any) => ({ v: y(v), label: formatValue(v) }))
     const first = points[0]
     const latest = points[points.length - 1]
     const delta = latest.y - first.y
@@ -125,7 +130,7 @@ export default function IdentityGrowthChart ({
   const activeI = pinI != null ? pinI : hoverI
   const active = chart && activeI != null ? chart.nodes[activeI] : null
 
-  const onMove = (e) => {
+  const onMove = (e: any) => {
     if (!chart) return
     const rect = e.currentTarget.getBoundingClientRect()
     const px = e.clientX - rect.left
@@ -144,7 +149,7 @@ export default function IdentityGrowthChart ({
   const onLeave = () => setHoverI(null)
   const onClick = () => {
     if (hoverI == null) return
-    setPinI(p => (p === hoverI ? null : hoverI))
+    setPinI((p: any) => (p === hoverI ? null : hoverI))
   }
 
   const isAll = PRESETS[dataPresetIdx].label === 'All'
@@ -155,7 +160,7 @@ export default function IdentityGrowthChart ({
         : `${chart.delta >= 0 ? '+' : ''}${formatValue(chart.delta)}`)
     : '—'
   const statMeta = active
-    ? `${chart.tipFmt(active.date)} · ${formatValue(active.value)} ${yAbbr}`
+    ? `${chart!.tipFmt(active.date)} · ${formatValue(active.value)} ${yAbbr}`
     : (chart
         ? (isAll
             ? [
@@ -233,7 +238,7 @@ export default function IdentityGrowthChart ({
                       </filter>
                     </defs>
 
-                    {chart.yTicks.map((t, i) => (
+                    {chart.yTicks.map((t: any, i: number) => (
                       <g key={`y${i}`}>
                         <line
                           className={'IdentityGrowthChart__Grid'}
@@ -253,7 +258,7 @@ export default function IdentityGrowthChart ({
                       </g>
                     ))}
 
-                    {chart.xTicks.map((t, i) => (
+                    {chart.xTicks.map((t: any, i: number) => (
                       <text
                         key={`x${i}`}
                         className={'IdentityGrowthChart__Tick IdentityGrowthChart__Tick--X'}

@@ -12,8 +12,8 @@ import { HOME_RICH_LIST_LIMIT } from './listLimits'
 const WINDOW_MS = 30 * 24 * 60 * 60 * 1000
 
 // tokens by transitions over the last 30 days
-export default function TrendingTokens ({ enabled = true }) {
-  const [state, setState] = useState({ loading: true, error: false, items: [] })
+export default function TrendingTokens ({ enabled = true }: { enabled?: boolean }) {
+  const [state, setState] = useState<{ loading: boolean, error: boolean, items: any[] }>({ loading: true, error: false, items: [] })
 
   useEffect(() => {
     if (!enabled) {
@@ -31,9 +31,9 @@ export default function TrendingTokens ({ enabled = true }) {
       .then(res => {
         const raw = res?.resultSet ?? []
         const seen = new Set()
-        const unique = []
+        const unique: any[] = []
         for (const item of raw) {
-          const id = item?.tokenIdentifier
+          const id = (item as any)?.tokenIdentifier || (item as any)?.identifier
           if (!id || seen.has(id)) continue
           seen.add(id)
           unique.push(item)
@@ -53,7 +53,7 @@ export default function TrendingTokens ({ enabled = true }) {
       header: 'Token',
       grow: true,
       minWidth: 120,
-      cell: (item, i) => {
+      cell: (item: any, i: any) => {
         const name = getTokenName(item.localizations)
         return (
           <span className={'DataList__Entity'}>
@@ -70,7 +70,7 @@ export default function TrendingTokens ({ enabled = true }) {
       header: 'Transitions',
       minWidth: 88,
       align: 'right',
-      cell: (item) => <BigNumber>{item.transitionCount}</BigNumber>
+      cell: (item: any) => <BigNumber>{item.transitionCount}</BigNumber>
     }
   ]
 
@@ -82,8 +82,8 @@ export default function TrendingTokens ({ enabled = true }) {
       loading={loading}
       skeletonCount={HOME_RICH_LIST_LIMIT}
       emptyMessage={'No data'}
-      rowHref={(item) => `/token/${item.tokenIdentifier}`}
-      rowKey={(item, i) => `${item.tokenIdentifier}-${i}`}
+      rowHref={(item: any) => `/token/${item.tokenIdentifier}`}
+      rowKey={(item: any, i?: number) => `${item.tokenIdentifier}-${i}`}
       rowClassName={rankRowClassName}
       footer={
         <Link href={'/tokens'} prefetch={false} className={'DataList__ShowMore'}>

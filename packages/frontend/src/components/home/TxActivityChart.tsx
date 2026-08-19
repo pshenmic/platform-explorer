@@ -12,21 +12,26 @@ import './TxActivityChart.css'
 const DEFAULT_PRESET = PRESETS.length - 1
 const M = { top: 12, right: 10, bottom: 22, left: 44 }
 
-const formatValue = (v) => Math.abs(v) >= 1e6 ? currencyRound(v) : d3.format(',')(Math.round(v))
+const formatValue = (v: number) => Math.abs(v) >= 1e6 ? currencyRound(v) : d3.format(',')(Math.round(v))
 
 export default function TxActivityChart ({
   fetcher,
   field = 'txs',
   yAbbr = 'txs',
   enabled = true
+}: {
+  fetcher?: any
+  field?: string
+  yAbbr?: string
+  enabled?: boolean
 }) {
   const [presetIdx, setPresetIdx] = useState(DEFAULT_PRESET)
-  const [state, setState] = useState({ loading: true, error: false, points: [] })
+  const [state, setState] = useState<{ loading: boolean, error: boolean, points: any[] }>({ loading: true, error: false, points: [] })
   const [width, setWidth] = useState(0)
   const [plotH, setPlotH] = useState(160)
-  const [hoverI, setHoverI] = useState(null)
-  const [pinI, setPinI] = useState(null)
-  const wrapRef = useRef(null)
+  const [hoverI, setHoverI] = useState<number | null>(null)
+  const [pinI, setPinI] = useState<number | null>(null)
+  const wrapRef = useRef<HTMLDivElement | null>(null)
   const gradId = useId().replace(/:/g, '')
 
   useResizeObserver(wrapRef, entry => {
@@ -52,10 +57,10 @@ export default function TxActivityChart ({
     setHoverI(null)
     setPinI(null)
     fetcher(start, end, preset.intervals)
-      .then(res => {
+      .then((res: any) => {
         const pts = (res || [])
-          .map(item => ({ x: new Date(item.timestamp), y: item?.data?.[field] }))
-          .filter(p => typeof p.y === 'number' && !isNaN(p.y))
+          .map((item: any) => ({ x: new Date(item.timestamp), y: item?.data?.[field] }))
+          .filter((p: any) => typeof p.y === 'number' && !isNaN(p.y))
         let s = 0
         while (s < pts.length - 1 && pts[s].y === 0) s++
         setState({ loading: false, error: false, points: pts.slice(s) })
@@ -69,11 +74,11 @@ export default function TxActivityChart ({
 
   const chart = useMemo(() => {
     if (!ready) return null
-    const x = d3.scaleTime(d3.extent(points, p => p.x), [M.left, width - M.right])
+    const x = d3.scaleTime(d3.extent(points, (p: any) => p.x), [M.left, width - M.right])
     const dataSpanDays = getDaysBetweenDates(points[0].x, points[points.length - 1].x)
     const tickFmt = d3.timeFormat(dataSpanDays > 365 ? '%b %Y' : dataSpanDays > 7 ? '%b %d' : '%H:%M')
     const tipFmt = d3.timeFormat(dataSpanDays > 365 ? '%b %d, %Y' : dataSpanDays > 3 ? '%b %d' : '%b %d, %H:%M')
-    const maxY = d3.max(points, p => p.y) || 1
+    const maxY = d3.max(points, (p: any) => p.y) || 1
     const y = d3.scaleLinear([0, maxY], [h - M.bottom, M.top]).nice()
     const step = points.length > 1 ? Math.abs(x(points[1].x) - x(points[0].x)) : 8
     const bw = Math.max(2, Math.min(step * 0.72, 18))
@@ -88,10 +93,10 @@ export default function TxActivityChart ({
       date: p.x
     }))
     const tickCount = Math.max(2, Math.min(6, Math.floor((width - M.left - M.right) / 72)))
-    const xTicks = x.ticks(tickCount).map(d => ({ v: x(d), label: tickFmt(d) }))
-    const yTicks = y.ticks(4).map(v => ({ v: y(v), label: formatValue(v) }))
+    const xTicks = x.ticks(tickCount).map((d: any) => ({ v: x(d), label: tickFmt(d) }))
+    const yTicks = y.ticks(4).map((v: any) => ({ v: y(v), label: formatValue(v) }))
     const total = points.reduce((s, p) => s + p.y, 0)
-    const peak = d3.max(points, p => p.y) || 0
+    const peak = d3.max(points, (p: any) => p.y) || 0
     const latest = points[points.length - 1]
     return { bars, xTicks, yTicks, tipFmt, total, peak, latest, maxY }
   }, [ready, points, width, h])
@@ -99,7 +104,7 @@ export default function TxActivityChart ({
   const activeI = pinI != null ? pinI : hoverI
   const activeBar = chart && activeI != null ? chart.bars[activeI] : null
 
-  const onMove = (e) => {
+  const onMove = (e: any) => {
     if (!chart) return
     const rect = e.currentTarget.getBoundingClientRect()
     const px = e.clientX - rect.left
@@ -119,12 +124,12 @@ export default function TxActivityChart ({
 
   const onClick = () => {
     if (hoverI == null) return
-    setPinI(p => (p === hoverI ? null : hoverI))
+    setPinI((p: any) => (p === hoverI ? null : hoverI))
   }
 
   const rangeTotal = chart ? formatValue(chart.total) : '—'
   const statMeta = activeBar
-    ? `${chart.tipFmt(activeBar.date)} · ${formatValue(activeBar.value)} ${yAbbr}`
+    ? `${chart!.tipFmt(activeBar.date)} · ${formatValue(activeBar.value)} ${yAbbr}`
     : (chart
         ? `peak ${formatValue(chart.peak)} · latest ${formatValue(chart.latest.y)}`
         : '')
@@ -198,7 +203,7 @@ export default function TxActivityChart ({
                       </filter>
                     </defs>
 
-                    {chart.yTicks.map((t, i) => (
+                    {chart.yTicks.map((t: any, i: number) => (
                       <g key={`y${i}`}>
                         <line
                           className={'TxActivityChart__Grid'}
@@ -213,7 +218,7 @@ export default function TxActivityChart ({
                       </g>
                     ))}
 
-                    {chart.xTicks.map((t, i) => (
+                    {chart.xTicks.map((t: any, i: number) => (
                       <text
                         key={`x${i}`}
                         className={'TxActivityChart__Tick TxActivityChart__Tick--X'}
@@ -233,7 +238,7 @@ export default function TxActivityChart ({
                       y2={h - M.bottom}
                     />
 
-                    {chart.bars.map(b => {
+                    {chart.bars.map((b: any) => {
                       const on = activeI === b.i
                       const dim = activeI != null && activeI !== b.i
                       return (
