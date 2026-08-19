@@ -24,22 +24,32 @@ function epochNumbersOf (current) {
 }
 
 const VALIDATORS_PAGE = 100
+const QUORUM_DETAIL_CONCURRENCY = 3
 
 async function fetchAllValidators (filters) {
   const first = await Api.getValidators(1, VALIDATORS_PAGE, 'desc', filters)
   const rows = Array.isArray(first?.resultSet) ? [...first.resultSet] : []
   const total = typeof first?.pagination?.total === 'number' ? first.pagination.total : rows.length
   const pages = Math.max(1, Math.ceil(total / VALIDATORS_PAGE))
-  if (pages === 1) return rows
-  const rest = await Promise.all(
-    Array.from({ length: pages - 1 }, (_, i) =>
-      Api.getValidators(i + 2, VALIDATORS_PAGE, 'desc', filters)
-    )
-  )
-  for (const page of rest) {
-    if (Array.isArray(page?.resultSet)) rows.push(...page.resultSet)
+  for (let page = 2; page <= pages; page++) {
+    const next = await Api.getValidators(page, VALIDATORS_PAGE, 'desc', filters)
+    if (Array.isArray(next?.resultSet)) rows.push(...next.resultSet)
   }
   return rows
+}
+
+async function fetchQuorumDetails (hashes) {
+  const out = new Array(hashes.length)
+  let cursor = 0
+  const worker = async () => {
+    while (cursor < hashes.length) {
+      const i = cursor++
+      out[i] = await Api.getQuorumByHash(hashes[i])
+    }
+  }
+  const n = Math.min(QUORUM_DETAIL_CONCURRENCY, hashes.length)
+  await Promise.all(Array.from({ length: n }, worker))
+  return out
 }
 
 function Home () {
@@ -106,14 +116,12 @@ function Home () {
     return list.map(q => q?.quorumHash).filter(Boolean)
   }, [quorumsListQuery.data])
 
-  const quorumDetailQueries = useQueries({
-    queries: quorumHashes.map(hash => ({
-      queryKey: ['home', 'quorums', 'detail', hash],
-      queryFn: () => Api.getQuorumByHash(hash),
-      staleTime: 60_000,
-      retry: 1,
-      enabled: quorumHashes.length > 0
-    }))
+  const quorumDetailsQuery = useQuery({
+    queryKey: ['home', 'quorums', 'details', quorumHashes],
+    queryFn: () => fetchQuorumDetails(quorumHashes),
+    staleTime: 60_000,
+    retry: 1,
+    enabled: quorumHashes.length > 0
   })
 
   const quorumRosters = useMemo(() => {
@@ -122,10 +130,10 @@ function Home () {
         .filter(q => q?.quorumHash)
         .map(q => [q.quorumHash, q])
     )
-    return quorumDetailQueries
-      .map((q, i) => {
-        const hash = quorumHashes[i]
-        const detail = q.data
+    const details = Array.isArray(quorumDetailsQuery.data) ? quorumDetailsQuery.data : []
+    return quorumHashes
+      .map((hash, i) => {
+        const detail = details[i]
         const meta = byHash.get(hash) || {}
         if (!detail && !meta.quorumHash) return null
         return {
@@ -136,7 +144,7 @@ function Home () {
         }
       })
       .filter(Boolean)
-  }, [quorumDetailQueries, quorumHashes, quorumsListQuery.data])
+  }, [quorumDetailsQuery.data, quorumHashes, quorumsListQuery.data])
 
   // shape expected by MasternodesDonut ({ data, loading })
   const validators = {
