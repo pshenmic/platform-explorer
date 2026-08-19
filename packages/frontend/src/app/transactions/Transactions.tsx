@@ -17,7 +17,7 @@ import { Container, Box, useBreakpointValue } from '@chakra-ui/react'
 import NetworkStatsInline from '../../components/stats/NetworkStatsInline'
 import PageTitle from '../../components/intro/PageTitle'
 import TransactionsChartCompact from '../../components/charts/TransactionsChartCompact'
-import introContent from './intro.md'
+import introContent from './introContent'
 import './Transactions.scss'
 
 const paginateConfig = {
