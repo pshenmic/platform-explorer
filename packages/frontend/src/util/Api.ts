@@ -24,7 +24,7 @@ import type {
 type HttpMethod = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH'
 type SortOrder = 'asc' | 'desc'
 type QueryValue = string | number | boolean | string[] | null | undefined
-type QueryFilters = Record<string, QueryValue>
+export type QueryFilters = Record<string, QueryValue>
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL
 
