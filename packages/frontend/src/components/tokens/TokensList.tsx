@@ -12,9 +12,9 @@ import { ErrorMessageBlock } from '../Errors'
 import Pagination from '../pagination'
 import { findActiveAlias, getMinTokenPrice } from '../../util'
 
-function tokenName (token) {
+function tokenName (token: any) {
   return token?.localizations?.en?.singularForm ||
-    Object.values(token?.localizations || {})[0]?.singularForm || ''
+    (Object.values(token?.localizations || {})[0] as any)?.singularForm || ''
 }
 
 function TokensList ({
@@ -23,7 +23,16 @@ function TokensList ({
   headerStyles = 'default',
   variant = 'default',
   pagination,
-  loading
+  loading,
+  itemsCount
+}: {
+  tokens?: any[]
+  rate?: any
+  headerStyles?: string
+  variant?: string
+  pagination?: any
+  loading?: any
+  itemsCount?: number
 }) {
   const router = useRouter()
 
@@ -33,7 +42,7 @@ function TokensList ({
       header: 'Token Name',
       grow: true,
       minWidth: 150,
-      cell: (token) => {
+      cell: (token: any) => {
         const name = tokenName(token)
         return name
           ? <Alias avatarSource={token.identifier}>{name}</Alias>
@@ -45,7 +54,7 @@ function TokensList ({
       header: 'Supply',
       minWidth: 120,
       priority: 3,
-      cell: (token) => (token.maxSupply
+      cell: (token: any) => (token.maxSupply
         ? <Supply currentSupply={token.totalSupply} maxSupply={token.maxSupply || token.totalSupply} decimals={token.decimals}/>
         : <FormattedNumber decimals={token.decimals}>{token.totalSupply}</FormattedNumber>)
     },
@@ -54,7 +63,7 @@ function TokensList ({
       header: 'Price',
       minWidth: 92,
       align: 'right',
-      cell: (token) => {
+      cell: (token: any) => {
         if (token.price != null) {
           return (
             <Tooltip placement={'top'} maxW={'none'} content={<CreditsBlock credits={token.price} rate={rate}/>}>
@@ -84,7 +93,7 @@ function TokensList ({
       grow: true,
       minWidth: 130,
       priority: 1,
-      cell: (token) => (
+      cell: (token: any) => (
         <LinkContainer
           onClick={e => { e.stopPropagation(); e.preventDefault(); router.push(`/dataContract/${token.dataContractIdentifier}`) }}
         >
@@ -98,7 +107,7 @@ function TokensList ({
       grow: true,
       minWidth: 130,
       priority: 2,
-      cell: (token) => {
+      cell: (token: any) => {
         const ownerId = typeof token.owner === 'object' ? token.owner?.identifier : token.owner
         const ownerName = typeof token.owner === 'object' ? findActiveAlias(token.owner?.aliases) : null
         return (
