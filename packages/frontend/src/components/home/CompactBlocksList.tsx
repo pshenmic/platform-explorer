@@ -7,12 +7,8 @@ import { useLiveList } from './hooks'
 import { HOME_FEED_LIMIT } from './listLimits'
 import './CompactBlocksList.css'
 
-export function CompactBlocksList ({
-  blocks,
-  limit = HOME_FEED_LIMIT,
-  loading
-}) {
-  const { shown, newKeys, hoverBind } = useLiveList(blocks, b => b?.header?.hash)
+export function CompactBlocksList ({ blocks, limit = HOME_FEED_LIMIT, loading }: { blocks?: any[], limit?: number, loading?: boolean }) {
+  const { shown, newKeys, hoverBind } = useLiveList<any>(blocks, (b: any) => b?.header?.hash)
   const rows = Array.isArray(shown) ? shown.slice(0, limit) : []
 
   const columns = [
@@ -20,7 +16,7 @@ export function CompactBlocksList ({
       key: 'height',
       header: 'Height',
       minWidth: 88,
-      cell: (block) => {
+      cell: (block: any) => {
         const height = block?.header?.height
         return (
           <span className={'CompactBlocksList__Height'}>
@@ -35,7 +31,7 @@ export function CompactBlocksList ({
       header: 'Hash',
       grow: true,
       minWidth: 96,
-      cell: (block) => (block?.header?.hash
+      cell: (block: any) => (block?.header?.hash
         ? <Identifier ellipsis={true} styles={['highlight-both']}>{block.header.hash}</Identifier>
         : <NotActive/>)
     },
@@ -44,7 +40,7 @@ export function CompactBlocksList ({
       header: 'Txs',
       minWidth: 56,
       align: 'center',
-      cell: (block) => {
+      cell: (block: any) => {
         const txCount = Array.isArray(block?.txs) ? block.txs.length : 0
         return <span className={'CompactBlocksList__Txs'}>{txCount}</span>
       }
@@ -54,7 +50,7 @@ export function CompactBlocksList ({
       header: 'Time',
       minWidth: 48,
       align: 'right',
-      cell: (block) => (block?.header?.timestamp
+      cell: (block: any) => (block?.header?.timestamp
         ? <TimeDelta showTimestampTooltip={true} format={'compact'} endDate={new Date(block.header.timestamp)}/>
         : <NotActive/>)
     }
@@ -68,10 +64,10 @@ export function CompactBlocksList ({
       loading={loading && !rows.length}
       skeletonCount={limit}
       emptyMessage={'No blocks'}
-      rowHref={(block) => `/block/${block?.header?.hash}`}
-      rowKey={(block) => block?.header?.hash}
-      rowClassName={(block) => (newKeys.has(block?.header?.hash) ? 'is-new' : '')}
-      rowStyle={(block, i) => (newKeys.has(block?.header?.hash) ? { '--stagger': `${i * 50}ms` } : undefined)}
+      rowHref={(block: any) => `/block/${block?.header?.hash}`}
+      rowKey={(block: any) => block?.header?.hash}
+      rowClassName={(block: any) => (newKeys.has(block?.header?.hash) ? 'is-new' : '')}
+      rowStyle={(block: any, i: number) => (newKeys.has(block?.header?.hash) ? { '--stagger': `${i * 50}ms` } : undefined)}
       wrapperProps={hoverBind}
     />
   )

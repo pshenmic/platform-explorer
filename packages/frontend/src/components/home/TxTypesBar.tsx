@@ -16,19 +16,19 @@ import './TxTypesBar.css'
 
 const MIN_SEG_FRAC = 0.008
 
-function labelOf (type) {
-  if (BatchActions[type]?.title) return BatchActions[type].title
-  return TransactionTypesInfo[type]?.title ?? type
+function labelOf (type: any) {
+  if ((BatchActions as any)[type]?.title) return (BatchActions as any)[type].title
+  return (TransactionTypesInfo as any)[type]?.title ?? type
 }
 
-function clsOf (type) {
-  if (BatchActions[type]) return type
-  if (TransactionTypesInfo[type]) return type
+function clsOf (type: any) {
+  if ((BatchActions as any)[type]) return type
+  if ((TransactionTypesInfo as any)[type]) return type
   return 'UNKNOWN'
 }
 
 /** Expand BATCH.batchTypes when present; otherwise keep the BATCH row. */
-function flattenStatisticItems (items) {
+function flattenStatisticItems (items: any) {
   const flat = []
   for (const t of items || []) {
     const count = t.count || 0
@@ -48,10 +48,10 @@ function flattenStatisticItems (items) {
 }
 
 export default function TxTypesBar ({ enabled = true }) {
-  const [state, setState] = useState({ loading: true, error: false, items: [] })
+  const [state, setState] = useState<{ loading: boolean, error: boolean, items: any[] }>({ loading: true, error: false, items: [] })
   const [presetIdx, setPresetIdx] = useState(PRESETS.length - 1)
-  const [pin, setPin] = useState(null)
-  const [hover, setHover] = useState(null)
+  const [pin, setPin] = useState<any>(null)
+  const [hover, setHover] = useState<any>(null)
 
   useEffect(() => {
     if (!enabled) {
@@ -101,15 +101,15 @@ export default function TxTypesBar ({ enabled = true }) {
     ? focused.label
     : (state.error ? '' : rangeLabel)
 
-  const togglePin = (type) => {
-    setPin(p => (p === type ? null : type))
+  const togglePin = (type: any) => {
+    setPin((p: any) => (p === type ? null : type))
   }
 
-  const focusHandlers = (type) => ({
+  const focusHandlers = (type: any) => ({
     onMouseEnter: () => setHover(type),
-    onMouseLeave: () => setHover(h => (h === type ? null : h)),
+    onMouseLeave: () => setHover((h: any) => (h === type ? null : h)),
     onFocus: () => setHover(type),
-    onBlur: () => setHover(h => (h === type ? null : h))
+    onBlur: () => setHover((h: any) => (h === type ? null : h))
   })
 
   return (
@@ -217,7 +217,7 @@ export default function TxTypesBar ({ enabled = true }) {
                           style={{ width: `${Math.max(s.frac * 100, 1.5)}%` }}
                         />
                       </span>
-                      <span className={'TxTypesBar__RowCount'}>{formatFullNumber(s.count)}</span>
+                      <span className={'TxTypesBar__RowCount'}>{formatFullNumber(s.count) as any}</span>
                     </button>
                   ))}
                 </div>

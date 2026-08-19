@@ -19,7 +19,7 @@ export const PRESETS = [
 ]
 const DEFAULT_PRESET = 2
 
-export function presetRange (preset) {
+export function presetRange (preset: any) {
   // floor end to hour: history API drops partial trailing buckets
   const endMs = Math.ceil(Date.now() / 3600000) * 3600000
   return {
@@ -28,7 +28,7 @@ export function presetRange (preset) {
   }
 }
 
-const formatValue = (v) => Math.abs(v) >= 1e6 ? currencyRound(v) : d3.format(',')(Math.round(v))
+const formatValue = (v: any) => Math.abs(v) >= 1e6 ? currencyRound(v) : d3.format(',')(Math.round(v))
 
 const M = { top: 10, right: 12, bottom: 18, left: 52 }
 const HEIGHT = 200
@@ -36,7 +36,7 @@ const HEIGHT = 200
 const GHOST_LINE_D = 'M 0 62 L 12 50 L 25 58 L 38 42 L 50 48 L 62 34 L 75 42 L 88 26 L 100 32'
 const GHOST_BARS = [38, 52, 30, 60, 45, 66, 40, 56, 34, 62, 48, 58]
 
-function ChartGhost ({ type }) {
+function ChartGhost ({ type }: any) {
   return (
     <svg className={'MetricChart__Ghost'} viewBox={'0 0 100 100'} preserveAspectRatio={'none'} aria-hidden={'true'}>
       {[18, 42, 66, 90].map(gy => (
@@ -62,22 +62,13 @@ function ChartGhost ({ type }) {
   )
 }
 
-export function MetricChart ({
-  title,
-  type = 'line',
-  fetcher,
-  field,
-  yAbbr = '',
-  enabled = true,
-  embedded = false,
-  fill = false
-}) {
+export function MetricChart ({ title, type = 'line', fetcher, field, yAbbr = '', enabled = true, embedded = false, fill = false }: any) {
   const [presetIdx, setPresetIdx] = useState(DEFAULT_PRESET)
-  const [state, setState] = useState({ loading: true, error: false, points: [] })
+  const [state, setState] = useState<{ loading: boolean, error: boolean, points: any[] }>({ loading: true, error: false, points: [] })
   const [width, setWidth] = useState(0)
   const [plotH, setPlotH] = useState(HEIGHT)
-  const [hover, setHover] = useState(null)
-  const wrapRef = useRef(null)
+  const [hover, setHover] = useState<any>(null)
+  const wrapRef = useRef<HTMLDivElement | null>(null)
   const gradientId = useId()
 
   useResizeObserver(wrapRef, entry => {
@@ -100,10 +91,10 @@ export function MetricChart ({
     const { start, end } = presetRange(preset)
     setState(s => ({ ...s, loading: true, error: false }))
     fetcher(start, end, preset.intervals)
-      .then(res => {
+      .then((res: any) => {
         const pts = (res || [])
-          .map(item => ({ x: new Date(item.timestamp), y: item?.data?.[field] }))
-          .filter(p => typeof p.y === 'number' && !isNaN(p.y))
+          .map((item: any) => ({ x: new Date(item.timestamp), y: item?.data?.[field] }))
+          .filter((p: any) => typeof p.y === 'number' && !isNaN(p.y))
         // drop leading empty buckets so the series starts at first activity
         let s = 0
         while (s < pts.length - 1 && pts[s].y === 0) s++
@@ -116,22 +107,22 @@ export function MetricChart ({
 
   const h = fill ? plotH : HEIGHT
   const ready = width > 0 && h > 0 && points.length > 1
-  let x, y, areaD, lineD, bars, xTicks, yTicks, tipFmt
+  let x: any, y: any, areaD: any, lineD: any, bars: any, xTicks: any, yTicks: any, tipFmt: any
   if (ready) {
-    x = d3.scaleTime(d3.extent(points, p => p.x), [M.left, width - M.right])
+    x = d3.scaleTime(d3.extent(points, (p: any) => p.x), [M.left, width - M.right])
     const dataSpanDays = getDaysBetweenDates(points[0].x, points[points.length - 1].x)
     const tickFmt = d3.timeFormat(dataSpanDays > 365 ? '%b %Y' : dataSpanDays > 7 ? '%b %d' : '%H:%M')
     tipFmt = d3.timeFormat(dataSpanDays > 365 ? '%b %d, %Y' : dataSpanDays > 3 ? '%b %d' : '%b %d, %H:%M')
-    const maxY = d3.max(points, p => p.y) || 1
-    const minY = d3.min(points, p => p.y) || 0
+    const maxY = d3.max(points, (p: any) => p.y) || 1
+    const minY = d3.min(points, (p: any) => p.y) || 0
     // bars from 0; line charts pad the domain around the series range
     const yDomain = type === 'bar'
       ? [0, maxY]
       : [minY - ((maxY - minY) * 0.12 || maxY * 0.05 || 1), maxY + ((maxY - minY) * 0.12 || maxY * 0.05 || 1)]
     y = d3.scaleLinear(yDomain, [h - M.bottom, M.top]).nice()
     const baseline = h - M.bottom
-    lineD = d3.line().x(p => x(p.x)).y(p => y(p.y)).curve(d3.curveMonotoneX)(points)
-    areaD = d3.area().x(p => x(p.x)).y0(baseline).y1(p => y(p.y)).curve(d3.curveMonotoneX)(points)
+    lineD = d3.line().x((p: any) => x(p.x)).y((p: any) => y(p.y)).curve(d3.curveMonotoneX)(points)
+    areaD = d3.area().x((p: any) => x(p.x)).y0(baseline).y1((p: any) => y(p.y)).curve(d3.curveMonotoneX)(points)
     const step = points.length > 1 ? Math.abs(x(points[1].x) - x(points[0].x)) : 8
     const bw = Math.max(1, Math.min(step * 0.65, 16))
     bars = points.map(p => ({ x: x(p.x) - bw / 2, y: y(p.y), w: bw, h: Math.max(0, y(0) - y(p.y)) }))
@@ -143,11 +134,11 @@ export function MetricChart ({
       const step = (rawTicks.length - 1) / (tickCount - 1)
       rawTicks = [...new Set(Array.from({ length: tickCount }, (_, i) => rawTicks[Math.round(i * step)]))]
     }
-    xTicks = rawTicks.map(d => ({ v: x(d), label: tickFmt(d) }))
-    yTicks = y.ticks(4).map(v => ({ v: y(v), label: formatValue(v) }))
+    xTicks = rawTicks.map((d: any) => ({ v: x(d), label: tickFmt(d) }))
+    yTicks = y.ticks(4).map((v: any) => ({ v: y(v), label: formatValue(v) }))
   }
 
-  function onMove (e) {
+  function onMove (e: any) {
     if (!ready) return
     const px = e.nativeEvent.offsetX
     const i = d3.bisectCenter(points.map(p => p.x), x.invert(px))
@@ -198,14 +189,14 @@ export function MetricChart ({
                     </linearGradient>
                   </defs>
 
-                  {yTicks.map((t, i) => (
+                  {yTicks.map((t: any, i: any) => (
                     <g key={i}>
                       <line className={'MetricChart__Grid'} x1={M.left} x2={width - M.right} y1={t.v} y2={t.v}/>
                       <text className={'MetricChart__Tick MetricChart__Tick--Y'} x={M.left - 6} y={t.v} dy={'0.32em'}>{t.label}</text>
                     </g>
                   ))}
 
-                  {xTicks.map((t, i) => (
+                  {xTicks.map((t: any, i: any) => (
                     <text
                       key={i}
                       className={'MetricChart__Tick MetricChart__Tick--X'}
@@ -216,7 +207,7 @@ export function MetricChart ({
                   ))}
 
                   {type === 'bar'
-                    ? bars.map((b, i) => (
+                    ? (bars ?? []).map((b: any, i: number) => (
                         <rect key={i} className={'MetricChart__Bar'} x={b.x} y={b.y} width={b.w} height={b.h} rx={1}/>
                     ))
                     : <>

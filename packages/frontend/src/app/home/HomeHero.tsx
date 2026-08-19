@@ -15,27 +15,27 @@ const creditsPerDashCompact = new Intl.NumberFormat('en', {
   maximumFractionDigits: 0
 }).format(CREDITS_PER_DASH)
 
-function formatUsdPrice (usd) {
+function formatUsdPrice (usd: any) {
   if (typeof usd !== 'number' || !Number.isFinite(usd)) return null
   if (usd >= 100) return `$${Math.round(usd).toLocaleString('en-US')}`
   if (usd >= 1) return `$${usd.toFixed(2)}`
   return `$${usd.toFixed(4)}`
 }
 
-function toMs (value) {
+function toMs (value: any) {
   if (value == null) return null
   if (typeof value === 'number' && Number.isFinite(value)) return value
   const ms = new Date(value).getTime()
   return Number.isFinite(ms) ? ms : null
 }
 
-function toNumber (value) {
+function toNumber (value: any) {
   if (typeof value === 'number' && Number.isFinite(value)) return value
   if (typeof value === 'string' && value !== '' && Number.isFinite(Number(value))) return Number(value)
   return null
 }
 
-function formatNextEpochDay (date) {
+function formatNextEpochDay (date: any) {
   const d = date.getDate()
   const m = String(date.getMonth() + 1).padStart(2, '0')
   return `${d}.${m}`
@@ -51,18 +51,7 @@ const nextEpochTitleFmt = new Intl.DateTimeFormat('en-GB', {
   timeZoneName: 'short'
 })
 
-export default function HomeHero ({
-  status,
-  loading,
-  rate,
-  rateLoading,
-  epochNumber,
-  epochEndTime,
-  transactions,
-  transactionsLoading,
-  blocks,
-  blocksLoading
-}) {
+export default function HomeHero ({ status, loading, rate, rateLoading, epochNumber, epochEndTime, transactions, transactionsLoading, blocks, blocksLoading }: any) {
   const epochNum = toNumber(epochNumber)
   const epochEndMs = toMs(epochEndTime)
   const epochEndDate = epochEndMs !== null ? new Date(epochEndMs) : null
@@ -77,7 +66,7 @@ export default function HomeHero ({
   const apiOk = isApiOperational(status)
   const drive = status?.versions?.software?.drive
   const tenderdash = status?.versions?.software?.tenderdash
-  const dotState = ok => (!ready ? 'is-loading' : (ok ? 'is-ok' : 'is-down'))
+  const dotState = (ok: any) => (!ready ? 'is-loading' : (ok ? 'is-ok' : 'is-down'))
   const usd = typeof rate?.usd === 'number' && Number.isFinite(rate.usd) ? rate.usd : null
   const evoUsd = usd != null ? EVONODE_COLLATERAL_DASH * usd : null
   const evoUsdLabel = formatUsdPrice(evoUsd)

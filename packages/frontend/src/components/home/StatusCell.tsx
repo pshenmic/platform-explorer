@@ -1,11 +1,21 @@
 'use client'
 
+import type { KeyboardEvent, ReactNode } from 'react'
 import Link from 'next/link'
 import { Tooltip } from '../ui/Tooltips'
 
-// KPI tile: whole cell opens tip when `hint` is set.
-export function StatusCell ({ label, hint, href, children }) {
-  const onKeyDown = (e) => {
+export function StatusCell ({
+  label,
+  hint,
+  href,
+  children
+}: {
+  label: ReactNode
+  hint?: ReactNode
+  href?: string
+  children?: ReactNode
+}) {
+  const onKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
     if (!hint) return
     if (e.key === 'Enter' || e.key === ' ') {
       e.preventDefault()

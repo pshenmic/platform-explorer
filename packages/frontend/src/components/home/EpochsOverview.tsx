@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, type CSSProperties } from 'react'
 import Link from 'next/link'
 import { BigNumber, TimeDelta } from '../data'
 import { BlockIcon } from '../ui/icons'
@@ -23,7 +23,7 @@ const SCAN_BOTTOM_Y = 100
 const SCAN_MIN_WAVE_SPAN = 10
 
 // y on a polyline at a given x (viewBox coords)
-function yAtX (pts, x) {
+function yAtX (pts: any, x: any) {
   if (!pts?.length) return 50
   if (x <= pts[0].x) return pts[0].y
   if (x >= pts[pts.length - 1].x) return pts[pts.length - 1].y
@@ -38,20 +38,20 @@ function yAtX (pts, x) {
   return pts[pts.length - 1].y
 }
 
-function ptsToPathD (pts) {
+function ptsToPathD (pts: any) {
   if (!pts?.length) return null
   if (pts.length === 1) return `M ${pts[0].x} ${pts[0].y}`
-  return `M ${pts.map(p => `${p.x} ${p.y}`).join(' L ')}`
+  return `M ${pts.map((p: any) => `${p.x} ${p.y}`).join(' L ')}`
 }
 
-function spanX (pts) {
+function spanX (pts: any) {
   if (!pts?.length) return 0
   return Math.abs(pts[pts.length - 1].x - pts[0].x)
 }
 
 // split scan: wave left/right of selection + vertical rails on the clicked epoch; the seam stays static
 // Tiny edge stubs omitted — pathLength=100 turns them into lines.
-function buildScanParts (linePts, seg) {
+function buildScanParts (linePts: any, seg: any) {
   if (!linePts?.length || !seg) {
     return { leftD: ptsToPathD(linePts), rightD: null, railDownD: null, railUpD: null }
   }
@@ -96,14 +96,14 @@ function Pending () {
 }
 
 // compact epoch length: fixed per network (1h on testnet, 9.125d on mainnet)
-function durationLabelOf (epoch) {
+function durationLabelOf (epoch: any) {
   if (!epoch?.startTime || !epoch?.endTime) return null
   const ms = epoch.endTime - epoch.startTime
   return ms >= 86400000 ? `${(ms / 86400000).toFixed(1)}d` : `${Math.round(ms / 3600000)}h`
 }
 
 // avgBlockTime arrives in ms: seconds under a minute, minutes above
-function avgBlockTimeLabel (ms) {
+function avgBlockTimeLabel (ms: any) {
   const s = ms / 1000
   return s < 60 ? `${s.toFixed(1)}s` : `${(s / 60).toFixed(1)}m`
 }
@@ -112,7 +112,7 @@ function avgBlockTimeLabel (ms) {
 const boundTimeFmt = new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit', hour12: false })
 const boundDateFmt = new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric' })
 
-function EpochBound ({ bound, longEpochs }) {
+function EpochBound ({ bound, longEpochs }: any) {
   const label = bound.ts ? (longEpochs ? boundDateFmt : boundTimeFmt).format(new Date(bound.ts)) : null
   const content = (
     <>
@@ -154,7 +154,7 @@ function EpochBound ({ bound, longEpochs }) {
   )
 }
 
-function EpochPoint ({ epoch, metricLabel, x, y, selected, onSelect }) {
+function EpochPoint ({ epoch, metricLabel, x, y, selected, onSelect }: any) {
   // the in-progress epoch counts down ("36 min. left") instead of "ended X ago"
   const inProgress = epoch?.endTime > Date.now()
   // sync node pulse with the 5s left→right scan (same period as HomeHeroDash)
@@ -164,7 +164,7 @@ function EpochPoint ({ epoch, metricLabel, x, y, selected, onSelect }) {
     <button
       type={'button'}
       className={`HomeHero__WavePoint EpochsWave__Point is-ready${selected ? ' is-selected' : ''}${inProgress ? ' is-live' : ''}`}
-      style={{ left: `${x}%`, top: `${y}%`, '--scan-pulse-delay': scanPulseDelay }}
+      style={{ left: `${x}%`, top: `${y}%`, ['--scan-pulse-delay']: scanPulseDelay } as CSSProperties}
       onClick={onSelect}
       aria-pressed={selected}
       aria-label={`Epoch ${epoch?.number}${inProgress ? ', in progress' : ''}`}
@@ -185,7 +185,7 @@ function EpochPoint ({ epoch, metricLabel, x, y, selected, onSelect }) {
   )
 }
 
-function TipShell ({ blurb, children }) {
+function TipShell ({ blurb, children }: any) {
   return (
     <div className={'EpochsOverview__Tip'}>
       {blurb && <div className={'EpochsOverview__TipBlurb'}>{blurb}</div>}
@@ -194,7 +194,7 @@ function TipShell ({ blurb, children }) {
   )
 }
 
-function feesHint (data, rate) {
+function feesHint (data: any, rate: any) {
   const feesCredits = Number(data.totalCollectedFees) || 0
   const dash = creditsToDash(feesCredits)
   const usd = typeof rate?.data?.usd === 'number' ? dash * rate.data.usd : null
@@ -221,7 +221,7 @@ function feesHint (data, rate) {
   )
 }
 
-function votesHint (data) {
+function votesHint (data: any) {
   const resource = data.topVotedResource
   const voter = data.bestVoter?.identifier
 
@@ -248,7 +248,7 @@ function votesHint (data) {
   )
 }
 
-function proposersHint (proposers) {
+function proposersHint (proposers: any) {
   const blurb = 'Validators that proposed Platform blocks this epoch (proposer rotates; similar counts mean even share). Click a row to open the validator.'
   if (!Array.isArray(proposers) || !proposers.length) {
     return 'Validator that proposed the most blocks this epoch. Full breakdown is available after the epoch finalizes.'
@@ -287,7 +287,7 @@ function proposersHint (proposers) {
   )
 }
 
-function blocksHint (epoch, endHeight, liveCount) {
+function blocksHint (epoch: any, endHeight: any, liveCount: any) {
   const blurb = 'Blocks produced in the epoch (finalized after it ends).'
   if (epoch?.firstBlockHeight == null) return blurb
 
@@ -319,7 +319,7 @@ function blocksHint (epoch, endHeight, liveCount) {
   )
 }
 
-function rewardsHint (rewards, rate) {
+function rewardsHint (rewards: any, rate: any) {
   const blurb = 'The evonode share (37.5%) of the masternode portion of Dash Core block rewards, pooled over this epoch and paid out to participating evonodes when it ends (finalized after the epoch).'
   if (rewards == null) return blurb
 
@@ -336,7 +336,7 @@ function rewardsHint (rewards, rate) {
   )
 }
 
-function documentsHint (created, deleted) {
+function documentsHint (created: any, deleted: any) {
   const blurb = 'Documents created and deleted during this epoch.'
   if (created == null && deleted == null) return blurb
 
@@ -361,7 +361,7 @@ function documentsHint (created, deleted) {
   )
 }
 
-function transactionsHint (data) {
+function transactionsHint (data: any) {
   const blurb = 'State transitions processed during this epoch.'
   const tps = data?.tps
   if (tps == null || Number.isNaN(Number(tps))) return blurb
@@ -386,7 +386,7 @@ function transactionsHint (data) {
 }
 
 // stat row for the shown epoch (the selected epoch's colour reaches it via the Beam column)
-function EpochCells ({ data, nextData, rate }) {
+function EpochCells ({ data, nextData, rate }: any) {
   const epoch = data.epoch
   // the epoch's last block is the one right before the NEXT epoch's first block
   const endHeight = nextData?.epoch?.number === epoch?.number + 1 && nextData?.epoch?.firstBlockHeight != null
@@ -500,20 +500,20 @@ function EpochCells ({ data, nextData, rate }) {
 }
 
 // fixed topology for progressive fill: always n-3…n (or whatever slotNumbers parent passes)
-function deriveSlots (slotNumbers, currentEpoch, arrived) {
+function deriveSlots (slotNumbers: any, currentEpoch: any, arrived: any) {
   if (Array.isArray(slotNumbers) && slotNumbers.length) return slotNumbers
   const cur = currentEpoch?.data?.epoch?.number
   if (typeof cur === 'number') {
     return [cur - 3, cur - 2, cur - 1, cur].filter(n => n >= 0)
   }
   if (arrived.length) {
-    const max = Math.max(...arrived.map(e => e.epoch.number))
+    const max = Math.max(...arrived.map((e: any) => e.epoch.number))
     return [max - 3, max - 2, max - 1, max].filter(n => n >= 0)
   }
   return []
 }
 
-export function EpochsOverview ({ title, epochs, currentEpoch, rate, loading, slotNumbers }) {
+export function EpochsOverview ({ title, epochs, currentEpoch, rate, loading, slotNumbers }: any) {
   const arrived = Array.isArray(epochs) ? epochs.filter(e => e?.epoch) : []
   const byNumber = new Map(arrived.map(e => [e.epoch.number, e]))
   const slots = deriveSlots(slotNumbers, currentEpoch, arrived)
@@ -593,7 +593,7 @@ export function EpochsOverview ({ title, epochs, currentEpoch, rate, loading, sl
   const tMin = knownTx.length ? Math.min(...knownTx) : 0
   const tMax = knownTx.length ? Math.max(...knownTx) : 1
   const midY = (Y_HIGH + Y_LOW) / 2
-  const yOf = (v) => {
+  const yOf = (v: any) => {
     if (!knownTx.length || tMax === tMin) return midY
     return Y_LOW - ((v - tMin) / (tMax - tMin)) * (Y_LOW - Y_HIGH)
   }
@@ -682,7 +682,7 @@ export function EpochsOverview ({ title, epochs, currentEpoch, rate, loading, sl
   return (
     <div
       className={'EpochsOverview'}
-      style={{ '--epoch-seg-l': seg.l, '--epoch-seg-w': seg.w }}
+      style={{ ['--epoch-seg-l']: seg.l, ['--epoch-seg-w']: seg.w } as CSSProperties}
       aria-label={title || 'Epochs'}
     >
       <header className={'EpochsOverview__Head'}>

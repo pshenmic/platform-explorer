@@ -19,12 +19,8 @@ const STATUS_LABEL = {
   BROADCASTED: 'Broadcasted'
 }
 
-export function CompactTxList ({
-  transactions,
-  limit = HOME_FEED_LIMIT,
-  loading
-}) {
-  const { shown, newKeys, hoverBind } = useLiveList(transactions, tx => tx?.hash)
+export function CompactTxList ({ transactions, limit = HOME_FEED_LIMIT, loading }: any) {
+  const { shown, newKeys, hoverBind } = useLiveList<any>(transactions, (tx: any) => tx?.hash)
   const rows = Array.isArray(shown) ? shown.slice(0, limit) : []
 
   const columns = [
@@ -33,8 +29,8 @@ export function CompactTxList ({
       header: 'Status',
       minWidth: 56,
       align: 'center',
-      cell: (tx) => (tx.status
-        ? <Tooltip content={STATUS_LABEL[tx.status] || tx.status} placement={'top'}>
+      cell: (tx: any) => (tx.status
+        ? <Tooltip content={(STATUS_LABEL as any)[tx.status] || tx.status} placement={'top'}>
             <span style={{ display: 'flex' }}>
               {tx.status === 'SUCCESS'
                 ? <CheckmarkIcon w={'18px'} h={'18px'}/>
@@ -50,7 +46,7 @@ export function CompactTxList ({
       header: 'Hash',
       grow: true,
       minWidth: 96,
-      cell: (tx) => (tx.hash
+      cell: (tx: any) => (tx.hash
         ? <Identifier ellipsis={true} styles={['highlight-both']}>{tx.hash}</Identifier>
         : <NotActive/>)
     },
@@ -58,7 +54,7 @@ export function CompactTxList ({
       key: 'type',
       header: 'Type',
       minWidth: 88,
-      cell: (tx) => (tx.batchType
+      cell: (tx: any) => (tx.batchType
         ? <BatchTypeBadge batchType={tx.batchType?.replace(/[\\""]/g, '')}/>
         : tx.type !== undefined
           ? <TypeBadge type={tx.type}/>
@@ -69,7 +65,7 @@ export function CompactTxList ({
       header: 'Time',
       minWidth: 48,
       align: 'right',
-      cell: (tx) => (tx.timestamp
+      cell: (tx: any) => (tx.timestamp
         ? <TimeDelta showTimestampTooltip={true} format={'compact'} endDate={new Date(tx.timestamp)}/>
         : <NotActive/>)
     }
@@ -83,10 +79,10 @@ export function CompactTxList ({
       loading={loading && !rows.length}
       skeletonCount={limit}
       emptyMessage={'No transactions'}
-      rowHref={(tx) => `/transaction/${tx.hash}`}
-      rowKey={(tx) => tx.hash}
-      rowClassName={(tx) => (newKeys.has(tx.hash) ? 'is-new' : '')}
-      rowStyle={(tx, i) => (newKeys.has(tx.hash) ? { '--stagger': `${i * 50}ms` } : undefined)}
+      rowHref={(tx: any) => `/transaction/${tx.hash}`}
+      rowKey={(tx: any) => tx.hash}
+      rowClassName={(tx: any) => (newKeys.has(tx.hash) ? 'is-new' : '')}
+      rowStyle={(tx: any, i: number) => (newKeys.has(tx.hash) ? { '--stagger': `${i * 50}ms` } : undefined)}
       wrapperProps={hoverBind}
     />
   )

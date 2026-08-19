@@ -26,12 +26,12 @@ const DAY_MS = 24 * 60 * 60 * 1000
 // margins keep vol label and flow ticks from overlapping
 const M = { top: 22, right: 54, bottom: 24, left: 48 }
 
-function fmtDash (dash) {
+function fmtDash (dash: any) {
   if (!dash) return '0'
   return Math.abs(dash) >= 0.01 ? dash.toFixed(2) : Number(dash.toPrecision(2)).toString()
 }
 
-function fmtCompact (dash) {
+function fmtCompact (dash: any) {
   const n = Number(dash) || 0
   if (Math.abs(n) >= 1e6) return `${(n / 1e6).toFixed(2)}M`
   if (Math.abs(n) >= 1e3) return `${(n / 1e3).toFixed(1)}k`
@@ -39,7 +39,7 @@ function fmtCompact (dash) {
   return fmtDash(n)
 }
 
-function buildTvlSeries (buckets, balanceCredits) {
+function buildTvlSeries (buckets: any, balanceCredits: any) {
   if (!buckets.length || balanceCredits == null) return []
   const series = new Array(buckets.length)
   let tvl = Number(balanceCredits) || 0
@@ -52,7 +52,7 @@ function buildTvlSeries (buckets, balanceCredits) {
   return series
 }
 
-async function fetchFlowBuckets (start, end, intervals) {
+async function fetchFlowBuckets (start: any, end: any, intervals: any) {
   const [shieldRes, unshieldRes] = await Promise.all([
     Api.getShieldHistory(start, end, intervals).catch(() => []),
     Api.getUnshieldHistory(start, end, intervals).catch(() => [])
@@ -65,7 +65,7 @@ async function fetchFlowBuckets (start, end, intervals) {
   }))
 }
 
-function trimLeadingEmpty (buckets) {
+function trimLeadingEmpty (buckets: any) {
   if (buckets.length < 3) return buckets
   let s = 0
   while (s < buckets.length - 2 && !buckets[s].inAmt && !buckets[s].outAmt) s++
@@ -73,7 +73,7 @@ function trimLeadingEmpty (buckets) {
 }
 
 /** Target bucket count for an active span — prefer ~daily up to 120 pts. */
-function intervalsForSpan (startIso, endIso) {
+function intervalsForSpan (startIso: any, endIso: any) {
   const start = new Date(startIso).getTime()
   const end = new Date(endIso).getTime()
   const days = Math.max(1, Math.ceil((end - start) / DAY_MS))
@@ -88,7 +88,7 @@ function intervalsForSpan (startIso, endIso) {
  * Load flows, then re-bucket from first activity so "All" does not
  * smear every deposit into ~3 giant bars over empty history.
  */
-async function loadDenseBuckets (rangeStart, rangeEnd) {
+async function loadDenseBuckets (rangeStart: any, rangeEnd: any) {
   const scoutIntervals = 48
   const raw = await fetchFlowBuckets(rangeStart, rangeEnd, scoutIntervals)
   const scout = trimLeadingEmpty(raw)
@@ -104,20 +104,25 @@ async function loadDenseBuckets (rangeStart, rangeEnd) {
   return dense.length ? dense : scout
 }
 
-export default function ShieldedPoolCard ({ enabled = true }) {
-  const [pool, setPool] = useState({ loading: true, error: false, balance: null })
-  const [series, setSeries] = useState({ loading: true, points: [] })
-  // period in/out from /shielded/statistic (exact range totals, not chart-bucket sums)
+export default function ShieldedPoolCard ({
+  enabled = true,
+  rate: _rate
+}: {
+  enabled?: boolean
+  rate?: unknown
+}) {
+  const [pool, setPool] = useState<{ loading: boolean, error: boolean, balance: number | null }>({ loading: true, error: false, balance: null })
+  const [series, setSeries] = useState<{ loading: boolean, points: any[] }>({ loading: true, points: [] })
   const [period, setPeriod] = useState({ loading: true, in: 0, out: 0 })
   const [presetIdx, setPresetIdx] = useState(DEFAULT_PRESET)
-  const [hoverI, setHoverI] = useState(null)
+  const [hoverI, setHoverI] = useState<number | null>(null)
   // TVL line always on; bars can be toggled
   const [showDeposits, setShowDeposits] = useState(true)
   const [showWithdrawals, setShowWithdrawals] = useState(true)
   const [width, setWidth] = useState(0)
   const [plotH, setPlotH] = useState(180)
-  const wrapRef = useRef(null)
-  const rootRef = useRef(null)
+  const wrapRef = useRef<HTMLDivElement | null>(null)
+  const rootRef = useRef<HTMLDivElement | null>(null)
   const gid = useId().replace(/:/g, '')
   const fetchGen = useRef(0)
   const periodGen = useRef(0)
@@ -193,7 +198,7 @@ export default function ShieldedPoolCard ({ enabled = true }) {
       return
     }
     Api.getShieldedPool()
-      .then(res => setPool({ loading: false, error: false, balance: res?.poolBalance ?? null }))
+      .then(res => setPool({ loading: false, error: false, balance: res?.poolBalance != null ? Number(res.poolBalance) : null }))
       .catch(() => setPool({ loading: false, error: true, balance: null }))
   }, [enabled])
 
@@ -273,13 +278,13 @@ export default function ShieldedPoolCard ({ enabled = true }) {
     if (!pts.length) return null
     if (pts.length === 1) {
       const only = pts[0]
-      pts = [{ ...only, x: new Date(+only.x - 3600000) }, only]
+      pts = [{ ...only, x: new Date(Number(only.x) - 3600000) }, only]
     }
 
-    const x = d3.scaleTime(d3.extent(pts, p => p.x), [M.left, width - M.right])
+    const x = d3.scaleTime(d3.extent(pts, (p: any) => p.x), [M.left, width - M.right])
 
-    const tvlMin = d3.min(pts, p => p.tvl) ?? 0
-    const tvlMax = d3.max(pts, p => p.tvl) ?? 1
+    const tvlMin = d3.min(pts, (p: any) => p.tvl) ?? 0
+    const tvlMax = d3.max(pts, (p: any) => p.tvl) ?? 1
     const tvlPad = (tvlMax - tvlMin) * 0.12 || Math.max(tvlMax * 0.08, 0.01)
     const yTvl = d3.scaleLinear(
       [Math.max(0, tvlMin - tvlPad * 0.3), tvlMax + tvlPad],
@@ -288,7 +293,7 @@ export default function ShieldedPoolCard ({ enabled = true }) {
 
     const flowVisible = showDeposits || showWithdrawals
     const flowMax = flowVisible
-      ? (d3.max(pts, p => Math.max(
+      ? (d3.max(pts, (p: any) => Math.max(
           showDeposits ? p.inDash : 0,
           showWithdrawals ? p.outDash : 0
         )) || 0)
@@ -299,17 +304,17 @@ export default function ShieldedPoolCard ({ enabled = true }) {
     ).nice()
 
     const line = d3.line()
-      .x(p => x(p.x))
-      .y(p => yTvl(p.tvl))
+      .x((p: any) => x(p.x))
+      .y((p: any) => yTvl(p.tvl))
       .curve(d3.curveMonotoneX)
 
     const area = d3.area()
-      .x(p => x(p.x))
+      .x((p: any) => x(p.x))
       .y0(plotH - M.bottom)
-      .y1(p => yTvl(p.tvl))
+      .y1((p: any) => yTvl(p.tvl))
       .curve(d3.curveMonotoneX)
 
-    const spanMs = pts[pts.length - 1].x - pts[0].x
+    const spanMs = Number(pts[pts.length - 1].x) - Number(pts[0].x)
     const tickFmt = d3.timeFormat(spanMs > 365 * DAY_MS ? '%b %Y' : spanMs > 3 * DAY_MS ? '%b %d' : '%H:%M')
     const tipFmt = d3.timeFormat(spanMs > 365 * DAY_MS ? '%b %d, %Y' : spanMs > 3 * DAY_MS ? '%b %d' : '%b %d, %H:%M')
 
@@ -318,7 +323,7 @@ export default function ShieldedPoolCard ({ enabled = true }) {
     const yTvlTicks = yTvl.ticks(4)
     // skip top flow tick so it does not collide with the vol caption
     const yFlowTicks = flowVisible
-      ? yFlow.ticks(4).filter(v => yFlow(v) > M.top + 14)
+      ? yFlow.ticks(4).filter((v: any) => yFlow(v) > M.top + 14)
       : []
 
     const step = pts.length > 1
@@ -378,7 +383,7 @@ export default function ShieldedPoolCard ({ enabled = true }) {
     }
   }, [ready, points, width, plotH, showDeposits, showWithdrawals])
 
-  const handleMove = (e) => {
+  const handleMove = (e: any) => {
     if (!chart) return
     const rect = e.currentTarget.getBoundingClientRect()
     const mx = e.clientX - rect.left
@@ -386,7 +391,7 @@ export default function ShieldedPoolCard ({ enabled = true }) {
     let best = 0
     let bestDist = Infinity
     chart.pts.forEach((p, i) => {
-      const d = Math.abs(p.x - t)
+      const d = Math.abs(Number(p.x) - Number(t))
       if (d < bestDist) { bestDist = d; best = i }
     })
     setHoverI(best)
@@ -513,7 +518,7 @@ export default function ShieldedPoolCard ({ enabled = true }) {
                           </filter>
                         </defs>
 
-                        {chart.yTvlTicks.map((v, i) => (
+                        {chart.yTvlTicks.map((v: any, i: any) => (
                           <g key={`yl-${i}`}>
                             <line
                               className={'ShieldedPool__Grid'}
@@ -534,7 +539,7 @@ export default function ShieldedPoolCard ({ enabled = true }) {
                           </g>
                         ))}
 
-                        {chart.yFlowTicks.map((v, i) => (
+                        {chart.yFlowTicks.map((v: any, i: any) => (
                           <text
                             key={`yr-${i}`}
                             className={'ShieldedPool__YTick ShieldedPool__YTick--right'}
@@ -627,7 +632,7 @@ export default function ShieldedPoolCard ({ enabled = true }) {
                             />
                           </>}
 
-                        {chart.xTicks.map((t, i) => (
+                        {chart.xTicks.map((t: any, i: any) => (
                           <text
                             key={`x-${i}`}
                             className={'ShieldedPool__Tick'}

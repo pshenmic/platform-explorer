@@ -14,24 +14,24 @@ const regionNames = (() => {
   try { return new Intl.DisplayNames(['en'], { type: 'region' }) } catch { return null }
 })()
 
-function countryName (cc) {
+function countryName (cc: any) {
   try { return regionNames?.of(cc) || cc } catch { return cc }
 }
 
-function shortHash (h, head = 4, tail = 4) {
+function shortHash (h: any, head = 4, tail = 4) {
   if (!h || typeof h !== 'string') return '—'
   if (h.length <= head + tail + 1) return h
   return `${h.slice(0, head)}…${h.slice(-tail)}`
 }
 
-function parseLlmqType (type) {
+function parseLlmqType (type: any) {
   if (!type || typeof type !== 'string') return null
   const m = type.match(/llmq_(\d+)_(\d+)/i)
   if (!m) return { raw: type, size: null, threshold: null }
   return { raw: type, size: Number(m[1]), threshold: Number(m[2]) }
 }
 
-function memberKey (proTx) {
+function memberKey (proTx: any) {
   return (proTx || '').toLowerCase()
 }
 
@@ -63,7 +63,7 @@ const STATS = [
   }
 ]
 
-function buildProportionalCells (active, queued, banned, total) {
+function buildProportionalCells (active: any, queued: any, banned: any, total: any) {
   const n = Math.min(Math.max(0, total | 0), MAX_CELLS)
   if (n <= 0) return []
 
@@ -109,19 +109,19 @@ function buildProportionalCells (active, queued, banned, total) {
   return cells
 }
 
-function matrixCols (count) {
+function matrixCols (count: any) {
   if (count <= 0) return 1
   if (count <= 36) return Math.max(6, Math.ceil(Math.sqrt(count)))
   if (count <= 100) return Math.max(8, Math.ceil(Math.sqrt(count)))
   return Math.max(12, Math.ceil(Math.sqrt(count)))
 }
 
-function isPoSeBannedValidator (v) {
+function isPoSeBannedValidator (v: any) {
   const ban = v?.proTxInfo?.state?.PoSeBanHeight
   return typeof ban === 'number' && ban >= 0
 }
 
-function buildPoolCells ({ list, currentSet, nextSet, memberMeta, bannedSet }) {
+function buildPoolCells ({ list, currentSet, nextSet, memberMeta, bannedSet }: any) {
   if (!Array.isArray(list) || list.length === 0) return []
 
   const cells = list.map((v, index) => {
@@ -162,12 +162,12 @@ function buildPoolCells ({ list, currentSet, nextSet, memberMeta, bannedSet }) {
     }
   })
 
-  const rank = { active: 0, next: 1, invalid: 2, inactive: 3, banned: 4, idle: 5 }
+  const rank: Record<string, number> = { active: 0, next: 1, invalid: 2, inactive: 3, banned: 4, idle: 5 }
   cells.sort((a, b) => (rank[a.type] ?? 9) - (rank[b.type] ?? 9))
   return cells
 }
 
-function TipRow ({ label, href, children, mono }) {
+function TipRow ({ label, href, children, mono }: any) {
   const value = <b className={mono ? 'MasternodesDonut__TipMono' : undefined}>{children}</b>
   return (
     <div className={'MasternodesDonut__TipRow'}>
@@ -187,16 +187,16 @@ function TipRow ({ label, href, children, mono }) {
   )
 }
 
-function formatQuorumIds (ids) {
+function formatQuorumIds (ids: any) {
   if (!ids?.length) return null
-  return ids.map(n => {
+  return ids.map((n: any) => {
     if (n === 0) return 'Now'
     if (n === 1) return 'Next'
     return `+${n}`
   }).join(' · ')
 }
 
-function NodeTooltipBody ({ cell }) {
+function NodeTooltipBody ({ cell }: any) {
   const v = cell.validator
   const quorumLabel = formatQuorumIds(cell.quorumIndexes)
   const status = (() => {
@@ -264,20 +264,9 @@ function NodeTooltipBody ({ cell }) {
   )
 }
 
-export default function MasternodesDonut ({
-  validators,
-  validatorsActive,
-  validatorsBanned,
-  validatorsInactive,
-  validatorsList,
-  bannedValidatorsList,
-  currentQuorum,
-  currentQuorumLoading,
-  currentQuorumError,
-  quorums
-}) {
-  const [pin, setPin] = useState(null)
-  const [focusKey, setFocusKey] = useState(null)
+export default function MasternodesDonut ({ validators, validatorsActive, validatorsBanned, validatorsInactive, validatorsList, bannedValidatorsList, currentQuorum, currentQuorumLoading, currentQuorumError, quorums }: any) {
+  const [pin, setPin] = useState<string | null>(null)
+  const [focusKey, setFocusKey] = useState<string | null>(null)
 
   const total = validators?.data?.pagination?.total
   const active = validatorsActive?.data?.pagination?.total
@@ -297,9 +286,8 @@ export default function MasternodesDonut ({
   const currentMembers = Array.isArray(currentQuorum?.members) ? currentQuorum.members : null
   const hasRoster = Boolean(currentMembers && currentMembers.length > 0)
 
-  const currentSet = useMemo(() => {
-    if (!currentMembers) return null
-    return new Set(currentMembers.map(m => memberKey(m.proTxHash)))
+  const currentSet = useMemo(() => { if (!currentMembers) return null
+    return new Set(currentMembers.map((m: any) => memberKey(m.proTxHash)))
   }, [currentMembers])
 
   const sortedQuorums = useMemo(() => {
@@ -339,7 +327,7 @@ export default function MasternodesDonut ({
       membersOf.set(hash, set)
     }
     for (const arr of byNode.values()) {
-      arr.sort((a, b) => {
+      arr.sort((a: any, b: any) => {
         if (a.isCurrent !== b.isCurrent) return a.isCurrent ? -1 : 1
         return a.index - b.index
       })
@@ -380,7 +368,7 @@ export default function MasternodesDonut ({
   }, [bannedValidatorsList])
   const hasNodeList = list.length > 0
 
-  const cells = useMemo(() => {
+  const cells = useMemo((): any[] => {
     const raw = hasNodeList
       ? buildPoolCells({
         list,
@@ -390,14 +378,10 @@ export default function MasternodesDonut ({
         bannedSet
       })
       : (hasTotal ? buildProportionalCells(activeN, queuedN, bannedN, total) : [])
-    return raw.map(cell => {
+    return (raw as any[]).map((cell: any) => {
       if (cell.kind !== 'node' || !cell.proTxHash) return cell
       const qs = rosterIndex.byNode.get(memberKey(cell.proTxHash)) || []
-      return {
-        ...cell,
-        quorumHashes: qs.map(q => q.hash),
-        quorumIndexes: qs.map(q => q.index).filter(n => typeof n === 'number')
-      }
+      return { ...cell, quorumHashes: qs.map((q: any) => q.hash), quorumIndexes: qs.map((q: any) => q.index).filter((n: any) => typeof n === 'number') }
     })
   }, [hasNodeList, list, currentSet, memberMeta, bannedSet, hasTotal, activeN, queuedN, bannedN, total, rosterIndex, sortedQuorums])
 
@@ -406,7 +390,7 @@ export default function MasternodesDonut ({
     [cells]
   )
 
-  const counts = {
+  const counts: Record<string, number | null> = {
     total: hasTotal ? total : null,
     active: typeof active === 'number' ? active : null,
     next: hasNodeList ? nextN : null,
@@ -423,20 +407,20 @@ export default function MasternodesDonut ({
   )
   const capped = hasTotal && cells.length < total
 
-  const pct = (n) => (hasTotal && typeof n === 'number' ? Math.round((n / total) * 100) : null)
+  const pct = (n: any) => (hasTotal && typeof n === 'number' ? Math.round((n / total) * 100) : null)
 
-  const togglePin = (key) => setPin(p => (p === key ? null : key))
+  const togglePin = (key: any) => setPin(p => (p === key ? null : key))
 
-  const cycleNodeQuorum = (hashes, proTx) => {
+  const cycleNodeQuorum = (hashes: any, proTx: any) => {
     const key = memberKey(proTx)
     if (key) setFocusKey(key)
     if (!hashes?.length) return
     const ordered = hashes
-      .map(h => sortedQuorums.find(q => q.quorumHash === h))
+      .map((h: any) => sortedQuorums.find(q => q.quorumHash === h))
       .filter(Boolean)
-      .sort((a, b) => a.offset - b.offset)
+      .sort((a: any, b: any) => a.offset - b.offset)
     if (!ordered.length) return
-    const keys = ordered.map(q => q.quorumHash)
+    const keys = ordered.map((q: any) => q.quorumHash)
     if (typeof pin === 'string' && pin.startsWith('q:')) {
       const cur = pin.slice(2)
       const i = keys.indexOf(cur)
@@ -454,7 +438,7 @@ export default function MasternodesDonut ({
     setPin(`q:${keys[0]}`)
   }
 
-  const turnLabel = (offset, isLive) => {
+  const turnLabel = (offset: any, isLive: any) => {
     if (isLive || offset === 0) return 'Now'
     if (offset === 1) return 'Next'
     return `+${offset}`

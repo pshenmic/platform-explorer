@@ -16,9 +16,11 @@ import {
 import { fetchHandlerSuccess, fetchHandlerError } from '../../util'
 import theme from '../../styles/theme'
 import { Box, Container, Flex } from '@chakra-ui/react'
+import type { LoadableState, Rate } from '../../types'
+import type { QueryFilters } from '../../util/Api'
 import './Home.css'
 
-function epochNumbersOf (current) {
+function epochNumbersOf (current: unknown) {
   if (typeof current !== 'number') return []
   return [current - 3, current - 2, current - 1, current].filter(n => n >= 0)
 }
@@ -26,7 +28,7 @@ function epochNumbersOf (current) {
 const VALIDATORS_PAGE = 100
 const QUORUM_DETAIL_CONCURRENCY = 3
 
-async function fetchAllValidators (filters) {
+async function fetchAllValidators (filters?: QueryFilters) {
   const first = await Api.getValidators(1, VALIDATORS_PAGE, 'desc', filters)
   const rows = Array.isArray(first?.resultSet) ? [...first.resultSet] : []
   const total = typeof first?.pagination?.total === 'number' ? first.pagination.total : rows.length
@@ -38,7 +40,7 @@ async function fetchAllValidators (filters) {
   return rows
 }
 
-async function fetchQuorumDetails (hashes) {
+async function fetchQuorumDetails (hashes: string[]) {
   const out = new Array(hashes.length)
   let cursor = 0
   const worker = async () => {
@@ -53,7 +55,7 @@ async function fetchQuorumDetails (hashes) {
 }
 
 function Home () {
-  const [rate, setRate] = useState({ data: {}, loading: true, error: false })
+  const [rate, setRate] = useState<LoadableState<Rate>>({ data: null, loading: true, error: false })
 
   const gap = theme.blockOffset
 
@@ -113,7 +115,7 @@ function Home () {
   const quorumHashes = useMemo(() => {
     const list = quorumsListQuery.data
     if (!Array.isArray(list)) return []
-    return list.map(q => q?.quorumHash).filter(Boolean)
+    return list.map(q => q?.quorumHash).filter((h): h is string => typeof h === 'string' && h.length > 0)
   }, [quorumsListQuery.data])
 
   const quorumDetailsQuery = useQuery({
