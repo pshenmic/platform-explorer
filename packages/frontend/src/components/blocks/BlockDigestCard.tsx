@@ -23,6 +23,8 @@ const Identifier = IdentifierJs as ComponentType<{
   children?: ReactNode
   avatar?: boolean
   ellipsis?: boolean
+  middleEllipsis?: boolean
+  copyButton?: boolean
   styles?: string[]
 }>
 const InfoLine = InfoLineJs as ComponentType<{
@@ -125,9 +127,9 @@ function BlockDigestCard ({ block, rate, status }: BlockDigestCardProps) {
           <ValueCard link={`/validator/${block.data?.header?.validator}`}>
             <Identifier
               avatar={true}
-              middleEllipsis={true}
+              middleEllipsis={true as any}
               copyButton={true}
-              styles={['highlight-both']}
+              styles={['highlight-both'] as any}
             >
               {block.data?.header?.validator}
             </Identifier>

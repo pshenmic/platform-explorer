@@ -11,7 +11,11 @@ import { DataList } from '../ui/lists'
 import './BlocksList.css'
 import './BlocksListItem.css'
 
-function BlocksList ({ blocks = [], headerStyles = 'default', absoluteDate }) {
+function BlocksList ({ blocks = [], headerStyles = 'default', absoluteDate }: {
+  blocks?: any[]
+  headerStyles?: string
+  absoluteDate?: boolean
+}) {
   const router = useRouter()
 
   const columns = [
@@ -20,7 +24,7 @@ function BlocksList ({ blocks = [], headerStyles = 'default', absoluteDate }) {
       header: 'Height',
       minWidth: 88,
       priority: 4,
-      cell: ({ header }) => (
+      cell: ({ header }: any) => (
         <>
           <BlockIcon w={'1.125rem'} h={'1.125rem'} mr={'0.5rem'}/>
           {header?.height ?? <NotActive>-</NotActive>}
@@ -32,7 +36,7 @@ function BlocksList ({ blocks = [], headerStyles = 'default', absoluteDate }) {
       header: 'Block Hash',
       grow: true,
       minWidth: 120,
-      cell: ({ header }) => (typeof header?.hash === 'string'
+      cell: ({ header }: any) => (typeof header?.hash === 'string'
         ? <Identifier middleEllipsis={true} copyButton={true}>{header.hash}</Identifier>
         : null)
     },
@@ -42,7 +46,7 @@ function BlocksList ({ blocks = [], headerStyles = 'default', absoluteDate }) {
       grow: 2,
       minWidth: 120,
       priority: 2,
-      cell: ({ header }) => (
+      cell: ({ header }: any) => (
         <LinkContainer
           onClick={e => { e.stopPropagation(); e.preventDefault(); router.push(`/validator/${header?.validator}`) }}
         >
@@ -56,7 +60,7 @@ function BlocksList ({ blocks = [], headerStyles = 'default', absoluteDate }) {
       minWidth: 84,
       align: 'center',
       priority: 1,
-      cell: ({ header }) => (typeof header?.totalGasUsed === 'number' || typeof header?.totalGasUsed === 'string'
+      cell: ({ header }: any) => (typeof header?.totalGasUsed === 'number' || typeof header?.totalGasUsed === 'string'
         ? <BigNumber>{header.totalGasUsed}</BigNumber>
         : <NotActive>-</NotActive>)
     },
@@ -66,14 +70,14 @@ function BlocksList ({ blocks = [], headerStyles = 'default', absoluteDate }) {
       minWidth: 72,
       align: 'center',
       priority: 3,
-      cell: ({ txs }) => (typeof txs?.length === 'number' ? <Badge>{txs.length}</Badge> : null)
+      cell: ({ txs }: any) => (typeof txs?.length === 'number' ? <Badge>{txs.length}</Badge> : null)
     },
     {
       key: 'timestamp',
       header: 'Timestamp',
       minWidth: absoluteDate ? 132 : 96,
       align: 'right',
-      cell: ({ header }) => {
+      cell: ({ header }: any) => {
         if (!header?.timestamp) return <NotActive/>
         return absoluteDate
           ? <DateBlock format={'dateOnly'} showTime={true} timestamp={header.timestamp} showRelativeTooltip={true}/>

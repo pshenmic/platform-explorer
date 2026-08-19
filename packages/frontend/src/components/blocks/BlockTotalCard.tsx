@@ -10,20 +10,20 @@ import { fetchHandlerError, fetchHandlerSuccess } from '../../util'
 import { useEffect, useState } from 'react'
 import './BlockTotalCard.css'
 
-function BlockTotalCard ({ block, l1explorerBaseUrl, className }) {
-  const [blocks, setBlocks] = useState({ data: {}, loading: true, error: false })
+function BlockTotalCard ({ block, l1explorerBaseUrl, className }: any) {
+  const [blocks, setBlocks] = useState<any>({ data: {}, loading: true, error: false })
   const blockData = block?.data?.header
-  const [previousBlock] = blocks.data?.resultSet?.filter(b => b?.header?.height === blockData?.height - 1) || []
-  const [nextBlock] = blocks.data?.resultSet?.filter(b => b?.header?.height === blockData?.height + 1) || []
+  const [previousBlock] = blocks.data?.resultSet?.filter((b: any) => b?.header?.height === blockData?.height - 1) || []
+  const [nextBlock] = blocks.data?.resultSet?.filter((b: any) => b?.header?.height === blockData?.height + 1) || []
 
   const fetchData = () => {
     if (!blockData?.height) return
 
-    setBlocks(state => ({ ...state, loading: true }))
+    setBlocks((state: any) => ({ ...state, loading: true }))
 
     Api.getBlocks(1, 3, 'desc', { height_min: Math.max(blockData?.height - 1, 1), height_max: blockData?.height + 1 })
-      .then(res => fetchHandlerSuccess(setBlocks, res))
-      .catch(err => fetchHandlerError(setBlocks, err))
+      .then(res => fetchHandlerSuccess(setBlocks as any, res))
+      .catch(err => fetchHandlerError(setBlocks as any, err))
   }
 
   useEffect(fetchData, [blockData])
