@@ -8,7 +8,7 @@ import { BlockIcon, ChevronIcon } from '../ui/icons'
 import { ValueCard } from '../cards'
 import { fetchHandlerError, fetchHandlerSuccess } from '../../util'
 import { useEffect, useState } from 'react'
-import './BlockTotalCard.scss'
+import './BlockTotalCard.css'
 
 function BlockTotalCard ({ block, l1explorerBaseUrl, className }) {
   const [blocks, setBlocks] = useState({ data: {}, loading: true, error: false })

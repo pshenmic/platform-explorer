@@ -8,8 +8,8 @@ import { LinkContainer } from '../ui/containers'
 import { DataList } from '../ui/lists'
 // retained until transfers/withdrawals/contested/votes migrate — they borrow
 // .BlocksList__ColumnTitles--Light and .BlocksListItem__LinkContainer from here
-import './BlocksList.scss'
-import './BlocksListItem.scss'
+import './BlocksList.css'
+import './BlocksListItem.css'
 
 function BlocksList ({ blocks = [], headerStyles = 'default', absoluteDate }) {
   const router = useRouter()

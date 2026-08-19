@@ -3,38 +3,36 @@
   flex-direction: column;
   overflow: visible;
 }
-
-.Block__InfoBlock .InfoLine--Loading {
-  flex-wrap: nowrap;
-}
-
 .Block__InfoBlocks {
   display: flex;
   width: 100%;
-  gap: var(--pe-space-5);
+  gap: 1.25rem;
 }
-
 .Block__InfoBlock {
   width: 50%;
 }
-
+.Block__InfoBlock .InfoLine--Loading {
+  flex-wrap: nowrap;
+}
 @media screen and (max-width: 62em) {
   .Block__InfoBlocks {
     flex-direction: column;
   }
-
   .Block__InfoBlock {
     width: 100%;
   }
 }
-
 @media screen and (max-width: 48em) {
   .Block__InfoBlocks {
     flex-direction: column;
-    gap: var(--pe-space-3);
+    gap: 0.75rem;
   }
-
   .Block__InfoBlock {
     width: 100%;
+  }
+}
+@media screen and (max-width: 30em) {
+  .Block__InfoBlocks {
+    gap: 0.625rem;
   }
 }

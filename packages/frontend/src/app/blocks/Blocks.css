@@ -1,71 +1,66 @@
-.Blocks .PageSizeSelector,
-.Blocks .GoToHeightForm {
-  width: 210px;
-}
-
 .Blocks__Controls {
-  display: flex;
-  justify-content: flex-start;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  grid-template-areas: "title stats filters";
   align-items: center;
-  gap: var(--pe-space-4);
-  margin: var(--pe-space-3) 0 var(--pe-space-6);
-  flex-wrap: wrap;
+  column-gap: 1rem;
+  row-gap: 0.75rem;
+  margin: 0.75rem 0 1.5rem;
 }
-
 .Blocks__Title {
-  flex-shrink: 0;
-  margin-right: var(--pe-space-2);
-}
-
-.Blocks__Stats {
-  flex: 1 1 auto;
+  grid-area: title;
   min-width: 0;
 }
-
-.Blocks__Filters {
-  width: auto;
-  flex-shrink: 0;
-  margin-left: auto;
+.Blocks__Stats {
+  grid-area: stats;
+  min-width: 0;
 }
-
+.Blocks__Filters {
+  grid-area: filters;
+  width: auto;
+  justify-self: end;
+}
+.Blocks .PageSizeSelector, .Blocks .GoToHeightForm {
+  width: 210px;
+}
 @media screen and (max-width: 1268px) {
   .Blocks .GoToHeightForm {
     order: 2;
   }
-
   .Blocks .Pagination {
     flex-grow: 1;
     width: 100%;
     display: flex;
   }
-
   .Blocks .PageSizeSelector {
     order: 3;
     text-align: left;
   }
 }
-
 @media screen and (max-width: 680px) {
   .Blocks .PageSizeSelector {
     width: auto;
   }
-
   .Blocks .Pagination {
     order: -1;
     width: 100%;
     justify-content: center;
-    margin-bottom: var(--pe-space-2);
+    margin-bottom: 8px;
   }
 }
-
 @media screen and (max-width: 48em) {
   .Blocks__Controls {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: var(--pe-space-4);
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas: "title filters" "stats stats";
+    column-gap: 12px;
+    row-gap: 10px;
+    margin: 0 0 1rem;
   }
-
   .Blocks__Filters {
-    margin-left: 0;
+    justify-self: end;
+    align-self: center;
+  }
+  .Blocks__Stats {
+    width: 100%;
   }
 }
