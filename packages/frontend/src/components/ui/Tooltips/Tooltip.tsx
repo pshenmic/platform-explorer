@@ -10,6 +10,7 @@ import {
   cloneElement,
   isValidElement
 } from 'react'
+import type { MouseEvent, ReactElement, ReactNode, Ref } from 'react'
 import { createPortal } from 'react-dom'
 import { useOutsideClick } from '@chakra-ui/react'
 import { useTooltipActive } from 'src/contexts/TooltipProvider'
@@ -19,7 +20,9 @@ const LEAVE_GRACE_MS = 280
 const GUTTER = 8
 const VIEW_PAD = 12
 
-function placeFixed (rect, placement, tipW = 240, tipH = 80) {
+type TipPos = { top: number, left: number, transform: string, placement: string }
+
+function placeFixed (rect: DOMRect, placement: string, tipW = 240, tipH = 80): TipPos {
   const cx = rect.left + rect.width / 2
   let next = placement || 'top'
 
@@ -53,6 +56,19 @@ function placeFixed (rect, placement, tipW = 240, tipH = 80) {
 
 // Fixed-position tip (no Chakra Popper). asChild keeps grid/flex layout intact.
 // Accepts legacy Chakra-style props (label, isOpen, isDisabled, bg, …) for call-site compat.
+interface TooltipProps {
+  title?: ReactNode
+  content?: ReactNode
+  label?: ReactNode
+  children?: ReactNode
+  className?: string
+  placement?: string
+  asChild?: boolean
+  isOpen?: boolean
+  isDisabled?: boolean
+  [key: string]: unknown
+}
+
 export default function Tooltip ({
   title = '',
   content = '',
@@ -63,9 +79,8 @@ export default function Tooltip ({
   asChild = true,
   isOpen: isOpenProp,
   isDisabled = false,
-  // Chakra leftovers (bg, color, p, …) kept so old call sites type-check; styling is CSS-only
   ..._legacy
-}) {
+}: TooltipProps) {
   // label is Chakra-era alias for content
   const body = content || label || ''
   const extraClass = title && body ? 'Tooltip--Extended' : ''
@@ -73,11 +88,11 @@ export default function Tooltip ({
   const active = useTooltipActive()
   const [pinned, setPinned] = useState(false)
   const [hovered, setHovered] = useState(false)
-  const [pos, setPos] = useState(null)
+  const [pos, setPos] = useState<TipPos | null>(null)
   const pinnedRef = useRef(false)
-  const triggerRef = useRef(null)
-  const tipRef = useRef(null)
-  const leaveTimer = useRef(null)
+  const triggerRef = useRef<HTMLElement | null>(null)
+  const tipRef = useRef<HTMLDivElement | null>(null)
+  const leaveTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
   const [mounted, setMounted] = useState(false)
 
   const isMine = !active || active.activeId === id
@@ -106,7 +121,7 @@ export default function Tooltip ({
 
   const updatePos = useCallback(() => {
     const el = triggerRef.current
-    const tipEl = tipRef.current
+    const tipEl = tipRef.current as HTMLElement | null
     if (!el || !tipEl) return
     const rect = el.getBoundingClientRect()
     if (rect.width === 0 && rect.height === 0) return
@@ -136,7 +151,7 @@ export default function Tooltip ({
     ref: triggerRef,
     handler: (e) => {
       if (!pinnedRef.current) return
-      if (tipRef.current?.contains(e.target)) return
+      if (tipRef.current?.contains(e.target as Node | null)) return
       release()
     }
   })
@@ -174,51 +189,55 @@ export default function Tooltip ({
     }, LEAVE_GRACE_MS)
   }
 
-  const onTriggerClick = (e) => {
-    if (e.target !== e.currentTarget && e.target.closest('a, button, [role="link"]')) return
-    setPinned(prev => {
-      const next = !prev
-      pinnedRef.current = next
-      if (next) {
-        clearLeave()
-        setHovered(true)
-        active?.activate(id)
-      } else {
-        active?.deactivate(id)
-        setHovered(false)
-        setPos(null)
-      }
-      return next
-    })
+  const onTriggerClick = (e: MouseEvent) => {
+    if (e.target !== e.currentTarget && (e.target as HTMLElement).closest?.('a, button, [role="link"]')) return
+    const next = !pinnedRef.current
+    pinnedRef.current = next
+    clearLeave()
+    setPinned(next)
+    if (next) {
+      setHovered(true)
+      active?.activate(id)
+    } else {
+      setHovered(false)
+      setPos(null)
+      active?.deactivate(id)
+    }
   }
 
-  const setTriggerNode = useCallback((node) => {
+  const setTriggerNode = useCallback((node: HTMLElement | null) => {
     triggerRef.current = node
   }, [])
 
   let trigger
   if (asChild && isValidElement(children)) {
-    const child = children
+    const child = children as ReactElement<{
+      onMouseEnter?: (e: MouseEvent) => void
+      onMouseLeave?: (e: MouseEvent) => void
+      onClick?: (e: MouseEvent) => void
+    }> & { ref?: Ref<HTMLElement> }
     trigger = cloneElement(child, {
-      ref: (node) => {
+      ref: (node: HTMLElement | null) => {
         setTriggerNode(node)
         const r = child.ref
         if (typeof r === 'function') r(node)
-        else if (r && typeof r === 'object') r.current = node
+        else if (r && typeof r === 'object' && 'current' in r) {
+          (r as { current: HTMLElement | null }).current = node
+        }
       },
-      onMouseEnter: (e) => {
+      onMouseEnter: (e: MouseEvent) => {
         child.props?.onMouseEnter?.(e)
         hoverIn()
       },
-      onMouseLeave: (e) => {
+      onMouseLeave: (e: MouseEvent) => {
         child.props?.onMouseLeave?.(e)
         hoverOut()
       },
-      onClick: (e) => {
+      onClick: (e: MouseEvent) => {
         child.props?.onClick?.(e)
         onTriggerClick(e)
       }
-    })
+    } as never)
   } else {
     trigger = (
       <span
