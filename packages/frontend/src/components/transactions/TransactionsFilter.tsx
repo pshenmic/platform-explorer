@@ -274,7 +274,9 @@ const filtersConfig = {
     defaultValue: '',
     formatValue: (value: any) => value || null,
     mobileTagRenderer: (value: any) => (
-      <Identifier avatar={true} ellipsis={true} styles={['highlight-both']}>{value}</Identifier>
+      <Identifier avatar={true} ellipsis={true} styles={['highlight-both']}>
+        {value}
+      </Identifier>
     )
   },
   timestamp: {
@@ -291,7 +293,7 @@ const filtersConfig = {
 export const TRANSACTION_TYPE_VALUES = transactionOptions.map(o => o.value)
 export const BATCH_TYPE_VALUES = batchOptions.map(o => o.value)
 
-export default function TransactionsFilter ({
+export default function TransactionsFilter({
   onFilterChange,
   isMobile,
   className,
@@ -302,10 +304,12 @@ export default function TransactionsFilter ({
   isMobile?: boolean
   className?: string
   excludeFilters?: string[]
-  initialFilters?: { transaction_type?: string[], batch_type?: string[] }
+  initialFilters?: { transaction_type?: string[]; batch_type?: string[] }
 }) {
   const config = excludeFilters.length
-    ? Object.fromEntries(Object.entries(filtersConfig).filter(([key]) => !excludeFilters.includes(key)))
+    ? Object.fromEntries(
+        Object.entries(filtersConfig).filter(([key]) => !excludeFilters.includes(key))
+      )
     : filtersConfig
 
   const urlKey = [

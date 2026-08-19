@@ -14,7 +14,7 @@ import { ErrorMessageBlock } from '../Errors'
 import Pagination from '../pagination'
 import type { Transaction } from '../../types'
 
-function TransactionsList ({
+function TransactionsList({
   transactions = [],
   showMoreLink,
   headerStyles = 'default',
@@ -41,25 +41,42 @@ function TransactionsList ({
       minWidth: 96,
       align: 'center',
       priority: 2,
-      cell: (tx: Transaction) => (tx?.status ? <TransactionStatusBadge status={tx.status}/> : <NotActive/>)
+      cell: (tx: Transaction) =>
+        tx?.status ? <TransactionStatusBadge status={tx.status} /> : <NotActive />
     },
     {
       key: 'hash',
       header: 'Hash',
       grow: 2,
       minWidth: 120,
-      cell: (tx: Transaction) => (tx?.hash ? <Identifier middleEllipsis={true} copyButton={true}>{tx.hash}</Identifier> : <NotActive/>)
+      cell: (tx: Transaction) =>
+        tx?.hash ? (
+          <Identifier middleEllipsis={true} copyButton={true}>
+            {tx.hash}
+          </Identifier>
+        ) : (
+          <NotActive />
+        )
     },
     {
       key: 'block',
       header: 'Block',
       minWidth: 72,
       priority: 3,
-      cell: (tx: Transaction) => (tx?.blockHeight != null
-        ? <LinkContainer onClick={e => { e.stopPropagation(); e.preventDefault(); router.push(`/block/${tx?.blockHash}`) }}>
+      cell: (tx: Transaction) =>
+        tx?.blockHeight != null ? (
+          <LinkContainer
+            onClick={e => {
+              e.stopPropagation()
+              e.preventDefault()
+              router.push(`/block/${tx?.blockHash}`)
+            }}
+          >
             <BigNumber>{tx.blockHeight}</BigNumber>
           </LinkContainer>
-        : <NotActive/>)
+        ) : (
+          <NotActive />
+        )
     },
     {
       key: 'gasUsed',
@@ -67,11 +84,16 @@ function TransactionsList ({
       minWidth: 140,
       align: 'center',
       priority: 1,
-      cell: (tx: Transaction) => (tx?.gasUsed
-        ? <RateTooltip credits={tx.gasUsed} rate={rate} placement={'top'}>
-            <span><BigNumber>{tx.gasUsed}</BigNumber> Credits</span>
+      cell: (tx: Transaction) =>
+        tx?.gasUsed ? (
+          <RateTooltip credits={tx.gasUsed} rate={rate} placement={'top'}>
+            <span>
+              <BigNumber>{tx.gasUsed}</BigNumber> Credits
+            </span>
           </RateTooltip>
-        : <NotActive/>)
+        ) : (
+          <NotActive />
+        )
     },
     {
       key: 'owner',
@@ -83,13 +105,36 @@ function TransactionsList ({
         if (!tx?.owner?.identifier) return <NotActive>-</NotActive>
         const activeAlias = tx?.owner?.aliases?.find((alias: any) => alias.status === 'ok')
         return (
-          <LinkContainer onClick={e => { e.stopPropagation(); e.preventDefault(); router.push(`/identity/${tx?.owner?.identifier}`) }}>
-            {activeAlias
-              ? <div style={{ display: 'flex', alignItems: 'center' }}>
-                  <ImageGenerator className={'Identifier__Avatar'} username={tx?.owner?.identifier} lightness={50} saturation={50} width={24} height={24}/>
-                  <Alias alias={typeof activeAlias?.alias === 'string' ? activeAlias.alias : String(activeAlias?.alias || '')}/>
-                </div>
-              : <Identifier avatar={true} copyButton={true}>{tx?.owner?.identifier}</Identifier>}
+          <LinkContainer
+            onClick={e => {
+              e.stopPropagation()
+              e.preventDefault()
+              router.push(`/identity/${tx?.owner?.identifier}`)
+            }}
+          >
+            {activeAlias ? (
+              <div style={{ display: 'flex', alignItems: 'center' }}>
+                <ImageGenerator
+                  className={'Identifier__Avatar'}
+                  username={tx?.owner?.identifier}
+                  lightness={50}
+                  saturation={50}
+                  width={24}
+                  height={24}
+                />
+                <Alias
+                  alias={
+                    typeof activeAlias?.alias === 'string'
+                      ? activeAlias.alias
+                      : String(activeAlias?.alias || '')
+                  }
+                />
+              </div>
+            ) : (
+              <Identifier avatar={true} copyButton={true}>
+                {tx?.owner?.identifier}
+              </Identifier>
+            )}
           </LinkContainer>
         )
       }
@@ -98,11 +143,14 @@ function TransactionsList ({
       key: 'type',
       header: 'Type',
       minWidth: 140,
-      cell: (tx: Transaction) => (tx?.batchType
-        ? <BatchTypeBadge batchType={tx.batchType?.replace(/[\\""]/g, '')}/>
-        : tx?.type !== undefined
-          ? <TypeBadge type={tx.type}/>
-          : <NotActive/>)
+      cell: (tx: Transaction) =>
+        tx?.batchType ? (
+          <BatchTypeBadge batchType={tx.batchType?.replace(/[\\""]/g, '')} />
+        ) : tx?.type !== undefined ? (
+          <TypeBadge type={tx.type} />
+        ) : (
+          <NotActive />
+        )
     },
     {
       key: 'timestamp',
@@ -110,15 +158,22 @@ function TransactionsList ({
       minWidth: absoluteDate ? 132 : 96,
       align: 'right',
       cell: (tx: Transaction) => {
-        if (!tx?.timestamp) return <NotActive/>
-        return absoluteDate
-          ? <DateBlock format={'dateOnly'} showTime={true} timestamp={tx.timestamp} showRelativeTooltip={true}/>
-          : <TimeDelta showTimestampTooltip={true} endDate={new Date(tx.timestamp)}/>
+        if (!tx?.timestamp) return <NotActive />
+        return absoluteDate ? (
+          <DateBlock
+            format={'dateOnly'}
+            showTime={true}
+            timestamp={tx.timestamp}
+            showRelativeTooltip={true}
+          />
+        ) : (
+          <TimeDelta showTimestampTooltip={true} endDate={new Date(tx.timestamp)} />
+        )
       }
     }
   ]
 
-  if (transactions === undefined) return <ErrorMessageBlock/>
+  if (transactions === undefined) return <ErrorMessageBlock />
 
   return (
     <DataList
@@ -130,11 +185,20 @@ function TransactionsList ({
       rowKey={(tx: Transaction) => tx?.hash ?? ''}
       headerVariant={headerStyles === 'light' ? 'light' : 'default'}
       emptyMessage={'There are no transactions yet.'}
-      footer={pagination
-        ? <Pagination onPageChange={pagination.onPageChange} pageCount={pagination.pageCount} forcePage={pagination.forcePage} justify={true}/>
-        : showMoreLink
-          ? <Link href={showMoreLink} className={'SimpleList__ShowMoreButton'}>Show more</Link>
-          : undefined}
+      footer={
+        pagination ? (
+          <Pagination
+            onPageChange={pagination.onPageChange}
+            pageCount={pagination.pageCount}
+            forcePage={pagination.forcePage}
+            justify={true}
+          />
+        ) : showMoreLink ? (
+          <Link href={showMoreLink} className={'SimpleList__ShowMoreButton'}>
+            Show more
+          </Link>
+        ) : undefined
+      }
     />
   )
 }

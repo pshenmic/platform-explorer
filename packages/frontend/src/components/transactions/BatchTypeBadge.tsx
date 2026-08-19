@@ -3,7 +3,7 @@ import { BatchActions } from '../../enums/batchTypes'
 import { Tooltip } from '../ui/Tooltips'
 import './TypeBadge.css'
 
-function BatchTypeBadge ({
+function BatchTypeBadge({
   batchType,
   className = '',
   ...props
@@ -17,18 +17,14 @@ function BatchTypeBadge ({
 
   if (!batchInfo) {
     return (
-      <Badge className={badgeClass} colorScheme='gray' {...props}>
+      <Badge className={badgeClass} colorScheme="gray" {...props}>
         <span className={'TypeBadge__Label'}>{batchType}</span>
       </Badge>
     )
   }
 
   return (
-    <Tooltip
-      title={batchInfo.title}
-      content={batchInfo.description}
-      placement={'top'}
-    >
+    <Tooltip title={batchInfo.title} content={batchInfo.description} placement={'top'}>
       <Badge className={badgeClass} colorScheme={batchInfo.colorScheme} {...props}>
         <span className={'TypeBadge__Label'}>{batchInfo.title}</span>
       </Badge>
