@@ -34,7 +34,7 @@ export function useCountUp(
 
     const tick = (now: number) => {
       const p = Math.min((now - start) / duration, 1)
-      const eased = 1 - Math.pow(1 - p, 3)
+      const eased = 1 - (1 - p) ** 3
       setValue(Math.round(from + (target - from) * eased))
       if (p < 1) raf = requestAnimationFrame(tick)
       else fromRef.current = target

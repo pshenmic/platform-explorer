@@ -12,9 +12,10 @@ import './TxActivityChart.css'
 const DEFAULT_PRESET = PRESETS.length - 1
 const M = { top: 12, right: 10, bottom: 22, left: 44 }
 
-const formatValue = (v: number) => Math.abs(v) >= 1e6 ? currencyRound(v) : d3.format(',')(Math.round(v))
+const formatValue = (v: number) =>
+  Math.abs(v) >= 1e6 ? currencyRound(v) : d3.format(',')(Math.round(v))
 
-export default function TxActivityChart ({
+export default function TxActivityChart({
   fetcher,
   field = 'txs',
   yAbbr = 'txs',
@@ -26,7 +27,11 @@ export default function TxActivityChart ({
   enabled?: boolean
 }) {
   const [presetIdx, setPresetIdx] = useState(DEFAULT_PRESET)
-  const [state, setState] = useState<{ loading: boolean, error: boolean, points: any[] }>({ loading: true, error: false, points: [] })
+  const [state, setState] = useState<{ loading: boolean; error: boolean; points: any[] }>({
+    loading: true,
+    error: false,
+    points: []
+  })
   const [width, setWidth] = useState(0)
   const [plotH, setPlotH] = useState(160)
   const [hoverI, setHoverI] = useState<number | null>(null)
@@ -74,10 +79,17 @@ export default function TxActivityChart ({
 
   const chart = useMemo(() => {
     if (!ready) return null
-    const x = d3.scaleTime(d3.extent(points, (p: any) => p.x), [M.left, width - M.right])
+    const x = d3.scaleTime(
+      d3.extent(points, (p: any) => p.x),
+      [M.left, width - M.right]
+    )
     const dataSpanDays = getDaysBetweenDates(points[0].x, points[points.length - 1].x)
-    const tickFmt = d3.timeFormat(dataSpanDays > 365 ? '%b %Y' : dataSpanDays > 7 ? '%b %d' : '%H:%M')
-    const tipFmt = d3.timeFormat(dataSpanDays > 365 ? '%b %d, %Y' : dataSpanDays > 3 ? '%b %d' : '%b %d, %H:%M')
+    const tickFmt = d3.timeFormat(
+      dataSpanDays > 365 ? '%b %Y' : dataSpanDays > 7 ? '%b %d' : '%H:%M'
+    )
+    const tipFmt = d3.timeFormat(
+      dataSpanDays > 365 ? '%b %d, %Y' : dataSpanDays > 3 ? '%b %d' : '%b %d, %H:%M'
+    )
     const maxY = d3.max(points, (p: any) => p.y) || 1
     const y = d3.scaleLinear([0, maxY], [h - M.bottom, M.top]).nice()
     const step = points.length > 1 ? Math.abs(x(points[1].x) - x(points[0].x)) : 8
@@ -130,9 +142,9 @@ export default function TxActivityChart ({
   const rangeTotal = chart ? formatValue(chart.total) : '—'
   const statMeta = activeBar
     ? `${chart!.tipFmt(activeBar.date)} · ${formatValue(activeBar.value)} ${yAbbr}`
-    : (chart
-        ? `peak ${formatValue(chart.peak)} · latest ${formatValue(chart.latest.y)}`
-        : '')
+    : chart
+      ? `peak ${formatValue(chart.peak)} · latest ${formatValue(chart.latest.y)}`
+      : ''
 
   return (
     <div className={'TxActivityChart'} aria-label={'Volume'}>
@@ -140,136 +152,143 @@ export default function TxActivityChart ({
         <div className={'TxActivityChart__HeadText'}>
           <span className={'TxActivityChart__Eyebrow'}>Throughput</span>
           <h2 className={'TxActivityChart__Title'}>Volume</h2>
-          <p className={'TxActivityChart__Lede'}>
-            Platform state transitions per bucket.
-          </p>
+          <p className={'TxActivityChart__Lede'}>Platform state transitions per bucket.</p>
         </div>
         <div className={'TxActivityChart__Controls'}>
-          <Presets options={PRESETS} value={presetIdx} onChange={setPresetIdx}/>
-          <div className={`TxActivityChart__Stat${activeBar ? ' is-on' : ''}${pinI != null ? ' is-pinned' : ''}`}>
+          <Presets options={PRESETS} value={presetIdx} onChange={setPresetIdx} />
+          <div
+            className={`TxActivityChart__Stat${activeBar ? ' is-on' : ''}${pinI != null ? ' is-pinned' : ''}`}
+          >
             <div className={'TxActivityChart__StatMain'}>
               <span className={'TxActivityChart__StatCount'}>{rangeTotal}</span>
               <span className={'TxActivityChart__StatUnit'}>{yAbbr}</span>
             </div>
-            {statMeta &&
-              <span className={'TxActivityChart__StatMeta'}>{statMeta}</span>}
+            {statMeta && <span className={'TxActivityChart__StatMeta'}>{statMeta}</span>}
           </div>
         </div>
       </header>
 
       <div ref={wrapRef} className={'TxActivityChart__Plot'}>
-        {error
-          ? <div className={'TxActivityChart__Empty'}>Error loading data</div>
-          : loading && !chart
-            ? <div className={'TxActivityChart__Ghost'}>
-                {Array.from({ length: 16 }).map((_, i) => (
-                  <Skeleton
-                    key={i}
-                    className={'TxActivityChart__GhostBar'}
-                    w={'100%'}
-                    h={`${30 + (i % 5) * 12}%`}
-                    radius={3}
-                  />
-                ))}
-              </div>
-            : !chart
-                ? <div className={'TxActivityChart__Empty'}>No data</div>
-                : <svg
-                    className={`TxActivityChart__Svg${loading ? ' is-stale' : ''}`}
-                    viewBox={`0 0 ${width} ${h}`}
-                    width={width}
-                    height={h}
-                    role={'img'}
-                    aria-label={`Volume, sum ${formatValue(chart.total)} ${yAbbr}`}
-                    onMouseMove={onMove}
-                    onMouseLeave={onLeave}
-                    onClick={onClick}
-                  >
-                    <defs>
-                      <linearGradient id={`txBar-${gradId}`} x1={'0'} y1={'0'} x2={'0'} y2={'1'}>
-                        <stop className={'TxActivityChart__GradTop'} offset={'0%'}/>
-                        <stop className={'TxActivityChart__GradBot'} offset={'100%'}/>
-                      </linearGradient>
-                      <linearGradient id={`txBarOn-${gradId}`} x1={'0'} y1={'0'} x2={'0'} y2={'1'}>
-                        <stop className={'TxActivityChart__GradOnTop'} offset={'0%'}/>
-                        <stop className={'TxActivityChart__GradOnBot'} offset={'100%'}/>
-                      </linearGradient>
-                      <filter id={`txGlow-${gradId}`} x={'-50%'} y={'-50%'} width={'200%'} height={'200%'}>
-                        <feGaussianBlur stdDeviation={'2.2'} result={'b'}/>
-                        <feMerge>
-                          <feMergeNode in={'b'}/>
-                          <feMergeNode in={'SourceGraphic'}/>
-                        </feMerge>
-                      </filter>
-                    </defs>
+        {error ? (
+          <div className={'TxActivityChart__Empty'}>Error loading data</div>
+        ) : loading && !chart ? (
+          <div className={'TxActivityChart__Ghost'}>
+            {Array.from({ length: 16 }).map((_, i) => (
+              <Skeleton
+                key={i}
+                className={'TxActivityChart__GhostBar'}
+                w={'100%'}
+                h={`${30 + (i % 5) * 12}%`}
+                radius={3}
+              />
+            ))}
+          </div>
+        ) : !chart ? (
+          <div className={'TxActivityChart__Empty'}>No data</div>
+        ) : (
+          <svg
+            className={`TxActivityChart__Svg${loading ? ' is-stale' : ''}`}
+            viewBox={`0 0 ${width} ${h}`}
+            width={width}
+            height={h}
+            role={'img'}
+            aria-label={`Volume, sum ${formatValue(chart.total)} ${yAbbr}`}
+            onMouseMove={onMove}
+            onMouseLeave={onLeave}
+            onClick={onClick}
+          >
+            <defs>
+              <linearGradient id={`txBar-${gradId}`} x1={'0'} y1={'0'} x2={'0'} y2={'1'}>
+                <stop className={'TxActivityChart__GradTop'} offset={'0%'} />
+                <stop className={'TxActivityChart__GradBot'} offset={'100%'} />
+              </linearGradient>
+              <linearGradient id={`txBarOn-${gradId}`} x1={'0'} y1={'0'} x2={'0'} y2={'1'}>
+                <stop className={'TxActivityChart__GradOnTop'} offset={'0%'} />
+                <stop className={'TxActivityChart__GradOnBot'} offset={'100%'} />
+              </linearGradient>
+              <filter id={`txGlow-${gradId}`} x={'-50%'} y={'-50%'} width={'200%'} height={'200%'}>
+                <feGaussianBlur stdDeviation={'2.2'} result={'b'} />
+                <feMerge>
+                  <feMergeNode in={'b'} />
+                  <feMergeNode in={'SourceGraphic'} />
+                </feMerge>
+              </filter>
+            </defs>
 
-                    {chart.yTicks.map((t: any, i: number) => (
-                      <g key={`y${i}`}>
-                        <line
-                          className={'TxActivityChart__Grid'}
-                          x1={M.left}
-                          x2={width - M.right}
-                          y1={t.v}
-                          y2={t.v}
-                        />
-                        <text className={'TxActivityChart__Tick TxActivityChart__Tick--Y'} x={M.left - 6} y={t.v} dy={'0.32em'}>
-                          {t.label}
-                        </text>
-                      </g>
-                    ))}
+            {chart.yTicks.map((t: any, i: number) => (
+              <g key={`y${i}`}>
+                <line
+                  className={'TxActivityChart__Grid'}
+                  x1={M.left}
+                  x2={width - M.right}
+                  y1={t.v}
+                  y2={t.v}
+                />
+                <text
+                  className={'TxActivityChart__Tick TxActivityChart__Tick--Y'}
+                  x={M.left - 6}
+                  y={t.v}
+                  dy={'0.32em'}
+                >
+                  {t.label}
+                </text>
+              </g>
+            ))}
 
-                    {chart.xTicks.map((t: any, i: number) => (
-                      <text
-                        key={`x${i}`}
-                        className={'TxActivityChart__Tick TxActivityChart__Tick--X'}
-                        style={{ textAnchor: i === 0 ? 'start' : i === chart.xTicks.length - 1 ? 'end' : 'middle' }}
-                        x={t.v}
-                        y={h - 4}
-                      >
-                        {t.label}
-                      </text>
-                    ))}
+            {chart.xTicks.map((t: any, i: number) => (
+              <text
+                key={`x${i}`}
+                className={'TxActivityChart__Tick TxActivityChart__Tick--X'}
+                style={{
+                  textAnchor: i === 0 ? 'start' : i === chart.xTicks.length - 1 ? 'end' : 'middle'
+                }}
+                x={t.v}
+                y={h - 4}
+              >
+                {t.label}
+              </text>
+            ))}
 
-                    <line
-                      className={'TxActivityChart__Baseline'}
-                      x1={M.left}
-                      x2={width - M.right}
-                      y1={h - M.bottom}
-                      y2={h - M.bottom}
-                    />
+            <line
+              className={'TxActivityChart__Baseline'}
+              x1={M.left}
+              x2={width - M.right}
+              y1={h - M.bottom}
+              y2={h - M.bottom}
+            />
 
-                    {chart.bars.map((b: any) => {
-                      const on = activeI === b.i
-                      const dim = activeI != null && activeI !== b.i
-                      return (
-                        <rect
-                          key={b.i}
-                          data-i={b.i}
-                          className={[
-                            'TxActivityChart__Bar',
-                            on ? 'is-on' : '',
-                            dim ? 'is-dim' : ''
-                          ].filter(Boolean).join(' ')}
-                          x={b.x}
-                          y={b.y}
-                          width={b.w}
-                          height={Math.max(b.h, b.value > 0 ? 2 : 0)}
-                          rx={Math.min(3, b.w / 2)}
-                          fill={on ? `url(#txBarOn-${gradId})` : `url(#txBar-${gradId})`}
-                          filter={on ? `url(#txGlow-${gradId})` : undefined}
-                        />
-                      )
-                    })}
+            {chart.bars.map((b: any) => {
+              const on = activeI === b.i
+              const dim = activeI != null && activeI !== b.i
+              return (
+                <rect
+                  key={b.i}
+                  data-i={b.i}
+                  className={['TxActivityChart__Bar', on ? 'is-on' : '', dim ? 'is-dim' : '']
+                    .filter(Boolean)
+                    .join(' ')}
+                  x={b.x}
+                  y={b.y}
+                  width={b.w}
+                  height={Math.max(b.h, b.value > 0 ? 2 : 0)}
+                  rx={Math.min(3, b.w / 2)}
+                  fill={on ? `url(#txBarOn-${gradId})` : `url(#txBar-${gradId})`}
+                  filter={on ? `url(#txGlow-${gradId})` : undefined}
+                />
+              )
+            })}
 
-                    {activeBar &&
-                      <line
-                        className={'TxActivityChart__Guide'}
-                        x1={activeBar.cx}
-                        x2={activeBar.cx}
-                        y1={M.top}
-                        y2={h - M.bottom}
-                      />}
-                  </svg>}
+            {activeBar && (
+              <line
+                className={'TxActivityChart__Guide'}
+                x1={activeBar.cx}
+                x2={activeBar.cx}
+                y1={M.top}
+                y2={h - M.bottom}
+              />
+            )}
+          </svg>
+        )}
       </div>
     </div>
   )

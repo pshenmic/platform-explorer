@@ -17,8 +17,12 @@ const WEEK = 7 * DAY
 const MONTH = 30 * DAY
 const QUARTER = 90 * DAY
 
-function useRatingList (enabled: boolean, load: () => Promise<any[]>) {
-  const [state, setState] = useState<{ loading: boolean, error: boolean, items: any[] }>({ loading: true, error: false, items: [] })
+function useRatingList(enabled: boolean, load: () => Promise<any[]>) {
+  const [state, setState] = useState<{ loading: boolean; error: boolean; items: any[] }>({
+    loading: true,
+    error: false,
+    items: []
+  })
 
   useEffect(() => {
     if (!enabled) {
@@ -34,24 +38,26 @@ function useRatingList (enabled: boolean, load: () => Promise<any[]>) {
       .catch(() => {
         if (!cancelled) setState({ loading: false, error: true, items: [] })
       })
-    return () => { cancelled = true }
+    return () => {
+      cancelled = true
+    }
   }, [enabled, load])
 
   return state
 }
 
-function meterWidth (value: number, max: number) {
+function meterWidth(value: number, max: number) {
   if (!(max > 0) || !(value > 0)) return 0
   return Math.max(Math.sqrt(value / max) * 100, 1.5)
 }
 
-function rangeIso (ms: number) {
+function rangeIso(ms: number) {
   const end = new Date()
   const start = new Date(end.getTime() - ms)
   return { start: start.toISOString(), end: end.toISOString() }
 }
 
-function LeaderRail ({ place, href, title, metric, meterValue, meterMax, accent }: any) {
+function LeaderRail({ place, href, title, metric, meterValue, meterMax, accent }: any) {
   return (
     <Link
       href={href}
@@ -60,18 +66,18 @@ function LeaderRail ({ place, href, title, metric, meterValue, meterMax, accent 
       style={{ ['--meter']: `${meterWidth(meterValue, meterMax)}%` } as CSSProperties}
     >
       <span className={'HomeLeaders__Rank'}>
-        <RankMark place={place}/>
+        <RankMark place={place} />
       </span>
       <span className={'HomeLeaders__Entity'}>{title}</span>
       <span className={'HomeLeaders__Metric'}>{metric}</span>
       <span className={'HomeLeaders__Meter'} aria-hidden={'true'}>
-        <i/>
+        <i />
       </span>
     </Link>
   )
 }
 
-function LeaderColumn ({
+function LeaderColumn({
   eyebrow,
   title,
   lede,
@@ -86,31 +92,37 @@ function LeaderColumn ({
     <div className={`HomeLeaders__Col HomeLeaders__Col--${accent}`}>
       <p className={'HomeLeaders__Caption'} title={`${eyebrow} · ${title} · ${lede}`}>
         <span className={'HomeLeaders__CaptionPart'}>{eyebrow}</span>
-        <span className={'HomeLeaders__CaptionSep'} aria-hidden={'true'}>·</span>
+        <span className={'HomeLeaders__CaptionSep'} aria-hidden={'true'}>
+          ·
+        </span>
         <span className={'HomeLeaders__CaptionPart'}>{title}</span>
-        <span className={'HomeLeaders__CaptionSep'} aria-hidden={'true'}>·</span>
+        <span className={'HomeLeaders__CaptionSep'} aria-hidden={'true'}>
+          ·
+        </span>
         <span className={'HomeLeaders__CaptionPart HomeLeaders__CaptionPart--muted'}>{lede}</span>
       </p>
       <div className={'HomeLeaders__Rails'} role={'list'}>
         {loading &&
           Array.from({ length: HOME_RICH_LIST_LIMIT }).map((_, i) => (
-            <Skeleton key={i} w={'100%'} h={'2.75rem'} radius={10}/>
+            <Skeleton key={i} w={'100%'} h={'2.75rem'} radius={10} />
           ))}
-        {!loading && error &&
-          <div className={'HomeLeaders__Empty'}>No data</div>}
-        {!loading && !error && items.length === 0 &&
-          <div className={'HomeLeaders__Empty'}>{empty}</div>}
-        {!loading && !error && items.map((item: any, i: any) => (
-          <div key={item.identifier || item.tokenIdentifier || i} role={'listitem'}>
-            {renderRail(item, i)}
-          </div>
-        ))}
+        {!loading && error && <div className={'HomeLeaders__Empty'}>No data</div>}
+        {!loading && !error && items.length === 0 && (
+          <div className={'HomeLeaders__Empty'}>{empty}</div>
+        )}
+        {!loading &&
+          !error &&
+          items.map((item: any, i: any) => (
+            <div key={item.identifier || item.tokenIdentifier || i} role={'listitem'}>
+              {renderRail(item, i)}
+            </div>
+          ))}
       </div>
     </div>
   )
 }
 
-function identityTitle (item: any) {
+function identityTitle(item: any) {
   return (
     <Identifier ellipsis avatar styles={['highlight-both']}>
       {item.identifier}
@@ -118,31 +130,38 @@ function identityTitle (item: any) {
   )
 }
 
-export default function HomeLeaders ({ rate, enabled = true }: { rate?: any, enabled?: boolean }) {
+export default function HomeLeaders({ rate, enabled = true }: { rate?: any; enabled?: boolean }) {
   const loadContracts = useMemo(
-    () => () => Api.getDataContractsRating(1, HOME_RICH_LIST_LIMIT, 'desc')
-      .then(res => (res?.resultSet ?? []).slice(0, HOME_RICH_LIST_LIMIT)),
+    () => () =>
+      Api.getDataContractsRating(1, HOME_RICH_LIST_LIMIT, 'desc').then(res =>
+        (res?.resultSet ?? []).slice(0, HOME_RICH_LIST_LIMIT)
+      ),
     []
   )
   const loadByBalance = useMemo(
-    () => () => Api.getIdentities(1, HOME_RICH_LIST_LIMIT, 'desc', 'balance')
-      .then(res => (res?.resultSet ?? [])
-        .slice(0, HOME_RICH_LIST_LIMIT)
-        .sort((a, b) => (Number(b.balance) || 0) - (Number(a.balance) || 0))),
+    () => () =>
+      Api.getIdentities(1, HOME_RICH_LIST_LIMIT, 'desc', 'balance').then(res =>
+        (res?.resultSet ?? [])
+          .slice(0, HOME_RICH_LIST_LIMIT)
+          .sort((a, b) => (Number(b.balance) || 0) - (Number(a.balance) || 0))
+      ),
     []
   )
   const loadByTxs = useMemo(
-    () => () => Api.getIdentities(1, HOME_RICH_LIST_LIMIT, 'desc', 'tx_count')
-      .then(res => (res?.resultSet ?? [])
-        .slice(0, HOME_RICH_LIST_LIMIT)
-        .sort((a, b) => (Number(b.totalTxs) || 0) - (Number(a.totalTxs) || 0))),
+    () => () =>
+      Api.getIdentities(1, HOME_RICH_LIST_LIMIT, 'desc', 'tx_count').then(res =>
+        (res?.resultSet ?? [])
+          .slice(0, HOME_RICH_LIST_LIMIT)
+          .sort((a, b) => (Number(b.totalTxs) || 0) - (Number(a.totalTxs) || 0))
+      ),
     []
   )
   const loadActiveContracts = useMemo(
     () => () => {
       const { start, end } = rangeIso(QUARTER)
-      return Api.getActiveDataContracts(1, HOME_RICH_LIST_LIMIT, 'desc', start, end)
-        .then(res => (res?.resultSet ?? []).slice(0, HOME_RICH_LIST_LIMIT))
+      return Api.getActiveDataContracts(1, HOME_RICH_LIST_LIMIT, 'desc', start, end).then(res =>
+        (res?.resultSet ?? []).slice(0, HOME_RICH_LIST_LIMIT)
+      )
     },
     []
   )
@@ -171,8 +190,9 @@ export default function HomeLeaders ({ rate, enabled = true }: { rate?: any, ena
   const loadActiveIdentities = useMemo(
     () => () => {
       const { start, end } = rangeIso(WEEK)
-      return Api.getActiveIdentities(1, HOME_RICH_LIST_LIMIT, 'desc', start, end)
-        .then(res => (res?.resultSet ?? []).slice(0, HOME_RICH_LIST_LIMIT))
+      return Api.getActiveIdentities(1, HOME_RICH_LIST_LIMIT, 'desc', start, end).then(res =>
+        (res?.resultSet ?? []).slice(0, HOME_RICH_LIST_LIMIT)
+      )
     },
     []
   )
@@ -209,229 +229,246 @@ export default function HomeLeaders ({ rate, enabled = true }: { rate?: any, ena
     [activeIds.items]
   )
 
-  const panels = useMemo(() => [
-    {
-      key: 'contracts',
-      label: 'Activity',
-      eyebrow: 'Contracts',
-      title: 'By activity',
-      lede: 'Usage volume · last 30 days',
-      node: (
-        <LeaderColumn
-          accent={'contracts'}
-          eyebrow={'Contracts'}
-          title={'By activity'}
-          lede={'Usage volume · last 30 days'}
-          loading={contracts.loading}
-          error={contracts.error}
-          items={contracts.items}
-          empty={'No contracts yet'}
-          renderRail={(item: any, i: any) => {
-            const n = Number(item.transitionsCount) || 0
-            return (
-              <LeaderRail
-                place={placeOf(i)}
-                href={`/dataContract/${item.identifier}`}
-                accent={'contracts'}
-                title={
-                  <Identifier ellipsis avatar styles={['highlight-both']}>
-                    {item.identifier}
-                  </Identifier>
-                }
-                metric={<BigNumber>{item.transitionsCount}</BigNumber>}
-                meterValue={n}
-                meterMax={maxTransitions}
-              />
-            )
-          }}
-        />
-      )
-    },
-    {
-      key: 'balance',
-      label: 'Balance',
-      eyebrow: 'Identities',
-      title: 'Highest balance',
-      lede: 'Most credits held',
-      node: (
-        <LeaderColumn
-          accent={'balance'}
-          eyebrow={'Identities'}
-          title={'Highest balance'}
-          lede={'Most credits held'}
-          loading={byBalance.loading}
-          error={byBalance.error}
-          items={byBalance.items}
-          empty={'No identities yet'}
-          renderRail={(item: any, i: any) => {
-            const credits = Number(item.balance) || 0
-            return (
-              <LeaderRail
-                place={placeOf(i)}
-                href={`/identity/${item.identifier}`}
-                accent={'balance'}
-                title={identityTitle(item)}
-                metric={
-                  <RateTooltip credits={credits} rate={rate?.data}>
-                    <span><BigNumber>{item.balance}</BigNumber></span>
-                  </RateTooltip>
-                }
-                meterValue={credits}
-                meterMax={maxBalance}
-              />
-            )
-          }}
-        />
-      )
-    },
-    {
-      key: 'txs',
-      label: 'Most txs',
-      eyebrow: 'Identities',
-      title: 'Most activity',
-      lede: 'All-time transaction count',
-      node: (
-        <LeaderColumn
-          accent={'txs'}
-          eyebrow={'Identities'}
-          title={'Most activity'}
-          lede={'All-time transaction count'}
-          loading={byTxs.loading}
-          error={byTxs.error}
-          items={byTxs.items}
-          empty={'No identities yet'}
-          renderRail={(item: any, i: any) => {
-            const n = Number(item.totalTxs) || 0
-            return (
-              <LeaderRail
-                place={placeOf(i)}
-                href={`/identity/${item.identifier}`}
-                accent={'txs'}
-                title={identityTitle(item)}
-                metric={<BigNumber>{item.totalTxs}</BigNumber>}
-                meterValue={n}
-                meterMax={maxTxs}
-              />
-            )
-          }}
-        />
-      )
-    },
-    {
-      key: 'activeContracts',
-      label: 'Recent',
-      eyebrow: 'Contracts',
-      title: 'Recently used',
-      lede: 'At least one tx · last 90 days',
-      node: (
-        <LeaderColumn
-          accent={'activeContracts'}
-          eyebrow={'Contracts'}
-          title={'Recently used'}
-          lede={'At least one tx · last 90 days'}
-          loading={activeContracts.loading}
-          error={activeContracts.error}
-          items={activeContracts.items}
-          empty={'No active contracts in this window'}
-          renderRail={(item: any, i: any) => {
-            const n = Number(item.transitionsCount) || 0
-            return (
-              <LeaderRail
-                place={placeOf(i)}
-                href={`/dataContract/${item.identifier}`}
-                accent={'activeContracts'}
-                title={
-                  <Identifier ellipsis avatar styles={['highlight-both']}>
-                    {item.identifier}
-                  </Identifier>
-                }
-                metric={<BigNumber>{item.transitionsCount}</BigNumber>}
-                meterValue={n}
-                meterMax={maxActiveContracts}
-              />
-            )
-          }}
-        />
-      )
-    },
-    {
-      key: 'tokens',
-      label: 'Tokens',
-      eyebrow: 'Tokens',
-      title: 'Trending',
-      lede: 'Token activity · last 30 days',
-      node: (
-        <LeaderColumn
-          accent={'tokens'}
-          eyebrow={'Tokens'}
-          title={'Trending'}
-          lede={'Token activity · last 30 days'}
-          loading={tokens.loading}
-          error={tokens.error}
-          items={tokens.items}
-          empty={'No token activity yet'}
-          renderRail={(item: any, i: any) => {
-            const n = Number(item.transitionCount) || 0
-            const name = getTokenName(item.localizations)
-            return (
-              <LeaderRail
-                place={placeOf(i)}
-                href={`/token/${item.tokenIdentifier}`}
-                accent={'tokens'}
-                title={
-                  name
-                    ? <Alias avatarSource={item.tokenIdentifier}>{name}</Alias>
-                    : <Identifier ellipsis avatar styles={['highlight-both']}>
+  const panels = useMemo(
+    () => [
+      {
+        key: 'contracts',
+        label: 'Activity',
+        eyebrow: 'Contracts',
+        title: 'By activity',
+        lede: 'Usage volume · last 30 days',
+        node: (
+          <LeaderColumn
+            accent={'contracts'}
+            eyebrow={'Contracts'}
+            title={'By activity'}
+            lede={'Usage volume · last 30 days'}
+            loading={contracts.loading}
+            error={contracts.error}
+            items={contracts.items}
+            empty={'No contracts yet'}
+            renderRail={(item: any, i: any) => {
+              const n = Number(item.transitionsCount) || 0
+              return (
+                <LeaderRail
+                  place={placeOf(i)}
+                  href={`/dataContract/${item.identifier}`}
+                  accent={'contracts'}
+                  title={
+                    <Identifier ellipsis avatar styles={['highlight-both']}>
+                      {item.identifier}
+                    </Identifier>
+                  }
+                  metric={<BigNumber>{item.transitionsCount}</BigNumber>}
+                  meterValue={n}
+                  meterMax={maxTransitions}
+                />
+              )
+            }}
+          />
+        )
+      },
+      {
+        key: 'balance',
+        label: 'Balance',
+        eyebrow: 'Identities',
+        title: 'Highest balance',
+        lede: 'Most credits held',
+        node: (
+          <LeaderColumn
+            accent={'balance'}
+            eyebrow={'Identities'}
+            title={'Highest balance'}
+            lede={'Most credits held'}
+            loading={byBalance.loading}
+            error={byBalance.error}
+            items={byBalance.items}
+            empty={'No identities yet'}
+            renderRail={(item: any, i: any) => {
+              const credits = Number(item.balance) || 0
+              return (
+                <LeaderRail
+                  place={placeOf(i)}
+                  href={`/identity/${item.identifier}`}
+                  accent={'balance'}
+                  title={identityTitle(item)}
+                  metric={
+                    <RateTooltip credits={credits} rate={rate?.data}>
+                      <span>
+                        <BigNumber>{item.balance}</BigNumber>
+                      </span>
+                    </RateTooltip>
+                  }
+                  meterValue={credits}
+                  meterMax={maxBalance}
+                />
+              )
+            }}
+          />
+        )
+      },
+      {
+        key: 'txs',
+        label: 'Most txs',
+        eyebrow: 'Identities',
+        title: 'Most activity',
+        lede: 'All-time transaction count',
+        node: (
+          <LeaderColumn
+            accent={'txs'}
+            eyebrow={'Identities'}
+            title={'Most activity'}
+            lede={'All-time transaction count'}
+            loading={byTxs.loading}
+            error={byTxs.error}
+            items={byTxs.items}
+            empty={'No identities yet'}
+            renderRail={(item: any, i: any) => {
+              const n = Number(item.totalTxs) || 0
+              return (
+                <LeaderRail
+                  place={placeOf(i)}
+                  href={`/identity/${item.identifier}`}
+                  accent={'txs'}
+                  title={identityTitle(item)}
+                  metric={<BigNumber>{item.totalTxs}</BigNumber>}
+                  meterValue={n}
+                  meterMax={maxTxs}
+                />
+              )
+            }}
+          />
+        )
+      },
+      {
+        key: 'activeContracts',
+        label: 'Recent',
+        eyebrow: 'Contracts',
+        title: 'Recently used',
+        lede: 'At least one tx · last 90 days',
+        node: (
+          <LeaderColumn
+            accent={'activeContracts'}
+            eyebrow={'Contracts'}
+            title={'Recently used'}
+            lede={'At least one tx · last 90 days'}
+            loading={activeContracts.loading}
+            error={activeContracts.error}
+            items={activeContracts.items}
+            empty={'No active contracts in this window'}
+            renderRail={(item: any, i: any) => {
+              const n = Number(item.transitionsCount) || 0
+              return (
+                <LeaderRail
+                  place={placeOf(i)}
+                  href={`/dataContract/${item.identifier}`}
+                  accent={'activeContracts'}
+                  title={
+                    <Identifier ellipsis avatar styles={['highlight-both']}>
+                      {item.identifier}
+                    </Identifier>
+                  }
+                  metric={<BigNumber>{item.transitionsCount}</BigNumber>}
+                  meterValue={n}
+                  meterMax={maxActiveContracts}
+                />
+              )
+            }}
+          />
+        )
+      },
+      {
+        key: 'tokens',
+        label: 'Tokens',
+        eyebrow: 'Tokens',
+        title: 'Trending',
+        lede: 'Token activity · last 30 days',
+        node: (
+          <LeaderColumn
+            accent={'tokens'}
+            eyebrow={'Tokens'}
+            title={'Trending'}
+            lede={'Token activity · last 30 days'}
+            loading={tokens.loading}
+            error={tokens.error}
+            items={tokens.items}
+            empty={'No token activity yet'}
+            renderRail={(item: any, i: any) => {
+              const n = Number(item.transitionCount) || 0
+              const name = getTokenName(item.localizations)
+              return (
+                <LeaderRail
+                  place={placeOf(i)}
+                  href={`/token/${item.tokenIdentifier}`}
+                  accent={'tokens'}
+                  title={
+                    name ? (
+                      <Alias avatarSource={item.tokenIdentifier}>{name}</Alias>
+                    ) : (
+                      <Identifier ellipsis avatar styles={['highlight-both']}>
                         {item.tokenIdentifier}
                       </Identifier>
-                }
-                metric={<BigNumber>{item.transitionCount}</BigNumber>}
-                meterValue={n}
-                meterMax={maxTokenTx}
-              />
-            )
-          }}
-        />
-      )
-    },
-    {
-      key: 'activeIds',
-      label: 'Active',
-      eyebrow: 'Identities',
-      title: 'Active this week',
-      lede: 'Sent at least one tx · last 7 days',
-      node: (
-        <LeaderColumn
-          accent={'activeIds'}
-          eyebrow={'Identities'}
-          title={'Active this week'}
-          lede={'Sent at least one tx · last 7 days'}
-          loading={activeIds.loading}
-          error={activeIds.error}
-          items={activeIds.items}
-          empty={'No active identities in this window'}
-          renderRail={(item: any, i: any) => {
-            const n = Number(item.transactionsCount) || 0
-            return (
-              <LeaderRail
-                place={placeOf(i)}
-                href={`/identity/${item.identifier}`}
-                accent={'activeIds'}
-                title={identityTitle(item)}
-                metric={<BigNumber>{item.transactionsCount}</BigNumber>}
-                meterValue={n}
-                meterMax={maxActiveIdTx}
-              />
-            )
-          }}
-        />
-      )
-    }
-  ], [
-    contracts, byBalance, byTxs, activeContracts, tokens, activeIds,
-    maxTransitions, maxBalance, maxTxs, maxActiveContracts, maxTokenTx, maxActiveIdTx,
-    rate
-  ])
+                    )
+                  }
+                  metric={<BigNumber>{item.transitionCount}</BigNumber>}
+                  meterValue={n}
+                  meterMax={maxTokenTx}
+                />
+              )
+            }}
+          />
+        )
+      },
+      {
+        key: 'activeIds',
+        label: 'Active',
+        eyebrow: 'Identities',
+        title: 'Active this week',
+        lede: 'Sent at least one tx · last 7 days',
+        node: (
+          <LeaderColumn
+            accent={'activeIds'}
+            eyebrow={'Identities'}
+            title={'Active this week'}
+            lede={'Sent at least one tx · last 7 days'}
+            loading={activeIds.loading}
+            error={activeIds.error}
+            items={activeIds.items}
+            empty={'No active identities in this window'}
+            renderRail={(item: any, i: any) => {
+              const n = Number(item.transactionsCount) || 0
+              return (
+                <LeaderRail
+                  place={placeOf(i)}
+                  href={`/identity/${item.identifier}`}
+                  accent={'activeIds'}
+                  title={identityTitle(item)}
+                  metric={<BigNumber>{item.transactionsCount}</BigNumber>}
+                  meterValue={n}
+                  meterMax={maxActiveIdTx}
+                />
+              )
+            }}
+          />
+        )
+      }
+    ],
+    [
+      contracts,
+      byBalance,
+      byTxs,
+      activeContracts,
+      tokens,
+      activeIds,
+      maxTransitions,
+      maxBalance,
+      maxTxs,
+      maxActiveContracts,
+      maxTokenTx,
+      maxActiveIdTx,
+      rate
+    ]
+  )
 
   const viewportRef = useRef<HTMLDivElement | null>(null)
   // React state only for tab index; slide chrome updates via DOM class
@@ -501,7 +538,7 @@ export default function HomeLeaders ({ rate, enabled = true }: { rate?: any, ena
     if (!vp || !el) return
     const vpRect = vp.getBoundingClientRect()
     const elRect = el.getBoundingClientRect()
-    const delta = (elRect.left + elRect.width / 2) - (vpRect.left + vpRect.width / 2)
+    const delta = elRect.left + elRect.width / 2 - (vpRect.left + vpRect.width / 2)
     if (Math.abs(delta) < 0.5) return
     vp.classList.add('is-programmatic')
     if (smooth) {
@@ -660,7 +697,14 @@ export default function HomeLeaders ({ rate, enabled = true }: { rate?: any, ena
             onClick={() => scrollByDir(-1)}
           >
             <svg viewBox={'0 0 16 16'} width={'14'} height={'14'} aria-hidden={'true'}>
-              <path d={'M10 3L5 8l5 5'} fill={'none'} stroke={'currentColor'} strokeWidth={'1.6'} strokeLinecap={'round'} strokeLinejoin={'round'}/>
+              <path
+                d={'M10 3L5 8l5 5'}
+                fill={'none'}
+                stroke={'currentColor'}
+                strokeWidth={'1.6'}
+                strokeLinecap={'round'}
+                strokeLinejoin={'round'}
+              />
             </svg>
           </button>
           <div className={'HomeLeaders__Tabs'} role={'tablist'} aria-label={'Leader lists'}>
@@ -684,7 +728,14 @@ export default function HomeLeaders ({ rate, enabled = true }: { rate?: any, ena
             onClick={() => scrollByDir(1)}
           >
             <svg viewBox={'0 0 16 16'} width={'14'} height={'14'} aria-hidden={'true'}>
-              <path d={'M6 3l5 5-5 5'} fill={'none'} stroke={'currentColor'} strokeWidth={'1.6'} strokeLinecap={'round'} strokeLinejoin={'round'}/>
+              <path
+                d={'M6 3l5 5-5 5'}
+                fill={'none'}
+                stroke={'currentColor'}
+                strokeWidth={'1.6'}
+                strokeLinecap={'round'}
+                strokeLinejoin={'round'}
+              />
             </svg>
           </button>
         </div>
@@ -699,7 +750,7 @@ export default function HomeLeaders ({ rate, enabled = true }: { rate?: any, ena
         aria-label={'Leaders lists — infinite carousel'}
       >
         <div className={'HomeLeaders__Track'}>
-          {loopPanels.map((panel) => (
+          {loopPanels.map(panel => (
             <div
               key={panel.key}
               className={'HomeLeaders__Slide'}
@@ -714,7 +765,6 @@ export default function HomeLeaders ({ rate, enabled = true }: { rate?: any, ena
           ))}
         </div>
       </div>
-
     </Box>
   )
 }

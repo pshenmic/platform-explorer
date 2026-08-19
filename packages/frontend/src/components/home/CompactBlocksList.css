@@ -23,7 +23,9 @@
   font-size: 0.75rem;
   line-height: 1.25;
   gap: 10px;
-  transition: border-color 0.12s ease, background 0.12s ease;
+  transition:
+    border-color 0.12s ease,
+    background 0.12s ease;
 }
 @media (hover: hover) and (pointer: fine) {
   .CompactBlocksList .DataList__Row:hover {

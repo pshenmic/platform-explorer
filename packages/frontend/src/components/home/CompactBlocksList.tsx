@@ -7,7 +7,15 @@ import { useLiveList } from './hooks'
 import { HOME_FEED_LIMIT } from './listLimits'
 import './CompactBlocksList.css'
 
-export function CompactBlocksList ({ blocks, limit = HOME_FEED_LIMIT, loading }: { blocks?: any[], limit?: number, loading?: boolean }) {
+export function CompactBlocksList({
+  blocks,
+  limit = HOME_FEED_LIMIT,
+  loading
+}: {
+  blocks?: any[]
+  limit?: number
+  loading?: boolean
+}) {
   const { shown, newKeys, hoverBind } = useLiveList<any>(blocks, (b: any) => b?.header?.hash)
   const rows = Array.isArray(shown) ? shown.slice(0, limit) : []
 
@@ -20,8 +28,8 @@ export function CompactBlocksList ({ blocks, limit = HOME_FEED_LIMIT, loading }:
         const height = block?.header?.height
         return (
           <span className={'CompactBlocksList__Height'}>
-            <BlockIcon w={'1.125rem'} h={'1.125rem'} flexShrink={0}/>
-            {typeof height === 'number' ? <BigNumber>{height}</BigNumber> : <NotActive/>}
+            <BlockIcon w={'1.125rem'} h={'1.125rem'} flexShrink={0} />
+            {typeof height === 'number' ? <BigNumber>{height}</BigNumber> : <NotActive />}
           </span>
         )
       }
@@ -31,9 +39,14 @@ export function CompactBlocksList ({ blocks, limit = HOME_FEED_LIMIT, loading }:
       header: 'Hash',
       grow: true,
       minWidth: 96,
-      cell: (block: any) => (block?.header?.hash
-        ? <Identifier ellipsis={true} styles={['highlight-both']}>{block.header.hash}</Identifier>
-        : <NotActive/>)
+      cell: (block: any) =>
+        block?.header?.hash ? (
+          <Identifier ellipsis={true} styles={['highlight-both']}>
+            {block.header.hash}
+          </Identifier>
+        ) : (
+          <NotActive />
+        )
     },
     {
       key: 'txs',
@@ -50,9 +63,16 @@ export function CompactBlocksList ({ blocks, limit = HOME_FEED_LIMIT, loading }:
       header: 'Time',
       minWidth: 48,
       align: 'right',
-      cell: (block: any) => (block?.header?.timestamp
-        ? <TimeDelta showTimestampTooltip={true} format={'compact'} endDate={new Date(block.header.timestamp)}/>
-        : <NotActive/>)
+      cell: (block: any) =>
+        block?.header?.timestamp ? (
+          <TimeDelta
+            showTimestampTooltip={true}
+            format={'compact'}
+            endDate={new Date(block.header.timestamp)}
+          />
+        ) : (
+          <NotActive />
+        )
     }
   ]
 
@@ -67,7 +87,9 @@ export function CompactBlocksList ({ blocks, limit = HOME_FEED_LIMIT, loading }:
       rowHref={(block: any) => `/block/${block?.header?.hash}`}
       rowKey={(block: any) => block?.header?.hash}
       rowClassName={(block: any) => (newKeys.has(block?.header?.hash) ? 'is-new' : '')}
-      rowStyle={(block: any, i: number) => (newKeys.has(block?.header?.hash) ? { '--stagger': `${i * 50}ms` } : undefined)}
+      rowStyle={(block: any, i: number) =>
+        newKeys.has(block?.header?.hash) ? { '--stagger': `${i * 50}ms` } : undefined
+      }
       wrapperProps={hoverBind}
     />
   )

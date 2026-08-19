@@ -134,7 +134,9 @@
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
   cursor: pointer;
-  transition: opacity 0.15s ease, color 0.15s ease;
+  transition:
+    opacity 0.15s ease,
+    color 0.15s ease;
 }
 .ShieldedPool__Flow b {
   font-weight: 700;
@@ -230,7 +232,9 @@
   stroke: rgba(255, 255, 255, 0.05);
   stroke-width: 1;
 }
-.ShieldedPool__YTick, .ShieldedPool__Tick, .ShieldedPool__AxisTitle {
+.ShieldedPool__YTick,
+.ShieldedPool__Tick,
+.ShieldedPool__AxisTitle {
   font-family: var(--pe-font-mono);
   font-size: 0.5625rem;
   fill: var(--pe-color-gray-500);
@@ -289,7 +293,10 @@
 .ShieldedPool__Bar--out {
   stroke: rgba(255, 92, 122, 0.28);
 }
-.ShieldedPool__Chart:has(.ShieldedPool__Bar--in):not(:has(.ShieldedPool__Bar--out)) .ShieldedPool__Bar, .ShieldedPool__Chart:has(.ShieldedPool__Bar--out):not(:has(.ShieldedPool__Bar--in)) .ShieldedPool__Bar {
+.ShieldedPool__Chart:has(.ShieldedPool__Bar--in):not(:has(.ShieldedPool__Bar--out))
+  .ShieldedPool__Bar,
+.ShieldedPool__Chart:has(.ShieldedPool__Bar--out):not(:has(.ShieldedPool__Bar--in))
+  .ShieldedPool__Bar {
   opacity: 0.88;
 }
 .ShieldedPool__Cross {

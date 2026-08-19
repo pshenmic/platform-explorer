@@ -39,7 +39,7 @@ export function isApiOperational(status?: Status | null): boolean {
 }
 
 // map Tenderdash chain ids to short display labels (mainnet/testnet/devnet)
-export function formatNetworkLabel (network: unknown): string | null {
+export function formatNetworkLabel(network: unknown): string | null {
   if (network == null || network === '') return null
   const n = String(network).toLowerCase()
   if (n === 'evo1' || n === 'mainnet' || n.includes('mainnet')) return 'mainnet'

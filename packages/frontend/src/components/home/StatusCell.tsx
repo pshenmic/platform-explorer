@@ -4,7 +4,7 @@ import type { KeyboardEvent, ReactNode } from 'react'
 import Link from 'next/link'
 import { Tooltip } from '../ui/Tooltips'
 
-export function StatusCell ({
+export function StatusCell({
   label,
   hint,
   href,
@@ -35,9 +35,13 @@ export function StatusCell ({
         <span className={'HomeHero__StatusLabel'}>{label}</span>
       </span>
       <span className={'HomeHero__StatusValue'}>
-        {href
-          ? <Link href={href} className={'HomeHero__StatusLink'} onClick={e => e.stopPropagation()}>{children}</Link>
-          : children}
+        {href ? (
+          <Link href={href} className={'HomeHero__StatusLink'} onClick={e => e.stopPropagation()}>
+            {children}
+          </Link>
+        ) : (
+          children
+        )}
       </span>
     </div>
   )

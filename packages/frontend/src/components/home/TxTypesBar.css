@@ -126,7 +126,8 @@
   overflow: hidden;
   text-overflow: ellipsis;
 }
-.TxTypesBar__Stat.is-on .TxTypesBar__StatMeta, .TxTypesBar__Stat.is-pinned .TxTypesBar__StatMeta {
+.TxTypesBar__Stat.is-on .TxTypesBar__StatMeta,
+.TxTypesBar__Stat.is-pinned .TxTypesBar__StatMeta {
   color: rgba(var(--pe-color-brand-light-rgb), 0.95);
 }
 .TxTypesBar__Body {
@@ -186,7 +187,9 @@
   text-decoration: none;
   flex-shrink: 1;
   opacity: 1;
-  transition: filter 0.12s ease, box-shadow 0.12s ease;
+  transition:
+    filter 0.12s ease,
+    box-shadow 0.12s ease;
 }
 .TxTypesBar__Seg:focus-visible {
   outline: 1px solid #fff;
@@ -233,7 +236,9 @@
   border-radius: 0;
   text-align: left;
   cursor: pointer;
-  transition: box-shadow 0.12s ease, color 0.12s ease;
+  transition:
+    box-shadow 0.12s ease,
+    color 0.12s ease;
 }
 .TxTypesBar__Row:focus-visible {
   outline: 1px solid rgba(var(--pe-color-brand-light-rgb), 0.45);

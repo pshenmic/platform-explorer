@@ -7,7 +7,7 @@ import RichestIdentities from './RichestIdentities'
 import './RichestSection.css'
 
 // contracts / tokens / identities; embedded skips outer InfoBlock chrome
-export default function RichestSection ({
+export default function RichestSection({
   rate,
   enabled = true,
   embedded = false
@@ -19,13 +19,13 @@ export default function RichestSection ({
   const body = (
     <div className={'HomeRichest__Grid'}>
       <div className={'HomeRichest__Col'}>
-        <DataContractsRating enabled={enabled}/>
+        <DataContractsRating enabled={enabled} />
       </div>
       <div className={'HomeRichest__Col'}>
-        <TrendingTokens enabled={enabled}/>
+        <TrendingTokens enabled={enabled} />
       </div>
       <div className={'HomeRichest__Col'}>
-        <RichestIdentities rate={rate} enabled={enabled}/>
+        <RichestIdentities rate={rate} enabled={enabled} />
       </div>
     </div>
   )
@@ -39,7 +39,12 @@ export default function RichestSection ({
   }
 
   return (
-    <Box className={'InfoBlock InfoBlock--NoBorder HomeRichest'} w={'100%'} as={'section'} aria-label={'Richest'}>
+    <Box
+      className={'InfoBlock InfoBlock--NoBorder HomeRichest'}
+      w={'100%'}
+      as={'section'}
+      aria-label={'Richest'}
+    >
       {body}
     </Box>
   )

@@ -4,7 +4,7 @@ import { Box } from '@chakra-ui/react'
 import { StatusBar } from './StatusBar'
 import './GovernanceCard.css'
 
-export default function GovernanceCard (props: any) {
+export default function GovernanceCard(props: any) {
   const { contested, activeContested, latestContested, latestVotes, epochData } = props
   return (
     <Box

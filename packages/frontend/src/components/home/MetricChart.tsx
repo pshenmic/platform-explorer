@@ -19,7 +19,7 @@ export const PRESETS = [
 ]
 const DEFAULT_PRESET = 2
 
-export function presetRange (preset: any) {
+export function presetRange(preset: any) {
   // floor end to hour: history API drops partial trailing buckets
   const endMs = Math.ceil(Date.now() / 3600000) * 3600000
   return {
@@ -28,7 +28,8 @@ export function presetRange (preset: any) {
   }
 }
 
-const formatValue = (v: any) => Math.abs(v) >= 1e6 ? currencyRound(v) : d3.format(',')(Math.round(v))
+const formatValue = (v: any) =>
+  Math.abs(v) >= 1e6 ? currencyRound(v) : d3.format(',')(Math.round(v))
 
 const M = { top: 10, right: 12, bottom: 18, left: 52 }
 const HEIGHT = 200
@@ -36,35 +37,74 @@ const HEIGHT = 200
 const GHOST_LINE_D = 'M 0 62 L 12 50 L 25 58 L 38 42 L 50 48 L 62 34 L 75 42 L 88 26 L 100 32'
 const GHOST_BARS = [38, 52, 30, 60, 45, 66, 40, 56, 34, 62, 48, 58]
 
-function ChartGhost ({ type }: any) {
+function ChartGhost({ type }: any) {
   return (
-    <svg className={'MetricChart__Ghost'} viewBox={'0 0 100 100'} preserveAspectRatio={'none'} aria-hidden={'true'}>
+    <svg
+      className={'MetricChart__Ghost'}
+      viewBox={'0 0 100 100'}
+      preserveAspectRatio={'none'}
+      aria-hidden={'true'}
+    >
       {[18, 42, 66, 90].map(gy => (
-        <line key={gy} className={'MetricChart__GhostGrid'} x1={0} x2={100} y1={gy} y2={gy} vectorEffect={'non-scaling-stroke'}/>
+        <line
+          key={gy}
+          className={'MetricChart__GhostGrid'}
+          x1={0}
+          x2={100}
+          y1={gy}
+          y2={gy}
+          vectorEffect={'non-scaling-stroke'}
+        />
       ))}
-      {type === 'bar'
-        ? GHOST_BARS.map((h, i) => (
-            <rect
-              key={i}
-              className={'MetricChart__GhostBar'}
-              x={2 + i * 8.2}
-              y={90 - h}
-              width={4.5}
-              height={h}
-              style={{ animationDelay: `${i * 0.12}s` }}
-            />
+      {type === 'bar' ? (
+        GHOST_BARS.map((h, i) => (
+          <rect
+            key={i}
+            className={'MetricChart__GhostBar'}
+            x={2 + i * 8.2}
+            y={90 - h}
+            width={4.5}
+            height={h}
+            style={{ animationDelay: `${i * 0.12}s` }}
+          />
         ))
-        : <>
-            <path className={'MetricChart__GhostLine'} d={GHOST_LINE_D} fill={'none'} vectorEffect={'non-scaling-stroke'}/>
-            <path className={'MetricChart__GhostScan'} d={GHOST_LINE_D} fill={'none'} pathLength={'100'} vectorEffect={'non-scaling-stroke'}/>
-          </>}
+      ) : (
+        <>
+          <path
+            className={'MetricChart__GhostLine'}
+            d={GHOST_LINE_D}
+            fill={'none'}
+            vectorEffect={'non-scaling-stroke'}
+          />
+          <path
+            className={'MetricChart__GhostScan'}
+            d={GHOST_LINE_D}
+            fill={'none'}
+            pathLength={'100'}
+            vectorEffect={'non-scaling-stroke'}
+          />
+        </>
+      )}
     </svg>
   )
 }
 
-export function MetricChart ({ title, type = 'line', fetcher, field, yAbbr = '', enabled = true, embedded = false, fill = false }: any) {
+export function MetricChart({
+  title,
+  type = 'line',
+  fetcher,
+  field,
+  yAbbr = '',
+  enabled = true,
+  embedded = false,
+  fill = false
+}: any) {
   const [presetIdx, setPresetIdx] = useState(DEFAULT_PRESET)
-  const [state, setState] = useState<{ loading: boolean, error: boolean, points: any[] }>({ loading: true, error: false, points: [] })
+  const [state, setState] = useState<{ loading: boolean; error: boolean; points: any[] }>({
+    loading: true,
+    error: false,
+    points: []
+  })
   const [width, setWidth] = useState(0)
   const [plotH, setPlotH] = useState(HEIGHT)
   const [hover, setHover] = useState<any>(null)
@@ -109,39 +149,69 @@ export function MetricChart ({ title, type = 'line', fetcher, field, yAbbr = '',
   const ready = width > 0 && h > 0 && points.length > 1
   let x: any, y: any, areaD: any, lineD: any, bars: any, xTicks: any, yTicks: any, tipFmt: any
   if (ready) {
-    x = d3.scaleTime(d3.extent(points, (p: any) => p.x), [M.left, width - M.right])
+    x = d3.scaleTime(
+      d3.extent(points, (p: any) => p.x),
+      [M.left, width - M.right]
+    )
     const dataSpanDays = getDaysBetweenDates(points[0].x, points[points.length - 1].x)
-    const tickFmt = d3.timeFormat(dataSpanDays > 365 ? '%b %Y' : dataSpanDays > 7 ? '%b %d' : '%H:%M')
-    tipFmt = d3.timeFormat(dataSpanDays > 365 ? '%b %d, %Y' : dataSpanDays > 3 ? '%b %d' : '%b %d, %H:%M')
+    const tickFmt = d3.timeFormat(
+      dataSpanDays > 365 ? '%b %Y' : dataSpanDays > 7 ? '%b %d' : '%H:%M'
+    )
+    tipFmt = d3.timeFormat(
+      dataSpanDays > 365 ? '%b %d, %Y' : dataSpanDays > 3 ? '%b %d' : '%b %d, %H:%M'
+    )
     const maxY = d3.max(points, (p: any) => p.y) || 1
     const minY = d3.min(points, (p: any) => p.y) || 0
     // bars from 0; line charts pad the domain around the series range
-    const yDomain = type === 'bar'
-      ? [0, maxY]
-      : [minY - ((maxY - minY) * 0.12 || maxY * 0.05 || 1), maxY + ((maxY - minY) * 0.12 || maxY * 0.05 || 1)]
+    const yDomain =
+      type === 'bar'
+        ? [0, maxY]
+        : [
+            minY - ((maxY - minY) * 0.12 || maxY * 0.05 || 1),
+            maxY + ((maxY - minY) * 0.12 || maxY * 0.05 || 1)
+          ]
     y = d3.scaleLinear(yDomain, [h - M.bottom, M.top]).nice()
     const baseline = h - M.bottom
-    lineD = d3.line().x((p: any) => x(p.x)).y((p: any) => y(p.y)).curve(d3.curveMonotoneX)(points)
-    areaD = d3.area().x((p: any) => x(p.x)).y0(baseline).y1((p: any) => y(p.y)).curve(d3.curveMonotoneX)(points)
+    lineD = d3
+      .line()
+      .x((p: any) => x(p.x))
+      .y((p: any) => y(p.y))
+      .curve(d3.curveMonotoneX)(points)
+    areaD = d3
+      .area()
+      .x((p: any) => x(p.x))
+      .y0(baseline)
+      .y1((p: any) => y(p.y))
+      .curve(d3.curveMonotoneX)(points)
     const step = points.length > 1 ? Math.abs(x(points[1].x) - x(points[0].x)) : 8
     const bw = Math.max(1, Math.min(step * 0.65, 16))
-    bars = points.map(p => ({ x: x(p.x) - bw / 2, y: y(p.y), w: bw, h: Math.max(0, y(0) - y(p.y)) }))
+    bars = points.map(p => ({
+      x: x(p.x) - bw / 2,
+      y: y(p.y),
+      w: bw,
+      h: Math.max(0, y(0) - y(p.y))
+    }))
     const tickCount = Math.max(2, Math.min(6, Math.floor((width - M.left - M.right) / 72)))
     // d3 treats tickCount as a hint, not a cap — for wide ranges (e.g. "All") it can
     // return more "nice" ticks than the pixel budget allows, so thin them out evenly
     let rawTicks = x.ticks(tickCount)
     if (rawTicks.length > tickCount) {
       const step = (rawTicks.length - 1) / (tickCount - 1)
-      rawTicks = [...new Set(Array.from({ length: tickCount }, (_, i) => rawTicks[Math.round(i * step)]))]
+      rawTicks = [
+        ...new Set(Array.from({ length: tickCount }, (_, i) => rawTicks[Math.round(i * step)]))
+      ]
     }
     xTicks = rawTicks.map((d: any) => ({ v: x(d), label: tickFmt(d) }))
     yTicks = y.ticks(4).map((v: any) => ({ v: y(v), label: formatValue(v) }))
   }
 
-  function onMove (e: any) {
+  function onMove(e: any) {
     if (!ready) return
     const px = e.nativeEvent.offsetX
-    const i = d3.bisectCenter(points.map(p => p.x), x.invert(px))
+    const i = d3.bisectCenter(
+      points.map(p => p.x),
+      x.invert(px)
+    )
     const p = points[i]
     if (p) setHover({ i, cx: x(p.x), cy: y(p.y), value: p.y, date: p.x })
   }
@@ -149,16 +219,14 @@ export function MetricChart ({ title, type = 'line', fetcher, field, yAbbr = '',
   const shellClass = [
     embedded ? 'MetricChart MetricChart--Embedded' : 'InfoBlock InfoBlock--NoBorder MetricChart',
     fill ? 'MetricChart--Fill' : ''
-  ].filter(Boolean).join(' ')
+  ]
+    .filter(Boolean)
+    .join(' ')
 
   return (
-    <Box
-      className={shellClass}
-      w={'100%'}
-      aria-label={title || undefined}
-    >
+    <Box className={shellClass} w={'100%'} aria-label={title || undefined}>
       <CardHead title={title || null}>
-        <Presets options={PRESETS} value={presetIdx} onChange={setPresetIdx}/>
+        <Presets options={PRESETS} value={presetIdx} onChange={setPresetIdx} />
       </CardHead>
 
       <div
@@ -166,70 +234,113 @@ export function MetricChart ({ title, type = 'line', fetcher, field, yAbbr = '',
         className={'MetricChart__Plot'}
         style={fill ? undefined : { height: HEIGHT }}
       >
-        {error
-          ? <div className={'MetricChart__Empty'}>Error loading data</div>
-          : loading && !ready
-            ? <ChartGhost type={type}/>
-            : !ready
-                ? <div className={'MetricChart__Empty'}>No data</div>
-                : <svg
-                  className={`MetricChart__Svg${loading ? ' MetricChart__Svg--Stale' : ''}`}
-                  viewBox={`0 0 ${width} ${h}`}
-                  width={width}
-                  height={h}
-                  role={'img'}
-                  aria-label={`${title}: latest ${formatValue(points[points.length - 1].y)} ${yAbbr}`}
-                  onMouseMove={onMove}
-                  onMouseLeave={() => setHover(null)}
+        {error ? (
+          <div className={'MetricChart__Empty'}>Error loading data</div>
+        ) : loading && !ready ? (
+          <ChartGhost type={type} />
+        ) : !ready ? (
+          <div className={'MetricChart__Empty'}>No data</div>
+        ) : (
+          <svg
+            className={`MetricChart__Svg${loading ? ' MetricChart__Svg--Stale' : ''}`}
+            viewBox={`0 0 ${width} ${h}`}
+            width={width}
+            height={h}
+            role={'img'}
+            aria-label={`${title}: latest ${formatValue(points[points.length - 1].y)} ${yAbbr}`}
+            onMouseMove={onMove}
+            onMouseLeave={() => setHover(null)}
+          >
+            <defs>
+              <linearGradient id={`mcArea-${gradientId}`} x1={'0'} y1={'0'} x2={'0'} y2={'1'}>
+                <stop className={'MetricChart__AreaTop'} offset={'0%'} />
+                <stop className={'MetricChart__AreaBottom'} offset={'100%'} />
+              </linearGradient>
+            </defs>
+
+            {yTicks.map((t: any, i: any) => (
+              <g key={i}>
+                <line
+                  className={'MetricChart__Grid'}
+                  x1={M.left}
+                  x2={width - M.right}
+                  y1={t.v}
+                  y2={t.v}
+                />
+                <text
+                  className={'MetricChart__Tick MetricChart__Tick--Y'}
+                  x={M.left - 6}
+                  y={t.v}
+                  dy={'0.32em'}
                 >
-                  <defs>
-                    <linearGradient id={`mcArea-${gradientId}`} x1={'0'} y1={'0'} x2={'0'} y2={'1'}>
-                      <stop className={'MetricChart__AreaTop'} offset={'0%'}/>
-                      <stop className={'MetricChart__AreaBottom'} offset={'100%'}/>
-                    </linearGradient>
-                  </defs>
+                  {t.label}
+                </text>
+              </g>
+            ))}
 
-                  {yTicks.map((t: any, i: any) => (
-                    <g key={i}>
-                      <line className={'MetricChart__Grid'} x1={M.left} x2={width - M.right} y1={t.v} y2={t.v}/>
-                      <text className={'MetricChart__Tick MetricChart__Tick--Y'} x={M.left - 6} y={t.v} dy={'0.32em'}>{t.label}</text>
-                    </g>
-                  ))}
+            {xTicks.map((t: any, i: any) => (
+              <text
+                key={i}
+                className={'MetricChart__Tick MetricChart__Tick--X'}
+                style={{
+                  textAnchor: i === 0 ? 'start' : i === xTicks.length - 1 ? 'end' : 'middle'
+                }}
+                x={t.v}
+                y={h - 4}
+              >
+                {t.label}
+              </text>
+            ))}
 
-                  {xTicks.map((t: any, i: any) => (
-                    <text
-                      key={i}
-                      className={'MetricChart__Tick MetricChart__Tick--X'}
-                      style={{ textAnchor: i === 0 ? 'start' : i === xTicks.length - 1 ? 'end' : 'middle' }}
-                      x={t.v}
-                      y={h - 4}
-                    >{t.label}</text>
-                  ))}
+            {type === 'bar' ? (
+              (bars ?? []).map((b: any, i: number) => (
+                <rect
+                  key={i}
+                  className={'MetricChart__Bar'}
+                  x={b.x}
+                  y={b.y}
+                  width={b.w}
+                  height={b.h}
+                  rx={1}
+                />
+              ))
+            ) : (
+              <>
+                <path
+                  className={'MetricChart__Area'}
+                  d={areaD}
+                  fill={`url(#mcArea-${gradientId})`}
+                />
+                <path className={'MetricChart__Line'} d={lineD} />
+              </>
+            )}
 
-                  {type === 'bar'
-                    ? (bars ?? []).map((b: any, i: number) => (
-                        <rect key={i} className={'MetricChart__Bar'} x={b.x} y={b.y} width={b.w} height={b.h} rx={1}/>
-                    ))
-                    : <>
-                        <path className={'MetricChart__Area'} d={areaD} fill={`url(#mcArea-${gradientId})`}/>
-                        <path className={'MetricChart__Line'} d={lineD}/>
-                      </>}
+            {hover && (
+              <g className={'MetricChart__Hover'}>
+                <line
+                  className={'MetricChart__HoverLine'}
+                  x1={hover.cx}
+                  x2={hover.cx}
+                  y1={M.top}
+                  y2={h - M.bottom}
+                />
+                <circle className={'MetricChart__HoverDot'} cx={hover.cx} cy={hover.cy} r={3.5} />
+              </g>
+            )}
+          </svg>
+        )}
 
-                  {hover &&
-                    <g className={'MetricChart__Hover'}>
-                      <line className={'MetricChart__HoverLine'} x1={hover.cx} x2={hover.cx} y1={M.top} y2={h - M.bottom}/>
-                      <circle className={'MetricChart__HoverDot'} cx={hover.cx} cy={hover.cy} r={3.5}/>
-                    </g>}
-                </svg>}
-
-        {hover && ready &&
+        {hover && ready && (
           <div
             className={'MetricChart__Tooltip'}
             style={{ left: `${hover.cx}px`, top: `${hover.cy}px` }}
           >
-            <span className={'MetricChart__TipValue'}>{formatValue(hover.value)} {yAbbr}</span>
+            <span className={'MetricChart__TipValue'}>
+              {formatValue(hover.value)} {yAbbr}
+            </span>
             <span className={'MetricChart__TipDate'}>{tipFmt(hover.date)}</span>
-          </div>}
+          </div>
+        )}
       </div>
     </Box>
   )

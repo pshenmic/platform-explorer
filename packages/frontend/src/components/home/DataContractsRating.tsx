@@ -9,8 +9,12 @@ import RankMark, { placeOf, rankRowClassName } from './RankMark'
 import { HOME_RICH_LIST_LIMIT } from './listLimits'
 
 // contracts by transitions; API may return fewer than HOME_RICH_LIST_LIMIT
-export default function DataContractsRating ({ enabled = true }: { enabled?: boolean }) {
-  const [state, setState] = useState<{ loading: boolean, error: boolean, items: any[] }>({ loading: true, error: false, items: [] })
+export default function DataContractsRating({ enabled = true }: { enabled?: boolean }) {
+  const [state, setState] = useState<{ loading: boolean; error: boolean; items: any[] }>({
+    loading: true,
+    error: false,
+    items: []
+  })
 
   useEffect(() => {
     if (!enabled) {
@@ -19,11 +23,13 @@ export default function DataContractsRating ({ enabled = true }: { enabled?: boo
     }
     setState(s => ({ ...s, loading: true, error: false }))
     Api.getDataContractsRating(1, HOME_RICH_LIST_LIMIT, 'desc')
-      .then(res => setState({
-        loading: false,
-        error: false,
-        items: (res?.resultSet ?? []).slice(0, HOME_RICH_LIST_LIMIT)
-      }))
+      .then(res =>
+        setState({
+          loading: false,
+          error: false,
+          items: (res?.resultSet ?? []).slice(0, HOME_RICH_LIST_LIMIT)
+        })
+      )
       .catch(() => setState({ loading: false, error: true, items: [] }))
   }, [enabled])
 
@@ -38,12 +44,8 @@ export default function DataContractsRating ({ enabled = true }: { enabled?: boo
       minWidth: 120,
       cell: (item: any, i: any) => (
         <span className={'DataList__Entity'}>
-          <RankMark place={placeOf(i)}/>
-          <Identifier
-            ellipsis={true}
-            avatar={true}
-            styles={['highlight-both']}
-          >
+          <RankMark place={placeOf(i)} />
+          <Identifier ellipsis={true} avatar={true} styles={['highlight-both']}>
             {item.identifier}
           </Identifier>
         </span>

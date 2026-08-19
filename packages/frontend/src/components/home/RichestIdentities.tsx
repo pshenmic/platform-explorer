@@ -12,9 +12,19 @@ import { HOME_RICH_LIST_LIMIT } from './listLimits'
 const DEFAULT_SORT = { order_by: 'balance', order: 'desc' }
 
 // identities by balance or tx_count (server sort via column headers)
-export default function RichestIdentities ({ rate, enabled = true }: { rate?: any, enabled?: boolean }) {
+export default function RichestIdentities({
+  rate,
+  enabled = true
+}: {
+  rate?: any
+  enabled?: boolean
+}) {
   const [sort, setSort] = useState(DEFAULT_SORT)
-  const [state, setState] = useState<{ loading: boolean, error: boolean, items: any[] }>({ loading: true, error: false, items: [] })
+  const [state, setState] = useState<{ loading: boolean; error: boolean; items: any[] }>({
+    loading: true,
+    error: false,
+    items: []
+  })
 
   useEffect(() => {
     if (!enabled) {
@@ -39,8 +49,8 @@ export default function RichestIdentities ({ rate, enabled = true }: { rate?: an
 
   const { loading, error, items } = state
   const rows = error ? [] : items
-  const showRank = sort.order === 'desc' &&
-    (sort.order_by === 'balance' || sort.order_by === 'tx_count')
+  const showRank =
+    sort.order === 'desc' && (sort.order_by === 'balance' || sort.order_by === 'tx_count')
 
   const columns = [
     {
@@ -50,12 +60,8 @@ export default function RichestIdentities ({ rate, enabled = true }: { rate?: an
       minWidth: 100,
       cell: (item: any, i: any) => (
         <span className={'DataList__Entity'}>
-          {showRank ? <RankMark place={placeOf(i)}/> : null}
-          <Identifier
-            ellipsis={true}
-            avatar={true}
-            styles={['highlight-both']}
-          >
+          {showRank ? <RankMark place={placeOf(i)} /> : null}
+          <Identifier ellipsis={true} avatar={true} styles={['highlight-both']}>
             {item.identifier}
           </Identifier>
         </span>
@@ -85,11 +91,8 @@ export default function RichestIdentities ({ rate, enabled = true }: { rate?: an
       align: 'right',
       sortKey: 'tx_count',
       priority: 1,
-      cell: (item: any) => (
-        typeof item.totalTxs === 'number'
-          ? <BigNumber>{item.totalTxs}</BigNumber>
-          : '—'
-      )
+      cell: (item: any) =>
+        typeof item.totalTxs === 'number' ? <BigNumber>{item.totalTxs}</BigNumber> : '—'
     }
   ]
 

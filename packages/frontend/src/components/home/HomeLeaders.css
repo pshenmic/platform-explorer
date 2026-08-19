@@ -59,7 +59,10 @@
   background: transparent;
   color: var(--pe-color-gray-400);
   cursor: pointer;
-  transition: color 0.12s, background 0.12s, opacity 0.12s;
+  transition:
+    color 0.12s,
+    background 0.12s,
+    opacity 0.12s;
 }
 .HomeLeaders__Arrow:hover:not(:disabled) {
   color: #fff;
@@ -94,7 +97,10 @@
   background: transparent;
   color: var(--pe-color-gray-500);
   cursor: pointer;
-  transition: color 0.12s, background 0.12s, box-shadow 0.12s;
+  transition:
+    color 0.12s,
+    background 0.12s,
+    box-shadow 0.12s;
 }
 .HomeLeaders__Tab:hover:not(.is-on) {
   color: var(--pe-color-gray-250);
@@ -128,7 +134,13 @@
   outline-offset: 2px;
 }
 .HomeLeaders__Viewport {
-  mask-image: linear-gradient(90deg, transparent 0, #000 20px, #000 calc(100% - 20px), transparent 100%);
+  mask-image: linear-gradient(
+    90deg,
+    transparent 0,
+    #000 20px,
+    #000 calc(100% - 20px),
+    transparent 100%
+  );
 }
 .HomeLeaders__Track {
   display: flex;
@@ -159,7 +171,9 @@
   scroll-snap-align: center;
   scroll-snap-stop: always;
   opacity: 0.55;
-  transition: opacity 0.2s ease, filter 0.2s ease;
+  transition:
+    opacity 0.2s ease,
+    filter 0.2s ease;
   filter: saturate(0.85);
 }
 .HomeLeaders__Slide.is-active {
@@ -262,7 +276,9 @@
   background: rgba(255, 255, 255, 0.03);
   border: 1px solid rgba(255, 255, 255, 0.06);
   overflow: hidden;
-  transition: border-color 0.12s ease, background 0.12s ease;
+  transition:
+    border-color 0.12s ease,
+    background 0.12s ease;
 }
 @media (hover: hover) and (pointer: fine) {
   .HomeLeaders__Rail:hover {
@@ -293,7 +309,7 @@
 }
 .HomeLeaders__Meter {
   grid-row: 2;
-  grid-column: 1/-1;
+  grid-column: 1 / -1;
   display: block;
   height: 3px;
   border-radius: 999px;

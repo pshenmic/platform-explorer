@@ -12,8 +12,12 @@ import { HOME_RICH_LIST_LIMIT } from './listLimits'
 const WINDOW_MS = 30 * 24 * 60 * 60 * 1000
 
 // tokens by transitions over the last 30 days
-export default function TrendingTokens ({ enabled = true }: { enabled?: boolean }) {
-  const [state, setState] = useState<{ loading: boolean, error: boolean, items: any[] }>({ loading: true, error: false, items: [] })
+export default function TrendingTokens({ enabled = true }: { enabled?: boolean }) {
+  const [state, setState] = useState<{ loading: boolean; error: boolean; items: any[] }>({
+    loading: true,
+    error: false,
+    items: []
+  })
 
   useEffect(() => {
     if (!enabled) {
@@ -57,10 +61,14 @@ export default function TrendingTokens ({ enabled = true }: { enabled?: boolean 
         const name = getTokenName(item.localizations)
         return (
           <span className={'DataList__Entity'}>
-            <RankMark place={placeOf(i)}/>
-            {name
-              ? <Alias avatarSource={item.tokenIdentifier}>{name}</Alias>
-              : <Identifier ellipsis={true} avatar={true} styles={['highlight-both']}>{item.tokenIdentifier}</Identifier>}
+            <RankMark place={placeOf(i)} />
+            {name ? (
+              <Alias avatarSource={item.tokenIdentifier}>{name}</Alias>
+            ) : (
+              <Identifier ellipsis={true} avatar={true} styles={['highlight-both']}>
+                {item.tokenIdentifier}
+              </Identifier>
+            )}
           </span>
         )
       }

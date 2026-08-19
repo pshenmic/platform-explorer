@@ -26,12 +26,12 @@ const DAY_MS = 24 * 60 * 60 * 1000
 // margins keep vol label and flow ticks from overlapping
 const M = { top: 22, right: 54, bottom: 24, left: 48 }
 
-function fmtDash (dash: any) {
+function fmtDash(dash: any) {
   if (!dash) return '0'
   return Math.abs(dash) >= 0.01 ? dash.toFixed(2) : Number(dash.toPrecision(2)).toString()
 }
 
-function fmtCompact (dash: any) {
+function fmtCompact(dash: any) {
   const n = Number(dash) || 0
   if (Math.abs(n) >= 1e6) return `${(n / 1e6).toFixed(2)}M`
   if (Math.abs(n) >= 1e3) return `${(n / 1e3).toFixed(1)}k`
@@ -39,7 +39,7 @@ function fmtCompact (dash: any) {
   return fmtDash(n)
 }
 
-function buildTvlSeries (buckets: any, balanceCredits: any) {
+function buildTvlSeries(buckets: any, balanceCredits: any) {
   if (!buckets.length || balanceCredits == null) return []
   const series = new Array(buckets.length)
   let tvl = Number(balanceCredits) || 0
@@ -47,12 +47,12 @@ function buildTvlSeries (buckets: any, balanceCredits: any) {
     const inAmt = Number(buckets[i].inAmt) || 0
     const outAmt = Number(buckets[i].outAmt) || 0
     series[i] = { ts: buckets[i].ts, tvl, inAmt, outAmt }
-    tvl -= (inAmt - outAmt)
+    tvl -= inAmt - outAmt
   }
   return series
 }
 
-async function fetchFlowBuckets (start: any, end: any, intervals: any) {
+async function fetchFlowBuckets(start: any, end: any, intervals: any) {
   const [shieldRes, unshieldRes] = await Promise.all([
     Api.getShieldHistory(start, end, intervals).catch(() => []),
     Api.getUnshieldHistory(start, end, intervals).catch(() => [])
@@ -65,7 +65,7 @@ async function fetchFlowBuckets (start: any, end: any, intervals: any) {
   }))
 }
 
-function trimLeadingEmpty (buckets: any) {
+function trimLeadingEmpty(buckets: any) {
   if (buckets.length < 3) return buckets
   let s = 0
   while (s < buckets.length - 2 && !buckets[s].inAmt && !buckets[s].outAmt) s++
@@ -73,7 +73,7 @@ function trimLeadingEmpty (buckets: any) {
 }
 
 /** Target bucket count for an active span — prefer ~daily up to 120 pts. */
-function intervalsForSpan (startIso: any, endIso: any) {
+function intervalsForSpan(startIso: any, endIso: any) {
   const start = new Date(startIso).getTime()
   const end = new Date(endIso).getTime()
   const days = Math.max(1, Math.ceil((end - start) / DAY_MS))
@@ -88,7 +88,7 @@ function intervalsForSpan (startIso: any, endIso: any) {
  * Load flows, then re-bucket from first activity so "All" does not
  * smear every deposit into ~3 giant bars over empty history.
  */
-async function loadDenseBuckets (rangeStart: any, rangeEnd: any) {
+async function loadDenseBuckets(rangeStart: any, rangeEnd: any) {
   const scoutIntervals = 48
   const raw = await fetchFlowBuckets(rangeStart, rangeEnd, scoutIntervals)
   const scout = trimLeadingEmpty(raw)
@@ -104,15 +104,22 @@ async function loadDenseBuckets (rangeStart: any, rangeEnd: any) {
   return dense.length ? dense : scout
 }
 
-export default function ShieldedPoolCard ({
+export default function ShieldedPoolCard({
   enabled = true,
   rate: _rate
 }: {
   enabled?: boolean
   rate?: unknown
 }) {
-  const [pool, setPool] = useState<{ loading: boolean, error: boolean, balance: number | null }>({ loading: true, error: false, balance: null })
-  const [series, setSeries] = useState<{ loading: boolean, points: any[] }>({ loading: true, points: [] })
+  const [pool, setPool] = useState<{ loading: boolean; error: boolean; balance: number | null }>({
+    loading: true,
+    error: false,
+    balance: null
+  })
+  const [series, setSeries] = useState<{ loading: boolean; points: any[] }>({
+    loading: true,
+    points: []
+  })
   const [period, setPeriod] = useState({ loading: true, in: 0, out: 0 })
   const [presetIdx, setPresetIdx] = useState(DEFAULT_PRESET)
   const [hoverI, setHoverI] = useState<number | null>(null)
@@ -198,7 +205,13 @@ export default function ShieldedPoolCard ({
       return
     }
     Api.getShieldedPool()
-      .then(res => setPool({ loading: false, error: false, balance: res?.poolBalance != null ? Number(res.poolBalance) : null }))
+      .then(res =>
+        setPool({
+          loading: false,
+          error: false,
+          balance: res?.poolBalance != null ? Number(res.poolBalance) : null
+        })
+      )
       .catch(() => setPool({ loading: false, error: true, balance: null }))
   }, [enabled])
 
@@ -281,67 +294,70 @@ export default function ShieldedPoolCard ({
       pts = [{ ...only, x: new Date(Number(only.x) - 3600000) }, only]
     }
 
-    const x = d3.scaleTime(d3.extent(pts, (p: any) => p.x), [M.left, width - M.right])
+    const x = d3.scaleTime(
+      d3.extent(pts, (p: any) => p.x),
+      [M.left, width - M.right]
+    )
 
     const tvlMin = d3.min(pts, (p: any) => p.tvl) ?? 0
     const tvlMax = d3.max(pts, (p: any) => p.tvl) ?? 1
     const tvlPad = (tvlMax - tvlMin) * 0.12 || Math.max(tvlMax * 0.08, 0.01)
-    const yTvl = d3.scaleLinear(
-      [Math.max(0, tvlMin - tvlPad * 0.3), tvlMax + tvlPad],
-      [plotH - M.bottom, M.top]
-    ).nice()
+    const yTvl = d3
+      .scaleLinear([Math.max(0, tvlMin - tvlPad * 0.3), tvlMax + tvlPad], [plotH - M.bottom, M.top])
+      .nice()
 
     const flowVisible = showDeposits || showWithdrawals
     const flowMax = flowVisible
-      ? (d3.max(pts, (p: any) => Math.max(
-          showDeposits ? p.inDash : 0,
-          showWithdrawals ? p.outDash : 0
-        )) || 0)
+      ? d3.max(pts, (p: any) =>
+          Math.max(showDeposits ? p.inDash : 0, showWithdrawals ? p.outDash : 0)
+        ) || 0
       : 0
-    const yFlow = d3.scaleLinear(
-      [0, flowMax > 0 ? flowMax * 1.2 : 1],
-      [plotH - M.bottom, M.top]
-    ).nice()
+    const yFlow = d3
+      .scaleLinear([0, flowMax > 0 ? flowMax * 1.2 : 1], [plotH - M.bottom, M.top])
+      .nice()
 
-    const line = d3.line()
+    const line = d3
+      .line()
       .x((p: any) => x(p.x))
       .y((p: any) => yTvl(p.tvl))
       .curve(d3.curveMonotoneX)
 
-    const area = d3.area()
+    const area = d3
+      .area()
       .x((p: any) => x(p.x))
       .y0(plotH - M.bottom)
       .y1((p: any) => yTvl(p.tvl))
       .curve(d3.curveMonotoneX)
 
     const spanMs = Number(pts[pts.length - 1].x) - Number(pts[0].x)
-    const tickFmt = d3.timeFormat(spanMs > 365 * DAY_MS ? '%b %Y' : spanMs > 3 * DAY_MS ? '%b %d' : '%H:%M')
-    const tipFmt = d3.timeFormat(spanMs > 365 * DAY_MS ? '%b %d, %Y' : spanMs > 3 * DAY_MS ? '%b %d' : '%b %d, %H:%M')
+    const tickFmt = d3.timeFormat(
+      spanMs > 365 * DAY_MS ? '%b %Y' : spanMs > 3 * DAY_MS ? '%b %d' : '%H:%M'
+    )
+    const tipFmt = d3.timeFormat(
+      spanMs > 365 * DAY_MS ? '%b %d, %Y' : spanMs > 3 * DAY_MS ? '%b %d' : '%b %d, %H:%M'
+    )
 
     const xTickN = Math.max(2, Math.min(6, Math.floor((width - M.left - M.right) / 72)))
     const xTicks = x.ticks(xTickN)
     const yTvlTicks = yTvl.ticks(4)
     // skip top flow tick so it does not collide with the vol caption
-    const yFlowTicks = flowVisible
-      ? yFlow.ticks(4).filter((v: any) => yFlow(v) > M.top + 14)
-      : []
+    const yFlowTicks = flowVisible ? yFlow.ticks(4).filter((v: any) => yFlow(v) > M.top + 14) : []
 
-    const step = pts.length > 1
-      ? Math.abs(x(pts[1].x) - x(pts[0].x))
-      : (width - M.left - M.right) / Math.max(pts.length, 1)
+    const step =
+      pts.length > 1
+        ? Math.abs(x(pts[1].x) - x(pts[0].x))
+        : (width - M.left - M.right) / Math.max(pts.length, 1)
     const both = showDeposits && showWithdrawals
     const groupW = Math.max(5, Math.min(20, step * 0.72))
-    const barW = both
-      ? Math.max(2, (groupW - 2) / 2)
-      : Math.max(2, groupW * 0.7)
+    const barW = both ? Math.max(2, (groupW - 2) / 2) : Math.max(2, groupW * 0.7)
     const baseline = plotH - M.bottom
 
     const bars = pts.map((p, i) => {
       const cx = x(p.x)
       const inH = showDeposits ? Math.max(0, baseline - yFlow(p.inDash)) : 0
       const outH = showWithdrawals ? Math.max(0, baseline - yFlow(p.outDash)) : 0
-      let inX
-      let outX
+      let inX = 0
+      let outX = 0
       if (both) {
         inX = cx - groupW / 2
         outX = cx - groupW / 2 + barW + 1
@@ -392,7 +408,10 @@ export default function ShieldedPoolCard ({
     let bestDist = Infinity
     chart.pts.forEach((p, i) => {
       const d = Math.abs(Number(p.x) - Number(t))
-      if (d < bestDist) { bestDist = d; best = i }
+      if (d < bestDist) {
+        bestDist = d
+        best = i
+      }
     })
     setHoverI(best)
   }
@@ -408,9 +427,14 @@ export default function ShieldedPoolCard ({
     return `${rangeNetDash >= 0 ? '+' : '−'}${fmtDash(Math.abs(rangeNetDash))}`
   })()
   const statUnit = isAll ? 'DASH locked' : 'DASH net'
-  const statTone = !isAll && !period.loading
-    ? (rangeNetDash > 0 ? ' is-up' : rangeNetDash < 0 ? ' is-down' : '')
-    : ''
+  const statTone =
+    !isAll && !period.loading
+      ? rangeNetDash > 0
+        ? ' is-up'
+        : rangeNetDash < 0
+          ? ' is-down'
+          : ''
+      : ''
   const flowsLoading = period.loading
 
   return (
@@ -429,7 +453,9 @@ export default function ShieldedPoolCard ({
             Pool size over time; bars show deposit and withdrawal volume.
             <Tooltip
               title={'How to read'}
-              content={'Line (left axis) is total DASH locked in the pool. Bars (right axis) are deposit and withdrawal volume in each time bucket. All starts from the first real pool activity so volumes are not merged into a few coarse columns.'}
+              content={
+                'Line (left axis) is total DASH locked in the pool. Bars (right axis) are deposit and withdrawal volume in each time bucket. All starts from the first real pool activity so volumes are not merged into a few coarse columns.'
+              }
               placement={'top'}
             >
               <span className={'ShieldedPool__LedeMore'}>How to read</span>
@@ -437,238 +463,265 @@ export default function ShieldedPoolCard ({
           </p>
         </div>
         <div className={'ShieldedPool__Controls'}>
-          <Presets options={PRESETS} value={presetIdx} onChange={setPresetIdx}/>
+          <Presets options={PRESETS} value={presetIdx} onChange={setPresetIdx} />
           <div className={'ShieldedPool__Stat'}>
             <div className={'ShieldedPool__StatMain'}>
-              {statCount == null
-                ? <Skeleton w={'7ch'} h={'1.6em'}/>
-                : <span className={`ShieldedPool__StatCount${statTone}`}>{statCount}</span>}
+              {statCount == null ? (
+                <Skeleton w={'7ch'} h={'1.6em'} />
+              ) : (
+                <span className={`ShieldedPool__StatCount${statTone}`}>{statCount}</span>
+              )}
               <span className={'ShieldedPool__StatUnit'}>{statUnit}</span>
             </div>
             <div className={'ShieldedPool__Flows'} aria-label={`Flows · ${windowLabel}`}>
-              {flowsLoading
-                ? <Skeleton w={'16ch'} h={'0.85em'}/>
-                : <>
-                    <button
-                      type={'button'}
-                      className={`ShieldedPool__Flow ShieldedPool__Flow--in${showDeposits ? ' is-on' : ' is-off'}`}
-                      aria-pressed={showDeposits}
-                      title={showDeposits ? 'Hide deposits on chart' : 'Show deposits on chart'}
-                      onClick={() => setShowDeposits(v => !v)}
-                    >
-                      <i className={'ShieldedPool__FlowSwatch'} aria-hidden={'true'}/>
-                      deposits <b>+{fmtDash(rangeInDash)}</b>
-                    </button>
-                    <button
-                      type={'button'}
-                      className={`ShieldedPool__Flow ShieldedPool__Flow--out${showWithdrawals ? ' is-on' : ' is-off'}`}
-                      aria-pressed={showWithdrawals}
-                      title={showWithdrawals ? 'Hide withdrawals on chart' : 'Show withdrawals on chart'}
-                      onClick={() => setShowWithdrawals(v => !v)}
-                    >
-                      <i className={'ShieldedPool__FlowSwatch'} aria-hidden={'true'}/>
-                      withdrawals <b>−{fmtDash(rangeOutDash)}</b>
-                    </button>
-                  </>}
+              {flowsLoading ? (
+                <Skeleton w={'16ch'} h={'0.85em'} />
+              ) : (
+                <>
+                  <button
+                    type={'button'}
+                    className={`ShieldedPool__Flow ShieldedPool__Flow--in${showDeposits ? ' is-on' : ' is-off'}`}
+                    aria-pressed={showDeposits}
+                    title={showDeposits ? 'Hide deposits on chart' : 'Show deposits on chart'}
+                    onClick={() => setShowDeposits(v => !v)}
+                  >
+                    <i className={'ShieldedPool__FlowSwatch'} aria-hidden={'true'} />
+                    deposits <b>+{fmtDash(rangeInDash)}</b>
+                  </button>
+                  <button
+                    type={'button'}
+                    className={`ShieldedPool__Flow ShieldedPool__Flow--out${showWithdrawals ? ' is-on' : ' is-off'}`}
+                    aria-pressed={showWithdrawals}
+                    title={
+                      showWithdrawals ? 'Hide withdrawals on chart' : 'Show withdrawals on chart'
+                    }
+                    onClick={() => setShowWithdrawals(v => !v)}
+                  >
+                    <i className={'ShieldedPool__FlowSwatch'} aria-hidden={'true'} />
+                    withdrawals <b>−{fmtDash(rangeOutDash)}</b>
+                  </button>
+                </>
+              )}
             </div>
           </div>
         </div>
       </header>
 
-      {pool.error
-        ? <div className={'ShieldedPool__Empty'}>No data</div>
-        : <div className={'ShieldedPool__Body'}>
-            <div
-              ref={wrapRef}
-              className={'ShieldedPool__Chart'}
-              onMouseMove={handleMove}
-              onMouseLeave={() => setHoverI(null)}
-            >
-              {(pool.loading || series.loading) && !chart
-                ? <Skeleton className={'ShieldedPool__ChartSkel'} radius={8}/>
-                : chart
-                  ? <>
-                      <svg
-                        className={`ShieldedPool__Svg${series.loading ? ' is-stale' : ''}`}
-                        viewBox={`0 0 ${width} ${plotH}`}
-                        width={width}
-                        height={plotH}
-                        role={'img'}
-                        aria-label={'Shielded pool TVL with deposit and withdrawal volume'}
+      {pool.error ? (
+        <div className={'ShieldedPool__Empty'}>No data</div>
+      ) : (
+        <div className={'ShieldedPool__Body'}>
+          <div
+            ref={wrapRef}
+            className={'ShieldedPool__Chart'}
+            onMouseMove={handleMove}
+            onMouseLeave={() => setHoverI(null)}
+          >
+            {(pool.loading || series.loading) && !chart ? (
+              <Skeleton className={'ShieldedPool__ChartSkel'} radius={8} />
+            ) : chart ? (
+              <>
+                <svg
+                  className={`ShieldedPool__Svg${series.loading ? ' is-stale' : ''}`}
+                  viewBox={`0 0 ${width} ${plotH}`}
+                  width={width}
+                  height={plotH}
+                  role={'img'}
+                  aria-label={'Shielded pool TVL with deposit and withdrawal volume'}
+                >
+                  <defs>
+                    <linearGradient id={`pool-tvl-fill-${gid}`} x1={'0'} y1={'0'} x2={'0'} y2={'1'}>
+                      <stop className={'ShieldedPool__AreaTop'} offset={'0%'} />
+                      <stop className={'ShieldedPool__AreaBot'} offset={'100%'} />
+                    </linearGradient>
+                    <linearGradient id={`pool-bar-in-${gid}`} x1={'0'} y1={'0'} x2={'0'} y2={'1'}>
+                      <stop className={'ShieldedPool__BarInTop'} offset={'0%'} />
+                      <stop className={'ShieldedPool__BarInBot'} offset={'100%'} />
+                    </linearGradient>
+                    <linearGradient id={`pool-bar-out-${gid}`} x1={'0'} y1={'0'} x2={'0'} y2={'1'}>
+                      <stop className={'ShieldedPool__BarOutTop'} offset={'0%'} />
+                      <stop className={'ShieldedPool__BarOutBot'} offset={'100%'} />
+                    </linearGradient>
+                    <filter
+                      id={`pool-glow-${gid}`}
+                      x={'-40%'}
+                      y={'-40%'}
+                      width={'180%'}
+                      height={'180%'}
+                    >
+                      <feGaussianBlur stdDeviation={'2'} result={'b'} />
+                      <feMerge>
+                        <feMergeNode in={'b'} />
+                        <feMergeNode in={'SourceGraphic'} />
+                      </feMerge>
+                    </filter>
+                  </defs>
+
+                  {chart.yTvlTicks.map((v: any, i: any) => (
+                    <g key={`yl-${i}`}>
+                      <line
+                        className={'ShieldedPool__Grid'}
+                        x1={M.left}
+                        x2={width - M.right}
+                        y1={chart.yTvl(v)}
+                        y2={chart.yTvl(v)}
+                      />
+                      <text
+                        className={'ShieldedPool__YTick ShieldedPool__YTick--left'}
+                        x={M.left - 6}
+                        y={chart.yTvl(v)}
+                        dy={'0.32em'}
+                        textAnchor={'end'}
                       >
-                        <defs>
-                          <linearGradient id={`pool-tvl-fill-${gid}`} x1={'0'} y1={'0'} x2={'0'} y2={'1'}>
-                            <stop className={'ShieldedPool__AreaTop'} offset={'0%'}/>
-                            <stop className={'ShieldedPool__AreaBot'} offset={'100%'}/>
-                          </linearGradient>
-                          <linearGradient id={`pool-bar-in-${gid}`} x1={'0'} y1={'0'} x2={'0'} y2={'1'}>
-                            <stop className={'ShieldedPool__BarInTop'} offset={'0%'}/>
-                            <stop className={'ShieldedPool__BarInBot'} offset={'100%'}/>
-                          </linearGradient>
-                          <linearGradient id={`pool-bar-out-${gid}`} x1={'0'} y1={'0'} x2={'0'} y2={'1'}>
-                            <stop className={'ShieldedPool__BarOutTop'} offset={'0%'}/>
-                            <stop className={'ShieldedPool__BarOutBot'} offset={'100%'}/>
-                          </linearGradient>
-                          <filter id={`pool-glow-${gid}`} x={'-40%'} y={'-40%'} width={'180%'} height={'180%'}>
-                            <feGaussianBlur stdDeviation={'2'} result={'b'}/>
-                            <feMerge>
-                              <feMergeNode in={'b'}/>
-                              <feMergeNode in={'SourceGraphic'}/>
-                            </feMerge>
-                          </filter>
-                        </defs>
+                        {fmtCompact(v)}
+                      </text>
+                    </g>
+                  ))}
 
-                        {chart.yTvlTicks.map((v: any, i: any) => (
-                          <g key={`yl-${i}`}>
-                            <line
-                              className={'ShieldedPool__Grid'}
-                              x1={M.left}
-                              x2={width - M.right}
-                              y1={chart.yTvl(v)}
-                              y2={chart.yTvl(v)}
+                  {chart.yFlowTicks.map((v: any, i: any) => (
+                    <text
+                      key={`yr-${i}`}
+                      className={'ShieldedPool__YTick ShieldedPool__YTick--right'}
+                      x={width - M.right + 8}
+                      y={chart.yFlow(v)}
+                      dy={'0.32em'}
+                      textAnchor={'start'}
+                    >
+                      {fmtCompact(v)}
+                    </text>
+                  ))}
+
+                  <text
+                    className={'ShieldedPool__AxisTitle ShieldedPool__AxisTitle--left'}
+                    x={M.left - 6}
+                    y={10}
+                    textAnchor={'end'}
+                  >
+                    TVL
+                  </text>
+                  {chart.flowVisible && (
+                    <text
+                      className={'ShieldedPool__AxisTitle ShieldedPool__AxisTitle--right'}
+                      x={width - 4}
+                      y={10}
+                      textAnchor={'end'}
+                    >
+                      vol
+                    </text>
+                  )}
+
+                  {chart.flowVisible &&
+                    chart.bars.map(b => {
+                      const dim = hoverI != null && hoverI !== b.i
+                      return (
+                        <g key={b.i} opacity={dim ? 0.22 : 1}>
+                          {showDeposits && b.inH > 0.5 && (
+                            <rect
+                              className={'ShieldedPool__Bar ShieldedPool__Bar--in'}
+                              fill={`url(#pool-bar-in-${gid})`}
+                              x={b.inX}
+                              y={b.inY}
+                              width={b.barW}
+                              height={b.inH}
+                              rx={1}
                             />
-                            <text
-                              className={'ShieldedPool__YTick ShieldedPool__YTick--left'}
-                              x={M.left - 6}
-                              y={chart.yTvl(v)}
-                              dy={'0.32em'}
-                              textAnchor={'end'}
-                            >
-                              {fmtCompact(v)}
-                            </text>
-                          </g>
-                        ))}
-
-                        {chart.yFlowTicks.map((v: any, i: any) => (
-                          <text
-                            key={`yr-${i}`}
-                            className={'ShieldedPool__YTick ShieldedPool__YTick--right'}
-                            x={width - M.right + 8}
-                            y={chart.yFlow(v)}
-                            dy={'0.32em'}
-                            textAnchor={'start'}
-                          >
-                            {fmtCompact(v)}
-                          </text>
-                        ))}
-
-                        <text
-                          className={'ShieldedPool__AxisTitle ShieldedPool__AxisTitle--left'}
-                          x={M.left - 6}
-                          y={10}
-                          textAnchor={'end'}
-                        >
-                          TVL
-                        </text>
-                        {chart.flowVisible &&
-                          <text
-                            className={'ShieldedPool__AxisTitle ShieldedPool__AxisTitle--right'}
-                            x={width - 4}
-                            y={10}
-                            textAnchor={'end'}
-                          >
-                            vol
-                          </text>}
-
-                        {chart.flowVisible && chart.bars.map(b => {
-                          const dim = hoverI != null && hoverI !== b.i
-                          return (
-                            <g key={b.i} opacity={dim ? 0.22 : 1}>
-                              {showDeposits && b.inH > 0.5 &&
-                                <rect
-                                  className={'ShieldedPool__Bar ShieldedPool__Bar--in'}
-                                  fill={`url(#pool-bar-in-${gid})`}
-                                  x={b.inX}
-                                  y={b.inY}
-                                  width={b.barW}
-                                  height={b.inH}
-                                  rx={1}
-                                />}
-                              {showWithdrawals && b.outH > 0.5 &&
-                                <rect
-                                  className={'ShieldedPool__Bar ShieldedPool__Bar--out'}
-                                  fill={`url(#pool-bar-out-${gid})`}
-                                  x={b.outX}
-                                  y={b.outY}
-                                  width={b.barW}
-                                  height={b.outH}
-                                  rx={1}
-                                />}
-                            </g>
-                          )
-                        })}
-
-                        <path
-                          className={'ShieldedPool__Area'}
-                          d={chart.area}
-                          fill={`url(#pool-tvl-fill-${gid})`}
-                        />
-                        <path
-                          className={'ShieldedPool__Line'}
-                          d={chart.line}
-                          filter={`url(#pool-glow-${gid})`}
-                        />
-
-                        {hovered &&
-                          <>
-                            <line
-                              className={'ShieldedPool__Cross'}
-                              x1={chart.x(hovered.x)}
-                              x2={chart.x(hovered.x)}
-                              y1={M.top}
-                              y2={chart.baseline}
+                          )}
+                          {showWithdrawals && b.outH > 0.5 && (
+                            <rect
+                              className={'ShieldedPool__Bar ShieldedPool__Bar--out'}
+                              fill={`url(#pool-bar-out-${gid})`}
+                              x={b.outX}
+                              y={b.outY}
+                              width={b.barW}
+                              height={b.outH}
+                              rx={1}
                             />
-                            <circle
-                              className={'ShieldedPool__DotRing'}
-                              cx={chart.x(hovered.x)}
-                              cy={chart.yTvl(hovered.tvl)}
-                              r={8}
-                            />
-                            <circle
-                              className={'ShieldedPool__Dot'}
-                              cx={chart.x(hovered.x)}
-                              cy={chart.yTvl(hovered.tvl)}
-                              r={4}
-                            />
-                          </>}
+                          )}
+                        </g>
+                      )
+                    })}
 
-                        {chart.xTicks.map((t: any, i: any) => (
-                          <text
-                            key={`x-${i}`}
-                            className={'ShieldedPool__Tick'}
-                            style={{
-                              textAnchor: i === 0
-                                ? 'start'
-                                : i === chart.xTicks.length - 1
-                                  ? 'end'
-                                  : 'middle'
-                            }}
-                            x={chart.x(t)}
-                            y={plotH - 4}
-                          >
-                            {chart.tickFmt(t)}
-                          </text>
-                        ))}
-                      </svg>
+                  <path
+                    className={'ShieldedPool__Area'}
+                    d={chart.area}
+                    fill={`url(#pool-tvl-fill-${gid})`}
+                  />
+                  <path
+                    className={'ShieldedPool__Line'}
+                    d={chart.line}
+                    filter={`url(#pool-glow-${gid})`}
+                  />
 
-                      {hovered &&
-                        <div
-                          className={'ShieldedPool__Tip'}
-                          style={{
-                            left: `${Math.min(Math.max((chart.x(hovered.x) / width) * 100, 14), 86)}%`
-                          }}
-                        >
-                          <span className={'ShieldedPool__TipDate'}>{chart.tipFmt(hovered.x)}</span>
-                          <span className={'ShieldedPool__TipRow is-tvl'}>TVL {fmtDash(hovered.tvl)}</span>
-                          {showDeposits &&
-                            <span className={'ShieldedPool__TipRow is-in'}>In +{fmtDash(hovered.inDash)}</span>}
-                          {showWithdrawals &&
-                            <span className={'ShieldedPool__TipRow is-out'}>Out −{fmtDash(hovered.outDash)}</span>}
-                        </div>}
+                  {hovered && (
+                    <>
+                      <line
+                        className={'ShieldedPool__Cross'}
+                        x1={chart.x(hovered.x)}
+                        x2={chart.x(hovered.x)}
+                        y1={M.top}
+                        y2={chart.baseline}
+                      />
+                      <circle
+                        className={'ShieldedPool__DotRing'}
+                        cx={chart.x(hovered.x)}
+                        cy={chart.yTvl(hovered.tvl)}
+                        r={8}
+                      />
+                      <circle
+                        className={'ShieldedPool__Dot'}
+                        cx={chart.x(hovered.x)}
+                        cy={chart.yTvl(hovered.tvl)}
+                        r={4}
+                      />
                     </>
-                  : <div className={'ShieldedPool__EmptyChart'}>Not enough history</div>}
-            </div>
-          </div>}
+                  )}
+
+                  {chart.xTicks.map((t: any, i: any) => (
+                    <text
+                      key={`x-${i}`}
+                      className={'ShieldedPool__Tick'}
+                      style={{
+                        textAnchor:
+                          i === 0 ? 'start' : i === chart.xTicks.length - 1 ? 'end' : 'middle'
+                      }}
+                      x={chart.x(t)}
+                      y={plotH - 4}
+                    >
+                      {chart.tickFmt(t)}
+                    </text>
+                  ))}
+                </svg>
+
+                {hovered && (
+                  <div
+                    className={'ShieldedPool__Tip'}
+                    style={{
+                      left: `${Math.min(Math.max((chart.x(hovered.x) / width) * 100, 14), 86)}%`
+                    }}
+                  >
+                    <span className={'ShieldedPool__TipDate'}>{chart.tipFmt(hovered.x)}</span>
+                    <span className={'ShieldedPool__TipRow is-tvl'}>
+                      TVL {fmtDash(hovered.tvl)}
+                    </span>
+                    {showDeposits && (
+                      <span className={'ShieldedPool__TipRow is-in'}>
+                        In +{fmtDash(hovered.inDash)}
+                      </span>
+                    )}
+                    {showWithdrawals && (
+                      <span className={'ShieldedPool__TipRow is-out'}>
+                        Out −{fmtDash(hovered.outDash)}
+                      </span>
+                    )}
+                  </div>
+                )}
+              </>
+            ) : (
+              <div className={'ShieldedPool__EmptyChart'}>Not enough history</div>
+            )}
+          </div>
+        </div>
+      )}
     </Box>
   )
 }

@@ -11,27 +11,35 @@ import './MasternodesDonut.css'
 const MAX_CELLS = 324
 
 const regionNames = (() => {
-  try { return new Intl.DisplayNames(['en'], { type: 'region' }) } catch { return null }
+  try {
+    return new Intl.DisplayNames(['en'], { type: 'region' })
+  } catch {
+    return null
+  }
 })()
 
-function countryName (cc: any) {
-  try { return regionNames?.of(cc) || cc } catch { return cc }
+function countryName(cc: any) {
+  try {
+    return regionNames?.of(cc) || cc
+  } catch {
+    return cc
+  }
 }
 
-function shortHash (h: any, head = 4, tail = 4) {
+function shortHash(h: any, head = 4, tail = 4) {
   if (!h || typeof h !== 'string') return '—'
   if (h.length <= head + tail + 1) return h
   return `${h.slice(0, head)}…${h.slice(-tail)}`
 }
 
-function parseLlmqType (type: any) {
+function parseLlmqType(type: any) {
   if (!type || typeof type !== 'string') return null
   const m = type.match(/llmq_(\d+)_(\d+)/i)
   if (!m) return { raw: type, size: null, threshold: null }
   return { raw: type, size: Number(m[1]), threshold: Number(m[2]) }
 }
 
-function memberKey (proTx: any) {
+function memberKey(proTx: any) {
   return (proTx || '').toLowerCase()
 }
 
@@ -63,7 +71,7 @@ const STATS = [
   }
 ]
 
-function buildProportionalCells (active: any, queued: any, banned: any, total: any) {
+function buildProportionalCells(active: any, queued: any, banned: any, total: any) {
   const n = Math.min(Math.max(0, total | 0), MAX_CELLS)
   if (n <= 0) return []
 
@@ -109,26 +117,24 @@ function buildProportionalCells (active: any, queued: any, banned: any, total: a
   return cells
 }
 
-function matrixCols (count: any) {
+function matrixCols(count: any) {
   if (count <= 0) return 1
   if (count <= 36) return Math.max(6, Math.ceil(Math.sqrt(count)))
   if (count <= 100) return Math.max(8, Math.ceil(Math.sqrt(count)))
   return Math.max(12, Math.ceil(Math.sqrt(count)))
 }
 
-function isPoSeBannedValidator (v: any) {
+function isPoSeBannedValidator(v: any) {
   const ban = v?.proTxInfo?.state?.PoSeBanHeight
   return typeof ban === 'number' && ban >= 0
 }
 
-function buildPoolCells ({ list, currentSet, nextSet, memberMeta, bannedSet }: any) {
+function buildPoolCells({ list, currentSet, nextSet, memberMeta, bannedSet }: any) {
   if (!Array.isArray(list) || list.length === 0) return []
 
   const cells = list.map((v, index) => {
     const key = memberKey(v.proTxHash)
-    const banned = bannedSet?.size
-      ? bannedSet.has(key)
-      : isPoSeBannedValidator(v)
+    const banned = bannedSet?.size ? bannedSet.has(key) : isPoSeBannedValidator(v)
     const inCurrent = currentSet?.has(key)
     const inNext = nextSet?.has(key)
     const meta = memberMeta?.get(key)
@@ -162,41 +168,50 @@ function buildPoolCells ({ list, currentSet, nextSet, memberMeta, bannedSet }: a
     }
   })
 
-  const rank: Record<string, number> = { active: 0, next: 1, invalid: 2, inactive: 3, banned: 4, idle: 5 }
+  const rank: Record<string, number> = {
+    active: 0,
+    next: 1,
+    invalid: 2,
+    inactive: 3,
+    banned: 4,
+    idle: 5
+  }
   cells.sort((a, b) => (rank[a.type] ?? 9) - (rank[b.type] ?? 9))
   return cells
 }
 
-function TipRow ({ label, href, children, mono }: any) {
+function TipRow({ label, href, children, mono }: any) {
   const value = <b className={mono ? 'MasternodesDonut__TipMono' : undefined}>{children}</b>
   return (
     <div className={'MasternodesDonut__TipRow'}>
       <span>{label}</span>
-      {href
-        ? (
-          <Link
-            href={href}
-            className={'MasternodesDonut__TipLink'}
-            onClick={e => e.stopPropagation()}
-          >
-            {value}
-          </Link>
-          )
-        : value}
+      {href ? (
+        <Link
+          href={href}
+          className={'MasternodesDonut__TipLink'}
+          onClick={e => e.stopPropagation()}
+        >
+          {value}
+        </Link>
+      ) : (
+        value
+      )}
     </div>
   )
 }
 
-function formatQuorumIds (ids: any) {
+function formatQuorumIds(ids: any) {
   if (!ids?.length) return null
-  return ids.map((n: any) => {
-    if (n === 0) return 'Now'
-    if (n === 1) return 'Next'
-    return `+${n}`
-  }).join(' · ')
+  return ids
+    .map((n: any) => {
+      if (n === 0) return 'Now'
+      if (n === 1) return 'Next'
+      return `+${n}`
+    })
+    .join(' · ')
 }
 
-function NodeTooltipBody ({ cell }: any) {
+function NodeTooltipBody({ cell }: any) {
   const v = cell.validator
   const quorumLabel = formatQuorumIds(cell.quorumIndexes)
   const status = (() => {
@@ -221,7 +236,7 @@ function NodeTooltipBody ({ cell }: any) {
   return (
     <div className={'MasternodesDonut__Tip'}>
       <div className={'MasternodesDonut__TipHead'}>
-        {cc &&
+        {cc && (
           <Image
             className={'MasternodesDonut__TipFlag'}
             src={`/flags/circle/${cc.toLowerCase()}.svg`}
@@ -229,42 +244,56 @@ function NodeTooltipBody ({ cell }: any) {
             width={22}
             height={22}
             unoptimized
-            onError={e => { e.currentTarget.style.display = 'none' }}
-          />}
+            onError={e => {
+              e.currentTarget.style.display = 'none'
+            }}
+          />
+        )}
         <div className={'MasternodesDonut__TipHeadText'}>
           <div className={'MasternodesDonut__TipStatus'}>{status}</div>
-          {ccName &&
-            <div className={'MasternodesDonut__TipCountry'}>{ccName} · {cc}</div>}
+          {ccName && (
+            <div className={'MasternodesDonut__TipCountry'}>
+              {ccName} · {cc}
+            </div>
+          )}
         </div>
       </div>
       <TipRow label={'proTx'} href={validatorHref}>
         {shortHash(cell.proTxHash, 6, 6)}
       </TipRow>
-      {quorumLabel &&
-        <TipRow label={'Signs'}>
-          {quorumLabel}
-        </TipRow>}
-      {cell.service &&
+      {quorumLabel && <TipRow label={'Signs'}>{quorumLabel}</TipRow>}
+      {cell.service && (
         <TipRow label={'Host'} mono>
           {cell.service}
-        </TipRow>}
-      {typeof proposed === 'number' &&
+        </TipRow>
+      )}
+      {typeof proposed === 'number' && (
         <TipRow label={'Proposed'} href={validatorHref}>
           {proposed.toLocaleString('en-US')} blocks
-        </TipRow>}
-      {identityHref &&
+        </TipRow>
+      )}
+      {identityHref && (
         <TipRow label={'Identity'} href={identityHref}>
           {shortHash(v.identity, 4, 4)}
-        </TipRow>}
-      {!cc &&
-        <TipRow label={'Country'}>
-          Unknown
-        </TipRow>}
+        </TipRow>
+      )}
+      {!cc && <TipRow label={'Country'}>Unknown</TipRow>}
     </div>
   )
 }
 
-export default function MasternodesDonut ({ validators, validatorsActive, validatorsBanned, validatorsInactive, validatorsList, bannedValidatorsList, currentQuorum, currentQuorumLoading, currentQuorumError, quorums }: any) {
+export default function MasternodesDonut({
+  validators,
+  validatorsActive,
+  validatorsBanned,
+  validatorsInactive,
+  validatorsList,
+  bannedValidatorsList,
+  currentQuorum,
+  currentQuorumLoading,
+  currentQuorumError,
+  quorums
+}: any) {
   const [pin, setPin] = useState<string | null>(null)
   const [focusKey, setFocusKey] = useState<string | null>(null)
 
@@ -286,7 +315,8 @@ export default function MasternodesDonut ({ validators, validatorsActive, valida
   const currentMembers = Array.isArray(currentQuorum?.members) ? currentQuorum.members : null
   const hasRoster = Boolean(currentMembers && currentMembers.length > 0)
 
-  const currentSet = useMemo(() => { if (!currentMembers) return null
+  const currentSet = useMemo(() => {
+    if (!currentMembers) return null
     return new Set(currentMembers.map((m: any) => memberKey(m.proTxHash)))
   }, [currentMembers])
 
@@ -296,8 +326,8 @@ export default function MasternodesDonut ({ validators, validatorsActive, valida
       .sort((a, b) => (a.blockHeight ?? 0) - (b.blockHeight ?? 0))
     if (!list.length) return []
     const liveHash = currentQuorum?.quorumHash
-    const liveI = list.findIndex(q =>
-      Boolean(q.isCurrent) || (liveHash && q.quorumHash === liveHash)
+    const liveI = list.findIndex(
+      q => Boolean(q.isCurrent) || (liveHash && q.quorumHash === liveHash)
     )
     const start = liveI >= 0 ? liveI : 0
     return list.map((_, i) => {
@@ -371,32 +401,48 @@ export default function MasternodesDonut ({ validators, validatorsActive, valida
   const cells = useMemo((): any[] => {
     const raw = hasNodeList
       ? buildPoolCells({
-        list,
-        currentSet,
-        nextSet: rosterIndex.membersOf.get(sortedQuorums.find(q => q.offset === 1)?.quorumHash) || null,
-        memberMeta,
-        bannedSet
-      })
-      : (hasTotal ? buildProportionalCells(activeN, queuedN, bannedN, total) : [])
+          list,
+          currentSet,
+          nextSet:
+            rosterIndex.membersOf.get(sortedQuorums.find(q => q.offset === 1)?.quorumHash) || null,
+          memberMeta,
+          bannedSet
+        })
+      : hasTotal
+        ? buildProportionalCells(activeN, queuedN, bannedN, total)
+        : []
     return (raw as any[]).map((cell: any) => {
       if (cell.kind !== 'node' || !cell.proTxHash) return cell
       const qs = rosterIndex.byNode.get(memberKey(cell.proTxHash)) || []
-      return { ...cell, quorumHashes: qs.map((q: any) => q.hash), quorumIndexes: qs.map((q: any) => q.index).filter((n: any) => typeof n === 'number') }
+      return {
+        ...cell,
+        quorumHashes: qs.map((q: any) => q.hash),
+        quorumIndexes: qs.map((q: any) => q.index).filter((n: any) => typeof n === 'number')
+      }
     })
-  }, [hasNodeList, list, currentSet, memberMeta, bannedSet, hasTotal, activeN, queuedN, bannedN, total, rosterIndex, sortedQuorums])
+  }, [
+    hasNodeList,
+    list,
+    currentSet,
+    memberMeta,
+    bannedSet,
+    hasTotal,
+    activeN,
+    queuedN,
+    bannedN,
+    total,
+    rosterIndex,
+    sortedQuorums
+  ])
 
-  const nextN = useMemo(
-    () => cells.filter(c => c.type === 'next').length,
-    [cells]
-  )
+  const nextN = useMemo(() => cells.filter(c => c.type === 'next').length, [cells])
 
   const counts: Record<string, number | null> = {
     total: hasTotal ? total : null,
     active: typeof active === 'number' ? active : null,
     next: hasNodeList ? nextN : null,
-    inactive: typeof inactive === 'number'
-      ? Math.max(0, inactive - (hasNodeList ? nextN : 0))
-      : null,
+    inactive:
+      typeof inactive === 'number' ? Math.max(0, inactive - (hasNodeList ? nextN : 0)) : null,
     banned: typeof banned === 'number' ? banned : null
   }
 
@@ -447,7 +493,7 @@ export default function MasternodesDonut ({ validators, validatorsActive, valida
   const pinnedQuorumHash = typeof pin === 'string' && pin.startsWith('q:') ? pin.slice(2) : null
   const pinnedQuorumSet = pinnedQuorumHash ? rosterIndex.membersOf.get(pinnedQuorumHash) : null
   const pinnedQuorumMeta = pinnedQuorumHash
-    ? (sortedQuorums.find(q => q.quorumHash === pinnedQuorumHash) || null)
+    ? sortedQuorums.find(q => q.quorumHash === pinnedQuorumHash) || null
     : null
 
   const matrixAria = hasNodeList
@@ -466,7 +512,7 @@ export default function MasternodesDonut ({ validators, validatorsActive, valida
       as={'section'}
       aria-label={'Quorum'}
     >
-      <div className={'MasternodesDonut__Glow'} aria-hidden={'true'}/>
+      <div className={'MasternodesDonut__Glow'} aria-hidden={'true'} />
 
       <header className={'MasternodesDonut__Head'}>
         <div className={'MasternodesDonut__HeadText'}>
@@ -479,45 +525,53 @@ export default function MasternodesDonut ({ validators, validatorsActive, valida
               content={
                 <div className={'MasternodesDonut__HelpTip'}>
                   <p>
-                    Mainnet keeps 24 formed Platform quorums (LLMQ 100/67). Only one signs
-                    the current block.
+                    Mainnet keeps 24 formed Platform quorums (LLMQ 100/67). Only one signs the
+                    current block.
                   </p>
                   <p className={'MasternodesDonut__HelpFoot'}>
-                    Click a square to see that node&apos;s soonest turn. Click again to
-                    cycle its other quorums.
+                    Click a square to see that node&apos;s soonest turn. Click again to cycle its
+                    other quorums.
                   </p>
                 </div>
               }
             >
               <span className={'MasternodesDonut__LedeMore'}>rotating set</span>
-            </Tooltip>
-            {' '}of 100 evonodes signs each block.
+            </Tooltip>{' '}
+            of 100 evonodes signs each block.
           </p>
         </div>
 
-        {sortedQuorums.length > 0 &&
+        {sortedQuorums.length > 0 && (
           <div className={'MasternodesDonut__QBar'} aria-label={'Platform quorums'}>
             <p className={'MasternodesDonut__QCaption'}>
-              {pinnedQuorumMeta
-                ? <>
-                    <b>{turnLabel(pinnedQuorumMeta.offset, pinnedQuorumMeta.isLive)}</b>
+              {pinnedQuorumMeta ? (
+                <>
+                  <b>{turnLabel(pinnedQuorumMeta.offset, pinnedQuorumMeta.isLive)}</b>
+                  <span>
+                    {pinnedQuorumMeta.members?.length || pinnedQuorumSet?.size || 0} signers
+                  </span>
+                  {pinnedQuorumMeta.isLive ? (
+                    <em>signing now</em>
+                  ) : (
                     <span>
-                      {(pinnedQuorumMeta.members?.length || pinnedQuorumSet?.size || 0)} signers
+                      {pinnedQuorumMeta.offset === 1
+                        ? 'signs next'
+                        : `in ${pinnedQuorumMeta.offset} rotations`}
                     </span>
-                    {pinnedQuorumMeta.isLive
-                      ? <em>signing now</em>
-                      : <span>
-                          {pinnedQuorumMeta.offset === 1
-                            ? 'signs next'
-                            : `in ${pinnedQuorumMeta.offset} rotations`}
-                        </span>}
-                  </>
-                : <>
-                    <b>When does it sign?</b>
-                    <span>pick a node or a turn</span>
-                  </>}
+                  )}
+                </>
+              ) : (
+                <>
+                  <b>When does it sign?</b>
+                  <span>pick a node or a turn</span>
+                </>
+              )}
             </p>
-            <div className={'MasternodesDonut__QPick'} role={'group'} aria-label={'Signing rotation'}>
+            <div
+              className={'MasternodesDonut__QPick'}
+              role={'group'}
+              aria-label={'Signing rotation'}
+            >
               {sortedQuorums.map(q => {
                 const selected = q.quorumHash === pinnedQuorumHash
                 const label = turnLabel(q.offset, q.isLive)
@@ -525,9 +579,7 @@ export default function MasternodesDonut ({ validators, validatorsActive, valida
                   <button
                     key={q.quorumHash}
                     type={'button'}
-                    className={
-                      `MasternodesDonut__QBtn${q.offset < 2 ? ' is-word' : ''}${selected ? ' is-on' : ''}${q.isLive ? ' is-live' : ''}${q.offset === 1 ? ' is-next' : ''}`
-                    }
+                    className={`MasternodesDonut__QBtn${q.offset < 2 ? ' is-word' : ''}${selected ? ' is-on' : ''}${q.isLive ? ' is-live' : ''}${q.offset === 1 ? ' is-next' : ''}`}
                     aria-pressed={selected}
                     title={
                       (q.isLive
@@ -546,31 +598,39 @@ export default function MasternodesDonut ({ validators, validatorsActive, valida
                 )
               })}
             </div>
-          </div>}
+          </div>
+        )}
       </header>
 
-      {currentQuorumError && !hasRoster && !currentQuorumLoading &&
+      {currentQuorumError && !hasRoster && !currentQuorumLoading && (
         <p className={'MasternodesDonut__FallbackNote'}>
           Detailed signing roster unavailable. Pool uses explorer active/queued flags only.
-        </p>}
+        </p>
+      )}
 
       <div className={'MasternodesDonut__Body'}>
-        {showSkeleton &&
+        {showSkeleton && (
           <div className={'MasternodesDonut__Stage'}>
-            <Skeleton className={'MasternodesDonut__MatrixSkel'} w={'100%'} h={'11rem'} radius={12}/>
+            <Skeleton
+              className={'MasternodesDonut__MatrixSkel'}
+              w={'100%'}
+              h={'11rem'}
+              radius={12}
+            />
             <div className={'MasternodesDonut__Rails'}>
               {Array.from({ length: 4 }).map((_, i) => (
-                <Skeleton key={i} w={'100%'} h={'4.25rem'} radius={12}/>
+                <Skeleton key={i} w={'100%'} h={'4.25rem'} radius={12} />
               ))}
             </div>
-          </div>}
+          </div>
+        )}
 
         {showEmpty && <div className={'MasternodesDonut__Empty'}>No data</div>}
 
-        {showContent &&
+        {showContent && (
           <div
             className={`MasternodesDonut__Stage${pin ? ' is-pinned' : ''}${pinnedQuorumHash ? ' is-pinned-quorum' : ''}`}
-            data-pin={pinnedQuorumHash ? 'quorum' : (pin || undefined)}
+            data-pin={pinnedQuorumHash ? 'quorum' : pin || undefined}
           >
             <div className={'MasternodesDonut__Col'}>
               <div className={'MasternodesDonut__MatrixWrap'}>
@@ -583,7 +643,7 @@ export default function MasternodesDonut ({ validators, validatorsActive, valida
                   role={'img'}
                   aria-label={matrixAria}
                 >
-                  {cells.map((cell) => {
+                  {cells.map(cell => {
                     if (cell.kind === 'abstract') {
                       const type = cell.type
                       return (
@@ -604,21 +664,23 @@ export default function MasternodesDonut ({ validators, validatorsActive, valida
                       )
                     }
 
-                    const dataType = cell.type === 'invalid'
-                      ? 'active'
-                      : cell.type === 'idle'
-                        ? 'total'
-                        : cell.type
+                    const dataType =
+                      cell.type === 'invalid'
+                        ? 'active'
+                        : cell.type === 'idle'
+                          ? 'total'
+                          : cell.type
 
                     const cc = cell.validator?.geoIpInfo?.countryCode
                     const ccName = cc ? countryName(cc) : null
-                    const roleHint = cell.role === 'current'
-                      ? 'signing now'
-                      : cell.role === 'next'
-                        ? 'signs next'
-                        : (cell.quorumIndexes?.length
+                    const roleHint =
+                      cell.role === 'current'
+                        ? 'signing now'
+                        : cell.role === 'next'
+                          ? 'signs next'
+                          : cell.quorumIndexes?.length
                             ? `signs ${formatQuorumIds(cell.quorumIndexes)}`
-                            : cell.role)
+                            : cell.role
 
                     const nodeKey = memberKey(cell.proTxHash)
                     const inPinned = Boolean(pinnedQuorumSet && pinnedQuorumSet.has(nodeKey))
@@ -647,7 +709,7 @@ export default function MasternodesDonut ({ validators, validatorsActive, valida
                       <Tooltip
                         key={cell.proTxHash || `n-${cell.index}`}
                         placement={'top'}
-                        content={<NodeTooltipBody cell={cell}/>}
+                        content={<NodeTooltipBody cell={cell} />}
                       >
                         {tile}
                       </Tooltip>
@@ -655,13 +717,23 @@ export default function MasternodesDonut ({ validators, validatorsActive, valida
                   })}
                 </div>
               </div>
-              {capped && hasNodeList &&
-                <p className={'MasternodesDonut__FallbackNote MasternodesDonut__FallbackNote--inline'}>
-                  Loaded {cells.length.toLocaleString('en-US')} of {total.toLocaleString('en-US')} validators
-                </p>}
+              {capped && hasNodeList && (
+                <p
+                  className={
+                    'MasternodesDonut__FallbackNote MasternodesDonut__FallbackNote--inline'
+                  }
+                >
+                  Loaded {cells.length.toLocaleString('en-US')} of {total.toLocaleString('en-US')}{' '}
+                  validators
+                </p>
+              )}
             </div>
 
-            <div className={'MasternodesDonut__Rails'} role={'group'} aria-label={'Validator groups'}>
+            <div
+              className={'MasternodesDonut__Rails'}
+              role={'group'}
+              aria-label={'Validator groups'}
+            >
               {STATS.map(s => {
                 const n = counts[s.key]
                 const ready = typeof n === 'number'
@@ -678,7 +750,7 @@ export default function MasternodesDonut ({ validators, validatorsActive, valida
                     title={s.hint}
                   >
                     <span className={'MasternodesDonut__RailId'}>
-                      <i className={`MasternodesDonut__Dot MasternodesDonut__Dot--${s.key}`}/>
+                      <i className={`MasternodesDonut__Dot MasternodesDonut__Dot--${s.key}`} />
                       {s.label}
                     </span>
                     <span className={'MasternodesDonut__RailHint'}>{s.hint}</span>
@@ -690,7 +762,8 @@ export default function MasternodesDonut ({ validators, validatorsActive, valida
                 )
               })}
             </div>
-          </div>}
+          </div>
+        )}
       </div>
     </Box>
   )
