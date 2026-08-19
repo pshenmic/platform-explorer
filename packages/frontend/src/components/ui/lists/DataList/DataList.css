@@ -108,7 +108,8 @@
 .DataList__Row:last-child {
   margin-bottom: 0;
 }
-.DataList__Row__Column--Credits, .DataList__Row__Column--Number {
+.DataList__Row__Column--Credits,
+.DataList__Row__Column--Number {
   font-size: 0.75rem;
   font-weight: 700;
 }
@@ -123,12 +124,16 @@
   flex-shrink: 0;
   margin-right: 12px;
 }
-.DataList__Row--Timestamp, .DataList__Row__Column--Timestamp {
+.DataList__Row--Timestamp,
+.DataList__Row__Column--Timestamp {
   font-family: var(--pe-font-mono);
   white-space: nowrap;
   color: #fff;
 }
-.DataList__Row--Timestamp, .DataList__Row--Timestamp .DateBlock__Date, .DataList__Row__Column--Timestamp, .DataList__Row__Column--Timestamp .DateBlock__Date {
+.DataList__Row--Timestamp,
+.DataList__Row--Timestamp .DateBlock__Date,
+.DataList__Row__Column--Timestamp,
+.DataList__Row__Column--Timestamp .DateBlock__Date {
   font-size: 0.75rem;
 }
 .DataList__Row {
@@ -161,11 +166,15 @@
   bottom: 6px;
   width: 3px;
   border-radius: 3px;
-  background: #FFD205;
+  background: #ffd205;
   opacity: 0.75;
 }
 .DataList__Row--Rank2 {
-  background-image: linear-gradient(90deg, rgba(198, 202, 205, 0.12) 0%, rgba(198, 202, 205, 0) 60%);
+  background-image: linear-gradient(
+    90deg,
+    rgba(198, 202, 205, 0.12) 0%,
+    rgba(198, 202, 205, 0) 60%
+  );
 }
 .DataList__Row--Rank2::before {
   content: "";
@@ -192,10 +201,16 @@
   background: #f49a58;
   opacity: 0.75;
 }
-.DataList__Row--Rank4, .DataList__Row--Rank5 {
-  background-image: linear-gradient(90deg, rgba(139, 147, 160, 0.12) 0%, rgba(139, 147, 160, 0) 60%);
+.DataList__Row--Rank4,
+.DataList__Row--Rank5 {
+  background-image: linear-gradient(
+    90deg,
+    rgba(139, 147, 160, 0.12) 0%,
+    rgba(139, 147, 160, 0) 60%
+  );
 }
-.DataList__Row--Rank4::before, .DataList__Row--Rank5::before {
+.DataList__Row--Rank4::before,
+.DataList__Row--Rank5::before {
   content: "";
   position: absolute;
   left: 2px;
@@ -285,7 +300,9 @@
   text-align: center;
   text-decoration: none;
   color: var(--pe-color-white-50);
-  transition: background-color 0.15s ease, color 0.15s ease;
+  transition:
+    background-color 0.15s ease,
+    color 0.15s ease;
 }
 @media (hover: hover) and (pointer: fine) {
   .DataList__ShowMore:hover {
@@ -297,12 +314,15 @@
   transform: translateY(1px);
 }
 .DataList__Row.is-new {
-  animation: DataListRowIn 0.4s ease-out backwards, DataListRowGlow 1.4s ease-out backwards;
+  animation:
+    DataListRowIn 0.4s ease-out backwards,
+    DataListRowGlow 1.4s ease-out backwards;
   animation-delay: var(--stagger, 0ms);
 }
 
 @keyframes DataListPulse {
-  0%, 100% {
+  0%,
+  100% {
     opacity: 0.5;
   }
   50% {
