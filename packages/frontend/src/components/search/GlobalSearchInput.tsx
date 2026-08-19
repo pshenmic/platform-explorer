@@ -16,7 +16,7 @@ function filterResultByCategories(
   categories: SearchCategory[]
 ): SearchResultsData {
   return categories.reduce<SearchResultsData>((filtered, key) => {
-    if (Object.prototype.hasOwnProperty.call(obj, key)) {
+    if (Object.hasOwn(obj, key)) {
       filtered[key] = obj[key]
     }
     return filtered
