@@ -1,4 +1,5 @@
-import { Button, Popover, PopoverTrigger, PopoverContent, PopoverBody, useOutsideClick } from '@chakra-ui/react'
+import { useOutsideClick } from '../../../hooks/useOutsideClick'
+import { Button, Popover, PopoverTrigger, PopoverContent, PopoverBody } from '@chakra-ui/react'
 import type { PopoverProps } from '@chakra-ui/react'
 import MenuLevel from './MenuLevel'
 import type { MenuItem } from './MenuLevel'
