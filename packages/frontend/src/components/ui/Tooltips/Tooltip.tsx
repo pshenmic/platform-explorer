@@ -13,7 +13,7 @@ import {
 import { createPortal } from 'react-dom'
 import { useOutsideClick } from '@chakra-ui/react'
 import { useTooltipActive } from 'src/contexts/TooltipProvider'
-import './Tooltip.scss'
+import './Tooltip.css'
 
 const LEAVE_GRACE_MS = 280
 const GUTTER = 8
