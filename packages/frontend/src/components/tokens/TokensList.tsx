@@ -12,12 +12,15 @@ import { ErrorMessageBlock } from '../Errors'
 import Pagination from '../pagination'
 import { findActiveAlias, getMinTokenPrice } from '../../util'
 
-function tokenName (token: any) {
-  return token?.localizations?.en?.singularForm ||
-    (Object.values(token?.localizations || {})[0] as any)?.singularForm || ''
+function tokenName(token: any) {
+  return (
+    token?.localizations?.en?.singularForm ||
+    (Object.values(token?.localizations || {})[0] as any)?.singularForm ||
+    ''
+  )
 }
 
-function TokensList ({
+function TokensList({
   tokens = [],
   rate,
   headerStyles = 'default',
@@ -44,9 +47,13 @@ function TokensList ({
       minWidth: 150,
       cell: (token: any) => {
         const name = tokenName(token)
-        return name
-          ? <Alias avatarSource={token.identifier}>{name}</Alias>
-          : <Identifier ellipsis={true} avatar={true} styles={['highlight-both']}>{token.identifier}</Identifier>
+        return name ? (
+          <Alias avatarSource={token.identifier}>{name}</Alias>
+        ) : (
+          <Identifier ellipsis={true} avatar={true} styles={['highlight-both']}>
+            {token.identifier}
+          </Identifier>
+        )
       }
     },
     {
@@ -54,9 +61,16 @@ function TokensList ({
       header: 'Supply',
       minWidth: 120,
       priority: 3,
-      cell: (token: any) => (token.maxSupply
-        ? <Supply currentSupply={token.totalSupply} maxSupply={token.maxSupply || token.totalSupply} decimals={token.decimals}/>
-        : <FormattedNumber decimals={token.decimals}>{token.totalSupply}</FormattedNumber>)
+      cell: (token: any) =>
+        token.maxSupply ? (
+          <Supply
+            currentSupply={token.totalSupply}
+            maxSupply={token.maxSupply || token.totalSupply}
+            decimals={token.decimals}
+          />
+        ) : (
+          <FormattedNumber decimals={token.decimals}>{token.totalSupply}</FormattedNumber>
+        )
     },
     {
       key: 'price',
@@ -66,7 +80,11 @@ function TokensList ({
       cell: (token: any) => {
         if (token.price != null) {
           return (
-            <Tooltip placement={'top'} maxW={'none'} content={<CreditsBlock credits={token.price} rate={rate}/>}>
+            <Tooltip
+              placement={'top'}
+              maxW={'none'}
+              content={<CreditsBlock credits={token.price} rate={rate} />}
+            >
               <div>
                 <ValueContainer colorScheme={'emeralds'} size={'sm'}>
                   <FormattedNumber decimals={token.decimals}>{token.price}</FormattedNumber>
@@ -77,9 +95,16 @@ function TokensList ({
         }
         if (token.prices != null && token.prices.length > 0) {
           return (
-            <Tooltip placement={'top'} maxW={'none'} content={<CreditsBlock credits={getMinTokenPrice(token.prices)} rate={rate}/>}>
+            <Tooltip
+              placement={'top'}
+              maxW={'none'}
+              content={<CreditsBlock credits={getMinTokenPrice(token.prices)} rate={rate} />}
+            >
               <Flex gap={'0.25rem'} fontSize={'0.75rem'} fontWeight={500}>
-                From <FormattedNumber decimals={token.decimals}>{getMinTokenPrice(token.prices)}</FormattedNumber>
+                From{' '}
+                <FormattedNumber decimals={token.decimals}>
+                  {getMinTokenPrice(token.prices)}
+                </FormattedNumber>
               </Flex>
             </Tooltip>
           )
@@ -95,9 +120,15 @@ function TokensList ({
       priority: 1,
       cell: (token: any) => (
         <LinkContainer
-          onClick={e => { e.stopPropagation(); e.preventDefault(); router.push(`/dataContract/${token.dataContractIdentifier}`) }}
+          onClick={e => {
+            e.stopPropagation()
+            e.preventDefault()
+            router.push(`/dataContract/${token.dataContractIdentifier}`)
+          }}
         >
-          <Identifier ellipsis={true} styles={['highlight-both']} avatar={true}>{token.dataContractIdentifier}</Identifier>
+          <Identifier ellipsis={true} styles={['highlight-both']} avatar={true}>
+            {token.dataContractIdentifier}
+          </Identifier>
         </LinkContainer>
       )
     },
@@ -109,14 +140,23 @@ function TokensList ({
       priority: 2,
       cell: (token: any) => {
         const ownerId = typeof token.owner === 'object' ? token.owner?.identifier : token.owner
-        const ownerName = typeof token.owner === 'object' ? findActiveAlias(token.owner?.aliases) : null
+        const ownerName =
+          typeof token.owner === 'object' ? findActiveAlias(token.owner?.aliases) : null
         return (
           <LinkContainer
-            onClick={e => { e.stopPropagation(); e.preventDefault(); router.push(`/identity/${ownerId}`) }}
+            onClick={e => {
+              e.stopPropagation()
+              e.preventDefault()
+              router.push(`/identity/${ownerId}`)
+            }}
           >
-            {ownerName
-              ? <Alias avatarSource={ownerId} alias={ownerName?.alias}/>
-              : <Identifier ellipsis={true} avatar={true} styles={['highlight-both']}>{ownerId}</Identifier>}
+            {ownerName ? (
+              <Alias avatarSource={ownerId} alias={ownerName?.alias} />
+            ) : (
+              <Identifier ellipsis={true} avatar={true} styles={['highlight-both']}>
+                {ownerId}
+              </Identifier>
+            )}
           </LinkContainer>
         )
       }
@@ -129,13 +169,20 @@ function TokensList ({
       header: 'Balance',
       minWidth: 100,
       align: 'right',
-      cell: (token) => (typeof token.balance === 'number' || typeof token.balance === 'string'
-        ? <ValueContainer colorScheme={'emeralds'} size={'sm'}><FormattedNumber decimals={token.decimals} threshold={0}>{token.balance}</FormattedNumber></ValueContainer>
-        : <NotActive/>)
+      cell: token =>
+        typeof token.balance === 'number' || typeof token.balance === 'string' ? (
+          <ValueContainer colorScheme={'emeralds'} size={'sm'}>
+            <FormattedNumber decimals={token.decimals} threshold={0}>
+              {token.balance}
+            </FormattedNumber>
+          </ValueContainer>
+        ) : (
+          <NotActive />
+        )
     })
   }
 
-  if (tokens === undefined) return <ErrorMessageBlock/>
+  if (tokens === undefined) return <ErrorMessageBlock />
 
   return (
     <DataList
@@ -143,18 +190,20 @@ function TokensList ({
       items={tokens}
       columns={columns}
       loading={loading}
-      rowHref={(token) => `/token/${token.identifier}`}
-      rowKey={(token) => token.identifier}
+      rowHref={token => `/token/${token.identifier}`}
+      rowKey={token => token.identifier}
       headerVariant={headerStyles === 'light' ? 'light' : 'default'}
       emptyMessage={'There are no tokens yet.'}
-      footer={pagination && (
-        <Pagination
-          onPageChange={pagination.onPageChange}
-          pageCount={pagination.pageCount}
-          forcePage={pagination.forcePage}
-          justify={true}
-        />
-      )}
+      footer={
+        pagination && (
+          <Pagination
+            onPageChange={pagination.onPageChange}
+            pageCount={pagination.pageCount}
+            forcePage={pagination.forcePage}
+            justify={true}
+          />
+        )
+      }
     />
   )
 }
