@@ -5,15 +5,32 @@
 .BlocksListItem {
   @include mixins.DefListItem;
   font-size: 0.75rem;
+  min-height: 44px; // touch / home compact row rhythm
 
-  // copy button revealed only on row hover
+  // copy button revealed only on row hover; always on for touch (no hover)
   .Identifier__CopyButton { opacity: 0; pointer-events: none; transition: opacity .15s; }
   &:hover .Identifier__CopyButton,
   &:focus-within .Identifier__CopyButton { opacity: 1; pointer-events: auto; }
 
+  @media (hover: none) {
+    .Identifier__CopyButton { opacity: 1; pointer-events: auto; }
+  }
+
   &__Content {
     @include blocks.Columns();
     align-items: center;
+  }
+
+  &__Column--Height {
+    font-family: $font-mono;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+
+  &__Column--Timestamp {
+    font-family: $font-mono;
+    font-size: 0.6875rem;
+    color: var(--chakra-colors-gray-500);
   }
 
   &--TimestampAbsolute &__Content {
