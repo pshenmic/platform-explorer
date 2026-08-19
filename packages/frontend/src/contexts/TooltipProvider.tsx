@@ -10,7 +10,7 @@ interface TooltipActiveContextValue {
 
 const TooltipActiveContext = createContext<TooltipActiveContextValue | null>(null)
 
-export function TooltipProvider ({ children }: { children: ReactNode }) {
+export function TooltipProvider({ children }: { children: ReactNode }) {
   const [activeId, setActiveId] = useState<string | null>(null)
 
   const activate = useCallback((id: string) => {
@@ -26,13 +26,9 @@ export function TooltipProvider ({ children }: { children: ReactNode }) {
     [activeId, activate, deactivate]
   )
 
-  return (
-    <TooltipActiveContext.Provider value={value}>
-      {children}
-    </TooltipActiveContext.Provider>
-  )
+  return <TooltipActiveContext.Provider value={value}>{children}</TooltipActiveContext.Provider>
 }
 
-export function useTooltipActive () {
+export function useTooltipActive() {
   return useContext(TooltipActiveContext)
 }
