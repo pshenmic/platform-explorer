@@ -22,7 +22,13 @@
   aspect-ratio: 1;
   height: auto;
   border-radius: 50%;
-  background: radial-gradient(circle at 40% 45%, rgba(var(--pe-color-brand-normal-rgb), 0.22) 0%, rgba(var(--pe-color-brand-normal-rgb), 0.1) 32%, rgba(var(--pe-color-brand-normal-rgb), 0.03) 55%, rgba(var(--pe-color-brand-normal-rgb), 0) 72%);
+  background: radial-gradient(
+    circle at 40% 45%,
+    rgba(var(--pe-color-brand-normal-rgb), 0.22) 0%,
+    rgba(var(--pe-color-brand-normal-rgb), 0.1) 32%,
+    rgba(var(--pe-color-brand-normal-rgb), 0.03) 55%,
+    rgba(var(--pe-color-brand-normal-rgb), 0) 72%
+  );
   pointer-events: none;
   z-index: 0;
 }
@@ -142,7 +148,13 @@
   height: min(320px, 52%);
   min-width: 200px;
   min-height: 200px;
-  background: radial-gradient(circle at 45% 45%, rgba(var(--pe-color-brand-normal-rgb), 0.22) 0%, rgba(var(--pe-color-brand-normal-rgb), 0.08) 38%, rgba(var(--pe-color-brand-normal-rgb), 0.02) 58%, transparent 74%);
+  background: radial-gradient(
+    circle at 45% 45%,
+    rgba(var(--pe-color-brand-normal-rgb), 0.22) 0%,
+    rgba(var(--pe-color-brand-normal-rgb), 0.08) 38%,
+    rgba(var(--pe-color-brand-normal-rgb), 0.02) 58%,
+    transparent 74%
+  );
   animation: HomeHeroOrbA 14s ease-in-out infinite alternate;
 }
 .HomeHero__BrandOrb--b {
@@ -152,7 +164,12 @@
   height: min(180px, 32%);
   min-width: 120px;
   min-height: 120px;
-  background: radial-gradient(circle, rgba(var(--pe-color-brand-light-rgb), 0.1) 0%, rgba(var(--pe-color-brand-light-rgb), 0.035) 42%, transparent 72%);
+  background: radial-gradient(
+    circle,
+    rgba(var(--pe-color-brand-light-rgb), 0.1) 0%,
+    rgba(var(--pe-color-brand-light-rgb), 0.035) 42%,
+    transparent 72%
+  );
   animation: HomeHeroOrbB 18s ease-in-out infinite alternate;
 }
 .HomeHero__BrandGrain {
@@ -208,13 +225,18 @@
   color: #fff;
   -webkit-text-fill-color: #fff;
   background: none;
-  text-shadow: 0 0 28px rgba(var(--pe-color-brand-light-rgb), 0.45), 0 0 56px rgba(var(--pe-color-brand-normal-rgb), 0.28), 0 0 90px rgba(var(--pe-color-brand-normal-rgb), 0.12);
+  text-shadow:
+    0 0 28px rgba(var(--pe-color-brand-light-rgb), 0.45),
+    0 0 56px rgba(var(--pe-color-brand-normal-rgb), 0.28),
+    0 0 90px rgba(var(--pe-color-brand-normal-rgb), 0.12);
   animation: HomeHeroTitlePulse 7s ease-in-out infinite;
 }
 @media screen and (max-width: 48em) {
   .HomeHero__TitleShine {
     display: inline-block;
-    text-shadow: 0 0 20px rgba(var(--pe-color-brand-light-rgb), 0.4), 0 0 40px rgba(var(--pe-color-brand-normal-rgb), 0.22);
+    text-shadow:
+      0 0 20px rgba(var(--pe-color-brand-light-rgb), 0.4),
+      0 0 40px rgba(var(--pe-color-brand-normal-rgb), 0.22);
   }
 }
 .HomeHero__Tagline {
@@ -374,7 +396,9 @@
   line-height: 1;
   color: #fff;
   text-shadow: 0 0 12px rgba(var(--pe-color-brand-normal-rgb), 0.45);
-  transition: color 0.15s, text-shadow 0.15s;
+  transition:
+    color 0.15s,
+    text-shadow 0.15s;
 }
 .HomeHero__GovCount:hover {
   color: var(--pe-color-brand-light);
@@ -418,7 +442,9 @@
   height: 4px;
   border-radius: 2px;
   background: rgba(var(--pe-color-gray-500-rgb), 0.45);
-  transition: background 0.15s, width 0.2s ease;
+  transition:
+    background 0.15s,
+    width 0.2s ease;
 }
 .HomeHero__GovSeg:hover i {
   background: rgba(255, 255, 255, 0.55);
@@ -495,7 +521,8 @@
   transition: color 0.15s;
 }
 @media (prefers-reduced-motion: reduce) {
-  .HomeHero__LiveBadge, .HomeHero__LiveDot {
+  .HomeHero__LiveBadge,
+  .HomeHero__LiveDot {
     animation: none;
   }
 }
@@ -613,7 +640,9 @@
   border-radius: 50%;
   background: rgb(var(--wave-c-rgb, var(--pe-color-brand-light-rgb)));
   box-shadow: 0 0 0 3px rgba(var(--wave-c-rgb, var(--pe-color-brand-normal-rgb)), 0.18);
-  transition: transform 0.15s, box-shadow 0.15s;
+  transition:
+    transform 0.15s,
+    box-shadow 0.15s;
 }
 .HomeHero__WaveLabel {
   font-size: 0.625rem;
@@ -623,10 +652,12 @@
   color: var(--pe-color-gray-500);
   white-space: nowrap;
 }
-.HomeHero__WavePoint:hover .HomeHero__WaveValue, .HomeHero__WavePoint:focus-within .HomeHero__WaveValue {
+.HomeHero__WavePoint:hover .HomeHero__WaveValue,
+.HomeHero__WavePoint:focus-within .HomeHero__WaveValue {
   color: var(--pe-color-brand-light);
 }
-.HomeHero__WavePoint:hover .HomeHero__WaveDot, .HomeHero__WavePoint:focus-within .HomeHero__WaveDot {
+.HomeHero__WavePoint:hover .HomeHero__WaveDot,
+.HomeHero__WavePoint:focus-within .HomeHero__WaveDot {
   transform: scale(1.5);
   box-shadow: 0 0 12px 3px rgba(var(--wave-c-rgb, var(--pe-color-brand-light-rgb)), 0.9);
 }
@@ -681,10 +712,17 @@
   padding: 0 0 0 1rem;
 }
 .HomeHero__HeightSeam {
-  grid-row: 1/-1;
+  grid-row: 1 / -1;
   width: 1px;
   align-self: stretch;
-  background: linear-gradient(180deg, transparent 0%, rgba(var(--pe-color-brand-normal-rgb), 0.45) 18%, rgba(var(--pe-color-gray-800-rgb), 0.9) 50%, rgba(var(--pe-color-brand-normal-rgb), 0.35) 82%, transparent 100%);
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    rgba(var(--pe-color-brand-normal-rgb), 0.45) 18%,
+    rgba(var(--pe-color-gray-800-rgb), 0.9) 50%,
+    rgba(var(--pe-color-brand-normal-rgb), 0.35) 82%,
+    transparent 100%
+  );
 }
 .HomeHero__HeightSeam--a {
   grid-column: 2;
@@ -968,7 +1006,9 @@
   color: var(--pe-color-gray-400);
   text-decoration: none;
   border-bottom: 1px dotted rgba(var(--pe-color-gray-500-rgb), 0.45);
-  transition: color 0.12s ease, border-color 0.12s ease;
+  transition:
+    color 0.12s ease,
+    border-color 0.12s ease;
 }
 @media (hover: hover) and (pointer: fine) {
   .HomeHero__LiveMetaLink:hover {
@@ -1024,23 +1064,35 @@
   }
 }
 @keyframes HomeHeroTitlePulse {
-  0%, 100% {
-    text-shadow: 0 0 24px rgba(var(--pe-color-brand-light-rgb), 0.35), 0 0 48px rgba(var(--pe-color-brand-normal-rgb), 0.2), 0 0 80px rgba(var(--pe-color-brand-normal-rgb), 0.08);
+  0%,
+  100% {
+    text-shadow:
+      0 0 24px rgba(var(--pe-color-brand-light-rgb), 0.35),
+      0 0 48px rgba(var(--pe-color-brand-normal-rgb), 0.2),
+      0 0 80px rgba(var(--pe-color-brand-normal-rgb), 0.08);
   }
   50% {
-    text-shadow: 0 0 32px rgba(var(--pe-color-brand-light-rgb), 0.55), 0 0 64px rgba(var(--pe-color-brand-normal-rgb), 0.32), 0 0 100px rgba(var(--pe-color-brand-normal-rgb), 0.16);
+    text-shadow:
+      0 0 32px rgba(var(--pe-color-brand-light-rgb), 0.55),
+      0 0 64px rgba(var(--pe-color-brand-normal-rgb), 0.32),
+      0 0 100px rgba(var(--pe-color-brand-normal-rgb), 0.16);
   }
 }
 @media (prefers-reduced-motion: reduce) {
-  .HomeHero__BrandOrb--a, .HomeHero__BrandOrb--b, .HomeHero__TitleShine {
+  .HomeHero__BrandOrb--a,
+  .HomeHero__BrandOrb--b,
+  .HomeHero__TitleShine {
     animation: none;
   }
   .HomeHero__TitleShine {
-    text-shadow: 0 0 28px rgba(var(--pe-color-brand-light-rgb), 0.4), 0 0 56px rgba(var(--pe-color-brand-normal-rgb), 0.22);
+    text-shadow:
+      0 0 28px rgba(var(--pe-color-brand-light-rgb), 0.4),
+      0 0 56px rgba(var(--pe-color-brand-normal-rgb), 0.22);
   }
 }
 @keyframes HeroMetaPulse {
-  0%, 100% {
+  0%,
+  100% {
     opacity: 0.4;
   }
   50% {
@@ -1048,7 +1100,8 @@
   }
 }
 @keyframes HeroLiveBreath {
-  0%, 100% {
+  0%,
+  100% {
     box-shadow: 0 0 4px rgba(var(--pe-color-green-label-rgb), 0.15);
   }
   50% {
@@ -1062,7 +1115,8 @@
   }
 }
 @keyframes EpochDotBreath {
-  0%, 100% {
+  0%,
+  100% {
     box-shadow: 0 0 8px 2px rgba(var(--pe-color-brand-light-rgb), 0.55);
   }
   50% {
@@ -1147,7 +1201,11 @@
   flex: 1;
   width: 1px;
   margin-top: 12px;
-  background: repeating-linear-gradient(180deg, rgba(255, 255, 255, 0.14) 0 4px, transparent 4px 9px);
+  background: repeating-linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.14) 0 4px,
+    transparent 4px 9px
+  );
 }
 .EpochsWave__Bound.is-approx {
   z-index: 3;
@@ -1162,7 +1220,11 @@
 .EpochsWave__Bound.is-approx::after {
   width: 2px;
   margin-top: 6px;
-  background: repeating-linear-gradient(180deg, rgba(var(--pe-color-brand-light-rgb), 0.75) 0 5px, transparent 5px 10px);
+  background: repeating-linear-gradient(
+    180deg,
+    rgba(var(--pe-color-brand-light-rgb), 0.75) 0 5px,
+    transparent 5px 10px
+  );
   animation: HeroMetaPulse 2.4s ease-in-out infinite;
 }
 @media (prefers-reduced-motion: reduce) {
@@ -1275,7 +1337,9 @@
   white-space: nowrap;
   text-align: center;
   border-bottom: 1px dotted rgba(var(--pe-color-gray-500-rgb), 0.5);
-  transition: color 0.15s, border-color 0.15s;
+  transition:
+    color 0.15s,
+    border-color 0.15s;
 }
 .EpochsWave__BoundIcon {
   flex-shrink: 0;
@@ -1366,16 +1430,22 @@
   .EpochsWave__Point.is-ready {
     animation: none;
   }
-  .EpochsWave__Point, .EpochsWave__GhostDot--slot, .EpochsWave__Line, .EpochsWave__Area {
+  .EpochsWave__Point,
+  .EpochsWave__GhostDot--slot,
+  .EpochsWave__Line,
+  .EpochsWave__Area {
     transition: none;
   }
 }
 .EpochsWave__GhostDot--slot {
   animation: none;
   opacity: 0.35;
-  transition: top 0.35s ease, opacity 0.2s ease;
+  transition:
+    top 0.35s ease,
+    opacity 0.2s ease;
 }
-.EpochsWave__Line, .EpochsWave__Area {
+.EpochsWave__Line,
+.EpochsWave__Area {
   transition: opacity 0.25s ease;
 }
 .EpochsWave__Point {
@@ -1385,7 +1455,9 @@
   font: inherit;
   cursor: pointer;
   opacity: 0.8;
-  transition: opacity 0.2s ease, top 0.35s ease;
+  transition:
+    opacity 0.2s ease,
+    top 0.35s ease;
   width: 28px;
   height: 28px;
   display: flex;
@@ -1397,7 +1469,9 @@
   animation: EpochPointIn 0.22s ease-out forwards;
 }
 .EpochsWave__Point .HomeHero__WaveDot {
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
 }
 .EpochsWave__Point .HomeHero__WaveValue {
   font-size: 1.75rem;
@@ -1476,7 +1550,9 @@
 }
 .EpochsWave__Point .HomeHero__WaveLabel {
   font-size: 0.6875rem;
-  transition: color 0.2s, transform 0.2s;
+  transition:
+    color 0.2s,
+    transform 0.2s;
 }
 .EpochsWave__Point .HomeHero__WaveDot {
   position: relative;
@@ -1486,7 +1562,12 @@
   position: absolute;
   inset: -5px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(184, 236, 255, 0.9) 0%, rgba(120, 200, 255, 0.35) 45%, transparent 70%);
+  background: radial-gradient(
+    circle,
+    rgba(184, 236, 255, 0.9) 0%,
+    rgba(120, 200, 255, 0.35) 45%,
+    transparent 70%
+  );
   opacity: 0;
   transform: scale(0.5);
   animation: EpochFlowPulse 5s linear infinite;
@@ -1527,8 +1608,15 @@
 .EpochsWave__Beam {
   position: absolute;
   bottom: 0;
-  background: linear-gradient(180deg, transparent, rgba(var(--epoch-color-rgb, var(--pe-color-brand-light-rgb)), 0.24));
-  transition: left 0.3s ease, width 0.3s ease, top 0.3s ease;
+  background: linear-gradient(
+    180deg,
+    transparent,
+    rgba(var(--epoch-color-rgb, var(--pe-color-brand-light-rgb)), 0.24)
+  );
+  transition:
+    left 0.3s ease,
+    width 0.3s ease,
+    top 0.3s ease;
   pointer-events: none;
 }
 .EpochsWave__BeamPulse {
@@ -1591,7 +1679,12 @@
 .EpochsOverview__Wash {
   position: absolute;
   inset: 0;
-  background: radial-gradient(ellipse 60% 150% at calc(100% * (var(--epoch-seg-l, 0) + var(--epoch-seg-w, 1) / 2)) 0%, rgba(var(--epoch-color-rgb, var(--pe-color-brand-normal-rgb)), 0.2), rgba(var(--epoch-color-rgb, var(--pe-color-brand-normal-rgb)), 0.06) 55%, transparent 90%);
+  background: radial-gradient(
+    ellipse 60% 150% at calc(100% * (var(--epoch-seg-l, 0) + var(--epoch-seg-w, 1) / 2)) 0%,
+    rgba(var(--epoch-color-rgb, var(--pe-color-brand-normal-rgb)), 0.2),
+    rgba(var(--epoch-color-rgb, var(--pe-color-brand-normal-rgb)), 0.06) 55%,
+    transparent 90%
+  );
   transform-origin: calc(100% * (var(--epoch-seg-l, 0) + var(--epoch-seg-w, 1) / 2)) top;
   transition: background 0.35s ease;
   pointer-events: none;
@@ -1633,8 +1726,15 @@
   left: calc(100% * var(--epoch-seg-l, 0));
   width: calc(100% * var(--epoch-seg-w, 1));
   height: 2px;
-  background: linear-gradient(90deg, transparent, rgba(var(--epoch-color-rgb, var(--pe-color-brand-light-rgb)), 0.75), transparent);
-  transition: left 0.3s ease, width 0.3s ease;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(var(--epoch-color-rgb, var(--pe-color-brand-light-rgb)), 0.75),
+    transparent
+  );
+  transition:
+    left 0.3s ease,
+    width 0.3s ease;
   pointer-events: none;
   z-index: 1;
 }
@@ -1647,7 +1747,9 @@
   min-width: 0;
   border: none;
   text-align: center;
-  box-shadow: inset -1px 0 0 0 rgba(var(--pe-color-gray-800-rgb), 0.5), inset 0 -1px 0 0 rgba(var(--pe-color-gray-800-rgb), 0.4);
+  box-shadow:
+    inset -1px 0 0 0 rgba(var(--pe-color-gray-800-rgb), 0.5),
+    inset 0 -1px 0 0 rgba(var(--pe-color-gray-800-rgb), 0.4);
   padding: 12px 12px 14px;
 }
 @media screen and (max-width: 48em) {

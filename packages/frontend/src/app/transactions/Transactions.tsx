@@ -7,7 +7,10 @@ import TransactionsFilter, {
   TRANSACTION_TYPE_VALUES,
   BATCH_TYPE_VALUES
 } from '../../components/transactions/TransactionsFilter'
-import { applyTypeParams, parseTypeParams } from '../../components/transactions/transactionsListHref'
+import {
+  applyTypeParams,
+  parseTypeParams
+} from '../../components/transactions/transactionsListHref'
 import Pagination from '../../components/pagination'
 import PageSizeSelector from '../../components/pageSizeSelector/PageSizeSelector'
 import { LoadingList } from '../../components/loading'
@@ -28,11 +31,17 @@ const paginateConfig = {
   defaultPage: 1
 }
 
-function Transactions ({ defaultPage = 1, defaultPageSize }: any) {
+function Transactions({ defaultPage = 1, defaultPageSize }: any) {
   const [currentPage, setCurrentPage] = useState(defaultPage ? parseInt(defaultPage) - 1 : 0)
-  const [pageSize, setPageSize] = useState(defaultPageSize ?? null ? defaultPageSize : paginateConfig.pageSize.default)
+  const [pageSize, setPageSize] = useState(
+    (defaultPageSize ?? null) ? defaultPageSize : paginateConfig.pageSize.default
+  )
   const [total, setTotal] = useState(0)
-  const [transactions, setTransactions] = useState<{ data: any[], loading: boolean, error: unknown }>({ data: [], loading: true, error: null })
+  const [transactions, setTransactions] = useState<{
+    data: any[]
+    loading: boolean
+    error: unknown
+  }>({ data: [], loading: true, error: null })
   const pageCount = Math.ceil(total / pageSize)
   const router = useRouter()
   const pathname = usePathname()
@@ -79,7 +88,11 @@ function Transactions ({ defaultPage = 1, defaultPageSize }: any) {
       } catch (error) {
         console.error('Error fetching transactions:', error)
         setTotal(0)
-        setTransactions({ data: [], loading: false, error: error instanceof Error ? error.message : error })
+        setTransactions({
+          data: [],
+          loading: false,
+          error: error instanceof Error ? error.message : error
+        })
       }
     }
 
@@ -89,14 +102,19 @@ function Transactions ({ defaultPage = 1, defaultPageSize }: any) {
   useEffect(() => {
     const page = parseInt(searchParams.get('page') || '', 10) || paginateConfig.defaultPage
     setCurrentPage(Math.max(page - 1, 0))
-    setPageSize(parseInt(searchParams.get('page-size') || '', 10) || paginateConfig.pageSize.default)
+    setPageSize(
+      parseInt(searchParams.get('page-size') || '', 10) || paginateConfig.pageSize.default
+    )
   }, [searchParams, pathname])
 
   useEffect(() => {
     const urlParameters = new URLSearchParams()
     applyTypeParams(urlParameters, typeParams)
 
-    if (currentPage + 1 !== paginateConfig.defaultPage || pageSize !== paginateConfig.pageSize.default) {
+    if (
+      currentPage + 1 !== paginateConfig.defaultPage ||
+      pageSize !== paginateConfig.pageSize.default
+    ) {
       urlParameters.set('page', String(currentPage + 1))
       urlParameters.set('page-size', String(pageSize))
     }
@@ -113,7 +131,9 @@ function Transactions ({ defaultPage = 1, defaultPageSize }: any) {
     const bt = Array.isArray(newFilters?.batch_type) ? newFilters.batch_type : []
     applyTypeParams(urlParameters, { transaction_type: tt, batch_type: bt })
     setCurrentPage(0)
-    router.replace(urlParameters.toString() ? `${pathname}?${urlParameters}` : pathname, { scroll: false })
+    router.replace(urlParameters.toString() ? `${pathname}?${urlParameters}` : pathname, {
+      scroll: false
+    })
   }
 
   const handlePageChange = (newPage: any) => {
@@ -127,50 +147,55 @@ function Transactions ({ defaultPage = 1, defaultPageSize }: any) {
   }
 
   return (
-    <Container
-      maxW={'container.maxPageW'}
-      mt={8}
-      className={'Transactions'}
-    >
-        <Container maxW={'container.maxPageW'} className={'InfoBlock'}>
-          <div className={'Transactions__Controls'}>
-            <PageTitle title={'Transactions'} description={introContent} className={'Transactions__Title'}/>
+    <Container maxW={'container.maxPageW'} mt={8} className={'Transactions'}>
+      <Container maxW={'container.maxPageW'} className={'InfoBlock'}>
+        <div className={'Transactions__Controls'}>
+          <PageTitle
+            title={'Transactions'}
+            description={introContent}
+            className={'Transactions__Title'}
+          />
 
-            <NetworkStatsInline className={'Transactions__Stats'}/>
+          <NetworkStatsInline className={'Transactions__Stats'} />
 
-            <TransactionsFilter
-              onFilterChange={filtersChangeHandler}
-              initialFilters={filterUiState}
-              isMobile={isMobile}
-              className={'Transactions__Filters'}
+          <TransactionsFilter
+            onFilterChange={filtersChangeHandler}
+            initialFilters={filterUiState}
+            isMobile={isMobile}
+            className={'Transactions__Filters'}
+          />
+        </div>
+
+        <TransactionsChartCompact className={'Transactions__Chart'} />
+
+        {!transactions.error ? (
+          !transactions.loading ? (
+            <TransactionsList transactions={transactions.data} />
+          ) : (
+            <LoadingList itemsCount={pageSize} />
+          )
+        ) : (
+          <Container h={20}>
+            <ErrorMessageBlock />
+          </Container>
+        )}
+
+        {transactions.data?.length > 0 && (
+          <div className={'ListNavigation'}>
+            <Box display={['none', 'none', 'block']} width={'155px'} />
+            <Pagination
+              onPageChange={handlePageChange}
+              pageCount={pageCount}
+              forcePage={currentPage}
+            />
+            <PageSizeSelector
+              PageSizeSelectHandler={handlePageSizeChange}
+              value={pageSize}
+              items={[10, 20, 50, 100]}
             />
           </div>
-
-          <TransactionsChartCompact className={'Transactions__Chart'}/>
-
-          {!transactions.error
-            ? !transactions.loading
-                ? <TransactionsList transactions={transactions.data}/>
-                : <LoadingList itemsCount={pageSize}/>
-            : <Container h={20}><ErrorMessageBlock/></Container>
-          }
-
-          {transactions.data?.length > 0 &&
-            <div className={'ListNavigation'}>
-              <Box display={['none', 'none', 'block']} width={'155px'}/>
-              <Pagination
-                onPageChange={handlePageChange}
-                pageCount={pageCount}
-                forcePage={currentPage}
-              />
-              <PageSizeSelector
-                PageSizeSelectHandler={handlePageSizeChange}
-                value={pageSize}
-                items={[10, 20, 50, 100]}
-              />
-            </div>
-          }
-        </Container>
+        )}
+      </Container>
     </Container>
   )
 }

@@ -20,7 +20,7 @@ import type { LoadableState, Rate } from '../../types'
 import type { QueryFilters } from '../../util/Api'
 import './Home.css'
 
-function epochNumbersOf (current: unknown) {
+function epochNumbersOf(current: unknown) {
   if (typeof current !== 'number') return []
   return [current - 3, current - 2, current - 1, current].filter(n => n >= 0)
 }
@@ -28,7 +28,7 @@ function epochNumbersOf (current: unknown) {
 const VALIDATORS_PAGE = 100
 const QUORUM_DETAIL_CONCURRENCY = 3
 
-async function fetchAllValidators (filters?: QueryFilters) {
+async function fetchAllValidators(filters?: QueryFilters) {
   const first = await Api.getValidators(1, VALIDATORS_PAGE, 'desc', filters)
   const rows = Array.isArray(first?.resultSet) ? [...first.resultSet] : []
   const total = typeof first?.pagination?.total === 'number' ? first.pagination.total : rows.length
@@ -40,7 +40,7 @@ async function fetchAllValidators (filters?: QueryFilters) {
   return rows
 }
 
-async function fetchQuorumDetails (hashes: string[]) {
+async function fetchQuorumDetails(hashes: string[]) {
   const out = new Array(hashes.length)
   let cursor = 0
   const worker = async () => {
@@ -54,15 +54,27 @@ async function fetchQuorumDetails (hashes: string[]) {
   return out
 }
 
-function Home () {
+function Home() {
   const [rate, setRate] = useState<LoadableState<Rate>>({ data: null, loading: true, error: false })
 
   const gap = theme.blockOffset
 
   // wave 0: hero + overview + validator totals (independent; RQ dedupes Strict Mode double-mount)
-  const statusQuery = useQuery({ queryKey: ['home', 'status'], queryFn: Api.getStatus, refetchInterval: 60000 })
-  const txQuery = useQuery({ queryKey: ['home', 'transactions'], queryFn: () => Api.getTransactions(1, 10, 'desc'), refetchInterval: 30000 })
-  const blocksQuery = useQuery({ queryKey: ['home', 'blocks'], queryFn: () => Api.getBlocks(1, 10, 'desc'), refetchInterval: 30000 })
+  const statusQuery = useQuery({
+    queryKey: ['home', 'status'],
+    queryFn: Api.getStatus,
+    refetchInterval: 60000
+  })
+  const txQuery = useQuery({
+    queryKey: ['home', 'transactions'],
+    queryFn: () => Api.getTransactions(1, 10, 'desc'),
+    refetchInterval: 30000
+  })
+  const blocksQuery = useQuery({
+    queryKey: ['home', 'blocks'],
+    queryFn: () => Api.getBlocks(1, 10, 'desc'),
+    refetchInterval: 30000
+  })
   const validatorsQuery = useQuery({
     queryKey: ['home', 'validators', 'total'],
     queryFn: () => Api.getValidators(1, 1, 'desc'),
@@ -115,7 +127,9 @@ function Home () {
   const quorumHashes = useMemo(() => {
     const list = quorumsListQuery.data
     if (!Array.isArray(list)) return []
-    return list.map(q => q?.quorumHash).filter((h): h is string => typeof h === 'string' && h.length > 0)
+    return list
+      .map(q => q?.quorumHash)
+      .filter((h): h is string => typeof h === 'string' && h.length > 0)
   }, [quorumsListQuery.data])
 
   const quorumDetailsQuery = useQuery({
@@ -182,14 +196,14 @@ function Home () {
 
   // progressive list: whatever has arrived, in epoch order (partial wave is OK)
   const epochDataStamp = epochQueries.map(q => `${q.dataUpdatedAt}:${q.fetchStatus}`).join('|')
-  const epochsBaseList = useMemo(() => (
-    epochNumbers
-      .map((n, i) => epochQueries[i]?.data)
-      .filter(Boolean)
-  // eslint-disable-next-line react-hooks/exhaustive-deps -- stamp tracks per-query arrivals
-  ), [epochNumbers, epochDataStamp])
+  const epochsBaseList = useMemo(
+    () => epochNumbers.map((n, i) => epochQueries[i]?.data).filter(Boolean),
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- stamp tracks per-query arrivals
+    [epochNumbers, epochDataStamp]
+  )
 
-  const epochsLoading = typeof currentEpochNumber !== 'number' ||
+  const epochsLoading =
+    typeof currentEpochNumber !== 'number' ||
     (epochsBaseList.length === 0 && epochQueries.some(q => q.isPending || q.isLoading))
 
   // phase B: first-block meta only after an epoch exists (does not block the wave)
@@ -206,18 +220,20 @@ function Home () {
   })
 
   const blockDataStamp = blockQueries.map(q => q.dataUpdatedAt).join('|')
-  const epochsList = useMemo(() => (
-    epochsBaseList.map((ep, i) => {
-      const blockRes = blockQueries[i]?.data
-      if (!blockRes) return ep
-      return {
-        ...ep,
-        protocolVersion: blockRes?.resultSet?.[0]?.header?.appVersion ?? null,
-        firstBlockHash: blockRes?.resultSet?.[0]?.header?.hash ?? null
-      }
-    })
-  // eslint-disable-next-line react-hooks/exhaustive-deps -- stamp tracks block enrich arrivals
-  ), [epochsBaseList, blockDataStamp])
+  const epochsList = useMemo(
+    () =>
+      epochsBaseList.map((ep, i) => {
+        const blockRes = blockQueries[i]?.data
+        if (!blockRes) return ep
+        return {
+          ...ep,
+          protocolVersion: blockRes?.resultSet?.[0]?.header?.appVersion ?? null,
+          firstBlockHash: blockRes?.resultSet?.[0]?.header?.hash ?? null
+        }
+      }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- stamp tracks block enrich arrivals
+    [epochsBaseList, blockDataStamp]
+  )
 
   const currentEpochPayload = epochsList.find(e => e?.epoch?.number === currentEpochNumber) || null
   const epochData = {
@@ -233,7 +249,8 @@ function Home () {
   }, [])
 
   // below-fold charts wait until the first epoch paints (or all epoch queries settle empty)
-  const epochsSettled = epochNumbers.length > 0 &&
+  const epochsSettled =
+    epochNumbers.length > 0 &&
     epochQueries.length === epochNumbers.length &&
     epochQueries.every(q => !q.isPending && !q.isLoading)
   const belowFoldReady = epochsBaseList.length > 0 || epochsSettled
@@ -271,7 +288,7 @@ function Home () {
         >
           <div className={'HomeActivity__Grid'}>
             <div className={'HomeActivity__Types'}>
-              <TxTypesBar enabled={belowFoldReady}/>
+              <TxTypesBar enabled={belowFoldReady} />
             </div>
             <div className={'HomeActivity__Charts'}>
               <div className={'HomeActivity__Chart'}>
@@ -294,7 +311,7 @@ function Home () {
           </div>
         </Box>
 
-        <HomeLeaders rate={rate} enabled={belowFoldReady}/>
+        <HomeLeaders rate={rate} enabled={belowFoldReady} />
 
         <Box
           id={'home-epochs'}
@@ -314,7 +331,7 @@ function Home () {
 
         <div className={'HomeShieldQuorum'}>
           <div className={'HomeShieldQuorum__Cell'}>
-            <ShieldedPoolCard rate={rate} enabled={belowFoldReady}/>
+            <ShieldedPoolCard rate={rate} enabled={belowFoldReady} />
           </div>
           <div className={'HomeShieldQuorum__Cell'}>
             <MasternodesDonut
