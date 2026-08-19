@@ -11,7 +11,7 @@ interface BaseSearchItemProps extends WithChildren, WithClassName {
   data?: unknown
 }
 
-export function BaseSearchItem ({
+export function BaseSearchItem({
   href,
   children,
   className,
@@ -27,17 +27,26 @@ export function BaseSearchItem ({
     children?: ReactNode
     href?: string
     className?: string
-  }) => typeof onClick === 'function'
-    ? <div onClick={() => onClick(data)} className={containerClassName}>{content}</div>
-    : <Link href={linkHref ?? '#'} className={containerClassName}>{content}</Link>
+  }) =>
+    typeof onClick === 'function' ? (
+      <div onClick={() => onClick(data)} className={containerClassName}>
+        {content}
+      </div>
+    ) : (
+      <Link href={linkHref ?? '#'} className={containerClassName}>
+        {content}
+      </Link>
+    )
 
   return (
     <Container href={href} className={`SearchResultsListItem ${className || ''}`}>
-      <Grid className={`SearchResultsListItem__Content ${gridClassModifier ? `SearchResultsListItem__Content--${gridClassModifier}` : ''}`}>
+      <Grid
+        className={`SearchResultsListItem__Content ${gridClassModifier ? `SearchResultsListItem__Content--${gridClassModifier}` : ''}`}
+      >
         {children}
         <GridItem className={'SearchResultsListItem__ArrowButtonContainer'}>
           <Button className={'SearchResultsListItem__ArrowButton'} size={'xxs'} variant={'blue'}>
-            <ChevronIcon w={'0.5rem'} h={'0.5rem'}/>
+            <ChevronIcon w={'0.5rem'} h={'0.5rem'} />
           </Button>
         </GridItem>
       </Grid>
@@ -51,12 +60,24 @@ interface BaseSearchItemContentProps {
   timestamp?: ReactNode
 }
 
-export function BaseSearchItemContent ({ mainContent, additionalContent, timestamp }: BaseSearchItemContentProps) {
+export function BaseSearchItemContent({
+  mainContent,
+  additionalContent,
+  timestamp
+}: BaseSearchItemContentProps) {
   return (
     <>
       <GridItem className={'SearchResultsListItem__Column'}>{mainContent}</GridItem>
-      <GridItem className={'SearchResultsListItem__Column SearchResultsListItem__Column--Additional'}>{additionalContent}</GridItem>
-      <GridItem className={'SearchResultsListItem__Column SearchResultsListItem__Column--Timestamp'}>{timestamp}</GridItem>
+      <GridItem
+        className={'SearchResultsListItem__Column SearchResultsListItem__Column--Additional'}
+      >
+        {additionalContent}
+      </GridItem>
+      <GridItem
+        className={'SearchResultsListItem__Column SearchResultsListItem__Column--Timestamp'}
+      >
+        {timestamp}
+      </GridItem>
     </>
   )
 }

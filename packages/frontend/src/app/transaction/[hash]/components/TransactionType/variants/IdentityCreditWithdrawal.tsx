@@ -44,12 +44,7 @@ export const IdentityCreditWithdrawal = ({
       title={'Identity'}
       value={
         <ValueCard link={`/identity/${senderId}`}>
-          <Identifier
-            avatar={true}
-            copyButton={true}
-            ellipsis={true}
-            styles={['highlight-both']}
-          >
+          <Identifier avatar={true} copyButton={true} ellipsis={true} styles={['highlight-both']}>
             {senderId}
           </Identifier>
         </ValueCard>

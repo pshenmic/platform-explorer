@@ -23,7 +23,7 @@ const WheelControls = (slider: KeenSliderInstance) => {
   let position: WheelPosition
   let wheelActive: boolean
 
-  function dispatch (e: WheelEvent, name: string) {
+  function dispatch(e: WheelEvent, name: string) {
     position.x -= e.deltaX
     position.y -= e.deltaY
     slider.container?.dispatchEvent(
@@ -36,7 +36,7 @@ const WheelControls = (slider: KeenSliderInstance) => {
     )
   }
 
-  function wheelStart (e: WheelEvent) {
+  function wheelStart(e: WheelEvent) {
     position = {
       x: e.pageX,
       y: e.pageY
@@ -44,15 +44,15 @@ const WheelControls = (slider: KeenSliderInstance) => {
     dispatch(e, 'ksDragStart')
   }
 
-  function wheel (e: WheelEvent) {
+  function wheel(e: WheelEvent) {
     dispatch(e, 'ksDrag')
   }
 
-  function wheelEnd (e: WheelEvent) {
+  function wheelEnd(e: WheelEvent) {
     dispatch(e, 'ksDragEnd')
   }
 
-  function eventWheel (e: WheelEvent) {
+  function eventWheel(e: WheelEvent) {
     e.preventDefault()
     if (!wheelActive) {
       wheelStart(e)

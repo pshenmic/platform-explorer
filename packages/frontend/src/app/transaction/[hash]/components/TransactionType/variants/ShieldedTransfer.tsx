@@ -18,10 +18,10 @@ export const ShieldedTransfer = ({
   rate
 }: ShieldedTransferProps) => (
   <>
-    <AmountInfoLine title='Value Balance' amount={valueBalance} rate={rate} />
+    <AmountInfoLine title="Value Balance" amount={valueBalance} rate={rate} />
     <ShieldedActions actions={actions} />
-    <HashInfoLine title='Anchor' value={anchor} />
-    <HashInfoLine title='Bindings Signature' value={bindingsSignature} />
-    <HashInfoLine title='Proof' value={proof} />
+    <HashInfoLine title="Anchor" value={anchor} />
+    <HashInfoLine title="Bindings Signature" value={bindingsSignature} />
+    <HashInfoLine title="Proof" value={proof} />
   </>
 )

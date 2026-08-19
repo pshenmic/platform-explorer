@@ -29,10 +29,7 @@ export const FilterValueTag = ({
   }
 
   const Container = ({ children, modifierClass, ...props }: ContainerProps) => (
-    <div
-      className={`FilterValueTag ${className || ''} ${modifierClass || ''}`}
-      {...props}
-    >
+    <div className={`FilterValueTag ${className || ''} ${modifierClass || ''}`} {...props}>
       {children}
     </div>
   )
@@ -41,21 +38,26 @@ export const FilterValueTag = ({
     case 'multiselect':
       return (
         <Container modifierClass={'FilterValueTag--Multiselect'}>
-           {Array.isArray(rawValue)
-             ? rawValue.map((selectedValue) => {
-               const option = options?.find((option) => option?.value === selectedValue)
-               return option?.label || option?.title || option?.value
-             })
-             : null}
+          {Array.isArray(rawValue)
+            ? rawValue.map(selectedValue => {
+                const option = options?.find(option => option?.value === selectedValue)
+                return option?.label || option?.title || option?.value
+              })
+            : null}
         </Container>
       )
 
     case 'range':
       if (rawValue && typeof rawValue === 'object' && !Array.isArray(rawValue)) {
-        const { min, max } = rawValue as { min?: string | number | null, max?: string | number | null }
+        const { min, max } = rawValue as {
+          min?: string | number | null
+          max?: string | number | null
+        }
 
         if (min && max) {
-          return <Container modifierClass={'FilterValueTag--Range'}>{`From ${min} to ${max}`}</Container>
+          return (
+            <Container modifierClass={'FilterValueTag--Range'}>{`From ${min} to ${max}`}</Container>
+          )
         }
         if (min) {
           return <Container modifierClass={'FilterValueTag--Range'}>{`Min ${min}`}</Container>

@@ -66,83 +66,78 @@ const NavbarMobileMenu = ({ items, isOpen, onClose, burgerRef }: NavbarMobileMen
       ref={mobileMenuRef}
     >
       <SmoothSize duration={0.1}>
-      {renderMain && (
-        <Fade className={'NavbarMobileMenu__Content'} in={!activeSubmenu} unmountOnExit>
-          <Stack className={'NavbarMobileMenu__Items'} as={'nav'}>
-            {items.map((item) => {
-              const hasSubmenu = Boolean(item.submenuItems?.length)
-              const itemClassName = `NavbarMobileMenu__Item ${pathname === item.href ? 'NavbarMobileMenu__Item--Active' : ''}`
+        {renderMain && (
+          <Fade className={'NavbarMobileMenu__Content'} in={!activeSubmenu} unmountOnExit>
+            <Stack className={'NavbarMobileMenu__Items'} as={'nav'}>
+              {items.map(item => {
+                const hasSubmenu = Boolean(item.submenuItems?.length)
+                const itemClassName = `NavbarMobileMenu__Item ${pathname === item.href ? 'NavbarMobileMenu__Item--Active' : ''}`
 
-              if (hasSubmenu) {
+                if (hasSubmenu) {
+                  return (
+                    <Flex
+                      key={item.title}
+                      className={itemClassName}
+                      onClick={() => handleItemClick(item)}
+                      justifyContent={'space-between'}
+                      alignItems={'center'}
+                    >
+                      <span>{item.title}</span>
+                      <div className={'NavbarMobileMenu__ItemIcon'}>
+                        <ArrowButton />
+                      </div>
+                    </Flex>
+                  )
+                }
+
                 return (
                   <Flex
                     key={item.title}
                     className={itemClassName}
                     onClick={() => handleItemClick(item)}
+                    as={Link}
+                    href={item.href ?? '#'}
                     justifyContent={'space-between'}
                     alignItems={'center'}
                   >
                     <span>{item.title}</span>
-                    <div className={'NavbarMobileMenu__ItemIcon'}>
-                      <ArrowButton/>
-                    </div>
                   </Flex>
                 )
-              }
+              })}
+            </Stack>
+          </Fade>
+        )}
 
-              return (
-                <Flex
-                  key={item.title}
-                  className={itemClassName}
-                  onClick={() => handleItemClick(item)}
-                  as={Link}
-                  href={item.href ?? '#'}
-                  justifyContent={'space-between'}
-                  alignItems={'center'}
-                >
-                  <span>{item.title}</span>
-                </Flex>
-              )
-            })}
-          </Stack>
-        </Fade>
-      )}
+        {renderSubmenu && activeSubmenu && (
+          <Fade className={'NavbarMobileMenu__Content'} in={!!activeSubmenu} unmountOnExit>
+            <div className={'NavbarMobileMenu__Header'}>
+              <Flex className={'NavbarMobileMenu__BackButton'} onClick={goToMainMenu}>
+                <ChevronIcon transform={'rotate(180deg)'} />
+              </Flex>
 
-      {renderSubmenu && activeSubmenu && (
-        <Fade className={'NavbarMobileMenu__Content'} in={!!activeSubmenu} unmountOnExit>
-          <div className={'NavbarMobileMenu__Header'}>
-            <Flex
-              className={'NavbarMobileMenu__BackButton'}
-              onClick={goToMainMenu}
-            >
-              <ChevronIcon transform={'rotate(180deg)'}/>
-            </Flex>
-
-            <div className={'NavbarMobileMenu__Title'}>
-              {activeSubmenu?.title}
+              <div className={'NavbarMobileMenu__Title'}>{activeSubmenu?.title}</div>
             </div>
-          </div>
 
-          <Stack className={'NavbarMobileMenu__Items'} as={'nav'}>
-            {activeSubmenu.submenuItems?.map((subItem) => (
-              <Link
-                key={subItem.title}
-                href={subItem.disabled ? '#' : (subItem.href ?? '#')}
-                className={`NavbarMobileMenu__Item ${pathname === subItem.href ? 'NavbarMobileMenu__Item--Active' : ''} ${subItem.disabled ? 'NavbarMobileMenu__Item--Disabled' : ''}`}
-                onClick={(e: ReactMouseEvent) => {
-                  if (subItem.disabled) {
-                    e.preventDefault()
-                    return
-                  }
-                  onClose()
-                }}
-              >
-                {subItem.title}
-              </Link>
-            ))}
-          </Stack>
-        </Fade>
-      )}
+            <Stack className={'NavbarMobileMenu__Items'} as={'nav'}>
+              {activeSubmenu.submenuItems?.map(subItem => (
+                <Link
+                  key={subItem.title}
+                  href={subItem.disabled ? '#' : (subItem.href ?? '#')}
+                  className={`NavbarMobileMenu__Item ${pathname === subItem.href ? 'NavbarMobileMenu__Item--Active' : ''} ${subItem.disabled ? 'NavbarMobileMenu__Item--Disabled' : ''}`}
+                  onClick={(e: ReactMouseEvent) => {
+                    if (subItem.disabled) {
+                      e.preventDefault()
+                      return
+                    }
+                    onClose()
+                  }}
+                >
+                  {subItem.title}
+                </Link>
+              ))}
+            </Stack>
+          </Fade>
+        )}
       </SmoothSize>
     </Box>
   )

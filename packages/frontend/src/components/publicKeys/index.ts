@@ -1,7 +1,4 @@
 import PublicKeysList from './PublicKeysList'
 import PublicKeyBoundCard from './PublicKeyBoundCard'
 
-export {
-  PublicKeysList,
-  PublicKeyBoundCard
-}
+export { PublicKeysList, PublicKeyBoundCard }

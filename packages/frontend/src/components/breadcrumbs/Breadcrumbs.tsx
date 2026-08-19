@@ -36,14 +36,18 @@ export const Breadcrumbs = () => {
   const links = breadcrumbs as BreadcrumbLink[]
 
   const icons: Record<string, ReactNode> = {
-    block: <BlockIcon className={'Breadcrumbs__Icon Breadcrumbs__Icon--Block'}/>
+    block: <BlockIcon className={'Breadcrumbs__Icon Breadcrumbs__Icon--Block'} />
   }
 
   if (!links || links.length === 0) return
 
   const LinkContainer = ({ children, href, ...props }: LinkContainerProps) => {
     if (href) {
-      return <Link href={href} {...props}>{children}</Link>
+      return (
+        <Link href={href} {...props}>
+          {children}
+        </Link>
+      )
     }
 
     return <span {...props}>{children}</span>
@@ -52,19 +56,39 @@ export const Breadcrumbs = () => {
   return (
     <div className={'Breadcrumbs'}>
       <ul className={'Breadcrumbs__LinksContainer'}>
-        {links.map((link, i) => link?.label
-          ? <li className={`Breadcrumbs__Link ${link?.shrink ? 'Breadcrumbs__Link--Shrink' : ''}`} key={i}>
+        {links.map((link, i) =>
+          link?.label ? (
+            <li
+              className={`Breadcrumbs__Link ${link?.shrink ? 'Breadcrumbs__Link--Shrink' : ''}`}
+              key={i}
+            >
               <LinkContainer href={i !== links.length - 1 ? link?.path : null} key={i}>
-                {link?.icon && <div className={'Breadcrumbs__IconContainer'}>{icons[link.icon] || null}</div>}
+                {link?.icon && (
+                  <div className={'Breadcrumbs__IconContainer'}>{icons[link.icon] || null}</div>
+                )}
 
-                {(link?.avatar || link?.avatarSource) &&
-                  <ImageGenerator className={'Breadcrumbs__Avatar'} username={link?.avatarSource || link.label} lightness={50} saturation={50} width={16} height={16} />}
+                {(link?.avatar || link?.avatarSource) && (
+                  <ImageGenerator
+                    className={'Breadcrumbs__Avatar'}
+                    username={link?.avatarSource || link.label}
+                    lightness={50}
+                    saturation={50}
+                    width={16}
+                    height={16}
+                  />
+                )}
                 <div className={'Breadcrumbs__Label'}>{link.label}</div>
               </LinkContainer>
 
-              {i !== links.length - 1 && <div className={'Breadcrumbs__Separator'}><ChevronIcon color={'brand.normal'}/></div>}
-          </li>
-          : ''
+              {i !== links.length - 1 && (
+                <div className={'Breadcrumbs__Separator'}>
+                  <ChevronIcon color={'brand.normal'} />
+                </div>
+              )}
+            </li>
+          ) : (
+            ''
+          )
         )}
       </ul>
     </div>

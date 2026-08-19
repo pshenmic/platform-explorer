@@ -1,7 +1,4 @@
-import {
-  Box,
-  Heading
-} from '@chakra-ui/react'
+import { Box, Heading } from '@chakra-ui/react'
 import type { ReactNode } from 'react'
 import type { WithClassName } from '../../types/common'
 import './Intro.css'
@@ -12,7 +9,7 @@ interface IntroProps extends WithClassName {
   block?: ReactNode
 }
 
-function Intro ({ title, description, block, className }: IntroProps) {
+function Intro({ title, description, block, className }: IntroProps) {
   return (
     <div className={`Intro ${className || ''}`}>
       <div className={'Intro__Info'}>
@@ -20,7 +17,7 @@ function Intro ({ title, description, block, className }: IntroProps) {
           {title}
         </Heading>
 
-        <Box my={3} w={16} h={'px'} background={'brand.normal'}/>
+        <Box my={3} w={16} h={'px'} background={'brand.normal'} />
 
         {description}
       </div>

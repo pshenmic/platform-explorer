@@ -20,7 +20,7 @@ interface PublicKeyBoundCardProps extends WithClassName {
   publicKeyBounds?: PublicKeyBounds | null
 }
 
-function PublicKeyBoundCard ({ publicKeyBounds, className }: PublicKeyBoundCardProps) {
+function PublicKeyBoundCard({ publicKeyBounds, className }: PublicKeyBoundCardProps) {
   return (
     <ValueCard className={`PublicKeyBoundCard ${className || ''}`} colorScheme={'transparent'}>
       <div className={'PublicKeyBoundCard__Title'}>Bound to</div>
@@ -37,9 +37,7 @@ function PublicKeyBoundCard ({ publicKeyBounds, className }: PublicKeyBoundCardP
       </div>
       <div className={'PublicKeyBoundCard__Type'}>
         <span className={'PublicKeyBoundCard__TypeTitle'}>Document Type:</span>
-        <span className={'PublicKeyBoundCard__TypeValue'}>
-          {publicKeyBounds?.documentTypeName}
-        </span>
+        <span className={'PublicKeyBoundCard__TypeValue'}>{publicKeyBounds?.documentTypeName}</span>
       </div>
     </ValueCard>
   )

@@ -10,9 +10,7 @@ export const DeployButton = () => {
 
   let label: string
   if (!signer.isConnected) {
-    label = signer.method === SignerMethod.PRIVATE_KEY
-      ? 'Use Private Key'
-      : 'Connect Wallet'
+    label = signer.method === SignerMethod.PRIVATE_KEY ? 'Use Private Key' : 'Connect Wallet'
   } else if (deploy.isLoading) {
     label = 'Deploying...'
   } else if (hasResult) {
@@ -21,16 +19,14 @@ export const DeployButton = () => {
     label = 'Deploy Contract'
   }
 
-  const isDisabled =
-    isBusy ||
-    (signer.isConnected && !hasResult && schemaError != null)
+  const isDisabled = isBusy || (signer.isConnected && !hasResult && schemaError != null)
 
   return (
     <Button
-      variant='blue'
-      size='sm'
-      minW='160px'
-      alignSelf='flex-start'
+      variant="blue"
+      size="sm"
+      minW="160px"
+      alignSelf="flex-start"
       onClick={handlePrimary}
       isLoading={isBusy}
       isDisabled={isDisabled}

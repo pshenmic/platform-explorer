@@ -10,7 +10,12 @@ interface PageDataContainerProps extends WithChildren, WithClassName {
   isChevronHidden?: boolean
 }
 
-function PageDataContainer ({ className, title, children, isChevronHidden = false }: PageDataContainerProps) {
+function PageDataContainer({
+  className,
+  title,
+  children,
+  isChevronHidden = false
+}: PageDataContainerProps) {
   return (
     <Container
       className={`PageDataContainer ${className || ''}`}
@@ -21,11 +26,11 @@ function PageDataContainer ({ className, title, children, isChevronHidden = fals
     >
       <Container maxW={'container.maxPageW'} px={[0]} py={0}>
         <div className={'PageDataContainer__Header'}>
-          {
-            !isChevronHidden && (<BackButton className={'PageDataContainer__BackLink'}>
+          {!isChevronHidden && (
+            <BackButton className={'PageDataContainer__BackLink'}>
               <ChevronIcon2 w={'8px'} h={'8px'} color={'brand.normal'} />
-            </BackButton>)
-          }
+            </BackButton>
+          )}
           {title && <div className={'PageDataContainer__Title'}>{title}</div>}
         </div>
 

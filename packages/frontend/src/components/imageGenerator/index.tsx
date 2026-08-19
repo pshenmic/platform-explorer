@@ -14,7 +14,7 @@ interface ImageGeneratorProps extends WithClassName, Omit<ImageProps, 'src' | 'a
   lightness?: number | string
 }
 
-export default function ImageGenerator ({
+export default function ImageGenerator({
   username,
   className,
   hat = null,
@@ -26,11 +26,14 @@ export default function ImageGenerator ({
   if (typeof name !== 'string') name = ''
 
   const svgURI = useMemo(
-    () => 'data:image/svg+xml;utf8,' + encodeURIComponent(minidenticon(name, saturation, lightness)),
+    () =>
+      'data:image/svg+xml;utf8,' + encodeURIComponent(minidenticon(name, saturation, lightness)),
     [name, saturation, lightness]
   )
 
-  const ImageElement = <Image src={svgURI} alt={name || ''} className={'ImageGenerator__Image'} {...props}/>
+  const ImageElement = (
+    <Image src={svgURI} alt={name || ''} className={'ImageGenerator__Image'} {...props} />
+  )
 
   const hatClasses: Record<string, string> = {
     christmas: 'ImageGenerator__Hat--Christmas'

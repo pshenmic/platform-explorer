@@ -8,7 +8,7 @@ interface BackgroundProps {
   snow?: boolean
 }
 
-function Background ({ snow }: BackgroundProps) {
+function Background({ snow }: BackgroundProps) {
   const pathname = usePathname()
   const showOnRoutes = [
     '/',
@@ -26,7 +26,7 @@ function Background ({ snow }: BackgroundProps) {
   return (
     <>
       <div className={`Background ${showDecoration ? 'Background--Light' : ''}`}></div>
-      {snow && <Snow/>}
+      {snow && <Snow />}
     </>
   )
 }

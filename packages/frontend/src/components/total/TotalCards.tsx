@@ -27,23 +27,29 @@ interface TotalCardsProps {
   loading?: boolean
 }
 
-export default function TotalCards ({ cards, event = null, loading = false }: TotalCardsProps) {
+export default function TotalCards({ cards, event = null, loading = false }: TotalCardsProps) {
   return (
     <div className={'TotalCards'}>
-        {cards.map((card, i) => (
-            <InfoCard link={card.link} className={'TotalCards__Item'} loading={card?.loading || loading} key={i}>
-              {!loading
-                ? <ValueBlock
-                    title={card.title}
-                    value={card.value}
-                    icon={card.icon}
-                    formats={card.format}
-                    event={event}
-                  />
-                : <Box h={'27px'}/>
-              }
-            </InfoCard>
-        ))}
+      {cards.map((card, i) => (
+        <InfoCard
+          link={card.link}
+          className={'TotalCards__Item'}
+          loading={card?.loading || loading}
+          key={i}
+        >
+          {!loading ? (
+            <ValueBlock
+              title={card.title}
+              value={card.value}
+              icon={card.icon}
+              formats={card.format}
+              event={event}
+            />
+          ) : (
+            <Box h={'27px'} />
+          )}
+        </InfoCard>
+      ))}
     </div>
   )
 }

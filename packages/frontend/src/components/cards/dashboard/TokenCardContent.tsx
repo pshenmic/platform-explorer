@@ -28,12 +28,8 @@ interface TokenCardContentProps {
   nullMessage?: string
 }
 
-export function TokenCardContent ({ token = {}, nullMessage = 'No data' }: TokenCardContentProps) {
-  const {
-    tokenIdentifier,
-    localizations,
-    transitionCount
-  } = token || {}
+export function TokenCardContent({ token = {}, nullMessage = 'No data' }: TokenCardContentProps) {
+  const { tokenIdentifier, localizations, transitionCount } = token || {}
 
   if (!token || !tokenIdentifier) {
     return <NotActive>{nullMessage}</NotActive>
@@ -61,10 +57,7 @@ export function TokenCardContent ({ token = {}, nullMessage = 'No data' }: Token
         </Badge>
       </Flex>
 
-      <Identifier
-        ellipsis={true}
-        styles={['highlight-both']}
-      >
+      <Identifier ellipsis={true} styles={['highlight-both']}>
         {tokenIdentifier}
       </Identifier>
     </div>

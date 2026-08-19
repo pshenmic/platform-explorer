@@ -33,41 +33,24 @@ export const DistType = ({ details }: DistTypeProps) => {
       value={
         <InfoLine
           className={styles.subcategory}
-          postfix=''
-          title='Perpetual distribution'
+          postfix=""
+          title="Perpetual distribution"
           value={
-            <ValueContainer
-              className={styles.container}
-              size={'sm'}
-              colorScheme={'gray'}
-            >
+            <ValueContainer className={styles.container} size={'sm'} colorScheme={'gray'}>
               <span className={styles.title}>Distribution type</span>
-              <ValueContainer
-                className={styles.card}
-                size={'sm'}
-                colorScheme={'gray'}
-              >
+              <ValueContainer className={styles.card} size={'sm'} colorScheme={'gray'}>
                 <div className={styles.header}>
                   <strong className={styles.title}>{title}</strong>
-                  <InfoIcon
-                    color='#58F4BC'
-                    width='1rem'
-                    height='1rem'
-                  />
+                  <InfoIcon color="#58F4BC" width="1rem" height="1rem" />
                 </div>
                 <div className={styles.list}>
-                  {keys.map((name) => {
+                  {keys.map(name => {
                     const field = fields[name] as DistField
-                    return field?.value
-                      ? (
-                      <p
-                        key={name}
-                        className={styles.field}
-                      >
+                    return field?.value ? (
+                      <p key={name} className={styles.field}>
                         {field.title}: <b>{String(field.value)}</b>
                       </p>
-                        )
-                      : null
+                    ) : null
                   })}
                 </div>
               </ValueContainer>

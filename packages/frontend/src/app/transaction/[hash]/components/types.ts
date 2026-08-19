@@ -64,7 +64,10 @@ export type DecodedOutputAddress =
 
 export interface TokenConventions {
   decimals?: number | null
-  localizations?: Record<string, { singularForm?: string; pluralForm?: string; shouldCapitalize?: boolean }> | null
+  localizations?: Record<
+    string,
+    { singularForm?: string; pluralForm?: string; shouldCapitalize?: boolean }
+  > | null
 }
 
 export interface TokenDistributionRules {

@@ -30,12 +30,7 @@ export const IdentityTopUp = ({
       title={'Identity'}
       value={
         <ValueCard link={`/identity/${identityId}`}>
-          <Identifier
-            avatar={true}
-            copyButton={true}
-            ellipsis={true}
-            styles={['highlight-both']}
-          >
+          <Identifier avatar={true} copyButton={true} ellipsis={true} styles={['highlight-both']}>
             {identityId}
           </Identifier>
         </ValueCard>
@@ -45,11 +40,7 @@ export const IdentityTopUp = ({
     />
 
     {assetLockProof && (
-      <AssetLockProof
-        assetLockProof={assetLockProof}
-        rate={rate}
-        loading={loading}
-      />
+      <AssetLockProof assetLockProof={assetLockProof} rate={rate} loading={loading} />
     )}
   </>
 )

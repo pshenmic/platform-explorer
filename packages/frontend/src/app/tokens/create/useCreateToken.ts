@@ -12,7 +12,7 @@ export type CreateTokenResult = {
 }
 
 export type UseCreateTokenReturn = {
-  submit: (params: { form: TokenForm, signer: Signer | null | undefined }) => Promise<void>
+  submit: (params: { form: TokenForm; signer: Signer | null | undefined }) => Promise<void>
   reset: () => void
   isLoading: boolean
   error: string | null
@@ -24,7 +24,13 @@ export const useCreateToken = (): UseCreateTokenReturn => {
   const [error, setError] = useState<string | null>(null)
   const [result, setResult] = useState<CreateTokenResult | null>(null)
 
-  const submit = async ({ form, signer }: { form: TokenForm, signer: Signer | null | undefined }) => {
+  const submit = async ({
+    form,
+    signer
+  }: {
+    form: TokenForm
+    signer: Signer | null | undefined
+  }) => {
     setIsLoading(true)
     setError(null)
     setResult(null)
@@ -45,13 +51,9 @@ export const useCreateToken = (): UseCreateTokenReturn => {
 
       // create() arg order is (ownerId, nonce, schema, fullValidation, tokens[]) — see pshenmic/dash-platform-sdk#76.
       // Cast tokens array: WASM config is built from pshenmic-dpp/wasm (weak types).
-      const dataContract = sdk.dataContracts.create(
-        signer.identityId,
-        nextNonce,
-        schema,
-        true,
-        [{ position: 0, tokenConfiguration }] as Parameters<typeof sdk.dataContracts.create>[4]
-      )
+      const dataContract = sdk.dataContracts.create(signer.identityId, nextNonce, schema, true, [
+        { position: 0, tokenConfiguration }
+      ] as Parameters<typeof sdk.dataContracts.create>[4])
 
       const stateTransition = sdk.dataContracts.createStateTransition(
         dataContract,

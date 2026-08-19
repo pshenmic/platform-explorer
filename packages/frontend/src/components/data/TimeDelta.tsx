@@ -14,9 +14,12 @@ interface WrapperProps {
   format?: string
 }
 
-const Wrapper = ({ children, tooltipDate, showTimestampTooltip, format }: WrapperProps) => (
-  showTimestampTooltip && format !== 'detailed' && tooltipDate != null && !isNaN(tooltipDate.getTime())
-    ? <Tooltip
+const Wrapper = ({ children, tooltipDate, showTimestampTooltip, format }: WrapperProps) =>
+  showTimestampTooltip &&
+  format !== 'detailed' &&
+  tooltipDate != null &&
+  !isNaN(tooltipDate.getTime()) ? (
+    <Tooltip
       placement={'top'}
       content={
         <span className={'TimeDelta__TooltipContent'}>
@@ -26,8 +29,9 @@ const Wrapper = ({ children, tooltipDate, showTimestampTooltip, format }: Wrappe
     >
       <span className={'TimeDelta'}>{children}</span>
     </Tooltip>
-    : <>{children}</>
-)
+  ) : (
+    <>{children}</>
+  )
 
 interface TimeDeltaProps {
   startDate?: string | number | Date | null
@@ -37,7 +41,13 @@ interface TimeDeltaProps {
   format?: string
 }
 
-function TimeDelta ({ startDate, endDate, showTimestampTooltip = true, tooltipDate, format = 'default' }: TimeDeltaProps) {
+function TimeDelta({
+  startDate,
+  endDate,
+  showTimestampTooltip = true,
+  tooltipDate,
+  format = 'default'
+}: TimeDeltaProps) {
   const [timeDelta, setTimeDelta] = useState<string | null>(null)
   const resolvedTooltipDate = new Date(tooltipDate || endDate || 0)
 
@@ -71,15 +81,17 @@ function TimeDelta ({ startDate, endDate, showTimestampTooltip = true, tooltipDa
     return () => clearTimeout(timeout)
   }, [startDate, endDate, format])
 
-  return timeDelta
-    ? <Wrapper
-        tooltipDate={resolvedTooltipDate}
-        showTimestampTooltip={showTimestampTooltip}
-        format={format}
-      >
-        {timeDelta}
-      </Wrapper>
-    : <NotActive/>
+  return timeDelta ? (
+    <Wrapper
+      tooltipDate={resolvedTooltipDate}
+      showTimestampTooltip={showTimestampTooltip}
+      format={format}
+    >
+      {timeDelta}
+    </Wrapper>
+  ) : (
+    <NotActive />
+  )
 }
 
 export default TimeDelta

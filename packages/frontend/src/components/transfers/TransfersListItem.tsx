@@ -18,7 +18,7 @@ import { useRouter } from 'next/navigation'
 import type { Rate, Transfer } from '../../types'
 import './TransfersListItem.css'
 
-const BigNumber = BigNumberJs as ComponentType<{ children?: ReactNode, className?: string }>
+const BigNumber = BigNumberJs as ComponentType<{ children?: ReactNode; className?: string }>
 const Identifier = IdentifierJs as ComponentType<{
   children?: ReactNode
   avatar?: boolean
@@ -29,7 +29,7 @@ const Identifier = IdentifierJs as ComponentType<{
   middleEllipsis?: boolean
   className?: string
 }>
-const NotActive = NotActiveJs as ComponentType<{ children?: ReactNode, className?: string }>
+const NotActive = NotActiveJs as ComponentType<{ children?: ReactNode; className?: string }>
 const TimeDelta = TimeDeltaJs as ComponentType<{
   endDate?: string | Date | null
   startDate?: string | Date | null
@@ -43,7 +43,7 @@ interface TransfersListItemProps {
   rate?: Pick<Rate, 'usd'> | null
 }
 
-function TransfersListItem ({ transfer, rate }: TransfersListItemProps) {
+function TransfersListItem({ transfer, rate }: TransfersListItemProps) {
   const containerRef = useRef<HTMLAnchorElement>(null)
   const router = useRouter()
 
@@ -58,11 +58,7 @@ function TransfersListItem ({ transfer, rate }: TransfersListItemProps) {
           router.push(`/identity/${transfer?.recipient}`)
         }}
       >
-        <Identifier
-          avatar={true}
-          styles={['highlight-both']}
-          clickable={true}
-        >
+        <Identifier avatar={true} styles={['highlight-both']} clickable={true}>
           {transfer.recipient}
         </Identifier>
       </LinkContainer>
@@ -77,46 +73,53 @@ function TransfersListItem ({ transfer, rate }: TransfersListItemProps) {
     >
       <Grid className={'TransfersListItem__Content'}>
         <GridItem className={'TransfersListItem__Column TransfersListItem__Column--Timestamp'}>
-          {transfer?.timestamp
-            ? <span><TimeDelta endDate={transfer.timestamp}/></span>
-            : <NotActive/>
-          }
+          {transfer?.timestamp ? (
+            <span>
+              <TimeDelta endDate={transfer.timestamp} />
+            </span>
+          ) : (
+            <NotActive />
+          )}
         </GridItem>
 
         <GridItem className={'TransfersListItem__Column TransfersListItem__Column--TxHash'}>
-          {transfer?.txHash
-            ? <Identifier styles={['highlight-both']}>{transfer.txHash}</Identifier>
-            : <NotActive/>
-          }
+          {transfer?.txHash ? (
+            <Identifier styles={['highlight-both']}>{transfer.txHash}</Identifier>
+          ) : (
+            <NotActive />
+          )}
         </GridItem>
 
         <GridItem className={'TransfersListItem__Column TransfersListItem__Column--Recipient'}>
-          <Recipient/>
+          <Recipient />
         </GridItem>
 
         <GridItem className={'TransfersListItem__Column TransfersListItem__Column--Amount'}>
-          {transfer?.amount
-            ? <RateTooltip credits={transfer.amount} rate={rate}>
-                <span><BigNumber>{transfer.amount}</BigNumber></span>
-              </RateTooltip>
-            : <NotActive>-</NotActive>
-          }
+          {transfer?.amount ? (
+            <RateTooltip credits={transfer.amount} rate={rate}>
+              <span>
+                <BigNumber>{transfer.amount}</BigNumber>
+              </span>
+            </RateTooltip>
+          ) : (
+            <NotActive>-</NotActive>
+          )}
         </GridItem>
 
         <GridItem className={'TransfersListItem__Column TransfersListItem__Column--GasUsed'}>
-          {transfer?.gasUsed
-            ? <RateTooltip credits={transfer.gasUsed} rate={rate}>
-                <span><BigNumber>{transfer.gasUsed}</BigNumber></span>
-              </RateTooltip>
-            : <NotActive>-</NotActive>
-          }
+          {transfer?.gasUsed ? (
+            <RateTooltip credits={transfer.gasUsed} rate={rate}>
+              <span>
+                <BigNumber>{transfer.gasUsed}</BigNumber>
+              </span>
+            </RateTooltip>
+          ) : (
+            <NotActive>-</NotActive>
+          )}
         </GridItem>
 
         <GridItem className={'TransfersListItem__Column TransfersListItem__Column--Type'}>
-          {transfer?.type
-            ? <TypeBadge type={transfer?.type}/>
-            : <NotActive/>
-          }
+          {transfer?.type ? <TypeBadge type={transfer?.type} /> : <NotActive />}
         </GridItem>
       </Grid>
     </Link>

@@ -12,7 +12,7 @@ interface PresetsProps extends WithClassName {
 }
 
 // segmented range chips for CardHead's right slot: options=[{label}], value=index, onChange(i)
-export default function Presets ({ options, value, onChange, className = '' }: PresetsProps) {
+export default function Presets({ options, value, onChange, className = '' }: PresetsProps) {
   return (
     <div className={`Presets ${className}`.trim()} role={'group'}>
       {options.map((o, i) => (

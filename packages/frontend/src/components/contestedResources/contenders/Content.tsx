@@ -45,9 +45,9 @@ export const ContendersContent = ({
 
   return (
     <>
-        {contenders.map((contender) => (
-            <ContendersListItem key={contender.identifier} contender={contender} {...props} />
-        ))}
+      {contenders.map(contender => (
+        <ContendersListItem key={contender.identifier} contender={contender} {...props} />
+      ))}
     </>
   )
 }

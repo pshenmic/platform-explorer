@@ -5,7 +5,7 @@ interface TransactionPageParams {
 }
 
 export async function generateMetadata(props: { params: Promise<TransactionPageParams> }) {
-  const params = await props.params;
+  const params = await props.params
   return {
     title: 'Transaction #' + params.hash + ' — Dash Platform Explorer',
     description:
@@ -28,7 +28,7 @@ export async function generateMetadata(props: { params: Promise<TransactionPageP
   }
 }
 
-function TransactionRoute () {
+function TransactionRoute() {
   return <Transaction />
 }
 

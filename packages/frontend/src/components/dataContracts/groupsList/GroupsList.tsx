@@ -28,7 +28,10 @@ interface GroupEntry extends Partial<DataContractGroup> {
 }
 
 interface GroupsListProps {
-  groups?: Record<string, Partial<DataContractGroup>> | DataContractGroup[] | Record<string, unknown>
+  groups?:
+    | Record<string, Partial<DataContractGroup>>
+    | DataContractGroup[]
+    | Record<string, unknown>
   headerStyles?: string
   loading?: boolean
   itemsCount?: number
@@ -36,7 +39,7 @@ interface GroupsListProps {
   onGroupToggle?: (groupId: string) => void
 }
 
-function GroupsList ({
+function GroupsList({
   groups = {},
   headerStyles = 'light',
   loading,
@@ -49,7 +52,9 @@ function GroupsList ({
     light: 'GroupsList__ColumnTitles--Light'
   }
 
-  const groupsArray: GroupEntry[] = Object.entries(groups as Record<string, Partial<DataContractGroup>>).map(([id, group]) => ({
+  const groupsArray: GroupEntry[] = Object.entries(
+    groups as Record<string, Partial<DataContractGroup>>
+  ).map(([id, group]) => ({
     id,
     ...group
   }))
@@ -62,72 +67,79 @@ function GroupsList ({
 
   return (
     <div className={'GroupsList'}>
-      {!loading
-        ? <div className={'GroupsList__Items'}>
-            {groupsArray?.map((group) => {
-              const membersArray = convertMembersToArray(group?.members)
-              const isExpanded = expandedGroup === group?.id
+      {!loading ? (
+        <div className={'GroupsList__Items'}>
+          {groupsArray?.map(group => {
+            const membersArray = convertMembersToArray(group?.members)
+            const isExpanded = expandedGroup === group?.id
 
-              return (
-                <div key={group.id} className={`GroupsList__Group ${isExpanded ? 'GroupsList__Group--Expanded' : ''}`}>
-                  <Grid className={'GroupsList__GroupHeader'}>
-                    <GridItem className={'GroupsList__GroupHeaderColumn'}>
-                      <span className={'GroupsList__GroupTitle'}>
-                        Group #{group.id}
-                      </span>
-                      <span className={'GroupsList__RequiredPower'}>
-                        Required Power: {group.requiredPower}
-                      </span>
-                    </GridItem>
-                    <GridItem className={'GroupsList__GroupHeaderColumn GroupsList__GroupHeaderColumn--Button'}>
-                      <Button
-                        size={'sm'}
-                        variant={isExpanded && membersArray.length > 0 ? 'gray' : 'blue'}
-                        onClick={() => toggleGroup(group.id)}
-                        className={'GroupsList__ToggleButton'}
+            return (
+              <div
+                key={group.id}
+                className={`GroupsList__Group ${isExpanded ? 'GroupsList__Group--Expanded' : ''}`}
+              >
+                <Grid className={'GroupsList__GroupHeader'}>
+                  <GridItem className={'GroupsList__GroupHeaderColumn'}>
+                    <span className={'GroupsList__GroupTitle'}>Group #{group.id}</span>
+                    <span className={'GroupsList__RequiredPower'}>
+                      Required Power: {group.requiredPower}
+                    </span>
+                  </GridItem>
+                  <GridItem
+                    className={
+                      'GroupsList__GroupHeaderColumn GroupsList__GroupHeaderColumn--Button'
+                    }
+                  >
+                    <Button
+                      size={'sm'}
+                      variant={isExpanded && membersArray.length > 0 ? 'gray' : 'blue'}
+                      onClick={() => toggleGroup(group.id)}
+                      className={'GroupsList__ToggleButton'}
+                    >
+                      {membersArray.length} members
+                      <ChevronIcon
+                        ml={'0.25rem'}
+                        h={'0.625rem'}
+                        w={'0.625rem'}
+                        transform={`rotate(${isExpanded ? '-90deg' : '90deg'})`}
+                      />
+                    </Button>
+                  </GridItem>
+                </Grid>
+
+                <SmoothSize className={'GroupsList__MembersContainer'}>
+                  {isExpanded && membersArray.length > 0 && (
+                    <div className={'GroupsList__MembersList'}>
+                      <Grid
+                        className={`GroupsList__ColumnTitles ${headerExtraClass?.[headerStyles] || ''}`}
                       >
-                        {membersArray.length} members
-                          <ChevronIcon
-                            ml={'0.25rem'}
-                            h={'0.625rem'}
-                            w={'0.625rem'}
-                            transform={`rotate(${isExpanded ? '-90deg' : '90deg'})`}
-                          />
-                      </Button>
-                    </GridItem>
-                  </Grid>
+                        <GridItem
+                          className={'GroupsList__ColumnTitle GroupsList__ColumnTitle--Identifier'}
+                        >
+                          Identifier
+                        </GridItem>
+                        <GridItem
+                          className={'GroupsList__ColumnTitle GroupsList__ColumnTitle--Power'}
+                        >
+                          Power
+                        </GridItem>
+                      </Grid>
 
-                  <SmoothSize className={'GroupsList__MembersContainer'}>
-                    {isExpanded && membersArray.length > 0 && (
-                      <div className={'GroupsList__MembersList'}>
-                        <Grid className={`GroupsList__ColumnTitles ${headerExtraClass?.[headerStyles] || ''}`}>
-                          <GridItem className={'GroupsList__ColumnTitle GroupsList__ColumnTitle--Identifier'}>
-                            Identifier
-                          </GridItem>
-                          <GridItem className={'GroupsList__ColumnTitle GroupsList__ColumnTitle--Power'}>
-                            Power
-                          </GridItem>
-                        </Grid>
-
-                        {membersArray.map((member) => (
-                          <GroupsListItem
-                            key={member.identifier}
-                            member={member}
-                          />
-                        ))}
-                      </div>
-                    )}
-                  </SmoothSize>
-                </div>
-              )
-            })}
-            {groupsArray?.length === 0 &&
-              <EmptyListMessage>No groups created yet</EmptyListMessage>
-            }
-            {groupsArray === undefined && <ErrorMessageBlock/>}
-          </div>
-        : <LoadingList itemsCount={itemsCount}/>
-      }
+                      {membersArray.map(member => (
+                        <GroupsListItem key={member.identifier} member={member} />
+                      ))}
+                    </div>
+                  )}
+                </SmoothSize>
+              </div>
+            )
+          })}
+          {groupsArray?.length === 0 && <EmptyListMessage>No groups created yet</EmptyListMessage>}
+          {groupsArray === undefined && <ErrorMessageBlock />}
+        </div>
+      ) : (
+        <LoadingList itemsCount={itemsCount} />
+      )}
     </div>
   )
 }

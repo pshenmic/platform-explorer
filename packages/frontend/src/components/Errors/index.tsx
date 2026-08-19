@@ -9,7 +9,12 @@ interface ErrorMessageBlockProps {
   warningIcon?: boolean
 }
 
-function ErrorMessageBlock ({ w = '100%', h = '100%', text, warningIcon = true }: ErrorMessageBlockProps) {
+function ErrorMessageBlock({
+  w = '100%',
+  h = '100%',
+  text,
+  warningIcon = true
+}: ErrorMessageBlockProps) {
   return (
     <Flex
       flexGrow={1}
@@ -20,11 +25,12 @@ function ErrorMessageBlock ({ w = '100%', h = '100%', text, warningIcon = true }
       flexDirection={'column'}
       opacity={0.5}
     >
-      <div>{warningIcon && <WarningTwoIcon color={'#ddd'} mr={2} mt={-1}/>}{ text || 'Error loading data'}</div>
+      <div>
+        {warningIcon && <WarningTwoIcon color={'#ddd'} mr={2} mt={-1} />}
+        {text || 'Error loading data'}
+      </div>
     </Flex>
   )
 }
 
-export {
-  ErrorMessageBlock
-}
+export { ErrorMessageBlock }

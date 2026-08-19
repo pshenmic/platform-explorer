@@ -2,7 +2,13 @@ import type { ComponentType, ReactNode } from 'react'
 import type { Identity, Document } from '../../types'
 import type { LoadableState } from '../../types/common'
 import Link from 'next/link'
-import { Identifier as IdentifierJs, Alias as AliasJs, DateBlock as DateBlockJs, BigNumber as BigNumberJs, NotActive as NotActiveJs } from '../data'
+import {
+  Identifier as IdentifierJs,
+  Alias as AliasJs,
+  DateBlock as DateBlockJs,
+  BigNumber as BigNumberJs,
+  NotActive as NotActiveJs
+} from '../data'
 import { Grid, GridItem } from '@chakra-ui/react'
 import { FirstPlaceIcon, SecondPlaceIcon, ThirdPlaceIcon } from '../ui/icons'
 import './IdentitiesListItem.css'
@@ -32,13 +38,15 @@ const DateBlock = DateBlockJs as ComponentType<{
   showTime?: boolean
   showRelativeTooltip?: boolean
 }>
-const BigNumber = BigNumberJs as ComponentType<{ children?: ReactNode, className?: string }>
+const BigNumber = BigNumberJs as ComponentType<{ children?: ReactNode; className?: string }>
 const NotActive = NotActiveJs as ComponentType<{ children?: ReactNode }>
 
 const renderCount = (value: unknown) =>
-  value != null && Number.isFinite(Number(value))
-    ? <BigNumber>{String(value)}</BigNumber>
-    : <NotActive>—</NotActive>
+  value != null && Number.isFinite(Number(value)) ? (
+    <BigNumber>{String(value)}</BigNumber>
+  ) : (
+    <NotActive>—</NotActive>
+  )
 
 const placeIcons = {
   1: FirstPlaceIcon,
@@ -51,43 +59,46 @@ interface IdentitiesListItemProps {
   place?: number
 }
 
-function IdentitiesListItem ({ identity, place }: IdentitiesListItemProps) {
-  const PlaceIcon = placeIcons[place as 1|2|3]
-  const { aliases, identifier, timestamp, isSystem, balance, totalTxs, totalDocuments, totalDataContracts } = identity
+function IdentitiesListItem({ identity, place }: IdentitiesListItemProps) {
+  const PlaceIcon = placeIcons[place as 1 | 2 | 3]
+  const {
+    aliases,
+    identifier,
+    timestamp,
+    isSystem,
+    balance,
+    totalTxs,
+    totalDocuments,
+    totalDataContracts
+  } = identity
   const activeAlias = aliases?.find((alias: { status?: string }) => alias?.status === 'ok')
 
-  const rootClassName = [
-    'IdentitiesListItem',
-    place ? `IdentitiesListItem--Rank${place}` : ''
-  ].filter(Boolean).join(' ')
+  const rootClassName = ['IdentitiesListItem', place ? `IdentitiesListItem--Rank${place}` : '']
+    .filter(Boolean)
+    .join(' ')
 
   return (
-    <Link
-      href={`/identity/${identifier}`}
-      className={rootClassName}
-    >
+    <Link href={`/identity/${identifier}`} className={rootClassName}>
       <Grid className={'IdentitiesListItem__Content'}>
         <GridItem className={'IdentitiesListItem__Column IdentitiesListItem__Column--Identifier'}>
-
           <div className={'IdentitiesListItem__IdentifierContainer'}>
-            {PlaceIcon &&
-              <PlaceIcon className={'IdentitiesListItem__Medal'}/>
-            }
-            {activeAlias
-              ? <Alias
-                  className={'IdentitiesListItem__Alias'}
-                  alias={activeAlias?.alias}
-                  avatarSource={identifier}
-                />
-              : <Identifier
-                  className={'IdentitiesListItem__Identifier'}
-                  middleEllipsis={true}
-                  avatar={true}
-                  copyButton={true}
-                >
-                  {identifier}
-                </Identifier>
-            }
+            {PlaceIcon && <PlaceIcon className={'IdentitiesListItem__Medal'} />}
+            {activeAlias ? (
+              <Alias
+                className={'IdentitiesListItem__Alias'}
+                alias={activeAlias?.alias}
+                avatarSource={identifier}
+              />
+            ) : (
+              <Identifier
+                className={'IdentitiesListItem__Identifier'}
+                middleEllipsis={true}
+                avatar={true}
+                copyButton={true}
+              >
+                {identifier}
+              </Identifier>
+            )}
           </div>
         </GridItem>
 
@@ -110,7 +121,7 @@ function IdentitiesListItem ({ identity, place }: IdentitiesListItemProps) {
         <GridItem className={'IdentitiesListItem__Column IdentitiesListItem__Column--Timestamp'}>
           {isSystem && <div>SYSTEM</div>}
 
-          {typeof timestamp === 'string' &&
+          {typeof timestamp === 'string' && (
             <div className={'IdentitiesListItem__Timestamp'}>
               <DateBlock
                 format={'dateOnly'}
@@ -119,7 +130,7 @@ function IdentitiesListItem ({ identity, place }: IdentitiesListItemProps) {
                 showRelativeTooltip={true}
               />
             </div>
-          }
+          )}
         </GridItem>
       </Grid>
     </Link>

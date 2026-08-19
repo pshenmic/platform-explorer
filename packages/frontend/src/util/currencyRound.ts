@@ -1,6 +1,6 @@
 import { numberFormat } from './'
 
-export default function currencyRound (number: number | string): string {
+export default function currencyRound(number: number | string): string {
   const num = Number(number)
   const billions = num / 1.0e9
   const millions = num / 1.0e6

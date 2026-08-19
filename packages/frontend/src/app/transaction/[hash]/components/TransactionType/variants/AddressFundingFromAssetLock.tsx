@@ -2,11 +2,7 @@ import { Flex, Grid, GridItem, Text } from '@chakra-ui/react'
 import { ValueCard } from '@components/cards'
 import { InfoLine, Identifier } from '@components/data'
 import { CopyButton } from '@components/ui/Buttons'
-import type {
-  AssetLockProofData,
-  DecodedFeeStrategy,
-  DecodedTxOutput
-} from '../../types'
+import type { AssetLockProofData, DecodedFeeStrategy, DecodedTxOutput } from '../../types'
 
 interface AddressFundingFromAssetLockProps {
   assetLockProof?: AssetLockProofData | null
@@ -25,17 +21,17 @@ export const AddressFundingFromAssetLock = ({
 }: AddressFundingFromAssetLockProps) => (
   <>
     <InfoLine
-      className='TransactionPage__InfoLine TransactionPage__InfoLine--Inline'
-      title='User Fee Increase'
+      className="TransactionPage__InfoLine TransactionPage__InfoLine--Inline"
+      title="User Fee Increase"
       value={userFeeIncrease}
       error={userFeeIncrease === undefined}
     />
 
     {assetLockProof && (
       <InfoLine
-        align='top'
-        className='TransactionPage__InfoLine TransactionPage__InfoLine--FullWidth'
-        title='Asset Lock Proof'
+        align="top"
+        className="TransactionPage__InfoLine TransactionPage__InfoLine--FullWidth"
+        title="Asset Lock Proof"
         value={
           <Grid
             templateColumns={{
@@ -81,18 +77,14 @@ export const AddressFundingFromAssetLock = ({
             </GridItem>
             <GridItem>
               <ValueCard>
-                <Identifier
-                  copyButton={true}
-                  ellipsis={true}
-                  styles={['highlight-both']}
-                >
+                <Identifier copyButton={true} ellipsis={true} styles={['highlight-both']}>
                   {assetLockProof.fundingCoreTx}
                 </Identifier>
               </ValueCard>
             </GridItem>
 
             <GridItem colSpan={1}>
-              <Flex align='center' h='100%'>
+              <Flex align="center" h="100%">
                 <Text>Instant Lock:</Text>
               </Flex>
             </GridItem>
@@ -111,27 +103,21 @@ export const AddressFundingFromAssetLock = ({
 
     {outputs && outputs.length > 0 && (
       <InfoLine
-        align='top'
+        align="top"
         className={
           'TransactionPage__InfoLine TransactionPage__InfoLine--FullWidth TransactionPage__InfoLine--Outputs'
         }
         title={`Outputs (${outputs.length})`}
         value={
-          <Flex direction='column' gap={2}>
+          <Flex direction="column" gap={2}>
             {outputs.map((output, index) => (
               <ValueCard key={index}>
-                <Flex
-                  gap={4}
-                  direction={{ base: 'column', md: 'row' }}
-                  w='100%'
-                >
-                  <ValueCard className='TransactionPage__AddressCard' link={`/platformAddress/${output.platformAddress.bech32m}`}>
-                    <Identifier
-                      avatar
-                      copyButton
-                      ellipsis
-                      styles={['highlight-both']}
-                    >
+                <Flex gap={4} direction={{ base: 'column', md: 'row' }} w="100%">
+                  <ValueCard
+                    className="TransactionPage__AddressCard"
+                    link={`/platformAddress/${output.platformAddress.bech32m}`}
+                  >
+                    <Identifier avatar copyButton ellipsis styles={['highlight-both']}>
                       {output.platformAddress.bech32m}
                     </Identifier>
                   </ValueCard>
@@ -148,12 +134,12 @@ export const AddressFundingFromAssetLock = ({
 
     {feeStrategy && feeStrategy.length > 0 && (
       <InfoLine
-        className='TransactionPage__InfoLine TransactionPage__InfoLine--FullWidth'
-        title='Fee Strategy'
+        className="TransactionPage__InfoLine TransactionPage__InfoLine--FullWidth"
+        title="Fee Strategy"
         value={
           <div>
             {feeStrategy.map((strategy, index) => (
-              <Flex key={index} align='center' gap={6} mb={4}>
+              <Flex key={index} align="center" gap={6} mb={4}>
                 <ValueCard>{strategy.type}</ValueCard>
                 <ValueCard>Value: {strategy.value}</ValueCard>
               </Flex>
@@ -165,21 +151,12 @@ export const AddressFundingFromAssetLock = ({
 
     {signature && (
       <InfoLine
-        className='TransactionPage__InfoLine TransactionPage__InfoLine--FullWidth'
-        title='Signature'
+        className="TransactionPage__InfoLine TransactionPage__InfoLine--FullWidth"
+        title="Signature"
         value={
           <ValueCard>
-            <Flex
-              gap={2}
-              maxW={{ base: 250, sm: 400 }}
-              align='center'
-              justify='space-between'
-            >
-              <Text
-                overflow='hidden'
-                textOverflow='ellipsis'
-                whiteSpace='nowrap'
-              >
+            <Flex gap={2} maxW={{ base: 250, sm: 400 }} align="center" justify="space-between">
+              <Text overflow="hidden" textOverflow="ellipsis" whiteSpace="nowrap">
                 {signature}
               </Text>
 

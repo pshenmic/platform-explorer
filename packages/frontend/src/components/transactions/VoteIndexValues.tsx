@@ -5,7 +5,7 @@ interface VoteIndexValuesProps extends WithClassName {
   indexValues?: string[] | null
 }
 
-function VoteIndexValues ({ indexValues, className }: VoteIndexValuesProps) {
+function VoteIndexValues({ indexValues, className }: VoteIndexValuesProps) {
   return (
     <div className={`VoteIndexValues ${className || ''}`}>
       <div className={'VoteIndexValues__Titles'}>

@@ -1,8 +1,5 @@
 import { useEffect, useState } from 'react'
-import {
-  checkPlatformExtension,
-  ExtensionStatusEnum
-} from '../../../util/extension'
+import { checkPlatformExtension, ExtensionStatusEnum } from '../../../util/extension'
 import type { WalletContextValue } from 'src/contexts'
 
 export const EditControlState = {
@@ -26,8 +23,7 @@ interface UseEditValidationParams {
 }
 
 export const useEditValidation = ({ wallet, ownerIdentifier }: UseEditValidationParams) => {
-  const isExtensionConnected =
-    checkPlatformExtension() === ExtensionStatusEnum.CONNECTED
+  const isExtensionConnected = checkPlatformExtension() === ExtensionStatusEnum.CONNECTED
 
   const [editValidateState, setEditValidate] = useState<EditControlStateValue>(
     EditControlState.INIT_INVALID

@@ -20,9 +20,5 @@ interface ModalProviderProps {
 export const ModalProvider = ({ children }: ModalProviderProps) => {
   const modalRef = useRef<HTMLDialogElement | null>(null)
 
-  return (
-    <ModalContext.Provider value={{ modalRef }}>
-      {children}
-    </ModalContext.Provider>
-  )
+  return <ModalContext.Provider value={{ modalRef }}>{children}</ModalContext.Provider>
 }

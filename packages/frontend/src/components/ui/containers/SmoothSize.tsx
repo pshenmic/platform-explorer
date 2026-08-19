@@ -23,7 +23,7 @@ const SmoothSize = ({
   const containerRef = useRef<HTMLDivElement | null>(null)
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 })
 
-  useResizeObserver(containerRef as never, (entry) => {
+  useResizeObserver(containerRef as never, entry => {
     const { width, height } = entry.contentRect
     setDimensions({ width, height })
   })
@@ -39,9 +39,7 @@ const SmoothSize = ({
         height: smoothHeight ? `${dimensions.height}px` : 'auto'
       }}
     >
-      <div ref={containerRef}>
-        {children as ReactNode}
-      </div>
+      <div ref={containerRef}>{children as ReactNode}</div>
     </div>
   )
 }

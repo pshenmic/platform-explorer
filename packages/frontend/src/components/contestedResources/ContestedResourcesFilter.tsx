@@ -26,7 +26,11 @@ const votingStateOptions = [
 ]
 
 const pickVotingState = (values?: FilterStateValue): string | undefined => {
-  if (!Array.isArray(values) || values.length === 0 || values.length === votingStateOptions.length) {
+  if (
+    !Array.isArray(values) ||
+    values.length === 0 ||
+    values.length === votingStateOptions.length
+  ) {
     return undefined
   }
   return values[0] as string
@@ -45,8 +49,8 @@ const filtersConfig: FiltersConfig = {
     title: 'Filter by voting status',
     options: votingStateOptions,
     defaultValue: [VotingStateEnum.PENDING, VotingStateEnum.FINISHED] as VotingState[],
-    formatValue: (values) => pickVotingState(values) || undefined,
-    isAllSelected: (values) => Array.isArray(values) && values.length === votingStateOptions.length
+    formatValue: values => pickVotingState(values) || undefined,
+    isAllSelected: values => Array.isArray(values) && values.length === votingStateOptions.length
   },
   document_type_name: {
     label: 'Document type',
@@ -54,7 +58,7 @@ const filtersConfig: FiltersConfig = {
     type: 'input',
     placeholder: 'e.g. domain',
     defaultValue: '',
-    formatValue: (value) => (typeof value === 'string' ? value : null) || null
+    formatValue: value => (typeof value === 'string' ? value : null) || null
   },
   contract_id: {
     label: 'Data Contract',
@@ -63,9 +67,11 @@ const filtersConfig: FiltersConfig = {
     entityType: 'dataContracts',
     placeholder: 'Data Contract name or identifier',
     defaultValue: '',
-    formatValue: (value) => (typeof value === 'string' ? value : null) || null,
-    mobileTagRenderer: (value) => (
-      <Identifier avatar={true} ellipsis={true} styles={['highlight-both']}>{value as ReactNode}</Identifier>
+    formatValue: value => (typeof value === 'string' ? value : null) || null,
+    mobileTagRenderer: value => (
+      <Identifier avatar={true} ellipsis={true} styles={['highlight-both']}>
+        {value as ReactNode}
+      </Identifier>
     )
   },
   timestamp: {
@@ -73,8 +79,8 @@ const filtersConfig: FiltersConfig = {
     title: 'Creation date range',
     type: 'daterange',
     defaultValue: null,
-    formatValue: (value) => {
-      const range = value as { start?: Date | null, end?: Date | null } | null
+    formatValue: value => {
+      const range = value as { start?: Date | null; end?: Date | null } | null
       return `${range?.start ? `from ${range?.start?.toLocaleDateString()}` : ''} ${range?.end ? `to ${range?.end?.toLocaleDateString()}` : ''}`
     }
   }
@@ -104,9 +110,11 @@ export const ContestedResourcesFilter = ({
     <Filters
       filtersConfig={filtersConfig}
       initialFilters={initialFilters}
-      onFilterChange={(values) => {
+      onFilterChange={values => {
         const payload: ContestedResourcesFilterPayload = {
-          is_voting_finished: toIsVotingFinished(pickVotingState(values.voting_state as FilterStateValue)),
+          is_voting_finished: toIsVotingFinished(
+            pickVotingState(values.voting_state as FilterStateValue)
+          ),
           document_type_name: (values.document_type_name as string) || undefined,
           contract_id: (values.contract_id as string) || undefined,
           timestamp_start: values.timestamp_start

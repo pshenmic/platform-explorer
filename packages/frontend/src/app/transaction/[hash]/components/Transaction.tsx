@@ -1,17 +1,9 @@
 'use client'
 
 import { useEffect } from 'react'
-import {
-  CreditsBlock,
-  InfoLine,
-  DateBlock,
-  Identifier
-} from '../../../../components/data'
+import { CreditsBlock, InfoLine, DateBlock, Identifier } from '../../../../components/data'
 import { TransactionType } from './TransactionType'
-import {
-  PageDataContainer,
-  ValueContainer
-} from '../../../../components/ui/containers'
+import { PageDataContainer, ValueContainer } from '../../../../components/ui/containers'
 import { ValueCard } from '../../../../components/cards'
 import { HorisontalSeparator } from '../../../../components/ui/separators'
 import { CopyButton } from '../../../../components/ui/Buttons'
@@ -59,14 +51,11 @@ export const Transaction = () => {
 
   // Occurrences = canonical + duplicates; the selected one is driven by ?block=
   const occurrences: TransactionOccurrence[] = transaction.data
-    ? [
-        transaction.data,
-        ...((transaction.data.duplicates ?? []) as TransactionOccurrence[])
-      ]
+    ? [transaction.data, ...((transaction.data.duplicates ?? []) as TransactionOccurrence[])]
     : []
   const selectedBlockHash = searchParams.get('block')
   const selected: TransactionOccurrence | null =
-    occurrences.find((o) => o?.blockHash === selectedBlockHash) || transaction.data
+    occurrences.find(o => o?.blockHash === selectedBlockHash) || transaction.data
 
   const handleSelectOccurrence = (blockHash?: string | null): void => {
     if (!blockHash || blockHash === selected?.blockHash) {
@@ -99,16 +88,9 @@ export const Transaction = () => {
       {!transaction.error && (
         <div className={'TransactionPage__CommonInfo'}>
           <InfoLine
-            className={
-              'TransactionPage__InfoLine TransactionPage__InfoLine--Timestamp'
-            }
+            className={'TransactionPage__InfoLine TransactionPage__InfoLine--Timestamp'}
             title={'Timestamp'}
-            value={
-              <DateBlock
-                timestamp={selected?.timestamp}
-                showTime={true}
-              />
-            }
+            value={<DateBlock timestamp={selected?.timestamp} showTime={true} />}
             loading={transaction.loading}
             error={transaction.error}
           />
@@ -117,11 +99,7 @@ export const Transaction = () => {
             className={'TransactionPage__InfoLine'}
             title={'Hash'}
             value={
-              <Identifier
-                copyButton={true}
-                ellipsis={false}
-                styles={['highlight-both']}
-              >
+              <Identifier copyButton={true} ellipsis={false} styles={['highlight-both']}>
                 {selected?.hash}
               </Identifier>
             }
@@ -140,11 +118,7 @@ export const Transaction = () => {
                 <ValueCard className={'TransactionPage__BlockHeight'}>
                   Height: {selected?.blockHeight}
                 </ValueCard>
-                <Identifier
-                  copyButton={true}
-                  ellipsis={false}
-                  styles={['highlight-both']}
-                >
+                <Identifier copyButton={true} ellipsis={false} styles={['highlight-both']}>
                   {selected?.blockHash}
                 </Identifier>
               </ValueCard>
@@ -154,9 +128,7 @@ export const Transaction = () => {
           />
 
           <InfoLine
-            className={
-              'TransactionPage__InfoLine TransactionPage__InfoLine--Index'
-            }
+            className={'TransactionPage__InfoLine TransactionPage__InfoLine--Index'}
             title={'Index'}
             value={selected?.index}
             loading={transaction.loading}
@@ -164,9 +136,7 @@ export const Transaction = () => {
           />
 
           <InfoLine
-            className={
-              'TransactionPage__InfoLine TransactionPage__InfoLine--Type'
-            }
+            className={'TransactionPage__InfoLine TransactionPage__InfoLine--Type'}
             title={'Type'}
             value={<TypeBadge type={selected?.type} />}
             loading={transaction.loading}
@@ -174,9 +144,7 @@ export const Transaction = () => {
           />
 
           <InfoLine
-            className={
-              'TransactionPage__InfoLine TransactionPage__InfoLine--Status'
-            }
+            className={'TransactionPage__InfoLine TransactionPage__InfoLine--Status'}
             title={'Status'}
             value={
               <div className={'TransactionPage__StatusContainer'}>
@@ -193,14 +161,10 @@ export const Transaction = () => {
           />
 
           <InfoLine
-            className={
-              'TransactionPage__InfoLine TransactionPage__InfoLine--Owner'
-            }
+            className={'TransactionPage__InfoLine TransactionPage__InfoLine--Owner'}
             title={'Owner'}
             value={
-              <ValueCard
-                link={`/identity/${selected?.owner?.identifier}`}
-              >
+              <ValueCard link={`/identity/${selected?.owner?.identifier}`}>
                 <Identifier
                   avatar={true}
                   copyButton={true}
@@ -216,9 +180,7 @@ export const Transaction = () => {
           />
 
           <InfoLine
-            className={
-              'TransactionPage__InfoLine TransactionPage__InfoLine--RawTransaction'
-            }
+            className={'TransactionPage__InfoLine TransactionPage__InfoLine--RawTransaction'}
             title={'Raw Transaction'}
             value={
               <ValueCard className={'TransactionPage__RawTransaction'}>
@@ -232,30 +194,21 @@ export const Transaction = () => {
           />
 
           <InfoLine
-            className={
-              'TransactionPage__InfoLine TransactionPage__InfoLine--GasUsed'
-            }
+            className={'TransactionPage__InfoLine TransactionPage__InfoLine--GasUsed'}
             title={'Gas Used'}
-            value={
-              <CreditsBlock credits={selected?.gasUsed} rate={rate} />
-            }
+            value={<CreditsBlock credits={selected?.gasUsed} rate={rate} />}
             loading={transaction.loading}
             error={transaction.error}
           />
 
           <InfoLine
-            className={
-              'TransactionPage__InfoLine TransactionPage__InfoLine--FeeMultiplier'
-            }
+            className={'TransactionPage__InfoLine TransactionPage__InfoLine--FeeMultiplier'}
             title={'Fee Multiplier'}
-            value={
-              <FeeMultiplier value={Number(decodedST.data?.userFeeIncrease)} />
-            }
+            value={<FeeMultiplier value={Number(decodedST.data?.userFeeIncrease)} />}
             loading={transaction.loading || decodedST.loading}
             error={
               decodedST.error ||
-              (!decodedST.loading &&
-                decodedST.data?.userFeeIncrease === undefined)
+              (!decodedST.loading && decodedST.data?.userFeeIncrease === undefined)
             }
           />
 
@@ -269,10 +222,7 @@ export const Transaction = () => {
               </ValueCard>
             }
             loading={transaction.loading || decodedST.loading}
-            error={
-              decodedST.error ||
-              (!decodedST.loading && !decodedST.data?.signature)
-            }
+            error={decodedST.error || (!decodedST.loading && !decodedST.data?.signature)}
           />
         </div>
       )}
@@ -283,9 +233,7 @@ export const Transaction = () => {
 
           {decodedST.data?.coreFeePerByte && (
             <InfoLine
-              className={
-                'TransactionPage__InfoLine TransactionPage__InfoLine--CoreFeePerByte'
-              }
+              className={'TransactionPage__InfoLine TransactionPage__InfoLine--CoreFeePerByte'}
               title={'Core Fee Per Byte'}
               value={<>{decodedST.data?.coreFeePerByte} Duff</>}
               loading={decodedST.loading}
@@ -313,11 +261,7 @@ export const Transaction = () => {
                   rel={'noopener noreferrer'}
                 >
                   <ValueContainer clickable={true} external={true}>
-                    <Identifier
-                      copyButton={true}
-                      ellipsis={false}
-                      styles={['highlight-both']}
-                    >
+                    <Identifier copyButton={true} ellipsis={false} styles={['highlight-both']}>
                       {typeof decodedST.data?.outputAddress === 'string'
                         ? decodedST.data.outputAddress
                         : null}

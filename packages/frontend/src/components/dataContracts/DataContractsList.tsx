@@ -8,11 +8,7 @@ import { ChevronIcon } from '../ui/icons'
 import SmoothSize from '../ui/containers/SmoothSize'
 import { Grid, GridItem } from '@chakra-ui/react'
 import { useState } from 'react'
-import {
-  createColumnHelper,
-  getCoreRowModel,
-  useReactTable
-} from '@tanstack/react-table'
+import { createColumnHelper, getCoreRowModel, useReactTable } from '@tanstack/react-table'
 
 import './DataContractsList.css'
 
@@ -63,7 +59,7 @@ interface DataContractsListProps {
   pinnedGroup?: PinnedGroup | null
 }
 
-function DataContractsList ({
+function DataContractsList({
   dataContracts = [],
   headerStyles,
   pagination,
@@ -83,28 +79,44 @@ function DataContractsList ({
 
   return (
     <div className={'DataContractsList'}>
-      <Grid className={`DataContractsList__ColumnTitles ${headerExtraClass?.[headerStyles ?? ''] || ''}`}>
-        <GridItem className={'DataContractsList__ColumnTitle DataContractsList__ColumnTitle--Identifier'}>
+      <Grid
+        className={`DataContractsList__ColumnTitles ${headerExtraClass?.[headerStyles ?? ''] || ''}`}
+      >
+        <GridItem
+          className={'DataContractsList__ColumnTitle DataContractsList__ColumnTitle--Identifier'}
+        >
           Identifier
         </GridItem>
-        <GridItem className={'DataContractsList__ColumnTitle DataContractsList__ColumnTitle--Owner'}>
+        <GridItem
+          className={'DataContractsList__ColumnTitle DataContractsList__ColumnTitle--Owner'}
+        >
           Owner
         </GridItem>
-        <GridItem className={'DataContractsList__ColumnTitle DataContractsList__ColumnTitle--System'}>
+        <GridItem
+          className={'DataContractsList__ColumnTitle DataContractsList__ColumnTitle--System'}
+        >
           System
         </GridItem>
-        <GridItem className={'DataContractsList__ColumnTitle DataContractsList__ColumnTitle--WithTokens'}>
+        <GridItem
+          className={'DataContractsList__ColumnTitle DataContractsList__ColumnTitle--WithTokens'}
+        >
           With tokens
         </GridItem>
-        <GridItem className={'DataContractsList__ColumnTitle DataContractsList__ColumnTitle--DocumentsCount'}>
+        <GridItem
+          className={
+            'DataContractsList__ColumnTitle DataContractsList__ColumnTitle--DocumentsCount'
+          }
+        >
           Documents
         </GridItem>
-        <GridItem className={'DataContractsList__ColumnTitle DataContractsList__ColumnTitle--Timestamp'}>
+        <GridItem
+          className={'DataContractsList__ColumnTitle DataContractsList__ColumnTitle--Timestamp'}
+        >
           Timestamp
         </GridItem>
       </Grid>
 
-      {pinnedItems.length > 0 &&
+      {pinnedItems.length > 0 && (
         <div className={'DataContractsList__Group'}>
           <button
             type={'button'}
@@ -112,37 +124,43 @@ function DataContractsList ({
             onClick={() => setGroupOpen(open => !open)}
             aria-expanded={groupOpen}
           >
-            <ChevronIcon className={`DataContractsList__GroupChevron ${groupOpen ? 'DataContractsList__GroupChevron--Open' : ''}`}/>
+            <ChevronIcon
+              className={`DataContractsList__GroupChevron ${groupOpen ? 'DataContractsList__GroupChevron--Open' : ''}`}
+            />
             <span className={'DataContractsList__GroupLabel'}>{pinnedGroup?.label}</span>
             <span className={'DataContractsList__GroupCount'}>{pinnedItems.length}</span>
           </button>
 
           <SmoothSize>
-            {groupOpen &&
+            {groupOpen && (
               <div className={'DataContractsList__Items DataContractsList__Items--Pinned'}>
                 {pinnedItems.map((dataContract, index) => (
-                  <DataContractsListItem dataContract={dataContract} key={dataContract?.identifier || index}/>
+                  <DataContractsListItem
+                    dataContract={dataContract}
+                    key={dataContract?.identifier || index}
+                  />
                 ))}
               </div>
-            }
+            )}
           </SmoothSize>
         </div>
-      }
+      )}
 
-      {!loading
-        ? <div className={'DataContractsList__Items'}>
-            {table.getRowModel().rows.map((row) => (
-              <DataContractsListItem dataContract={row.original} key={row.id}/>
-            ))}
-            {dataContracts?.length === 0 &&
-              <EmptyListMessage>There are no data contracts created yet.</EmptyListMessage>
-            }
-            {dataContracts === undefined && <ErrorMessageBlock/>}
-          </div>
-        : <LoadingList itemsCount={itemsCount}/>
-      }
+      {!loading ? (
+        <div className={'DataContractsList__Items'}>
+          {table.getRowModel().rows.map(row => (
+            <DataContractsListItem dataContract={row.original} key={row.id} />
+          ))}
+          {dataContracts?.length === 0 && (
+            <EmptyListMessage>There are no data contracts created yet.</EmptyListMessage>
+          )}
+          {dataContracts === undefined && <ErrorMessageBlock />}
+        </div>
+      ) : (
+        <LoadingList itemsCount={itemsCount} />
+      )}
 
-      {pagination &&
+      {pagination && (
         <Pagination
           className={'DataContractsList__Pagination'}
           onPageChange={pagination.onPageChange}
@@ -150,7 +168,7 @@ function DataContractsList ({
           forcePage={pagination.forcePage}
           justify={true}
         />
-      }
+      )}
     </div>
   )
 }
