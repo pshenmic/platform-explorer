@@ -5,7 +5,7 @@ import { cva } from 'class-variance-authority'
 
 import { FORM_MODE_ENUM } from './constants'
 import type { FormMode } from './constants'
-import styles from './NameScreen.module.scss'
+import styles from './NameScreen.module.css'
 
 const button = cva([styles.btn])
 

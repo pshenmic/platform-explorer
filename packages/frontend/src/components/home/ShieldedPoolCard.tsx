@@ -19,7 +19,7 @@ import { Tooltip } from '../ui/Tooltips'
 import { creditsToDash } from '../../util'
 import { Skeleton } from './Skeleton'
 import { PRESETS, presetRange } from './MetricChart'
-import './ShieldedPoolCard.scss'
+import './ShieldedPoolCard.css'
 
 const DEFAULT_PRESET = PRESETS.length - 1
 const DAY_MS = 24 * 60 * 60 * 1000

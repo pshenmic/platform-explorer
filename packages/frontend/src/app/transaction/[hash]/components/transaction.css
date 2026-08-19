@@ -1,0 +1,298 @@
+.TransactionPage__CommonInfo > .InfoLine--Loading .InfoLine__Value,
+.TransactionPage__DetailsInfo > .InfoLine--Loading .InfoLine__Value {
+  height: 28px;
+  flex-grow: 1;
+  width: 100% !important;
+}
+
+.TransactionPage__InfoLine--Outputs .InfoLine__Value {
+  overflow: hidden;
+}
+
+.TransactionPage__InfoLine--VoteIndexValues .InfoLine__Value {
+  width: 100%;
+  overflow: hidden;
+}
+
+.TransactionPage__InfoLine--VoteChoice .InfoLine__Value {
+  overflow: hidden;
+}
+
+.TransactionPage__InfoLine--Schema .InfoLine__Value {
+  width: 100%;
+}
+
+.TransactionPage__InfoLine--InternalConfig .InfoLine__Value {
+  width: 100%;
+}
+
+.TransactionPage__InfoLine--Pooling .ValueContainer,
+.TransactionPage__InfoLine--Pooling .ValueCard {
+  max-width: max-content;
+}
+
+.TransactionPage__InfoLine--RawTransaction .InfoLine__Value {
+  min-width: 0;
+  overflow: hidden;
+}
+
+.TransactionPage__InfoLine--RawTransaction .ValueCard {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.TransactionPage__InfoLine--RawTransaction .Identifier {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.TransactionPage__InfoLine--Transitions .InfoLine__Value {
+  flex-grow: 1;
+  overflow: hidden;
+  padding-bottom: 2px;
+  padding-right: 2px;
+}
+
+.TransactionPage__InfoLine .InfoLine__Title {
+  width: 200px;
+  max-width: 200px;
+  line-height: var(--pe-space-5);
+}
+
+.TransactionPage__InfoLine .InfoLine__Value {
+  text-align: left;
+  font-size: var(--pe-text-sm);
+}
+
+.TransactionPage .HorisontalSeparator {
+  margin: 0;
+}
+
+.TransactionPage__Signature .CopyButton,
+.TransactionPage__AssetLockProof .CopyButton,
+.TransactionPage__OutputScript .CopyButton {
+  margin-left: var(--pe-space-1);
+}
+
+.TransactionPage__ErrorContainer .ValueContainer__Value {
+  overflow: hidden;
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
+.TransactionPage__RawTransaction .CopyButton {
+  margin-left: var(--pe-space-3);
+}
+
+.TransactionPage__VoteIndexValuesContainer .VoteIndexValues {
+  min-width: 34.25rem;
+  width: max-content;
+  max-width: 100%;
+}
+
+.TransactionPage {
+  position: relative;
+}
+
+.TransactionPage__InfoLine {
+  margin-bottom: var(--pe-space-3_5);
+  justify-content: flex-start !important;
+}
+
+.TransactionPage__InfoLine--Schema {
+  align-items: flex-start !important;
+}
+
+.TransactionPage__InfoLine--InternalConfig {
+  width: 100%;
+}
+
+.TransactionPage__InfoLine--Baseline,
+.TransactionPage__InfoLine--RawTransaction,
+.TransactionPage__InfoLine--Status,
+.TransactionPage__InfoLine--Transitions,
+.TransactionPage__InfoLine--PublicKeys {
+  align-items: baseline !important;
+}
+
+.TransactionPage__Signature,
+.TransactionPage__AssetLockProof,
+.TransactionPage__OutputScript {
+  overflow-wrap: break-word;
+  word-break: break-word;
+  color: var(--pe-color-fg-muted);
+  max-width: 510px;
+}
+
+.TransactionPage__ErrorContainer {
+  margin-top: var(--pe-space-2);
+  font-size: var(--pe-text-xs);
+}
+
+.TransactionPage__BlockHeight {
+  padding: 2px var(--pe-space-2);
+  border-radius: 3px;
+  font-size: var(--pe-text-2xs);
+  margin-right: var(--pe-space-3);
+  white-space: nowrap;
+}
+
+.TransactionPage__DetailsInfoTitle {
+  font-family: var(--pe-font-heading);
+  font-size: var(--pe-text-sm);
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  font-weight: var(--pe-font-weight-bold);
+  margin-bottom: var(--pe-space-3_5);
+}
+
+.TransactionPage__RawTransaction {
+  align-items: flex-start;
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
+.TransactionPage__PublicKeyCard,
+.TransactionPage__TransitionCard {
+  margin-bottom: var(--pe-space-3_5);
+}
+
+.TransactionPage__PublicKeyCard:last-child,
+.TransactionPage__TransitionCard:last-child {
+  margin-bottom: 0;
+}
+
+.TransactionPage__AddressCard {
+  overflow: hidden;
+}
+
+.TransactionPage__VoteIndexValuesContainer {
+  container-type: inline-size;
+  width: 100%;
+  overflow: hidden;
+}
+
+@container (max-width: 34.25rem) {
+  .TransactionPage__VoteIndexValuesContainer .VoteIndexValues {
+    min-width: auto;
+    width: auto;
+  }
+}
+
+.TransactionPage__VoteIndexValuesContainer .InfoLine__Value {
+  overflow: hidden;
+}
+
+@media screen and (max-width: 48em) {
+  .TransactionPage__InfoLine:not(.TransactionPage__InfoLine--Inline):not(
+    .TransactionPage__InfoLine--Index
+  ):not(.TransactionPage__InfoLine--Type):not(.TransactionPage__InfoLine--FeeMultiplier):not(
+    .InfoLine--Error
+  ):not(.TransactionPage__InfoLine--CoreFeePerByte):not(.TransactionPage__InfoLine--Status):not(
+    .TransactionPage__InfoLine--Pooling
+  ) {
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start !important;
+  }
+
+  .TransactionPage__InfoLine:not(.TransactionPage__InfoLine--Inline):not(
+      .TransactionPage__InfoLine--Index
+    ):not(.TransactionPage__InfoLine--Type):not(.TransactionPage__InfoLine--FeeMultiplier):not(
+      .InfoLine--Error
+    ):not(.TransactionPage__InfoLine--CoreFeePerByte):not(.TransactionPage__InfoLine--Status):not(
+      .TransactionPage__InfoLine--Pooling
+    )
+    > .InfoLine__Title {
+    width: 100%;
+    margin-bottom: var(--pe-space-1);
+    margin-right: 0;
+  }
+
+  .TransactionPage__InfoLine:not(.TransactionPage__InfoLine--Inline):not(
+      .TransactionPage__InfoLine--Index
+    ):not(.TransactionPage__InfoLine--Type):not(.TransactionPage__InfoLine--FeeMultiplier):not(
+      .InfoLine--Error
+    ):not(.TransactionPage__InfoLine--CoreFeePerByte):not(.TransactionPage__InfoLine--Status):not(
+      .TransactionPage__InfoLine--Pooling
+    )
+    > .InfoLine__Value {
+    width: 100%;
+  }
+
+  .TransactionPage__InfoLine > .InfoLine__Title {
+    width: auto;
+  }
+
+  .TransactionPage__InfoLine--GasUsed .CreditsBlock {
+    display: flex;
+    flex-wrap: wrap;
+  }
+
+  .TransactionPage__InfoLine--GasUsed .CreditsBlock .CreditsBlock__Usd {
+    margin-left: auto;
+  }
+
+  .TransactionPage__InfoLine--Timestamp .DateBlock__Delta {
+    margin-left: auto;
+  }
+
+  .TransactionPage__InfoLine--VoteChoice .VoteChoice--TowardsIdentity {
+    max-width: none;
+  }
+
+  .TransactionPage__InfoLine--VoteChoice .VoteChoice--TowardsIdentity .ValueContainer__Value {
+    justify-content: space-between;
+  }
+
+  .TransactionPage__InfoLine .ValueCard .Identifier,
+  .TransactionPage__InfoLine .ValueContainer .Identifier {
+    flex-grow: 1;
+  }
+
+  .TransactionPage__InfoLine .ValueCard .Identifier .Identifier__SymbolsContainer,
+  .TransactionPage__InfoLine .ValueContainer .Identifier .Identifier__SymbolsContainer {
+    flex-grow: 1;
+  }
+
+  .TransactionPage__VoteIndexValuesContainer .VoteIndexValues {
+    width: 100%;
+  }
+
+  .TransactionPage__InfoLine {
+    margin-bottom: var(--pe-space-3);
+    justify-content: space-between !important;
+    flex-wrap: wrap;
+  }
+
+  .TransactionPage__InfoLine--Status {
+    position: relative;
+  }
+
+  .TransactionPage__VoteIndexValuesContainer {
+    container-type: inline-size;
+    width: 100%;
+    overflow: hidden;
+  }
+
+  .TransactionPage__StatusBadge {
+    position: absolute;
+    top: 0;
+    right: 0;
+  }
+
+  .TransactionPage__ErrorContainer {
+    margin-top: 0;
+  }
+
+  .TransactionPage__DetailsInfoTitle {
+    margin-bottom: var(--pe-space-3);
+  }
+
+  .TransactionPage__RawTransaction,
+  .TransactionPage__Signature,
+  .TransactionPage__AssetLockProof,
+  .TransactionPage__OutputScript {
+    max-width: none;
+  }
+}

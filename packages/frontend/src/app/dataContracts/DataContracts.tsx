@@ -19,7 +19,7 @@ import { DataContractsFilter } from '@components/dataContracts/DataContractsFilt
 import DataContractsStatsInline from '@components/dataContracts/DataContractsStatsInline'
 import PageTitle from '../../components/intro/PageTitle'
 import introContent from './introContent'
-import './DataContractsPage.scss'
+import './DataContractsPage.css'
 
 const paginateConfig = {
   pageSize: {

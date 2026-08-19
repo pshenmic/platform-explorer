@@ -4,7 +4,7 @@ import { Badge, Grid, GridItem } from '@chakra-ui/react'
 import { NotActive as NotActiveJs } from '../../data'
 import type { Localization } from '../../../types'
 import type { WithClassName } from '../../../types/common'
-import './LocalisationListItem.scss'
+import './LocalisationListItem.css'
 
 const NotActive = NotActiveJs as ComponentType<{ children?: ReactNode, className?: string }>
 

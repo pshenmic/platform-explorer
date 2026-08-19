@@ -1,5 +1,5 @@
 import type { WithChildren, WithClassName } from '../../types/common'
-import './NotActive.scss'
+import './NotActive.css'
 
 function NotActive ({ children, className }: WithChildren & WithClassName) {
   return (

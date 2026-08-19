@@ -5,7 +5,7 @@ import Pagination from '../pagination'
 import { LoadingList } from '../loading'
 import { ErrorMessageBlock } from '../Errors'
 import { Grid, GridItem } from '@chakra-ui/react'
-import './DocumentsList.scss'
+import './DocumentsList.css'
 
 interface DocumentsListProps {
   documents?: Array<Document & { gasUsed?: number }>

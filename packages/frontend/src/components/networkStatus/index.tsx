@@ -12,7 +12,7 @@ import { EpochTooltip } from '../ui/Tooltips'
 import Link from 'next/link'
 import type { LoadableState, WithClassName } from '../../types/common'
 import type { Status } from '../../types'
-import './NetworkStatus.scss'
+import './NetworkStatus.css'
 
 // Untyped JS component — props optional until data/* is migrated
 const TimeDelta = TimeDeltaJs as ComponentType<{

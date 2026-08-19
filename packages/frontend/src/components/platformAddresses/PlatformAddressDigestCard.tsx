@@ -3,7 +3,7 @@ import { CreditsBlock as CreditsBlockJs } from '../data'
 import { LoadingLine } from '../loading'
 import type { PlatformAddress, Rate } from '../../types'
 import type { WithClassName } from '../../types/common'
-import './PlatformAddressDigestCard.scss'
+import './PlatformAddressDigestCard.css'
 
 // Untyped JS until data/* is migrated
 const CreditsBlock = CreditsBlockJs as ComponentType<{

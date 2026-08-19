@@ -10,7 +10,7 @@ import type { VoteEnumValue } from './constants'
 import type { WalletInfo } from 'src/contexts'
 import type { WithClassName } from '../../../types'
 
-import './ContendersListItem.scss'
+import './ContendersListItem.css'
 
 // Untyped JS components — loose wrappers until data/* is migrated
 const Identifier = IdentifierJs as ComponentType<{

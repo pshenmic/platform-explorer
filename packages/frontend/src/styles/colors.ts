@@ -1,98 +1,102 @@
+/**
+ * Chakra color map — values come from CSS tokens (styles/tokens/palette.css).
+ * Prefer var(--pe-color-*) in new CSS; keep this object for Chakra components.
+ */
 export const colors = {
   brand: {
-    normal: '#008DE4',
-    'normal-rgb': '0, 141, 228',
-    deep: '#0E75B5',
-    shaded: '#165278',
-    light: '#2CBBFF',
-    'light-rgb': '44, 187, 255',
-    pressed: '#0493EB'
+    normal: 'var(--pe-color-brand-normal)',
+    'normal-rgb': 'var(--pe-color-brand-normal-rgb)',
+    deep: 'var(--pe-color-brand-deep)',
+    shaded: 'var(--pe-color-brand-shaded)',
+    light: 'var(--pe-color-brand-light)',
+    'light-rgb': 'var(--pe-color-brand-light-rgb)',
+    pressed: 'var(--pe-color-brand-pressed)'
   },
   white: {
-    50: '#FFFFFF'
+    50: 'var(--pe-color-white-50)'
   },
   red: {
-    default: '#F45858',
-    'default-rgb': '244, 88, 88'
+    default: 'var(--pe-color-red-default)',
+    'default-rgb': 'var(--pe-color-red-default-rgb)'
   },
   yellow: {
-    default: '#FFD205'
+    default: 'var(--pe-color-yellow-default)'
   },
   green: {
-    default: '#1CC400',
-    'default-rgb': '28, 196, 0',
-    label: '#81F458',
-    'label-rgb': '129, 244, 88',
-    emeralds: '#58F4BC',
-    'emeralds-rgb': '88, 244, 188'
+    default: 'var(--pe-color-green-default)',
+    'default-rgb': 'var(--pe-color-green-default-rgb)',
+    label: 'var(--pe-color-green-label)',
+    'label-rgb': 'var(--pe-color-green-label-rgb)',
+    emeralds: 'var(--pe-color-green-emeralds)',
+    'emeralds-rgb': 'var(--pe-color-green-emeralds-rgb)'
   },
   orange: {
-    default: '#f49a58',
-    'default-rgb': '244, 154, 88'
+    default: 'var(--pe-color-orange-default)',
+    'default-rgb': 'var(--pe-color-orange-default-rgb)'
   },
   gray: {
-    50: '#f0f1f2',
-    100: '#e0e3e5',
-    200: '#c6cacd',
-    250: '#93aab2',
-    '250-rgb': '147, 170, 178',
-    300: '#acb1b4',
-    400: '#94999c',
-    500: '#7b7f83',
-    525: '#849099',
-    550: '#52585d6b',
-    600: '#62676a',
-    650: '#232C30',
-    675: '#21272C',
-    '675-rgb': '33, 39, 44',
-    700: '#494e51',
-    750: '#39454C',
-    800: '#2e393d',
-    '800-rgb': '46, 57, 61',
-    900: '#181d20'
+    50: 'var(--pe-color-gray-50)',
+    100: 'var(--pe-color-gray-100)',
+    200: 'var(--pe-color-gray-200)',
+    250: 'var(--pe-color-gray-250)',
+    '250-rgb': 'var(--pe-color-gray-250-rgb)',
+    300: 'var(--pe-color-gray-300)',
+    400: 'var(--pe-color-gray-400)',
+    500: 'var(--pe-color-gray-500)',
+    525: 'var(--pe-color-gray-525)',
+    550: 'var(--pe-color-gray-550)',
+    600: 'var(--pe-color-gray-600)',
+    650: 'var(--pe-color-gray-650)',
+    675: 'var(--pe-color-gray-675)',
+    '675-rgb': 'var(--pe-color-gray-675-rgb)',
+    700: 'var(--pe-color-gray-700)',
+    750: 'var(--pe-color-gray-750)',
+    800: 'var(--pe-color-gray-800)',
+    '800-rgb': 'var(--pe-color-gray-800-rgb)',
+    900: 'var(--pe-color-gray-900)'
   }
 }
 
 export const badgeColors = {
   red: {
-    bg: `rgba(${colors.red['default-rgb']}, .2)`,
+    bg: 'rgba(var(--pe-color-red-default-rgb), .2)',
     bgHover: '',
-    text: colors.red.default
+    text: 'var(--pe-color-red-default)'
   },
   green: {
-    bg: `rgba(${colors.green['label-rgb']}, .2)`,
+    bg: 'rgba(var(--pe-color-green-label-rgb), .2)',
     bgHover: '',
-    text: colors.green.label
+    text: 'var(--pe-color-green-label)'
   },
   gray: {
     bg: 'rgba(255,255,255, .2)',
     bgHover: 'rgba(255,255,255, .3)',
-    text: '#fff',
-    border: colors.gray[750]
+    text: 'var(--pe-color-white-50)',
+    border: 'var(--pe-color-gray-750)'
   },
   dimGray: {
-    bg: colors.gray[800],
-    bgHover: colors.gray[700],
-    text: colors.gray[250]
+    bg: 'var(--pe-color-gray-800)',
+    bgHover: 'var(--pe-color-gray-700)',
+    text: 'var(--pe-color-gray-250)'
   },
   blue: {
-    bg: 'rgba(0, 141, 228, 0.2)',
-    bgHover: `rgba(${colors.brand['light-rgb']}, .2)`,
-    text: colors.brand.light
+    bg: 'rgba(var(--pe-color-brand-normal-rgb), 0.2)',
+    bgHover: 'rgba(var(--pe-color-brand-light-rgb), .2)',
+    text: 'var(--pe-color-brand-light)'
   },
   yellow: {
     bg: 'rgba(244, 228, 88, 0.2)',
     bgHover: '',
-    text: '#F4E458'
+    text: 'var(--pe-color-yellow-badge)'
   },
   orange: {
-    bg: `rgba(${colors.orange['default-rgb']}, .2)`,
+    bg: 'rgba(var(--pe-color-orange-default-rgb), .2)',
     bgHover: '',
-    text: colors.orange.default
+    text: 'var(--pe-color-orange-default)'
   },
   emerald: {
-    bg: `rgba(${colors.green['emeralds-rgb']}, .2)`,
+    bg: 'rgba(var(--pe-color-green-emeralds-rgb), .2)',
     bgHover: '',
-    text: colors.green.emeralds
+    text: 'var(--pe-color-green-emeralds)'
   }
 }

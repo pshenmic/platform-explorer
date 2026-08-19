@@ -12,7 +12,7 @@ import { Tooltip } from '../ui/Tooltips'
 import { transactionsListHref } from '../transactions/transactionsListHref'
 import { formatFullNumber } from '../../util'
 import { PRESETS, presetRange } from './MetricChart'
-import './TxTypesBar.scss'
+import './TxTypesBar.css'
 
 const MIN_SEG_FRAC = 0.008
 

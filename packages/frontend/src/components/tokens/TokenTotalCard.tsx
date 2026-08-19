@@ -24,7 +24,7 @@ import { useState } from 'react'
 import ImageGeneratorJs from '../imageGenerator'
 import type { Localization, Rate } from '../../types'
 import type { PriceData } from './prices/PriceListItem'
-import './TokenTotalCard.scss'
+import './TokenTotalCard.css'
 
 const Alias = AliasJs as ComponentType<{
   children?: ReactNode

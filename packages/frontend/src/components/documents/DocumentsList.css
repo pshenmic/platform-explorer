@@ -1,0 +1,210 @@
+.DocumentsList__Pagination {
+  margin-top: var(--pe-space-8) !important;
+}
+
+.DocumentsList__ScrollZone {
+  width: fit-content;
+  min-width: 100%;
+}
+
+@media screen and (max-width: 48em) {
+  .DocumentsList__Pagination {
+    margin-top: var(--pe-space-6) !important;
+  }
+}
+
+@media screen and (max-width: 30em) {
+  .DocumentsList__Pagination {
+    margin-top: var(--pe-space-4) !important;
+  }
+}
+
+.DocumentsList {
+  container-type: inline-size;
+}
+
+.DocumentsList__Table {
+  display: grid;
+  column-gap: var(--pe-space-3);
+  grid-template-columns: 70px 150px fit-content(220px) 50px minmax(0, 1fr) minmax(0, 1fr) 100px 80px;
+}
+
+@container (max-width: 64rem) {
+  .DocumentsList__Table {
+    grid-template-columns: 70px 150px fit-content(220px) 50px minmax(0, 1fr) minmax(0, 1fr) 80px;
+  }
+}
+
+@container (max-width: 48rem) {
+  .DocumentsList__Table {
+    grid-template-columns: 70px 150px fit-content(200px) 50px minmax(0, 1fr) 80px;
+  }
+}
+
+@container (max-width: 22rem) {
+  .DocumentsList__Table {
+    grid-template-columns: 70px minmax(0, 1fr);
+  }
+}
+
+.DocumentsList__Table > *:not(.DocumentsList__ColumnTitles):not(.DocumentsListItem) {
+  grid-column: 1 / -1;
+}
+
+.DocumentsList__Table--Compact {
+  grid-template-columns: 70px fit-content(220px) 50px minmax(0, 1fr) minmax(0, 1fr) 80px;
+}
+
+@container (max-width: 64rem) {
+  .DocumentsList__Table--Compact {
+    grid-template-columns: 70px fit-content(220px) 50px minmax(0, 1fr) minmax(0, 1fr) 80px;
+  }
+}
+
+@container (max-width: 48rem) {
+  .DocumentsList__Table--Compact {
+    grid-template-columns: 70px fit-content(200px) 50px minmax(0, 1fr) 80px;
+  }
+}
+
+@container (max-width: 22rem) {
+  .DocumentsList__Table--Compact {
+    grid-template-columns: 70px minmax(0, 1fr);
+  }
+}
+
+.DocumentsList__ColumnTitles {
+  display: grid;
+  padding: var(--pe-list-row-pad-y) var(--pe-list-row-pad-x);
+  border-radius: var(--pe-list-row-radius);
+  background-color: var(--pe-color-gray-800);
+  margin-bottom: var(--pe-space-2);
+  font-family: var(--pe-font-heading);
+  font-weight: var(--pe-font-weight-bold);
+  font-size: var(--pe-text-sm);
+  text-transform: uppercase;
+  color: var(--pe-color-fg);
+}
+
+.DocumentsList__ColumnTitles--Light {
+  background: transparent !important;
+  font-weight: var(--pe-font-weight-medium) !important;
+  color: var(--pe-color-fg) !important;
+  text-transform: none !important;
+}
+
+.DocumentsList__ColumnTitles {
+  display: grid;
+  grid-column: 1 / -1;
+  grid-template-columns: subgrid;
+  column-gap: var(--pe-space-3);
+}
+
+.DocumentsList__ColumnTitle {
+  display: flex;
+  align-items: center;
+  font-size: var(--pe-text-sm);
+}
+
+.DocumentsList__ColumnTitle--Timestamp {
+  max-width: 70px;
+}
+
+.DocumentsList__ColumnTitle--TransitionType {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.DocumentsList__ColumnTitle--DocumentType {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.DocumentsList__ColumnTitle--Revision {
+  justify-content: flex-end;
+  font-variant-numeric: tabular-nums;
+}
+
+.DocumentsList__ColumnTitle--Identifier {
+  max-width: 600px;
+  width: 100%;
+  overflow: hidden;
+}
+
+.DocumentsList__ColumnTitle--Owner,
+.DocumentsList__ColumnTitle--DataContract {
+  overflow: hidden;
+  justify-content: flex-end;
+}
+
+.DocumentsList__ColumnTitle--Gas {
+  justify-content: flex-end;
+  font-variant-numeric: tabular-nums;
+  font-size: var(--pe-text-sm);
+  opacity: var(--pe-opacity-strong);
+}
+
+.DocumentsList__ColumnTitle--Status {
+  justify-content: flex-end;
+}
+
+@container (max-width: 64rem) {
+  .DocumentsList__ColumnTitle--Gas {
+    display: none;
+  }
+}
+
+@container (max-width: 48rem) {
+  .DocumentsList__ColumnTitle--Owner,
+  .DocumentsList__ColumnTitle--DataContract {
+    display: none;
+  }
+
+  .DocumentsList__ColumnTitle--Gas {
+    display: none;
+  }
+}
+
+@container (max-width: 22rem) {
+  .DocumentsList__ColumnTitle--TransitionType {
+    display: none;
+  }
+
+  .DocumentsList__ColumnTitle--DocumentType {
+    display: none;
+  }
+
+  .DocumentsList__ColumnTitle--Revision {
+    display: none;
+  }
+
+  .DocumentsList__ColumnTitle--Owner,
+  .DocumentsList__ColumnTitle--DataContract {
+    display: none;
+  }
+
+  .DocumentsList__ColumnTitle--Gas {
+    display: none;
+  }
+
+  .DocumentsList__ColumnTitle--Status {
+    display: none;
+  }
+
+  .DocumentsList__ColumnTitle--Identifier {
+    max-width: none;
+    width: 100%;
+  }
+}
+
+.DocumentsList__ColumnTitle {
+  word-break: normal;
+  white-space: normal;
+  overflow-wrap: break-word;
+}
+
+.DocumentsList__ColumnTitle:last-child {
+  text-align: right;
+}

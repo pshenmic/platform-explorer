@@ -11,7 +11,7 @@ import { findActiveAlias } from '../../util'
 import { DataContractTitle } from './DataContractTitle'
 import type { LoadableState, Owner, WithClassName } from '../../types'
 
-import './DataContractTotalCard.scss'
+import './DataContractTotalCard.css'
 
 // Untyped JS components — loose wrappers until data/* and cards/* are migrated
 const ImageGenerator = ImageGeneratorJs as ComponentType<{

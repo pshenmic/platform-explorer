@@ -1,6 +1,6 @@
 import type { WithChildren, WithClassName } from '../../types/common'
 import { InfoCard } from './'
-import './CardsGrid.scss'
+import './CardsGrid.css'
 
 interface CardsGridProps extends WithChildren, WithClassName {
   itemsCount?: number | null

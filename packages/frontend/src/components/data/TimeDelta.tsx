@@ -5,7 +5,7 @@ import type { ReactNode } from 'react'
 import { getTimeDelta } from '../../util'
 import { NotActive } from './index'
 import { Tooltip } from '../ui/Tooltips'
-import './TimeDelta.scss'
+import './TimeDelta.css'
 
 interface WrapperProps {
   children?: ReactNode

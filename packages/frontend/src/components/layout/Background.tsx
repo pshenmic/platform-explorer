@@ -2,7 +2,7 @@
 
 import { usePathname } from 'next/navigation'
 import Snow from './Snow'
-import './Background.scss'
+import './Background.css'
 
 interface BackgroundProps {
   snow?: boolean

@@ -10,7 +10,11 @@
     "includes": ["src/**", "*.mjs", "*.json"]
   },
   "formatter": {
-    "enabled": false
+    "enabled": true,
+    "indentStyle": "space",
+    "indentWidth": 2,
+    "lineEnding": "lf",
+    "lineWidth": 100
   },
   "linter": {
     "enabled": true,
@@ -46,7 +50,27 @@
     }
   },
   "javascript": {
-    "globals": ["React", "JSX"]
+    "globals": ["React", "JSX"],
+    "formatter": {
+      "enabled": false
+    }
+  },
+  "json": {
+    "formatter": {
+      "enabled": false
+    }
+  },
+  "css": {
+    "formatter": {
+      "enabled": true,
+      "indentStyle": "space",
+      "indentWidth": 2,
+      "lineWidth": 100,
+      "quoteStyle": "double"
+    },
+    "linter": {
+      "enabled": false
+    }
   },
   "assist": {
     "enabled": false

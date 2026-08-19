@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react'
 import type { WithChildren, WithClassName } from '../../types/common'
-import './FilterGroup.scss'
+import './FilterGroup.css'
 
 interface FilterGroupProps extends WithChildren, WithClassName {
   title?: ReactNode

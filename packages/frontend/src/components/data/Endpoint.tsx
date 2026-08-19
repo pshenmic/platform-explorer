@@ -1,7 +1,7 @@
 import type { ReactNode, ComponentPropsWithoutRef } from 'react'
 import { CircleIcon, ArrowCornerIcon } from '../ui/icons'
 import { Tooltip } from '../ui/Tooltips'
-import './Endpoint.scss'
+import './Endpoint.css'
 
 type EndpointStatus = 'OK' | 'UNKNOWN' | 'ERROR' | 'ERR_CONNECTION_REFUSED' | string
 

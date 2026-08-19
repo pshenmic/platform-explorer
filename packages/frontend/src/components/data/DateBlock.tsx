@@ -8,7 +8,7 @@ import { TimeDelta } from './index'
 import { Tooltip } from '../ui/Tooltips'
 import { formatDate } from '../../util'
 
-import './DateBlock.scss'
+import './DateBlock.css'
 
 type DateBlockFormat = 'all' | 'deltaOnly' | 'dateOnly'
 

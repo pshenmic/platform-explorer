@@ -8,7 +8,7 @@ import BatchTypeBadgeJs from '../transactions/BatchTypeBadge'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { findActiveAlias } from '../../util'
-import './DocumentsListItem.scss'
+import './DocumentsListItem.css'
 
 // Untyped JS modules — cast until migrated
 const Alias = AliasJs as ComponentType<{

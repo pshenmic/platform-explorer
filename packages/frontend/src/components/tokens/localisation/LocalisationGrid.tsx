@@ -3,7 +3,7 @@ import LocalisationList from './LocalisationList'
 import { cva } from 'class-variance-authority'
 import type { Localization } from '../../../types'
 
-import styles from './LocalisationGrid.module.scss'
+import styles from './LocalisationGrid.module.css'
 
 const localisationStyles = cva(styles.root, {
   variants: {

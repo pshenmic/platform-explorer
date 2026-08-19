@@ -6,7 +6,7 @@ import { VOTING_CAPABLE_TYPES } from './constants'
 import type { VoteEnumValue } from './constants'
 import type { WalletInfo } from 'src/contexts'
 
-import './VoteManager.scss'
+import './VoteManager.css'
 
 interface IdentityWithType {
   identifier: string

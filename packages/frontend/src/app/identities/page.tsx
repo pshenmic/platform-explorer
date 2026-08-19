@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import Identities from './Identities'
-import './IdentitiesPage.scss'
+import './IdentitiesPage.css'
 
 export const metadata: Metadata = {
   title: 'Identities — Dash Platform Explorer',

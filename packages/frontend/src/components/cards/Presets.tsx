@@ -1,5 +1,5 @@
 import type { WithClassName } from '../../types/common'
-import './Presets.scss'
+import './Presets.css'
 
 interface PresetOption {
   label: string

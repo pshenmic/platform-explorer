@@ -1,7 +1,7 @@
 import type { ComponentPropsWithoutRef, ReactNode } from 'react'
 import Link from 'next/link'
 import type { WithChildren, WithClassName } from '../../../types/common'
-import './LinkContainer.scss'
+import './LinkContainer.css'
 
 interface LinkContainerProps extends WithChildren, WithClassName, Omit<ComponentPropsWithoutRef<'div'>, 'className' | 'children'> {
   href?: string

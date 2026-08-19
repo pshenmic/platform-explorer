@@ -2,7 +2,7 @@ import { Input } from '@chakra-ui/react'
 import type { ReactNode, ChangeEvent } from 'react'
 import { SubmitButton } from '../ui/forms'
 import FilterActions from './FilterActions'
-import './InputFilter.scss'
+import './InputFilter.css'
 
 interface InputFilterProps {
   value?: string | number | null

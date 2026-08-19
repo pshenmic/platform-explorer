@@ -2,7 +2,7 @@ import type { ComponentPropsWithoutRef, ReactNode } from 'react'
 import { ArrowCornerIcon } from '../icons'
 import Link from 'next/link'
 import type { WithChildren, WithClassName } from '../../../types/common'
-import './ValueContainer.scss'
+import './ValueContainer.css'
 
 type ColorScheme =
   | 'default'

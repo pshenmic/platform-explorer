@@ -18,7 +18,7 @@ import ContestedResourcesStatsInline from '../../components/contestedResources/C
 import PageTitle from '../../components/intro/PageTitle'
 import type { ContestedResource, LoadableState, PaginatedResultSet } from '../../types'
 import introContent from './introContent'
-import './ContestedResourcesPage.scss'
+import './ContestedResourcesPage.css'
 
 const paginateConfig = {
   pageSize: {

@@ -1,5 +1,5 @@
-import './SimpleList.scss'
-import './EmptyListMessage.scss'
+import './SimpleList.css'
+import './EmptyListMessage.css'
 import Link from 'next/link'
 import { forwardRef } from 'react'
 import { Container } from '@chakra-ui/react'

@@ -7,7 +7,8 @@ import Navbar from './navbar/Navbar'
 import Footer from './footer'
 import Background from './Background'
 
-import '../../styles/theme.scss'
+import '../../styles/tokens/index.css'
+import '../../styles/theme.css'
 
 interface RootComponentProps {
   children?: ReactNode

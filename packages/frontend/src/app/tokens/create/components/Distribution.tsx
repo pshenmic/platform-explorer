@@ -6,7 +6,7 @@ import { YesNoBadge } from './FeatureRow'
 import { Row, GroupHeader } from './AdvancedRow'
 import { useTokenWizard } from '../TokenWizardContext'
 import type { IntervalUnit, PerpetualRecipient, PerpetualType, TokenForm } from '../TokenWizardContext'
-import './Advanced.scss'
+import './Advanced.css'
 
 let __rowSeq = 0
 const makeRowId = (): string => `pp${++__rowSeq}`

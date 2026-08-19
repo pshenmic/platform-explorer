@@ -19,7 +19,7 @@ import { FormattedNumber } from '../ui/FormattedNumber'
 import type { LoadableState, Rate, Token } from '../../types'
 import type { WithClassName } from '../../types/common'
 import type { PriceData } from './prices/PriceListItem'
-import './TokenTransitionCard.scss'
+import './TokenTransitionCard.css'
 
 const BigNumber = BigNumberJs as ComponentType<{ children?: ReactNode, className?: string }>
 const CreditsBlock = CreditsBlockJs as ComponentType<{

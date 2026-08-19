@@ -17,7 +17,7 @@ import ContendersBadge from './ContendersBadge'
 import { LinkContainer } from '../ui/containers'
 import { useRouter } from 'next/navigation'
 import type { ContestedResource } from '../../types'
-import './ContestedResourcesListItem.scss'
+import './ContestedResourcesListItem.css'
 
 // Untyped JS components — loose wrappers until data/* / transactions/* are migrated
 const Alias = AliasJs as ComponentType<{ children?: ReactNode, ellipsis?: boolean, className?: string }>

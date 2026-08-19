@@ -8,7 +8,7 @@ import { LoadingList as LoadingListJs } from '../../loading'
 import PaginationJs from '../../pagination'
 import { ErrorMessageBlock } from '../../Errors'
 import type { Rate } from '../../../types'
-import './ActivityList.scss'
+import './ActivityList.css'
 
 const LoadingList = LoadingListJs as ComponentType<{ itemsCount?: number }>
 const Pagination = PaginationJs as ComponentType<{

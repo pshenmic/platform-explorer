@@ -13,7 +13,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { findActiveAlias } from '../../../util'
 import type { Alias } from '../../../types'
-import './HoldersListItem.scss'
+import './HoldersListItem.css'
 
 const AliasEl = AliasJs as ComponentType<{
   children?: ReactNode

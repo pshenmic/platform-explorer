@@ -6,7 +6,7 @@ import type { CSSProperties, ReactNode } from 'react'
 import { fetchHandlerSuccess, fetchHandlerError, formatFullNumber } from '../../util'
 import type { LoadableState, WithClassName } from '../../types/common'
 import type { Status, EpochData } from '../../types'
-import './NetworkStatsInline.scss'
+import './NetworkStatsInline.css'
 
 interface NetworkStatsItem {
   label: ReactNode

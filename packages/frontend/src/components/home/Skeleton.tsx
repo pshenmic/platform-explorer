@@ -1,6 +1,6 @@
 import type { CSSProperties } from 'react'
 import type { WithClassName } from '../../types'
-import './Skeleton.scss'
+import './Skeleton.css'
 
 interface SkeletonProps extends WithClassName {
   w?: string | number

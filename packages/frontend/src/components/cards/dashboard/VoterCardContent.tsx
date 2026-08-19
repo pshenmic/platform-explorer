@@ -3,7 +3,7 @@ import { Flex } from '@chakra-ui/react'
 import type { BestVoter } from '../../../types'
 import IdentifierJs from '../../data/Identifier'
 import VoteBadgesJs from '../../contestedResources/VoteBadges'
-import './TotalValidatorsCardContent.scss'
+import './TotalValidatorsCardContent.css'
 
 const Identifier = IdentifierJs as ComponentType<{
   children?: ReactNode

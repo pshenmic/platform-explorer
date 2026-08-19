@@ -3,7 +3,7 @@ import Link from 'next/link'
 import { Identifier as IdentifierJs, BigNumber as BigNumberJs } from '../../data'
 import ValueContainer from '../../ui/containers/ValueContainer'
 import { Grid, GridItem } from '@chakra-ui/react'
-import './GroupsListItem.scss'
+import './GroupsListItem.css'
 
 // Untyped JS components — loose wrappers until data/* is migrated
 const Identifier = IdentifierJs as ComponentType<{

@@ -3,8 +3,8 @@ import LocalisationListItem from './LocalisationListItem'
 import { EmptyListMessage } from '../../ui/lists'
 import type { Localization } from '../../../types'
 import type { WithClassName } from '../../../types/common'
-import './LocalisationList.scss'
-import './LocalisationListItem.scss'
+import './LocalisationList.css'
+import './LocalisationListItem.css'
 
 interface LocalisationListProps extends WithClassName {
   localisations?: Record<string, Partial<Localization>> | null

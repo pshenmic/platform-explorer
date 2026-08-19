@@ -6,8 +6,8 @@ import { WheelControls } from '../ui/Slider/plugins'
 import type { WithClassName } from '../../types/common'
 import DashboardCard from './DashboardCard'
 import type { DashboardCardData } from './DashboardCard'
-import './DashboardCards.scss'
-import './InfoCard.scss'
+import './DashboardCards.css'
+import './InfoCard.css'
 
 type SliderMode = 'responsive' | 'always' | 'never'
 

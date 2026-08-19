@@ -1,7 +1,7 @@
 import { Badge } from '@chakra-ui/react'
 import { ChoiceEnum, ChoiceInfo } from '../../enums/choiceEnum'
 import type { WithClassName } from '../../types'
-import './VoteBadges.scss'
+import './VoteBadges.css'
 
 interface ChoiceBadgeProps extends WithClassName {
   choice: number | string

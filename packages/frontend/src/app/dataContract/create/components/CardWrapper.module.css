@@ -1,0 +1,5 @@
+.root {
+  border-radius: var(--pe-radius-def);
+  background-color: rgba(46, 57, 61, 0.5019607843);
+  border: 1px solid #2f363a;
+}

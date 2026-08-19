@@ -2,7 +2,7 @@ import type { ComponentType, ReactNode } from 'react'
 import { ValueContainer } from '../ui/containers'
 import { ValueCard as ValueCardJs } from '../cards'
 import type { WithClassName } from '../../types/common'
-import './PublicKeyBoundCard.scss'
+import './PublicKeyBoundCard.css'
 
 const ValueCard = ValueCardJs as ComponentType<{
   children?: ReactNode

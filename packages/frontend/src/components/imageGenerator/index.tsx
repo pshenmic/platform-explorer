@@ -5,7 +5,7 @@ import type { ImageProps } from 'next/image'
 import { minidenticon } from 'minidenticons'
 import { useMemo } from 'react'
 import type { WithClassName } from '../../types/common'
-import './ImageGenerator.scss'
+import './ImageGenerator.css'
 
 interface ImageGeneratorProps extends WithClassName, Omit<ImageProps, 'src' | 'alt' | 'className'> {
   username?: string | null

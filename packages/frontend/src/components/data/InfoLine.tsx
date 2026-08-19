@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react'
 import type { WithClassName } from '../../types/common'
 import { NotActive } from './index'
-import './InfoLine.scss'
+import './InfoLine.css'
 
 interface InfoLineProps extends WithClassName {
   title?: ReactNode

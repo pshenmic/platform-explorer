@@ -4,7 +4,7 @@ import rehypeRaw from 'rehype-raw'
 import remarkGfm from 'remark-gfm'
 import type { ComponentPropsWithoutRef, ReactNode } from 'react'
 import HeadingRenderer from './HeadingRenderer'
-import './Markdown.scss'
+import './Markdown.css'
 
 interface CustomMarkdownProps {
   children?: string | null

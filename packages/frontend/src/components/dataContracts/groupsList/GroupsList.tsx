@@ -8,7 +8,7 @@ import { Button, Grid, GridItem } from '@chakra-ui/react'
 import { ChevronIcon } from '../../ui/icons'
 import type { DataContractGroup } from '../../../types'
 
-import './GroupsList.scss'
+import './GroupsList.css'
 
 const convertMembersToArray = (members: unknown): GroupMember[] => {
   if (!members || typeof members !== 'object') {

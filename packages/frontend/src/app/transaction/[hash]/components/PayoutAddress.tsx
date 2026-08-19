@@ -8,7 +8,7 @@ import { useActiveNetwork } from 'src/contexts'
 import type { Validator } from '../../../../types'
 import type { LoadableState } from '../../../../types/common'
 
-import styles from './PayoutAddress.module.scss'
+import styles from './PayoutAddress.module.css'
 
 interface PayoutAddressProps {
   outputScript?: string | null
