@@ -90,7 +90,7 @@ function PlatformAddress() {
                   transactions={transitions.data?.resultSet}
                   loading={transitions.isLoading}
                   pagination={{
-                    onPageChange: pagination => setTxPage(pagination.selected + 1),
+                    onPageChange: (pagination: { selected: number }) => setTxPage(pagination.selected + 1),
                     pageCount:
                       Math.ceil((transitions.data?.pagination?.total || 0) / pageSize) || 1,
                     forcePage: txPage - 1

@@ -25,7 +25,7 @@ import {
 import { useBreadcrumbs } from '../../../contexts/BreadcrumbsContext'
 import { TransactionsList } from '../../../components/transactions'
 import TokensList from '../../../components/tokens/TokensList'
-import type { TokenListItemData } from '../../../components/tokens/TokensListItem'
+import type { Token as TokenListItemData } from '../../../types'
 import { useDataContractDocumentsFilters } from '../../../components/documents/hooks/useDataContractDocumentsFilters'
 import { DocumentsFilter } from '../../../components/documents/DocumentsFilter'
 import { useQuery, keepPreviousData } from '@tanstack/react-query'
@@ -255,7 +255,7 @@ function DataContract({ identifier }: DataContractProps) {
                   transactions={transactions.data?.list}
                   loading={transactions.isLoading}
                   pagination={{
-                    onPageChange: ({ selected }) => setTxPage(selected + 1),
+                    onPageChange: ({ selected }: { selected: number }) => setTxPage(selected + 1),
                     pageCount: txPagination?.pageCount ?? 0,
                     forcePage: txPagination?.forcePage
                   }}

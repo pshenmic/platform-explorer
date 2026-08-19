@@ -300,7 +300,7 @@ function Identity({ identifier }: IdentityProps) {
                 <TransactionsList
                   transactions={transactions.data?.resultSet}
                   pagination={{
-                    onPageChange: pagination =>
+                    onPageChange: (pagination: { selected: number }) =>
                       paginationHandler(setTransactions, pagination.selected),
                     pageCount:
                       Math.ceil((transactions.data?.pagination?.total ?? 0) / pageSize) || 1,
@@ -382,7 +382,7 @@ function Identity({ identifier }: IdentityProps) {
                   variant={'balance'}
                   rate={rate.data}
                   pagination={{
-                    onPageChange: pagination => paginationHandler(setTokens, pagination.selected),
+                    onPageChange: (pagination: { selected: number }) => paginationHandler(setTokens, pagination.selected),
                     pageCount: Math.ceil((tokens.data?.pagination?.total ?? 0) / pageSize) || 1,
                     forcePage: (tokens?.props as PaginatedProps)?.currentPage
                   }}
