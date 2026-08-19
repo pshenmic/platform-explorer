@@ -30,6 +30,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
     <html
       lang="en"
       data-theme="dark"
+      data-scroll-behavior="smooth"
       style={{ colorScheme: 'dark' }}
       className={`${montserratVar} ${robotoMonoVar} ${openSansVar}`}
     >
