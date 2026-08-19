@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useRef, useId, useMemo } from 'react'
+import { useState, useEffect, useRef, useId, useMemo, type RefObject } from 'react'
 import * as d3 from 'd3'
 import useResizeObserver from '@react-hook/resize-observer'
 import { Presets } from '../cards'
@@ -39,7 +39,7 @@ export default function TxActivityChart({
   const wrapRef = useRef<HTMLDivElement | null>(null)
   const gradId = useId().replace(/:/g, '')
 
-  useResizeObserver(wrapRef, entry => {
+  useResizeObserver(wrapRef as RefObject<HTMLElement>, entry => {
     const { width: w, height: hh } = entry.contentRect
     setWidth(Math.max(0, Math.floor(w)))
     setPlotH(Math.max(120, Math.floor(hh)))

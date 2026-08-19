@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useRef, useId } from 'react'
+import { useState, useEffect, useRef, useId, type RefObject } from 'react'
 import * as d3 from 'd3'
 import useResizeObserver from '@react-hook/resize-observer'
 import { Box } from '@chakra-ui/react'
@@ -111,7 +111,7 @@ export function MetricChart({
   const wrapRef = useRef<HTMLDivElement | null>(null)
   const gradientId = useId()
 
-  useResizeObserver(wrapRef, entry => {
+  useResizeObserver(wrapRef as RefObject<HTMLElement>, entry => {
     const { width: w, height: hh } = entry.contentRect
     setWidth(Math.max(0, Math.floor(w)))
     if (fill) setPlotH(Math.max(96, Math.floor(hh)))

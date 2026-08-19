@@ -9,7 +9,7 @@
  * don't collapse every deposit into a few coarse buckets.
  */
 
-import { useState, useEffect, useMemo, useRef, useId } from 'react'
+import { useState, useEffect, useMemo, useRef, useId, type RefObject } from 'react'
 import * as d3 from 'd3'
 import useResizeObserver from '@react-hook/resize-observer'
 import { Box } from '@chakra-ui/react'
@@ -186,7 +186,7 @@ export default function ShieldedPoolCard({
     }
   }, [])
 
-  useResizeObserver(wrapRef, entry => {
+  useResizeObserver(wrapRef as RefObject<HTMLElement>, entry => {
     const { width: w, height: hh } = entry.contentRect
     setWidth(Math.max(0, Math.floor(w)))
     // when height-matched, plot may shrink below the default min
