@@ -27,7 +27,8 @@
 .BlocksListItem:last-child {
   margin-bottom: 0;
 }
-.BlocksListItem__Column--Credits, .BlocksListItem__Column--Number {
+.BlocksListItem__Column--Credits,
+.BlocksListItem__Column--Number {
   font-size: 0.75rem;
   font-weight: 700;
 }
@@ -42,12 +43,16 @@
   flex-shrink: 0;
   margin-right: 12px;
 }
-.BlocksListItem--Timestamp, .BlocksListItem__Column--Timestamp {
+.BlocksListItem--Timestamp,
+.BlocksListItem__Column--Timestamp {
   font-family: var(--pe-font-mono);
   white-space: nowrap;
   color: #fff;
 }
-.BlocksListItem--Timestamp, .BlocksListItem--Timestamp .DateBlock__Date, .BlocksListItem__Column--Timestamp, .BlocksListItem__Column--Timestamp .DateBlock__Date {
+.BlocksListItem--Timestamp,
+.BlocksListItem--Timestamp .DateBlock__Date,
+.BlocksListItem__Column--Timestamp,
+.BlocksListItem__Column--Timestamp .DateBlock__Date {
   font-size: 0.75rem;
 }
 .BlocksListItem {
@@ -59,7 +64,8 @@
   pointer-events: none;
   transition: opacity 0.15s;
 }
-.BlocksListItem:hover .Identifier__CopyButton, .BlocksListItem:focus-within .Identifier__CopyButton {
+.BlocksListItem:hover .Identifier__CopyButton,
+.BlocksListItem:focus-within .Identifier__CopyButton {
   opacity: 1;
   pointer-events: auto;
 }
@@ -162,7 +168,9 @@
   text-align: center;
   min-width: 0;
 }
-.BlocksListItem__Column--Height, .BlocksListItem__Column--Hash, .BlocksListItem__Column--Validator {
+.BlocksListItem__Column--Height,
+.BlocksListItem__Column--Hash,
+.BlocksListItem__Column--Validator {
   justify-content: flex-start;
   text-align: left;
 }

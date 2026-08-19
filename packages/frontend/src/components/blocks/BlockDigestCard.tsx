@@ -3,7 +3,13 @@
 import type { ComponentType, ReactNode } from 'react'
 import type { Block, Rate, Status } from '../../types'
 import type { LoadableState } from '../../types/common'
-import { DocumentIcon, MembersIcon, QueuePositionIcon, TransactionsIcon, InfoIcon } from '../ui/icons'
+import {
+  DocumentIcon,
+  MembersIcon,
+  QueuePositionIcon,
+  TransactionsIcon,
+  InfoIcon
+} from '../ui/icons'
 // Untyped JS components — loose wrappers until data/* is migrated
 import {
   CreditsBlock as CreditsBlockJs,
@@ -46,14 +52,21 @@ interface BlockDigestCardProps {
   status: LoadableState<Partial<Status>>
 }
 
-function BlockDigestCard ({ block, rate, status }: BlockDigestCardProps) {
+function BlockDigestCard({ block, rate, status }: BlockDigestCardProps) {
   return (
-    <div className={`Block__InfoBlock Block__DigestCard BlockDigestCard ${block.loading ? 'BlockDigestCard--Loading' : ''}`}>
+    <div
+      className={`Block__InfoBlock Block__DigestCard BlockDigestCard ${block.loading ? 'BlockDigestCard--Loading' : ''}`}
+    >
       <div className={'BlockDigestCard__RowContainer'}>
         <div className={'BlockDigestCard__InfoContainer'}>
           <InfoLine
             className={'BlockDigestCard__InfoLine BlockDigestCard__InfoLine--TotalTransactions'}
-            title={(<span><TransactionsIcon/>Total transactions</span>)}
+            title={
+              <span>
+                <TransactionsIcon />
+                Total transactions
+              </span>
+            }
             value={block?.data?.txs?.length}
             loading={block.loading}
             error={block.error || block?.data?.txs?.length === undefined}
@@ -63,12 +76,17 @@ function BlockDigestCard ({ block, rate, status }: BlockDigestCardProps) {
         <div className={'BlockDigestCard__InfoContainer'}>
           <InfoLine
             className={'BlockDigestCard__InfoLine BlockDigestCard__InfoLine--Epoch'}
-            title={(<span><DocumentIcon/>Epoch</span>)}
+            title={
+              <span>
+                <DocumentIcon />
+                Epoch
+              </span>
+            }
             value={
               <EpochTooltip epoch={status?.data?.epoch ?? undefined}>
                 <span className={'BlockDigestCard__InfoLineValueContent'}>
                   #{status?.data?.epoch?.number}
-                  <InfoIcon className={'BlockDigestCard__InfoIcon'}/>
+                  <InfoIcon className={'BlockDigestCard__InfoIcon'} />
                 </span>
               </EpochTooltip>
             }
@@ -82,7 +100,12 @@ function BlockDigestCard ({ block, rate, status }: BlockDigestCardProps) {
         <div className={'BlockDigestCard__InfoContainer'}>
           <InfoLine
             className={'BlockDigestCard__InfoLine BlockDigestCard__InfoLine--QuorumIndex'}
-            title={<span><QueuePositionIcon/>Quorum Index</span>}
+            title={
+              <span>
+                <QueuePositionIcon />
+                Quorum Index
+              </span>
+            }
             value={
               <Tooltip
                 title={'Quorum Index'}
@@ -90,7 +113,7 @@ function BlockDigestCard ({ block, rate, status }: BlockDigestCardProps) {
               >
                 <span className={'BlockDigestCard__InfoLineValueContent'}>
                   {block?.data?.quorum?.quorumIndex}
-                  <InfoIcon className={'BlockDigestCard__InfoIcon'}/>
+                  <InfoIcon className={'BlockDigestCard__InfoIcon'} />
                 </span>
               </Tooltip>
             }
@@ -102,15 +125,20 @@ function BlockDigestCard ({ block, rate, status }: BlockDigestCardProps) {
         <div className={'BlockDigestCard__InfoContainer'}>
           <InfoLine
             className={'BlockDigestCard__InfoLine BlockDigestCard__InfoLine--QuorumMembers'}
-            title={(<span><MembersIcon/>Quorum Members</span>)}
+            title={
+              <span>
+                <MembersIcon />
+                Quorum Members
+              </span>
+            }
             value={
               <Tooltip
                 title={'Quorum Members'}
-                content={'Amount of quorum\'s participants that have signed this platform block'}
+                content={"Amount of quorum's participants that have signed this platform block"}
               >
                 <span className={'BlockDigestCard__InfoLineValueContent'}>
                   {block?.data?.quorum?.members?.length}
-                  <InfoIcon className={'BlockDigestCard__InfoIcon'}/>
+                  <InfoIcon className={'BlockDigestCard__InfoIcon'} />
                 </span>
               </Tooltip>
             }
@@ -123,7 +151,7 @@ function BlockDigestCard ({ block, rate, status }: BlockDigestCardProps) {
       <InfoLine
         className={'BlockDigestCard__InfoLine BlockDigestCard__InfoLine--Validator'}
         title={'Validator'}
-        value={(
+        value={
           <ValueCard link={`/validator/${block.data?.header?.validator}`}>
             <Identifier
               avatar={true}
@@ -134,7 +162,7 @@ function BlockDigestCard ({ block, rate, status }: BlockDigestCardProps) {
               {block.data?.header?.validator}
             </Identifier>
           </ValueCard>
-        )}
+        }
         loading={block.loading}
         error={block.error || !block.data?.header?.validator}
       />
@@ -142,7 +170,7 @@ function BlockDigestCard ({ block, rate, status }: BlockDigestCardProps) {
       <InfoLine
         className={'BlockDigestCard__InfoLine'}
         title={'Total Fees'}
-        value={<CreditsBlock credits={block.data?.header?.totalGasUsed} rate={rate}/>}
+        value={<CreditsBlock credits={block.data?.header?.totalGasUsed} rate={rate} />}
         loading={block.loading}
         error={block.error}
       />

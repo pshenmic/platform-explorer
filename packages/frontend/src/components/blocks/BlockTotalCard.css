@@ -2,7 +2,8 @@
   white-space: break-spaces;
   word-break: break-all;
 }
-.BlockTotalCard__Title .Alias__Name, .BlockTotalCard__Title .Alias__Domain {
+.BlockTotalCard__Title .Alias__Name,
+.BlockTotalCard__Title .Alias__Domain {
   font-family: var(--pe-font-heading);
   font-size: 0.875rem;
   font-weight: 700;
@@ -70,7 +71,8 @@
   .BlockTotalCard__ContentContainer {
     flex-direction: column;
   }
-  .BlockTotalCard__ContentContainer, .BlockTotalCard__CommonLines {
+  .BlockTotalCard__ContentContainer,
+  .BlockTotalCard__CommonLines {
     gap: 0.75rem;
   }
   .BlockTotalCard__Column {
@@ -149,11 +151,15 @@
 .BlockTotalCard__CommonInfo {
   gap: 1rem;
 }
-.BlockTotalCard__InfoLine--QuorumHash .InfoLine__Value, .BlockTotalCard__InfoLine--AppHash .InfoLine__Value, .BlockTotalCard__InfoLine--Hash .InfoLine__Value {
+.BlockTotalCard__InfoLine--QuorumHash .InfoLine__Value,
+.BlockTotalCard__InfoLine--AppHash .InfoLine__Value,
+.BlockTotalCard__InfoLine--Hash .InfoLine__Value {
   width: 100%;
   min-width: 0;
 }
-.BlockTotalCard__InfoLine--QuorumHash .Identifier, .BlockTotalCard__InfoLine--AppHash .Identifier, .BlockTotalCard__InfoLine--Hash .Identifier {
+.BlockTotalCard__InfoLine--QuorumHash .Identifier,
+.BlockTotalCard__InfoLine--AppHash .Identifier,
+.BlockTotalCard__InfoLine--Hash .Identifier {
   justify-content: flex-end;
   max-width: 100%;
   min-width: 0;
@@ -168,7 +174,9 @@
   .BlockTotalCard__CommonInfo {
     gap: 0.75rem;
   }
-  .BlockTotalCard__InfoLine--QuorumHash .Identifier, .BlockTotalCard__InfoLine--AppHash .Identifier, .BlockTotalCard__InfoLine--Hash .Identifier {
+  .BlockTotalCard__InfoLine--QuorumHash .Identifier,
+  .BlockTotalCard__InfoLine--AppHash .Identifier,
+  .BlockTotalCard__InfoLine--Hash .Identifier {
     justify-content: flex-start;
     text-align: left;
   }
