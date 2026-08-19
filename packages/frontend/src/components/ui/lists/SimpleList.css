@@ -1,47 +1,46 @@
-/* BEM: SimpleList / SimpleListItem — plain CSS + design tokens (no Sass mixins) */
-
 .SimpleList__ColumnTitles {
   display: grid;
-  padding: var(--pe-list-row-pad-y) var(--pe-list-row-pad-x);
-  border-radius: var(--pe-list-row-radius);
+  padding: 7px 12px;
+  border-radius: 10px;
   background-color: var(--pe-color-gray-800);
-  margin-bottom: var(--pe-space-2);
+  margin-bottom: 8px;
   font-family: var(--pe-font-heading);
-  font-weight: var(--pe-font-weight-bold);
-  font-size: var(--pe-text-sm);
+  font-weight: 700;
+  font-size: 12px;
   text-transform: uppercase;
-  color: var(--pe-color-fg);
+  color: var(--pe-color-white-50);
+}
+.SimpleList__ColumnTitles--Light {
+  background: transparent !important;
+  font-weight: 500 !important;
+  color: #fff !important;
+  text-transform: none !important;
+}
+.SimpleList__ColumnTitles {
+  display: flex;
   justify-content: space-between;
 }
-
 .SimpleList__ColumnTitle {
   word-wrap: break-word;
   overflow-wrap: anywhere;
   letter-spacing: 0.4px;
 }
-
-/* ex-DefButton */
-
 .SimpleList__ShowMoreButton {
   display: block;
   position: relative;
   z-index: 1;
   text-align: center;
   font-family: var(--pe-font-heading);
-  font-size: var(--pe-text-sm);
-  font-weight: var(--pe-font-weight-bold);
+  font-size: 12px;
+  font-weight: 700;
   text-transform: uppercase;
-  padding: var(--pe-space-3);
-  border-radius: var(--pe-radius-def);
+  padding: 12px;
+  border-radius: 10px;
   overflow: hidden;
   background-color: transparent;
   transition: all 0.5s;
-  width: 100%;
-  margin-top: var(--pe-space-2);
 }
-
-.SimpleList__ShowMoreButton::before,
-.SimpleList__ShowMoreButton::after {
+.SimpleList__ShowMoreButton::before, .SimpleList__ShowMoreButton::after {
   content: "";
   display: block;
   position: absolute;
@@ -49,74 +48,63 @@
   left: 0;
   height: 100%;
 }
-
 .SimpleList__ShowMoreButton::before {
   background-color: var(--pe-color-gray-800);
   width: 100%;
   z-index: -1;
   transition: all 1s;
 }
-
 .SimpleList__ShowMoreButton::after {
   width: 300px;
-  background: linear-gradient(
-    90deg,
-    rgba(255, 255, 255, 0),
-    rgba(255, 255, 255, 0.1),
-    rgba(255, 255, 255, 0)
-  );
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0));
   transform: translateX(-100%);
   opacity: 0;
   transition: all 0.5s;
 }
-
-@keyframes SimpleList-flash {
+@keyframes flash {
   from {
     left: 0;
     transform: translateX(-100%);
   }
-
   to {
     left: 100%;
     transform: translateX(0);
   }
 }
-
-.SimpleList__ShowMoreButton:hover,
-.SimpleList__ShowMoreButton:focus-within {
+.SimpleList__ShowMoreButton:hover, .SimpleList__ShowMoreButton:focus-within {
   background-color: var(--pe-color-brand-normal);
 }
-
-.SimpleList__ShowMoreButton:hover::before,
-.SimpleList__ShowMoreButton:focus-within::before {
-  opacity: var(--pe-opacity-strong);
+.SimpleList__ShowMoreButton:hover::before, .SimpleList__ShowMoreButton:focus-within::before {
+  opacity: 0.85;
 }
-
-.SimpleList__ShowMoreButton:hover::after,
-.SimpleList__ShowMoreButton:focus-within::after {
-  animation: SimpleList-flash 1s backwards;
+.SimpleList__ShowMoreButton:hover::after, .SimpleList__ShowMoreButton:focus-within::after {
+  animation: flash 1s backwards;
   pointer-events: none;
   opacity: 1;
 }
-
-/* ex-DefListItem */
+.SimpleList__ShowMoreButton {
+  width: 100%;
+  margin-top: 8px;
+}
+.SimpleList__ShowMoreButton::before {
+  content: "";
+}
 
 .SimpleListItem {
-  display: block;
+  display: flex;
   width: 100%;
   text-decoration: none;
-  padding: var(--pe-list-row-pad-y) var(--pe-list-row-pad-x);
-  margin-bottom: var(--pe-space-2);
-  line-height: var(--pe-leading-list);
+  padding: 7px 12px;
+  margin-bottom: 8px;
+  line-height: 24px;
   color: var(--pe-color-gray-100);
   font-family: var(--pe-font-mono);
   font-size: 12pt;
-  border-radius: var(--pe-list-row-radius);
+  border-radius: 10px;
   border: 1px solid var(--pe-color-gray-750);
   background-color: rgba(var(--pe-color-gray-800-rgb), 0.5);
   transition: all 0.1s;
 }
-
 @media (hover: hover) and (pointer: fine) {
   .SimpleListItem:hover {
     background-color: var(--pe-color-gray-750);
@@ -124,57 +112,151 @@
     cursor: pointer;
   }
 }
-
 .SimpleListItem:active {
   transform: translateY(1px);
   box-shadow: 0 0 9999px 0 rgba(0, 0, 0, 0.25) inset;
 }
-
 .SimpleListItem:last-child {
   margin-bottom: 0;
 }
-
+.SimpleListItem__Column--Credits, .SimpleListItem__Column--Number {
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+.SimpleListItem__IdentifierContainer {
+  display: flex;
+  align-items: center;
+  min-width: 50px;
+}
+.SimpleListItem__Avatar {
+  height: 24px;
+  width: 24px;
+  flex-shrink: 0;
+  margin-right: 12px;
+}
+.SimpleListItem--Timestamp, .SimpleListItem__Column--Timestamp {
+  font-family: var(--pe-font-mono);
+  white-space: nowrap;
+  color: #fff;
+}
+.SimpleListItem--Timestamp, .SimpleListItem--Timestamp .DateBlock__Date, .SimpleListItem__Column--Timestamp, .SimpleListItem__Column--Timestamp .DateBlock__Date {
+  font-size: 0.75rem;
+}
+.SimpleListItem {
+  display: block;
+  position: relative;
+}
 .SimpleListItem__Title {
   word-wrap: break-word;
   overflow-wrap: anywhere;
 }
-
 .SimpleListItem__Title--Mono {
   font-family: var(--pe-font-mono);
-  color: var(--pe-color-fg-muted);
+  color: var(--pe-color-gray-250);
 }
-
 .SimpleListItem__ColumnsContainer {
   display: flex;
   justify-content: space-between;
 }
-
 .SimpleListItem__Column {
   max-width: 100%;
   word-wrap: break-word;
   overflow-wrap: anywhere;
-  margin-right: var(--pe-space-4);
+  margin-right: 16px;
   display: flex;
   align-items: center;
+  gap: 0.4rem;
+  min-width: 0;
 }
-
 .SimpleListItem__Column:last-child {
   overflow-wrap: normal;
   margin-right: 0;
 }
-
 .SimpleListItem__Column--Mono {
   font-family: var(--pe-font-mono);
-  font-size: var(--pe-text-sm);
+  font-size: 0.75rem;
 }
-
-.SimpleListItem__Column--Ellipsis,
-.SimpleListItem__Column--Ellipsis span {
+.SimpleListItem__Column--Ellipsis, .SimpleListItem__Column--Ellipsis span {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-
 .SimpleListItem__Column--Dim {
-  color: var(--pe-color-fg-muted);
+  color: var(--pe-color-gray-250);
+}
+.SimpleListItem__Rank {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+}
+.SimpleListItem__Medal {
+  width: 18px;
+  height: 18px;
+}
+.SimpleListItem__RankNum {
+  font-family: var(--pe-font-mono);
+  font-size: 0.625rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--pe-color-gray-500);
+  line-height: 1;
+}
+.SimpleListItem--Rank1 {
+  background-image: linear-gradient(90deg, rgba(255, 210, 5, 0.12) 0%, rgba(255, 210, 5, 0) 60%);
+}
+.SimpleListItem--Rank1::before {
+  content: "";
+  position: absolute;
+  left: 2px;
+  top: 6px;
+  bottom: 6px;
+  width: 3px;
+  border-radius: 3px;
+  background: #FFD205;
+  opacity: 0.75;
+}
+.SimpleListItem--Rank2 {
+  background-image: linear-gradient(90deg, rgba(198, 202, 205, 0.12) 0%, rgba(198, 202, 205, 0) 60%);
+}
+.SimpleListItem--Rank2::before {
+  content: "";
+  position: absolute;
+  left: 2px;
+  top: 6px;
+  bottom: 6px;
+  width: 3px;
+  border-radius: 3px;
+  background: #c6cacd;
+  opacity: 0.75;
+}
+.SimpleListItem--Rank3 {
+  background-image: linear-gradient(90deg, rgba(244, 154, 88, 0.12) 0%, rgba(244, 154, 88, 0) 60%);
+}
+.SimpleListItem--Rank3::before {
+  content: "";
+  position: absolute;
+  left: 2px;
+  top: 6px;
+  bottom: 6px;
+  width: 3px;
+  border-radius: 3px;
+  background: #f49a58;
+  opacity: 0.75;
+}
+.SimpleListItem--Rank4, .SimpleListItem--Rank5 {
+  background-image: linear-gradient(90deg, rgba(139, 147, 160, 0.12) 0%, rgba(139, 147, 160, 0) 60%);
+}
+.SimpleListItem--Rank4::before, .SimpleListItem--Rank5::before {
+  content: "";
+  position: absolute;
+  left: 2px;
+  top: 6px;
+  bottom: 6px;
+  width: 3px;
+  border-radius: 3px;
+  background: #8b93a0;
+  opacity: 0.75;
 }

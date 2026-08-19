@@ -1,0 +1,330 @@
+.DataList {
+  width: 100%;
+}
+.DataList__Body {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.DataList__Head {
+  display: grid;
+  padding: 7px 12px;
+  border-radius: 10px;
+  background-color: var(--pe-color-gray-800);
+  margin-bottom: 8px;
+  font-family: var(--pe-font-heading);
+  font-weight: 700;
+  font-size: 12px;
+  text-transform: uppercase;
+  color: var(--pe-color-white-50);
+}
+.DataList__Head--Light {
+  background: transparent !important;
+  font-weight: 500 !important;
+  color: #fff !important;
+  text-transform: none !important;
+}
+.DataList__Head {
+  gap: 16px;
+  align-items: center;
+}
+.DataList__Head--light {
+  background: transparent;
+  font-weight: 500;
+  text-transform: none;
+  color: #fff;
+}
+.DataList__HeadCell {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  gap: 2px;
+}
+.DataList__HeadCell--center {
+  justify-content: center;
+  text-align: center;
+}
+.DataList__HeadCell--right {
+  justify-content: flex-end;
+  text-align: right;
+}
+.DataList__HeadCell--Sortable {
+  appearance: none;
+  background: none;
+  border: 0;
+  padding: 0;
+  margin: 0;
+  font: inherit;
+  color: inherit;
+  letter-spacing: inherit;
+  text-transform: inherit;
+  cursor: pointer;
+  transition: color 0.15s ease;
+}
+@media (hover: hover) and (pointer: fine) {
+  .DataList__HeadCell--Sortable:hover {
+    color: #fff;
+  }
+}
+.DataList__HeadCell--Active {
+  color: #fff;
+}
+.DataList__SortIcon {
+  flex-shrink: 0;
+  opacity: 0.9;
+}
+.DataList__SortSpacer {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+}
+.DataList__Row {
+  display: flex;
+  width: 100%;
+  text-decoration: none;
+  padding: 7px 12px;
+  margin-bottom: 8px;
+  line-height: 24px;
+  color: var(--pe-color-gray-100);
+  font-family: var(--pe-font-mono);
+  font-size: 12pt;
+  border-radius: 10px;
+  border: 1px solid var(--pe-color-gray-750);
+  background-color: rgba(var(--pe-color-gray-800-rgb), 0.5);
+  transition: all 0.1s;
+}
+@media (hover: hover) and (pointer: fine) {
+  .DataList__Row:hover {
+    background-color: var(--pe-color-gray-750);
+    text-decoration: none;
+    cursor: pointer;
+  }
+}
+.DataList__Row:active {
+  transform: translateY(1px);
+  box-shadow: 0 0 9999px 0 rgba(0, 0, 0, 0.25) inset;
+}
+.DataList__Row:last-child {
+  margin-bottom: 0;
+}
+.DataList__Row__Column--Credits, .DataList__Row__Column--Number {
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+.DataList__Row__IdentifierContainer {
+  display: flex;
+  align-items: center;
+  min-width: 50px;
+}
+.DataList__Row__Avatar {
+  height: 24px;
+  width: 24px;
+  flex-shrink: 0;
+  margin-right: 12px;
+}
+.DataList__Row--Timestamp, .DataList__Row__Column--Timestamp {
+  font-family: var(--pe-font-mono);
+  white-space: nowrap;
+  color: #fff;
+}
+.DataList__Row--Timestamp, .DataList__Row--Timestamp .DateBlock__Date, .DataList__Row__Column--Timestamp, .DataList__Row__Column--Timestamp .DateBlock__Date {
+  font-size: 0.75rem;
+}
+.DataList__Row {
+  display: grid;
+  gap: 16px;
+  align-items: center;
+  font-size: 0.75rem;
+  position: relative;
+  margin-bottom: 0;
+  min-height: 2.375rem;
+  box-sizing: border-box;
+}
+.DataList__Row .Identifier__CopyButton {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.15s;
+}
+.DataList__Row:hover .Identifier__CopyButton {
+  opacity: 1;
+  pointer-events: auto;
+}
+.DataList__Row--Rank1 {
+  background-image: linear-gradient(90deg, rgba(255, 210, 5, 0.12) 0%, rgba(255, 210, 5, 0) 60%);
+}
+.DataList__Row--Rank1::before {
+  content: "";
+  position: absolute;
+  left: 2px;
+  top: 6px;
+  bottom: 6px;
+  width: 3px;
+  border-radius: 3px;
+  background: #FFD205;
+  opacity: 0.75;
+}
+.DataList__Row--Rank2 {
+  background-image: linear-gradient(90deg, rgba(198, 202, 205, 0.12) 0%, rgba(198, 202, 205, 0) 60%);
+}
+.DataList__Row--Rank2::before {
+  content: "";
+  position: absolute;
+  left: 2px;
+  top: 6px;
+  bottom: 6px;
+  width: 3px;
+  border-radius: 3px;
+  background: #c6cacd;
+  opacity: 0.75;
+}
+.DataList__Row--Rank3 {
+  background-image: linear-gradient(90deg, rgba(244, 154, 88, 0.12) 0%, rgba(244, 154, 88, 0) 60%);
+}
+.DataList__Row--Rank3::before {
+  content: "";
+  position: absolute;
+  left: 2px;
+  top: 6px;
+  bottom: 6px;
+  width: 3px;
+  border-radius: 3px;
+  background: #f49a58;
+  opacity: 0.75;
+}
+.DataList__Row--Rank4, .DataList__Row--Rank5 {
+  background-image: linear-gradient(90deg, rgba(139, 147, 160, 0.12) 0%, rgba(139, 147, 160, 0) 60%);
+}
+.DataList__Row--Rank4::before, .DataList__Row--Rank5::before {
+  content: "";
+  position: absolute;
+  left: 2px;
+  top: 6px;
+  bottom: 6px;
+  width: 3px;
+  border-radius: 3px;
+  background: #8b93a0;
+  opacity: 0.75;
+}
+.DataList__Rank {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+}
+.DataList__Medal {
+  width: 18px;
+  height: 18px;
+}
+.DataList__RankNum {
+  font-family: var(--pe-font-mono);
+  font-size: 0.625rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--pe-color-gray-500);
+  line-height: 1;
+}
+.DataList__Entity {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  min-width: 0;
+  max-width: 100%;
+}
+.DataList__RowLink {
+  display: block;
+  color: inherit;
+  text-decoration: none;
+}
+.DataList__Cell {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+}
+.DataList__Cell > * {
+  min-width: 0;
+  max-width: 100%;
+}
+.DataList__Cell--center {
+  justify-content: center;
+  text-align: center;
+}
+.DataList__Cell--right {
+  justify-content: flex-end;
+  text-align: right;
+}
+.DataList__Skeleton {
+  width: 100%;
+  max-width: 90px;
+  height: 0.85em;
+  border-radius: 4px;
+  background: rgba(var(--pe-color-gray-800-rgb), 0.8);
+  animation: DataListPulse 1.4s ease-in-out infinite;
+}
+.DataList__Footer {
+  margin-top: 12px;
+}
+.DataList__ShowMore {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 7px 12px;
+  border-radius: 10px;
+  background-color: var(--pe-color-gray-800);
+  font-family: var(--pe-font-heading);
+  font-weight: 700;
+  font-size: 12px;
+  line-height: 18px;
+  text-transform: uppercase;
+  text-align: center;
+  text-decoration: none;
+  color: var(--pe-color-white-50);
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+@media (hover: hover) and (pointer: fine) {
+  .DataList__ShowMore:hover {
+    background-color: var(--pe-color-gray-750);
+    color: #fff;
+  }
+}
+.DataList__ShowMore:active {
+  transform: translateY(1px);
+}
+.DataList__Row.is-new {
+  animation: DataListRowIn 0.4s ease-out backwards, DataListRowGlow 1.4s ease-out backwards;
+  animation-delay: var(--stagger, 0ms);
+}
+
+@keyframes DataListPulse {
+  0%, 100% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+@keyframes DataListRowIn {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+}
+@keyframes DataListRowGlow {
+  from {
+    background-color: rgba(var(--pe-color-brand-normal-rgb), 0.12);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .DataList__Skeleton {
+    animation: none;
+  }
+  .DataList__Row.is-new {
+    animation: DataListRowGlow 1.4s ease-out backwards;
+  }
+}

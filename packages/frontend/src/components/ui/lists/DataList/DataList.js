@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { ChevronUpIcon, ChevronDownIcon } from '@chakra-ui/icons'
 import useResizeObserver from '@react-hook/resize-observer'
 import { EmptyListMessage } from '../index'
-import './DataList.scss'
+import './DataList.css'
 
 const GAP = 16
 const DEFAULT_SKELETON_ROWS = 8
