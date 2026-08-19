@@ -1,7 +1,7 @@
 import { Badge } from '@chakra-ui/react'
 import { BatchActions } from '../../enums/batchTypes'
 import { Tooltip } from '../ui/Tooltips'
-import './TypeBadge.scss'
+import './TypeBadge.css'
 
 function BatchTypeBadge ({ batchType, className = '', ...props }) {
   const batchInfo = BatchActions?.[batchType]

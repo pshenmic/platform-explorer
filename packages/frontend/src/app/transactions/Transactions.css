@@ -1,40 +1,41 @@
 .Transactions__Controls {
-  display: flex;
-  justify-content: flex-start;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  grid-template-areas: "title stats filters";
   align-items: center;
-  gap: var(--pe-space-4);
-  margin: var(--pe-space-3) 0 var(--pe-space-6);
-  flex-wrap: wrap;
+  column-gap: 1rem;
+  row-gap: 0.75rem;
+  margin: 0.75rem 0 1.5rem;
 }
-
 .Transactions__Title {
-  flex-shrink: 0;
-  margin-right: var(--pe-space-2);
-}
-
-.Transactions__Filters {
-  width: auto;
-  flex-shrink: 0;
-  margin-left: auto;
-}
-
-.Transactions__Chart {
-  margin: 0 0 var(--pe-space-6);
-}
-
-.Transactions__Stats {
-  flex: 1 1 auto;
+  grid-area: title;
   min-width: 0;
 }
-
+.Transactions__Stats {
+  grid-area: stats;
+  min-width: 0;
+}
+.Transactions__Filters {
+  grid-area: filters;
+  width: auto;
+  justify-self: end;
+}
+.Transactions__Chart {
+  margin: 0 0 1.5rem;
+}
 @media screen and (max-width: 48em) {
   .Transactions__Controls {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: var(--pe-space-4);
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas: "title filters" "stats stats";
+    column-gap: 12px;
+    row-gap: 10px;
+    margin: 0 0 1rem;
   }
-
   .Transactions__Filters {
-    margin-left: 0;
+    justify-self: end;
+    align-self: center;
+  }
+  .Transactions__Stats {
+    width: 100%;
   }
 }

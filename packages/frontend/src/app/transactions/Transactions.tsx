@@ -18,7 +18,7 @@ import NetworkStatsInline from '../../components/stats/NetworkStatsInline'
 import PageTitle from '../../components/intro/PageTitle'
 import TransactionsChartCompact from '../../components/charts/TransactionsChartCompact'
 import introContent from './introContent'
-import './Transactions.scss'
+import './Transactions.css'
 
 const paginateConfig = {
   pageSize: {
