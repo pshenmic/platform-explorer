@@ -85,12 +85,11 @@
   gap: 1.5rem;
   width: 100%;
   min-width: 0;
-  align-items: start;
+  align-items: stretch;
 }
 @media screen and (min-width: 48em) {
   .HomeShieldQuorum {
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-    align-items: start;
   }
 }
 .HomeShieldQuorum__Cell {
@@ -102,6 +101,8 @@
 .HomeShieldQuorum__Cell > * {
   width: 100%;
   min-width: 0;
+  flex: 1 1 auto;
+  height: 100%;
 }
 
 .HomeEpochs {
