@@ -4,63 +4,196 @@
 .HomeHero {
   @include mixins.Block(true);
   position: relative;
-  overflow: hidden;
+  overflow-x: clip;
+  overflow-y: visible;
   width: 100%;
+  max-width: 100%;
   padding: 0 !important;
+  min-width: 0;
 
   display: flex;
   flex-direction: column;
 
-  // soft brand wash without live filter:blur — gaussian filter here was a continuous GPU tax
   &__Glow {
     position: absolute;
-    top: -40%;
-    left: -8%;
-    width: 520px;
-    height: 520px;
+    top: -20%;
+    left: -4%;
+    width: min(460px, 58%);
+    aspect-ratio: 1;
+    height: auto;
     border-radius: 50%;
     background: radial-gradient(
-      circle,
+      circle at 40% 45%,
       rgba(var(--chakra-colors-brand-normal-rgb), 0.22) 0%,
-      rgba(var(--chakra-colors-brand-normal-rgb), 0.08) 38%,
-      rgba(var(--chakra-colors-brand-normal-rgb), 0) 68%
+      rgba(var(--chakra-colors-brand-normal-rgb), 0.1) 32%,
+      rgba(var(--chakra-colors-brand-normal-rgb), 0.03) 55%,
+      rgba(var(--chakra-colors-brand-normal-rgb), 0) 72%
     );
     pointer-events: none;
     z-index: 0;
   }
 
-  &__Nodes {
-    position: absolute;
-    inset: 0;
-    z-index: 0;
-    pointer-events: none;
-    mask-image: radial-gradient(ellipse 62% 92% at 50% 48%, #000 35%, transparent 80%);
-    -webkit-mask-image: radial-gradient(ellipse 62% 92% at 50% 48%, #000 35%, transparent 80%);
-  }
-
   &__Inner {
     position: relative;
     z-index: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    padding: 20px 32px 20px;
+    overflow: visible;
+
+    @media screen and (max-width: $breakpoint-lg) {
+      gap: 1.25rem;
+      padding: 20px 24px;
+    }
+
+    @media screen and (max-width: $breakpoint-md) {
+      padding: 16px;
+    }
+  }
+
+  &__Bottom {
+    position: relative;
+    z-index: 2;
     display: grid;
-    grid-template-columns: 1.4fr 1fr;
-    align-items: center;
-    gap: 2rem;
-    padding: 32px 40px;
+    grid-template-columns: minmax(10rem, 12.5rem) minmax(0, 1fr);
+    align-items: stretch;
+    gap: 0 1.5rem;
+    min-width: 0;
+    padding-top: 1.25rem;
+    border-top: 1px solid rgba(var(--chakra-colors-gray-800-rgb), 0.55);
 
     @media screen and (max-width: $breakpoint-lg) {
       grid-template-columns: 1fr;
-      gap: 1.5rem;
-      padding: 32px 24px;
+      gap: 1.25rem;
+    }
+  }
+
+  &__Feeds {
+    min-width: 0;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 0;
+    align-items: start;
+
+    @media screen and (max-width: $breakpoint-md) {
+      grid-template-columns: 1fr;
+      gap: 1.25rem;
+    }
+  }
+
+  &__Feed {
+    min-width: 0;
+    max-width: 100%;
+    overflow: hidden;
+
+    > .DataList {
+      max-width: 100%;
+      min-width: 0;
     }
 
-    // phone + edge cards: same 16px content inset as InfoBlock
-    @media screen and (max-width: $breakpoint-md) {
-      padding: 24px 16px;
+    > .DataList .DataList__RowLink,
+    > .DataList .DataList__Row {
+      max-width: 100%;
+      overflow: hidden;
+    }
+
+    @media screen and (min-width: $breakpoint-md) {
+      &:first-child {
+        padding-right: 1.25rem;
+        border-right: 1px solid rgba(var(--chakra-colors-gray-800-rgb), 0.55);
+      }
+
+      &:last-child {
+        padding-left: 1.25rem;
+      }
     }
   }
 
   &__Brand {
+    position: relative;
+    z-index: 1;
     min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    overflow: visible;
+    width: 100%;
+
+    @media screen and (min-width: $breakpoint-lg) {
+      display: grid;
+      grid-template-columns: minmax(16rem, 1fr) minmax(0, 1.15fr);
+      gap: 1.5rem 2.5rem;
+      align-items: center;
+    }
+
+    @media screen and (min-width: 77.5em) {
+      gap: 1.75rem 3rem;
+    }
+  }
+
+  &__BrandFx {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    overflow: hidden;
+    border-radius: inherit;
+  }
+
+  &__BrandOrb {
+    position: absolute;
+    border-radius: 50%;
+    will-change: transform;
+
+    &--a {
+      top: -6%;
+      left: -2%;
+      width: min(320px, 52%);
+      height: min(320px, 52%);
+      min-width: 200px;
+      min-height: 200px;
+      background: radial-gradient(
+        circle at 45% 45%,
+        rgba(var(--chakra-colors-brand-normal-rgb), 0.22) 0%,
+        rgba(var(--chakra-colors-brand-normal-rgb), 0.08) 38%,
+        rgba(var(--chakra-colors-brand-normal-rgb), 0.02) 58%,
+        transparent 74%
+      );
+      animation: HomeHeroOrbA 14s ease-in-out infinite alternate;
+    }
+
+    &--b {
+      left: 12%;
+      top: 28%;
+      width: min(180px, 32%);
+      height: min(180px, 32%);
+      min-width: 120px;
+      min-height: 120px;
+      background: radial-gradient(
+        circle,
+        rgba(var(--chakra-colors-brand-light-rgb), 0.1) 0%,
+        rgba(var(--chakra-colors-brand-light-rgb), 0.035) 42%,
+        transparent 72%
+      );
+      animation: HomeHeroOrbB 18s ease-in-out infinite alternate;
+    }
+  }
+
+  &__BrandGrain {
+    position: absolute;
+    inset: 0;
+    opacity: 0.03;
+    mix-blend-mode: soft-light;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    background-size: 160px 160px;
+  }
+
+  &__BrandCopy {
+    position: relative;
+    z-index: 1;
+    min-width: 0;
+    width: 100%;
   }
 
   &__Welcome {
@@ -71,15 +204,52 @@
     font-style: italic;
     letter-spacing: 0.04em;
     color: $color-brand-normal;
-    margin: 0 0 6px;
+    margin: 0 0 10px;
   }
 
   &__Title {
     font-style: italic;
     font-size: 2.5rem !important;
     font-weight: 800;
-    line-height: 1.05;
+    // room for italic ascenders/descenders under background-clip:text
+    line-height: 1.22;
     margin: 0 0 12px;
+    padding: 0.06em 0.14em 0.1em 0.02em;
+    overflow: visible;
+
+    @media screen and (max-width: 72em) {
+      font-size: 2.125rem !important;
+    }
+
+    @media screen and (max-width: $breakpoint-md) {
+      font-size: 1.75rem !important;
+      line-height: 1.25;
+      overflow-wrap: anywhere;
+      word-break: break-word;
+    }
+  }
+
+  // solid fill + soft brand halo — background-clip:text always hard-cuts italic glyphs
+  &__TitleShine {
+    display: inline-block;
+    max-width: 100%;
+    padding: 0.04em 0.1em 0.06em 0.04em;
+    color: #fff;
+    -webkit-text-fill-color: #fff;
+    background: none;
+    // diffuse brand wash behind the letters (not clipped to glyph outlines)
+    text-shadow:
+      0 0 28px rgba(var(--chakra-colors-brand-light-rgb), 0.45),
+      0 0 56px rgba(var(--chakra-colors-brand-normal-rgb), 0.28),
+      0 0 90px rgba(var(--chakra-colors-brand-normal-rgb), 0.12);
+    animation: HomeHeroTitlePulse 7s ease-in-out infinite;
+
+    @media screen and (max-width: $breakpoint-md) {
+      display: inline-block;
+      text-shadow:
+        0 0 20px rgba(var(--chakra-colors-brand-light-rgb), 0.4),
+        0 0 40px rgba(var(--chakra-colors-brand-normal-rgb), 0.22);
+    }
   }
 
   &__Tagline {
@@ -90,6 +260,11 @@
     line-height: 1.3;
     color: #fff;
     margin: 0 0 12px;
+
+    @media screen and (max-width: $breakpoint-md) {
+      font-size: 1rem;
+      overflow-wrap: anywhere;
+    }
   }
 
   &__Description {
@@ -97,8 +272,14 @@
     font-family: $font-mono;
     color: var(--chakra-colors-gray-500);
     line-height: 1.6;
-    max-width: 520px;
-    margin: 0 0 18px;
+    max-width: 38rem;
+    margin: 0;
+    overflow-wrap: anywhere;
+
+    @media screen and (max-width: $breakpoint-md) {
+      font-size: 0.75rem;
+      line-height: 1.55;
+    }
   }
 
   &__StatusBar {
@@ -130,6 +311,25 @@
     gap: 4px;
     padding: 0 20px;
     border-right: 1px solid rgba(var(--chakra-colors-gray-800-rgb), 0.6);
+    box-sizing: border-box;
+
+    // whole tile is the tip trigger (no (i) dots)
+    &--Hint {
+      cursor: pointer;
+      border-radius: 0;
+      transition: background 0.12s ease;
+
+      @media (hover: hover) and (pointer: fine) {
+        &:hover {
+          background: rgba(255, 255, 255, 0.04);
+        }
+      }
+
+      &:focus-visible {
+        outline: 1px solid rgba(var(--chakra-colors-brand-light-rgb), 0.45);
+        outline-offset: -2px;
+      }
+    }
 
     &:first-child { padding-left: 0; flex-grow: 1.3; }
     &:last-child { border-right: none; }
@@ -343,126 +543,9 @@
     transition: color .15s;
   }
 
-  // status ribbon: Network / API / Drive / Tenderdash
-  &__Meta {
-    position: relative;
-    z-index: 1;
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: space-between;
-    gap: 14px 28px;
-    padding: 11px 40px;
-    border-bottom: 1px solid rgba(var(--chakra-colors-gray-800-rgb), 0.6);
-
-    @media screen and (max-width: $breakpoint-lg) {
-      justify-content: flex-start;
-      padding: 11px 24px;
-    }
-
-    @media screen and (max-width: $breakpoint-md) {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 8px 16px;
-      padding: 11px 16px;
-    }
-  }
-
-  &__MetaItem {
-    display: inline-flex;
-    align-items: baseline;
-    gap: 7px;
-    min-width: 0;
-  }
-
-  &__MetaLabel {
-    font-size: 0.625rem;
-    font-family: $font-mono;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    color: var(--chakra-colors-gray-500);
-  }
-
-  &__MetaValue {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    min-width: 0;
-    font-size: 0.8125rem;
-    font-family: $font-mono;
-    font-variant-numeric: tabular-nums;
-    color: #fff;
-  }
-
-  // shared chip shell for status (Network/API) and versions (Drive/Tenderdash)
-  // radius matches system Badge / LiveBadge (full pill)
-  &__MetaChip {
-    padding: 4px 10px;
-    border-radius: 999px;
-    border: 1px solid rgba(var(--chakra-colors-gray-800-rgb), 0.9);
-    background: rgba(255, 255, 255, 0.03);
-    line-height: 1.3;
-    max-width: 100%;
-    transition: color .15s, border-color .15s, background .15s;
-
-    &--Loading {
-      color: var(--chakra-colors-gray-500);
-    }
-
-    // Network / API: same language as LiveBadge, but 6px radius like version chips
-    &--Status {
-      font-weight: 700;
-
-      &.is-ok {
-        // green.label — status Badge green
-        color: var(--chakra-colors-green-label);
-        border-color: rgba(var(--chakra-colors-green-label-rgb), 0.4);
-        background: rgba(var(--chakra-colors-green-label-rgb), 0.12);
-        animation: HeroLiveBreath 2.4s ease-in-out infinite;
-      }
-
-      // static alarm: blinking failure reads as noise, not urgency
-      &.is-down {
-        color: var(--chakra-colors-red-default);
-        border-color: rgba(var(--chakra-colors-red-default-rgb), 0.45);
-        background: rgba(var(--chakra-colors-red-default-rgb), 0.12);
-        box-shadow: 0 0 10px rgba(var(--chakra-colors-red-default-rgb), 0.25);
-      }
-
-      &.is-loading {
-        color: var(--chakra-colors-gray-500);
-        border-color: rgba(255, 255, 255, 0.15);
-        background: transparent;
-        animation: HeroMetaPulse 1.2s ease-in-out infinite;
-      }
-    }
-  }
-
-  &__MetaVer {
-    text-decoration: none;
-    transition: color .15s, border-color .15s, background .15s;
-
-    .chakra-icon {
-      color: rgba(var(--chakra-colors-brand-normal-rgb), 0.7);
-      transition: color .15s;
-    }
-
-    &:hover {
-      color: $color-brand-light;
-      border-color: rgba(var(--chakra-colors-brand-normal-rgb), 0.55);
-      background: rgba(var(--chakra-colors-brand-normal-rgb), 0.1);
-      text-decoration: none;
-
-      .chakra-icon { color: $color-brand-light; }
-    }
-  }
-
-  &__MetaValue--Muted { color: var(--chakra-colors-gray-500); }
-
   @media (prefers-reduced-motion: reduce) {
-    &__MetaChip--Status.is-ok,
-    &__MetaChip--Status.is-loading,
-    &__LiveBadge { animation: none; }
+    &__LiveBadge,
+    &__LiveDot { animation: none; }
   }
 
   // votes breakdown inside the Total-votes info tooltip
@@ -511,20 +594,17 @@
   // wave line with vertex points (base styles for the Epochs overview wave)
   &__Wave {
     position: relative;
-    width: auto;
-    // taller so the filled area reaches the data row
+    width: 100%;
+    // taller so the filled area reaches the data row; room for Next callout at top
     height: 200px;
-    // full-bleed sides; top margin + HomeEpochs padding-top give space for taller first Id stack
-    // (EPOCH + every 1h + #); negative side margins match .HomeEpochs padding (20 / 16)
-    margin: 20px -20px 0;
+    // HomeEpochs has no side pad — wave is already edge-to-edge
+    margin: 16px 0 0;
     padding: 0;
-
-    @media screen and (max-width: $breakpoint-lg) {
-      margin: 18px -16px 0;
-    }
+    overflow: visible;
 
     @media screen and (max-width: $breakpoint-md) {
-      margin: 16px -16px 0;
+      margin-top: 28px;
+      height: 180px;
     }
   }
 
@@ -537,17 +617,15 @@
   }
 
   &__WaveLine {
-    // Ocean gradient flowing through the epoch slots (defined in the SVG defs)
-    stroke: url(#homeEpochStroke);
+    stroke: $color-brand-normal;
     stroke-width: 2px;
     stroke-linejoin: round;
     stroke-linecap: round;
   }
 
-  // soft ice-blue runner: same family as the ocean line, brighter so it still tracks on aqua
-  // pathLength=100 keeps the scanning dash uniform when the path is stretched
+  // pathLength=100 keeps the scan dash length stable under stretch
   &__WaveScan {
-    stroke: #b8ecff;
+    stroke: $color-brand-light;
     stroke-width: 2.5px;
     stroke-linecap: round;
     // short head + long gap reads as a bead, not a streak
@@ -562,7 +640,7 @@
 
   // cool blue halo — softer than white, still readable on deep + light stops
   &__WaveScanGlow {
-    stroke: rgba(120, 200, 255, 0.4);
+    stroke: rgba(var(--chakra-colors-brand-light-rgb), 0.4);
     stroke-width: 7px;
     stroke-linecap: round;
     stroke-dasharray: 2.5 97.5;
@@ -629,34 +707,69 @@
     &__WaveScan { animation: none; opacity: 0; }
   }
 
-  &__Live {
+  &__HeightRail {
+    position: relative;
+    z-index: 2;
+    min-width: 0;
+    width: 100%;
+    justify-self: stretch;
+  }
+
+  &__HeightPair {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 1px minmax(0, 1fr) 1px minmax(0, 1fr);
+    grid-template-rows: auto 1.25rem;
+    column-gap: 0;
+    row-gap: 6px;
+    align-items: end;
+    width: 100%;
+    min-width: 0;
+  }
+
+  &__HeightCol {
     display: flex;
     flex-direction: column;
     align-items: flex-end;
-    justify-content: center;
-    min-width: 0;
     text-align: right;
-    padding-left: 2rem;
+    min-width: 0;
+    grid-row: 1;
 
-    @media screen and (max-width: $breakpoint-lg) {
-      align-items: flex-start;
-      text-align: left;
-      padding-left: 0;
-      padding-top: 1.25rem;
-      border-left: none;
-      border-top: 1px solid rgba(var(--chakra-colors-gray-800-rgb), 0.6);
+    .HomeHero__LiveLabel {
+      display: inline-flex;
+      align-items: center;
+      justify-content: flex-end;
+      min-height: 1.5rem;
+      margin-bottom: 6px;
     }
+
+    &--evo { grid-column: 1; padding: 0 1rem 0 0; }
+    &--block { grid-column: 3; padding: 0 1rem; }
+    &--epoch { grid-column: 5; padding: 0 0 0 1rem; }
   }
 
-  &__LiveLabel {
-    font-size: 0.6875rem;
-    text-transform: uppercase;
-    letter-spacing: 0.12em;
-    color: var(--chakra-colors-gray-500);
-    margin: 0 0 6px;
+  &__HeightSeam {
+    grid-row: 1 / -1;
+    width: 1px;
+    align-self: stretch;
+    background: linear-gradient(
+      180deg,
+      transparent 0%,
+      rgba(var(--chakra-colors-brand-normal-rgb), 0.45) 18%,
+      rgba(var(--chakra-colors-gray-800-rgb), 0.9) 50%,
+      rgba(var(--chakra-colors-brand-normal-rgb), 0.35) 82%,
+      transparent 100%
+    );
+
+    &--a { grid-column: 2; }
+    &--b { grid-column: 4; }
   }
 
-  // chain status pill: breathing glow while live (radius matches MetaChip / Badge)
+  @media screen and (max-width: $breakpoint-md) {
+    &__HeightCol--evo { padding: 0 0.75rem 0 0; }
+    &__HeightCol--block { padding: 0 0.75rem; }
+    &__HeightCol--epoch { padding: 0 0 0 0.75rem; }
+  }
+
   &__LiveBadge {
     display: inline-block;
     padding: 3px 10px;
@@ -664,16 +777,18 @@
     border-radius: 999px;
     border: 1px solid;
     font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-size: 0.625rem;
+    vertical-align: middle;
 
     &.is-live {
-      // green.label — status Badge green
       color: var(--chakra-colors-green-label);
       border-color: rgba(var(--chakra-colors-green-label-rgb), 0.4);
       background: rgba(var(--chakra-colors-green-label-rgb), 0.12);
       animation: HeroLiveBreath 2.4s ease-in-out infinite;
     }
 
-    // static alarm: a blinking failure state reads as noise, not urgency
     &.is-down {
       color: var(--chakra-colors-red-default);
       border-color: rgba(var(--chakra-colors-red-default-rgb), 0.45);
@@ -696,31 +811,306 @@
     line-height: 1;
     color: #fff;
 
-    // make the thousands separators visible at this large size
-    .BigNumber__Space:not(:last-child) {
-      border-right-width: 0.22em;
-    }
-
     @media screen and (max-width: $breakpoint-lg) {
       font-size: 2.5rem;
+    }
+
+    @media screen and (max-width: $breakpoint-md) {
+      font-size: 2rem;
+    }
+  }
+
+  &__HeightMeta {
+    align-self: center;
+    margin: 0;
+    color: var(--chakra-colors-gray-500);
+    font-size: 0.6875rem;
+    line-height: 1.25rem;
+    height: 1.25rem;
+    font-family: $font-mono;
+    white-space: nowrap;
+    overflow: hidden;
+    justify-self: end;
+
+    &--evo { grid-column: 1; grid-row: 2; padding: 0 1rem 0 0; }
+    &--block { grid-column: 3; grid-row: 2; padding: 0 1rem; }
+    &--epoch { grid-column: 5; grid-row: 2; padding: 0 0 0 1rem; }
+
+    @media screen and (max-width: $breakpoint-md) {
+      &--evo { padding: 0 0.75rem 0 0; }
+      &--block { padding: 0 0.75rem; }
+      &--epoch { padding: 0 0 0 0.75rem; }
+    }
+  }
+
+  &__Live {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: space-between;
+    align-self: stretch;
+    gap: 0;
+    min-width: 0;
+    min-height: 100%;
+    max-width: 100%;
+    padding: 0 1.25rem 0 0;
+    border-right: 1px solid rgba(var(--chakra-colors-gray-800-rgb), 0.55);
+
+    @media screen and (max-width: $breakpoint-lg) {
+      padding: 0 0 1rem;
+      border-right: none;
+      border-bottom: 1px solid rgba(var(--chakra-colors-gray-800-rgb), 0.55);
+      flex-direction: row;
+      flex-wrap: nowrap;
+      align-items: stretch;
+      gap: 0;
+    }
+  }
+
+  &__LiveStat {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 6px;
+    min-width: 0;
+    flex: 1 1 0;
+    text-align: left;
+    padding: 0;
+
+    @media screen and (max-width: $breakpoint-lg) {
+      flex: 1 1 0;
+      padding: 0;
+    }
+  }
+
+  &__LiveDivider {
+    flex-shrink: 0;
+    width: 100%;
+    height: 1px;
+    margin: 0.75rem 0;
+    background: rgba(var(--chakra-colors-gray-800-rgb), 0.6);
+
+    @media screen and (max-width: $breakpoint-lg) {
+      width: 1px;
+      height: auto;
+      align-self: stretch;
+      margin: 0 0.65rem;
+    }
+  }
+
+  &__LiveLabelRow {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    min-height: 1.2em;
+  }
+
+  // label · value · sub — same rhythm in all three columns
+  &__LiveLabel {
+    font-size: 0.625rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--chakra-colors-gray-500);
+    margin: 0;
+    line-height: 1.2;
+
+    @media screen and (max-width: $breakpoint-md) {
+      font-size: 0.5rem;
+      letter-spacing: 0.08em;
+    }
+  }
+
+  // desktop: full labels; phone: compact (see .HomeHero__LiveShort)
+  &__LiveFull {
+    display: inline;
+  }
+
+  &__LiveShort {
+    display: none;
+  }
+
+  @media screen and (max-width: $breakpoint-md) {
+    &__LiveFull { display: none; }
+    &__LiveShort { display: inline; }
+  }
+
+  &__LiveValue {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    min-width: 0;
+    max-width: 100%;
+    min-height: 1.25rem;
+    font-family: $font-heading;
+    font-weight: 800;
+    font-style: italic;
+    font-size: 1.35rem;
+    line-height: 1.15;
+    color: #fff;
+    white-space: nowrap;
+    overflow: visible;
+
+    @media screen and (max-width: $breakpoint-md) {
+      gap: 4px;
+      font-size: 1.125rem;
+      min-height: 1.125rem;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  }
+
+  &__LiveDot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    flex-shrink: 0;
+
+    @media screen and (max-width: $breakpoint-md) {
+      width: 6px;
+      height: 6px;
+    }
+
+    &.is-ok {
+      background: var(--chakra-colors-green-label);
+      animation: HeroLiveBreath 2.4s ease-in-out infinite;
+    }
+
+    &.is-down {
+      background: var(--chakra-colors-red-default);
+      box-shadow: 0 0 6px 1px rgba(var(--chakra-colors-red-default-rgb), 0.5);
+    }
+
+    &.is-loading {
+      background: var(--chakra-colors-gray-500);
+      animation: HeroMetaPulse 1.2s ease-in-out infinite;
+    }
+  }
+
+  &__LiveSub {
+    display: flex;
+    align-items: center;
+    gap: 0.3em;
+    min-width: 0;
+    max-width: 100%;
+    min-height: 1rem;
+    margin: 0;
+    font-size: 0.6875rem;
+    line-height: 1.25;
+    font-family: $font-mono;
+    color: var(--chakra-colors-gray-500);
+    white-space: nowrap;
+    overflow: visible;
+
+    @media screen and (max-width: $breakpoint-md) {
+      font-size: 0.5625rem;
+      min-height: 0.875rem;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
   }
 
   &__LiveMeta {
-    font-size: 0.75rem;
-    font-family: $font-mono;
-    color: var(--chakra-colors-gray-500);
-    margin: 10px 0 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35em;
+    min-width: 0;
+    max-width: 100%;
+    font-variant-numeric: tabular-nums;
   }
 
-  &__Live--Loading &__Height {
-    opacity: 0.4;
+  &__LiveMetaSep {
+    opacity: 0.45;
+    user-select: none;
+  }
+
+  &__LiveMetaLink {
+    color: var(--chakra-colors-gray-400);
+    text-decoration: none;
+    border-bottom: 1px dotted rgba(var(--chakra-colors-gray-500-rgb, 122, 132, 137), 0.45);
+    transition: color 0.12s ease, border-color 0.12s ease;
+
+    @media (hover: hover) and (pointer: fine) {
+      &:hover {
+        color: $color-brand-light;
+        border-color: rgba(var(--chakra-colors-brand-light-rgb), 0.55);
+      }
+    }
+
+    &:focus-visible {
+      outline: 1px solid rgba(var(--chakra-colors-brand-light-rgb), 0.55);
+      outline-offset: 2px;
+      border-radius: 2px;
+    }
+
+    &--Next {
+      color: var(--chakra-colors-gray-250);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      font-size: 0.625rem;
+      font-weight: 700;
+      font-family: $font-heading;
+      font-style: italic;
+      border-bottom-style: solid;
+      border-bottom-color: rgba(var(--chakra-colors-gray-500-rgb, 122, 132, 137), 0.35);
+
+      @media (hover: hover) and (pointer: fine) {
+        &:hover {
+          color: $color-brand-light;
+          border-bottom-color: rgba(var(--chakra-colors-brand-light-rgb), 0.65);
+        }
+      }
+    }
   }
 }
 
 @keyframes HomeHeroDash {
   from { stroke-dashoffset: 0; }
   to { stroke-dashoffset: -100; }
+}
+
+// transform-only orb drift — small range so orbs stay inside the brand column
+@keyframes HomeHeroOrbA {
+  from { transform: translate3d(0, 0, 0) scale(1); }
+  to { transform: translate3d(4%, 3%, 0) scale(1.04); }
+}
+
+@keyframes HomeHeroOrbB {
+  from { transform: translate3d(0, 0, 0) scale(1); }
+  to { transform: translate3d(3%, -3%, 0) scale(1.05); }
+}
+
+@keyframes HomeHeroTitlePulse {
+  0%, 100% {
+    text-shadow:
+      0 0 24px rgba(var(--chakra-colors-brand-light-rgb), 0.35),
+      0 0 48px rgba(var(--chakra-colors-brand-normal-rgb), 0.2),
+      0 0 80px rgba(var(--chakra-colors-brand-normal-rgb), 0.08);
+  }
+  50% {
+    text-shadow:
+      0 0 32px rgba(var(--chakra-colors-brand-light-rgb), 0.55),
+      0 0 64px rgba(var(--chakra-colors-brand-normal-rgb), 0.32),
+      0 0 100px rgba(var(--chakra-colors-brand-normal-rgb), 0.16);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .HomeHero {
+    &__BrandOrb--a,
+    &__BrandOrb--b,
+    &__TitleShine {
+      animation: none;
+    }
+
+    &__TitleShine {
+      text-shadow:
+        0 0 28px rgba(var(--chakra-colors-brand-light-rgb), 0.4),
+        0 0 56px rgba(var(--chakra-colors-brand-normal-rgb), 0.22);
+    }
+  }
 }
 
 @keyframes HeroMetaPulse {
@@ -816,41 +1206,138 @@
     }
   }
 
-  // the estimated boundary is still forming: its dashed line gently breathes
-  &__Bound.is-approx::after {
-    animation: HeroMetaPulse 2.4s ease-in-out infinite;
+  // estimated epoch-end: callout above the wave (clears last #N); rail drops to the table
+  &__Bound.is-approx {
+    z-index: 3;
+    // lift fully above the epoch point stack on narrow screens
+    top: 0 !important;
+    transform: translateX(-100%) translateY(-6px);
+
+    @media screen and (max-width: $breakpoint-md) {
+      transform: translateX(-100%) translateY(-10px);
+    }
+
+    &::after {
+      width: 2px;
+      margin-top: 6px;
+      background: repeating-linear-gradient(
+        180deg,
+        rgba(var(--chakra-colors-brand-light-rgb), 0.75) 0 5px,
+        transparent 5px 10px
+      );
+      animation: HeroMetaPulse 2.4s ease-in-out infinite;
+    }
   }
 
   @media (prefers-reduced-motion: reduce) {
     &__Bound.is-approx::after { animation: none; }
   }
 
-  // edge markers hug the wave rims; label stacks stay centered on their # number
+  // edge rails stay on the rim; only the #height “footnote” nudges inward
   &__Bound--edgeL {
     transform: none;
-    align-items: flex-start; // rail on the left rim
+    align-items: flex-start;
+
+    &::after {
+      align-self: flex-start;
+      margin-left: 0;
+    }
+
+    .EpochsWave__BoundLabel {
+      margin-left: 8px;
+      align-items: flex-start;
+      text-align: left;
+    }
   }
 
   &__Bound--edgeR {
     transform: translateX(-100%);
-    align-items: flex-end; // rail on the right rim
+    align-items: flex-end;
+
+    &::after {
+      align-self: flex-end;
+      margin-right: 0;
+    }
+
+    .EpochsWave__BoundLabel {
+      margin-right: 8px;
+      align-items: flex-end;
+      text-align: right;
+    }
+
+    // approx re-sets transform (edge + lift); keep rail on the right rim
+    &.is-approx {
+      transform: translateX(-100%) translateY(-6px);
+      align-items: flex-end;
+
+      @media screen and (max-width: $breakpoint-md) {
+        transform: translateX(-100%) translateY(-12px);
+      }
+
+      .EpochsWave__BoundLabel {
+        margin-right: 6px;
+        // pull callout left of the last epoch # so it doesn’t glue to the number
+        transform: translateX(-6px);
+      }
+    }
   }
 
   &__BoundLabel {
     display: flex;
     flex-direction: column;
-    align-items: center; // pill centered over #height
+    align-items: center;
     text-align: center;
-    gap: 6px; // pill → number → when (same as Epoch Id stack)
+    gap: 5px;
     text-decoration: none;
     pointer-events: auto;
 
-    // the estimated final block is a projection, not a link: dimmer, no underline
+    // projected end — compact callout above the wave / clear of last #N
     &.is-approx {
-      opacity: 0.75;
+      opacity: 1;
+      padding: 5px 8px;
+      border-radius: 10px;
+      background: rgba(24, 31, 34, 0.94);
+      border: 1px solid rgba(var(--chakra-colors-brand-light-rgb), 0.4);
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
 
-      .EpochsWave__BoundBlock { border-bottom: none; }
-      &:hover .EpochsWave__BoundBlock { color: var(--chakra-colors-gray-250); }
+      .EpochsWave__BoundBlock {
+        border-bottom: none;
+        color: #fff;
+        font-size: 0.75rem;
+        font-weight: 700;
+      }
+
+      .EpochsWave__BoundWhen {
+        color: $color-brand-light;
+        font-size: 0.625rem;
+        font-weight: 600;
+      }
+
+      // phone: one tight row so height doesn’t collide with the epoch point
+      @media screen and (max-width: $breakpoint-md) {
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+        align-items: center;
+        gap: 4px 6px;
+        max-width: 9.5rem;
+        padding: 4px 7px;
+
+        .EpochsWave__BoundTag {
+          font-size: 0.5rem;
+          padding: 2px 5px;
+        }
+
+        .EpochsWave__BoundBlock {
+          font-size: 0.6875rem;
+        }
+
+        .EpochsWave__BoundWhen {
+          flex: 1 1 100%;
+          text-align: right;
+          font-size: 0.5625rem;
+        }
+      }
     }
 
     &:hover .EpochsWave__BoundBlock {
@@ -862,53 +1349,56 @@
   &__BoundBlock {
     display: inline-flex;
     align-items: center;
-    gap: 4px;
+    gap: 5px;
     font-family: $font-mono;
-    font-size: 0.625rem;
-    color: var(--chakra-colors-gray-250);
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--chakra-colors-gray-100);
     white-space: nowrap;
     text-align: center;
-    // same "clickable value" affordance as the tooltip'ed stats below the wave
     border-bottom: 1px dotted rgba(var(--chakra-colors-gray-500-rgb, 122, 132, 137), 0.5);
     transition: color .15s, border-color .15s;
   }
 
-  // same glyph as CompactBlocks Height; slightly smaller for the dense wave
   &__BoundIcon {
     flex-shrink: 0;
     opacity: 0.9;
+    width: 0.875rem !important;
+    height: 0.875rem !important;
   }
 
-  // micro brand pill above #height — same language as Epoch Kind / Governance
   &__BoundTag {
     display: inline-block;
-    padding: 2px 6px;
-    border-radius: 4px;
+    padding: 2px 7px;
+    border-radius: 999px;
     font-family: $font-heading;
     font-size: 0.5625rem;
-    font-weight: 700;
+    font-weight: 800;
+    font-style: italic;
     text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: $color-brand-light;
-    background: rgba(var(--chakra-colors-brand-normal-rgb), 0.14);
-    border: 1px solid rgba(var(--chakra-colors-brand-normal-rgb), 0.3);
+    letter-spacing: 0.1em;
+    color: #fff;
+    background: rgba(var(--chakra-colors-brand-normal-rgb), 0.45);
+    border: 1px solid rgba(var(--chakra-colors-brand-light-rgb), 0.5);
     line-height: 1.2;
     text-align: center;
   }
 
   &__BoundWhen {
     font-family: $font-mono;
-    font-size: 0.5625rem;
-    color: var(--chakra-colors-gray-500);
+    font-size: 0.6875rem;
+    color: var(--chakra-colors-gray-250);
     white-space: nowrap;
     text-align: center;
   }
 
-  // small screens: keep the break line, hide the labels so they can't collide with captions
+  // mid bounds: hide dense labels on small screens; keep projected end callout
   @media screen and (max-width: $breakpoint-lg) {
-    &__BoundTag,
-    &__BoundBlock,
-    &__BoundWhen { display: none; }
+    &__Bound:not(.is-approx) {
+      .EpochsWave__BoundTag,
+      .EpochsWave__BoundBlock,
+      .EpochsWave__BoundWhen { display: none; }
+    }
   }
 
   // steady opacity like the wave scan; the dash leaving a short path reads clearly on its own
@@ -1002,7 +1492,11 @@
       transition: transform .2s ease, box-shadow .2s ease;
     }
 
-    .HomeHero__WaveValue { font-size: 1.5rem; }
+    .HomeHero__WaveValue { font-size: 1.75rem; }
+
+    @media screen and (max-width: $breakpoint-md) {
+      .HomeHero__WaveValue { font-size: 1.5rem; }
+    }
 
     // Epoch label over number — lifted above the #, even 6px stack gaps
     .EpochsWave__Id {
@@ -1234,28 +1728,30 @@
     &__Wash { transition: none; }
   }
 
-  // flat KPI table: 11 metrics; even 2 rows (6+5) mid widths, one row from xl; colour from --epoch-color-rgb
+  // flat KPI table: 11 metrics; colour from --epoch-color-rgb
+  // phone: 4 cols (aligns with 4 epoch slots on the wave) → 4+4+3
+  // md–lg: 6 cols → 6+5; xl+: single 11-col row
   &__Cells {
     position: relative;
     display: grid;
     // no full-width border-top: the selected epoch's Beam + seam mark the connection instead
     border-top: none;
-    // phone: flexible wrap (all metrics remain)
-    grid-template-columns: repeat(auto-fit, minmax(96px, 1fr));
+    // phone: fixed 4 tracks so vertical mesh lines match the 4-epoch wave rhythm
+    grid-template-columns: repeat(4, minmax(0, 1fr));
     // hairline mesh via cell inset shadows — gap 0 so lines read as a continuous grid
     gap: 0;
     align-items: stretch;
     min-width: 0;
-    // full-bleed to card edges (cancel HomeEpochs side pad); no re-pad — mesh flush, no side gutters
-    margin: 0 -20px;
-    padding: 0;
-    // clip the outer right/bottom hairlines so the mesh doesn't double the card edge
-    overflow: hidden;
+    margin: 0;
+    // soft inset so first/last tiles (Transactions / Top proposer) don't hug the card chrome
+    padding: 0 4px;
+    overflow-x: clip;
+    overflow-y: visible;
 
     // soft outer frame (same gray-800 language as CompactTx row rules)
     box-shadow: inset 0 0 0 1px rgba(var(--chakra-colors-gray-800-rgb), 0.4);
 
-    // md–xl (incl. ~1024): 6 tracks → row1: 6, row2: 5 equal 1fr (not ragged auto-fit 9+2)
+    // md–xl (incl. ~1024): 6 tracks → row1: 6, row2: 5 equal 1fr
     @media screen and (min-width: $breakpoint-md) {
       grid-template-columns: repeat(6, minmax(0, 1fr));
     }
@@ -1263,14 +1759,6 @@
     // >=1280: a fixed 11-column row
     @media screen and (min-width: $breakpoint-xl) {
       grid-template-columns: repeat(11, minmax(0, 1fr));
-    }
-
-    @media screen and (max-width: $breakpoint-lg) {
-      margin: 0 -16px;
-    }
-
-    @media screen and (max-width: $breakpoint-md) {
-      margin: 0 -16px;
     }
 
     // glowing seam spanning the selected epoch's segment (boundary to boundary)
@@ -1294,7 +1782,7 @@
 
     // KPI tile: label over value + wrap-safe hairline mesh (right + bottom)
     .HomeHero__StatusCell {
-      position: relative; // anchor for mobile (i) corner
+      position: relative;
       flex-direction: column;
       align-items: center;
       justify-content: flex-start;
@@ -1306,32 +1794,39 @@
       box-shadow:
         inset -1px 0 0 0 rgba(var(--chakra-colors-gray-800-rgb), 0.5),
         inset 0 -1px 0 0 rgba(var(--chakra-colors-gray-800-rgb), 0.4);
-      padding: 12px 10px 14px;
+      padding: 12px 12px 14px;
 
       @media screen and (max-width: $breakpoint-md) {
-        // room for corner (i) so it doesn't sit on the value
-        padding: 10px 8px 14px;
+        padding: 10px 10px 12px;
+      }
+
+      &--Hint:hover {
+        background: rgba(255, 255, 255, 0.045);
       }
     }
 
-    // label + (i): desktop in-flow beside title; mobile (i) docks to cell corner
+    // outer columns: air against card edge (StatusCell is the grid item again)
+    > .HomeHero__StatusCell:first-child {
+      padding-left: 16px;
+    }
+
+    > .HomeHero__StatusCell:last-child {
+      padding-right: 16px;
+    }
+
+    // label only — tip opens on the whole cell (no (i) icons)
     .HomeHero__StatusHead {
       position: relative;
       display: flex;
-      align-items: flex-start; // (i) tops with first line when the title wraps
+      align-items: flex-start;
       justify-content: center;
-      gap: 3px;
+      gap: 0;
       width: 100%;
       max-width: 100%;
       min-width: 0;
       flex-shrink: 1;
       white-space: normal;
       box-sizing: border-box;
-
-      @media screen and (max-width: $breakpoint-md) {
-        // let (i) position against the cell, not the head
-        position: static;
-      }
     }
 
     // same language as CompactTx Status / Hash / Type / Time (not brand pills)
@@ -1345,38 +1840,19 @@
       line-height: 1.15;
       flex: 1 1 auto;
       min-width: 0;
-      // leave room for the (i) so long titles wrap inside the tile (desktop)
-      max-width: calc(100% - 14px);
+      max-width: 100%;
       text-align: center;
       white-space: normal; // "Core rewards" / "Top proposer" wrap in narrow tiles
 
       @media screen and (max-width: $breakpoint-md) {
         font-size: 0.625rem;
         letter-spacing: 0.03em;
-        max-width: 100%; // (i) is in the corner, not beside the title
       }
     }
 
-    // desktop: in-flow after label; mobile: bottom-right of the data cell
+    // legacy (i) hook — unused when cells are the tip trigger
     .HomeHero__StatusInfo {
-      position: static;
-      flex: 0 0 auto;
-      margin-left: 0;
-      margin-top: 1px; // optical align with uppercase caps
-      padding: 2px;
-      line-height: 0;
-      transform: none;
-
-      @media screen and (max-width: $breakpoint-md) {
-        position: absolute;
-        right: 4px;
-        bottom: 4px;
-        z-index: 2;
-        margin-top: 0;
-        // slightly larger hit target for touch
-        padding: 4px;
-        color: var(--chakra-colors-gray-500);
-      }
+      display: none;
     }
 
     .HomeHero__StatusValue {
@@ -1538,30 +2014,15 @@
     &:hover { color: $color-brand-normal; }
   }
 
-  &__Proposer {
-    display: block;
-    max-width: 100%;
-    min-width: 0;
-
-    &:hover .EpochsOverview__ProposerVal {
-      color: $color-brand-light;
-      border-bottom-color: rgba(var(--chakra-colors-brand-light-rgb), 0.7);
-    }
-  }
-
-  // full hash in the markup; inline-block + fixed cap clips it and keeps the mono width steady
+  // shortId in cell; full hash lives in the tip content
   &__ProposerVal {
     font-family: $font-mono;
     font-style: normal;
     font-weight: 700;
     letter-spacing: 0.02em;
     display: inline-block;
-    max-width: 8ch;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    max-width: 100%;
     line-height: 1.25rem;
-    // same "clickable value" affordance as the tooltip'ed stats in this row
-    border-bottom: 1px dotted rgba(var(--chakra-colors-gray-500-rgb, 122, 132, 137), 0.6);
-    transition: color .15s, border-color .15s;
   }
 }
+

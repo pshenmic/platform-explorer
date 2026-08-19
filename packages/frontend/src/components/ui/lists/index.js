@@ -5,8 +5,16 @@ import { forwardRef } from 'react'
 import { Container } from '@chakra-ui/react'
 import ImageGenerator from '../../imageGenerator'
 import ListColumnsHeader from './ListColumnsHeader'
+import DataList from './DataList/DataList'
 import { BigNumber, Identifier, Alias } from '../../data'
 import { RateTooltip } from '../Tooltips'
+import { FirstPlaceIcon, SecondPlaceIcon, ThirdPlaceIcon } from '../icons'
+
+const placeIcons = {
+  1: FirstPlaceIcon,
+  2: SecondPlaceIcon,
+  3: ThirdPlaceIcon
+}
 
 function EmptyListMessage ({ children }) {
   return (
@@ -14,10 +22,29 @@ function EmptyListMessage ({ children }) {
   )
 }
 
+// fixed-width slot so rows 1–3 (medal) and 4–5 (#n) share the same left edge
+function RankMark ({ place }) {
+  if (place == null) return null
+  const PlaceIcon = placeIcons[place]
+  return (
+    <span className={'SimpleListItem__Rank'}>
+      {PlaceIcon
+        ? <PlaceIcon className={'SimpleListItem__Medal'} aria-hidden={'true'}/>
+        : <span className={'SimpleListItem__RankNum'} aria-hidden={'true'}>#{place}</span>}
+    </span>
+  )
+}
+
 function SimpleListItem ({ item }) {
-  const ItemContainer = ({ link, children }) => link
-    ? <Link href={link} className={'SimpleListItem'}>{children}</Link>
-    : <div className={'SimpleListItem'}>{children}</div>
+  const place = item.place
+  const rootClassName = [
+    'SimpleListItem',
+    place ? `SimpleListItem--Rank${place}` : ''
+  ].filter(Boolean).join(' ')
+
+  const ItemContainer = ({ link, className, children }) => link
+    ? <Link href={link} className={className}>{children}</Link>
+    : <div className={className}>{children}</div>
 
   const ValueContainer = ({ column, children }) => {
     if (column.format === 'currency') {
@@ -39,7 +66,7 @@ function SimpleListItem ({ item }) {
   return (
     <ItemContainer
       link={item.link}
-      className={'SimpleListItem'}
+      className={rootClassName}
     >
       {item.monospaceTitles &&
         <div className={'SimpleListItem__TitlesContainer SimpleListItem__TitlesContainer--Mono'}>
@@ -69,6 +96,7 @@ function SimpleListItem ({ item }) {
         <div className={'SimpleListItem__ColumnsContainer'}>
           {item.columns.map((column, key) => {
             if (typeof column === 'object') {
+              const isFirst = key === 0
               return (
                 <div
                   key={key}
@@ -80,6 +108,7 @@ function SimpleListItem ({ item }) {
                       column?.ellipsis ? 'SimpleListItem__Column--Ellipsis' : ''
                     }`}
                 >
+                  {isFirst && <RankMark place={place}/>}
                   {column?.avatar &&
                     <ImageGenerator
                       className={'SimpleListItem__Avatar'}
@@ -144,5 +173,6 @@ SimpleList.displayName = 'SimpleList'
 export {
   SimpleList,
   EmptyListMessage,
-  ListColumnsHeader
+  ListColumnsHeader,
+  DataList
 }

@@ -1,7 +1,7 @@
 'use client'
 
 import { NuqsAdapter } from 'nuqs/adapters/next/app'
-import { NetworkProvider, BreadcrumbsProvider, ThemeProvider, ModalProvider, WalletProvider, QueryProvider } from 'src/contexts'
+import { NetworkProvider, BreadcrumbsProvider, ThemeProvider, ModalProvider, WalletProvider, QueryProvider, TooltipProvider } from 'src/contexts'
 import Navbar from './navbar/Navbar'
 import Footer from './footer'
 import Background from './Background'
@@ -15,14 +15,16 @@ export default function RootComponent ({ children }) {
         <QueryProvider>
           <WalletProvider>
             <ThemeProvider>
-              <ModalProvider>
-                <Background snow={false}/>
-                <BreadcrumbsProvider>
-                  <Navbar/>
-                  {children}
-                </BreadcrumbsProvider>
-                <Footer/>
-              </ModalProvider>
+              <TooltipProvider>
+                <ModalProvider>
+                  <Background snow={false}/>
+                  <BreadcrumbsProvider>
+                    <Navbar/>
+                    {children}
+                  </BreadcrumbsProvider>
+                  <Footer/>
+                </ModalProvider>
+              </TooltipProvider>
             </ThemeProvider>
           </WalletProvider>
         </QueryProvider>

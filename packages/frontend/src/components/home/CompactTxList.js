@@ -1,14 +1,14 @@
 'use client'
 
-import Link from 'next/link'
 import StatusIcon from '../transactions/StatusIcon'
 import TypeBadge from '../transactions/TypeBadge'
 import BatchTypeBadge from '../transactions/BatchTypeBadge'
-import { TimeDelta, NotActive } from '../data'
+import { TimeDelta, NotActive, Identifier } from '../data'
 import { CheckmarkIcon, ErrorCircleIcon } from '../ui/icons'
 import { Tooltip } from '../ui/Tooltips'
-import { Skeleton } from './Skeleton'
+import { DataList } from '../ui/lists'
 import { useLiveList } from './hooks'
+import { HOME_FEED_LIMIT } from './listLimits'
 import './CompactTxList.scss'
 
 const STATUS_LABEL = {
@@ -19,95 +19,75 @@ const STATUS_LABEL = {
   BROADCASTED: 'Broadcasted'
 }
 
-// column-title row aligned to the grid, so the compact list reads like the full tables
-function CompactTxHead () {
-  return (
-    <div className={'CompactTx__Head'} aria-hidden={'true'}>
-      <span className={'CompactTx__HeadCell CompactTx__HeadCell--status'}>Status</span>
-      <span className={'CompactTx__HeadCell'}>Hash</span>
-      <span className={'CompactTx__HeadCell'}>Type</span>
-      <span className={'CompactTx__HeadCell CompactTx__HeadCell--time'}>Time</span>
-    </div>
-  )
-}
-
-// dense latest-transactions list; refreshes are held back while hovered
-export function CompactTxList ({ transactions, limit = 6, loading, moreHref, moreLabel }) {
+export function CompactTxList ({
+  transactions,
+  limit = HOME_FEED_LIMIT,
+  loading
+}) {
   const { shown, newKeys, hoverBind } = useLiveList(transactions, tx => tx?.hash)
   const rows = Array.isArray(shown) ? shown.slice(0, limit) : []
 
-  const footer = moreHref
-    ? <Link href={moreHref} prefetch={false} className={'CompactTx__More'}>{moreLabel || 'View all'}</Link>
-    : null
-
-  // skeleton mirrors the real row grid so there's no layout shift
-  if (loading && !rows.length) {
-    return (
-      <div className={'CompactTx'}>
-        <CompactTxHead/>
-        {Array.from({ length: limit }).map((_, i) => (
-          <div className={'CompactTx__Row CompactTx__Row--skeleton'} key={i}>
-            <span className={'CompactTx__Status'}><Skeleton w={'16px'} circle={true}/></span>
-            <span className={'CompactTx__Hash'}><Skeleton w={'72%'} h={'0.8em'}/></span>
-            <span className={'CompactTx__Type'}><Skeleton w={'64px'} h={'1.05em'} radius={10}/></span>
-            <span className={'CompactTx__Time'}><Skeleton w={'42px'} h={'0.7em'}/></span>
-          </div>
-        ))}
-        {footer}
-      </div>
-    )
-  }
-
-  if (!rows.length) {
-    return <div className={'CompactTx__Empty'}>No transactions</div>
-  }
+  const columns = [
+    {
+      key: 'status',
+      header: 'Status',
+      minWidth: 56,
+      align: 'center',
+      cell: (tx) => (tx.status
+        ? <Tooltip content={STATUS_LABEL[tx.status] || tx.status} placement={'top'}>
+            <span style={{ display: 'flex' }}>
+              {tx.status === 'SUCCESS'
+                ? <CheckmarkIcon w={'18px'} h={'18px'}/>
+                : tx.status === 'FAIL'
+                  ? <ErrorCircleIcon w={'18px'} h={'18px'}/>
+                  : <StatusIcon status={tx.status} w={'18px'} h={'18px'}/>}
+            </span>
+          </Tooltip>
+        : <NotActive/>)
+    },
+    {
+      key: 'hash',
+      header: 'Hash',
+      grow: true,
+      minWidth: 96,
+      cell: (tx) => (tx.hash
+        ? <Identifier ellipsis={true} styles={['highlight-both']}>{tx.hash}</Identifier>
+        : <NotActive/>)
+    },
+    {
+      key: 'type',
+      header: 'Type',
+      minWidth: 88,
+      cell: (tx) => (tx.batchType
+        ? <BatchTypeBadge batchType={tx.batchType?.replace(/[\\""]/g, '')}/>
+        : tx.type !== undefined
+          ? <TypeBadge type={tx.type}/>
+          : <NotActive/>)
+    },
+    {
+      key: 'time',
+      header: 'Time',
+      minWidth: 48,
+      align: 'right',
+      cell: (tx) => (tx.timestamp
+        ? <TimeDelta showTimestampTooltip={true} format={'compact'} endDate={new Date(tx.timestamp)}/>
+        : <NotActive/>)
+    }
+  ]
 
   return (
-    <div className={'CompactTx'} {...hoverBind}>
-      <CompactTxHead/>
-      {rows.map((tx, i) => (
-        <Link
-          key={tx.hash}
-          href={`/transaction/${tx.hash}`}
-          // rows churn every refresh tick; prefetching each new hash grows the router cache for the tab's lifetime
-          prefetch={false}
-          className={`CompactTx__Row${newKeys.has(tx.hash) ? ' is-new' : ''}`}
-          // fresh rows cascade in top-down instead of swapping in one frame
-          style={newKeys.has(tx.hash) ? { '--stagger': `${i * 50}ms` } : undefined}
-        >
-          <span className={'CompactTx__Status'}>
-            {tx.status
-              ? <Tooltip content={STATUS_LABEL[tx.status] || tx.status} placement={'top'}>
-                  <span className={'CompactTx__StatusIcon'}>
-                    {/* filled colour disc from the /transactions status badge, minus the label text */}
-                    {tx.status === 'SUCCESS'
-                      ? <CheckmarkIcon w={'18px'} h={'18px'}/>
-                      : tx.status === 'FAIL'
-                        ? <ErrorCircleIcon w={'18px'} h={'18px'}/>
-                        : <StatusIcon status={tx.status} w={'18px'} h={'18px'}/>}
-                  </span>
-                </Tooltip>
-              : <NotActive/>}
-          </span>
-
-          <span className={'CompactTx__Hash'}>
-            {tx.hash ? <span className={'CompactTx__HashText'}>{tx.hash}</span> : <NotActive/>}
-          </span>
-
-          <span className={'CompactTx__Type'}>
-            {tx.batchType
-              ? <BatchTypeBadge batchType={tx.batchType?.replace(/[\\""]/g, '')}/>
-              : tx.type !== undefined
-                ? <TypeBadge type={tx.type}/>
-                : <NotActive/>}
-          </span>
-
-          <span className={'CompactTx__Time'}>
-            {tx.timestamp ? <TimeDelta showTimestampTooltip={true} format={'compact'} endDate={new Date(tx.timestamp)}/> : <NotActive/>}
-          </span>
-        </Link>
-      ))}
-      {footer}
-    </div>
+    <DataList
+      className={'CompactTxList'}
+      items={rows}
+      columns={columns}
+      loading={loading && !rows.length}
+      skeletonCount={limit}
+      emptyMessage={'No transactions'}
+      rowHref={(tx) => `/transaction/${tx.hash}`}
+      rowKey={(tx) => tx.hash}
+      rowClassName={(tx) => (newKeys.has(tx.hash) ? 'is-new' : '')}
+      rowStyle={(tx, i) => (newKeys.has(tx.hash) ? { '--stagger': `${i * 50}ms` } : undefined)}
+      wrapperProps={hoverBind}
+    />
   )
 }
