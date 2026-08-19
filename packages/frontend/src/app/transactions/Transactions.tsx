@@ -28,11 +28,11 @@ const paginateConfig = {
   defaultPage: 1
 }
 
-function Transactions ({ defaultPage = 1, defaultPageSize }) {
+function Transactions ({ defaultPage = 1, defaultPageSize }: any) {
   const [currentPage, setCurrentPage] = useState(defaultPage ? parseInt(defaultPage) - 1 : 0)
   const [pageSize, setPageSize] = useState(defaultPageSize ?? null ? defaultPageSize : paginateConfig.pageSize.default)
   const [total, setTotal] = useState(0)
-  const [transactions, setTransactions] = useState({ data: [], loading: true, error: null })
+  const [transactions, setTransactions] = useState<{ data: any[], loading: boolean, error: unknown }>({ data: [], loading: true, error: null })
   const pageCount = Math.ceil(total / pageSize)
   const router = useRouter()
   const pathname = usePathname()
@@ -41,7 +41,7 @@ function Transactions ({ defaultPage = 1, defaultPageSize }) {
 
   const typeParams = useMemo(() => {
     const parsed = parseTypeParams(searchParams)
-    const allow = (list, allowed) => list.filter(v => allowed.includes(v))
+    const allow = (list: any, allowed: any) => list.filter((v: any) => allowed.includes(v))
     return {
       transaction_type: allow(parsed.transaction_type, TRANSACTION_TYPE_VALUES),
       batch_type: allow(parsed.batch_type, BATCH_TYPE_VALUES)
@@ -49,14 +49,14 @@ function Transactions ({ defaultPage = 1, defaultPageSize }) {
   }, [searchParams])
 
   const apiFilters = useMemo(() => {
-    const next = {}
+    const next: Record<string, string[]> = {}
     if (typeParams.transaction_type.length) next.transaction_type = typeParams.transaction_type
     if (typeParams.batch_type.length) next.batch_type = typeParams.batch_type
     return next
   }, [typeParams])
 
   const filterUiState = useMemo(() => {
-    const next = {}
+    const next: Record<string, string[]> = {}
     if (typeParams.transaction_type.length) next.transaction_type = typeParams.transaction_type
     if (typeParams.batch_type.length) next.batch_type = typeParams.batch_type
     return next
@@ -79,7 +79,7 @@ function Transactions ({ defaultPage = 1, defaultPageSize }) {
       } catch (error) {
         console.error('Error fetching transactions:', error)
         setTotal(0)
-        setTransactions({ data: [], loading: false, error: error.message })
+        setTransactions({ data: [], loading: false, error: error instanceof Error ? error.message : error })
       }
     }
 
@@ -87,9 +87,9 @@ function Transactions ({ defaultPage = 1, defaultPageSize }) {
   }, [currentPage, pageSize, apiFilters])
 
   useEffect(() => {
-    const page = parseInt(searchParams.get('page')) || paginateConfig.defaultPage
+    const page = parseInt(searchParams.get('page') || '', 10) || paginateConfig.defaultPage
     setCurrentPage(Math.max(page - 1, 0))
-    setPageSize(parseInt(searchParams.get('page-size')) || paginateConfig.pageSize.default)
+    setPageSize(parseInt(searchParams.get('page-size') || '', 10) || paginateConfig.pageSize.default)
   }, [searchParams, pathname])
 
   useEffect(() => {
@@ -107,7 +107,7 @@ function Transactions ({ defaultPage = 1, defaultPageSize }) {
     router.replace(next ? `${pathname}?${next}` : pathname, { scroll: false })
   }, [currentPage, pageSize, typeParams, pathname, router, searchParams])
 
-  const filtersChangeHandler = (newFilters) => {
+  const filtersChangeHandler = (newFilters: any) => {
     const urlParameters = new URLSearchParams()
     const tt = Array.isArray(newFilters?.transaction_type) ? newFilters.transaction_type : []
     const bt = Array.isArray(newFilters?.batch_type) ? newFilters.batch_type : []
@@ -116,11 +116,11 @@ function Transactions ({ defaultPage = 1, defaultPageSize }) {
     router.replace(urlParameters.toString() ? `${pathname}?${urlParameters}` : pathname, { scroll: false })
   }
 
-  const handlePageChange = (newPage) => {
+  const handlePageChange = (newPage: any) => {
     setCurrentPage(Math.max(0, newPage?.selected))
   }
 
-  const handlePageSizeChange = (newSize) => {
+  const handlePageSizeChange = (newSize: any) => {
     const size = typeof newSize === 'object' ? newSize.value : parseInt(newSize)
     setPageSize(Math.max(1, size))
     setCurrentPage(0)

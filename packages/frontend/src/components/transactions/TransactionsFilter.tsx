@@ -216,12 +216,12 @@ const filtersConfig = {
     title: 'Transaction Types',
     options: transactionOptions,
     defaultValue: transactionOptions.map(t => t.value),
-    formatValue: (values) => {
+    formatValue: (values: any) => {
       if (values.length === transactionOptions.length) return null
       if (values.length > 1) return `${values.length} categories`
       return transactionOptions.find(t => t.value === values[0])?.title || values[0]
     },
-    isAllSelected: (values) => values.length === transactionOptions.length
+    isAllSelected: (values: any) => values.length === transactionOptions.length
   },
   batch_type: {
     type: 'multiselect',
@@ -229,12 +229,12 @@ const filtersConfig = {
     title: 'Batch Types',
     options: batchOptions,
     defaultValue: batchOptions.map(t => t.value),
-    formatValue: (values) => {
+    formatValue: (values: any) => {
       if (values.length === batchOptions.length) return null
       if (values.length > 1) return `${values.length} categories`
       return batchOptions.find(t => t.value === values[0])?.title || values[0]
     },
-    isAllSelected: (values) => values.length === batchOptions.length
+    isAllSelected: (values: any) => values.length === batchOptions.length
   },
   status: {
     type: 'multiselect',
@@ -242,12 +242,12 @@ const filtersConfig = {
     title: 'Status',
     options: statusOptions,
     defaultValue: statusOptions.map(s => s.value),
-    formatValue: (values) => {
+    formatValue: (values: any) => {
       if (values.length === statusOptions.length) return null
       if (values.length > 1) return `${values.length} values`
       return statusOptions.find(s => s.value === values[0])?.title || values[0]
     },
-    isAllSelected: (values) => values.length === statusOptions.length
+    isAllSelected: (values: any) => values.length === statusOptions.length
   },
   gas: {
     type: 'range',
@@ -258,7 +258,7 @@ const filtersConfig = {
     minPlaceholder: 'ex. 0...',
     maxTitle: 'Maximum amount',
     maxPlaceholder: 'ex. 10000000...',
-    formatValue: ({ min, max }) => {
+    formatValue: ({ min, max }: any) => {
       if (min && max) return `${min} - ${max} Credits`
       if (min) return `Min ${min} Credits`
       if (max) return `Max ${max} Credits`
@@ -272,8 +272,8 @@ const filtersConfig = {
     entityType: 'identities',
     placeholder: 'OWNER ID OR IDENTITY',
     defaultValue: '',
-    formatValue: (value) => value || null,
-    mobileTagRenderer: (value) => (
+    formatValue: (value: any) => value || null,
+    mobileTagRenderer: (value: any) => (
       <Identifier avatar={true} ellipsis={true} styles={['highlight-both']}>{value}</Identifier>
     )
   },
@@ -282,7 +282,7 @@ const filtersConfig = {
     title: 'Date range',
     type: 'daterange',
     defaultValue: null,
-    formatValue: (value) => {
+    formatValue: (value: any) => {
       return `${value?.start ? `from ${value?.start?.toLocaleDateString()}` : ''} ${value?.end ? `to ${value?.end?.toLocaleDateString()}` : ''}`
     }
   }
@@ -297,6 +297,12 @@ export default function TransactionsFilter ({
   className,
   excludeFilters = [],
   initialFilters
+}: {
+  onFilterChange?: (filters: Record<string, unknown>) => void
+  isMobile?: boolean
+  className?: string
+  excludeFilters?: string[]
+  initialFilters?: { transaction_type?: string[], batch_type?: string[] }
 }) {
   const config = excludeFilters.length
     ? Object.fromEntries(Object.entries(filtersConfig).filter(([key]) => !excludeFilters.includes(key)))
@@ -310,7 +316,7 @@ export default function TransactionsFilter ({
   return (
     <Filters
       key={urlKey}
-      filtersConfig={config}
+      filtersConfig={config as any}
       initialFilters={initialFilters}
       onFilterChange={onFilterChange}
       isMobile={isMobile}

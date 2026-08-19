@@ -3,8 +3,16 @@ import { BatchActions } from '../../enums/batchTypes'
 import { Tooltip } from '../ui/Tooltips'
 import './TypeBadge.css'
 
-function BatchTypeBadge ({ batchType, className = '', ...props }) {
-  const batchInfo = BatchActions?.[batchType]
+function BatchTypeBadge ({
+  batchType,
+  className = '',
+  ...props
+}: {
+  batchType: string
+  className?: string
+  [key: string]: unknown
+}) {
+  const batchInfo = BatchActions?.[batchType as keyof typeof BatchActions]
   const badgeClass = `TypeBadge ${className}`.trim()
 
   if (!batchInfo) {
