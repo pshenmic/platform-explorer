@@ -35,14 +35,16 @@
 .HomeHero__Inner {
   position: relative;
   z-index: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(14rem, 0.8fr);
+  align-items: stretch;
+  gap: 2rem 3rem;
   padding: 20px 32px 20px;
   overflow: visible;
 }
 @media screen and (max-width: 62em) {
   .HomeHero__Inner {
+    grid-template-columns: 1fr;
     gap: 1.25rem;
     padding: 20px 24px;
   }
@@ -55,55 +57,9 @@
 .HomeHero__Bottom {
   position: relative;
   z-index: 2;
-  display: grid;
-  grid-template-columns: minmax(10rem, 12.5rem) minmax(0, 1fr);
-  align-items: stretch;
-  gap: 0 1.5rem;
   min-width: 0;
   padding-top: 1.25rem;
   border-top: 1px solid rgba(var(--pe-color-gray-800-rgb), 0.55);
-}
-@media screen and (max-width: 62em) {
-  .HomeHero__Bottom {
-    grid-template-columns: 1fr;
-    gap: 1.25rem;
-  }
-}
-.HomeHero__Feeds {
-  min-width: 0;
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-  gap: 0;
-  align-items: start;
-}
-@media screen and (max-width: 48em) {
-  .HomeHero__Feeds {
-    grid-template-columns: 1fr;
-    gap: 1.25rem;
-  }
-}
-.HomeHero__Feed {
-  min-width: 0;
-  max-width: 100%;
-  overflow: hidden;
-}
-.HomeHero__Feed > .DataList {
-  max-width: 100%;
-  min-width: 0;
-}
-.HomeHero__Feed > .DataList .DataList__RowLink,
-.HomeHero__Feed > .DataList .DataList__Row {
-  max-width: 100%;
-  overflow: hidden;
-}
-@media screen and (min-width: 48em) {
-  .HomeHero__Feed:first-child {
-    padding-right: 1.25rem;
-    border-right: 1px solid rgba(var(--pe-color-gray-800-rgb), 0.55);
-  }
-  .HomeHero__Feed:last-child {
-    padding-left: 1.25rem;
-  }
 }
 .HomeHero__Brand {
   position: relative;
@@ -111,22 +67,8 @@
   min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: 1.25rem;
   overflow: visible;
   width: 100%;
-}
-@media screen and (min-width: 62em) {
-  .HomeHero__Brand {
-    display: grid;
-    grid-template-columns: minmax(16rem, 1fr) minmax(0, 1.15fr);
-    gap: 1.5rem 2.5rem;
-    align-items: center;
-  }
-}
-@media screen and (min-width: 77.5em) {
-  .HomeHero__Brand {
-    gap: 1.75rem 3rem;
-  }
 }
 .HomeHero__BrandFx {
   position: absolute;
@@ -258,8 +200,8 @@
   font-size: 0.8125rem;
   font-family: var(--pe-font-mono);
   color: var(--pe-color-gray-500);
-  line-height: 1.6;
-  max-width: 38rem;
+  line-height: 1.55;
+  max-width: 28rem;
   margin: 0;
   overflow-wrap: anywhere;
 }
@@ -672,74 +614,39 @@
   z-index: 2;
   min-width: 0;
   width: 100%;
-  justify-self: stretch;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 1rem;
 }
-.HomeHero__HeightPair {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) 1px minmax(0, 1fr) 1px minmax(0, 1fr);
-  grid-template-rows: auto 1.25rem;
-  column-gap: 0;
-  row-gap: 6px;
-  align-items: end;
-  width: 100%;
-  min-width: 0;
+@media screen and (max-width: 62em) {
+  .HomeHero__HeightRail {
+    padding-top: 1rem;
+    gap: 1.25rem;
+  }
 }
-.HomeHero__HeightCol {
+.HomeHero__Stat {
   display: flex;
   flex-direction: column;
   align-items: flex-end;
   text-align: right;
   min-width: 0;
-  grid-row: 1;
+  gap: 6px;
 }
-.HomeHero__HeightCol .HomeHero__LiveLabel {
+.HomeHero__Stat .HomeHero__LiveLabel {
   display: inline-flex;
   align-items: center;
   justify-content: flex-end;
-  min-height: 1.5rem;
-  margin-bottom: 6px;
+  margin: 0;
 }
-.HomeHero__HeightCol--evo {
-  grid-column: 1;
-  padding: 0 1rem 0 0;
-}
-.HomeHero__HeightCol--block {
-  grid-column: 3;
-  padding: 0 1rem;
-}
-.HomeHero__HeightCol--epoch {
-  grid-column: 5;
-  padding: 0 0 0 1rem;
-}
-.HomeHero__HeightSeam {
-  grid-row: 1 / -1;
-  width: 1px;
-  align-self: stretch;
-  background: linear-gradient(
-    180deg,
-    transparent 0%,
-    rgba(var(--pe-color-brand-normal-rgb), 0.45) 18%,
-    rgba(var(--pe-color-gray-800-rgb), 0.9) 50%,
-    rgba(var(--pe-color-brand-normal-rgb), 0.35) 82%,
-    transparent 100%
-  );
-}
-.HomeHero__HeightSeam--a {
-  grid-column: 2;
-}
-.HomeHero__HeightSeam--b {
-  grid-column: 4;
-}
-@media screen and (max-width: 48em) {
-  .HomeHero__HeightCol--evo {
-    padding: 0 0.75rem 0 0;
-  }
-  .HomeHero__HeightCol--block {
-    padding: 0 0.75rem;
-  }
-  .HomeHero__HeightCol--epoch {
-    padding: 0 0 0 0.75rem;
-  }
+.HomeHero__Stat .HomeHero__LiveMeta {
+  margin: 0;
+  color: var(--pe-color-gray-500);
+  font-size: 0.6875rem;
+  line-height: 1.25;
+  font-family: var(--pe-font-mono);
+  white-space: nowrap;
 }
 .HomeHero__LiveBadge {
   display: inline-block;
@@ -774,56 +681,27 @@
   font-family: var(--pe-font-heading);
   font-weight: 800;
   font-style: italic;
-  font-size: 3.25rem;
-  line-height: 1;
+  font-size: 2.25rem;
+  line-height: 1.1;
   color: #fff;
+}
+.HomeHero__Height--epoch {
+  font-size: 2rem;
 }
 @media screen and (max-width: 62em) {
   .HomeHero__Height {
-    font-size: 2.5rem;
+    font-size: 2rem;
+  }
+  .HomeHero__Height--epoch {
+    font-size: 1.75rem;
   }
 }
 @media screen and (max-width: 48em) {
   .HomeHero__Height {
-    font-size: 2rem;
+    font-size: 1.75rem;
   }
-}
-.HomeHero__HeightMeta {
-  align-self: center;
-  margin: 0;
-  color: var(--pe-color-gray-500);
-  font-size: 0.6875rem;
-  line-height: 1.25rem;
-  height: 1.25rem;
-  font-family: var(--pe-font-mono);
-  white-space: nowrap;
-  overflow: hidden;
-  justify-self: end;
-}
-.HomeHero__HeightMeta--evo {
-  grid-column: 1;
-  grid-row: 2;
-  padding: 0 1rem 0 0;
-}
-.HomeHero__HeightMeta--block {
-  grid-column: 3;
-  grid-row: 2;
-  padding: 0 1rem;
-}
-.HomeHero__HeightMeta--epoch {
-  grid-column: 5;
-  grid-row: 2;
-  padding: 0 0 0 1rem;
-}
-@media screen and (max-width: 48em) {
-  .HomeHero__HeightMeta--evo {
-    padding: 0 0.75rem 0 0;
-  }
-  .HomeHero__HeightMeta--block {
-    padding: 0 0.75rem;
-  }
-  .HomeHero__HeightMeta--epoch {
-    padding: 0 0 0 0.75rem;
+  .HomeHero__Height--epoch {
+    font-size: 1.5rem;
   }
 }
 .HomeHero__Live {
