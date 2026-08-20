@@ -7,14 +7,17 @@
   overflow: hidden;
   contain: layout style;
 }
-.ShieldedPool.is-height-matched .ShieldedPool__Body {
+.HomeCardPair .ShieldedPool {
+  height: 100%;
+}
+.HomeCardPair .ShieldedPool .ShieldedPool__Body {
   flex: 1 1 auto;
   min-height: 0;
   display: flex;
   flex-direction: column;
   overflow: hidden;
 }
-.ShieldedPool.is-height-matched .ShieldedPool__Chart {
+.HomeCardPair .ShieldedPool .ShieldedPool__Chart {
   flex: 1 1 auto;
   min-height: 0;
   height: auto;

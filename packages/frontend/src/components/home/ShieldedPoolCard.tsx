@@ -134,62 +134,9 @@ export default function ShieldedPoolCard({
   const fetchGen = useRef(0)
   const periodGen = useRef(0)
 
-  // match Quorum card height on md+ so the pair reads as one band
-  useEffect(() => {
-    const root = rootRef.current
-    if (!root || typeof ResizeObserver === 'undefined') return undefined
-
-    const pair = root.closest('.HomeShieldQuorum')
-    const quorum = pair?.querySelector('.MasternodesDonut')
-    if (!pair || !quorum) return undefined
-
-    const mq = window.matchMedia('(min-width: 48em)')
-    const clear = () => {
-      root.style.removeProperty('height')
-      root.style.removeProperty('max-height')
-      root.style.removeProperty('min-height')
-      root.classList.remove('is-height-matched')
-    }
-
-    const measurePlot = () => {
-      const el = wrapRef.current
-      if (!el) return
-      setWidth(Math.max(0, Math.floor(el.clientWidth)))
-      setPlotH(Math.max(120, Math.floor(el.clientHeight || 180)))
-    }
-
-    const sync = () => {
-      if (!mq.matches) {
-        clear()
-        measurePlot()
-        return
-      }
-      const qh = Math.round(quorum.getBoundingClientRect().height)
-      if (qh < 1) return
-      root.style.height = `${qh}px`
-      root.style.maxHeight = `${qh}px`
-      root.style.minHeight = `${qh}px`
-      root.classList.add('is-height-matched')
-      measurePlot()
-    }
-
-    sync()
-    const ro = new ResizeObserver(sync)
-    ro.observe(quorum)
-    mq.addEventListener?.('change', sync)
-    mq.addListener?.(sync)
-    return () => {
-      ro.disconnect()
-      mq.removeEventListener?.('change', sync)
-      mq.removeListener?.(sync)
-      clear()
-    }
-  }, [])
-
   useResizeObserver(wrapRef as RefObject<HTMLElement>, entry => {
     const { width: w, height: hh } = entry.contentRect
     setWidth(Math.max(0, Math.floor(w)))
-    // when height-matched, plot may shrink below the default min
     setPlotH(Math.max(120, Math.floor(hh) || 180))
   })
 

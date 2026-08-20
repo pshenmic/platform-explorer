@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useRef, useId, useMemo, type RefObject } from 'react'
+import { Box } from '@chakra-ui/react'
 import * as d3 from 'd3'
 import useResizeObserver from '@react-hook/resize-observer'
 import { Presets } from '../cards'
@@ -147,7 +148,12 @@ export default function TxActivityChart({
       : ''
 
   return (
-    <div className={'TxActivityChart'} aria-label={'Volume'}>
+    <Box
+      className={'InfoBlock InfoBlock--NoBorder TxActivityChart'}
+      w={'100%'}
+      as={'section'}
+      aria-label={'Volume'}
+    >
       <header className={'TxActivityChart__Head'}>
         <div className={'TxActivityChart__HeadText'}>
           <span className={'TxActivityChart__Eyebrow'}>Throughput</span>
@@ -290,6 +296,6 @@ export default function TxActivityChart({
           </svg>
         )}
       </div>
-    </div>
+    </Box>
   )
 }

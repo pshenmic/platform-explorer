@@ -104,7 +104,7 @@
 .IdentityGrowthChart__Plot {
   position: relative;
   flex: 1 1 auto;
-  min-height: 120px;
+  min-height: 0;
   width: 100%;
 }
 .IdentityGrowthChart__Empty {
