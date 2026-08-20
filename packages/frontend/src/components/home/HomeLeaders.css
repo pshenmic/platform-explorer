@@ -5,6 +5,7 @@
   padding-right: 0 !important;
   padding-top: 20px !important;
   padding-bottom: 22px !important;
+  height: 100%;
 }
 .HomeLeaders__Head {
   display: flex;
@@ -114,6 +115,21 @@
 .HomeLeaders__Tab:focus-visible {
   outline: 1px solid rgba(var(--pe-color-brand-light-rgb), 0.65);
   outline-offset: 1px;
+}
+.HomeLeaders__Panel {
+  flex: 1 1 auto;
+  min-width: 0;
+  padding: 0 32px;
+}
+@media screen and (max-width: 62em) {
+  .HomeLeaders__Panel {
+    padding: 0 24px;
+  }
+}
+@media screen and (max-width: 48em) {
+  .HomeLeaders__Panel {
+    padding: 0 16px;
+  }
 }
 .HomeLeaders__Viewport {
   overflow-x: auto;
