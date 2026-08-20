@@ -11,7 +11,10 @@ import {
   TxActivityChart,
   IdentityGrowthChart,
   ShieldedPoolCard,
-  HomeLeaders
+  HomeLeaders,
+  CompactTxList,
+  CompactBlocksList,
+  HeroMeta
 } from '../../components/home'
 import { fetchHandlerSuccess, fetchHandlerError } from '../../util'
 import theme from '../../styles/theme'
@@ -19,6 +22,17 @@ import { Box, Container, Flex } from '@chakra-ui/react'
 import type { LoadableState, Rate } from '../../types'
 import type { QueryFilters } from '../../util/Api'
 import './Home.css'
+
+function computeAvgBlockTime(blocks: any) {
+  const stamps = (blocks || [])
+    .map((b: any) => new Date(b?.header?.timestamp).getTime())
+    .filter((t: number) => !Number.isNaN(t))
+    .sort((a: number, b: number) => b - a)
+  if (stamps.length < 2) return null
+  let total = 0
+  for (let i = 0; i < stamps.length - 1; i++) total += stamps[i] - stamps[i + 1]
+  return Math.round(total / (stamps.length - 1) / 1000)
+}
 
 function epochNumbersOf(current: unknown) {
   if (typeof current !== 'number') return []
@@ -59,7 +73,6 @@ function Home() {
 
   const gap = theme.blockOffset
 
-  // wave 0: hero + overview + validator totals (independent; RQ dedupes Strict Mode double-mount)
   const statusQuery = useQuery({
     queryKey: ['home', 'status'],
     queryFn: Api.getStatus,
@@ -90,7 +103,6 @@ function Home() {
     queryFn: () => Api.getValidators(1, 1, 'desc', { isBanned: 'true' }),
     staleTime: 60_000
   })
-  // inactive straight from the backend (not-active AND not-banned) — no client-side arithmetic
   const validatorsInactiveQuery = useQuery({
     queryKey: ['home', 'validators', 'inactive'],
     queryFn: () => Api.getValidators(1, 1, 'desc', { isActive: 'false', isBanned: 'false' }),
@@ -162,7 +174,6 @@ function Home() {
       .filter(Boolean)
   }, [quorumDetailsQuery.data, quorumHashes, quorumsListQuery.data])
 
-  // shape expected by MasternodesDonut ({ data, loading })
   const validators = {
     data: validatorsQuery.data ?? {},
     loading: validatorsQuery.isPending || validatorsQuery.isLoading
@@ -183,18 +194,15 @@ function Home() {
   const currentEpochNumber = statusQuery.data?.epoch?.number
   const epochNumbers = useMemo(() => epochNumbersOf(currentEpochNumber), [currentEpochNumber])
 
-  // one query per epoch — results stream in independently (no Promise.all gate on the skeleton)
   const epochQueries = useQueries({
     queries: epochNumbers.map(n => ({
       queryKey: ['home', 'epoch', n],
       queryFn: () => Api.getEpoch(n),
       staleTime: 30_000,
-      // live epoch refreshes with the status cadence; finalized epochs stay cached
       refetchInterval: n === currentEpochNumber ? 60_000 : false
     }))
   })
 
-  // progressive list: whatever has arrived, in epoch order (partial wave is OK)
   const epochDataStamp = epochQueries.map(q => `${q.dataUpdatedAt}:${q.fetchStatus}`).join('|')
   const epochsBaseList = useMemo(
     () => epochNumbers.map((n, i) => epochQueries[i]?.data).filter(Boolean),
@@ -206,7 +214,6 @@ function Home() {
     typeof currentEpochNumber !== 'number' ||
     (epochsBaseList.length === 0 && epochQueries.some(q => q.isPending || q.isLoading))
 
-  // phase B: first-block meta only after an epoch exists (does not block the wave)
   const blockQueries = useQueries({
     queries: epochsBaseList.map(ep => {
       const height = ep?.epoch?.firstBlockHeight
@@ -248,8 +255,7 @@ function Home() {
       .catch(err => fetchHandlerError(setRate, err))
   }, [])
 
-  // below-fold charts wait until the first epoch paints (or all epoch queries settle empty)
-  const epochsSettled =
+  const epochsSettled = {
     epochNumbers.length > 0 &&
     epochQueries.length === epochNumbers.length &&
     epochQueries.every(q => !q.isPending && !q.isLoading)
@@ -260,7 +266,6 @@ function Home() {
       className={'HomePage'}
       maxW={'container.maxPageW'}
       color={'white'}
-      // mobile: tight gutter so card border/shadow aren't clipped; md+: standard 12px
       px={{ base: 2, md: 3 }}
       py={0}
       mt={gap}
@@ -270,48 +275,41 @@ function Home() {
         <HomeHero
           status={statusQuery.data ?? {}}
           loading={statusQuery.isLoading}
-          rate={rate?.data}
-          rateLoading={rate?.loading}
           epochNumber={currentEpochNumber}
           epochEndTime={currentEpochPayload?.epoch?.endTime}
-          transactions={txQuery.data?.resultSet}
-          transactionsLoading={txQuery.isLoading}
-          blocks={blocksQuery.data?.resultSet}
-          blocksLoading={blocksQuery.isLoading}
+          avgBlockTimeSec={computeAvgBlockTime(blocksQuery.data?.resultSet)}
         />
 
         <Box
-          className={'InfoBlock InfoBlock--NoBorder HomeActivity'}
+          className={'InfoBlock InfoBlock--NoBorder HomeOverview'}
           w={'100%'}
           as={'section'}
-          aria-label={'Network charts'}
+          aria-label={'Network overview'}
         >
-          <div className={'HomeActivity__Grid'}>
-            <div className={'HomeActivity__Types'}>
-              <TxTypesBar enabled={belowFoldReady} />
+          <div className={'HomeOverview__Grid'}>
+            <div className={'HomeOverview__Sys'}>
+              <HeroMeta status={statusQuery.data ?? {}} loading={statusQuery.isLoading} />
             </div>
-            <div className={'HomeActivity__Charts'}>
-              <div className={'HomeActivity__Chart'}>
-                <TxActivityChart
-                  fetcher={Api.getTransactionsHistory}
-                  field={'txs'}
-                  yAbbr={'txs'}
-                  enabled={belowFoldReady}
-                />
-              </div>
-              <div className={'HomeActivity__Chart'}>
-                <IdentityGrowthChart
-                  fetcher={Api.getIdentitiesHistory}
-                  field={'registeredIdentities'}
-                  yAbbr={'identities'}
-                  enabled={belowFoldReady}
-                />
-              </div>
+            <div className={'HomeOverview__Tx'}>
+              <CompactTxList
+                transactions={txQuery.data?.resultSet}
+                limit={5}
+                loading={txQuery.isLoading}
+                moreHref={'/transactions'}
+                moreLabel={'View all transactions'}
+              />
+            </div>
+            <div className={'HomeOverview__Blocks'}>
+              <CompactBlocksList
+                blocks={blocksQuery.data?.resultSet}
+                limit={5}
+                loading={blocksQuery.isLoading}
+                moreHref={'/blocks'}
+                moreLabel={'View all blocks'}
+              />
             </div>
           </div>
         </Box>
-
-        <HomeLeaders rate={rate} enabled={belowFoldReady} />
 
         <Box
           id={'home-epochs'}
@@ -329,11 +327,39 @@ function Home() {
           />
         </Box>
 
-        <div className={'HomeShieldQuorum'}>
-          <div className={'HomeShieldQuorum__Cell'}>
+        <div className={'HomeCardPair HomeCardPair--metrics'}>
+          <div className={'HomeCardPair__Cell'}>
+            <TxActivityChart
+              fetcher={Api.getTransactionsHistory}
+              field={'txs'}
+              yAbbr={'txs'}
+              enabled={belowFoldReady}
+            />
+          </div>
+          <div className={'HomeCardPair__Cell'}>
+            <IdentityGrowthChart
+              fetcher={Api.getIdentitiesHistory}
+              field={'registeredIdentities'}
+              yAbbr={'identities'}
+              enabled={belowFoldReady}
+            />
+          </div>
+        </div>
+
+        <div className={'HomeCardPair HomeCardPair--viz'}>
+          <div className={'HomeCardPair__Cell'}>
+            <TxTypesBar enabled={belowFoldReady} />
+          </div>
+          <div className={'HomeCardPair__Cell'}>
             <ShieldedPoolCard rate={rate} enabled={belowFoldReady} />
           </div>
-          <div className={'HomeShieldQuorum__Cell'}>
+        </div>
+
+        <div className={'HomeCardPair HomeCardPair--leaders'}>
+          <div className={'HomeCardPair__Cell'}>
+            <HomeLeaders rate={rate} enabled={belowFoldReady} />
+          </div>
+          <div className={'HomeCardPair__Cell'}>
             <MasternodesDonut
               validators={validators}
               validatorsActive={validatorsActive}

@@ -1,5 +1,6 @@
 'use client'
 
+import Link from 'next/link'
 import { BigNumber, TimeDelta, NotActive, Identifier } from '../data'
 import { BlockIcon } from '../ui/icons'
 import { DataList } from '../ui/lists'
@@ -10,11 +11,15 @@ import './CompactBlocksList.css'
 export function CompactBlocksList({
   blocks,
   limit = HOME_FEED_LIMIT,
-  loading
+  loading,
+  moreHref,
+  moreLabel
 }: {
   blocks?: any[]
   limit?: number
   loading?: boolean
+  moreHref?: string
+  moreLabel?: string
 }) {
   const { shown, newKeys, hoverBind } = useLiveList<any>(blocks, (b: any) => b?.header?.hash)
   const rows = Array.isArray(shown) ? shown.slice(0, limit) : []
@@ -91,6 +96,13 @@ export function CompactBlocksList({
         newKeys.has(block?.header?.hash) ? { '--stagger': `${i * 50}ms` } : undefined
       }
       wrapperProps={hoverBind}
+      footer={
+        moreHref ? (
+          <Link href={moreHref} prefetch={false} className={'DataList__ShowMore'}>
+            {moreLabel || 'View all'}
+          </Link>
+        ) : null
+      }
     />
   )
 }

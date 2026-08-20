@@ -1,5 +1,6 @@
 'use client'
 
+import Link from 'next/link'
 import StatusIcon from '../transactions/StatusIcon'
 import TypeBadge from '../transactions/TypeBadge'
 import BatchTypeBadge from '../transactions/BatchTypeBadge'
@@ -19,7 +20,13 @@ const STATUS_LABEL = {
   BROADCASTED: 'Broadcasted'
 }
 
-export function CompactTxList({ transactions, limit = HOME_FEED_LIMIT, loading }: any) {
+export function CompactTxList({
+  transactions,
+  limit = HOME_FEED_LIMIT,
+  loading,
+  moreHref,
+  moreLabel
+}: any) {
   const { shown, newKeys, hoverBind } = useLiveList<any>(transactions, (tx: any) => tx?.hash)
   const rows = Array.isArray(shown) ? shown.slice(0, limit) : []
 
@@ -106,6 +113,13 @@ export function CompactTxList({ transactions, limit = HOME_FEED_LIMIT, loading }
         newKeys.has(tx.hash) ? { '--stagger': `${i * 50}ms` } : undefined
       }
       wrapperProps={hoverBind}
+      footer={
+        moreHref ? (
+          <Link href={moreHref} prefetch={false} className={'DataList__ShowMore'}>
+            {moreLabel || 'View all'}
+          </Link>
+        ) : null
+      }
     />
   )
 }
