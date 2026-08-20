@@ -72,7 +72,9 @@ export default function HomeHero({
             <Heading as={'h1'} className={'HomeHero__Title'}>
               <span className={'HomeHero__TitleShine'}>Platform Explorer</span>
             </Heading>
-            <Text className={'HomeHero__Tagline'}>The information resource about Dash Platform</Text>
+            <Text className={'HomeHero__Tagline'}>
+              The information resource about Dash Platform
+            </Text>
             <Text className={'HomeHero__Description'}>
               Your portal for real-time and historical data across the Dash blockchain — track and
               verify transactions, identities, contracts and documents with confidence.
@@ -124,10 +126,7 @@ export default function HomeHero({
               )}
             </div>
             {epochEndDate ? (
-              <span
-                className={'HomeHero__LiveMeta'}
-                title={nextEpochTitleFmt.format(epochEndDate)}
-              >
+              <span className={'HomeHero__LiveMeta'} title={nextEpochTitleFmt.format(epochEndDate)}>
                 <a
                   className={'HomeHero__LiveMetaLink HomeHero__LiveMetaLink--Next'}
                   href={'#home-epochs'}
@@ -139,7 +138,9 @@ export default function HomeHero({
                     el.scrollIntoView({ behavior: 'smooth', block: 'start' })
                     try {
                       el.focus({ preventScroll: true })
-                    } catch (_) {}
+                    } catch {
+                      return
+                    }
                   }}
                 >
                   Next
@@ -147,11 +148,7 @@ export default function HomeHero({
                 <span className={'HomeHero__LiveMetaSep'} aria-hidden={'true'}>
                   ·
                 </span>
-                <TimeDelta
-                  endDate={epochEndDate}
-                  format={'compact'}
-                  showTimestampTooltip={false}
-                />
+                <TimeDelta endDate={epochEndDate} format={'compact'} showTimestampTooltip={false} />
                 <span className={'HomeHero__LiveMetaSep'} aria-hidden={'true'}>
                   ·
                 </span>

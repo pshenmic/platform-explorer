@@ -255,7 +255,7 @@ function Home() {
       .catch(err => fetchHandlerError(setRate, err))
   }, [])
 
-  const epochsSettled = {
+  const epochsSettled =
     epochNumbers.length > 0 &&
     epochQueries.length === epochNumbers.length &&
     epochQueries.every(q => !q.isPending && !q.isLoading)

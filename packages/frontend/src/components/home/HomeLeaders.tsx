@@ -290,15 +290,7 @@ export default function HomeLeaders({ rate, enabled = true }: { rate?: any; enab
         )
       }
     ],
-    [
-      byBalance,
-      byTxs,
-      activeIds,
-      maxBalance,
-      maxTxs,
-      maxActiveIdTx,
-      rate
-    ]
+    [byBalance, byTxs, activeIds, maxBalance, maxTxs, maxActiveIdTx, rate]
   )
 
   const [active, setActive] = useState(0)
