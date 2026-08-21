@@ -89,6 +89,7 @@
   font-family: var(--pe-font-mono);
   font-size: 0.8125rem;
   line-height: 1.35;
+  min-height: 1.35em;
   color: var(--pe-color-gray-400);
   white-space: nowrap;
   max-width: 18rem;

@@ -140,11 +140,12 @@ export default function TxActivityChart({
     setPinI((p: any) => (p === hoverI ? null : hoverI))
   }
 
+  const rangeLabel = PRESETS[presetIdx].label === 'All' ? 'all time' : PRESETS[presetIdx].label
   const rangeTotal = chart ? formatValue(chart.total) : '—'
   const statMeta = activeBar
     ? `${chart!.tipFmt(activeBar.date)} · ${formatValue(activeBar.value)} ${yAbbr}`
     : chart
-      ? `peak ${formatValue(chart.peak)} · latest ${formatValue(chart.latest.y)}`
+      ? `in ${rangeLabel}`
       : ''
 
   return (
@@ -169,7 +170,7 @@ export default function TxActivityChart({
               <span className={'TxActivityChart__StatCount'}>{rangeTotal}</span>
               <span className={'TxActivityChart__StatUnit'}>{yAbbr}</span>
             </div>
-            {statMeta && <span className={'TxActivityChart__StatMeta'}>{statMeta}</span>}
+            <span className={'TxActivityChart__StatMeta'}>{statMeta || '\u00a0'}</span>
           </div>
         </div>
       </header>
