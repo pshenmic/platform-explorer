@@ -14,6 +14,41 @@
   display: flex;
   flex-direction: column;
 }
+.HomeHero__Nodes {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  mask-image: linear-gradient(
+    90deg,
+    transparent 0%,
+    transparent 14%,
+    rgba(0, 0, 0, 0.12) 26%,
+    rgba(0, 0, 0, 0.45) 34%,
+    #000 46%,
+    #000 72%,
+    rgba(0, 0, 0, 0.2) 84%,
+    transparent 94%,
+    transparent 100%
+  );
+  -webkit-mask-image: linear-gradient(
+    90deg,
+    transparent 0%,
+    transparent 14%,
+    rgba(0, 0, 0, 0.12) 26%,
+    rgba(0, 0, 0, 0.45) 34%,
+    #000 46%,
+    #000 72%,
+    rgba(0, 0, 0, 0.2) 84%,
+    transparent 94%,
+    transparent 100%
+  );
+}
+.HomeHero__Nodes canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
 .HomeHero__Glow {
   position: absolute;
   top: -20%;
@@ -36,10 +71,10 @@
   position: relative;
   z-index: 1;
   display: grid;
-  grid-template-columns: minmax(0, 1.2fr) minmax(14rem, 0.8fr);
+  grid-template-columns: minmax(0, 1fr) auto;
   align-items: stretch;
   gap: 2rem 3rem;
-  padding: 20px 32px 20px;
+  padding: 20px 4.5rem 20px 32px;
   overflow: visible;
 }
 @media screen and (max-width: 62em) {
@@ -612,8 +647,8 @@
 .HomeHero__HeightRail {
   position: relative;
   z-index: 2;
-  min-width: 0;
-  width: 100%;
+  min-width: 14rem;
+  width: auto;
   height: 100%;
   display: flex;
   flex-direction: column;
@@ -623,6 +658,7 @@
 @media screen and (max-width: 62em) {
   .HomeHero__HeightRail {
     padding-top: 1rem;
+    padding-right: 0;
     gap: 1.25rem;
   }
 }

@@ -3,7 +3,7 @@
 import { Box, Heading, Text } from '@chakra-ui/react'
 import { TimeDelta, BigNumber } from '../../components/data'
 import { useCountUp } from '../../components/home/hooks'
-import { Skeleton } from '../../components/home'
+import { HeroNodes, Skeleton } from '../../components/home'
 import { isNetworkLive } from '../../components/home/utils'
 import './HomeHero.css'
 
@@ -37,6 +37,18 @@ const nextEpochTitleFmt = new Intl.DateTimeFormat('en-GB', {
   timeZoneName: 'short'
 })
 
+function scrollToEpochs(e: { preventDefault: () => void }) {
+  e.preventDefault()
+  const el = document.getElementById('home-epochs')
+  if (!el) return
+  el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  try {
+    el.focus({ preventScroll: true })
+  } catch {
+    return
+  }
+}
+
 export default function HomeHero({
   status,
   loading,
@@ -64,6 +76,7 @@ export default function HomeHero({
         <span className={'HomeHero__BrandOrb HomeHero__BrandOrb--b'} />
         <span className={'HomeHero__BrandGrain'} />
       </div>
+      <HeroNodes />
 
       <Box className={'HomeHero__Inner'}>
         <div className={'HomeHero__Brand'}>
@@ -131,17 +144,7 @@ export default function HomeHero({
                   className={'HomeHero__LiveMetaLink HomeHero__LiveMetaLink--Next'}
                   href={'#home-epochs'}
                   aria-label={'Next epoch — scroll to Epochs'}
-                  onClick={e => {
-                    e.preventDefault()
-                    const el = document.getElementById('home-epochs')
-                    if (!el) return
-                    el.scrollIntoView({ behavior: 'smooth', block: 'start' })
-                    try {
-                      el.focus({ preventScroll: true })
-                    } catch {
-                      return
-                    }
-                  }}
+                  onClick={scrollToEpochs}
                 >
                   Next
                 </a>
