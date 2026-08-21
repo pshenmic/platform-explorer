@@ -123,13 +123,13 @@ export default function IdentityGrowthChart({
       .line()
       .x((p: any) => x(p.x))
       .y((p: any) => y(p.y))
-      .curve(d3.curveMonotoneX)(points)
+      .curve(d3.curveStepAfter)(points)
     const areaD = d3
       .area()
       .x((p: any) => x(p.x))
       .y0(baseline)
       .y1((p: any) => y(p.y))
-      .curve(d3.curveMonotoneX)(points)
+      .curve(d3.curveStepAfter)(points)
     const nodes = points.map((p, i) => ({
       i,
       cx: x(p.x),
@@ -174,31 +174,13 @@ export default function IdentityGrowthChart({
 
   const isAll = PRESETS[dataPresetIdx].label === 'All'
   const rangeLabel = isAll ? 'all time' : PRESETS[dataPresetIdx].label
-  const rangeTotal = chart
-    ? isAll
-      ? formatValue(chart.latest.y)
-      : `${chart.delta >= 0 ? '+' : ''}${formatValue(chart.delta)}`
-    : '—'
+  const rangeTotal = chart ? formatValue(chart.latest.y) : '—'
   const statMeta = active
     ? `${chart!.tipFmt(active.date)} · ${formatValue(active.value)} ${yAbbr}`
     : chart
       ? isAll
-        ? [
-            `${chart.delta >= 0 ? '+' : ''}${formatValue(chart.delta)} since start`,
-            chart.growthPct != null
-              ? `${chart.growthPct >= 0 ? '+' : ''}${chart.growthPct.toFixed(1)}%`
-              : null
-          ]
-            .filter(Boolean)
-            .join(' · ')
-        : [
-            `total ${formatValue(chart.latest.y)}`,
-            chart.growthPct != null
-              ? `${chart.growthPct >= 0 ? '+' : ''}${chart.growthPct.toFixed(1)}% ${rangeLabel}`
-              : null
-          ]
-            .filter(Boolean)
-            .join(' · ')
+        ? `in ${rangeLabel}`
+        : `${chart.delta >= 0 ? '+' : ''}${formatValue(chart.delta)} in ${rangeLabel}`
       : ''
 
   return (
@@ -213,7 +195,7 @@ export default function IdentityGrowthChart({
           <span className={'IdentityGrowthChart__Eyebrow'}>Network growth</span>
           <h2 className={'IdentityGrowthChart__Title'}>Identities</h2>
           <p className={'IdentityGrowthChart__Lede'}>
-            Cumulative identity registrations over time.
+            Cumulative identity registrations. Each step is new identities in that bucket.
           </p>
         </div>
         <div className={'IdentityGrowthChart__Controls'}>
@@ -225,7 +207,7 @@ export default function IdentityGrowthChart({
               <span className={'IdentityGrowthChart__StatCount'}>{rangeTotal}</span>
               <span className={'IdentityGrowthChart__StatUnit'}>{yAbbr}</span>
             </div>
-            {statMeta && <span className={'IdentityGrowthChart__StatMeta'}>{statMeta}</span>}
+            <span className={'IdentityGrowthChart__StatMeta'}>{statMeta || '\u00a0'}</span>
           </div>
         </div>
       </header>
@@ -246,11 +228,9 @@ export default function IdentityGrowthChart({
             width={width}
             height={h}
             role={'img'}
-            aria-label={
-              isAll
-                ? `Identities, total ${formatValue(chart.latest.y)}`
-                : `Identities, ${chart.delta >= 0 ? '+' : ''}${formatValue(chart.delta)} in ${rangeLabel}`
-            }
+            aria-label={`Identities, total ${formatValue(chart.latest.y)}${
+              isAll ? '' : `, ${chart.delta >= 0 ? '+' : ''}${formatValue(chart.delta)} in ${rangeLabel}`
+            }`}
             onMouseMove={onMove}
             onMouseLeave={onLeave}
             onClick={onClick}
@@ -313,7 +293,6 @@ export default function IdentityGrowthChart({
               d={chart.lineD}
               filter={`url(#idGlow-${gid})`}
             />
-            <path className={'IdentityGrowthChart__Scan'} d={chart.lineD} pathLength={'100'} />
 
             {active && (
               <>

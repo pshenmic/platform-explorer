@@ -89,6 +89,7 @@
   font-family: var(--pe-font-mono);
   font-size: 0.8125rem;
   line-height: 1.35;
+  min-height: 1.35em;
   color: var(--pe-color-gray-400);
   white-space: nowrap;
   max-width: 18rem;
@@ -161,21 +162,6 @@
   stroke-linejoin: round;
   stroke-linecap: round;
 }
-.IdentityGrowthChart__Scan {
-  fill: none;
-  stroke: #fff;
-  stroke-width: 2.5;
-  stroke-linecap: round;
-  stroke-dasharray: 3 97;
-  opacity: 0.85;
-  animation: IdGrowthScan 5.5s linear infinite;
-}
-@media (prefers-reduced-motion: reduce) {
-  .IdentityGrowthChart__Scan {
-    animation: none;
-    opacity: 0;
-  }
-}
 .IdentityGrowthChart__Guide {
   stroke: rgba(var(--pe-color-brand-light-rgb), 0.5);
   stroke-width: 1;
@@ -194,13 +180,4 @@
   stroke-width: 1.5;
   pointer-events: none;
   filter: drop-shadow(0 0 6px rgba(var(--pe-color-brand-normal-rgb), 0.55));
-}
-
-@keyframes IdGrowthScan {
-  from {
-    stroke-dashoffset: 0;
-  }
-  to {
-    stroke-dashoffset: -100;
-  }
 }
