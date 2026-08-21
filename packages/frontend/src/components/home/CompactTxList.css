@@ -40,3 +40,13 @@
   font-family: var(--pe-font-mono);
   font-size: 0.75rem;
 }
+.CompactTxList .TypeBadge {
+  max-width: 100%;
+  min-width: 0;
+}
+.CompactTxList .TypeBadge__Label {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
