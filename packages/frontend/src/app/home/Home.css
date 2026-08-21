@@ -67,15 +67,43 @@
 }
 @media screen and (min-width: 62em) {
   .HomeOverview__Grid {
-    grid-template-columns: 250px minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-columns: 11.25rem minmax(0, 1fr) minmax(0, 1fr);
     gap: 0;
     align-items: stretch;
   }
 }
 
 .HomeOverview__Sys {
+  position: relative;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
+  isolation: isolate;
+}
+.HomeOverview__Nodes {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  mask-image: linear-gradient(
+    90deg,
+    transparent 0%,
+    transparent 36%,
+    rgba(0, 0, 0, 0.35) 48%,
+    #000 62%
+  );
+  -webkit-mask-image: linear-gradient(
+    90deg,
+    transparent 0%,
+    transparent 36%,
+    rgba(0, 0, 0, 0.35) 48%,
+    #000 62%
+  );
+}
+.HomeOverview__Nodes canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
 }
 .HomeOverview__Sys .HomeHero__MetaLabel {
   font-family: var(--pe-font-heading);
@@ -88,6 +116,8 @@
   text-align: left;
 }
 .HomeOverview__Sys .HomeHero__Meta {
+  position: relative;
+  z-index: 1;
   flex: 1;
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -115,9 +145,11 @@
 @media screen and (min-width: 62em) {
   .HomeOverview__Sys {
     border-right: 1px solid rgba(var(--pe-color-gray-800-rgb), 0.6);
-    padding-right: 2rem;
+    padding-right: 1rem;
   }
   .HomeOverview__Sys .HomeHero__Meta {
+    position: relative;
+    z-index: 1;
     display: flex;
     flex-direction: column;
     grid-template-columns: none;

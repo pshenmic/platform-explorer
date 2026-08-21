@@ -14,7 +14,8 @@ import {
   HomeLeaders,
   CompactTxList,
   CompactBlocksList,
-  HeroMeta
+  HeroMeta,
+  HeroNodes
 } from '../../components/home'
 import { fetchHandlerSuccess, fetchHandlerError } from '../../util'
 import theme from '../../styles/theme'
@@ -288,6 +289,7 @@ function Home() {
         >
           <div className={'HomeOverview__Grid'}>
             <div className={'HomeOverview__Sys'}>
+              <HeroNodes compact className={'HomeOverview__Nodes'} />
               <HeroMeta status={statusQuery.data ?? {}} loading={statusQuery.isLoading} />
             </div>
             <div className={'HomeOverview__Tx'}>
