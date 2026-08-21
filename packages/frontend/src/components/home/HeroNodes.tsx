@@ -41,7 +41,8 @@ export default function HeroNodes({
     if (!canvas) return
     const ctx = canvas.getContext('2d')
     const parent =
-      (canvas.closest('.HomeHero, .HomeOverview__Sys') as HTMLElement | null) ?? canvas.parentElement
+      (canvas.closest('.HomeHero, .HomeOverview__Sys') as HTMLElement | null) ??
+      canvas.parentElement
     if (!ctx || !parent) return
     const cellX = compact ? 92 : 88
     const cellY = compact ? 88 : 64

@@ -229,7 +229,9 @@ export default function IdentityGrowthChart({
             height={h}
             role={'img'}
             aria-label={`Identities, total ${formatValue(chart.latest.y)}${
-              isAll ? '' : `, ${chart.delta >= 0 ? '+' : ''}${formatValue(chart.delta)} in ${rangeLabel}`
+              isAll
+                ? ''
+                : `, ${chart.delta >= 0 ? '+' : ''}${formatValue(chart.delta)} in ${rangeLabel}`
             }`}
             onMouseMove={onMove}
             onMouseLeave={onLeave}
