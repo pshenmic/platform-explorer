@@ -66,7 +66,7 @@ const call = async <T>(path: string, method: HttpMethod, body?: unknown): Promis
       throw error
     }
   } catch (e) {
-    console.error(e)
+    if (!(e instanceof ResponseErrorNotFound)) console.error(e)
     throw e
   }
 }
