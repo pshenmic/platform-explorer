@@ -6,7 +6,7 @@ import * as Api from '../../util/Api'
 import HomeHero from './HomeHero'
 import {
   EpochsOverview,
-  MasternodesDonut,
+  QuorumCard,
   TxTypesBar,
   TxActivityChart,
   IdentityGrowthChart,
@@ -41,32 +41,22 @@ function epochNumbersOf(current: unknown) {
 }
 
 const VALIDATORS_PAGE = 100
-const QUORUM_DETAIL_CONCURRENCY = 3
 
 async function fetchAllValidators(filters?: QueryFilters) {
   const first = await Api.getValidators(1, VALIDATORS_PAGE, 'desc', filters)
   const rows = Array.isArray(first?.resultSet) ? [...first.resultSet] : []
   const total = typeof first?.pagination?.total === 'number' ? first.pagination.total : rows.length
   const pages = Math.max(1, Math.ceil(total / VALIDATORS_PAGE))
-  for (let page = 2; page <= pages; page++) {
-    const next = await Api.getValidators(page, VALIDATORS_PAGE, 'desc', filters)
-    if (Array.isArray(next?.resultSet)) rows.push(...next.resultSet)
+  if (pages <= 1) return rows
+  const rest = await Promise.all(
+    Array.from({ length: pages - 1 }, (_, i) =>
+      Api.getValidators(i + 2, VALIDATORS_PAGE, 'desc', filters)
+    )
+  )
+  for (const page of rest) {
+    if (Array.isArray(page?.resultSet)) rows.push(...page.resultSet)
   }
   return rows
-}
-
-async function fetchQuorumDetails(hashes: string[]) {
-  const out = new Array(hashes.length)
-  let cursor = 0
-  const worker = async () => {
-    while (cursor < hashes.length) {
-      const i = cursor++
-      out[i] = await Api.getQuorumByHash(hashes[i])
-    }
-  }
-  const n = Math.min(QUORUM_DETAIL_CONCURRENCY, hashes.length)
-  await Promise.all(Array.from({ length: n }, worker))
-  return out
 }
 
 function Home() {
@@ -109,12 +99,46 @@ function Home() {
     queryFn: () => Api.getValidators(1, 1, 'desc', { isActive: 'false', isBanned: 'false' }),
     staleTime: 60_000
   })
-  const validatorsGeoQuery = useQuery({
-    queryKey: ['home', 'validators', 'pool'],
-    queryFn: () => fetchAllValidators(),
+  const validatorsPoolHeadQuery = useQuery({
+    queryKey: ['home', 'validators', 'pool', 'head'],
+    queryFn: () => Api.getValidators(1, VALIDATORS_PAGE, 'desc'),
     staleTime: 60_000,
     refetchInterval: 120_000
   })
+  const poolTotal =
+    (typeof validatorsPoolHeadQuery.data?.pagination?.total === 'number'
+      ? validatorsPoolHeadQuery.data.pagination.total
+      : null) ??
+    (typeof validatorsQuery.data?.pagination?.total === 'number'
+      ? validatorsQuery.data.pagination.total
+      : null)
+  const poolPages =
+    typeof poolTotal === 'number' ? Math.max(1, Math.ceil(poolTotal / VALIDATORS_PAGE)) : 1
+  const validatorsPoolRestQuery = useQuery({
+    queryKey: ['home', 'validators', 'pool', 'rest', poolTotal],
+    queryFn: async () => {
+      const rest = await Promise.all(
+        Array.from({ length: poolPages - 1 }, (_, i) =>
+          Api.getValidators(i + 2, VALIDATORS_PAGE, 'desc')
+        )
+      )
+      const rows = []
+      for (const page of rest) {
+        if (Array.isArray(page?.resultSet)) rows.push(...page.resultSet)
+      }
+      return rows
+    },
+    enabled: validatorsPoolHeadQuery.isSuccess && poolPages > 1,
+    staleTime: 60_000,
+    refetchInterval: 120_000
+  })
+  const validatorsPoolList = useMemo(() => {
+    const head = validatorsPoolHeadQuery.data?.resultSet
+    const rest = validatorsPoolRestQuery.data
+    const rows = Array.isArray(head) ? [...head] : []
+    if (Array.isArray(rest)) rows.push(...rest)
+    return rows
+  }, [validatorsPoolHeadQuery.data, validatorsPoolRestQuery.data])
   const validatorsBannedListQuery = useQuery({
     queryKey: ['home', 'validators', 'banned-list'],
     queryFn: () => fetchAllValidators({ isBanned: 'true' }),
@@ -136,44 +160,6 @@ function Home() {
     refetchInterval: 60_000,
     retry: 1
   })
-
-  const quorumHashes = useMemo(() => {
-    const list = quorumsListQuery.data
-    if (!Array.isArray(list)) return []
-    return list
-      .map(q => q?.quorumHash)
-      .filter((h): h is string => typeof h === 'string' && h.length > 0)
-  }, [quorumsListQuery.data])
-
-  const quorumDetailsQuery = useQuery({
-    queryKey: ['home', 'quorums', 'details', quorumHashes],
-    queryFn: () => fetchQuorumDetails(quorumHashes),
-    staleTime: 60_000,
-    retry: 1,
-    enabled: quorumHashes.length > 0
-  })
-
-  const quorumRosters = useMemo(() => {
-    const byHash = new Map(
-      (Array.isArray(quorumsListQuery.data) ? quorumsListQuery.data : [])
-        .filter(q => q?.quorumHash)
-        .map(q => [q.quorumHash, q])
-    )
-    const details = Array.isArray(quorumDetailsQuery.data) ? quorumDetailsQuery.data : []
-    return quorumHashes
-      .map((hash, i) => {
-        const detail = details[i]
-        const meta = byHash.get(hash) || {}
-        if (!detail && !meta.quorumHash) return null
-        return {
-          ...meta,
-          ...detail,
-          quorumHash: detail?.quorumHash || hash,
-          members: Array.isArray(detail?.members) ? detail.members : []
-        }
-      })
-      .filter(Boolean)
-  }, [quorumDetailsQuery.data, quorumHashes, quorumsListQuery.data])
 
   const validators = {
     data: validatorsQuery.data ?? {},
@@ -362,17 +348,25 @@ function Home() {
             <HomeLeaders rate={rate} enabled={belowFoldReady} />
           </div>
           <div className={'HomeCardPair__Cell'}>
-            <MasternodesDonut
+            <QuorumCard
               validators={validators}
               validatorsActive={validatorsActive}
               validatorsBanned={validatorsBanned}
               validatorsInactive={validatorsInactive}
-              validatorsList={validatorsGeoQuery.data}
+              validatorsList={validatorsPoolList}
+              poolLoading={
+                validatorsPoolHeadQuery.isPending ||
+                (validatorsPoolHeadQuery.isSuccess &&
+                  poolPages > 1 &&
+                  validatorsPoolRestQuery.isPending)
+              }
               bannedValidatorsList={validatorsBannedListQuery.data}
+              bannedListLoading={validatorsBannedListQuery.isPending}
               currentQuorum={currentQuorumQuery.data}
               currentQuorumLoading={currentQuorumQuery.isPending || currentQuorumQuery.isLoading}
               currentQuorumError={currentQuorumQuery.isError}
-              quorums={quorumRosters}
+              quorums={quorumsListQuery.data}
+              avgBlockTimeSec={computeAvgBlockTime(blocksQuery.data?.resultSet)}
             />
           </div>
         </div>

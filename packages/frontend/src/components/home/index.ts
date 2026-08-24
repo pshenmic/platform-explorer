@@ -1,6 +1,6 @@
 export * from './MetricChart'
 export * from './StatusBar'
-export { default as MasternodesDonut } from './MasternodesDonut'
+export { default as QuorumCard } from './QuorumCard'
 export { default as GovernanceCard } from './GovernanceCard'
 export { default as TxTypesBar } from './TxTypesBar'
 export { default as TxActivityChart } from './TxActivityChart'
