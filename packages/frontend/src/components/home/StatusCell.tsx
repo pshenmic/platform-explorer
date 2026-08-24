@@ -28,7 +28,9 @@ export function StatusCell({
       className={`HomeHero__StatusCell${hint ? ' HomeHero__StatusCell--Hint' : ''}`}
       role={hint ? 'button' : undefined}
       tabIndex={hint ? 0 : undefined}
-      aria-label={hint ? `${label}, show details` : undefined}
+      aria-label={
+        hint ? `${typeof label === 'string' ? label : 'KPI'}, show details` : undefined
+      }
       onKeyDown={onKeyDown}
     >
       <span className={'HomeHero__StatusHead'}>

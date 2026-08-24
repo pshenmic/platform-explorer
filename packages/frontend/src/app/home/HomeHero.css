@@ -1124,7 +1124,7 @@
 .EpochsWave__Bound.is-approx {
   z-index: 3;
   top: 0 !important;
-  transform: translateX(-100%) translateY(-6px);
+  transform: translateX(-100%);
 }
 @media screen and (max-width: 48em) {
   .EpochsWave__Bound.is-approx {
@@ -1706,11 +1706,14 @@
   max-width: 100%;
   text-align: center;
   white-space: normal;
+  overflow-wrap: normal;
+  word-break: keep-all;
+  hyphens: none;
 }
 @media screen and (max-width: 48em) {
   .EpochsOverview__Cells .HomeHero__StatusLabel {
     font-size: 0.625rem;
-    letter-spacing: 0.03em;
+    letter-spacing: 0;
   }
 }
 .EpochsOverview__Cells .HomeHero__StatusInfo {
@@ -1718,17 +1721,20 @@
 }
 .EpochsOverview__Cells .HomeHero__StatusValue {
   min-width: 0;
+  max-width: 100%;
   text-align: center;
   width: 100%;
   display: flex;
   justify-content: center;
+  overflow: hidden;
 }
 .EpochsOverview__Cells .EpochsOverview__Stat {
   font-size: 1.0625rem;
 }
 .EpochsOverview__Cells .EpochsOverview__Stat,
 .EpochsOverview__Cells .EpochsOverview__Pending {
-  min-width: 6ch;
+  min-width: 0;
+  max-width: 100%;
   justify-content: center;
 }
 .EpochsOverview__Cells .EpochsOverview__Sub {
@@ -1864,4 +1870,23 @@
   display: inline-block;
   max-width: 100%;
   line-height: 1.25rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.EpochsOverview__LabelShort {
+  display: none;
+}
+@media screen and (max-width: 48em) {
+  .EpochsOverview__LabelFull {
+    display: none;
+  }
+  .EpochsOverview__LabelShort {
+    display: inline;
+  }
+  .EpochsOverview__Cells .HomeHero__StatusCell {
+    overflow: hidden;
+  }
+  .EpochsOverview__Cells .EpochsOverview__ProposerVal {
+    font-size: 0.75rem;
+  }
 }

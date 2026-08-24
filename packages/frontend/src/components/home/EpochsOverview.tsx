@@ -10,19 +10,14 @@ import { StatusCell } from './StatusCell'
 import { Skeleton } from './Skeleton'
 import { compact, shortId } from './utils'
 
-// epoch slot centers (full-width quarters); segment fill is edge-to-edge
 const X_POSITIONS = [12.5, 37.5, 62.5, 87.5]
 const EDGE_L = 0
 const EDGE_R = 100
 const Y_HIGH = 22
-// taller wave: keep the dip higher so point captions clear the data row below
 const Y_LOW = 60
-// scan detour rides the block rails down to the wave/KPI join (viewBox bottom)
 const SCAN_BOTTOM_Y = 100
-// stubs shorter than this (viewBox units) render as a static “stick” with pathLength=100 — skip them
 const SCAN_MIN_WAVE_SPAN = 10
 
-// y on a polyline at a given x (viewBox coords)
 function yAtX(pts: any, x: any) {
   if (!pts?.length) return 50
   if (x <= pts[0].x) return pts[0].y
@@ -49,8 +44,6 @@ function spanX(pts: any) {
   return Math.abs(pts[pts.length - 1].x - pts[0].x)
 }
 
-// split scan: wave left/right of selection + vertical rails on the clicked epoch; the seam stays static
-// Tiny edge stubs omitted — pathLength=100 turns them into lines.
 function buildScanParts(linePts: any, seg: any) {
   if (!linePts?.length || !seg) {
     return { leftD: ptsToPathD(linePts), rightD: null, railDownD: null, railUpD: null }
@@ -72,7 +65,6 @@ function buildScanParts(linePts: any, seg: any) {
     if (p.x > rightX + 1e-6) right.push(p)
   }
 
-  // vertical legs only — no horizontal crawl along the colored KPI seam
   const railDownD = ptsToPathD([
     { x: leftX, y: yL },
     { x: leftX, y: SCAN_BOTTOM_Y }
@@ -90,25 +82,21 @@ function buildScanParts(linePts: any, seg: any) {
   }
 }
 
-// neutral marker for finalized-only fields that are null while the epoch is in progress
 function Pending() {
   return <span className={'EpochsOverview__Pending'}>pending</span>
 }
 
-// compact epoch length: fixed per network (1h on testnet, 9.125d on mainnet)
 function durationLabelOf(epoch: any) {
   if (!epoch?.startTime || !epoch?.endTime) return null
   const ms = epoch.endTime - epoch.startTime
   return ms >= 86400000 ? `${(ms / 86400000).toFixed(1)}d` : `${Math.round(ms / 3600000)}h`
 }
 
-// avgBlockTime arrives in ms: seconds under a minute, minutes above
-function avgBlockTimeLabel(ms: any) {
+function avgBlockTimeLabel(ms: any) { // API sends ms
   const s = ms / 1000
   return s < 60 ? `${s.toFixed(1)}s` : `${(s / 60).toFixed(1)}m`
 }
 
-// boundary timestamps: date + time on short (testnet) epochs, date on mainnet-length ones
 const boundTimeFmt = new Intl.DateTimeFormat('en-US', {
   month: 'short',
   day: 'numeric',
@@ -118,13 +106,50 @@ const boundTimeFmt = new Intl.DateTimeFormat('en-US', {
 })
 const boundDateFmt = new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric' })
 
+function boundWhenLabel(bound: any, longEpochs: boolean) {
+  if (!bound?.ts) return null
+  return (longEpochs ? boundDateFmt : boundTimeFmt).format(new Date(bound.ts))
+}
+
+function pad2(n: number) {
+  return String(n).padStart(2, '0')
+}
+
+function nextWhenLabel(ts: unknown) {
+  const d = ts instanceof Date ? ts : new Date(Number(ts))
+  if (Number.isNaN(d.getTime())) return null
+  return `${pad2(d.getDate())}.${pad2(d.getMonth() + 1)}.${d.getFullYear()} ${pad2(d.getHours())}:${pad2(d.getMinutes())}:${pad2(d.getSeconds())}`
+}
+
+function NextEpochCard({ bound }: any) {
+  const label = nextWhenLabel(bound.ts)
+  return (
+    <span
+      className={'EpochsOverview__Next'}
+      aria-label={`Next epoch end ~ block ${bound.height}${label ? `, ${label}` : ''}`}
+    >
+      <span className={'EpochsOverview__NextTag'}>Next</span>
+      <span className={'EpochsOverview__NextBlock'}>
+        <BlockIcon
+          className={'EpochsOverview__NextIcon'}
+          w={'1.125rem'}
+          h={'1.125rem'}
+          aria-hidden={'true'}
+        />
+        ~{bound.height}
+      </span>
+      {label && <span className={'EpochsOverview__NextWhen'}>{label}</span>}
+      <i className={'EpochsOverview__NextLead'} aria-hidden={'true'} />
+    </span>
+  )
+}
+
 function EpochBound({ bound, longEpochs }: any) {
-  const label = bound.ts
-    ? (longEpochs ? boundDateFmt : boundTimeFmt).format(new Date(bound.ts))
-    : null
+  const label = boundWhenLabel(bound, longEpochs)
+  const edgeClass = bound.edge ? ` EpochsWave__Bound--edge${bound.edge.toUpperCase()}` : ''
+
   const content = (
     <>
-      {bound.approx && <span className={'EpochsWave__BoundTag'}>Next</span>}
       <span className={'EpochsWave__BoundBlock'}>
         <BlockIcon
           className={'EpochsWave__BoundIcon'}
@@ -132,26 +157,20 @@ function EpochBound({ bound, longEpochs }: any) {
           h={'0.875rem'}
           aria-hidden={'true'}
         />
-        {bound.approx ? '~' : ''}
         {bound.height}
       </span>
       {label && <span className={'EpochsWave__BoundWhen'}>{label}</span>}
     </>
   )
-  const edgeClass = bound.edge ? ` EpochsWave__Bound--edge${bound.edge.toUpperCase()}` : ''
-  const approxClass = bound.approx ? ' is-approx' : ''
-
-  const top = bound.approx ? '0' : `calc(${bound.y}% - 56px)`
 
   return (
     <span
-      className={`EpochsWave__Bound${edgeClass}${approxClass}`}
-      style={{ left: `${bound.x}%`, top }}
+      className={`EpochsWave__Bound${edgeClass}`}
+      style={{ left: `${bound.x}%`, top: `calc(${bound.y}% - 56px)` }}
     >
       {bound.hash ? (
         <Link
           href={`/block/${bound.hash}`}
-          // boundary hashes change with the epoch wave; skip viewport prefetch so they don't pile up in the router cache
           prefetch={false}
           className={'EpochsWave__BoundLabel'}
           aria-label={`Epoch boundary, first block #${bound.height}`}
@@ -159,25 +178,14 @@ function EpochBound({ bound, longEpochs }: any) {
           {content}
         </Link>
       ) : (
-        <span
-          className={`EpochsWave__BoundLabel${bound.approx ? ' is-approx' : ''}`}
-          aria-label={
-            bound.approx
-              ? `Next epoch end ~ block ${bound.height}${label ? `, ${label}` : ''}`
-              : undefined
-          }
-        >
-          {content}
-        </span>
+        <span className={'EpochsWave__BoundLabel'}>{content}</span>
       )}
     </span>
   )
 }
 
 function EpochPoint({ epoch, metricLabel, x, y, selected, onSelect }: any) {
-  // the in-progress epoch counts down ("36 min. left") instead of "ended X ago"
   const inProgress = epoch?.endTime > Date.now()
-  // sync node pulse with the 5s left→right scan (same period as HomeHeroDash)
   const scanPulseDelay = `${(Number(x) / 100) * 5}s`
 
   return (
@@ -303,7 +311,6 @@ function proposersHint(proposers: any) {
             title={p.proposer}
             onClick={e => e.stopPropagation()}
           >
-            {/* full hash in markup; CSS clips to a leading slice like Top proposer cell */}
             <span className={'EpochsOverview__TipHash'}>{p.proposer}</span>
           </Link>
           <span>{Number(p.count)} blocks</span>
@@ -427,30 +434,25 @@ function transactionsHint(data: any) {
   )
 }
 
-// stat row for the shown epoch (the selected epoch's colour reaches it via the Beam column)
 function EpochCells({ data, nextData, rate }: any) {
   const epoch = data.epoch
-  // the epoch's last block is the one right before the NEXT epoch's first block
   const endHeight =
     nextData?.epoch?.number === epoch?.number + 1 && nextData?.epoch?.firstBlockHeight != null
       ? Number(nextData.epoch.firstBlockHeight) - 1
       : null
-  // finalized after the epoch ends; live pendingBlocksInEpoch sits at the response top level
   const finalizedBlocks = epoch?.totalBlocksInEpoch
   const pendingBlocks = data.pendingBlocksInEpoch != null ? Number(data.pendingBlocksInEpoch) : null
   const blocks = finalizedBlocks ?? pendingBlocks ?? null
   const blocksLive = finalizedBlocks == null && blocks != null
-  const rewards = epoch?.coreBlockRewards // finalized-only (credits, null for current)
+  const rewards = epoch?.coreBlockRewards
   const feesCredits = Number(data.totalCollectedFees) || 0
 
-  // second-row fields (#822): undefined until the API deploys them (mainnet) -> Pending;
-  // a real 0 (testnet, quiet epoch) is a number, so `!= null` keeps it distinct from "not deployed"
-  const created = data.totalCreatedDocumentsCount
+  const created = data.totalCreatedDocumentsCount // undefined → Pending; 0 is a real value
   const deleted = data.totalDeletedDocumentsCount
   const names = data.totalRegisteredNamesCount
   const contested = data.totalContestedDocumentsCount
   const avgMs = data.avgBlockTime
-  const proposers = epoch?.blockProposers // finalized-only breakdown [{proposer, count}]
+  const proposers = epoch?.blockProposers
 
   const txAnim = useCountUp(Number(data.totalTxCount) || 0)
   const blocksAnim = useCountUp(typeof blocks === 'number' ? blocks : null)
@@ -461,13 +463,10 @@ function EpochCells({ data, nextData, rate }: any) {
   const delAnim = useCountUp(deleted != null ? Number(deleted) : null)
   const namesAnim = useCountUp(names != null ? Number(names) : null)
   const contestedAnim = useCountUp(contested != null ? Number(contested) : null)
-  // full hash in the markup; CSS clips it to a leading slice ("20107EC…")
   const proposerAnim = useScramble(data.bestValidator ? shortId(data.bestValidator) : null)
 
   return (
-    // one flat KPI table: label over value, many columns, read left-to-right (no group headers)
     <div className={'EpochsOverview__Cells HomeHero__StatusBar'}>
-      {/* selected-epoch wash — no remount key (avoids a full-second opacity flash on epoch change) */}
       <span className={'EpochsOverview__Wash'} aria-hidden={'true'} />
       <StatusCell label={'Transactions'} hint={transactionsHint(data)}>
         <span className={'EpochsOverview__Stat'}>
@@ -559,7 +558,15 @@ function EpochCells({ data, nextData, rate }: any) {
         </span>
       </StatusCell>
 
-      <StatusCell label={'Top proposer'} hint={proposersHint(proposers)}>
+      <StatusCell
+        label={
+          <>
+            <span className={'EpochsOverview__LabelFull'}>Top proposer</span>
+            <span className={'EpochsOverview__LabelShort'}>Proposer</span>
+          </>
+        }
+        hint={proposersHint(proposers)}
+      >
         {data.bestValidator ? (
           <span className={'EpochsOverview__Stat EpochsOverview__ProposerVal'}>{proposerAnim}</span>
         ) : (
@@ -570,7 +577,6 @@ function EpochCells({ data, nextData, rate }: any) {
   )
 }
 
-// fixed topology for progressive fill: always n-3…n (or whatever slotNumbers parent passes)
 function deriveSlots(slotNumbers: any, currentEpoch: any, arrived: any) {
   if (Array.isArray(slotNumbers) && slotNumbers.length) return slotNumbers
   const cur = currentEpoch?.data?.epoch?.number
@@ -592,7 +598,6 @@ export function EpochsOverview({ title, epochs, currentEpoch, rate, loading, slo
 
   const [selected, setSelected] = useState(lastIdx)
 
-  // pin selection to the newest *arrived* epoch (stable slot index, not growing list index)
   useEffect(() => {
     for (let i = slots.length - 1; i >= 0; i--) {
       if (byNumber.has(slots[i])) {
@@ -601,10 +606,9 @@ export function EpochsOverview({ title, epochs, currentEpoch, rate, loading, slo
       }
     }
     setSelected(lastIdx)
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- only when slot set or which epochs have data changes
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- slots + arrived epoch numbers
   }, [slots.join(','), arrived.map(e => e.epoch.number).join(',')])
 
-  // status not ready yet: fixed 4-slot ghost scaffold (same footprint as the live wave)
   if (!slots.length) {
     const ghostYs = [46, 40, 52, 44]
     const ghostPts = X_POSITIONS.map((gx, i) => ({ x: gx, y: ghostYs[i] ?? 46 }))
@@ -680,7 +684,6 @@ export function EpochsOverview({ title, epochs, currentEpoch, rate, loading, slo
     )
   }
 
-  // y-scale from arrived data only; empty slots sit on the midline until filled (X never rebinds)
   const knownTx = slots
     .map(n => byNumber.get(n))
     .filter(Boolean)
@@ -704,7 +707,6 @@ export function EpochsOverview({ title, epochs, currentEpoch, rate, loading, slo
     }
   })
 
-  // boundaries only where we know the next epoch's first block
   const bounds = []
   for (let i = 1; i < points.length; i++) {
     const e = points[i].ep
@@ -761,7 +763,6 @@ export function EpochsOverview({ title, epochs, currentEpoch, rate, loading, slo
     return { l: l / 100, w: (r - l) / 100 }
   })
 
-  // full-width path through all 4 fixed slots (ghosts hold the midline until filled)
   const linePts = [
     { x: 0, y: points[0].y },
     ...points.map(p => ({ x: p.x, y: p.y })),
@@ -776,10 +777,11 @@ export function EpochsOverview({ title, epochs, currentEpoch, rate, loading, slo
 
   const seg = segments[selIdx] ?? { l: 0, w: 1 }
   const hasAny = points.some(p => p.ready)
-  // wave scan outside selection; vertical rails only on clicked epoch (no bottom seam runner)
   const { leftD, rightD, railDownD, railUpD } = hasAny
     ? buildScanParts(linePts, seg)
     : { leftD: null, rightD: null, railDownD: null, railUpD: null }
+
+  const nextBound = bounds.find(b => b.approx)
 
   return (
     <div
@@ -805,6 +807,7 @@ export function EpochsOverview({ title, epochs, currentEpoch, rate, loading, slo
             Tap a point on the wave for that epoch&apos;s KPIs.
           </p>
         </div>
+        {nextBound && <NextEpochCard bound={nextBound} />}
       </header>
       <div className={`HomeHero__Wave EpochsWave${hasAny ? '' : ' EpochsWave--Skeleton'}`}>
         <svg
@@ -826,7 +829,6 @@ export function EpochsOverview({ title, epochs, currentEpoch, rate, loading, slo
                 stopOpacity={'0'}
               />
             </linearGradient>
-            {/* vertical fade so the area dissolves toward the data block instead of a hard bottom edge */}
             <linearGradient
               id={'homeEpochFadeGrad'}
               x1={'0'}
@@ -865,7 +867,6 @@ export function EpochsOverview({ title, epochs, currentEpoch, rate, loading, slo
                 fill={'none'}
                 vectorEffect={'non-scaling-stroke'}
               />
-              {/* continuous wave scan outside selection — never “goes dark” when leaving an epoch */}
               {leftD && (
                 <>
                   <path
@@ -902,7 +903,6 @@ export function EpochsOverview({ title, epochs, currentEpoch, rate, loading, slo
                   />
                 </>
               )}
-              {/* selected epoch: drop left rail (fade out) + climb right rail (fade in) — no seam crawl */}
               {railDownD && (
                 <>
                   <path
@@ -964,9 +964,11 @@ export function EpochsOverview({ title, epochs, currentEpoch, rate, loading, slo
         </svg>
 
         {hasAny &&
-          bounds.map(b => (
-            <EpochBound key={`${b.edge || 'mid'}-${b.height}`} bound={b} longEpochs={longEpochs} />
-          ))}
+          bounds
+            .filter(b => !b.approx)
+            .map(b => (
+              <EpochBound key={`${b.edge || 'mid'}-${b.height}`} bound={b} longEpochs={longEpochs} />
+            ))}
 
         {hasAny && (
           <span
