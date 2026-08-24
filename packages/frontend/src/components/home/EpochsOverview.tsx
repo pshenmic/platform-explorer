@@ -92,7 +92,8 @@ function durationLabelOf(epoch: any) {
   return ms >= 86400000 ? `${(ms / 86400000).toFixed(1)}d` : `${Math.round(ms / 3600000)}h`
 }
 
-function avgBlockTimeLabel(ms: any) { // API sends ms
+function avgBlockTimeLabel(ms: any) {
+  // API sends ms
   const s = ms / 1000
   return s < 60 ? `${s.toFixed(1)}s` : `${(s / 60).toFixed(1)}m`
 }
@@ -967,7 +968,11 @@ export function EpochsOverview({ title, epochs, currentEpoch, rate, loading, slo
           bounds
             .filter(b => !b.approx)
             .map(b => (
-              <EpochBound key={`${b.edge || 'mid'}-${b.height}`} bound={b} longEpochs={longEpochs} />
+              <EpochBound
+                key={`${b.edge || 'mid'}-${b.height}`}
+                bound={b}
+                longEpochs={longEpochs}
+              />
             ))}
 
         {hasAny && (

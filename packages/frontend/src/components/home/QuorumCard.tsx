@@ -66,15 +66,13 @@ function isPlaceholderHost(host: string) {
     t === '*' ||
     /^(\*|0\.0\.0\.0|\[::\]|::)(:0)?$/.test(t) ||
     bare === '::' ||
-    /:0$/.test(t) && (t.startsWith('[::]') || t.startsWith('0.0.0.0') || t.startsWith('*'))
+    (/:0$/.test(t) && (t.startsWith('[::]') || t.startsWith('0.0.0.0') || t.startsWith('*')))
   )
 }
 
 function nodeHost(cell: any) {
   const raw =
-    cell?.service ||
-    cell?.validator?.proTxInfo?.state?.service ||
-    cell?.validator?.endpoints?.[0]
+    cell?.service || cell?.validator?.proTxInfo?.state?.service || cell?.validator?.endpoints?.[0]
   if (typeof raw !== 'string') return null
   const host = raw.trim()
   if (!host || isPlaceholderHost(host)) return null
@@ -135,14 +133,7 @@ function isPoSeBannedValidator(v: any) {
   return typeof ban === 'number' && ban >= 0
 }
 
-function buildPoolCells({
-  list,
-  currentSet,
-  nextSet,
-  memberMeta,
-  bannedSet,
-  sortByType
-}: any) {
+function buildPoolCells({ list, currentSet, nextSet, memberMeta, bannedSet, sortByType }: any) {
   if (!Array.isArray(list) || list.length === 0) return []
 
   const cells = list.map((v, index) => {
@@ -549,32 +540,18 @@ export default function QuorumCard({
         quorumIndexes: qs.map((q: any) => q.index).filter((n: any) => typeof n === 'number')
       }
     })
-  }, [
-    filling,
-    list,
-    currentSet,
-    nextMembers,
-    memberMeta,
-    bannedSet,
-    rosterIndex
-  ])
+  }, [filling, list, currentSet, nextMembers, memberMeta, bannedSet, rosterIndex])
 
   const nextN = useMemo(() => cells.filter(c => c.type === 'next').length, [cells])
 
   const counts: Record<string, number | null> = {
     total: hasTotal ? total : null,
     active: typeof active === 'number' ? active : null,
-    next: filling
-      ? nextMembers?.size || null
-      : hasNodeList
-        ? nextN
-        : null,
+    next: filling ? nextMembers?.size || null : hasNodeList ? nextN : null,
     inactive:
       typeof inactive === 'number' ? Math.max(0, inactive - (hasNodeList ? nextN : 0)) : null,
     banned: typeof banned === 'number' ? banned : null
   }
-
-
 
   const togglePin = (key: any) => setPin(p => (p === key ? null : key))
 
@@ -587,9 +564,7 @@ export default function QuorumCard({
       return
     }
     const ordered = hashes
-      .map((h: any) =>
-        sortedQuorumsWithMembers.find(q => quorumKey(q.quorumHash) === quorumKey(h))
-      )
+      .map((h: any) => sortedQuorumsWithMembers.find(q => quorumKey(q.quorumHash) === quorumKey(h)))
       .filter(Boolean)
       .sort((a: any, b: any) => a.offset - b.offset)
     if (!ordered.length) return
@@ -628,21 +603,14 @@ export default function QuorumCard({
       if (ordered.length) setPin(`q:${ordered[0].quorumHash}`)
     }
     setPendingNode(null)
-  }, [
-    detailsFetching,
-    loadAllDetails,
-    pendingNode,
-    rosterIndex,
-    sortedQuorumsWithMembers
-  ])
+  }, [detailsFetching, loadAllDetails, pendingNode, rosterIndex, sortedQuorumsWithMembers])
 
   const blockMs =
     typeof avgBlockTimeSec === 'number' && avgBlockTimeSec > 0
       ? avgBlockTimeSec * 1000
       : FALLBACK_BLOCK_MS
 
-  const turnAt = (offset: number) =>
-    new Date(Date.now() + offset * PLATFORM_DKG_BLOCKS * blockMs)
+  const turnAt = (offset: number) => new Date(Date.now() + offset * PLATFORM_DKG_BLOCKS * blockMs)
 
   const turnLabel = (offset: any, isLive: any) => {
     if (isLive || offset === 0) return 'Now'
@@ -698,13 +666,17 @@ export default function QuorumCard({
         const aIp = a.host.includes('.') || a.host.includes(':')
         const bIp = b.host.includes('.') || b.host.includes(':')
         if (aIp !== bIp) return aIp ? -1 : 1
-        return a.host.localeCompare(b.host, undefined, { numeric: true }) || a.key.localeCompare(b.key)
+        return (
+          a.host.localeCompare(b.host, undefined, { numeric: true }) || a.key.localeCompare(b.key)
+        )
       })
   }, [cells, focusKey, pinnedQuorumSet])
 
   const hostIndexByKey = useMemo(() => {
     const map = new Map<string, number>()
-    hostRows.forEach((row: any, i: number) => map.set(row.key, i + 1))
+    hostRows.forEach((row: any, i: number) => {
+      map.set(row.key, i + 1)
+    })
     return map
   }, [hostRows])
 
@@ -859,78 +831,68 @@ export default function QuorumCard({
                 role={'img'}
                 aria-label={matrixAria}
               >
-                  {cells.map((cell, slot) => {
-                    if (cell.kind === 'skel' || cell.kind === 'idle') {
-                      return (
-                        <span
-                          key={slot}
-                          className={`QuorumCard__Cell QuorumCard__Cell--${cell.kind === 'skel' ? 'skel' : 'idle'}`}
-                        />
-                      )
-                    }
-
-                    const dataType =
-                      cell.type === 'invalid'
-                        ? 'active'
-                        : cell.type === 'idle'
-                          ? 'total'
-                          : cell.type
-
-                    const cc = cell.validator?.geoIpInfo?.countryCode
-                    const ccName = cc ? countryName(cc) : null
-                    const roleHint =
-                      cell.role === 'current'
-                        ? 'signing now'
-                        : cell.role === 'next'
-                          ? 'signs next'
-                          : cell.quorumIndexes?.length
-                            ? `signs ${formatQuorumIds(cell.quorumIndexes)}`
-                            : cell.role
-
-                    const nodeKey = memberKey(cell.proTxHash)
-                    const inPinned = Boolean(pinnedQuorumSet && pinnedQuorumSet.has(nodeKey))
-                    const isFocus = Boolean(focusKey && focusKey === nodeKey)
-                    const hostIdx = hostIndexByKey.get(nodeKey)
-
-                    const tile = (
-                      <button
-                        type={'button'}
-                        data-type={dataType}
-                        data-role={cell.role}
-                        className={
-                          `QuorumCard__Cell QuorumCard__Cell--${cell.type}` +
-                          (inPinned ? ' is-in-pin' : '') +
-                          (isFocus ? ' is-focus' : '')
-                        }
-                        aria-label={
-                          `${hostIdx != null ? `#${hostIdx}, ` : ''}` +
-                          `${shortHash(cell.proTxHash)}, ${roleHint}` +
-                          (ccName ? `, ${ccName}` : '')
-                        }
-                        aria-pressed={inPinned || undefined}
-                        onClick={() => cycleNodeQuorum(cell.quorumHashes, cell.proTxHash)}
-                      >
-                        {hostIdx != null && (
-                          <span className={'QuorumCard__CellIdx'}>{hostIdx}</span>
-                        )}
-                      </button>
-                    )
-
+                {cells.map((cell, slot) => {
+                  if (cell.kind === 'skel' || cell.kind === 'idle') {
                     return (
-                      <Tooltip
+                      <span
                         key={slot}
-                        placement={'top'}
-                        content={<NodeTooltipBody cell={cell} />}
-                      >
-                        {tile}
-                      </Tooltip>
+                        className={`QuorumCard__Cell QuorumCard__Cell--${cell.kind === 'skel' ? 'skel' : 'idle'}`}
+                      />
                     )
-                  })}
-                </div>
+                  }
+
+                  const dataType =
+                    cell.type === 'invalid' ? 'active' : cell.type === 'idle' ? 'total' : cell.type
+
+                  const cc = cell.validator?.geoIpInfo?.countryCode
+                  const ccName = cc ? countryName(cc) : null
+                  const roleHint =
+                    cell.role === 'current'
+                      ? 'signing now'
+                      : cell.role === 'next'
+                        ? 'signs next'
+                        : cell.quorumIndexes?.length
+                          ? `signs ${formatQuorumIds(cell.quorumIndexes)}`
+                          : cell.role
+
+                  const nodeKey = memberKey(cell.proTxHash)
+                  const inPinned = Boolean(pinnedQuorumSet && pinnedQuorumSet.has(nodeKey))
+                  const isFocus = Boolean(focusKey && focusKey === nodeKey)
+                  const hostIdx = hostIndexByKey.get(nodeKey)
+
+                  const tile = (
+                    <button
+                      type={'button'}
+                      data-type={dataType}
+                      data-role={cell.role}
+                      className={
+                        `QuorumCard__Cell QuorumCard__Cell--${cell.type}` +
+                        (inPinned ? ' is-in-pin' : '') +
+                        (isFocus ? ' is-focus' : '')
+                      }
+                      aria-label={
+                        `${hostIdx != null ? `#${hostIdx}, ` : ''}` +
+                        `${shortHash(cell.proTxHash)}, ${roleHint}` +
+                        (ccName ? `, ${ccName}` : '')
+                      }
+                      aria-pressed={inPinned || undefined}
+                      onClick={() => cycleNodeQuorum(cell.quorumHashes, cell.proTxHash)}
+                    >
+                      {hostIdx != null && <span className={'QuorumCard__CellIdx'}>{hostIdx}</span>}
+                    </button>
+                  )
+
+                  return (
+                    <Tooltip key={slot} placement={'top'} content={<NodeTooltipBody cell={cell} />}>
+                      {tile}
+                    </Tooltip>
+                  )
+                })}
               </div>
             </div>
+          </div>
 
-            <div className={'QuorumCard__HostsClip'}>
+          <div className={'QuorumCard__HostsClip'}>
             <div className={'QuorumCard__Hosts'} aria-label={'Masternode addresses'}>
               {hostRows.length === 0 ? (
                 <p className={'QuorumCard__HostsEmpty'}>
@@ -977,8 +939,8 @@ export default function QuorumCard({
                 })
               )}
             </div>
-            </div>
           </div>
+        </div>
       </div>
     </Box>
   )
