@@ -255,19 +255,16 @@ function formatQuorumIds(ids: any) {
 
 function NodeTooltipBody({ cell }: any) {
   const v = cell.validator
-  const quorumLabel = formatQuorumIds(cell.quorumIndexes)
   const status = (() => {
     if (cell.role === 'banned') {
-      const ban = isPoSeBannedValidator(cell.validator)
+      return isPoSeBannedValidator(cell.validator)
         ? 'Banned (PoSe)'
         : 'Banned / not in registered set'
-      return quorumLabel ? `${ban} · still listed in ${quorumLabel}` : ban
     }
     if (cell.role === 'invalid') return 'In current quorum · invalid'
     if (cell.role === 'next') return 'Signs next'
     if (cell.role === 'current' || cell.role === 'active') return 'In the live signing set'
-    if (quorumLabel) return `In quorum ${quorumLabel}`
-    return 'Not in a loaded Platform quorum'
+    return 'Queued'
   })()
 
   const cc = v?.geoIpInfo?.countryCode
@@ -304,7 +301,6 @@ function NodeTooltipBody({ cell }: any) {
       <TipRow label={'proTx'} href={validatorHref}>
         {shortHash(cell.proTxHash, 6, 6)}
       </TipRow>
-      {quorumLabel && <TipRow label={'Signs'}>{quorumLabel}</TipRow>}
       {cell.service && (
         <TipRow label={'Host'} mono>
           {cell.service}
@@ -693,6 +689,7 @@ export default function QuorumCard({
           dot,
           cc: typeof cc === 'string' ? cc : null,
           quorumHashes: cell.quorumHashes,
+          quorumIndexes: Array.isArray(cell.quorumIndexes) ? cell.quorumIndexes : [],
           inPinned: Boolean(pinnedQuorumSet && pinnedQuorumSet.has(nodeKey)),
           isFocus: Boolean(focusKey && focusKey === nodeKey)
         }
@@ -704,6 +701,12 @@ export default function QuorumCard({
         return a.host.localeCompare(b.host, undefined, { numeric: true }) || a.key.localeCompare(b.key)
       })
   }, [cells, focusKey, pinnedQuorumSet])
+
+  const hostIndexByKey = useMemo(() => {
+    const map = new Map<string, number>()
+    hostRows.forEach((row: any, i: number) => map.set(row.key, i + 1))
+    return map
+  }, [hostRows])
 
   return (
     <Box
@@ -887,6 +890,7 @@ export default function QuorumCard({
                     const nodeKey = memberKey(cell.proTxHash)
                     const inPinned = Boolean(pinnedQuorumSet && pinnedQuorumSet.has(nodeKey))
                     const isFocus = Boolean(focusKey && focusKey === nodeKey)
+                    const hostIdx = hostIndexByKey.get(nodeKey)
 
                     const tile = (
                       <button
@@ -899,12 +903,17 @@ export default function QuorumCard({
                           (isFocus ? ' is-focus' : '')
                         }
                         aria-label={
+                          `${hostIdx != null ? `#${hostIdx}, ` : ''}` +
                           `${shortHash(cell.proTxHash)}, ${roleHint}` +
                           (ccName ? `, ${ccName}` : '')
                         }
                         aria-pressed={inPinned || undefined}
                         onClick={() => cycleNodeQuorum(cell.quorumHashes, cell.proTxHash)}
-                      />
+                      >
+                        {hostIdx != null && (
+                          <span className={'QuorumCard__CellIdx'}>{hostIdx}</span>
+                        )}
+                      </button>
                     )
 
                     return (
@@ -928,34 +937,44 @@ export default function QuorumCard({
                   {filling ? 'Loading addresses…' : 'No addresses'}
                 </p>
               ) : (
-                hostRows.map(row => (
-                  <button
-                    key={row.key}
-                    type={'button'}
-                    data-type={row.dataType}
-                    className={
-                      `QuorumCard__Host QuorumCard__Host--${row.type}` +
-                      (row.inPinned ? ' is-in-pin' : '') +
-                      (row.isFocus ? ' is-focus' : '')
-                    }
-                    onClick={() => cycleNodeQuorum(row.quorumHashes, row.proTxHash)}
-                  >
-                    <i className={`QuorumCard__Dot QuorumCard__Dot--${row.dot}`} />
-                    {row.cc ? (
-                      <Image
-                        className={'QuorumCard__HostFlag'}
-                        src={`/flags/circle/${row.cc.toLowerCase()}.svg`}
-                        alt={row.cc}
-                        width={14}
-                        height={14}
-                        unoptimized
-                      />
-                    ) : (
-                      <span className={'QuorumCard__HostFlag is-empty'} aria-hidden={'true'} />
-                    )}
-                    <span>{row.host}</span>
-                  </button>
-                ))
+                hostRows.map((row, i) => {
+                  const signs = formatQuorumIds(row.quorumIndexes)
+                  return (
+                    <Tooltip
+                      key={row.key}
+                      placement={'top'}
+                      title={'Signs'}
+                      content={signs || 'none loaded'}
+                    >
+                      <button
+                        type={'button'}
+                        data-type={row.dataType}
+                        className={
+                          `QuorumCard__Host QuorumCard__Host--${row.type}` +
+                          (row.inPinned ? ' is-in-pin' : '') +
+                          (row.isFocus ? ' is-focus' : '')
+                        }
+                        onClick={() => cycleNodeQuorum(row.quorumHashes, row.proTxHash)}
+                      >
+                        <span className={'QuorumCard__HostIdx'}>{i + 1}</span>
+                        <i className={`QuorumCard__Dot QuorumCard__Dot--${row.dot}`} />
+                        {row.cc ? (
+                          <Image
+                            className={'QuorumCard__HostFlag'}
+                            src={`/flags/circle/${row.cc.toLowerCase()}.svg`}
+                            alt={row.cc}
+                            width={14}
+                            height={14}
+                            unoptimized
+                          />
+                        ) : (
+                          <span className={'QuorumCard__HostFlag is-empty'} aria-hidden={'true'} />
+                        )}
+                        <span>{row.host}</span>
+                      </button>
+                    </Tooltip>
+                  )
+                })
               )}
             </div>
             </div>
