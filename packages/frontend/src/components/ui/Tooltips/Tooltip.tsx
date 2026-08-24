@@ -16,8 +16,8 @@ import { useOutsideClick } from '@chakra-ui/react'
 import { useTooltipActive } from 'src/contexts/TooltipProvider'
 import './Tooltip.css'
 
-const LEAVE_GRACE_MS = 280
-const GUTTER = 8
+const LEAVE_GRACE_MS = 420
+const GUTTER = 10
 const VIEW_PAD = 12
 
 type TipPos = { top: number; left: number; transform: string; placement: string }
@@ -41,7 +41,6 @@ function placeFixed(rect: DOMRect, placement: string, tipW = 240, tipH = 80): Ti
     transform = 'translate(-50%, -100%)'
   }
 
-  // horizontal: keep tip in viewport without slamming to 0 when possible
   const half = tipW / 2
   const minCenter = VIEW_PAD + half
   const maxCenter = window.innerWidth - VIEW_PAD - half
@@ -54,8 +53,7 @@ function placeFixed(rect: DOMRect, placement: string, tipW = 240, tipH = 80): Ti
   return { top, left, transform, placement: next }
 }
 
-// Fixed-position tip (no Chakra Popper). asChild keeps grid/flex layout intact.
-// Accepts legacy Chakra-style props (label, isOpen, isDisabled, bg, …) for call-site compat.
+// Portal tooltip; `label` is a Chakra-era alias for `content`.
 interface TooltipProps {
   title?: ReactNode
   content?: ReactNode
@@ -81,25 +79,25 @@ export default function Tooltip({
   isDisabled = false,
   ..._legacy
 }: TooltipProps) {
-  // label is Chakra-era alias for content
   const body = content || label || ''
   const extraClass = title && body ? 'Tooltip--Extended' : ''
   const id = useId()
   const active = useTooltipActive()
-  const [pinned, setPinned] = useState(false)
   const [hovered, setHovered] = useState(false)
   const [pos, setPos] = useState<TipPos | null>(null)
-  const pinnedRef = useRef(false)
   const triggerRef = useRef<HTMLElement | null>(null)
   const tipRef = useRef<HTMLDivElement | null>(null)
   const leaveTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
   const [mounted, setMounted] = useState(false)
 
+  const pinned = Boolean(active?.pinnedId && active.pinnedId === id)
+  const pinnedRef = useRef(pinned)
+  pinnedRef.current = pinned
+  const locked = Boolean(active?.pinnedId && active.pinnedId !== id)
   const isMine = !active || active.activeId === id
-  // controlled isOpen (CopyButton) wins over hover/pin; isDisabled forces closed
-  const openByInteraction = pinned || hovered
+  const openByInteraction = pinned || (hovered && !locked)
   const openByProp = typeof isOpenProp === 'boolean' ? isOpenProp : openByInteraction
-  const isOpen = !isDisabled && isMine && openByProp
+  const isOpen = !isDisabled && openByProp && (isMine || pinned)
 
   useEffect(() => {
     setMounted(true)
@@ -115,9 +113,8 @@ export default function Tooltip({
   const release = useCallback(() => {
     clearLeave()
     setHovered(false)
-    setPinned(false)
-    pinnedRef.current = false
     setPos(null)
+    active?.unpin(id)
     active?.deactivate(id)
   }, [active, id])
 
@@ -168,16 +165,15 @@ export default function Tooltip({
   )
 
   useEffect(() => {
-    if (active && active.activeId != null && active.activeId !== id) {
+    if (active && active.activeId != null && active.activeId !== id && !pinned) {
       clearLeave()
       setHovered(false)
-      setPinned(false)
-      pinnedRef.current = false
       setPos(null)
     }
-  }, [active?.activeId, id, active])
+  }, [active?.activeId, id, active, pinned])
 
   const hoverIn = () => {
+    if (locked) return
     clearLeave()
     setHovered(true)
     active?.activate(id)
@@ -187,7 +183,7 @@ export default function Tooltip({
     clearLeave()
     leaveTimer.current = setTimeout(() => {
       setHovered(false)
-      if (!pinnedRef.current) {
+      if (!pinned) {
         active?.deactivate(id)
         setPos(null)
       }
@@ -200,18 +196,15 @@ export default function Tooltip({
       (e.target as HTMLElement).closest?.('a, button, [role="link"]')
     )
       return
-    const next = !pinnedRef.current
-    pinnedRef.current = next
     clearLeave()
-    setPinned(next)
-    if (next) {
-      setHovered(true)
-      active?.activate(id)
-    } else {
+    if (pinned) {
       setHovered(false)
       setPos(null)
-      active?.deactivate(id)
+      active?.unpin(id)
+      return
     }
+    setHovered(true)
+    active?.pin(id)
   }
 
   const setTriggerNode = useCallback((node: HTMLElement | null) => {
@@ -266,6 +259,7 @@ export default function Tooltip({
       <div
         ref={tipRef}
         className={`Tooltip ${extraClass}${className ? ` ${className}` : ''}`}
+        data-placement={pos?.placement || placement}
         role={'tooltip'}
         style={{
           position: 'fixed',
