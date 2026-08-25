@@ -21,9 +21,15 @@
   margin-bottom: 16px;
   flex-shrink: 0;
 }
+@media screen and (min-width: 48em) {
+  .TxTypesBar__Head {
+    flex-wrap: nowrap;
+  }
+}
 .TxTypesBar__HeadText {
+  flex: 1 1 auto;
   min-width: 0;
-  max-width: 22rem;
+  max-width: 18rem;
 }
 .TxTypesBar__Eyebrow {
   display: block;
@@ -82,6 +88,7 @@
   align-items: flex-end;
   gap: 14px;
   flex-shrink: 0;
+  margin-left: auto;
   min-width: 0;
 }
 .TxTypesBar__Stat {
@@ -237,19 +244,28 @@
   border-radius: 0;
   text-align: left;
   cursor: pointer;
+  border-radius: 6px;
   transition:
+    background-color 0.12s ease,
     box-shadow 0.12s ease,
     color 0.12s ease;
+}
+.TxTypesBar__Row:hover,
+.TxTypesBar__Row.is-focus {
+  background: rgba(255, 255, 255, 0.04);
 }
 .TxTypesBar__Row:focus-visible {
   outline: 1px solid rgba(var(--pe-color-brand-light-rgb), 0.45);
   outline-offset: -1px;
 }
 .TxTypesBar__Row.is-focus .TxTypesBar__RowLabel,
-.TxTypesBar__Row.is-focus .TxTypesBar__RowCount {
+.TxTypesBar__Row.is-focus .TxTypesBar__RowCount,
+.TxTypesBar__Row:hover .TxTypesBar__RowLabel,
+.TxTypesBar__Row:hover .TxTypesBar__RowCount {
   color: #fff;
 }
-.TxTypesBar__Row.is-focus .TxTypesBar__Dot {
+.TxTypesBar__Row.is-focus .TxTypesBar__Dot,
+.TxTypesBar__Row:hover .TxTypesBar__Dot {
   box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.22);
 }
 @media screen and (max-width: 48em) {
@@ -276,6 +292,8 @@
 }
 .TxTypesBar__RowLabel {
   min-width: 0;
+  max-width: 100%;
+  justify-self: start;
   font-family: var(--pe-font-mono);
   font-size: 0.6875rem;
   color: var(--pe-color-gray-250);
@@ -286,15 +304,14 @@
 .TxTypesBar__RowLabelLink {
   color: inherit;
   text-decoration: none;
-  border-bottom: 1px dotted rgba(255, 255, 255, 0.22);
 }
-.TxTypesBar__RowLabelLink:hover {
-  color: #fff;
-  border-bottom-color: rgba(var(--pe-color-brand-light-rgb), 0.7);
+.TxTypesBar__RowLabelLink:hover,
+.TxTypesBar__RowLabelLink:focus-visible {
+  color: rgba(var(--pe-color-brand-light-rgb), 1);
 }
 .TxTypesBar__Meter {
   display: block;
-  height: 4px;
+  height: 6px;
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.06);
   overflow: hidden;

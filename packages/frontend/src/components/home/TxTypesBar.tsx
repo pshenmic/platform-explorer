@@ -128,9 +128,9 @@ export default function TxTypesBar({ enabled = true }) {
           <span className={'TxTypesBar__Eyebrow'}>Network mix</span>
           <h2 className={'TxTypesBar__Title'}>Transaction</h2>
           <p className={'TxTypesBar__Lede'}>
-            Who is joining, writing data, or moving credits
+            Who is joining, writing data,
             <br />
-            and using{' '}
+            or moving credits and using{' '}
             <Tooltip
               placement={'top'}
               content={
