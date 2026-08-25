@@ -103,6 +103,53 @@
 .TxActivityChart__Stat.is-pinned .TxActivityChart__StatMeta {
   color: var(--pe-color-brand-light);
 }
+@media screen and (max-width: 47.99em) {
+  .TxActivityChart__Head {
+    flex-wrap: nowrap;
+    gap: 8px 12px;
+    margin-bottom: 12px;
+  }
+  .TxActivityChart__HeadText {
+    flex: 1 1 0;
+    min-width: 0;
+    max-width: 9.5rem;
+  }
+  .TxActivityChart__Title {
+    font-size: 1.125rem;
+  }
+  .TxActivityChart__Lede {
+    display: block;
+    font-size: 0.625rem;
+    line-height: 1.45;
+  }
+  .TxActivityChart__Controls {
+    gap: 8px;
+    margin-left: auto;
+    flex-shrink: 1;
+  }
+  .TxActivityChart .Presets {
+    width: auto;
+    max-width: none;
+    flex-wrap: nowrap;
+    flex-shrink: 0;
+    justify-content: flex-end;
+    gap: 2px;
+  }
+  .TxActivityChart .Presets__Chip {
+    padding: 2px 5px;
+    font-size: 0.5625rem;
+  }
+  .TxActivityChart__StatCount {
+    font-size: 1.25rem;
+  }
+  .TxActivityChart__StatUnit {
+    font-size: 0.5625rem;
+  }
+  .TxActivityChart__StatMeta {
+    font-size: 0.6875rem;
+    max-width: 11.5rem;
+  }
+}
 .TxActivityChart__Plot {
   position: relative;
   flex: 1 1 auto;
