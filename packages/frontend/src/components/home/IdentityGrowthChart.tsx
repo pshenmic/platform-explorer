@@ -195,7 +195,9 @@ export default function IdentityGrowthChart({
           <span className={'IdentityGrowthChart__Eyebrow'}>Network growth</span>
           <h2 className={'IdentityGrowthChart__Title'}>Identities</h2>
           <p className={'IdentityGrowthChart__Lede'}>
-            Cumulative identity registrations. Each step is new identities in that bucket.
+            Cumulative registrations.
+            <br />
+            Each step is new identities.
           </p>
         </div>
         <div className={'IdentityGrowthChart__Controls'}>
