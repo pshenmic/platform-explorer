@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useMemo, useEffect } from 'react'
+import { useState, useMemo, useEffect, useRef } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { useQueries, useQueryClient } from '@tanstack/react-query'
@@ -332,6 +332,7 @@ export default function QuorumCard({
   const [focusKey, setFocusKey] = useState<string | null>(null)
   const [loadAllDetails, setLoadAllDetails] = useState(false)
   const [pendingNode, setPendingNode] = useState<string | null>(null)
+  const pickRef = useRef<HTMLDivElement | null>(null)
 
   const total = validators?.data?.pagination?.total
   const active = validatorsActive?.data?.pagination?.total
@@ -372,6 +373,29 @@ export default function QuorumCard({
     })
   }, [quorums, currentQuorum?.quorumHash])
 
+  useEffect(() => {
+    const el = pickRef.current
+    if (!el) return
+    const sync = () => {
+      const max = Math.max(0, el.scrollWidth - el.clientWidth)
+      if (max < 2) {
+        el.dataset.overflow = 'none'
+        return
+      }
+      const left = el.scrollLeft > 2
+      const right = el.scrollLeft < max - 2
+      el.dataset.overflow = left && right ? 'both' : left ? 'start' : 'end'
+    }
+    sync()
+    el.addEventListener('scroll', sync, { passive: true })
+    const ro = new ResizeObserver(sync)
+    ro.observe(el)
+    return () => {
+      el.removeEventListener('scroll', sync)
+      ro.disconnect()
+    }
+  }, [sortedQuorums.length])
+
   const liveHash = typeof currentQuorum?.quorumHash === 'string' ? currentQuorum.quorumHash : null
   const liveKey = quorumKey(liveHash)
   const nextHash = sortedQuorums.find(q => q.offset === 1)?.quorumHash ?? null
@@ -379,6 +403,14 @@ export default function QuorumCard({
   const pinnedQuorumHashEarly =
     typeof pin === 'string' && pin.startsWith('q:') ? pin.slice(2) : null
   const pinnedKey = quorumKey(pinnedQuorumHashEarly)
+
+  useEffect(() => {
+    const el = pickRef.current
+    if (!el || !pinnedKey) return
+    const on = el.querySelector('.QuorumCard__QBtn.is-on')
+    if (!(on instanceof HTMLElement)) return
+    on.scrollIntoView({ inline: 'nearest', block: 'nearest', behavior: 'smooth' })
+  }, [pinnedKey])
 
   const detailQueries = useQueries({
     queries: sortedQuorums.map(q => {
@@ -695,7 +727,7 @@ export default function QuorumCard({
           <span className={'QuorumCard__Eyebrow'}>Consensus</span>
           <h2 className={'QuorumCard__Title'}>Quorum</h2>
           <p className={'QuorumCard__Lede'}>
-            Only a
+            Only a{' '}
             <Tooltip
               placement={'top'}
               content={
@@ -713,8 +745,13 @@ export default function QuorumCard({
             >
               <span className={'QuorumCard__LedeMore'}>rotating set</span>
             </Tooltip>{' '}
-            of 100 evonodes signs each block.
+            of
+            <br />
+            100 evonodes signs each block.
           </p>
+        </div>
+
+        <div className={'QuorumCard__Controls'}>
           <div className={'QuorumCard__Legend'} role={'group'} aria-label={'Validator counts'}>
             {STATS.map(s => {
               const n = counts[s.key]
@@ -729,17 +766,16 @@ export default function QuorumCard({
                   aria-pressed={pin === s.key}
                   disabled={!ready}
                 >
-                  <i className={`QuorumCard__Dot QuorumCard__Dot--${s.key}`} />
-                  <span>{s.label}</span>
+                  <span className={'QuorumCard__LegLabel'}>
+                    <i className={`QuorumCard__Dot QuorumCard__Dot--${s.key}`} />
+                    {s.label}
+                  </span>
                   <b>{ready ? n.toLocaleString('en-US') : '—'}</b>
                 </button>
               )
             })}
           </div>
-        </div>
-
-        {sortedQuorums.length > 0 && (
-          <div className={'QuorumCard__QBar'} aria-label={'Platform quorums'}>
+          {sortedQuorums.length > 0 && (
             <p className={'QuorumCard__QCaption'}>
               {pendingNode && !pinnedQuorumMeta ? (
                 <>
@@ -771,42 +807,8 @@ export default function QuorumCard({
                 </>
               )}
             </p>
-            <div className={'QuorumCard__QPick'} role={'group'} aria-label={'Signing rotation'}>
-              {sortedQuorums.map(q => {
-                const selected = quorumKey(q.quorumHash) === pinnedKey
-                const label = turnLabel(q.offset, q.isLive)
-                const signers = quorumSize
-                return (
-                  <Tooltip
-                    key={q.quorumHash}
-                    placement={'top'}
-                    title={q.offset < 2 ? label : ''}
-                    content={
-                      <TurnTip
-                        turn={
-                          q.isLive || q.offset === 0
-                            ? 'Now'
-                            : `~ ${turnWhenFmt.format(turnAt(q.offset))}`
-                        }
-                        formedHeight={q.blockHeight ?? q.creationHeight}
-                        signers={signers}
-                      />
-                    }
-                  >
-                    <button
-                      type={'button'}
-                      className={`QuorumCard__QBtn${q.offset < 2 ? ' is-word' : ''}${selected ? ' is-on' : ''}${q.isLive ? ' is-live' : ''}${q.offset === 1 ? ' is-next' : ''}`}
-                      aria-pressed={selected}
-                      onClick={() => togglePin(`q:${q.quorumHash}`)}
-                    >
-                      {label}
-                    </button>
-                  </Tooltip>
-                )
-              })}
-            </div>
-          </div>
-        )}
+          )}
+        </div>
       </header>
 
       {currentQuorumError && !hasRoster && !currentQuorumLoading && (
@@ -816,6 +818,49 @@ export default function QuorumCard({
       )}
 
       <div className={'QuorumCard__Body'}>
+        {sortedQuorums.length > 0 && (
+          <div
+            ref={pickRef}
+            className={'QuorumCard__QPick'}
+            role={'group'}
+            aria-label={'Signing rotation'}
+            aria-orientation={'horizontal'}
+            tabIndex={0}
+          >
+            {sortedQuorums.map(q => {
+              const selected = quorumKey(q.quorumHash) === pinnedKey
+              const label = turnLabel(q.offset, q.isLive)
+              const signers = quorumSize
+              return (
+                <Tooltip
+                  key={q.quorumHash}
+                  placement={'top'}
+                  title={q.offset < 2 ? label : ''}
+                  content={
+                    <TurnTip
+                      turn={
+                        q.isLive || q.offset === 0
+                          ? 'Now'
+                          : `~ ${turnWhenFmt.format(turnAt(q.offset))}`
+                      }
+                      formedHeight={q.blockHeight ?? q.creationHeight}
+                      signers={signers}
+                    />
+                  }
+                >
+                  <button
+                    type={'button'}
+                    className={`QuorumCard__QBtn${q.offset < 2 ? ' is-word' : ''}${selected ? ' is-on' : ''}${q.isLive ? ' is-live' : ''}${q.offset === 1 ? ' is-next' : ''}`}
+                    aria-pressed={selected}
+                    onClick={() => togglePin(`q:${q.quorumHash}`)}
+                  >
+                    {label}
+                  </button>
+                </Tooltip>
+              )
+            })}
+          </div>
+        )}
         <div
           className={`QuorumCard__Stage${pin ? ' is-pinned' : ''}${pinnedQuorumHash ? ' is-pinned-quorum' : ''}${pendingNode && !pinnedQuorumHash ? ' is-lookup' : ''}`}
           data-pin={pinnedQuorumHash ? 'quorum' : pin || undefined}

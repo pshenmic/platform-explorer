@@ -58,7 +58,7 @@
   }
 }
 .HomeCardPair--leaders .QuorumCard__Stage {
-  grid-template-columns: minmax(0, auto) minmax(16rem, 1fr);
+  grid-template-columns: minmax(0, auto) minmax(11rem, 1fr);
 }
 
 @media screen and (min-width: 48em) {
