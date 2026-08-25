@@ -716,7 +716,6 @@ export default function QuorumCard({
     <Box
       className={'InfoBlock InfoBlock--NoBorder QuorumCard'}
       w={'100%'}
-      h={'100%'}
       as={'section'}
       aria-label={'Quorum'}
     >

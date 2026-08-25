@@ -33,6 +33,15 @@
   flex: 1 1 auto;
   height: 100%;
 }
+@media screen and (max-width: 47.99em) {
+  .HomeCardPair--leaders .HomeCardPair__Cell:last-child,
+  .HomeCardPair--leaders .HomeCardPair__Cell:last-child > * {
+    height: auto;
+    max-height: none;
+    flex: 0 0 auto;
+    position: static;
+  }
+}
 .HomeCardPair--leaders .HomeCardPair__Cell > * {
   display: flex;
   flex-direction: column;
@@ -57,8 +66,10 @@
     max-height: 100%;
   }
 }
-.HomeCardPair--leaders .QuorumCard__Stage {
-  grid-template-columns: minmax(0, auto) minmax(11rem, 1fr);
+@media screen and (min-width: 48em) {
+  .HomeCardPair--leaders .QuorumCard__Stage {
+    grid-template-columns: minmax(0, auto) minmax(11rem, 1fr);
+  }
 }
 
 @media screen and (min-width: 48em) {
