@@ -1,14 +1,5 @@
 'use client'
 
-/**
- * Shielded pool — combo chart
- * - Line/area (left axis) = TVL locked in pool (stock)
- * - Grouped bars (right axis) = deposit / withdrawal volume (flow)
- *
- * "All" densifies from first real activity so early empty years
- * don't collapse every deposit into a few coarse buckets.
- */
-
 import { useState, useEffect, useMemo, useRef, useId, type RefObject } from 'react'
 import * as d3 from 'd3'
 import useResizeObserver from '@react-hook/resize-observer'
@@ -16,7 +7,7 @@ import { Box } from '@chakra-ui/react'
 import * as Api from '../../util/Api'
 import { Presets } from '../cards'
 import { Tooltip } from '../ui/Tooltips'
-import { creditsToDash } from '../../util'
+import { creditsToDash, roundUsd } from '../../util'
 import { Skeleton } from './Skeleton'
 import { PRESETS, presetRange } from './MetricChart'
 import './ShieldedPoolCard.css'
@@ -37,6 +28,18 @@ function fmtCompact(dash: any) {
   if (Math.abs(n) >= 1e3) return `${(n / 1e3).toFixed(1)}k`
   if (Math.abs(n) >= 10) return n.toFixed(1)
   return fmtDash(n)
+}
+
+function fmtUsd(n: number, compact = false) {
+  const sign = n < 0 ? '−' : ''
+  const a = Math.abs(n)
+  if (compact || a >= 1000) return `${sign}$${fmtCompact(a)}`
+  return `${sign}$${roundUsd(a)}`
+}
+
+function fmtAmt(dash: number, inUsd: boolean, usdPx: number | null, compact = false) {
+  if (inUsd && usdPx != null) return fmtUsd(dash * usdPx, compact)
+  return compact ? fmtCompact(dash) : fmtDash(dash)
 }
 
 function buildTvlSeries(buckets: any, balanceCredits: any) {
@@ -106,10 +109,10 @@ async function loadDenseBuckets(rangeStart: any, rangeEnd: any) {
 
 export default function ShieldedPoolCard({
   enabled = true,
-  rate: _rate
+  rate: rateState
 }: {
   enabled?: boolean
-  rate?: unknown
+  rate?: { data?: { usd?: number } | null }
 }) {
   const [pool, setPool] = useState<{ loading: boolean; error: boolean; balance: number | null }>({
     loading: true,
@@ -123,9 +126,9 @@ export default function ShieldedPoolCard({
   const [period, setPeriod] = useState({ loading: true, in: 0, out: 0 })
   const [presetIdx, setPresetIdx] = useState(DEFAULT_PRESET)
   const [hoverI, setHoverI] = useState<number | null>(null)
-  // TVL line always on; bars can be toggled
   const [showDeposits, setShowDeposits] = useState(true)
   const [showWithdrawals, setShowWithdrawals] = useState(true)
+  const [unit, setUnit] = useState<'dash' | 'usd'>('dash')
   const [width, setWidth] = useState(0)
   const [plotH, setPlotH] = useState(180)
   const wrapRef = useRef<HTMLDivElement | null>(null)
@@ -216,10 +219,12 @@ export default function ShieldedPoolCard({
   const points = series.points
   const isAll = PRESETS[presetIdx].label === 'All'
   const windowLabel = isAll ? 'all time' : PRESETS[presetIdx].label
-  // period totals from statistic API; net is deposits minus withdrawals
   const rangeInDash = creditsToDash(period.in)
   const rangeOutDash = creditsToDash(period.out)
   const rangeNetDash = rangeInDash - rangeOutDash
+  const usdPx = typeof rateState?.data?.usd === 'number' ? rateState.data.usd : null
+  const inUsd = unit === 'usd' && usdPx != null
+  const k = inUsd && usdPx != null ? usdPx : 1
 
   const ready = width > 0 && plotH > 0 && points.length >= 1 && !series.loading
 
@@ -227,12 +232,20 @@ export default function ShieldedPoolCard({
     if (!ready) return null
 
     let pts = points
-      .map(p => ({
-        x: p.ts ? new Date(p.ts) : null,
-        tvl: creditsToDash(p.tvl),
-        inDash: creditsToDash(p.inAmt),
-        outDash: creditsToDash(p.outAmt)
-      }))
+      .map(p => {
+        const tvlDash = creditsToDash(p.tvl)
+        const inDash = creditsToDash(p.inAmt)
+        const outDash = creditsToDash(p.outAmt)
+        return {
+          x: p.ts ? new Date(p.ts) : null,
+          tvlDash,
+          inDash,
+          outDash,
+          tvl: tvlDash * k,
+          inAmt: inDash * k,
+          outAmt: outDash * k
+        }
+      })
       .filter(p => p.x && !isNaN(p.x.getTime()))
 
     if (!pts.length) return null
@@ -256,7 +269,7 @@ export default function ShieldedPoolCard({
     const flowVisible = showDeposits || showWithdrawals
     const flowMax = flowVisible
       ? d3.max(pts, (p: any) =>
-          Math.max(showDeposits ? p.inDash : 0, showWithdrawals ? p.outDash : 0)
+          Math.max(showDeposits ? p.inAmt : 0, showWithdrawals ? p.outAmt : 0)
         ) || 0
       : 0
     const yFlow = d3
@@ -301,8 +314,8 @@ export default function ShieldedPoolCard({
 
     const bars = pts.map((p, i) => {
       const cx = x(p.x)
-      const inH = showDeposits ? Math.max(0, baseline - yFlow(p.inDash)) : 0
-      const outH = showWithdrawals ? Math.max(0, baseline - yFlow(p.outDash)) : 0
+      const inH = showDeposits ? Math.max(0, baseline - yFlow(p.inAmt)) : 0
+      const outH = showWithdrawals ? Math.max(0, baseline - yFlow(p.outAmt)) : 0
       let inX = 0
       let outX = 0
       if (both) {
@@ -342,9 +355,10 @@ export default function ShieldedPoolCard({
       yFlowTicks,
       bars,
       baseline,
-      flowVisible
+      flowVisible,
+      inUsd
     }
-  }, [ready, points, width, plotH, showDeposits, showWithdrawals])
+  }, [ready, points, width, plotH, showDeposits, showWithdrawals, k, inUsd])
 
   const handleMove = (e: any) => {
     if (!chart) return
@@ -365,15 +379,15 @@ export default function ShieldedPoolCard({
 
   const hovered = chart && hoverI != null ? chart.pts[hoverI] : null
 
-  // All = locked total; ranged presets = net Δ for that window (hover does not change this)
+  const statDash = isAll ? balanceDash : rangeNetDash
   const statCount = (() => {
     if (pool.loading) return null
-    if (isAll) return fmtDash(balanceDash)
-    if (period.loading) return null
-    if (!rangeNetDash) return '0'
-    return `${rangeNetDash >= 0 ? '+' : '−'}${fmtDash(Math.abs(rangeNetDash))}`
+    if (!isAll && period.loading) return null
+    if (!statDash) return inUsd ? fmtUsd(0) : '0'
+    const body = fmtAmt(Math.abs(statDash), inUsd, usdPx)
+    if (isAll) return body
+    return `${statDash >= 0 ? '+' : '−'}${body.replace(/^[−-]/, '')}`
   })()
-  const statUnit = isAll ? 'DASH locked' : 'DASH net'
   const statTone =
     !isAll && !period.loading
       ? rangeNetDash > 0
@@ -397,11 +411,13 @@ export default function ShieldedPoolCard({
           <span className={'ShieldedPool__Eyebrow'}>Privacy layer</span>
           <h2 className={'ShieldedPool__Title'}>Shielded pool</h2>
           <p className={'ShieldedPool__Lede'}>
-            Pool size over time; bars show deposit and withdrawal volume.
+            Pool size over time; bars show
+            <br />
+            deposit and withdrawal volume.
             <Tooltip
               title={'How to read'}
               content={
-                'Line (left axis) is total DASH locked in the pool. Bars (right axis) are deposit and withdrawal volume in each time bucket. All starts from the first real pool activity so volumes are not merged into a few coarse columns.'
+                'Line (left axis) is total locked in the pool. Bars (right axis) are deposit and withdrawal volume in each bucket. Switch DASH / USD next to the headline; USD uses the current rate, not historical prices. All starts from the first real pool activity so volumes are not merged into a few coarse columns.'
               }
               placement={'top'}
             >
@@ -416,9 +432,49 @@ export default function ShieldedPoolCard({
               {statCount == null ? (
                 <Skeleton w={'7ch'} h={'1.6em'} />
               ) : (
-                <span className={`ShieldedPool__StatCount${statTone}`}>{statCount}</span>
+                <button
+                  type={'button'}
+                  className={`ShieldedPool__StatCount${statTone}`}
+                  disabled={usdPx == null}
+                  title={
+                    usdPx == null
+                      ? 'USD rate unavailable'
+                      : inUsd
+                        ? 'Show in DASH'
+                        : 'Show in USD at current rate'
+                  }
+                  aria-label={
+                    inUsd ? 'Amount in USD, switch to DASH' : 'Amount in DASH, switch to USD'
+                  }
+                  onClick={() => usdPx != null && setUnit(u => (u === 'dash' ? 'usd' : 'dash'))}
+                >
+                  {statCount}
+                </button>
               )}
-              <span className={'ShieldedPool__StatUnit'}>{statUnit}</span>
+              <div
+                className={'ShieldedPool__UnitSwitch'}
+                role={'group'}
+                aria-label={'Display unit'}
+              >
+                <button
+                  type={'button'}
+                  className={`ShieldedPool__Unit${!inUsd ? ' is-on' : ''}`}
+                  aria-pressed={!inUsd}
+                  onClick={() => setUnit('dash')}
+                >
+                  DASH
+                </button>
+                <button
+                  type={'button'}
+                  className={`ShieldedPool__Unit${inUsd ? ' is-on' : ''}`}
+                  aria-pressed={inUsd}
+                  disabled={usdPx == null}
+                  title={usdPx == null ? 'USD rate unavailable' : 'USD at current DASH rate'}
+                  onClick={() => usdPx != null && setUnit('usd')}
+                >
+                  USD
+                </button>
+              </div>
             </div>
             <div className={'ShieldedPool__Flows'} aria-label={`Flows · ${windowLabel}`}>
               {flowsLoading ? (
@@ -429,23 +485,33 @@ export default function ShieldedPoolCard({
                     type={'button'}
                     className={`ShieldedPool__Flow ShieldedPool__Flow--in${showDeposits ? ' is-on' : ' is-off'}`}
                     aria-pressed={showDeposits}
+                    aria-label={
+                      showDeposits
+                        ? `Hide deposits, ${fmtAmt(rangeInDash, inUsd, usdPx)}`
+                        : `Show deposits, ${fmtAmt(rangeInDash, inUsd, usdPx)}`
+                    }
                     title={showDeposits ? 'Hide deposits on chart' : 'Show deposits on chart'}
                     onClick={() => setShowDeposits(v => !v)}
                   >
                     <i className={'ShieldedPool__FlowSwatch'} aria-hidden={'true'} />
-                    deposits <b>+{fmtDash(rangeInDash)}</b>
+                    <b>+{fmtAmt(rangeInDash, inUsd, usdPx)}</b>
                   </button>
                   <button
                     type={'button'}
                     className={`ShieldedPool__Flow ShieldedPool__Flow--out${showWithdrawals ? ' is-on' : ' is-off'}`}
                     aria-pressed={showWithdrawals}
+                    aria-label={
+                      showWithdrawals
+                        ? `Hide withdrawals, ${fmtAmt(rangeOutDash, inUsd, usdPx)}`
+                        : `Show withdrawals, ${fmtAmt(rangeOutDash, inUsd, usdPx)}`
+                    }
                     title={
                       showWithdrawals ? 'Hide withdrawals on chart' : 'Show withdrawals on chart'
                     }
                     onClick={() => setShowWithdrawals(v => !v)}
                   >
                     <i className={'ShieldedPool__FlowSwatch'} aria-hidden={'true'} />
-                    withdrawals <b>−{fmtDash(rangeOutDash)}</b>
+                    <b>−{fmtAmt(rangeOutDash, inUsd, usdPx)}</b>
                   </button>
                 </>
               )}
@@ -520,7 +586,7 @@ export default function ShieldedPoolCard({
                         dy={'0.32em'}
                         textAnchor={'end'}
                       >
-                        {fmtCompact(v)}
+                        {inUsd ? fmtUsd(v, true) : fmtCompact(v)}
                       </text>
                     </g>
                   ))}
@@ -534,7 +600,7 @@ export default function ShieldedPoolCard({
                       dy={'0.32em'}
                       textAnchor={'start'}
                     >
-                      {fmtCompact(v)}
+                      {inUsd ? fmtUsd(v, true) : fmtCompact(v)}
                     </text>
                   ))}
 
@@ -648,16 +714,17 @@ export default function ShieldedPoolCard({
                   >
                     <span className={'ShieldedPool__TipDate'}>{chart.tipFmt(hovered.x)}</span>
                     <span className={'ShieldedPool__TipRow is-tvl'}>
-                      TVL {fmtDash(hovered.tvl)}
+                      TVL {fmtAmt(hovered.tvlDash, inUsd, usdPx)}
+                      {usdPx != null && <em> · {fmtAmt(hovered.tvlDash, !inUsd, usdPx)}</em>}
                     </span>
                     {showDeposits && (
                       <span className={'ShieldedPool__TipRow is-in'}>
-                        In +{fmtDash(hovered.inDash)}
+                        In +{fmtAmt(hovered.inDash, inUsd, usdPx)}
                       </span>
                     )}
                     {showWithdrawals && (
                       <span className={'ShieldedPool__TipRow is-out'}>
-                        Out −{fmtDash(hovered.outDash)}
+                        Out −{fmtAmt(hovered.outDash, inUsd, usdPx)}
                       </span>
                     )}
                   </div>

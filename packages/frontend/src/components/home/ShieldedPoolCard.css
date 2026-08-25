@@ -32,7 +32,13 @@
   flex-shrink: 0;
   margin-bottom: 16px;
 }
+@media screen and (min-width: 48em) {
+  .ShieldedPool__Head {
+    flex-wrap: nowrap;
+  }
+}
 .ShieldedPool__HeadText {
+  flex: 1 1 auto;
   min-width: 0;
   max-width: 18rem;
 }
@@ -74,6 +80,7 @@
   align-items: flex-end;
   gap: 14px;
   flex-shrink: 0;
+  margin-left: auto;
   min-width: 0;
 }
 .ShieldedPool__Stat {
@@ -92,6 +99,11 @@
   min-width: 0;
 }
 .ShieldedPool__StatCount {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
   font-family: var(--pe-font-heading);
   font-weight: 800;
   font-style: italic;
@@ -101,6 +113,42 @@
   font-variant-numeric: tabular-nums;
   text-shadow: 0 0 16px rgba(var(--pe-color-brand-light-rgb), 0.28);
   min-width: 4ch;
+}
+.ShieldedPool__StatCount:disabled {
+  cursor: default;
+}
+.ShieldedPool__UnitSwitch {
+  display: inline-flex;
+  gap: 2px;
+  flex-shrink: 0;
+  padding: 2px;
+  border-radius: var(--pe-radius-sm);
+  background: rgba(255, 255, 255, 0.04);
+}
+.ShieldedPool__Unit {
+  margin: 0;
+  padding: 3px 7px;
+  border: 0;
+  border-radius: 3px;
+  background: transparent;
+  cursor: pointer;
+  font-family: var(--pe-font-mono);
+  font-size: 0.5625rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--pe-color-gray-500);
+}
+.ShieldedPool__Unit:hover:not(:disabled) {
+  color: var(--pe-color-fg);
+}
+.ShieldedPool__Unit.is-on {
+  color: var(--pe-color-fg);
+  background: rgba(var(--pe-color-brand-normal-rgb), 0.18);
+  box-shadow: inset 0 0 0 1px rgba(var(--pe-color-brand-normal-rgb), 0.45);
+}
+.ShieldedPool__Unit:disabled {
+  cursor: not-allowed;
+  opacity: 0.4;
 }
 .ShieldedPool__StatCount.is-up {
   color: #2cffb4;
@@ -117,7 +165,8 @@
 }
 .ShieldedPool__Flows {
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: row;
+  flex-wrap: nowrap;
   justify-content: flex-end;
   align-items: baseline;
   gap: 4px 14px;
@@ -347,6 +396,11 @@
 }
 .ShieldedPool__TipRow.is-tvl {
   color: var(--pe-color-brand-light);
+}
+.ShieldedPool__TipRow em {
+  font-style: normal;
+  font-weight: 500;
+  opacity: 0.62;
 }
 .ShieldedPool__TipRow.is-in {
   color: #2cffb4;
