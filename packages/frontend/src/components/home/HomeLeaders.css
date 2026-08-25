@@ -116,6 +116,74 @@
   outline: 1px solid rgba(var(--pe-color-brand-light-rgb), 0.65);
   outline-offset: 1px;
 }
+@media screen and (max-width: 47.99em) {
+  .HomeLeaders {
+    padding-top: 16px !important;
+    padding-bottom: 16px !important;
+  }
+  .HomeLeaders__Head {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 6px 8px;
+    padding: 0 16px 12px;
+  }
+  .HomeLeaders__HeadText {
+    display: contents;
+    max-width: none;
+  }
+  .HomeLeaders__Eyebrow {
+    grid-column: 1;
+    grid-row: 1;
+    margin-bottom: 0;
+  }
+  .HomeLeaders__Title {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    font-size: 1.25rem;
+    margin: 2px 0 0;
+    white-space: nowrap;
+  }
+  .HomeLeaders__Nav {
+    grid-column: 2;
+    grid-row: 1;
+    margin-left: 0;
+    flex-shrink: 0;
+    max-width: none;
+    padding: 2px;
+    gap: 2px;
+  }
+  .HomeLeaders__Arrow {
+    width: 1.375rem;
+    height: 1.375rem;
+  }
+  .HomeLeaders__Tab {
+    padding: 4px 7px;
+    font-size: 0.5rem;
+  }
+  .HomeLeaders__Slide {
+    flex: 0 0 min(20rem, calc(100vw - 3rem));
+    width: min(20rem, calc(100vw - 3rem));
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+  }
+  .HomeLeaders__Viewport {
+    mask-image: linear-gradient(
+      90deg,
+      transparent 0,
+      #000 12px,
+      #000 calc(100% - 12px),
+      transparent 100%
+    );
+  }
+  .HomeLeaders__Rail {
+    padding: 8px;
+    column-gap: 6px;
+  }
+  .HomeLeaders__Metric {
+    font-size: 0.6875rem;
+  }
+}
 .HomeLeaders__Panel {
   flex: 1 1 auto;
   min-width: 0;
