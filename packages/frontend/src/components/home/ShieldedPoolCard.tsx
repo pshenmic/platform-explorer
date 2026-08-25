@@ -14,8 +14,7 @@ import './ShieldedPoolCard.css'
 
 const DEFAULT_PRESET = PRESETS.length - 1
 const DAY_MS = 24 * 60 * 60 * 1000
-// margins keep vol label and flow ticks from overlapping
-const M = { top: 22, right: 54, bottom: 24, left: 48 }
+const M = { top: 22, right: 16, bottom: 24, left: 48 }
 
 function fmtDash(dash: any) {
   if (!dash) return '0'
@@ -300,8 +299,6 @@ export default function ShieldedPoolCard({
     const xTickN = Math.max(2, Math.min(6, Math.floor((width - M.left - M.right) / 72)))
     const xTicks = x.ticks(xTickN)
     const yTvlTicks = yTvl.ticks(4)
-    // skip top flow tick so it does not collide with the vol caption
-    const yFlowTicks = flowVisible ? yFlow.ticks(4).filter((v: any) => yFlow(v) > M.top + 14) : []
 
     const step =
       pts.length > 1
@@ -345,14 +342,12 @@ export default function ShieldedPoolCard({
       pts,
       x,
       yTvl,
-      yFlow,
       line: line(pts),
       area: area(pts),
       tickFmt,
       tipFmt,
       xTicks,
       yTvlTicks,
-      yFlowTicks,
       bars,
       baseline,
       flowVisible,
@@ -417,7 +412,7 @@ export default function ShieldedPoolCard({
             <Tooltip
               title={'How to read'}
               content={
-                'Line (left axis) is total locked in the pool. Bars (right axis) are deposit and withdrawal volume in each bucket. Switch DASH / USD next to the headline; USD uses the current rate, not historical prices. All starts from the first real pool activity so volumes are not merged into a few coarse columns.'
+                'The line is total locked in the pool. Bars are deposit and withdrawal volume in each bucket. Switch DASH / USD next to the headline; USD uses the current rate, not historical prices. All starts from the first real pool activity so volumes are not merged into a few coarse columns.'
               }
               placement={'top'}
             >
@@ -592,19 +587,6 @@ export default function ShieldedPoolCard({
                     </g>
                   ))}
 
-                  {chart.yFlowTicks.map((v: any, i: any) => (
-                    <text
-                      key={`yr-${i}`}
-                      className={'ShieldedPool__YTick ShieldedPool__YTick--right'}
-                      x={width - M.right + 8}
-                      y={chart.yFlow(v)}
-                      dy={'0.32em'}
-                      textAnchor={'start'}
-                    >
-                      {inUsd ? fmtUsd(v, true) : fmtCompact(v)}
-                    </text>
-                  ))}
-
                   <text
                     className={'ShieldedPool__AxisTitle ShieldedPool__AxisTitle--left'}
                     x={M.left - 6}
@@ -613,16 +595,6 @@ export default function ShieldedPoolCard({
                   >
                     TVL
                   </text>
-                  {chart.flowVisible && (
-                    <text
-                      className={'ShieldedPool__AxisTitle ShieldedPool__AxisTitle--right'}
-                      x={width - 4}
-                      y={10}
-                      textAnchor={'end'}
-                    >
-                      vol
-                    </text>
-                  )}
 
                   {chart.flowVisible &&
                     chart.bars.map(b => {
