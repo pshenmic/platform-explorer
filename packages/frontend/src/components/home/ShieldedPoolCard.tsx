@@ -411,9 +411,9 @@ export default function ShieldedPoolCard({
           <span className={'ShieldedPool__Eyebrow'}>Privacy layer</span>
           <h2 className={'ShieldedPool__Title'}>Shielded pool</h2>
           <p className={'ShieldedPool__Lede'}>
-            Pool size over time; bars show
+            Pool size over time.
             <br />
-            deposit and withdrawal volume.
+            In and out{' '}
             <Tooltip
               title={'How to read'}
               content={
@@ -421,8 +421,9 @@ export default function ShieldedPoolCard({
               }
               placement={'top'}
             >
-              <span className={'ShieldedPool__LedeMore'}>How to read</span>
+              <span className={'ShieldedPool__LedeMore'}>volume</span>
             </Tooltip>
+            .
           </p>
         </div>
         <div className={'ShieldedPool__Controls'}>

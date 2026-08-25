@@ -23,6 +23,22 @@
   height: auto;
   max-height: none;
 }
+@media screen and (max-width: 47.99em) {
+  .HomeCardPair .ShieldedPool {
+    height: auto;
+    overflow: visible;
+  }
+  .HomeCardPair .ShieldedPool .ShieldedPool__Body {
+    flex: 0 0 auto;
+    overflow: visible;
+  }
+  .HomeCardPair .ShieldedPool .ShieldedPool__Chart {
+    flex: 0 0 12rem;
+    min-height: 12rem;
+    height: 12rem;
+    max-height: none;
+  }
+}
 .ShieldedPool__Head {
   display: flex;
   align-items: flex-start;
@@ -415,4 +431,47 @@
   height: 100%;
   font-size: 0.8125rem;
   color: var(--pe-color-gray-500);
+}
+@media screen and (max-width: 47.99em) {
+  .ShieldedPool__Head {
+    flex-wrap: nowrap;
+    gap: 8px 12px;
+    margin-bottom: 12px;
+  }
+  .ShieldedPool__HeadText {
+    flex: 1 1 0;
+    min-width: 0;
+    max-width: 9.5rem;
+  }
+  .ShieldedPool__Title {
+    font-size: 1.125rem;
+  }
+  .ShieldedPool__Lede {
+    font-size: 0.5625rem;
+    line-height: 1.45;
+  }
+  .ShieldedPool__Controls {
+    gap: 8px;
+    margin-left: auto;
+    flex-shrink: 1;
+  }
+  .ShieldedPool .Presets {
+    width: auto;
+    max-width: none;
+    flex-wrap: nowrap;
+    flex-shrink: 0;
+    justify-content: flex-end;
+    gap: 2px;
+  }
+  .ShieldedPool .Presets__Chip {
+    padding: 2px 5px;
+    font-size: 0.5625rem;
+  }
+  .ShieldedPool__StatCount {
+    font-size: 1.25rem;
+  }
+  .ShieldedPool__Unit {
+    padding: 2px 5px;
+    font-size: 0.5rem;
+  }
 }
