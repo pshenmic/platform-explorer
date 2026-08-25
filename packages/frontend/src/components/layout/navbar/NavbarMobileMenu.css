@@ -7,13 +7,18 @@
   padding-top: 4rem;
   overflow: hidden;
   opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
   box-shadow: none;
   background-color: var(--pe-color-gray-650);
   border-radius: 0 0 var(--pe-space-5) var(--pe-space-5);
   max-height: 100%;
   min-height: 10rem;
-  transform: translateY(calc(-var(--pe-space-5) - 100%));
-  transition: all 0.15s;
+  transform: translateY(calc(-100% - var(--pe-space-5)));
+  transition:
+    transform 0.15s,
+    opacity 0.15s,
+    visibility 0.15s;
   padding-left: var(--pe-space-3);
   padding-right: var(--pe-space-3);
 }
@@ -22,6 +27,7 @@
   max-height: calc(100vh - 200px);
   opacity: 1;
   visibility: visible;
+  pointer-events: auto;
   transform: translateY(0);
   box-shadow: 0 var(--pe-space-5) var(--pe-space-8) 0 var(--pe-color-gray-900);
   overflow-y: auto;
