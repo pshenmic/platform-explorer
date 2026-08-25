@@ -151,11 +151,14 @@ export default function HomeHero({
                 <span className={'HomeHero__LiveMetaSep'} aria-hidden={'true'}>
                   ·
                 </span>
-                <TimeDelta endDate={epochEndDate} format={'compact'} showTimestampTooltip={false} />
-                <span className={'HomeHero__LiveMetaSep'} aria-hidden={'true'}>
-                  ·
+                <span className={'HomeHero__LiveMetaTrail'}>
+                  <TimeDelta
+                    endDate={epochEndDate}
+                    format={'compact'}
+                    showTimestampTooltip={false}
+                  />{' '}
+                  {formatNextEpochDay(epochEndDate)}
                 </span>
-                <span>{formatNextEpochDay(epochEndDate)}</span>
               </span>
             ) : (
               <Skeleton w={'8ch'} h={'0.7em'} radius={4} />

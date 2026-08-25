@@ -684,6 +684,50 @@
   font-family: var(--pe-font-mono);
   white-space: nowrap;
 }
+@media screen and (max-width: 47.99em) {
+  .HomeHero__HeightRail {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-rows: auto auto auto;
+    align-items: start;
+    justify-content: stretch;
+    height: auto;
+    min-width: 0;
+    width: 100%;
+    gap: 10px 12px;
+    padding-top: 1.25rem;
+  }
+  .HomeHero__Stat {
+    display: grid;
+    grid-template-rows: subgrid;
+    grid-row: span 3;
+    align-items: start;
+    justify-items: start;
+    text-align: left;
+    gap: 0;
+  }
+  .HomeHero__HeightRail .HomeHero__LiveLabel {
+    justify-content: flex-start;
+    font-size: 0.625rem;
+    letter-spacing: 0.1em;
+    margin: 0 0 8px;
+  }
+  .HomeHero__HeightRail .HomeHero__Height {
+    margin: 0 0 10px;
+  }
+  .HomeHero__Stat .HomeHero__LiveMeta {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+    white-space: normal;
+    text-align: left;
+    line-height: 1.4;
+  }
+  .HomeHero__HeightRail .HomeHero__LiveMetaSep {
+    display: none;
+  }
+}
 .HomeHero__LiveBadge {
   display: inline-block;
   padding: 3px 10px;
@@ -734,10 +778,10 @@
 }
 @media screen and (max-width: 48em) {
   .HomeHero__Height {
-    font-size: 1.75rem;
+    font-size: 1.5rem;
   }
   .HomeHero__Height--epoch {
-    font-size: 1.5rem;
+    font-size: 1.375rem;
   }
 }
 .HomeHero__Live {
