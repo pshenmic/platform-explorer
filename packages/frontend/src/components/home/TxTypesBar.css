@@ -56,9 +56,51 @@
   color: var(--pe-color-gray-500);
   margin: 0;
 }
-@media screen and (max-width: 48em) {
+@media screen and (max-width: 47.99em) {
+  .TxTypesBar__Head {
+    flex-wrap: nowrap;
+    gap: 8px 12px;
+    margin-bottom: 12px;
+  }
+  .TxTypesBar__HeadText {
+    flex: 1 1 0;
+    min-width: 0;
+    max-width: 12.5rem;
+  }
+  .TxTypesBar__Title {
+    font-size: 1.125rem;
+  }
   .TxTypesBar__Lede {
-    display: none;
+    display: block;
+    font-size: 0.5625rem;
+    line-height: 1.45;
+  }
+  .TxTypesBar__Controls {
+    gap: 8px;
+    margin-left: auto;
+    flex-shrink: 1;
+  }
+  .TxTypesBar .Presets {
+    width: auto;
+    max-width: none;
+    flex-wrap: nowrap;
+    flex-shrink: 0;
+    justify-content: flex-end;
+    gap: 2px;
+  }
+  .TxTypesBar .Presets__Chip {
+    padding: 2px 5px;
+    font-size: 0.5625rem;
+  }
+  .TxTypesBar__StatCount {
+    font-size: 1.25rem;
+  }
+  .TxTypesBar__StatUnit {
+    font-size: 0.5625rem;
+  }
+  .TxTypesBar__StatMeta {
+    font-size: 0.6875rem;
+    max-width: 11.5rem;
   }
 }
 .TxTypesBar__LedeMore {

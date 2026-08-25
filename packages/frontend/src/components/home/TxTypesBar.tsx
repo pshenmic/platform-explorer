@@ -130,7 +130,7 @@ export default function TxTypesBar({ enabled = true }) {
           <p className={'TxTypesBar__Lede'}>
             Who is joining, writing data,
             <br />
-            or moving credits and using{' '}
+            or moving credits and{' '}
             <Tooltip
               placement={'top'}
               content={
