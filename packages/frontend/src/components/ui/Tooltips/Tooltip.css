@@ -12,8 +12,11 @@
   pointer-events: auto;
   display: block;
   width: max-content;
-  max-width: min(16rem, 100vw - 24px);
+  max-width: min(20rem, calc(100vw - 24px));
   min-width: 11rem;
+  overflow-x: hidden;
+  overflow-y: auto;
+  max-height: min(70vh, calc(100vh - 24px));
   white-space: normal;
   font-family: var(--pe-font-heading);
   font-size: 0.75rem;
