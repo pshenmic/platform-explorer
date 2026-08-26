@@ -1811,8 +1811,8 @@
   display: flex;
   flex-direction: column;
   gap: 3px;
-  min-width: 190px;
-  max-width: 280px;
+  min-width: 0;
+  max-width: 100%;
 }
 .EpochsOverview__TipBlurb {
   font-size: 0.6875rem;
@@ -1836,12 +1836,19 @@
   display: flex;
   justify-content: space-between;
   gap: 16px;
+  min-width: 0;
   font-size: 0.6875rem;
   font-family: var(--pe-font-mono);
   color: var(--pe-color-gray-250);
 }
 .EpochsOverview__TipRow span:first-child {
   color: var(--pe-color-gray-500);
+  flex-shrink: 0;
+}
+.EpochsOverview__TipRow span:last-child {
+  min-width: 0;
+  text-align: right;
+  overflow-wrap: anywhere;
 }
 .EpochsOverview__TipLink {
   color: var(--pe-color-brand-light);
