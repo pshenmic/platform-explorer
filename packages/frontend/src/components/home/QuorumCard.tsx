@@ -671,7 +671,6 @@ export default function QuorumCard({
   }, [cells, selectedMemberSet])
   const windowCount = windowSlots.size
   const headLabel = selectedOffset <= 0 ? 'Now' : selectedOffset === 1 ? 'Next' : 'Turn'
-  const followLabel = 'Next'
   const headTurn = formatApproxTurn(
     approxTurnMs(selectedOffset, avgBlockTimeSec, llmq?.size || 100)
   )
@@ -998,7 +997,11 @@ export default function QuorumCard({
               </div>
             )}
             <div className={'QuorumCard__HostsClip'}>
-              <div ref={hostsRef} className={'QuorumCard__Hosts'} aria-label={'Masternode addresses'}>
+              <div
+                ref={hostsRef}
+                className={'QuorumCard__Hosts'}
+                aria-label={'Masternode addresses'}
+              >
                 {hostRows.length === 0 ? (
                   <p className={'QuorumCard__HostsEmpty'}>
                     {filling ? 'Loading addresses…' : 'No addresses'}
@@ -1007,12 +1010,7 @@ export default function QuorumCard({
                   <>
                     <div className={'QuorumCard__HostsGrid'}>
                       {hostRows.map((row, i) => (
-                        <HostButton
-                          key={row.key}
-                          row={row}
-                          index={i + 1}
-                          onClick={focusNode}
-                        />
+                        <HostButton key={row.key} row={row} index={i + 1} onClick={focusNode} />
                       ))}
                     </div>
                     {!filling && extraHosts.queued.length > 0 && (
