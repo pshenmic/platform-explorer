@@ -367,7 +367,6 @@ function Home() {
               currentQuorumError={currentQuorumQuery.isError}
               quorums={quorumsListQuery.data}
               avgBlockTimeSec={computeAvgBlockTime(blocksQuery.data?.resultSet)}
-              platformHeight={Number(blocksQuery.data?.resultSet?.[0]?.header?.height)}
             />
           </div>
         </div>
