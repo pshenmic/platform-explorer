@@ -30,9 +30,9 @@
   flex-shrink: 0;
   margin-bottom: 16px;
 }
-@media screen and (min-width: 48em) {
-  .QuorumCard__Head {
-    flex-wrap: nowrap;
+@media screen and (min-width: 64em) {
+  .QuorumCard__Lede {
+    white-space: nowrap;
   }
 }
 @media screen and (max-width: 47.99em) {
@@ -90,7 +90,7 @@
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-  gap: 14px;
+  gap: 8px;
   flex-shrink: 0;
   margin-left: auto;
   min-width: 0;
@@ -324,7 +324,8 @@
   font-weight: 600;
   color: #fff;
   text-align: right;
-  word-break: break-all;
+  min-width: 0;
+  word-break: break-word;
 }
 .QuorumCard__TipLink {
   min-width: 0;
@@ -353,14 +354,14 @@
   grid-template-columns: repeat(5, minmax(0, 1fr));
   align-items: end;
   justify-items: end;
-  gap: 4px 8px;
+  gap: 6px 14px;
   width: 100%;
   max-width: 18rem;
 }
 .QuorumCard__Controls .QuorumCard__Leg {
   flex-direction: column;
   align-items: flex-end;
-  gap: 2px;
+  gap: 6px;
   min-width: 0;
   max-width: 100%;
 }
@@ -368,6 +369,79 @@
   max-width: 100%;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+@media screen and (min-width: 48em) {
+  .QuorumCard__Head {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-rows: auto auto auto;
+    align-items: baseline;
+    column-gap: 24px;
+    row-gap: 0;
+  }
+  .QuorumCard__HeadText {
+    display: grid;
+    grid-template-rows: subgrid;
+    grid-row: 1 / 4;
+    grid-column: 1;
+    max-width: none;
+    flex: none;
+  }
+  .QuorumCard__Eyebrow {
+    grid-row: 1;
+  }
+  .QuorumCard__Title {
+    grid-row: 2;
+  }
+  .QuorumCard__Lede {
+    grid-row: 3;
+  }
+  .QuorumCard__Controls {
+    display: grid;
+    grid-template-rows: subgrid;
+    grid-row: 1 / 4;
+    grid-column: 2;
+    gap: 0;
+    margin-left: 0;
+    justify-items: end;
+  }
+  .QuorumCard__Legend,
+  .QuorumCard__Controls .QuorumCard__Legend {
+    grid-row: 1 / 3;
+    display: grid;
+    grid-template-columns: repeat(5, minmax(2.85rem, 1fr));
+    grid-template-rows: subgrid;
+    width: 100%;
+    max-width: none;
+    gap: 0 10px;
+    align-items: baseline;
+    justify-items: end;
+    justify-content: stretch;
+  }
+  .QuorumCard__Leg,
+  .QuorumCard__Controls .QuorumCard__Leg {
+    display: grid;
+    grid-template-rows: subgrid;
+    grid-row: 1 / 3;
+    gap: 0;
+    align-items: baseline;
+    justify-items: end;
+    min-width: 0;
+  }
+  .QuorumCard__LegLabel {
+    grid-row: 1;
+    margin-bottom: 8px;
+  }
+  .QuorumCard__Leg b {
+    grid-row: 2;
+    margin-bottom: 8px;
+    font-size: 1.375rem;
+  }
+  .QuorumCard__QCaption {
+    grid-row: 3;
+    justify-self: end;
+    margin-top: 0;
+  }
 }
 .QuorumCard__Empty {
   flex: 1;
@@ -378,6 +452,7 @@
   font-size: 0.8125rem;
 }
 .QuorumCard__Stage {
+  --q-win: rgba(44, 255, 180, 0.92);
   flex: 1 1 auto;
   min-height: 0;
   display: grid;
@@ -447,7 +522,7 @@
   gap: 2px;
   margin: 0;
   max-width: 100%;
-  overflow: hidden;
+  overflow: visible;
   font-family: var(--pe-font-mono);
   font-size: 0.75rem;
   line-height: 1.3;
@@ -460,11 +535,96 @@
   font-style: italic;
   font-size: 1.125rem;
   line-height: 1.15;
+  padding-right: 0.18em;
 }
 .QuorumCard__QCaptionHead {
   display: flex;
   align-items: baseline;
-  gap: 0.5em;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 0.5em 1em;
+}
+.QuorumCard__PairCaption {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 0.2rem 1rem;
+  margin: 0;
+}
+.QuorumCard__PairCaption > span {
+  display: inline-flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.45em;
+  opacity: 0.55;
+}
+.QuorumCard__BlockLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: inherit;
+  text-decoration: none;
+}
+.QuorumCard__BlockLink:hover {
+  color: var(--pe-color-brand-light);
+}
+.QuorumCard__CaptionIcon {
+  flex-shrink: 0;
+  opacity: 0.9;
+  width: 0.875rem !important;
+  height: 0.875rem !important;
+}
+.QuorumCard__PairCaption > span.is-on {
+  opacity: 1;
+}
+.QuorumCard__PairCaption b,
+.QuorumCard__PairCaption em {
+  line-height: 1.2;
+  padding-right: 0;
+}
+.QuorumCard__PairCaption b {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-family: var(--pe-font-heading);
+  font-style: italic;
+  font-weight: 800;
+  font-size: 0.9375rem;
+}
+.QuorumCard__PairCaption b.is-block {
+  font-family: var(--pe-font-mono);
+  font-style: normal;
+  font-weight: 600;
+  font-size: 0.75rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--pe-color-gray-100);
+}
+.QuorumCard__PairCaption b.is-block .QuorumCard__BlockLink:hover {
+  color: var(--pe-color-brand-light);
+}
+.QuorumCard__PairCaption em {
+  font-family: var(--pe-font-mono);
+  font-style: normal;
+  font-weight: 600;
+  font-size: 0.75rem;
+  font-variant-numeric: tabular-nums;
+}
+.QuorumCard__PairCaption [data-tone="now"] b:not(.is-block) {
+  color: #2cffb4;
+}
+.QuorumCard__PairCaption [data-tone="next"] b:not(.is-block) {
+  color: #ffc857;
+}
+.QuorumCard__PairCaption [data-tone="now"] em {
+  color: #2cffb4;
+}
+.QuorumCard__PairCaption [data-tone="next"] em {
+  color: #ffc857;
+}
+.QuorumCard__QCaptionOverlap {
+  color: #ffc857;
+  font-size: 0.6875rem;
 }
 .QuorumCard__QCaptionMeta {
   font-size: 0.75rem;
@@ -477,6 +637,27 @@
   letter-spacing: 0.06em;
   font-size: 0.6875rem;
   font-weight: 700;
+}
+.QuorumCard__QueueKey {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 14px;
+  margin: 0;
+  font-family: var(--pe-font-mono);
+  font-size: 0.6875rem;
+  line-height: 1.35;
+  color: var(--pe-color-gray-500);
+}
+.QuorumCard__QCaption .QuorumCard__QueueKey {
+  justify-content: flex-end;
+  flex-wrap: nowrap;
+  white-space: nowrap;
+}
+.QuorumCard__QueueKey [data-tone="now"] {
+  color: #2cffb4;
+}
+.QuorumCard__QueueKey [data-tone="next"] {
+  color: #ffc857;
 }
 .QuorumCard__QPick {
   display: flex;
@@ -525,7 +706,7 @@
   );
 }
 .QuorumCard__QPick > * {
-  flex: 0 0 auto;
+  flex: 1 1 0;
   min-width: 0;
 }
 .QuorumCard__QBtn {
@@ -533,17 +714,19 @@
   border: 1px solid rgba(255, 255, 255, 0.1);
   background: rgba(255, 255, 255, 0.04);
   color: var(--pe-color-gray-250);
-  min-width: 1.7rem;
-  width: auto;
+  box-sizing: border-box;
+  min-width: 0;
+  width: 100%;
   height: 1.5rem;
   min-height: 24px;
-  padding: 0 6px;
+  padding: 0 2px;
   border-radius: 4px;
   font-family: var(--pe-font-mono);
   font-size: 0.5625rem;
   line-height: 1;
   cursor: pointer;
   white-space: nowrap;
+  overflow: hidden;
 }
 .QuorumCard__QBtn.is-live {
   box-shadow: inset 0 -2px 0 0 rgba(44, 255, 180, 0.75);
@@ -558,7 +741,9 @@
   border-color: #ffc857;
 }
 .QuorumCard__QBtn.is-word {
-  padding: 0 1px;
+  flex: 1.7 1 0;
+  min-width: 0;
+  padding: 0 3px;
   text-transform: uppercase;
   letter-spacing: 0;
   font-size: 0.5rem;
@@ -567,9 +752,14 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
-  min-width: 13.5rem;
-  max-width: 18rem;
+  min-width: 0;
+  max-width: 100%;
   text-align: left;
+}
+.QuorumCard__TurnTip .QuorumCard__TipRow b {
+  word-break: break-word;
+  overflow-wrap: anywhere;
+  white-space: normal;
 }
 .QuorumCard__TurnTipBrief {
   font-size: 0.8125rem;
@@ -602,7 +792,7 @@
 }
 .QuorumCard__Cell {
   appearance: none;
-  border: 0;
+  border: 2px solid transparent;
   padding: 0;
   margin: 0;
   min-width: 0;
@@ -613,8 +803,11 @@
   cursor: pointer;
   position: relative;
   z-index: 0;
+  background-clip: border-box;
+  background-origin: border-box;
   transition:
     background-color 0.35s ease,
+    border-color 0.12s ease,
     opacity 0.12s ease,
     filter 0.12s ease,
     box-shadow 0.12s ease;
@@ -648,25 +841,47 @@
     min-height: 0;
   }
 }
+.QuorumCard__Stage[data-window="next"] {
+  --q-win: #ffc857;
+}
+.QuorumCard__Stage[data-window="later"] {
+  --q-win: rgba(255, 255, 255, 0.7);
+}
+.QuorumCard__Cell.is-in-window {
+  z-index: 1;
+}
+.QuorumCard__Cell.is-win-n {
+  border-top-color: var(--q-win);
+}
+.QuorumCard__Cell.is-win-s {
+  border-bottom-color: var(--q-win);
+}
+.QuorumCard__Cell.is-win-w {
+  border-left-color: var(--q-win);
+}
+.QuorumCard__Cell.is-win-e {
+  border-right-color: var(--q-win);
+}
+.QuorumCard__Stage.is-show-banned .QuorumCard__Cell[data-band="pad"] {
+  background: transparent;
+  box-shadow: none;
+  cursor: default;
+}
 .QuorumCard__Cell--active {
-  background: #2cffb4;
-  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.12);
+  background-color: #2cffb4;
 }
 .QuorumCard__Cell--next {
-  background: #ffc857;
-  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.12);
+  background-color: #ffc857;
 }
 .QuorumCard__Cell--inactive {
-  background: rgba(255, 255, 255, 0.22);
-  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.1);
+  background-color: rgba(255, 255, 255, 0.22);
 }
 .QuorumCard__Cell--banned,
 .QuorumCard__Cell--invalid {
-  background: #ff5c7a;
-  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.15);
+  background-color: #ff5c7a;
 }
 .QuorumCard__Cell--idle {
-  background: rgba(255, 255, 255, 0.06);
+  background-color: rgba(255, 255, 255, 0.06);
   cursor: default;
 }
 .QuorumCard__Cell.is-dimmed {
@@ -677,9 +892,6 @@
 .QuorumCard__Cell:not(.QuorumCard__Cell--idle):focus-visible {
   z-index: 2;
   filter: brightness(1.16);
-  box-shadow:
-    inset 0 0 0 1px rgba(255, 255, 255, 0.35),
-    0 0 0 1px rgba(255, 255, 255, 0.1);
 }
 .QuorumCard__Matrix--roster {
   gap: 3px;
@@ -1003,25 +1215,12 @@
 }
 .QuorumCard__Cell.is-focus {
   z-index: 4;
-  background: var(--pe-color-brand-light) !important;
-  box-shadow:
-    inset 0 0 0 1px var(--pe-color-brand-normal),
-    0 0 0 2px rgba(var(--pe-color-brand-light-rgb), 0.7);
+  border-color: transparent;
+  background-color: var(--pe-color-brand-light) !important;
+  box-shadow: 0 0 0 2px rgba(var(--pe-color-brand-light-rgb), 0.55);
 }
 .QuorumCard__Stage.is-pinned-quorum .QuorumCard__Cell.is-focus {
   opacity: 1;
-}
-.QuorumCard__Stage.is-lookup .QuorumCard__Cell {
-  opacity: 0.28;
-}
-.QuorumCard__Stage.is-lookup .QuorumCard__Cell.is-focus {
-  opacity: 1;
-  animation: QuorumSkelPulse 1.2s ease-in-out infinite;
-}
-@media (prefers-reduced-motion: reduce) {
-  .QuorumCard__Stage.is-lookup .QuorumCard__Cell.is-focus {
-    animation: none;
-  }
 }
 .QuorumCard__Stage.is-pinned[data-pin="total"] .QuorumCard__Cell[data-type] {
   opacity: 1;
@@ -1045,7 +1244,7 @@
     animation: none;
   }
 }
-@media screen and (max-width: 48em) {
+@media screen and (max-width: 47.99em) {
   .QuorumCard {
     overflow: visible;
     height: auto !important;
@@ -1104,7 +1303,16 @@
     align-self: start;
   }
   .QuorumCard__QCaption b {
-    font-size: 1rem;
+    font-size: 0.875rem;
+  }
+  .QuorumCard__PairCaption b {
+    font-size: 0.8125rem;
+  }
+  .QuorumCard__PairCaption b.is-block {
+    font-size: 0.75rem;
+  }
+  .QuorumCard__PairCaption em {
+    font-size: 0.75rem;
   }
   .QuorumCard__QCaptionMeta {
     font-size: 0.625rem;
@@ -1123,6 +1331,18 @@
   }
   .QuorumCard__QPick {
     order: 0;
+  }
+  .QuorumCard__QPick > * {
+    flex: 0 0 auto;
+    min-width: 1.7rem;
+  }
+  .QuorumCard__QBtn {
+    min-width: 1.7rem;
+    width: auto;
+  }
+  .QuorumCard__QBtn.is-word {
+    flex: 0 0 auto;
+    min-width: 2.2rem;
   }
   .QuorumCard__Stage {
     display: flex !important;

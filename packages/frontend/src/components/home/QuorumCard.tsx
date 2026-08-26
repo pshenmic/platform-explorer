@@ -5,10 +5,11 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { useQueries, useQueryClient } from '@tanstack/react-query'
 import { Box } from '@chakra-ui/react'
-import { Skeleton } from './Skeleton'
 import { Tooltip } from '../ui/Tooltips'
+import { BlockIcon } from '../ui/icons'
 import * as Api from '../../util/Api'
 import { ResponseErrorNotFound } from '../../util/Errors'
+import { useActiveNetwork } from '../../contexts'
 import './QuorumCard.css'
 
 const QUORUM_DETAIL_STALE = 60_000
@@ -22,17 +23,29 @@ async function fetchQuorumDetail(hash: string) {
   }
 }
 
-const GRID_COLS = 26
-const SKELETON_SLOTS = 650
+// 25 cols → 4 rows for a 100-signer window
+const GRID_COLS = 25
+const SKELETON_SLOTS = 375
 const PLATFORM_DKG_BLOCKS = 24
-const FALLBACK_BLOCK_MS = 150_000
-const turnWhenFmt = new Intl.DateTimeFormat('en-GB', {
-  day: 'numeric',
-  month: 'short',
-  hour: '2-digit',
-  minute: '2-digit',
-  hour12: false
-})
+const FALLBACK_BLOCK_SEC = 5
+
+function formatApproxTurn(ms: number) {
+  const d = new Date(ms)
+  const date = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+  const time = d.toLocaleTimeString('en-US', {
+    hour: 'numeric',
+    minute: '2-digit',
+    second: '2-digit',
+    hour12: true
+  })
+  return `~${date} ${time}`
+}
+
+function approxTurnMs(offset: number, blockSec: unknown, signers: number) {
+  const sec = typeof blockSec === 'number' && blockSec > 0 ? blockSec : FALLBACK_BLOCK_SEC
+  const n = signers > 0 ? signers : 100
+  return Date.now() + offset * n * sec * 1000
+}
 
 const regionNames = (() => {
   try {
@@ -114,7 +127,7 @@ const STATS = [
   {
     key: 'next',
     label: 'Next',
-    hint: 'Orange · signs the next rotation'
+    hint: 'Next 100: ~28 stay from Now, the rest are orange'
   },
   {
     key: 'inactive',
@@ -133,54 +146,141 @@ function isPoSeBannedValidator(v: any) {
   return typeof ban === 'number' && ban >= 0
 }
 
-function buildPoolCells({ list, currentSet, nextSet, memberMeta, bannedSet, sortByType }: any) {
+function isBannedNode(v: any, bannedSet: Set<any> | undefined, key: string) {
+  return Boolean(bannedSet?.has(key)) || Boolean(v && isPoSeBannedValidator(v))
+}
+
+function paintNode(
+  k: string,
+  v: any,
+  colorNowSet: Set<any>,
+  colorNextSet: Set<any>,
+  memberMeta: any,
+  bannedSet: Set<any> | undefined
+) {
+  const meta = memberMeta?.get(k)
+  // Now members stay green even if PoSe-banned
+  if (colorNowSet.has(k)) {
+    if (meta?.valid === false) return { type: 'invalid', role: 'invalid' }
+    return { type: 'active', role: 'current' }
+  }
+  if (colorNextSet.has(k)) return { type: 'next', role: 'next' }
+  if (isBannedNode(v, bannedSet, k)) return { type: 'banned', role: 'banned' }
+  if (v?.isActive && colorNowSet.size === 0) return { type: 'active', role: 'active' }
+  return { type: 'inactive', role: 'queued' }
+}
+
+function windowOutlineClass(slot: number, windowSlots: Set<number>, cols: number) {
+  if (!windowSlots.has(slot)) return ''
+  const r = Math.floor(slot / cols)
+  const c = slot % cols
+  const up = (r - 1) * cols + c
+  const down = (r + 1) * cols + c
+  let s = ' is-in-window'
+  if (r === 0 || !windowSlots.has(up)) s += ' is-win-n'
+  if (!windowSlots.has(down)) s += ' is-win-s'
+  if (c === 0 || !windowSlots.has(slot - 1)) s += ' is-win-w'
+  if (c === cols - 1 || !windowSlots.has(slot + 1)) s += ' is-win-e'
+  return s
+}
+
+function setOfMembers(membersOf: Map<string, Set<string>> | undefined, hash: unknown) {
+  const k = quorumKey(hash)
+  if (!k) return new Set<string>()
+  return membersOf?.get(k) || membersOf?.get(hash as string) || new Set<string>()
+}
+
+// Order: Now unique, overlap, Next unique, later
+function buildQueueCells({
+  list,
+  bannedSet,
+  memberMeta,
+  membersOf,
+  rotation,
+  headKey,
+  nextHeadKey,
+  liveKey,
+  liveNextKey,
+  showBanned
+}: any) {
   if (!Array.isArray(list) || list.length === 0) return []
 
-  const cells = list.map((v, index) => {
-    const key = memberKey(v.proTxHash)
-    const banned = Boolean(bannedSet?.has(key)) || isPoSeBannedValidator(v)
-    const inCurrent = currentSet?.has(key)
-    const inNext = nextSet?.has(key)
-    const meta = memberMeta?.get(key)
+  const byKey = new Map<string, any>()
+  for (const v of list) {
+    const k = memberKey(v.proTxHash)
+    if (k) byKey.set(k, v)
+  }
 
-    let type = 'inactive'
-    let role = 'queued'
+  const headSet: Set<string> = setOfMembers(membersOf, headKey)
+  const nextHeadSet: Set<string> = setOfMembers(membersOf, nextHeadKey)
+  const liveSet: Set<string> = setOfMembers(membersOf, liveKey)
+  const liveNextSet: Set<string> = setOfMembers(membersOf, liveNextKey)
 
-    if (banned) {
-      type = 'banned'
-      role = 'banned'
-    } else if (inCurrent) {
-      type = meta?.valid === false ? 'invalid' : 'active'
-      role = meta?.valid === false ? 'invalid' : 'current'
-    } else if (inNext) {
-      type = 'next'
-      role = 'next'
-    } else if (v.isActive && !currentSet) {
-      type = 'active'
-      role = 'active'
-    }
+  const used = new Set<string>()
+  const cells: any[] = []
 
-    return {
+  const pushKey = (k: string, band: string) => {
+    if (!k || used.has(k)) return
+    const v = byKey.get(k)
+    const keepIfBanned =
+      headSet.has(k) || nextHeadSet.has(k) || liveSet.has(k) || liveNextSet.has(k)
+    const banned = isBannedNode(v, bannedSet, k)
+    if (banned && !showBanned && !keepIfBanned) return
+    if (!v && !keepIfBanned) return
+    used.add(k)
+    const painted = paintNode(k, v, headSet, nextHeadSet, memberMeta, bannedSet)
+    const type = banned && !keepIfBanned ? 'banned' : painted.type
+    const role = banned && !keepIfBanned ? 'banned' : painted.role
+    const meta = memberMeta?.get(k)
+    cells.push({
       kind: 'node',
-      index,
       type,
       role,
-      proTxHash: v.proTxHash,
+      band,
+      proTxHash: v?.proTxHash || k,
       service: meta?.service || v?.proTxInfo?.state?.service || v?.endpoints?.[0] || null,
       valid: meta ? meta.valid !== false : true,
-      validator: v
-    }
-  })
-
-  const rank: Record<string, number> = {
-    active: 0,
-    next: 1,
-    invalid: 2,
-    inactive: 3,
-    banned: 4,
-    idle: 5
+      validator: v || { proTxHash: k }
+    })
   }
-  if (sortByType) cells.sort((a, b) => (rank[a.type] ?? 9) - (rank[b.type] ?? 9))
+
+  for (const k of headSet) {
+    if (!nextHeadSet.has(k)) pushKey(k, 'selected')
+  }
+  for (const k of headSet) {
+    if (nextHeadSet.has(k)) pushKey(k, 'carry')
+  }
+  for (const k of nextHeadSet) {
+    if (!headSet.has(k)) pushKey(k, 'upcoming')
+  }
+
+  if (Array.isArray(rotation) && rotation.length) {
+    const start = rotation.findIndex((q: any) => quorumKey(q.quorumHash) === quorumKey(headKey))
+    const from = start >= 0 ? start : 0
+    for (let i = 2; i < rotation.length; i++) {
+      const q = rotation[(from + i) % rotation.length]
+      const set = setOfMembers(membersOf, q.quorumHash)
+      for (const k of set) pushKey(k, 'later')
+    }
+  }
+
+  for (const v of list) {
+    const k = memberKey(v.proTxHash)
+    if (isBannedNode(v, bannedSet, k)) continue
+    pushKey(k, 'later')
+  }
+
+  if (showBanned) {
+    while (cells.length % GRID_COLS !== 0) {
+      cells.push({ kind: 'idle', type: 'idle', band: 'pad' })
+    }
+    for (const v of list) {
+      const k = memberKey(v.proTxHash)
+      if (!isBannedNode(v, bannedSet, k)) continue
+      pushKey(k, 'banned')
+    }
+  }
+
   return cells
 }
 
@@ -233,6 +333,69 @@ function TipRow({ label, href, children, mono }: any) {
   )
 }
 
+function turnLabel(offset: any, isLive: any) {
+  if (isLive || offset === 0) return 'Now'
+  if (offset === 1) return 'Next'
+  return `+${offset + 1}`
+}
+
+function CaptionTitle({
+  height,
+  href,
+  fallback
+}: {
+  height: number | null
+  href: string | null
+  fallback: string
+}) {
+  if (height == null) return fallback
+  const label = height.toLocaleString('en-US')
+  const body = (
+    <>
+      <BlockIcon
+        className={'QuorumCard__CaptionIcon'}
+        w={'0.875rem'}
+        h={'0.875rem'}
+        aria-hidden={'true'}
+      />
+      {label}
+    </>
+  )
+  if (!href) return body
+  return (
+    <a href={href} target={'_blank'} rel={'noreferrer'} className={'QuorumCard__BlockLink'}>
+      {body}
+    </a>
+  )
+}
+
+function bandOrder(band: string) {
+  if (band === 'selected') return 0
+  if (band === 'carry') return 1
+  if (band === 'upcoming') return 2
+  if (band === 'later') return 3
+  if (band === 'pad') return 4
+  if (band === 'banned') return 5
+  return 6
+}
+
+function visualHomeRange(cells: any[], start: number, count: number) {
+  let seen = 0
+  let first: number | null = null
+  let last: number | null = null
+  for (const c of cells) {
+    if (c.kind !== 'node' || typeof c.homeIndex !== 'number') continue
+    if (seen >= start && seen < start + count) {
+      if (first == null) first = c.homeIndex
+      last = c.homeIndex
+    }
+    seen += 1
+    if (seen >= start + count) break
+  }
+  if (first == null || last == null) return null
+  return { lo: first, hi: last }
+}
+
 function formatQuorumIds(ids: any) {
   if (!ids?.length) return null
   return ids
@@ -252,9 +415,11 @@ function NodeTooltipBody({ cell }: any) {
         ? 'Banned (PoSe)'
         : 'Banned / not in registered set'
     }
-    if (cell.role === 'invalid') return 'In current quorum · invalid'
-    if (cell.role === 'next') return 'Signs next'
-    if (cell.role === 'current' || cell.role === 'active') return 'In the live signing set'
+    if (cell.band === 'carry') return 'This turn and the following one'
+    if (cell.band === 'upcoming') return 'New in the following turn'
+    if (cell.role === 'invalid') return 'In this turn · invalid'
+    if (cell.role === 'next') return 'Following turn (orange)'
+    if (cell.role === 'current' || cell.role === 'active') return 'This turn (green)'
     return 'Queued'
   })()
 
@@ -325,14 +490,16 @@ export default function QuorumCard({
   currentQuorumLoading,
   currentQuorumError,
   quorums,
+  platformHeight,
   avgBlockTimeSec
 }: any) {
   const queryClient = useQueryClient()
+  const { l1explorerBaseUrl } = useActiveNetwork()
   const [pin, setPin] = useState<string | null>(null)
   const [focusKey, setFocusKey] = useState<string | null>(null)
   const [loadAllDetails, setLoadAllDetails] = useState(false)
-  const [pendingNode, setPendingNode] = useState<string | null>(null)
   const pickRef = useRef<HTMLDivElement | null>(null)
+  const hostsRef = useRef<HTMLDivElement | null>(null)
 
   const total = validators?.data?.pagination?.total
   const active = validatorsActive?.data?.pagination?.total
@@ -341,17 +508,8 @@ export default function QuorumCard({
 
   const hasTotal = typeof total === 'number' && total > 0
 
-  const activeN = typeof active === 'number' ? active : 0
-  const bannedN = typeof banned === 'number' ? banned : 0
-  const queuedN = typeof inactive === 'number' ? inactive : 0
-
   const currentMembers = Array.isArray(currentQuorum?.members) ? currentQuorum.members : null
   const hasRoster = Boolean(currentMembers && currentMembers.length > 0)
-
-  const currentSet = useMemo(() => {
-    if (!currentMembers) return null
-    return new Set(currentMembers.map((m: any) => memberKey(m.proTxHash)))
-  }, [currentMembers])
 
   const sortedQuorums = useMemo(() => {
     const list = [...(Array.isArray(quorums) ? quorums : [])]
@@ -547,7 +705,24 @@ export default function QuorumCard({
     if (!filling && sortedQuorums.length > 0) setLoadAllDetails(true)
   }, [filling, sortedQuorums.length])
 
-  const cells = useMemo((): any[] => {
+  const showBanned = pin === 'banned'
+  const selectedKey = pinnedKey || liveKey
+  const selectedMeta = sortedQuorums.find(q => quorumKey(q.quorumHash) === selectedKey) || null
+  const selectedOffset = selectedMeta?.offset ?? 0
+  // Even offset = pair head; odd slides onto the following turn
+  const pairOffset = selectedOffset - (selectedOffset % 2)
+  const regroup = Boolean(pinnedKey && pairOffset >= 2)
+  const pairHeadMeta = sortedQuorums.find(q => q.offset === pairOffset) || null
+  const pairFollowMeta = sortedQuorums.find(q => q.offset === pairOffset + 1) || null
+  const headKey = regroup ? quorumKey(pairHeadMeta?.quorumHash) : liveKey
+  const nextHeadKey = regroup ? quorumKey(pairFollowMeta?.quorumHash) : nextKey
+  const selectedMemberSet = useMemo(() => {
+    const k = selectedKey
+    if (!k) return new Set<string>()
+    return rosterIndex.membersOf.get(k) || new Set<string>()
+  }, [rosterIndex, selectedKey])
+
+  const homeCells = useMemo((): any[] => {
     if (filling) {
       return Array.from({ length: SKELETON_SLOTS }, (_, index) => ({
         kind: 'skel',
@@ -555,13 +730,17 @@ export default function QuorumCard({
         index
       }))
     }
-    const raw = buildPoolCells({
+    const raw = buildQueueCells({
       list,
-      currentSet,
-      nextSet: nextMembers,
-      memberMeta,
       bannedSet,
-      sortByType: true
+      memberMeta,
+      membersOf: rosterIndex.membersOf,
+      rotation: sortedQuorums,
+      headKey: liveKey,
+      nextHeadKey: nextKey,
+      liveKey,
+      liveNextKey: nextKey,
+      showBanned
     })
     return raw.map((cell: any) => {
       if (cell.kind !== 'node' || !cell.proTxHash) return cell
@@ -572,100 +751,187 @@ export default function QuorumCard({
         quorumIndexes: qs.map((q: any) => q.index).filter((n: any) => typeof n === 'number')
       }
     })
-  }, [filling, list, currentSet, nextMembers, memberMeta, bannedSet, rosterIndex])
+  }, [
+    filling,
+    list,
+    memberMeta,
+    bannedSet,
+    rosterIndex,
+    sortedQuorums,
+    liveKey,
+    nextKey,
+    showBanned
+  ])
 
-  const nextN = useMemo(() => cells.filter(c => c.type === 'next').length, [cells])
+  const homeIndexByKey = useMemo(() => {
+    const map = new Map<string, number>()
+    let n = 0
+    for (const cell of homeCells) {
+      if (cell.kind !== 'node' || !cell.proTxHash) continue
+      n += 1
+      map.set(memberKey(cell.proTxHash), n)
+    }
+    return map
+  }, [homeCells])
+
+  const cells = useMemo((): any[] => {
+    if (filling) return homeCells
+    const raw = regroup
+      ? buildQueueCells({
+          list,
+          bannedSet,
+          memberMeta,
+          membersOf: rosterIndex.membersOf,
+          rotation: sortedQuorums,
+          headKey,
+          nextHeadKey,
+          liveKey,
+          liveNextKey: nextKey,
+          showBanned
+        }).map((cell: any) => {
+          if (cell.kind !== 'node' || !cell.proTxHash) return cell
+          const qs = rosterIndex.byNode.get(memberKey(cell.proTxHash)) || []
+          return {
+            ...cell,
+            quorumHashes: qs.map((q: any) => q.hash),
+            quorumIndexes: qs.map((q: any) => q.index).filter((n: any) => typeof n === 'number')
+          }
+        })
+      : homeCells
+    const withIndex = raw.map((cell: any) => {
+      if (cell.kind !== 'node' || !cell.proTxHash) return cell
+      return { ...cell, homeIndex: homeIndexByKey.get(memberKey(cell.proTxHash)) ?? null }
+    })
+    if (!regroup) return withIndex
+    const nodes: any[] = []
+    const tail: any[] = []
+    for (const cell of withIndex) {
+      if (cell.kind === 'node') nodes.push(cell)
+      else tail.push(cell)
+    }
+    nodes.sort(
+      (a, b) => bandOrder(a.band) - bandOrder(b.band) || (a.homeIndex ?? 0) - (b.homeIndex ?? 0)
+    )
+    return nodes.concat(tail)
+  }, [
+    filling,
+    homeCells,
+    homeIndexByKey,
+    regroup,
+    list,
+    bannedSet,
+    memberMeta,
+    rosterIndex,
+    sortedQuorums,
+    headKey,
+    nextHeadKey,
+    liveKey,
+    nextKey,
+    showBanned
+  ])
+
+  const queuedN = useMemo(
+    () => homeCells.filter(c => c.kind === 'node' && c.type === 'inactive').length,
+    [homeCells]
+  )
+  const nowUniqueN = useMemo(
+    () => cells.filter(c => c.kind === 'node' && c.band === 'selected').length,
+    [cells]
+  )
+  const carryN = useMemo(
+    () => cells.filter(c => c.kind === 'node' && c.band === 'carry').length,
+    [cells]
+  )
+  const upcomingN = useMemo(
+    () => cells.filter(c => c.kind === 'node' && c.band === 'upcoming').length,
+    [cells]
+  )
+  const windowSlots = useMemo(() => {
+    const set = new Set<number>()
+    for (let i = 0; i < cells.length; i++) {
+      const cell = cells[i]
+      if (cell.kind !== 'node' || !cell.proTxHash) continue
+      if (selectedMemberSet.has(memberKey(cell.proTxHash))) set.add(i)
+    }
+    return set
+  }, [cells, selectedMemberSet])
+  const windowCount = windowSlots.size
+  const nowEnd = nowUniqueN + carryN
+  const nextStart = nowUniqueN + 1
+  const nextEnd = nowUniqueN + carryN + upcomingN
+  const headLabel = regroup ? turnLabel(pairOffset, false) : 'Now'
+  const followLabel = regroup ? turnLabel(pairOffset + 1, pairOffset + 1 === 0) : 'Next'
+  const heightAt = (offset: number) => {
+    const base = Number(platformHeight)
+    if (!Number.isFinite(base) || base <= 0) return null
+    return Math.round(base + offset * PLATFORM_DKG_BLOCKS)
+  }
+  const titleAt = (offset: number, fallback: string) => {
+    if (offset < 2) return fallback
+    const h = heightAt(offset)
+    return h != null ? `~${h.toLocaleString('en-US')}` : fallback
+  }
+  const coreHeightOf = (q: any) => {
+    const h = q?.blockHeight ?? q?.creationHeight
+    return typeof h === 'number' && h > 0 ? h : null
+  }
+  const coreHref = (h: number | null) =>
+    h != null && l1explorerBaseUrl ? `${l1explorerBaseUrl}/block/${h}` : null
+  const headCore = coreHeightOf(pairHeadMeta)
+  const followCore = coreHeightOf(pairFollowMeta)
+  const headTitle =
+    headCore != null ? `#${headCore.toLocaleString('en-US')}` : titleAt(pairOffset, headLabel)
+  const followTitle =
+    followCore != null
+      ? `#${followCore.toLocaleString('en-US')}`
+      : titleAt(pairOffset + 1, followLabel)
+  const headHref = coreHref(headCore)
+  const followHref = coreHref(followCore)
+  const headSpan = regroup ? visualHomeRange(cells, 0, nowEnd || 100) : null
+  const followSpan = regroup ? visualHomeRange(cells, nowUniqueN, 100) : null
+  const headRange = headSpan ? `${headSpan.lo}–${headSpan.hi}` : `1–${nowEnd || 100}`
+  const followRange = followSpan ? `${followSpan.lo}–${followSpan.hi}` : `${nextStart}–${nextEnd}`
 
   const counts: Record<string, number | null> = {
     total: hasTotal ? total : null,
     active: typeof active === 'number' ? active : null,
-    next: filling ? nextMembers?.size || null : hasNodeList ? nextN : null,
-    inactive:
-      typeof inactive === 'number' ? Math.max(0, inactive - (hasNodeList ? nextN : 0)) : null,
+    next: nextMembers?.size
+      ? nextMembers.size
+      : filling
+        ? null
+        : nextKey
+          ? llmq?.size || 100
+          : null,
+    inactive: filling || !hasNodeList ? (typeof inactive === 'number' ? inactive : null) : queuedN,
     banned: typeof banned === 'number' ? banned : null
   }
 
   const togglePin = (key: any) => setPin(p => (p === key ? null : key))
 
-  const cycleNodeQuorum = (hashes: any, proTx: any) => {
+  // Highlight only; do not change the selected turn
+  const focusNode = (proTx: any) => {
     const key = memberKey(proTx)
     if (key) setFocusKey(key)
-    if (!hashes?.length) {
-      setLoadAllDetails(true)
-      if (key) setPendingNode(key)
-      return
-    }
-    const ordered = hashes
-      .map((h: any) => sortedQuorumsWithMembers.find(q => quorumKey(q.quorumHash) === quorumKey(h)))
-      .filter(Boolean)
-      .sort((a: any, b: any) => a.offset - b.offset)
-    if (!ordered.length) return
-    const keys = ordered.map((q: any) => q.quorumHash)
-    if (typeof pin === 'string' && pin.startsWith('q:')) {
-      const cur = pin.slice(2)
-      const i = keys.indexOf(cur)
-      if (i === -1) {
-        setPin(`q:${keys[0]}`)
-        return
-      }
-      if (i + 1 < keys.length) {
-        setPin(`q:${keys[i + 1]}`)
-        return
-      }
-      setPin(null)
-      return
-    }
-    setPin(`q:${keys[0]}`)
   }
-
-  const detailsFetching = detailQueries.some(q => q.isFetching)
 
   useEffect(() => {
-    if (!pendingNode) return
-    if (loadAllDetails && detailsFetching) return
-    const qs = rosterIndex.byNode.get(pendingNode) || []
-    if (qs.length) {
-      const hashes = qs.map((q: any) => q.hash)
-      const ordered = hashes
-        .map((h: any) =>
-          sortedQuorumsWithMembers.find(q => quorumKey(q.quorumHash) === quorumKey(h))
-        )
-        .filter(Boolean)
-        .sort((a: any, b: any) => a.offset - b.offset)
-      if (ordered.length) setPin(`q:${ordered[0].quorumHash}`)
-    }
-    setPendingNode(null)
-  }, [detailsFetching, loadAllDetails, pendingNode, rosterIndex, sortedQuorumsWithMembers])
-
-  const blockMs =
-    typeof avgBlockTimeSec === 'number' && avgBlockTimeSec > 0
-      ? avgBlockTimeSec * 1000
-      : FALLBACK_BLOCK_MS
-
-  const turnAt = (offset: number) => new Date(Date.now() + offset * PLATFORM_DKG_BLOCKS * blockMs)
-
-  const turnLabel = (offset: any, isLive: any) => {
-    if (isLive || offset === 0) return 'Now'
-    if (offset === 1) return 'Next'
-    return `+${offset}`
-  }
+    if (!focusKey || !hostsRef.current) return
+    const row = hostsRef.current.querySelector('.QuorumCard__Host.is-focus')
+    if (row instanceof HTMLElement) row.scrollIntoView({ block: 'nearest' })
+  }, [focusKey])
 
   const pinnedQuorumHash = pinnedQuorumHashEarly
-  const pinnedQuorumSet =
-    (pinnedKey && rosterIndex.membersOf.get(pinnedKey)) ||
-    (pinnedQuorumHash ? rosterIndex.membersOf.get(pinnedQuorumHash) : null)
   const pinnedQuorumMeta = pinnedQuorumHash
     ? sortedQuorumsWithMembers.find(q => quorumKey(q.quorumHash) === pinnedKey) || null
     : null
   const quorumSize = llmq?.size || 100
-  const pinnedSignerCount = quorumSize
 
   const matrixAria =
     (hasTotal ? `${total} validators` : 'Validator pool') +
     (hasRoster && rosterSize != null ? `, ${rosterSize} in current quorum` : '')
 
   const hostRows = useMemo(() => {
-    return cells
+    return homeCells
       .filter((cell: any) => cell.kind === 'node' && cell.proTxHash)
       .map((cell: any) => {
         const nodeKey = memberKey(cell.proTxHash)
@@ -690,25 +956,17 @@ export default function QuorumCard({
           cc: typeof cc === 'string' ? cc : null,
           quorumHashes: cell.quorumHashes,
           quorumIndexes: Array.isArray(cell.quorumIndexes) ? cell.quorumIndexes : [],
-          inPinned: Boolean(pinnedQuorumSet && pinnedQuorumSet.has(nodeKey)),
+          inPinned: selectedMemberSet.has(nodeKey),
           isFocus: Boolean(focusKey && focusKey === nodeKey)
         }
       })
-      .sort((a: any, b: any) => {
-        const aIp = a.host.includes('.') || a.host.includes(':')
-        const bIp = b.host.includes('.') || b.host.includes(':')
-        if (aIp !== bIp) return aIp ? -1 : 1
-        return (
-          a.host.localeCompare(b.host, undefined, { numeric: true }) || a.key.localeCompare(b.key)
-        )
-      })
-  }, [cells, focusKey, pinnedQuorumSet])
+  }, [homeCells, focusKey, selectedMemberSet])
 
   const hostIndexByKey = useMemo(() => {
     const map = new Map<string, number>()
-    hostRows.forEach((row: any, i: number) => {
-      map.set(row.key, i + 1)
-    })
+    for (let i = 0; i < hostRows.length; i++) {
+      map.set(hostRows[i].key, i + 1)
+    }
     return map
   }, [hostRows])
 
@@ -736,17 +994,15 @@ export default function QuorumCard({
                     current block.
                   </p>
                   <p className={'QuorumCard__HelpFoot'}>
-                    Click a square to see that node&apos;s soonest turn. Click again to cycle its
-                    other quorums.
+                    Green is this turn, orange is the following one. Now/Next stay put; +2/+4…
+                    rebuild the same green+orange pair (numbers still match the list).
                   </p>
                 </div>
               }
             >
               <span className={'QuorumCard__LedeMore'}>rotating set</span>
             </Tooltip>{' '}
-            of
-            <br />
-            100 evonodes signs each block.
+            of 100 evonodes signs each block.
           </p>
         </div>
 
@@ -755,14 +1011,27 @@ export default function QuorumCard({
             {STATS.map(s => {
               const n = counts[s.key]
               const ready = typeof n === 'number'
+              const nowOn = pin === 'active' || (Boolean(pinnedKey) && pinnedKey === liveKey)
+              const nextOn = pin === 'next' || (Boolean(pinnedKey) && pinnedKey === nextKey)
+              const pressed = s.key === 'active' ? nowOn : s.key === 'next' ? nextOn : pin === s.key
               return (
                 <button
                   key={s.key}
                   type={'button'}
                   data-type={s.key}
-                  className={`QuorumCard__Leg QuorumCard__Leg--${s.key}${pin === s.key ? ' is-on' : ''}`}
-                  onClick={() => togglePin(s.key)}
-                  aria-pressed={pin === s.key}
+                  className={`QuorumCard__Leg QuorumCard__Leg--${s.key}${pressed ? ' is-on' : ''}`}
+                  onClick={() => {
+                    if (s.key === 'active' && liveHash) {
+                      togglePin(`q:${liveHash}`)
+                      return
+                    }
+                    if (s.key === 'next' && nextHash) {
+                      togglePin(`q:${nextHash}`)
+                      return
+                    }
+                    togglePin(s.key)
+                  }}
+                  aria-pressed={pressed}
                   disabled={!ready}
                 >
                   <span className={'QuorumCard__LegLabel'}>
@@ -776,35 +1045,25 @@ export default function QuorumCard({
           </div>
           {sortedQuorums.length > 0 && (
             <p className={'QuorumCard__QCaption'}>
-              {pendingNode && !pinnedQuorumMeta ? (
-                <>
-                  <span className={'QuorumCard__QCaptionHead'}>
-                    <b>Looking up</b>
+              <span className={'QuorumCard__PairCaption'}>
+                <span data-tone={'now'} className={selectedOffset % 2 === 0 ? 'is-on' : undefined}>
+                  <b className={headCore != null ? 'is-block' : undefined}>
+                    <CaptionTitle height={headCore} href={headHref} fallback={headTitle} />
+                  </b>
+                  <em>{headRange}</em>
+                </span>
+                {nextEnd > nowEnd && (
+                  <span
+                    data-tone={'next'}
+                    className={selectedOffset % 2 === 1 ? 'is-on' : undefined}
+                  >
+                    <b className={followCore != null ? 'is-block' : undefined}>
+                      <CaptionTitle height={followCore} href={followHref} fallback={followTitle} />
+                    </b>
+                    <em>{followRange}</em>
                   </span>
-                  <span className={'QuorumCard__QCaptionMeta'}>this node&apos;s quorums</span>
-                </>
-              ) : pinnedQuorumMeta ? (
-                <>
-                  <span className={'QuorumCard__QCaptionHead'}>
-                    <b>{turnLabel(pinnedQuorumMeta.offset, pinnedQuorumMeta.isLive)}</b>
-                    <span>{pinnedSignerCount} signers</span>
-                  </span>
-                  {pinnedQuorumMeta.isLive ? (
-                    <em className={'QuorumCard__QCaptionMeta'}>signing now</em>
-                  ) : (
-                    <span className={'QuorumCard__QCaptionMeta'}>
-                      ~ {turnWhenFmt.format(turnAt(pinnedQuorumMeta.offset))}
-                    </span>
-                  )}
-                </>
-              ) : (
-                <>
-                  <span className={'QuorumCard__QCaptionHead'}>
-                    <b>When does it sign?</b>
-                  </span>
-                  <span className={'QuorumCard__QCaptionMeta'}>pick a node or a turn</span>
-                </>
-              )}
+                )}
+              </span>
             </p>
           )}
         </div>
@@ -830,6 +1089,10 @@ export default function QuorumCard({
               const selected = quorumKey(q.quorumHash) === pinnedKey
               const label = turnLabel(q.offset, q.isLive)
               const signers = quorumSize
+              const turn =
+                q.isLive || q.offset === 0
+                  ? 'Now'
+                  : formatApproxTurn(approxTurnMs(q.offset, avgBlockTimeSec, signers))
               return (
                 <Tooltip
                   key={q.quorumHash}
@@ -837,11 +1100,7 @@ export default function QuorumCard({
                   title={q.offset < 2 ? label : ''}
                   content={
                     <TurnTip
-                      turn={
-                        q.isLive || q.offset === 0
-                          ? 'Now'
-                          : `~ ${turnWhenFmt.format(turnAt(q.offset))}`
-                      }
+                      turn={turn}
                       formedHeight={q.blockHeight ?? q.creationHeight}
                       signers={signers}
                     />
@@ -861,8 +1120,15 @@ export default function QuorumCard({
           </div>
         )}
         <div
-          className={`QuorumCard__Stage${pin ? ' is-pinned' : ''}${pinnedQuorumHash ? ' is-pinned-quorum' : ''}${pendingNode && !pinnedQuorumHash ? ' is-lookup' : ''}`}
-          data-pin={pinnedQuorumHash ? 'quorum' : pin || undefined}
+          className={
+            `QuorumCard__Stage` +
+            (pin ? ' is-pinned' : '') +
+            (pinnedQuorumHash && !showBanned ? ' is-pinned-quorum' : '') +
+            (showBanned ? ' is-show-banned' : '') +
+            (windowCount > 0 && !filling ? ' is-window' : '')
+          }
+          data-pin={showBanned ? undefined : pinnedQuorumHash ? 'quorum' : pin || undefined}
+          data-window={selectedOffset % 2 === 1 ? 'next' : 'live'}
         >
           <div className={'QuorumCard__Col'}>
             <div className={'QuorumCard__MatrixWrap'}>
@@ -891,28 +1157,35 @@ export default function QuorumCard({
                   const cc = cell.validator?.geoIpInfo?.countryCode
                   const ccName = cc ? countryName(cc) : null
                   const roleHint =
-                    cell.role === 'current'
-                      ? 'signing now'
-                      : cell.role === 'next'
-                        ? 'signs next'
-                        : cell.quorumIndexes?.length
-                          ? `signs ${formatQuorumIds(cell.quorumIndexes)}`
-                          : cell.role
+                    cell.band === 'carry'
+                      ? `signs ${headLabel} and ${followLabel}`
+                      : cell.band === 'upcoming'
+                        ? `new in ${followLabel}`
+                        : cell.role === 'current'
+                          ? `signing ${headLabel}`
+                          : cell.role === 'next'
+                            ? `signs ${followLabel}`
+                            : cell.quorumIndexes?.length
+                              ? `signs ${formatQuorumIds(cell.quorumIndexes)}`
+                              : cell.role
 
                   const nodeKey = memberKey(cell.proTxHash)
-                  const inPinned = Boolean(pinnedQuorumSet && pinnedQuorumSet.has(nodeKey))
+                  const inPinned = windowSlots.has(slot)
                   const isFocus = Boolean(focusKey && focusKey === nodeKey)
-                  const hostIdx = hostIndexByKey.get(nodeKey)
+                  const hostIdx = cell.homeIndex ?? hostIndexByKey.get(nodeKey)
 
                   const tile = (
                     <button
                       type={'button'}
                       data-type={dataType}
                       data-role={cell.role}
+                      data-band={cell.band || undefined}
                       className={
                         `QuorumCard__Cell QuorumCard__Cell--${cell.type}` +
                         (inPinned ? ' is-in-pin' : '') +
-                        (isFocus ? ' is-focus' : '')
+                        (isFocus ? ' is-focus' : '') +
+                        windowOutlineClass(slot, windowSlots, GRID_COLS) +
+                        (cell.band === 'carry' ? ' is-carry' : '')
                       }
                       aria-label={
                         `${hostIdx != null ? `#${hostIdx}, ` : ''}` +
@@ -920,7 +1193,7 @@ export default function QuorumCard({
                         (ccName ? `, ${ccName}` : '')
                       }
                       aria-pressed={inPinned || undefined}
-                      onClick={() => cycleNodeQuorum(cell.quorumHashes, cell.proTxHash)}
+                      onClick={() => focusNode(cell.proTxHash)}
                     >
                       {hostIdx != null && <span className={'QuorumCard__CellIdx'}>{hostIdx}</span>}
                     </button>
@@ -937,7 +1210,7 @@ export default function QuorumCard({
           </div>
 
           <div className={'QuorumCard__HostsClip'}>
-            <div className={'QuorumCard__Hosts'} aria-label={'Masternode addresses'}>
+            <div ref={hostsRef} className={'QuorumCard__Hosts'} aria-label={'Masternode addresses'}>
               {hostRows.length === 0 ? (
                 <p className={'QuorumCard__HostsEmpty'}>
                   {filling ? 'Loading addresses…' : 'No addresses'}
@@ -960,7 +1233,7 @@ export default function QuorumCard({
                           (row.inPinned ? ' is-in-pin' : '') +
                           (row.isFocus ? ' is-focus' : '')
                         }
-                        onClick={() => cycleNodeQuorum(row.quorumHashes, row.proTxHash)}
+                        onClick={() => focusNode(row.proTxHash)}
                       >
                         <span className={'QuorumCard__HostIdx'}>{i + 1}</span>
                         <i className={`QuorumCard__Dot QuorumCard__Dot--${row.dot}`} />
