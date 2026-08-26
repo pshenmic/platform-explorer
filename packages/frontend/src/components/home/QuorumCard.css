@@ -768,7 +768,7 @@
 }
 .QuorumCard__Cell {
   appearance: none;
-  border: 0;
+  border: 1px solid transparent;
   padding: 0;
   margin: 0;
   min-width: 0;
@@ -782,6 +782,7 @@
   background-clip: border-box;
   transition:
     background-color 0.15s ease,
+    border-color 0.12s ease,
     box-shadow 0.12s ease,
     opacity 0.12s ease;
   outline: none;
@@ -847,9 +848,26 @@
 .QuorumCard__Cell--next {
   --q-fill: var(--pe-color-yellow-default-rgb);
   background-color: rgba(var(--q-fill), 0.2);
+  border: 1px dotted rgba(var(--pe-color-yellow-default-rgb), 0.55);
+  animation: qCarryDash 2.4s ease-in-out infinite;
 }
 .QuorumCard__Cell--next .QuorumCard__CellIdx {
   color: var(--pe-color-yellow-default);
+}
+@keyframes qCarryDash {
+  0%,
+  100% {
+    border-color: rgba(var(--pe-color-yellow-default-rgb), 0.28);
+  }
+  50% {
+    border-color: rgba(var(--pe-color-yellow-default-rgb), 0.85);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .QuorumCard__Cell--next {
+    animation: none;
+    border-color: rgba(var(--pe-color-yellow-default-rgb), 0.55);
+  }
 }
 .QuorumCard__Cell--inactive {
   --q-fill: 255, 255, 255;
