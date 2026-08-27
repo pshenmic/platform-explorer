@@ -23,7 +23,6 @@ async function fetchQuorumDetail(hash: string) {
   }
 }
 
-// 10×10 = one 100-signer quorum
 const GRID_COLS = 10
 const SKELETON_SLOTS = 100
 const FALLBACK_BLOCK_SEC = 5
@@ -129,22 +128,17 @@ const STATS = [
   {
     key: 'total',
     label: 'Total',
-    hint: 'All evonodes on Platform'
+    hint: 'This quorum plus queued. Banned are counted separately.'
   },
   {
     key: 'active',
     label: 'Now',
-    hint: 'This quorum, in signing order'
+    hint: 'Members of this quorum. Yellow cells are already in this 100 — they also sat in the previous set.'
   },
   {
     key: 'inactive',
     label: 'Queued',
-    hint: 'Not in this quorum'
-  },
-  {
-    key: 'banned',
-    label: 'Banned',
-    hint: 'PoSe banned or left the list'
+    hint: 'Unbanned evonodes not in this quorum'
   }
 ]
 
@@ -153,25 +147,24 @@ function isPoSeBannedValidator(v: any) {
   return typeof ban === 'number' && ban >= 0
 }
 
-function isBannedNode(v: any, bannedSet: Set<any> | undefined, key: string) {
-  return Boolean(bannedSet?.has(key)) || Boolean(v && isPoSeBannedValidator(v))
-}
-
-function paintWindowNode(
+function paintPoolNode(
   k: string,
-  v: any,
+  selectedSet: Set<string>,
   prevSet: Set<string>,
-  selectedOffset: number,
   memberMeta: any,
-  bannedSet: Set<any> | undefined
+  isBanned: boolean
 ) {
-  const meta = memberMeta?.get(k)
-  if (isBannedNode(v, bannedSet, k) && selectedOffset < 0) {
-    return { type: 'banned', role: 'banned' }
+  if (!selectedSet.has(k)) {
+    return isBanned
+      ? { type: 'banned', role: 'banned', band: 'out' }
+      : { type: 'inactive', role: 'queued', band: 'wait' }
   }
-  if (prevSet.has(k)) return { type: 'next', role: 'next' }
-  if (meta?.valid === false) return { type: 'invalid', role: 'invalid' }
-  return { type: 'active', role: 'current' }
+  const meta = memberMeta?.get(k)
+  if (isBanned || meta?.valid === false) {
+    return { type: 'banned', role: 'banned', band: prevSet.has(k) ? 'carry' : 'selected' }
+  }
+  if (prevSet.has(k)) return { type: 'next', role: 'next', band: 'carry' }
+  return { type: 'active', role: 'current', band: 'selected' }
 }
 
 function orderWindowKeys(curr: string[], prevSet: Set<string>, followSet: Set<string>) {
@@ -179,82 +172,6 @@ function orderWindowKeys(curr: string[], prevSet: Set<string>, followSet: Set<st
   const toFollow = curr.filter(k => followSet.has(k) && !prevSet.has(k))
   const unique = curr.filter(k => !prevSet.has(k) && !followSet.has(k))
   return fromPrev.concat(unique, toFollow)
-}
-
-function buildWindowCells({
-  keys,
-  list,
-  prevSet,
-  followSet,
-  selectedOffset,
-  memberMeta,
-  bannedSet,
-  showBanned
-}: any) {
-  const byKey = new Map<string, any>()
-  for (const v of Array.isArray(list) ? list : []) {
-    const k = memberKey(v.proTxHash)
-    if (k) byKey.set(k, v)
-  }
-  const used = new Set<string>()
-  const cells: any[] = []
-  const pushKey = (k: string) => {
-    if (!k || used.has(k)) return
-    const v = byKey.get(k)
-    used.add(k)
-    const painted = paintWindowNode(
-      k,
-      v,
-      prevSet,
-      showBanned ? -1 : selectedOffset,
-      memberMeta,
-      bannedSet
-    )
-    const inPrev = prevSet.has(k)
-    const inFollow = followSet.has(k)
-    const band = inPrev ? 'carry' : inFollow ? 'upcoming' : 'selected'
-    const meta = memberMeta?.get(k)
-    cells.push({
-      kind: 'node',
-      type: painted.type,
-      role: painted.role,
-      band,
-      proTxHash: v?.proTxHash || k,
-      service: meta?.service || v?.proTxInfo?.state?.service || v?.endpoints?.[0] || null,
-      valid: meta ? meta.valid !== false : true,
-      validator: v || { proTxHash: k }
-    })
-  }
-  if (showBanned) {
-    for (const v of Array.isArray(list) ? list : []) {
-      const k = memberKey(v.proTxHash)
-      if (isBannedNode(v, bannedSet, k)) pushKey(k)
-    }
-    return cells
-  }
-  for (const k of keys) pushKey(k)
-  return cells
-}
-
-function rowFromValidator(v: any, type: 'inactive' | 'banned') {
-  const k = memberKey(v.proTxHash)
-  if (!k) return null
-  const rawHost = nodeHost({
-    service: v?.proTxInfo?.state?.service || v?.endpoints?.[0],
-    validator: v
-  })
-  const cc = v?.geoIpInfo?.countryCode
-  return {
-    key: k,
-    proTxHash: v.proTxHash,
-    host: rawHost ? stripPort(rawHost) : shortHash(v.proTxHash, 6, 6),
-    type,
-    dataType: type,
-    dot: type === 'banned' ? 'banned' : 'inactive',
-    cc: typeof cc === 'string' ? cc : null,
-    inPinned: false,
-    isFocus: false
-  }
 }
 
 function HostButton({
@@ -384,7 +301,7 @@ function NodeTooltipBody({ cell }: any) {
 export default function QuorumCard({
   validators,
   validatorsActive,
-  validatorsBanned,
+  validatorsBanned: _validatorsBanned,
   validatorsInactive,
   validatorsList,
   poolLoading,
@@ -402,10 +319,11 @@ export default function QuorumCard({
   const [focusKey, setFocusKey] = useState<string | null>(null)
   const pickRef = useRef<HTMLDivElement | null>(null)
   const hostsRef = useRef<HTMLDivElement | null>(null)
+  const nodeNumberRef = useRef(new Map<string, number>())
+  const nextNodeNumberRef = useRef(1)
 
   const total = validators?.data?.pagination?.total
   const active = validatorsActive?.data?.pagination?.total
-  const banned = validatorsBanned?.data?.pagination?.total
   const inactive = validatorsInactive?.data?.pagination?.total
 
   const hasTotal = typeof total === 'number' && total > 0
@@ -531,7 +449,7 @@ export default function QuorumCard({
     put(liveHash, currentQuorum?.members)
     for (const q of detailQueries) put(q.data?.quorumHash, q.data?.members)
     return map
-  }, [currentQuorum?.members, detailStamp, liveHash]) // detailStamp: query objects are new each render
+  }, [currentQuorum?.members, detailStamp, liveHash])
 
   const sortedQuorumsWithMembers = useMemo(
     () =>
@@ -589,7 +507,6 @@ export default function QuorumCard({
     }
     return set
   }, [bannedValidatorsList])
-  const showBanned = pin === 'banned'
   const selectedMemberSet = useMemo(() => {
     const k = selectedKey
     if (!k) return new Set<string>()
@@ -600,13 +517,62 @@ export default function QuorumCard({
   const selectedQueryPending = Boolean(
     selectedKey && selectedKey !== liveKey && selectedQuery && !selectedQuery.isFetched
   )
+  const neighborQueryPending = (key: string) => {
+    if (!key || key === liveKey) return false
+    if ((rosterIndex.membersOf.get(key)?.size ?? 0) > 0) return false
+    const idx = sortedQuorums.findIndex(q => quorumKey(q.quorumHash) === key)
+    if (idx < 0) return false
+    const q = detailQueries[idx]
+    return Boolean(q && !q.isFetched)
+  }
   const filling = Boolean(
-    showBanned
-      ? bannedListLoading || poolLoading
-      : currentQuorumLoading ||
-          selectedQueryPending ||
-          (Boolean(selectedKey) && selectedMemberSet.size === 0 && !currentQuorumError)
+    currentQuorumLoading ||
+      selectedQueryPending ||
+      neighborQueryPending(prevKey) ||
+      neighborQueryPending(followKey) ||
+      (Boolean(selectedKey) && selectedMemberSet.size === 0 && !currentQuorumError)
   )
+
+  const windowKeys = useMemo(() => {
+    if (filling || selectedMemberSet.size === 0) return []
+    const prevSet = rosterIndex.membersOf.get(prevKey) || new Set<string>()
+    const followSet = rosterIndex.membersOf.get(followKey) || new Set<string>()
+    return orderWindowKeys([...selectedMemberSet], prevSet, followSet)
+  }, [filling, selectedMemberSet, rosterIndex, prevKey, followKey])
+
+  const listKeys = useMemo(() => {
+    if (filling) return []
+    const seen = new Set<string>()
+    const keys: string[] = []
+    const push = (k: string, allowBanned: boolean) => {
+      if (!k || seen.has(k)) return
+      if (!allowBanned && bannedSet.has(k)) return
+      seen.add(k)
+      keys.push(k)
+    }
+    for (const k of windowKeys) push(k, true)
+    for (const v of list) push(memberKey(v.proTxHash), false)
+    for (const set of rosterIndex.membersOf.values()) {
+      for (const k of set) push(k, false)
+    }
+    return keys
+  }, [filling, windowKeys, list, rosterIndex, bannedSet])
+
+  const nodeNumberByKey = useMemo(() => {
+    const map = nodeNumberRef.current
+    if (filling) return new Map(map)
+    for (const k of listKeys) {
+      if (k && !map.has(k)) map.set(k, nextNodeNumberRef.current++)
+    }
+    return new Map(map)
+  }, [filling, listKeys])
+
+  const isLiveView = selectedOffset <= 0
+  const windowIndexByKey = useMemo(() => {
+    const map = new Map<string, number>()
+    for (let i = 0; i < windowKeys.length; i++) map.set(windowKeys[i], i + 1)
+    return map
+  }, [windowKeys])
 
   const homeCells = useMemo((): any[] => {
     if (filling) {
@@ -617,58 +583,63 @@ export default function QuorumCard({
       }))
     }
     const prevSet = rosterIndex.membersOf.get(prevKey) || new Set<string>()
-    const followSet = rosterIndex.membersOf.get(followKey) || new Set<string>()
-    const keys = showBanned ? [] : orderWindowKeys([...selectedMemberSet], prevSet, followSet)
-    return buildWindowCells({
-      keys,
-      list,
-      prevSet,
-      followSet,
-      selectedOffset,
-      memberMeta,
-      bannedSet,
-      showBanned
+    const byKey = new Map<string, any>()
+    for (const v of list) {
+      const k = memberKey(v.proTxHash)
+      if (k) byKey.set(k, v)
+    }
+    for (const v of Array.isArray(bannedValidatorsList) ? bannedValidatorsList : []) {
+      const k = memberKey(v?.proTxHash)
+      if (k && !byKey.has(k)) byKey.set(k, v)
+    }
+    return windowKeys.map(k => {
+      const v = byKey.get(k)
+      const painted = paintPoolNode(
+        k,
+        selectedMemberSet,
+        prevSet,
+        memberMeta,
+        bannedSet.has(k) || isPoSeBannedValidator(v)
+      )
+      const meta = memberMeta?.get(k)
+      return {
+        kind: 'node',
+        type: painted.type,
+        role: painted.role,
+        band: painted.band,
+        homeIndex: isLiveView
+          ? (windowIndexByKey.get(k) ?? nodeNumberByKey.get(k) ?? null)
+          : (nodeNumberByKey.get(k) ?? null),
+        proTxHash: v?.proTxHash || k,
+        service: meta?.service || v?.proTxInfo?.state?.service || v?.endpoints?.[0] || null,
+        valid: meta ? meta.valid !== false : true,
+        validator: v || { proTxHash: k }
+      }
     })
   }, [
     filling,
+    windowKeys,
     list,
     memberMeta,
-    bannedSet,
     rosterIndex,
     prevKey,
-    followKey,
     selectedMemberSet,
-    selectedOffset,
-    showBanned
+    nodeNumberByKey,
+    bannedSet,
+    bannedValidatorsList,
+    isLiveView,
+    windowIndexByKey
   ])
 
-  const homeIndexByKey = useMemo(() => {
-    const map = new Map<string, number>()
-    let n = 0
-    for (const cell of homeCells) {
-      if (cell.kind !== 'node' || !cell.proTxHash) continue
-      n += 1
-      map.set(memberKey(cell.proTxHash), n)
-    }
-    return map
-  }, [homeCells])
-
-  const cells = useMemo((): any[] => {
-    if (filling) return homeCells
-    return homeCells.map((cell: any) => {
-      if (cell.kind !== 'node' || !cell.proTxHash) return cell
-      return { ...cell, homeIndex: homeIndexByKey.get(memberKey(cell.proTxHash)) ?? null }
-    })
-  }, [filling, homeCells, homeIndexByKey])
   const windowSlots = useMemo(() => {
     const set = new Set<number>()
-    for (let i = 0; i < cells.length; i++) {
-      const cell = cells[i]
+    for (let i = 0; i < homeCells.length; i++) {
+      const cell = homeCells[i]
       if (cell.kind !== 'node' || !cell.proTxHash) continue
       if (selectedMemberSet.has(memberKey(cell.proTxHash))) set.add(i)
     }
     return set
-  }, [cells, selectedMemberSet])
+  }, [homeCells, selectedMemberSet])
   const windowCount = windowSlots.size
   const headLabel = selectedOffset <= 0 ? 'Now' : selectedOffset === 1 ? 'Next' : 'Turn'
   const headTurn = formatApproxTurn(
@@ -698,86 +669,101 @@ export default function QuorumCard({
     (hasTotal ? `${total} validators` : 'Validator pool') +
     (hasRoster && rosterSize != null ? `, ${rosterSize} in current quorum` : '')
 
-  const hostRows = useMemo(() => {
-    return homeCells
-      .filter((cell: any) => cell.kind === 'node' && cell.proTxHash)
-      .map((cell: any) => {
-        const nodeKey = memberKey(cell.proTxHash)
-        const dataType =
-          cell.type === 'invalid' ? 'active' : cell.type === 'idle' ? 'total' : cell.type
-        const dot =
-          cell.type === 'active' || cell.type === 'invalid'
-            ? 'active'
-            : cell.type === 'next'
-              ? 'next'
-              : cell.type === 'banned'
-                ? 'banned'
-                : 'inactive'
-        const cc = cell.validator?.geoIpInfo?.countryCode
-        const rawHost = nodeHost(cell)
-        return {
-          key: nodeKey,
-          proTxHash: cell.proTxHash,
-          host: rawHost ? stripPort(rawHost) : shortHash(cell.proTxHash, 6, 6),
-          type: cell.type,
-          dataType,
-          dot,
-          cc: typeof cc === 'string' ? cc : null,
-          inPinned: selectedMemberSet.has(nodeKey),
-          isFocus: Boolean(focusKey && focusKey === nodeKey)
-        }
-      })
-  }, [homeCells, focusKey, selectedMemberSet])
+  const cells = homeCells
 
-  const extraHosts = useMemo(() => {
-    const queued: any[] = []
-    const banned: any[] = []
-    const seen = new Set(selectedMemberSet)
+  const hostRows = useMemo(() => {
+    if (filling) return []
+    const prevSet = rosterIndex.membersOf.get(prevKey) || new Set<string>()
+    const byKey = new Map<string, any>()
     for (const v of list) {
       const k = memberKey(v.proTxHash)
-      if (!k || seen.has(k)) continue
-      seen.add(k)
-      const row = rowFromValidator(v, isBannedNode(v, bannedSet, k) ? 'banned' : 'inactive')
-      if (!row) continue
-      if (row.type === 'banned') banned.push(row)
-      else queued.push(row)
+      if (k) byKey.set(k, v)
     }
     for (const v of Array.isArray(bannedValidatorsList) ? bannedValidatorsList : []) {
-      const k = memberKey(v.proTxHash)
-      if (!k || seen.has(k)) continue
-      seen.add(k)
-      const row = rowFromValidator(v, 'banned')
-      if (row) banned.push(row)
+      const k = memberKey(v?.proTxHash)
+      if (k && !byKey.has(k)) byKey.set(k, v)
     }
-    return { queued, banned }
-  }, [list, bannedValidatorsList, bannedSet, selectedMemberSet])
+    const rows = listKeys.map(k => {
+      const v = byKey.get(k)
+      const painted = paintPoolNode(
+        k,
+        selectedMemberSet,
+        prevSet,
+        memberMeta,
+        bannedSet.has(k) || isPoSeBannedValidator(v)
+      )
+      const meta = memberMeta?.get(k)
+      const cell = {
+        type: painted.type,
+        proTxHash: v?.proTxHash || k,
+        service: meta?.service || v?.proTxInfo?.state?.service || v?.endpoints?.[0] || null,
+        validator: v || { proTxHash: k }
+      }
+      const dataType =
+        painted.type === 'invalid' || painted.type === 'banned'
+          ? painted.type === 'banned'
+            ? 'banned'
+            : 'active'
+          : painted.type === 'idle'
+            ? 'total'
+            : painted.type
+      const rawHost = nodeHost(cell)
+      return {
+        key: k,
+        proTxHash: cell.proTxHash,
+        host: rawHost ? stripPort(rawHost) : shortHash(cell.proTxHash, 6, 6),
+        type: painted.type,
+        dataType,
+        cc:
+          typeof cell.validator?.geoIpInfo?.countryCode === 'string'
+            ? cell.validator.geoIpInfo.countryCode
+            : null,
+        inPinned: selectedMemberSet.has(k),
+        isFocus: Boolean(focusKey && focusKey === k),
+        homeIndex:
+          isLiveView && selectedMemberSet.has(k)
+            ? (windowIndexByKey.get(k) ?? nodeNumberByKey.get(k) ?? null)
+            : (nodeNumberByKey.get(k) ?? null)
+      }
+    })
+    rows.sort((a, b) => {
+      if (isLiveView) {
+        const aNow = selectedMemberSet.has(a.key)
+        const bNow = selectedMemberSet.has(b.key)
+        if (aNow !== bNow) return aNow ? -1 : 1
+      }
+      return (a.homeIndex ?? 0) - (b.homeIndex ?? 0)
+    })
+    return rows
+  }, [
+    filling,
+    listKeys,
+    list,
+    bannedValidatorsList,
+    rosterIndex,
+    prevKey,
+    selectedMemberSet,
+    memberMeta,
+    bannedSet,
+    nodeNumberByKey,
+    focusKey,
+    isLiveView,
+    windowIndexByKey
+  ])
 
-  const hostIndexByKey = useMemo(() => {
-    const map = new Map<string, number>()
-    for (let i = 0; i < hostRows.length; i++) {
-      map.set(hostRows[i].key, i + 1)
-    }
-    return map
-  }, [hostRows])
-
+  const queuedKeysCount = listKeys.filter(k => !selectedMemberSet.has(k)).length
+  const nowCount = windowKeys.length
   const counts: Record<string, number | null> = {
-    total: hasTotal ? total : null,
-    active:
-      !showBanned && hostRows.length > 0
-        ? hostRows.length
-        : typeof active === 'number'
-          ? active
-          : null,
-    inactive: !poolLoading
-      ? extraHosts.queued.length
-      : typeof inactive === 'number'
-        ? inactive
-        : null,
-    banned: !bannedListLoading
-      ? extraHosts.banned.length
-      : typeof banned === 'number'
-        ? banned
-        : null
+    total:
+      nowCount > 0
+        ? nowCount + queuedKeysCount
+        : typeof active === 'number' && typeof inactive === 'number'
+          ? active + inactive
+          : hasTotal
+            ? total
+            : null,
+    active: nowCount > 0 ? nowCount : typeof active === 'number' ? active : null,
+    inactive: nowCount > 0 ? queuedKeysCount : typeof inactive === 'number' ? inactive : null
   }
 
   return (
@@ -804,8 +790,9 @@ export default function QuorumCard({
                     current block.
                   </p>
                   <p className={'QuorumCard__HelpFoot'}>
-                    Click a quorum: 100 nodes in signing order. Yellow cells stayed from the
-                    previous set. Queued and banned are in the list below.
+                    Click a quorum: 100 cells in signing order. Yellow cells stayed from the
+                    previous set. The IP list is this 100 plus queued nodes; numbers stay on the
+                    same IP.
                   </p>
                 </div>
               }
@@ -824,27 +811,28 @@ export default function QuorumCard({
               const nowOn = pin === 'active' || (Boolean(pinnedKey) && pinnedKey === liveKey)
               const pressed = s.key === 'active' ? nowOn : pin === s.key
               return (
-                <button
-                  key={s.key}
-                  type={'button'}
-                  data-type={s.key}
-                  className={`QuorumCard__Leg QuorumCard__Leg--${s.key}${pressed ? ' is-on' : ''}`}
-                  onClick={() => {
-                    if (s.key === 'active' && liveHash) {
-                      togglePin(`q:${liveHash}`)
-                      return
-                    }
-                    togglePin(s.key)
-                  }}
-                  aria-pressed={pressed}
-                  disabled={!ready}
-                >
-                  <span className={'QuorumCard__LegLabel'}>
-                    <i className={`QuorumCard__Dot QuorumCard__Dot--${s.key}`} />
-                    {s.label}
-                  </span>
-                  <b>{ready ? n.toLocaleString('en-US') : '—'}</b>
-                </button>
+                <Tooltip key={s.key} placement={'top'} content={s.hint}>
+                  <button
+                    type={'button'}
+                    data-type={s.key}
+                    className={`QuorumCard__Leg QuorumCard__Leg--${s.key}${pressed ? ' is-on' : ''}`}
+                    onClick={() => {
+                      if (s.key === 'active' && liveHash) {
+                        togglePin(`q:${liveHash}`)
+                        return
+                      }
+                      togglePin(s.key)
+                    }}
+                    aria-pressed={pressed}
+                    disabled={!ready}
+                  >
+                    <span className={'QuorumCard__LegLabel'}>
+                      <i className={`QuorumCard__Dot QuorumCard__Dot--${s.key}`} />
+                      {s.label}
+                    </span>
+                    <b>{ready ? n.toLocaleString('en-US') : '—'}</b>
+                  </button>
+                </Tooltip>
               )
             })}
           </div>
@@ -878,10 +866,9 @@ export default function QuorumCard({
           className={
             `QuorumCard__Stage` +
             (pin ? ' is-pinned' : '') +
-            (showBanned ? ' is-show-banned' : '') +
             (windowCount > 0 && !filling ? ' is-window' : '')
           }
-          data-pin={showBanned ? undefined : pin || undefined}
+          data-pin={pin || undefined}
           data-window={selectedOffset === 1 ? 'next' : selectedOffset > 1 ? 'later' : 'live'}
         >
           <div className={'QuorumCard__Col'}>
@@ -922,7 +909,7 @@ export default function QuorumCard({
                   const nodeKey = memberKey(cell.proTxHash)
                   const inPinned = windowSlots.has(slot)
                   const isFocus = Boolean(focusKey && focusKey === nodeKey)
-                  const hostIdx = cell.homeIndex ?? hostIndexByKey.get(nodeKey)
+                  const hostIdx = cell.homeIndex
 
                   const tile = (
                     <button
@@ -1007,53 +994,16 @@ export default function QuorumCard({
                     {filling ? 'Loading addresses…' : 'No addresses'}
                   </p>
                 ) : (
-                  <>
-                    <div className={'QuorumCard__HostsGrid'}>
-                      {hostRows.map((row, i) => (
-                        <HostButton key={row.key} row={row} index={i + 1} onClick={focusNode} />
-                      ))}
-                    </div>
-                    {!filling && extraHosts.queued.length > 0 && (
-                      <details className={'QuorumCard__HostsFold'}>
-                        <summary>
-                          <span>Queued</span>
-                          <span className={'QuorumCard__HostsFoldCount'}>
-                            <b>{extraHosts.queued.length.toLocaleString('en-US')}</b>
-                          </span>
-                        </summary>
-                        <div className={'QuorumCard__HostsGrid'}>
-                          {extraHosts.queued.map((row, i) => (
-                            <HostButton
-                              key={row.key}
-                              row={{ ...row, isFocus: Boolean(focusKey && focusKey === row.key) }}
-                              index={hostRows.length + i + 1}
-                              onClick={focusNode}
-                            />
-                          ))}
-                        </div>
-                      </details>
-                    )}
-                    {!filling && !showBanned && extraHosts.banned.length > 0 && (
-                      <details className={'QuorumCard__HostsFold'}>
-                        <summary>
-                          <span>Banned</span>
-                          <span className={'QuorumCard__HostsFoldCount'}>
-                            <b>{extraHosts.banned.length.toLocaleString('en-US')}</b>
-                          </span>
-                        </summary>
-                        <div className={'QuorumCard__HostsGrid'}>
-                          {extraHosts.banned.map((row, i) => (
-                            <HostButton
-                              key={row.key}
-                              row={{ ...row, isFocus: Boolean(focusKey && focusKey === row.key) }}
-                              index={hostRows.length + extraHosts.queued.length + i + 1}
-                              onClick={focusNode}
-                            />
-                          ))}
-                        </div>
-                      </details>
-                    )}
-                  </>
+                  <div className={'QuorumCard__HostsGrid'}>
+                    {hostRows.map(row => (
+                      <HostButton
+                        key={row.key}
+                        row={row}
+                        index={row.homeIndex ?? 0}
+                        onClick={focusNode}
+                      />
+                    ))}
+                  </div>
                 )}
               </div>
             </div>
