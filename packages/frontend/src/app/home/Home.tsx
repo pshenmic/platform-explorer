@@ -100,8 +100,8 @@ function Home() {
     staleTime: 60_000
   })
   const validatorsPoolHeadQuery = useQuery({
-    queryKey: ['home', 'validators', 'pool', 'head'],
-    queryFn: () => Api.getValidators(1, VALIDATORS_PAGE, 'desc'),
+    queryKey: ['home', 'validators', 'pool', 'head', 'unbanned'],
+    queryFn: () => Api.getValidators(1, VALIDATORS_PAGE, 'desc', { isBanned: 'false' }),
     staleTime: 60_000,
     refetchInterval: 120_000
   })
@@ -115,11 +115,11 @@ function Home() {
   const poolPages =
     typeof poolTotal === 'number' ? Math.max(1, Math.ceil(poolTotal / VALIDATORS_PAGE)) : 1
   const validatorsPoolRestQuery = useQuery({
-    queryKey: ['home', 'validators', 'pool', 'rest', poolTotal],
+    queryKey: ['home', 'validators', 'pool', 'rest', 'unbanned', poolTotal],
     queryFn: async () => {
       const rest = await Promise.all(
         Array.from({ length: poolPages - 1 }, (_, i) =>
-          Api.getValidators(i + 2, VALIDATORS_PAGE, 'desc')
+          Api.getValidators(i + 2, VALIDATORS_PAGE, 'desc', { isBanned: 'false' })
         )
       )
       const rows = []
