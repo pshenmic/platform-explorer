@@ -317,6 +317,7 @@ export default function QuorumCard({
   const { l1explorerBaseUrl } = useActiveNetwork()
   const [pin, setPin] = useState<string | null>(null)
   const [focusKey, setFocusKey] = useState<string | null>(null)
+  const [loadAllDetails, setLoadAllDetails] = useState(false)
   const pickRef = useRef<HTMLDivElement | null>(null)
   const hostsRef = useRef<HTMLDivElement | null>(null)
   const nodeNumberRef = useRef(new Map<string, number>())
@@ -407,7 +408,12 @@ export default function QuorumCard({
       const hash = q.quorumHash as string
       const key = quorumKey(hash)
       const isLive = Boolean(key && key === liveKey)
-      const needed = key === nextKey || key === pinnedKey || key === prevKey || key === followKey
+      const needed =
+        key === nextKey ||
+        key === pinnedKey ||
+        key === prevKey ||
+        key === followKey ||
+        loadAllDetails
       return {
         queryKey: ['home', 'quorums', 'detail', key],
         queryFn: () => fetchQuorumDetail(hash),
@@ -461,6 +467,7 @@ export default function QuorumCard({
   )
 
   const rosterIndex = useMemo(() => {
+    const byNode = new Map()
     const membersOf = new Map()
     for (const q of sortedQuorumsWithMembers) {
       const hash = q.quorumHash
@@ -468,12 +475,22 @@ export default function QuorumCard({
       const set = new Set()
       for (const m of q.members || []) {
         const k = memberKey(m.proTxHash)
-        if (k) set.add(k)
+        if (!k) continue
+        set.add(k)
+        const arr = byNode.get(k) || []
+        arr.push({ hash: key, index: q.offset, isCurrent: q.isLive })
+        byNode.set(k, arr)
       }
       membersOf.set(key, set)
       if (hash && hash !== key) membersOf.set(hash, set)
     }
-    return { membersOf }
+    for (const arr of byNode.values()) {
+      arr.sort((a: any, b: any) => {
+        if (a.isCurrent !== b.isCurrent) return a.isCurrent ? -1 : 1
+        return a.index - b.index
+      })
+    }
+    return { byNode, membersOf }
   }, [sortedQuorumsWithMembers])
 
   const memberMeta = useMemo(() => {
@@ -657,7 +674,17 @@ export default function QuorumCard({
     const key = memberKey(proTx)
     if (!key) return
     setFocusKey(k => (k === key ? null : key))
+    setLoadAllDetails(true)
   }
+
+  const signedHashes = useMemo(() => {
+    const set = new Set<string>()
+    if (!focusKey) return set
+    for (const q of rosterIndex.byNode.get(focusKey) || []) {
+      if (q?.hash) set.add(q.hash)
+    }
+    return set
+  }, [focusKey, rosterIndex])
 
   useEffect(() => {
     if (!focusKey || !hostsRef.current) return
@@ -958,6 +985,7 @@ export default function QuorumCard({
                   const formedHeight = q.blockHeight ?? q.creationHeight
                   const qk = quorumKey(q.quorumHash)
                   const on = qk === selectedKey
+                  const signed = Boolean(qk && signedHashes.has(qk))
                   const heightLabel =
                     typeof formedHeight === 'number' && formedHeight > 0
                       ? String(formedHeight)
@@ -966,7 +994,10 @@ export default function QuorumCard({
                     <button
                       key={q.quorumHash}
                       type={'button'}
-                      className={`QuorumCard__QBtn${on ? ' is-on' : ''}${q.isLive ? ' is-live' : ''}`}
+                      className={
+                        `QuorumCard__QBtn${on ? ' is-on' : ''}${q.isLive ? ' is-live' : ''}` +
+                        (signed ? ' is-signed' : '')
+                      }
                       aria-label={`Block ${heightLabel}`}
                       aria-pressed={on}
                       onClick={() => togglePin(`q:${q.quorumHash}`)}

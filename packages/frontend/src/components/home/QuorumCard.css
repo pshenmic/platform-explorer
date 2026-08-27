@@ -754,6 +754,33 @@
   border-color: rgba(var(--pe-color-brand-light-rgb), 0.55);
   background: rgba(var(--pe-color-brand-normal-rgb), 0.22);
 }
+.QuorumCard__QBtn.is-signed {
+  border: 1px dotted var(--pe-color-white-50);
+  background: rgba(var(--pe-color-white-50-rgb), 0.14);
+  animation: qSignedDash 1.6s linear infinite;
+}
+.QuorumCard__QBtn.is-signed.is-on {
+  border-style: dotted;
+  border-color: var(--pe-color-white-50);
+  background: rgba(var(--pe-color-white-50-rgb), 0.2);
+}
+@keyframes qSignedDash {
+  0% {
+    border-color: rgba(var(--pe-color-white-50-rgb), 0.35);
+  }
+  50% {
+    border-color: var(--pe-color-white-50);
+  }
+  100% {
+    border-color: rgba(var(--pe-color-white-50-rgb), 0.35);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .QuorumCard__QBtn.is-signed {
+    animation: none;
+    border-color: var(--pe-color-white-50);
+  }
+}
 .QuorumCard__Matrix {
   display: grid;
   gap: 2px;
