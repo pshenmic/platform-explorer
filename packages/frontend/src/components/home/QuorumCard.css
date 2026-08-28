@@ -56,7 +56,7 @@
   margin-bottom: 6px;
 }
 .QuorumCard__HelpTip {
-  max-width: 16rem;
+  max-width: 18rem;
   font-size: 0.75rem;
   line-height: 1.5;
   text-align: left;
@@ -69,6 +69,36 @@
   color: rgba(255, 255, 255, 0.55);
   font-size: 0.6875rem;
   line-height: 1.45;
+}
+.QuorumCard__HelpMark {
+  color: var(--pe-color-brand-light);
+  border-bottom: 1px dotted rgba(var(--pe-color-brand-light-rgb), 0.6);
+  text-decoration: none;
+  white-space: nowrap;
+}
+a.QuorumCard__HelpMark:hover {
+  border-bottom-style: solid;
+}
+.QuorumCard__HelpSwatch {
+  font-weight: 700;
+  padding: 0 0.3em;
+  border-radius: 3px;
+}
+.QuorumCard__HelpSwatch--active {
+  color: var(--pe-color-green-label);
+  background-color: rgba(var(--pe-color-green-label-rgb), 0.2);
+}
+.QuorumCard__HelpSwatch--next {
+  color: var(--pe-color-yellow-default);
+  background-color: rgba(var(--pe-color-yellow-default-rgb), 0.2);
+}
+.QuorumCard__HelpSwatch--inactive {
+  color: rgba(255, 255, 255, 0.78);
+  background-color: rgba(255, 255, 255, 0.22);
+}
+.QuorumCard__HelpSwatch--banned {
+  color: var(--pe-color-red-default);
+  background-color: rgba(var(--pe-color-red-default-rgb), 0.2);
 }
 .QuorumCard__Title {
   font-family: var(--pe-font-heading);
@@ -524,6 +554,11 @@
   min-width: 0;
 }
 .QuorumCard__QCaption {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  align-items: baseline;
+  gap: 0.25em 0.7em;
   margin: 0;
   max-width: 100%;
   overflow: visible;
@@ -532,6 +567,10 @@
   line-height: 1.55;
   color: var(--pe-color-gray-500);
   text-align: right;
+}
+.QuorumCard__QEta {
+  white-space: nowrap;
+  color: var(--pe-color-gray-250);
 }
 .QuorumCard__QCaption b {
   font-weight: 800;
@@ -808,10 +847,9 @@
   z-index: 0;
   background-clip: border-box;
   transition:
-    background-color 0.15s ease,
-    border-color 0.12s ease,
-    box-shadow 0.12s ease,
-    opacity 0.12s ease;
+    background-color 0.4s ease,
+    border-color 0.4s ease,
+    box-shadow 0.35s ease;
   outline: none;
   text-decoration: none;
   display: flex;
@@ -829,6 +867,7 @@
   color: var(--pe-color-gray-900);
   pointer-events: none;
   user-select: none;
+  transition: color 0.4s ease;
 }
 .QuorumCard__Cell--inactive .QuorumCard__CellIdx,
 .QuorumCard__Cell--idle .QuorumCard__CellIdx {
@@ -875,8 +914,9 @@
 .QuorumCard__Cell--next {
   --q-fill: var(--pe-color-yellow-default-rgb);
   background-color: rgba(var(--q-fill), 0.2);
-  border: 1px dotted rgba(var(--pe-color-yellow-default-rgb), 0.55);
-  animation: qCarryDash 2.4s ease-in-out infinite;
+  border-style: dotted;
+  border-color: rgba(var(--pe-color-yellow-default-rgb), 0.55);
+  animation: qCarryDash 2.4s ease-in-out 0.4s infinite;
 }
 .QuorumCard__Cell--next .QuorumCard__CellIdx {
   color: var(--pe-color-yellow-default);
@@ -891,6 +931,12 @@
   }
 }
 @media (prefers-reduced-motion: reduce) {
+  .QuorumCard__Cell,
+  .QuorumCard__CellIdx,
+  .QuorumCard__Host,
+  .QuorumCard__HostIdx {
+    transition: none;
+  }
   .QuorumCard__Cell--next {
     animation: none;
     border-color: rgba(var(--pe-color-yellow-default-rgb), 0.55);
@@ -917,6 +963,10 @@
   opacity: 0.22;
   filter: none;
 }
+.QuorumCard__Cell.is-search-hit {
+  box-shadow: inset 0 0 0 1px var(--pe-color-white-50);
+  filter: brightness(1.12);
+}
 @media (hover: hover) and (pointer: fine) {
   .QuorumCard__Cell:not(.QuorumCard__Cell--idle):not(.is-focus):hover {
     background-color: rgba(var(--q-fill), 0.38);
@@ -930,6 +980,8 @@
 }
 .QuorumCard__HostsClip {
   position: relative;
+  display: flex;
+  flex-direction: column;
   min-width: 0;
   min-height: 0;
   height: 100%;
@@ -938,16 +990,59 @@
   background: rgba(255, 255, 255, 0.02);
   border: 1px solid rgba(255, 255, 255, 0.06);
 }
-.QuorumCard__Hosts {
+.QuorumCard__HostSearch {
   position: absolute;
-  inset: 0;
+  top: 0;
+  right: 0;
+  left: 0;
+  z-index: 2;
+  display: block;
+  padding: 8px;
+  pointer-events: none;
+  background: none;
+}
+.QuorumCard__HostSearchLabel {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+}
+.QuorumCard__HostSearchInput {
+  display: block;
+  width: 100%;
+  margin: 0;
+  padding: 7px 10px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 10px;
+  background: var(--pe-color-gray-900);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.28);
+  color: #fff;
+  font-family: var(--pe-font-mono);
+  font-size: 0.75rem;
+  line-height: 1.3;
+  outline: none;
+  pointer-events: auto;
+}
+.QuorumCard__HostSearchInput::placeholder {
+  color: var(--pe-color-gray-500);
+}
+.QuorumCard__HostSearchInput:focus {
+  border-color: rgba(var(--pe-color-brand-light-rgb), 0.55);
+}
+.QuorumCard__Hosts {
+  position: relative;
+  flex: 1 1 auto;
   display: flex;
   flex-direction: column;
   gap: 8px;
   min-width: 0;
+  min-height: 0;
   overflow-x: hidden;
   overflow-y: auto;
-  padding: 6px;
+  padding: 48px 6px 6px;
   scrollbar-width: thin;
 }
 .QuorumCard__HostsGrid {
@@ -1047,6 +1142,9 @@
   line-height: 1.3;
   text-align: left;
   cursor: pointer;
+  transition:
+    background-color 0.4s ease,
+    color 0.4s ease;
 }
 .QuorumCard__HostIdx {
   flex-shrink: 0;
@@ -1055,6 +1153,7 @@
   font-variant-numeric: tabular-nums;
   text-align: right;
   color: var(--pe-color-gray-100);
+  transition: color 0.4s ease;
 }
 .QuorumCard__Host--active .QuorumCard__HostIdx,
 .QuorumCard__Host--invalid .QuorumCard__HostIdx {
