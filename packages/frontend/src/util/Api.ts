@@ -1,4 +1,4 @@
-import { ResponseErrorNotFound, ResponseErrorTimeout } from './Errors'
+import { ResponseErrorInternalServer, ResponseErrorNotFound, ResponseErrorTimeout } from './Errors'
 import type {
   Block,
   ContestedResource,
@@ -57,16 +57,36 @@ const call = async <T>(path: string, method: HttpMethod, body?: unknown): Promis
 
     if (response.status === 200) {
       return response.json() as Promise<T>
-    } else if (response.status === 404) {
-      throw new ResponseErrorNotFound()
-    } else {
-      const text = await response.text()
-      console.error(text)
-      const error = new Error('Unknown status code: ' + response.status)
-      throw error
     }
+    if (response.status === 404) {
+      throw new ResponseErrorNotFound()
+    }
+    const text = await response.text()
+    let message = ''
+    try {
+      const parsed = JSON.parse(text) as { error?: string; message?: string }
+      message = parsed.error || parsed.message || ''
+    } catch {
+      message = text
+    }
+    const backendDown =
+      /tenderdash|dashcore backend is not available/i.test(message) ||
+      response.status === 502 ||
+      response.status === 503 ||
+      response.status === 504 ||
+      response.status === 500
+    if (backendDown) {
+      throw new ResponseErrorInternalServer(message || undefined)
+    }
+    throw new Error(message || `Unknown status code: ${response.status}`)
   } catch (e) {
-    if (!(e instanceof ResponseErrorNotFound)) console.error(e)
+    if (
+      !(e instanceof ResponseErrorNotFound) &&
+      !(e instanceof ResponseErrorTimeout) &&
+      !(e instanceof ResponseErrorInternalServer)
+    ) {
+      console.error(e)
+    }
     throw e
   }
 }
