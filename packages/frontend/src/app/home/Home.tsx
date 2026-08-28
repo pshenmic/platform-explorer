@@ -366,7 +366,7 @@ function Home() {
               currentQuorumLoading={currentQuorumQuery.isPending || currentQuorumQuery.isLoading}
               currentQuorumError={currentQuorumQuery.isError}
               quorums={quorumsListQuery.data}
-              avgBlockTimeSec={computeAvgBlockTime(blocksQuery.data?.resultSet)}
+              l1LockedHeight={blocksQuery.data?.resultSet?.[0]?.header?.l1LockedHeight}
             />
           </div>
         </div>

@@ -10,6 +10,8 @@ import { BlockIcon } from '../ui/icons'
 import * as Api from '../../util/Api'
 import { ResponseErrorNotFound } from '../../util/Errors'
 import { useActiveNetwork } from '../../contexts'
+import { TimeDelta } from '../data'
+import { useCountUp } from './hooks'
 import './QuorumCard.css'
 
 const QUORUM_DETAIL_STALE = 60_000
@@ -25,24 +27,24 @@ async function fetchQuorumDetail(hash: string) {
 
 const GRID_COLS = 10
 const SKELETON_SLOTS = 100
-const FALLBACK_BLOCK_SEC = 5
+const CORE_BLOCK_SEC = 150
 
-function formatApproxTurn(ms: number) {
-  const d = new Date(ms)
-  const date = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
-  const time = d.toLocaleTimeString('en-US', {
-    hour: 'numeric',
-    minute: '2-digit',
-    second: '2-digit',
-    hour12: true
-  })
-  return `~${date} ${time}`
+function quorumHeight(q: any) {
+  const n = q?.blockHeight ?? q?.creationHeight
+  return typeof n === 'number' && n > 0 ? n : null
 }
 
-function approxTurnMs(offset: number, blockSec: unknown, signers: number) {
-  const sec = typeof blockSec === 'number' && blockSec > 0 ? blockSec : FALLBACK_BLOCK_SEC
-  const n = signers > 0 ? signers : 100
-  return Date.now() + offset * n * sec * 1000
+function quorumStep(list: any[]) {
+  const hs = list.map(quorumHeight).filter((n): n is number => n != null)
+  hs.sort((a, b) => a - b)
+  const diffs: number[] = []
+  for (let i = 1; i < hs.length; i++) {
+    const d = hs[i] - hs[i - 1]
+    if (d > 0 && d < 200) diffs.push(d)
+  }
+  if (!diffs.length) return 24
+  diffs.sort((a, b) => a - b)
+  return diffs[Math.floor(diffs.length / 2)]
 }
 
 const regionNames = (() => {
@@ -125,21 +127,9 @@ function quorumKey(hash: unknown) {
 }
 
 const STATS = [
-  {
-    key: 'total',
-    label: 'Total',
-    hint: 'This quorum plus queued. Banned are counted separately.'
-  },
-  {
-    key: 'active',
-    label: 'Now',
-    hint: 'Members of this quorum. Yellow cells are already in this 100 — they also sat in the previous set.'
-  },
-  {
-    key: 'inactive',
-    label: 'Queued',
-    hint: 'Unbanned evonodes not in this quorum'
-  }
+  { key: 'total', label: 'Total', hint: 'This quorum plus queued' },
+  { key: 'active', label: 'Now', hint: 'This quorum of 100' },
+  { key: 'inactive', label: 'Queued', hint: 'Not in this quorum' }
 ]
 
 function isPoSeBannedValidator(v: any) {
@@ -172,6 +162,38 @@ function orderWindowKeys(curr: string[], prevSet: Set<string>, followSet: Set<st
   const toFollow = curr.filter(k => followSet.has(k) && !prevSet.has(k))
   const unique = curr.filter(k => !prevSet.has(k) && !followSet.has(k))
   return fromPrev.concat(unique, toFollow)
+}
+
+function hostMatches(row: any, query: string) {
+  const s = query.trim().toLowerCase()
+  if (!s) return true
+  if (String(row.homeIndex ?? '').includes(s)) return true
+  if (typeof row.host === 'string' && row.host.toLowerCase().includes(s)) return true
+  const proTx = typeof row.proTxHash === 'string' ? row.proTxHash.toLowerCase() : ''
+  return proTx.includes(s.replace(/^0x/, ''))
+}
+
+function RollingIdx({ value }: { value: number }) {
+  const n = useCountUp(value, 500, true)
+  return <span className={'QuorumCard__CellIdx'}>{typeof n === 'number' ? n : value}</span>
+}
+
+function HostSearch({ value, onChange }: { value: string; onChange: (next: string) => void }) {
+  return (
+    <label className={'QuorumCard__HostSearch'}>
+      <span className={'QuorumCard__HostSearchLabel'}>Find node</span>
+      <input
+        type={'search'}
+        value={value}
+        onChange={e => onChange(e.target.value)}
+        placeholder={'IP or proTx'}
+        autoComplete={'off'}
+        spellCheck={false}
+        aria-label={'Find node by IP or proTx'}
+        className={'QuorumCard__HostSearchInput'}
+      />
+    </label>
+  )
 }
 
 function HostButton({
@@ -304,19 +326,20 @@ export default function QuorumCard({
   validatorsBanned: _validatorsBanned,
   validatorsInactive,
   validatorsList,
-  poolLoading,
+  poolLoading: _poolLoading,
   bannedValidatorsList,
-  bannedListLoading,
+  bannedListLoading: _bannedListLoading,
   currentQuorum,
   currentQuorumLoading,
   currentQuorumError,
   quorums,
-  avgBlockTimeSec
+  l1LockedHeight
 }: any) {
   const queryClient = useQueryClient()
   const { l1explorerBaseUrl } = useActiveNetwork()
   const [pin, setPin] = useState<string | null>(null)
   const [focusKey, setFocusKey] = useState<string | null>(null)
+  const [hostQuery, setHostQuery] = useState('')
   const [loadAllDetails, setLoadAllDetails] = useState(false)
   const pickRef = useRef<HTMLDivElement | null>(null)
   const hostsRef = useRef<HTMLDivElement | null>(null)
@@ -534,19 +557,9 @@ export default function QuorumCard({
   const selectedQueryPending = Boolean(
     selectedKey && selectedKey !== liveKey && selectedQuery && !selectedQuery.isFetched
   )
-  const neighborQueryPending = (key: string) => {
-    if (!key || key === liveKey) return false
-    if ((rosterIndex.membersOf.get(key)?.size ?? 0) > 0) return false
-    const idx = sortedQuorums.findIndex(q => quorumKey(q.quorumHash) === key)
-    if (idx < 0) return false
-    const q = detailQueries[idx]
-    return Boolean(q && !q.isFetched)
-  }
   const filling = Boolean(
     currentQuorumLoading ||
       selectedQueryPending ||
-      neighborQueryPending(prevKey) ||
-      neighborQueryPending(followKey) ||
       (Boolean(selectedKey) && selectedMemberSet.size === 0 && !currentQuorumError)
   )
 
@@ -659,10 +672,29 @@ export default function QuorumCard({
   }, [homeCells, selectedMemberSet])
   const windowCount = windowSlots.size
   const headLabel = selectedOffset <= 0 ? 'Now' : selectedOffset === 1 ? 'Next' : 'Turn'
-  const headTurn = formatApproxTurn(
-    approxTurnMs(selectedOffset, avgBlockTimeSec, llmq?.size || 100)
-  )
   const headCore = selectedMeta?.blockHeight ?? selectedMeta?.creationHeight
+  const headTurn = typeof headCore === 'number' ? `Core ${headCore.toLocaleString('en-US')}` : '—'
+  const quorumEta = useMemo(() => {
+    const step = quorumStep(sortedQuorums)
+    const heights = sortedQuorums.map(quorumHeight).filter((n): n is number => n != null)
+    if (!heights.length || step <= 0) return null
+    const maxH = Math.max(...heights)
+    const liveH = quorumHeight(sortedQuorums.find(q => q.isLive))
+    const tip =
+      typeof l1LockedHeight === 'number' && l1LockedHeight > 0 ? l1LockedHeight : (liveH ?? maxH)
+    let toNext = step
+    if (tip <= maxH) toNext = maxH + step - tip
+    else {
+      const r = (tip - maxH) % step
+      toNext = r === 0 ? step : step - r
+    }
+    const offset = Math.max(0, selectedOffset)
+    const blocks = offset <= 0 ? toNext : toNext + (offset - 1) * step
+    return {
+      kind: offset <= 0 ? 'left' : 'in',
+      end: new Date(Date.now() + Math.max(1, blocks) * CORE_BLOCK_SEC * 1000)
+    }
+  }, [sortedQuorums, selectedOffset, l1LockedHeight])
   const headHref =
     typeof headCore === 'number' && headCore > 0 && l1explorerBaseUrl
       ? `${l1explorerBaseUrl}/block/${headCore}`
@@ -687,10 +719,16 @@ export default function QuorumCard({
   }, [focusKey, rosterIndex])
 
   useEffect(() => {
-    if (!focusKey || !hostsRef.current) return
-    const row = hostsRef.current.querySelector('.QuorumCard__Host.is-focus')
+    if (!hostsRef.current) return
+    const sel = focusKey
+      ? '.QuorumCard__Host.is-focus'
+      : hostQuery.trim()
+        ? '.QuorumCard__Host'
+        : null
+    if (!sel) return
+    const row = hostsRef.current.querySelector(sel)
     if (row instanceof HTMLElement) row.scrollIntoView({ block: 'nearest' })
-  }, [focusKey])
+  }, [focusKey, hostQuery])
 
   const matrixAria =
     (hasTotal ? `${total} validators` : 'Validator pool') +
@@ -778,6 +816,24 @@ export default function QuorumCard({
     windowIndexByKey
   ])
 
+  const visibleHostRows = useMemo(
+    () => (hostQuery.trim() ? hostRows.filter(row => hostMatches(row, hostQuery)) : hostRows),
+    [hostRows, hostQuery]
+  )
+  const searchMatchKeys = useMemo(() => {
+    if (!hostQuery.trim()) return null
+    return new Set(visibleHostRows.map(row => row.key))
+  }, [hostQuery, visibleHostRows])
+
+  useEffect(() => {
+    if (!searchMatchKeys || searchMatchKeys.size !== 1) return
+    const only = visibleHostRows[0]?.proTxHash
+    if (only) {
+      setFocusKey(memberKey(only))
+      setLoadAllDetails(true)
+    }
+  }, [searchMatchKeys, visibleHostRows])
+
   const queuedKeysCount = listKeys.filter(k => !selectedMemberSet.has(k)).length
   const nowCount = windowKeys.length
   const counts: Record<string, number | null> = {
@@ -813,13 +869,54 @@ export default function QuorumCard({
               content={
                 <div className={'QuorumCard__HelpTip'}>
                   <p>
-                    Mainnet keeps 24 formed Platform quorums (LLMQ 100/67). Only one signs the
-                    current block.
+                    A{' '}
+                    <a
+                      className={'QuorumCard__HelpMark'}
+                      href={'https://docs.dash.org/en/stable/docs/core/dips/dip-0006.html'}
+                      target={'_blank'}
+                      rel={'noreferrer'}
+                      onClick={e => e.stopPropagation()}
+                    >
+                      quorum
+                    </a>{' '}
+                    is 100 evonodes. We keep{' '}
+                    <a
+                      className={'QuorumCard__HelpMark'}
+                      href={
+                        'https://docs.dash.org/en/stable/docs/core/guide/dash-features-masternode-quorums.html'
+                      }
+                      target={'_blank'}
+                      rel={'noreferrer'}
+                      onClick={e => e.stopPropagation()}
+                    >
+                      24 of these groups
+                    </a>
+                    ; they take turns signing.
                   </p>
-                  <p className={'QuorumCard__HelpFoot'}>
-                    Click a quorum: 100 cells in signing order. Yellow cells stayed from the
-                    previous set. The IP list is this 100 plus queued nodes; numbers stay on the
-                    same IP.
+                  <p>
+                    The grid is that hundred:{' '}
+                    <b className={'QuorumCard__HelpSwatch QuorumCard__HelpSwatch--active'}>green</b>{' '}
+                    are new here,{' '}
+                    <b className={'QuorumCard__HelpSwatch QuorumCard__HelpSwatch--next'}>yellow</b>{' '}
+                    were in the last group.{' '}
+                    <b className={'QuorumCard__HelpSwatch QuorumCard__HelpSwatch--inactive'}>
+                      Gray
+                    </b>{' '}
+                    in the list wait their turn.
+                  </p>
+                  <p>
+                    A <b className={'QuorumCard__HelpSwatch QuorumCard__HelpSwatch--banned'}>red</b>{' '}
+                    cell can still sit here: the group is built first, a{' '}
+                    <a
+                      className={'QuorumCard__HelpMark'}
+                      href={'https://docs.dash.org/en/stable/docs/core/dips/dip-0003.html'}
+                      target={'_blank'}
+                      rel={'noreferrer'}
+                      onClick={e => e.stopPropagation()}
+                    >
+                      ban
+                    </a>{' '}
+                    can land after.
                   </p>
                 </div>
               }
@@ -876,6 +973,19 @@ export default function QuorumCard({
                 </a>
               ) : (
                 headTurn
+              )}
+              {quorumEta && (
+                <span
+                  className={'QuorumCard__QEta'}
+                  title={'About 24 Core blocks per turn (~2.5 min each)'}
+                >
+                  ~{quorumEta.kind}{' '}
+                  <TimeDelta
+                    endDate={quorumEta.end}
+                    format={'compact'}
+                    showTimestampTooltip={false}
+                  />
+                </span>
               )}
             </p>
           )}
@@ -936,6 +1046,7 @@ export default function QuorumCard({
                   const nodeKey = memberKey(cell.proTxHash)
                   const inPinned = windowSlots.has(slot)
                   const isFocus = Boolean(focusKey && focusKey === nodeKey)
+                  const isSearchHit = Boolean(searchMatchKeys?.has(nodeKey))
                   const hostIdx = cell.homeIndex
 
                   const tile = (
@@ -948,6 +1059,7 @@ export default function QuorumCard({
                         `QuorumCard__Cell QuorumCard__Cell--${cell.type}` +
                         (inPinned ? ' is-in-pin' : '') +
                         (isFocus ? ' is-focus' : '') +
+                        (isSearchHit ? ' is-search-hit' : '') +
                         (cell.band === 'carry' ? ' is-carry' : '')
                       }
                       aria-label={
@@ -958,7 +1070,7 @@ export default function QuorumCard({
                       aria-pressed={inPinned || undefined}
                       onClick={() => focusNode(cell.proTxHash)}
                     >
-                      {hostIdx != null && <span className={'QuorumCard__CellIdx'}>{hostIdx}</span>}
+                      {hostIdx != null && <RollingIdx value={hostIdx} />}
                     </button>
                   )
 
@@ -1015,6 +1127,7 @@ export default function QuorumCard({
               </div>
             )}
             <div className={'QuorumCard__HostsClip'}>
+              {hostRows.length > 0 && <HostSearch value={hostQuery} onChange={setHostQuery} />}
               <div
                 ref={hostsRef}
                 className={'QuorumCard__Hosts'}
@@ -1024,9 +1137,11 @@ export default function QuorumCard({
                   <p className={'QuorumCard__HostsEmpty'}>
                     {filling ? 'Loading addresses…' : 'No addresses'}
                   </p>
+                ) : visibleHostRows.length === 0 ? (
+                  <p className={'QuorumCard__HostsEmpty'}>No matching node</p>
                 ) : (
                   <div className={'QuorumCard__HostsGrid'}>
-                    {hostRows.map(row => (
+                    {visibleHostRows.map(row => (
                       <HostButton
                         key={row.key}
                         row={row}
