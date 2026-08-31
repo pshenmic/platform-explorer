@@ -220,6 +220,8 @@ function HostButton({
           height={14}
           unoptimized
         />
+      ) : row.geoPending ? (
+        <Skeleton className={'QuorumCard__HostFlag'} w={14} h={14} circle />
       ) : (
         <span className={'QuorumCard__HostFlag is-empty'} aria-hidden={'true'} />
       )}
@@ -761,16 +763,18 @@ export default function QuorumCard({
             ? 'total'
             : painted.type
       const rawHost = nodeHost(cell)
+      const cc =
+        typeof cell.validator?.geoIpInfo?.countryCode === 'string'
+          ? cell.validator.geoIpInfo.countryCode
+          : null
       return {
         key: k,
         proTxHash: cell.proTxHash,
         host: rawHost ? stripPort(rawHost) : shortHash(cell.proTxHash, 6, 6),
         type: painted.type,
         dataType,
-        cc:
-          typeof cell.validator?.geoIpInfo?.countryCode === 'string'
-            ? cell.validator.geoIpInfo.countryCode
-            : null,
+        cc,
+        geoPending: Boolean(poolLoading && !cc),
         inPinned: selectedMemberSet.has(k),
         isFocus: Boolean(focusKey && focusKey === k),
         homeIndex: nodeNumberByKey.get(k) ?? null
@@ -780,6 +784,7 @@ export default function QuorumCard({
     return rows
   }, [
     filling,
+    poolLoading,
     listKeys,
     list,
     bannedValidatorsList,
