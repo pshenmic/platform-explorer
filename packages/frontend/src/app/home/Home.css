@@ -34,8 +34,11 @@
   height: 100%;
 }
 @media screen and (max-width: 47.99em) {
-  .HomeCardPair--leaders .HomeCardPair__Cell:last-child,
-  .HomeCardPair--leaders .HomeCardPair__Cell:last-child > * {
+  .HomeCardPair--leaders {
+    align-items: start;
+  }
+  .HomeCardPair--leaders .HomeCardPair__Cell,
+  .HomeCardPair--leaders .HomeCardPair__Cell > * {
     height: auto;
     max-height: none;
     flex: 0 0 auto;

@@ -1517,27 +1517,24 @@ a.QuorumCard__HelpMark:hover {
     font-size: 0.75rem;
   }
   .QuorumCard__Body {
+    flex: 0 0 auto;
+    min-height: auto;
     gap: 10px;
-  }
-  .QuorumCard__QPick {
-    height: 10.5rem;
-  }
-  .QuorumCard__QBtn {
-    min-height: 28px;
   }
   .QuorumCard__Stage {
     display: flex !important;
     flex-direction: column;
-    gap: 12px;
-  }
-  .QuorumCard__Side {
-    max-width: none;
-    grid-template-rows: auto minmax(12rem, 1fr);
+    align-items: stretch;
+    flex: 0 0 auto;
+    min-height: auto;
+    height: auto;
+    gap: 10px;
   }
   .QuorumCard__Col {
     max-width: none;
     width: 100%;
     height: auto;
+    min-height: 0;
     aspect-ratio: 1;
   }
   .QuorumCard__MatrixWrap {
@@ -1548,14 +1545,65 @@ a.QuorumCard__HelpMark:hover {
     overflow: hidden;
     pointer-events: auto;
   }
+  .QuorumCard__Side {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-rows: auto;
+    align-items: stretch;
+    gap: 8px;
+    flex: 0 0 auto;
+    width: 100%;
+    max-width: none;
+    min-height: 0;
+    height: auto;
+  }
+  .QuorumCard__QPick {
+    height: auto;
+    min-height: 0;
+    max-height: none;
+    overflow: visible;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-auto-rows: minmax(1.7rem, auto);
+    gap: 3px;
+    padding: 6px;
+  }
+  .QuorumCard__QBtn {
+    height: auto;
+    min-height: 28px;
+    padding: 3px 4px;
+    font-size: 0.625rem;
+    gap: 3px;
+  }
+  .QuorumCard__QBtnIcon {
+    width: 0.7rem !important;
+    height: 0.7rem !important;
+  }
   .QuorumCard__HostsClip {
     position: relative;
-    height: 14rem;
     width: 100%;
+    height: 0;
+    min-height: 100%;
+    max-height: 100%;
+    overflow: hidden;
+  }
+  .QuorumCard__HostSearch {
+    padding: 6px 6px 4px;
+  }
+  .QuorumCard__HostSearchInput {
+    padding: 5px 8px;
+    font-size: 0.6875rem;
+  }
+  .QuorumCard__Hosts {
+    padding: 4px;
+  }
+  .QuorumCard__HostsGrid {
+    grid-template-columns: minmax(0, 1fr);
+    column-gap: 0;
+    row-gap: 3px;
   }
   .QuorumCard__Host {
-    min-height: 44px !important;
-    padding: 10px 8px;
-    font-size: 0.75rem;
+    min-height: 32px !important;
+    padding: 6px;
+    font-size: 0.625rem;
   }
 }
