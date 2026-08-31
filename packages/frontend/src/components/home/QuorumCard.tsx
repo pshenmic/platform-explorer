@@ -157,13 +157,6 @@ function paintPoolNode(
   return { type: 'active', role: 'current', band: 'selected' }
 }
 
-function orderWindowKeys(curr: string[], prevSet: Set<string>, followSet: Set<string>) {
-  const fromPrev = curr.filter(k => prevSet.has(k))
-  const toFollow = curr.filter(k => followSet.has(k) && !prevSet.has(k))
-  const unique = curr.filter(k => !prevSet.has(k) && !followSet.has(k))
-  return fromPrev.concat(unique, toFollow)
-}
-
 function hostMatches(row: any, query: string) {
   const s = query.trim().toLowerCase()
   if (!s) return true
@@ -565,22 +558,14 @@ export default function QuorumCard({
 
   const windowKeys = useMemo(() => {
     if (filling || selectedMemberSet.size === 0) return []
-    const prevSet = rosterIndex.membersOf.get(prevKey) || new Set<string>()
-    const followSet = rosterIndex.membersOf.get(followKey) || new Set<string>()
-    return orderWindowKeys([...selectedMemberSet], prevSet, followSet)
-  }, [filling, selectedMemberSet, rosterIndex, prevKey, followKey])
+    return [...selectedMemberSet]
+  }, [filling, selectedMemberSet])
 
   const liveSeedKeys = useMemo(() => {
     const liveSet = liveKey ? rosterIndex.membersOf.get(liveKey) : null
     if (!liveSet || liveSet.size === 0) return []
-    const livePrev = sortedQuorums.find(q => q.offset === rotN - 1)
-    const liveFollow = sortedQuorums.find(q => q.offset === 1)
-    return orderWindowKeys(
-      [...liveSet],
-      rosterIndex.membersOf.get(quorumKey(livePrev?.quorumHash)) || new Set<string>(),
-      rosterIndex.membersOf.get(quorumKey(liveFollow?.quorumHash)) || new Set<string>()
-    )
-  }, [liveKey, rosterIndex, sortedQuorums, rotN])
+    return [...liveSet]
+  }, [liveKey, rosterIndex])
 
   const listKeys = useMemo(() => {
     if (filling) return []
@@ -609,8 +594,6 @@ export default function QuorumCard({
     }
     return new Map(map)
   }, [filling, listKeys])
-
-  const isLiveView = selectedOffset <= 0
 
   const homeCells = useMemo((): any[] => {
     if (filling) {
@@ -652,7 +635,7 @@ export default function QuorumCard({
         validator: v || { proTxHash: k }
       }
     })
-    if (isLiveView) cells.sort((a, b) => (a.homeIndex ?? 0) - (b.homeIndex ?? 0))
+    cells.sort((a, b) => (a.homeIndex ?? 0) - (b.homeIndex ?? 0))
     return cells
   }, [
     filling,
@@ -664,8 +647,7 @@ export default function QuorumCard({
     selectedMemberSet,
     nodeNumberByKey,
     bannedSet,
-    bannedValidatorsList,
-    isLiveView
+    bannedValidatorsList
   ])
 
   const windowSlots = useMemo(() => {
