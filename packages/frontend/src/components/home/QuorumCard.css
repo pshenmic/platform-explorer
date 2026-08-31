@@ -160,6 +160,10 @@ a.QuorumCard__HelpMark:hover {
   color: var(--pe-color-gray-250);
 }
 .QuorumCard__Leg b {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  min-height: 1.125rem;
   font-family: var(--pe-font-heading);
   font-style: italic;
   font-weight: 800;

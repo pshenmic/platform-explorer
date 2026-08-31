@@ -12,6 +12,7 @@ import { ResponseErrorNotFound } from '../../util/Errors'
 import { useActiveNetwork } from '../../contexts'
 import { TimeDelta } from '../data'
 import { useCountUp } from './hooks'
+import { Skeleton } from './Skeleton'
 import './QuorumCard.css'
 
 const QUORUM_DETAIL_STALE = 60_000
@@ -128,8 +129,8 @@ function quorumKey(hash: unknown) {
 
 const STATS = [
   { key: 'total', label: 'Total', hint: 'This quorum plus queued' },
-  { key: 'active', label: 'Now', hint: 'This quorum of 100' },
-  { key: 'inactive', label: 'Queued', hint: 'Not in this quorum' }
+  { key: 'inactive', label: 'Queued', hint: 'Not in this quorum' },
+  { key: 'active', label: 'Now', hint: 'This quorum of 100' }
 ]
 
 function isPoSeBannedValidator(v: any) {
@@ -315,11 +316,11 @@ function NodeTooltipBody({ cell }: any) {
 
 export default function QuorumCard({
   validators,
-  validatorsActive,
+  validatorsActive: _validatorsActive,
   validatorsBanned: _validatorsBanned,
-  validatorsInactive,
+  validatorsInactive: _validatorsInactive,
   validatorsList,
-  poolLoading: _poolLoading,
+  poolLoading,
   bannedValidatorsList,
   bannedListLoading: _bannedListLoading,
   currentQuorum,
@@ -340,8 +341,6 @@ export default function QuorumCard({
   const nextNodeNumberRef = useRef(1)
 
   const total = validators?.data?.pagination?.total
-  const active = validatorsActive?.data?.pagination?.total
-  const inactive = validatorsInactive?.data?.pagination?.total
 
   const hasTotal = typeof total === 'number' && total > 0
 
@@ -813,17 +812,12 @@ export default function QuorumCard({
 
   const queuedKeysCount = listKeys.filter(k => !selectedMemberSet.has(k)).length
   const nowCount = windowKeys.length
+  const nowFixed = llmq?.size ?? 100
+  const poolReady = !poolLoading && !filling && listKeys.length > 0
   const counts: Record<string, number | null> = {
-    total:
-      nowCount > 0
-        ? nowCount + queuedKeysCount
-        : typeof active === 'number' && typeof inactive === 'number'
-          ? active + inactive
-          : hasTotal
-            ? total
-            : null,
-    active: nowCount > 0 ? nowCount : typeof active === 'number' ? active : null,
-    inactive: nowCount > 0 ? queuedKeysCount : typeof inactive === 'number' ? inactive : null
+    total: poolReady ? nowCount + queuedKeysCount : null,
+    inactive: poolReady ? queuedKeysCount : null,
+    active: nowFixed
   }
 
   return (
@@ -931,41 +925,54 @@ export default function QuorumCard({
                       <i className={`QuorumCard__Dot QuorumCard__Dot--${s.key}`} />
                       {s.label}
                     </span>
-                    <b>{ready ? n.toLocaleString('en-US') : '—'}</b>
+                    <b>
+                      {ready ? (
+                        n.toLocaleString('en-US')
+                      ) : (
+                        <Skeleton w={'3.2ch'} h={'0.95em'} radius={4} />
+                      )}
+                    </b>
                   </button>
                 </Tooltip>
               )
             })}
           </div>
-          {sortedQuorums.length > 0 && (
-            <p className={'QuorumCard__QCaption'}>
-              {headHref ? (
-                <a
-                  href={headHref}
-                  target={'_blank'}
-                  rel={'noreferrer'}
-                  className={'QuorumCard__BlockLink'}
-                >
-                  {headTurn}
-                </a>
-              ) : (
-                headTurn
-              )}
-              {quorumEta && (
-                <span
-                  className={'QuorumCard__QEta'}
-                  title={'About 24 Core blocks per turn (~2.5 min each)'}
-                >
-                  ~{quorumEta.kind}{' '}
-                  <TimeDelta
-                    endDate={quorumEta.end}
-                    format={'compact'}
-                    showTimestampTooltip={false}
-                  />
-                </span>
-              )}
-            </p>
-          )}
+          <p className={'QuorumCard__QCaption'}>
+            {sortedQuorums.length > 0 ? (
+              <>
+                {headHref ? (
+                  <a
+                    href={headHref}
+                    target={'_blank'}
+                    rel={'noreferrer'}
+                    className={'QuorumCard__BlockLink'}
+                  >
+                    {headTurn}
+                  </a>
+                ) : (
+                  headTurn
+                )}
+                {quorumEta && (
+                  <span
+                    className={'QuorumCard__QEta'}
+                    title={'About 24 Core blocks per turn (~2.5 min each)'}
+                  >
+                    ~{quorumEta.kind}{' '}
+                    <TimeDelta
+                      endDate={quorumEta.end}
+                      format={'compact'}
+                      showTimestampTooltip={false}
+                    />
+                  </span>
+                )}
+              </>
+            ) : (
+              <>
+                <Skeleton w={'11ch'} h={'0.8em'} radius={4} />
+                <Skeleton w={'6ch'} h={'0.8em'} radius={4} />
+              </>
+            )}
+          </p>
         </div>
       </header>
 
@@ -988,7 +995,7 @@ export default function QuorumCard({
           <div className={'QuorumCard__Col'}>
             <div className={'QuorumCard__MatrixWrap'}>
               <div
-                className={'QuorumCard__Matrix'}
+                className={'QuorumCard__Matrix' + (filling ? ' QuorumCard__Matrix--skel' : '')}
                 style={{
                   gridTemplateColumns: `repeat(${GRID_COLS}, minmax(0, 1fr))`,
                   gridTemplateRows: `repeat(${Math.max(1, Math.ceil(cells.length / GRID_COLS))}, minmax(0, 1fr))`
