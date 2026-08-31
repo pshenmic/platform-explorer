@@ -570,6 +570,18 @@ export default function QuorumCard({
     return orderWindowKeys([...selectedMemberSet], prevSet, followSet)
   }, [filling, selectedMemberSet, rosterIndex, prevKey, followKey])
 
+  const liveSeedKeys = useMemo(() => {
+    const liveSet = liveKey ? rosterIndex.membersOf.get(liveKey) : null
+    if (!liveSet || liveSet.size === 0) return []
+    const livePrev = sortedQuorums.find(q => q.offset === rotN - 1)
+    const liveFollow = sortedQuorums.find(q => q.offset === 1)
+    return orderWindowKeys(
+      [...liveSet],
+      rosterIndex.membersOf.get(quorumKey(livePrev?.quorumHash)) || new Set<string>(),
+      rosterIndex.membersOf.get(quorumKey(liveFollow?.quorumHash)) || new Set<string>()
+    )
+  }, [liveKey, rosterIndex, sortedQuorums, rotN])
+
   const listKeys = useMemo(() => {
     if (filling) return []
     const seen = new Set<string>()
@@ -580,13 +592,14 @@ export default function QuorumCard({
       seen.add(k)
       keys.push(k)
     }
+    for (const k of liveSeedKeys) push(k, true)
     for (const k of windowKeys) push(k, true)
     for (const v of list) push(memberKey(v.proTxHash), false)
     for (const set of rosterIndex.membersOf.values()) {
       for (const k of set) push(k, false)
     }
     return keys
-  }, [filling, windowKeys, list, rosterIndex, bannedSet])
+  }, [filling, liveSeedKeys, windowKeys, list, rosterIndex, bannedSet])
 
   const nodeNumberByKey = useMemo(() => {
     const map = nodeNumberRef.current
@@ -598,11 +611,6 @@ export default function QuorumCard({
   }, [filling, listKeys])
 
   const isLiveView = selectedOffset <= 0
-  const windowIndexByKey = useMemo(() => {
-    const map = new Map<string, number>()
-    for (let i = 0; i < windowKeys.length; i++) map.set(windowKeys[i], i + 1)
-    return map
-  }, [windowKeys])
 
   const homeCells = useMemo((): any[] => {
     if (filling) {
@@ -622,7 +630,7 @@ export default function QuorumCard({
       const k = memberKey(v?.proTxHash)
       if (k && !byKey.has(k)) byKey.set(k, v)
     }
-    return windowKeys.map(k => {
+    const cells = windowKeys.map(k => {
       const v = byKey.get(k)
       const painted = paintPoolNode(
         k,
@@ -637,15 +645,15 @@ export default function QuorumCard({
         type: painted.type,
         role: painted.role,
         band: painted.band,
-        homeIndex: isLiveView
-          ? (windowIndexByKey.get(k) ?? nodeNumberByKey.get(k) ?? null)
-          : (nodeNumberByKey.get(k) ?? null),
+        homeIndex: nodeNumberByKey.get(k) ?? null,
         proTxHash: v?.proTxHash || k,
         service: meta?.service || v?.proTxInfo?.state?.service || v?.endpoints?.[0] || null,
         valid: meta ? meta.valid !== false : true,
         validator: v || { proTxHash: k }
       }
     })
+    if (isLiveView) cells.sort((a, b) => (a.homeIndex ?? 0) - (b.homeIndex ?? 0))
+    return cells
   }, [
     filling,
     windowKeys,
@@ -657,8 +665,7 @@ export default function QuorumCard({
     nodeNumberByKey,
     bannedSet,
     bannedValidatorsList,
-    isLiveView,
-    windowIndexByKey
+    isLiveView
   ])
 
   const windowSlots = useMemo(() => {
@@ -785,20 +792,10 @@ export default function QuorumCard({
             : null,
         inPinned: selectedMemberSet.has(k),
         isFocus: Boolean(focusKey && focusKey === k),
-        homeIndex:
-          isLiveView && selectedMemberSet.has(k)
-            ? (windowIndexByKey.get(k) ?? nodeNumberByKey.get(k) ?? null)
-            : (nodeNumberByKey.get(k) ?? null)
+        homeIndex: nodeNumberByKey.get(k) ?? null
       }
     })
-    rows.sort((a, b) => {
-      if (isLiveView) {
-        const aNow = selectedMemberSet.has(a.key)
-        const bNow = selectedMemberSet.has(b.key)
-        if (aNow !== bNow) return aNow ? -1 : 1
-      }
-      return (a.homeIndex ?? 0) - (b.homeIndex ?? 0)
-    })
+    rows.sort((a, b) => (a.homeIndex ?? 0) - (b.homeIndex ?? 0))
     return rows
   }, [
     filling,
@@ -811,9 +808,7 @@ export default function QuorumCard({
     memberMeta,
     bannedSet,
     nodeNumberByKey,
-    focusKey,
-    isLiveView,
-    windowIndexByKey
+    focusKey
   ])
 
   const visibleHostRows = useMemo(
