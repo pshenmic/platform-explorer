@@ -79,7 +79,7 @@ function BlocksListItem ({ block, absoluteDate }) {
                   timestamp={header.timestamp}
                   showRelativeTooltip={true}
                 />
-              : <TimeDelta showTimestampTooltip={true} endDate={new Date(header.timestamp)}/>
+              : <TimeDelta showTimestampTooltip={true} format={'compact'} endDate={new Date(header.timestamp)}/>
             : <NotActive/>
           }
         </GridItem>
