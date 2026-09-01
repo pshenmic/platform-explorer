@@ -26,7 +26,7 @@ const columns = [
     header: 'Block'
   }),
   columnHelper.accessor('gasUsed', {
-    header: 'Gas used'
+    header: 'Gas'
   }),
   columnHelper.accessor('owner', {
     header: 'Owner'
@@ -35,7 +35,7 @@ const columns = [
     header: 'Type'
   }),
   columnHelper.accessor('timestamp', {
-    header: 'Timestamp'
+    header: 'Time'
   })
 ]
 
@@ -77,7 +77,7 @@ export default function TransactionsList ({
           Block
         </GridItem>
         <GridItem className={'TransactionsList__ColumnTitle TransactionsList__ColumnTitle--GasUsed'}>
-          Gas used
+          Gas
         </GridItem>
         <GridItem className={'TransactionsList__ColumnTitle TransactionsList__ColumnTitle--Owner'}>
           Owner
@@ -86,7 +86,7 @@ export default function TransactionsList ({
           Type
         </GridItem>
         <GridItem className={'TransactionsList__ColumnTitle TransactionsList__ColumnTitle--Timestamp'}>
-          Timestamp
+          Time
         </GridItem>
       </Grid>
 

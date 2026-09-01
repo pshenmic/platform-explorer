@@ -14,8 +14,8 @@
   &__ColumnTitle {
     @include txs.Column();
     word-break: normal;
-    white-space: normal;
-    overflow-wrap: break-word;
+    white-space: nowrap;
+    overflow-wrap: normal;
 
     &--Hash {
       white-space: nowrap;
@@ -26,23 +26,18 @@
     }
   }
 
-  @container (max-width: 660px) {
+  // phone: status header is an icon-width track — show short label that fits
+  @container (max-width: 37.5em) {
     &__ColumnTitle {
-      &--Owner {
-        white-space: nowrap;
-        width: 20px;
+      &--Status {
+        font-size: 0.625rem;
+        letter-spacing: 0.02em;
+        overflow: hidden;
+        text-overflow: clip;
       }
 
       &--Type {
-        width: 145px;
-      }
-    }
-  }
-
-  @container (max-width: 350px) {
-    &__ColumnTitle {
-      &--Type {
-        width: max-content;
+        min-width: 0;
       }
     }
   }
