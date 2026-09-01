@@ -1,126 +1,115 @@
 @import '../../styles/variables.scss';
 
+// Column tracks for /tokens list — catalog mental model on phone:
+// Name · Supply · Price (Contract / Owner → detail / filters).
+// Drop Contract → Owner first; never drop Name. Price only on the narrowest strip.
 @mixin Columns() {
   display: grid;
-  gap: 1rem;
-  grid-template-columns:
-    3fr
-    10rem
-    2fr
-    3fr
-    3fr;
+  gap: 12px;
+  width: 100%;
 
-  justify-content: space-between;
+  // desktop: Name · Supply · Price · Contract · Owner
+  grid-template-columns:
+    minmax(0, 3fr) // name
+    10rem // supply
+    minmax(0, 2fr) // price
+    minmax(0, 3fr) // contract
+    minmax(0, 3fr); // owner
 
   @container (max-width: 80rem) {
     grid-template-columns:
-      10rem
-      6rem
+      minmax(10rem, 1.4fr)
       8rem
-      8rem
-      18rem;
+      7rem
+      minmax(0, 1fr)
+      minmax(0, 1fr);
   }
 
+  // drop Contract — Name · Supply · Price · Owner
   @container (max-width: 64rem) {
     grid-template-columns:
-      minmax(10rem, 22rem)
-      50px
-      10rem
-      minmax(0, 22rem);
+      minmax(10rem, 1.5fr)
+      8rem
+      7rem
+      minmax(0, 1fr);
   }
 
+  // drop Owner — Name · Supply · Price (tablet / phone)
   @container (max-width: 48rem) {
     grid-template-columns:
-      minmax(10rem, 16rem)
-      50px
-      minmax(0, 22rem);
+      minmax(0, 1.4fr)
+      7rem
+      minmax(5.5rem, 7rem);
+    gap: 10px;
   }
 
+  // phone (~390 / ~320 content): keep Name · Supply · Price
   @container (max-width: 40rem) {
     grid-template-columns:
-      minmax(10rem, 18rem)
-      minmax(0, 22rem);
-  }
-
-  @container (max-width: 30rem) {
-    grid-template-columns:
-      10rem
-      minmax(0, 22rem);
-  }
-
-  @container (max-width: 23rem) {
-    grid-template-columns:
-      8rem
-      minmax(0, 22rem);
+      minmax(0, 1fr)
+      minmax(4.75rem, 6.25rem)
+      minmax(4rem, 5.75rem);
+    gap: 8px;
   }
 }
 
-// With balance
+// With balance (identity embeds)
 @mixin ColumnsBalance() {
   display: grid;
-  gap: 1rem;
+  gap: 12px;
+  width: 100%;
+
   grid-template-columns:
-    3fr
+    minmax(0, 3fr)
     10rem
-    2fr
-    3fr
-    3fr
+    minmax(0, 2fr)
+    minmax(0, 3fr)
+    minmax(0, 3fr)
     2fr;
 
   @container (max-width: 100rem) {
     grid-template-columns:
-      minmax(10rem, 26rem)
-      10rem
-      10rem
-      minmax(10rem, 22rem)
-      minmax(10rem, 22rem)
-      8rem;
+      minmax(10rem, 1.4fr)
+      8rem
+      7rem
+      minmax(0, 1fr)
+      minmax(0, 1fr)
+      7rem;
   }
 
-  @container (max-width: 90rem) {
-    grid-template-columns:
-      minmax(12rem, 18rem)
-      10rem
-      10rem
-      minmax(6rem, 18rem)
-      minmax(6rem, 18rem)
-      8rem;
-  }
-
+  // drop Owner
   @container (max-width: 80rem) {
     grid-template-columns:
-      minmax(12rem, 26rem)
-      10rem
-      10rem
-      minmax(8rem, 26rem)
-      8rem;
+      minmax(10rem, 1.4fr)
+      8rem
+      7rem
+      minmax(0, 1fr)
+      7rem;
   }
 
+  // drop Contract
   @container (max-width: 64rem) {
     grid-template-columns:
-      minmax(8rem, 26rem)
-      10rem
+      minmax(8rem, 1.4fr)
       8rem
-      minmax(8rem, 18rem);
+      7rem
+      7rem;
   }
 
+  // drop Price — Name · Supply · Balance
   @container (max-width: 48rem) {
     grid-template-columns:
-      minmax(8rem, 16rem)
-      10rem
-      auto;
+      minmax(0, 1.4fr)
+      7rem
+      6rem;
   }
 
+  // phone balance: Name · Balance
   @container (max-width: 40rem) {
     grid-template-columns:
-      minmax(8rem, 16rem)
-      auto;
-  }
-
-  @container (max-width: 30rem) {
-    grid-template-columns:
-      8rem
-      minmax(0, 18rem);
+      minmax(0, 1fr)
+      minmax(5rem, 7rem);
+    gap: 10px;
   }
 }
 
@@ -128,6 +117,7 @@
   display: flex;
   align-items: center;
   width: 100%;
+  min-width: 0;
 
   &:last-child {
     justify-content: flex-end;
@@ -140,20 +130,22 @@
   }
 
   @container (max-width: 48rem) {
-    &--Price {
-      display: none;
-    }
-  }
-
-  @container (max-width: 40rem) {
-    &--Supply {
+    &--OwnerIdentity {
       display: none;
     }
   }
 }
 
-// With balance
 @mixin ColumnBalance() {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  min-width: 0;
+
+  &:last-child {
+    justify-content: flex-end;
+  }
+
   @container (max-width: 80rem) {
     &--OwnerIdentity {
       display: none;
@@ -172,6 +164,7 @@
     }
   }
 
+  // phone balance: keep Name + Balance; drop Supply if tight
   @container (max-width: 40rem) {
     &--Supply {
       display: none;
