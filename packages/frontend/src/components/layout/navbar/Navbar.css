@@ -1,6 +1,6 @@
 .Navbar {
-  padding-left: var(--pe-space-3);
-  padding-right: var(--pe-space-3);
+  padding-left: var(--pe-space-4);
+  padding-right: var(--pe-space-4);
   padding-top: var(--pe-space-3);
   padding-bottom: var(--pe-space-3);
   position: fixed;
@@ -19,16 +19,23 @@
 .Navbar__NetworkSelectContainer {
   display: flex;
   justify-content: flex-end;
-  width: 10rem;
+  align-items: center;
   flex-shrink: 0;
-  margin-left: auto;
 }
 
 .Navbar__Left {
   display: flex;
   align-items: center;
-  width: 0;
+  flex: 1 1 auto;
+  min-width: 0;
   gap: var(--pe-space-2);
+}
+
+.Navbar--search .Navbar__Left {
+  flex: 0 0 0;
+  width: 0;
+  overflow: hidden;
+  pointer-events: none;
 }
 
 .Navbar__Right {
@@ -36,8 +43,15 @@
   display: flex;
   justify-content: flex-end;
   align-items: center;
+  flex: 0 0 auto;
+  gap: var(--pe-space-3);
+  z-index: 1;
+}
+
+.Navbar--search .Navbar__Right {
+  flex: 1 1 auto;
   width: 100%;
-  z-index: -1;
+  gap: 0;
 }
 
 .Navbar__SearchContainer {
@@ -71,10 +85,10 @@
   width: auto;
   height: auto;
   box-sizing: border-box;
-  border-radius: 0 0 var(--pe-space-5) var(--pe-space-5);
+  border-radius: 0 0 var(--pe-radius-block) var(--pe-radius-block);
   background: rgba(24, 31, 34, 0.8);
   backdrop-filter: blur(44px);
-  border: 1px solid rgba(255, 255, 255, 0.07);
+  border: 1px solid var(--pe-color-border);
 }
 
 .Navbar__Burger {
@@ -85,8 +99,23 @@
 }
 
 .Navbar__Menu {
-  gap: var(--pe-space-10) !important;
-  padding: 0 var(--pe-space-3);
+  display: none;
+  align-items: center;
+  flex-wrap: nowrap;
+  gap: var(--pe-space-6);
+  min-width: 0;
+  padding: 0;
+}
+
+@media screen and (min-width: 62em) {
+  .Navbar {
+    padding-left: var(--pe-space-5);
+    padding-right: var(--pe-space-5);
+  }
+
+  .Navbar__Menu {
+    display: flex;
+  }
 }
 
 @media screen and (min-width: 80rem) and (max-width: 87rem) {
@@ -101,23 +130,23 @@
   }
 }
 
+@media screen and (max-width: 80em) {
+  .Navbar__Menu {
+    gap: var(--pe-space-5);
+  }
+
+  .Navbar__SearchContainer {
+    width: 12rem;
+  }
+}
+
 @media screen and (max-width: 72.5rem) {
   .Navbar__NetworkSelectContainer .NetworkSelect__Title {
     display: none;
   }
 
-  .Navbar__NetworkSelectContainer {
-    width: 5rem;
-  }
-}
-
-@media screen and (max-width: 80em) {
   .Navbar__Menu {
-    gap: var(--pe-space-6) !important;
-  }
-
-  .Navbar__SearchContainer {
-    width: 10rem;
+    gap: var(--pe-space-4);
   }
 }
 
@@ -133,7 +162,7 @@
   }
 
   .Navbar__Menu {
-    gap: var(--pe-space-4) !important;
+    gap: var(--pe-space-4);
   }
 }
 

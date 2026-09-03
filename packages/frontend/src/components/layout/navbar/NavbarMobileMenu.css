@@ -11,7 +11,7 @@
   pointer-events: none;
   box-shadow: none;
   background-color: var(--pe-color-gray-650);
-  border-radius: 0 0 var(--pe-space-5) var(--pe-space-5);
+  border-radius: 0 0 var(--pe-radius-block) var(--pe-radius-block);
   max-height: 100%;
   min-height: 10rem;
   transform: translateY(calc(-100% - var(--pe-space-5)));
@@ -88,8 +88,8 @@
   color: var(--pe-color-fg-muted);
   background: rgba(255, 255, 255, 0.08);
   border-radius: var(--pe-radius-def);
-  padding: var(--pe-space-5);
-  border: 1px solid rgba(255, 255, 255, 0.07);
+  padding: var(--pe-space-3) var(--pe-space-4);
+  border: 1px solid var(--pe-color-border);
   transition: all 0.1s;
   cursor: pointer;
 }

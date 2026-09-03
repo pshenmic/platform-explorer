@@ -3,7 +3,7 @@
 import { useOutsideClick } from '../../../hooks/useOutsideClick'
 import { HamburgerIcon, CloseIcon } from '@chakra-ui/icons'
 import GlobalSearchInput from '../../search/GlobalSearchInput'
-import { Box, Flex, HStack, IconButton, useDisclosure, useBreakpointValue } from '@chakra-ui/react'
+import { Box, Flex, IconButton, useDisclosure, useBreakpointValue } from '@chakra-ui/react'
 import { Breadcrumbs, breadcrumbsActiveRoutes } from '../../breadcrumbs/Breadcrumbs'
 import NetworkSelect from './NetworkSelect'
 import { usePathname } from 'next/navigation'
@@ -41,7 +41,7 @@ const menuItems: NavMenuItem[] = [
   {
     title: 'Validators',
     href: '/validators',
-    breakpoints: { base: true, sm: true, md: true, lg: true, xl: false, '2xl': true, '3xl': true }
+    breakpoints: { base: true, sm: true, md: true, lg: false, xl: false, '2xl': true, '3xl': true }
   },
   {
     title: 'Developers',
@@ -97,7 +97,7 @@ const menuItems: NavMenuItem[] = [
           base: true,
           sm: false,
           md: false,
-          lg: false,
+          lg: true,
           xl: true,
           '2xl': true,
           '3xl': true
@@ -258,7 +258,10 @@ function Navbar() {
     <Box position={'relative'}>
       <div className={'NavbarStub'}></div>
 
-      <Flex className={'Navbar'} maxW={'container.maxNavigationW'}>
+      <Flex
+        className={'Navbar' + (searchState.focused ? ' Navbar--search' : '')}
+        maxW={'container.maxNavigationW'}
+      >
         <div className={'Navbar__Left'}>
           <IconButton
             className={'Navbar__Burger'}
@@ -273,11 +276,8 @@ function Navbar() {
             ref={burgerRef}
           />
 
-          <HStack
+          <nav
             className={'Navbar__Menu'}
-            as={'nav'}
-            spacing={3}
-            display={{ base: 'none', lg: 'flex' }}
             style={{
               visibility: searchState.focused ? 'hidden' : 'visible',
               opacity: searchState.focused ? 0 : 1,
@@ -289,13 +289,13 @@ function Navbar() {
             {visibleMenuItems.map(menuItem => (
               <NavItem key={menuItem.title} item={menuItem} />
             ))}
-          </HStack>
+          </nav>
         </div>
 
         <div
           className={'Navbar__Right'}
           style={{
-            gap: searchState.focused ? 0 : '0.5rem',
+            gap: searchState.focused ? 0 : undefined,
             transition: `gap ${(searchTransitionTime ?? 0.1) / 4}s`
           }}
         >
