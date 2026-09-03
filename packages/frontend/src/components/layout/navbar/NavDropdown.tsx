@@ -31,9 +31,7 @@ const NavDropdown = ({ item }: NavDropdownProps) => {
     if (!isHoverable) return
 
     if (timeoutRef.current) clearTimeout(timeoutRef.current)
-    timeoutRef.current = setTimeout(() => {
-      setIsOpen(true)
-    }, 100)
+    setIsOpen(true)
   }
 
   const handleMouseLeave = () => {
@@ -42,7 +40,7 @@ const NavDropdown = ({ item }: NavDropdownProps) => {
     if (timeoutRef.current) clearTimeout(timeoutRef.current)
     timeoutRef.current = setTimeout(() => {
       setIsOpen(false)
-    }, 100)
+    }, 220)
   }
 
   const handleClick = (e: MouseEvent) => {
@@ -75,6 +73,8 @@ const NavDropdown = ({ item }: NavDropdownProps) => {
         isOpen={isOpen}
         onClose={() => setIsOpen(false)}
         onOpen={() => setIsOpen(true)}
+        onContentMouseEnter={handleMouseEnter}
+        onContentMouseLeave={handleMouseLeave}
       />
     </div>
   )
