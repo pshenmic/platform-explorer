@@ -1,10 +1,39 @@
+.GlobalSearchInput {
+  height: 2rem;
+}
+
+.GlobalSearchInput .chakra-input__right-element {
+  width: 2rem;
+  height: 2rem;
+}
+
 .GlobalSearchInput__Field {
   font-family: var(--pe-font-mono);
+  font-size: var(--pe-text-sm) !important;
+  height: 2rem !important;
+  padding-left: var(--pe-space-3) !important;
+  padding-right: 2rem !important;
   border-radius: var(--pe-radius-def) !important;
-  color: var(--pe-color-fg);
+  color: var(--pe-color-fg-muted) !important;
+}
+
+.GlobalSearchInput__Field::placeholder {
+  color: var(--pe-color-gray-500);
 }
 
 .GlobalSearchInput__Field:hover,
 .GlobalSearchInput__Field:focus {
-  background-color: rgba(46, 57, 61, 0.6) !important;
+  color: var(--pe-color-fg) !important;
+  background-color: rgba(var(--pe-color-gray-800-rgb), 0.6) !important;
+}
+
+.GlobalSearchInput__Button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--pe-color-gray-500);
+}
+
+.GlobalSearchInput__Button:hover {
+  color: var(--pe-color-fg);
 }

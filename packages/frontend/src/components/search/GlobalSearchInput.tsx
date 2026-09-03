@@ -3,8 +3,7 @@
 import { useState, useEffect } from 'react'
 import type { LoadableState } from '../../types/common'
 import * as Api from '../../util/Api'
-import { Input, InputGroup, InputRightElement, Button } from '@chakra-ui/react'
-import { SearchIcon } from '../ui/icons'
+import { Input, InputGroup, InputRightElement, IconButton } from '@chakra-ui/react'
 import { useDebounce } from '../../hooks'
 import { useRouter } from 'next/navigation'
 import type { SearchResultsData } from './SearchResultsList'
@@ -156,11 +155,11 @@ function GlobalSearchInput({
 
   return (
     <div>
-      <InputGroup size={'md'} className={'GlobalSearchInput'}>
+      <InputGroup size={'sm'} className={'GlobalSearchInput'}>
         <Input
-          pr={'2.5rem'}
+          pr={'2rem'}
           value={searchQuery}
-          type={'text'}
+          type={'search'}
           placeholder={placeholder || 'Search...'}
           onChange={handleSearchInput}
           onKeyPress={handleKeyPress}
@@ -168,17 +167,31 @@ function GlobalSearchInput({
           fontSize={'0.75rem'}
           className={'GlobalSearchInput__Field'}
         />
-        <InputRightElement>
-          <Button
-            h={'28px'}
-            w={'28px'}
-            minW={'none'}
-            size={'xxs'}
-            onClick={() => search(searchQuery)}
+        <InputRightElement h={'2rem'} w={'2rem'}>
+          <IconButton
+            aria-label={'Search'}
+            variant={'unstyled'}
+            minW={'2rem'}
+            h={'2rem'}
             className={'GlobalSearchInput__Button'}
+            onClick={() => search(searchQuery)}
           >
-            <SearchIcon w={'14px'} color={'whiteAlpha.900'} />
-          </Button>
+            <svg
+              width={'16'}
+              height={'16'}
+              viewBox={'0 0 24 24'}
+              fill={'none'}
+              aria-hidden={'true'}
+            >
+              <circle cx={'11'} cy={'11'} r={'7'} stroke={'currentColor'} strokeWidth={'1.75'} />
+              <path
+                d={'M20 20L16.5 16.5'}
+                stroke={'currentColor'}
+                strokeWidth={'1.75'}
+                strokeLinecap={'round'}
+              />
+            </svg>
+          </IconButton>
         </InputRightElement>
       </InputGroup>
     </div>
