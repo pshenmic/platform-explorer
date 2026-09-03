@@ -1,0 +1,477 @@
+.ShieldedPool {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  min-height: 0;
+  overflow: hidden;
+  contain: layout style;
+}
+.HomeCardPair .ShieldedPool {
+  height: 100%;
+}
+.HomeCardPair .ShieldedPool .ShieldedPool__Body {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.HomeCardPair .ShieldedPool .ShieldedPool__Chart {
+  flex: 1 1 auto;
+  min-height: 0;
+  height: auto;
+  max-height: none;
+}
+@media screen and (max-width: 47.99em) {
+  .HomeCardPair .ShieldedPool {
+    height: auto;
+    overflow: visible;
+  }
+  .HomeCardPair .ShieldedPool .ShieldedPool__Body {
+    flex: 0 0 auto;
+    overflow: visible;
+  }
+  .HomeCardPair .ShieldedPool .ShieldedPool__Chart {
+    flex: 0 0 12rem;
+    min-height: 12rem;
+    height: 12rem;
+    max-height: none;
+  }
+}
+.ShieldedPool__Head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px 24px;
+  flex-wrap: wrap;
+  flex-shrink: 0;
+  margin-bottom: 16px;
+}
+@media screen and (min-width: 48em) {
+  .ShieldedPool__Head {
+    flex-wrap: nowrap;
+  }
+}
+.ShieldedPool__HeadText {
+  flex: 1 1 auto;
+  min-width: 0;
+  max-width: 18rem;
+}
+.ShieldedPool__Eyebrow {
+  display: block;
+  font-family: var(--pe-font-mono);
+  font-size: 0.5625rem;
+  text-transform: uppercase;
+  letter-spacing: 0.22em;
+  color: rgba(var(--pe-color-brand-light-rgb), 0.9);
+  margin-bottom: 6px;
+}
+.ShieldedPool__Title {
+  font-family: var(--pe-font-heading);
+  font-weight: 800;
+  font-style: italic;
+  font-size: 1.375rem;
+  line-height: 1.1;
+  color: #fff;
+  margin: 0 0 8px;
+}
+.ShieldedPool__Lede {
+  font-family: var(--pe-font-mono);
+  font-size: 0.6875rem;
+  line-height: 1.55;
+  color: var(--pe-color-gray-500);
+  margin: 0;
+}
+.ShieldedPool__LedeMore {
+  margin-left: 6px;
+  color: var(--pe-color-brand-light);
+  border-bottom: 1px dotted rgba(var(--pe-color-brand-light-rgb), 0.6);
+  cursor: help;
+  white-space: nowrap;
+}
+.ShieldedPool__Controls {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 14px;
+  flex-shrink: 0;
+  margin-left: auto;
+  min-width: 0;
+}
+.ShieldedPool__Stat {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+  min-width: 0;
+  text-align: right;
+}
+.ShieldedPool__StatMain {
+  display: flex;
+  align-items: baseline;
+  justify-content: flex-end;
+  gap: 10px;
+  min-width: 0;
+}
+.ShieldedPool__StatCount {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  font-family: var(--pe-font-heading);
+  font-weight: 800;
+  font-style: italic;
+  font-size: clamp(1.5rem, 2.8vw, 2rem);
+  line-height: 1;
+  color: #fff;
+  font-variant-numeric: tabular-nums;
+  text-shadow: 0 0 16px rgba(var(--pe-color-brand-light-rgb), 0.28);
+  min-width: 4ch;
+}
+.ShieldedPool__StatCount:disabled {
+  cursor: default;
+}
+.ShieldedPool__UnitSwitch {
+  display: inline-flex;
+  gap: 2px;
+  flex-shrink: 0;
+  padding: 2px;
+  border-radius: var(--pe-radius-sm);
+  background: rgba(255, 255, 255, 0.04);
+}
+.ShieldedPool__Unit {
+  margin: 0;
+  padding: 3px 7px;
+  border: 0;
+  border-radius: 3px;
+  background: transparent;
+  cursor: pointer;
+  font-family: var(--pe-font-mono);
+  font-size: 0.5625rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--pe-color-gray-500);
+}
+.ShieldedPool__Unit:hover:not(:disabled) {
+  color: var(--pe-color-fg);
+}
+.ShieldedPool__Unit.is-on {
+  color: var(--pe-color-fg);
+  background: rgba(var(--pe-color-brand-normal-rgb), 0.18);
+  box-shadow: inset 0 0 0 1px rgba(var(--pe-color-brand-normal-rgb), 0.45);
+}
+.ShieldedPool__Unit:disabled {
+  cursor: not-allowed;
+  opacity: 0.4;
+}
+.ShieldedPool__StatCount.is-up {
+  color: #2cffb4;
+}
+.ShieldedPool__StatCount.is-down {
+  color: #ff5c7a;
+}
+.ShieldedPool__StatUnit {
+  font-family: var(--pe-font-mono);
+  font-size: 0.625rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--pe-color-gray-500);
+}
+.ShieldedPool__Flows {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: flex-end;
+  align-items: baseline;
+  gap: 4px 14px;
+}
+.ShieldedPool__Flow {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  margin: 0;
+  padding: 2px 0;
+  border: 0;
+  background: transparent;
+  font-family: var(--pe-font-mono);
+  font-size: 0.6875rem;
+  line-height: 1.3;
+  color: var(--pe-color-gray-500);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    opacity 0.15s ease,
+    color 0.15s ease;
+}
+.ShieldedPool__Flow b {
+  font-weight: 700;
+  margin-left: 0.15em;
+  color: #fff;
+}
+.ShieldedPool__Flow--in b {
+  color: #2cffb4;
+}
+.ShieldedPool__Flow--out b {
+  color: #ff5c7a;
+}
+.ShieldedPool__Flow.is-off {
+  opacity: 0.38;
+}
+.ShieldedPool__Flow.is-off b {
+  color: var(--pe-color-gray-500);
+}
+.ShieldedPool__Flow.is-off .ShieldedPool__FlowSwatch {
+  background: transparent;
+  box-shadow: none;
+}
+.ShieldedPool__Flow.is-off.ShieldedPool__Flow--in .ShieldedPool__FlowSwatch {
+  border-color: rgba(44, 255, 180, 0.45);
+}
+.ShieldedPool__Flow.is-off.ShieldedPool__Flow--out .ShieldedPool__FlowSwatch {
+  border-color: rgba(255, 92, 122, 0.45);
+}
+.ShieldedPool__Flow:hover {
+  opacity: 1;
+}
+.ShieldedPool__Flow:focus-visible {
+  outline: 1px solid rgba(var(--pe-color-brand-light-rgb), 0.6);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+.ShieldedPool__FlowSwatch {
+  width: 8px;
+  height: 8px;
+  border-radius: 2px;
+  border: 1px solid transparent;
+  flex-shrink: 0;
+}
+.ShieldedPool__Flow--in .ShieldedPool__FlowSwatch {
+  background: rgba(44, 255, 180, 0.75);
+  box-shadow: 0 0 5px rgba(44, 255, 180, 0.35);
+}
+.ShieldedPool__Flow--out .ShieldedPool__FlowSwatch {
+  background: rgba(255, 92, 122, 0.75);
+  box-shadow: 0 0 5px rgba(255, 92, 122, 0.3);
+}
+.ShieldedPool__Flow.is-on .ShieldedPool__FlowSwatch {
+  opacity: 1;
+}
+.ShieldedPool__Empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 180px;
+  font-size: 0.8125rem;
+  color: var(--pe-color-gray-500);
+}
+.ShieldedPool__Body {
+  display: flex;
+  flex-direction: column;
+  flex: 0 0 auto;
+  min-height: 0;
+}
+.ShieldedPool__Chart {
+  position: relative;
+  width: 100%;
+  height: 200px;
+  min-height: 140px;
+  max-height: 220px;
+  cursor: crosshair;
+}
+.ShieldedPool__ChartSkel {
+  position: absolute !important;
+  inset: 0;
+  width: 100% !important;
+  height: 100% !important;
+}
+.ShieldedPool__Svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+.ShieldedPool__Svg.is-stale {
+  opacity: 0.45;
+}
+.ShieldedPool__Grid {
+  stroke: rgba(255, 255, 255, 0.05);
+  stroke-width: 1;
+}
+.ShieldedPool__YTick,
+.ShieldedPool__Tick,
+.ShieldedPool__AxisTitle {
+  font-family: var(--pe-font-mono);
+  font-size: 0.5625rem;
+  fill: var(--pe-color-gray-500);
+}
+.ShieldedPool__YTick--right {
+  fill: var(--pe-color-gray-500);
+  opacity: 0.85;
+}
+.ShieldedPool__AxisTitle {
+  font-size: 0.5rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  fill: var(--pe-color-gray-500);
+}
+.ShieldedPool__AxisTitle--right {
+  fill: var(--pe-color-gray-500);
+  opacity: 0.9;
+}
+.ShieldedPool__AreaTop {
+  stop-color: rgba(var(--pe-color-brand-normal-rgb), 0.28);
+}
+.ShieldedPool__AreaBot {
+  stop-color: rgba(var(--pe-color-brand-normal-rgb), 0);
+}
+.ShieldedPool__Area {
+  stroke: none;
+  pointer-events: none;
+}
+.ShieldedPool__Line {
+  fill: none;
+  stroke: var(--pe-color-brand-light);
+  stroke-width: 2.5;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+.ShieldedPool__BarInTop {
+  stop-color: rgba(44, 255, 180, 0.42);
+}
+.ShieldedPool__BarInBot {
+  stop-color: rgba(44, 255, 180, 0.12);
+}
+.ShieldedPool__BarOutTop {
+  stop-color: rgba(255, 92, 122, 0.42);
+}
+.ShieldedPool__BarOutBot {
+  stop-color: rgba(255, 92, 122, 0.12);
+}
+.ShieldedPool__Bar {
+  stroke-width: 0.5;
+  opacity: 0.72;
+  transition: opacity 0.12s ease;
+}
+.ShieldedPool__Bar--in {
+  stroke: rgba(44, 255, 180, 0.28);
+}
+.ShieldedPool__Bar--out {
+  stroke: rgba(255, 92, 122, 0.28);
+}
+.ShieldedPool__Chart:has(.ShieldedPool__Bar--in):not(:has(.ShieldedPool__Bar--out))
+  .ShieldedPool__Bar,
+.ShieldedPool__Chart:has(.ShieldedPool__Bar--out):not(:has(.ShieldedPool__Bar--in))
+  .ShieldedPool__Bar {
+  opacity: 0.88;
+}
+.ShieldedPool__Cross {
+  stroke: rgba(var(--pe-color-brand-light-rgb), 0.5);
+  stroke-width: 1;
+  stroke-dasharray: 3 4;
+  pointer-events: none;
+}
+.ShieldedPool__DotRing {
+  fill: none;
+  stroke: rgba(var(--pe-color-brand-light-rgb), 0.45);
+  stroke-width: 1.5;
+  pointer-events: none;
+}
+.ShieldedPool__Dot {
+  fill: var(--pe-color-brand-light);
+  stroke: #fff;
+  stroke-width: 1.5;
+  pointer-events: none;
+  filter: drop-shadow(0 0 6px rgba(var(--pe-color-brand-normal-rgb), 0.55));
+}
+.ShieldedPool__Tip {
+  position: absolute;
+  top: 10px;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 7px 10px;
+  border-radius: 8px;
+  background: rgba(10, 14, 16, 0.95);
+  border: 1px solid rgba(var(--pe-color-gray-800-rgb), 0.9);
+  font-family: var(--pe-font-mono);
+  font-size: 0.625rem;
+  white-space: nowrap;
+  pointer-events: none;
+  z-index: 2;
+}
+.ShieldedPool__TipDate {
+  color: var(--pe-color-gray-500);
+}
+.ShieldedPool__TipRow {
+  font-weight: 600;
+  color: #fff;
+}
+.ShieldedPool__TipRow.is-tvl {
+  color: var(--pe-color-brand-light);
+}
+.ShieldedPool__TipRow em {
+  font-style: normal;
+  font-weight: 500;
+  opacity: 0.62;
+}
+.ShieldedPool__TipRow.is-in {
+  color: #2cffb4;
+}
+.ShieldedPool__TipRow.is-out {
+  color: #ff5c7a;
+}
+.ShieldedPool__EmptyChart {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  font-size: 0.8125rem;
+  color: var(--pe-color-gray-500);
+}
+@media screen and (max-width: 47.99em) {
+  .ShieldedPool__Head {
+    flex-wrap: nowrap;
+    gap: 8px 12px;
+    margin-bottom: 12px;
+  }
+  .ShieldedPool__HeadText {
+    flex: 1 1 0;
+    min-width: 0;
+    max-width: 9.5rem;
+  }
+  .ShieldedPool__Title {
+    font-size: 1.125rem;
+  }
+  .ShieldedPool__Lede {
+    font-size: 0.5625rem;
+    line-height: 1.45;
+  }
+  .ShieldedPool__Controls {
+    gap: 8px;
+    margin-left: auto;
+    flex-shrink: 1;
+  }
+  .ShieldedPool .Presets {
+    width: auto;
+    max-width: none;
+    flex-wrap: nowrap;
+    flex-shrink: 0;
+    justify-content: flex-end;
+    gap: 2px;
+  }
+  .ShieldedPool .Presets__Chip {
+    padding: 2px 5px;
+    font-size: 0.5625rem;
+  }
+  .ShieldedPool__StatCount {
+    font-size: 1.25rem;
+  }
+  .ShieldedPool__Unit {
+    padding: 2px 5px;
+    font-size: 0.5rem;
+  }
+}

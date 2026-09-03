@@ -1,0 +1,690 @@
+.TxTypesBar {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  contain: layout style;
+}
+@media screen and (max-width: 47.99em) {
+  .TxTypesBar {
+    height: auto;
+    max-height: none;
+  }
+}
+.TxTypesBar__Head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px 24px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+  flex-shrink: 0;
+}
+@media screen and (min-width: 48em) {
+  .TxTypesBar__Head {
+    flex-wrap: nowrap;
+  }
+}
+.TxTypesBar__HeadText {
+  flex: 1 1 auto;
+  min-width: 0;
+  max-width: 18rem;
+}
+.TxTypesBar__Eyebrow {
+  display: block;
+  font-family: var(--pe-font-mono);
+  font-size: 0.5625rem;
+  text-transform: uppercase;
+  letter-spacing: 0.22em;
+  color: rgba(var(--pe-color-brand-light-rgb), 0.9);
+  margin-bottom: 6px;
+}
+.TxTypesBar__Title {
+  font-family: var(--pe-font-heading);
+  font-weight: 800;
+  font-style: italic;
+  font-size: 1.375rem;
+  line-height: 1.1;
+  color: #fff;
+  margin: 0 0 8px;
+}
+.TxTypesBar__Lede {
+  font-family: var(--pe-font-mono);
+  font-size: 0.6875rem;
+  line-height: 1.55;
+  color: var(--pe-color-gray-500);
+  margin: 0;
+}
+@media screen and (max-width: 47.99em) {
+  .TxTypesBar__Head {
+    flex-wrap: nowrap;
+    gap: 8px 12px;
+    margin-bottom: 12px;
+  }
+  .TxTypesBar__HeadText {
+    flex: 1 1 0;
+    min-width: 0;
+    max-width: 12.5rem;
+  }
+  .TxTypesBar__Title {
+    font-size: 1.125rem;
+  }
+  .TxTypesBar__Lede {
+    display: block;
+    font-size: 0.5625rem;
+    line-height: 1.45;
+  }
+  .TxTypesBar__Controls {
+    gap: 8px;
+    margin-left: auto;
+    flex-shrink: 1;
+  }
+  .TxTypesBar .Presets {
+    width: auto;
+    max-width: none;
+    flex-wrap: nowrap;
+    flex-shrink: 0;
+    justify-content: flex-end;
+    gap: 2px;
+  }
+  .TxTypesBar .Presets__Chip {
+    padding: 2px 5px;
+    font-size: 0.5625rem;
+  }
+  .TxTypesBar__StatCount {
+    font-size: 1.25rem;
+  }
+  .TxTypesBar__StatUnit {
+    font-size: 0.5625rem;
+  }
+  .TxTypesBar__StatMeta {
+    font-size: 0.6875rem;
+    max-width: 11.5rem;
+  }
+}
+.TxTypesBar__LedeMore {
+  color: var(--pe-color-brand-light);
+  border-bottom: 1px dotted rgba(var(--pe-color-brand-light-rgb), 0.6);
+  cursor: help;
+  white-space: nowrap;
+}
+.TxTypesBar__HelpTip {
+  max-width: 16rem;
+  font-size: 0.75rem;
+  line-height: 1.5;
+  text-align: left;
+}
+.TxTypesBar__HelpTip p {
+  margin: 0 0 0.55em;
+}
+.TxTypesBar__HelpFoot {
+  margin: 0 !important;
+  color: rgba(255, 255, 255, 0.55);
+  font-size: 0.6875rem;
+  line-height: 1.45;
+}
+.TxTypesBar__Controls {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 14px;
+  flex-shrink: 0;
+  margin-left: auto;
+  min-width: 0;
+}
+.TxTypesBar__Stat {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+  min-width: 0;
+  text-align: right;
+}
+.TxTypesBar__StatMain {
+  display: flex;
+  align-items: baseline;
+  justify-content: flex-end;
+  gap: 10px;
+  min-width: 0;
+}
+.TxTypesBar__StatCount {
+  font-family: var(--pe-font-heading);
+  font-weight: 800;
+  font-style: italic;
+  font-size: clamp(1.5rem, 2.8vw, 2rem);
+  line-height: 1;
+  color: #fff;
+  font-variant-numeric: tabular-nums;
+  text-shadow: 0 0 16px rgba(var(--pe-color-brand-light-rgb), 0.28);
+  min-width: 4ch;
+}
+.TxTypesBar__StatUnit {
+  font-family: var(--pe-font-mono);
+  font-size: 0.625rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--pe-color-gray-500);
+}
+.TxTypesBar__StatMeta {
+  font-family: var(--pe-font-mono);
+  font-size: 0.8125rem;
+  line-height: 1.35;
+  color: var(--pe-color-gray-400);
+  white-space: nowrap;
+  max-width: 18rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.TxTypesBar__Stat.is-on .TxTypesBar__StatMeta,
+.TxTypesBar__Stat.is-pinned .TxTypesBar__StatMeta {
+  color: rgba(var(--pe-color-brand-light-rgb), 0.95);
+}
+.TxTypesBar__Body {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+.TxTypesBar__Stack {
+  width: 100%;
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-height: 0;
+}
+@media screen and (max-width: 48em) {
+  .TxTypesBar__Stack {
+    flex: 0 1 auto;
+    min-height: 0;
+    gap: 12px;
+  }
+}
+.TxTypesBar__Empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 160px;
+  font-size: 0.8125rem;
+  color: var(--pe-color-gray-500);
+}
+.TxTypesBar__Bar {
+  display: flex;
+  gap: 2px;
+  width: 100%;
+  height: 18px;
+  flex-shrink: 0;
+  border-radius: 999px;
+  overflow: hidden;
+  padding: 2px;
+  box-sizing: border-box;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+.TxTypesBar__Seg {
+  appearance: none;
+  border: 0;
+  padding: 0;
+  margin: 0;
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+  min-width: 3px;
+  cursor: pointer;
+  text-decoration: none;
+  flex-shrink: 1;
+  opacity: 1;
+  transition:
+    filter 0.12s ease,
+    box-shadow 0.12s ease;
+}
+.TxTypesBar__Seg:focus-visible {
+  outline: 1px solid #fff;
+  outline-offset: -1px;
+}
+.TxTypesBar__Seg.is-focus {
+  filter: brightness(1.12);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.5);
+  z-index: 1;
+}
+.TxTypesBar__Rows {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.12) transparent;
+}
+@media screen and (max-width: 47.99em) {
+  .TxTypesBar__Rows {
+    flex: 0 1 auto;
+    max-height: 13.5rem;
+  }
+}
+.TxTypesBar__Row {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  display: grid;
+  grid-template-columns: 1.5rem 10px minmax(0, 1.1fr) minmax(40px, 1fr) minmax(4.5rem, auto);
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  height: 2.25rem;
+  flex-shrink: 0;
+  box-sizing: border-box;
+  padding: 0 8px;
+  border-radius: 0;
+  text-align: left;
+  cursor: pointer;
+  border-radius: 6px;
+  transition:
+    background-color 0.12s ease,
+    box-shadow 0.12s ease,
+    color 0.12s ease;
+}
+.TxTypesBar__Row:hover,
+.TxTypesBar__Row.is-focus {
+  background: rgba(255, 255, 255, 0.04);
+}
+.TxTypesBar__Row:focus-visible {
+  outline: 1px solid rgba(var(--pe-color-brand-light-rgb), 0.45);
+  outline-offset: -1px;
+}
+.TxTypesBar__Row.is-focus .TxTypesBar__RowLabel,
+.TxTypesBar__Row.is-focus .TxTypesBar__RowCount,
+.TxTypesBar__Row:hover .TxTypesBar__RowLabel,
+.TxTypesBar__Row:hover .TxTypesBar__RowCount {
+  color: #fff;
+}
+.TxTypesBar__Row.is-focus .TxTypesBar__Dot,
+.TxTypesBar__Row:hover .TxTypesBar__Dot {
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.22);
+}
+@media screen and (max-width: 48em) {
+  .TxTypesBar__Row {
+    grid-template-columns: 1.25rem 8px minmax(0, 1fr) minmax(3.75rem, auto);
+    gap: 6px;
+    padding: 0 6px;
+  }
+}
+.TxTypesBar__Stack.is-pinned .TxTypesBar__Row.is-focus {
+  box-shadow: inset 2px 0 0 rgba(var(--pe-color-brand-light-rgb), 0.95);
+}
+.TxTypesBar__Rank {
+  font-family: var(--pe-font-mono);
+  font-size: 0.625rem;
+  color: var(--pe-color-gray-500);
+  text-align: right;
+}
+.TxTypesBar__Dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.TxTypesBar__RowLabel {
+  min-width: 0;
+  max-width: 100%;
+  justify-self: start;
+  font-family: var(--pe-font-mono);
+  font-size: 0.6875rem;
+  color: var(--pe-color-gray-250);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.TxTypesBar__RowLabelLink {
+  color: inherit;
+  text-decoration: none;
+}
+.TxTypesBar__RowLabelLink:hover,
+.TxTypesBar__RowLabelLink:focus-visible {
+  color: rgba(var(--pe-color-brand-light-rgb), 1);
+}
+.TxTypesBar__Meter {
+  display: block;
+  height: 6px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.06);
+  overflow: hidden;
+  min-width: 0;
+}
+@media screen and (max-width: 48em) {
+  .TxTypesBar__Meter {
+    display: none;
+  }
+}
+.TxTypesBar__MeterFill {
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+}
+.TxTypesBar__RowCount {
+  font-family: var(--pe-font-mono);
+  font-size: 0.6875rem;
+  text-align: right;
+  white-space: nowrap;
+  color: #fff;
+}
+.TxTypesBar__Seg--BATCH {
+  background: rgba(255, 255, 255, 0.45);
+  color: rgba(255, 255, 255, 0.45);
+}
+.TxTypesBar__Dot--BATCH {
+  background: rgba(255, 255, 255, 0.45);
+  color: rgba(255, 255, 255, 0.45);
+}
+.TxTypesBar__Seg--MASTERNODE_VOTE {
+  background: #f49a58;
+  color: #f49a58;
+}
+.TxTypesBar__Dot--MASTERNODE_VOTE {
+  background: #f49a58;
+  color: #f49a58;
+}
+.TxTypesBar__Seg--IDENTITY_CREDIT_TRANSFER {
+  background: #d9742c;
+  color: #d9742c;
+}
+.TxTypesBar__Dot--IDENTITY_CREDIT_TRANSFER {
+  background: #d9742c;
+  color: #d9742c;
+}
+.TxTypesBar__Seg--IDENTITY_CREDIT_WITHDRAWAL {
+  background: #f45858;
+  color: #f45858;
+}
+.TxTypesBar__Dot--IDENTITY_CREDIT_WITHDRAWAL {
+  background: #f45858;
+  color: #f45858;
+}
+.TxTypesBar__Seg--IDENTITY_CREATE {
+  background: #2cbbff;
+  color: #2cbbff;
+}
+.TxTypesBar__Dot--IDENTITY_CREATE {
+  background: #2cbbff;
+  color: #2cbbff;
+}
+.TxTypesBar__Seg--DATA_CONTRACT_CREATE {
+  background: #008de4;
+  color: #008de4;
+}
+.TxTypesBar__Dot--DATA_CONTRACT_CREATE {
+  background: #008de4;
+  color: #008de4;
+}
+.TxTypesBar__Seg--IDENTITY_UPDATE {
+  background: #f4e458;
+  color: #f4e458;
+}
+.TxTypesBar__Dot--IDENTITY_UPDATE {
+  background: #f4e458;
+  color: #f4e458;
+}
+.TxTypesBar__Seg--DATA_CONTRACT_UPDATE {
+  background: #cfae2e;
+  color: #cfae2e;
+}
+.TxTypesBar__Dot--DATA_CONTRACT_UPDATE {
+  background: #cfae2e;
+  color: #cfae2e;
+}
+.TxTypesBar__Seg--IDENTITY_TOP_UP {
+  background: #58f4bc;
+  color: #58f4bc;
+}
+.TxTypesBar__Dot--IDENTITY_TOP_UP {
+  background: #58f4bc;
+  color: #58f4bc;
+}
+.TxTypesBar__Seg--SHIELD {
+  background: #81f458;
+  color: #81f458;
+}
+.TxTypesBar__Dot--SHIELD {
+  background: #81f458;
+  color: #81f458;
+}
+.TxTypesBar__Seg--SHIELD_FROM_ASSET_LOCK {
+  background: #5fd437;
+  color: #5fd437;
+}
+.TxTypesBar__Dot--SHIELD_FROM_ASSET_LOCK {
+  background: #5fd437;
+  color: #5fd437;
+}
+.TxTypesBar__Seg--SHIELDED_TRANSFER {
+  background: #a4f77e;
+  color: #a4f77e;
+}
+.TxTypesBar__Dot--SHIELDED_TRANSFER {
+  background: #a4f77e;
+  color: #a4f77e;
+}
+.TxTypesBar__Seg--UNSHIELD {
+  background: #66e04a;
+  color: #66e04a;
+}
+.TxTypesBar__Dot--UNSHIELD {
+  background: #66e04a;
+  color: #66e04a;
+}
+.TxTypesBar__Seg--SHIELDED_WITHDRAWAL {
+  background: #8fee62;
+  color: #8fee62;
+}
+.TxTypesBar__Dot--SHIELDED_WITHDRAWAL {
+  background: #8fee62;
+  color: #8fee62;
+}
+.TxTypesBar__Seg--IDENTITY_CREATE_FROM_SHIELDED_POOL {
+  background: #b8fa9b;
+  color: #b8fa9b;
+}
+.TxTypesBar__Dot--IDENTITY_CREATE_FROM_SHIELDED_POOL {
+  background: #b8fa9b;
+  color: #b8fa9b;
+}
+.TxTypesBar__Seg--ADDRESS_FUNDING_FROM_ASSET_LOCK {
+  background: #93aab2;
+  color: #93aab2;
+}
+.TxTypesBar__Dot--ADDRESS_FUNDING_FROM_ASSET_LOCK {
+  background: #93aab2;
+  color: #93aab2;
+}
+.TxTypesBar__Seg--ADDRESS_FUNDS_TRANSFER {
+  background: #7b939c;
+  color: #7b939c;
+}
+.TxTypesBar__Dot--ADDRESS_FUNDS_TRANSFER {
+  background: #7b939c;
+  color: #7b939c;
+}
+.TxTypesBar__Seg--ADDRESS_CREDIT_WITHDRAWAL {
+  background: #a8bcc3;
+  color: #a8bcc3;
+}
+.TxTypesBar__Dot--ADDRESS_CREDIT_WITHDRAWAL {
+  background: #a8bcc3;
+  color: #a8bcc3;
+}
+.TxTypesBar__Seg--IDENTITY_CREDIT_TRANSFER_TO_ADDRESS {
+  background: #86979e;
+  color: #86979e;
+}
+.TxTypesBar__Dot--IDENTITY_CREDIT_TRANSFER_TO_ADDRESS {
+  background: #86979e;
+  color: #86979e;
+}
+.TxTypesBar__Seg--IDENTITY_CREATE_FROM_ADDRESSES {
+  background: #9fb3ba;
+  color: #9fb3ba;
+}
+.TxTypesBar__Dot--IDENTITY_CREATE_FROM_ADDRESSES {
+  background: #9fb3ba;
+  color: #9fb3ba;
+}
+.TxTypesBar__Seg--IDENTITY_TOP_UP_FROM_ADDRESSES {
+  background: #8ba0a8;
+  color: #8ba0a8;
+}
+.TxTypesBar__Dot--IDENTITY_TOP_UP_FROM_ADDRESSES {
+  background: #8ba0a8;
+  color: #8ba0a8;
+}
+.TxTypesBar__Seg--DOCUMENT_CREATE {
+  background: #4fd4a8;
+  color: #4fd4a8;
+}
+.TxTypesBar__Dot--DOCUMENT_CREATE {
+  background: #4fd4a8;
+  color: #4fd4a8;
+}
+.TxTypesBar__Seg--DOCUMENT_REPLACE {
+  background: #e8a04a;
+  color: #e8a04a;
+}
+.TxTypesBar__Dot--DOCUMENT_REPLACE {
+  background: #e8a04a;
+  color: #e8a04a;
+}
+.TxTypesBar__Seg--DOCUMENT_DELETE {
+  background: #e85a6a;
+  color: #e85a6a;
+}
+.TxTypesBar__Dot--DOCUMENT_DELETE {
+  background: #e85a6a;
+  color: #e85a6a;
+}
+.TxTypesBar__Seg--DOCUMENT_TRANSFER {
+  background: #d4883c;
+  color: #d4883c;
+}
+.TxTypesBar__Dot--DOCUMENT_TRANSFER {
+  background: #d4883c;
+  color: #d4883c;
+}
+.TxTypesBar__Seg--DOCUMENT_UPDATE_PRICE {
+  background: #5ab8f0;
+  color: #5ab8f0;
+}
+.TxTypesBar__Dot--DOCUMENT_UPDATE_PRICE {
+  background: #5ab8f0;
+  color: #5ab8f0;
+}
+.TxTypesBar__Seg--DOCUMENT_PURCHASE {
+  background: #3ecf8e;
+  color: #3ecf8e;
+}
+.TxTypesBar__Dot--DOCUMENT_PURCHASE {
+  background: #3ecf8e;
+  color: #3ecf8e;
+}
+.TxTypesBar__Seg--TOKEN_MINT {
+  background: #58e8d0;
+  color: #58e8d0;
+}
+.TxTypesBar__Dot--TOKEN_MINT {
+  background: #58e8d0;
+  color: #58e8d0;
+}
+.TxTypesBar__Seg--TOKEN_TRANSFER {
+  background: #f0b060;
+  color: #f0b060;
+}
+.TxTypesBar__Dot--TOKEN_TRANSFER {
+  background: #f0b060;
+  color: #f0b060;
+}
+.TxTypesBar__Seg--TOKEN_BURN {
+  background: #e05050;
+  color: #e05050;
+}
+.TxTypesBar__Dot--TOKEN_BURN {
+  background: #e05050;
+  color: #e05050;
+}
+.TxTypesBar__Seg--TOKEN_FREEZE {
+  background: #6a9ee0;
+  color: #6a9ee0;
+}
+.TxTypesBar__Dot--TOKEN_FREEZE {
+  background: #6a9ee0;
+  color: #6a9ee0;
+}
+.TxTypesBar__Seg--TOKEN_UNFREEZE {
+  background: #e8c060;
+  color: #e8c060;
+}
+.TxTypesBar__Dot--TOKEN_UNFREEZE {
+  background: #e8c060;
+  color: #e8c060;
+}
+.TxTypesBar__Seg--TOKEN_DESTROY_FROZEN_FUNDS {
+  background: #c87848;
+  color: #c87848;
+}
+.TxTypesBar__Dot--TOKEN_DESTROY_FROZEN_FUNDS {
+  background: #c87848;
+  color: #c87848;
+}
+.TxTypesBar__Seg--TOKEN_CLAIM {
+  background: #68d898;
+  color: #68d898;
+}
+.TxTypesBar__Dot--TOKEN_CLAIM {
+  background: #68d898;
+  color: #68d898;
+}
+.TxTypesBar__Seg--TOKEN_EMERGENCY_ACTION {
+  background: #f06070;
+  color: #f06070;
+}
+.TxTypesBar__Dot--TOKEN_EMERGENCY_ACTION {
+  background: #f06070;
+  color: #f06070;
+}
+.TxTypesBar__Seg--TOKEN_CONFIG_UPDATE {
+  background: #98a0a8;
+  color: #98a0a8;
+}
+.TxTypesBar__Dot--TOKEN_CONFIG_UPDATE {
+  background: #98a0a8;
+  color: #98a0a8;
+}
+.TxTypesBar__Seg--TOKEN_DIRECT_PURCHASE {
+  background: #48c880;
+  color: #48c880;
+}
+.TxTypesBar__Dot--TOKEN_DIRECT_PURCHASE {
+  background: #48c880;
+  color: #48c880;
+}
+.TxTypesBar__Seg--TOKEN_SET_PRICE_FOR_DIRECT_PURCHASE {
+  background: #70a8e8;
+  color: #70a8e8;
+}
+.TxTypesBar__Dot--TOKEN_SET_PRICE_FOR_DIRECT_PURCHASE {
+  background: #70a8e8;
+  color: #70a8e8;
+}
+.TxTypesBar__Seg--UNKNOWN {
+  background: rgba(255, 255, 255, 0.25);
+  color: rgba(255, 255, 255, 0.25);
+}
+.TxTypesBar__Dot--UNKNOWN {
+  background: rgba(255, 255, 255, 0.25);
+  color: rgba(255, 255, 255, 0.25);
+}

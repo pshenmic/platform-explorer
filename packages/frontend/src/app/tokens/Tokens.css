@@ -1,0 +1,50 @@
+.Tokens__Controls {
+  display: grid;
+  grid-template-columns: auto auto minmax(0, 1fr) auto;
+  grid-template-areas: "title stats trending filters";
+  align-items: center;
+  column-gap: 1rem;
+  row-gap: 0.75rem;
+  margin: 0.75rem 0 1.5rem;
+}
+.Tokens__Title {
+  grid-area: title;
+  min-width: 0;
+}
+.Tokens__Stats {
+  grid-area: stats;
+  min-width: 0;
+}
+.Tokens__Trending {
+  grid-area: trending;
+  min-width: 0;
+  overflow: hidden;
+  padding-left: 1rem;
+  border-left: 1px solid var(--pe-color-gray-700);
+}
+.Tokens__Filters {
+  grid-area: filters;
+  width: auto;
+  justify-self: end;
+}
+@media screen and (max-width: 48em) {
+  .Tokens__Controls {
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas: "title filters" "stats stats" "trending trending";
+    column-gap: 12px;
+    row-gap: 10px;
+    margin: 0 0 1rem;
+  }
+  .Tokens__Filters {
+    justify-self: end;
+    align-self: center;
+  }
+  .Tokens__Stats {
+    width: 100%;
+  }
+  .Tokens__Trending {
+    width: 100%;
+    padding-left: 0;
+    border-left: none;
+  }
+}

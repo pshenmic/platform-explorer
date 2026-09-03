@@ -1,5 +1,3 @@
 import { TableHeaders } from './TableHeaders'
 
-export {
-  TableHeaders
-}
+export { TableHeaders }

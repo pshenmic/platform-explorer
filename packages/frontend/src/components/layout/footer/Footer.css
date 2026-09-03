@@ -1,0 +1,145 @@
+.Footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 22;
+  background-color: var(--pe-color-gray-650);
+  padding: var(--pe-space-2_5) var(--pe-space-4);
+  padding-left: var(--pe-space-3);
+  padding-right: var(--pe-space-3);
+  border-radius: var(--pe-radius-def) var(--pe-space-2_5) 0 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--pe-space-4);
+}
+
+.Footer > * {
+  flex: 1;
+}
+
+.Footer > p,
+.Footer a {
+  font-size: var(--pe-text-sm);
+  color: var(--pe-color-fg-muted);
+  font-weight: var(--pe-font-weight-normal);
+}
+
+.Footer__CopyrightBlock {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: var(--pe-space-3);
+}
+
+.Footer__Copyright {
+  font-size: var(--pe-text-sm);
+  text-align: right;
+  color: var(--pe-color-fg-muted);
+  margin: 0;
+}
+
+@media screen and (max-width: 62em) {
+  .Footer__Copyright {
+    text-align: center;
+  }
+}
+
+.Footer__WrapperNetwork {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--pe-space-3);
+  justify-content: center;
+}
+
+.Footer__Network {
+  position: relative;
+  border-radius: var(--pe-radius-def);
+  padding: var(--pe-space-2_5) var(--pe-space-5);
+  background-color: var(--pe-color-gray-800);
+  transition: background-color ease 0.5s;
+}
+
+.Footer__Network:hover {
+  background-color: var(--pe-color-brand-deep);
+}
+
+.Footer__Network > img {
+  position: relative;
+  width: var(--pe-space-5);
+  height: var(--pe-space-5);
+}
+
+.Footer__PshenmicLogo {
+  transition: color 0.1s;
+  width: max-content;
+}
+
+.Footer__PshenmicLogo:hover {
+  color: var(--pe-color-fg);
+}
+
+.Footer__PshenmicLogo:active,
+.Footer__PshenmicLogo a:active {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.Footer__TimezoneContainer {
+  display: flex;
+  align-items: center;
+}
+
+.Footer__ClockIcon {
+  margin-right: var(--pe-space-3);
+}
+
+@media screen and (max-width: 62em) {
+  .Footer {
+    flex-direction: column;
+    gap: var(--pe-space-3);
+  }
+
+  .Footer__Logo {
+    display: none;
+  }
+
+  .Footer__WrapperNetwork {
+    order: 1;
+  }
+
+  .Footer__TimezoneContainer {
+    order: 2;
+  }
+
+  .Footer__Copyright {
+    order: 3;
+  }
+}
+
+@media screen and (max-width: 62em) {
+  .Footer {
+    position: static;
+  }
+}
+
+@media screen and (max-width: 30em) {
+  .Footer__LocalTime .LocalTime__Time:after {
+    display: none !important;
+  }
+
+  .Footer__LocalTime span {
+    display: block;
+  }
+}
+
+.FooterStub {
+  height: 66px;
+}
+
+@media screen and (max-width: 62em) {
+  .FooterStub {
+    display: none;
+  }
+}

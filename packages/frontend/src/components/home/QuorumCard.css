@@ -1,0 +1,1627 @@
+.QuorumCard {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+  contain: layout style;
+}
+.QuorumCard__Glow {
+  position: absolute;
+  top: 20%;
+  left: 8%;
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  pointer-events: none;
+  background: radial-gradient(
+    circle,
+    rgba(var(--pe-color-green-label-rgb), 0.12) 0%,
+    rgba(var(--pe-color-brand-normal-rgb), 0.06) 40%,
+    transparent 70%
+  );
+}
+.QuorumCard__Head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px 24px;
+  flex-wrap: wrap;
+  flex-shrink: 0;
+  margin-bottom: 16px;
+}
+@media screen and (min-width: 64em) {
+  .QuorumCard__Lede {
+    white-space: nowrap;
+  }
+}
+@media screen and (max-width: 47.99em) {
+  .QuorumCard__Head {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+.QuorumCard__HeadText {
+  flex: 1 1 auto;
+  min-width: 0;
+  max-width: 18rem;
+}
+.QuorumCard__Eyebrow {
+  display: block;
+  font-family: var(--pe-font-mono);
+  font-size: 0.5625rem;
+  text-transform: uppercase;
+  letter-spacing: 0.22em;
+  color: var(--pe-color-green-label);
+  margin-bottom: 6px;
+}
+.QuorumCard__HelpTip {
+  max-width: 18rem;
+  font-size: 0.75rem;
+  line-height: 1.5;
+  text-align: left;
+}
+.QuorumCard__HelpTip p {
+  margin: 0 0 0.55em;
+}
+.QuorumCard__HelpFoot {
+  margin: 0 !important;
+  color: rgba(255, 255, 255, 0.55);
+  font-size: 0.6875rem;
+  line-height: 1.45;
+}
+.QuorumCard__HelpMark {
+  color: var(--pe-color-brand-light);
+  border-bottom: 1px dotted rgba(var(--pe-color-brand-light-rgb), 0.6);
+  text-decoration: none;
+  white-space: nowrap;
+}
+a.QuorumCard__HelpMark:hover {
+  border-bottom-style: solid;
+}
+.QuorumCard__HelpSwatch {
+  font-weight: 700;
+  padding: 0 0.3em;
+  border-radius: 3px;
+}
+.QuorumCard__HelpSwatch--active {
+  color: var(--pe-color-green-label);
+  background-color: rgba(var(--pe-color-green-label-rgb), 0.2);
+}
+.QuorumCard__HelpSwatch--next {
+  color: var(--pe-color-yellow-default);
+  background-color: rgba(var(--pe-color-yellow-default-rgb), 0.2);
+}
+.QuorumCard__HelpSwatch--inactive {
+  color: rgba(255, 255, 255, 0.78);
+  background-color: rgba(255, 255, 255, 0.22);
+}
+.QuorumCard__HelpSwatch--banned {
+  color: var(--pe-color-red-default);
+  background-color: rgba(var(--pe-color-red-default-rgb), 0.2);
+}
+.QuorumCard__Title {
+  font-family: var(--pe-font-heading);
+  font-weight: 800;
+  font-style: italic;
+  font-size: 1.375rem;
+  line-height: 1.1;
+  color: #fff;
+  margin: 0 0 8px;
+}
+.QuorumCard__Lede {
+  font-family: var(--pe-font-mono);
+  font-size: 0.6875rem;
+  line-height: 1.55;
+  color: var(--pe-color-gray-500);
+  margin: 0;
+}
+.QuorumCard__Controls {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+  flex-shrink: 0;
+  margin-left: auto;
+  min-width: 0;
+}
+.QuorumCard__Legend {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  align-items: flex-end;
+  gap: 8px 14px;
+  margin: 0;
+  min-width: 0;
+}
+.QuorumCard__Leg {
+  appearance: none;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font-family: var(--pe-font-mono);
+  font-size: 0.5625rem;
+  white-space: nowrap;
+  flex-shrink: 0;
+  line-height: 1.2;
+  cursor: pointer;
+  opacity: 0.85;
+}
+.QuorumCard__LegLabel {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: var(--pe-color-gray-250);
+}
+.QuorumCard__Leg b {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  min-height: 1.125rem;
+  font-family: var(--pe-font-heading);
+  font-style: italic;
+  font-weight: 800;
+  font-size: 1.125rem;
+  line-height: 1;
+  color: #fff;
+  font-variant-numeric: tabular-nums;
+}
+.QuorumCard__Leg.is-on,
+.QuorumCard__Leg:hover:not(:disabled) {
+  opacity: 1;
+}
+.QuorumCard__Leg:disabled {
+  cursor: default;
+  opacity: 0.45;
+}
+.QuorumCard__LedeMore {
+  color: var(--pe-color-brand-light);
+  border-bottom: 1px dotted rgba(var(--pe-color-brand-light-rgb), 0.6);
+  cursor: help;
+  white-space: nowrap;
+}
+.QuorumCard__Status {
+  flex: 0 1 auto;
+  display: flex;
+  flex-wrap: wrap;
+  align-content: flex-start;
+  justify-content: flex-end;
+  gap: 5px;
+  min-width: 0;
+  max-width: min(52%, 20rem);
+  padding-top: 0.2rem;
+}
+@media screen and (max-width: 48em) {
+  .QuorumCard__Status {
+    max-width: none;
+    width: 100%;
+    justify-content: flex-start;
+    padding-top: 0;
+  }
+}
+@media screen and (max-width: 47.99em) {
+  .QuorumCard__Controls {
+    width: 100%;
+    align-items: flex-start;
+  }
+  .QuorumCard__Legend,
+  .QuorumCard__QCaption {
+    justify-content: flex-start;
+    align-items: flex-start;
+  }
+}
+.QuorumCard__Chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px;
+  border-radius: 999px;
+  font-family: var(--pe-font-mono);
+  font-size: 0.625rem;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.2;
+  color: #fff;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  white-space: nowrap;
+}
+.QuorumCard__Chip i {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+  flex-shrink: 0;
+}
+.QuorumCard__Chip--good {
+  color: var(--pe-color-green-label);
+  border-color: rgba(var(--pe-color-green-label-rgb), 0.35);
+  background: rgba(var(--pe-color-green-label-rgb), 0.08);
+}
+.QuorumCard__Chip--warn {
+  color: var(--pe-color-yellow-default);
+  border-color: rgba(var(--pe-color-yellow-default-rgb), 0.35);
+  background: rgba(var(--pe-color-yellow-default-rgb), 0.08);
+}
+.QuorumCard__Chip--bad,
+.QuorumCard__Chip--critical {
+  color: var(--pe-color-red-default);
+  border-color: rgba(var(--pe-color-red-default-rgb), 0.4);
+  background: rgba(var(--pe-color-red-default-rgb), 0.1);
+}
+.QuorumCard__Chip--muted {
+  color: var(--pe-color-gray-250);
+}
+.QuorumCard__Chip--live {
+  color: var(--pe-color-green-label);
+}
+.QuorumCard__Chip--live i {
+  box-shadow: 0 0 6px rgba(var(--pe-color-green-label-rgb), 0.7);
+  animation: mn-live-pulse 1.8s ease-in-out infinite;
+}
+.QuorumCard__FallbackNote {
+  margin: -6px 0 10px;
+  font-family: var(--pe-font-mono);
+  font-size: 0.6875rem;
+  color: var(--pe-color-gray-500);
+}
+.QuorumCard__FallbackNote--inline {
+  margin: 8px 0 0;
+}
+.QuorumCard__Diff {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 10px;
+  margin: -2px 0 12px;
+  font-family: var(--pe-font-mono);
+  font-size: 0.625rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--pe-color-gray-250);
+  flex-shrink: 0;
+}
+.QuorumCard__DiffItem {
+  padding: 2px 7px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.03);
+}
+.QuorumCard__DiffItem--stay {
+  color: #fff;
+}
+.QuorumCard__DiffItem--join {
+  color: #7ad7ff;
+  border-color: rgba(122, 215, 255, 0.3);
+  background: rgba(122, 215, 255, 0.08);
+}
+.QuorumCard__DiffItem--leave {
+  color: rgba(255, 255, 255, 0.55);
+  border-style: dashed;
+}
+.QuorumCard__DiffNote {
+  color: var(--pe-color-gray-500);
+}
+.QuorumCard__Tip {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  min-width: 12rem;
+  max-width: 17rem;
+  text-align: left;
+}
+.QuorumCard__TipHead {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+.QuorumCard__TipFlag {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.15);
+}
+.QuorumCard__TipHeadText {
+  min-width: 0;
+  flex: 1 1 auto;
+}
+.QuorumCard__TipStatus {
+  font-weight: 700;
+  color: #fff;
+  line-height: 1.25;
+}
+.QuorumCard__TipCountry {
+  margin-top: 2px;
+  font-size: 0.6875rem;
+  color: rgba(255, 255, 255, 0.65);
+  line-height: 1.3;
+}
+.QuorumCard__TipRow {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  font-size: 0.6875rem;
+  line-height: 1.35;
+}
+.QuorumCard__TipRow span {
+  color: rgba(255, 255, 255, 0.55);
+  flex-shrink: 0;
+}
+.QuorumCard__TipRow b {
+  font-weight: 600;
+  color: #fff;
+  text-align: right;
+  min-width: 0;
+  word-break: break-word;
+}
+.QuorumCard__TipLink {
+  min-width: 0;
+  text-decoration: none;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.22);
+}
+.QuorumCard__TipLink b {
+  color: var(--pe-color-green-label);
+}
+.QuorumCard__TipLink:hover {
+  border-bottom-color: var(--pe-color-green-label);
+}
+.QuorumCard__TipMono {
+  font-family: var(--pe-font-mono);
+  font-size: 0.625rem;
+}
+.QuorumCard__Body {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.QuorumCard__Controls .QuorumCard__Legend {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  align-items: end;
+  justify-items: end;
+  gap: 6px 14px;
+  width: 100%;
+  max-width: 18rem;
+}
+.QuorumCard__Controls .QuorumCard__Leg {
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
+  min-width: 0;
+  max-width: 100%;
+}
+.QuorumCard__Controls .QuorumCard__LegLabel {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+@media screen and (min-width: 48em) {
+  .QuorumCard__Head {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-rows: auto auto auto;
+    align-items: baseline;
+    column-gap: 24px;
+    row-gap: 0;
+  }
+  .QuorumCard__HeadText {
+    display: grid;
+    grid-template-rows: subgrid;
+    grid-row: 1 / 4;
+    grid-column: 1;
+    max-width: none;
+    flex: none;
+  }
+  .QuorumCard__Eyebrow {
+    grid-row: 1;
+  }
+  .QuorumCard__Title {
+    grid-row: 2;
+  }
+  .QuorumCard__Lede {
+    grid-row: 3;
+  }
+  .QuorumCard__Controls {
+    display: grid;
+    grid-template-rows: subgrid;
+    grid-row: 1 / 4;
+    grid-column: 2;
+    gap: 0;
+    margin-left: 0;
+    justify-items: end;
+  }
+  .QuorumCard__Legend,
+  .QuorumCard__Controls .QuorumCard__Legend {
+    grid-row: 1 / 3;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(2.85rem, 1fr));
+    grid-template-rows: subgrid;
+    width: 100%;
+    max-width: none;
+    gap: 0 10px;
+    align-items: baseline;
+    justify-items: end;
+    justify-content: stretch;
+  }
+  .QuorumCard__Leg,
+  .QuorumCard__Controls .QuorumCard__Leg {
+    display: grid;
+    grid-template-rows: subgrid;
+    grid-row: 1 / 3;
+    gap: 0;
+    align-items: baseline;
+    justify-items: end;
+    min-width: 0;
+  }
+  .QuorumCard__LegLabel {
+    grid-row: 1;
+    margin-bottom: 8px;
+  }
+  .QuorumCard__Leg b {
+    grid-row: 2;
+    margin-bottom: 8px;
+    font-size: 1.375rem;
+  }
+  .QuorumCard__QCaption {
+    grid-row: 3;
+    justify-self: end;
+    margin-top: 0;
+  }
+}
+.QuorumCard__Empty {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--pe-color-gray-500);
+  font-size: 0.8125rem;
+}
+.QuorumCard__Stage {
+  --q-win: var(--pe-color-green-label);
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  gap: 12px;
+  align-items: stretch;
+}
+.QuorumCard__Side {
+  flex: 1 1 0;
+  min-width: 11.5rem;
+  max-width: 22rem;
+  display: grid;
+  grid-template-rows: 1fr 1fr;
+  gap: 12px;
+  min-height: 0;
+}
+@media screen and (max-width: 48em) {
+  .QuorumCard__Stage {
+    grid-template-columns: 1fr;
+    flex: 0 0 auto;
+    min-height: auto;
+  }
+}
+.QuorumCard__Col {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+  height: 100%;
+  aspect-ratio: 1;
+  width: auto;
+  max-width: min(100%, 58%);
+  flex: 0 1 auto;
+}
+@media screen and (max-width: 48em) {
+  .QuorumCard__Col {
+    height: auto;
+    width: 100%;
+    min-height: 0;
+  }
+}
+.QuorumCard__MatrixWrap {
+  flex: 1 1 auto;
+  display: flex;
+  min-width: 0;
+  min-height: 0;
+  height: 100%;
+  width: 100%;
+  max-width: 100%;
+  padding: 12px;
+  overflow: visible;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+@media screen and (max-width: 48em) {
+  .QuorumCard__MatrixWrap {
+    flex: 0 0 auto;
+    width: 100%;
+    height: auto;
+    min-height: 0;
+  }
+}
+.QuorumCard__QBar {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 8px;
+  min-width: 0;
+}
+.QuorumCard__QCaption {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  align-items: baseline;
+  gap: 0.25em 0.7em;
+  margin: 0;
+  max-width: 100%;
+  overflow: visible;
+  font-family: var(--pe-font-mono);
+  font-size: 0.6875rem;
+  line-height: 1.55;
+  color: var(--pe-color-gray-500);
+  text-align: right;
+}
+.QuorumCard__QEta {
+  white-space: nowrap;
+  color: var(--pe-color-gray-250);
+}
+.QuorumCard__QCaption b {
+  font-weight: 800;
+  color: #fff;
+  font-family: var(--pe-font-heading);
+  font-style: italic;
+  font-size: 1.125rem;
+  line-height: 1.15;
+  padding-right: 0.18em;
+}
+.QuorumCard__QCaptionHead {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 0.5em 1em;
+}
+.QuorumCard__PairCaption {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 0.2rem 1rem;
+  margin: 0;
+}
+.QuorumCard__PairCaption > span {
+  display: inline-flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.45em;
+  opacity: 0.55;
+}
+.QuorumCard__BlockLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: inherit;
+  text-decoration: none;
+  border-bottom: 1px dotted currentColor;
+}
+.QuorumCard__BlockLink:hover {
+  color: var(--pe-color-brand-light);
+}
+.QuorumCard__CaptionIcon {
+  flex-shrink: 0;
+  opacity: 0.9;
+  width: 0.875rem !important;
+  height: 0.875rem !important;
+}
+.QuorumCard__PairCaption > span.is-on {
+  opacity: 1;
+}
+.QuorumCard__PairCaption b,
+.QuorumCard__PairCaption em {
+  line-height: 1.2;
+  padding-right: 0;
+}
+.QuorumCard__PairCaption b {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-family: var(--pe-font-heading);
+  font-style: italic;
+  font-weight: 800;
+  font-size: 0.9375rem;
+}
+.QuorumCard__PairCaption b.is-block {
+  font-family: var(--pe-font-mono);
+  font-style: normal;
+  font-weight: 600;
+  font-size: 0.75rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--pe-color-gray-100);
+}
+.QuorumCard__PairCaption b.is-block .QuorumCard__BlockLink:hover {
+  color: var(--pe-color-brand-light);
+}
+.QuorumCard__PairCaption em {
+  font-family: var(--pe-font-mono);
+  font-style: normal;
+  font-weight: 600;
+  font-size: 0.75rem;
+  font-variant-numeric: tabular-nums;
+}
+.QuorumCard__PairCaption [data-tone="now"] b:not(.is-block) {
+  color: var(--pe-color-green-label);
+}
+.QuorumCard__PairCaption [data-tone="next"] b:not(.is-block) {
+  color: var(--pe-color-yellow-default);
+}
+.QuorumCard__PairCaption [data-tone="now"] em {
+  color: var(--pe-color-green-label);
+}
+.QuorumCard__PairCaption [data-tone="next"] em {
+  color: var(--pe-color-yellow-default);
+}
+.QuorumCard__QCaptionOverlap {
+  color: var(--pe-color-yellow-default);
+  font-size: 0.6875rem;
+}
+.QuorumCard__QCaptionMeta {
+  font-size: 0.75rem;
+  line-height: 1.3;
+}
+.QuorumCard__QCaption em.QuorumCard__QCaptionMeta {
+  font-style: normal;
+  color: var(--pe-color-green-label);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-size: 0.6875rem;
+  font-weight: 700;
+}
+.QuorumCard__QueueKey {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 14px;
+  margin: 0;
+  font-family: var(--pe-font-mono);
+  font-size: 0.6875rem;
+  line-height: 1.35;
+  color: var(--pe-color-gray-500);
+}
+.QuorumCard__QCaption .QuorumCard__QueueKey {
+  justify-content: flex-end;
+  flex-wrap: nowrap;
+  white-space: nowrap;
+}
+.QuorumCard__QueueKey [data-tone="now"] {
+  color: var(--pe-color-green-label);
+}
+.QuorumCard__QueueKey [data-tone="next"] {
+  color: var(--pe-color-yellow-default);
+}
+.QuorumCard__QPick {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-auto-rows: minmax(1.75rem, 1fr);
+  gap: 4px;
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  padding: 8px;
+  box-sizing: border-box;
+  overflow: auto;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+.QuorumCard__QPick:focus-visible {
+  outline: 1px solid rgba(var(--pe-color-brand-light-rgb), 0.45);
+  outline-offset: 2px;
+}
+.QuorumCard__QPick > * {
+  min-width: 0;
+  min-height: 0;
+}
+.QuorumCard__QBtn {
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--pe-color-gray-100);
+  box-sizing: border-box;
+  min-width: 0;
+  width: 100%;
+  height: auto;
+  min-height: 1.75rem;
+  padding: 4px 6px;
+  border-radius: 4px;
+  font-family: var(--pe-font-mono);
+  font-size: 0.75rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+  line-height: 1;
+  cursor: pointer;
+  white-space: nowrap;
+  overflow: hidden;
+}
+.QuorumCard__QBtnIcon {
+  flex-shrink: 0;
+  opacity: 0.9;
+  width: 0.875rem !important;
+  height: 0.875rem !important;
+}
+.QuorumCard__QBtn.is-live {
+  box-shadow: inset 0 -2px 0 0 rgba(var(--pe-color-green-label-rgb), 0.75);
+}
+.QuorumCard__TurnTip {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+  max-width: 100%;
+  text-align: left;
+}
+.QuorumCard__TurnTip .QuorumCard__TipRow b {
+  word-break: break-word;
+  overflow-wrap: anywhere;
+  white-space: normal;
+}
+.QuorumCard__TurnTipBrief {
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: #fff;
+  line-height: 1.3;
+}
+.QuorumCard__TurnTipRows {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.QuorumCard__QBtn.is-on {
+  color: #fff;
+  border-color: rgba(var(--pe-color-brand-light-rgb), 0.55);
+  background: rgba(var(--pe-color-brand-normal-rgb), 0.22);
+}
+.QuorumCard__QBtn.is-signed {
+  border: 1px dotted var(--pe-color-white-50);
+  background: rgba(var(--pe-color-white-50-rgb), 0.14);
+  animation: qSignedDash 1.6s linear infinite;
+}
+.QuorumCard__QBtn.is-signed.is-on {
+  border-style: dotted;
+  border-color: var(--pe-color-white-50);
+  background: rgba(var(--pe-color-white-50-rgb), 0.2);
+}
+@keyframes qSignedDash {
+  0% {
+    border-color: rgba(var(--pe-color-white-50-rgb), 0.35);
+  }
+  50% {
+    border-color: var(--pe-color-white-50);
+  }
+  100% {
+    border-color: rgba(var(--pe-color-white-50-rgb), 0.35);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .QuorumCard__QBtn.is-signed {
+    animation: none;
+    border-color: var(--pe-color-white-50);
+  }
+}
+.QuorumCard__Matrix {
+  display: grid;
+  gap: 2px;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  flex: 1 1 auto;
+  overflow: visible;
+  padding: 3px;
+  box-sizing: border-box;
+  border-radius: 4px;
+}
+.QuorumCard__Cell {
+  appearance: none;
+  border: 1px solid transparent;
+  padding: 0;
+  margin: 0;
+  min-width: 0;
+  min-height: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 2px;
+  cursor: pointer;
+  position: relative;
+  z-index: 0;
+  background-clip: border-box;
+  transition:
+    background-color 0.4s ease,
+    border-color 0.4s ease,
+    box-shadow 0.35s ease;
+  outline: none;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+.QuorumCard__CellIdx {
+  font-family: var(--pe-font-mono);
+  font-size: 0.75rem;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.04em;
+  color: var(--pe-color-gray-900);
+  pointer-events: none;
+  user-select: none;
+  transition: color 0.4s ease;
+}
+.QuorumCard__Cell--inactive .QuorumCard__CellIdx,
+.QuorumCard__Cell--idle .QuorumCard__CellIdx {
+  color: rgba(255, 255, 255, 0.55);
+}
+@media screen and (max-width: 48em) {
+  .QuorumCard__Cell {
+    min-height: 0;
+  }
+}
+.QuorumCard__Stage[data-window="next"] {
+  --q-win: var(--pe-color-yellow-default);
+}
+.QuorumCard__Stage[data-window="later"] {
+  --q-win: rgba(255, 255, 255, 0.7);
+}
+.QuorumCard__Cell.is-in-window {
+  z-index: 1;
+}
+.QuorumCard__Cell.is-win-n {
+  border-top-color: var(--q-win);
+}
+.QuorumCard__Cell.is-win-s {
+  border-bottom-color: var(--q-win);
+}
+.QuorumCard__Cell.is-win-w {
+  border-left-color: var(--q-win);
+}
+.QuorumCard__Cell.is-win-e {
+  border-right-color: var(--q-win);
+}
+.QuorumCard__Stage.is-show-banned .QuorumCard__Cell[data-band="pad"] {
+  background: transparent;
+  box-shadow: none;
+  cursor: default;
+}
+.QuorumCard__Cell--active {
+  --q-fill: var(--pe-color-green-label-rgb);
+  background-color: rgba(var(--q-fill), 0.2);
+}
+.QuorumCard__Cell--active .QuorumCard__CellIdx {
+  color: var(--pe-color-green-label);
+}
+.QuorumCard__Cell--next {
+  --q-fill: var(--pe-color-yellow-default-rgb);
+  background-color: rgba(var(--q-fill), 0.2);
+  border-style: dotted;
+  border-color: rgba(var(--pe-color-yellow-default-rgb), 0.55);
+  animation: qCarryDash 2.4s ease-in-out 0.4s infinite;
+}
+.QuorumCard__Cell--next .QuorumCard__CellIdx {
+  color: var(--pe-color-yellow-default);
+}
+@keyframes qCarryDash {
+  0%,
+  100% {
+    border-color: rgba(var(--pe-color-yellow-default-rgb), 0.28);
+  }
+  50% {
+    border-color: rgba(var(--pe-color-yellow-default-rgb), 0.85);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .QuorumCard__Cell,
+  .QuorumCard__CellIdx,
+  .QuorumCard__Host,
+  .QuorumCard__HostIdx {
+    transition: none;
+  }
+  .QuorumCard__Cell--next {
+    animation: none;
+    border-color: rgba(var(--pe-color-yellow-default-rgb), 0.55);
+  }
+}
+.QuorumCard__Cell--inactive {
+  --q-fill: 255, 255, 255;
+  background-color: rgba(255, 255, 255, 0.22);
+}
+.QuorumCard__Cell--banned,
+.QuorumCard__Cell--invalid {
+  --q-fill: var(--pe-color-red-default-rgb);
+  background-color: rgba(var(--q-fill), 0.2);
+}
+.QuorumCard__Cell--banned .QuorumCard__CellIdx,
+.QuorumCard__Cell--invalid .QuorumCard__CellIdx {
+  color: var(--pe-color-red-default);
+}
+.QuorumCard__Cell--idle {
+  background-color: rgba(255, 255, 255, 0.06);
+  cursor: default;
+}
+.QuorumCard__Cell.is-dimmed {
+  opacity: 0.22;
+  filter: none;
+}
+.QuorumCard__Cell.is-search-hit {
+  box-shadow: inset 0 0 0 1px var(--pe-color-white-50);
+  filter: brightness(1.12);
+}
+@media (hover: hover) and (pointer: fine) {
+  .QuorumCard__Cell:not(.QuorumCard__Cell--idle):not(.is-focus):hover {
+    background-color: rgba(var(--q-fill), 0.38);
+  }
+}
+.QuorumCard__Cell:not(.QuorumCard__Cell--idle):focus-visible {
+  box-shadow: inset 0 0 0 1px var(--pe-color-white-50);
+}
+.QuorumCard__Matrix--roster {
+  gap: 3px;
+}
+.QuorumCard__HostsClip {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+  height: 100%;
+  overflow: hidden;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+.QuorumCard__HostSearch {
+  flex: 0 0 auto;
+  display: block;
+  padding: 8px 8px 6px;
+  pointer-events: none;
+  background: var(--pe-color-gray-900);
+}
+.QuorumCard__HostSearchLabel {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+}
+.QuorumCard__HostSearchInput {
+  display: block;
+  width: 100%;
+  margin: 0;
+  padding: 7px 10px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 10px;
+  background: var(--pe-color-gray-800);
+  color: #fff;
+  font-family: var(--pe-font-mono);
+  font-size: 0.75rem;
+  line-height: 1.3;
+  outline: none;
+  pointer-events: auto;
+}
+.QuorumCard__HostSearchInput::placeholder {
+  color: var(--pe-color-gray-500);
+}
+.QuorumCard__HostSearchInput:focus {
+  border-color: rgba(var(--pe-color-brand-light-rgb), 0.55);
+}
+.QuorumCard__Hosts {
+  position: relative;
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 6px;
+  scrollbar-width: thin;
+}
+.QuorumCard__HostsGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  grid-auto-flow: row;
+  column-gap: 6px;
+  row-gap: 4px;
+  width: 100%;
+  min-width: 0;
+}
+.QuorumCard__HostsEmpty {
+  margin: auto;
+  padding: 12px;
+  font-family: var(--pe-font-mono);
+  font-size: 0.6875rem;
+  color: var(--pe-color-gray-500);
+}
+.QuorumCard__HostsFold {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  margin: 0;
+  padding: 4px 0 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  box-sizing: border-box;
+}
+.QuorumCard__HostsFold > summary {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 6px 4px;
+  cursor: pointer;
+  list-style: none;
+  font-family: var(--pe-font-mono);
+  font-size: 0.75rem;
+  color: var(--pe-color-gray-250);
+  user-select: none;
+}
+.QuorumCard__HostsFold > summary::-webkit-details-marker {
+  display: none;
+}
+.QuorumCard__HostsFold > summary > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.QuorumCard__HostsFoldCount {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+.QuorumCard__HostsFoldCount b {
+  font-family: var(--pe-font-heading);
+  font-style: italic;
+  font-weight: 800;
+  color: #fff;
+}
+.QuorumCard__HostsFoldCount::after {
+  content: "";
+  width: 0.4rem;
+  height: 0.4rem;
+  border-right: 1.5px solid var(--pe-color-gray-250);
+  border-bottom: 1.5px solid var(--pe-color-gray-250);
+  transform: rotate(45deg);
+  transition: transform 0.15s ease;
+}
+.QuorumCard__HostsFold[open] .QuorumCard__HostsFoldCount::after {
+  transform: rotate(225deg);
+}
+.QuorumCard__HostsFold > .QuorumCard__HostsGrid {
+  margin-top: 6px;
+}
+.QuorumCard__Host {
+  appearance: none;
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 6px 4px;
+  min-height: 2rem;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: inherit;
+  font-family: var(--pe-font-mono);
+  font-size: 0.75rem;
+  line-height: 1.3;
+  text-align: left;
+  cursor: pointer;
+  transition:
+    background-color 0.4s ease,
+    color 0.4s ease;
+}
+.QuorumCard__HostIdx {
+  flex-shrink: 0;
+  width: 4ch;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+  color: var(--pe-color-gray-100);
+  transition: color 0.4s ease;
+}
+.QuorumCard__Host--active .QuorumCard__HostIdx,
+.QuorumCard__Host--invalid .QuorumCard__HostIdx {
+  color: var(--pe-color-green-label);
+}
+.QuorumCard__Host--next .QuorumCard__HostIdx {
+  color: var(--pe-color-yellow-default);
+}
+.QuorumCard__Host--banned .QuorumCard__HostIdx {
+  color: var(--pe-color-red-default);
+}
+.QuorumCard__HostFlag {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.12);
+}
+.QuorumCard__HostFlag.is-empty {
+  display: inline-block;
+  background: rgba(255, 255, 255, 0.08);
+  box-shadow: none;
+}
+.QuorumCard__Host span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.QuorumCard__Host--active,
+.QuorumCard__Host--invalid {
+  background-color: rgba(var(--pe-color-green-label-rgb), 0.2);
+}
+.QuorumCard__Host--next {
+  background-color: rgba(var(--pe-color-yellow-default-rgb), 0.2);
+}
+.QuorumCard__Host--inactive {
+  background-color: rgba(255, 255, 255, 0.08);
+}
+.QuorumCard__Host--banned {
+  background-color: rgba(var(--pe-color-red-default-rgb), 0.2);
+}
+.QuorumCard__Host:hover {
+  filter: brightness(1.12);
+}
+.QuorumCard__Host.is-focus {
+  box-shadow: inset 0 0 0 1px var(--pe-color-white-50);
+}
+.QuorumCard__Matrix--skel {
+  pointer-events: none;
+}
+.QuorumCard__Cell--skel {
+  background: rgba(255, 255, 255, 0.08);
+  cursor: default;
+  pointer-events: none;
+  animation: QuorumSkelPulse 1.5s ease-in-out infinite;
+}
+.QuorumCard__Matrix--skel .QuorumCard__Cell--skel:nth-child(3n) {
+  animation-delay: 0.2s;
+}
+.QuorumCard__Matrix--skel .QuorumCard__Cell--skel:nth-child(3n + 1) {
+  animation-delay: 0.4s;
+}
+@keyframes QuorumSkelPulse {
+  0%,
+  100% {
+    opacity: 0.35;
+  }
+  50% {
+    opacity: 0.72;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .QuorumCard__Cell--skel {
+    animation: none;
+    opacity: 0.45;
+  }
+}
+.QuorumCard__Rail {
+  appearance: none;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  background: rgba(255, 255, 255, 0.03);
+  color: inherit;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  flex: 1 1 0;
+  min-height: 0;
+  padding: 8px 12px;
+  border-radius: 12px;
+  text-align: left;
+  cursor: pointer;
+  opacity: 1;
+  transition:
+    background 0.12s ease,
+    border-color 0.12s ease,
+    opacity 0.12s ease;
+}
+@media screen and (max-width: 48em) {
+  .QuorumCard__Rail {
+    flex: 0 0 auto;
+    min-height: auto;
+  }
+}
+.QuorumCard__Rail:disabled {
+  cursor: default;
+  opacity: 0.55;
+}
+@media (hover: hover) and (pointer: fine) {
+  .QuorumCard__Rail:hover:not(:disabled) {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.1);
+  }
+}
+.QuorumCard__Rail:focus-visible {
+  outline: 1px solid rgba(var(--pe-color-brand-light-rgb), 0.5);
+  outline-offset: 0;
+}
+.QuorumCard__RailTop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  min-width: 0;
+}
+.QuorumCard__RailId {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-width: 0;
+  font-family: var(--pe-font-mono);
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #fff;
+  white-space: nowrap;
+}
+.QuorumCard__Dot {
+  display: block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.QuorumCard__Dot--total {
+  background: rgba(var(--pe-color-brand-light-rgb), 0.85);
+  box-shadow: 0 0 6px rgba(var(--pe-color-brand-light-rgb), 0.4);
+}
+.QuorumCard__Dot--active {
+  background: var(--pe-color-green-label);
+  box-shadow: 0 0 6px rgba(var(--pe-color-green-label-rgb), 0.55);
+}
+.QuorumCard__Dot--inactive {
+  background: rgba(255, 255, 255, 0.22);
+}
+.QuorumCard__Dot--next {
+  background: var(--pe-color-yellow-default);
+  box-shadow: 0 0 6px rgba(var(--pe-color-yellow-default-rgb), 0.45);
+}
+.QuorumCard__Dot--banned {
+  background: var(--pe-color-red-default);
+  box-shadow: 0 0 6px rgba(var(--pe-color-red-default-rgb), 0.45);
+}
+.QuorumCard__RailNums {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+  flex-shrink: 0;
+  font-variant-numeric: tabular-nums;
+}
+.QuorumCard__RailNums b {
+  font-family: var(--pe-font-heading);
+  font-style: italic;
+  font-weight: 800;
+  font-size: 1.125rem;
+  color: #fff;
+}
+.QuorumCard__RailNums em {
+  font-family: var(--pe-font-mono);
+  font-style: normal;
+  font-size: 0.6875rem;
+  color: var(--pe-color-gray-500);
+}
+.QuorumCard__RailHint {
+  flex: 1 1 auto;
+  min-width: 0;
+  font-family: var(--pe-font-mono);
+  font-size: 0.625rem;
+  line-height: 1.2;
+  color: var(--pe-color-gray-500);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.QuorumCard__Rail--active {
+  color: var(--pe-color-green-label);
+}
+.QuorumCard__Rail--next {
+  color: var(--pe-color-yellow-default);
+}
+.QuorumCard__Rail--inactive {
+  color: rgba(255, 255, 255, 0.22);
+}
+.QuorumCard__Rail--banned {
+  color: var(--pe-color-red-default);
+}
+.QuorumCard__Rail--total {
+  color: rgba(var(--pe-color-brand-light-rgb), 0.85);
+}
+.QuorumCard__Stage.is-pinned[data-pin="active"]
+  .QuorumCard__Cell[data-type]:not([data-type="active"]) {
+  opacity: 0.22;
+}
+.QuorumCard__Stage.is-pinned[data-pin="active"] .QuorumCard__Cell[data-type="active"] {
+  opacity: 1;
+}
+.QuorumCard__Stage.is-pinned[data-pin="active"] .QuorumCard__Rail--active {
+  border-color: rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.05);
+}
+.QuorumCard__Stage.is-pinned[data-pin="active"] .QuorumCard__Cell[data-type="active"] {
+  filter: brightness(1.06);
+}
+.QuorumCard__Stage.is-pinned[data-pin="next"] .QuorumCard__Cell[data-type]:not([data-type="next"]) {
+  opacity: 0.22;
+}
+.QuorumCard__Stage.is-pinned[data-pin="next"] .QuorumCard__Cell[data-type="next"] {
+  opacity: 1;
+}
+.QuorumCard__Stage.is-pinned[data-pin="next"] .QuorumCard__Rail--next {
+  border-color: rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.05);
+}
+.QuorumCard__Stage.is-pinned[data-pin="next"] .QuorumCard__Cell[data-type="next"] {
+  filter: brightness(1.06);
+}
+.QuorumCard__Stage.is-pinned[data-pin="inactive"]
+  .QuorumCard__Cell[data-type]:not([data-type="inactive"]) {
+  opacity: 0.22;
+}
+.QuorumCard__Stage.is-pinned[data-pin="inactive"] .QuorumCard__Cell[data-type="inactive"] {
+  opacity: 1;
+}
+.QuorumCard__Stage.is-pinned[data-pin="inactive"] .QuorumCard__Rail--inactive {
+  border-color: rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.05);
+}
+.QuorumCard__Stage.is-pinned[data-pin="inactive"] .QuorumCard__Cell[data-type="inactive"] {
+  filter: brightness(1.06);
+}
+.QuorumCard__Stage.is-pinned[data-pin="banned"]
+  .QuorumCard__Cell[data-type]:not([data-type="banned"]) {
+  opacity: 0.22;
+}
+.QuorumCard__Stage.is-pinned[data-pin="banned"] .QuorumCard__Cell[data-type="banned"] {
+  opacity: 1;
+}
+.QuorumCard__Stage.is-pinned[data-pin="banned"] .QuorumCard__Rail--banned {
+  border-color: rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.05);
+}
+.QuorumCard__Stage.is-pinned[data-pin="banned"] .QuorumCard__Cell[data-type="banned"] {
+  filter: brightness(1.06);
+}
+.QuorumCard__Stage.is-pinned-quorum .QuorumCard__Cell {
+  opacity: 0.2;
+}
+.QuorumCard__Stage.is-pinned-quorum .QuorumCard__Cell.is-in-pin {
+  opacity: 1;
+}
+.QuorumCard__Cell.is-focus {
+  background-color: rgba(var(--q-fill), 0.28);
+  box-shadow: inset 0 0 0 1px var(--pe-color-white-50);
+}
+.QuorumCard__Stage.is-pinned-quorum .QuorumCard__Cell.is-focus {
+  opacity: 1;
+}
+.QuorumCard__Stage.is-pinned[data-pin="total"] .QuorumCard__Cell[data-type] {
+  opacity: 1;
+}
+.QuorumCard__Stage.is-pinned[data-pin="total"] .QuorumCard__Rail--total {
+  border-color: rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+@keyframes mn-live-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.35;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .QuorumCard__Chip--live i {
+    animation: none;
+  }
+}
+@media screen and (max-width: 47.99em) {
+  .QuorumCard {
+    overflow: visible;
+    height: auto !important;
+    max-height: none !important;
+  }
+  .QuorumCard__Head {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-rows: auto auto auto;
+    align-items: baseline;
+    gap: 0 10px;
+    margin-bottom: 12px;
+  }
+  .QuorumCard__HeadText,
+  .QuorumCard__Controls {
+    display: contents;
+  }
+  .QuorumCard__Eyebrow {
+    grid-column: 1;
+    grid-row: 1;
+    margin: 0;
+    align-self: baseline;
+  }
+  .QuorumCard__Title {
+    grid-column: 1;
+    grid-row: 2;
+    font-size: 1.125rem;
+    white-space: normal;
+    margin: 0;
+  }
+  .QuorumCard__Lede {
+    grid-column: 1;
+    grid-row: 3;
+    max-width: none;
+    font-size: 0.5625rem;
+    line-height: 1.45;
+  }
+  .QuorumCard__LedeMore {
+    white-space: nowrap;
+  }
+  .QuorumCard__Legend {
+    grid-column: 2;
+    grid-row: 1 / 3;
+    width: 100%;
+    max-width: none;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-rows: subgrid;
+    align-items: baseline;
+    justify-items: end;
+    gap: 0 6px;
+  }
+  .QuorumCard__Controls .QuorumCard__Leg {
+    display: grid;
+    grid-template-rows: subgrid;
+    grid-row: 1 / 3;
+    gap: 0;
+    align-items: baseline;
+    justify-items: end;
+  }
+  .QuorumCard__Controls .QuorumCard__LegLabel {
+    grid-row: 1;
+    margin: 0;
+    font-size: 0.5rem;
+  }
+  .QuorumCard__Controls .QuorumCard__Leg b {
+    grid-row: 2;
+    margin: 0;
+    font-size: 0.75rem;
+  }
+  .QuorumCard__QCaption {
+    grid-column: 2;
+    grid-row: 3;
+    font-size: 0.5625rem;
+    line-height: 1.45;
+    text-align: right;
+    justify-self: end;
+    align-self: start;
+    margin: 0;
+  }
+  .QuorumCard__Body {
+    flex: 0 0 auto;
+    min-height: auto;
+    gap: 10px;
+  }
+  .QuorumCard__Stage {
+    display: flex !important;
+    flex-direction: column;
+    align-items: stretch;
+    flex: 0 0 auto;
+    min-height: auto;
+    height: auto;
+    gap: 10px;
+  }
+  .QuorumCard__Col {
+    max-width: none;
+    width: 100%;
+    height: auto;
+    min-height: 0;
+    aspect-ratio: 1;
+  }
+  .QuorumCard__MatrixWrap {
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+    aspect-ratio: 1;
+    overflow: hidden;
+    pointer-events: auto;
+  }
+  .QuorumCard__Side {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-rows: auto;
+    align-items: stretch;
+    gap: 8px;
+    flex: 0 0 auto;
+    width: 100%;
+    max-width: none;
+    min-height: 0;
+    height: auto;
+  }
+  .QuorumCard__QPick {
+    height: auto;
+    min-height: 0;
+    max-height: none;
+    overflow: visible;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-auto-rows: minmax(1.7rem, auto);
+    gap: 3px;
+    padding: 6px;
+  }
+  .QuorumCard__QBtn {
+    height: auto;
+    min-height: 28px;
+    padding: 3px 4px;
+    font-size: 0.625rem;
+    gap: 3px;
+  }
+  .QuorumCard__QBtnIcon {
+    width: 0.7rem !important;
+    height: 0.7rem !important;
+  }
+  .QuorumCard__HostsClip {
+    position: relative;
+    width: 100%;
+    height: 0;
+    min-height: 100%;
+    max-height: 100%;
+    overflow: hidden;
+  }
+  .QuorumCard__HostSearch {
+    padding: 6px 6px 4px;
+  }
+  .QuorumCard__HostSearchInput {
+    padding: 5px 8px;
+    font-size: 0.6875rem;
+  }
+  .QuorumCard__Hosts {
+    padding: 4px;
+  }
+  .QuorumCard__HostsGrid {
+    grid-template-columns: minmax(0, 1fr);
+    column-gap: 0;
+    row-gap: 3px;
+  }
+  .QuorumCard__Host {
+    min-height: 32px !important;
+    padding: 6px;
+    font-size: 0.625rem;
+  }
+}

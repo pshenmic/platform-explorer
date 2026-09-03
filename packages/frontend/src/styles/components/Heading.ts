@@ -1,12 +1,8 @@
 import { colors } from '../colors'
 
 const Heading = {
-  baseStyle: {
-
-  },
-  sizes: {
-
-  },
+  baseStyle: {},
+  sizes: {},
   variants: {
     cloud: {
       fontSize: '14px',
@@ -16,7 +12,6 @@ const Heading = {
       borderTopRightRadius: '20px',
       borderBottomRightRadius: '20px',
       bg: colors.brand.normal
-
     }
   }
 }

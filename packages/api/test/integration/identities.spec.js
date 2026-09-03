@@ -2627,7 +2627,8 @@ describe('Identities routes', () => {
     })
 
     it('should return default series set timespan 2H', async () => {
-      const { body } = await client.get(`/identities/history?timestamp_start=${new Date(new Date().getTime() - 3600000).toISOString()}&timestamp_end=${new Date(new Date().getTime() + 3600000).toISOString()}&intervalsCount=5`)
+      const now = Date.now()
+      const { body } = await client.get(`/identities/history?timestamp_start=${new Date(now - 3600000).toISOString()}&timestamp_end=${new Date(now + 3600000).toISOString()}&intervalsCount=5`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -2658,7 +2659,8 @@ describe('Identities routes', () => {
     })
 
     it('should return default series set timespan 24h', async () => {
-      const { body } = await client.get(`/identities/history?timestamp_start=${new Date(new Date().getTime() - 43200000).toISOString()}&timestamp_end=${new Date(new Date().getTime() + 43200000).toISOString()}&intervalsCount=5`)
+      const now = Date.now()
+      const { body } = await client.get(`/identities/history?timestamp_start=${new Date(now - 43200000).toISOString()}&timestamp_end=${new Date(now + 43200000).toISOString()}&intervalsCount=5`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -2689,7 +2691,8 @@ describe('Identities routes', () => {
     })
 
     it('should return default series set timespan 3d', async () => {
-      const { body } = await client.get(`/identities/history?timestamp_start=${new Date(new Date().getTime() - 129600000).toISOString()}&timestamp_end=${new Date(new Date().getTime() + 129600000).toISOString()}&intervalsCount=5`)
+      const now = Date.now()
+      const { body } = await client.get(`/identities/history?timestamp_start=${new Date(now - 129600000).toISOString()}&timestamp_end=${new Date(now + 129600000).toISOString()}&intervalsCount=5`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -2720,7 +2723,8 @@ describe('Identities routes', () => {
     })
 
     it('should return default series set timespan 1w', async () => {
-      const { body } = await client.get(`/identities/history?timestamp_start=${new Date(new Date().getTime() - 302400000).toISOString()}&timestamp_end=${new Date(new Date().getTime() + 302400000).toISOString()}&intervalsCount=5`)
+      const now = Date.now()
+      const { body } = await client.get(`/identities/history?timestamp_start=${new Date(now - 302400000).toISOString()}&timestamp_end=${new Date(now + 302400000).toISOString()}&intervalsCount=5`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 

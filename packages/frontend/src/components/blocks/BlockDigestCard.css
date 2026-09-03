@@ -1,0 +1,147 @@
+.BlockDigestCard {
+  padding: calc(var(--pe-space-3) + 0px);
+}
+@media screen and (min-width: 48em) {
+  .BlockDigestCard {
+    padding: calc(var(--pe-space-4) + 0px);
+  }
+}
+@media screen and (min-width: 62em) {
+  .BlockDigestCard {
+    padding: calc(var(--pe-space-5) + 0px);
+  }
+}
+@media screen and (min-width: 80em) {
+  .BlockDigestCard {
+    padding: calc(var(--pe-space-6) + 0px);
+  }
+}
+.BlockDigestCard {
+  font-family: var(--pe-font-mono);
+  font-size: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.875rem;
+  background: rgba(var(--pe-color-gray-800-rgb), 0.5);
+  border-radius: 10px;
+  container-type: inline-size;
+}
+.BlockDigestCard--Loading .InfoLine__Value {
+  height: 1.5rem;
+}
+.BlockDigestCard--Loading .BlockDigestCard__InfoContainer {
+  overflow: hidden;
+}
+.BlockDigestCard--Loading .BlockDigestCard__InfoContainerValue {
+  width: 100px;
+  max-width: 100%;
+}
+.BlockDigestCard__RowContainer {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.875rem;
+}
+.BlockDigestCard__InfoContainer {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px;
+  padding: 24px;
+  background: rgba(var(--pe-color-gray-800-rgb), 0.5);
+  border-radius: 10px;
+  width: 100%;
+}
+.BlockDigestCard__InfoContainer .InfoLine__Title svg {
+  width: 1.75rem;
+  height: 1.75rem;
+}
+.BlockDigestCard__LinesContainer {
+  flex-direction: column;
+}
+.BlockDigestCard {
+  border-radius: 20px;
+  container-type: inline-size;
+}
+.BlockDigestCard__InfoContainer > .InfoLine > .InfoLine__Title svg {
+  margin-right: 0.75rem;
+}
+.BlockDigestCard__InfoContainer > .InfoLine > .InfoLine__Value {
+  font-size: 0.813rem;
+}
+.BlockDigestCard .BlockDigestCard__InfoLineValueContent {
+  display: flex;
+  gap: 0.25rem;
+  align-items: center;
+}
+.BlockDigestCard__InfoIcon {
+  cursor: pointer;
+  transition: 0.15s;
+  width: 1rem !important;
+  height: 1rem !important;
+}
+.BlockDigestCard__InfoIcon:hover {
+  cursor: pointer;
+  color: #fff;
+}
+.BlockDigestCard__InfoLine--Validator .InfoLine__Value {
+  max-width: 20rem;
+  overflow: hidden;
+}
+.BlockDigestCard__InfoLine--TotalTransactions,
+.BlockDigestCard__InfoLine--QuorumIndex,
+.BlockDigestCard__InfoLine--Epoch,
+.BlockDigestCard__InfoLine--QuorumMembers {
+  width: 100%;
+}
+.BlockDigestCard__InfoLine--TotalTransactions > .InfoLine .InfoLine__Title,
+.BlockDigestCard__InfoLine--TotalTransactions > .InfoLine .InfoLine__Title span,
+.BlockDigestCard__InfoLine--QuorumIndex > .InfoLine .InfoLine__Title,
+.BlockDigestCard__InfoLine--QuorumIndex > .InfoLine .InfoLine__Title span,
+.BlockDigestCard__InfoLine--Epoch > .InfoLine .InfoLine__Title,
+.BlockDigestCard__InfoLine--Epoch > .InfoLine .InfoLine__Title span,
+.BlockDigestCard__InfoLine--QuorumMembers > .InfoLine .InfoLine__Title,
+.BlockDigestCard__InfoLine--QuorumMembers > .InfoLine .InfoLine__Title span {
+  align-items: center;
+  display: flex;
+}
+.BlockDigestCard__InfoLine--TotalTransactions > .InfoLine .InfoLine__Title span,
+.BlockDigestCard__InfoLine--QuorumIndex > .InfoLine .InfoLine__Title span,
+.BlockDigestCard__InfoLine--Epoch > .InfoLine .InfoLine__Title span,
+.BlockDigestCard__InfoLine--QuorumMembers > .InfoLine .InfoLine__Title span {
+  gap: 0.75rem;
+}
+.BlockDigestCard__InfoLine--TotalTransactions > .InfoLine .InfoLine__Value,
+.BlockDigestCard__InfoLine--QuorumIndex > .InfoLine .InfoLine__Value,
+.BlockDigestCard__InfoLine--Epoch > .InfoLine .InfoLine__Value,
+.BlockDigestCard__InfoLine--QuorumMembers > .InfoLine .InfoLine__Value {
+  font-size: 0.813rem;
+}
+@container (max-width: 35rem) {
+  .BlockDigestCard__RowContainer {
+    flex-wrap: wrap;
+  }
+}
+@media screen and (max-width: 30em) {
+  .BlockDigestCard {
+    gap: 0.625rem;
+  }
+  .BlockDigestCard__RowContainer {
+    gap: 0.625rem;
+  }
+  .BlockDigestCard__InfoContainer {
+    padding: 12px 14px;
+  }
+  .BlockDigestCard__InfoLine {
+    flex-wrap: wrap;
+  }
+  .BlockDigestCard__InfoLine--Validator .InfoLine__Value {
+    width: 100%;
+    min-width: 0;
+  }
+  .BlockDigestCard__InfoLine--Validator .InfoLine__Value .Identifier {
+    width: 100%;
+    max-width: 100%;
+    justify-content: space-between;
+  }
+}

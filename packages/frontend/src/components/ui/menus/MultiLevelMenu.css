@@ -1,0 +1,76 @@
+.MultiLevelMenu__Content,
+.MultiLevelMenu .chakra-popover__content {
+  backdrop-filter: blur(10px);
+  border-radius: var(--pe-radius-def);
+  border: 1px solid var(--pe-color-border);
+  background: var(--pe-color-surface-elevated) !important;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
+  overflow: hidden;
+  padding: 0;
+  max-width: min(960px, calc(100vw - 24px));
+}
+
+.MultiLevelMenu {
+  display: inline-flex;
+  position: relative;
+}
+
+.MultiLevelMenu__Body {
+  overflow: hidden !important;
+  padding: 0 !important;
+}
+
+.MultiLevelMenu__Layout {
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  min-height: 0;
+  max-height: min(70vh, 480px);
+}
+
+.MultiLevelMenu__Content--WithPanel .MultiLevelMenu__Layout {
+  min-height: 120px;
+}
+
+.MultiLevelMenu__Nav {
+  flex: 0 0 auto;
+  min-width: 0;
+  max-width: 240px;
+  padding: var(--pe-space-1);
+  overflow-y: auto;
+  border-right: 1px solid transparent;
+}
+
+.MultiLevelMenu__Content--WithPanel .MultiLevelMenu__Nav {
+  min-width: 180px;
+  padding: var(--pe-space-2);
+}
+
+.MultiLevelMenu__Content--WithPanel .MultiLevelMenu__Nav {
+  border-right-color: var(--pe-color-border-subtle);
+}
+
+.MultiLevelMenu__Panel {
+  flex: 1 1 auto;
+  min-width: 220px;
+  max-width: min(520px, calc(100vw - 220px));
+  padding: var(--pe-space-3);
+  overflow: auto;
+}
+
+@media (max-width: 30em) {
+  .MultiLevelMenu__Layout {
+    flex-direction: column;
+    max-height: min(80vh, 560px);
+  }
+
+  .MultiLevelMenu__Nav {
+    max-width: none;
+    border-right: none;
+    border-bottom: 1px solid var(--pe-color-border-subtle);
+  }
+
+  .MultiLevelMenu__Panel {
+    max-width: none;
+  }
+}

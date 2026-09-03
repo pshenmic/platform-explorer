@@ -1,0 +1,227 @@
+.ValidatorPage__Card {
+  margin-bottom: var(--pe-space-6);
+}
+
+.ValidatorPage__ContentContainer {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--pe-space-3);
+}
+
+@media screen and (min-width: 48em) {
+  .ValidatorPage__ContentContainer {
+    gap: var(--pe-space-4);
+  }
+}
+
+@media screen and (min-width: 62em) {
+  .ValidatorPage__ContentContainer {
+    gap: var(--pe-space-5);
+  }
+}
+
+@media screen and (min-width: 80em) {
+  .ValidatorPage__ContentContainer {
+    gap: var(--pe-space-6);
+  }
+}
+
+.ValidatorPage__Column {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.ValidatorPage__Lists {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  margin-top: var(--pe-space-6);
+  margin-top: var(--pe-space-3);
+}
+
+@media screen and (min-width: 48em) {
+  .ValidatorPage__Lists {
+    margin-top: var(--pe-space-4);
+  }
+}
+
+@media screen and (min-width: 62em) {
+  .ValidatorPage__Lists {
+    margin-top: var(--pe-space-5);
+  }
+}
+
+@media screen and (min-width: 80em) {
+  .ValidatorPage__Lists {
+    margin-top: var(--pe-space-6);
+  }
+}
+
+.ValidatorPage__ListContainer {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  padding-top: var(--pe-space-3) !important;
+  padding-bottom: 0 !important;
+  padding-left: calc(var(--pe-space-3) + 0px) !important;
+}
+
+@media screen and (min-width: 48em) {
+  .ValidatorPage__ListContainer {
+    padding-left: calc(var(--pe-space-4) + 0px) !important;
+  }
+}
+
+@media screen and (min-width: 62em) {
+  .ValidatorPage__ListContainer {
+    padding-left: calc(var(--pe-space-5) + 0px) !important;
+  }
+}
+
+@media screen and (min-width: 80em) {
+  .ValidatorPage__ListContainer {
+    padding-left: calc(var(--pe-space-6) + 0px) !important;
+  }
+}
+
+.ValidatorPage__ListContainer {
+  padding-right: calc(var(--pe-space-3) + 0px) !important;
+}
+
+@media screen and (min-width: 48em) {
+  .ValidatorPage__ListContainer {
+    padding-right: calc(var(--pe-space-4) + 0px) !important;
+  }
+}
+
+@media screen and (min-width: 62em) {
+  .ValidatorPage__ListContainer {
+    padding-right: calc(var(--pe-space-5) + 0px) !important;
+  }
+}
+
+@media screen and (min-width: 80em) {
+  .ValidatorPage__ListContainer {
+    padding-right: calc(var(--pe-space-6) + 0px) !important;
+  }
+}
+
+.ValidatorPage__ChartsContainer .Chart {
+  overflow: visible !important;
+}
+
+.ValidatorPage__ChartsContainer {
+  padding-bottom: 0;
+  overflow-x: hidden;
+}
+
+.ValidatorPage__ListPagination {
+  margin-top: calc(var(--pe-space-3) + 0px);
+}
+
+@media screen and (min-width: 48em) {
+  .ValidatorPage__ListPagination {
+    margin-top: calc(var(--pe-space-4) + 0px);
+  }
+}
+
+@media screen and (min-width: 62em) {
+  .ValidatorPage__ListPagination {
+    margin-top: calc(var(--pe-space-5) + 0px);
+  }
+}
+
+@media screen and (min-width: 80em) {
+  .ValidatorPage__ListPagination {
+    margin-top: calc(var(--pe-space-6) + 0px);
+  }
+}
+
+.ValidatorPage__ListPagination .PageItem--Previous,
+.ValidatorPage__ListPagination .PageItem--Next {
+  display: block;
+}
+
+.ValidatorPage__ListPagination .PageItem--Previous {
+  margin-right: auto;
+  margin-left: 0;
+}
+
+.ValidatorPage__ListPagination .PageItem--Next {
+  margin-left: auto;
+  margin-right: 0;
+}
+
+.ValidatorPage__GroupContainer .InfoLine--Loading .InfoLine__Value {
+  height: 28px;
+}
+
+.ValidatorPage__InfoLine .DateBlock__InfoContainer {
+  justify-content: flex-end;
+}
+
+.ValidatorPage__ValueContainer .DateBlock {
+  margin-bottom: var(--pe-space-1);
+}
+
+.ValidatorPage__List {
+  flex-grow: 1;
+}
+
+.ValidatorPage__GroupContainer {
+  flex-grow: 1;
+  border-radius: 18px;
+  border: 1px solid var(--pe-color-gray-800);
+}
+
+.ValidatorPage__InfoLine {
+  margin-bottom: var(--pe-space-3_5);
+}
+
+.ValidatorPage__ValueContainer {
+  display: flex;
+  justify-content: flex-end;
+  overflow: hidden;
+}
+
+.ValidatorPage__PoseScroreValue {
+  display: flex;
+  align-items: center;
+}
+
+@media screen and (max-width: 62em) {
+  .ValidatorPage .PageDataContainer__Content {
+    border-radius: 0;
+    background: transparent;
+  }
+
+  .ValidatorPage__ContentContainer {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media screen and (min-width: 421px) and (max-width: 62em) {
+  .ValidatorPage .PageDataContainer__Content {
+    padding: 0 !important;
+  }
+}
+
+@media screen and (min-width: 62em) and (max-width: 1100px) {
+  .ValidatorPage__ListPagination .PageLink {
+    padding: var(--pe-space-2_5) var(--pe-space-2);
+    min-width: 45px;
+  }
+
+  .ValidatorPage__ListPagination .PageItem:not(.PageItem--Previous):not(.PageItem--Next) {
+    margin: 0 var(--pe-space-1);
+  }
+}
+
+@media screen and (max-width: 420px) {
+  .ValidatorPage .PageDataContainer__Content {
+    padding-bottom: 0 !important;
+  }
+}

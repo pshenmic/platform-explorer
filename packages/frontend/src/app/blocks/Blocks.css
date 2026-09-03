@@ -1,0 +1,67 @@
+.Blocks__Controls {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  grid-template-areas: "title stats filters";
+  align-items: center;
+  column-gap: 1rem;
+  row-gap: 0.75rem;
+  margin: 0.75rem 0 1.5rem;
+}
+.Blocks__Title {
+  grid-area: title;
+  min-width: 0;
+}
+.Blocks__Stats {
+  grid-area: stats;
+  min-width: 0;
+}
+.Blocks__Filters {
+  grid-area: filters;
+  width: auto;
+  justify-self: end;
+}
+.Blocks .PageSizeSelector,
+.Blocks .GoToHeightForm {
+  width: 210px;
+}
+@media screen and (max-width: 1268px) {
+  .Blocks .GoToHeightForm {
+    order: 2;
+  }
+  .Blocks .Pagination {
+    flex-grow: 1;
+    width: 100%;
+    display: flex;
+  }
+  .Blocks .PageSizeSelector {
+    order: 3;
+    text-align: left;
+  }
+}
+@media screen and (max-width: 680px) {
+  .Blocks .PageSizeSelector {
+    width: auto;
+  }
+  .Blocks .Pagination {
+    order: -1;
+    width: 100%;
+    justify-content: center;
+    margin-bottom: 8px;
+  }
+}
+@media screen and (max-width: 48em) {
+  .Blocks__Controls {
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas: "title filters" "stats stats";
+    column-gap: 12px;
+    row-gap: 10px;
+    margin: 0 0 1rem;
+  }
+  .Blocks__Filters {
+    justify-self: end;
+    align-self: center;
+  }
+  .Blocks__Stats {
+    width: 100%;
+  }
+}
