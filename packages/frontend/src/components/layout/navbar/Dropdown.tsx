@@ -21,7 +21,11 @@ function Dropdown({ active, data }: DropdownProps) {
 
         if (isActive || item.disabled || !href) {
           return (
-            <span key={item.name} className={className} aria-current={isActive ? 'true' : undefined}>
+            <span
+              key={item.name}
+              className={className}
+              aria-current={isActive ? 'true' : undefined}
+            >
               {item.name}
               {item.subname ? <small>{item.subname}</small> : null}
             </span>
