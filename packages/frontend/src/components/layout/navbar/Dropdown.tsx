@@ -1,8 +1,6 @@
 'use client'
 
-import type { ReactNode } from 'react'
 import type { NetworkOption } from '../../../constants/networks'
-import NavigationButton from '../../ui/NavigationButton/NavigationButton'
 import './NetworkSelect.css'
 
 interface DropdownProps {
@@ -10,37 +8,33 @@ interface DropdownProps {
   data?: NetworkOption[]
 }
 
-interface ButtonContainerProps {
-  item: NetworkOption
-  children: ReactNode
-}
-
-// props.data - The data array [{ name: '', subname: '', disabled: boolean, link: '' }]
 function Dropdown({ active, data }: DropdownProps) {
-  const ButtonContainer = ({ item, children }: ButtonContainerProps) =>
-    item.name !== active ? (
-      <a href={item.explorerBaseUrl} rel={'noopener noreferrer'}>
-        {children}
-      </a>
-    ) : (
-      children
-    )
-
   return (
     <div className={'InternalNavigation'}>
-      {data?.length
-        ? data.map((item, i) => (
-            <ButtonContainer item={item} key={i}>
-              <NavigationButton
-                key={i}
-                active={active === item.name}
-                name={item.name}
-                subName={item.subname}
-                disabled={item.disabled}
-              />
-            </ButtonContainer>
-          ))
-        : null}
+      {(data ?? []).map(item => {
+        const isActive = active === item.name
+        const href = item.explorerBaseUrl
+        const className =
+          'InternalNavigation__Item' +
+          (isActive ? ' is-active' : '') +
+          (item.disabled ? ' is-disabled' : '')
+
+        if (isActive || item.disabled || !href) {
+          return (
+            <span key={item.name} className={className} aria-current={isActive ? 'true' : undefined}>
+              {item.name}
+              {item.subname ? <small>{item.subname}</small> : null}
+            </span>
+          )
+        }
+
+        return (
+          <a key={item.name} className={className} href={href} role={'option'}>
+            {item.name}
+            {item.subname ? <small>{item.subname}</small> : null}
+          </a>
+        )
+      })}
     </div>
   )
 }
