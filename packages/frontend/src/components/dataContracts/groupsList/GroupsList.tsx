@@ -4,7 +4,6 @@ import { EmptyListMessage } from '../../ui/lists'
 import { ErrorMessageBlock } from '../../Errors'
 import { LoadingList } from '../../loading'
 import { SmoothSize } from '../../ui/containers'
-import { Button } from '@chakra-ui/react'
 import { ChevronIcon } from '../../ui/icons'
 import type { DataContractGroup } from '../../../types'
 
@@ -90,20 +89,23 @@ function GroupsList({
                       'GroupsList__GroupHeaderColumn GroupsList__GroupHeaderColumn--Button'
                     }
                   >
-                    <Button
-                      size={'sm'}
-                      variant={isExpanded && membersArray.length > 0 ? 'gray' : 'blue'}
+                    <button
+                      type={'button'}
                       onClick={() => toggleGroup(group.id)}
-                      className={'GroupsList__ToggleButton'}
+                      className={`GroupsList__ToggleButton GroupsList__ToggleButton--${
+                        isExpanded && membersArray.length > 0 ? 'Gray' : 'Blue'
+                      }`}
                     >
                       {membersArray.length} members
                       <ChevronIcon
-                        ml={'0.25rem'}
-                        h={'0.625rem'}
-                        w={'0.625rem'}
-                        transform={`rotate(${isExpanded ? '-90deg' : '90deg'})`}
+                        style={{
+                          marginLeft: '0.25rem',
+                          height: '0.625rem',
+                          width: '0.625rem',
+                          transform: `rotate(${isExpanded ? '-90deg' : '90deg'})`
+                        }}
                       />
-                    </Button>
+                    </button>
                   </div>
                 </div>
 

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
-import { ChevronUpIcon, ChevronDownIcon } from '@chakra-ui/icons'
-import { Th, Box } from '@chakra-ui/react'
+import { ChevronIcon } from '../icons'
+import './TableHeaders.css'
 
 interface TableHeader {
   key: string
@@ -36,27 +36,26 @@ function TableHeaders({ headers, sortCallback }: TableHeadersProps) {
   return (
     <>
       {headers.map((header, i) => (
-        <Th
-          className={`Table__Header ${header?.sortable ? 'Table__Header--Sortable' : ''}`}
+        <th
+          className={`Table__Header ${header?.sortable ? 'Table__Header--Sortable' : ''} ${
+            header?.isNumeric ? 'Table__Header--Numeric' : ''
+          }`}
           onClick={() => header?.sortable && sortHandler(header)}
-          isNumeric={header?.isNumeric}
           key={i}
         >
           {header?.sortable && (
             <div className={'TableHeader__SortDirection'}>
               {header.key === sort.key ? (
-                sort.direction === 'asc' ? (
-                  <ChevronDownIcon w={4} h={4} my={-1} mr={1} />
-                ) : (
-                  <ChevronUpIcon w={4} h={4} my={-1} mr={1} />
-                )
+                <ChevronIcon
+                  className={`TableHeaders__SortIcon TableHeaders__SortIcon--${sort.direction}`}
+                />
               ) : (
-                <Box w={4} height={1} mr={1} display={'inline-block'} />
+                <div className={'TableHeaders__SortSpacer'} />
               )}
             </div>
           )}
           <span>{header.label}</span>
-        </Th>
+        </th>
       ))}
     </>
   )

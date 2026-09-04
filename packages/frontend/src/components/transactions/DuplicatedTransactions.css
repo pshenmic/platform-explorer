@@ -124,14 +124,42 @@
 }
 
 .DuplicatedTransactions__ArrowButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   width: var(--pe-space-6);
   height: var(--pe-space-6);
   min-width: auto;
+  border-radius: 0.25rem;
+  background: rgba(var(--pe-color-brand-normal-rgb), 0.2);
+  color: var(--pe-color-brand-light);
 }
 
 .DuplicatedTransactions__ShowMoreButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   width: 100%;
   margin-top: var(--pe-space-2);
+  border: none;
+  cursor: pointer;
+  font-size: 0.75rem;
+  font-family: var(--pe-font-heading);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  border-radius: 10px;
+  padding: 0.375rem 0.75rem;
+}
+
+.DuplicatedTransactions__ShowMoreButton--Blue {
+  background: rgba(var(--pe-color-brand-normal-rgb), 0.2);
+  color: var(--pe-color-brand-light);
+}
+
+.DuplicatedTransactions__ShowMoreButton--Gray {
+  background: rgba(255, 255, 255, 0.2);
+  color: var(--pe-color-white-50);
 }
 
 @container (max-width: 720px) {

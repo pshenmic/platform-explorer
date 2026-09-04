@@ -133,8 +133,27 @@
 }
 
 .GroupsList__ToggleButton {
-  font-weight: var(--pe-font-weight-medium) !important;
-  text-transform: capitalize !important;
+  display: inline-flex;
+  align-items: center;
+  border: none;
+  cursor: pointer;
+  font-size: 0.75rem;
+  font-family: var(--pe-font-heading);
+  border-radius: 10px;
+  padding: 0.25rem 0.625rem;
+  letter-spacing: 0.4px;
+  font-weight: var(--pe-font-weight-medium);
+  text-transform: capitalize;
+}
+
+.GroupsList__ToggleButton--Blue {
+  background: rgba(var(--pe-color-brand-normal-rgb), 0.2);
+  color: var(--pe-color-brand-light);
+}
+
+.GroupsList__ToggleButton--Gray {
+  background: rgba(255, 255, 255, 0.2);
+  color: var(--pe-color-white-50);
 }
 
 .GroupsList__ToggleButton svg {

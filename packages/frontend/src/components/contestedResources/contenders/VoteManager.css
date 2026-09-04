@@ -1,3 +1,30 @@
 .Vote-btn {
   border-radius: var(--pe-radius-def);
 }
+
+.VoteManager__VoteButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 30px;
+  width: 94px;
+  border: none;
+  cursor: pointer;
+  font-size: 0.75rem;
+  font-family: var(--pe-font-heading);
+  font-weight: 500;
+  letter-spacing: 0.4px;
+  text-transform: none;
+  border-radius: 10px;
+  background: var(--pe-color-brand-normal);
+  color: #fff;
+}
+
+.VoteManager__VoteButton:hover:not(:disabled) {
+  background: var(--pe-color-brand-light);
+}
+
+.VoteManager__VoteButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
