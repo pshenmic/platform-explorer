@@ -115,15 +115,15 @@ function Identities({ defaultPage = 1, defaultPageSize, defaultShowAll = false }
   return (
     <div className={'ListPage IdentitiesPage'}>
       <div className={'InfoBlock'}>
-        <div className={'IdentitiesPage__Controls'}>
+        <div className={'ListPage__Controls IdentitiesPage__Controls'}>
           <PageTitle
             title={'Identities'}
             description={introContent}
-            className={'IdentitiesPage__Title'}
+            className={'ListPage__Title IdentitiesPage__Title'}
           />
 
           <NetworkStatsInline
-            className={'IdentitiesPage__Stats'}
+            className={'ListPage__Stats IdentitiesPage__Stats'}
             items={[
               {
                 label: 'Total',
