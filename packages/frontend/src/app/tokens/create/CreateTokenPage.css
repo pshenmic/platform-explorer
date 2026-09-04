@@ -77,3 +77,45 @@
   flex-direction: column;
   gap: 16px;
 }
+
+.DeployBar {
+  display: flex;
+  flex-direction: column;
+  gap: var(--pe-space-3);
+}
+.DeployBar__Status {
+  min-height: 20px;
+}
+.DeployBar__Msg {
+  font-size: var(--pe-text-sm);
+  color: var(--pe-color-fg-muted);
+}
+.DeployBar__Msg--error {
+  color: var(--pe-color-red-500);
+}
+.DeployBar__Msg--ok {
+  color: var(--pe-color-green-default);
+}
+.DeployBar__Msg--ok a {
+  color: var(--pe-color-green-default);
+  text-decoration: underline;
+}
+.DeployBar__Errors {
+  list-style: disc;
+  padding-left: var(--pe-space-4);
+}
+.DeployBar__Btn {
+  align-self: flex-start;
+  min-width: 160px;
+  font-size: var(--pe-text-sm);
+  padding: var(--pe-space-1) var(--pe-space-3);
+  border-radius: var(--pe-radius-def);
+  border: 0;
+  background: var(--pe-color-brand-normal);
+  color: var(--pe-color-fg);
+  cursor: pointer;
+}
+.DeployBar__Btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

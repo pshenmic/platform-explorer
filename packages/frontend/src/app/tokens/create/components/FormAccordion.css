@@ -28,6 +28,13 @@
   border-bottom: 1px solid var(--pe-color-gray-550);
 }
 .FormAccordion__Header {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  color: inherit;
   padding: 0.75rem 0;
 }
 .FormAccordion__Header:hover {
@@ -44,4 +51,11 @@
 }
 .FormAccordion__Panel {
   padding: 0 0 1rem;
+}
+.FormAccordion__Icon {
+  margin-left: auto;
+  transition: transform var(--pe-transition-def);
+}
+.FormAccordion__Icon--open {
+  transform: rotate(180deg);
 }
