@@ -1,4 +1,3 @@
-import { Grid, GridItem } from '@chakra-ui/react'
 import { EmptyListMessage } from '../../ui/lists'
 import { ErrorMessageBlock } from '../../Errors'
 import { LoadingList } from '../../loading'
@@ -40,33 +39,33 @@ function VotesList({
     <div className={'VotesList'}>
       <div className={'VotesList__ListContainer'}>
         <div className={'VotesList__ScrollZone'}>
-          <Grid
+          <div
             className={`VotesList__ColumnTitles ${headerExtraClass?.[headerStyles ?? ''] || ''} ${!showDataContract ? headerExtraClass.noDataContract : ''}`}
           >
-            <GridItem className={'VotesList__ColumnTitle VotesList__ColumnTitle--Timestamp'}>
+            <div className={'VotesList__ColumnTitle VotesList__ColumnTitle--Timestamp'}>
               Time
-            </GridItem>
-            <GridItem className={'VotesList__ColumnTitle VotesList__ColumnTitle--ProTxHash'}>
+            </div>
+            <div className={'VotesList__ColumnTitle VotesList__ColumnTitle--ProTxHash'}>
               Voter Pro Tx Hash
-            </GridItem>
+            </div>
             {showDataContract && (
-              <GridItem className={'VotesList__ColumnTitle VotesList__ColumnTitle--DataContract'}>
+              <div className={'VotesList__ColumnTitle VotesList__ColumnTitle--DataContract'}>
                 Data Contract
-              </GridItem>
+              </div>
             )}
-            <GridItem className={'VotesList__ColumnTitle VotesList__ColumnTitle--Document'}>
+            <div className={'VotesList__ColumnTitle VotesList__ColumnTitle--Document'}>
               Document
-            </GridItem>
-            <GridItem className={'VotesList__ColumnTitle VotesList__ColumnTitle--TowardsIdentity'}>
+            </div>
+            <div className={'VotesList__ColumnTitle VotesList__ColumnTitle--TowardsIdentity'}>
               Towards Identity
-            </GridItem>
-            <GridItem className={'VotesList__ColumnTitle VotesList__ColumnTitle--Choice'}>
+            </div>
+            <div className={'VotesList__ColumnTitle VotesList__ColumnTitle--Choice'}>
               Choice
-            </GridItem>
-            <GridItem className={'VotesList__ColumnTitle VotesList__ColumnTitle--Power'}>
+            </div>
+            <div className={'VotesList__ColumnTitle VotesList__ColumnTitle--Power'}>
               Power
-            </GridItem>
-          </Grid>
+            </div>
+          </div>
 
           {!loading ? (
             <div className={'VotesList__Items'}>

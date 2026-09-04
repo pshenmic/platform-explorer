@@ -1,5 +1,5 @@
 import type { ComponentType, ReactNode, MouseEvent } from 'react'
-import { Grid, GridItem, Badge } from '@chakra-ui/react'
+import { Badge } from '@chakra-ui/react'
 import {
   Alias as AliasJs,
   Identifier as IdentifierJs,
@@ -66,8 +66,8 @@ export function ContestedResourcesListItem({ contestedResource }: ContestedResou
       href={`/contestedResource/${resourceValueBase64}`}
       className={'ContestedResourcesListItem'}
     >
-      <Grid className={'ContestedResourcesListItem__Content'}>
-        <GridItem
+      <div className={'ContestedResourcesListItem__Content'}>
+        <div
           className={
             'ContestedResourcesListItem__Column ContestedResourcesListItem__Column--Timestamp'
           }
@@ -96,9 +96,9 @@ export function ContestedResourcesListItem({ contestedResource }: ContestedResou
           ) : (
             <NotActive />
           )}
-        </GridItem>
+        </div>
 
-        <GridItem
+        <div
           className={
             'ContestedResourcesListItem__Column ContestedResourcesListItem__Column--ResourceValue'
           }
@@ -109,9 +109,9 @@ export function ContestedResourcesListItem({ contestedResource }: ContestedResou
           {contestedResource?.contenders && (
             <ContendersBadge contenders={contestedResource.contenders} />
           )}
-        </GridItem>
+        </div>
 
-        <GridItem
+        <div
           className={
             'ContestedResourcesListItem__Column ContestedResourcesListItem__Column--DataContract'
           }
@@ -128,9 +128,9 @@ export function ContestedResourcesListItem({ contestedResource }: ContestedResou
               {contestedResource?.dataContractIdentifier}
             </Identifier>
           </LinkContainer>
-        </GridItem>
+        </div>
 
-        <GridItem
+        <div
           className={
             'ContestedResourcesListItem__Column ContestedResourcesListItem__Column--IndexName'
           }
@@ -138,9 +138,9 @@ export function ContestedResourcesListItem({ contestedResource }: ContestedResou
           <ValueContainer colorScheme={'gray'} size={'xxs'}>
             {contestedResource?.indexName}
           </ValueContainer>
-        </GridItem>
+        </div>
 
-        <GridItem
+        <div
           className={
             'ContestedResourcesListItem__Column ContestedResourcesListItem__Column--DocumentType'
           }
@@ -148,9 +148,9 @@ export function ContestedResourcesListItem({ contestedResource }: ContestedResou
           <Badge colorScheme={'gray'} size={'xs'}>
             {contestedResource?.documentTypeName}
           </Badge>
-        </GridItem>
+        </div>
 
-        <GridItem
+        <div
           className={'ContestedResourcesListItem__Column ContestedResourcesListItem__Column--Votes'}
         >
           <VoteBadges
@@ -158,9 +158,9 @@ export function ContestedResourcesListItem({ contestedResource }: ContestedResou
             totalCountLock={contestedResource?.totalCountLock}
             totalCountTowardsIdentity={contestedResource?.totalCountTowardsIdentity}
           />
-        </GridItem>
+        </div>
 
-        <GridItem
+        <div
           className={
             'ContestedResourcesListItem__Column ContestedResourcesListItem__Column--EndsIn'
           }
@@ -170,8 +170,8 @@ export function ContestedResourcesListItem({ contestedResource }: ContestedResou
             endTime={contestedResource?.endTimestamp}
             displayProgress={!isEnded}
           />
-        </GridItem>
-      </Grid>
+        </div>
+      </div>
     </Link>
   )
 }

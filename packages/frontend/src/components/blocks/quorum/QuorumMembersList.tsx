@@ -3,7 +3,6 @@
 import QuorumMembersListItem from './QuorumMembersListItem'
 import type { QuorumMember } from './QuorumMembersListItem'
 import { EmptyListMessage } from '../../ui/lists'
-import { Grid, GridItem } from '@chakra-ui/react'
 import { ErrorMessageBlock } from '../../Errors'
 import { LoadingList } from '../../loading'
 import './QuorumMembersList.css'
@@ -28,30 +27,30 @@ function QuorumMembersList({
 }: QuorumMembersListProps) {
   return (
     <div className={'QuorumMembersList'}>
-      <Grid className={`QuorumMembersList__ColumnTitles ${headerExtraClass[headerStyles] || ''}`}>
-        <GridItem
+      <div className={`QuorumMembersList__ColumnTitles ${headerExtraClass[headerStyles] || ''}`}>
+        <div
           className={'QuorumMembersList__ColumnTitle QuorumMembersList__ColumnTitle--ProtxHash'}
         >
           Protx hash
-        </GridItem>
-        <GridItem
+        </div>
+        <div
           className={'QuorumMembersList__ColumnTitle QuorumMembersList__ColumnTitle--Service'}
         >
           Service
-        </GridItem>
-        <GridItem
+        </div>
+        <div
           className={
             'QuorumMembersList__ColumnTitle QuorumMembersList__ColumnTitle--OperatorPubKey'
           }
         >
           Operator Pubkey
-        </GridItem>
-        <GridItem
+        </div>
+        <div
           className={'QuorumMembersList__ColumnTitle QuorumMembersList__ColumnTitle--Valid'}
         >
           Valid
-        </GridItem>
-      </Grid>
+        </div>
+      </div>
 
       {!loading ? (
         <div className={'QuorumMembersList__Items'}>

@@ -1,5 +1,5 @@
 import type { ComponentType, ReactNode, MouseEvent } from 'react'
-import { Badge, Grid, GridItem } from '@chakra-ui/react'
+import { Badge } from '@chakra-ui/react'
 import {
   Identifier as IdentifierJs,
   NotActive as NotActiveJs,
@@ -33,18 +33,18 @@ function VotesListItem({ vote, showDataContract = true }: VotesListItemProps) {
 
   return (
     <Link href={`/transaction/${vote?.txHash}`} className={'VotesListItem'}>
-      <Grid
+      <div
         className={`VotesListItem__Content ${!showDataContract ? 'VotesListItem__Content--NoDataContract' : ''}`}
       >
-        <GridItem className={'VotesListItem__Column VotesListItem__Column--Timestamp'}>
+        <div className={'VotesListItem__Column VotesListItem__Column--Timestamp'}>
           {(vote?.timestamp ?? null) ? (
             <TimeDelta endDate={new Date(vote?.timestamp ?? '')} />
           ) : (
             <NotActive>-</NotActive>
           )}
-        </GridItem>
+        </div>
 
-        <GridItem className={'VotesListItem__Column VotesListItem__Column--ProTxHash'}>
+        <div className={'VotesListItem__Column VotesListItem__Column--ProTxHash'}>
           {(vote?.proTxHash ?? null) && (
             <LinkContainer
               className={'BlocksListItem__LinkContainer'}
@@ -59,10 +59,10 @@ function VotesListItem({ vote, showDataContract = true }: VotesListItemProps) {
               </Identifier>
             </LinkContainer>
           )}
-        </GridItem>
+        </div>
 
         {showDataContract && (
-          <GridItem className={'VotesListItem__Column VotesListItem__Column--DataContract'}>
+          <div className={'VotesListItem__Column VotesListItem__Column--DataContract'}>
             {(vote?.dataContractIdentifier ?? null) && (
               <LinkContainer
                 className={'BlocksListItem__LinkContainer'}
@@ -77,10 +77,10 @@ function VotesListItem({ vote, showDataContract = true }: VotesListItemProps) {
                 </Identifier>
               </LinkContainer>
             )}
-          </GridItem>
+          </div>
         )}
 
-        <GridItem className={'VotesListItem__Column VotesListItem__Column--Document'}>
+        <div className={'VotesListItem__Column VotesListItem__Column--Document'}>
           {(vote?.documentIdentifier ?? null) && (
             <LinkContainer
               className={'BlocksListItem__LinkContainer'}
@@ -95,9 +95,9 @@ function VotesListItem({ vote, showDataContract = true }: VotesListItemProps) {
               </Identifier>
             </LinkContainer>
           )}
-        </GridItem>
+        </div>
 
-        <GridItem className={'VotesListItem__Column VotesListItem__Column--TowardsIdentity'}>
+        <div className={'VotesListItem__Column VotesListItem__Column--TowardsIdentity'}>
           {(vote?.towardsIdentity ?? null) && (
             <LinkContainer
               className={'BlocksListItem__LinkContainer'}
@@ -112,24 +112,24 @@ function VotesListItem({ vote, showDataContract = true }: VotesListItemProps) {
               </Identifier>
             </LinkContainer>
           )}
-        </GridItem>
+        </div>
 
-        <GridItem className={'VotesListItem__Column VotesListItem__Column--Choice'}>
+        <div className={'VotesListItem__Column VotesListItem__Column--Choice'}>
           {typeof vote?.choice === 'number' ? (
             <ChoiceBadge choice={vote?.choice} />
           ) : (
             <NotActive>-</NotActive>
           )}
-        </GridItem>
+        </div>
 
-        <GridItem className={'VotesListItem__Column VotesListItem__Column--Power'}>
+        <div className={'VotesListItem__Column VotesListItem__Column--Power'}>
           {typeof vote?.power === 'number' ? (
             <Badge colorScheme={vote?.power > 1 ? 'green' : 'blue'}>x{vote?.power}</Badge>
           ) : (
             <NotActive>-</NotActive>
           )}
-        </GridItem>
-      </Grid>
+        </div>
+      </div>
     </Link>
   )
 }
