@@ -4,35 +4,27 @@
 .DataList__Body {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: var(--pe-space-2);
 }
 .DataList__Head {
   display: grid;
   padding: 7px 12px;
   border-radius: 10px;
   background-color: var(--pe-color-gray-800);
-  margin-bottom: 8px;
+  margin-bottom: var(--pe-space-2);
   font-family: var(--pe-font-heading);
   font-weight: 700;
-  font-size: 12px;
+  font-size: var(--pe-text-sm);
   text-transform: uppercase;
   color: var(--pe-color-white-50);
-}
-.DataList__Head--Light {
-  background: transparent;
-  font-weight: 500;
-  color: #fff;
-  text-transform: none;
-}
-.DataList__Head {
-  gap: 16px;
+  gap: var(--pe-space-4);
   align-items: center;
 }
 .DataList__Head--light {
   background: transparent;
   font-weight: 500;
   text-transform: none;
-  color: #fff;
+  color: var(--pe-color-fg);
 }
 .DataList__HeadCell {
   display: flex;
