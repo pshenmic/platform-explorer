@@ -1,4 +1,3 @@
-import { Grid, GridItem } from '@chakra-ui/react'
 import type { ComponentType, ReactNode } from 'react'
 import { ValueCard as ValueCardJs } from '../../components/cards'
 import PublicKeyBoundCard from './PublicKeyBoundCard'
@@ -52,11 +51,11 @@ function PublicKeysListItem({ publicKey, className }: PublicKeysListItemProps) {
 
   return (
     <div className={`PublicKeysListItem ${className || ''}`}>
-      <Grid className={'PublicKeysListItem__Content'}>
-        <GridItem className={'PublicKeysListItem__Column PublicKeysListItem__Column--Id'}>
+      <div className={'PublicKeysListItem__Content'}>
+        <div className={'PublicKeysListItem__Column PublicKeysListItem__Column--Id'}>
           {publicKey?.keyId !== undefined ? publicKey?.keyId : <NotActive>-</NotActive>}
-        </GridItem>
-        <GridItem className={'PublicKeysListItem__Column--PublicKeyHash'}>
+        </div>
+        <div className={'PublicKeysListItem__Column--PublicKeyHash'}>
           {publicKey?.publicKeyHash !== undefined ? (
             <ValueCard
               className={'PublicKeysListItem__PublicKeyHash'}
@@ -69,8 +68,8 @@ function PublicKeysListItem({ publicKey, className }: PublicKeysListItemProps) {
           ) : (
             <NotActive />
           )}
-        </GridItem>
-        <GridItem className={'PublicKeysListItem__Column PublicKeysListItem__Column--Type'}>
+        </div>
+        <div className={'PublicKeysListItem__Column PublicKeysListItem__Column--Type'}>
           {publicKey?.keyType !== undefined ? (
             <ValueContainer colorScheme={'gray'} size={'sm'}>
               {publicKey?.keyType || '-'}
@@ -78,8 +77,8 @@ function PublicKeysListItem({ publicKey, className }: PublicKeysListItemProps) {
           ) : (
             <NotActive />
           )}
-        </GridItem>
-        <GridItem className={'PublicKeysListItem__Column PublicKeysListItem__Column--Purpose'}>
+        </div>
+        <div className={'PublicKeysListItem__Column PublicKeysListItem__Column--Purpose'}>
           {purpose?.title !== undefined ? (
             <ValueContainer
               colorScheme={purpose?.colorScheme as 'blue' | 'green' | 'orange' | 'gray' | 'red'}
@@ -90,8 +89,8 @@ function PublicKeysListItem({ publicKey, className }: PublicKeysListItemProps) {
           ) : (
             <NotActive />
           )}
-        </GridItem>
-        <GridItem
+        </div>
+        <div
           className={'PublicKeysListItem__Column PublicKeysListItem__Column--SecurityLevel'}
         >
           {securityLevel?.title !== undefined ? (
@@ -106,8 +105,8 @@ function PublicKeysListItem({ publicKey, className }: PublicKeysListItemProps) {
           ) : (
             <NotActive />
           )}
-        </GridItem>
-        <GridItem className={'PublicKeysListItem__Column PublicKeysListItem__Column--Disabled'}>
+        </div>
+        <div className={'PublicKeysListItem__Column PublicKeysListItem__Column--Disabled'}>
           {publicKey?.disabledAt ? (
             <Tooltip
               placement={'top'}
@@ -125,8 +124,8 @@ function PublicKeysListItem({ publicKey, className }: PublicKeysListItemProps) {
               False
             </ValueContainer>
           )}
-        </GridItem>
-        <GridItem className={'PublicKeysListItem__Column PublicKeysListItem__Column--ReadOnly'}>
+        </div>
+        <div className={'PublicKeysListItem__Column PublicKeysListItem__Column--ReadOnly'}>
           {publicKey?.readOnly !== undefined ? (
             <ValueContainer colorScheme={publicKey?.readOnly ? 'red' : 'green'} size={'sm'}>
               {publicKey?.readOnly ? 'True' : 'False'}
@@ -134,8 +133,8 @@ function PublicKeysListItem({ publicKey, className }: PublicKeysListItemProps) {
           ) : (
             <NotActive />
           )}
-        </GridItem>
-        <GridItem className={'PublicKeysListItem__Column PublicKeysListItem__Column--Data'}>
+        </div>
+        <div className={'PublicKeysListItem__Column PublicKeysListItem__Column--Data'}>
           {publicKey?.data !== undefined ? (
             <ValueCard className={'PublicKeysListItem__Data'} colorScheme={'transparent'}>
               {publicKey?.data}
@@ -150,8 +149,8 @@ function PublicKeysListItem({ publicKey, className }: PublicKeysListItemProps) {
               publicKeyBounds={publicKey?.contractBounds}
             />
           )}
-        </GridItem>
-      </Grid>
+        </div>
+      </div>
     </div>
   )
 }

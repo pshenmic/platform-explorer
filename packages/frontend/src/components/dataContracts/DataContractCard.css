@@ -2,6 +2,16 @@
   padding: var(--pe-space-6) 30px;
 }
 
+.DataContractCard__Header {
+  display: flex;
+  align-items: center;
+  margin-bottom: var(--pe-space-1);
+}
+
+.DataContractCard__Skeleton {
+  height: 55px;
+}
+
 .DataContractCard__Img {
   margin-right: var(--pe-space-2);
   width: var(--pe-space-8);

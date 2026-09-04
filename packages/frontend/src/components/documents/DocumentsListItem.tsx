@@ -1,7 +1,7 @@
 import type { ComponentType, ReactNode } from 'react'
 import type { Document } from '../../types'
 import type { LoadableState } from '../../types/common'
-import { Badge, GridItem } from '@chakra-ui/react'
+import { Badge } from '@chakra-ui/react'
 import {
   Alias as AliasJs,
   Identifier as IdentifierJs,
@@ -62,32 +62,32 @@ function DocumentsListItem({
 
   return (
     <Link href={`/document/${document?.identifier}`} className={'DocumentsListItem'}>
-      <GridItem className={'DocumentsListItem__Column DocumentsListItem__Column--Timestamp'}>
+      <div className={'DocumentsListItem__Column DocumentsListItem__Column--Timestamp'}>
         <TimeDelta endDate={document?.timestamp} />
-      </GridItem>
+      </div>
 
       {showAction && (
-        <GridItem className={'DocumentsListItem__Column DocumentsListItem__Column--TransitionType'}>
+        <div className={'DocumentsListItem__Column DocumentsListItem__Column--TransitionType'}>
           {document?.transitionType ? (
             <BatchTypeBadge batchType={document.transitionType} />
           ) : (
             <NotActive />
           )}
-        </GridItem>
+        </div>
       )}
 
-      <GridItem
+      <div
         className={'DocumentsListItem__Column DocumentsListItem__Column--DocumentType'}
         title={document?.documentTypeName || undefined}
       >
         {document?.documentTypeName ?? <NotActive />}
-      </GridItem>
+      </div>
 
-      <GridItem className={'DocumentsListItem__Column DocumentsListItem__Column--Revision'}>
+      <div className={'DocumentsListItem__Column DocumentsListItem__Column--Revision'}>
         {document?.revision ?? <NotActive />}
-      </GridItem>
+      </div>
 
-      <GridItem className={'DocumentsListItem__Column DocumentsListItem__Column--Identifier'}>
+      <div className={'DocumentsListItem__Column DocumentsListItem__Column--Identifier'}>
         {document?.identifier ? (
           <Identifier ellipsis={true} styles={['highlight-both']}>
             {document?.identifier}
@@ -95,10 +95,10 @@ function DocumentsListItem({
         ) : (
           <NotActive />
         )}
-      </GridItem>
+      </div>
 
       {showDataContract ? (
-        <GridItem className={'DocumentsListItem__Column DocumentsListItem__Column--DataContract'}>
+        <div className={'DocumentsListItem__Column DocumentsListItem__Column--DataContract'}>
           {document?.dataContractIdentifier ? (
             <LinkContainer
               className={'DocumentsListItem__ColumnContent'}
@@ -115,9 +115,9 @@ function DocumentsListItem({
           ) : (
             <NotActive />
           )}
-        </GridItem>
+        </div>
       ) : (
-        <GridItem className={'DocumentsListItem__Column DocumentsListItem__Column--Owner'}>
+        <div className={'DocumentsListItem__Column DocumentsListItem__Column--Owner'}>
           {document?.owner ? (
             <LinkContainer
               className={'DocumentsListItem__ColumnContent'}
@@ -140,22 +140,22 @@ function DocumentsListItem({
           ) : (
             <NotActive />
           )}
-        </GridItem>
+        </div>
       )}
 
       {showGas && (
-        <GridItem className={'DocumentsListItem__Column DocumentsListItem__Column--Gas'}>
+        <div className={'DocumentsListItem__Column DocumentsListItem__Column--Gas'}>
           {Number.isFinite(document?.gasUsed) ? document.gasUsed.toLocaleString() : <NotActive />}
-        </GridItem>
+        </div>
       )}
 
-      <GridItem className={'DocumentsListItem__Column DocumentsListItem__Column--Status'}>
+      <div className={'DocumentsListItem__Column DocumentsListItem__Column--Status'}>
         {document?.deleted ? (
           <Badge colorScheme={'red'}>Deleted</Badge>
         ) : (
           <Badge colorScheme={'green'}>Active</Badge>
         )}
-      </GridItem>
+      </div>
     </Link>
   )
 }

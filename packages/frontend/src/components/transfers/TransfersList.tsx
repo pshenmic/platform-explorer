@@ -1,6 +1,6 @@
 import TransfersListItem from './TransfersListItem'
 import { EmptyListMessage } from '../ui/lists'
-import { Grid, GridItem } from '@chakra-ui/react'
+
 import { LoadingList } from '../loading'
 import Pagination from '../pagination'
 import { ErrorMessageBlock } from '../Errors'
@@ -38,26 +38,26 @@ function TransfersList({
   return (
     <div className={'TransfersList'}>
       <div className={'TransfersList__ContentContainer'}>
-        <Grid
+        <div
           className={`TransfersList__ColumnTitles ${headerStyles ? headerExtraClass[headerStyles] || '' : ''}`}
         >
-          <GridItem className={'TransfersList__ColumnTitle'}>Time</GridItem>
-          <GridItem className={'TransfersList__ColumnTitle TransfersList__ColumnTitle--TxHash'}>
+          <div className={'TransfersList__ColumnTitle'}>Time</div>
+          <div className={'TransfersList__ColumnTitle TransfersList__ColumnTitle--TxHash'}>
             Tx hash
-          </GridItem>
-          <GridItem className={'TransfersList__ColumnTitle TransfersList__ColumnTitle--Recipient'}>
+          </div>
+          <div className={'TransfersList__ColumnTitle TransfersList__ColumnTitle--Recipient'}>
             To
-          </GridItem>
-          <GridItem className={'TransfersList__ColumnTitle TransfersList__ColumnTitle--Amount'}>
+          </div>
+          <div className={'TransfersList__ColumnTitle TransfersList__ColumnTitle--Amount'}>
             Amount
-          </GridItem>
-          <GridItem className={'TransfersList__ColumnTitle TransfersList__ColumnTitle--GasUsed'}>
+          </div>
+          <div className={'TransfersList__ColumnTitle TransfersList__ColumnTitle--GasUsed'}>
             Gas used
-          </GridItem>
-          <GridItem className={'TransfersList__ColumnTitle TransfersList__ColumnTitle--Type'}>
+          </div>
+          <div className={'TransfersList__ColumnTitle TransfersList__ColumnTitle--Type'}>
             Type
-          </GridItem>
-        </Grid>
+          </div>
+        </div>
 
         {!loading ? (
           <div className={'TransfersList__Items'}>
