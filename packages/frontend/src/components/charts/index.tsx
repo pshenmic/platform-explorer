@@ -3,7 +3,6 @@ import type { ReactElement, RefObject } from 'react'
 import useResizeObserver from '@react-hook/resize-observer'
 import * as d3 from 'd3'
 import './charts.css'
-import { Container } from '@chakra-ui/react'
 import theme from '../../styles/theme'
 import TimeframeMenu from './TimeframeMenu'
 import TimeframeSelector from './TimeframeSelector'
@@ -105,17 +104,13 @@ const LineChart = ({
   }, [chartElement, data, timespan, xAxis, yAxis, type])
 
   return (
-    <Container
+    <div
       ref={chartContainer}
-      width={width || '100%'}
-      height={height || '100%'}
-      maxW={'none'}
-      p={0}
-      m={0}
       className={`ChartContainer ${skeleton || dataLoading ? 'loading' : ''}`}
+      style={{ width: width || '100%', height: height || '100%' }}
     >
       {chartElement || <></>}
-    </Container>
+    </div>
   )
 }
 

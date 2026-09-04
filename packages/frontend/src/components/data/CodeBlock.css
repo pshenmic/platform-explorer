@@ -37,8 +37,18 @@
 }
 
 .CodeBlock__FullSizeButton {
-  display: block !important;
+  display: block;
   margin: var(--pe-space-2_5) auto 0;
+  cursor: pointer;
+  border: none;
+  border-radius: 10px;
+  padding: 0.4rem 0.75rem;
+  font-family: var(--pe-font-heading);
+  font-size: 0.75rem;
+  font-weight: var(--pe-font-weight-bold);
+  text-transform: uppercase;
+  background: var(--pe-color-gray-750);
+  color: var(--pe-color-fg);
 }
 
 .CodeBlock__CopyButton {

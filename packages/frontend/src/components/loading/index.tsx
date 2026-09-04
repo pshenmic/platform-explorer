@@ -1,9 +1,14 @@
-import { Container } from '@chakra-ui/react'
 import type { ComponentPropsWithoutRef } from 'react'
 import type { WithChildren, WithClassName } from '../../types/common'
 import './LoadingLine.css'
 import './LoadingBlock.css'
 import './LoadingList.css'
+
+function toCssSize(value?: string | number): string | undefined {
+  if (value === undefined) return undefined
+  if (typeof value === 'number') return `${value * 0.25}rem`
+  return value
+}
 
 interface LoadingLineProps extends WithChildren, WithClassName {
   colorScheme?: string
@@ -27,13 +32,10 @@ function LoadingLine({
 
   if (children === undefined || loading) {
     return (
-      <Container
-        p={0}
-        w={w}
-        h={h}
-        maxW={'none'}
+      <div
         className={`LoadingLine ${colorSchemeClass} ${className || ''}`}
-      ></Container>
+        style={{ width: toCssSize(w), height: toCssSize(h) }}
+      />
     )
   }
 
@@ -43,7 +45,7 @@ function LoadingLine({
 interface LoadingBlockProps
   extends WithChildren,
     WithClassName,
-    Omit<ComponentPropsWithoutRef<typeof Container>, 'children' | 'className'> {
+    Omit<ComponentPropsWithoutRef<'div'>, 'children' | 'className'> {
   loading?: boolean
   w?: string | number
   h?: string | number
@@ -55,17 +57,16 @@ function LoadingBlock({
   w = '100%',
   h = '100%',
   className = '',
+  style,
   ...props
 }: LoadingBlockProps) {
   if (children === undefined || loading) {
     return (
-      <Container
-        w={w}
-        h={h}
-        maxW={'none'}
+      <div
         className={`LoadingBlock ${className}`}
+        style={{ width: toCssSize(w), height: toCssSize(h), ...style }}
         {...props}
-      ></Container>
+      />
     )
   }
 
@@ -77,7 +78,6 @@ interface LoadingListProps {
 }
 
 const LoadingList = ({ itemsCount }: LoadingListProps) => {
-  // Guard NaN/Infinity/negative — Array(NaN) throws RangeError: Invalid array length
   const count =
     Number.isFinite(itemsCount) && (itemsCount as number) > 0
       ? Math.min(Math.floor(itemsCount as number), 200)

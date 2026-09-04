@@ -24,9 +24,26 @@
 }
 
 .TimeframeMenu__ValueButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--pe-font-heading);
   font-size: var(--pe-text-sm);
-  height: 28px !important;
-  padding: 3px var(--pe-space-3) !important;
+  font-weight: var(--pe-font-weight-bold);
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  height: 28px;
+  padding: 3px var(--pe-space-3);
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  background: var(--pe-color-gray-750);
+  color: var(--pe-color-fg);
+}
+
+.TimeframeMenu__ValueButton--Ok {
+  background: var(--pe-color-green-default);
+  color: #fff;
 }
 
 .TimeframeMenu__ValueButton--Active {

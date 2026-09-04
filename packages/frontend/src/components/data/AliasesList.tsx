@@ -3,7 +3,6 @@
 import { useState } from 'react'
 import type { Alias as AliasModel } from '../../types'
 import { Alias, DateBlock } from './index'
-import { Button } from '@chakra-ui/react'
 import { ChevronIcon } from '../ui/icons'
 import { SmoothSize } from '../ui/containers'
 import './AliasesList.css'
@@ -34,20 +33,16 @@ function AliasesList({ aliases = [], smallCount = 5 }: AliasesListProps) {
       </SmoothSize>
 
       {aliases.length > smallCount && (
-        <Button
+        <button
+          type={'button'}
           onClick={() => setShowAll(!showAll)}
-          className={'AliasesList__ShowMoreButton'}
-          size={'sm'}
-          variant={showAll ? 'gray' : 'blue'}
+          className={`AliasesList__ShowMoreButton ${showAll ? 'AliasesList__ShowMoreButton--Less' : ''}`}
         >
           {showAll ? 'Show less' : 'Show more'}
           <ChevronIcon
-            ml={'4px'}
-            h={'10px'}
-            w={'10px'}
-            transform={`rotate(${showAll ? '-90deg' : '90deg'})`}
+            className={`AliasesList__Chevron ${showAll ? 'AliasesList__Chevron--Up' : ''}`}
           />
-        </Button>
+        </button>
       )}
     </div>
   )

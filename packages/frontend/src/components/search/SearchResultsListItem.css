@@ -198,9 +198,20 @@
 }
 
 .SearchResultsListItem__ArrowButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   margin-left: auto;
   width: var(--pe-space-4);
   height: var(--pe-space-4);
+  border-radius: 0.25rem;
+  background: var(--pe-color-brand-normal);
+  color: var(--pe-color-fg);
+}
+
+.SearchResultsListItem__ArrowButton svg {
+  width: 0.5rem;
+  height: 0.5rem;
 }
 
 .SearchResultsListItem__Icon {

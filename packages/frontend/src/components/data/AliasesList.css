@@ -15,9 +15,32 @@
 }
 
 .AliasesList__ShowMoreButton {
+  display: inline-flex;
+  align-items: center;
   width: max-content;
-  font-weight: var(--pe-font-weight-medium) !important;
-  text-transform: capitalize !important;
+  font-weight: var(--pe-font-weight-medium);
+  text-transform: capitalize;
+  cursor: pointer;
+  border: none;
+  border-radius: 10px;
+  padding: 0.4rem 0.75rem;
+  background: var(--pe-color-brand-normal);
+  color: var(--pe-color-fg);
+}
+
+.AliasesList__ShowMoreButton--Less {
+  background: var(--pe-color-gray-750);
+}
+
+.AliasesList__Chevron {
+  margin-left: 4px;
+  width: 10px;
+  height: 10px;
+  transform: rotate(90deg);
+}
+
+.AliasesList__Chevron--Up {
+  transform: rotate(-90deg);
 }
 
 .AliasesList__ShowMoreButton svg {

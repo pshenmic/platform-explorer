@@ -1,7 +1,6 @@
 import type { ComponentType, ReactNode } from 'react'
 import type { Identity } from '../../../types'
 import type { WithClassName } from '../../../types/common'
-import { Badge } from '@chakra-ui/react'
 // Untyped JS components — loose wrappers until data/* is migrated
 import {
   Alias as AliasJs,
@@ -68,9 +67,9 @@ export function IdentitySearchItem({ identity, className, onClick }: IdentitySea
         }
         additionalContent={
           identity?.status?.status ? (
-            <Badge size={'xs'} colorScheme={STATUS_COLORS[identity?.status?.status] || 'gray'}>
+            <span className={`Badge Badge--${STATUS_COLORS[identity?.status?.status] || 'gray'}`}>
               {identity?.status?.status}
-            </Badge>
+            </span>
           ) : (
             <NotActive>-</NotActive>
           )

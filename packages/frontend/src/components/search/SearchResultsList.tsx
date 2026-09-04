@@ -2,7 +2,6 @@ import type { Transaction } from '../../types'
 import type { LoadableState } from '../../types/common'
 import SearchResultsListItem from './SearchResultsListItem'
 import './SearchResultsList.css'
-import { Grid, GridItem } from '@chakra-ui/react'
 import {
   categoryMap,
   entityTypes,
@@ -49,23 +48,23 @@ function ListCategory({ type, data, onItemClick }: ListCategoryProps) {
 
   return (
     <div className={'SearchResultsList__Category'}>
-      <Grid
+      <div
         className={`SearchResultsList__ColumnTitles SearchResultsList__ColumnTitles--${modifierMap[categoryMap[type]] || ''}`}
       >
-        <GridItem className={'SearchResultsList__ColumnTitle'}>
+        <div className={'SearchResultsList__ColumnTitle'}>
           {displayData?.length}{' '}
           {displayData?.length > 1
             ? pluralCategoryNames[type]
             : singularCategoryNames[categoryMap[type]]}{' '}
           FOUND
-        </GridItem>
+        </div>
         {titles.map((title, i) => (
-          <GridItem key={i} className={'SearchResultsList__ColumnTitle'}>
+          <div key={i} className={'SearchResultsList__ColumnTitle'}>
             {title}
-          </GridItem>
+          </div>
         ))}
-        <GridItem />
-      </Grid>
+        <div />
+      </div>
       <div>
         {displayData?.map((entity, i) => (
           <SearchResultsListItem

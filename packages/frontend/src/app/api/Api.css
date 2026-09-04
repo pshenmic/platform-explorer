@@ -1,3 +1,9 @@
+.Api {
+  max-width: 62rem;
+  margin: 2rem auto;
+  color: var(--pe-color-fg);
+}
+
 .Api code {
   max-width: 100%;
   overflow-wrap: break-word;

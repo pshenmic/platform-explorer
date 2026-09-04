@@ -1,7 +1,6 @@
 import type { ComponentType, ReactNode } from 'react'
 import type { Block } from '../../../types'
 import type { WithClassName } from '../../../types/common'
-import { Badge, Flex } from '@chakra-ui/react'
 import { BlockIcon } from '../../ui/icons'
 // Untyped JS components — loose wrappers until data/* is migrated
 import {
@@ -36,18 +35,16 @@ export function BlockSearchItem({ block, className, onClick }: BlockSearchItemPr
     >
       <BaseSearchItemContent
         mainContent={
-          <Flex alignItems={'center'} w={'100%'}>
+          <div className={'SearchResultsListItem__IdentifierContainer'}>
             <BlockIcon className={'SearchResultsListItem__Icon'} />
             <Identifier ellipsis={true} styles={['highlight-both']}>
               {block?.header?.hash}
             </Identifier>
-          </Flex>
+          </div>
         }
         additionalContent={
           (block?.header?.height ?? null) ? (
-            <Badge size={'xs'} colorScheme={'gray'}>
-              #{block?.header?.height}
-            </Badge>
+            <span className={'Badge'}>#{block?.header?.height}</span>
           ) : (
             <NotActive>-</NotActive>
           )

@@ -20,11 +20,37 @@
 }
 
 .TimeframeSelector__Button {
-  position: absolute !important;
+  position: absolute;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
   transition: all 0.2s;
   visibility: visible;
   opacity: 1;
-  height: 28px !important;
+  height: 28px;
+  padding: 0 var(--pe-space-3);
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-family: var(--pe-font-heading);
+  font-size: var(--pe-text-sm);
+  font-weight: var(--pe-font-weight-bold);
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  background: var(--pe-color-gray-750);
+  color: var(--pe-color-fg);
+}
+
+.TimeframeSelector__Close {
+  width: 0;
+  height: 8px;
+  overflow: hidden;
+  color: var(--pe-color-fg-muted);
+  transition: all 0.1s;
+}
+
+.TimeframeSelector__Close--Open {
+  width: 8px;
 }
 
 .TimeframeSelector__Button--Active {
