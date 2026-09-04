@@ -4,17 +4,18 @@
 .DataList__Body {
   display: flex;
   flex-direction: column;
-  gap: var(--pe-space-2);
 }
 .DataList__Head {
   display: grid;
   padding: 7px 12px;
+  min-height: 0;
   border-radius: 10px;
   background-color: var(--pe-color-gray-800);
   margin-bottom: var(--pe-space-2);
   font-family: var(--pe-font-heading);
   font-weight: 700;
   font-size: var(--pe-text-sm);
+  line-height: 1.2;
   text-transform: uppercase;
   color: var(--pe-color-white-50);
   gap: var(--pe-space-4);
@@ -31,6 +32,7 @@
   align-items: center;
   min-width: 0;
   gap: 2px;
+  white-space: nowrap;
 }
 .DataList__HeadCell--center {
   justify-content: center;
@@ -84,7 +86,7 @@
   border-radius: 10px;
   border: 1px solid var(--pe-color-gray-750);
   background-color: rgba(var(--pe-color-gray-800-rgb), 0.5);
-  transition: all 0.1s;
+  transition: background-color 0.1s;
 }
 @media (hover: hover) and (pointer: fine) {
   .DataList__Row:hover {
@@ -135,7 +137,10 @@
   font-size: 0.75rem;
   position: relative;
   margin-bottom: 0;
+  height: 2.375rem;
   min-height: 2.375rem;
+  max-height: 2.375rem;
+  overflow: hidden;
   box-sizing: border-box;
 }
 .DataList__Row .Identifier__CopyButton {
@@ -240,15 +245,23 @@
   min-width: 0;
   max-width: 100%;
 }
-.DataList__RowLink {
+.DataList__RowLink,
+.DataList__RowStatic {
   display: block;
+  overflow: hidden;
+  margin-bottom: var(--pe-space-2);
   color: inherit;
   text-decoration: none;
+}
+.DataList__RowLink:last-child,
+.DataList__RowStatic:last-child {
+  margin-bottom: 0;
 }
 .DataList__Cell {
   display: flex;
   align-items: center;
   min-width: 0;
+  height: 100%;
   white-space: nowrap;
   overflow: hidden;
 }
@@ -274,6 +287,49 @@
 }
 .DataList__Footer {
   margin-top: 12px;
+}
+.DataList__Group {
+  border-radius: var(--pe-radius-def);
+  background: rgba(var(--pe-color-brand-normal-rgb), 0.05);
+  margin-bottom: var(--pe-space-2);
+}
+.DataList__GroupHeader {
+  display: flex;
+  align-items: center;
+  gap: var(--pe-space-2);
+  width: 100%;
+  padding: var(--pe-space-2) var(--pe-space-3);
+  cursor: pointer;
+  color: var(--pe-color-brand-normal);
+  font-family: var(--pe-font-heading);
+  font-style: italic;
+  font-weight: var(--pe-font-weight-extrabold);
+  font-size: var(--pe-text-sm);
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+.DataList__GroupChevron {
+  width: var(--pe-space-2);
+  height: var(--pe-space-2);
+  transition: transform var(--pe-transition-def) ease;
+}
+.DataList__GroupChevron--Open {
+  transform: rotate(90deg);
+}
+.DataList__GroupCount {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 var(--pe-space-1_5);
+  border-radius: 9px;
+  background: var(--pe-color-brand-normal);
+  color: var(--pe-color-fg);
+  font-size: var(--pe-text-xs);
+}
+.DataList__GroupBody {
+  padding: 0 var(--pe-space-1) var(--pe-space-1);
 }
 .DataList__ShowMore {
   display: flex;
@@ -306,9 +362,18 @@
   transform: translateY(1px);
 }
 .DataList__Row.is-new {
-  animation:
-    DataListRowIn 0.4s ease-out backwards,
-    DataListRowGlow 1.4s ease-out backwards;
+  animation: DataListRowGlow 1.2s ease-out backwards;
+  animation-delay: var(--stagger, 0ms);
+}
+.DataList__RowLink.is-insert,
+.DataList__RowStatic.is-insert {
+  animation: DataListSlotInsert 0.38s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+  animation-delay: var(--stagger, 0ms);
+}
+.DataList__RowLink.is-exit,
+.DataList__RowStatic.is-exit {
+  pointer-events: none;
+  animation: DataListSlotExit 0.32s cubic-bezier(0.4, 0, 1, 1) forwards;
   animation-delay: var(--stagger, 0ms);
 }
 
@@ -321,10 +386,28 @@
     opacity: 1;
   }
 }
-@keyframes DataListRowIn {
+@keyframes DataListSlotInsert {
   from {
+    max-height: 0;
+    margin-bottom: 0;
     opacity: 0;
-    transform: translateY(-6px);
+  }
+  to {
+    max-height: 3rem;
+    margin-bottom: var(--pe-space-2);
+    opacity: 1;
+  }
+}
+@keyframes DataListSlotExit {
+  from {
+    max-height: 3rem;
+    margin-bottom: var(--pe-space-2);
+    opacity: 1;
+  }
+  to {
+    max-height: 0;
+    margin-bottom: 0;
+    opacity: 0;
   }
 }
 @keyframes DataListRowGlow {
@@ -336,7 +419,11 @@
   .DataList__Skeleton {
     animation: none;
   }
-  .DataList__Row.is-new {
-    animation: DataListRowGlow 1.4s ease-out backwards;
+  .DataList__Row.is-new,
+  .DataList__RowLink.is-insert,
+  .DataList__RowStatic.is-insert,
+  .DataList__RowLink.is-exit,
+  .DataList__RowStatic.is-exit {
+    animation: none;
   }
 }
