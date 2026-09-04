@@ -12,7 +12,7 @@ import {
   DataContractTotalCard,
   GroupsList
 } from '../../../components/dataContracts'
-import { Tabs, TabList, TabPanels, Tab, TabPanel } from '@chakra-ui/react'
+import { Tabs, TabList, TabPanels, Tab, TabPanel } from '../../../components/ui/Tabs'
 import { useBreadcrumbs } from '../../../contexts/BreadcrumbsContext'
 import { TransactionsList } from '../../../components/transactions'
 import TokensList from '../../../components/tokens/TokensList'

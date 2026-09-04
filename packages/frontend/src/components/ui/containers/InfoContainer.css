@@ -80,7 +80,7 @@
   }
 }
 
-.InfoContainer--Tabs .chakra-tabs__tab {
+.InfoContainer--Tabs .Tabs__Tab {
   font-size: var(--pe-text-sm);
   white-space: nowrap;
   font-weight: var(--pe-font-weight-bold);
@@ -88,33 +88,33 @@
   text-transform: uppercase;
 }
 
-.InfoContainer--Tabs .chakra-tabs__tablist {
+.InfoContainer--Tabs .Tabs__TabList {
   scroll-behavior: smooth;
   scrollbar-width: thin;
   scrollbar-color: var(--pe-color-brand-normal) transparent;
 }
 
-.InfoContainer--Tabs .chakra-tabs__tablist::-webkit-scrollbar {
+.InfoContainer--Tabs .Tabs__TabList::-webkit-scrollbar {
   height: var(--pe-space-2);
   width: var(--pe-space-2);
 }
 
-.InfoContainer--Tabs .chakra-tabs__tablist::-webkit-scrollbar-track {
+.InfoContainer--Tabs .Tabs__TabList::-webkit-scrollbar-track {
   background: transparent;
 }
 
-.InfoContainer--Tabs .chakra-tabs__tablist::-webkit-scrollbar-thumb {
+.InfoContainer--Tabs .Tabs__TabList::-webkit-scrollbar-thumb {
   background-color: var(--pe-color-brand-normal);
   border-radius: var(--pe-radius-md);
   border: 2px solid transparent;
   background-clip: padding-box;
 }
 
-.InfoContainer--Tabs .chakra-tabs__tablist::-webkit-scrollbar-thumb:hover {
+.InfoContainer--Tabs .Tabs__TabList::-webkit-scrollbar-thumb:hover {
   background-color: var(--pe-color-brand-light);
 }
 
-.InfoContainer--Tabs .chakra-tabs__tablist {
+.InfoContainer--Tabs .Tabs__TabList {
   padding-left: calc(var(--pe-space-3) + -var(--pe-space-2)) !important;
 }
 
@@ -124,139 +124,139 @@
 }
 
 @media screen and (min-width: 48em) {
-  .InfoContainer--Tabs .chakra-tabs__tablist {
+  .InfoContainer--Tabs .Tabs__TabList {
     padding-left: calc(var(--pe-space-4) + -var(--pe-space-2)) !important;
   }
 }
 
 @media screen and (min-width: 62em) {
-  .InfoContainer--Tabs .chakra-tabs__tablist {
+  .InfoContainer--Tabs .Tabs__TabList {
     padding-left: calc(var(--pe-space-5) + -var(--pe-space-2)) !important;
   }
 }
 
 @media screen and (min-width: 80em) {
-  .InfoContainer--Tabs .chakra-tabs__tablist {
+  .InfoContainer--Tabs .Tabs__TabList {
     padding-left: calc(var(--pe-space-6) + -var(--pe-space-2)) !important;
   }
 }
 
-.InfoContainer--Tabs .chakra-tabs__tablist {
+.InfoContainer--Tabs .Tabs__TabList {
   padding-right: calc(var(--pe-space-3) + -var(--pe-space-2)) !important;
 }
 
 @media screen and (min-width: 48em) {
-  .InfoContainer--Tabs .chakra-tabs__tablist {
+  .InfoContainer--Tabs .Tabs__TabList {
     padding-right: calc(var(--pe-space-4) + -var(--pe-space-2)) !important;
   }
 }
 
 @media screen and (min-width: 62em) {
-  .InfoContainer--Tabs .chakra-tabs__tablist {
+  .InfoContainer--Tabs .Tabs__TabList {
     padding-right: calc(var(--pe-space-5) + -var(--pe-space-2)) !important;
   }
 }
 
 @media screen and (min-width: 80em) {
-  .InfoContainer--Tabs .chakra-tabs__tablist {
+  .InfoContainer--Tabs .Tabs__TabList {
     padding-right: calc(var(--pe-space-6) + -var(--pe-space-2)) !important;
   }
 }
 
-.InfoContainer--Tabs .chakra-tabs__tablist {
+.InfoContainer--Tabs .Tabs__TabList {
   overflow-y: hidden;
   overflow-x: auto;
 }
 
-.InfoContainer--Tabs .chakra-tabs__tab-panel {
+.InfoContainer--Tabs .Tabs__TabPanel {
   padding-left: calc(var(--pe-space-3) + 0px) !important;
 }
 
 @media screen and (min-width: 48em) {
-  .InfoContainer--Tabs .chakra-tabs__tab-panel {
+  .InfoContainer--Tabs .Tabs__TabPanel {
     padding-left: calc(var(--pe-space-4) + 0px) !important;
   }
 }
 
 @media screen and (min-width: 62em) {
-  .InfoContainer--Tabs .chakra-tabs__tab-panel {
+  .InfoContainer--Tabs .Tabs__TabPanel {
     padding-left: calc(var(--pe-space-5) + 0px) !important;
   }
 }
 
 @media screen and (min-width: 80em) {
-  .InfoContainer--Tabs .chakra-tabs__tab-panel {
+  .InfoContainer--Tabs .Tabs__TabPanel {
     padding-left: calc(var(--pe-space-6) + 0px) !important;
   }
 }
 
-.InfoContainer--Tabs .chakra-tabs__tab-panel {
+.InfoContainer--Tabs .Tabs__TabPanel {
   padding-right: calc(var(--pe-space-3) + 0px) !important;
 }
 
 @media screen and (min-width: 48em) {
-  .InfoContainer--Tabs .chakra-tabs__tab-panel {
+  .InfoContainer--Tabs .Tabs__TabPanel {
     padding-right: calc(var(--pe-space-4) + 0px) !important;
   }
 }
 
 @media screen and (min-width: 62em) {
-  .InfoContainer--Tabs .chakra-tabs__tab-panel {
+  .InfoContainer--Tabs .Tabs__TabPanel {
     padding-right: calc(var(--pe-space-5) + 0px) !important;
   }
 }
 
 @media screen and (min-width: 80em) {
-  .InfoContainer--Tabs .chakra-tabs__tab-panel {
+  .InfoContainer--Tabs .Tabs__TabPanel {
     padding-right: calc(var(--pe-space-6) + 0px) !important;
   }
 }
 
 @media screen and (max-width: 30em) {
-  .InfoContainer--Tabs .chakra-tabs__tablist {
+  .InfoContainer--Tabs .Tabs__TabList {
     padding-left: calc(var(--pe-space-3) + -var(--pe-space-1)) !important;
     padding-right: calc(var(--pe-space-3) + -var(--pe-space-1)) !important;
   }
 }
 
 @media screen and (max-width: 30em) and (min-width: 48em) {
-  .InfoContainer--Tabs .chakra-tabs__tablist {
+  .InfoContainer--Tabs .Tabs__TabList {
     padding-left: calc(var(--pe-space-4) + -var(--pe-space-1)) !important;
   }
 }
 
 @media screen and (max-width: 30em) and (min-width: 62em) {
-  .InfoContainer--Tabs .chakra-tabs__tablist {
+  .InfoContainer--Tabs .Tabs__TabList {
     padding-left: calc(var(--pe-space-5) + -var(--pe-space-1)) !important;
   }
 }
 
 @media screen and (max-width: 30em) and (min-width: 80em) {
-  .InfoContainer--Tabs .chakra-tabs__tablist {
+  .InfoContainer--Tabs .Tabs__TabList {
     padding-left: calc(var(--pe-space-6) + -var(--pe-space-1)) !important;
   }
 }
 
 @media screen and (max-width: 30em) and (min-width: 48em) {
-  .InfoContainer--Tabs .chakra-tabs__tablist {
+  .InfoContainer--Tabs .Tabs__TabList {
     padding-right: calc(var(--pe-space-4) + -var(--pe-space-1)) !important;
   }
 }
 
 @media screen and (max-width: 30em) and (min-width: 62em) {
-  .InfoContainer--Tabs .chakra-tabs__tablist {
+  .InfoContainer--Tabs .Tabs__TabList {
     padding-right: calc(var(--pe-space-5) + -var(--pe-space-1)) !important;
   }
 }
 
 @media screen and (max-width: 30em) and (min-width: 80em) {
-  .InfoContainer--Tabs .chakra-tabs__tablist {
+  .InfoContainer--Tabs .Tabs__TabList {
     padding-right: calc(var(--pe-space-6) + -var(--pe-space-1)) !important;
   }
 }
 
 @media screen and (max-width: 30em) {
-  .InfoContainer--Tabs .chakra-tabs__tab {
+  .InfoContainer--Tabs .Tabs__Tab {
     padding: var(--pe-space-2) var(--pe-space-1);
   }
 }

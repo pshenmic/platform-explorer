@@ -10,7 +10,7 @@ import {
 } from '../../../util'
 import { ErrorMessageBlock } from '../../../components/Errors'
 import { useSearchParams } from 'next/navigation'
-import { Tabs, TabList, Tab, TabPanels, TabPanel } from '@chakra-ui/react'
+import { Tabs, TabList, Tab, TabPanels, TabPanel } from '../../../components/ui/Tabs'
 import { InfoContainer, PageDataContainer } from '../../../components/ui/containers'
 import { DocumentTotalCard, DocumentsRevisionsList } from '../../../components/documents'
 import { LoadingBlock } from '../../../components/loading'

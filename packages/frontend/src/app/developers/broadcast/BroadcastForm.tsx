@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
-import { Button, Collapse, Tabs, TabList, TabPanels, Tab, TabPanel } from '@chakra-ui/react'
+import { Tabs, TabList, TabPanels, Tab, TabPanel } from '../../../components/ui/Tabs'
 import * as Api from '../../../util/Api'
 import { useSigner, SignerMethod } from 'src/hooks/useSigner'
 import { MethodSelect, PrivateKeyForm } from 'src/components/signing'
@@ -125,9 +125,13 @@ function SignedHexView({ unsignedHex, signedHex, onEdit }: SignedHexViewProps) {
         <span>Signed locally — {appended.length} new hex chars appended</span>
         <div className={'BroadcastForm__SignedHexActions'}>
           <CopyButton text={signedHex} />
-          <Button variant={'gray'} size={'xs'} onClick={onEdit}>
+          <button
+            type={'button'}
+            className={'BroadcastForm__Button BroadcastForm__Button--gray BroadcastForm__Button--xs'}
+            onClick={onEdit}
+          >
             Edit
-          </Button>
+          </button>
         </div>
       </div>
       <div ref={bodyRef} className={'BroadcastForm__SignedHexBody'}>
@@ -436,10 +440,15 @@ function BroadcastForm() {
           }
         />
 
-        <Collapse
-          in={state === STATE.UNSIGNED || state === STATE.SIGNING}
-          animateOpacity
-          unmountOnExit={false}
+        <div
+          className={[
+            'BroadcastForm__Collapse',
+            state === STATE.UNSIGNED || state === STATE.SIGNING
+              ? 'BroadcastForm__Collapse--Open'
+              : ''
+          ]
+            .filter(Boolean)
+            .join(' ')}
         >
           <div className={'BroadcastForm__SignPanel'}>
             <div className={'BroadcastForm__SignPanelHeader'}>
@@ -476,20 +485,18 @@ function BroadcastForm() {
               <div className={'BroadcastForm__ErrorMessage'}>{signerCtl.error}</div>
             )}
           </div>
-        </Collapse>
+        </div>
 
         <div className={'BroadcastForm__ButtonsRow'}>
-          <Button
-            variant={'blue'}
-            size={'sm'}
-            minW={'200px'}
+          <button
+            type={'button'}
+            className={'BroadcastForm__Button BroadcastForm__Button--blue BroadcastForm__Button--sm'}
+            style={{ minWidth: 200 }}
             onClick={primaryAction.onClick}
-            isLoading={primaryAction.isLoading}
-            loadingText={primaryAction.loadingText}
-            isDisabled={primaryAction.isDisabled}
+            disabled={primaryAction.isDisabled || primaryAction.isLoading}
           >
-            {primaryAction.label}
-          </Button>
+            {primaryAction.isLoading ? primaryAction.loadingText : primaryAction.label}
+          </button>
 
           <div className={'BroadcastForm__ButtonMessage'}>
             {verify?.result === 'error' && state !== STATE.UNSIGNED && (

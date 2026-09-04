@@ -29,7 +29,8 @@ import { WithdrawalsList } from '../../../components/transfers'
 import { useBreadcrumbs } from '../../../contexts/BreadcrumbsContext'
 import { defaultChartConfig } from '../../../components/charts/config'
 import type { TimespanValue } from '../../../components/charts/types'
-import { Badge, Tabs, TabList, TabPanels, Tab, TabPanel } from '@chakra-ui/react'
+import { Badge } from '../../../components/ui/Badge'
+import { Tabs, TabList, TabPanels, Tab, TabPanel } from '../../../components/ui/Tabs'
 import { useActiveNetwork } from 'src/contexts'
 import type {
   Block,

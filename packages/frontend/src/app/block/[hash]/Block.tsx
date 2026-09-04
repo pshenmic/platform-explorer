@@ -6,7 +6,7 @@ import TransactionsList from '../../../components/transactions/TransactionsList'
 import { ErrorMessageBlock } from '../../../components/Errors'
 import { fetchHandlerSuccess, fetchHandlerError } from '../../../util'
 import { InfoContainer, PageDataContainer } from '../../../components/ui/containers'
-import { Tabs, TabList, Tab, TabPanels, TabPanel } from '@chakra-ui/react'
+import { Tabs, TabList, Tab, TabPanels, TabPanel } from '../../../components/ui/Tabs'
 import { BlockDigestCard, BlockTotalCard, QuorumMembersList } from '../../../components/blocks'
 import type { BlockDetail } from '../../../components/blocks/BlockDigestCard'
 import { useBreadcrumbs } from '../../../contexts/BreadcrumbsContext'
@@ -94,7 +94,9 @@ function Block({ hash }: BlockProps) {
       urlParameters.set('tab', tabs[activeTab])
     }
 
-    router.replace(`${pathname}?${urlParameters.toString()}`, { scroll: false })
+    const next = urlParameters.toString()
+    if (next === searchParams.toString()) return
+    router.replace(next ? `${pathname}?${next}` : pathname, { scroll: false })
   }, [activeTab, pathname, router, searchParams])
 
   const fetchData = () => {

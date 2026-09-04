@@ -10,7 +10,7 @@ import {
 } from '../../../util'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { InfoContainer, PageDataContainer } from '../../../components/ui/containers'
-import { Tabs, TabList, TabPanels, Tab, TabPanel } from '@chakra-ui/react'
+import { Tabs, TabList, TabPanels, Tab, TabPanel } from '../../../components/ui/Tabs'
 import { useBreadcrumbs } from '../../../contexts/BreadcrumbsContext'
 import { ContestedResourceTotalCard } from '../../../components/contestedResources'
 import { VotesList } from '../../../components/contestedResources/votes'
@@ -155,7 +155,9 @@ function ContestedResource({ resourceValue }: ContestedResourceProps) {
       urlParameters.set('tab', tabs[activeTab])
     }
 
-    router.replace(`${pathname}?${urlParameters.toString()}`, { scroll: false })
+    const next = urlParameters.toString()
+    if (next === searchParams.toString()) return
+    router.replace(next ? `${pathname}?${next}` : pathname, { scroll: false })
   }, [activeTab])
 
   useEffect(() => {

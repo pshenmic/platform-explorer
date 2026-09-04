@@ -69,6 +69,64 @@
   align-items: center;
 }
 
+.BroadcastForm__Button {
+  font-family: var(--pe-font-heading);
+  text-transform: uppercase;
+  border-radius: 10px;
+  letter-spacing: 0.4px;
+  font-weight: 700;
+  transition: 0.1s;
+  border: 0;
+  cursor: pointer;
+}
+
+.BroadcastForm__Button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.BroadcastForm__Button--xs {
+  border-radius: 0.25rem;
+  font-size: 0.75rem;
+  padding: 0.438rem;
+}
+
+.BroadcastForm__Button--sm {
+  font-size: 0.75rem;
+  padding: var(--pe-space-2) var(--pe-space-3);
+}
+
+.BroadcastForm__Button--blue {
+  background: rgba(var(--pe-color-brand-normal-rgb), 0.2);
+  color: var(--pe-color-brand-light);
+}
+
+.BroadcastForm__Button--blue:hover:not(:disabled) {
+  background: rgba(var(--pe-color-brand-light-rgb), 0.2);
+}
+
+.BroadcastForm__Button--gray {
+  background: rgba(255, 255, 255, 0.2);
+  color: var(--pe-color-white-50);
+}
+
+.BroadcastForm__Button--gray:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.BroadcastForm__Collapse {
+  display: none;
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+}
+
+.BroadcastForm__Collapse--Open {
+  display: block;
+  max-height: 800px;
+  opacity: 1;
+}
+
 .BroadcastForm__ButtonMessage {
   flex: 1;
   min-width: 0;
