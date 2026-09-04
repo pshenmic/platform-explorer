@@ -19,10 +19,10 @@
   color: var(--pe-color-white-50);
 }
 .DataList__Head--Light {
-  background: transparent !important;
-  font-weight: 500 !important;
-  color: #fff !important;
-  text-transform: none !important;
+  background: transparent;
+  font-weight: 500;
+  color: #fff;
+  text-transform: none;
 }
 .DataList__Head {
   gap: 16px;

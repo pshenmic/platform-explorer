@@ -96,8 +96,8 @@
   height: 100%;
   top: 0;
   left: 0;
-  z-index: 5 !important;
-  opacity: 1 !important;
+  z-index: 5;
+  opacity: 1;
   background-color: var(--pe-color-gray-900);
 }
 
@@ -116,5 +116,5 @@
     transparent 0%,
     rgb(14 117 181) 50%,
     transparent 100%
-  ) !important;
+  );
 }

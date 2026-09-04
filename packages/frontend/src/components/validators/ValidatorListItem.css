@@ -71,7 +71,7 @@
 }
 
 .ValidatorListItem--Loading {
-  height: 46px !important;
+  height: 46px;
 }
 
 .ValidatorListItem__Content {
@@ -83,7 +83,7 @@
 }
 
 .ValidatorListItem__Content--Inline {
-  display: inline !important;
+  display: inline;
 }
 
 .ValidatorListItem__Column {

@@ -5,7 +5,7 @@
 }
 
 .BroadcastForm .InfoLine {
-  justify-content: flex-start !important;
+  justify-content: flex-start;
 }
 
 .BroadcastForm .InfoLine .InfoLine__Title {

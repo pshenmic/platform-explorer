@@ -260,7 +260,7 @@ function DataContract({ identifier }: DataContractProps) {
                   }}
                 />
               ) : (
-                <div style={{ height: '5rem' }}>
+                <div className={'Tabs__PanelSpacer'}>
                   <ErrorMessageBlock />
                 </div>
               )}
@@ -287,7 +287,7 @@ function DataContract({ identifier }: DataContractProps) {
                   }}
                 />
               ) : (
-                <div style={{ height: '5rem' }}>
+                <div className={'Tabs__PanelSpacer'}>
                   <ErrorMessageBlock />
                 </div>
               )}
@@ -296,7 +296,7 @@ function DataContract({ identifier }: DataContractProps) {
               {!dataContractQuery.isError ? (
                 <TokensList tokens={tokens} loading={dataContractQuery.isLoading} />
               ) : (
-                <div style={{ height: '5rem' }}>
+                <div className={'Tabs__PanelSpacer'}>
                   <ErrorMessageBlock />
                 </div>
               )}
@@ -311,13 +311,13 @@ function DataContract({ identifier }: DataContractProps) {
                       code={dataContract.data?.schema}
                     />
                   ) : (
-                    <div style={{ height: '5rem' }}>
+                    <div className={'Tabs__PanelSpacer'}>
                       <ErrorMessageBlock />
                     </div>
                   )}
                 </LoadingBlock>
               ) : (
-                <div style={{ height: '5rem' }}>
+                <div className={'Tabs__PanelSpacer'}>
                   <ErrorMessageBlock />
                 </div>
               )}
@@ -332,7 +332,7 @@ function DataContract({ identifier }: DataContractProps) {
                   />
                 </LoadingBlock>
               ) : (
-                <div style={{ height: '5rem' }}>
+                <div className={'Tabs__PanelSpacer'}>
                   <ErrorMessageBlock />
                 </div>
               )}

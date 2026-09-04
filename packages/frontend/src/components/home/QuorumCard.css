@@ -65,7 +65,7 @@
   margin: 0 0 0.55em;
 }
 .QuorumCard__HelpFoot {
-  margin: 0 !important;
+  margin: 0;
   color: rgba(255, 255, 255, 0.55);
   font-size: 0.6875rem;
   line-height: 1.45;
@@ -621,8 +621,8 @@ a.QuorumCard__HelpMark:hover {
 .QuorumCard__CaptionIcon {
   flex-shrink: 0;
   opacity: 0.9;
-  width: 0.875rem !important;
-  height: 0.875rem !important;
+  width: 0.875rem;
+  height: 0.875rem;
 }
 .QuorumCard__PairCaption > span.is-on {
   opacity: 1;
@@ -761,8 +761,8 @@ a.QuorumCard__HelpMark:hover {
 .QuorumCard__QBtnIcon {
   flex-shrink: 0;
   opacity: 0.9;
-  width: 0.875rem !important;
-  height: 0.875rem !important;
+  width: 0.875rem;
+  height: 0.875rem;
 }
 .QuorumCard__QBtn.is-live {
   box-shadow: inset 0 -2px 0 0 rgba(var(--pe-color-green-label-rgb), 0.75);
@@ -1456,8 +1456,8 @@ a.QuorumCard__HelpMark:hover {
 @media screen and (max-width: 47.99em) {
   .QuorumCard {
     overflow: visible;
-    height: auto !important;
-    max-height: none !important;
+    height: auto;
+    max-height: none;
   }
   .QuorumCard__Head {
     display: grid;
@@ -1540,7 +1540,7 @@ a.QuorumCard__HelpMark:hover {
     gap: 10px;
   }
   .QuorumCard__Stage {
-    display: flex !important;
+    display: flex;
     flex-direction: column;
     align-items: stretch;
     flex: 0 0 auto;
@@ -1593,8 +1593,8 @@ a.QuorumCard__HelpMark:hover {
     gap: 3px;
   }
   .QuorumCard__QBtnIcon {
-    width: 0.7rem !important;
-    height: 0.7rem !important;
+    width: 0.7rem;
+    height: 0.7rem;
   }
   .QuorumCard__HostsClip {
     position: relative;
@@ -1620,7 +1620,7 @@ a.QuorumCard__HelpMark:hover {
     row-gap: 3px;
   }
   .QuorumCard__Host {
-    min-height: 32px !important;
+    min-height: 32px;
     padding: 6px;
     font-size: 0.625rem;
   }

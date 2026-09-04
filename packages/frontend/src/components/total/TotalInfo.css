@@ -75,7 +75,7 @@
   }
 
   .TotalInfo__ContentContainer {
-    flex-wrap: nowrap !important;
+    flex-wrap: nowrap;
     padding-bottom: var(--pe-space-1);
   }
 

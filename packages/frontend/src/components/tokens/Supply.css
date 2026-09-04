@@ -24,7 +24,7 @@
 }
 
 .Supply--Loading .Supply__ProgressContainer--Single {
-  max-width: none !important;
+  max-width: none;
 }
 
 .Supply__ProgressContainer .Supply__Title {

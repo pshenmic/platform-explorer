@@ -2,7 +2,7 @@
 .TransactionPage__DetailsInfo > .InfoLine--Loading .InfoLine__Value {
   height: 28px;
   flex-grow: 1;
-  width: 100% !important;
+  width: 100%;
 }
 
 .TransactionPage__InfoLine--Outputs .InfoLine__Value {
@@ -96,11 +96,11 @@
 
 .TransactionPage__InfoLine {
   margin-bottom: var(--pe-space-3_5);
-  justify-content: flex-start !important;
+  justify-content: flex-start;
 }
 
 .TransactionPage__InfoLine--Schema {
-  align-items: flex-start !important;
+  align-items: flex-start;
 }
 
 .TransactionPage__InfoLine--InternalConfig {
@@ -112,7 +112,7 @@
 .TransactionPage__InfoLine--Status,
 .TransactionPage__InfoLine--Transitions,
 .TransactionPage__InfoLine--PublicKeys {
-  align-items: baseline !important;
+  align-items: baseline;
 }
 
 .TransactionPage__Signature,
@@ -332,7 +332,7 @@
   ) {
     flex-direction: column;
     align-items: flex-start;
-    justify-content: flex-start !important;
+    justify-content: flex-start;
   }
 
   .TransactionPage__InfoLine:not(.TransactionPage__InfoLine--Inline):not(
@@ -400,7 +400,7 @@
 
   .TransactionPage__InfoLine {
     margin-bottom: var(--pe-space-3);
-    justify-content: space-between !important;
+    justify-content: space-between;
     flex-wrap: wrap;
   }
 

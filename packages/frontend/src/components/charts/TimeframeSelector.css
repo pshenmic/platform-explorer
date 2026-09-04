@@ -5,7 +5,7 @@
 }
 
 .TimeframeSelector__Menu {
-  padding: 0 var(--pe-space-3) !important;
+  padding: 0 var(--pe-space-3);
   top: var(--pe-space-3);
   position: absolute;
   z-index: 10;
@@ -54,20 +54,20 @@
 }
 
 .TimeframeSelector__Button--Active {
-  background-color: var(--pe-color-fg) !important;
-  color: var(--pe-color-brand-normal) !important;
+  background-color: var(--pe-color-fg);
+  color: var(--pe-color-brand-normal);
 }
 
 @media screen and (max-width: 555px) {
   .TimeframeSelector__Button {
-    font-size: 0.6rem !important;
-    height: var(--pe-space-6) !important;
+    font-size: 0.6rem;
+    height: var(--pe-space-6);
   }
 }
 
 @media screen and (max-width: 350px) {
   .TimeframeSelector__Button {
-    font-size: var(--pe-space-2) !important;
-    height: 22px !important;
+    font-size: var(--pe-space-2);
+    height: 22px;
   }
 }

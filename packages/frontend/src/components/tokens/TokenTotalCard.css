@@ -97,24 +97,24 @@
 }
 
 .TokenTotalCard {
-  padding: calc(var(--pe-space-3) + 0px) !important;
+  padding: calc(var(--pe-space-3) + 0px);
 }
 
 @media screen and (min-width: 48em) {
   .TokenTotalCard {
-    padding: calc(var(--pe-space-4) + 0px) !important;
+    padding: calc(var(--pe-space-4) + 0px);
   }
 }
 
 @media screen and (min-width: 62em) {
   .TokenTotalCard {
-    padding: calc(var(--pe-space-5) + 0px) !important;
+    padding: calc(var(--pe-space-5) + 0px);
   }
 }
 
 @media screen and (min-width: 80em) {
   .TokenTotalCard {
-    padding: calc(var(--pe-space-6) + 0px) !important;
+    padding: calc(var(--pe-space-6) + 0px);
   }
 }
 
@@ -159,8 +159,8 @@
 }
 
 .TokenTotalCard--Loading .TokenTotalCard__Avatar::before {
-  z-index: 5 !important;
-  opacity: 1 !important;
+  z-index: 5;
+  opacity: 1;
 }
 
 .TokenTotalCard--Loading .TokenTotalCard__Avatar::after {
@@ -189,13 +189,13 @@
     transparent 0%,
     rgb(14, 117, 181) 50%,
     transparent 100%
-  ) !important;
+  );
   width: 100%;
   height: 100%;
 }
 
 .TokenTotalCard--Loading .TokenTotalCard__Header .InfoLine__Value {
-  width: 100% !important;
+  width: 100%;
 }
 
 .TokenTotalCard__Header {
@@ -248,8 +248,8 @@
 
 .TokenTotalCard__PublicKeysShowButton {
   width: max-content;
-  font-weight: 500 !important;
-  text-transform: capitalize !important;
+  font-weight: 500;
+  text-transform: capitalize;
 }
 
 .TokenTotalCard__PublicKeysShowButton svg {
@@ -258,8 +258,8 @@
 
 .TokenTotalCard__LocalisationShowButton {
   width: max-content;
-  font-weight: 500 !important;
-  text-transform: capitalize !important;
+  font-weight: 500;
+  text-transform: capitalize;
 }
 
 .TokenTotalCard__LocalisationShowButton svg {
@@ -268,8 +268,8 @@
 
 .TokenTotalCard__PriceShowButton {
   width: max-content;
-  font-weight: 500 !important;
-  text-transform: capitalize !important;
+  font-weight: 500;
+  text-transform: capitalize;
 }
 
 .TokenTotalCard__PriceFrom {
@@ -343,35 +343,35 @@
 }
 
 .TokenTotalCard__PublicKeysListContainer {
-  transition: 0.3s !important;
+  transition: 0.3s;
 }
 
 .TokenTotalCard__PublicKeysListContainer--Hidden {
-  margin-top: -1rem !important;
+  margin-top: -1rem;
 }
 
 .TokenTotalCard__PublicKeysListContainer--Mobile {
-  display: none !important;
+  display: none;
 }
 
 .TokenTotalCard__LocalisationListContainer {
-  transition: 0.3s !important;
+  transition: 0.3s;
 }
 
 .TokenTotalCard__LocalisationListContainer--Hidden {
-  margin-top: -1rem !important;
+  margin-top: -1rem;
 }
 
 .TokenTotalCard__LocalisationListContainer--Mobile {
-  display: none !important;
+  display: none;
 }
 
 .TokenTotalCard__PriceListContainer {
-  transition: 0.3s !important;
+  transition: 0.3s;
 }
 
 .TokenTotalCard__PriceListContainer--Hidden {
-  margin-top: -1rem !important;
+  margin-top: -1rem;
 }
 
 .TokenTotalCard__Separator {
@@ -521,70 +521,70 @@
   }
 
   .TokenTotalCard__Separator {
-    margin-top: calc(var(--pe-space-3) + 0px) !important;
-    margin-bottom: calc(var(--pe-space-3) + 0px) !important;
+    margin-top: calc(var(--pe-space-3) + 0px);
+    margin-bottom: calc(var(--pe-space-3) + 0px);
   }
 }
 
 @media screen and (max-width: 48em) and (min-width: 48em) {
   .TokenTotalCard__Separator {
-    margin-top: calc(var(--pe-space-4) + 0px) !important;
+    margin-top: calc(var(--pe-space-4) + 0px);
   }
 }
 
 @media screen and (max-width: 48em) and (min-width: 62em) {
   .TokenTotalCard__Separator {
-    margin-top: calc(var(--pe-space-5) + 0px) !important;
+    margin-top: calc(var(--pe-space-5) + 0px);
   }
 }
 
 @media screen and (max-width: 48em) and (min-width: 80em) {
   .TokenTotalCard__Separator {
-    margin-top: calc(var(--pe-space-6) + 0px) !important;
+    margin-top: calc(var(--pe-space-6) + 0px);
   }
 }
 
 @media screen and (max-width: 48em) and (min-width: 48em) {
   .TokenTotalCard__Separator {
-    margin-bottom: calc(var(--pe-space-4) + 0px) !important;
+    margin-bottom: calc(var(--pe-space-4) + 0px);
   }
 }
 
 @media screen and (max-width: 48em) and (min-width: 62em) {
   .TokenTotalCard__Separator {
-    margin-bottom: calc(var(--pe-space-5) + 0px) !important;
+    margin-bottom: calc(var(--pe-space-5) + 0px);
   }
 }
 
 @media screen and (max-width: 48em) and (min-width: 80em) {
   .TokenTotalCard__Separator {
-    margin-bottom: calc(var(--pe-space-6) + 0px) !important;
+    margin-bottom: calc(var(--pe-space-6) + 0px);
   }
 }
 
 @media screen and (max-width: 48em) {
   .TokenTotalCard__PublicKeysListContainer--Hidden {
-    margin-top: -0.75rem !important;
+    margin-top: -0.75rem;
   }
 
   .TokenTotalCard__PublicKeysListContainer--Mobile {
-    display: block !important;
+    display: block;
   }
 
   .TokenTotalCard__PublicKeysListContainer--Desktop {
-    display: none !important;
+    display: none;
   }
 
   .TokenTotalCard__LocalisationListContainer--Hidden {
-    margin-top: -0.75rem !important;
+    margin-top: -0.75rem;
   }
 
   .TokenTotalCard__LocalisationListContainer--Mobile {
-    display: block !important;
+    display: block;
   }
 
   .TokenTotalCard__LocalisationListContainer--Desktop {
-    display: none !important;
+    display: none;
   }
 
   .TokenTotalCard__InfoLine {
@@ -601,69 +601,69 @@
   }
 
   .TokenTotalCard--Loading .InfoLine__Value {
-    width: 100% !important;
+    width: 100%;
   }
 }
 
 @media screen and (max-width: 30em) {
   .TokenTotalCard__Digest {
-    margin-left: calc(calc(0px - var(--pe-space-3)) + 0px) !important;
-    margin-right: calc(calc(0px - var(--pe-space-3)) + 0px) !important;
-    margin-bottom: calc(calc(0px - var(--pe-space-3)) + 0px) !important;
+    margin-left: calc(calc(0px - var(--pe-space-3)) + 0px);
+    margin-right: calc(calc(0px - var(--pe-space-3)) + 0px);
+    margin-bottom: calc(calc(0px - var(--pe-space-3)) + 0px);
   }
 }
 
 @media screen and (max-width: 30em) and (min-width: 48em) {
   .TokenTotalCard__Digest {
-    margin-left: calc(calc(0px - var(--pe-space-4)) + 0px) !important;
+    margin-left: calc(calc(0px - var(--pe-space-4)) + 0px);
   }
 }
 
 @media screen and (max-width: 30em) and (min-width: 62em) {
   .TokenTotalCard__Digest {
-    margin-left: calc(calc(0px - var(--pe-space-5)) + 0px) !important;
+    margin-left: calc(calc(0px - var(--pe-space-5)) + 0px);
   }
 }
 
 @media screen and (max-width: 30em) and (min-width: 80em) {
   .TokenTotalCard__Digest {
-    margin-left: calc(calc(0px - var(--pe-space-6)) + 0px) !important;
+    margin-left: calc(calc(0px - var(--pe-space-6)) + 0px);
   }
 }
 
 @media screen and (max-width: 30em) and (min-width: 48em) {
   .TokenTotalCard__Digest {
-    margin-right: calc(calc(0px - var(--pe-space-4)) + 0px) !important;
+    margin-right: calc(calc(0px - var(--pe-space-4)) + 0px);
   }
 }
 
 @media screen and (max-width: 30em) and (min-width: 62em) {
   .TokenTotalCard__Digest {
-    margin-right: calc(calc(0px - var(--pe-space-5)) + 0px) !important;
+    margin-right: calc(calc(0px - var(--pe-space-5)) + 0px);
   }
 }
 
 @media screen and (max-width: 30em) and (min-width: 80em) {
   .TokenTotalCard__Digest {
-    margin-right: calc(calc(0px - var(--pe-space-6)) + 0px) !important;
+    margin-right: calc(calc(0px - var(--pe-space-6)) + 0px);
   }
 }
 
 @media screen and (max-width: 30em) and (min-width: 48em) {
   .TokenTotalCard__Digest {
-    margin-bottom: calc(calc(0px - var(--pe-space-4)) + 0px) !important;
+    margin-bottom: calc(calc(0px - var(--pe-space-4)) + 0px);
   }
 }
 
 @media screen and (max-width: 30em) and (min-width: 62em) {
   .TokenTotalCard__Digest {
-    margin-bottom: calc(calc(0px - var(--pe-space-5)) + 0px) !important;
+    margin-bottom: calc(calc(0px - var(--pe-space-5)) + 0px);
   }
 }
 
 @media screen and (max-width: 30em) and (min-width: 80em) {
   .TokenTotalCard__Digest {
-    margin-bottom: calc(calc(0px - var(--pe-space-6)) + 0px) !important;
+    margin-bottom: calc(calc(0px - var(--pe-space-6)) + 0px);
   }
 }
 

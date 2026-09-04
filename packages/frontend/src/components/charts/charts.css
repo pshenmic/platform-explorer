@@ -32,8 +32,8 @@
 }
 
 .ChartContainer.loading::before {
-  z-index: 5 !important;
-  opacity: 1 !important;
+  z-index: 5;
+  opacity: 1;
 }
 
 .ChartContainer.loading::after {
@@ -62,7 +62,7 @@
     transparent 0%,
     rgb(14, 117, 181) 50%,
     transparent 100%
-  ) !important;
+  );
   width: 100%;
   height: 100%;
 }
@@ -97,8 +97,8 @@
   visibility: hidden;
   opacity: 0;
   transition: all 1s;
-  margin: 0 -var(--pe-space-2_5) !important;
-  padding: 0 var(--pe-space-2_5) !important;
+  margin: 0 -var(--pe-space-2_5);
+  padding: 0 var(--pe-space-2_5);
   overflow-x: clip;
 }
 

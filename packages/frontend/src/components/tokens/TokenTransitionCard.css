@@ -76,13 +76,13 @@
   .TokenTransitionCard__InfoLine--Revision .InfoLine__Value,
   .TokenTransitionCard__InfoLine--Action .InfoLine__Title,
   .TokenTransitionCard__InfoLine--Action .InfoLine__Value {
-    width: max-content !important;
+    width: max-content;
   }
 
   .TokenTransitionCard__InfoLine--Revision .InfoLine__Value,
   .TokenTransitionCard__InfoLine--Action .InfoLine__Value {
     width: max-content;
-    text-align: right !important;
+    text-align: right;
   }
 }
 
@@ -167,7 +167,7 @@
 
 @container (max-width: 600px) {
   .TokenTransitionCard .InfoLine__Value {
-    text-align: right !important;
+    text-align: right;
     display: flex;
     justify-content: flex-end;
   }

@@ -1,10 +1,10 @@
 .HomeLeaders {
   position: relative;
   overflow: hidden;
-  padding-left: 0 !important;
-  padding-right: 0 !important;
-  padding-top: 20px !important;
-  padding-bottom: 22px !important;
+  padding-left: 0;
+  padding-right: 0;
+  padding-top: 20px;
+  padding-bottom: 22px;
   height: auto;
 }
 .HomeLeaders__Head {
@@ -118,8 +118,8 @@
 }
 @media screen and (max-width: 47.99em) {
   .HomeLeaders {
-    padding-top: 16px !important;
-    padding-bottom: 16px !important;
+    padding-top: 16px;
+    padding-bottom: 16px;
   }
   .HomeLeaders__Head {
     display: grid;

@@ -78,13 +78,13 @@
   .DocumentTransitionCard__InfoLine--Revision .InfoLine__Value,
   .DocumentTransitionCard__InfoLine--Action .InfoLine__Title,
   .DocumentTransitionCard__InfoLine--Action .InfoLine__Value {
-    width: max-content !important;
+    width: max-content;
   }
 
   .DocumentTransitionCard__InfoLine--Revision .InfoLine__Value,
   .DocumentTransitionCard__InfoLine--Action .InfoLine__Value {
     width: max-content;
-    text-align: right !important;
+    text-align: right;
   }
 
   .DocumentTransitionCard__InfoLine {

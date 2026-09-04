@@ -1,21 +1,21 @@
 .PublicKeyCard {
-  padding: var(--pe-space-10) !important;
+  padding: var(--pe-space-10);
 }
 
 @media screen and (max-width: 48em) {
   .PublicKeyCard {
-    padding: var(--pe-space-8) !important;
+    padding: var(--pe-space-8);
   }
 }
 
 @media screen and (max-width: 30em) {
   .PublicKeyCard {
-    padding: var(--pe-space-4) !important;
+    padding: var(--pe-space-4);
   }
 }
 
 .PublicKeyCard__InfoLine .InfoLine__Title {
-  width: 150px !important;
+  width: 150px;
 }
 
 .PublicKeyCard__InfoLine {
@@ -41,7 +41,7 @@
 
 @media screen and (max-width: 30em) {
   .PublicKeyCard__InfoLine .InfoLine__Title {
-    width: auto !important;
+    width: auto;
   }
 
   .PublicKeyCard__InfoLine--Data .InfoLine__Title {

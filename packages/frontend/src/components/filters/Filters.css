@@ -6,11 +6,11 @@
 }
 
 .Filters__Button {
-  display: flex !important;
+  display: flex;
   align-items: center;
   gap: var(--pe-space-2);
-  font-weight: var(--pe-font-weight-normal) !important;
-  text-transform: capitalize !important;
+  font-weight: var(--pe-font-weight-normal);
+  text-transform: capitalize;
   border: none;
   cursor: pointer;
   font-size: 0.75rem;
