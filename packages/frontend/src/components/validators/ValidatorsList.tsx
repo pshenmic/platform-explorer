@@ -5,7 +5,6 @@ import type { ReactNode } from 'react'
 import type { Validator } from '../../types'
 import { ListColumnsHeader } from '../ui/lists'
 import { ValidatorListItem } from './ValidatorListItem'
-import { Container } from '@chakra-ui/react'
 import { ErrorMessageBlock } from '@components/Errors'
 import { createColumnHelper, getCoreRowModel, useReactTable } from '@tanstack/react-table'
 import { LoadingLine } from '@components/loading'
@@ -72,9 +71,9 @@ export const ValidatorsList = ({ loading, list, pageSize, error }: ValidatorsLis
 
   if (error) {
     return (
-      <Container h={20}>
+      <div className={'ListPage__Error'}>
         <ErrorMessageBlock />
-      </Container>
+      </div>
     )
   }
 
