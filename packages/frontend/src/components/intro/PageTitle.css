@@ -33,10 +33,9 @@
   cursor: pointer;
 }
 
-.PageTitle__InfoButton svg,
-.PageTitle__InfoButton .chakra-icon {
-  width: 16px !important;
-  height: 16px !important;
+.PageTitle__InfoButton svg {
+  width: 16px;
+  height: 16px;
   max-width: 16px;
   max-height: 16px;
 }
