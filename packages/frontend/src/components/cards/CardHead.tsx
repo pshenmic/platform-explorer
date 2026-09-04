@@ -1,5 +1,4 @@
 import type { ReactNode } from 'react'
-import { Heading } from '@chakra-ui/react'
 import type { WithChildren, WithClassName } from '../../types/common'
 
 interface CardHeadProps extends WithChildren, WithClassName {
@@ -8,11 +7,7 @@ interface CardHeadProps extends WithChildren, WithClassName {
 }
 
 export default function CardHead({ title, extra, children, className = '' }: CardHeadProps) {
-  const heading = title ? (
-    <Heading className={'InfoBlock__Title'} as={'h2'}>
-      {title}
-    </Heading>
-  ) : null
+  const heading = title ? <h2 className={'InfoBlock__Title'}>{title}</h2> : null
 
   return (
     <div className={`InfoBlock__Head ${className}`.trim()}>

@@ -6,6 +6,33 @@
 
 .HomePage {
   --home-chart-row: 26rem;
+  --home-page-gap: var(--pe-space-3);
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 1920px;
+  margin-inline: auto;
+  margin-block: var(--home-page-gap);
+  padding-inline: var(--pe-space-2);
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  gap: var(--home-page-gap);
+}
+@media screen and (min-width: 30em) {
+  .HomePage {
+    --home-page-gap: var(--pe-space-4);
+  }
+}
+@media screen and (min-width: 48em) {
+  .HomePage {
+    --home-page-gap: var(--pe-space-5);
+    padding-inline: var(--pe-space-3);
+  }
+}
+@media screen and (min-width: 80em) {
+  .HomePage {
+    --home-page-gap: var(--pe-space-10);
+  }
 }
 
 .HomeCardPair {
