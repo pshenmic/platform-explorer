@@ -10,6 +10,11 @@ const QUERIES: [BreakpointKey, string][] = [
   ['sm', '(min-width: 30em)']
 ]
 
+export function useIsMobile(): boolean {
+  const key = useBreakpointKey()
+  return key === 'base' || key === 'sm'
+}
+
 export function useBreakpointKey(): BreakpointKey {
   const [key, setKey] = useState<BreakpointKey>('base')
 
