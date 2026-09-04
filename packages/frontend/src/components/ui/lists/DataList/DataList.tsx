@@ -33,6 +33,8 @@ export interface DataListProps<T = any> {
   headerVariant?: string
   skeletonCount?: number
   footer?: ReactNode
+  beforeBody?: ReactNode
+  showHeader?: boolean
   className?: string
   wrapperProps?: Record<string, unknown>
   sort?: { order_by?: string; order?: string }
@@ -58,7 +60,11 @@ function visibleColumns<T>(columns: DataListColumn<T>[], width: number) {
 
 function templateFor<T>(cols: DataListColumn<T>[]) {
   return cols
-    .map(c => (c.grow ? `minmax(0, ${Number(c.grow) || 1}fr)` : `minmax(0, ${c.minWidth}px)`))
+    .map(c => {
+      const min = c.minWidth || 0
+      if (c.grow) return `minmax(${min}px, ${Number(c.grow) || 1}fr)`
+      return `minmax(${min}px, max-content)`
+    })
     .join(' ')
 }
 
@@ -147,6 +153,8 @@ export default function DataList<T = any>({
   headerVariant = 'default',
   skeletonCount = DEFAULT_SKELETON_ROWS,
   footer,
+  beforeBody,
+  showHeader = true,
   className = '',
   wrapperProps = {},
   sort,
@@ -161,14 +169,18 @@ export default function DataList<T = any>({
 
   return (
     <div ref={wrapRef} className={`DataList ${className}`.trim()} {...wrapperProps}>
-      <div
-        className={`DataList__Head DataList__Head--${headerVariant}`}
-        style={{ gridTemplateColumns: template }}
-      >
-        {cols.map(c => (
-          <HeadCell key={c.key} column={c} sort={sort} onSortChange={onSortChange} />
-        ))}
-      </div>
+      {showHeader && (
+        <div
+          className={`DataList__Head DataList__Head--${headerVariant}`}
+          style={{ gridTemplateColumns: template }}
+        >
+          {cols.map(c => (
+            <HeadCell key={c.key} column={c} sort={sort} onSortChange={onSortChange} />
+          ))}
+        </div>
+      )}
+
+      {beforeBody}
 
       <div className={'DataList__Body'}>
         {loading ? (
@@ -200,9 +212,8 @@ export default function DataList<T = any>({
             ))
             const inner = (
               <div
-                key={key}
                 className={`DataList__Row${extraRowClass ? ` ${extraRowClass}` : ''}`}
-                style={{ gridTemplateColumns: template, ...extraRowStyle }}
+                style={{ gridTemplateColumns: template }}
               >
                 {cells}
               </div>
@@ -212,12 +223,17 @@ export default function DataList<T = any>({
                 key={key}
                 href={rowHref(item, i) || '#'}
                 prefetch={false}
-                className={'DataList__RowLink'}
+                className={`DataList__RowLink${extraRowClass ? ` ${extraRowClass}` : ''}`}
+                style={extraRowStyle}
               >
                 {inner}
               </Link>
             ) : (
-              <div key={key} className={'DataList__RowStatic'}>
+              <div
+                key={key}
+                className={`DataList__RowStatic${extraRowClass ? ` ${extraRowClass}` : ''}`}
+                style={extraRowStyle}
+              >
                 {inner}
               </div>
             )

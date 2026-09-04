@@ -18,6 +18,7 @@ export const normalizePagination = ({
   if (unknown) {
     return {
       unknownTotal: true,
+      total: null,
       pageCount: 1,
       forcePage: 0,
       ...other
@@ -28,6 +29,7 @@ export const normalizePagination = ({
 
   return {
     unknownTotal: false,
+    total: Number(total),
     pageCount,
     forcePage: Math.max(0, Math.min(pageCount - 1, safePage - 1)),
     ...other

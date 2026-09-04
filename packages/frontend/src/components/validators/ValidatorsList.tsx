@@ -1,57 +1,19 @@
 'use client'
 
-import type { ReactNode } from 'react'
-
 import type { Validator } from '../../types'
-import { ListColumnsHeader } from '../ui/lists'
-import { ValidatorListItem } from './ValidatorListItem'
+import { DateBlock, Identifier, NotActive } from '../data'
+import { Badge } from '../ui/Badge'
+import { DataList } from '../ui/lists'
 import { ErrorMessageBlock } from '@components/Errors'
-import { createColumnHelper, getCoreRowModel, useReactTable } from '@tanstack/react-table'
-import { LoadingLine } from '@components/loading'
 
-import './ValidatorsList.css'
-
-const columnHelper = createColumnHelper<Validator>()
-
-const columns = [
-  columnHelper.accessor('proTxHash', {
-    id: 'identifier',
-    header: 'Identifier'
-  }),
-  columnHelper.accessor(row => (row?.isActive === true ? 'current' : 'queued'), {
-    id: 'active',
-    header: 'Active'
-  }),
-  columnHelper.accessor(row => row?.lastProposedBlockHeader?.height ?? 0, {
-    id: 'lastBlockHeight',
-    header: 'Last block height'
-  }),
-  columnHelper.accessor('proposedBlocksAmount', {
-    id: 'proposedBlocksAmount',
-    header: 'Blocks proposed'
-  }),
-  columnHelper.accessor(row => row?.lastProposedBlockHeader?.timestamp ?? null, {
-    id: 'timestamp',
-    header: 'Timestamp'
-  })
-]
-
-interface TableWrapperProps {
-  children?: ReactNode
-}
-
-const TableWrapper = ({ children }: TableWrapperProps) => (
-  <div className={'ValidatorsList'}>
-    <div className={'ValidatorsList__ContentContainer'}>{children}</div>
-  </div>
-)
-
-export const ValidatorsListSceleton = () => (
-  <TableWrapper>
-    {Array.from({ length: 25 }, (x, i) => (
-      <LoadingLine key={i} loading className={'ValidatorListItem ValidatorListItem--Loading'} />
-    ))}
-  </TableWrapper>
+export const ValidatorsListSceleton = ({ pageSize = 25 }: { pageSize?: number | string }) => (
+  <DataList
+    className={'ValidatorsList'}
+    items={[]}
+    columns={validatorColumns()}
+    loading
+    skeletonCount={String(pageSize).toLowerCase() === 'all' ? 50 : Number(pageSize) || 25}
+  />
 )
 
 interface ValidatorsListProps {
@@ -61,14 +23,69 @@ interface ValidatorsListProps {
   error?: boolean
 }
 
-export const ValidatorsList = ({ loading, list, pageSize, error }: ValidatorsListProps) => {
-  const table = useReactTable({
-    data: list ?? [],
-    columns,
-    getCoreRowModel: getCoreRowModel(),
-    manualPagination: true
-  })
+function validatorColumns() {
+  return [
+    {
+      key: 'identifier',
+      header: 'Identifier',
+      grow: true,
+      minWidth: 160,
+      cell: (validator: Validator) =>
+        validator?.proTxHash ? (
+          <Identifier avatar={true} copyButton={true} styles={['highlight-both']}>
+            {validator.proTxHash}
+          </Identifier>
+        ) : (
+          <NotActive />
+        )
+    },
+    {
+      key: 'active',
+      header: 'Active',
+      minWidth: 80,
+      align: 'center',
+      priority: 2,
+      cell: (validator: Validator) =>
+        validator?.isActive !== undefined ? (
+          <Badge colorScheme={validator?.isActive ? 'orange' : 'gray'}>
+            {validator?.isActive ? 'true' : 'false'}
+          </Badge>
+        ) : (
+          <NotActive />
+        )
+    },
+    {
+      key: 'lastBlockHeight',
+      header: 'Last block height',
+      minWidth: 110,
+      align: 'center',
+      priority: 1,
+      cell: (validator: Validator) => validator?.lastProposedBlockHeader?.height || '-'
+    },
+    {
+      key: 'proposedBlocksAmount',
+      header: 'Blocks proposed',
+      minWidth: 110,
+      align: 'center',
+      priority: 1,
+      cell: (validator: Validator) => validator?.proposedBlocksAmount || '-'
+    },
+    {
+      key: 'timestamp',
+      header: 'Timestamp',
+      minWidth: 120,
+      align: 'right',
+      cell: (validator: Validator) => (
+        <DateBlock
+          timestamp={validator.lastProposedBlockHeader?.timestamp}
+          format="dateOnly"
+        />
+      )
+    }
+  ]
+}
 
+export const ValidatorsList = ({ loading, list, pageSize, error }: ValidatorsListProps) => {
   if (error) {
     return (
       <div className={'ListPage__Error'}>
@@ -77,35 +94,16 @@ export const ValidatorsList = ({ loading, list, pageSize, error }: ValidatorsLis
     )
   }
 
-  if (loading) {
-    return (
-      <TableWrapper>
-        {Array.from(
-          {
-            length: String(pageSize).toLowerCase() === 'all' ? 50 : Number(pageSize) || 25
-          },
-          (x, i) => (
-            <LoadingLine
-              key={i}
-              loading={loading}
-              className={'ValidatorListItem ValidatorListItem--Loading'}
-            />
-          )
-        )}
-      </TableWrapper>
-    )
-  }
-
   return (
-    <TableWrapper>
-      <ListColumnsHeader
-        headers={table.getHeaderGroups().flatMap(({ headers }) => headers) as any}
-        className={'ValidatorsList__ColumnTitles'}
-        columnClassName={'ValidatorsList__ColumnTitle'}
-      />
-      {table.getRowModel().rows.map(row => (
-        <ValidatorListItem key={row.id} validator={row.original} />
-      ))}
-    </TableWrapper>
+    <DataList
+      className={'ValidatorsList'}
+      items={list || []}
+      columns={validatorColumns()}
+      loading={loading}
+      skeletonCount={String(pageSize).toLowerCase() === 'all' ? 50 : Number(pageSize) || 25}
+      rowHref={validator => `/validator/${validator.proTxHash}`}
+      rowKey={validator => validator.proTxHash || ''}
+      emptyMessage={'There are no validators yet.'}
+    />
   )
 }
