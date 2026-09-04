@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from 'react'
 import type { ComponentType, ReactNode } from 'react'
-import { Button } from '@chakra-ui/react'
 import { SubmitButton } from '../ui/forms'
 import FilterActions from './FilterActions'
 import { SearchResultsList, GlobalSearchInput } from '../search'
@@ -12,6 +11,7 @@ import type { LoadableState } from '../../types/common'
 import IdentifierJs from '../data/Identifier'
 import { ValueCard } from '../cards'
 import './SearchFilter.css'
+import './Filters.css'
 
 const Identifier = IdentifierJs as ComponentType<{
   children?: ReactNode
@@ -176,9 +176,9 @@ export const SearchFilter = ({
         <FilterActions>
           <SubmitButton text={'Close'} onSubmit={onSubmit} />
           {selectedEntity && (
-            <Button variant={'gray'} size={'sm'} onClick={clearSearch}>
+            <button type={'button'} className={'Filters__Button Filters__Button--Gray'} onClick={clearSearch}>
               Clear
-            </Button>
+            </button>
           )}
         </FilterActions>
       )}

@@ -7,9 +7,27 @@
 
 .Filters__Button {
   display: flex !important;
+  align-items: center;
   gap: var(--pe-space-2);
   font-weight: var(--pe-font-weight-normal) !important;
   text-transform: capitalize !important;
+  border: none;
+  cursor: pointer;
+  font-size: 0.75rem;
+  font-family: var(--pe-font-heading);
+  border-radius: 10px;
+  padding: 0.375rem 0.75rem;
+  letter-spacing: 0.4px;
+}
+
+.Filters__Button--Brand {
+  background: var(--pe-color-brand-normal);
+  color: #fff;
+}
+
+.Filters__Button--Gray {
+  background: var(--pe-color-gray-800);
+  color: var(--pe-color-gray-250);
 }
 
 .Filters__Button--ToggleFilters svg {

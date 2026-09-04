@@ -1,4 +1,3 @@
-import { Grid, GridItem } from '@chakra-ui/react'
 import LocalisationListItem from './LocalisationListItem'
 import { EmptyListMessage } from '../../ui/lists'
 import type { Localization } from '../../../types'
@@ -16,28 +15,28 @@ function LocalisationList({ localisations = {}, className }: LocalisationListPro
   return (
     <div className={`LocalisationList ${className || ''}`}>
       <div className={'LocalisationList__ScrollZone'}>
-        <Grid className={'LocalisationList__ColumnTitles'}>
-          <GridItem
+        <div className={'LocalisationList__ColumnTitles'}>
+          <div
             className={'LocalisationList__ColumnTitle LocalisationList__ColumnTitle--Language'}
           >
             Language
-          </GridItem>
-          <GridItem
+          </div>
+          <div
             className={'LocalisationList__ColumnTitle LocalisationList__ColumnTitle--Singular'}
           >
             Singular
-          </GridItem>
-          <GridItem
+          </div>
+          <div
             className={'LocalisationList__ColumnTitle LocalisationList__ColumnTitle--Plural'}
           >
             Plural
-          </GridItem>
-          <GridItem
+          </div>
+          <div
             className={'LocalisationList__ColumnTitle LocalisationList__ColumnTitle--Capitalize'}
           >
             Capitalize
-          </GridItem>
-        </Grid>
+          </div>
+        </div>
 
         {localisationEntries?.length > 0 &&
           localisationEntries.map(([langCode, localisationData]) => (

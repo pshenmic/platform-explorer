@@ -2,7 +2,6 @@
 
 import { DateRangePicker } from '../calendar'
 import { useEffect, useState } from 'react'
-import { Button } from '@chakra-ui/react'
 import { defaultChartConfig } from '../charts/config'
 import type { ChartConfig, TimespanValue } from '../charts/types'
 import type { DateRangeFilterValue } from './types'
@@ -85,23 +84,22 @@ export const DateRangeFilter = ({
         <div className={'DateRangeFilter__ValuesTitle'}>Select a day, period or Timeframe:</div>
         <div className={'DateRangeFilter__Values'}>
           {config.timespan.values.map((iTimespan, i) => (
-            <Button
+            <button
+              type={'button'}
               className={`DateRangeFilter__ValueButton ${iTimespan.label === timespan?.label ? 'DateRangeFilter__ValueButton--Active' : ''}`}
               onClick={() => timeframeButtonHandler(iTimespan)}
               key={i}
-              size={'xs'}
             >
               {iTimespan.label}
-            </Button>
+            </button>
           ))}
-          <Button
+          <button
+            type={'button'}
             className={'DateRangeFilter__ValueButton DateRangeFilter__ValueButton--Submit'}
             onClick={onSubmit}
-            size={'xs'}
-            variant={'customGreen'}
           >
             ok
-          </Button>
+          </button>
         </div>
       </div>
 

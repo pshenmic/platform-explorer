@@ -50,6 +50,37 @@
   gap: 0.875rem;
 }
 
+.TokenDigestCard__DistributionList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  align-items: flex-end;
+}
+
+.TokenDigestCard__DistributionTooltip {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  justify-content: space-between;
+}
+
+.TokenDigestCard__DistributionTooltipRow {
+  display: flex;
+  gap: 0.5rem;
+  flex-grow: 1;
+}
+
+.TokenDigestCard__DistributionTooltipRow--Spread {
+  justify-content: space-between;
+}
+
+.TokenDigestCard__DistributionBadge {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+}
+
 .TokenDigestCard__InfoContainer {
   display: flex;
   flex-direction: row;

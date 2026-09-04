@@ -132,6 +132,12 @@
   width: 50%;
 }
 
+.MobileFilterMenu__ItemRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
 .MobileFilterMenu__Item {
   display: flex;
   flex-direction: column;
@@ -180,6 +186,7 @@
 .MobileFilterMenu__BackButton {
   position: absolute;
   left: 0;
+  display: flex;
   transition: var(--pe-transition-def);
   align-items: center;
   padding: var(--pe-space-2);

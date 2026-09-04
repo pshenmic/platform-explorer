@@ -272,6 +272,33 @@
   text-transform: capitalize !important;
 }
 
+.TokenTotalCard__PriceFrom {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.TokenTotalCard__ToggleButton {
+  display: inline-flex;
+  align-items: center;
+  border: none;
+  cursor: pointer;
+  font-size: 0.75rem;
+  font-family: var(--pe-font-heading);
+  border-radius: 10px;
+  padding: 0.25rem 0.625rem;
+  letter-spacing: 0.4px;
+}
+
+.TokenTotalCard__ToggleButton--Blue {
+  background: rgba(var(--pe-color-brand-normal-rgb), 0.2);
+  color: var(--pe-color-brand-light);
+}
+
+.TokenTotalCard__ToggleButton--Gray {
+  background: var(--pe-color-gray-800);
+  color: var(--pe-color-gray-250);
+}
+
 .TokenTotalCard__PriceShowButton svg {
   transition: 0.2s;
 }

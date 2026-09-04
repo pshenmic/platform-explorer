@@ -1,5 +1,5 @@
 import type { ComponentType, ReactNode } from 'react'
-import { Badge, Grid, GridItem } from '@chakra-ui/react'
+import { Badge } from '@chakra-ui/react'
 // Untyped JS components — loose wrappers until data/* is migrated
 import { NotActive as NotActiveJs } from '../../data'
 import type { Localization } from '../../../types'
@@ -16,17 +16,17 @@ interface LocalisationListItemProps extends WithClassName {
 function LocalisationListItem({ langCode, localisation, className }: LocalisationListItemProps) {
   return (
     <div className={`LocalisationListItem ${className || ''}`}>
-      <Grid className={'LocalisationListItem__Content'}>
-        <GridItem className={'LocalisationListItem__Column LocalisationListItem__Column--Language'}>
+      <div className={'LocalisationListItem__Content'}>
+        <div className={'LocalisationListItem__Column LocalisationListItem__Column--Language'}>
           {langCode !== undefined ? langCode : <NotActive>-</NotActive>}
-        </GridItem>
-        <GridItem className={'LocalisationListItem__Column LocalisationListItem__Column--Singular'}>
+        </div>
+        <div className={'LocalisationListItem__Column LocalisationListItem__Column--Singular'}>
           {localisation?.singularForm !== undefined ? localisation?.singularForm : <NotActive />}
-        </GridItem>
-        <GridItem className={'LocalisationListItem__Column LocalisationListItem__Column--Plural'}>
+        </div>
+        <div className={'LocalisationListItem__Column LocalisationListItem__Column--Plural'}>
           {localisation?.pluralForm !== undefined ? localisation?.pluralForm : <NotActive />}
-        </GridItem>
-        <GridItem
+        </div>
+        <div
           className={'LocalisationListItem__Column LocalisationListItem__Column--Capitalize'}
         >
           {localisation?.shouldCapitalize !== undefined ? (
@@ -36,8 +36,8 @@ function LocalisationListItem({ langCode, localisation, className }: Localisatio
           ) : (
             <NotActive />
           )}
-        </GridItem>
-      </Grid>
+        </div>
+      </div>
     </div>
   )
 }

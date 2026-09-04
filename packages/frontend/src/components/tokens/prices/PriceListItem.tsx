@@ -1,5 +1,4 @@
 import type { ComponentType, ReactNode } from 'react'
-import { Grid, GridItem } from '@chakra-ui/react'
 // Untyped JS components — loose wrappers until data/* is migrated
 import {
   NotActive as NotActiveJs,
@@ -33,15 +32,15 @@ function PriceListItem({ priceData, rate, className }: PriceListItemProps) {
 
   return (
     <div className={`PriceListItem ${className || ''}`}>
-      <Grid className={'PriceListItem__Content'}>
-        <GridItem
+      <div className={'PriceListItem__Content'}>
+        <div
           className={
             'PriceListItem__Column PriceListItem__Column--Amount PriceListItem__Column--Number'
           }
         >
           {amount !== undefined ? <BigNumber>{amount}</BigNumber> : <NotActive>-</NotActive>}
-        </GridItem>
-        <GridItem
+        </div>
+        <div
           className={
             'PriceListItem__Column PriceListItem__Column--Price PriceListItem__Column--Number'
           }
@@ -59,8 +58,8 @@ function PriceListItem({ priceData, rate, className }: PriceListItemProps) {
           ) : (
             <NotActive />
           )}
-        </GridItem>
-      </Grid>
+        </div>
+      </div>
     </div>
   )
 }

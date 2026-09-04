@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState, useMemo } from 'react'
 import type { Dispatch, ReactNode, SetStateAction } from 'react'
-import { Button, useDisclosure } from '@chakra-ui/react'
+import { useDisclosure } from '@chakra-ui/react'
 import { useFilters } from '../../hooks'
 import type { FilterValue, Filters as UseFiltersState } from '../../hooks/useFilters'
 import {
@@ -364,9 +364,9 @@ export const Filters = ({
   /** Mobile: we own the click. Desktop: PopoverTrigger owns the click — no onClick here. */
   const filterTriggerButton = useMemo(
     () => (
-      <Button
+      <button
         type="button"
-        className={'Filters__Button Filters__Button--ToggleFilters '}
+        className={'Filters__Button Filters__Button--ToggleFilters Filters__Button--Brand'}
         onClick={
           isMobile
             ? () => {
@@ -374,17 +374,15 @@ export const Filters = ({
               }
             : undefined
         }
-        variant={'brand'}
-        size={'sm'}
       >
         <span>{buttonText}</span>
         <ChevronIcon
-          css={{
+          style={{
             transition: '.1s',
             transform: menuIsOpen ? 'rotate(-90deg)' : 'rotate(90deg)'
           }}
         />
-      </Button>
+      </button>
     ),
     [isMobile, menuIsOpen, handleMenuClose, handleMenuOpen, buttonText]
   )
@@ -410,14 +408,13 @@ export const Filters = ({
           )}
 
           {activeFiltersCount > 0 && (
-            <Button
-              className={'Filters__Button'}
-              variant={'gray'}
-              size={'sm'}
+            <button
+              type={'button'}
+              className={'Filters__Button Filters__Button--Gray'}
               onClick={resetAllAppliedFilters}
             >
               Clear ({activeFiltersCount})
-            </Button>
+            </button>
           )}
         </div>
 

@@ -23,6 +23,13 @@
   container-type: inline-size;
 }
 
+.TokensList__PriceFrom {
+  display: flex;
+  gap: 0.25rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
 .TokensList__ColumnTitles {
   display: grid;
   padding: var(--pe-list-row-pad-y) var(--pe-list-row-pad-x);
