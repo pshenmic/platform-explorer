@@ -8,7 +8,7 @@ import {
   DateBlock as DateBlockJs
 } from '../data'
 import ValueContainer from '../ui/containers/ValueContainer'
-import { Badge } from '@chakra-ui/react'
+import { Badge } from '../ui/Badge'
 import type { DataContract, Owner } from '../../types'
 import './DataContractsListItem.css'
 

@@ -1,4 +1,4 @@
-import { Badge } from '@chakra-ui/react'
+import { Badge } from '../ui/Badge'
 import { Tooltip } from '../ui/Tooltips'
 import type { WithClassName } from '../../types'
 import './VoteBadges.css'

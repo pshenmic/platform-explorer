@@ -1,5 +1,5 @@
-import { Badge } from '@chakra-ui/react'
-import type { BadgeProps } from '@chakra-ui/react'
+import { Badge } from '../ui/Badge'
+import type { BadgeProps } from '../ui/Badge'
 import { TransactionTypesInfo } from '../../enums/state.transition.type'
 import { Tooltip } from '../ui/Tooltips'
 import './TypeBadge.css'

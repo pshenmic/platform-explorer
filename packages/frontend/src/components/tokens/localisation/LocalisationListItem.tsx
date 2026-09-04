@@ -1,5 +1,5 @@
 import type { ComponentType, ReactNode } from 'react'
-import { Badge } from '@chakra-ui/react'
+import { Badge } from '../../ui/Badge'
 // Untyped JS components — loose wrappers until data/* is migrated
 import { NotActive as NotActiveJs } from '../../data'
 import type { Localization } from '../../../types'

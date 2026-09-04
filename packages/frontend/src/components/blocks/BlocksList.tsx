@@ -1,7 +1,7 @@
 'use client'
 
 import { useRouter } from 'next/navigation'
-import { Badge } from '@chakra-ui/react'
+import { Badge } from '../ui/Badge'
 import { Identifier, NotActive, TimeDelta, BigNumber, DateBlock } from '../data'
 import { BlockIcon } from '../ui/icons'
 import { LinkContainer } from '../ui/containers'

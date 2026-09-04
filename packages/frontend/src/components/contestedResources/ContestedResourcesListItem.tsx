@@ -1,5 +1,5 @@
 import type { ComponentType, ReactNode, MouseEvent } from 'react'
-import { Badge } from '@chakra-ui/react'
+import { Badge } from '../ui/Badge'
 import {
   Alias as AliasJs,
   Identifier as IdentifierJs,

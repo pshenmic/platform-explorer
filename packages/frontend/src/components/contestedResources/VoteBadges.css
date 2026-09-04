@@ -12,3 +12,12 @@
   transform: scale(1.05);
   opacity: 1 !important;
 }
+
+.ContendersBadge {
+  margin-left: 0.25rem;
+  transition: 0.1s;
+}
+
+.ContendersBadge:hover {
+  transform: scale(1.05);
+}

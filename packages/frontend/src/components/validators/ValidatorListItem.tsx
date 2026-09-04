@@ -7,7 +7,7 @@ import {
   Identifier as IdentifierJs,
   NotActive as NotActiveJs
 } from '../data'
-import { Badge } from '@chakra-ui/react'
+import { Badge } from '../ui/Badge'
 
 import './ValidatorListItem.css'
 

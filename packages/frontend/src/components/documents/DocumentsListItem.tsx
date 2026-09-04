@@ -1,7 +1,7 @@
 import type { ComponentType, ReactNode } from 'react'
 import type { Document } from '../../types'
 import type { LoadableState } from '../../types/common'
-import { Badge } from '@chakra-ui/react'
+import { Badge } from '../ui/Badge'
 import {
   Alias as AliasJs,
   Identifier as IdentifierJs,

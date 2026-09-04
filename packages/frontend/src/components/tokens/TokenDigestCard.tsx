@@ -16,7 +16,7 @@ import {
   InfoIcon
 } from '../ui/icons'
 import { ValueCard as ValueCardJs } from '../cards'
-import { Badge } from '@chakra-ui/react'
+import { Badge } from '../ui/Badge'
 import { Tooltip } from '../ui/Tooltips'
 import type { Alias, LoadableState, Owner, Rate, Token } from '../../types'
 import type { WithClassName } from '../../types/common'
