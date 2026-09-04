@@ -12,7 +12,7 @@ import {
 } from 'react'
 import type { MouseEvent, ReactElement, ReactNode, Ref } from 'react'
 import { createPortal } from 'react-dom'
-import { useOutsideClick } from '@chakra-ui/react'
+import { useOutsideClick } from '../../../hooks/useOutsideClick'
 import { useTooltipActive } from 'src/contexts/TooltipProvider'
 import './Tooltip.css'
 

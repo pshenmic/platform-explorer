@@ -2,7 +2,6 @@
 
 import { useCallback, useEffect, useRef, useState, useMemo } from 'react'
 import type { Dispatch, ReactNode, SetStateAction } from 'react'
-import { useDisclosure } from '@chakra-ui/react'
 import { useFilters } from '../../hooks'
 import type { FilterValue, Filters as UseFiltersState } from '../../hooks/useFilters'
 import {
@@ -154,13 +153,14 @@ export const Filters = ({
     }
   }, [applyFilters, applyOnChange])
 
-  const { isOpen: menuIsOpen, onOpen: menuOnOpen, onClose: menuOnClose } = useDisclosure()
+  const [menuIsOpen, setMenuIsOpen] = useState(false)
   const [isMenuInitialized, setIsMenuInitialized] = useState(false)
+  const menuOnOpen = useCallback(() => setMenuIsOpen(true), [])
+  const menuOnClose = useCallback(() => setMenuIsOpen(false), [])
 
   /**
    * Open / close the filter menu.
-   * Parent owns open state (controlled Popover). Handlers must be idempotent:
-   * Chakra may call onOpen/onClose more than once for one transition.
+   * Parent owns open state (controlled menu). Handlers must be idempotent.
    */
   const handleMenuOpen = useCallback(() => {
     if (menuIsOpen) return
