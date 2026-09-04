@@ -26,6 +26,9 @@
 
 .TotalInfo__ContentContainer {
   margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
 }
 
 .TotalInfo__Item {
