@@ -6,7 +6,7 @@ import TransactionsList from '../../../components/transactions/TransactionsList'
 import { ErrorMessageBlock } from '../../../components/Errors'
 import { fetchHandlerSuccess, fetchHandlerError } from '../../../util'
 import { InfoContainer, PageDataContainer } from '../../../components/ui/containers'
-import { Container, Tabs, TabList, Tab, TabPanels, TabPanel } from '@chakra-ui/react'
+import { Tabs, TabList, Tab, TabPanels, TabPanel } from '@chakra-ui/react'
 import { BlockDigestCard, BlockTotalCard, QuorumMembersList } from '../../../components/blocks'
 import type { BlockDetail } from '../../../components/blocks/BlockDigestCard'
 import { useBreadcrumbs } from '../../../contexts/BreadcrumbsContext'
@@ -165,9 +165,9 @@ function Block({ hash }: BlockProps) {
                   loading={block.loading}
                 />
               ) : (
-                <Container h={20}>
+                <div style={{ height: '5rem' }}>
                   <ErrorMessageBlock />
-                </Container>
+                </div>
               )}
             </TabPanel>
             <TabPanel>
@@ -177,9 +177,9 @@ function Block({ hash }: BlockProps) {
                   loading={block.loading}
                 />
               ) : (
-                <Container h={20}>
+                <div style={{ height: '5rem' }}>
                   <ErrorMessageBlock />
-                </Container>
+                </div>
               )}
             </TabPanel>
             <TabPanel>

@@ -10,7 +10,7 @@ import {
 } from '../../../util'
 import { ErrorMessageBlock } from '../../../components/Errors'
 import { useSearchParams } from 'next/navigation'
-import { Container, Tabs, TabList, Tab, TabPanels, TabPanel } from '@chakra-ui/react'
+import { Tabs, TabList, Tab, TabPanels, TabPanel } from '@chakra-ui/react'
 import { InfoContainer, PageDataContainer } from '../../../components/ui/containers'
 import { DocumentTotalCard, DocumentsRevisionsList } from '../../../components/documents'
 import { LoadingBlock } from '../../../components/loading'
@@ -128,19 +128,19 @@ function Document({ identifier }: DocumentProps) {
                   code={document.data?.data as never}
                 />
               ) : (
-                <Container h={20}>
+                <div style={{ height: '5rem' }}>
                   {document.data?.deleted ? (
                     <ErrorMessageBlock warningIcon={false} text={'Document is deleted'} />
                   ) : (
                     <ErrorMessageBlock />
                   )}
-                </Container>
+                </div>
               )}
             </LoadingBlock>
           ) : (
-            <Container h={20}>
+            <div style={{ height: '5rem' }}>
               <ErrorMessageBlock />
-            </Container>
+            </div>
           )}
         </div>
       </div>
@@ -175,9 +175,9 @@ function Document({ identifier }: DocumentProps) {
                   }}
                 />
               ) : (
-                <Container h={20}>
+                <div style={{ height: '5rem' }}>
                   <ErrorMessageBlock />
-                </Container>
+                </div>
               )}
             </TabPanel>
           </TabPanels>

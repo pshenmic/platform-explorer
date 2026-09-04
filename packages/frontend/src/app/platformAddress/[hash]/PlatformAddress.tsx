@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import { useParams } from 'next/navigation'
 import { useQuery } from '@tanstack/react-query'
 import { useQueryState, parseAsStringEnum } from 'nuqs'
-import { Container, Tabs, TabList, TabPanels, Tab, TabPanel } from '@chakra-ui/react'
+import { Tabs, TabList, TabPanels, Tab, TabPanel } from '@chakra-ui/react'
 import * as Api from '../../../util/Api'
 import { PageDataContainer, InfoContainer } from '../../../components/ui/containers'
 import { ErrorMessageBlock } from '../../../components/Errors'
@@ -98,9 +98,9 @@ function PlatformAddress() {
                   }}
                 />
               ) : (
-                <Container h={20}>
+                <div style={{ height: '5rem' }}>
                   <ErrorMessageBlock />
-                </Container>
+                </div>
               )}
             </TabPanel>
           </TabPanels>

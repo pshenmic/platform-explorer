@@ -1,4 +1,3 @@
-import { Flex, Grid, GridItem, Text } from '@chakra-ui/react'
 import { ValueCard } from '@components/cards'
 import { InfoLine, Identifier, CreditsBlock } from '@components/data'
 import type {
@@ -23,13 +22,13 @@ export const HashInfoLine = ({ title, value }: HashInfoLineProps) => {
       className="TransactionPage__InfoLine TransactionPage__InfoLine--FullWidth"
       title={title}
       value={
-        <Grid templateColumns="minmax(300px, auto)">
+        <div className="TransactionPage__RawWrap">
           <ValueCard className="TransactionPage__RawTransaction">
             <Identifier copyButton ellipsis styles={['highlight-both']}>
               {value}
             </Identifier>
           </ValueCard>
-        </Grid>
+        </div>
       }
     />
   )
@@ -74,34 +73,27 @@ export const ShieldedActions = ({ actions = [] }: ShieldedActionsProps) => {
       className="TransactionPage__InfoLine TransactionPage__InfoLine--FullWidth"
       title={`Actions (${actions.length})`}
       value={
-        <Flex direction="column" gap={2}>
+        <div className="TransactionPage__Stack">
           {actions.map((action, index) => (
             <ValueCard key={index}>
-              <Grid
-                templateColumns={{
-                  base: 'minmax(220px, 1fr)',
-                  md: '200px minmax(100px, 1fr)'
-                }}
-                gap={3}
-                alignItems="center"
-              >
+              <div className="TransactionPage__ActionsGrid">
                 {fields.map(
                   ([label, key]) =>
                     action?.[key] !== undefined && (
-                      <GridItem key={key} display="contents">
-                        <Text>{label}:</Text>
+                      <div key={key} className="TransactionPage__ActionsGridItem">
+                        <span>{label}:</span>
                         <ValueCard className="TransactionPage__RawTransaction">
                           <Identifier copyButton ellipsis styles={['highlight-both']}>
                             {String(action[key])}
                           </Identifier>
                         </ValueCard>
-                      </GridItem>
+                      </div>
                     )
                 )}
-              </Grid>
+              </div>
             </ValueCard>
           ))}
-        </Flex>
+        </div>
       }
     />
   )
@@ -120,10 +112,10 @@ export const InputsLine = ({ inputs = [] }: InputsLineProps) => {
       className="TransactionPage__InfoLine TransactionPage__InfoLine--FullWidth"
       title={`Inputs (${inputs.length})`}
       value={
-        <Flex direction="column" gap={2}>
+        <div className="TransactionPage__Stack">
           {inputs.map((input, index) => (
             <ValueCard key={index}>
-              <Flex gap={4} direction={{ base: 'column', lg: 'row' }}>
+              <div className="TransactionPage__Row TransactionPage__Row--lgCol">
                 <ValueCard link={`/platformAddress/${input.platformAddress.bech32m}`}>
                   <Identifier avatar copyButton ellipsis styles={['highlight-both']}>
                     {input.platformAddress.bech32m}
@@ -133,10 +125,10 @@ export const InputsLine = ({ inputs = [] }: InputsLineProps) => {
                   <div>{input.credits} credits</div>
                 </ValueCard>
                 <ValueCard>Nonce: {input.nonce}</ValueCard>
-              </Flex>
+              </div>
             </ValueCard>
           ))}
-        </Flex>
+        </div>
       }
     />
   )
@@ -155,30 +147,24 @@ export const InputWitnessesLine = ({ inputWitnesses = [] }: InputWitnessesLinePr
       className="TransactionPage__InfoLine TransactionPage__InfoLine--FullWidth"
       title={`Input Witness (${inputWitnesses.length})`}
       value={
-        <Flex direction="column" gap={2}>
+        <div className="TransactionPage__Stack">
           {inputWitnesses.map((witness, index) => (
             <ValueCard key={index}>
-              <Grid
-                templateColumns={{
-                  base: '1fr minmax(240px, 1fr)',
-                  md: '100px minmax(100px, 1fr)'
-                }}
-                gap={4}
-              >
-                <Text>Type:</Text>
-                <GridItem width="fit-content">
+              <div className="TransactionPage__WitnessGrid">
+                <span>Type:</span>
+                <div className="TransactionPage__Fit">
                   <ValueCard>{witness.type}</ValueCard>
-                </GridItem>
-                <Text>Signature:</Text>
+                </div>
+                <span>Signature:</span>
                 <ValueCard>
                   <Identifier copyButton ellipsis styles={['highlight-both']}>
                     {witness?.value?.signature}
                   </Identifier>
                 </ValueCard>
-              </Grid>
+              </div>
             </ValueCard>
           ))}
-        </Flex>
+        </div>
       }
     />
   )
@@ -198,10 +184,10 @@ export const FeeStrategyLine = ({ feeStrategy = [] }: FeeStrategyLineProps) => {
       value={
         <div>
           {feeStrategy.map((strategy, index) => (
-            <Flex key={index} align="center" gap={6} mb={4}>
+            <div key={index} className="TransactionPage__FeeRow">
               <ValueCard>{strategy.type}</ValueCard>
               <ValueCard>Value: {strategy.value}</ValueCard>
-            </Flex>
+            </div>
           ))}
         </div>
       }
