@@ -1,0 +1,55 @@
+/* Replaces Chakra CSSReset (box model, unstyled <a>/<button>).
+   Keep selectors at element specificity so BEM classes always win.
+   Do not use [type=button] here — it ties .NetworkSelect__Button and
+   wipes padding/border when this file loads later. */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  border-width: 0;
+  border-style: solid;
+  border-color: rgba(255, 255, 255, 0.07);
+}
+
+html,
+body {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  color: #fff;
+  line-height: 1.5;
+  font-family: var(--pe-font-body);
+}
+
+a {
+  color: inherit;
+  text-decoration: inherit;
+  background-color: transparent;
+}
+
+button {
+  appearance: none;
+  background: transparent;
+  padding: 0;
+  margin: 0;
+  border: none;
+  font: inherit;
+  color: inherit;
+  line-height: inherit;
+  cursor: pointer;
+}
+
+button:disabled {
+  cursor: not-allowed;
+}
+
+input,
+textarea,
+select {
+  font: inherit;
+  color: inherit;
+  margin: 0;
+}
