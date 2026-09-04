@@ -49,6 +49,7 @@ interface LoadingBlockProps
   loading?: boolean
   w?: string | number
   h?: string | number
+  minH?: string | number
 }
 
 function LoadingBlock({
@@ -56,6 +57,7 @@ function LoadingBlock({
   loading,
   w = '100%',
   h = '100%',
+  minH,
   className = '',
   style,
   ...props
@@ -64,13 +66,22 @@ function LoadingBlock({
     return (
       <div
         className={`LoadingBlock ${className}`}
-        style={{ width: toCssSize(w), height: toCssSize(h), ...style }}
+        style={{
+          width: toCssSize(w),
+          height: toCssSize(h),
+          minHeight: toCssSize(minH),
+          ...style
+        }}
         {...props}
       />
     )
   }
 
-  return <>{children}</>
+  return (
+    <div style={{ width: toCssSize(w), minHeight: toCssSize(minH), height: toCssSize(h), ...style }}>
+      {children}
+    </div>
+  )
 }
 
 interface LoadingListProps {
