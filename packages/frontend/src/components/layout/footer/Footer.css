@@ -1,3 +1,7 @@
+.FooterShell {
+  margin-top: auto;
+}
+
 .Footer {
   position: fixed;
   bottom: 0;
@@ -91,6 +95,12 @@
   align-items: center;
 }
 
+.Footer__TimezoneMeta {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
 .Footer__ClockIcon {
   margin-right: var(--pe-space-3);
 }
@@ -126,7 +136,7 @@
 
 @media screen and (max-width: 30em) {
   .Footer__LocalTime .LocalTime__Time:after {
-    display: none !important;
+    display: none;
   }
 
   .Footer__LocalTime span {
