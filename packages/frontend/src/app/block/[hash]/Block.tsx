@@ -167,7 +167,7 @@ function Block({ hash }: BlockProps) {
                   loading={block.loading}
                 />
               ) : (
-                <div style={{ height: '5rem' }}>
+                <div className={'Tabs__PanelSpacer'}>
                   <ErrorMessageBlock />
                 </div>
               )}
@@ -179,7 +179,7 @@ function Block({ hash }: BlockProps) {
                   loading={block.loading}
                 />
               ) : (
-                <div style={{ height: '5rem' }}>
+                <div className={'Tabs__PanelSpacer'}>
                   <ErrorMessageBlock />
                 </div>
               )}

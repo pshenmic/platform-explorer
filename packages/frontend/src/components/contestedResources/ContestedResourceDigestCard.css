@@ -186,7 +186,7 @@
 
 @media screen and (max-width: 30em) {
   .ContestedResourcesDigestCard--Loading .InfoLine__Value {
-    width: 100% !important;
+    width: 100%;
   }
 
   .ContestedResourcesDigestCard__CardValue .LoadingLine {
@@ -196,7 +196,7 @@
 
 @container (max-width: 24em) {
   .ContestedResourcesDigestCard--Loading .InfoLine__Value {
-    width: 100% !important;
+    width: 100%;
   }
 
   .ContestedResourcesDigestCard__InfoLine .InfoLine__Value {

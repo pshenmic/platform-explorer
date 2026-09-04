@@ -9,7 +9,7 @@
   overflow-y: visible;
   width: 100%;
   max-width: 100%;
-  padding: 0 !important;
+  padding: 0;
   min-width: 0;
   display: flex;
   flex-direction: column;
@@ -1138,7 +1138,7 @@
   }
 }
 .EpochsWave--Empty {
-  display: flex !important;
+  display: flex;
   align-items: center;
   justify-content: center;
   color: var(--pe-color-gray-500);
@@ -1168,7 +1168,7 @@
 }
 .EpochsWave__Bound.is-approx {
   z-index: 3;
-  top: 0 !important;
+  top: 0;
   transform: translateX(-100%);
 }
 @media screen and (max-width: 48em) {
@@ -1303,8 +1303,8 @@
 .EpochsWave__BoundIcon {
   flex-shrink: 0;
   opacity: 0.9;
-  width: 0.875rem !important;
-  height: 0.875rem !important;
+  width: 0.875rem;
+  height: 0.875rem;
 }
 .EpochsWave__BoundTag {
   display: inline-block;
@@ -1341,7 +1341,7 @@
 }
 @media (prefers-reduced-motion: reduce) {
   .EpochsWave__RailScan {
-    animation: none !important;
+    animation: none;
     opacity: 0;
   }
 }

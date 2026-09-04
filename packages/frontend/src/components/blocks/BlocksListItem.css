@@ -220,7 +220,7 @@
   max-height: 1.6rem;
   overflow: hidden;
   text-overflow: ellipsis;
-  white-space: normal !important;
+  white-space: normal;
 }
 @container (max-width: 56em) {
   .BlocksListItem__Column--Validator .Identifier__SymbolsContainer {

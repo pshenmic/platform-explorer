@@ -97,24 +97,24 @@
 }
 
 .IdentityTotalCard {
-  padding: calc(var(--pe-space-3) + 0px) !important;
+  padding: calc(var(--pe-space-3) + 0px);
 }
 
 @media screen and (min-width: 48em) {
   .IdentityTotalCard {
-    padding: calc(var(--pe-space-4) + 0px) !important;
+    padding: calc(var(--pe-space-4) + 0px);
   }
 }
 
 @media screen and (min-width: 62em) {
   .IdentityTotalCard {
-    padding: calc(var(--pe-space-5) + 0px) !important;
+    padding: calc(var(--pe-space-5) + 0px);
   }
 }
 
 @media screen and (min-width: 80em) {
   .IdentityTotalCard {
-    padding: calc(var(--pe-space-6) + 0px) !important;
+    padding: calc(var(--pe-space-6) + 0px);
   }
 }
 
@@ -156,7 +156,7 @@
 }
 
 .IdentityTotalCard--Loading .IdentityTotalCard__Header .InfoLine__Value {
-  width: 100% !important;
+  width: 100%;
 }
 
 .IdentityTotalCard__InfoLine--Names .InfoLine__Value {
@@ -180,8 +180,8 @@
 }
 
 .IdentityTotalCard--Loading .IdentityTotalCard__Avatar::before {
-  z-index: 5 !important;
-  opacity: 1 !important;
+  z-index: 5;
+  opacity: 1;
 }
 
 .IdentityTotalCard--Loading .IdentityTotalCard__Avatar::after {
@@ -210,7 +210,7 @@
     transparent 0%,
     rgb(14, 117, 181) 50%,
     transparent 100%
-  ) !important;
+  );
   width: 100%;
   height: 100%;
 }
@@ -291,15 +291,15 @@
 }
 
 .IdentityTotalCard__PublicKeysListContainer {
-  transition: 0.3s !important;
+  transition: 0.3s;
 }
 
 .IdentityTotalCard__PublicKeysListContainer--Hidden {
-  margin-top: -var(--pe-space-3_5) !important;
+  margin-top: -var(--pe-space-3_5);
 }
 
 .IdentityTotalCard__PublicKeysListContainer--Mobile {
-  display: none !important;
+  display: none;
 }
 
 .IdentityTotalCard__Separator {
@@ -449,62 +449,62 @@
   }
 
   .IdentityTotalCard__Separator {
-    margin-top: calc(var(--pe-space-3) + 0px) !important;
-    margin-bottom: calc(var(--pe-space-3) + 0px) !important;
+    margin-top: calc(var(--pe-space-3) + 0px);
+    margin-bottom: calc(var(--pe-space-3) + 0px);
   }
 }
 
 @media screen and (max-width: 48em) and (min-width: 48em) {
   .IdentityTotalCard__Separator {
-    margin-top: calc(var(--pe-space-4) + 0px) !important;
+    margin-top: calc(var(--pe-space-4) + 0px);
   }
 }
 
 @media screen and (max-width: 48em) and (min-width: 62em) {
   .IdentityTotalCard__Separator {
-    margin-top: calc(var(--pe-space-5) + 0px) !important;
+    margin-top: calc(var(--pe-space-5) + 0px);
   }
 }
 
 @media screen and (max-width: 48em) and (min-width: 80em) {
   .IdentityTotalCard__Separator {
-    margin-top: calc(var(--pe-space-6) + 0px) !important;
+    margin-top: calc(var(--pe-space-6) + 0px);
   }
 }
 
 @media screen and (max-width: 48em) and (min-width: 48em) {
   .IdentityTotalCard__Separator {
-    margin-bottom: calc(var(--pe-space-4) + 0px) !important;
+    margin-bottom: calc(var(--pe-space-4) + 0px);
   }
 }
 
 @media screen and (max-width: 48em) and (min-width: 62em) {
   .IdentityTotalCard__Separator {
-    margin-bottom: calc(var(--pe-space-5) + 0px) !important;
+    margin-bottom: calc(var(--pe-space-5) + 0px);
   }
 }
 
 @media screen and (max-width: 48em) and (min-width: 80em) {
   .IdentityTotalCard__Separator {
-    margin-bottom: calc(var(--pe-space-6) + 0px) !important;
+    margin-bottom: calc(var(--pe-space-6) + 0px);
   }
 }
 
 @media screen and (max-width: 48em) {
   .IdentityTotalCard--Loading .InfoLine__Value {
-    width: 100% !important;
+    width: 100%;
   }
 
   .IdentityTotalCard__PublicKeysListContainer--Hidden {
-    margin-top: -var(--pe-space-3) !important;
+    margin-top: -var(--pe-space-3);
   }
 
   .IdentityTotalCard__PublicKeysListContainer--Mobile {
-    display: block !important;
+    display: block;
   }
 
   .IdentityTotalCard__PublicKeysListContainer--Desktop {
-    display: none !important;
+    display: none;
   }
 
   .IdentityTotalCard__InfoLine {
@@ -523,63 +523,63 @@
 
 @media screen and (max-width: 30em) {
   .IdentityTotalCard__Digest {
-    margin-left: calc(calc(0px - var(--pe-space-3)) + 0px) !important;
-    margin-right: calc(calc(0px - var(--pe-space-3)) + 0px) !important;
-    margin-bottom: calc(calc(0px - var(--pe-space-3)) + 0px) !important;
+    margin-left: calc(calc(0px - var(--pe-space-3)) + 0px);
+    margin-right: calc(calc(0px - var(--pe-space-3)) + 0px);
+    margin-bottom: calc(calc(0px - var(--pe-space-3)) + 0px);
   }
 }
 
 @media screen and (max-width: 30em) and (min-width: 48em) {
   .IdentityTotalCard__Digest {
-    margin-left: calc(calc(0px - var(--pe-space-4)) + 0px) !important;
+    margin-left: calc(calc(0px - var(--pe-space-4)) + 0px);
   }
 }
 
 @media screen and (max-width: 30em) and (min-width: 62em) {
   .IdentityTotalCard__Digest {
-    margin-left: calc(calc(0px - var(--pe-space-5)) + 0px) !important;
+    margin-left: calc(calc(0px - var(--pe-space-5)) + 0px);
   }
 }
 
 @media screen and (max-width: 30em) and (min-width: 80em) {
   .IdentityTotalCard__Digest {
-    margin-left: calc(calc(0px - var(--pe-space-6)) + 0px) !important;
+    margin-left: calc(calc(0px - var(--pe-space-6)) + 0px);
   }
 }
 
 @media screen and (max-width: 30em) and (min-width: 48em) {
   .IdentityTotalCard__Digest {
-    margin-right: calc(calc(0px - var(--pe-space-4)) + 0px) !important;
+    margin-right: calc(calc(0px - var(--pe-space-4)) + 0px);
   }
 }
 
 @media screen and (max-width: 30em) and (min-width: 62em) {
   .IdentityTotalCard__Digest {
-    margin-right: calc(calc(0px - var(--pe-space-5)) + 0px) !important;
+    margin-right: calc(calc(0px - var(--pe-space-5)) + 0px);
   }
 }
 
 @media screen and (max-width: 30em) and (min-width: 80em) {
   .IdentityTotalCard__Digest {
-    margin-right: calc(calc(0px - var(--pe-space-6)) + 0px) !important;
+    margin-right: calc(calc(0px - var(--pe-space-6)) + 0px);
   }
 }
 
 @media screen and (max-width: 30em) and (min-width: 48em) {
   .IdentityTotalCard__Digest {
-    margin-bottom: calc(calc(0px - var(--pe-space-4)) + 0px) !important;
+    margin-bottom: calc(calc(0px - var(--pe-space-4)) + 0px);
   }
 }
 
 @media screen and (max-width: 30em) and (min-width: 62em) {
   .IdentityTotalCard__Digest {
-    margin-bottom: calc(calc(0px - var(--pe-space-5)) + 0px) !important;
+    margin-bottom: calc(calc(0px - var(--pe-space-5)) + 0px);
   }
 }
 
 @media screen and (max-width: 30em) and (min-width: 80em) {
   .IdentityTotalCard__Digest {
-    margin-bottom: calc(calc(0px - var(--pe-space-6)) + 0px) !important;
+    margin-bottom: calc(calc(0px - var(--pe-space-6)) + 0px);
   }
 }
 

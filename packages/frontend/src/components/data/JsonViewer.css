@@ -30,7 +30,7 @@
 }
 
 .JsonViewer--Fill .cm-editor {
-  height: 100% !important;
+  height: 100%;
 }
 
 .JsonViewer {

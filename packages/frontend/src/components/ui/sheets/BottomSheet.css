@@ -23,8 +23,8 @@
 }
 
 .BottomSheet__Body {
-  padding-left: var(--pe-space-3) !important;
-  padding-right: var(--pe-space-3) !important;
+  padding-left: var(--pe-space-3);
+  padding-right: var(--pe-space-3);
   flex: 1;
   overflow-y: auto;
   min-height: 0;

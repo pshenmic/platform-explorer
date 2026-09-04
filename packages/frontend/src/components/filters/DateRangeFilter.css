@@ -1,5 +1,5 @@
 .MobileFilterMenu .DateRangeFilter {
-  min-width: unset !important;
+  min-width: unset;
   width: 100%;
 }
 

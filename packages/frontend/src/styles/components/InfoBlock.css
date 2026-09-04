@@ -6,7 +6,7 @@
   box-shadow: 2px 2px var(--pe-color-brand-normal);
   position: relative;
   z-index: 1;
-  padding: var(--pe-space-5) var(--pe-space-8) var(--pe-space-8) var(--pe-space-8) !important;
+  padding: var(--pe-space-5) var(--pe-space-8) var(--pe-space-8) var(--pe-space-8);
 }
 
 .InfoBlock--NoBorder {
@@ -17,7 +17,7 @@
   overflow: hidden;
   background-color: transparent;
   border-radius: var(--pe-radius-block);
-  padding: var(--pe-space-5) var(--pe-space-6) !important;
+  padding: var(--pe-space-5) var(--pe-space-6);
 }
 
 .InfoBlock--Gradient::before {
@@ -75,7 +75,7 @@
 
 .InfoBlock__Title {
   background-color: var(--pe-color-brand-normal);
-  font-size: var(--pe-text-md) !important;
+  font-size: var(--pe-text-md);
   width: max-content;
   padding: var(--pe-space-3) var(--pe-space-5);
   border-radius: var(--pe-radius-block) var(--pe-radius-block) var(--pe-radius-block) 0;
@@ -118,7 +118,7 @@
 
 @media screen and (max-width: 62em) {
   .InfoBlock {
-    padding: var(--pe-space-4) !important;
+    padding: var(--pe-space-4);
   }
 
   .InfoBlock__Title {

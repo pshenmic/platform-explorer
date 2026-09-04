@@ -261,7 +261,7 @@
   .TransactionsListItem__Column--Owner .Identifier__Avatar,
   .TransactionsListItem__Column--Owner img,
   .TransactionsListItem__Column--Owner a {
-    display: block !important;
+    display: block;
   }
 
   .TransactionsListItem__Column--Owner .Identifier__Avatar {
@@ -296,11 +296,11 @@
   }
 
   .TransactionsListItem__TypeBadge {
-    font-size: 0.438rem !important;
+    font-size: 0.438rem;
     line-height: 15px;
   }
 
   .TransactionsListItem__StatusIcon {
-    display: none !important;
+    display: none;
   }
 }

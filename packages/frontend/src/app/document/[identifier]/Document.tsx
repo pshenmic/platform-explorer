@@ -128,7 +128,7 @@ function Document({ identifier }: DocumentProps) {
                   code={document.data?.data as never}
                 />
               ) : (
-                <div style={{ height: '5rem' }}>
+                <div className={'Tabs__PanelSpacer'}>
                   {document.data?.deleted ? (
                     <ErrorMessageBlock warningIcon={false} text={'Document is deleted'} />
                   ) : (
@@ -138,7 +138,7 @@ function Document({ identifier }: DocumentProps) {
               )}
             </LoadingBlock>
           ) : (
-            <div style={{ height: '5rem' }}>
+            <div className={'Tabs__PanelSpacer'}>
               <ErrorMessageBlock />
             </div>
           )}
@@ -175,7 +175,7 @@ function Document({ identifier }: DocumentProps) {
                   }}
                 />
               ) : (
-                <div style={{ height: '5rem' }}>
+                <div className={'Tabs__PanelSpacer'}>
                   <ErrorMessageBlock />
                 </div>
               )}

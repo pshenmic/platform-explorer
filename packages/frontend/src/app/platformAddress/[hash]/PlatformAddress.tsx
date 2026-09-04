@@ -98,7 +98,7 @@ function PlatformAddress() {
                   }}
                 />
               ) : (
-                <div style={{ height: '5rem' }}>
+                <div className={'Tabs__PanelSpacer'}>
                   <ErrorMessageBlock />
                 </div>
               )}

@@ -7,10 +7,14 @@
   transition: 0.1s;
 }
 
+.VoteBadges__Badge--Dim {
+  opacity: 0.4;
+}
+
 .VoteBadges__Badge:hover {
   cursor: pointer;
   transform: scale(1.05);
-  opacity: 1 !important;
+  opacity: 1;
 }
 
 .ContendersBadge {

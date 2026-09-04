@@ -215,12 +215,12 @@
 }
 
 .SearchResultsListItem__Icon {
-  height: var(--pe-space-6) !important;
-  width: var(--pe-space-6) !important;
+  height: var(--pe-space-6);
+  width: var(--pe-space-6);
 }
 
 .SearchResultsListItem--Loading {
-  background-color: rgba(var(--pe-color-gray-800-rgb), 0.5) !important;
+  background-color: rgba(var(--pe-color-gray-800-rgb), 0.5);
 }
 
 .SearchResultsListItem--Loading:hover {
@@ -228,7 +228,7 @@
 }
 
 .SearchResultsListItem--Loading .SearchResultsListItem__ArrowButton {
-  background-color: rgba(255, 255, 255, 0.1) !important;
+  background-color: rgba(255, 255, 255, 0.1);
 }
 
 @container (max-width: 768px) {

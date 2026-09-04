@@ -278,14 +278,14 @@
 
 .HomeEpochs {
   border-radius: var(--pe-radius-block);
-  padding: 20px 0 0 !important;
+  padding: 20px 0 0;
   overflow-x: hidden;
   outline: none;
   scroll-margin-top: 1.25rem;
 }
 @media screen and (max-width: 48em) {
   .HomeEpochs {
-    padding: 16px 0 0 !important;
+    padding: 16px 0 0;
   }
 }
 
@@ -397,8 +397,8 @@
 .EpochsOverview__NextIcon {
   flex-shrink: 0;
   opacity: 0.9;
-  width: 1.125rem !important;
-  height: 1.125rem !important;
+  width: 1.125rem;
+  height: 1.125rem;
 }
 
 .EpochsOverview__NextWhen {
@@ -438,8 +438,8 @@
   }
 
   .EpochsOverview__NextIcon {
-    width: 0.75rem !important;
-    height: 0.75rem !important;
+    width: 0.75rem;
+    height: 0.75rem;
   }
 
   .EpochsOverview__NextWhen {

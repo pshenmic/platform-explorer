@@ -309,7 +309,7 @@
   }
 
   .DataContractTotalCard__Identifier .Identifier {
-    justify-content: flex-start !important;
+    justify-content: flex-start;
   }
 
   .DataContractTotalCard__Owner .ValueCard {

@@ -64,53 +64,53 @@
   display: flex;
   flex-direction: column;
   flex-grow: 1;
-  padding-top: var(--pe-space-3) !important;
-  padding-bottom: 0 !important;
-  padding-left: calc(var(--pe-space-3) + 0px) !important;
+  padding-top: var(--pe-space-3);
+  padding-bottom: 0;
+  padding-left: calc(var(--pe-space-3) + 0px);
 }
 
 @media screen and (min-width: 48em) {
   .ValidatorPage__ListContainer {
-    padding-left: calc(var(--pe-space-4) + 0px) !important;
+    padding-left: calc(var(--pe-space-4) + 0px);
   }
 }
 
 @media screen and (min-width: 62em) {
   .ValidatorPage__ListContainer {
-    padding-left: calc(var(--pe-space-5) + 0px) !important;
+    padding-left: calc(var(--pe-space-5) + 0px);
   }
 }
 
 @media screen and (min-width: 80em) {
   .ValidatorPage__ListContainer {
-    padding-left: calc(var(--pe-space-6) + 0px) !important;
+    padding-left: calc(var(--pe-space-6) + 0px);
   }
 }
 
 .ValidatorPage__ListContainer {
-  padding-right: calc(var(--pe-space-3) + 0px) !important;
+  padding-right: calc(var(--pe-space-3) + 0px);
 }
 
 @media screen and (min-width: 48em) {
   .ValidatorPage__ListContainer {
-    padding-right: calc(var(--pe-space-4) + 0px) !important;
+    padding-right: calc(var(--pe-space-4) + 0px);
   }
 }
 
 @media screen and (min-width: 62em) {
   .ValidatorPage__ListContainer {
-    padding-right: calc(var(--pe-space-5) + 0px) !important;
+    padding-right: calc(var(--pe-space-5) + 0px);
   }
 }
 
 @media screen and (min-width: 80em) {
   .ValidatorPage__ListContainer {
-    padding-right: calc(var(--pe-space-6) + 0px) !important;
+    padding-right: calc(var(--pe-space-6) + 0px);
   }
 }
 
 .ValidatorPage__ChartsContainer .Chart {
-  overflow: visible !important;
+  overflow: visible;
 }
 
 .ValidatorPage__ChartsContainer {
@@ -205,7 +205,7 @@
 
 @media screen and (min-width: 421px) and (max-width: 62em) {
   .ValidatorPage .PageDataContainer__Content {
-    padding: 0 !important;
+    padding: 0;
   }
 }
 
@@ -222,6 +222,6 @@
 
 @media screen and (max-width: 420px) {
   .ValidatorPage .PageDataContainer__Content {
-    padding-bottom: 0 !important;
+    padding-bottom: 0;
   }
 }
