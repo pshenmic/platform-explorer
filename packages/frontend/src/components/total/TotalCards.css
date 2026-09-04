@@ -11,6 +11,10 @@
   padding: var(--pe-space-6);
 }
 
+.TotalCards__Skeleton {
+  height: 27px;
+}
+
 @media screen and (max-width: 48em) {
   .TotalCards__Item {
     width: 100%;

@@ -37,6 +37,12 @@
   overflow: hidden;
 }
 
+.ContestedResourcesDigestCard__Locked {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
 .ContestedResourcesDigestCard,
 .ContestedResourcesDigestCard__Cards,
 .ContestedResourcesDigestCard__LinesContainer {

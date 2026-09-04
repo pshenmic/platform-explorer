@@ -1,7 +1,6 @@
 import type { ComponentType, ReactNode } from 'react'
 import { InfoCard as InfoCardJs } from '../cards'
 import ValueBlock from './ValueBlock'
-import { Box } from '@chakra-ui/react'
 import './TotalCards.css'
 
 const InfoCard = InfoCardJs as ComponentType<{
@@ -46,7 +45,7 @@ export default function TotalCards({ cards, event = null, loading = false }: Tot
               event={event}
             />
           ) : (
-            <Box h={'27px'} />
+            <div className={'TotalCards__Skeleton'} />
           )}
         </InfoCard>
       ))}
