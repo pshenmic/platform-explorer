@@ -7,7 +7,7 @@ import {
   Identifier as IdentifierJs,
   NotActive as NotActiveJs
 } from '../data'
-import { Badge, Grid, GridItem } from '@chakra-ui/react'
+import { Badge } from '../ui/Badge'
 
 import './ValidatorListItem.css'
 
@@ -38,8 +38,8 @@ interface ValidatorListItemProps {
 export const ValidatorListItem = ({ validator }: ValidatorListItemProps) => {
   return (
     <Link href={`/validator/${validator.proTxHash}`} className={'ValidatorListItem'}>
-      <Grid className={'ValidatorListItem__Content'}>
-        <GridItem className={'ValidatorListItem__Column'}>
+      <div className={'ValidatorListItem__Content'}>
+        <div className={'ValidatorListItem__Column'}>
           {validator?.proTxHash && (
             <Identifier
               className={'ValidatorListItem__Column ValidatorListItem__Column--Identifier'}
@@ -50,8 +50,8 @@ export const ValidatorListItem = ({ validator }: ValidatorListItemProps) => {
               {validator.proTxHash}
             </Identifier>
           )}
-        </GridItem>
-        <GridItem className={'ValidatorListItem__Column'}>
+        </div>
+        <div className={'ValidatorListItem__Column'}>
           {validator?.isActive !== undefined ? (
             <Badge
               className="ValidatorListItem__Column--Active"
@@ -62,17 +62,17 @@ export const ValidatorListItem = ({ validator }: ValidatorListItemProps) => {
           ) : (
             <NotActive />
           )}
-        </GridItem>
-        <GridItem className={'ValidatorListItem__Column'}>
+        </div>
+        <div className={'ValidatorListItem__Column'}>
           {validator?.lastProposedBlockHeader?.height || '-'}
-        </GridItem>
-        <GridItem className={'ValidatorListItem__Column'}>
+        </div>
+        <div className={'ValidatorListItem__Column'}>
           {validator?.proposedBlocksAmount || '-'}
-        </GridItem>
-        <GridItem className={'ValidatorListItem__Column'}>
+        </div>
+        <div className={'ValidatorListItem__Column'}>
           <DateBlock timestamp={validator.lastProposedBlockHeader?.timestamp} format="dateOnly" />
-        </GridItem>
-      </Grid>
+        </div>
+      </div>
     </Link>
   )
 }

@@ -1,4 +1,3 @@
-import { Grid, GridItem } from '@chakra-ui/react'
 import PriceListItem from './PriceListItem'
 import type { PriceData } from './PriceListItem'
 import { EmptyListMessage } from '../../ui/lists'
@@ -17,14 +16,14 @@ function PriceList({ prices = [], rate, className }: PriceListProps) {
 
   return (
     <div className={`PriceList ${className || ''}`}>
-      <Grid className={'PriceList__ColumnTitles'}>
-        <GridItem className={'PriceList__ColumnTitle PriceList__ColumnTitle--Amount'}>
+      <div className={'PriceList__ColumnTitles'}>
+        <div className={'PriceList__ColumnTitle PriceList__ColumnTitle--Amount'}>
           Amount
-        </GridItem>
-        <GridItem className={'PriceList__ColumnTitle PriceList__ColumnTitle--Price'}>
+        </div>
+        <div className={'PriceList__ColumnTitle PriceList__ColumnTitle--Price'}>
           Price (Credits)
-        </GridItem>
-      </Grid>
+        </div>
+      </div>
 
       {list.length > 0 &&
         list.map((priceData, i) => <PriceListItem key={i} priceData={priceData} rate={rate} />)}

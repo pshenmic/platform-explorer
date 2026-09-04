@@ -1,4 +1,3 @@
-import { Button } from '@chakra-ui/react'
 import { VoteControls } from './VoteControls'
 import { VoteControlState } from './useVoteValidation'
 import type { VoteControlStateValue } from './useVoteValidation'
@@ -57,16 +56,14 @@ export const VoteManeger = ({
 
   if (voteValidateState === VoteControlState.USER_HAS_NO_WALLET) {
     return (
-      <Button
+      <button
+        type={'button'}
+        className={'VoteManager__VoteButton'}
         onClick={() => connectWallet?.()}
-        isLoading={isConnecting}
-        variant="brand"
-        size="sm"
-        h="30px"
-        w="94px"
+        disabled={isConnecting}
       >
         Vote
-      </Button>
+      </button>
     )
   }
 

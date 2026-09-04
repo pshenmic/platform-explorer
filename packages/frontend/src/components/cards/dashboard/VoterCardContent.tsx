@@ -1,5 +1,4 @@
 import type { ComponentType, ReactNode } from 'react'
-import { Flex } from '@chakra-ui/react'
 import type { BestVoter } from '../../../types'
 import IdentifierJs from '../../data/Identifier'
 import VoteBadgesJs from '../../contestedResources/VoteBadges'
@@ -29,7 +28,7 @@ export function VoterCardContent({ voter = {}, nullMessage = 'None' }: VoterCard
   const { identifier, totalCountAbstain, totalCountLock, totalCountTowardsIdentity } = voter || {}
 
   return (
-    <Flex gap={'0.25rem'} flexDirection={'column'}>
+    <div className={'VoterCardContent'}>
       {identifier ? (
         <>
           <Identifier copyButton={true} avatar={true} styles={['highlight-both']}>
@@ -47,6 +46,6 @@ export function VoterCardContent({ voter = {}, nullMessage = 'None' }: VoterCard
       ) : (
         nullMessage
       )}
-    </Flex>
+    </div>
   )
 }

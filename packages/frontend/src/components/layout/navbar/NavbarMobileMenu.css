@@ -1,3 +1,9 @@
+@media screen and (min-width: 62em) {
+  .NavbarMobileMenu {
+    display: none;
+  }
+}
+
 .NavbarMobileMenu {
   position: fixed;
   z-index: 50;
@@ -52,6 +58,8 @@
   left: 0;
   display: flex;
   align-items: center;
+  border: none;
+  background: transparent;
   cursor: pointer;
   color: rgba(var(--pe-color-brand-normal-rgb), 0.8);
   transition: color 0.2s;
@@ -75,11 +83,17 @@
 }
 
 .NavbarMobileMenu__Items {
+  display: flex;
+  flex-direction: column;
   width: 100%;
   gap: var(--pe-space-2);
 }
 
 .NavbarMobileMenu__Item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
   font-family: var(--pe-font-heading);
   font-size: var(--pe-text-sm);
   letter-spacing: 0.4px;
@@ -92,11 +106,14 @@
   border: 1px solid var(--pe-color-border);
   transition: all 0.1s;
   cursor: pointer;
+  text-align: left;
+  text-decoration: none;
+  box-sizing: border-box;
 }
 
 .NavbarMobileMenu__Item--Active {
   border: 1px solid var(--pe-color-brand-normal);
-  color: var(--pe-color-brand-normal) !important;
+  color: var(--pe-color-brand-normal);
   background: rgba(255, 255, 255, 0.02);
 }
 
@@ -119,7 +136,7 @@
 .NavbarMobileMenu__Item:active:not(.NavbarMobileMenu__Item--Disabled) {
   color: var(--pe-color-fg);
   transform: translateY(1px);
-  background: rgba(255, 255, 255, 0.1) !important;
+  background: rgba(255, 255, 255, 0.1);
 }
 
 .NavbarMobileMenu__ItemIcon {

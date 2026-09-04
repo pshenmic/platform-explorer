@@ -28,19 +28,19 @@ export default function ContestedResourcesStatsInline({ className }: WithClassNa
     {
       label: 'Total',
       value: formatFullNumber(data?.totalContestedResources) as ReactNode,
-      color: 'var(--chakra-colors-brand-light)',
+      color: 'var(--pe-color-brand-light)',
       loading: stats.loading
     },
     {
       label: 'Pending',
       value: formatFullNumber(data?.totalPendingContestedResources) as ReactNode,
-      color: 'var(--chakra-colors-orange-default)',
+      color: 'var(--pe-color-orange-default)',
       loading: stats.loading
     },
     {
       label: 'Votes',
       value: formatFullNumber(data?.totalVotesCount) as ReactNode,
-      color: 'var(--chakra-colors-green-label)',
+      color: 'var(--pe-color-green-label)',
       loading: stats.loading
     }
   ]

@@ -1,7 +1,6 @@
 'use client'
 
 import type { ComponentType, ReactNode } from 'react'
-import type { IconProps } from '@chakra-ui/react'
 import type { WithClassName } from '../../types/common'
 import { InfoCard } from './'
 import './InfoCard.css'
@@ -10,7 +9,7 @@ import './DashboardCard.css'
 export interface DashboardCardData {
   title?: ReactNode
   value?: ReactNode
-  icon?: ComponentType<IconProps> | null
+  icon?: ComponentType<{ className?: string }> | null
   error?: boolean
   loading?: boolean
   className?: string
@@ -41,7 +40,7 @@ const DashboardCard = ({ card, className: extraClass }: DashboardCardProps) => {
           <div className={'DashboardCard__Value'}>{!error ? value : 'N/A'}</div>
         </div>
 
-        {icon && IconComponent && <IconComponent w={'3rem'} h={'3rem'} />}
+        {icon && IconComponent && <IconComponent className={'DashboardCard__Icon'} />}
       </div>
     </InfoCard>
   )

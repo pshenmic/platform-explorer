@@ -1,4 +1,3 @@
-import { Input } from '@chakra-ui/react'
 import type { ReactNode, ChangeEvent } from 'react'
 import { SubmitButton } from '../ui/forms'
 import FilterActions from './FilterActions'
@@ -26,7 +25,7 @@ export const InputFilter = ({
   <div className={'InputFilter'}>
     {title && <div className={'InputFilter__Title'}>{title}</div>}
 
-    <Input
+    <input
       className={'InputFilter__Input'}
       type={type}
       value={value || ''}

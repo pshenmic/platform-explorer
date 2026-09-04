@@ -4,7 +4,7 @@ import { EmptyListMessage } from '../ui/lists'
 import Pagination from '../pagination'
 import { LoadingList } from '../loading'
 import { ErrorMessageBlock } from '../Errors'
-import { Grid, GridItem } from '@chakra-ui/react'
+
 import './DocumentsList.css'
 
 interface DocumentsListProps {
@@ -42,44 +42,44 @@ export default function DocumentsList({
   return (
     <div className={'DocumentsList'}>
       <div className={`DocumentsList__Table${compact ? ' DocumentsList__Table--Compact' : ''}`}>
-        <Grid
+        <div
           className={`DocumentsList__ColumnTitles ${headerExtraClass[headerStyles ?? 'default'] || ''}`}
         >
-          <GridItem className={'DocumentsList__ColumnTitle DocumentsList__ColumnTitle--Timestamp'}>
+          <div className={'DocumentsList__ColumnTitle DocumentsList__ColumnTitle--Timestamp'}>
             Time
-          </GridItem>
+          </div>
           {showAction && (
-            <GridItem
+            <div
               className={'DocumentsList__ColumnTitle DocumentsList__ColumnTitle--TransitionType'}
             >
               Action
-            </GridItem>
+            </div>
           )}
-          <GridItem
+          <div
             className={'DocumentsList__ColumnTitle DocumentsList__ColumnTitle--DocumentType'}
           >
             Type
-          </GridItem>
-          <GridItem className={'DocumentsList__ColumnTitle DocumentsList__ColumnTitle--Revision'}>
+          </div>
+          <div className={'DocumentsList__ColumnTitle DocumentsList__ColumnTitle--Revision'}>
             Rev
-          </GridItem>
-          <GridItem className={'DocumentsList__ColumnTitle DocumentsList__ColumnTitle--Identifier'}>
+          </div>
+          <div className={'DocumentsList__ColumnTitle DocumentsList__ColumnTitle--Identifier'}>
             Identifier
-          </GridItem>
-          <GridItem
+          </div>
+          <div
             className={`DocumentsList__ColumnTitle DocumentsList__ColumnTitle--${showDataContract ? 'DataContract' : 'Owner'}`}
           >
             {showDataContract ? 'Data Contract' : 'Owner'}
-          </GridItem>
+          </div>
           {showGas && (
-            <GridItem className={'DocumentsList__ColumnTitle DocumentsList__ColumnTitle--Gas'}>
+            <div className={'DocumentsList__ColumnTitle DocumentsList__ColumnTitle--Gas'}>
               Gas
-            </GridItem>
+            </div>
           )}
-          <GridItem className={'DocumentsList__ColumnTitle DocumentsList__ColumnTitle--Status'}>
+          <div className={'DocumentsList__ColumnTitle DocumentsList__ColumnTitle--Status'}>
             Status
-          </GridItem>
-        </Grid>
+          </div>
+        </div>
 
         {!loading ? (
           <>

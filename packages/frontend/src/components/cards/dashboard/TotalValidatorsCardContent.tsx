@@ -1,4 +1,3 @@
-import { Box, Flex } from '@chakra-ui/react'
 import type { Validator } from '../../../types'
 import type { LoadableState } from '../../../types/common'
 import ImageGenerator from '../../imageGenerator'
@@ -27,9 +26,13 @@ export function TotalValidatorsCardContent({ validators }: TotalValidatorsCardCo
           ? validators.data.pagination.total
           : 'n/a'}
       </div>
-      <Flex className={'TotalValidatorsCardContent__Avatars'}>
+      <div className={'TotalValidatorsCardContent__Avatars'}>
         {validators?.data?.resultSet?.map((validator, i) => (
-          <Box opacity={1 - 0.1 * i} key={i}>
+          <div
+            className={'TotalValidatorsCardContent__Avatar'}
+            style={{ ['--avatar-opacity' as string]: String(1 - 0.1 * i) }}
+            key={i}
+          >
             <ImageGenerator
               className={''}
               username={validator.proTxHash ?? ''}
@@ -38,9 +41,9 @@ export function TotalValidatorsCardContent({ validators }: TotalValidatorsCardCo
               width={32}
               height={32}
             />
-          </Box>
+          </div>
         ))}
-      </Flex>
+      </div>
     </div>
   )
 }

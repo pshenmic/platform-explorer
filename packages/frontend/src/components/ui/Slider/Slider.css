@@ -3,6 +3,6 @@
 }
 
 .Slider__Carousel {
-  user-select: auto !important;
-  -webkit-user-select: auto !important;
+  user-select: auto;
+  -webkit-user-select: auto;
 }

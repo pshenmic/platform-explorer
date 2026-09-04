@@ -1,3 +1,4 @@
 .TransactionStatusBadge {
-  padding: 0 var(--pe-space-3) 0 var(--pe-space-1_5) !important;
+  padding: 0 var(--pe-space-3) 0 var(--pe-space-1_5);
+  line-height: 20px;
 }

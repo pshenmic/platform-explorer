@@ -4,7 +4,6 @@ import { EmptyListMessage } from '../../ui/lists'
 import { ErrorMessageBlock } from '../../Errors'
 import { LoadingList } from '../../loading'
 import { SmoothSize } from '../../ui/containers'
-import { Button, Grid, GridItem } from '@chakra-ui/react'
 import { ChevronIcon } from '../../ui/icons'
 import type { DataContractGroup } from '../../../types'
 
@@ -78,52 +77,55 @@ function GroupsList({
                 key={group.id}
                 className={`GroupsList__Group ${isExpanded ? 'GroupsList__Group--Expanded' : ''}`}
               >
-                <Grid className={'GroupsList__GroupHeader'}>
-                  <GridItem className={'GroupsList__GroupHeaderColumn'}>
+                <div className={'GroupsList__GroupHeader'}>
+                  <div className={'GroupsList__GroupHeaderColumn'}>
                     <span className={'GroupsList__GroupTitle'}>Group #{group.id}</span>
                     <span className={'GroupsList__RequiredPower'}>
                       Required Power: {group.requiredPower}
                     </span>
-                  </GridItem>
-                  <GridItem
+                  </div>
+                  <div
                     className={
                       'GroupsList__GroupHeaderColumn GroupsList__GroupHeaderColumn--Button'
                     }
                   >
-                    <Button
-                      size={'sm'}
-                      variant={isExpanded && membersArray.length > 0 ? 'gray' : 'blue'}
+                    <button
+                      type={'button'}
                       onClick={() => toggleGroup(group.id)}
-                      className={'GroupsList__ToggleButton'}
+                      className={`GroupsList__ToggleButton GroupsList__ToggleButton--${
+                        isExpanded && membersArray.length > 0 ? 'Gray' : 'Blue'
+                      }`}
                     >
                       {membersArray.length} members
                       <ChevronIcon
-                        ml={'0.25rem'}
-                        h={'0.625rem'}
-                        w={'0.625rem'}
-                        transform={`rotate(${isExpanded ? '-90deg' : '90deg'})`}
+                        style={{
+                          marginLeft: '0.25rem',
+                          height: '0.625rem',
+                          width: '0.625rem',
+                          transform: `rotate(${isExpanded ? '-90deg' : '90deg'})`
+                        }}
                       />
-                    </Button>
-                  </GridItem>
-                </Grid>
+                    </button>
+                  </div>
+                </div>
 
                 <SmoothSize className={'GroupsList__MembersContainer'}>
                   {isExpanded && membersArray.length > 0 && (
                     <div className={'GroupsList__MembersList'}>
-                      <Grid
+                      <div
                         className={`GroupsList__ColumnTitles ${headerExtraClass?.[headerStyles] || ''}`}
                       >
-                        <GridItem
+                        <div
                           className={'GroupsList__ColumnTitle GroupsList__ColumnTitle--Identifier'}
                         >
                           Identifier
-                        </GridItem>
-                        <GridItem
+                        </div>
+                        <div
                           className={'GroupsList__ColumnTitle GroupsList__ColumnTitle--Power'}
                         >
                           Power
-                        </GridItem>
-                      </Grid>
+                        </div>
+                      </div>
 
                       {membersArray.map(member => (
                         <GroupsListItem key={member.identifier} member={member} />

@@ -21,6 +21,10 @@
   margin-left: auto;
 }
 
+.MasternodeVotes .ListNavigation__Balance {
+  width: 210px;
+}
+
 @media screen and (max-width: 48em) {
   .MasternodeVotes__Controls {
     flex-direction: column;

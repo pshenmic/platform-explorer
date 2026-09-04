@@ -12,12 +12,15 @@
 }
 
 .Presets__Chip {
+  appearance: none;
+  border: none;
   padding: 3px 9px;
   border-radius: var(--pe-radius-sm);
   font-family: var(--pe-font-mono);
   font-size: var(--pe-text-xs);
   color: var(--pe-color-gray-500);
   background: rgba(255, 255, 255, 0.04);
+  cursor: pointer;
   transition:
     color 0.15s,
     background-color 0.15s;

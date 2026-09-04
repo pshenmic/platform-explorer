@@ -4,7 +4,7 @@ import { EmptyListMessage } from '../../ui/lists'
 import Pagination from '../../pagination'
 import { LoadingList } from '../../loading'
 import { ErrorMessageBlock } from '../../Errors'
-import { Grid, GridItem } from '@chakra-ui/react'
+
 import './DocumentsRevisionsList.css'
 
 interface DocumentsRevisionsListProps {
@@ -33,52 +33,52 @@ export default function DocumentsRevisionsList({
 
   return (
     <div className={'DocumentsRevisionsList'}>
-      <Grid
+      <div
         className={`DocumentsRevisionsList__ColumnTitles ${headerExtraClass[headerStyles ?? 'default'] || ''}`}
       >
-        <GridItem
+        <div
           className={
             'DocumentsRevisionsList__ColumnTitle DocumentsRevisionsList__ColumnTitle--Timestamp'
           }
         >
           Time
-        </GridItem>
-        <GridItem
+        </div>
+        <div
           className={
             'DocumentsRevisionsList__ColumnTitle DocumentsRevisionsList__ColumnTitle--TxHash'
           }
         >
           Tx Hash
-        </GridItem>
-        <GridItem
+        </div>
+        <div
           className={
             'DocumentsRevisionsList__ColumnTitle DocumentsRevisionsList__ColumnTitle--Owner'
           }
         >
           Owner
-        </GridItem>
-        <GridItem
+        </div>
+        <div
           className={
             'DocumentsRevisionsList__ColumnTitle DocumentsRevisionsList__ColumnTitle--GasUsed'
           }
         >
           Gas Used
-        </GridItem>
-        <GridItem
+        </div>
+        <div
           className={
             'DocumentsRevisionsList__ColumnTitle DocumentsRevisionsList__ColumnTitle--TransitionType'
           }
         >
           Transition
-        </GridItem>
-        <GridItem
+        </div>
+        <div
           className={
             'DocumentsRevisionsList__ColumnTitle DocumentsRevisionsList__ColumnTitle--Revision'
           }
         >
           Revision
-        </GridItem>
-      </Grid>
+        </div>
+      </div>
 
       {!loading ? (
         <div className={'DocumentsRevisionsList__Items'}>

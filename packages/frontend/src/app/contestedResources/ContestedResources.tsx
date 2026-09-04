@@ -8,8 +8,6 @@ import { LoadingList } from '../../components/loading'
 import { ErrorMessageBlock } from '../../components/Errors'
 import { fetchHandlerSuccess, fetchHandlerError } from '../../util'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
-
-import { Box, Container } from '@chakra-ui/react'
 import {
   ContestedResourcesList,
   ContestedResourcesFilter,
@@ -96,11 +94,8 @@ function ContestedResources({ defaultPage = 1, defaultPageSize }: ContestedResou
   }, [currentPage, pageSize])
 
   return (
-    <Container
-      className={'InfoBlock ContestedResources ContestedResourcesPage'}
-      maxW={'container.maxPageW'}
-      my={8}
-    >
+    <div className={'ListPage ContestedResources ContestedResourcesPage'}>
+      <div className={'InfoBlock'}>
       <div className={'ContestedResourcesPage__Controls'}>
         <PageTitle
           title={'Contested Resources'}
@@ -129,14 +124,14 @@ function ContestedResources({ defaultPage = 1, defaultPageSize }: ContestedResou
           )}
         </>
       ) : (
-        <Container h={20}>
+        <div className={'ListPage__Error'}>
           <ErrorMessageBlock />
-        </Container>
+        </div>
       )}
 
       {(contestedResources.data?.resultSet?.length ?? 0) > 0 && (
         <div className={'ListNavigation'}>
-          <Box w={'210px'} />
+          <div className={'ListNavigation__Balance'} />
           <Pagination
             onPageChange={({ selected }) => setCurrentPage(selected)}
             pageCount={pageCount}
@@ -149,7 +144,8 @@ function ContestedResources({ defaultPage = 1, defaultPageSize }: ContestedResou
           />
         </div>
       )}
-    </Container>
+      </div>
+    </div>
   )
 }
 

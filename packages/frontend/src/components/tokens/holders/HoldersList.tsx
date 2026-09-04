@@ -5,7 +5,7 @@ import { EmptyListMessage } from '../../ui/lists'
 import PaginationJs from '../../pagination'
 import { LoadingList as LoadingListJs } from '../../loading'
 import { ErrorMessageBlock } from '../../Errors'
-import { Grid, GridItem } from '@chakra-ui/react'
+
 import './HoldersList.css'
 
 const Pagination = PaginationJs as ComponentType<{
@@ -47,22 +47,22 @@ export default function HoldersList({
 
   return (
     <div className={'HoldersList'}>
-      <Grid
+      <div
         className={`HoldersList__ColumnTitles ${headerStyles ? headerExtraClass[headerStyles] || '' : ''}`}
       >
-        <GridItem className={'HoldersList__ColumnTitle HoldersList__ColumnTitle--Holder'}>
+        <div className={'HoldersList__ColumnTitle HoldersList__ColumnTitle--Holder'}>
           Holder
-        </GridItem>
-        <GridItem className={'HoldersList__ColumnTitle HoldersList__ColumnTitle--TokensAmount'}>
+        </div>
+        <div className={'HoldersList__ColumnTitle HoldersList__ColumnTitle--TokensAmount'}>
           Tokens
-        </GridItem>
-        <GridItem className={'HoldersList__ColumnTitle HoldersList__ColumnTitle--DashAmount'}>
+        </div>
+        <div className={'HoldersList__ColumnTitle HoldersList__ColumnTitle--DashAmount'}>
           Dash
-        </GridItem>
-        <GridItem className={'HoldersList__ColumnTitle HoldersList__ColumnTitle--LastActivity'}>
+        </div>
+        <div className={'HoldersList__ColumnTitle HoldersList__ColumnTitle--LastActivity'}>
           Last Activity
-        </GridItem>
-      </Grid>
+        </div>
+      </div>
 
       {!loading ? (
         <div className={'HoldersList__Items'}>

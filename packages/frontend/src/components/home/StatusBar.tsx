@@ -1,7 +1,6 @@
 'use client'
 
 import type { ReactNode } from 'react'
-import { Flex } from '@chakra-ui/react'
 import { StatusCell } from './StatusCell'
 import { ContestedCell } from './ContestedCell'
 import { TotalVotesCell } from './TotalVotesCell'
@@ -88,7 +87,7 @@ export function StatusBar({
   const votesCount = contested?.data?.totalVotesCount
 
   return (
-    <Flex className={'HomeHero__StatusBar'}>
+    <div className={'HomeHero__StatusBar'}>
       <StatusCell
         label={'Contested'}
         hint={
@@ -104,6 +103,6 @@ export function StatusBar({
       >
         <TotalVotesCell count={votesCount} votes={latestVotes} />
       </StatusCell>
-    </Flex>
+    </div>
   )
 }

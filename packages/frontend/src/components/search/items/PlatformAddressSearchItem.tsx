@@ -1,7 +1,6 @@
 import type { ComponentType, ReactNode } from 'react'
 import type { PlatformAddress } from '../../../types'
 import type { WithClassName } from '../../../types/common'
-import { GridItem } from '@chakra-ui/react'
 // Untyped JS components — loose wrappers until data/* is migrated
 import { Identifier as IdentifierJs, NotActive as NotActiveJs } from '../../data'
 import { BaseSearchItem } from './BaseSearchItem'
@@ -33,20 +32,18 @@ export function PlatformAddressSearchItem({
       onClick={onClick}
       data={platformAddress}
     >
-      <GridItem className={'SearchResultsListItem__Column'}>
+      <div className={'SearchResultsListItem__Column'}>
         <Identifier ellipsis={true} styles={['highlight-both']}>
           {address}
         </Identifier>
-      </GridItem>
-      <GridItem
-        className={'SearchResultsListItem__Column SearchResultsListItem__Column--Additional'}
-      >
+      </div>
+      <div className={'SearchResultsListItem__Column SearchResultsListItem__Column--Additional'}>
         {platformAddress?.totalTxs != null ? (
           <span>{platformAddress.totalTxs} txs</span>
         ) : (
           <NotActive>-</NotActive>
         )}
-      </GridItem>
+      </div>
     </BaseSearchItem>
   )
 }

@@ -5,7 +5,7 @@ import * as Api from '../../../util/Api'
 import { fetchHandlerSuccess, fetchHandlerError } from '../../../util'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { useBreadcrumbs } from '../../../contexts/BreadcrumbsContext'
-import { Tabs, TabList, TabPanels, Tab, TabPanel } from '@chakra-ui/react'
+import { Tabs, TabList, TabPanels, Tab, TabPanel } from '../../../components/ui/Tabs'
 import { InfoContainer, PageDataContainer } from '../../../components/ui/containers'
 import { TokenTotalCard } from '../../../components/tokens'
 import { ActivityList } from '../../../components/tokens/activity'
@@ -117,7 +117,9 @@ function Token({ identifier }: TokenProps) {
       urlParameters.set('tab', tabs[activeTab])
     }
 
-    router.replace(`${pathname}?${urlParameters.toString()}`, { scroll: false })
+    const next = urlParameters.toString()
+    if (next === searchParams.toString()) return
+    router.replace(next ? `${pathname}?${next}` : pathname, { scroll: false })
   }, [activeTab, router, pathname])
 
   return (

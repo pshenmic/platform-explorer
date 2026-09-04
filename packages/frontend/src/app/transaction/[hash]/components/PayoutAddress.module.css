@@ -28,5 +28,5 @@
 
 .root {
   margin-bottom: var(--pe-space-3_5);
-  justify-content: flex-start !important;
+  justify-content: flex-start;
 }

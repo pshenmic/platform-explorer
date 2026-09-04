@@ -1,4 +1,4 @@
-import { Badge } from '@chakra-ui/react'
+import { Badge } from '../ui/Badge'
 import { Tooltip } from '../ui/Tooltips'
 import type { WithClassName } from '../../types'
 import './VoteBadges.css'
@@ -14,11 +14,9 @@ function ContendersBadges({ contenders, className }: ContendersBadgeProps) {
     <div className={`VoteBadges ${className || ''}`}>
       <Tooltip title={'Contenders'} placement={'top'}>
         <Badge
+          className={'ContendersBadge'}
           colorScheme={'blue'}
           size={'xs'}
-          ml={'0.25rem'}
-          style={{ transition: '.1s' }}
-          _hover={{ transform: 'scale(1.05)' }}
         >
           {contenders}
         </Badge>

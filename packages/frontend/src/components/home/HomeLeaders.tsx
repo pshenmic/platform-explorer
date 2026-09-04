@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useMemo, type CSSProperties } from 'react'
 import Link from 'next/link'
-import { Box } from '@chakra-ui/react'
+
 import * as Api from '../../util/Api'
 import { Identifier, BigNumber, Alias } from '../data'
 import { findActiveAlias } from '../../util'
@@ -303,10 +303,8 @@ export default function HomeLeaders({ rate, enabled = true }: { rate?: any; enab
   }
 
   return (
-    <Box
+    <section
       className={'InfoBlock InfoBlock--NoBorder HomeLeaders'}
-      w={'100%'}
-      as={'section'}
       aria-label={'Platform leaders'}
     >
       <header className={'HomeLeaders__Head'}>
@@ -369,6 +367,6 @@ export default function HomeLeaders({ rate, enabled = true }: { rate?: any; enab
       <div className={'HomeLeaders__Panel'} role={'tabpanel'}>
         {current?.node}
       </div>
-    </Box>
+    </section>
   )
 }

@@ -1,6 +1,5 @@
 import { forwardRef } from 'react'
 import type { ReactNode, Ref } from 'react'
-import { CloseButton } from '@chakra-ui/react'
 import { cva } from 'class-variance-authority'
 
 import styles from './Modal.module.css'
@@ -23,7 +22,12 @@ export const ModalLayout = forwardRef(function ModalLayout(
         <h2 id="modal-title" className={styles.title}>
           {title}
         </h2>
-        <CloseButton onClick={onClose} />
+        <button type={'button'} className={styles.close} onClick={onClose} aria-label={'Close'}>
+          <svg width="10" height="10" viewBox="0 0 10 10" fill="none" aria-hidden="true">
+            <path d="M1 1L9 9" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+            <path d="M9 1L1 9" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+          </svg>
+        </button>
       </div>
       <div className={styles.content}>{children}</div>
     </dialog>

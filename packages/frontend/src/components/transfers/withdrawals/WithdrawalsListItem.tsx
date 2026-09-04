@@ -1,5 +1,5 @@
 import type { ComponentType, ReactNode, AnchorHTMLAttributes, HTMLAttributes, Ref } from 'react'
-import { Grid, GridItem } from '@chakra-ui/react'
+
 import { ArrowCornerIcon } from '../../ui/icons'
 // Untyped JS components — loose wrappers until data/* is migrated
 import { Identifier as IdentifierJs, BigNumber as BigNumberJs } from '../../data'
@@ -99,14 +99,14 @@ function WithdrawalsListItem({
       className={`WithdrawalsListItem ${clickable ? 'WithdrawalsListItem--Clickable' : ''}`}
     >
       <Wrapper className={'WithdrawalsListItem__ContentWrapper'}>
-        <Grid className={'WithdrawalsListItem__Content'}>
-          <GridItem
+        <div className={'WithdrawalsListItem__Content'}>
+          <div
             className={'WithdrawalsListItem__Column WithdrawalsListItem__Column--Timestamp'}
           >
             {withdrawal.timestamp ? new Date(withdrawal.timestamp).toLocaleString() : '-'}
-          </GridItem>
+          </div>
 
-          <GridItem className={'WithdrawalsListItem__Column WithdrawalsListItem__Column--TxHash'}>
+          <div className={'WithdrawalsListItem__Column WithdrawalsListItem__Column--TxHash'}>
             {withdrawal?.hash ? (
               <ItemWrapper
                 className={'WithdrawalsListItem__ColumnContent'}
@@ -120,9 +120,9 @@ function WithdrawalsListItem({
             ) : (
               '-'
             )}
-          </GridItem>
+          </div>
 
-          <GridItem className={'WithdrawalsListItem__Column WithdrawalsListItem__Column--Address'}>
+          <div className={'WithdrawalsListItem__Column WithdrawalsListItem__Column--Address'}>
             {withdrawalAddress ? (
               <ItemWrapper
                 className={'WithdrawalsListItem__ColumnContent'}
@@ -139,9 +139,9 @@ function WithdrawalsListItem({
             ) : (
               '-'
             )}
-          </GridItem>
+          </div>
 
-          <GridItem className={'WithdrawalsListItem__Column WithdrawalsListItem__Column--Document'}>
+          <div className={'WithdrawalsListItem__Column WithdrawalsListItem__Column--Document'}>
             {withdrawal?.document ? (
               <ItemWrapper
                 className={'WithdrawalsListItem__ColumnContent'}
@@ -159,20 +159,20 @@ function WithdrawalsListItem({
             ) : (
               '-'
             )}
-          </GridItem>
+          </div>
 
-          <GridItem className={'WithdrawalsListItem__Column WithdrawalsListItem__Column--Amount'}>
+          <div className={'WithdrawalsListItem__Column WithdrawalsListItem__Column--Amount'}>
             <RateTooltip credits={amountCredits} rate={rate}>
               <span>
                 <BigNumber>{withdrawal.amount}</BigNumber>
               </span>
             </RateTooltip>
-          </GridItem>
+          </div>
 
-          <GridItem className={'WithdrawalsListItem__Column WithdrawalsListItem__Column--Status'}>
+          <div className={'WithdrawalsListItem__Column WithdrawalsListItem__Column--Status'}>
             <StatusIcon status={withdrawal.status} w={'18px'} h={'18px'} />
-          </GridItem>
-        </Grid>
+          </div>
+        </div>
       </Wrapper>
     </div>
   )

@@ -1,6 +1,5 @@
 'use client'
 
-import { Box, Flex } from '@chakra-ui/react'
 import { useEffect, useState } from 'react'
 import Image from 'next/image'
 import version from './version'
@@ -42,22 +41,14 @@ function Footer() {
   useEffect(() => setCurrentYear(new Date().getFullYear()), [])
 
   return (
-    <Box marginTop={'auto'}>
+    <div className={'FooterShell'}>
       <div className={'FooterStub'}></div>
 
-      <Flex
-        className={'Footer'}
-        maxW={'container.maxNavigationW'}
-        ml={'auto'}
-        mr={'auto'}
-        h={'auto'}
-        alignItems={'center'}
-        justifyContent={'space-between'}
-      >
+      <footer className={'Footer'}>
         <div className={'Footer__TimezoneContainer'}>
           <BigClockIcon className={'Footer__ClockIcon'} w={'35px'} h={'34px'} />
 
-          <Flex flexDirection={'column'} justifyContent={'center'}>
+          <div className={'Footer__TimezoneMeta'}>
             <a
               className={'Footer__PshenmicLogo'}
               href={'https://pshenmic.dev/'}
@@ -68,7 +59,7 @@ function Footer() {
               <PshenmicLogoIcon w={'95px'} h={'8px'} />
             </a>
             <LocalTime className={'Footer__LocalTime'} />
-          </Flex>
+          </div>
         </div>
 
         {socialNetwork.length ? (
@@ -97,8 +88,8 @@ function Footer() {
             <PlatformExplorerLogoStroke w={'2rem'} h={'2rem'} color={'gray.250'} />
           </Link>
         </div>
-      </Flex>
-    </Box>
+      </footer>
+    </div>
   )
 }
 

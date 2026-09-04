@@ -3,3 +3,15 @@
   background-color: rgba(46, 57, 61, 0.5019607843);
   border: 1px solid #2f363a;
 }
+
+.title {
+  margin: 0;
+  font-family: var(--pe-font-heading);
+  font-size: var(--pe-text-xs);
+  font-weight: var(--pe-font-weight-bold);
+  color: var(--pe-color-fg);
+}
+
+.body {
+  padding: var(--pe-space-2) var(--pe-space-6) var(--pe-space-8);
+}

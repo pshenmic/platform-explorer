@@ -2,7 +2,7 @@
 .TransactionPage__DetailsInfo > .InfoLine--Loading .InfoLine__Value {
   height: 28px;
   flex-grow: 1;
-  width: 100% !important;
+  width: 100%;
 }
 
 .TransactionPage__InfoLine--Outputs .InfoLine__Value {
@@ -96,11 +96,11 @@
 
 .TransactionPage__InfoLine {
   margin-bottom: var(--pe-space-3_5);
-  justify-content: flex-start !important;
+  justify-content: flex-start;
 }
 
 .TransactionPage__InfoLine--Schema {
-  align-items: flex-start !important;
+  align-items: flex-start;
 }
 
 .TransactionPage__InfoLine--InternalConfig {
@@ -112,7 +112,7 @@
 .TransactionPage__InfoLine--Status,
 .TransactionPage__InfoLine--Transitions,
 .TransactionPage__InfoLine--PublicKeys {
-  align-items: baseline !important;
+  align-items: baseline;
 }
 
 .TransactionPage__Signature,
@@ -166,6 +166,145 @@
   overflow: hidden;
 }
 
+.TransactionPage__Stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--pe-space-2);
+}
+
+.TransactionPage__Row {
+  display: flex;
+  gap: var(--pe-space-4);
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.TransactionPage__Row--lgCol {
+  flex-direction: row;
+}
+
+.TransactionPage__Row--mdCol {
+  flex-direction: row;
+}
+
+.TransactionPage__FeeRow {
+  display: flex;
+  align-items: center;
+  gap: var(--pe-space-6);
+  margin-bottom: var(--pe-space-4);
+}
+
+.TransactionPage__FeeRow--tight {
+  gap: var(--pe-space-4);
+  margin-bottom: 0;
+}
+
+.TransactionPage__RawWrap {
+  display: grid;
+  grid-template-columns: minmax(300px, auto);
+}
+
+.TransactionPage__WitnessGrid {
+  display: grid;
+  gap: var(--pe-space-4);
+  grid-template-columns: 1fr minmax(240px, 1fr);
+}
+
+.TransactionPage__Fit {
+  width: fit-content;
+  min-width: min-content;
+}
+
+.TransactionPage__ActionsGrid {
+  display: grid;
+  gap: var(--pe-space-3);
+  align-items: center;
+  grid-template-columns: minmax(220px, 1fr);
+}
+
+.TransactionPage__ActionsGridItem {
+  display: contents;
+}
+
+.TransactionPage__OutputGrid {
+  display: grid;
+  gap: var(--pe-space-4);
+  width: 100%;
+  align-items: center;
+  grid-template-columns: 1fr;
+}
+
+.TransactionPage__AssetLockGrid {
+  display: grid;
+  gap: var(--pe-space-4);
+  padding-inline: var(--pe-space-5);
+  grid-template-columns: minmax(250px, auto);
+}
+
+.TransactionPage__SignatureRow {
+  display: flex;
+  gap: var(--pe-space-2);
+  max-width: 250px;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.TransactionPage__SignatureText {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@media screen and (max-width: 62em) {
+  .TransactionPage__Row--lgCol {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
+@media screen and (max-width: 48em) {
+  .TransactionPage__Row--mdCol {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
+@media screen and (min-width: 30em) {
+  .TransactionPage__SignatureRow {
+    max-width: 400px;
+  }
+}
+
+@media screen and (min-width: 48em) {
+  .TransactionPage__AssetLockGrid {
+    padding-inline: 0;
+    grid-template-columns: 1fr 400px;
+  }
+
+  .TransactionPage__ActionsGrid {
+    grid-template-columns: 200px minmax(100px, 1fr);
+  }
+
+  .TransactionPage__WitnessGrid {
+    grid-template-columns: 100px minmax(100px, 1fr);
+  }
+}
+
+@media screen and (min-width: 62em) {
+  .TransactionPage__AssetLockGrid {
+    grid-template-columns: 1fr 500px;
+  }
+
+  .TransactionPage__OutputGrid {
+    grid-template-columns: 1fr 200px;
+  }
+
+  .TransactionPage__SignatureRow {
+    max-width: 400px;
+  }
+}
+
 .TransactionPage__VoteIndexValuesContainer {
   container-type: inline-size;
   width: 100%;
@@ -193,7 +332,7 @@
   ) {
     flex-direction: column;
     align-items: flex-start;
-    justify-content: flex-start !important;
+    justify-content: flex-start;
   }
 
   .TransactionPage__InfoLine:not(.TransactionPage__InfoLine--Inline):not(
@@ -261,7 +400,7 @@
 
   .TransactionPage__InfoLine {
     margin-bottom: var(--pe-space-3);
-    justify-content: space-between !important;
+    justify-content: space-between;
     flex-wrap: wrap;
   }
 

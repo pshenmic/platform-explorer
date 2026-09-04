@@ -113,7 +113,7 @@
 
 @media screen and (min-width: 48em) and (max-width: 62em), screen and (max-width: 30em) {
   .PlatformAddressDigestCard--Loading .InfoLine__Value {
-    width: 100% !important;
+    width: 100%;
   }
 
   .PlatformAddressDigestCard__Transfer .CreditsBlock {
@@ -138,7 +138,7 @@
 
 @container (max-width: 24em) {
   .PlatformAddressDigestCard--Loading .InfoLine__Value {
-    width: 100% !important;
+    width: 100%;
   }
 
   .PlatformAddressDigestCard__InfoLine .InfoLine__Value {

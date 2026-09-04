@@ -1,6 +1,6 @@
 'use client'
 
-import { Box } from '@chakra-ui/react'
+
 import DataContractsRating from './DataContractsRating'
 import TrendingTokens from './TrendingTokens'
 import RichestIdentities from './RichestIdentities'
@@ -39,13 +39,8 @@ export default function RichestSection({
   }
 
   return (
-    <Box
-      className={'InfoBlock InfoBlock--NoBorder HomeRichest'}
-      w={'100%'}
-      as={'section'}
-      aria-label={'Richest'}
-    >
+    <section className={'InfoBlock InfoBlock--NoBorder HomeRichest'} aria-label={'Richest'}>
       {body}
-    </Box>
+    </section>
   )
 }

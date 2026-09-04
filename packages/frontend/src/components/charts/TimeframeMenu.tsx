@@ -1,6 +1,5 @@
 import { useState, forwardRef, useEffect } from 'react'
 import type { Ref, ComponentType } from 'react'
-import { Button } from '@chakra-ui/react'
 // Untyped JS component — loose wrapper until calendar/* is migrated
 import { DateRangePicker as DateRangePickerJs } from '../calendar'
 import { defaultIntervalsCount } from './config'
@@ -84,26 +83,25 @@ const TimeframeMenu = forwardRef(function TimeframeMenu(
       <div className={'TimeframeMenu__ValuesContainer'}>
         <div className={'TimeframeMenu__Values'}>
           {config.timespan.values.map((iTimespan, i) => (
-            <Button
+            <button
+              type={'button'}
               className={`TimeframeMenu__ValueButton ${iTimespan.label === timespan?.label ? 'TimeframeMenu__ValueButton--Active' : ''}`}
               onClick={() => {
                 changeHandler(iTimespan)
                 clearCalendarRange()
               }}
               key={i}
-              size={'xs'}
             >
               {iTimespan.label}
-            </Button>
+            </button>
           ))}
-          <Button
-            className={'TimeframeMenu__ValueButton'}
+          <button
+            type={'button'}
+            className={'TimeframeMenu__ValueButton TimeframeMenu__ValueButton--Ok'}
             onClick={submitHandler}
-            size={'xs'}
-            variant={'customGreen'}
           >
             ok
-          </Button>
+          </button>
         </div>
       </div>
 

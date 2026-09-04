@@ -1,4 +1,4 @@
-import type { IconProps } from '@chakra-ui/react'
+import type { IconProps } from '../ui/icons/Icon'
 import type { ReactElement } from 'react'
 import { SuccessIcon, ErrorIcon, QueuedIcon, PooledIcon, BroadcastedIcon } from '../ui/icons'
 

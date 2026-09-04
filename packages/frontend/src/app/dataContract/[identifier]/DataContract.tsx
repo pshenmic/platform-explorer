@@ -12,16 +12,7 @@ import {
   DataContractTotalCard,
   GroupsList
 } from '../../../components/dataContracts'
-import {
-  Box,
-  Container,
-  Tabs,
-  TabList,
-  TabPanels,
-  Tab,
-  TabPanel,
-  useBreakpointValue
-} from '@chakra-ui/react'
+import { Tabs, TabList, TabPanels, Tab, TabPanel } from '../../../components/ui/Tabs'
 import { useBreadcrumbs } from '../../../contexts/BreadcrumbsContext'
 import { TransactionsList } from '../../../components/transactions'
 import TokensList from '../../../components/tokens/TokensList'
@@ -62,7 +53,15 @@ interface DataContractProps {
 
 function DataContract({ identifier }: DataContractProps) {
   const { setBreadcrumbs } = useBreadcrumbs()
-  const isMobile = useBreakpointValue({ base: true, md: false })
+  const [isMobile, setIsMobile] = useState(false)
+
+  useEffect(() => {
+    const mq = window.matchMedia('(max-width: 767px)')
+    const update = () => setIsMobile(mq.matches)
+    update()
+    mq.addEventListener('change', update)
+    return () => mq.removeEventListener('change', update)
+  }, [])
   const [txPage, setTxPage] = useState(pagintationConfig.defaultPage)
   const [docPage, setDocPage] = useState(pagintationConfig.defaultPage)
   const { filters: docFilters, setFilters: setDocFilters } = useDataContractDocumentsFilters()
@@ -261,20 +260,20 @@ function DataContract({ identifier }: DataContractProps) {
                   }}
                 />
               ) : (
-                <Container h={20}>
+                <div className={'Tabs__PanelSpacer'}>
                   <ErrorMessageBlock />
-                </Container>
+                </div>
               )}
             </TabPanel>
             <TabPanel position={'relative'}>
-              <Box mb={3}>
+              <div style={{ marginBottom: '0.75rem' }}>
                 <DocumentsFilter
                   onFilterChange={handleDocFiltersChange}
                   isMobile={isMobile}
                   excludeFilters={['transition_type', 'status']}
                   className={'DataContract__DocumentsFilter'}
                 />
-              </Box>
+              </div>
               {!documents.isError ? (
                 <DocumentsList
                   documents={
@@ -288,18 +287,18 @@ function DataContract({ identifier }: DataContractProps) {
                   }}
                 />
               ) : (
-                <Container h={20}>
+                <div className={'Tabs__PanelSpacer'}>
                   <ErrorMessageBlock />
-                </Container>
+                </div>
               )}
             </TabPanel>
             <TabPanel position={'relative'}>
               {!dataContractQuery.isError ? (
                 <TokensList tokens={tokens} loading={dataContractQuery.isLoading} />
               ) : (
-                <Container h={20}>
+                <div className={'Tabs__PanelSpacer'}>
                   <ErrorMessageBlock />
-                </Container>
+                </div>
               )}
             </TabPanel>
             <TabPanel position={'relative'}>
@@ -312,15 +311,15 @@ function DataContract({ identifier }: DataContractProps) {
                       code={dataContract.data?.schema}
                     />
                   ) : (
-                    <Container h={20}>
+                    <div className={'Tabs__PanelSpacer'}>
                       <ErrorMessageBlock />
-                    </Container>
+                    </div>
                   )}
                 </LoadingBlock>
               ) : (
-                <Container h={20}>
+                <div className={'Tabs__PanelSpacer'}>
                   <ErrorMessageBlock />
-                </Container>
+                </div>
               )}
             </TabPanel>
             <TabPanel position={'relative'}>
@@ -333,9 +332,9 @@ function DataContract({ identifier }: DataContractProps) {
                   />
                 </LoadingBlock>
               ) : (
-                <Container h={20}>
+                <div className={'Tabs__PanelSpacer'}>
                   <ErrorMessageBlock />
-                </Container>
+                </div>
               )}
             </TabPanel>
           </TabPanels>

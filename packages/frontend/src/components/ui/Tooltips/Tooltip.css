@@ -13,10 +13,11 @@
   display: block;
   width: max-content;
   max-width: min(20rem, calc(100vw - 24px));
-  min-width: 11rem;
+  min-width: 0;
   overflow-x: hidden;
   overflow-y: auto;
   max-height: min(70vh, calc(100vh - 24px));
+  scrollbar-width: none;
   white-space: normal;
   font-family: var(--pe-font-heading);
   font-size: 0.75rem;
@@ -33,6 +34,11 @@
   padding: 0.65rem 0.85rem;
   filter: drop-shadow(0 8px 24px rgba(0, 0, 0, 0.35));
 }
+.Tooltip::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
+}
 .Tooltip::after {
   content: "";
   position: absolute;
@@ -45,6 +51,22 @@
 }
 .Tooltip[data-placement="bottom"]::after {
   bottom: 100%;
+}
+.Tooltip[data-placement="left"]::after {
+  top: 0;
+  bottom: 0;
+  left: 100%;
+  right: auto;
+  width: 12px;
+  height: auto;
+}
+.Tooltip[data-placement="right"]::after {
+  top: 0;
+  bottom: 0;
+  right: 100%;
+  left: auto;
+  width: 12px;
+  height: auto;
 }
 .Tooltip__Body {
   pointer-events: auto;
@@ -60,6 +82,10 @@
   white-space: normal;
   word-break: break-word;
 }
+.Tooltip--Extended {
+  min-width: min(11rem, calc(100vw - 24px));
+}
+
 .Tooltip--Extended .Tooltip__Title {
   margin-bottom: 0;
   text-transform: uppercase;

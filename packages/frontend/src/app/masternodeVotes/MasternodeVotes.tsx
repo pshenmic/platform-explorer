@@ -7,7 +7,7 @@ import PageSizeSelector from '../../components/pageSizeSelector/PageSizeSelector
 import { ErrorMessageBlock } from '../../components/Errors'
 import { fetchHandlerSuccess, fetchHandlerError } from '../../util'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
-import { Box, Container, useBreakpointValue } from '@chakra-ui/react'
+import { useIsMobile } from '../../hooks'
 import { VotesList } from '../../components/contestedResources/votes'
 import { MasternodeVotesFilters } from '../../components/contestedResources'
 import MasternodeVotesStatsInline from '../../components/contestedResources/MasternodeVotesStatsInline'
@@ -46,7 +46,7 @@ function MasternodeVotes({ defaultPage = 1, defaultPageSize }: MasternodeVotesPr
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
-  const isMobile = useBreakpointValue({ base: true, md: false })
+  const isMobile = useIsMobile()
 
   const filtersChangeHandler = (newFilters: Record<string, unknown>) => {
     setFilters(newFilters as QueryFilters)
@@ -97,14 +97,8 @@ function MasternodeVotes({ defaultPage = 1, defaultPageSize }: MasternodeVotesPr
   }, [currentPage, pageSize])
 
   return (
-    <Container
-      maxW={'container.maxPageW'}
-      color={'white'}
-      mt={8}
-      mb={8}
-      className={'MasternodeVotes'}
-    >
-      <Container maxW={'container.maxPageW'} _dark={{ color: 'white' }} className={'InfoBlock'}>
+    <div className={'ListPage MasternodeVotes'}>
+      <div className={'InfoBlock'}>
         <div className={'MasternodeVotes__Controls'}>
           <PageTitle
             title={'Masternode Votes'}
@@ -128,14 +122,14 @@ function MasternodeVotes({ defaultPage = 1, defaultPageSize }: MasternodeVotesPr
             loading={masternodeVotes.loading}
           />
         ) : (
-          <Container h={20}>
+          <div className={'ListPage__Error'}>
             <ErrorMessageBlock />
-          </Container>
+          </div>
         )}
 
         {(masternodeVotes.data?.resultSet?.length ?? 0) > 0 && (
           <div className={'ListNavigation'}>
-            <Box display={['none', 'none', 'block']} width={'210px'} />
+            <div className={'ListNavigation__Balance'} />
             <Pagination
               onPageChange={({ selected }) => setCurrentPage(selected)}
               pageCount={pageCount}
@@ -148,8 +142,8 @@ function MasternodeVotes({ defaultPage = 1, defaultPageSize }: MasternodeVotesPr
             />
           </div>
         )}
-      </Container>
-    </Container>
+      </div>
+    </div>
   )
 }
 

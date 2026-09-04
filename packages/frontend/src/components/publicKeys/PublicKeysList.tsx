@@ -1,4 +1,3 @@
-import { Grid, GridItem } from '@chakra-ui/react'
 import PublicKeysListItem from './PublicKeysListItem'
 import type { PublicKey } from './PublicKeysListItem'
 import { EmptyListMessage } from '../ui/lists'
@@ -15,38 +14,38 @@ function PublicKeysList({ publicKeys = [], className }: PublicKeysListProps) {
   return (
     <div className={`PublicKeysList ${className || ''}`}>
       <div className={'PublicKeysList__ScrollZone'}>
-        <Grid className={'PublicKeysList__ColumnTitles'}>
-          <GridItem className={'PublicKeysList__ColumnTitle PublicKeysList__ColumnTitle--Id'}>
+        <div className={'PublicKeysList__ColumnTitles'}>
+          <div className={'PublicKeysList__ColumnTitle PublicKeysList__ColumnTitle--Id'}>
             Key Id
-          </GridItem>
-          <GridItem
+          </div>
+          <div
             className={'PublicKeysList__ColumnTitle PublicKeysList__ColumnTitle--PublicKeyHash'}
           >
             Public Key Hash
-          </GridItem>
-          <GridItem className={'PublicKeysList__ColumnTitle PublicKeysList__ColumnTitle--Type'}>
+          </div>
+          <div className={'PublicKeysList__ColumnTitle PublicKeysList__ColumnTitle--Type'}>
             Type
-          </GridItem>
-          <GridItem className={'PublicKeysList__ColumnTitle PublicKeysList__ColumnTitle--Purpose'}>
+          </div>
+          <div className={'PublicKeysList__ColumnTitle PublicKeysList__ColumnTitle--Purpose'}>
             Purpose
-          </GridItem>
-          <GridItem
+          </div>
+          <div
             className={'PublicKeysList__ColumnTitle PublicKeysList__ColumnTitle--SecurityLevel'}
           >
             Security Level
-          </GridItem>
-          <GridItem
+          </div>
+          <div
             className={'PublicKeysList__ColumnTitle PublicKeysList__ColumnTitle--DisabledAt'}
           >
             Disabled
-          </GridItem>
-          <GridItem className={'PublicKeysList__ColumnTitle PublicKeysList__ColumnTitle--ReadOnly'}>
+          </div>
+          <div className={'PublicKeysList__ColumnTitle PublicKeysList__ColumnTitle--ReadOnly'}>
             Read Only
-          </GridItem>
-          <GridItem className={'PublicKeysList__ColumnTitle PublicKeysList__ColumnTitle--Data'}>
+          </div>
+          <div className={'PublicKeysList__ColumnTitle PublicKeysList__ColumnTitle--Data'}>
             Data
-          </GridItem>
-        </Grid>
+          </div>
+        </div>
 
         {publicKeys?.length > 0 &&
           publicKeys.map((publicKey, i) => <PublicKeysListItem publicKey={publicKey} key={i} />)}

@@ -18,8 +18,6 @@ import {
   HeroNodes
 } from '../../components/home'
 import { fetchHandlerSuccess, fetchHandlerError } from '../../util'
-import theme from '../../styles/theme'
-import { Box, Container, Flex } from '@chakra-ui/react'
 import type { LoadableState, Rate } from '../../types'
 import type { QueryFilters } from '../../util/Api'
 import './Home.css'
@@ -61,8 +59,6 @@ async function fetchAllValidators(filters?: QueryFilters) {
 
 function Home() {
   const [rate, setRate] = useState<LoadableState<Rate>>({ data: null, loading: true, error: false })
-
-  const gap = theme.blockOffset
 
   const statusQuery = useQuery({
     queryKey: ['home', 'status'],
@@ -249,16 +245,7 @@ function Home() {
   const belowFoldReady = epochsBaseList.length > 0 || epochsSettled
 
   return (
-    <Container
-      className={'HomePage'}
-      maxW={'container.maxPageW'}
-      color={'white'}
-      px={{ base: 2, md: 3 }}
-      py={0}
-      mt={gap}
-      mb={gap}
-    >
-      <Flex direction={'column'} gap={gap}>
+    <div className={'HomePage'}>
         <HomeHero
           status={statusQuery.data ?? {}}
           loading={statusQuery.isLoading}
@@ -267,10 +254,8 @@ function Home() {
           avgBlockTimeSec={computeAvgBlockTime(blocksQuery.data?.resultSet)}
         />
 
-        <Box
+        <section
           className={'InfoBlock InfoBlock--NoBorder HomeOverview'}
-          w={'100%'}
-          as={'section'}
           aria-label={'Network overview'}
         >
           <div className={'HomeOverview__Grid'}>
@@ -297,12 +282,11 @@ function Home() {
               />
             </div>
           </div>
-        </Box>
+        </section>
 
-        <Box
+        <section
           id={'home-epochs'}
           className={'InfoBlock InfoBlock--NoBorder HomeEpochs'}
-          w={'100%'}
           tabIndex={-1}
         >
           <EpochsOverview
@@ -313,7 +297,7 @@ function Home() {
             loading={epochsLoading}
             slotNumbers={epochNumbers}
           />
-        </Box>
+        </section>
 
         <div className={'HomeCardPair HomeCardPair--metrics'}>
           <div className={'HomeCardPair__Cell'}>
@@ -370,8 +354,7 @@ function Home() {
             />
           </div>
         </div>
-      </Flex>
-    </Container>
+    </div>
   )
 }
 

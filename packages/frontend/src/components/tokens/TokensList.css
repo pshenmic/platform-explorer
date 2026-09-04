@@ -1,5 +1,5 @@
 .TokensList__Pagination {
-  margin-top: 2rem !important;
+  margin-top: 2rem;
 }
 
 .TokensList__ScrollZone {
@@ -9,18 +9,25 @@
 
 @media screen and (max-width: 48em) {
   .TokensList__Pagination {
-    margin-top: 1.5rem !important;
+    margin-top: 1.5rem;
   }
 }
 
 @media screen and (max-width: 30em) {
   .TokensList__Pagination {
-    margin-top: 1rem !important;
+    margin-top: 1rem;
   }
 }
 
 .TokensList {
   container-type: inline-size;
+}
+
+.TokensList__PriceFrom {
+  display: flex;
+  gap: 0.25rem;
+  font-size: 0.75rem;
+  font-weight: 500;
 }
 
 .TokensList__ColumnTitles {
@@ -37,10 +44,10 @@
 }
 
 .TokensList__ColumnTitles--Light {
-  background: transparent !important;
-  font-weight: 500 !important;
-  color: #fff !important;
-  text-transform: none !important;
+  background: transparent;
+  font-weight: 500;
+  color: #fff;
+  text-transform: none;
 }
 
 .TokensList__ColumnTitles {

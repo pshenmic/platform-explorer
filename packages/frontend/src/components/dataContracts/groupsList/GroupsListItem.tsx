@@ -2,7 +2,7 @@ import type { ComponentType, ReactNode } from 'react'
 import Link from 'next/link'
 import { Identifier as IdentifierJs, BigNumber as BigNumberJs } from '../../data'
 import ValueContainer from '../../ui/containers/ValueContainer'
-import { Grid, GridItem } from '@chakra-ui/react'
+
 import './GroupsListItem.css'
 
 // Untyped JS components — loose wrappers until data/* is migrated
@@ -27,8 +27,8 @@ interface GroupsListItemProps {
 function GroupsListItem({ member }: GroupsListItemProps) {
   return (
     <Link href={`/identity/${member.identifier}`} className={'GroupsListItem'}>
-      <Grid className={'GroupsListItem__Content'}>
-        <GridItem className={'GroupsListItem__Column GroupsListItem__Column--Identifier'}>
+      <div className={'GroupsListItem__Content'}>
+        <div className={'GroupsListItem__Column GroupsListItem__Column--Identifier'}>
           <Identifier
             avatar={true}
             ellipsis={true}
@@ -37,14 +37,14 @@ function GroupsListItem({ member }: GroupsListItemProps) {
           >
             {member.identifier}
           </Identifier>
-        </GridItem>
+        </div>
 
-        <GridItem className={'GroupsListItem__Column GroupsListItem__Column--Power'}>
+        <div className={'GroupsListItem__Column GroupsListItem__Column--Power'}>
           <ValueContainer colorScheme={'darkGray'} size={'xs'}>
             <BigNumber>{member.power}</BigNumber>
           </ValueContainer>
-        </GridItem>
-      </Grid>
+        </div>
+      </div>
     </Link>
   )
 }

@@ -1,16 +1,15 @@
 import { useOutsideClick } from '../../../hooks/useOutsideClick'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import type { ReactNode } from 'react'
-import { Box, Drawer, DrawerBody, DrawerHeader, DrawerOverlay, Text } from '@chakra-ui/react'
 import { useSpring, animated } from 'react-spring'
 import type { ComponentType, CSSProperties, ReactNode as RN } from 'react'
 
-// react-spring + React 19: AnimatedProps omit children; loosen for host elements
 const AnimatedDiv = animated.div as unknown as ComponentType<{
   children?: RN
   ref?: React.Ref<HTMLDivElement>
   className?: string
   style?: CSSProperties
+  onClick?: (e: React.MouseEvent) => void
 }>
 import { useDrag } from '@use-gesture/react'
 import { useWindowSize } from '../../../hooks'
@@ -56,6 +55,7 @@ export const BottomSheet = ({
 
   useOutsideClick({
     ref: drawerRef,
+    enabled: isOpen,
     handler: () => isOpen && handleClose()
   })
 
@@ -101,9 +101,21 @@ export const BottomSheet = ({
     }
   )
 
+  if (!isOpen) return null
+
   return (
-    <Drawer isOpen={isOpen} placement={'bottom'} onClose={handleClose} size={'full'}>
-      <DrawerOverlay />
+    <>
+      <div
+        className={'BottomSheet__Overlay'}
+        style={{
+          position: 'fixed',
+          inset: 0,
+          background: 'rgba(0, 0, 0, 0.45)',
+          zIndex: 1390
+        }}
+        onClick={handleClose}
+        aria-hidden
+      />
       <AnimatedDiv
         ref={drawerRef}
         className={'BottomSheet'}
@@ -118,7 +130,7 @@ export const BottomSheet = ({
           transition: 'height 0.2s ease-out'
         }}
       >
-        <Box
+        <div
           style={{
             height: '100%',
             display: 'flex',
@@ -126,19 +138,17 @@ export const BottomSheet = ({
           }}
           className={'BottomSheet__ContentContainer'}
         >
-          <DrawerHeader {...bind()} className={'BottomSheet__DragHandle'}>
+          <div {...bind()} className={'BottomSheet__DragHandle'}>
             <div className={'BottomSheet__DragHandleLine'} />
-          </DrawerHeader>
+          </div>
 
-          {title && <Text className={'BottomSheet__Title'}>{title}</Text>}
+          {title ? <div className={'BottomSheet__Title'}>{title}</div> : null}
 
-          <DrawerBody className={'BottomSheet__Body'}>
-            <Box flex="1" minHeight="0">
-              {children}
-            </Box>
-          </DrawerBody>
-        </Box>
+          <div className={'BottomSheet__Body'}>
+            <div style={{ flex: 1, minHeight: 0 }}>{children}</div>
+          </div>
+        </div>
       </AnimatedDiv>
-    </Drawer>
+    </>
   )
 }

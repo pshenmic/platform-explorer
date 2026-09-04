@@ -5,6 +5,9 @@
 }
 
 .PageTitle__Title {
+  margin: 0;
+  font-size: var(--pe-text-xl);
+  line-height: var(--pe-leading-tight);
   font-style: italic;
   font-weight: var(--pe-font-weight-extrabold);
   white-space: nowrap;
@@ -17,12 +20,24 @@
   flex-shrink: 0;
   width: var(--pe-space-5);
   height: var(--pe-space-5);
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: inherit;
+  overflow: hidden;
   border-radius: 50%;
   opacity: 0.55;
   transition:
     opacity var(--pe-transition-def) ease,
     transform var(--pe-transition-def) ease;
   cursor: pointer;
+}
+
+.PageTitle__InfoButton svg {
+  width: 16px;
+  height: 16px;
+  max-width: 16px;
+  max-height: 16px;
 }
 
 .PageTitle__InfoButton:hover {

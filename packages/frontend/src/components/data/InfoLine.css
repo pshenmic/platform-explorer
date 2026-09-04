@@ -33,7 +33,7 @@
   overflow: hidden;
   position: relative;
   min-height: 18px;
-  width: 200px !important;
+  width: 200px;
   max-width: 100%;
 }
 

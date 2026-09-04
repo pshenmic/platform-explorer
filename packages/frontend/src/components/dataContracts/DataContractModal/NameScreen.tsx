@@ -1,4 +1,3 @@
-import { Divider, Input, FormControl } from '@chakra-ui/react'
 import { useState } from 'react'
 import type { FormEvent } from 'react'
 import { cva } from 'class-variance-authority'
@@ -49,23 +48,22 @@ export const NameScreen = ({ onChangeName, setMode, defaultName }: NameScreenPro
 
   return (
     <div className={styles.root}>
-      <div className={styles.divider}>
-        <Divider />
-      </div>
+      <div className={styles.divider} />
       <form className={styles.form} id="data-contract-name-form" onSubmit={handleSubmit}>
         <div className={styles.field}>
           <label className={styles.label} htmlFor="data-contract-name">
             Data Contract Name:
           </label>
-          <FormControl className={styles.input} isInvalid={!!error}>
-            <Input
+          <div className={styles.input}>
+            <input
+              className={`${styles.control}${error ? ` ${styles.controlInvalid}` : ''}`}
               placeholder="Enter Name..."
               id="data-contract-name"
               value={form.name}
               onChange={e => handleNameChange(e.target.value)}
               onBlur={() => setError(validateName(form.name))}
             />
-          </FormControl>
+          </div>
 
           <div className={styles.errorSlot}>
             {error && <span className={styles.errorText}>{error}</span>}

@@ -1,4 +1,3 @@
-import { Input } from '@chakra-ui/react'
 import type { ChangeEvent } from 'react'
 import { SubmitButton } from '../ui/forms'
 import FilterActions from './FilterActions'
@@ -30,10 +29,10 @@ export const RangeFilter = ({
 }: RangeFilterProps) => (
   <div className={'RangeFilter'}>
     <div className={'RangeFilter__InputContainer'}>
-      <span className={'RangeFilter__InputTitle'} color="gray.600">
+      <span className={'RangeFilter__InputTitle'}>
         {minTitle}
       </span>
-      <Input
+      <input
         className={'RangeFilter__Input'}
         type={type}
         value={value.min || ''}
@@ -47,10 +46,10 @@ export const RangeFilter = ({
       />
     </div>
     <div className={'RangeFilter__InputContainer'}>
-      <span className={'RangeFilter__InputTitle'} color="gray.600">
+      <span className={'RangeFilter__InputTitle'}>
         {maxTitle}
       </span>
-      <Input
+      <input
         className={'RangeFilter__Input'}
         type={type}
         value={value.max || ''}

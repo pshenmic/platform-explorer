@@ -1,6 +1,5 @@
 'use client'
 
-import { Progress } from '@chakra-ui/react'
 import { useEffect, useMemo, useState } from 'react'
 import { getTimeDelta } from '../../util'
 import './TimeRemaining.css'
@@ -33,7 +32,11 @@ function TimeRemaining({ startTime, endTime, displayProgress = true }: TimeRemai
 
   return (
     <div className={'TimeRemaining'}>
-      {displayProgress && <Progress value={progress} height={'1px'} />}
+      {displayProgress && (
+        <div className={'TimeRemaining__Bar Progress Progress--blue'}>
+          <div className={'Progress__Fill'} style={{ width: `${progress}%` }} />
+        </div>
+      )}
       <div className={'TimeRemaining__TimeLeft'}>{timeLeft}</div>
     </div>
   )

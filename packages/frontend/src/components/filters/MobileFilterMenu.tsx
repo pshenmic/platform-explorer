@@ -1,10 +1,10 @@
 import { useState, useEffect, useCallback } from 'react'
-import { Box, Button, Flex, Fade } from '@chakra-ui/react'
 import { ChevronIcon } from '../ui/icons'
 import { FilterValueTag } from './FilterValueTag'
 import { SubmitButton } from '../ui/forms'
 import type { FilterMenuItem } from './types'
 import './MobileFilterMenu.css'
+import './Filters.css'
 
 interface MobileFilterMenuProps {
   menuData?: FilterMenuItem[]
@@ -42,19 +42,18 @@ export const MobileFilterMenu = ({ menuData = [], onSubmit, onReset }: MobileFil
   return (
     <div className={'MobileFilterMenu'}>
       {renderList && (
-        <Fade className={'MobileFilterMenu__Content'} in={!activeItem} unmountOnExit>
+        <div className={'MobileFilterMenu__Content'}>
           <div className={'MobileFilterMenu__Header'}>
             <div className={'MobileFilterMenu__Title'}>Add Filters</div>
 
             {hasActiveFilters && (
-              <Button
-                className={'MobileFilterMenu__ClearButton'}
-                variant={'gray'}
-                size={'sm'}
+              <button
+                type={'button'}
+                className={'MobileFilterMenu__ClearButton Filters__Button Filters__Button--Gray'}
                 onClick={onReset}
               >
                 Clear
-              </Button>
+              </button>
             )}
           </div>
 
@@ -65,13 +64,13 @@ export const MobileFilterMenu = ({ menuData = [], onSubmit, onReset }: MobileFil
                 onClick={() => selectMenuItem(item)}
                 key={index}
               >
-                <Flex justifyContent={'space-between'} alignItems={'center'}>
+                <div className={'MobileFilterMenu__ItemRow'}>
                   <span className={'MobileFilterMenu__ItemTitle'}>{item.label}</span>
 
                   <div className={'MobileFilterMenu__ItemIcon'}>
                     <ChevronIcon />
                   </div>
-                </Flex>
+                </div>
 
                 {item.activeFilterValue && (
                   <FilterValueTag
@@ -89,23 +88,23 @@ export const MobileFilterMenu = ({ menuData = [], onSubmit, onReset }: MobileFil
           <SubmitButton className={'MobileFilterMenu__SubmitButton'} onClick={onSubmit}>
             Close
           </SubmitButton>
-        </Fade>
+        </div>
       )}
 
       {renderDetails && currentActiveItem && (
-        <Fade className={'MobileFilterMenu__Content'} in={!!currentActiveItem} unmountOnExit>
+        <div className={'MobileFilterMenu__Content'}>
           <div className={'MobileFilterMenu__Header'}>
-            <Flex className={'MobileFilterMenu__BackButton'} onClick={goToMainMenu}>
-              <ChevronIcon transform={'rotate(180deg)'} />
-            </Flex>
+            <div className={'MobileFilterMenu__BackButton'} onClick={goToMainMenu}>
+              <ChevronIcon style={{ transform: 'rotate(180deg)' }} />
+            </div>
 
             <div className={'MobileFilterMenu__Title'}>{currentActiveItem.title}</div>
           </div>
 
-          <Box className={'MobileFilterMenu__DetailView'}>
-            <Box className={'MobileFilterMenu__Content'}>{currentActiveItem.content}</Box>
-          </Box>
-        </Fade>
+          <div className={'MobileFilterMenu__DetailView'}>
+            <div className={'MobileFilterMenu__Content'}>{currentActiveItem.content}</div>
+          </div>
+        </div>
       )}
     </div>
   )

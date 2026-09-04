@@ -6,6 +6,33 @@
 
 .HomePage {
   --home-chart-row: 26rem;
+  --home-page-gap: var(--pe-space-3);
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 1920px;
+  margin-inline: auto;
+  margin-block: var(--home-page-gap);
+  padding-inline: var(--pe-space-2);
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  gap: var(--home-page-gap);
+}
+@media screen and (min-width: 30em) {
+  .HomePage {
+    --home-page-gap: var(--pe-space-4);
+  }
+}
+@media screen and (min-width: 48em) {
+  .HomePage {
+    --home-page-gap: var(--pe-space-5);
+    padding-inline: var(--pe-space-3);
+  }
+}
+@media screen and (min-width: 80em) {
+  .HomePage {
+    --home-page-gap: var(--pe-space-10);
+  }
 }
 
 .HomeCardPair {
@@ -251,14 +278,14 @@
 
 .HomeEpochs {
   border-radius: var(--pe-radius-block);
-  padding: 20px 0 0 !important;
+  padding: 20px 0 0;
   overflow-x: hidden;
   outline: none;
   scroll-margin-top: 1.25rem;
 }
 @media screen and (max-width: 48em) {
   .HomeEpochs {
-    padding: 16px 0 0 !important;
+    padding: 16px 0 0;
   }
 }
 
@@ -370,8 +397,8 @@
 .EpochsOverview__NextIcon {
   flex-shrink: 0;
   opacity: 0.9;
-  width: 1.125rem !important;
-  height: 1.125rem !important;
+  width: 1.125rem;
+  height: 1.125rem;
 }
 
 .EpochsOverview__NextWhen {
@@ -411,8 +438,8 @@
   }
 
   .EpochsOverview__NextIcon {
-    width: 0.75rem !important;
-    height: 0.75rem !important;
+    width: 0.75rem;
+    height: 0.75rem;
   }
 
   .EpochsOverview__NextWhen {

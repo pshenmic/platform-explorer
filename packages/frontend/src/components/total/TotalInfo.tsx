@@ -1,6 +1,5 @@
 import './TotalInfo.css'
 import './TotalInfoItem.css'
-import { Container, Flex } from '@chakra-ui/react'
 import Link from 'next/link'
 import type { ReactNode } from 'react'
 
@@ -28,14 +27,8 @@ export default function TotalInfo({
   }
 
   return (
-    <Container
-      className={`TotalInfo ${event ? eventClasses[event] || '' : ''}`}
-      maxW={'none'}
-      borderColor={'gray.800'}
-      p={0}
-      m={0}
-    >
-      <Flex className={'TotalInfo__ContentContainer'} justify={'space-between'} wrap={'wrap'}>
+    <div className={`TotalInfo ${event ? eventClasses[event] || '' : ''}`}>
+      <div className={'TotalInfo__ContentContainer'}>
         <Link
           href={'/blocks/'}
           className={
@@ -94,7 +87,7 @@ export default function TotalInfo({
           </div>
           <div className={'TotalInfoItem__Title'}>Identities</div>
         </Link>
-      </Flex>
-    </Container>
+      </div>
+    </div>
   )
 }

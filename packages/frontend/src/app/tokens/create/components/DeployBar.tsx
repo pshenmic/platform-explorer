@@ -1,7 +1,6 @@
 'use client'
 
 import { useState } from 'react'
-import { Button, Stack, Box, Text, Link } from '@chakra-ui/react'
 import { MethodSelect, PrivateKeyForm } from 'src/components/signing'
 import { CardWrapper } from '../../../dataContract/create/components/CardWrapper'
 import { useSigner, SignerMethod } from '../../../dataContract/create/useSigner'
@@ -11,6 +10,7 @@ import { useCreateToken } from '../useCreateToken'
 import type { UseCreateTokenReturn } from '../useCreateToken'
 import { validateForm } from '../validation'
 import ReviewModal from './ReviewModal'
+import '../CreateTokenPage.css'
 
 type SignerCtl = ReturnType<typeof useSigner>
 
@@ -20,52 +20,26 @@ interface DeployStatusProps {
 }
 
 const DeployStatus = ({ signer, deploy }: DeployStatusProps) => {
-  if (deploy.error != null)
-    return (
-      <Text color="red.500" fontSize="sm">
-        {deploy.error}
-      </Text>
-    )
-  if (signer.error != null)
-    return (
-      <Text color="red.500" fontSize="sm">
-        {signer.error}
-      </Text>
-    )
+  if (deploy.error != null) return <p className="DeployBar__Msg DeployBar__Msg--error">{deploy.error}</p>
+  if (signer.error != null) return <p className="DeployBar__Msg DeployBar__Msg--error">{signer.error}</p>
   if (deploy.result != null) {
     return (
-      <Text color="green.500" fontSize="sm">
+      <p className="DeployBar__Msg DeployBar__Msg--ok">
         ✓ Token deployed:{' '}
-        <Link
-          href={`/dataContract/${deploy.result.dataContractId}`}
-          color="green.500"
-          textDecoration="underline"
-        >
+        <a href={`/dataContract/${deploy.result.dataContractId}`}>
           {deploy.result.dataContractId}
-        </Link>{' '}
+        </a>{' '}
         · {deploy.result.tokenId}
-      </Text>
+      </p>
     )
   }
   if (signer.isConnected) {
     const connected = signer.signer as Signer
-    return (
-      <Text color="gray.500" fontSize="sm">
-        Signing as: {connected.identityId}
-      </Text>
-    )
+    return <p className="DeployBar__Msg">Signing as: {connected.identityId}</p>
   }
   if (signer.method === SignerMethod.PRIVATE_KEY)
-    return (
-      <Text color="gray.500" fontSize="sm">
-        Enter your private key from your Identity
-      </Text>
-    )
-  return (
-    <Text color="gray.500" fontSize="sm">
-      Connect a wallet to deploy
-    </Text>
-  )
+    return <p className="DeployBar__Msg">Enter your private key from your Identity</p>
+  return <p className="DeployBar__Msg">Connect a wallet to deploy</p>
 }
 
 function DeployBar() {
@@ -94,7 +68,6 @@ function DeployBar() {
       else signerCtl.connect()
       return
     }
-    // Surface errors only on a deploy attempt — no nagging on the empty form.
     if (errors.length) {
       setShowErrors(true)
       return
@@ -114,12 +87,11 @@ function DeployBar() {
   else if (deploy.isLoading) label = 'Deploying...'
   else label = 'Deploy Token'
 
-  // Stays clickable when connected so a click can reveal validation errors.
   const isDisabled = isBusy || (!isConnected && isPK && !wif.trim())
 
   return (
     <CardWrapper title="Deploy">
-      <Stack spacing={3}>
+      <div className="DeployBar">
         <MethodSelect
           value={signerCtl.method}
           onChange={signerCtl.setMethod}
@@ -134,30 +106,28 @@ function DeployBar() {
             isInactive={isBusy}
           />
         )}
-        <Box minH="20px">
+        <div className="DeployBar__Status">
           <DeployStatus signer={signerCtl} deploy={deploy} />
-        </Box>
+        </div>
         {showErrors && errors.length > 0 && !deploy.result && (
-          <Stack spacing={1} as="ul" pl={4} sx={{ listStyle: 'disc' }}>
+          <ul className="DeployBar__Errors">
             {errors.map((msg, i) => (
-              <Text as="li" key={i} color="red.500" fontSize="sm">
+              <li key={i} className="DeployBar__Msg DeployBar__Msg--error">
                 {msg}
-              </Text>
+              </li>
             ))}
-          </Stack>
+          </ul>
         )}
-        <Button
-          variant="blue"
-          size="sm"
-          minW="160px"
-          alignSelf="flex-start"
+        <button
+          type="button"
+          className="DeployBar__Btn"
           onClick={handlePrimary}
-          isLoading={isBusy}
-          isDisabled={isDisabled}
+          disabled={isDisabled}
+          aria-busy={isBusy}
         >
           {label}
-        </Button>
-      </Stack>
+        </button>
+      </div>
 
       <ReviewModal
         isOpen={isReviewOpen}

@@ -12,10 +12,10 @@
 }
 
 .ValidatorsList__ColumnTitles--Light {
-  background: transparent !important;
-  font-weight: var(--pe-font-weight-medium) !important;
-  color: var(--pe-color-fg) !important;
-  text-transform: none !important;
+  background: transparent;
+  font-weight: var(--pe-font-weight-medium);
+  color: var(--pe-color-fg);
+  text-transform: none;
 }
 
 .ValidatorsList__ColumnTitles {

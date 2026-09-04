@@ -27,8 +27,19 @@
   align-items: flex-start;
 }
 
-.DocumentTransitionCard__InfoLine--Data code {
+.DocumentTransitionCard__InfoLine--Data code,
+.DocumentTransitionCard__Code {
   max-width: 100%;
+}
+
+.DocumentTransitionCard__Code {
+  margin: 0;
+  border-radius: var(--pe-radius-lg, 0.5rem);
+  padding: 1rem 1.25rem;
+  overflow: auto;
+  font-family: var(--pe-font-mono);
+  font-size: var(--pe-text-sm);
+  background: var(--pe-color-gray-900);
 }
 
 @container (max-width: 600px) {
@@ -37,7 +48,8 @@
     flex-wrap: wrap;
   }
 
-  .DocumentTransitionCard__InfoLine--Data code {
+  .DocumentTransitionCard__InfoLine--Data code,
+  .DocumentTransitionCard__Code {
     width: 100%;
     margin: 0;
   }
@@ -66,13 +78,13 @@
   .DocumentTransitionCard__InfoLine--Revision .InfoLine__Value,
   .DocumentTransitionCard__InfoLine--Action .InfoLine__Title,
   .DocumentTransitionCard__InfoLine--Action .InfoLine__Value {
-    width: max-content !important;
+    width: max-content;
   }
 
   .DocumentTransitionCard__InfoLine--Revision .InfoLine__Value,
   .DocumentTransitionCard__InfoLine--Action .InfoLine__Value {
     width: max-content;
-    text-align: right !important;
+    text-align: right;
   }
 
   .DocumentTransitionCard__InfoLine {

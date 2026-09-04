@@ -1,5 +1,5 @@
 a.Endpoint:hover {
-  color: var(--pe-color-brand-light) !important;
+  color: var(--pe-color-brand-light);
 }
 
 a.Endpoint .Endpoint__Value {

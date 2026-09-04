@@ -4,6 +4,20 @@
   gap: var(--pe-space-1);
 }
 
+.TimeRemaining__Bar {
+  height: 1px;
+}
+
+.Progress--blue {
+  overflow: hidden;
+  background: rgba(var(--pe-color-brand-normal-rgb), 0.3);
+}
+
+.Progress--blue .Progress__Fill {
+  height: 100%;
+  background: var(--pe-color-brand-normal);
+}
+
 .TimeRemaining__TimeLeft {
   font-family: var(--pe-font-mono);
   font-weight: var(--pe-font-weight-normal);

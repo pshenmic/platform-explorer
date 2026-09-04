@@ -1,7 +1,6 @@
 import type { ComponentType, ReactNode } from 'react'
 import type { Transaction } from '../../../types'
 import type { WithClassName } from '../../../types/common'
-import { Flex } from '@chakra-ui/react'
 // Untyped JS components — loose wrappers until data/* / transactions/* are migrated
 import { Identifier as IdentifierJs, TimeDelta as TimeDeltaJs } from '../../data'
 import { TransactionsIcon } from '../../ui/icons'
@@ -44,12 +43,12 @@ export function TransactionSearchItem({
     >
       <BaseSearchItemContent
         mainContent={
-          <Flex alignItems={'center'} w={'100%'}>
+          <div className={'SearchResultsListItem__IdentifierContainer'}>
             <TransactionsIcon className={'SearchResultsListItem__Icon'} />
             <Identifier ellipsis={true} styles={['highlight-both']}>
               {transaction?.hash}
             </Identifier>
-          </Flex>
+          </div>
         }
         additionalContent={<TransactionStatusBadge status={transaction?.status} />}
         timestamp={<TimeDelta endDate={transaction?.timestamp} />}

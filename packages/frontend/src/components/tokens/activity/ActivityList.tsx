@@ -3,7 +3,7 @@ import Link from 'next/link'
 import ActivityListItem from './ActivityListItem'
 import type { TokenActivity } from './ActivityListItem'
 import { EmptyListMessage } from '../../ui/lists'
-import { Grid, GridItem, useBreakpointValue } from '@chakra-ui/react'
+import { useBreakpointKey } from '../../../hooks'
 import { LoadingList as LoadingListJs } from '../../loading'
 import PaginationJs from '../../pagination'
 import { ErrorMessageBlock } from '../../Errors'
@@ -48,7 +48,8 @@ export default function ActivityList({
   itemsCount = 10,
   decimals
 }: ActivityListProps) {
-  const isLargeScreen = useBreakpointValue({ base: true, lg: false })
+  const breakpoint = useBreakpointKey()
+  const isLargeScreen = breakpoint === 'base' || breakpoint === 'sm' || breakpoint === 'md'
   const headerExtraClass: Record<HeaderStyles, string> = {
     default: '',
     light: 'ActivityList__ColumnTitles--Light'
@@ -57,26 +58,26 @@ export default function ActivityList({
   return (
     <div className={'ActivityList'}>
       <div className={'ActivityList__ScrollZone'}>
-        <Grid className={`ActivityList__ColumnTitles ${headerExtraClass[headerStyles] || ''}`}>
-          <GridItem className={'ActivityList__ColumnTitle ActivityList__ColumnTitle--Timestamp'}>
+        <div className={`ActivityList__ColumnTitles ${headerExtraClass[headerStyles] || ''}`}>
+          <div className={'ActivityList__ColumnTitle ActivityList__ColumnTitle--Timestamp'}>
             Time
-          </GridItem>
-          <GridItem className={'ActivityList__ColumnTitle ActivityList__ColumnTitle--Hash'}>
+          </div>
+          <div className={'ActivityList__ColumnTitle ActivityList__ColumnTitle--Hash'}>
             Hash
-          </GridItem>
-          <GridItem className={'ActivityList__ColumnTitle ActivityList__ColumnTitle--Creator'}>
+          </div>
+          <div className={'ActivityList__ColumnTitle ActivityList__ColumnTitle--Creator'}>
             Owner
-          </GridItem>
-          <GridItem className={'ActivityList__ColumnTitle ActivityList__ColumnTitle--Recipient'}>
+          </div>
+          <div className={'ActivityList__ColumnTitle ActivityList__ColumnTitle--Recipient'}>
             Recipient
-          </GridItem>
-          <GridItem className={'ActivityList__ColumnTitle ActivityList__ColumnTitle--Amount'}>
+          </div>
+          <div className={'ActivityList__ColumnTitle ActivityList__ColumnTitle--Amount'}>
             Amount {!isLargeScreen && <>Tokens</>}
-          </GridItem>
-          <GridItem className={'ActivityList__ColumnTitle ActivityList__ColumnTitle--Type'}>
+          </div>
+          <div className={'ActivityList__ColumnTitle ActivityList__ColumnTitle--Type'}>
             Type
-          </GridItem>
-        </Grid>
+          </div>
+        </div>
 
         {!loading ? (
           <div className={'ActivityList__Items'}>

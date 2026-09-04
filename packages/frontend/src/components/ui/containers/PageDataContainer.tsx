@@ -1,5 +1,4 @@
 import type { ReactNode } from 'react'
-import { Container } from '@chakra-ui/react'
 import { ChevronIcon2 } from '../icons'
 import BackButton from '../Buttons/BackButton'
 import type { WithChildren, WithClassName } from '../../../types/common'
@@ -17,14 +16,8 @@ function PageDataContainer({
   isChevronHidden = false
 }: PageDataContainerProps) {
   return (
-    <Container
-      className={`PageDataContainer ${className || ''}`}
-      maxW={'none'}
-      m={0}
-      py={[4, 4, 4, 5]}
-      mt={0}
-    >
-      <Container maxW={'container.maxPageW'} px={[0]} py={0}>
+    <div className={`PageDataContainer ${className || ''}`}>
+      <div className={'PageDataContainer__Inner'}>
         <div className={'PageDataContainer__Header'}>
           {!isChevronHidden && (
             <BackButton className={'PageDataContainer__BackLink'}>
@@ -37,8 +30,8 @@ function PageDataContainer({
         <div className={'PageDataContainer__ContentContainer'}>
           <div className={'PageDataContainer__Content'}>{children}</div>
         </div>
-      </Container>
-    </Container>
+      </div>
+    </div>
   )
 }
 

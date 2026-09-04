@@ -12,7 +12,6 @@ import {
 } from '../data'
 import { HorisontalSeparator } from '../ui/separators'
 import { SmoothSize, ValueContainer } from '../ui/containers'
-import { Button, Flex } from '@chakra-ui/react'
 import { ChevronIcon } from '../ui/icons'
 import { findActiveAlias, getTokenName, getMinTokenPrice } from '../../util'
 import TokenDigestCard from './TokenDigestCard'
@@ -197,23 +196,24 @@ function TokenTotalCard({ token, rate, loading }: TokenTotalCardProps) {
                 price != null ? (
                   <CreditsBlock credits={price} rate={rate} />
                 ) : prices && prices?.length > 0 ? (
-                  <Button
-                    className={'TokenTotalCard__PriceShowButton'}
-                    size={'sm'}
-                    variant={showPrices ? 'gray' : 'blue'}
+                  <button
+                    type={'button'}
+                    className={`TokenTotalCard__PriceShowButton TokenTotalCard__ToggleButton TokenTotalCard__ToggleButton--${showPrices ? 'Gray' : 'Blue'}`}
                     onClick={() => setShowPrices(prev => !prev)}
                   >
-                    <Flex gap={'0.5rem'}>
-                      <div>From</div>
+                    <span className={'TokenTotalCard__PriceFrom'}>
+                      <span>From</span>
                       <BigNumber>{minPrice}</BigNumber>
-                    </Flex>
+                    </span>
                     <ChevronIcon
-                      ml={'4px'}
-                      h={'10px'}
-                      w={'10px'}
-                      transform={`rotate(${showPrices ? '-90deg' : '90deg'})`}
+                      style={{
+                        marginLeft: '4px',
+                        height: '10px',
+                        width: '10px',
+                        transform: `rotate(${showPrices ? '-90deg' : '90deg'})`
+                      }}
                     />
-                  </Button>
+                  </button>
                 ) : (
                   <ValueContainer size={'md'} className={'TokenTotalCard__ZeroListBadge'}>
                     none
@@ -301,20 +301,21 @@ function TokenTotalCard({ token, rate, loading }: TokenTotalCardProps) {
               title={'Localisation'}
               value={
                 localizationsCount > 0 ? (
-                  <Button
-                    className={'TokenTotalCard__LocalisationShowButton'}
-                    size={'sm'}
-                    variant={showLocalisations && localizationsCount > 0 ? 'gray' : 'blue'}
+                  <button
+                    type={'button'}
+                    className={`TokenTotalCard__LocalisationShowButton TokenTotalCard__ToggleButton TokenTotalCard__ToggleButton--${showLocalisations && localizationsCount > 0 ? 'Gray' : 'Blue'}`}
                     onClick={() => setShowLocalisations(prev => !prev)}
                   >
                     {localizationsCount} translations
                     <ChevronIcon
-                      ml={'4px'}
-                      h={'10px'}
-                      w={'10px'}
-                      transform={`rotate(${showLocalisations ? '-90deg' : '90deg'})`}
+                      style={{
+                        marginLeft: '4px',
+                        height: '10px',
+                        width: '10px',
+                        transform: `rotate(${showLocalisations ? '-90deg' : '90deg'})`
+                      }}
                     />
-                  </Button>
+                  </button>
                 ) : (
                   <ValueContainer className={'TokenTotalCard__ZeroListBadge'}>none</ValueContainer>
                 )

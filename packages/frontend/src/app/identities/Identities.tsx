@@ -16,7 +16,7 @@ import NetworkStatsInline from '../../components/stats/NetworkStatsInline'
 import type { Identity, LoadableState, PaginatedResultSet } from '../../types'
 import introContent from './introContent'
 
-import { Container, Box, FormControl, FormLabel, Switch } from '@chakra-ui/react'
+import './IdentitiesPage.css'
 
 const paginateConfig = {
   pageSize: {
@@ -113,8 +113,8 @@ function Identities({ defaultPage = 1, defaultPageSize, defaultShowAll = false }
   }
 
   return (
-    <Container maxW={'container.maxPageW'} mt={8} className={'IdentitiesPage'}>
-      <Container maxW={'container.maxPageW'} className={'InfoBlock'}>
+    <div className={'ListPage IdentitiesPage'}>
+      <div className={'InfoBlock'}>
         <div className={'IdentitiesPage__Controls'}>
           <PageTitle
             title={'Identities'}
@@ -133,23 +133,15 @@ function Identities({ defaultPage = 1, defaultPageSize, defaultShowAll = false }
             ]}
           />
 
-          <FormControl
-            display={'flex'}
-            alignItems={'center'}
-            width={'auto'}
-            className={'IdentitiesPage__ShowAll'}
-          >
-            <FormLabel
-              htmlFor={'show-all-identities'}
-              mb={0}
-              mr={2}
-              fontSize={'sm'}
-              fontWeight={'normal'}
-            >
-              Show all (incl. masternode)
-            </FormLabel>
-            <Switch id={'show-all-identities'} isChecked={showAll} onChange={handleShowAllChange} />
-          </FormControl>
+          <label className={'IdentitiesPage__ShowAll'} htmlFor={'show-all-identities'}>
+            <span>Show all (incl. masternode)</span>
+            <input
+              id={'show-all-identities'}
+              type={'checkbox'}
+              checked={showAll}
+              onChange={handleShowAllChange}
+            />
+          </label>
 
           <IdentitiesFilter
             initialFilters={filters}
@@ -179,12 +171,14 @@ function Identities({ defaultPage = 1, defaultPageSize, defaultShowAll = false }
             <LoadingList itemsCount={pageSize} />
           )
         ) : (
-          <ErrorMessageBlock h={20} />
+          <div className={'ListPage__Error'}>
+            <ErrorMessageBlock />
+          </div>
         )}
 
         {(identities.data?.resultSet?.length ?? 0) > 0 && (
           <div className={'ListNavigation'}>
-            <Box display={['none', 'none', 'block']} width={'155px'} />
+            <div className={'ListNavigation__Balance'} />
             <Pagination
               onPageChange={({ selected }) => setCurrentPage(selected)}
               pageCount={pageCount}
@@ -197,8 +191,8 @@ function Identities({ defaultPage = 1, defaultPageSize, defaultShowAll = false }
             />
           </div>
         )}
-      </Container>
-    </Container>
+      </div>
+    </div>
   )
 }
 

@@ -14,7 +14,6 @@ import {
 import ImageGenerator from '../imageGenerator'
 import { HorisontalSeparator } from '../ui/separators'
 import { SmoothSize, ValueContainer } from '../ui/containers'
-import { Button } from '@chakra-ui/react'
 import { ChevronIcon } from '../ui/icons'
 import { IdentityDigestCard } from './index'
 import { PublicKeysList } from '../publicKeys'
@@ -187,22 +186,23 @@ function IdentityTotalCard({ identity, rate }: IdentityTotalCardProps) {
               title={'Public Keys'}
               value={
                 identity.data?.publicKeys?.length ? (
-                  <Button
-                    className={'IdentityTotalCard__PublicKeysShowButton'}
-                    size={'sm'}
-                    variant={
-                      showPublicKeys && identity.data?.publicKeys?.length > 0 ? 'gray' : 'blue'
-                    }
+                  <button
+                    type={'button'}
+                    className={`IdentityTotalCard__PublicKeysShowButton IdentityTotalCard__ToggleButton IdentityTotalCard__ToggleButton--${
+                      showPublicKeys && identity.data?.publicKeys?.length > 0 ? 'Gray' : 'Blue'
+                    }`}
                     onClick={() => setShowPublicKeys(prev => !prev)}
                   >
                     {identity.data?.publicKeys?.length} public keys
                     <ChevronIcon
-                      ml={'4px'}
-                      h={'10px'}
-                      w={'10px'}
-                      transform={`rotate(${showPublicKeys ? '-90deg' : '90deg'})`}
+                      style={{
+                        marginLeft: '4px',
+                        height: '10px',
+                        width: '10px',
+                        transform: `rotate(${showPublicKeys ? '-90deg' : '90deg'})`
+                      }}
                     />
-                  </Button>
+                  </button>
                 ) : (
                   <ValueContainer className={'IdentityTotalCard__ZeroListBadge'}>
                     none

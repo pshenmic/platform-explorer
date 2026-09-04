@@ -1,6 +1,5 @@
 'use client'
 
-import { Box, Heading, Text } from '@chakra-ui/react'
 import { TimeDelta, BigNumber } from '../../components/data'
 import { useCountUp } from '../../components/home/hooks'
 import { HeroNodes, Skeleton } from '../../components/home'
@@ -69,7 +68,7 @@ export default function HomeHero({
   const badgeState = !ready ? 'is-loading' : live ? 'is-live' : 'is-down'
 
   return (
-    <Box className={'InfoBlock InfoBlock--NoBorder HomeHero'}>
+    <section className={'InfoBlock InfoBlock--NoBorder HomeHero'}>
       <div className={'HomeHero__Glow'} aria-hidden={'true'} />
       <div className={'HomeHero__BrandFx'} aria-hidden={'true'}>
         <span className={'HomeHero__BrandOrb HomeHero__BrandOrb--a'} />
@@ -78,31 +77,31 @@ export default function HomeHero({
       </div>
       <HeroNodes />
 
-      <Box className={'HomeHero__Inner'}>
+      <div className={'HomeHero__Inner'}>
         <div className={'HomeHero__Brand'}>
           <div className={'HomeHero__BrandCopy'}>
-            <Text className={'HomeHero__Welcome'}>Welcome to</Text>
-            <Heading as={'h1'} className={'HomeHero__Title'}>
+            <p className={'HomeHero__Welcome'}>Welcome to</p>
+            <h1 className={'HomeHero__Title'}>
               <span className={'HomeHero__TitleShine'}>Platform Explorer</span>
-            </Heading>
-            <Text className={'HomeHero__Tagline'}>
+            </h1>
+            <p className={'HomeHero__Tagline'}>
               The information resource about Dash Platform
-            </Text>
-            <Text className={'HomeHero__Description'}>
+            </p>
+            <p className={'HomeHero__Description'}>
               Your portal for real-time and historical data across the Dash blockchain — track and
               verify transactions, identities, contracts and documents with confidence.
-            </Text>
+            </p>
           </div>
         </div>
 
         <div className={`HomeHero__HeightRail ${loading ? 'HomeHero__HeightRail--Loading' : ''}`}>
           <div className={'HomeHero__Stat'}>
-            <Text className={'HomeHero__LiveLabel'}>
+            <p className={'HomeHero__LiveLabel'}>
               <span role={'status'} className={`HomeHero__LiveBadge ${badgeState}`}>
                 {ready && !live ? 'Offline' : 'Live'}
               </span>{' '}
               Block Height
-            </Text>
+            </p>
             <div className={'HomeHero__Height'}>
               {typeof heightCount === 'number' ? (
                 <BigNumber>{heightCount}</BigNumber>
@@ -112,7 +111,7 @@ export default function HomeHero({
                 <Skeleton w={'7ch'} h={'0.9em'} radius={4} />
               )}
             </div>
-            <Text className={'HomeHero__LiveMeta'}>
+            <p className={'HomeHero__LiveMeta'}>
               {ready ? (
                 <>
                   {typeof avgBlockTimeSec === 'number' ? `Avg ~${avgBlockTimeSec}s` : 'Live'}
@@ -126,11 +125,11 @@ export default function HomeHero({
               ) : (
                 <Skeleton w={'8ch'} h={'0.7em'} radius={4} />
               )}
-            </Text>
+            </p>
           </div>
 
           <div className={'HomeHero__Stat'} aria-busy={!epochReady}>
-            <Text className={'HomeHero__LiveLabel'}>Epoch</Text>
+            <p className={'HomeHero__LiveLabel'}>Epoch</p>
             <div className={'HomeHero__Height HomeHero__Height--epoch'}>
               {epochReady && typeof epochCount === 'number' ? (
                 <BigNumber>{epochCount}</BigNumber>
@@ -165,7 +164,7 @@ export default function HomeHero({
             )}
           </div>
         </div>
-      </Box>
-    </Box>
+      </div>
+    </section>
   )
 }

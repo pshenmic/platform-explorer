@@ -12,8 +12,7 @@ import {
 import BatchTypeBadge from '../transactions/BatchTypeBadge'
 import TokenEmergencyActionBadge from './TokenEmergencyActionBadge'
 import { PriceList } from './prices'
-import { Code, Badge, Flex } from '@chakra-ui/react'
-import { colors } from '../../styles/colors'
+
 import { getMinTokenPrice } from '../../util'
 import { FormattedNumber } from '../ui/FormattedNumber'
 import type { LoadableState, Rate, Token } from '../../types'
@@ -229,22 +228,12 @@ const TokenTransitionCard = ({ transition, rate, className }: TokenTransitionCar
           className={'TokenTransitionCard__InfoLine TokenTransitionCard__InfoLine--Amount'}
           title={'Amount'}
           value={
-            <Badge
-              bg={`rgba(${colors.green['emeralds-rgb']}, .2)`}
-              px={3}
-              py={2}
-              borderRadius={'0.5rem'}
-              display={'flex'}
-              alignItems={'baseline'}
-              gap={2}
-              maxWidth={'max-content'}
-              color={`${colors.green.emeralds}`}
-            >
+            <span className={'TokenTransitionCard__AmountBadge'}>
               <FormattedNumber decimals={token.data?.decimals ?? undefined}>
                 {transition?.amount || '0'}
               </FormattedNumber>
               <span>{transition?.tokenSymbol || 'TOKEN'}</span>
-            </Badge>
+            </span>
           }
           loading={token.loading}
           error={transition?.amount === undefined}
@@ -359,7 +348,7 @@ const TokenTransitionCard = ({ transition, rate, className }: TokenTransitionCar
               transition?.price != null ? (
                 <CreditsBlock credits={transition?.price} rate={rate} />
               ) : transition?.prices != null && transition?.prices?.length > 0 ? (
-                <Flex gap={'0.25rem'}>
+                <span className={'TokenTransitionCard__PriceFrom'}>
                   From{' '}
                   <BigNumber>
                     {getMinTokenPrice(
@@ -367,7 +356,7 @@ const TokenTransitionCard = ({ transition, rate, className }: TokenTransitionCar
                     )}
                   </BigNumber>{' '}
                   Credits
-                </Flex>
+                </span>
               ) : (
                 'none'
               )
@@ -399,9 +388,9 @@ const TokenTransitionCard = ({ transition, rate, className }: TokenTransitionCar
           className={'TokenTransitionCard__InfoLine TokenTransitionCard__InfoLine--Data'}
           title={'Data'}
           value={
-            <Code borderRadius={'lg'} px={5} py={4}>
+            <pre className={'TokenTransitionCard__Data'}>
               {JSON.stringify(transition?.data, null, 2)}
-            </Code>
+            </pre>
           }
         />
       )}

@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, useRef, useId, useMemo, type RefObject } from 'react'
-import { Box } from '@chakra-ui/react'
+
 import * as d3 from 'd3'
 import useResizeObserver from '@react-hook/resize-observer'
 import { Presets } from '../cards'
@@ -184,10 +184,8 @@ export default function IdentityGrowthChart({
       : ''
 
   return (
-    <Box
+    <section
       className={'InfoBlock InfoBlock--NoBorder IdentityGrowthChart'}
-      w={'100%'}
-      as={'section'}
       aria-label={'Identity growth'}
     >
       <header className={'IdentityGrowthChart__Head'}>
@@ -324,6 +322,6 @@ export default function IdentityGrowthChart({
           </svg>
         )}
       </div>
-    </Box>
+    </section>
   )
 }

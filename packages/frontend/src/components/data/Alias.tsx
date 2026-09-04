@@ -1,5 +1,5 @@
 import type { ReactElement, ReactNode } from 'react'
-import type { IconProps } from '@chakra-ui/react'
+import type { IconProps } from '../ui/icons/Icon'
 import type { WithChildren, WithClassName } from '../../types/common'
 import { Tooltip } from '../ui/Tooltips'
 import { ErrorIcon, QueuedIcon } from '../ui/icons'

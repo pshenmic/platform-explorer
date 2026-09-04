@@ -6,7 +6,6 @@ import { ErrorMessageBlock } from '../Errors'
 import { LoadingList } from '../loading'
 import { ChevronIcon } from '../ui/icons'
 import SmoothSize from '../ui/containers/SmoothSize'
-import { Grid, GridItem } from '@chakra-ui/react'
 import { useState } from 'react'
 import { createColumnHelper, getCoreRowModel, useReactTable } from '@tanstack/react-table'
 
@@ -79,42 +78,42 @@ function DataContractsList({
 
   return (
     <div className={'DataContractsList'}>
-      <Grid
+      <div
         className={`DataContractsList__ColumnTitles ${headerExtraClass?.[headerStyles ?? ''] || ''}`}
       >
-        <GridItem
+        <div
           className={'DataContractsList__ColumnTitle DataContractsList__ColumnTitle--Identifier'}
         >
           Identifier
-        </GridItem>
-        <GridItem
+        </div>
+        <div
           className={'DataContractsList__ColumnTitle DataContractsList__ColumnTitle--Owner'}
         >
           Owner
-        </GridItem>
-        <GridItem
+        </div>
+        <div
           className={'DataContractsList__ColumnTitle DataContractsList__ColumnTitle--System'}
         >
           System
-        </GridItem>
-        <GridItem
+        </div>
+        <div
           className={'DataContractsList__ColumnTitle DataContractsList__ColumnTitle--WithTokens'}
         >
           With tokens
-        </GridItem>
-        <GridItem
+        </div>
+        <div
           className={
             'DataContractsList__ColumnTitle DataContractsList__ColumnTitle--DocumentsCount'
           }
         >
           Documents
-        </GridItem>
-        <GridItem
+        </div>
+        <div
           className={'DataContractsList__ColumnTitle DataContractsList__ColumnTitle--Timestamp'}
         >
           Timestamp
-        </GridItem>
-      </Grid>
+        </div>
+      </div>
 
       {pinnedItems.length > 0 && (
         <div className={'DataContractsList__Group'}>

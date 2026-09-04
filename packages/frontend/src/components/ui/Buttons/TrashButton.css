@@ -1,0 +1,38 @@
+.TrashButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  cursor: pointer;
+  border-radius: 10px;
+  background-color: #f4585833;
+  color: inherit;
+}
+
+.TrashButton:hover {
+  background-color: #f45858;
+}
+
+.TrashButton--lg {
+  padding: 10px 20px;
+  width: 2.5rem;
+  height: 2.5rem;
+}
+
+.TrashButton--md {
+  padding: 7px 10px;
+  min-width: 2rem;
+  width: 2rem;
+  min-height: 1.5rem;
+  height: 1.5rem;
+}
+
+.TrashButton--lg .TrashButton__Icon {
+  width: 0.875rem;
+  height: 0.875rem;
+}
+
+.TrashButton--md .TrashButton__Icon {
+  width: 0.625rem;
+  height: 0.625rem;
+}

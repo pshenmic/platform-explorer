@@ -1,5 +1,5 @@
-import { Icon } from '@chakra-ui/react'
-import type { IconProps } from '@chakra-ui/react'
+import { Icon } from './Icon'
+import type { IconProps } from './Icon'
 
 const PlatformExplorerLogoColor = (props: IconProps) => {
   return (
