@@ -155,13 +155,15 @@ function DataContractsList({
         if (enteringKeys?.has(id)) return 'is-new is-insert'
         return ''
       }}
-      rowStyle={(item, i) => {
+      rowStyle={(item: DataContractsListItemData, i: number) => {
         const id = item?.identifier || ''
         const index = i ?? 0
         if (leavingKeys?.has(id)) {
-          return { '--stagger': `${Math.max(0, (leavingKeys.size - 1 - index) * 45)}ms` }
+          return { ['--stagger']: `${Math.max(0, (leavingKeys.size - 1 - index) * 45)}ms` }
         }
-        if (enteringKeys?.has(id)) return { '--stagger': `${index * 45}ms` }
+        if (enteringKeys?.has(id)) {
+          return { ['--stagger']: `${index * 45}ms` }
+        }
         return undefined
       }}
       headerVariant={headerStyles === 'light' ? 'light' : 'default'}
