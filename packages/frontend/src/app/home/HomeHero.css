@@ -5,8 +5,7 @@
   background: rgba(24, 31, 34, 0.2);
   box-shadow: 2px 2px var(--pe-color-brand-normal);
   position: relative;
-  overflow-x: clip;
-  overflow-y: visible;
+  overflow: visible;
   width: 100%;
   max-width: 100%;
   padding: 0;
@@ -18,6 +17,8 @@
   position: absolute;
   inset: 0;
   z-index: 0;
+  overflow: hidden;
+  border-radius: inherit;
   pointer-events: none;
   mask-image: linear-gradient(
     90deg,
