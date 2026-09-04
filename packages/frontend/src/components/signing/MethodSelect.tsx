@@ -1,5 +1,6 @@
-import { HStack, Radio, RadioGroup } from '@chakra-ui/react'
+import { useId } from 'react'
 import { SignerMethod } from 'src/hooks/useSigner'
+import styles from './signing.module.css'
 
 interface MethodSelectProps {
   value?: string
@@ -7,11 +8,32 @@ interface MethodSelectProps {
   isDisabled?: boolean
 }
 
-export const MethodSelect = ({ value, onChange, isDisabled }: MethodSelectProps) => (
-  <RadioGroup value={value} onChange={onChange} isDisabled={isDisabled}>
-    <HStack spacing={6} align="center">
-      <Radio value={SignerMethod.EXTENSION}>Extension</Radio>
-      <Radio value={SignerMethod.PRIVATE_KEY}>Private Key</Radio>
-    </HStack>
-  </RadioGroup>
-)
+export const MethodSelect = ({ value, onChange, isDisabled }: MethodSelectProps) => {
+  const name = useId()
+  return (
+    <div className={styles.radios} role="radiogroup">
+      <label className={styles.radio}>
+        <input
+          type="radio"
+          name={name}
+          value={SignerMethod.EXTENSION}
+          checked={value === SignerMethod.EXTENSION}
+          disabled={isDisabled}
+          onChange={() => onChange?.(SignerMethod.EXTENSION)}
+        />
+        Extension
+      </label>
+      <label className={styles.radio}>
+        <input
+          type="radio"
+          name={name}
+          value={SignerMethod.PRIVATE_KEY}
+          checked={value === SignerMethod.PRIVATE_KEY}
+          disabled={isDisabled}
+          onChange={() => onChange?.(SignerMethod.PRIVATE_KEY)}
+        />
+        Private Key
+      </label>
+    </div>
+  )
+}
