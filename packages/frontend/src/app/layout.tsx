@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react'
+import type { CSSProperties, ReactNode } from 'react'
 import type { Viewport } from 'next'
 import RootComponent from '../components/layout/RootComponent'
 import { Montserrat, Open_Sans as OpenSans, Roboto_Mono as RobotoMono } from 'next/font/google'
@@ -31,10 +31,17 @@ export default function RootLayout({ children }: RootLayoutProps) {
       lang="en"
       data-theme="dark"
       data-scroll-behavior="smooth"
-      style={{ colorScheme: 'dark' }}
+      style={
+        {
+          colorScheme: 'dark',
+          ['--pe-font-heading' as string]: montserrat.style.fontFamily,
+          ['--pe-font-body' as string]: openSans.style.fontFamily,
+          ['--pe-font-mono' as string]: robotoMono.style.fontFamily
+        } as CSSProperties
+      }
       className={`${montserratVar} ${robotoMonoVar} ${openSansVar}`}
     >
-      <body className={'chakra-ui-dark'}>
+      <body className={openSans.className}>
         <RootComponent>{children}</RootComponent>
       </body>
     </html>

@@ -33,7 +33,7 @@ export default function MasternodeVotesStatsInline({
     {
       label: 'Total',
       value: (typeof total === 'number' ? formatFullNumber(total) : null) as ReactNode,
-      color: 'var(--chakra-colors-green-label)',
+      color: 'var(--pe-color-green-label)',
       loading: total == null
     },
     {
@@ -41,7 +41,7 @@ export default function MasternodeVotesStatsInline({
       value: (typeof data?.totalVotesCount === 'number'
         ? formatFullNumber(data.totalVotesCount)
         : null) as ReactNode,
-      color: 'var(--chakra-colors-brand-light)',
+      color: 'var(--pe-color-brand-light)',
       loading: epoch.loading
     },
     {
@@ -49,7 +49,7 @@ export default function MasternodeVotesStatsInline({
       value: (typeof data?.totalCollectedFees === 'number'
         ? formatFullNumber(data.totalCollectedFees)
         : null) as ReactNode,
-      color: 'var(--chakra-colors-brand-light)',
+      color: 'var(--pe-color-brand-light)',
       loading: epoch.loading
     }
   ]

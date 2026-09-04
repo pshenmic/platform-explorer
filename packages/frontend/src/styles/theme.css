@@ -181,12 +181,12 @@
   }
 }
 
-.chakra-tabs__tab[aria-selected="true"] .Tabs__TabItemsCount {
+.Tabs__Tab[aria-selected="true"] .Tabs__TabItemsCount {
   background: rgba(var(--pe-color-brand-normal-rgb), 0.2);
   color: var(--pe-color-brand-normal);
 }
 
-.chakra-tabs__tab[aria-selected="false"] .Tabs__TabItemsCount {
+.Tabs__Tab[aria-selected="false"] .Tabs__TabItemsCount {
   color: var(--pe-color-fg-muted);
   background-color: rgba(var(--pe-color-gray-250-rgb), 0.2);
 }

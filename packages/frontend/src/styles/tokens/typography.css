@@ -11,9 +11,9 @@
 
 :root {
   /* Fonts */
-  --pe-font-heading: var(--chakra-fonts-heading, "Montserrat", system-ui, sans-serif);
-  --pe-font-body: var(--chakra-fonts-body, "Open Sans", system-ui, sans-serif);
-  --pe-font-mono: var(--chakra-fonts-mono, "Roboto Mono", ui-monospace, monospace);
+  --pe-font-heading: "Montserrat", system-ui, sans-serif;
+  --pe-font-body: "Open Sans", system-ui, sans-serif;
+  --pe-font-mono: "Roboto Mono", ui-monospace, monospace;
 
   /* Type scale */
   --pe-text-2xs: 0.625rem; /* 10px */
