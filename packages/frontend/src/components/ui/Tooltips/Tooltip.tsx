@@ -24,36 +24,51 @@ type TipPos = { top: number; left: number; transform: string; placement: string 
 
 function placeFixed(rect: DOMRect, placement: string, tipW = 240, tipH = 80): TipPos {
   const cx = rect.left + rect.width / 2
+  const cy = rect.top + rect.height / 2
   let next = placement || 'top'
 
   if (next === 'top' && rect.top < tipH + GUTTER + VIEW_PAD) next = 'bottom'
   if (next === 'bottom' && window.innerHeight - rect.bottom < tipH + GUTTER + VIEW_PAD) next = 'top'
+  if (next === 'right' && window.innerWidth - rect.right < tipW + GUTTER + VIEW_PAD) next = 'left'
+  if (next === 'left' && rect.left < tipW + GUTTER + VIEW_PAD) next = 'right'
 
   let top = 0
   let left = cx
   let transform = ''
 
-  if (next === 'bottom') {
+  if (next === 'right') {
+    top = cy
+    left = rect.right + GUTTER
+    transform = 'translate(0, -50%)'
+  } else if (next === 'left') {
+    top = cy
+    left = rect.left - GUTTER
+    transform = 'translate(-100%, -50%)'
+  } else if (next === 'bottom') {
     top = rect.bottom + GUTTER
     transform = 'translate(-50%, 0)'
   } else {
+    next = 'top'
     top = rect.top - GUTTER
     transform = 'translate(-50%, -100%)'
   }
 
-  const half = tipW / 2
-  const minCenter = VIEW_PAD + half
-  const maxCenter = window.innerWidth - VIEW_PAD - half
-  if (maxCenter > minCenter) {
-    left = Math.min(maxCenter, Math.max(minCenter, left))
+  if (next === 'top' || next === 'bottom') {
+    const half = tipW / 2
+    const minCenter = VIEW_PAD + half
+    const maxCenter = window.innerWidth - VIEW_PAD - half
+    left = maxCenter > minCenter ? Math.min(maxCenter, Math.max(minCenter, left)) : window.innerWidth / 2
   } else {
-    left = window.innerWidth / 2
+    const half = tipH / 2
+    const minCenter = VIEW_PAD + half
+    const maxCenter = window.innerHeight - VIEW_PAD - half
+    top = maxCenter > minCenter ? Math.min(maxCenter, Math.max(minCenter, top)) : window.innerHeight / 2
   }
 
   return { top, left, transform, placement: next }
 }
 
-// Portal tooltip; `label` is a Chakra-era alias for `content`.
+// `label` is an alias of `content` for existing call sites.
 interface TooltipProps {
   title?: ReactNode
   content?: ReactNode
