@@ -1,4 +1,4 @@
-.PeBadge {
+.Badge {
   display: inline-flex;
   align-items: center;
   border-width: 0;
@@ -13,47 +13,47 @@
   color: var(--pe-color-white-50);
 }
 
-.PeBadge--xs {
+.Badge--xs {
   line-height: 1.125rem;
   padding: 0 0.5rem;
 }
 
-.PeBadge--red {
+.Badge--red {
   background: rgba(var(--pe-color-red-default-rgb), 0.2);
   color: var(--pe-color-red-default);
 }
 
-.PeBadge--green {
+.Badge--green {
   background: rgba(var(--pe-color-green-label-rgb), 0.2);
   color: var(--pe-color-green-label);
 }
 
-.PeBadge--gray {
+.Badge--gray {
   background: rgba(255, 255, 255, 0.2);
   color: var(--pe-color-white-50);
 }
 
-.PeBadge--dimGray {
+.Badge--dimGray {
   background: var(--pe-color-gray-800);
   color: var(--pe-color-gray-250);
 }
 
-.PeBadge--blue {
+.Badge--blue {
   background: rgba(var(--pe-color-brand-normal-rgb), 0.2);
   color: var(--pe-color-brand-light);
 }
 
-.PeBadge--yellow {
+.Badge--yellow {
   background: rgba(244, 228, 88, 0.2);
   color: var(--pe-color-yellow-badge);
 }
 
-.PeBadge--orange {
+.Badge--orange {
   background: rgba(var(--pe-color-orange-default-rgb), 0.2);
   color: var(--pe-color-orange-default);
 }
 
-.PeBadge--emerald {
+.Badge--emerald {
   background: rgba(var(--pe-color-green-emeralds-rgb), 0.2);
   color: var(--pe-color-green-emeralds);
 }

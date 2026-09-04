@@ -26,9 +26,9 @@ export function Badge({ colorScheme = 'gray', size, className, ...props }: Badge
     : 'gray'
 
   const classes = [
-    'PeBadge',
-    `PeBadge--${scheme}`,
-    size === 'xs' ? 'PeBadge--xs' : '',
+    'Badge',
+    `Badge--${scheme}`,
+    size === 'xs' ? 'Badge--xs' : '',
     className || ''
   ]
     .filter(Boolean)
