@@ -248,12 +248,37 @@
   justify-content: right;
 }
 
+.ListPage {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 1920px;
+  margin-inline: auto;
+  margin-block: var(--pe-space-8);
+  color: #fff;
+}
+
+.ListPage__Error {
+  min-height: 5rem;
+}
+
 .ListNavigation {
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
   flex-wrap: wrap;
   margin-top: 18px;
+}
+
+.ListNavigation__Balance {
+  display: none;
+  flex-shrink: 0;
+  width: 155px;
+}
+
+@media screen and (min-width: 48em) {
+  .ListNavigation__Balance {
+    display: block;
+  }
 }
 
 .ListNavigation--Center {
