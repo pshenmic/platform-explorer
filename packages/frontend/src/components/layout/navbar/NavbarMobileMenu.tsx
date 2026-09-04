@@ -1,13 +1,11 @@
 'use client'
 
-import { useOutsideClick } from '../../../hooks/useOutsideClick'
 import { useState, useEffect, useRef } from 'react'
 import type { RefObject, MouseEvent as ReactMouseEvent } from 'react'
-import { Box, Stack, Flex, Fade } from '@chakra-ui/react'
 import { ChevronIcon } from '../../ui/icons'
 import { usePathname } from 'next/navigation'
-import { ArrowButton } from '../../ui/Buttons'
 import Link from 'next/link'
+import '../../ui/Buttons/ArrowButton.css'
 import { SmoothSize } from '../../ui/containers'
 import type { NavMenuItem } from './types'
 import './NavbarMobileMenu.css'
@@ -26,15 +24,22 @@ const NavbarMobileMenu = ({ items, isOpen, onClose, burgerRef }: NavbarMobileMen
   const [renderSubmenu, setRenderSubmenu] = useState(false)
   const mobileMenuRef = useRef<HTMLDivElement | null>(null)
 
-  useOutsideClick({
-    ref: mobileMenuRef,
-    handler: (e: Event) => {
+  useEffect(() => {
+    if (!isOpen) return
+    const onPointerDown = (e: PointerEvent) => {
       const target = e.target as Node
-      if (burgerRef?.current && !burgerRef.current.contains(target)) {
-        onClose()
-      }
+      if (mobileMenuRef.current?.contains(target)) return
+      if (burgerRef?.current?.contains(target)) return
+      onClose()
     }
-  })
+    const id = window.setTimeout(() => {
+      document.addEventListener('pointerdown', onPointerDown)
+    }, 0)
+    return () => {
+      window.clearTimeout(id)
+      document.removeEventListener('pointerdown', onPointerDown)
+    }
+  }, [isOpen, onClose, burgerRef])
 
   useEffect(() => {
     setRenderMain(!activeSubmenu)
@@ -60,65 +65,67 @@ const NavbarMobileMenu = ({ items, isOpen, onClose, burgerRef }: NavbarMobileMen
   }
 
   return (
-    <Box
+    <div
       className={`NavbarMobileMenu ${isOpen ? 'NavbarMobileMenu--Open' : ''}`}
-      display={{ lg: 'none' }}
       ref={mobileMenuRef}
     >
       <SmoothSize duration={0.1}>
         {renderMain && (
-          <Fade className={'NavbarMobileMenu__Content'} in={!activeSubmenu} unmountOnExit>
-            <Stack className={'NavbarMobileMenu__Items'} as={'nav'}>
+          <div className={'NavbarMobileMenu__Content'}>
+            <nav className={'NavbarMobileMenu__Items'}>
               {items.map(item => {
                 const hasSubmenu = Boolean(item.submenuItems?.length)
                 const itemClassName = `NavbarMobileMenu__Item ${pathname === item.href ? 'NavbarMobileMenu__Item--Active' : ''}`
 
                 if (hasSubmenu) {
                   return (
-                    <Flex
+                    <button
+                      type={'button'}
                       key={item.title}
                       className={itemClassName}
                       onClick={() => handleItemClick(item)}
-                      justifyContent={'space-between'}
-                      alignItems={'center'}
                     >
                       <span>{item.title}</span>
-                      <div className={'NavbarMobileMenu__ItemIcon'}>
-                        <ArrowButton />
-                      </div>
-                    </Flex>
+                      <span className={'NavbarMobileMenu__ItemIcon'} aria-hidden={'true'}>
+                        <span className={'ArrowButton'}>
+                          <ChevronIcon />
+                        </span>
+                      </span>
+                    </button>
                   )
                 }
 
                 return (
-                  <Flex
+                  <Link
                     key={item.title}
                     className={itemClassName}
                     onClick={() => handleItemClick(item)}
-                    as={Link}
                     href={item.href ?? '#'}
-                    justifyContent={'space-between'}
-                    alignItems={'center'}
                   >
                     <span>{item.title}</span>
-                  </Flex>
+                  </Link>
                 )
               })}
-            </Stack>
-          </Fade>
+            </nav>
+          </div>
         )}
 
         {renderSubmenu && activeSubmenu && (
-          <Fade className={'NavbarMobileMenu__Content'} in={!!activeSubmenu} unmountOnExit>
+          <div className={'NavbarMobileMenu__Content'}>
             <div className={'NavbarMobileMenu__Header'}>
-              <Flex className={'NavbarMobileMenu__BackButton'} onClick={goToMainMenu}>
-                <ChevronIcon transform={'rotate(180deg)'} />
-              </Flex>
+              <button
+                type={'button'}
+                className={'NavbarMobileMenu__BackButton'}
+                onClick={goToMainMenu}
+                aria-label={'Back'}
+              >
+                <ChevronIcon style={{ transform: 'rotate(180deg)' }} />
+              </button>
 
               <div className={'NavbarMobileMenu__Title'}>{activeSubmenu?.title}</div>
             </div>
 
-            <Stack className={'NavbarMobileMenu__Items'} as={'nav'}>
+            <nav className={'NavbarMobileMenu__Items'}>
               {activeSubmenu.submenuItems?.map(subItem => (
                 <Link
                   key={subItem.title}
@@ -135,11 +142,11 @@ const NavbarMobileMenu = ({ items, isOpen, onClose, burgerRef }: NavbarMobileMen
                   {subItem.title}
                 </Link>
               ))}
-            </Stack>
-          </Fade>
+            </nav>
+          </div>
         )}
       </SmoothSize>
-    </Box>
+    </div>
   )
 }
 

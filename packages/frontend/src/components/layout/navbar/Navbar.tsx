@@ -1,13 +1,12 @@
 'use client'
 
 import { useOutsideClick } from '../../../hooks/useOutsideClick'
-import { HamburgerIcon, CloseIcon } from '@chakra-ui/icons'
+import { useBreakpointKey } from '../../../hooks'
 import GlobalSearchInput from '../../search/GlobalSearchInput'
-import { Box, Flex, IconButton, useDisclosure, useBreakpointValue } from '@chakra-ui/react'
 import { Breadcrumbs, breadcrumbsActiveRoutes } from '../../breadcrumbs/Breadcrumbs'
 import NetworkSelect from './NetworkSelect'
 import { usePathname } from 'next/navigation'
-import { useEffect, useState, useRef, useMemo } from 'react'
+import { useEffect, useState, useRef, useMemo, useCallback } from 'react'
 import type { MouseEvent } from 'react'
 import { SearchResultsList } from '../../search'
 import NavItem from './NavItem'
@@ -149,23 +148,13 @@ function Navbar() {
     [pathname]
   )
 
-  const {
-    isOpen: isMobileMenuOpen,
-    onOpen: openMobileMenu,
-    onClose: closeMobileMenu
-  } = useDisclosure()
+  const [isMobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const openMobileMenu = useCallback(() => setMobileMenuOpen(true), [])
+  const closeMobileMenu = useCallback(() => setMobileMenuOpen(false), [])
 
   const [searchState, setSearchState] = useState<SearchState>(defaultSearchState)
 
-  const currentBreakpoint = (useBreakpointValue({
-    base: 'base',
-    sm: 'sm',
-    md: 'md',
-    lg: 'lg',
-    xl: 'xl',
-    '2xl': '2xl',
-    '3xl': '3xl'
-  }) || 'base') as BreakpointKey
+  const currentBreakpoint = useBreakpointKey()
 
   const visibleMenuItems = useMemo(() => {
     return menuItems
@@ -203,7 +192,7 @@ function Navbar() {
       searchState.results.error)
 
   const searchContainerRef = useRef<HTMLDivElement | null>(null)
-  const searchTransitionTime = useBreakpointValue({ base: 0.2, md: 0.1 })
+  const searchTransitionTime = currentBreakpoint === 'base' || currentBreakpoint === 'sm' ? 0.2 : 0.1
   const burgerRef = useRef<HTMLButtonElement | null>(null)
 
   const hideSearch = () => setSearchState(defaultSearchState)
@@ -255,26 +244,37 @@ function Navbar() {
   }
 
   return (
-    <Box position={'relative'}>
+    <div className={'NavbarShell'}>
       <div className={'NavbarStub'}></div>
 
-      <Flex
-        className={'Navbar' + (searchState.focused ? ' Navbar--search' : '')}
-        maxW={'container.maxNavigationW'}
-      >
+      <header className={'Navbar' + (searchState.focused ? ' Navbar--search' : '')}>
         <div className={'Navbar__Left'}>
-          <IconButton
+          <button
+            type={'button'}
             className={'Navbar__Burger'}
-            size={'md'}
-            icon={isMobileMenuOpen ? <CloseIcon /> : <HamburgerIcon />}
-            visibility={searchState.focused ? 'hidden' : 'visible'}
-            w={searchState.focused ? '0' : '40px'}
-            minW={0}
-            aria-label={'Open Menu'}
-            display={{ lg: 'none' }}
+            aria-label={isMobileMenuOpen ? 'Close Menu' : 'Open Menu'}
+            aria-expanded={isMobileMenuOpen}
             onClick={handleMobileMenuToggle}
             ref={burgerRef}
-          />
+          >
+            {isMobileMenuOpen ? (
+              <svg width={'14'} height={'14'} viewBox={'0 0 10 10'} aria-hidden={'true'}>
+                <path
+                  d={'M1 1L9 9M9 1L1 9'}
+                  stroke={'currentColor'}
+                  strokeWidth={'1.5'}
+                  strokeLinecap={'round'}
+                />
+              </svg>
+            ) : (
+              <svg width={'18'} height={'18'} viewBox={'0 0 24 24'} aria-hidden={'true'}>
+                <path
+                  fill={'currentColor'}
+                  d={'M3 6h18v2H3V6zm0 5h18v2H3v-2zm0 5h18v2H3v-2z'}
+                />
+              </svg>
+            )}
+          </button>
 
           <nav
             className={'Navbar__Menu'}
@@ -354,7 +354,7 @@ function Navbar() {
             </div>
           </div>
         </div>
-      </Flex>
+      </header>
 
       <NavbarMobileMenu
         items={mobileMenuItems}
@@ -364,7 +364,7 @@ function Navbar() {
       />
 
       {displayBreadcrumbs && <Breadcrumbs />}
-    </Box>
+    </div>
   )
 }
 
