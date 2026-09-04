@@ -1,6 +1,6 @@
-import { Button } from '@chakra-ui/react'
 import { useDeploy } from '../../DeployContext'
 import { SignerMethod } from '../../useSigner'
+import styles from '../../create.module.css'
 
 export const DeployButton = () => {
   const { signer, deploy, schemaError, handlePrimary } = useDeploy()
@@ -22,16 +22,14 @@ export const DeployButton = () => {
   const isDisabled = isBusy || (signer.isConnected && !hasResult && schemaError != null)
 
   return (
-    <Button
-      variant="blue"
-      size="sm"
-      minW="160px"
-      alignSelf="flex-start"
+    <button
+      type="button"
+      className={`${styles.btn} ${styles.btnPrimary}`}
       onClick={handlePrimary}
-      isLoading={isBusy}
-      isDisabled={isDisabled}
+      disabled={isDisabled}
+      aria-busy={isBusy}
     >
       {label}
-    </Button>
+    </button>
   )
 }

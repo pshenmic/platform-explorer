@@ -1,6 +1,6 @@
-import { Button, Flex } from '@chakra-ui/react'
 import { CloseIcon } from '@components/ui/icons'
 import { useSchema } from '../../SchemaProvider'
+import styles from '../../create.module.css'
 
 export const FormControls = () => {
   const { value, error: schemaError, handleChange, handleReset } = useSchema()
@@ -14,13 +14,19 @@ export const FormControls = () => {
   }
 
   return (
-    <Flex gap={2} align="center" wrap="wrap">
-      <Button variant="blue" size="sm" onClick={handleFormat} isDisabled={schemaError != null}>
+    <div className={styles.controls}>
+      <button
+        type="button"
+        className={`${styles.btn} ${styles.btnBlue}`}
+        onClick={handleFormat}
+        disabled={schemaError != null}
+      >
         Format
-      </Button>
-      <Button leftIcon={<CloseIcon />} variant="red" size="sm" onClick={handleReset}>
+      </button>
+      <button type="button" className={`${styles.btn} ${styles.btnRed}`} onClick={handleReset}>
+        <CloseIcon />
         Reset
-      </Button>
-    </Flex>
+      </button>
+    </div>
   )
 }

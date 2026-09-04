@@ -1,16 +1,16 @@
-import { Box, Stack } from '@chakra-ui/react'
 import { CardWrapper } from './CardWrapper'
 import { MethodSelect, DeployButton, DeployStatus, PrivateKeyForm } from './SchemaAtomic'
+import styles from '../create.module.css'
 
 export const Deploy = () => (
   <CardWrapper title="Deploy">
-    <Stack spacing={3}>
+    <div className={styles.deployStack}>
       <MethodSelect />
       <PrivateKeyForm />
-      <Box minH="20px">
+      <div className={styles.statusSlot}>
         <DeployStatus />
-      </Box>
+      </div>
       <DeployButton />
-    </Stack>
+    </div>
   </CardWrapper>
 )

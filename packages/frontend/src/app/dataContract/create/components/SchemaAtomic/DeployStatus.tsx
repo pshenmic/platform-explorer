@@ -1,70 +1,42 @@
-import { Link, Text } from '@chakra-ui/react'
 import { useDeploy } from '../../DeployContext'
 import { SignerMethod } from '../../useSigner'
 import type { Signer } from '../../useSigner'
+import styles from '../../create.module.css'
 
 export const DeployStatus = () => {
   const { schemaError, signer, deploy } = useDeploy()
 
   if (schemaError != null) {
-    return (
-      <Text color="red.500" fontSize="sm">
-        {schemaError}
-      </Text>
-    )
+    return <p className={styles.statusError}>{schemaError}</p>
   }
 
   if (signer.error != null) {
-    return (
-      <Text color="red.500" fontSize="sm">
-        {signer.error}
-      </Text>
-    )
+    return <p className={styles.statusError}>{signer.error}</p>
   }
 
   if (deploy.error != null) {
-    return (
-      <Text color="red.500" fontSize="sm">
-        {deploy.error}
-      </Text>
-    )
+    return <p className={styles.statusError}>{deploy.error}</p>
   }
 
   if (deploy.result != null) {
     return (
-      <Text color="green.500" fontSize="sm">
+      <p className={styles.statusOk}>
         ✓ Contract deployed:{' '}
-        <Link
-          href={`/dataContract/${deploy.result.dataContractId}`}
-          color="green.500"
-          textDecoration="underline"
-        >
+        <a href={`/dataContract/${deploy.result.dataContractId}`}>
           {deploy.result.dataContractId}
-        </Link>
-      </Text>
+        </a>
+      </p>
     )
   }
 
   if (signer.isConnected) {
     const connected = signer.signer as Signer
-    return (
-      <Text color="gray.500" fontSize="sm">
-        Signing as: {connected.identityId}
-      </Text>
-    )
+    return <p className={styles.status}>Signing as: {connected.identityId}</p>
   }
 
   if (signer.method === SignerMethod.PRIVATE_KEY) {
-    return (
-      <Text color="gray.500" fontSize="sm">
-        Enter your private key from your Identity
-      </Text>
-    )
+    return <p className={styles.status}>Enter your private key from your Identity</p>
   }
 
-  return (
-    <Text color="gray.500" fontSize="sm">
-      Connect a wallet to deploy
-    </Text>
-  )
+  return <p className={styles.status}>Connect a wallet to deploy</p>
 }

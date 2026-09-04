@@ -1,0 +1,112 @@
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--pe-space-4);
+}
+
+.deployStack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--pe-space-3);
+}
+
+.statusSlot {
+  min-height: 20px;
+}
+
+.status {
+  font-size: var(--pe-text-sm);
+  color: var(--pe-color-fg-muted);
+}
+
+.statusError {
+  font-size: var(--pe-text-sm);
+  color: var(--pe-color-red-500);
+}
+
+.statusOk {
+  font-size: var(--pe-text-sm);
+  color: var(--pe-color-green-default);
+}
+
+.statusOk a {
+  color: var(--pe-color-green-default);
+  text-decoration: underline;
+}
+
+.header {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--pe-space-2);
+}
+
+.headerTitle {
+  margin: 0;
+  font-size: var(--pe-text-xs);
+  font-weight: var(--pe-font-weight-bold);
+}
+
+.controls {
+  display: flex;
+  gap: var(--pe-space-2);
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.btn {
+  font-family: var(--pe-font-body);
+  font-size: var(--pe-text-sm);
+  padding: var(--pe-space-1) var(--pe-space-3);
+  border-radius: var(--pe-radius-def);
+  border: 0;
+  cursor: pointer;
+  min-width: 0;
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btnBlue {
+  background: var(--pe-color-brand-normal);
+  color: var(--pe-color-fg);
+}
+
+.btnRed {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--pe-space-1);
+  background: rgba(var(--pe-color-red-default-rgb), 0.25);
+  color: var(--pe-color-red-default);
+}
+
+.btnPrimary {
+  align-self: flex-start;
+  min-width: 160px;
+  background: var(--pe-color-brand-normal);
+  color: var(--pe-color-fg);
+}
+
+.footer {
+  margin-top: var(--pe-space-2);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  min-height: 24px;
+  gap: var(--pe-space-4);
+}
+
+.footerSize {
+  font-size: var(--pe-text-sm);
+  color: var(--pe-color-fg-muted);
+  white-space: nowrap;
+}
+
+.footerLink {
+  font-size: var(--pe-text-sm);
+  white-space: nowrap;
+  color: var(--pe-color-brand-normal);
+}

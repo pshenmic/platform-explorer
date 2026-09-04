@@ -1,4 +1,3 @@
-import { Divider, Input, Textarea, FormControl } from '@chakra-ui/react'
 import { useId, useState } from 'react'
 import type { FormEvent } from 'react'
 import { cva } from 'class-variance-authority'
@@ -127,17 +126,16 @@ export const KeywordsScreen = ({
 
   return (
     <div className={styles.root}>
-      <div className={styles.divider}>
-        <Divider />
-      </div>
+      <div className={styles.divider} />
       <form id="data-contract-keywords-form" className={styles.form} onSubmit={handleSubmit}>
         <div className={styles.field}>
           <label className={styles.label} htmlFor={`${id}-description`}>
             Description:
           </label>
 
-          <FormControl className={styles.input} isInvalid={!!errors.description}>
-            <Textarea
+          <div className={styles.input}>
+            <textarea
+              className={`${styles.control}${errors.description ? ` ${styles.controlInvalid}` : ''}`}
               placeholder="Enter Description..."
               id={`${id}-description`}
               value={form.description}
@@ -146,10 +144,9 @@ export const KeywordsScreen = ({
                 const error = validateDescription(form.description)
                 setErrors(prev => ({ ...prev, description: error }))
               }}
-              resize="none"
               rows={4}
             />
-          </FormControl>
+          </div>
 
           <div className={styles.errorSlot}>
             {errors.description && <span className={styles.errorText}>{errors.description}</span>}
@@ -159,8 +156,9 @@ export const KeywordsScreen = ({
           <label className={styles.label} htmlFor={`${id}-keywords`}>
             Keywords:
           </label>
-          <FormControl className={styles.input} isInvalid={!!errors.keywords}>
-            <Input
+          <div className={styles.input}>
+            <input
+              className={`${styles.control}${errors.keywords ? ` ${styles.controlInvalid}` : ''}`}
               placeholder="keyword1, keyword2 (Latin only, max 20)"
               id={`${id}-keywords`}
               value={form.keywords}
@@ -170,7 +168,7 @@ export const KeywordsScreen = ({
                 setErrors(prev => ({ ...prev, keywords: error }))
               }}
             />
-          </FormControl>
+          </div>
 
           <div className={styles.errorSlot}>
             {errors.keywords && <span className={styles.errorText}>{errors.keywords}</span>}

@@ -1,5 +1,21 @@
 .root .divider {
   padding: var(--pe-space-5) 0;
+  border-top: 1px solid var(--pe-color-gray-550);
+}
+
+.root .control {
+  width: 100%;
+  font-family: var(--pe-font-mono);
+  font-size: var(--pe-text-sm);
+  color: var(--pe-color-fg);
+  background: var(--pe-color-gray-800);
+  border: 1px solid var(--pe-color-gray-550);
+  border-radius: var(--pe-radius-def);
+  padding: var(--pe-space-2);
+}
+
+.root .controlInvalid {
+  border-color: var(--pe-color-red-500);
 }
 
 .root .form {
