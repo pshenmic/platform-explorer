@@ -1,11 +1,15 @@
-import type { Document } from '../../types'
-import DocumentsListItem from './DocumentsListItem'
-import { EmptyListMessage } from '../ui/lists'
-import Pagination from '../pagination'
-import { LoadingList } from '../loading'
-import { ErrorMessageBlock } from '../Errors'
+'use client'
 
-import './DocumentsList.css'
+import type { Document } from '../../types'
+import { Badge } from '../ui/Badge'
+import { Alias, Identifier, NotActive, TimeDelta } from '../data'
+import { LinkContainer } from '../ui/containers'
+import BatchTypeBadge from '../transactions/BatchTypeBadge'
+import { DataList } from '../ui/lists'
+import { useRouter } from 'next/navigation'
+import { findActiveAlias } from '../../util'
+import Pagination from '../pagination'
+import { ErrorMessageBlock } from '../Errors'
 
 interface DocumentsListProps {
   documents?: Array<Document & { gasUsed?: number }>
@@ -32,85 +36,163 @@ export default function DocumentsList({
   showAction = true,
   showGas = true
 }: DocumentsListProps) {
-  const headerExtraClass: Record<string, string> = {
-    default: '',
-    light: 'DocumentsList__ColumnTitles--Light'
-  }
+  const router = useRouter()
 
-  const compact = !showAction && !showGas
+  if (documents === undefined && !loading) return <ErrorMessageBlock />
+
+  const columns = [
+    {
+      key: 'timestamp',
+      header: 'Time',
+      minWidth: 88,
+      cell: (document: Document & { gasUsed?: number }) => (
+        <TimeDelta endDate={document?.timestamp} />
+      )
+    },
+    ...(showAction
+      ? [
+          {
+            key: 'action',
+            header: 'Action',
+            minWidth: 100,
+            priority: 2,
+            cell: (document: Document & { gasUsed?: number }) =>
+              document?.transitionType ? (
+                <BatchTypeBadge batchType={document.transitionType} />
+              ) : (
+                <NotActive />
+              )
+          }
+        ]
+      : []),
+    {
+      key: 'type',
+      header: 'Type',
+      minWidth: 88,
+      priority: 3,
+      cell: (document: Document & { gasUsed?: number }) =>
+        document?.documentTypeName ?? <NotActive />
+    },
+    {
+      key: 'revision',
+      header: 'Rev',
+      minWidth: 48,
+      align: 'center',
+      priority: 1,
+      cell: (document: Document & { gasUsed?: number }) => document?.revision ?? <NotActive />
+    },
+    {
+      key: 'identifier',
+      header: 'Identifier',
+      grow: true,
+      minWidth: 120,
+      cell: (document: Document & { gasUsed?: number }) =>
+        document?.identifier ? (
+          <Identifier ellipsis={true} styles={['highlight-both']}>
+            {document?.identifier}
+          </Identifier>
+        ) : (
+          <NotActive />
+        )
+    },
+    {
+      key: 'ownerOrContract',
+      header: showDataContract ? 'Data Contract' : 'Owner',
+      grow: true,
+      minWidth: 120,
+      priority: 2,
+      cell: (document: Document & { gasUsed?: number }) => {
+        if (showDataContract) {
+          return document?.dataContractIdentifier ? (
+            <LinkContainer
+              onClick={e => {
+                e.stopPropagation()
+                e.preventDefault()
+                router.push(`/dataContract/${document?.dataContractIdentifier}`)
+              }}
+            >
+              <Identifier ellipsis={true} avatar={true} styles={['highlight-both']}>
+                {document?.dataContractIdentifier}
+              </Identifier>
+            </LinkContainer>
+          ) : (
+            <NotActive />
+          )
+        }
+        const activeAlias = findActiveAlias(document?.owner?.aliases)
+        return document?.owner ? (
+          <LinkContainer
+            onClick={e => {
+              e.stopPropagation()
+              e.preventDefault()
+              router.push(`/identity/${document?.owner?.identifier}`)
+            }}
+          >
+            {activeAlias ? (
+              <Alias avatarSource={document?.owner?.identifier || null}>{activeAlias?.alias}</Alias>
+            ) : (
+              <Identifier ellipsis={true} avatar={true} styles={['highlight-both']}>
+                {document?.owner?.identifier}
+              </Identifier>
+            )}
+          </LinkContainer>
+        ) : (
+          <NotActive />
+        )
+      }
+    },
+    ...(showGas
+      ? [
+          {
+            key: 'gas',
+            header: 'Gas',
+            minWidth: 72,
+            align: 'right',
+            priority: 1,
+            cell: (document: Document & { gasUsed?: number }) =>
+              Number.isFinite(document?.gasUsed) ? (
+                document.gasUsed.toLocaleString()
+              ) : (
+                <NotActive />
+              )
+          }
+        ]
+      : []),
+    {
+      key: 'status',
+      header: 'Status',
+      minWidth: 80,
+      align: 'center',
+      cell: (document: Document & { gasUsed?: number }) =>
+        document?.deleted ? (
+          <Badge colorScheme={'red'}>Deleted</Badge>
+        ) : (
+          <Badge colorScheme={'green'}>Active</Badge>
+        )
+    }
+  ]
 
   return (
-    <div className={'DocumentsList'}>
-      <div className={`DocumentsList__Table${compact ? ' DocumentsList__Table--Compact' : ''}`}>
-        <div
-          className={`DocumentsList__ColumnTitles ${headerExtraClass[headerStyles ?? 'default'] || ''}`}
-        >
-          <div className={'DocumentsList__ColumnTitle DocumentsList__ColumnTitle--Timestamp'}>
-            Time
-          </div>
-          {showAction && (
-            <div
-              className={'DocumentsList__ColumnTitle DocumentsList__ColumnTitle--TransitionType'}
-            >
-              Action
-            </div>
-          )}
-          <div
-            className={'DocumentsList__ColumnTitle DocumentsList__ColumnTitle--DocumentType'}
-          >
-            Type
-          </div>
-          <div className={'DocumentsList__ColumnTitle DocumentsList__ColumnTitle--Revision'}>
-            Rev
-          </div>
-          <div className={'DocumentsList__ColumnTitle DocumentsList__ColumnTitle--Identifier'}>
-            Identifier
-          </div>
-          <div
-            className={`DocumentsList__ColumnTitle DocumentsList__ColumnTitle--${showDataContract ? 'DataContract' : 'Owner'}`}
-          >
-            {showDataContract ? 'Data Contract' : 'Owner'}
-          </div>
-          {showGas && (
-            <div className={'DocumentsList__ColumnTitle DocumentsList__ColumnTitle--Gas'}>
-              Gas
-            </div>
-          )}
-          <div className={'DocumentsList__ColumnTitle DocumentsList__ColumnTitle--Status'}>
-            Status
-          </div>
-        </div>
-
-        {!loading ? (
-          <>
-            {documents?.map((document, key) => (
-              <DocumentsListItem
-                document={document}
-                showDataContract={showDataContract}
-                showAction={showAction}
-                showGas={showGas}
-                key={key}
-              />
-            ))}
-            {documents?.length === 0 && (
-              <EmptyListMessage>There are no documents created yet.</EmptyListMessage>
-            )}
-            {documents === undefined && <ErrorMessageBlock />}
-          </>
-        ) : (
-          <LoadingList itemsCount={itemsCount} />
-        )}
-      </div>
-
-      {pagination && (
-        <Pagination
-          className={'DocumentsList__Pagination'}
-          onPageChange={pagination.onPageChange}
-          pageCount={pagination.pageCount ?? 0}
-          forcePage={pagination.forcePage ?? 0}
-          justify={true}
-        />
-      )}
-    </div>
+    <DataList
+      className={'DocumentsList'}
+      items={documents || []}
+      columns={columns}
+      loading={loading}
+      skeletonCount={itemsCount}
+      rowHref={document => `/document/${document?.identifier}`}
+      rowKey={document => document?.identifier}
+      headerVariant={headerStyles === 'light' ? 'light' : 'default'}
+      emptyMessage={'There are no documents created yet.'}
+      footer={
+        pagination ? (
+          <Pagination
+            onPageChange={pagination.onPageChange}
+            pageCount={pagination.pageCount ?? 0}
+            forcePage={pagination.forcePage ?? 0}
+            justify={true}
+          />
+        ) : null
+      }
+    />
   )
 }
