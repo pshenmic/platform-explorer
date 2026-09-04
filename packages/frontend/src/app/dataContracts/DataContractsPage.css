@@ -16,9 +16,13 @@
   min-width: 0;
 }
 
+.DataContractsPage__ShowAll {
+  margin-left: auto;
+}
+
 .DataContractsPage__Filters {
   flex-shrink: 0;
-  margin-left: auto;
+  margin-left: 0;
 }
 
 @media screen and (max-width: 48em) {

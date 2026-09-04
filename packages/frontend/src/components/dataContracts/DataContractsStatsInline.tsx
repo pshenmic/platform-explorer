@@ -7,7 +7,10 @@ import { fetchHandlerSuccess, fetchHandlerError, formatFullNumber } from '../../
 import NetworkStatsInline from '../stats/NetworkStatsInline'
 import type { LoadableState, Status, WithClassName } from '../../types'
 
-export default function DataContractsStatsInline({ className }: WithClassName) {
+export default function DataContractsStatsInline({
+  className,
+  total
+}: WithClassName & { total?: number | null }) {
   const [status, setStatus] = useState<LoadableState<Status>>({
     data: null,
     loading: true,
@@ -15,16 +18,20 @@ export default function DataContractsStatsInline({ className }: WithClassName) {
   })
 
   useEffect(() => {
+    if (typeof total === 'number') return
+
     Api.getStatus()
       .then(res => fetchHandlerSuccess(setStatus, res))
       .catch(err => fetchHandlerError(setStatus, err))
-  }, [])
+  }, [total])
+
+  const value = typeof total === 'number' ? total : status.data?.dataContractsCount
 
   const items = [
     {
       label: 'Total',
-      value: formatFullNumber(status.data?.dataContractsCount) as ReactNode,
-      loading: status.loading
+      value: formatFullNumber(value) as ReactNode,
+      loading: typeof total !== 'number' && status.loading
     }
   ]
 

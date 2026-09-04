@@ -1,52 +1,17 @@
-import DataContractsListItem from './DataContractsListItem'
+'use client'
+
 import type { DataContractsListItemData } from './DataContractsListItem'
-import { EmptyListMessage } from '../ui/lists'
+import { Alias, Identifier, BigNumber, NotActive, DateBlock } from '../data'
+import ValueContainer from '../ui/containers/ValueContainer'
+import { Badge } from '../ui/Badge'
+import { DataList } from '../ui/lists'
 import Pagination from '../pagination'
 import { ErrorMessageBlock } from '../Errors'
-import { LoadingList } from '../loading'
-import { ChevronIcon } from '../ui/icons'
-import SmoothSize from '../ui/containers/SmoothSize'
-import { useState } from 'react'
-import { createColumnHelper, getCoreRowModel, useReactTable } from '@tanstack/react-table'
-
-import './DataContractsList.css'
-
-const columnHelper = createColumnHelper<DataContractsListItemData>()
-
-const columns = [
-  columnHelper.accessor('identifier', {
-    header: 'Identifier'
-  }),
-  columnHelper.accessor('owner', {
-    header: 'Owner'
-  }),
-  columnHelper.accessor('isSystem', {
-    header: 'System'
-  }),
-  columnHelper.accessor('withTokens', {
-    header: 'With tokens'
-  }),
-  columnHelper.accessor('documentsCount', {
-    header: 'Documents'
-  }),
-  columnHelper.accessor('timestamp', {
-    header: 'Timestamp'
-  })
-]
-const headerExtraClass: Record<string, string> = {
-  default: '',
-  light: 'DataContractsList__ColumnTitles--Light'
-}
 
 interface PaginationProps {
   onPageChange: (selectedItem: { selected: number }) => void
   pageCount: number
   forcePage?: number
-}
-
-interface PinnedGroup {
-  label?: string
-  items?: DataContractsListItemData[]
 }
 
 interface DataContractsListProps {
@@ -55,7 +20,111 @@ interface DataContractsListProps {
   pagination?: PaginationProps | null
   loading?: boolean
   itemsCount?: number
-  pinnedGroup?: PinnedGroup | null
+  enteringKeys?: Set<string>
+  leavingKeys?: Set<string>
+}
+
+function ownerIdOf(item: DataContractsListItemData) {
+  return typeof item?.owner === 'object' ? item?.owner?.identifier : item?.owner
+}
+
+function ownerNameOf(item: DataContractsListItemData) {
+  return typeof item?.owner === 'object' ? item?.owner?.name || null : null
+}
+
+function contractColumns() {
+  return [
+    {
+      key: 'identifier',
+      header: 'Identifier',
+      grow: true,
+      minWidth: 140,
+      cell: (item: DataContractsListItemData) =>
+        item?.name ? (
+          <Alias avatarSource={item?.identifier}>{item.name}</Alias>
+        ) : (
+          <Identifier avatar={true} styles={['highlight-both']} ellipsis={true}>
+            {item.identifier}
+          </Identifier>
+        )
+    },
+    {
+      key: 'owner',
+      header: 'Owner',
+      grow: true,
+      minWidth: 120,
+      priority: 2,
+      cell: (item: DataContractsListItemData) => {
+        const ownerId = ownerIdOf(item)
+        const ownerName = ownerNameOf(item)
+        if (ownerName) return <Alias avatarSource={ownerId}>{ownerName}</Alias>
+        if (ownerId)
+          return (
+            <Identifier ellipsis={true} avatar={true} styles={['highlight-both']}>
+              {ownerId}
+            </Identifier>
+          )
+        return <span>-</span>
+      }
+    },
+    {
+      key: 'system',
+      header: 'System',
+      minWidth: 72,
+      align: 'center',
+      priority: 1,
+      cell: (item: DataContractsListItemData) =>
+        item?.isSystem !== undefined ? (
+          <Badge colorScheme={item?.isSystem ? 'orange' : 'gray'}>
+            {item?.isSystem ? 'true' : 'false'}
+          </Badge>
+        ) : (
+          <NotActive />
+        )
+    },
+    {
+      key: 'withTokens',
+      header: 'With tokens',
+      minWidth: 108,
+      align: 'center',
+      priority: 1,
+      cell: (item: DataContractsListItemData) =>
+        Number.isNaN(Number(item?.tokensCount)) ? (
+          <NotActive />
+        ) : (
+          <Badge colorScheme={(item?.tokensCount ?? 0) > 0 ? 'orange' : 'gray'}>
+            {(item?.tokensCount ?? 0) > 0 ? 'true' : 'false'}
+          </Badge>
+        )
+    },
+    {
+      key: 'documents',
+      header: 'Documents',
+      minWidth: 88,
+      align: 'center',
+      priority: 3,
+      cell: (item: DataContractsListItemData) => (
+        <ValueContainer
+          colorScheme={(item?.documentsCount ?? 0) > 0 ? 'brand' : 'darkGray'}
+          size={'xs'}
+        >
+          <BigNumber>{item?.documentsCount}</BigNumber>
+        </ValueContainer>
+      )
+    },
+    {
+      key: 'timestamp',
+      header: 'Timestamp',
+      minWidth: 120,
+      align: 'right',
+      cell: (item: DataContractsListItemData) =>
+        !item?.timestamp && item?.isSystem ? (
+          <span>Genesis</span>
+        ) : (
+          <DateBlock timestamp={item?.timestamp} format="dateOnly" />
+        )
+    }
+  ]
 }
 
 function DataContractsList({
@@ -64,111 +133,50 @@ function DataContractsList({
   pagination,
   loading,
   itemsCount = 10,
-  pinnedGroup = null
+  enteringKeys,
+  leavingKeys
 }: DataContractsListProps) {
-  const [groupOpen, setGroupOpen] = useState(true)
-  const table = useReactTable({
-    data: dataContracts,
-    columns,
-    getCoreRowModel: getCoreRowModel(),
-    manualPagination: true
-  })
+  const columns = contractColumns()
 
-  const pinnedItems = pinnedGroup?.items || []
+  if (dataContracts === undefined) return <ErrorMessageBlock />
 
   return (
-    <div className={'DataContractsList'}>
-      <div
-        className={`DataContractsList__ColumnTitles ${headerExtraClass?.[headerStyles ?? ''] || ''}`}
-      >
-        <div
-          className={'DataContractsList__ColumnTitle DataContractsList__ColumnTitle--Identifier'}
-        >
-          Identifier
-        </div>
-        <div
-          className={'DataContractsList__ColumnTitle DataContractsList__ColumnTitle--Owner'}
-        >
-          Owner
-        </div>
-        <div
-          className={'DataContractsList__ColumnTitle DataContractsList__ColumnTitle--System'}
-        >
-          System
-        </div>
-        <div
-          className={'DataContractsList__ColumnTitle DataContractsList__ColumnTitle--WithTokens'}
-        >
-          With tokens
-        </div>
-        <div
-          className={
-            'DataContractsList__ColumnTitle DataContractsList__ColumnTitle--DocumentsCount'
-          }
-        >
-          Documents
-        </div>
-        <div
-          className={'DataContractsList__ColumnTitle DataContractsList__ColumnTitle--Timestamp'}
-        >
-          Timestamp
-        </div>
-      </div>
-
-      {pinnedItems.length > 0 && (
-        <div className={'DataContractsList__Group'}>
-          <button
-            type={'button'}
-            className={'DataContractsList__GroupHeader'}
-            onClick={() => setGroupOpen(open => !open)}
-            aria-expanded={groupOpen}
-          >
-            <ChevronIcon
-              className={`DataContractsList__GroupChevron ${groupOpen ? 'DataContractsList__GroupChevron--Open' : ''}`}
-            />
-            <span className={'DataContractsList__GroupLabel'}>{pinnedGroup?.label}</span>
-            <span className={'DataContractsList__GroupCount'}>{pinnedItems.length}</span>
-          </button>
-
-          <SmoothSize>
-            {groupOpen && (
-              <div className={'DataContractsList__Items DataContractsList__Items--Pinned'}>
-                {pinnedItems.map((dataContract, index) => (
-                  <DataContractsListItem
-                    dataContract={dataContract}
-                    key={dataContract?.identifier || index}
-                  />
-                ))}
-              </div>
-            )}
-          </SmoothSize>
-        </div>
-      )}
-
-      {!loading ? (
-        <div className={'DataContractsList__Items'}>
-          {table.getRowModel().rows.map(row => (
-            <DataContractsListItem dataContract={row.original} key={row.id} />
-          ))}
-          {dataContracts?.length === 0 && (
-            <EmptyListMessage>There are no data contracts created yet.</EmptyListMessage>
-          )}
-          {dataContracts === undefined && <ErrorMessageBlock />}
-        </div>
-      ) : (
-        <LoadingList itemsCount={itemsCount} />
-      )}
-
-      {pagination && (
-        <Pagination
-          className={'DataContractsList__Pagination'}
-          onPageChange={pagination.onPageChange}
-          pageCount={pagination.pageCount}
-          forcePage={pagination.forcePage}
-          justify={true}
-        />
-      )}
-    </div>
+    <DataList
+      className={'DataContractsList'}
+      items={dataContracts}
+      columns={columns}
+      loading={loading}
+      skeletonCount={itemsCount}
+      rowHref={item => `/dataContract/${item?.identifier}`}
+      rowKey={item => item?.identifier || ''}
+      rowClassName={item => {
+        const id = item?.identifier || ''
+        if (leavingKeys?.has(id)) return 'is-exit'
+        if (enteringKeys?.has(id)) return 'is-new is-insert'
+        return ''
+      }}
+      rowStyle={(item, i) => {
+        const id = item?.identifier || ''
+        const index = i ?? 0
+        if (leavingKeys?.has(id)) {
+          return { '--stagger': `${Math.max(0, (leavingKeys.size - 1 - index) * 45)}ms` }
+        }
+        if (enteringKeys?.has(id)) return { '--stagger': `${index * 45}ms` }
+        return undefined
+      }}
+      headerVariant={headerStyles === 'light' ? 'light' : 'default'}
+      emptyMessage={'There are no data contracts created yet.'}
+      footer={
+        pagination ? (
+          <Pagination
+            onPageChange={pagination.onPageChange}
+            pageCount={pagination.pageCount}
+            forcePage={pagination.forcePage}
+            justify={true}
+          />
+        ) : null
+      }
+    />
   )
 }
 
