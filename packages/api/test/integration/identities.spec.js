@@ -309,6 +309,38 @@ describe('Identities routes', () => {
       }])
     })
 
+    it('should return masternode identity that has no row in identities table', async () => {
+      const block = await fixtures.block(knex, { timestamp: new Date(0) })
+
+      // masternode voting identities are never indexed, they are only ever visible
+      // through the masternode vote state transitions they own
+      const voterIdentifier = 'e73ZaW2airbBZ7saALtPDJEjpWHGn3Fx4FjzDf5Fwvz'
+
+      await fixtures.transaction(knex, {
+        block_hash: block.hash,
+        block_height: block.height,
+        type: StateTransitionEnum.MASTERNODE_VOTE,
+        owner: voterIdentifier,
+        gas_used: 10000000,
+        data: ''
+      })
+
+      const { body } = await client.get(`/identity/${voterIdentifier}`)
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      assert.equal(body.identifier, voterIdentifier)
+      assert.equal(body.owner, voterIdentifier)
+      assert.equal(body.isSystem, false)
+      assert.equal(body.txHash, null)
+      assert.equal(body.timestamp, null)
+      assert.equal(body.totalTxs, 1)
+      assert.equal(body.totalGasSpent, 10000000)
+      assert.equal(body.revision, String(mockIdentity.revision))
+      assert.equal(body.balance, '0')
+      assert.equal(body.nonce, '0')
+    })
+
     it('should return 404 when identity not found', async () => {
       await client.get('/identity/Cxo56ta5EMrWok8yp2Gpzm8cjBoa3mGYKZaAp9yqD3gW')
         .expect(404)

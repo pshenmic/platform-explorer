@@ -47,11 +47,17 @@ module.exports = class IdentitiesDAO {
       .where('identities.identifier', '=', identifier)
       .as('all_identities')
 
-    const lastRevisionIdentities = this.knex(subquery)
-      .select('identifier', 'owner', 'revision', 'tx_hash', 'tx_id', 'is_system', 'transfers.id as transfer_id',
-        'transfers.sender as sender', 'transfers.recipient as recipient', 'transfers.amount as amount')
-      .where('rank', 1)
-      .leftJoin('transfers', 'transfers.recipient', 'identifier')
+    // Masternode voting and operator identities are never written to the identities table
+    const lastRevisionIdentities = this.knex
+      .select('requested_identity.identifier as identifier', 'owner', 'revision', 'tx_hash', 'tx_id',
+        'is_system', 'transfers.id as transfer_id', 'transfers.sender as sender',
+        'transfers.recipient as recipient', 'transfers.amount as amount')
+      .from(this.knex.raw('(values (?)) as requested_identity(identifier)', [identifier]))
+      .leftJoin(subquery, function () {
+        this.on('all_identities.identifier', '=', 'requested_identity.identifier')
+          .andOnVal('all_identities.rank', '=', 1)
+      })
+      .leftJoin('transfers', 'transfers.recipient', 'requested_identity.identifier')
 
     const documentsSubQuery = this.knex('documents')
       .select('documents.id', 'documents.state_transition_hash', 'documents.owner as owner')
@@ -150,6 +156,10 @@ module.exports = class IdentitiesDAO {
       return null
     }
 
+    if (row.owner == null && Number(row.total_txs) === 0 && Number(row.total_transfers) === 0) {
+      return null
+    }
+
     const identity = Identity.fromRow(row)
 
     const aliases = await Promise.all(identity.aliases.map(async alias => {
@@ -168,14 +178,15 @@ module.exports = class IdentitiesDAO {
       fundingCoreTx = assetLockProof?.fundingCoreTx
     }
 
-    const balance = await this.sdk.identities.getIdentityBalance(identity.identifier)
     const identityNonce = await this.sdk.identities.getIdentityNonce(identity.identifier)
     const identityInfo = await this.sdk.identities.getIdentityByIdentifier(identity.identifier)
 
     return Identity.fromObject({
       ...identity,
+      owner: identity.owner ?? identity.identifier,
+      isSystem: identity.isSystem ?? false,
       aliases,
-      balance: String(balance),
+      balance: String(identityInfo.balance),
       nonce: String(identityNonce),
       revision: String(identityInfo.revision),
       publicKeys: publicKeys?.map(key => {
