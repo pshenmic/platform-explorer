@@ -170,6 +170,9 @@ describe('Platform Addresses routes', () => {
         timestamp: transition.block.timestamp.toISOString(),
         gasUsed: transition.stateTransition.gasUsed ?? 0,
         incoming: transition.addressTransition.recipient_id === platformAddress.address.id,
+        amount: String(transition.addressTransition.recipient_id === platformAddress.address.id
+          ? transition.addressTransition.amount
+          : -transition.addressTransition.amount),
         status: transition.stateTransition.status,
         error: transition.stateTransition.error,
         owner: {
@@ -206,6 +209,9 @@ describe('Platform Addresses routes', () => {
         timestamp: transition.block.timestamp.toISOString(),
         gasUsed: transition.stateTransition.gasUsed ?? 0,
         incoming: transition.addressTransition.recipient_id === platformAddress.address.id,
+        amount: String(transition.addressTransition.recipient_id === platformAddress.address.id
+          ? transition.addressTransition.amount
+          : -transition.addressTransition.amount),
         status: transition.stateTransition.status,
         error: transition.stateTransition.error,
         owner: {
@@ -242,6 +248,9 @@ describe('Platform Addresses routes', () => {
         timestamp: transition.block.timestamp.toISOString(),
         gasUsed: transition.stateTransition.gasUsed ?? 0,
         incoming: transition.addressTransition.recipient_id === platformAddress.address.id,
+        amount: String(transition.addressTransition.recipient_id === platformAddress.address.id
+          ? transition.addressTransition.amount
+          : -transition.addressTransition.amount),
         status: transition.stateTransition.status,
         error: transition.stateTransition.error,
         owner: {
@@ -278,6 +287,9 @@ describe('Platform Addresses routes', () => {
         timestamp: transition.block.timestamp.toISOString(),
         gasUsed: transition.stateTransition.gasUsed ?? 0,
         incoming: transition.addressTransition.recipient_id === platformAddress.address.id,
+        amount: String(transition.addressTransition.recipient_id === platformAddress.address.id
+          ? transition.addressTransition.amount
+          : -transition.addressTransition.amount),
         status: transition.stateTransition.status,
         error: transition.stateTransition.error,
         owner: {
@@ -291,6 +303,32 @@ describe('Platform Addresses routes', () => {
         .slice(14, 21)
 
       assert.deepEqual(expectedAddressTransitions, body.resultSet)
+    })
+
+    it('should fold input and change output of one transition into a single row', async () => {
+      const platformAddress = platformAddresses[platformAddresses.length - 1]
+      const [, spentTransition] = platformAddress.transitions
+
+      // the indexer writes one row per input and one per output, so spending with change
+      // back to the same address leaves two rows behind for a single state transition
+      await fixtures.platformAddressTransition(knex, {
+        recipient_id: platformAddress.address.id,
+        state_transition_id: spentTransition.stateTransition.id,
+        state_transition_type: StateTransitionEnum.ADDRESS_FUNDS_TRANSFER,
+        amount: 30000
+      })
+
+      const { body } = await client.get(`/platformAddress/${platformAddress.address.bech32m_address}/transactions?limit=100`)
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      assert.equal(body.pagination.total, platformAddress.transitions.length)
+      assert.equal(body.resultSet.length, platformAddress.transitions.length)
+
+      const [transaction] = body.resultSet.filter(({ hash }) => hash === spentTransition.stateTransition.hash)
+
+      assert.equal(transaction.incoming, false)
+      assert.equal(transaction.amount, String(30000 - spentTransition.addressTransition.amount))
     })
   })
 

@@ -4452,6 +4452,7 @@ Return all transitions for platform address paged and order by creation height.
 * Valid `order` values are `asc` or `desc`
 * `limit` cannot be more than 100
 * `page` cannot be less than 1
+* `amount` is the net change to the address balance in credits (negative on outcome and positive on income)
 
 ```
 GET /platformAddress/yRpNvoc3hd66c3rNrPRGubVd9vGUoAVpZV/transitions?page=1&limit=10&order=desc
@@ -4475,6 +4476,7 @@ GET /platformAddress/yRpNvoc3hd66c3rNrPRGubVd9vGUoAVpZV/transitions?page=1&limit
                 "aliases": []
             },
             "incoming": false,
+            "amount": "-1000704433560",
             "base58Address": "yRpNvoc3hd66c3rNrPRGubVd9vGUoAVpZV",
             "bech32mAddress": "tdashevo1qq79z66rh34l4u2axlz3jv34zwshggnenut9k093"
         },

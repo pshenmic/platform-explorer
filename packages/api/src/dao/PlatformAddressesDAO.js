@@ -126,15 +126,36 @@ module.exports = class PlatformAddressesDAO {
       .whereRaw('LOWER(address) = ?', [platformAddress.toLowerCase()])
       .orWhereRaw('LOWER(bech32m_address) = ?', [platformAddress.toLowerCase()])
       .limit(1)
-      .as('address_subquery')
 
-    const transitionsSubquery = this.knex(addressSubquery)
-      .select('address', 'bech32m_address', 'state_transition_id', 'recipient_id', 'sender_id')
-      .leftJoin('platform_address_transitions', function () {
-        this
-          .on('platform_address_transitions.recipient_id', '=', 'address_subquery.id')
-          .orOn('platform_address_transitions.sender_id', '=', 'address_subquery.id')
-      })
+    const unionTransitions = this.knex
+      .unionAll([
+        this.knex('platform_address_transitions')
+          .join('address_subquery', 'platform_address_transitions.sender_id', 'address_subquery.id')
+          .select(
+            'state_transition_id',
+            this.knex.raw('0 as incoming'),
+            this.knex.raw('SUM(amount) as amount')
+          )
+          .groupBy('state_transition_id'),
+
+        this.knex('platform_address_transitions')
+          .join('address_subquery', 'platform_address_transitions.recipient_id', 'address_subquery.id')
+          .select(
+            'state_transition_id',
+            this.knex.raw('1 as incoming'),
+            this.knex.raw('SUM(amount) as amount')
+          )
+          .groupBy('state_transition_id')
+      ])
+
+    // the indexer writes one row per input and one per output, so an address that is both an
+    // input and the change output of the same transition owns two rows in it. Fold them into
+    // a single row per state transition holding the net amount, and read the direction off
+    // its sign
+    const transitionsSubquery = this.knex('unique_transitions')
+      .select('state_transition_id')
+      .select(this.knex.raw('COALESCE(SUM(amount) FILTER (WHERE incoming = 1), 0) - COALESCE(SUM(amount) FILTER (WHERE incoming = 0), 0) as amount'))
+      .groupBy('state_transition_id')
 
     const countSubquery = this.knex
       .select(
@@ -143,20 +164,22 @@ module.exports = class PlatformAddressesDAO {
           .as('total_count')
       )
 
-    const transitionsSubqueryWithTotalCount = this.knex
+    const transitionsSubqueryWithTotalCount = this.knex('transitions_subquery')
+      .with('address_subquery', addressSubquery)
+      .with('unique_transitions', unionTransitions)
       .with('transitions_subquery', transitionsSubquery)
-      .select('address', 'bech32m_address', 'state_transition_id')
-      .select(this.knex.raw('recipient_id is not null as incoming'))
+      .crossJoin('address_subquery')
+      .select('address', 'bech32m_address', 'state_transition_id', 'amount')
+      .select(this.knex.raw('amount >= 0 as incoming'))
       .select(countSubquery.as('total_count'))
       .orderBy('state_transition_id', order)
       .offset(fromRank)
       .limit(limit)
-      .from('transitions_subquery')
       .as('transitions_with_total_count_subquery')
 
     const rows = await this.knex(transitionsSubqueryWithTotalCount)
       .select('state_transitions.hash as tx_hash', 'index', 'block_hash', 'type',
-        'gas_used', 'status', 'gas_used', 'owner', 'data', 'incoming', 'total_count',
+        'gas_used', 'status', 'gas_used', 'owner', 'data', 'incoming', 'amount', 'total_count',
         'blocks.timestamp as timestamp', 'blocks.height as block_height',
         'address as base58_address', 'bech32m_address', 'state_transition_id')
       .leftJoin('state_transitions', 'state_transitions.id', 'state_transition_id')
@@ -185,6 +208,6 @@ module.exports = class PlatformAddressesDAO {
 
     const [row] = rows
 
-    return new PaginatedResultSet(resultSet, page, limit, Number(row?.total_count))
+    return new PaginatedResultSet(resultSet, page, limit, Number(row?.total_count ?? 0))
   }
 }
