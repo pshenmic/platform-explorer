@@ -358,6 +358,23 @@ const schemaTypes = [
     }
   },
   {
+    $id: 'platformAddresses',
+    type: 'object',
+    required: ['addresses'],
+    properties: {
+      addresses: {
+        type: 'array',
+        minItems: 1,
+        maxItems: 100,
+        items: {
+          type: 'string',
+          maxLength: 100,
+          pattern: '^[A-Za-z0-9]+$'
+        }
+      }
+    }
+  },
+  {
     $id: 'identifier',
     type: 'string',
     pattern: '^[A-Za-z0-9]+$',

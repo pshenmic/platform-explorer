@@ -332,6 +332,152 @@ describe('Platform Addresses routes', () => {
     })
   })
 
+  describe('getAddressesInfo()', () => {
+    it('should return info for a set of addresses', async () => {
+      const selected = platformAddresses.slice(0, 3)
+
+      const { body } = await client.post('/platformAddresses/info')
+        .send({ addresses: selected.map(({ address }) => address.bech32m_address) })
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      const expected = selected.map(platformAddress => ({
+        base58Address: platformAddress.address.address,
+        bech32mAddress: platformAddress.address.bech32m_address,
+        totalTxs: platformAddress.transitions.length,
+        incomingTxs: platformAddress.transitions.filter(({ addressTransition }) => addressTransition.recipient_id === platformAddress.address.id).length,
+        outgoingTxs: platformAddress.transitions.filter(({ addressTransition }) => addressTransition.sender_id === platformAddress.address.id).length,
+        nonce: platformAddress.address.nonce,
+        balance: platformAddress.address.balance.toString(),
+        totalIncomingAmount: platformAddress.transitions.filter(({ addressTransition }) => addressTransition.recipient_id === platformAddress.address.id).reduce((partialSum, a) => partialSum + a.addressTransition.amount, 0).toString(),
+        totalOutgoingAmount: platformAddress.transitions.filter(({ addressTransition }) => addressTransition.sender_id === platformAddress.address.id).reduce((partialSum, a) => partialSum + a.addressTransition.amount, 0).toString()
+      }))
+
+      assert.deepEqual(expected, body)
+    })
+
+    it('should accept base58 and bech32m in the same set', async () => {
+      const [first, second] = platformAddresses
+
+      const { body } = await client.post('/platformAddresses/info')
+        .send({ addresses: [first.address.address, second.address.bech32m_address] })
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      assert.deepEqual(body.map(({ base58Address }) => base58Address),
+        [first.address.address, second.address.address])
+    })
+
+    it('should skip addresses that were never seen', async () => {
+      const [first] = platformAddresses
+
+      const { body } = await client.post('/platformAddresses/info')
+        .send({ addresses: [first.address.address, 'yfMwEBHUZAsHSJcgnfCVSN1mFEeoPzUZAM'] })
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      assert.equal(body.length, 1)
+      assert.equal(body[0].base58Address, first.address.address)
+    })
+
+    it('should not accept more than 100 addresses', async () => {
+      const [first] = platformAddresses
+
+      const { body, status } = await client.post('/platformAddresses/info')
+        .send({ addresses: new Array(101).fill(first.address.address) })
+
+      assert.notEqual(status, 200)
+      assert.match(body.error, /must NOT have more than 100 items/)
+    })
+  })
+
+  describe('getAddressesTransitions()', () => {
+    it('should return one merged page across a set of addresses', async () => {
+      const [first, second] = platformAddresses
+
+      const { body } = await client.post('/platformAddresses/transactions?limit=100')
+        .send({ addresses: [first.address.bech32m_address, second.address.address] })
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      assert.equal(body.pagination.total, first.transitions.length + second.transitions.length)
+      assert.equal(body.resultSet.length, first.transitions.length + second.transitions.length)
+
+      // paged on chain order, not on insertion order
+      const expected = [...first.transitions, ...second.transitions]
+        .sort((a, b) => a.block.height - b.block.height)
+        .map(({ stateTransition }) => stateTransition.hash)
+
+      assert.deepEqual(body.resultSet.map(({ hash }) => hash), expected)
+
+      // every transition here belongs to exactly one of the two, so it still names its address
+      const addresses = new Set(body.resultSet.map(({ base58Address }) => base58Address))
+      assert.deepEqual([...addresses].sort(), [first.address.address, second.address.address].sort())
+    })
+
+    it('should page and order the merged set by block height', async () => {
+      const [first, second] = platformAddresses
+
+      const { body } = await client.post('/platformAddresses/transactions?limit=7&page=3&order=desc')
+        .send({ addresses: [first.address.address, second.address.address] })
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      assert.equal(body.pagination.page, 3)
+      assert.equal(body.pagination.limit, 7)
+      assert.equal(body.pagination.total, first.transitions.length + second.transitions.length)
+
+      const expected = [...first.transitions, ...second.transitions]
+        .sort((a, b) => b.block.height - a.block.height)
+        .slice(14, 21)
+        .map(({ stateTransition }) => stateTransition.hash)
+
+      assert.deepEqual(body.resultSet.map(({ hash }) => hash), expected)
+    })
+
+    it('should return one row when a transition touches several of the addresses', async () => {
+      const sender = platformAddresses[26]
+      const recipient = platformAddresses[27]
+      const [, sharedTransition] = sender.transitions
+
+      await fixtures.platformAddressTransition(knex, {
+        recipient_id: recipient.address.id,
+        state_transition_id: sharedTransition.stateTransition.id,
+        state_transition_type: StateTransitionEnum.ADDRESS_FUNDS_TRANSFER,
+        amount: 40000
+      })
+
+      const { body } = await client.post('/platformAddresses/transactions?limit=100')
+        .send({ addresses: [sender.address.address, recipient.address.address] })
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      const merged = body.resultSet.filter(({ hash }) => hash === sharedTransition.stateTransition.hash)
+
+      // the shared transition is listed once, not once per address that owns a row in it
+      assert.equal(merged.length, 1)
+      assert.equal(body.pagination.total, sender.transitions.length + recipient.transitions.length)
+
+      const [transaction] = merged
+
+      assert.equal(transaction.amount, String(40000 - sharedTransition.addressTransition.amount))
+      assert.equal(transaction.incoming, false)
+      // no single address of the set describes the row
+      assert.equal(transaction.base58Address, null)
+      assert.equal(transaction.bech32mAddress, null)
+    })
+
+    it('should not accept more than 100 addresses', async () => {
+      const [first] = platformAddresses
+
+      const { body, status } = await client.post('/platformAddresses/transactions')
+        .send({ addresses: new Array(101).fill(first.address.address) })
+
+      assert.notEqual(status, 200)
+      assert.match(body.error, /must NOT have more than 100 items/)
+    })
+  })
+
   describe('getAddresses()', () => {
     it('should return default set of platform addresses', async () => {
       const { body } = await client.get('/platformAddresses')

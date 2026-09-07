@@ -799,6 +799,23 @@ module.exports = ({
       }
     },
     {
+      path: '/platformAddresses/info',
+      method: 'POST',
+      handler: platformAddressesController.getPlatformAddressesInfo,
+      schema: {
+        body: { $ref: 'platformAddresses#' }
+      }
+    },
+    {
+      path: '/platformAddresses/transactions',
+      method: 'POST',
+      handler: platformAddressesController.getPlatformAddressesTransitions,
+      schema: {
+        querystring: { $ref: 'paginationOptions#' },
+        body: { $ref: 'platformAddresses#' }
+      }
+    },
+    {
       path: '/transactions/duplicates',
       method: 'GET',
       handler: transactionsController.getDuplicatedTransactions,

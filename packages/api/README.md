@@ -4447,7 +4447,7 @@ Response codes:
 ```
 ___
 ### Platform Address Transactions
-Return all transitions for platform address paged and order by creation height.
+Return all transitions for platform address paged and ordered by block height and index.
 
 * Valid `order` values are `asc` or `desc`
 * `limit` cannot be more than 100
@@ -4486,6 +4486,100 @@ GET /platformAddress/yRpNvoc3hd66c3rNrPRGubVd9vGUoAVpZV/transitions?page=1&limit
         "page": 1,
         "limit": 10,
         "total": 80
+    }
+}
+```
+
+Response codes:
+```
+200: OK
+500: Internal Server Error
+```
+___
+### Platform Addresses Info
+Return info for a set of platform addresses in one request, so a wallet can cover a whole
+DIP-17 window without one request per address.
+
+* `addresses` accepts base58check or bech32m, mixed freely
+* at most 100 addresses per request
+* addresses the indexer has never seen are left out of the response, so a short response means
+  the missing addresses are unused
+* the response is ordered by the order the indexer first saw each address, not by the order of
+  the request — key the result by address rather than by position
+
+```
+POST /platformAddresses/info
+{"addresses": ["yRpNvoc3hd66c3rNrPRGubVd9vGUoAVpZV", "tdashevo1qq79z66rh34l4u2axlz3jv34zwshggnenut9k093"]}
+
+[
+    {
+        "base58Address": "yRpNvoc3hd66c3rNrPRGubVd9vGUoAVpZV",
+        "bech32mAddress": "tdashevo1qq79z66rh34l4u2axlz3jv34zwshggnenut9k093",
+        "totalTxs": 80,
+        "incomingTxs": 1,
+        "outgoingTxs": 79,
+        "nonce": 79,
+        "balance": "39506060",
+        "totalIncomingAmount": "1000000000",
+        "totalOutgoingAmount": "960493940"
+    },
+    ...
+]
+```
+
+Response codes:
+```
+200: OK
+500: Internal Server Error
+```
+___
+### Platform Addresses Transactions
+Return one merged page of transitions across a set of platform addresses, ordered by block
+height and index.
+
+* `addresses` accepts base58check or bech32m, mixed freely
+* at most 100 addresses per request
+* Valid `order` values are `asc` or `desc`
+* `limit` cannot be more than 100
+* `page` cannot be less than 1
+* a transition is listed once no matter how many addresses of the set own a row in it, and
+  `amount` is the net change across the whole set
+* `base58Address` and `bech32mAddress` name the address the transition belongs to, and are
+  `null` when it touches more than one address of the set
+
+```
+POST /platformAddresses/transactions?page=1&limit=10&order=desc
+{"addresses": ["yRpNvoc3hd66c3rNrPRGubVd9vGUoAVpZV", "yjaZy4BRBd99jB4mSpd6hJQkYFaCeprGQm"]}
+
+{
+    "resultSet": [
+        {
+            "hash": "99C5901B019156C0547472B4C825D05E0510DD60C0EE1DDB7730A2387421D52D",
+            "index": 17,
+            "blockHash": "A3D5152ECA3629D4BD8DE05E77B5BDC1AA6D22F8180630EE10CBC01F946A2885",
+            "blockHeight": 246835,
+            "type": "ADDRESS_FUNDS_TRANSFER",
+            "batchType": null,
+            "data": "DAABADxRa0O8a/rxXTfFGTI1E6F0InmfT/wF9eEAZAADfLzYQY3...",
+            "timestamp": "2026-01-15T16:15:33.127Z",
+            "gasUsed": 704433560,
+            "status": "SUCCESS",
+            "error": null,
+            "owner": {
+                "identifier": null,
+                "aliases": []
+            },
+            "incoming": false,
+            "amount": "-1000704433560",
+            "base58Address": "yRpNvoc3hd66c3rNrPRGubVd9vGUoAVpZV",
+            "bech32mAddress": "tdashevo1qq79z66rh34l4u2axlz3jv34zwshggnenut9k093"
+        },
+        ...
+    ],
+    "pagination": {
+        "page": 1,
+        "limit": 10,
+        "total": 142
     }
 }
 ```
