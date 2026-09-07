@@ -8,10 +8,7 @@ import BlocksList from '../../components/blocks/BlocksList'
 import { ErrorMessageBlock } from '../../components/Errors'
 import { fetchHandlerSuccess, fetchHandlerError } from '../../util'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
-import NetworkStatsInline from '../../components/stats/NetworkStatsInline'
-import PageTitle from '../../components/intro/PageTitle'
 import type { Block, LoadableState, PaginatedResultSet } from '../../types'
-import introContent from './introContent'
 import './Blocks.css'
 
 const paginateConfig = {
@@ -173,12 +170,7 @@ function Blocks({ defaultPage = 1, defaultPageSize }: BlocksProps) {
   return (
     <div className={'ListPage Blocks'}>
       <div className={'InfoBlock'}>
-        <div className={'Blocks__Controls'}>
-          <PageTitle title={'Blocks'} description={introContent} className={'Blocks__Title'} />
-
-          <NetworkStatsInline className={'Blocks__Stats'} />
-        </div>
-
+        <h1 className={'Blocks__PageTitle'}>Blocks</h1>
         {blocks.error ? (
           <div className={'ListPage__Error'}>
             <ErrorMessageBlock />
