@@ -172,6 +172,7 @@ module.exports = class BlockDAO {
   getBlocks = async (
     page, limit, order,
     validator,
+    hash,
     gasMin, gasMax,
     heightMin, heightMax,
     startTimestamp, endTimestamp,
@@ -226,6 +227,13 @@ module.exports = class BlockDAO {
         ]
       : ['true']
 
+    const hashQuery = hash
+      ? [
+          'hash ILIKE ?',
+          hash
+        ]
+      : ['true']
+
     if (gasMin) {
       gasQueryString = 'COALESCE(total_gas_used, 0) >= ?'
       gasQueryBindings.push(gasMin)
@@ -255,6 +263,7 @@ module.exports = class BlockDAO {
       .andWhereRaw(heightQueryString, heightQueryBindings)
       .andWhereRaw(timestampQueryString, timestampQueryBindings)
       .andWhereRaw(...validatorQuery)
+      .andWhereRaw(...hashQuery)
       .as('blocks')
 
     const transactionsSubquery = this.knex('state_transitions')
