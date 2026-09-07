@@ -10,7 +10,7 @@
 .DataList__Table {
   width: 100%;
   border-collapse: separate;
-  border-spacing: 0 8px;
+  border-spacing: 0 6px;
   table-layout: fixed;
 }
 .DataList__Head {
@@ -45,13 +45,15 @@
   background-color: transparent;
 }
 .DataList__HeadCell {
-  padding: 7px 8px;
+  height: 32px;
+  padding: 6px 8px;
   min-width: 0;
   white-space: nowrap;
   font: inherit;
   color: inherit;
   text-align: left;
   vertical-align: middle;
+  box-sizing: border-box;
 }
 .DataList__Head .DataList__HeadCell:not(:first-child) {
   box-shadow: inset 1px 0 0 rgba(255, 255, 255, 0.07);
@@ -155,15 +157,15 @@
   color: var(--pe-color-gray-100);
   font-family: var(--pe-font-mono);
   font-size: 0.75rem;
-  line-height: 24px;
+  line-height: 18px;
   position: relative;
 }
 .DataList__Row--link {
   cursor: pointer;
 }
 .DataList__Cell {
-  height: 2.375rem;
-  padding: 7px 8px;
+  height: 32px;
+  padding: 6px 8px;
   min-width: 0;
   vertical-align: middle;
   white-space: nowrap;
@@ -234,10 +236,26 @@
   min-width: 50px;
 }
 .DataList__Row__Avatar {
-  height: 24px;
-  width: 24px;
+  height: 18px;
+  width: 18px;
   flex-shrink: 0;
-  margin-right: 12px;
+  margin-right: 8px;
+}
+.DataList__Cell .Identifier {
+  min-width: 0;
+  max-width: 100%;
+}
+.DataList__Cell .Identifier--Ellipsis .Identifier__SymbolsContainer {
+  min-width: 0;
+  flex: 1 1 auto;
+}
+.DataList__Cell .Identifier__Avatar {
+  height: 18px;
+  width: 18px;
+}
+.DataList__Cell .Badge {
+  line-height: 18px;
+  padding: 0 0.5rem;
 }
 .DataList__Row--Timestamp,
 .DataList__Row__Column--Timestamp {
@@ -487,13 +505,36 @@
   max-width: 100%;
 }
 .DataList__Skeleton {
-  display: inline-block;
-  width: 100%;
-  max-width: 90px;
-  height: 0.85em;
+  display: block;
+  width: 72%;
+  height: 10px;
   border-radius: 4px;
-  background: rgba(var(--pe-color-gray-800-rgb), 0.8);
-  animation: DataListPulse 1.4s ease-in-out infinite;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.04) 0%,
+    rgba(255, 255, 255, 0.1) 40%,
+    rgba(255, 255, 255, 0.04) 80%
+  );
+  background-size: 200% 100%;
+  animation: DataListShimmer 1.2s ease-in-out infinite;
+}
+.DataList__Cell:first-child .DataList__Skeleton {
+  width: 3.5rem;
+}
+.DataList__Cell:nth-child(2) .DataList__Skeleton {
+  width: 82%;
+}
+.DataList__Cell:nth-child(3) .DataList__Skeleton {
+  width: 2.5rem;
+  margin-inline: auto;
+}
+.DataList__Cell--center .DataList__Skeleton {
+  margin-inline: auto;
+  width: 2.75rem;
+}
+.DataList__Cell--right .DataList__Skeleton {
+  margin-left: auto;
+  width: 4.5rem;
 }
 .DataList__Footer {
   margin-top: 12px;
@@ -590,13 +631,12 @@
   animation-delay: var(--stagger, 0ms);
 }
 
-@keyframes DataListPulse {
-  0%,
-  100% {
-    opacity: 0.5;
+@keyframes DataListShimmer {
+  0% {
+    background-position: 100% 0;
   }
-  50% {
-    opacity: 1;
+  100% {
+    background-position: -100% 0;
   }
 }
 @keyframes DataListSlotInsert {
@@ -623,6 +663,7 @@
 @media (prefers-reduced-motion: reduce) {
   .DataList__Skeleton {
     animation: none;
+    background: rgba(255, 255, 255, 0.06);
   }
   .DataList__Row.is-new > .DataList__Cell,
   .DataList__Row.is-insert,
