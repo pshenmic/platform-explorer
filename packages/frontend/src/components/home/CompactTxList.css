@@ -1,5 +1,5 @@
-.CompactTxList .DataList__Body {
-  gap: 6px;
+.CompactTxList .DataList__Table {
+  border-spacing: 0 6px;
 }
 .CompactTxList .DataList__Head {
   margin-bottom: 6px;
@@ -14,12 +14,12 @@
   color: var(--pe-color-gray-500);
 }
 .CompactTxList .DataList__Row {
+  --DataList-row-bg: rgba(255, 255, 255, 0.03);
+  --DataList-row-border: rgba(255, 255, 255, 0.06);
+  --DataList-row-radius: 12px;
   padding: 8px 10px;
   margin-bottom: 0;
   min-height: 2.75rem;
-  border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  background: rgba(255, 255, 255, 0.03);
   font-size: 0.75rem;
   line-height: 1.25;
   gap: 10px;
@@ -29,8 +29,8 @@
 }
 @media (hover: hover) and (pointer: fine) {
   .CompactTxList .DataList__Row:hover {
-    background: rgba(255, 255, 255, 0.05);
-    border-color: rgba(255, 255, 255, 0.12);
+    --DataList-row-bg: rgba(255, 255, 255, 0.05);
+    --DataList-row-border: rgba(255, 255, 255, 0.12);
   }
 }
 .CompactTxList .DataList__Row:active {
