@@ -10,15 +10,30 @@
 }
 .DataListHeaderMenu__Search input,
 .DataListHeaderMenu__Range input {
+  appearance: none;
+  -webkit-appearance: none;
   box-sizing: border-box;
   width: 100%;
   height: 28px;
   padding: 0 8px;
   border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 6px;
+  border-radius: 8px;
   background: var(--pe-color-gray-900);
   color: var(--pe-color-fg);
   font-size: 12px;
+  outline: none;
+}
+.DataListHeaderMenu__Search input:focus,
+.DataListHeaderMenu__Range input:focus {
+  border-color: rgba(255, 255, 255, 0.22);
+}
+.DataListHeaderMenu__Range input::-webkit-outer-spin-button,
+.DataListHeaderMenu__Range input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.DataListHeaderMenu__Range input[type='number'] {
+  -moz-appearance: textfield;
 }
 .DataListHeaderMenu__Range {
   display: flex;

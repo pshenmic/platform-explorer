@@ -108,7 +108,7 @@ export default function DataListHeaderMenu({
         <div className={'DataListHeaderMenu__Search'}>
           <input
             ref={searchRef}
-            type={'search'}
+            type={'text'}
             value={typeof value === 'string' ? value : ''}
             placeholder={placeholder}
             onChange={event => onChange(event.target.value)}
@@ -121,12 +121,14 @@ export default function DataListHeaderMenu({
           <input
             ref={searchRef}
             type={'number'}
+            inputMode={'numeric'}
             placeholder={'Min'}
             value={rangeValue.min ?? ''}
             onChange={event => onChange({ ...rangeValue, min: event.target.value })}
           />
           <input
             type={'number'}
+            inputMode={'numeric'}
             placeholder={'Max'}
             value={rangeValue.max ?? ''}
             onChange={event => onChange({ ...rangeValue, max: event.target.value })}
