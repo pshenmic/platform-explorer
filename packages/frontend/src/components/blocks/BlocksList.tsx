@@ -136,7 +136,7 @@ function BlocksList({
       header: 'TX count',
       filterKey: 'tx_count',
       filterType: 'range' as const,
-      minWidth: 96,
+      minWidth: 118,
       align: 'center',
       cell: ({ txs }: any) => (typeof txs?.length === 'number' ? <Badge>{txs.length}</Badge> : null)
     },
@@ -145,7 +145,7 @@ function BlocksList({
       header: 'Timestamp',
       filterKey: 'timestamp',
       filterType: 'daterange' as const,
-      minWidth: absoluteDate ? 132 : 108,
+      minWidth: absoluteDate ? 148 : 128,
       align: 'right',
       cell: ({ header }: any) => {
         if (!header?.timestamp) return <NotActive />

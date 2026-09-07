@@ -1,4 +1,5 @@
 .DataList {
+  position: relative;
   width: 100%;
   min-width: 0;
 }
@@ -55,10 +56,12 @@
 .DataList__HeadCellInner {
   display: flex;
   align-items: center;
+  gap: 4px;
   min-width: 0;
   width: 100%;
 }
 .DataList__HeadCellTitle {
+  flex: 1 1 auto;
   min-width: 0;
 }
 .DataList__HeadMenuBtn {
@@ -66,12 +69,13 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 16px;
-  height: 16px;
+  flex-shrink: 0;
+  width: 14px;
+  height: 14px;
   margin-left: auto;
   padding: 0;
   border: 0;
-  border-radius: 4px;
+  border-radius: 3px;
   background: none;
   color: inherit;
   opacity: 0.5;
@@ -87,24 +91,30 @@
   color: var(--pe-color-brand-normal);
 }
 .DataList__HeadMenuIcon {
-  transform: rotate(90deg);
+  display: block;
+  width: 12px;
+  height: 12px;
 }
 .DataList__HeadCell--center {
   text-align: center;
 }
-.DataList__HeadCell--center .DataList__HeadCellInner {
-  justify-content: center;
+.DataList__HeadCell--center .DataList__HeadCellTitle,
+.DataList__HeadCell--center .DataList__HeadCell--Sortable {
+  text-align: center;
 }
 .DataList__HeadCell--right {
   text-align: right;
 }
-.DataList__HeadCell--right .DataList__HeadCellInner {
-  justify-content: flex-end;
+.DataList__HeadCell--right .DataList__HeadCellTitle,
+.DataList__HeadCell--right .DataList__HeadCell--Sortable {
+  text-align: right;
 }
 .DataList__HeadCell--Sortable {
   appearance: none;
   display: inline-flex;
   align-items: center;
+  flex: 1 1 auto;
+  min-width: 0;
   gap: 2px;
   background: none;
   border: 0;
@@ -131,8 +141,8 @@
 }
 .DataList__SortSpacer {
   display: inline-block;
-  width: 14px;
-  height: 14px;
+  width: 12px;
+  height: 12px;
   flex-shrink: 0;
 }
 .DataList__Row {
@@ -239,19 +249,49 @@
   font-size: 0.75rem;
 }
 
-.DataList--pinFirst .DataList__Scroll {
-  overflow: auto;
+.DataList--pinFirst {
+  display: flex;
+  flex-direction: column;
   max-height: calc(100dvh - 10.5rem);
+  min-height: 0;
+}
+.DataList--pinFirst .DataList__HeadScroll {
+  flex: 0 0 auto;
+  width: 100%;
+  min-width: 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  overscroll-behavior: contain;
+  touch-action: pan-x pan-y;
+}
+.DataList--pinFirst .DataList__HeadScroll::-webkit-scrollbar {
+  display: none;
+  height: 0;
+}
+.DataList--pinFirst .DataList__BodyScroll {
+  flex: 1 1 auto;
+  width: 100%;
+  min-width: 0;
+  min-height: 0;
+  margin-top: 8px;
+  overflow: auto;
   overscroll-behavior: contain;
   touch-action: pan-x pan-y;
   -webkit-overflow-scrolling: touch;
-  border-radius: 10px;
+  scroll-behavior: auto;
+  scrollbar-gutter: stable;
+}
+.DataList--pinFirst .DataList__Table--head {
+  border-spacing: 0;
 }
 .DataList--pinFirst .DataList__Head .DataList__HeadCell {
-  position: sticky;
-  top: 0;
-  z-index: 2;
   background-color: var(--pe-color-gray-800);
+}
+.DataList--pinFirst .DataList__Head .DataList__HeadCell--pin {
+  z-index: 10;
+  box-shadow: 16px 0 12px -8px var(--pe-color-gray-800);
 }
 .DataList--pinFirst .DataList__Head .DataList__HeadCell:first-child {
   border-radius: 10px 0 0 10px;
@@ -269,18 +309,43 @@
   transform: none;
   box-shadow: none;
 }
+.DataList--pinFirst .DataList__Cell:not(.DataList__Cell--pin) {
+  position: relative;
+  z-index: 0;
+}
 .DataList--pinFirst .DataList__HeadCell--pin,
 .DataList--pinFirst .DataList__Cell--pin {
   position: sticky;
   left: 0;
-  z-index: 1;
   background-color: var(--pe-color-gray-800);
 }
 .DataList--pinFirst .DataList__Cell--pin {
-  background-color: rgb(38, 46, 50);
-}
-.DataList--pinFirst .DataList__HeadCell--pin {
   z-index: 3;
+  transform: translateZ(0);
+  background-color: rgb(38, 46, 50);
+  box-shadow: 16px 0 12px -8px rgb(38, 46, 50);
+}
+.DataList--pinFirst.DataList--fadeEnd .DataList__HeadScroll,
+.DataList--pinFirst.DataList--fadeEnd .DataList__BodyScroll {
+  -webkit-mask-image: linear-gradient(
+    to right,
+    #000 0,
+    #000 calc(100% - 2.5rem),
+    transparent
+  );
+  mask-image: linear-gradient(to right, #000 0, #000 calc(100% - 2.5rem), transparent);
+}
+.DataList--pinFirst.DataList--fadeEnd::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 2.5rem;
+  pointer-events: none;
+  z-index: 8;
+  border-radius: 0 10px 10px 0;
+  background: linear-gradient(to right, rgb(16 22 24 / 0), rgb(16 22 24 / 0.55));
 }
 .DataList--pinFirst .DataList__Cell .Identifier {
   max-width: 100%;
@@ -295,6 +360,7 @@
 @media (hover: hover) and (pointer: fine) {
   .DataList--pinFirst .DataList__Row:hover > .DataList__Cell--pin {
     background-color: var(--pe-color-gray-750);
+    box-shadow: 16px 0 12px -8px var(--pe-color-gray-750);
   }
 }
 

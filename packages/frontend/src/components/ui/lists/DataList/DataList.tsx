@@ -10,7 +10,7 @@ import {
   type RefObject
 } from 'react'
 import { useRouter } from 'next/navigation'
-import { ChevronIcon } from '../../icons'
+import { ChevronDown, ChevronUp } from 'lucide-react'
 import useResizeObserver from '@react-hook/resize-observer'
 import { EmptyListMessage } from '../index'
 import DataListHeaderMenu, {
@@ -155,7 +155,7 @@ function HeadCell<T>({
         onMenuOpen?.(event.currentTarget.getBoundingClientRect())
       }}
     >
-      <ChevronIcon className={'DataList__HeadMenuIcon'} w={3} h={3} aria-hidden />
+      <ChevronDown className={'DataList__HeadMenuIcon'} size={12} strokeWidth={2} aria-hidden />
     </button>
   ) : null
 
@@ -179,21 +179,9 @@ function HeadCell<T>({
           >
             {isActive ? (
               direction === 'asc' ? (
-                <ChevronIcon
-                  className={'DataList__SortIcon'}
-                  w={3.5}
-                  h={3.5}
-                  aria-hidden
-                  style={{ transform: 'rotate(-90deg)' }}
-                />
+                <ChevronUp className={'DataList__SortIcon'} size={12} strokeWidth={2} aria-hidden />
               ) : (
-                <ChevronIcon
-                  className={'DataList__SortIcon'}
-                  w={3.5}
-                  h={3.5}
-                  aria-hidden
-                  style={{ transform: 'rotate(90deg)' }}
-                />
+                <ChevronDown className={'DataList__SortIcon'} size={12} strokeWidth={2} aria-hidden />
               )
             ) : (
               <span className={'DataList__SortSpacer'} aria-hidden />
@@ -238,7 +226,10 @@ export default function DataList<T = any>({
 }: DataListProps<T>) {
   const wrapRef = useRef<HTMLDivElement | null>(null)
   const scrollRef = useRef<HTMLDivElement | null>(null)
+  const headScrollRef = useRef<HTMLDivElement | null>(null)
+  const syncingScroll = useRef(false)
   const [width, setWidth] = useState(0)
+  const [canScrollEnd, setCanScrollEnd] = useState(false)
   const [openMenu, setOpenMenu] = useState<{ key: string; anchor: DOMRect } | null>(null)
   const router = useRouter()
   useResizeObserver(wrapRef as RefObject<HTMLElement>, entry => setWidth(entry.contentRect.width))
@@ -256,6 +247,50 @@ export default function DataList<T = any>({
     el.addEventListener('wheel', onWheel, { passive: false })
     return () => el.removeEventListener('wheel', onWheel)
   }, [pinFirst, items.length, loading])
+
+  useEffect(() => {
+    const body = scrollRef.current
+    const head = headScrollRef.current
+    if (!body || !pinFirst) {
+      setCanScrollEnd(false)
+      return
+    }
+    const updateFade = () => {
+      const max = body.scrollWidth - body.clientWidth
+      setCanScrollEnd(max > 8 && body.scrollLeft < max - 8)
+    }
+    const onBodyScroll = () => {
+      if (syncingScroll.current) return
+      syncingScroll.current = true
+      if (head) head.scrollLeft = body.scrollLeft
+      updateFade()
+      syncingScroll.current = false
+    }
+    const onHeadScroll = () => {
+      if (!head || syncingScroll.current) return
+      syncingScroll.current = true
+      body.scrollLeft = head.scrollLeft
+      updateFade()
+      syncingScroll.current = false
+    }
+    const onHeadWheel = (event: WheelEvent) => {
+      if (Math.abs(event.deltaY) <= Math.abs(event.deltaX)) return
+      event.preventDefault()
+      body.scrollTop += event.deltaY
+    }
+    updateFade()
+    body.addEventListener('scroll', onBodyScroll, { passive: true })
+    head?.addEventListener('scroll', onHeadScroll, { passive: true })
+    head?.addEventListener('wheel', onHeadWheel, { passive: false })
+    const ro = new ResizeObserver(updateFade)
+    ro.observe(body)
+    return () => {
+      body.removeEventListener('scroll', onBodyScroll)
+      head?.removeEventListener('scroll', onHeadScroll)
+      head?.removeEventListener('wheel', onHeadWheel)
+      ro.disconnect()
+    }
+  }, [pinFirst, items.length, loading, width])
 
   const cols = visibleColumns(columns, width, !pinFirst)
   const tableMinWidth = minTableWidth(cols)
@@ -279,96 +314,126 @@ export default function DataList<T = any>({
       </td>
     ))
 
+  const renderColGroup = () => (
+    <colgroup>
+      {cols.map(c => (
+        <col key={c.key} style={colStyle(c)} />
+      ))}
+    </colgroup>
+  )
+
+  const headerRow =
+    showHeader ? (
+      <thead className={`DataList__Head DataList__Head--${headerVariant}`}>
+        <tr>
+          {cols.map((c, i) => (
+            <HeadCell
+              key={c.key}
+              column={c}
+              sort={sort}
+              onSortChange={onSortChange}
+              pinned={pinFirst && i === 0}
+              filterActive={isFilterActive(c.filterType, filterValues[c.filterKey || ''])}
+              menuOpen={openMenu?.key === c.key}
+              onMenuOpen={
+                c.filterKey && c.filterType && onFilterChange
+                  ? anchor =>
+                      setOpenMenu(prev => (prev?.key === c.key ? null : { key: c.key, anchor }))
+                  : undefined
+              }
+            />
+          ))}
+        </tr>
+      </thead>
+    ) : null
+
+  const bodyRows = (
+    <tbody className={'DataList__Body'}>
+      {beforeBody ? (
+        <tr className={'DataList__BeforeBody'}>
+          <td colSpan={Math.max(cols.length, 1)}>{beforeBody}</td>
+        </tr>
+      ) : null}
+      {loading ? (
+        Array.from({ length: skeletonCount }).map((_, i) => (
+          <tr key={i} className={'DataList__Row DataList__Row--Skeleton'}>
+            {renderCells(undefined, i, true)}
+          </tr>
+        ))
+      ) : items.length === 0 ? (
+        <tr className={'DataList__Empty'}>
+          <td colSpan={Math.max(cols.length, 1)}>
+            <EmptyListMessage>{emptyMessage}</EmptyListMessage>
+          </td>
+        </tr>
+      ) : (
+        items.map((item, i) => {
+          const key = rowKey ? rowKey(item, i) : i
+          const extraRowClass = resolveRowClassName(rowClassName, item, i)
+          const extraRowStyle =
+            typeof rowStyle === 'function' ? rowStyle(item, i) || {} : rowStyle || {}
+          const href = rowHref?.(item, i)
+          return (
+            <tr
+              key={key}
+              className={`DataList__Row${href ? ' DataList__Row--link' : ''}${extraRowClass ? ` ${extraRowClass}` : ''}`}
+              style={extraRowStyle}
+              onClick={href ? e => openRow(e, href) : undefined}
+              onAuxClick={href ? e => openRow(e, href) : undefined}
+              onKeyDown={
+                href
+                  ? e => {
+                      if (e.key !== 'Enter' && e.key !== ' ') return
+                      if (isInteractiveTarget(e.target)) return
+                      e.preventDefault()
+                      router.push(href)
+                    }
+                  : undefined
+              }
+              tabIndex={href ? 0 : undefined}
+            >
+              {renderCells(item, i, false)}
+            </tr>
+          )
+        })
+      )}
+    </tbody>
+  )
+
+  const tableStyle = { minWidth: tableMinWidth }
+
   return (
     <div
       ref={wrapRef}
-      className={`DataList ${pinFirst ? 'DataList--pinFirst' : ''} ${className}`.trim()}
+      className={`DataList ${pinFirst ? 'DataList--pinFirst' : ''} ${canScrollEnd ? 'DataList--fadeEnd' : ''} ${className}`.trim()}
       {...wrapperProps}
     >
-      <div ref={scrollRef} className={'DataList__Scroll'}>
-        <table className={'DataList__Table'} style={{ minWidth: tableMinWidth }}>
-          <colgroup>
-            {cols.map(c => (
-              <col key={c.key} style={colStyle(c)} />
-            ))}
-          </colgroup>
-          {showHeader && (
-            <thead className={`DataList__Head DataList__Head--${headerVariant}`}>
-              <tr>
-                {cols.map((c, i) => (
-                  <HeadCell
-                    key={c.key}
-                    column={c}
-                    sort={sort}
-                    onSortChange={onSortChange}
-                    pinned={pinFirst && i === 0}
-                    filterActive={isFilterActive(c.filterType, filterValues[c.filterKey || ''])}
-                    menuOpen={openMenu?.key === c.key}
-                    onMenuOpen={
-                      c.filterKey && c.filterType && onFilterChange
-                        ? anchor =>
-                            setOpenMenu(prev =>
-                              prev?.key === c.key ? null : { key: c.key, anchor }
-                            )
-                        : undefined
-                    }
-                  />
-                ))}
-              </tr>
-            </thead>
-          )}
-          <tbody className={'DataList__Body'}>
-            {beforeBody ? (
-              <tr className={'DataList__BeforeBody'}>
-                <td colSpan={Math.max(cols.length, 1)}>{beforeBody}</td>
-              </tr>
-            ) : null}
-            {loading ? (
-              Array.from({ length: skeletonCount }).map((_, i) => (
-                <tr key={i} className={'DataList__Row DataList__Row--Skeleton'}>
-                  {renderCells(undefined, i, true)}
-                </tr>
-              ))
-            ) : items.length === 0 ? (
-              <tr className={'DataList__Empty'}>
-                <td colSpan={Math.max(cols.length, 1)}>
-                  <EmptyListMessage>{emptyMessage}</EmptyListMessage>
-                </td>
-              </tr>
-            ) : (
-              items.map((item, i) => {
-                const key = rowKey ? rowKey(item, i) : i
-                const extraRowClass = resolveRowClassName(rowClassName, item, i)
-                const extraRowStyle =
-                  typeof rowStyle === 'function' ? rowStyle(item, i) || {} : rowStyle || {}
-                const href = rowHref?.(item, i)
-                return (
-                  <tr
-                    key={key}
-                    className={`DataList__Row${href ? ' DataList__Row--link' : ''}${extraRowClass ? ` ${extraRowClass}` : ''}`}
-                    style={extraRowStyle}
-                    onClick={href ? e => openRow(e, href) : undefined}
-                    onAuxClick={href ? e => openRow(e, href) : undefined}
-                    onKeyDown={
-                      href
-                        ? e => {
-                            if (e.key !== 'Enter' && e.key !== ' ') return
-                            if (isInteractiveTarget(e.target)) return
-                            e.preventDefault()
-                            router.push(href)
-                          }
-                        : undefined
-                    }
-                    tabIndex={href ? 0 : undefined}
-                  >
-                    {renderCells(item, i, false)}
-                  </tr>
-                )
-              })
-            )}
-          </tbody>
-        </table>
-      </div>
+      {pinFirst ? (
+        <>
+          {showHeader ? (
+            <div ref={headScrollRef} className={'DataList__HeadScroll'}>
+              <table className={'DataList__Table DataList__Table--head'} style={tableStyle}>
+                {renderColGroup()}
+                {headerRow}
+              </table>
+            </div>
+          ) : null}
+          <div ref={scrollRef} className={'DataList__BodyScroll pe-QuietScroll'}>
+            <table className={'DataList__Table DataList__Table--body'} style={tableStyle}>
+              {renderColGroup()}
+              {bodyRows}
+            </table>
+          </div>
+        </>
+      ) : (
+        <div ref={scrollRef} className={'DataList__Scroll'}>
+          <table className={'DataList__Table'} style={tableStyle}>
+            {renderColGroup()}
+            {headerRow}
+            {bodyRows}
+          </table>
+        </div>
+      )}
 
       {openMenu &&
         (() => {
