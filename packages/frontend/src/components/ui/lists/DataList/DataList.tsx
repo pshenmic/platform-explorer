@@ -22,6 +22,7 @@ import './DataList.css'
 
 const GAP = 16
 const DEFAULT_SKELETON_ROWS = 8
+const ROW_STRIDE = 38
 
 export interface DataListColumn<T = any> {
   key: string
@@ -231,6 +232,7 @@ export default function DataList<T = any>({
   const [width, setWidth] = useState(0)
   const [canScrollEnd, setCanScrollEnd] = useState(false)
   const [overflowX, setOverflowX] = useState(false)
+  const [fillRows, setFillRows] = useState(skeletonCount)
   const [openMenu, setOpenMenu] = useState<{ key: string; anchor: DOMRect } | null>(null)
   const router = useRouter()
   useResizeObserver(wrapRef as RefObject<HTMLElement>, entry => setWidth(entry.contentRect.width))
@@ -266,6 +268,10 @@ export default function DataList<T = any>({
         body.scrollLeft = 0
         if (head) head.scrollLeft = 0
       }
+      const h = body.clientHeight
+      if (h > 8) {
+        setFillRows(Math.min(48, Math.max(skeletonCount, Math.floor((h + 6) / ROW_STRIDE))))
+      }
     }
     const onBodyScroll = () => {
       if (syncingScroll.current) return
@@ -298,7 +304,7 @@ export default function DataList<T = any>({
       head?.removeEventListener('wheel', onHeadWheel)
       ro.disconnect()
     }
-  }, [pinFirst, items.length, loading, width])
+  }, [pinFirst, items.length, loading, width, skeletonCount])
 
   const cols = visibleColumns(columns, width, !pinFirst)
   const tableMinWidth = minTableWidth(cols)
@@ -363,7 +369,7 @@ export default function DataList<T = any>({
         </tr>
       ) : null}
       {loading ? (
-        Array.from({ length: skeletonCount }).map((_, i) => (
+        Array.from({ length: pinFirst ? fillRows : skeletonCount }).map((_, i) => (
           <tr key={i} className={'DataList__Row DataList__Row--Skeleton'}>
             {renderCells(undefined, i, true)}
           </tr>
@@ -413,7 +419,7 @@ export default function DataList<T = any>({
   return (
     <div
       ref={wrapRef}
-      className={`DataList ${pinFirst ? 'DataList--pinFirst' : ''} ${overflowX ? 'DataList--overflowX' : ''} ${canScrollEnd ? 'DataList--fadeEnd' : ''} ${className}`.trim()}
+      className={`DataList ${pinFirst ? 'DataList--pinFirst' : ''} ${loading ? 'DataList--loading' : ''} ${overflowX ? 'DataList--overflowX' : ''} ${canScrollEnd ? 'DataList--fadeEnd' : ''} ${className}`.trim()}
       {...wrapperProps}
     >
       {pinFirst ? (
