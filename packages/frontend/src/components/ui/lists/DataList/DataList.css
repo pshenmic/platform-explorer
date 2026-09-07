@@ -262,12 +262,11 @@
   flex: 0 0 auto;
   width: 100%;
   min-width: 0;
-  overflow-x: auto;
+  overflow-x: hidden;
   overflow-y: hidden;
   scrollbar-width: none;
   -ms-overflow-style: none;
-  overscroll-behavior: contain;
-  touch-action: pan-x pan-y;
+  overscroll-behavior: none;
 }
 .DataList--pinFirst .DataList__HeadScroll::-webkit-scrollbar {
   display: none;
@@ -279,12 +278,17 @@
   min-width: 0;
   min-height: 0;
   margin-top: 8px;
-  overflow: auto;
-  overscroll-behavior: contain;
-  touch-action: pan-x pan-y;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior-x: none;
+  overscroll-behavior-y: contain;
   -webkit-overflow-scrolling: touch;
   scroll-behavior: auto;
-  scrollbar-gutter: stable;
+}
+.DataList--pinFirst.DataList--overflowX .DataList__HeadScroll,
+.DataList--pinFirst.DataList--overflowX .DataList__BodyScroll {
+  overflow-x: auto;
+  touch-action: pan-x pan-y;
 }
 .DataList--pinFirst .DataList__Table--head {
   border-spacing: 0;

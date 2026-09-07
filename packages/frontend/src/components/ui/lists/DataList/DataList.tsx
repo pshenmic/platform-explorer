@@ -230,6 +230,7 @@ export default function DataList<T = any>({
   const syncingScroll = useRef(false)
   const [width, setWidth] = useState(0)
   const [canScrollEnd, setCanScrollEnd] = useState(false)
+  const [overflowX, setOverflowX] = useState(false)
   const [openMenu, setOpenMenu] = useState<{ key: string; anchor: DOMRect } | null>(null)
   const router = useRouter()
   useResizeObserver(wrapRef as RefObject<HTMLElement>, entry => setWidth(entry.contentRect.width))
@@ -253,11 +254,18 @@ export default function DataList<T = any>({
     const head = headScrollRef.current
     if (!body || !pinFirst) {
       setCanScrollEnd(false)
+      setOverflowX(false)
       return
     }
     const updateFade = () => {
       const max = body.scrollWidth - body.clientWidth
-      setCanScrollEnd(max > 8 && body.scrollLeft < max - 8)
+      const hasX = max > 1
+      setOverflowX(hasX)
+      setCanScrollEnd(hasX && body.scrollLeft < max - 8)
+      if (!hasX && body.scrollLeft !== 0) {
+        body.scrollLeft = 0
+        if (head) head.scrollLeft = 0
+      }
     }
     const onBodyScroll = () => {
       if (syncingScroll.current) return
@@ -405,7 +413,7 @@ export default function DataList<T = any>({
   return (
     <div
       ref={wrapRef}
-      className={`DataList ${pinFirst ? 'DataList--pinFirst' : ''} ${canScrollEnd ? 'DataList--fadeEnd' : ''} ${className}`.trim()}
+      className={`DataList ${pinFirst ? 'DataList--pinFirst' : ''} ${overflowX ? 'DataList--overflowX' : ''} ${canScrollEnd ? 'DataList--fadeEnd' : ''} ${className}`.trim()}
       {...wrapperProps}
     >
       {pinFirst ? (
