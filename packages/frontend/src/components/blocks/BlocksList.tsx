@@ -7,6 +7,7 @@ import { Identifier, NotActive, TimeDelta, BigNumber, DateBlock } from '../data'
 import { BlockIcon } from '../ui/icons'
 import { LinkContainer } from '../ui/containers'
 import { DataList } from '../ui/lists'
+import { RateTooltip } from '../ui/Tooltips'
 import * as Api from '../../util/Api'
 import type { Epoch } from '../../types'
 // retained until transfers/withdrawals/contested/votes migrate — they borrow
@@ -46,6 +47,12 @@ function BlocksList({
     staleTime: 30_000
   })
   const currentEpoch = statusQuery.data?.epoch ?? null
+  const rateQuery = useQuery({
+    queryKey: ['rate'],
+    queryFn: () => Api.getRate(),
+    staleTime: 60_000
+  })
+  const rate = rateQuery.data ?? null
 
   const columns = [
     {
@@ -71,7 +78,7 @@ function BlocksList({
       minWidth: 160,
       cell: ({ header }: any) =>
         typeof header?.hash === 'string' ? (
-          <Identifier middleEllipsis={true} copyButton={true}>
+          <Identifier ellipsis={true} copyButton={true}>
             {header.hash}
           </Identifier>
         ) : null
@@ -126,7 +133,11 @@ function BlocksList({
       align: 'center',
       cell: ({ header }: any) =>
         typeof header?.totalGasUsed === 'number' || typeof header?.totalGasUsed === 'string' ? (
-          <BigNumber>{header.totalGasUsed}</BigNumber>
+          <RateTooltip credits={Number(header.totalGasUsed)} rate={rate}>
+            <span>
+              <BigNumber>{header.totalGasUsed}</BigNumber>
+            </span>
+          </RateTooltip>
         ) : (
           <NotActive>-</NotActive>
         )
