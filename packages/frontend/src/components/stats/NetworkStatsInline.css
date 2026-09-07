@@ -1,7 +1,8 @@
 .NetworkStatsInline {
   display: flex;
   align-items: center;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
+  min-width: 0;
   gap: var(--pe-space-1_5) var(--pe-space-4);
   font-family: var(--pe-font-mono);
 }
@@ -17,7 +18,7 @@
 .NetworkStatsInline__Item:not(:last-child)::after {
   content: "·";
   position: absolute;
-  right: -var(--pe-space-2_5);
+  right: calc(-1 * var(--pe-space-2_5));
   color: var(--pe-color-gray-500);
 }
 
@@ -36,6 +37,29 @@
 
 @media screen and (max-width: 48em) {
   .NetworkStatsInline {
-    gap: var(--pe-space-1_5) var(--pe-space-3_5);
+    gap: 0.15rem 0.35rem;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .NetworkStatsInline::-webkit-scrollbar {
+    display: none;
+  }
+
+  .NetworkStatsInline__Item {
+    gap: 0.25rem;
+  }
+
+  .NetworkStatsInline__Label {
+    font-size: 0.5625rem;
+    letter-spacing: 0.01em;
+  }
+
+  .NetworkStatsInline__Value {
+    font-size: 0.6875rem;
+  }
+
+  .NetworkStatsInline__Item:not(:last-child)::after {
+    right: -0.35rem;
   }
 }
