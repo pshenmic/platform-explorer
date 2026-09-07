@@ -156,8 +156,14 @@ impl PSQLProcessor {
             is_system: false,
         };
 
+        let transfer = Transfer::from(state_transition);
+
         self.dao
             .create_identity(identity, Some(st_hash.clone()), sql_transaction)
+            .await
+            .unwrap();
+        self.dao
+            .create_transfer(transfer, st_hash.clone(), sql_transaction)
             .await
             .unwrap();
     }

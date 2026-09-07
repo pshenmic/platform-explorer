@@ -1,5 +1,7 @@
 use dpp::identifier::Identifier;
 use dpp::identity::state_transition::AssetLockProved;
+use dpp::state_transition::identity_create_from_addresses_transition::accessors::IdentityCreateFromAddressesTransitionAccessorsV0;
+use dpp::state_transition::identity_create_from_addresses_transition::IdentityCreateFromAddressesTransition;
 use dpp::state_transition::identity_credit_transfer_to_addresses_transition::accessors::IdentityCreditTransferToAddressesTransitionAccessorsV0;
 use dpp::state_transition::identity_credit_transfer_to_addresses_transition::IdentityCreditTransferToAddressesTransition;
 use dpp::state_transition::identity_credit_transfer_transition::accessors::IdentityCreditTransferTransitionAccessorsV0;
@@ -10,6 +12,7 @@ use dpp::state_transition::identity_topup_from_addresses_transition::accessors::
 use dpp::state_transition::identity_topup_from_addresses_transition::IdentityTopUpFromAddressesTransition;
 use dpp::state_transition::identity_topup_transition::accessors::IdentityTopUpTransitionAccessorsV0;
 use dpp::state_transition::identity_topup_transition::IdentityTopUpTransition;
+use dpp::state_transition::{StateTransitionIdentityIdFromInputs, StateTransitionWitnessSigned};
 
 #[derive(Clone)]
 pub struct Transfer {
@@ -58,6 +61,30 @@ impl From<IdentityTopUpFromAddressesTransition> for Transfer {
             sender: None,
             recipient: Some(identifier),
             amount,
+        };
+    }
+}
+
+impl From<IdentityCreateFromAddressesTransition> for Transfer {
+    fn from(state_transition: IdentityCreateFromAddressesTransition) -> Self {
+        let identifier = state_transition.identity_id_from_inputs().unwrap();
+
+        let total_inputs: u64 = state_transition
+            .inputs()
+            .iter()
+            .map(|(_, (_, amount))| amount)
+            .sum();
+
+        // Credits left over are sent back to an address, only the rest funds the identity
+        let change = state_transition
+            .output()
+            .map(|(_, amount)| amount.clone())
+            .unwrap_or(0);
+
+        return Transfer {
+            sender: None,
+            recipient: Some(identifier),
+            amount: total_inputs - change,
         };
     }
 }
