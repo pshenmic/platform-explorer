@@ -1,13 +1,14 @@
 'use client'
 
+import { useMemo } from 'react'
 import { useRouter } from 'next/navigation'
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, useQueries } from '@tanstack/react-query'
 import { Badge } from '../ui/Badge'
 import { Identifier, NotActive, TimeDelta, BigNumber, DateBlock } from '../data'
 import { BlockIcon } from '../ui/icons'
 import { LinkContainer } from '../ui/containers'
 import { DataList } from '../ui/lists'
-import { RateTooltip } from '../ui/Tooltips'
+import { RateTooltip, EpochTooltip } from '../ui/Tooltips'
 import * as Api from '../../util/Api'
 import type { Epoch } from '../../types'
 // retained until transfers/withdrawals/contested/votes migrate — they borrow
@@ -54,6 +55,33 @@ function BlocksList({
   })
   const rate = rateQuery.data ?? null
 
+  const epochIndexes = useMemo(() => {
+    const set = new Set<number>()
+    for (const block of blocks) {
+      const index = epochIndexForTimestamp(block?.header?.timestamp, currentEpoch)
+      if (typeof index === 'number' && Number.isFinite(index)) set.add(index)
+    }
+    return [...set]
+  }, [blocks, currentEpoch])
+
+  const epochQueries = useQueries({
+    queries: epochIndexes.map(index => ({
+      queryKey: ['epoch', index],
+      queryFn: () => Api.getEpoch(index),
+      staleTime: 60_000
+    }))
+  })
+
+  const epochByIndex = useMemo(() => {
+    const map = new Map<number, Epoch>()
+    epochQueries.forEach((query, i) => {
+      const index = epochIndexes[i]
+      const epoch = query.data?.epoch
+      if (typeof index === 'number' && epoch) map.set(index, epoch)
+    })
+    return map
+  }, [epochQueries, epochIndexes])
+
   const columns = [
     {
       key: 'height',
@@ -92,11 +120,10 @@ function BlocksList({
       align: 'center',
       cell: ({ header }: any) => {
         const index = epochIndexForTimestamp(header?.timestamp, currentEpoch)
-        return typeof index === 'number' && Number.isFinite(index) ? (
-          <span>#{index}</span>
-        ) : (
-          <NotActive />
-        )
+        if (typeof index !== 'number' || !Number.isFinite(index)) return <NotActive />
+        const epoch = epochByIndex.get(index)
+        const label = <span>#{index}</span>
+        return epoch ? <EpochTooltip epoch={epoch}>{label}</EpochTooltip> : label
       }
     },
     {
