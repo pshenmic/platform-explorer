@@ -1095,15 +1095,19 @@ export default function QuorumCard({
                 aria-label={'Signing rotation'}
                 tabIndex={0}
               >
-                {sortedQuorums.map(q => {
+                {sortedQuorums.map((q, i) => {
                   const formedHeight = q.blockHeight ?? q.creationHeight
                   const qk = quorumKey(q.quorumHash)
                   const on = qk === selectedKey
                   const signed = Boolean(qk && signedHashes.has(qk))
-                  const heightLabel =
+                  const fullHash =
+                    typeof q.quorumHash === 'string' ? q.quorumHash.toLowerCase() : ''
+                  const tailHash = fullHash.replace(/^0+/, '') || fullHash
+                  const slot = i + 1
+                  const heightHint =
                     typeof formedHeight === 'number' && formedHeight > 0
-                      ? String(formedHeight)
-                      : '—'
+                      ? `Core ${formedHeight.toLocaleString('en-US')}`
+                      : ''
                   return (
                     <button
                       key={q.quorumHash}
@@ -1112,17 +1116,24 @@ export default function QuorumCard({
                         `QuorumCard__QBtn${on ? ' is-on' : ''}${q.isLive ? ' is-live' : ''}` +
                         (signed ? ' is-signed' : '')
                       }
-                      aria-label={`Block ${heightLabel}`}
+                      aria-label={
+                        fullHash
+                          ? `Quorum ${slot} of ${sortedQuorums.length}, ${fullHash}${heightHint ? `, ${heightHint}` : ''}`
+                          : `Quorum ${slot}`
+                      }
                       aria-pressed={on}
                       onClick={() => togglePin(`q:${q.quorumHash}`)}
                     >
-                      <BlockIcon
-                        className={'QuorumCard__QBtnIcon'}
-                        w={'0.875rem'}
-                        h={'0.875rem'}
-                        aria-hidden={'true'}
-                      />
-                      <span className={'QuorumCard__QBtnHeight'}>{heightLabel}</span>
+                      <span className={'QuorumCard__QBtnIdx'}>{slot}</span>
+                      {fullHash ? (
+                        <span className={'QuorumCard__QBtnHash'}>
+                          <span className={'QuorumCard__QBtnHashInner'} dir={'ltr'}>
+                            {tailHash}
+                          </span>
+                        </span>
+                      ) : (
+                        <span className={'QuorumCard__QBtnHash'}>—</span>
+                      )}
                     </button>
                   )
                 })}
