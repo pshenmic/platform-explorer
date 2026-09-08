@@ -10,7 +10,7 @@ import {
   type RefObject
 } from 'react'
 import { useRouter } from 'next/navigation'
-import { ChevronDown, ChevronUp } from 'lucide-react'
+import { ChevronDown, ChevronUp, X } from 'lucide-react'
 import useResizeObserver from '@react-hook/resize-observer'
 import { EmptyListMessage } from '../index'
 import DataListHeaderMenu, {
@@ -61,6 +61,7 @@ export interface DataListProps<T = any> {
   pinFirst?: boolean
   filterValues?: Record<string, unknown>
   onFilterChange?: (key: string, value: unknown) => void
+  title?: ReactNode
 }
 
 function visibleColumns<T>(columns: DataListColumn<T>[], width: number, collapse: boolean) {
@@ -114,6 +115,38 @@ function isFilterActive(type: DataListHeaderFilterType | undefined, value: unkno
   }
   if (type === 'options') return Array.isArray(value) && value.length > 0
   return String(value).length > 0
+}
+
+function emptyFilterValue(type: DataListHeaderFilterType | undefined): unknown {
+  if (type === 'range') return { min: '', max: '' }
+  if (type === 'daterange') return { start: null, end: null }
+  if (type === 'options') return []
+  return ''
+}
+
+function formatChipDate(value: unknown): string {
+  const date = value instanceof Date ? value : new Date(String(value))
+  if (Number.isNaN(date.getTime())) return ''
+  return date.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })
+}
+
+function formatFilterChip(type: DataListHeaderFilterType | undefined, value: unknown): string {
+  if (type === 'range') {
+    const range = value as RangeFilterValue
+    const min = range?.min != null && range.min !== '' ? String(range.min) : '…'
+    const max = range?.max != null && range.max !== '' ? String(range.max) : '…'
+    return `${min}–${max}`
+  }
+  if (type === 'daterange') {
+    const range = value as DateRangeFilterValue
+    const start = formatChipDate(range?.start)
+    const end = formatChipDate(range?.end)
+    if (start && end && start === end) return start
+    if (start && end) return `${start} – ${end}`
+    return start || end
+  }
+  if (type === 'options' && Array.isArray(value)) return value.join(', ')
+  return String(value ?? '')
 }
 
 function HeadCell<T>({
@@ -223,7 +256,8 @@ export default function DataList<T = any>({
   onSortChange,
   pinFirst = false,
   filterValues = {},
-  onFilterChange
+  onFilterChange,
+  title
 }: DataListProps<T>) {
   const wrapRef = useRef<HTMLDivElement | null>(null)
   const scrollRef = useRef<HTMLDivElement | null>(null)
@@ -273,6 +307,8 @@ export default function DataList<T = any>({
         setFillRows(Math.min(48, Math.max(skeletonCount, Math.floor((h + 6) / ROW_STRIDE))))
       }
     }
+    const maxScrollX = () => Math.max(0, body.scrollWidth - body.clientWidth)
+    const maxScrollY = () => Math.max(0, body.scrollHeight - body.clientHeight)
     const onBodyScroll = () => {
       if (syncingScroll.current) return
       syncingScroll.current = true
@@ -292,14 +328,28 @@ export default function DataList<T = any>({
       event.preventDefault()
       body.scrollTop += event.deltaY
     }
+    const onBodyWheel = (event: WheelEvent) => {
+      const maxX = maxScrollX()
+      const maxY = maxScrollY()
+      const atLeft = body.scrollLeft <= 0
+      const atRight = body.scrollLeft >= maxX - 0.5
+      const atTop = body.scrollTop <= 0
+      const atBottom = body.scrollTop >= maxY - 0.5
+      const xOver = (event.deltaX < 0 && atLeft) || (event.deltaX > 0 && atRight)
+      const yOver = (event.deltaY < 0 && atTop) || (event.deltaY > 0 && atBottom)
+      if (xOver && Math.abs(event.deltaX) >= Math.abs(event.deltaY)) event.preventDefault()
+      if (yOver && Math.abs(event.deltaY) > Math.abs(event.deltaX)) event.preventDefault()
+    }
     updateFade()
     body.addEventListener('scroll', onBodyScroll, { passive: true })
+    body.addEventListener('wheel', onBodyWheel, { passive: false })
     head?.addEventListener('scroll', onHeadScroll, { passive: true })
     head?.addEventListener('wheel', onHeadWheel, { passive: false })
     const ro = new ResizeObserver(updateFade)
     ro.observe(body)
     return () => {
       body.removeEventListener('scroll', onBodyScroll)
+      body.removeEventListener('wheel', onBodyWheel)
       head?.removeEventListener('scroll', onHeadScroll)
       head?.removeEventListener('wheel', onHeadWheel)
       ro.disconnect()
@@ -415,6 +465,12 @@ export default function DataList<T = any>({
   )
 
   const tableStyle = { minWidth: tableMinWidth }
+  const canFilter = Boolean(onFilterChange && cols.some(column => column.filterKey))
+  const activeFilters = canFilter
+    ? cols.filter(
+        c => c.filterKey && isFilterActive(c.filterType, filterValues[c.filterKey])
+      )
+    : []
 
   return (
     <div
@@ -422,6 +478,44 @@ export default function DataList<T = any>({
       className={`DataList ${pinFirst ? 'DataList--pinFirst' : ''} ${loading ? 'DataList--loading' : ''} ${overflowX ? 'DataList--overflowX' : ''} ${canScrollEnd ? 'DataList--fadeEnd' : ''} ${className}`.trim()}
       {...wrapperProps}
     >
+      {canFilter || title ? (
+        <div className={'DataList__FilterBar'}>
+          {title ? <h1 className={'DataList__Title'}>{title}</h1> : <span />}
+          <div className={'DataList__FilterChips'}>
+            {activeFilters.map(column => {
+              const key = column.filterKey as string
+              return (
+                <button
+                  type={'button'}
+                  key={key}
+                  className={'DataList__FilterChip'}
+                  onClick={() => onFilterChange?.(key, emptyFilterValue(column.filterType))}
+                >
+                  <span className={'DataList__FilterChipLabel'}>
+                    {column.header}: {formatFilterChip(column.filterType, filterValues[key])}
+                  </span>
+                  <X size={10} strokeWidth={2.5} aria-hidden />
+                </button>
+              )
+            })}
+            {activeFilters.length > 0 ? (
+              <button
+                type={'button'}
+                className={'DataList__FilterChip DataList__FilterChip--Clear'}
+                onClick={() => {
+                  activeFilters.forEach(column => {
+                    if (column.filterKey) {
+                      onFilterChange?.(column.filterKey, emptyFilterValue(column.filterType))
+                    }
+                  })
+                }}
+              >
+                Clear
+              </button>
+            ) : null}
+          </div>
+        </div>
+      ) : null}
       {pinFirst ? (
         <>
           {showHeader ? (

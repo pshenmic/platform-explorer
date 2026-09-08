@@ -3,6 +3,104 @@
   width: 100%;
   min-width: 0;
 }
+.DataList__FilterBar {
+  display: flex;
+  flex-shrink: 0;
+  flex-wrap: nowrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  box-sizing: border-box;
+  height: 24px;
+  margin-bottom: 6px;
+  min-width: 0;
+  width: 100%;
+  position: relative;
+  z-index: 9;
+}
+.DataList__Title {
+  flex-shrink: 0;
+  margin: 0;
+  padding: 0 10px 0 0;
+  font-family: var(--pe-font-heading);
+  font-size: var(--pe-text-sm);
+  font-weight: 700;
+  line-height: 24px;
+  letter-spacing: 0.02em;
+  color: var(--pe-color-white-50);
+}
+.DataList__FilterChips {
+  display: flex;
+  flex: 1 1 auto;
+  flex-wrap: nowrap;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+  overscroll-behavior-x: contain;
+  scrollbar-width: none;
+}
+.DataList__FilterChips::-webkit-scrollbar {
+  display: none;
+}
+.DataList__FilterChip {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 4px;
+  box-sizing: border-box;
+  height: 24px;
+  max-width: 16rem;
+  padding: 0 6px 0 8px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 999px;
+  background: var(--pe-color-gray-800);
+  color: var(--pe-color-gray-200);
+  font-family: var(--pe-font-heading);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  line-height: 1;
+  cursor: pointer;
+}
+.DataList__FilterChip:hover {
+  border-color: rgba(255, 255, 255, 0.18);
+  color: var(--pe-color-fg);
+}
+.DataList__FilterChip--Clear {
+  flex-shrink: 0;
+  background: rgba(var(--pe-color-brand-normal-rgb), 0.2);
+  border-color: rgba(var(--pe-color-brand-normal-rgb), 0.35);
+  color: var(--pe-color-brand-light);
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  padding-right: 8px;
+}
+.DataList__FilterChip--Clear:hover {
+  background: rgba(var(--pe-color-brand-light-rgb), 0.22);
+  border-color: rgba(var(--pe-color-brand-light-rgb), 0.45);
+  color: var(--pe-color-brand-light);
+}
+.DataList__FilterChipLabel {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+@media screen and (max-width: 48em) {
+  .DataList__FilterBar {
+    gap: 0;
+  }
+  .DataList__FilterChips {
+    -webkit-mask-image: linear-gradient(to right, transparent, #000 14px, #000 100%);
+    mask-image: linear-gradient(to right, transparent, #000 14px, #000 100%);
+    padding-left: 2px;
+  }
+  .DataList__FilterChip {
+    max-width: min(14rem, calc(100vw - 7rem));
+  }
+}
 .DataList__Scroll {
   width: 100%;
   min-width: 0;
@@ -271,12 +369,14 @@
 }
 
 .DataList--pinFirst {
+  --DataList-row-radius: 10px;
   display: flex;
   flex-direction: column;
   max-height: calc(100dvh - 10.5rem);
   min-height: 0;
 }
 .DataList--pinFirst .DataList__HeadScroll {
+  position: relative;
   flex: 0 0 auto;
   width: 100%;
   min-width: 0;
@@ -291,16 +391,15 @@
   height: 0;
 }
 .DataList--pinFirst .DataList__BodyScroll {
+  position: relative;
   flex: 1 1 auto;
   width: 100%;
   min-width: 0;
   min-height: 0;
-  margin-top: 8px;
+  margin-top: 0;
   overflow-x: hidden;
   overflow-y: auto;
-  overscroll-behavior-x: none;
-  overscroll-behavior-y: contain;
-  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: none;
   scroll-behavior: auto;
 }
 .DataList--pinFirst.DataList--overflowX .DataList__HeadScroll,
@@ -316,7 +415,6 @@
 }
 .DataList--pinFirst .DataList__Head .DataList__HeadCell--pin {
   z-index: 10;
-  box-shadow: 16px 0 12px -8px var(--pe-color-gray-800);
 }
 .DataList--pinFirst .DataList__Head .DataList__HeadCell:first-child {
   border-radius: 10px 0 0 10px;
@@ -348,11 +446,9 @@
   left: 0;
   background-color: var(--pe-color-gray-800);
 }
-.DataList--pinFirst .DataList__Cell--pin {
+.DataList--pinFirst .DataList__Row > .DataList__Cell--pin {
   z-index: 3;
-  transform: translateZ(0);
   background-color: rgb(38, 46, 50);
-  box-shadow: 16px 0 12px -8px rgb(38, 46, 50);
 }
 .DataList--pinFirst .DataList__HeadCell--pin::after,
 .DataList--pinFirst .DataList__Cell--pin::after {
@@ -365,28 +461,7 @@
   pointer-events: none;
   background: rgba(255, 255, 255, 0.07);
 }
-.DataList--pinFirst.DataList--fadeEnd .DataList__HeadScroll,
-.DataList--pinFirst.DataList--fadeEnd .DataList__BodyScroll {
-  -webkit-mask-image: linear-gradient(
-    to right,
-    #000 0,
-    #000 calc(100% - 2.5rem),
-    transparent
-  );
-  mask-image: linear-gradient(to right, #000 0, #000 calc(100% - 2.5rem), transparent);
-}
-.DataList--pinFirst.DataList--fadeEnd::after {
-  content: "";
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  width: 2.5rem;
-  pointer-events: none;
-  z-index: 8;
-  border-radius: 0 10px 10px 0;
-  background: linear-gradient(to right, rgb(16 22 24 / 0), rgb(16 22 24 / 0.55));
-}
+
 .DataList--pinFirst .DataList__Cell .Identifier {
   max-width: 100%;
   min-width: 0;
@@ -400,7 +475,6 @@
 @media (hover: hover) and (pointer: fine) {
   .DataList--pinFirst .DataList__Row:hover > .DataList__Cell--pin {
     background-color: var(--pe-color-gray-750);
-    box-shadow: 16px 0 12px -8px var(--pe-color-gray-750);
   }
 }
 
