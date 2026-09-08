@@ -90,10 +90,10 @@ function BlocksList({
       filterType: 'range' as const,
       minWidth: 108,
       cell: ({ header }: any) => (
-        <>
+        <span className={'DataList__Entity'}>
           <BlockIcon w={'1.125rem'} h={'1.125rem'} mr={'0.5rem'} />
           {header?.height ?? <NotActive>-</NotActive>}
-        </>
+        </span>
       )
     },
     {
@@ -210,10 +210,15 @@ function BlocksList({
       rowHref={({ header }) => `/block/${header?.hash}`}
       rowKey={({ header }) => header?.hash}
       headerVariant={headerStyles === 'light' ? 'light' : 'default'}
-      emptyMessage={'There are no blocks yet.'}
+      emptyMessage={
+        filterValues && Object.keys(filterValues).length
+          ? 'No blocks match these filters.'
+          : 'There are no blocks yet.'
+      }
       filterValues={filterValues}
       onFilterChange={onFilterChange}
       loading={loading}
+      title={'Blocks'}
     />
   )
 }

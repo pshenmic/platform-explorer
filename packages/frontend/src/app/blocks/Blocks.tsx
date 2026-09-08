@@ -62,21 +62,112 @@ function toBlocksApiFilters(state: Record<string, unknown>): QueryFilters {
     const hash = state.hash.trim()
     if (/^[A-Za-z0-9]{64}$/.test(hash)) out.hash = hash
   }
-  const ts = state.timestamp as { start?: Date | null; end?: Date | null } | null
+  const ts = state.timestamp as
+    | { start?: Date | null; end?: Date | null; mode?: 'days' | 'rolling' }
+    | null
   const start = ts?.start ? new Date(ts.start) : null
   const end = ts?.end ? new Date(ts.end) : null
-  if (start && !Number.isNaN(start.getTime())) out.timestamp_start = start.toISOString()
-  if (end && !Number.isNaN(end.getTime())) out.timestamp_end = end.toISOString()
-  if (
-    out.timestamp_start &&
-    out.timestamp_end &&
-    new Date(String(out.timestamp_start)).getTime() >
-      new Date(String(out.timestamp_end)).getTime()
-  ) {
-    delete out.timestamp_start
-    delete out.timestamp_end
+  const startValid = start && !Number.isNaN(start.getTime())
+  const endValid = end && !Number.isNaN(end.getTime())
+  if (startValid && endValid) {
+    if (ts?.mode === 'rolling') {
+      const from = start.getTime() <= end.getTime() ? start : end
+      const to = start.getTime() <= end.getTime() ? end : start
+      out.timestamp_start = from.toISOString()
+      out.timestamp_end = to.toISOString()
+    } else {
+      const from = start.getTime() <= end.getTime() ? start : end
+      const to = start.getTime() <= end.getTime() ? end : start
+      from.setHours(0, 0, 0, 0)
+      to.setHours(23, 59, 59, 999)
+      out.timestamp_start = from.toISOString()
+      out.timestamp_end = to.toISOString()
+    }
   }
   return out
+}
+
+function isBadTimestampRange(error: unknown): boolean {
+  return error instanceof Error && /Bad timestamp range/i.test(error.message)
+}
+
+async function lastBlockAtOrBefore(iso: string): Promise<Block | null> {
+  const res = await Api.getBlocks(1, 1, 'desc', { timestamp_end: iso })
+  return res.resultSet?.[0] ?? null
+}
+
+const heightRangeCache = new Map<string, { height_min: number; height_max: number }>()
+const HEIGHT_CACHE_MAX = 32
+
+function heightCacheKey(startIso: string, endIso: string) {
+  return `${startIso}|${endIso}`
+}
+
+function rememberHeightRange(startIso: string, endIso: string, value: { height_min: number; height_max: number }) {
+  if (heightRangeCache.size >= HEIGHT_CACHE_MAX) {
+    const first = heightRangeCache.keys().next().value
+    if (first) heightRangeCache.delete(first)
+  }
+  heightRangeCache.set(heightCacheKey(startIso, endIso), value)
+}
+
+async function getBlocksWithFilters(
+  page: number,
+  pageSize: number,
+  filters: QueryFilters
+): Promise<PaginatedResultSet<Block>> {
+  const startIso = typeof filters.timestamp_start === 'string' ? filters.timestamp_start : null
+  const endIso = typeof filters.timestamp_end === 'string' ? filters.timestamp_end : null
+  const cachedHeights =
+    startIso && endIso ? heightRangeCache.get(heightCacheKey(startIso, endIso)) : undefined
+
+  const applyHeightRange = (bounds: { height_min: number; height_max: number }) => {
+    const next: QueryFilters = { ...filters }
+    delete next.timestamp_start
+    delete next.timestamp_end
+    const existingMin = toNumber(next.height_min)
+    const existingMax = toNumber(next.height_max)
+    next.height_min =
+      existingMin != null ? Math.max(existingMin, bounds.height_min) : bounds.height_min
+    next.height_max =
+      existingMax != null ? Math.min(existingMax, bounds.height_max) : bounds.height_max
+    if (toNumber(next.height_max)! < toNumber(next.height_min)!) {
+      return Promise.resolve({
+        resultSet: [] as Block[],
+        pagination: { page, limit: pageSize, total: 0 }
+      })
+    }
+    return Api.getBlocks(page, pageSize, 'desc', next)
+  }
+
+  if (cachedHeights) {
+    return applyHeightRange(cachedHeights)
+  }
+
+  try {
+    return await Api.getBlocks(page, pageSize, 'desc', filters)
+  } catch (error) {
+    if (!isBadTimestampRange(error)) throw error
+    if (!startIso || !endIso) throw error
+
+    const lastBeforeStart = await lastBlockAtOrBefore(
+      new Date(new Date(startIso).getTime() - 1).toISOString()
+    )
+    const lastAtEnd = await lastBlockAtOrBefore(endIso)
+    if (!lastAtEnd) {
+      return { resultSet: [], pagination: { page, limit: pageSize, total: 0 } }
+    }
+
+    const heightMinResolved = lastBeforeStart ? lastBeforeStart.header.height + 1 : 1
+    const heightMaxResolved = lastAtEnd.header.height
+    if (heightMaxResolved < heightMinResolved) {
+      return { resultSet: [], pagination: { page, limit: pageSize, total: 0 } }
+    }
+
+    const bounds = { height_min: heightMinResolved, height_max: heightMaxResolved }
+    rememberHeightRange(startIso, endIso, bounds)
+    return applyHeightRange(bounds)
+  }
 }
 
 interface BlocksProps {
@@ -110,7 +201,7 @@ function Blocks({ defaultPage = 1, defaultPageSize }: BlocksProps) {
             resultSet: [block],
             pagination: { page: 1, limit: pageSize, total: 1 }
           }))
-        : Api.getBlocks(Math.max(1, currentPage + 1), Math.max(1, pageSize), 'desc', filters)
+        : getBlocksWithFilters(Math.max(1, currentPage + 1), Math.max(1, pageSize), filters)
 
       request
         .then(res => {
@@ -152,25 +243,44 @@ function Blocks({ defaultPage = 1, defaultPageSize }: BlocksProps) {
   }, [currentPage, pageSize])
 
   const onColumnFilterChange = (key: string, value: unknown) => {
-    setColumnFilters(prev => ({ ...prev, [key]: value }))
+    setColumnFilters(prev => {
+      if (
+        value == null ||
+        value === '' ||
+        (typeof value === 'object' &&
+          !Array.isArray(value) &&
+          Object.values(value as Record<string, unknown>).every(
+            item => item == null || item === ''
+          ))
+      ) {
+        const next = { ...prev }
+        delete next[key]
+        return next
+      }
+      return { ...prev, [key]: value }
+    })
   }
 
   useEffect(() => {
-    const id = window.setTimeout(() => {
-      const next = toBlocksApiFilters(columnFilters)
-      setFilters(prev => {
-        if (JSON.stringify(prev) === JSON.stringify(next)) return prev
-        setCurrentPage(0)
-        return next
-      })
-    }, 400)
+    const ts = columnFilters.timestamp as { start?: unknown; end?: unknown } | undefined
+    const dateRangeReady = Boolean(ts?.start && ts?.end)
+    const id = window.setTimeout(
+      () => {
+        const next = toBlocksApiFilters(columnFilters)
+        setFilters(prev => {
+          if (JSON.stringify(prev) === JSON.stringify(next)) return prev
+          setCurrentPage(0)
+          return next
+        })
+      },
+      dateRangeReady ? 0 : 400
+    )
     return () => window.clearTimeout(id)
   }, [columnFilters])
 
   return (
     <div className={'ListPage Blocks'}>
       <div className={'InfoBlock'}>
-        <h1 className={'Blocks__PageTitle'}>Blocks</h1>
         {blocks.error ? (
           <div className={'ListPage__Error'}>
             <ErrorMessageBlock />
@@ -178,12 +288,12 @@ function Blocks({ defaultPage = 1, defaultPageSize }: BlocksProps) {
         ) : null}
         <BlocksList
           blocks={blocks.data?.resultSet}
-          loading={blocks.loading && !blocks.data?.resultSet?.length}
+          loading={blocks.loading}
           filterValues={columnFilters}
           onFilterChange={onColumnFilterChange}
         />
 
-        {(blocks.data?.resultSet?.length ?? 0) > 0 && (
+        {!blocks.loading && (blocks.data?.resultSet?.length ?? 0) > 0 && (
           <div className={'ListNavigation'}>
             <div className={'ListNavigation__Balance'} />
             <Pagination

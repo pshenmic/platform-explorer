@@ -83,7 +83,8 @@ const call = async <T>(path: string, method: HttpMethod, body?: unknown): Promis
     if (
       !(e instanceof ResponseErrorNotFound) &&
       !(e instanceof ResponseErrorTimeout) &&
-      !(e instanceof ResponseErrorInternalServer)
+      !(e instanceof ResponseErrorInternalServer) &&
+      !(e instanceof Error && /Bad timestamp range/i.test(e.message))
     ) {
       console.error(e)
     }
