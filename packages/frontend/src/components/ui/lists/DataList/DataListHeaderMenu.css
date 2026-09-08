@@ -2,11 +2,24 @@
   position: fixed;
   z-index: 1000;
   box-sizing: border-box;
+  max-width: calc(100vw - 16px);
   padding: 6px;
   border-radius: 8px;
   border: 1px solid rgba(255, 255, 255, 0.1);
   background: var(--pe-color-gray-800);
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+.DataListHeaderMenu--Dates {
+  padding: 10px;
+  width: min(22rem, calc(100vw - 16px));
+  max-width: calc(100vw - 16px);
+  overflow: hidden;
+}
+@media screen and (max-width: 48em) {
+  .DataListHeaderMenu--Dates {
+    padding: 8px;
+    width: min(20rem, calc(100vw - 16px));
+  }
 }
 .DataListHeaderMenu__Search input,
 .DataListHeaderMenu__Range input {

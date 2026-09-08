@@ -37,22 +37,44 @@ export default function DataListHeaderMenu({
   const rootRef = useRef<HTMLDivElement | null>(null)
   const searchRef = useRef<HTMLInputElement | null>(null)
   const [top, setTop] = useState(anchor.bottom + 4)
+  const [left, setLeft] = useState(8)
   const [query, setQuery] = useState('')
-
-  const left = Math.max(8, Math.min(anchor.right - PANEL_WIDTH, window.innerWidth - PANEL_WIDTH - 8))
+  const panelWidth =
+    filterType === 'daterange'
+      ? Math.min(window.innerWidth < 768 ? 320 : 352, window.innerWidth - 16)
+      : PANEL_WIDTH
 
   useLayoutEffect(() => {
     setQuery('')
+    const margin = 8
+    const maxWidth = Math.max(0, window.innerWidth - margin * 2)
+    const maxLeft = Math.max(margin, window.innerWidth - Math.min(panelWidth, maxWidth) - margin)
+    setLeft(Math.max(margin, Math.min(anchor.right - panelWidth, maxLeft)))
     setTop(anchor.bottom + 4)
     const id = requestAnimationFrame(() => {
-      searchRef.current?.focus()
-      const rect = rootRef.current?.getBoundingClientRect()
-      if (rect && rect.bottom > window.innerHeight - 8) {
-        setTop(Math.max(8, anchor.top - rect.height - 4))
+      const el = rootRef.current
+      if (filterType === 'search' || filterType === 'options') {
+        searchRef.current?.focus()
+      } else {
+        el?.focus()
       }
+      if (!el) return
+      const width = Math.min(el.offsetWidth, maxWidth)
+      const height = el.offsetHeight
+      let nextLeft = Math.min(anchor.right - width, window.innerWidth - width - margin)
+      nextLeft = Math.max(margin, nextLeft)
+      setLeft(nextLeft)
+      let nextTop = anchor.bottom + 4
+      if (nextTop + height > window.innerHeight - margin) {
+        nextTop = Math.max(margin, anchor.top - height - 4)
+      }
+      if (nextTop + height > window.innerHeight - margin) {
+        nextTop = Math.max(margin, window.innerHeight - height - margin)
+      }
+      setTop(nextTop)
     })
     return () => cancelAnimationFrame(id)
-  }, [anchor])
+  }, [anchor, panelWidth, filterType])
 
   useEffect(() => {
     const onDocClick = (event: MouseEvent) => {
@@ -66,6 +88,7 @@ export default function DataListHeaderMenu({
       if (event.key === 'Escape') onClose()
     }
     const onScroll = (event: Event) => {
+      if (filterType === 'daterange') return
       const target = event.target
       if (target instanceof Node && rootRef.current?.contains(target)) return
       onClose()
@@ -80,7 +103,7 @@ export default function DataListHeaderMenu({
       window.removeEventListener('scroll', onScroll, true)
       window.removeEventListener('resize', onClose)
     }
-  }, [onClose])
+  }, [onClose, filterType])
 
   const rangeValue = (value as RangeFilterValue | undefined) ?? { min: '', max: '' }
   const selected = Array.isArray(value) ? (value as string[]) : []
@@ -100,8 +123,9 @@ export default function DataListHeaderMenu({
   return createPortal(
     <div
       ref={rootRef}
-      className={'DataListHeaderMenu'}
-      style={{ top, left, width: PANEL_WIDTH }}
+      className={`DataListHeaderMenu${filterType === 'daterange' ? ' DataListHeaderMenu--Dates' : ''}`}
+      style={{ top, left, width: panelWidth }}
+      tabIndex={-1}
       onMouseDown={event => event.stopPropagation()}
     >
       {filterType === 'search' && (
@@ -139,6 +163,7 @@ export default function DataListHeaderMenu({
       {filterType === 'daterange' && (
         <div className={'DataListHeaderMenu__Dates'}>
           <DateRangeFilter
+            compact={true}
             value={(value as DateRangeFilterValue | undefined) ?? { start: null, end: null }}
             onChange={onChange}
           />
