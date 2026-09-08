@@ -24,6 +24,8 @@ export interface TimespanRange {
 export interface TimespanValue {
   label: string
   range: TimespanRange
+  /** Rolling window length; compute `range` at click time when set. */
+  durationMs?: number
   intervalsCount?: number
   short?: string
 }

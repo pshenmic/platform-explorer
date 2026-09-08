@@ -11,6 +11,8 @@ export interface RangeFilterValue {
 export interface DateRangeFilterValue {
   start?: Date | null
   end?: Date | null
+  /** `days` = local calendar days; `rolling` = exact instants (presets). */
+  mode?: 'days' | 'rolling'
 }
 
 /** Values stored in filter state (broader than useFilters' FilterValue). */

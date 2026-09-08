@@ -6,8 +6,49 @@
 .DateRangeFilter {
   display: flex;
   flex-direction: column;
+  align-items: stretch;
   gap: var(--pe-space-6);
   min-width: 650px;
+}
+.DateRangeFilter--Compact {
+  min-width: 0;
+  max-width: 100%;
+  width: 100%;
+  gap: 10px;
+}
+.DateRangeFilter--Compact .DateRangePicker {
+  margin-bottom: 0;
+}
+.DateRangeFilter--Compact .DateRangePicker__Calendar {
+  margin-bottom: 0;
+}
+.DateRangeFilter--Compact .DateRangePicker__Header {
+  margin-bottom: var(--pe-space-2);
+}
+.DateRangeFilter--Compact .DateRangeFilter__ValuesContainer {
+  display: block;
+  min-width: 0;
+}
+.DateRangeFilter--Compact .DateRangeFilter__Values {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: stretch;
+  gap: 4px;
+  margin-left: 0;
+  width: 100%;
+  min-width: 0;
+}
+.DateRangeFilter--Compact .DateRangeFilter__ValueButton {
+  flex: 1 1 0;
+  min-width: 0;
+  margin: 0;
+  padding: 6px 2px;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 0.625rem;
+  letter-spacing: 0;
 }
 
 .DateRangeFilter__ValuesContainer {
@@ -53,6 +94,34 @@
   color: #fff;
 }
 
+.DateRangeFilter__ClearLink {
+  align-self: flex-end;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--pe-color-gray-250);
+  font-size: 0.625rem;
+  font-family: var(--pe-font-heading);
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  line-height: 1;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+.DateRangeFilter--Compact .DateRangeFilter__ClearLink {
+  margin-top: -8px;
+}
+
+.DateRangeFilter__ClearLink:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.DateRangeFilter__ClearLink:not(:disabled):hover {
+  color: var(--pe-color-fg);
+}
+
 @media screen and (max-width: 55em) {
   .MobileFilterMenu .DateRangeFilter__CalendarTitle,
   .MobileFilterMenu .DateRangeFilter__ValuesTitle {
@@ -77,7 +146,7 @@
     margin-left: auto;
   }
 
-  .DateRangeFilter__Values {
+  .DateRangeFilter:not(.DateRangeFilter--Compact) .DateRangeFilter__Values {
     width: 100%;
     flex-wrap: wrap;
   }
@@ -97,7 +166,7 @@
 }
 
 @media screen and (max-width: 62em) {
-  .DateRangeFilter {
+  .DateRangeFilter:not(.DateRangeFilter--Compact) {
     min-width: 500px;
   }
 }
