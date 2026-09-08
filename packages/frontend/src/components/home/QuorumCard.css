@@ -561,7 +561,7 @@ a.QuorumCard__HelpMark:hover {
   display: flex;
   flex-wrap: wrap;
   justify-content: flex-end;
-  align-items: baseline;
+  align-items: center;
   gap: 0.25em 0.7em;
   margin: 0;
   max-width: 100%;

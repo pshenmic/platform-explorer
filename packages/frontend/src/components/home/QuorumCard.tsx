@@ -9,7 +9,6 @@ import { Tooltip } from '../ui/Tooltips'
 import { BlockIcon } from '../ui/icons'
 import * as Api from '../../util/Api'
 import { ResponseErrorNotFound } from '../../util/Errors'
-import { useActiveNetwork } from '../../contexts'
 import { TimeDelta } from '../data'
 import { useCountUp } from './hooks'
 import { Skeleton } from './Skeleton'
@@ -332,7 +331,6 @@ export default function QuorumCard({
   l1LockedHeight
 }: any) {
   const queryClient = useQueryClient()
-  const { l1explorerBaseUrl } = useActiveNetwork()
   const [pin, setPin] = useState<string | null>(null)
   const [focusKey, setFocusKey] = useState<string | null>(null)
   const [hostQuery, setHostQuery] = useState('')
@@ -685,10 +683,11 @@ export default function QuorumCard({
       end: new Date(Date.now() + Math.max(1, blocks) * CORE_BLOCK_SEC * 1000)
     }
   }, [sortedQuorums, selectedOffset, l1LockedHeight])
-  const headHref =
-    typeof headCore === 'number' && headCore > 0 && l1explorerBaseUrl
-      ? `${l1explorerBaseUrl}/block/${headCore}`
+  const headHash =
+    typeof selectedMeta?.quorumHash === 'string' && selectedMeta.quorumHash.length > 0
+      ? selectedMeta.quorumHash.toLowerCase()
       : null
+  const headHref = headHash ? `https://dashscan.io/blocks/${headHash}` : null
 
   const togglePin = (key: any) => setPin(p => (p === key ? null : key))
 
@@ -952,10 +951,24 @@ export default function QuorumCard({
                     rel={'noreferrer'}
                     className={'QuorumCard__BlockLink'}
                   >
+                    <BlockIcon
+                      className={'QuorumCard__CaptionIcon'}
+                      w={'0.875rem'}
+                      h={'0.875rem'}
+                      aria-hidden={'true'}
+                    />
                     {headTurn}
                   </a>
                 ) : (
-                  headTurn
+                  <span className={'QuorumCard__BlockLink'}>
+                    <BlockIcon
+                      className={'QuorumCard__CaptionIcon'}
+                      w={'0.875rem'}
+                      h={'0.875rem'}
+                      aria-hidden={'true'}
+                    />
+                    {headTurn}
+                  </span>
                 )}
                 {quorumEta && (
                   <span
