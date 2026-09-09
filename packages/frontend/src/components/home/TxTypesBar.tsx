@@ -93,7 +93,6 @@ export default function TxTypesBar({ enabled = true }) {
   }, [state.items])
 
   const total = segments.reduce((sum, s) => sum + s.count, 0)
-  // pin beats hover so the header number stays stable while inspecting a type
   const focusType = pin || hover
   const focused = focusType ? segments.find(s => s.type === focusType) : null
 
@@ -152,7 +151,7 @@ export default function TxTypesBar({ enabled = true }) {
               <span className={'TxTypesBar__StatCount'}>{rangeTotal}</span>
               <span className={'TxTypesBar__StatUnit'}>txs</span>
             </div>
-            {statMeta && <span className={'TxTypesBar__StatMeta'}>{statMeta}</span>}
+            <span className={'TxTypesBar__StatMeta'}>{statMeta || '\u00a0'}</span>
           </div>
         </div>
       </header>
