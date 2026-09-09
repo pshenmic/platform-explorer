@@ -41,8 +41,8 @@
   display: grid;
   grid-template-columns: minmax(0, max-content) 1fr;
   grid-template-areas:
-    'line1 caption'
-    'line2 caption';
+    "line1 caption"
+    "line2 caption";
   align-items: baseline;
   column-gap: 10px;
   row-gap: 0;
@@ -486,8 +486,7 @@ a.QuorumCard__HelpMark:hover {
   }
   .QuorumCard__HeadBottom {
     grid-template-columns: minmax(0, 1fr) auto;
-    grid-template-areas:
-      'lede caption';
+    grid-template-areas: "lede caption";
     align-items: start;
   }
   .QuorumCard__HeadBottom .QuorumCard__Lede {
