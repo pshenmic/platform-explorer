@@ -274,11 +274,11 @@ function NodeTooltipBody({ cell }: any) {
         ? 'Banned (PoSe)'
         : 'Banned / not in registered set'
     }
-    if (cell.band === 'carry') return 'This turn and the following one'
+    if (cell.band === 'carry') return 'In this set and the last group'
     if (cell.band === 'upcoming') return 'New in the following turn'
     if (cell.role === 'invalid') return 'In this turn · invalid'
-    if (cell.role === 'next') return 'Following turn (orange)'
-    if (cell.role === 'current' || cell.role === 'active') return 'This turn (green)'
+    if (cell.role === 'next') return 'From the last group'
+    if (cell.role === 'current' || cell.role === 'active') return 'New this turn'
     return 'Queued'
   })()
 
@@ -868,6 +868,7 @@ export default function QuorumCard({
             Only a{' '}
             <Tooltip
               placement={'top'}
+              className={'QuorumCard__HelpTipTooltip'}
               content={
                 <div className={'QuorumCard__HelpTip'}>
                   <p>
@@ -895,33 +896,55 @@ export default function QuorumCard({
                     </a>{' '}
                     take turns signing.
                   </p>
-                  <p>
-                    Grid:{' '}
-                    <b className={'QuorumCard__HelpSwatch QuorumCard__HelpSwatch--active'}>green</b>{' '}
-                    new this turn,{' '}
-                    <b className={'QuorumCard__HelpSwatch QuorumCard__HelpSwatch--next'}>yellow</b>{' '}
-                    from the last group,{' '}
-                    <b className={'QuorumCard__HelpSwatch QuorumCard__HelpSwatch--proposer'}>
-                      blue
-                    </b>{' '}
-                    proposed the last Platform block.{' '}
-                    <b className={'QuorumCard__HelpSwatch QuorumCard__HelpSwatch--inactive'}>
-                      Gray
-                    </b>{' '}
-                    in the list wait.{' '}
-                    <b className={'QuorumCard__HelpSwatch QuorumCard__HelpSwatch--banned'}>Red</b>{' '}
-                    can still sit here: the set is built first, a{' '}
-                    <a
-                      className={'QuorumCard__HelpMark'}
-                      href={'https://docs.dash.org/en/stable/docs/core/dips/dip-0003.html'}
-                      target={'_blank'}
-                      rel={'noreferrer'}
-                      onClick={e => e.stopPropagation()}
-                    >
-                      ban
-                    </a>{' '}
-                    can land after.
-                  </p>
+                  <ul className={'QuorumCard__HelpKeys'} aria-label={'Color legend'}>
+                    <li className={'QuorumCard__HelpKey'}>
+                      <span
+                        className={'QuorumCard__HelpChip QuorumCard__HelpChip--active'}
+                        aria-hidden={'true'}
+                      />
+                      <span>New this turn</span>
+                    </li>
+                    <li className={'QuorumCard__HelpKey'}>
+                      <span
+                        className={'QuorumCard__HelpChip QuorumCard__HelpChip--next'}
+                        aria-hidden={'true'}
+                      />
+                      <span>From the last group</span>
+                    </li>
+                    <li className={'QuorumCard__HelpKey'}>
+                      <span
+                        className={'QuorumCard__HelpChip QuorumCard__HelpChip--proposer'}
+                        aria-hidden={'true'}
+                      />
+                      <span>Proposed the last Platform block</span>
+                    </li>
+                    <li className={'QuorumCard__HelpKey'}>
+                      <span
+                        className={'QuorumCard__HelpChip QuorumCard__HelpChip--inactive'}
+                        aria-hidden={'true'}
+                      />
+                      <span>In the list, waiting</span>
+                    </li>
+                    <li className={'QuorumCard__HelpKey'}>
+                      <span
+                        className={'QuorumCard__HelpChip QuorumCard__HelpChip--banned'}
+                        aria-hidden={'true'}
+                      />
+                      <span>
+                        Can still sit here: the set is built first, a{' '}
+                        <a
+                          className={'QuorumCard__HelpMark'}
+                          href={'https://docs.dash.org/en/stable/docs/core/dips/dip-0003.html'}
+                          target={'_blank'}
+                          rel={'noreferrer'}
+                          onClick={e => e.stopPropagation()}
+                        >
+                          ban
+                        </a>{' '}
+                        can land after
+                      </span>
+                    </li>
+                  </ul>
                 </div>
               }
             >

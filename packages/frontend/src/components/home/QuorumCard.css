@@ -55,14 +55,58 @@
   color: var(--pe-color-green-label);
   margin-bottom: 6px;
 }
+.QuorumCard__HelpTipTooltip.Tooltip {
+  overflow: visible;
+  max-height: none;
+  max-width: min(22rem, calc(100vw - 24px));
+}
 .QuorumCard__HelpTip {
-  max-width: 18rem;
+  max-width: 20rem;
   font-size: 0.75rem;
   line-height: 1.5;
   text-align: left;
 }
 .QuorumCard__HelpTip p {
-  margin: 0 0 0.55em;
+  margin: 0 0 0.6em;
+}
+.QuorumCard__HelpKeys {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4em;
+}
+.QuorumCard__HelpKey {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5em;
+  margin: 0;
+  font-size: 0.6875rem;
+  line-height: 1.4;
+  color: rgba(255, 255, 255, 0.88);
+}
+.QuorumCard__HelpChip {
+  flex: 0 0 auto;
+  width: 0.7em;
+  height: 0.7em;
+  margin-top: 0.22em;
+  border-radius: 2px;
+}
+.QuorumCard__HelpChip--active {
+  background: var(--pe-color-green-label);
+}
+.QuorumCard__HelpChip--next {
+  background: var(--pe-color-yellow-default);
+}
+.QuorumCard__HelpChip--proposer {
+  background: var(--pe-color-brand-normal);
+}
+.QuorumCard__HelpChip--inactive {
+  background: rgba(255, 255, 255, 0.45);
+}
+.QuorumCard__HelpChip--banned {
+  background: var(--pe-color-red-default);
 }
 .QuorumCard__HelpFoot {
   margin: 0 !important;
@@ -78,31 +122,6 @@
 }
 a.QuorumCard__HelpMark:hover {
   border-bottom-style: solid;
-}
-.QuorumCard__HelpSwatch {
-  font-weight: 700;
-  padding: 0 0.3em;
-  border-radius: 3px;
-}
-.QuorumCard__HelpSwatch--active {
-  color: var(--pe-color-green-label);
-  background-color: rgba(var(--pe-color-green-label-rgb), 0.2);
-}
-.QuorumCard__HelpSwatch--next {
-  color: var(--pe-color-yellow-default);
-  background-color: rgba(var(--pe-color-yellow-default-rgb), 0.2);
-}
-.QuorumCard__HelpSwatch--inactive {
-  color: rgba(255, 255, 255, 0.78);
-  background-color: rgba(255, 255, 255, 0.22);
-}
-.QuorumCard__HelpSwatch--banned {
-  color: var(--pe-color-red-default);
-  background-color: rgba(var(--pe-color-red-default-rgb), 0.2);
-}
-.QuorumCard__HelpSwatch--proposer {
-  color: var(--pe-color-brand-light);
-  background-color: rgba(var(--pe-color-brand-normal-rgb), 0.28);
 }
 .QuorumCard__Title {
   font-family: var(--pe-font-heading);
