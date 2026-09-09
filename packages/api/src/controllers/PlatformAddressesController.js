@@ -30,7 +30,7 @@ module.exports = class PlatformAddressesController {
     response.send(platformAddresses)
   }
 
-  getPlatformAddressTransition = async (request, response) => {
+  getPlatformAddressTransitions = async (request, response) => {
     const {
       page = 1,
       limit = 10,

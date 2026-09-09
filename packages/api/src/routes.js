@@ -773,9 +773,9 @@ module.exports = ({
       }
     },
     {
-      path: '/platformAddress/:platform_address/transactions',
+      path: '/platformAddress/:platform_address/transitions',
       method: 'GET',
-      handler: platformAddressesController.getPlatformAddressTransition,
+      handler: platformAddressesController.getPlatformAddressTransitions,
       schema: {
         querystring: { $ref: 'paginationOptions#' },
         params: {
@@ -807,7 +807,7 @@ module.exports = ({
       }
     },
     {
-      path: '/platformAddresses/transactions',
+      path: '/platformAddresses/transitions',
       method: 'POST',
       handler: platformAddressesController.getPlatformAddressesTransitions,
       schema: {

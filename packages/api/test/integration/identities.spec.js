@@ -385,7 +385,9 @@ describe('Identities routes', () => {
         },
         properties: {
           status: 0,
-          amount: 12345678
+          amount: 12345678,
+          transactionIndex: 7,
+          transactionSignHeight: 1234
         },
         getCreatedAt: () => transaction.block.timestamp,
         getId: () => transaction.transaction.hash,
@@ -406,7 +408,9 @@ describe('Identities routes', () => {
         status: 'QUEUED',
         timestamp: new Date(withdrawal.createdAt).toISOString(),
         amount: withdrawal.properties.amount,
-        withdrawalAddress: null
+        withdrawalAddress: null,
+        transactionIndex: withdrawal.properties.transactionIndex,
+        transactionSignHeight: withdrawal.properties.transactionSignHeight
       })))
     })
 

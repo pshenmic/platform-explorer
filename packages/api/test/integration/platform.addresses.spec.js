@@ -151,7 +151,7 @@ describe('Platform Addresses routes', () => {
   describe('getAddressTransitions()', () => {
     it('should return default set of address transitions', async () => {
       const [platformAddress] = platformAddresses
-      const { body } = await client.get(`/platformAddress/${platformAddress.address.bech32m_address}/transactions`)
+      const { body } = await client.get(`/platformAddress/${platformAddress.address.bech32m_address}/transitions`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -192,7 +192,7 @@ describe('Platform Addresses routes', () => {
       const [platformAddress] = platformAddresses
       const [funding] = platformAddress.transitions
 
-      const { body } = await client.get(`/platformAddress/${platformAddress.address.bech32m_address}/transactions?limit=100&transaction_type=${StateTransitionEnum.ADDRESS_FUNDING_FROM_ASSET_LOCK}`)
+      const { body } = await client.get(`/platformAddress/${platformAddress.address.bech32m_address}/transitions?limit=100&transaction_type=${StateTransitionEnum.ADDRESS_FUNDING_FROM_ASSET_LOCK}`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -211,14 +211,14 @@ describe('Platform Addresses routes', () => {
     it('should accept the type by name and more than one of them', async () => {
       const [platformAddress] = platformAddresses
 
-      const { body } = await client.get(`/platformAddress/${platformAddress.address.bech32m_address}/transactions?limit=100&transaction_type=ADDRESS_FUNDS_TRANSFER`)
+      const { body } = await client.get(`/platformAddress/${platformAddress.address.bech32m_address}/transitions?limit=100&transaction_type=ADDRESS_FUNDS_TRANSFER`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
       assert.equal(body.pagination.total, platformAddress.transitions.length - 1)
       assert.deepEqual([...new Set(body.resultSet.map(({ type }) => type))], ['ADDRESS_FUNDS_TRANSFER'])
 
-      const { body: bothTypes } = await client.get(`/platformAddress/${platformAddress.address.bech32m_address}/transactions?limit=100&transaction_type=ADDRESS_FUNDS_TRANSFER&transaction_type=${StateTransitionEnum.ADDRESS_FUNDING_FROM_ASSET_LOCK}`)
+      const { body: bothTypes } = await client.get(`/platformAddress/${platformAddress.address.bech32m_address}/transitions?limit=100&transaction_type=ADDRESS_FUNDS_TRANSFER&transaction_type=${StateTransitionEnum.ADDRESS_FUNDING_FROM_ASSET_LOCK}`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -228,7 +228,7 @@ describe('Platform Addresses routes', () => {
     it('should return an empty set for a type the address has never seen', async () => {
       const [platformAddress] = platformAddresses
 
-      const { body } = await client.get(`/platformAddress/${platformAddress.address.bech32m_address}/transactions?limit=100&transaction_type=SHIELD`)
+      const { body } = await client.get(`/platformAddress/${platformAddress.address.bech32m_address}/transitions?limit=100&transaction_type=SHIELD`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -239,7 +239,7 @@ describe('Platform Addresses routes', () => {
 
     it('should return set of address transitions with custom limit', async () => {
       const [platformAddress] = platformAddresses
-      const { body } = await client.get(`/platformAddress/${platformAddress.address.bech32m_address}/transactions?limit=7`)
+      const { body } = await client.get(`/platformAddress/${platformAddress.address.bech32m_address}/transitions?limit=7`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -278,7 +278,7 @@ describe('Platform Addresses routes', () => {
 
     it('should return set of address transitions with custom limit and page', async () => {
       const [platformAddress] = platformAddresses
-      const { body } = await client.get(`/platformAddress/${platformAddress.address.bech32m_address}/transactions?limit=7&page=3`)
+      const { body } = await client.get(`/platformAddress/${platformAddress.address.bech32m_address}/transitions?limit=7&page=3`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -317,7 +317,7 @@ describe('Platform Addresses routes', () => {
 
     it('should return set of address transitions with custom limit, page and order', async () => {
       const [platformAddress] = platformAddresses
-      const { body } = await client.get(`/platformAddress/${platformAddress.address.bech32m_address}/transactions?limit=7&page=3&order=desc`)
+      const { body } = await client.get(`/platformAddress/${platformAddress.address.bech32m_address}/transitions?limit=7&page=3&order=desc`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -367,7 +367,7 @@ describe('Platform Addresses routes', () => {
         amount: 30000
       })
 
-      const { body } = await client.get(`/platformAddress/${platformAddress.address.bech32m_address}/transactions?limit=100`)
+      const { body } = await client.get(`/platformAddress/${platformAddress.address.bech32m_address}/transitions?limit=100`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -444,7 +444,7 @@ describe('Platform Addresses routes', () => {
     it('should return one merged page across a set of addresses', async () => {
       const [first, second] = platformAddresses
 
-      const { body } = await client.post('/platformAddresses/transactions?limit=100')
+      const { body } = await client.post('/platformAddresses/transitions?limit=100')
         .send({ addresses: [first.address.bech32m_address, second.address.address] })
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
@@ -462,12 +462,15 @@ describe('Platform Addresses routes', () => {
       // every transition here belongs to exactly one of the two, so it still names its address
       const addresses = new Set(body.resultSet.map(({ base58Address }) => base58Address))
       assert.deepEqual([...addresses].sort(), [first.address.address, second.address.address].sort())
+
+      // the serialized transition is left out of a page that spans a set of addresses
+      assert.deepEqual([...new Set(body.resultSet.map(({ data }) => data))], [null])
     })
 
     it('should page and order the merged set by block height', async () => {
       const [first, second] = platformAddresses
 
-      const { body } = await client.post('/platformAddresses/transactions?limit=7&page=3&order=desc')
+      const { body } = await client.post('/platformAddresses/transitions?limit=7&page=3&order=desc')
         .send({ addresses: [first.address.address, second.address.address] })
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
@@ -496,7 +499,7 @@ describe('Platform Addresses routes', () => {
         amount: 40000
       })
 
-      const { body } = await client.post('/platformAddresses/transactions?limit=100')
+      const { body } = await client.post('/platformAddresses/transitions?limit=100')
         .send({ addresses: [sender.address.address, recipient.address.address] })
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
@@ -519,7 +522,7 @@ describe('Platform Addresses routes', () => {
     it('should filter the merged set by type', async () => {
       const [first, second] = platformAddresses
 
-      const { body } = await client.post(`/platformAddresses/transactions?limit=100&transaction_type=${StateTransitionEnum.ADDRESS_FUNDING_FROM_ASSET_LOCK}`)
+      const { body } = await client.post(`/platformAddresses/transitions?limit=100&transaction_type=${StateTransitionEnum.ADDRESS_FUNDING_FROM_ASSET_LOCK}`)
         .send({ addresses: [first.address.bech32m_address, second.address.address] })
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
@@ -535,7 +538,7 @@ describe('Platform Addresses routes', () => {
     it('should not accept more than 100 addresses', async () => {
       const [first] = platformAddresses
 
-      const { body, status } = await client.post('/platformAddresses/transactions')
+      const { body, status } = await client.post('/platformAddresses/transitions')
         .send({ addresses: new Array(101).fill(first.address.address) })
 
       assert.notEqual(status, 200)

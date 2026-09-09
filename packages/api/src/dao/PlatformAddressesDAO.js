@@ -177,10 +177,10 @@ module.exports = class PlatformAddressesDAO {
   getPlatformAddressTransitions = async (addresses, page, limit, order, transactionTypes) => {
     const fromRank = (page - 1) * limit
 
+    const withData = addresses.length === 1
+
     const addressSubquery = this.addressSubquery(addresses)
 
-    // the type lives on the transition row itself, so both halves of the union can be narrowed
-    // before anything is folded, and the total count follows the filter for free
     const filterByType = (query) => query
       .modify(qb => {
         if (transactionTypes?.length > 0) {
@@ -215,10 +215,7 @@ module.exports = class PlatformAddressesDAO {
         )
       ])
 
-    // the indexer writes one row per input and one per output, so an address that is both an
-    // input and the change output of the same transition owns two rows in it. Fold everything
-    // the requested set owns in a transition into a single row holding the net amount, and
-    // read the direction off its sign. Across a set the fold is what merges the addresses
+    // the indexer writes one row per input and one per output
     const transitionsSubquery = this.knex('unique_transitions')
       .select('state_transition_id')
       .select(this.knex.raw('COALESCE(SUM(amount) FILTER (WHERE incoming = 1), 0) - COALESCE(SUM(amount) FILTER (WHERE incoming = 0), 0) as amount'))
@@ -233,8 +230,6 @@ module.exports = class PlatformAddressesDAO {
           .as('total_count')
       )
 
-    // state_transition_id is insertion order, which is not a usable merge key across a set of
-    // addresses, so page on the chain order instead
     const transitionsSubqueryWithTotalCount = this.knex('transitions_subquery')
       .with('address_subquery', addressSubquery)
       .with('unique_transitions', unionTransitions)
@@ -246,10 +241,13 @@ module.exports = class PlatformAddressesDAO {
         'state_transitions.block_hash as block_hash', 'state_transitions.type as type',
         'state_transitions.gas_used as gas_used', 'state_transitions.status as status',
         'state_transitions.error as error', 'state_transitions.owner as owner',
-        'state_transitions.data as data', 'state_transitions.block_height as block_height')
+        'state_transitions.block_height as block_height')
+      .modify(qb => {
+        if (withData) {
+          qb.select('state_transitions.data as data')
+        }
+      })
       .select(this.knex.raw('amount >= 0 as incoming'))
-      // a transition can touch more than one address of the requested set, and then no single
-      // one of them describes the row
       .select(this.knex.raw('CASE WHEN addresses_count = 1 THEN address_subquery.address END as address'))
       .select(this.knex.raw('CASE WHEN addresses_count = 1 THEN address_subquery.bech32m_address END as bech32m_address'))
       .select(countSubquery.as('total_count'))
@@ -263,12 +261,15 @@ module.exports = class PlatformAddressesDAO {
 
     const rows = await this.knex(transitionsSubqueryWithTotalCount)
       .select('tx_hash', 'index', 'block_hash', 'type',
-        'gas_used', 'status', 'error', 'owner', 'data', 'incoming', 'amount', 'total_count',
+        'gas_used', 'status', 'error', 'owner', 'incoming', 'amount', 'total_count',
         'blocks.timestamp as timestamp', 'block_height',
         'address as base58_address', 'bech32m_address', 'state_transition_id')
+      .modify(qb => {
+        if (withData) {
+          qb.select('data')
+        }
+      })
       .leftJoin('blocks', 'transitions_with_total_count_subquery.block_height', 'blocks.height')
-      // the page is picked inside the subquery, but a join is free to hand its rows back in any
-      // order, so the chain order has to be restated out here for the page to hold it
       .orderBy([
         { column: 'block_height', order },
         { column: 'index', order }
