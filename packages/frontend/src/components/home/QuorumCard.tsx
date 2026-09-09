@@ -1044,7 +1044,7 @@ export default function QuorumCard({
                 }
               >
                 <button type={'button'} className={'QuorumCard__Legends'}>
-                  Legends
+                  Legend
                 </button>
               </Tooltip>
             </span>
