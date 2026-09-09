@@ -1,38 +1,46 @@
-.DataContractsPage__Controls {
+html:has(.DataContractsPage.ListPage),
+body:has(.DataContractsPage.ListPage) {
+  overflow: hidden;
+  height: 100%;
+}
+body:has(.DataContractsPage.ListPage) .Footer {
+  position: fixed;
+}
+.DataContractsPage.ListPage {
+  box-sizing: border-box;
   display: flex;
-  align-items: center;
-  gap: var(--pe-space-4);
-  margin: var(--pe-space-3) 0 var(--pe-space-6);
-  flex-wrap: wrap;
+  flex-direction: column;
+  height: calc(100dvh - var(--layout-nav-h));
+  margin-block: 0;
+  padding: var(--pe-space-4);
+  padding-bottom: calc(var(--layout-footer-h) + 0.75rem);
 }
-
-.DataContractsPage__Title {
-  flex-shrink: 0;
-  margin-right: var(--pe-space-2);
-}
-
-.DataContractsPage__Stats {
+.DataContractsPage .InfoBlock {
+  display: flex;
+  flex-direction: column;
   flex: 1 1 auto;
-  min-width: 0;
+  min-height: 0;
+  padding-left: var(--pe-space-6);
+  padding-right: var(--pe-space-6);
+  padding-bottom: var(--pe-space-5);
 }
-
-.DataContractsPage__ShowAll {
-  margin-left: auto;
+.DataContractsPage .DataList {
+  flex: 1 1 auto;
+  min-height: 0;
 }
-
-.DataContractsPage__Filters {
-  flex-shrink: 0;
-  margin-left: 0;
+.DataContractsPage .DataList--fill {
+  max-height: none;
+  height: 100%;
 }
 
 @media screen and (max-width: 48em) {
-  .DataContractsPage__Controls {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: var(--pe-space-4);
+  .DataContractsPage.ListPage {
+    padding: var(--pe-space-3);
+    padding-bottom: calc(var(--layout-footer-h) + 0.5rem);
   }
-
-  .DataContractsPage__Filters {
-    margin-left: 0;
+  .DataContractsPage .InfoBlock {
+    padding-left: var(--pe-space-4);
+    padding-right: var(--pe-space-4);
+    padding-bottom: var(--pe-space-2);
   }
 }

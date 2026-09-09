@@ -1,21 +1,17 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, useCallback } from 'react'
 import * as Api from '../../util/Api'
 import DataContractsList from '../../components/dataContracts/DataContractsList'
-import Pagination from '../../components/pagination'
+import {
+  readListScrollMode,
+  writeListScrollMode,
+  type ListScrollMode
+} from '../../components/ui/lists/DataList/listScrollMode'
 import { ErrorMessageBlock } from '@components/Errors'
-import PageSizeSelector from '../../components/pageSizeSelector/PageSizeSelector'
-import { useQuery, keepPreviousData } from '@tanstack/react-query'
-import { useQueryState, parseAsInteger, parseAsBoolean } from 'nuqs'
-import { normalizePagination } from '@utils/table'
-
-import { useIsMobile } from '../../hooks'
-import { useDataContractsFilters, useDataContractsSorting } from '@components/dataContracts/hooks'
-import { DataContractsFilter } from '@components/dataContracts/DataContractsFilter'
-import DataContractsStatsInline from '@components/dataContracts/DataContractsStatsInline'
-import PageTitle from '../../components/intro/PageTitle'
-import introContent from './introContent'
+import { fetchHandlerSuccess, fetchHandlerError } from '../../util'
+import { usePathname, useRouter, useSearchParams } from 'next/navigation'
+import type { DataContract, LoadableState, PaginatedResultSet } from '../../types'
 import './DataContractsPage.css'
 
 const paginateConfig = {
@@ -26,199 +22,309 @@ const paginateConfig = {
   defaultPage: 1
 }
 
-function DataContractsLayout() {
-  const isMobile = useIsMobile()
-  const { sorting } = useDataContractsSorting()
-  const { filters, setFilters } = useDataContractsFilters()
-  const [page, setPage] = useQueryState(
-    'page',
-    parseAsInteger
-      .withDefault(paginateConfig.defaultPage)
-      .withOptions({ scroll: false, shallow: true })
-  )
-  const [pageSize, setPageSize] = useQueryState(
-    'page-size',
-    parseAsInteger
-      .withDefault(paginateConfig.pageSize.default)
-      .withOptions({ scroll: false, shallow: true })
-  )
-  const [showSystem, setShowSystem] = useQueryState(
-    'show-system',
-    parseAsBoolean.withDefault(false).withOptions({ scroll: false, shallow: true })
-  )
+type QueryFilters = Record<string, string | number | boolean | string[] | null | undefined>
+const IDENTIFIER_RE = /^[A-Za-z0-9]{43,44}$/
 
-  const pinSystem = showSystem && !filters.is_system
-  const listFilters = pinSystem || !showSystem ? { ...filters, is_system: 'false' } : filters
+function toNumber(value: unknown): number | null {
+  if (value === '' || value == null) return null
+  const n = Number(value)
+  return Number.isFinite(n) ? n : null
+}
 
-  const dataContracts = useQuery({
-    queryKey: ['dataContracts', page, pageSize, ...Object.values(listFilters)],
-    queryFn: () =>
-      Api.getDataContracts(
-        page,
-        pageSize,
-        sorting.order as 'asc' | 'desc',
-        sorting.orderBy,
-        listFilters as never
-      ),
-    placeholderData: keepPreviousData,
-    select: ({ pagination, ...other }) => ({
-      ...other,
-      pagination: normalizePagination({
-        ...pagination,
-        page,
-        pageSize
-      })
-    })
-  })
+function addRange(
+  out: QueryFilters,
+  value: unknown,
+  minKey: string,
+  maxKey: string,
+  minAllowed: number,
+  maxAllowed: number
+) {
+  const range = value as { min?: unknown; max?: unknown } | undefined
+  const min = toNumber(range?.min)
+  const max = toNumber(range?.max)
+  if (min != null && min >= minAllowed) out[minKey] = min
+  if (max != null && max >= maxAllowed) out[maxKey] = max
+  const sentMin = out[minKey] as number | undefined
+  const sentMax = out[maxKey] as number | undefined
+  if (sentMin != null && sentMax != null && sentMax < sentMin) {
+    delete out[minKey]
+    delete out[maxKey]
+  }
+}
 
-  const systemContracts = useQuery({
-    queryKey: ['dataContracts', 'system', sorting.order, sorting.orderBy],
-    queryFn: () =>
-      Api.getDataContracts(1, 12, sorting.order as 'asc' | 'desc', sorting.orderBy, {
-        is_system: 'true'
-      }),
-    placeholderData: keepPreviousData
-  })
+function toContractsApiFilters(state: Record<string, unknown>): QueryFilters {
+  const out: QueryFilters = {}
+  addRange(out, state.documents, 'documents_count_min', 'documents_count_max', 0, 0)
 
-  const fetchedSystem = systemContracts.data?.resultSet || []
-  const cachedSystem = useRef(fetchedSystem)
-  if (fetchedSystem.length > 0) cachedSystem.current = fetchedSystem
+  if (typeof state.identifier === 'string') {
+    const query = state.identifier.trim()
+    if (IDENTIFIER_RE.test(query)) out.identifier = query
+    else if (query) out.name = query
+  }
 
-  const [enteringKeys, setEnteringKeys] = useState<Set<string>>(() => new Set())
-  const [leavingKeys, setLeavingKeys] = useState<Set<string>>(() => new Set())
-  const [exitingItems, setExitingItems] = useState<typeof fetchedSystem>([])
-  const wasPinned = useRef(false)
-  const leaveTimeout = useRef<number | null>(null)
-  const enterTimeout = useRef<number | null>(null)
+  if (typeof state.owner === 'string') {
+    const owner = state.owner.trim()
+    if (IDENTIFIER_RE.test(owner)) out.owner = owner
+  }
 
-  const idsOf = (items: typeof fetchedSystem) =>
-    new Set(items.map(item => item?.identifier).filter(Boolean) as string[])
+  const withTokens = Array.isArray(state.with_tokens)
+    ? (state.with_tokens as string[]).filter(v => v === 'true' || v === 'false')
+    : []
+  if (withTokens.length === 1) out.with_tokens = withTokens[0]
 
-  const clearTimer = (ref: typeof leaveTimeout) => {
-    if (ref.current) {
-      window.clearTimeout(ref.current)
-      ref.current = null
+  const system = Array.isArray(state.system)
+    ? (state.system as string[]).filter(v => v === 'true' || v === 'false')
+    : []
+  if (system.length === 1) out.is_system = system[0]
+
+  const ts = state.timestamp as
+    | { start?: Date | null; end?: Date | null; mode?: 'days' | 'rolling' }
+    | null
+  const start = ts?.start ? new Date(ts.start) : null
+  const end = ts?.end ? new Date(ts.end) : null
+  const startValid = start && !Number.isNaN(start.getTime())
+  const endValid = end && !Number.isNaN(end.getTime())
+  if (startValid && endValid) {
+    if (ts?.mode === 'rolling') {
+      const from = start.getTime() <= end.getTime() ? start : end
+      const to = start.getTime() <= end.getTime() ? end : start
+      out.timestamp_start = from.toISOString()
+      out.timestamp_end = to.toISOString()
+    } else {
+      const from = start.getTime() <= end.getTime() ? start : end
+      const to = start.getTime() <= end.getTime() ? end : start
+      from.setHours(0, 0, 0, 0)
+      to.setHours(23, 59, 59, 999)
+      out.timestamp_start = from.toISOString()
+      out.timestamp_end = to.toISOString()
     }
   }
+  return out
+}
 
-  const slotDuration = (count: number) => 380 + Math.max(0, count - 1) * 45 + 40
-
-  const startEnter = (items: typeof fetchedSystem) => {
-    if (items.length === 0) return
-    clearTimer(enterTimeout)
-    setEnteringKeys(idsOf(items))
-    wasPinned.current = true
-    enterTimeout.current = window.setTimeout(() => {
-      setEnteringKeys(new Set())
-      enterTimeout.current = null
-    }, slotDuration(items.length))
+function isEmptyFilterValue(value: unknown) {
+  if (value == null || value === '') return true
+  if (Array.isArray(value)) return value.length === 0
+  if (typeof value === 'object') {
+    return Object.values(value as Record<string, unknown>).every(
+      item => item == null || item === ''
+    )
   }
+  return false
+}
 
-  const systemItems = pinSystem ? fetchedSystem : exitingItems
-  const pageItems = dataContracts.data?.resultSet || []
-  const listItems = systemItems.length > 0 ? [...systemItems, ...pageItems] : pageItems
-  const pagination = dataContracts.data?.pagination
-  const listTotal =
-    typeof pagination?.total === 'number' ? pagination.total + systemItems.length : null
+function DataContractsLayout() {
+  const [contracts, setContracts] = useState<LoadableState<PaginatedResultSet<DataContract>>>({
+    data: {} as PaginatedResultSet<DataContract>,
+    loading: true,
+    error: false
+  })
+  const [total, setTotal] = useState(1)
+  const [pageSize, setPageSize] = useState(paginateConfig.pageSize.default)
+  const [currentPage, setCurrentPage] = useState(0)
+  const [scrollMode, setScrollMode] = useState<ListScrollMode>('pages')
+  const [loadingMore, setLoadingMore] = useState(false)
+  const [systemItems, setSystemItems] = useState<DataContract[]>([])
+  const fetchGen = useRef(0)
+  const [filters, setFilters] = useState<QueryFilters>({})
+  const [columnFilters, setColumnFilters] = useState<Record<string, unknown>>({})
+  const router = useRouter()
+  const pathname = usePathname()
+  const searchParams = useSearchParams()
 
   useEffect(() => {
-    if (!pinSystem || wasPinned.current || fetchedSystem.length === 0) return
-    startEnter(fetchedSystem)
-  }, [pinSystem, fetchedSystem.length])
+    setScrollMode(readListScrollMode('dataContracts'))
+  }, [])
 
-  const handleFiltersChange = (next: Parameters<typeof setFilters>[0]) => {
-    setFilters(next)
-    setPage(1)
+  useEffect(() => {
+    Api.getDataContracts(1, 12, 'desc', 'block_height', { is_system: 'true' }).then(res => {
+      setSystemItems(res.resultSet)
+    })
+  }, [])
+
+  useEffect(() => {
+    const gen = ++fetchGen.current
+    const replace = scrollMode === 'pages' || currentPage === 0
+    if (replace) {
+      setContracts(prev => ({ ...prev, loading: true, error: false }))
+      setLoadingMore(false)
+    } else {
+      setLoadingMore(true)
+    }
+
+    const identifier = typeof filters.identifier === 'string' ? filters.identifier : ''
+    const name = typeof filters.name === 'string' ? filters.name : ''
+    const listFilters: QueryFilters = { ...filters }
+    delete listFilters.identifier
+    delete listFilters.name
+    if (listFilters.is_system == null) listFilters.is_system = 'false'
+
+    const request = identifier
+      ? Api.getDataContractByIdentifier(identifier).then(contract => ({
+          resultSet: [contract],
+          pagination: { page: 1, limit: pageSize, total: 1 }
+        }))
+      : name
+        ? Api.search(encodeURIComponent(name)).then((res: unknown) => {
+            const payload = res as { dataContracts?: DataContract[] }
+            const q = name.toLowerCase()
+            const list = (payload?.dataContracts ?? []).filter(contract => {
+              const n = contract.name?.toLowerCase() ?? ''
+              return n === q || n.startsWith(q)
+            })
+            return {
+              resultSet: list,
+              pagination: { page: 1, limit: Math.max(1, list.length), total: list.length }
+            }
+          })
+        : Api.getDataContracts(
+            Math.max(1, currentPage + 1),
+            Math.max(1, pageSize),
+            'desc',
+            'block_height',
+            listFilters
+          )
+
+    request
+      .then(res => {
+        if (gen !== fetchGen.current) return
+        setTotal(res.pagination.total)
+        if (replace) {
+          fetchHandlerSuccess(setContracts, res)
+        } else {
+          setContracts(prev => {
+            const seen = new Set((prev.data?.resultSet ?? []).map(item => item.identifier))
+            const extra = res.resultSet.filter(item => {
+              if (!item.identifier || seen.has(item.identifier)) return false
+              seen.add(item.identifier)
+              return true
+            })
+            return {
+              loading: false,
+              error: false,
+              data: {
+                ...res,
+                resultSet: [...(prev.data?.resultSet ?? []), ...extra]
+              }
+            }
+          })
+        }
+        setLoadingMore(false)
+      })
+      .catch(err => {
+        if (gen !== fetchGen.current) return
+        if (replace) {
+          setTotal(0)
+          fetchHandlerError(setContracts, err)
+        }
+        setLoadingMore(false)
+      })
+  }, [currentPage, pageSize, filters, scrollMode])
+
+  useEffect(() => {
+    setPageSize(
+      parseInt(searchParams.get('page-size') || '', 10) || paginateConfig.pageSize.default
+    )
+    if (scrollMode !== 'pages') return
+    const page = parseInt(searchParams.get('page') || '', 10) || paginateConfig.defaultPage
+    setCurrentPage(Math.max(page - 1, 0))
+  }, [searchParams, pathname, scrollMode])
+
+  useEffect(() => {
+    const urlParameters = new URLSearchParams(Array.from(searchParams.entries()))
+    if (pageSize === paginateConfig.pageSize.default) {
+      urlParameters.delete('page-size')
+    } else {
+      urlParameters.set('page-size', String(pageSize))
+    }
+    if (scrollMode === 'pages' && currentPage + 1 !== paginateConfig.defaultPage) {
+      urlParameters.set('page', String(currentPage + 1))
+    } else {
+      urlParameters.delete('page')
+    }
+    const next = urlParameters.toString()
+    const href = next ? `${pathname}?${next}` : pathname
+    router.replace(href, { scroll: false })
+  }, [currentPage, pageSize, scrollMode])
+
+  const onColumnFilterChange = (key: string, value: unknown) => {
+    setColumnFilters(prev => {
+      if (isEmptyFilterValue(value)) {
+        const next = { ...prev }
+        delete next[key]
+        return next
+      }
+      return { ...prev, [key]: value }
+    })
+  }
+
+  useEffect(() => {
+    const ts = columnFilters.timestamp as { start?: unknown; end?: unknown } | undefined
+    const dateRangeReady = Boolean(ts?.start && ts?.end)
+    const id = window.setTimeout(
+      () => {
+        const next = toContractsApiFilters(columnFilters)
+        setFilters(prev => {
+          if (JSON.stringify(prev) === JSON.stringify(next)) return prev
+          setCurrentPage(0)
+          return next
+        })
+      },
+      dateRangeReady ? 0 : 400
+    )
+    return () => window.clearTimeout(id)
+  }, [columnFilters])
+
+  const onScrollModeChange = useCallback((mode: ListScrollMode) => {
+    writeListScrollMode('dataContracts', mode)
+    setScrollMode(mode)
+    setCurrentPage(0)
+  }, [])
+
+  const onLoadMore = useCallback(() => {
+    setCurrentPage(page => page + 1)
+  }, [])
+
+  const includeSystem = filters.is_system == null && !filters.identifier && !filters.name
+  const pageItems = contracts.data?.resultSet ?? []
+  const pageCount = Math.max(1, Math.ceil(total / Math.max(1, pageSize)))
+  const atEnd =
+    scrollMode === 'pages' ? currentPage + 1 >= pageCount : pageItems.length >= total
+  const listItems =
+    includeSystem && atEnd && systemItems.length > 0
+      ? [...pageItems, ...systemItems]
+      : pageItems
+  const displayTotal = total + (includeSystem ? systemItems.length : 0)
+
+  const paging = {
+    mode: scrollMode,
+    onModeChange: onScrollModeChange,
+    total: displayTotal,
+    pageSize,
+    page: currentPage,
+    onPageChange: setCurrentPage,
+    onLoadMore,
+    loadingMore,
+    hasMore: pageItems.length < total
   }
 
   return (
     <div className={'ListPage DataContractsPage'}>
       <div className={'InfoBlock'}>
-        <div className={'ListPage__Controls'}>
-          <PageTitle
-            title={'Data contracts'}
-            description={introContent}
-            className={'ListPage__Title DataContractsPage__Title'}
-          />
-
-          <DataContractsStatsInline
-            className={'ListPage__Stats DataContractsPage__Stats'}
-            total={listTotal}
-          />
-
-          <label className={'ListPage__ShowAll DataContractsPage__ShowAll'} htmlFor={'show-system-contracts'}>
-            <span>Show system contracts</span>
-            <input
-              id={'show-system-contracts'}
-              type={'checkbox'}
-              checked={showSystem}
-              onChange={e => {
-                const next = e.target.checked
-                const items = fetchedSystem.length > 0 ? fetchedSystem : cachedSystem.current
-                if (!next) {
-                  clearTimer(enterTimeout)
-                  setEnteringKeys(new Set())
-                  setExitingItems(items)
-                  setLeavingKeys(idsOf(items))
-                  clearTimer(leaveTimeout)
-                  leaveTimeout.current = window.setTimeout(() => {
-                    setExitingItems([])
-                    setLeavingKeys(new Set())
-                    leaveTimeout.current = null
-                  }, 320 + Math.max(0, items.length - 1) * 45 + 40)
-                  wasPinned.current = false
-                } else {
-                  clearTimer(leaveTimeout)
-                  setExitingItems([])
-                  setLeavingKeys(new Set())
-                  startEnter(items)
-                }
-                setShowSystem(next)
-                setPage(1)
-              }}
-            />
-          </label>
-
-          <DataContractsFilter
-            onFilterChange={handleFiltersChange}
-            isMobile={isMobile}
-            className={'ListPage__Filters DataContractsPage__Filters'}
-          />
-        </div>
-
-        {!dataContracts.isError ? (
-          <DataContractsList
-            dataContracts={listItems}
-            loading={dataContracts.isLoading && pageItems.length === 0}
-            itemsCount={pageSize}
-            enteringKeys={enteringKeys}
-            leavingKeys={leavingKeys}
-          />
-        ) : (
+        {contracts.error ? (
           <div className={'ListPage__Error'}>
             <ErrorMessageBlock />
           </div>
-        )}
-
-        {(dataContracts.data?.resultSet?.length ?? 0) > 0 && (
-          <div className={'ListNavigation'}>
-            <div className={'ListNavigation__Balance'} />
-            <Pagination
-              onPageChange={({ selected }) => {
-                setPage((selected || 0) + 1)
-              }}
-              pageCount={pagination?.pageCount ?? 1}
-              forcePage={pagination?.forcePage}
-            />
-            <PageSizeSelector
-              PageSizeSelectHandler={e => {
-                setPageSize(Number(e?.value))
-              }}
-              value={pageSize}
-              items={paginateConfig.pageSize.values}
-            />
-          </div>
-        )}
+        ) : null}
+        <DataContractsList
+          dataContracts={listItems}
+          loading={contracts.loading && (scrollMode === 'pages' || pageItems.length === 0)}
+          filterValues={columnFilters}
+          onFilterChange={onColumnFilterChange}
+          paging={paging}
+          title={'Data contracts'}
+          pinFirst={true}
+        />
       </div>
     </div>
   )
