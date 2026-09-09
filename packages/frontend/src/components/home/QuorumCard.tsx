@@ -122,6 +122,19 @@ function memberKey(proTx: any) {
   return (proTx || '').toLowerCase()
 }
 
+function memberKeysInCoreOrder(members: any) {
+  const keys: string[] = []
+  const seen = new Set<string>()
+  if (!Array.isArray(members)) return keys
+  for (const member of members) {
+    const key = memberKey(member?.proTxHash)
+    if (!key || seen.has(key)) continue
+    seen.add(key)
+    keys.push(key)
+  }
+  return keys
+}
+
 function quorumKey(hash: unknown) {
   return typeof hash === 'string' && hash.length ? hash.toUpperCase() : ''
 }
@@ -337,8 +350,6 @@ export default function QuorumCard({
   const [loadAllDetails, setLoadAllDetails] = useState(false)
   const pickRef = useRef<HTMLDivElement | null>(null)
   const hostsRef = useRef<HTMLDivElement | null>(null)
-  const nodeNumberRef = useRef(new Map<string, number>())
-  const nextNodeNumberRef = useRef(1)
 
   const total = validators?.data?.pagination?.total
 
@@ -556,15 +567,15 @@ export default function QuorumCard({
   )
 
   const windowKeys = useMemo(() => {
-    if (filling || selectedMemberSet.size === 0) return []
-    return [...selectedMemberSet]
-  }, [filling, selectedMemberSet])
+    if (filling) return []
+    const selected = sortedQuorumsWithMembers.find(q => quorumKey(q.quorumHash) === selectedKey)
+    return memberKeysInCoreOrder(selected?.members)
+  }, [filling, sortedQuorumsWithMembers, selectedKey])
 
   const liveSeedKeys = useMemo(() => {
-    const liveSet = liveKey ? rosterIndex.membersOf.get(liveKey) : null
-    if (!liveSet || liveSet.size === 0) return []
-    return [...liveSet]
-  }, [liveKey, rosterIndex])
+    const live = sortedQuorumsWithMembers.find(q => quorumKey(q.quorumHash) === liveKey)
+    return memberKeysInCoreOrder(live?.members ?? currentMembers)
+  }, [sortedQuorumsWithMembers, liveKey, currentMembers])
 
   const listKeys = useMemo(() => {
     if (filling) return []
@@ -585,15 +596,6 @@ export default function QuorumCard({
     return keys
   }, [filling, liveSeedKeys, windowKeys, list, rosterIndex, bannedSet])
 
-  const nodeNumberByKey = useMemo(() => {
-    const map = nodeNumberRef.current
-    if (filling) return new Map(map)
-    for (const k of listKeys) {
-      if (k && !map.has(k)) map.set(k, nextNodeNumberRef.current++)
-    }
-    return new Map(map)
-  }, [filling, listKeys])
-
   const homeCells = useMemo((): any[] => {
     if (filling) {
       return Array.from({ length: SKELETON_SLOTS }, (_, index) => ({
@@ -612,7 +614,7 @@ export default function QuorumCard({
       const k = memberKey(v?.proTxHash)
       if (k && !byKey.has(k)) byKey.set(k, v)
     }
-    const cells = windowKeys.map(k => {
+    return windowKeys.map((k, i) => {
       const v = byKey.get(k)
       const painted = paintPoolNode(
         k,
@@ -627,15 +629,13 @@ export default function QuorumCard({
         type: painted.type,
         role: painted.role,
         band: painted.band,
-        homeIndex: nodeNumberByKey.get(k) ?? null,
+        homeIndex: i + 1,
         proTxHash: v?.proTxHash || k,
         service: meta?.service || v?.proTxInfo?.state?.service || v?.endpoints?.[0] || null,
         valid: meta ? meta.valid !== false : true,
         validator: v || { proTxHash: k }
       }
     })
-    cells.sort((a, b) => (a.homeIndex ?? 0) - (b.homeIndex ?? 0))
-    return cells
   }, [
     filling,
     windowKeys,
@@ -644,7 +644,6 @@ export default function QuorumCard({
     rosterIndex,
     prevKey,
     selectedMemberSet,
-    nodeNumberByKey,
     bannedSet,
     bannedValidatorsList
   ])
@@ -737,7 +736,7 @@ export default function QuorumCard({
       const k = memberKey(v?.proTxHash)
       if (k && !byKey.has(k)) byKey.set(k, v)
     }
-    const rows = listKeys.map(k => {
+    return windowKeys.map((k, i) => {
       const v = byKey.get(k)
       const painted = paintPoolNode(
         k,
@@ -776,15 +775,13 @@ export default function QuorumCard({
         geoPending: Boolean(poolLoading && !cc),
         inPinned: selectedMemberSet.has(k),
         isFocus: Boolean(focusKey && focusKey === k),
-        homeIndex: nodeNumberByKey.get(k) ?? null
+        homeIndex: i + 1
       }
     })
-    rows.sort((a, b) => (a.homeIndex ?? 0) - (b.homeIndex ?? 0))
-    return rows
   }, [
     filling,
     poolLoading,
-    listKeys,
+    windowKeys,
     list,
     bannedValidatorsList,
     rosterIndex,
@@ -792,7 +789,6 @@ export default function QuorumCard({
     selectedMemberSet,
     memberMeta,
     bannedSet,
-    nodeNumberByKey,
     focusKey
   ])
 
@@ -1099,8 +1095,11 @@ export default function QuorumCard({
                   const qk = quorumKey(q.quorumHash)
                   const on = qk === selectedKey
                   const signed = Boolean(qk && signedHashes.has(qk))
-                  const hash =
-                    typeof q.quorumHash === 'string' ? q.quorumHash.toLowerCase() : ''
+                  const formedHeight = q.blockHeight ?? q.creationHeight
+                  const heightLabel =
+                    typeof formedHeight === 'number' && formedHeight > 0
+                      ? String(formedHeight)
+                      : '—'
                   const slot = i + 1
                   return (
                     <button
@@ -1110,14 +1109,12 @@ export default function QuorumCard({
                         `QuorumCard__QBtn${on ? ' is-on' : ''}${q.isLive ? ' is-live' : ''}` +
                         (signed ? ' is-signed' : '')
                       }
-                      aria-label={
-                        `Quorum ${slot} of ${sortedQuorums.length}` + (hash ? `, ${hash}` : '')
-                      }
+                      aria-label={`Quorum ${slot} of ${sortedQuorums.length}, Core ${heightLabel}`}
                       aria-pressed={on}
                       onClick={() => togglePin(`q:${q.quorumHash}`)}
                     >
                       <span className={'QuorumCard__QBtnIdx'}>{slot}</span>
-                      <span className={'QuorumCard__QBtnHash'}>{hash || '—'}</span>
+                      <span className={'QuorumCard__QBtnHeight'}>{heightLabel}</span>
                     </button>
                   )
                 })}
