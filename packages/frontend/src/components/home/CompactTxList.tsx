@@ -34,7 +34,7 @@ export function CompactTxList({
     {
       key: 'status',
       header: 'Status',
-      minWidth: 56,
+      minWidth: 40,
       align: 'center',
       cell: (tx: any) =>
         tx.status ? (
@@ -83,7 +83,7 @@ export function CompactTxList({
     {
       key: 'time',
       header: 'Time',
-      minWidth: 48,
+      minWidth: 52,
       align: 'right',
       cell: (tx: any) =>
         tx.timestamp ? (
@@ -101,6 +101,7 @@ export function CompactTxList({
   return (
     <DataList
       className={'CompactTxList'}
+      fit={'feed'}
       items={rows}
       columns={columns}
       loading={loading && !rows.length}

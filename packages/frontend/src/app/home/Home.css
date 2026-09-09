@@ -126,6 +126,11 @@
   gap: 1.5rem;
   margin-top: 0;
 }
+.HomeOverview__Tx,
+.HomeOverview__Blocks {
+  min-width: 0;
+  max-width: 100%;
+}
 @media screen and (min-width: 62em) {
   .HomeOverview__Grid {
     grid-template-columns: 11.25rem minmax(0, 1fr) minmax(0, 1fr);

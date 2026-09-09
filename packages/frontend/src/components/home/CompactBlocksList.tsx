@@ -28,7 +28,7 @@ export function CompactBlocksList({
     {
       key: 'height',
       header: 'Height',
-      minWidth: 88,
+      minWidth: 92,
       cell: (block: any) => {
         const height = block?.header?.height
         return (
@@ -66,7 +66,7 @@ export function CompactBlocksList({
     {
       key: 'time',
       header: 'Time',
-      minWidth: 48,
+      minWidth: 52,
       align: 'right',
       cell: (block: any) =>
         block?.header?.timestamp ? (
@@ -84,6 +84,7 @@ export function CompactBlocksList({
   return (
     <DataList
       className={'CompactBlocksList'}
+      fit={'feed'}
       items={rows}
       columns={columns}
       loading={loading && !rows.length}

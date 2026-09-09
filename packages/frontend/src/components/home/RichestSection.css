@@ -17,30 +17,12 @@
 .HomeRichestList .DataList__Table {
   border-spacing: 0 6px;
 }
-.HomeRichestList .DataList__Head {
-  margin-bottom: 6px;
-  padding: 0 2px 4px;
-  gap: 12px;
-  background: transparent;
-  border: 0;
-  border-radius: 0;
-  font-family: var(--pe-font-mono);
-  font-size: 0.5625rem;
-  font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: 0.16em;
-  color: var(--pe-color-gray-500);
-}
 .HomeRichestList .DataList__Row {
   --DataList-row-bg: rgba(255, 255, 255, 0.03);
   --DataList-row-border: rgba(255, 255, 255, 0.06);
   --DataList-row-radius: 12px;
-  padding: 8px 10px;
-  margin-bottom: 0;
-  min-height: 2.75rem;
   font-size: 0.75rem;
   line-height: 1.25;
-  gap: 10px;
   transition:
     border-color 0.12s ease,
     background-color 0.12s ease;

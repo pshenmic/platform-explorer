@@ -63,6 +63,7 @@ export default function DataContractsRating({ enabled = true }: { enabled?: bool
   return (
     <DataList
       className={'HomeRichestList'}
+      fit={'feed'}
       items={rows}
       columns={columns}
       loading={loading}

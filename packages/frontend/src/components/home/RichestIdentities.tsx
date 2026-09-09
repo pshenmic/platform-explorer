@@ -100,6 +100,7 @@ export default function RichestIdentities({
   return (
     <DataList
       className={'HomeRichestList HomeRichestList--Identities'}
+      fit={'feed'}
       items={rows}
       columns={columns}
       loading={loading}
