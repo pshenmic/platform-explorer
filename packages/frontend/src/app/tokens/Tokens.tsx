@@ -1,21 +1,17 @@
 'use client'
 
+import { useEffect, useState, useCallback, useRef } from 'react'
 import * as Api from '../../util/Api'
 import TokensList from '../../components/tokens/TokensList'
-import TokensTrending from '../../components/tokens/TokensTrending'
-import Pagination from '../../components/pagination'
-import { ErrorMessageBlock } from '@components/Errors'
-import PageSizeSelector from '../../components/pageSizeSelector/PageSizeSelector'
-import { useQuery, keepPreviousData } from '@tanstack/react-query'
-import { useQueryState, parseAsInteger } from 'nuqs'
-import { normalizePagination } from '@utils/table'
-import { useIsMobile } from '../../hooks'
-import { useTokensFilters, TokenFilters } from '@components/tokens'
-import PageTitle from '../../components/intro/PageTitle'
-import NetworkStatsInline from '../../components/stats/NetworkStatsInline'
-import { formatFullNumber } from '../../util'
-import introContent from './introContent'
-
+import {
+  readListScrollMode,
+  writeListScrollMode,
+  type ListScrollMode
+} from '../../components/ui/lists/DataList/listScrollMode'
+import { ErrorMessageBlock } from '../../components/Errors'
+import { fetchHandlerSuccess, fetchHandlerError } from '../../util'
+import { usePathname, useRouter, useSearchParams } from 'next/navigation'
+import type { LoadableState, PaginatedResultSet, Token } from '../../types'
 import './Tokens.css'
 
 const paginateConfig = {
@@ -26,107 +22,200 @@ const paginateConfig = {
   defaultPage: 1
 }
 
+type QueryFilters = Record<string, string | number | boolean | string[] | null | undefined>
+
+const IDENTIFIER_RE = /^[A-Za-z0-9]{43,44}$/
+
+function toTokensApiFilters(state: Record<string, unknown>): QueryFilters {
+  const out: QueryFilters = {}
+
+  if (typeof state.name === 'string') {
+    const name = state.name.trim()
+    if (IDENTIFIER_RE.test(name)) out.token_id = name
+    else if (name) out.token_name = name
+  }
+
+  if (typeof state.contract === 'string') {
+    const contract = state.contract.trim()
+    if (IDENTIFIER_RE.test(contract)) out.contract_id = contract
+  }
+
+  if (typeof state.owner === 'string') {
+    const owner = state.owner.trim()
+    if (IDENTIFIER_RE.test(owner)) out.owner = owner
+  }
+
+  return out
+}
+
+function isEmptyFilterValue(value: unknown) {
+  if (value == null || value === '') return true
+  if (Array.isArray(value)) return value.length === 0
+  if (typeof value === 'object') {
+    return Object.values(value as Record<string, unknown>).every(
+      item => item == null || item === ''
+    )
+  }
+  return false
+}
+
 function Tokens() {
-  const isMobile = useIsMobile()
-  const { filters, setFilters } = useTokensFilters()
-
-  const [page, setPage] = useQueryState(
-    'page',
-    parseAsInteger
-      .withDefault(paginateConfig.defaultPage)
-      .withOptions({ scroll: false, shallow: true })
-  )
-  const [pageSize, setPageSize] = useQueryState(
-    'page-size',
-    parseAsInteger
-      .withDefault(paginateConfig.pageSize.default)
-      .withOptions({ scroll: false, shallow: true })
-  )
-
-  const tokens = useQuery({
-    queryKey: ['tokens', page, pageSize, ...Object.values(filters)],
-    queryFn: () => Api.getTokens(page, pageSize, 'asc', filters as never),
-    placeholderData: keepPreviousData,
-    select: ({ pagination, ...other }) => ({
-      ...other,
-      total: pagination?.total,
-      pagination: normalizePagination({
-        ...pagination,
-        page,
-        pageSize
-      })
-    })
+  const [tokens, setTokens] = useState<LoadableState<PaginatedResultSet<Token>>>({
+    data: {} as PaginatedResultSet<Token>,
+    loading: true,
+    error: false
   })
+  const [total, setTotal] = useState(1)
+  const [pageSize, setPageSize] = useState(paginateConfig.pageSize.default)
+  const [currentPage, setCurrentPage] = useState(0)
+  const [scrollMode, setScrollMode] = useState<ListScrollMode>('pages')
+  const [loadingMore, setLoadingMore] = useState(false)
+  const fetchGen = useRef(0)
+  const [filters, setFilters] = useState<QueryFilters>({})
+  const [columnFilters, setColumnFilters] = useState<Record<string, unknown>>({})
+  const router = useRouter()
+  const pathname = usePathname()
+  const searchParams = useSearchParams()
 
-  const pagination = tokens.data?.pagination
-  const totalTokens = tokens.data?.total
+  useEffect(() => {
+    setScrollMode(readListScrollMode('tokens'))
+  }, [])
 
-  const handleFiltersChange = (next: Parameters<typeof setFilters>[0]) => {
-    setFilters(next)
-    setPage(1)
+  useEffect(() => {
+    const gen = ++fetchGen.current
+    const replace = scrollMode === 'pages' || currentPage === 0
+    if (replace) {
+      setTokens(prev => ({ ...prev, loading: true, error: false }))
+      setLoadingMore(false)
+    } else {
+      setLoadingMore(true)
+    }
+
+    Api.getTokens(Math.max(1, currentPage + 1), Math.max(1, pageSize), 'asc', filters)
+      .then(res => {
+        if (gen !== fetchGen.current) return
+        setTotal(res.pagination.total)
+        if (replace) {
+          fetchHandlerSuccess(setTokens, res)
+        } else {
+          setTokens(prev => {
+            const seen = new Set((prev.data?.resultSet ?? []).map(token => token.identifier))
+            const extra = res.resultSet.filter(token => {
+              if (!token.identifier || seen.has(token.identifier)) return false
+              seen.add(token.identifier)
+              return true
+            })
+            return {
+              loading: false,
+              error: false,
+              data: {
+                ...res,
+                resultSet: [...(prev.data?.resultSet ?? []), ...extra]
+              }
+            }
+          })
+        }
+        setLoadingMore(false)
+      })
+      .catch(err => {
+        if (gen !== fetchGen.current) return
+        if (replace) {
+          setTotal(0)
+          fetchHandlerError(setTokens, err)
+        }
+        setLoadingMore(false)
+      })
+  }, [currentPage, pageSize, filters, scrollMode])
+
+  useEffect(() => {
+    setPageSize(
+      parseInt(searchParams.get('page-size') || '', 10) || paginateConfig.pageSize.default
+    )
+    if (scrollMode !== 'pages') return
+    const page = parseInt(searchParams.get('page') || '', 10) || paginateConfig.defaultPage
+    setCurrentPage(Math.max(page - 1, 0))
+  }, [searchParams, pathname, scrollMode])
+
+  useEffect(() => {
+    const urlParameters = new URLSearchParams(Array.from(searchParams.entries()))
+    if (pageSize === paginateConfig.pageSize.default) {
+      urlParameters.delete('page-size')
+    } else {
+      urlParameters.set('page-size', String(pageSize))
+    }
+    if (scrollMode === 'pages' && currentPage + 1 !== paginateConfig.defaultPage) {
+      urlParameters.set('page', String(currentPage + 1))
+    } else {
+      urlParameters.delete('page')
+    }
+    const next = urlParameters.toString()
+    const href = next ? `${pathname}?${next}` : pathname
+    router.replace(href, { scroll: false })
+  }, [currentPage, pageSize, scrollMode])
+
+  const onColumnFilterChange = (key: string, value: unknown) => {
+    setColumnFilters(prev => {
+      if (isEmptyFilterValue(value)) {
+        const next = { ...prev }
+        delete next[key]
+        return next
+      }
+      return { ...prev, [key]: value }
+    })
+  }
+
+  useEffect(() => {
+    const id = window.setTimeout(() => {
+      const next = toTokensApiFilters(columnFilters)
+      setFilters(prev => {
+        if (JSON.stringify(prev) === JSON.stringify(next)) return prev
+        setCurrentPage(0)
+        return next
+      })
+    }, 400)
+    return () => window.clearTimeout(id)
+  }, [columnFilters])
+
+  const onScrollModeChange = useCallback((mode: ListScrollMode) => {
+    writeListScrollMode('tokens', mode)
+    setScrollMode(mode)
+    setCurrentPage(0)
+  }, [])
+
+  const onLoadMore = useCallback(() => {
+    setCurrentPage(page => page + 1)
+  }, [])
+
+  const items = tokens.data?.resultSet ?? []
+  const paging = {
+    mode: scrollMode,
+    onModeChange: onScrollModeChange,
+    total,
+    pageSize,
+    page: currentPage,
+    onPageChange: setCurrentPage,
+    onLoadMore,
+    loadingMore,
+    hasMore: items.length < total
   }
 
   return (
     <div className={'ListPage Tokens'}>
       <div className={'InfoBlock'}>
-        <div className={'Tokens__Controls'}>
-          <PageTitle title={'Tokens'} description={introContent} className={'Tokens__Title'} />
-
-          <NetworkStatsInline
-            className={'Tokens__Stats'}
-            items={[
-              {
-                label: 'Total',
-                value:
-                  typeof totalTokens === 'number'
-                    ? (formatFullNumber(totalTokens) as string | number)
-                    : null,
-                loading: tokens.isLoading
-              }
-            ]}
-          />
-
-          <TokensTrending className={'Tokens__Trending'} />
-
-          <TokenFilters
-            onFilterChange={handleFiltersChange}
-            isMobile={isMobile}
-            className={'Tokens__Filters'}
-          />
-        </div>
-
-        {!tokens.isError ? (
-          <TokensList
-            tokens={tokens.data?.resultSet as never}
-            loading={tokens.isLoading}
-            itemsCount={pageSize}
-          />
-        ) : (
+        {tokens.error ? (
           <div className={'ListPage__Error'}>
             <ErrorMessageBlock />
           </div>
-        )}
-
-        {(tokens.data?.resultSet?.length ?? 0) > 0 && (
-          <div className={'ListNavigation'}>
-            <div className={'ListNavigation__Balance'} />
-            <Pagination
-              onPageChange={({ selected }) => {
-                setPage((selected || 0) + 1)
-              }}
-              pageCount={pagination?.pageCount ?? 1}
-              forcePage={pagination?.forcePage}
-            />
-            <PageSizeSelector
-              PageSizeSelectHandler={e => {
-                setPageSize(Number(e?.value))
-                setPage(1)
-              }}
-              value={pageSize}
-              items={paginateConfig.pageSize.values}
-            />
-          </div>
-        )}
+        ) : null}
+        <TokensList
+          tokens={items}
+          loading={tokens.loading && (scrollMode === 'pages' || items.length === 0)}
+          filterValues={columnFilters}
+          onFilterChange={onColumnFilterChange}
+          paging={paging}
+          title={'Tokens'}
+          pinFirst={true}
+        />
       </div>
     </div>
   )
