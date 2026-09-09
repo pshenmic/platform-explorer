@@ -120,7 +120,6 @@ class BlocksController {
       gas_min: gasMin,
       gas_max: gasMax,
       validator,
-      hash,
       height_max: heightMax,
       height_min: heightMin,
       tx_count_min: transactionCountMin,
@@ -144,7 +143,7 @@ class BlocksController {
       return response.status(400).send('Bad transaction range')
     }
 
-    if (timestampStart && timestampEnd && new Date(timestampStart).getTime() > new Date(timestampEnd).getTime()) {
+    if (timestampStart && timestampEnd && new Date(timestampStart).getTime() < new Date(timestampEnd).getTime()) {
       return response.status(400).send('Bad timestamp range')
     }
 
@@ -178,7 +177,6 @@ class BlocksController {
       Number(limit ?? 10),
       order,
       validator,
-      hash,
       gasMin,
       gasMax,
       heightMin,
