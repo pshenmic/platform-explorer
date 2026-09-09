@@ -42,7 +42,8 @@
   grid-template-columns: minmax(0, max-content) 1fr;
   grid-template-areas:
     "line1 caption"
-    "line2 caption";
+    "line2 caption"
+    "legends caption";
   align-items: baseline;
   column-gap: 10px;
   row-gap: 0;
@@ -63,8 +64,9 @@
   align-self: start;
 }
 .QuorumCard__LegendsSlot {
-  display: inline;
-  margin-left: 0.15em;
+  grid-area: legends;
+  display: block;
+  margin: 2px 0 0;
 }
 .QuorumCard__Eyebrow {
   display: block;
@@ -927,8 +929,9 @@ a.QuorumCard__HelpMark:hover {
     display: none;
   }
 }
-.QuorumCard__Cell--idle .QuorumCard__CellIdx {
-  color: rgba(255, 255, 255, 0.45);
+.QuorumCard__Cell--idle .QuorumCard__CellIdx,
+.QuorumCard__Cell--inactive .QuorumCard__CellIdx {
+  color: rgba(255, 255, 255, 0.55);
 }
 @media screen and (max-width: 48em) {
   .QuorumCard__Cell {
@@ -965,11 +968,17 @@ a.QuorumCard__HelpMark:hover {
   --q-fill: var(--pe-color-green-label-rgb);
   background-color: rgba(var(--q-fill), 0.2);
 }
+.QuorumCard__Cell--active .QuorumCard__CellIdx {
+  color: var(--pe-color-green-label);
+}
 .QuorumCard__Cell.is-proposer {
   --q-fill: var(--pe-color-brand-normal-rgb);
   background-color: rgba(var(--q-fill), 0.32);
   border-color: rgba(var(--pe-color-brand-light-rgb), 0.7);
   z-index: 2;
+}
+.QuorumCard__Cell.is-proposer .QuorumCard__CellIdx {
+  color: var(--pe-color-brand-light);
 }
 .QuorumCard__Cell--next {
   --q-fill: var(--pe-color-yellow-default-rgb);
@@ -977,6 +986,9 @@ a.QuorumCard__HelpMark:hover {
   border-style: dotted;
   border-color: rgba(var(--pe-color-yellow-default-rgb), 0.55);
   animation: qCarryDash 2.4s ease-in-out 0.4s infinite;
+}
+.QuorumCard__Cell--next .QuorumCard__CellIdx {
+  color: var(--pe-color-yellow-default);
 }
 @keyframes qCarryDash {
   0%,
@@ -1008,6 +1020,10 @@ a.QuorumCard__HelpMark:hover {
   --q-fill: var(--pe-color-red-default-rgb);
   background-color: rgba(var(--q-fill), 0.2);
 }
+.QuorumCard__Cell--banned .QuorumCard__CellIdx,
+.QuorumCard__Cell--invalid .QuorumCard__CellIdx {
+  color: var(--pe-color-red-default);
+}
 .QuorumCard__Cell--idle {
   background-color: rgba(255, 255, 255, 0.06);
   cursor: default;
@@ -1024,6 +1040,7 @@ a.QuorumCard__HelpMark:hover {
 .QuorumCard__Cell.is-done:not(.is-proposer) .QuorumCard__CellIdx {
   position: relative;
   z-index: 1;
+  opacity: 0.45;
 }
 .QuorumCard__Cell--next.is-done:not(.is-proposer) {
   animation: none;
