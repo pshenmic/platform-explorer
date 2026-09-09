@@ -24,6 +24,8 @@ import './DataList.css'
 const GAP = 16
 const DEFAULT_SKELETON_ROWS = 8
 const ROW_STRIDE = 38
+const SKELETON_DELAY_MS = 180
+const APPEND_SKELETON_ROWS = 4
 
 export interface DataListColumn<T = any> {
   key: string
@@ -272,6 +274,7 @@ export default function DataList<T = any>({
   const [overflowX, setOverflowX] = useState(false)
   const [fillRows, setFillRows] = useState(skeletonCount)
   const [openMenu, setOpenMenu] = useState<{ key: string; anchor: DOMRect } | null>(null)
+  const [showReplaceSkeleton, setShowReplaceSkeleton] = useState(false)
   const router = useRouter()
   useResizeObserver(wrapRef as RefObject<HTMLElement>, entry => setWidth(entry.contentRect.width))
 
@@ -360,6 +363,20 @@ export default function DataList<T = any>({
     }
   }, [pinFirst, items.length, loading, width, skeletonCount])
 
+  const replacePending = Boolean(loading && (items.length === 0 || paging?.mode === 'pages'))
+  useEffect(() => {
+    if (!replacePending) {
+      setShowReplaceSkeleton(false)
+      return
+    }
+    if (items.length === 0) {
+      setShowReplaceSkeleton(true)
+      return
+    }
+    const id = window.setTimeout(() => setShowReplaceSkeleton(true), SKELETON_DELAY_MS)
+    return () => window.clearTimeout(id)
+  }, [replacePending, items.length])
+
   const cols = visibleColumns(columns, width, !pinFirst)
   const tableMinWidth = minTableWidth(cols)
 
@@ -415,6 +432,18 @@ export default function DataList<T = any>({
       </thead>
     ) : null
 
+  const replaceSkeletonCount = pinFirst
+    ? fillRows
+    : Math.max(1, paging?.pageSize || skeletonCount)
+  const renderSkeletonRows = (count: number, prefix: string) =>
+    Array.from({ length: count }).map((_, i) => (
+      <tr key={`${prefix}-${i}`} className={'DataList__Row DataList__Row--Skeleton'}>
+        {renderCells(undefined, i, true)}
+      </tr>
+    ))
+  const replaceSkeleton = showReplaceSkeleton && replacePending
+  const appendSkeleton = Boolean(paging?.mode === 'continuous' && paging.loadingMore)
+
   const bodyRows = (
     <tbody className={'DataList__Body'}>
       {beforeBody ? (
@@ -422,12 +451,8 @@ export default function DataList<T = any>({
           <td colSpan={Math.max(cols.length, 1)}>{beforeBody}</td>
         </tr>
       ) : null}
-      {loading && items.length === 0 ? (
-        Array.from({ length: pinFirst ? fillRows : skeletonCount }).map((_, i) => (
-          <tr key={`sk-${i}`} className={'DataList__Row DataList__Row--Skeleton'}>
-            {renderCells(undefined, i, true)}
-          </tr>
-        ))
+      {replaceSkeleton ? (
+        renderSkeletonRows(replaceSkeletonCount, 'sk')
       ) : items.length === 0 ? (
         <tr className={'DataList__Empty'}>
           <td colSpan={Math.max(cols.length, 1)}>
@@ -465,11 +490,10 @@ export default function DataList<T = any>({
               </tr>
             )
           })}
+          {appendSkeleton ? renderSkeletonRows(APPEND_SKELETON_ROWS, 'more') : null}
           {paging?.mode === 'continuous' && (paging.hasMore ?? items.length < paging.total) ? (
             <tr ref={sentinelRef} className={'DataList__Sentinel'}>
-              <td colSpan={Math.max(cols.length, 1)}>
-                {paging.loadingMore ? <span className={'DataList__MoreSpinner'} aria-hidden /> : null}
-              </td>
+              <td colSpan={Math.max(cols.length, 1)} />
             </tr>
           ) : null}
         </>
@@ -488,7 +512,8 @@ export default function DataList<T = any>({
   return (
     <div
       ref={wrapRef}
-      className={`DataList ${pinFirst ? 'DataList--pinFirst' : ''} ${loading ? 'DataList--loading' : ''} ${overflowX ? 'DataList--overflowX' : ''} ${canScrollEnd ? 'DataList--fadeEnd' : ''} ${className}`.trim()}
+      className={`DataList ${pinFirst ? 'DataList--pinFirst' : ''} ${loading || paging?.loadingMore ? 'DataList--loading' : ''} ${overflowX ? 'DataList--overflowX' : ''} ${canScrollEnd ? 'DataList--fadeEnd' : ''} ${className}`.trim()}
+      aria-busy={loading || paging?.loadingMore ? true : undefined}
       {...wrapperProps}
     >
       {canFilter || title ? (

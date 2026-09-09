@@ -350,7 +350,7 @@ function Blocks({ defaultPage = 1, defaultPageSize }: BlocksProps) {
         ) : null}
         <BlocksList
           blocks={items}
-          loading={blocks.loading && items.length === 0}
+          loading={blocks.loading && (scrollMode === 'pages' || items.length === 0)}
           filterValues={columnFilters}
           onFilterChange={onColumnFilterChange}
           paging={paging}

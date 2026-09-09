@@ -98,9 +98,6 @@ export function DataListPagingBar({
             Load more
           </button>
         ) : null}
-        {continuous && hasMore && !showLoadMore && loadingMore ? (
-          <span className={'DataList__StatusHint'}>Loading</span>
-        ) : null}
         {continuous && !hasMore && itemCount > 0 ? (
           <span className={'DataList__StatusHint'}>End</span>
         ) : null}
@@ -111,7 +108,7 @@ export function DataListPagingBar({
             type={'button'}
             className={'DataList__PageBtn'}
             aria-label={'Previous page'}
-            disabled={page <= 0}
+            disabled={page <= 0 || loading}
             onClick={() => paging.onPageChange(Math.max(0, page - 1))}
           >
             <ChevronLeft size={14} strokeWidth={2} aria-hidden />
@@ -123,7 +120,7 @@ export function DataListPagingBar({
             type={'button'}
             className={'DataList__PageBtn'}
             aria-label={'Next page'}
-            disabled={page + 1 >= pageCount}
+            disabled={page + 1 >= pageCount || loading}
             onClick={() => paging.onPageChange(Math.min(pageCount - 1, page + 1))}
           >
             <ChevronRight size={14} strokeWidth={2} aria-hidden />
