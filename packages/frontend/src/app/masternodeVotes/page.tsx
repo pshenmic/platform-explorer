@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { Suspense } from 'react'
 import MasternodeVotes from './MasternodeVotes'
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -23,19 +24,12 @@ export async function generateMetadata(): Promise<Metadata> {
   }
 }
 
-interface MasternodeVotesRouteProps {
-  searchParams: Promise<{
-    page?: string
-    'page-size'?: string
-  }>
-}
-
-async function MasternodeVotesRoute(props: MasternodeVotesRouteProps) {
-  const searchParams = await props.searchParams
-  const page = Number(searchParams.page) || 1
-  const pageSize = Number(searchParams['page-size'])
-
-  return <MasternodeVotes defaultPage={page} defaultPageSize={pageSize} />
+function MasternodeVotesRoute() {
+  return (
+    <Suspense fallback={null}>
+      <MasternodeVotes />
+    </Suspense>
+  )
 }
 
 export default MasternodeVotesRoute

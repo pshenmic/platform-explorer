@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { Suspense } from 'react'
 import Identities from './Identities'
 import './IdentitiesPage.css'
 
@@ -9,21 +10,12 @@ export const metadata: Metadata = {
   applicationName: 'Dash Platform Explorer'
 }
 
-interface IdentitiesRouteProps {
-  searchParams: Promise<{
-    page?: string
-    'page-size'?: string
-    'show-all'?: string
-  }>
-}
-
-async function IdentitiesRoute(props: IdentitiesRouteProps) {
-  const searchParams = await props.searchParams
-  const page = Number(searchParams.page) || 1
-  const pageSize = Number(searchParams['page-size'])
-  const showAll = searchParams['show-all'] === 'true'
-
-  return <Identities defaultPage={page} defaultPageSize={pageSize} defaultShowAll={showAll} />
+function IdentitiesRoute() {
+  return (
+    <Suspense fallback={null}>
+      <Identities />
+    </Suspense>
+  )
 }
 
 export default IdentitiesRoute

@@ -124,10 +124,10 @@ export default function DataListHeaderMenu({
 
   const toggleOption = (next: string) => {
     if (next === '') {
-      onChange([])
+      onChange?.([])
       return
     }
-    onChange(selected.includes(next) ? selected.filter(item => item !== next) : [...selected, next])
+    onChange?.(selected.includes(next) ? selected.filter(item => item !== next) : [...selected, next])
   }
 
   return createPortal(

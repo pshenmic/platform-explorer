@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { Suspense } from 'react'
 import ContestedResources from './ContestedResources'
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -24,19 +25,12 @@ export async function generateMetadata(): Promise<Metadata> {
   }
 }
 
-interface ContestedResourcesRouteProps {
-  searchParams: Promise<{
-    page?: string
-    'page-size'?: string
-  }>
-}
-
-async function ContestedResourcesRoute(props: ContestedResourcesRouteProps) {
-  const searchParams = await props.searchParams
-  const page = Number(searchParams.page) || 1
-  const pageSize = Number(searchParams['page-size'])
-
-  return <ContestedResources defaultPage={page} defaultPageSize={pageSize} />
+function ContestedResourcesRoute() {
+  return (
+    <Suspense fallback={null}>
+      <ContestedResources />
+    </Suspense>
+  )
 }
 
 export default ContestedResourcesRoute
