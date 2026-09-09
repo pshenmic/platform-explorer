@@ -938,7 +938,7 @@ export default function QuorumCard({
         <div className={'QuorumCard__HeadBottom'}>
           <p className={'QuorumCard__Lede'}>
             <span className={'QuorumCard__LedeLine'}>Evonodes are grouped in quorums</span>
-            <span className={'QuorumCard__LedeLine'}>that take turns in proposing blocks</span>
+            <span className={'QuorumCard__LedeLine'}>and they take turns in proposing blocks</span>
             <span className={'QuorumCard__LegendsSlot'}>
               <Tooltip
                 placement={'top'}
