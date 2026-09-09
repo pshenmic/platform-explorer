@@ -4,7 +4,6 @@
   flex-direction: column;
   height: 100%;
   overflow: hidden;
-  contain: layout style;
 }
 .QuorumCard__Glow {
   position: absolute;
@@ -23,28 +22,49 @@
 }
 .QuorumCard__Head {
   display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 16px 24px;
-  flex-wrap: wrap;
+  flex-direction: column;
+  gap: 8px;
   flex-shrink: 0;
   margin-bottom: 16px;
 }
-@media screen and (min-width: 64em) {
-  .QuorumCard__Lede {
-    white-space: nowrap;
-  }
-}
-@media screen and (max-width: 47.99em) {
-  .QuorumCard__Head {
-    flex-direction: column;
-    align-items: stretch;
-  }
+.QuorumCard__HeadTop {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px 24px;
 }
 .QuorumCard__HeadText {
-  flex: 1 1 auto;
   min-width: 0;
-  max-width: 18rem;
+  flex: 1 1 auto;
+}
+.QuorumCard__HeadBottom {
+  display: grid;
+  grid-template-columns: minmax(0, max-content) 1fr;
+  grid-template-areas:
+    "line1 caption"
+    "line2 caption";
+  align-items: baseline;
+  column-gap: 10px;
+  row-gap: 0;
+}
+.QuorumCard__HeadBottom .QuorumCard__Lede {
+  display: contents;
+}
+.QuorumCard__LedeLine:first-child {
+  grid-area: line1;
+}
+.QuorumCard__LedeLine:last-of-type {
+  grid-area: line2;
+}
+.QuorumCard__HeadBottom .QuorumCard__QCaption {
+  grid-area: caption;
+  margin: 0;
+  justify-self: end;
+  align-self: start;
+}
+.QuorumCard__LegendsSlot {
+  display: inline;
+  margin-left: 0.15em;
 }
 .QuorumCard__Eyebrow {
   display: block;
@@ -53,16 +73,64 @@
   text-transform: uppercase;
   letter-spacing: 0.22em;
   color: var(--pe-color-green-label);
-  margin-bottom: 6px;
+  margin: 0 0 6px;
+}
+.QuorumCard__HelpTipTooltip.Tooltip {
+  overflow: visible;
+  max-height: none;
+  max-width: min(22rem, calc(100vw - 24px));
 }
 .QuorumCard__HelpTip {
-  max-width: 18rem;
+  max-width: 20rem;
   font-size: 0.75rem;
   line-height: 1.5;
   text-align: left;
 }
 .QuorumCard__HelpTip p {
-  margin: 0 0 0.55em;
+  margin: 0 0 0.6em;
+}
+.QuorumCard__HelpKeys {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4em;
+}
+.QuorumCard__HelpKey {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5em;
+  margin: 0;
+  font-size: 0.6875rem;
+  line-height: 1.4;
+  color: rgba(255, 255, 255, 0.88);
+}
+.QuorumCard__HelpChip {
+  flex: 0 0 auto;
+  width: 0.7em;
+  height: 0.7em;
+  margin-top: 0.22em;
+  border-radius: 2px;
+}
+.QuorumCard__HelpChip--active {
+  background: var(--pe-color-green-label);
+}
+.QuorumCard__HelpChip--done {
+  background: var(--pe-color-green-label);
+  opacity: 0.38;
+}
+.QuorumCard__HelpChip--next {
+  background: var(--pe-color-yellow-default);
+}
+.QuorumCard__HelpChip--proposer {
+  background: var(--pe-color-brand-normal);
+}
+.QuorumCard__HelpChip--inactive {
+  background: rgba(255, 255, 255, 0.45);
+}
+.QuorumCard__HelpChip--banned {
+  background: var(--pe-color-red-default);
 }
 .QuorumCard__HelpFoot {
   margin: 0;
@@ -79,27 +147,6 @@
 a.QuorumCard__HelpMark:hover {
   border-bottom-style: solid;
 }
-.QuorumCard__HelpSwatch {
-  font-weight: 700;
-  padding: 0 0.3em;
-  border-radius: 3px;
-}
-.QuorumCard__HelpSwatch--active {
-  color: var(--pe-color-green-label);
-  background-color: rgba(var(--pe-color-green-label-rgb), 0.2);
-}
-.QuorumCard__HelpSwatch--next {
-  color: var(--pe-color-yellow-default);
-  background-color: rgba(var(--pe-color-yellow-default-rgb), 0.2);
-}
-.QuorumCard__HelpSwatch--inactive {
-  color: rgba(255, 255, 255, 0.78);
-  background-color: rgba(255, 255, 255, 0.22);
-}
-.QuorumCard__HelpSwatch--banned {
-  color: var(--pe-color-red-default);
-  background-color: rgba(var(--pe-color-red-default-rgb), 0.2);
-}
 .QuorumCard__Title {
   font-family: var(--pe-font-heading);
   font-weight: 800;
@@ -107,38 +154,38 @@ a.QuorumCard__HelpMark:hover {
   font-size: 1.375rem;
   line-height: 1.1;
   color: #fff;
-  margin: 0 0 8px;
+  margin: 0;
 }
 .QuorumCard__Lede {
+  display: flex;
+  flex-direction: column;
   font-family: var(--pe-font-mono);
   font-size: 0.6875rem;
-  line-height: 1.55;
+  line-height: 1.45;
   color: var(--pe-color-gray-500);
   margin: 0;
 }
-.QuorumCard__Controls {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 8px;
-  flex-shrink: 0;
-  margin-left: auto;
-  min-width: 0;
+.QuorumCard__LedeLine {
+  display: block;
+}
+.QuorumCard__LedeQueue {
+  display: inline;
 }
 .QuorumCard__Legend {
   display: flex;
   flex-wrap: wrap;
   justify-content: flex-end;
-  align-items: flex-end;
+  align-items: flex-start;
   gap: 8px 14px;
   margin: 0;
+  width: max-content;
   min-width: 0;
 }
 .QuorumCard__Leg {
   appearance: none;
   display: inline-flex;
   flex-direction: column;
-  align-items: flex-end;
+  align-items: flex-start;
   gap: 4px;
   margin: 0;
   padding: 0;
@@ -159,10 +206,28 @@ a.QuorumCard__HelpMark:hover {
   gap: 5px;
   color: var(--pe-color-gray-250);
 }
+.QuorumCard__Dot {
+  display: block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.QuorumCard__Dot--total {
+  background: rgba(var(--pe-color-brand-light-rgb), 0.85);
+  box-shadow: 0 0 6px rgba(var(--pe-color-brand-light-rgb), 0.4);
+}
+.QuorumCard__Dot--active {
+  background: var(--pe-color-green-label);
+  box-shadow: 0 0 6px rgba(var(--pe-color-green-label-rgb), 0.55);
+}
+.QuorumCard__Dot--inactive {
+  background: rgba(255, 255, 255, 0.22);
+}
 .QuorumCard__Leg b {
   display: inline-flex;
   align-items: center;
-  justify-content: flex-end;
+  justify-content: flex-start;
   min-height: 1.125rem;
   font-family: var(--pe-font-heading);
   font-style: italic;
@@ -180,11 +245,39 @@ a.QuorumCard__HelpMark:hover {
   cursor: default;
   opacity: 0.45;
 }
+.QuorumCard__Controls {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+  flex: 0 0 auto;
+  min-width: 0;
+}
 .QuorumCard__LedeMore {
   color: var(--pe-color-brand-light);
   border-bottom: 1px dotted rgba(var(--pe-color-brand-light-rgb), 0.6);
   cursor: help;
   white-space: nowrap;
+}
+.QuorumCard__Legends {
+  appearance: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  font-family: var(--pe-font-mono);
+  font-size: 0.625rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--pe-color-brand-light);
+  border-bottom: 1px dotted rgba(var(--pe-color-brand-light-rgb), 0.65);
+  cursor: help;
+  white-space: nowrap;
+  line-height: 1.4;
+}
+.QuorumCard__Legends:hover {
+  border-bottom-style: solid;
 }
 .QuorumCard__Status {
   flex: 0 1 auto;
@@ -205,17 +298,7 @@ a.QuorumCard__HelpMark:hover {
     padding-top: 0;
   }
 }
-@media screen and (max-width: 47.99em) {
-  .QuorumCard__Controls {
-    width: 100%;
-    align-items: flex-start;
-  }
-  .QuorumCard__Legend,
-  .QuorumCard__QCaption {
-    justify-content: flex-start;
-    align-items: flex-start;
-  }
-}
+
 .QuorumCard__Chip {
   display: inline-flex;
   align-items: center;
@@ -383,19 +466,7 @@ a.QuorumCard__HelpMark:hover {
   flex-direction: column;
   gap: 14px;
 }
-.QuorumCard__Controls .QuorumCard__Legend {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  align-items: end;
-  justify-items: end;
-  gap: 6px 14px;
-  width: 100%;
-  max-width: 18rem;
-}
 .QuorumCard__Controls .QuorumCard__Leg {
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 6px;
   min-width: 0;
   max-width: 100%;
 }
@@ -405,76 +476,36 @@ a.QuorumCard__HelpMark:hover {
   text-overflow: ellipsis;
 }
 @media screen and (min-width: 48em) {
-  .QuorumCard__Head {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) auto;
-    grid-template-rows: auto auto auto;
-    align-items: baseline;
-    column-gap: 24px;
-    row-gap: 0;
-  }
-  .QuorumCard__HeadText {
-    display: grid;
-    grid-template-rows: subgrid;
-    grid-row: 1 / 4;
-    grid-column: 1;
-    max-width: none;
-    flex: none;
-  }
-  .QuorumCard__Eyebrow {
-    grid-row: 1;
-  }
-  .QuorumCard__Title {
-    grid-row: 2;
-  }
-  .QuorumCard__Lede {
-    grid-row: 3;
-  }
-  .QuorumCard__Controls {
-    display: grid;
-    grid-template-rows: subgrid;
-    grid-row: 1 / 4;
-    grid-column: 2;
-    gap: 0;
-    margin-left: 0;
-    justify-items: end;
-  }
-  .QuorumCard__Legend,
-  .QuorumCard__Controls .QuorumCard__Legend {
-    grid-row: 1 / 3;
-    display: grid;
-    grid-template-columns: repeat(3, minmax(2.85rem, 1fr));
-    grid-template-rows: subgrid;
-    width: 100%;
-    max-width: none;
-    gap: 0 10px;
-    align-items: baseline;
-    justify-items: end;
-    justify-content: stretch;
-  }
-  .QuorumCard__Leg,
-  .QuorumCard__Controls .QuorumCard__Leg {
-    display: grid;
-    grid-template-rows: subgrid;
-    grid-row: 1 / 3;
-    gap: 0;
-    align-items: baseline;
-    justify-items: end;
-    min-width: 0;
-  }
-  .QuorumCard__LegLabel {
-    grid-row: 1;
-    margin-bottom: 8px;
-  }
   .QuorumCard__Leg b {
-    grid-row: 2;
-    margin-bottom: 8px;
     font-size: 1.375rem;
   }
-  .QuorumCard__QCaption {
-    grid-row: 3;
-    justify-self: end;
-    margin-top: 0;
+}
+@media screen and (max-width: 47.99em) {
+  .QuorumCard__Head {
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+  .QuorumCard__Title {
+    font-size: 1.125rem;
+  }
+  .QuorumCard__HeadBottom {
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas: "lede caption";
+    align-items: start;
+  }
+  .QuorumCard__HeadBottom .QuorumCard__Lede {
+    display: flex;
+    flex-direction: column;
+    grid-area: lede;
+  }
+  .QuorumCard__Lede {
+    font-size: 0.625rem;
+  }
+  .QuorumCard__LedeLine:first-child {
+    white-space: nowrap;
+  }
+  .QuorumCard__Leg b {
+    font-size: 0.75rem;
   }
 }
 .QuorumCard__Empty {
@@ -559,16 +590,15 @@ a.QuorumCard__HelpMark:hover {
 }
 .QuorumCard__QCaption {
   display: flex;
-  flex-wrap: wrap;
-  justify-content: flex-end;
-  align-items: baseline;
-  gap: 0.25em 0.7em;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.4em;
   margin: 0;
   max-width: 100%;
   overflow: visible;
   font-family: var(--pe-font-mono);
   font-size: 0.6875rem;
-  line-height: 1.55;
+  line-height: 1.45;
   color: var(--pe-color-gray-500);
   text-align: right;
 }
@@ -736,8 +766,8 @@ a.QuorumCard__HelpMark:hover {
   appearance: none;
   display: inline-flex;
   align-items: center;
-  justify-content: center;
-  gap: 5px;
+  justify-content: flex-start;
+  gap: 6px;
   border: 1px solid rgba(255, 255, 255, 0.1);
   background: rgba(255, 255, 255, 0.04);
   color: var(--pe-color-gray-100);
@@ -746,7 +776,7 @@ a.QuorumCard__HelpMark:hover {
   width: 100%;
   height: auto;
   min-height: 1.75rem;
-  padding: 4px 6px;
+  padding: 4px 8px 4px 6px;
   border-radius: 4px;
   font-family: var(--pe-font-mono);
   font-size: 0.75rem;
@@ -758,11 +788,26 @@ a.QuorumCard__HelpMark:hover {
   white-space: nowrap;
   overflow: hidden;
 }
-.QuorumCard__QBtnIcon {
+.QuorumCard__QBtnIdx {
   flex-shrink: 0;
-  opacity: 0.9;
-  width: 0.875rem;
-  height: 0.875rem;
+  min-width: 3ch;
+  text-align: right;
+  color: var(--pe-color-gray-500);
+  font-weight: 600;
+}
+.QuorumCard__QBtn.is-on .QuorumCard__QBtnIdx,
+.QuorumCard__QBtn.is-live .QuorumCard__QBtnIdx {
+  color: inherit;
+}
+.QuorumCard__QBtnHeight {
+  flex: 1 1 0;
+  min-width: 0;
+  overflow: hidden;
+  text-align: left;
+  font-variant-numeric: tabular-nums;
+  font-size: inherit;
+  font-weight: inherit;
+  line-height: 1;
 }
 .QuorumCard__QBtn.is-live {
   box-shadow: inset 0 -2px 0 0 rgba(var(--pe-color-green-label-rgb), 0.75);
@@ -868,14 +913,22 @@ a.QuorumCard__HelpMark:hover {
   font-weight: 800;
   line-height: 1;
   letter-spacing: -0.04em;
-  color: var(--pe-color-gray-900);
+  font-variant-numeric: tabular-nums;
+  color: var(--pe-color-gray-100);
   pointer-events: none;
   user-select: none;
-  transition: color 0.4s ease;
 }
-.QuorumCard__Cell--inactive .QuorumCard__CellIdx,
+@media screen and (max-width: 47.99em) {
+  .QuorumCard__CellIdx {
+    font-size: 0.5625rem;
+    letter-spacing: -0.06em;
+  }
+  .QuorumCard__CellIdxMark {
+    display: none;
+  }
+}
 .QuorumCard__Cell--idle .QuorumCard__CellIdx {
-  color: rgba(255, 255, 255, 0.55);
+  color: rgba(255, 255, 255, 0.45);
 }
 @media screen and (max-width: 48em) {
   .QuorumCard__Cell {
@@ -912,8 +965,11 @@ a.QuorumCard__HelpMark:hover {
   --q-fill: var(--pe-color-green-label-rgb);
   background-color: rgba(var(--q-fill), 0.2);
 }
-.QuorumCard__Cell--active .QuorumCard__CellIdx {
-  color: var(--pe-color-green-label);
+.QuorumCard__Cell.is-proposer {
+  --q-fill: var(--pe-color-brand-normal-rgb);
+  background-color: rgba(var(--q-fill), 0.32);
+  border-color: rgba(var(--pe-color-brand-light-rgb), 0.7);
+  z-index: 2;
 }
 .QuorumCard__Cell--next {
   --q-fill: var(--pe-color-yellow-default-rgb);
@@ -921,9 +977,6 @@ a.QuorumCard__HelpMark:hover {
   border-style: dotted;
   border-color: rgba(var(--pe-color-yellow-default-rgb), 0.55);
   animation: qCarryDash 2.4s ease-in-out 0.4s infinite;
-}
-.QuorumCard__Cell--next .QuorumCard__CellIdx {
-  color: var(--pe-color-yellow-default);
 }
 @keyframes qCarryDash {
   0%,
@@ -955,13 +1008,29 @@ a.QuorumCard__HelpMark:hover {
   --q-fill: var(--pe-color-red-default-rgb);
   background-color: rgba(var(--q-fill), 0.2);
 }
-.QuorumCard__Cell--banned .QuorumCard__CellIdx,
-.QuorumCard__Cell--invalid .QuorumCard__CellIdx {
-  color: var(--pe-color-red-default);
-}
 .QuorumCard__Cell--idle {
   background-color: rgba(255, 255, 255, 0.06);
   cursor: default;
+}
+.QuorumCard__Cell.is-done:not(.is-proposer)::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background: rgba(24, 31, 34, 0.62);
+  z-index: 0;
+}
+.QuorumCard__Cell.is-done:not(.is-proposer) .QuorumCard__CellIdx {
+  position: relative;
+  z-index: 1;
+}
+.QuorumCard__Cell--next.is-done:not(.is-proposer) {
+  animation: none;
+}
+.QuorumCard__Cell.is-done:not(.is-proposer):hover::after,
+.QuorumCard__Cell.is-done.is-focus:not(.is-proposer)::after {
+  background: rgba(24, 31, 34, 0.38);
 }
 .QuorumCard__Cell.is-dimmed {
   opacity: 0.22;
@@ -1041,7 +1110,6 @@ a.QuorumCard__HelpMark:hover {
   overflow-y: auto;
   overscroll-behavior: contain;
   padding: 6px;
-  scrollbar-width: thin;
 }
 .QuorumCard__HostsGrid {
   display: grid;
@@ -1153,15 +1221,8 @@ a.QuorumCard__HelpMark:hover {
   color: var(--pe-color-gray-100);
   transition: color 0.4s ease;
 }
-.QuorumCard__Host--active .QuorumCard__HostIdx,
-.QuorumCard__Host--invalid .QuorumCard__HostIdx {
-  color: var(--pe-color-green-label);
-}
-.QuorumCard__Host--next .QuorumCard__HostIdx {
-  color: var(--pe-color-yellow-default);
-}
-.QuorumCard__Host--banned .QuorumCard__HostIdx {
-  color: var(--pe-color-red-default);
+.QuorumCard__Host.is-proposer {
+  background: rgba(var(--pe-color-brand-normal-rgb), 0.16);
 }
 .QuorumCard__HostFlag {
   width: 14px;
@@ -1290,32 +1351,6 @@ a.QuorumCard__HelpMark:hover {
   font-weight: 600;
   color: #fff;
   white-space: nowrap;
-}
-.QuorumCard__Dot {
-  display: block;
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  flex-shrink: 0;
-}
-.QuorumCard__Dot--total {
-  background: rgba(var(--pe-color-brand-light-rgb), 0.85);
-  box-shadow: 0 0 6px rgba(var(--pe-color-brand-light-rgb), 0.4);
-}
-.QuorumCard__Dot--active {
-  background: var(--pe-color-green-label);
-  box-shadow: 0 0 6px rgba(var(--pe-color-green-label-rgb), 0.55);
-}
-.QuorumCard__Dot--inactive {
-  background: rgba(255, 255, 255, 0.22);
-}
-.QuorumCard__Dot--next {
-  background: var(--pe-color-yellow-default);
-  box-shadow: 0 0 6px rgba(var(--pe-color-yellow-default-rgb), 0.45);
-}
-.QuorumCard__Dot--banned {
-  background: var(--pe-color-red-default);
-  box-shadow: 0 0 6px rgba(var(--pe-color-red-default-rgb), 0.45);
 }
 .QuorumCard__RailNums {
   display: inline-flex;
@@ -1459,81 +1494,6 @@ a.QuorumCard__HelpMark:hover {
     height: auto;
     max-height: none;
   }
-  .QuorumCard__Head {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-    grid-template-rows: auto auto auto;
-    align-items: baseline;
-    gap: 0 10px;
-    margin-bottom: 12px;
-  }
-  .QuorumCard__HeadText,
-  .QuorumCard__Controls {
-    display: contents;
-  }
-  .QuorumCard__Eyebrow {
-    grid-column: 1;
-    grid-row: 1;
-    margin: 0;
-    align-self: baseline;
-  }
-  .QuorumCard__Title {
-    grid-column: 1;
-    grid-row: 2;
-    font-size: 1.125rem;
-    white-space: normal;
-    margin: 0;
-  }
-  .QuorumCard__Lede {
-    grid-column: 1;
-    grid-row: 3;
-    max-width: none;
-    font-size: 0.5625rem;
-    line-height: 1.45;
-  }
-  .QuorumCard__LedeMore {
-    white-space: nowrap;
-  }
-  .QuorumCard__Legend {
-    grid-column: 2;
-    grid-row: 1 / 3;
-    width: 100%;
-    max-width: none;
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    grid-template-rows: subgrid;
-    align-items: baseline;
-    justify-items: end;
-    gap: 0 6px;
-  }
-  .QuorumCard__Controls .QuorumCard__Leg {
-    display: grid;
-    grid-template-rows: subgrid;
-    grid-row: 1 / 3;
-    gap: 0;
-    align-items: baseline;
-    justify-items: end;
-  }
-  .QuorumCard__Controls .QuorumCard__LegLabel {
-    grid-row: 1;
-    margin: 0;
-    font-size: 0.5rem;
-  }
-  .QuorumCard__Controls .QuorumCard__Leg b {
-    grid-row: 2;
-    margin: 0;
-    font-size: 0.75rem;
-  }
-  .QuorumCard__QCaption {
-    grid-column: 2;
-    grid-row: 3;
-    font-size: 0.5625rem;
-    line-height: 1.45;
-    text-align: right;
-    justify-self: end;
-    align-self: start;
-    margin: 0;
-  }
   .QuorumCard__Body {
     flex: 0 0 auto;
     min-height: auto;
@@ -1589,12 +1549,8 @@ a.QuorumCard__HelpMark:hover {
     height: auto;
     min-height: 28px;
     padding: 3px 4px;
-    font-size: 0.625rem;
+    font-size: 0.5625rem;
     gap: 3px;
-  }
-  .QuorumCard__QBtnIcon {
-    width: 0.7rem;
-    height: 0.7rem;
   }
   .QuorumCard__HostsClip {
     position: relative;

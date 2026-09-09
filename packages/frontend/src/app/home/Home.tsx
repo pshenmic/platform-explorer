@@ -226,6 +226,9 @@ function Home() {
   )
 
   const currentEpochPayload = epochsList.find(e => e?.epoch?.number === currentEpochNumber) || null
+  const epochAvgBlockMs = Number(
+    (currentEpochPayload as { avgBlockTime?: number } | null)?.avgBlockTime
+  )
   const epochData = {
     data: currentEpochPayload || {},
     loading: typeof currentEpochNumber === 'number' && !currentEpochPayload && epochsLoading,
@@ -351,6 +354,12 @@ function Home() {
               currentQuorumError={currentQuorumQuery.isError}
               quorums={quorumsListQuery.data}
               l1LockedHeight={blocksQuery.data?.resultSet?.[0]?.header?.l1LockedHeight}
+              lastProposerProTx={blocksQuery.data?.resultSet?.[0]?.header?.validator}
+              avgBlockTimeSec={
+                epochAvgBlockMs > 0
+                  ? epochAvgBlockMs / 1000
+                  : computeAvgBlockTime(blocksQuery.data?.resultSet)
+              }
             />
           </div>
         </div>

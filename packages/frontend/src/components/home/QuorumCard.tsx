@@ -9,7 +9,6 @@ import { Tooltip } from '../ui/Tooltips'
 import { BlockIcon } from '../ui/icons'
 import * as Api from '../../util/Api'
 import { ResponseErrorNotFound } from '../../util/Errors'
-import { useActiveNetwork } from '../../contexts'
 import { TimeDelta } from '../data'
 import { useCountUp } from './hooks'
 import { Skeleton } from './Skeleton'
@@ -123,6 +122,58 @@ function memberKey(proTx: any) {
   return (proTx || '').toLowerCase()
 }
 
+function memberKeysInCoreOrder(members: any) {
+  const keys: string[] = []
+  const seen = new Set<string>()
+  if (!Array.isArray(members)) return keys
+  for (const member of members) {
+    const key = memberKey(member?.proTxHash)
+    if (!key || seen.has(key)) continue
+    seen.add(key)
+    keys.push(key)
+  }
+  return keys
+}
+
+function sortProTxKeys(keys: string[]) {
+  return [...keys].sort((a, b) => a.localeCompare(b))
+}
+
+function formatProposeWait(blocks: number, avgSec: number | null) {
+  if (typeof avgSec === 'number' && avgSec > 0) {
+    const sec = Math.round(blocks * avgSec)
+    if (sec < 90) return `~${sec}s`
+    const min = Math.round(sec / 60)
+    return min < 90 ? `~${min}m` : `~${(min / 60).toFixed(1)}h`
+  }
+  return `~${blocks} blocks`
+}
+
+function proposeHintFor(
+  nodeKey: string,
+  lastKey: string,
+  ordered: string[],
+  avgSec: number | null,
+  later?: { liveOrdered: string[]; offset: number }
+) {
+  if (!nodeKey || !ordered.length) return null
+  const i = ordered.indexOf(nodeKey)
+  if (i < 0) return null
+  if (later) {
+    const live = later.liveOrdered
+    const p = lastKey && live.length ? live.indexOf(lastKey) : -1
+    const untilLiveDone = p >= 0 ? Math.max(0, live.length - p - 1) : live.length
+    const setsAhead = Math.max(0, later.offset - 1)
+    const setSize = ordered.length || live.length || 100
+    return formatProposeWait(untilLiveDone + setsAhead * setSize + i, avgSec)
+  }
+  const p = lastKey ? ordered.indexOf(lastKey) : -1
+  if (p < 0) return formatProposeWait(i, avgSec)
+  if (i === p) return 'now'
+  if (i > p) return formatProposeWait(i - p, avgSec)
+  return 'finished'
+}
+
 function quorumKey(hash: unknown) {
   return typeof hash === 'string' && hash.length ? hash.toUpperCase() : ''
 }
@@ -161,7 +212,7 @@ function paintPoolNode(
 function hostMatches(row: any, query: string) {
   const s = query.trim().toLowerCase()
   if (!s) return true
-  if (String(row.homeIndex ?? '').includes(s)) return true
+  if (String(row.homeIndex ?? '').includes(s.replace(/^#/, ''))) return true
   if (typeof row.host === 'string' && row.host.toLowerCase().includes(s)) return true
   const proTx = typeof row.proTxHash === 'string' ? row.proTxHash.toLowerCase() : ''
   return proTx.includes(s.replace(/^0x/, ''))
@@ -169,7 +220,15 @@ function hostMatches(row: any, query: string) {
 
 function RollingIdx({ value }: { value: number }) {
   const n = useCountUp(value, 500, true)
-  return <span className={'QuorumCard__CellIdx'}>{typeof n === 'number' ? n : value}</span>
+  const shown = typeof n === 'number' ? n : value
+  return (
+    <span className={'QuorumCard__CellIdx'}>
+      <span className={'QuorumCard__CellIdxMark'} aria-hidden={'true'}>
+        #
+      </span>
+      {shown}
+    </span>
+  )
 }
 
 function HostSearch({ value, onChange }: { value: string; onChange: (next: string) => void }) {
@@ -206,11 +265,12 @@ function HostButton({
       className={
         `QuorumCard__Host QuorumCard__Host--${row.type}` +
         (row.inPinned ? ' is-in-pin' : '') +
-        (row.isFocus ? ' is-focus' : '')
+        (row.isFocus ? ' is-focus' : '') +
+        (row.isProposer ? ' is-proposer' : '')
       }
       onClick={() => onClick(row.proTxHash)}
     >
-      <span className={'QuorumCard__HostIdx'}>{index}</span>
+      <span className={'QuorumCard__HostIdx'}>{index > 0 ? `#${index}` : ''}</span>
       {row.cc ? (
         <Image
           className={'QuorumCard__HostFlag'}
@@ -249,24 +309,26 @@ function TipRow({ label, href, children, mono }: any) {
 function NodeTooltipBody({ cell }: any) {
   const v = cell.validator
   const status = (() => {
+    if (cell.isProposer) return 'Last Platform block proposer'
+    if (cell.proposeHint === 'finished') return 'Already proposed this turn'
     if (cell.role === 'banned') {
       return isPoSeBannedValidator(cell.validator)
         ? 'Banned (PoSe)'
         : 'Banned / not in registered set'
     }
-    if (cell.band === 'carry') return 'This turn and the following one'
+    if (cell.band === 'carry') return 'In this set and the last group'
     if (cell.band === 'upcoming') return 'New in the following turn'
     if (cell.role === 'invalid') return 'In this turn · invalid'
-    if (cell.role === 'next') return 'Following turn (orange)'
-    if (cell.role === 'current' || cell.role === 'active') return 'This turn (green)'
+    if (cell.role === 'next') return 'From the last group'
+    if (cell.role === 'current' || cell.role === 'active') return 'New this turn'
     return 'Queued'
   })()
 
   const cc = v?.geoIpInfo?.countryCode
   const ccName = cc ? countryName(cc) : null
+  const geoPending = Boolean(cell.geoPending && !cc)
   const proposed = v?.proposedBlocksAmount
   const validatorHref = cell.proTxHash ? `/validator/${cell.proTxHash}` : null
-  const identityHref = v?.identity ? `/identity/${v.identity}` : null
 
   return (
     <div className={'QuorumCard__Tip'}>
@@ -284,6 +346,7 @@ function NodeTooltipBody({ cell }: any) {
             }}
           />
         )}
+        {geoPending && <Skeleton className={'QuorumCard__TipFlag'} w={22} h={22} circle />}
         <div className={'QuorumCard__TipHeadText'}>
           <div className={'QuorumCard__TipStatus'}>{status}</div>
           {ccName && (
@@ -302,16 +365,11 @@ function NodeTooltipBody({ cell }: any) {
         </TipRow>
       )}
       {typeof proposed === 'number' && (
-        <TipRow label={'Proposed'} href={validatorHref}>
+        <TipRow label={'Validated'} href={validatorHref}>
           {proposed.toLocaleString('en-US')} blocks
         </TipRow>
       )}
-      {identityHref && (
-        <TipRow label={'Identity'} href={identityHref}>
-          {shortHash(v.identity, 4, 4)}
-        </TipRow>
-      )}
-      {!cc && <TipRow label={'Country'}>Unknown</TipRow>}
+      {cell.proposeHint && <TipRow label={'Proposing'}>{cell.proposeHint}</TipRow>}
     </div>
   )
 }
@@ -329,10 +387,11 @@ export default function QuorumCard({
   currentQuorumLoading,
   currentQuorumError,
   quorums,
-  l1LockedHeight
+  l1LockedHeight,
+  lastProposerProTx,
+  avgBlockTimeSec
 }: any) {
   const queryClient = useQueryClient()
-  const { l1explorerBaseUrl } = useActiveNetwork()
   const [pin, setPin] = useState<string | null>(null)
   const [focusKey, setFocusKey] = useState<string | null>(null)
   const [hostQuery, setHostQuery] = useState('')
@@ -348,11 +407,12 @@ export default function QuorumCard({
 
   const currentMembers = Array.isArray(currentQuorum?.members) ? currentQuorum.members : null
   const hasRoster = Boolean(currentMembers && currentMembers.length > 0)
+  const lastProposerKey = memberKey(lastProposerProTx)
 
   const sortedQuorums = useMemo(() => {
     const list = [...(Array.isArray(quorums) ? quorums : [])]
       .filter(q => q?.quorumHash)
-      .sort((a, b) => (a.blockHeight ?? 0) - (b.blockHeight ?? 0))
+      .sort((a, b) => (quorumHeight(b) ?? 0) - (quorumHeight(a) ?? 0))
     if (!list.length) return []
     const liveKey = quorumKey(currentQuorum?.quorumHash)
     const liveI = list.findIndex(
@@ -400,6 +460,8 @@ export default function QuorumCard({
     typeof pin === 'string' && pin.startsWith('q:') ? pin.slice(2) : null
   const pinnedKey = quorumKey(pinnedQuorumHashEarly)
   const selectedKey = pinnedKey || liveKey
+  const viewingLiveQuorum = !pinnedKey || pinnedKey === liveKey
+  const showLastProposer = Boolean(lastProposerKey && viewingLiveQuorum)
   const selectedMeta = sortedQuorums.find(q => quorumKey(q.quorumHash) === selectedKey) || null
   const selectedOffset = selectedMeta?.offset ?? 0
   const rotN = sortedQuorums.length
@@ -558,33 +620,35 @@ export default function QuorumCard({
   )
 
   const windowKeys = useMemo(() => {
-    if (filling || selectedMemberSet.size === 0) return []
-    return [...selectedMemberSet]
-  }, [filling, selectedMemberSet])
+    if (filling) return []
+    const selected = sortedQuorumsWithMembers.find(q => quorumKey(q.quorumHash) === selectedKey)
+    return memberKeysInCoreOrder(selected?.members)
+  }, [filling, sortedQuorumsWithMembers, selectedKey])
 
   const liveSeedKeys = useMemo(() => {
-    const liveSet = liveKey ? rosterIndex.membersOf.get(liveKey) : null
-    if (!liveSet || liveSet.size === 0) return []
-    return [...liveSet]
-  }, [liveKey, rosterIndex])
+    const live = sortedQuorumsWithMembers.find(q => quorumKey(q.quorumHash) === liveKey)
+    return sortProTxKeys(memberKeysInCoreOrder(live?.members ?? currentMembers))
+  }, [sortedQuorumsWithMembers, liveKey, currentMembers])
+
+  const selectedSeedKeys = useMemo(() => sortProTxKeys(windowKeys), [windowKeys])
 
   const listKeys = useMemo(() => {
     if (filling) return []
     const seen = new Set<string>()
-    const keys: string[] = []
-    const push = (k: string, allowBanned: boolean) => {
+    const rest: string[] = []
+    const pushRest = (k: string, allowBanned: boolean) => {
       if (!k || seen.has(k)) return
       if (!allowBanned && bannedSet.has(k)) return
       seen.add(k)
-      keys.push(k)
+      rest.push(k)
     }
-    for (const k of liveSeedKeys) push(k, true)
-    for (const k of windowKeys) push(k, true)
-    for (const v of list) push(memberKey(v.proTxHash), false)
+    for (const k of liveSeedKeys) seen.add(k)
+    for (const k of windowKeys) pushRest(k, true)
+    for (const v of list) pushRest(memberKey(v.proTxHash), false)
     for (const set of rosterIndex.membersOf.values()) {
-      for (const k of set) push(k, false)
+      for (const k of set) pushRest(k, false)
     }
-    return keys
+    return [...liveSeedKeys.filter(Boolean), ...sortProTxKeys(rest)]
   }, [filling, liveSeedKeys, windowKeys, list, rosterIndex, bannedSet])
 
   const nodeNumberByKey = useMemo(() => {
@@ -633,13 +697,15 @@ export default function QuorumCard({
         proTxHash: v?.proTxHash || k,
         service: meta?.service || v?.proTxInfo?.state?.service || v?.endpoints?.[0] || null,
         valid: meta ? meta.valid !== false : true,
-        validator: v || { proTxHash: k }
+        validator: v || { proTxHash: k },
+        geoPending: Boolean(poolLoading && !(typeof v?.geoIpInfo?.countryCode === 'string'))
       }
     })
     cells.sort((a, b) => (a.homeIndex ?? 0) - (b.homeIndex ?? 0))
     return cells
   }, [
     filling,
+    poolLoading,
     windowKeys,
     list,
     memberMeta,
@@ -685,10 +751,11 @@ export default function QuorumCard({
       end: new Date(Date.now() + Math.max(1, blocks) * CORE_BLOCK_SEC * 1000)
     }
   }, [sortedQuorums, selectedOffset, l1LockedHeight])
-  const headHref =
-    typeof headCore === 'number' && headCore > 0 && l1explorerBaseUrl
-      ? `${l1explorerBaseUrl}/block/${headCore}`
+  const headHash =
+    typeof selectedMeta?.quorumHash === 'string' && selectedMeta.quorumHash.length > 0
+      ? selectedMeta.quorumHash.toLowerCase()
       : null
+  const headHref = headHash ? `https://dashscan.io/blocks/${headHash}` : null
 
   const togglePin = (key: any) => setPin(p => (p === key ? null : key))
 
@@ -777,6 +844,7 @@ export default function QuorumCard({
         geoPending: Boolean(poolLoading && !cc),
         inPinned: selectedMemberSet.has(k),
         isFocus: Boolean(focusKey && focusKey === k),
+        isProposer: Boolean(showLastProposer && k === lastProposerKey),
         homeIndex: nodeNumberByKey.get(k) ?? null
       }
     })
@@ -794,6 +862,8 @@ export default function QuorumCard({
     memberMeta,
     bannedSet,
     nodeNumberByKey,
+    lastProposerKey,
+    showLastProposer,
     focusKey
   ])
 
@@ -830,75 +900,11 @@ export default function QuorumCard({
       <div className={'QuorumCard__Glow'} aria-hidden={'true'} />
 
       <header className={'QuorumCard__Head'}>
-        <div className={'QuorumCard__HeadText'}>
-          <span className={'QuorumCard__Eyebrow'}>Consensus</span>
-          <h2 className={'QuorumCard__Title'}>Quorum</h2>
-          <p className={'QuorumCard__Lede'}>
-            Only a{' '}
-            <Tooltip
-              placement={'top'}
-              content={
-                <div className={'QuorumCard__HelpTip'}>
-                  <p>
-                    A{' '}
-                    <a
-                      className={'QuorumCard__HelpMark'}
-                      href={'https://docs.dash.org/en/stable/docs/core/dips/dip-0006.html'}
-                      target={'_blank'}
-                      rel={'noreferrer'}
-                      onClick={e => e.stopPropagation()}
-                    >
-                      quorum
-                    </a>{' '}
-                    is 100 evonodes. We keep{' '}
-                    <a
-                      className={'QuorumCard__HelpMark'}
-                      href={
-                        'https://docs.dash.org/en/stable/docs/core/guide/dash-features-masternode-quorums.html'
-                      }
-                      target={'_blank'}
-                      rel={'noreferrer'}
-                      onClick={e => e.stopPropagation()}
-                    >
-                      24 of these groups
-                    </a>
-                    ; they take turns signing.
-                  </p>
-                  <p>
-                    The grid is that hundred:{' '}
-                    <b className={'QuorumCard__HelpSwatch QuorumCard__HelpSwatch--active'}>green</b>{' '}
-                    are new here,{' '}
-                    <b className={'QuorumCard__HelpSwatch QuorumCard__HelpSwatch--next'}>yellow</b>{' '}
-                    were in the last group.{' '}
-                    <b className={'QuorumCard__HelpSwatch QuorumCard__HelpSwatch--inactive'}>
-                      Gray
-                    </b>{' '}
-                    in the list wait their turn.
-                  </p>
-                  <p>
-                    A <b className={'QuorumCard__HelpSwatch QuorumCard__HelpSwatch--banned'}>red</b>{' '}
-                    cell can still sit here: the group is built first, a{' '}
-                    <a
-                      className={'QuorumCard__HelpMark'}
-                      href={'https://docs.dash.org/en/stable/docs/core/dips/dip-0003.html'}
-                      target={'_blank'}
-                      rel={'noreferrer'}
-                      onClick={e => e.stopPropagation()}
-                    >
-                      ban
-                    </a>{' '}
-                    can land after.
-                  </p>
-                </div>
-              }
-            >
-              <span className={'QuorumCard__LedeMore'}>rotating set</span>
-            </Tooltip>{' '}
-            of 100 evonodes signs each block.
-          </p>
-        </div>
-
-        <div className={'QuorumCard__Controls'}>
+        <div className={'QuorumCard__HeadTop'}>
+          <div className={'QuorumCard__HeadText'}>
+            <span className={'QuorumCard__Eyebrow'}>Consensus</span>
+            <h2 className={'QuorumCard__Title'}>Quorum</h2>
+          </div>
           <div className={'QuorumCard__Legend'} role={'group'} aria-label={'Validator counts'}>
             {STATS.map(s => {
               const n = counts[s.key]
@@ -937,6 +943,109 @@ export default function QuorumCard({
               )
             })}
           </div>
+        </div>
+        <div className={'QuorumCard__HeadBottom'}>
+          <p className={'QuorumCard__Lede'}>
+            <span className={'QuorumCard__LedeLine'}>Evonodes are grouped in quorums</span>
+            <span className={'QuorumCard__LedeLine'}>
+              that take turns in proposing blocks{' '}
+              <span className={'QuorumCard__LegendsSlot'}>
+                <Tooltip
+                  placement={'top'}
+                  className={'QuorumCard__HelpTipTooltip'}
+                  content={
+                    <div className={'QuorumCard__HelpTip'}>
+                      <p>
+                        A{' '}
+                        <a
+                          className={'QuorumCard__HelpMark'}
+                          href={'https://docs.dash.org/en/stable/docs/core/dips/dip-0006.html'}
+                          target={'_blank'}
+                          rel={'noreferrer'}
+                          onClick={e => e.stopPropagation()}
+                        >
+                          quorum
+                        </a>{' '}
+                        is 100 evonodes.{' '}
+                        <a
+                          className={'QuorumCard__HelpMark'}
+                          href={
+                            'https://docs.dash.org/en/stable/docs/core/guide/dash-features-masternode-quorums.html'
+                          }
+                          target={'_blank'}
+                          rel={'noreferrer'}
+                          onClick={e => e.stopPropagation()}
+                        >
+                          24 groups
+                        </a>{' '}
+                        take turns signing.
+                      </p>
+                      <ul className={'QuorumCard__HelpKeys'} aria-label={'Color legend'}>
+                        <li className={'QuorumCard__HelpKey'}>
+                          <span
+                            className={'QuorumCard__HelpChip QuorumCard__HelpChip--active'}
+                            aria-hidden={'true'}
+                          />
+                          <span>New this turn</span>
+                        </li>
+                        <li className={'QuorumCard__HelpKey'}>
+                          <span
+                            className={'QuorumCard__HelpChip QuorumCard__HelpChip--done'}
+                            aria-hidden={'true'}
+                          />
+                          <span>Already proposed this turn</span>
+                        </li>
+                        <li className={'QuorumCard__HelpKey'}>
+                          <span
+                            className={'QuorumCard__HelpChip QuorumCard__HelpChip--next'}
+                            aria-hidden={'true'}
+                          />
+                          <span>From the last group</span>
+                        </li>
+                        <li className={'QuorumCard__HelpKey'}>
+                          <span
+                            className={'QuorumCard__HelpChip QuorumCard__HelpChip--proposer'}
+                            aria-hidden={'true'}
+                          />
+                          <span>Proposed the last Platform block</span>
+                        </li>
+                        <li className={'QuorumCard__HelpKey'}>
+                          <span
+                            className={'QuorumCard__HelpChip QuorumCard__HelpChip--inactive'}
+                            aria-hidden={'true'}
+                          />
+                          <span>In the list, waiting</span>
+                        </li>
+                        <li className={'QuorumCard__HelpKey'}>
+                          <span
+                            className={'QuorumCard__HelpChip QuorumCard__HelpChip--banned'}
+                            aria-hidden={'true'}
+                          />
+                          <span>
+                            Can still sit here: the set is built first, a{' '}
+                            <a
+                              className={'QuorumCard__HelpMark'}
+                              href={'https://docs.dash.org/en/stable/docs/core/dips/dip-0003.html'}
+                              target={'_blank'}
+                              rel={'noreferrer'}
+                              onClick={e => e.stopPropagation()}
+                            >
+                              ban
+                            </a>{' '}
+                            can land after
+                          </span>
+                        </li>
+                      </ul>
+                    </div>
+                  }
+                >
+                  <button type={'button'} className={'QuorumCard__Legends'}>
+                    Legends
+                  </button>
+                </Tooltip>
+              </span>
+            </span>
+          </p>
           <p className={'QuorumCard__QCaption'}>
             {sortedQuorums.length > 0 ? (
               <>
@@ -947,10 +1056,24 @@ export default function QuorumCard({
                     rel={'noreferrer'}
                     className={'QuorumCard__BlockLink'}
                   >
+                    <BlockIcon
+                      className={'QuorumCard__CaptionIcon'}
+                      w={'0.875rem'}
+                      h={'0.875rem'}
+                      aria-hidden={'true'}
+                    />
                     {headTurn}
                   </a>
                 ) : (
-                  headTurn
+                  <span className={'QuorumCard__BlockLink'}>
+                    <BlockIcon
+                      className={'QuorumCard__CaptionIcon'}
+                      w={'0.875rem'}
+                      h={'0.875rem'}
+                      aria-hidden={'true'}
+                    />
+                    {headTurn}
+                  </span>
                 )}
                 {quorumEta && (
                   <span
@@ -1032,6 +1155,14 @@ export default function QuorumCard({
                   const isFocus = Boolean(focusKey && focusKey === nodeKey)
                   const isSearchHit = Boolean(searchMatchKeys?.has(nodeKey))
                   const hostIdx = cell.homeIndex
+                  const isProposer = Boolean(showLastProposer && nodeKey === lastProposerKey)
+                  const avgSec = typeof avgBlockTimeSec === 'number' ? avgBlockTimeSec : null
+                  const proposeHint = viewingLiveQuorum
+                    ? proposeHintFor(nodeKey, lastProposerKey, liveSeedKeys, avgSec)
+                    : proposeHintFor(nodeKey, lastProposerKey, selectedSeedKeys, avgSec, {
+                        liveOrdered: liveSeedKeys,
+                        offset: selectedOffset
+                      })
 
                   const tile = (
                     <button
@@ -1044,11 +1175,14 @@ export default function QuorumCard({
                         (inPinned ? ' is-in-pin' : '') +
                         (isFocus ? ' is-focus' : '') +
                         (isSearchHit ? ' is-search-hit' : '') +
-                        (cell.band === 'carry' ? ' is-carry' : '')
+                        (cell.band === 'carry' ? ' is-carry' : '') +
+                        (isProposer ? ' is-proposer' : '') +
+                        (proposeHint === 'finished' ? ' is-done' : '')
                       }
                       aria-label={
                         `${hostIdx != null ? `#${hostIdx}, ` : ''}` +
                         `${shortHash(cell.proTxHash)}, ${roleHint}` +
+                        (isProposer ? ', last block proposer' : '') +
                         (ccName ? `, ${ccName}` : '')
                       }
                       aria-pressed={inPinned || undefined}
@@ -1059,7 +1193,11 @@ export default function QuorumCard({
                   )
 
                   return (
-                    <Tooltip key={slot} placement={'top'} content={<NodeTooltipBody cell={cell} />}>
+                    <Tooltip
+                      key={slot}
+                      placement={'top'}
+                      content={<NodeTooltipBody cell={{ ...cell, isProposer, proposeHint }} />}
+                    >
                       {tile}
                     </Tooltip>
                   )
@@ -1072,20 +1210,21 @@ export default function QuorumCard({
             {sortedQuorums.length > 0 && (
               <div
                 ref={pickRef}
-                className={'QuorumCard__QPick'}
+                className={'QuorumCard__QPick pe-QuietScroll'}
                 role={'group'}
                 aria-label={'Signing rotation'}
                 tabIndex={0}
               >
-                {sortedQuorums.map(q => {
-                  const formedHeight = q.blockHeight ?? q.creationHeight
+                {sortedQuorums.map((q, i) => {
                   const qk = quorumKey(q.quorumHash)
                   const on = qk === selectedKey
                   const signed = Boolean(qk && signedHashes.has(qk))
+                  const formedHeight = q.blockHeight ?? q.creationHeight
                   const heightLabel =
                     typeof formedHeight === 'number' && formedHeight > 0
                       ? String(formedHeight)
                       : '—'
+                  const slot = i + 1
                   return (
                     <button
                       key={q.quorumHash}
@@ -1094,16 +1233,11 @@ export default function QuorumCard({
                         `QuorumCard__QBtn${on ? ' is-on' : ''}${q.isLive ? ' is-live' : ''}` +
                         (signed ? ' is-signed' : '')
                       }
-                      aria-label={`Block ${heightLabel}`}
+                      aria-label={`Quorum ${slot} of ${sortedQuorums.length}, Core ${heightLabel}`}
                       aria-pressed={on}
                       onClick={() => togglePin(`q:${q.quorumHash}`)}
                     >
-                      <BlockIcon
-                        className={'QuorumCard__QBtnIcon'}
-                        w={'0.875rem'}
-                        h={'0.875rem'}
-                        aria-hidden={'true'}
-                      />
+                      <span className={'QuorumCard__QBtnIdx'}>#{slot}</span>
                       <span className={'QuorumCard__QBtnHeight'}>{heightLabel}</span>
                     </button>
                   )
@@ -1114,7 +1248,7 @@ export default function QuorumCard({
               {hostRows.length > 0 && <HostSearch value={hostQuery} onChange={setHostQuery} />}
               <div
                 ref={hostsRef}
-                className={'QuorumCard__Hosts'}
+                className={'QuorumCard__Hosts pe-QuietScroll'}
                 aria-label={'Masternode addresses'}
               >
                 {hostRows.length === 0 ? (
