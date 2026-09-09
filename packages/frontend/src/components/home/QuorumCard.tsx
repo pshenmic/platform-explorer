@@ -350,7 +350,7 @@ export default function QuorumCard({
   const sortedQuorums = useMemo(() => {
     const list = [...(Array.isArray(quorums) ? quorums : [])]
       .filter(q => q?.quorumHash)
-      .sort((a, b) => (a.blockHeight ?? 0) - (b.blockHeight ?? 0))
+      .sort((a, b) => (quorumHeight(b) ?? 0) - (quorumHeight(a) ?? 0))
     if (!list.length) return []
     const liveKey = quorumKey(currentQuorum?.quorumHash)
     const liveI = list.findIndex(
