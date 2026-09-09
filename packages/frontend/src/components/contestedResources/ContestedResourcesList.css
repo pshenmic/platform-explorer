@@ -1,3 +1,24 @@
+.EndsInCell {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.EndsInCell--ok {
+  color: var(--pe-color-gray-250);
+}
+.EndsInCell--soon {
+  color: var(--pe-color-orange-default);
+}
+.EndsInCell--critical {
+  color: var(--pe-color-red-default);
+  font-weight: 600;
+}
+.EndsInCell--ended {
+  color: var(--pe-color-gray-500);
+}
+
 .ContestedResourcesList__Pagination {
   margin-top: var(--pe-space-8);
 }
