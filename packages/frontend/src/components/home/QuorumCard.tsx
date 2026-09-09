@@ -1006,7 +1006,7 @@ export default function QuorumCard({
                           className={'QuorumCard__HelpChip QuorumCard__HelpChip--proposer'}
                           aria-hidden={'true'}
                         />
-                        <span>Proposed the last Platform block</span>
+                        <span>Proposed the last block</span>
                       </li>
                       <li className={'QuorumCard__HelpKey'}>
                         <span
