@@ -999,7 +999,7 @@ export default function QuorumCard({
                           className={'QuorumCard__HelpChip QuorumCard__HelpChip--next'}
                           aria-hidden={'true'}
                         />
-                        <span>From the last group</span>
+                        <span>From the previous quorum</span>
                       </li>
                       <li className={'QuorumCard__HelpKey'}>
                         <span
