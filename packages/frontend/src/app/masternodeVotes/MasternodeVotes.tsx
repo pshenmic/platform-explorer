@@ -1,19 +1,17 @@
 'use client'
 
+import { useEffect, useState, useCallback, useRef } from 'react'
 import * as Api from '../../util/Api'
-import { useState, useEffect } from 'react'
-import Pagination from '../../components/pagination'
-import PageSizeSelector from '../../components/pageSizeSelector/PageSizeSelector'
+import { VotesList } from '../../components/contestedResources/votes'
+import {
+  readListScrollMode,
+  writeListScrollMode,
+  type ListScrollMode
+} from '../../components/ui/lists/DataList/listScrollMode'
 import { ErrorMessageBlock } from '../../components/Errors'
 import { fetchHandlerSuccess, fetchHandlerError } from '../../util'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
-import { useIsMobile } from '../../hooks'
-import { VotesList } from '../../components/contestedResources/votes'
-import { MasternodeVotesFilters } from '../../components/contestedResources'
-import MasternodeVotesStatsInline from '../../components/contestedResources/MasternodeVotesStatsInline'
-import PageTitle from '../../components/intro/PageTitle'
 import type { LoadableState, PaginatedResultSet, Vote } from '../../types'
-import introContent from './introContent'
 import './MasternodeVotes.css'
 
 const paginateConfig = {
@@ -25,123 +23,230 @@ const paginateConfig = {
 }
 
 type QueryFilters = Record<string, string | number | boolean | string[] | null | undefined>
+const IDENTIFIER_RE = new RegExp('^[A-Za-z0-9]{43,44}$')
 
-interface MasternodeVotesProps {
-  defaultPage?: number
-  defaultPageSize?: number
+function pickOne(value: unknown): string | undefined {
+  if (Array.isArray(value)) {
+    const items = value.filter(item => item != null && item !== '')
+    return items.length === 1 ? String(items[0]) : undefined
+  }
+  if (typeof value === 'string' && value.trim()) return value.trim()
+  if (typeof value === 'number') return String(value)
+  return undefined
 }
 
-function MasternodeVotes({ defaultPage = 1, defaultPageSize }: MasternodeVotesProps) {
-  const [masternodeVotes, setMasternodeVotes] = useState<LoadableState<PaginatedResultSet<Vote>>>({
+function toApiFilters(state: Record<string, unknown>): QueryFilters {
+  const out: QueryFilters = {}
+
+  if (typeof state.voter_identity === 'string') {
+    const voter = state.voter_identity.trim()
+    if (IDENTIFIER_RE.test(voter)) out.voter_identity = voter
+  }
+
+  if (typeof state.towards_identity === 'string') {
+    const towards = state.towards_identity.trim()
+    if (IDENTIFIER_RE.test(towards)) out.towards_identity = towards
+  }
+
+  const choice = pickOne(state.choice)
+  if (choice === '0' || choice === '1' || choice === '2') out.choice = choice
+
+  const power = pickOne(state.power)
+  if (power === '1' || power === '4') out.power = power
+
+  const ts = state.timestamp as
+    | { start?: Date | null; end?: Date | null; mode?: 'days' | 'rolling' }
+    | null
+  const start = ts?.start ? new Date(ts.start) : null
+  const end = ts?.end ? new Date(ts.end) : null
+  const startValid = start && !Number.isNaN(start.getTime())
+  const endValid = end && !Number.isNaN(end.getTime())
+  if (startValid && endValid) {
+    const from = start.getTime() <= end.getTime() ? start : end
+    const to = start.getTime() <= end.getTime() ? end : start
+    if (ts?.mode !== 'rolling') {
+      from.setHours(0, 0, 0, 0)
+      to.setHours(23, 59, 59, 999)
+    }
+    out.timestamp_start = from.toISOString()
+    out.timestamp_end = to.toISOString()
+  }
+  return out
+}
+
+function isEmptyFilterValue(value: unknown) {
+  if (value == null || value === '') return true
+  if (Array.isArray(value)) return value.length === 0
+  if (typeof value === 'object') {
+    return Object.values(value as Record<string, unknown>).every(
+      item => item == null || item === ''
+    )
+  }
+  return false
+}
+
+function MasternodeVotes() {
+  const [votes, setVotes] = useState<LoadableState<PaginatedResultSet<Vote>>>({
     data: {} as PaginatedResultSet<Vote>,
-    props: { currentPage: 0 },
     loading: true,
     error: false
   })
   const [total, setTotal] = useState(1)
-  const [pageSize, setPageSize] = useState(defaultPageSize || paginateConfig.pageSize.default)
-  const [currentPage, setCurrentPage] = useState(defaultPage ? defaultPage - 1 : 0)
-  const pageCount = Math.ceil(total / pageSize) ? Math.ceil(total / pageSize) : 1
+  const [pageSize, setPageSize] = useState(paginateConfig.pageSize.default)
+  const [currentPage, setCurrentPage] = useState(0)
+  const [scrollMode, setScrollMode] = useState<ListScrollMode>('pages')
+  const [loadingMore, setLoadingMore] = useState(false)
+  const fetchGen = useRef(0)
   const [filters, setFilters] = useState<QueryFilters>({})
+  const [columnFilters, setColumnFilters] = useState<Record<string, unknown>>({})
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
-  const isMobile = useIsMobile()
-
-  const filtersChangeHandler = (newFilters: Record<string, unknown>) => {
-    setFilters(newFilters as QueryFilters)
-    setCurrentPage(0)
-  }
 
   useEffect(() => {
-    setMasternodeVotes(prev => ({ ...prev, loading: true, error: false }))
+    setScrollMode(readListScrollMode('masternodeVotes'))
+  }, [])
 
-    const fetchData = async () => {
-      Api.getMasternodeVotes(Math.max(1, currentPage + 1), Math.max(1, pageSize), 'desc', filters)
-        .then(res => {
-          setTotal(res?.pagination?.total)
-          fetchHandlerSuccess(setMasternodeVotes, res)
-        })
-        .catch(err => {
-          setTotal(0)
-          fetchHandlerError(setMasternodeVotes, err)
-        })
+  useEffect(() => {
+    const gen = ++fetchGen.current
+    const replace = scrollMode === 'pages' || currentPage === 0
+    if (replace) {
+      setVotes(prev => ({ ...prev, loading: true, error: false }))
+      setLoadingMore(false)
+    } else {
+      setLoadingMore(true)
     }
 
-    fetchData()
-  }, [currentPage, pageSize, filters])
+    Api.getMasternodeVotes(Math.max(1, currentPage + 1), Math.max(1, pageSize), 'desc', filters)
+      .then(res => {
+        if (gen !== fetchGen.current) return
+        setTotal(res.pagination.total)
+        if (replace) {
+          fetchHandlerSuccess(setVotes, res)
+        } else {
+          setVotes(prev => {
+            const seen = new Set((prev.data?.resultSet ?? []).map(item => item.txHash || ''))
+            const extra = res.resultSet.filter(item => {
+              if (!item.txHash || seen.has(item.txHash)) return false
+              seen.add(item.txHash)
+              return true
+            })
+            return {
+              loading: false,
+              error: false,
+              data: {
+                ...res,
+                resultSet: [...(prev.data?.resultSet ?? []), ...extra]
+              }
+            }
+          })
+        }
+        setLoadingMore(false)
+      })
+      .catch(err => {
+        if (gen !== fetchGen.current) return
+        if (replace) {
+          setTotal(0)
+          fetchHandlerError(setVotes, err)
+        }
+        setLoadingMore(false)
+      })
+  }, [currentPage, pageSize, filters, scrollMode])
 
   useEffect(() => {
-    const page = parseInt(searchParams.get('page') || '', 10) || paginateConfig.defaultPage
-    setCurrentPage(Math.max(page - 1, 0))
     setPageSize(
       parseInt(searchParams.get('page-size') || '', 10) || paginateConfig.pageSize.default
     )
-  }, [searchParams, pathname])
+    if (scrollMode !== 'pages') return
+    const page = parseInt(searchParams.get('page') || '', 10) || paginateConfig.defaultPage
+    setCurrentPage(Math.max(page - 1, 0))
+  }, [searchParams, pathname, scrollMode])
 
   useEffect(() => {
     const urlParameters = new URLSearchParams(Array.from(searchParams.entries()))
-
-    if (
-      currentPage + 1 === paginateConfig.defaultPage &&
-      pageSize === paginateConfig.pageSize.default
-    ) {
-      urlParameters.delete('page')
+    if (pageSize === paginateConfig.pageSize.default) {
       urlParameters.delete('page-size')
     } else {
-      urlParameters.set('page', String(currentPage + 1))
       urlParameters.set('page-size', String(pageSize))
     }
+    if (scrollMode === 'pages' && currentPage + 1 !== paginateConfig.defaultPage) {
+      urlParameters.set('page', String(currentPage + 1))
+    } else {
+      urlParameters.delete('page')
+    }
+    const next = urlParameters.toString()
+    const href = next ? `${pathname}?${next}` : pathname
+    router.replace(href, { scroll: false })
+  }, [currentPage, pageSize, scrollMode])
 
-    router.push(`${pathname}?${urlParameters.toString()}`, { scroll: false })
-  }, [currentPage, pageSize])
+  const onColumnFilterChange = (key: string, value: unknown) => {
+    setColumnFilters(prev => {
+      if (isEmptyFilterValue(value)) {
+        const next = { ...prev }
+        delete next[key]
+        return next
+      }
+      return { ...prev, [key]: value }
+    })
+  }
+
+  useEffect(() => {
+    const ts = columnFilters.timestamp as { start?: unknown; end?: unknown } | undefined
+    const dateRangeReady = Boolean(ts?.start && ts?.end)
+    const id = window.setTimeout(
+      () => {
+        const next = toApiFilters(columnFilters)
+        setFilters(prev => {
+          if (JSON.stringify(prev) === JSON.stringify(next)) return prev
+          setCurrentPage(0)
+          return next
+        })
+      },
+      dateRangeReady ? 0 : 400
+    )
+    return () => window.clearTimeout(id)
+  }, [columnFilters])
+
+  const onScrollModeChange = useCallback((mode: ListScrollMode) => {
+    writeListScrollMode('masternodeVotes', mode)
+    setScrollMode(mode)
+    setCurrentPage(0)
+  }, [])
+
+  const onLoadMore = useCallback(() => {
+    setCurrentPage(page => page + 1)
+  }, [])
+
+  const items = votes.data?.resultSet ?? []
+  const paging = {
+    mode: scrollMode,
+    onModeChange: onScrollModeChange,
+    total,
+    pageSize,
+    page: currentPage,
+    onPageChange: setCurrentPage,
+    onLoadMore,
+    loadingMore,
+    hasMore: items.length < total
+  }
 
   return (
     <div className={'ListPage MasternodeVotes'}>
       <div className={'InfoBlock'}>
-        <div className={'MasternodeVotes__Controls'}>
-          <PageTitle
-            title={'Masternode Votes'}
-            description={introContent}
-            className={'MasternodeVotes__Title'}
-          />
-
-          <MasternodeVotesStatsInline className={'MasternodeVotes__Stats'} total={total} />
-
-          <MasternodeVotesFilters
-            onFilterChange={filtersChangeHandler}
-            isMobile={isMobile}
-            className={'MasternodeVotes__Filters'}
-          />
-        </div>
-
-        {!masternodeVotes.error ? (
-          <VotesList
-            votes={masternodeVotes.data?.resultSet as never}
-            itemsCount={pageSize}
-            loading={masternodeVotes.loading}
-          />
-        ) : (
+        {votes.error ? (
           <div className={'ListPage__Error'}>
             <ErrorMessageBlock />
           </div>
-        )}
-
-        {(masternodeVotes.data?.resultSet?.length ?? 0) > 0 && (
-          <div className={'ListNavigation'}>
-            <div className={'ListNavigation__Balance'} />
-            <Pagination
-              onPageChange={({ selected }) => setCurrentPage(selected)}
-              pageCount={pageCount}
-              forcePage={currentPage}
-            />
-            <PageSizeSelector
-              PageSizeSelectHandler={e => setPageSize(Number(e?.value))}
-              value={pageSize}
-              items={paginateConfig.pageSize.values}
-            />
-          </div>
-        )}
+        ) : null}
+        <VotesList
+          votes={items}
+          loading={votes.loading && (scrollMode === 'pages' || items.length === 0)}
+          filterValues={columnFilters}
+          onFilterChange={onColumnFilterChange}
+          paging={paging}
+          title={'Masternode votes'}
+          pinFirst={true}
+        />
       </div>
     </div>
   )
