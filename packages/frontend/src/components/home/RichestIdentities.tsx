@@ -11,7 +11,6 @@ import { HOME_RICH_LIST_LIMIT } from './listLimits'
 
 const DEFAULT_SORT = { order_by: 'balance', order: 'desc' }
 
-// identities by balance or tx_count (server sort via column headers)
 export default function RichestIdentities({
   rate,
   enabled = true
@@ -35,7 +34,6 @@ export default function RichestIdentities({
     Api.getIdentities(1, HOME_RICH_LIST_LIMIT, sort.order as any, sort.order_by)
       .then(res => {
         let items = (res?.resultSet ?? []).slice(0, HOME_RICH_LIST_LIMIT)
-        // re-sort by live balance (API ranks by transfer-sum)
         if (sort.order_by === 'balance') {
           const dir = sort.order === 'asc' ? 1 : -1
           items = [...items].sort(
@@ -77,8 +75,11 @@ export default function RichestIdentities({
         const credits = Number(item.balance)
         return (
           <RateTooltip credits={credits} rate={rate?.data}>
-            <span>
-              <BigNumber>{item.balance}</BigNumber>
+            <span className={'DataList__CompactNum'}>
+              {new Intl.NumberFormat('en', {
+                notation: Math.abs(credits) >= 1_000_000 ? 'compact' : 'standard',
+                maximumFractionDigits: 2
+              }).format(credits)}
             </span>
           </RateTooltip>
         )

@@ -1,13 +1,28 @@
 .RateTooltip {
-  font-size: var(--pe-text-sm);
+  display: grid;
+  grid-template-columns: auto auto;
+  align-items: baseline;
+  column-gap: 10px;
+  row-gap: 6px;
+  font-size: 0.75rem;
+  line-height: 1.25;
 }
 
-.RateTooltip__Dash {
+.RateTooltip__Value {
   font-family: var(--pe-font-heading);
-  color: var(--pe-color-fg);
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
+  font-weight: 600;
+  color: #fff;
+  text-align: right;
+  white-space: nowrap;
 }
 
-.RateTooltip__Usd {
-  font-family: var(--pe-font-mono);
-  color: rgba(255, 255, 255, 0.6);
+.RateTooltip__Unit {
+  font-family: var(--pe-font-heading);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.55);
 }
