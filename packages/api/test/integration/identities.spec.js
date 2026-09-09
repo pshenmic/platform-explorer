@@ -2286,7 +2286,7 @@ describe('Identities routes', () => {
         .sort((a, b) => a.block.height - b.block.height)
         .slice(0, 10)
         .map((_transfer) => ({
-          amount: parseInt(_transfer.transfer.amount),
+          amount: String(_transfer.transfer.amount),
           sender: _transfer.transfer.sender,
           recipient: _transfer.transfer.recipient,
           timestamp: _transfer.block.timestamp.toISOString(),
@@ -2336,7 +2336,7 @@ describe('Identities routes', () => {
         .sort((a, b) => a.block.height - b.block.height)
         .slice(0, 10)
         .map((_transfer) => ({
-          amount: parseInt(_transfer.transfer.amount),
+          amount: String(_transfer.transfer.amount),
           sender: _transfer.transfer.sender,
           recipient: _transfer.transfer.recipient,
           timestamp: _transfer.block.timestamp.toISOString(),
@@ -2386,7 +2386,7 @@ describe('Identities routes', () => {
         .sort((a, b) => a.block.height - b.block.height)
         .slice(0, 10)
         .map((_transfer) => ({
-          amount: parseInt(_transfer.transfer.amount),
+          amount: String(_transfer.transfer.amount),
           sender: _transfer.transfer.sender,
           recipient: _transfer.transfer.recipient,
           timestamp: _transfer.block.timestamp.toISOString(),
@@ -2428,7 +2428,7 @@ describe('Identities routes', () => {
       assert.equal(body.pagination.limit, 10)
 
       const expectedTransfers = {
-        amount: transfer.amount,
+        amount: String(transfer.amount),
         sender: null,
         recipient: identity.identifier,
         timestamp: block.timestamp.toISOString(),
@@ -2477,7 +2477,7 @@ describe('Identities routes', () => {
         .sort((a, b) => b.block.height - a.block.height)
         .slice(0, 10)
         .map((_transfer) => ({
-          amount: parseInt(_transfer.transfer.amount),
+          amount: String(_transfer.transfer.amount),
           sender: _transfer.transfer.sender,
           recipient: _transfer.transfer.recipient,
           timestamp: _transfer.block.timestamp.toISOString(),
@@ -2526,7 +2526,7 @@ describe('Identities routes', () => {
         .sort((a, b) => a.block.height - b.block.height)
         .slice(7, 14)
         .map((_transfer) => ({
-          amount: parseInt(_transfer.transfer.amount),
+          amount: String(_transfer.transfer.amount),
           sender: _transfer.transfer.sender,
           recipient: _transfer.transfer.recipient,
           timestamp: _transfer.block.timestamp.toISOString(),
@@ -2575,7 +2575,7 @@ describe('Identities routes', () => {
         .sort((a, b) => b.block.height - a.block.height)
         .slice(7, 14)
         .map((_transfer) => ({
-          amount: parseInt(_transfer.transfer.amount),
+          amount: String(_transfer.transfer.amount),
           sender: _transfer.transfer.sender,
           recipient: _transfer.transfer.recipient,
           timestamp: _transfer.block.timestamp.toISOString(),

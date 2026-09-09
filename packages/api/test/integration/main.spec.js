@@ -771,8 +771,9 @@ describe('Other routes', () => {
         outgoingTxs: 0,
         nonce: 12,
         balance: '111111',
-        totalIncomingAmount: null,
-        totalOutgoingAmount: null
+        // an address with no transitions has moved zero credits, not an unknown amount
+        totalIncomingAmount: '0',
+        totalOutgoingAmount: '0'
       }
 
       assert.deepEqual(body, { platformAddresses: [expectedAddress] })

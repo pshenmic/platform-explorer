@@ -188,6 +188,55 @@ describe('Platform Addresses routes', () => {
       assert.deepEqual(expectedAddressTransitions, body.resultSet)
     })
 
+    it('should return only the transitions of the requested type', async () => {
+      const [platformAddress] = platformAddresses
+      const [funding] = platformAddress.transitions
+
+      const { body } = await client.get(`/platformAddress/${platformAddress.address.bech32m_address}/transactions?limit=100&transaction_type=${StateTransitionEnum.ADDRESS_FUNDING_FROM_ASSET_LOCK}`)
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      // the count follows the filter, so a wallet can page the filtered set
+      assert.equal(body.pagination.total, 1)
+      assert.equal(body.resultSet.length, 1)
+
+      const [transaction] = body.resultSet
+
+      assert.equal(transaction.hash, funding.stateTransition.hash)
+      assert.equal(transaction.type, 'ADDRESS_FUNDING_FROM_ASSET_LOCK')
+      assert.equal(transaction.incoming, true)
+      assert.equal(transaction.amount, String(funding.addressTransition.amount))
+    })
+
+    it('should accept the type by name and more than one of them', async () => {
+      const [platformAddress] = platformAddresses
+
+      const { body } = await client.get(`/platformAddress/${platformAddress.address.bech32m_address}/transactions?limit=100&transaction_type=ADDRESS_FUNDS_TRANSFER`)
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      assert.equal(body.pagination.total, platformAddress.transitions.length - 1)
+      assert.deepEqual([...new Set(body.resultSet.map(({ type }) => type))], ['ADDRESS_FUNDS_TRANSFER'])
+
+      const { body: bothTypes } = await client.get(`/platformAddress/${platformAddress.address.bech32m_address}/transactions?limit=100&transaction_type=ADDRESS_FUNDS_TRANSFER&transaction_type=${StateTransitionEnum.ADDRESS_FUNDING_FROM_ASSET_LOCK}`)
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      assert.equal(bothTypes.pagination.total, platformAddress.transitions.length)
+    })
+
+    it('should return an empty set for a type the address has never seen', async () => {
+      const [platformAddress] = platformAddresses
+
+      const { body } = await client.get(`/platformAddress/${platformAddress.address.bech32m_address}/transactions?limit=100&transaction_type=SHIELD`)
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      // an empty page carries the -1 total every paged endpoint here uses
+      assert.equal(body.pagination.total, -1)
+      assert.deepEqual(body.resultSet, [])
+    })
+
     it('should return set of address transitions with custom limit', async () => {
       const [platformAddress] = platformAddresses
       const { body } = await client.get(`/platformAddress/${platformAddress.address.bech32m_address}/transactions?limit=7`)
@@ -467,6 +516,22 @@ describe('Platform Addresses routes', () => {
       assert.equal(transaction.bech32mAddress, null)
     })
 
+    it('should filter the merged set by type', async () => {
+      const [first, second] = platformAddresses
+
+      const { body } = await client.post(`/platformAddresses/transactions?limit=100&transaction_type=${StateTransitionEnum.ADDRESS_FUNDING_FROM_ASSET_LOCK}`)
+        .send({ addresses: [first.address.bech32m_address, second.address.address] })
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      // one funding transition each, the transfers are filtered out
+      assert.equal(body.pagination.total, 2)
+      assert.deepEqual(
+        body.resultSet.map(({ hash }) => hash),
+        [first, second].map(({ transitions: [funding] }) => funding.stateTransition.hash)
+      )
+    })
+
     it('should not accept more than 100 addresses', async () => {
       const [first] = platformAddresses
 
@@ -585,6 +650,37 @@ describe('Platform Addresses routes', () => {
         }))
 
       assert.deepEqual(expectedResultSet, body.resultSet)
+    })
+  })
+
+  describe('one sided address', () => {
+    it('should return 0 for the side the address has never moved credits on', async () => {
+      const address = await fixtures.platformAddress(knex, {})
+
+      const block = await fixtures.block(knex, { height: 100000 })
+      const stateTransition = await fixtures.transaction(knex, {
+        block_height: block.height,
+        block_hash: block.hash,
+        type: StateTransitionEnum.ADDRESS_FUNDING_FROM_ASSET_LOCK
+      })
+      await fixtures.platformAddressTransition(knex, {
+        recipient_id: address.id,
+        state_transition_id: stateTransition.id,
+        state_transition_type: StateTransitionEnum.ADDRESS_FUNDING_FROM_ASSET_LOCK,
+        amount: 700000
+      })
+
+      // the sdk mock reads the fixture set, and nothing below this point reads it back
+      platformAddresses.push({ address: { ...address, nonce: 0, balance: 700000 }, transitions: [] })
+
+      const { body } = await client.get(`/platformAddress/${address.bech32m_address}/info`)
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      assert.equal(body.totalIncomingAmount, '700000')
+      assert.equal(body.outgoingTxs, 0)
+      // no outgoing transition is zero credits out, not an unknown amount
+      assert.equal(body.totalOutgoingAmount, '0')
     })
   })
 })
