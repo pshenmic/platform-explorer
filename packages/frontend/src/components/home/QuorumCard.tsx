@@ -146,8 +146,7 @@ function quorumKey(hash: unknown) {
 const STATS = [
   { key: 'total', label: 'Total', hint: 'This quorum plus queued' },
   { key: 'inactive', label: 'Queued', hint: 'Not in this quorum' },
-  { key: 'active', label: 'Now', hint: 'This quorum of 100' },
-  { key: 'proposer', label: 'Last', hint: 'Proposed the last Platform block' }
+  { key: 'active', label: 'Now', hint: 'This quorum of 100' }
 ]
 
 function isPoSeBannedValidator(v: any) {
@@ -843,12 +842,10 @@ export default function QuorumCard({
   const nowCount = windowKeys.length
   const nowFixed = llmq?.size ?? 100
   const poolReady = !poolLoading && !filling && listKeys.length > 0
-  const proposerIdx = lastProposerKey ? (nodeNumberByKey.get(lastProposerKey) ?? null) : null
   const counts: Record<string, number | null> = {
     total: poolReady ? nowCount + queuedKeysCount : null,
     inactive: poolReady ? queuedKeysCount : null,
-    active: nowFixed,
-    proposer: proposerIdx
+    active: nowFixed
   }
 
   return (
@@ -960,12 +957,7 @@ export default function QuorumCard({
               const n = counts[s.key]
               const ready = typeof n === 'number'
               const nowOn = pin === 'active' || (Boolean(pinnedKey) && pinnedKey === liveKey)
-              const pressed =
-                s.key === 'active'
-                  ? nowOn
-                  : s.key === 'proposer'
-                    ? Boolean(lastProposerKey && focusKey === lastProposerKey)
-                    : pin === s.key
+              const pressed = s.key === 'active' ? nowOn : pin === s.key
               return (
                 <Tooltip key={s.key} placement={'top'} content={s.hint}>
                   <button
@@ -973,10 +965,6 @@ export default function QuorumCard({
                     data-type={s.key}
                     className={`QuorumCard__Leg QuorumCard__Leg--${s.key}${pressed ? ' is-on' : ''}`}
                     onClick={() => {
-                      if (s.key === 'proposer') {
-                        if (lastProposerProTx) focusNode(lastProposerProTx)
-                        return
-                      }
                       if (s.key === 'active' && liveHash) {
                         togglePin(`q:${liveHash}`)
                         return
@@ -986,17 +974,10 @@ export default function QuorumCard({
                     aria-pressed={pressed}
                     disabled={!ready}
                   >
-                    <span className={'QuorumCard__LegLabel'}>
-                      <i className={`QuorumCard__Dot QuorumCard__Dot--${s.key}`} />
-                      {s.label}
-                    </span>
+                    <span className={'QuorumCard__LegLabel'}>{s.label}</span>
                     <b>
                       {ready ? (
-                        s.key === 'proposer' ? (
-                          `#${n}`
-                        ) : (
-                          n.toLocaleString('en-US')
-                        )
+                        n.toLocaleString('en-US')
                       ) : (
                         <Skeleton w={'3.2ch'} h={'0.95em'} radius={4} />
                       )}
