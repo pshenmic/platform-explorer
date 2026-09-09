@@ -1,10 +1,13 @@
 'use client'
 
 import * as Api from '../../util/Api'
-import { useState, useEffect } from 'react'
-import Pagination from '../../components/pagination'
-import PageSizeSelector from '../../components/pageSizeSelector/PageSizeSelector'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import BlocksList from '../../components/blocks/BlocksList'
+import {
+  readListScrollMode,
+  writeListScrollMode,
+  type ListScrollMode
+} from '../../components/ui/lists/DataList/listScrollMode'
 import { ErrorMessageBlock } from '../../components/Errors'
 import { fetchHandlerSuccess, fetchHandlerError } from '../../util'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
@@ -184,7 +187,9 @@ function Blocks({ defaultPage = 1, defaultPageSize }: BlocksProps) {
   const [total, setTotal] = useState(1)
   const [pageSize, setPageSize] = useState(defaultPageSize || paginateConfig.pageSize.default)
   const [currentPage, setCurrentPage] = useState(defaultPage ? defaultPage - 1 : 0)
-  const pageCount = Math.ceil(total / pageSize) ? Math.ceil(total / pageSize) : 1
+  const [scrollMode, setScrollMode] = useState<ListScrollMode>('continuous')
+  const [loadingMore, setLoadingMore] = useState(false)
+  const fetchGen = useRef(0)
   const [filters, setFilters] = useState<QueryFilters>({})
   const [columnFilters, setColumnFilters] = useState<Record<string, unknown>>({})
   const router = useRouter()
@@ -192,55 +197,89 @@ function Blocks({ defaultPage = 1, defaultPageSize }: BlocksProps) {
   const searchParams = useSearchParams()
 
   useEffect(() => {
-    setBlocks(prev => ({ ...prev, loading: true, error: false }))
-
-    const fetchData = async () => {
-      const hash = typeof filters.hash === 'string' ? filters.hash : ''
-      const request = hash
-        ? Api.getBlockByHash(hash).then(block => ({
-            resultSet: [block],
-            pagination: { page: 1, limit: pageSize, total: 1 }
-          }))
-        : getBlocksWithFilters(Math.max(1, currentPage + 1), Math.max(1, pageSize), filters)
-
-      request
-        .then(res => {
-          setTotal(res.pagination.total)
-          fetchHandlerSuccess(setBlocks, res)
-        })
-        .catch(err => {
-          setTotal(0)
-          fetchHandlerError(setBlocks, err)
-        })
-    }
-
-    fetchData()
-  }, [currentPage, pageSize, filters])
+    setScrollMode(readListScrollMode('blocks'))
+  }, [])
 
   useEffect(() => {
-    const page = parseInt(searchParams.get('page') || '', 10) || paginateConfig.defaultPage
-    setCurrentPage(Math.max(page - 1, 0))
+    const gen = ++fetchGen.current
+    const replace = scrollMode === 'pages' || currentPage === 0
+    if (replace) {
+      setBlocks(prev => ({ ...prev, loading: true, error: false }))
+      setLoadingMore(false)
+    } else {
+      setLoadingMore(true)
+    }
+
+    const hash = typeof filters.hash === 'string' ? filters.hash : ''
+    const request = hash
+      ? Api.getBlockByHash(hash).then(block => ({
+          resultSet: [block],
+          pagination: { page: 1, limit: pageSize, total: 1 }
+        }))
+      : getBlocksWithFilters(Math.max(1, currentPage + 1), Math.max(1, pageSize), filters)
+
+    request
+      .then(res => {
+        if (gen !== fetchGen.current) return
+        setTotal(res.pagination.total)
+        if (replace) {
+          fetchHandlerSuccess(setBlocks, res)
+        } else {
+          setBlocks(prev => {
+            const seen = new Set((prev.data?.resultSet ?? []).map(b => b.header?.hash))
+            const extra = res.resultSet.filter(b => {
+              const key = b.header?.hash
+              if (!key || seen.has(key)) return false
+              seen.add(key)
+              return true
+            })
+            return {
+              loading: false,
+              error: false,
+              data: {
+                ...res,
+                resultSet: [...(prev.data?.resultSet ?? []), ...extra]
+              }
+            }
+          })
+        }
+        setLoadingMore(false)
+      })
+      .catch(err => {
+        if (gen !== fetchGen.current) return
+        if (replace) {
+          setTotal(0)
+          fetchHandlerError(setBlocks, err)
+        }
+        setLoadingMore(false)
+      })
+  }, [currentPage, pageSize, filters, scrollMode])
+
+  useEffect(() => {
     setPageSize(
       parseInt(searchParams.get('page-size') || '', 10) || paginateConfig.pageSize.default
     )
-  }, [searchParams, pathname])
+    if (scrollMode !== 'pages') return
+    const page = parseInt(searchParams.get('page') || '', 10) || paginateConfig.defaultPage
+    setCurrentPage(Math.max(page - 1, 0))
+  }, [searchParams, pathname, scrollMode])
 
   useEffect(() => {
     const urlParameters = new URLSearchParams(Array.from(searchParams.entries()))
-
-    if (
-      currentPage + 1 === paginateConfig.defaultPage &&
-      pageSize === paginateConfig.pageSize.default
-    ) {
-      urlParameters.delete('page')
+    if (pageSize === paginateConfig.pageSize.default) {
       urlParameters.delete('page-size')
     } else {
-      urlParameters.set('page', String(currentPage + 1))
       urlParameters.set('page-size', String(pageSize))
     }
-
-    router.push(`${pathname}?${urlParameters.toString()}`, { scroll: false })
-  }, [currentPage, pageSize])
+    if (scrollMode === 'pages' && currentPage + 1 !== paginateConfig.defaultPage) {
+      urlParameters.set('page', String(currentPage + 1))
+    } else {
+      urlParameters.delete('page')
+    }
+    const next = urlParameters.toString()
+    const href = next ? `${pathname}?${next}` : pathname
+    router.replace(href, { scroll: false })
+  }, [currentPage, pageSize, scrollMode])
 
   const onColumnFilterChange = (key: string, value: unknown) => {
     setColumnFilters(prev => {
@@ -278,6 +317,29 @@ function Blocks({ defaultPage = 1, defaultPageSize }: BlocksProps) {
     return () => window.clearTimeout(id)
   }, [columnFilters])
 
+  const onScrollModeChange = useCallback((mode: ListScrollMode) => {
+    writeListScrollMode('blocks', mode)
+    setScrollMode(mode)
+    setCurrentPage(0)
+  }, [])
+
+  const onLoadMore = useCallback(() => {
+    setCurrentPage(page => page + 1)
+  }, [])
+
+  const items = blocks.data?.resultSet ?? []
+  const paging = {
+    mode: scrollMode,
+    onModeChange: onScrollModeChange,
+    total,
+    pageSize,
+    page: currentPage,
+    onPageChange: setCurrentPage,
+    onLoadMore,
+    loadingMore,
+    hasMore: items.length < total
+  }
+
   return (
     <div className={'ListPage Blocks'}>
       <div className={'InfoBlock'}>
@@ -287,27 +349,12 @@ function Blocks({ defaultPage = 1, defaultPageSize }: BlocksProps) {
           </div>
         ) : null}
         <BlocksList
-          blocks={blocks.data?.resultSet}
-          loading={blocks.loading}
+          blocks={items}
+          loading={blocks.loading && items.length === 0}
           filterValues={columnFilters}
           onFilterChange={onColumnFilterChange}
+          paging={paging}
         />
-
-        {!blocks.loading && (blocks.data?.resultSet?.length ?? 0) > 0 && (
-          <div className={'ListNavigation'}>
-            <div className={'ListNavigation__Balance'} />
-            <Pagination
-              onPageChange={({ selected }) => setCurrentPage(selected)}
-              pageCount={pageCount}
-              forcePage={currentPage}
-            />
-            <PageSizeSelector
-              PageSizeSelectHandler={e => setPageSize(Number(e?.value))}
-              value={pageSize}
-              items={paginateConfig.pageSize.values}
-            />
-          </div>
-        )}
       </div>
     </div>
   )

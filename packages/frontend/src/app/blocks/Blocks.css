@@ -24,9 +24,6 @@
   max-height: none;
   height: 100%;
 }
-.Blocks .ListNavigation {
-  flex-shrink: 0;
-}
 .Blocks__PageTitle {
   position: absolute;
   width: 1px;

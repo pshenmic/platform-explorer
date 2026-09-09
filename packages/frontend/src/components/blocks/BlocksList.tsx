@@ -8,6 +8,7 @@ import { Identifier, NotActive, TimeDelta, BigNumber, DateBlock } from '../data'
 import { BlockIcon } from '../ui/icons'
 import { LinkContainer } from '../ui/containers'
 import { DataList } from '../ui/lists'
+import type { DataListProps } from '../ui/lists/DataList/DataList'
 import { RateTooltip, EpochTooltip } from '../ui/Tooltips'
 import * as Api from '../../util/Api'
 import type { Epoch } from '../../types'
@@ -32,7 +33,8 @@ function BlocksList({
   absoluteDate,
   filterValues,
   onFilterChange,
-  loading
+  loading,
+  paging
 }: {
   blocks?: any[]
   headerStyles?: string
@@ -40,6 +42,7 @@ function BlocksList({
   filterValues?: Record<string, unknown>
   onFilterChange?: (key: string, value: unknown) => void
   loading?: boolean
+  paging?: DataListProps['paging']
 }) {
   const router = useRouter()
   const statusQuery = useQuery({
@@ -219,6 +222,7 @@ function BlocksList({
       onFilterChange={onFilterChange}
       loading={loading}
       title={'Blocks'}
+      paging={paging}
     />
   )
 }
