@@ -1069,12 +1069,13 @@ export default function QuorumCard({
                     className={'QuorumCard__QEta'}
                     title={'About 24 Core blocks per turn (~2.5 min each)'}
                   >
-                    ~{quorumEta.kind}{' '}
+                    ~{quorumEta.kind === 'in' ? 'in ' : ''}
                     <TimeDelta
                       endDate={quorumEta.end}
                       format={'compact'}
                       showTimestampTooltip={false}
                     />
+                    {quorumEta.kind === 'left' ? ' left' : ''}
                   </span>
                 )}
               </>
