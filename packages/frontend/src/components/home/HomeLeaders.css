@@ -382,8 +382,10 @@
   gap: var(--home-leaders-gap);
   flex: 1 1 auto;
   min-height: calc(
-    var(--home-leaders-count) * var(--home-leaders-row) + (var(--home-leaders-count) - 1) *
-      var(--home-leaders-gap)
+    var(--home-leaders-count) *
+    var(--home-leaders-row) +
+    (var(--home-leaders-count) - 1) *
+    var(--home-leaders-gap)
   );
 }
 .HomeLeaders__Skel.Skeleton {
