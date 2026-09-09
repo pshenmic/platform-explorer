@@ -35,9 +35,14 @@
 
 .Identifier--Ellipsis {
   overflow: hidden;
+  min-width: 0;
+  max-width: 100%;
+  white-space: nowrap;
 }
 
 .Identifier--Ellipsis .Identifier__SymbolsContainer {
+  flex: 1 1 auto;
+  min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;

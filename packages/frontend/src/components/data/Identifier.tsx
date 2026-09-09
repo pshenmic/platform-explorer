@@ -231,7 +231,7 @@ export default function Identifier({
         className={'Identifier__SymbolsContainer'}
         style={{ maxWidth: widthIsCounted ? linesMaxWidth : 'none' }}
         ref={symbolsContainerRef}
-        title={middleEllipsis && typeof children === 'string' ? children : undefined}
+        title={typeof children === 'string' ? children : undefined}
       >
         {children && middleEllipsis ? (
           <MiddleTruncated>{children}</MiddleTruncated>
