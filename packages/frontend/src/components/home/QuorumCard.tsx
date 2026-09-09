@@ -308,21 +308,7 @@ function TipRow({ label, href, children, mono }: any) {
 
 function NodeTooltipBody({ cell }: any) {
   const v = cell.validator
-  const status = (() => {
-    if (cell.isProposer) return 'Last Platform block proposer'
-    if (cell.proposeHint === 'finished') return 'Already proposed this turn'
-    if (cell.role === 'banned') {
-      return isPoSeBannedValidator(cell.validator)
-        ? 'Banned (PoSe)'
-        : 'Banned / not in registered set'
-    }
-    if (cell.band === 'carry') return 'In this set and the last group'
-    if (cell.band === 'upcoming') return 'New in the following turn'
-    if (cell.role === 'invalid') return 'In this turn · invalid'
-    if (cell.role === 'next') return 'From the last group'
-    if (cell.role === 'current' || cell.role === 'active') return 'New this turn'
-    return 'Queued'
-  })()
+  const title = cell.homeIndex != null ? `#${cell.homeIndex}` : shortHash(cell.proTxHash, 6, 6)
 
   const cc = v?.geoIpInfo?.countryCode
   const ccName = cc ? countryName(cc) : null
@@ -348,7 +334,7 @@ function NodeTooltipBody({ cell }: any) {
         )}
         {geoPending && <Skeleton className={'QuorumCard__TipFlag'} w={22} h={22} circle />}
         <div className={'QuorumCard__TipHeadText'}>
-          <div className={'QuorumCard__TipStatus'}>{status}</div>
+          <div className={'QuorumCard__TipStatus'}>{title}</div>
           {ccName && (
             <div className={'QuorumCard__TipCountry'}>
               {ccName} · {cc}
