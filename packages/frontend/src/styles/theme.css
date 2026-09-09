@@ -95,6 +95,50 @@
   );
 }
 
+@media screen and (max-width: 48em) {
+  :root {
+    --layout-nav-h: 52px;
+    --layout-footer-h: 40px;
+  }
+
+  html:has(.ListPage),
+  body:has(.ListPage) {
+    overflow: visible !important;
+    height: auto !important;
+    min-height: 100dvh;
+  }
+  body:has(.ListPage) {
+    display: flex !important;
+    flex-direction: column;
+  }
+  body:has(.ListPage) .NavbarShell {
+    flex: 0 0 auto;
+  }
+  body:has(.ListPage) .NavbarStub {
+    height: var(--layout-nav-h);
+  }
+  body:has(.ListPage) .ListPage {
+    flex: 1 1 auto;
+    min-height: 0;
+    height: auto !important;
+    max-height: none !important;
+    padding-bottom: var(--pe-space-3) !important;
+  }
+  body:has(.ListPage) .DataList--fill {
+    max-height: none !important;
+    height: auto !important;
+  }
+  body:has(.ListPage) .Footer {
+    position: relative !important;
+    left: auto;
+    right: auto;
+    bottom: auto;
+  }
+  body:has(.ListPage) .FooterStub {
+    display: none;
+  }
+}
+
 * {
   border-color: var(--pe-color-gray-800);
 }
