@@ -327,7 +327,7 @@
 .TxTypesBar__Rank {
   font-family: var(--pe-font-mono);
   font-size: 0.625rem;
-  color: var(--pe-color-gray-500);
+  color: var(--pe-color-gray-100);
   text-align: right;
 }
 .TxTypesBar__Dot {
