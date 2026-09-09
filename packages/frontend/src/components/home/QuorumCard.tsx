@@ -985,7 +985,7 @@ export default function QuorumCard({
                           className={'QuorumCard__HelpChip QuorumCard__HelpChip--active'}
                           aria-hidden={'true'}
                         />
-                        <span>New this turn</span>
+                        <span>Proposing this quorum</span>
                       </li>
                       <li className={'QuorumCard__HelpKey'}>
                         <span
