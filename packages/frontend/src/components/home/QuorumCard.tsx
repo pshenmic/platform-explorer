@@ -25,9 +25,14 @@ async function fetchQuorumDetail(hash: string) {
   }
 }
 
-const GRID_COLS = 10
-const SKELETON_SLOTS = 100
 const CORE_BLOCK_SEC = 150
+
+function gridSide(n: number) {
+  const size = n > 0 ? n : 100
+  const root = Math.round(Math.sqrt(size))
+  if (root * root === size) return root
+  return Math.max(1, Math.ceil(Math.sqrt(size)))
+}
 
 function quorumHeight(q: any) {
   const n = q?.blockHeight ?? q?.creationHeight
@@ -577,6 +582,8 @@ export default function QuorumCard({
 
   const llmq = parseLlmqType(currentQuorum?.type)
   const rosterSize = currentMembers?.length ?? llmq?.size ?? null
+  const quorumSize = llmq?.size ?? rosterSize ?? 100
+  const gridCols = gridSide(quorumSize)
 
   const list = useMemo(
     () => (Array.isArray(validatorsList) ? validatorsList : []),
@@ -648,7 +655,7 @@ export default function QuorumCard({
 
   const homeCells = useMemo((): any[] => {
     if (filling) {
-      return Array.from({ length: SKELETON_SLOTS }, (_, index) => ({
+      return Array.from({ length: quorumSize }, (_, index) => ({
         kind: 'skel',
         type: 'skel',
         index
@@ -700,7 +707,8 @@ export default function QuorumCard({
     selectedMemberSet,
     nodeNumberByKey,
     bannedSet,
-    bannedValidatorsList
+    bannedValidatorsList,
+    quorumSize
   ])
 
   const windowSlots = useMemo(() => {
@@ -873,7 +881,8 @@ export default function QuorumCard({
 
   const queuedKeysCount = listKeys.filter(k => !selectedMemberSet.has(k)).length
   const nowCount = windowKeys.length
-  const nowFixed = llmq?.size ?? 100
+  const nowFixed = quorumSize
+  const groupCount = sortedQuorums.length || 24
   const poolReady = !poolLoading && !filling && listKeys.length > 0
   const counts: Record<string, number | null> = {
     total: poolReady ? nowCount + queuedKeysCount : null,
@@ -956,7 +965,7 @@ export default function QuorumCard({
                       >
                         quorum
                       </a>{' '}
-                      is 100 evonodes.{' '}
+                      is {nowFixed} evonodes.{' '}
                       <a
                         className={'QuorumCard__HelpMark'}
                         href={
@@ -966,7 +975,7 @@ export default function QuorumCard({
                         rel={'noreferrer'}
                         onClick={e => e.stopPropagation()}
                       >
-                        24 groups
+                        {groupCount} groups
                       </a>{' '}
                       take turns signing.
                     </p>
@@ -1067,7 +1076,7 @@ export default function QuorumCard({
                 {quorumEta && (
                   <span
                     className={'QuorumCard__QEta'}
-                    title={'About 24 Core blocks per turn (~2.5 min each)'}
+                    title={`About ${quorumStep(sortedQuorums)} Core blocks per turn (~2.5 min each)`}
                   >
                     ~{quorumEta.kind === 'in' ? 'in ' : ''}
                     <TimeDelta
@@ -1110,8 +1119,8 @@ export default function QuorumCard({
               <div
                 className={'QuorumCard__Matrix' + (filling ? ' QuorumCard__Matrix--skel' : '')}
                 style={{
-                  gridTemplateColumns: `repeat(${GRID_COLS}, minmax(0, 1fr))`,
-                  gridTemplateRows: `repeat(${Math.max(1, Math.ceil(cells.length / GRID_COLS))}, minmax(0, 1fr))`
+                  gridTemplateColumns: `repeat(${gridCols}, minmax(0, 1fr))`,
+                  gridTemplateRows: `repeat(${Math.max(1, Math.ceil(cells.length / gridCols))}, minmax(0, 1fr))`
                 }}
                 role={'img'}
                 aria-label={matrixAria}
