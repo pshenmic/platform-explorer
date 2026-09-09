@@ -17,7 +17,7 @@
   align-items: flex-start;
   justify-content: space-between;
   gap: 16px 24px;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   margin-bottom: 16px;
   flex-shrink: 0;
 }
@@ -65,7 +65,7 @@
   .TxTypesBar__HeadText {
     flex: 1 1 0;
     min-width: 0;
-    max-width: 12.5rem;
+    max-width: none;
   }
   .TxTypesBar__Title {
     font-size: 1.125rem;
@@ -74,11 +74,12 @@
     display: block;
     font-size: 0.5625rem;
     line-height: 1.45;
+    min-height: 2.9em;
   }
   .TxTypesBar__Controls {
     gap: 8px;
     margin-left: auto;
-    flex-shrink: 1;
+    flex-shrink: 0;
   }
   .TxTypesBar .Presets {
     width: auto;
@@ -131,7 +132,7 @@
   gap: 14px;
   flex-shrink: 0;
   margin-left: auto;
-  min-width: 0;
+  min-width: 9.5rem;
 }
 .TxTypesBar__Stat {
   display: flex;
@@ -157,7 +158,7 @@
   color: #fff;
   font-variant-numeric: tabular-nums;
   text-shadow: 0 0 16px rgba(var(--pe-color-brand-light-rgb), 0.28);
-  min-width: 4ch;
+  min-width: 8ch;
 }
 .TxTypesBar__StatUnit {
   font-family: var(--pe-font-mono);
@@ -172,6 +173,8 @@
   line-height: 1.35;
   color: var(--pe-color-gray-400);
   white-space: nowrap;
+  min-height: 1.35em;
+  min-width: 7rem;
   max-width: 18rem;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -265,7 +268,8 @@
 }
 @media screen and (max-width: 47.99em) {
   .TxTypesBar__Rows {
-    flex: 0 1 auto;
+    flex: 0 0 auto;
+    min-height: 13.5rem;
     max-height: 13.5rem;
   }
 }
