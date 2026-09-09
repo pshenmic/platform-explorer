@@ -1,37 +1,3 @@
-html:has(.Blocks.ListPage),
-body:has(.Blocks.ListPage) {
-  overflow: hidden;
-  height: 100%;
-}
-body:has(.Blocks.ListPage) .Footer {
-  position: fixed;
-}
-.Blocks.ListPage {
-  box-sizing: border-box;
-  display: flex;
-  flex-direction: column;
-  height: calc(100dvh - var(--layout-nav-h));
-  margin-block: 0;
-  padding: var(--pe-space-4);
-  padding-bottom: calc(var(--layout-footer-h) + 0.75rem);
-}
-.Blocks .InfoBlock {
-  display: flex;
-  flex-direction: column;
-  flex: 1 1 auto;
-  min-height: 0;
-  padding-left: var(--pe-space-6);
-  padding-right: var(--pe-space-6);
-  padding-bottom: var(--pe-space-5);
-}
-.Blocks .DataList {
-  flex: 1 1 auto;
-  min-height: 0;
-}
-.Blocks .DataList--fill {
-  max-height: none;
-  height: 100%;
-}
 .Blocks__PageTitle {
   position: absolute;
   width: 1px;
@@ -42,45 +8,4 @@ body:has(.Blocks.ListPage) .Footer {
   clip: rect(0, 0, 0, 0);
   white-space: nowrap;
   border: 0;
-}
-.Blocks .PageSizeSelector,
-.Blocks .GoToHeightForm,
-.Blocks .ListNavigation__Balance {
-  width: 210px;
-}
-@media screen and (max-width: 1268px) {
-  .Blocks .GoToHeightForm {
-    order: 2;
-  }
-  .Blocks .Pagination {
-    flex-grow: 1;
-    width: 100%;
-    display: flex;
-  }
-  .Blocks .PageSizeSelector {
-    order: 3;
-    text-align: left;
-  }
-}
-@media screen and (max-width: 680px) {
-  .Blocks .PageSizeSelector {
-    width: auto;
-  }
-  .Blocks .Pagination {
-    order: -1;
-    width: 100%;
-    justify-content: center;
-    margin-bottom: 8px;
-  }
-}
-@media screen and (max-width: 48em) {
-  .Blocks.ListPage {
-    padding: var(--pe-space-3);
-    padding-bottom: calc(var(--layout-footer-h) + 0.5rem);
-  }
-  .Blocks .InfoBlock {
-    padding-left: var(--pe-space-4);
-    padding-right: var(--pe-space-4);
-    padding-bottom: var(--pe-space-2);
-  }
 }
