@@ -948,7 +948,7 @@ export default function QuorumCard({
           <p className={'QuorumCard__Lede'}>
             <span className={'QuorumCard__LedeLine'}>
               <a
-                className={'QuorumCard__HelpMark'}
+                className={'QuorumCard__BlockLink'}
                 href={
                   'https://docs.dash.org/en/stable/docs/user/masternodes/understanding.html#evolution-masternodes-evonodes'
                 }

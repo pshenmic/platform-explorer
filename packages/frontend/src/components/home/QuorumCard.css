@@ -273,13 +273,12 @@ a.QuorumCard__HelpMark:hover {
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--pe-color-brand-light);
-  border-bottom: 1px dotted rgba(var(--pe-color-brand-light-rgb), 0.65);
   cursor: help;
   white-space: nowrap;
   line-height: 1.4;
 }
 .QuorumCard__Legends:hover {
-  border-bottom-style: solid;
+  color: var(--pe-color-brand-pressed);
 }
 .QuorumCard__Status {
   flex: 0 1 auto;
