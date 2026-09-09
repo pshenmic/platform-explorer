@@ -900,7 +900,7 @@ export default function QuorumCard({
       className={'InfoBlock InfoBlock--NoBorder QuorumCard'}
       w={'100%'}
       as={'section'}
-      aria-label={'Quorum'}
+      aria-label={'Quorums'}
     >
       <div className={'QuorumCard__Glow'} aria-hidden={'true'} />
 
@@ -908,7 +908,7 @@ export default function QuorumCard({
         <div className={'QuorumCard__HeadTop'}>
           <div className={'QuorumCard__HeadText'}>
             <span className={'QuorumCard__Eyebrow'}>Consensus</span>
-            <h2 className={'QuorumCard__Title'}>Quorum</h2>
+            <h2 className={'QuorumCard__Title'}>Quorums</h2>
           </div>
           <div className={'QuorumCard__Legend'} role={'group'} aria-label={'Validator counts'}>
             {STATS.map(s => {
