@@ -1,26 +1,21 @@
 'use client'
 
-import { useEffect, useState, useMemo } from 'react'
+import { useEffect, useState, useCallback, useRef } from 'react'
 import * as Api from '../../util/Api'
 import TransactionsList from '../../components/transactions/TransactionsList'
-import TransactionsFilter, {
-  TRANSACTION_TYPE_VALUES,
-  BATCH_TYPE_VALUES
+import {
+  BATCH_TYPE_VALUES,
+  TRANSACTION_TYPE_VALUES
 } from '../../components/transactions/TransactionsFilter'
 import {
-  applyTypeParams,
-  parseTypeParams
-} from '../../components/transactions/transactionsListHref'
-import Pagination from '../../components/pagination'
-import PageSizeSelector from '../../components/pageSizeSelector/PageSizeSelector'
-import { LoadingList } from '../../components/loading'
+  readListScrollMode,
+  writeListScrollMode,
+  type ListScrollMode
+} from '../../components/ui/lists/DataList/listScrollMode'
 import { ErrorMessageBlock } from '../../components/Errors'
+import { fetchHandlerSuccess, fetchHandlerError } from '../../util'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
-import { useIsMobile } from '../../hooks'
-import NetworkStatsInline from '../../components/stats/NetworkStatsInline'
-import PageTitle from '../../components/intro/PageTitle'
-import TransactionsChartCompact from '../../components/charts/TransactionsChartCompact'
-import introContent from './introContent'
+import type { LoadableState, PaginatedResultSet, Transaction } from '../../types'
 import './Transactions.css'
 
 const paginateConfig = {
@@ -31,170 +26,280 @@ const paginateConfig = {
   defaultPage: 1
 }
 
-function Transactions({ defaultPage = 1, defaultPageSize }: any) {
-  const [currentPage, setCurrentPage] = useState(defaultPage ? parseInt(defaultPage) - 1 : 0)
-  const [pageSize, setPageSize] = useState(
-    (defaultPageSize ?? null) ? defaultPageSize : paginateConfig.pageSize.default
-  )
-  const [total, setTotal] = useState(0)
-  const [transactions, setTransactions] = useState<{
-    data: any[]
-    loading: boolean
-    error: unknown
-  }>({ data: [], loading: true, error: null })
-  const pageCount = Math.ceil(total / pageSize)
+type QueryFilters = Record<string, string | number | boolean | string[] | null | undefined>
+
+const TX_TYPES = new Set(TRANSACTION_TYPE_VALUES)
+const BATCH_TYPES = new Set(BATCH_TYPE_VALUES)
+
+function toNumber(value: unknown): number | null {
+  if (value === '' || value == null) return null
+  const n = Number(value)
+  return Number.isFinite(n) ? n : null
+}
+
+function addRange(
+  out: QueryFilters,
+  value: unknown,
+  minKey: string,
+  maxKey: string,
+  minAllowed: number,
+  maxAllowed: number
+) {
+  const range = value as { min?: unknown; max?: unknown } | undefined
+  const min = toNumber(range?.min)
+  const max = toNumber(range?.max)
+  if (min != null && min >= minAllowed) out[minKey] = min
+  if (max != null && max >= maxAllowed) out[maxKey] = max
+  const sentMin = out[minKey] as number | undefined
+  const sentMax = out[maxKey] as number | undefined
+  if (sentMin != null && sentMax != null && sentMax < sentMin) {
+    delete out[minKey]
+    delete out[maxKey]
+  }
+}
+
+function toTransactionsApiFilters(state: Record<string, unknown>): QueryFilters {
+  const out: QueryFilters = {}
+  addRange(out, state.gas, 'gas_min', 'gas_max', 0, 0)
+
+  if (typeof state.hash === 'string') {
+    const hash = state.hash.trim()
+    if (/^[A-Za-z0-9]{64}$/.test(hash)) out.hash = hash
+  }
+
+  if (typeof state.owner === 'string') {
+    const owner = state.owner.trim()
+    if (/^[A-Za-z0-9]{43,44}$/.test(owner)) out.owner = owner
+  }
+
+  const status = Array.isArray(state.status)
+    ? (state.status as string[]).filter(v => v === 'SUCCESS' || v === 'FAIL')
+    : []
+  if (status.length === 1) out.status = status[0]
+
+  const typeSelected = Array.isArray(state.type) ? (state.type as string[]) : []
+  const txTypes = typeSelected.filter(v => TX_TYPES.has(v))
+  const batchTypes = typeSelected.filter(v => BATCH_TYPES.has(v))
+  if (batchTypes.length) {
+    out.transaction_type = ['BATCH']
+    out.batch_type = batchTypes
+  } else if (txTypes.length) {
+    out.transaction_type = txTypes
+  }
+
+  const ts = state.timestamp as
+    | { start?: Date | null; end?: Date | null; mode?: 'days' | 'rolling' }
+    | null
+  const start = ts?.start ? new Date(ts.start) : null
+  const end = ts?.end ? new Date(ts.end) : null
+  const startValid = start && !Number.isNaN(start.getTime())
+  const endValid = end && !Number.isNaN(end.getTime())
+  if (startValid && endValid) {
+    if (ts?.mode === 'rolling') {
+      const from = start.getTime() <= end.getTime() ? start : end
+      const to = start.getTime() <= end.getTime() ? end : start
+      out.timestamp_start = from.toISOString()
+      out.timestamp_end = to.toISOString()
+    } else {
+      const from = start.getTime() <= end.getTime() ? start : end
+      const to = start.getTime() <= end.getTime() ? end : start
+      from.setHours(0, 0, 0, 0)
+      to.setHours(23, 59, 59, 999)
+      out.timestamp_start = from.toISOString()
+      out.timestamp_end = to.toISOString()
+    }
+  }
+  return out
+}
+
+function isEmptyFilterValue(value: unknown) {
+  if (value == null || value === '') return true
+  if (Array.isArray(value)) return value.length === 0
+  if (typeof value === 'object') {
+    return Object.values(value as Record<string, unknown>).every(
+      item => item == null || item === ''
+    )
+  }
+  return false
+}
+
+interface TransactionsProps {
+  defaultPage?: number
+  defaultPageSize?: number
+}
+
+function Transactions({ defaultPage = 1, defaultPageSize }: TransactionsProps) {
+  const [transactions, setTransactions] = useState<LoadableState<PaginatedResultSet<Transaction>>>({
+    data: {} as PaginatedResultSet<Transaction>,
+    loading: true,
+    error: false
+  })
+  const [total, setTotal] = useState(1)
+  const [pageSize, setPageSize] = useState(defaultPageSize || paginateConfig.pageSize.default)
+  const [currentPage, setCurrentPage] = useState(defaultPage ? defaultPage - 1 : 0)
+  const [scrollMode, setScrollMode] = useState<ListScrollMode>('pages')
+  const [loadingMore, setLoadingMore] = useState(false)
+  const fetchGen = useRef(0)
+  const [filters, setFilters] = useState<QueryFilters>({})
+  const [columnFilters, setColumnFilters] = useState<Record<string, unknown>>({})
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
-  const isMobile = useIsMobile()
-
-  const typeParams = useMemo(() => {
-    const parsed = parseTypeParams(searchParams)
-    const allow = (list: any, allowed: any) => list.filter((v: any) => allowed.includes(v))
-    return {
-      transaction_type: allow(parsed.transaction_type, TRANSACTION_TYPE_VALUES),
-      batch_type: allow(parsed.batch_type, BATCH_TYPE_VALUES)
-    }
-  }, [searchParams])
-
-  const apiFilters = useMemo(() => {
-    const next: Record<string, string[]> = {}
-    if (typeParams.transaction_type.length) next.transaction_type = typeParams.transaction_type
-    if (typeParams.batch_type.length) next.batch_type = typeParams.batch_type
-    return next
-  }, [typeParams])
-
-  const filterUiState = useMemo(() => {
-    const next: Record<string, string[]> = {}
-    if (typeParams.transaction_type.length) next.transaction_type = typeParams.transaction_type
-    if (typeParams.batch_type.length) next.batch_type = typeParams.batch_type
-    return next
-  }, [typeParams])
 
   useEffect(() => {
-    const fetchTransactions = async () => {
-      try {
-        setTransactions(prev => ({ ...prev, loading: true, error: null }))
-
-        const response = await Api.getTransactions(
-          Math.max(1, currentPage + 1),
-          Math.max(1, pageSize),
-          'desc',
-          apiFilters
-        )
-
-        setTotal(response.pagination.total)
-        setTransactions({ data: response.resultSet, loading: false, error: null })
-      } catch (error) {
-        console.error('Error fetching transactions:', error)
-        setTotal(0)
-        setTransactions({
-          data: [],
-          loading: false,
-          error: error instanceof Error ? error.message : error
-        })
-      }
-    }
-
-    fetchTransactions()
-  }, [currentPage, pageSize, apiFilters])
+    setScrollMode(readListScrollMode('transactions'))
+  }, [])
 
   useEffect(() => {
-    const page = parseInt(searchParams.get('page') || '', 10) || paginateConfig.defaultPage
-    setCurrentPage(Math.max(page - 1, 0))
+    const gen = ++fetchGen.current
+    const replace = scrollMode === 'pages' || currentPage === 0
+    if (replace) {
+      setTransactions(prev => ({ ...prev, loading: true, error: false }))
+      setLoadingMore(false)
+    } else {
+      setLoadingMore(true)
+    }
+
+    const hash = typeof filters.hash === 'string' ? filters.hash : ''
+    const listFilters = { ...filters }
+    delete listFilters.hash
+    const request = hash
+      ? Api.getTransaction(hash).then(tx => ({
+          resultSet: [tx],
+          pagination: { page: 1, limit: pageSize, total: 1 }
+        }))
+      : Api.getTransactions(Math.max(1, currentPage + 1), Math.max(1, pageSize), 'desc', listFilters)
+
+    request
+      .then(res => {
+        if (gen !== fetchGen.current) return
+        setTotal(res.pagination.total)
+        if (replace) {
+          fetchHandlerSuccess(setTransactions, res)
+        } else {
+          setTransactions(prev => {
+            const seen = new Set((prev.data?.resultSet ?? []).map(tx => tx.hash))
+            const extra = res.resultSet.filter(tx => {
+              if (!tx.hash || seen.has(tx.hash)) return false
+              seen.add(tx.hash)
+              return true
+            })
+            return {
+              loading: false,
+              error: false,
+              data: {
+                ...res,
+                resultSet: [...(prev.data?.resultSet ?? []), ...extra]
+              }
+            }
+          })
+        }
+        setLoadingMore(false)
+      })
+      .catch(err => {
+        if (gen !== fetchGen.current) return
+        if (replace) {
+          setTotal(0)
+          fetchHandlerError(setTransactions, err)
+        }
+        setLoadingMore(false)
+      })
+  }, [currentPage, pageSize, filters, scrollMode])
+
+  useEffect(() => {
     setPageSize(
       parseInt(searchParams.get('page-size') || '', 10) || paginateConfig.pageSize.default
     )
-  }, [searchParams, pathname])
+    if (scrollMode !== 'pages') return
+    const page = parseInt(searchParams.get('page') || '', 10) || paginateConfig.defaultPage
+    setCurrentPage(Math.max(page - 1, 0))
+  }, [searchParams, pathname, scrollMode])
 
   useEffect(() => {
-    const urlParameters = new URLSearchParams()
-    applyTypeParams(urlParameters, typeParams)
-
-    if (
-      currentPage + 1 !== paginateConfig.defaultPage ||
-      pageSize !== paginateConfig.pageSize.default
-    ) {
-      urlParameters.set('page', String(currentPage + 1))
+    const urlParameters = new URLSearchParams(Array.from(searchParams.entries()))
+    if (pageSize === paginateConfig.pageSize.default) {
+      urlParameters.delete('page-size')
+    } else {
       urlParameters.set('page-size', String(pageSize))
     }
-
+    if (scrollMode === 'pages' && currentPage + 1 !== paginateConfig.defaultPage) {
+      urlParameters.set('page', String(currentPage + 1))
+    } else {
+      urlParameters.delete('page')
+    }
     const next = urlParameters.toString()
-    const current = searchParams.toString()
-    if (next === current) return
-    router.replace(next ? `${pathname}?${next}` : pathname, { scroll: false })
-  }, [currentPage, pageSize, typeParams, pathname, router, searchParams])
+    const href = next ? `${pathname}?${next}` : pathname
+    router.replace(href, { scroll: false })
+  }, [currentPage, pageSize, scrollMode])
 
-  const filtersChangeHandler = (newFilters: any) => {
-    const urlParameters = new URLSearchParams()
-    const tt = Array.isArray(newFilters?.transaction_type) ? newFilters.transaction_type : []
-    const bt = Array.isArray(newFilters?.batch_type) ? newFilters.batch_type : []
-    applyTypeParams(urlParameters, { transaction_type: tt, batch_type: bt })
-    setCurrentPage(0)
-    router.replace(urlParameters.toString() ? `${pathname}?${urlParameters}` : pathname, {
-      scroll: false
+  const onColumnFilterChange = (key: string, value: unknown) => {
+    setColumnFilters(prev => {
+      if (isEmptyFilterValue(value)) {
+        const next = { ...prev }
+        delete next[key]
+        return next
+      }
+      return { ...prev, [key]: value }
     })
   }
 
-  const handlePageChange = (newPage: any) => {
-    setCurrentPage(Math.max(0, newPage?.selected))
-  }
+  useEffect(() => {
+    const ts = columnFilters.timestamp as { start?: unknown; end?: unknown } | undefined
+    const dateRangeReady = Boolean(ts?.start && ts?.end)
+    const id = window.setTimeout(
+      () => {
+        const next = toTransactionsApiFilters(columnFilters)
+        setFilters(prev => {
+          if (JSON.stringify(prev) === JSON.stringify(next)) return prev
+          setCurrentPage(0)
+          return next
+        })
+      },
+      dateRangeReady ? 0 : 400
+    )
+    return () => window.clearTimeout(id)
+  }, [columnFilters])
 
-  const handlePageSizeChange = (newSize: any) => {
-    const size = typeof newSize === 'object' ? newSize.value : parseInt(newSize)
-    setPageSize(Math.max(1, size))
+  const onScrollModeChange = useCallback((mode: ListScrollMode) => {
+    writeListScrollMode('transactions', mode)
+    setScrollMode(mode)
     setCurrentPage(0)
+  }, [])
+
+  const onLoadMore = useCallback(() => {
+    setCurrentPage(page => page + 1)
+  }, [])
+
+  const items = transactions.data?.resultSet ?? []
+  const paging = {
+    mode: scrollMode,
+    onModeChange: onScrollModeChange,
+    total,
+    pageSize,
+    page: currentPage,
+    onPageChange: setCurrentPage,
+    onLoadMore,
+    loadingMore,
+    hasMore: items.length < total
   }
 
   return (
     <div className={'ListPage Transactions'}>
       <div className={'InfoBlock'}>
-        <div className={'Transactions__Controls'}>
-          <PageTitle
-            title={'Transactions'}
-            description={introContent}
-            className={'Transactions__Title'}
-          />
-
-          <NetworkStatsInline className={'Transactions__Stats'} />
-
-          <TransactionsFilter
-            onFilterChange={filtersChangeHandler}
-            initialFilters={filterUiState}
-            isMobile={isMobile}
-            className={'Transactions__Filters'}
-          />
-        </div>
-
-        <TransactionsChartCompact className={'Transactions__Chart'} />
-
-        {!transactions.error ? (
-          !transactions.loading ? (
-            <TransactionsList transactions={transactions.data} />
-          ) : (
-            <LoadingList itemsCount={pageSize} />
-          )
-        ) : (
+        {transactions.error ? (
           <div className={'ListPage__Error'}>
             <ErrorMessageBlock />
           </div>
-        )}
-
-        {transactions.data?.length > 0 && (
-          <div className={'ListNavigation'}>
-            <div className={'ListNavigation__Balance'} />
-            <Pagination
-              onPageChange={handlePageChange}
-              pageCount={pageCount}
-              forcePage={currentPage}
-            />
-            <PageSizeSelector
-              PageSizeSelectHandler={handlePageSizeChange}
-              value={pageSize}
-              items={[10, 20, 50, 100]}
-            />
-          </div>
-        )}
+        ) : null}
+        <TransactionsList
+          transactions={items}
+          loading={transactions.loading && (scrollMode === 'pages' || items.length === 0)}
+          filterValues={columnFilters}
+          onFilterChange={onColumnFilterChange}
+          paging={paging}
+          title={'Transactions'}
+          pinFirst={true}
+        />
       </div>
     </div>
   )

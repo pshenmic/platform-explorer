@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
+import type { ReactNode } from 'react'
 import TypeBadge from './TypeBadge'
 import BatchTypeBadge from './BatchTypeBadge'
 import TransactionStatusBadge from './TransactionStatusBadge'
@@ -10,9 +11,11 @@ import { RateTooltip } from '../ui/Tooltips'
 import ImageGenerator from '../imageGenerator'
 import { LinkContainer } from '../ui/containers'
 import { DataList } from '../ui/lists'
+import type { DataListProps } from '../ui/lists/DataList/DataList'
 import { ErrorMessageBlock } from '../Errors'
 import Pagination from '../pagination'
 import type { Transaction } from '../../types'
+import { STATUS_FILTER_OPTIONS, TYPE_FILTER_OPTIONS } from './TransactionsFilter'
 
 function TransactionsList({
   transactions = [],
@@ -21,7 +24,12 @@ function TransactionsList({
   rate,
   pagination,
   loading,
-  absoluteDate = false
+  absoluteDate = false,
+  filterValues,
+  onFilterChange,
+  paging,
+  title,
+  pinFirst = false
 }: {
   transactions?: Transaction[]
   showMoreLink?: any
@@ -31,13 +39,41 @@ function TransactionsList({
   loading?: any
   absoluteDate?: boolean
   itemsCount?: number
+  filterValues?: Record<string, unknown>
+  onFilterChange?: (key: string, value: unknown) => void
+  paging?: DataListProps['paging']
+  title?: ReactNode
+  pinFirst?: boolean
 }) {
   const router = useRouter()
+  const canFilter = Boolean(onFilterChange)
 
   const columns = [
     {
+      key: 'hash',
+      header: 'Hash',
+      filterKey: canFilter ? 'hash' : undefined,
+      filterType: canFilter ? ('search' as const) : undefined,
+      filterPlaceholder: 'Transaction Hash',
+      grow: true,
+      minWidth: 160,
+      cell: (tx: Transaction) =>
+        tx?.hash ? (
+          <span className={'DataList__Entity'}>
+            <Identifier ellipsis={true} copyButton={true}>
+              {tx.hash}
+            </Identifier>
+          </span>
+        ) : (
+          <NotActive />
+        )
+    },
+    {
       key: 'status',
       header: 'Status',
+      filterKey: canFilter ? 'status' : undefined,
+      filterType: canFilter ? ('options' as const) : undefined,
+      filterOptions: STATUS_FILTER_OPTIONS,
       minWidth: 96,
       align: 'center',
       priority: 2,
@@ -45,15 +81,17 @@ function TransactionsList({
         tx?.status ? <TransactionStatusBadge status={tx.status} /> : <NotActive />
     },
     {
-      key: 'hash',
-      header: 'Hash',
-      grow: 2,
-      minWidth: 120,
+      key: 'type',
+      header: 'Type',
+      filterKey: canFilter ? 'type' : undefined,
+      filterType: canFilter ? ('options' as const) : undefined,
+      filterOptions: TYPE_FILTER_OPTIONS,
+      minWidth: 140,
       cell: (tx: Transaction) =>
-        tx?.hash ? (
-          <Identifier middleEllipsis={true} copyButton={true}>
-            {tx.hash}
-          </Identifier>
+        tx?.batchType ? (
+          <BatchTypeBadge batchType={tx.batchType?.replace(/[\\""]/g, '')} />
+        ) : tx?.type !== undefined ? (
+          <TypeBadge type={tx.type} />
         ) : (
           <NotActive />
         )
@@ -61,7 +99,7 @@ function TransactionsList({
     {
       key: 'block',
       header: 'Block',
-      minWidth: 72,
+      minWidth: 88,
       priority: 3,
       cell: (tx: Transaction) =>
         tx?.blockHeight != null ? (
@@ -80,15 +118,17 @@ function TransactionsList({
     },
     {
       key: 'gasUsed',
-      header: 'Gas used',
-      minWidth: 140,
+      header: 'Gas',
+      filterKey: canFilter ? 'gas' : undefined,
+      filterType: canFilter ? ('range' as const) : undefined,
+      minWidth: 88,
       align: 'center',
       priority: 1,
       cell: (tx: Transaction) =>
         tx?.gasUsed ? (
           <RateTooltip credits={tx.gasUsed} rate={rate} placement={'top'}>
             <span>
-              <BigNumber>{tx.gasUsed}</BigNumber> Credits
+              <BigNumber>{tx.gasUsed}</BigNumber>
             </span>
           </RateTooltip>
         ) : (
@@ -98,7 +138,10 @@ function TransactionsList({
     {
       key: 'owner',
       header: 'Owner',
-      grow: 2,
+      filterKey: canFilter ? 'owner' : undefined,
+      filterType: canFilter ? ('search' as const) : undefined,
+      filterPlaceholder: 'Owner ID',
+      grow: true,
       minWidth: 120,
       priority: 4,
       cell: (tx: Transaction) => {
@@ -131,7 +174,7 @@ function TransactionsList({
                 />
               </div>
             ) : (
-              <Identifier avatar={true} copyButton={true}>
+              <Identifier avatar={true} copyButton={true} ellipsis={true}>
                 {tx?.owner?.identifier}
               </Identifier>
             )}
@@ -140,22 +183,11 @@ function TransactionsList({
       }
     },
     {
-      key: 'type',
-      header: 'Type',
-      minWidth: 140,
-      cell: (tx: Transaction) =>
-        tx?.batchType ? (
-          <BatchTypeBadge batchType={tx.batchType?.replace(/[\\""]/g, '')} />
-        ) : tx?.type !== undefined ? (
-          <TypeBadge type={tx.type} />
-        ) : (
-          <NotActive />
-        )
-    },
-    {
       key: 'timestamp',
       header: 'Timestamp',
-      minWidth: absoluteDate ? 132 : 96,
+      filterKey: canFilter ? 'timestamp' : undefined,
+      filterType: canFilter ? ('daterange' as const) : undefined,
+      minWidth: absoluteDate ? 148 : 128,
       align: 'right',
       cell: (tx: Transaction) => {
         if (!tx?.timestamp) return <NotActive />
@@ -180,11 +212,20 @@ function TransactionsList({
       className={'TransactionsList'}
       items={transactions}
       columns={columns}
+      pinFirst={pinFirst}
       loading={loading}
       rowHref={(tx: Transaction) => `/transaction/${tx?.hash}`}
       rowKey={(tx: Transaction) => tx?.hash ?? ''}
       headerVariant={headerStyles === 'light' ? 'light' : 'default'}
-      emptyMessage={'There are no transactions yet.'}
+      emptyMessage={
+        filterValues && Object.keys(filterValues).length
+          ? 'No transactions match these filters.'
+          : 'There are no transactions yet.'
+      }
+      filterValues={filterValues}
+      onFilterChange={onFilterChange}
+      paging={paging}
+      title={title}
       footer={
         pagination ? (
           <Pagination
