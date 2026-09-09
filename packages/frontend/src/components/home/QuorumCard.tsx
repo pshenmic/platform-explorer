@@ -142,11 +142,11 @@ function sortProTxKeys(keys: string[]) {
 function formatProposeWait(blocks: number, avgSec: number | null) {
   if (typeof avgSec === 'number' && avgSec > 0) {
     const sec = Math.round(blocks * avgSec)
-    if (sec < 90) return `~${sec}s`
+    if (sec < 90) return `~in ${sec}s`
     const min = Math.round(sec / 60)
-    return min < 90 ? `~${min}m` : `~${(min / 60).toFixed(1)}h`
+    return min < 90 ? `~in ${min}m` : `~in ${(min / 60).toFixed(1)}h`
   }
-  return `~${blocks} blocks`
+  return `~in ${blocks} blocks`
 }
 
 function proposeHintFor(
