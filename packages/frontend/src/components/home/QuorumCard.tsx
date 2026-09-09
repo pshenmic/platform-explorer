@@ -1013,7 +1013,7 @@ export default function QuorumCard({
                           className={'QuorumCard__HelpChip QuorumCard__HelpChip--inactive'}
                           aria-hidden={'true'}
                         />
-                        <span>In the list, waiting</span>
+                        <span>In the next turns, waiting</span>
                       </li>
                       <li className={'QuorumCard__HelpKey'}>
                         <span
