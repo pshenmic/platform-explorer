@@ -1,11 +1,19 @@
+html:has(.Blocks.ListPage),
+body:has(.Blocks.ListPage) {
+  overflow: hidden;
+  height: 100%;
+}
+body:has(.Blocks.ListPage) .Footer {
+  position: fixed;
+}
 .Blocks.ListPage {
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  height: calc(100dvh - 66px);
+  height: calc(100dvh - var(--layout-nav-h));
   margin-block: 0;
   padding: var(--pe-space-4);
-  padding-bottom: 5.5rem;
+  padding-bottom: calc(var(--layout-footer-h) + 0.75rem);
 }
 .Blocks .InfoBlock {
   display: flex;
@@ -20,7 +28,7 @@
   flex: 1 1 auto;
   min-height: 0;
 }
-.Blocks .DataList--pinFirst {
+.Blocks .DataList--fill {
   max-height: none;
   height: 100%;
 }
@@ -68,10 +76,11 @@
 @media screen and (max-width: 48em) {
   .Blocks.ListPage {
     padding: var(--pe-space-3);
-    padding-bottom: 5.5rem;
+    padding-bottom: calc(var(--layout-footer-h) + 0.5rem);
   }
   .Blocks .InfoBlock {
     padding-left: var(--pe-space-4);
     padding-right: var(--pe-space-4);
+    padding-bottom: var(--pe-space-2);
   }
 }
