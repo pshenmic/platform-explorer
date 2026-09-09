@@ -96,9 +96,9 @@ const ENTITIES = [
     key: 'identities',
     label: 'Identities',
     metrics: [
-      { key: 'active', label: 'Recent Active' },
       { key: 'balance', label: 'Highest Balance' },
-      { key: 'txs', label: 'Most tx' }
+      { key: 'txs', label: 'Most tx' },
+      { key: 'active', label: 'Recent Active' }
     ]
   },
   {
@@ -125,7 +125,7 @@ type EntityKey = (typeof ENTITIES)[number]['key']
 
 export default function HomeLeaders({ rate, enabled = true }: { rate?: any; enabled?: boolean }) {
   const [entityKey, setEntityKey] = useState<EntityKey>('identities')
-  const [metricKey, setMetricKey] = useState<string>('active')
+  const [metricKey, setMetricKey] = useState<string>('balance')
 
   const entityIndex = ENTITIES.findIndex(e => e.key === entityKey)
   const entity = ENTITIES[entityIndex] || ENTITIES[0]
