@@ -1096,18 +1096,12 @@ export default function QuorumCard({
                 tabIndex={0}
               >
                 {sortedQuorums.map((q, i) => {
-                  const formedHeight = q.blockHeight ?? q.creationHeight
                   const qk = quorumKey(q.quorumHash)
                   const on = qk === selectedKey
                   const signed = Boolean(qk && signedHashes.has(qk))
-                  const fullHash =
+                  const hash =
                     typeof q.quorumHash === 'string' ? q.quorumHash.toLowerCase() : ''
-                  const tailHash = fullHash.replace(/^0+/, '') || fullHash
                   const slot = i + 1
-                  const heightHint =
-                    typeof formedHeight === 'number' && formedHeight > 0
-                      ? `Core ${formedHeight.toLocaleString('en-US')}`
-                      : ''
                   return (
                     <button
                       key={q.quorumHash}
@@ -1117,23 +1111,13 @@ export default function QuorumCard({
                         (signed ? ' is-signed' : '')
                       }
                       aria-label={
-                        fullHash
-                          ? `Quorum ${slot} of ${sortedQuorums.length}, ${fullHash}${heightHint ? `, ${heightHint}` : ''}`
-                          : `Quorum ${slot}`
+                        `Quorum ${slot} of ${sortedQuorums.length}` + (hash ? `, ${hash}` : '')
                       }
                       aria-pressed={on}
                       onClick={() => togglePin(`q:${q.quorumHash}`)}
                     >
                       <span className={'QuorumCard__QBtnIdx'}>{slot}</span>
-                      {fullHash ? (
-                        <span className={'QuorumCard__QBtnHash'}>
-                          <span className={'QuorumCard__QBtnHashInner'} dir={'ltr'}>
-                            {tailHash}
-                          </span>
-                        </span>
-                      ) : (
-                        <span className={'QuorumCard__QBtnHash'}>—</span>
-                      )}
+                      <span className={'QuorumCard__QBtnHash'}>{hash || '—'}</span>
                     </button>
                   )
                 })}
