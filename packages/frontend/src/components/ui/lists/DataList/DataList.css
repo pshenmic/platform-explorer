@@ -613,6 +613,153 @@
 .DataList__Footer {
   margin-top: 12px;
 }
+.DataList__StatusBar {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 8px;
+  box-sizing: border-box;
+  height: 24px;
+  margin-top: 6px;
+  min-width: 0;
+  width: 100%;
+}
+.DataList__StatusRange {
+  display: flex;
+  flex: 1 1 auto;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  overflow: hidden;
+  color: var(--pe-color-gray-400);
+  font-family: var(--pe-font-heading);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  line-height: 24px;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+.DataList__StatusHint {
+  color: var(--pe-color-gray-500);
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  font-size: 0.625rem;
+}
+.DataList__LoadMore {
+  flex-shrink: 0;
+  height: 24px;
+  padding: 0 8px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 999px;
+  background: var(--pe-color-gray-800);
+  color: var(--pe-color-gray-200);
+  font-family: var(--pe-font-heading);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  line-height: 1;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  cursor: pointer;
+}
+.DataList__LoadMore:hover {
+  border-color: rgba(255, 255, 255, 0.18);
+  color: var(--pe-color-fg);
+}
+.DataList__PageSwitch {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 2px;
+}
+.DataList__PageBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--pe-color-gray-300);
+  cursor: pointer;
+}
+.DataList__PageBtn:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--pe-color-fg);
+}
+.DataList__PageBtn:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+.DataList__PageNum {
+  min-width: 3.5rem;
+  text-align: center;
+  color: var(--pe-color-gray-300);
+  font-family: var(--pe-font-heading);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+.DataList__ModeSwitch {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  height: 24px;
+  padding: 2px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 999px;
+  background: var(--pe-color-gray-800);
+}
+.DataList__ModeBtn {
+  height: 20px;
+  padding: 0 8px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--pe-color-gray-400);
+  font-family: var(--pe-font-heading);
+  font-size: 0.625rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  line-height: 20px;
+  cursor: pointer;
+}
+.DataList__ModeBtn--On {
+  background: rgba(var(--pe-color-brand-normal-rgb), 0.2);
+  color: var(--pe-color-brand-light);
+}
+.DataList__Sentinel td {
+  background: none;
+  border: 0;
+  height: 20px;
+  padding: 4px 0 0;
+  text-align: center;
+}
+.DataList__MoreSpinner {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border: 1.5px solid rgba(255, 255, 255, 0.15);
+  border-top-color: var(--pe-color-gray-300);
+  border-radius: 50%;
+  animation: DataListSpin 0.7s linear infinite;
+}
+@keyframes DataListSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@media screen and (max-width: 48em) {
+  .DataList__StatusRange {
+    font-size: 0.625rem;
+  }
+  .DataList__ModeBtn {
+    padding: 0 6px;
+  }
+}
 .DataList__Empty td {
   background: none;
   border: 0;

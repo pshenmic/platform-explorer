@@ -11,6 +11,7 @@ import {
 } from 'react'
 import { useRouter } from 'next/navigation'
 import { ChevronDown, ChevronUp, X } from 'lucide-react'
+import { DataListPagingBar, type DataListPagingConfig } from './DataListPaging'
 import useResizeObserver from '@react-hook/resize-observer'
 import { EmptyListMessage } from '../index'
 import DataListHeaderMenu, {
@@ -62,6 +63,7 @@ export interface DataListProps<T = any> {
   filterValues?: Record<string, unknown>
   onFilterChange?: (key: string, value: unknown) => void
   title?: ReactNode
+  paging?: DataListPagingConfig
 }
 
 function visibleColumns<T>(columns: DataListColumn<T>[], width: number, collapse: boolean) {
@@ -257,11 +259,13 @@ export default function DataList<T = any>({
   pinFirst = false,
   filterValues = {},
   onFilterChange,
-  title
+  title,
+  paging
 }: DataListProps<T>) {
   const wrapRef = useRef<HTMLDivElement | null>(null)
   const scrollRef = useRef<HTMLDivElement | null>(null)
   const headScrollRef = useRef<HTMLDivElement | null>(null)
+  const sentinelRef = useRef<HTMLTableRowElement | null>(null)
   const syncingScroll = useRef(false)
   const [width, setWidth] = useState(0)
   const [canScrollEnd, setCanScrollEnd] = useState(false)
@@ -418,9 +422,9 @@ export default function DataList<T = any>({
           <td colSpan={Math.max(cols.length, 1)}>{beforeBody}</td>
         </tr>
       ) : null}
-      {loading ? (
+      {loading && items.length === 0 ? (
         Array.from({ length: pinFirst ? fillRows : skeletonCount }).map((_, i) => (
-          <tr key={i} className={'DataList__Row DataList__Row--Skeleton'}>
+          <tr key={`sk-${i}`} className={'DataList__Row DataList__Row--Skeleton'}>
             {renderCells(undefined, i, true)}
           </tr>
         ))
@@ -431,35 +435,44 @@ export default function DataList<T = any>({
           </td>
         </tr>
       ) : (
-        items.map((item, i) => {
-          const key = rowKey ? rowKey(item, i) : i
-          const extraRowClass = resolveRowClassName(rowClassName, item, i)
-          const extraRowStyle =
-            typeof rowStyle === 'function' ? rowStyle(item, i) || {} : rowStyle || {}
-          const href = rowHref?.(item, i)
-          return (
-            <tr
-              key={key}
-              className={`DataList__Row${href ? ' DataList__Row--link' : ''}${extraRowClass ? ` ${extraRowClass}` : ''}`}
-              style={extraRowStyle}
-              onClick={href ? e => openRow(e, href) : undefined}
-              onAuxClick={href ? e => openRow(e, href) : undefined}
-              onKeyDown={
-                href
-                  ? e => {
-                      if (e.key !== 'Enter' && e.key !== ' ') return
-                      if (isInteractiveTarget(e.target)) return
-                      e.preventDefault()
-                      router.push(href)
-                    }
-                  : undefined
-              }
-              tabIndex={href ? 0 : undefined}
-            >
-              {renderCells(item, i, false)}
+        <>
+          {items.map((item, i) => {
+            const key = rowKey ? rowKey(item, i) : i
+            const extraRowClass = resolveRowClassName(rowClassName, item, i)
+            const extraRowStyle =
+              typeof rowStyle === 'function' ? rowStyle(item, i) || {} : rowStyle || {}
+            const href = rowHref?.(item, i)
+            return (
+              <tr
+                key={key}
+                className={`DataList__Row${href ? ' DataList__Row--link' : ''}${extraRowClass ? ` ${extraRowClass}` : ''}`}
+                style={extraRowStyle}
+                onClick={href ? e => openRow(e, href) : undefined}
+                onAuxClick={href ? e => openRow(e, href) : undefined}
+                onKeyDown={
+                  href
+                    ? e => {
+                        if (e.key !== 'Enter' && e.key !== ' ') return
+                        if (isInteractiveTarget(e.target)) return
+                        e.preventDefault()
+                        router.push(href)
+                      }
+                    : undefined
+                }
+                tabIndex={href ? 0 : undefined}
+              >
+                {renderCells(item, i, false)}
+              </tr>
+            )
+          })}
+          {paging?.mode === 'continuous' && (paging.hasMore ?? items.length < paging.total) ? (
+            <tr ref={sentinelRef} className={'DataList__Sentinel'}>
+              <td colSpan={Math.max(cols.length, 1)}>
+                {paging.loadingMore ? <span className={'DataList__MoreSpinner'} aria-hidden /> : null}
+              </td>
             </tr>
-          )
-        })
+          ) : null}
+        </>
       )}
     </tbody>
   )
@@ -560,6 +573,15 @@ export default function DataList<T = any>({
           )
         })()}
 
+      {paging ? (
+        <DataListPagingBar
+          paging={paging}
+          itemCount={items.length}
+          scrollRef={scrollRef}
+          sentinelRef={sentinelRef}
+          loading={loading}
+        />
+      ) : null}
       {footer && <div className={'DataList__Footer'}>{footer}</div>}
     </div>
   )
