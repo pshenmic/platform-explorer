@@ -139,6 +139,31 @@ function sortProTxKeys(keys: string[]) {
   return [...keys].sort((a, b) => a.localeCompare(b))
 }
 
+function formatProposeWait(blocks: number, avgSec: number | null) {
+  if (typeof avgSec === 'number' && avgSec > 0) {
+    const sec = Math.round(blocks * avgSec)
+    if (sec < 90) return `~${sec}s`
+    const min = Math.round(sec / 60)
+    return min < 90 ? `~${min}m` : `~${(min / 60).toFixed(1)}h`
+  }
+  return `~${blocks} blocks`
+}
+
+function proposeHintFor(
+  nodeKey: string,
+  lastKey: string,
+  ordered: string[],
+  avgSec: number | null
+) {
+  if (!nodeKey || !lastKey || !ordered.length) return null
+  const i = ordered.indexOf(nodeKey)
+  const p = ordered.indexOf(lastKey)
+  if (i < 0 || p < 0) return null
+  if (i === p) return 'now'
+  if (i > p) return formatProposeWait(i - p, avgSec)
+  return 'already'
+}
+
 function quorumKey(hash: unknown) {
   return typeof hash === 'string' && hash.length ? hash.toUpperCase() : ''
 }
@@ -325,6 +350,7 @@ function NodeTooltipBody({ cell }: any) {
           {proposed.toLocaleString('en-US')} blocks
         </TipRow>
       )}
+      {cell.proposeHint && <TipRow label={'Proposes'}>{cell.proposeHint}</TipRow>}
       {identityHref && (
         <TipRow label={'Identity'} href={identityHref}>
           {shortHash(v.identity, 4, 4)}
@@ -349,7 +375,8 @@ export default function QuorumCard({
   currentQuorumError,
   quorums,
   l1LockedHeight,
-  lastProposerProTx
+  lastProposerProTx,
+  avgBlockTimeSec
 }: any) {
   const queryClient = useQueryClient()
   const [pin, setPin] = useState<string | null>(null)
@@ -420,6 +447,8 @@ export default function QuorumCard({
     typeof pin === 'string' && pin.startsWith('q:') ? pin.slice(2) : null
   const pinnedKey = quorumKey(pinnedQuorumHashEarly)
   const selectedKey = pinnedKey || liveKey
+  const viewingLiveQuorum = !pinnedKey || pinnedKey === liveKey
+  const showLastProposer = Boolean(lastProposerKey && viewingLiveQuorum)
   const selectedMeta = sortedQuorums.find(q => quorumKey(q.quorumHash) === selectedKey) || null
   const selectedOffset = selectedMeta?.offset ?? 0
   const rotN = sortedQuorums.length
@@ -798,7 +827,7 @@ export default function QuorumCard({
         geoPending: Boolean(poolLoading && !cc),
         inPinned: selectedMemberSet.has(k),
         isFocus: Boolean(focusKey && focusKey === k),
-        isProposer: Boolean(lastProposerKey && k === lastProposerKey),
+        isProposer: Boolean(showLastProposer && k === lastProposerKey),
         homeIndex: nodeNumberByKey.get(k) ?? null
       }
     })
@@ -817,6 +846,7 @@ export default function QuorumCard({
     bannedSet,
     nodeNumberByKey,
     lastProposerKey,
+    showLastProposer,
     focusKey
   ])
 
@@ -1096,7 +1126,15 @@ export default function QuorumCard({
                   const isFocus = Boolean(focusKey && focusKey === nodeKey)
                   const isSearchHit = Boolean(searchMatchKeys?.has(nodeKey))
                   const hostIdx = cell.homeIndex
-                  const isProposer = Boolean(lastProposerKey && nodeKey === lastProposerKey)
+                  const isProposer = Boolean(showLastProposer && nodeKey === lastProposerKey)
+                  const proposeHint = showLastProposer
+                    ? proposeHintFor(
+                        nodeKey,
+                        lastProposerKey,
+                        liveSeedKeys,
+                        typeof avgBlockTimeSec === 'number' ? avgBlockTimeSec : null
+                      )
+                    : null
 
                   const tile = (
                     <button
@@ -1129,7 +1167,7 @@ export default function QuorumCard({
                     <Tooltip
                       key={slot}
                       placement={'top'}
-                      content={<NodeTooltipBody cell={{ ...cell, isProposer }} />}
+                      content={<NodeTooltipBody cell={{ ...cell, isProposer, proposeHint }} />}
                     >
                       {tile}
                     </Tooltip>
