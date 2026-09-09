@@ -367,6 +367,7 @@ function Home() {
               currentQuorumError={currentQuorumQuery.isError}
               quorums={quorumsListQuery.data}
               l1LockedHeight={blocksQuery.data?.resultSet?.[0]?.header?.l1LockedHeight}
+              lastProposerProTx={blocksQuery.data?.resultSet?.[0]?.header?.validator}
             />
           </div>
         </div>

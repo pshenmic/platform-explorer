@@ -100,6 +100,10 @@ a.QuorumCard__HelpMark:hover {
   color: var(--pe-color-red-default);
   background-color: rgba(var(--pe-color-red-default-rgb), 0.2);
 }
+.QuorumCard__HelpSwatch--proposer {
+  color: var(--pe-color-brand-light);
+  background-color: rgba(var(--pe-color-brand-normal-rgb), 0.28);
+}
 .QuorumCard__Title {
   font-family: var(--pe-font-heading);
   font-weight: 800;
@@ -385,7 +389,7 @@ a.QuorumCard__HelpMark:hover {
 }
 .QuorumCard__Controls .QuorumCard__Legend {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   align-items: end;
   justify-items: end;
   gap: 6px 14px;
@@ -443,7 +447,7 @@ a.QuorumCard__HelpMark:hover {
   .QuorumCard__Controls .QuorumCard__Legend {
     grid-row: 1 / 3;
     display: grid;
-    grid-template-columns: repeat(3, minmax(2.85rem, 1fr));
+    grid-template-columns: repeat(4, minmax(2.4rem, 1fr));
     grid-template-rows: subgrid;
     width: 100%;
     max-width: none;
@@ -760,7 +764,7 @@ a.QuorumCard__HelpMark:hover {
 }
 .QuorumCard__QBtnIdx {
   flex-shrink: 0;
-  min-width: 2ch;
+  min-width: 3ch;
   text-align: right;
   color: var(--pe-color-gray-500);
   font-weight: 600;
@@ -929,6 +933,15 @@ a.QuorumCard__HelpMark:hover {
 }
 .QuorumCard__Cell--active .QuorumCard__CellIdx {
   color: var(--pe-color-green-label);
+}
+.QuorumCard__Cell.is-proposer {
+  --q-fill: var(--pe-color-brand-normal-rgb);
+  background-color: rgba(var(--q-fill), 0.32);
+  border-color: rgba(var(--pe-color-brand-light-rgb), 0.7);
+  z-index: 2;
+}
+.QuorumCard__Cell.is-proposer .QuorumCard__CellIdx {
+  color: var(--pe-color-brand-light);
 }
 .QuorumCard__Cell--next {
   --q-fill: var(--pe-color-yellow-default-rgb);
@@ -1178,6 +1191,12 @@ a.QuorumCard__HelpMark:hover {
 .QuorumCard__Host--banned .QuorumCard__HostIdx {
   color: var(--pe-color-red-default);
 }
+.QuorumCard__Host.is-proposer {
+  background: rgba(var(--pe-color-brand-normal-rgb), 0.16);
+}
+.QuorumCard__Host.is-proposer .QuorumCard__HostIdx {
+  color: var(--pe-color-brand-light);
+}
 .QuorumCard__HostFlag {
   width: 14px;
   height: 14px;
@@ -1331,6 +1350,10 @@ a.QuorumCard__HelpMark:hover {
 .QuorumCard__Dot--banned {
   background: var(--pe-color-red-default);
   box-shadow: 0 0 6px rgba(var(--pe-color-red-default-rgb), 0.45);
+}
+.QuorumCard__Dot--proposer {
+  background: var(--pe-color-brand-normal);
+  box-shadow: 0 0 6px rgba(var(--pe-color-brand-normal-rgb), 0.5);
 }
 .QuorumCard__RailNums {
   display: inline-flex;
@@ -1515,7 +1538,7 @@ a.QuorumCard__HelpMark:hover {
     width: 100%;
     max-width: none;
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(4, minmax(0, 1fr));
     grid-template-rows: subgrid;
     align-items: baseline;
     justify-items: end;

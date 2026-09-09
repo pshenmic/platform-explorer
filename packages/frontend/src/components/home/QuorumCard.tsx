@@ -146,7 +146,8 @@ function quorumKey(hash: unknown) {
 const STATS = [
   { key: 'total', label: 'Total', hint: 'This quorum plus queued' },
   { key: 'inactive', label: 'Queued', hint: 'Not in this quorum' },
-  { key: 'active', label: 'Now', hint: 'This quorum of 100' }
+  { key: 'active', label: 'Now', hint: 'This quorum of 100' },
+  { key: 'proposer', label: 'Last', hint: 'Proposed the last Platform block' }
 ]
 
 function isPoSeBannedValidator(v: any) {
@@ -223,7 +224,8 @@ function HostButton({
       className={
         `QuorumCard__Host QuorumCard__Host--${row.type}` +
         (row.inPinned ? ' is-in-pin' : '') +
-        (row.isFocus ? ' is-focus' : '')
+        (row.isFocus ? ' is-focus' : '') +
+        (row.isProposer ? ' is-proposer' : '')
       }
       onClick={() => onClick(row.proTxHash)}
     >
@@ -266,6 +268,7 @@ function TipRow({ label, href, children, mono }: any) {
 function NodeTooltipBody({ cell }: any) {
   const v = cell.validator
   const status = (() => {
+    if (cell.isProposer) return 'Last Platform block proposer'
     if (cell.role === 'banned') {
       return isPoSeBannedValidator(cell.validator)
         ? 'Banned (PoSe)'
@@ -346,7 +349,8 @@ export default function QuorumCard({
   currentQuorumLoading,
   currentQuorumError,
   quorums,
-  l1LockedHeight
+  l1LockedHeight,
+  lastProposerProTx
 }: any) {
   const queryClient = useQueryClient()
   const [pin, setPin] = useState<string | null>(null)
@@ -364,6 +368,7 @@ export default function QuorumCard({
 
   const currentMembers = Array.isArray(currentQuorum?.members) ? currentQuorum.members : null
   const hasRoster = Boolean(currentMembers && currentMembers.length > 0)
+  const lastProposerKey = memberKey(lastProposerProTx)
 
   const sortedQuorums = useMemo(() => {
     const list = [...(Array.isArray(quorums) ? quorums : [])]
@@ -794,6 +799,7 @@ export default function QuorumCard({
         geoPending: Boolean(poolLoading && !cc),
         inPinned: selectedMemberSet.has(k),
         isFocus: Boolean(focusKey && focusKey === k),
+        isProposer: Boolean(lastProposerKey && k === lastProposerKey),
         homeIndex: nodeNumberByKey.get(k) ?? null
       }
     })
@@ -811,6 +817,7 @@ export default function QuorumCard({
     memberMeta,
     bannedSet,
     nodeNumberByKey,
+    lastProposerKey,
     focusKey
   ])
 
@@ -836,10 +843,12 @@ export default function QuorumCard({
   const nowCount = windowKeys.length
   const nowFixed = llmq?.size ?? 100
   const poolReady = !poolLoading && !filling && listKeys.length > 0
+  const proposerIdx = lastProposerKey ? (nodeNumberByKey.get(lastProposerKey) ?? null) : null
   const counts: Record<string, number | null> = {
     total: poolReady ? nowCount + queuedKeysCount : null,
     inactive: poolReady ? queuedKeysCount : null,
-    active: nowFixed
+    active: nowFixed,
+    proposer: proposerIdx
   }
 
   return (
@@ -872,7 +881,7 @@ export default function QuorumCard({
                     >
                       quorum
                     </a>{' '}
-                    is 100 evonodes. We keep{' '}
+                    is 100 evonodes.{' '}
                     <a
                       className={'QuorumCard__HelpMark'}
                       href={
@@ -882,24 +891,26 @@ export default function QuorumCard({
                       rel={'noreferrer'}
                       onClick={e => e.stopPropagation()}
                     >
-                      24 of these groups
-                    </a>
-                    ; they take turns signing.
+                      24 groups
+                    </a>{' '}
+                    take turns signing.
                   </p>
                   <p>
-                    The grid is that hundred:{' '}
+                    Grid:{' '}
                     <b className={'QuorumCard__HelpSwatch QuorumCard__HelpSwatch--active'}>green</b>{' '}
-                    are new here,{' '}
+                    new this turn,{' '}
                     <b className={'QuorumCard__HelpSwatch QuorumCard__HelpSwatch--next'}>yellow</b>{' '}
-                    were in the last group.{' '}
+                    from the last group,{' '}
+                    <b className={'QuorumCard__HelpSwatch QuorumCard__HelpSwatch--proposer'}>
+                      blue
+                    </b>{' '}
+                    proposed the last Platform block.{' '}
                     <b className={'QuorumCard__HelpSwatch QuorumCard__HelpSwatch--inactive'}>
                       Gray
                     </b>{' '}
-                    in the list wait their turn.
-                  </p>
-                  <p>
-                    A <b className={'QuorumCard__HelpSwatch QuorumCard__HelpSwatch--banned'}>red</b>{' '}
-                    cell can still sit here: the group is built first, a{' '}
+                    in the list wait.{' '}
+                    <b className={'QuorumCard__HelpSwatch QuorumCard__HelpSwatch--banned'}>Red</b>{' '}
+                    can still sit here: the set is built first, a{' '}
                     <a
                       className={'QuorumCard__HelpMark'}
                       href={'https://docs.dash.org/en/stable/docs/core/dips/dip-0003.html'}
@@ -926,7 +937,12 @@ export default function QuorumCard({
               const n = counts[s.key]
               const ready = typeof n === 'number'
               const nowOn = pin === 'active' || (Boolean(pinnedKey) && pinnedKey === liveKey)
-              const pressed = s.key === 'active' ? nowOn : pin === s.key
+              const pressed =
+                s.key === 'active'
+                  ? nowOn
+                  : s.key === 'proposer'
+                    ? Boolean(lastProposerKey && focusKey === lastProposerKey)
+                    : pin === s.key
               return (
                 <Tooltip key={s.key} placement={'top'} content={s.hint}>
                   <button
@@ -934,6 +950,10 @@ export default function QuorumCard({
                     data-type={s.key}
                     className={`QuorumCard__Leg QuorumCard__Leg--${s.key}${pressed ? ' is-on' : ''}`}
                     onClick={() => {
+                      if (s.key === 'proposer') {
+                        if (lastProposerProTx) focusNode(lastProposerProTx)
+                        return
+                      }
                       if (s.key === 'active' && liveHash) {
                         togglePin(`q:${liveHash}`)
                         return
@@ -949,7 +969,11 @@ export default function QuorumCard({
                     </span>
                     <b>
                       {ready ? (
-                        n.toLocaleString('en-US')
+                        s.key === 'proposer' ? (
+                          `#${n}`
+                        ) : (
+                          n.toLocaleString('en-US')
+                        )
                       ) : (
                         <Skeleton w={'3.2ch'} h={'0.95em'} radius={4} />
                       )}
@@ -1068,6 +1092,7 @@ export default function QuorumCard({
                   const isFocus = Boolean(focusKey && focusKey === nodeKey)
                   const isSearchHit = Boolean(searchMatchKeys?.has(nodeKey))
                   const hostIdx = cell.homeIndex
+                  const isProposer = Boolean(lastProposerKey && nodeKey === lastProposerKey)
 
                   const tile = (
                     <button
@@ -1080,11 +1105,13 @@ export default function QuorumCard({
                         (inPinned ? ' is-in-pin' : '') +
                         (isFocus ? ' is-focus' : '') +
                         (isSearchHit ? ' is-search-hit' : '') +
-                        (cell.band === 'carry' ? ' is-carry' : '')
+                        (cell.band === 'carry' ? ' is-carry' : '') +
+                        (isProposer ? ' is-proposer' : '')
                       }
                       aria-label={
                         `${hostIdx != null ? `#${hostIdx}, ` : ''}` +
                         `${shortHash(cell.proTxHash)}, ${roleHint}` +
+                        (isProposer ? ', last block proposer' : '') +
                         (ccName ? `, ${ccName}` : '')
                       }
                       aria-pressed={inPinned || undefined}
@@ -1095,7 +1122,11 @@ export default function QuorumCard({
                   )
 
                   return (
-                    <Tooltip key={slot} placement={'top'} content={<NodeTooltipBody cell={cell} />}>
+                    <Tooltip
+                      key={slot}
+                      placement={'top'}
+                      content={<NodeTooltipBody cell={{ ...cell, isProposer }} />}
+                    >
                       {tile}
                     </Tooltip>
                   )
@@ -1135,7 +1166,7 @@ export default function QuorumCard({
                       aria-pressed={on}
                       onClick={() => togglePin(`q:${q.quorumHash}`)}
                     >
-                      <span className={'QuorumCard__QBtnIdx'}>{slot}</span>
+                      <span className={'QuorumCard__QBtnIdx'}>#{slot}</span>
                       <span className={'QuorumCard__QBtnHeight'}>{heightLabel}</span>
                     </button>
                   )
