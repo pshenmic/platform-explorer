@@ -96,9 +96,9 @@ const ENTITIES = [
     key: 'identities',
     label: 'Identities',
     metrics: [
-      { key: 'active', label: 'Recent Active' },
       { key: 'balance', label: 'Highest Balance' },
-      { key: 'txs', label: 'Most tx' }
+      { key: 'txs', label: 'Most tx' },
+      { key: 'active', label: 'Recent Active' }
     ]
   },
   {
@@ -125,7 +125,7 @@ type EntityKey = (typeof ENTITIES)[number]['key']
 
 export default function HomeLeaders({ rate, enabled = true }: { rate?: any; enabled?: boolean }) {
   const [entityKey, setEntityKey] = useState<EntityKey>('identities')
-  const [metricKey, setMetricKey] = useState<string>('active')
+  const [metricKey, setMetricKey] = useState<string>('balance')
 
   const entityIndex = ENTITIES.findIndex(e => e.key === entityKey)
   const entity = ENTITIES[entityIndex] || ENTITIES[0]
@@ -372,61 +372,66 @@ export default function HomeLeaders({ rate, enabled = true }: { rate?: any; enab
           <span className={'HomeLeaders__Eyebrow'}>Leaderboards</span>
           <h2 className={'HomeLeaders__Title'}>Platform leaders</h2>
         </div>
-        <div className={'HomeLeaders__Nav'} aria-label={'Leader list controls'}>
-          <button
-            type={'button'}
-            className={'HomeLeaders__Arrow'}
-            aria-label={'Previous list'}
-            onClick={() => goEntity(-1)}
-          >
-            <svg viewBox={'0 0 16 16'} width={'14'} height={'14'} aria-hidden={'true'}>
-              <path
-                d={'M10 3L5 8l5 5'}
-                fill={'none'}
-                stroke={'currentColor'}
-                strokeWidth={'1.6'}
-                strokeLinecap={'round'}
-                strokeLinejoin={'round'}
-              />
-            </svg>
-          </button>
-          <div className={'HomeLeaders__Tabs'} role={'tablist'} aria-label={'Leader entities'}>
-            {ENTITIES.map(item => (
-              <button
-                key={item.key}
-                type={'button'}
-                role={'tab'}
-                aria-selected={entity.key === item.key}
-                className={`HomeLeaders__Tab${entity.key === item.key ? ' is-on' : ''}`}
-                onClick={() => selectEntity(item.key)}
-              >
-                {item.label}
-              </button>
-            ))}
+        <p className={'HomeLeaders__Lede'}>
+          <span className={'HomeLeaders__LedeLine'}>Highest, busiest and recently active</span>
+          <span className={'HomeLeaders__LedeLine'}>identities, contracts and validators</span>
+        </p>
+        <div className={'HomeLeaders__Switchers'}>
+          <div className={'HomeLeaders__Nav'} aria-label={'Leader list controls'}>
+            <button
+              type={'button'}
+              className={'HomeLeaders__Arrow'}
+              aria-label={'Previous list'}
+              onClick={() => goEntity(-1)}
+            >
+              <svg viewBox={'0 0 16 16'} width={'14'} height={'14'} aria-hidden={'true'}>
+                <path
+                  d={'M10 3L5 8l5 5'}
+                  fill={'none'}
+                  stroke={'currentColor'}
+                  strokeWidth={'1.6'}
+                  strokeLinecap={'round'}
+                  strokeLinejoin={'round'}
+                />
+              </svg>
+            </button>
+            <div className={'HomeLeaders__Tabs'} role={'tablist'} aria-label={'Leader entities'}>
+              {ENTITIES.map(item => (
+                <button
+                  key={item.key}
+                  type={'button'}
+                  role={'tab'}
+                  aria-selected={entity.key === item.key}
+                  className={`HomeLeaders__Tab${entity.key === item.key ? ' is-on' : ''}`}
+                  onClick={() => selectEntity(item.key)}
+                >
+                  {item.label}
+                </button>
+              ))}
+            </div>
+            <button
+              type={'button'}
+              className={'HomeLeaders__Arrow'}
+              aria-label={'Next list'}
+              onClick={() => goEntity(1)}
+            >
+              <svg viewBox={'0 0 16 16'} width={'14'} height={'14'} aria-hidden={'true'}>
+                <path
+                  d={'M6 3l5 5-5 5'}
+                  fill={'none'}
+                  stroke={'currentColor'}
+                  strokeWidth={'1.6'}
+                  strokeLinecap={'round'}
+                  strokeLinejoin={'round'}
+                />
+              </svg>
+            </button>
           </div>
-          <button
-            type={'button'}
-            className={'HomeLeaders__Arrow'}
-            aria-label={'Next list'}
-            onClick={() => goEntity(1)}
+          <div
+            className={'HomeLeaders__Metrics'}
+            role={'tablist'}
+            aria-label={`${entity.label} ranking`}
           >
-            <svg viewBox={'0 0 16 16'} width={'14'} height={'14'} aria-hidden={'true'}>
-              <path
-                d={'M6 3l5 5-5 5'}
-                fill={'none'}
-                stroke={'currentColor'}
-                strokeWidth={'1.6'}
-                strokeLinecap={'round'}
-                strokeLinejoin={'round'}
-              />
-            </svg>
-          </button>
-        </div>
-      </header>
-
-      <div className={'HomeLeaders__Panel'} role={'tabpanel'}>
-        <div className={`HomeLeaders__Col HomeLeaders__Col--${list.accent}`}>
-          <div className={'HomeLeaders__Metrics'} role={'tablist'} aria-label={'Leader metrics'}>
             {metrics.map(item => (
               <button
                 key={item.key}
@@ -440,6 +445,11 @@ export default function HomeLeaders({ rate, enabled = true }: { rate?: any; enab
               </button>
             ))}
           </div>
+        </div>
+      </header>
+
+      <div className={'HomeLeaders__Panel'} role={'tabpanel'}>
+        <div className={`HomeLeaders__Col HomeLeaders__Col--${list.accent}`}>
           <div className={'HomeLeaders__Rails'} role={'list'}>
             {list.loading &&
               Array.from({ length: HOME_LEADERS_LIMIT }).map((_, i) => (
