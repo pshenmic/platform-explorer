@@ -13,7 +13,7 @@
   padding: 10px;
   width: min(22rem, calc(100vw - 16px));
   max-width: calc(100vw - 16px);
-  overflow: hidden;
+  overflow: visible;
 }
 @media screen and (max-width: 48em) {
   .DataListHeaderMenu--Dates {
@@ -53,6 +53,52 @@
   flex-direction: column;
   gap: 6px;
 }
+.DataListHeaderMenu__Sort {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 6px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+.DataListHeaderMenu__Sort:last-child {
+  margin-bottom: 0;
+  padding-bottom: 0;
+  border-bottom: 0;
+}
+.DataListHeaderMenu__SortLabel {
+  padding: 0 2px;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--pe-color-gray-500);
+}
+.DataListHeaderMenu__SortRow {
+  display: flex;
+  gap: 4px;
+}
+.DataListHeaderMenu__SortBtn {
+  appearance: none;
+  flex: 1 1 0;
+  height: 28px;
+  padding: 0 8px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  background: var(--pe-color-gray-900);
+  color: var(--pe-color-gray-250);
+  font-size: 11px;
+  cursor: pointer;
+}
+.DataListHeaderMenu__SortBtn:hover {
+  color: var(--pe-color-fg);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+.DataListHeaderMenu__SortBtn--Active {
+  border-color: rgba(var(--pe-color-brand-normal-rgb), 0.5);
+  color: var(--pe-color-brand-light);
+  background: rgba(var(--pe-color-brand-normal-rgb), 0.12);
+}
 .DataListHeaderMenu__Dates {
   min-width: 0;
 }
@@ -84,10 +130,10 @@
   color: var(--pe-color-brand-normal);
 }
 .DataListHeaderMenu__Label {
+  display: flex;
+  align-items: center;
   min-width: 0;
   overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 }
 .DataListHeaderMenu__Empty {
   padding: 8px;

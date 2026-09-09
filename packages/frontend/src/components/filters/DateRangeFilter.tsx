@@ -123,8 +123,8 @@ export const DateRangeFilter = ({
 
       <DateRangePicker
         disableFutureDates={true}
-        noTopNavigation={true}
-        noWeekDay={compact ? false : true}
+        noTopNavigation={!compact}
+        noWeekDay={!compact}
         compact={compact}
         showSingleCalendar={compact}
         changeHandler={calendarHandler}

@@ -27,13 +27,15 @@ export function DataListPagingBar({
   itemCount,
   scrollRef,
   sentinelRef,
-  loading
+  loading,
+  pageScroll = false
 }: {
   paging: DataListPagingConfig
   itemCount: number
   scrollRef: RefObject<HTMLDivElement | null>
   sentinelRef: RefObject<HTMLTableRowElement | null>
   loading: boolean
+  pageScroll?: boolean
 }) {
   const [autoLeft, setAutoLeft] = useState(AUTO_LOAD_PAGES)
   const loadLock = useRef(false)
@@ -58,9 +60,9 @@ export function DataListPagingBar({
 
   useEffect(() => {
     if (!continuous || loadingMore || loading || autoLeft <= 0 || !hasMore) return
-    const root = scrollRef.current
+    const root = pageScroll ? null : scrollRef.current
     const sentinel = sentinelRef.current
-    if (!root || !sentinel) return
+    if ((!pageScroll && !root) || !sentinel) return
     const observer = new IntersectionObserver(
       entries => {
         if (!entries[0]?.isIntersecting) return
@@ -69,11 +71,11 @@ export function DataListPagingBar({
         onLoadMoreRef.current()
         setAutoLeft(n => Math.max(0, n - 1))
       },
-      { root, rootMargin: '200px', threshold: 0 }
+      { root, rootMargin: pageScroll ? '320px' : '200px', threshold: 0 }
     )
     observer.observe(sentinel)
     return () => observer.disconnect()
-  }, [continuous, loadingMore, loading, autoLeft, hasMore, scrollRef, sentinelRef])
+  }, [continuous, loadingMore, loading, autoLeft, hasMore, scrollRef, sentinelRef, pageScroll])
 
   const pageCount = Math.max(1, Math.ceil((total || 0) / Math.max(1, pageSize)))
   const rangeFrom = mode === 'pages' ? (total === 0 ? 0 : page * pageSize + 1) : itemCount ? 1 : 0
@@ -95,7 +97,7 @@ export function DataListPagingBar({
               setAutoLeft(AUTO_LOAD_PAGES)
             }}
           >
-            Load more
+            Load<span className={'DataList__LoadMoreRest'}> more</span>
           </button>
         ) : null}
         {continuous && !hasMore && itemCount > 0 ? (

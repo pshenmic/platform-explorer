@@ -10,7 +10,7 @@ import {
   type RefObject
 } from 'react'
 import { useRouter } from 'next/navigation'
-import { ChevronDown, ChevronUp, X } from 'lucide-react'
+import { ChevronDown, X } from 'lucide-react'
 import { DataListPagingBar, type DataListPagingConfig } from './DataListPaging'
 import useResizeObserver from '@react-hook/resize-observer'
 import { EmptyListMessage } from '../index'
@@ -60,11 +60,13 @@ export interface DataListProps<T = any> {
   className?: string
   wrapperProps?: Record<string, unknown>
   sort?: { order_by?: string; order?: string }
+  sortDefault?: { order_by: string; order: string }
   onSortChange?: (sort: { order_by: string; order: string }) => void
   pinFirst?: boolean
   filterValues?: Record<string, unknown>
   onFilterChange?: (key: string, value: unknown) => void
   title?: ReactNode
+  titleExtra?: ReactNode
   paging?: DataListPagingConfig
 }
 
@@ -85,17 +87,33 @@ function visibleColumns<T>(columns: DataListColumn<T>[], width: number, collapse
   return kept
 }
 
+const HEAD_CHAR_PX = 8.5
+const HEAD_PAD_PX = 40
+const HEAD_MENU_PX = 24
+const COMPACT_FIRST_MAX = 768
+const COMPACT_FIRST_FLOOR = 112
+
+function headerMinWidth<T>(column: DataListColumn<T>) {
+  const label = typeof column.header === 'string' ? Math.ceil(column.header.length * HEAD_CHAR_PX) : 0
+  const menu = (column.filterKey && column.filterType) || column.sortKey ? HEAD_MENU_PX : 0
+  return label + HEAD_PAD_PX + menu
+}
+
+function columnFloor<T>(column: DataListColumn<T>) {
+  return Math.max(COMPACT_FIRST_FLOOR, headerMinWidth(column))
+}
+
 function minTableWidth<T>(cols: DataListColumn<T>[]) {
-  return cols.reduce((sum, c) => sum + (c.minWidth || 0), 0) + GAP * Math.max(0, cols.length - 1)
+  return cols.reduce((sum, column) => sum + columnFloor(column), 0)
 }
 
 function colStyle<T>(column: DataListColumn<T>): CSSProperties {
-  if (column.grow) return { width: 'auto' }
+  const floor = columnFloor(column)
+  if (column.grow) return { width: 'auto', minWidth: `${floor}px` }
   if (column.maxWidth) {
-    return { width: `${column.minWidth || 0}px`, maxWidth: `${column.maxWidth}px` }
+    return { width: `${floor}px`, minWidth: `${floor}px`, maxWidth: `${column.maxWidth}px` }
   }
-  if (column.minWidth) return { width: `${column.minWidth}px` }
-  return {}
+  return { width: 'auto', minWidth: `${floor}px` }
 }
 
 function resolveRowClassName<T>(
@@ -134,6 +152,10 @@ function formatChipDate(value: unknown): string {
   return date.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })
 }
 
+function compactCount(value: number) {
+  return new Intl.NumberFormat('en', { notation: 'compact', maximumFractionDigits: 1 }).format(value)
+}
+
 function formatFilterChip(type: DataListHeaderFilterType | undefined, value: unknown): string {
   if (type === 'range') {
     const range = value as RangeFilterValue
@@ -153,11 +175,14 @@ function formatFilterChip(type: DataListHeaderFilterType | undefined, value: unk
   return String(value ?? '')
 }
 
+function formatSortChip(order?: string) {
+  return order === 'asc' ? 'Low to high' : 'High to low'
+}
+
 function HeadCell<T>({
   column,
   sort,
   onSortChange,
-  pinned,
   filterActive,
   menuOpen,
   onMenuOpen
@@ -165,7 +190,6 @@ function HeadCell<T>({
   column: DataListColumn<T>
   sort?: DataListProps<T>['sort']
   onSortChange?: DataListProps<T>['onSortChange']
-  pinned?: boolean
   filterActive?: boolean
   menuOpen?: boolean
   onMenuOpen?: (anchor: DOMRect) => void
@@ -175,19 +199,13 @@ function HeadCell<T>({
   const sortable = Boolean(sortKey && onSortChange)
   const isActive = Boolean(sortable && sort && sort.order_by === sortKey)
   const direction = isActive ? sort?.order : null
-  const pinClass = pinned ? ' DataList__HeadCell--pin' : ''
-  const hasMenu = Boolean(column.filterKey && column.filterType && onMenuOpen)
-
-  const handleSort = () => {
-    const nextOrder = isActive && direction === 'desc' ? 'asc' : 'desc'
-    onSortChange?.({ order_by: sortKey as string, order: nextOrder })
-  }
+  const hasMenu = Boolean(onMenuOpen)
 
   const menuBtn = hasMenu ? (
     <button
       type={'button'}
-      className={`DataList__HeadMenuBtn${filterActive ? ' DataList__HeadMenuBtn--Filtered' : ''}${menuOpen ? ' DataList__HeadMenuBtn--Open' : ''}`}
-      aria-label={`Filter: ${String(column.header ?? column.key)}`}
+      className={`DataList__HeadMenuBtn${filterActive || isActive ? ' DataList__HeadMenuBtn--Filtered' : ''}${menuOpen ? ' DataList__HeadMenuBtn--Open' : ''}`}
+      aria-label={`${sortable ? 'Sort and filter' : 'Filter'}: ${String(column.header ?? column.key)}`}
       onClick={event => {
         event.stopPropagation()
         onMenuOpen?.(event.currentTarget.getBoundingClientRect())
@@ -199,36 +217,12 @@ function HeadCell<T>({
 
   return (
     <th
-      className={`DataList__HeadCell DataList__HeadCell--${align}${pinClass}`}
+      className={`DataList__HeadCell DataList__HeadCell--${align}`}
       scope={'col'}
       aria-sort={sortable ? (isActive ? (direction === 'asc' ? 'ascending' : 'descending') : 'none') : undefined}
     >
       <div className={'DataList__HeadCellInner'}>
-        {sortable ? (
-          <button
-            type={'button'}
-            className={[
-              'DataList__HeadCell--Sortable',
-              isActive ? 'DataList__HeadCell--Active' : ''
-            ]
-              .filter(Boolean)
-              .join(' ')}
-            onClick={handleSort}
-          >
-            {isActive ? (
-              direction === 'asc' ? (
-                <ChevronUp className={'DataList__SortIcon'} size={12} strokeWidth={2} aria-hidden />
-              ) : (
-                <ChevronDown className={'DataList__SortIcon'} size={12} strokeWidth={2} aria-hidden />
-              )
-            ) : (
-              <span className={'DataList__SortSpacer'} aria-hidden />
-            )}
-            <span className={'DataList__HeadCellTitle'}>{column.header}</span>
-          </button>
-        ) : (
-          <span className={'DataList__HeadCellTitle'}>{column.header}</span>
-        )}
+        <span className={'DataList__HeadCellTitle'}>{column.header}</span>
         {menuBtn}
       </div>
     </th>
@@ -257,18 +251,18 @@ export default function DataList<T = any>({
   className = '',
   wrapperProps = {},
   sort,
+  sortDefault,
   onSortChange,
   pinFirst = false,
   filterValues = {},
   onFilterChange,
   title,
+  titleExtra,
   paging
 }: DataListProps<T>) {
   const wrapRef = useRef<HTMLDivElement | null>(null)
   const scrollRef = useRef<HTMLDivElement | null>(null)
-  const headScrollRef = useRef<HTMLDivElement | null>(null)
   const sentinelRef = useRef<HTMLTableRowElement | null>(null)
-  const syncingScroll = useRef(false)
   const [width, setWidth] = useState(0)
   const [canScrollEnd, setCanScrollEnd] = useState(false)
   const [overflowX, setOverflowX] = useState(false)
@@ -280,7 +274,7 @@ export default function DataList<T = any>({
 
   useEffect(() => {
     const el = scrollRef.current
-    if (!el) return
+    if (!el || width <= COMPACT_FIRST_MAX) return
     const onWheel = (event: WheelEvent) => {
       const canScrollY = el.scrollHeight > el.clientHeight + 1
       if (canScrollY) return
@@ -290,12 +284,11 @@ export default function DataList<T = any>({
     }
     el.addEventListener('wheel', onWheel, { passive: false })
     return () => el.removeEventListener('wheel', onWheel)
-  }, [pinFirst, items.length, loading])
+  }, [pinFirst, items.length, loading, width])
 
   useEffect(() => {
     const body = scrollRef.current
-    const head = headScrollRef.current
-    if (!body || !pinFirst) {
+    if (!body) {
       setCanScrollEnd(false)
       setOverflowX(false)
       return
@@ -305,60 +298,21 @@ export default function DataList<T = any>({
       const hasX = max > 1
       setOverflowX(hasX)
       setCanScrollEnd(hasX && body.scrollLeft < max - 8)
-      if (!hasX && body.scrollLeft !== 0) {
-        body.scrollLeft = 0
-        if (head) head.scrollLeft = 0
+      if (width > 0 && width <= COMPACT_FIRST_MAX) {
+        setFillRows(skeletonCount)
+        return
       }
       const h = body.clientHeight
       if (h > 8) {
         setFillRows(Math.min(48, Math.max(skeletonCount, Math.floor((h + 6) / ROW_STRIDE))))
       }
     }
-    const maxScrollX = () => Math.max(0, body.scrollWidth - body.clientWidth)
-    const maxScrollY = () => Math.max(0, body.scrollHeight - body.clientHeight)
-    const onBodyScroll = () => {
-      if (syncingScroll.current) return
-      syncingScroll.current = true
-      if (head) head.scrollLeft = body.scrollLeft
-      updateFade()
-      syncingScroll.current = false
-    }
-    const onHeadScroll = () => {
-      if (!head || syncingScroll.current) return
-      syncingScroll.current = true
-      body.scrollLeft = head.scrollLeft
-      updateFade()
-      syncingScroll.current = false
-    }
-    const onHeadWheel = (event: WheelEvent) => {
-      if (Math.abs(event.deltaY) <= Math.abs(event.deltaX)) return
-      event.preventDefault()
-      body.scrollTop += event.deltaY
-    }
-    const onBodyWheel = (event: WheelEvent) => {
-      const maxX = maxScrollX()
-      const maxY = maxScrollY()
-      const atLeft = body.scrollLeft <= 0
-      const atRight = body.scrollLeft >= maxX - 0.5
-      const atTop = body.scrollTop <= 0
-      const atBottom = body.scrollTop >= maxY - 0.5
-      const xOver = (event.deltaX < 0 && atLeft) || (event.deltaX > 0 && atRight)
-      const yOver = (event.deltaY < 0 && atTop) || (event.deltaY > 0 && atBottom)
-      if (xOver && Math.abs(event.deltaX) >= Math.abs(event.deltaY)) event.preventDefault()
-      if (yOver && Math.abs(event.deltaY) > Math.abs(event.deltaX)) event.preventDefault()
-    }
     updateFade()
-    body.addEventListener('scroll', onBodyScroll, { passive: true })
-    body.addEventListener('wheel', onBodyWheel, { passive: false })
-    head?.addEventListener('scroll', onHeadScroll, { passive: true })
-    head?.addEventListener('wheel', onHeadWheel, { passive: false })
+    body.addEventListener('scroll', updateFade, { passive: true })
     const ro = new ResizeObserver(updateFade)
     ro.observe(body)
     return () => {
-      body.removeEventListener('scroll', onBodyScroll)
-      body.removeEventListener('wheel', onBodyWheel)
-      head?.removeEventListener('scroll', onHeadScroll)
-      head?.removeEventListener('wheel', onHeadWheel)
+      body.removeEventListener('scroll', updateFade)
       ro.disconnect()
     }
   }, [pinFirst, items.length, loading, width, skeletonCount])
@@ -377,7 +331,9 @@ export default function DataList<T = any>({
     return () => window.clearTimeout(id)
   }, [replacePending, items.length])
 
-  const cols = visibleColumns(columns, width, !pinFirst)
+  const compactFirst = width > 0 && width <= COMPACT_FIRST_MAX
+  const fillList = pinFirst && !compactFirst
+  const cols = visibleColumns(columns, width, !pinFirst && !compactFirst)
   const tableMinWidth = minTableWidth(cols)
 
   const openRow = (event: MouseEvent, href?: string) => {
@@ -393,7 +349,7 @@ export default function DataList<T = any>({
     cols.map((c, ci) => (
       <td
         key={c.key}
-        className={`DataList__Cell DataList__Cell--${c.align || 'left'}${pinFirst && ci === 0 ? ' DataList__Cell--pin' : ''}`}
+        className={`DataList__Cell DataList__Cell--${c.align || 'left'}`}
       >
         {skeleton ? <span className={'DataList__Skeleton'} /> : c.cell?.(item as T, index)}
       </td>
@@ -417,11 +373,10 @@ export default function DataList<T = any>({
               column={c}
               sort={sort}
               onSortChange={onSortChange}
-              pinned={pinFirst && i === 0}
               filterActive={isFilterActive(c.filterType, filterValues[c.filterKey || ''])}
               menuOpen={openMenu?.key === c.key}
               onMenuOpen={
-                c.filterKey && c.filterType && onFilterChange
+                (c.filterKey && c.filterType && onFilterChange) || (c.sortKey && onSortChange)
                   ? anchor =>
                       setOpenMenu(prev => (prev?.key === c.key ? null : { key: c.key, anchor }))
                   : undefined
@@ -502,24 +457,64 @@ export default function DataList<T = any>({
   )
 
   const tableStyle = { minWidth: tableMinWidth }
+  const isEmpty = !loading && items.length === 0 && !replacePending
+  const showCenteredEmpty = compactFirst && isEmpty
   const canFilter = Boolean(onFilterChange && cols.some(column => column.filterKey))
   const activeFilters = canFilter
     ? cols.filter(
         c => c.filterKey && isFilterActive(c.filterType, filterValues[c.filterKey])
       )
     : []
+  const sortColumn = sort?.order_by
+    ? cols.find(column => column.sortKey && column.sortKey === sort.order_by)
+    : undefined
+  const isCustomSort = Boolean(
+    sortColumn &&
+      sort?.order_by &&
+      (!sortDefault ||
+        sort.order_by !== sortDefault.order_by ||
+        sort.order !== sortDefault.order)
+  )
 
   return (
     <div
       ref={wrapRef}
-      className={`DataList ${pinFirst ? 'DataList--pinFirst' : ''} ${loading || paging?.loadingMore ? 'DataList--loading' : ''} ${overflowX ? 'DataList--overflowX' : ''} ${canScrollEnd ? 'DataList--fadeEnd' : ''} ${className}`.trim()}
+      className={`DataList ${fillList ? 'DataList--fill' : ''} ${compactFirst ? 'DataList--compactFirst' : ''} ${showCenteredEmpty ? 'DataList--empty' : ''} ${loading || paging?.loadingMore ? 'DataList--loading' : ''} ${overflowX && !showCenteredEmpty ? 'DataList--overflowX' : ''} ${canScrollEnd && !showCenteredEmpty ? 'DataList--fadeEnd' : ''} ${className}`.trim()}
       aria-busy={loading || paging?.loadingMore ? true : undefined}
       {...wrapperProps}
     >
       {canFilter || title ? (
         <div className={'DataList__FilterBar'}>
-          {title ? <h1 className={'DataList__Title'}>{title}</h1> : <span />}
+          {title ? (
+            <div className={'DataList__TitleRow'}>
+              <h1 className={'DataList__Title'}>{title}</h1>
+              {paging && paging.total > 0 ? (
+                <span className={'DataList__Total'} title={paging.total.toLocaleString('en-US')}>
+                  {compactCount(paging.total)}
+                </span>
+              ) : null}
+              {titleExtra ? <div className={'DataList__TitleExtra'}>{titleExtra}</div> : null}
+            </div>
+          ) : (
+            <span />
+          )}
           <div className={'DataList__FilterChips'}>
+            {isCustomSort ? (
+              <button
+                type={'button'}
+                className={'DataList__FilterChip'}
+                aria-label={`Clear sort: ${String(sortColumn?.header)} ${formatSortChip(sort?.order)}`}
+                onClick={() => {
+                  if (!sortDefault || !onSortChange) return
+                  onSortChange(sortDefault)
+                }}
+              >
+                <span className={'DataList__FilterChipLabel'}>
+                  Sort: {String(sortColumn?.header)} · {formatSortChip(sort?.order)}
+                </span>
+                <X size={10} strokeWidth={2.5} aria-hidden />
+              </button>
+            ) : null}
             {activeFilters.map(column => {
               const key = column.filterKey as string
               return (
@@ -536,7 +531,7 @@ export default function DataList<T = any>({
                 </button>
               )
             })}
-            {activeFilters.length > 0 ? (
+            {activeFilters.length > 0 || isCustomSort ? (
               <button
                 type={'button'}
                 className={'DataList__FilterChip DataList__FilterChip--Clear'}
@@ -546,6 +541,7 @@ export default function DataList<T = any>({
                       onFilterChange?.(column.filterKey, emptyFilterValue(column.filterType))
                     }
                   })
+                  if (sortDefault && onSortChange) onSortChange(sortDefault)
                 }}
               >
                 Clear
@@ -554,57 +550,61 @@ export default function DataList<T = any>({
           </div>
         </div>
       ) : null}
-      {pinFirst ? (
-        <>
-          {showHeader ? (
-            <div ref={headScrollRef} className={'DataList__HeadScroll'}>
-              <table className={'DataList__Table DataList__Table--head'} style={tableStyle}>
-                {renderColGroup()}
-                {headerRow}
-              </table>
-            </div>
-          ) : null}
-          <div ref={scrollRef} className={'DataList__BodyScroll pe-QuietScroll'}>
-            <table className={'DataList__Table DataList__Table--body'} style={tableStyle}>
-              {renderColGroup()}
-              {bodyRows}
-            </table>
-          </div>
-        </>
-      ) : (
-        <div ref={scrollRef} className={'DataList__Scroll'}>
+      <div ref={scrollRef} className={'DataList__Scroll pe-QuietScroll'}>
+        {showCenteredEmpty ? (
+          <EmptyListMessage>{emptyMessage}</EmptyListMessage>
+        ) : (
           <table className={'DataList__Table'} style={tableStyle}>
             {renderColGroup()}
             {headerRow}
             {bodyRows}
           </table>
-        </div>
-      )}
+        )}
+      </div>
 
       {openMenu &&
         (() => {
           const column = cols.find(c => c.key === openMenu.key)
-          if (!column?.filterKey || !column.filterType || !onFilterChange) return null
+          if (!column) return null
+          const canFilterColumn = Boolean(column.filterKey && column.filterType && onFilterChange)
+          const canSortColumn = Boolean(column.sortKey && onSortChange)
+          if (!canFilterColumn && !canSortColumn) return null
           return (
             <DataListHeaderMenu
               anchor={openMenu.anchor}
-              filterType={column.filterType}
-              value={filterValues[column.filterKey]}
+              filterType={canFilterColumn ? column.filterType : undefined}
+              value={canFilterColumn ? filterValues[column.filterKey as string] : undefined}
               options={column.filterOptions}
               placeholder={column.filterPlaceholder}
-              onChange={next => onFilterChange(column.filterKey as string, next)}
+              onChange={
+                canFilterColumn
+                  ? next => onFilterChange?.(column.filterKey as string, next)
+                  : undefined
+              }
+              sortKey={canSortColumn ? column.sortKey : undefined}
+              sortOrder={
+                canSortColumn && column.sortKey && sort?.order_by === column.sortKey
+                  ? sort.order
+                  : undefined
+              }
+              onSortChange={
+                canSortColumn
+                  ? order => onSortChange?.({ order_by: column.sortKey as string, order })
+                  : undefined
+              }
               onClose={() => setOpenMenu(null)}
             />
           )
         })()}
 
-      {paging ? (
+      {paging && !showCenteredEmpty ? (
         <DataListPagingBar
           paging={paging}
           itemCount={items.length}
           scrollRef={scrollRef}
           sentinelRef={sentinelRef}
           loading={loading}
+          pageScroll={compactFirst}
         />
       ) : null}
       {footer && <div className={'DataList__Footer'}>{footer}</div>}

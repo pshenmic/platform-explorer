@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useLayoutEffect, useRef, useState } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState, type ReactNode } from 'react'
 import { createPortal } from 'react-dom'
 import { DateRangeFilter } from '../../../filters/DateRangeFilter'
 import type { DateRangeFilterValue, RangeFilterValue } from '../../../filters/types'
@@ -10,17 +10,21 @@ export type DataListHeaderFilterType = 'search' | 'range' | 'daterange' | 'optio
 
 export interface DataListHeaderMenuOption {
   value: string
-  label: string
+  label: ReactNode
+  searchText?: string
 }
 
 export interface DataListHeaderMenuProps {
   anchor: DOMRect
-  filterType: DataListHeaderFilterType
+  filterType?: DataListHeaderFilterType
   value?: unknown
   options?: DataListHeaderMenuOption[]
   placeholder?: string
-  onChange: (value: unknown) => void
+  onChange?: (value: unknown) => void
   onClose: () => void
+  sortKey?: string
+  sortOrder?: string
+  onSortChange?: (order: string) => void
 }
 
 const PANEL_WIDTH = 224
@@ -32,7 +36,10 @@ export default function DataListHeaderMenu({
   options,
   placeholder = 'Search…',
   onChange,
-  onClose
+  onClose,
+  sortKey,
+  sortOrder,
+  onSortChange
 }: DataListHeaderMenuProps) {
   const rootRef = useRef<HTMLDivElement | null>(null)
   const searchRef = useRef<HTMLInputElement | null>(null)
@@ -107,9 +114,12 @@ export default function DataListHeaderMenu({
 
   const rangeValue = (value as RangeFilterValue | undefined) ?? { min: '', max: '' }
   const selected = Array.isArray(value) ? (value as string[]) : []
+  const optionSearchText = (option: DataListHeaderMenuOption) =>
+    (option.searchText ?? (typeof option.label === 'string' ? option.label : '')).toLowerCase()
+
   const filteredOptions = (options ?? []).filter(option => {
     const q = query.trim().toLowerCase()
-    return !q || option.label.toLowerCase().includes(q)
+    return !q || optionSearchText(option).includes(q)
   })
 
   const toggleOption = (next: string) => {
@@ -128,6 +138,27 @@ export default function DataListHeaderMenu({
       tabIndex={-1}
       onMouseDown={event => event.stopPropagation()}
     >
+      {sortKey && onSortChange ? (
+        <div className={'DataListHeaderMenu__Sort'}>
+          <div className={'DataListHeaderMenu__SortLabel'}>Sort</div>
+          <div className={'DataListHeaderMenu__SortRow'}>
+            <button
+              type={'button'}
+              className={`DataListHeaderMenu__SortBtn${sortOrder === 'desc' ? ' DataListHeaderMenu__SortBtn--Active' : ''}`}
+              onClick={() => onSortChange('desc')}
+            >
+              High to low
+            </button>
+            <button
+              type={'button'}
+              className={`DataListHeaderMenu__SortBtn${sortOrder === 'asc' ? ' DataListHeaderMenu__SortBtn--Active' : ''}`}
+              onClick={() => onSortChange('asc')}
+            >
+              Low to high
+            </button>
+          </div>
+        </div>
+      ) : null}
       {filterType === 'search' && (
         <div className={'DataListHeaderMenu__Search'}>
           <input
@@ -135,7 +166,7 @@ export default function DataListHeaderMenu({
             type={'text'}
             value={typeof value === 'string' ? value : ''}
             placeholder={placeholder}
-            onChange={event => onChange(event.target.value)}
+            onChange={event => onChange?.(event.target.value)}
           />
         </div>
       )}
@@ -148,14 +179,14 @@ export default function DataListHeaderMenu({
             inputMode={'numeric'}
             placeholder={'Min'}
             value={rangeValue.min ?? ''}
-            onChange={event => onChange({ ...rangeValue, min: event.target.value })}
+            onChange={event => onChange?.({ ...rangeValue, min: event.target.value })}
           />
           <input
             type={'number'}
             inputMode={'numeric'}
             placeholder={'Max'}
             value={rangeValue.max ?? ''}
-            onChange={event => onChange({ ...rangeValue, max: event.target.value })}
+            onChange={event => onChange?.({ ...rangeValue, max: event.target.value })}
           />
         </div>
       )}
@@ -165,7 +196,7 @@ export default function DataListHeaderMenu({
           <DateRangeFilter
             compact={true}
             value={(value as DateRangeFilterValue | undefined) ?? { start: null, end: null }}
-            onChange={onChange}
+            onChange={next => onChange?.(next)}
           />
         </div>
       )}
@@ -195,7 +226,7 @@ export default function DataListHeaderMenu({
                 type={'button'}
                 key={option.value}
                 className={'DataListHeaderMenu__Item'}
-                title={option.label}
+                title={option.searchText ?? (typeof option.label === 'string' ? option.label : undefined)}
                 onClick={() => toggleOption(option.value)}
               >
                 <span className={'DataListHeaderMenu__Check'}>

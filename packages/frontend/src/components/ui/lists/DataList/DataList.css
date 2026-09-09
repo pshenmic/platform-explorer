@@ -18,16 +18,38 @@
   position: relative;
   z-index: 9;
 }
-.DataList__Title {
+.DataList__TitleRow {
+  display: flex;
   flex-shrink: 0;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  padding-right: 10px;
+  height: 24px;
+}
+.DataList__Title {
   margin: 0;
-  padding: 0 10px 0 0;
+  padding: 0;
   font-family: var(--pe-font-heading);
   font-size: var(--pe-text-sm);
   font-weight: 700;
   line-height: 24px;
   letter-spacing: 0.02em;
   color: var(--pe-color-white-50);
+}
+.DataList__Total {
+  font-family: var(--pe-font-heading);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  line-height: 24px;
+  letter-spacing: 0.04em;
+  color: var(--pe-color-gray-500);
+  font-variant-numeric: tabular-nums;
+}
+.DataList__TitleExtra {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
 }
 .DataList__FilterChips {
   display: flex;
@@ -105,6 +127,28 @@
   width: 100%;
   min-width: 0;
 }
+.DataList--fill {
+  display: flex;
+  flex-direction: column;
+  max-height: calc(100dvh - 10.5rem);
+  min-height: 0;
+}
+.DataList--fill .DataList__Scroll {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: auto;
+}
+.DataList--compactFirst .DataList__Scroll {
+  overflow-x: auto;
+  overflow-y: hidden;
+  touch-action: pan-x;
+  overscroll-behavior-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.DataList--compactFirst.DataList--overflowX .DataList__Scroll {
+  -webkit-mask-image: linear-gradient(to right, #000 0, #000 calc(100% - 28px), transparent 100%);
+  mask-image: linear-gradient(to right, #000 0, #000 calc(100% - 28px), transparent 100%);
+}
 .DataList__Table {
   width: 100%;
   border-collapse: separate;
@@ -144,8 +188,7 @@
 }
 .DataList__HeadCell {
   height: 32px;
-  padding: 6px 8px;
-  min-width: 0;
+  padding: 6px 12px;
   white-space: nowrap;
   font: inherit;
   color: inherit;
@@ -154,18 +197,19 @@
   box-sizing: border-box;
 }
 .DataList__Head .DataList__HeadCell:not(:first-child) {
-  box-shadow: inset 1px 0 0 rgba(255, 255, 255, 0.07);
+  box-shadow: none;
 }
 .DataList__HeadCellInner {
   display: flex;
   align-items: center;
-  gap: 4px;
-  min-width: 0;
+  gap: 8px;
   width: 100%;
+  min-width: max-content;
+  padding-right: 2px;
 }
 .DataList__HeadCellTitle {
-  flex: 1 1 auto;
-  min-width: 0;
+  flex: 0 0 auto;
+  white-space: nowrap;
 }
 .DataList__HeadMenuBtn {
   appearance: none;
@@ -208,7 +252,6 @@
 .DataList__HeadCell--right {
   text-align: right;
 }
-.DataList__HeadCell--right .DataList__HeadCellTitle,
 .DataList__HeadCell--right .DataList__HeadCell--Sortable {
   text-align: right;
 }
@@ -263,7 +306,7 @@
 }
 .DataList__Cell {
   height: 32px;
-  padding: 6px 8px;
+  padding: 6px 12px;
   min-width: 0;
   vertical-align: middle;
   white-space: nowrap;
@@ -291,7 +334,17 @@
   border-bottom-right-radius: var(--DataList-row-radius);
 }
 .DataList__Row > .DataList__Cell:not(:first-child) {
-  box-shadow: inset 1px 0 0 rgba(255, 255, 255, 0.07);
+  position: relative;
+}
+.DataList__Row > .DataList__Cell:not(:first-child)::before {
+  content: "";
+  position: absolute;
+  top: 8px;
+  bottom: 8px;
+  left: 0;
+  width: 1px;
+  pointer-events: none;
+  background: rgba(255, 255, 255, 0.07);
 }
 .DataList__Cell--center {
   text-align: center;
@@ -355,6 +408,15 @@
   line-height: 18px;
   padding: 0 0.5rem;
 }
+.DataList__CompactNum {
+  display: block;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
+}
 .DataList__Row--Timestamp,
 .DataList__Row__Column--Timestamp {
   font-family: var(--pe-font-mono);
@@ -380,6 +442,7 @@
   flex: 0 0 auto;
   width: 100%;
   min-width: 0;
+  box-sizing: border-box;
   overflow-x: hidden;
   overflow-y: hidden;
   scrollbar-width: none;
@@ -432,9 +495,8 @@
   transform: none;
   box-shadow: none;
 }
-.DataList--pinFirst .DataList__Head .DataList__HeadCell:nth-child(2),
-.DataList--pinFirst .DataList__Row > .DataList__Cell:nth-child(2) {
-  box-shadow: none;
+.DataList--pinFirst .DataList__Row > .DataList__Cell:nth-child(2)::before {
+  content: none;
 }
 .DataList--pinFirst .DataList__Cell:not(.DataList__Cell--pin) {
   position: relative;
@@ -450,13 +512,12 @@
   z-index: 3;
   background-color: rgb(38, 46, 50);
 }
-.DataList--pinFirst .DataList__HeadCell--pin::after,
 .DataList--pinFirst .DataList__Cell--pin::after {
   content: "";
   position: absolute;
-  top: 0;
+  top: 8px;
   right: 0;
-  bottom: 0;
+  bottom: 8px;
   width: 1px;
   pointer-events: none;
   background: rgba(255, 255, 255, 0.07);
@@ -478,7 +539,7 @@
   }
 }
 
-.DataList__Row--Rank1 > .DataList__Cell {
+.DataList__Row--Rank1 > .DataList__Cell:first-child {
   background-image: linear-gradient(90deg, rgba(255, 210, 5, 0.12) 0%, rgba(255, 210, 5, 0) 60%);
 }
 .DataList__Row--Rank1 > .DataList__Cell:first-child::before {
@@ -492,7 +553,7 @@
   background: #ffd205;
   opacity: 0.75;
 }
-.DataList__Row--Rank2 > .DataList__Cell {
+.DataList__Row--Rank2 > .DataList__Cell:first-child {
   background-image: linear-gradient(
     90deg,
     rgba(198, 202, 205, 0.12) 0%,
@@ -510,7 +571,7 @@
   background: #c6cacd;
   opacity: 0.75;
 }
-.DataList__Row--Rank3 > .DataList__Cell {
+.DataList__Row--Rank3 > .DataList__Cell:first-child {
   background-image: linear-gradient(90deg, rgba(244, 154, 88, 0.12) 0%, rgba(244, 154, 88, 0) 60%);
 }
 .DataList__Row--Rank3 > .DataList__Cell:first-child::before {
@@ -524,8 +585,8 @@
   background: #f49a58;
   opacity: 0.75;
 }
-.DataList__Row--Rank4 > .DataList__Cell,
-.DataList__Row--Rank5 > .DataList__Cell {
+.DataList__Row--Rank4 > .DataList__Cell:first-child,
+.DataList__Row--Rank5 > .DataList__Cell:first-child {
   background-image: linear-gradient(
     90deg,
     rgba(139, 147, 160, 0.12) 0%,
@@ -577,6 +638,34 @@
   gap: 0.4rem;
   min-width: 0;
   max-width: 100%;
+  overflow: hidden;
+}
+.DataList__Cell .Identifier,
+.DataList__Cell .Alias,
+.DataList__Entity .Identifier,
+.DataList__Entity .Alias {
+  min-width: 0;
+  max-width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+}
+.DataList__Entity .Identifier,
+.DataList__Entity .Alias {
+  flex: 1 1 auto;
+}
+.DataList__Cell .Identifier__SymbolsContainer,
+.DataList__Cell .Alias__SymbolsContainer {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.DataList__Cell .Identifier__Avatar,
+.DataList__Cell .Alias__Avatar,
+.DataList__Cell .Identifier__CopyButton,
+.DataList__Medal {
+  flex-shrink: 0;
 }
 .DataList__Skeleton {
   display: block;
@@ -755,15 +844,57 @@
 @media screen and (max-width: 48em) {
   .DataList__StatusRange {
     font-size: 0.625rem;
+    gap: 6px;
+  }
+  .DataList__LoadMore {
+    height: 20px;
+    padding: 0 6px;
+    font-size: 0.5625rem;
+    letter-spacing: 0.02em;
+  }
+  .DataList__LoadMoreRest {
+    display: none;
   }
   .DataList__ModeBtn {
     padding: 0 6px;
+  }
+  .DataList__PageNum {
+    min-width: 2.75rem;
+    font-size: 0.625rem;
   }
 }
 .DataList__Empty td {
   background: none;
   border: 0;
   padding: 12px 0;
+}
+.DataList--empty.DataList--pinFirst .DataList__BodyScroll,
+.DataList--empty .DataList__Scroll {
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.DataList--empty .EmptyListMessage {
+  padding: 1.5rem 1.25rem;
+  max-width: 18rem;
+  line-height: 1.45;
+}
+@media screen and (max-width: 48em) {
+  .DataList--empty.DataList--compactFirst {
+    min-height: calc(100dvh - var(--layout-nav-h) - 8rem);
+    display: flex;
+    flex-direction: column;
+  }
+  .DataList--empty.DataList--compactFirst .DataList__Scroll {
+    flex: 1 1 auto;
+    min-height: 12rem;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    touch-action: pan-y;
+  }
 }
 .DataList__Group {
   border-radius: var(--pe-radius-def);
