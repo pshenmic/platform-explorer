@@ -971,15 +971,6 @@ a.QuorumCard__HelpMark:hover {
 .QuorumCard__Cell--active .QuorumCard__CellIdx {
   color: var(--pe-color-green-label);
 }
-.QuorumCard__Cell.is-proposer {
-  --q-fill: var(--pe-color-brand-normal-rgb);
-  background-color: rgba(var(--q-fill), 0.32);
-  border-color: rgba(var(--pe-color-brand-light-rgb), 0.7);
-  z-index: 2;
-}
-.QuorumCard__Cell.is-proposer .QuorumCard__CellIdx {
-  color: var(--pe-color-brand-light);
-}
 .QuorumCard__Cell--next {
   --q-fill: var(--pe-color-yellow-default-rgb);
   background-color: rgba(var(--q-fill), 0.2);
@@ -1027,6 +1018,22 @@ a.QuorumCard__HelpMark:hover {
 .QuorumCard__Cell--idle {
   background-color: rgba(255, 255, 255, 0.06);
   cursor: default;
+}
+.QuorumCard__Cell.is-proposer,
+.QuorumCard__Cell--active.is-proposer,
+.QuorumCard__Cell--next.is-proposer,
+.QuorumCard__Cell--banned.is-proposer,
+.QuorumCard__Cell--invalid.is-proposer {
+  --q-fill: var(--pe-color-brand-normal-rgb);
+  background-color: rgba(var(--q-fill), 0.32);
+  border-style: solid;
+  border-color: rgba(var(--pe-color-brand-light-rgb), 0.7);
+  animation: none;
+  z-index: 2;
+}
+.QuorumCard__Cell.is-proposer .QuorumCard__CellIdx {
+  color: var(--pe-color-brand-light);
+  opacity: 1;
 }
 .QuorumCard__Cell.is-done:not(.is-proposer)::after {
   content: "";
@@ -1238,9 +1245,6 @@ a.QuorumCard__HelpMark:hover {
   color: var(--pe-color-gray-100);
   transition: color 0.4s ease;
 }
-.QuorumCard__Host.is-proposer {
-  background: rgba(var(--pe-color-brand-normal-rgb), 0.16);
-}
 .QuorumCard__HostFlag {
   width: 14px;
   height: 14px;
@@ -1272,6 +1276,12 @@ a.QuorumCard__HelpMark:hover {
 }
 .QuorumCard__Host--banned {
   background-color: rgba(var(--pe-color-red-default-rgb), 0.2);
+}
+.QuorumCard__Host.is-proposer,
+.QuorumCard__Host--active.is-proposer,
+.QuorumCard__Host--next.is-proposer,
+.QuorumCard__Host--banned.is-proposer {
+  background: rgba(var(--pe-color-brand-normal-rgb), 0.16);
 }
 .QuorumCard__Host:hover {
   filter: brightness(1.12);
