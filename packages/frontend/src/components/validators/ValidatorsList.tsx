@@ -1,18 +1,36 @@
 'use client'
 
+import type { ReactNode } from 'react'
 import type { Validator } from '../../types'
-import { DateBlock, Identifier, NotActive } from '../data'
+import { Identifier, NotActive, TimeDelta, BigNumber } from '../data'
+import { BlockIcon } from '../ui/icons'
 import { Badge } from '../ui/Badge'
 import { DataList } from '../ui/lists'
-import { ErrorMessageBlock } from '@components/Errors'
+import type { DataListProps } from '../ui/lists/DataList/DataList'
+import { ErrorMessageBlock } from '../Errors'
+
+const ACTIVE_OPTIONS = [
+  {
+    value: 'current',
+    label: <Badge colorScheme={'orange'}>Current</Badge>,
+    searchText: 'current active'
+  },
+  {
+    value: 'queued',
+    label: <Badge colorScheme={'gray'}>Queued</Badge>,
+    searchText: 'queued inactive'
+  }
+]
 
 export const ValidatorsListSceleton = ({ pageSize = 25 }: { pageSize?: number | string }) => (
   <DataList
     className={'ValidatorsList'}
     items={[]}
-    columns={validatorColumns()}
+    columns={validatorColumns(false)}
     loading
-    skeletonCount={String(pageSize).toLowerCase() === 'all' ? 50 : Number(pageSize) || 25}
+    pinFirst={true}
+    title={'Validators'}
+    skeletonCount={Number(pageSize) || 25}
   />
 )
 
@@ -21,20 +39,30 @@ interface ValidatorsListProps {
   list?: Validator[]
   pageSize?: number | string
   error?: boolean
+  filterValues?: Record<string, unknown>
+  onFilterChange?: (key: string, value: unknown) => void
+  paging?: DataListProps['paging']
+  title?: ReactNode
+  pinFirst?: boolean
 }
 
-function validatorColumns() {
+function validatorColumns(canFilter: boolean) {
   return [
     {
       key: 'identifier',
-      header: 'Identifier',
+      header: 'Validator',
+      filterKey: canFilter ? 'identifier' : undefined,
+      filterType: canFilter ? ('search' as const) : undefined,
+      filterPlaceholder: 'ProTxHash, identity or block hash',
       grow: true,
-      minWidth: 160,
+      minWidth: 176,
       cell: (validator: Validator) =>
         validator?.proTxHash ? (
-          <Identifier avatar={true} copyButton={true} styles={['highlight-both']}>
-            {validator.proTxHash}
-          </Identifier>
+          <span className={'DataList__Entity'}>
+            <Identifier avatar={true} copyButton={true} ellipsis={true}>
+              {validator.proTxHash}
+            </Identifier>
+          </span>
         ) : (
           <NotActive />
         )
@@ -42,13 +70,14 @@ function validatorColumns() {
     {
       key: 'active',
       header: 'Active',
-      minWidth: 80,
-      align: 'center',
-      priority: 2,
+      filterKey: canFilter ? 'isActive' : undefined,
+      filterType: canFilter ? ('options' as const) : undefined,
+      filterOptions: ACTIVE_OPTIONS,
+      minWidth: 108,
       cell: (validator: Validator) =>
-        validator?.isActive !== undefined ? (
-          <Badge colorScheme={validator?.isActive ? 'orange' : 'gray'}>
-            {validator?.isActive ? 'true' : 'false'}
+        validator?.isActive != null ? (
+          <Badge colorScheme={validator.isActive ? 'orange' : 'gray'}>
+            {validator.isActive ? 'Current' : 'Queued'}
           </Badge>
         ) : (
           <NotActive />
@@ -56,36 +85,72 @@ function validatorColumns() {
     },
     {
       key: 'lastBlockHeight',
-      header: 'Last block height',
-      minWidth: 110,
-      align: 'center',
+      header: 'Last height',
+      filterKey: canFilter ? 'last_proposed_block_height' : undefined,
+      filterType: canFilter ? ('range' as const) : undefined,
+      minWidth: 128,
       priority: 1,
-      cell: (validator: Validator) => validator?.lastProposedBlockHeader?.height || '-'
+      cell: (validator: Validator) => {
+        const height = validator?.lastProposedBlockHeader?.height
+        if (height == null) return <NotActive>—</NotActive>
+        return (
+          <span className={'DataList__Entity'}>
+            <BlockIcon w={'1.125rem'} h={'1.125rem'} mr={'0.5rem'} />
+            {height}
+          </span>
+        )
+      }
     },
     {
       key: 'proposedBlocksAmount',
       header: 'Blocks proposed',
-      minWidth: 110,
+      filterKey: canFilter ? 'blocks_proposed' : undefined,
+      filterType: canFilter ? ('range' as const) : undefined,
+      minWidth: 120,
       align: 'center',
       priority: 1,
-      cell: (validator: Validator) => validator?.proposedBlocksAmount || '-'
+      cell: (validator: Validator) => {
+        const n = Number(validator?.proposedBlocksAmount)
+        if (!Number.isFinite(n)) return <NotActive>—</NotActive>
+        return (
+          <Badge colorScheme={n > 0 ? 'gray' : 'dimGray'} size={'xs'}>
+            <BigNumber>{String(n)}</BigNumber>
+          </Badge>
+        )
+      }
     },
     {
       key: 'timestamp',
       header: 'Timestamp',
-      minWidth: 120,
+      filterKey: canFilter ? 'timestamp' : undefined,
+      filterType: canFilter ? ('daterange' as const) : undefined,
+      minWidth: 128,
       align: 'right',
-      cell: (validator: Validator) => (
-        <DateBlock
-          timestamp={validator.lastProposedBlockHeader?.timestamp}
-          format="dateOnly"
-        />
-      )
+      cell: (validator: Validator) => {
+        const ts = validator.lastProposedBlockHeader?.timestamp
+        return ts ? (
+          <TimeDelta showTimestampTooltip={true} endDate={new Date(ts)} />
+        ) : (
+          <NotActive />
+        )
+      }
     }
   ]
 }
 
-export const ValidatorsList = ({ loading, list, pageSize, error }: ValidatorsListProps) => {
+export const ValidatorsList = ({
+  loading,
+  list,
+  pageSize,
+  error,
+  filterValues,
+  onFilterChange,
+  paging,
+  title,
+  pinFirst = false
+}: ValidatorsListProps) => {
+  const canFilter = Boolean(onFilterChange)
+
   if (error) {
     return (
       <div className={'ListPage__Error'}>
@@ -98,12 +163,21 @@ export const ValidatorsList = ({ loading, list, pageSize, error }: ValidatorsLis
     <DataList
       className={'ValidatorsList'}
       items={list || []}
-      columns={validatorColumns()}
+      columns={validatorColumns(canFilter)}
       loading={loading}
-      skeletonCount={String(pageSize).toLowerCase() === 'all' ? 50 : Number(pageSize) || 25}
+      skeletonCount={Number(pageSize) || 25}
+      pinFirst={pinFirst}
       rowHref={validator => `/validator/${validator.proTxHash}`}
       rowKey={validator => validator.proTxHash || ''}
-      emptyMessage={'There are no validators yet.'}
+      emptyMessage={
+        filterValues && Object.keys(filterValues).length
+          ? 'No validators match these filters.'
+          : 'There are no validators yet.'
+      }
+      filterValues={filterValues}
+      onFilterChange={onFilterChange}
+      paging={paging}
+      title={title}
     />
   )
 }

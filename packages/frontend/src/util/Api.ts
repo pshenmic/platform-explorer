@@ -607,8 +607,6 @@ const getIdentities = (
     limit,
     order: filters?.order ?? order,
     order_by: filters?.order_by ?? orderBy,
-    // includeMasternodes=true (Show all toggle on) → omit identity_type so backend returns everything
-    // includeMasternodes=false (default) → request only regular identities
     identity_type: filters?.identity_type ?? (includeMasternodes ? null : 'regular'),
     balance_min: filters?.balance_min,
     balance_max: filters?.balance_max,
@@ -698,7 +696,6 @@ const getValidators = (
     page: Math.max(1, Number(page)),
     limit: Math.max(1, Number(limit)),
     order,
-    // order_by: orderBy,
     ...filters
   })
 
