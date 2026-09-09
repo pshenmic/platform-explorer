@@ -24,7 +24,6 @@ import './DataList.css'
 const GAP = 16
 const DEFAULT_SKELETON_ROWS = 8
 const ROW_STRIDE = 38
-const SKELETON_DELAY_MS = 180
 const APPEND_SKELETON_ROWS = 4
 
 export interface DataListColumn<T = any> {
@@ -63,6 +62,7 @@ export interface DataListProps<T = any> {
   sortDefault?: { order_by: string; order: string }
   onSortChange?: (sort: { order_by: string; order: string }) => void
   pinFirst?: boolean
+  fit?: 'page' | 'feed'
   filterValues?: Record<string, unknown>
   onFilterChange?: (key: string, value: unknown) => void
   title?: ReactNode
@@ -99,17 +99,26 @@ function headerMinWidth<T>(column: DataListColumn<T>) {
   return label + HEAD_PAD_PX + menu
 }
 
-function columnFloor<T>(column: DataListColumn<T>) {
+function columnFloor<T>(column: DataListColumn<T>, feed: boolean) {
+  if (feed) {
+    const sortPad = column.sortKey ? 16 : 0
+    return Math.max(column.minWidth || 0, sortPad)
+  }
   return Math.max(COMPACT_FIRST_FLOOR, headerMinWidth(column))
 }
 
-function minTableWidth<T>(cols: DataListColumn<T>[]) {
-  return cols.reduce((sum, column) => sum + columnFloor(column), 0)
+function minTableWidth<T>(cols: DataListColumn<T>[], feed: boolean) {
+  return cols.reduce((sum, column) => sum + columnFloor(column, feed), 0)
 }
 
-function colStyle<T>(column: DataListColumn<T>): CSSProperties {
-  const floor = columnFloor(column)
-  if (column.grow) return { width: 'auto', minWidth: `${floor}px` }
+function colStyle<T>(column: DataListColumn<T>, feed: boolean): CSSProperties {
+  const floor = columnFloor(column, feed)
+  if (column.grow) {
+    return { width: 'auto', minWidth: feed ? `${column.minWidth || 0}px` : `${floor}px` }
+  }
+  if (feed) {
+    return { width: `${floor}px`, minWidth: `${floor}px` }
+  }
   if (column.maxWidth) {
     return { width: `${floor}px`, minWidth: `${floor}px`, maxWidth: `${column.maxWidth}px` }
   }
@@ -254,6 +263,7 @@ export default function DataList<T = any>({
   sortDefault,
   onSortChange,
   pinFirst = false,
+  fit = 'page',
   filterValues = {},
   onFilterChange,
   title,
@@ -262,19 +272,20 @@ export default function DataList<T = any>({
 }: DataListProps<T>) {
   const wrapRef = useRef<HTMLDivElement | null>(null)
   const scrollRef = useRef<HTMLDivElement | null>(null)
-  const sentinelRef = useRef<HTMLTableRowElement | null>(null)
+  const sentinelRef = useRef<HTMLDivElement | null>(null)
   const [width, setWidth] = useState(0)
   const [canScrollEnd, setCanScrollEnd] = useState(false)
   const [overflowX, setOverflowX] = useState(false)
-  const [fillRows, setFillRows] = useState(skeletonCount)
+  const [fillRows, setFillRows] = useState(() =>
+    Math.max(skeletonCount, paging?.pageSize || 0)
+  )
   const [openMenu, setOpenMenu] = useState<{ key: string; anchor: DOMRect } | null>(null)
-  const [showReplaceSkeleton, setShowReplaceSkeleton] = useState(false)
   const router = useRouter()
   useResizeObserver(wrapRef as RefObject<HTMLElement>, entry => setWidth(entry.contentRect.width))
 
   useEffect(() => {
     const el = scrollRef.current
-    if (!el || width <= COMPACT_FIRST_MAX) return
+    if (!el || fit === 'feed' || width <= COMPACT_FIRST_MAX) return
     const onWheel = (event: WheelEvent) => {
       const canScrollY = el.scrollHeight > el.clientHeight + 1
       if (canScrollY) return
@@ -284,7 +295,7 @@ export default function DataList<T = any>({
     }
     el.addEventListener('wheel', onWheel, { passive: false })
     return () => el.removeEventListener('wheel', onWheel)
-  }, [pinFirst, items.length, loading, width])
+  }, [pinFirst, fit, items.length, loading, width])
 
   useEffect(() => {
     const body = scrollRef.current
@@ -298,13 +309,19 @@ export default function DataList<T = any>({
       const hasX = max > 1
       setOverflowX(hasX)
       setCanScrollEnd(hasX && body.scrollLeft < max - 8)
+      if (fit === 'feed') return
       if (width > 0 && width <= COMPACT_FIRST_MAX) {
-        setFillRows(skeletonCount)
+        setFillRows(Math.max(skeletonCount, paging?.pageSize || 0))
         return
       }
       const h = body.clientHeight
       if (h > 8) {
-        setFillRows(Math.min(48, Math.max(skeletonCount, Math.floor((h + 6) / ROW_STRIDE))))
+        setFillRows(
+          Math.min(
+            48,
+            Math.max(skeletonCount, paging?.pageSize || 0, Math.floor((h + 6) / ROW_STRIDE))
+          )
+        )
       }
     }
     updateFade()
@@ -315,26 +332,14 @@ export default function DataList<T = any>({
       body.removeEventListener('scroll', updateFade)
       ro.disconnect()
     }
-  }, [pinFirst, items.length, loading, width, skeletonCount])
+  }, [pinFirst, fit, items.length, loading, width, skeletonCount, paging?.pageSize])
 
   const replacePending = Boolean(loading && (items.length === 0 || paging?.mode === 'pages'))
-  useEffect(() => {
-    if (!replacePending) {
-      setShowReplaceSkeleton(false)
-      return
-    }
-    if (items.length === 0) {
-      setShowReplaceSkeleton(true)
-      return
-    }
-    const id = window.setTimeout(() => setShowReplaceSkeleton(true), SKELETON_DELAY_MS)
-    return () => window.clearTimeout(id)
-  }, [replacePending, items.length])
-
-  const compactFirst = width > 0 && width <= COMPACT_FIRST_MAX
-  const fillList = pinFirst && !compactFirst
-  const cols = visibleColumns(columns, width, !pinFirst && !compactFirst)
-  const tableMinWidth = minTableWidth(cols)
+  const isFeed = fit === 'feed'
+  const compactFirst = !isFeed && width > 0 && width <= COMPACT_FIRST_MAX
+  const fillList = pinFirst && !isFeed
+  const cols = visibleColumns(columns, width, !isFeed && !pinFirst && !compactFirst)
+  const tableMinWidth = minTableWidth(cols, isFeed)
 
   const openRow = (event: MouseEvent, href?: string) => {
     if (!href || isInteractiveTarget(event.target)) return
@@ -358,7 +363,7 @@ export default function DataList<T = any>({
   const renderColGroup = () => (
     <colgroup>
       {cols.map(c => (
-        <col key={c.key} style={colStyle(c)} />
+        <col key={c.key} style={colStyle(c, isFeed)} />
       ))}
     </colgroup>
   )
@@ -387,16 +392,17 @@ export default function DataList<T = any>({
       </thead>
     ) : null
 
-  const replaceSkeletonCount = pinFirst
-    ? fillRows
-    : Math.max(1, paging?.pageSize || skeletonCount)
+  const replaceSkeletonCount =
+    fillList && !compactFirst
+      ? fillRows
+      : Math.max(1, paging?.pageSize || skeletonCount)
   const renderSkeletonRows = (count: number, prefix: string) =>
     Array.from({ length: count }).map((_, i) => (
       <tr key={`${prefix}-${i}`} className={'DataList__Row DataList__Row--Skeleton'}>
         {renderCells(undefined, i, true)}
       </tr>
     ))
-  const replaceSkeleton = showReplaceSkeleton && replacePending
+  const replaceSkeleton = replacePending
   const appendSkeleton = Boolean(paging?.mode === 'continuous' && paging.loadingMore)
 
   const bodyRows = (
@@ -446,17 +452,12 @@ export default function DataList<T = any>({
             )
           })}
           {appendSkeleton ? renderSkeletonRows(APPEND_SKELETON_ROWS, 'more') : null}
-          {paging?.mode === 'continuous' && (paging.hasMore ?? items.length < paging.total) ? (
-            <tr ref={sentinelRef} className={'DataList__Sentinel'}>
-              <td colSpan={Math.max(cols.length, 1)} />
-            </tr>
-          ) : null}
         </>
       )}
     </tbody>
   )
 
-  const tableStyle = { minWidth: tableMinWidth }
+  const tableStyle = isFeed ? undefined : { minWidth: tableMinWidth }
   const isEmpty = !loading && items.length === 0 && !replacePending
   const showCenteredEmpty = compactFirst && isEmpty
   const canFilter = Boolean(onFilterChange && cols.some(column => column.filterKey))
@@ -479,7 +480,7 @@ export default function DataList<T = any>({
   return (
     <div
       ref={wrapRef}
-      className={`DataList ${fillList ? 'DataList--fill' : ''} ${compactFirst ? 'DataList--compactFirst' : ''} ${showCenteredEmpty ? 'DataList--empty' : ''} ${loading || paging?.loadingMore ? 'DataList--loading' : ''} ${overflowX && !showCenteredEmpty ? 'DataList--overflowX' : ''} ${canScrollEnd && !showCenteredEmpty ? 'DataList--fadeEnd' : ''} ${className}`.trim()}
+      className={`DataList ${fillList ? 'DataList--fill' : ''} ${compactFirst ? 'DataList--compactFirst' : ''} ${isFeed ? 'DataList--feed' : ''} ${showCenteredEmpty ? 'DataList--empty' : ''} ${loading || paging?.loadingMore ? 'DataList--loading' : ''} ${overflowX && !showCenteredEmpty && !isFeed ? 'DataList--overflowX' : ''} ${canScrollEnd && !showCenteredEmpty && !isFeed ? 'DataList--fadeEnd' : ''} ${className}`.trim()}
       aria-busy={loading || paging?.loadingMore ? true : undefined}
       {...wrapperProps}
     >
@@ -554,11 +555,17 @@ export default function DataList<T = any>({
         {showCenteredEmpty ? (
           <EmptyListMessage>{emptyMessage}</EmptyListMessage>
         ) : (
-          <table className={'DataList__Table'} style={tableStyle}>
-            {renderColGroup()}
-            {headerRow}
-            {bodyRows}
-          </table>
+          <>
+            <table className={'DataList__Table'} style={tableStyle}>
+              {renderColGroup()}
+              {headerRow}
+              {bodyRows}
+            </table>
+            {paging?.mode === 'continuous' &&
+            (paging.hasMore ?? items.length < paging.total) ? (
+              <div ref={sentinelRef} className={'DataList__Sentinel'} />
+            ) : null}
+          </>
         )}
       </div>
 

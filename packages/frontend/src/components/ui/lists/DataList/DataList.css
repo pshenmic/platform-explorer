@@ -130,6 +130,7 @@
 .DataList--fill {
   display: flex;
   flex-direction: column;
+  height: 100%;
   max-height: calc(100dvh - 10.5rem);
   min-height: 0;
 }
@@ -138,15 +139,78 @@
   min-height: 0;
   overflow: auto;
 }
+.DataList--fill .DataList__StatusBar {
+  margin-top: 12px;
+}
 .DataList--compactFirst .DataList__Scroll {
   overflow-x: auto;
-  overflow-y: clip;
+  overflow-y: visible;
   touch-action: pan-x pan-y;
   overscroll-behavior-x: contain;
+}
+@media screen and (max-width: 48em) {
+  .DataList--fill.DataList--compactFirst {
+    height: auto;
+    max-height: none;
+    min-height: 0;
+    flex: 0 0 auto;
+  }
+  .DataList--fill.DataList--compactFirst .DataList__Scroll {
+    flex: 0 0 auto;
+    overflow-x: auto;
+    overflow-y: visible;
+  }
 }
 .DataList--compactFirst.DataList--overflowX .DataList__Scroll {
   -webkit-mask-image: linear-gradient(to right, #000 0, #000 calc(100% - 28px), transparent 100%);
   mask-image: linear-gradient(to right, #000 0, #000 calc(100% - 28px), transparent 100%);
+}
+.DataList--feed {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  max-width: 100%;
+}
+.DataList--feed .DataList__Scroll {
+  overflow: visible;
+  min-width: 0;
+}
+.DataList--feed .DataList__Table {
+  width: 100%;
+  min-width: 0;
+}
+.DataList--feed .DataList__Head {
+  font-family: var(--pe-font-mono);
+  font-weight: 600;
+  font-size: 0.5625rem;
+  letter-spacing: 0.14em;
+  color: var(--pe-color-gray-500);
+}
+.DataList--feed .DataList__Head .DataList__HeadCell {
+  background: transparent;
+  height: auto;
+  padding: 4px 8px;
+}
+.DataList--feed .DataList__Head .DataList__HeadCell:first-child,
+.DataList--feed .DataList__Head .DataList__HeadCell:last-child {
+  border-radius: 0;
+}
+.DataList--feed .DataList__HeadCellInner {
+  min-width: 0;
+  gap: 4px;
+}
+.DataList--feed .DataList__Cell {
+  padding: 6px 8px;
+}
+.DataList--feed .DataList__Row > .DataList__Cell:first-child {
+  padding-left: 10px;
+}
+.DataList--feed .DataList__Row > .DataList__Cell:last-child {
+  padding-right: 10px;
+}
+.DataList--feed .DataList__Footer {
+  width: 100%;
+  min-width: 0;
 }
 .DataList__Table {
   width: 100%;
@@ -705,16 +769,16 @@
   display: flex;
   flex-shrink: 0;
   align-items: center;
+  justify-content: space-between;
   gap: 8px;
   box-sizing: border-box;
   height: 24px;
-  margin-top: 6px;
+  margin-top: 12px;
   min-width: 0;
   width: 100%;
 }
 .DataList__StatusRange {
   display: flex;
-  flex: 1 1 auto;
   align-items: center;
   gap: 8px;
   min-width: 0;
@@ -782,13 +846,15 @@
   cursor: default;
 }
 .DataList__PageNum {
-  min-width: 3.5rem;
+  min-width: 0;
+  padding: 0 4px;
   text-align: center;
   color: var(--pe-color-gray-300);
   font-family: var(--pe-font-heading);
   font-size: 0.6875rem;
   font-weight: 600;
   font-variant-numeric: tabular-nums;
+  white-space: nowrap;
 }
 .DataList__ModeSwitch {
   display: flex;
@@ -819,12 +885,11 @@
   background: rgba(var(--pe-color-brand-normal-rgb), 0.2);
   color: var(--pe-color-brand-light);
 }
-.DataList__Sentinel td {
-  background: none;
-  border: 0;
-  height: 20px;
-  padding: 4px 0 0;
-  text-align: center;
+.DataList__Sentinel {
+  height: 1px;
+  margin: 0;
+  padding: 0;
+  pointer-events: none;
 }
 .DataList__MoreSpinner {
   display: inline-block;
@@ -841,24 +906,24 @@
   }
 }
 @media screen and (max-width: 48em) {
+  .DataList--fill .DataList__StatusBar,
+  .DataList__StatusBar {
+    margin-top: 12px;
+  }
   .DataList__StatusRange {
     font-size: 0.625rem;
     gap: 6px;
   }
   .DataList__LoadMore {
     height: 20px;
-    padding: 0 6px;
-    font-size: 0.5625rem;
+    padding: 0 8px;
+    font-size: 0.625rem;
     letter-spacing: 0.02em;
-  }
-  .DataList__LoadMoreRest {
-    display: none;
   }
   .DataList__ModeBtn {
     padding: 0 6px;
   }
   .DataList__PageNum {
-    min-width: 2.75rem;
     font-size: 0.625rem;
   }
 }

@@ -18,10 +18,6 @@ export type DataListPagingConfig = {
   hasMore?: boolean
 }
 
-function formatCount(value: number) {
-  return value.toLocaleString('en-US')
-}
-
 export function DataListPagingBar({
   paging,
   itemCount,
@@ -33,7 +29,7 @@ export function DataListPagingBar({
   paging: DataListPagingConfig
   itemCount: number
   scrollRef: RefObject<HTMLDivElement | null>
-  sentinelRef: RefObject<HTMLTableRowElement | null>
+  sentinelRef: RefObject<HTMLDivElement | null>
   loading: boolean
   pageScroll?: boolean
 }) {
@@ -71,39 +67,17 @@ export function DataListPagingBar({
         onLoadMoreRef.current()
         setAutoLeft(n => Math.max(0, n - 1))
       },
-      { root, rootMargin: pageScroll ? '320px' : '200px', threshold: 0 }
+      { root, rootMargin: pageScroll ? '80px' : '200px', threshold: 0 }
     )
     observer.observe(sentinel)
     return () => observer.disconnect()
   }, [continuous, loadingMore, loading, autoLeft, hasMore, scrollRef, sentinelRef, pageScroll])
 
   const pageCount = Math.max(1, Math.ceil((total || 0) / Math.max(1, pageSize)))
-  const rangeFrom = mode === 'pages' ? (total === 0 ? 0 : page * pageSize + 1) : itemCount ? 1 : 0
-  const rangeTo = mode === 'pages' ? Math.min((page + 1) * pageSize, total) : itemCount
-  const showLoadMore = continuous && hasMore && autoLeft <= 0 && !loadingMore
+  const showLoadMore = continuous && hasMore && !loadingMore && autoLeft <= 0
 
   return (
     <div className={'DataList__StatusBar'}>
-      <div className={'DataList__StatusRange'}>
-        {total > 0
-          ? `${formatCount(rangeFrom)}–${formatCount(rangeTo)} of ${formatCount(total)}`
-          : '0'}
-        {showLoadMore ? (
-          <button
-            type={'button'}
-            className={'DataList__LoadMore'}
-            onClick={() => {
-              paging.onLoadMore()
-              setAutoLeft(AUTO_LOAD_PAGES)
-            }}
-          >
-            Load<span className={'DataList__LoadMoreRest'}> more</span>
-          </button>
-        ) : null}
-        {continuous && !hasMore && itemCount > 0 ? (
-          <span className={'DataList__StatusHint'}>End</span>
-        ) : null}
-      </div>
       {mode === 'pages' ? (
         <div className={'DataList__PageSwitch'}>
           <button
@@ -129,7 +103,24 @@ export function DataListPagingBar({
           </button>
         </div>
       ) : (
-        <span />
+        <div className={'DataList__StatusRange'}>
+          {showLoadMore ? (
+            <button
+              type={'button'}
+              className={'DataList__LoadMore'}
+              onClick={() => {
+                if (loadLock.current) return
+                loadLock.current = true
+                paging.onLoadMore()
+              }}
+            >
+              Load<span className={'DataList__LoadMoreRest'}> more</span>
+            </button>
+          ) : null}
+          {continuous && !hasMore && itemCount > 0 ? (
+            <span className={'DataList__StatusHint'}>End</span>
+          ) : null}
+        </div>
       )}
       <div className={'DataList__ModeSwitch'} role={'group'} aria-label={'List view'}>
         <button
