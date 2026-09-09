@@ -736,7 +736,10 @@ export default function QuorumCard({
       const k = memberKey(v?.proTxHash)
       if (k && !byKey.has(k)) byKey.set(k, v)
     }
-    return windowKeys.map((k, i) => {
+    const selectedOrder = windowKeys
+    const selectedSet = new Set(selectedOrder)
+    const queuedKeys = listKeys.filter(k => !selectedSet.has(k))
+    return [...selectedOrder, ...queuedKeys].map((k, i) => {
       const v = byKey.get(k)
       const painted = paintPoolNode(
         k,
@@ -782,6 +785,7 @@ export default function QuorumCard({
     filling,
     poolLoading,
     windowKeys,
+    listKeys,
     list,
     bannedValidatorsList,
     rosterIndex,
