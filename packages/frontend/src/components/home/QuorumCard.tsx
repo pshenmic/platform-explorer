@@ -946,7 +946,19 @@ export default function QuorumCard({
         </div>
         <div className={'QuorumCard__HeadBottom'}>
           <p className={'QuorumCard__Lede'}>
-            <span className={'QuorumCard__LedeLine'}>Evonodes are grouped in quorums</span>
+            <span className={'QuorumCard__LedeLine'}>
+              <a
+                className={'QuorumCard__HelpMark'}
+                href={
+                  'https://docs.dash.org/en/stable/docs/user/masternodes/understanding.html#evolution-masternodes-evonodes'
+                }
+                target={'_blank'}
+                rel={'noreferrer'}
+              >
+                Evonodes
+              </a>{' '}
+              are grouped in quorums
+            </span>
             <span className={'QuorumCard__LedeLine'}>and they take turns in proposing blocks</span>
             <span className={'QuorumCard__LegendsSlot'}>
               <Tooltip
@@ -1021,7 +1033,6 @@ export default function QuorumCard({
                           aria-hidden={'true'}
                         />
                         <span>
-                          Can still sit here: the set is built first, a{' '}
                           <a
                             className={'QuorumCard__HelpMark'}
                             href={'https://docs.dash.org/en/stable/docs/core/dips/dip-0003.html'}
@@ -1029,9 +1040,9 @@ export default function QuorumCard({
                             rel={'noreferrer'}
                             onClick={e => e.stopPropagation()}
                           >
-                            ban
+                            Banned
                           </a>{' '}
-                          can land after
+                          nodes
                         </span>
                       </li>
                     </ul>
