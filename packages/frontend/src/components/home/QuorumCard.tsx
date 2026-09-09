@@ -135,6 +135,10 @@ function memberKeysInCoreOrder(members: any) {
   return keys
 }
 
+function sortProTxKeys(keys: string[]) {
+  return [...keys].sort((a, b) => a.localeCompare(b))
+}
+
 function quorumKey(hash: unknown) {
   return typeof hash === 'string' && hash.length ? hash.toUpperCase() : ''
 }
@@ -173,7 +177,7 @@ function paintPoolNode(
 function hostMatches(row: any, query: string) {
   const s = query.trim().toLowerCase()
   if (!s) return true
-  if (String(row.homeIndex ?? '').includes(s)) return true
+  if (String(row.homeIndex ?? '').includes(s.replace(/^#/, ''))) return true
   if (typeof row.host === 'string' && row.host.toLowerCase().includes(s)) return true
   const proTx = typeof row.proTxHash === 'string' ? row.proTxHash.toLowerCase() : ''
   return proTx.includes(s.replace(/^0x/, ''))
@@ -181,7 +185,8 @@ function hostMatches(row: any, query: string) {
 
 function RollingIdx({ value }: { value: number }) {
   const n = useCountUp(value, 500, true)
-  return <span className={'QuorumCard__CellIdx'}>{typeof n === 'number' ? n : value}</span>
+  const shown = typeof n === 'number' ? n : value
+  return <span className={'QuorumCard__CellIdx'}>#{shown}</span>
 }
 
 function HostSearch({ value, onChange }: { value: string; onChange: (next: string) => void }) {
@@ -222,7 +227,7 @@ function HostButton({
       }
       onClick={() => onClick(row.proTxHash)}
     >
-      <span className={'QuorumCard__HostIdx'}>{index}</span>
+      <span className={'QuorumCard__HostIdx'}>{index > 0 ? `#${index}` : ''}</span>
       {row.cc ? (
         <Image
           className={'QuorumCard__HostFlag'}
@@ -350,6 +355,8 @@ export default function QuorumCard({
   const [loadAllDetails, setLoadAllDetails] = useState(false)
   const pickRef = useRef<HTMLDivElement | null>(null)
   const hostsRef = useRef<HTMLDivElement | null>(null)
+  const nodeNumberRef = useRef(new Map<string, number>())
+  const nextNodeNumberRef = useRef(1)
 
   const total = validators?.data?.pagination?.total
 
@@ -574,27 +581,36 @@ export default function QuorumCard({
 
   const liveSeedKeys = useMemo(() => {
     const live = sortedQuorumsWithMembers.find(q => quorumKey(q.quorumHash) === liveKey)
-    return memberKeysInCoreOrder(live?.members ?? currentMembers)
+    return sortProTxKeys(memberKeysInCoreOrder(live?.members ?? currentMembers))
   }, [sortedQuorumsWithMembers, liveKey, currentMembers])
 
   const listKeys = useMemo(() => {
     if (filling) return []
     const seen = new Set<string>()
-    const keys: string[] = []
-    const push = (k: string, allowBanned: boolean) => {
+    const rest: string[] = []
+    const pushRest = (k: string, allowBanned: boolean) => {
       if (!k || seen.has(k)) return
       if (!allowBanned && bannedSet.has(k)) return
       seen.add(k)
-      keys.push(k)
+      rest.push(k)
     }
-    for (const k of liveSeedKeys) push(k, true)
-    for (const k of windowKeys) push(k, true)
-    for (const v of list) push(memberKey(v.proTxHash), false)
+    for (const k of liveSeedKeys) seen.add(k)
+    for (const k of windowKeys) pushRest(k, true)
+    for (const v of list) pushRest(memberKey(v.proTxHash), false)
     for (const set of rosterIndex.membersOf.values()) {
-      for (const k of set) push(k, false)
+      for (const k of set) pushRest(k, false)
     }
-    return keys
+    return [...liveSeedKeys.filter(Boolean), ...sortProTxKeys(rest)]
   }, [filling, liveSeedKeys, windowKeys, list, rosterIndex, bannedSet])
+
+  const nodeNumberByKey = useMemo(() => {
+    const map = nodeNumberRef.current
+    if (filling) return new Map(map)
+    for (const k of listKeys) {
+      if (k && !map.has(k)) map.set(k, nextNodeNumberRef.current++)
+    }
+    return new Map(map)
+  }, [filling, listKeys])
 
   const homeCells = useMemo((): any[] => {
     if (filling) {
@@ -614,7 +630,7 @@ export default function QuorumCard({
       const k = memberKey(v?.proTxHash)
       if (k && !byKey.has(k)) byKey.set(k, v)
     }
-    return windowKeys.map((k, i) => {
+    const cells = windowKeys.map(k => {
       const v = byKey.get(k)
       const painted = paintPoolNode(
         k,
@@ -629,13 +645,15 @@ export default function QuorumCard({
         type: painted.type,
         role: painted.role,
         band: painted.band,
-        homeIndex: i + 1,
+        homeIndex: nodeNumberByKey.get(k) ?? null,
         proTxHash: v?.proTxHash || k,
         service: meta?.service || v?.proTxInfo?.state?.service || v?.endpoints?.[0] || null,
         valid: meta ? meta.valid !== false : true,
         validator: v || { proTxHash: k }
       }
     })
+    cells.sort((a, b) => (a.homeIndex ?? 0) - (b.homeIndex ?? 0))
+    return cells
   }, [
     filling,
     windowKeys,
@@ -644,6 +662,7 @@ export default function QuorumCard({
     rosterIndex,
     prevKey,
     selectedMemberSet,
+    nodeNumberByKey,
     bannedSet,
     bannedValidatorsList
   ])
@@ -736,10 +755,7 @@ export default function QuorumCard({
       const k = memberKey(v?.proTxHash)
       if (k && !byKey.has(k)) byKey.set(k, v)
     }
-    const selectedOrder = windowKeys
-    const selectedSet = new Set(selectedOrder)
-    const queuedKeys = listKeys.filter(k => !selectedSet.has(k))
-    return [...selectedOrder, ...queuedKeys].map((k, i) => {
+    const rows = listKeys.map(k => {
       const v = byKey.get(k)
       const painted = paintPoolNode(
         k,
@@ -778,13 +794,14 @@ export default function QuorumCard({
         geoPending: Boolean(poolLoading && !cc),
         inPinned: selectedMemberSet.has(k),
         isFocus: Boolean(focusKey && focusKey === k),
-        homeIndex: i + 1
+        homeIndex: nodeNumberByKey.get(k) ?? null
       }
     })
+    rows.sort((a, b) => (a.homeIndex ?? 0) - (b.homeIndex ?? 0))
+    return rows
   }, [
     filling,
     poolLoading,
-    windowKeys,
     listKeys,
     list,
     bannedValidatorsList,
@@ -793,6 +810,7 @@ export default function QuorumCard({
     selectedMemberSet,
     memberMeta,
     bannedSet,
+    nodeNumberByKey,
     focusKey
   ])
 
