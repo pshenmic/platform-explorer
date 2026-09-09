@@ -57,8 +57,11 @@ module.exports = class PlatformAddressesDAO {
       .with('address_subquery', addressSubquery)
       .with('unique_transitions', unionTransitions)
       .select('address as base58_address', 'bech32m_address')
-      .select('txs_count.total_txs as total_txs', 'txs_count.incoming_txs as incoming_txs', 'txs_count.outgoing_txs as outgoing_txs',
-        'txs_count.total_incoming_amount as total_incoming_amount', 'txs_count.total_outgoing_amount as total_outgoing_amount')
+      .select('txs_count.total_txs as total_txs', 'txs_count.incoming_txs as incoming_txs', 'txs_count.outgoing_txs as outgoing_txs')
+      // an address with nothing on one side of the ledger has moved zero credits there, and the
+      // join misses it entirely when it has no transitions at all, so both are a 0 rather than a null
+      .select(this.knex.raw('COALESCE(txs_count.total_incoming_amount, 0) as total_incoming_amount'))
+      .select(this.knex.raw('COALESCE(txs_count.total_outgoing_amount, 0) as total_outgoing_amount'))
       .leftJoin(
         this.knex('unique_transitions')
           .select(
@@ -171,32 +174,45 @@ module.exports = class PlatformAddressesDAO {
     return new PaginatedResultSet(resultSet, page, limit, Number(row?.total_count))
   }
 
-  getPlatformAddressTransitions = async (addresses, page, limit, order) => {
+  getPlatformAddressTransitions = async (addresses, page, limit, order, transactionTypes) => {
     const fromRank = (page - 1) * limit
 
     const addressSubquery = this.addressSubquery(addresses)
 
+    // the type lives on the transition row itself, so both halves of the union can be narrowed
+    // before anything is folded, and the total count follows the filter for free
+    const filterByType = (query) => query
+      .modify(qb => {
+        if (transactionTypes?.length > 0) {
+          qb.whereIn('platform_address_transitions.state_transition_type', transactionTypes)
+        }
+      })
+
     const unionTransitions = this.knex
       .unionAll([
-        this.knex('platform_address_transitions')
-          .join('address_subquery', 'platform_address_transitions.sender_id', 'address_subquery.id')
-          .select(
-            'address_subquery.id as address_id',
-            'state_transition_id',
-            this.knex.raw('0 as incoming'),
-            this.knex.raw('SUM(amount) as amount')
-          )
-          .groupBy('address_subquery.id', 'state_transition_id'),
+        filterByType(
+          this.knex('platform_address_transitions')
+            .join('address_subquery', 'platform_address_transitions.sender_id', 'address_subquery.id')
+            .select(
+              'address_subquery.id as address_id',
+              'state_transition_id',
+              this.knex.raw('0 as incoming'),
+              this.knex.raw('SUM(amount) as amount')
+            )
+            .groupBy('address_subquery.id', 'state_transition_id')
+        ),
 
-        this.knex('platform_address_transitions')
-          .join('address_subquery', 'platform_address_transitions.recipient_id', 'address_subquery.id')
-          .select(
-            'address_subquery.id as address_id',
-            'state_transition_id',
-            this.knex.raw('1 as incoming'),
-            this.knex.raw('SUM(amount) as amount')
-          )
-          .groupBy('address_subquery.id', 'state_transition_id')
+        filterByType(
+          this.knex('platform_address_transitions')
+            .join('address_subquery', 'platform_address_transitions.recipient_id', 'address_subquery.id')
+            .select(
+              'address_subquery.id as address_id',
+              'state_transition_id',
+              this.knex.raw('1 as incoming'),
+              this.knex.raw('SUM(amount) as amount')
+            )
+            .groupBy('address_subquery.id', 'state_transition_id')
+        )
       ])
 
     // the indexer writes one row per input and one per output, so an address that is both an
@@ -251,6 +267,12 @@ module.exports = class PlatformAddressesDAO {
         'blocks.timestamp as timestamp', 'block_height',
         'address as base58_address', 'bech32m_address', 'state_transition_id')
       .leftJoin('blocks', 'transitions_with_total_count_subquery.block_height', 'blocks.height')
+      // the page is picked inside the subquery, but a join is free to hand its rows back in any
+      // order, so the chain order has to be restated out here for the page to hold it
+      .orderBy([
+        { column: 'block_height', order },
+        { column: 'index', order }
+      ])
 
     const identifiers = rows.filter(row => row.owner != null).map(row => row.owner?.trim())
 

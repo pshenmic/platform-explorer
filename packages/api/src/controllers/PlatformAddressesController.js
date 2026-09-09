@@ -1,4 +1,5 @@
 const PlatformAddressesDAO = require('../dao/PlatformAddressesDAO')
+const StateTransitionEnum = require('../enums/StateTransitionEnum')
 
 module.exports = class PlatformAddressesController {
   constructor (knex, sdk) {
@@ -33,12 +34,15 @@ module.exports = class PlatformAddressesController {
     const {
       page = 1,
       limit = 10,
-      order = 'asc'
+      order = 'asc',
+      transaction_type: transactionTypes
     } = request.query
+
+    const normalizedTransactionTypes = transactionTypes?.map(transactionType => typeof transactionType === 'string' ? StateTransitionEnum[transactionType] : transactionType)
 
     const { platform_address: platformAddress } = request.params
 
-    const transitions = await this.platformAddressesDAO.getPlatformAddressTransitions([platformAddress], Number(page ?? 0), Number(limit ?? 0), order)
+    const transitions = await this.platformAddressesDAO.getPlatformAddressTransitions([platformAddress], Number(page ?? 0), Number(limit ?? 0), order, normalizedTransactionTypes)
 
     response.send(transitions)
   }
@@ -55,12 +59,15 @@ module.exports = class PlatformAddressesController {
     const {
       page = 1,
       limit = 10,
-      order = 'asc'
+      order = 'asc',
+      transaction_type: transactionTypes
     } = request.query
+
+    const normalizedTransactionTypes = transactionTypes?.map(transactionType => typeof transactionType === 'string' ? StateTransitionEnum[transactionType] : transactionType)
 
     const { addresses } = request.body
 
-    const transitions = await this.platformAddressesDAO.getPlatformAddressTransitions(addresses, Number(page ?? 0), Number(limit ?? 0), order)
+    const transitions = await this.platformAddressesDAO.getPlatformAddressTransitions(addresses, Number(page ?? 0), Number(limit ?? 0), order, normalizedTransactionTypes)
 
     response.send(transitions)
   }
