@@ -140,10 +140,9 @@
 }
 .DataList--compactFirst .DataList__Scroll {
   overflow-x: auto;
-  overflow-y: hidden;
-  touch-action: pan-x;
-  overscroll-behavior-y: auto;
-  -webkit-overflow-scrolling: touch;
+  overflow-y: clip;
+  touch-action: pan-x pan-y;
+  overscroll-behavior-x: contain;
 }
 .DataList--compactFirst.DataList--overflowX .DataList__Scroll {
   -webkit-mask-image: linear-gradient(to right, #000 0, #000 calc(100% - 28px), transparent 100%);
