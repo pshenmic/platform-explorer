@@ -94,6 +94,8 @@ impl PSQLProcessor {
 
         let tx_result_status = tx_result.status.clone();
 
+        let gas_used = tx_result.gas_used;
+
         self.dao
             .create_state_transition(
                 block_hash.clone(),
@@ -102,7 +104,7 @@ impl PSQLProcessor {
                 st_type,
                 index,
                 bytes,
-                tx_result.gas_used,
+                gas_used,
                 tx_result.status,
                 tx_result.error,
                 batch_type,
@@ -298,35 +300,8 @@ impl PSQLProcessor {
                 );
             }
             StateTransition::AddressFundingFromAssetLock(st) => {
-                let asset_lock_amount = match AssetLockProved::asset_lock_proof(&st) {
-                    AssetLockProof::Instant(i) => {
-                        i.transaction
-                            .special_transaction_payload
-                            .clone()
-                            .unwrap()
-                            .to_asset_lock_payload()
-                            .expect("Cannot get asset lock payload for instant lock proof")
-                            .credit_outputs[i.output_index as usize]
-                            .value
-                    }
-                    AssetLockProof::Chain(c) => {
-                        let tx = self
-                            .dashcore_rpc
-                            .get_raw_transaction_info(&c.out_point.txid, None)
-                            .unwrap();
-
-                        let payload = tx
-                            .extra_payload
-                            .clone()
-                            .expect("Cannot get Asset Lock Payload");
-
-                        let asset_lock_payload =
-                            AssetLockPayload::consensus_decode(&mut payload.as_slice())
-                                .expect("Cannot parse payload");
-
-                        asset_lock_payload.credit_outputs[c.out_point.vout as usize].value
-                    }
-                };
+                let asset_lock_amount =
+                    self.get_asset_lock_amount(AssetLockProved::asset_lock_proof(&st));
 
                 let address_transitions =
                     PlatformAddressTransition::from_address_funding_from_asset_lock(
@@ -373,6 +348,21 @@ impl PSQLProcessor {
                     .unwrap();
 
                 println!("Processed Shield at block hash {}", block_hash);
+
+                let address_transitions =
+                    PlatformAddressTransition::from_shield_transition(st.clone(), st_hash.clone());
+                self.handle_platform_address_transitions(
+                    address_transitions.clone(),
+                    sql_transaction,
+                )
+                .await
+                .unwrap();
+
+                println!(
+                    "Processed {} Address transitions at block hash {}",
+                    address_transitions.len(),
+                    block_hash
+                );
             }
             StateTransition::ShieldedTransfer(st) => {
                 let shielded_transition = ShieldedTransition::from_shielded_transfer_transition(
@@ -393,6 +383,24 @@ impl PSQLProcessor {
                     .unwrap();
 
                 println!("Processed Unshield at block hash {}", block_hash);
+
+                let address_transitions = PlatformAddressTransition::from_unshield_transition(
+                    st.clone(),
+                    st_hash.clone(),
+                    gas_used,
+                );
+                self.handle_platform_address_transitions(
+                    address_transitions.clone(),
+                    sql_transaction,
+                )
+                .await
+                .unwrap();
+
+                println!(
+                    "Processed {} Address transitions at block hash {}",
+                    address_transitions.len(),
+                    block_hash
+                );
             }
             StateTransition::ShieldFromAssetLock(st) => {
                 let shielded_transition =
@@ -405,6 +413,28 @@ impl PSQLProcessor {
                     .unwrap();
 
                 println!("Processed ShieldFromAssetLock at block hash {}", block_hash);
+
+                let asset_lock_amount =
+                    self.get_asset_lock_amount(AssetLockProved::asset_lock_proof(&st));
+
+                let address_transitions = PlatformAddressTransition::from_shield_from_asset_lock(
+                    st.clone(),
+                    st_hash.clone(),
+                    asset_lock_amount,
+                    gas_used,
+                );
+                self.handle_platform_address_transitions(
+                    address_transitions.clone(),
+                    sql_transaction,
+                )
+                .await
+                .unwrap();
+
+                println!(
+                    "Processed {} Address transitions at block hash {}",
+                    address_transitions.len(),
+                    block_hash
+                );
             }
             StateTransition::ShieldedWithdrawal(st) => {
                 let shielded_transition = ShieldedTransition::from_shielded_withdrawal_transition(
@@ -438,6 +468,38 @@ impl PSQLProcessor {
                 self.handle_shielded_transition(shielded_transition, sql_transaction)
                     .await
                     .unwrap();
+            }
+        }
+    }
+
+    fn get_asset_lock_amount(&self, asset_lock_proof: &AssetLockProof) -> u64 {
+        match asset_lock_proof {
+            AssetLockProof::Instant(i) => {
+                i.transaction
+                    .special_transaction_payload
+                    .clone()
+                    .unwrap()
+                    .to_asset_lock_payload()
+                    .expect("Cannot get asset lock payload for instant lock proof")
+                    .credit_outputs[i.output_index as usize]
+                    .value
+            }
+            AssetLockProof::Chain(c) => {
+                let tx = self
+                    .dashcore_rpc
+                    .get_raw_transaction_info(&c.out_point.txid, None)
+                    .unwrap();
+
+                let payload = tx
+                    .extra_payload
+                    .clone()
+                    .expect("Cannot get Asset Lock Payload");
+
+                let asset_lock_payload =
+                    AssetLockPayload::consensus_decode(&mut payload.as_slice())
+                        .expect("Cannot parse payload");
+
+                asset_lock_payload.credit_outputs[c.out_point.vout as usize].value
             }
         }
     }
