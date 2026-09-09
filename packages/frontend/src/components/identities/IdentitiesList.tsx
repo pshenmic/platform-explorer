@@ -1,9 +1,13 @@
 'use client'
 
+import type { ReactNode } from 'react'
 import type { Identity } from '../../types'
-import { Identifier, Alias, DateBlock, BigNumber, NotActive } from '../data'
+import { Identifier, Alias, BigNumber, NotActive, TimeDelta } from '../data'
 import { FirstPlaceIcon, SecondPlaceIcon, ThirdPlaceIcon } from '../ui/icons'
+import { Badge } from '../ui/Badge'
+import { RateTooltip } from '../ui/Tooltips'
 import { DataList } from '../ui/lists'
+import type { DataListProps } from '../ui/lists/DataList/DataList'
 import Pagination from '../pagination'
 import { ErrorMessageBlock } from '../Errors'
 
@@ -12,6 +16,19 @@ const placeIcons = {
   2: SecondPlaceIcon,
   3: ThirdPlaceIcon
 }
+
+const TYPE_OPTIONS = [
+  {
+    value: 'regular',
+    label: <Badge colorScheme={'gray'}>Regular</Badge>,
+    searchText: 'regular identity'
+  },
+  {
+    value: 'masternode',
+    label: <Badge colorScheme={'orange'}>Masternode</Badge>,
+    searchText: 'masternode validator'
+  }
+]
 
 interface IdentitiesListProps {
   identities?: Identity[]
@@ -24,16 +41,37 @@ interface IdentitiesListProps {
   loading?: boolean
   itemsCount?: number
   sort?: { order_by?: string; order?: string } | null
-  onSortChange?: (v: Record<string, unknown>) => void
+  sortDefault?: { order_by: string; order: string }
+  onSortChange?: (v: { order_by: string; order: string }) => void
   page?: number
+  filterValues?: Record<string, unknown>
+  onFilterChange?: (key: string, value: unknown) => void
+  paging?: DataListProps['paging']
+  title?: ReactNode
+  pinFirst?: boolean
 }
 
-const renderCount = (value: unknown) =>
-  value != null && Number.isFinite(Number(value)) ? (
-    <BigNumber>{String(value)}</BigNumber>
-  ) : (
-    <NotActive>—</NotActive>
+function compactAmount(value: number) {
+  if (!Number.isFinite(value)) return '—'
+  if (Math.abs(value) < 1_000_000) return value.toLocaleString('en-US')
+  return new Intl.NumberFormat('en', { notation: 'compact', maximumFractionDigits: 2 }).format(value)
+}
+
+const renderCount = (value: unknown) => {
+  if (value == null || !Number.isFinite(Number(value))) return <NotActive>—</NotActive>
+  const n = Number(value)
+  return (
+    <Badge colorScheme={n > 0 ? 'gray' : 'dimGray'} size={'xs'}>
+      <BigNumber>{String(value)}</BigNumber>
+    </Badge>
   )
+}
+
+function identityTypeOf(identity: Identity) {
+  if (identity.isSystem) return 'system'
+  if (!identity.timestamp) return 'masternode'
+  return 'regular'
+}
 
 function IdentitiesList({
   identities,
@@ -42,9 +80,16 @@ function IdentitiesList({
   loading,
   itemsCount = 10,
   sort,
+  sortDefault,
   onSortChange,
-  page = 0
+  page = 0,
+  filterValues,
+  onFilterChange,
+  paging,
+  title,
+  pinFirst = false
 }: IdentitiesListProps) {
+  const canFilter = Boolean(onFilterChange)
   const showRank =
     sort?.order === 'desc' &&
     ['balance', 'tx_count', 'documents_count'].includes(sort?.order_by as string) &&
@@ -55,9 +100,12 @@ function IdentitiesList({
   const columns = [
     {
       key: 'identifier',
-      header: 'Identifier',
+      header: 'Identity',
+      filterKey: canFilter ? 'identifier' : undefined,
+      filterType: canFilter ? ('search' as const) : undefined,
+      filterPlaceholder: 'Identity ID or name',
       grow: true,
-      minWidth: 160,
+      minWidth: 168,
       cell: (identity: Identity, index?: number) => {
         const place = showRank && (index ?? 0) < 3 ? (index ?? 0) + 1 : undefined
         const PlaceIcon = placeIcons[place as 1 | 2 | 3]
@@ -65,35 +113,56 @@ function IdentitiesList({
           (alias: { status?: string }) => alias?.status === 'ok'
         )
         return (
-          <>
+          <span className={'DataList__Entity'}>
             {PlaceIcon && <PlaceIcon className={'DataList__Medal'} />}
             {activeAlias ? (
-              <Alias alias={activeAlias?.alias} avatarSource={identity.identifier} />
+              <Alias ellipsis={true} alias={activeAlias?.alias} avatarSource={identity.identifier} />
             ) : (
-              <Identifier middleEllipsis={true} avatar={true} copyButton={true}>
+              <Identifier ellipsis={true} avatar={true} copyButton={true}>
                 {identity.identifier}
               </Identifier>
             )}
-          </>
+          </span>
         )
+      }
+    },
+    {
+      key: 'type',
+      header: 'Type',
+      filterKey: canFilter ? 'identity_type' : undefined,
+      filterType: canFilter ? ('options' as const) : undefined,
+      filterOptions: TYPE_OPTIONS,
+      minWidth: 120,
+      cell: (identity: Identity) => {
+        const type = identityTypeOf(identity)
+        if (type === 'system') return <Badge colorScheme={'orange'}>System</Badge>
+        if (type === 'masternode') return <Badge colorScheme={'orange'}>Masternode</Badge>
+        return <Badge colorScheme={'gray'}>Regular</Badge>
       }
     },
     {
       key: 'balance',
       header: 'Balance',
-      minWidth: 100,
+      filterKey: canFilter ? 'balance' : undefined,
+      filterType: canFilter ? ('range' as const) : undefined,
+      minWidth: 96,
       sortKey: 'balance',
-      cell: (identity: Identity) =>
-        identity.balance != null ? (
-          <BigNumber>{String(identity.balance)}</BigNumber>
-        ) : (
-          <NotActive>—</NotActive>
+      cell: (identity: Identity) => {
+        if (identity.balance == null) return <NotActive>—</NotActive>
+        const credits = Number(identity.balance)
+        return (
+          <RateTooltip credits={credits}>
+            <span className={'DataList__CompactNum'}>{compactAmount(credits)}</span>
+          </RateTooltip>
         )
+      }
     },
     {
       key: 'txs',
       header: 'Transactions',
-      minWidth: 88,
+      filterKey: canFilter ? 'tx_count' : undefined,
+      filterType: canFilter ? ('range' as const) : undefined,
+      minWidth: 108,
       align: 'center',
       sortKey: 'tx_count',
       priority: 2,
@@ -102,16 +171,19 @@ function IdentitiesList({
     {
       key: 'documents',
       header: 'Documents',
-      minWidth: 88,
+      filterKey: canFilter ? 'documents_count' : undefined,
+      filterType: canFilter ? ('range' as const) : undefined,
+      minWidth: 108,
       align: 'center',
-      sortKey: 'documents_count',
       priority: 2,
       cell: (identity: Identity) => renderCount(identity.totalDocuments)
     },
     {
       key: 'contracts',
       header: 'Data Contracts',
-      minWidth: 96,
+      filterKey: canFilter ? 'data_contracts' : undefined,
+      filterType: canFilter ? ('range' as const) : undefined,
+      minWidth: 120,
       align: 'center',
       priority: 1,
       cell: (identity: Identity) => renderCount(identity.totalDataContracts)
@@ -119,22 +191,16 @@ function IdentitiesList({
     {
       key: 'timestamp',
       header: 'Timestamp',
-      minWidth: 132,
+      minWidth: 128,
       align: 'right',
-      sortKey: 'timestamp',
-      cell: (identity: Identity) => (
-        <>
-          {identity.isSystem && <div>SYSTEM</div>}
-          {typeof identity.timestamp === 'string' && (
-            <DateBlock
-              format={'dateOnly'}
-              showTime={true}
-              timestamp={identity.timestamp}
-              showRelativeTooltip={true}
-            />
-          )}
-        </>
-      )
+      cell: (identity: Identity) =>
+        identity.timestamp ? (
+          <TimeDelta showTimestampTooltip={true} endDate={new Date(identity.timestamp)} />
+        ) : identity.isSystem ? (
+          <span className={'IdentitiesList__Genesis'}>Genesis</span>
+        ) : (
+          <NotActive />
+        )
     }
   ]
 
@@ -143,22 +209,28 @@ function IdentitiesList({
       className={'IdentitiesList'}
       items={identities || []}
       columns={columns}
+      pinFirst={pinFirst}
       loading={loading}
       skeletonCount={itemsCount}
       rowHref={identity => `/identity/${identity.identifier}`}
       rowKey={identity => identity.identifier}
       headerVariant={headerStyles === 'light' ? 'light' : 'default'}
-      emptyMessage={'There are no identities yet.'}
+      emptyMessage={
+        filterValues && Object.keys(filterValues).length
+          ? 'No identities match these filters.'
+          : 'There are no identities yet.'
+      }
       rowClassName={(identity, index) => {
         const place = showRank && index < 3 ? index + 1 : undefined
         return place ? `DataList__Row--Rank${place}` : ''
       }}
       sort={sort || undefined}
-      onSortChange={
-        onSortChange
-          ? next => onSortChange(next)
-          : undefined
-      }
+      sortDefault={sortDefault}
+      onSortChange={onSortChange}
+      filterValues={filterValues}
+      onFilterChange={onFilterChange}
+      paging={paging}
+      title={title}
       footer={
         pagination ? (
           <Pagination
