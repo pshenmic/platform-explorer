@@ -4,6 +4,10 @@ import { useEffect, useState, useCallback, useRef } from 'react'
 import * as Api from '../../util/Api'
 import TransactionsList from '../../components/transactions/TransactionsList'
 import {
+  applyTypeParams,
+  parseTypeParams
+} from '../../components/transactions/transactionsListHref'
+import {
   BATCH_TYPE_VALUES,
   TRANSACTION_TYPE_VALUES
 } from '../../components/transactions/TransactionsFilter'
@@ -14,7 +18,7 @@ import {
 } from '../../components/ui/lists/DataList/listScrollMode'
 import { ErrorMessageBlock } from '../../components/Errors'
 import { fetchHandlerSuccess, fetchHandlerError } from '../../util'
-import { usePathname, useRouter, useSearchParams } from 'next/navigation'
+import { usePathname, useSearchParams } from 'next/navigation'
 import type { LoadableState, PaginatedResultSet, Transaction } from '../../types'
 import './Transactions.css'
 
@@ -131,6 +135,18 @@ interface TransactionsProps {
 }
 
 function Transactions({ defaultPage = 1, defaultPageSize }: TransactionsProps) {
+  const searchParams = useSearchParams()
+  const typeParams = parseTypeParams(searchParams)
+  const batchTypes = typeParams.batch_type.filter(type => BATCH_TYPES.has(type))
+  const urlTypes = [
+    ...new Set(
+      batchTypes.length
+        ? batchTypes
+        : typeParams.transaction_type.filter(type => TX_TYPES.has(type))
+    )
+  ]
+  const urlTypeKey = JSON.stringify(urlTypes)
+  const [typeKey, setTypeKey] = useState(urlTypeKey)
   const [transactions, setTransactions] = useState<LoadableState<PaginatedResultSet<Transaction>>>({
     data: {} as PaginatedResultSet<Transaction>,
     loading: true,
@@ -142,11 +158,29 @@ function Transactions({ defaultPage = 1, defaultPageSize }: TransactionsProps) {
   const [scrollMode, setScrollMode] = useState<ListScrollMode>('continuous')
   const [loadingMore, setLoadingMore] = useState(false)
   const fetchGen = useRef(0)
-  const [filters, setFilters] = useState<QueryFilters>({})
-  const [columnFilters, setColumnFilters] = useState<Record<string, unknown>>({})
-  const router = useRouter()
+  const [filters, setFilters] = useState<QueryFilters>(() =>
+    toTransactionsApiFilters({ type: urlTypes })
+  )
+  const [columnFilters, setColumnFilters] = useState<Record<string, unknown>>(() => ({
+    type: urlTypes
+  }))
   const pathname = usePathname()
-  const searchParams = useSearchParams()
+
+  if (typeKey !== urlTypeKey) {
+    const next = { ...columnFilters, type: urlTypes }
+    setTypeKey(urlTypeKey)
+    setColumnFilters(next)
+    setFilters(toTransactionsApiFilters(next))
+    setCurrentPage(
+      scrollMode === 'pages' ? Math.max(0, Number(searchParams.get('page')) - 1 || 0) : 0
+    )
+    setTransactions(prev => ({
+      ...prev,
+      data: null,
+      loading: true,
+      error: false
+    }))
+  }
 
   useEffect(() => {
     setScrollMode(readListScrollMode('transactions'))
@@ -220,10 +254,10 @@ function Transactions({ defaultPage = 1, defaultPageSize }: TransactionsProps) {
     if (scrollMode !== 'pages') return
     const page = parseInt(searchParams.get('page') || '', 10) || paginateConfig.defaultPage
     setCurrentPage(Math.max(page - 1, 0))
-  }, [searchParams, pathname, scrollMode])
+  }, [searchParams, scrollMode])
 
   useEffect(() => {
-    const urlParameters = new URLSearchParams(Array.from(searchParams.entries()))
+    const urlParameters = new URLSearchParams(window.location.search)
     if (pageSize === paginateConfig.pageSize.default) {
       urlParameters.delete('page-size')
     } else {
@@ -236,10 +270,26 @@ function Transactions({ defaultPage = 1, defaultPageSize }: TransactionsProps) {
     }
     const next = urlParameters.toString()
     const href = next ? `${pathname}?${next}` : pathname
-    router.replace(href, { scroll: false })
-  }, [currentPage, pageSize, scrollMode])
+    if (href !== `${window.location.pathname}${window.location.search}`) {
+      window.history.replaceState(null, '', href)
+    }
+  }, [currentPage, pageSize, scrollMode, pathname])
 
   const onColumnFilterChange = (key: string, value: unknown) => {
+    if (key === 'type') {
+      const next = toTransactionsApiFilters({ type: value })
+      const params = applyTypeParams(new URLSearchParams(window.location.search), {
+        transaction_type: (next.transaction_type as string[]) || [],
+        batch_type: (next.batch_type as string[]) || []
+      })
+      params.delete('page')
+      const query = params.toString()
+      const href = query ? `${pathname}?${query}` : pathname
+      if (href !== `${window.location.pathname}${window.location.search}`) {
+        window.history.pushState(null, '', href)
+      }
+      return
+    }
     setColumnFilters(prev => {
       if (isEmptyFilterValue(value)) {
         const next = { ...prev }
