@@ -15,7 +15,7 @@ import NavbarMobileMenu from './NavbarMobileMenu'
 import type { BreakpointKey, BreakpointVisibility, NavMenuItem } from './types'
 import type { LoadableState } from '../../../types/common'
 import type { SearchResultsData } from '../../search/SearchResultsList'
-import './Navbar.scss'
+import './Navbar.css'
 
 const menuItems: NavMenuItem[] = [
   { title: 'Home', href: '/' },

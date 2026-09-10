@@ -7,7 +7,7 @@ import { usePathname } from 'next/navigation'
 import MultiLevelMenu from '../../ui/menus/MultiLevelMenu'
 import { ArrowButton } from '../../ui/Buttons'
 import type { NavMenuItem } from './types'
-import './NavDropdown.scss'
+import './NavDropdown.css'
 
 interface NavDropdownProps {
   item: NavMenuItem

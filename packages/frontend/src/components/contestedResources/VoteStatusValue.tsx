@@ -1,6 +1,6 @@
 import { ValueContainer } from '../ui/containers'
 import type { WithClassName } from '../../types'
-import './VoteBadges.scss'
+import './VoteBadges.css'
 
 interface VoteStatusValueProps extends WithClassName {
   status?: string | null

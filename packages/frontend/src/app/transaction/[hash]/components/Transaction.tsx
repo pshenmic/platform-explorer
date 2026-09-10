@@ -28,7 +28,7 @@ import { useParams, usePathname, useRouter, useSearchParams } from 'next/navigat
 import { useActiveNetwork } from 'src/contexts'
 import type { Transaction as TransactionModel } from '../../../../types'
 
-import './transaction.scss'
+import './transaction.css'
 
 /** Duplicates may include blockHash at runtime even if domain type is partial. */
 type TransactionOccurrence = TransactionModel & {

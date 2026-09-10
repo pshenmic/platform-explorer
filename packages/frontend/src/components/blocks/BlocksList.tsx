@@ -2,7 +2,7 @@ import type { Block } from '../../types'
 import BlocksListItem from './BlocksListItem'
 import { EmptyListMessage } from '../ui/lists'
 import { Grid, GridItem } from '@chakra-ui/react'
-import './BlocksList.scss'
+import './BlocksList.css'
 
 const headerExtraClass: Record<string, string> = {
   default: '',

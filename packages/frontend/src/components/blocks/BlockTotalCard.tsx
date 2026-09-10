@@ -17,7 +17,7 @@ import { ValueCard } from '../cards'
 import { fetchHandlerError, fetchHandlerSuccess } from '../../util'
 import { useEffect, useState } from 'react'
 import type { BlockDetail } from './BlockDigestCard'
-import './BlockTotalCard.scss'
+import './BlockTotalCard.css'
 
 const DateBlock = DateBlockJs as ComponentType<{ timestamp?: string | number | null }>
 const Identifier = IdentifierJs as ComponentType<{

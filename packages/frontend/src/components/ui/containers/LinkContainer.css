@@ -1,0 +1,32 @@
+.LinkContainer {
+  position: relative;
+  cursor: pointer;
+}
+
+.LinkContainer:after {
+  content: "";
+  position: absolute;
+  display: block;
+  bottom: 0;
+  background: var(--pe-color-brand-normal);
+  width: 80%;
+  height: 0;
+  opacity: 0;
+  transition: var(--pe-transition-def);
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .LinkContainer:hover:after {
+    height: 1px;
+    opacity: 1;
+    width: 100%;
+    bottom: 0;
+  }
+}
+
+.LinkContainer:active:after {
+  opacity: 0.7;
+  width: 99%;
+}

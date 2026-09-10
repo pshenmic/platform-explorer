@@ -3,7 +3,7 @@ import type { WithdrawalListItem } from './WithdrawalsListItem'
 import { EmptyListMessage } from '../../ui/lists'
 import { Grid, GridItem } from '@chakra-ui/react'
 import type { Rate } from '../../../types'
-import './WithdrawalsList.scss'
+import './WithdrawalsList.css'
 
 type HeaderStyles = 'default' | 'light'
 

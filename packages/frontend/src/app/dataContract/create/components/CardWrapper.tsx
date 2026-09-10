@@ -2,7 +2,7 @@ import type { ReactNode } from 'react'
 import { Box, Heading } from '@chakra-ui/react'
 import { cva } from 'class-variance-authority'
 
-import styles from './CardWrapper.module.scss'
+import styles from './CardWrapper.module.css'
 
 const cardStyles = cva(styles.root)
 

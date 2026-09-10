@@ -1,9 +1,9 @@
 import { Container } from '@chakra-ui/react'
 import type { ComponentPropsWithoutRef } from 'react'
 import type { WithChildren, WithClassName } from '../../types/common'
-import './LoadingLine.scss'
-import './LoadingBlock.scss'
-import './LoadingList.scss'
+import './LoadingLine.css'
+import './LoadingBlock.css'
+import './LoadingList.css'
 
 interface LoadingLineProps extends WithChildren, WithClassName {
   colorScheme?: string

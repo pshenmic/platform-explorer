@@ -5,7 +5,7 @@ import { usePathname } from 'next/navigation'
 import type { WithClassName } from '../../../types/common'
 import NavDropdown from './NavDropdown'
 import type { NavMenuItem } from './types'
-import './NavItem.scss'
+import './NavItem.css'
 
 interface NavItemProps extends WithClassName {
   item: NavMenuItem

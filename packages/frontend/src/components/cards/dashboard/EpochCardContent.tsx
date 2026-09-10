@@ -4,7 +4,7 @@ import { EpochTooltip } from '../../ui/Tooltips'
 import { InfoIcon } from '@chakra-ui/icons'
 import NotActiveJs from '../../data/NotActive'
 import EpochProgressJs from '../../networkStatus/EpochProgress'
-import './EpochCardContent.scss'
+import './EpochCardContent.css'
 
 const NotActive = NotActiveJs as ComponentType<{ children?: ReactNode }>
 const EpochProgress = EpochProgressJs as ComponentType<{

@@ -3,7 +3,7 @@ import { ValueCard as ValueCardJs } from '../cards'
 // Untyped JS components — loose wrappers until data/* is migrated
 import { InfoLine as InfoLineJs } from '../data'
 import type { WithClassName } from '../../types/common'
-import './PublicKeyCard.scss'
+import './PublicKeyCard.css'
 
 const InfoLine = InfoLineJs as ComponentType<{
   className?: string

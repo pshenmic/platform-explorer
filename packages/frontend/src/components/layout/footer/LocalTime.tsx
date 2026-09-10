@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import type { WithClassName } from '../../../types/common'
-import './LocalTime.scss'
+import './LocalTime.css'
 
 function LocalTime ({ className }: WithClassName) {
   const [time, setTime] = useState<string | null>(null)

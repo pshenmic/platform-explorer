@@ -3,7 +3,7 @@ import type { LoadableState } from '../../types/common'
 import BigNumber from './BigNumber'
 import { roundUsd, removeTrailingZeros, creditsToDash } from '../../util'
 import { NotActive } from './index'
-import './CreditsBlock.scss'
+import './CreditsBlock.css'
 
 interface CreditsBlockProps {
   credits?: number | string | null

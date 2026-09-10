@@ -1,7 +1,7 @@
 'use client'
 
 import type { ReactNode } from 'react'
-import './ListColumnsHeader.scss'
+import './ListColumnsHeader.css'
 
 interface ListColumn {
   id: string | number

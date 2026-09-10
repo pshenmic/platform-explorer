@@ -13,7 +13,7 @@ import { ValueContainer } from '../ui/containers'
 import { LockIcon } from '../ui/icons'
 import { Flex } from '@chakra-ui/react'
 import type { ContestedResource, LoadableState, WithClassName } from '../../types'
-import './ContestedResourceDigestCard.scss'
+import './ContestedResourceDigestCard.css'
 
 // Untyped JS components — loose wrappers until data/* / cards/* are migrated
 const DateBlock = DateBlockJs as ComponentType<{

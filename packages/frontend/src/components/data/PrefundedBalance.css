@@ -1,0 +1,12 @@
+.PrefundedBalance {
+  max-width: max-content;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--pe-space-2);
+}
+
+.PrefundedBalance__Title,
+.PrefundedBalance__Value {
+  padding: 3px var(--pe-space-2_5);
+  border-radius: var(--pe-radius-sm);
+}

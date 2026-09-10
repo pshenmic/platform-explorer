@@ -1,0 +1,34 @@
+.LocalTime {
+  font-family: var(--pe-font-mono);
+  font-size: var(--pe-text-sm);
+}
+
+.LocalTime__Time,
+.LocalTime__Date,
+.LocalTime__TimeZone {
+  margin-right: 0.5em;
+}
+
+.LocalTime__Time:last-child,
+.LocalTime__Date:last-child,
+.LocalTime__TimeZone:last-child {
+  margin-right: 0;
+}
+
+.LocalTime__Time {
+  position: relative;
+  color: var(--pe-color-fg);
+}
+
+.LocalTime__Time:after {
+  content: "·";
+  padding-left: 0.5em;
+}
+
+.LocalTime__Date {
+  color: var(--pe-color-fg-muted);
+}
+
+.LocalTime__TimeZone {
+  color: var(--pe-color-fg-muted);
+}

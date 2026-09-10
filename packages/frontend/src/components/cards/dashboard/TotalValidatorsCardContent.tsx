@@ -2,7 +2,7 @@ import { Box, Flex } from '@chakra-ui/react'
 import type { Validator } from '../../../types'
 import type { LoadableState } from '../../../types/common'
 import ImageGenerator from '../../imageGenerator'
-import './TotalValidatorsCardContent.scss'
+import './TotalValidatorsCardContent.css'
 
 interface ValidatorsListData {
   pagination?: {

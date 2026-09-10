@@ -10,7 +10,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import BatchTypeBadge from '../../transactions/BatchTypeBadge'
 import { Tooltip } from '../../ui/Tooltips'
-import './ActivityListItem.scss'
+import './ActivityListItem.css'
 import { FormattedNumber } from '../../ui/FormattedNumber'
 import type { Owner } from '../../../types'
 

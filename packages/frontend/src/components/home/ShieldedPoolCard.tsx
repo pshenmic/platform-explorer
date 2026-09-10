@@ -9,7 +9,7 @@ import { RateTooltip } from '../ui/Tooltips'
 import { creditsToDash } from '../../util'
 import { Skeleton } from './Skeleton'
 import { PRESETS, presetRange } from './MetricChart'
-import './ShieldedPoolCard.scss'
+import './ShieldedPoolCard.css'
 
 const SPARK_W = 100
 const SPARK_H = 56

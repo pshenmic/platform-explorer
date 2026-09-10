@@ -13,7 +13,7 @@ import {
 import { ValueCard } from '../cards'
 import { EpochTooltip, Tooltip } from '../ui/Tooltips'
 import type { QuorumInfoData } from './quorum/QuorumInfo'
-import './BlockDigestCard.scss'
+import './BlockDigestCard.css'
 
 const CreditsBlock = CreditsBlockJs as ComponentType<{
   credits?: number | string | null

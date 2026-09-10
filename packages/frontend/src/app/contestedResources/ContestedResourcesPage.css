@@ -1,0 +1,35 @@
+.ContestedResourcesPage__Controls {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: var(--pe-space-4);
+  margin: var(--pe-space-3) 0 var(--pe-space-6);
+  flex-wrap: wrap;
+}
+
+.ContestedResourcesPage__Title {
+  flex-shrink: 0;
+  margin-right: var(--pe-space-2);
+}
+
+.ContestedResourcesPage__Stats {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.ContestedResourcesPage__Filters {
+  flex-shrink: 0;
+  margin-left: auto;
+}
+
+@media screen and (max-width: 48em) {
+  .ContestedResourcesPage__Controls {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--pe-space-4);
+  }
+
+  .ContestedResourcesPage__Filters {
+    margin-left: 0;
+  }
+}

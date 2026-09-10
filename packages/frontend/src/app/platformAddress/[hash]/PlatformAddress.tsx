@@ -11,7 +11,7 @@ import { ErrorMessageBlock } from '../../../components/Errors'
 import { TransactionsList } from '../../../components/transactions'
 import { useBreadcrumbs } from '../../../contexts/BreadcrumbsContext'
 import { PlatformAddressTotalCard } from '../../../components/platformAddresses'
-import './PlatformAddress.scss'
+import './PlatformAddress.css'
 
 const tabs = ['transitions'] as const
 

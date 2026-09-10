@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import { readFile } from 'fs/promises'
 import path from 'path'
 import Markdown from '../../components/markdown'
-import './Api.scss'
+import './Api.css'
 
 import {
   Container,

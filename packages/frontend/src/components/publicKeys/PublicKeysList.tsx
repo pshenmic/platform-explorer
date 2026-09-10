@@ -3,9 +3,9 @@ import PublicKeysListItem from './PublicKeysListItem'
 import type { PublicKey } from './PublicKeysListItem'
 import { EmptyListMessage } from '../ui/lists'
 import type { WithClassName } from '../../types/common'
-import './PublicKeysList.scss'
-import './PublicKeysListItem.scss'
-import './PublicKeyBoundCard.scss'
+import './PublicKeysList.css'
+import './PublicKeysListItem.css'
+import './PublicKeyBoundCard.css'
 
 interface PublicKeysListProps extends WithClassName {
   publicKeys?: PublicKey[]

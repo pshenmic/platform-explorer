@@ -15,7 +15,7 @@ import { QuorumInfo } from '../../../components/blocks/quorum'
 import { useActiveNetwork } from 'src/contexts'
 import type { LoadableState, Rate, Status } from '../../../types'
 
-import './Block.scss'
+import './Block.css'
 
 const tabs = [
   'transactions',

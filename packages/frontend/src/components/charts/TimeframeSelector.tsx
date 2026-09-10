@@ -5,7 +5,7 @@ import { Button } from '@chakra-ui/react'
 import { CalendarIcon2, CloseIcon } from '../ui/icons'
 import type { ChartConfig, TimespanValue } from './types'
 import type { WithClassName } from '../../types/common'
-import './TimeframeSelector.scss'
+import './TimeframeSelector.css'
 
 interface TimeframeSelectorProps extends WithClassName {
   config: ChartConfig

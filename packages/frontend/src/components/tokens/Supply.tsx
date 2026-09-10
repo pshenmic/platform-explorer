@@ -6,7 +6,7 @@ import { LoadingLine } from '../loading'
 import { FormattedNumber } from '../ui/FormattedNumber'
 import type { WithClassName } from '../../types/common'
 
-import './Supply.scss'
+import './Supply.css'
 
 interface SupplyProps extends WithClassName {
   currentSupply?: string | number | null

@@ -1,0 +1,142 @@
+.SearchResultsList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--pe-space-4);
+  container-type: inline-size;
+}
+
+.SearchResultsList__ColumnTitles {
+  display: grid;
+  padding: var(--pe-list-row-pad-y) var(--pe-list-row-pad-x);
+  border-radius: var(--pe-list-row-radius);
+  background-color: var(--pe-color-gray-800);
+  margin-bottom: var(--pe-space-2);
+  font-family: var(--pe-font-heading);
+  font-weight: var(--pe-font-weight-bold);
+  font-size: var(--pe-text-sm);
+  text-transform: uppercase;
+  color: var(--pe-color-fg);
+}
+
+.SearchResultsList__ColumnTitles--Light {
+  background: transparent !important;
+  font-weight: var(--pe-font-weight-medium) !important;
+  color: var(--pe-color-fg) !important;
+  text-transform: none !important;
+}
+
+.SearchResultsList__ColumnTitles {
+  display: grid;
+  gap: var(--pe-space-4);
+  width: 100%;
+  grid-template-columns: minmax(0, 80rem) minmax(0, 80rem) 5rem var(--pe-space-4);
+}
+
+.SearchResultsList__ColumnTitles--Validator {
+  grid-template-columns: minmax(0, 80rem) minmax(0, 80rem) 6rem var(--pe-space-4);
+}
+
+.SearchResultsList__ColumnTitles--PlatformAddress {
+  grid-template-columns: minmax(0, 80rem) 5rem var(--pe-space-4);
+}
+
+@container (max-width: 48rem) {
+  .SearchResultsList__ColumnTitles--Document,
+  .SearchResultsList__ColumnTitles--DataContract,
+  .SearchResultsList__ColumnTitles--Token,
+  .SearchResultsList__ColumnTitles--PlatformAddress {
+    grid-template-columns: minmax(0, 80rem) 4.5rem var(--pe-space-4);
+  }
+
+  .SearchResultsList__ColumnTitles--Validator {
+    grid-template-columns: minmax(0, 80rem) 6rem var(--pe-space-4);
+  }
+}
+
+@container (max-width: 24rem) {
+  .SearchResultsList__ColumnTitles--Block,
+  .SearchResultsList__ColumnTitles--Identity,
+  .SearchResultsList__ColumnTitles--Transaction {
+    grid-template-columns: minmax(0, 80rem) 4.5rem var(--pe-space-4);
+  }
+}
+
+[class*="--PlatformAddress"] .SearchResultsList__ColumnTitle:nth-last-child(3) {
+  justify-content: flex-start;
+}
+
+.SearchResultsList__ColumnTitles {
+  padding: 0 var(--pe-space-4);
+  background: transparent;
+  margin-bottom: 0;
+}
+
+.SearchResultsList__ColumnTitle {
+  display: flex;
+  align-items: center;
+  font-family: var(--pe-font-mono);
+  font-size: var(--pe-text-sm);
+  color: var(--pe-color-fg-muted);
+  width: 100%;
+}
+
+.SearchResultsList__ColumnTitle--EntityName {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.SearchResultsList__ColumnTitle--Additional {
+  justify-content: flex-start;
+  white-space: nowrap;
+}
+
+.SearchResultsList__ColumnTitle--Timestamp {
+  justify-content: flex-end;
+  white-space: nowrap;
+  color: var(--pe-color-fg);
+}
+
+.SearchResultsList__ColumnTitle--Arrow {
+  justify-content: flex-end;
+}
+
+.SearchResultsList__ColumnTitle:last-child,
+.SearchResultsList__ColumnTitle:nth-last-child(2),
+.SearchResultsList__ColumnTitle:nth-last-child(3) {
+  text-align: right;
+  margin-left: auto;
+  justify-content: flex-end;
+}
+
+@container (max-width: 48rem) {
+  [class*="--Document"] .SearchResultsList__ColumnTitle:nth-child(2),
+  [class*="--DataContract"] .SearchResultsList__ColumnTitle:nth-child(2),
+  [class*="--Validator"] .SearchResultsList__ColumnTitle:nth-child(2),
+  [class*="--Token"] .SearchResultsList__ColumnTitle:nth-child(2),
+  [class*="--PlatformAddress"] .SearchResultsList__ColumnTitle:nth-child(2) {
+    display: none;
+  }
+}
+
+@container (max-width: 24rem) {
+  [class*="--Block"] .SearchResultsList__ColumnTitle:nth-child(2),
+  [class*="--Identity"] .SearchResultsList__ColumnTitle:nth-child(2),
+  [class*="--Transaction"] .SearchResultsList__ColumnTitle:nth-child(2) {
+    display: none;
+  }
+}
+
+.SearchResultsList__ColumnTitle {
+  font-family: var(--pe-font-heading);
+  font-size: var(--pe-text-sm);
+  letter-spacing: 0.4px;
+  font-weight: var(--pe-font-weight-bold);
+  text-transform: uppercase;
+  color: var(--pe-color-gray-100);
+}
+
+.SearchResultsList__Category {
+  display: flex;
+  flex-direction: column;
+  gap: var(--pe-space-2);
+}

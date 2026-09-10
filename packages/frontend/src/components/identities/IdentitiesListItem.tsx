@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { Identifier as IdentifierJs, Alias as AliasJs, DateBlock as DateBlockJs, BigNumber as BigNumberJs, NotActive as NotActiveJs } from '../data'
 import { Grid, GridItem } from '@chakra-ui/react'
 import { FirstPlaceIcon, SecondPlaceIcon, ThirdPlaceIcon } from '../ui/icons'
-import './IdentitiesListItem.scss'
+import './IdentitiesListItem.css'
 
 // Untyped JS modules — cast until migrated
 const Identifier = IdentifierJs as ComponentType<{

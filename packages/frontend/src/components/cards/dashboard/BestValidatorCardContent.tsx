@@ -2,7 +2,7 @@ import type { ComponentType, ReactNode } from 'react'
 import type { EpochData } from '../../../types'
 import { ValueCard } from '../index'
 import IdentifierJs from '../../data/Identifier'
-import './BestValidatorCardContent.scss'
+import './BestValidatorCardContent.css'
 
 const Identifier = IdentifierJs as ComponentType<{
   children?: ReactNode

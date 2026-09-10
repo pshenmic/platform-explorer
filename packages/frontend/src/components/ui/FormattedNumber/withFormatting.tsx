@@ -9,7 +9,7 @@ import {
 import { Tooltip } from '../Tooltips'
 import { currencyRound } from '../../../util'
 
-import styles from './FormattedNumber.module.scss'
+import styles from './FormattedNumber.module.css'
 
 interface FormattingProps {
   children?: ReactNode

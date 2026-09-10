@@ -14,7 +14,7 @@ import {
   useReactTable
 } from '@tanstack/react-table'
 
-import './DataContractsList.scss'
+import './DataContractsList.css'
 
 const columnHelper = createColumnHelper<DataContractsListItemData>()
 

@@ -9,7 +9,7 @@ import {
 import { YesNoBadge } from './FeatureRow'
 import { useTokenWizard } from '../TokenWizardContext'
 import type { TokenForm } from '../TokenWizardContext'
-import './Essentials.scss'
+import './Essentials.css'
 
 // DPP caps name at 3–25 bytes and rejects whitespace/control chars.
 // ASCII letters/digits keep maxLength byte-accurate and pluralization sane.

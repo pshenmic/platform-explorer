@@ -5,7 +5,7 @@ import Calendar from 'react-calendar'
 import { ChevronIcon } from '../ui/icons'
 import type { WithClassName } from '../../types/common'
 import 'react-calendar/dist/Calendar.css'
-import './DateRangePicker.scss'
+import './DateRangePicker.css'
 
 type CalendarRange = [Date | null, Date | null]
 type CalendarValue = Date | null | CalendarRange

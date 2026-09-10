@@ -1,4 +1,4 @@
-import './Switcher.scss'
+import './Switcher.css'
 
 interface SwitcherOption {
   title: string

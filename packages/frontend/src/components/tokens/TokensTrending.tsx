@@ -8,7 +8,7 @@ import { fetchHandlerError, fetchHandlerSuccess, currencyRound, getTokenName } f
 import ImageGeneratorJs from '../imageGenerator'
 import type { LoadableState, Localization, PaginatedResultSet } from '../../types'
 import type { WithClassName } from '../../types/common'
-import './TokensTrending.scss'
+import './TokensTrending.css'
 
 const ImageGenerator = ImageGeneratorJs as ComponentType<{
   username?: string | null

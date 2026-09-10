@@ -5,7 +5,7 @@ import IdentifierJs from '../../data/Identifier'
 import NotActiveJs from '../../data/NotActive'
 import { currencyRound, getTokenName } from '../../../util'
 import ImageGenerator from '../../imageGenerator'
-import './TokenCardContent.scss'
+import './TokenCardContent.css'
 
 const Identifier = IdentifierJs as ComponentType<{
   children?: ReactNode

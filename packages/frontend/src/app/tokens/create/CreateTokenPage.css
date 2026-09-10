@@ -1,0 +1,79 @@
+.CreateTokenPage {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+}
+
+.CreateTokenPage__MobileTabs {
+  display: none;
+  gap: 2px;
+  padding: 2px;
+  border: 1px solid var(--pe-color-gray-550);
+  border-radius: 0.375rem;
+  background: var(--pe-color-gray-675);
+}
+
+.CreateTokenPage__MobileTab {
+  flex: 1;
+  font-family: var(--pe-font-heading);
+  font-weight: 600;
+  font-size: 0.75rem;
+  padding: 6px 0;
+  border-radius: 0.25rem;
+  color: var(--pe-color-white-50);
+  background: transparent;
+  cursor: pointer;
+  transition:
+    background var(--pe-transition-def),
+    color var(--pe-transition-def);
+}
+
+.CreateTokenPage__MobileTab--active {
+  color: var(--pe-color-brand-normal);
+  background: var(--pe-color-gray-800);
+}
+
+.CreateTokenPage__Layout {
+  display: grid;
+  grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+  gap: 16px;
+  align-items: start;
+}
+
+@media (max-width: 960px) {
+  .CreateTokenPage__Layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 960px) {
+  .CreateTokenPage__MobileTabs {
+    display: flex;
+  }
+
+  .CreateTokenPage__Layout--m-form .CreateTokenPage__PreviewPane {
+    display: none;
+  }
+
+  .CreateTokenPage__Layout--m-preview .CreateTokenPage__FormPane {
+    display: none;
+  }
+}
+
+.CreateTokenPage__FormPane,
+.CreateTokenPage__PreviewPane {
+  background: var(--pe-color-gray-675);
+  border: 1px solid var(--pe-color-gray-550);
+  border-radius: var(--pe-radius-block);
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.CreateTokenPage__FormScroll {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}

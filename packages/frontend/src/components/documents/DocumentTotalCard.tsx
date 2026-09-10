@@ -7,7 +7,7 @@ import { HorisontalSeparator } from '../ui/separators'
 import { ValueCard } from '../cards'
 import { Badge } from '@chakra-ui/react'
 import { findActiveAlias } from '../../util'
-import './DocumentTotalCard.scss'
+import './DocumentTotalCard.css'
 
 // Untyped JS modules — cast until migrated
 const Alias = AliasJs as ComponentType<{

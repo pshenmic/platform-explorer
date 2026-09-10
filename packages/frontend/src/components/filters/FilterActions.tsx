@@ -1,5 +1,5 @@
 import type { WithChildren, WithClassName } from '../../types/common'
-import './FilterActions.scss'
+import './FilterActions.css'
 
 const FilterActions = ({ children, className }: WithChildren & WithClassName) => (
   <div className={`FilterActions ${className || ''}`}>

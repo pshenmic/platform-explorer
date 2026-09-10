@@ -8,7 +8,7 @@ import { fetchHandlerSuccess, fetchHandlerError, getDaysBetweenDates } from '../
 import { defaultChartConfig } from './config'
 import type { TimespanValue } from './types'
 import { LineChart } from './index'
-import './TransactionsChartCompact.scss'
+import './TransactionsChartCompact.css'
 
 interface IdentityHistoryPoint {
   registeredIdentities: number

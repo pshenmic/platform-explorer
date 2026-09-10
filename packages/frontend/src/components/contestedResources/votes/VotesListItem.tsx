@@ -10,7 +10,7 @@ import { LinkContainer } from '../../ui/containers'
 import { useRouter } from 'next/navigation'
 import ChoiceBadge from '../ChoiceBadge'
 import type { Vote } from '../../../types'
-import './VotesListItem.scss'
+import './VotesListItem.css'
 
 // Untyped JS components — loose wrappers until data/* is migrated
 const Identifier = IdentifierJs as ComponentType<{

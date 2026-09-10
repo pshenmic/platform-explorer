@@ -1,5 +1,5 @@
 import type { WithClassName } from '../../types/common'
-import './VoteIndexValues.scss'
+import './VoteIndexValues.css'
 
 interface VoteIndexValuesProps extends WithClassName {
   indexValues?: string[] | null

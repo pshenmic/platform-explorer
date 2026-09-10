@@ -3,7 +3,7 @@ import type { ReactNode, Ref } from 'react'
 import { CloseButton } from '@chakra-ui/react'
 import { cva } from 'class-variance-authority'
 
-import styles from './Modal.module.scss'
+import styles from './Modal.module.css'
 
 const modalStyles = cva([styles.dialog, 'InfoBlock', 'InfoBlock--Gradient'])
 

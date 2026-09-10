@@ -2,7 +2,7 @@ import type { ReactNode } from 'react'
 import { withFormatting } from './withFormatting'
 import { cva } from 'class-variance-authority'
 
-import styles from './FormattedNumber.module.scss'
+import styles from './FormattedNumber.module.css'
 
 const BigNumberStyles = cva(styles.root)
 

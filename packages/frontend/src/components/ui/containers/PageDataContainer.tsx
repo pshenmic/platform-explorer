@@ -3,7 +3,7 @@ import { Container } from '@chakra-ui/react'
 import { ChevronIcon2 } from '../icons'
 import BackButton from '../Buttons/BackButton'
 import type { WithChildren, WithClassName } from '../../../types/common'
-import './PageDataContainer.scss'
+import './PageDataContainer.css'
 
 interface PageDataContainerProps extends WithChildren, WithClassName {
   title?: ReactNode

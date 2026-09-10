@@ -6,7 +6,7 @@ import { Alias, DateBlock } from './index'
 import { Button } from '@chakra-ui/react'
 import { ChevronIcon } from '../ui/icons'
 import { SmoothSize } from '../ui/containers'
-import './AliasesList.scss'
+import './AliasesList.css'
 
 interface AliasesListProps {
   aliases?: Array<Pick<AliasModel, 'alias' | 'status'> & { timestamp?: string | number | null }>

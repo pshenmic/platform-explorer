@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react'
 import { CirclePauseIcon, CirclePlayIcon } from '../ui/icons'
 import { ValueContainer } from '../ui/containers'
-import './TokenEmergencyActionBadge.scss'
+import './TokenEmergencyActionBadge.css'
 
 interface TokenEmergencyActionBadgeProps {
   type?: string | null

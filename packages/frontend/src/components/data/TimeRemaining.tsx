@@ -3,7 +3,7 @@
 import { Progress } from '@chakra-ui/react'
 import { useEffect, useMemo, useState } from 'react'
 import { getTimeDelta } from '../../util'
-import './TimeRemaining.scss'
+import './TimeRemaining.css'
 
 interface TimeRemainingProps {
   startTime: string | number | Date

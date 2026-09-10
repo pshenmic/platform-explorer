@@ -9,7 +9,7 @@ import Pagination from '../pagination'
 import { ErrorMessageBlock } from '../Errors'
 import { LoadingList } from '../loading'
 
-import './IdentitiesList.scss'
+import './IdentitiesList.css'
 
 const SORTABLE_HEADERS = [
   { key: 'balance', modifier: 'Balance', label: 'Balance' },

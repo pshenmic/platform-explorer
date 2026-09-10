@@ -9,7 +9,7 @@ import {
 import { ValueCard as ValueCardJs } from '../cards'
 import { findActiveAlias } from '../../util'
 import type { LoadableState, Owner, Rate } from '../../types'
-import './DataContractDigestCard.scss'
+import './DataContractDigestCard.css'
 
 // Untyped JS components — loose wrappers until data/* and cards/* are migrated
 const Alias = AliasJs as ComponentType<{

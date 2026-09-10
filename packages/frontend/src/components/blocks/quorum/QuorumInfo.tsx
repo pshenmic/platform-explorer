@@ -7,7 +7,7 @@ import {
 import { ValueContainer } from '../../ui/containers'
 import { Badge } from '@chakra-ui/react'
 import type { QuorumMember } from './QuorumMembersListItem'
-import './QuorumInfo.scss'
+import './QuorumInfo.css'
 
 const Identifier = IdentifierJs as ComponentType<{
   children?: ReactNode

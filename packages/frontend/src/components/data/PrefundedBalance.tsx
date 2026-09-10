@@ -5,7 +5,7 @@ import { ValueCard } from '../cards'
 import { ValueContainer } from '../ui/containers'
 import { Flex } from '@chakra-ui/react'
 import NotActive from './NotActive'
-import './PrefundedBalance.scss'
+import './PrefundedBalance.css'
 
 interface PrefundedBalanceProps {
   prefundedBalance?: Record<string, string | number> | null

@@ -11,7 +11,7 @@ import type { SearchCategory } from '../search/constants'
 import type { LoadableState } from '../../types/common'
 import IdentifierJs from '../data/Identifier'
 import { ValueCard } from '../cards'
-import './SearchFilter.scss'
+import './SearchFilter.css'
 
 const Identifier = IdentifierJs as ComponentType<{
   children?: ReactNode

@@ -1,4 +1,4 @@
-import './Pagination.scss'
+import './Pagination.css'
 
 import ReactPaginate from 'react-paginate'
 import type { ComponentType, ReactNode } from 'react'

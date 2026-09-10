@@ -11,7 +11,7 @@ import { HorisontalSeparator } from '../ui/separators'
 import { PlatformAddressDigestCard } from './index'
 import type { PlatformAddressQueryLike } from './PlatformAddressDigestCard'
 import type { Rate } from '../../types'
-import './PlatformAddressTotalCard.scss'
+import './PlatformAddressTotalCard.css'
 
 const CreditsBlock = CreditsBlockJs as ComponentType<{
   credits?: number | string | null

@@ -1,0 +1,42 @@
+.TabsChartBlock .TimeframeSelector__Button {
+  top: -36px;
+  right: var(--pe-space-2_5);
+}
+
+.TabsChartBlock {
+  container-type: inline-size;
+  height: 100%;
+  transition: all 0.2s;
+}
+
+.TabsChartBlock__ChartContainer {
+  height: 100%;
+  visibility: visible;
+  opacity: 1;
+  transition: all 0.2s;
+}
+
+.TabsChartBlock__ChartContainer--Hidden {
+  visibility: hidden;
+  opacity: 0;
+  transition-delay: 0s;
+}
+
+@container (max-width: 500px) {
+  .TabsChartBlock .TimeframeSelector__Button {
+    top: var(--pe-space-2_5);
+    right: var(--pe-space-3);
+    z-index: 11;
+    width: 100px;
+    min-width: max-content;
+    transition: width 0.2s;
+  }
+
+  .TabsChartBlock .TimeframeSelector__Button--Active {
+    width: calc(100% - var(--pe-space-6));
+  }
+
+  .TabsChartBlock .TimeframeSelector .TimeframeMenu {
+    padding-top: 36px !important;
+  }
+}

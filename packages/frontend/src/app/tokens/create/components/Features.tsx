@@ -4,7 +4,7 @@ import { Stack } from '@chakra-ui/react'
 import { FeatureToggle } from './FeatureRow'
 import { useTokenWizard } from '../TokenWizardContext'
 import type { TokenForm } from '../TokenWizardContext'
-import './Features.scss'
+import './Features.css'
 
 type BooleanFormKey = {
   [K in keyof TokenForm]: TokenForm[K] extends boolean ? K : never

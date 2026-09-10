@@ -10,7 +10,7 @@ import {
 import ValueContainer from '../ui/containers/ValueContainer'
 import { Badge, Grid, GridItem } from '@chakra-ui/react'
 import type { DataContract, Owner } from '../../types'
-import './DataContractsListItem.scss'
+import './DataContractsListItem.css'
 
 // Untyped JS components — loose wrappers until data/* is migrated
 const Alias = AliasJs as ComponentType<{

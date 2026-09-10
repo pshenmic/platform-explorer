@@ -17,7 +17,7 @@ import TransactionStatusBadge from './TransactionStatusBadge'
 import { TransactionsIcon, ChevronIcon } from '../ui/icons'
 import type { Transaction } from '../../types'
 
-import './DuplicatedTransactions.scss'
+import './DuplicatedTransactions.css'
 
 const Identifier = IdentifierJs as ComponentType<{
   children?: ReactNode

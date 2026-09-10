@@ -6,7 +6,7 @@ import { EmptyListMessage } from '../../ui/lists'
 import { Grid, GridItem } from '@chakra-ui/react'
 import { ErrorMessageBlock } from '../../Errors'
 import { LoadingList } from '../../loading'
-import './QuorumMembersList.scss'
+import './QuorumMembersList.css'
 
 const headerExtraClass: Record<string, string> = {
   default: '',

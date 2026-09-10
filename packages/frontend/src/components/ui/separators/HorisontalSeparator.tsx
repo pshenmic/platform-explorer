@@ -1,5 +1,5 @@
 import type { WithClassName } from '../../../types'
-import './HorisontalSeparator.scss'
+import './HorisontalSeparator.css'
 
 export default function HorisontalSeparator ({ className }: WithClassName) {
   return <div className={`HorisontalSeparator ${className || ''}`}></div>

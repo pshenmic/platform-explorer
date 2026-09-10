@@ -14,7 +14,7 @@ import { PublicKeysList } from '../publicKeys'
 import { findActiveAlias } from '../../util'
 import { useState } from 'react'
 import { ValueCard } from '../cards'
-import './IdentityTotalCard.scss'
+import './IdentityTotalCard.css'
 
 // Untyped JS modules — cast until migrated
 const Alias = AliasJs as ComponentType<{

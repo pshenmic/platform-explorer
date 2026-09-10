@@ -10,7 +10,7 @@ import { parseAsInteger, useQueryState } from 'nuqs'
 import { useValidatorsFilters, ValidatorsFilter, ValidatorsList, ValidatorsStatsInline } from '@components/validators'
 import PageTitle from '../../components/intro/PageTitle'
 import introContent from './introContent'
-import './ValidatorsPage.scss'
+import './ValidatorsPage.css'
 
 const paginateConfig = {
   pageSize: {

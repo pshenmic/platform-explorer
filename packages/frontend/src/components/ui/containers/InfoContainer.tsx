@@ -1,5 +1,5 @@
 import type { WithChildren, WithClassName } from '../../../types/common'
-import './InfoContainer.scss'
+import './InfoContainer.css'
 
 type InfoContainerStyle = 'tabs' | 'translucentBg'
 

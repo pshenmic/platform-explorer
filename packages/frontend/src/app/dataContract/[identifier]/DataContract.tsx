@@ -21,7 +21,7 @@ import { useQueryState, parseAsStringEnum, parseAsString } from 'nuqs'
 import { normalizePagination } from '@utils/table'
 import type { DataContract as DataContractModel, LoadableState, Rate, Transaction } from '../../../types'
 
-import './DataContract.scss'
+import './DataContract.css'
 
 const pagintationConfig = {
   itemsOnPage: {

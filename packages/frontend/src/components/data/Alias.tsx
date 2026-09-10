@@ -4,7 +4,7 @@ import type { WithChildren, WithClassName } from '../../types/common'
 import { Tooltip } from '../ui/Tooltips'
 import { ErrorIcon, QueuedIcon } from '../ui/icons'
 import ImageGenerator from '../imageGenerator'
-import './Alias.scss'
+import './Alias.css'
 
 interface AliasProps extends WithChildren, WithClassName {
   alias?: string | null

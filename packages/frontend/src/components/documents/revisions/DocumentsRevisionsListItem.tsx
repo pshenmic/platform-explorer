@@ -9,7 +9,7 @@ import Link from 'next/link'
 import { findActiveAlias } from '../../../util'
 // Direct path — avoid transactions/index barrel (cycles via TransitionCard → documents)
 import BatchTypeBadge from '../../transactions/BatchTypeBadge'
-import './DocumentsRevisionsListItem.scss'
+import './DocumentsRevisionsListItem.css'
 
 // Loose casts for data/* props used here
 const Alias = AliasJs as ComponentType<{

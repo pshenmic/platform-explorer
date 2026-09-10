@@ -9,7 +9,7 @@ import {
 import { Tooltip } from '../../ui/Tooltips'
 import type { Rate } from '../../../types'
 import type { WithClassName } from '../../../types/common'
-import './PriceListItem.scss'
+import './PriceListItem.css'
 
 const NotActive = NotActiveJs as ComponentType<{ children?: ReactNode, className?: string }>
 const BigNumber = BigNumberJs as ComponentType<{ children?: ReactNode, className?: string }>

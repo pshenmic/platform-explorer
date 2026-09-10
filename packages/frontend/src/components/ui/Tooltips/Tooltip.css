@@ -1,0 +1,31 @@
+.Tooltip {
+  pointer-events: auto !important;
+  max-width: min(18rem, 100%) !important;
+  white-space: normal !important;
+}
+
+.Tooltip__Body {
+  pointer-events: auto;
+  max-width: 100%;
+}
+
+.Tooltip__Title {
+  color: var(--pe-color-fg);
+  font-weight: var(--pe-font-weight-extrabold);
+  font-size: var(--pe-text-sm);
+  white-space: normal;
+  word-break: break-word;
+}
+
+.Tooltip--Extended .Tooltip__Title {
+  margin-bottom: var(--pe-space-2_5);
+  text-transform: uppercase;
+}
+
+.Tooltip__Content {
+  color: var(--pe-color-fg);
+  font-size: var(--pe-text-xs);
+  white-space: normal;
+  word-break: break-word;
+  line-height: 1.45;
+}

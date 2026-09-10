@@ -6,7 +6,7 @@ import {
   IpAddress as IpAddressJs
 } from '../../data'
 import Link from 'next/link'
-import './QuorumMembersListItem.scss'
+import './QuorumMembersListItem.css'
 
 const Identifier = IdentifierJs as ComponentType<{
   children?: ReactNode

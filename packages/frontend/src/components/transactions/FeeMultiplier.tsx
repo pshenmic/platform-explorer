@@ -1,4 +1,4 @@
-import './FeeMultiplier.scss'
+import './FeeMultiplier.css'
 
 interface FeeMultiplierProps {
   value?: number

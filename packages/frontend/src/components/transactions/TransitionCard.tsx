@@ -3,7 +3,7 @@ import TokenTransitionCard from '../tokens/TokenTransitionCard'
 import DocumentTransitionCard from '../documents/DocumentTransitionCard'
 import type { Rate } from '../../types'
 import type { WithClassName } from '../../types/common'
-import './TransitionCard.scss'
+import './TransitionCard.css'
 
 /** Document/token transition payload from state transition data (loose shape). */
 export interface TransitionData {

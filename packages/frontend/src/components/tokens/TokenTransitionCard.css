@@ -1,0 +1,148 @@
+.TokenTransitionCard {
+  container-type: inline-size;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.TokenTransitionCard .InfoLine {
+  justify-content: flex-start;
+}
+
+.TokenTransitionCard__InfoLine .InfoLine__Title {
+  width: 200px;
+}
+
+.TokenTransitionCard__InfoLine--IdContainer .InfoLine__Value {
+  flex-grow: 0;
+  max-width: max-content;
+}
+
+.TokenTransitionCard__InfoLine--IdContainer .Identifier,
+.TokenTransitionCard__InfoLine--IdContainer .Identifier__SymbolsContainer {
+  flex-grow: 1;
+}
+
+.TokenTransitionCard__InfoLine--Data {
+  align-items: flex-start;
+}
+
+.TokenTransitionCard__InfoLine--Data code {
+  max-width: 100%;
+}
+
+@container (max-width: 600px) {
+  .TokenTransitionCard__InfoLine--Data,
+  .TokenTransitionCard__InfoLine--PrefundedBalance {
+    flex-wrap: wrap;
+  }
+
+  .TokenTransitionCard__InfoLine--Data code {
+    width: 100%;
+    margin: 0;
+  }
+}
+
+@media screen and (max-width: 48em) {
+  .TokenTransitionCard__InfoLine:not(.TokenTransitionCard__InfoLine--Revision):not(
+      .TokenTransitionCard__InfoLine--Action
+    )
+    .InfoLine
+    .InfoLine__Value {
+    flex-grow: 1;
+  }
+}
+
+@media screen and (max-width: 30em) {
+  .TokenTransitionCard__InfoLine {
+    flex-wrap: wrap;
+    justify-content: space-between;
+  }
+
+  .TokenTransitionCard__InfoLine:not(.TokenTransitionCard__InfoLine--Revision):not(
+      .TokenTransitionCard__InfoLine--Action
+    )
+    .InfoLine__Title {
+    margin-bottom: 4px;
+    margin-right: 0;
+  }
+
+  .TokenTransitionCard__InfoLine--Revision,
+  .TokenTransitionCard__InfoLine--Action {
+    justify-content: space-between;
+  }
+
+  .TokenTransitionCard__InfoLine--Revision .InfoLine__Title,
+  .TokenTransitionCard__InfoLine--Revision .InfoLine__Value,
+  .TokenTransitionCard__InfoLine--Action .InfoLine__Title,
+  .TokenTransitionCard__InfoLine--Action .InfoLine__Value {
+    width: max-content !important;
+  }
+
+  .TokenTransitionCard__InfoLine--Revision .InfoLine__Value,
+  .TokenTransitionCard__InfoLine--Action .InfoLine__Value {
+    width: max-content;
+    text-align: right !important;
+  }
+}
+
+.TokenTransitionCard .InfoLine__Value {
+  text-align: left;
+}
+
+.TokenTransitionCard .ValueCard {
+  width: max-content;
+  max-width: 100%;
+}
+
+.TokenTransitionCard__InfoLine--Action .InfoLine__Title {
+  min-width: 80px;
+}
+
+.TokenTransitionCard__InfoLine--Amount .InfoLine__Title {
+  min-width: 100px;
+}
+
+.TokenTransitionCard__InfoLine--TokenId .InfoLine__Title {
+  min-width: 120px;
+}
+
+.TokenTransitionCard__InfoLine--TokenContractPosition .InfoLine__Title {
+  min-width: 200px;
+}
+
+.TokenTransitionCard__InfoLine--DataContractId .InfoLine__Title {
+  min-width: 160px;
+}
+
+.TokenTransitionCard__InfoLine--Nonce .InfoLine__Title {
+  min-width: 200px;
+}
+
+.TokenTransitionCard__InfoLine--Recipient .InfoLine__Title {
+  min-width: 120px;
+}
+
+.TokenTransitionCard__InfoLine--IssuedToIdentity .InfoLine__Title {
+  min-width: 180px;
+}
+
+.TokenTransitionCard__InfoLine--Price .InfoLine__Title {
+  min-width: 80px;
+}
+
+.TokenTransitionCard__InfoLine--PublicNote .InfoLine__Title {
+  min-width: 120px;
+}
+
+.TokenTransitionCard__InfoLine--Data .InfoLine__Title {
+  min-width: 80px;
+}
+
+@container (max-width: 600px) {
+  .TokenTransitionCard .InfoLine__Value {
+    text-align: right !important;
+    display: flex;
+    justify-content: flex-end;
+  }
+}

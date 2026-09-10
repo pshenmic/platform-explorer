@@ -7,8 +7,8 @@ import { ErrorMessageBlock } from '../Errors'
 // Untyped JS components — loose wrappers until data/* is migrated
 import { NotActive as NotActiveJs } from '../data'
 import type { WithClassName } from '../../types/common'
-import './TokenDashboardCards.scss'
-import './TokenDashboardCard.scss'
+import './TokenDashboardCards.css'
+import './TokenDashboardCard.css'
 
 const NotActive = NotActiveJs as ComponentType<{ children?: ReactNode, className?: string }>
 const DashboardCards = DashboardCardsJs as ComponentType<{

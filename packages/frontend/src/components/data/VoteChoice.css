@@ -1,0 +1,20 @@
+.VoteChoice--TowardsIdentity .ValueContainer__Value {
+  display: flex;
+  align-items: center;
+  gap: var(--pe-space-2);
+}
+
+.VoteChoice {
+  max-width: max-content;
+  padding: var(--pe-space-1_5) var(--pe-space-3);
+}
+
+.VoteChoice--TowardsIdentity .VoteChoice__Parameter {
+  background: rgba(var(--pe-color-green-default-rgb), 0.1);
+}
+
+.VoteChoice__Parameter {
+  max-width: 100%;
+  overflow: hidden;
+  padding: 0.125rem var(--pe-space-2_5);
+}

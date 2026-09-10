@@ -1,0 +1,22 @@
+/**
+ * Design tokens entry (import once from app shell).
+ *
+ * Order: palette → typography → shared utils.
+ * See palette.css / typography.css headers for naming conventions.
+ *
+ * New component CSS:
+ * - Color: var(--pe-color-*) / semantic bg|fg|border|surface
+ * - Type: var(--pe-text-*), var(--pe-font-weight-*)
+ * - Space: var(--pe-space-*) (4px grid; half-steps 1_5/2_5/3_5 for legacy only)
+ * - Radius: var(--pe-radius-*), not space tokens
+ * - Opacity: var(--pe-opacity-*)
+ * - Prefer scale steps over raw px/rem
+ * - Prefer native CSS nesting for BEM (&.__El, &--Mod, nested @media)
+ * - Compound mods: &:is(.Block--A.Block--B) (not &--A&--B / &--A.Block--B) for Turbopack
+ * - Do not reintroduce Sass or var(--chakra-colors-*)
+ */
+
+@import "./palette.css";
+@import "./typography.css";
+@import "../utils/loading-line.css";
+@import "../utils/brand-scroll.css";

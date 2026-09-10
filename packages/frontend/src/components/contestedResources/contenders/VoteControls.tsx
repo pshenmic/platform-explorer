@@ -8,7 +8,7 @@ import { VoteEnum } from './constants'
 import type { VoteEnumValue } from './constants'
 import type { WalletInfo } from 'src/contexts'
 
-import './VoteControls.scss'
+import './VoteControls.css'
 import { useState, useEffect } from 'react'
 
 const VOTING_DATA_CONTRACT_ID =

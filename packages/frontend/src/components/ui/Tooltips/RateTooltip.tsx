@@ -3,7 +3,7 @@ import Tooltip from './Tooltip'
 import { roundUsd, removeTrailingZeros, creditsToDash } from '../../../util'
 import type { Rate } from '../../../types'
 import type { PlacementWithLogical } from '@chakra-ui/react'
-import './RateTooltip.scss'
+import './RateTooltip.css'
 
 interface RateTooltipProps {
   credits?: number

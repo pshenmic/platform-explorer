@@ -4,7 +4,7 @@ import { ValueContainer } from '@ui/containers'
 import { InfoIcon } from '@components/ui/icons'
 import { distDataByType, type DistField } from './serialaze'
 
-import styles from './DistType.module.scss'
+import styles from './DistType.module.css'
 
 interface DistTypeDetails {
   functionName?: string | null

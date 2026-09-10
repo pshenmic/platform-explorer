@@ -3,7 +3,7 @@ import type { ChangeEvent } from 'react'
 import { SubmitButton } from '../ui/forms'
 import FilterActions from './FilterActions'
 import type { RangeFilterValue } from './types'
-import './RangeFilter.scss'
+import './RangeFilter.css'
 
 interface RangeFilterProps {
   value?: RangeFilterValue

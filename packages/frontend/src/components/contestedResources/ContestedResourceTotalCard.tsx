@@ -18,7 +18,7 @@ import type { Contender } from './contenders/ContendersListItem'
 import { InfoBlock } from '../ui/containers'
 import { colors } from '../../styles/colors'
 import type { ContestedResource, LoadableState, Rate, WithClassName } from '../../types'
-import './ContestedResourceTotalCard.scss'
+import './ContestedResourceTotalCard.css'
 
 // Untyped JS components — loose wrappers until data/* / cards/* are migrated
 const Alias = AliasJs as ComponentType<{ children?: ReactNode, className?: string, ellipsis?: boolean }>

@@ -5,7 +5,7 @@ import { InfoIcon, RepeatIcon } from '@chakra-ui/icons'
 import { CardHead } from '../cards'
 import { Tooltip } from '../ui/Tooltips'
 import { Skeleton } from './Skeleton'
-import './MasternodesDonut.scss'
+import './MasternodesDonut.css'
 
 // tiny slices (e.g. banned 1%) would vanish from the bar; clamp the display width, keep exact counts
 const MIN_SEG_FRAC = 0.02

@@ -14,7 +14,7 @@ import {
   useReactTable
 } from '@tanstack/react-table'
 import type { Rate } from '../../types'
-import './TokensList.scss'
+import './TokensList.css'
 
 const Pagination = PaginationJs as ComponentType<{
   className?: string

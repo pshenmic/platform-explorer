@@ -5,7 +5,7 @@ import Pagination from '../../pagination'
 import { LoadingList } from '../../loading'
 import { ErrorMessageBlock } from '../../Errors'
 import { Grid, GridItem } from '@chakra-ui/react'
-import './DocumentsRevisionsList.scss'
+import './DocumentsRevisionsList.css'
 
 interface DocumentsRevisionsListProps {
   revisions?: Array<Record<string, unknown>>

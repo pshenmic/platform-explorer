@@ -6,7 +6,7 @@ import { TimeDelta, BigNumber } from '../../components/data'
 import { useCountUp } from '../../components/home/hooks'
 import { HeroNodes } from '../../components/home'
 import { isNetworkLive } from '../../components/home/utils'
-import './HomeHero.scss'
+import './HomeHero.css'
 
 interface HomeHeroProps {
   status?: Status | Partial<Status> | null

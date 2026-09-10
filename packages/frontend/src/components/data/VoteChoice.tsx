@@ -1,7 +1,7 @@
 import ValueContainer from '../ui/containers/ValueContainer'
 import Identifier from './Identifier'
 import { ValueCard } from '../cards'
-import './VoteChoice.scss'
+import './VoteChoice.css'
 
 function transformTypeString (input: unknown): string | null {
   if (typeof input !== 'string') return null

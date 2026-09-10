@@ -5,7 +5,7 @@ import { LoadingList } from '../loading'
 import Pagination from '../pagination'
 import { ErrorMessageBlock } from '../Errors'
 import type { Transfer } from '../../types'
-import './TransfersList.scss'
+import './TransfersList.css'
 
 type HeaderStyles = 'default' | 'light'
 

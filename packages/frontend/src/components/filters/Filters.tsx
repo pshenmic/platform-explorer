@@ -21,7 +21,7 @@ import type {
 } from './types'
 import type { WithClassName } from '../../types/common'
 
-import './Filters.scss'
+import './Filters.css'
 
 interface FiltersProps extends WithClassName {
   filtersConfig: FiltersConfig
@@ -66,11 +66,10 @@ export const Filters = ({
   const previousAppliedFilters = useRef<Record<string, unknown>>(appliedFilters as Record<string, unknown>)
 
   const applyFilters = useCallback((filtersToApply: FilterState = menuFilters) => {
-    if (typeof onFilterChange !== 'function') return
-
     const processedFilters = (() => {
       return Object.entries(filtersToApply).reduce<Record<string, unknown>>((result, [key, value]) => {
         const filterKeyConfig = filtersConfig[key]
+        if (!filterKeyConfig) return result
 
         if (filterKeyConfig.type === 'multiselect' && (filterKeyConfig.isAllSelected?.(value) || (Array.isArray(value) && value.length === 0))) {
           return result
@@ -109,8 +108,17 @@ export const Filters = ({
       }, {})
     })()
 
-    /** Update applied filters state */
-    setAppliedFilters(filtersToApply)
+    setAppliedFilters(prev => {
+      // Avoid extra renders when closing the menu with unchanged draft filters
+      try {
+        if (JSON.stringify(prev) === JSON.stringify(filtersToApply)) return prev
+      } catch {
+        /* fall through */
+      }
+      return filtersToApply
+    })
+
+    if (typeof onFilterChange !== 'function') return
 
     if (JSON.stringify(previousAppliedFilters.current) === JSON.stringify(processedFilters)) {
       return
@@ -130,32 +138,35 @@ export const Filters = ({
   const { isOpen: menuIsOpen, onOpen: menuOnOpen, onClose: menuOnClose } = useDisclosure()
   const [isMenuInitialized, setIsMenuInitialized] = useState(false)
 
-  /** Sync menu filters with applied filters when menu opens */
+  /**
+   * Open / close the filter menu.
+   * Parent owns open state (controlled Popover). Handlers must be idempotent:
+   * Chakra may call onOpen/onClose more than once for one transition.
+   */
   const handleMenuOpen = useCallback(() => {
-    // Only sync on first open or in desktop mode
-    if (!isMenuInitialized || !isMobile) {
-      setMenuFilters(appliedFilters)
-      setIsMenuInitialized(true)
-    }
+    if (menuIsOpen) return
 
+    // Snapshot applied filters into draft menu state once per open
+    setMenuFilters(appliedFilters)
+    setIsMenuInitialized(true)
     menuOnOpen()
-  }, [appliedFilters, setMenuFilters, menuOnOpen, isMenuInitialized, isMobile])
+  }, [menuIsOpen, appliedFilters, setMenuFilters, menuOnOpen])
 
   const handleMenuClose = useCallback(() => {
-    /** Apply filters when menu closes (if not applying on change) */
+    if (!menuIsOpen) return
+
     if (!applyOnChange) {
       applyFilters()
     }
     setIsMenuInitialized(false)
     menuOnClose()
-  }, [applyFilters, applyOnChange, menuOnClose])
+  }, [menuIsOpen, applyFilters, applyOnChange, menuOnClose])
 
-  const submitHandler = () => {
-    /** Always apply filters when submit is pressed */
+  const submitHandler = useCallback(() => {
     applyFilters()
     setIsMenuInitialized(false)
     menuOnClose()
-  }
+  }, [applyFilters, menuOnClose])
 
   /** Handle single filter change in menu */
   const handleFilterChange = useCallback((filterName: string, value: FilterStateValue) => {
@@ -302,12 +313,14 @@ export const Filters = ({
       options: config.options || null,
       mobileTagRenderer: config.mobileTagRenderer || null
     }
-  }), [filtersConfig, menuFilters, appliedFilters, handleMultipleValuesChange, handleFilterChange, handleToggleAll])
+  }), [filtersConfig, menuFilters, appliedFilters, handleMultipleValuesChange, handleFilterChange, handleToggleAll, submitHandler])
 
-  const TriggerButton = () => (
+  /** Mobile: we own the click. Desktop: PopoverTrigger owns the click — no onClick here. */
+  const filterTriggerButton = useMemo(() => (
     <Button
+      type='button'
       className={'Filters__Button Filters__Button--ToggleFilters '}
-      onClick={() => menuIsOpen ? handleMenuClose() : handleMenuOpen()}
+      onClick={isMobile ? () => { menuIsOpen ? handleMenuClose() : handleMenuOpen() } : undefined}
       variant={'brand'}
       size={'sm'}
     >
@@ -317,7 +330,7 @@ export const Filters = ({
         transform: menuIsOpen ? 'rotate(-90deg)' : 'rotate(90deg)'
       }} />
     </Button>
-  )
+  ), [isMobile, menuIsOpen, handleMenuClose, handleMenuOpen, buttonText])
 
   const activeFiltersCount = menuData.filter(item => item.activeFilterValue).length
 
@@ -326,10 +339,11 @@ export const Filters = ({
       <div className={'Filters__ButtonsContainer'}>
         <div className={'Filters__ControlButtons'}>
           {isMobile
-            ? <TriggerButton />
+            ? filterTriggerButton
             : <MultiLevelMenu
-                placement={'bottom-start'}
-                trigger={TriggerButton()}
+                // Button is usually on the right of the page — open toward free space (left)
+                placement={'bottom-end'}
+                trigger={filterTriggerButton}
                 menuData={menuData}
                 onClose={handleMenuClose}
                 isOpen={menuIsOpen}

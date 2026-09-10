@@ -16,7 +16,7 @@ import { BlockIcon } from '../ui/icons'
 import { LinkContainer } from '../ui/containers'
 import { useRouter } from 'next/navigation'
 
-import './BlocksListItem.scss'
+import './BlocksListItem.css'
 
 const Identifier = IdentifierJs as ComponentType<{
   children?: ReactNode

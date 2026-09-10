@@ -1,9 +1,8 @@
-import { useEffect, useState } from 'react'
+'use client'
+
 import type { ReactNode } from 'react'
-import { Popover, PopoverTrigger, PopoverContent, PopoverBody, Link } from '@chakra-ui/react'
-import type { PlacementWithLogical } from '@chakra-ui/react'
-import { ChevronIcon } from '../icons'
-import './MenuLevel.scss'
+import { Link } from '@chakra-ui/react'
+import './MenuLevel.css'
 
 export interface MenuItem {
   label?: ReactNode
@@ -17,56 +16,31 @@ export interface MenuItem {
 interface MenuLevelProps {
   items?: MenuItem[]
   onMenuItemClick?: () => void
-  placement?: PlacementWithLogical
-  onLevelClose?: () => void
-  forceClose?: boolean
-  activeItemId?: number | null
-  onActiveItemChange?: (id: number | null) => void
+  /** Selected row index — owned by MultiLevelMenu only */
+  selectedIndex?: number | null
+  onSelectIndex?: (index: number) => void
 }
 
+/**
+ * Flat menu list. No nested Popovers, no parent setState during render.
+ * Items with content/subMenu ask the parent to show a side panel via onSelectIndex.
+ */
 function MenuLevel ({
   items = [],
   onMenuItemClick,
-  placement = 'right-start',
-  onLevelClose,
-  forceClose,
-  activeItemId,
-  onActiveItemChange
+  selectedIndex = null,
+  onSelectIndex
 }: MenuLevelProps) {
-  const [openSubMenuId, setOpenSubMenuId] = useState<number | null>(null)
-
-  useEffect(() => {
-    if (forceClose) setOpenSubMenuId(null)
-  }, [forceClose])
-
-  const handleItemClick = (item: MenuItem, index: number) => {
-    if (item?.subMenu?.length || item?.content) {
-      setOpenSubMenuId(prev => prev === index ? null : index)
-      return
-    }
-
-    if (item?.onClick) {
-      item?.onClick()
-      onMenuItemClick && onMenuItemClick()
-    }
-  }
-
-  const handleSubMenuClose = () => {
-    onActiveItemChange?.(null)
-    setOpenSubMenuId(null)
-    if (typeof onLevelClose === 'function') onLevelClose()
-  }
-
   return (
     <div className={'MenuLevel'}>
       {items.map((item, index) => {
-        const isActive = activeItemId === index
+        const isSelected = selectedIndex === index
+        const opensPanel = Boolean(item.content || item.subMenu?.length)
 
-        if (item?.disabled) {
+        if (item.disabled) {
           return (
             <div
               key={index}
-              onClick={() => onMenuItemClick && onMenuItemClick()}
               className={'MenuLevel__Item MenuLevel__Item--Disabled'}
             >
               <span>{item.label}</span>
@@ -74,7 +48,7 @@ function MenuLevel ({
           )
         }
 
-        if (item?.link) {
+        if (item.link) {
           return (
             <Link
               key={index}
@@ -82,66 +56,45 @@ function MenuLevel ({
               w={'100%'}
               textDecoration={'none'}
               _hover={{ textDecoration: 'none' }}
-              onClick={() => onMenuItemClick && onMenuItemClick()}
-              className={`MenuLevel__Item ${isActive ? 'active' : ''}`}
+              onClick={() => onMenuItemClick?.()}
+              className={`MenuLevel__Item ${isSelected ? 'MenuLevel__Item--Active' : ''}`}
             >
               <span>{item.label}</span>
             </Link>
           )
         }
 
-        if (item?.subMenu?.length || item?.content) {
+        if (opensPanel) {
           return (
-            <Popover
+            <div
               key={index}
-              isOpen={openSubMenuId === index}
-              onClose={handleSubMenuClose}
-              onOpen={() => onActiveItemChange?.(index)}
-              placement={placement}
-              closeOnBlur={true}
-              autoFocus={false}
-              strategy={'fixed'}
-              variant={'menu'}
-              offset={[0, 25]}
-              boundary={'scrollParent'}
+              role='button'
+              tabIndex={0}
+              className={`MenuLevel__Item MenuLevel__Item--Submenu ${isSelected ? 'MenuLevel__Item--Active' : ''}`}
+              onClick={() => onSelectIndex?.(index)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault()
+                  onSelectIndex?.(index)
+                }
+              }}
             >
-              <PopoverTrigger>
-                <div
-                  className={`MenuLevel__Item MenuLevel__Item--Submenu ${isActive ? 'MenuLevel__Item--Active' : ''}`}
-                  onClick={() => handleItemClick(item, index)}
-                >
-                  {<span>{item.label}</span>}
-                  <div className={'MenuLevel__ItemIcon'}>
-                    <ChevronIcon />
-                  </div>
-                </div>
-              </PopoverTrigger>
-              <PopoverContent width={'auto'} minWidth={'180px'}>
-                <PopoverBody overflow={'visible'} p={0}>
-                  {item.subMenu
-                    ? <MenuLevel
-                        items={item.subMenu}
-                        onMenuItemClick={onMenuItemClick}
-                        placement={placement}
-                        onLevelClose={handleSubMenuClose}
-                        activeItemId={activeItemId}
-                        onActiveItemChange={onActiveItemChange}
-                      />
-                    : item.content
-                  }
-                </PopoverBody>
-              </PopoverContent>
-            </Popover>
+              <span>{item.label}</span>
+              <span className={'MenuLevel__ItemChevron'} aria-hidden>›</span>
+            </div>
           )
         }
 
         return (
           <div
-            className={`MenuLevel__Item ${isActive ? 'active' : ''}`}
-            onClick={() => handleItemClick(item, index)}
             key={index}
+            className={`MenuLevel__Item ${isSelected ? 'MenuLevel__Item--Active' : ''}`}
+            onClick={() => {
+              item.onClick?.()
+              onMenuItemClick?.()
+            }}
           >
-            {<span>{item.label}</span>}
+            <span>{item.label}</span>
           </div>
         )
       })}

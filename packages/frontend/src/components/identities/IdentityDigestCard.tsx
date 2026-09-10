@@ -7,7 +7,7 @@ import { ValueContainer } from '../ui/containers'
 import { LoadingLine } from '../loading'
 import { useActiveNetwork } from 'src/contexts'
 
-import './IdentityDigestCard.scss'
+import './IdentityDigestCard.css'
 
 // Untyped JS modules — cast until migrated
 const CreditsBlock = CreditsBlockJs as ComponentType<{ credits?: number | string | null, rate?: Rate | null }>

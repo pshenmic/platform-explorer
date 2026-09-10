@@ -1,7 +1,7 @@
 import { Badge } from '@chakra-ui/react'
 import { Tooltip } from '../ui/Tooltips'
 import type { WithClassName } from '../../types'
-import './VoteBadges.scss'
+import './VoteBadges.css'
 
 interface VoteBadgesProps extends WithClassName {
   totalCountAbstain?: number | null

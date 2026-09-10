@@ -3,7 +3,7 @@ import type { EpochData, Rate, Status } from '../../../types'
 import { RateTooltip } from '../../ui/Tooltips'
 import { currencyRound } from '../../../util'
 import { InfoIcon } from '@chakra-ui/icons'
-import './FeesCollectedCardContent.scss'
+import './FeesCollectedCardContent.css'
 
 interface FeesCollectedCardContentProps {
   epoch?: Pick<EpochData, 'totalCollectedFees'> | null

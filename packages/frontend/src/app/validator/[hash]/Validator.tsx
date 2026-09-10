@@ -36,7 +36,7 @@ import type {
   Withdrawal
 } from '../../../types'
 
-import './ValidatorPage.scss'
+import './ValidatorPage.css'
 
 /** API endpoint status may include a free-form message. */
 type EndpointStatus = {

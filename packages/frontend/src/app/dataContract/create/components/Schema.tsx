@@ -3,7 +3,7 @@ import { CardWrapper } from './CardWrapper'
 import { SchemaHeader, SchemaField } from './SchemaAtomic'
 import { useSchema } from '../SchemaProvider'
 
-import styles from './Schema.module.scss'
+import styles from './Schema.module.css'
 
 const DOCS_URL = 'https://docs.dash.org/projects/platform/en/stable/docs/explanations/platform-protocol-data-contract.html'
 

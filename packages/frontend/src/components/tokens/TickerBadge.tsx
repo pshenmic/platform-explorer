@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react'
-import './TickerBadge.scss'
+import './TickerBadge.css'
 import { ValueContainer } from '../ui/containers'
 import type { WithClassName } from '../../types/common'
 

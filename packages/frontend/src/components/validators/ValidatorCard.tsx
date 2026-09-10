@@ -5,7 +5,7 @@ import { Identifier as IdentifierJs, InfoLine as InfoLineJs, CreditsBlock as Cre
 import ImageGenerator from '../imageGenerator'
 import { HorisontalSeparator } from '../ui/separators'
 import Link from 'next/link'
-import './ValidatorCard.scss'
+import './ValidatorCard.css'
 
 // Untyped JS modules — cast until migrated
 const Identifier = IdentifierJs as ComponentType<{

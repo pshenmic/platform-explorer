@@ -1,0 +1,84 @@
+.NetworkSelect {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--pe-space-2);
+  font-family: var(--pe-font-heading);
+}
+
+.NetworkSelect__Title {
+  font-weight: var(--pe-font-weight-normal);
+  font-size: var(--pe-text-sm);
+  color: var(--pe-color-fg-muted);
+}
+
+.NetworkSelect__Button {
+  position: relative;
+  padding: var(--pe-space-1_5) var(--pe-space-3);
+  background-color: var(--pe-color-brand-normal);
+  border-radius: var(--pe-radius-def);
+  cursor: pointer;
+  font-weight: var(--pe-font-weight-medium);
+  font-size: var(--pe-text-sm);
+  letter-spacing: 0.025rem;
+  display: flex;
+  align-items: center;
+  gap: var(--pe-space-2_5);
+  z-index: 11;
+  transition: var(--pe-transition-def);
+}
+
+.NetworkSelect__Button:hover {
+  background-color: var(--pe-color-brand-light);
+}
+
+.NetworkSelect__Button--Arrow {
+  color: var(--pe-color-white-50);
+  stroke-width: 1.5px;
+  transform: rotate(180deg);
+  transition: transform ease 0.5s;
+}
+
+.NetworkSelect__Button--ArrowActive {
+  transform: rotate(0deg);
+  transition: transform ease 0.5s;
+}
+
+.NetworkSelect__DropdownWrapper {
+  position: absolute;
+  top: calc(5px + 100%);
+  right: 0;
+  z-index: 10;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity ease 0.5s;
+}
+
+.NetworkSelect__DropdownWrapper::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: -50%;
+  width: 100%;
+  height: 100%;
+}
+
+.NetworkSelect__DropdownWrapperActive {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: all;
+}
+
+.InternalNavigation {
+  position: relative;
+  width: auto;
+  border-bottom: var(--pe-space-1) solid var(--pe-color-gray-600);
+  border-top: var(--pe-space-1) solid var(--pe-color-gray-600);
+  border-radius: var(--pe-radius-def);
+  padding: var(--pe-space-2) var(--pe-space-1);
+  background: #24282b;
+  display: flex;
+  flex-direction: column;
+  gap: var(--pe-space-1);
+}

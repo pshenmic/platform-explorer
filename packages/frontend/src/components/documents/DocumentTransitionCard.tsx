@@ -5,7 +5,7 @@ import { CreditsBlock as CreditsBlockJs, Identifier as IdentifierJs, InfoLine as
 import BatchTypeBadgeJs from '../transactions/BatchTypeBadge'
 import { ValueContainer } from '../ui/containers'
 import { Code } from '@chakra-ui/react'
-import './DocumentTransitionCard.scss'
+import './DocumentTransitionCard.css'
 
 // Untyped JS modules — cast until migrated
 const CreditsBlock = CreditsBlockJs as ComponentType<{ credits?: number | string | null, rate?: Rate | null }>

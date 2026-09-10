@@ -12,7 +12,7 @@ import { LoadingBlock } from '../../../components/loading'
 import { CodeBlock } from '../../../components/data'
 import { useBreadcrumbs } from '../../../contexts/BreadcrumbsContext'
 import type { Document as DocumentType, LoadableState, PaginatedResultSet, Rate } from '../../../types'
-import './Document.scss'
+import './Document.css'
 
 const pagintationConfig = {
   itemsOnPage: {

@@ -11,7 +11,7 @@ import { BlockIcon } from '../ui/icons'
 import { Skeleton } from './Skeleton'
 import { useLiveList } from './hooks'
 import type { Block } from '../../types'
-import './CompactBlocksList.scss'
+import './CompactBlocksList.css'
 
 // Untyped JS components — loose wrappers until data/* is migrated
 const BigNumber = BigNumberJs as ComponentType<{ children?: ReactNode, className?: string }>

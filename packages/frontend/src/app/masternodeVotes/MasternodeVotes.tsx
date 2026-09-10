@@ -14,7 +14,7 @@ import MasternodeVotesStatsInline from '../../components/contestedResources/Mast
 import PageTitle from '../../components/intro/PageTitle'
 import type { LoadableState, PaginatedResultSet, Vote } from '../../types'
 import introContent from './introContent'
-import './MasternodeVotes.scss'
+import './MasternodeVotes.css'
 
 const paginateConfig = {
   pageSize: {

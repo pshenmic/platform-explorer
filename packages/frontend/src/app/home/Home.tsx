@@ -20,7 +20,7 @@ import type {
   Status,
   Vote
 } from '../../types'
-import './Home.scss'
+import './Home.css'
 
 type EpochPayload = EpochData & {
   protocolVersion?: number | null

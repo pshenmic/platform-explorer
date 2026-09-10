@@ -1,5 +1,5 @@
 import type { FormEventHandler } from 'react'
-import './GoToHeightForm.scss'
+import './GoToHeightForm.css'
 
 interface GoToHeightFormProps {
   isValid: () => boolean

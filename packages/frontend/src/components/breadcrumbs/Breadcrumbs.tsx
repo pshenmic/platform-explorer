@@ -1,4 +1,4 @@
-import './Breadcrumbs.scss'
+import './Breadcrumbs.css'
 import Link from 'next/link'
 import type { ReactNode } from 'react'
 import { BlockIcon, ChevronIcon } from '../ui/icons'

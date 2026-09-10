@@ -5,7 +5,7 @@ import { LoadingList } from '../../loading'
 import Pagination from '../../pagination'
 import { VotesListItem } from './'
 import type { Vote } from '../../../types'
-import './VotesList.scss'
+import './VotesList.css'
 
 interface PaginationProps {
   onPageChange: (selectedItem: { selected: number }) => void
