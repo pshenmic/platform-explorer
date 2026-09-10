@@ -25,9 +25,14 @@ async function fetchQuorumDetail(hash: string) {
   }
 }
 
-const GRID_COLS = 10
-const SKELETON_SLOTS = 100
 const CORE_BLOCK_SEC = 150
+
+function gridSide(n: number) {
+  const size = n > 0 ? n : 100
+  const root = Math.round(Math.sqrt(size))
+  if (root * root === size) return root
+  return Math.max(1, Math.ceil(Math.sqrt(size)))
+}
 
 function quorumHeight(q: any) {
   const n = q?.blockHeight ?? q?.creationHeight
@@ -142,11 +147,11 @@ function sortProTxKeys(keys: string[]) {
 function formatProposeWait(blocks: number, avgSec: number | null) {
   if (typeof avgSec === 'number' && avgSec > 0) {
     const sec = Math.round(blocks * avgSec)
-    if (sec < 90) return `~${sec}s`
+    if (sec < 90) return `~in ${sec}s`
     const min = Math.round(sec / 60)
-    return min < 90 ? `~${min}m` : `~${(min / 60).toFixed(1)}h`
+    return min < 90 ? `~in ${min}m` : `~in ${(min / 60).toFixed(1)}h`
   }
-  return `~${blocks} blocks`
+  return `~in ${blocks} blocks`
 }
 
 function proposeHintFor(
@@ -169,7 +174,8 @@ function proposeHintFor(
   }
   const p = lastKey ? ordered.indexOf(lastKey) : -1
   if (p < 0) return formatProposeWait(i, avgSec)
-  if (i === p) return 'now'
+  if (i === p) return 'finished'
+  if (i === (p + 1) % ordered.length) return 'now'
   if (i > p) return formatProposeWait(i - p, avgSec)
   return 'finished'
 }
@@ -308,21 +314,7 @@ function TipRow({ label, href, children, mono }: any) {
 
 function NodeTooltipBody({ cell }: any) {
   const v = cell.validator
-  const status = (() => {
-    if (cell.isProposer) return 'Last Platform block proposer'
-    if (cell.proposeHint === 'finished') return 'Already proposed this turn'
-    if (cell.role === 'banned') {
-      return isPoSeBannedValidator(cell.validator)
-        ? 'Banned (PoSe)'
-        : 'Banned / not in registered set'
-    }
-    if (cell.band === 'carry') return 'In this set and the last group'
-    if (cell.band === 'upcoming') return 'New in the following turn'
-    if (cell.role === 'invalid') return 'In this turn · invalid'
-    if (cell.role === 'next') return 'From the last group'
-    if (cell.role === 'current' || cell.role === 'active') return 'New this turn'
-    return 'Queued'
-  })()
+  const title = cell.homeIndex != null ? `#${cell.homeIndex}` : shortHash(cell.proTxHash, 6, 6)
 
   const cc = v?.geoIpInfo?.countryCode
   const ccName = cc ? countryName(cc) : null
@@ -348,7 +340,7 @@ function NodeTooltipBody({ cell }: any) {
         )}
         {geoPending && <Skeleton className={'QuorumCard__TipFlag'} w={22} h={22} circle />}
         <div className={'QuorumCard__TipHeadText'}>
-          <div className={'QuorumCard__TipStatus'}>{status}</div>
+          <div className={'QuorumCard__TipStatus'}>{title}</div>
           {ccName && (
             <div className={'QuorumCard__TipCountry'}>
               {ccName} · {cc}
@@ -591,6 +583,8 @@ export default function QuorumCard({
 
   const llmq = parseLlmqType(currentQuorum?.type)
   const rosterSize = currentMembers?.length ?? llmq?.size ?? null
+  const quorumSize = llmq?.size ?? rosterSize ?? 100
+  const gridCols = gridSide(quorumSize)
 
   const list = useMemo(
     () => (Array.isArray(validatorsList) ? validatorsList : []),
@@ -662,7 +656,7 @@ export default function QuorumCard({
 
   const homeCells = useMemo((): any[] => {
     if (filling) {
-      return Array.from({ length: SKELETON_SLOTS }, (_, index) => ({
+      return Array.from({ length: quorumSize }, (_, index) => ({
         kind: 'skel',
         type: 'skel',
         index
@@ -714,7 +708,8 @@ export default function QuorumCard({
     selectedMemberSet,
     nodeNumberByKey,
     bannedSet,
-    bannedValidatorsList
+    bannedValidatorsList,
+    quorumSize
   ])
 
   const windowSlots = useMemo(() => {
@@ -887,7 +882,8 @@ export default function QuorumCard({
 
   const queuedKeysCount = listKeys.filter(k => !selectedMemberSet.has(k)).length
   const nowCount = windowKeys.length
-  const nowFixed = llmq?.size ?? 100
+  const nowFixed = quorumSize
+  const groupCount = sortedQuorums.length || 24
   const poolReady = !poolLoading && !filling && listKeys.length > 0
   const counts: Record<string, number | null> = {
     total: poolReady ? nowCount + queuedKeysCount : null,
@@ -896,14 +892,14 @@ export default function QuorumCard({
   }
 
   return (
-    <section className={'InfoBlock InfoBlock--NoBorder QuorumCard'} aria-label={'Quorum'}>
+    <section className={'InfoBlock InfoBlock--NoBorder QuorumCard'} aria-label={'Quorums'}>
       <div className={'QuorumCard__Glow'} aria-hidden={'true'} />
 
       <header className={'QuorumCard__Head'}>
         <div className={'QuorumCard__HeadTop'}>
           <div className={'QuorumCard__HeadText'}>
             <span className={'QuorumCard__Eyebrow'}>Consensus</span>
-            <h2 className={'QuorumCard__Title'}>Quorum</h2>
+            <h2 className={'QuorumCard__Title'}>Quorums</h2>
           </div>
           <div className={'QuorumCard__Legend'} role={'group'} aria-label={'Validator counts'}>
             {STATS.map(s => {
@@ -946,104 +942,113 @@ export default function QuorumCard({
         </div>
         <div className={'QuorumCard__HeadBottom'}>
           <p className={'QuorumCard__Lede'}>
-            <span className={'QuorumCard__LedeLine'}>Evonodes are grouped in quorums</span>
             <span className={'QuorumCard__LedeLine'}>
-              that take turns in proposing blocks{' '}
-              <span className={'QuorumCard__LegendsSlot'}>
-                <Tooltip
-                  placement={'top'}
-                  className={'QuorumCard__HelpTipTooltip'}
-                  content={
-                    <div className={'QuorumCard__HelpTip'}>
-                      <p>
-                        A{' '}
-                        <a
-                          className={'QuorumCard__HelpMark'}
-                          href={'https://docs.dash.org/en/stable/docs/core/dips/dip-0006.html'}
-                          target={'_blank'}
-                          rel={'noreferrer'}
-                          onClick={e => e.stopPropagation()}
-                        >
-                          quorum
-                        </a>{' '}
-                        is 100 evonodes.{' '}
-                        <a
-                          className={'QuorumCard__HelpMark'}
-                          href={
-                            'https://docs.dash.org/en/stable/docs/core/guide/dash-features-masternode-quorums.html'
-                          }
-                          target={'_blank'}
-                          rel={'noreferrer'}
-                          onClick={e => e.stopPropagation()}
-                        >
-                          24 groups
-                        </a>{' '}
-                        take turns signing.
-                      </p>
-                      <ul className={'QuorumCard__HelpKeys'} aria-label={'Color legend'}>
-                        <li className={'QuorumCard__HelpKey'}>
-                          <span
-                            className={'QuorumCard__HelpChip QuorumCard__HelpChip--active'}
-                            aria-hidden={'true'}
-                          />
-                          <span>New this turn</span>
-                        </li>
-                        <li className={'QuorumCard__HelpKey'}>
-                          <span
-                            className={'QuorumCard__HelpChip QuorumCard__HelpChip--done'}
-                            aria-hidden={'true'}
-                          />
-                          <span>Already proposed this turn</span>
-                        </li>
-                        <li className={'QuorumCard__HelpKey'}>
-                          <span
-                            className={'QuorumCard__HelpChip QuorumCard__HelpChip--next'}
-                            aria-hidden={'true'}
-                          />
-                          <span>From the last group</span>
-                        </li>
-                        <li className={'QuorumCard__HelpKey'}>
-                          <span
-                            className={'QuorumCard__HelpChip QuorumCard__HelpChip--proposer'}
-                            aria-hidden={'true'}
-                          />
-                          <span>Proposed the last Platform block</span>
-                        </li>
-                        <li className={'QuorumCard__HelpKey'}>
-                          <span
-                            className={'QuorumCard__HelpChip QuorumCard__HelpChip--inactive'}
-                            aria-hidden={'true'}
-                          />
-                          <span>In the list, waiting</span>
-                        </li>
-                        <li className={'QuorumCard__HelpKey'}>
-                          <span
-                            className={'QuorumCard__HelpChip QuorumCard__HelpChip--banned'}
-                            aria-hidden={'true'}
-                          />
-                          <span>
-                            Can still sit here: the set is built first, a{' '}
-                            <a
-                              className={'QuorumCard__HelpMark'}
-                              href={'https://docs.dash.org/en/stable/docs/core/dips/dip-0003.html'}
-                              target={'_blank'}
-                              rel={'noreferrer'}
-                              onClick={e => e.stopPropagation()}
-                            >
-                              ban
-                            </a>{' '}
-                            can land after
-                          </span>
-                        </li>
-                      </ul>
-                    </div>
-                  }
-                >
-                  <button type={'button'} className={'QuorumCard__Legends'}>
-                    Legends
-                  </button>
-                </Tooltip>
-              </span>
+              <a
+                className={'QuorumCard__BlockLink'}
+                href={
+                  'https://docs.dash.org/en/stable/docs/user/masternodes/understanding.html#evolution-masternodes-evonodes'
+                }
+                target={'_blank'}
+                rel={'noreferrer'}
+              >
+                Evonodes
+              </a>{' '}
+              are grouped in quorums
+            </span>
+            <span className={'QuorumCard__LedeLine'}>and they take turns in proposing blocks</span>
+            <span className={'QuorumCard__LegendsSlot'}>
+              <Tooltip
+                placement={'top'}
+                className={'QuorumCard__HelpTipTooltip'}
+                content={
+                  <div className={'QuorumCard__HelpTip'}>
+                    <p>
+                      A{' '}
+                      <a
+                        className={'QuorumCard__HelpMark'}
+                        href={'https://docs.dash.org/en/stable/docs/core/dips/dip-0006.html'}
+                        target={'_blank'}
+                        rel={'noreferrer'}
+                        onClick={e => e.stopPropagation()}
+                      >
+                        quorum
+                      </a>{' '}
+                      is {nowFixed} evonodes.{' '}
+                      <a
+                        className={'QuorumCard__HelpMark'}
+                        href={
+                          'https://docs.dash.org/en/stable/docs/core/guide/dash-features-masternode-quorums.html'
+                        }
+                        target={'_blank'}
+                        rel={'noreferrer'}
+                        onClick={e => e.stopPropagation()}
+                      >
+                        {groupCount} groups
+                      </a>{' '}
+                      take turns signing.
+                    </p>
+                    <ul className={'QuorumCard__HelpKeys'} aria-label={'Color legend'}>
+                      <li className={'QuorumCard__HelpKey'}>
+                        <span
+                          className={'QuorumCard__HelpChip QuorumCard__HelpChip--active'}
+                          aria-hidden={'true'}
+                        />
+                        <span>Proposing this quorum</span>
+                      </li>
+                      <li className={'QuorumCard__HelpKey'}>
+                        <span
+                          className={'QuorumCard__HelpChip QuorumCard__HelpChip--done'}
+                          aria-hidden={'true'}
+                        />
+                        <span>Already proposed this turn</span>
+                      </li>
+                      <li className={'QuorumCard__HelpKey'}>
+                        <span
+                          className={'QuorumCard__HelpChip QuorumCard__HelpChip--next'}
+                          aria-hidden={'true'}
+                        />
+                        <span>From the previous quorum</span>
+                      </li>
+                      <li className={'QuorumCard__HelpKey'}>
+                        <span
+                          className={'QuorumCard__HelpChip QuorumCard__HelpChip--proposer'}
+                          aria-hidden={'true'}
+                        />
+                        <span>Proposed the last block</span>
+                      </li>
+                      <li className={'QuorumCard__HelpKey'}>
+                        <span
+                          className={'QuorumCard__HelpChip QuorumCard__HelpChip--inactive'}
+                          aria-hidden={'true'}
+                        />
+                        <span>In the next turns, waiting</span>
+                      </li>
+                      <li className={'QuorumCard__HelpKey'}>
+                        <span
+                          className={'QuorumCard__HelpChip QuorumCard__HelpChip--banned'}
+                          aria-hidden={'true'}
+                        />
+                        <span>
+                          <a
+                            className={'QuorumCard__HelpMark'}
+                            href={'https://docs.dash.org/en/stable/docs/core/dips/dip-0003.html'}
+                            target={'_blank'}
+                            rel={'noreferrer'}
+                            onClick={e => e.stopPropagation()}
+                          >
+                            Banned
+                          </a>{' '}
+                          nodes
+                        </span>
+                      </li>
+                    </ul>
+                  </div>
+                }
+              >
+                <button type={'button'} className={'QuorumCard__Legends'}>
+                  Legend
+                </button>
+              </Tooltip>
             </span>
           </p>
           <p className={'QuorumCard__QCaption'}>
@@ -1078,14 +1083,15 @@ export default function QuorumCard({
                 {quorumEta && (
                   <span
                     className={'QuorumCard__QEta'}
-                    title={'About 24 Core blocks per turn (~2.5 min each)'}
+                    title={`About ${quorumStep(sortedQuorums)} Core blocks per turn (~2.5 min each)`}
                   >
-                    ~{quorumEta.kind}{' '}
+                    ~{quorumEta.kind === 'in' ? 'in ' : ''}
                     <TimeDelta
                       endDate={quorumEta.end}
                       format={'compact'}
                       showTimestampTooltip={false}
                     />
+                    {quorumEta.kind === 'left' ? ' left' : ''}
                   </span>
                 )}
               </>
@@ -1120,8 +1126,8 @@ export default function QuorumCard({
               <div
                 className={'QuorumCard__Matrix' + (filling ? ' QuorumCard__Matrix--skel' : '')}
                 style={{
-                  gridTemplateColumns: `repeat(${GRID_COLS}, minmax(0, 1fr))`,
-                  gridTemplateRows: `repeat(${Math.max(1, Math.ceil(cells.length / GRID_COLS))}, minmax(0, 1fr))`
+                  gridTemplateColumns: `repeat(${gridCols}, minmax(0, 1fr))`,
+                  gridTemplateRows: `repeat(${Math.max(1, Math.ceil(cells.length / gridCols))}, minmax(0, 1fr))`
                 }}
                 role={'img'}
                 aria-label={matrixAria}
