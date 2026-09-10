@@ -117,22 +117,14 @@ export function DataListPageFooter({
 
   return (
     <div className={'DataList__Pager'}>
-      <div className={'DataList__PagerMeta'}>
-        <span className={'DataList__PagerPage'}>
-          Page <strong>{current.toLocaleString('en-US')}</strong>
-          <span className={'DataList__PagerOf'}> of {pageCount.toLocaleString('en-US')}</span>
-        </span>
-        <span className={'DataList__PagerDot'} aria-hidden />
-        <span className={'DataList__PagerTotal'}>{paging.total.toLocaleString('en-US')} total</span>
-        {paging.onPageSizeChange ? (
-          <PagerRowsSelect
-            value={paging.pageSize}
-            sizes={sizes}
-            disabled={loading}
-            onChange={paging.onPageSizeChange}
-          />
-        ) : null}
-      </div>
+      {paging.onPageSizeChange ? (
+        <PagerRowsSelect
+          value={paging.pageSize}
+          sizes={sizes}
+          disabled={loading}
+          onChange={paging.onPageSizeChange}
+        />
+      ) : null}
       <nav className={'DataList__PagerNav'} aria-label={'Pagination'}>
         <button
           type={'button'}
@@ -142,7 +134,6 @@ export function DataListPageFooter({
           onClick={() => go(current - 1)}
         >
           <ChevronLeft size={14} strokeWidth={2} aria-hidden />
-          <span>Previous</span>
         </button>
         {pageList.map((item, i) =>
           item === '...' ? (
@@ -154,7 +145,7 @@ export function DataListPageFooter({
             <button
               type={'button'}
               key={item}
-              className={`DataList__PagerBtn${item === current ? ' DataList__PagerBtn--On' : ''}`}
+              className={`DataList__PagerBtn${item === current ? ' DataList__PagerBtn--On' : ''}${item !== current && item !== 1 && item !== pageCount ? ' DataList__PagerBtn--Neighbor' : ''}`}
               aria-current={item === current ? 'page' : undefined}
               disabled={loading}
               onClick={() => go(item)}
@@ -170,7 +161,6 @@ export function DataListPageFooter({
           disabled={current >= pageCount || loading}
           onClick={() => go(current + 1)}
         >
-          <span>Next</span>
           <ChevronRight size={14} strokeWidth={2} aria-hidden />
         </button>
       </nav>
@@ -210,10 +200,11 @@ function PagerRowsSelect({
 
   return (
     <div className={'DataList__PagerRows'} ref={rootRef}>
-      <span className={'DataList__PagerRowsLabel'}>Rows</span>
+      <span className={'DataList__PagerRowsLabel'}>Show</span>
       <button
         type={'button'}
         className={'DataList__PagerSelect'}
+        aria-label={'Rows per page'}
         aria-haspopup={'listbox'}
         aria-expanded={open}
         disabled={disabled}
@@ -222,6 +213,7 @@ function PagerRowsSelect({
         {value}
         <ChevronDown size={14} strokeWidth={2} aria-hidden />
       </button>
+      <span>records</span>
       {open ? (
         <div className={'DataList__PagerMenu'} role={'listbox'} aria-label={'Rows'}>
           {sizes.map(size => (
