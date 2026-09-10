@@ -43,8 +43,9 @@ export default function DocumentsList({
   const columns = [
     {
       key: 'timestamp',
-      header: 'Time',
-      minWidth: 88,
+      header: 'Timestamp',
+      minWidth: 128,
+      align: 'right',
       cell: (document: Document & { gasUsed?: number }) => (
         <TimeDelta endDate={document?.timestamp} />
       )

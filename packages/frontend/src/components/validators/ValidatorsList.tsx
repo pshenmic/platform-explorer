@@ -123,7 +123,7 @@ function validatorColumns(canFilter: boolean) {
     },
     {
       key: 'timestamp',
-      header: 'Timestamp',
+      header: 'Last block',
       filterKey: canFilter ? 'timestamp' : undefined,
       filterType: canFilter ? ('daterange' as const) : undefined,
       minWidth: 128,

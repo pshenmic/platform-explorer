@@ -159,6 +159,7 @@ function ContestedResourcesList({
     {
       key: 'timestamp',
       header: 'Timestamp',
+      align: 'right',
       filterKey: canFilter ? 'timestamp' : undefined,
       filterType: canFilter ? ('daterange' as const) : undefined,
       minWidth: 128,

@@ -3,7 +3,7 @@
 import type { ReactNode } from 'react'
 import { useRouter } from 'next/navigation'
 import type { DataContractsListItemData } from './DataContractsListItem'
-import { Alias, Identifier, BigNumber, NotActive, DateBlock } from '../data'
+import { Alias, Identifier, BigNumber, NotActive, TimeDelta } from '../data'
 import { LinkContainer } from '../ui/containers'
 import { Badge } from '../ui/Badge'
 import { DataList } from '../ui/lists'
@@ -185,7 +185,7 @@ function contractColumns(canFilter: boolean, router: ReturnType<typeof useRouter
         !item?.timestamp && item?.isSystem ? (
           <span>Genesis</span>
         ) : (
-          <DateBlock timestamp={item?.timestamp} format="dateOnly" />
+          <TimeDelta endDate={item?.timestamp} />
         )
     }
   ]

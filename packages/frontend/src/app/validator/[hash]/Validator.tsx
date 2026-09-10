@@ -597,7 +597,6 @@ function Validator({ hash }: ValidatorProps) {
                         <BlocksList
                           blocks={proposedBlocks?.data?.resultSet}
                           headerStyles={'light'}
-                          absoluteDate={true}
                         />
                       ) : (
                         <LoadingList itemsCount={pageSize} />
