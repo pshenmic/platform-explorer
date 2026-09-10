@@ -1,6 +1,14 @@
 'use client'
 
-import { useState, useEffect, useMemo, useRef, useId, type RefObject } from 'react'
+import {
+  useState,
+  useEffect,
+  useMemo,
+  useRef,
+  useId,
+  type RefObject,
+  type PointerEvent
+} from 'react'
 import * as d3 from 'd3'
 import useResizeObserver from '@react-hook/resize-observer'
 
@@ -135,6 +143,23 @@ export default function ShieldedPoolCard({
   const gid = useId().replace(/:/g, '')
   const fetchGen = useRef(0)
   const periodGen = useRef(0)
+
+  useEffect(() => {
+    const dismissOutside = (event: globalThis.PointerEvent) => {
+      if (event.target instanceof Node && !wrapRef.current?.contains(event.target)) {
+        setHoverI(null)
+      }
+    }
+    const dismissOnEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setHoverI(null)
+    }
+    document.addEventListener('pointerdown', dismissOutside)
+    document.addEventListener('keydown', dismissOnEscape)
+    return () => {
+      document.removeEventListener('pointerdown', dismissOutside)
+      document.removeEventListener('keydown', dismissOnEscape)
+    }
+  }, [])
 
   useResizeObserver(wrapRef as RefObject<HTMLElement>, entry => {
     const { width: w, height: hh } = entry.contentRect
@@ -355,7 +380,7 @@ export default function ShieldedPoolCard({
     }
   }, [ready, points, width, plotH, showDeposits, showWithdrawals, k, inUsd])
 
-  const handleMove = (e: any) => {
+  const handleMove = (e: PointerEvent<HTMLDivElement>) => {
     if (!chart) return
     const rect = e.currentTarget.getBoundingClientRect()
     const mx = e.clientX - rect.left
@@ -373,6 +398,8 @@ export default function ShieldedPoolCard({
   }
 
   const hovered = chart && hoverI != null ? chart.pts[hoverI] : null
+  const tooltipPosition =
+    hovered && chart ? Math.min(1, Math.max(0, chart.x(hovered.x) / width)) : 0
 
   const statDash = isAll ? balanceDash : rangeNetDash
   const statCount = (() => {
@@ -521,8 +548,14 @@ export default function ShieldedPoolCard({
           <div
             ref={wrapRef}
             className={'ShieldedPool__Chart'}
-            onMouseMove={handleMove}
-            onMouseLeave={() => setHoverI(null)}
+            onPointerDown={handleMove}
+            onPointerMove={event => {
+              if (event.pointerType === 'mouse') handleMove(event)
+            }}
+            onPointerLeave={event => {
+              if (event.pointerType === 'mouse') setHoverI(null)
+            }}
+            onPointerCancel={() => setHoverI(null)}
           >
             {(pool.loading || series.loading) && !chart ? (
               <Skeleton className={'ShieldedPool__ChartSkel'} radius={8} />
@@ -680,22 +713,32 @@ export default function ShieldedPoolCard({
                   <div
                     className={'ShieldedPool__Tip'}
                     style={{
-                      left: `${Math.min(Math.max((chart.x(hovered.x) / width) * 100, 14), 86)}%`
+                      left: `calc(8px + (100% - 16px) * ${tooltipPosition})`,
+                      transform: `translateX(-${tooltipPosition * 100}%)`
                     }}
                   >
                     <span className={'ShieldedPool__TipDate'}>{chart.tipFmt(hovered.x)}</span>
                     <span className={'ShieldedPool__TipRow is-tvl'}>
-                      TVL {fmtAmt(hovered.tvlDash, inUsd, usdPx)}
-                      {usdPx != null && <em> · {fmtAmt(hovered.tvlDash, !inUsd, usdPx)}</em>}
+                      <span>TVL</span>
+                      <span className={'ShieldedPool__TipAmounts'}>
+                        <strong>{fmtAmt(hovered.tvlDash, inUsd, usdPx)}</strong>
+                        {usdPx != null && (
+                          <span className={'ShieldedPool__TipSecondary'}>
+                            ≈ {fmtAmt(hovered.tvlDash, !inUsd, usdPx)}
+                          </span>
+                        )}
+                      </span>
                     </span>
                     {showDeposits && (
                       <span className={'ShieldedPool__TipRow is-in'}>
-                        In +{fmtAmt(hovered.inDash, inUsd, usdPx)}
+                        <span>Deposits</span>
+                        <strong>+{fmtAmt(hovered.inDash, inUsd, usdPx)}</strong>
                       </span>
                     )}
                     {showWithdrawals && (
                       <span className={'ShieldedPool__TipRow is-out'}>
-                        Out −{fmtAmt(hovered.outDash, inUsd, usdPx)}
+                        <span>Withdrawals</span>
+                        <strong>−{fmtAmt(hovered.outDash, inUsd, usdPx)}</strong>
                       </span>
                     )}
                   </div>
