@@ -19,7 +19,6 @@ export const RowLabel = ({ label, tooltip, width }: RowLabelProps) => (
       <PopoverTrigger>
         <Text
           as='button'
-          type='button'
           fontSize='0.75rem'
           fontWeight='600'
           fontFamily='var(--font-body)'
@@ -31,6 +30,7 @@ export const RowLabel = ({ label, tooltip, width }: RowLabelProps) => (
             padding: 0,
             cursor: 'help'
           }}
+          {...({ type: 'button' } as object)}
         >
           {label}
         </Text>

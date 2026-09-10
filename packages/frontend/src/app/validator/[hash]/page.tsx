@@ -2,10 +2,11 @@ import type { Metadata } from 'next'
 import Validator from './Validator'
 
 interface ValidatorRouteProps {
-  params: { hash: string }
+  params: Promise<{ hash: string }>
 }
 
-export function generateMetadata ({ params }: ValidatorRouteProps): Metadata {
+export async function generateMetadata(props: ValidatorRouteProps): Promise<Metadata> {
+  const params = await props.params;
   return {
     title: 'Validator #' + params.hash + ' — Dash Platform Explorer',
     description: 'Validator #' + params.hash + ' on dash platform. ProTxHash, Status, Proposed blocks',
@@ -14,7 +15,8 @@ export function generateMetadata ({ params }: ValidatorRouteProps): Metadata {
   }
 }
 
-function ValidatorRoute ({ params }: ValidatorRouteProps) {
+async function ValidatorRoute(props: ValidatorRouteProps) {
+  const params = await props.params;
   return <Validator hash={params.hash}/>
 }
 

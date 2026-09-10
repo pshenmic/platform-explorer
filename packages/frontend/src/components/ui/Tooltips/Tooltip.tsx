@@ -1,6 +1,7 @@
 'use client'
 
-import { Tooltip as ChakraTooltip, useOutsideClick } from '@chakra-ui/react'
+import { useOutsideClick } from '../../../hooks/useOutsideClick'
+import { Tooltip as ChakraTooltip } from '@chakra-ui/react'
 import type { TooltipProps as ChakraTooltipProps } from '@chakra-ui/react'
 import {
   useState,
@@ -24,7 +25,8 @@ interface TooltipProps extends WithClassName, Omit<ChakraTooltipProps, 'children
   title?: ReactNode
   content?: ReactNode
   label?: ReactNode
-  children: ReactElement<TooltipChildProps>
+  // React 19: child element props are unknown; keep loose element type
+  children: ReactElement
 }
 
 // Interactive-friendly tooltip: delayed close so the pointer can move from the
@@ -63,19 +65,21 @@ export default function Tooltip ({ title = '', content = '', children, className
     leaveTimer.current = setTimeout(() => setIsHovered(false), 280)
   }
 
+  const childProps = (isValidElement(children) ? children.props : {}) as TooltipChildProps
+
   const element = isValidElement(children)
-    ? cloneElement(children, {
+    ? cloneElement(children as ReactElement<TooltipChildProps>, {
       ref,
       onMouseEnter: (e: MouseEvent) => {
-        children.props?.onMouseEnter?.(e)
+        childProps.onMouseEnter?.(e)
         hoverIn()
       },
       onMouseLeave: (e: MouseEvent) => {
-        children.props?.onMouseLeave?.(e)
+        childProps.onMouseLeave?.(e)
         hoverOut()
       },
       onClick: (e: MouseEvent) => {
-        children.props?.onClick?.(e)
+        childProps.onClick?.(e)
         setIsOpen(prev => !prev)
       }
     })

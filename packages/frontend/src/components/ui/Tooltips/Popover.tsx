@@ -1,17 +1,7 @@
 'use client'
 
-import {
-  Popover,
-  PopoverContent,
-  PopoverArrow,
-  PopoverCloseButton,
-  PopoverBody,
-  PopoverHeader,
-  PopoverTrigger,
-  useDisclosure,
-  Box,
-  useOutsideClick
-} from '@chakra-ui/react'
+import { useOutsideClick } from '../../../hooks/useOutsideClick'
+import { Popover, PopoverContent, PopoverArrow, PopoverCloseButton, PopoverBody, PopoverHeader, PopoverTrigger, useDisclosure, Box } from '@chakra-ui/react'
 import type { PopoverProps, PopoverContentProps } from '@chakra-ui/react'
 import { useEffect, useRef } from 'react'
 import type { ReactNode } from 'react'

@@ -9,13 +9,14 @@ export const metadata: Metadata = {
 }
 
 interface BlocksRouteProps {
-  searchParams: {
+  searchParams: Promise<{
     page?: string
     'page-size'?: string
-  }
+  }>
 }
 
-async function BlocksRoute ({ searchParams }: BlocksRouteProps) {
+async function BlocksRoute(props: BlocksRouteProps) {
+  const searchParams = await props.searchParams;
   const page = Number(searchParams.page) || 1
   const pageSize = Number(searchParams['page-size'])
 

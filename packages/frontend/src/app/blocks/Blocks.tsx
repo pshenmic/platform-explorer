@@ -14,7 +14,7 @@ import { BlocksFilter } from '../../components/blocks'
 import NetworkStatsInline from '../../components/stats/NetworkStatsInline'
 import PageTitle from '../../components/intro/PageTitle'
 import type { Block, LoadableState, PaginatedResultSet } from '../../types'
-import introContent from './intro.md'
+import introContent from './introContent'
 import './Blocks.scss'
 
 const paginateConfig = {

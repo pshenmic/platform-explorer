@@ -52,7 +52,7 @@ function WithdrawalsListItem ({
   const clickable = isMobile && Boolean(withdrawal?.hash)
   const withdrawalAddress = withdrawal?.withdrawalAddress || defaultPayoutAddress
 
-  useResizeObserver(containerRef, () => {
+  useResizeObserver(containerRef as never, () => {
     const offsetWidth = containerRef.current?.offsetWidth ?? 0
     setIsMobile(offsetWidth <= mobileWidth)
   })

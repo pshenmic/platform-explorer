@@ -13,7 +13,7 @@ import { MasternodeVotesFilters } from '../../components/contestedResources'
 import MasternodeVotesStatsInline from '../../components/contestedResources/MasternodeVotesStatsInline'
 import PageTitle from '../../components/intro/PageTitle'
 import type { LoadableState, PaginatedResultSet, Vote } from '../../types'
-import introContent from './intro.md'
+import introContent from './introContent'
 import './MasternodeVotes.scss'
 
 const paginateConfig = {

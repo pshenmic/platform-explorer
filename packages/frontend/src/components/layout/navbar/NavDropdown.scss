@@ -24,7 +24,8 @@
   }
 }
 
-@media screen and (max-width: $breakpoint-lg - 1px) {
+// quoted $breakpoint-lg ('62em') cannot do Sass math; emit valid CSS calc()
+@media screen and (max-width: calc(#{$breakpoint-lg} - 1px)) {
   .NavDropdown {
     width: 100%;
     

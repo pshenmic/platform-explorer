@@ -17,7 +17,7 @@ import { ContestedResourcesList, ContestedResourcesFilter, useContestedResources
 import ContestedResourcesStatsInline from '../../components/contestedResources/ContestedResourcesStatsInline'
 import PageTitle from '../../components/intro/PageTitle'
 import type { ContestedResource, LoadableState, PaginatedResultSet } from '../../types'
-import introContent from './intro.md'
+import introContent from './introContent'
 import './ContestedResourcesPage.scss'
 
 const paginateConfig = {

@@ -18,7 +18,7 @@ import { useDataContractsFilters, useDataContractsSorting } from '@components/da
 import { DataContractsFilter } from '@components/dataContracts/DataContractsFilter'
 import DataContractsStatsInline from '@components/dataContracts/DataContractsStatsInline'
 import PageTitle from '../../components/intro/PageTitle'
-import introContent from './intro.md'
+import introContent from './introContent'
 import './DataContractsPage.scss'
 
 const paginateConfig = {

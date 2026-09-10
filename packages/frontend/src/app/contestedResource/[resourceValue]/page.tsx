@@ -3,10 +3,11 @@ import ContestedResource from './ContestedResource'
 import contestedResources from '../../../util/contestedResources'
 
 interface ContestedResourceRouteProps {
-  params: { resourceValue: string }
+  params: Promise<{ resourceValue: string }>
 }
 
-export const generateMetadata = async ({ params }: ContestedResourceRouteProps): Promise<Metadata> => {
+export const generateMetadata = async (props: ContestedResourceRouteProps): Promise<Metadata> => {
+  const params = await props.params;
   const resourceValue = decodeURIComponent(params.resourceValue)
   const decodedValue = contestedResources.decodeValue(resourceValue)
   const readableValue = contestedResources.getResourceValue(decodedValue as never)
@@ -33,7 +34,8 @@ export const generateMetadata = async ({ params }: ContestedResourceRouteProps):
   }
 }
 
-const ContestedResourceRoute = ({ params }: ContestedResourceRouteProps) => {
+const ContestedResourceRoute = async (props: ContestedResourceRouteProps) => {
+  const params = await props.params;
   return <ContestedResource resourceValue={params.resourceValue} />
 }
 

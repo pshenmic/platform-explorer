@@ -43,7 +43,7 @@ export default function Identifier ({
 
   if (ellipsis || middleEllipsis) linesAdjustment = false
 
-  useResizeObserver(symbolsContainerRef, (entry) => {
+  useResizeObserver(symbolsContainerRef as never, (entry) => {
     setContainerWidth(entry.contentRect.width)
   })
 

@@ -9,7 +9,7 @@ import { useQuery, keepPreviousData } from '@tanstack/react-query'
 import { parseAsInteger, useQueryState } from 'nuqs'
 import { useValidatorsFilters, ValidatorsFilter, ValidatorsList, ValidatorsStatsInline } from '@components/validators'
 import PageTitle from '../../components/intro/PageTitle'
-import introContent from './intro.md'
+import introContent from './introContent'
 import './ValidatorsPage.scss'
 
 const paginateConfig = {

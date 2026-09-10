@@ -1,8 +1,9 @@
 'use client'
 
+import { useOutsideClick } from '../../../hooks/useOutsideClick'
 import { useState, useEffect, useRef } from 'react'
 import type { RefObject, MouseEvent as ReactMouseEvent } from 'react'
-import { Box, Stack, Flex, Fade, useOutsideClick } from '@chakra-ui/react'
+import { Box, Stack, Flex, Fade } from '@chakra-ui/react'
 import { ChevronIcon } from '../../ui/icons'
 import { usePathname } from 'next/navigation'
 import { ArrowButton } from '../../ui/Buttons'

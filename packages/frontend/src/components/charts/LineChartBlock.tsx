@@ -97,7 +97,7 @@ export default function LineChartBlock ({
 
   useEffect(updateMenuHeight, [menuIsOpen, TimeframeMenuRef])
 
-  useResizeObserver(TimeframeMenuRef, updateMenuHeight)
+  useResizeObserver(TimeframeMenuRef as never, updateMenuHeight)
 
   return (<>
     <Flex
