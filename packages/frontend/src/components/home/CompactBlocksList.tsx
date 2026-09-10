@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { BigNumber, TimeDelta, NotActive, Identifier } from '../data'
+import { BigNumber, TimeDelta, NotActive } from '../data'
 import { BlockIcon } from '../ui/icons'
 import { useLiveList } from './hooks'
 import { HOME_FEED_LIMIT } from './listLimits'
@@ -75,15 +75,17 @@ export function CompactBlocksList({
               </div>
               <div className={'CompactBlocksList__Cell'}>
                 {hash ? (
-                  <Identifier ellipsis={true} styles={['highlight-both']}>
+                  <span className={'CompactBlocksList__Hash'} title={hash}>
                     {hash}
-                  </Identifier>
+                  </span>
                 ) : (
                   <NotActive />
                 )}
               </div>
               <div className={'CompactBlocksList__Cell CompactBlocksList__Cell--center'}>
-                <span className={'CompactBlocksList__Txs'}>{txCount}</span>
+                <span className={'CompactBlocksList__Txs'}>
+                  {txCount} {txCount === 1 ? 'tx' : 'txs'}
+                </span>
               </div>
               <div className={'CompactBlocksList__Cell CompactBlocksList__Cell--right'}>
                 {block?.header?.timestamp ? (

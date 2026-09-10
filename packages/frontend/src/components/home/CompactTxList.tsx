@@ -4,7 +4,7 @@ import Link from 'next/link'
 import StatusIcon from '../transactions/StatusIcon'
 import TypeBadge from '../transactions/TypeBadge'
 import BatchTypeBadge from '../transactions/BatchTypeBadge'
-import { TimeDelta, NotActive, Identifier } from '../data'
+import { TimeDelta, NotActive } from '../data'
 import { CheckmarkIcon, ErrorCircleIcon } from '../ui/icons'
 import { Tooltip } from '../ui/Tooltips'
 import { useLiveList } from './hooks'
@@ -101,9 +101,9 @@ export function CompactTxList({
               </div>
               <div className={'CompactTxList__Cell'}>
                 {hash ? (
-                  <Identifier ellipsis={true} styles={['highlight-both']}>
+                  <span className={'CompactTxList__Hash'} title={hash}>
                     {hash}
-                  </Identifier>
+                  </span>
                 ) : (
                   <NotActive />
                 )}

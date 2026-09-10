@@ -1,4 +1,7 @@
 .CompactTxList {
+  display: grid;
+  column-gap: 12px;
+  grid-template-columns: 3.5rem minmax(8ch, 1fr) minmax(0, 10rem) 5ch;
   width: 100%;
   min-width: 0;
   max-width: 100%;
@@ -7,24 +10,24 @@
 .CompactTxList__Head,
 .CompactTxList__Row {
   display: grid;
-  grid-template-columns: minmax(0, 56px) minmax(0, 1fr) minmax(0, 88px) minmax(0, 48px);
-  gap: 12px;
+  grid-template-columns: subgrid;
+  grid-column: 1 / -1;
   align-items: center;
   width: 100%;
   box-sizing: border-box;
 }
 
 .CompactTxList__Head {
-  margin-bottom: 6px;
-  padding: 0 2px 4px;
+  margin-bottom: 4px;
+  padding: 6px;
   background: transparent;
-  border: 0;
-  font-family: var(--pe-font-mono);
-  font-size: 0.5625rem;
-  font-weight: 600;
+  border-bottom: 1px solid rgba(var(--pe-color-gray-800-rgb), 0.6);
+  font-family: var(--pe-font-heading);
+  font-size: 0.6875rem;
+  font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.16em;
-  color: var(--pe-color-gray-500);
+  letter-spacing: 0.04em;
+  color: var(--pe-color-fg);
 }
 
 .CompactTxList__HeadCell {
@@ -40,17 +43,16 @@
 }
 
 .CompactTxList__Body {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
+  display: grid;
+  grid-template-columns: subgrid;
+  grid-column: 1 / -1;
 }
 
 .CompactTxList__Row {
-  padding: 8px 10px;
-  min-height: 2.75rem;
-  border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  background: rgba(255, 255, 255, 0.03);
+  padding: 0 6px;
+  min-height: 44px;
+  border-radius: 6px;
+  border-bottom: 1px solid rgba(var(--pe-color-gray-800-rgb), 0.5);
   font-size: 0.75rem;
   line-height: 1.25;
   color: inherit;
@@ -62,8 +64,7 @@
 
 @media (hover: hover) and (pointer: fine) {
   .CompactTxList__Row:hover {
-    background: rgba(255, 255, 255, 0.05);
-    border-color: rgba(255, 255, 255, 0.12);
+    background: rgba(var(--pe-color-brand-normal-rgb), 0.07);
   }
 }
 
@@ -123,6 +124,7 @@
 }
 
 .CompactTxList__Footer {
+  grid-column: 1 / -1;
   margin-top: 12px;
 }
 
@@ -180,5 +182,29 @@
   .CompactTxList__Skeleton,
   .CompactTxList__Row.is-new {
     animation: none;
+  }
+}
+
+.CompactTxList__Hash {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.CompactTxList__Cell--right {
+  font-size: 0.6875rem;
+  color: var(--pe-color-gray-500);
+  white-space: nowrap;
+}
+
+.CompactTxList__Empty {
+  grid-column: 1 / -1;
+}
+
+@media screen and (max-width: 40em) {
+  .CompactTxList {
+    column-gap: 8px;
+    grid-template-columns: 3.25rem minmax(6ch, 1.1fr) minmax(0, 0.9fr) 5ch;
   }
 }
