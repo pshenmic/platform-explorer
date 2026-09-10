@@ -50,12 +50,12 @@ function NetworkSelect() {
       onMouseEnter={openMenu}
       onMouseLeave={scheduleClose}
     >
-      <span className={'NetworkSelect__Title'}>Network:</span>
       <button
         type={'button'}
         className={'NetworkSelect__Button'}
         aria-expanded={open}
         aria-haspopup={'listbox'}
+        aria-label={'Network'}
         onClick={() => setOpen(v => !v)}
       >
         {network || ''}
