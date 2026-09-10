@@ -26,7 +26,7 @@ const columnHelper = createColumnHelper<TokenListItemData>()
 const columns = [
   columnHelper.accessor(row => row.localizations?.en?.singularForm, {
     id: 'tokenName',
-    header: 'Token Name'
+    header: 'Name'
   }),
   columnHelper.accessor('position', { id: 'position', header: 'Position' }),
   columnHelper.accessor('totalSupply', { id: 'supply', header: 'Supply' }),
@@ -80,7 +80,7 @@ function TokensList({
     <div className={`TokensList ${variantClass}`}>
       <Grid className={`TokensList__ColumnTitles ${headerExtraClass[headerStyles] || ''}`}>
         <GridItem className={'TokensList__ColumnTitle TokensList__ColumnTitle--TokenName'}>
-          Token Name
+          Name
         </GridItem>
         <GridItem className={'TokensList__ColumnTitle TokensList__ColumnTitle--Supply'}>
           Supply

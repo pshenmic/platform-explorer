@@ -604,8 +604,8 @@ module.exports = class TransactionsDAO {
 
   getTransactionStatistic = async (timestampStart, timestampEnd) => {
     let query = this.knex('state_transitions')
-      .select('type')
-      .groupBy('type')
+      .select('type', 'batch_type')
+      .groupBy('type', 'batch_type')
       .count()
 
     if (timestampStart && timestampEnd) {
@@ -617,9 +617,33 @@ module.exports = class TransactionsDAO {
 
     const rows = await query
 
-    return rows.map(row => ({
-      transactionType: StateTransitionEnum[row.type],
-      count: Number(row.count)
+    const statistic = rows.reduce((accumulator, row) => {
+      const count = Number(row.count)
+
+      const entry = accumulator[row.type] ?? {
+        transactionType: StateTransitionEnum[row.type],
+        count: 0,
+        batchTypes: null
+      }
+
+      entry.count += count
+
+      if (row.batch_type !== null) {
+        entry.batchTypes = [
+          ...entry.batchTypes ?? [],
+          { batchType: BatchEnum[row.batch_type], count }
+        ]
+      }
+
+      accumulator[row.type] = entry
+
+      return accumulator
+    }, {})
+
+    return Object.values(statistic).map(entry => ({
+      ...entry,
+      // hide for non batch transitions
+      batchTypes: entry.batchTypes?.sort((a, b) => b.count - a.count) ?? undefined
     }))
   }
 

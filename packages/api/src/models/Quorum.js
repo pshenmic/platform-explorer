@@ -9,9 +9,10 @@ module.exports = class Quorum {
   quorumIndex
   quorumPublicKey
   previousConsecutiveDKGFailures
+  isCurrent
   members
 
-  constructor (blockHeight, creationHeight, minedBlockHash, numValidMembers, healthRatio, type, quorumHash, quorumIndex, members, quorumPublicKey, previousConsecutiveDKGFailures) {
+  constructor (blockHeight, creationHeight, minedBlockHash, numValidMembers, healthRatio, type, quorumHash, quorumIndex, members, quorumPublicKey, previousConsecutiveDKGFailures, isCurrent) {
     this.creationHeight = creationHeight ?? null
     this.minedBlockHash = minedBlockHash ?? null
     this.numValidMembers = numValidMembers ?? null
@@ -22,10 +23,11 @@ module.exports = class Quorum {
     this.members = members ?? null
     this.quorumPublicKey = quorumPublicKey ?? null
     this.previousConsecutiveDKGFailures = previousConsecutiveDKGFailures ?? null
+    this.isCurrent = isCurrent ?? null
     this.blockHeight = blockHeight ?? null
   }
 
-  static fromObject ({ height, creationHeight, minedBlockHash, numValidMembers, healthRatio, type, quorumHash, quorumIndex, members, quorumPublicKey, previousConsecutiveDKGFailures }) {
-    return new Quorum(height, creationHeight, minedBlockHash, numValidMembers, healthRatio, type, quorumHash, quorumIndex, members, quorumPublicKey, previousConsecutiveDKGFailures)
+  static fromObject ({ height, creationHeight, minedBlockHash, numValidMembers, healthRatio, type, quorumHash, quorumIndex, members, quorumPublicKey, previousConsecutiveDKGFailures, isCurrent }) {
+    return new Quorum(height, creationHeight, minedBlockHash, numValidMembers, healthRatio, type, quorumHash, quorumIndex, members, quorumPublicKey, previousConsecutiveDKGFailures, isCurrent)
   }
 }
