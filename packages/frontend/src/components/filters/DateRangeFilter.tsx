@@ -29,7 +29,11 @@ function sameRange(
   a: DateRangeFilterValue | null | undefined,
   b: DateRangeFilterValue | null | undefined
 ): boolean {
-  return sameDay(a?.start, b?.start) && sameDay(a?.end, b?.end) && (a?.mode ?? 'days') === (b?.mode ?? 'days')
+  return (
+    sameDay(a?.start, b?.start) &&
+    sameDay(a?.end, b?.end) &&
+    (a?.mode ?? 'days') === (b?.mode ?? 'days')
+  )
 }
 
 export const DateRangeFilter = ({

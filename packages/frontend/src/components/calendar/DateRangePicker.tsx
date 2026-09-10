@@ -210,42 +210,42 @@ const DateRangePicker = ({
       </div>
 
       {compact ? null : (
-      <div className={'DateRangePicker__MonthSelector'}>
-        <button
-          type={'button'}
-          className={'DateRangePicker__Arrow DateRangePicker__Arrow--Left'}
-          onClick={() => setCurrentMonthIndex(prev => prev - (single ? 1 : 2))}
-        >
-          <ChevronIcon color={'gray.250'} />
-        </button>
-
-        {monthPairs.map((pair, i) => (
+        <div className={'DateRangePicker__MonthSelector'}>
           <button
             type={'button'}
-            key={i}
-            className={
-              'DateRangePicker__MonthButton ' +
-              `${
-                activeStartDate.getTime() === pair.start1.getTime()
-                  ? 'DateRangePicker__MonthButton--Active'
-                  : ''
-              }`
-            }
-            onClick={() => setActiveStartDate(pair.start1)}
-            disabled={disableFutureDates && pair.start1 > today}
+            className={'DateRangePicker__Arrow DateRangePicker__Arrow--Left'}
+            onClick={() => setCurrentMonthIndex(prev => prev - (single ? 1 : 2))}
           >
-            {single ? pair.labelShort.split('-')[0] : pair.labelShort}
+            <ChevronIcon color={'gray.250'} />
           </button>
-        ))}
 
-        <button
-          type={'button'}
-          className={'DateRangePicker__Arrow DateRangePicker__Arrow--Right'}
-          onClick={() => setCurrentMonthIndex(prev => prev + (single ? 1 : 2))}
-        >
-          <ChevronIcon color={'gray.250'} />
-        </button>
-      </div>
+          {monthPairs.map((pair, i) => (
+            <button
+              type={'button'}
+              key={i}
+              className={
+                'DateRangePicker__MonthButton ' +
+                `${
+                  activeStartDate.getTime() === pair.start1.getTime()
+                    ? 'DateRangePicker__MonthButton--Active'
+                    : ''
+                }`
+              }
+              onClick={() => setActiveStartDate(pair.start1)}
+              disabled={disableFutureDates && pair.start1 > today}
+            >
+              {single ? pair.labelShort.split('-')[0] : pair.labelShort}
+            </button>
+          ))}
+
+          <button
+            type={'button'}
+            className={'DateRangePicker__Arrow DateRangePicker__Arrow--Right'}
+            onClick={() => setCurrentMonthIndex(prev => prev + (single ? 1 : 2))}
+          >
+            <ChevronIcon color={'gray.250'} />
+          </button>
+        </div>
       )}
     </div>
   )

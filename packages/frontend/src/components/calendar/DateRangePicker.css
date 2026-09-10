@@ -143,19 +143,11 @@
 }
 
 .DateRangePicker__Day--RangeStart:not(.DateRangePicker__Day--RangeEnd) {
-  background: linear-gradient(
-    90deg,
-    transparent 50%,
-    var(--pe-color-white-alpha-200) 50%
-  );
+  background: linear-gradient(90deg, transparent 50%, var(--pe-color-white-alpha-200) 50%);
 }
 
 .DateRangePicker__Day--RangeEnd:not(.DateRangePicker__Day--RangeStart) {
-  background: linear-gradient(
-    90deg,
-    var(--pe-color-white-alpha-200) 50%,
-    transparent 50%
-  );
+  background: linear-gradient(90deg, var(--pe-color-white-alpha-200) 50%, transparent 50%);
 }
 
 .DateRangePicker__Day--RangeStart .DateRangePicker__DayBtn,
@@ -168,7 +160,8 @@
 
 .DateRangePicker__Day--RangeStart .DateRangePicker__DayBtn:hover,
 .DateRangePicker__Day--RangeEnd .DateRangePicker__DayBtn:hover,
-.DateRangePicker__Day--Selected:not(.DateRangePicker__Day--RangeMiddle) .DateRangePicker__DayBtn:hover {
+.DateRangePicker__Day--Selected:not(.DateRangePicker__Day--RangeMiddle)
+  .DateRangePicker__DayBtn:hover {
   background: var(--pe-color-white-50);
 }
 
