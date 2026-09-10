@@ -53,7 +53,7 @@ function TransactionsList ({
     },
     {
       key: 'gasUsed',
-      header: 'Gas used',
+      header: 'Gas',
       minWidth: 140,
       align: 'center',
       priority: 1,
@@ -96,7 +96,7 @@ function TransactionsList ({
     },
     {
       key: 'timestamp',
-      header: 'Timestamp',
+      header: 'Time',
       minWidth: absoluteDate ? 132 : 96,
       align: 'right',
       cell: (tx) => {

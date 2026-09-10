@@ -1,47 +1,63 @@
 @import '../../styles/variables.scss';
 
+// Column tracks for /transactions list — keep Status + Hash + Type + Time on phones
+// (home CompactTx language). Drop Gas → Block → Owner first; never drop Status.
 @mixin Columns () {
-  display: grid;
-  gap: 16px;
+  // compact relative ("2m") needs less than "2 min. ago"
+  $timeSpanWidth: 5ch;
 
+  display: grid;
+  gap: 12px;
+
+  // desktop: full set
   grid-template-columns:
-    6.5rem // status
+    6.5rem // status badge
     minmax(0, 1fr) // hash
     6rem // block
-    11rem // gas used
+    7rem // gas
     minmax(0, 1fr) // owner
     10rem // type
-    10.5rem; // time
+    $timeSpanWidth; // time
 
-  @container (max-width: 810px) {
+  // drop Gas
+  @container (max-width: 56em) {
     grid-template-columns:
-      minmax(0, 1fr) // hash
-      minmax(0, 1fr) // owner
-      10rem // type
-      10.5rem; // time
+      6.5rem
+      minmax(0, 1fr)
+      6rem
+      minmax(0, 1fr)
+      10rem
+      $timeSpanWidth;
   }
 
-  @container (max-width: 660px) {
+  // drop Block — Status · Hash · Owner · Type · Time
+  @container (max-width: 46.5em) {
     grid-template-columns:
-      minmax(0, 1fr) // hash
-      20px // owner
-      10rem // type
-      10.5rem; // time
+      6.5rem
+      minmax(0, 1fr)
+      minmax(0, 1fr)
+      10rem
+      $timeSpanWidth;
   }
 
-  @container (max-width: 430px) {
-    gap: 12px;
+  // phone / half-width: Status icon · Hash · Type · Time (matches home CompactTx)
+  @container (max-width: 37.5em) {
     grid-template-columns:
+      2.75rem // status icon
       minmax(0, 1fr) // hash
-      8rem // type
-      9rem; // time
+      minmax(0, 10rem) // type
+      $timeSpanWidth; // time
+    gap: 10px;
   }
 
-  @container (max-width: 400px) {
+  // very narrow: still keep Status · Hash · Type · Time
+  @container (max-width: 24.5em) {
     grid-template-columns:
-      minmax(0, 1fr) // hash
-      7rem // type
-      8rem; // time
+      2.75rem
+      minmax(0, 1fr)
+      minmax(0, 0.9fr)
+      $timeSpanWidth;
+    gap: 8px;
   }
 }
 
@@ -50,6 +66,7 @@
   align-items: center;
   justify-content: center;
   text-align: center;
+  min-width: 0;
 
   &--Status,
   &--Hash,
@@ -59,7 +76,6 @@
   }
 
   &--Owner {
-    min-width: 0;
     width: 100%;
   }
 
@@ -77,15 +93,19 @@
     text-align: right;
   }
 
-  @container (max-width: 810px) {
-    &--GasUsed,
-    &--Status,
+  @container (max-width: 56em) {
+    &--GasUsed {
+      display: none;
+    }
+  }
+
+  @container (max-width: 46.5em) {
     &--Block {
       display: none;
     }
   }
 
-  @container (max-width: 430px) {
+  @container (max-width: 37.5em) {
     &--Owner {
       display: none;
     }

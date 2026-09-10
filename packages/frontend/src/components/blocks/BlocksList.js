@@ -29,7 +29,7 @@ function BlocksList ({ blocks = [], headerStyles = 'default', absoluteDate }) {
     },
     {
       key: 'hash',
-      header: 'Block Hash',
+      header: 'Hash',
       grow: true,
       minWidth: 120,
       cell: ({ header }) => (typeof header?.hash === 'string'
@@ -62,7 +62,7 @@ function BlocksList ({ blocks = [], headerStyles = 'default', absoluteDate }) {
     },
     {
       key: 'txs',
-      header: 'TXs count',
+      header: 'Txs',
       minWidth: 72,
       align: 'center',
       priority: 3,
@@ -70,7 +70,7 @@ function BlocksList ({ blocks = [], headerStyles = 'default', absoluteDate }) {
     },
     {
       key: 'timestamp',
-      header: 'Timestamp',
+      header: 'Time',
       minWidth: absoluteDate ? 132 : 96,
       align: 'right',
       cell: ({ header }) => {

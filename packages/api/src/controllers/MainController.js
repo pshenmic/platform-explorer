@@ -10,6 +10,7 @@ const { base58 } = require('@scure/base')
 const DashCoreRPC = require('../dashcoreRpc')
 const TokensDAO = require('../dao/TokensDAO')
 const PlatformAddressesDAO = require('../dao/PlatformAddressesDAO')
+const { getPlatformQuorums } = require('../utils')
 
 const API_VERSION = require('../../package.json').version
 
@@ -269,6 +270,38 @@ class MainController {
     const quorumInfo = await DashCoreRPC.getQuorumInfo(quorumHash ?? lastQuorumHash, quorumType)
 
     response.send(quorumInfo)
+  }
+
+  getQuorums = async (request, response) => {
+    const { quorums } = await getPlatformQuorums()
+
+    response.send(quorums.map(({ members, ...quorum }) => quorum))
+  }
+
+  getCurrentQuorum = async (request, response) => {
+    const { quorums } = await getPlatformQuorums()
+
+    const currentQuorum = quorums.find(quorum => quorum.isCurrent)
+
+    if (!currentQuorum) {
+      return response.status(404).send({ message: 'not found' })
+    }
+
+    response.send(currentQuorum)
+  }
+
+  getQuorumByHash = async (request, response) => {
+    const { hash } = request.params
+
+    const { quorums } = await getPlatformQuorums()
+
+    const quorum = quorums.find(quorum => quorum.quorumHash === hash.toUpperCase())
+
+    if (!quorum) {
+      return response.status(404).send({ message: 'not found' })
+    }
+
+    response.send(quorum)
   }
 }
 

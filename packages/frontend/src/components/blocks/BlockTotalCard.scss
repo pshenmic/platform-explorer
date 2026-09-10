@@ -4,64 +4,121 @@
 .BlockTotalCard {
   @include mixins.TotalCard();
 
-  &__Header {
-    align-items: flex-start;
+  // Height as primary signal (home / list language)
+  &__Hero {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    min-width: 0;
+  }
+
+  &__HeroMain {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-width: 0;
+  }
+
+  &__HeroLabel {
+    font-family: $font-mono;
+    font-size: 0.625rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--chakra-colors-gray-500);
+  }
+
+  &__BlockHeight {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+    justify-content: flex-start;
+
+    .ValueCard {
+      justify-content: center;
+      align-items: center;
+      gap: 0.25rem;
+      width: max-content;
+      min-width: 1.75rem;
+      min-height: 1.75rem;
+
+      svg {
+        height: 0.55rem;
+      }
+    }
+  }
+
+  &__NavSpacer {
+    display: inline-block;
+    width: 1.75rem;
+    height: 1.75rem;
+    flex-shrink: 0;
+  }
+
+  &__HeightValue {
+    font-family: $font-mono;
+    font-weight: 800;
+    font-size: 1.5rem;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+    color: #fff;
   }
 
   &__Avatar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 56px;
+    height: 56px;
+    border: 1px solid rgba(137, 126, 126, 0.1);
+
     svg {
-      width: 54px;
-      height: 54px;
+      width: 32px;
+      height: 32px;
     }
+  }
+
+  &__Separator {
+    margin: 1rem 0;
+  }
+
+  &__CommonInfo {
+    gap: 1rem;
   }
 
   &__InfoLine {
     &--QuorumHash, &--AppHash, &--Hash {
       .InfoLine__Value {
         width: 100%;
+        min-width: 0;
       }
+
       .Identifier {
         justify-content: flex-end;
-      }
-    }
-  }
-
-  &__BlockHeight {
-    display: flex;
-    gap: 1rem;
-    font-size: 0.75rem;
-    justify-content: space-between;
-    align-items: center;
-
-    .ValueCard {
-      justify-content: space-between;
-      align-items: center;
-      gap: 0.25rem;
-      width: max-content;
-
-      svg {
-        height: 0.5rem;
+        max-width: 100%;
+        min-width: 0;
       }
     }
   }
 
   @media screen and (max-width: $breakpoint-sm) {
-    @include mixins.TotalCard(true);
-
-    &__InfoLine {
-      &--Hash {
-        padding-right: 100px;
-      }
+    // no absolute avatar / padding-right:100px — free the hash row
+    &__Avatar {
+      display: none;
     }
 
-    &__Header {
-      .InfoLine {
-        flex-wrap: wrap;
-      }
+    &__HeightValue {
+      font-size: 1.375rem;
+    }
+
+    &__CommonInfo {
+      gap: 0.75rem;
     }
 
     &__InfoLine {
-      &--Hash {
+      &--QuorumHash, &--AppHash, &--Hash {
         .Identifier {
           justify-content: flex-start;
           text-align: left;
