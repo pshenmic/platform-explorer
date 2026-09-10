@@ -7,6 +7,7 @@ import './MenuLevel.css'
 export interface MenuItem {
   label?: ReactNode
   link?: string
+  closeOnNavigate?: boolean
   disabled?: boolean
   onClick?: () => void
   subMenu?: MenuItem[]
@@ -50,7 +51,9 @@ function MenuLevel({
             <NextLink
               key={index}
               href={item.link}
-              onClick={() => onMenuItemClick?.()}
+              onClick={() => {
+                if (item.closeOnNavigate !== false) onMenuItemClick?.()
+              }}
               className={`MenuLevel__Item ${isSelected ? 'MenuLevel__Item--Active' : ''}`}
               style={{ width: '100%', textDecoration: 'none' }}
             >
