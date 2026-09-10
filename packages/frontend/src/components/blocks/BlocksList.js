@@ -17,7 +17,7 @@ function BlocksList ({ blocks = [], size = 'l', headerStyles = 'default', absolu
         </GridItem>
 
         <GridItem className={'BlocksList__ColumnTitle BlocksList__ColumnTitle--Hash'}>
-          Block Hash
+          Hash
         </GridItem>
 
         <GridItem className={'BlocksList__ColumnTitle BlocksList__ColumnTitle--Validator'}>
@@ -29,11 +29,11 @@ function BlocksList ({ blocks = [], size = 'l', headerStyles = 'default', absolu
         </GridItem>
 
         <GridItem className={'BlocksList__ColumnTitle BlocksList__ColumnTitle--Txs'}>
-          TXs count
+          Txs
         </GridItem>
 
         <GridItem className={'BlocksList__ColumnTitle BlocksList__ColumnTitle--Timestamp'}>
-          Timestamp
+          Time
         </GridItem>
       </Grid>
 

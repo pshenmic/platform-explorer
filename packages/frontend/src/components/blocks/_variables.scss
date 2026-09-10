@@ -1,22 +1,26 @@
 @import '../../styles/variables.scss';
 
+// Column tracks for /blocks list — keep Height + Hash + Time on all phones (home CompactBlocks language).
+// Drop Fees → Validator first; only hide Txs on the narrowest strip.
 @mixin Columns ($absoluteTimespan: false) {
-  $timeSpanWidth: #{if($absoluteTimespan, '9rem', '6rem')};
+  // compact relative ("2m") needs less than "2 min. ago"; absolute dates stay wider
+  $timeSpanWidth: #{if($absoluteTimespan, '9rem', '5ch')};
 
   display: grid;
-  gap: 16px;
+  gap: 12px;
   width: 100%;
 
   @container (min-width: 90em) {
     grid-template-columns:
-    5.3rem // height
-    minmax(0, 1fr) // hash
-    minmax(0, 1fr) // proposed by
-    minmax(5rem, 15rem) // fees
-    4.75rem // tx count
-    $timeSpanWidth; // time
+      5.3rem // height
+      minmax(0, 1fr) // hash
+      minmax(0, 1fr) // proposed by
+      minmax(5rem, 15rem) // fees
+      4.75rem // tx count
+      $timeSpanWidth; // time
   }
 
+  // default desktop / tablet
   grid-template-columns:
     5.3rem // height
     minmax(0, 1fr) // hash
@@ -27,49 +31,40 @@
 
   @container (max-width: 56em) {
     grid-template-columns:
-      5.3rem // height
-      minmax(0, 1fr) // hash
-      minmax(0, 1fr) // proposed by
-      minmax(5rem, 8rem) // fees
-      4.75rem // tx count
-      $timeSpanWidth; // time
+      5.3rem
+      minmax(0, 1fr)
+      minmax(0, 1fr)
+      minmax(5rem, 8rem)
+      4.75rem
+      $timeSpanWidth;
   }
 
+  // hide Fees
   @container (max-width: 46.5em) {
     grid-template-columns:
-      5.3rem // height
-      minmax(0, 1fr) // hash
-      minmax(0, 1fr) // proposed by
-      4.75rem // tx count
-      $timeSpanWidth; // time
+      5.3rem
+      minmax(0, 1fr)
+      minmax(0, 1fr)
+      4.75rem
+      $timeSpanWidth;
   }
 
+  // hide Proposed By — phone / half-width: Height · Hash · Txs · Time (matches home)
   @container (max-width: 37.5em) {
     grid-template-columns:
-      5.3rem // height
+      minmax(5.5ch, auto) // height (icon + number)
       minmax(0, 1fr) // hash
-      4.75rem // tx count
+      3.25rem // txs
       $timeSpanWidth; // time
+    gap: 10px;
   }
 
-  @container (max-width: 30em) {
+  // only under ~320px: drop Txs; still keep Height · Hash · Time (never drop height)
+  @container (max-width: 20em) {
     grid-template-columns:
-      5.3rem // height
-      minmax(0, 1fr) // hash
-      $timeSpanWidth; // time
-  }
-
-  @container (max-width: 24.5em) {
-    grid-template-columns:
-      minmax(0, 1fr) // hash
-      4.75rem // tx count
-      $timeSpanWidth; // time
-  }
-
-  @container (max-width: 23em) {
-    grid-template-columns:
-      minmax(0, 1fr) // hash
-      $timeSpanWidth; // time
+      minmax(5.5ch, auto)
+      minmax(0, 1fr)
+      $timeSpanWidth;
   }
 }
 
@@ -78,6 +73,7 @@
   align-items: center;
   justify-content: center;
   text-align: center;
+  min-width: 0;
 
   &--Height,
   &--Hash,
@@ -99,6 +95,11 @@
 
   &--Txs {
     font-variant-numeric: tabular-nums;
+    justify-content: center;
+  }
+
+  &--Timestamp {
+    font-variant-numeric: tabular-nums;
   }
 
   @container (max-width: 46.5em) {
@@ -113,23 +114,8 @@
     }
   }
 
-  @container (max-width: 30em) {
-    &--Txs {
-      display: none;
-    }
-  }
-
-  @container (max-width: 24.5em) {
-    &--Txs {
-      display: flex;
-    }
-
-    &--Height {
-      display: none;
-    }
-  }
-
-  @container (max-width: 23em) {
+  // only drop Txs below ~320px container — Height stays
+  @container (max-width: 20em) {
     &--Txs {
       display: none;
     }
