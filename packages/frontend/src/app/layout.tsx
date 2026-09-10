@@ -1,14 +1,21 @@
-import type { CSSProperties, ReactNode } from 'react'
+import type { ReactNode } from 'react'
 import type { Viewport } from 'next'
 import RootComponent from '../components/layout/RootComponent'
 import { Montserrat, Open_Sans as OpenSans, Roboto_Mono as RobotoMono } from 'next/font/google'
 
 const montserrat = Montserrat({
   subsets: ['latin'],
-  style: ['normal', 'italic']
+  style: ['normal', 'italic'],
+  variable: '--font-montserrat'
 })
-const openSans = OpenSans({ subsets: ['latin'] })
-const robotoMono = RobotoMono({ subsets: ['latin'] })
+const openSans = OpenSans({
+  subsets: ['latin'],
+  variable: '--font-open-sans'
+})
+const robotoMono = RobotoMono({
+  subsets: ['latin'],
+  variable: '--font-roboto-mono'
+})
 
 export const viewport: Viewport = {
   width: 'device-width',
@@ -20,29 +27,14 @@ interface RootLayoutProps {
   children: ReactNode
 }
 
-// Font instances are created without `variable:`, but the layout historically
-// referenced `.variable` CSS class names (undefined → empty). Keep that behavior.
-type FontVars = { variable?: string }
-
 export default function RootLayout({ children }: RootLayoutProps) {
-  const montserratVar = (montserrat as FontVars).variable ?? ''
-  const robotoMonoVar = (robotoMono as FontVars).variable ?? ''
-  const openSansVar = (openSans as FontVars).variable ?? ''
-
   return (
     <html
       lang="en"
       data-theme="dark"
       data-scroll-behavior="smooth"
-      style={
-        {
-          colorScheme: 'dark',
-          ['--pe-font-heading' as string]: montserrat.style.fontFamily,
-          ['--pe-font-body' as string]: openSans.style.fontFamily,
-          ['--pe-font-mono' as string]: robotoMono.style.fontFamily
-        } as CSSProperties
-      }
-      className={`${montserratVar} ${robotoMonoVar} ${openSansVar}`}
+      style={{ colorScheme: 'dark' }}
+      className={`${montserrat.variable} ${openSans.variable} ${robotoMono.variable}`}
     >
       <body className={openSans.className}>
         <RootComponent>{children}</RootComponent>

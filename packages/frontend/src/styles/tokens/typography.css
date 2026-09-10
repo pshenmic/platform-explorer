@@ -10,10 +10,10 @@
  */
 
 :root {
-  /* Fonts */
-  --pe-font-heading: "Montserrat", system-ui, sans-serif;
-  --pe-font-body: "Open Sans", system-ui, sans-serif;
-  --pe-font-mono: "Roboto Mono", ui-monospace, monospace;
+  /* Fonts — same next/font stacks Chakra used as --chakra-fonts-heading/body/mono */
+  --pe-font-heading: var(--font-montserrat), "Montserrat", system-ui, sans-serif;
+  --pe-font-body: var(--font-open-sans), "Open Sans", system-ui, sans-serif;
+  --pe-font-mono: var(--font-roboto-mono), "Roboto Mono", ui-monospace, monospace;
 
   /* Type scale */
   --pe-text-2xs: 0.625rem; /* 10px */
