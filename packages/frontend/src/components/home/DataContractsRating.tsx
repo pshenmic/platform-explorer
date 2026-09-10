@@ -53,6 +53,7 @@ export default function DataContractsRating({ enabled = true }: { enabled?: bool
     },
     {
       key: 'transitions',
+      numeric: true,
       header: 'Transitions',
       minWidth: 88,
       align: 'right',
@@ -63,6 +64,7 @@ export default function DataContractsRating({ enabled = true }: { enabled?: bool
   return (
     <DataList
       className={'HomeRichestList'}
+      fit={'feed'}
       items={rows}
       columns={columns}
       loading={loading}

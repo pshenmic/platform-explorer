@@ -1,9 +1,8 @@
 'use client'
 
 import Link from 'next/link'
-import { BigNumber, TimeDelta, NotActive, Identifier } from '../data'
+import { BigNumber, TimeDelta, NotActive } from '../data'
 import { BlockIcon } from '../ui/icons'
-import { DataList } from '../ui/lists'
 import { useLiveList } from './hooks'
 import { HOME_FEED_LIMIT } from './listLimits'
 import './CompactBlocksList.css'
@@ -23,86 +22,93 @@ export function CompactBlocksList({
 }) {
   const { shown, newKeys, hoverBind } = useLiveList<any>(blocks, (b: any) => b?.header?.hash)
   const rows = Array.isArray(shown) ? shown.slice(0, limit) : []
-
-  const columns = [
-    {
-      key: 'height',
-      header: 'Height',
-      minWidth: 88,
-      cell: (block: any) => {
-        const height = block?.header?.height
-        return (
-          <span className={'CompactBlocksList__Height'}>
-            <BlockIcon w={'1.125rem'} h={'1.125rem'} flexShrink={0} />
-            {typeof height === 'number' ? <BigNumber>{height}</BigNumber> : <NotActive />}
-          </span>
-        )
-      }
-    },
-    {
-      key: 'hash',
-      header: 'Hash',
-      grow: true,
-      minWidth: 96,
-      cell: (block: any) =>
-        block?.header?.hash ? (
-          <Identifier ellipsis={true} styles={['highlight-both']}>
-            {block.header.hash}
-          </Identifier>
-        ) : (
-          <NotActive />
-        )
-    },
-    {
-      key: 'txs',
-      header: 'Txs',
-      minWidth: 56,
-      align: 'center',
-      cell: (block: any) => {
-        const txCount = Array.isArray(block?.txs) ? block.txs.length : 0
-        return <span className={'CompactBlocksList__Txs'}>{txCount}</span>
-      }
-    },
-    {
-      key: 'time',
-      header: 'Time',
-      minWidth: 48,
-      align: 'right',
-      cell: (block: any) =>
-        block?.header?.timestamp ? (
-          <TimeDelta
-            showTimestampTooltip={true}
-            format={'compact'}
-            endDate={new Date(block.header.timestamp)}
-          />
-        ) : (
-          <NotActive />
-        )
-    }
-  ]
+  const showSkeleton = Boolean(loading && !rows.length)
 
   return (
-    <DataList
-      className={'CompactBlocksList'}
-      items={rows}
-      columns={columns}
-      loading={loading && !rows.length}
-      skeletonCount={limit}
-      emptyMessage={'No blocks'}
-      rowHref={(block: any) => `/block/${block?.header?.hash}`}
-      rowKey={(block: any) => block?.header?.hash}
-      rowClassName={(block: any) => (newKeys.has(block?.header?.hash) ? 'is-new' : '')}
-      rowStyle={(block: any, i: number) =>
-        newKeys.has(block?.header?.hash) ? { '--stagger': `${i * 50}ms` } : undefined
-      }
-      wrapperProps={hoverBind}
-      footer={
-        moreHref ? (
-          <Link href={moreHref} prefetch={false} className={'DataList__ShowMore'}>
+    <div className={'CompactBlocksList'} {...hoverBind}>
+      <div className={'CompactBlocksList__Head'}>
+        <div className={'CompactBlocksList__HeadCell'}>Height</div>
+        <div className={'CompactBlocksList__HeadCell'}>Hash</div>
+        <div className={'CompactBlocksList__HeadCell CompactBlocksList__HeadCell--center'}>Txs</div>
+        <div className={'CompactBlocksList__HeadCell CompactBlocksList__HeadCell--right'}>Time</div>
+      </div>
+      <div className={'CompactBlocksList__Body'}>
+        {showSkeleton
+          ? Array.from({ length: limit }, (_, i) => (
+              <div key={i} className={'CompactBlocksList__Row CompactBlocksList__Row--Skeleton'}>
+                <div className={'CompactBlocksList__Cell'}>
+                  <span className={'CompactBlocksList__Skeleton'} />
+                </div>
+                <div className={'CompactBlocksList__Cell'}>
+                  <span className={'CompactBlocksList__Skeleton'} />
+                </div>
+                <div className={'CompactBlocksList__Cell CompactBlocksList__Cell--center'}>
+                  <span className={'CompactBlocksList__Skeleton'} />
+                </div>
+                <div className={'CompactBlocksList__Cell CompactBlocksList__Cell--right'}>
+                  <span className={'CompactBlocksList__Skeleton'} />
+                </div>
+              </div>
+            ))
+          : null}
+        {!showSkeleton && rows.length === 0 ? (
+          <div className={'CompactBlocksList__Empty'}>No blocks</div>
+        ) : null}
+        {rows.map((block: any, i: number) => {
+          const hash = block?.header?.hash
+          const height = block?.header?.height
+          const txCount = Array.isArray(block?.txs) ? block.txs.length : 0
+          const isNew = hash && newKeys.has(hash)
+          return (
+            <Link
+              key={hash || i}
+              href={`/block/${hash}`}
+              prefetch={false}
+              className={`CompactBlocksList__Row${isNew ? ' is-new' : ''}`}
+              style={isNew ? ({ ['--stagger']: `${i * 50}ms` } as any) : undefined}
+            >
+              <div className={'CompactBlocksList__Cell'}>
+                <span className={'CompactBlocksList__Height'}>
+                  <BlockIcon w={'1.125rem'} h={'1.125rem'} flexShrink={0} />
+                  {typeof height === 'number' ? <BigNumber>{height}</BigNumber> : <NotActive />}
+                </span>
+              </div>
+              <div className={'CompactBlocksList__Cell'}>
+                {hash ? (
+                  <span className={'CompactBlocksList__Hash'} title={hash}>
+                    {hash}
+                  </span>
+                ) : (
+                  <NotActive />
+                )}
+              </div>
+              <div className={'CompactBlocksList__Cell CompactBlocksList__Cell--center'}>
+                <span className={'CompactBlocksList__Txs'}>
+                  {txCount} {txCount === 1 ? 'tx' : 'txs'}
+                </span>
+              </div>
+              <div className={'CompactBlocksList__Cell CompactBlocksList__Cell--right'}>
+                {block?.header?.timestamp ? (
+                  <TimeDelta
+                    showTimestampTooltip={true}
+                    format={'compact'}
+                    endDate={new Date(block.header.timestamp)}
+                  />
+                ) : (
+                  <NotActive />
+                )}
+              </div>
+            </Link>
+          )
+        })}
+      </div>
+      {moreHref ? (
+        <div className={'CompactBlocksList__Footer'}>
+          <Link href={moreHref} prefetch={false} className={'CompactBlocksList__More'}>
             {moreLabel || 'View all'}
           </Link>
-        ) : null
-      }
-    />
+        </div>
+      ) : null}
+    </div>
   )
 }

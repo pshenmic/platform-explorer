@@ -24,19 +24,8 @@ export async function generateMetadata(): Promise<Metadata> {
   }
 }
 
-interface ContestedResourcesRouteProps {
-  searchParams: Promise<{
-    page?: string
-    'page-size'?: string
-  }>
-}
-
-async function ContestedResourcesRoute(props: ContestedResourcesRouteProps) {
-  const searchParams = await props.searchParams
-  const page = Number(searchParams.page) || 1
-  const pageSize = Number(searchParams['page-size'])
-
-  return <ContestedResources defaultPage={page} defaultPageSize={pageSize} />
+function ContestedResourcesRoute() {
+  return <ContestedResources />
 }
 
 export default ContestedResourcesRoute

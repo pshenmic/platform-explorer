@@ -23,19 +23,8 @@ export async function generateMetadata(): Promise<Metadata> {
   }
 }
 
-interface MasternodeVotesRouteProps {
-  searchParams: Promise<{
-    page?: string
-    'page-size'?: string
-  }>
-}
-
-async function MasternodeVotesRoute(props: MasternodeVotesRouteProps) {
-  const searchParams = await props.searchParams
-  const page = Number(searchParams.page) || 1
-  const pageSize = Number(searchParams['page-size'])
-
-  return <MasternodeVotes defaultPage={page} defaultPageSize={pageSize} />
+function MasternodeVotesRoute() {
+  return <MasternodeVotes />
 }
 
 export default MasternodeVotesRoute

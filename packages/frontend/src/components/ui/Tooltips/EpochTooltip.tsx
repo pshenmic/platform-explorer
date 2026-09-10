@@ -19,6 +19,8 @@ interface EpochTooltipProps {
 }
 
 export default function EpochTooltip({ epoch, children }: EpochTooltipProps) {
+  const ended = epoch?.endTime != null && epoch.endTime <= Date.now()
+
   return (
     <Tooltip
       label={
@@ -26,16 +28,22 @@ export default function EpochTooltip({ epoch, children }: EpochTooltipProps) {
           <div className={'EpochTooltip'}>
             <div className={'EpochTooltip__Line'}>
               {epoch?.number != null && (
-                <div className={'EpochTooltip__Title'}>Epoch #{epoch?.number || ''} started</div>
+                <div className={'EpochTooltip__Title'}>
+                  {ended ? `Epoch #${epoch.number} ended` : `Epoch #${epoch.number} started`}
+                </div>
               )}
               {epoch?.startTime != null && (
-                <div className={'EpochTooltip__Value'}>{formatDate(epoch.startTime)}</div>
+                <div className={'EpochTooltip__Value'}>
+                  {ended && epoch.endTime != null
+                    ? `${formatDate(epoch.startTime)} – ${formatDate(epoch.endTime)}`
+                    : formatDate(epoch.startTime)}
+                </div>
               )}
             </div>
 
-            {epoch?.endTime != null && (
+            {!ended && epoch?.endTime != null && (
               <div className={'EpochTooltip__Line'}>
-                <div className={'EpochTooltip__Title'}>Next epoch:</div>
+                <div className={'EpochTooltip__Title'}>Ends:</div>
                 <div className={'EpochTooltip__Value'}>{formatDate(epoch.endTime)}</div>
               </div>
             )}

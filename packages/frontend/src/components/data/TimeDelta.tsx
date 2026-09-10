@@ -23,7 +23,14 @@ const Wrapper = ({ children, tooltipDate, showTimestampTooltip, format }: Wrappe
       placement={'top'}
       content={
         <span className={'TimeDelta__TooltipContent'}>
-          {tooltipDate?.toLocaleDateString()} {tooltipDate?.toLocaleTimeString()}
+          {tooltipDate.toLocaleString(undefined, {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit'
+          })}
         </span>
       }
     >

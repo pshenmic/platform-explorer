@@ -292,6 +292,25 @@ const filtersConfig = {
 
 export const TRANSACTION_TYPE_VALUES = transactionOptions.map(o => o.value)
 export const BATCH_TYPE_VALUES = batchOptions.map(o => o.value)
+export const TRANSACTION_TYPE_FILTER_OPTIONS = transactionOptions.map(o => ({
+  value: o.value,
+  label: o.label,
+  searchText: o.title
+}))
+export const BATCH_TYPE_FILTER_OPTIONS = batchOptions.map(o => ({
+  value: o.value,
+  label: o.label,
+  searchText: o.title
+}))
+export const STATUS_FILTER_OPTIONS = statusOptions.map(o => ({
+  value: o.value,
+  label: o.label,
+  searchText: o.title
+}))
+export const TYPE_FILTER_OPTIONS = [
+  ...TRANSACTION_TYPE_FILTER_OPTIONS,
+  ...BATCH_TYPE_FILTER_OPTIONS
+]
 
 export default function TransactionsFilter({
   onFilterChange,

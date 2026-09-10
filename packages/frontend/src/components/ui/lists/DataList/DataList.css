@@ -1,47 +1,377 @@
 .DataList {
+  position: relative;
   width: 100%;
+  min-width: 0;
 }
-.DataList__Body {
+.DataList__FilterBar {
+  display: flex;
+  flex-shrink: 0;
+  flex-wrap: nowrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  box-sizing: border-box;
+  height: 24px;
+  margin-bottom: 6px;
+  min-width: 0;
+  width: 100%;
+  position: relative;
+  z-index: 9;
+}
+.DataList__TitleRow {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  padding-right: 10px;
+  height: 24px;
+}
+.DataList__Title {
+  margin: 0;
+  padding: 0;
+  font-family: var(--pe-font-heading);
+  font-size: var(--pe-text-sm);
+  font-weight: 700;
+  line-height: 24px;
+  letter-spacing: 0.02em;
+  color: var(--pe-color-white-50);
+}
+.DataList__Total {
+  font-family: var(--pe-font-heading);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  line-height: 24px;
+  letter-spacing: 0.04em;
+  color: var(--pe-color-gray-500);
+  font-variant-numeric: tabular-nums;
+}
+.DataList__TitleExtra {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+.DataList__FilterChips {
+  display: flex;
+  flex: 1 1 auto;
+  flex-wrap: nowrap;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+  overscroll-behavior-x: contain;
+  scrollbar-width: none;
+}
+.DataList__FilterChips::-webkit-scrollbar {
+  display: none;
+}
+.DataList__FilterChip {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 4px;
+  box-sizing: border-box;
+  height: 24px;
+  max-width: 16rem;
+  padding: 0 6px 0 8px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 999px;
+  background: var(--pe-color-gray-800);
+  color: var(--pe-color-gray-200);
+  font-family: var(--pe-font-heading);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  line-height: 1;
+  cursor: pointer;
+}
+.DataList__FilterChip:hover {
+  border-color: rgba(255, 255, 255, 0.18);
+  color: var(--pe-color-fg);
+}
+.DataList__FilterChip--Clear {
+  flex-shrink: 0;
+  background: rgba(var(--pe-color-brand-normal-rgb), 0.2);
+  border-color: rgba(var(--pe-color-brand-normal-rgb), 0.35);
+  color: var(--pe-color-brand-light);
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  padding-right: 8px;
+}
+.DataList__FilterChip--Clear:hover {
+  background: rgba(var(--pe-color-brand-light-rgb), 0.22);
+  border-color: rgba(var(--pe-color-brand-light-rgb), 0.45);
+  color: var(--pe-color-brand-light);
+}
+.DataList__FilterChipLabel {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+@media screen and (max-width: 48em) {
+  .DataList__FilterBar {
+    flex-wrap: wrap;
+    height: auto;
+    row-gap: 8px;
+    column-gap: 8px;
+  }
+  .DataList__TitleRow {
+    flex: 1 1 auto;
+    padding-right: 0;
+    min-width: 0;
+  }
+  .DataList__StatusBar {
+    margin-left: 0;
+  }
+  .DataList__FilterChips {
+    order: 3;
+    flex: 1 1 100%;
+    justify-content: flex-start;
+    width: 100%;
+    -webkit-mask-image: none;
+    mask-image: none;
+    padding-left: 0;
+  }
+  .DataList__FilterChips--Empty {
+    display: none;
+  }
+  .DataList__FilterChip {
+    max-width: min(14rem, calc(100vw - 3rem));
+  }
+}
+.DataList__Scroll {
+  width: 100%;
+  min-width: 0;
+}
+.DataList--fill {
   display: flex;
   flex-direction: column;
-  gap: var(--pe-space-2);
+  min-height: 0;
+}
+.DataList--fill .DataList__Scroll {
+  overflow-x: auto;
+  overflow-y: visible;
+}
+.DataList--fill .DataList__StatusBar {
+  margin-top: 0;
+}
+.DataList--compactFirst .DataList__Scroll {
+  overflow-x: auto;
+  overflow-y: visible;
+  touch-action: pan-x pan-y;
+  overscroll-behavior-x: contain;
+}
+@media screen and (max-width: 48em) {
+  .DataList--fill.DataList--compactFirst {
+    height: auto;
+    max-height: none;
+    min-height: 0;
+    flex: 0 0 auto;
+  }
+  .DataList--fill.DataList--compactFirst .DataList__Scroll {
+    flex: 0 0 auto;
+    overflow-x: auto;
+    overflow-y: visible;
+  }
+}
+.DataList--compactFirst.DataList--overflowX .DataList__Scroll {
+  -webkit-mask-image: linear-gradient(to right, #000 0, #000 calc(100% - 28px), transparent 100%);
+  mask-image: linear-gradient(to right, #000 0, #000 calc(100% - 28px), transparent 100%);
+}
+.DataList--feed {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  max-width: 100%;
+}
+.DataList--feed .DataList__Scroll {
+  overflow: visible;
+  min-width: 0;
+}
+.DataList--feed .DataList__Table {
+  width: 100%;
+  min-width: 0;
+}
+.DataList--feed .DataList__Head {
+  font-family: var(--pe-font-mono);
+  font-weight: 600;
+  font-size: 0.5625rem;
+  letter-spacing: 0.14em;
+  color: var(--pe-color-gray-500);
+}
+.DataList--feed .DataList__Head .DataList__HeadCell {
+  background: transparent;
+  height: auto;
+  padding: 4px 8px;
+}
+.DataList--feed .DataList__Head .DataList__HeadCell:first-child,
+.DataList--feed .DataList__Head .DataList__HeadCell:last-child {
+  border-radius: 0;
+}
+.DataList--feed .DataList__HeadCellInner {
+  min-width: 0;
+  gap: 4px;
+}
+.DataList--feed .DataList__Cell {
+  padding: 6px 8px;
+}
+.DataList--feed .DataList__Row > .DataList__Cell:first-child {
+  padding-left: 10px;
+}
+.DataList--feed .DataList__Row > .DataList__Cell:last-child {
+  padding-right: 10px;
+}
+.DataList--feed .DataList__Footer {
+  width: 100%;
+  min-width: 0;
+}
+.DataList__Table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0 6px;
+  table-layout: auto;
+}
+.DataList__Cell--compact {
+  width: 1%;
+}
+.DataList__Cell--grow .DataList__CellContent {
+  width: 0;
+  min-width: 100%;
+}
+.DataList__CellContent {
+  white-space: nowrap;
+}
+.DataList__Cell--grow .DataList__CellContent > div {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.DataList__Cell--numeric .DataList__CellContent > div > * {
+  margin-left: auto;
+}
+.DataList__Cell--numeric {
+  font-variant-numeric: tabular-nums;
+}
+.DataList__Cell--numeric > * {
+  margin-left: auto;
+}
+.DataList__Cell--numeric .DataList__Entity {
+  justify-content: flex-end;
 }
 .DataList__Head {
-  display: grid;
-  padding: 7px 12px;
-  border-radius: 10px;
-  background-color: var(--pe-color-gray-800);
-  margin-bottom: var(--pe-space-2);
   font-family: var(--pe-font-heading);
   font-weight: 700;
   font-size: var(--pe-text-sm);
+  line-height: 1.2;
   text-transform: uppercase;
   color: var(--pe-color-white-50);
-  gap: var(--pe-space-4);
-  align-items: center;
+}
+.DataList__Head .DataList__HeadCell {
+  background-color: var(--pe-color-gray-800);
+  border-top: 1px solid transparent;
+  border-bottom: 1px solid transparent;
+}
+.DataList__Head .DataList__HeadCell:first-child {
+  border-left: 1px solid transparent;
+  border-radius: 10px 0 0 10px;
+  padding-left: 12px;
+}
+.DataList__Head .DataList__HeadCell:last-child {
+  border-right: 1px solid transparent;
+  border-radius: 0 10px 10px 0;
+  padding-right: 12px;
 }
 .DataList__Head--light {
-  background: transparent;
   font-weight: 500;
   text-transform: none;
   color: var(--pe-color-fg);
 }
+.DataList__Head--light .DataList__HeadCell {
+  background-color: transparent;
+}
 .DataList__HeadCell {
+  height: 32px;
+  padding: 6px 12px;
+  white-space: nowrap;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  vertical-align: middle;
+  box-sizing: border-box;
+}
+.DataList__Head .DataList__HeadCell:not(:first-child) {
+  box-shadow: none;
+}
+.DataList__HeadCellInner {
   display: flex;
   align-items: center;
-  min-width: 0;
-  gap: 2px;
+  gap: 8px;
+  width: 100%;
+  min-width: max-content;
+  padding-right: 2px;
+}
+.DataList__HeadCellTitle {
+  flex: 0 0 auto;
+  white-space: nowrap;
+}
+.DataList__HeadMenuBtn {
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 14px;
+  height: 14px;
+  margin-left: auto;
+  padding: 0;
+  border: 0;
+  border-radius: 3px;
+  background: none;
+  color: inherit;
+  opacity: 0.5;
+  cursor: pointer;
+}
+.DataList__HeadMenuBtn:hover,
+.DataList__HeadMenuBtn--Open {
+  opacity: 1;
+  background: rgba(255, 255, 255, 0.08);
+}
+.DataList__HeadMenuBtn--Filtered {
+  opacity: 1;
+  color: var(--pe-color-brand-normal);
+}
+.DataList__HeadMenuIcon {
+  display: block;
+  width: 12px;
+  height: 12px;
 }
 .DataList__HeadCell--center {
-  justify-content: center;
+  text-align: center;
+}
+.DataList__HeadCell--center .DataList__HeadCellTitle,
+.DataList__HeadCell--center .DataList__HeadCell--Sortable {
   text-align: center;
 }
 .DataList__HeadCell--right {
+  text-align: right;
+}
+.DataList__HeadCell--right .DataList__HeadCellInner {
   justify-content: flex-end;
+}
+.DataList__HeadCell--right .DataList__HeadMenuBtn {
+  margin-left: 0;
+}
+.DataList__HeadCell--right .DataList__HeadCell--Sortable {
   text-align: right;
 }
 .DataList__HeadCell--Sortable {
   appearance: none;
+  display: inline-flex;
+  align-items: center;
+  flex: 1 1 auto;
+  min-width: 0;
+  gap: 2px;
   background: none;
   border: 0;
   padding: 0;
@@ -67,38 +397,94 @@
 }
 .DataList__SortSpacer {
   display: inline-block;
-  width: 14px;
-  height: 14px;
+  width: 12px;
+  height: 12px;
   flex-shrink: 0;
 }
 .DataList__Row {
-  display: flex;
-  width: 100%;
-  text-decoration: none;
-  padding: 7px 12px;
-  margin-bottom: 8px;
-  line-height: 24px;
+  --DataList-row-bg: rgba(var(--pe-color-gray-800-rgb), 0.5);
+  --DataList-row-border: var(--pe-color-gray-750);
+  --DataList-row-radius: 10px;
   color: var(--pe-color-gray-100);
   font-family: var(--pe-font-mono);
-  font-size: 12pt;
-  border-radius: 10px;
-  border: 1px solid var(--pe-color-gray-750);
-  background-color: rgba(var(--pe-color-gray-800-rgb), 0.5);
-  transition: all 0.1s;
+  font-size: 0.75rem;
+  line-height: 18px;
+  position: relative;
+}
+.DataList__Row--link {
+  cursor: pointer;
+}
+.DataList__Cell {
+  height: 32px;
+  padding: 6px 12px;
+  min-width: 0;
+  vertical-align: middle;
+  white-space: nowrap;
+  overflow: hidden;
+  background-color: var(--DataList-row-bg);
+  border-top: 1px solid var(--DataList-row-border);
+  border-bottom: 1px solid var(--DataList-row-border);
+  box-sizing: border-box;
+  transition: background-color 0.1s;
+}
+.DataList__Cell > * {
+  min-width: 0;
+  max-width: 100%;
+}
+.DataList__Row > .DataList__Cell:first-child {
+  padding-left: 12px;
+  border-left: 1px solid var(--DataList-row-border);
+  border-top-left-radius: var(--DataList-row-radius);
+  border-bottom-left-radius: var(--DataList-row-radius);
+}
+.DataList__Row > .DataList__Cell:last-child {
+  padding-right: 12px;
+  border-right: 1px solid var(--DataList-row-border);
+  border-top-right-radius: var(--DataList-row-radius);
+  border-bottom-right-radius: var(--DataList-row-radius);
+}
+.DataList__Row > .DataList__Cell:not(:first-child) {
+  position: relative;
+}
+.DataList__Row > .DataList__Cell:not(:first-child)::before {
+  content: "";
+  position: absolute;
+  top: 8px;
+  bottom: 8px;
+  left: 0;
+  width: 1px;
+  pointer-events: none;
+  background: rgba(255, 255, 255, 0.07);
+}
+.DataList__Cell--center {
+  text-align: center;
+}
+.DataList__Cell--right {
+  text-align: right;
+}
+.DataList__Cell--center > * {
+  margin-inline: auto;
+}
+.DataList__Cell--right > * {
+  margin-left: auto;
 }
 @media (hover: hover) and (pointer: fine) {
-  .DataList__Row:hover {
+  .DataList__Row:hover > .DataList__Cell {
     background-color: var(--pe-color-gray-750);
-    text-decoration: none;
-    cursor: pointer;
   }
 }
 .DataList__Row:active {
   transform: translateY(1px);
   box-shadow: 0 0 9999px 0 rgba(0, 0, 0, 0.25) inset;
 }
-.DataList__Row:last-child {
-  margin-bottom: 0;
+.DataList__Row .Identifier__CopyButton {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.15s;
+}
+.DataList__Row:hover .Identifier__CopyButton {
+  opacity: 1;
+  pointer-events: auto;
 }
 .DataList__Row__Column--Credits,
 .DataList__Row__Column--Number {
@@ -111,10 +497,35 @@
   min-width: 50px;
 }
 .DataList__Row__Avatar {
-  height: 24px;
-  width: 24px;
+  height: 18px;
+  width: 18px;
   flex-shrink: 0;
-  margin-right: 12px;
+  margin-right: 8px;
+}
+.DataList__Cell .Identifier {
+  min-width: 0;
+  max-width: 100%;
+}
+.DataList__Cell .Identifier--Ellipsis .Identifier__SymbolsContainer {
+  min-width: 0;
+  flex: 1 1 auto;
+}
+.DataList__Cell .Identifier__Avatar {
+  height: 18px;
+  width: 18px;
+}
+.DataList__Cell .Badge {
+  line-height: 18px;
+  padding: 0 0.5rem;
+}
+.DataList__CompactNum {
+  display: block;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
 }
 .DataList__Row--Timestamp,
 .DataList__Row__Column--Timestamp {
@@ -128,29 +539,118 @@
 .DataList__Row__Column--Timestamp .DateBlock__Date {
   font-size: 0.75rem;
 }
-.DataList__Row {
-  display: grid;
-  gap: 16px;
-  align-items: center;
-  font-size: 0.75rem;
+
+.DataList--pinFirst {
+  --DataList-row-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+.DataList--pinFirst .DataList__HeadScroll {
   position: relative;
-  margin-bottom: 0;
-  min-height: 2.375rem;
+  flex: 0 0 auto;
+  width: 100%;
+  min-width: 0;
   box-sizing: border-box;
+  overflow-x: hidden;
+  overflow-y: hidden;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  overscroll-behavior: none;
 }
-.DataList__Row .Identifier__CopyButton {
-  opacity: 0;
+.DataList--pinFirst .DataList__HeadScroll::-webkit-scrollbar {
+  display: none;
+  height: 0;
+}
+.DataList--pinFirst .DataList__BodyScroll {
+  position: relative;
+  flex: 0 0 auto;
+  width: 100%;
+  min-width: 0;
+  margin-top: 0;
+  overflow-x: hidden;
+  overflow-y: visible;
+  overscroll-behavior-x: contain;
+  scroll-behavior: auto;
+}
+.DataList--pinFirst.DataList--overflowX .DataList__HeadScroll,
+.DataList--pinFirst.DataList--overflowX .DataList__BodyScroll {
+  overflow-x: auto;
+  touch-action: pan-x pan-y;
+}
+.DataList--pinFirst .DataList__Table--head {
+  border-spacing: 0;
+}
+.DataList--pinFirst .DataList__Head .DataList__HeadCell {
+  background-color: var(--pe-color-gray-800);
+}
+.DataList--pinFirst .DataList__Head .DataList__HeadCell--pin {
+  z-index: 10;
+}
+.DataList--pinFirst .DataList__Head .DataList__HeadCell:first-child {
+  border-radius: 10px 0 0 10px;
+}
+.DataList--pinFirst .DataList__Head .DataList__HeadCell:last-child {
+  border-radius: 0 10px 10px 0;
+}
+.DataList--pinFirst .DataList__Head--light .DataList__HeadCell {
+  background-color: var(--pe-color-gray-800);
+}
+.DataList--pinFirst .DataList__Row {
+  --DataList-row-bg: rgb(38, 46, 50);
+}
+.DataList--pinFirst .DataList__Row:active {
+  transform: none;
+  box-shadow: none;
+}
+.DataList--pinFirst .DataList__Row > .DataList__Cell:nth-child(2)::before {
+  content: none;
+}
+.DataList--pinFirst .DataList__Cell:not(.DataList__Cell--pin) {
+  position: relative;
+  z-index: 0;
+}
+.DataList--pinFirst .DataList__HeadCell--pin,
+.DataList--pinFirst .DataList__Cell--pin {
+  position: sticky;
+  left: 0;
+  background-color: var(--pe-color-gray-800);
+}
+.DataList--pinFirst .DataList__Row > .DataList__Cell--pin {
+  z-index: 3;
+  background-color: rgb(38, 46, 50);
+}
+.DataList--pinFirst .DataList__Cell--pin::after {
+  content: "";
+  position: absolute;
+  top: 8px;
+  right: 0;
+  bottom: 8px;
+  width: 1px;
   pointer-events: none;
-  transition: opacity 0.15s;
+  background: rgba(255, 255, 255, 0.07);
 }
-.DataList__Row:hover .Identifier__CopyButton {
-  opacity: 1;
-  pointer-events: auto;
+
+.DataList--pinFirst .DataList__Cell .Identifier {
+  max-width: 100%;
+  min-width: 0;
+  overflow: hidden;
 }
-.DataList__Row--Rank1 {
+.DataList--pinFirst .DataList__Cell .Identifier__SymbolsContainer {
+  max-width: 100%;
+  min-width: 0;
+  overflow: hidden;
+}
+@media (hover: hover) and (pointer: fine) {
+  .DataList--pinFirst .DataList__Row:hover > .DataList__Cell--pin {
+    background-color: var(--pe-color-gray-750);
+  }
+}
+
+.DataList__Row--Rank1 > .DataList__Cell:first-child {
   background-image: linear-gradient(90deg, rgba(255, 210, 5, 0.12) 0%, rgba(255, 210, 5, 0) 60%);
 }
-.DataList__Row--Rank1::before {
+.DataList__Row--Rank1 > .DataList__Cell:first-child::before {
   content: "";
   position: absolute;
   left: 2px;
@@ -161,14 +661,14 @@
   background: #ffd205;
   opacity: 0.75;
 }
-.DataList__Row--Rank2 {
+.DataList__Row--Rank2 > .DataList__Cell:first-child {
   background-image: linear-gradient(
     90deg,
     rgba(198, 202, 205, 0.12) 0%,
     rgba(198, 202, 205, 0) 60%
   );
 }
-.DataList__Row--Rank2::before {
+.DataList__Row--Rank2 > .DataList__Cell:first-child::before {
   content: "";
   position: absolute;
   left: 2px;
@@ -179,10 +679,10 @@
   background: #c6cacd;
   opacity: 0.75;
 }
-.DataList__Row--Rank3 {
+.DataList__Row--Rank3 > .DataList__Cell:first-child {
   background-image: linear-gradient(90deg, rgba(244, 154, 88, 0.12) 0%, rgba(244, 154, 88, 0) 60%);
 }
-.DataList__Row--Rank3::before {
+.DataList__Row--Rank3 > .DataList__Cell:first-child::before {
   content: "";
   position: absolute;
   left: 2px;
@@ -193,16 +693,16 @@
   background: #f49a58;
   opacity: 0.75;
 }
-.DataList__Row--Rank4,
-.DataList__Row--Rank5 {
+.DataList__Row--Rank4 > .DataList__Cell:first-child,
+.DataList__Row--Rank5 > .DataList__Cell:first-child {
   background-image: linear-gradient(
     90deg,
     rgba(139, 147, 160, 0.12) 0%,
     rgba(139, 147, 160, 0) 60%
   );
 }
-.DataList__Row--Rank4::before,
-.DataList__Row--Rank5::before {
+.DataList__Row--Rank4 > .DataList__Cell:first-child::before,
+.DataList__Row--Rank5 > .DataList__Cell:first-child::before {
   content: "";
   position: absolute;
   left: 2px;
@@ -212,6 +712,13 @@
   border-radius: 3px;
   background: #8b93a0;
   opacity: 0.75;
+}
+.DataList__Row > .DataList__Cell:first-child {
+  position: relative;
+}
+.DataList--pinFirst .DataList__Row > .DataList__Cell--pin {
+  position: sticky;
+  left: 0;
 }
 .DataList__Rank {
   flex-shrink: 0;
@@ -239,41 +746,428 @@
   gap: 0.4rem;
   min-width: 0;
   max-width: 100%;
-}
-.DataList__RowLink {
-  display: block;
-  color: inherit;
-  text-decoration: none;
-}
-.DataList__Cell {
-  display: flex;
-  align-items: center;
-  min-width: 0;
-  white-space: nowrap;
   overflow: hidden;
 }
-.DataList__Cell > * {
+.DataList__Cell .Identifier,
+.DataList__Cell .Alias,
+.DataList__Entity .Identifier,
+.DataList__Entity .Alias {
   min-width: 0;
   max-width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
 }
-.DataList__Cell--center {
-  justify-content: center;
-  text-align: center;
+.DataList__Entity .Identifier,
+.DataList__Entity .Alias {
+  flex: 1 1 auto;
 }
-.DataList__Cell--right {
-  justify-content: flex-end;
-  text-align: right;
+.DataList__Cell .Identifier__SymbolsContainer,
+.DataList__Cell .Alias__SymbolsContainer {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.DataList__Cell .Identifier__Avatar,
+.DataList__Cell .Alias__Avatar,
+.DataList__Cell .Identifier__CopyButton,
+.DataList__Medal {
+  flex-shrink: 0;
 }
 .DataList__Skeleton {
-  width: 100%;
-  max-width: 90px;
-  height: 0.85em;
+  display: block;
+  width: 4.5rem;
+  max-width: 100%;
+  height: 1em;
   border-radius: 4px;
-  background: rgba(var(--pe-color-gray-800-rgb), 0.8);
-  animation: DataListPulse 1.4s ease-in-out infinite;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.04) 0%,
+    rgba(255, 255, 255, 0.1) 40%,
+    rgba(255, 255, 255, 0.04) 80%
+  );
+  background-size: 200% 100%;
+  animation: DataListShimmer 1.2s ease-in-out infinite;
+}
+.DataList__Cell--grow .DataList__Skeleton {
+  width: 80%;
+}
+.DataList__Cell--numeric .DataList__Skeleton {
+  width: 3rem;
+}
+.DataList__Cell--center .DataList__Skeleton {
+  margin-inline: auto;
+}
+.DataList__Cell--right .DataList__Skeleton {
+  margin-left: auto;
 }
 .DataList__Footer {
   margin-top: 12px;
+}
+.DataList__Pager {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+  min-width: 0;
+  margin-top: 8px;
+  padding: 4px 0;
+  color: var(--pe-color-gray-400);
+  font-family: var(--pe-font-heading);
+  font-size: 0.75rem;
+  font-variant-numeric: tabular-nums;
+}
+.DataList__PagerRows {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+}
+.DataList__PagerNav {
+  display: flex;
+  flex: 1;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
+}
+.DataList__PagerBtn,
+.DataList__PagerSelect,
+.DataList__PagerEllipsis {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: 32px;
+  min-width: 32px;
+  box-sizing: border-box;
+  padding: 0 10px;
+  border: 1px solid var(--DataList-row-border);
+  border-radius: 6px;
+  background: transparent;
+  color: var(--pe-color-fg);
+  font: inherit;
+  white-space: nowrap;
+}
+.DataList__PagerBtn,
+.DataList__PagerSelect {
+  cursor: pointer;
+}
+.DataList__PagerBtn:hover:not(:disabled),
+.DataList__PagerSelect:hover:not(:disabled) {
+  background: var(--pe-color-gray-800);
+}
+.DataList__PagerBtn--On,
+.DataList__PagerBtn--On:hover:not(:disabled) {
+  background: rgba(var(--pe-color-brand-light-rgb), 0.12);
+  border-color: rgba(var(--pe-color-brand-light-rgb), 0.24);
+  color: var(--pe-color-brand-light);
+}
+.DataList__PagerEllipsis {
+  color: var(--pe-color-gray-400);
+  padding: 0 4px;
+  min-width: 24px;
+  border-color: transparent;
+}
+.DataList__Pager button:focus-visible {
+  outline: 2px solid var(--pe-color-brand-normal);
+  outline-offset: 2px;
+}
+.DataList__Pager :disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+.DataList__PagerMenu {
+  position: absolute;
+  left: 0;
+  bottom: calc(100% + 6px);
+  z-index: 12;
+  min-width: 88px;
+  padding: 4px;
+  border: 1px solid var(--DataList-row-border);
+  border-radius: 8px;
+  background: var(--pe-color-gray-800);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+}
+.DataList__PagerOption {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  min-height: 28px;
+  padding: 4px 8px;
+  border: 0;
+  border-radius: 4px;
+  background: transparent;
+  color: var(--pe-color-fg);
+  font: inherit;
+  cursor: pointer;
+}
+.DataList__PagerOption:hover,
+.DataList__PagerOption--On {
+  background: rgba(255, 255, 255, 0.06);
+}
+.DataList__PagerSr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+}
+@media screen and (max-width: 48em) {
+  .DataList__Pager {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 6px 12px;
+    margin-top: 6px;
+  }
+  .DataList__PagerNav {
+    flex: 1 0 100%;
+    justify-content: center;
+  }
+  .DataList__PagerBtn,
+  .DataList__PagerSelect,
+  .DataList__PagerEllipsis {
+    height: 28px;
+    min-width: 28px;
+    padding: 0 6px;
+  }
+  .DataList__PagerBtn--Neighbor {
+    display: none;
+  }
+  .DataList__PagerEllipsis {
+    min-width: 16px;
+    padding: 0;
+  }
+}
+.DataList__StatusBar {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  box-sizing: border-box;
+  height: 24px;
+  margin-top: 0;
+  margin-left: auto;
+  min-width: 0;
+}
+.DataList__StatusRange {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  overflow: hidden;
+  color: var(--pe-color-gray-400);
+  font-family: var(--pe-font-heading);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  line-height: 24px;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+.DataList__StatusHint {
+  color: var(--pe-color-gray-500);
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  font-size: 0.625rem;
+}
+.DataList__LoadMore {
+  flex-shrink: 0;
+  height: 24px;
+  padding: 0 8px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 999px;
+  background: var(--pe-color-gray-800);
+  color: var(--pe-color-gray-200);
+  font-family: var(--pe-font-heading);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  line-height: 1;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  cursor: pointer;
+}
+.DataList__LoadMore:hover {
+  border-color: rgba(255, 255, 255, 0.18);
+  color: var(--pe-color-fg);
+}
+.DataList__PageSwitch {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 2px;
+}
+.DataList__PageBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--pe-color-gray-300);
+  cursor: pointer;
+}
+.DataList__PageBtn:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--pe-color-fg);
+}
+.DataList__PageBtn:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+.DataList__PageNum {
+  min-width: 0;
+  padding: 0 4px;
+  text-align: center;
+  color: var(--pe-color-gray-300);
+  font-family: var(--pe-font-heading);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.DataList__ModeSwitch {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  height: 24px;
+  padding: 2px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 999px;
+  background: var(--pe-color-gray-800);
+}
+.DataList__ModeBtn {
+  height: 20px;
+  padding: 0 8px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--pe-color-gray-400);
+  font-family: var(--pe-font-heading);
+  font-size: 0.625rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  line-height: 20px;
+  cursor: pointer;
+}
+.DataList__ModeBtn--On {
+  background: rgba(var(--pe-color-brand-normal-rgb), 0.2);
+  color: var(--pe-color-brand-light);
+}
+.DataList__Sentinel {
+  height: 1px;
+  margin: 0;
+  padding: 0;
+  pointer-events: none;
+}
+.DataList__MoreSpinner {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border: 1.5px solid rgba(255, 255, 255, 0.15);
+  border-top-color: var(--pe-color-gray-300);
+  border-radius: 50%;
+  animation: DataListSpin 0.7s linear infinite;
+}
+@keyframes DataListSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@media screen and (max-width: 48em) {
+  .DataList__StatusBar {
+    margin-top: 0;
+  }
+  .DataList__ModeBtn {
+    padding: 0 6px;
+  }
+  .DataList__PageNum {
+    font-size: 0.625rem;
+  }
+}
+.DataList__Empty td {
+  background: none;
+  border: 0;
+  padding: 12px 0;
+}
+.DataList--empty.DataList--pinFirst .DataList__BodyScroll,
+.DataList--empty .DataList__Scroll {
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.DataList--empty .EmptyListMessage {
+  padding: 1.5rem 1.25rem;
+  max-width: 18rem;
+  line-height: 1.45;
+}
+@media screen and (max-width: 48em) {
+  .DataList--empty.DataList--compactFirst {
+    min-height: calc(100dvh - var(--layout-nav-h) - 8rem);
+    display: flex;
+    flex-direction: column;
+  }
+  .DataList--empty.DataList--compactFirst .DataList__Scroll {
+    flex: 1 1 auto;
+    min-height: 12rem;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    touch-action: pan-y;
+  }
+}
+.DataList__Group {
+  border-radius: var(--pe-radius-def);
+  background: rgba(var(--pe-color-brand-normal-rgb), 0.05);
+  margin-bottom: var(--pe-space-2);
+}
+.DataList__GroupHeader {
+  display: flex;
+  align-items: center;
+  gap: var(--pe-space-2);
+  width: 100%;
+  padding: var(--pe-space-2) var(--pe-space-3);
+  cursor: pointer;
+  color: var(--pe-color-brand-normal);
+  font-family: var(--pe-font-heading);
+  font-style: italic;
+  font-weight: var(--pe-font-weight-extrabold);
+  font-size: var(--pe-text-sm);
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+.DataList__GroupChevron {
+  width: var(--pe-space-2);
+  height: var(--pe-space-2);
+  transition: transform var(--pe-transition-def) ease;
+}
+.DataList__GroupChevron--Open {
+  transform: rotate(90deg);
+}
+.DataList__GroupCount {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 var(--pe-space-1_5);
+  border-radius: 9px;
+  background: var(--pe-color-brand-normal);
+  color: var(--pe-color-fg);
+  font-size: var(--pe-text-xs);
+}
+.DataList__GroupBody {
+  padding: 0 var(--pe-space-1) var(--pe-space-1);
 }
 .DataList__ShowMore {
   display: flex;
@@ -305,26 +1199,42 @@
 .DataList__ShowMore:active {
   transform: translateY(1px);
 }
-.DataList__Row.is-new {
-  animation:
-    DataListRowIn 0.4s ease-out backwards,
-    DataListRowGlow 1.4s ease-out backwards;
+.DataList__Row.is-new > .DataList__Cell {
+  animation: DataListRowGlow 1.2s ease-out backwards;
+  animation-delay: var(--stagger, 0ms);
+}
+.DataList__Row.is-insert {
+  animation: DataListSlotInsert 0.38s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+  animation-delay: var(--stagger, 0ms);
+}
+.DataList__Row.is-exit {
+  pointer-events: none;
+  animation: DataListSlotExit 0.32s cubic-bezier(0.4, 0, 1, 1) forwards;
   animation-delay: var(--stagger, 0ms);
 }
 
-@keyframes DataListPulse {
-  0%,
-  100% {
-    opacity: 0.5;
+@keyframes DataListShimmer {
+  0% {
+    background-position: 100% 0;
   }
-  50% {
+  100% {
+    background-position: -100% 0;
+  }
+}
+@keyframes DataListSlotInsert {
+  from {
+    opacity: 0;
+  }
+  to {
     opacity: 1;
   }
 }
-@keyframes DataListRowIn {
+@keyframes DataListSlotExit {
   from {
+    opacity: 1;
+  }
+  to {
     opacity: 0;
-    transform: translateY(-6px);
   }
 }
 @keyframes DataListRowGlow {
@@ -335,8 +1245,11 @@
 @media (prefers-reduced-motion: reduce) {
   .DataList__Skeleton {
     animation: none;
+    background: rgba(255, 255, 255, 0.06);
   }
-  .DataList__Row.is-new {
-    animation: DataListRowGlow 1.4s ease-out backwards;
+  .DataList__Row.is-new > .DataList__Cell,
+  .DataList__Row.is-insert,
+  .DataList__Row.is-exit {
+    animation: none;
   }
 }

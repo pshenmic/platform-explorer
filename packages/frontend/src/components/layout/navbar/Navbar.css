@@ -192,12 +192,25 @@
 }
 
 @media screen and (max-width: 48em) {
+  .Navbar {
+    padding: 6px 10px;
+  }
+
+  .Navbar__Burger {
+    width: 36px;
+    height: 36px;
+  }
+
   .Navbar__SearchContainer {
     width: 15rem;
   }
 
   .Navbar__Menu {
     gap: var(--pe-space-4);
+  }
+
+  .NavbarStub {
+    height: var(--layout-nav-h);
   }
 }
 

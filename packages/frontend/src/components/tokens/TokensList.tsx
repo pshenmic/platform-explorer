@@ -1,12 +1,15 @@
 'use client'
 
+import { columnLayout } from './TokensList.columns'
+
 import { useRouter } from 'next/navigation'
-import { Alias, Identifier, NotActive, CreditsBlock } from '../data'
-import { Supply } from './index'
+import { Alias, Identifier, NotActive, CreditsBlock, BigNumber } from '../data'
 import { LinkContainer, ValueContainer } from '../ui/containers'
 import { Tooltip } from '../ui/Tooltips'
 import { FormattedNumber } from '../ui/FormattedNumber'
+import type { ReactNode } from 'react'
 import { DataList } from '../ui/lists'
+import type { DataListColumn, DataListProps } from '../ui/lists/DataList/DataList'
 import { ErrorMessageBlock } from '../Errors'
 import Pagination from '../pagination'
 import { findActiveAlias, getMinTokenPrice } from '../../util'
@@ -26,7 +29,12 @@ function TokensList({
   variant = 'default',
   pagination,
   loading,
-  itemsCount
+  itemsCount,
+  filterValues,
+  onFilterChange,
+  paging,
+  title,
+  pinFirst = false
 }: {
   tokens?: any[]
   rate?: any
@@ -35,47 +43,72 @@ function TokensList({
   pagination?: any
   loading?: any
   itemsCount?: number
+  filterValues?: Record<string, unknown>
+  onFilterChange?: (key: string, value: unknown) => void
+  paging?: DataListProps['paging']
+  title?: ReactNode
+  pinFirst?: boolean
 }) {
   const router = useRouter()
+  const canFilter = Boolean(onFilterChange)
 
-  const columns = [
+  const columns: DataListColumn<any>[] = [
     {
-      key: 'tokenName',
-      header: 'Token Name',
-      grow: true,
-      minWidth: 150,
+      ...columnLayout.tokenName,
+      filterKey: canFilter ? 'name' : undefined,
+      filterType: canFilter ? ('search' as const) : undefined,
+      filterPlaceholder: 'Name or ID',
       cell: (token: any) => {
         const name = tokenName(token)
-        return name ? (
-          <Alias avatarSource={token.identifier}>{name}</Alias>
-        ) : (
-          <Identifier ellipsis={true} avatar={true} styles={['highlight-both']}>
-            {token.identifier}
-          </Identifier>
+        return (
+          <span className={'DataList__Entity'}>
+            {name ? (
+              <Alias ellipsis={true} avatarSource={token.identifier}>
+                {name}
+              </Alias>
+            ) : (
+              <Identifier ellipsis={true} avatar={true} styles={['highlight-both']}>
+                {token.identifier}
+              </Identifier>
+            )}
+          </span>
         )
       }
     },
     {
-      key: 'supply',
-      header: 'Supply',
-      minWidth: 120,
-      priority: 3,
+      ...columnLayout.position,
+
       cell: (token: any) =>
-        token.maxSupply ? (
-          <Supply
-            currentSupply={token.totalSupply}
-            maxSupply={token.maxSupply || token.totalSupply}
-            decimals={token.decimals}
-          />
-        ) : (
-          <FormattedNumber decimals={token.decimals}>{token.totalSupply}</FormattedNumber>
-        )
+        token?.position != null ? <BigNumber>{token.position}</BigNumber> : <NotActive />
     },
     {
-      key: 'price',
-      header: 'Price',
-      minWidth: 92,
-      align: 'right',
+      ...columnLayout.supply,
+
+      cell: (token: any) => {
+        if (token.totalSupply == null) return <NotActive />
+        const value = (
+          <FormattedNumber decimals={token.decimals}>{token.totalSupply}</FormattedNumber>
+        )
+        if (token.maxSupply == null) return value
+        return (
+          <Tooltip
+            placement={'top'}
+            content={
+              <>
+                <FormattedNumber decimals={token.decimals}>{token.totalSupply}</FormattedNumber>
+                {' / '}
+                <FormattedNumber decimals={token.decimals}>{token.maxSupply}</FormattedNumber>
+              </>
+            }
+          >
+            <span>{value}</span>
+          </Tooltip>
+        )
+      }
+    },
+    {
+      ...columnLayout.price,
+
       cell: (token: any) => {
         if (token.price != null) {
           return (
@@ -84,11 +117,9 @@ function TokensList({
               maxW={'none'}
               content={<CreditsBlock credits={token.price} rate={rate} />}
             >
-              <div>
-                <ValueContainer colorScheme={'emeralds'} size={'sm'}>
-                  <FormattedNumber decimals={token.decimals}>{token.price}</FormattedNumber>
-                </ValueContainer>
-              </div>
+              <span>
+                <FormattedNumber decimals={token.decimals}>{token.price}</FormattedNumber>
+              </span>
             </Tooltip>
           )
         }
@@ -99,23 +130,23 @@ function TokensList({
               maxW={'none'}
               content={<CreditsBlock credits={getMinTokenPrice(token.prices)} rate={rate} />}
             >
-              <div className={'TokensList__PriceFrom'}>
+              <span className={'TokensList__PriceFrom'}>
                 From{' '}
                 <FormattedNumber decimals={token.decimals}>
                   {getMinTokenPrice(token.prices)}
                 </FormattedNumber>
-              </div>
+              </span>
             </Tooltip>
           )
         }
-        return null
+        return <NotActive />
       }
     },
     {
-      key: 'contract',
-      header: 'Contract',
-      grow: true,
-      minWidth: 130,
+      ...columnLayout.contract,
+      filterKey: canFilter ? 'contract' : undefined,
+      filterType: canFilter ? ('search' as const) : undefined,
+      filterPlaceholder: 'Contract ID',
       priority: 1,
       cell: (token: any) => (
         <LinkContainer
@@ -132,10 +163,10 @@ function TokensList({
       )
     },
     {
-      key: 'owner',
-      header: 'Owner',
-      grow: true,
-      minWidth: 130,
+      ...columnLayout.owner,
+      filterKey: canFilter ? 'owner' : undefined,
+      filterType: canFilter ? ('search' as const) : undefined,
+      filterPlaceholder: 'Owner ID',
       priority: 2,
       cell: (token: any) => {
         const ownerId = typeof token.owner === 'object' ? token.owner?.identifier : token.owner
@@ -164,10 +195,8 @@ function TokensList({
 
   if (variant === 'balance') {
     columns.push({
-      key: 'balance',
-      header: 'Balance',
-      minWidth: 100,
-      align: 'right',
+      ...columnLayout.balance,
+
       cell: token =>
         typeof token.balance === 'number' || typeof token.balance === 'string' ? (
           <ValueContainer colorScheme={'emeralds'} size={'sm'}>
@@ -188,11 +217,21 @@ function TokensList({
       className={'TokensList'}
       items={tokens}
       columns={columns}
+      pinFirst={pinFirst}
       loading={loading}
+      skeletonCount={itemsCount}
       rowHref={token => `/token/${token.identifier}`}
       rowKey={token => token.identifier}
       headerVariant={headerStyles === 'light' ? 'light' : 'default'}
-      emptyMessage={'There are no tokens yet.'}
+      emptyMessage={
+        filterValues && Object.keys(filterValues).length
+          ? 'No tokens match these filters.'
+          : 'There are no tokens yet.'
+      }
+      filterValues={filterValues}
+      onFilterChange={onFilterChange}
+      paging={paging}
+      title={title}
       footer={
         pagination && (
           <Pagination

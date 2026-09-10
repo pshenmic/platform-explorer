@@ -5,6 +5,7 @@ import type { RefObject, MouseEvent as ReactMouseEvent } from 'react'
 import { ChevronIcon } from '../../ui/icons'
 import { usePathname } from 'next/navigation'
 import Link from 'next/link'
+import NavLinkStatus from './NavLinkStatus'
 import '../../ui/Buttons/ArrowButton.css'
 import { SmoothSize } from '../../ui/containers'
 import type { NavMenuItem } from './types'
@@ -99,10 +100,13 @@ const NavbarMobileMenu = ({ items, isOpen, onClose, burgerRef }: NavbarMobileMen
                   <Link
                     key={item.title}
                     className={itemClassName}
-                    onClick={() => handleItemClick(item)}
+                    onClick={() => {
+                      if (pathname === item.href) onClose()
+                    }}
                     href={item.href ?? '#'}
                   >
                     <span>{item.title}</span>
+                    <NavLinkStatus />
                   </Link>
                 )
               })}
@@ -136,10 +140,11 @@ const NavbarMobileMenu = ({ items, isOpen, onClose, burgerRef }: NavbarMobileMen
                       e.preventDefault()
                       return
                     }
-                    onClose()
+                    if (pathname === subItem.href) onClose()
                   }}
                 >
                   {subItem.title}
+                  <NavLinkStatus />
                 </Link>
               ))}
             </nav>

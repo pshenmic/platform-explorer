@@ -10,7 +10,6 @@
   },
   "author": "pshenmic <pshenmic@gmail.com>",
   "license": "ISC",
-  "dependencies": {},
   "private": true,
   "workspaces": [
     "packages/*"

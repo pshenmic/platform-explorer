@@ -46,7 +46,7 @@
 
 @media screen and (max-width: 62em) {
   .Footer__Copyright {
-    text-align: center;
+    display: none;
   }
 }
 
@@ -107,8 +107,17 @@
 
 @media screen and (max-width: 62em) {
   .Footer {
-    flex-direction: column;
-    gap: var(--pe-space-3);
+    position: fixed;
+    flex-direction: row;
+    align-items: center;
+    gap: var(--pe-space-2);
+    min-height: var(--layout-footer-h);
+    padding: 8px 12px;
+    transition: transform 0.22s ease;
+  }
+
+  .Footer > * {
+    flex: 0 1 auto;
   }
 
   .Footer__Logo {
@@ -116,31 +125,74 @@
   }
 
   .Footer__WrapperNetwork {
-    order: 1;
+    flex: 1 1 auto;
+    justify-content: center;
+    gap: var(--pe-space-2);
   }
 
-  .Footer__TimezoneContainer {
-    order: 2;
+  .Footer__Network {
+    padding: 6px;
   }
 
-  .Footer__Copyright {
-    order: 3;
+  .Footer__ClockIcon {
+    display: none;
+  }
+
+  .Footer__LocalTime .LocalTime__Date,
+  .Footer__LocalTime .LocalTime__TimeZone {
+    display: none;
+  }
+
+  .Footer__LocalTime .LocalTime__Time:after {
+    display: none;
   }
 }
 
-@media screen and (max-width: 62em) {
+@media screen and (max-width: 48em) {
   .Footer {
-    position: static;
+    position: relative;
+    left: auto;
+    right: auto;
+    bottom: auto;
+    z-index: 2;
+    min-height: var(--layout-footer-h);
+    padding: 4px 10px;
+    gap: 8px;
+    border-radius: 10px 10px 0 0;
+  }
+
+  .FooterStub {
+    display: none;
+  }
+
+  .Footer > p,
+  .Footer a,
+  .Footer__Copyright {
+    font-size: 10px;
+  }
+
+  .Footer__Network {
+    padding: 4px;
+  }
+
+  .Footer__Network > img {
+    width: 14px;
+    height: 14px;
+  }
+
+  .Footer__LocalTime {
+    font-size: 10px;
+  }
+
+  .Footer__PshenmicLogo svg {
+    width: 72px;
+    height: 6px;
   }
 }
 
 @media screen and (max-width: 30em) {
-  .Footer__LocalTime .LocalTime__Time:after {
-    display: none;
-  }
-
   .Footer__LocalTime span {
-    display: block;
+    display: inline;
   }
 }
 
@@ -150,6 +202,6 @@
 
 @media screen and (max-width: 62em) {
   .FooterStub {
-    display: none;
+    height: var(--layout-footer-h);
   }
 }

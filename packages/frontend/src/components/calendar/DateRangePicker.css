@@ -1,15 +1,8 @@
-.DateRangePicker--NoTopNavigation .react-calendar__navigation {
-  display: none !important;
-}
-
-.DateRangePicker--NoWeekDay .react-calendar__month-view__weekdays {
-  display: none !important;
-}
-
 .DateRangePicker {
   display: flex;
   flex-direction: column;
   align-items: center;
+  width: 100%;
   font-size: var(--pe-text-sm);
   font-family: var(--pe-font-mono);
   container-type: inline-size;
@@ -18,8 +11,20 @@
 .DateRangePicker__Header {
   display: flex;
   justify-content: center;
+  align-items: center;
+  gap: var(--pe-space-2);
   width: 100%;
-  margin-bottom: var(--pe-space-5);
+  margin-bottom: var(--pe-space-4);
+}
+.DateRangePicker--Compact .DateRangePicker__Header {
+  justify-content: space-between;
+  margin-bottom: var(--pe-space-2);
+}
+.DateRangePicker--Compact .DateRangePicker__HeaderMonth {
+  flex: 1;
+  width: auto;
+  max-width: none;
+  font-size: var(--pe-text-sm);
 }
 
 .DateRangePicker--SingleCalendar .DateRangePicker__HeaderMonth {
@@ -29,19 +34,145 @@
 
 .DateRangePicker__HeaderMonth {
   width: 50%;
+  max-width: 350px;
   text-align: center;
   font-family: var(--pe-font-heading);
   font-size: var(--pe-text-md);
   font-weight: var(--pe-font-weight-bold);
-  max-width: 350px;
 }
 
 .DateRangePicker__Calendar {
   width: 100%;
+  margin-bottom: var(--pe-space-2_5);
 }
 
-.DateRangePicker__Calendar {
-  margin-bottom: var(--pe-space-2_5);
+.DateRangePicker__Root {
+  width: 100%;
+}
+
+.DateRangePicker__Months {
+  display: flex;
+  gap: var(--pe-space-6);
+  justify-content: center;
+  width: 100%;
+}
+
+.DateRangePicker--SingleCalendar .DateRangePicker__Months {
+  gap: 0;
+}
+
+.DateRangePicker__Month {
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+.DateRangePicker__Caption {
+  display: none;
+}
+
+.DateRangePicker__Nav {
+  display: none;
+}
+
+.DateRangePicker--NoWeekDay thead {
+  display: none;
+}
+
+.DateRangePicker__Grid {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+.DateRangePicker__Weekday {
+  padding: 0 0 4px;
+  font-family: var(--pe-font-heading);
+  font-size: 0.625rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--pe-color-fg-muted);
+  text-align: center;
+}
+
+.DateRangePicker__Day {
+  padding: 0;
+  text-align: center;
+  vertical-align: middle;
+}
+
+.DateRangePicker__DayBtn {
+  appearance: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: clamp(1.375rem, 7.5cqi, 1.875rem);
+  height: clamp(1.375rem, 7.5cqi, 1.875rem);
+  margin: 0 auto;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: inherit;
+  font-family: var(--pe-font-heading);
+  font-size: clamp(0.6875rem, 3.6cqi, 0.8125rem);
+  cursor: pointer;
+}
+
+.DateRangePicker__DayBtn:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.DateRangePicker__Day--Today .DateRangePicker__DayBtn {
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.22);
+}
+
+.DateRangePicker__Day--RangeMiddle {
+  background: var(--pe-color-white-alpha-200);
+}
+
+.DateRangePicker__Day--RangeMiddle .DateRangePicker__DayBtn {
+  border-radius: 0;
+  background: transparent;
+  color: inherit;
+  font-weight: 500;
+}
+
+.DateRangePicker__Day--RangeMiddle .DateRangePicker__DayBtn:hover {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.DateRangePicker__Day--RangeStart:not(.DateRangePicker__Day--RangeEnd) {
+  background: linear-gradient(90deg, transparent 50%, var(--pe-color-white-alpha-200) 50%);
+}
+
+.DateRangePicker__Day--RangeEnd:not(.DateRangePicker__Day--RangeStart) {
+  background: linear-gradient(90deg, var(--pe-color-white-alpha-200) 50%, transparent 50%);
+}
+
+.DateRangePicker__Day--RangeStart .DateRangePicker__DayBtn,
+.DateRangePicker__Day--RangeEnd .DateRangePicker__DayBtn,
+.DateRangePicker__Day--Selected:not(.DateRangePicker__Day--RangeMiddle) .DateRangePicker__DayBtn {
+  background: var(--pe-color-gray-100);
+  color: var(--pe-color-gray-900);
+  font-weight: 700;
+}
+
+.DateRangePicker__Day--RangeStart .DateRangePicker__DayBtn:hover,
+.DateRangePicker__Day--RangeEnd .DateRangePicker__DayBtn:hover,
+.DateRangePicker__Day--Selected:not(.DateRangePicker__Day--RangeMiddle)
+  .DateRangePicker__DayBtn:hover {
+  background: var(--pe-color-white-50);
+}
+
+.DateRangePicker__Day--Outside .DateRangePicker__DayBtn {
+  color: var(--pe-color-fg-muted);
+  opacity: 0.4;
+}
+
+.DateRangePicker__Day--Disabled .DateRangePicker__DayBtn {
+  opacity: 0.35;
+  pointer-events: none;
 }
 
 .DateRangePicker__MonthSelector {
@@ -58,7 +189,7 @@
   border-radius: var(--pe-radius-def);
   background-color: rgba(var(--pe-color-gray-800-rgb), 0.3);
   cursor: pointer;
-  transition: all 0.1s;
+  transition: background-color 0.1s;
   margin: 0 var(--pe-space-1);
 }
 
@@ -119,6 +250,29 @@
   margin-right: 0;
 }
 
+@media screen and (max-width: 48em) {
+  .DateRangePicker__DayBtn {
+    width: clamp(1.25rem, 8cqi, 1.625rem);
+    height: clamp(1.25rem, 8cqi, 1.625rem);
+    font-size: 0.6875rem;
+  }
+
+  .DateRangePicker:not(.DateRangePicker--SingleCalendar) .DateRangePicker__Months {
+    flex-direction: column;
+    gap: var(--pe-space-6);
+  }
+
+  .DateRangePicker:not(.DateRangePicker--SingleCalendar) .DateRangePicker__Header {
+    flex-direction: column;
+    gap: var(--pe-space-2);
+  }
+
+  .DateRangePicker:not(.DateRangePicker--SingleCalendar) .DateRangePicker__HeaderMonth {
+    width: 100%;
+    max-width: none;
+  }
+}
+
 @container (max-width: 640px) {
   .DateRangePicker__MonthButton {
     font-size: var(--pe-text-2xs);
@@ -130,34 +284,7 @@
   }
 }
 
-@container (max-width: 570px) {
-  .DateRangePicker__MonthButton,
-  .DateRangePicker__Arrow {
-    border-radius: var(--pe-radius-md);
-  }
-
-  .DateRangePicker__MonthButton {
-    font-size: var(--pe-space-2);
-    padding: var(--pe-space-2) var(--pe-space-2_5);
-    margin: 0 var(--pe-space-1);
-  }
-
-  .DateRangePicker__Arrow {
-    width: var(--pe-space-5);
-  }
-
-  .DateRangePicker__Arrow svg {
-    width: var(--pe-space-1);
-    height: var(--pe-space-1_5);
-  }
-}
-
 @container (max-width: 450px) {
-  .DateRangePicker__MonthButton,
-  .DateRangePicker__Arrow {
-    border-radius: var(--pe-radius-sm);
-  }
-
   .DateRangePicker__MonthButton {
     font-size: var(--pe-space-2);
     padding: var(--pe-space-1_5);
@@ -166,179 +293,5 @@
 
   .DateRangePicker__Arrow {
     width: var(--pe-space-4);
-  }
-
-  .DateRangePicker__Arrow svg {
-    width: var(--pe-space-1);
-    height: var(--pe-space-1_5);
-  }
-}
-
-@container (max-width: 400px) {
-  .DateRangePicker__MonthButton,
-  .DateRangePicker__Arrow {
-    border-radius: 5px;
-  }
-
-  .DateRangePicker__MonthButton {
-    font-size: 0.438rem;
-    padding: 5px;
-    margin: 0px 1px;
-  }
-
-  .DateRangePicker__Arrow {
-    width: var(--pe-space-3_5);
-  }
-
-  .DateRangePicker__Arrow svg {
-    width: 3px;
-    height: 5px;
-  }
-}
-
-.DateRangePicker .react-calendar {
-  margin: 0 auto;
-  background: transparent;
-  border: none;
-  -webkit-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-}
-
-.DateRangePicker .react-calendar__tile {
-  border-radius: var(--pe-radius-def);
-  font-family: var(--pe-font-heading);
-  font-size: var(--pe-text-sm);
-  white-space: nowrap;
-  padding: var(--pe-space-4) var(--pe-space-2);
-}
-
-.DateRangePicker .react-calendar__tile:disabled {
-  color: rgba(255, 255, 255, 0.5) !important;
-  pointer-events: none;
-  background-color: transparent;
-  opacity: var(--pe-opacity-muted);
-}
-
-.DateRangePicker .react-calendar__tile--now {
-  background-color: rgba(var(--pe-color-gray-800-rgb), 0.3);
-}
-
-.DateRangePicker .react-calendar__tile--hover,
-.DateRangePicker .react-calendar__tile--range {
-  background-color: rgba(var(--pe-color-gray-800-rgb), 0.5) !important;
-  border-radius: 0;
-}
-
-.DateRangePicker .react-calendar__tile--rangeStart,
-.DateRangePicker .react-calendar__tile--rangeEnd {
-  transition: border-radius 0.2s;
-  background-color: var(--pe-color-brand-normal) !important;
-  color: var(--pe-color-fg);
-}
-
-.DateRangePicker .react-calendar__tile--rangeStart:hover,
-.DateRangePicker .react-calendar__tile--rangeEnd:hover {
-  background-color: var(--pe-color-brand-light) !important;
-}
-
-.DateRangePicker .react-calendar__tile--rangeStart {
-  border-radius: var(--pe-radius-def) 0 0 var(--pe-space-2_5) !important;
-}
-
-.DateRangePicker .react-calendar__tile--rangeEnd {
-  border-radius: 0 var(--pe-space-2_5) var(--pe-space-2_5) 0 !important;
-}
-
-.DateRangePicker .react-calendar__tile--rangeStart.react-calendar__tile--rangeEnd {
-  border-radius: var(--pe-radius-def) !important;
-}
-
-.DateRangePicker .react-calendar__tile:enabled:focus,
-.DateRangePicker .react-calendar__tile:enabled:hover {
-  background-color: rgba(var(--pe-color-gray-800-rgb), 0.3);
-}
-
-.DateRangePicker .react-calendar__navigation button {
-  font-size: var(--pe-text-md);
-  font-weight: var(--pe-font-weight-bold);
-}
-
-.DateRangePicker .react-calendar__navigation button:enabled:hover,
-.DateRangePicker .react-calendar__navigation button:enabled:focus {
-  background-color: rgba(var(--pe-color-gray-800-rgb), 0.5);
-  border-radius: var(--pe-radius-def);
-  overflow: hidden;
-}
-
-.DateRangePicker .react-calendar__month-view__weekdays__weekday abbr {
-  text-decoration: none;
-}
-
-.DateRangePicker
-  .react-calendar__month-view__days__day--weekend:not(
-    .react-calendar__month-view__days__day--neighboringMonth
-  ) {
-  color: var(--pe-color-fg);
-}
-
-.DateRangePicker:not(.DateRangePicker--SingleCalendar)
-  .react-calendar__month-view__days__day--neighboringMonth.react-calendar__tile--rangeEnd,
-.DateRangePicker:not(.DateRangePicker--SingleCalendar)
-  .react-calendar__month-view__days__day--neighboringMonth.react-calendar__tile--rangeStart {
-  background: rgba(var(--pe-color-gray-800-rgb), 0.5) !important;
-}
-
-@media screen and (max-width: 80em) {
-  .DateRangePicker .react-calendar__tile {
-    padding: var(--pe-space-3) var(--pe-space-1_5);
-  }
-}
-
-@media screen and (max-width: 48em) {
-  .DateRangePicker .react-calendar__tile {
-    font-size: 0.7rem;
-  }
-}
-
-@media screen and (max-width: 30em) {
-  .DateRangePicker .react-calendar__tile {
-    font-size: 0.6rem;
-  }
-
-  .DateRangePicker:not(.DateRangePicker--SingleCalendar) .react-calendar__viewContainer {
-    flex-direction: column;
-  }
-
-  .DateRangePicker:not(.DateRangePicker--SingleCalendar) .react-calendar__month-view {
-    width: 100%;
-    margin-top: 34px;
-    margin-left: 0;
-    margin-right: 0;
-  }
-
-  .DateRangePicker:not(.DateRangePicker--SingleCalendar) .react-calendar__month-view:first-child {
-    margin-top: 0;
-  }
-
-  .DateRangePicker:not(.DateRangePicker--SingleCalendar) .react-calendar__viewContainer {
-    margin-left: 0;
-    margin-right: 0;
-  }
-
-  .DateRangePicker:not(.DateRangePicker--SingleCalendar) .DateRangePicker__Header {
-    flex-direction: column;
-    position: relative;
-  }
-
-  .DateRangePicker:not(.DateRangePicker--SingleCalendar) .DateRangePicker__HeaderMonth {
-    width: 100%;
-    max-width: none;
-  }
-
-  .DateRangePicker:not(.DateRangePicker--SingleCalendar)
-    .DateRangePicker__HeaderMonth:nth-child(2) {
-    position: absolute;
-    top: 270px;
   }
 }

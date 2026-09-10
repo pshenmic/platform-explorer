@@ -1,6 +1,7 @@
 import { useOutsideClick } from '../../../hooks/useOutsideClick'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import type { ReactNode } from 'react'
+import { createPortal } from 'react-dom'
 import { useSpring, animated } from 'react-spring'
 import type { ComponentType, CSSProperties, ReactNode as RN } from 'react'
 
@@ -39,6 +40,7 @@ export const BottomSheet = ({
   const { height: windowHeight } = useWindowSize()
   const [{ y }, api] = useSpring(() => ({ y: 0 }))
   const [isExpanded, setIsExpanded] = useState(fullHeightOnly)
+  const [outsideEnabled, setOutsideEnabled] = useState(false)
   const drawerRef = useRef<HTMLDivElement | null>(null)
 
   const handleOpen = useCallback(() => {
@@ -55,13 +57,19 @@ export const BottomSheet = ({
 
   useOutsideClick({
     ref: drawerRef,
-    enabled: isOpen,
+    enabled: isOpen && outsideEnabled,
     handler: () => isOpen && handleClose()
   })
 
   useEffect(() => {
-    isOpen ? handleOpen() : handleClose()
-  }, [isOpen, handleOpen, handleClose])
+    if (!isOpen) {
+      setOutsideEnabled(false)
+      return
+    }
+    handleOpen()
+    const timeout = window.setTimeout(() => setOutsideEnabled(true), 120)
+    return () => window.clearTimeout(timeout)
+  }, [isOpen, handleOpen])
 
   const bind = useDrag(
     ({ down, movement: [, my], velocity: [, vy], direction: [, dy] }) => {
@@ -103,7 +111,7 @@ export const BottomSheet = ({
 
   if (!isOpen) return null
 
-  return (
+  return createPortal(
     <>
       <div
         className={'BottomSheet__Overlay'}
@@ -149,6 +157,7 @@ export const BottomSheet = ({
           </div>
         </div>
       </AnimatedDiv>
-    </>
+    </>,
+    document.body
   )
 }

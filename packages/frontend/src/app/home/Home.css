@@ -120,11 +120,20 @@
   }
 }
 
+.HomePage .HomeOverview {
+  background: transparent;
+}
+
 .HomeOverview__Grid {
   display: grid;
   grid-template-columns: 1fr;
   gap: 1.5rem;
   margin-top: 0;
+}
+.HomeOverview__Tx,
+.HomeOverview__Blocks {
+  min-width: 0;
+  max-width: 100%;
 }
 @media screen and (min-width: 62em) {
   .HomeOverview__Grid {

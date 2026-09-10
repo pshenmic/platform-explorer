@@ -75,6 +75,7 @@ export default function TrendingTokens({ enabled = true }: { enabled?: boolean }
     },
     {
       key: 'transitions',
+      numeric: true,
       header: 'Transitions',
       minWidth: 88,
       align: 'right',
@@ -85,6 +86,7 @@ export default function TrendingTokens({ enabled = true }: { enabled?: boolean }
   return (
     <DataList
       className={'HomeRichestList'}
+      fit={'feed'}
       items={rows}
       columns={columns}
       loading={loading}

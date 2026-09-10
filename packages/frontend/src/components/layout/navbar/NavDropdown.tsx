@@ -7,6 +7,7 @@ import MultiLevelMenu from '../../ui/menus/MultiLevelMenu'
 import { ArrowButton } from '../../ui/Buttons'
 import type { NavMenuItem } from './types'
 import './NavDropdown.css'
+import NavLinkStatus from './NavLinkStatus'
 
 interface NavDropdownProps {
   item: NavMenuItem
@@ -29,7 +30,13 @@ const NavDropdown = ({ item }: NavDropdownProps) => {
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   const menuData = (submenuItems ?? []).map(subItem => ({
-    label: subItem.title,
+    label: (
+      <span style={{ position: 'relative' }}>
+        {subItem.title}
+        <NavLinkStatus />
+      </span>
+    ),
+    closeOnNavigate: pathname === subItem.href,
     disabled: subItem?.disabled,
     link: subItem?.href
   }))

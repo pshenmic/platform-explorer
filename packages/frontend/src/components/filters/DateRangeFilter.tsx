@@ -3,6 +3,7 @@
 import { DateRangePicker } from '../calendar'
 import { useEffect, useState } from 'react'
 import { defaultChartConfig } from '../charts/config'
+import { getDynamicRange } from '../../util'
 import type { ChartConfig, TimespanValue } from '../charts/types'
 import type { DateRangeFilterValue } from './types'
 import './DateRangeFilter.css'
@@ -15,6 +16,7 @@ interface DateRangeFilterProps {
   onChange: (value: DateRangeFilterValue | null) => void
   onSubmit?: () => void
   config?: ChartConfig
+  compact?: boolean
 }
 
 function sameDay(a: Date | null | undefined, b: Date | null | undefined): boolean {
@@ -27,19 +29,19 @@ function sameRange(
   a: DateRangeFilterValue | null | undefined,
   b: DateRangeFilterValue | null | undefined
 ): boolean {
-  return sameDay(a?.start, b?.start) && sameDay(a?.end, b?.end)
+  return (
+    sameDay(a?.start, b?.start) &&
+    sameDay(a?.end, b?.end) &&
+    (a?.mode ?? 'days') === (b?.mode ?? 'days')
+  )
 }
 
-/**
- * Date range filter panel.
- * Calls onChange only from user actions (not from useEffect) to avoid
- * Filters menuData remount loops / Maximum update depth.
- */
 export const DateRangeFilter = ({
   value = { start: null, end: null },
   onChange,
   onSubmit,
-  config = defaultChartConfig
+  config = defaultChartConfig,
+  compact = false
 }: DateRangeFilterProps) => {
   const [timespan, setTimespan] = useState<TimespanValue | null>(null)
   const [calendarValue, setCalendarValue] = useState<CalendarRange>([
@@ -47,7 +49,6 @@ export const DateRangeFilter = ({
     value?.end ?? null
   ])
 
-  // Sync from parent when applied filters change (open menu snapshot) — do not call onChange here
   useEffect(() => {
     setCalendarValue(prev => {
       const next: CalendarRange = [value?.start ?? null, value?.end ?? null]
@@ -63,9 +64,14 @@ export const DateRangeFilter = ({
 
   const timeframeButtonHandler = (timespanValue: TimespanValue) => {
     setTimespan(timespanValue)
+    const rolling =
+      typeof timespanValue.durationMs === 'number'
+        ? getDynamicRange(timespanValue.durationMs)
+        : timespanValue.range
     const next: DateRangeFilterValue = {
-      start: timespanValue?.range?.start ? new Date(timespanValue.range.start) : null,
-      end: timespanValue?.range?.end ? new Date(timespanValue.range.end) : null
+      start: rolling?.start ? new Date(rolling.start) : null,
+      end: rolling?.end ? new Date(rolling.end) : null,
+      mode: 'rolling'
     }
     setCalendarValue([next.start ?? null, next.end ?? null])
     emitChange(next)
@@ -75,13 +81,27 @@ export const DateRangeFilter = ({
     const range = (Array.isArray(nextValue) ? nextValue : [nextValue, null]) as CalendarRange
     setCalendarValue(range)
     setTimespan(null)
-    emitChange({ start: range[0], end: range[1] })
+    if (range[0] && range[1]) {
+      emitChange({ start: range[0], end: range[1], mode: 'days' })
+    } else if (!range[0] && !range[1]) {
+      emitChange(null)
+    }
   }
 
+  const clearHandler = () => {
+    setTimespan(null)
+    setCalendarValue([null, null])
+    emitChange(null)
+  }
+
+  const canClear = Boolean(calendarValue[0] || calendarValue[1] || value?.start || value?.end)
+
   return (
-    <div className={'DateRangeFilter'}>
+    <div className={`DateRangeFilter${compact ? ' DateRangeFilter--Compact' : ''}`}>
       <div className={'DateRangeFilter__ValuesContainer'}>
-        <div className={'DateRangeFilter__ValuesTitle'}>Select a day, period or Timeframe:</div>
+        {!compact && (
+          <div className={'DateRangeFilter__ValuesTitle'}>Select a day, period or Timeframe:</div>
+        )}
         <div className={'DateRangeFilter__Values'}>
           {config.timespan.values.map((iTimespan, i) => (
             <button
@@ -93,23 +113,36 @@ export const DateRangeFilter = ({
               {iTimespan.label}
             </button>
           ))}
-          <button
-            type={'button'}
-            className={'DateRangeFilter__ValueButton DateRangeFilter__ValueButton--Submit'}
-            onClick={onSubmit}
-          >
-            ok
-          </button>
+          {!compact && onSubmit && (
+            <button
+              type={'button'}
+              className={'DateRangeFilter__ValueButton DateRangeFilter__ValueButton--Submit'}
+              onClick={onSubmit}
+            >
+              ok
+            </button>
+          )}
         </div>
       </div>
 
       <DateRangePicker
         disableFutureDates={true}
-        noTopNavigation={true}
-        noWeekDay={true}
+        noTopNavigation={!compact}
+        noWeekDay={!compact}
+        compact={compact}
+        showSingleCalendar={compact}
         changeHandler={calendarHandler}
         value={calendarValue}
       />
+
+      <button
+        type={'button'}
+        className={'DateRangeFilter__ClearLink'}
+        onClick={clearHandler}
+        disabled={!canClear}
+      >
+        Clear
+      </button>
     </div>
   )
 }
