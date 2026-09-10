@@ -34,7 +34,7 @@ export function CompactTxList({
     {
       key: 'status',
       header: 'Status',
-      minWidth: 40,
+      minWidth: 76,
       align: 'center',
       cell: (tx: any) =>
         tx.status ? (
