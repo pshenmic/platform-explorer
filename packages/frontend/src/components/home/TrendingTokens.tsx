@@ -75,6 +75,7 @@ export default function TrendingTokens({ enabled = true }: { enabled?: boolean }
     },
     {
       key: 'transitions',
+      numeric: true,
       header: 'Transitions',
       minWidth: 88,
       align: 'right',

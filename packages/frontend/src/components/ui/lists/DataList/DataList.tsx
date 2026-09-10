@@ -1,14 +1,6 @@
 'use client'
 
-import {
-  useEffect,
-  useRef,
-  useState,
-  type CSSProperties,
-  type MouseEvent,
-  type ReactNode,
-  type RefObject
-} from 'react'
+import { useEffect, useRef, useState, type MouseEvent, type ReactNode, type RefObject } from 'react'
 import { useRouter } from 'next/navigation'
 import { ChevronDown, X } from 'lucide-react'
 import { DataListPageFooter, DataListPagingBar, type DataListPagingConfig } from './DataListPaging'
@@ -21,7 +13,7 @@ import DataListHeaderMenu, {
 import type { DateRangeFilterValue, RangeFilterValue } from '../../../filters/types'
 import './DataList.css'
 
-const GAP = 16
+const COMPACT_FIRST_MAX = 768
 const DEFAULT_SKELETON_ROWS = 8
 const APPEND_SKELETON_ROWS = 4
 
@@ -31,6 +23,7 @@ export interface DataListColumn<T = any> {
   minWidth?: number
   maxWidth?: number
   grow?: number | boolean
+  numeric?: boolean
   align?: string
   priority?: number
   sortKey?: string
@@ -67,62 +60,6 @@ export interface DataListProps<T = any> {
   title?: ReactNode
   titleExtra?: ReactNode
   paging?: DataListPagingConfig
-}
-
-function visibleColumns<T>(columns: DataListColumn<T>[], width: number, collapse: boolean) {
-  if (!collapse || !width) return columns
-  const fits = (cols: DataListColumn<T>[]) =>
-    cols.reduce((sum, c) => sum + (c.minWidth || 0), 0) + GAP * Math.max(0, cols.length - 1) <=
-    width
-  const kept = [...columns]
-  const droppable = () =>
-    kept
-      .map((c, i) => ({ c, i }))
-      .filter(({ c }) => typeof c.priority === 'number')
-      .sort((a, b) => (a.c.priority ?? 0) - (b.c.priority ?? 0))
-  while (!fits(kept) && droppable().length) {
-    kept.splice(droppable()[0].i, 1)
-  }
-  return kept
-}
-
-const HEAD_CHAR_PX = 8.5
-const HEAD_PAD_PX = 40
-const HEAD_MENU_PX = 24
-const COMPACT_FIRST_MAX = 768
-const COMPACT_FIRST_FLOOR = 112
-
-function headerMinWidth<T>(column: DataListColumn<T>) {
-  const label =
-    typeof column.header === 'string' ? Math.ceil(column.header.length * HEAD_CHAR_PX) : 0
-  const menu = (column.filterKey && column.filterType) || column.sortKey ? HEAD_MENU_PX : 0
-  return label + HEAD_PAD_PX + menu
-}
-
-function columnFloor<T>(column: DataListColumn<T>, feed: boolean) {
-  if (feed) {
-    const sortPad = column.sortKey ? 16 : 0
-    return Math.max(column.minWidth || 0, sortPad)
-  }
-  return Math.max(COMPACT_FIRST_FLOOR, headerMinWidth(column))
-}
-
-function minTableWidth<T>(cols: DataListColumn<T>[], feed: boolean) {
-  return cols.reduce((sum, column) => sum + columnFloor(column, feed), 0)
-}
-
-function colStyle<T>(column: DataListColumn<T>, feed: boolean): CSSProperties {
-  const floor = columnFloor(column, feed)
-  if (column.grow) {
-    return { width: 'auto', minWidth: feed ? `${column.minWidth || 0}px` : `${floor}px` }
-  }
-  if (feed) {
-    return { width: `${floor}px`, minWidth: `${floor}px` }
-  }
-  if (column.maxWidth) {
-    return { width: `${floor}px`, minWidth: `${floor}px`, maxWidth: `${column.maxWidth}px` }
-  }
-  return { width: 'auto', minWidth: `${floor}px` }
 }
 
 function resolveRowClassName<T>(
@@ -205,7 +142,7 @@ function HeadCell<T>({
   menuOpen?: boolean
   onMenuOpen?: (anchor: DOMRect) => void
 }) {
-  const align = column.align || 'left'
+  const align = column.numeric ? 'right' : column.align || 'left'
   const sortKey = column.sortKey
   const sortable = Boolean(sortKey && onSortChange)
   const isActive = Boolean(sortable && sort && sort.order_by === sortKey)
@@ -229,6 +166,7 @@ function HeadCell<T>({
   return (
     <th
       className={`DataList__HeadCell DataList__HeadCell--${align}`}
+      style={{ minWidth: column.minWidth }}
       scope={'col'}
       aria-sort={
         sortable
@@ -320,8 +258,7 @@ export default function DataList<T = any>({
   const isFeed = fit === 'feed'
   const compactFirst = !isFeed && width > 0 && width <= COMPACT_FIRST_MAX
   const fillList = pinFirst && !isFeed
-  const cols = visibleColumns(columns, width, !isFeed && !pinFirst && !compactFirst)
-  const tableMinWidth = minTableWidth(cols, isFeed)
+  const cols = columns
 
   const openRow = (event: MouseEvent, href?: string) => {
     if (!href || isInteractiveTarget(event.target)) return
@@ -333,19 +270,19 @@ export default function DataList<T = any>({
   }
 
   const renderCells = (item: T | undefined, index: number, skeleton: boolean) =>
-    cols.map((c, ci) => (
-      <td key={c.key} className={`DataList__Cell DataList__Cell--${c.align || 'left'}`}>
-        {skeleton ? <span className={'DataList__Skeleton'} /> : c.cell?.(item as T, index)}
+    cols.map(c => (
+      <td
+        key={c.key}
+        style={{ minWidth: c.minWidth }}
+        className={`DataList__Cell DataList__Cell--${c.numeric ? 'right' : c.align || 'left'}${c.numeric ? ' DataList__Cell--numeric' : ''}${c.grow ? ' DataList__Cell--grow' : ' DataList__Cell--compact'}`}
+      >
+        <div className={'DataList__CellContent'}>
+          <div style={{ maxWidth: c.maxWidth }}>
+            {skeleton ? <span className={'DataList__Skeleton'} /> : c.cell?.(item as T, index)}
+          </div>
+        </div>
       </td>
     ))
-
-  const renderColGroup = () => (
-    <colgroup>
-      {cols.map(c => (
-        <col key={c.key} style={colStyle(c, isFeed)} />
-      ))}
-    </colgroup>
-  )
 
   const headerRow = showHeader ? (
     <thead className={`DataList__Head DataList__Head--${headerVariant}`}>
@@ -433,7 +370,6 @@ export default function DataList<T = any>({
     </tbody>
   )
 
-  const tableStyle = isFeed ? undefined : { minWidth: tableMinWidth }
   const isEmpty = !loading && items.length === 0 && !replacePending
   const showCenteredEmpty = compactFirst && isEmpty
   const canFilter = Boolean(onFilterChange && cols.some(column => column.filterKey))
@@ -542,8 +478,7 @@ export default function DataList<T = any>({
           <EmptyListMessage>{emptyMessage}</EmptyListMessage>
         ) : (
           <>
-            <table className={'DataList__Table'} style={tableStyle}>
-              {renderColGroup()}
+            <table className={'DataList__Table'}>
               {headerRow}
               {bodyRows}
             </table>

@@ -75,6 +75,7 @@ export default function DocumentsList({
     },
     {
       key: 'revision',
+      numeric: true,
       header: 'Rev',
       minWidth: 48,
       align: 'center',
@@ -145,6 +146,7 @@ export default function DocumentsList({
       ? [
           {
             key: 'gas',
+            numeric: true,
             header: 'Gas',
             minWidth: 72,
             align: 'right',

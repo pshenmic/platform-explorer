@@ -85,6 +85,7 @@ function validatorColumns(canFilter: boolean) {
     },
     {
       key: 'lastBlockHeight',
+      numeric: true,
       header: 'Last height',
       filterKey: canFilter ? 'last_proposed_block_height' : undefined,
       filterType: canFilter ? ('range' as const) : undefined,
@@ -103,6 +104,7 @@ function validatorColumns(canFilter: boolean) {
     },
     {
       key: 'proposedBlocksAmount',
+      numeric: true,
       header: 'Blocks proposed',
       filterKey: canFilter ? 'blocks_proposed' : undefined,
       filterType: canFilter ? ('range' as const) : undefined,

@@ -228,6 +228,7 @@ function ContestedResourcesList({
     },
     {
       key: 'votes',
+      numeric: true,
       header: 'Votes',
       minWidth: 120,
       cell: (item: ContestedResourcesListItemData) => (

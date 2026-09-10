@@ -231,7 +231,33 @@
   width: 100%;
   border-collapse: separate;
   border-spacing: 0 6px;
-  table-layout: fixed;
+  table-layout: auto;
+}
+.DataList__Cell--compact {
+  width: 1%;
+}
+.DataList__Cell--grow .DataList__CellContent {
+  width: 0;
+  min-width: 100%;
+}
+.DataList__CellContent {
+  white-space: nowrap;
+}
+.DataList__Cell--grow .DataList__CellContent > div {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.DataList__Cell--numeric .DataList__CellContent > div > * {
+  margin-left: auto;
+}
+.DataList__Cell--numeric {
+  font-variant-numeric: tabular-nums;
+}
+.DataList__Cell--numeric > * {
+  margin-left: auto;
+}
+.DataList__Cell--numeric .DataList__Entity {
+  justify-content: flex-end;
 }
 .DataList__Head {
   font-family: var(--pe-font-heading);
@@ -329,6 +355,12 @@
 }
 .DataList__HeadCell--right {
   text-align: right;
+}
+.DataList__HeadCell--right .DataList__HeadCellInner {
+  justify-content: flex-end;
+}
+.DataList__HeadCell--right .DataList__HeadMenuBtn {
+  margin-left: 0;
 }
 .DataList__HeadCell--right .DataList__HeadCell--Sortable {
   text-align: right;

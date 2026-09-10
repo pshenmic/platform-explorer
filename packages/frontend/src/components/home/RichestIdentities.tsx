@@ -67,6 +67,7 @@ export default function RichestIdentities({
     },
     {
       key: 'balance',
+      numeric: true,
       header: 'Balance',
       minWidth: 104,
       align: 'right',
@@ -87,6 +88,7 @@ export default function RichestIdentities({
     },
     {
       key: 'txs',
+      numeric: true,
       header: 'Txs',
       minWidth: 72,
       align: 'right',

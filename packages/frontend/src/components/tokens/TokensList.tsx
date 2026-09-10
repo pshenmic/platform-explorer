@@ -78,6 +78,7 @@ function TokensList({
     },
     {
       key: 'position',
+      numeric: true,
       header: 'Position',
       minWidth: 88,
       align: 'center',
@@ -86,6 +87,7 @@ function TokensList({
     },
     {
       key: 'supply',
+      numeric: true,
       header: 'Supply',
       minWidth: 108,
       cell: (token: any) => {
@@ -112,6 +114,7 @@ function TokensList({
     },
     {
       key: 'price',
+      numeric: true,
       header: 'Price',
       minWidth: 96,
       cell: (token: any) => {
@@ -207,6 +210,7 @@ function TokensList({
   if (variant === 'balance') {
     columns.push({
       key: 'balance',
+      numeric: true,
       header: 'Balance',
       minWidth: 100,
       align: 'right',

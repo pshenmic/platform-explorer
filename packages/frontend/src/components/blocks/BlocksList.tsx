@@ -89,6 +89,7 @@ function BlocksList({
   const columns = [
     {
       key: 'height',
+      numeric: true,
       header: 'Height',
       filterKey: 'height',
       filterType: 'range' as const,
@@ -117,6 +118,7 @@ function BlocksList({
     },
     {
       key: 'epoch',
+      numeric: true,
       header: 'Epoch',
       filterKey: 'epoch_index',
       filterType: 'range' as const,
@@ -157,6 +159,7 @@ function BlocksList({
     },
     {
       key: 'gas',
+      numeric: true,
       header: 'Gas',
       filterKey: 'gas',
       filterType: 'range' as const,
@@ -175,6 +178,7 @@ function BlocksList({
     },
     {
       key: 'txs',
+      numeric: true,
       header: 'TX count',
       filterKey: 'tx_count',
       filterType: 'range' as const,

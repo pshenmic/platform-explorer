@@ -191,6 +191,7 @@ function VotesList({
     },
     {
       key: 'power',
+      numeric: true,
       header: 'Power',
       filterKey: canFilter ? 'power' : undefined,
       filterType: canFilter ? ('options' as const) : undefined,

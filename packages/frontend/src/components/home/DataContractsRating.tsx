@@ -53,6 +53,7 @@ export default function DataContractsRating({ enabled = true }: { enabled?: bool
     },
     {
       key: 'transitions',
+      numeric: true,
       header: 'Transitions',
       minWidth: 88,
       align: 'right',

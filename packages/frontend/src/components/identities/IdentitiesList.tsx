@@ -148,6 +148,7 @@ function IdentitiesList({
     },
     {
       key: 'balance',
+      numeric: true,
       header: 'Balance',
       filterKey: canFilter ? 'balance' : undefined,
       filterType: canFilter ? ('range' as const) : undefined,
@@ -165,6 +166,7 @@ function IdentitiesList({
     },
     {
       key: 'txs',
+      numeric: true,
       header: 'Transactions',
       filterKey: canFilter ? 'tx_count' : undefined,
       filterType: canFilter ? ('range' as const) : undefined,
@@ -176,6 +178,7 @@ function IdentitiesList({
     },
     {
       key: 'documents',
+      numeric: true,
       header: 'Documents',
       filterKey: canFilter ? 'documents_count' : undefined,
       filterType: canFilter ? ('range' as const) : undefined,
@@ -186,6 +189,7 @@ function IdentitiesList({
     },
     {
       key: 'contracts',
+      numeric: true,
       header: 'Data Contracts',
       filterKey: canFilter ? 'data_contracts' : undefined,
       filterType: canFilter ? ('range' as const) : undefined,

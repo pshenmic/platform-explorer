@@ -158,6 +158,7 @@ function contractColumns(canFilter: boolean, router: ReturnType<typeof useRouter
     },
     {
       key: 'documents',
+      numeric: true,
       header: 'Documents',
       filterKey: canFilter ? 'documents' : undefined,
       filterType: canFilter ? ('range' as const) : undefined,

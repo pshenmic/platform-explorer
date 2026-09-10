@@ -98,6 +98,7 @@ function TransactionsList({
     },
     {
       key: 'block',
+      numeric: true,
       header: 'Block',
       minWidth: 88,
       priority: 3,
@@ -118,6 +119,7 @@ function TransactionsList({
     },
     {
       key: 'gasUsed',
+      numeric: true,
       header: 'Gas',
       filterKey: canFilter ? 'gas' : undefined,
       filterType: canFilter ? ('range' as const) : undefined,
