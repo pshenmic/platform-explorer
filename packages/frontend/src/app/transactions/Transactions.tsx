@@ -278,6 +278,10 @@ function Transactions({ defaultPage = 1, defaultPageSize }: TransactionsProps) {
     pageSize,
     page: currentPage,
     onPageChange: setCurrentPage,
+    onPageSizeChange: (size: number) => {
+      setPageSize(size)
+      setCurrentPage(0)
+    },
     onLoadMore,
     loadingMore,
     hasMore: items.length < total

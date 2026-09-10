@@ -303,6 +303,10 @@ function DataContractsLayout() {
     pageSize,
     page: currentPage,
     onPageChange: setCurrentPage,
+    onPageSizeChange: (size: number) => {
+      setPageSize(size)
+      setCurrentPage(0)
+    },
     onLoadMore,
     loadingMore,
     hasMore: pageItems.length < total
