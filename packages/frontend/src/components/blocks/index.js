@@ -1,5 +1,4 @@
 import BlocksList from './BlocksList'
-import BlocksListItem from './BlocksListItem'
 import BlocksDashboardCards from './BlocksDashboardCards'
 import BlockDigestCard from './BlockDigestCard'
 import BlockTotalCard from './BlockTotalCard'
@@ -8,7 +7,6 @@ export { default as BlocksFilter } from './BlocksFilter'
 
 export {
   BlocksList,
-  BlocksListItem,
   BlocksDashboardCards,
   BlockDigestCard,
   BlockTotalCard,
