@@ -111,10 +111,5 @@
   left: 0;
   z-index: 6;
   animation: 1s pe-loading-process infinite;
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    rgb(14 117 181) 50%,
-    transparent 100%
-  );
+  background: linear-gradient(90deg, transparent 0%, rgb(14 117 181) 50%, transparent 100%);
 }

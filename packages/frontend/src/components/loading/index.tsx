@@ -78,7 +78,9 @@ function LoadingBlock({
   }
 
   return (
-    <div style={{ width: toCssSize(w), minHeight: toCssSize(minH), height: toCssSize(h), ...style }}>
+    <div
+      style={{ width: toCssSize(w), minHeight: toCssSize(minH), height: toCssSize(h), ...style }}
+    >
       {children}
     </div>
   )

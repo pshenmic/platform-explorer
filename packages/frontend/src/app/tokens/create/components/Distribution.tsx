@@ -83,8 +83,8 @@ function Distribution() {
         />
         {(form.preProgrammedRows || []).length > 0 && (
           <p className="Advanced__Hint">
-            Times are in your local zone ({tzOffsetLabel()}); the on-chain UTC instant is shown under
-            each row.
+            Times are in your local zone ({tzOffsetLabel()}); the on-chain UTC instant is shown
+            under each row.
           </p>
         )}
         {(form.preProgrammedRows || []).map((row, idx) => {

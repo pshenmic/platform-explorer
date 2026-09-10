@@ -20,15 +20,15 @@ interface DeployStatusProps {
 }
 
 const DeployStatus = ({ signer, deploy }: DeployStatusProps) => {
-  if (deploy.error != null) return <p className="DeployBar__Msg DeployBar__Msg--error">{deploy.error}</p>
-  if (signer.error != null) return <p className="DeployBar__Msg DeployBar__Msg--error">{signer.error}</p>
+  if (deploy.error != null)
+    return <p className="DeployBar__Msg DeployBar__Msg--error">{deploy.error}</p>
+  if (signer.error != null)
+    return <p className="DeployBar__Msg DeployBar__Msg--error">{signer.error}</p>
   if (deploy.result != null) {
     return (
       <p className="DeployBar__Msg DeployBar__Msg--ok">
         ✓ Token deployed:{' '}
-        <a href={`/dataContract/${deploy.result.dataContractId}`}>
-          {deploy.result.dataContractId}
-        </a>{' '}
+        <a href={`/dataContract/${deploy.result.dataContractId}`}>{deploy.result.dataContractId}</a>{' '}
         · {deploy.result.tokenId}
       </p>
     )

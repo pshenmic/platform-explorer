@@ -96,54 +96,54 @@ function ContestedResources({ defaultPage = 1, defaultPageSize }: ContestedResou
   return (
     <div className={'ListPage ContestedResources ContestedResourcesPage'}>
       <div className={'InfoBlock'}>
-      <div className={'ContestedResourcesPage__Controls'}>
-        <PageTitle
-          title={'Contested Resources'}
-          description={introContent}
-          className={'ContestedResourcesPage__Title'}
-        />
-
-        <ContestedResourcesStatsInline className={'ContestedResourcesPage__Stats'} />
-
-        <ContestedResourcesFilter
-          initialFilters={filters as never}
-          className={'ContestedResourcesPage__Filters'}
-          onFilterChange={next => {
-            setFilters(next as never)
-            setCurrentPage(0)
-          }}
-        />
-      </div>
-
-      {!contestedResources.error ? (
-        <>
-          {!contestedResources.loading ? (
-            <ContestedResourcesList contestedResources={contestedResources.data?.resultSet} />
-          ) : (
-            <LoadingList itemsCount={pageSize} />
-          )}
-        </>
-      ) : (
-        <div className={'ListPage__Error'}>
-          <ErrorMessageBlock />
-        </div>
-      )}
-
-      {(contestedResources.data?.resultSet?.length ?? 0) > 0 && (
-        <div className={'ListNavigation'}>
-          <div className={'ListNavigation__Balance'} />
-          <Pagination
-            onPageChange={({ selected }) => setCurrentPage(selected)}
-            pageCount={pageCount}
-            forcePage={currentPage}
+        <div className={'ContestedResourcesPage__Controls'}>
+          <PageTitle
+            title={'Contested Resources'}
+            description={introContent}
+            className={'ContestedResourcesPage__Title'}
           />
-          <PageSizeSelector
-            PageSizeSelectHandler={e => setPageSize(Number(e?.value))}
-            value={pageSize}
-            items={paginateConfig.pageSize.values}
+
+          <ContestedResourcesStatsInline className={'ContestedResourcesPage__Stats'} />
+
+          <ContestedResourcesFilter
+            initialFilters={filters as never}
+            className={'ContestedResourcesPage__Filters'}
+            onFilterChange={next => {
+              setFilters(next as never)
+              setCurrentPage(0)
+            }}
           />
         </div>
-      )}
+
+        {!contestedResources.error ? (
+          <>
+            {!contestedResources.loading ? (
+              <ContestedResourcesList contestedResources={contestedResources.data?.resultSet} />
+            ) : (
+              <LoadingList itemsCount={pageSize} />
+            )}
+          </>
+        ) : (
+          <div className={'ListPage__Error'}>
+            <ErrorMessageBlock />
+          </div>
+        )}
+
+        {(contestedResources.data?.resultSet?.length ?? 0) > 0 && (
+          <div className={'ListNavigation'}>
+            <div className={'ListNavigation__Balance'} />
+            <Pagination
+              onPageChange={({ selected }) => setCurrentPage(selected)}
+              pageCount={pageCount}
+              forcePage={currentPage}
+            />
+            <PageSizeSelector
+              PageSizeSelectHandler={e => setPageSize(Number(e?.value))}
+              value={pageSize}
+              items={paginateConfig.pageSize.values}
+            />
+          </div>
+        )}
       </div>
     </div>
   )

@@ -55,9 +55,7 @@ export default function DocumentsList({
               Action
             </div>
           )}
-          <div
-            className={'DocumentsList__ColumnTitle DocumentsList__ColumnTitle--DocumentType'}
-          >
+          <div className={'DocumentsList__ColumnTitle DocumentsList__ColumnTitle--DocumentType'}>
             Type
           </div>
           <div className={'DocumentsList__ColumnTitle DocumentsList__ColumnTitle--Revision'}>
@@ -72,9 +70,7 @@ export default function DocumentsList({
             {showDataContract ? 'Data Contract' : 'Owner'}
           </div>
           {showGas && (
-            <div className={'DocumentsList__ColumnTitle DocumentsList__ColumnTitle--Gas'}>
-              Gas
-            </div>
+            <div className={'DocumentsList__ColumnTitle DocumentsList__ColumnTitle--Gas'}>Gas</div>
           )}
           <div className={'DocumentsList__ColumnTitle DocumentsList__ColumnTitle--Status'}>
             Status

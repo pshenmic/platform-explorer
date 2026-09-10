@@ -86,14 +86,10 @@ function DataContractsList({
         >
           Identifier
         </div>
-        <div
-          className={'DataContractsList__ColumnTitle DataContractsList__ColumnTitle--Owner'}
-        >
+        <div className={'DataContractsList__ColumnTitle DataContractsList__ColumnTitle--Owner'}>
           Owner
         </div>
-        <div
-          className={'DataContractsList__ColumnTitle DataContractsList__ColumnTitle--System'}
-        >
+        <div className={'DataContractsList__ColumnTitle DataContractsList__ColumnTitle--System'}>
           System
         </div>
         <div
@@ -108,9 +104,7 @@ function DataContractsList({
         >
           Documents
         </div>
-        <div
-          className={'DataContractsList__ColumnTitle DataContractsList__ColumnTitle--Timestamp'}
-        >
+        <div className={'DataContractsList__ColumnTitle DataContractsList__ColumnTitle--Timestamp'}>
           Timestamp
         </div>
       </div>

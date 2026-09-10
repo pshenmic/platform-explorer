@@ -16,19 +16,13 @@ function LocalisationList({ localisations = {}, className }: LocalisationListPro
     <div className={`LocalisationList ${className || ''}`}>
       <div className={'LocalisationList__ScrollZone'}>
         <div className={'LocalisationList__ColumnTitles'}>
-          <div
-            className={'LocalisationList__ColumnTitle LocalisationList__ColumnTitle--Language'}
-          >
+          <div className={'LocalisationList__ColumnTitle LocalisationList__ColumnTitle--Language'}>
             Language
           </div>
-          <div
-            className={'LocalisationList__ColumnTitle LocalisationList__ColumnTitle--Singular'}
-          >
+          <div className={'LocalisationList__ColumnTitle LocalisationList__ColumnTitle--Singular'}>
             Singular
           </div>
-          <div
-            className={'LocalisationList__ColumnTitle LocalisationList__ColumnTitle--Plural'}
-          >
+          <div className={'LocalisationList__ColumnTitle LocalisationList__ColumnTitle--Plural'}>
             Plural
           </div>
           <div

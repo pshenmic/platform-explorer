@@ -26,12 +26,7 @@ export const Schema = () => {
       <SchemaField className={styles.code} />
       <div className={createStyles.footer}>
         <span className={createStyles.footerSize}>Size: {byteSize} Bytes</span>
-        <a
-          className={createStyles.footerLink}
-          href={DOCS_URL}
-          target="_blank"
-          rel="noreferrer"
-        >
+        <a className={createStyles.footerLink} href={DOCS_URL} target="_blank" rel="noreferrer">
           Read Data Contract documentation →
         </a>
       </div>

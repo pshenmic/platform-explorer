@@ -192,7 +192,8 @@ function Navbar() {
       searchState.results.error)
 
   const searchContainerRef = useRef<HTMLDivElement | null>(null)
-  const searchTransitionTime = currentBreakpoint === 'base' || currentBreakpoint === 'sm' ? 0.2 : 0.1
+  const searchTransitionTime =
+    currentBreakpoint === 'base' || currentBreakpoint === 'sm' ? 0.2 : 0.1
   const burgerRef = useRef<HTMLButtonElement | null>(null)
 
   const hideSearch = () => setSearchState(defaultSearchState)
@@ -268,10 +269,7 @@ function Navbar() {
               </svg>
             ) : (
               <svg width={'18'} height={'18'} viewBox={'0 0 24 24'} aria-hidden={'true'}>
-                <path
-                  fill={'currentColor'}
-                  d={'M3 6h18v2H3V6zm0 5h18v2H3v-2zm0 5h18v2H3v-2z'}
-                />
+                <path fill={'currentColor'} d={'M3 6h18v2H3V6zm0 5h18v2H3v-2zm0 5h18v2H3v-2z'} />
               </svg>
             )}
           </button>

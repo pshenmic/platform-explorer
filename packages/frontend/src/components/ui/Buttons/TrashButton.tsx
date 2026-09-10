@@ -13,7 +13,12 @@ function DeleteIcon() {
   )
 }
 
-export const TrashButton = ({ size = 'lg', className, type = 'button', ...props }: TrashButtonProps) => (
+export const TrashButton = ({
+  size = 'lg',
+  className,
+  type = 'button',
+  ...props
+}: TrashButtonProps) => (
   <button type={type} className={`TrashButton TrashButton--${size} ${className || ''}`} {...props}>
     <DeleteIcon />
   </button>

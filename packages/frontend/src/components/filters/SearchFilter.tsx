@@ -176,7 +176,11 @@ export const SearchFilter = ({
         <FilterActions>
           <SubmitButton text={'Close'} onSubmit={onSubmit} />
           {selectedEntity && (
-            <button type={'button'} className={'Filters__Button Filters__Button--Gray'} onClick={clearSearch}>
+            <button
+              type={'button'}
+              className={'Filters__Button Filters__Button--Gray'}
+              onClick={clearSearch}
+            >
               Clear
             </button>
           )}

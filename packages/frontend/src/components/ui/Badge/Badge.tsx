@@ -21,16 +21,9 @@ export interface BadgeProps extends HTMLAttributes<HTMLSpanElement> {
 }
 
 export function Badge({ colorScheme = 'gray', size, className, ...props }: BadgeProps) {
-  const scheme = COLOR_SCHEMES.includes(colorScheme as BadgeColorScheme)
-    ? colorScheme
-    : 'gray'
+  const scheme = COLOR_SCHEMES.includes(colorScheme as BadgeColorScheme) ? colorScheme : 'gray'
 
-  const classes = [
-    'Badge',
-    `Badge--${scheme}`,
-    size === 'xs' ? 'Badge--xs' : '',
-    className || ''
-  ]
+  const classes = ['Badge', `Badge--${scheme}`, size === 'xs' ? 'Badge--xs' : '', className || '']
     .filter(Boolean)
     .join(' ')
 

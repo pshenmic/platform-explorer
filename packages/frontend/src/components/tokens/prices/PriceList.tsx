@@ -17,9 +17,7 @@ function PriceList({ prices = [], rate, className }: PriceListProps) {
   return (
     <div className={`PriceList ${className || ''}`}>
       <div className={'PriceList__ColumnTitles'}>
-        <div className={'PriceList__ColumnTitle PriceList__ColumnTitle--Amount'}>
-          Amount
-        </div>
+        <div className={'PriceList__ColumnTitle PriceList__ColumnTitle--Amount'}>Amount</div>
         <div className={'PriceList__ColumnTitle PriceList__ColumnTitle--Price'}>
           Price (Credits)
         </div>

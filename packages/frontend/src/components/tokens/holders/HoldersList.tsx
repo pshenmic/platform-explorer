@@ -50,15 +50,11 @@ export default function HoldersList({
       <div
         className={`HoldersList__ColumnTitles ${headerStyles ? headerExtraClass[headerStyles] || '' : ''}`}
       >
-        <div className={'HoldersList__ColumnTitle HoldersList__ColumnTitle--Holder'}>
-          Holder
-        </div>
+        <div className={'HoldersList__ColumnTitle HoldersList__ColumnTitle--Holder'}>Holder</div>
         <div className={'HoldersList__ColumnTitle HoldersList__ColumnTitle--TokensAmount'}>
           Tokens
         </div>
-        <div className={'HoldersList__ColumnTitle HoldersList__ColumnTitle--DashAmount'}>
-          Dash
-        </div>
+        <div className={'HoldersList__ColumnTitle HoldersList__ColumnTitle--DashAmount'}>Dash</div>
         <div className={'HoldersList__ColumnTitle HoldersList__ColumnTitle--LastActivity'}>
           Last Activity
         </div>

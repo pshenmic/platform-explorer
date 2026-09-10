@@ -66,9 +66,7 @@ export const ValidatorListItem = ({ validator }: ValidatorListItemProps) => {
         <div className={'ValidatorListItem__Column'}>
           {validator?.lastProposedBlockHeader?.height || '-'}
         </div>
-        <div className={'ValidatorListItem__Column'}>
-          {validator?.proposedBlocksAmount || '-'}
-        </div>
+        <div className={'ValidatorListItem__Column'}>{validator?.proposedBlocksAmount || '-'}</div>
         <div className={'ValidatorListItem__Column'}>
           <DateBlock timestamp={validator.lastProposedBlockHeader?.timestamp} format="dateOnly" />
         </div>

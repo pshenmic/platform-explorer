@@ -120,9 +120,7 @@ function GroupsList({
                         >
                           Identifier
                         </div>
-                        <div
-                          className={'GroupsList__ColumnTitle GroupsList__ColumnTitle--Power'}
-                        >
+                        <div className={'GroupsList__ColumnTitle GroupsList__ColumnTitle--Power'}>
                           Power
                         </div>
                       </div>

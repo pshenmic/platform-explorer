@@ -54,9 +54,7 @@ function TransfersList({
           <div className={'TransfersList__ColumnTitle TransfersList__ColumnTitle--GasUsed'}>
             Gas used
           </div>
-          <div className={'TransfersList__ColumnTitle TransfersList__ColumnTitle--Type'}>
-            Type
-          </div>
+          <div className={'TransfersList__ColumnTitle TransfersList__ColumnTitle--Type'}>Type</div>
         </div>
 
         {!loading ? (

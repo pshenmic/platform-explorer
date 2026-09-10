@@ -100,9 +100,7 @@ function WithdrawalsListItem({
     >
       <Wrapper className={'WithdrawalsListItem__ContentWrapper'}>
         <div className={'WithdrawalsListItem__Content'}>
-          <div
-            className={'WithdrawalsListItem__Column WithdrawalsListItem__Column--Timestamp'}
-          >
+          <div className={'WithdrawalsListItem__Column WithdrawalsListItem__Column--Timestamp'}>
             {withdrawal.timestamp ? new Date(withdrawal.timestamp).toLocaleString() : '-'}
           </div>
 

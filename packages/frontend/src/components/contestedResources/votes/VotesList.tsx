@@ -42,9 +42,7 @@ function VotesList({
           <div
             className={`VotesList__ColumnTitles ${headerExtraClass?.[headerStyles ?? ''] || ''} ${!showDataContract ? headerExtraClass.noDataContract : ''}`}
           >
-            <div className={'VotesList__ColumnTitle VotesList__ColumnTitle--Timestamp'}>
-              Time
-            </div>
+            <div className={'VotesList__ColumnTitle VotesList__ColumnTitle--Timestamp'}>Time</div>
             <div className={'VotesList__ColumnTitle VotesList__ColumnTitle--ProTxHash'}>
               Voter Pro Tx Hash
             </div>
@@ -59,12 +57,8 @@ function VotesList({
             <div className={'VotesList__ColumnTitle VotesList__ColumnTitle--TowardsIdentity'}>
               Towards Identity
             </div>
-            <div className={'VotesList__ColumnTitle VotesList__ColumnTitle--Choice'}>
-              Choice
-            </div>
-            <div className={'VotesList__ColumnTitle VotesList__ColumnTitle--Power'}>
-              Power
-            </div>
+            <div className={'VotesList__ColumnTitle VotesList__ColumnTitle--Choice'}>Choice</div>
+            <div className={'VotesList__ColumnTitle VotesList__ColumnTitle--Power'}>Power</div>
           </div>
 
           {!loading ? (

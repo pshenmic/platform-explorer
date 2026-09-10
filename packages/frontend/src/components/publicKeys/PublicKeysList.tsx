@@ -18,9 +18,7 @@ function PublicKeysList({ publicKeys = [], className }: PublicKeysListProps) {
           <div className={'PublicKeysList__ColumnTitle PublicKeysList__ColumnTitle--Id'}>
             Key Id
           </div>
-          <div
-            className={'PublicKeysList__ColumnTitle PublicKeysList__ColumnTitle--PublicKeyHash'}
-          >
+          <div className={'PublicKeysList__ColumnTitle PublicKeysList__ColumnTitle--PublicKeyHash'}>
             Public Key Hash
           </div>
           <div className={'PublicKeysList__ColumnTitle PublicKeysList__ColumnTitle--Type'}>
@@ -29,14 +27,10 @@ function PublicKeysList({ publicKeys = [], className }: PublicKeysListProps) {
           <div className={'PublicKeysList__ColumnTitle PublicKeysList__ColumnTitle--Purpose'}>
             Purpose
           </div>
-          <div
-            className={'PublicKeysList__ColumnTitle PublicKeysList__ColumnTitle--SecurityLevel'}
-          >
+          <div className={'PublicKeysList__ColumnTitle PublicKeysList__ColumnTitle--SecurityLevel'}>
             Security Level
           </div>
-          <div
-            className={'PublicKeysList__ColumnTitle PublicKeysList__ColumnTitle--DisabledAt'}
-          >
+          <div className={'PublicKeysList__ColumnTitle PublicKeysList__ColumnTitle--DisabledAt'}>
             Disabled
           </div>
           <div className={'PublicKeysList__ColumnTitle PublicKeysList__ColumnTitle--ReadOnly'}>

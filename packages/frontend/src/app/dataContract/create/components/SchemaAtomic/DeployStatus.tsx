@@ -22,9 +22,7 @@ export const DeployStatus = () => {
     return (
       <p className={styles.statusOk}>
         ✓ Contract deployed:{' '}
-        <a href={`/dataContract/${deploy.result.dataContractId}`}>
-          {deploy.result.dataContractId}
-        </a>
+        <a href={`/dataContract/${deploy.result.dataContractId}`}>{deploy.result.dataContractId}</a>
       </p>
     )
   }
