@@ -389,17 +389,22 @@
 .ShieldedPool__Tip {
   position: absolute;
   top: 10px;
-  transform: translateX(-50%);
+  box-sizing: border-box;
+  width: max-content;
+  max-width: calc(100% - 16px);
   display: flex;
   flex-direction: column;
-  gap: 2px;
-  padding: 7px 10px;
+  gap: 6px;
+  padding: 10px 12px;
   border-radius: 8px;
   background: rgba(10, 14, 16, 0.95);
   border: 1px solid rgba(var(--pe-color-gray-800-rgb), 0.9);
   font-family: var(--pe-font-mono);
-  font-size: 0.625rem;
-  white-space: nowrap;
+  font-size: 0.75rem;
+  line-height: 1.4;
+  font-variant-numeric: tabular-nums;
+  white-space: normal;
+  overflow-wrap: anywhere;
   pointer-events: none;
   z-index: 2;
 }
@@ -407,16 +412,32 @@
   color: var(--pe-color-gray-500);
 }
 .ShieldedPool__TipRow {
+  display: grid;
+  grid-template-columns: auto auto;
+  justify-content: start;
+  align-items: baseline;
+  gap: 12px;
   font-weight: 600;
   color: #fff;
 }
+.ShieldedPool__TipRow strong {
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-align: right;
+}
 .ShieldedPool__TipRow.is-tvl {
+  grid-template-columns: auto minmax(0, 1fr);
   color: var(--pe-color-brand-light);
 }
-.ShieldedPool__TipRow em {
-  font-style: normal;
-  font-weight: 500;
-  opacity: 0.62;
+.ShieldedPool__TipAmounts {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 2px 8px;
+  min-width: 0;
+}
+.ShieldedPool__TipSecondary {
+  color: var(--pe-color-gray-400);
 }
 .ShieldedPool__TipRow.is-in {
   color: #2cffb4;
