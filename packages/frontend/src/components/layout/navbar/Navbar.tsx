@@ -1,8 +1,9 @@
 'use client'
 
+import { useOutsideClick } from '../../../hooks/useOutsideClick'
 import { HamburgerIcon, CloseIcon } from '@chakra-ui/icons'
 import GlobalSearchInput from '../../search/GlobalSearchInput'
-import { Box, Flex, HStack, IconButton, useDisclosure, useOutsideClick, useBreakpointValue } from '@chakra-ui/react'
+import { Box, Flex, HStack, IconButton, useDisclosure, useBreakpointValue } from '@chakra-ui/react'
 import { Breadcrumbs, breadcrumbsActiveRoutes } from '../../breadcrumbs/Breadcrumbs'
 import NetworkSelect from './NetworkSelect'
 import { usePathname } from 'next/navigation'

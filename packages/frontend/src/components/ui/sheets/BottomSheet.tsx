@@ -1,6 +1,7 @@
+import { useOutsideClick } from '../../../hooks/useOutsideClick'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import type { ReactNode } from 'react'
-import { Box, Drawer, DrawerBody, DrawerHeader, DrawerOverlay, Text, useOutsideClick } from '@chakra-ui/react'
+import { Box, Drawer, DrawerBody, DrawerHeader, DrawerOverlay, Text } from '@chakra-ui/react'
 import { useSpring, animated } from 'react-spring'
 import type { ComponentType, CSSProperties, ReactNode as RN } from 'react'
 

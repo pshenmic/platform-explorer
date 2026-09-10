@@ -26,14 +26,15 @@ export default function CustomMarkdown ({ children }: CustomMarkdownProps) {
   }
 
   return (
-    <Markdown
-      className={'Markdown'}
-      rehypePlugins={[rehypeRaw]}
-      remarkPlugins={[remarkGfm]}
-      components={components}
-    >
-      {children ?? ''}
-    </Markdown>
+    <div className={'Markdown'}>
+      <Markdown
+        rehypePlugins={[rehypeRaw]}
+        remarkPlugins={[remarkGfm]}
+        components={components}
+      >
+        {children ?? ''}
+      </Markdown>
+    </div>
   )
 }
 
