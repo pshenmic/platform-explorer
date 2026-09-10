@@ -31,11 +31,7 @@ export const MasterNodeVote = ({
       title={'Pro TX Hash'}
       value={
         <ValueCard>
-          <Identifier
-            copyButton={true}
-            ellipsis={true}
-            styles={['highlight-both']}
-          >
+          <Identifier copyButton={true} ellipsis={true} styles={['highlight-both']}>
             {proTxHash}
           </Identifier>
         </ValueCard>
@@ -49,12 +45,7 @@ export const MasterNodeVote = ({
       title={'Data Contract'}
       value={
         <ValueCard link={`/dataContract/${contractId}`}>
-          <Identifier
-            avatar={true}
-            copyButton={true}
-            ellipsis={true}
-            styles={['highlight-both']}
-          >
+          <Identifier avatar={true} copyButton={true} ellipsis={true} styles={['highlight-both']}>
             {contractId}
           </Identifier>
         </ValueCard>
@@ -67,16 +58,8 @@ export const MasterNodeVote = ({
       className={'TransactionPage__InfoLine'}
       title={'Voter Identity'}
       value={
-        <ValueCard
-          link={`/identity/${ownerId}`}
-          className={'TransactionPage__BlockHash'}
-        >
-          <Identifier
-            avatar={true}
-            copyButton={true}
-            ellipsis={true}
-            styles={['highlight-both']}
-          >
+        <ValueCard link={`/identity/${ownerId}`} className={'TransactionPage__BlockHash'}>
+          <Identifier avatar={true} copyButton={true} ellipsis={true} styles={['highlight-both']}>
             {ownerId}
           </Identifier>
         </ValueCard>
@@ -104,11 +87,7 @@ export const MasterNodeVote = ({
     <InfoLine
       className={'TransactionPage__InfoLine'}
       title={'Document Type'}
-      value={
-        <ValueCard className={'TransactionPage__DocumentType'}>
-          {documentTypeName}
-        </ValueCard>
-      }
+      value={<ValueCard className={'TransactionPage__DocumentType'}>{documentTypeName}</ValueCard>}
       loading={loading}
       error={!documentTypeName}
     />
@@ -116,11 +95,7 @@ export const MasterNodeVote = ({
     <InfoLine
       className={'TransactionPage__InfoLine'}
       title={'Index Name'}
-      value={
-        <ValueCard className={'TransactionPage__IndexName'}>
-          {indexName}
-        </ValueCard>
-      }
+      value={<ValueCard className={'TransactionPage__IndexName'}>{indexName}</ValueCard>}
       loading={loading}
       error={!indexName}
     />

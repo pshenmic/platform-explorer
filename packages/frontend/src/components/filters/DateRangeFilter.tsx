@@ -18,13 +18,13 @@ interface DateRangeFilterProps {
   config?: ChartConfig
 }
 
-function sameDay (a: Date | null | undefined, b: Date | null | undefined): boolean {
+function sameDay(a: Date | null | undefined, b: Date | null | undefined): boolean {
   if (a == null && b == null) return true
   if (a == null || b == null) return false
   return a.getTime() === b.getTime()
 }
 
-function sameRange (
+function sameRange(
   a: DateRangeFilterValue | null | undefined,
   b: DateRangeFilterValue | null | undefined
 ): boolean {
@@ -82,9 +82,7 @@ export const DateRangeFilter = ({
   return (
     <div className={'DateRangeFilter'}>
       <div className={'DateRangeFilter__ValuesContainer'}>
-        <div className={'DateRangeFilter__ValuesTitle'}>
-          Select a day, period or Timeframe:
-        </div>
+        <div className={'DateRangeFilter__ValuesTitle'}>Select a day, period or Timeframe:</div>
         <div className={'DateRangeFilter__Values'}>
           {config.timespan.values.map((iTimespan, i) => (
             <Button

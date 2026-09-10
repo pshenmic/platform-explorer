@@ -15,7 +15,7 @@ interface WithdrawalsListProps {
   l1explorerBaseUrl?: string | null
 }
 
-function WithdrawalsList ({
+function WithdrawalsList({
   withdrawals = [],
   headerStyles = 'default',
   defaultPayoutAddress,
@@ -30,9 +30,7 @@ function WithdrawalsList ({
   return (
     <div className={'WithdrawalsList'}>
       <Grid className={`WithdrawalsList__ColumnTitles ${headerExtraClass[headerStyles] || ''}`}>
-        <GridItem className={'WithdrawalsList__ColumnTitle'}>
-          Timestamp
-        </GridItem>
+        <GridItem className={'WithdrawalsList__ColumnTitle'}>Timestamp</GridItem>
         <GridItem className={'WithdrawalsList__ColumnTitle WithdrawalsList__ColumnTitle--TxHash'}>
           Tx hash
         </GridItem>
@@ -45,12 +43,10 @@ function WithdrawalsList ({
         <GridItem className={'WithdrawalsList__ColumnTitle WithdrawalsList__ColumnTitle--Amount'}>
           Amount
         </GridItem>
-        <GridItem className={'WithdrawalsList__ColumnTitle'}>
-          Status
-        </GridItem>
+        <GridItem className={'WithdrawalsList__ColumnTitle'}>Status</GridItem>
       </Grid>
 
-      {withdrawals.map((withdrawal, key) =>
+      {withdrawals.map((withdrawal, key) => (
         <WithdrawalsListItem
           key={key}
           withdrawal={withdrawal}
@@ -58,11 +54,11 @@ function WithdrawalsList ({
           rate={rate}
           defaultPayoutAddress={defaultPayoutAddress}
         />
-      )}
+      ))}
 
-      {withdrawals.length === 0 &&
+      {withdrawals.length === 0 && (
         <EmptyListMessage>There are no withdrawals yet.</EmptyListMessage>
-      }
+      )}
     </div>
   )
 }

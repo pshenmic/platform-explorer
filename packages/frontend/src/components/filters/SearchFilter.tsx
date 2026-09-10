@@ -83,7 +83,9 @@ export const SearchFilter = ({
   entityType
 }: SearchFilterProps) => {
   const [searchState, setSearchState] = useState<SearchState>(defaultSearchState)
-  const [selectedEntity, setSelectedEntity] = useState<SelectedEntityElementProps['entity']>(value ? { identifier: value, proTxHash: value } : null)
+  const [selectedEntity, setSelectedEntity] = useState<SelectedEntityElementProps['entity']>(
+    value ? { identifier: value, proTxHash: value } : null
+  )
   const [searchFocused, setSearchFocused] = useState(false)
   const displayResults =
     Object.keys(searchState.results?.data || {}).length ||
@@ -142,50 +144,42 @@ export const SearchFilter = ({
 
   return (
     <div className={'SearchFilter'}>
-      {title &&
-        <div className={'SearchFilter__Title'}>{title}</div>
-      }
+      {title && <div className={'SearchFilter__Title'}>{title}</div>}
 
-      {selectedEntity && !searchFocused
-        ? <div
-            className={'SearchFilter__selectedEntityContainer'}
-            onClick={() => setSearchFocused(true)}
-          >
-            <SelectedEntityElement entity={selectedEntity} type={entityType}/>
-          </div>
-        : <div className={'SearchFilter__SearchContainer'}>
-            <GlobalSearchInput
-              forceValue={searchState.value}
-              onResultChange={results => setSearchState(prevState => ({ ...prevState, results }))}
-              onChange={nextValue => setSearchState(prevState => ({ ...prevState, value: nextValue }))}
-              categoryFilters={entityType ? [entityType] : []}
-              placeholder={placeholder}
-            />
-            {displayResults
-              ? (
-              <div className={'SearchFilter__ResultsContainer'}>
-                <SearchResultsList
-                  results={searchState.results}
-                  onItemClick={selectEntity}
-                />
-              </div>
-                )
-              : null}
-          </div>
-      }
+      {selectedEntity && !searchFocused ? (
+        <div
+          className={'SearchFilter__selectedEntityContainer'}
+          onClick={() => setSearchFocused(true)}
+        >
+          <SelectedEntityElement entity={selectedEntity} type={entityType} />
+        </div>
+      ) : (
+        <div className={'SearchFilter__SearchContainer'}>
+          <GlobalSearchInput
+            forceValue={searchState.value}
+            onResultChange={results => setSearchState(prevState => ({ ...prevState, results }))}
+            onChange={nextValue =>
+              setSearchState(prevState => ({ ...prevState, value: nextValue }))
+            }
+            categoryFilters={entityType ? [entityType] : []}
+            placeholder={placeholder}
+          />
+          {displayResults ? (
+            <div className={'SearchFilter__ResultsContainer'}>
+              <SearchResultsList results={searchState.results} onItemClick={selectEntity} />
+            </div>
+          ) : null}
+        </div>
+      )}
 
       {showSubmitButton && (
         <FilterActions>
           <SubmitButton text={'Close'} onSubmit={onSubmit} />
-          {selectedEntity &&
-            <Button
-              variant={'gray'}
-              size={'sm'}
-              onClick={clearSearch}
-            >
+          {selectedEntity && (
+            <Button variant={'gray'} size={'sm'} onClick={clearSearch}>
               Clear
             </Button>
-          }
+          )}
         </FilterActions>
       )}
     </div>

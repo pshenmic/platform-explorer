@@ -40,10 +40,8 @@ export const useDataContractDocumentsFilters = () => {
   const filters = {
     document_type_name: documentTypeName || undefined,
     owner: owner || undefined,
-    revision_min:
-      revisionMin != null && revisionMin !== '' ? Number(revisionMin) : undefined,
-    revision_max:
-      revisionMax != null && revisionMax !== '' ? Number(revisionMax) : undefined,
+    revision_min: revisionMin != null && revisionMin !== '' ? Number(revisionMin) : undefined,
+    revision_max: revisionMax != null && revisionMax !== '' ? Number(revisionMax) : undefined,
     timestamp_start: tsStartISO,
     timestamp_end: tsEndISO
   }
@@ -76,11 +74,15 @@ export const useDataContractDocumentsFilters = () => {
     }
 
     if ('timestamp_start' in next) {
-      const encoded = encodeDateToURL(next.timestamp_start as string | number | Date | null | undefined)
+      const encoded = encodeDateToURL(
+        next.timestamp_start as string | number | Date | null | undefined
+      )
       setTsStart(encoded ?? null)
     }
     if ('timestamp_end' in next) {
-      const encoded = encodeDateToURL(next.timestamp_end as string | number | Date | null | undefined)
+      const encoded = encodeDateToURL(
+        next.timestamp_end as string | number | Date | null | undefined
+      )
       setTsEnd(encoded ?? null)
     }
   }

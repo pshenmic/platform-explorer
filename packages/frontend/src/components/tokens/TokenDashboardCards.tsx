@@ -10,7 +10,7 @@ import type { WithClassName } from '../../types/common'
 import './TokenDashboardCards.css'
 import './TokenDashboardCard.css'
 
-const NotActive = NotActiveJs as ComponentType<{ children?: ReactNode, className?: string }>
+const NotActive = NotActiveJs as ComponentType<{ children?: ReactNode; className?: string }>
 const DashboardCards = DashboardCardsJs as ComponentType<{
   cards?: Array<Record<string, unknown>>
   columnLayout?: number[]
@@ -33,14 +33,15 @@ interface TokenDashboardCardsProps extends WithClassName {
   loading?: boolean
 }
 
-function TokenDashboardCards ({ items, error, loading, className }: TokenDashboardCardsProps) {
-  const cards = items?.map(token => ({
-    value: <TokenCardContent token={token} />,
-    className: 'TokenDashboardCards__Card',
-    error: false,
-    loading,
-    link: `/token/${token?.tokenIdentifier}`
-  })) || Array.from({ length: 6 }, () => ({ loading: true }))
+function TokenDashboardCards({ items, error, loading, className }: TokenDashboardCardsProps) {
+  const cards =
+    items?.map(token => ({
+      value: <TokenCardContent token={token} />,
+      className: 'TokenDashboardCards__Card',
+      error: false,
+      loading,
+      link: `/token/${token?.tokenIdentifier}`
+    })) || Array.from({ length: 6 }, () => ({ loading: true }))
 
   let displayCards = cards
   let columnLayout = [3, 3]
@@ -57,17 +58,24 @@ function TokenDashboardCards ({ items, error, loading, className }: TokenDashboa
   }
 
   return (
-    <div className={`TokenDashboardCards ${loading ? 'TokenDashboardCards--Loading' : ''} ${columnLayout.length === 1 ? 'TokenDashboardCards--SingleColumn' : ''} ${className || ''}`}>
-      {!error
-        ? !loading && (!items || items.length === 0)
-            ? <NotActive>No tokens available</NotActive>
-            : <DashboardCards cards={displayCards} columnLayout={columnLayout} sliderMode={columnLayout.length === 1 ? 'never' : 'responsive'}/>
-        : <ErrorMessageBlock h={250}/>
-      }
+    <div
+      className={`TokenDashboardCards ${loading ? 'TokenDashboardCards--Loading' : ''} ${columnLayout.length === 1 ? 'TokenDashboardCards--SingleColumn' : ''} ${className || ''}`}
+    >
+      {!error ? (
+        !loading && (!items || items.length === 0) ? (
+          <NotActive>No tokens available</NotActive>
+        ) : (
+          <DashboardCards
+            cards={displayCards}
+            columnLayout={columnLayout}
+            sliderMode={columnLayout.length === 1 ? 'never' : 'responsive'}
+          />
+        )
+      ) : (
+        <ErrorMessageBlock h={250} />
+      )}
     </div>
   )
 }
 
-export {
-  TokenDashboardCards
-}
+export { TokenDashboardCards }

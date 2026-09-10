@@ -33,7 +33,7 @@ const Identifier = IdentifierJs as ComponentType<{
   copyButton?: boolean
   className?: string
 }>
-const BigNumber = BigNumberJs as ComponentType<{ children?: ReactNode, className?: string }>
+const BigNumber = BigNumberJs as ComponentType<{ children?: ReactNode; className?: string }>
 const Alias = AliasJs as ComponentType<{
   children?: ReactNode
   alias?: string | { alias?: string } | null
@@ -49,7 +49,7 @@ const TimeDelta = TimeDeltaJs as ComponentType<{
   tooltipDate?: string | Date | null
   format?: string
 }>
-const NotActive = NotActiveJs as ComponentType<{ children?: ReactNode, className?: string }>
+const NotActive = NotActiveJs as ComponentType<{ children?: ReactNode; className?: string }>
 const DateBlock = DateBlockJs as ComponentType<{
   timestamp?: string | number | Date | null
   format?: string
@@ -63,7 +63,7 @@ interface TransactionsListItemProps {
   absoluteDate?: boolean
 }
 
-function TransactionsListItem ({ transaction, rate, absoluteDate }: TransactionsListItemProps) {
+function TransactionsListItem({ transaction, rate, absoluteDate }: TransactionsListItemProps) {
   const activeAlias = transaction?.owner?.aliases?.find(alias => alias.status === 'ok')
   const router = useRouter()
 
@@ -71,81 +71,109 @@ function TransactionsListItem ({ transaction, rate, absoluteDate }: Transactions
     <Link href={`/transaction/${transaction?.hash}`} className={'TransactionsListItem'}>
       <Grid className={'TransactionsListItem__Content'}>
         <GridItem className={'TransactionsListItem__Column TransactionsListItem__Column--Status'}>
-          {transaction?.status
-            ? <TransactionStatusBadge status={transaction.status}/>
-            : <NotActive/>
-          }
+          {transaction?.status ? (
+            <TransactionStatusBadge status={transaction.status} />
+          ) : (
+            <NotActive />
+          )}
         </GridItem>
         <GridItem className={'TransactionsListItem__Column TransactionsListItem__Column--Hash'}>
-          {transaction?.hash
-            ? <Identifier middleEllipsis={true} copyButton={true}>{transaction.hash}</Identifier>
-            : <NotActive/>
-          }
+          {transaction?.hash ? (
+            <Identifier middleEllipsis={true} copyButton={true}>
+              {transaction.hash}
+            </Identifier>
+          ) : (
+            <NotActive />
+          )}
         </GridItem>
         <GridItem className={'TransactionsListItem__Column TransactionsListItem__Column--Block'}>
-          {transaction?.blockHeight != null
-            ? <LinkContainer
-                className={'TransactionsListItem__BlockLink'}
-                onClick={e => {
-                  e.stopPropagation()
-                  e.preventDefault()
-                  router.push(`/block/${transaction?.blockHash}`)
-                }}
-              >
-                <BigNumber>{transaction.blockHeight}</BigNumber>
-              </LinkContainer>
-            : <NotActive/>
-          }
+          {transaction?.blockHeight != null ? (
+            <LinkContainer
+              className={'TransactionsListItem__BlockLink'}
+              onClick={e => {
+                e.stopPropagation()
+                e.preventDefault()
+                router.push(`/block/${transaction?.blockHash}`)
+              }}
+            >
+              <BigNumber>{transaction.blockHeight}</BigNumber>
+            </LinkContainer>
+          ) : (
+            <NotActive />
+          )}
         </GridItem>
         <GridItem className={'TransactionsListItem__Column TransactionsListItem__Column--GasUsed'}>
-          {transaction?.gasUsed
-            ? <RateTooltip
-                credits={transaction.gasUsed}
-                rate={rate}
-                placement={'top'}
-              >
-                <span><BigNumber>{transaction.gasUsed}</BigNumber> Credits</span>
-              </RateTooltip>
-            : <NotActive/>
-          }
+          {transaction?.gasUsed ? (
+            <RateTooltip credits={transaction.gasUsed} rate={rate} placement={'top'}>
+              <span>
+                <BigNumber>{transaction.gasUsed}</BigNumber> Credits
+              </span>
+            </RateTooltip>
+          ) : (
+            <NotActive />
+          )}
         </GridItem>
-          <GridItem className={'TransactionsListItem__Column TransactionsListItem__Column--Owner'}>
-            {transaction?.owner?.identifier
-              ? <LinkContainer
-                  className={'TransactionsListItem__OwnerLink'}
-                  onClick={e => {
-                    e.stopPropagation()
-                    e.preventDefault()
-                    router.push(`/identity/${transaction?.owner?.identifier}`)
-                  }}
-                >
-                  {activeAlias
-                    ? <div className={'TransactionsListItem__AliasContainer'}>
-                      <ImageGenerator className={'Identifier__Avatar'} username={transaction?.owner?.identifier}
-                                      lightness={50} saturation={50} width={24} height={24}/>
-                      <Alias alias={activeAlias?.alias || activeAlias}/>
-                    </div>
-                    : <Identifier avatar={true} copyButton={true} middleEllipsis={true}>{transaction?.owner?.identifier}</Identifier>
-                  }
-                </LinkContainer>
-              : <NotActive>-</NotActive>
-            }
-          </GridItem>
+        <GridItem className={'TransactionsListItem__Column TransactionsListItem__Column--Owner'}>
+          {transaction?.owner?.identifier ? (
+            <LinkContainer
+              className={'TransactionsListItem__OwnerLink'}
+              onClick={e => {
+                e.stopPropagation()
+                e.preventDefault()
+                router.push(`/identity/${transaction?.owner?.identifier}`)
+              }}
+            >
+              {activeAlias ? (
+                <div className={'TransactionsListItem__AliasContainer'}>
+                  <ImageGenerator
+                    className={'Identifier__Avatar'}
+                    username={transaction?.owner?.identifier}
+                    lightness={50}
+                    saturation={50}
+                    width={24}
+                    height={24}
+                  />
+                  <Alias alias={activeAlias?.alias || activeAlias} />
+                </div>
+              ) : (
+                <Identifier avatar={true} copyButton={true} middleEllipsis={true}>
+                  {transaction?.owner?.identifier}
+                </Identifier>
+              )}
+            </LinkContainer>
+          ) : (
+            <NotActive>-</NotActive>
+          )}
+        </GridItem>
         <GridItem className={'TransactionsListItem__Column TransactionsListItem__Column--Type'}>
-          {transaction?.batchType
-            ? <BatchTypeBadge className={'TransactionsListItem__TypeBadge'} batchType={transaction.batchType?.replace(/[\\""]/g, '')}/>
-            : transaction?.type !== undefined
-              ? <TypeBadge className={'TransactionsListItem__TypeBadge'} type={transaction.type}/>
-              : <NotActive/>
-          }
+          {transaction?.batchType ? (
+            <BatchTypeBadge
+              className={'TransactionsListItem__TypeBadge'}
+              batchType={transaction.batchType?.replace(/[\\""]/g, '')}
+            />
+          ) : transaction?.type !== undefined ? (
+            <TypeBadge className={'TransactionsListItem__TypeBadge'} type={transaction.type} />
+          ) : (
+            <NotActive />
+          )}
         </GridItem>
-        <GridItem className={'TransactionsListItem__Column TransactionsListItem__Column--Timestamp'}>
-          {transaction?.timestamp
-            ? absoluteDate
-              ? <DateBlock format={'dateOnly'} showTime={true} timestamp={transaction.timestamp} showRelativeTooltip={true}/>
-              : <TimeDelta showTimestampTooltip={true} endDate={new Date(transaction.timestamp)}/>
-            : <NotActive/>
-          }
+        <GridItem
+          className={'TransactionsListItem__Column TransactionsListItem__Column--Timestamp'}
+        >
+          {transaction?.timestamp ? (
+            absoluteDate ? (
+              <DateBlock
+                format={'dateOnly'}
+                showTime={true}
+                timestamp={transaction.timestamp}
+                showRelativeTooltip={true}
+              />
+            ) : (
+              <TimeDelta showTimestampTooltip={true} endDate={new Date(transaction.timestamp)} />
+            )
+          ) : (
+            <NotActive />
+          )}
         </GridItem>
       </Grid>
     </Link>

@@ -11,11 +11,7 @@ import Input from './components/Input'
 import Heading from './components/Heading'
 import Textarea from './components/Textarea'
 
-import {
-  Montserrat,
-  Open_Sans as OpenSans,
-  Roboto_Mono as RobotoMono
-} from 'next/font/google'
+import { Montserrat, Open_Sans as OpenSans, Roboto_Mono as RobotoMono } from 'next/font/google'
 import Checkbox from './components/Checkbox'
 
 const montserrat = Montserrat({ subsets: ['latin'] })

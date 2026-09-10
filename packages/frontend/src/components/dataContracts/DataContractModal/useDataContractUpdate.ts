@@ -84,21 +84,14 @@ export const useDataContractUpdate = ({ owner, dataContractId }: UseDataContract
         dataContractsFields,
         owner
       )
-      const nonce = await sdk.identities.getIdentityContractNonce(
-        owner,
-        dataContractPE
-      )
+      const nonce = await sdk.identities.getIdentityContractNonce(owner, dataContractPE)
       const params = { identityContractNonce: nonce + 1n }
 
-      const stateTransition = await sdk.documents.createStateTransition(
-        document,
-        'create',
-        params
-      )
+      const stateTransition = await sdk.documents.createStateTransition(document, 'create', params)
       // base64, not the raw WASM object — the extension runs a separate wasm and can't unwrap it.
       await signer.signAndBroadcast(stateTransition.base64())
 
-      await new Promise((resolve) => setTimeout(resolve, 2000))
+      await new Promise(resolve => setTimeout(resolve, 2000))
 
       queryClient.invalidateQueries({
         queryKey: ['dataContract']
@@ -116,12 +109,8 @@ export const useDataContractUpdate = ({ owner, dataContractId }: UseDataContract
     if (!sdk || !signer) return
 
     try {
-      const dataContract =
-        await sdk.dataContracts.getDataContractByIdentifier(dataContractId)
-      const nonce = await sdk.identities.getIdentityContractNonce(
-        owner,
-        dataContractId
-      )
+      const dataContract = await sdk.dataContracts.getDataContractByIdentifier(dataContractId)
+      const nonce = await sdk.identities.getIdentityContractNonce(owner, dataContractId)
 
       if (Array.isArray(keywords)) {
         dataContract.keywords = keywords
@@ -139,7 +128,7 @@ export const useDataContractUpdate = ({ owner, dataContractId }: UseDataContract
 
       await signer.signAndBroadcast(stateTransition.base64())
 
-      await new Promise((resolve) => setTimeout(resolve, 2000))
+      await new Promise(resolve => setTimeout(resolve, 2000))
 
       queryClient.invalidateQueries({
         queryKey: ['dataContract']

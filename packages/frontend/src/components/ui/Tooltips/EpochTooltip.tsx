@@ -3,7 +3,7 @@ import Tooltip from './Tooltip'
 import type { Epoch } from '../../../types'
 import './EpochTooltip.css'
 
-function formatDate (timestamp: number) {
+function formatDate(timestamp: number) {
   const date = new Date(timestamp)
   const day = date.getDate()
   const month = date.toLocaleString('en-GB', { month: 'long' })
@@ -18,28 +18,30 @@ interface EpochTooltipProps {
   children: ReactElement
 }
 
-export default function EpochTooltip ({ epoch, children }: EpochTooltipProps) {
+export default function EpochTooltip({ epoch, children }: EpochTooltipProps) {
   return (
     <Tooltip
-      label={(
-        <div className={'EpochTooltip'}>
-          <div className={'EpochTooltip__Line'}>
-            {epoch?.number != null &&
-              <div className={'EpochTooltip__Title'}>Epoch #{epoch?.number || ''} started</div>
-            }
-            {epoch?.startTime != null &&
-              <div className={'EpochTooltip__Value'}>{formatDate(epoch.startTime)}</div>
-            }
-          </div>
-
-          {epoch?.endTime != null &&
+      label={
+        (
+          <div className={'EpochTooltip'}>
             <div className={'EpochTooltip__Line'}>
-              <div className={'EpochTooltip__Title'}>Next epoch:</div>
-              <div className={'EpochTooltip__Value'}>{formatDate(epoch.endTime)}</div>
+              {epoch?.number != null && (
+                <div className={'EpochTooltip__Title'}>Epoch #{epoch?.number || ''} started</div>
+              )}
+              {epoch?.startTime != null && (
+                <div className={'EpochTooltip__Value'}>{formatDate(epoch.startTime)}</div>
+              )}
             </div>
-          }
-        </div>
-      ) as ReactNode}
+
+            {epoch?.endTime != null && (
+              <div className={'EpochTooltip__Line'}>
+                <div className={'EpochTooltip__Title'}>Next epoch:</div>
+                <div className={'EpochTooltip__Value'}>{formatDate(epoch.endTime)}</div>
+              </div>
+            )}
+          </div>
+        ) as ReactNode
+      }
       placement={'top'}
       color={'#fff'}
     >

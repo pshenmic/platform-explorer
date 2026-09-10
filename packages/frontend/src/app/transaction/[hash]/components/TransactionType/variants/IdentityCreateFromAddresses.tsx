@@ -3,12 +3,7 @@ import { ValueCard } from '@components/cards'
 import { InfoLine, Identifier } from '@components/data'
 import { PublicKeyCard } from '@components/transactions'
 import type { PublicKeyData } from 'src/components/transactions/PublicKeyCard'
-import type {
-  DecodedInputWitness,
-  DecodedTxInput,
-  DecodedTxOutput,
-  WithLoading
-} from '../../types'
+import type { DecodedInputWitness, DecodedTxInput, DecodedTxOutput, WithLoading } from '../../types'
 
 interface IdentityCreateFromAddressesProps extends WithLoading {
   publicKeys?: PublicKeyData[] | null
@@ -46,17 +41,12 @@ export const IdentityCreateFromAddresses = ({
                 <Flex
                   direction={{ base: 'column', lg: 'row' }}
                   align={{ lg: 'center' }}
-                  justify='space-between'
+                  justify="space-between"
                   gap={4}
-                  w='100%'
+                  w="100%"
                 >
                   <ValueCard link={`/platformAddress/${input.platformAddress.bech32m}`}>
-                    <Identifier
-                      avatar
-                      copyButton
-                      ellipsis
-                      styles={['highlight-both']}
-                    >
+                    <Identifier avatar copyButton ellipsis styles={['highlight-both']}>
                       {input.platformAddress.bech32m}
                     </Identifier>
                   </ValueCard>
@@ -87,18 +77,14 @@ export const IdentityCreateFromAddresses = ({
                   gap={4}
                 >
                   <Text>Type:</Text>
-                  <GridItem width='fit-content' minW='min-content'>
+                  <GridItem width="fit-content" minW="min-content">
                     <ValueCard>{witness.type}</ValueCard>
                   </GridItem>
 
                   <Text>Signature:</Text>
                   <ValueCard>
                     {witness.value && witness.value.signature && (
-                      <Identifier
-                        copyButton
-                        ellipsis
-                        styles={['highlight-both']}
-                      >
+                      <Identifier copyButton ellipsis styles={['highlight-both']}>
                         {witness.value.signature}
                       </Identifier>
                     )}
@@ -114,20 +100,20 @@ export const IdentityCreateFromAddresses = ({
     {outputs && outputs.length > 0 && (
       <InfoLine
         align={outputs.length !== 1 ? 'top' : undefined}
-        className={'TransactionPage__InfoLine TransactionPage__InfoLine--FullWidth TransactionPage__InfoLine--Outputs'}
+        className={
+          'TransactionPage__InfoLine TransactionPage__InfoLine--FullWidth TransactionPage__InfoLine--Outputs'
+        }
         title={`Outputs (${outputs.length})`}
         value={
-          <Flex direction='column' gap={2}>
+          <Flex direction="column" gap={2}>
             {outputs.map((output, index) => (
               <ValueCard key={index}>
-                <Flex gap={4} direction={{ base: 'column', md: 'row' }} w='100%'>
-                  <ValueCard className='TransactionPage__AddressCard' link={`/platformAddress/${output.platformAddress.bech32m}`}>
-                    <Identifier
-                      avatar
-                      copyButton
-                      ellipsis
-                      styles={['highlight-both']}
-                    >
+                <Flex gap={4} direction={{ base: 'column', md: 'row' }} w="100%">
+                  <ValueCard
+                    className="TransactionPage__AddressCard"
+                    link={`/platformAddress/${output.platformAddress.bech32m}`}
+                  >
+                    <Identifier avatar copyButton ellipsis styles={['highlight-both']}>
                       {output.platformAddress.bech32m}
                     </Identifier>
                   </ValueCard>

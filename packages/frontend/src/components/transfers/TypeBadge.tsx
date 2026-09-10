@@ -14,19 +14,12 @@ interface TypeBadgeProps extends BadgeProps {
   type: string
 }
 
-function TypeBadge ({ type, ...props }: TypeBadgeProps) {
+function TypeBadge({ type, ...props }: TypeBadgeProps) {
   const info = TransactionTypesInfo[type as keyof typeof TransactionTypesInfo]
 
   return (
-    <Tooltip
-      title={TransferTypesTitle[type]}
-      content={info?.description}
-      placement={'top'}
-    >
-      <Badge
-        colorScheme={info?.colorScheme}
-        {...props}
-      >
+    <Tooltip title={TransferTypesTitle[type]} content={info?.description} placement={'top'}>
+      <Badge colorScheme={info?.colorScheme} {...props}>
         {TransferTypesTitle[type]}
       </Badge>
     </Tooltip>

@@ -21,14 +21,9 @@ interface LocalisationGridProps {
 
 export const LocalisationGrid = ({ isOpen, localisations = {} }: LocalisationGridProps) => {
   return (
-    <SmoothSize
-      className={localisationStyles({ state: isOpen ? 'open' : 'close' })}
-    >
+    <SmoothSize className={localisationStyles({ state: isOpen ? 'open' : 'close' })}>
       {Object.keys(localisations || {}).length > 0 && (
-        <LocalisationList
-          className={styles.list}
-          localisations={localisations}
-        />
+        <LocalisationList className={styles.list} localisations={localisations} />
       )}
     </SmoothSize>
   )

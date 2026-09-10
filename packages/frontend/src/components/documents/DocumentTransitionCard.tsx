@@ -1,14 +1,22 @@
 import type { ComponentType, ReactNode } from 'react'
 import type { Identity, Document, Rate } from '../../types'
 import { ValueCard } from '../cards'
-import { CreditsBlock as CreditsBlockJs, Identifier as IdentifierJs, InfoLine as InfoLineJs, PrefundedBalance as PrefundedBalanceJs } from '../data'
+import {
+  CreditsBlock as CreditsBlockJs,
+  Identifier as IdentifierJs,
+  InfoLine as InfoLineJs,
+  PrefundedBalance as PrefundedBalanceJs
+} from '../data'
 import BatchTypeBadgeJs from '../transactions/BatchTypeBadge'
 import { ValueContainer } from '../ui/containers'
 import { Code } from '@chakra-ui/react'
 import './DocumentTransitionCard.css'
 
 // Untyped JS modules — cast until migrated
-const CreditsBlock = CreditsBlockJs as ComponentType<{ credits?: number | string | null, rate?: Rate | null }>
+const CreditsBlock = CreditsBlockJs as ComponentType<{
+  credits?: number | string | null
+  rate?: Rate | null
+}>
 const Identifier = IdentifierJs as ComponentType<{
   children?: ReactNode
   className?: string
@@ -27,8 +35,14 @@ const InfoLine = InfoLineJs as ComponentType<{
   loading?: boolean
   error?: boolean
 }>
-const PrefundedBalance = PrefundedBalanceJs as ComponentType<{ prefundedBalance?: unknown, rate?: Rate | null }>
-const BatchTypeBadge = BatchTypeBadgeJs as ComponentType<{ batchType?: string | null, className?: string }>
+const PrefundedBalance = PrefundedBalanceJs as ComponentType<{
+  prefundedBalance?: unknown
+  rate?: Rate | null
+}>
+const BatchTypeBadge = BatchTypeBadgeJs as ComponentType<{
+  batchType?: string | null
+  className?: string
+}>
 
 const fieldsOfTypes: Record<string, string[]> = {
   DOCUMENT_CREATE: [
@@ -108,21 +122,25 @@ interface DocumentTransitionCardProps {
   className?: string
 }
 
-const DocumentTransitionCard = ({ transition, owner, rate, className }: DocumentTransitionCardProps) => {
+const DocumentTransitionCard = ({
+  transition,
+  owner,
+  rate,
+  className
+}: DocumentTransitionCardProps) => {
   const fields = fieldsOfTypes?.[String(transition?.action ?? '')] || []
 
   return (
-    <div
-      className={`InfoBlock InfoBlock--Gradient DocumentTransitionCard ${
-        className || ''
-      }`}
-    >
+    <div className={`InfoBlock InfoBlock--Gradient DocumentTransitionCard ${className || ''}`}>
       <InfoLine
-        className={
-          'DocumentTransitionCard__InfoLine DocumentTransitionCard__InfoLine--Action'
-        }
+        className={'DocumentTransitionCard__InfoLine DocumentTransitionCard__InfoLine--Action'}
         title={'Action'}
-        value={<BatchTypeBadge className='DocumentTransitionCard__InfoLine__Badge' batchType={transition?.action} />}
+        value={
+          <BatchTypeBadge
+            className="DocumentTransitionCard__InfoLine__Badge"
+            batchType={transition?.action}
+          />
+        }
         error={transition?.action === undefined}
       />
 
@@ -170,26 +188,25 @@ const DocumentTransitionCard = ({ transition, owner, rate, className }: Document
         />
       )}
 
-      {fields?.indexOf('RecipientIdentifier') !== -1 &&
-        transition?.recipientId && (
-          <InfoLine
-            className={
-              'DocumentTransitionCard__InfoLine DocumentTransitionCard__InfoLine--IdContainer'
-            }
-            title={'Recipient Identifier'}
-            value={
-              <ValueCard link={`/identity/${transition?.recipientId}`}>
-                <Identifier
-                  avatar={true}
-                  copyButton={true}
-                  ellipsis={true}
-                  styles={['highlight-both']}
-                >
-                  {transition?.recipientId}
-                </Identifier>
-              </ValueCard>
-            }
-          />
+      {fields?.indexOf('RecipientIdentifier') !== -1 && transition?.recipientId && (
+        <InfoLine
+          className={
+            'DocumentTransitionCard__InfoLine DocumentTransitionCard__InfoLine--IdContainer'
+          }
+          title={'Recipient Identifier'}
+          value={
+            <ValueCard link={`/identity/${transition?.recipientId}`}>
+              <Identifier
+                avatar={true}
+                copyButton={true}
+                ellipsis={true}
+                styles={['highlight-both']}
+              >
+                {transition?.recipientId}
+              </Identifier>
+            </ValueCard>
+          }
+        />
       )}
 
       {fields?.indexOf('SellerIdentifier') !== -1 && owner && (
@@ -217,12 +234,7 @@ const DocumentTransitionCard = ({ transition, owner, rate, className }: Document
         <InfoLine
           className={'DocumentTransitionCard__InfoLine'}
           title={'Price'}
-          value={
-            <CreditsBlock
-              credits={transition?.price}
-              rate={rate}
-            />
-          }
+          value={<CreditsBlock credits={transition?.price} rate={rate} />}
           error={transition?.price === undefined}
         />
       )}
@@ -240,9 +252,7 @@ const DocumentTransitionCard = ({ transition, owner, rate, className }: Document
 
       {fields?.indexOf('Revision') !== -1 && (
         <InfoLine
-          className={
-            'DocumentTransitionCard__InfoLine DocumentTransitionCard__InfoLine--Revision'
-          }
+          className={'DocumentTransitionCard__InfoLine DocumentTransitionCard__InfoLine--Revision'}
           title={'Revision'}
           value={transition?.revision}
           error={transition?.revision === undefined}
@@ -251,9 +261,7 @@ const DocumentTransitionCard = ({ transition, owner, rate, className }: Document
 
       {fields?.indexOf('IdentityContractNonce') !== -1 && (
         <InfoLine
-          className={
-            'DocumentTransitionCard__InfoLine DocumentTransitionCard__InfoLine--Nonce'
-          }
+          className={'DocumentTransitionCard__InfoLine DocumentTransitionCard__InfoLine--Nonce'}
           title={'Identity Contract Nonce'}
           value={transition?.identityContractNonce}
           error={transition?.identityContractNonce === undefined}
@@ -262,16 +270,10 @@ const DocumentTransitionCard = ({ transition, owner, rate, className }: Document
 
       {fields?.indexOf('Data') !== -1 && transition?.data && (
         <InfoLine
-          className={
-            'DocumentTransitionCard__InfoLine DocumentTransitionCard__InfoLine--Data'
-          }
+          className={'DocumentTransitionCard__InfoLine DocumentTransitionCard__InfoLine--Data'}
           title={'Data'}
           value={
-            <Code
-              borderRadius={'lg'}
-              px={5}
-              py={4}
-            >
+            <Code borderRadius={'lg'} px={5} py={4}>
               {JSON.stringify(transition?.data, null, 2)}
             </Code>
           }
@@ -286,10 +288,7 @@ const DocumentTransitionCard = ({ transition, owner, rate, className }: Document
           }
           title={'Prefunded Voting Balance'}
           value={
-            <PrefundedBalance
-              prefundedBalance={transition?.prefundedVotingBalance}
-              rate={rate}
-            />
+            <PrefundedBalance prefundedBalance={transition?.prefundedVotingBalance} rate={rate} />
           }
         />
       )}

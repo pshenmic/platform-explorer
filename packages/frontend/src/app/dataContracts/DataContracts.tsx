@@ -9,11 +9,7 @@ import { useQuery, keepPreviousData } from '@tanstack/react-query'
 import { useQueryState, parseAsInteger } from 'nuqs'
 import { normalizePagination } from '@utils/table'
 
-import {
-  Container,
-  Box,
-  useBreakpointValue
-} from '@chakra-ui/react'
+import { Container, Box, useBreakpointValue } from '@chakra-ui/react'
 import { useDataContractsFilters, useDataContractsSorting } from '@components/dataContracts/hooks'
 import { DataContractsFilter } from '@components/dataContracts/DataContractsFilter'
 import DataContractsStatsInline from '@components/dataContracts/DataContractsStatsInline'
@@ -29,7 +25,7 @@ const paginateConfig = {
   defaultPage: 1
 }
 
-function DataContractsLayout () {
+function DataContractsLayout() {
   const isMobile = useBreakpointValue({ base: true, md: false })
   const { sorting } = useDataContractsSorting()
   const { filters, setFilters } = useDataContractsFilters()
@@ -51,13 +47,14 @@ function DataContractsLayout () {
 
   const dataContracts = useQuery({
     queryKey: ['dataContracts', page, pageSize, ...Object.values(listFilters)],
-    queryFn: () => Api.getDataContracts(
-      page,
-      pageSize,
-      sorting.order as 'asc' | 'desc',
-      sorting.orderBy,
-      listFilters as never
-    ),
+    queryFn: () =>
+      Api.getDataContracts(
+        page,
+        pageSize,
+        sorting.order as 'asc' | 'desc',
+        sorting.orderBy,
+        listFilters as never
+      ),
     placeholderData: keepPreviousData,
     select: ({ pagination, ...other }) => ({
       ...other,
@@ -71,7 +68,10 @@ function DataContractsLayout () {
 
   const systemContracts = useQuery({
     queryKey: ['dataContracts', 'system', sorting.order, sorting.orderBy],
-    queryFn: () => Api.getDataContracts(1, 12, sorting.order as 'asc' | 'desc', sorting.orderBy, { is_system: 'true' }),
+    queryFn: () =>
+      Api.getDataContracts(1, 12, sorting.order as 'asc' | 'desc', sorting.orderBy, {
+        is_system: 'true'
+      }),
     placeholderData: keepPreviousData,
     enabled: showPinnedSystem
   })
@@ -88,54 +88,57 @@ function DataContractsLayout () {
   }
 
   return (
-    <Container
-        maxW={'container.maxPageW'}
-        color={'white'}
-        mt={8}
-        mb={8}
-    >
-        <Container
-            maxW={'container.maxPageW'}
-            className={'InfoBlock'}
-        >
-            <div className={'DataContractsPage__Controls'}>
-              <PageTitle title={'Data contracts'} description={introContent} className={'DataContractsPage__Title'}/>
+    <Container maxW={'container.maxPageW'} color={'white'} mt={8} mb={8}>
+      <Container maxW={'container.maxPageW'} className={'InfoBlock'}>
+        <div className={'DataContractsPage__Controls'}>
+          <PageTitle
+            title={'Data contracts'}
+            description={introContent}
+            className={'DataContractsPage__Title'}
+          />
 
-              <DataContractsStatsInline className={'DataContractsPage__Stats'}/>
+          <DataContractsStatsInline className={'DataContractsPage__Stats'} />
 
-              <DataContractsFilter
-                onFilterChange={handleFiltersChange}
-                isMobile={isMobile}
-                className={'DataContractsPage__Filters'}
-              />
-            </div>
+          <DataContractsFilter
+            onFilterChange={handleFiltersChange}
+            isMobile={isMobile}
+            className={'DataContractsPage__Filters'}
+          />
+        </div>
 
-            {!dataContracts.isError
-              ? <DataContractsList
-                  dataContracts={dataContracts.data?.resultSet}
-                  loading={dataContracts.isLoading}
-                  itemsCount={pageSize}
-                  pinnedGroup={pinnedGroup as never}
-                />
-              : <Container h={20}><ErrorMessageBlock/></Container>
-            }
+        {!dataContracts.isError ? (
+          <DataContractsList
+            dataContracts={dataContracts.data?.resultSet}
+            loading={dataContracts.isLoading}
+            itemsCount={pageSize}
+            pinnedGroup={pinnedGroup as never}
+          />
+        ) : (
+          <Container h={20}>
+            <ErrorMessageBlock />
+          </Container>
+        )}
 
-            {(dataContracts.data?.resultSet?.length ?? 0) > 0 &&
-              <div className={'ListNavigation'}>
-                <Box display={['none', 'none', 'block']} width={'155px'}/>
-                <Pagination
-                  onPageChange={({ selected }) => { setPage((selected || 0) + 1) }}
-                  pageCount={pagination?.pageCount ?? 1}
-                  forcePage={pagination?.forcePage}
-                />
-                <PageSizeSelector
-                  PageSizeSelectHandler={e => { setPageSize(Number(e?.value)) }}
-                  value={pageSize}
-                  items={paginateConfig.pageSize.values}
-                />
-              </div>
-            }
-        </Container>
+        {(dataContracts.data?.resultSet?.length ?? 0) > 0 && (
+          <div className={'ListNavigation'}>
+            <Box display={['none', 'none', 'block']} width={'155px'} />
+            <Pagination
+              onPageChange={({ selected }) => {
+                setPage((selected || 0) + 1)
+              }}
+              pageCount={pagination?.pageCount ?? 1}
+              forcePage={pagination?.forcePage}
+            />
+            <PageSizeSelector
+              PageSizeSelectHandler={e => {
+                setPageSize(Number(e?.value))
+              }}
+              value={pageSize}
+              items={paginateConfig.pageSize.values}
+            />
+          </div>
+        )}
+      </Container>
     </Container>
   )
 }

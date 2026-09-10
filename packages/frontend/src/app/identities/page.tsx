@@ -18,12 +18,12 @@ interface IdentitiesRouteProps {
 }
 
 async function IdentitiesRoute(props: IdentitiesRouteProps) {
-  const searchParams = await props.searchParams;
+  const searchParams = await props.searchParams
   const page = Number(searchParams.page) || 1
   const pageSize = Number(searchParams['page-size'])
   const showAll = searchParams['show-all'] === 'true'
 
-  return <Identities defaultPage={page} defaultPageSize={pageSize} defaultShowAll={showAll}/>
+  return <Identities defaultPage={page} defaultPageSize={pageSize} defaultShowAll={showAll} />
 }
 
 export default IdentitiesRoute

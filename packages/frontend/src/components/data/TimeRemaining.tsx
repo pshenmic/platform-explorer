@@ -11,7 +11,7 @@ interface TimeRemainingProps {
   displayProgress?: boolean
 }
 
-function TimeRemaining ({ startTime, endTime, displayProgress = true }: TimeRemainingProps) {
+function TimeRemaining({ startTime, endTime, displayProgress = true }: TimeRemainingProps) {
   const startDate = useMemo(() => new Date(startTime), [startTime])
   const endDate = useMemo(() => new Date(endTime), [endTime])
   const [progress, setProgress] = useState(0)
@@ -33,9 +33,7 @@ function TimeRemaining ({ startTime, endTime, displayProgress = true }: TimeRema
 
   return (
     <div className={'TimeRemaining'}>
-      {displayProgress &&
-        <Progress value={progress} height={'1px'}/>
-      }
+      {displayProgress && <Progress value={progress} height={'1px'} />}
       <div className={'TimeRemaining__TimeLeft'}>{timeLeft}</div>
     </div>
   )

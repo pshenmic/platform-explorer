@@ -5,12 +5,7 @@ import useResizeObserver from '@react-hook/resize-observer'
 import { LineChart, TimeframeSelector } from './'
 import { ErrorMessageBlock } from '../Errors'
 import { defaultChartConfig } from './config'
-import type {
-  ChartAxis,
-  ChartConfig,
-  ChartDataPoint,
-  TimespanValue
-} from './types'
+import type { ChartAxis, ChartConfig, ChartDataPoint, TimespanValue } from './types'
 import './TabsChartBlock.css'
 
 interface TabsChartBlockProps {
@@ -26,7 +21,7 @@ interface TabsChartBlockProps {
   heightPx?: number
 }
 
-export default function TabsChartBlock ({
+export default function TabsChartBlock({
   menuIsActive = true,
   timespanChangeCallback,
   loading,
@@ -57,7 +52,7 @@ export default function TabsChartBlock ({
   useResizeObserver(TimeframeMenuRef as never, updateMenuHeight)
 
   if (error || (!loading && !data)) {
-    return (<ErrorMessageBlock h={`${heightPx}px`}/>)
+    return <ErrorMessageBlock h={`${heightPx}px`} />
   }
 
   return (
@@ -74,7 +69,9 @@ export default function TabsChartBlock ({
         menuIsActive={menuIsActive}
         openStateCallback={setMenuIsOpen}
       />
-      <div className={`TabsChartBlock__ChartContainer ${menuIsOpen ? 'TabsChartBlock__ChartContainer--Hidden' : ''}`}>
+      <div
+        className={`TabsChartBlock__ChartContainer ${menuIsOpen ? 'TabsChartBlock__ChartContainer--Hidden' : ''}`}
+      >
         <LineChart
           data={data ?? undefined}
           dataLoading={loading}

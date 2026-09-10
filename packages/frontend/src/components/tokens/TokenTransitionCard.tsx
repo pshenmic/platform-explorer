@@ -21,7 +21,7 @@ import type { WithClassName } from '../../types/common'
 import type { PriceData } from './prices/PriceListItem'
 import './TokenTransitionCard.css'
 
-const BigNumber = BigNumberJs as ComponentType<{ children?: ReactNode, className?: string }>
+const BigNumber = BigNumberJs as ComponentType<{ children?: ReactNode; className?: string }>
 const CreditsBlock = CreditsBlockJs as ComponentType<{
   credits?: string | number | null
   rate?: Pick<Rate, 'usd'> | null
@@ -175,16 +175,22 @@ interface TokenTransitionCardProps extends WithClassName {
 const TokenTransitionCard = ({ transition, rate, className }: TokenTransitionCardProps) => {
   const action = transition?.action ?? undefined
   const fields = (action && fieldsOfTypes[action]) || []
-  const [token, setToken] = useState<LoadableState<Token>>({ data: null, loading: true, error: false })
+  const [token, setToken] = useState<LoadableState<Token>>({
+    data: null,
+    loading: true,
+    error: false
+  })
 
   useEffect(() => {
     const tokensInfo = () => {
       if (transition?.tokenId) {
-        Api.getToken(transition.tokenId).then((res) => {
-          setToken({ data: res, loading: false, error: false })
-        }).catch(() => {
-          setToken(prev => ({ ...prev, loading: false, error: true }))
-        })
+        Api.getToken(transition.tokenId)
+          .then(res => {
+            setToken({ data: res, loading: false, error: false })
+          })
+          .catch(() => {
+            setToken(prev => ({ ...prev, loading: false, error: true }))
+          })
       }
     }
     tokensInfo()
@@ -192,24 +198,28 @@ const TokenTransitionCard = ({ transition, rate, className }: TokenTransitionCar
 
   return (
     <div className={`InfoBlock InfoBlock--Gradient TokenTransitionCard ${className || ''}`}>
-       {fields.includes('Action') && (
+      {fields.includes('Action') && (
         <InfoLine
           className={'TokenTransitionCard__InfoLine TokenTransitionCard__InfoLine--Action'}
           title={'Action'}
           value={
             <BatchTypeBadge
-              batchType={transition?.action !== undefined && transition?.action !== null ? transition.action : undefined}
+              batchType={
+                transition?.action !== undefined && transition?.action !== null
+                  ? transition.action
+                  : undefined
+              }
             />
           }
           error={transition?.action === undefined}
         />
-       )}
+      )}
 
       {fields.includes('EmergencyAction') && (
         <InfoLine
           className={'TokenTransitionCard__InfoLine TokenTransitionCard__InfoLine--EmergencyAction'}
           title={'Emergency Action'}
-          value={<TokenEmergencyActionBadge type={transition?.emergencyAction}/>}
+          value={<TokenEmergencyActionBadge type={transition?.emergencyAction} />}
           error={transition?.emergencyAction === undefined}
         />
       )}
@@ -233,9 +243,7 @@ const TokenTransitionCard = ({ transition, rate, className }: TokenTransitionCar
               <FormattedNumber decimals={token.data?.decimals ?? undefined}>
                 {transition?.amount || '0'}
               </FormattedNumber>
-              <span>
-                {transition?.tokenSymbol || 'TOKEN'}
-              </span>
+              <span>{transition?.tokenSymbol || 'TOKEN'}</span>
             </Badge>
           }
           loading={token.loading}
@@ -247,13 +255,13 @@ const TokenTransitionCard = ({ transition, rate, className }: TokenTransitionCar
         <InfoLine
           className={'TokenTransitionCard__InfoLine TokenTransitionCard__InfoLine--TokenId'}
           title={'Token ID'}
-          value={(
+          value={
             <ValueCard>
               <Identifier copyButton={true} ellipsis={true} styles={['highlight-both']}>
                 {transition?.tokenId}
               </Identifier>
             </ValueCard>
-          )}
+          }
           error={!transition?.tokenId}
         />
       )}
@@ -262,27 +270,39 @@ const TokenTransitionCard = ({ transition, rate, className }: TokenTransitionCar
         <InfoLine
           className={'TokenTransitionCard__InfoLine TokenTransitionCard__InfoLine--Recipient'}
           title={'Recipient'}
-          value={(
+          value={
             <ValueCard link={`/identity/${transition?.recipient}`}>
-              <Identifier avatar={true} copyButton={true} ellipsis={true} styles={['highlight-both']}>
+              <Identifier
+                avatar={true}
+                copyButton={true}
+                ellipsis={true}
+                styles={['highlight-both']}
+              >
                 {transition?.recipient}
               </Identifier>
             </ValueCard>
-          )}
+          }
         />
       )}
 
       {fields.includes('IssuedToIdentity') && (
         <InfoLine
-          className={'TokenTransitionCard__InfoLine TokenTransitionCard__InfoLine--IssuedToIdentity'}
+          className={
+            'TokenTransitionCard__InfoLine TokenTransitionCard__InfoLine--IssuedToIdentity'
+          }
           title={'Issued to Identity ID'}
-          value={(
+          value={
             <ValueCard link={`/identity/${transition?.issuedToIdentityId}`}>
-              <Identifier avatar={true} copyButton={true} ellipsis={true} styles={['highlight-both']}>
+              <Identifier
+                avatar={true}
+                copyButton={true}
+                ellipsis={true}
+                styles={['highlight-both']}
+              >
                 {transition?.issuedToIdentityId}
               </Identifier>
             </ValueCard>
-          )}
+          }
           error={!transition?.issuedToIdentityId}
         />
       )}
@@ -298,10 +318,15 @@ const TokenTransitionCard = ({ transition, rate, className }: TokenTransitionCar
 
       {fields.includes('TokenContractPosition') && (
         <InfoLine
-          className={'TokenTransitionCard__InfoLine TokenTransitionCard__InfoLine--TokenContractPosition'}
+          className={
+            'TokenTransitionCard__InfoLine TokenTransitionCard__InfoLine--TokenContractPosition'
+          }
           title={'Token Contract Position'}
           value={transition?.tokenContractPosition}
-          error={transition?.tokenContractPosition === undefined || transition?.tokenContractPosition === null}
+          error={
+            transition?.tokenContractPosition === undefined ||
+            transition?.tokenContractPosition === null
+          }
         />
       )}
 
@@ -309,39 +334,56 @@ const TokenTransitionCard = ({ transition, rate, className }: TokenTransitionCar
         <InfoLine
           className={'TokenTransitionCard__InfoLine TokenTransitionCard__InfoLine--DataContractId'}
           title={'Data Contract ID'}
-          value={(
+          value={
             <ValueCard link={`/dataContract/${transition?.dataContractId}`}>
-              <Identifier avatar={true} copyButton={true} ellipsis={true} styles={['highlight-both']}>
+              <Identifier
+                avatar={true}
+                copyButton={true}
+                ellipsis={true}
+                styles={['highlight-both']}
+              >
                 {transition?.dataContractId}
               </Identifier>
             </ValueCard>
-          )}
+          }
           error={!transition?.dataContractId}
         />
       )}
 
-      {fields.includes('Price') && (<>
-        <InfoLine
-          className={'TokenTransitionCard__InfoLine TokenTransitionCard__InfoLine--Price'}
-          title={'Price'}
-          value={
-            transition?.price != null
-              ? <CreditsBlock credits={transition?.price} rate={rate}/>
-              : transition?.prices != null && transition?.prices?.length > 0
-                ? <Flex gap={'0.25rem'}>From <BigNumber>{getMinTokenPrice(transition?.prices as Array<{ price: string | number }> | null | undefined)}</BigNumber> Credits</Flex>
-                : 'none'
-          }
-          error={transition?.price === undefined && (!transition?.prices || transition?.prices?.length === 0)}
-        />
-        {transition?.prices != null && transition?.prices?.length > 0 &&
-          <div className={'TokenTransitionCard__PriceList'}>
-            <PriceList
-              prices={transition?.prices}
-              rate={rate}
-            />
-          </div>
-        }
-      </>)}
+      {fields.includes('Price') && (
+        <>
+          <InfoLine
+            className={'TokenTransitionCard__InfoLine TokenTransitionCard__InfoLine--Price'}
+            title={'Price'}
+            value={
+              transition?.price != null ? (
+                <CreditsBlock credits={transition?.price} rate={rate} />
+              ) : transition?.prices != null && transition?.prices?.length > 0 ? (
+                <Flex gap={'0.25rem'}>
+                  From{' '}
+                  <BigNumber>
+                    {getMinTokenPrice(
+                      transition?.prices as Array<{ price: string | number }> | null | undefined
+                    )}
+                  </BigNumber>{' '}
+                  Credits
+                </Flex>
+              ) : (
+                'none'
+              )
+            }
+            error={
+              transition?.price === undefined &&
+              (!transition?.prices || transition?.prices?.length === 0)
+            }
+          />
+          {transition?.prices != null && transition?.prices?.length > 0 && (
+            <div className={'TokenTransitionCard__PriceList'}>
+              <PriceList prices={transition?.prices} rate={rate} />
+            </div>
+          )}
+        </>
+      )}
 
       {fields.includes('PublicNote') && (
         <InfoLine
@@ -356,15 +398,11 @@ const TokenTransitionCard = ({ transition, rate, className }: TokenTransitionCar
         <InfoLine
           className={'TokenTransitionCard__InfoLine TokenTransitionCard__InfoLine--Data'}
           title={'Data'}
-          value={(
-            <Code
-              borderRadius={'lg'}
-              px={5}
-              py={4}
-            >
+          value={
+            <Code borderRadius={'lg'} px={5} py={4}>
               {JSON.stringify(transition?.data, null, 2)}
             </Code>
-          )}
+          }
         />
       )}
     </div>

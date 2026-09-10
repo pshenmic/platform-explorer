@@ -16,7 +16,7 @@ interface TimeframeSelectorProps extends WithClassName {
   forceTimespan?: TimespanValue | null
 }
 
-export default function TimeframeSelector ({
+export default function TimeframeSelector({
   config,
   menuIsActive,
   changeCallback,
@@ -49,7 +49,9 @@ export default function TimeframeSelector ({
   }, [menuIsOpen, openStateCallback])
 
   return (
-    <div className={`TimeframeSelector ${menuIsOpen ? 'TimeframeSelector--MenuActive' : ''} ${className || ''}`}>
+    <div
+      className={`TimeframeSelector ${menuIsOpen ? 'TimeframeSelector--MenuActive' : ''} ${className || ''}`}
+    >
       <TimeframeMenu
         ref={menuRef}
         className={'TimeframeSelector__Menu'}
@@ -61,7 +63,7 @@ export default function TimeframeSelector ({
         className={`TimeframeSelector__Button ${menuIsOpen ? 'TimeframeSelector__Button--Active' : ''}`}
         onClick={() => setMenuIsOpen(state => !state)}
       >
-        <CalendarIcon2 mr={'10px'}/>
+        <CalendarIcon2 mr={'10px'} />
         {timespan?.label}
         <CloseIcon
           color={'gray.250'}

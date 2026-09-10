@@ -5,7 +5,7 @@ import type { Transaction, Rate } from '../../../../types'
 import type { LoadableState } from '../../../../types/common'
 import type { DecodedStateTransition } from './types'
 
-const initialLoading = <T, >(loading = true): LoadableState<T> => ({
+const initialLoading = <T>(loading = true): LoadableState<T> => ({
   data: null,
   loading,
   error: false
@@ -22,7 +22,7 @@ export const useTransactionQuery = (): LoadableState<Transaction> => {
     if (!hash) return
 
     const fetchData = async (): Promise<void> => {
-      setState((prev) => ({ ...prev, loading: true, error: false }))
+      setState(prev => ({ ...prev, loading: true, error: false }))
 
       try {
         const data = await Api.getTransaction(hash)
@@ -42,9 +42,7 @@ export const useTransactionQuery = (): LoadableState<Transaction> => {
 export const useDecodedSTQuery = (
   transaction: Transaction | null | undefined
 ): LoadableState<DecodedStateTransition> => {
-  const [state, setState] = useState<LoadableState<DecodedStateTransition>>(
-    initialLoading(false)
-  )
+  const [state, setState] = useState<LoadableState<DecodedStateTransition>>(initialLoading(false))
 
   useEffect(() => {
     if (!transaction) {
@@ -53,7 +51,7 @@ export const useDecodedSTQuery = (
     }
 
     const fetchData = async (): Promise<void> => {
-      setState((prev) => ({ ...prev, loading: true, error: false }))
+      setState(prev => ({ ...prev, loading: true, error: false }))
       const tx = transaction.data
       if (!tx) {
         setState({ data: null, loading: false, error: true })
@@ -80,7 +78,7 @@ export const useRateQuery = (): LoadableState<Rate> => {
 
   useEffect(() => {
     const fetchData = async (): Promise<void> => {
-      setState((prev) => ({ ...prev, loading: true, error: false }))
+      setState(prev => ({ ...prev, loading: true, error: false }))
 
       try {
         const data = await Api.getRate()

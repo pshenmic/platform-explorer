@@ -12,12 +12,14 @@ interface ValidatorsListData {
 }
 
 interface TotalValidatorsCardContentProps {
-  validators?: LoadableState<ValidatorsListData> | {
-    data?: ValidatorsListData | null
-  }
+  validators?:
+    | LoadableState<ValidatorsListData>
+    | {
+        data?: ValidatorsListData | null
+      }
 }
 
-export function TotalValidatorsCardContent ({ validators }: TotalValidatorsCardContentProps) {
+export function TotalValidatorsCardContent({ validators }: TotalValidatorsCardContentProps) {
   return (
     <div className={'TotalValidatorsCardContent'}>
       <div className={'TotalValidatorsCardContent__Count'}>
@@ -27,7 +29,7 @@ export function TotalValidatorsCardContent ({ validators }: TotalValidatorsCardC
       </div>
       <Flex className={'TotalValidatorsCardContent__Avatars'}>
         {validators?.data?.resultSet?.map((validator, i) => (
-          <Box opacity={ 1 - 0.1 * i } key={i}>
+          <Box opacity={1 - 0.1 * i} key={i}>
             <ImageGenerator
               className={''}
               username={validator.proTxHash ?? ''}

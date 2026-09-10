@@ -6,9 +6,7 @@ export const PrivateKeyForm = () => {
   const { signer, privateKeyForm } = useDeploy()
 
   const isInactive =
-    signer.method !== SignerMethod.PRIVATE_KEY ||
-    signer.isConnecting ||
-    signer.isConnected
+    signer.method !== SignerMethod.PRIVATE_KEY || signer.isConnecting || signer.isConnected
 
   return (
     <SharedPrivateKeyForm

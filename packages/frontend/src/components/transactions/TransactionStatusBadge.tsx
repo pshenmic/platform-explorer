@@ -7,10 +7,13 @@ interface TransactionStatusBadgeProps {
   status?: TransactionStatus | string | null
 }
 
-function TransactionStatusBadge ({ status }: TransactionStatusBadgeProps) {
-  const StatusIcon = status === 'SUCCESS'
-    ? <CheckmarkIcon w={'12px'} h={'12px'} mr={'5px'}/>
-    : <ErrorCircleIcon w={'12px'} h={'12px'} mr={'5px'}/>
+function TransactionStatusBadge({ status }: TransactionStatusBadgeProps) {
+  const StatusIcon =
+    status === 'SUCCESS' ? (
+      <CheckmarkIcon w={'12px'} h={'12px'} mr={'5px'} />
+    ) : (
+      <ErrorCircleIcon w={'12px'} h={'12px'} mr={'5px'} />
+    )
 
   return (
     <Badge

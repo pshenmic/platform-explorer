@@ -14,11 +14,11 @@ export const FormControls = () => {
   }
 
   return (
-    <Flex gap={2} align='center' wrap='wrap'>
-      <Button variant='blue' size='sm' onClick={handleFormat} isDisabled={schemaError != null}>
+    <Flex gap={2} align="center" wrap="wrap">
+      <Button variant="blue" size="sm" onClick={handleFormat} isDisabled={schemaError != null}>
         Format
       </Button>
-      <Button leftIcon={<CloseIcon />} variant='red' size='sm' onClick={handleReset}>
+      <Button leftIcon={<CloseIcon />} variant="red" size="sm" onClick={handleReset}>
         Reset
       </Button>
     </Flex>

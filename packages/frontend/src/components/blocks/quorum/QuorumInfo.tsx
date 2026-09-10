@@ -1,9 +1,6 @@
 import type { ComponentType, ReactNode } from 'react'
 // Untyped JS components — loose wrappers until data/* is migrated
-import {
-  Identifier as IdentifierJs,
-  InfoLine as InfoLineJs
-} from '../../data'
+import { Identifier as IdentifierJs, InfoLine as InfoLineJs } from '../../data'
 import { ValueContainer } from '../../ui/containers'
 import { Badge } from '@chakra-ui/react'
 import type { QuorumMember } from './QuorumMembersListItem'
@@ -43,7 +40,7 @@ interface QuorumInfoProps {
   showQuorumMembers?: () => void
 }
 
-export default function QuorumInfo ({
+export default function QuorumInfo({
   quorum,
   loading,
   l1explorerBaseUrl,
@@ -55,7 +52,11 @@ export default function QuorumInfo ({
         <InfoLine
           className={'QuorumInfo__InfoLine'}
           title={'Quorum Hash'}
-          value={<Identifier styles={['highlight-both']} ellipsis={false} copyButton={true}>{quorum?.quorumHash}</Identifier>}
+          value={
+            <Identifier styles={['highlight-both']} ellipsis={false} copyButton={true}>
+              {quorum?.quorumHash}
+            </Identifier>
+          }
           loading={loading}
           error={!quorum?.quorumHash}
         />
@@ -127,7 +128,9 @@ export default function QuorumInfo ({
               external={true}
               link={`${l1explorerBaseUrl}/block/${quorum?.minedBlockHash}`}
             >
-              <Identifier styles={['highlight-both']} ellipsis={false}>{quorum?.minedBlockHash}</Identifier>
+              <Identifier styles={['highlight-both']} ellipsis={false}>
+                {quorum?.minedBlockHash}
+              </Identifier>
             </ValueContainer>
           }
           loading={loading}
@@ -139,23 +142,21 @@ export default function QuorumInfo ({
         <InfoLine
           className={'QuorumInfo__InfoLine'}
           title={'Total Valid Members'}
-          value={typeof showQuorumMembers === 'function'
-            ? <ValueContainer
-                size={'md'}
-                clickable={true}
-                light={true}
-                onClick={showQuorumMembers}
-              >
+          value={
+            typeof showQuorumMembers === 'function' ? (
+              <ValueContainer size={'md'} clickable={true} light={true} onClick={showQuorumMembers}>
                 {quorum?.numValidMembers}
               </ValueContainer>
-            : quorum?.numValidMembers
+            ) : (
+              quorum?.numValidMembers
+            )
           }
           loading={loading}
           error={typeof quorum?.numValidMembers !== 'number'}
         />
       </div>
 
-      {typeof quorum?.previousConsecutiveDKGFailures === 'number' &&
+      {typeof quorum?.previousConsecutiveDKGFailures === 'number' && (
         <div className={'QuorumInfo__LineContainer'}>
           <InfoLine
             className={'QuorumInfo__InfoLine'}
@@ -168,7 +169,7 @@ export default function QuorumInfo ({
             loading={loading}
           />
         </div>
-      }
+      )}
 
       <div className={'QuorumInfo__LineContainer'}>
         <InfoLine

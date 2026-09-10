@@ -34,7 +34,7 @@ interface TrendingItemProps {
   rank: number
 }
 
-function TrendingItem ({ token, rank }: TrendingItemProps) {
+function TrendingItem({ token, rank }: TrendingItemProps) {
   return (
     <Link href={`/token/${token?.tokenIdentifier}`} className={'TokensTrending__Item'}>
       <span className={'TokensTrending__Rank'}>#{rank}</span>
@@ -47,12 +47,14 @@ function TrendingItem ({ token, rank }: TrendingItemProps) {
         height={18}
       />
       <span className={'TokensTrending__Name'}>{getTokenName(token?.localizations)}</span>
-      <span className={'TokensTrending__Txs'}>{currencyRound(token?.transitionCount ?? 0)} txs</span>
+      <span className={'TokensTrending__Txs'}>
+        {currencyRound(token?.transitionCount ?? 0)} txs
+      </span>
     </Link>
   )
 }
 
-export default function TokensTrending ({ className }: WithClassName) {
+export default function TokensTrending({ className }: WithClassName) {
   const [tokens, setTokens] = useState<LoadableState<PaginatedResultSet<TrendingToken>>>({
     data: null,
     loading: true,
@@ -67,7 +69,9 @@ export default function TokensTrending ({ className }: WithClassName) {
       timestamp_start: startDate.toISOString(),
       timestamp_end: endDate.toISOString()
     })
-      .then(res => fetchHandlerSuccess(setTokens, res as unknown as PaginatedResultSet<TrendingToken>))
+      .then(res =>
+        fetchHandlerSuccess(setTokens, res as unknown as PaginatedResultSet<TrendingToken>)
+      )
       .catch(err => fetchHandlerError(setTokens, err))
   }, [])
 
@@ -75,9 +79,11 @@ export default function TokensTrending ({ className }: WithClassName) {
 
   if (tokens.loading || tokens.error || items.length === 0) return null
 
-  const half: Array<{ token: TrendingToken, rank: number }> = []
+  const half: Array<{ token: TrendingToken; rank: number }> = []
   while (half.length < MIN_PER_HALF) {
-    items.forEach((token, i) => half.push({ token, rank: i + 1 }))
+    for (let i = 0; i < items.length; i++) {
+      half.push({ token: items[i], rank: i + 1 })
+    }
   }
   const track = [...half, ...half]
 
@@ -90,7 +96,7 @@ export default function TokensTrending ({ className }: WithClassName) {
           style={{ animationDuration: `${half.length * SECONDS_PER_ITEM}s` }}
         >
           {track.map((entry, index) => (
-            <TrendingItem token={entry.token} rank={entry.rank} key={index}/>
+            <TrendingItem token={entry.token} rank={entry.rank} key={index} />
           ))}
         </div>
       </div>

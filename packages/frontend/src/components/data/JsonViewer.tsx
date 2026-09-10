@@ -37,7 +37,7 @@ interface JsonViewerProps extends WithClassName {
   placeholder?: string
 }
 
-function JsonViewer ({
+function JsonViewer({
   value,
   minHeight = '100px',
   maxHeight = '500px',
@@ -46,11 +46,8 @@ function JsonViewer ({
   placeholder,
   className = ''
 }: JsonViewerProps) {
-  const text = value == null
-    ? ''
-    : typeof value === 'string'
-      ? value
-      : JSON.stringify(value, null, 2)
+  const text =
+    value == null ? '' : typeof value === 'string' ? value : JSON.stringify(value, null, 2)
 
   const extensions: Extension[] = [json(), editorTheme, EditorView.editable.of(false)]
   if (!text && placeholder) extensions.push(cmPlaceholder(placeholder))
@@ -74,7 +71,7 @@ function JsonViewer ({
         minHeight={fill ? undefined : minHeight}
         maxHeight={fill ? undefined : maxHeight}
       />
-      {showCopy && text && <CopyButton className={'JsonViewer__CopyButton'} text={text}/>}
+      {showCopy && text && <CopyButton className={'JsonViewer__CopyButton'} text={text} />}
     </div>
   )
 }

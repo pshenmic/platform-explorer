@@ -54,22 +54,54 @@ const menuItems: NavMenuItem[] = [
   },
   {
     title: 'more',
-    breakpoints: { base: false, sm: false, md: false, lg: true, xl: true, '2xl': false, '3xl': false },
+    breakpoints: {
+      base: false,
+      sm: false,
+      md: false,
+      lg: true,
+      xl: true,
+      '2xl': false,
+      '3xl': false
+    },
     submenuItems: [
       {
         title: 'Contested Resources',
         href: '/contestedResources',
-        breakpoints: { base: true, sm: false, md: true, lg: true, xl: false, '2xl': false, '3xl': false }
+        breakpoints: {
+          base: true,
+          sm: false,
+          md: true,
+          lg: true,
+          xl: false,
+          '2xl': false,
+          '3xl': false
+        }
       },
       {
         title: 'Masternode votes',
         href: '/masternodeVotes',
-        breakpoints: { base: true, sm: true, md: true, lg: true, xl: false, '2xl': false, '3xl': false }
+        breakpoints: {
+          base: true,
+          sm: true,
+          md: true,
+          lg: true,
+          xl: false,
+          '2xl': false,
+          '3xl': false
+        }
       },
       {
         title: 'Validators',
         href: '/validators',
-        breakpoints: { base: true, sm: false, md: false, lg: false, xl: true, '2xl': true, '3xl': true }
+        breakpoints: {
+          base: true,
+          sm: false,
+          md: false,
+          lg: false,
+          xl: true,
+          '2xl': true,
+          '3xl': true
+        }
       }
     ]
   }
@@ -110,7 +142,7 @@ const defaultSearchState: SearchState = {
   value: ''
 }
 
-function Navbar () {
+function Navbar() {
   const pathname = usePathname()
   const displayBreadcrumbs = useMemo(
     () => breadcrumbsActiveRoutes.some(route => pathname.indexOf(route) !== -1),
@@ -136,29 +168,39 @@ function Navbar () {
   }) || 'base') as BreakpointKey
 
   const visibleMenuItems = useMemo(() => {
-    return menuItems.filter(item => {
-      const breakpoints = { ...defaultBreakpoints, ...item.breakpoints }
-      return breakpoints[currentBreakpoint]
-    }).map(item => ({
-      ...item,
-      submenuItems: filterSubmenuItems(item.submenuItems, currentBreakpoint)
-    }))
+    return menuItems
+      .filter(item => {
+        const breakpoints = { ...defaultBreakpoints, ...item.breakpoints }
+        return breakpoints[currentBreakpoint]
+      })
+      .map(item => ({
+        ...item,
+        submenuItems: filterSubmenuItems(item.submenuItems, currentBreakpoint)
+      }))
   }, [currentBreakpoint])
 
   const mobileMenuItems = useMemo(() => {
     const isMobileBreakpoint = (['base', 'sm', 'md'] as BreakpointKey[]).includes(currentBreakpoint)
 
-    return menuItems.filter(item => {
-      const breakpoints = { ...defaultBreakpoints, ...item.breakpoints }
-      return isMobileBreakpoint ? breakpoints[currentBreakpoint] : breakpoints.base
-    }).map(item => ({
-      ...item,
-      submenuItems: filterSubmenuItems(item.submenuItems, isMobileBreakpoint ? currentBreakpoint : 'base')
-    }))
+    return menuItems
+      .filter(item => {
+        const breakpoints = { ...defaultBreakpoints, ...item.breakpoints }
+        return isMobileBreakpoint ? breakpoints[currentBreakpoint] : breakpoints.base
+      })
+      .map(item => ({
+        ...item,
+        submenuItems: filterSubmenuItems(
+          item.submenuItems,
+          isMobileBreakpoint ? currentBreakpoint : 'base'
+        )
+      }))
   }, [currentBreakpoint])
 
-  const searchResultIsDisplay = searchState.focused &&
-    (Object.entries(searchState.results.data || {})?.length || searchState.results.loading || searchState.results.error)
+  const searchResultIsDisplay =
+    searchState.focused &&
+    (Object.entries(searchState.results.data || {})?.length ||
+      searchState.results.loading ||
+      searchState.results.error)
 
   const searchContainerRef = useRef<HTMLDivElement | null>(null)
   const searchTransitionTime = useBreakpointValue({ base: 0.2, md: 0.1 })
@@ -216,15 +258,12 @@ function Navbar () {
     <Box position={'relative'}>
       <div className={'NavbarStub'}></div>
 
-      <Flex
-        className={'Navbar'}
-        maxW={'container.maxNavigationW'}
-      >
+      <Flex className={'Navbar'} maxW={'container.maxNavigationW'}>
         <div className={'Navbar__Left'}>
           <IconButton
             className={'Navbar__Burger'}
             size={'md'}
-            icon={isMobileMenuOpen ? <CloseIcon/> : <HamburgerIcon/>}
+            icon={isMobileMenuOpen ? <CloseIcon /> : <HamburgerIcon />}
             visibility={searchState.focused ? 'hidden' : 'visible'}
             w={searchState.focused ? '0' : '40px'}
             minW={0}
@@ -247,8 +286,8 @@ function Navbar () {
               transitionDelay: searchState.focused ? '0s' : `${(searchTransitionTime ?? 0.1) / 2}s`
             }}
           >
-            {visibleMenuItems.map((menuItem) => (
-              <NavItem key={menuItem.title} item={menuItem}/>
+            {visibleMenuItems.map(menuItem => (
+              <NavItem key={menuItem.title} item={menuItem} />
             ))}
           </HStack>
         </div>
@@ -271,7 +310,7 @@ function Navbar () {
               ...(searchState.focused && { width: 0 })
             }}
           >
-            <NetworkSelect/>
+            <NetworkSelect />
           </div>
 
           <div
@@ -293,7 +332,9 @@ function Navbar () {
                 onResultChange={results => setSearchState(prevState => ({ ...prevState, results }))}
                 onChange={value => setSearchState(prevState => ({ ...prevState, value }))}
                 navigateToFirstResult={true}
-                onFocusChange={isFocused => setSearchState(prevState => ({ ...prevState, focused: !!isFocused }))}
+                onFocusChange={isFocused =>
+                  setSearchState(prevState => ({ ...prevState, focused: !!isFocused }))
+                }
               />
             </div>
 
@@ -309,7 +350,7 @@ function Navbar () {
                 padding: searchResultIsDisplay ? '0 0.75rem' : 0
               }}
             >
-              <SearchResultsList results={searchState.results}/>
+              <SearchResultsList results={searchState.results} />
             </div>
           </div>
         </div>
@@ -322,7 +363,7 @@ function Navbar () {
         burgerRef={burgerRef}
       />
 
-      {displayBreadcrumbs && <Breadcrumbs/>}
+      {displayBreadcrumbs && <Breadcrumbs />}
     </Box>
   )
 }

@@ -19,8 +19,10 @@ const timeframes: TimespanValue[] = defaultChartConfig.timespan.values.map((valu
   short: (['24H', '3D', '1W', '1M'] as const)[index] || value.label
 }))
 
-export default function IdentitiesGrowthChartCompact ({ className }: WithClassName) {
-  const [history, setHistory] = useState<LoadableState<{ resultSet?: Array<SeriesData<IdentityHistoryPoint>> }>>({
+export default function IdentitiesGrowthChartCompact({ className }: WithClassName) {
+  const [history, setHistory] = useState<
+    LoadableState<{ resultSet?: Array<SeriesData<IdentityHistoryPoint>> }>
+  >({
     data: {},
     loading: true,
     error: false
@@ -40,10 +42,11 @@ export default function IdentitiesGrowthChartCompact ({ className }: WithClassNa
       .catch(err => fetchHandlerError(setHistory, err))
   }, [timespan])
 
-  const data = history.data?.resultSet?.map(item => ({
-    x: new Date(item.timestamp ?? 0),
-    y: item.data?.registeredIdentities ?? 0
-  })) || []
+  const data =
+    history.data?.resultSet?.map(item => ({
+      x: new Date(item.timestamp ?? 0),
+      y: item.data?.registeredIdentities ?? 0
+    })) || []
 
   const xAxis = {
     type: (() => {
@@ -77,11 +80,15 @@ export default function IdentitiesGrowthChartCompact ({ className }: WithClassNa
       </div>
 
       <div className={'TransactionsChartCompact__Chart'}>
-        {!history.loading
-          ? (!history.error && data.length)
-              ? <LineChart data={data} timespan={timespan} xAxis={xAxis} yAxis={yAxis}/>
-              : <div className={'TransactionsChartCompact__Empty'}>No data</div>
-          : <div className={'TransactionsChartCompact__Loader'}/>}
+        {!history.loading ? (
+          !history.error && data.length ? (
+            <LineChart data={data} timespan={timespan} xAxis={xAxis} yAxis={yAxis} />
+          ) : (
+            <div className={'TransactionsChartCompact__Empty'}>No data</div>
+          )
+        ) : (
+          <div className={'TransactionsChartCompact__Loader'} />
+        )}
       </div>
     </div>
   )

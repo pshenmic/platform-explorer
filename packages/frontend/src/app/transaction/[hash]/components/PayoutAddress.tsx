@@ -29,10 +29,10 @@ export const PayoutAddress = ({ outputScript, loading, identity }: PayoutAddress
     const getData = (): void => {
       if (!identity) return
       Api.getValidatorByMasternodeIdentity(identity)
-        .then((res) => {
+        .then(res => {
           fetchHandlerSuccess(setValidator, res)
         })
-        .catch((err) => fetchHandlerError(setValidator, err))
+        .catch(err => fetchHandlerError(setValidator, err))
     }
 
     if (!outputScript && !loading) {
@@ -47,10 +47,7 @@ export const PayoutAddress = ({ outputScript, loading, identity }: PayoutAddress
         title={'Output Script'}
         value={
           <ValueCard className={styles.card}>
-            <Identifier
-              copyButton={true}
-              ellipsis={false}
-            >
+            <Identifier copyButton={true} ellipsis={false}>
               {outputScript}
             </Identifier>
           </ValueCard>
@@ -60,8 +57,9 @@ export const PayoutAddress = ({ outputScript, loading, identity }: PayoutAddress
     )
   }
 
-  const payoutAddress = (validator.data?.proTxInfo?.state as { payoutAddress?: string } | null | undefined)
-    ?.payoutAddress
+  const payoutAddress = (
+    validator.data?.proTxInfo?.state as { payoutAddress?: string } | null | undefined
+  )?.payoutAddress
 
   return (
     <InfoLine
@@ -69,23 +67,12 @@ export const PayoutAddress = ({ outputScript, loading, identity }: PayoutAddress
       title={'Payout address'}
       value={
         <a
-          href={
-            l1explorerBaseUrl
-              ? `${l1explorerBaseUrl}/address/${payoutAddress}`
-              : '#'
-          }
+          href={l1explorerBaseUrl ? `${l1explorerBaseUrl}/address/${payoutAddress}` : '#'}
           target={'_blank'}
           rel={'noopener noreferrer'}
         >
-          <ValueContainer
-            className={styles.value}
-            clickable={true}
-            external={true}
-          >
-            <Identifier
-              styles={['highlight-both']}
-              ellipsis={false}
-            >
+          <ValueContainer className={styles.value} clickable={true} external={true}>
+            <Identifier styles={['highlight-both']} ellipsis={false}>
               {payoutAddress || ''}
             </Identifier>
           </ValueContainer>

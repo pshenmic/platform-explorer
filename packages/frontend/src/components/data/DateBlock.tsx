@@ -12,7 +12,7 @@ import './DateBlock.css'
 
 type DateBlockFormat = 'all' | 'deltaOnly' | 'dateOnly'
 
-const formats: Record<DateBlockFormat, { calendarIcon: boolean, date: boolean, delta: boolean }> = {
+const formats: Record<DateBlockFormat, { calendarIcon: boolean; date: boolean; delta: boolean }> = {
   all: {
     calendarIcon: true,
     date: true,
@@ -35,16 +35,14 @@ interface WrapperProps extends ComponentPropsWithoutRef<'div'> {
   tooltipContent?: ReactNode
 }
 
-const Wrapper = ({ children, tooltipContent, ...props }: WrapperProps) => (
-  tooltipContent
-    ? <Tooltip
-        placement={'top'}
-        content={tooltipContent}
-      >
-        <div {...props}>{children}</div>
-      </Tooltip>
-    : <div {...props}>{children}</div>
-)
+const Wrapper = ({ children, tooltipContent, ...props }: WrapperProps) =>
+  tooltipContent ? (
+    <Tooltip placement={'top'} content={tooltipContent}>
+      <div {...props}>{children}</div>
+    </Tooltip>
+  ) : (
+    <div {...props}>{children}</div>
+  )
 
 interface DateBlockProps {
   timestamp?: string | number | Date | null
@@ -53,7 +51,7 @@ interface DateBlockProps {
   showRelativeTooltip?: boolean
 }
 
-function DateBlock ({
+function DateBlock({
   timestamp,
   format = 'all',
   showTime = false,
@@ -61,17 +59,14 @@ function DateBlock ({
 }: DateBlockProps) {
   const { calendarIcon, date, delta } = formats[format]
 
-  const formattedDate = useMemo(
-    () => {
-      if (timestamp == null) return null
-      const ts = timestamp instanceof Date ? timestamp.getTime() : timestamp
-      return formatDate(ts, ({ hour, minute, ...other }) => ({
-        ...other,
-        ...(showTime && { hour: '2-digit', minute: '2-digit' })
-      }))
-    },
-    [showTime, timestamp]
-  )
+  const formattedDate = useMemo(() => {
+    if (timestamp == null) return null
+    const ts = timestamp instanceof Date ? timestamp.getTime() : timestamp
+    return formatDate(ts, ({ hour, minute, ...other }) => ({
+      ...other,
+      ...(showTime && { hour: '2-digit', minute: '2-digit' })
+    }))
+  }, [showTime, timestamp])
 
   if (!formattedDate) {
     return null
@@ -80,9 +75,8 @@ function DateBlock ({
   return (
     <Wrapper
       className={'DateBlock'}
-      tooltipContent={showRelativeTooltip
-        ? <TimeDelta endDate={timestamp} showTimestampTooltip={false}/>
-        : null
+      tooltipContent={
+        showRelativeTooltip ? <TimeDelta endDate={timestamp} showTimestampTooltip={false} /> : null
       }
     >
       <div className={'DateBlock__InfoContainer'}>
@@ -94,15 +88,10 @@ function DateBlock ({
             h={'14px'}
           />
         )}
-        {date && (
-          <div className={'DateBlock__Date'}>{formattedDate.formatted}</div>
-        )}
+        {date && <div className={'DateBlock__Date'}>{formattedDate.formatted}</div>}
         {delta && (
           <div className={'DateBlock__Delta'}>
-            <TimeDelta
-              endDate={formattedDate.date}
-              showTimestampTooltip={format !== 'all'}
-            />
+            <TimeDelta endDate={formattedDate.date} showTimestampTooltip={format !== 'all'} />
           </div>
         )}
       </div>

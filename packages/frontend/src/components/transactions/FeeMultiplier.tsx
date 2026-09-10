@@ -4,7 +4,7 @@ interface FeeMultiplierProps {
   value?: number
 }
 
-function FeeMultiplier ({ value }: FeeMultiplierProps) {
+function FeeMultiplier({ value }: FeeMultiplierProps) {
   if (value === undefined) return null
 
   const getModifier = (v: number): string => {
@@ -18,11 +18,7 @@ function FeeMultiplier ({ value }: FeeMultiplierProps) {
 
   const modifier = getModifier(value)
 
-  return (
-    <div className={`FeeMultiplier FeeMultiplier--${modifier}`}>
-      +{value}%
-    </div>
-  )
+  return <div className={`FeeMultiplier FeeMultiplier--${modifier}`}>+{value}%</div>
 }
 
 export default FeeMultiplier

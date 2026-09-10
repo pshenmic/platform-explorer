@@ -13,12 +13,10 @@ interface AliasesListProps {
   smallCount?: number
 }
 
-function AliasesList ({ aliases = [], smallCount = 5 }: AliasesListProps) {
+function AliasesList({ aliases = [], smallCount = 5 }: AliasesListProps) {
   const [showAll, setShowAll] = useState(false)
 
-  const filteredArray = showAll
-    ? aliases
-    : aliases.filter((item, i) => i < smallCount)
+  const filteredArray = showAll ? aliases : aliases.filter((item, i) => i < smallCount)
 
   return (
     <div className={'AliasesList'}>
@@ -26,14 +24,16 @@ function AliasesList ({ aliases = [], smallCount = 5 }: AliasesListProps) {
         <div className={'AliasesList__ItemsContainer'}>
           {filteredArray?.map((alias, i) => (
             <div className={'AliasesList__Item'} key={i}>
-              <Alias status={alias.status} ellipsis={false} key={i}>{alias.alias}</Alias>
-              {alias?.timestamp && <DateBlock timestamp={alias.timestamp} format={'deltaOnly'}/>}
+              <Alias status={alias.status} ellipsis={false} key={i}>
+                {alias.alias}
+              </Alias>
+              {alias?.timestamp && <DateBlock timestamp={alias.timestamp} format={'deltaOnly'} />}
             </div>
           ))}
         </div>
       </SmoothSize>
 
-      {aliases.length > smallCount &&
+      {aliases.length > smallCount && (
         <Button
           onClick={() => setShowAll(!showAll)}
           className={'AliasesList__ShowMoreButton'}
@@ -41,9 +41,14 @@ function AliasesList ({ aliases = [], smallCount = 5 }: AliasesListProps) {
           variant={showAll ? 'gray' : 'blue'}
         >
           {showAll ? 'Show less' : 'Show more'}
-          <ChevronIcon ml={'4px'} h={'10px'} w={'10px'} transform={`rotate(${showAll ? '-90deg' : '90deg'})`}/>
+          <ChevronIcon
+            ml={'4px'}
+            h={'10px'}
+            w={'10px'}
+            transform={`rotate(${showAll ? '-90deg' : '90deg'})`}
+          />
         </Button>
-      }
+      )}
     </div>
   )
 }

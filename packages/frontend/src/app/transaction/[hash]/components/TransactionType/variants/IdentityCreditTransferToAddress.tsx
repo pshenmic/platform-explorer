@@ -29,12 +29,7 @@ export const IdentityCreditTransferToAddress = ({
       title={'Sender'}
       value={
         <ValueCard link={`/identity/${senderId}`}>
-          <Identifier
-            avatar={true}
-            copyButton={true}
-            ellipsis={true}
-            styles={['highlight-both']}
-          >
+          <Identifier avatar={true} copyButton={true} ellipsis={true} styles={['highlight-both']}>
             {senderId}
           </Identifier>
         </ValueCard>

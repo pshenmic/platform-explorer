@@ -17,7 +17,7 @@ interface ProposedBlocksChartProps {
   height?: string | number
 }
 
-export default function ProposedBlocksChart ({
+export default function ProposedBlocksChart({
   blocksHistory,
   timespan,
   timespanChangeHandler,
@@ -30,32 +30,35 @@ export default function ProposedBlocksChart ({
 
   return (
     <LineChartBlock
-        title={'Proposed blocks'}
-        loading={blocksHistory.loading}
-        error={blocksHistory.error}
-        timespanChange={timespanChangeHandler}
-        data={blocksHistory.data?.resultSet?.map((item) => ({
+      title={'Proposed blocks'}
+      loading={blocksHistory.loading}
+      error={blocksHistory.error}
+      timespanChange={timespanChangeHandler}
+      data={
+        blocksHistory.data?.resultSet?.map(item => ({
           x: new Date(item.timestamp ?? 0),
           y: item.data?.blocksCount ?? 0
-        })) || []}
-        xAxis={{
-          type: (() => {
-            if (timespanKey === '1h') return { axis: 'time' as const }
-            if (timespanKey === '24h' || timespanKey === '24 hours') return { axis: 'time' as const }
-            if (timespanKey === '3d' || timespanKey === '3 days') return { axis: 'date' as const, tooltip: 'datetime' as const }
-            if (timespanKey === '1w' || timespanKey === '1 week') return { axis: 'date' as const }
-            return { axis: 'date' as const }
-          })(),
-          abbreviation: '',
-          title: ''
-        }}
-        yAxis={{
-          type: 'number',
-          title: '',
-          abbreviation: 'blocks'
-        }}
-        height={height}
-        blockBorders={blockBorders}
+        })) || []
+      }
+      xAxis={{
+        type: (() => {
+          if (timespanKey === '1h') return { axis: 'time' as const }
+          if (timespanKey === '24h' || timespanKey === '24 hours') return { axis: 'time' as const }
+          if (timespanKey === '3d' || timespanKey === '3 days')
+            return { axis: 'date' as const, tooltip: 'datetime' as const }
+          if (timespanKey === '1w' || timespanKey === '1 week') return { axis: 'date' as const }
+          return { axis: 'date' as const }
+        })(),
+        abbreviation: '',
+        title: ''
+      }}
+      yAxis={{
+        type: 'number',
+        title: '',
+        abbreviation: 'blocks'
+      }}
+      height={height}
+      blockBorders={blockBorders}
     />
   )
 }

@@ -2,11 +2,7 @@ import type { ComponentType, ReactNode } from 'react'
 import type { DataContract, Owner } from '../../../types'
 import type { WithClassName } from '../../../types/common'
 // Untyped JS components — loose wrappers until data/* is migrated
-import {
-  Alias as AliasJs,
-  Identifier as IdentifierJs,
-  TimeDelta as TimeDeltaJs
-} from '../../data'
+import { Alias as AliasJs, Identifier as IdentifierJs, TimeDelta as TimeDeltaJs } from '../../data'
 import { BaseSearchItem, BaseSearchItemContent } from './BaseSearchItem'
 
 const Alias = AliasJs as ComponentType<{
@@ -32,10 +28,17 @@ interface DataContractSearchItemProps extends WithClassName {
   onClick?: (data: unknown) => void
 }
 
-export function DataContractSearchItem ({ dataContract, className, onClick }: DataContractSearchItemProps) {
-  const ownerId = typeof dataContract?.owner === 'object' && dataContract.owner
-    ? dataContract.owner.identifier
-    : (typeof dataContract?.owner === 'string' ? dataContract.owner : undefined)
+export function DataContractSearchItem({
+  dataContract,
+  className,
+  onClick
+}: DataContractSearchItemProps) {
+  const ownerId =
+    typeof dataContract?.owner === 'object' && dataContract.owner
+      ? dataContract.owner.identifier
+      : typeof dataContract?.owner === 'string'
+        ? dataContract.owner
+        : undefined
 
   return (
     <BaseSearchItem
@@ -47,14 +50,22 @@ export function DataContractSearchItem ({ dataContract, className, onClick }: Da
     >
       <BaseSearchItemContent
         mainContent={
-          dataContract?.name
-            ? <Alias avatarSource={dataContract?.identifier} ellipsis={true}>{dataContract?.name}</Alias>
-            : <Identifier avatar={true} ellipsis={true} styles={['highlight-both']}>{dataContract?.identifier}</Identifier>
+          dataContract?.name ? (
+            <Alias avatarSource={dataContract?.identifier} ellipsis={true}>
+              {dataContract?.name}
+            </Alias>
+          ) : (
+            <Identifier avatar={true} ellipsis={true} styles={['highlight-both']}>
+              {dataContract?.identifier}
+            </Identifier>
+          )
         }
         additionalContent={
-          <Identifier avatar={!!ownerId} ellipsis={true}>{ownerId || '-'}</Identifier>
+          <Identifier avatar={!!ownerId} ellipsis={true}>
+            {ownerId || '-'}
+          </Identifier>
         }
-        timestamp={<TimeDelta endDate={dataContract?.timestamp}/>}
+        timestamp={<TimeDelta endDate={dataContract?.timestamp} />}
       />
     </BaseSearchItem>
   )

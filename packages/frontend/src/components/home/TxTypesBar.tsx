@@ -19,7 +19,7 @@ interface TxTypeStat {
   count?: number
 }
 
-function labelOf (type?: string): string {
+function labelOf(type?: string): string {
   if (!type) return 'Unknown'
   return (TransactionTypesInfo as Record<string, { title?: string }>)[type]?.title ?? type
 }
@@ -29,8 +29,8 @@ interface TxTypesBarProps {
 }
 
 // tx counts by state transition type for a chosen time range: one stacked share bar over chips
-export default function TxTypesBar ({ enabled = true }: TxTypesBarProps) {
-  const [state, setState] = useState<{ loading: boolean, error: boolean, items: TxTypeStat[] }>({
+export default function TxTypesBar({ enabled = true }: TxTypesBarProps) {
+  const [state, setState] = useState<{ loading: boolean; error: boolean; items: TxTypeStat[] }>({
     loading: true,
     error: false,
     items: []
@@ -46,7 +46,13 @@ export default function TxTypesBar ({ enabled = true }: TxTypesBarProps) {
     setState(s => ({ ...s, loading: true, error: false }))
     const { start, end } = presetRange(PRESETS[presetIdx])
     Api.getTransactionsStatistic(start, end)
-      .then(res => setState({ loading: false, error: false, items: Array.isArray(res) ? res as TxTypeStat[] : [] }))
+      .then(res =>
+        setState({
+          loading: false,
+          error: false,
+          items: Array.isArray(res) ? (res as TxTypeStat[]) : []
+        })
+      )
       .catch(() => setState({ loading: false, error: true, items: [] }))
   }, [enabled, presetIdx])
 
@@ -68,61 +74,74 @@ export default function TxTypesBar ({ enabled = true }: TxTypesBarProps) {
     frac: rawFracs[i],
     dFrac: clamped[i] / clampedSum,
     // per-type shade of the badge family hue keeps segments tellable yet on-brand
-    cls: t.transactionType && (TransactionTypesInfo as Record<string, unknown>)[t.transactionType]
-      ? t.transactionType
-      : 'UNKNOWN'
+    cls:
+      t.transactionType && (TransactionTypesInfo as Record<string, unknown>)[t.transactionType]
+        ? t.transactionType
+        : 'UNKNOWN'
   }))
 
   const pctOf = (frac: number) => (frac < 0.01 ? '<1%' : `${Math.round(frac * 100)}%`)
-  const tipOf = (s: { label: string, count: number, frac: number }) =>
+  const tipOf = (s: { label: string; count: number; frac: number }) =>
     `${s.label} · ${s.count.toLocaleString('en-US')} · ${pctOf(s.frac)}`
 
   return (
     <Box className={'InfoBlock InfoBlock--NoBorder TxTypesBar'} w={'100%'}>
       <CardHead
         title={'Transaction types'}
-        extra={total > 0 &&
-          <span className={'TxTypesBar__Total'}>
-            {total.toLocaleString('en-US')} <span className={'TxTypesBar__TotalLabel'}>{rangeLabel}</span>
-          </span>}
+        extra={
+          total > 0 && (
+            <span className={'TxTypesBar__Total'}>
+              {total.toLocaleString('en-US')}{' '}
+              <span className={'TxTypesBar__TotalLabel'}>{rangeLabel}</span>
+            </span>
+          )
+        }
       >
-        <Presets options={PRESETS} value={presetIdx} onChange={setPresetIdx}/>
+        <Presets options={PRESETS} value={presetIdx} onChange={setPresetIdx} />
       </CardHead>
 
       <div className={'TxTypesBar__Body'}>
-        {state.loading
-          ? <div className={'TxTypesBar__Stack'}>
-              <Skeleton w={'100%'} h={'14px'}/>
-              <div className={'TxTypesBar__Chips'}>
-                {Array.from({ length: 8 }).map((_, i) => <Skeleton w={'110px'} h={'0.75em'} key={i}/>)}
-              </div>
+        {state.loading ? (
+          <div className={'TxTypesBar__Stack'}>
+            <Skeleton w={'100%'} h={'14px'} />
+            <div className={'TxTypesBar__Chips'}>
+              {Array.from({ length: 8 }).map((_, i) => (
+                <Skeleton w={'110px'} h={'0.75em'} key={i} />
+              ))}
             </div>
-          : state.error || !total
-            ? <div className={'TxTypesBar__Empty'}>No data</div>
-            : <div className={'TxTypesBar__Stack'}>
-                <div className={'TxTypesBar__Bar'} role={'img'} aria-label={`${total} transactions by type`}>
-                  {segments.map(s => (
-                    <Tooltip content={tipOf(s)} placement={'top'} key={s.label}>
-                      <span
-                        className={`TxTypesBar__Seg TxTypesBar__Seg--${s.cls}`}
-                        style={{ width: `${s.dFrac * 100}%` }}
-                      />
-                    </Tooltip>
-                  ))}
-                </div>
+          </div>
+        ) : state.error || !total ? (
+          <div className={'TxTypesBar__Empty'}>No data</div>
+        ) : (
+          <div className={'TxTypesBar__Stack'}>
+            <div
+              className={'TxTypesBar__Bar'}
+              role={'img'}
+              aria-label={`${total} transactions by type`}
+            >
+              {segments.map(s => (
+                <Tooltip content={tipOf(s)} placement={'top'} key={s.label}>
+                  <span
+                    className={`TxTypesBar__Seg TxTypesBar__Seg--${s.cls}`}
+                    style={{ width: `${s.dFrac * 100}%` }}
+                  />
+                </Tooltip>
+              ))}
+            </div>
 
-                <div className={'TxTypesBar__Chips'}>
-                  {segments.map(s => (
-                    <Tooltip content={tipOf(s)} placement={'top'} key={s.label}>
-                      <span className={'TxTypesBar__Chip'}>
-                        <i className={`TxTypesBar__Dot TxTypesBar__Dot--${s.cls}`}/>
-                        <span className={'TxTypesBar__ChipLabel'}>{s.label}</span>
-                        <span className={'TxTypesBar__ChipCount'}>{compact(s.count)}</span>
-                      </span>
-                    </Tooltip>
-                  ))}
-                </div>
-              </div>}
+            <div className={'TxTypesBar__Chips'}>
+              {segments.map(s => (
+                <Tooltip content={tipOf(s)} placement={'top'} key={s.label}>
+                  <span className={'TxTypesBar__Chip'}>
+                    <i className={`TxTypesBar__Dot TxTypesBar__Dot--${s.cls}`} />
+                    <span className={'TxTypesBar__ChipLabel'}>{s.label}</span>
+                    <span className={'TxTypesBar__ChipCount'}>{compact(s.count)}</span>
+                  </span>
+                </Tooltip>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     </Box>
   )

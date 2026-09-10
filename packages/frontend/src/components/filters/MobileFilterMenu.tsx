@@ -12,11 +12,7 @@ interface MobileFilterMenuProps {
   onReset?: () => void
 }
 
-export const MobileFilterMenu = ({
-  menuData = [],
-  onSubmit,
-  onReset
-}: MobileFilterMenuProps) => {
+export const MobileFilterMenu = ({ menuData = [], onSubmit, onReset }: MobileFilterMenuProps) => {
   const [activeItem, setActiveItem] = useState<FilterMenuItem | null>(null)
   const [renderDetails, setRenderDetails] = useState(false)
   const [renderList, setRenderList] = useState(true)
@@ -26,12 +22,15 @@ export const MobileFilterMenu = ({
     setRenderDetails(!!activeItem)
   }, [activeItem])
 
-  const getUpdatedMenuItem = useCallback((item: FilterMenuItem) => {
-    if (!item) return null
+  const getUpdatedMenuItem = useCallback(
+    (item: FilterMenuItem) => {
+      if (!item) return null
 
-    const currentItem = menuData.find(menuItem => menuItem.label === item.label)
-    return currentItem || item
-  }, [menuData])
+      const currentItem = menuData.find(menuItem => menuItem.label === item.label)
+      return currentItem || item
+    },
+    [menuData]
+  )
 
   const goToMainMenu = () => setActiveItem(null)
   const selectMenuItem = (item: FilterMenuItem) => setActiveItem(item)
@@ -70,7 +69,7 @@ export const MobileFilterMenu = ({
                   <span className={'MobileFilterMenu__ItemTitle'}>{item.label}</span>
 
                   <div className={'MobileFilterMenu__ItemIcon'}>
-                    <ChevronIcon/>
+                    <ChevronIcon />
                   </div>
                 </Flex>
 
@@ -87,10 +86,7 @@ export const MobileFilterMenu = ({
             ))}
           </div>
 
-          <SubmitButton
-            className={'MobileFilterMenu__SubmitButton'}
-            onClick={onSubmit}
-          >
+          <SubmitButton className={'MobileFilterMenu__SubmitButton'} onClick={onSubmit}>
             Close
           </SubmitButton>
         </Fade>
@@ -99,20 +95,15 @@ export const MobileFilterMenu = ({
       {renderDetails && currentActiveItem && (
         <Fade className={'MobileFilterMenu__Content'} in={!!currentActiveItem} unmountOnExit>
           <div className={'MobileFilterMenu__Header'}>
-            <Flex
-              className={'MobileFilterMenu__BackButton'}
-              onClick={goToMainMenu}
-            >
-              <ChevronIcon transform={'rotate(180deg)'}/>
+            <Flex className={'MobileFilterMenu__BackButton'} onClick={goToMainMenu}>
+              <ChevronIcon transform={'rotate(180deg)'} />
             </Flex>
 
             <div className={'MobileFilterMenu__Title'}>{currentActiveItem.title}</div>
           </div>
 
           <Box className={'MobileFilterMenu__DetailView'}>
-            <Box className={'MobileFilterMenu__Content'}>
-              {currentActiveItem.content}
-            </Box>
+            <Box className={'MobileFilterMenu__Content'}>{currentActiveItem.content}</Box>
           </Box>
         </Fade>
       )}

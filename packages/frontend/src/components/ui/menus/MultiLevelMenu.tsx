@@ -25,7 +25,7 @@ interface MultiLevelMenuProps extends Omit<PopoverProps, 'children' | 'trigger'>
  *
  * Used by Filters (forms) and NavDropdown (links only — no panel).
  */
-function MultiLevelMenu ({
+function MultiLevelMenu({
   menuData = [],
   trigger,
   placement = 'bottom-start',
@@ -63,7 +63,7 @@ function MultiLevelMenu ({
         autoFocus={false}
         returnFocusOnClose={false}
         gutter={4}
-        strategy='absolute'
+        strategy="absolute"
         modifiers={[
           {
             name: 'preventOverflow',
@@ -77,19 +77,23 @@ function MultiLevelMenu ({
           {
             name: 'flip',
             options: {
-              fallbackPlacements: ['bottom-end', 'bottom-start', 'top-end', 'top-start', 'left-start']
+              fallbackPlacements: [
+                'bottom-end',
+                'bottom-start',
+                'top-end',
+                'top-start',
+                'left-start'
+              ]
             }
           }
         ]}
         {...props}
       >
-        <PopoverTrigger>
-          {trigger ?? <Button type='button'>Open menu</Button>}
-        </PopoverTrigger>
+        <PopoverTrigger>{trigger ?? <Button type="button">Open menu</Button>}</PopoverTrigger>
         <PopoverContent
           className={`MultiLevelMenu__Content${showPanel ? ' MultiLevelMenu__Content--WithPanel' : ''}`}
-          width='auto'
-          maxW='min(960px, calc(100vw - 24px))'
+          width="auto"
+          maxW="min(960px, calc(100vw - 24px))"
           rootProps={{ style: { zIndex: 1500 } }}
         >
           <PopoverBody p={0} className={'MultiLevelMenu__Body'}>
@@ -105,14 +109,9 @@ function MultiLevelMenu ({
               {showPanel && (
                 <div className={'MultiLevelMenu__Panel'}>
                   {selected?.content}
-                  {selected?.subMenu?.length
-                    ? (
-                      <MenuLevel
-                        items={selected.subMenu}
-                        onMenuItemClick={handleClose}
-                      />
-                      )
-                    : null}
+                  {selected?.subMenu?.length ? (
+                    <MenuLevel items={selected.subMenu} onMenuItemClick={handleClose} />
+                  ) : null}
                 </div>
               )}
             </div>

@@ -16,19 +16,22 @@ interface EpochCardContentProps {
   status?: Pick<Status, 'epoch'> | null
 }
 
-export function EpochCardContent ({ status }: EpochCardContentProps) {
+export function EpochCardContent({ status }: EpochCardContentProps) {
   return (
     <div className={'EpochCardContent'}>
-      {typeof status?.epoch?.number === 'number'
-        ? <EpochTooltip epoch={status.epoch}>
+      {typeof status?.epoch?.number === 'number' ? (
+        <EpochTooltip epoch={status.epoch}>
           <div className={'ValidatorsTotalCard__EpochNumber'}>
             #{status.epoch.number}
-            <InfoIcon ml={2} color={'brand.light'} boxSize={4}/>
+            <InfoIcon ml={2} color={'brand.light'} boxSize={4} />
           </div>
         </EpochTooltip>
-        : <NotActive />}
-      {status?.epoch &&
-        <EpochProgress epoch={status.epoch} className={'EpochCardContent__EpochProgress'}/>}
+      ) : (
+        <NotActive />
+      )}
+      {status?.epoch && (
+        <EpochProgress epoch={status.epoch} className={'EpochCardContent__EpochProgress'} />
+      )}
     </div>
   )
 }

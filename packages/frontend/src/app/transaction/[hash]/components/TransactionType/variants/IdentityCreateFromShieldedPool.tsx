@@ -1,11 +1,7 @@
 import { ValueCard } from '@components/cards'
 import { InfoLine, Identifier } from '@components/data'
 import { AssetLockProof } from '../AssetLockProof'
-import {
-  ShieldedActions,
-  AmountInfoLine,
-  HashInfoLine
-} from '../ShieldedCommon'
+import { ShieldedActions, AmountInfoLine, HashInfoLine } from '../ShieldedCommon'
 import type { AssetLockProofData, ShieldedAction, WithRate } from '../../types'
 
 interface IdentityCreateFromShieldedPoolProps extends WithRate {
@@ -35,8 +31,8 @@ export const IdentityCreateFromShieldedPool = ({
   <>
     {identityId && (
       <InfoLine
-        className='TransactionPage__InfoLine TransactionPage__InfoLine--FullWidth'
-        title='Identity'
+        className="TransactionPage__InfoLine TransactionPage__InfoLine--FullWidth"
+        title="Identity"
         value={
           <ValueCard link={`/identity/${identityId}`}>
             <Identifier avatar copyButton ellipsis styles={['highlight-both']}>
@@ -47,13 +43,13 @@ export const IdentityCreateFromShieldedPool = ({
       />
     )}
 
-    <AmountInfoLine title='Amount' amount={amount} rate={rate} />
-    <AmountInfoLine title='Value Balance' amount={valueBalance} rate={rate} />
+    <AmountInfoLine title="Amount" amount={amount} rate={rate} />
+    <AmountInfoLine title="Value Balance" amount={valueBalance} rate={rate} />
     {assetLockProof && <AssetLockProof assetLockProof={assetLockProof} />}
     <ShieldedActions actions={actions} />
-    <HashInfoLine title='Anchor' value={anchor} />
-    <HashInfoLine title='Bindings Signature' value={bindingsSignature} />
-    <HashInfoLine title='Signature' value={signature} />
-    <HashInfoLine title='Proof' value={proof} />
+    <HashInfoLine title="Anchor" value={anchor} />
+    <HashInfoLine title="Bindings Signature" value={bindingsSignature} />
+    <HashInfoLine title="Signature" value={signature} />
+    <HashInfoLine title="Proof" value={proof} />
   </>
 )

@@ -33,7 +33,7 @@ interface HoldersListProps {
   itemsCount?: number
 }
 
-export default function HoldersList ({
+export default function HoldersList({
   holders = [],
   headerStyles,
   pagination,
@@ -47,7 +47,9 @@ export default function HoldersList ({
 
   return (
     <div className={'HoldersList'}>
-      <Grid className={`HoldersList__ColumnTitles ${headerStyles ? headerExtraClass[headerStyles] || '' : ''}`}>
+      <Grid
+        className={`HoldersList__ColumnTitles ${headerStyles ? headerExtraClass[headerStyles] || '' : ''}`}
+      >
         <GridItem className={'HoldersList__ColumnTitle HoldersList__ColumnTitle--Holder'}>
           Holder
         </GridItem>
@@ -62,20 +64,19 @@ export default function HoldersList ({
         </GridItem>
       </Grid>
 
-      {!loading
-        ? <div className={'HoldersList__Items'}>
-          {holders?.map((holder, key) =>
-            <HoldersListItem holder={holder} key={key}/>
-          )}
-          {holders?.length === 0 &&
-            <EmptyListMessage>There are no holders yet.</EmptyListMessage>
-          }
-          {holders === undefined && <ErrorMessageBlock/>}
+      {!loading ? (
+        <div className={'HoldersList__Items'}>
+          {holders?.map((holder, key) => (
+            <HoldersListItem holder={holder} key={key} />
+          ))}
+          {holders?.length === 0 && <EmptyListMessage>There are no holders yet.</EmptyListMessage>}
+          {holders === undefined && <ErrorMessageBlock />}
         </div>
-        : <LoadingList itemsCount={itemsCount}/>
-      }
+      ) : (
+        <LoadingList itemsCount={itemsCount} />
+      )}
 
-      {pagination &&
+      {pagination && (
         <Pagination
           className={'HoldersList__Pagination'}
           onPageChange={pagination.onPageChange}
@@ -83,7 +84,7 @@ export default function HoldersList ({
           forcePage={pagination.forcePage}
           justify={true}
         />
-      }
+      )}
     </div>
   )
 }

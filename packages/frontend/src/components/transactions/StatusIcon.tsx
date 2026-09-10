@@ -6,15 +6,15 @@ interface StatusIconProps extends IconProps {
   status?: string | null
 }
 
-function StatusIcon ({ status, ...props }: StatusIconProps) {
+function StatusIcon({ status, ...props }: StatusIconProps) {
   if (!status) return <></>
 
   const StatusIcons: Record<string, ReactElement> = {
-    SUCCESS: <SuccessIcon {...props}/>,
-    FAIL: <ErrorIcon {...props}/>,
-    QUEUED: <QueuedIcon {...props}/>,
-    POOLED: <PooledIcon {...props}/>,
-    BROADCASTED: <BroadcastedIcon {...props}/>
+    SUCCESS: <SuccessIcon {...props} />,
+    FAIL: <ErrorIcon {...props} />,
+    QUEUED: <QueuedIcon {...props} />,
+    POOLED: <PooledIcon {...props} />,
+    BROADCASTED: <BroadcastedIcon {...props} />
   }
 
   return StatusIcons[status] || <></>

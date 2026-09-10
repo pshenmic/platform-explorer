@@ -25,12 +25,7 @@ export const IdentityCreditTransfer = ({
       title={'Sender'}
       value={
         <ValueCard link={`/identity/${senderId}`}>
-          <Identifier
-            avatar={true}
-            copyButton={true}
-            ellipsis={true}
-            styles={['highlight-both']}
-          >
+          <Identifier avatar={true} copyButton={true} ellipsis={true} styles={['highlight-both']}>
             {senderId}
           </Identifier>
         </ValueCard>
@@ -44,12 +39,7 @@ export const IdentityCreditTransfer = ({
       title={'Recipient'}
       value={
         <ValueCard link={`/identity/${recipientId}`}>
-          <Identifier
-            avatar={true}
-            copyButton={true}
-            ellipsis={true}
-            styles={['highlight-both']}
-          >
+          <Identifier avatar={true} copyButton={true} ellipsis={true} styles={['highlight-both']}>
             {recipientId}
           </Identifier>
         </ValueCard>

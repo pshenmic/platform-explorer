@@ -32,7 +32,11 @@ const buildPreProgrammedDistribution = (
     const ts = Date.parse(row.time)
     if (Number.isNaN(ts)) continue
     let scaled: string
-    try { scaled = String(BigInt(row.amount) * scale) } catch { continue }
+    try {
+      scaled = String(BigInt(row.amount) * scale)
+    } catch {
+      continue
+    }
     const key = String(ts)
     if (!distributions[key]) distributions[key] = {}
     distributions[key][row.identity.trim()] = scaled
@@ -45,7 +49,11 @@ const buildPerpetualDistribution = (form: TokenForm, scale: bigint) => {
   const intervalValue = Number(form.perpetualIntervalValue)
   if (!intervalValue || intervalValue <= 0) return null
   let amountScaled: string
-  try { amountScaled = String(BigInt(form.perpetualAmount || '0') * scale) } catch { return null }
+  try {
+    amountScaled = String(BigInt(form.perpetualAmount || '0') * scale)
+  } catch {
+    return null
+  }
   if (amountScaled === '0') return null
 
   const type = form.perpetualType || 'time'
@@ -76,12 +84,9 @@ export const buildTokenConfiguration = (form: TokenForm) => {
   // Supply is multiplied by 10^decimals before broadcast. DPP caps decimals at 16.
   const decimals = Math.min(16, Number(form.decimals) || 0)
   const scale = 10n ** BigInt(decimals)
-  const baseSupply = form.baseSupply
-    ? String(BigInt(form.baseSupply) * scale)
-    : '0'
-  const maxSupply = form.hasMaxSupply && form.maxSupply
-    ? String(BigInt(form.maxSupply) * scale)
-    : null
+  const baseSupply = form.baseSupply ? String(BigInt(form.baseSupply) * scale) : '0'
+  const maxSupply =
+    form.hasMaxSupply && form.maxSupply ? String(BigInt(form.maxSupply) * scale) : null
 
   const history = form.keepsHistory || {}
   return {

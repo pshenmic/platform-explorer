@@ -1,7 +1,17 @@
 'use client'
 
 import { useOutsideClick } from '../../../hooks/useOutsideClick'
-import { Popover, PopoverContent, PopoverArrow, PopoverCloseButton, PopoverBody, PopoverHeader, PopoverTrigger, useDisclosure, Box } from '@chakra-ui/react'
+import {
+  Popover,
+  PopoverContent,
+  PopoverArrow,
+  PopoverCloseButton,
+  PopoverBody,
+  PopoverHeader,
+  PopoverTrigger,
+  useDisclosure,
+  Box
+} from '@chakra-ui/react'
 import type { PopoverProps, PopoverContentProps } from '@chakra-ui/react'
 import { useEffect, useRef } from 'react'
 import type { ReactNode } from 'react'
@@ -43,7 +53,7 @@ const CustomPopover = ({
 
   useOutsideClick({
     ref: popoverRef,
-    handler: (event) => {
+    handler: event => {
       const target = event.target as Node
       if (
         popoverRef?.current &&
@@ -65,11 +75,7 @@ const CustomPopover = ({
       {...popoverProps}
     >
       <PopoverTrigger>
-        <Box
-          ref={triggerRef}
-          onClick={handleToggle}
-          display='inline-block'
-        >
+        <Box ref={triggerRef} onClick={handleToggle} display="inline-block">
           {trigger}
         </Box>
       </PopoverTrigger>

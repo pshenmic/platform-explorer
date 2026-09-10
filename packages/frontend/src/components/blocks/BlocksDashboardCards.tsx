@@ -9,9 +9,17 @@ import { DashboardCards } from '../cards'
 import { BlockIcon, HourglassIcon, TransactionsIcon } from '../ui/icons'
 import { EpochCardContent } from '../cards/dashboard'
 
-export default function BlocksDashboardCards () {
-  const [status, setStatus] = useState<LoadableState<Partial<Status>>>({ data: {}, loading: true, error: false })
-  const [epoch, setEpoch] = useState<LoadableState<Partial<EpochData>>>({ data: {}, loading: true, error: false })
+export default function BlocksDashboardCards() {
+  const [status, setStatus] = useState<LoadableState<Partial<Status>>>({
+    data: {},
+    loading: true,
+    error: false
+  })
+  const [epoch, setEpoch] = useState<LoadableState<Partial<EpochData>>>({
+    data: {},
+    loading: true,
+    error: false
+  })
 
   const fetchData = () => {
     Api.getStatus()
@@ -35,8 +43,12 @@ export default function BlocksDashboardCards () {
       cards={[
         {
           title: 'Epoch',
-          value: <EpochCardContent status={status?.data ? { epoch: status.data.epoch ?? null } : null}/>,
-          error: typeof status?.data?.epoch?.number !== 'number' && typeof status?.data?.epoch?.number !== 'string',
+          value: (
+            <EpochCardContent status={status?.data ? { epoch: status.data.epoch ?? null } : null} />
+          ),
+          error:
+            typeof status?.data?.epoch?.number !== 'number' &&
+            typeof status?.data?.epoch?.number !== 'string',
           loading: status.loading
         },
         {
@@ -49,14 +61,18 @@ export default function BlocksDashboardCards () {
         {
           title: 'Blocks',
           value: currencyRound(status.data?.api?.block?.height ?? 0),
-          error: typeof status?.data?.api?.block?.height !== 'number' && typeof status?.data?.api?.block?.height !== 'string',
+          error:
+            typeof status?.data?.api?.block?.height !== 'number' &&
+            typeof status?.data?.api?.block?.height !== 'string',
           loading: status.loading,
           icon: BlockIcon
         },
         {
           title: 'Transactions',
           value: currencyRound(status.data?.transactionsCount ?? 0),
-          error: typeof status.data?.transactionsCount !== 'number' && typeof status.data?.transactionsCount !== 'string',
+          error:
+            typeof status.data?.transactionsCount !== 'number' &&
+            typeof status.data?.transactionsCount !== 'string',
           loading: status.loading,
           icon: TransactionsIcon
         }

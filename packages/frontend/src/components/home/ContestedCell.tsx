@@ -10,9 +10,11 @@ import type { ContestedResource, LoadableState, PaginatedResultSet } from '../..
 // the rotator and the dot pager must share one list, or the active dot runs off the pager
 const FEED_LIMIT = 6
 
-type ContestedFeedState = LoadableState<PaginatedResultSet<ContestedResource>> | {
-  data?: PaginatedResultSet<ContestedResource> | null
-}
+type ContestedFeedState =
+  | LoadableState<PaginatedResultSet<ContestedResource>>
+  | {
+      data?: PaginatedResultSet<ContestedResource> | null
+    }
 
 interface ContestedCellProps {
   count?: number | null
@@ -21,7 +23,7 @@ interface ContestedCellProps {
 }
 
 // Count + pill (left); rotating active/latest contested name over bullet dots (right).
-export function ContestedCell ({ count, active, latest }: ContestedCellProps) {
+export function ContestedCell({ count, active, latest }: ContestedCellProps) {
   const activeItems = active?.data?.resultSet || []
   const latestItems = latest?.data?.resultSet || []
   const feed = (activeItems.length > 0 ? activeItems : latestItems).slice(0, FEED_LIMIT)
@@ -41,7 +43,7 @@ export function ContestedCell ({ count, active, latest }: ContestedCellProps) {
         <span className={'HomeHero__GovCountLabel'}>names</span>
       </div>
 
-      {item &&
+      {item && (
         <div
           className={'HomeHero__GovFeed'}
           onMouseEnter={rotator.onMouseEnter}
@@ -49,16 +51,26 @@ export function ContestedCell ({ count, active, latest }: ContestedCellProps) {
         >
           {/* key remounts the ticker so each rotation slides in; .dash TLD gets the brand accent */}
           <span key={rotator.index} className={'HomeHero__GovTicker'}>
-            <Link href={contestedHref(item.resourceValue)} className={'HomeHero__ContestedName'} title={name ?? undefined}>
+            <Link
+              href={contestedHref(item.resourceValue)}
+              className={'HomeHero__ContestedName'}
+              title={name ?? undefined}
+            >
               {(() => {
                 // middle-trim keeps both ends readable; the .dash suffix stays and is accented
                 const { text, dash } = trimName(name)
-                return <>{text}{dash && <span className={'HomeHero__GovTld'}>.dash</span>}</>
+                return (
+                  <>
+                    {text}
+                    {dash && <span className={'HomeHero__GovTld'}>.dash</span>}
+                  </>
+                )
               })()}
             </Link>
           </span>
-          <GovDots count={dotCount} index={rotator.index} setIndex={rotator.setIndex}/>
-        </div>}
+          <GovDots count={dotCount} index={rotator.index} setIndex={rotator.setIndex} />
+        </div>
+      )}
     </div>
   )
 }

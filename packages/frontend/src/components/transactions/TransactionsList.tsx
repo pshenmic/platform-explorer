@@ -6,11 +6,7 @@ import { Grid, GridItem } from '@chakra-ui/react'
 import { LoadingList as LoadingListJs } from '../loading'
 import PaginationJs from '../pagination'
 import { ErrorMessageBlock } from '../Errors'
-import {
-  createColumnHelper,
-  getCoreRowModel,
-  useReactTable
-} from '@tanstack/react-table'
+import { createColumnHelper, getCoreRowModel, useReactTable } from '@tanstack/react-table'
 import type { Rate, Transaction } from '../../types'
 
 import './TransactionsList.css'
@@ -75,7 +71,7 @@ interface TransactionsListProps {
   absoluteDate?: boolean
 }
 
-export default function TransactionsList ({
+export default function TransactionsList({
   transactions = [],
   showMoreLink,
   headerStyles = 'default',
@@ -107,7 +103,9 @@ export default function TransactionsList ({
         <GridItem className={'TransactionsList__ColumnTitle TransactionsList__ColumnTitle--Block'}>
           Block
         </GridItem>
-        <GridItem className={'TransactionsList__ColumnTitle TransactionsList__ColumnTitle--GasUsed'}>
+        <GridItem
+          className={'TransactionsList__ColumnTitle TransactionsList__ColumnTitle--GasUsed'}
+        >
           Gas used
         </GridItem>
         <GridItem className={'TransactionsList__ColumnTitle TransactionsList__ColumnTitle--Owner'}>
@@ -116,28 +114,33 @@ export default function TransactionsList ({
         <GridItem className={'TransactionsList__ColumnTitle TransactionsList__ColumnTitle--Type'}>
           Type
         </GridItem>
-        <GridItem className={'TransactionsList__ColumnTitle TransactionsList__ColumnTitle--Timestamp'}>
+        <GridItem
+          className={'TransactionsList__ColumnTitle TransactionsList__ColumnTitle--Timestamp'}
+        >
           Timestamp
         </GridItem>
       </Grid>
 
-      {!loading
-        ? <div className={'TransactionsList__Items'}>
-            {table.getRowModel().rows.map((row) => (
-              <TransactionsListItem
-                key={row.id}
-                transaction={row.original}
-                rate={rate}
-                absoluteDate={absoluteDate}
-              />
-            ))}
-            {transactions?.length === 0 && <EmptyListMessage>There are no transactions yet.</EmptyListMessage>}
-            {transactions === undefined && <ErrorMessageBlock />}
-          </div>
-        : <LoadingList itemsCount={itemsCount} />
-      }
+      {!loading ? (
+        <div className={'TransactionsList__Items'}>
+          {table.getRowModel().rows.map(row => (
+            <TransactionsListItem
+              key={row.id}
+              transaction={row.original}
+              rate={rate}
+              absoluteDate={absoluteDate}
+            />
+          ))}
+          {transactions?.length === 0 && (
+            <EmptyListMessage>There are no transactions yet.</EmptyListMessage>
+          )}
+          {transactions === undefined && <ErrorMessageBlock />}
+        </div>
+      ) : (
+        <LoadingList itemsCount={itemsCount} />
+      )}
 
-      {pagination &&
+      {pagination && (
         <Pagination
           className={'TransactionsList__Pagination'}
           onPageChange={pagination.onPageChange}
@@ -145,8 +148,12 @@ export default function TransactionsList ({
           forcePage={pagination.forcePage}
           justify={true}
         />
-      }
-      {showMoreLink && <Link href={showMoreLink} className={'SimpleList__ShowMoreButton'}>Show more</Link>}
+      )}
+      {showMoreLink && (
+        <Link href={showMoreLink} className={'SimpleList__ShowMoreButton'}>
+          Show more
+        </Link>
+      )}
     </div>
   )
 }

@@ -21,9 +21,16 @@ import type { ContestedResource, LoadableState, Rate, WithClassName } from '../.
 import './ContestedResourceTotalCard.css'
 
 // Untyped JS components — loose wrappers until data/* / cards/* are migrated
-const Alias = AliasJs as ComponentType<{ children?: ReactNode, className?: string, ellipsis?: boolean }>
-const CreditsBlock = CreditsBlockJs as ComponentType<{ credits?: string | number | null, rate?: unknown }>
-const DateBlock = DateBlockJs as ComponentType<{ timestamp?: string | null, showTime?: boolean }>
+const Alias = AliasJs as ComponentType<{
+  children?: ReactNode
+  className?: string
+  ellipsis?: boolean
+}>
+const CreditsBlock = CreditsBlockJs as ComponentType<{
+  credits?: string | number | null
+  rate?: unknown
+}>
+const DateBlock = DateBlockJs as ComponentType<{ timestamp?: string | null; showTime?: boolean }>
 const Identifier = IdentifierJs as ComponentType<{
   children?: ReactNode
   avatar?: boolean
@@ -39,26 +46,33 @@ const InfoLine = InfoLineJs as ComponentType<{
   error?: unknown
   className?: string
 }>
-const ValueCard = ValueCardJs as ComponentType<{ children?: ReactNode, link?: string, className?: string }>
+const ValueCard = ValueCardJs as ComponentType<{
+  children?: ReactNode
+  link?: string
+  className?: string
+}>
 
 /** Enriched contenders / prefunded balance shapes used by this card. */
-interface ContestedResourceDetail extends Omit<ContestedResource, 'contenders' | 'prefundedVotingBalance'> {
+interface ContestedResourceDetail
+  extends Omit<ContestedResource, 'contenders' | 'prefundedVotingBalance'> {
   contenders?: Contender[] | null
   prefundedVotingBalance?: Record<string, string | number | null> | string | null
 }
 
 interface ContestedResourceTotalCardProps extends WithClassName {
-  contestedResource: LoadableState<ContestedResourceDetail> | {
-    data?: ContestedResourceDetail | null
-    loading?: boolean
-    error?: unknown
-  }
+  contestedResource:
+    | LoadableState<ContestedResourceDetail>
+    | {
+        data?: ContestedResourceDetail | null
+        loading?: boolean
+        error?: unknown
+      }
   rate?: LoadableState<Rate> | { data?: Rate | null } | null
   refresh?: () => void
   isPollingAfterVote?: boolean
 }
 
-function ContestedResourceTotalCard ({
+function ContestedResourceTotalCard({
   contestedResource,
   rate,
   className,
@@ -90,9 +104,10 @@ function ContestedResourceTotalCard ({
     []
   )
 
-  const prefundedBalance = typeof data?.prefundedVotingBalance === 'object' && data?.prefundedVotingBalance !== null
-    ? data.prefundedVotingBalance[data.indexName]
-    : null
+  const prefundedBalance =
+    typeof data?.prefundedVotingBalance === 'object' && data?.prefundedVotingBalance !== null
+      ? data.prefundedVotingBalance[data.indexName]
+      : null
 
   return (
     <InfoBlock
@@ -101,9 +116,7 @@ function ContestedResourceTotalCard ({
       className={`ContestedResourcesTotalCard ${loading ? 'ContestedResourceTotalCard--Loading' : ''} ${className || ''}`}
     >
       <div className={'ContestedResourcesTotalCard__Title'}>
-        <Alias>
-          {contestedResources.getResourceValue(data?.resourceValue)}
-        </Alias>
+        <Alias>{contestedResources.getResourceValue(data?.resourceValue)}</Alias>
       </div>
 
       <div className={'ContestedResourcesTotalCard__ContentContainer'}>
@@ -117,9 +130,7 @@ function ContestedResourceTotalCard ({
                 error={error}
                 value={
                   <Alias>
-                    {contestedResources.getResourceValue(
-                      contestedResource?.data?.resourceValue
-                    )}
+                    {contestedResources.getResourceValue(contestedResource?.data?.resourceValue)}
                   </Alias>
                 }
               />
@@ -132,14 +143,8 @@ function ContestedResourceTotalCard ({
                 loading={loading}
                 error={error || !data?.dataContractIdentifier}
                 value={
-                  <ValueCard
-                    link={`/dataContract/${data?.dataContractIdentifier}`}
-                  >
-                    <Identifier
-                      styles={['highlight-both']}
-                      ellipsis={false}
-                      avatar={true}
-                    >
+                  <ValueCard link={`/dataContract/${data?.dataContractIdentifier}`}>
+                    <Identifier styles={['highlight-both']} ellipsis={false} avatar={true}>
                       {data?.dataContractIdentifier}
                     </Identifier>
                   </ValueCard>
@@ -172,9 +177,7 @@ function ContestedResourceTotalCard ({
             </div>
           </div>
 
-          <HorisontalSeparator
-            className={'ContestedResourcesTotalCard__Separator'}
-          />
+          <HorisontalSeparator className={'ContestedResourcesTotalCard__Separator'} />
 
           <div className={'ContestedResourcesTotalCard__CommonInfo'}>
             <InfoLine
@@ -186,29 +189,16 @@ function ContestedResourceTotalCard ({
 
             <InfoLine
               title={'Prefunding Voting Balance'}
-              value={
-                <CreditsBlock
-                  credits={prefundedBalance}
-                  rate={rate}
-                />
-              }
+              value={<CreditsBlock credits={prefundedBalance} rate={rate} />}
               loading={loading}
-              error={
-                error ||
-                prefundedBalance === null ||
-                prefundedBalance === undefined
-              }
+              error={error || prefundedBalance === null || prefundedBalance === undefined}
             />
 
             <InfoLine
               title={'Gas Fees'}
               value={<CreditsBlock credits={data?.totalGasUsed} rate={rate} />}
               loading={loading}
-              error={
-                error ||
-                data?.totalGasUsed === null ||
-                data?.totalGasUsed === undefined
-              }
+              error={error || data?.totalGasUsed === null || data?.totalGasUsed === undefined}
             />
           </div>
         </div>

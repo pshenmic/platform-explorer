@@ -33,11 +33,7 @@ export const TokenConfiguration = ({
           <InfoLine
             title={'Token Position'}
             value={
-              <ValueContainer
-                className={styles.position}
-                size={'sm'}
-                colorScheme={'gray'}
-              >
+              <ValueContainer className={styles.position} size={'sm'} colorScheme={'gray'}>
                 {position}
               </ValueContainer>
             }
@@ -63,22 +59,14 @@ export const TokenConfiguration = ({
         )}
 
         {conventions?.decimals != null && !Number.isNaN(Number(conventions.decimals)) && (
-          <InfoLine
-            title={'Decimals'}
-            value={conventions.decimals}
-          />
+          <InfoLine title={'Decimals'} value={conventions.decimals} />
         )}
         {conventions?.localizations && (
           <InfoLine
             className={styles.localization}
             title={<b>Localization:</b>}
-            postfix=''
-            value={
-              <LocalisationGrid
-                localisations={conventions.localizations}
-                isOpen
-              />
-            }
+            postfix=""
+            value={<LocalisationGrid localisations={conventions.localizations} isOpen />}
           />
         )}
 

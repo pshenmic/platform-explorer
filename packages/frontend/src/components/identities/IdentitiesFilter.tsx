@@ -24,13 +24,17 @@ const identityTypeOptions = [
 ]
 
 const pickIdentityType = (values: unknown[] | null | undefined) => {
-  if (!Array.isArray(values) || values.length === 0 || values.length === identityTypeOptions.length) {
+  if (
+    !Array.isArray(values) ||
+    values.length === 0 ||
+    values.length === identityTypeOptions.length
+  ) {
     return undefined
   }
   return values[0]
 }
 
-const rangeFormat = ({ min, max }: { min?: string | number, max?: string | number }) => {
+const rangeFormat = ({ min, max }: { min?: string | number; max?: string | number }) => {
   if (min && max) return `${min} – ${max}`
   if (min) return `Min ${min}`
   if (max) return `Max ${max}`
@@ -100,7 +104,12 @@ interface IdentitiesFilterProps {
   className?: string
 }
 
-export const IdentitiesFilter = ({ initialFilters, onFilterChange, isMobile, className }: IdentitiesFilterProps) => {
+export const IdentitiesFilter = ({
+  initialFilters,
+  onFilterChange,
+  isMobile,
+  className
+}: IdentitiesFilterProps) => {
   return (
     <Filters
       filtersConfig={filtersConfig}

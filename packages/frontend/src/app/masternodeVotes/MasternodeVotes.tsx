@@ -31,7 +31,7 @@ interface MasternodeVotesProps {
   defaultPageSize?: number
 }
 
-function MasternodeVotes ({ defaultPage = 1, defaultPageSize }: MasternodeVotesProps) {
+function MasternodeVotes({ defaultPage = 1, defaultPageSize }: MasternodeVotesProps) {
   const [masternodeVotes, setMasternodeVotes] = useState<LoadableState<PaginatedResultSet<Vote>>>({
     data: {} as PaginatedResultSet<Vote>,
     props: { currentPage: 0 },
@@ -57,18 +57,15 @@ function MasternodeVotes ({ defaultPage = 1, defaultPageSize }: MasternodeVotesP
     setMasternodeVotes(prev => ({ ...prev, loading: true, error: false }))
 
     const fetchData = async () => {
-      Api.getMasternodeVotes(
-        Math.max(1, currentPage + 1),
-        Math.max(1, pageSize),
-        'desc',
-        filters
-      ).then(res => {
-        setTotal(res?.pagination?.total)
-        fetchHandlerSuccess(setMasternodeVotes, res)
-      }).catch(err => {
-        setTotal(0)
-        fetchHandlerError(setMasternodeVotes, err)
-      })
+      Api.getMasternodeVotes(Math.max(1, currentPage + 1), Math.max(1, pageSize), 'desc', filters)
+        .then(res => {
+          setTotal(res?.pagination?.total)
+          fetchHandlerSuccess(setMasternodeVotes, res)
+        })
+        .catch(err => {
+          setTotal(0)
+          fetchHandlerError(setMasternodeVotes, err)
+        })
     }
 
     fetchData()
@@ -77,13 +74,18 @@ function MasternodeVotes ({ defaultPage = 1, defaultPageSize }: MasternodeVotesP
   useEffect(() => {
     const page = parseInt(searchParams.get('page') || '', 10) || paginateConfig.defaultPage
     setCurrentPage(Math.max(page - 1, 0))
-    setPageSize(parseInt(searchParams.get('page-size') || '', 10) || paginateConfig.pageSize.default)
+    setPageSize(
+      parseInt(searchParams.get('page-size') || '', 10) || paginateConfig.pageSize.default
+    )
   }, [searchParams, pathname])
 
   useEffect(() => {
     const urlParameters = new URLSearchParams(Array.from(searchParams.entries()))
 
-    if (currentPage + 1 === paginateConfig.defaultPage && pageSize === paginateConfig.pageSize.default) {
+    if (
+      currentPage + 1 === paginateConfig.defaultPage &&
+      pageSize === paginateConfig.pageSize.default
+    ) {
       urlParameters.delete('page')
       urlParameters.delete('page-size')
     } else {
@@ -92,7 +94,6 @@ function MasternodeVotes ({ defaultPage = 1, defaultPageSize }: MasternodeVotesP
     }
 
     router.push(`${pathname}?${urlParameters.toString()}`, { scroll: false })
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentPage, pageSize])
 
   return (
@@ -103,15 +104,15 @@ function MasternodeVotes ({ defaultPage = 1, defaultPageSize }: MasternodeVotesP
       mb={8}
       className={'MasternodeVotes'}
     >
-      <Container
-        maxW={'container.maxPageW'}
-        _dark={{ color: 'white' }}
-        className={'InfoBlock'}
-      >
+      <Container maxW={'container.maxPageW'} _dark={{ color: 'white' }} className={'InfoBlock'}>
         <div className={'MasternodeVotes__Controls'}>
-          <PageTitle title={'Masternode Votes'} description={introContent} className={'MasternodeVotes__Title'}/>
+          <PageTitle
+            title={'Masternode Votes'}
+            description={introContent}
+            className={'MasternodeVotes__Title'}
+          />
 
-          <MasternodeVotesStatsInline className={'MasternodeVotes__Stats'} total={total}/>
+          <MasternodeVotesStatsInline className={'MasternodeVotes__Stats'} total={total} />
 
           <MasternodeVotesFilters
             onFilterChange={filtersChangeHandler}
@@ -120,17 +121,21 @@ function MasternodeVotes ({ defaultPage = 1, defaultPageSize }: MasternodeVotesP
           />
         </div>
 
-        {!masternodeVotes.error
-          ? <VotesList
-              votes={masternodeVotes.data?.resultSet as never}
-              itemsCount={pageSize}
-              loading={masternodeVotes.loading}
-            />
-          : <Container h={20}><ErrorMessageBlock/></Container>}
+        {!masternodeVotes.error ? (
+          <VotesList
+            votes={masternodeVotes.data?.resultSet as never}
+            itemsCount={pageSize}
+            loading={masternodeVotes.loading}
+          />
+        ) : (
+          <Container h={20}>
+            <ErrorMessageBlock />
+          </Container>
+        )}
 
-        {(masternodeVotes.data?.resultSet?.length ?? 0) > 0 &&
+        {(masternodeVotes.data?.resultSet?.length ?? 0) > 0 && (
           <div className={'ListNavigation'}>
-            <Box display={['none', 'none', 'block']} width={'210px'}/>
+            <Box display={['none', 'none', 'block']} width={'210px'} />
             <Pagination
               onPageChange={({ selected }) => setCurrentPage(selected)}
               pageCount={pageCount}
@@ -142,7 +147,7 @@ function MasternodeVotes ({ defaultPage = 1, defaultPageSize }: MasternodeVotesP
               items={paginateConfig.pageSize.values}
             />
           </div>
-        }
+        )}
       </Container>
     </Container>
   )

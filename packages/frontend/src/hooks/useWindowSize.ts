@@ -13,13 +13,15 @@ const useWindowSize = ({ useVisualViewport = false }: UseWindowSizeOptions = {})
   const getSize = (): WindowSize => {
     if (typeof window === 'undefined') return { width: 0, height: 0 }
 
-    const width = useVisualViewport && window?.visualViewport
-      ? window.visualViewport?.width
-      : window?.innerWidth
+    const width =
+      useVisualViewport && window?.visualViewport
+        ? window.visualViewport?.width
+        : window?.innerWidth
 
-    const height = useVisualViewport && window?.visualViewport
-      ? window.visualViewport?.height
-      : window?.innerHeight
+    const height =
+      useVisualViewport && window?.visualViewport
+        ? window.visualViewport?.height
+        : window?.innerHeight
 
     return { width, height }
   }

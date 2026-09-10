@@ -42,17 +42,12 @@ export const AddressFundsTransfer = ({
                 <Flex
                   direction={{ base: 'column', lg: 'row' }}
                   align={{ lg: 'center' }}
-                  justify='space-between'
+                  justify="space-between"
                   gap={4}
-                  w='100%'
+                  w="100%"
                 >
                   <ValueCard link={`/platformAddress/${input.platformAddress.bech32m}`}>
-                    <Identifier
-                      avatar
-                      copyButton
-                      ellipsis
-                      styles={['highlight-both']}
-                    >
+                    <Identifier avatar copyButton ellipsis styles={['highlight-both']}>
                       {input.platformAddress.bech32m}
                     </Identifier>
                   </ValueCard>
@@ -68,9 +63,7 @@ export const AddressFundsTransfer = ({
 
     {inputWitness && inputWitness.length > 0 && (
       <InfoLine
-        className={
-          'TransactionPage__InfoLine TransactionPage__InfoLine--FullWidth'
-        }
+        className={'TransactionPage__InfoLine TransactionPage__InfoLine--FullWidth'}
         title={`Input Witness (${inputWitness.length})`}
         align={inputWitness.length !== 1 ? 'top' : undefined}
         value={
@@ -85,18 +78,14 @@ export const AddressFundsTransfer = ({
                   gap={4}
                 >
                   <Text>Type:</Text>
-                  <GridItem width='fit-content' minW='min-content'>
+                  <GridItem width="fit-content" minW="min-content">
                     <ValueCard>{witness.type}</ValueCard>
                   </GridItem>
 
                   <Text>Signature:</Text>
                   <ValueCard>
                     {witness.value && witness.value.signature && (
-                      <Identifier
-                        copyButton
-                        ellipsis
-                        styles={['highlight-both']}
-                      >
+                      <Identifier copyButton ellipsis styles={['highlight-both']}>
                         {witness.value.signature}
                       </Identifier>
                     )}
@@ -112,9 +101,7 @@ export const AddressFundsTransfer = ({
     {outputs && outputs.length > 0 && (
       <InfoLine
         align={outputs.length !== 1 ? 'top' : undefined}
-        className={
-          'TransactionPage__InfoLine TransactionPage__InfoLine--FullWidth'
-        }
+        className={'TransactionPage__InfoLine TransactionPage__InfoLine--FullWidth'}
         title={`Outputs (${outputs.length})`}
         value={
           <Stack gap={2}>
@@ -123,16 +110,14 @@ export const AddressFundsTransfer = ({
                 <Grid
                   gap={4}
                   templateColumns={{ base: '1fr', lg: '1fr 200px' }}
-                  w='100%'
-                  alignItems='center'
+                  w="100%"
+                  alignItems="center"
                 >
-                  <ValueCard className='TransactionPage__AddressCard' link={`/platformAddress/${output.platformAddress.bech32m}`}>
-                    <Identifier
-                      avatar
-                      copyButton
-                      ellipsis
-                      styles={['highlight-both']}
-                    >
+                  <ValueCard
+                    className="TransactionPage__AddressCard"
+                    link={`/platformAddress/${output.platformAddress.bech32m}`}
+                  >
+                    <Identifier avatar copyButton ellipsis styles={['highlight-both']}>
                       {output.platformAddress.bech32m}
                     </Identifier>
                   </ValueCard>
@@ -147,9 +132,7 @@ export const AddressFundsTransfer = ({
 
     {feeStrategy && feeStrategy.length > 0 && (
       <InfoLine
-        className={
-          'TransactionPage__InfoLine TransactionPage__InfoLine--FullWidth'
-        }
+        className={'TransactionPage__InfoLine TransactionPage__InfoLine--FullWidth'}
         title={'Fee Strategy'}
         align={feeStrategy.length !== 1 ? 'top' : undefined}
         value={

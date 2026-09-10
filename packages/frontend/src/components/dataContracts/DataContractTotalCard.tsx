@@ -73,31 +73,36 @@ interface DataContractDetail {
 }
 
 interface DataContractTotalCardProps extends WithClassName {
-  dataContract: LoadableState<DataContractDetail> | {
-    data?: DataContractDetail | null
-    loading?: boolean
-    error?: unknown
-  }
+  dataContract:
+    | LoadableState<DataContractDetail>
+    | {
+        data?: DataContractDetail | null
+        loading?: boolean
+        error?: unknown
+      }
 }
 
-function DataContractTotalCard ({ dataContract, className }: DataContractTotalCardProps) {
+function DataContractTotalCard({ dataContract, className }: DataContractTotalCardProps) {
   const owner = dataContract?.data?.owner
   const ownerId = typeof owner === 'object' && owner !== null ? owner.identifier : owner
   const ownerAliases = typeof owner === 'object' && owner !== null ? owner.aliases : undefined
   const activeAlias = findActiveAlias(ownerAliases)
 
-  const titleData = dataContract.data && owner
-    ? {
-        identifier: dataContract.data.identifier ?? '',
-        name: dataContract.data.name,
-        description: dataContract.data.description,
-        keywords: dataContract.data.keywords,
-        owner
-      }
-    : null
+  const titleData =
+    dataContract.data && owner
+      ? {
+          identifier: dataContract.data.identifier ?? '',
+          name: dataContract.data.name,
+          description: dataContract.data.description,
+          keywords: dataContract.data.keywords,
+          owner
+        }
+      : null
 
   return (
-    <div className={`InfoBlock InfoBlock--Gradient DataContractTotalCard ${dataContract.loading ? 'DataContractTotalCard--Loading' : ''} ${className || ''}`}>
+    <div
+      className={`InfoBlock InfoBlock--Gradient DataContractTotalCard ${dataContract.loading ? 'DataContractTotalCard--Loading' : ''} ${className || ''}`}
+    >
       <DataContractTitle dataContract={titleData} />
       <div className={'DataContractTotalCard__Header'}>
         <div className={'DataContractTotalCard__HeaderLines'}>
@@ -107,11 +112,7 @@ function DataContractTotalCard ({ dataContract, className }: DataContractTotalCa
             loading={dataContract.loading}
             error={dataContract.error || !dataContract.data?.identifier}
             value={
-              <Identifier
-                copyButton={true}
-                styles={['highlight-both']}
-                ellipsis={false}
-              >
+              <Identifier copyButton={true} styles={['highlight-both']} ellipsis={false}>
                 {dataContract.data?.identifier}
               </Identifier>
             }
@@ -124,9 +125,10 @@ function DataContractTotalCard ({ dataContract, className }: DataContractTotalCa
             error={dataContract.error}
             value={
               <ValueCard link={`/identity/${ownerId}`}>
-                {activeAlias
-                  ? <Alias avatarSource={ownerId}>{activeAlias.alias}</Alias>
-                  : <Identifier
+                {activeAlias ? (
+                  <Alias avatarSource={ownerId}>{activeAlias.alias}</Alias>
+                ) : (
+                  <Identifier
                     avatar={true}
                     className={''}
                     copyButton={true}
@@ -135,7 +137,7 @@ function DataContractTotalCard ({ dataContract, className }: DataContractTotalCa
                   >
                     {ownerId}
                   </Identifier>
-                }
+                )}
               </ValueCard>
             }
           />
@@ -155,7 +157,9 @@ function DataContractTotalCard ({ dataContract, className }: DataContractTotalCa
           />
 
           <InfoLine
-            className={'DataContractTotalCard__InfoLine DataContractTotalCard__InfoLine--Description'}
+            className={
+              'DataContractTotalCard__InfoLine DataContractTotalCard__InfoLine--Description'
+            }
             title={'Description'}
             loading={dataContract.loading}
             error={dataContract.error || !dataContract.data?.description}
@@ -171,25 +175,29 @@ function DataContractTotalCard ({ dataContract, className }: DataContractTotalCa
             title={'Creation Date'}
             loading={dataContract.loading}
             error={dataContract.error}
-            value={dataContract?.data?.txHash
-              ? <ValueCard link={`/transaction/${dataContract.data?.txHash}`}>
-                  <DateBlock timestamp={dataContract.data?.timestamp}/>
+            value={
+              dataContract?.data?.txHash ? (
+                <ValueCard link={`/transaction/${dataContract.data?.txHash}`}>
+                  <DateBlock timestamp={dataContract.data?.timestamp} />
                 </ValueCard>
-              : <DateBlock timestamp={dataContract.data?.timestamp}/>
+              ) : (
+                <DateBlock timestamp={dataContract.data?.timestamp} />
+              )
             }
           />
         </div>
         <div className={'DataContractTotalCard__Avatar'}>
-          {!dataContract.error
-            ? <ImageGenerator
+          {!dataContract.error ? (
+            <ImageGenerator
               username={dataContract.data?.identifier}
               lightness={50}
               saturation={50}
               width={88}
               height={88}
             />
-            : 'n/a'
-          }
+          ) : (
+            'n/a'
+          )}
         </div>
       </div>
     </div>

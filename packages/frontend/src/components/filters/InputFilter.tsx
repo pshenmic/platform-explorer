@@ -24,9 +24,7 @@ export const InputFilter = ({
   title
 }: InputFilterProps) => (
   <div className={'InputFilter'}>
-    {title &&
-      <div className={'InputFilter__Title'}>{title}</div>
-    }
+    {title && <div className={'InputFilter__Title'}>{title}</div>}
 
     <Input
       className={'InputFilter__Input'}

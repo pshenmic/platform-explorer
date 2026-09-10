@@ -1,9 +1,6 @@
-type CopyResult = { status: boolean, message?: unknown }
+type CopyResult = { status: boolean; message?: unknown }
 
-function copyToClipboard (
-  copyText = '',
-  callback?: (result: CopyResult) => void
-): void {
+function copyToClipboard(copyText = '', callback?: (result: CopyResult) => void): void {
   if (!callback) callback = () => {}
 
   try {

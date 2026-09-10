@@ -20,20 +20,29 @@ export type TokensFiltersUpdate = {
 }
 
 export const useTokensFilters = () => {
-  const [dataContract, setDataContract] = useQueryState('data_contract', { scroll: false, shallow: true })
+  const [dataContract, setDataContract] = useQueryState('data_contract', {
+    scroll: false,
+    shallow: true
+  })
   const [owner, setOwner] = useQueryState('owner', { scroll: false, shallow: true })
-  const [positionMin, setPositionMin] = useQueryState('position_min', { scroll: false, shallow: true })
-  const [positionMax, setPositionMax] = useQueryState('position_max', { scroll: false, shallow: true })
+  const [positionMin, setPositionMin] = useQueryState('position_min', {
+    scroll: false,
+    shallow: true
+  })
+  const [positionMax, setPositionMax] = useQueryState('position_max', {
+    scroll: false,
+    shallow: true
+  })
   const [tsStart, setTsStart] = useQueryState('timestamp_start', { scroll: false, shallow: true })
   const [tsEnd, setTsEnd] = useQueryState('timestamp_end', { scroll: false, shallow: true })
 
   const tsStartISO = (() => {
     const d = decodeDateFromURL(tsStart)
-    return d ? d.toISOString() : (tsStart || undefined)
+    return d ? d.toISOString() : tsStart || undefined
   })()
   const tsEndISO = (() => {
     const d = decodeDateFromURL(tsEnd)
-    return d ? d.toISOString() : (tsEnd || undefined)
+    return d ? d.toISOString() : tsEnd || undefined
   })()
 
   const filters: TokensFilters = {
@@ -51,14 +60,20 @@ export const useTokensFilters = () => {
     if ('owner' in next) setOwner(next.owner || null)
 
     if ('position_min' in next) {
-      setPositionMin(next.position_min != null && next.position_min !== '' ? String(next.position_min) : null)
+      setPositionMin(
+        next.position_min != null && next.position_min !== '' ? String(next.position_min) : null
+      )
     }
     if ('position_max' in next) {
-      setPositionMax(next.position_max != null && next.position_max !== '' ? String(next.position_max) : null)
+      setPositionMax(
+        next.position_max != null && next.position_max !== '' ? String(next.position_max) : null
+      )
     }
 
-    if ('timestamp_start' in next) setTsStart(encodeDateToURL(next.timestamp_start as Date | string | null | undefined) ?? null)
-    if ('timestamp_end' in next) setTsEnd(encodeDateToURL(next.timestamp_end as Date | string | null | undefined) ?? null)
+    if ('timestamp_start' in next)
+      setTsStart(encodeDateToURL(next.timestamp_start as Date | string | null | undefined) ?? null)
+    if ('timestamp_end' in next)
+      setTsEnd(encodeDateToURL(next.timestamp_end as Date | string | null | undefined) ?? null)
   }
 
   return { filters, setFilters }

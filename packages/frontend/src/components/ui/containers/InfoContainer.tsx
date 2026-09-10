@@ -8,7 +8,7 @@ interface InfoContainerProps extends WithChildren, WithClassName {
   id?: string
 }
 
-function InfoContainer ({ children, styles = [], id, className }: InfoContainerProps) {
+function InfoContainer({ children, styles = [], id, className }: InfoContainerProps) {
   const styleClasses: Record<InfoContainerStyle, string> = {
     tabs: 'InfoContainer--Tabs',
     translucentBg: 'InfoContainer--TranslucentBg'

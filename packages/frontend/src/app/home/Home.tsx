@@ -4,7 +4,17 @@ import { useState, useEffect, useMemo, useRef } from 'react'
 import { useQuery, useQueries } from '@tanstack/react-query'
 import * as Api from '../../util/Api'
 import HomeHero from './HomeHero'
-import { MetricChart, EpochsOverview, StatusBar, HeroMeta, MasternodesDonut, TxTypesBar, ShieldedPoolCard, CompactTxList, CompactBlocksList } from '../../components/home'
+import {
+  MetricChart,
+  EpochsOverview,
+  StatusBar,
+  HeroMeta,
+  MasternodesDonut,
+  TxTypesBar,
+  ShieldedPoolCard,
+  CompactTxList,
+  CompactBlocksList
+} from '../../components/home'
 import { fetchHandlerSuccess, fetchHandlerError } from '../../util'
 import theme from '../../styles/theme'
 import { Box, Container, Flex, SimpleGrid } from '@chakra-ui/react'
@@ -27,7 +37,7 @@ type EpochPayload = EpochData & {
   firstBlockHash?: string | null
 }
 
-function computeAvgBlockTime (blocks?: Block[] | null): number | null {
+function computeAvgBlockTime(blocks?: Block[] | null): number | null {
   const stamps = (blocks || [])
     .map(b => new Date(b?.header?.timestamp).getTime())
     .filter(t => !Number.isNaN(t))
@@ -38,25 +48,54 @@ function computeAvgBlockTime (blocks?: Block[] | null): number | null {
   return Math.round(total / (stamps.length - 1) / 1000)
 }
 
-function epochNumbersOf (current: number | undefined): number[] {
+function epochNumbersOf(current: number | undefined): number[] {
   if (typeof current !== 'number') return []
   return [current - 3, current - 2, current - 1, current].filter(n => n >= 0)
 }
 
-function Home () {
-  const [contested, setContested] = useState<LoadableState<ContestedResourcesStatus>>({ data: {} as ContestedResourcesStatus, loading: true, error: false })
-  const [activeContested, setActiveContested] = useState<LoadableState<PaginatedResultSet<ContestedResource>>>({ data: {} as PaginatedResultSet<ContestedResource>, loading: true, error: false })
-  const [latestContested, setLatestContested] = useState<LoadableState<PaginatedResultSet<ContestedResource>>>({ data: {} as PaginatedResultSet<ContestedResource>, loading: true, error: false })
-  const [latestVotes, setLatestVotes] = useState<LoadableState<PaginatedResultSet<Vote>>>({ data: {} as PaginatedResultSet<Vote>, loading: true, error: false })
-  const [rate, setRate] = useState<LoadableState<Rate>>({ data: {} as Rate, loading: true, error: false })
+function Home() {
+  const [contested, setContested] = useState<LoadableState<ContestedResourcesStatus>>({
+    data: {} as ContestedResourcesStatus,
+    loading: true,
+    error: false
+  })
+  const [activeContested, setActiveContested] = useState<
+    LoadableState<PaginatedResultSet<ContestedResource>>
+  >({ data: {} as PaginatedResultSet<ContestedResource>, loading: true, error: false })
+  const [latestContested, setLatestContested] = useState<
+    LoadableState<PaginatedResultSet<ContestedResource>>
+  >({ data: {} as PaginatedResultSet<ContestedResource>, loading: true, error: false })
+  const [latestVotes, setLatestVotes] = useState<LoadableState<PaginatedResultSet<Vote>>>({
+    data: {} as PaginatedResultSet<Vote>,
+    loading: true,
+    error: false
+  })
+  const [rate, setRate] = useState<LoadableState<Rate>>({
+    data: {} as Rate,
+    loading: true,
+    error: false
+  })
 
-  const gap = (theme as typeof theme & { blockOffset: number | string | Array<number | string> }).blockOffset
+  const gap = (theme as typeof theme & { blockOffset: number | string | Array<number | string> })
+    .blockOffset
   const secondaryStarted = useRef(false)
 
   // wave 0: hero + overview + validator totals (independent; RQ dedupes Strict Mode double-mount)
-  const statusQuery = useQuery({ queryKey: ['home', 'status'], queryFn: Api.getStatus, refetchInterval: 60000 })
-  const txQuery = useQuery({ queryKey: ['home', 'transactions'], queryFn: () => Api.getTransactions(1, 10, 'desc'), refetchInterval: 30000 })
-  const blocksQuery = useQuery({ queryKey: ['home', 'blocks'], queryFn: () => Api.getBlocks(1, 10, 'desc'), refetchInterval: 30000 })
+  const statusQuery = useQuery({
+    queryKey: ['home', 'status'],
+    queryFn: Api.getStatus,
+    refetchInterval: 60000
+  })
+  const txQuery = useQuery({
+    queryKey: ['home', 'transactions'],
+    queryFn: () => Api.getTransactions(1, 10, 'desc'),
+    refetchInterval: 30000
+  })
+  const blocksQuery = useQuery({
+    queryKey: ['home', 'blocks'],
+    queryFn: () => Api.getBlocks(1, 10, 'desc'),
+    refetchInterval: 30000
+  })
   const validatorsQuery = useQuery({
     queryKey: ['home', 'validators', 'total'],
     queryFn: () => Api.getValidators(1, 1, 'desc'),
@@ -119,14 +158,16 @@ function Home () {
 
   // progressive list: whatever has arrived, in epoch order (partial wave is OK)
   const epochDataStamp = epochQueries.map(q => `${q.dataUpdatedAt}:${q.fetchStatus}`).join('|')
-  const epochsBaseList = useMemo(() => (
-    epochNumbers
-      .map((n, i) => epochQueries[i]?.data)
-      .filter((ep): ep is EpochData => Boolean(ep))
-  // eslint-disable-next-line react-hooks/exhaustive-deps -- stamp tracks per-query arrivals
-  ), [epochNumbers, epochDataStamp])
+  const epochsBaseList = useMemo(
+    () =>
+      epochNumbers
+        .map((n, i) => epochQueries[i]?.data)
+        .filter((ep): ep is EpochData => Boolean(ep)),
+    [epochNumbers, epochDataStamp]
+  )
 
-  const epochsLoading = typeof currentEpochNumber !== 'number' ||
+  const epochsLoading =
+    typeof currentEpochNumber !== 'number' ||
     (epochsBaseList.length === 0 && epochQueries.some(q => q.isPending || q.isLoading))
 
   // phase B: first-block meta only after an epoch exists (does not block the wave)
@@ -143,18 +184,19 @@ function Home () {
   })
 
   const blockDataStamp = blockQueries.map(q => q.dataUpdatedAt).join('|')
-  const epochsList: EpochPayload[] = useMemo(() => (
-    epochsBaseList.map((ep, i) => {
-      const blockRes = blockQueries[i]?.data
-      if (!blockRes) return ep
-      return {
-        ...ep,
-        protocolVersion: blockRes?.resultSet?.[0]?.header?.appVersion ?? null,
-        firstBlockHash: blockRes?.resultSet?.[0]?.header?.hash ?? null
-      }
-    })
-  // eslint-disable-next-line react-hooks/exhaustive-deps -- stamp tracks block enrich arrivals
-  ), [epochsBaseList, blockDataStamp])
+  const epochsList: EpochPayload[] = useMemo(
+    () =>
+      epochsBaseList.map((ep, i) => {
+        const blockRes = blockQueries[i]?.data
+        if (!blockRes) return ep
+        return {
+          ...ep,
+          protocolVersion: blockRes?.resultSet?.[0]?.header?.appVersion ?? null,
+          firstBlockHash: blockRes?.resultSet?.[0]?.header?.hash ?? null
+        }
+      }),
+    [epochsBaseList, blockDataStamp]
+  )
 
   const currentEpochPayload = epochsList.find(e => e?.epoch?.number === currentEpochNumber) || null
   const epochData: LoadableState<EpochPayload> = {
@@ -191,7 +233,8 @@ function Home () {
   }, [statusQuery.isSuccess])
 
   // below-fold charts wait until the first epoch paints (or all epoch queries settle empty)
-  const epochsSettled = epochNumbers.length > 0 &&
+  const epochsSettled =
+    epochNumbers.length > 0 &&
     epochQueries.length === epochNumbers.length &&
     epochQueries.every(q => !q.isPending && !q.isLoading)
   const belowFoldReady = epochsBaseList.length > 0 || epochsSettled
@@ -210,9 +253,13 @@ function Home () {
       py={0}
       mt={gap}
       mb={gap}
-      >
+    >
       <Flex direction={'column'} gap={gap}>
-        <HomeHero status={statusData} loading={statusQuery.isLoading} avgBlockTimeSec={avgBlockTimeSec}/>
+        <HomeHero
+          status={statusData}
+          loading={statusQuery.isLoading}
+          avgBlockTimeSec={avgBlockTimeSec}
+        />
 
         <Box
           className={'InfoBlock InfoBlock--NoBorder HomeOverview'}
@@ -222,11 +269,13 @@ function Home () {
         >
           <div className={'HomeOverview__Grid'}>
             <div className={'HomeOverview__Sys'}>
-              <HeroMeta status={statusData as Status} loading={statusQuery.isLoading}/>
+              <HeroMeta status={statusData as Status} loading={statusQuery.isLoading} />
             </div>
             <div className={'HomeOverview__Tx'}>
               <CompactTxList
-                transactions={txQuery.data?.resultSet as Parameters<typeof CompactTxList>[0]['transactions']}
+                transactions={
+                  txQuery.data?.resultSet as Parameters<typeof CompactTxList>[0]['transactions']
+                }
                 limit={6}
                 loading={txQuery.isLoading}
                 moreHref={'/transactions'}
@@ -257,13 +306,41 @@ function Home () {
         </Box>
 
         <SimpleGrid columns={{ base: 1, md: 2 }} spacing={gap} w={'100%'}>
-          <MetricChart title={'Transactions history'} type={'bar'} fetcher={Api.getTransactionsHistory as unknown as Parameters<typeof MetricChart>[0]['fetcher']} field={'txs'} yAbbr={'txs'} enabled={belowFoldReady}/>
-          <MetricChart title={'Identities growth'} type={'line'} fetcher={Api.getIdentitiesHistory as unknown as Parameters<typeof MetricChart>[0]['fetcher']} field={'registeredIdentities'} yAbbr={'identities'} enabled={belowFoldReady}/>
-          <TxTypesBar enabled={belowFoldReady}/>
-          <ShieldedPoolCard rate={rate} enabled={belowFoldReady}/>
-          <MasternodesDonut validators={validators} validatorsActive={validatorsActive} validatorsBanned={validatorsBanned} validatorsInactive={validatorsInactive} validatorsList={validatorsGeoQuery.data?.resultSet as Parameters<typeof MasternodesDonut>[0]['validatorsList']}/>
+          <MetricChart
+            title={'Transactions history'}
+            type={'bar'}
+            fetcher={
+              Api.getTransactionsHistory as unknown as Parameters<typeof MetricChart>[0]['fetcher']
+            }
+            field={'txs'}
+            yAbbr={'txs'}
+            enabled={belowFoldReady}
+          />
+          <MetricChart
+            title={'Identities growth'}
+            type={'line'}
+            fetcher={
+              Api.getIdentitiesHistory as unknown as Parameters<typeof MetricChart>[0]['fetcher']
+            }
+            field={'registeredIdentities'}
+            yAbbr={'identities'}
+            enabled={belowFoldReady}
+          />
+          <TxTypesBar enabled={belowFoldReady} />
+          <ShieldedPoolCard rate={rate} enabled={belowFoldReady} />
+          <MasternodesDonut
+            validators={validators}
+            validatorsActive={validatorsActive}
+            validatorsBanned={validatorsBanned}
+            validatorsInactive={validatorsInactive}
+            validatorsList={
+              validatorsGeoQuery.data?.resultSet as Parameters<
+                typeof MasternodesDonut
+              >[0]['validatorsList']
+            }
+          />
           <Box className={'InfoBlock InfoBlock--NoBorder HomeGovCard'} w={'100%'}>
-            <CardHead title={'Governance'}/>
+            <CardHead title={'Governance'} />
             <StatusBar
               contested={contested}
               activeContested={activeContested}

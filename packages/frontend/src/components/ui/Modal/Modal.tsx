@@ -14,7 +14,9 @@ export const Modal = ({ children, ...props }: ModalProps) => {
   const { handleClose } = useModal()
 
   return createPortal(
-    <ModalLayout ref={modalRef} onClose={handleClose} {...props}>{children}</ModalLayout>,
+    <ModalLayout ref={modalRef} onClose={handleClose} {...props}>
+      {children}
+    </ModalLayout>,
     document.body
   )
 }

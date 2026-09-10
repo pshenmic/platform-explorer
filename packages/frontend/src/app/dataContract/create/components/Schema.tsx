@@ -5,7 +5,8 @@ import { useSchema } from '../SchemaProvider'
 
 import styles from './Schema.module.css'
 
-const DOCS_URL = 'https://docs.dash.org/projects/platform/en/stable/docs/explanations/platform-protocol-data-contract.html'
+const DOCS_URL =
+  'https://docs.dash.org/projects/platform/en/stable/docs/explanations/platform-protocol-data-contract.html'
 
 const formatBytes = (value: string | undefined | null): number => {
   try {
@@ -20,14 +21,14 @@ export const Schema = () => {
   const byteSize = formatBytes(value)
 
   return (
-    <CardWrapper title='Contract' className={styles.schema}>
+    <CardWrapper title="Contract" className={styles.schema}>
       <SchemaHeader />
       <SchemaField className={styles.code} />
-      <Flex mt={2} justify='space-between' align='center' minH='24px' gap={4}>
-        <Text fontSize='sm' color='gray.500' whiteSpace='nowrap'>
+      <Flex mt={2} justify="space-between" align="center" minH="24px" gap={4}>
+        <Text fontSize="sm" color="gray.500" whiteSpace="nowrap">
           Size: {byteSize} Bytes
         </Text>
-        <Link href={DOCS_URL} isExternal fontSize='sm' whiteSpace='nowrap'>
+        <Link href={DOCS_URL} isExternal fontSize="sm" whiteSpace="nowrap">
           Read Data Contract documentation →
         </Link>
       </Flex>

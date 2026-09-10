@@ -17,8 +17,16 @@ interface RewardsChartProps {
   timespanChangeCallback?: (value: TimespanValue) => void
 }
 
-export default function RewardsChart ({ hash, isActive, loading, timespan, timespanChangeCallback }: RewardsChartProps) {
-  const [rewardsHistory, setRewardsHistory] = useState<LoadableState<{ resultSet?: Array<SeriesData<RewardsStatsPoint>> }>>({
+export default function RewardsChart({
+  hash,
+  isActive,
+  loading,
+  timespan,
+  timespanChangeCallback
+}: RewardsChartProps) {
+  const [rewardsHistory, setRewardsHistory] = useState<
+    LoadableState<{ resultSet?: Array<SeriesData<RewardsStatsPoint>> }>
+  >({
     data: {},
     loading: true,
     error: false
@@ -40,17 +48,21 @@ export default function RewardsChart ({ hash, isActive, loading, timespan, times
       menuIsActive={isActive}
       timespanChangeCallback={timespanChangeCallback}
       timespan={timespan}
-      data={rewardsHistory.data?.resultSet?.map((item) => ({
-        x: new Date(item.timestamp ?? 0),
-        y: item.data?.reward ?? 0
-      })) || []}
+      data={
+        rewardsHistory.data?.resultSet?.map(item => ({
+          x: new Date(item.timestamp ?? 0),
+          y: item.data?.reward ?? 0
+        })) || []
+      }
       loading={loading || rewardsHistory.loading}
       error={!hash || rewardsHistory.error}
       xAxis={{
         type: (() => {
           if (!timespan?.range?.start || !timespan?.range?.end) return { axis: 'time' as const }
-          if (getDaysBetweenDates(timespan.range.start, timespan.range.end) > 7) return { axis: 'date' as const }
-          if (getDaysBetweenDates(timespan.range.start, timespan.range.end) > 3) return { axis: 'date' as const, tooltip: 'datetime' as const }
+          if (getDaysBetweenDates(timespan.range.start, timespan.range.end) > 7)
+            return { axis: 'date' as const }
+          if (getDaysBetweenDates(timespan.range.start, timespan.range.end) > 3)
+            return { axis: 'date' as const, tooltip: 'datetime' as const }
           return { axis: 'time' as const }
         })()
       }}

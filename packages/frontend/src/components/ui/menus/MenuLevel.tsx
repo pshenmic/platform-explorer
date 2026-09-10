@@ -25,7 +25,7 @@ interface MenuLevelProps {
  * Flat menu list. No nested Popovers, no parent setState during render.
  * Items with content/subMenu ask the parent to show a side panel via onSelectIndex.
  */
-function MenuLevel ({
+function MenuLevel({
   items = [],
   onMenuItemClick,
   selectedIndex = null,
@@ -39,10 +39,7 @@ function MenuLevel ({
 
         if (item.disabled) {
           return (
-            <div
-              key={index}
-              className={'MenuLevel__Item MenuLevel__Item--Disabled'}
-            >
+            <div key={index} className={'MenuLevel__Item MenuLevel__Item--Disabled'}>
               <span>{item.label}</span>
             </div>
           )
@@ -68,11 +65,11 @@ function MenuLevel ({
           return (
             <div
               key={index}
-              role='button'
+              role="button"
               tabIndex={0}
               className={`MenuLevel__Item MenuLevel__Item--Submenu ${isSelected ? 'MenuLevel__Item--Active' : ''}`}
               onClick={() => onSelectIndex?.(index)}
-              onKeyDown={(e) => {
+              onKeyDown={e => {
                 if (e.key === 'Enter' || e.key === ' ') {
                   e.preventDefault()
                   onSelectIndex?.(index)
@@ -80,7 +77,9 @@ function MenuLevel ({
               }}
             >
               <span>{item.label}</span>
-              <span className={'MenuLevel__ItemChevron'} aria-hidden>›</span>
+              <span className={'MenuLevel__ItemChevron'} aria-hidden>
+                ›
+              </span>
             </div>
           )
         }

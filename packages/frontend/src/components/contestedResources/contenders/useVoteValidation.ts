@@ -1,9 +1,6 @@
 import { useEffect, useState } from 'react'
 import * as Api from '../../../util/Api'
-import {
-  checkPlatformExtension,
-  ExtensionStatusEnum
-} from '../../../util/extension'
+import { checkPlatformExtension, ExtensionStatusEnum } from '../../../util/extension'
 import { useParams } from 'next/navigation'
 import { API_VOTE_ENUM, VOTING_CAPABLE_TYPES } from './constants'
 import type { VoteEnumValue } from './constants'
@@ -61,13 +58,13 @@ const getLastVoteByProTxHash = ({
 export const useVoteValidation = ({ wallet, isFinished }: UseVoteValidationParams) => {
   const proTxHash = wallet.walletInfo?.proTxHash
   const params = useParams()
-  const resourceValue = typeof params?.resourceValue === 'string'
-    ? params.resourceValue
-    : Array.isArray(params?.resourceValue)
-      ? params.resourceValue[0]
-      : undefined
-  const isExtensionConnected =
-    checkPlatformExtension() === ExtensionStatusEnum.CONNECTED
+  const resourceValue =
+    typeof params?.resourceValue === 'string'
+      ? params.resourceValue
+      : Array.isArray(params?.resourceValue)
+        ? params.resourceValue[0]
+        : undefined
+  const isExtensionConnected = checkPlatformExtension() === ExtensionStatusEnum.CONNECTED
   const [prevVote, setPrevVote] = useState<VoteEnumValue | null>(null)
   const [voteValidateState, setVoteValidate] = useState<VoteControlStateValue>(
     VoteControlState.INIT_INVALID
@@ -103,13 +100,7 @@ export const useVoteValidation = ({ wallet, isFinished }: UseVoteValidationParam
     }
 
     setVoteValidate(VoteControlState.CAN_VOTE)
-  }, [
-    isFinished,
-    isExtensionConnected,
-    wallet,
-    currentCanVote,
-    proTxHash
-  ])
+  }, [isFinished, isExtensionConnected, wallet, currentCanVote, proTxHash])
 
   useEffect(() => {
     const getPrevVote = async () => {
@@ -125,9 +116,7 @@ export const useVoteValidation = ({ wallet, isFinished }: UseVoteValidationParam
         })
 
         if (prev) {
-          const choiceIndex = typeof prev.choice === 'number'
-            ? prev.choice
-            : Number(prev.choice)
+          const choiceIndex = typeof prev.choice === 'number' ? prev.choice : Number(prev.choice)
           const choice = API_VOTE_ENUM[choiceIndex]
 
           setPrevVote(choice)

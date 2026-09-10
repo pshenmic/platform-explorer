@@ -22,7 +22,7 @@ interface SupplyProps extends WithClassName {
   loading?: boolean
 }
 
-function Supply ({
+function Supply({
   currentSupply,
   maxSupply,
   className,
@@ -31,7 +31,13 @@ function Supply ({
   showTitles = false,
   showIcons = false,
   minTitle = <>Minted</>,
-  maxTitle = <>Total<br/>Supply</>,
+  maxTitle = (
+    <>
+      Total
+      <br />
+      Supply
+    </>
+  ),
   topIcon,
   bottomIcon,
   loading
@@ -40,41 +46,51 @@ function Supply ({
   const hasMaxSupply = maxSupply != null && Number(maxSupply) > 0
 
   return (
-    <div className={`Supply ${progressClass || ''} ${showTitles && 'Supply--WithIcons'} ${className || ''} ${loading ? 'Supply--Loading' : ''}`}>
+    <div
+      className={`Supply ${progressClass || ''} ${showTitles && 'Supply--WithIcons'} ${className || ''} ${loading ? 'Supply--Loading' : ''}`}
+    >
       <div className={'Supply__ContentWrapper'}>
         {showTitles && (
           <div className={'Supply__Title'}>
             {showIcons && topIcon}
-            <span className={'Supply__TitleText'}>{minTitle}{(!hasMaxSupply && !loading) && ':'}</span>
+            <span className={'Supply__TitleText'}>
+              {minTitle}
+              {!hasMaxSupply && !loading && ':'}
+            </span>
           </div>
         )}
 
-        <div className={`Supply__ProgressContainer ${!hasMaxSupply ? 'Supply__ProgressContainer--Single' : ''}`}>
-          {loading
-            ? <LoadingLine w='100%' h={'20px'}/>
-            : <>
-                <div className={'Supply__SupplyTitles'}>
-                  <FormattedNumber decimals={decimals ?? undefined} className={'Supply__CurrentSupply'}>
-                    {currentSupply}
+        <div
+          className={`Supply__ProgressContainer ${!hasMaxSupply ? 'Supply__ProgressContainer--Single' : ''}`}
+        >
+          {loading ? (
+            <LoadingLine w="100%" h={'20px'} />
+          ) : (
+            <>
+              <div className={'Supply__SupplyTitles'}>
+                <FormattedNumber
+                  decimals={decimals ?? undefined}
+                  className={'Supply__CurrentSupply'}
+                >
+                  {currentSupply}
+                </FormattedNumber>
+                {maxSupply != null && (
+                  <FormattedNumber decimals={decimals ?? undefined} className={'Supply__MaxSupply'}>
+                    {maxSupply}
                   </FormattedNumber>
-                  {
-                    maxSupply != null &&
-                      <FormattedNumber decimals={decimals ?? undefined} className={'Supply__MaxSupply'}>
-                        {maxSupply}
-                      </FormattedNumber>
-                  }
-                </div>
-                {hasMaxSupply && (
-                  <Progress
-                    className={'Supply__Progress'}
-                    value={(Number(currentSupply) / Number(maxSupply)) * 100}
-                    height={'1px'}
-                    width={'100%'}
-                    colorScheme={'gray'}
-                  />
                 )}
-              </>
-          }
+              </div>
+              {hasMaxSupply && (
+                <Progress
+                  className={'Supply__Progress'}
+                  value={(Number(currentSupply) / Number(maxSupply)) * 100}
+                  height={'1px'}
+                  width={'100%'}
+                  colorScheme={'gray'}
+                />
+              )}
+            </>
+          )}
         </div>
 
         {showTitles && (loading || hasMaxSupply) && (

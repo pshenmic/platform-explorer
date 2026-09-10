@@ -64,10 +64,8 @@ export const useDataContractsFilters = () => {
     owner: owner || undefined,
     is_system: isSystem,
     with_tokens: withTokens,
-    documents_count_min:
-      dcMin != null && dcMin !== '' ? Number(dcMin) : undefined,
-    documents_count_max:
-      dcMax != null && dcMax !== '' ? Number(dcMax) : undefined,
+    documents_count_min: dcMin != null && dcMin !== '' ? Number(dcMin) : undefined,
+    documents_count_max: dcMax != null && dcMax !== '' ? Number(dcMax) : undefined,
     timestamp_start: tsStartISO,
     timestamp_end: tsEndISO
   }

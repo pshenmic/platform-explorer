@@ -10,12 +10,16 @@ import './DocumentsRevisionsList.css'
 interface DocumentsRevisionsListProps {
   revisions?: Array<Record<string, unknown>>
   headerStyles?: string
-  pagination?: { onPageChange?: (p: { selected: number }) => void, pageCount?: number, forcePage?: number } | null
+  pagination?: {
+    onPageChange?: (p: { selected: number }) => void
+    pageCount?: number
+    forcePage?: number
+  } | null
   loading?: boolean
   itemsCount?: number
 }
 
-export default function DocumentsRevisionsList ({
+export default function DocumentsRevisionsList({
   revisions = [],
   headerStyles,
   pagination,
@@ -29,41 +33,68 @@ export default function DocumentsRevisionsList ({
 
   return (
     <div className={'DocumentsRevisionsList'}>
-      <Grid className={`DocumentsRevisionsList__ColumnTitles ${headerExtraClass[headerStyles ?? 'default'] || ''}`}>
-        <GridItem className={'DocumentsRevisionsList__ColumnTitle DocumentsRevisionsList__ColumnTitle--Timestamp'}>
+      <Grid
+        className={`DocumentsRevisionsList__ColumnTitles ${headerExtraClass[headerStyles ?? 'default'] || ''}`}
+      >
+        <GridItem
+          className={
+            'DocumentsRevisionsList__ColumnTitle DocumentsRevisionsList__ColumnTitle--Timestamp'
+          }
+        >
           Time
         </GridItem>
-        <GridItem className={'DocumentsRevisionsList__ColumnTitle DocumentsRevisionsList__ColumnTitle--TxHash'}>
+        <GridItem
+          className={
+            'DocumentsRevisionsList__ColumnTitle DocumentsRevisionsList__ColumnTitle--TxHash'
+          }
+        >
           Tx Hash
         </GridItem>
-        <GridItem className={'DocumentsRevisionsList__ColumnTitle DocumentsRevisionsList__ColumnTitle--Owner'}>
+        <GridItem
+          className={
+            'DocumentsRevisionsList__ColumnTitle DocumentsRevisionsList__ColumnTitle--Owner'
+          }
+        >
           Owner
         </GridItem>
-        <GridItem className={'DocumentsRevisionsList__ColumnTitle DocumentsRevisionsList__ColumnTitle--GasUsed'}>
+        <GridItem
+          className={
+            'DocumentsRevisionsList__ColumnTitle DocumentsRevisionsList__ColumnTitle--GasUsed'
+          }
+        >
           Gas Used
         </GridItem>
-        <GridItem className={'DocumentsRevisionsList__ColumnTitle DocumentsRevisionsList__ColumnTitle--TransitionType'}>
+        <GridItem
+          className={
+            'DocumentsRevisionsList__ColumnTitle DocumentsRevisionsList__ColumnTitle--TransitionType'
+          }
+        >
           Transition
         </GridItem>
-        <GridItem className={'DocumentsRevisionsList__ColumnTitle DocumentsRevisionsList__ColumnTitle--Revision'}>
+        <GridItem
+          className={
+            'DocumentsRevisionsList__ColumnTitle DocumentsRevisionsList__ColumnTitle--Revision'
+          }
+        >
           Revision
         </GridItem>
       </Grid>
 
-      {!loading
-        ? <div className={'DocumentsRevisionsList__Items'}>
-          {revisions?.map((revision, key) =>
-            <DocumentsRevisionsListItem revision={revision} key={key}/>
-          )}
-          {revisions?.length === 0 &&
+      {!loading ? (
+        <div className={'DocumentsRevisionsList__Items'}>
+          {revisions?.map((revision, key) => (
+            <DocumentsRevisionsListItem revision={revision} key={key} />
+          ))}
+          {revisions?.length === 0 && (
             <EmptyListMessage>There are no documents created yet.</EmptyListMessage>
-          }
-          {revisions === undefined && <ErrorMessageBlock/>}
+          )}
+          {revisions === undefined && <ErrorMessageBlock />}
         </div>
-        : <LoadingList itemsCount={itemsCount}/>
-      }
+      ) : (
+        <LoadingList itemsCount={itemsCount} />
+      )}
 
-      {pagination &&
+      {pagination && (
         <Pagination
           className={'DocumentsRevisionsList__Pagination'}
           onPageChange={pagination.onPageChange}
@@ -71,7 +102,7 @@ export default function DocumentsRevisionsList ({
           forcePage={pagination.forcePage ?? 0}
           justify={true}
         />
-      }
+      )}
     </div>
   )
 }

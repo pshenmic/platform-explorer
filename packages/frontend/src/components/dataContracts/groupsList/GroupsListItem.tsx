@@ -13,7 +13,7 @@ const Identifier = IdentifierJs as ComponentType<{
   ellipsis?: boolean
   styles?: string[]
 }>
-const BigNumber = BigNumberJs as ComponentType<{ children?: ReactNode, className?: string }>
+const BigNumber = BigNumberJs as ComponentType<{ children?: ReactNode; className?: string }>
 
 export interface GroupMember {
   identifier: string
@@ -24,7 +24,7 @@ interface GroupsListItemProps {
   member: GroupMember
 }
 
-function GroupsListItem ({ member }: GroupsListItemProps) {
+function GroupsListItem({ member }: GroupsListItemProps) {
   return (
     <Link href={`/identity/${member.identifier}`} className={'GroupsListItem'}>
       <Grid className={'GroupsListItem__Content'}>

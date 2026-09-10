@@ -13,7 +13,7 @@ interface DataContractModalContentProps {
   defaultDescription?: string | null
   defaultKeywords?: string[] | null
   onChangeName?: (payload: { name: string }) => void
-  onChangeDescription?: (payload: { description: string, keywords: string[] }) => void
+  onChangeDescription?: (payload: { description: string; keywords: string[] }) => void
 }
 
 interface ModeProps {
@@ -50,10 +50,7 @@ export const DataContractModal = ({ isOpen, ...props }: DataContractModalProps) 
 
   return (
     <Modal title={title}>
-      <Content
-        setMode={setMode}
-        {...props}
-      />
+      <Content setMode={setMode} {...props} />
     </Modal>
   )
 }

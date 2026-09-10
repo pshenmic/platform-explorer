@@ -13,17 +13,26 @@ interface InfoLineProps extends WithClassName {
   align?: 'center' | 'top' | string
 }
 
-function InfoLine ({ title, value, icon, loading, error, postfix = ':', className, align = 'center' }: InfoLineProps) {
+function InfoLine({
+  title,
+  value,
+  icon,
+  loading,
+  error,
+  postfix = ':',
+  className,
+  align = 'center'
+}: InfoLineProps) {
   return (
-    <div className={`InfoLine ${className || ''} ${loading ? 'InfoLine--Loading' : ''} ${align === 'top' ? 'InfoLine__Align--top' : ''}`}>
+    <div
+      className={`InfoLine ${className || ''} ${loading ? 'InfoLine--Loading' : ''} ${align === 'top' ? 'InfoLine__Align--top' : ''}`}
+    >
       {icon && <div className={'InfoLine__Icon'}>{icon}</div>}
-      <div className={'InfoLine__Title'}>{title}{postfix}</div>
-      <div className={'InfoLine__Value'}>
-        {!error
-          ? !loading && value
-          : <NotActive/>
-        }
+      <div className={'InfoLine__Title'}>
+        {title}
+        {postfix}
       </div>
+      <div className={'InfoLine__Value'}>{!error ? !loading && value : <NotActive />}</div>
     </div>
   )
 }

@@ -1,11 +1,6 @@
 import { forwardRef } from 'react'
 import type { ComponentType, ReactNode, Ref } from 'react'
-import {
-  concatDecimal,
-  sliceNumberByDecimals,
-  splitNum,
-  trimEndZeros
-} from '../../../util/numbers'
+import { concatDecimal, sliceNumberByDecimals, splitNum, trimEndZeros } from '../../../util/numbers'
 import { Tooltip } from '../Tooltips'
 import { currencyRound } from '../../../util'
 
@@ -20,7 +15,7 @@ interface FormattingProps {
 
 export const withFormatting = (Component: ComponentType<Record<string, unknown>>) => {
   const FormattedNumberWithTooltip = forwardRef<HTMLElement, FormattingProps>(
-    function FormattedNumberWithTooltip (props, ref) {
+    function FormattedNumberWithTooltip(props, ref) {
       const { children, decimals, threshold = 999999999, ...rest } = props
       const value = String(children)
       const { integer, fractional } = sliceNumberByDecimals(value, decimals ?? 0)
@@ -28,15 +23,9 @@ export const withFormatting = (Component: ComponentType<Record<string, unknown>>
       const trimmedFractional = trimEndZeros(fractional)
 
       const Child = ({ children: content }: { children?: ReactNode }) => (
-        <Tooltip
-          placement={'top'}
-          content={value}
-        >
+        <Tooltip placement={'top'} content={value}>
           <span>
-            <Component
-              {...(rest as Record<string, unknown>)}
-              ref={ref as Ref<HTMLElement>}
-            >
+            <Component {...(rest as Record<string, unknown>)} ref={ref as Ref<HTMLElement>}>
               {content}
             </Component>
           </span>
@@ -48,21 +37,14 @@ export const withFormatting = (Component: ComponentType<Record<string, unknown>>
       }
 
       if (threshold <= Number(integer)) {
-        return (
-          <Child>
-            {concatDecimal(currencyRound(integer), trimmedFractional)}
-          </Child>
-        )
+        return <Child>{concatDecimal(currencyRound(integer), trimmedFractional)}</Child>
       }
 
       if (Number(integer) > 0) {
         return (
           <Child>
             {splitNum(integer).map((num, i) => (
-              <span
-                className={styles.item}
-                key={`${num}-${i}`}
-              >
+              <span className={styles.item} key={`${num}-${i}`}>
                 {num}
               </span>
             ))}
@@ -74,10 +56,7 @@ export const withFormatting = (Component: ComponentType<Record<string, unknown>>
         return (
           <Child>
             {splitNum(integer).map((num, i) => (
-              <span
-                className={styles.item}
-                key={`${num}-${i}`}
-              >
+              <span className={styles.item} key={`${num}-${i}`}>
                 {num}
               </span>
             ))}
@@ -89,10 +68,7 @@ export const withFormatting = (Component: ComponentType<Record<string, unknown>>
       return (
         <Child>
           {splitNum(integer).map((num, i) => (
-            <span
-              className={styles.item}
-              key={`${num}-${i}`}
-            >
+            <span className={styles.item} key={`${num}-${i}`}>
               {num}
             </span>
           ))}

@@ -125,7 +125,10 @@ interface TransactionsStatisticItem {
   count: number
 }
 
-const getTransactionsStatistic = (start?: string, end?: string): Promise<TransactionsStatisticItem[]> => {
+const getTransactionsStatistic = (
+  start?: string,
+  end?: string
+): Promise<TransactionsStatisticItem[]> => {
   const range = start && end ? `?timestamp_start=${start}&timestamp_end=${end}` : ''
   return call<TransactionsStatisticItem[]>(`transactions/statistic${range}`, 'GET')
 }
@@ -134,7 +137,7 @@ interface ShieldedStatistic {
   totalShieldedIn: string
   totalShieldedOut: string
   transitionsCount: number
-  types?: Array<{ transactionType: string, count: number, amount: string }>
+  types?: Array<{ transactionType: string; count: number; amount: string }>
 }
 
 // optional time interval; omitted → all-time
@@ -291,7 +294,10 @@ const getContestedResources = (
     ...filters
   })
 
-  return call<PaginatedResultSet<ContestedResource>>(`contestedResources?${params.toString()}`, 'GET')
+  return call<PaginatedResultSet<ContestedResource>>(
+    `contestedResources?${params.toString()}`,
+    'GET'
+  )
 }
 
 const getContestedResourceByValue = (value: string): Promise<ContestedResource> => {
@@ -312,7 +318,10 @@ const getContestedResourceVotes = (
     ...filters
   })
 
-  return call<PaginatedResultSet<Vote>>(`contestedResource/${value}/votes?${params.toString()}`, 'GET')
+  return call<PaginatedResultSet<Vote>>(
+    `contestedResource/${value}/votes?${params.toString()}`,
+    'GET'
+  )
 }
 
 const getDataContractByIdentifier = (identifier: string): Promise<DataContract> => {
@@ -401,7 +410,10 @@ const getDocumentsByDataContract = (
     timestamp_start: filters.timestamp_start,
     timestamp_end: filters.timestamp_end
   })
-  return call<PaginatedResultSet<Document>>(`dataContract/${dataContractIdentifier}/documents?${params.toString()}`, 'GET')
+  return call<PaginatedResultSet<Document>>(
+    `dataContract/${dataContractIdentifier}/documents?${params.toString()}`,
+    'GET'
+  )
 }
 
 const getEpoch = (identifier?: number | string): Promise<EpochData> => {
@@ -458,7 +470,10 @@ const getDocumentsByIdentity = (
     timestamp_start: filters.timestamp_start,
     timestamp_end: filters.timestamp_end
   })
-  return call<PaginatedResultSet<Document>>(`identity/${identifier}/documents?${params.toString()}`, 'GET')
+  return call<PaginatedResultSet<Document>>(
+    `identity/${identifier}/documents?${params.toString()}`,
+    'GET'
+  )
 }
 
 const getWithdrawalsByIdentity = (

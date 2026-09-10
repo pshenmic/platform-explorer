@@ -2,7 +2,15 @@ import type { ComponentType, ReactNode } from 'react'
 import type { Document, Rate } from '../../types'
 import type { LoadableState } from '../../types/common'
 import ImageGenerator from '../imageGenerator'
-import { Alias as AliasJs, CreditsBlock as CreditsBlockJs, DateBlock as DateBlockJs, Identifier as IdentifierJs, InfoLine as InfoLineJs, NotActive as NotActiveJs, PrefundedBalance as PrefundedBalanceJs } from '../data'
+import {
+  Alias as AliasJs,
+  CreditsBlock as CreditsBlockJs,
+  DateBlock as DateBlockJs,
+  Identifier as IdentifierJs,
+  InfoLine as InfoLineJs,
+  NotActive as NotActiveJs,
+  PrefundedBalance as PrefundedBalanceJs
+} from '../data'
 import { HorisontalSeparator } from '../ui/separators'
 import { ValueCard } from '../cards'
 import { Badge } from '@chakra-ui/react'
@@ -17,7 +25,10 @@ const Alias = AliasJs as ComponentType<{
   alias?: string
   ellipsis?: boolean
 }>
-const CreditsBlock = CreditsBlockJs as ComponentType<{ credits?: number | string | null, rate?: Rate | null }>
+const CreditsBlock = CreditsBlockJs as ComponentType<{
+  credits?: number | string | null
+  rate?: Rate | null
+}>
 const DateBlock = DateBlockJs as ComponentType<{
   timestamp?: string | number | null
   format?: string
@@ -43,7 +54,10 @@ const InfoLine = InfoLineJs as ComponentType<{
   error?: boolean
 }>
 const NotActive = NotActiveJs as ComponentType<{ children?: ReactNode }>
-const PrefundedBalance = PrefundedBalanceJs as ComponentType<{ prefundedBalance?: unknown, rate?: Rate | null }>
+const PrefundedBalance = PrefundedBalanceJs as ComponentType<{
+  prefundedBalance?: unknown
+  rate?: Rate | null
+}>
 
 interface DocumentTotalCardProps {
   document: LoadableState<Document & { name?: string }>
@@ -51,16 +65,16 @@ interface DocumentTotalCardProps {
   className?: string
 }
 
-function DocumentTotalCard ({ document, rate, className }: DocumentTotalCardProps) {
+function DocumentTotalCard({ document, rate, className }: DocumentTotalCardProps) {
   const activeAlias = findActiveAlias(document.data?.owner?.aliases)
 
   return (
-    <div className={`InfoBlock InfoBlock--Gradient DocumentTotalCard ${document?.loading ? 'DocumentTotalCard--Loading' : ''} ${className || ''}`}>
-      {document?.data?.name &&
-        <div className={'DocumentTotalCard__Title'}>
-          {document?.data.name}
-        </div>
-      }
+    <div
+      className={`InfoBlock InfoBlock--Gradient DocumentTotalCard ${document?.loading ? 'DocumentTotalCard--Loading' : ''} ${className || ''}`}
+    >
+      {document?.data?.name && (
+        <div className={'DocumentTotalCard__Title'}>{document?.data.name}</div>
+      )}
 
       <div className={'DocumentTotalCard__Header'}>
         <div className={'DocumentTotalCard__HeaderLines'}>
@@ -70,27 +84,24 @@ function DocumentTotalCard ({ document, rate, className }: DocumentTotalCardProp
             loading={document.loading}
             error={document.error || !document.data?.identifier}
             value={
-              <Identifier
-                copyButton={true}
-                styles={['highlight-both']}
-                ellipsis={false}
-              >
+              <Identifier copyButton={true} styles={['highlight-both']} ellipsis={false}>
                 {document.data?.identifier}
               </Identifier>
             }
           />
         </div>
         <div className={'DocumentTotalCard__Avatar'}>
-          {!document?.error
-            ? <ImageGenerator
+          {!document?.error ? (
+            <ImageGenerator
               username={document.data?.identifier}
               lightness={50}
               saturation={50}
               width={88}
               height={88}
             />
-            : <NotActive/>
-          }
+          ) : (
+            <NotActive />
+          )}
         </div>
       </div>
 
@@ -122,9 +133,12 @@ function DocumentTotalCard ({ document, rate, className }: DocumentTotalCardProp
           error={document.error}
           value={
             <ValueCard link={`/identity/${document.data?.owner?.identifier}`}>
-              {activeAlias
-                ? <Alias avatarSource={document.data?.owner?.identifier || null}>{activeAlias?.alias}</Alias>
-                : <Identifier
+              {activeAlias ? (
+                <Alias avatarSource={document.data?.owner?.identifier || null}>
+                  {activeAlias?.alias}
+                </Alias>
+              ) : (
+                <Identifier
                   avatar={true}
                   className={''}
                   copyButton={true}
@@ -133,24 +147,22 @@ function DocumentTotalCard ({ document, rate, className }: DocumentTotalCardProp
                 >
                   {document.data?.owner?.identifier}
                 </Identifier>
-              }
+              )}
             </ValueCard>
           }
         />
 
-        <HorisontalSeparator className={'DocumentTotalCard__Separator'}/>
+        <HorisontalSeparator className={'DocumentTotalCard__Separator'} />
 
         <InfoLine
-          className={'DocumentTotalCard__InfoLine DocumentTotalCard__InfoLine--Entropy DocumentTotalCard__Entropy'}
+          className={
+            'DocumentTotalCard__InfoLine DocumentTotalCard__InfoLine--Entropy DocumentTotalCard__Entropy'
+          }
           title={'Entropy'}
           loading={document.loading}
           error={document.error || !document.data?.entropy}
           value={
-            <Identifier
-              copyButton={true}
-              styles={['highlight-both']}
-              ellipsis={false}
-            >
+            <Identifier copyButton={true} styles={['highlight-both']} ellipsis={false}>
               {document.data?.entropy}
             </Identifier>
           }
@@ -169,12 +181,14 @@ function DocumentTotalCard ({ document, rate, className }: DocumentTotalCardProp
           title={'System'}
           value={<Badge colorScheme={'gray'}>{document.data?.system ? 'Yes' : 'No'}</Badge>}
           loading={document.loading}
-          error={document.error || (typeof document.data?.system !== 'boolean' && !document.data?.system)}
+          error={
+            document.error || (typeof document.data?.system !== 'boolean' && !document.data?.system)
+          }
         />
 
         <InfoLine
           title={'Total Gas Used'}
-          value={<CreditsBlock credits={document.data?.totalGasUsed} rate={rate}/>}
+          value={<CreditsBlock credits={document.data?.totalGasUsed} rate={rate} />}
           loading={document.loading}
           error={document.error}
         />
@@ -190,25 +204,34 @@ function DocumentTotalCard ({ document, rate, className }: DocumentTotalCardProp
         <InfoLine
           className={'DocumentTotalCard__InfoLine'}
           title={'Deleted'}
-          value={<Badge colorScheme={document.data?.deleted ? 'red' : 'green'}>{document.data?.deleted ? 'True' : 'False'}</Badge>}
+          value={
+            <Badge colorScheme={document.data?.deleted ? 'red' : 'green'}>
+              {document.data?.deleted ? 'True' : 'False'}
+            </Badge>
+          }
           loading={document.loading}
           error={document.error || document.data?.deleted === undefined}
         />
 
-        {document.data?.prefundedVotingBalance &&
+        {document.data?.prefundedVotingBalance && (
           <InfoLine
             className={'DocumentTotalCard__InfoLine'}
             title={'Prefunded Voting Balance'}
-            value={<PrefundedBalance prefundedBalance={document.data?.prefundedVotingBalance} rate={rate}/>}
+            value={
+              <PrefundedBalance
+                prefundedBalance={document.data?.prefundedVotingBalance}
+                rate={rate}
+              />
+            }
             loading={document.loading}
             error={document.error}
           />
-        }
+        )}
 
         <InfoLine
           className={'DocumentTotalCard__InfoLine DocumentTotalCard__InfoLine--Timestamp'}
           title={'Timestamp'}
-          value={<DateBlock timestamp={document.data?.timestamp}/>}
+          value={<DateBlock timestamp={document.data?.timestamp} />}
           loading={document.loading}
           error={document.error || !document.data?.timestamp}
         />

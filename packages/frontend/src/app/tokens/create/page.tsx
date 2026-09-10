@@ -5,7 +5,7 @@ import { useBreadcrumbs } from '../../../contexts/BreadcrumbsContext'
 import { PageDataContainer } from '@components/ui/containers'
 import CreateTokenPage from './CreateTokenPage'
 
-function CreateTokenRoute () {
+function CreateTokenRoute() {
   const { setBreadcrumbs } = useBreadcrumbs()
 
   useEffect(() => {
@@ -17,8 +17,8 @@ function CreateTokenRoute () {
   }, [setBreadcrumbs])
 
   return (
-    <PageDataContainer title='CREATE TOKEN'>
-      <CreateTokenPage/>
+    <PageDataContainer title="CREATE TOKEN">
+      <CreateTokenPage />
     </PageDataContainer>
   )
 }

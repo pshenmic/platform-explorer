@@ -52,13 +52,7 @@ export const VoteManeger = ({
   ...other
 }: VoteManagerProps) => {
   if (voteValidateState === VoteControlState.CAN_VOTE) {
-    return (
-      <VoteControls
-        contender={identifier}
-        walletInfo={walletInfo}
-        {...other}
-      />
-    )
+    return <VoteControls contender={identifier} walletInfo={walletInfo} {...other} />
   }
 
   if (voteValidateState === VoteControlState.USER_HAS_NO_WALLET) {
@@ -66,10 +60,10 @@ export const VoteManeger = ({
       <Button
         onClick={() => connectWallet?.()}
         isLoading={isConnecting}
-        variant='brand'
-        size='sm'
-        h='30px'
-        w='94px'
+        variant="brand"
+        size="sm"
+        h="30px"
+        w="94px"
       >
         Vote
       </Button>

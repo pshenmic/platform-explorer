@@ -3,13 +3,7 @@
 import { useOutsideClick } from '../../../hooks/useOutsideClick'
 import { Tooltip as ChakraTooltip } from '@chakra-ui/react'
 import type { TooltipProps as ChakraTooltipProps } from '@chakra-ui/react'
-import {
-  useState,
-  useRef,
-  useEffect,
-  cloneElement,
-  isValidElement
-} from 'react'
+import { useState, useRef, useEffect, cloneElement, isValidElement } from 'react'
 import type { ReactElement, ReactNode, MouseEvent, Ref } from 'react'
 import type { WithClassName } from '../../../types/common'
 import './Tooltip.css'
@@ -21,7 +15,9 @@ type TooltipChildProps = {
   onClick?: (e: MouseEvent) => void
 }
 
-interface TooltipProps extends WithClassName, Omit<ChakraTooltipProps, 'children' | 'label' | 'className' | 'title' | 'content'> {
+interface TooltipProps
+  extends WithClassName,
+    Omit<ChakraTooltipProps, 'children' | 'label' | 'className' | 'title' | 'content'> {
   title?: ReactNode
   content?: ReactNode
   label?: ReactNode
@@ -31,7 +27,14 @@ interface TooltipProps extends WithClassName, Omit<ChakraTooltipProps, 'children
 
 // Interactive-friendly tooltip: delayed close so the pointer can move from the
 // trigger into the tip body (links, richer content) without the tip vanishing.
-export default function Tooltip ({ title = '', content = '', children, className, label, ...props }: TooltipProps) {
+export default function Tooltip({
+  title = '',
+  content = '',
+  children,
+  className,
+  label,
+  ...props
+}: TooltipProps) {
   const extraClass = title && content ? 'Tooltip--Extended' : ''
   const [isOpen, setIsOpen] = useState(false)
   const [isHovered, setIsHovered] = useState(false)
@@ -43,9 +46,12 @@ export default function Tooltip ({ title = '', content = '', children, className
     handler: () => setIsOpen(false)
   })
 
-  useEffect(() => () => {
-    if (leaveTimer.current) clearTimeout(leaveTimer.current)
-  }, [])
+  useEffect(
+    () => () => {
+      if (leaveTimer.current) clearTimeout(leaveTimer.current)
+    },
+    []
+  )
 
   const clearLeave = () => {
     if (leaveTimer.current) {
@@ -69,28 +75,24 @@ export default function Tooltip ({ title = '', content = '', children, className
 
   const element = isValidElement(children)
     ? cloneElement(children as ReactElement<TooltipChildProps>, {
-      ref,
-      onMouseEnter: (e: MouseEvent) => {
-        childProps.onMouseEnter?.(e)
-        hoverIn()
-      },
-      onMouseLeave: (e: MouseEvent) => {
-        childProps.onMouseLeave?.(e)
-        hoverOut()
-      },
-      onClick: (e: MouseEvent) => {
-        childProps.onClick?.(e)
-        setIsOpen(prev => !prev)
-      }
-    })
+        ref,
+        onMouseEnter: (e: MouseEvent) => {
+          childProps.onMouseEnter?.(e)
+          hoverIn()
+        },
+        onMouseLeave: (e: MouseEvent) => {
+          childProps.onMouseLeave?.(e)
+          hoverOut()
+        },
+        onClick: (e: MouseEvent) => {
+          childProps.onClick?.(e)
+          setIsOpen(prev => !prev)
+        }
+      })
     : children
 
   const resolvedLabel = label ?? (
-    <div
-      className={'Tooltip__Body'}
-      onMouseEnter={hoverIn}
-      onMouseLeave={hoverOut}
-    >
+    <div className={'Tooltip__Body'} onMouseEnter={hoverIn} onMouseLeave={hoverOut}>
       {title ? <div className={'Tooltip__Title'}>{title}</div> : null}
       <div className={'Tooltip__Content'}>{content}</div>
     </div>

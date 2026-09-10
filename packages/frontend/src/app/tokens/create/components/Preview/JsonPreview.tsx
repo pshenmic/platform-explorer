@@ -6,7 +6,12 @@ import { json } from '@codemirror/lang-json'
 import { oneDark } from '@codemirror/theme-one-dark'
 import { EditorView } from '@codemirror/view'
 import { useTokenWizard } from '../../TokenWizardContext'
-import type { HistoryFlags, IntervalUnit, PreProgrammedRow, TokenForm } from '../../TokenWizardContext'
+import type {
+  HistoryFlags,
+  IntervalUnit,
+  PreProgrammedRow,
+  TokenForm
+} from '../../TokenWizardContext'
 import { buildTokenConfiguration } from '../../buildTokenConfiguration'
 import type { PreviewView } from '../../CreateTokenPage'
 import FaqView from './FaqView'
@@ -128,18 +133,24 @@ const parseFormUpdates = (config: unknown): PartialFormUpdates | null => {
       let unit: IntervalUnit = 'days'
       let value = intervalMs / 86_400_000
       if (intervalMs % 86_400_000 !== 0) {
-        unit = 'hours'; value = intervalMs / 3_600_000
+        unit = 'hours'
+        value = intervalMs / 3_600_000
         if (intervalMs % 3_600_000 !== 0) {
-          unit = 'minutes'; value = intervalMs / 60_000
+          unit = 'minutes'
+          value = intervalMs / 60_000
           if (intervalMs % 60_000 !== 0) {
-            unit = 'seconds'; value = intervalMs / 1000
+            unit = 'seconds'
+            value = intervalMs / 1000
           }
         }
       }
       updates.perpetualIntervalValue = String(value)
       updates.perpetualIntervalUnit = unit
       updates.perpetualAmount = String(fixed.amount)
-      if (typeof pd.distributionRecipient === 'string' && pd.distributionRecipient === 'ContractOwner') {
+      if (
+        typeof pd.distributionRecipient === 'string' &&
+        pd.distributionRecipient === 'ContractOwner'
+      ) {
         updates.perpetualRecipient = 'owner'
         updates.perpetualRecipientIdentity = ''
       } else if (pd.distributionRecipient?.Identity) {
@@ -179,8 +190,8 @@ interface TabButtonProps {
 
 const TabButton = ({ id, label, view, onSelect }: TabButtonProps) => (
   <button
-    type='button'
-    role='tab'
+    type="button"
+    role="tab"
     aria-selected={view === id}
     className={`Preview__ViewToggleBtn${view === id ? ' Preview__ViewToggleBtn--active' : ''}`}
     onClick={() => onSelect(id)}
@@ -194,7 +205,7 @@ interface JsonPreviewProps {
   onViewChange: (view: PreviewView) => void
 }
 
-function JsonPreview ({ view, onViewChange }: JsonPreviewProps) {
+function JsonPreview({ view, onViewChange }: JsonPreviewProps) {
   const { form, setField } = useTokenWizard()
   const configuration = useMemo(() => buildTokenConfiguration(form), [form])
   const code = useMemo(() => JSON.stringify(configuration, null, 2), [configuration])
@@ -203,11 +214,12 @@ function JsonPreview ({ view, onViewChange }: JsonPreviewProps) {
   const [parseError, setParseError] = useState<string | null>(null)
   // Kept here so FAQ open-state survives switching to the JSON tab and back.
   const [faqOpen, setFaqOpen] = useState(() => new Set<string>())
-  const toggleFaq = (key: string) => setFaqOpen((prev) => {
-    const next = new Set(prev)
-    next.has(key) ? next.delete(key) : next.add(key)
-    return next
-  })
+  const toggleFaq = (key: string) =>
+    setFaqOpen(prev => {
+      const next = new Set(prev)
+      next.has(key) ? next.delete(key) : next.add(key)
+      return next
+    })
   const isFocusedRef = useRef(false)
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
@@ -241,17 +253,20 @@ function JsonPreview ({ view, onViewChange }: JsonPreviewProps) {
     }, 500)
   }
 
-  useEffect(() => () => {
-    if (debounceRef.current) clearTimeout(debounceRef.current)
-  }, [])
+  useEffect(
+    () => () => {
+      if (debounceRef.current) clearTimeout(debounceRef.current)
+    },
+    []
+  )
 
   return (
-    <div className='Preview__Json'>
-      <div className='Preview__JsonTitle'>
+    <div className="Preview__Json">
+      <div className="Preview__JsonTitle">
         <span>{TITLES[view]}</span>
-        <div className='Preview__ViewToggle' role='tablist'>
-          <TabButton id='json' label='JSON' view={view} onSelect={onViewChange}/>
-          <TabButton id='faq' label='FAQ' view={view} onSelect={onViewChange}/>
+        <div className="Preview__ViewToggle" role="tablist">
+          <TabButton id="json" label="JSON" view={view} onSelect={onViewChange} />
+          <TabButton id="faq" label="FAQ" view={view} onSelect={onViewChange} />
         </div>
       </div>
 
@@ -263,16 +278,20 @@ function JsonPreview ({ view, onViewChange }: JsonPreviewProps) {
             theme={oneDark}
             basicSetup={basicSetup}
             onChange={handleChange}
-            onFocus={() => { isFocusedRef.current = true }}
-            onBlur={() => { isFocusedRef.current = false }}
+            onFocus={() => {
+              isFocusedRef.current = true
+            }}
+            onBlur={() => {
+              isFocusedRef.current = false
+            }}
           />
           {parseError && (
-            <div className='Preview__JsonError'>Invalid JSON — last valid state kept</div>
+            <div className="Preview__JsonError">Invalid JSON — last valid state kept</div>
           )}
         </>
       )}
 
-      {view === 'faq' && <FaqView open={faqOpen} onToggle={toggleFaq}/>}
+      {view === 'faq' && <FaqView open={faqOpen} onToggle={toggleFaq} />}
     </div>
   )
 }

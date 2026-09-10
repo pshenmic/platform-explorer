@@ -8,7 +8,7 @@ interface InfoBlockProps extends WithChildren, WithClassName {
   gradient?: boolean
 }
 
-function InfoBlock ({ children, colorScheme = 'blue', gradient, className }: InfoBlockProps) {
+function InfoBlock({ children, colorScheme = 'blue', gradient, className }: InfoBlockProps) {
   const schemeClasses: Record<ColorScheme, string> = {
     blue: '',
     green: 'InfoBlock--Green',
@@ -21,11 +21,7 @@ function InfoBlock ({ children, colorScheme = 'blue', gradient, className }: Inf
   if (gradient) classes.push('InfoBlock--Gradient')
   if (className) classes.push(className)
 
-  return (
-    <div className={classes.join(' ')}>
-      {children}
-    </div>
-  )
+  return <div className={classes.join(' ')}>{children}</div>
 }
 
 export default InfoBlock

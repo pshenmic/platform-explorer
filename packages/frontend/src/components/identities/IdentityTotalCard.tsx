@@ -3,7 +3,14 @@
 import type { ComponentType, ReactNode } from 'react'
 import type { Identity, Rate } from '../../types'
 import type { LoadableState } from '../../types/common'
-import { Alias as AliasJs, AliasesList as AliasesListJs, CreditsBlock as CreditsBlockJs, DateBlock as DateBlockJs, Identifier as IdentifierJs, InfoLine as InfoLineJs } from '../data'
+import {
+  Alias as AliasJs,
+  AliasesList as AliasesListJs,
+  CreditsBlock as CreditsBlockJs,
+  DateBlock as DateBlockJs,
+  Identifier as IdentifierJs,
+  InfoLine as InfoLineJs
+} from '../data'
 import ImageGenerator from '../imageGenerator'
 import { HorisontalSeparator } from '../ui/separators'
 import { SmoothSize, ValueContainer } from '../ui/containers'
@@ -24,8 +31,11 @@ const Alias = AliasJs as ComponentType<{
   alias?: string
   ellipsis?: boolean
 }>
-const AliasesList = AliasesListJs as ComponentType<{ aliases?: unknown[], className?: string }>
-const CreditsBlock = CreditsBlockJs as ComponentType<{ credits?: number | string | null, rate?: Rate | null }>
+const AliasesList = AliasesListJs as ComponentType<{ aliases?: unknown[]; className?: string }>
+const CreditsBlock = CreditsBlockJs as ComponentType<{
+  credits?: number | string | null
+  rate?: Rate | null
+}>
 const DateBlock = DateBlockJs as ComponentType<{
   timestamp?: string | number | null
   format?: string
@@ -59,12 +69,12 @@ interface PublicKeysProps {
 
 const PublicKeys = ({ className, show, publicKeys = [] }: PublicKeysProps) => (
   <SmoothSize className={className || ''}>
-    {publicKeys.length > 0 &&
+    {publicKeys.length > 0 && (
       <PublicKeysList
         className={`IdentityTotalCard__PublicKeysList ${show ? 'IdentityTotalCard__PublicKeysList--Show' : ''}`}
         publicKeys={publicKeys as any}
       />
-    }
+    )}
   </SmoothSize>
 )
 
@@ -73,17 +83,19 @@ interface IdentityTotalCardProps {
   rate?: Rate | null
 }
 
-function IdentityTotalCard ({ identity, rate }: IdentityTotalCardProps) {
+function IdentityTotalCard({ identity, rate }: IdentityTotalCardProps) {
   const activeAlias = findActiveAlias(identity.data?.aliases)
   const [showPublicKeys, setShowPublicKeys] = useState(false)
 
   return (
-    <div className={`InfoBlock InfoBlock--Gradient IdentityPage__CommonInfo IdentityTotalCard ${identity.loading ? 'IdentityTotalCard--Loading' : ''} `}>
-      {activeAlias &&
+    <div
+      className={`InfoBlock InfoBlock--Gradient IdentityPage__CommonInfo IdentityTotalCard ${identity.loading ? 'IdentityTotalCard--Loading' : ''} `}
+    >
+      {activeAlias && (
         <div className={'IdentityTotalCard__Title'}>
           <Alias ellipsis={false}>{activeAlias.alias}</Alias>
         </div>
-      }
+      )}
 
       <div className={'IdentityTotalCard__ContentContainer'}>
         <div className={'IdentityTotalCard__Column'}>
@@ -94,38 +106,36 @@ function IdentityTotalCard ({ identity, rate }: IdentityTotalCardProps) {
                 title={'Identifier'}
                 loading={identity.loading}
                 error={identity.error || (!identity.loading && !identity.data?.identifier)}
-                value={(
-                  <Identifier
-                    copyButton={true}
-                    styles={['highlight-both']}
-                    ellipsis={false}
-                  >
+                value={
+                  <Identifier copyButton={true} styles={['highlight-both']} ellipsis={false}>
                     {identity.data?.identifier}
                   </Identifier>
-                )}
+                }
               />
               <InfoLine
                 className={'IdentityTotalCard__InfoLine IdentityTotalCard__InfoLine--Balance'}
                 title={'Balance'}
-                value={<CreditsBlock credits={identity.data?.balance} rate={rate}/>}
+                value={<CreditsBlock credits={identity.data?.balance} rate={rate} />}
                 loading={identity.loading}
                 error={identity.error}
               />
             </div>
             <div className={'IdentityTotalCard__Avatar'}>
-              {!identity.error
-                ? <ImageGenerator
+              {!identity.error ? (
+                <ImageGenerator
                   username={identity.data?.identifier}
                   lightness={50}
                   saturation={50}
                   width={88}
-                  height={88}/>
-                : 'n/a'
-              }
+                  height={88}
+                />
+              ) : (
+                'n/a'
+              )}
             </div>
           </div>
 
-          <HorisontalSeparator className={'IdentityTotalCard__Separator'}/>
+          <HorisontalSeparator className={'IdentityTotalCard__Separator'} />
 
           <div className={'IdentityTotalCard__CommonLines'}>
             <InfoLine
@@ -145,11 +155,14 @@ function IdentityTotalCard ({ identity, rate }: IdentityTotalCardProps) {
             <InfoLine
               className={'IdentityTotalCard__InfoLine'}
               title={'Creation date'}
-              value={identity?.data?.txHash
-                ? <ValueCard link={`/transaction/${identity.data.txHash}`}>
-                    <DateBlock timestamp={identity.data?.timestamp}/>
+              value={
+                identity?.data?.txHash ? (
+                  <ValueCard link={`/transaction/${identity.data.txHash}`}>
+                    <DateBlock timestamp={identity.data?.timestamp} />
                   </ValueCard>
-                : <DateBlock timestamp={identity.data?.timestamp}/>
+                ) : (
+                  <DateBlock timestamp={identity.data?.timestamp} />
+                )
               }
               loading={identity.loading}
               error={identity.error || (!identity.loading && !identity.data?.timestamp)}
@@ -157,9 +170,14 @@ function IdentityTotalCard ({ identity, rate }: IdentityTotalCardProps) {
             <InfoLine
               className={'IdentityTotalCard__InfoLine IdentityTotalCard__InfoLine--Names'}
               title={'Identities names'}
-              value={identity.data?.aliases?.length
-                ? <AliasesList aliases={identity.data?.aliases}/>
-                : <ValueContainer className={'IdentityTotalCard__ZeroListBadge'}>none</ValueContainer>
+              value={
+                identity.data?.aliases?.length ? (
+                  <AliasesList aliases={identity.data?.aliases} />
+                ) : (
+                  <ValueContainer className={'IdentityTotalCard__ZeroListBadge'}>
+                    none
+                  </ValueContainer>
+                )
               }
               loading={identity.loading}
               error={identity.error || (!identity.loading && identity.data?.aliases === undefined)}
@@ -167,28 +185,43 @@ function IdentityTotalCard ({ identity, rate }: IdentityTotalCardProps) {
             <InfoLine
               className={'IdentityTotalCard__InfoLine IdentityTotalCard__InfoLine--PublicKeys'}
               title={'Public Keys'}
-              value={identity.data?.publicKeys?.length
-                ? <Button
+              value={
+                identity.data?.publicKeys?.length ? (
+                  <Button
                     className={'IdentityTotalCard__PublicKeysShowButton'}
                     size={'sm'}
-                    variant={showPublicKeys && identity.data?.publicKeys?.length > 0 ? 'gray' : 'blue'}
+                    variant={
+                      showPublicKeys && identity.data?.publicKeys?.length > 0 ? 'gray' : 'blue'
+                    }
                     onClick={() => setShowPublicKeys(prev => !prev)}
                   >
                     {identity.data?.publicKeys?.length} public keys
-                    <ChevronIcon ml={'4px'} h={'10px'} w={'10px'}
-                                 transform={`rotate(${showPublicKeys ? '-90deg' : '90deg'})`}/>
+                    <ChevronIcon
+                      ml={'4px'}
+                      h={'10px'}
+                      w={'10px'}
+                      transform={`rotate(${showPublicKeys ? '-90deg' : '90deg'})`}
+                    />
                   </Button>
-                : <ValueContainer className={'IdentityTotalCard__ZeroListBadge'}>none</ValueContainer>
+                ) : (
+                  <ValueContainer className={'IdentityTotalCard__ZeroListBadge'}>
+                    none
+                  </ValueContainer>
+                )
               }
               loading={identity.loading}
-              error={identity.error || (!identity.loading && identity.data?.publicKeys === undefined)}
+              error={
+                identity.error || (!identity.loading && identity.data?.publicKeys === undefined)
+              }
             />
             <PublicKeys
               publicKeys={identity.data?.publicKeys}
               show={showPublicKeys}
-              className={`IdentityTotalCard__PublicKeysListContainer IdentityTotalCard__PublicKeysListContainer--Mobile ${showPublicKeys
-                ? ' IdentityTotalCard__PublicKeysListContainer--Opened'
-                : ' IdentityTotalCard__PublicKeysListContainer--Hidden'}`}
+              className={`IdentityTotalCard__PublicKeysListContainer IdentityTotalCard__PublicKeysListContainer--Mobile ${
+                showPublicKeys
+                  ? ' IdentityTotalCard__PublicKeysListContainer--Opened'
+                  : ' IdentityTotalCard__PublicKeysListContainer--Hidden'
+              }`}
             />
           </div>
         </div>
@@ -204,9 +237,11 @@ function IdentityTotalCard ({ identity, rate }: IdentityTotalCardProps) {
       <PublicKeys
         publicKeys={identity.data?.publicKeys}
         show={showPublicKeys}
-        className={`IdentityTotalCard__PublicKeysListContainer IdentityTotalCard__PublicKeysListContainer--Desktop ${showPublicKeys
-          ? ' IdentityTotalCard__PublicKeysListContainer--Opened'
-          : ' IdentityTotalCard__PublicKeysListContainer--Hidden'}`}
+        className={`IdentityTotalCard__PublicKeysListContainer IdentityTotalCard__PublicKeysListContainer--Desktop ${
+          showPublicKeys
+            ? ' IdentityTotalCard__PublicKeysListContainer--Opened'
+            : ' IdentityTotalCard__PublicKeysListContainer--Hidden'
+        }`}
       />
     </div>
   )

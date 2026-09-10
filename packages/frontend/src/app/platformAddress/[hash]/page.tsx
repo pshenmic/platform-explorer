@@ -6,11 +6,13 @@ interface PlatformAddressRouteProps {
 }
 
 export async function generateMetadata(props: PlatformAddressRouteProps): Promise<Metadata> {
-  const params = await props.params;
+  const params = await props.params
   return {
     title: 'Platform Address ' + params.hash + ' — Dash Platform Explorer',
     description:
-      'Platform Address ' + params.hash + ' on Dash Platform. Balance, nonce, incoming and outgoing transactions.',
+      'Platform Address ' +
+      params.hash +
+      ' on Dash Platform. Balance, nonce, incoming and outgoing transactions.',
     keywords: [
       'Dash',
       'platform',
@@ -25,7 +27,7 @@ export async function generateMetadata(props: PlatformAddressRouteProps): Promis
   }
 }
 
-function PlatformAddressRoute () {
+function PlatformAddressRoute() {
   return <PlatformAddress />
 }
 

@@ -8,11 +8,7 @@ import { Grid, GridItem } from '@chakra-ui/react'
 import PaginationJs from '../pagination'
 import { ErrorMessageBlock } from '../Errors'
 import { LoadingList as LoadingListJs } from '../loading'
-import {
-  createColumnHelper,
-  getCoreRowModel,
-  useReactTable
-} from '@tanstack/react-table'
+import { createColumnHelper, getCoreRowModel, useReactTable } from '@tanstack/react-table'
 import type { Rate } from '../../types'
 import './TokensList.css'
 
@@ -28,7 +24,10 @@ const LoadingList = LoadingListJs as ComponentType<{ itemsCount?: number }>
 const columnHelper = createColumnHelper<TokenListItemData>()
 
 const columns = [
-  columnHelper.accessor(row => row.localizations?.en?.singularForm, { id: 'tokenName', header: 'Token Name' }),
+  columnHelper.accessor(row => row.localizations?.en?.singularForm, {
+    id: 'tokenName',
+    header: 'Token Name'
+  }),
   columnHelper.accessor('position', { id: 'position', header: 'Position' }),
   columnHelper.accessor('totalSupply', { id: 'supply', header: 'Supply' }),
   columnHelper.accessor('price', { id: 'price', header: 'Price' }),
@@ -59,7 +58,7 @@ interface TokensListProps {
   itemsCount?: number
 }
 
-function TokensList ({
+function TokensList({
   tokens = [],
   rate,
   headerStyles = 'default',
@@ -102,23 +101,17 @@ function TokensList ({
         )}
       </Grid>
 
-      {!loading
-        ? <div className={'TokensList__Items'}>
-            {table.getRowModel().rows.map((row) => (
-              <TokensListItem
-                key={row.id}
-                token={row.original}
-                rate={rate}
-                variant={variant}
-              />
-            ))}
-            {tokens?.length === 0 && (
-              <EmptyListMessage>There are no tokens yet.</EmptyListMessage>
-            )}
-            {tokens === undefined && <ErrorMessageBlock />}
-          </div>
-        : <LoadingList itemsCount={itemsCount} />
-      }
+      {!loading ? (
+        <div className={'TokensList__Items'}>
+          {table.getRowModel().rows.map(row => (
+            <TokensListItem key={row.id} token={row.original} rate={rate} variant={variant} />
+          ))}
+          {tokens?.length === 0 && <EmptyListMessage>There are no tokens yet.</EmptyListMessage>}
+          {tokens === undefined && <ErrorMessageBlock />}
+        </div>
+      ) : (
+        <LoadingList itemsCount={itemsCount} />
+      )}
 
       {pagination && (
         <Pagination

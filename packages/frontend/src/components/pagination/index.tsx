@@ -44,7 +44,7 @@ interface PaginationProps extends WithClassName {
   justify?: boolean
 }
 
-function Pagination ({
+function Pagination({
   onPageChange,
   pageCount,
   forcePage,
@@ -58,12 +58,12 @@ function Pagination ({
   return (
     <Paginate
       breakLabel={'...'}
-      nextLabel={<ChevronIcon color={'gray.250'}/>}
+      nextLabel={<ChevronIcon color={'gray.250'} />}
       onPageChange={onPageChange}
       pageRangeDisplayed={pageRangeDisplayed}
       marginPagesDisplayed={marginPagesDisplayed}
       pageCount={count}
-      previousLabel={<ChevronIcon color={'gray.250'}/>}
+      previousLabel={<ChevronIcon color={'gray.250'} />}
       pageClassName={'PageItem'}
       pageLinkClassName={'PageLink'}
       previousClassName={'PageItem PageItem--Previous'}

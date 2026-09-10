@@ -25,7 +25,7 @@ interface BlockSearchItemProps extends WithClassName {
   onClick?: (data: unknown) => void
 }
 
-export function BlockSearchItem ({ block, className, onClick }: BlockSearchItemProps) {
+export function BlockSearchItem({ block, className, onClick }: BlockSearchItemProps) {
   return (
     <BaseSearchItem
       href={`/block/${block?.header?.hash}`}
@@ -37,18 +37,22 @@ export function BlockSearchItem ({ block, className, onClick }: BlockSearchItemP
       <BaseSearchItemContent
         mainContent={
           <Flex alignItems={'center'} w={'100%'}>
-            <BlockIcon className={'SearchResultsListItem__Icon'}/>
-            <Identifier ellipsis={true} styles={['highlight-both']}>{block?.header?.hash}</Identifier>
+            <BlockIcon className={'SearchResultsListItem__Icon'} />
+            <Identifier ellipsis={true} styles={['highlight-both']}>
+              {block?.header?.hash}
+            </Identifier>
           </Flex>
         }
         additionalContent={
-          block?.header?.height ?? null
-            ? <Badge size={'xs'} colorScheme={'gray'}>
-                #{block?.header?.height}
-              </Badge>
-            : <NotActive>-</NotActive>
+          (block?.header?.height ?? null) ? (
+            <Badge size={'xs'} colorScheme={'gray'}>
+              #{block?.header?.height}
+            </Badge>
+          ) : (
+            <NotActive>-</NotActive>
+          )
         }
-        timestamp={<TimeDelta endDate={block?.header?.timestamp}/>}
+        timestamp={<TimeDelta endDate={block?.header?.timestamp} />}
       />
     </BaseSearchItem>
   )

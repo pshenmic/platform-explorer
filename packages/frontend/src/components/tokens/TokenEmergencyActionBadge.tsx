@@ -11,7 +11,11 @@ interface TokenEmergencyActionBadgeProps {
   [key: string]: unknown
 }
 
-const TokenEmergencyActionBadge = ({ type, size = 'sm', ...props }: TokenEmergencyActionBadgeProps) => {
+const TokenEmergencyActionBadge = ({
+  type,
+  size = 'sm',
+  ...props
+}: TokenEmergencyActionBadgeProps) => {
   const colorScheme: Record<string, 'red' | 'green' | 'gray'> = {
     pause: 'red',
     resume: 'green',
@@ -19,8 +23,8 @@ const TokenEmergencyActionBadge = ({ type, size = 'sm', ...props }: TokenEmergen
   }
 
   const icons: Record<string, ReactNode> = {
-    pause: <CirclePauseIcon w={6} h={6}/>,
-    resume: <CirclePlayIcon w={6} h={6}/>
+    pause: <CirclePauseIcon w={6} h={6} />,
+    resume: <CirclePlayIcon w={6} h={6} />
   }
 
   const key = String(type).toLowerCase()

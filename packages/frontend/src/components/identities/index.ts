@@ -6,9 +6,4 @@ import { IdentitiesFilter } from './IdentitiesFilter'
 
 export * from './hooks'
 
-export {
-  IdentitiesList,
-  IdentityTotalCard,
-  IdentityDigestCard,
-  IdentitiesFilter
-}
+export { IdentitiesList, IdentityTotalCard, IdentityDigestCard, IdentitiesFilter }

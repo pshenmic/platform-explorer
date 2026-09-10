@@ -1,5 +1,3 @@
 import HorisontalSeparator from './HorisontalSeparator'
 
-export {
-  HorisontalSeparator
-}
+export { HorisontalSeparator }

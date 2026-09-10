@@ -2,7 +2,11 @@ import type { ComponentType, ReactNode } from 'react'
 import type { Validator } from '../../types'
 import type { LoadableState } from '../../types/common'
 import Link from 'next/link'
-import { DateBlock as DateBlockJs, Identifier as IdentifierJs, NotActive as NotActiveJs } from '../data'
+import {
+  DateBlock as DateBlockJs,
+  Identifier as IdentifierJs,
+  NotActive as NotActiveJs
+} from '../data'
 import { Badge, Grid, GridItem } from '@chakra-ui/react'
 
 import './ValidatorListItem.css'
@@ -33,41 +37,42 @@ interface ValidatorListItemProps {
 
 export const ValidatorListItem = ({ validator }: ValidatorListItemProps) => {
   return (
-    <Link
-        href={`/validator/${validator.proTxHash}`}
-        className={'ValidatorListItem'}
-    >
-        <Grid className={'ValidatorListItem__Content'}>
-            <GridItem className={'ValidatorListItem__Column'}>
-                {validator?.proTxHash &&
-                <Identifier
-                    className={'ValidatorListItem__Column ValidatorListItem__Column--Identifier'}
-                    avatar={true}
-                    copyButton={true}
-                    styles={['highlight-both']}
-                >
-                    {validator.proTxHash}
-                </Identifier>
-                }
-            </GridItem>
-            <GridItem className={'ValidatorListItem__Column'}>
-              {validator?.isActive !== undefined
-                ? <Badge className='ValidatorListItem__Column--Active' colorScheme={validator?.isActive ? 'orange' : 'gray'}>
-                    {validator?.isActive ? 'true' : 'false'}
-                </Badge>
-                : <NotActive />
-                }
-            </GridItem>
-            <GridItem className={'ValidatorListItem__Column'}>
-                {validator?.lastProposedBlockHeader?.height || '-'}
-            </GridItem>
-            <GridItem className={'ValidatorListItem__Column'}>
-                {validator?.proposedBlocksAmount || '-'}
-            </GridItem>
-            <GridItem className={'ValidatorListItem__Column'}>
-                <DateBlock timestamp={validator.lastProposedBlockHeader?.timestamp} format='dateOnly' />
-            </GridItem>
-        </Grid>
+    <Link href={`/validator/${validator.proTxHash}`} className={'ValidatorListItem'}>
+      <Grid className={'ValidatorListItem__Content'}>
+        <GridItem className={'ValidatorListItem__Column'}>
+          {validator?.proTxHash && (
+            <Identifier
+              className={'ValidatorListItem__Column ValidatorListItem__Column--Identifier'}
+              avatar={true}
+              copyButton={true}
+              styles={['highlight-both']}
+            >
+              {validator.proTxHash}
+            </Identifier>
+          )}
+        </GridItem>
+        <GridItem className={'ValidatorListItem__Column'}>
+          {validator?.isActive !== undefined ? (
+            <Badge
+              className="ValidatorListItem__Column--Active"
+              colorScheme={validator?.isActive ? 'orange' : 'gray'}
+            >
+              {validator?.isActive ? 'true' : 'false'}
+            </Badge>
+          ) : (
+            <NotActive />
+          )}
+        </GridItem>
+        <GridItem className={'ValidatorListItem__Column'}>
+          {validator?.lastProposedBlockHeader?.height || '-'}
+        </GridItem>
+        <GridItem className={'ValidatorListItem__Column'}>
+          {validator?.proposedBlocksAmount || '-'}
+        </GridItem>
+        <GridItem className={'ValidatorListItem__Column'}>
+          <DateBlock timestamp={validator.lastProposedBlockHeader?.timestamp} format="dateOnly" />
+        </GridItem>
+      </Grid>
     </Link>
   )
 }

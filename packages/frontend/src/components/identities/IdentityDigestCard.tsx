@@ -1,7 +1,12 @@
 import type { ComponentType, ReactNode } from 'react'
 import type { Identity, Rate } from '../../types'
 import type { LoadableState } from '../../types/common'
-import { CreditsBlock as CreditsBlockJs, DateBlock as DateBlockJs, Identifier as IdentifierJs, InfoLine as InfoLineJs } from '../data'
+import {
+  CreditsBlock as CreditsBlockJs,
+  DateBlock as DateBlockJs,
+  Identifier as IdentifierJs,
+  InfoLine as InfoLineJs
+} from '../data'
 import Link from 'next/link'
 import { ValueContainer } from '../ui/containers'
 import { LoadingLine } from '../loading'
@@ -10,7 +15,10 @@ import { useActiveNetwork } from 'src/contexts'
 import './IdentityDigestCard.css'
 
 // Untyped JS modules — cast until migrated
-const CreditsBlock = CreditsBlockJs as ComponentType<{ credits?: number | string | null, rate?: Rate | null }>
+const CreditsBlock = CreditsBlockJs as ComponentType<{
+  credits?: number | string | null
+  rate?: Rate | null
+}>
 const DateBlock = DateBlockJs as ComponentType<{
   timestamp?: string | number | null
   format?: string
@@ -42,22 +50,24 @@ interface IdentityDigestCardProps {
   className?: string
 }
 
-function IdentityDigestCard ({ identity, rate, className }: IdentityDigestCardProps) {
+function IdentityDigestCard({ identity, rate, className }: IdentityDigestCardProps) {
   const { l1explorerBaseUrl } = useActiveNetwork()
 
   return (
-    <div className={`IdentityDigestCard ${className || ''} ${identity.loading ? 'IdentityDigestCard--Loading' : ''}`}>
+    <div
+      className={`IdentityDigestCard ${className || ''} ${identity.loading ? 'IdentityDigestCard--Loading' : ''}`}
+    >
       <div className={'IdentityDigestCard__Transfers'}>
         <div className={'IdentityDigestCard__Transfer IdentityDigestCard__Transfer--TupUp'}>
           <div className={'IdentityDigestCard__TransferTitle'}>Total Top-up’s:</div>
           <LoadingLine loading={identity.loading}>
-            <CreditsBlock credits={identity.data?.totalTopUpsAmount} rate={rate}/>
+            <CreditsBlock credits={identity.data?.totalTopUpsAmount} rate={rate} />
           </LoadingLine>
         </div>
         <div className={'IdentityDigestCard__Transfer IdentityDigestCard__Transfer--Withdrawals'}>
           <div className={'IdentityDigestCard__TransferTitle'}>Total Withdrawals:</div>
           <LoadingLine loading={identity.loading}>
-            <CreditsBlock credits={identity.data?.totalWithdrawalsAmount} rate={rate}/>
+            <CreditsBlock credits={identity.data?.totalWithdrawalsAmount} rate={rate} />
           </LoadingLine>
         </div>
       </div>
@@ -66,53 +76,66 @@ function IdentityDigestCard ({ identity, rate, className }: IdentityDigestCardPr
         <InfoLine
           className={'IdentityDigestCard__InfoLine'}
           title={'Funding Core Transaction'}
-          value={(
-            <a {...(l1explorerBaseUrl && {
-              href: `${l1explorerBaseUrl}/tx/${identity.data?.fundingCoreTx}`,
-              target: '_blank',
-              rel: 'noopener noreferrer'
-            })}>
-              <ValueContainer className={'IdentityDigestCard__ValueContainer'} clickable={!!l1explorerBaseUrl} external={!!l1explorerBaseUrl}>
+          value={
+            <a
+              {...(l1explorerBaseUrl && {
+                href: `${l1explorerBaseUrl}/tx/${identity.data?.fundingCoreTx}`,
+                target: '_blank',
+                rel: 'noopener noreferrer'
+              })}
+            >
+              <ValueContainer
+                className={'IdentityDigestCard__ValueContainer'}
+                clickable={!!l1explorerBaseUrl}
+                external={!!l1explorerBaseUrl}
+              >
                 <Identifier styles={['highlight-both']} ellipsis={false}>
                   {identity.data?.fundingCoreTx || null}
                 </Identifier>
               </ValueContainer>
             </a>
-          )}
+          }
           loading={identity.loading}
           error={identity.error || (!identity.loading && !identity.data?.fundingCoreTx)}
         />
         <InfoLine
           className={'IdentityDigestCard__InfoLine IdentityDigestCard__InfoLine--LastWithdrawal'}
           title={'Last Withdrawal'}
-          value={(
+          value={
             <Link href={`/transaction/${identity.data?.lastWithdrawalHash}`}>
               <ValueContainer className={'IdentityDigestCard__ValueContainer'} clickable={true}>
-                {identity.data?.lastWithdrawalTimestamp &&
-                  <DateBlock timestamp={identity.data?.lastWithdrawalTimestamp} format={'deltaOnly'}/>
-                }
+                {identity.data?.lastWithdrawalTimestamp && (
+                  <DateBlock
+                    timestamp={identity.data?.lastWithdrawalTimestamp}
+                    format={'deltaOnly'}
+                  />
+                )}
                 <Identifier ellipsis={false} styles={['highlight-both']}>
                   {identity.data?.lastWithdrawalHash}
                 </Identifier>
               </ValueContainer>
             </Link>
-          )}
+          }
           loading={identity.loading}
           error={identity.error || (!identity.loading && !identity.data?.lastWithdrawalHash)}
         />
         <InfoLine
           className={'IdentityDigestCard__InfoLine'}
           title={'Total Gas Spent'}
-          value={<CreditsBlock credits={identity.data?.totalGasSpent} rate={rate}/>}
+          value={<CreditsBlock credits={identity.data?.totalGasSpent} rate={rate} />}
           loading={identity.loading}
-          error={identity.error || (!identity.loading && identity.data?.totalGasSpent === undefined)}
+          error={
+            identity.error || (!identity.loading && identity.data?.totalGasSpent === undefined)
+          }
         />
         <InfoLine
           className={'IdentityDigestCard__InfoLine'}
           title={'Average Gas Spent'}
-          value={<CreditsBlock credits={identity.data?.averageGasSpent} rate={rate}/>}
+          value={<CreditsBlock credits={identity.data?.averageGasSpent} rate={rate} />}
           loading={identity.loading}
-          error={identity.error || (!identity.loading && identity.data?.averageGasSpent === undefined)}
+          error={
+            identity.error || (!identity.loading && identity.data?.averageGasSpent === undefined)
+          }
         />
       </div>
     </div>

@@ -9,11 +9,7 @@ import PageSizeSelector from '../../components/pageSizeSelector/PageSizeSelector
 import { useQuery, keepPreviousData } from '@tanstack/react-query'
 import { useQueryState, parseAsInteger } from 'nuqs'
 import { normalizePagination } from '@utils/table'
-import {
-  Container,
-  Box,
-  useBreakpointValue
-} from '@chakra-ui/react'
+import { Container, Box, useBreakpointValue } from '@chakra-ui/react'
 import { useTokensFilters, TokenFilters } from '@components/tokens'
 import PageTitle from '../../components/intro/PageTitle'
 import NetworkStatsInline from '../../components/stats/NetworkStatsInline'
@@ -30,7 +26,7 @@ const paginateConfig = {
   defaultPage: 1
 }
 
-function Tokens () {
+function Tokens() {
   const isMobile = useBreakpointValue({ base: true, md: false })
   const { filters, setFilters } = useTokensFilters()
 
@@ -49,12 +45,7 @@ function Tokens () {
 
   const tokens = useQuery({
     queryKey: ['tokens', page, pageSize, ...Object.values(filters)],
-    queryFn: () => Api.getTokens(
-      page,
-      pageSize,
-      'asc',
-      filters as never
-    ),
+    queryFn: () => Api.getTokens(page, pageSize, 'asc', filters as never),
     placeholderData: keepPreviousData,
     select: ({ pagination, ...other }) => ({
       ...other,
@@ -76,24 +67,26 @@ function Tokens () {
   }
 
   return (
-    <Container
-      maxW={'container.maxPageW'}
-      mt={8}
-      className={'Tokens'}
-    >
-      <Container
-        maxW={'container.maxPageW'}
-        className={'InfoBlock'}
-      >
+    <Container maxW={'container.maxPageW'} mt={8} className={'Tokens'}>
+      <Container maxW={'container.maxPageW'} className={'InfoBlock'}>
         <div className={'Tokens__Controls'}>
-          <PageTitle title={'Tokens'} description={introContent} className={'Tokens__Title'}/>
+          <PageTitle title={'Tokens'} description={introContent} className={'Tokens__Title'} />
 
           <NetworkStatsInline
             className={'Tokens__Stats'}
-            items={[{ label: 'Total', value: typeof totalTokens === 'number' ? formatFullNumber(totalTokens) as string | number : null, loading: tokens.isLoading }]}
+            items={[
+              {
+                label: 'Total',
+                value:
+                  typeof totalTokens === 'number'
+                    ? (formatFullNumber(totalTokens) as string | number)
+                    : null,
+                loading: tokens.isLoading
+              }
+            ]}
           />
 
-          <TokensTrending className={'Tokens__Trending'}/>
+          <TokensTrending className={'Tokens__Trending'} />
 
           <TokenFilters
             onFilterChange={handleFiltersChange}
@@ -102,20 +95,25 @@ function Tokens () {
           />
         </div>
 
-        {!tokens.isError
-          ? <TokensList
-              tokens={tokens.data?.resultSet as never}
-              loading={tokens.isLoading}
-              itemsCount={pageSize}
-            />
-          : <Container h={20}><ErrorMessageBlock/></Container>
-        }
+        {!tokens.isError ? (
+          <TokensList
+            tokens={tokens.data?.resultSet as never}
+            loading={tokens.isLoading}
+            itemsCount={pageSize}
+          />
+        ) : (
+          <Container h={20}>
+            <ErrorMessageBlock />
+          </Container>
+        )}
 
-        {(tokens.data?.resultSet?.length ?? 0) > 0 &&
+        {(tokens.data?.resultSet?.length ?? 0) > 0 && (
           <div className={'ListNavigation'}>
-            <Box display={['none', 'none', 'block']} width={'155px'}/>
+            <Box display={['none', 'none', 'block']} width={'155px'} />
             <Pagination
-              onPageChange={({ selected }) => { setPage((selected || 0) + 1) }}
+              onPageChange={({ selected }) => {
+                setPage((selected || 0) + 1)
+              }}
               pageCount={pagination?.pageCount ?? 1}
               forcePage={pagination?.forcePage}
             />
@@ -128,7 +126,7 @@ function Tokens () {
               items={paginateConfig.pageSize.values}
             />
           </div>
-        }
+        )}
       </Container>
     </Container>
   )

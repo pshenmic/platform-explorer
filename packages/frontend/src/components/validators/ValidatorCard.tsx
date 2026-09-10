@@ -1,7 +1,11 @@
 import type { ComponentType, ReactNode } from 'react'
 import type { Identity, Validator, Rate } from '../../types'
 import type { LoadableState } from '../../types/common'
-import { Identifier as IdentifierJs, InfoLine as InfoLineJs, CreditsBlock as CreditsBlockJs } from '../data'
+import {
+  Identifier as IdentifierJs,
+  InfoLine as InfoLineJs,
+  CreditsBlock as CreditsBlockJs
+} from '../data'
 import ImageGenerator from '../imageGenerator'
 import { HorisontalSeparator } from '../ui/separators'
 import Link from 'next/link'
@@ -26,7 +30,10 @@ const InfoLine = InfoLineJs as ComponentType<{
   loading?: boolean
   error?: boolean
 }>
-const CreditsBlock = CreditsBlockJs as ComponentType<{ credits?: number | string | null, rate?: Rate | null }>
+const CreditsBlock = CreditsBlockJs as ComponentType<{
+  credits?: number | string | null
+  rate?: Rate | null
+}>
 
 interface ValidatorCardProps {
   validator: LoadableState<Validator>
@@ -34,9 +41,11 @@ interface ValidatorCardProps {
   className?: string
 }
 
-export default function ValidatorCard ({ validator, rate, className }: ValidatorCardProps) {
+export default function ValidatorCard({ validator, rate, className }: ValidatorCardProps) {
   return (
-    <div className={`InfoBlock InfoBlock--Gradient ValidatorCard ${validator.loading ? 'ValidatorCard--Loading' : ''} ${className || ''}`}>
+    <div
+      className={`InfoBlock InfoBlock--Gradient ValidatorCard ${validator.loading ? 'ValidatorCard--Loading' : ''} ${className || ''}`}
+    >
       <div className={'ValidatorCard__Header'}>
         <div className={'ValidatorCard__HeaderLines'}>
           <InfoLine
@@ -44,8 +53,9 @@ export default function ValidatorCard ({ validator, rate, className }: Validator
             title={'Pro TX Hash'}
             loading={validator.loading}
             error={validator.error}
-            value={(!validator.error
-              ? <Identifier
+            value={
+              !validator.error ? (
+                <Identifier
                   className={''}
                   copyButton={true}
                   styles={['highlight-both']}
@@ -53,34 +63,36 @@ export default function ValidatorCard ({ validator, rate, className }: Validator
                 >
                   {validator.data?.proTxHash}
                 </Identifier>
-              : 'n/a'
-            )}
+              ) : (
+                'n/a'
+              )
+            }
           />
           <InfoLine
             title={'Balance'}
-            value={<CreditsBlock credits={validator.data?.identityBalance} rate={rate}/>}
+            value={<CreditsBlock credits={validator.data?.identityBalance} rate={rate} />}
             loading={validator.loading}
             error={validator.error}
           />
         </div>
         <div className={'ValidatorCard__Avatar'}>
-          {!validator.error
-            ? <ImageGenerator
+          {!validator.error ? (
+            <ImageGenerator
               username={validator.data?.proTxHash}
               lightness={50}
               saturation={50}
               width={88}
               height={88}
             />
-            : 'n/a'
-          }
+          ) : (
+            'n/a'
+          )}
         </div>
       </div>
 
-      <HorisontalSeparator className={'ValidatorCard__Separator'}/>
+      <HorisontalSeparator className={'ValidatorCard__Separator'} />
 
       <div className={'ValidatorCard__CommonInfo'}>
-
         {/* Will be activated later /*}
 
         {/* <InfoLine
@@ -104,7 +116,7 @@ export default function ValidatorCard ({ validator, rate, className }: Validator
         <InfoLine
           className={'ValidatorCard__InfoLine ValidatorCard__InfoLine--IdentityAddress'}
           title={'Identity Address'}
-          value={(
+          value={
             <Link href={`/identity/${validator.data?.identity}`}>
               <Identifier
                 className={''}
@@ -116,7 +128,7 @@ export default function ValidatorCard ({ validator, rate, className }: Validator
                 {validator.data?.identity}
               </Identifier>
             </Link>
-          )}
+          }
           loading={validator.loading}
           error={validator.error}
         />
@@ -124,7 +136,7 @@ export default function ValidatorCard ({ validator, rate, className }: Validator
         <InfoLine
           className={'ValidatorCard__InfoLine  ValidatorCard__InfoLine--NodeId'}
           title={'Node ID'}
-          value={(
+          value={
             <Identifier
               className={''}
               copyButton={true}
@@ -133,7 +145,7 @@ export default function ValidatorCard ({ validator, rate, className }: Validator
             >
               {validator.data?.proTxInfo?.state?.platformNodeID as ReactNode}
             </Identifier>
-          )}
+          }
           loading={validator.loading}
           error={validator.error}
         />

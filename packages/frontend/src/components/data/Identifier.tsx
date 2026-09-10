@@ -10,7 +10,13 @@ import NotActive from './NotActive'
 import { useDebounce } from '../../hooks'
 import './Identifier.css'
 
-type HighlightStyle = 'dim' | 'highlight' | 'highlight-first' | 'highlight-last' | 'highlight-both' | string
+type HighlightStyle =
+  | 'dim'
+  | 'highlight'
+  | 'highlight-first'
+  | 'highlight-last'
+  | 'highlight-both'
+  | string
 type HighlightMode = 'dim' | 'highlight' | 'first' | 'last' | 'both' | 'default'
 
 interface IdentifierProps extends WithChildren, WithClassName {
@@ -22,7 +28,7 @@ interface IdentifierProps extends WithChildren, WithClassName {
   linesAdjustment?: boolean
 }
 
-export default function Identifier ({
+export default function Identifier({
   children,
   ellipsis = true,
   middleEllipsis = false,
@@ -43,7 +49,7 @@ export default function Identifier ({
 
   if (ellipsis || middleEllipsis) linesAdjustment = false
 
-  useResizeObserver(symbolsContainerRef as never, (entry) => {
+  useResizeObserver(symbolsContainerRef as never, entry => {
     setContainerWidth(entry.contentRect.width)
   })
 
@@ -59,7 +65,7 @@ export default function Identifier ({
 
     const lineWidthAdjustment = 0.7
     const charSpacingFactor = 0.1625
-    const charsPerLine = Math.floor((containerWidth / charWidth) + charSpacingFactor)
+    const charsPerLine = Math.floor(containerWidth / charWidth + charSpacingFactor)
 
     if (charsPerLine <= charCount / 8 || charsPerLine > charCount) {
       setLinesMaxWidth('none')
@@ -76,7 +82,11 @@ export default function Identifier ({
   useEffect(() => {
     if (!linesAdjustment) return
 
-    if (debouncedWindowWidth !== prevWidthRef.current || !widthIsCounted || prevWidthRef.current === null) {
+    if (
+      debouncedWindowWidth !== prevWidthRef.current ||
+      !widthIsCounted ||
+      prevWidthRef.current === null
+    ) {
       updateSize()
     }
     prevWidthRef.current = debouncedWindowWidth
@@ -127,14 +137,15 @@ export default function Identifier ({
     setCharWidth(measureCharWidth() || 'auto')
   }, [measureCharWidth, linesAdjustment, middleEllipsis])
 
-  const highlightModes: Record<HighlightMode, { first: boolean, middle: boolean, last: boolean }> = {
-    dim: { first: false, middle: false, last: false },
-    highlight: { first: true, middle: true, last: true },
-    first: { first: true, middle: false, last: false },
-    last: { first: false, middle: false, last: true },
-    both: { first: true, middle: false, last: true },
-    default: { first: true, middle: false, last: true }
-  }
+  const highlightModes: Record<HighlightMode, { first: boolean; middle: boolean; last: boolean }> =
+    {
+      dim: { first: false, middle: false, last: false },
+      highlight: { first: true, middle: true, last: true },
+      first: { first: true, middle: false, last: false },
+      last: { first: false, middle: false, last: true },
+      both: { first: true, middle: false, last: true },
+      default: { first: true, middle: false, last: true }
+    }
 
   const styleToMode: Record<string, HighlightMode> = {
     dim: 'dim',
@@ -149,7 +160,7 @@ export default function Identifier ({
 
   // start…end truncation sized to the available width (recomputed on resize); full value in title
   const MiddleTruncated = ({ children: middleChildren }: { children?: ReactNode }) => {
-    if (!middleChildren || typeof middleChildren !== 'string') return <NotActive/>
+    if (!middleChildren || typeof middleChildren !== 'string') return <NotActive />
 
     const minEdge = 4
     const measured = charWidth && charWidth !== 'auto' && containerWidth
@@ -166,8 +177,14 @@ export default function Identifier ({
     return <>{`${middleChildren.slice(0, head)}…${middleChildren.slice(-tail)}`}</>
   }
 
-  const HighlightedID = ({ children: idChildren, mode }: { children?: ReactNode, mode: HighlightMode }) => {
-    if (!idChildren || typeof idChildren !== 'string') return <NotActive/>
+  const HighlightedID = ({
+    children: idChildren,
+    mode
+  }: {
+    children?: ReactNode
+    mode: HighlightMode
+  }) => {
+    if (!idChildren || typeof idChildren !== 'string') return <NotActive />
 
     const highlightedCount = 5
     const firstPart = idChildren.slice(0, highlightedCount)
@@ -177,17 +194,38 @@ export default function Identifier ({
 
     return (
       <>
-        <span className={`Identifier__Symbols ${!dimConfig?.first ? 'Identifier__Symbols--Dim' : ''}`}>{firstPart}</span>
-        <span className={`Identifier__Symbols ${!dimConfig?.middle ? 'Identifier__Symbols--Dim' : ''}`}>{middlePart}</span>
-        <span className={`Identifier__Symbols ${!dimConfig?.last ? 'Identifier__Symbols--Dim' : ''}`}>{lastPart}</span>
+        <span
+          className={`Identifier__Symbols ${!dimConfig?.first ? 'Identifier__Symbols--Dim' : ''}`}
+        >
+          {firstPart}
+        </span>
+        <span
+          className={`Identifier__Symbols ${!dimConfig?.middle ? 'Identifier__Symbols--Dim' : ''}`}
+        >
+          {middlePart}
+        </span>
+        <span
+          className={`Identifier__Symbols ${!dimConfig?.last ? 'Identifier__Symbols--Dim' : ''}`}
+        >
+          {lastPart}
+        </span>
       </>
     )
   }
 
   return (
-    <div className={`Identifier ${ellipsis && !middleEllipsis ? 'Identifier--Ellipsis' : ''} ${middleEllipsis ? 'Identifier--Middle' : ''} ${className || ''}`}>
+    <div
+      className={`Identifier ${ellipsis && !middleEllipsis ? 'Identifier--Ellipsis' : ''} ${middleEllipsis ? 'Identifier--Middle' : ''} ${className || ''}`}
+    >
       {avatar && children && (
-        <ImageGenerator className={'Identifier__Avatar'} username={typeof children === 'string' ? children : String(children)} lightness={50} saturation={50} width={24} height={24} />
+        <ImageGenerator
+          className={'Identifier__Avatar'}
+          username={typeof children === 'string' ? children : String(children)}
+          lightness={50}
+          saturation={50}
+          width={24}
+          height={24}
+        />
       )}
       <div
         className={'Identifier__SymbolsContainer'}
@@ -195,14 +233,17 @@ export default function Identifier ({
         ref={symbolsContainerRef}
         title={middleEllipsis && typeof children === 'string' ? children : undefined}
       >
-        {children && middleEllipsis
-          ? <MiddleTruncated>{children}</MiddleTruncated>
-          : children && highlightMode
-            ? <HighlightedID mode={highlightMode}>{children}</HighlightedID>
-            : children || <NotActive/>
-        }
+        {children && middleEllipsis ? (
+          <MiddleTruncated>{children}</MiddleTruncated>
+        ) : children && highlightMode ? (
+          <HighlightedID mode={highlightMode}>{children}</HighlightedID>
+        ) : (
+          children || <NotActive />
+        )}
       </div>
-      {copyButton && children && <CopyButton className={'Identifier__CopyButton'} text={String(children)}/>}
+      {copyButton && children && (
+        <CopyButton className={'Identifier__CopyButton'} text={String(children)} />
+      )}
     </div>
   )
 }

@@ -11,7 +11,10 @@ import type { SearchResultsData } from './SearchResultsList'
 import type { SearchCategory } from './constants'
 import './GlobalSearchInput.css'
 
-function filterResultByCategories (obj: SearchResultsData = {}, categories: SearchCategory[]): SearchResultsData {
+function filterResultByCategories(
+  obj: SearchResultsData = {},
+  categories: SearchCategory[]
+): SearchResultsData {
   return categories.reduce<SearchResultsData>((filtered, key) => {
     if (Object.prototype.hasOwnProperty.call(obj, key)) {
       filtered[key] = obj[key]
@@ -31,7 +34,7 @@ interface GlobalSearchInputProps {
   onFocusChange?: (focused: boolean) => void
 }
 
-function GlobalSearchInput ({
+function GlobalSearchInput({
   onResultChange,
   forceValue,
   onChange,
@@ -69,12 +72,20 @@ function GlobalSearchInput ({
 
         setSearchResults({ data, loading: false, error: false })
       })
-      .catch(err => setSearchResults({ data: err as SearchResultsData, loading: false, error: true }))
+      .catch(err =>
+        setSearchResults({ data: err as SearchResultsData, loading: false, error: true })
+      )
   }
 
-  useEffect(() => { search(debouncedQuery) }, [debouncedQuery])
-  useEffect(() => { onResultChange?.(searchResults) }, [searchResults])
-  useEffect(() => { if (forceValue !== undefined) setSearchQuery(forceValue) }, [forceValue])
+  useEffect(() => {
+    search(debouncedQuery)
+  }, [debouncedQuery])
+  useEffect(() => {
+    onResultChange?.(searchResults)
+  }, [searchResults])
+  useEffect(() => {
+    if (forceValue !== undefined) setSearchQuery(forceValue)
+  }, [forceValue])
 
   const getFirstResultUrl = (): string | null => {
     const data = searchResults.data
@@ -157,18 +168,18 @@ function GlobalSearchInput ({
           fontSize={'0.75rem'}
           className={'GlobalSearchInput__Field'}
         />
-          <InputRightElement>
-            <Button
-              h={'28px'}
-              w={'28px'}
-              minW={'none'}
-              size={'xxs'}
-              onClick={() => search(searchQuery)}
-              className={'GlobalSearchInput__Button'}
-            >
-              <SearchIcon w={'14px'} color={'whiteAlpha.900'}/>
-            </Button>
-          </InputRightElement>
+        <InputRightElement>
+          <Button
+            h={'28px'}
+            w={'28px'}
+            minW={'none'}
+            size={'xxs'}
+            onClick={() => search(searchQuery)}
+            className={'GlobalSearchInput__Button'}
+          >
+            <SearchIcon w={'14px'} color={'whiteAlpha.900'} />
+          </Button>
+        </InputRightElement>
       </InputGroup>
     </div>
   )

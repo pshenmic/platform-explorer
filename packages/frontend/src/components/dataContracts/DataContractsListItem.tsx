@@ -27,8 +27,8 @@ const Identifier = IdentifierJs as ComponentType<{
   ellipsis?: boolean
   styles?: string[]
 }>
-const BigNumber = BigNumberJs as ComponentType<{ children?: ReactNode, className?: string }>
-const NotActive = NotActiveJs as ComponentType<{ children?: ReactNode, className?: string }>
+const BigNumber = BigNumberJs as ComponentType<{ children?: ReactNode; className?: string }>
+const NotActive = NotActiveJs as ComponentType<{ children?: ReactNode; className?: string }>
 const DateBlock = DateBlockJs as ComponentType<{
   timestamp?: string | null
   format?: string
@@ -46,68 +46,87 @@ interface DataContractsListItemProps {
   dataContract: DataContractsListItemData
 }
 
-function DataContractsListItem ({ dataContract }: DataContractsListItemProps) {
-  const ownerId = typeof dataContract?.owner === 'object' ? dataContract?.owner?.identifier : dataContract?.owner
-  const ownerName = typeof dataContract?.owner === 'object' ? dataContract?.owner?.name || null : null
+function DataContractsListItem({ dataContract }: DataContractsListItemProps) {
+  const ownerId =
+    typeof dataContract?.owner === 'object' ? dataContract?.owner?.identifier : dataContract?.owner
+  const ownerName =
+    typeof dataContract?.owner === 'object' ? dataContract?.owner?.name || null : null
 
   return (
-    <Link
-      href={`/dataContract/${dataContract?.identifier}`}
-      className={'DataContractsListItem'}
-    >
+    <Link href={`/dataContract/${dataContract?.identifier}`} className={'DataContractsListItem'}>
       <Grid className={'DataContractsListItem__Content'}>
-        <GridItem className={'DataContractsListItem__Column DataContractsListItem__Column--Identifier'}>
+        <GridItem
+          className={'DataContractsListItem__Column DataContractsListItem__Column--Identifier'}
+        >
           <div className={'DataContractsListItem__IdentifierContainer'}>
-            {dataContract?.name
-              ? <Alias avatarSource={dataContract?.identifier}>{dataContract.name}</Alias>
-              : <Identifier
-                  className={'DataContractsListItem__Identifier'}
-                  avatar={true}
-                  styles={['highlight-both']}
-                  ellipsis={true}
-                >
+            {dataContract?.name ? (
+              <Alias avatarSource={dataContract?.identifier}>{dataContract.name}</Alias>
+            ) : (
+              <Identifier
+                className={'DataContractsListItem__Identifier'}
+                avatar={true}
+                styles={['highlight-both']}
+                ellipsis={true}
+              >
                 {dataContract.identifier}
-              </Identifier>}
+              </Identifier>
+            )}
           </div>
         </GridItem>
 
         <GridItem className={'DataContractsListItem__Column DataContractsListItem__Column--Owner'}>
-          {ownerName
-            ? <Alias avatarSource={ownerId}>{ownerName}</Alias>
-            : ownerId
-              ? <Identifier ellipsis={true} avatar={true} styles={['highlight-both']}>{ownerId}</Identifier>
-              : <span>-</span>
-          }
+          {ownerName ? (
+            <Alias avatarSource={ownerId}>{ownerName}</Alias>
+          ) : ownerId ? (
+            <Identifier ellipsis={true} avatar={true} styles={['highlight-both']}>
+              {ownerId}
+            </Identifier>
+          ) : (
+            <span>-</span>
+          )}
         </GridItem>
 
         <GridItem className={'DataContractsListItem__Column DataContractsListItem__Column--System'}>
-          {dataContract?.isSystem !== undefined
-            ? <Badge colorScheme={dataContract?.isSystem ? 'orange' : 'gray'}>
+          {dataContract?.isSystem !== undefined ? (
+            <Badge colorScheme={dataContract?.isSystem ? 'orange' : 'gray'}>
               {dataContract?.isSystem ? 'true' : 'false'}
             </Badge>
-            : <NotActive/>
-          }
+          ) : (
+            <NotActive />
+          )}
         </GridItem>
 
-        <GridItem className={'DataContractsListItem__Column DataContractsListItem__Column--WithTokens'}>
-          {isNaN(Number(dataContract?.tokensCount))
-            ? <NotActive/>
-            : <Badge colorScheme={(dataContract?.tokensCount ?? 0) > 0 ? 'orange' : 'gray'}>
+        <GridItem
+          className={'DataContractsListItem__Column DataContractsListItem__Column--WithTokens'}
+        >
+          {isNaN(Number(dataContract?.tokensCount)) ? (
+            <NotActive />
+          ) : (
+            <Badge colorScheme={(dataContract?.tokensCount ?? 0) > 0 ? 'orange' : 'gray'}>
               {(dataContract?.tokensCount ?? 0) > 0 ? 'true' : 'false'}
             </Badge>
-          }
+          )}
         </GridItem>
 
-        <GridItem className={'DataContractsListItem__Column DataContractsListItem__Column--DocumentsCount'}>
-          <ValueContainer colorScheme={(dataContract?.documentsCount ?? 0) > 0 ? 'brand' : 'darkGray'} size={'xs'}>
+        <GridItem
+          className={'DataContractsListItem__Column DataContractsListItem__Column--DocumentsCount'}
+        >
+          <ValueContainer
+            colorScheme={(dataContract?.documentsCount ?? 0) > 0 ? 'brand' : 'darkGray'}
+            size={'xs'}
+          >
             <BigNumber>{dataContract?.documentsCount}</BigNumber>
           </ValueContainer>
         </GridItem>
 
-        <GridItem className={'DataContractsListItem__Column DataContractsListItem__Column--Timestamp'}>
-          {!dataContract?.timestamp && dataContract?.isSystem
-            ? <span className={'DataContractsListItem__Genesis'}>Genesis</span>
-            : <DateBlock timestamp={dataContract?.timestamp} format='dateOnly' />}
+        <GridItem
+          className={'DataContractsListItem__Column DataContractsListItem__Column--Timestamp'}
+        >
+          {!dataContract?.timestamp && dataContract?.isSystem ? (
+            <span className={'DataContractsListItem__Genesis'}>Genesis</span>
+          ) : (
+            <DateBlock timestamp={dataContract?.timestamp} format="dateOnly" />
+          )}
         </GridItem>
       </Grid>
     </Link>

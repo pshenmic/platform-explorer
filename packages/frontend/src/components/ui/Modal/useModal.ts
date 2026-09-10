@@ -7,7 +7,7 @@ export const useModal = () => {
   const handleOpen = () => modalRef.current?.showModal()
 
   const isOpen = useSyncExternalStore(
-    (onStoreChange) => {
+    onStoreChange => {
       const observer = new MutationObserver(onStoreChange)
       if (modalRef.current) {
         observer.observe(modalRef.current, { attributes: true, attributeFilter: ['open'] })

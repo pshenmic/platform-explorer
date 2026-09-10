@@ -27,11 +27,7 @@ export const DataContractUpdate = ({
       title={'Data Contract'}
       value={
         <ValueCard link={`/dataContract/${dataContractId}`}>
-          <Identifier
-            copyButton={true}
-            ellipsis={true}
-            styles={['highlight-both']}
-          >
+          <Identifier copyButton={true} ellipsis={true} styles={['highlight-both']}>
             {dataContractId}
           </Identifier>
         </ValueCard>
@@ -45,12 +41,7 @@ export const DataContractUpdate = ({
       title={'Contract Owner'}
       value={
         <ValueCard link={`/identity/${ownerId}`}>
-          <Identifier
-            avatar={true}
-            copyButton={true}
-            ellipsis={true}
-            styles={['highlight-both']}
-          >
+          <Identifier avatar={true} copyButton={true} ellipsis={true} styles={['highlight-both']}>
             {ownerId}
           </Identifier>
         </ValueCard>

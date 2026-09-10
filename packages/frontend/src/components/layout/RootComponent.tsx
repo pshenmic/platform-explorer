@@ -2,7 +2,14 @@
 
 import type { ReactNode } from 'react'
 import { NuqsAdapter } from 'nuqs/adapters/next/app'
-import { NetworkProvider, BreadcrumbsProvider, ThemeProvider, ModalProvider, WalletProvider, QueryProvider } from 'src/contexts'
+import {
+  NetworkProvider,
+  BreadcrumbsProvider,
+  ThemeProvider,
+  ModalProvider,
+  WalletProvider,
+  QueryProvider
+} from 'src/contexts'
 import Navbar from './navbar/Navbar'
 import Footer from './footer'
 import Background from './Background'
@@ -14,7 +21,7 @@ interface RootComponentProps {
   children?: ReactNode
 }
 
-export default function RootComponent ({ children }: RootComponentProps) {
+export default function RootComponent({ children }: RootComponentProps) {
   return (
     <NuqsAdapter>
       <NetworkProvider>
@@ -22,12 +29,12 @@ export default function RootComponent ({ children }: RootComponentProps) {
           <WalletProvider>
             <ThemeProvider>
               <ModalProvider>
-                <Background snow={false}/>
+                <Background snow={false} />
                 <BreadcrumbsProvider>
-                  <Navbar/>
+                  <Navbar />
                   {children}
                 </BreadcrumbsProvider>
-                <Footer/>
+                <Footer />
               </ModalProvider>
             </ThemeProvider>
           </WalletProvider>

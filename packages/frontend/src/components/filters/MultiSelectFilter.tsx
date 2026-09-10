@@ -35,8 +35,8 @@ export const MultiSelectFilter = ({
 
   return (
     <div className={'MultiSelectFilter'}>
-      <div className='MultiSelectFilter__List'>
-        {items.map((item) => (
+      <div className="MultiSelectFilter__List">
+        {items.map(item => (
           <div
             key={item.value}
             className={`MultiSelectFilter__Item ${selectedValues.includes(item.value) ? 'MultiSelectFilter__Item--Selected' : ''}`}
@@ -46,21 +46,24 @@ export const MultiSelectFilter = ({
               className={'MultiSelectFilter__ItemCheckbox'}
               forceChecked={selectedValues.includes(item.value)}
             />
-            <div className={'MultiSelectFilter__ItemTitle'}>
-              {item.label}
-            </div>
+            <div className={'MultiSelectFilter__ItemTitle'}>{item.label}</div>
           </div>
         ))}
       </div>
       {(showToggleAll || showSubmitButton) && (
         <FilterActions>
           {showSubmitButton && (
-            <SubmitButton className={'MultiSelectFilter__ActionButton MultiSelectFilter__ActionButton--Submit'} onSubmit={onSubmit} />
+            <SubmitButton
+              className={'MultiSelectFilter__ActionButton MultiSelectFilter__ActionButton--Submit'}
+              onSubmit={onSubmit}
+            />
           )}
 
           {showToggleAll && (
             <Button
-              className={'MultiSelectFilter__ActionButton MultiSelectFilter__ActionButton--ToggleAll'}
+              className={
+                'MultiSelectFilter__ActionButton MultiSelectFilter__ActionButton--ToggleAll'
+              }
               size={'sm'}
               variant={'gray'}
               onClick={handleToggleAll}

@@ -20,11 +20,11 @@ export const HashInfoLine = ({ title, value }: HashInfoLineProps) => {
 
   return (
     <InfoLine
-      className='TransactionPage__InfoLine TransactionPage__InfoLine--FullWidth'
+      className="TransactionPage__InfoLine TransactionPage__InfoLine--FullWidth"
       title={title}
       value={
-        <Grid templateColumns='minmax(300px, auto)'>
-          <ValueCard className='TransactionPage__RawTransaction'>
+        <Grid templateColumns="minmax(300px, auto)">
+          <ValueCard className="TransactionPage__RawTransaction">
             <Identifier copyButton ellipsis styles={['highlight-both']}>
               {value}
             </Identifier>
@@ -45,7 +45,7 @@ export const AmountInfoLine = ({ title, amount, rate }: AmountInfoLineProps) => 
 
   return (
     <InfoLine
-      className='TransactionPage__InfoLine TransactionPage__InfoLine--Inline'
+      className="TransactionPage__InfoLine TransactionPage__InfoLine--Inline"
       title={title}
       value={<CreditsBlock credits={amount} rate={rate} />}
     />
@@ -70,11 +70,11 @@ export const ShieldedActions = ({ actions = [] }: ShieldedActionsProps) => {
 
   return (
     <InfoLine
-      align='top'
-      className='TransactionPage__InfoLine TransactionPage__InfoLine--FullWidth'
+      align="top"
+      className="TransactionPage__InfoLine TransactionPage__InfoLine--FullWidth"
       title={`Actions (${actions.length})`}
       value={
-        <Flex direction='column' gap={2}>
+        <Flex direction="column" gap={2}>
           {actions.map((action, index) => (
             <ValueCard key={index}>
               <Grid
@@ -83,19 +83,20 @@ export const ShieldedActions = ({ actions = [] }: ShieldedActionsProps) => {
                   md: '200px minmax(100px, 1fr)'
                 }}
                 gap={3}
-                alignItems='center'
+                alignItems="center"
               >
-                {fields.map(([label, key]) =>
-                  action?.[key] !== undefined && (
-                    <GridItem key={key} display='contents'>
-                      <Text>{label}:</Text>
-                      <ValueCard className='TransactionPage__RawTransaction'>
-                        <Identifier copyButton ellipsis styles={['highlight-both']}>
-                          {String(action[key])}
-                        </Identifier>
-                      </ValueCard>
-                    </GridItem>
-                  )
+                {fields.map(
+                  ([label, key]) =>
+                    action?.[key] !== undefined && (
+                      <GridItem key={key} display="contents">
+                        <Text>{label}:</Text>
+                        <ValueCard className="TransactionPage__RawTransaction">
+                          <Identifier copyButton ellipsis styles={['highlight-both']}>
+                            {String(action[key])}
+                          </Identifier>
+                        </ValueCard>
+                      </GridItem>
+                    )
                 )}
               </Grid>
             </ValueCard>
@@ -115,11 +116,11 @@ export const InputsLine = ({ inputs = [] }: InputsLineProps) => {
 
   return (
     <InfoLine
-      align='top'
-      className='TransactionPage__InfoLine TransactionPage__InfoLine--FullWidth'
+      align="top"
+      className="TransactionPage__InfoLine TransactionPage__InfoLine--FullWidth"
       title={`Inputs (${inputs.length})`}
       value={
-        <Flex direction='column' gap={2}>
+        <Flex direction="column" gap={2}>
           {inputs.map((input, index) => (
             <ValueCard key={index}>
               <Flex gap={4} direction={{ base: 'column', lg: 'row' }}>
@@ -128,7 +129,9 @@ export const InputsLine = ({ inputs = [] }: InputsLineProps) => {
                     {input.platformAddress.bech32m}
                   </Identifier>
                 </ValueCard>
-                <ValueCard><div>{input.credits} credits</div></ValueCard>
+                <ValueCard>
+                  <div>{input.credits} credits</div>
+                </ValueCard>
                 <ValueCard>Nonce: {input.nonce}</ValueCard>
               </Flex>
             </ValueCard>
@@ -148,11 +151,11 @@ export const InputWitnessesLine = ({ inputWitnesses = [] }: InputWitnessesLinePr
 
   return (
     <InfoLine
-      align='top'
-      className='TransactionPage__InfoLine TransactionPage__InfoLine--FullWidth'
+      align="top"
+      className="TransactionPage__InfoLine TransactionPage__InfoLine--FullWidth"
       title={`Input Witness (${inputWitnesses.length})`}
       value={
-        <Flex direction='column' gap={2}>
+        <Flex direction="column" gap={2}>
           {inputWitnesses.map((witness, index) => (
             <ValueCard key={index}>
               <Grid
@@ -163,7 +166,9 @@ export const InputWitnessesLine = ({ inputWitnesses = [] }: InputWitnessesLinePr
                 gap={4}
               >
                 <Text>Type:</Text>
-                <GridItem width='fit-content'><ValueCard>{witness.type}</ValueCard></GridItem>
+                <GridItem width="fit-content">
+                  <ValueCard>{witness.type}</ValueCard>
+                </GridItem>
                 <Text>Signature:</Text>
                 <ValueCard>
                   <Identifier copyButton ellipsis styles={['highlight-both']}>
@@ -188,12 +193,12 @@ export const FeeStrategyLine = ({ feeStrategy = [] }: FeeStrategyLineProps) => {
 
   return (
     <InfoLine
-      className='TransactionPage__InfoLine TransactionPage__InfoLine--FullWidth'
-      title='Fee Strategy'
+      className="TransactionPage__InfoLine TransactionPage__InfoLine--FullWidth"
+      title="Fee Strategy"
       value={
         <div>
           {feeStrategy.map((strategy, index) => (
-            <Flex key={index} align='center' gap={6} mb={4}>
+            <Flex key={index} align="center" gap={6} mb={4}>
               <ValueCard>{strategy.type}</ValueCard>
               <ValueCard>Value: {strategy.value}</ValueCard>
             </Flex>
@@ -212,9 +217,7 @@ export const OutputAddressLine = ({ outputAddress }: OutputAddressLineProps) => 
   if (outputAddress === undefined || outputAddress === null) return null
 
   const bech32m =
-    typeof outputAddress === 'object'
-      ? outputAddress?.platformAddress?.bech32m
-      : undefined
+    typeof outputAddress === 'object' ? outputAddress?.platformAddress?.bech32m : undefined
   const link = bech32m ? `/platformAddress/${bech32m}` : undefined
   const value = bech32m ?? (typeof outputAddress === 'string' ? outputAddress : null)
 
@@ -222,8 +225,8 @@ export const OutputAddressLine = ({ outputAddress }: OutputAddressLineProps) => 
 
   return (
     <InfoLine
-      className='TransactionPage__InfoLine TransactionPage__InfoLine--FullWidth'
-      title='Output Address'
+      className="TransactionPage__InfoLine TransactionPage__InfoLine--FullWidth"
+      title="Output Address"
       value={
         <ValueCard {...(link ? { link } : {})}>
           <Identifier avatar={!!bech32m} copyButton ellipsis styles={['highlight-both']}>

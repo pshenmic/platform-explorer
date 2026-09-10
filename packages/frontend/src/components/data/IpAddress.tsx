@@ -2,7 +2,10 @@ import type { ReactNode } from 'react'
 import type { WithChildren, WithClassName } from '../../types/common'
 import './IpAddress.css'
 
-function splitIpAndPort (address: string | null | undefined): { host: string | null, port: string | null } {
+function splitIpAndPort(address: string | null | undefined): {
+  host: string | null
+  port: string | null
+} {
   if (!address) return { host: null, port: null }
 
   if (address.includes(':')) {
@@ -23,7 +26,7 @@ interface IpAddressProps extends WithChildren, WithClassName {
   clickable?: boolean
 }
 
-function IpAddress ({ children, host, port, variant, clickable = true, className }: IpAddressProps) {
+function IpAddress({ children, host, port, variant, clickable = true, className }: IpAddressProps) {
   if (!children && !host) return
 
   const extraClass = (() => {
@@ -37,7 +40,9 @@ function IpAddress ({ children, host, port, variant, clickable = true, className
   let resolvedPort = port
 
   if (!resolvedHost && !resolvedPort) {
-    const addressData = splitIpAndPort(typeof children === 'string' ? children : String(children ?? ''))
+    const addressData = splitIpAndPort(
+      typeof children === 'string' ? children : String(children ?? '')
+    )
     resolvedHost = addressData.host
     resolvedPort = addressData.port
   }
@@ -45,7 +50,11 @@ function IpAddress ({ children, host, port, variant, clickable = true, className
   return (
     <div className={`IpAddress ${extraClass} ${className || ''}`}>
       <span className={'IpAddress__Host'}>{resolvedHost}</span>
-      {resolvedPort && <>:<span className={'IpAddress__Port'}>{resolvedPort}</span></>}
+      {resolvedPort && (
+        <>
+          :<span className={'IpAddress__Port'}>{resolvedPort}</span>
+        </>
+      )}
     </div>
   )
 }

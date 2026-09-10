@@ -16,11 +16,11 @@ interface TransactionsRouteProps {
 }
 
 async function TransactionsRoute(props: TransactionsRouteProps) {
-  const searchParams = await props.searchParams;
+  const searchParams = await props.searchParams
   const page = Number(searchParams.page) || 1
   const pageSize = Number(searchParams['page-size'])
 
-  return <Transactions defaultPage={page} defaultPageSize={pageSize}/>
+  return <Transactions defaultPage={page} defaultPageSize={pageSize} />
 }
 
 export default TransactionsRoute

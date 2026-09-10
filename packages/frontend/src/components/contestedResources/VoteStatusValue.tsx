@@ -7,7 +7,7 @@ interface VoteStatusValueProps extends WithClassName {
   size?: 'default' | 'xl' | 'lg' | 'md' | 'sm' | 'xs' | 'xxs'
 }
 
-function VoteStatusValue ({ status, size = 'sm', className }: VoteStatusValueProps) {
+function VoteStatusValue({ status, size = 'sm', className }: VoteStatusValueProps) {
   const colorSchemas: Record<string, 'green' | 'blue'> = {
     finished: 'green',
     pending: 'blue',
@@ -16,14 +16,14 @@ function VoteStatusValue ({ status, size = 'sm', className }: VoteStatusValuePro
 
   return (
     <div className={`VoteBadges ${className || ''}`}>
-        <ValueContainer
-          className={'VoteBadges__Badge'}
-          colorScheme={colorSchemas?.[status?.toLowerCase() ?? ''] || colorSchemas.default }
-          size={size || 'sm'}
-          style={{ textTransform: 'capitalize' }}
-        >
-          {status}
-        </ValueContainer>
+      <ValueContainer
+        className={'VoteBadges__Badge'}
+        colorScheme={colorSchemas?.[status?.toLowerCase() ?? ''] || colorSchemas.default}
+        size={size || 'sm'}
+        style={{ textTransform: 'capitalize' }}
+      >
+        {status}
+      </ValueContainer>
     </div>
   )
 }

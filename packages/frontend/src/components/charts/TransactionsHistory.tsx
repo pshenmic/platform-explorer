@@ -24,7 +24,7 @@ interface TransactionsHistoryProps {
   type?: ChartRenderType
 }
 
-export default function TransactionsHistory ({
+export default function TransactionsHistory({
   heightPx = 300,
   blockBorders = true,
   useInfoBlock = true,
@@ -32,7 +32,9 @@ export default function TransactionsHistory ({
   title = 'Transactions history',
   type = 'line'
 }: TransactionsHistoryProps) {
-  const [transactionsHistory, setTransactionsHistory] = useState<LoadableState<{ resultSet?: Array<SeriesData<TxHistoryPoint>> }>>({
+  const [transactionsHistory, setTransactionsHistory] = useState<
+    LoadableState<{ resultSet?: Array<SeriesData<TxHistoryPoint>> }>
+  >({
     data: {},
     loading: true,
     error: false
@@ -54,33 +56,37 @@ export default function TransactionsHistory ({
 
   return (
     <LineChartBlock
-        title={title}
-        useInfoBlock={useInfoBlock}
-        menuIsActive={menuIsActive}
-        loading={transactionsHistory.loading}
-        error={transactionsHistory.error}
-        timespanChange={setTimespan}
-        data={transactionsHistory.data?.resultSet?.map((item) => ({
+      title={title}
+      useInfoBlock={useInfoBlock}
+      menuIsActive={menuIsActive}
+      loading={transactionsHistory.loading}
+      error={transactionsHistory.error}
+      timespanChange={setTimespan}
+      data={
+        transactionsHistory.data?.resultSet?.map(item => ({
           x: new Date(item.timestamp ?? 0),
           y: item.data?.txs ?? 0
-        })) ?? []}
-        xAxis={{
-          type: (() => {
-            if (getDaysBetweenDates(timespan.range.start, timespan.range.end) > 7) return { axis: 'date' as const }
-            if (getDaysBetweenDates(timespan.range.start, timespan.range.end) > 3) return { axis: 'date' as const, tooltip: 'datetime' as const }
-            return { axis: 'time' as const }
-          })(),
-          abbreviation: '',
-          title: ''
-        }}
-        yAxis={{
-          type: 'number',
-          title: '',
-          abbreviation: 'txs'
-        }}
-        heightPx={heightPx}
-        blockBorders={blockBorders}
-        type={type}
+        })) ?? []
+      }
+      xAxis={{
+        type: (() => {
+          if (getDaysBetweenDates(timespan.range.start, timespan.range.end) > 7)
+            return { axis: 'date' as const }
+          if (getDaysBetweenDates(timespan.range.start, timespan.range.end) > 3)
+            return { axis: 'date' as const, tooltip: 'datetime' as const }
+          return { axis: 'time' as const }
+        })(),
+        abbreviation: '',
+        title: ''
+      }}
+      yAxis={{
+        type: 'number',
+        title: '',
+        abbreviation: 'txs'
+      }}
+      heightPx={heightPx}
+      blockBorders={blockBorders}
+      type={type}
     />
   )
 }

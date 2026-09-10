@@ -7,7 +7,7 @@ interface ContestedResourceRouteProps {
 }
 
 export const generateMetadata = async (props: ContestedResourceRouteProps): Promise<Metadata> => {
-  const params = await props.params;
+  const params = await props.params
   const resourceValue = decodeURIComponent(params.resourceValue)
   const decodedValue = contestedResources.decodeValue(resourceValue)
   const readableValue = contestedResources.getResourceValue(decodedValue as never)
@@ -35,7 +35,7 @@ export const generateMetadata = async (props: ContestedResourceRouteProps): Prom
 }
 
 const ContestedResourceRoute = async (props: ContestedResourceRouteProps) => {
-  const params = await props.params;
+  const params = await props.params
   return <ContestedResource resourceValue={params.resourceValue} />
 }
 

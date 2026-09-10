@@ -32,13 +32,13 @@ const Identifier = IdentifierJs as ComponentType<{
   ellipsis?: boolean
   className?: string
 }>
-const NotActive = NotActiveJs as ComponentType<{ children?: ReactNode, className?: string }>
+const NotActive = NotActiveJs as ComponentType<{ children?: ReactNode; className?: string }>
 const CreditsBlock = CreditsBlockJs as ComponentType<{
   credits?: string | number | null
   rate?: Pick<Rate, 'usd'> | null
 }>
 
-export type TokenPriceTier = { amount?: string | number, price: string | number }
+export type TokenPriceTier = { amount?: string | number; price: string | number }
 
 /** List-row token shape (owner may be string or Owner; prices are tier arrays). */
 export type TokenListItemData = Omit<Token, 'owner' | 'prices'> & {
@@ -54,7 +54,7 @@ interface TokensListItemProps {
   rate?: Pick<Rate, 'usd'> | null
 }
 
-function TokensListItem ({ token, variant = 'default', rate }: TokensListItemProps) {
+function TokensListItem({ token, variant = 'default', rate }: TokensListItemProps) {
   const {
     identifier,
     dataContractIdentifier,
@@ -68,9 +68,8 @@ function TokensListItem ({ token, variant = 'default', rate }: TokensListItemPro
   const router = useRouter()
   const ownerId = typeof owner === 'object' && owner ? owner.identifier : owner
   const ownerName = typeof owner === 'object' && owner ? findActiveAlias(owner.aliases) : null
-  const name = localizations?.en?.singularForm ||
-    Object.values(localizations || {})[0]?.singularForm ||
-    ''
+  const name =
+    localizations?.en?.singularForm || Object.values(localizations || {})[0]?.singularForm || ''
 
   const variantClass = variant === 'balance' ? 'TokensListItem--Balance' : ''
 
@@ -78,25 +77,38 @@ function TokensListItem ({ token, variant = 'default', rate }: TokensListItemPro
     <Link href={`/token/${identifier}`} className={`TokensListItem ${variantClass}`}>
       <Grid className={'TokensListItem__Content'}>
         <GridItem className={'TokensListItem__Column TokensListItem__Column--TokenName'}>
-          {name
-            ? <Alias avatarSource={identifier}>{name}</Alias>
-            : <Identifier ellipsis={true} avatar={true} styles={['highlight-both']}>{identifier}</Identifier>
-          }
+          {name ? (
+            <Alias avatarSource={identifier}>{name}</Alias>
+          ) : (
+            <Identifier ellipsis={true} avatar={true} styles={['highlight-both']}>
+              {identifier}
+            </Identifier>
+          )}
         </GridItem>
         <GridItem className={'TokensListItem__Column TokensListItem__Column--Supply'}>
-          {maxSupply
-            ? <Supply
-                currentSupply={totalSupply}
-                maxSupply={maxSupply || totalSupply}
-                decimals={decimals}
-              />
-            : <FormattedNumber className={'TokensListItem__Column--SupplyBigNumber'} decimals={decimals ?? undefined}>{totalSupply}</FormattedNumber>
-          }
+          {maxSupply ? (
+            <Supply
+              currentSupply={totalSupply}
+              maxSupply={maxSupply || totalSupply}
+              decimals={decimals}
+            />
+          ) : (
+            <FormattedNumber
+              className={'TokensListItem__Column--SupplyBigNumber'}
+              decimals={decimals ?? undefined}
+            >
+              {totalSupply}
+            </FormattedNumber>
+          )}
         </GridItem>
 
-        <GridItem className={'TokensListItem__Column TokensListItem__Column--Price TokensListItem__Column--Number'}>
-          {token.price != null
-            ? <Tooltip
+        <GridItem
+          className={
+            'TokensListItem__Column TokensListItem__Column--Price TokensListItem__Column--Number'
+          }
+        >
+          {token.price != null ? (
+            <Tooltip
               placement={'top'}
               maxW={'none'}
               content={<CreditsBlock credits={token.price} rate={rate} />}
@@ -107,18 +119,22 @@ function TokensListItem ({ token, variant = 'default', rate }: TokensListItemPro
                 </ValueContainer>
               </div>
             </Tooltip>
-            : token.prices != null && token.prices.length > 0
-              ? <Tooltip
-                placement={'top'}
-                maxW={'none'}
-                content={<CreditsBlock credits={getMinTokenPrice(token.prices)} rate={rate} />}
-              >
-                <Flex gap={'0.25rem'} fontSize={'0.75rem'} fontWeight={500}>
-                  From <FormattedNumber decimals={decimals ?? undefined}>{getMinTokenPrice(token.prices)}</FormattedNumber>
-                </Flex>
-              </Tooltip>
-              : <></>
-          }
+          ) : token.prices != null && token.prices.length > 0 ? (
+            <Tooltip
+              placement={'top'}
+              maxW={'none'}
+              content={<CreditsBlock credits={getMinTokenPrice(token.prices)} rate={rate} />}
+            >
+              <Flex gap={'0.25rem'} fontSize={'0.75rem'} fontWeight={500}>
+                From{' '}
+                <FormattedNumber decimals={decimals ?? undefined}>
+                  {getMinTokenPrice(token.prices)}
+                </FormattedNumber>
+              </Flex>
+            </Tooltip>
+          ) : (
+            <></>
+          )}
         </GridItem>
 
         <GridItem className={'TokensListItem__Column TokensListItem__Column--DataContract'}>
@@ -150,9 +166,10 @@ function TokensListItem ({ token, variant = 'default', rate }: TokensListItemPro
               router.push(`/identity/${ownerId}`)
             }}
           >
-            {ownerName
-              ? <Alias avatarSource={ownerId} alias={ownerName?.alias} />
-              : <Identifier
+            {ownerName ? (
+              <Alias avatarSource={ownerId} alias={ownerName?.alias} />
+            ) : (
+              <Identifier
                 className={'TokensListItem__OwnerIdentifier'}
                 ellipsis={true}
                 avatar={true}
@@ -160,18 +177,25 @@ function TokensListItem ({ token, variant = 'default', rate }: TokensListItemPro
               >
                 {ownerId}
               </Identifier>
-            }
+            )}
           </LinkContainer>
         </GridItem>
 
         {variant === 'balance' && (
-          <GridItem className={'TokensListItem__Column TokensListItem__Column--Balance TokensListItem__Column--Number'}>
-            {typeof balance === 'number' || typeof balance === 'string'
-              ? <ValueContainer colorScheme={'emeralds'} size={'sm'}>
-                <FormattedNumber decimals={decimals ?? undefined} threshold={0} >{balance}</FormattedNumber>
-              </ValueContainer>
-              : <NotActive />
+          <GridItem
+            className={
+              'TokensListItem__Column TokensListItem__Column--Balance TokensListItem__Column--Number'
             }
+          >
+            {typeof balance === 'number' || typeof balance === 'string' ? (
+              <ValueContainer colorScheme={'emeralds'} size={'sm'}>
+                <FormattedNumber decimals={decimals ?? undefined} threshold={0}>
+                  {balance}
+                </FormattedNumber>
+              </ValueContainer>
+            ) : (
+              <NotActive />
+            )}
           </GridItem>
         )}
       </Grid>

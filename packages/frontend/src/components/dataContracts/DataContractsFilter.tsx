@@ -80,7 +80,8 @@ const filtersConfig = {
       const list = Array.isArray(value) ? value : []
       return (list[0] as string) ?? null
     },
-    isAllSelected: (list: unknown) => Array.isArray(list) && list.length === withTokensOptions.length
+    isAllSelected: (list: unknown) =>
+      Array.isArray(list) && list.length === withTokensOptions.length
   },
   documents_count: {
     type: 'range' as const,
@@ -92,7 +93,7 @@ const filtersConfig = {
     maxTitle: 'Maximum count',
     maxPlaceholder: 'ex. 100',
     formatValue: (value: unknown) => {
-      const range = value as { min?: string, max?: string } | null
+      const range = value as { min?: string; max?: string } | null
       const min = range?.min
       const max = range?.max
       if (min && max) return `${min} - ${max}`
@@ -107,7 +108,7 @@ const filtersConfig = {
     type: 'daterange' as const,
     defaultValue: null,
     formatValue: (value: unknown) => {
-      const range = value as { start?: Date | null, end?: Date | null } | null
+      const range = value as { start?: Date | null; end?: Date | null } | null
       return `${range?.start ? `from ${range?.start?.toLocaleDateString()}` : ''} ${range?.end ? `to ${range?.end?.toLocaleDateString()}` : ''}`
     }
   }
@@ -126,7 +127,7 @@ export const DataContractsFilter = ({
   return (
     <Filters
       filtersConfig={filtersConfig}
-      onFilterChange={(values) => {
+      onFilterChange={values => {
         const isSystem = values.is_system
         const withTokens = values.with_tokens
         const [isSystemSelected] = Array.isArray(isSystem) ? isSystem : []

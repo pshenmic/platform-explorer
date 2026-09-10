@@ -15,7 +15,7 @@ import type {
   TimespanValue
 } from './types'
 
-function getDatesTicks (dates: Array<Date | number>, numTicks: number): Date[] {
+function getDatesTicks(dates: Array<Date | number>, numTicks: number): Date[] {
   if (!dates.length) return []
 
   const sortedDates = dates.map(d => new Date(d)).sort((a, b) => a.getTime() - b.getTime())
@@ -91,15 +91,17 @@ const LineChart = ({
 
     if (!chartContainer.current) return
 
-    setChartElement(<LineGraph
-      xAxis={xAxis}
-      yAxis={yAxis}
-      timespan={timespan}
-      width={chartContainer.current.offsetWidth}
-      height={chartContainer.current.offsetHeight}
-      data={data}
-      type={type}
-    />)
+    setChartElement(
+      <LineGraph
+        xAxis={xAxis}
+        yAxis={yAxis}
+        timespan={timespan}
+        width={chartContainer.current.offsetWidth}
+        height={chartContainer.current.offsetHeight}
+        data={data}
+        type={type}
+      />
+    )
   }, [chartElement, data, timespan, xAxis, yAxis, type])
 
   return (
@@ -108,8 +110,9 @@ const LineChart = ({
       width={width || '100%'}
       height={height || '100%'}
       maxW={'none'}
-      p={0} m={0}
-      className={`ChartContainer ${(skeleton || dataLoading) ? 'loading' : ''}`}
+      p={0}
+      m={0}
+      className={`ChartContainer ${skeleton || dataLoading ? 'loading' : ''}`}
     >
       {chartElement || <></>}
     </Container>
@@ -141,7 +144,9 @@ const LineGraph = ({
   const marginBottom = xAxis.title ? 45 : 20
   const marginLeft = 40
   const chartInnerOffset = 15
-  const xAxisFormatCode: AxisFormatCode = (typeof xAxis.type === 'string' ? xAxis.type : xAxis.type.axis) as AxisFormatCode
+  const xAxisFormatCode: AxisFormatCode = (
+    typeof xAxis.type === 'string' ? xAxis.type : xAxis.type.axis
+  ) as AxisFormatCode
   const [chartWidth, setChartWidth] = useState(0)
   const svgRef = useRef<SVGSVGElement | null>(null)
   const uniqueComponentId = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
@@ -155,12 +160,26 @@ const LineGraph = ({
 
   const xTickFormat = tickFormats[xAxisFormatCode]
   const filteredData = data.filter(d => typeof d.y === 'number' && !isNaN(d.y))
-  const y = d3.scaleLinear(d3.extent(filteredData, (d: ChartDataPoint) => d.y), [height - marginBottom, marginTop])
+  const y = d3.scaleLinear(
+    d3.extent(filteredData, (d: ChartDataPoint) => d.y),
+    [height - marginBottom, marginTop]
+  )
 
   const [x, setX] = useState(() => {
-    if (xAxisFormatCode === 'number') return d3.scaleLinear(d3.extent(data, (d: ChartDataPoint) => d.x), [marginLeft, width - marginRight])
-    if (xAxisFormatCode === 'date' || xAxisFormatCode === 'time' || xAxisFormatCode === 'datetime') return d3.scaleTime(d3.extent(data, (d: ChartDataPoint) => d.x), [marginLeft, width - marginRight])
-    return d3.scaleLinear(d3.extent(data, (d: ChartDataPoint) => d.x), [marginLeft, width - marginRight])
+    if (xAxisFormatCode === 'number')
+      return d3.scaleLinear(
+        d3.extent(data, (d: ChartDataPoint) => d.x),
+        [marginLeft, width - marginRight]
+      )
+    if (xAxisFormatCode === 'date' || xAxisFormatCode === 'time' || xAxisFormatCode === 'datetime')
+      return d3.scaleTime(
+        d3.extent(data, (d: ChartDataPoint) => d.x),
+        [marginLeft, width - marginRight]
+      )
+    return d3.scaleLinear(
+      d3.extent(data, (d: ChartDataPoint) => d.x),
+      [marginLeft, width - marginRight]
+    )
   })
 
   const timespanKey = typeof timespan === 'string' ? timespan : timespan?.label
@@ -194,16 +213,22 @@ const LineGraph = ({
   const graphicLine = useRef<SVGPathElement | null>(null)
   const focusPoint = useRef<SVGGElement | null>(null)
 
-  const [line, setLine] = useState(() => d3.line()
-    .x((d: ChartDataPoint) => x(d.x))
-    .y((d: ChartDataPoint) => y(d.y))
-    .curve(d3.curveLinear))
+  const [line, setLine] = useState(() =>
+    d3
+      .line()
+      .x((d: ChartDataPoint) => x(d.x))
+      .y((d: ChartDataPoint) => y(d.y))
+      .curve(d3.curveLinear)
+  )
 
-  const [area, setArea] = useState(() => d3.area()
-    .curve(d3.curveLinear)
-    .x((d: ChartDataPoint) => x(d.x))
-    .y0(y(0))
-    .y1((d: ChartDataPoint) => y(d.y)))
+  const [area, setArea] = useState(() =>
+    d3
+      .area()
+      .curve(d3.curveLinear)
+      .x((d: ChartDataPoint) => x(d.x))
+      .y0(y(0))
+      .y1((d: ChartDataPoint) => y(d.y))
+  )
 
   const valuesFormat = (value: number | string | null | undefined) => {
     if (typeof value !== 'number' || isNaN(value)) return value
@@ -216,87 +241,129 @@ const LineGraph = ({
 
   useEffect(() => {
     d3.select(gx.current)
-      .call((axis: { select: (s: string) => { call: (c: unknown) => unknown, node: () => { getBBox: () => DOMRect }, attr: (k: string, v: string) => unknown } }) => {
-        axis.select('.Axis__TickContainer')
-          .call(d3.axisBottom(x)
-            .tickSize(0)
-            .tickPadding(10)
-            .tickFormat(xTickFormat)
-            .tickValues(getDatesTicks(data.map((d) => d.x), xTicksCount - 2))
+      .call(
+        (axis: {
+          select: (s: string) => {
+            call: (c: unknown) => unknown
+            node: () => { getBBox: () => DOMRect }
+            attr: (k: string, v: string) => unknown
+          }
+        }) => {
+          axis.select('.Axis__TickContainer').call(
+            d3
+              .axisBottom(x)
+              .tickSize(0)
+              .tickPadding(10)
+              .tickFormat(xTickFormat)
+              .tickValues(
+                getDatesTicks(
+                  data.map(d => d.x),
+                  xTicksCount - 2
+                )
+              )
           )
-      })
-      .call((axis: { select: (s: string) => { call: (c: unknown) => unknown, node: () => { getBBox: () => DOMRect }, attr: (k: string, v: string) => unknown } }) => {
-        const labelSize = axis.select('.Axis__Label').node().getBBox()
+        }
+      )
+      .call(
+        (axis: {
+          select: (s: string) => {
+            call: (c: unknown) => unknown
+            node: () => { getBBox: () => DOMRect }
+            attr: (k: string, v: string) => unknown
+          }
+        }) => {
+          const labelSize = axis.select('.Axis__Label').node().getBBox()
 
-        axis.select('.Axis__Label')
-          .attr('transform', `translate(${width - labelSize.width / 2 - marginRight}, ${marginBottom})`)
-      })
+          axis
+            .select('.Axis__Label')
+            .attr(
+              'transform',
+              `translate(${width - labelSize.width / 2 - marginRight}, ${marginBottom})`
+            )
+        }
+      )
 
-    setLine(() => d3.line()
-      .x((d: ChartDataPoint) => x(d.x))
-      .y((d: ChartDataPoint) => y(d.y))
-      .curve(d3.curveLinear))
+    setLine(() =>
+      d3
+        .line()
+        .x((d: ChartDataPoint) => x(d.x))
+        .y((d: ChartDataPoint) => y(d.y))
+        .curve(d3.curveLinear)
+    )
 
-    setArea(() => d3.area()
-      .curve(d3.curveLinear)
-      .x((d: ChartDataPoint) => x(d.x))
-      .y0(y(0))
-      .y1((d: ChartDataPoint) => y(d.y)))
+    setArea(() =>
+      d3
+        .area()
+        .curve(d3.curveLinear)
+        .x((d: ChartDataPoint) => x(d.x))
+        .y0(y(0))
+        .y1((d: ChartDataPoint) => y(d.y))
+    )
   }, [gx, x, data, width, xTicksCount, marginBottom])
 
   useEffect(() => {
     d3.select(gy.current)
       .select('.Axis__TickContainer')
-      .call(d3.axisLeft(y)
-        .tickSize(0)
-        .ticks(5)
-        .tickFormat(valuesFormat)
-        .tickPadding(10)
-      )
+      .call(d3.axisLeft(y).tickSize(0).ticks(5).tickFormat(valuesFormat).tickPadding(10))
   }, [gy, y])
 
   useEffect(() => {
     if (!gx.current || !gy.current) return
 
-    const yGrid = d3.axisLeft(y)
-      .ticks(5)
-      .tickSize(-width)
-      .tickFormat('')
+    const yGrid = d3.axisLeft(y).ticks(5).tickSize(-width).tickFormat('')
 
     d3.select(gy.current).select('.grid-y').remove()
-    d3.select(gy.current)
-      .append('g')
-      .attr('class', 'grid grid-y')
-      .call(yGrid)
+    d3.select(gy.current).append('g').attr('class', 'grid grid-y').call(yGrid)
 
-    const xGrid = d3.axisBottom(x)
-      .tickValues(getDatesTicks(data.map((d) => d.x), xTicksCount - 2))
+    const xGrid = d3
+      .axisBottom(x)
+      .tickValues(
+        getDatesTicks(
+          data.map(d => d.x),
+          xTicksCount - 2
+        )
+      )
       .tickSize(-height + marginTop)
       .tickFormat('')
 
     d3.select(gx.current).select('.grid-x').remove()
-    d3.select(gx.current)
-      .append('g')
-      .attr('class', 'grid grid-x')
-      .call(xGrid)
+    d3.select(gx.current).append('g').attr('class', 'grid grid-x').call(xGrid)
   }, [x, y, width, height, marginLeft, marginRight, marginTop, marginBottom, gx, gy, data])
 
   const updateSize = () => {
     if (!loading || !d3.select(gy.current).node()) return
 
-    const yAxisTicksWidth = d3.select(gy.current).select('.Axis__TickContainer').node().getBBox().width
+    const yAxisTicksWidth = d3
+      .select(gy.current)
+      .select('.Axis__TickContainer')
+      .node()
+      .getBBox().width
 
     d3.select(gy.current)
       .select('.Axis__Label')
       .attr('transform', `translate(${-yAxisTicksWidth}, ${marginTop - 15})`)
 
-    d3.select(gy.current)
-      .attr('transform', `translate(${yAxisTicksWidth}, 0)`)
+    d3.select(gy.current).attr('transform', `translate(${yAxisTicksWidth}, 0)`)
 
     setX(() => {
-      if (xAxisFormatCode === 'number') return d3.scaleLinear(d3.extent(data, (d: ChartDataPoint) => d.x), [yAxisTicksWidth, width - marginRight])
-      if (xAxisFormatCode === 'date' || xAxisFormatCode === 'time' || xAxisFormatCode === 'datetime') return d3.scaleTime(d3.extent(data, (d: ChartDataPoint) => d.x), [yAxisTicksWidth, width - marginRight])
-      return d3.scaleLinear(d3.extent(data, (d: ChartDataPoint) => d.x), [yAxisTicksWidth, width - marginRight])
+      if (xAxisFormatCode === 'number')
+        return d3.scaleLinear(
+          d3.extent(data, (d: ChartDataPoint) => d.x),
+          [yAxisTicksWidth, width - marginRight]
+        )
+      if (
+        xAxisFormatCode === 'date' ||
+        xAxisFormatCode === 'time' ||
+        xAxisFormatCode === 'datetime'
+      )
+        return d3.scaleTime(
+          d3.extent(data, (d: ChartDataPoint) => d.x),
+          [yAxisTicksWidth, width - marginRight]
+        )
+      return d3.scaleLinear(
+        d3.extent(data, (d: ChartDataPoint) => d.x),
+        [yAxisTicksWidth, width - marginRight]
+      )
     })
 
     if (loading) setLoading(false)
@@ -306,13 +373,14 @@ const LineGraph = ({
 
   const bisect = d3.bisector((d: ChartDataPoint) => d.x).center
 
-  function tooltipPosition (point: number) {
+  function tooltipPosition(point: number) {
     const tooltipElement = d3.select(tooltip.current)
     const { width: tooltipWidth } = tooltipElement.node().getBoundingClientRect()
 
-    const xPos = x(data[point].x) + tooltipWidth + 20 < width
-      ? x(data[point].x) + tooltipWidth / 2 + 15
-      : x(data[point].x) - tooltipWidth / 2 - 15
+    const xPos =
+      x(data[point].x) + tooltipWidth + 20 < width
+        ? x(data[point].x) + tooltipWidth / 2 + 15
+        : x(data[point].x) - tooltipWidth / 2 - 15
 
     tooltipElement
       .attr('transform', `translate(${xPos},${y(data[point].y)})`)
@@ -323,7 +391,7 @@ const LineGraph = ({
       .style('visibility', 'visible')
   }
 
-  function pointermoved (event: MouseEvent) {
+  function pointermoved(event: MouseEvent) {
     const i = bisect(data, x.invert(d3.pointer(event)[0] - chartInnerOffset))
 
     d3.select(focusPoint.current)
@@ -332,7 +400,8 @@ const LineGraph = ({
       .attr('cx', x(data[i].x))
       .attr('cy', y(data[i].y))
 
-    const path = d3.select(tooltip.current)
+    const path = d3
+      .select(tooltip.current)
       .selectAll('path')
       .data([''])
       .join('path')
@@ -345,7 +414,7 @@ const LineGraph = ({
 
       let classStr = ''
 
-      styles.forEach((style) => {
+      styles.forEach(style => {
         if (style === 'blocks') classStr += ' ChartTooltip__InfoLine--Blocks'
         if (style === 'inline') classStr += ' ChartTooltip__InfoLine--Inline'
         if (style === 'bold') classStr += ' ChartTooltip__InfoLine--Bold'
@@ -355,62 +424,91 @@ const LineGraph = ({
       return classStr
     }
 
-    const infoLines: Array<{ styles: string[], value: string }> = []
-    const xFormatCode: AxisFormatCode = (typeof xAxis.type === 'object' && xAxis.type.tooltip
-      ? xAxis.type.tooltip
-      : (typeof xAxis.type === 'string' ? xAxis.type : xAxis.type.axis)) as AxisFormatCode
+    const infoLines: Array<{ styles: string[]; value: string }> = []
+    const xFormatCode: AxisFormatCode = (
+      typeof xAxis.type === 'object' && xAxis.type.tooltip
+        ? xAxis.type.tooltip
+        : typeof xAxis.type === 'string'
+          ? xAxis.type
+          : xAxis.type.axis
+    ) as AxisFormatCode
     const xFormat = tickFormats[xFormatCode]
 
-    infoLines.push({
-      styles: ['inline', 'tiny'],
-      value: `${xFormat(data[i].x)}: `
-    }, {
-      styles: ['inline', 'bold'],
-      value: ` ${new Intl.NumberFormat('fr-FR', { useGrouping: true, minimumFractionDigits: 0 }).format(data[i].y)} `
-    }, {
-      styles: ['inline', 'tiny'],
-      value: ` ${yAxis.abbreviation ?? ''}`
-    })
+    infoLines.push(
+      {
+        styles: ['inline', 'tiny'],
+        value: `${xFormat(data[i].x)}: `
+      },
+      {
+        styles: ['inline', 'bold'],
+        value: ` ${new Intl.NumberFormat('fr-FR', { useGrouping: true, minimumFractionDigits: 0 }).format(data[i].y)} `
+      },
+      {
+        styles: ['inline', 'tiny'],
+        value: ` ${yAxis.abbreviation ?? ''}`
+      }
+    )
 
-    const text = d3.select(tooltip.current)
+    const text = d3
+      .select(tooltip.current)
       .selectAll('text')
       .data([''])
       .join('text')
       .attr('class', 'ChartTooltip__TextContainer')
-      .call((t: {
-        selectAll: (s: string) => {
-          data: (d: unknown) => {
-            join: (s: string) => {
-              attr: (k: string, v: string | ((d: { styles: string[] }) => string)) => {
-                attr: (k: string, v: string | ((d: { styles: string[] }) => string)) => {
-                  text: (fn: (d: { value: string }) => string) => unknown
+      .call(
+        (t: {
+          selectAll: (s: string) => {
+            data: (d: unknown) => {
+              join: (s: string) => {
+                attr: (
+                  k: string,
+                  v: string | ((d: { styles: string[] }) => string)
+                ) => {
+                  attr: (
+                    k: string,
+                    v: string | ((d: { styles: string[] }) => string)
+                  ) => {
+                    text: (fn: (d: { value: string }) => string) => unknown
+                  }
                 }
               }
             }
           }
-        }
-      }) => t
-        .selectAll('tspan')
-        .data(infoLines)
-        .join('tspan')
-        .attr('class', (infoLine: { styles: string[] }) => `ChartTooltip__InfoLine ${lineClass(infoLine.styles)}`)
-        .attr('fill', (infoLine: { styles: string[] }) => `${!infoLine.styles.includes('tiny') ? '#fff' : theme.colors.gray['100']}`)
-        .text((d: { value: string }) => d.value))
+        }) =>
+          t
+            .selectAll('tspan')
+            .data(infoLines)
+            .join('tspan')
+            .attr(
+              'class',
+              (infoLine: { styles: string[] }) =>
+                `ChartTooltip__InfoLine ${lineClass(infoLine.styles)}`
+            )
+            .attr(
+              'fill',
+              (infoLine: { styles: string[] }) =>
+                `${!infoLine.styles.includes('tiny') ? '#fff' : theme.colors.gray['100']}`
+            )
+            .text((d: { value: string }) => d.value)
+      )
 
     const { width: textW, height: textH } = text.node().getBBox()
 
     text.attr('transform', `translate(${-textW / 2},${-(textH - 20) / 2 + 5})`)
 
-    path.attr('d', `M${-textW / 2 - 10}, ${-textH / 2 - 10}
+    path.attr(
+      'd',
+      `M${-textW / 2 - 10}, ${-textH / 2 - 10}
                     H${textW / 2 + 10}
                     v${textH + 20}
                     h-${textW + 20}
-                    z`)
+                    z`
+    )
 
     tooltipPosition(i)
   }
 
-  function pointerleft () {
+  function pointerleft() {
     d3.select(tooltip.current)
       .transition()
       .delay(1)
@@ -418,120 +516,146 @@ const LineGraph = ({
       .style('visibility', 'none')
       .style('transition', 'all 0s')
 
-    d3.select(focusPoint.current)
-      .style('display', 'none')
+    d3.select(focusPoint.current).style('display', 'none')
   }
 
   return (
     <div className={`Chart ${!loading ? 'loaded' : ''}`}>
-        <svg
-            ref={svgRef}
-            onMouseEnter={pointermoved as unknown as React.MouseEventHandler<SVGSVGElement>}
-            onMouseMove={pointermoved as unknown as React.MouseEventHandler<SVGSVGElement>}
-            onMouseLeave={pointerleft}
-            overflow={'visible'}
-            viewBox={`0 0 ${width} ${height}`}
-        >
-            <filter id={`shadow-${uniqueComponentId}`}>
-                <feDropShadow dx='0.2' dy='0.4' stdDeviation='.15'/>
-            </filter>
+      <svg
+        ref={svgRef}
+        onMouseEnter={pointermoved as unknown as React.MouseEventHandler<SVGSVGElement>}
+        onMouseMove={pointermoved as unknown as React.MouseEventHandler<SVGSVGElement>}
+        onMouseLeave={pointerleft}
+        overflow={'visible'}
+        viewBox={`0 0 ${width} ${height}`}
+      >
+        <filter id={`shadow-${uniqueComponentId}`}>
+          <feDropShadow dx="0.2" dy="0.4" stdDeviation=".15" />
+        </filter>
 
-            <svg x={chartInnerOffset} y={-chartInnerOffset} overflow={'visible'}>
-              <g className={'Axis Axis--X'} ref={gx} transform={`translate(0,${height - marginBottom + chartInnerOffset})`}>
-                <line
-                  x1={marginLeft - chartInnerOffset - 20}
-                  x2={width - marginRight + 50}
-                  y1={0}
-                  y2={0}
-                  className={'Axis__Line'}
-                />
-                <g><text className={'Axis__Label'} fill='white'>{xAxis.title}</text></g>
-                <g className={'Axis__TickContainer'}></g>
-              </g>
-            </svg>
-
-            <svg x='0' y={-chartInnerOffset} overflow={'visible'}>
-              <g className={'Axis Axis--Y'} ref={gy} >
-                <line
-                  x1={0}
-                  x2={0}
-                  y1={marginTop - 5}
-                  y2={height - marginBottom + chartInnerOffset + 5}
-                  className={'Axis__Line'}
-                />
-                <g><text className={'Axis__Label'} fill='white'>{yAxis.title}</text></g>
-                <g className={'Axis__TickContainer'}></g>
-              </g>
-            </svg>
-
-            <g transform={`translate(${chartInnerOffset},${-chartInnerOffset})`}>
-                <defs>
-                    <linearGradient id={`AreaFill-${uniqueComponentId}`} x1='0%' y1='100%' x2='0%' y2='0%'>
-                        <stop stopColor='#0F4D74' stopOpacity='0.02' offset='0%' />
-                        <stop stopColor='#0E75B5' stopOpacity='0.4' offset='100%' />
-                    </linearGradient>
-                    <clipPath id={`clipPath-${uniqueComponentId}`}>
-                        <rect
-                            x={Math.max(marginLeft - 20, 0)}
-                            y={Math.max(marginTop, 0)}
-                            width={Math.max(width - (marginLeft - 20 + marginRight), 0)}
-                            height={Math.max(height - (marginTop + marginBottom), 0)}
-                        ></rect>
-                    </clipPath>
-                </defs>
-
-                {type === 'bar'
-                  ? (() => {
-                      const step = data.length > 1 ? Math.abs(x(data[1].x) - x(data[0].x)) : 12
-                      const barW = Math.max(1, Math.min(step * 0.6, 14))
-                      const baseY = y(0)
-                      return (
-                        <g clipPath={`url(#clipPath-${uniqueComponentId})`}>
-                          {data.map((d, i) => {
-                            const h = Math.max(0, baseY - y(d.y))
-                            return (
-                              <rect
-                                key={i}
-                                x={x(d.x) - barW / 2}
-                                y={y(d.y)}
-                                width={barW}
-                                height={h}
-                                rx={1}
-                                fill={`url(#AreaFill-${uniqueComponentId})`}
-                                stroke={'#008DE4'}
-                                strokeWidth={1}
-                                className={'Chart__Bar'}
-                              />
-                            )
-                          })}
-                        </g>
-                      )
-                    })()
-                  : <>
-                      <path d={area(data) ?? undefined} fill={`url(#AreaFill-${uniqueComponentId})`} clipPath={`url(#clipPath-${uniqueComponentId})`}/>
-
-                      <g filter={`url(#shadow-${uniqueComponentId})`}>
-                          <path ref={graphicLine} d={line(data) ?? undefined} stroke={'#008DE4'} strokeWidth={2} fill={'none'} strokeLinejoin={'round'}/>
-
-                          <g fill='#008DE4'>
-                              {data.map((d, i) => (<circle key={i} cx={x(d.x)} cy={y(d.y)} r={4} className={'Chart__Point'}/>))}
-                          </g>
-                      </g>
-                    </>}
-
-                <g ref={focusPoint} className={'Chart__FocusPoint'}>
-                    <circle r={3}/>
-                </g>
-
-                <g ref={tooltip} className={'Chart__Tooltip ChartTooltip'} filter={`url(#shadow-${uniqueComponentId})`}></g>
+        <svg x={chartInnerOffset} y={-chartInnerOffset} overflow={'visible'}>
+          <g
+            className={'Axis Axis--X'}
+            ref={gx}
+            transform={`translate(0,${height - marginBottom + chartInnerOffset})`}
+          >
+            <line
+              x1={marginLeft - chartInnerOffset - 20}
+              x2={width - marginRight + 50}
+              y1={0}
+              y2={0}
+              className={'Axis__Line'}
+            />
+            <g>
+              <text className={'Axis__Label'} fill="white">
+                {xAxis.title}
+              </text>
             </g>
+            <g className={'Axis__TickContainer'}></g>
+          </g>
         </svg>
+
+        <svg x="0" y={-chartInnerOffset} overflow={'visible'}>
+          <g className={'Axis Axis--Y'} ref={gy}>
+            <line
+              x1={0}
+              x2={0}
+              y1={marginTop - 5}
+              y2={height - marginBottom + chartInnerOffset + 5}
+              className={'Axis__Line'}
+            />
+            <g>
+              <text className={'Axis__Label'} fill="white">
+                {yAxis.title}
+              </text>
+            </g>
+            <g className={'Axis__TickContainer'}></g>
+          </g>
+        </svg>
+
+        <g transform={`translate(${chartInnerOffset},${-chartInnerOffset})`}>
+          <defs>
+            <linearGradient id={`AreaFill-${uniqueComponentId}`} x1="0%" y1="100%" x2="0%" y2="0%">
+              <stop stopColor="#0F4D74" stopOpacity="0.02" offset="0%" />
+              <stop stopColor="#0E75B5" stopOpacity="0.4" offset="100%" />
+            </linearGradient>
+            <clipPath id={`clipPath-${uniqueComponentId}`}>
+              <rect
+                x={Math.max(marginLeft - 20, 0)}
+                y={Math.max(marginTop, 0)}
+                width={Math.max(width - (marginLeft - 20 + marginRight), 0)}
+                height={Math.max(height - (marginTop + marginBottom), 0)}
+              ></rect>
+            </clipPath>
+          </defs>
+
+          {type === 'bar' ? (
+            (() => {
+              const step = data.length > 1 ? Math.abs(x(data[1].x) - x(data[0].x)) : 12
+              const barW = Math.max(1, Math.min(step * 0.6, 14))
+              const baseY = y(0)
+              return (
+                <g clipPath={`url(#clipPath-${uniqueComponentId})`}>
+                  {data.map((d, i) => {
+                    const h = Math.max(0, baseY - y(d.y))
+                    return (
+                      <rect
+                        key={i}
+                        x={x(d.x) - barW / 2}
+                        y={y(d.y)}
+                        width={barW}
+                        height={h}
+                        rx={1}
+                        fill={`url(#AreaFill-${uniqueComponentId})`}
+                        stroke={'#008DE4'}
+                        strokeWidth={1}
+                        className={'Chart__Bar'}
+                      />
+                    )
+                  })}
+                </g>
+              )
+            })()
+          ) : (
+            <>
+              <path
+                d={area(data) ?? undefined}
+                fill={`url(#AreaFill-${uniqueComponentId})`}
+                clipPath={`url(#clipPath-${uniqueComponentId})`}
+              />
+
+              <g filter={`url(#shadow-${uniqueComponentId})`}>
+                <path
+                  ref={graphicLine}
+                  d={line(data) ?? undefined}
+                  stroke={'#008DE4'}
+                  strokeWidth={2}
+                  fill={'none'}
+                  strokeLinejoin={'round'}
+                />
+
+                <g fill="#008DE4">
+                  {data.map((d, i) => (
+                    <circle key={i} cx={x(d.x)} cy={y(d.y)} r={4} className={'Chart__Point'} />
+                  ))}
+                </g>
+              </g>
+            </>
+          )}
+
+          <g ref={focusPoint} className={'Chart__FocusPoint'}>
+            <circle r={3} />
+          </g>
+
+          <g
+            ref={tooltip}
+            className={'Chart__Tooltip ChartTooltip'}
+            filter={`url(#shadow-${uniqueComponentId})`}
+          ></g>
+        </g>
+      </svg>
     </div>
   )
 }
 
-export {
-  LineChart,
-  TimeframeMenu,
-  TimeframeSelector
-}
+export { LineChart, TimeframeMenu, TimeframeSelector }

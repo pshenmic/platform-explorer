@@ -12,8 +12,8 @@ interface PrefundedBalanceProps {
   rate?: LoadableState<Rate> | { data?: Pick<Rate, 'usd'> | null } | null
 }
 
-function PrefundedBalance ({ prefundedBalance, rate }: PrefundedBalanceProps) {
-  if (typeof prefundedBalance !== 'object' || prefundedBalance === null) return <NotActive/>
+function PrefundedBalance({ prefundedBalance, rate }: PrefundedBalanceProps) {
+  if (typeof prefundedBalance !== 'object' || prefundedBalance === null) return <NotActive />
 
   const elements = []
 
@@ -32,11 +32,15 @@ function PrefundedBalance ({ prefundedBalance, rate }: PrefundedBalanceProps) {
     )
   }
 
-  return elements?.length > 1
-    ? <Flex gap={'8px'} flexDirection={'column'}>
-        {elements.map((element, i) => <div key={i}>{element}</div>)}
-      </Flex>
-    : elements[0]
+  return elements?.length > 1 ? (
+    <Flex gap={'8px'} flexDirection={'column'}>
+      {elements.map((element, i) => (
+        <div key={i}>{element}</div>
+      ))}
+    </Flex>
+  ) : (
+    elements[0]
+  )
 }
 
 export default PrefundedBalance

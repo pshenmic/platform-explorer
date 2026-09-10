@@ -12,7 +12,7 @@ type BooleanFormKey = {
   [K in keyof TokenForm]: TokenForm[K] extends boolean ? K : never
 }[keyof TokenForm]
 
-function Advanced () {
+function Advanced() {
   const { form, setField } = useTokenWizard()
   const toggle = (key: BooleanFormKey) => () => setField(key, !form[key])
 
@@ -24,42 +24,42 @@ function Advanced () {
   }
 
   return (
-    <div className='Features'>
+    <div className="Features">
       <Stack spacing={3}>
         <Row
-          label='Decimals'
-          tooltip='How many fractional digits the token supports (like cents). Max 16. DASH itself uses 8. Your supply inputs are multiplied by 10^decimals on chain.'
+          label="Decimals"
+          tooltip="How many fractional digits the token supports (like cents). Max 16. DASH itself uses 8. Your supply inputs are multiplied by 10^decimals on chain."
         >
           <Input
-            size='sm'
-            variant='filled'
-            placeholder='8'
+            size="sm"
+            variant="filled"
+            placeholder="8"
             value={form.decimals}
             onChange={onDecimalsChange}
-            fontFamily='mono'
-            inputMode='numeric'
-            width='80px'
+            fontFamily="mono"
+            inputMode="numeric"
+            width="80px"
           />
         </Row>
         <FeatureToggle
-          label='Capitalize singular form'
-          tooltip='Hints that the token name should be rendered capitalized in clients (e.g. MyToken, not mytoken). Metadata only.'
+          label="Capitalize singular form"
+          tooltip="Hints that the token name should be rendered capitalized in clients (e.g. MyToken, not mytoken). Metadata only."
           value={form.shouldCapitalize}
           onToggle={toggle('shouldCapitalize')}
         />
         <FeatureToggle
-          label='Start paused'
-          tooltip='Token is created in a paused state. Owner must unpause before transfers work.'
+          label="Start paused"
+          tooltip="Token is created in a paused state. Owner must unpause before transfers work."
           value={form.startAsPaused}
           onToggle={toggle('startAsPaused')}
         />
         <FeatureToggle
-          label='Allow transfer to frozen balance'
-          tooltip='If on, mints and transfers can land on a balance that is currently frozen. Off bounces them.'
+          label="Allow transfer to frozen balance"
+          tooltip="If on, mints and transfers can land on a balance that is currently frozen. Off bounces them."
           value={form.allowTransferToFrozenBalance}
           onToggle={toggle('allowTransferToFrozenBalance')}
         />
-        <History/>
+        <History />
       </Stack>
     </div>
   )

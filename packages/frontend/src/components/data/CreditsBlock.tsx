@@ -10,23 +10,28 @@ interface CreditsBlockProps {
   rate?: LoadableState<Rate> | { data?: Pick<Rate, 'usd'> | null } | null
 }
 
-export default function CreditsBlock ({ credits, rate }: CreditsBlockProps) {
+export default function CreditsBlock({ credits, rate }: CreditsBlockProps) {
   const creditsNumber = Number(credits)
 
   return (
     <span className={'CreditsBlock'}>
-      {!isNaN(creditsNumber)
-        ? <>
-          <span className={'CreditsBlock__Credits'}><BigNumber>{creditsNumber}</BigNumber> CREDITS</span>
-            <span className={'CreditsBlock__Dash'}>({removeTrailingZeros(creditsToDash(Number(creditsNumber)).toFixed(8))} DASH)</span>
-            {typeof rate?.data?.usd === 'number' &&
-              <span className={'CreditsBlock__Usd'}>
-                ~{roundUsd(creditsToDash(Number(creditsNumber)) * rate?.data?.usd)}$
-              </span>
-            }
+      {!isNaN(creditsNumber) ? (
+        <>
+          <span className={'CreditsBlock__Credits'}>
+            <BigNumber>{creditsNumber}</BigNumber> CREDITS
+          </span>
+          <span className={'CreditsBlock__Dash'}>
+            ({removeTrailingZeros(creditsToDash(Number(creditsNumber)).toFixed(8))} DASH)
+          </span>
+          {typeof rate?.data?.usd === 'number' && (
+            <span className={'CreditsBlock__Usd'}>
+              ~{roundUsd(creditsToDash(Number(creditsNumber)) * rate?.data?.usd)}$
+            </span>
+          )}
         </>
-        : <NotActive/>
-      }
+      ) : (
+        <NotActive />
+      )}
     </span>
   )
 }

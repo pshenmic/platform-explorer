@@ -52,24 +52,17 @@ export const NameScreen = ({ onChangeName, setMode, defaultName }: NameScreenPro
       <div className={styles.divider}>
         <Divider />
       </div>
-      <form
-        className={styles.form}
-        id='data-contract-name-form'
-        onSubmit={handleSubmit}
-      >
+      <form className={styles.form} id="data-contract-name-form" onSubmit={handleSubmit}>
         <div className={styles.field}>
-          <label
-            className={styles.label}
-            htmlFor='data-contract-name'
-          >
+          <label className={styles.label} htmlFor="data-contract-name">
             Data Contract Name:
           </label>
           <FormControl className={styles.input} isInvalid={!!error}>
             <Input
-              placeholder='Enter Name...'
-              id='data-contract-name'
+              placeholder="Enter Name..."
+              id="data-contract-name"
               value={form.name}
-              onChange={(e) => handleNameChange(e.target.value)}
+              onChange={e => handleNameChange(e.target.value)}
               onBlur={() => setError(validateName(form.name))}
             />
           </FormControl>
@@ -88,9 +81,9 @@ export const NameScreen = ({ onChangeName, setMode, defaultName }: NameScreenPro
           Cancel
         </button>
         <button
-          type='submit'
+          type="submit"
           className={button({ className: styles.submit })}
-          form='data-contract-name-form'
+          form="data-contract-name-form"
           disabled={isSubmitDisabled}
         >
           Submit Changes
