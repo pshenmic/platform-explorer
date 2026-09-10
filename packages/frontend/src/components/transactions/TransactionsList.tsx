@@ -24,6 +24,7 @@ function TransactionsList({
   rate,
   pagination,
   loading,
+  skeletonCount,
   absoluteDate = false,
   filterValues,
   onFilterChange,
@@ -37,6 +38,7 @@ function TransactionsList({
   rate?: any
   pagination?: any
   loading?: any
+  skeletonCount?: number
   absoluteDate?: boolean
   itemsCount?: number
   filterValues?: Record<string, unknown>
@@ -216,6 +218,7 @@ function TransactionsList({
       columns={columns}
       pinFirst={pinFirst}
       loading={loading}
+      skeletonCount={skeletonCount}
       rowHref={(tx: Transaction) => `/transaction/${tx?.hash}`}
       rowKey={(tx: Transaction) => tx?.hash ?? ''}
       headerVariant={headerStyles === 'light' ? 'light' : 'default'}

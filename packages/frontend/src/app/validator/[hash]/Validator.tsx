@@ -593,14 +593,12 @@ function Validator({ hash }: ValidatorProps) {
                 <TabPanel className={'ValidatorPage__ListContainer'}>
                   {!proposedBlocks.error ? (
                     <div className={'ValidatorPage__List'}>
-                      {!proposedBlocks.loading ? (
-                        <BlocksList
-                          blocks={proposedBlocks?.data?.resultSet}
-                          headerStyles={'light'}
-                        />
-                      ) : (
-                        <LoadingList itemsCount={pageSize} />
-                      )}
+                      <BlocksList
+                        blocks={proposedBlocks?.data?.resultSet}
+                        loading={proposedBlocks.loading}
+                        skeletonCount={pageSize}
+                        headerStyles={'light'}
+                      />
                     </div>
                   ) : (
                     <ErrorMessageBlock />
@@ -624,14 +622,12 @@ function Validator({ hash }: ValidatorProps) {
                 <TabPanel className={'ValidatorPage__ListContainer'}>
                   {!transactions.error ? (
                     <div className={'ValidatorPage__List'}>
-                      {!transactions.loading ? (
-                        <TransactionsList
-                          transactions={transactions.data?.resultSet}
-                          headerStyles={'light'}
-                        />
-                      ) : (
-                        <LoadingList itemsCount={pageSize} />
-                      )}
+                      <TransactionsList
+                        transactions={transactions.data?.resultSet}
+                        loading={transactions.loading}
+                        skeletonCount={pageSize}
+                        headerStyles={'light'}
+                      />
                     </div>
                   ) : (
                     <ErrorMessageBlock />

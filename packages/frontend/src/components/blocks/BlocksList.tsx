@@ -35,6 +35,7 @@ function BlocksList({
   filterValues,
   onFilterChange,
   loading,
+  skeletonCount,
   paging
 }: {
   blocks?: any[]
@@ -43,6 +44,7 @@ function BlocksList({
   filterValues?: Record<string, unknown>
   onFilterChange?: (key: string, value: unknown) => void
   loading?: boolean
+  skeletonCount?: number
   paging?: DataListProps['paging']
 }) {
   const router = useRouter()
@@ -226,6 +228,7 @@ function BlocksList({
       filterValues={filterValues}
       onFilterChange={onFilterChange}
       loading={loading}
+      skeletonCount={skeletonCount}
       title={'Blocks'}
       paging={paging}
     />

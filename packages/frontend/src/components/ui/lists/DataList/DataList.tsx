@@ -254,7 +254,7 @@ export default function DataList<T = any>({
     }
   }, [pinFirst, fit, items.length, loading, width, skeletonCount, paging?.pageSize])
 
-  const replacePending = Boolean(loading && (items.length === 0 || paging?.mode === 'pages'))
+  const replacePending = Boolean(loading && (items.length === 0 || paging?.mode !== 'continuous'))
   const isFeed = fit === 'feed'
   const compactFirst = !isFeed && width > 0 && width <= COMPACT_FIRST_MAX
   const fillList = pinFirst && !isFeed
