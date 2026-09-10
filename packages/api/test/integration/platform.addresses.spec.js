@@ -180,7 +180,8 @@ describe('Platform Addresses routes', () => {
           aliases: []
         },
         base58Address: platformAddress.address.address,
-        bech32mAddress: platformAddress.address.bech32m_address
+        bech32mAddress: platformAddress.address.bech32m_address,
+        addressesCount: 1
       }))
         .sort((a, b) => a.height - b.height)
         .slice(0, 10)
@@ -268,7 +269,8 @@ describe('Platform Addresses routes', () => {
           aliases: []
         },
         base58Address: platformAddress.address.address,
-        bech32mAddress: platformAddress.address.bech32m_address
+        bech32mAddress: platformAddress.address.bech32m_address,
+        addressesCount: 1
       }))
         .sort((a, b) => a.blockHeight - b.blockHeight)
         .slice(0, 7)
@@ -307,7 +309,8 @@ describe('Platform Addresses routes', () => {
           aliases: []
         },
         base58Address: platformAddress.address.address,
-        bech32mAddress: platformAddress.address.bech32m_address
+        bech32mAddress: platformAddress.address.bech32m_address,
+        addressesCount: 1
       }))
         .sort((a, b) => a.blockHeight - b.blockHeight)
         .slice(14, 21)
@@ -346,7 +349,8 @@ describe('Platform Addresses routes', () => {
           aliases: []
         },
         base58Address: platformAddress.address.address,
-        bech32mAddress: platformAddress.address.bech32m_address
+        bech32mAddress: platformAddress.address.bech32m_address,
+        addressesCount: 1
       }))
         .sort((a, b) => b.blockHeight - a.blockHeight)
         .slice(14, 21)
@@ -508,6 +512,7 @@ describe('Platform Addresses routes', () => {
 
       // the shared transition is listed once, not once per address that owns a row in it
       assert.equal(merged.length, 1)
+      assert.equal(merged[0].addressesCount, 2)
       assert.equal(body.pagination.total, sender.transitions.length + recipient.transitions.length)
 
       const [transaction] = merged

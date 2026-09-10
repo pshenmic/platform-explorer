@@ -248,6 +248,7 @@ module.exports = class PlatformAddressesDAO {
         }
       })
       .select(this.knex.raw('amount >= 0 as incoming'))
+      .select('addresses_count')
       .select(this.knex.raw('CASE WHEN addresses_count = 1 THEN address_subquery.address END as address'))
       .select(this.knex.raw('CASE WHEN addresses_count = 1 THEN address_subquery.bech32m_address END as bech32m_address'))
       .select(countSubquery.as('total_count'))
@@ -262,7 +263,7 @@ module.exports = class PlatformAddressesDAO {
     const rows = await this.knex(transitionsSubqueryWithTotalCount)
       .select('tx_hash', 'index', 'block_hash', 'type',
         'gas_used', 'status', 'error', 'owner', 'incoming', 'amount', 'total_count',
-        'blocks.timestamp as timestamp', 'block_height',
+        'blocks.timestamp as timestamp', 'block_height', 'addresses_count',
         'address as base58_address', 'bech32m_address', 'state_transition_id')
       .modify(qb => {
         if (withData) {
@@ -288,12 +289,18 @@ module.exports = class PlatformAddressesDAO {
         aliases.push(getAliasFromDocument(aliasDocument))
       }
 
-      return Transaction.fromRow({
+      const transaction = Transaction.fromRow({
         ...row,
         owner: row.owner,
         aliases,
         type: StateTransitionEnum[row.type]
       })
+
+      // how many of the requested addresses own a row in this transition. Above one no single
+      // address describes it, which is why it carries no address of its own
+      transaction.addressesCount = Number(row.addresses_count)
+
+      return transaction
     })
 
     const [row] = rows
