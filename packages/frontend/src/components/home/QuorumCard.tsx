@@ -174,7 +174,8 @@ function proposeHintFor(
   }
   const p = lastKey ? ordered.indexOf(lastKey) : -1
   if (p < 0) return formatProposeWait(i, avgSec)
-  if (i === p) return 'now'
+  if (i === p) return 'finished'
+  if (i === (p + 1) % ordered.length) return 'now'
   if (i > p) return formatProposeWait(i - p, avgSec)
   return 'finished'
 }
