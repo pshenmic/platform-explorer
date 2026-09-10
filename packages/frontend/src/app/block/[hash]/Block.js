@@ -86,10 +86,12 @@ function Block ({ hash }) {
 
   useEffect(fetchData, [hash])
 
+  const height = block.data?.header?.height
+
   return (
     <PageDataContainer
       className={'Block'}
-      title={'Block info'}
+      title={typeof height === 'number' ? `Block #${height}` : 'Block info'}
     >
       <div className={'Block__InfoBlocks'}>
         <BlockTotalCard

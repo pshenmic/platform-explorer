@@ -74,16 +74,29 @@
     }
   }
 
+  // denser mobile rhythm (home-adjacent)
   @media screen and (max-width: $breakpoint-sm) {
+    gap: 0.625rem;
+
+    &__RowContainer {
+      gap: 0.625rem;
+    }
+
+    &__InfoContainer {
+      padding: 12px 14px;
+    }
+
     &__InfoLine {
       flex-wrap: wrap;
 
       &--Validator {
         .InfoLine__Value {
           width: 100%;
+          min-width: 0;
 
           .Identifier {
             width: 100%;
+            max-width: 100%;
             justify-content: space-between;
           }
         }
