@@ -514,6 +514,19 @@ module.exports = ({
       }
     },
     {
+      path: '/validator/:hash/quorums',
+      method: 'GET',
+      handler: validatorsController.getValidatorQuorumsByProTxHash,
+      schema: {
+        params: {
+          type: 'object',
+          properties: {
+            hash: { $ref: 'hash#' }
+          }
+        }
+      }
+    },
+    {
       path: '/validator/:hash',
       method: 'GET',
       handler: validatorsController.getValidatorByProTxHash,
@@ -694,6 +707,29 @@ module.exports = ({
               ]
             },
             quorumHash: { $ref: 'hash#' }
+          }
+        }
+      }
+    },
+    {
+      path: '/quorums',
+      method: 'GET',
+      handler: mainController.getQuorums
+    },
+    {
+      path: '/quorums/current',
+      method: 'GET',
+      handler: mainController.getCurrentQuorum
+    },
+    {
+      path: '/quorum/:hash',
+      method: 'GET',
+      handler: mainController.getQuorumByHash,
+      schema: {
+        params: {
+          type: 'object',
+          properties: {
+            hash: { $ref: 'hash#' }
           }
         }
       }

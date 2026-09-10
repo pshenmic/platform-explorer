@@ -136,7 +136,14 @@ export function MetricChart ({
     const bw = Math.max(1, Math.min(step * 0.65, 16))
     bars = points.map(p => ({ x: x(p.x) - bw / 2, y: y(p.y), w: bw, h: Math.max(0, y(0) - y(p.y)) }))
     const tickCount = Math.max(2, Math.min(6, Math.floor((width - M.left - M.right) / 72)))
-    xTicks = x.ticks(tickCount).map(d => ({ v: x(d), label: tickFmt(d) }))
+    // d3 treats tickCount as a hint, not a cap — for wide ranges (e.g. "All") it can
+    // return more "nice" ticks than the pixel budget allows, so thin them out evenly
+    let rawTicks = x.ticks(tickCount)
+    if (rawTicks.length > tickCount) {
+      const step = (rawTicks.length - 1) / (tickCount - 1)
+      rawTicks = [...new Set(Array.from({ length: tickCount }, (_, i) => rawTicks[Math.round(i * step)]))]
+    }
+    xTicks = rawTicks.map(d => ({ v: x(d), label: tickFmt(d) }))
     yTicks = y.ticks(4).map(v => ({ v: y(v), label: formatValue(v) }))
   }
 
