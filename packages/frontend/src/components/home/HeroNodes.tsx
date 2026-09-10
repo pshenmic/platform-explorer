@@ -46,7 +46,7 @@ export default function HeroNodes() {
     const centerBiasedX = (seed: number) => {
       const u = (((Math.sin(seed * 12.9898) * 43758.5453) % 1) + 1) % 1
       const v = (((Math.sin(seed * 78.233) * 24634.6345) % 1) + 1) % 1
-      const centered = 0.5 + (u - 0.5) * Math.pow(v, 0.55)
+      const centered = 0.5 + (u - 0.5) * v ** 0.55
       return Math.min(0.98, Math.max(0.02, centered))
     }
     const rand = (seed: number) => (((Math.sin(seed * 91.7) * 19273.1) % 1) + 1) % 1

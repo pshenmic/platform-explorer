@@ -1,5 +1,5 @@
 /** Deep-link to /transactions with the same type filters the list API understands. */
-export function transactionsListHref ({ type, fromBatch }) {
+export function transactionsListHref({ type, fromBatch }) {
   if (!type) return '/transactions'
   const params = new URLSearchParams()
   if (fromBatch) {
@@ -10,12 +10,13 @@ export function transactionsListHref ({ type, fromBatch }) {
   return `/transactions?${params.toString()}`
 }
 
-export function parseTypeParams (searchParams) {
-  const split = (key) => searchParams
-    .getAll(key)
-    .flatMap(v => String(v).split(','))
-    .map(v => v.trim())
-    .filter(Boolean)
+export function parseTypeParams(searchParams) {
+  const split = key =>
+    searchParams
+      .getAll(key)
+      .flatMap(v => String(v).split(','))
+      .map(v => v.trim())
+      .filter(Boolean)
 
   return {
     transaction_type: split('transaction_type'),
@@ -23,10 +24,14 @@ export function parseTypeParams (searchParams) {
   }
 }
 
-export function applyTypeParams (urlParameters, { transaction_type: tt = [], batch_type: bt = [] }) {
+export function applyTypeParams(urlParameters, { transaction_type: tt = [], batch_type: bt = [] }) {
   urlParameters.delete('transaction_type')
   urlParameters.delete('batch_type')
-  tt.forEach(v => urlParameters.append('transaction_type', v))
-  bt.forEach(v => urlParameters.append('batch_type', v))
+  tt.forEach(v => {
+    urlParameters.append('transaction_type', v)
+  })
+  bt.forEach(v => {
+    urlParameters.append('batch_type', v)
+  })
   return urlParameters
 }

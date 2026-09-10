@@ -619,7 +619,7 @@ const getIdentitiesHistory = (
 interface ActiveIdentityItem {
   identifier: string
   transactionsCount: number
-  aliases?: Array<{ alias: string, status: string, contested: boolean }>
+  aliases?: Array<{ alias: string; status: string; contested: boolean }>
 }
 
 const getActiveIdentities = (
@@ -636,7 +636,10 @@ const getActiveIdentities = (
     timestamp_start: timestampStart,
     timestamp_end: timestampEnd
   })
-  return call<PaginatedResultSet<ActiveIdentityItem>>(`identities/active?${params.toString()}`, 'GET')
+  return call<PaginatedResultSet<ActiveIdentityItem>>(
+    `identities/active?${params.toString()}`,
+    'GET'
+  )
 }
 
 interface ActiveDataContractItem {
@@ -658,7 +661,10 @@ const getActiveDataContracts = (
     timestamp_start: timestampStart,
     timestamp_end: timestampEnd
   })
-  return call<PaginatedResultSet<ActiveDataContractItem>>(`dataContracts/active?${params.toString()}`, 'GET')
+  return call<PaginatedResultSet<ActiveDataContractItem>>(
+    `dataContracts/active?${params.toString()}`,
+    'GET'
+  )
 }
 
 const getValidators = (

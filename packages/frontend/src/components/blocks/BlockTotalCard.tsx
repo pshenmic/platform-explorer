@@ -1,5 +1,8 @@
 'use client'
 
+import { useEffect, useState } from 'react'
+import type { Block, PaginatedResultSet } from '../../types'
+import type { LoadableState, WithClassName } from '../../types/common'
 import * as Api from '../../util/Api'
 import { Identifier, InfoLine, TimeDelta } from '../data'
 import { HorisontalSeparator } from '../ui/separators'
@@ -7,21 +10,35 @@ import { ValueContainer } from '../ui/containers'
 import { BlockIcon, ChevronIcon } from '../ui/icons'
 import { ValueCard } from '../cards'
 import { fetchHandlerError, fetchHandlerSuccess } from '../../util'
-import { useEffect, useState } from 'react'
+import type { BlockDetail } from './BlockDigestCard'
 import './BlockTotalCard.css'
 
-function BlockTotalCard ({ block, l1explorerBaseUrl, className }) {
-  const [blocks, setBlocks] = useState({ data: {}, loading: true, error: false })
+interface BlockTotalCardProps extends WithClassName {
+  block: LoadableState<BlockDetail>
+  l1explorerBaseUrl?: string
+}
+
+function BlockTotalCard({ block, l1explorerBaseUrl, className }: BlockTotalCardProps) {
+  const [blocks, setBlocks] = useState<LoadableState<Partial<PaginatedResultSet<Block>>>>({
+    data: {},
+    loading: true,
+    error: false
+  })
   const blockData = block?.data?.header
-  const [previousBlock] = blocks.data?.resultSet?.filter(b => b?.header?.height === blockData?.height - 1) || []
-  const [nextBlock] = blocks.data?.resultSet?.filter(b => b?.header?.height === blockData?.height + 1) || []
+  const [previousBlock] =
+    blocks.data?.resultSet?.filter(b => b?.header?.height === (blockData?.height ?? 0) - 1) || []
+  const [nextBlock] =
+    blocks.data?.resultSet?.filter(b => b?.header?.height === (blockData?.height ?? 0) + 1) || []
 
   const fetchData = () => {
     if (!blockData?.height) return
 
     setBlocks(state => ({ ...state, loading: true }))
 
-    Api.getBlocks(1, 3, 'desc', { height_min: Math.max(blockData?.height - 1, 1), height_max: blockData?.height + 1 })
+    Api.getBlocks(1, 3, 'desc', {
+      height_min: Math.max(blockData?.height - 1, 1),
+      height_max: blockData?.height + 1
+    })
       .then(res => fetchHandlerSuccess(setBlocks, res))
       .catch(err => fetchHandlerError(setBlocks, err))
   }
@@ -29,39 +46,41 @@ function BlockTotalCard ({ block, l1explorerBaseUrl, className }) {
   useEffect(fetchData, [blockData])
 
   return (
-    <div className={`InfoBlock InfoBlock--Gradient BlockTotalCard ${block?.loading ? 'BlockTotalCard--Loading' : ''} ${className || ''}`}>
-      {block.data?.name &&
-        <div className={'BlockTotalCard__Title'}>
-          {block.data.name}
-        </div>
-      }
+    <div
+      className={`InfoBlock InfoBlock--Gradient BlockTotalCard ${block?.loading ? 'BlockTotalCard--Loading' : ''} ${className || ''}`}
+    >
+      {block.data?.name && <div className={'BlockTotalCard__Title'}>{block.data.name}</div>}
 
       {/* Height first — home/list mental model */}
       <div className={'BlockTotalCard__Hero'}>
         <div className={'BlockTotalCard__HeroMain'}>
           <span className={'BlockTotalCard__HeroLabel'}>Height</span>
           <div className={'BlockTotalCard__BlockHeight'}>
-            {previousBlock
-              ? <ValueCard link={`/block/${previousBlock.header?.hash}`}>
-                  <ChevronIcon transform={'rotate(180deg)'}/>
-                </ValueCard>
-              : <span className={'BlockTotalCard__NavSpacer'} aria-hidden={'true'}/>}
+            {previousBlock ? (
+              <ValueCard link={`/block/${previousBlock.header?.hash}`}>
+                <ChevronIcon transform={'rotate(180deg)'} />
+              </ValueCard>
+            ) : (
+              <span className={'BlockTotalCard__NavSpacer'} aria-hidden={'true'} />
+            )}
             <span className={'BlockTotalCard__HeightValue'}>
               {block.loading ? '…' : (blockData?.height ?? '—')}
             </span>
-            {nextBlock
-              ? <ValueCard link={`/block/${nextBlock.header?.hash}`}>
-                  <ChevronIcon/>
-                </ValueCard>
-              : <span className={'BlockTotalCard__NavSpacer'} aria-hidden={'true'}/>}
+            {nextBlock ? (
+              <ValueCard link={`/block/${nextBlock.header?.hash}`}>
+                <ChevronIcon />
+              </ValueCard>
+            ) : (
+              <span className={'BlockTotalCard__NavSpacer'} aria-hidden={'true'} />
+            )}
           </div>
         </div>
         <div className={'BlockTotalCard__Avatar'} aria-hidden={'true'}>
-          <BlockIcon/>
+          <BlockIcon />
         </div>
       </div>
 
-      <HorisontalSeparator className={'BlockTotalCard__Separator'}/>
+      <HorisontalSeparator className={'BlockTotalCard__Separator'} />
 
       <div className={'BlockTotalCard__CommonInfo'}>
         <InfoLine
@@ -70,11 +89,7 @@ function BlockTotalCard ({ block, l1explorerBaseUrl, className }) {
           loading={block.loading}
           error={block.error || !block?.data?.header?.hash}
           value={
-            <Identifier
-              copyButton={true}
-              styles={['highlight-both']}
-              middleEllipsis={true}
-            >
+            <Identifier copyButton={true} styles={['highlight-both']} middleEllipsis={true}>
               {block?.data?.header?.hash}
             </Identifier>
           }
@@ -86,7 +101,10 @@ function BlockTotalCard ({ block, l1explorerBaseUrl, className }) {
           loading={block.loading}
           error={block.error}
           value={
-            <ValueContainer external={true} link={`${l1explorerBaseUrl}/block/${block.data?.header?.l1LockedHeight}`}>
+            <ValueContainer
+              external={true}
+              link={`${l1explorerBaseUrl}/block/${block.data?.header?.l1LockedHeight}`}
+            >
               {block.data?.header?.l1LockedHeight}
             </ValueContainer>
           }
@@ -126,13 +144,13 @@ function BlockTotalCard ({ block, l1explorerBaseUrl, className }) {
         <InfoLine
           title={'Time'}
           value={
-            blockData?.timestamp
-              ? <TimeDelta
-                  showTimestampTooltip={true}
-                  format={'compact'}
-                  endDate={new Date(blockData.timestamp)}
-                />
-              : null
+            blockData?.timestamp ? (
+              <TimeDelta
+                showTimestampTooltip={true}
+                format={'compact'}
+                endDate={new Date(blockData.timestamp)}
+              />
+            ) : null
           }
           loading={block.loading}
           error={block.error}

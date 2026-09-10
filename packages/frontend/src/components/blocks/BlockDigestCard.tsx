@@ -29,6 +29,8 @@ const Identifier = IdentifierJs as ComponentType<{
   children?: ReactNode
   avatar?: boolean
   ellipsis?: boolean
+  middleEllipsis?: boolean
+  copyButton?: boolean
   styles?: string[]
 }>
 const InfoLine = InfoLineJs as ComponentType<{

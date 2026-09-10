@@ -41,9 +41,7 @@ function BlocksList({
           Fees
         </GridItem>
 
-        <GridItem className={'BlocksList__ColumnTitle BlocksList__ColumnTitle--Txs'}>
-          Txs
-        </GridItem>
+        <GridItem className={'BlocksList__ColumnTitle BlocksList__ColumnTitle--Txs'}>Txs</GridItem>
 
         <GridItem className={'BlocksList__ColumnTitle BlocksList__ColumnTitle--Timestamp'}>
           Time
