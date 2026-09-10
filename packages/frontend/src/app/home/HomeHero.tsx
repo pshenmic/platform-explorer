@@ -69,12 +69,6 @@ export default function HomeHero({
 
   return (
     <section className={'InfoBlock InfoBlock--NoBorder HomeHero'}>
-      <div className={'HomeHero__Glow'} aria-hidden={'true'} />
-      <div className={'HomeHero__BrandFx'} aria-hidden={'true'}>
-        <span className={'HomeHero__BrandOrb HomeHero__BrandOrb--a'} />
-        <span className={'HomeHero__BrandOrb HomeHero__BrandOrb--b'} />
-        <span className={'HomeHero__BrandGrain'} />
-      </div>
       <HeroNodes />
 
       <div className={'HomeHero__Inner'}>
