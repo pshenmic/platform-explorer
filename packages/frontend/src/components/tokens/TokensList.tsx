@@ -1,5 +1,7 @@
 'use client'
 
+import { columnLayout } from './TokensList.columns'
+
 import { useRouter } from 'next/navigation'
 import { Alias, Identifier, NotActive, CreditsBlock, BigNumber } from '../data'
 import { LinkContainer, ValueContainer } from '../ui/containers'
@@ -7,7 +9,7 @@ import { Tooltip } from '../ui/Tooltips'
 import { FormattedNumber } from '../ui/FormattedNumber'
 import type { ReactNode } from 'react'
 import { DataList } from '../ui/lists'
-import type { DataListProps } from '../ui/lists/DataList/DataList'
+import type { DataListColumn, DataListProps } from '../ui/lists/DataList/DataList'
 import { ErrorMessageBlock } from '../Errors'
 import Pagination from '../pagination'
 import { findActiveAlias, getMinTokenPrice } from '../../util'
@@ -50,15 +52,12 @@ function TokensList({
   const router = useRouter()
   const canFilter = Boolean(onFilterChange)
 
-  const columns = [
+  const columns: DataListColumn<any>[] = [
     {
-      key: 'tokenName',
-      header: 'Token Name',
+      ...columnLayout.tokenName,
       filterKey: canFilter ? 'name' : undefined,
       filterType: canFilter ? ('search' as const) : undefined,
       filterPlaceholder: 'Name or ID',
-      grow: true,
-      minWidth: 160,
       cell: (token: any) => {
         const name = tokenName(token)
         return (
@@ -77,19 +76,14 @@ function TokensList({
       }
     },
     {
-      key: 'position',
-      numeric: true,
-      header: 'Position',
-      minWidth: 88,
-      align: 'center',
+      ...columnLayout.position,
+
       cell: (token: any) =>
         token?.position != null ? <BigNumber>{token.position}</BigNumber> : <NotActive />
     },
     {
-      key: 'supply',
-      numeric: true,
-      header: 'Supply',
-      minWidth: 108,
+      ...columnLayout.supply,
+
       cell: (token: any) => {
         if (token.totalSupply == null) return <NotActive />
         const value = (
@@ -113,10 +107,8 @@ function TokensList({
       }
     },
     {
-      key: 'price',
-      numeric: true,
-      header: 'Price',
-      minWidth: 96,
+      ...columnLayout.price,
+
       cell: (token: any) => {
         if (token.price != null) {
           return (
@@ -151,13 +143,10 @@ function TokensList({
       }
     },
     {
-      key: 'contract',
-      header: 'Contract',
+      ...columnLayout.contract,
       filterKey: canFilter ? 'contract' : undefined,
       filterType: canFilter ? ('search' as const) : undefined,
       filterPlaceholder: 'Contract ID',
-      grow: true,
-      minWidth: 130,
       priority: 1,
       cell: (token: any) => (
         <LinkContainer
@@ -174,13 +163,10 @@ function TokensList({
       )
     },
     {
-      key: 'owner',
-      header: 'Owner',
+      ...columnLayout.owner,
       filterKey: canFilter ? 'owner' : undefined,
       filterType: canFilter ? ('search' as const) : undefined,
       filterPlaceholder: 'Owner ID',
-      grow: true,
-      minWidth: 130,
       priority: 2,
       cell: (token: any) => {
         const ownerId = typeof token.owner === 'object' ? token.owner?.identifier : token.owner
@@ -209,11 +195,8 @@ function TokensList({
 
   if (variant === 'balance') {
     columns.push({
-      key: 'balance',
-      numeric: true,
-      header: 'Balance',
-      minWidth: 100,
-      align: 'right',
+      ...columnLayout.balance,
+
       cell: token =>
         typeof token.balance === 'number' || typeof token.balance === 'string' ? (
           <ValueContainer colorScheme={'emeralds'} size={'sm'}>

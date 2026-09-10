@@ -1,5 +1,7 @@
 'use client'
 
+import { columnLayout } from './TransactionsList.columns'
+
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import type { ReactNode } from 'react'
@@ -52,13 +54,10 @@ function TransactionsList({
 
   const columns = [
     {
-      key: 'hash',
-      header: 'Hash',
+      ...columnLayout.hash,
       filterKey: canFilter ? 'hash' : undefined,
       filterType: canFilter ? ('search' as const) : undefined,
       filterPlaceholder: 'Transaction Hash',
-      grow: true,
-      minWidth: 160,
       cell: (tx: Transaction) =>
         tx?.hash ? (
           <span className={'DataList__Entity'}>
@@ -71,24 +70,19 @@ function TransactionsList({
         )
     },
     {
-      key: 'status',
-      header: 'Status',
+      ...columnLayout.status,
       filterKey: canFilter ? 'status' : undefined,
       filterType: canFilter ? ('options' as const) : undefined,
       filterOptions: STATUS_FILTER_OPTIONS,
-      minWidth: 96,
-      align: 'center',
       priority: 2,
       cell: (tx: Transaction) =>
         tx?.status ? <TransactionStatusBadge status={tx.status} /> : <NotActive />
     },
     {
-      key: 'type',
-      header: 'Type',
+      ...columnLayout.type,
       filterKey: canFilter ? 'type' : undefined,
       filterType: canFilter ? ('options' as const) : undefined,
       filterOptions: TYPE_FILTER_OPTIONS,
-      minWidth: 140,
       cell: (tx: Transaction) =>
         tx?.batchType ? (
           <BatchTypeBadge batchType={tx.batchType?.replace(/[\\""]/g, '')} />
@@ -99,10 +93,7 @@ function TransactionsList({
         )
     },
     {
-      key: 'block',
-      numeric: true,
-      header: 'Block',
-      minWidth: 88,
+      ...columnLayout.block,
       priority: 3,
       cell: (tx: Transaction) =>
         tx?.blockHeight != null ? (
@@ -120,13 +111,9 @@ function TransactionsList({
         )
     },
     {
-      key: 'gasUsed',
-      numeric: true,
-      header: 'Gas',
+      ...columnLayout.gasUsed,
       filterKey: canFilter ? 'gas' : undefined,
       filterType: canFilter ? ('range' as const) : undefined,
-      minWidth: 88,
-      align: 'center',
       priority: 1,
       cell: (tx: Transaction) =>
         tx?.gasUsed ? (
@@ -140,13 +127,10 @@ function TransactionsList({
         )
     },
     {
-      key: 'owner',
-      header: 'Owner',
+      ...columnLayout.owner,
       filterKey: canFilter ? 'owner' : undefined,
       filterType: canFilter ? ('search' as const) : undefined,
       filterPlaceholder: 'Owner ID',
-      grow: true,
-      minWidth: 120,
       priority: 4,
       cell: (tx: Transaction) => {
         if (!tx?.owner?.identifier) return <NotActive>-</NotActive>
@@ -187,12 +171,10 @@ function TransactionsList({
       }
     },
     {
-      key: 'timestamp',
-      header: 'Timestamp',
+      ...columnLayout.timestamp,
       filterKey: canFilter ? 'timestamp' : undefined,
       filterType: canFilter ? ('daterange' as const) : undefined,
       minWidth: absoluteDate ? 148 : 128,
-      align: 'right',
       cell: (tx: Transaction) => {
         if (!tx?.timestamp) return <NotActive />
         return absoluteDate ? (

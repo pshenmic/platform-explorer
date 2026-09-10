@@ -1,5 +1,7 @@
 'use client'
 
+import { columnLayout } from './ContestedResourcesList.columns'
+
 import type { ReactNode, MouseEvent } from 'react'
 import { useRouter } from 'next/navigation'
 import { Alias, Identifier, NotActive, TimeDelta } from '../data'
@@ -125,13 +127,10 @@ function ContestedResourcesList({
 
   const columns = [
     {
-      key: 'resourceValue',
-      header: 'Resource Value',
+      ...columnLayout.resourceValue,
       filterKey: canFilter ? 'resourceValue' : undefined,
       filterType: canFilter ? ('search' as const) : undefined,
       filterPlaceholder: 'Name or encoded value',
-      grow: true,
-      minWidth: 168,
       cell: (item: ContestedResourcesListItemData) => (
         <span className={'DataList__Entity'}>
           <Alias ellipsis={true}>
@@ -142,13 +141,10 @@ function ContestedResourcesList({
       )
     },
     {
-      key: 'status',
-      header: 'Status',
+      ...columnLayout.status,
       filterKey: canFilter ? 'voting_finished' : undefined,
       filterType: canFilter ? ('options' as const) : undefined,
       filterOptions: STATUS_OPTIONS,
-      minWidth: 104,
-      align: 'center',
       cell: (item: ContestedResourcesListItemData) =>
         isEnded(item) ? (
           <Badge colorScheme={'gray'}>Finished</Badge>
@@ -157,12 +153,9 @@ function ContestedResourcesList({
         )
     },
     {
-      key: 'timestamp',
-      header: 'Timestamp',
-      align: 'right',
+      ...columnLayout.timestamp,
       filterKey: canFilter ? 'timestamp' : undefined,
       filterType: canFilter ? ('daterange' as const) : undefined,
-      minWidth: 128,
       cell: (item: ContestedResourcesListItemData) =>
         item?.timestamp ? (
           <TimeDelta showTimestampTooltip={true} endDate={new Date(item.timestamp)} />
@@ -171,13 +164,10 @@ function ContestedResourcesList({
         )
     },
     {
-      key: 'contract',
-      header: 'Contract ID',
+      ...columnLayout.contract,
       filterKey: canFilter ? 'contract' : undefined,
       filterType: canFilter ? ('search' as const) : undefined,
       filterPlaceholder: 'Contract ID or name',
-      grow: true,
-      minWidth: 148,
       priority: 1,
       cell: (item: ContestedResourcesListItemData) =>
         item?.dataContractIdentifier ? (
@@ -197,9 +187,7 @@ function ContestedResourcesList({
         )
     },
     {
-      key: 'indexName',
-      header: 'Index name',
-      minWidth: 168,
+      ...columnLayout.indexName,
       priority: 3,
       cell: (item: ContestedResourcesListItemData) =>
         item?.indexName ? (
@@ -211,12 +199,10 @@ function ContestedResourcesList({
         )
     },
     {
-      key: 'documentType',
-      header: 'Document type',
+      ...columnLayout.documentType,
       filterKey: canFilter ? 'document_type_name' : undefined,
       filterType: canFilter ? ('options' as const) : undefined,
       filterOptions: DOCUMENT_TYPE_OPTIONS,
-      minWidth: 132,
       priority: 2,
       cell: (item: ContestedResourcesListItemData) =>
         item?.documentTypeName ? (
@@ -228,10 +214,8 @@ function ContestedResourcesList({
         )
     },
     {
-      key: 'votes',
-      numeric: true,
-      header: 'Votes',
-      minWidth: 120,
+      ...columnLayout.votes,
+
       cell: (item: ContestedResourcesListItemData) => (
         <VoteBadges
           totalCountAbstain={item?.totalCountAbstain}
@@ -241,10 +225,8 @@ function ContestedResourcesList({
       )
     },
     {
-      key: 'endsIn',
-      header: 'Ends',
-      minWidth: 96,
-      align: 'right',
+      ...columnLayout.endsIn,
+
       cell: (item: ContestedResourcesListItemData) =>
         item?.endTimestamp ? <EndsInCell end={item.endTimestamp} /> : <NotActive />
     }

@@ -1,5 +1,7 @@
 'use client'
 
+import { columnLayout } from './VotesList.columns'
+
 import type { ReactNode, MouseEvent } from 'react'
 import { useRouter } from 'next/navigation'
 import { Alias, Identifier, NotActive, TimeDelta } from '../../data'
@@ -83,13 +85,10 @@ function VotesList({
 
   const columns = [
     {
-      key: 'voter',
-      header: 'Voter',
+      ...columnLayout.voter,
       filterKey: canFilter ? 'voter_identity' : undefined,
       filterType: canFilter ? ('search' as const) : undefined,
       filterPlaceholder: 'Voter identity',
-      grow: true,
-      minWidth: 148,
       cell: (vote: Vote) =>
         vote?.proTxHash ? (
           <LinkContainer
@@ -120,20 +119,15 @@ function VotesList({
         )
     },
     {
-      key: 'choice',
-      header: 'Choice',
+      ...columnLayout.choice,
       filterKey: canFilter ? 'choice' : undefined,
       filterType: canFilter ? ('options' as const) : undefined,
       filterOptions: CHOICE_OPTIONS,
-      minWidth: 148,
       cell: (vote: Vote) =>
         typeof vote?.choice === 'number' ? <ChoiceBadge choice={vote.choice} /> : <NotActive />
     },
     {
-      key: 'document',
-      header: 'Resource',
-      grow: true,
-      minWidth: 140,
+      ...columnLayout.document,
       priority: 3,
       cell: (vote: Vote) => {
         const resourceLabel = contestedResourcesUtil.getResourceValue(vote?.indexValues)
@@ -159,13 +153,10 @@ function VotesList({
       }
     },
     {
-      key: 'towards',
-      header: 'Towards Identity',
+      ...columnLayout.towards,
       filterKey: canFilter ? 'towards_identity' : undefined,
       filterType: canFilter ? ('search' as const) : undefined,
       filterPlaceholder: 'Identity ID',
-      grow: true,
-      minWidth: 148,
       priority: 1,
       cell: (vote: Vote) => {
         if (!vote?.towardsIdentity) return <NotActive />
@@ -190,14 +181,10 @@ function VotesList({
       }
     },
     {
-      key: 'power',
-      numeric: true,
-      header: 'Power',
+      ...columnLayout.power,
       filterKey: canFilter ? 'power' : undefined,
       filterType: canFilter ? ('options' as const) : undefined,
       filterOptions: POWER_OPTIONS,
-      minWidth: 88,
-      align: 'center',
       cell: (vote: Vote) =>
         typeof vote?.power === 'number' ? (
           <Badge colorScheme={vote.power > 1 ? 'green' : 'blue'}>x{vote.power}</Badge>
@@ -208,10 +195,7 @@ function VotesList({
     ...(showDataContract
       ? [
           {
-            key: 'contract',
-            header: 'Contract ID',
-            grow: true,
-            minWidth: 140,
+            ...columnLayout.contract,
             priority: 2,
             cell: (vote: Vote) =>
               vote?.dataContractIdentifier ? (
@@ -233,12 +217,9 @@ function VotesList({
         ]
       : []),
     {
-      key: 'timestamp',
-      header: 'Timestamp',
+      ...columnLayout.timestamp,
       filterKey: canFilter ? 'timestamp' : undefined,
       filterType: canFilter ? ('daterange' as const) : undefined,
-      minWidth: 128,
-      align: 'right',
       cell: (vote: Vote) =>
         vote?.timestamp ? (
           <TimeDelta showTimestampTooltip={true} endDate={new Date(vote.timestamp)} />

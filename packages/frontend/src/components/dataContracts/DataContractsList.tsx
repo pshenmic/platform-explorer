@@ -1,5 +1,7 @@
 'use client'
 
+import { columnLayout } from './DataContractsList.columns'
+
 import type { ReactNode } from 'react'
 import { useRouter } from 'next/navigation'
 import type { DataContractsListItemData } from './DataContractsListItem'
@@ -69,13 +71,10 @@ function ownerNameOf(item: DataContractsListItemData) {
 function contractColumns(canFilter: boolean, router: ReturnType<typeof useRouter>) {
   return [
     {
-      key: 'identifier',
-      header: 'Contract ID',
+      ...columnLayout.identifier,
       filterKey: canFilter ? 'identifier' : undefined,
       filterType: canFilter ? ('search' as const) : undefined,
       filterPlaceholder: 'Contract ID or name',
-      grow: true,
-      minWidth: 160,
       cell: (item: DataContractsListItemData) => (
         <span className={'DataList__Entity'}>
           {item?.name ? (
@@ -89,13 +88,10 @@ function contractColumns(canFilter: boolean, router: ReturnType<typeof useRouter
       )
     },
     {
-      key: 'owner',
-      header: 'Owner',
+      ...columnLayout.owner,
       filterKey: canFilter ? 'owner' : undefined,
       filterType: canFilter ? ('search' as const) : undefined,
       filterPlaceholder: 'Owner ID',
-      grow: true,
-      minWidth: 120,
       priority: 2,
       cell: (item: DataContractsListItemData) => {
         const ownerId = ownerIdOf(item)
@@ -121,13 +117,10 @@ function contractColumns(canFilter: boolean, router: ReturnType<typeof useRouter
       }
     },
     {
-      key: 'system',
-      header: 'System',
+      ...columnLayout.system,
       filterKey: canFilter ? 'system' : undefined,
       filterType: canFilter ? ('options' as const) : undefined,
       filterOptions: SYSTEM_OPTIONS,
-      minWidth: 88,
-      align: 'center',
       priority: 1,
       cell: (item: DataContractsListItemData) =>
         item?.isSystem !== undefined ? (
@@ -139,13 +132,10 @@ function contractColumns(canFilter: boolean, router: ReturnType<typeof useRouter
         )
     },
     {
-      key: 'withTokens',
-      header: 'With tokens',
+      ...columnLayout.withTokens,
       filterKey: canFilter ? 'with_tokens' : undefined,
       filterType: canFilter ? ('options' as const) : undefined,
       filterOptions: WITH_TOKENS_OPTIONS,
-      minWidth: 152,
-      align: 'center',
       priority: 1,
       cell: (item: DataContractsListItemData) =>
         Number.isNaN(Number(item?.tokensCount)) ? (
@@ -157,13 +147,9 @@ function contractColumns(canFilter: boolean, router: ReturnType<typeof useRouter
         )
     },
     {
-      key: 'documents',
-      numeric: true,
-      header: 'Documents',
+      ...columnLayout.documents,
       filterKey: canFilter ? 'documents' : undefined,
       filterType: canFilter ? ('range' as const) : undefined,
-      minWidth: 88,
-      align: 'center',
       priority: 3,
       cell: (item: DataContractsListItemData) =>
         item?.documentsCount == null ? (
@@ -175,12 +161,9 @@ function contractColumns(canFilter: boolean, router: ReturnType<typeof useRouter
         )
     },
     {
-      key: 'timestamp',
-      header: 'Timestamp',
+      ...columnLayout.timestamp,
       filterKey: canFilter ? 'timestamp' : undefined,
       filterType: canFilter ? ('daterange' as const) : undefined,
-      minWidth: 128,
-      align: 'right',
       cell: (item: DataContractsListItemData) =>
         !item?.timestamp && item?.isSystem ? (
           <span>Genesis</span>

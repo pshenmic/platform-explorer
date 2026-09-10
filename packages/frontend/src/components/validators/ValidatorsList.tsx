@@ -1,5 +1,7 @@
 'use client'
 
+import { columnLayout } from './ValidatorsList.columns'
+
 import type { ReactNode } from 'react'
 import type { Validator } from '../../types'
 import { Identifier, NotActive, TimeDelta, BigNumber } from '../data'
@@ -49,13 +51,10 @@ interface ValidatorsListProps {
 function validatorColumns(canFilter: boolean) {
   return [
     {
-      key: 'identifier',
-      header: 'Validator',
+      ...columnLayout.identifier,
       filterKey: canFilter ? 'identifier' : undefined,
       filterType: canFilter ? ('search' as const) : undefined,
       filterPlaceholder: 'ProTxHash, identity or block hash',
-      grow: true,
-      minWidth: 176,
       cell: (validator: Validator) =>
         validator?.proTxHash ? (
           <span className={'DataList__Entity'}>
@@ -68,12 +67,10 @@ function validatorColumns(canFilter: boolean) {
         )
     },
     {
-      key: 'active',
-      header: 'Active',
+      ...columnLayout.active,
       filterKey: canFilter ? 'isActive' : undefined,
       filterType: canFilter ? ('options' as const) : undefined,
       filterOptions: ACTIVE_OPTIONS,
-      minWidth: 108,
       cell: (validator: Validator) =>
         validator?.isActive != null ? (
           <Badge colorScheme={validator.isActive ? 'orange' : 'gray'}>
@@ -84,12 +81,9 @@ function validatorColumns(canFilter: boolean) {
         )
     },
     {
-      key: 'lastBlockHeight',
-      numeric: true,
-      header: 'Last height',
+      ...columnLayout.lastBlockHeight,
       filterKey: canFilter ? 'last_proposed_block_height' : undefined,
       filterType: canFilter ? ('range' as const) : undefined,
-      minWidth: 128,
       priority: 1,
       cell: (validator: Validator) => {
         const height = validator?.lastProposedBlockHeader?.height
@@ -103,13 +97,9 @@ function validatorColumns(canFilter: boolean) {
       }
     },
     {
-      key: 'proposedBlocksAmount',
-      numeric: true,
-      header: 'Blocks proposed',
+      ...columnLayout.proposedBlocksAmount,
       filterKey: canFilter ? 'blocks_proposed' : undefined,
       filterType: canFilter ? ('range' as const) : undefined,
-      minWidth: 120,
-      align: 'center',
       priority: 1,
       cell: (validator: Validator) => {
         const n = Number(validator?.proposedBlocksAmount)
@@ -122,12 +112,9 @@ function validatorColumns(canFilter: boolean) {
       }
     },
     {
-      key: 'timestamp',
-      header: 'Last block',
+      ...columnLayout.timestamp,
       filterKey: canFilter ? 'timestamp' : undefined,
       filterType: canFilter ? ('daterange' as const) : undefined,
-      minWidth: 128,
-      align: 'right',
       cell: (validator: Validator) => {
         const ts = validator.lastProposedBlockHeader?.timestamp
         return ts ? <TimeDelta showTimestampTooltip={true} endDate={new Date(ts)} /> : <NotActive />

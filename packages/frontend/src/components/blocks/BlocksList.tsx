@@ -1,5 +1,7 @@
 'use client'
 
+import { columnLayout } from './BlocksList.columns'
+
 import { useMemo } from 'react'
 import { useRouter } from 'next/navigation'
 import { useQuery, useQueries } from '@tanstack/react-query'
@@ -90,12 +92,9 @@ function BlocksList({
 
   const columns = [
     {
-      key: 'height',
-      numeric: true,
-      header: 'Height',
+      ...columnLayout.height,
       filterKey: 'height',
       filterType: 'range' as const,
-      minWidth: 108,
       cell: ({ header }: any) => (
         <span className={'DataList__Entity'}>
           <BlockIcon w={'1.125rem'} h={'1.125rem'} mr={'0.5rem'} />
@@ -104,13 +103,10 @@ function BlocksList({
       )
     },
     {
-      key: 'hash',
-      header: 'Block Hash',
+      ...columnLayout.hash,
       filterKey: 'hash',
       filterType: 'search' as const,
       filterPlaceholder: 'Block Hash',
-      grow: true,
-      minWidth: 160,
       cell: ({ header }: any) =>
         typeof header?.hash === 'string' ? (
           <Identifier ellipsis={true} copyButton={true}>
@@ -119,13 +115,9 @@ function BlocksList({
         ) : null
     },
     {
-      key: 'epoch',
-      numeric: true,
-      header: 'Epoch',
+      ...columnLayout.epoch,
       filterKey: 'epoch_index',
       filterType: 'range' as const,
-      minWidth: 88,
-      align: 'center',
       cell: ({ header }: any) => {
         const index = epochIndexForTimestamp(header?.timestamp, currentEpoch)
         if (typeof index !== 'number' || !Number.isFinite(index)) return <NotActive />
@@ -135,13 +127,10 @@ function BlocksList({
       }
     },
     {
-      key: 'validator',
-      header: 'Validator',
+      ...columnLayout.validator,
       filterKey: 'validator',
       filterType: 'search' as const,
       filterPlaceholder: 'Validator Pro TX Hash',
-      grow: true,
-      minWidth: 160,
       cell: ({ header }: any) =>
         header?.validator ? (
           <LinkContainer
@@ -160,13 +149,9 @@ function BlocksList({
         )
     },
     {
-      key: 'gas',
-      numeric: true,
-      header: 'Gas',
+      ...columnLayout.gas,
       filterKey: 'gas',
       filterType: 'range' as const,
-      minWidth: 88,
-      align: 'center',
       cell: ({ header }: any) =>
         typeof header?.totalGasUsed === 'number' || typeof header?.totalGasUsed === 'string' ? (
           <RateTooltip credits={Number(header.totalGasUsed)} rate={rate}>
@@ -179,22 +164,16 @@ function BlocksList({
         )
     },
     {
-      key: 'txs',
-      numeric: true,
-      header: 'TX count',
+      ...columnLayout.txs,
       filterKey: 'tx_count',
       filterType: 'range' as const,
-      minWidth: 118,
-      align: 'center',
       cell: ({ txs }: any) => (typeof txs?.length === 'number' ? <Badge>{txs.length}</Badge> : null)
     },
     {
-      key: 'timestamp',
-      header: 'Timestamp',
+      ...columnLayout.timestamp,
       filterKey: 'timestamp',
       filterType: 'daterange' as const,
       minWidth: absoluteDate ? 148 : 128,
-      align: 'right',
       cell: ({ header }: any) => {
         if (!header?.timestamp) return <NotActive />
         return absoluteDate ? (

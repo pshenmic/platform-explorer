@@ -1,5 +1,7 @@
 'use client'
 
+import { columnLayout } from './IdentitiesList.columns'
+
 import type { ReactNode } from 'react'
 import type { Identity } from '../../types'
 import { Identifier, Alias, BigNumber, NotActive, TimeDelta } from '../data'
@@ -101,13 +103,10 @@ function IdentitiesList({
 
   const columns = [
     {
-      key: 'identifier',
-      header: 'Identity',
+      ...columnLayout.identifier,
       filterKey: canFilter ? 'identifier' : undefined,
       filterType: canFilter ? ('search' as const) : undefined,
       filterPlaceholder: 'Identity ID or name',
-      grow: true,
-      minWidth: 168,
       cell: (identity: Identity, index?: number) => {
         const place = showRank && (index ?? 0) < 3 ? (index ?? 0) + 1 : undefined
         const PlaceIcon = placeIcons[place as 1 | 2 | 3]
@@ -133,12 +132,10 @@ function IdentitiesList({
       }
     },
     {
-      key: 'type',
-      header: 'Type',
+      ...columnLayout.type,
       filterKey: canFilter ? 'identity_type' : undefined,
       filterType: canFilter ? ('options' as const) : undefined,
       filterOptions: TYPE_OPTIONS,
-      minWidth: 120,
       cell: (identity: Identity) => {
         const type = identityTypeOf(identity)
         if (type === 'system') return <Badge colorScheme={'orange'}>System</Badge>
@@ -147,12 +144,9 @@ function IdentitiesList({
       }
     },
     {
-      key: 'balance',
-      numeric: true,
-      header: 'Balance',
+      ...columnLayout.balance,
       filterKey: canFilter ? 'balance' : undefined,
       filterType: canFilter ? ('range' as const) : undefined,
-      minWidth: 96,
       sortKey: 'balance',
       cell: (identity: Identity) => {
         if (identity.balance == null) return <NotActive>—</NotActive>
@@ -165,44 +159,30 @@ function IdentitiesList({
       }
     },
     {
-      key: 'txs',
-      numeric: true,
-      header: 'Transactions',
+      ...columnLayout.txs,
       filterKey: canFilter ? 'tx_count' : undefined,
       filterType: canFilter ? ('range' as const) : undefined,
-      minWidth: 108,
-      align: 'center',
       sortKey: 'tx_count',
       priority: 2,
       cell: (identity: Identity) => renderCount(identity.totalTxs)
     },
     {
-      key: 'documents',
-      numeric: true,
-      header: 'Documents',
+      ...columnLayout.documents,
       filterKey: canFilter ? 'documents_count' : undefined,
       filterType: canFilter ? ('range' as const) : undefined,
-      minWidth: 108,
-      align: 'center',
       priority: 2,
       cell: (identity: Identity) => renderCount(identity.totalDocuments)
     },
     {
-      key: 'contracts',
-      numeric: true,
-      header: 'Data Contracts',
+      ...columnLayout.contracts,
       filterKey: canFilter ? 'data_contracts' : undefined,
       filterType: canFilter ? ('range' as const) : undefined,
-      minWidth: 120,
-      align: 'center',
       priority: 1,
       cell: (identity: Identity) => renderCount(identity.totalDataContracts)
     },
     {
-      key: 'timestamp',
-      header: 'Timestamp',
-      minWidth: 128,
-      align: 'right',
+      ...columnLayout.timestamp,
+
       cell: (identity: Identity) =>
         identity.timestamp ? (
           <TimeDelta showTimestampTooltip={true} endDate={new Date(identity.timestamp)} />
