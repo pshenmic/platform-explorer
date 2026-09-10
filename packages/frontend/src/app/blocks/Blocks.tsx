@@ -65,9 +65,11 @@ function toBlocksApiFilters(state: Record<string, unknown>): QueryFilters {
     const hash = state.hash.trim()
     if (/^[A-Za-z0-9]{64}$/.test(hash)) out.hash = hash
   }
-  const ts = state.timestamp as
-    | { start?: Date | null; end?: Date | null; mode?: 'days' | 'rolling' }
-    | null
+  const ts = state.timestamp as {
+    start?: Date | null
+    end?: Date | null
+    mode?: 'days' | 'rolling'
+  } | null
   const start = ts?.start ? new Date(ts.start) : null
   const end = ts?.end ? new Date(ts.end) : null
   const startValid = start && !Number.isNaN(start.getTime())
@@ -106,7 +108,11 @@ function heightCacheKey(startIso: string, endIso: string) {
   return `${startIso}|${endIso}`
 }
 
-function rememberHeightRange(startIso: string, endIso: string, value: { height_min: number; height_max: number }) {
+function rememberHeightRange(
+  startIso: string,
+  endIso: string,
+  value: { height_min: number; height_max: number }
+) {
   if (heightRangeCache.size >= HEIGHT_CACHE_MAX) {
     const first = heightRangeCache.keys().next().value
     if (first) heightRangeCache.delete(first)

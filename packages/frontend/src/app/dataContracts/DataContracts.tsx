@@ -77,9 +77,11 @@ function toContractsApiFilters(state: Record<string, unknown>): QueryFilters {
     : []
   if (system.length === 1) out.is_system = system[0]
 
-  const ts = state.timestamp as
-    | { start?: Date | null; end?: Date | null; mode?: 'days' | 'rolling' }
-    | null
+  const ts = state.timestamp as {
+    start?: Date | null
+    end?: Date | null
+    mode?: 'days' | 'rolling'
+  } | null
   const start = ts?.start ? new Date(ts.start) : null
   const end = ts?.end ? new Date(ts.end) : null
   const startValid = start && !Number.isNaN(start.getTime())
@@ -288,12 +290,9 @@ function DataContractsLayout() {
   const includeSystem = filters.is_system == null && !filters.identifier && !filters.name
   const pageItems = contracts.data?.resultSet ?? []
   const pageCount = Math.max(1, Math.ceil(total / Math.max(1, pageSize)))
-  const atEnd =
-    scrollMode === 'pages' ? currentPage + 1 >= pageCount : pageItems.length >= total
+  const atEnd = scrollMode === 'pages' ? currentPage + 1 >= pageCount : pageItems.length >= total
   const listItems =
-    includeSystem && atEnd && systemItems.length > 0
-      ? [...pageItems, ...systemItems]
-      : pageItems
+    includeSystem && atEnd && systemItems.length > 0 ? [...pageItems, ...systemItems] : pageItems
   const displayTotal = total + (includeSystem ? systemItems.length : 0)
 
   const paging = {

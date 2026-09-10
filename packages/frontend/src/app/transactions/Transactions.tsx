@@ -87,9 +87,11 @@ function toTransactionsApiFilters(state: Record<string, unknown>): QueryFilters 
     out.transaction_type = txTypes
   }
 
-  const ts = state.timestamp as
-    | { start?: Date | null; end?: Date | null; mode?: 'days' | 'rolling' }
-    | null
+  const ts = state.timestamp as {
+    start?: Date | null
+    end?: Date | null
+    mode?: 'days' | 'rolling'
+  } | null
   const start = ts?.start ? new Date(ts.start) : null
   const end = ts?.end ? new Date(ts.end) : null
   const startValid = start && !Number.isNaN(start.getTime())
@@ -168,7 +170,12 @@ function Transactions({ defaultPage = 1, defaultPageSize }: TransactionsProps) {
           resultSet: [tx],
           pagination: { page: 1, limit: pageSize, total: 1 }
         }))
-      : Api.getTransactions(Math.max(1, currentPage + 1), Math.max(1, pageSize), 'desc', listFilters)
+      : Api.getTransactions(
+          Math.max(1, currentPage + 1),
+          Math.max(1, pageSize),
+          'desc',
+          listFilters
+        )
 
     request
       .then(res => {

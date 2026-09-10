@@ -90,7 +90,11 @@ function flattenSearchIdentities(payload: unknown): string[] {
   const ids: string[] = []
   for (const item of list) {
     if (typeof item === 'string' && IDENTIFIER_RE.test(item)) ids.push(item)
-    else if (item && typeof item === 'object' && typeof (item as Identity).identifier === 'string') {
+    else if (
+      item &&
+      typeof item === 'object' &&
+      typeof (item as Identity).identifier === 'string'
+    ) {
       ids.push((item as Identity).identifier)
     }
   }
@@ -156,19 +160,11 @@ function Identities() {
             const ids = flattenSearchIdentities(res).slice(0, pageSize)
             const q = name.toLowerCase()
             const items = (
-              await Promise.all(
-                ids.map(id =>
-                  Api.getIdentity(id).catch(() => null)
-                )
-              )
+              await Promise.all(ids.map(id => Api.getIdentity(id).catch(() => null)))
             ).filter((item): item is Identity => {
               if (!item) return false
               const alias = item.aliases?.find(a => a.status === 'ok')?.alias?.toLowerCase() ?? ''
-              return (
-                item.identifier.toLowerCase() === q ||
-                alias === q ||
-                alias.startsWith(q)
-              )
+              return item.identifier.toLowerCase() === q || alias === q || alias.startsWith(q)
             })
             return {
               resultSet: items,

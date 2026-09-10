@@ -54,9 +54,11 @@ function toApiFilters(state: Record<string, unknown>): QueryFilters {
   const power = pickOne(state.power)
   if (power === '1' || power === '4') out.power = power
 
-  const ts = state.timestamp as
-    | { start?: Date | null; end?: Date | null; mode?: 'days' | 'rolling' }
-    | null
+  const ts = state.timestamp as {
+    start?: Date | null
+    end?: Date | null
+    mode?: 'days' | 'rolling'
+  } | null
   const start = ts?.start ? new Date(ts.start) : null
   const end = ts?.end ? new Date(ts.end) : null
   const startValid = start && !Number.isNaN(start.getTime())

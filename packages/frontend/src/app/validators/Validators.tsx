@@ -74,9 +74,11 @@ function toApiFilters(state: Record<string, unknown>): QueryFilters {
     : []
   if (active.length === 1) out.isActive = active[0] === 'current' ? 'true' : 'false'
 
-  const ts = state.timestamp as
-    | { start?: Date | null; end?: Date | null; mode?: 'days' | 'rolling' }
-    | null
+  const ts = state.timestamp as {
+    start?: Date | null
+    end?: Date | null
+    mode?: 'days' | 'rolling'
+  } | null
   const start = ts?.start ? new Date(ts.start) : null
   const end = ts?.end ? new Date(ts.end) : null
   const startValid = start && !Number.isNaN(start.getTime())
@@ -175,12 +177,7 @@ function Validators() {
                 owner
               }).catch(() => emptyList(pageSize))
             )
-        : Api.getValidators(
-            Math.max(1, currentPage + 1),
-            Math.max(1, pageSize),
-            'asc',
-            listFilters
-          )
+        : Api.getValidators(Math.max(1, currentPage + 1), Math.max(1, pageSize), 'asc', listFilters)
 
     request
       .then(res => {

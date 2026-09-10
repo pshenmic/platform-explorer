@@ -11,7 +11,12 @@ import {
 import { ErrorMessageBlock } from '../../components/Errors'
 import { fetchHandlerSuccess, fetchHandlerError } from '../../util'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
-import type { ContestedResource, DataContract, LoadableState, PaginatedResultSet } from '../../types'
+import type {
+  ContestedResource,
+  DataContract,
+  LoadableState,
+  PaginatedResultSet
+} from '../../types'
 import './ContestedResourcesPage.css'
 
 const paginateConfig = {
@@ -68,9 +73,11 @@ function toApiFilters(state: Record<string, unknown>): QueryFilters {
     : []
   if (voting.length === 1) out.voting_finished = voting[0]
 
-  const ts = state.timestamp as
-    | { start?: Date | null; end?: Date | null; mode?: 'days' | 'rolling' }
-    | null
+  const ts = state.timestamp as {
+    start?: Date | null
+    end?: Date | null
+    mode?: 'days' | 'rolling'
+  } | null
   const start = ts?.start ? new Date(ts.start) : null
   const end = ts?.end ? new Date(ts.end) : null
   const startValid = start && !Number.isNaN(start.getTime())
@@ -162,10 +169,16 @@ function ContestedResources() {
                 pagination: { page: 1, limit: pageSize, total: 0 }
               }
             }
-            return Api.getContestedResources(Math.max(1, currentPage + 1), Math.max(1, pageSize), 'desc', undefined, {
-              ...listFilters,
-              contract_id: match.identifier
-            })
+            return Api.getContestedResources(
+              Math.max(1, currentPage + 1),
+              Math.max(1, pageSize),
+              'desc',
+              undefined,
+              {
+                ...listFilters,
+                contract_id: match.identifier
+              }
+            )
           })
         : Api.getContestedResources(
             Math.max(1, currentPage + 1),
