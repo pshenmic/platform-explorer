@@ -1,36 +1,67 @@
 @use '../../../styles/mixins.scss';
 @import '../../../styles/variables.scss';
 
+// Only used when asChild={false} (inline text / TimeDelta)
+.Tooltip__Trigger {
+  display: inline-flex;
+  align-items: center;
+  vertical-align: middle;
+  box-sizing: border-box;
+  max-width: 100%;
+  min-width: 0;
+}
+
+// Fixed portal bubble
 .Tooltip {
-  // keep tip interactive when moving from the trigger into the portal
-  pointer-events: auto !important;
-  // phone-safe width; avoid 100vw (includes scrollbar → can force horizontal page scroll)
-  max-width: min(18rem, 100%) !important;
-  white-space: normal !important;
+  pointer-events: auto;
+  // intrinsic width, then cap — without max-content fixed boxes collapse narrow
+  display: block;
+  width: max-content;
+  max-width: min(16rem, calc(100vw - 24px));
+  min-width: 11rem;
+  white-space: normal;
+  font-family: $font-heading;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: #fff;
+  background: #3e4a4f;
+  border-radius: 10px;
+  border: 4px solid;
+  border-top-color: #72787b4d;
+  border-bottom-color: #181f23;
+  border-left: none;
+  border-right: none;
+  box-sizing: border-box;
+  padding: 0.65rem 0.85rem;
+  filter: drop-shadow(0 8px 24px rgba(0, 0, 0, 0.35));
 
   &__Body {
     pointer-events: auto;
     max-width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
   }
 
   &__Title {
     color: #fff;
     font-weight: 800;
-    font-size: 0.75rem;
+    font-size: 0.6875rem;
     white-space: normal;
     word-break: break-word;
   }
 
   &--Extended & {
     &__Title {
-      margin-bottom: 10px;
+      margin-bottom: 0;
       text-transform: uppercase;
+      letter-spacing: 0.04em;
     }
   }
 
   &__Content {
-    color: #fff;
-    font-size: 0.688rem;
+    color: rgba(255, 255, 255, 0.88);
+    font-size: 0.6875rem;
     white-space: normal;
     word-break: break-word;
     line-height: 1.45;

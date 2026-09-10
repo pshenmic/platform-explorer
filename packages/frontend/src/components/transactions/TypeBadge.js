@@ -1,8 +1,9 @@
 import { Badge } from '@chakra-ui/react'
 import { TransactionTypesInfo } from '../../enums/state.transition.type'
 import { Tooltip } from '../ui/Tooltips'
+import './TypeBadge.scss'
 
-function TypeBadge ({ type, ...props }) {
+function TypeBadge ({ type, className = '', ...props }) {
   return (
     <Tooltip
       title={TransactionTypesInfo?.[type]?.title}
@@ -10,10 +11,11 @@ function TypeBadge ({ type, ...props }) {
       placement={'top'}
     >
       <Badge
+        className={`TypeBadge ${className}`.trim()}
         colorScheme={TransactionTypesInfo?.[type]?.colorScheme}
         {...props}
       >
-        <span className={'TransactionsListItem__TypeBadgeLabel'}>{TransactionTypesInfo?.[type]?.title}</span>
+        <span className={'TypeBadge__Label'}>{TransactionTypesInfo?.[type]?.title}</span>
       </Badge>
     </Tooltip>
   )

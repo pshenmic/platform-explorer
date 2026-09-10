@@ -288,14 +288,30 @@ const filtersConfig = {
   }
 }
 
-export default function TransactionsFilter ({ onFilterChange, isMobile, className, excludeFilters = [] }) {
+export const TRANSACTION_TYPE_VALUES = transactionOptions.map(o => o.value)
+export const BATCH_TYPE_VALUES = batchOptions.map(o => o.value)
+
+export default function TransactionsFilter ({
+  onFilterChange,
+  isMobile,
+  className,
+  excludeFilters = [],
+  initialFilters
+}) {
   const config = excludeFilters.length
     ? Object.fromEntries(Object.entries(filtersConfig).filter(([key]) => !excludeFilters.includes(key)))
     : filtersConfig
 
+  const urlKey = [
+    (initialFilters?.transaction_type || []).join(','),
+    (initialFilters?.batch_type || []).join(',')
+  ].join('|')
+
   return (
     <Filters
+      key={urlKey}
       filtersConfig={config}
+      initialFilters={initialFilters}
       onFilterChange={onFilterChange}
       isMobile={isMobile}
       className={`TransactionsFilter ${className || ''}`}
