@@ -14,12 +14,6 @@
   padding: var(--pe-space-3) var(--pe-space-4);
 }
 
-.MobileFilterMenu .SearchFilter .chakra-input__right-element {
-  top: 50%;
-  transform: translateY(-50%);
-  right: var(--pe-space-1);
-}
-
 .SearchFilter {
   display: flex;
   flex-direction: column;

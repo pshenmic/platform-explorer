@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef, useId, type RefObject } from 'react'
 import * as d3 from 'd3'
 import useResizeObserver from '@react-hook/resize-observer'
-import { Box } from '@chakra-ui/react'
+
 import { CardHead, Presets } from '../cards'
 import { getDaysBetweenDates, currencyRound } from '../../util'
 import './MetricChart.css'
@@ -224,7 +224,7 @@ export function MetricChart({
     .join(' ')
 
   return (
-    <Box className={shellClass} w={'100%'} aria-label={title || undefined}>
+    <div className={shellClass} aria-label={title || undefined}>
       <CardHead title={title || null}>
         <Presets options={PRESETS} value={presetIdx} onChange={setPresetIdx} />
       </CardHead>
@@ -342,6 +342,6 @@ export function MetricChart({
           </div>
         )}
       </div>
-    </Box>
+    </div>
   )
 }

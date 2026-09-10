@@ -1,7 +1,6 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
-import { Code, Button } from '@chakra-ui/react'
 import type { WithClassName } from '../../types/common'
 import { CopyButton } from '../ui/Buttons'
 import { SmoothSize } from '../ui/containers'
@@ -17,7 +16,7 @@ function CodeBlock({ code, smoothSize = true, className = '' }: CodeBlockProps) 
   const [fullSize, setFullSize] = useState(false)
   const [isOverflowing, setIsOverflowing] = useState(false)
   const parsedCode = code ? JSON.stringify(JSON.parse(code), null, 2) : ''
-  const codeContainerRef = useRef<HTMLDivElement | null>(null)
+  const codeContainerRef = useRef<HTMLPreElement | null>(null)
   const codeRef = useRef<HTMLDivElement | null>(null)
 
   useEffect(() => {
@@ -54,28 +53,25 @@ function CodeBlock({ code, smoothSize = true, className = '' }: CodeBlockProps) 
     <div className={`CodeBlock ${className || ''}`}>
       <div className={'CodeBlock__CodeContainer'}>
         <SmoothSize smoothHeight={isAnimating}>
-          <Code
+          <pre
             className={`CodeBlock__Code ${fullSize ? 'CodeBlock__Code--FullSize' : ''}`}
-            borderRadius={'lg'}
-            px={5}
-            py={4}
             ref={codeContainerRef}
           >
             <div ref={codeRef}>{parsedCode}</div>
-          </Code>
+          </pre>
         </SmoothSize>
 
         <CopyButton className={'CodeBlock__CopyButton'} text={parsedCode} />
       </div>
 
       {(isOverflowing || fullSize) && (
-        <Button
-          size={'sm'}
+        <button
+          type={'button'}
           onClick={() => setFullSize(state => !state)}
           className={'CodeBlock__FullSizeButton'}
         >
           {fullSize ? 'Hide code' : 'Show full code'}
-        </Button>
+        </button>
       )}
     </div>
   )

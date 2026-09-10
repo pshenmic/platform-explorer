@@ -32,3 +32,13 @@
   font-weight: var(--pe-font-weight-normal);
   color: rgba(255, 255, 255, 0.5);
 }
+
+.RangeFilter__Input {
+  width: 100%;
+  background: var(--pe-color-gray-800);
+  border: 1px solid var(--pe-color-gray-700);
+  border-radius: var(--pe-radius-def);
+  color: inherit;
+  padding: var(--pe-space-2) var(--pe-space-3);
+  font-size: var(--pe-text-sm);
+}

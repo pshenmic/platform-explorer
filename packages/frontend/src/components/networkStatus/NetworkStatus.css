@@ -1313,15 +1313,15 @@ Tr:nth-child(10n) .NetworkStatus__Stat--Loading:nth-of-type(10) .NetworkStatus__
 }
 
 .NetworkStatus__InfoValue--Epoch span,
-.NetworkStatus__InfoValue--Epoch span .chakra-icon {
+.NetworkStatus__InfoValue--Epoch span svg {
   transition: 0.2s;
 }
 
-.NetworkStatus__InfoValue--Epoch span .chakra-icon {
+.NetworkStatus__InfoValue--Epoch span svg {
   color: var(--pe-color-brand-normal);
 }
 
-.NetworkStatus__InfoValue--Epoch span:hover .chakra-icon {
+.NetworkStatus__InfoValue--Epoch span:hover svg {
   color: var(--pe-color-brand-light);
 }
 

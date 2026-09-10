@@ -11,7 +11,6 @@ import { ValueCard as ValueCardJs } from '../cards'
 import ChoiceBadge from './ChoiceBadge'
 import { ValueContainer } from '../ui/containers'
 import { LockIcon } from '../ui/icons'
-import { Flex } from '@chakra-ui/react'
 import type { ContestedResource, LoadableState, WithClassName } from '../../types'
 import './ContestedResourceDigestCard.css'
 
@@ -177,10 +176,10 @@ function ContestedResourceDigestCard({
           />
         ) : (
           <ValueContainer colorScheme={'red'}>
-            <Flex justifyContent={'space-between'} alignItems={'center'}>
+            <div className={'ContestedResourcesDigestCard__Locked'}>
               <span>Locked</span>
               <LockIcon />
-            </Flex>
+            </div>
           </ValueContainer>
         )}
       </div>

@@ -3,7 +3,7 @@ import type { Document } from '../../types'
 import IdentifierJs from '@components/data/Identifier'
 import { Filters as FiltersJs } from '@components/filters'
 import BatchTypeBadgeJs from '@components/transactions/BatchTypeBadge'
-import { Badge } from '@chakra-ui/react'
+import { Badge } from '../ui/Badge'
 import { BatchActions } from '../../enums/batchTypes'
 
 // Untyped JS modules — cast until migrated

@@ -9,7 +9,6 @@ import {
   BigNumber as BigNumberJs,
   NotActive as NotActiveJs
 } from '../data'
-import { Grid, GridItem } from '@chakra-ui/react'
 import { FirstPlaceIcon, SecondPlaceIcon, ThirdPlaceIcon } from '../ui/icons'
 import './IdentitiesListItem.css'
 
@@ -79,8 +78,8 @@ function IdentitiesListItem({ identity, place }: IdentitiesListItemProps) {
 
   return (
     <Link href={`/identity/${identifier}`} className={rootClassName}>
-      <Grid className={'IdentitiesListItem__Content'}>
-        <GridItem className={'IdentitiesListItem__Column IdentitiesListItem__Column--Identifier'}>
+      <div className={'IdentitiesListItem__Content'}>
+        <div className={'IdentitiesListItem__Column IdentitiesListItem__Column--Identifier'}>
           <div className={'IdentitiesListItem__IdentifierContainer'}>
             {PlaceIcon && <PlaceIcon className={'IdentitiesListItem__Medal'} />}
             {activeAlias ? (
@@ -100,25 +99,25 @@ function IdentitiesListItem({ identity, place }: IdentitiesListItemProps) {
               </Identifier>
             )}
           </div>
-        </GridItem>
+        </div>
 
-        <GridItem className={'IdentitiesListItem__Column IdentitiesListItem__Column--Balance'}>
+        <div className={'IdentitiesListItem__Column IdentitiesListItem__Column--Balance'}>
           {balance != null ? <BigNumber>{String(balance)}</BigNumber> : <NotActive>—</NotActive>}
-        </GridItem>
+        </div>
 
-        <GridItem className={'IdentitiesListItem__Column IdentitiesListItem__Column--Txs'}>
+        <div className={'IdentitiesListItem__Column IdentitiesListItem__Column--Txs'}>
           {renderCount(totalTxs)}
-        </GridItem>
+        </div>
 
-        <GridItem className={'IdentitiesListItem__Column IdentitiesListItem__Column--Documents'}>
+        <div className={'IdentitiesListItem__Column IdentitiesListItem__Column--Documents'}>
           {renderCount(totalDocuments)}
-        </GridItem>
+        </div>
 
-        <GridItem className={'IdentitiesListItem__Column IdentitiesListItem__Column--Contracts'}>
+        <div className={'IdentitiesListItem__Column IdentitiesListItem__Column--Contracts'}>
           {renderCount(totalDataContracts)}
-        </GridItem>
+        </div>
 
-        <GridItem className={'IdentitiesListItem__Column IdentitiesListItem__Column--Timestamp'}>
+        <div className={'IdentitiesListItem__Column IdentitiesListItem__Column--Timestamp'}>
           {isSystem && <div>SYSTEM</div>}
 
           {typeof timestamp === 'string' && (
@@ -131,8 +130,8 @@ function IdentitiesListItem({ identity, place }: IdentitiesListItemProps) {
               />
             </div>
           )}
-        </GridItem>
-      </Grid>
+        </div>
+      </div>
     </Link>
   )
 }

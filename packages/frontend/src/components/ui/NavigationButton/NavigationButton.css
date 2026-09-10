@@ -1,5 +1,5 @@
 .NavigationButton:hover .NavigationButton__SubName {
-  background-color: var(--pe-color-gray-525) !important;
+  background-color: var(--pe-color-gray-525);
 }
 
 .NavigationButton {
@@ -38,7 +38,7 @@
 }
 
 .NavigationButton__Active {
-  background-color: var(--pe-color-brand-normal) !important;
+  background-color: var(--pe-color-brand-normal);
 }
 
 .NavigationButton__Active:hover {
@@ -46,5 +46,5 @@
 }
 
 .NavigationButton__NoActive {
-  cursor: no-drop !important;
+  cursor: no-drop;
 }

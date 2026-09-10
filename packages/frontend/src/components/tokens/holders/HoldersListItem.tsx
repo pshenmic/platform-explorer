@@ -1,5 +1,4 @@
 import type { ComponentType, ReactNode } from 'react'
-import { Grid, GridItem } from '@chakra-ui/react'
 // Untyped JS components — loose wrappers until data/* is migrated
 import {
   Alias as AliasJs,
@@ -49,8 +48,8 @@ function HoldersListItem({ holder }: HoldersListItemProps) {
 
   return (
     <Link href={`/identity/${holder?.identifier}`} className={'HoldersListItem'}>
-      <Grid className={'HoldersListItem__Content'}>
-        <GridItem className={'HoldersListItem__Column HoldersListItem__Column--Holder'}>
+      <div className={'HoldersListItem__Content'}>
+        <div className={'HoldersListItem__Column HoldersListItem__Column--Holder'}>
           {holder?.identifier ? (
             <LinkContainer
               className={'HoldersListItem__ColumnContent'}
@@ -71,9 +70,9 @@ function HoldersListItem({ holder }: HoldersListItemProps) {
           ) : (
             <NotActive />
           )}
-        </GridItem>
+        </div>
 
-        <GridItem
+        <div
           className={
             'HoldersListItem__Column HoldersListItem__Column--TokensAmount HoldersListItem__Column--Number'
           }
@@ -81,9 +80,9 @@ function HoldersListItem({ holder }: HoldersListItemProps) {
           <div className={'HoldersListItem__ColumnContent'}>
             <BigNumber>{holder.tokensAmount}</BigNumber>
           </div>
-        </GridItem>
+        </div>
 
-        <GridItem
+        <div
           className={
             'HoldersListItem__Column HoldersListItem__Column--DashAmount HoldersListItem__Column--Number'
           }
@@ -91,16 +90,16 @@ function HoldersListItem({ holder }: HoldersListItemProps) {
           <div className={'HoldersListItem__ColumnContent'}>
             <BigNumber>{holder.dashAmount}</BigNumber>
           </div>
-        </GridItem>
+        </div>
 
-        <GridItem
+        <div
           className={
             'HoldersListItem__Column HoldersListItem__Column--LastActivity HoldersListItem__Column--Timestamp'
           }
         >
           <TimeDelta endDate={holder?.lastActivity} />
-        </GridItem>
-      </Grid>
+        </div>
+      </div>
     </Link>
   )
 }

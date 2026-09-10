@@ -22,7 +22,7 @@
 }
 
 .ProportionsLine__Item:hover {
-  opacity: 1 !important;
+  opacity: 1;
 }
 
 .ProportionsLine__Item--Empty {

@@ -3,8 +3,7 @@ import type { ReactElement, RefObject } from 'react'
 import useResizeObserver from '@react-hook/resize-observer'
 import * as d3 from 'd3'
 import './charts.css'
-import { Container } from '@chakra-ui/react'
-import theme from '../../styles/theme'
+import { colors } from '../../styles/colors'
 import TimeframeMenu from './TimeframeMenu'
 import TimeframeSelector from './TimeframeSelector'
 import type {
@@ -105,17 +104,13 @@ const LineChart = ({
   }, [chartElement, data, timespan, xAxis, yAxis, type])
 
   return (
-    <Container
+    <div
       ref={chartContainer}
-      width={width || '100%'}
-      height={height || '100%'}
-      maxW={'none'}
-      p={0}
-      m={0}
       className={`ChartContainer ${skeleton || dataLoading ? 'loading' : ''}`}
+      style={{ width: width || '100%', height: height || '100%' }}
     >
       {chartElement || <></>}
-    </Container>
+    </div>
   )
 }
 
@@ -405,9 +400,9 @@ const LineGraph = ({
       .selectAll('path')
       .data([''])
       .join('path')
-      .attr('fill', theme.colors.gray['800'])
+      .attr('fill', colors.gray['800'])
       .attr('opacity', '1')
-      .attr('stroke', theme.colors.gray['700'])
+      .attr('stroke', colors.gray['700'])
 
     const lineClass = (styles: string | string[]) => {
       if (typeof styles === 'string') styles = [styles]
@@ -487,7 +482,7 @@ const LineGraph = ({
             .attr(
               'fill',
               (infoLine: { styles: string[] }) =>
-                `${!infoLine.styles.includes('tiny') ? '#fff' : theme.colors.gray['100']}`
+                `${!infoLine.styles.includes('tiny') ? '#fff' : colors.gray['100']}`
             )
             .text((d: { value: string }) => d.value)
       )

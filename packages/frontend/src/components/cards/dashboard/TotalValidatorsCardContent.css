@@ -1,3 +1,17 @@
+.VoterCardContent {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.TotalValidatorsCardContent__Avatars {
+  display: flex;
+}
+
+.TotalValidatorsCardContent__Avatar {
+  opacity: var(--avatar-opacity, 1);
+}
+
 .TotalValidatorsCardContent__Avatars .ImageGenerator {
   max-width: var(--pe-space-10);
   max-height: var(--pe-space-10);

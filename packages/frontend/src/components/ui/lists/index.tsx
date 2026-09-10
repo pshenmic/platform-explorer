@@ -2,7 +2,6 @@ import './SimpleList.css'
 import './EmptyListMessage.css'
 import Link from 'next/link'
 import { forwardRef, type ReactNode, type Ref } from 'react'
-import { Container } from '@chakra-ui/react'
 import ImageGenerator from '../../imageGenerator'
 import ListColumnsHeader from './ListColumnsHeader'
 import DataList from './DataList/DataList'
@@ -40,7 +39,7 @@ type ListItem = {
 }
 
 function EmptyListMessage({ children }: { children?: ReactNode }) {
-  return <Container className={'EmptyListMessage'}>{children}</Container>
+  return <div className={'EmptyListMessage'}>{children}</div>
 }
 
 // fixed-width slot so rows 1–3 (medal) and 4–5 (#n) share the same left edge

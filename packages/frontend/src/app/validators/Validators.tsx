@@ -4,7 +4,7 @@ import * as Api from '../../util/Api'
 import Pagination from '../../components/pagination'
 import PageSizeSelector from '../../components/pageSizeSelector/PageSizeSelector'
 import { normalizePagination } from '../../util'
-import { Container, Box, useBreakpointValue } from '@chakra-ui/react'
+import { useIsMobile } from '../../hooks'
 import { useQuery, keepPreviousData } from '@tanstack/react-query'
 import { parseAsInteger, useQueryState } from 'nuqs'
 import {
@@ -26,7 +26,7 @@ const paginateConfig = {
 }
 
 function Validators() {
-  const isMobile = useBreakpointValue({ base: true, md: false })
+  const isMobile = useIsMobile()
   const { filters, setFilters } = useValidatorsFilters()
   const [page, setPage] = useQueryState(
     'page',
@@ -65,8 +65,8 @@ function Validators() {
   }
 
   return (
-    <Container maxW={'container.maxPageW'} mt={8} className={'Validators'}>
-      <Container maxW={'container.maxPageW'} className={'InfoBlock'}>
+    <div className={'ListPage Validators'}>
+      <div className={'InfoBlock'}>
         <div className={'Validators__Controls'}>
           <PageTitle
             title={'Validators'}
@@ -91,7 +91,7 @@ function Validators() {
         />
         {(validators.data?.resultSet?.length ?? 0) > 0 && (
           <div className={'ListNavigation'}>
-            <Box display={['none', 'none', 'block']} width={'155px'} />
+            <div className={'ListNavigation__Balance'} />
             <Pagination
               onPageChange={({ selected }) => {
                 setPage((selected || 0) + 1)
@@ -109,8 +109,8 @@ function Validators() {
             />
           </div>
         )}
-      </Container>
-    </Container>
+      </div>
+    </div>
   )
 }
 

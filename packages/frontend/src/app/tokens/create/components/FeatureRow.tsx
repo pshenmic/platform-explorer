@@ -1,16 +1,10 @@
 'use client'
 
 import type { KeyboardEvent, ReactNode } from 'react'
-import {
-  HStack,
-  Text,
-  Popover,
-  PopoverTrigger,
-  PopoverContent,
-  PopoverArrow,
-  PopoverBody
-} from '@chakra-ui/react'
 import { ValueContainer } from '@components/ui/containers'
+import Tooltip from '@components/ui/Tooltips/Tooltip'
+import './Features.css'
+import './Essentials.css'
 
 interface RowLabelProps {
   label: ReactNode
@@ -19,33 +13,13 @@ interface RowLabelProps {
 }
 
 export const RowLabel = ({ label, tooltip, width }: RowLabelProps) => (
-  <HStack spacing={2} align="center" width={width} flexShrink={0}>
-    <Popover trigger="click" placement="top" isLazy>
-      <PopoverTrigger>
-        <Text
-          as="button"
-          fontSize="0.75rem"
-          fontWeight="600"
-          fontFamily="var(--font-body)"
-          color="var(--chakra-colors-white-100)"
-          sx={{
-            background: 'transparent',
-            border: 'none',
-            borderBottom: '1px dashed var(--chakra-colors-gray-500)',
-            padding: 0,
-            cursor: 'help'
-          }}
-          {...({ type: 'button' } as object)}
-        >
-          {label}
-        </Text>
-      </PopoverTrigger>
-      <PopoverContent maxW="280px" fontSize="0.75rem" fontFamily="var(--font-body)">
-        <PopoverArrow />
-        <PopoverBody>{tooltip}</PopoverBody>
-      </PopoverContent>
-    </Popover>
-  </HStack>
+  <div className="Features__LabelWrap" style={width != null ? { width } : undefined}>
+    <Tooltip content={tooltip} placement="top">
+      <button type="button" className="Essentials__Label">
+        {label}
+      </button>
+    </Tooltip>
+  </div>
 )
 
 interface YesNoBadgeProps {
@@ -81,8 +55,8 @@ interface FeatureToggleProps {
 }
 
 export const FeatureToggle = ({ label, tooltip, value, onToggle }: FeatureToggleProps) => (
-  <HStack className="Features__Row" justify="space-between" spacing={3}>
+  <div className="Features__Row">
     <RowLabel label={label} tooltip={tooltip} />
     <YesNoBadge value={value} onToggle={onToggle} />
-  </HStack>
+  </div>
 )

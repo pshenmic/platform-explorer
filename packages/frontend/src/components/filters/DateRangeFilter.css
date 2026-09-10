@@ -1,5 +1,5 @@
 .MobileFilterMenu .DateRangeFilter {
-  min-width: unset !important;
+  min-width: unset;
   width: 100%;
 }
 
@@ -27,6 +27,30 @@
   display: flex;
   gap: var(--pe-space-2);
   margin-left: auto;
+}
+
+.DateRangeFilter__ValueButton {
+  border: none;
+  cursor: pointer;
+  font-size: 0.75rem;
+  font-family: var(--pe-font-heading);
+  border-radius: 10px;
+  padding: 0.25rem 0.5rem;
+  text-transform: uppercase;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+  background: var(--pe-color-gray-800);
+  color: var(--pe-color-gray-250);
+}
+
+.DateRangeFilter__ValueButton--Active {
+  background: var(--pe-color-brand-normal);
+  color: #fff;
+}
+
+.DateRangeFilter__ValueButton--Submit {
+  background: var(--pe-color-green-default);
+  color: #fff;
 }
 
 @media screen and (max-width: 55em) {

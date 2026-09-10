@@ -9,7 +9,7 @@ import { LoadingList } from '../../components/loading'
 import { ErrorMessageBlock } from '../../components/Errors'
 import { fetchHandlerSuccess, fetchHandlerError } from '../../util'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
-import { Box, Container, useBreakpointValue } from '@chakra-ui/react'
+import { useIsMobile } from '../../hooks'
 import { BlocksFilter } from '../../components/blocks'
 import NetworkStatsInline from '../../components/stats/NetworkStatsInline'
 import PageTitle from '../../components/intro/PageTitle'
@@ -45,7 +45,7 @@ function Blocks({ defaultPage = 1, defaultPageSize }: BlocksProps) {
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
-  const isMobile = useBreakpointValue({ base: true, md: false })
+  const isMobile = useIsMobile()
 
   const filtersChangeHandler = (newFilters: Record<string, unknown>) => {
     setFilters(newFilters as QueryFilters)
@@ -96,8 +96,8 @@ function Blocks({ defaultPage = 1, defaultPageSize }: BlocksProps) {
   }, [currentPage, pageSize])
 
   return (
-    <Container maxW={'container.maxPageW'} color={'white'} mt={8} mb={8} className={'Blocks'}>
-      <Container maxW={'container.maxPageW'} _dark={{ color: 'white' }} className={'InfoBlock'}>
+    <div className={'ListPage Blocks'}>
+      <div className={'InfoBlock'}>
         <div className={'Blocks__Controls'}>
           <PageTitle title={'Blocks'} description={introContent} className={'Blocks__Title'} />
 
@@ -119,14 +119,14 @@ function Blocks({ defaultPage = 1, defaultPageSize }: BlocksProps) {
             )}
           </>
         ) : (
-          <Container h={20}>
+          <div className={'ListPage__Error'}>
             <ErrorMessageBlock />
-          </Container>
+          </div>
         )}
 
         {(blocks.data?.resultSet?.length ?? 0) > 0 && (
           <div className={'ListNavigation'}>
-            <Box display={['none', 'none', 'block']} width={'210px'} />
+            <div className={'ListNavigation__Balance'} />
             <Pagination
               onPageChange={({ selected }) => setCurrentPage(selected)}
               pageCount={pageCount}
@@ -139,8 +139,8 @@ function Blocks({ defaultPage = 1, defaultPageSize }: BlocksProps) {
             />
           </div>
         )}
-      </Container>
-    </Container>
+      </div>
+    </div>
   )
 }
 

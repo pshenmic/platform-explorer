@@ -4,3 +4,62 @@
   gap: 2px;
   height: 30px;
 }
+
+.VoteControls__Button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.VoteControls__Button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.VoteControls__Button--Approve {
+  color: #58f4bc;
+  background: #58f4bc26;
+}
+
+.VoteControls__Button--Approve:hover:not(:disabled) {
+  background: #58f4bc4d;
+}
+
+.VoteControls__Button--Approve:active:not(:disabled) {
+  background: #58f4bc;
+  color: #21272c;
+}
+
+.VoteControls__Button--Abstain {
+  color: #f49a58;
+  background: #f49a5826;
+}
+
+.VoteControls__Button--Abstain:hover:not(:disabled) {
+  background: #f49a584d;
+}
+
+.VoteControls__Button--Abstain:active:not(:disabled) {
+  background: #f49a58;
+  color: #21272c;
+}
+
+.VoteControls__Button--Reject {
+  color: #f45858;
+  background: #f4585826;
+}
+
+.VoteControls__Button--Reject:hover:not(:disabled) {
+  background: #f458584d;
+}
+
+.VoteControls__Button--Reject:active:not(:disabled) {
+  background: #f45858;
+  color: #21272c;
+}

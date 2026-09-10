@@ -1,7 +1,7 @@
 import WithdrawalsListItem from './WithdrawalsListItem'
 import type { WithdrawalListItem } from './WithdrawalsListItem'
 import { EmptyListMessage } from '../../ui/lists'
-import { Grid, GridItem } from '@chakra-ui/react'
+
 import type { Rate } from '../../../types'
 import './WithdrawalsList.css'
 
@@ -29,22 +29,22 @@ function WithdrawalsList({
 
   return (
     <div className={'WithdrawalsList'}>
-      <Grid className={`WithdrawalsList__ColumnTitles ${headerExtraClass[headerStyles] || ''}`}>
-        <GridItem className={'WithdrawalsList__ColumnTitle'}>Timestamp</GridItem>
-        <GridItem className={'WithdrawalsList__ColumnTitle WithdrawalsList__ColumnTitle--TxHash'}>
+      <div className={`WithdrawalsList__ColumnTitles ${headerExtraClass[headerStyles] || ''}`}>
+        <div className={'WithdrawalsList__ColumnTitle'}>Timestamp</div>
+        <div className={'WithdrawalsList__ColumnTitle WithdrawalsList__ColumnTitle--TxHash'}>
           Tx hash
-        </GridItem>
-        <GridItem className={'WithdrawalsList__ColumnTitle WithdrawalsList__ColumnTitle--Address'}>
+        </div>
+        <div className={'WithdrawalsList__ColumnTitle WithdrawalsList__ColumnTitle--Address'}>
           Address
-        </GridItem>
-        <GridItem className={'WithdrawalsList__ColumnTitle WithdrawalsList__ColumnTitle--Document'}>
+        </div>
+        <div className={'WithdrawalsList__ColumnTitle WithdrawalsList__ColumnTitle--Document'}>
           Document
-        </GridItem>
-        <GridItem className={'WithdrawalsList__ColumnTitle WithdrawalsList__ColumnTitle--Amount'}>
+        </div>
+        <div className={'WithdrawalsList__ColumnTitle WithdrawalsList__ColumnTitle--Amount'}>
           Amount
-        </GridItem>
-        <GridItem className={'WithdrawalsList__ColumnTitle'}>Status</GridItem>
-      </Grid>
+        </div>
+        <div className={'WithdrawalsList__ColumnTitle'}>Status</div>
+      </div>
 
       {withdrawals.map((withdrawal, key) => (
         <WithdrawalsListItem

@@ -21,7 +21,8 @@
   justify-self: end;
 }
 .Blocks .PageSizeSelector,
-.Blocks .GoToHeightForm {
+.Blocks .GoToHeightForm,
+.Blocks .ListNavigation__Balance {
   width: 210px;
 }
 @media screen and (max-width: 1268px) {

@@ -1,14 +1,14 @@
 .TypeBadge {
   max-width: 100%;
   min-width: 0;
-  display: inline-flex !important;
+  display: inline-flex;
   align-items: center;
-  height: 1.25rem !important;
-  min-height: 1.25rem !important;
-  max-height: 1.25rem !important;
-  padding-top: 0 !important;
-  padding-bottom: 0 !important;
-  line-height: 1 !important;
+  height: 1.25rem;
+  min-height: 1.25rem;
+  max-height: 1.25rem;
+  padding-top: 0;
+  padding-bottom: 0;
+  line-height: 1;
   overflow: hidden;
 }
 

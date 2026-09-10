@@ -1,6 +1,6 @@
 import type { ComponentType, ReactNode } from 'react'
 import type { Document, Rate } from '../../../types'
-import { Grid, GridItem } from '@chakra-ui/react'
+
 import {
   Alias as AliasJs,
   BigNumber as BigNumberJs,
@@ -54,16 +54,16 @@ function DocumentsRevisionsListItem({ revision, rate }: DocumentsRevisionsListIt
 
   return (
     <Link href={`/transaction/${revision?.txHash}`} className={'DocumentsRevisionsListItem'}>
-      <Grid className={'DocumentsRevisionsListItem__Content'}>
-        <GridItem
+      <div className={'DocumentsRevisionsListItem__Content'}>
+        <div
           className={
             'DocumentsRevisionsListItem__Column DocumentsRevisionsListItem__Column--Timestamp'
           }
         >
           {revision?.timestamp ? <TimeDelta endDate={revision?.timestamp} /> : <NotActive />}
-        </GridItem>
+        </div>
 
-        <GridItem
+        <div
           className={
             'DocumentsRevisionsListItem__Column DocumentsRevisionsListItem__Column--TxHash'
           }
@@ -75,9 +75,9 @@ function DocumentsRevisionsListItem({ revision, rate }: DocumentsRevisionsListIt
           ) : (
             <NotActive />
           )}
-        </GridItem>
+        </div>
 
-        <GridItem
+        <div
           className={'DocumentsRevisionsListItem__Column DocumentsRevisionsListItem__Column--Owner'}
         >
           {revision?.owner?.identifier ? (
@@ -102,9 +102,9 @@ function DocumentsRevisionsListItem({ revision, rate }: DocumentsRevisionsListIt
           ) : (
             <NotActive />
           )}
-        </GridItem>
+        </div>
 
-        <GridItem
+        <div
           className={
             'DocumentsRevisionsListItem__Column DocumentsRevisionsListItem__Column--GasUsed DocumentsRevisionsListItem__Column--Credits'
           }
@@ -118,9 +118,9 @@ function DocumentsRevisionsListItem({ revision, rate }: DocumentsRevisionsListIt
           ) : (
             <NotActive>-</NotActive>
           )}
-        </GridItem>
+        </div>
 
-        <GridItem
+        <div
           className={
             'DocumentsRevisionsListItem__Column DocumentsRevisionsListItem__Column--TransitionType'
           }
@@ -130,16 +130,16 @@ function DocumentsRevisionsListItem({ revision, rate }: DocumentsRevisionsListIt
           ) : (
             <NotActive>-</NotActive>
           )}
-        </GridItem>
+        </div>
 
-        <GridItem
+        <div
           className={
             'DocumentsRevisionsListItem__Column DocumentsRevisionsListItem__Column--Revision DocumentsRevisionsListItem__Column--Number'
           }
         >
           {typeof revision?.revision === 'number' ? revision.revision : <NotActive>-</NotActive>}
-        </GridItem>
-      </Grid>
+        </div>
+      </div>
     </Link>
   )
 }

@@ -50,7 +50,7 @@
 
 .Alias__LockedIcon {
   display: inline-block;
-  width: 18px !important;
-  height: 18px !important;
+  width: 18px;
+  height: 18px;
   margin-left: var(--pe-space-2);
 }

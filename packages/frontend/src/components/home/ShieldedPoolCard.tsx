@@ -3,7 +3,7 @@
 import { useState, useEffect, useMemo, useRef, useId, type RefObject } from 'react'
 import * as d3 from 'd3'
 import useResizeObserver from '@react-hook/resize-observer'
-import { Box } from '@chakra-ui/react'
+
 import * as Api from '../../util/Api'
 import { Presets } from '../cards'
 import { Tooltip } from '../ui/Tooltips'
@@ -394,11 +394,9 @@ export default function ShieldedPoolCard({
   const flowsLoading = period.loading
 
   return (
-    <Box
+    <section
       ref={rootRef}
       className={'InfoBlock InfoBlock--NoBorder ShieldedPool'}
-      w={'100%'}
-      as={'section'}
       aria-label={'Shielded pool'}
     >
       <header className={'ShieldedPool__Head'}>
@@ -709,6 +707,6 @@ export default function ShieldedPoolCard({
           </div>
         </div>
       )}
-    </Box>
+    </section>
   )
 }

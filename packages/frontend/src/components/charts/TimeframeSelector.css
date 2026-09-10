@@ -5,7 +5,7 @@
 }
 
 .TimeframeSelector__Menu {
-  padding: 0 var(--pe-space-3) !important;
+  padding: 0 var(--pe-space-3);
   top: var(--pe-space-3);
   position: absolute;
   z-index: 10;
@@ -20,28 +20,54 @@
 }
 
 .TimeframeSelector__Button {
-  position: absolute !important;
+  position: absolute;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
   transition: all 0.2s;
   visibility: visible;
   opacity: 1;
-  height: 28px !important;
+  height: 28px;
+  padding: 0 var(--pe-space-3);
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-family: var(--pe-font-heading);
+  font-size: var(--pe-text-sm);
+  font-weight: var(--pe-font-weight-bold);
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  background: var(--pe-color-gray-750);
+  color: var(--pe-color-fg);
+}
+
+.TimeframeSelector__Close {
+  width: 0;
+  height: 8px;
+  overflow: hidden;
+  color: var(--pe-color-fg-muted);
+  transition: all 0.1s;
+}
+
+.TimeframeSelector__Close--Open {
+  width: 8px;
 }
 
 .TimeframeSelector__Button--Active {
-  background-color: var(--pe-color-fg) !important;
-  color: var(--pe-color-brand-normal) !important;
+  background-color: var(--pe-color-fg);
+  color: var(--pe-color-brand-normal);
 }
 
 @media screen and (max-width: 555px) {
   .TimeframeSelector__Button {
-    font-size: 0.6rem !important;
-    height: var(--pe-space-6) !important;
+    font-size: 0.6rem;
+    height: var(--pe-space-6);
   }
 }
 
 @media screen and (max-width: 350px) {
   .TimeframeSelector__Button {
-    font-size: var(--pe-space-2) !important;
-    height: 22px !important;
+    font-size: var(--pe-space-2);
+    height: 22px;
   }
 }

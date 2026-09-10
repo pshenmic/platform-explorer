@@ -17,8 +17,22 @@
 }
 
 .IdentitiesPage__ShowAll {
+  display: flex;
+  align-items: center;
+  gap: var(--pe-space-2);
   flex-shrink: 0;
   margin-left: auto;
+  font-size: var(--pe-text-sm);
+  font-weight: var(--pe-font-weight-normal);
+  color: var(--pe-color-fg);
+  cursor: pointer;
+}
+
+.IdentitiesPage__ShowAll input {
+  width: 1.75rem;
+  height: 1rem;
+  accent-color: var(--pe-color-brand-normal);
+  cursor: pointer;
 }
 
 .IdentitiesPage__Filters {

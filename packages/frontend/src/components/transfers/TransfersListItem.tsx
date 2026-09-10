@@ -1,7 +1,7 @@
 'use client'
 
 import type { ComponentType, ReactNode } from 'react'
-import { Grid, GridItem } from '@chakra-ui/react'
+
 import { LinkContainer } from '../ui/containers'
 // Untyped JS components — loose wrappers until data/* is migrated
 import {
@@ -71,8 +71,8 @@ function TransfersListItem({ transfer, rate }: TransfersListItemProps) {
       ref={containerRef}
       className={'TransfersListItem TransfersListItem--Clickable'}
     >
-      <Grid className={'TransfersListItem__Content'}>
-        <GridItem className={'TransfersListItem__Column TransfersListItem__Column--Timestamp'}>
+      <div className={'TransfersListItem__Content'}>
+        <div className={'TransfersListItem__Column TransfersListItem__Column--Timestamp'}>
           {transfer?.timestamp ? (
             <span>
               <TimeDelta endDate={transfer.timestamp} />
@@ -80,21 +80,21 @@ function TransfersListItem({ transfer, rate }: TransfersListItemProps) {
           ) : (
             <NotActive />
           )}
-        </GridItem>
+        </div>
 
-        <GridItem className={'TransfersListItem__Column TransfersListItem__Column--TxHash'}>
+        <div className={'TransfersListItem__Column TransfersListItem__Column--TxHash'}>
           {transfer?.txHash ? (
             <Identifier styles={['highlight-both']}>{transfer.txHash}</Identifier>
           ) : (
             <NotActive />
           )}
-        </GridItem>
+        </div>
 
-        <GridItem className={'TransfersListItem__Column TransfersListItem__Column--Recipient'}>
+        <div className={'TransfersListItem__Column TransfersListItem__Column--Recipient'}>
           <Recipient />
-        </GridItem>
+        </div>
 
-        <GridItem className={'TransfersListItem__Column TransfersListItem__Column--Amount'}>
+        <div className={'TransfersListItem__Column TransfersListItem__Column--Amount'}>
           {transfer?.amount ? (
             <RateTooltip credits={transfer.amount} rate={rate}>
               <span>
@@ -104,9 +104,9 @@ function TransfersListItem({ transfer, rate }: TransfersListItemProps) {
           ) : (
             <NotActive>-</NotActive>
           )}
-        </GridItem>
+        </div>
 
-        <GridItem className={'TransfersListItem__Column TransfersListItem__Column--GasUsed'}>
+        <div className={'TransfersListItem__Column TransfersListItem__Column--GasUsed'}>
           {transfer?.gasUsed ? (
             <RateTooltip credits={transfer.gasUsed} rate={rate}>
               <span>
@@ -116,12 +116,12 @@ function TransfersListItem({ transfer, rate }: TransfersListItemProps) {
           ) : (
             <NotActive>-</NotActive>
           )}
-        </GridItem>
+        </div>
 
-        <GridItem className={'TransfersListItem__Column TransfersListItem__Column--Type'}>
+        <div className={'TransfersListItem__Column TransfersListItem__Column--Type'}>
           {transfer?.type ? <TypeBadge type={transfer?.type} /> : <NotActive />}
-        </GridItem>
-      </Grid>
+        </div>
+      </div>
     </Link>
   )
 }

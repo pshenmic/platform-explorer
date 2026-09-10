@@ -4,7 +4,7 @@ import { useState, useMemo, useEffect, useRef } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { useQueries, useQueryClient } from '@tanstack/react-query'
-import { Box } from '@chakra-ui/react'
+
 import { Tooltip } from '../ui/Tooltips'
 import { BlockIcon } from '../ui/icons'
 import * as Api from '../../util/Api'
@@ -892,12 +892,7 @@ export default function QuorumCard({
   }
 
   return (
-    <Box
-      className={'InfoBlock InfoBlock--NoBorder QuorumCard'}
-      w={'100%'}
-      as={'section'}
-      aria-label={'Quorums'}
-    >
+    <section className={'InfoBlock InfoBlock--NoBorder QuorumCard'} aria-label={'Quorums'}>
       <div className={'QuorumCard__Glow'} aria-hidden={'true'} />
 
       <header className={'QuorumCard__Head'}>
@@ -1285,6 +1280,6 @@ export default function QuorumCard({
           </div>
         </div>
       </div>
-    </Box>
+    </section>
   )
 }

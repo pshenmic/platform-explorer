@@ -1,5 +1,4 @@
 import type { MouseEvent, ReactNode } from 'react'
-import { Button } from '@chakra-ui/react'
 import { CloseIcon } from '../ui/icons'
 import type { FilterState, FilterStateValue } from './types'
 import './ActiveFilters.css'
@@ -36,25 +35,18 @@ export const ActiveFilters = ({
   return (
     <div className={'ActiveFilters__ItemsContainer'}>
       {activeFilters.map(([key, value]) => (
-        <Button
-          className={'ActiveFilters__Item'}
-          key={key}
-          size={'sm'}
-          variant={'gray'}
-          rightIcon={
-            <div
-              className={'ActiveFilters__IconContainer'}
-              onClick={(e: MouseEvent) => {
-                e.stopPropagation()
-                onClearFilter(key)
-              }}
-            >
-              <CloseIcon />
-            </div>
-          }
-        >
+        <button type={'button'} className={'ActiveFilters__Item'} key={key}>
           {getFilterLabel(key)}: {formatValue ? formatValue(key, value) : (value as ReactNode)}
-        </Button>
+          <div
+            className={'ActiveFilters__IconContainer'}
+            onClick={(e: MouseEvent) => {
+              e.stopPropagation()
+              onClearFilter(key)
+            }}
+          >
+            <CloseIcon />
+          </div>
+        </button>
       ))}
     </div>
   )

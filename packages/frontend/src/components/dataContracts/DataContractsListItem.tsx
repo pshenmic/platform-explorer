@@ -8,7 +8,7 @@ import {
   DateBlock as DateBlockJs
 } from '../data'
 import ValueContainer from '../ui/containers/ValueContainer'
-import { Badge, Grid, GridItem } from '@chakra-ui/react'
+import { Badge } from '../ui/Badge'
 import type { DataContract, Owner } from '../../types'
 import './DataContractsListItem.css'
 
@@ -54,10 +54,8 @@ function DataContractsListItem({ dataContract }: DataContractsListItemProps) {
 
   return (
     <Link href={`/dataContract/${dataContract?.identifier}`} className={'DataContractsListItem'}>
-      <Grid className={'DataContractsListItem__Content'}>
-        <GridItem
-          className={'DataContractsListItem__Column DataContractsListItem__Column--Identifier'}
-        >
+      <div className={'DataContractsListItem__Content'}>
+        <div className={'DataContractsListItem__Column DataContractsListItem__Column--Identifier'}>
           <div className={'DataContractsListItem__IdentifierContainer'}>
             {dataContract?.name ? (
               <Alias avatarSource={dataContract?.identifier}>{dataContract.name}</Alias>
@@ -72,9 +70,9 @@ function DataContractsListItem({ dataContract }: DataContractsListItemProps) {
               </Identifier>
             )}
           </div>
-        </GridItem>
+        </div>
 
-        <GridItem className={'DataContractsListItem__Column DataContractsListItem__Column--Owner'}>
+        <div className={'DataContractsListItem__Column DataContractsListItem__Column--Owner'}>
           {ownerName ? (
             <Alias avatarSource={ownerId}>{ownerName}</Alias>
           ) : ownerId ? (
@@ -84,9 +82,9 @@ function DataContractsListItem({ dataContract }: DataContractsListItemProps) {
           ) : (
             <span>-</span>
           )}
-        </GridItem>
+        </div>
 
-        <GridItem className={'DataContractsListItem__Column DataContractsListItem__Column--System'}>
+        <div className={'DataContractsListItem__Column DataContractsListItem__Column--System'}>
           {dataContract?.isSystem !== undefined ? (
             <Badge colorScheme={dataContract?.isSystem ? 'orange' : 'gray'}>
               {dataContract?.isSystem ? 'true' : 'false'}
@@ -94,11 +92,9 @@ function DataContractsListItem({ dataContract }: DataContractsListItemProps) {
           ) : (
             <NotActive />
           )}
-        </GridItem>
+        </div>
 
-        <GridItem
-          className={'DataContractsListItem__Column DataContractsListItem__Column--WithTokens'}
-        >
+        <div className={'DataContractsListItem__Column DataContractsListItem__Column--WithTokens'}>
           {isNaN(Number(dataContract?.tokensCount)) ? (
             <NotActive />
           ) : (
@@ -106,9 +102,9 @@ function DataContractsListItem({ dataContract }: DataContractsListItemProps) {
               {(dataContract?.tokensCount ?? 0) > 0 ? 'true' : 'false'}
             </Badge>
           )}
-        </GridItem>
+        </div>
 
-        <GridItem
+        <div
           className={'DataContractsListItem__Column DataContractsListItem__Column--DocumentsCount'}
         >
           <ValueContainer
@@ -117,18 +113,16 @@ function DataContractsListItem({ dataContract }: DataContractsListItemProps) {
           >
             <BigNumber>{dataContract?.documentsCount}</BigNumber>
           </ValueContainer>
-        </GridItem>
+        </div>
 
-        <GridItem
-          className={'DataContractsListItem__Column DataContractsListItem__Column--Timestamp'}
-        >
+        <div className={'DataContractsListItem__Column DataContractsListItem__Column--Timestamp'}>
           {!dataContract?.timestamp && dataContract?.isSystem ? (
             <span className={'DataContractsListItem__Genesis'}>Genesis</span>
           ) : (
             <DateBlock timestamp={dataContract?.timestamp} format="dateOnly" />
           )}
-        </GridItem>
-      </Grid>
+        </div>
+      </div>
     </Link>
   )
 }

@@ -1,5 +1,4 @@
 import type { ComponentType, ReactNode } from 'react'
-import { Badge, Flex } from '@chakra-ui/react'
 import type { Localization } from '../../../types'
 import IdentifierJs from '../../data/Identifier'
 import NotActiveJs from '../../data/NotActive'
@@ -39,7 +38,7 @@ export function TokenCardContent({ token = {}, nullMessage = 'No data' }: TokenC
 
   return (
     <div className={'TokenCardContent'}>
-      <Flex gap={'0.75rem'} alignItems={'center'} justifyContent={'space-between'}>
+      <div className={'TokenCardContent__Row'}>
         <div className={'TokenCardContent__NameContainer'}>
           <ImageGenerator
             className={'TokenCardContent__Avatar'}
@@ -51,11 +50,11 @@ export function TokenCardContent({ token = {}, nullMessage = 'No data' }: TokenC
           />
           <span className={'TokenCardContent__Name'}>{getTokenName(localizations)}</span>
         </div>
-        <Badge className={'TokenCardContent__Count'}>
+        <span className={'TokenCardContent__Count'}>
           <span className={'TokenCardContent__CountValue'}>{txsCount}</span>
           <span>txs</span>
-        </Badge>
-      </Flex>
+        </span>
+      </div>
 
       <Identifier ellipsis={true} styles={['highlight-both']}>
         {tokenIdentifier}

@@ -1,7 +1,6 @@
 'use client'
 
 import { useRouter } from 'next/navigation'
-import { Flex } from '@chakra-ui/react'
 import { Alias, Identifier, NotActive, CreditsBlock } from '../data'
 import { Supply } from './index'
 import { LinkContainer, ValueContainer } from '../ui/containers'
@@ -100,12 +99,12 @@ function TokensList({
               maxW={'none'}
               content={<CreditsBlock credits={getMinTokenPrice(token.prices)} rate={rate} />}
             >
-              <Flex gap={'0.25rem'} fontSize={'0.75rem'} fontWeight={500}>
+              <div className={'TokensList__PriceFrom'}>
                 From{' '}
                 <FormattedNumber decimals={token.decimals}>
                   {getMinTokenPrice(token.prices)}
                 </FormattedNumber>
-              </Flex>
+              </div>
             </Tooltip>
           )
         }

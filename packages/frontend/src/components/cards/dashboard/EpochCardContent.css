@@ -1,3 +1,10 @@
+.EpochCardContent__InfoIcon {
+  margin-left: var(--pe-space-2);
+  width: 1rem;
+  height: 1rem;
+  color: var(--pe-color-brand-light);
+}
+
 .EpochCardContent {
   display: flex;
   flex-direction: column;

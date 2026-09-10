@@ -37,6 +37,12 @@
   overflow: hidden;
 }
 
+.ContestedResourcesDigestCard__Locked {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
 .ContestedResourcesDigestCard,
 .ContestedResourcesDigestCard__Cards,
 .ContestedResourcesDigestCard__LinesContainer {
@@ -180,7 +186,7 @@
 
 @media screen and (max-width: 30em) {
   .ContestedResourcesDigestCard--Loading .InfoLine__Value {
-    width: 100% !important;
+    width: 100%;
   }
 
   .ContestedResourcesDigestCard__CardValue .LoadingLine {
@@ -190,7 +196,7 @@
 
 @container (max-width: 24em) {
   .ContestedResourcesDigestCard--Loading .InfoLine__Value {
-    width: 100% !important;
+    width: 100%;
   }
 
   .ContestedResourcesDigestCard__InfoLine .InfoLine__Value {

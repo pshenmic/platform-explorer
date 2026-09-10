@@ -25,7 +25,7 @@
 }
 
 .TransfersList__Pagination {
-  margin-top: var(--pe-space-8) !important;
+  margin-top: var(--pe-space-8);
 }
 
 .TransfersList__ScrollZone {
@@ -35,13 +35,13 @@
 
 @media screen and (max-width: 48em) {
   .TransfersList__Pagination {
-    margin-top: var(--pe-space-6) !important;
+    margin-top: var(--pe-space-6);
   }
 }
 
 @media screen and (max-width: 30em) {
   .TransfersList__Pagination {
-    margin-top: var(--pe-space-4) !important;
+    margin-top: var(--pe-space-4);
   }
 }
 
@@ -64,10 +64,10 @@
 }
 
 .TransfersList__ColumnTitles--Light {
-  background: transparent !important;
-  font-weight: var(--pe-font-weight-medium) !important;
-  color: var(--pe-color-fg) !important;
-  text-transform: none !important;
+  background: transparent;
+  font-weight: var(--pe-font-weight-medium);
+  color: var(--pe-color-fg);
+  text-transform: none;
 }
 
 .TransfersList__ColumnTitles {
@@ -171,7 +171,7 @@
 }
 
 .TransfersList__ColumnTitle {
-  overflow: visible !important;
+  overflow: visible;
 }
 
 .TransfersList__ColumnTitle:last-child {

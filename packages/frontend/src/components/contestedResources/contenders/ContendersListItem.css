@@ -144,7 +144,7 @@
   max-height: var(--pe-space-8);
   overflow: hidden;
   text-overflow: ellipsis;
-  white-space: normal !important;
+  white-space: normal;
 }
 
 .ContendersListItem__Column {

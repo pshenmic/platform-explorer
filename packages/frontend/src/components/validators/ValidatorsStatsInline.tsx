@@ -51,7 +51,7 @@ export default function ValidatorsStatsInline({ total, className }: ValidatorsSt
     {
       label: 'Epoch',
       value: typeof status.data?.epoch?.number === 'number' ? `#${status.data.epoch.number}` : null,
-      color: 'var(--chakra-colors-brand-light)',
+      color: 'var(--pe-color-brand-light)',
       loading: status.loading
     },
     {
@@ -60,7 +60,7 @@ export default function ValidatorsStatsInline({ total, className }: ValidatorsSt
         typeof epoch.data?.totalCollectedFees === 'number'
           ? String(formatFullNumber(epoch.data.totalCollectedFees))
           : null,
-      color: 'var(--chakra-colors-brand-light)',
+      color: 'var(--pe-color-brand-light)',
       loading: epoch.loading
     },
     {
@@ -68,12 +68,12 @@ export default function ValidatorsStatsInline({ total, className }: ValidatorsSt
       value: bestValidator ? (
         <Link
           href={`/validator/${bestValidator}`}
-          style={{ color: 'inherit', fontFamily: 'var(--chakra-fonts-mono)', whiteSpace: 'nowrap' }}
+          style={{ color: 'inherit', fontFamily: 'var(--pe-font-mono)', whiteSpace: 'nowrap' }}
         >
           {shortHash(bestValidator)}
         </Link>
       ) : null,
-      color: 'var(--chakra-colors-brand-light)',
+      color: 'var(--pe-color-brand-light)',
       loading: epoch.loading
     }
   ]

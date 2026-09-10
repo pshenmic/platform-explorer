@@ -137,7 +137,7 @@
 
 @media screen and (min-width: 48em) and (max-width: 62em), screen and (max-width: 30em) {
   .IdentityDigestCard--Loading .InfoLine__Value {
-    width: 100% !important;
+    width: 100%;
   }
 
   .IdentityDigestCard__Transfer .CreditsBlock {
@@ -162,7 +162,7 @@
 
 @container (max-width: 24em) {
   .IdentityDigestCard--Loading .InfoLine__Value {
-    width: 100% !important;
+    width: 100%;
   }
 
   .IdentityDigestCard__InfoLine .InfoLine__Value {

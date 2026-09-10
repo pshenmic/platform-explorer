@@ -3,8 +3,7 @@
 import type { Identity, Document } from '../../types'
 import IdentitiesListItem from './IdentitiesListItem'
 import { EmptyListMessage } from '../ui/lists'
-import { Grid, GridItem } from '@chakra-ui/react'
-import { ChevronUpIcon, ChevronDownIcon } from '@chakra-ui/icons'
+import { ChevronIcon } from '../ui/icons'
 import Pagination from '../pagination'
 import { ErrorMessageBlock } from '../Errors'
 import { LoadingList } from '../loading'
@@ -45,23 +44,18 @@ function SortableHeader({ headerKey, label, modifier, sort, onSortChange }: Sort
   }
 
   return (
-    <GridItem
-      as={'button'}
-      className={className}
-      onClick={handleClick}
-      {...({ type: 'button' } as object)}
-    >
+    <button type={'button'} className={className} onClick={handleClick}>
       {isActive ? (
-        direction === 'asc' ? (
-          <ChevronUpIcon w={4} h={4} />
-        ) : (
-          <ChevronDownIcon w={4} h={4} />
-        )
+        <ChevronIcon
+          w={4}
+          h={4}
+          transform={direction === 'asc' ? 'rotate(-90deg)' : 'rotate(90deg)'}
+        />
       ) : (
         <span aria-hidden className={'IdentitiesList__SortSpacer'} />
       )}
       <span>{label}</span>
-    </GridItem>
+    </button>
   )
 }
 
@@ -113,20 +107,20 @@ function IdentitiesList({
 
   return (
     <div className={'IdentitiesList'}>
-      <Grid
+      <div
         className={`IdentitiesList__ColumnTitles ${headerExtraClass[headerStyles ?? 'default'] || ''}`}
       >
-        <GridItem className={'IdentitiesList__ColumnTitle IdentitiesList__ColumnTitle--Identifier'}>
+        <div className={'IdentitiesList__ColumnTitle IdentitiesList__ColumnTitle--Identifier'}>
           Identifier
-        </GridItem>
+        </div>
         <SortableHeader {...sortableProps('balance')} />
         <SortableHeader {...sortableProps('tx_count')} />
         <SortableHeader {...sortableProps('documents_count')} />
-        <GridItem className={'IdentitiesList__ColumnTitle IdentitiesList__ColumnTitle--Contracts'}>
+        <div className={'IdentitiesList__ColumnTitle IdentitiesList__ColumnTitle--Contracts'}>
           Data Contracts
-        </GridItem>
+        </div>
         <SortableHeader {...sortableProps('timestamp')} />
-      </Grid>
+      </div>
 
       {!loading ? (
         <div className={'IdentitiesList__Items'}>

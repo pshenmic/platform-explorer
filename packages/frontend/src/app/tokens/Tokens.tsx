@@ -9,7 +9,7 @@ import PageSizeSelector from '../../components/pageSizeSelector/PageSizeSelector
 import { useQuery, keepPreviousData } from '@tanstack/react-query'
 import { useQueryState, parseAsInteger } from 'nuqs'
 import { normalizePagination } from '@utils/table'
-import { Container, Box, useBreakpointValue } from '@chakra-ui/react'
+import { useIsMobile } from '../../hooks'
 import { useTokensFilters, TokenFilters } from '@components/tokens'
 import PageTitle from '../../components/intro/PageTitle'
 import NetworkStatsInline from '../../components/stats/NetworkStatsInline'
@@ -27,7 +27,7 @@ const paginateConfig = {
 }
 
 function Tokens() {
-  const isMobile = useBreakpointValue({ base: true, md: false })
+  const isMobile = useIsMobile()
   const { filters, setFilters } = useTokensFilters()
 
   const [page, setPage] = useQueryState(
@@ -67,8 +67,8 @@ function Tokens() {
   }
 
   return (
-    <Container maxW={'container.maxPageW'} mt={8} className={'Tokens'}>
-      <Container maxW={'container.maxPageW'} className={'InfoBlock'}>
+    <div className={'ListPage Tokens'}>
+      <div className={'InfoBlock'}>
         <div className={'Tokens__Controls'}>
           <PageTitle title={'Tokens'} description={introContent} className={'Tokens__Title'} />
 
@@ -102,14 +102,14 @@ function Tokens() {
             itemsCount={pageSize}
           />
         ) : (
-          <Container h={20}>
+          <div className={'ListPage__Error'}>
             <ErrorMessageBlock />
-          </Container>
+          </div>
         )}
 
         {(tokens.data?.resultSet?.length ?? 0) > 0 && (
           <div className={'ListNavigation'}>
-            <Box display={['none', 'none', 'block']} width={'155px'} />
+            <div className={'ListNavigation__Balance'} />
             <Pagination
               onPageChange={({ selected }) => {
                 setPage((selected || 0) + 1)
@@ -127,8 +127,8 @@ function Tokens() {
             />
           </div>
         )}
-      </Container>
-    </Container>
+      </div>
+    </div>
   )
 }
 

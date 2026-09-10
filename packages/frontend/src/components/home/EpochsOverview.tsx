@@ -819,16 +819,8 @@ export function EpochsOverview({ title, epochs, currentEpoch, rate, loading, slo
         >
           <defs>
             <linearGradient id={'homeEpochFill'} x1={'0'} y1={'0'} x2={'0'} y2={'1'}>
-              <stop
-                offset={'0%'}
-                stopColor={'var(--chakra-colors-brand-normal)'}
-                stopOpacity={'0.28'}
-              />
-              <stop
-                offset={'100%'}
-                stopColor={'var(--chakra-colors-brand-normal)'}
-                stopOpacity={'0'}
-              />
+              <stop offset={'0%'} stopColor={'var(--pe-color-brand-normal)'} stopOpacity={'0.28'} />
+              <stop offset={'100%'} stopColor={'var(--pe-color-brand-normal)'} stopOpacity={'0'} />
             </linearGradient>
             <linearGradient
               id={'homeEpochFadeGrad'}

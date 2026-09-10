@@ -32,7 +32,7 @@
 }
 
 .MobileFilterMenu__ClearButton {
-  position: absolute !important;
+  position: absolute;
   right: 0;
 }
 
@@ -114,8 +114,8 @@
 
 .MobileFilterMenu__SubmitButton,
 .MobileFilterMenu .FilterActions Button {
-  padding: var(--pe-space-4) var(--pe-space-8) !important;
-  height: auto !important;
+  padding: var(--pe-space-4) var(--pe-space-8);
+  height: auto;
 }
 
 .MobileFilterMenu .InputFilter .FilterActions {
@@ -130,6 +130,12 @@
 
 .MobileFilterMenu .FilterActions .MultiSelectFilter__ActionButton {
   width: 50%;
+}
+
+.MobileFilterMenu__ItemRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .MobileFilterMenu__Item {
@@ -180,6 +186,7 @@
 .MobileFilterMenu__BackButton {
   position: absolute;
   left: 0;
+  display: flex;
   transition: var(--pe-transition-def);
   align-items: center;
   padding: var(--pe-space-2);

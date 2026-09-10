@@ -16,7 +16,7 @@ import PageSizeSelector from '../../components/pageSizeSelector/PageSizeSelector
 import { LoadingList } from '../../components/loading'
 import { ErrorMessageBlock } from '../../components/Errors'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
-import { Container, Box, useBreakpointValue } from '@chakra-ui/react'
+import { useIsMobile } from '../../hooks'
 import NetworkStatsInline from '../../components/stats/NetworkStatsInline'
 import PageTitle from '../../components/intro/PageTitle'
 import TransactionsChartCompact from '../../components/charts/TransactionsChartCompact'
@@ -46,7 +46,7 @@ function Transactions({ defaultPage = 1, defaultPageSize }: any) {
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
-  const isMobile = useBreakpointValue({ base: true, md: false })
+  const isMobile = useIsMobile()
 
   const typeParams = useMemo(() => {
     const parsed = parseTypeParams(searchParams)
@@ -147,8 +147,8 @@ function Transactions({ defaultPage = 1, defaultPageSize }: any) {
   }
 
   return (
-    <Container maxW={'container.maxPageW'} mt={8} className={'Transactions'}>
-      <Container maxW={'container.maxPageW'} className={'InfoBlock'}>
+    <div className={'ListPage Transactions'}>
+      <div className={'InfoBlock'}>
         <div className={'Transactions__Controls'}>
           <PageTitle
             title={'Transactions'}
@@ -175,14 +175,14 @@ function Transactions({ defaultPage = 1, defaultPageSize }: any) {
             <LoadingList itemsCount={pageSize} />
           )
         ) : (
-          <Container h={20}>
+          <div className={'ListPage__Error'}>
             <ErrorMessageBlock />
-          </Container>
+          </div>
         )}
 
         {transactions.data?.length > 0 && (
           <div className={'ListNavigation'}>
-            <Box display={['none', 'none', 'block']} width={'155px'} />
+            <div className={'ListNavigation__Balance'} />
             <Pagination
               onPageChange={handlePageChange}
               pageCount={pageCount}
@@ -195,8 +195,8 @@ function Transactions({ defaultPage = 1, defaultPageSize }: any) {
             />
           </div>
         )}
-      </Container>
-    </Container>
+      </div>
+    </div>
   )
 }
 

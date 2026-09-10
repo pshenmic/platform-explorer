@@ -2,7 +2,7 @@ import type { ComponentType, ReactNode } from 'react'
 // Untyped JS components — loose wrappers until data/* is migrated
 import { Identifier as IdentifierJs, InfoLine as InfoLineJs } from '../../data'
 import { ValueContainer } from '../../ui/containers'
-import { Badge } from '@chakra-ui/react'
+import { Badge } from '../../ui/Badge'
 import type { QuorumMember } from './QuorumMembersListItem'
 import './QuorumInfo.css'
 

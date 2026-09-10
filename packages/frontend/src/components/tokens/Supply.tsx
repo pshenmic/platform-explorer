@@ -1,7 +1,6 @@
 'use client'
 
 import type { ReactNode } from 'react'
-import { Progress } from '@chakra-ui/react'
 import { LoadingLine } from '../loading'
 import { FormattedNumber } from '../ui/FormattedNumber'
 import type { WithClassName } from '../../types/common'
@@ -81,13 +80,20 @@ function Supply({
                 )}
               </div>
               {hasMaxSupply && (
-                <Progress
+                <div
                   className={'Supply__Progress'}
-                  value={(Number(currentSupply) / Number(maxSupply)) * 100}
-                  height={'1px'}
-                  width={'100%'}
-                  colorScheme={'gray'}
-                />
+                  role={'progressbar'}
+                  aria-valuemin={0}
+                  aria-valuemax={100}
+                  aria-valuenow={(Number(currentSupply) / Number(maxSupply)) * 100}
+                >
+                  <div
+                    className={'Supply__ProgressBar'}
+                    style={{
+                      width: `${Math.min(100, Math.max(0, (Number(currentSupply) / Number(maxSupply)) * 100))}%`
+                    }}
+                  />
+                </div>
               )}
             </>
           )}

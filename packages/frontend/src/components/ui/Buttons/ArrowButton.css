@@ -19,7 +19,7 @@
 }
 
 .ArrowButton:active {
-  background-color: var(--pe-color-gray-700) !important;
+  background-color: var(--pe-color-gray-700);
 }
 
 .ArrowButton--Active {

@@ -1,5 +1,4 @@
 import { useState, useEffect, useMemo } from 'react'
-import { Progress } from '@chakra-ui/react'
 import { getTimeDelta } from '../../util'
 import type { Epoch } from '../../types'
 import type { WithClassName } from '../../types/common'
@@ -31,7 +30,9 @@ function EpochProgress({ epoch, className }: EpochProgressProps) {
 
   return (
     <div className={`EpochProgress ${className || ''}`}>
-      <Progress value={progress} height={'1px'} />
+      <div className={'EpochProgress__Bar Progress Progress--blue'}>
+        <div className={'Progress__Fill'} style={{ width: `${progress}%` }} />
+      </div>
 
       <div className={'EpochProgress__Info'}>
         <div className={'EpochProgress__InfoTitle'}>Next Epoch:</div>

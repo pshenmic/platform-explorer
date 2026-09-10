@@ -5,11 +5,10 @@
   background: rgba(24, 31, 34, 0.2);
   box-shadow: 2px 2px var(--pe-color-brand-normal);
   position: relative;
-  overflow-x: clip;
-  overflow-y: visible;
+  overflow: visible;
   width: 100%;
   max-width: 100%;
-  padding: 0 !important;
+  padding: 0;
   min-width: 0;
   display: flex;
   flex-direction: column;
@@ -18,6 +17,8 @@
   position: absolute;
   inset: 0;
   z-index: 0;
+  overflow: hidden;
+  border-radius: inherit;
   pointer-events: none;
   mask-image: linear-gradient(
     90deg,
@@ -48,24 +49,6 @@
   display: block;
   width: 100%;
   height: 100%;
-}
-.HomeHero__Glow {
-  position: absolute;
-  top: -20%;
-  left: -4%;
-  width: min(460px, 58%);
-  aspect-ratio: 1;
-  height: auto;
-  border-radius: 50%;
-  background: radial-gradient(
-    circle at 40% 45%,
-    rgba(var(--pe-color-brand-normal-rgb), 0.22) 0%,
-    rgba(var(--pe-color-brand-normal-rgb), 0.1) 32%,
-    rgba(var(--pe-color-brand-normal-rgb), 0.03) 55%,
-    rgba(var(--pe-color-brand-normal-rgb), 0) 72%
-  );
-  pointer-events: none;
-  z-index: 0;
 }
 .HomeHero__Inner {
   position: relative;
@@ -105,58 +88,6 @@
   overflow: visible;
   width: 100%;
 }
-.HomeHero__BrandFx {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  pointer-events: none;
-  overflow: hidden;
-  border-radius: inherit;
-}
-.HomeHero__BrandOrb {
-  position: absolute;
-  border-radius: 50%;
-  will-change: transform;
-}
-.HomeHero__BrandOrb--a {
-  top: -6%;
-  left: -2%;
-  width: min(320px, 52%);
-  height: min(320px, 52%);
-  min-width: 200px;
-  min-height: 200px;
-  background: radial-gradient(
-    circle at 45% 45%,
-    rgba(var(--pe-color-brand-normal-rgb), 0.22) 0%,
-    rgba(var(--pe-color-brand-normal-rgb), 0.08) 38%,
-    rgba(var(--pe-color-brand-normal-rgb), 0.02) 58%,
-    transparent 74%
-  );
-  animation: HomeHeroOrbA 14s ease-in-out infinite alternate;
-}
-.HomeHero__BrandOrb--b {
-  left: 12%;
-  top: 28%;
-  width: min(180px, 32%);
-  height: min(180px, 32%);
-  min-width: 120px;
-  min-height: 120px;
-  background: radial-gradient(
-    circle,
-    rgba(var(--pe-color-brand-light-rgb), 0.1) 0%,
-    rgba(var(--pe-color-brand-light-rgb), 0.035) 42%,
-    transparent 72%
-  );
-  animation: HomeHeroOrbB 18s ease-in-out infinite alternate;
-}
-.HomeHero__BrandGrain {
-  position: absolute;
-  inset: 0;
-  opacity: 0.03;
-  mix-blend-mode: soft-light;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-  background-size: 160px 160px;
-}
 .HomeHero__BrandCopy {
   position: relative;
   z-index: 1;
@@ -167,16 +98,17 @@
   font-size: 0.8125rem;
   text-transform: uppercase;
   font-family: var(--pe-font-heading);
-  font-weight: 800;
+  font-weight: var(--pe-font-weight-bold);
   font-style: italic;
   letter-spacing: 0.04em;
   color: var(--pe-color-brand-normal);
   margin: 0 0 10px;
 }
 .HomeHero__Title {
+  font-family: var(--pe-font-heading);
   font-style: italic;
-  font-size: 2.5rem !important;
-  font-weight: 800;
+  font-size: 2.5rem;
+  font-weight: var(--pe-font-weight-bold);
   line-height: 1.22;
   margin: 0 0 12px;
   padding: 0.06em 0.14em 0.1em 0.02em;
@@ -184,12 +116,12 @@
 }
 @media screen and (max-width: 72em) {
   .HomeHero__Title {
-    font-size: 2.125rem !important;
+    font-size: 2.125rem;
   }
 }
 @media screen and (max-width: 48em) {
   .HomeHero__Title {
-    font-size: 1.75rem !important;
+    font-size: 1.75rem;
     line-height: 1.25;
     overflow-wrap: anywhere;
     word-break: break-word;
@@ -202,19 +134,7 @@
   color: #fff;
   -webkit-text-fill-color: #fff;
   background: none;
-  text-shadow:
-    0 0 28px rgba(var(--pe-color-brand-light-rgb), 0.45),
-    0 0 56px rgba(var(--pe-color-brand-normal-rgb), 0.28),
-    0 0 90px rgba(var(--pe-color-brand-normal-rgb), 0.12);
-  animation: HomeHeroTitlePulse 7s ease-in-out infinite;
-}
-@media screen and (max-width: 48em) {
-  .HomeHero__TitleShine {
-    display: inline-block;
-    text-shadow:
-      0 0 20px rgba(var(--pe-color-brand-light-rgb), 0.4),
-      0 0 40px rgba(var(--pe-color-brand-normal-rgb), 0.22);
-  }
+  text-shadow: none;
 }
 .HomeHero__Tagline {
   font-family: var(--pe-font-heading);
@@ -249,6 +169,7 @@
 .HomeHero__StatusBar {
   position: relative;
   z-index: 1;
+  display: flex;
   flex-wrap: wrap;
   align-items: stretch;
   gap: 0;
@@ -1005,49 +926,7 @@
     stroke-dashoffset: -100;
   }
 }
-@keyframes HomeHeroOrbA {
-  from {
-    transform: translate3d(0, 0, 0) scale(1);
-  }
-  to {
-    transform: translate3d(4%, 3%, 0) scale(1.04);
-  }
-}
-@keyframes HomeHeroOrbB {
-  from {
-    transform: translate3d(0, 0, 0) scale(1);
-  }
-  to {
-    transform: translate3d(3%, -3%, 0) scale(1.05);
-  }
-}
-@keyframes HomeHeroTitlePulse {
-  0%,
-  100% {
-    text-shadow:
-      0 0 24px rgba(var(--pe-color-brand-light-rgb), 0.35),
-      0 0 48px rgba(var(--pe-color-brand-normal-rgb), 0.2),
-      0 0 80px rgba(var(--pe-color-brand-normal-rgb), 0.08);
-  }
-  50% {
-    text-shadow:
-      0 0 32px rgba(var(--pe-color-brand-light-rgb), 0.55),
-      0 0 64px rgba(var(--pe-color-brand-normal-rgb), 0.32),
-      0 0 100px rgba(var(--pe-color-brand-normal-rgb), 0.16);
-  }
-}
-@media (prefers-reduced-motion: reduce) {
-  .HomeHero__BrandOrb--a,
-  .HomeHero__BrandOrb--b,
-  .HomeHero__TitleShine {
-    animation: none;
-  }
-  .HomeHero__TitleShine {
-    text-shadow:
-      0 0 28px rgba(var(--pe-color-brand-light-rgb), 0.4),
-      0 0 56px rgba(var(--pe-color-brand-normal-rgb), 0.22);
-  }
-}
+
 @keyframes HeroMetaPulse {
   0%,
   100% {
@@ -1137,7 +1016,7 @@
   }
 }
 .EpochsWave--Empty {
-  display: flex !important;
+  display: flex;
   align-items: center;
   justify-content: center;
   color: var(--pe-color-gray-500);
@@ -1167,7 +1046,7 @@
 }
 .EpochsWave__Bound.is-approx {
   z-index: 3;
-  top: 0 !important;
+  top: 0;
   transform: translateX(-100%);
 }
 @media screen and (max-width: 48em) {
@@ -1302,8 +1181,8 @@
 .EpochsWave__BoundIcon {
   flex-shrink: 0;
   opacity: 0.9;
-  width: 0.875rem !important;
-  height: 0.875rem !important;
+  width: 0.875rem;
+  height: 0.875rem;
 }
 .EpochsWave__BoundTag {
   display: inline-block;
@@ -1340,7 +1219,7 @@
 }
 @media (prefers-reduced-motion: reduce) {
   .EpochsWave__RailScan {
-    animation: none !important;
+    animation: none;
     opacity: 0;
   }
 }

@@ -1,5 +1,4 @@
 import type { ComponentType, ReactNode } from 'react'
-import { Grid, GridItem } from '@chakra-ui/react'
 import { ProportionsLine } from '../../ui/infographics'
 import { Identifier as IdentifierJs, TimeDelta as TimeDeltaJs } from '../../data'
 import { LinkContainer } from '../../ui/containers'
@@ -62,13 +61,13 @@ const ContendersListItem = ({
     className={`ContendersListItem ${className || ''} ${isVoteVisible ? '' : 'ContendersListItem__Content--Hidden'}`}
   >
     <div className={'ContendersListItem__ScrollZone'}>
-      <Grid
+      <div
         className={`ContendersListItem__Content ${isVoteVisible ? '' : 'ContendersListItem__Content--Hidden'}`}
       >
-        <GridItem className={'ContendersListItem__Column--Timestamp'}>
+        <div className={'ContendersListItem__Column--Timestamp'}>
           <TimeDelta endDate={new Date(contender.timestamp ?? '')} />
-        </GridItem>
-        <GridItem className={'ContendersListItem__Column ContendersListItem__Column--Hash'}>
+        </div>
+        <div className={'ContendersListItem__Column ContendersListItem__Column--Hash'}>
           <LinkContainer
             className={'ContendersListItem__LinkContainer'}
             href={`/transaction/${contender.documentStateTransition}`}
@@ -77,8 +76,8 @@ const ContendersListItem = ({
               {contender.documentStateTransition}
             </Identifier>
           </LinkContainer>
-        </GridItem>
-        <GridItem className={'ContendersListItem__Column ContendersListItem__Column--Identity'}>
+        </div>
+        <div className={'ContendersListItem__Column ContendersListItem__Column--Identity'}>
           <LinkContainer
             className={'ContendersListItem__LinkContainer'}
             href={`/identity/${contender.identifier}`}
@@ -87,8 +86,8 @@ const ContendersListItem = ({
               {contender.identifier}
             </Identifier>
           </LinkContainer>
-        </GridItem>
-        <GridItem className={'ContendersListItem__Column ContendersListItem__Column--Document'}>
+        </div>
+        <div className={'ContendersListItem__Column ContendersListItem__Column--Document'}>
           <LinkContainer
             className={'ContendersListItem__LinkContainer'}
             href={`/document/${contender.documentIdentifier}`}
@@ -97,8 +96,8 @@ const ContendersListItem = ({
               {contender.documentIdentifier}
             </Identifier>
           </LinkContainer>
-        </GridItem>
-        <GridItem className={'ContendersListItem__Column ContendersListItem__Column--Votes'}>
+        </div>
+        <div className={'ContendersListItem__Column ContendersListItem__Column--Votes'}>
           <ProportionsLine
             items={[
               {
@@ -121,14 +120,14 @@ const ContendersListItem = ({
               }
             ]}
           />
-        </GridItem>
+        </div>
 
         {isVoteVisible && (
-          <GridItem className={'ContendersListItem__Column ContendersListItem__Column--Votes'}>
+          <div className={'ContendersListItem__Column ContendersListItem__Column--Votes'}>
             <VoteManeger {...contender} {...props} />
-          </GridItem>
+          </div>
         )}
-      </Grid>
+      </div>
     </div>
   </div>
 )

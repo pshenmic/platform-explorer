@@ -1,6 +1,6 @@
 .NotActive {
-  font-size: var(--pe-text-sm) !important;
-  color: var(--pe-color-fg-muted) !important;
-  text-transform: lowercase !important;
-  font-weight: var(--pe-font-weight-normal) !important;
+  font-size: var(--pe-text-sm);
+  color: var(--pe-color-fg-muted);
+  text-transform: lowercase;
+  font-weight: var(--pe-font-weight-normal);
 }

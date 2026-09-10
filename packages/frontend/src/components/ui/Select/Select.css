@@ -162,19 +162,19 @@ body > .react-select__menu-portal > .react-select__option:hover {
 .Select .react-select__option--is-selected,
 body > .react-select__option--is-selected,
 body > .react-select__menu-portal > .react-select__option--is-selected {
-  background-color: var(--pe-color-brand-light) !important;
-  color: var(--pe-color-fg) !important;
+  background-color: var(--pe-color-brand-light);
+  color: var(--pe-color-fg);
 }
 
 .Select .react-select__option--is-selected:hover,
 body > .react-select__option--is-selected:hover,
 body > .react-select__menu-portal > .react-select__option--is-selected:hover {
   background-color: var(--pe-color-brand-light);
-  cursor: default !important;
+  cursor: default;
 }
 
 .Select .react-select__menu-portal,
 body > .react-select__menu-portal,
 body > .react-select__menu-portal > .react-select__menu-portal {
-  z-index: 50 !important;
+  z-index: 50;
 }

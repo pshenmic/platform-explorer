@@ -1,11 +1,9 @@
-import { Flex, Heading } from '@chakra-ui/react'
 import { FormControls } from './FormControls'
+import styles from '../../create.module.css'
 
 export const SchemaHeader = () => (
-  <Flex width="100%" justify="space-between" align="center" px={2} py={2}>
-    <Heading as="h2" size="xs" fontWeight="bold" m={0}>
-      Contract Scheme
-    </Heading>
+  <div className={styles.header}>
+    <h2 className={styles.headerTitle}>Contract Scheme</h2>
     <FormControls />
-  </Flex>
+  </div>
 )

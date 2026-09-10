@@ -1,4 +1,4 @@
-import { Badge } from '@chakra-ui/react'
+import { Badge } from '../ui/Badge'
 import { ErrorCircleIcon, CheckmarkIcon } from '../ui/icons'
 import type { TransactionStatus } from '../../types'
 import './TransactionStatusBadge.css'
@@ -18,7 +18,6 @@ function TransactionStatusBadge({ status }: TransactionStatusBadgeProps) {
   return (
     <Badge
       className={'TransactionStatusBadge'}
-      lineHeight={'20px'}
       colorScheme={status === 'SUCCESS' ? 'green' : 'red'}
     >
       {StatusIcon}

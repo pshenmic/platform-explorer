@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react'
 import type { Ref } from 'react'
 import TimeframeMenu from './TimeframeMenu'
-import { Button } from '@chakra-ui/react'
 import { CalendarIcon2, CloseIcon } from '../ui/icons'
 import type { ChartConfig, TimespanValue } from './types'
 import type { WithClassName } from '../../types/common'
@@ -59,20 +58,17 @@ export default function TimeframeSelector({
         changeCallback={changeHandler}
         forceTimespan={timespan}
       />
-      <Button
+      <button
+        type={'button'}
         className={`TimeframeSelector__Button ${menuIsOpen ? 'TimeframeSelector__Button--Active' : ''}`}
         onClick={() => setMenuIsOpen(state => !state)}
       >
-        <CalendarIcon2 mr={'10px'} />
+        <CalendarIcon2 />
         {timespan?.label}
         <CloseIcon
-          color={'gray.250'}
-          style={{ transition: 'all .1s' }}
-          ml={menuIsOpen ? '10px' : '0px'}
-          w={menuIsOpen ? '8px' : '0px'}
-          h={'8px'}
+          className={`TimeframeSelector__Close ${menuIsOpen ? 'TimeframeSelector__Close--Open' : ''}`}
         />
-      </Button>
+      </button>
     </div>
   )
 }

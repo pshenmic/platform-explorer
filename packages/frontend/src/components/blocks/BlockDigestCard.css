@@ -77,8 +77,8 @@
 .BlockDigestCard__InfoIcon {
   cursor: pointer;
   transition: 0.15s;
-  width: 1rem !important;
-  height: 1rem !important;
+  width: 1rem;
+  height: 1rem;
 }
 .BlockDigestCard__InfoIcon:hover {
   cursor: pointer;

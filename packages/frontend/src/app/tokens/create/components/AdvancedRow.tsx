@@ -1,7 +1,6 @@
 'use client'
 
 import type { ReactNode } from 'react'
-import { HStack, IconButton } from '@chakra-ui/react'
 import { RowLabel } from './FeatureRow'
 
 interface RowProps {
@@ -11,10 +10,10 @@ interface RowProps {
 }
 
 export const Row = ({ label, tooltip, children }: RowProps) => (
-  <HStack className="Advanced__Row" justify="space-between" spacing={3} align="center">
+  <div className="Advanced__Row">
     <RowLabel label={label} tooltip={tooltip} />
     {children}
-  </HStack>
+  </div>
 )
 
 interface GroupHeaderProps {
@@ -24,16 +23,17 @@ interface GroupHeaderProps {
 }
 
 export const GroupHeader = ({ label, tooltip, onAdd }: GroupHeaderProps) => (
-  <HStack className="Advanced__GroupHeader" justify="space-between" spacing={3} align="center">
+  <div className="Advanced__GroupHeader">
     <RowLabel label={label} tooltip={tooltip} />
     {onAdd && (
-      <IconButton
-        size="xs"
-        variant="outline"
+      <button
+        type="button"
+        className="WizardIconBtn"
         aria-label={`Add ${String(label)} row`}
-        icon={<span style={{ fontSize: '14px', lineHeight: 1 }}>+</span>}
         onClick={onAdd}
-      />
+      >
+        +
+      </button>
     )}
-  </HStack>
+  </div>
 )

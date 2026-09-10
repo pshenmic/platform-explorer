@@ -1,14 +1,6 @@
 import { useState } from 'react'
 import type { Dispatch, SetStateAction } from 'react'
-import {
-  Flex,
-  FormControl,
-  IconButton,
-  Input,
-  InputGroup,
-  InputRightElement
-} from '@chakra-ui/react'
-import { ViewIcon, ViewOffIcon } from '@chakra-ui/icons'
+import styles from './signing.module.css'
 
 const noAutofillProps = {
   autoComplete: 'off',
@@ -40,43 +32,38 @@ export const PrivateKeyForm = ({
   const [showWif, setShowWif] = useState(false)
 
   return (
-    <Flex gap={2} wrap="wrap">
-      <FormControl flex="1" minW="200px" isDisabled={isInactive}>
-        <InputGroup size="sm">
-          <Input
-            variant="filled"
-            type="text"
-            name="wif"
-            placeholder="WIF, hex, or base64"
-            value={wif}
-            onChange={e => setWif(e.target.value)}
-            fontFamily="mono"
-            sx={!showWif ? { WebkitTextSecurity: 'disc', textSecurity: 'disc' } : undefined}
-            {...noAutofillProps}
-          />
-          <InputRightElement>
-            <IconButton
-              size="xs"
-              variant="ghost"
-              tabIndex={-1}
-              icon={showWif ? <ViewOffIcon /> : <ViewIcon />}
-              aria-label={showWif ? 'Hide private key' : 'Show private key'}
-              onClick={() => setShowWif(v => !v)}
-            />
-          </InputRightElement>
-        </InputGroup>
-      </FormControl>
-      <FormControl flex="1" minW="200px" isDisabled={isInactive}>
-        <Input
-          size="sm"
-          variant="filled"
-          placeholder={identityIdPlaceholder}
-          value={identityId}
-          onChange={e => setIdentityId(e.target.value)}
-          fontFamily="mono"
+    <div className={styles.row}>
+      <div className={styles.field}>
+        <input
+          className={`${styles.input}${showWif ? '' : ` ${styles.inputMasked}`}`}
+          type="text"
+          name="wif"
+          placeholder="WIF, hex, or base64"
+          value={wif}
+          disabled={isInactive}
+          onChange={e => setWif(e.target.value)}
           {...noAutofillProps}
         />
-      </FormControl>
-    </Flex>
+        <button
+          type="button"
+          className={styles.toggle}
+          tabIndex={-1}
+          aria-label={showWif ? 'Hide private key' : 'Show private key'}
+          onClick={() => setShowWif(v => !v)}
+        >
+          {showWif ? 'Hide' : 'Show'}
+        </button>
+      </div>
+      <div className={styles.field}>
+        <input
+          className={styles.input}
+          placeholder={identityIdPlaceholder}
+          value={identityId}
+          disabled={isInactive}
+          onChange={e => setIdentityId(e.target.value)}
+          {...noAutofillProps}
+        />
+      </div>
+    </div>
   )
 }

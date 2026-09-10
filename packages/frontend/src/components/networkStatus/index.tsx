@@ -3,9 +3,9 @@
 import * as Api from '../../util/Api'
 import { useState, useEffect, useCallback } from 'react'
 import type { ComponentType } from 'react'
-import { CheckCircleIcon, WarningIcon, InfoIcon } from '@chakra-ui/icons'
+import { CheckmarkIcon, ErrorCircleIcon, InfoIcon } from '../ui/icons'
 import EpochProgress from './EpochProgress'
-import { Badge } from '@chakra-ui/react'
+import { Badge } from '../ui/Badge'
 import { fetchHandlerSuccess, fetchHandlerError } from '../../util'
 import { TimeDelta as TimeDeltaJs } from '../data'
 import { EpochTooltip } from '../ui/Tooltips'
@@ -59,9 +59,9 @@ function NetworkStatus({ className }: WithClassName) {
 
   useEffect(fetchData, [fetchData])
 
-  const NetworkStatusIcon = networkStatus ? <CheckCircleIcon mr={2} /> : <WarningIcon mr={2} />
+  const NetworkStatusIcon = networkStatus ? <CheckmarkIcon mr={2} /> : <ErrorCircleIcon mr={2} />
 
-  const ApiStatusIcon = apiStatus ? <CheckCircleIcon mr={2} /> : <WarningIcon mr={2} />
+  const ApiStatusIcon = apiStatus ? <CheckmarkIcon mr={2} /> : <ErrorCircleIcon mr={2} />
 
   return (
     <div className={`NetworkStatus  ${className || ''}`}>

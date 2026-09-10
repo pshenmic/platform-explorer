@@ -13,7 +13,7 @@ import {
 } from '../data'
 import { HorisontalSeparator } from '../ui/separators'
 import { ValueCard } from '../cards'
-import { Badge } from '@chakra-ui/react'
+import { Badge } from '../ui/Badge'
 import { findActiveAlias } from '../../util'
 import './DocumentTotalCard.css'
 

@@ -77,7 +77,7 @@
 }
 
 .PublicKeysListItem__Content--Inline {
-  display: inline !important;
+  display: inline;
 }
 
 .PublicKeysListItem__Column {

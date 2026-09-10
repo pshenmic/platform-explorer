@@ -1,4 +1,4 @@
-import { Badge } from '@chakra-ui/react'
+import { Badge } from '../ui/Badge'
 import { BatchActions } from '../../enums/batchTypes'
 import { Tooltip } from '../ui/Tooltips'
 import './TypeBadge.css'

@@ -11,8 +11,16 @@
 }
 
 .Intro__Title {
+  margin: 0;
   font-style: italic;
   font-weight: var(--pe-font-weight-extrabold);
+}
+
+.Intro__Accent {
+  margin: var(--pe-space-3) 0;
+  width: 4rem;
+  height: 1px;
+  background: var(--pe-color-brand-normal);
 }
 
 .Intro__Info {

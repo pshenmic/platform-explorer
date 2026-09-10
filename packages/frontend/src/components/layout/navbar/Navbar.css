@@ -1,3 +1,7 @@
+.NavbarShell {
+  position: relative;
+}
+
 .Navbar {
   padding-left: var(--pe-space-4);
   padding-right: var(--pe-space-4);
@@ -7,11 +11,13 @@
   z-index: 100;
   top: 0;
   width: 100%;
+  max-width: none;
   left: 50%;
   transform: translateX(-50%);
   max-height: 100%;
   margin: 0 auto;
   min-height: 0;
+  display: flex;
   align-items: center;
   justify-content: space-between;
 }
@@ -94,8 +100,37 @@
 .Navbar__Burger {
   position: relative;
   z-index: 20;
-  transition: background-color 0.1s !important;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: none;
+  border-radius: var(--pe-radius-md);
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
   flex-shrink: 0;
+  transition: background-color 0.1s;
+}
+
+.Navbar__Burger:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.Navbar--search .Navbar__Burger {
+  visibility: hidden;
+  width: 0;
+  min-width: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+@media screen and (min-width: 62em) {
+  .Navbar__Burger {
+    display: none;
+  }
 }
 
 .Navbar__Menu {

@@ -1,8 +1,7 @@
 'use client'
 
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import type { MouseEvent } from 'react'
-import { useMediaQuery } from '@chakra-ui/react'
 import { usePathname } from 'next/navigation'
 import MultiLevelMenu from '../../ui/menus/MultiLevelMenu'
 import { ArrowButton } from '../../ui/Buttons'
@@ -17,8 +16,16 @@ const NavDropdown = ({ item }: NavDropdownProps) => {
   const { title, href, submenuItems } = item
   const pathname = usePathname()
   const isActive = pathname === href || (href != null && pathname.startsWith(href))
-  const [isHoverable] = useMediaQuery('(hover: hover) and (pointer: fine)')
+  const [isHoverable, setIsHoverable] = useState(false)
   const [isOpen, setIsOpen] = useState(false)
+
+  useEffect(() => {
+    const mq = window.matchMedia('(hover: hover) and (pointer: fine)')
+    const update = () => setIsHoverable(mq.matches)
+    update()
+    mq.addEventListener('change', update)
+    return () => mq.removeEventListener('change', update)
+  }, [])
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   const menuData = (submenuItems ?? []).map(subItem => ({

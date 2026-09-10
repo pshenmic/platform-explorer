@@ -1,9 +1,7 @@
 import React, { useState, useEffect, useCallback, memo } from 'react'
 import type { ReactNode } from 'react'
-import { Progress } from '@chakra-ui/react'
 import { useKeenSlider } from 'keen-slider/react'
 import type { KeenSliderOptions, KeenSliderPlugin } from 'keen-slider/react'
-import { ChevronLeftIcon, ChevronRightIcon } from '@chakra-ui/icons'
 import 'keen-slider/keen-slider.min.css'
 import './Slider.css'
 import './SliderNavigation.css'
@@ -45,17 +43,15 @@ const SliderProgressBar = memo(function SliderProgressBar({
   }, [isActive, autoPlaySpeed, onComplete])
 
   return (
-    <Progress
-      className={'SliderNavigation__ProgressBar'}
-      value={progress}
-      height={'2px'}
-      colorScheme={'gray'}
-      sx={{
-        '& > div': {
+    <div className={'SliderNavigation__ProgressBar Progress Progress--gray'}>
+      <div
+        className={'Progress__Fill'}
+        style={{
+          width: `${progress}%`,
           transition: `width ${progress !== 0 ? transitionInterval : 0}ms linear`
-        }
-      }}
-    />
+        }}
+      />
+    </div>
   )
 })
 
@@ -136,7 +132,9 @@ function Slider({
               }`}
               onClick={handlePrevSlide}
             >
-              <ChevronLeftIcon color={'#ddd'} />
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="#ddd" aria-hidden="true">
+                <path d="M15.41 7.41 14 6l-6 6 6 6 1.41-1.41L10.83 12z" />
+              </svg>
             </button>
             <button
               className={`SliderNavigation__Button SliderNavigation__Button--Next ${
@@ -144,7 +142,9 @@ function Slider({
               }`}
               onClick={handleNextSlide}
             >
-              <ChevronRightIcon color={'#ddd'} />
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="#ddd" aria-hidden="true">
+                <path d="M10 6 8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z" />
+              </svg>
             </button>
           </div>
         )}

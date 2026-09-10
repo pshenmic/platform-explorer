@@ -3,7 +3,6 @@ import type { ContestedResource } from '../../../types'
 import AliasJs from '../../data/Alias'
 import TimeRemainingJs from '../../data/TimeRemaining'
 import contestedResources from '../../../util/contestedResources'
-import { Badge } from '@chakra-ui/react'
 import VoteBadgesJs from '../../contestedResources/VoteBadges'
 import './ContestedResourceContent.css'
 
@@ -49,14 +48,9 @@ export function ContestedResourceContent({
               {resourceValue}
             </Alias>
             {contestedResource?.contenders && (
-              <Badge
-                className={'ContestedResourceContent__ContendersBadge'}
-                colorScheme={'blue'}
-                size={'xs'}
-                ml={'0.25rem'}
-              >
+              <span className={'ContestedResourceContent__ContendersBadge'}>
                 {contestedResource.contenders}
-              </Badge>
+              </span>
             )}
           </div>
 

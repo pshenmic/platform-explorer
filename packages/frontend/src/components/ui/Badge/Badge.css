@@ -1,0 +1,59 @@
+.Badge {
+  display: inline-flex;
+  align-items: center;
+  border-width: 0;
+  border-radius: 999px;
+  padding: 0 0.75rem;
+  font-family: var(--pe-font-mono);
+  font-size: 0.625rem;
+  font-weight: 400;
+  line-height: 1.25rem;
+  text-transform: none;
+  background: rgba(255, 255, 255, 0.2);
+  color: var(--pe-color-white-50);
+}
+
+.Badge--xs {
+  line-height: 1.125rem;
+  padding: 0 0.5rem;
+}
+
+.Badge--red {
+  background: rgba(var(--pe-color-red-default-rgb), 0.2);
+  color: var(--pe-color-red-default);
+}
+
+.Badge--green {
+  background: rgba(var(--pe-color-green-label-rgb), 0.2);
+  color: var(--pe-color-green-label);
+}
+
+.Badge--gray {
+  background: rgba(255, 255, 255, 0.2);
+  color: var(--pe-color-white-50);
+}
+
+.Badge--dimGray {
+  background: var(--pe-color-gray-800);
+  color: var(--pe-color-gray-250);
+}
+
+.Badge--blue {
+  background: rgba(var(--pe-color-brand-normal-rgb), 0.2);
+  color: var(--pe-color-brand-light);
+}
+
+.Badge--yellow {
+  background: rgba(244, 228, 88, 0.2);
+  color: var(--pe-color-yellow-badge);
+}
+
+.Badge--orange {
+  background: rgba(var(--pe-color-orange-default-rgb), 0.2);
+  color: var(--pe-color-orange-default);
+}
+
+.Badge--emerald {
+  background: rgba(var(--pe-color-green-emeralds-rgb), 0.2);
+  color: var(--pe-color-green-emeralds);
+}

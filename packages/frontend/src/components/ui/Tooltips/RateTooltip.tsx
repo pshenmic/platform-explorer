@@ -2,7 +2,6 @@ import type { ReactElement } from 'react'
 import Tooltip from './Tooltip'
 import { roundUsd, removeTrailingZeros, creditsToDash } from '../../../util'
 import type { Rate } from '../../../types'
-import type { PlacementWithLogical } from '@chakra-ui/react'
 import './RateTooltip.css'
 
 interface RateTooltipProps {
@@ -11,7 +10,7 @@ interface RateTooltipProps {
   usd?: number
   rate?: Pick<Rate, 'usd'> | null
   children: ReactElement
-  placement?: PlacementWithLogical
+  placement?: 'top' | 'bottom' | 'left' | 'right'
 }
 
 export default function RateTooltip({
@@ -42,7 +41,7 @@ export default function RateTooltip({
           )}
         </div>
       }
-      placement={placement || 'right'}
+      placement={placement || 'top'}
     >
       {children}
     </Tooltip>

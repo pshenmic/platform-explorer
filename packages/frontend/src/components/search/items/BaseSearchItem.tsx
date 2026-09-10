@@ -1,6 +1,5 @@
 import type { ReactNode } from 'react'
 import type { WithChildren, WithClassName } from '../../../types/common'
-import { Button, Grid, GridItem } from '@chakra-ui/react'
 import { ChevronIcon } from '../../ui/icons'
 import Link from 'next/link'
 
@@ -40,16 +39,16 @@ export function BaseSearchItem({
 
   return (
     <Container href={href} className={`SearchResultsListItem ${className || ''}`}>
-      <Grid
+      <div
         className={`SearchResultsListItem__Content ${gridClassModifier ? `SearchResultsListItem__Content--${gridClassModifier}` : ''}`}
       >
         {children}
-        <GridItem className={'SearchResultsListItem__ArrowButtonContainer'}>
-          <Button className={'SearchResultsListItem__ArrowButton'} size={'xxs'} variant={'blue'}>
-            <ChevronIcon w={'0.5rem'} h={'0.5rem'} />
-          </Button>
-        </GridItem>
-      </Grid>
+        <div className={'SearchResultsListItem__ArrowButtonContainer'}>
+          <span className={'SearchResultsListItem__ArrowButton'}>
+            <ChevronIcon />
+          </span>
+        </div>
+      </div>
     </Container>
   )
 }
@@ -67,17 +66,13 @@ export function BaseSearchItemContent({
 }: BaseSearchItemContentProps) {
   return (
     <>
-      <GridItem className={'SearchResultsListItem__Column'}>{mainContent}</GridItem>
-      <GridItem
-        className={'SearchResultsListItem__Column SearchResultsListItem__Column--Additional'}
-      >
+      <div className={'SearchResultsListItem__Column'}>{mainContent}</div>
+      <div className={'SearchResultsListItem__Column SearchResultsListItem__Column--Additional'}>
         {additionalContent}
-      </GridItem>
-      <GridItem
-        className={'SearchResultsListItem__Column SearchResultsListItem__Column--Timestamp'}
-      >
+      </div>
+      <div className={'SearchResultsListItem__Column SearchResultsListItem__Column--Timestamp'}>
         {timestamp}
-      </GridItem>
+      </div>
     </>
   )
 }

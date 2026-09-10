@@ -2,7 +2,7 @@
 
 import { useRef, useState, type CSSProperties, type ReactNode, type RefObject } from 'react'
 import Link from 'next/link'
-import { ChevronUpIcon, ChevronDownIcon } from '@chakra-ui/icons'
+import { ChevronIcon } from '../../icons'
 import useResizeObserver from '@react-hook/resize-observer'
 import { EmptyListMessage } from '../index'
 import './DataList.css'
@@ -111,9 +111,21 @@ function HeadCell<T>({
     >
       {isActive ? (
         direction === 'asc' ? (
-          <ChevronUpIcon className={'DataList__SortIcon'} w={3.5} h={3.5} aria-hidden />
+          <ChevronIcon
+            className={'DataList__SortIcon'}
+            w={3.5}
+            h={3.5}
+            aria-hidden
+            style={{ transform: 'rotate(-90deg)' }}
+          />
         ) : (
-          <ChevronDownIcon className={'DataList__SortIcon'} w={3.5} h={3.5} aria-hidden />
+          <ChevronIcon
+            className={'DataList__SortIcon'}
+            w={3.5}
+            h={3.5}
+            aria-hidden
+            style={{ transform: 'rotate(90deg)' }}
+          />
         )
       ) : (
         <span className={'DataList__SortSpacer'} aria-hidden />

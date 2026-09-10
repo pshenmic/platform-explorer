@@ -1,4 +1,3 @@
-import { Grid, GridItem } from '@chakra-ui/react'
 import { EmptyListMessage } from '../ui/lists'
 import { ErrorMessageBlock } from '../Errors'
 import { LoadingList } from '../loading'
@@ -35,47 +34,47 @@ function ContestedResourcesList({
 
   return (
     <div className={'ContestedResourcesList'}>
-      <Grid
+      <div
         className={`ContestedResourcesList__ColumnTitles ${headerExtraClass?.[headerStyles ?? ''] || ''}`}
       >
-        <GridItem className={'ContestedResourcesList__ColumnTitle'}>Time</GridItem>
-        <GridItem className={'ContestedResourcesList__ColumnTitle'}>Resource Value</GridItem>
-        <GridItem
+        <div className={'ContestedResourcesList__ColumnTitle'}>Time</div>
+        <div className={'ContestedResourcesList__ColumnTitle'}>Resource Value</div>
+        <div
           className={
             'ContestedResourcesList__ColumnTitle ContestedResourcesList__ColumnTitle--DataContract'
           }
         >
           Data Contract
-        </GridItem>
-        <GridItem
+        </div>
+        <div
           className={
             'ContestedResourcesList__ColumnTitle ContestedResourcesList__ColumnTitle--IndexName'
           }
         >
           Index name
-        </GridItem>
-        <GridItem
+        </div>
+        <div
           className={
             'ContestedResourcesList__ColumnTitle ContestedResourcesList__ColumnTitle--DocumentType'
           }
         >
           Document type
-        </GridItem>
-        <GridItem
+        </div>
+        <div
           className={
             'ContestedResourcesList__ColumnTitle ContestedResourcesList__ColumnTitle--Votes'
           }
         >
           Votes
-        </GridItem>
-        <GridItem
+        </div>
+        <div
           className={
             'ContestedResourcesList__ColumnTitle ContestedResourcesList__ColumnTitle--EndsIn'
           }
         >
           Ends in
-        </GridItem>
-      </Grid>
+        </div>
+      </div>
 
       {!loading ? (
         <div className={'ContestedResourcesList__Items'}>

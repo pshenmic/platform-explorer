@@ -3,7 +3,6 @@ import type { LoadableState } from '../../types/common'
 import { RateTooltip } from '../ui/Tooltips'
 import { ValueCard } from '../cards'
 import { ValueContainer } from '../ui/containers'
-import { Flex } from '@chakra-ui/react'
 import NotActive from './NotActive'
 import './PrefundedBalance.css'
 
@@ -33,11 +32,11 @@ function PrefundedBalance({ prefundedBalance, rate }: PrefundedBalanceProps) {
   }
 
   return elements?.length > 1 ? (
-    <Flex gap={'8px'} flexDirection={'column'}>
+    <div className={'PrefundedBalance__List'}>
       {elements.map((element, i) => (
         <div key={i}>{element}</div>
       ))}
-    </Flex>
+    </div>
   ) : (
     elements[0]
   )

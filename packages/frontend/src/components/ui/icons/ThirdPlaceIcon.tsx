@@ -1,8 +1,9 @@
-import { Icon, useId } from '@chakra-ui/react'
-import type { IconProps } from '@chakra-ui/react'
+import { useId } from 'react'
+import { Icon } from './Icon'
+import type { IconProps } from './Icon'
 
 const FirstPlaceIcon = (props: IconProps) => {
-  const uniqueId = useId(undefined)
+  const uniqueId = useId()
 
   return (
     <Icon viewBox="0 0 29 22" width="29" height="22" fill="none" color={'white'} {...props}>

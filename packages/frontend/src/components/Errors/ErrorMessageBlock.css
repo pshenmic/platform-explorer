@@ -1,0 +1,19 @@
+.ErrorMessageBlock {
+  flex-grow: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  opacity: 0.5;
+}
+
+.ErrorMessageBlock__Inner {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--pe-space-2);
+}
+
+.ErrorMessageBlock__Icon {
+  color: #ddd;
+  flex-shrink: 0;
+}

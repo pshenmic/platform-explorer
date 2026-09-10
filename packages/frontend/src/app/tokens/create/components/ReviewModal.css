@@ -1,0 +1,88 @@
+.ReviewModal {
+  background-color: #181f22;
+  max-width: 648px;
+  width: 100%;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--pe-radius-block);
+  padding: var(--pe-space-5) var(--pe-space-6);
+  color: var(--pe-color-fg);
+}
+.ReviewModal::backdrop {
+  background: rgba(0, 0, 0, 0.5);
+}
+.ReviewModal__Header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.ReviewModal__Title {
+  margin: 0;
+  font-family: var(--pe-font-heading);
+  font-size: var(--pe-text-md);
+  font-weight: var(--pe-font-weight-bold);
+}
+.ReviewModal__Close {
+  background: transparent;
+  border: 0;
+  color: var(--pe-color-fg);
+  cursor: pointer;
+  font-size: var(--pe-text-md);
+}
+.ReviewModal__Intro {
+  font-size: var(--pe-text-sm);
+  margin: 0 0 var(--pe-space-3);
+  color: var(--pe-color-gray-250);
+}
+.ReviewModal__List {
+  list-style: disc;
+  padding-left: var(--pe-space-5);
+  font-family: var(--pe-font-mono);
+  font-size: 12px;
+  line-height: 150%;
+  color: var(--pe-color-white-100);
+}
+.ReviewModal__Owner {
+  margin-top: var(--pe-space-4);
+  font-size: 12px;
+  font-family: var(--pe-font-mono);
+  color: var(--pe-color-gray-250);
+}
+.ReviewModal__OwnerId {
+  color: var(--pe-color-white-100);
+  word-break: break-all;
+}
+.ReviewModal__Tip {
+  margin-top: var(--pe-space-4);
+  padding: var(--pe-space-3);
+  border-radius: var(--pe-radius-md);
+  border: 1px solid #c9a227;
+  color: #f7e07a;
+  font-size: 12px;
+  line-height: 150%;
+}
+.ReviewModal__Footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--pe-space-2);
+  margin-top: var(--pe-space-4);
+}
+.ReviewModal__Btn {
+  font-size: var(--pe-text-sm);
+  padding: var(--pe-space-1) var(--pe-space-3);
+  border-radius: var(--pe-radius-def);
+  border: 0;
+  cursor: pointer;
+}
+.ReviewModal__Btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.ReviewModal__BtnGhost {
+  background: transparent;
+  color: var(--pe-color-fg);
+}
+.ReviewModal__BtnPrimary {
+  min-width: 160px;
+  background: var(--pe-color-brand-normal);
+  color: var(--pe-color-fg);
+}

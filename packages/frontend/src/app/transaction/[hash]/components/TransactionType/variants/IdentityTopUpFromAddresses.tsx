@@ -1,4 +1,3 @@
-import { Flex, Grid, GridItem, Stack, Text } from '@chakra-ui/react'
 import { ValueCard } from '@components/cards'
 import { InfoLine, Identifier } from '@components/data'
 import type {
@@ -41,10 +40,10 @@ export const IdentityTopUpFromAddresses = ({
         value={
           <div>
             {feeStrategy.map((strategy, index) => (
-              <Flex gap={4} key={index}>
+              <div className="TransactionPage__FeeRow TransactionPage__FeeRow--tight" key={index}>
                 <div>{strategy.type}</div>
                 <div>{strategy.value}</div>
-              </Flex>
+              </div>
             ))}
           </div>
         }
@@ -57,16 +56,10 @@ export const IdentityTopUpFromAddresses = ({
         title={`Inputs (${inputs.length})`}
         align={inputs.length !== 1 ? 'top' : undefined}
         value={
-          <Stack gap={2}>
+          <div className="TransactionPage__Stack">
             {inputs.map((input, index) => (
               <ValueCard key={index}>
-                <Flex
-                  direction={{ base: 'column', lg: 'row' }}
-                  align={{ lg: 'center' }}
-                  justify="space-between"
-                  gap={4}
-                  w="100%"
-                >
+                <div className="TransactionPage__Row TransactionPage__Row--lgCol">
                   <ValueCard link={`/platformAddress/${input.platformAddress.bech32m}`}>
                     <Identifier avatar copyButton ellipsis styles={['highlight-both']}>
                       {input.platformAddress.bech32m}
@@ -74,10 +67,10 @@ export const IdentityTopUpFromAddresses = ({
                   </ValueCard>
                   <ValueCard>{input.credits} credits</ValueCard>
                   <ValueCard>Nonce: {input.nonce}</ValueCard>
-                </Flex>
+                </div>
               </ValueCard>
             ))}
-          </Stack>
+          </div>
         }
       />
     )}
@@ -88,22 +81,16 @@ export const IdentityTopUpFromAddresses = ({
         title={`Input Witness (${inputWitness.length})`}
         align={inputWitness.length !== 1 ? 'top' : undefined}
         value={
-          <Stack gap={2}>
+          <div className="TransactionPage__Stack">
             {inputWitness.map((witness, index) => (
               <ValueCard key={index}>
-                <Grid
-                  templateColumns={{
-                    base: '1fr minmax(240px, 1fr)',
-                    md: '100px minmax(100px, 1fr)'
-                  }}
-                  gap={4}
-                >
-                  <Text>Type:</Text>
-                  <GridItem width="fit-content" minW="min-content">
+                <div className="TransactionPage__WitnessGrid">
+                  <span>Type:</span>
+                  <div className="TransactionPage__Fit">
                     <ValueCard>{witness.type}</ValueCard>
-                  </GridItem>
+                  </div>
 
-                  <Text>Signature:</Text>
+                  <span>Signature:</span>
                   <ValueCard>
                     {witness.value && witness.value.signature && (
                       <Identifier copyButton ellipsis styles={['highlight-both']}>
@@ -111,10 +98,10 @@ export const IdentityTopUpFromAddresses = ({
                       </Identifier>
                     )}
                   </ValueCard>
-                </Grid>
+                </div>
               </ValueCard>
             ))}
-          </Stack>
+          </div>
         }
       />
     )}
@@ -127,10 +114,10 @@ export const IdentityTopUpFromAddresses = ({
         }
         title={`Outputs (${outputs.length})`}
         value={
-          <Flex direction="column" gap={2}>
+          <div className="TransactionPage__Stack">
             {outputs.map((output, index) => (
               <ValueCard key={index}>
-                <Flex gap={4} direction={{ base: 'column', md: 'row' }} w="100%">
+                <div className="TransactionPage__Row TransactionPage__Row--mdCol">
                   <ValueCard
                     className="TransactionPage__AddressCard"
                     link={`/platformAddress/${output.platformAddress.bech32m}`}
@@ -142,10 +129,10 @@ export const IdentityTopUpFromAddresses = ({
                   <ValueCard>
                     <div>{output.credits} credits</div>
                   </ValueCard>
-                </Flex>
+                </div>
               </ValueCard>
             ))}
-          </Flex>
+          </div>
         }
       />
     )}

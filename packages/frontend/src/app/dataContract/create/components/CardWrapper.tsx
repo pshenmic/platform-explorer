@@ -1,5 +1,4 @@
 import type { ReactNode } from 'react'
-import { Box, Heading } from '@chakra-ui/react'
 import { cva } from 'class-variance-authority'
 
 import styles from './CardWrapper.module.css'
@@ -14,11 +13,7 @@ interface CardWrapperProps {
 
 export const CardWrapper = ({ title, children, className }: CardWrapperProps) => (
   <div className={[cardStyles(), className].filter(Boolean).join(' ')}>
-    <Heading variant="cloud" size="xs" margin={0}>
-      {title}
-    </Heading>
-    <Box px={6} pb={8} pt={2}>
-      {children}
-    </Box>
+    <h2 className={styles.title}>{title}</h2>
+    <div className={styles.body}>{children}</div>
   </div>
 )

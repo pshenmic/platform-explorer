@@ -3,8 +3,7 @@
 import { useEffect, useRef, useState } from 'react'
 import type { ReactNode } from 'react'
 import { LineChart, TimeframeSelector } from './index'
-import { Container, Heading, Flex } from '@chakra-ui/react'
-import { WarningTwoIcon } from '@chakra-ui/icons'
+import { ErrorMessageBlock } from '../Errors'
 import './ChartBlock.css'
 import useResizeObserver from '@react-hook/resize-observer'
 import { defaultChartConfig } from './config'
@@ -16,24 +15,6 @@ import type {
   TimespanValue
 } from './types'
 import type { WithClassName } from '../../types/common'
-
-function ErrorMessageBlock() {
-  return (
-    <Flex
-      flexGrow={1}
-      w={'100%'}
-      justifyContent={'center'}
-      alignItems={'center'}
-      flexDirection={'column'}
-      opacity={0.5}
-    >
-      <div>
-        <WarningTwoIcon color={'#ddd'} mr={2} mt={-1} />
-        Error loading data
-      </div>
-    </Flex>
-  )
-}
 
 interface LineChartBlockProps extends WithClassName {
   heightPx?: number
@@ -104,62 +85,39 @@ export default function LineChartBlock({
   useResizeObserver(TimeframeMenuRef as never, updateMenuHeight)
 
   return (
-    <>
-      <Flex
-        className={`ChartBlock ${useInfoBlock ? `InfoBlock ${!blockBorders ? 'InfoBlock--NoBorder' : ''}` : ''} ${menuIsOpen ? 'ChartBlock--MenuIsOpen' : ''} ${className ?? ''}`}
-        maxW={'none'}
-        width={'100%'}
-        borderWidth={useInfoBlock ? '1px' : '0'}
-        borderRadius={useInfoBlock ? 'block' : 'none'}
-        direction={'column'}
-        style={{
-          height: menuIsOpen
-            ? `${Math.max(selectorHeight, resolvedHeightPx)}px`
-            : `${resolvedHeightPx}px`,
-          minHeight: '100%'
-        }}
+    <div
+      className={`ChartBlock ${useInfoBlock ? `InfoBlock ${!blockBorders ? 'InfoBlock--NoBorder' : ''}` : ''} ${menuIsOpen ? 'ChartBlock--MenuIsOpen' : ''} ${className ?? ''}`}
+      style={{
+        height: menuIsOpen
+          ? `${Math.max(selectorHeight, resolvedHeightPx)}px`
+          : `${resolvedHeightPx}px`,
+        minHeight: '100%'
+      }}
+    >
+      {useInfoBlock && <h1 className={'InfoBlock__Title'}>{title}</h1>}
+
+      <TimeframeSelector
+        menuRef={TimeframeMenuRef}
+        className={'ChartBlock__TimeframeSelector'}
+        config={chartConfig}
+        changeCallback={timespanChangeHandler}
+        menuIsActive={menuIsActive}
+        openStateCallback={setMenuIsOpen}
+      />
+
+      <div
+        className={`ChartBlock__ChartContainer ${menuIsOpen ? 'ChartBlock__ChartContainer--Hidden' : ''}`}
       >
-        {useInfoBlock && (
-          <Heading className={'InfoBlock__Title'} as={'h1'}>
-            {title}
-          </Heading>
-        )}
-
-        <TimeframeSelector
-          menuRef={TimeframeMenuRef}
-          className={'ChartBlock__TimeframeSelector'}
-          config={chartConfig}
-          changeCallback={timespanChangeHandler}
-          menuIsActive={menuIsActive}
-          openStateCallback={setMenuIsOpen}
-        />
-
-        <Flex
-          className={`ChartBlock__ChartContainer ${menuIsOpen ? 'ChartBlock__ChartContainer--Hidden' : ''}`}
-          height={'100%'}
-          maxW={'none'}
-          flexGrow={'1'}
-          mt={2}
-          mb={4}
-          p={0}
-          flexDirection={'column'}
-        >
-          {!loading ? (
-            !error && data?.length ? (
-              <LineChart data={data} timespan={timespan} xAxis={xAxis} yAxis={yAxis} type={type} />
-            ) : (
-              <ErrorMessageBlock />
-            )
+        {!loading ? (
+          !error && data?.length ? (
+            <LineChart data={data} timespan={timespan} xAxis={xAxis} yAxis={yAxis} type={type} />
           ) : (
-            <Container
-              w={'100%'}
-              h={'100%'}
-              maxW={'none'}
-              className={'ChartBlock__Loader'}
-            ></Container>
-          )}
-        </Flex>
-      </Flex>
-    </>
+            <ErrorMessageBlock />
+          )
+        ) : (
+          <div className={'ChartBlock__Loader'} />
+        )}
+      </div>
+    </div>
   )
 }

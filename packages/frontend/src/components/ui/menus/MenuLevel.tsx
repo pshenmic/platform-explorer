@@ -1,7 +1,7 @@
 'use client'
 
 import type { ReactNode } from 'react'
-import { Link } from '@chakra-ui/react'
+import NextLink from 'next/link'
 import './MenuLevel.css'
 
 export interface MenuItem {
@@ -47,17 +47,15 @@ function MenuLevel({
 
         if (item.link) {
           return (
-            <Link
+            <NextLink
               key={index}
               href={item.link}
-              w={'100%'}
-              textDecoration={'none'}
-              _hover={{ textDecoration: 'none' }}
               onClick={() => onMenuItemClick?.()}
               className={`MenuLevel__Item ${isSelected ? 'MenuLevel__Item--Active' : ''}`}
+              style={{ width: '100%', textDecoration: 'none' }}
             >
               <span>{item.label}</span>
-            </Link>
+            </NextLink>
           )
         }
 

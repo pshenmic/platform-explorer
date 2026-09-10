@@ -7,7 +7,7 @@
 }
 
 .QuorumInfo .InfoLine--Loading .InfoLine__Value {
-  width: 100% !important;
+  width: 100%;
 }
 
 .QuorumInfo {

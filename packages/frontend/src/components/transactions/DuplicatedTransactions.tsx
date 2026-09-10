@@ -3,8 +3,7 @@
 import type { ComponentType, ReactNode, KeyboardEvent } from 'react'
 import { useState } from 'react'
 import Link from 'next/link'
-import { Button } from '@chakra-ui/react'
-import { WarningTwoIcon } from '@chakra-ui/icons'
+
 // Untyped JS components — loose wrappers until data/* is migrated
 import {
   Identifier as IdentifierJs,
@@ -129,9 +128,9 @@ function OccurrenceRow({ occurrence, selected, onSelect }: OccurrenceRowProps) {
           onClick={e => e.stopPropagation()}
           className={'DuplicatedTransactions__ArrowLink'}
         >
-          <Button className={'DuplicatedTransactions__ArrowButton'} size={'xxs'} variant={'blue'}>
-            <ChevronIcon w={'0.5rem'} h={'0.5rem'} />
-          </Button>
+          <span className={'DuplicatedTransactions__ArrowButton'}>
+            <ChevronIcon style={{ width: '0.5rem', height: '0.5rem' }} />
+          </span>
         </Link>
       </div>
     </div>
@@ -162,7 +161,16 @@ function DuplicatedTransactions({
     <div className={'DuplicatedTransactions'}>
       <div className={'DuplicatedTransactions__Title'}>Duplicated Transactions</div>
       <div className={'DuplicatedTransactions__Notice'}>
-        <WarningTwoIcon className={'DuplicatedTransactions__NoticeIcon'} />
+        <svg
+          className={'DuplicatedTransactions__NoticeIcon'}
+          viewBox="0 0 24 24"
+          width="16"
+          height="16"
+          fill="currentColor"
+          aria-hidden="true"
+        >
+          <path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z" />
+        </svg>
         <span>This transaction was included in more than one block</span>
       </div>
       <div className={'DuplicatedTransactions__List'}>
@@ -177,20 +185,23 @@ function DuplicatedTransactions({
       </div>
 
       {hasMore && (
-        <Button
+        <button
+          type={'button'}
           onClick={() => setShowAll(!showAll)}
-          className={'DuplicatedTransactions__ShowMoreButton'}
-          variant={showAll ? 'gray' : 'blue'}
-          size={'sm'}
+          className={`DuplicatedTransactions__ShowMoreButton DuplicatedTransactions__ShowMoreButton--${
+            showAll ? 'Gray' : 'Blue'
+          }`}
         >
           {showAll ? 'Show less' : 'Show more'}
           <ChevronIcon
-            ml={'4px'}
-            h={'10px'}
-            w={'10px'}
-            transform={`rotate(${showAll ? '-90deg' : '90deg'})`}
+            style={{
+              marginLeft: '4px',
+              height: '10px',
+              width: '10px',
+              transform: `rotate(${showAll ? '-90deg' : '90deg'})`
+            }}
           />
-        </Button>
+        </button>
       )}
     </div>
   )

@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useMemo } from 'react'
 import Link from 'next/link'
-import { Box } from '@chakra-ui/react'
+
 import * as Api from '../../util/Api'
 import { Presets } from '../cards'
 import { TransactionTypesInfo } from '../../enums/state.transition.type'
@@ -115,13 +115,7 @@ export default function TxTypesBar({ enabled = true }) {
   })
 
   return (
-    <Box
-      className={'InfoBlock InfoBlock--NoBorder TxTypesBar'}
-      w={'100%'}
-      h={'100%'}
-      as={'section'}
-      aria-label={'Transaction'}
-    >
+    <section className={'InfoBlock InfoBlock--NoBorder TxTypesBar'} aria-label={'Transaction'}>
       <header className={'TxTypesBar__Head'}>
         <div className={'TxTypesBar__HeadText'}>
           <span className={'TxTypesBar__Eyebrow'}>Network mix</span>
@@ -235,6 +229,6 @@ export default function TxTypesBar({ enabled = true }) {
           </div>
         )}
       </div>
-    </Box>
+    </section>
   )
 }

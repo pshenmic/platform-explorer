@@ -118,7 +118,7 @@
 
 .DocumentTotalCard__Avatar {
   margin: 0;
-  position: static !important;
+  position: static;
 }
 
 .DocumentTotalCard__InfoLine--Timestamp {
@@ -254,11 +254,11 @@
   }
 
   .DocumentTotalCard__Identifier .Identifier {
-    justify-content: flex-start !important;
+    justify-content: flex-start;
   }
 
   .DocumentTotalCard__InfoLine--Revision {
-    flex-direction: row !important;
+    flex-direction: row;
   }
 }
 

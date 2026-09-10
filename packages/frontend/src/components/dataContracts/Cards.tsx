@@ -2,7 +2,6 @@
 
 import { useState } from 'react'
 import type { ComponentType, ReactNode } from 'react'
-import { Flex, Box } from '@chakra-ui/react'
 import { InfoCard } from '../cards'
 import { ErrorMessageBlock } from '../Errors'
 import ImageGeneratorJs from '../imageGenerator'
@@ -46,7 +45,7 @@ function DataContractCard({ dataContract, className, loading = false }: DataCont
     >
       {!loading ? (
         <div>
-          <Flex mb={1} alignItems={'center'}>
+          <div className={'DataContractCard__Header'}>
             <div className={'DataContractCard__Img'}>
               <ImageGenerator
                 username={dataContract.identifier}
@@ -57,7 +56,7 @@ function DataContractCard({ dataContract, className, loading = false }: DataCont
               />
             </div>
             <div className={'DataContractCard__Name'}>{dataContract.name}</div>
-          </Flex>
+          </div>
           <Identifier
             className={'DataContractCard__Id'}
             ellipsis={true}
@@ -67,7 +66,7 @@ function DataContractCard({ dataContract, className, loading = false }: DataCont
           </Identifier>
         </div>
       ) : (
-        <Box h={'55px'} />
+        <div className={'DataContractCard__Skeleton'} />
       )}
     </InfoCard>
   )

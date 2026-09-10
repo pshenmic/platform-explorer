@@ -24,7 +24,7 @@
 }
 
 .Supply--Loading .Supply__ProgressContainer--Single {
-  max-width: none !important;
+  max-width: none;
 }
 
 .Supply__ProgressContainer .Supply__Title {
@@ -82,6 +82,18 @@
 
 .Supply__MaxSupply {
   color: var(--pe-color-fg-muted);
+}
+
+.Supply__Progress {
+  height: 1px;
+  width: 100%;
+  background: var(--pe-color-gray-700);
+  overflow: hidden;
+}
+
+.Supply__ProgressBar {
+  height: 100%;
+  background: var(--pe-color-gray-400);
 }
 
 @container (max-width: 27.5rem) {

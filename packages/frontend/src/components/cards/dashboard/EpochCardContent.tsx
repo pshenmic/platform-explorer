@@ -1,7 +1,7 @@
 import type { ComponentType, ReactNode } from 'react'
 import type { Status } from '../../../types'
 import { EpochTooltip } from '../../ui/Tooltips'
-import { InfoIcon } from '@chakra-ui/icons'
+import { InfoIcon } from '../../ui/icons'
 import NotActiveJs from '../../data/NotActive'
 import EpochProgressJs from '../../networkStatus/EpochProgress'
 import './EpochCardContent.css'
@@ -23,7 +23,7 @@ export function EpochCardContent({ status }: EpochCardContentProps) {
         <EpochTooltip epoch={status.epoch}>
           <div className={'ValidatorsTotalCard__EpochNumber'}>
             #{status.epoch.number}
-            <InfoIcon ml={2} color={'brand.light'} boxSize={4} />
+            <InfoIcon className={'EpochCardContent__InfoIcon'} />
           </div>
         </EpochTooltip>
       ) : (

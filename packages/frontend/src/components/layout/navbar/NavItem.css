@@ -58,7 +58,7 @@
 
   .NavItem--Active {
     border: 1px solid var(--pe-color-brand-normal);
-    color: var(--pe-color-brand-normal) !important;
+    color: var(--pe-color-brand-normal);
     background: rgba(255, 255, 255, 0.02);
     cursor: default;
   }
@@ -74,6 +74,6 @@
   .NavItem:active {
     color: var(--pe-color-fg);
     transform: translateY(1px);
-    background: rgba(255, 255, 255, 0.1) !important;
+    background: rgba(255, 255, 255, 0.1);
   }
 }

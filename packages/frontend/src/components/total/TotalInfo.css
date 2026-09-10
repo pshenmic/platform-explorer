@@ -26,6 +26,9 @@
 
 .TotalInfo__ContentContainer {
   margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
 }
 
 .TotalInfo__Item {
@@ -72,7 +75,7 @@
   }
 
   .TotalInfo__ContentContainer {
-    flex-wrap: nowrap !important;
+    flex-wrap: nowrap;
     padding-bottom: var(--pe-space-1);
   }
 

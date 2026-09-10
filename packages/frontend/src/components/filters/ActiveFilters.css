@@ -8,15 +8,17 @@
 .ActiveFilters__Item {
   display: flex;
   align-items: center;
-  font-weight: var(--pe-font-weight-medium) !important;
-  text-transform: none !important;
-  background-color: var(--pe-color-gray-800) !important;
+  gap: var(--pe-space-2);
+  border: none;
+  font-weight: var(--pe-font-weight-medium);
+  text-transform: none;
+  background-color: var(--pe-color-gray-800);
   cursor: default;
   max-width: 100%;
-  white-space: break-spaces !important;
+  white-space: break-spaces;
   word-break: break-all;
   text-align: left;
-  height: auto !important;
+  height: auto;
   padding: var(--pe-space-1_5) var(--pe-space-3);
 }
 

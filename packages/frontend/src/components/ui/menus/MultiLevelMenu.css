@@ -1,9 +1,8 @@
-.MultiLevelMenu__Content,
-.MultiLevelMenu .chakra-popover__content {
+.MultiLevelMenu__Content {
   backdrop-filter: blur(10px);
   border-radius: var(--pe-radius-def);
   border: 1px solid var(--pe-color-border);
-  background: var(--pe-color-surface-elevated) !important;
+  background: var(--pe-color-surface-elevated);
   box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
   overflow: hidden;
   padding: 0;
@@ -16,8 +15,8 @@
 }
 
 .MultiLevelMenu__Body {
-  overflow: hidden !important;
-  padding: 0 !important;
+  overflow: hidden;
+  padding: 0;
 }
 
 .MultiLevelMenu__Layout {

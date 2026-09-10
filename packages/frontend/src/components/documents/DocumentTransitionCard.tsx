@@ -9,7 +9,6 @@ import {
 } from '../data'
 import BatchTypeBadgeJs from '../transactions/BatchTypeBadge'
 import { ValueContainer } from '../ui/containers'
-import { Code } from '@chakra-ui/react'
 import './DocumentTransitionCard.css'
 
 // Untyped JS modules — cast until migrated
@@ -273,9 +272,9 @@ const DocumentTransitionCard = ({
           className={'DocumentTransitionCard__InfoLine DocumentTransitionCard__InfoLine--Data'}
           title={'Data'}
           value={
-            <Code borderRadius={'lg'} px={5} py={4}>
+            <pre className={'DocumentTransitionCard__Code'}>
               {JSON.stringify(transition?.data, null, 2)}
-            </Code>
+            </pre>
           }
           error={transition?.data === undefined}
         />

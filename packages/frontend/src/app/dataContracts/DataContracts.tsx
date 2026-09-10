@@ -9,7 +9,7 @@ import { useQuery, keepPreviousData } from '@tanstack/react-query'
 import { useQueryState, parseAsInteger } from 'nuqs'
 import { normalizePagination } from '@utils/table'
 
-import { Container, Box, useBreakpointValue } from '@chakra-ui/react'
+import { useIsMobile } from '../../hooks'
 import { useDataContractsFilters, useDataContractsSorting } from '@components/dataContracts/hooks'
 import { DataContractsFilter } from '@components/dataContracts/DataContractsFilter'
 import DataContractsStatsInline from '@components/dataContracts/DataContractsStatsInline'
@@ -26,7 +26,7 @@ const paginateConfig = {
 }
 
 function DataContractsLayout() {
-  const isMobile = useBreakpointValue({ base: true, md: false })
+  const isMobile = useIsMobile()
   const { sorting } = useDataContractsSorting()
   const { filters, setFilters } = useDataContractsFilters()
   const [page, setPage] = useQueryState(
@@ -88,8 +88,8 @@ function DataContractsLayout() {
   }
 
   return (
-    <Container maxW={'container.maxPageW'} color={'white'} mt={8} mb={8}>
-      <Container maxW={'container.maxPageW'} className={'InfoBlock'}>
+    <div className={'ListPage DataContractsPage'}>
+      <div className={'InfoBlock'}>
         <div className={'DataContractsPage__Controls'}>
           <PageTitle
             title={'Data contracts'}
@@ -114,14 +114,14 @@ function DataContractsLayout() {
             pinnedGroup={pinnedGroup as never}
           />
         ) : (
-          <Container h={20}>
+          <div className={'ListPage__Error'}>
             <ErrorMessageBlock />
-          </Container>
+          </div>
         )}
 
         {(dataContracts.data?.resultSet?.length ?? 0) > 0 && (
           <div className={'ListNavigation'}>
-            <Box display={['none', 'none', 'block']} width={'155px'} />
+            <div className={'ListNavigation__Balance'} />
             <Pagination
               onPageChange={({ selected }) => {
                 setPage((selected || 0) + 1)
@@ -138,8 +138,8 @@ function DataContractsLayout() {
             />
           </div>
         )}
-      </Container>
-    </Container>
+      </div>
+    </div>
   )
 }
 

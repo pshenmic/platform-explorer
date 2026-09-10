@@ -1,18 +1,12 @@
 'use client'
 
-import { Box } from '@chakra-ui/react'
 import { StatusBar } from './StatusBar'
 import './GovernanceCard.css'
 
 export default function GovernanceCard(props: any) {
   const { contested, activeContested, latestContested, latestVotes, epochData } = props
   return (
-    <Box
-      className={'InfoBlock InfoBlock--NoBorder GovernanceCard'}
-      w={'100%'}
-      as={'section'}
-      aria-label={'Governance'}
-    >
+    <section className={'InfoBlock InfoBlock--NoBorder GovernanceCard'} aria-label={'Governance'}>
       <header className={'GovernanceCard__Head'}>
         <div className={'GovernanceCard__HeadText'}>
           <span className={'GovernanceCard__Eyebrow'}>Governance</span>
@@ -32,6 +26,6 @@ export default function GovernanceCard(props: any) {
           epochData={epochData}
         />
       </div>
-    </Box>
+    </section>
   )
 }

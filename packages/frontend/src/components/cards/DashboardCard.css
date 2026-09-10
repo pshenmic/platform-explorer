@@ -41,6 +41,11 @@
   text-transform: uppercase;
 }
 
+.DashboardCard__Icon {
+  width: 3rem;
+  height: 3rem;
+}
+
 .DashboardCard__Value {
   font-family: var(--pe-font-heading);
   font-weight: var(--pe-font-weight-extrabold);

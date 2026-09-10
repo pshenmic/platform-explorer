@@ -76,18 +76,44 @@
   .TokenTransitionCard__InfoLine--Revision .InfoLine__Value,
   .TokenTransitionCard__InfoLine--Action .InfoLine__Title,
   .TokenTransitionCard__InfoLine--Action .InfoLine__Value {
-    width: max-content !important;
+    width: max-content;
   }
 
   .TokenTransitionCard__InfoLine--Revision .InfoLine__Value,
   .TokenTransitionCard__InfoLine--Action .InfoLine__Value {
     width: max-content;
-    text-align: right !important;
+    text-align: right;
   }
 }
 
 .TokenTransitionCard .InfoLine__Value {
   text-align: left;
+}
+
+.TokenTransitionCard__AmountBadge {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  max-width: max-content;
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.5rem;
+  background: rgba(var(--pe-color-green-emeralds-rgb), 0.2);
+  color: var(--pe-color-green-emeralds);
+}
+
+.TokenTransitionCard__PriceFrom {
+  display: flex;
+  gap: 0.25rem;
+}
+
+.TokenTransitionCard__Data {
+  margin: 0;
+  padding: 1rem 1.25rem;
+  border-radius: 0.5rem;
+  overflow: auto;
+  font-family: var(--pe-font-mono);
+  font-size: 0.75rem;
+  background: var(--pe-color-gray-800);
 }
 
 .TokenTransitionCard .ValueCard {
@@ -141,7 +167,7 @@
 
 @container (max-width: 600px) {
   .TokenTransitionCard .InfoLine__Value {
-    text-align: right !important;
+    text-align: right;
     display: flex;
     justify-content: flex-end;
   }
