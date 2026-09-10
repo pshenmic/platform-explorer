@@ -32,8 +32,14 @@ export function useBreakpointKey(): BreakpointKey {
     }
 
     update()
-    mqs.forEach(([, mq]) => mq.addEventListener('change', update))
-    return () => mqs.forEach(([, mq]) => mq.removeEventListener('change', update))
+    mqs.forEach(([, mq]) => {
+      mq.addEventListener('change', update)
+    })
+    return () => {
+      mqs.forEach(([, mq]) => {
+        mq.removeEventListener('change', update)
+      })
+    }
   }, [])
 
   return key
