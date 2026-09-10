@@ -23,7 +23,8 @@ function epochIndexForTimestamp(timestamp: string | undefined, epoch: Epoch | nu
   const start = Number(epoch.startTime)
   const end = Number(epoch.endTime)
   const duration = end - start
-  if (!Number.isFinite(t) || duration <= 0) return typeof epoch.number === 'number' ? epoch.number : null
+  if (!Number.isFinite(t) || duration <= 0)
+    return typeof epoch.number === 'number' ? epoch.number : null
   return epoch.number + Math.floor((t - start) / duration)
 }
 

@@ -61,7 +61,11 @@ export default function RateTooltip({
   let resolvedDash = dash
   let resolvedUsd = usd
   if (resolvedDash == null && typeof credits === 'number') resolvedDash = creditsToDash(credits)
-  if (resolvedUsd == null && typeof resolvedDash === 'number' && typeof resolvedRate?.usd === 'number') {
+  if (
+    resolvedUsd == null &&
+    typeof resolvedDash === 'number' &&
+    typeof resolvedRate?.usd === 'number'
+  ) {
     resolvedUsd = resolvedDash * resolvedRate.usd
   }
 

@@ -127,11 +127,7 @@ function VotesList({
       filterOptions: CHOICE_OPTIONS,
       minWidth: 148,
       cell: (vote: Vote) =>
-        typeof vote?.choice === 'number' ? (
-          <ChoiceBadge choice={vote.choice} />
-        ) : (
-          <NotActive />
-        )
+        typeof vote?.choice === 'number' ? <ChoiceBadge choice={vote.choice} /> : <NotActive />
     },
     {
       key: 'document',
@@ -261,7 +257,9 @@ function VotesList({
       pinFirst={pinFirst}
       loading={loading}
       rowHref={vote => (vote?.txHash ? `/transaction/${vote.txHash}` : undefined)}
-      rowKey={(vote, index) => vote?.txHash || `${vote?.voterIdentifier}-${vote?.timestamp}-${index}`}
+      rowKey={(vote, index) =>
+        vote?.txHash || `${vote?.voterIdentifier}-${vote?.timestamp}-${index}`
+      }
       headerVariant={headerStyles === 'light' ? 'light' : 'default'}
       emptyMessage={
         filterValues && Object.keys(filterValues).length

@@ -54,7 +54,9 @@ interface IdentitiesListProps {
 function compactAmount(value: number) {
   if (!Number.isFinite(value)) return '—'
   if (Math.abs(value) < 1_000_000) return value.toLocaleString('en-US')
-  return new Intl.NumberFormat('en', { notation: 'compact', maximumFractionDigits: 2 }).format(value)
+  return new Intl.NumberFormat('en', { notation: 'compact', maximumFractionDigits: 2 }).format(
+    value
+  )
 }
 
 const renderCount = (value: unknown) => {
@@ -116,7 +118,11 @@ function IdentitiesList({
           <span className={'DataList__Entity'}>
             {PlaceIcon && <PlaceIcon className={'DataList__Medal'} />}
             {activeAlias ? (
-              <Alias ellipsis={true} alias={activeAlias?.alias} avatarSource={identity.identifier} />
+              <Alias
+                ellipsis={true}
+                alias={activeAlias?.alias}
+                avatarSource={identity.identifier}
+              />
             ) : (
               <Identifier ellipsis={true} avatar={true} copyButton={true}>
                 {identity.identifier}

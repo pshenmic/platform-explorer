@@ -128,11 +128,7 @@ function validatorColumns(canFilter: boolean) {
       align: 'right',
       cell: (validator: Validator) => {
         const ts = validator.lastProposedBlockHeader?.timestamp
-        return ts ? (
-          <TimeDelta showTimestampTooltip={true} endDate={new Date(ts)} />
-        ) : (
-          <NotActive />
-        )
+        return ts ? <TimeDelta showTimestampTooltip={true} endDate={new Date(ts)} /> : <NotActive />
       }
     }
   ]

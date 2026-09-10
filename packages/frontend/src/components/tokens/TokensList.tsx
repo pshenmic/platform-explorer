@@ -64,7 +64,9 @@ function TokensList({
         return (
           <span className={'DataList__Entity'}>
             {name ? (
-              <Alias ellipsis={true} avatarSource={token.identifier}>{name}</Alias>
+              <Alias ellipsis={true} avatarSource={token.identifier}>
+                {name}
+              </Alias>
             ) : (
               <Identifier ellipsis={true} avatar={true} styles={['highlight-both']}>
                 {token.identifier}

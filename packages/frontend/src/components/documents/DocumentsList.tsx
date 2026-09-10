@@ -150,11 +150,7 @@ export default function DocumentsList({
             align: 'right',
             priority: 1,
             cell: (document: Document & { gasUsed?: number }) =>
-              Number.isFinite(document?.gasUsed) ? (
-                document.gasUsed.toLocaleString()
-              ) : (
-                <NotActive />
-              )
+              Number.isFinite(document?.gasUsed) ? document.gasUsed.toLocaleString() : <NotActive />
           }
         ]
       : []),
