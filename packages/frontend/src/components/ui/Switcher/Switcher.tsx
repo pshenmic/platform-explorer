@@ -1,4 +1,4 @@
-import './Switcher.scss'
+import './Switcher.css'
 
 interface SwitcherOption {
   title: string
@@ -10,7 +10,7 @@ interface SwitcherProps {
   defaultValue?: string
 }
 
-function Switcher ({ options = [], onChange, defaultValue }: SwitcherProps) {
+function Switcher({ options = [], onChange, defaultValue }: SwitcherProps) {
   if (!options?.length) return <></>
   if (!onChange) onChange = () => {}
 
@@ -22,7 +22,11 @@ function Switcher ({ options = [], onChange, defaultValue }: SwitcherProps) {
             type={'radio'}
             name={'switcher'}
             value={option.title}
-            defaultChecked={String(defaultValue).toLowerCase() === String(option.title).toLowerCase() || (!defaultValue && i === 0)}/>
+            defaultChecked={
+              String(defaultValue).toLowerCase() === String(option.title).toLowerCase() ||
+              (!defaultValue && i === 0)
+            }
+          />
           <span className={'Switcher__OptionTitle'}>{option.title}</span>
         </label>
       ))}
@@ -30,6 +34,4 @@ function Switcher ({ options = [], onChange, defaultValue }: SwitcherProps) {
   )
 }
 
-export {
-  Switcher
-}
+export { Switcher }

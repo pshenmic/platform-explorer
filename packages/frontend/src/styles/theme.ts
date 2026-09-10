@@ -11,11 +11,7 @@ import Input from './components/Input'
 import Heading from './components/Heading'
 import Textarea from './components/Textarea'
 
-import {
-  Montserrat,
-  Open_Sans as OpenSans,
-  Roboto_Mono as RobotoMono
-} from 'next/font/google'
+import { Montserrat, Open_Sans as OpenSans, Roboto_Mono as RobotoMono } from 'next/font/google'
 import Checkbox from './components/Checkbox'
 
 const montserrat = Montserrat({ subsets: ['latin'] })
@@ -63,7 +59,7 @@ export const theme = extendTheme({
   colors,
   radii: {
     // must fit inside the corner-docked InfoBlock__Title badge (badge height ≥ 2×radius)
-    block: '20px'
+    block: 'var(--pe-radius-block)'
   },
   styles: {
     global

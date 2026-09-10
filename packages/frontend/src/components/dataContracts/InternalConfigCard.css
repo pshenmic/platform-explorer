@@ -1,0 +1,52 @@
+.InternalConfigCard {
+  display: flex;
+  flex-direction: column;
+  gap: var(--pe-space-2);
+  font-family: var(--pe-font-mono);
+  padding: var(--pe-space-10) !important;
+}
+
+.InternalConfigCard__Line {
+  display: flex;
+  align-items: center;
+  gap: var(--pe-space-2);
+}
+
+.InternalConfigCard__Title {
+  white-space: break-spaces;
+  width: 16.875rem;
+  color: var(--pe-color-fg-muted);
+  font-size: var(--pe-text-sm);
+}
+
+.InternalConfigCard__Title:after {
+  content: ":";
+}
+
+.InternalConfigCard__ValueContainer {
+  font-size: var(--pe-text-xs);
+}
+
+.InternalConfigCard__ValueContainer {
+  max-width: max-content;
+}
+
+@media screen and (max-width: 48em) {
+  .InternalConfigCard {
+    padding: var(--pe-space-4) !important;
+  }
+
+  .InternalConfigCard__Line {
+    justify-content: space-between;
+  }
+}
+
+@media screen and (max-width: 18em) {
+  .InternalConfigCard__Line {
+    flex-wrap: wrap;
+  }
+
+  .InternalConfigCard__ValueContainer {
+    margin-left: auto;
+  }
+}

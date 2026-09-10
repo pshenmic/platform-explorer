@@ -1,0 +1,15 @@
+.TransitionCard {
+  padding: var(--pe-space-10) !important;
+}
+
+@media screen and (max-width: 48em) {
+  .TransitionCard {
+    padding: var(--pe-space-8) !important;
+  }
+}
+
+@media screen and (max-width: 30em) {
+  .TransitionCard {
+    padding: var(--pe-space-4) !important;
+  }
+}

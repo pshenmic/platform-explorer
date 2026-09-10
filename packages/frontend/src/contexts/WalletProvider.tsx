@@ -72,7 +72,7 @@ export const WalletProvider = ({ children }: WalletProviderProps) => {
     setIsConnecting(true)
     return dashPlatformExtension.signer
       .connect()
-      .then((wallet) => {
+      .then(wallet => {
         const current = wallet.identities?.find(
           ({ identifier }) => identifier === wallet.currentIdentity
         )
@@ -92,7 +92,9 @@ export const WalletProvider = ({ children }: WalletProviderProps) => {
   }
 
   return (
-    <WalletContext.Provider value={{ connectWallet, connected, walletInfo, currentIdentity, error, isConnecting }}>
+    <WalletContext.Provider
+      value={{ connectWallet, connected, walletInfo, currentIdentity, error, isConnecting }}
+    >
       {children}
     </WalletContext.Provider>
   )

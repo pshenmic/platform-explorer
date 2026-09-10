@@ -1,0 +1,13 @@
+.root {
+  transition: 0.3s;
+}
+.root.open .list {
+  position: relative;
+  opacity: 1;
+}
+.root.close .list {
+  position: absolute;
+  width: 100%;
+  top: 0;
+  opacity: 0;
+}

@@ -6,7 +6,7 @@ interface SubmitButtonProps extends ButtonProps {
   text?: string
 }
 
-export default function SubmitButton ({ onSubmit, text, children, ...props }: SubmitButtonProps) {
+export default function SubmitButton({ onSubmit, text, children, ...props }: SubmitButtonProps) {
   return (
     <Button
       className={'SubmitButton'}

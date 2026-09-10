@@ -1,0 +1,171 @@
+.TokenDigestCard {
+  padding: calc(var(--pe-space-3) + 0px);
+}
+
+@media screen and (min-width: 48em) {
+  .TokenDigestCard {
+    padding: calc(var(--pe-space-4) + 0px);
+  }
+}
+
+@media screen and (min-width: 62em) {
+  .TokenDigestCard {
+    padding: calc(var(--pe-space-5) + 0px);
+  }
+}
+
+@media screen and (min-width: 80em) {
+  .TokenDigestCard {
+    padding: calc(var(--pe-space-6) + 0px);
+  }
+}
+
+.TokenDigestCard {
+  font-family: var(--pe-font-mono);
+  font-size: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.875rem;
+  background: rgba(var(--pe-color-gray-800-rgb), 0.5);
+  border-radius: var(--pe-radius-def);
+  container-type: inline-size;
+}
+
+.TokenDigestCard--Loading .InfoLine__Value {
+  height: 1.5rem;
+}
+
+.TokenDigestCard--Loading .TokenDigestCard__InfoContainer {
+  overflow: hidden;
+}
+
+.TokenDigestCard--Loading .TokenDigestCard__InfoContainerValue {
+  width: 100px;
+  max-width: 100%;
+}
+
+.TokenDigestCard__RowContainer {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.875rem;
+}
+
+.TokenDigestCard__InfoContainer {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px;
+  padding: 24px;
+  background: rgba(var(--pe-color-gray-800-rgb), 0.5);
+  border-radius: var(--pe-radius-def);
+  width: 100%;
+}
+
+.TokenDigestCard__InfoContainer .InfoLine__Title svg {
+  width: 1.75rem;
+  height: 1.75rem;
+}
+
+.TokenDigestCard__LinesContainer {
+  flex-direction: column;
+}
+
+.TokenDigestCard {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  container-type: inline-size;
+}
+
+.TokenDigestCard--Loading .TokenDigestCard .LoadingLine {
+  height: 24px;
+}
+
+.TokenDigestCard__TopCards {
+  display: flex;
+  gap: 16px;
+  width: 100%;
+}
+
+.TokenDigestCard__SupplyCardContainer {
+  width: 100%;
+  min-height: 4.75rem;
+}
+
+.TokenDigestCard__SupplyCard {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.TokenDigestCard__SupplyCard svg {
+  width: 1.75rem;
+  height: auto;
+}
+
+.TokenDigestCard__CurrentSupplyTitle {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 88px;
+}
+
+.TokenDigestCard__SupplyCardTitle {
+  font-size: 0.75rem;
+  color: var(--pe-color-fg-muted);
+}
+
+.TokenDigestCard__SupplyData {
+  flex-grow: 1;
+}
+
+.TokenDigestCard__TotalSupplyTitle {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  align-self: flex-end;
+}
+
+.TokenDigestCard__SupplyFooterTitle {
+  font-size: 0.75rem;
+  color: var(--pe-color-fg-muted);
+  text-align: right;
+  line-height: 1.1;
+}
+
+.TokenDigestCard__RowContainer {
+  display: flex;
+  gap: 16px;
+  width: 100%;
+}
+
+.TokenDigestCard__RowContainer .ValueContainer {
+  overflow: hidden;
+  width: 100%;
+  line-height: 1.1;
+  min-height: 4.75rem;
+}
+
+.TokenDigestCard__InfoLine {
+  gap: 4px;
+  column-gap: 8px;
+}
+
+.TokenDigestCard__InfoLine .InfoLine__Value {
+  text-align: right;
+}
+
+.TokenDigestCard__ValueContainer {
+  display: flex;
+  justify-content: flex-end;
+  overflow: hidden;
+}
+
+@container (max-width: 35rem) {
+  .TokenDigestCard__RowContainer {
+    flex-wrap: wrap;
+  }
+}

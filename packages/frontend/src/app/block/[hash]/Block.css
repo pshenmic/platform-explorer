@@ -1,0 +1,40 @@
+.Block .PageDataContainer__Content {
+  display: flex;
+  flex-direction: column;
+  overflow: visible;
+}
+
+.Block__InfoBlock .InfoLine--Loading {
+  flex-wrap: nowrap;
+}
+
+.Block__InfoBlocks {
+  display: flex;
+  width: 100%;
+  gap: var(--pe-space-5);
+}
+
+.Block__InfoBlock {
+  width: 50%;
+}
+
+@media screen and (max-width: 62em) {
+  .Block__InfoBlocks {
+    flex-direction: column;
+  }
+
+  .Block__InfoBlock {
+    width: 100%;
+  }
+}
+
+@media screen and (max-width: 48em) {
+  .Block__InfoBlocks {
+    flex-direction: column;
+    gap: var(--pe-space-3);
+  }
+
+  .Block__InfoBlock {
+    width: 100%;
+  }
+}

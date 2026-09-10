@@ -1,0 +1,12 @@
+/* BEM: EmptyListMessage — plain CSS + design tokens */
+
+.EmptyListMessage {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  font-size: var(--pe-text-sm);
+  font-family: var(--pe-font-mono);
+  color: var(--pe-color-fg-muted);
+}

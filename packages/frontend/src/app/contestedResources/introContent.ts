@@ -1,0 +1,4 @@
+const content = `A contested resource appears when several identities request the same premium name, such as a short DPNS username. Masternodes then vote to award it to one identity or to lock it so no one can claim it.
+`
+
+export default content

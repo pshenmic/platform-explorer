@@ -1,0 +1,7 @@
+.Features {
+  display: flex;
+  flex-direction: column;
+}
+.Features__Row {
+  font-size: 0.75rem;
+}

@@ -1,0 +1,89 @@
+/**
+ * Design tokens — typography, space, size, opacity, motion.
+ *
+ * Space scale (4px base / rem @ 16px):
+ *   1=4px  2=8px  3=12px  4=16px  5=20px  6=24px  8=32px  10=40px
+ * Half-steps 1.5 / 2.5 / 3.5 for legacy 6 / 10 / 14px (prefer full steps in new UI).
+ *
+ * Type: use --pe-text-* not raw 12px / 0.75rem.
+ * Weight / opacity / control heights: use named tokens below.
+ */
+
+:root {
+  /* Fonts */
+  --pe-font-heading: var(--chakra-fonts-heading, "Montserrat", system-ui, sans-serif);
+  --pe-font-body: var(--chakra-fonts-body, "Open Sans", system-ui, sans-serif);
+  --pe-font-mono: var(--chakra-fonts-mono, "Roboto Mono", ui-monospace, monospace);
+
+  /* Type scale */
+  --pe-text-2xs: 0.625rem; /* 10px */
+  --pe-text-xs: 0.6875rem; /* 11px */
+  --pe-text-sm: 0.75rem; /* 12px */
+  --pe-text-md: 0.875rem; /* 14px */
+  --pe-text-lg: 1rem; /* 16px */
+  --pe-text-xl: 1.125rem; /* 18px */
+  --pe-text-2xl: 1.5rem; /* 24px */
+
+  --pe-font-weight-normal: 400;
+  --pe-font-weight-medium: 500;
+  --pe-font-weight-semibold: 600;
+  --pe-font-weight-bold: 700;
+  --pe-font-weight-extrabold: 800;
+
+  --pe-leading-tight: 1.25;
+  --pe-leading-normal: 1.45;
+  --pe-leading-list: 1.5rem; /* 24px */
+
+  /* Breakpoints — match Chakra (sm…3xl) */
+  --pe-bp-sm: 30em;
+  --pe-bp-md: 48em;
+  --pe-bp-lg: 62em;
+  --pe-bp-xl: 80em;
+  --pe-bp-2xl: 96em;
+  --pe-bp-3xl: 120em;
+
+  /* Space scale */
+  --pe-space-px: 1px;
+  --pe-space-0: 0;
+  --pe-space-1: 0.25rem; /* 4px */
+  --pe-space-1_5: 0.375rem; /* 6px — legacy */
+  --pe-space-2: 0.5rem; /* 8px */
+  --pe-space-2_5: 0.625rem; /* 10px — legacy */
+  --pe-space-3: 0.75rem; /* 12px */
+  --pe-space-3_5: 0.875rem; /* 14px — legacy */
+  --pe-space-4: 1rem; /* 16px */
+  --pe-space-5: 1.25rem; /* 20px */
+  --pe-space-6: 1.5rem; /* 24px */
+  --pe-space-7: 1.75rem; /* 28px */
+  --pe-space-8: 2rem; /* 32px */
+  --pe-space-9: 2.375rem; /* 38px */
+  --pe-space-10: 2.5rem; /* 40px */
+
+  /* Control / icon sizes */
+  --pe-size-icon-sm: 1rem; /* 16px */
+  --pe-size-icon-md: 1.5rem; /* 24px */
+  --pe-size-control-sm: 1.5rem; /* 24px */
+  --pe-size-control-md: 2.5rem; /* 40px */
+  --pe-size-control-lg: 3rem; /* 48px */
+
+  /* Opacity */
+  --pe-opacity-faint: 0.1;
+  --pe-opacity-subtle: 0.2;
+  --pe-opacity-muted: 0.5;
+  --pe-opacity-soft: 0.75;
+  --pe-opacity-strong: 0.85;
+
+  /* List chrome */
+  --pe-list-row-pad-y: 7px;
+  --pe-list-row-pad-x: var(--pe-space-3);
+  --pe-list-row-gap: var(--pe-space-4);
+  --pe-list-row-radius: var(--pe-radius-def);
+
+  /* Layout sizes */
+  --pe-size-container-xl: 1310px;
+  --pe-size-container-max-page: 1920px;
+  --pe-size-container-max-navigation: none;
+
+  /* Motion */
+  --pe-transition-def: 0.15s;
+}

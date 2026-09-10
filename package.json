@@ -10,11 +10,14 @@
   },
   "author": "pshenmic <pshenmic@gmail.com>",
   "license": "ISC",
-  "dependencies": {
-  },
+  "dependencies": {},
   "private": true,
   "workspaces": [
     "packages/*"
   ],
-  "repository": "git@github.com:pshenmic/platform-explorer.git"
+  "repository": "git@github.com:pshenmic/platform-explorer.git",
+  "overrides": {
+    "react": "19.2.8",
+    "react-dom": "19.2.8"
+  }
 }

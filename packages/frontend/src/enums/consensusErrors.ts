@@ -8,7 +8,8 @@ export const CONSENSUS_ERROR_MESSAGES: Record<string, string> = {
   IdentityNotFoundError: 'Identity not found.',
   InvalidStateTransitionSignatureError: 'Invalid signature. Re-sign with correct key.',
   MissingPublicKeyError: 'Public key not found on identity.',
-  InvalidSignaturePublicKeySecurityLevelError: 'Signing key security level too low. Sign first to fix.',
+  InvalidSignaturePublicKeySecurityLevelError:
+    'Signing key security level too low. Sign first to fix.',
   PublicKeySecurityLevelNotMetError: 'Signing key security level too low.',
   InvalidSignaturePublicKeyPurposeError: 'Signing key has wrong purpose.',
   WrongPublicKeyPurposeError: 'Signing key has wrong purpose.',
@@ -26,9 +27,16 @@ export const CONSENSUS_ERROR_MESSAGES: Record<string, string> = {
   DuplicateUniqueIndexError: 'Duplicate value in unique index.'
 }
 
-export function explainConsensusError (errorName: string | null | undefined, code: number | null | undefined): string {
+export function explainConsensusError(
+  errorName: string | null | undefined,
+  code: number | null | undefined
+): string {
   if (!errorName) {
-    return code != null ? `Drive rejected the transaction (code ${code})` : 'Drive rejected the transaction'
+    return code != null
+      ? `Drive rejected the transaction (code ${code})`
+      : 'Drive rejected the transaction'
   }
-  return CONSENSUS_ERROR_MESSAGES[errorName] ?? `${errorName}${code != null ? ` (code ${code})` : ''}`
+  return (
+    CONSENSUS_ERROR_MESSAGES[errorName] ?? `${errorName}${code != null ? ` (code ${code})` : ''}`
+  )
 }

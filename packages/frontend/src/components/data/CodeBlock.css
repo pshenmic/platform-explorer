@@ -1,0 +1,54 @@
+.CodeBlock__CodeContainer {
+  position: relative;
+  z-index: 1;
+  margin: 0 -15px;
+}
+
+.CodeBlock__CodeContainer::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  width: calc(100% - 30px);
+  height: 100%;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: var(--pe-color-gray-800);
+  border-radius: var(--pe-radius-def);
+}
+
+.CodeBlock__Code {
+  padding: var(--pe-space-2_5) 30px !important;
+  margin: 0;
+  white-space: break-spaces;
+  word-wrap: break-word;
+  overflow-y: auto;
+  overflow-x: hidden;
+  width: 100%;
+  min-height: 100px;
+  max-height: 450px;
+  background: transparent !important;
+}
+
+.CodeBlock__Code--FullSize {
+  height: 100% !important;
+  max-height: none;
+  resize: none;
+}
+
+.CodeBlock__FullSizeButton {
+  display: block !important;
+  margin: var(--pe-space-2_5) auto 0;
+}
+
+.CodeBlock__CopyButton {
+  position: absolute !important;
+  top: var(--pe-space-2_5);
+  right: 22px;
+}
+
+@media screen and (max-width: 1020px) {
+  .CodeBlock__CodeContainer {
+    width: calc(100% + 30px);
+  }
+}
