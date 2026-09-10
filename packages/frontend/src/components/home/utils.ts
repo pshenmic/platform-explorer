@@ -38,6 +38,16 @@ export function isApiOperational(status?: Status | null): boolean {
   return !Number.isNaN(a) && !Number.isNaN(t) && Math.abs(a - t) <= 10 * 60 * 1000
 }
 
+// map Tenderdash chain ids to short display labels (mainnet/testnet/devnet)
+export function formatNetworkLabel (network) {
+  if (network == null || network === '') return null
+  const n = String(network).toLowerCase()
+  if (n === 'evo1' || n === 'mainnet' || n.includes('mainnet')) return 'mainnet'
+  if (n.includes('testnet') || n.includes('test-net') || n.startsWith('dash-test')) return 'testnet'
+  if (n.includes('devnet') || n.includes('regtest') || n === 'local') return 'devnet'
+  return String(network)
+}
+
 // middle-truncate a display name; the ".dash" suffix survives and can be styled separately
 export function trimName(name: unknown, head = 8, tail = 5): { text: string; dash: boolean } {
   const hasDash = typeof name === 'string' && name.endsWith('.dash')
