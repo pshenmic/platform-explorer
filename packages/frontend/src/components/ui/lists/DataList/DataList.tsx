@@ -11,11 +11,7 @@ import {
 } from 'react'
 import { useRouter } from 'next/navigation'
 import { ChevronDown, X } from 'lucide-react'
-import {
-  DataListPageFooter,
-  DataListPagingBar,
-  type DataListPagingConfig
-} from './DataListPaging'
+import { DataListPageFooter, DataListPagingBar, type DataListPagingConfig } from './DataListPaging'
 import useResizeObserver from '@react-hook/resize-observer'
 import { EmptyListMessage } from '../index'
 import DataListHeaderMenu, {
@@ -97,7 +93,8 @@ const COMPACT_FIRST_MAX = 768
 const COMPACT_FIRST_FLOOR = 112
 
 function headerMinWidth<T>(column: DataListColumn<T>) {
-  const label = typeof column.header === 'string' ? Math.ceil(column.header.length * HEAD_CHAR_PX) : 0
+  const label =
+    typeof column.header === 'string' ? Math.ceil(column.header.length * HEAD_CHAR_PX) : 0
   const menu = (column.filterKey && column.filterType) || column.sortKey ? HEAD_MENU_PX : 0
   return label + HEAD_PAD_PX + menu
 }
@@ -165,7 +162,9 @@ function formatChipDate(value: unknown): string {
 }
 
 function compactCount(value: number) {
-  return new Intl.NumberFormat('en', { notation: 'compact', maximumFractionDigits: 1 }).format(value)
+  return new Intl.NumberFormat('en', { notation: 'compact', maximumFractionDigits: 1 }).format(
+    value
+  )
 }
 
 function formatFilterChip(type: DataListHeaderFilterType | undefined, value: unknown): string {
@@ -231,7 +230,15 @@ function HeadCell<T>({
     <th
       className={`DataList__HeadCell DataList__HeadCell--${align}`}
       scope={'col'}
-      aria-sort={sortable ? (isActive ? (direction === 'asc' ? 'ascending' : 'descending') : 'none') : undefined}
+      aria-sort={
+        sortable
+          ? isActive
+            ? direction === 'asc'
+              ? 'ascending'
+              : 'descending'
+            : 'none'
+          : undefined
+      }
     >
       <div className={'DataList__HeadCellInner'}>
         <span className={'DataList__HeadCellTitle'}>{column.header}</span>
@@ -279,9 +286,7 @@ export default function DataList<T = any>({
   const [width, setWidth] = useState(0)
   const [canScrollEnd, setCanScrollEnd] = useState(false)
   const [overflowX, setOverflowX] = useState(false)
-  const [fillRows, setFillRows] = useState(() =>
-    Math.max(skeletonCount, paging?.pageSize || 0)
-  )
+  const [fillRows, setFillRows] = useState(() => Math.max(skeletonCount, paging?.pageSize || 0))
   const [openMenu, setOpenMenu] = useState<{ key: string; anchor: DOMRect } | null>(null)
   const router = useRouter()
   useResizeObserver(wrapRef as RefObject<HTMLElement>, entry => setWidth(entry.contentRect.width))
@@ -329,10 +334,7 @@ export default function DataList<T = any>({
 
   const renderCells = (item: T | undefined, index: number, skeleton: boolean) =>
     cols.map((c, ci) => (
-      <td
-        key={c.key}
-        className={`DataList__Cell DataList__Cell--${c.align || 'left'}`}
-      >
+      <td key={c.key} className={`DataList__Cell DataList__Cell--${c.align || 'left'}`}>
         {skeleton ? <span className={'DataList__Skeleton'} /> : c.cell?.(item as T, index)}
       </td>
     ))
@@ -345,34 +347,31 @@ export default function DataList<T = any>({
     </colgroup>
   )
 
-  const headerRow =
-    showHeader ? (
-      <thead className={`DataList__Head DataList__Head--${headerVariant}`}>
-        <tr>
-          {cols.map((c, i) => (
-            <HeadCell
-              key={c.key}
-              column={c}
-              sort={sort}
-              onSortChange={onSortChange}
-              filterActive={isFilterActive(c.filterType, filterValues[c.filterKey || ''])}
-              menuOpen={openMenu?.key === c.key}
-              onMenuOpen={
-                (c.filterKey && c.filterType && onFilterChange) || (c.sortKey && onSortChange)
-                  ? anchor =>
-                      setOpenMenu(prev => (prev?.key === c.key ? null : { key: c.key, anchor }))
-                  : undefined
-              }
-            />
-          ))}
-        </tr>
-      </thead>
-    ) : null
+  const headerRow = showHeader ? (
+    <thead className={`DataList__Head DataList__Head--${headerVariant}`}>
+      <tr>
+        {cols.map((c, i) => (
+          <HeadCell
+            key={c.key}
+            column={c}
+            sort={sort}
+            onSortChange={onSortChange}
+            filterActive={isFilterActive(c.filterType, filterValues[c.filterKey || ''])}
+            menuOpen={openMenu?.key === c.key}
+            onMenuOpen={
+              (c.filterKey && c.filterType && onFilterChange) || (c.sortKey && onSortChange)
+                ? anchor =>
+                    setOpenMenu(prev => (prev?.key === c.key ? null : { key: c.key, anchor }))
+                : undefined
+            }
+          />
+        ))}
+      </tr>
+    </thead>
+  ) : null
 
   const replaceSkeletonCount =
-    fillList && !compactFirst
-      ? fillRows
-      : Math.max(1, paging?.pageSize || skeletonCount)
+    fillList && !compactFirst ? fillRows : Math.max(1, paging?.pageSize || skeletonCount)
   const renderSkeletonRows = (count: number, prefix: string) =>
     Array.from({ length: count }).map((_, i) => (
       <tr key={`${prefix}-${i}`} className={'DataList__Row DataList__Row--Skeleton'}>
@@ -439,9 +438,7 @@ export default function DataList<T = any>({
   const showCenteredEmpty = compactFirst && isEmpty
   const canFilter = Boolean(onFilterChange && cols.some(column => column.filterKey))
   const activeFilters = canFilter
-    ? cols.filter(
-        c => c.filterKey && isFilterActive(c.filterType, filterValues[c.filterKey])
-      )
+    ? cols.filter(c => c.filterKey && isFilterActive(c.filterType, filterValues[c.filterKey]))
     : []
   const sortColumn = sort?.order_by
     ? cols.find(column => column.sortKey && column.sortKey === sort.order_by)
@@ -449,9 +446,7 @@ export default function DataList<T = any>({
   const isCustomSort = Boolean(
     sortColumn &&
       sort?.order_by &&
-      (!sortDefault ||
-        sort.order_by !== sortDefault.order_by ||
-        sort.order !== sortDefault.order)
+      (!sortDefault || sort.order_by !== sortDefault.order_by || sort.order !== sortDefault.order)
   )
 
   return (
@@ -552,8 +547,7 @@ export default function DataList<T = any>({
               {headerRow}
               {bodyRows}
             </table>
-            {paging?.mode === 'continuous' &&
-            (paging.hasMore ?? items.length < paging.total) ? (
+            {paging?.mode === 'continuous' && (paging.hasMore ?? items.length < paging.total) ? (
               <div ref={sentinelRef} className={'DataList__Sentinel'} />
             ) : null}
           </>

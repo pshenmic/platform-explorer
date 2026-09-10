@@ -86,7 +86,9 @@ export default function DataListHeaderMenu({
   useEffect(() => {
     const onDocClick = (event: MouseEvent) => {
       const path = event.composedPath()
-      if (path.some(el => el instanceof Element && el.classList.contains('DataList__HeadMenuBtn'))) {
+      if (
+        path.some(el => el instanceof Element && el.classList.contains('DataList__HeadMenuBtn'))
+      ) {
         return
       }
       if (rootRef.current && !path.includes(rootRef.current)) onClose()
@@ -127,7 +129,9 @@ export default function DataListHeaderMenu({
       onChange?.([])
       return
     }
-    onChange?.(selected.includes(next) ? selected.filter(item => item !== next) : [...selected, next])
+    onChange?.(
+      selected.includes(next) ? selected.filter(item => item !== next) : [...selected, next]
+    )
   }
 
   return createPortal(
@@ -218,7 +222,9 @@ export default function DataListHeaderMenu({
               className={'DataListHeaderMenu__Item'}
               onClick={() => toggleOption('')}
             >
-              <span className={'DataListHeaderMenu__Check'}>{selected.length === 0 ? '✓' : ''}</span>
+              <span className={'DataListHeaderMenu__Check'}>
+                {selected.length === 0 ? '✓' : ''}
+              </span>
               All
             </button>
             {filteredOptions.map(option => (
@@ -226,7 +232,9 @@ export default function DataListHeaderMenu({
                 type={'button'}
                 key={option.value}
                 className={'DataListHeaderMenu__Item'}
-                title={option.searchText ?? (typeof option.label === 'string' ? option.label : undefined)}
+                title={
+                  option.searchText ?? (typeof option.label === 'string' ? option.label : undefined)
+                }
                 onClick={() => toggleOption(option.value)}
               >
                 <span className={'DataListHeaderMenu__Check'}>

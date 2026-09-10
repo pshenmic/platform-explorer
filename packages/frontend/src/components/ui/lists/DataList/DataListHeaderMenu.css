@@ -45,7 +45,7 @@
   -webkit-appearance: none;
   margin: 0;
 }
-.DataListHeaderMenu__Range input[type='number'] {
+.DataListHeaderMenu__Range input[type="number"] {
   -moz-appearance: textfield;
 }
 .DataListHeaderMenu__Range {
