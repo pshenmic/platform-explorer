@@ -24,6 +24,15 @@ body {
   font-family: var(--pe-font-body);
 }
 
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--pe-font-heading);
+}
+
 a {
   color: inherit;
   text-decoration: inherit;

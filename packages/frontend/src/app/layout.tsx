@@ -3,7 +3,10 @@ import type { Viewport } from 'next'
 import RootComponent from '../components/layout/RootComponent'
 import { Montserrat, Open_Sans as OpenSans, Roboto_Mono as RobotoMono } from 'next/font/google'
 
-const montserrat = Montserrat({ subsets: ['latin'] })
+const montserrat = Montserrat({
+  subsets: ['latin'],
+  style: ['normal', 'italic']
+})
 const openSans = OpenSans({ subsets: ['latin'] })
 const robotoMono = RobotoMono({ subsets: ['latin'] })
 

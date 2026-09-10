@@ -175,6 +175,7 @@
   margin: 0 0 10px;
 }
 .HomeHero__Title {
+  font-family: var(--pe-font-heading);
   font-style: italic;
   font-size: 2.5rem;
   font-weight: 800;
