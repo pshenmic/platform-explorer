@@ -130,7 +130,7 @@ function Validators() {
   const [total, setTotal] = useState(1)
   const [pageSize, setPageSize] = useState(paginateConfig.pageSize.default)
   const [currentPage, setCurrentPage] = useState(0)
-  const [scrollMode, setScrollMode] = useState<ListScrollMode>('pages')
+  const [scrollMode, setScrollMode] = useState<ListScrollMode>('continuous')
   const [loadingMore, setLoadingMore] = useState(false)
   const fetchGen = useRef(0)
   const [filters, setFilters] = useState<QueryFilters>({})
