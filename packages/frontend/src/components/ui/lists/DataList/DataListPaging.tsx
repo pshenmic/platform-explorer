@@ -1,10 +1,10 @@
 'use client'
 
 import { useEffect, useRef, useState, type RefObject } from 'react'
-import { ChevronLeft, ChevronRight } from 'lucide-react'
+import { Check, ChevronDown, ChevronLeft, ChevronRight, MoreHorizontal } from 'lucide-react'
 import type { ListScrollMode } from './listScrollMode'
 
-const AUTO_LOAD_PAGES = 5
+const DEFAULT_PAGE_SIZES = [10, 25, 50, 75, 100]
 
 export type DataListPagingConfig = {
   mode: ListScrollMode
@@ -13,9 +13,23 @@ export type DataListPagingConfig = {
   pageSize: number
   page: number
   onPageChange: (page: number) => void
+  onPageSizeChange?: (size: number) => void
+  pageSizeValues?: number[]
   onLoadMore: () => void
   loadingMore?: boolean
   hasMore?: boolean
+}
+
+function buildPageList(current: number, total: number): (number | '...')[] {
+  if (total <= 7) return Array.from({ length: total }, (_, i) => i + 1)
+  const pages: (number | '...')[] = [1]
+  if (current > 3) pages.push('...')
+  const start = Math.max(2, current - 1)
+  const end = Math.min(total - 1, current + 1)
+  for (let i = start; i <= end; i++) pages.push(i)
+  if (current < total - 2) pages.push('...')
+  pages.push(total)
+  return pages
 }
 
 export function DataListPagingBar({
@@ -33,29 +47,21 @@ export function DataListPagingBar({
   loading: boolean
   pageScroll?: boolean
 }) {
-  const [autoLeft, setAutoLeft] = useState(AUTO_LOAD_PAGES)
   const loadLock = useRef(false)
   const onLoadMoreRef = useRef(paging.onLoadMore)
   onLoadMoreRef.current = paging.onLoadMore
 
   const mode = paging.mode
-  const page = paging.page
-  const pageSize = paging.pageSize
-  const total = paging.total
   const loadingMore = Boolean(paging.loadingMore)
-  const hasMore = paging.hasMore ?? itemCount < total
+  const hasMore = paging.hasMore ?? itemCount < paging.total
   const continuous = mode === 'continuous'
-
-  useEffect(() => {
-    if (page === 0) setAutoLeft(AUTO_LOAD_PAGES)
-  }, [mode, pageSize, page])
 
   useEffect(() => {
     if (!loadingMore) loadLock.current = false
   }, [loadingMore])
 
   useEffect(() => {
-    if (!continuous || loadingMore || loading || autoLeft <= 0 || !hasMore) return
+    if (!continuous || loadingMore || loading || !hasMore) return
     const root = pageScroll ? null : scrollRef.current
     const sentinel = sentinelRef.current
     if ((!pageScroll && !root) || !sentinel) return
@@ -65,63 +71,15 @@ export function DataListPagingBar({
         if (loadLock.current) return
         loadLock.current = true
         onLoadMoreRef.current()
-        setAutoLeft(n => Math.max(0, n - 1))
       },
       { root, rootMargin: pageScroll ? '80px' : '200px', threshold: 0 }
     )
     observer.observe(sentinel)
     return () => observer.disconnect()
-  }, [continuous, loadingMore, loading, autoLeft, hasMore, scrollRef, sentinelRef, pageScroll])
-
-  const pageCount = Math.max(1, Math.ceil((total || 0) / Math.max(1, pageSize)))
-  const showLoadMore = continuous && hasMore && !loadingMore && autoLeft <= 0
+  }, [continuous, loadingMore, loading, hasMore, scrollRef, sentinelRef, pageScroll])
 
   return (
     <div className={'DataList__StatusBar'}>
-      {mode === 'pages' ? (
-        <div className={'DataList__PageSwitch'}>
-          <button
-            type={'button'}
-            className={'DataList__PageBtn'}
-            aria-label={'Previous page'}
-            disabled={page <= 0 || loading}
-            onClick={() => paging.onPageChange(Math.max(0, page - 1))}
-          >
-            <ChevronLeft size={14} strokeWidth={2} aria-hidden />
-          </button>
-          <span className={'DataList__PageNum'}>
-            {page + 1} / {pageCount}
-          </span>
-          <button
-            type={'button'}
-            className={'DataList__PageBtn'}
-            aria-label={'Next page'}
-            disabled={page + 1 >= pageCount || loading}
-            onClick={() => paging.onPageChange(Math.min(pageCount - 1, page + 1))}
-          >
-            <ChevronRight size={14} strokeWidth={2} aria-hidden />
-          </button>
-        </div>
-      ) : (
-        <div className={'DataList__StatusRange'}>
-          {showLoadMore ? (
-            <button
-              type={'button'}
-              className={'DataList__LoadMore'}
-              onClick={() => {
-                if (loadLock.current) return
-                loadLock.current = true
-                paging.onLoadMore()
-              }}
-            >
-              Load<span className={'DataList__LoadMoreRest'}> more</span>
-            </button>
-          ) : null}
-          {continuous && !hasMore && itemCount > 0 ? (
-            <span className={'DataList__StatusHint'}>End</span>
-          ) : null}
-        </div>
-      )}
       <div className={'DataList__ModeSwitch'} role={'group'} aria-label={'List view'}>
         <button
           type={'button'}
@@ -138,6 +96,152 @@ export function DataListPagingBar({
           Pages
         </button>
       </div>
+    </div>
+  )
+}
+
+export function DataListPageFooter({
+  paging,
+  loading
+}: {
+  paging: DataListPagingConfig
+  loading: boolean
+}) {
+  if (paging.mode !== 'pages' || paging.total <= 0) return null
+
+  const pageCount = Math.max(1, Math.ceil(paging.total / Math.max(1, paging.pageSize)))
+  const current = paging.page + 1
+  const pageList = buildPageList(current, pageCount)
+  const sizes = paging.pageSizeValues?.length ? paging.pageSizeValues : DEFAULT_PAGE_SIZES
+  const go = (next: number) => paging.onPageChange(Math.max(0, Math.min(pageCount - 1, next - 1)))
+
+  return (
+    <div className={'DataList__Pager'}>
+      <div className={'DataList__PagerMeta'}>
+        <span className={'DataList__PagerPage'}>
+          Page <strong>{current.toLocaleString('en-US')}</strong>
+          <span className={'DataList__PagerOf'}> of {pageCount.toLocaleString('en-US')}</span>
+        </span>
+        <span className={'DataList__PagerDot'} aria-hidden />
+        <span className={'DataList__PagerTotal'}>{paging.total.toLocaleString('en-US')} total</span>
+        {paging.onPageSizeChange ? (
+          <PagerRowsSelect
+            value={paging.pageSize}
+            sizes={sizes}
+            disabled={loading}
+            onChange={paging.onPageSizeChange}
+          />
+        ) : null}
+      </div>
+      <nav className={'DataList__PagerNav'} aria-label={'Pagination'}>
+        <button
+          type={'button'}
+          className={'DataList__PagerBtn DataList__PagerBtn--Wide'}
+          aria-label={'Previous page'}
+          disabled={current <= 1 || loading}
+          onClick={() => go(current - 1)}
+        >
+          <ChevronLeft size={14} strokeWidth={2} aria-hidden />
+          <span>Previous</span>
+        </button>
+        {pageList.map((item, i) =>
+          item === '...' ? (
+            <span key={`e-${i}`} className={'DataList__PagerEllipsis'} aria-hidden>
+              <MoreHorizontal size={14} strokeWidth={2} />
+              <span className={'DataList__PagerSr'}>More pages</span>
+            </span>
+          ) : (
+            <button
+              type={'button'}
+              key={item}
+              className={`DataList__PagerBtn${item === current ? ' DataList__PagerBtn--On' : ''}`}
+              aria-current={item === current ? 'page' : undefined}
+              disabled={loading}
+              onClick={() => go(item)}
+            >
+              {item.toLocaleString('en-US')}
+            </button>
+          )
+        )}
+        <button
+          type={'button'}
+          className={'DataList__PagerBtn DataList__PagerBtn--Wide'}
+          aria-label={'Next page'}
+          disabled={current >= pageCount || loading}
+          onClick={() => go(current + 1)}
+        >
+          <span>Next</span>
+          <ChevronRight size={14} strokeWidth={2} aria-hidden />
+        </button>
+      </nav>
+    </div>
+  )
+}
+
+function PagerRowsSelect({
+  value,
+  sizes,
+  disabled,
+  onChange
+}: {
+  value: number
+  sizes: number[]
+  disabled?: boolean
+  onChange: (size: number) => void
+}) {
+  const [open, setOpen] = useState(false)
+  const rootRef = useRef<HTMLDivElement | null>(null)
+
+  useEffect(() => {
+    if (!open) return
+    const onPointer = (e: PointerEvent) => {
+      if (!rootRef.current?.contains(e.target as Node)) setOpen(false)
+    }
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setOpen(false)
+    }
+    document.addEventListener('pointerdown', onPointer)
+    document.addEventListener('keydown', onKey)
+    return () => {
+      document.removeEventListener('pointerdown', onPointer)
+      document.removeEventListener('keydown', onKey)
+    }
+  }, [open])
+
+  return (
+    <div className={'DataList__PagerRows'} ref={rootRef}>
+      <span className={'DataList__PagerRowsLabel'}>Rows</span>
+      <button
+        type={'button'}
+        className={'DataList__PagerSelect'}
+        aria-haspopup={'listbox'}
+        aria-expanded={open}
+        disabled={disabled}
+        onClick={() => setOpen(v => !v)}
+      >
+        {value}
+        <ChevronDown size={14} strokeWidth={2} aria-hidden />
+      </button>
+      {open ? (
+        <div className={'DataList__PagerMenu'} role={'listbox'} aria-label={'Rows'}>
+          {sizes.map(size => (
+            <button
+              type={'button'}
+              key={size}
+              role={'option'}
+              aria-selected={size === value}
+              className={`DataList__PagerOption${size === value ? ' DataList__PagerOption--On' : ''}`}
+              onClick={() => {
+                onChange(size)
+                setOpen(false)
+              }}
+            >
+              <span>{size}</span>
+              {size === value ? <Check size={14} strokeWidth={2} aria-hidden /> : null}
+            </button>
+          ))}
+        </div>
+      ) : null}
     </div>
   )
 }

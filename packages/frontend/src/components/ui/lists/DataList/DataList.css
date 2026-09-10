@@ -112,15 +112,33 @@
 }
 @media screen and (max-width: 48em) {
   .DataList__FilterBar {
-    gap: 0;
+    flex-wrap: wrap;
+    height: auto;
+    row-gap: 8px;
+    column-gap: 8px;
+  }
+  .DataList__TitleRow {
+    flex: 1 1 auto;
+    padding-right: 0;
+    min-width: 0;
+  }
+  .DataList__StatusBar {
+    margin-left: 0;
   }
   .DataList__FilterChips {
-    -webkit-mask-image: linear-gradient(to right, transparent, #000 14px, #000 100%);
-    mask-image: linear-gradient(to right, transparent, #000 14px, #000 100%);
-    padding-left: 2px;
+    order: 3;
+    flex: 1 1 100%;
+    justify-content: flex-start;
+    width: 100%;
+    -webkit-mask-image: none;
+    mask-image: none;
+    padding-left: 0;
+  }
+  .DataList__FilterChips--Empty {
+    display: none;
   }
   .DataList__FilterChip {
-    max-width: min(14rem, calc(100vw - 7rem));
+    max-width: min(14rem, calc(100vw - 3rem));
   }
 }
 .DataList__Scroll {
@@ -130,17 +148,14 @@
 .DataList--fill {
   display: flex;
   flex-direction: column;
-  height: 100%;
-  max-height: calc(100dvh - 10.5rem);
   min-height: 0;
 }
 .DataList--fill .DataList__Scroll {
-  flex: 1 1 auto;
-  min-height: 0;
-  overflow: auto;
+  overflow-x: auto;
+  overflow-y: visible;
 }
 .DataList--fill .DataList__StatusBar {
-  margin-top: 12px;
+  margin-top: 0;
 }
 .DataList--compactFirst .DataList__Scroll {
   overflow-x: auto;
@@ -497,7 +512,6 @@
   --DataList-row-radius: 10px;
   display: flex;
   flex-direction: column;
-  max-height: calc(100dvh - 10.5rem);
   min-height: 0;
 }
 .DataList--pinFirst .DataList__HeadScroll {
@@ -518,14 +532,13 @@
 }
 .DataList--pinFirst .DataList__BodyScroll {
   position: relative;
-  flex: 1 1 auto;
+  flex: 0 0 auto;
   width: 100%;
   min-width: 0;
-  min-height: 0;
   margin-top: 0;
   overflow-x: hidden;
-  overflow-y: auto;
-  overscroll-behavior: none;
+  overflow-y: visible;
+  overscroll-behavior-x: contain;
   scroll-behavior: auto;
 }
 .DataList--pinFirst.DataList--overflowX .DataList__HeadScroll,
@@ -765,17 +778,257 @@
 .DataList__Footer {
   margin-top: 12px;
 }
+.DataList__Pager {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 16px;
+  min-width: 0;
+  width: 100%;
+}
+.DataList__PagerMeta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 14px;
+  min-width: 0;
+  color: var(--pe-color-gray-400);
+  font-family: var(--pe-font-heading);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  line-height: 1.35;
+  font-variant-numeric: tabular-nums;
+}
+.DataList__PagerPage {
+  color: var(--pe-color-gray-300);
+  letter-spacing: 0.01em;
+}
+.DataList__PagerPage strong {
+  color: var(--pe-color-fg);
+  font-weight: 700;
+  margin: 0 0.15em;
+}
+.DataList__PagerOf {
+  color: var(--pe-color-gray-400);
+}
+.DataList__PagerDot {
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.28);
+  flex-shrink: 0;
+}
+.DataList__PagerTotal {
+  color: var(--pe-color-gray-500);
+}
+.DataList__PagerRows {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--pe-color-gray-400);
+}
+.DataList__PagerRowsLabel {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.DataList__PagerSelect {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 32px;
+  padding: 0 10px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  background: var(--pe-color-gray-800);
+  color: var(--pe-color-fg);
+  font-family: var(--pe-font-heading);
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+.DataList__PagerSelect:hover:not(:disabled) {
+  border-color: rgba(255, 255, 255, 0.22);
+}
+.DataList__PagerSelect:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+.DataList__PagerMenu {
+  position: absolute;
+  left: 0;
+  bottom: calc(100% + 6px);
+  z-index: 12;
+  min-width: 5.5rem;
+  padding: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 10px;
+  background: var(--pe-color-gray-800);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+}
+.DataList__PagerOption {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  width: 100%;
+  min-height: 32px;
+  padding: 6px 12px 6px 10px;
+  border: 0;
+  border-radius: 6px;
+  background: none;
+  color: var(--pe-color-gray-250);
+  font-family: var(--pe-font-heading);
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-align: left;
+  cursor: pointer;
+}
+.DataList__PagerOption svg {
+  flex-shrink: 0;
+  margin-right: 2px;
+  color: var(--pe-color-brand-light);
+}
+.DataList__PagerOption:hover {
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--pe-color-fg);
+}
+.DataList__PagerOption--On {
+  color: var(--pe-color-fg);
+}
+.DataList__PagerNav {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 4px;
+  min-width: 0;
+}
+.DataList__PagerBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 36px;
+  height: 36px;
+  padding: 0 10px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--pe-color-gray-250);
+  font-family: var(--pe-font-heading);
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  gap: 4px;
+}
+.DataList__PagerBtn:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--pe-color-fg);
+}
+.DataList__PagerBtn:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+.DataList__PagerBtn--On {
+  border-color: var(--pe-color-brand-normal);
+  background: rgba(var(--pe-color-brand-normal-rgb), 0.2);
+  color: var(--pe-color-brand-light);
+}
+.DataList__PagerBtn--Wide {
+  padding: 0 12px;
+}
+.DataList__PagerEllipsis {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 36px;
+  height: 36px;
+  color: var(--pe-color-gray-500);
+}
+.DataList__PagerSr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+}
+@media screen and (max-width: 48em) {
+  .DataList__Pager {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+    margin-top: 10px;
+  }
+  .DataList__PagerMeta {
+    flex-wrap: nowrap;
+    justify-content: space-between;
+    width: 100%;
+    gap: 6px;
+    font-size: 0.6875rem;
+  }
+  .DataList__PagerDot {
+    display: none;
+  }
+  .DataList__PagerPage,
+  .DataList__PagerTotal,
+  .DataList__PagerRows {
+    flex: 1 1 0;
+    min-width: 0;
+  }
+  .DataList__PagerPage {
+    text-align: left;
+  }
+  .DataList__PagerTotal {
+    text-align: center;
+  }
+  .DataList__PagerRows {
+    justify-content: flex-end;
+    gap: 4px;
+  }
+  .DataList__PagerRowsLabel {
+    font-size: 0.625rem;
+  }
+  .DataList__PagerSelect {
+    height: 28px;
+    padding: 0 8px;
+    font-size: 0.6875rem;
+  }
+  .DataList__PagerNav {
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: stretch;
+    width: 100%;
+    gap: 4px;
+  }
+  .DataList__PagerBtn,
+  .DataList__PagerEllipsis {
+    flex: 1 1 0;
+    min-width: 0;
+    height: 36px;
+    padding: 0 4px;
+  }
+  .DataList__PagerBtn--Wide {
+    padding: 0 4px;
+  }
+  .DataList__PagerBtn--Wide span {
+    display: none;
+  }
+}
 .DataList__StatusBar {
   display: flex;
   flex-shrink: 0;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-end;
   gap: 8px;
   box-sizing: border-box;
   height: 24px;
-  margin-top: 12px;
+  margin-top: 0;
+  margin-left: auto;
   min-width: 0;
-  width: 100%;
 }
 .DataList__StatusRange {
   display: flex;
@@ -906,19 +1159,8 @@
   }
 }
 @media screen and (max-width: 48em) {
-  .DataList--fill .DataList__StatusBar,
   .DataList__StatusBar {
-    margin-top: 12px;
-  }
-  .DataList__StatusRange {
-    font-size: 0.625rem;
-    gap: 6px;
-  }
-  .DataList__LoadMore {
-    height: 20px;
-    padding: 0 8px;
-    font-size: 0.625rem;
-    letter-spacing: 0.02em;
+    margin-top: 0;
   }
   .DataList__ModeBtn {
     padding: 0 6px;

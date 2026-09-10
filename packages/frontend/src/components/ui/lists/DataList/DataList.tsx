@@ -11,7 +11,11 @@ import {
 } from 'react'
 import { useRouter } from 'next/navigation'
 import { ChevronDown, X } from 'lucide-react'
-import { DataListPagingBar, type DataListPagingConfig } from './DataListPaging'
+import {
+  DataListPageFooter,
+  DataListPagingBar,
+  type DataListPagingConfig
+} from './DataListPaging'
 import useResizeObserver from '@react-hook/resize-observer'
 import { EmptyListMessage } from '../index'
 import DataListHeaderMenu, {
@@ -23,7 +27,6 @@ import './DataList.css'
 
 const GAP = 16
 const DEFAULT_SKELETON_ROWS = 8
-const ROW_STRIDE = 38
 const APPEND_SKELETON_ROWS = 4
 
 export interface DataListColumn<T = any> {
@@ -284,20 +287,6 @@ export default function DataList<T = any>({
   useResizeObserver(wrapRef as RefObject<HTMLElement>, entry => setWidth(entry.contentRect.width))
 
   useEffect(() => {
-    const el = scrollRef.current
-    if (!el || fit === 'feed' || width <= COMPACT_FIRST_MAX) return
-    const onWheel = (event: WheelEvent) => {
-      const canScrollY = el.scrollHeight > el.clientHeight + 1
-      if (canScrollY) return
-      if (Math.abs(event.deltaY) <= Math.abs(event.deltaX)) return
-      event.preventDefault()
-      window.scrollBy(0, event.deltaY)
-    }
-    el.addEventListener('wheel', onWheel, { passive: false })
-    return () => el.removeEventListener('wheel', onWheel)
-  }, [pinFirst, fit, items.length, loading, width])
-
-  useEffect(() => {
     const body = scrollRef.current
     if (!body) {
       setCanScrollEnd(false)
@@ -310,19 +299,7 @@ export default function DataList<T = any>({
       setOverflowX(hasX)
       setCanScrollEnd(hasX && body.scrollLeft < max - 8)
       if (fit === 'feed') return
-      if (width > 0 && width <= COMPACT_FIRST_MAX) {
-        setFillRows(Math.max(skeletonCount, paging?.pageSize || 0))
-        return
-      }
-      const h = body.clientHeight
-      if (h > 8) {
-        setFillRows(
-          Math.min(
-            48,
-            Math.max(skeletonCount, paging?.pageSize || 0, Math.floor((h + 6) / ROW_STRIDE))
-          )
-        )
-      }
+      setFillRows(Math.max(skeletonCount, paging?.pageSize || 0))
     }
     updateFade()
     body.addEventListener('scroll', updateFade, { passive: true })
@@ -484,7 +461,7 @@ export default function DataList<T = any>({
       aria-busy={loading || paging?.loadingMore ? true : undefined}
       {...wrapperProps}
     >
-      {canFilter || title ? (
+      {canFilter || title || paging ? (
         <div className={'DataList__FilterBar'}>
           {title ? (
             <div className={'DataList__TitleRow'}>
@@ -499,7 +476,11 @@ export default function DataList<T = any>({
           ) : (
             <span />
           )}
-          <div className={'DataList__FilterChips'}>
+          <div
+            className={`DataList__FilterChips${
+              activeFilters.length > 0 || isCustomSort ? '' : ' DataList__FilterChips--Empty'
+            }`}
+          >
             {isCustomSort ? (
               <button
                 type={'button'}
@@ -549,6 +530,16 @@ export default function DataList<T = any>({
               </button>
             ) : null}
           </div>
+          {paging && !showCenteredEmpty ? (
+            <DataListPagingBar
+              paging={paging}
+              itemCount={items.length}
+              scrollRef={scrollRef}
+              sentinelRef={sentinelRef}
+              loading={loading}
+              pageScroll={true}
+            />
+          ) : null}
         </div>
       ) : null}
       <div ref={scrollRef} className={'DataList__Scroll pe-QuietScroll'}>
@@ -605,14 +596,7 @@ export default function DataList<T = any>({
         })()}
 
       {paging && !showCenteredEmpty ? (
-        <DataListPagingBar
-          paging={paging}
-          itemCount={items.length}
-          scrollRef={scrollRef}
-          sentinelRef={sentinelRef}
-          loading={loading}
-          pageScroll={compactFirst}
-        />
+        <DataListPageFooter paging={paging} loading={loading} />
       ) : null}
       {footer && <div className={'DataList__Footer'}>{footer}</div>}
     </div>
