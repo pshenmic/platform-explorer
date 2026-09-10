@@ -120,6 +120,10 @@
   }
 }
 
+.HomePage .HomeOverview {
+  background: transparent;
+}
+
 .HomeOverview__Grid {
   display: grid;
   grid-template-columns: 1fr;
