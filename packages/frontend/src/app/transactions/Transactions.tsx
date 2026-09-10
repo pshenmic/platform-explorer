@@ -1,9 +1,16 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useMemo } from 'react'
 import * as Api from '../../util/Api'
 import TransactionsList from '../../components/transactions/TransactionsList'
-import TransactionsFilter from '../../components/transactions/TransactionsFilter'
+import TransactionsFilter, {
+  TRANSACTION_TYPE_VALUES,
+  BATCH_TYPE_VALUES
+} from '../../components/transactions/TransactionsFilter'
+import {
+  applyTypeParams,
+  parseTypeParams
+} from '../../components/transactions/transactionsListHref'
 import Pagination from '../../components/pagination'
 import PageSizeSelector from '../../components/pageSizeSelector/PageSizeSelector'
 import { LoadingList } from '../../components/loading'
@@ -13,7 +20,6 @@ import { Container, Box, useBreakpointValue } from '@chakra-ui/react'
 import NetworkStatsInline from '../../components/stats/NetworkStatsInline'
 import PageTitle from '../../components/intro/PageTitle'
 import TransactionsChartCompact from '../../components/charts/TransactionsChartCompact'
-import type { Transaction } from '../../types'
 import introContent from './introContent'
 import './Transactions.css'
 
@@ -25,40 +31,45 @@ const paginateConfig = {
   defaultPage: 1
 }
 
-interface TransactionsState {
-  data: Transaction[]
-  loading: boolean
-  error: string | null
-}
-
-interface TransactionsProps {
-  defaultPage?: number
-  defaultPageSize?: number
-}
-
-function Transactions({ defaultPage = 1, defaultPageSize }: TransactionsProps) {
-  const [currentPage, setCurrentPage] = useState(
-    defaultPage ? parseInt(String(defaultPage), 10) - 1 : 0
+function Transactions({ defaultPage = 1, defaultPageSize }: any) {
+  const [currentPage, setCurrentPage] = useState(defaultPage ? parseInt(defaultPage) - 1 : 0)
+  const [pageSize, setPageSize] = useState(
+    (defaultPageSize ?? null) ? defaultPageSize : paginateConfig.pageSize.default
   )
-  // Number(undefined) from page.tsx is NaN — treat as missing (NaN != null is true!)
-  const initialPageSize =
-    typeof defaultPageSize === 'number' && Number.isFinite(defaultPageSize) && defaultPageSize > 0
-      ? defaultPageSize
-      : paginateConfig.pageSize.default
-  const [pageSize, setPageSize] = useState(initialPageSize)
   const [total, setTotal] = useState(0)
-  const [transactions, setTransactions] = useState<TransactionsState>({
-    data: [],
-    loading: true,
-    error: null
-  })
-  type QueryFilters = Record<string, string | number | boolean | string[] | null | undefined>
-  const [filters, setFilters] = useState<QueryFilters>({})
+  const [transactions, setTransactions] = useState<{
+    data: any[]
+    loading: boolean
+    error: unknown
+  }>({ data: [], loading: true, error: null })
   const pageCount = Math.ceil(total / pageSize)
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
   const isMobile = useBreakpointValue({ base: true, md: false })
+
+  const typeParams = useMemo(() => {
+    const parsed = parseTypeParams(searchParams)
+    const allow = (list: any, allowed: any) => list.filter((v: any) => allowed.includes(v))
+    return {
+      transaction_type: allow(parsed.transaction_type, TRANSACTION_TYPE_VALUES),
+      batch_type: allow(parsed.batch_type, BATCH_TYPE_VALUES)
+    }
+  }, [searchParams])
+
+  const apiFilters = useMemo(() => {
+    const next: Record<string, string[]> = {}
+    if (typeParams.transaction_type.length) next.transaction_type = typeParams.transaction_type
+    if (typeParams.batch_type.length) next.batch_type = typeParams.batch_type
+    return next
+  }, [typeParams])
+
+  const filterUiState = useMemo(() => {
+    const next: Record<string, string[]> = {}
+    if (typeParams.transaction_type.length) next.transaction_type = typeParams.transaction_type
+    if (typeParams.batch_type.length) next.batch_type = typeParams.batch_type
+    return next
+  }, [typeParams])
 
   useEffect(() => {
     const fetchTransactions = async () => {
@@ -69,7 +80,7 @@ function Transactions({ defaultPage = 1, defaultPageSize }: TransactionsProps) {
           Math.max(1, currentPage + 1),
           Math.max(1, pageSize),
           'desc',
-          filters
+          apiFilters
         )
 
         setTotal(response.pagination.total)
@@ -77,13 +88,16 @@ function Transactions({ defaultPage = 1, defaultPageSize }: TransactionsProps) {
       } catch (error) {
         console.error('Error fetching transactions:', error)
         setTotal(0)
-        const message = error instanceof Error ? error.message : String(error)
-        setTransactions({ data: [], loading: false, error: message })
+        setTransactions({
+          data: [],
+          loading: false,
+          error: error instanceof Error ? error.message : error
+        })
       }
     }
 
     fetchTransactions()
-  }, [currentPage, pageSize, filters])
+  }, [currentPage, pageSize, apiFilters])
 
   useEffect(() => {
     const page = parseInt(searchParams.get('page') || '', 10) || paginateConfig.defaultPage
@@ -94,38 +108,41 @@ function Transactions({ defaultPage = 1, defaultPageSize }: TransactionsProps) {
   }, [searchParams, pathname])
 
   useEffect(() => {
-    const urlParameters = new URLSearchParams(Array.from(searchParams.entries()))
+    const urlParameters = new URLSearchParams()
+    applyTypeParams(urlParameters, typeParams)
 
     if (
-      currentPage + 1 === paginateConfig.defaultPage &&
-      pageSize === paginateConfig.pageSize.default
+      currentPage + 1 !== paginateConfig.defaultPage ||
+      pageSize !== paginateConfig.pageSize.default
     ) {
-      urlParameters.delete('page')
-      urlParameters.delete('page-size')
-    } else {
       urlParameters.set('page', String(currentPage + 1))
       urlParameters.set('page-size', String(pageSize))
     }
 
-    router.push(`${pathname}?${urlParameters.toString()}`, { scroll: false })
-  }, [currentPage, pageSize])
+    const next = urlParameters.toString()
+    const current = searchParams.toString()
+    if (next === current) return
+    router.replace(next ? `${pathname}?${next}` : pathname, { scroll: false })
+  }, [currentPage, pageSize, typeParams, pathname, router, searchParams])
 
-  const filtersChangeHandler = (newFilters: Record<string, unknown>) => {
-    setFilters(newFilters as QueryFilters)
+  const filtersChangeHandler = (newFilters: any) => {
+    const urlParameters = new URLSearchParams()
+    const tt = Array.isArray(newFilters?.transaction_type) ? newFilters.transaction_type : []
+    const bt = Array.isArray(newFilters?.batch_type) ? newFilters.batch_type : []
+    applyTypeParams(urlParameters, { transaction_type: tt, batch_type: bt })
     setCurrentPage(0)
+    router.replace(urlParameters.toString() ? `${pathname}?${urlParameters}` : pathname, {
+      scroll: false
+    })
   }
 
-  const handlePageChange = (newPage: { selected?: number }) => {
-    setCurrentPage(Math.max(0, newPage?.selected ?? 0))
+  const handlePageChange = (newPage: any) => {
+    setCurrentPage(Math.max(0, newPage?.selected))
   }
 
-  const handlePageSizeChange = (newSize: { value?: string | number } | string | number | null) => {
-    const raw =
-      typeof newSize === 'object' && newSize !== null
-        ? Number(newSize.value)
-        : parseInt(String(newSize), 10)
-    const size = Number.isFinite(raw) && raw > 0 ? raw : paginateConfig.pageSize.default
-    setPageSize(size)
+  const handlePageSizeChange = (newSize: any) => {
+    const size = typeof newSize === 'object' ? newSize.value : parseInt(newSize)
+    setPageSize(Math.max(1, size))
     setCurrentPage(0)
   }
 
@@ -143,6 +160,7 @@ function Transactions({ defaultPage = 1, defaultPageSize }: TransactionsProps) {
 
           <TransactionsFilter
             onFilterChange={filtersChangeHandler}
+            initialFilters={filterUiState}
             isMobile={isMobile}
             className={'Transactions__Filters'}
           />

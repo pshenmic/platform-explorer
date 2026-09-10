@@ -1,8 +1,5 @@
 'use client'
 
-import { useEffect, useState } from 'react'
-import type { Block, PaginatedResultSet } from '../../types'
-import type { LoadableState, WithClassName } from '../../types/common'
 import * as Api from '../../util/Api'
 import { Identifier, InfoLine, TimeDelta } from '../data'
 import { HorisontalSeparator } from '../ui/separators'
@@ -10,37 +7,28 @@ import { ValueContainer } from '../ui/containers'
 import { BlockIcon, ChevronIcon } from '../ui/icons'
 import { ValueCard } from '../cards'
 import { fetchHandlerError, fetchHandlerSuccess } from '../../util'
-import type { BlockDetail } from './BlockDigestCard'
+import { useEffect, useState } from 'react'
 import './BlockTotalCard.css'
 
-interface BlockTotalCardProps extends WithClassName {
-  block: LoadableState<BlockDetail>
-  l1explorerBaseUrl?: string
-}
-
-function BlockTotalCard({ block, l1explorerBaseUrl, className }: BlockTotalCardProps) {
-  const [blocks, setBlocks] = useState<LoadableState<Partial<PaginatedResultSet<Block>>>>({
-    data: {},
-    loading: true,
-    error: false
-  })
+function BlockTotalCard({ block, l1explorerBaseUrl, className }: any) {
+  const [blocks, setBlocks] = useState<any>({ data: {}, loading: true, error: false })
   const blockData = block?.data?.header
   const [previousBlock] =
-    blocks.data?.resultSet?.filter(b => b?.header?.height === (blockData?.height ?? 0) - 1) || []
+    blocks.data?.resultSet?.filter((b: any) => b?.header?.height === blockData?.height - 1) || []
   const [nextBlock] =
-    blocks.data?.resultSet?.filter(b => b?.header?.height === (blockData?.height ?? 0) + 1) || []
+    blocks.data?.resultSet?.filter((b: any) => b?.header?.height === blockData?.height + 1) || []
 
   const fetchData = () => {
     if (!blockData?.height) return
 
-    setBlocks(state => ({ ...state, loading: true }))
+    setBlocks((state: any) => ({ ...state, loading: true }))
 
     Api.getBlocks(1, 3, 'desc', {
       height_min: Math.max(blockData?.height - 1, 1),
       height_max: blockData?.height + 1
     })
-      .then(res => fetchHandlerSuccess(setBlocks, res))
-      .catch(err => fetchHandlerError(setBlocks, err))
+      .then(res => fetchHandlerSuccess(setBlocks as any, res))
+      .catch(err => fetchHandlerError(setBlocks as any, err))
   }
 
   useEffect(fetchData, [blockData])

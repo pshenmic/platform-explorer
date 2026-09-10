@@ -1,32 +1,42 @@
-import type { ReactNode } from 'react'
-import Link from 'next/link'
-import { InfoIcon } from '@chakra-ui/icons'
-import { Tooltip } from '../ui/Tooltips'
-import type { WithChildren } from '../../types'
+'use client'
 
-interface StatusCellProps extends WithChildren {
+import type { KeyboardEvent, ReactNode } from 'react'
+import Link from 'next/link'
+import { Tooltip } from '../ui/Tooltips'
+
+export function StatusCell({
+  label,
+  hint,
+  href,
+  children
+}: {
   label: ReactNode
   hint?: ReactNode
   href?: string
-}
+  children?: ReactNode
+}) {
+  const onKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
+    if (!hint) return
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault()
+      e.currentTarget.click()
+    }
+  }
 
-// One cell of the hero status bar: label (+ optional i-tooltip) over a value (+ optional link).
-export function StatusCell({ label, hint, href, children }: StatusCellProps) {
-  return (
-    <div className={'HomeHero__StatusCell'}>
+  const cell = (
+    <div
+      className={`HomeHero__StatusCell${hint ? ' HomeHero__StatusCell--Hint' : ''}`}
+      role={hint ? 'button' : undefined}
+      tabIndex={hint ? 0 : undefined}
+      aria-label={hint ? `${typeof label === 'string' ? label : 'KPI'}, show details` : undefined}
+      onKeyDown={onKeyDown}
+    >
       <span className={'HomeHero__StatusHead'}>
         <span className={'HomeHero__StatusLabel'}>{label}</span>
-        {hint && (
-          <Tooltip title={label} content={hint} placement={'top'}>
-            <span className={'HomeHero__StatusInfo'} aria-label={`About ${label}`}>
-              <InfoIcon boxSize={2.5} />
-            </span>
-          </Tooltip>
-        )}
       </span>
       <span className={'HomeHero__StatusValue'}>
         {href ? (
-          <Link href={href} className={'HomeHero__StatusLink'}>
+          <Link href={href} className={'HomeHero__StatusLink'} onClick={e => e.stopPropagation()}>
             {children}
           </Link>
         ) : (
@@ -34,5 +44,13 @@ export function StatusCell({ label, hint, href, children }: StatusCellProps) {
         )}
       </span>
     </div>
+  )
+
+  if (!hint) return cell
+
+  return (
+    <Tooltip title={label} content={hint} placement={'top'}>
+      {cell}
+    </Tooltip>
   )
 }

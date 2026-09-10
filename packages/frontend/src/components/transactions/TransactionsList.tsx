@@ -1,159 +1,206 @@
-import type { ComponentType, ReactNode } from 'react'
+'use client'
+
 import Link from 'next/link'
-import TransactionsListItem from './TransactionsListItem'
-import { EmptyListMessage } from '@ui/lists'
-import { Grid, GridItem } from '@chakra-ui/react'
-import { LoadingList as LoadingListJs } from '../loading'
-import PaginationJs from '../pagination'
+import { useRouter } from 'next/navigation'
+import TypeBadge from './TypeBadge'
+import BatchTypeBadge from './BatchTypeBadge'
+import TransactionStatusBadge from './TransactionStatusBadge'
+import { Identifier, BigNumber, Alias, TimeDelta, NotActive, DateBlock } from '../data'
+import { RateTooltip } from '../ui/Tooltips'
+import ImageGenerator from '../imageGenerator'
+import { LinkContainer } from '../ui/containers'
+import { DataList } from '../ui/lists'
 import { ErrorMessageBlock } from '../Errors'
-import { createColumnHelper, getCoreRowModel, useReactTable } from '@tanstack/react-table'
-import type { Rate, Transaction } from '../../types'
+import Pagination from '../pagination'
+import type { Transaction } from '../../types'
 
-import './TransactionsList.css'
-
-const LoadingList = LoadingListJs as ComponentType<{ itemsCount?: number }>
-const Pagination = PaginationJs as ComponentType<{
-  className?: string
-  onPageChange?: (selectedItem: { selected: number }) => void
-  pageCount?: number
-  forcePage?: number
-  justify?: boolean
-  children?: ReactNode
-}>
-
-const columnHelper = createColumnHelper<Transaction>()
-
-const columns = [
-  columnHelper.accessor('status', {
-    header: 'Status'
-  }),
-  columnHelper.accessor('hash', {
-    header: 'Hash'
-  }),
-  columnHelper.accessor('blockHeight', {
-    header: 'Block'
-  }),
-  columnHelper.accessor('gasUsed', {
-    header: 'Gas used'
-  }),
-  columnHelper.accessor('owner', {
-    header: 'Owner'
-  }),
-  columnHelper.accessor('type', {
-    header: 'Type'
-  }),
-  columnHelper.accessor('timestamp', {
-    header: 'Timestamp'
-  })
-]
-
-type HeaderStyles = 'default' | 'light'
-
-const headerExtraClass: Record<HeaderStyles, string> = {
-  default: '',
-  light: 'TransactionsList__ColumnTitles--Light'
-}
-
-interface ListPagination {
-  onPageChange: (selectedItem: { selected: number }) => void
-  pageCount: number
-  forcePage?: number
-}
-
-interface TransactionsListProps {
-  transactions?: Transaction[]
-  showMoreLink?: string
-  headerStyles?: HeaderStyles
-  rate?: Pick<Rate, 'usd'> | null
-  pagination?: ListPagination
-  loading?: boolean
-  itemsCount?: number
-  absoluteDate?: boolean
-}
-
-export default function TransactionsList({
+function TransactionsList({
   transactions = [],
   showMoreLink,
   headerStyles = 'default',
   rate,
   pagination,
   loading,
-  itemsCount = 10,
   absoluteDate = false
-}: TransactionsListProps) {
-  const table = useReactTable({
-    data: transactions,
-    columns,
-    getCoreRowModel: getCoreRowModel(),
-    meta: {
-      rate
+}: {
+  transactions?: Transaction[]
+  showMoreLink?: any
+  headerStyles?: string
+  rate?: any
+  pagination?: any
+  loading?: any
+  absoluteDate?: boolean
+  itemsCount?: number
+}) {
+  const router = useRouter()
+
+  const columns = [
+    {
+      key: 'status',
+      header: 'Status',
+      minWidth: 96,
+      align: 'center',
+      priority: 2,
+      cell: (tx: Transaction) =>
+        tx?.status ? <TransactionStatusBadge status={tx.status} /> : <NotActive />
     },
-    manualPagination: true
-  })
+    {
+      key: 'hash',
+      header: 'Hash',
+      grow: 2,
+      minWidth: 120,
+      cell: (tx: Transaction) =>
+        tx?.hash ? (
+          <Identifier middleEllipsis={true} copyButton={true}>
+            {tx.hash}
+          </Identifier>
+        ) : (
+          <NotActive />
+        )
+    },
+    {
+      key: 'block',
+      header: 'Block',
+      minWidth: 72,
+      priority: 3,
+      cell: (tx: Transaction) =>
+        tx?.blockHeight != null ? (
+          <LinkContainer
+            onClick={e => {
+              e.stopPropagation()
+              e.preventDefault()
+              router.push(`/block/${tx?.blockHash}`)
+            }}
+          >
+            <BigNumber>{tx.blockHeight}</BigNumber>
+          </LinkContainer>
+        ) : (
+          <NotActive />
+        )
+    },
+    {
+      key: 'gasUsed',
+      header: 'Gas used',
+      minWidth: 140,
+      align: 'center',
+      priority: 1,
+      cell: (tx: Transaction) =>
+        tx?.gasUsed ? (
+          <RateTooltip credits={tx.gasUsed} rate={rate} placement={'top'}>
+            <span>
+              <BigNumber>{tx.gasUsed}</BigNumber> Credits
+            </span>
+          </RateTooltip>
+        ) : (
+          <NotActive />
+        )
+    },
+    {
+      key: 'owner',
+      header: 'Owner',
+      grow: 2,
+      minWidth: 120,
+      priority: 4,
+      cell: (tx: Transaction) => {
+        if (!tx?.owner?.identifier) return <NotActive>-</NotActive>
+        const activeAlias = tx?.owner?.aliases?.find((alias: any) => alias.status === 'ok')
+        return (
+          <LinkContainer
+            onClick={e => {
+              e.stopPropagation()
+              e.preventDefault()
+              router.push(`/identity/${tx?.owner?.identifier}`)
+            }}
+          >
+            {activeAlias ? (
+              <div style={{ display: 'flex', alignItems: 'center' }}>
+                <ImageGenerator
+                  className={'Identifier__Avatar'}
+                  username={tx?.owner?.identifier}
+                  lightness={50}
+                  saturation={50}
+                  width={24}
+                  height={24}
+                />
+                <Alias
+                  alias={
+                    typeof activeAlias?.alias === 'string'
+                      ? activeAlias.alias
+                      : String(activeAlias?.alias || '')
+                  }
+                />
+              </div>
+            ) : (
+              <Identifier avatar={true} copyButton={true}>
+                {tx?.owner?.identifier}
+              </Identifier>
+            )}
+          </LinkContainer>
+        )
+      }
+    },
+    {
+      key: 'type',
+      header: 'Type',
+      minWidth: 140,
+      cell: (tx: Transaction) =>
+        tx?.batchType ? (
+          <BatchTypeBadge batchType={tx.batchType?.replace(/[\\""]/g, '')} />
+        ) : tx?.type !== undefined ? (
+          <TypeBadge type={tx.type} />
+        ) : (
+          <NotActive />
+        )
+    },
+    {
+      key: 'timestamp',
+      header: 'Timestamp',
+      minWidth: absoluteDate ? 132 : 96,
+      align: 'right',
+      cell: (tx: Transaction) => {
+        if (!tx?.timestamp) return <NotActive />
+        return absoluteDate ? (
+          <DateBlock
+            format={'dateOnly'}
+            showTime={true}
+            timestamp={tx.timestamp}
+            showRelativeTooltip={true}
+          />
+        ) : (
+          <TimeDelta showTimestampTooltip={true} endDate={new Date(tx.timestamp)} />
+        )
+      }
+    }
+  ]
+
+  if (transactions === undefined) return <ErrorMessageBlock />
 
   return (
-    <div className={'TransactionsList'}>
-      <Grid className={`TransactionsList__ColumnTitles ${headerExtraClass[headerStyles] || ''}`}>
-        <GridItem className={'TransactionsList__ColumnTitle TransactionsList__ColumnTitle--Status'}>
-          Status
-        </GridItem>
-        <GridItem className={'TransactionsList__ColumnTitle TransactionsList__ColumnTitle--Hash'}>
-          Hash
-        </GridItem>
-        <GridItem className={'TransactionsList__ColumnTitle TransactionsList__ColumnTitle--Block'}>
-          Block
-        </GridItem>
-        <GridItem
-          className={'TransactionsList__ColumnTitle TransactionsList__ColumnTitle--GasUsed'}
-        >
-          Gas used
-        </GridItem>
-        <GridItem className={'TransactionsList__ColumnTitle TransactionsList__ColumnTitle--Owner'}>
-          Owner
-        </GridItem>
-        <GridItem className={'TransactionsList__ColumnTitle TransactionsList__ColumnTitle--Type'}>
-          Type
-        </GridItem>
-        <GridItem
-          className={'TransactionsList__ColumnTitle TransactionsList__ColumnTitle--Timestamp'}
-        >
-          Timestamp
-        </GridItem>
-      </Grid>
-
-      {!loading ? (
-        <div className={'TransactionsList__Items'}>
-          {table.getRowModel().rows.map(row => (
-            <TransactionsListItem
-              key={row.id}
-              transaction={row.original}
-              rate={rate}
-              absoluteDate={absoluteDate}
-            />
-          ))}
-          {transactions?.length === 0 && (
-            <EmptyListMessage>There are no transactions yet.</EmptyListMessage>
-          )}
-          {transactions === undefined && <ErrorMessageBlock />}
-        </div>
-      ) : (
-        <LoadingList itemsCount={itemsCount} />
-      )}
-
-      {pagination && (
-        <Pagination
-          className={'TransactionsList__Pagination'}
-          onPageChange={pagination.onPageChange}
-          pageCount={pagination.pageCount}
-          forcePage={pagination.forcePage}
-          justify={true}
-        />
-      )}
-      {showMoreLink && (
-        <Link href={showMoreLink} className={'SimpleList__ShowMoreButton'}>
-          Show more
-        </Link>
-      )}
-    </div>
+    <DataList
+      className={'TransactionsList'}
+      items={transactions}
+      columns={columns}
+      loading={loading}
+      rowHref={(tx: Transaction) => `/transaction/${tx?.hash}`}
+      rowKey={(tx: Transaction) => tx?.hash ?? ''}
+      headerVariant={headerStyles === 'light' ? 'light' : 'default'}
+      emptyMessage={'There are no transactions yet.'}
+      footer={
+        pagination ? (
+          <Pagination
+            onPageChange={pagination.onPageChange}
+            pageCount={pagination.pageCount}
+            forcePage={pagination.forcePage}
+            justify={true}
+          />
+        ) : showMoreLink ? (
+          <Link href={showMoreLink} className={'SimpleList__ShowMoreButton'}>
+            Show more
+          </Link>
+        ) : undefined
+      }
+    />
   )
 }
+
+export default TransactionsList

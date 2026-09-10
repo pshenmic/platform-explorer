@@ -8,7 +8,7 @@
   color: var(--pe-color-fg-muted);
   transition: var(--pe-transition-def);
   white-space: nowrap;
-  padding: var(--pe-space-1) 0;
+  padding: var(--pe-space-2) 0;
 }
 
 .NavItem--WithDropdown {
@@ -49,7 +49,7 @@
   .NavItem {
     background: rgba(255, 255, 255, 0.08);
     border-radius: var(--pe-radius-def);
-    padding: var(--pe-space-5);
+    padding: var(--pe-space-3) var(--pe-space-4);
     text-align: center;
     border: 1px solid rgba(255, 255, 255, 0.07);
     top: 0;

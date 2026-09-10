@@ -2,33 +2,56 @@
 
 import { useEffect, useRef } from 'react'
 
-const LINK_DIST = 130
-const NODE_MIN = 12
-const NODE_MAX = 26
-// short drift after entering view, then freeze until the user hovers the hero
-const INTRO_MS = 4000
+const LINK_DIST = 190
+const NODE_MIN = 24
+const NODE_MAX = 72
+const PACKET_COUNT = 5
 const BRAND = '0, 141, 228'
 const BRAND_LIGHT = '44, 187, 255'
 
-interface Node {
+type Node = {
   x: number
   y: number
-  vx: number
-  vy: number
+  hx: number
+  hy: number
+  ampX: number
+  ampY: number
   r: number
   pulse: number
 }
 
-export default function HeroNodes() {
+type Packet = {
+  from: number
+  to: number
+  t: number
+  speed: number
+}
+
+export default function HeroNodes({
+  compact = false,
+  className = 'HomeHero__Nodes'
+}: {
+  compact?: boolean
+  className?: string
+}) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null)
 
   useEffect(() => {
     const canvas = canvasRef.current
     if (!canvas) return
     const ctx = canvas.getContext('2d')
-    if (!ctx) return
-    const parent = canvas.parentElement
-    if (!parent) return
+    const parent =
+      (canvas.closest('.HomeHero, .HomeOverview__Sys') as HTMLElement | null) ??
+      canvas.parentElement
+    if (!ctx || !parent) return
+    const cellX = compact ? 92 : 88
+    const cellY = compact ? 88 : 64
+    const linkDist = compact ? 150 : LINK_DIST
+    const packetCount = compact ? 1 : PACKET_COUNT
+    const nodeMin = compact ? 6 : NODE_MIN
+    const nodeMax = compact ? 10 : NODE_MAX
+    const linkAlpha = compact ? 0.55 : 0.34
+    const linkWidth = compact ? 1.25 : 1
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
     let width = 0
@@ -38,74 +61,105 @@ export default function HeroNodes() {
     let raf: number | null = null
     let inView = true
     let interactive = false
-    let introUntil = 0
     let lastFrame = 0
+    let packets: Packet[] = []
     const mouse = { x: -1, y: -1 }
 
-    // center-weighted X: denser middle so the constellation sits behind the brand copy
-    const centerBiasedX = (seed: number) => {
-      const u = (((Math.sin(seed * 12.9898) * 43758.5453) % 1) + 1) % 1
-      const v = (((Math.sin(seed * 78.233) * 24634.6345) % 1) + 1) % 1
-      const centered = 0.5 + (u - 0.5) * v ** 0.55
-      return Math.min(0.98, Math.max(0.02, centered))
-    }
     const rand = (seed: number) => (((Math.sin(seed * 91.7) * 19273.1) % 1) + 1) % 1
 
     const build = () => {
-      const count = Math.max(NODE_MIN, Math.min(NODE_MAX, Math.round(width / 42)))
-      nodes = Array.from({ length: count }, (_, i) => {
-        const s = i + 1
-        return {
-          x: centerBiasedX(s) * width,
-          y: rand(s * 3.1) * height,
-          vx: (rand(s * 5.7) - 0.5) * 0.22,
-          vy: (rand(s * 7.3) - 0.5) * 0.22,
-          r: 1.1 + rand(s * 9.9) * 1.6,
-          pulse: rand(s * 2.2) * Math.PI * 2
+      const cols = Math.max(compact ? 2 : 6, Math.round(width / cellX))
+      const rows = Math.max(compact ? 3 : 4, Math.round(height / cellY))
+      const jitterX = (width / cols) * 0.36
+      const jitterY = (height / rows) * 0.36
+      const total = Math.min(nodeMax, Math.max(nodeMin, cols * rows))
+      nodes = []
+      let i = 0
+      for (let row = 0; row < rows; row++) {
+        for (let col = 0; col < cols; col++) {
+          if (nodes.length >= total) break
+          const s = ++i
+          const cx = ((col + 0.5) / cols) * width
+          const cy = ((row + 0.5) / rows) * height
+          const hx = Math.max(6, Math.min(width - 6, cx + (rand(s * 5.7) - 0.5) * 2 * jitterX))
+          const hy = Math.max(6, Math.min(height - 6, cy + (rand(s * 7.3) - 0.5) * 2 * jitterY))
+          const cellAmp = compact ? 5 : 10
+          nodes.push({
+            x: hx,
+            y: hy,
+            hx,
+            hy,
+            ampX: cellAmp * (0.55 + rand(s * 11.1) * 0.7),
+            ampY: cellAmp * (0.55 + rand(s * 13.3) * 0.7),
+            r: 1.5 + rand(s * 9.9) * 2.1,
+            pulse: rand(s * 2.2) * Math.PI * 2
+          })
         }
-      })
+      }
     }
 
-    // animate=false freezes positions (idle snapshot); links only while interactive
+    const nearestOther = (from: number, skip: number) => {
+      let to = (from + 1) % nodes.length
+      let best = Infinity
+      for (let j = 0; j < nodes.length; j++) {
+        if (j === from || j === skip) continue
+        const d = Math.hypot(nodes[from].x - nodes[j].x, nodes[from].y - nodes[j].y)
+        if (d < best && d > 10) {
+          best = d
+          to = j
+        }
+      }
+      return to
+    }
+
+    const seedPackets = () => {
+      packets = []
+      if (nodes.length < 2) return
+      for (let p = 0; p < packetCount; p++) {
+        const from = Math.min(nodes.length - 1, Math.floor(rand(p + 2.1) * nodes.length))
+        packets.push({
+          from,
+          to: nearestOther(from, -1),
+          t: rand(p + 4.4),
+          speed: 0.0035 + rand(p + 9.2) * 0.0055
+        })
+      }
+    }
+
     const draw = (t: number, animate: boolean) => {
       ctx.clearRect(0, 0, width, height)
 
       if (animate) {
         for (const n of nodes) {
-          n.x += n.vx
-          n.y += n.vy
-          if (n.x < 0 || n.x > width) n.vx *= -1
-          if (n.y < 0 || n.y > height) n.vy *= -1
-          n.x = Math.max(0, Math.min(width, n.x))
-          n.y = Math.max(0, Math.min(height, n.y))
+          n.x = n.hx + Math.sin(t / 1800 + n.pulse) * n.ampX
+          n.y = n.hy + Math.cos(t / 2100 + n.pulse * 0.85) * n.ampY
         }
       }
 
-      // O(n²) links are the hot path — only while the user is engaging the hero
-      if (interactive) {
-        for (let i = 0; i < nodes.length; i++) {
-          for (let j = i + 1; j < nodes.length; j++) {
-            const a = nodes[i]
-            const b = nodes[j]
-            const dist = Math.hypot(a.x - b.x, a.y - b.y)
-            if (dist < LINK_DIST) {
-              const alpha = (1 - dist / LINK_DIST) * 0.22
-              ctx.strokeStyle = `rgba(${BRAND}, ${alpha})`
-              ctx.lineWidth = 1
-              ctx.beginPath()
-              ctx.moveTo(a.x, a.y)
-              ctx.lineTo(b.x, b.y)
-              ctx.stroke()
-            }
+      for (let i = 0; i < nodes.length; i++) {
+        for (let j = i + 1; j < nodes.length; j++) {
+          const a = nodes[i]
+          const b = nodes[j]
+          const dist = Math.hypot(a.x - b.x, a.y - b.y)
+          if (dist < linkDist) {
+            const alpha = Math.max(compact ? 0.18 : 0.05, (1 - dist / linkDist) * linkAlpha)
+            ctx.strokeStyle = `rgba(${BRAND}, ${alpha})`
+            ctx.lineWidth = linkWidth
+            ctx.beginPath()
+            ctx.moveTo(a.x, a.y)
+            ctx.lineTo(b.x, b.y)
+            ctx.stroke()
           }
         }
+      }
 
+      if (interactive) {
         for (const n of nodes) {
           const dist = Math.hypot(n.x - mouse.x, n.y - mouse.y)
-          if (dist < LINK_DIST * 1.4) {
-            const alpha = (1 - dist / (LINK_DIST * 1.4)) * 0.4
+          if (dist < linkDist * 1.4) {
+            const alpha = (1 - dist / (linkDist * 1.4)) * 0.45
             ctx.strokeStyle = `rgba(${BRAND_LIGHT}, ${alpha})`
-            ctx.lineWidth = 1
+            ctx.lineWidth = 1.15
             ctx.beginPath()
             ctx.moveTo(n.x, n.y)
             ctx.lineTo(mouse.x, mouse.y)
@@ -122,6 +176,27 @@ export default function HeroNodes() {
         ctx.arc(n.x, n.y, r, 0, Math.PI * 2)
         ctx.fill()
       }
+
+      if (animate && packets.length) {
+        for (const pkt of packets) {
+          pkt.t += pkt.speed
+          if (pkt.t >= 1) {
+            const prev = pkt.from
+            pkt.from = pkt.to
+            pkt.to = nearestOther(pkt.from, prev)
+            pkt.t = 0
+          }
+          const a = nodes[pkt.from]
+          const b = nodes[pkt.to]
+          if (!a || !b) continue
+          const x = a.x + (b.x - a.x) * pkt.t
+          const y = a.y + (b.y - a.y) * pkt.t
+          ctx.fillStyle = `rgba(${BRAND_LIGHT}, 0.95)`
+          ctx.beginPath()
+          ctx.arc(x, y, 2.4, 0, Math.PI * 2)
+          ctx.fill()
+        }
+      }
     }
 
     const resize = () => {
@@ -130,16 +205,15 @@ export default function HeroNodes() {
       dpr = Math.min(1.25, window.devicePixelRatio || 1)
       canvas.width = Math.round(width * dpr)
       canvas.height = Math.round(height * dpr)
-      canvas.style.width = width + 'px'
-      canvas.style.height = height + 'px'
+      canvas.style.width = `${width}px`
+      canvas.style.height = `${height}px`
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
       build()
-      // static snapshot after layout so idle freeze still shows the field
+      seedPackets()
       draw(performance.now(), false)
     }
 
-    const shouldRun = () =>
-      !reduced && !document.hidden && inView && (interactive || performance.now() < introUntil)
+    const shouldRun = () => !reduced && !document.hidden && inView
 
     const stop = () => {
       if (raf != null) {
@@ -148,7 +222,6 @@ export default function HeroNodes() {
       }
     }
 
-    // ~24fps while moving; full stop (last frame kept) once idle
     const loop = (t: number) => {
       if (!shouldRun()) {
         draw(t, false)
@@ -175,17 +248,11 @@ export default function HeroNodes() {
       const rect = canvas.getBoundingClientRect()
       mouse.x = e.clientX - rect.left
       mouse.y = e.clientY - rect.top
-      if (!interactive) {
-        interactive = true
-        start()
-      }
+      interactive = true
     }
 
     const onLeave = () => {
       interactive = false
-      // freeze the last animated frame — no rAF while the cursor is away
-      stop()
-      draw(performance.now(), false)
     }
 
     resize()
@@ -195,7 +262,6 @@ export default function HeroNodes() {
     const io = new IntersectionObserver(([entry]) => {
       inView = entry.isIntersecting
       if (inView) {
-        introUntil = performance.now() + INTRO_MS
         start()
       } else {
         stop()
@@ -206,7 +272,6 @@ export default function HeroNodes() {
     if (reduced) {
       draw(0, false)
     } else {
-      introUntil = performance.now() + INTRO_MS
       start()
       document.addEventListener('visibilitychange', onVisibility)
       parent.addEventListener('mousemove', onMove)
@@ -221,7 +286,11 @@ export default function HeroNodes() {
       parent.removeEventListener('mousemove', onMove)
       parent.removeEventListener('mouseleave', onLeave)
     }
-  }, [])
+  }, [compact])
 
-  return <canvas ref={canvasRef} className={'HomeHero__Nodes'} />
+  return (
+    <div className={className} aria-hidden={'true'}>
+      <canvas ref={canvasRef} />
+    </div>
+  )
 }

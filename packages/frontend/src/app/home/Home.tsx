@@ -1,86 +1,69 @@
 'use client'
 
-import { useState, useEffect, useMemo, useRef } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { useQuery, useQueries } from '@tanstack/react-query'
 import * as Api from '../../util/Api'
 import HomeHero from './HomeHero'
 import {
-  MetricChart,
   EpochsOverview,
-  StatusBar,
-  HeroMeta,
-  MasternodesDonut,
+  QuorumCard,
   TxTypesBar,
+  TxActivityChart,
+  IdentityGrowthChart,
   ShieldedPoolCard,
+  HomeLeaders,
   CompactTxList,
-  CompactBlocksList
+  CompactBlocksList,
+  HeroMeta,
+  HeroNodes
 } from '../../components/home'
 import { fetchHandlerSuccess, fetchHandlerError } from '../../util'
 import theme from '../../styles/theme'
-import { Box, Container, Flex, SimpleGrid } from '@chakra-ui/react'
-import { CardHead } from '../../components/cards'
-import type {
-  Block,
-  ContestedResource,
-  ContestedResourcesStatus,
-  EpochData,
-  LoadableState,
-  PaginatedResultSet,
-  Rate,
-  Status,
-  Vote
-} from '../../types'
+import { Box, Container, Flex } from '@chakra-ui/react'
+import type { LoadableState, Rate } from '../../types'
+import type { QueryFilters } from '../../util/Api'
 import './Home.css'
 
-type EpochPayload = EpochData & {
-  protocolVersion?: number | null
-  firstBlockHash?: string | null
-}
-
-function computeAvgBlockTime(blocks?: Block[] | null): number | null {
+function computeAvgBlockTime(blocks: any) {
   const stamps = (blocks || [])
-    .map(b => new Date(b?.header?.timestamp).getTime())
-    .filter(t => !Number.isNaN(t))
-    .sort((a, b) => b - a)
+    .map((b: any) => new Date(b?.header?.timestamp).getTime())
+    .filter((t: number) => !Number.isNaN(t))
+    .sort((a: number, b: number) => b - a)
   if (stamps.length < 2) return null
   let total = 0
   for (let i = 0; i < stamps.length - 1; i++) total += stamps[i] - stamps[i + 1]
   return Math.round(total / (stamps.length - 1) / 1000)
 }
 
-function epochNumbersOf(current: number | undefined): number[] {
+function epochNumbersOf(current: unknown) {
   if (typeof current !== 'number') return []
   return [current - 3, current - 2, current - 1, current].filter(n => n >= 0)
 }
 
+const VALIDATORS_PAGE = 100
+
+async function fetchAllValidators(filters?: QueryFilters) {
+  const first = await Api.getValidators(1, VALIDATORS_PAGE, 'desc', filters)
+  const rows = Array.isArray(first?.resultSet) ? [...first.resultSet] : []
+  const total = typeof first?.pagination?.total === 'number' ? first.pagination.total : rows.length
+  const pages = Math.max(1, Math.ceil(total / VALIDATORS_PAGE))
+  if (pages <= 1) return rows
+  const rest = await Promise.all(
+    Array.from({ length: pages - 1 }, (_, i) =>
+      Api.getValidators(i + 2, VALIDATORS_PAGE, 'desc', filters)
+    )
+  )
+  for (const page of rest) {
+    if (Array.isArray(page?.resultSet)) rows.push(...page.resultSet)
+  }
+  return rows
+}
+
 function Home() {
-  const [contested, setContested] = useState<LoadableState<ContestedResourcesStatus>>({
-    data: {} as ContestedResourcesStatus,
-    loading: true,
-    error: false
-  })
-  const [activeContested, setActiveContested] = useState<
-    LoadableState<PaginatedResultSet<ContestedResource>>
-  >({ data: {} as PaginatedResultSet<ContestedResource>, loading: true, error: false })
-  const [latestContested, setLatestContested] = useState<
-    LoadableState<PaginatedResultSet<ContestedResource>>
-  >({ data: {} as PaginatedResultSet<ContestedResource>, loading: true, error: false })
-  const [latestVotes, setLatestVotes] = useState<LoadableState<PaginatedResultSet<Vote>>>({
-    data: {} as PaginatedResultSet<Vote>,
-    loading: true,
-    error: false
-  })
-  const [rate, setRate] = useState<LoadableState<Rate>>({
-    data: {} as Rate,
-    loading: true,
-    error: false
-  })
+  const [rate, setRate] = useState<LoadableState<Rate>>({ data: null, loading: true, error: false })
 
-  const gap = (theme as typeof theme & { blockOffset: number | string | Array<number | string> })
-    .blockOffset
-  const secondaryStarted = useRef(false)
+  const gap = theme.blockOffset
 
-  // wave 0: hero + overview + validator totals (independent; RQ dedupes Strict Mode double-mount)
   const statusQuery = useQuery({
     queryKey: ['home', 'status'],
     queryFn: Api.getStatus,
@@ -111,20 +94,73 @@ function Home() {
     queryFn: () => Api.getValidators(1, 1, 'desc', { isBanned: 'true' }),
     staleTime: 60_000
   })
-  // inactive straight from the backend (not-active AND not-banned) — no client-side arithmetic
   const validatorsInactiveQuery = useQuery({
     queryKey: ['home', 'validators', 'inactive'],
     queryFn: () => Api.getValidators(1, 1, 'desc', { isActive: 'false', isBanned: 'false' }),
     staleTime: 60_000
   })
-  // one page for geoIpInfo (#822): full set on testnet, a sample on large networks
-  const validatorsGeoQuery = useQuery({
-    queryKey: ['home', 'validators', 'geo'],
-    queryFn: () => Api.getValidators(1, 100, 'desc'),
-    staleTime: 300_000
+  const validatorsPoolHeadQuery = useQuery({
+    queryKey: ['home', 'validators', 'pool', 'head', 'unbanned'],
+    queryFn: () => Api.getValidators(1, VALIDATORS_PAGE, 'desc', { isBanned: 'false' }),
+    staleTime: 60_000,
+    refetchInterval: 120_000
+  })
+  const poolTotal =
+    (typeof validatorsPoolHeadQuery.data?.pagination?.total === 'number'
+      ? validatorsPoolHeadQuery.data.pagination.total
+      : null) ??
+    (typeof validatorsQuery.data?.pagination?.total === 'number'
+      ? validatorsQuery.data.pagination.total
+      : null)
+  const poolPages =
+    typeof poolTotal === 'number' ? Math.max(1, Math.ceil(poolTotal / VALIDATORS_PAGE)) : 1
+  const validatorsPoolRestQuery = useQuery({
+    queryKey: ['home', 'validators', 'pool', 'rest', 'unbanned', poolTotal],
+    queryFn: async () => {
+      const rest = await Promise.all(
+        Array.from({ length: poolPages - 1 }, (_, i) =>
+          Api.getValidators(i + 2, VALIDATORS_PAGE, 'desc', { isBanned: 'false' })
+        )
+      )
+      const rows = []
+      for (const page of rest) {
+        if (Array.isArray(page?.resultSet)) rows.push(...page.resultSet)
+      }
+      return rows
+    },
+    enabled: validatorsPoolHeadQuery.isSuccess && poolPages > 1,
+    staleTime: 60_000,
+    refetchInterval: 120_000
+  })
+  const validatorsPoolList = useMemo(() => {
+    const head = validatorsPoolHeadQuery.data?.resultSet
+    const rest = validatorsPoolRestQuery.data
+    const rows = Array.isArray(head) ? [...head] : []
+    if (Array.isArray(rest)) rows.push(...rest)
+    return rows
+  }, [validatorsPoolHeadQuery.data, validatorsPoolRestQuery.data])
+  const validatorsBannedListQuery = useQuery({
+    queryKey: ['home', 'validators', 'banned-list'],
+    queryFn: () => fetchAllValidators({ isBanned: 'true' }),
+    staleTime: 60_000,
+    refetchInterval: 120_000
   })
 
-  // shape expected by MasternodesDonut ({ data, loading })
+  const currentQuorumQuery = useQuery({
+    queryKey: ['home', 'quorums', 'current'],
+    queryFn: () => Api.getCurrentQuorum(),
+    staleTime: 60_000,
+    refetchInterval: 60_000,
+    retry: 1
+  })
+  const quorumsListQuery = useQuery({
+    queryKey: ['home', 'quorums', 'list'],
+    queryFn: () => Api.getQuorums(),
+    staleTime: 60_000,
+    refetchInterval: 60_000,
+    retry: 1
+  })
+
   const validators = {
     data: validatorsQuery.data ?? {},
     loading: validatorsQuery.isPending || validatorsQuery.isLoading
@@ -145,24 +181,19 @@ function Home() {
   const currentEpochNumber = statusQuery.data?.epoch?.number
   const epochNumbers = useMemo(() => epochNumbersOf(currentEpochNumber), [currentEpochNumber])
 
-  // one query per epoch — results stream in independently (no Promise.all gate on the skeleton)
   const epochQueries = useQueries({
     queries: epochNumbers.map(n => ({
-      queryKey: ['home', 'epoch', n] as const,
+      queryKey: ['home', 'epoch', n],
       queryFn: () => Api.getEpoch(n),
       staleTime: 30_000,
-      // live epoch refreshes with the status cadence; finalized epochs stay cached
-      refetchInterval: (n === currentEpochNumber ? 60_000 : false) as number | false
+      refetchInterval: n === currentEpochNumber ? 60_000 : false
     }))
   })
 
-  // progressive list: whatever has arrived, in epoch order (partial wave is OK)
   const epochDataStamp = epochQueries.map(q => `${q.dataUpdatedAt}:${q.fetchStatus}`).join('|')
   const epochsBaseList = useMemo(
-    () =>
-      epochNumbers
-        .map((n, i) => epochQueries[i]?.data)
-        .filter((ep): ep is EpochData => Boolean(ep)),
+    () => epochNumbers.map((n, i) => epochQueries[i]?.data).filter(Boolean),
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- stamp tracks per-query arrivals
     [epochNumbers, epochDataStamp]
   )
 
@@ -170,7 +201,6 @@ function Home() {
     typeof currentEpochNumber !== 'number' ||
     (epochsBaseList.length === 0 && epochQueries.some(q => q.isPending || q.isLoading))
 
-  // phase B: first-block meta only after an epoch exists (does not block the wave)
   const blockQueries = useQueries({
     queries: epochsBaseList.map(ep => {
       const height = ep?.epoch?.firstBlockHeight
@@ -184,7 +214,7 @@ function Home() {
   })
 
   const blockDataStamp = blockQueries.map(q => q.dataUpdatedAt).join('|')
-  const epochsList: EpochPayload[] = useMemo(
+  const epochsList = useMemo(
     () =>
       epochsBaseList.map((ep, i) => {
         const blockRes = blockQueries[i]?.data
@@ -195,60 +225,37 @@ function Home() {
           firstBlockHash: blockRes?.resultSet?.[0]?.header?.hash ?? null
         }
       }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- stamp tracks block enrich arrivals
     [epochsBaseList, blockDataStamp]
   )
 
   const currentEpochPayload = epochsList.find(e => e?.epoch?.number === currentEpochNumber) || null
-  const epochData: LoadableState<EpochPayload> = {
-    data: currentEpochPayload || ({} as EpochPayload),
+  const epochAvgBlockMs = Number(
+    (currentEpochPayload as { avgBlockTime?: number } | null)?.avgBlockTime
+  )
+  const epochData = {
+    data: currentEpochPayload || {},
     loading: typeof currentEpochNumber === 'number' && !currentEpochPayload && epochsLoading,
     error: false
   }
 
-  // gov + rate after status (parallel with epochs); keep them off wave 0 so validators keep bandwidth
   useEffect(() => {
-    if (secondaryStarted.current) return
-    if (!statusQuery.isSuccess) return
-    secondaryStarted.current = true
-
-    Api.getContestedResourcesStats()
-      .then(res => fetchHandlerSuccess(setContested, res))
-      .catch(err => fetchHandlerError(setContested, err))
-
-    Api.getContestedResources(1, 10, 'desc', undefined, { voting_finished: false })
-      .then(res => fetchHandlerSuccess(setActiveContested, res))
-      .catch(err => fetchHandlerError(setActiveContested, err))
-
-    Api.getContestedResources(1, 5, 'desc')
-      .then(res => fetchHandlerSuccess(setLatestContested, res))
-      .catch(err => fetchHandlerError(setLatestContested, err))
-
-    Api.getMasternodeVotes(1, 10, 'desc')
-      .then(res => fetchHandlerSuccess(setLatestVotes, res))
-      .catch(err => fetchHandlerError(setLatestVotes, err))
-
     Api.getRate()
       .then(res => fetchHandlerSuccess(setRate, res))
       .catch(err => fetchHandlerError(setRate, err))
-  }, [statusQuery.isSuccess])
+  }, [])
 
-  // below-fold charts wait until the first epoch paints (or all epoch queries settle empty)
   const epochsSettled =
     epochNumbers.length > 0 &&
     epochQueries.length === epochNumbers.length &&
     epochQueries.every(q => !q.isPending && !q.isLoading)
   const belowFoldReady = epochsBaseList.length > 0 || epochsSettled
 
-  const avgBlockTimeSec = computeAvgBlockTime(blocksQuery.data?.resultSet)
-
-  const statusData: Status | Partial<Status> = statusQuery.data ?? {}
-
   return (
     <Container
       className={'HomePage'}
       maxW={'container.maxPageW'}
       color={'white'}
-      // mobile: tight gutter so card border/shadow aren't clipped; md+: standard 12px
       px={{ base: 2, md: 3 }}
       py={0}
       mt={gap}
@@ -256,9 +263,11 @@ function Home() {
     >
       <Flex direction={'column'} gap={gap}>
         <HomeHero
-          status={statusData}
+          status={statusQuery.data ?? {}}
           loading={statusQuery.isLoading}
-          avgBlockTimeSec={avgBlockTimeSec}
+          epochNumber={currentEpochNumber}
+          epochEndTime={currentEpochPayload?.epoch?.endTime}
+          avgBlockTimeSec={computeAvgBlockTime(blocksQuery.data?.resultSet)}
         />
 
         <Box
@@ -269,14 +278,13 @@ function Home() {
         >
           <div className={'HomeOverview__Grid'}>
             <div className={'HomeOverview__Sys'}>
-              <HeroMeta status={statusData as Status} loading={statusQuery.isLoading} />
+              <HeroNodes compact className={'HomeOverview__Nodes'} />
+              <HeroMeta status={statusQuery.data ?? {}} loading={statusQuery.isLoading} />
             </div>
             <div className={'HomeOverview__Tx'}>
               <CompactTxList
-                transactions={
-                  txQuery.data?.resultSet as Parameters<typeof CompactTxList>[0]['transactions']
-                }
-                limit={6}
+                transactions={txQuery.data?.resultSet}
+                limit={5}
                 loading={txQuery.isLoading}
                 moreHref={'/transactions'}
                 moreLabel={'View all transactions'}
@@ -285,7 +293,7 @@ function Home() {
             <div className={'HomeOverview__Blocks'}>
               <CompactBlocksList
                 blocks={blocksQuery.data?.resultSet}
-                limit={6}
+                limit={5}
                 loading={blocksQuery.isLoading}
                 moreHref={'/blocks'}
                 moreLabel={'View all blocks'}
@@ -294,7 +302,12 @@ function Home() {
           </div>
         </Box>
 
-        <Box className={'InfoBlock InfoBlock--NoBorder HomeEpochs'} w={'100%'}>
+        <Box
+          id={'home-epochs'}
+          className={'InfoBlock InfoBlock--NoBorder HomeEpochs'}
+          w={'100%'}
+          tabIndex={-1}
+        >
           <EpochsOverview
             title={'Epochs'}
             epochs={epochsList}
@@ -305,51 +318,67 @@ function Home() {
           />
         </Box>
 
-        <SimpleGrid columns={{ base: 1, md: 2 }} spacing={gap} w={'100%'}>
-          <MetricChart
-            title={'Transactions history'}
-            type={'bar'}
-            fetcher={
-              Api.getTransactionsHistory as unknown as Parameters<typeof MetricChart>[0]['fetcher']
-            }
-            field={'txs'}
-            yAbbr={'txs'}
-            enabled={belowFoldReady}
-          />
-          <MetricChart
-            title={'Identities growth'}
-            type={'line'}
-            fetcher={
-              Api.getIdentitiesHistory as unknown as Parameters<typeof MetricChart>[0]['fetcher']
-            }
-            field={'registeredIdentities'}
-            yAbbr={'identities'}
-            enabled={belowFoldReady}
-          />
-          <TxTypesBar enabled={belowFoldReady} />
-          <ShieldedPoolCard rate={rate} enabled={belowFoldReady} />
-          <MasternodesDonut
-            validators={validators}
-            validatorsActive={validatorsActive}
-            validatorsBanned={validatorsBanned}
-            validatorsInactive={validatorsInactive}
-            validatorsList={
-              validatorsGeoQuery.data?.resultSet as Parameters<
-                typeof MasternodesDonut
-              >[0]['validatorsList']
-            }
-          />
-          <Box className={'InfoBlock InfoBlock--NoBorder HomeGovCard'} w={'100%'}>
-            <CardHead title={'Governance'} />
-            <StatusBar
-              contested={contested}
-              activeContested={activeContested}
-              latestContested={latestContested}
-              latestVotes={latestVotes}
-              epochData={epochData}
+        <div className={'HomeCardPair HomeCardPair--metrics'}>
+          <div className={'HomeCardPair__Cell'}>
+            <TxActivityChart
+              fetcher={Api.getTransactionsHistory}
+              field={'txs'}
+              yAbbr={'txs'}
+              enabled={belowFoldReady}
             />
-          </Box>
-        </SimpleGrid>
+          </div>
+          <div className={'HomeCardPair__Cell'}>
+            <IdentityGrowthChart
+              fetcher={Api.getIdentitiesHistory}
+              field={'registeredIdentities'}
+              yAbbr={'identities'}
+              enabled={belowFoldReady}
+            />
+          </div>
+        </div>
+
+        <div className={'HomeCardPair HomeCardPair--viz'}>
+          <div className={'HomeCardPair__Cell'}>
+            <TxTypesBar enabled={belowFoldReady} />
+          </div>
+          <div className={'HomeCardPair__Cell'}>
+            <ShieldedPoolCard rate={rate} enabled={belowFoldReady} />
+          </div>
+        </div>
+
+        <div className={'HomeCardPair HomeCardPair--leaders'}>
+          <div className={'HomeCardPair__Cell'}>
+            <HomeLeaders rate={rate} enabled={belowFoldReady} />
+          </div>
+          <div className={'HomeCardPair__Cell'}>
+            <QuorumCard
+              validators={validators}
+              validatorsActive={validatorsActive}
+              validatorsBanned={validatorsBanned}
+              validatorsInactive={validatorsInactive}
+              validatorsList={validatorsPoolList}
+              poolLoading={
+                validatorsPoolHeadQuery.isPending ||
+                (validatorsPoolHeadQuery.isSuccess &&
+                  poolPages > 1 &&
+                  validatorsPoolRestQuery.isPending)
+              }
+              bannedValidatorsList={validatorsBannedListQuery.data}
+              bannedListLoading={validatorsBannedListQuery.isPending}
+              currentQuorum={currentQuorumQuery.data}
+              currentQuorumLoading={currentQuorumQuery.isPending || currentQuorumQuery.isLoading}
+              currentQuorumError={currentQuorumQuery.isError}
+              quorums={quorumsListQuery.data}
+              l1LockedHeight={blocksQuery.data?.resultSet?.[0]?.header?.l1LockedHeight}
+              lastProposerProTx={blocksQuery.data?.resultSet?.[0]?.header?.validator}
+              avgBlockTimeSec={
+                epochAvgBlockMs > 0
+                  ? epochAvgBlockMs / 1000
+                  : computeAvgBlockTime(blocksQuery.data?.resultSet)
+              }
+            />
+          </div>
+        </div>
       </Flex>
     </Container>
   )

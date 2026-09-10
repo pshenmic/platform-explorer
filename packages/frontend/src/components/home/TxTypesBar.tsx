@@ -1,42 +1,61 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
+import Link from 'next/link'
 import { Box } from '@chakra-ui/react'
 import * as Api from '../../util/Api'
-import { CardHead, Presets } from '../cards'
+import { Presets } from '../cards'
 import { TransactionTypesInfo } from '../../enums/state.transition.type'
-import { Tooltip } from '../ui/Tooltips'
+import { BatchActions } from '../../enums/batchTypes'
 import { Skeleton } from './Skeleton'
-import { compact } from './utils'
+import { Tooltip } from '../ui/Tooltips'
+import { transactionsListHref } from '../transactions/transactionsListHref'
+import { formatFullNumber } from '../../util'
 import { PRESETS, presetRange } from './MetricChart'
 import './TxTypesBar.css'
 
-// a sub-percent slice would collapse below the segment gap: clamp for display, chips keep exact counts
 const MIN_SEG_FRAC = 0.008
 
-interface TxTypeStat {
-  transactionType?: string
-  count?: number
+function labelOf(type: any) {
+  if ((BatchActions as any)[type]?.title) return (BatchActions as any)[type].title
+  return (TransactionTypesInfo as any)[type]?.title ?? type
 }
 
-function labelOf(type?: string): string {
-  if (!type) return 'Unknown'
-  return (TransactionTypesInfo as Record<string, { title?: string }>)[type]?.title ?? type
+function clsOf(type: any) {
+  if ((BatchActions as any)[type]) return type
+  if ((TransactionTypesInfo as any)[type]) return type
+  return 'UNKNOWN'
 }
 
-interface TxTypesBarProps {
-  enabled?: boolean
+/** Expand BATCH.batchTypes when present; otherwise keep the BATCH row. */
+function flattenStatisticItems(items: any) {
+  const flat = []
+  for (const t of items || []) {
+    const count = t.count || 0
+    if (count <= 0) continue
+    const kind = t.transactionType || 'UNKNOWN'
+    if (kind === 'BATCH' && Array.isArray(t.batchTypes) && t.batchTypes.length > 0) {
+      for (const bt of t.batchTypes) {
+        const n = bt.count || 0
+        if (n <= 0) continue
+        flat.push({ type: bt.batchType || 'UNKNOWN', count: n, fromBatch: true })
+      }
+      continue
+    }
+    flat.push({ type: kind, count, fromBatch: false })
+  }
+  return flat
 }
 
-// tx counts by state transition type for a chosen time range: one stacked share bar over chips
-export default function TxTypesBar({ enabled = true }: TxTypesBarProps) {
-  const [state, setState] = useState<{ loading: boolean; error: boolean; items: TxTypeStat[] }>({
+export default function TxTypesBar({ enabled = true }) {
+  const [state, setState] = useState<{ loading: boolean; error: boolean; items: any[] }>({
     loading: true,
     error: false,
     items: []
   })
-  // default to "All" so the initial view stays the familiar all-time distribution
   const [presetIdx, setPresetIdx] = useState(PRESETS.length - 1)
+  const [pin, setPin] = useState<any>(null)
+  const [hover, setHover] = useState<any>(null)
 
   useEffect(() => {
     if (!enabled) {
@@ -44,100 +63,173 @@ export default function TxTypesBar({ enabled = true }: TxTypesBarProps) {
       return
     }
     setState(s => ({ ...s, loading: true, error: false }))
+    setPin(null)
+    setHover(null)
     const { start, end } = presetRange(PRESETS[presetIdx])
     Api.getTransactionsStatistic(start, end)
-      .then(res =>
-        setState({
-          loading: false,
-          error: false,
-          items: Array.isArray(res) ? (res as TxTypeStat[]) : []
-        })
-      )
+      .then(res => setState({ loading: false, error: false, items: Array.isArray(res) ? res : [] }))
       .catch(() => setState({ loading: false, error: true, items: [] }))
   }, [enabled, presetIdx])
 
   const preset = PRESETS[presetIdx]
   const rangeLabel = preset.label === 'All' ? 'all time' : preset.label
 
-  const sorted = [...state.items]
-    .filter(t => (t.count || 0) > 0)
-    .sort((a, b) => (b.count || 0) - (a.count || 0))
-  const total = sorted.reduce((sum, t) => sum + (t.count || 0), 0)
+  const segments = useMemo(() => {
+    const flat = flattenStatisticItems(state.items).sort((a, b) => b.count - a.count)
+    const total = flat.reduce((sum, t) => sum + t.count, 0)
+    const rawFracs = flat.map(t => (total > 0 ? t.count / total : 0))
+    const clamped = rawFracs.map(f => (f > 0 ? Math.max(f, MIN_SEG_FRAC) : 0))
+    const clampedSum = clamped.reduce((sum, f) => sum + f, 0) || 1
+    return flat.map((t, i) => ({
+      type: t.type,
+      label: labelOf(t.type),
+      count: t.count,
+      frac: rawFracs[i],
+      dFrac: clamped[i] / clampedSum,
+      cls: clsOf(t.type),
+      rank: i + 1,
+      fromBatch: t.fromBatch
+    }))
+  }, [state.items])
 
-  // display shares are clamped and renormalized so slivers stay visible and the bar still closes
-  const rawFracs = sorted.map(t => (total > 0 ? (t.count || 0) / total : 0))
-  const clamped = rawFracs.map(f => (f > 0 ? Math.max(f, MIN_SEG_FRAC) : 0))
-  const clampedSum = clamped.reduce((sum, f) => sum + f, 0) || 1
-  const segments = sorted.map((t, i) => ({
-    label: labelOf(t.transactionType),
-    count: t.count || 0,
-    frac: rawFracs[i],
-    dFrac: clamped[i] / clampedSum,
-    // per-type shade of the badge family hue keeps segments tellable yet on-brand
-    cls:
-      t.transactionType && (TransactionTypesInfo as Record<string, unknown>)[t.transactionType]
-        ? t.transactionType
-        : 'UNKNOWN'
-  }))
+  const total = segments.reduce((sum, s) => sum + s.count, 0)
+  const focusType = pin || hover
+  const focused = focusType ? segments.find(s => s.type === focusType) : null
 
-  const pctOf = (frac: number) => (frac < 0.01 ? '<1%' : `${Math.round(frac * 100)}%`)
-  const tipOf = (s: { label: string; count: number; frac: number }) =>
-    `${s.label} · ${s.count.toLocaleString('en-US')} · ${pctOf(s.frac)}`
+  const rangeTotal = state.loading
+    ? '—'
+    : focused
+      ? focused.count.toLocaleString('en-US')
+      : total.toLocaleString('en-US')
+  const statMeta = focused ? focused.label : state.error ? '' : rangeLabel
+
+  const togglePin = (type: any) => {
+    setPin((p: any) => (p === type ? null : type))
+  }
+
+  const focusHandlers = (type: any) => ({
+    onMouseEnter: () => setHover(type),
+    onMouseLeave: () => setHover((h: any) => (h === type ? null : h)),
+    onFocus: () => setHover(type),
+    onBlur: () => setHover((h: any) => (h === type ? null : h))
+  })
 
   return (
-    <Box className={'InfoBlock InfoBlock--NoBorder TxTypesBar'} w={'100%'}>
-      <CardHead
-        title={'Transaction types'}
-        extra={
-          total > 0 && (
-            <span className={'TxTypesBar__Total'}>
-              {total.toLocaleString('en-US')}{' '}
-              <span className={'TxTypesBar__TotalLabel'}>{rangeLabel}</span>
-            </span>
-          )
-        }
-      >
-        <Presets options={PRESETS} value={presetIdx} onChange={setPresetIdx} />
-      </CardHead>
+    <Box
+      className={'InfoBlock InfoBlock--NoBorder TxTypesBar'}
+      w={'100%'}
+      h={'100%'}
+      as={'section'}
+      aria-label={'Transaction'}
+    >
+      <header className={'TxTypesBar__Head'}>
+        <div className={'TxTypesBar__HeadText'}>
+          <span className={'TxTypesBar__Eyebrow'}>Network mix</span>
+          <h2 className={'TxTypesBar__Title'}>Transaction</h2>
+          <p className={'TxTypesBar__Lede'}>
+            Who is joining, writing data,
+            <br />
+            or moving credits and{' '}
+            <Tooltip
+              placement={'top'}
+              content={
+                <div className={'TxTypesBar__HelpTip'}>
+                  <p>
+                    Use this mix to see what Platform is for right now: new people, app data,
+                    tokens, credit flows, votes, and privacy.
+                  </p>
+                  <p className={'TxTypesBar__HelpFoot'}>
+                    Pick a type to see its count. A document or token row is one write on chain, not
+                    a raw batch dump.
+                  </p>
+                </div>
+              }
+            >
+              <span className={'TxTypesBar__LedeMore'}>tokens</span>
+            </Tooltip>
+            .
+          </p>
+        </div>
+        <div className={'TxTypesBar__Controls'}>
+          <Presets options={PRESETS} value={presetIdx} onChange={setPresetIdx} />
+          <div className={`TxTypesBar__Stat${focused ? ' is-on' : ''}${pin ? ' is-pinned' : ''}`}>
+            <div className={'TxTypesBar__StatMain'}>
+              <span className={'TxTypesBar__StatCount'}>{rangeTotal}</span>
+              <span className={'TxTypesBar__StatUnit'}>txs</span>
+            </div>
+            <span className={'TxTypesBar__StatMeta'}>{statMeta || '\u00a0'}</span>
+          </div>
+        </div>
+      </header>
 
       <div className={'TxTypesBar__Body'}>
         {state.loading ? (
           <div className={'TxTypesBar__Stack'}>
-            <Skeleton w={'100%'} h={'14px'} />
-            <div className={'TxTypesBar__Chips'}>
-              {Array.from({ length: 8 }).map((_, i) => (
-                <Skeleton w={'110px'} h={'0.75em'} key={i} />
+            <Skeleton w={'100%'} h={'18px'} radius={9} />
+            <div className={'TxTypesBar__Rows'}>
+              {Array.from({ length: 6 }).map((_, i) => (
+                <Skeleton w={'100%'} h={'2.25rem'} key={i} />
               ))}
             </div>
           </div>
         ) : state.error || !total ? (
           <div className={'TxTypesBar__Empty'}>No data</div>
         ) : (
-          <div className={'TxTypesBar__Stack'}>
+          <div
+            className={`TxTypesBar__Stack${pin ? ' is-pinned' : ''}`}
+            data-focus={focusType || undefined}
+            onMouseLeave={() => {
+              if (!pin) setHover(null)
+            }}
+          >
             <div
               className={'TxTypesBar__Bar'}
-              role={'img'}
+              role={'group'}
               aria-label={`${total} transactions by type`}
             >
               {segments.map(s => (
-                <Tooltip content={tipOf(s)} placement={'top'} key={s.label}>
-                  <span
-                    className={`TxTypesBar__Seg TxTypesBar__Seg--${s.cls}`}
-                    style={{ width: `${s.dFrac * 100}%` }}
-                  />
-                </Tooltip>
+                <Link
+                  key={s.type}
+                  href={transactionsListHref({ type: s.type, fromBatch: s.fromBatch })}
+                  data-type={s.type}
+                  className={`TxTypesBar__Seg TxTypesBar__Seg--${s.cls}${focusType === s.type ? ' is-focus' : ''}`}
+                  style={{ flexGrow: s.dFrac, flexBasis: 0 }}
+                  title={`${s.label}: ${s.count.toLocaleString('en-US')}`}
+                  aria-label={`${s.label}, open filtered transactions`}
+                  {...focusHandlers(s.type)}
+                />
               ))}
             </div>
 
-            <div className={'TxTypesBar__Chips'}>
+            <div className={'TxTypesBar__Rows'} role={'group'} aria-label={'Transaction types'}>
               {segments.map(s => (
-                <Tooltip content={tipOf(s)} placement={'top'} key={s.label}>
-                  <span className={'TxTypesBar__Chip'}>
-                    <i className={`TxTypesBar__Dot TxTypesBar__Dot--${s.cls}`} />
-                    <span className={'TxTypesBar__ChipLabel'}>{s.label}</span>
-                    <span className={'TxTypesBar__ChipCount'}>{compact(s.count)}</span>
+                <button
+                  key={s.type}
+                  type={'button'}
+                  data-type={s.type}
+                  className={`TxTypesBar__Row${focusType === s.type ? ' is-focus' : ''}`}
+                  title={`${s.label}: ${s.count.toLocaleString('en-US')}`}
+                  onClick={() => togglePin(s.type)}
+                  aria-pressed={pin === s.type}
+                  {...focusHandlers(s.type)}
+                >
+                  <span className={'TxTypesBar__Rank'}>{s.rank}</span>
+                  <span className={`TxTypesBar__Dot TxTypesBar__Dot--${s.cls}`} />
+                  <Link
+                    href={transactionsListHref({ type: s.type, fromBatch: s.fromBatch })}
+                    className={'TxTypesBar__RowLabel TxTypesBar__RowLabelLink'}
+                    onClick={e => e.stopPropagation()}
+                  >
+                    {s.label}
+                  </Link>
+                  <span className={'TxTypesBar__Meter'} aria-hidden={'true'}>
+                    <i
+                      className={`TxTypesBar__MeterFill TxTypesBar__Seg--${s.cls}`}
+                      style={{ width: `${Math.max(s.frac * 100, 1.5)}%` }}
+                    />
                   </span>
-                </Tooltip>
+                  <span className={'TxTypesBar__RowCount'}>{formatFullNumber(s.count) as any}</span>
+                </button>
               ))}
             </div>
           </div>

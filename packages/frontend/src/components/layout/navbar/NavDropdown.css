@@ -3,7 +3,7 @@
   font-size: var(--pe-text-sm);
   letter-spacing: 0.4px;
   text-transform: uppercase;
-  color: var(--pe-color-gray-100);
+  color: var(--pe-color-fg-muted);
 }
 
 .NavDropdown .MenuLevel__Item--Disabled {

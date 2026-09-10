@@ -20,7 +20,8 @@ export const colors = {
     'default-rgb': 'var(--pe-color-red-default-rgb)'
   },
   yellow: {
-    default: 'var(--pe-color-yellow-default)'
+    default: 'var(--pe-color-yellow-default)',
+    'default-rgb': 'var(--pe-color-yellow-default-rgb)'
   },
   green: {
     default: 'var(--pe-color-green-default)',

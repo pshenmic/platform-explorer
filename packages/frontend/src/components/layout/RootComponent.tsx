@@ -8,7 +8,8 @@ import {
   ThemeProvider,
   ModalProvider,
   WalletProvider,
-  QueryProvider
+  QueryProvider,
+  TooltipProvider
 } from 'src/contexts'
 import Navbar from './navbar/Navbar'
 import Footer from './footer'
@@ -28,14 +29,16 @@ export default function RootComponent({ children }: RootComponentProps) {
         <QueryProvider>
           <WalletProvider>
             <ThemeProvider>
-              <ModalProvider>
-                <Background snow={false} />
-                <BreadcrumbsProvider>
-                  <Navbar />
-                  {children}
-                </BreadcrumbsProvider>
-                <Footer />
-              </ModalProvider>
+              <TooltipProvider>
+                <ModalProvider>
+                  <Background snow={false} />
+                  <BreadcrumbsProvider>
+                    <Navbar />
+                    {children}
+                  </BreadcrumbsProvider>
+                  <Footer />
+                </ModalProvider>
+              </TooltipProvider>
             </ThemeProvider>
           </WalletProvider>
         </QueryProvider>

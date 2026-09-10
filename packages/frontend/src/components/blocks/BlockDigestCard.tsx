@@ -155,9 +155,9 @@ function BlockDigestCard({ block, rate, status }: BlockDigestCardProps) {
           <ValueCard link={`/validator/${block.data?.header?.validator}`}>
             <Identifier
               avatar={true}
-              middleEllipsis={true}
+              middleEllipsis={true as any}
               copyButton={true}
-              styles={['highlight-both']}
+              styles={['highlight-both'] as any}
             >
               {block.data?.header?.validator}
             </Identifier>

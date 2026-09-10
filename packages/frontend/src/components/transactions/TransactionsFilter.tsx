@@ -1,36 +1,11 @@
-import type { ComponentType, ReactNode } from 'react'
 import { TransactionTypesInfo } from '../../enums/state.transition.type'
 import { TransactionStatusBadge, TypeBadge } from './index'
 import BatchTypeBadge from './BatchTypeBadge'
 import { BatchActions } from '../../enums/batchTypes'
-import { Filters as FiltersJs } from '../filters'
-// Untyped JS components — loose wrappers until data/* is migrated
-import { Identifier as IdentifierJs } from '../data'
-import type { WithClassName } from '../../types/common'
+import { Filters } from '../filters'
+import { Identifier } from '../data'
 
-const Identifier = IdentifierJs as ComponentType<{
-  children?: ReactNode
-  avatar?: boolean
-  ellipsis?: boolean
-  styles?: string[]
-}>
-const Filters = FiltersJs as ComponentType<{
-  filtersConfig?: Record<string, unknown>
-  onFilterChange?: (values: Record<string, unknown>) => void
-  isMobile?: boolean
-  className?: string
-  buttonText?: string
-  applyOnChange?: boolean
-  initialFilters?: Record<string, unknown>
-}>
-
-interface FilterOption {
-  label: ReactNode
-  title: string
-  value: string
-}
-
-const transactionOptions: FilterOption[] = [
+const transactionOptions = [
   {
     label: <TypeBadge type={'DATA_CONTRACT_CREATE'} />,
     title: TransactionTypesInfo.DATA_CONTRACT_CREATE.title,
@@ -133,7 +108,7 @@ const transactionOptions: FilterOption[] = [
   }
 ]
 
-const batchOptions: FilterOption[] = [
+const batchOptions = [
   {
     label: <BatchTypeBadge batchType={'DOCUMENT_CREATE'} />,
     title: BatchActions.DOCUMENT_CREATE.title,
@@ -221,7 +196,7 @@ const batchOptions: FilterOption[] = [
   }
 ]
 
-const statusOptions: FilterOption[] = [
+const statusOptions = [
   {
     label: <TransactionStatusBadge status={'SUCCESS'} />,
     title: 'Success',
@@ -241,12 +216,12 @@ const filtersConfig = {
     title: 'Transaction Types',
     options: transactionOptions,
     defaultValue: transactionOptions.map(t => t.value),
-    formatValue: (values: string[]) => {
+    formatValue: (values: any) => {
       if (values.length === transactionOptions.length) return null
       if (values.length > 1) return `${values.length} categories`
       return transactionOptions.find(t => t.value === values[0])?.title || values[0]
     },
-    isAllSelected: (values: string[]) => values.length === transactionOptions.length
+    isAllSelected: (values: any) => values.length === transactionOptions.length
   },
   batch_type: {
     type: 'multiselect',
@@ -254,12 +229,12 @@ const filtersConfig = {
     title: 'Batch Types',
     options: batchOptions,
     defaultValue: batchOptions.map(t => t.value),
-    formatValue: (values: string[]) => {
+    formatValue: (values: any) => {
       if (values.length === batchOptions.length) return null
       if (values.length > 1) return `${values.length} categories`
       return batchOptions.find(t => t.value === values[0])?.title || values[0]
     },
-    isAllSelected: (values: string[]) => values.length === batchOptions.length
+    isAllSelected: (values: any) => values.length === batchOptions.length
   },
   status: {
     type: 'multiselect',
@@ -267,12 +242,12 @@ const filtersConfig = {
     title: 'Status',
     options: statusOptions,
     defaultValue: statusOptions.map(s => s.value),
-    formatValue: (values: string[]) => {
+    formatValue: (values: any) => {
       if (values.length === statusOptions.length) return null
       if (values.length > 1) return `${values.length} values`
       return statusOptions.find(s => s.value === values[0])?.title || values[0]
     },
-    isAllSelected: (values: string[]) => values.length === statusOptions.length
+    isAllSelected: (values: any) => values.length === statusOptions.length
   },
   gas: {
     type: 'range',
@@ -283,7 +258,7 @@ const filtersConfig = {
     minPlaceholder: 'ex. 0...',
     maxTitle: 'Maximum amount',
     maxPlaceholder: 'ex. 10000000...',
-    formatValue: ({ min, max }: { min?: string; max?: string }) => {
+    formatValue: ({ min, max }: any) => {
       if (min && max) return `${min} - ${max} Credits`
       if (min) return `Min ${min} Credits`
       if (max) return `Max ${max} Credits`
@@ -297,8 +272,8 @@ const filtersConfig = {
     entityType: 'identities',
     placeholder: 'OWNER ID OR IDENTITY',
     defaultValue: '',
-    formatValue: (value: string) => value || null,
-    mobileTagRenderer: (value: string) => (
+    formatValue: (value: any) => value || null,
+    mobileTagRenderer: (value: any) => (
       <Identifier avatar={true} ellipsis={true} styles={['highlight-both']}>
         {value}
       </Identifier>
@@ -309,33 +284,44 @@ const filtersConfig = {
     title: 'Date range',
     type: 'daterange',
     defaultValue: null,
-    formatValue: (value: { start?: Date | null; end?: Date | null } | null) => {
+    formatValue: (value: any) => {
       return `${value?.start ? `from ${value?.start?.toLocaleDateString()}` : ''} ${value?.end ? `to ${value?.end?.toLocaleDateString()}` : ''}`
     }
   }
 }
 
-interface TransactionsFilterProps extends WithClassName {
-  onFilterChange?: (values: Record<string, unknown>) => void
-  isMobile?: boolean
-  excludeFilters?: string[]
-}
+export const TRANSACTION_TYPE_VALUES = transactionOptions.map(o => o.value)
+export const BATCH_TYPE_VALUES = batchOptions.map(o => o.value)
 
 export default function TransactionsFilter({
   onFilterChange,
   isMobile,
   className,
-  excludeFilters = []
-}: TransactionsFilterProps) {
+  excludeFilters = [],
+  initialFilters
+}: {
+  onFilterChange?: (filters: Record<string, unknown>) => void
+  isMobile?: boolean
+  className?: string
+  excludeFilters?: string[]
+  initialFilters?: { transaction_type?: string[]; batch_type?: string[] }
+}) {
   const config = excludeFilters.length
     ? Object.fromEntries(
         Object.entries(filtersConfig).filter(([key]) => !excludeFilters.includes(key))
       )
     : filtersConfig
 
+  const urlKey = [
+    (initialFilters?.transaction_type || []).join(','),
+    (initialFilters?.batch_type || []).join(',')
+  ].join('|')
+
   return (
     <Filters
-      filtersConfig={config}
+      key={urlKey}
+      filtersConfig={config as any}
+      initialFilters={initialFilters}
       onFilterChange={onFilterChange}
       isMobile={isMobile}
       className={`TransactionsFilter ${className || ''}`}

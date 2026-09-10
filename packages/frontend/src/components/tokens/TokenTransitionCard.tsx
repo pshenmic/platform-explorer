@@ -206,8 +206,8 @@ const TokenTransitionCard = ({ transition, rate, className }: TokenTransitionCar
             <BatchTypeBadge
               batchType={
                 transition?.action !== undefined && transition?.action !== null
-                  ? transition.action
-                  : undefined
+                  ? String(transition.action)
+                  : ''
               }
             />
           }

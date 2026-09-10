@@ -16,6 +16,8 @@ interface MultiLevelMenuProps extends Omit<PopoverProps, 'children' | 'trigger'>
   onClose?: () => void
   onOpen?: () => void
   isOpen?: boolean
+  onContentMouseEnter?: () => void
+  onContentMouseLeave?: () => void
 }
 
 /**
@@ -32,6 +34,8 @@ function MultiLevelMenu({
   onClose,
   onOpen,
   isOpen,
+  onContentMouseEnter,
+  onContentMouseLeave,
   ...props
 }: MultiLevelMenuProps) {
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null)
@@ -62,7 +66,7 @@ function MultiLevelMenu({
         isLazy
         autoFocus={false}
         returnFocusOnClose={false}
-        gutter={4}
+        gutter={0}
         strategy="absolute"
         modifiers={[
           {
@@ -93,8 +97,12 @@ function MultiLevelMenu({
         <PopoverContent
           className={`MultiLevelMenu__Content${showPanel ? ' MultiLevelMenu__Content--WithPanel' : ''}`}
           width="auto"
+          p={0}
+          borderRadius="var(--pe-radius-def)"
           maxW="min(960px, calc(100vw - 24px))"
           rootProps={{ style: { zIndex: 1500 } }}
+          onMouseEnter={onContentMouseEnter}
+          onMouseLeave={onContentMouseLeave}
         >
           <PopoverBody p={0} className={'MultiLevelMenu__Body'}>
             <div className={'MultiLevelMenu__Layout'}>

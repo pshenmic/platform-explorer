@@ -2,18 +2,21 @@
 
 import { useState, useEffect, useRef } from 'react'
 
-// Eases a number from its previous value to target; snaps under reduced-motion / non-numbers.
 export function useCountUp(
   target: number | string | null | undefined,
-  duration = 800
+  duration = 800,
+  startAtTarget = false
 ): number | string | null | undefined {
   const [value, setValue] = useState<number | string | null | undefined>(
-    typeof target === 'number' ? 0 : target
+    typeof target === 'number' ? (startAtTarget ? target : 0) : target
   )
-  const fromRef = useRef(0)
+  const fromRef = useRef(typeof target === 'number' && startAtTarget ? target : 0)
+  const firstRef = useRef(true)
+  const startAtTargetRef = useRef(startAtTarget)
+  startAtTargetRef.current = startAtTarget
 
   useEffect(() => {
-    if (typeof target !== 'number' || isNaN(target)) {
+    if (typeof target !== 'number' || Number.isNaN(target)) {
       setValue(target)
       return
     }
@@ -22,11 +25,13 @@ export function useCountUp(
       typeof window !== 'undefined' &&
       window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches
 
-    if (reduce) {
+    if (reduce || (startAtTargetRef.current && firstRef.current)) {
+      firstRef.current = false
       setValue(target)
       fromRef.current = target
       return
     }
+    firstRef.current = false
 
     const from = fromRef.current
     const start = performance.now()
