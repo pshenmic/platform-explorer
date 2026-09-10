@@ -13,11 +13,7 @@ function ContendersBadges({ contenders, className }: ContendersBadgeProps) {
   return (
     <div className={`VoteBadges ${className || ''}`}>
       <Tooltip title={'Contenders'} placement={'top'}>
-        <Badge
-          className={'ContendersBadge'}
-          colorScheme={'blue'}
-          size={'xs'}
-        >
+        <Badge className={'ContendersBadge'} colorScheme={'blue'} size={'xs'}>
           {contenders}
         </Badge>
       </Tooltip>

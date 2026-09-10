@@ -55,9 +55,7 @@ function DataContractsListItem({ dataContract }: DataContractsListItemProps) {
   return (
     <Link href={`/dataContract/${dataContract?.identifier}`} className={'DataContractsListItem'}>
       <div className={'DataContractsListItem__Content'}>
-        <div
-          className={'DataContractsListItem__Column DataContractsListItem__Column--Identifier'}
-        >
+        <div className={'DataContractsListItem__Column DataContractsListItem__Column--Identifier'}>
           <div className={'DataContractsListItem__IdentifierContainer'}>
             {dataContract?.name ? (
               <Alias avatarSource={dataContract?.identifier}>{dataContract.name}</Alias>
@@ -96,9 +94,7 @@ function DataContractsListItem({ dataContract }: DataContractsListItemProps) {
           )}
         </div>
 
-        <div
-          className={'DataContractsListItem__Column DataContractsListItem__Column--WithTokens'}
-        >
+        <div className={'DataContractsListItem__Column DataContractsListItem__Column--WithTokens'}>
           {isNaN(Number(dataContract?.tokensCount)) ? (
             <NotActive />
           ) : (
@@ -119,9 +115,7 @@ function DataContractsListItem({ dataContract }: DataContractsListItemProps) {
           </ValueContainer>
         </div>
 
-        <div
-          className={'DataContractsListItem__Column DataContractsListItem__Column--Timestamp'}
-        >
+        <div className={'DataContractsListItem__Column DataContractsListItem__Column--Timestamp'}>
           {!dataContract?.timestamp && dataContract?.isSystem ? (
             <span className={'DataContractsListItem__Genesis'}>Genesis</span>
           ) : (

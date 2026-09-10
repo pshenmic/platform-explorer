@@ -116,7 +116,9 @@ const CustomPopover = ({
     const el = triggerRef.current
     const panel = popoverRef.current
     if (!el || !panel) return
-    setPos(place(el.getBoundingClientRect(), String(placement), panel.offsetWidth, panel.offsetHeight))
+    setPos(
+      place(el.getBoundingClientRect(), String(placement), panel.offsetWidth, panel.offsetHeight)
+    )
   }, [placement])
 
   useLayoutEffect(() => {
@@ -156,19 +158,33 @@ const CustomPopover = ({
           >
             {hasArrow ? <div className={'Popover__Arrow'} aria-hidden /> : null}
             {showCloseButton ? (
-              <button type="button" className={'Popover__Close'} onClick={onClose} aria-label="Close">
+              <button
+                type="button"
+                className={'Popover__Close'}
+                onClick={onClose}
+                aria-label="Close"
+              >
                 ×
               </button>
             ) : null}
             {header ? (
               <div
                 className={'Popover__Header'}
-                style={{ padding: 0, borderBottom: 0, textAlign: 'left', fontWeight: 700, fontSize: '0.75rem' }}
+                style={{
+                  padding: 0,
+                  borderBottom: 0,
+                  textAlign: 'left',
+                  fontWeight: 700,
+                  fontSize: '0.75rem'
+                }}
               >
                 {header}
               </div>
             ) : null}
-            <div className={'Popover__Body'} style={{ fontFamily: 'var(--pe-font-mono)', padding: 0 }}>
+            <div
+              className={'Popover__Body'}
+              style={{ fontFamily: 'var(--pe-font-mono)', padding: 0 }}
+            >
               {children}
             </div>
           </div>,

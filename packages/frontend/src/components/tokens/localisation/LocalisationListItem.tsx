@@ -26,9 +26,7 @@ function LocalisationListItem({ langCode, localisation, className }: Localisatio
         <div className={'LocalisationListItem__Column LocalisationListItem__Column--Plural'}>
           {localisation?.pluralForm !== undefined ? localisation?.pluralForm : <NotActive />}
         </div>
-        <div
-          className={'LocalisationListItem__Column LocalisationListItem__Column--Capitalize'}
-        >
+        <div className={'LocalisationListItem__Column LocalisationListItem__Column--Capitalize'}>
           {localisation?.shouldCapitalize !== undefined ? (
             <Badge colorScheme={localisation?.shouldCapitalize ? 'orange' : 'gray'}>
               {localisation?.shouldCapitalize ? 'true' : 'false'}

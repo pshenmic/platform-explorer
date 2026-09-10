@@ -57,12 +57,14 @@ function placeFixed(rect: DOMRect, placement: string, tipW = 240, tipH = 80): Ti
     const half = tipW / 2
     const minCenter = VIEW_PAD + half
     const maxCenter = window.innerWidth - VIEW_PAD - half
-    left = maxCenter > minCenter ? Math.min(maxCenter, Math.max(minCenter, left)) : window.innerWidth / 2
+    left =
+      maxCenter > minCenter ? Math.min(maxCenter, Math.max(minCenter, left)) : window.innerWidth / 2
   } else {
     const half = tipH / 2
     const minCenter = VIEW_PAD + half
     const maxCenter = window.innerHeight - VIEW_PAD - half
-    top = maxCenter > minCenter ? Math.min(maxCenter, Math.max(minCenter, top)) : window.innerHeight / 2
+    top =
+      maxCenter > minCenter ? Math.min(maxCenter, Math.max(minCenter, top)) : window.innerHeight / 2
   }
 
   return { top, left, transform, placement: next }

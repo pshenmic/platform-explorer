@@ -2,14 +2,7 @@
 
 import MenuLevel from './MenuLevel'
 import type { MenuItem } from './MenuLevel'
-import {
-  cloneElement,
-  isValidElement,
-  useCallback,
-  useLayoutEffect,
-  useRef,
-  useState
-} from 'react'
+import { cloneElement, isValidElement, useCallback, useLayoutEffect, useRef, useState } from 'react'
 import type { CSSProperties, MouseEvent, ReactElement, ReactNode } from 'react'
 import { createPortal } from 'react-dom'
 import { useOutsideClick } from '../../../hooks/useOutsideClick'
@@ -118,9 +111,7 @@ function MultiLevelMenu({
   const selected = selectedIndex != null ? menuData[selectedIndex] : undefined
   const showPanel = Boolean(selected?.content || selected?.subMenu?.length)
 
-  let triggerNode: ReactNode = trigger ?? (
-    <button type="button">Open menu</button>
-  )
+  let triggerNode: ReactNode = trigger ?? <button type="button">Open menu</button>
   if (isValidElement(trigger)) {
     const child = trigger as ReactElement<{ onClick?: (e: MouseEvent) => void }>
     triggerNode = cloneElement(child, {
@@ -131,39 +122,40 @@ function MultiLevelMenu({
     } as never)
   }
 
-  const content = isOpen && mounted ? (
-    createPortal(
-      <div
-        ref={contentRef}
-        className={`MultiLevelMenu__Content${showPanel ? ' MultiLevelMenu__Content--WithPanel' : ''}`}
-        style={pos}
-        onMouseEnter={onContentMouseEnter}
-        onMouseLeave={onContentMouseLeave}
-      >
-        <div className={'MultiLevelMenu__Body'}>
-          <div className={'MultiLevelMenu__Layout'}>
-            <div className={'MultiLevelMenu__Nav'}>
-              <MenuLevel
-                items={menuData}
-                selectedIndex={selectedIndex}
-                onSelectIndex={setSelectedIndex}
-                onMenuItemClick={handleClose}
-              />
-            </div>
-            {showPanel && (
-              <div className={'MultiLevelMenu__Panel'}>
-                {selected?.content}
-                {selected?.subMenu?.length ? (
-                  <MenuLevel items={selected.subMenu} onMenuItemClick={handleClose} />
-                ) : null}
+  const content =
+    isOpen && mounted
+      ? createPortal(
+          <div
+            ref={contentRef}
+            className={`MultiLevelMenu__Content${showPanel ? ' MultiLevelMenu__Content--WithPanel' : ''}`}
+            style={pos}
+            onMouseEnter={onContentMouseEnter}
+            onMouseLeave={onContentMouseLeave}
+          >
+            <div className={'MultiLevelMenu__Body'}>
+              <div className={'MultiLevelMenu__Layout'}>
+                <div className={'MultiLevelMenu__Nav'}>
+                  <MenuLevel
+                    items={menuData}
+                    selectedIndex={selectedIndex}
+                    onSelectIndex={setSelectedIndex}
+                    onMenuItemClick={handleClose}
+                  />
+                </div>
+                {showPanel && (
+                  <div className={'MultiLevelMenu__Panel'}>
+                    {selected?.content}
+                    {selected?.subMenu?.length ? (
+                      <MenuLevel items={selected.subMenu} onMenuItemClick={handleClose} />
+                    ) : null}
+                  </div>
+                )}
               </div>
-            )}
-          </div>
-        </div>
-      </div>,
-      document.body
-    )
-  ) : null
+            </div>
+          </div>,
+          document.body
+        )
+      : null
 
   return (
     <div className={'MultiLevelMenu'}>

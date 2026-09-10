@@ -62,9 +62,7 @@ export default function ActivityList({
           <div className={'ActivityList__ColumnTitle ActivityList__ColumnTitle--Timestamp'}>
             Time
           </div>
-          <div className={'ActivityList__ColumnTitle ActivityList__ColumnTitle--Hash'}>
-            Hash
-          </div>
+          <div className={'ActivityList__ColumnTitle ActivityList__ColumnTitle--Hash'}>Hash</div>
           <div className={'ActivityList__ColumnTitle ActivityList__ColumnTitle--Creator'}>
             Owner
           </div>
@@ -74,9 +72,7 @@ export default function ActivityList({
           <div className={'ActivityList__ColumnTitle ActivityList__ColumnTitle--Amount'}>
             Amount {!isLargeScreen && <>Tokens</>}
           </div>
-          <div className={'ActivityList__ColumnTitle ActivityList__ColumnTitle--Type'}>
-            Type
-          </div>
+          <div className={'ActivityList__ColumnTitle ActivityList__ColumnTitle--Type'}>Type</div>
         </div>
 
         {!loading ? (

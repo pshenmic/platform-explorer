@@ -71,7 +71,9 @@ export function Tabs({
   return (
     <TabsContext.Provider value={value}>
       <div
-        className={['Tabs', variant ? `Tabs--${variant}` : '', className || ''].filter(Boolean).join(' ')}
+        className={['Tabs', variant ? `Tabs--${variant}` : '', className || '']
+          .filter(Boolean)
+          .join(' ')}
         {...props}
       >
         {children}

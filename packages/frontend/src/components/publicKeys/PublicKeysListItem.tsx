@@ -90,9 +90,7 @@ function PublicKeysListItem({ publicKey, className }: PublicKeysListItemProps) {
             <NotActive />
           )}
         </div>
-        <div
-          className={'PublicKeysListItem__Column PublicKeysListItem__Column--SecurityLevel'}
-        >
+        <div className={'PublicKeysListItem__Column PublicKeysListItem__Column--SecurityLevel'}>
           {securityLevel?.title !== undefined ? (
             <ValueContainer
               colorScheme={

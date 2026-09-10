@@ -1,6 +1,5 @@
 'use client'
 
-
 import DataContractsRating from './DataContractsRating'
 import TrendingTokens from './TrendingTokens'
 import RichestIdentities from './RichestIdentities'

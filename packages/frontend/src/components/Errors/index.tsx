@@ -37,7 +37,12 @@ function ErrorMessageBlock({
               strokeWidth={'1.5'}
               strokeLinejoin={'round'}
             />
-            <path d={'M12 10v5'} stroke={'currentColor'} strokeWidth={'1.5'} strokeLinecap={'round'} />
+            <path
+              d={'M12 10v5'}
+              stroke={'currentColor'}
+              strokeWidth={'1.5'}
+              strokeLinecap={'round'}
+            />
             <circle cx={'12'} cy={'17.5'} r={'1'} fill={'currentColor'} />
           </svg>
         )}

@@ -28,14 +28,10 @@ function QuorumMembersList({
   return (
     <div className={'QuorumMembersList'}>
       <div className={`QuorumMembersList__ColumnTitles ${headerExtraClass[headerStyles] || ''}`}>
-        <div
-          className={'QuorumMembersList__ColumnTitle QuorumMembersList__ColumnTitle--ProtxHash'}
-        >
+        <div className={'QuorumMembersList__ColumnTitle QuorumMembersList__ColumnTitle--ProtxHash'}>
           Protx hash
         </div>
-        <div
-          className={'QuorumMembersList__ColumnTitle QuorumMembersList__ColumnTitle--Service'}
-        >
+        <div className={'QuorumMembersList__ColumnTitle QuorumMembersList__ColumnTitle--Service'}>
           Service
         </div>
         <div
@@ -45,9 +41,7 @@ function QuorumMembersList({
         >
           Operator Pubkey
         </div>
-        <div
-          className={'QuorumMembersList__ColumnTitle QuorumMembersList__ColumnTitle--Valid'}
-        >
+        <div className={'QuorumMembersList__ColumnTitle QuorumMembersList__ColumnTitle--Valid'}>
           Valid
         </div>
       </div>

@@ -171,15 +171,27 @@ function TokenDigestCard({ token, rate, className, loading, error }: TokenDigest
                         <span>Type:</span>
                         <b>{perpetualDistribution?.type}</b>
                       </div>
-                      <div className={'TokenDigestCard__DistributionTooltipRow TokenDigestCard__DistributionTooltipRow--Spread'}>
+                      <div
+                        className={
+                          'TokenDigestCard__DistributionTooltipRow TokenDigestCard__DistributionTooltipRow--Spread'
+                        }
+                      >
                         <span>Recipient Type:</span>
                         <b>{perpetualDistribution?.recipientType}</b>
                       </div>
-                      <div className={'TokenDigestCard__DistributionTooltipRow TokenDigestCard__DistributionTooltipRow--Spread'}>
+                      <div
+                        className={
+                          'TokenDigestCard__DistributionTooltipRow TokenDigestCard__DistributionTooltipRow--Spread'
+                        }
+                      >
                         <span>Interval:</span>
                         <b>{perpetualDistribution?.interval}</b>
                       </div>
-                      <div className={'TokenDigestCard__DistributionTooltipRow TokenDigestCard__DistributionTooltipRow--Spread'}>
+                      <div
+                        className={
+                          'TokenDigestCard__DistributionTooltipRow TokenDigestCard__DistributionTooltipRow--Spread'
+                        }
+                      >
                         <span>Function Name:</span>
                         <b>{perpetualDistribution?.functionName}</b>
                       </div>

@@ -29,9 +29,7 @@ export const RangeFilter = ({
 }: RangeFilterProps) => (
   <div className={'RangeFilter'}>
     <div className={'RangeFilter__InputContainer'}>
-      <span className={'RangeFilter__InputTitle'}>
-        {minTitle}
-      </span>
+      <span className={'RangeFilter__InputTitle'}>{minTitle}</span>
       <input
         className={'RangeFilter__Input'}
         type={type}
@@ -46,9 +44,7 @@ export const RangeFilter = ({
       />
     </div>
     <div className={'RangeFilter__InputContainer'}>
-      <span className={'RangeFilter__InputTitle'}>
-        {maxTitle}
-      </span>
+      <span className={'RangeFilter__InputTitle'}>{maxTitle}</span>
       <input
         className={'RangeFilter__Input'}
         type={type}

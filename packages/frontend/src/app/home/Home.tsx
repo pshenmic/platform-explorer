@@ -249,120 +249,120 @@ function Home() {
 
   return (
     <div className={'HomePage'}>
-        <HomeHero
-          status={statusQuery.data ?? {}}
-          loading={statusQuery.isLoading}
-          epochNumber={currentEpochNumber}
-          epochEndTime={currentEpochPayload?.epoch?.endTime}
-          avgBlockTimeSec={computeAvgBlockTime(blocksQuery.data?.resultSet)}
+      <HomeHero
+        status={statusQuery.data ?? {}}
+        loading={statusQuery.isLoading}
+        epochNumber={currentEpochNumber}
+        epochEndTime={currentEpochPayload?.epoch?.endTime}
+        avgBlockTimeSec={computeAvgBlockTime(blocksQuery.data?.resultSet)}
+      />
+
+      <section
+        className={'InfoBlock InfoBlock--NoBorder HomeOverview'}
+        aria-label={'Network overview'}
+      >
+        <div className={'HomeOverview__Grid'}>
+          <div className={'HomeOverview__Sys'}>
+            <HeroNodes compact className={'HomeOverview__Nodes'} />
+            <HeroMeta status={statusQuery.data ?? {}} loading={statusQuery.isLoading} />
+          </div>
+          <div className={'HomeOverview__Tx'}>
+            <CompactTxList
+              transactions={txQuery.data?.resultSet}
+              limit={5}
+              loading={txQuery.isLoading}
+              moreHref={'/transactions'}
+              moreLabel={'View all transactions'}
+            />
+          </div>
+          <div className={'HomeOverview__Blocks'}>
+            <CompactBlocksList
+              blocks={blocksQuery.data?.resultSet}
+              limit={5}
+              loading={blocksQuery.isLoading}
+              moreHref={'/blocks'}
+              moreLabel={'View all blocks'}
+            />
+          </div>
+        </div>
+      </section>
+
+      <section
+        id={'home-epochs'}
+        className={'InfoBlock InfoBlock--NoBorder HomeEpochs'}
+        tabIndex={-1}
+      >
+        <EpochsOverview
+          title={'Epochs'}
+          epochs={epochsList}
+          currentEpoch={epochData}
+          rate={rate}
+          loading={epochsLoading}
+          slotNumbers={epochNumbers}
         />
+      </section>
 
-        <section
-          className={'InfoBlock InfoBlock--NoBorder HomeOverview'}
-          aria-label={'Network overview'}
-        >
-          <div className={'HomeOverview__Grid'}>
-            <div className={'HomeOverview__Sys'}>
-              <HeroNodes compact className={'HomeOverview__Nodes'} />
-              <HeroMeta status={statusQuery.data ?? {}} loading={statusQuery.isLoading} />
-            </div>
-            <div className={'HomeOverview__Tx'}>
-              <CompactTxList
-                transactions={txQuery.data?.resultSet}
-                limit={5}
-                loading={txQuery.isLoading}
-                moreHref={'/transactions'}
-                moreLabel={'View all transactions'}
-              />
-            </div>
-            <div className={'HomeOverview__Blocks'}>
-              <CompactBlocksList
-                blocks={blocksQuery.data?.resultSet}
-                limit={5}
-                loading={blocksQuery.isLoading}
-                moreHref={'/blocks'}
-                moreLabel={'View all blocks'}
-              />
-            </div>
-          </div>
-        </section>
-
-        <section
-          id={'home-epochs'}
-          className={'InfoBlock InfoBlock--NoBorder HomeEpochs'}
-          tabIndex={-1}
-        >
-          <EpochsOverview
-            title={'Epochs'}
-            epochs={epochsList}
-            currentEpoch={epochData}
-            rate={rate}
-            loading={epochsLoading}
-            slotNumbers={epochNumbers}
+      <div className={'HomeCardPair HomeCardPair--metrics'}>
+        <div className={'HomeCardPair__Cell'}>
+          <TxActivityChart
+            fetcher={Api.getTransactionsHistory}
+            field={'txs'}
+            yAbbr={'txs'}
+            enabled={belowFoldReady}
           />
-        </section>
-
-        <div className={'HomeCardPair HomeCardPair--metrics'}>
-          <div className={'HomeCardPair__Cell'}>
-            <TxActivityChart
-              fetcher={Api.getTransactionsHistory}
-              field={'txs'}
-              yAbbr={'txs'}
-              enabled={belowFoldReady}
-            />
-          </div>
-          <div className={'HomeCardPair__Cell'}>
-            <IdentityGrowthChart
-              fetcher={Api.getIdentitiesHistory}
-              field={'registeredIdentities'}
-              yAbbr={'identities'}
-              enabled={belowFoldReady}
-            />
-          </div>
         </div>
-
-        <div className={'HomeCardPair HomeCardPair--viz'}>
-          <div className={'HomeCardPair__Cell'}>
-            <TxTypesBar enabled={belowFoldReady} />
-          </div>
-          <div className={'HomeCardPair__Cell'}>
-            <ShieldedPoolCard rate={rate} enabled={belowFoldReady} />
-          </div>
+        <div className={'HomeCardPair__Cell'}>
+          <IdentityGrowthChart
+            fetcher={Api.getIdentitiesHistory}
+            field={'registeredIdentities'}
+            yAbbr={'identities'}
+            enabled={belowFoldReady}
+          />
         </div>
+      </div>
 
-        <div className={'HomeCardPair HomeCardPair--leaders'}>
-          <div className={'HomeCardPair__Cell'}>
-            <HomeLeaders rate={rate} enabled={belowFoldReady} />
-          </div>
-          <div className={'HomeCardPair__Cell'}>
-            <QuorumCard
-              validators={validators}
-              validatorsActive={validatorsActive}
-              validatorsBanned={validatorsBanned}
-              validatorsInactive={validatorsInactive}
-              validatorsList={validatorsPoolList}
-              poolLoading={
-                validatorsPoolHeadQuery.isPending ||
-                (validatorsPoolHeadQuery.isSuccess &&
-                  poolPages > 1 &&
-                  validatorsPoolRestQuery.isPending)
-              }
-              bannedValidatorsList={validatorsBannedListQuery.data}
-              bannedListLoading={validatorsBannedListQuery.isPending}
-              currentQuorum={currentQuorumQuery.data}
-              currentQuorumLoading={currentQuorumQuery.isPending || currentQuorumQuery.isLoading}
-              currentQuorumError={currentQuorumQuery.isError}
-              quorums={quorumsListQuery.data}
-              l1LockedHeight={blocksQuery.data?.resultSet?.[0]?.header?.l1LockedHeight}
-              lastProposerProTx={blocksQuery.data?.resultSet?.[0]?.header?.validator}
-              avgBlockTimeSec={
-                epochAvgBlockMs > 0
-                  ? epochAvgBlockMs / 1000
-                  : computeAvgBlockTime(blocksQuery.data?.resultSet)
-              }
-            />
-          </div>
+      <div className={'HomeCardPair HomeCardPair--viz'}>
+        <div className={'HomeCardPair__Cell'}>
+          <TxTypesBar enabled={belowFoldReady} />
         </div>
+        <div className={'HomeCardPair__Cell'}>
+          <ShieldedPoolCard rate={rate} enabled={belowFoldReady} />
+        </div>
+      </div>
+
+      <div className={'HomeCardPair HomeCardPair--leaders'}>
+        <div className={'HomeCardPair__Cell'}>
+          <HomeLeaders rate={rate} enabled={belowFoldReady} />
+        </div>
+        <div className={'HomeCardPair__Cell'}>
+          <QuorumCard
+            validators={validators}
+            validatorsActive={validatorsActive}
+            validatorsBanned={validatorsBanned}
+            validatorsInactive={validatorsInactive}
+            validatorsList={validatorsPoolList}
+            poolLoading={
+              validatorsPoolHeadQuery.isPending ||
+              (validatorsPoolHeadQuery.isSuccess &&
+                poolPages > 1 &&
+                validatorsPoolRestQuery.isPending)
+            }
+            bannedValidatorsList={validatorsBannedListQuery.data}
+            bannedListLoading={validatorsBannedListQuery.isPending}
+            currentQuorum={currentQuorumQuery.data}
+            currentQuorumLoading={currentQuorumQuery.isPending || currentQuorumQuery.isLoading}
+            currentQuorumError={currentQuorumQuery.isError}
+            quorums={quorumsListQuery.data}
+            l1LockedHeight={blocksQuery.data?.resultSet?.[0]?.header?.l1LockedHeight}
+            lastProposerProTx={blocksQuery.data?.resultSet?.[0]?.header?.validator}
+            avgBlockTimeSec={
+              epochAvgBlockMs > 0
+                ? epochAvgBlockMs / 1000
+                : computeAvgBlockTime(blocksQuery.data?.resultSet)
+            }
+          />
+        </div>
+      </div>
     </div>
   )
 }

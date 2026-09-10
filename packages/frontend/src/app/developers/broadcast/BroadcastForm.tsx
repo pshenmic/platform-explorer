@@ -127,7 +127,9 @@ function SignedHexView({ unsignedHex, signedHex, onEdit }: SignedHexViewProps) {
           <CopyButton text={signedHex} />
           <button
             type={'button'}
-            className={'BroadcastForm__Button BroadcastForm__Button--gray BroadcastForm__Button--xs'}
+            className={
+              'BroadcastForm__Button BroadcastForm__Button--gray BroadcastForm__Button--xs'
+            }
             onClick={onEdit}
           >
             Edit
@@ -490,7 +492,9 @@ function BroadcastForm() {
         <div className={'BroadcastForm__ButtonsRow'}>
           <button
             type={'button'}
-            className={'BroadcastForm__Button BroadcastForm__Button--blue BroadcastForm__Button--sm'}
+            className={
+              'BroadcastForm__Button BroadcastForm__Button--blue BroadcastForm__Button--sm'
+            }
             style={{ minWidth: 200 }}
             onClick={primaryAction.onClick}
             disabled={primaryAction.isDisabled || primaryAction.isLoading}
