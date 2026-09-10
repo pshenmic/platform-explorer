@@ -1,7 +1,5 @@
 import type { Metadata } from 'next'
-import { Suspense } from 'react'
 import Validators from './Validators'
-import { ValidatorsListSceleton } from '../../components/validators'
 
 export const metadata: Metadata = {
   title: 'Validators — Dash Platform Explorer',
@@ -12,11 +10,7 @@ export const metadata: Metadata = {
 }
 
 function ValidatorsRoute() {
-  return (
-    <Suspense fallback={<ValidatorsListSceleton />}>
-      <Validators />
-    </Suspense>
-  )
+  return <Validators />
 }
 
 export default ValidatorsRoute

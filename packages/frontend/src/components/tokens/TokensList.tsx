@@ -219,6 +219,7 @@ function TokensList({
       columns={columns}
       pinFirst={pinFirst}
       loading={loading}
+      skeletonCount={itemsCount}
       rowHref={token => `/token/${token.identifier}`}
       rowKey={token => token.identifier}
       headerVariant={headerStyles === 'light' ? 'light' : 'default'}

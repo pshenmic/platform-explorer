@@ -1,5 +1,4 @@
 import type { Metadata } from 'next'
-import { Suspense } from 'react'
 import Identities from './Identities'
 import './IdentitiesPage.css'
 
@@ -11,11 +10,7 @@ export const metadata: Metadata = {
 }
 
 function IdentitiesRoute() {
-  return (
-    <Suspense fallback={null}>
-      <Identities />
-    </Suspense>
-  )
+  return <Identities />
 }
 
 export default IdentitiesRoute

@@ -1,5 +1,4 @@
 import type { Metadata } from 'next'
-import { Suspense } from 'react'
 import ContestedResources from './ContestedResources'
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -26,11 +25,7 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 function ContestedResourcesRoute() {
-  return (
-    <Suspense fallback={null}>
-      <ContestedResources />
-    </Suspense>
-  )
+  return <ContestedResources />
 }
 
 export default ContestedResourcesRoute

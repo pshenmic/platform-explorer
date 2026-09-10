@@ -53,12 +53,14 @@ function BlocksList({
   const statusQuery = useQuery({
     queryKey: ['status'],
     queryFn: () => Api.getStatus(),
+    enabled: blocks.length > 0,
     staleTime: 30_000
   })
   const currentEpoch = statusQuery.data?.epoch ?? null
   const rateQuery = useQuery({
     queryKey: ['rate'],
     queryFn: () => Api.getRate(),
+    enabled: blocks.length > 0,
     staleTime: 60_000
   })
   const rate = rateQuery.data ?? null

@@ -73,6 +73,7 @@ function VotesList({
   headerStyles = 'default',
   pagination,
   loading,
+  itemsCount,
   showDataContract = true,
   filterValues,
   onFilterChange,
@@ -238,6 +239,7 @@ function VotesList({
       columns={columns}
       pinFirst={pinFirst}
       loading={loading}
+      skeletonCount={itemsCount}
       rowHref={vote => (vote?.txHash ? `/transaction/${vote.txHash}` : undefined)}
       rowKey={(vote, index) =>
         vote?.txHash || `${vote?.voterIdentifier}-${vote?.timestamp}-${index}`

@@ -1,5 +1,4 @@
 import type { Metadata } from 'next'
-import { Suspense } from 'react'
 import MasternodeVotes from './MasternodeVotes'
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -25,11 +24,7 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 function MasternodeVotesRoute() {
-  return (
-    <Suspense fallback={null}>
-      <MasternodeVotes />
-    </Suspense>
-  )
+  return <MasternodeVotes />
 }
 
 export default MasternodeVotesRoute

@@ -115,6 +115,7 @@ function ContestedResourcesList({
   headerStyles = 'default',
   pagination,
   loading,
+  itemsCount,
   filterValues,
   onFilterChange,
   paging,
@@ -241,6 +242,7 @@ function ContestedResourcesList({
       columns={columns}
       pinFirst={pinFirst}
       loading={loading}
+      skeletonCount={itemsCount}
       rowHref={resourceHref}
       rowKey={resourceKey}
       headerVariant={headerStyles === 'light' ? 'light' : 'default'}
