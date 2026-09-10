@@ -4,7 +4,7 @@ const PREFIX = 'pe:list-scroll-v2:'
 
 export function readListScrollMode(
   key: string,
-  fallback: ListScrollMode = 'pages'
+  fallback: ListScrollMode = 'continuous'
 ): ListScrollMode {
   if (typeof window === 'undefined') return fallback
   try {
