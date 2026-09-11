@@ -10,11 +10,13 @@ import {
   type PointerEvent
 } from 'react'
 import * as d3 from 'd3'
+import { useQuery } from '@tanstack/react-query'
 import useResizeObserver from '@react-hook/resize-observer'
 
 import * as Api from '../../util/Api'
 import { Presets } from '../cards'
 import { Tooltip } from '../ui/Tooltips'
+import DashIcon from '../ui/icons/DashIcon'
 import { creditsToDash, roundUsd } from '../../util'
 import { Skeleton } from './Skeleton'
 import { PRESETS, presetRange } from './MetricChart'
@@ -32,7 +34,7 @@ function fmtDash(dash: any) {
 function fmtCompact(dash: any) {
   const n = Number(dash) || 0
   if (Math.abs(n) >= 1e6) return `${(n / 1e6).toFixed(2)}M`
-  if (Math.abs(n) >= 1e3) return `${(n / 1e3).toFixed(1)}k`
+  if (Math.abs(n) >= 1e3) return `${(n / 1e3).toFixed(Math.abs(n) < 1e5 ? 2 : 1)}k`
   if (Math.abs(n) >= 10) return n.toFixed(1)
   return fmtDash(n)
 }
@@ -44,9 +46,45 @@ function fmtUsd(n: number, compact = false) {
   return `${sign}$${roundUsd(a)}`
 }
 
-function fmtAmt(dash: number, inUsd: boolean, usdPx: number | null, compact = false) {
+function fmtFiatAmount(dash: number, inUsd: boolean, usdPx: number | null, compact = false) {
   if (inUsd && usdPx != null) return fmtUsd(dash * usdPx, compact)
   return compact ? fmtCompact(dash) : fmtDash(dash)
+}
+
+function fmtFullFiatAmount(dash: number, inUsd: boolean, usdPx: number | null) {
+  const amount = inUsd && usdPx != null ? dash * usdPx : dash
+  const formatted = amount.toLocaleString('en-US', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: amount !== 0 && Math.abs(amount) < 0.01 ? 8 : 2
+  })
+  return inUsd ? `$${formatted}` : `${formatted} DASH`
+}
+
+function fmtBtc(amount: number, compact = false) {
+  if (compact) {
+    const magnitude = Math.abs(amount)
+    if (magnitude >= 1000) return `₿${fmtCompact(amount)}`
+    const decimals =
+      magnitude === 0 || magnitude >= 1
+        ? 2
+        : Math.min(8, Math.max(2, 1 - Math.floor(Math.log10(magnitude))))
+    return `₿${amount.toFixed(decimals)}`
+  }
+  return `₿${amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 8 })}`
+}
+
+async function fetchBtcRate({ signal }: { signal: AbortSignal }) {
+  const response = await fetch('https://api.coinbase.com/v2/exchange-rates?currency=DASH', {
+    credentials: 'omit',
+    signal: AbortSignal.any([signal, AbortSignal.timeout(10000)])
+  })
+  if (!response.ok) throw new Error('BTC rate unavailable')
+  const body = await response.json()
+  const rate = Number(body.data?.rates?.BTC)
+  if (body.data?.currency !== 'DASH' || !Number.isFinite(rate) || rate <= 0) {
+    throw new Error('Invalid DASH/BTC rate')
+  }
+  return rate
 }
 
 function buildTvlSeries(buckets: any, balanceCredits: any) {
@@ -160,7 +198,15 @@ export default function ShieldedPoolCard({
   const [hoverI, setHoverI] = useState<number | null>(null)
   const [showDeposits, setShowDeposits] = useState(true)
   const [showWithdrawals, setShowWithdrawals] = useState(true)
-  const [unit, setUnit] = useState<'dash' | 'usd'>('dash')
+  const [unit, setUnit] = useState<'dash' | 'usd' | 'btc'>('dash')
+  const btcRate = useQuery({
+    queryKey: ['exchange-rate', 'coinbase', 'DASH', 'BTC'],
+    queryFn: fetchBtcRate,
+    enabled: enabled && unit === 'btc',
+    staleTime: 60000,
+    refetchInterval: unit === 'btc' ? 60000 : false,
+    retry: 1
+  })
   const [width, setWidth] = useState(0)
   const [plotH, setPlotH] = useState(180)
   const wrapRef = useRef<HTMLDivElement | null>(null)
@@ -275,7 +321,17 @@ export default function ShieldedPoolCard({
   const rangeNetDash = rangeInDash - rangeOutDash
   const usdPx = typeof rateState?.data?.usd === 'number' ? rateState.data.usd : null
   const inUsd = unit === 'usd' && usdPx != null
-  const k = inUsd && usdPx != null ? usdPx : 1
+  const inBtc = unit === 'btc'
+  const btcPx = btcRate.data ?? null
+  const k = inBtc ? (btcPx ?? 1) : inUsd && usdPx != null ? usdPx : 1
+  const fmtAmt = (dash: number, usd: boolean, rate: number | null, compact = false) =>
+    inBtc
+      ? btcPx == null
+        ? '—'
+        : fmtBtc(dash * btcPx, compact)
+      : fmtFiatAmount(dash, usd, rate, compact)
+  const fmtFullAmount = (dash: number, usd: boolean, rate: number | null) =>
+    inBtc ? (btcPx == null ? '—' : fmtBtc(dash * btcPx)) : fmtFullFiatAmount(dash, usd, rate)
 
   const ready = width > 0 && plotH > 0 && points.length >= 1
 
@@ -408,7 +464,7 @@ export default function ShieldedPoolCard({
   }, [ready, points, width, plotH, showDeposits, showWithdrawals, k, inUsd])
 
   const handleMove = (e: PointerEvent<HTMLDivElement>) => {
-    if (!chart || series.loading) return
+    if (!chart || series.loading || (inBtc && btcPx == null)) return
     const rect = e.currentTarget.getBoundingClientRect()
     const mx = e.clientX - rect.left
     const t = chart.x.invert(mx)
@@ -430,11 +486,12 @@ export default function ShieldedPoolCard({
 
   const statDash = isAll ? balanceDash : rangeNetDash
   const statCount = (() => {
-    if (hovered) return fmtAmt(hovered.tvlDash, inUsd, usdPx)
+    if (inBtc && btcPx == null) return btcRate.isError ? '—' : null
+    if (hovered) return fmtAmt(hovered.tvlDash, inUsd, usdPx, true)
     if (pool.loading) return null
     if (!isAll && !period.loaded) return null
-    if (!statDash) return inUsd ? fmtUsd(0) : '0'
-    const body = fmtAmt(Math.abs(statDash), inUsd, usdPx)
+    if (!statDash) return fmtAmt(0, inUsd, usdPx)
+    const body = fmtAmt(Math.abs(statDash), inUsd, usdPx, true)
     if (isAll) return body
     return `${statDash >= 0 ? '+' : '−'}${body.replace(/^[−-]/, '')}`
   })()
@@ -446,6 +503,8 @@ export default function ShieldedPoolCard({
           ? ' is-down'
           : ''
       : ''
+  const displayedInDash = rangeInDash
+  const displayedOutDash = rangeOutDash
   const flowsLoading = !period.loaded
 
   return (
@@ -488,19 +547,29 @@ export default function ShieldedPoolCard({
                   <button
                     type={'button'}
                     className={`ShieldedPool__StatCount${statTone}`}
-                    disabled={usdPx == null}
+                    disabled={!inBtc && usdPx == null}
                     title={
-                      usdPx == null
-                        ? 'USD rate unavailable'
-                        : inUsd
-                          ? 'Show in DASH'
-                          : 'Show in USD at current rate'
+                      inBtc
+                        ? 'Show in DASH'
+                        : usdPx == null
+                          ? 'USD rate unavailable'
+                          : inUsd
+                            ? 'Show in DASH'
+                            : 'Show in USD at current rate'
                     }
                     aria-label={
-                      inUsd ? 'Amount in USD, switch to DASH' : 'Amount in DASH, switch to USD'
+                      inBtc
+                        ? 'Amount in BTC, switch to DASH'
+                        : inUsd
+                          ? 'Amount in USD, switch to DASH'
+                          : 'Amount in DASH, switch to USD'
                     }
-                    onClick={() => usdPx != null && setUnit(u => (u === 'dash' ? 'usd' : 'dash'))}
+                    onClick={() => {
+                      if (inBtc) setUnit('dash')
+                      else if (usdPx != null) setUnit(value => (value === 'dash' ? 'usd' : 'dash'))
+                    }}
                   >
+                    {!inUsd && !inBtc && <DashIcon boxSize={'0.85em'} aria-hidden={'true'} />}
                     {statCount}
                   </button>
                 )}
@@ -512,8 +581,8 @@ export default function ShieldedPoolCard({
               >
                 <button
                   type={'button'}
-                  className={`ShieldedPool__Unit${!inUsd ? ' is-on' : ''}`}
-                  aria-pressed={!inUsd}
+                  className={`ShieldedPool__Unit${unit === 'dash' ? ' is-on' : ''}`}
+                  aria-pressed={unit === 'dash'}
                   onClick={() => setUnit('dash')}
                 >
                   DASH
@@ -528,47 +597,78 @@ export default function ShieldedPoolCard({
                 >
                   USD
                 </button>
+                <button
+                  type={'button'}
+                  className={`ShieldedPool__Unit${inBtc ? ' is-on' : ''}`}
+                  aria-pressed={inBtc}
+                  title={'BTC at current DASH rate from Coinbase'}
+                  onClick={() => setUnit('btc')}
+                >
+                  BTC
+                </button>
               </div>
             </div>
-            <div className={'ShieldedPool__Flows'} aria-label={`Flows · ${windowLabel}`}>
-              {flowsLoading ? (
-                <Skeleton w={'16ch'} h={'0.85em'} />
-              ) : (
-                <>
-                  <button
-                    type={'button'}
-                    className={`ShieldedPool__Flow ShieldedPool__Flow--in${showDeposits ? ' is-on' : ' is-off'}`}
-                    aria-pressed={showDeposits}
-                    aria-label={
-                      showDeposits
-                        ? `Hide deposits, ${fmtAmt(rangeInDash, inUsd, usdPx)}`
-                        : `Show deposits, ${fmtAmt(rangeInDash, inUsd, usdPx)}`
-                    }
-                    title={showDeposits ? 'Hide deposits on chart' : 'Show deposits on chart'}
-                    onClick={() => setShowDeposits(v => !v)}
-                  >
-                    <i className={'ShieldedPool__FlowSwatch'} aria-hidden={'true'} />
-                    <b>+{fmtAmt(rangeInDash, inUsd, usdPx)}</b>
-                  </button>
-                  <button
-                    type={'button'}
-                    className={`ShieldedPool__Flow ShieldedPool__Flow--out${showWithdrawals ? ' is-on' : ' is-off'}`}
-                    aria-pressed={showWithdrawals}
-                    aria-label={
-                      showWithdrawals
-                        ? `Hide withdrawals, ${fmtAmt(rangeOutDash, inUsd, usdPx)}`
-                        : `Show withdrawals, ${fmtAmt(rangeOutDash, inUsd, usdPx)}`
-                    }
-                    title={
-                      showWithdrawals ? 'Hide withdrawals on chart' : 'Show withdrawals on chart'
-                    }
-                    onClick={() => setShowWithdrawals(v => !v)}
-                  >
-                    <i className={'ShieldedPool__FlowSwatch'} aria-hidden={'true'} />
-                    <b>−{fmtAmt(rangeOutDash, inUsd, usdPx)}</b>
-                  </button>
-                </>
+            <div className={'ShieldedPool__Summary'}>
+              {inBtc && (btcRate.isError || btcPx == null) && (
+                <span className={'ShieldedPool__RateStatus'} role={'status'}>
+                  {btcRate.isError ? (
+                    <button type={'button'} onClick={() => void btcRate.refetch()}>
+                      BTC rate unavailable · Retry
+                    </button>
+                  ) : (
+                    'Loading BTC rate…'
+                  )}
+                </span>
               )}
+              <div
+                className={'ShieldedPool__Flows'}
+                aria-label={hovered ? 'Flows · selected interval' : `Flows · ${windowLabel}`}
+              >
+                {flowsLoading ? (
+                  <Skeleton w={'16ch'} h={'0.85em'} />
+                ) : (
+                  <>
+                    <button
+                      type={'button'}
+                      className={`ShieldedPool__Flow ShieldedPool__Flow--in${showDeposits ? ' is-on' : ' is-off'}`}
+                      aria-pressed={showDeposits}
+                      aria-label={
+                        showDeposits
+                          ? `Hide deposits, ${fmtAmt(displayedInDash, inUsd, usdPx)}`
+                          : `Show deposits, ${fmtAmt(displayedInDash, inUsd, usdPx)}`
+                      }
+                      title={showDeposits ? 'Hide deposits on chart' : 'Show deposits on chart'}
+                      onClick={() => setShowDeposits(v => !v)}
+                    >
+                      <i className={'ShieldedPool__FlowSwatch'} aria-hidden={'true'} />
+                      <b>
+                        +{!inUsd && !inBtc && <DashIcon boxSize={'0.85em'} aria-hidden={'true'} />}
+                        {fmtAmt(displayedInDash, inUsd, usdPx, inBtc)}
+                      </b>
+                    </button>
+                    <button
+                      type={'button'}
+                      className={`ShieldedPool__Flow ShieldedPool__Flow--out${showWithdrawals ? ' is-on' : ' is-off'}`}
+                      aria-pressed={showWithdrawals}
+                      aria-label={
+                        showWithdrawals
+                          ? `Hide withdrawals, ${fmtAmt(displayedOutDash, inUsd, usdPx)}`
+                          : `Show withdrawals, ${fmtAmt(displayedOutDash, inUsd, usdPx)}`
+                      }
+                      title={
+                        showWithdrawals ? 'Hide withdrawals on chart' : 'Show withdrawals on chart'
+                      }
+                      onClick={() => setShowWithdrawals(v => !v)}
+                    >
+                      <i className={'ShieldedPool__FlowSwatch'} aria-hidden={'true'} />
+                      <b>
+                        −{!inUsd && !inBtc && <DashIcon boxSize={'0.85em'} aria-hidden={'true'} />}
+                        {fmtAmt(displayedOutDash, inUsd, usdPx, inBtc)}
+                      </b>
+                    </button>
+                  </>
+                )}
+              </div>
             </div>
           </div>
         </div>
@@ -656,7 +756,13 @@ export default function ShieldedPoolCard({
                         dy={'0.32em'}
                         textAnchor={'end'}
                       >
-                        {inUsd ? fmtUsd(v, true) : fmtCompact(v)}
+                        {inBtc
+                          ? btcPx == null
+                            ? '—'
+                            : fmtBtc(v)
+                          : inUsd
+                            ? fmtUsd(v, true)
+                            : fmtCompact(v)}
                       </text>
                     </g>
                   ))}
@@ -784,10 +890,10 @@ export default function ShieldedPoolCard({
                     <span className={'ShieldedPool__TipRow is-tvl'}>
                       <span>Locked</span>
                       <span className={'ShieldedPool__TipAmounts'}>
-                        <strong>{fmtAmt(hovered.tvlDash, inUsd, usdPx)}</strong>
-                        {usdPx != null && (
+                        <strong>{fmtFullAmount(hovered.tvlDash, inUsd, usdPx)}</strong>
+                        {!inBtc && usdPx != null && (
                           <span className={'ShieldedPool__TipSecondary'}>
-                            ≈ {fmtAmt(hovered.tvlDash, !inUsd, usdPx)}
+                            ≈ {fmtFullAmount(hovered.tvlDash, !inUsd, usdPx)}
                           </span>
                         )}
                       </span>
@@ -795,13 +901,13 @@ export default function ShieldedPoolCard({
                     {showDeposits && (
                       <span className={'ShieldedPool__TipRow is-in'}>
                         <span>Deposits</span>
-                        <strong>+{fmtAmt(hovered.inDash, inUsd, usdPx)}</strong>
+                        <strong>+{fmtFullAmount(hovered.inDash, inUsd, usdPx)}</strong>
                       </span>
                     )}
                     {showWithdrawals && (
                       <span className={'ShieldedPool__TipRow is-out'}>
                         <span>Withdrawals</span>
-                        <strong>−{fmtAmt(hovered.outDash, inUsd, usdPx)}</strong>
+                        <strong>−{fmtFullAmount(hovered.outDash, inUsd, usdPx)}</strong>
                       </span>
                     )}
                   </div>

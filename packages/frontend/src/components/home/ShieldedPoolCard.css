@@ -124,6 +124,9 @@
   opacity: 0.55;
 }
 .ShieldedPool__StatCount {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.12em;
   margin: 0;
   padding: 0;
   border: 0;
@@ -189,6 +192,7 @@
   color: var(--pe-color-gray-500);
 }
 .ShieldedPool__Flows {
+  order: -1;
   min-height: calc(0.6875rem * 1.3 + 4px);
   display: flex;
   flex-direction: row;
@@ -196,6 +200,28 @@
   justify-content: flex-end;
   align-items: baseline;
   gap: 4px 14px;
+}
+.ShieldedPool__Summary {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px 14px;
+  max-width: 100%;
+}
+.ShieldedPool__RateStatus {
+  color: var(--pe-color-gray-400);
+  font-family: var(--pe-font-mono);
+  font-size: 0.625rem;
+}
+.ShieldedPool__RateStatus button {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-decoration: underline;
+  cursor: pointer;
 }
 .ShieldedPool__Flow {
   display: inline-flex;
@@ -217,6 +243,9 @@
     color 0.15s ease;
 }
 .ShieldedPool__Flow b {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.08em;
   font-weight: 700;
   margin-left: 0.15em;
   color: #fff;
