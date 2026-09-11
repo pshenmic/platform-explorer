@@ -722,6 +722,14 @@ module.exports = ({
       handler: mainController.getCurrentQuorum
     },
     {
+      path: '/quorums/proposers',
+      method: 'GET',
+      handler: mainController.getProposers,
+      schema: {
+        querystring: { $ref: 'paginationOptions#' }
+      }
+    },
+    {
       path: '/quorum/:hash',
       method: 'GET',
       handler: mainController.getQuorumByHash,

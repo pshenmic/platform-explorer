@@ -82,7 +82,8 @@ const fixtures = {
     app_version,
     l1_locked_height,
     validator,
-    app_hash
+    app_hash,
+    quorum_hash
   } = {}) => {
     const validatorObject = validator
       ? await fixtures.getValidator(knex, { pro_tx_hash: validator })
@@ -96,7 +97,8 @@ const fixtures = {
       l1_locked_height: l1_locked_height ?? 1337,
       validator: validatorObject.pro_tx_hash,
       validator_id: validatorObject.id,
-      app_hash: app_hash ?? generateHash()
+      app_hash: app_hash ?? generateHash(),
+      quorum_hash: quorum_hash ?? generateHash()
     }
 
     await knex('blocks').insert(row)

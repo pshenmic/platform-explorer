@@ -161,6 +161,12 @@ const schemaTypes = [
         minLength: 64,
         maxLength: 64
       },
+      quorum: {
+        type: 'string',
+        pattern: '^[A-Za-z0-9]+$',
+        minLength: 64,
+        maxLength: 64
+      },
       height_min: {
         type: ['number', 'null'],
         minimum: 1
