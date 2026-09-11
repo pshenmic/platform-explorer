@@ -20,9 +20,59 @@ import { Tooltip } from '../ui/Tooltips'
 import DashIcon from '../ui/icons/DashIcon'
 import { creditsToDash, roundUsd } from '../../util'
 import { Skeleton } from './Skeleton'
+import { useCountUp } from './hooks/useCountUp'
 import './ShieldedPoolCard.css'
 
 const DAY_MS = 24 * 60 * 60 * 1000
+
+function PoolAmount({ amount, unit, instant }: { amount: number; unit: string; instant: boolean }) {
+  const [displayed, setDisplayed] = useState({ amount, unit })
+  const changingUnit = displayed.unit !== unit
+
+  if (!changingUnit && displayed.amount !== amount) setDisplayed({ amount, unit })
+
+  useEffect(() => {
+    if (!changingUnit) return
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    const timeout = window.setTimeout(() => setDisplayed({ amount, unit }), reduced ? 0 : 90)
+    return () => window.clearTimeout(timeout)
+  }, [amount, unit, changingUnit])
+
+  return (
+    <span className={changingUnit ? 'ShieldedPool__Amount is-leaving' : 'ShieldedPool__Amount'}>
+      <CountedPoolAmount
+        key={displayed.unit}
+        amount={changingUnit ? displayed.amount : amount}
+        unit={displayed.unit}
+        instant={instant}
+      />
+    </span>
+  )
+}
+
+function CountedPoolAmount({
+  amount,
+  unit,
+  instant
+}: {
+  amount: number
+  unit: string
+  instant: boolean
+}) {
+  const decimals = unit === 'btc' ? 3 : 2
+  const animated = useCountUp(amount, instant ? 0 : 450, true, decimals) as number
+  return (
+    <span className={'ShieldedPool__AmountEnter'}>
+      {animated
+        .toLocaleString('en-US', {
+          minimumFractionDigits: decimals,
+          maximumFractionDigits: decimals
+        })
+        .replace(/,/g, '\u00a0')}
+    </span>
+  )
+}
+
 const POOL_PRESETS = [
   ...PRESETS.slice(0, 3),
   { label: '3M', ms: 90 * DAY_MS, intervals: 100 },
@@ -492,16 +542,12 @@ export default function ShieldedPoolCard({
     hovered && chart ? Math.min(1, Math.max(0, chart.x(hovered.x) / width)) : 0
 
   const statDash = isAll ? balanceDash : rangeNetDash
+  const statLoading = !hovered && (pool.loading || (!isAll && !period.loaded))
+  const targetAmount = (hovered?.tvlDash ?? statDash) * k
   const statCount = (() => {
     if (inBtc && btcPx == null) return btcRate.isError ? '—' : null
-    if (!hovered && (pool.loading || (!isAll && !period.loaded))) return null
-    const amount = (hovered?.tvlDash ?? statDash) * k
-    return amount
-      .toLocaleString('en-US', {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: inBtc ? 8 : 2
-      })
-      .replace(/,/g, '\u00a0')
+    if (statLoading) return null
+    return <PoolAmount amount={targetAmount} unit={unit} instant={hovered != null} />
   })()
   const statTone =
     !hovered && !isAll && !period.loading
@@ -597,6 +643,7 @@ export default function ShieldedPoolCard({
               </div>
               <div
                 className={'ShieldedPool__UnitSwitch'}
+                data-unit={unit}
                 role={'group'}
                 aria-label={'Display unit'}
               >

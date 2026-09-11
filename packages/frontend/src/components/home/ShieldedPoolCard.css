@@ -226,12 +226,53 @@
   cursor: default;
 }
 .ShieldedPool__UnitSwitch {
-  display: inline-flex;
+  position: relative;
+  isolation: isolate;
+  display: inline-grid;
+  grid-template-columns: repeat(3, 1fr);
   gap: 2px;
   flex-shrink: 0;
   padding: 2px;
   border-radius: var(--pe-radius-sm);
   background: rgba(255, 255, 255, 0.04);
+}
+.ShieldedPool__Amount {
+  opacity: 1;
+  transition: opacity 90ms ease-out;
+}
+.ShieldedPool__Amount.is-leaving {
+  opacity: 0;
+}
+.ShieldedPool__AmountEnter {
+  animation: shielded-pool-amount-enter 110ms ease-out;
+}
+@keyframes shielded-pool-amount-enter {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+.ShieldedPool__UnitSwitch::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  pointer-events: none;
+  top: 2px;
+  bottom: 2px;
+  left: 2px;
+  width: calc((100% - 8px) / 3);
+  border-radius: 3px;
+  background: rgba(var(--pe-color-brand-normal-rgb), 0.18);
+  box-shadow: inset 0 0 0 1px rgba(var(--pe-color-brand-normal-rgb), 0.45);
+  transition: transform 240ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.ShieldedPool__UnitSwitch[data-unit="usd"]::before {
+  transform: translateX(calc(100% + 2px));
+}
+.ShieldedPool__UnitSwitch[data-unit="btc"]::before {
+  transform: translateX(calc(200% + 4px));
 }
 .ShieldedPool__Unit {
   margin: 0;
@@ -248,9 +289,17 @@
   text-transform: uppercase;
   letter-spacing: 0.08em;
   color: var(--pe-color-gray-500);
+  transition:
+    background-color 200ms ease,
+    box-shadow 200ms ease,
+    color 200ms ease,
+    transform 150ms ease;
 }
 .ShieldedPool__Unit:hover:not(:disabled) {
   color: var(--pe-color-fg);
+}
+.ShieldedPool__Unit:active:not(:disabled) {
+  transform: scale(0.96);
 }
 .ShieldedPool__DashLabel {
   display: inline-flex;
@@ -260,8 +309,6 @@
 }
 .ShieldedPool__Unit.is-on {
   color: var(--pe-color-fg);
-  background: rgba(var(--pe-color-brand-normal-rgb), 0.18);
-  box-shadow: inset 0 0 0 1px rgba(var(--pe-color-brand-normal-rgb), 0.45);
 }
 .ShieldedPool__Unit:disabled {
   cursor: not-allowed;
@@ -467,6 +514,22 @@
   opacity: 0.45;
 }
 @media (prefers-reduced-motion: reduce) {
+  .ShieldedPool__Amount {
+    transition: none;
+  }
+  .ShieldedPool__Amount.is-leaving {
+    opacity: 1;
+  }
+  .ShieldedPool__AmountEnter {
+    animation: none;
+  }
+  .ShieldedPool__UnitSwitch::before {
+    transition: none;
+  }
+  .ShieldedPool__Unit {
+    transition: none;
+    transform: none;
+  }
   .ShieldedPool__ChartSkel::before,
   .ShieldedPool__Svg {
     animation: none;
