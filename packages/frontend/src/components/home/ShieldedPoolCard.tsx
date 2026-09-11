@@ -522,21 +522,36 @@ export default function ShieldedPoolCard({
         <div className={'ShieldedPool__HeadText'}>
           <span className={'ShieldedPool__Eyebrow'}>Privacy layer</span>
           <h2 className={'ShieldedPool__Title'}>Shielded pool</h2>
-          <p className={'ShieldedPool__Lede'}>
-            Pool size over time.
-            <br />
-            In and out{' '}
-            <Tooltip
-              title={'How to read'}
-              content={
-                'The line is total locked in the pool. Bars are deposit and withdrawal volume in each bucket. Switch DASH / USD next to the headline; USD uses the current rate, not historical prices. All starts from the first real pool activity so volumes are not merged into a few coarse columns.'
-              }
-              placement={'top'}
-            >
-              <span className={'ShieldedPool__LedeMore'}>volume</span>
-            </Tooltip>
-            .
-          </p>
+          <p className={'ShieldedPool__Lede'}>Pool size over time. In and out volume.</p>
+          <Tooltip
+            title={'Legend'}
+            content={
+              <div className={'ShieldedPool__LegendContent'}>
+                <p>The blue line shows the total locked in the pool.</p>
+                <p>
+                  Green bars show deposits; red bars show withdrawals in each interval. Small dots
+                  mark nonzero volumes too small to display as bars at this scale.
+                </p>
+                <p>
+                  Hover or tap the chart to see the locked balance and flows for an interval. Select
+                  the green or red totals to hide or show their bars.
+                </p>
+                <p>
+                  Switch DASH / USD / BTC next to the headline. USD and BTC use current rates, not
+                  historical prices.
+                </p>
+                <p>
+                  All starts from the first recorded pool activity so empty history does not
+                  compress the visible flows.
+                </p>
+              </div>
+            }
+            placement={'top'}
+          >
+            <button type={'button'} className={'ShieldedPool__Legend'}>
+              Legend
+            </button>
+          </Tooltip>
         </div>
         <div className={'ShieldedPool__Controls'}>
           <Presets options={POOL_PRESETS} value={presetIdx} onChange={setPresetIdx} />

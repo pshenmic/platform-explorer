@@ -83,12 +83,32 @@
   color: var(--pe-color-gray-500);
   margin: 0;
 }
-.ShieldedPool__LedeMore {
-  margin-left: 6px;
+.ShieldedPool__Legend {
+  appearance: none;
+  margin: 8px 0 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  font-family: var(--pe-font-mono);
+  font-size: 0.625rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
   color: var(--pe-color-brand-light);
-  border-bottom: 1px dotted rgba(var(--pe-color-brand-light-rgb), 0.6);
   cursor: help;
   white-space: nowrap;
+  line-height: 1.4;
+}
+.ShieldedPool__Legend:hover {
+  color: var(--pe-color-brand-pressed);
+}
+.ShieldedPool__LegendContent {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.ShieldedPool__LegendContent p {
+  margin: 0;
 }
 .ShieldedPool__Controls {
   display: flex;
@@ -549,23 +569,41 @@
 }
 @media screen and (max-width: 47.99em) {
   .ShieldedPool__Head {
-    flex-wrap: nowrap;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
     gap: 8px 12px;
     margin-bottom: 12px;
   }
   .ShieldedPool__HeadText {
-    flex: 1 1 0;
-    min-width: 0;
-    max-width: 9.5rem;
+    display: contents;
+  }
+  .ShieldedPool__Eyebrow {
+    grid-column: 1;
+    grid-row: 1;
+    margin-bottom: 0;
+    align-self: end;
   }
   .ShieldedPool__Title {
+    grid-column: 1;
+    grid-row: 2;
     font-size: 1.125rem;
+    margin-bottom: 0;
   }
   .ShieldedPool__Lede {
+    grid-column: 1 / -1;
+    grid-row: 3;
     font-size: 0.5625rem;
     line-height: 1.45;
   }
+  .ShieldedPool__Legend {
+    grid-column: 1 / -1;
+    grid-row: 4;
+    justify-self: start;
+    margin-top: 0;
+  }
   .ShieldedPool__Controls {
+    grid-column: 2;
+    grid-row: 1 / 3;
     gap: 8px;
     margin-left: auto;
     flex-shrink: 1;
