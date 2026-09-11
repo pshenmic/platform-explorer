@@ -327,9 +327,15 @@ export default function HomeLeaders({ rate, enabled = true }: { rate?: any; enab
           href={`/dataContract/${item.identifier}`}
           accent={list.accent}
           title={
-            <Identifier ellipsis avatar styles={['highlight-both']}>
-              {item.identifier}
-            </Identifier>
+            item.name ? (
+              <Alias ellipsis avatarSource={item.identifier}>
+                {item.name}
+              </Alias>
+            ) : (
+              <Identifier ellipsis avatar styles={['highlight-both']}>
+                {item.identifier}
+              </Identifier>
+            )
           }
           metric={
             <BigNumber>
