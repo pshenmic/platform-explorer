@@ -57,10 +57,12 @@ function fmtFiatAmount(dash: number, inUsd: boolean, usdPx: number | null, compa
 
 function fmtFullFiatAmount(dash: number, inUsd: boolean, usdPx: number | null) {
   const amount = inUsd && usdPx != null ? dash * usdPx : dash
-  const formatted = amount.toLocaleString('en-US', {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: amount !== 0 && Math.abs(amount) < 0.01 ? 8 : 2
-  })
+  const formatted = amount
+    .toLocaleString('en-US', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: amount !== 0 && Math.abs(amount) < 0.01 ? 8 : 2
+    })
+    .replace(/,/g, '\u202f')
   return inUsd ? `$${formatted}` : `${formatted} DASH`
 }
 
@@ -74,7 +76,7 @@ function fmtBtc(amount: number, compact = false) {
         : Math.min(8, Math.max(2, 1 - Math.floor(Math.log10(magnitude))))
     return `₿${amount.toFixed(decimals)}`
   }
-  return `₿${amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 8 })}`
+  return `₿${amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 8 }).replace(/,/g, '\u202f')}`
 }
 
 async function fetchBtcRate({ signal }: { signal: AbortSignal }) {
@@ -492,13 +494,14 @@ export default function ShieldedPoolCard({
   const statDash = isAll ? balanceDash : rangeNetDash
   const statCount = (() => {
     if (inBtc && btcPx == null) return btcRate.isError ? '—' : null
-    if (hovered) return fmtAmt(hovered.tvlDash, inUsd, usdPx, true)
-    if (pool.loading) return null
-    if (!isAll && !period.loaded) return null
-    if (!statDash) return fmtAmt(0, inUsd, usdPx)
-    const body = fmtAmt(Math.abs(statDash), inUsd, usdPx, true)
-    if (isAll) return body
-    return `${statDash < 0 ? '−' : ''}${body.replace(/^[−-]/, '')}`
+    if (!hovered && (pool.loading || (!isAll && !period.loaded))) return null
+    const amount = (hovered?.tvlDash ?? statDash) * k
+    return amount
+      .toLocaleString('en-US', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: inBtc ? 8 : 2
+      })
+      .replace(/,/g, '\u00a0')
   })()
   const statTone =
     !hovered && !isAll && !period.loading
@@ -589,7 +592,6 @@ export default function ShieldedPoolCard({
                       else if (usdPx != null) setUnit(value => (value === 'dash' ? 'usd' : 'dash'))
                     }}
                   >
-                    {!inUsd && !inBtc && <DashIcon boxSize={'0.85em'} aria-hidden={'true'} />}
                     {statCount}
                   </button>
                 )}
@@ -603,28 +605,34 @@ export default function ShieldedPoolCard({
                   type={'button'}
                   className={`ShieldedPool__Unit${unit === 'dash' ? ' is-on' : ''}`}
                   aria-pressed={unit === 'dash'}
+                  aria-label={'DASH'}
                   onClick={() => setUnit('dash')}
                 >
-                  DASH
+                  <span className={'ShieldedPool__DashLabel'} aria-hidden={'true'}>
+                    <DashIcon boxSize={'1em'} />
+                    <span>ASH</span>
+                  </span>
                 </button>
                 <button
                   type={'button'}
                   className={`ShieldedPool__Unit${inUsd ? ' is-on' : ''}`}
                   aria-pressed={inUsd}
+                  aria-label={'USD'}
                   disabled={usdPx == null}
                   title={usdPx == null ? 'USD rate unavailable' : 'USD at current DASH rate'}
                   onClick={() => usdPx != null && setUnit('usd')}
                 >
-                  USD
+                  <span aria-hidden={'true'}>USD</span>
                 </button>
                 <button
                   type={'button'}
                   className={`ShieldedPool__Unit${inBtc ? ' is-on' : ''}`}
                   aria-pressed={inBtc}
+                  aria-label={'BTC'}
                   title={'BTC at current DASH rate from Coinbase'}
                   onClick={() => setUnit('btc')}
                 >
-                  BTC
+                  <span aria-hidden={'true'}>BTC</span>
                 </button>
               </div>
             </div>

@@ -129,24 +129,55 @@
 }
 .ShieldedPool__StatMain {
   display: flex;
-  align-items: center;
+  flex-direction: column;
+  align-items: flex-end;
   justify-content: flex-end;
   gap: 10px;
   min-width: 0;
 }
 .ShieldedPool__StatValue {
+  position: relative;
+  isolation: isolate;
   display: flex;
   align-items: center;
   height: 1em;
   font-size: clamp(1.5rem, 2.8vw, 2rem);
 }
+.ShieldedPool__StatValue::before {
+  content: "";
+  position: absolute;
+  inset: -8px -12px -5px;
+  z-index: -1;
+  pointer-events: none;
+  background: radial-gradient(
+    ellipse at center,
+    rgba(var(--pe-color-brand-light-rgb), 0.12),
+    rgba(var(--pe-color-brand-light-rgb), 0) 72%
+  );
+}
+.ShieldedPool__StatValue::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  bottom: -5px;
+  left: 0;
+  height: 1px;
+  pointer-events: none;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(var(--pe-color-brand-light-rgb), 0.55),
+    transparent
+  );
+}
 .ShieldedPool__Stat.is-updating {
   opacity: 0.55;
 }
 .ShieldedPool__StatCount {
+  white-space: nowrap;
   display: inline-flex;
   align-items: center;
-  gap: 0.12em;
+  gap: 0.3em;
   margin: 0;
   padding: 0;
   border: 0;
@@ -175,19 +206,28 @@
 }
 .ShieldedPool__Unit {
   margin: 0;
-  padding: 3px 7px;
+  padding: 6px 10px;
+  min-height: 32px;
   border: 0;
   border-radius: 3px;
   background: transparent;
   cursor: pointer;
-  font-family: var(--pe-font-mono);
-  font-size: 0.5625rem;
+  font-family: var(--pe-font-heading);
+  font-weight: 600;
+  font-style: normal;
+  font-size: 0.6875rem;
   text-transform: uppercase;
   letter-spacing: 0.08em;
   color: var(--pe-color-gray-500);
 }
 .ShieldedPool__Unit:hover:not(:disabled) {
   color: var(--pe-color-fg);
+}
+.ShieldedPool__DashLabel {
+  display: inline-flex;
+  align-items: center;
+  vertical-align: middle;
+  gap: 0.05em;
 }
 .ShieldedPool__Unit.is-on {
   color: var(--pe-color-fg);
@@ -625,7 +665,7 @@
     font-size: 1.25rem;
   }
   .ShieldedPool__Unit {
-    padding: 2px 5px;
-    font-size: 0.5rem;
+    padding: 5px 8px;
+    font-size: 0.625rem;
   }
 }
