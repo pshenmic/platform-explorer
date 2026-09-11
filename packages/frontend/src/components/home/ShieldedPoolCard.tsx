@@ -155,7 +155,7 @@ export default function ShieldedPoolCard({
     error: false,
     points: []
   })
-  const [period, setPeriod] = useState({ loading: true, in: 0, out: 0 })
+  const [period, setPeriod] = useState({ loading: true, loaded: false, in: 0, out: 0 })
   const [presetIdx, setPresetIdx] = useState(DEFAULT_PRESET)
   const [hoverI, setHoverI] = useState<number | null>(null)
   const [showDeposits, setShowDeposits] = useState(true)
@@ -244,7 +244,7 @@ export default function ShieldedPoolCard({
   // exact deposit/withdraw totals for the selected range
   useEffect(() => {
     if (!enabled) {
-      setPeriod({ loading: true, in: 0, out: 0 })
+      setPeriod(state => ({ ...state, loading: true }))
       return
     }
     const gen = ++periodGen.current
@@ -255,13 +255,14 @@ export default function ShieldedPoolCard({
         if (gen !== periodGen.current) return
         setPeriod({
           loading: false,
+          loaded: true,
           in: Number(res?.totalShieldedIn) || 0,
           out: Number(res?.totalShieldedOut) || 0
         })
       })
       .catch(() => {
         if (gen !== periodGen.current) return
-        setPeriod({ loading: false, in: 0, out: 0 })
+        setPeriod(state => ({ ...state, loading: false }))
       })
   }, [presetIdx, enabled])
 
@@ -276,7 +277,7 @@ export default function ShieldedPoolCard({
   const inUsd = unit === 'usd' && usdPx != null
   const k = inUsd && usdPx != null ? usdPx : 1
 
-  const ready = width > 0 && plotH > 0 && points.length >= 1 && !series.loading
+  const ready = width > 0 && plotH > 0 && points.length >= 1
 
   const chart = useMemo(() => {
     if (!ready) return null
@@ -407,7 +408,7 @@ export default function ShieldedPoolCard({
   }, [ready, points, width, plotH, showDeposits, showWithdrawals, k, inUsd])
 
   const handleMove = (e: PointerEvent<HTMLDivElement>) => {
-    if (!chart) return
+    if (!chart || series.loading) return
     const rect = e.currentTarget.getBoundingClientRect()
     const mx = e.clientX - rect.left
     const t = chart.x.invert(mx)
@@ -429,9 +430,9 @@ export default function ShieldedPoolCard({
 
   const statDash = isAll ? balanceDash : rangeNetDash
   const statCount = (() => {
-    if (pool.loading) return null
     if (hovered) return fmtAmt(hovered.tvlDash, inUsd, usdPx)
-    if (!isAll && period.loading) return null
+    if (pool.loading) return null
+    if (!isAll && !period.loaded) return null
     if (!statDash) return inUsd ? fmtUsd(0) : '0'
     const body = fmtAmt(Math.abs(statDash), inUsd, usdPx)
     if (isAll) return body
@@ -445,7 +446,7 @@ export default function ShieldedPoolCard({
           ? ' is-down'
           : ''
       : ''
-  const flowsLoading = period.loading
+  const flowsLoading = !period.loaded
 
   return (
     <section
@@ -475,30 +476,35 @@ export default function ShieldedPoolCard({
         </div>
         <div className={'ShieldedPool__Controls'}>
           <Presets options={PRESETS} value={presetIdx} onChange={setPresetIdx} />
-          <div className={'ShieldedPool__Stat'}>
+          <div
+            className={`ShieldedPool__Stat${period.loading && period.loaded ? ' is-updating' : ''}`}
+            aria-busy={period.loading}
+          >
             <div className={'ShieldedPool__StatMain'}>
-              {statCount == null ? (
-                <Skeleton w={'7ch'} h={'1.6em'} />
-              ) : (
-                <button
-                  type={'button'}
-                  className={`ShieldedPool__StatCount${statTone}`}
-                  disabled={usdPx == null}
-                  title={
-                    usdPx == null
-                      ? 'USD rate unavailable'
-                      : inUsd
-                        ? 'Show in DASH'
-                        : 'Show in USD at current rate'
-                  }
-                  aria-label={
-                    inUsd ? 'Amount in USD, switch to DASH' : 'Amount in DASH, switch to USD'
-                  }
-                  onClick={() => usdPx != null && setUnit(u => (u === 'dash' ? 'usd' : 'dash'))}
-                >
-                  {statCount}
-                </button>
-              )}
+              <div className={'ShieldedPool__StatValue'}>
+                {statCount == null ? (
+                  <Skeleton w={'7ch'} h={'1em'} />
+                ) : (
+                  <button
+                    type={'button'}
+                    className={`ShieldedPool__StatCount${statTone}`}
+                    disabled={usdPx == null}
+                    title={
+                      usdPx == null
+                        ? 'USD rate unavailable'
+                        : inUsd
+                          ? 'Show in DASH'
+                          : 'Show in USD at current rate'
+                    }
+                    aria-label={
+                      inUsd ? 'Amount in USD, switch to DASH' : 'Amount in DASH, switch to USD'
+                    }
+                    onClick={() => usdPx != null && setUnit(u => (u === 'dash' ? 'usd' : 'dash'))}
+                  >
+                    {statCount}
+                  </button>
+                )}
+              </div>
               <div
                 className={'ShieldedPool__UnitSwitch'}
                 role={'group'}
@@ -575,6 +581,7 @@ export default function ShieldedPoolCard({
           <div
             ref={wrapRef}
             className={'ShieldedPool__Chart'}
+            aria-busy={pool.loading || series.loading}
             onPointerDown={handleMove}
             onPointerMove={event => {
               if (event.pointerType === 'mouse') handleMove(event)
@@ -585,9 +592,18 @@ export default function ShieldedPoolCard({
             onPointerCancel={() => setHoverI(null)}
           >
             {(pool.loading || series.loading) && !chart ? (
-              <Skeleton className={'ShieldedPool__ChartSkel'} radius={8} />
+              <div className={'ShieldedPool__ChartSkel'}>
+                <span className={'ShieldedPool__LoadingLabel'} role={'status'}>
+                  Loading pool history…
+                </span>
+              </div>
             ) : chart ? (
               <>
+                {series.loading && (
+                  <span className={'ShieldedPool__LoadingLabel'} role={'status'}>
+                    Updating…
+                  </span>
+                )}
                 <svg
                   className={`ShieldedPool__Svg${series.loading ? ' is-stale' : ''}`}
                   viewBox={`0 0 ${width} ${plotH}`}
@@ -691,6 +707,16 @@ export default function ShieldedPoolCard({
                               rx={1}
                             />
                           )}
+                          {showWithdrawals && b.outH > 0 && b.outH < 1 && (
+                            <circle
+                              className={'ShieldedPool__Activity ShieldedPool__Activity--out'}
+                              cx={b.outX + b.barW / 2}
+                              cy={chart.baseline}
+                              r={1.5}
+                            >
+                              <title>Withdrawal volume below one pixel; hover for the amount</title>
+                            </circle>
+                          )}
                         </g>
                       )
                     })}
@@ -707,16 +733,6 @@ export default function ShieldedPoolCard({
                   />
 
                   {hovered && (
-                          {showWithdrawals && b.outH > 0 && b.outH < 1 && (
-                            <circle
-                              className={'ShieldedPool__Activity ShieldedPool__Activity--out'}
-                              cx={b.outX + b.barW / 2}
-                              cy={chart.baseline}
-                              r={1.5}
-                            >
-                              <title>Withdrawal volume below one pixel; hover for the amount</title>
-                            </circle>
-                          )}
                     <>
                       <line
                         className={'ShieldedPool__Cross'}

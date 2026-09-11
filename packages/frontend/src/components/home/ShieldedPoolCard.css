@@ -109,10 +109,19 @@
 }
 .ShieldedPool__StatMain {
   display: flex;
-  align-items: baseline;
+  align-items: center;
   justify-content: flex-end;
   gap: 10px;
   min-width: 0;
+}
+.ShieldedPool__StatValue {
+  display: flex;
+  align-items: center;
+  height: 1em;
+  font-size: clamp(1.5rem, 2.8vw, 2rem);
+}
+.ShieldedPool__Stat.is-updating {
+  opacity: 0.55;
 }
 .ShieldedPool__StatCount {
   margin: 0;
@@ -180,6 +189,7 @@
   color: var(--pe-color-gray-500);
 }
 .ShieldedPool__Flows {
+  min-height: calc(0.6875rem * 1.3 + 4px);
   display: flex;
   flex-direction: row;
   flex-wrap: nowrap;
@@ -283,18 +293,67 @@
 }
 .ShieldedPool__ChartSkel {
   position: absolute;
+  inset: 22px 16px 24px 48px;
+  overflow: hidden;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  background: repeating-linear-gradient(
+    to top,
+    transparent 0,
+    transparent calc(25% - 1px),
+    rgba(255, 255, 255, 0.05) calc(25% - 1px),
+    rgba(255, 255, 255, 0.05) 25%
+  );
+}
+.ShieldedPool__ChartSkel::before {
+  content: "";
+  position: absolute;
   inset: 0;
-  width: 100%;
-  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(80, 200, 240, 0.1), transparent);
+  animation: shielded-pool-scan 2.4s ease-in-out infinite;
+}
+.ShieldedPool__LoadingLabel {
+  position: absolute;
+  top: 8px;
+  right: 16px;
+  z-index: 2;
+  color: var(--pe-color-gray-400);
+  font-family: var(--pe-font-mono);
+  font-size: 0.6875rem;
+  pointer-events: none;
+}
+@keyframes shielded-pool-scan {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(100%);
+  }
+}
+@keyframes shielded-pool-reveal {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 .ShieldedPool__Svg {
   display: block;
   width: 100%;
   height: 100%;
   overflow: visible;
+  animation: shielded-pool-reveal 180ms ease-out;
+  transition: opacity 180ms ease-out;
 }
 .ShieldedPool__Svg.is-stale {
   opacity: 0.45;
+}
+@media (prefers-reduced-motion: reduce) {
+  .ShieldedPool__ChartSkel::before,
+  .ShieldedPool__Svg {
+    animation: none;
+    transition: none;
+  }
 }
 .ShieldedPool__Grid {
   stroke: rgba(255, 255, 255, 0.05);
@@ -361,6 +420,12 @@
 .ShieldedPool__Bar--out {
   stroke: rgba(255, 92, 122, 0.28);
 }
+.ShieldedPool__Activity--in {
+  fill: rgba(44, 255, 180, 0.85);
+}
+.ShieldedPool__Activity--out {
+  fill: rgba(255, 92, 122, 0.85);
+}
 .ShieldedPool__Chart:has(.ShieldedPool__Bar--in):not(:has(.ShieldedPool__Bar--out))
   .ShieldedPool__Bar,
 .ShieldedPool__Chart:has(.ShieldedPool__Bar--out):not(:has(.ShieldedPool__Bar--in))
@@ -419,12 +484,6 @@
   gap: 12px;
   font-weight: 600;
   color: #fff;
-}
-.ShieldedPool__Activity--in {
-  fill: rgba(44, 255, 180, 0.85);
-}
-.ShieldedPool__Activity--out {
-  fill: rgba(255, 92, 122, 0.85);
 }
 .ShieldedPool__TipRow strong {
   font-size: 0.875rem;
@@ -494,7 +553,8 @@
     padding: 2px 5px;
     font-size: 0.5625rem;
   }
-  .ShieldedPool__StatCount {
+  .ShieldedPool__StatCount,
+  .ShieldedPool__StatValue {
     font-size: 1.25rem;
   }
   .ShieldedPool__Unit {
