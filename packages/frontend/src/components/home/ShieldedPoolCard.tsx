@@ -430,6 +430,7 @@ export default function ShieldedPoolCard({
   const statDash = isAll ? balanceDash : rangeNetDash
   const statCount = (() => {
     if (pool.loading) return null
+    if (hovered) return fmtAmt(hovered.tvlDash, inUsd, usdPx)
     if (!isAll && period.loading) return null
     if (!statDash) return inUsd ? fmtUsd(0) : '0'
     const body = fmtAmt(Math.abs(statDash), inUsd, usdPx)
@@ -437,7 +438,7 @@ export default function ShieldedPoolCard({
     return `${statDash >= 0 ? '+' : '−'}${body.replace(/^[−-]/, '')}`
   })()
   const statTone =
-    !isAll && !period.loading
+    !hovered && !isAll && !period.loading
       ? rangeNetDash > 0
         ? ' is-up'
         : rangeNetDash < 0
@@ -593,7 +594,7 @@ export default function ShieldedPoolCard({
                   width={width}
                   height={plotH}
                   role={'img'}
-                  aria-label={'Shielded pool TVL with deposit and withdrawal volume'}
+                  aria-label={'Shielded pool locked balance with deposit and withdrawal volume'}
                 >
                   <defs>
                     <linearGradient id={`pool-tvl-fill-${gid}`} x1={'0'} y1={'0'} x2={'0'} y2={'1'}>
@@ -650,7 +651,7 @@ export default function ShieldedPoolCard({
                     y={10}
                     textAnchor={'end'}
                   >
-                    TVL
+                    Locked
                   </text>
 
                   {chart.flowVisible &&
@@ -658,7 +659,7 @@ export default function ShieldedPoolCard({
                       const dim = hoverI != null && hoverI !== b.i
                       return (
                         <g key={b.i} opacity={dim ? 0.22 : 1}>
-                          {showDeposits && b.inH > 0.5 && (
+                          {showDeposits && b.inH >= 1 && (
                             <rect
                               className={'ShieldedPool__Bar ShieldedPool__Bar--in'}
                               fill={`url(#pool-bar-in-${gid})`}
@@ -669,7 +670,17 @@ export default function ShieldedPoolCard({
                               rx={1}
                             />
                           )}
-                          {showWithdrawals && b.outH > 0.5 && (
+                          {showDeposits && b.inH > 0 && b.inH < 1 && (
+                            <circle
+                              className={'ShieldedPool__Activity ShieldedPool__Activity--in'}
+                              cx={b.inX + b.barW / 2}
+                              cy={chart.baseline}
+                              r={1.5}
+                            >
+                              <title>Deposit volume below one pixel; hover for the amount</title>
+                            </circle>
+                          )}
+                          {showWithdrawals && b.outH >= 1 && (
                             <rect
                               className={'ShieldedPool__Bar ShieldedPool__Bar--out'}
                               fill={`url(#pool-bar-out-${gid})`}
@@ -696,6 +707,16 @@ export default function ShieldedPoolCard({
                   />
 
                   {hovered && (
+                          {showWithdrawals && b.outH > 0 && b.outH < 1 && (
+                            <circle
+                              className={'ShieldedPool__Activity ShieldedPool__Activity--out'}
+                              cx={b.outX + b.barW / 2}
+                              cy={chart.baseline}
+                              r={1.5}
+                            >
+                              <title>Withdrawal volume below one pixel; hover for the amount</title>
+                            </circle>
+                          )}
                     <>
                       <line
                         className={'ShieldedPool__Cross'}
@@ -745,7 +766,7 @@ export default function ShieldedPoolCard({
                   >
                     <span className={'ShieldedPool__TipDate'}>{chart.tipFmt(hovered.x)}</span>
                     <span className={'ShieldedPool__TipRow is-tvl'}>
-                      <span>TVL</span>
+                      <span>Locked</span>
                       <span className={'ShieldedPool__TipAmounts'}>
                         <strong>{fmtAmt(hovered.tvlDash, inUsd, usdPx)}</strong>
                         {usdPx != null && (

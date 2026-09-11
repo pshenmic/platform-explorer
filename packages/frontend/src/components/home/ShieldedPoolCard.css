@@ -339,20 +339,20 @@
   stroke-linecap: round;
 }
 .ShieldedPool__BarInTop {
-  stop-color: rgba(44, 255, 180, 0.42);
+  stop-color: rgba(44, 255, 180, 0.7);
 }
 .ShieldedPool__BarInBot {
-  stop-color: rgba(44, 255, 180, 0.12);
+  stop-color: rgba(44, 255, 180, 0.35);
 }
 .ShieldedPool__BarOutTop {
-  stop-color: rgba(255, 92, 122, 0.42);
+  stop-color: rgba(255, 92, 122, 0.7);
 }
 .ShieldedPool__BarOutBot {
-  stop-color: rgba(255, 92, 122, 0.12);
+  stop-color: rgba(255, 92, 122, 0.35);
 }
 .ShieldedPool__Bar {
   stroke-width: 0.5;
-  opacity: 0.72;
+  opacity: 0.9;
   transition: opacity 0.12s ease;
 }
 .ShieldedPool__Bar--in {
@@ -419,6 +419,12 @@
   gap: 12px;
   font-weight: 600;
   color: #fff;
+}
+.ShieldedPool__Activity--in {
+  fill: rgba(44, 255, 180, 0.85);
+}
+.ShieldedPool__Activity--out {
+  fill: rgba(255, 92, 122, 0.85);
 }
 .ShieldedPool__TipRow strong {
   font-size: 0.875rem;
