@@ -129,18 +129,12 @@ function fmtBtc(amount: number, compact = false) {
   return `₿${amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 8 }).replace(/,/g, '\u202f')}`
 }
 
-async function fetchBtcRate({ signal }: { signal: AbortSignal }) {
-  const response = await fetch('https://api.coinbase.com/v2/exchange-rates?currency=DASH', {
-    credentials: 'omit',
-    signal: AbortSignal.any([signal, AbortSignal.timeout(10000)])
-  })
-  if (!response.ok) throw new Error('BTC rate unavailable')
-  const body = await response.json()
-  const rate = Number(body.data?.rates?.BTC)
-  if (body.data?.currency !== 'DASH' || !Number.isFinite(rate) || rate <= 0) {
+async function fetchBtcRate() {
+  const { btc } = await Api.getRate()
+  if (typeof btc !== 'number' || !Number.isFinite(btc) || btc <= 0) {
     throw new Error('Invalid DASH/BTC rate')
   }
-  return rate
+  return btc
 }
 
 function buildTvlSeries(buckets: any, balanceCredits: any) {
@@ -257,7 +251,7 @@ export default function ShieldedPoolCard({
   const [showWithdrawals, setShowWithdrawals] = useState(true)
   const [unit, setUnit] = useState<'dash' | 'usd' | 'btc'>('dash')
   const btcRate = useQuery({
-    queryKey: ['exchange-rate', 'coinbase', 'DASH', 'BTC'],
+    queryKey: ['exchange-rate', 'backend', 'DASH', 'BTC'],
     queryFn: fetchBtcRate,
     enabled: enabled && unit === 'btc',
     staleTime: 60000,
@@ -675,7 +669,7 @@ export default function ShieldedPoolCard({
                   className={`ShieldedPool__Unit${inBtc ? ' is-on' : ''}`}
                   aria-pressed={inBtc}
                   aria-label={'BTC'}
-                  title={'BTC at current DASH rate from Coinbase'}
+                  title={'BTC at current DASH rate'}
                   onClick={() => setUnit('btc')}
                 >
                   <span aria-hidden={'true'}>BTC</span>

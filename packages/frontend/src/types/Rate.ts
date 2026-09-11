@@ -4,5 +4,6 @@ export type RateSource = 'Kucoin' | 'Coinbase'
 
 export interface Rate {
   usd: number
+  btc: number | null
   source: RateSource
 }
