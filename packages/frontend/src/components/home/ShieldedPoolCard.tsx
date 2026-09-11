@@ -15,15 +15,19 @@ import useResizeObserver from '@react-hook/resize-observer'
 
 import * as Api from '../../util/Api'
 import { Presets } from '../cards'
+import { PRESETS, presetRange } from './MetricChart'
 import { Tooltip } from '../ui/Tooltips'
 import DashIcon from '../ui/icons/DashIcon'
 import { creditsToDash, roundUsd } from '../../util'
 import { Skeleton } from './Skeleton'
-import { PRESETS, presetRange } from './MetricChart'
 import './ShieldedPoolCard.css'
 
-const DEFAULT_PRESET = PRESETS.length - 1
 const DAY_MS = 24 * 60 * 60 * 1000
+const POOL_PRESETS = [
+  ...PRESETS.slice(0, 3),
+  { label: '3M', ms: 90 * DAY_MS, intervals: 100 },
+  ...PRESETS.slice(3)
+]
 const M = { top: 22, right: 16, bottom: 24, left: 48 }
 
 function fmtDash(dash: any) {
@@ -194,7 +198,8 @@ export default function ShieldedPoolCard({
     points: []
   })
   const [period, setPeriod] = useState({ loading: true, loaded: false, in: 0, out: 0 })
-  const [presetIdx, setPresetIdx] = useState(DEFAULT_PRESET)
+  const [presetIdx, setPresetIdx] = useState(POOL_PRESETS.length - 1)
+  const range = useMemo(() => presetRange(POOL_PRESETS[presetIdx]), [presetIdx])
   const [hoverI, setHoverI] = useState<number | null>(null)
   const [showDeposits, setShowDeposits] = useState(true)
   const [showWithdrawals, setShowWithdrawals] = useState(true)
@@ -267,7 +272,7 @@ export default function ShieldedPoolCard({
     }
 
     const gen = ++fetchGen.current
-    const { start, end } = presetRange(PRESETS[presetIdx])
+    const { start, end } = range
     const balance = pool.balance ?? 0
     setSeries(s => ({ ...s, loading: true, error: false }))
     setHoverI(null)
@@ -285,7 +290,7 @@ export default function ShieldedPoolCard({
           points: []
         })
       })
-  }, [presetIdx, enabled, pool.loading, pool.error, pool.balance])
+  }, [range, enabled, pool.loading, pool.error, pool.balance])
 
   // exact deposit/withdraw totals for the selected range
   useEffect(() => {
@@ -294,7 +299,7 @@ export default function ShieldedPoolCard({
       return
     }
     const gen = ++periodGen.current
-    const { start, end } = presetRange(PRESETS[presetIdx])
+    const { start, end } = range
     setPeriod(s => ({ ...s, loading: true }))
     Api.getShieldedStatistic(start, end)
       .then(res => {
@@ -310,12 +315,12 @@ export default function ShieldedPoolCard({
         if (gen !== periodGen.current) return
         setPeriod(state => ({ ...state, loading: false }))
       })
-  }, [presetIdx, enabled])
+  }, [range, enabled])
 
   const balanceDash = creditsToDash(Number(pool.balance) || 0)
   const points = series.points
-  const isAll = PRESETS[presetIdx].label === 'All'
-  const windowLabel = isAll ? 'all time' : PRESETS[presetIdx].label
+  const isAll = POOL_PRESETS[presetIdx].label === 'All'
+  const windowLabel = isAll ? 'All time' : POOL_PRESETS[presetIdx].label
   const rangeInDash = creditsToDash(period.in)
   const rangeOutDash = creditsToDash(period.out)
   const rangeNetDash = rangeInDash - rangeOutDash
@@ -493,7 +498,7 @@ export default function ShieldedPoolCard({
     if (!statDash) return fmtAmt(0, inUsd, usdPx)
     const body = fmtAmt(Math.abs(statDash), inUsd, usdPx, true)
     if (isAll) return body
-    return `${statDash >= 0 ? '+' : '−'}${body.replace(/^[−-]/, '')}`
+    return `${statDash < 0 ? '−' : ''}${body.replace(/^[−-]/, '')}`
   })()
   const statTone =
     !hovered && !isAll && !period.loading
@@ -503,9 +508,9 @@ export default function ShieldedPoolCard({
           ? ' is-down'
           : ''
       : ''
-  const displayedInDash = rangeInDash
-  const displayedOutDash = rangeOutDash
-  const flowsLoading = !period.loaded
+  const displayedInDash = hovered?.inDash ?? rangeInDash
+  const displayedOutDash = hovered?.outDash ?? rangeOutDash
+  const flowsLoading = !hovered && !period.loaded
 
   return (
     <section
@@ -534,7 +539,7 @@ export default function ShieldedPoolCard({
           </p>
         </div>
         <div className={'ShieldedPool__Controls'}>
-          <Presets options={PRESETS} value={presetIdx} onChange={setPresetIdx} />
+          <Presets options={POOL_PRESETS} value={presetIdx} onChange={setPresetIdx} />
           <div
             className={`ShieldedPool__Stat${period.loading && period.loaded ? ' is-updating' : ''}`}
             aria-busy={period.loading}
