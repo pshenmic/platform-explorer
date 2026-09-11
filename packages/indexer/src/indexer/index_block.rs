@@ -16,7 +16,7 @@ impl Indexer {
             .tenderdash_rpc
             .get_block_results_by_height(block_height.clone())
             .await?;
-        let validators = self
+        let (validators, quorum_hash) = self
             .tenderdash_rpc
             .get_validators_by_block_height(block_height.clone())
             .await?;
@@ -87,6 +87,7 @@ impl Indexer {
                 l1_locked_height: core_chain_locked_height,
                 app_hash,
                 proposer_pro_tx_hash: block.block.header.proposer_pro_tx_hash,
+                quorum_hash: Some(quorum_hash),
             },
             txs,
         };
