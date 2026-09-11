@@ -66,6 +66,7 @@ module.exports = class ValidatorsDAO {
         'blocks.app_version as app_version',
         'blocks.block_version as block_version',
         'blocks.app_hash as app_hash',
+        'blocks.quorum_hash as quorum_hash',
         'total_collected_reward',
         'total_collected_reward_by_epoch'
       )
@@ -84,6 +85,7 @@ module.exports = class ValidatorsDAO {
         'l1_locked_height',
         'app_version',
         'block_version',
+        'quorum_hash',
         'total_collected_reward',
         'total_collected_reward_by_epoch',
         this.knex.with('subquery_alias', withdrawalsSubquery)
@@ -217,7 +219,7 @@ module.exports = class ValidatorsDAO {
       .select(
         'hash as block_hash', 'height as latest_height', 'timestamp as latest_timestamp',
         'l1_locked_height', 'max_height', 'app_version', 'block_version', 'app_hash',
-        'proposed_blocks_amount', 'blocks_subquery.validator_id'
+        'quorum_hash', 'proposed_blocks_amount', 'blocks_subquery.validator_id'
       )
       .leftJoin('blocks', 'height', 'max_height')
 
@@ -226,7 +228,7 @@ module.exports = class ValidatorsDAO {
       .with('blocks_subquery', joinedBlocksSubqeury)
       .select(
         'block_hash', 'latest_height', 'latest_timestamp', 'l1_locked_height',
-        'app_version', 'block_version', 'app_hash', 'id', 'pro_tx_hash',
+        'app_version', 'block_version', 'app_hash', 'quorum_hash', 'id', 'pro_tx_hash',
         this.knex.raw('COALESCE(proposed_blocks_amount, 0) as proposed_blocks_amount')
       )
       .leftJoin('blocks_subquery', 'subquery.id', 'blocks_subquery.validator_id')
@@ -241,7 +243,7 @@ module.exports = class ValidatorsDAO {
       .select(
         'pro_tx_hash', 'block_hash',
         'latest_height', 'latest_timestamp', 'l1_locked_height',
-        'app_version', 'block_version', 'app_hash', 'proposed_blocks_amount'
+        'app_version', 'block_version', 'app_hash', 'quorum_hash', 'proposed_blocks_amount'
       )
       .select(this.knex('subquery').select(this.knex.raw('COUNT(id)')).limit(1).as('total_count'))
       .offset(fromRank)

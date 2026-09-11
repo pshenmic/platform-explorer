@@ -3,7 +3,6 @@ const { calculateInterval, iso8601duration } = require('../utils')
 const Intervals = require('../enums/IntervalsEnum')
 const { EPOCH_CHANGE_TIME, NETWORK } = require('../constants')
 const DashCoreRPC = require('../dashcoreRpc')
-const TenderdashRPC = require('../tenderdashRpc')
 const Quorum = require('../models/Quorum')
 const QuorumTypeEnum = require('../enums/QuorumTypeEnum')
 
@@ -22,13 +21,13 @@ class BlocksController {
       return response.status(404).send({ message: 'not found' })
     }
 
-    const { block: blockInfo } = await TenderdashRPC.getBlockByHeight(block.header.height + 1)
-
-    const { last_commit: lastCommit } = blockInfo ?? { last_commit: undefined }
+    // the quorum that signed the block is indexed on the row, so there is no need to read
+    // last_commit off the next block from Tenderdash to learn it
+    const quorumHash = block.header.quorumHash
 
     let quorum = null
 
-    if (lastCommit?.quorum_hash !== '' && lastCommit?.quorum_hash !== undefined) {
+    if (quorumHash) {
       const quorumsList = await DashCoreRPC.getQuorumsListExtended(block.header.l1LockedHeight)
 
       const quorumType = NETWORK === 'testnet'
@@ -38,16 +37,16 @@ class BlocksController {
       const quorumTypeName = QuorumTypeEnum[quorumType]
 
       const quorumInfo = quorumsList[quorumTypeName]
-        .find(quorum => Object.keys(quorum).includes(lastCommit.quorum_hash.toLowerCase()))
+        .find(quorum => Object.keys(quorum).includes(quorumHash.toLowerCase()))
 
       const quorumIndex = quorumsList[quorumTypeName]
-        .findIndex(quorum => Object.keys(quorum).includes(lastCommit.quorum_hash.toLowerCase()))
+        .findIndex(quorum => Object.keys(quorum).includes(quorumHash.toLowerCase()))
 
-      const quorumDetailedInfo = await DashCoreRPC.getQuorumInfo(lastCommit.quorum_hash, quorumType)
+      const quorumDetailedInfo = await DashCoreRPC.getQuorumInfo(quorumHash, quorumType)
 
       quorum = Quorum.fromObject({
         ...quorumDetailedInfo,
-        ...(quorumInfo ?? [])[lastCommit.quorum_hash.toLowerCase()],
+        ...(quorumInfo ?? [])[quorumHash.toLowerCase()],
         quorumIndex
       })
     }
@@ -120,6 +119,7 @@ class BlocksController {
       gas_min: gasMin,
       gas_max: gasMax,
       validator,
+      quorum,
       height_max: heightMax,
       height_min: heightMin,
       tx_count_min: transactionCountMin,
@@ -177,6 +177,7 @@ class BlocksController {
       Number(limit ?? 10),
       order,
       validator,
+      quorum?.toUpperCase(),
       gasMin,
       gasMax,
       heightMin,
