@@ -62,17 +62,41 @@ function buildTvlSeries(buckets: any, balanceCredits: any) {
   return series
 }
 
-async function fetchFlowBuckets(start: any, end: any, intervals: any) {
+async function fetchFlowBuckets(start: string, end: string, intervals: number) {
   const [shieldRes, unshieldRes] = await Promise.all([
-    Api.getShieldHistory(start, end, intervals).catch(() => []),
-    Api.getUnshieldHistory(start, end, intervals).catch(() => [])
+    Api.getShieldHistory(start, end, intervals),
+    Api.getUnshieldHistory(start, end, intervals)
   ])
-  const count = Math.max(shieldRes?.length || 0, unshieldRes?.length || 0)
-  return Array.from({ length: count }, (_, i) => ({
-    ts: shieldRes?.[i]?.timestamp ?? unshieldRes?.[i]?.timestamp ?? null,
-    inAmt: Number(shieldRes?.[i]?.data?.amount) || 0,
-    outAmt: Number(unshieldRes?.[i]?.data?.amount) || 0
-  }))
+  if (
+    shieldRes.length !== unshieldRes.length ||
+    shieldRes.some((point, index) => point.timestamp !== unshieldRes[index].timestamp)
+  ) {
+    throw new Error('Shielded flow intervals do not match')
+  }
+  const intervalMs = Math.ceil((Date.parse(end) - Date.parse(start)) / intervals / 1000) * 1000
+  const buckets = shieldRes.map((point, index) => {
+    const withdrawal = unshieldRes[index].data
+    if (!point.timestamp || !point.data || !withdrawal) {
+      throw new Error('Incomplete shielded flow interval')
+    }
+    return {
+      ts: point.timestamp,
+      inAmt: Number(point.data.amount),
+      outAmt: Number(withdrawal.amount)
+    }
+  })
+  const coveredUntil = buckets.length
+    ? Date.parse(buckets[buckets.length - 1].ts) + intervalMs
+    : Date.parse(start)
+  if (coveredUntil < Date.parse(end)) {
+    const tail = await Api.getShieldedStatistic(new Date(coveredUntil + 1).toISOString(), end)
+    buckets.push({
+      ts: new Date(coveredUntil).toISOString(),
+      inAmt: Number(tail.totalShieldedIn),
+      outAmt: Number(tail.totalShieldedOut)
+    })
+  }
+  return buckets
 }
 
 function trimLeadingEmpty(buckets: any) {
@@ -126,8 +150,9 @@ export default function ShieldedPoolCard({
     error: false,
     balance: null
   })
-  const [series, setSeries] = useState<{ loading: boolean; points: any[] }>({
+  const [series, setSeries] = useState<{ loading: boolean; error: boolean; points: any[] }>({
     loading: true,
+    error: false,
     points: []
   })
   const [period, setPeriod] = useState({ loading: true, in: 0, out: 0 })
@@ -198,19 +223,20 @@ export default function ShieldedPoolCard({
     const gen = ++fetchGen.current
     const { start, end } = presetRange(PRESETS[presetIdx])
     const balance = pool.balance ?? 0
-    setSeries(s => ({ ...s, loading: true }))
+    setSeries(s => ({ ...s, loading: true, error: false }))
     setHoverI(null)
 
     loadDenseBuckets(start, end)
       .then(buckets => {
         if (gen !== fetchGen.current) return
-        setSeries({ loading: false, points: buildTvlSeries(buckets, balance) })
+        setSeries({ loading: false, error: false, points: buildTvlSeries(buckets, balance) })
       })
       .catch(() => {
         if (gen !== fetchGen.current) return
         setSeries({
           loading: false,
-          points: [{ ts: new Date().toISOString(), tvl: Number(balance) || 0, inAmt: 0, outAmt: 0 }]
+          error: true,
+          points: []
         })
       })
   }, [presetIdx, enabled, pool.loading, pool.error, pool.balance])
@@ -541,8 +567,8 @@ export default function ShieldedPoolCard({
         </div>
       </header>
 
-      {pool.error ? (
-        <div className={'ShieldedPool__Empty'}>No data</div>
+      {pool.error || series.error ? (
+        <div className={'ShieldedPool__Empty'}>Unable to load pool history</div>
       ) : (
         <div className={'ShieldedPool__Body'}>
           <div
