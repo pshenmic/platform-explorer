@@ -110,6 +110,35 @@
 .ShieldedPool__LegendContent p {
   margin: 0;
 }
+.ShieldedPool__LegendKeys {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.ShieldedPool__LegendKeys li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.ShieldedPool__LegendKey {
+  width: 12px;
+  height: 12px;
+  flex-shrink: 0;
+  border-radius: 3px;
+}
+.ShieldedPool__LegendKey.is-locked {
+  height: 3px;
+  background: var(--pe-color-brand-light);
+}
+.ShieldedPool__LegendKey.is-in {
+  background: #2cffb4;
+}
+.ShieldedPool__LegendKey.is-out {
+  background: #ff5c7a;
+}
 .ShieldedPool__Controls {
   display: flex;
   flex-direction: column;

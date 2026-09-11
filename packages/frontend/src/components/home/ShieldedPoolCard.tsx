@@ -525,28 +525,27 @@ export default function ShieldedPoolCard({
         <div className={'ShieldedPool__HeadText'}>
           <span className={'ShieldedPool__Eyebrow'}>Privacy layer</span>
           <h2 className={'ShieldedPool__Title'}>Shielded pool</h2>
-          <p className={'ShieldedPool__Lede'}>Pool size over time. In and out volume.</p>
+          <p className={'ShieldedPool__Lede'}>Pool size (in DASH) over time.</p>
           <Tooltip
             title={'Legend'}
             content={
               <div className={'ShieldedPool__LegendContent'}>
-                <p>The blue line shows the total locked in the pool.</p>
-                <p>
-                  Green bars show deposits; red bars show withdrawals in each interval. Small dots
-                  mark nonzero volumes too small to display as bars at this scale.
-                </p>
-                <p>
-                  Hover or tap the chart to see the locked balance and flows for an interval. Select
-                  the green or red totals to hide or show their bars.
-                </p>
-                <p>
-                  Switch DASH / USD / BTC next to the headline. USD and BTC use current rates, not
-                  historical prices.
-                </p>
-                <p>
-                  All starts from the first recorded pool activity so empty history does not
-                  compress the visible flows.
-                </p>
+                <ul className={'ShieldedPool__LegendKeys'} aria-label={'Color legend'}>
+                  <li>
+                    <i className={'ShieldedPool__LegendKey is-locked'} aria-hidden={'true'} />
+                    <span>Locked — balance in the pool</span>
+                  </li>
+                  <li>
+                    <i className={'ShieldedPool__LegendKey is-in'} aria-hidden={'true'} />
+                    <span>Deposits — volume per interval</span>
+                  </li>
+                  <li>
+                    <i className={'ShieldedPool__LegendKey is-out'} aria-hidden={'true'} />
+                    <span>Withdrawals — volume per interval</span>
+                  </li>
+                </ul>
+                <p>Dots mark tiny flows. Hover or tap for amounts; select totals to toggle bars.</p>
+                <p>USD and BTC use current rates, not historical prices.</p>
               </div>
             }
             placement={'top'}
