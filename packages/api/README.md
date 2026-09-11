@@ -2569,11 +2569,12 @@ Response codes:
 ```
 ___
 ### Rate
-Return a rate DASH to USD
+Return a rate DASH to USD and DASH to BTC
 ```
 GET /rate
 {
     "usd": 24.45,
+    "btc": 0.00073,
     "source": "Kucoin"
 }
 ```
