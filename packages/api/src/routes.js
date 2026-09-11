@@ -96,6 +96,14 @@ module.exports = ({
       }
     },
     {
+      path: '/blocks/proposerSchedule',
+      method: 'GET',
+      handler: blocksController.getProposerSchedule,
+      schema: {
+        querystring: { $ref: 'paginationOptions#' }
+      }
+    },
+    {
       path: '/blocks/avgBlockTime/history',
       method: 'GET',
       handler: blocksController.getAvgBlockTimeHistory,
@@ -720,14 +728,6 @@ module.exports = ({
       path: '/quorums/current',
       method: 'GET',
       handler: mainController.getCurrentQuorum
-    },
-    {
-      path: '/quorums/proposers',
-      method: 'GET',
-      handler: mainController.getProposers,
-      schema: {
-        querystring: { $ref: 'paginationOptions#' }
-      }
     },
     {
       path: '/quorum/:hash',

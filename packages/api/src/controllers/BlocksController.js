@@ -1,8 +1,10 @@
 const BlocksDAO = require('../dao/BlocksDAO')
-const { calculateInterval, iso8601duration } = require('../utils')
+const { calculateInterval, iso8601duration, getPlatformQuorums, buildProposerSchedule } = require('../utils')
 const Intervals = require('../enums/IntervalsEnum')
 const { EPOCH_CHANGE_TIME, NETWORK } = require('../constants')
 const DashCoreRPC = require('../dashcoreRpc')
+const TenderdashRPC = require('../tenderdashRpc')
+const PaginatedResultSet = require('../models/PaginatedResultSet')
 const Quorum = require('../models/Quorum')
 const QuorumTypeEnum = require('../enums/QuorumTypeEnum')
 
@@ -59,6 +61,46 @@ class BlocksController {
         },
         quorum
       }
+    )
+  }
+
+  getProposerSchedule = async (request, response) => {
+    const { page = 1, limit = 10 } = request.query
+
+    const [{ quorumHash: currentQuorumHash }, { highestBlock }] = await Promise.all([
+      TenderdashRPC.getValidators(),
+      TenderdashRPC.getStatus()
+    ])
+
+    const lastBlock = await TenderdashRPC.getBlockByHeight(highestBlock.height)
+
+    const lastProposer = lastBlock?.block?.header?.proposer_pro_tx_hash?.toUpperCase() ?? null
+
+    const { quorums } = await getPlatformQuorums()
+
+    // the schedule ends when the rotation has been walked once, so building it whole gives
+    // both the total and the page without repeating the walk
+    const schedule = buildProposerSchedule(
+      quorums,
+      currentQuorumHash?.toUpperCase() ?? null,
+      lastProposer,
+      highestBlock.height,
+      quorums.reduce((total, quorum) => total + (quorum.members ?? []).length, 0)
+    )
+
+    if (!schedule) {
+      return response.status(404).send({ message: 'not found' })
+    }
+
+    const fromRank = (Number(page) - 1) * Number(limit)
+
+    response.send(
+      new PaginatedResultSet(
+        schedule.slice(fromRank, fromRank + Number(limit)),
+        Number(page),
+        Number(limit),
+        schedule.length
+      )
     )
   }
 
