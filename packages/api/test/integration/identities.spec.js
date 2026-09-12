@@ -246,6 +246,7 @@ describe('Identities routes', () => {
         totalDocuments: 0,
         totalDataContracts: 0,
         isSystem: false,
+        type: 'regular',
         aliases: [{
           alias: alias.alias,
           contested: false,
@@ -531,6 +532,7 @@ describe('Identities routes', () => {
         totalDocuments: 0,
         totalDataContracts: 0,
         isSystem: false,
+        type: 'regular',
         aliases: [
           {
             alias: 'test.test',
@@ -594,6 +596,7 @@ describe('Identities routes', () => {
           totalDocuments: 0,
           totalDataContracts: 0,
           isSystem: false,
+          type: 'regular',
           aliases: [
             {
               alias: 'test.test',
@@ -658,6 +661,7 @@ describe('Identities routes', () => {
           totalDocuments: 0,
           totalDataContracts: 0,
           isSystem: false,
+          type: 'regular',
           aliases: [
             {
               alias: 'test.test',
@@ -723,6 +727,7 @@ describe('Identities routes', () => {
           totalDocuments: 0,
           totalDataContracts: 0,
           isSystem: false,
+          type: 'regular',
           aliases: [
             {
               alias: 'test.test',
@@ -798,6 +803,7 @@ describe('Identities routes', () => {
           totalDocuments: 0,
           totalDataContracts: 0,
           isSystem: false,
+          type: 'regular',
           aliases: [
             {
               alias: 'test.test',
@@ -876,6 +882,7 @@ describe('Identities routes', () => {
           totalDocuments: 0,
           totalDataContracts: 0,
           isSystem: false,
+          type: 'regular',
           aliases: [
             {
               alias: 'test.test',
@@ -964,6 +971,7 @@ describe('Identities routes', () => {
           totalDocuments: _identity.balance / 10000,
           totalDataContracts: _identity.balance / 10000,
           isSystem: false,
+          type: 'regular',
           aliases: [
             {
               alias: 'test.test',
@@ -1046,6 +1054,7 @@ describe('Identities routes', () => {
           totalDocuments: 0,
           totalDataContracts: 0,
           isSystem: false,
+          type: 'regular',
           aliases: [
             {
               alias: 'test.test',
@@ -1151,6 +1160,7 @@ describe('Identities routes', () => {
           totalDocuments: 0,
           totalDataContracts: 0,
           isSystem: false,
+          type: 'regular',
           aliases: [
             {
               alias: 'test.test',
@@ -1190,7 +1200,7 @@ describe('Identities routes', () => {
       for (let i = 0; i < 5; i++) {
         block = await fixtures.block(knex, { height: 100 + i, timestamp: new Date(0) })
         identity = await fixtures.identity(knex, { block_hash: block.hash, block_height: block.height })
-        await knex('identities').where('id', identity.id).update({ state_transition_hash: null, state_transition_id: null })
+        await knex('identities').where('id', identity.id).update({ state_transition_hash: null, state_transition_id: null, type: 'masternode' })
         masternode.push(identity.identifier)
       }
 
@@ -1216,7 +1226,7 @@ describe('Identities routes', () => {
       for (let i = 0; i < 5; i++) {
         block = await fixtures.block(knex, { height: 200 + i, timestamp: new Date(0) })
         identity = await fixtures.identity(knex, { block_hash: block.hash, block_height: block.height })
-        await knex('identities').where('id', identity.id).update({ state_transition_hash: null, state_transition_id: null })
+        await knex('identities').where('id', identity.id).update({ state_transition_hash: null, state_transition_id: null, type: 'masternode' })
         masternode.push(identity.identifier)
       }
 
@@ -1246,7 +1256,7 @@ describe('Identities routes', () => {
       for (let i = 0; i < 5; i++) {
         block = await fixtures.block(knex, { height: 300 + i, timestamp: new Date(0) })
         identity = await fixtures.identity(knex, { block_hash: block.hash, block_height: block.height })
-        await knex('identities').where('id', identity.id).update({ state_transition_hash: null, state_transition_id: null })
+        await knex('identities').where('id', identity.id).update({ state_transition_hash: null, state_transition_id: null, type: 'masternode' })
         masternode.push(identity.identifier)
       }
 
@@ -1259,6 +1269,70 @@ describe('Identities routes', () => {
       for (const reg of regular) {
         assert.equal(returnedIdentifiers.includes(reg), false)
       }
+    })
+
+    it('should report the type of every identity', async () => {
+      mock.method(IdentitiesController.prototype, 'getIdentityBalance', async () => 0)
+
+      const regular = []
+      const masternode = []
+
+      for (let i = 0; i < 5; i++) {
+        block = await fixtures.block(knex, { height: i + 1, timestamp: new Date(0) })
+        identity = await fixtures.identity(knex, { block_hash: block.hash, block_height: block.height })
+        regular.push(identity.identifier)
+      }
+
+      for (let i = 0; i < 5; i++) {
+        block = await fixtures.block(knex, { height: 400 + i, timestamp: new Date(0) })
+        identity = await fixtures.identity(knex, { block_hash: block.hash, block_height: block.height })
+        await knex('identities').where('id', identity.id).update({ state_transition_hash: null, state_transition_id: null, type: 'masternode' })
+        masternode.push(identity.identifier)
+      }
+
+      const { body } = await client.get('/identities?limit=10')
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      const types = body.resultSet.reduce((types, identity) => ({ ...types, [identity.identifier]: identity.type }), {})
+
+      for (const identifier of regular) {
+        assert.equal(types[identifier], 'regular')
+      }
+
+      for (const identifier of masternode) {
+        assert.equal(types[identifier], 'masternode')
+      }
+    })
+
+    it('should filter by the masternode voting and operator types', async () => {
+      mock.method(IdentitiesController.prototype, 'getIdentityBalance', async () => 0)
+
+      const byType = {}
+
+      for (const identityType of ['regular', 'masternode', 'masternode_voting', 'masternode_operator']) {
+        block = await fixtures.block(knex, { height: Object.keys(byType).length + 1, timestamp: new Date(0) })
+        identity = await fixtures.identity(knex, { block_hash: block.hash, block_height: block.height, type: identityType })
+        byType[identityType] = identity.identifier
+      }
+
+      for (const [identityType, identifier] of Object.entries(byType)) {
+        const { body } = await client.get(`/identities?identity_type=${identityType}`)
+          .expect(200)
+          .expect('Content-Type', 'application/json; charset=utf-8')
+
+        assert.deepEqual(body.resultSet.map(identity => identity.identifier), [identifier])
+        assert.deepEqual(body.resultSet.map(identity => identity.type), [identityType])
+      }
+    })
+
+    it('should reject an unknown identity type', async () => {
+      // the schema rejects the value, the shared error handler reports every
+      // validation failure as a 500
+      const { body } = await client.get('/identities?identity_type=SOMETHING')
+        .expect(500)
+
+      assert.equal(body.error, 'querystring/identity_type must be equal to one of the allowed values')
     })
   })
 

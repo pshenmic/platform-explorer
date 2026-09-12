@@ -743,7 +743,8 @@ describe('Other routes', () => {
         fundingCoreTx: null,
         lastWithdrawalTimestamp: null,
         totalTopUps: 0,
-        totalWithdrawals: 0
+        totalWithdrawals: 0,
+        type: 'regular'
       }
 
       assert.deepEqual(body, { identities: [expectedIdentity] })

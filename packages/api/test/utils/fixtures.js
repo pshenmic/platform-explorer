@@ -155,7 +155,8 @@ const fixtures = {
     state_transition_hash,
     revision,
     owner,
-    is_system
+    is_system,
+    type
   } = {}) {
     if (!identifier) {
       identifier = generateIdentifier()
@@ -189,7 +190,8 @@ const fixtures = {
       state_transition_hash: state_transition_hash ?? transaction.hash,
       state_transition_id: transaction?.id ?? temp?.id,
       owner: owner ?? identifier,
-      is_system: is_system ?? false
+      is_system: is_system ?? false,
+      type: type ?? 'regular'
     }
 
     const result = await knex('identities').insert(row).returning('id')

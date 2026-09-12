@@ -237,7 +237,7 @@ const schemaTypes = [
       },
       identity_type: {
         type: ['string', 'null'],
-        enum: ['regular', 'masternode']
+        enum: ['regular', 'masternode', 'masternode_voting', 'masternode_operator']
       },
       with_tokens: {
         type: ['boolean', 'null']
