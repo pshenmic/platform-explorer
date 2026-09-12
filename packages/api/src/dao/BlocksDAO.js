@@ -49,7 +49,7 @@ module.exports = class BlockDAO {
         'state_transitions.status as status', 'state_transitions.owner as owner',
         'state_transitions.error as error', 'block_hash',
         'state_transitions.index as index', 'state_transitions.type as type', 'app_hash',
-        'blocks.quorum_hash as quorum_hash'
+        'blocks.quorum_hash as quorum_hash', 'state_transitions.amount as amount'
       )
       .leftJoin('state_transitions', 'state_transitions.block_height', 'blocks.height')
       .whereILike('blocks.hash', blockHash)
@@ -65,7 +65,7 @@ module.exports = class BlockDAO {
         'height', 'timestamp',
         'gas_used', 'data',
         'hash', 'tx_hash',
-        'status', 'owner', 'quorum_hash'
+        'status', 'owner', 'quorum_hash', 'amount'
       )
       .select(this.knex(subquery).sum('gas_used').as('total_gas_used'))
 

@@ -25,7 +25,8 @@ module.exports = class TransactionsDAO {
         'state_transitions.error as error', 'state_transitions.type as type', 'state_transitions.batch_type as batch_type',
         'state_transitions.index as index', 'blocks.height as block_height',
         'blocks.hash as block_hash', 'blocks.timestamp as timestamp', 'state_transitions.owner as owner',
-        'shielded_transitions.amount as shielded_amount'
+        'shielded_transitions.amount as shielded_amount',
+        'state_transitions.amount as amount'
       )
       .select(duplicatesSubquery.as('duplicates'))
       .whereILike('state_transitions.hash', hash)
@@ -133,7 +134,8 @@ module.exports = class TransactionsDAO {
       ? this.knex('tokens')
         .select(
           'state_transitions.hash', 'data', 'type', 'index', 'batch_type', 'state_transitions.owner',
-          'gas_used', 'status', 'error', 'block_hash', 'block_height', 'state_transitions.id')
+          'gas_used', 'status', 'error', 'block_hash', 'block_height', 'state_transitions.id',
+          'state_transitions.amount')
         .whereILike('name', tokenName)
         .leftJoin('token_transitions', 'token_identifier', 'identifier')
         .leftJoin('state_transitions', 'token_transitions.state_transition_hash', 'state_transitions.hash')
@@ -144,7 +146,7 @@ module.exports = class TransactionsDAO {
       .select('state_transitions_subquery.hash as tx_hash',
         'block_hash', 'id', 'owner', 'block_height',
         'data', 'type', 'index', 'batch_type',
-        'gas_used', 'status', 'error',
+        'gas_used', 'status', 'error', 'amount',
         'blocks.timestamp as timestamp'
       )
       .whereRaw(timestampsQuery, timestampBindings)
@@ -155,7 +157,7 @@ module.exports = class TransactionsDAO {
       .with('subquery', subquery)
       .select('tx_hash',
         'data', 'type', 'index', 'batch_type',
-        'gas_used', 'status', 'error',
+        'gas_used', 'status', 'error', 'amount',
         'block_hash', 'id', 'owner',
         'block_height', 'timestamp'
       )
@@ -168,7 +170,7 @@ module.exports = class TransactionsDAO {
     const rows = await this.knex(sortedSubquery)
       .select('tx_hash',
         'data', 'type', 'index', 'batch_type',
-        'gas_used', 'status', 'error',
+        'gas_used', 'status', 'error', 'amount',
         'block_hash', 'id', 'owner',
         'block_height', 'timestamp',
         'total_count.total_count')
@@ -464,6 +466,7 @@ module.exports = class TransactionsDAO {
       .as('blocks_sub')
 
     const shieldedTransitionsSubquery = this.knex('shielded_transitions')
+      .select('shielded_transitions.amount as amount', 'state_transitions.block_height as block_height')
       .whereIn('state_transition_type', transitionTypes)
       .leftJoin('state_transitions', 'shielded_transitions.state_transition_id', 'state_transitions.id')
       .as('shielded_transitions_subquery')
@@ -650,7 +653,7 @@ module.exports = class TransactionsDAO {
   getShieldedStatistic = async (timestampStart, timestampEnd) => {
     let query = this.knex('shielded_transitions')
       .select('state_transition_type as type')
-      .sum('amount as total_amount')
+      .sum('shielded_transitions.amount as total_amount')
       .count('* as count')
       .groupBy('state_transition_type')
 

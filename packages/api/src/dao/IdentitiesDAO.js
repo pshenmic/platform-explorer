@@ -81,7 +81,7 @@ module.exports = class IdentitiesDAO {
       .select(
         'identifier', 'with_alias.owner as owner', 'revision',
         'transfer_id', 'sender', 'tx_hash', 'is_system', 'with_alias.type as type',
-        'blocks.timestamp as timestamp', 'recipient', 'amount',
+        'blocks.timestamp as timestamp', 'recipient', 'with_alias.amount as amount',
         'state_transitions.data as tx_data'
       )
       .select(this.knex('state_transitions').count('*').where('owner', identifier).as('total_txs'))
@@ -110,14 +110,14 @@ module.exports = class IdentitiesDAO {
         this.knex.raw('ROUND(total_gas_spent/total_txs) as average_gas_spent')
       )
       .select(this.knex('transfers')
-        .select(this.knex.raw('sum(amount)'))
+        .select(this.knex.raw('sum(transfers.amount)'))
         .where('recipient', identifier)
         .orWhere('sender', identifier)
         .andWhere('type', IDENTITY_TOP_UP)
         .leftJoin('state_transitions', 'state_transition_hash', 'hash')
         .as('total_top_ups_amount'))
       .select(this.knex('transfers')
-        .select(this.knex.raw('sum(amount)'))
+        .select(this.knex.raw('sum(transfers.amount)'))
         .where('sender', identifier)
         .andWhere('type', IDENTITY_CREDIT_WITHDRAWAL)
         .leftJoin('state_transitions', 'state_transition_hash', 'hash')
@@ -567,13 +567,14 @@ module.exports = class IdentitiesDAO {
       .select('state_transitions.id as state_transition_id', 'state_transitions.hash as tx_hash',
         'state_transitions.index as index', 'state_transitions.type as type', 'state_transitions.block_hash as block_hash',
         'state_transitions.gas_used as gas_used', 'state_transitions.status as status', 'state_transitions.error as error',
-        'state_transitions.owner as owner', 'state_transitions.data as data'
+        'state_transitions.owner as owner', 'state_transitions.data as data',
+        'state_transitions.amount as amount'
       )
       .where('state_transitions.owner', '=', identifier)
 
     const rows = await this.knex.with('with_alias', subquery)
       .select('state_transition_id', 'tx_hash', 'index', 'block_hash', 'type',
-        'gas_used', 'status', 'gas_used', 'owner', 'data',
+        'gas_used', 'status', 'gas_used', 'owner', 'data', 'amount',
         'blocks.timestamp as timestamp', 'blocks.height as block_height')
       .select(this.knex('with_alias').count('*').as('total_count'))
       .leftJoin('blocks', 'blocks.hash', 'block_hash')
