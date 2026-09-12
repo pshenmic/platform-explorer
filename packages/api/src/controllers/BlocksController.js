@@ -23,8 +23,6 @@ class BlocksController {
       return response.status(404).send({ message: 'not found' })
     }
 
-    // the quorum that signed the block is indexed on the row, so there is no need to read
-    // last_commit off the next block from Tenderdash to learn it
     const quorumHash = block.header.quorumHash
 
     let quorum = null
@@ -78,8 +76,6 @@ class BlocksController {
 
     const { quorums } = await getPlatformQuorums()
 
-    // the schedule ends when the rotation has been walked once, so building it whole gives
-    // both the total and the page without repeating the walk
     const schedule = buildProposerSchedule(
       quorums,
       currentQuorumHash?.toUpperCase() ?? null,

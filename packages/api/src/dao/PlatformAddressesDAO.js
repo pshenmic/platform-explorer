@@ -10,12 +10,6 @@ module.exports = class PlatformAddressesDAO {
     this.sdk = sdk
   }
 
-  // matches a set of base58 or bech32m addresses against the platform_addresses table. Both
-  // the single and the batch endpoints anchor on this, so they agree on what an address is.
-  // Each half compares the column itself so it can use the plain index on that column:
-  // base58check is case sensitive, and bech32m is stored canonically lowercased, so only the
-  // input needs folding. Wrapping a column in LOWER() instead costs a sequential scan over
-  // every address ever seen, on every request
   addressSubquery = (addresses) => {
     const lowered = addresses.map(address => address.toLowerCase())
 
@@ -58,8 +52,6 @@ module.exports = class PlatformAddressesDAO {
       .with('unique_transitions', unionTransitions)
       .select('address as base58_address', 'bech32m_address')
       .select('txs_count.total_txs as total_txs', 'txs_count.incoming_txs as incoming_txs', 'txs_count.outgoing_txs as outgoing_txs')
-      // an address with nothing on one side of the ledger has moved zero credits there, and the
-      // join misses it entirely when it has no transitions at all, so both are a 0 rather than a null
       .select(this.knex.raw('COALESCE(txs_count.total_incoming_amount, 0) as total_incoming_amount'))
       .select(this.knex.raw('COALESCE(txs_count.total_outgoing_amount, 0) as total_outgoing_amount'))
       .leftJoin(
@@ -97,8 +89,6 @@ module.exports = class PlatformAddressesDAO {
     })
   }
 
-  // batch counterpart of getPlatformAddressInfo, so a wallet can cover a whole DIP-17 window
-  // in one request. Addresses the indexer has never seen have no row and are left out
   getPlatformAddressesInfo = async (addresses) => {
     const rows = await this.getPlatformAddressesRows(addresses)
 
@@ -296,8 +286,6 @@ module.exports = class PlatformAddressesDAO {
         type: StateTransitionEnum[row.type]
       })
 
-      // how many of the requested addresses own a row in this transition. Above one no single
-      // address describes it, which is why it carries no address of its own
       transaction.addressesCount = Number(row.addresses_count)
 
       return transaction
