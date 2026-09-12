@@ -47,6 +47,7 @@ Reference:
 * [Blocks by validator](#blocks-by-validator)
 * [Blocks](#blocks)
 * [Average Block Time History](#average-block-time-history)
+* [Block Proposer Schedule](#block-proposer-schedule)
 * [Validators](#validators)
 * [Validator by ProTxHash](#validator-by-protxhash)
 * [Validator by Masternode Identifier](#validator-by-masternode-identifier)
@@ -108,7 +109,7 @@ Reference:
 * [Quorum by Hash](#quorum-by-hash)
 * [Platform Addresses](#platform-addresses)
 * [Platform Address Info](#platform-address-info)
-* [Platform Address Transactions](#platform-address-transactions)
+* [Platform Address Transitions](#platform-address-transitions)
 
 ### Status
 Returns basic stats and epoch info
@@ -264,6 +265,8 @@ HTTP /epoch/2492
 ---
 ### Block by hash
 Get a block by hash
+
+* `quorumHash` on the header is the quorum that signed the block
 ```
 GET /block/12E5592208322B5A3598C98C1811FCDD403DF40F522511D7A965DDE1D96C97C7
 
@@ -276,7 +279,8 @@ GET /block/12E5592208322B5A3598C98C1811FCDD403DF40F522511D7A965DDE1D96C97C7
     "appVersion": 4,
     "l1LockedHeight": 1124953,
     "validator": "8917BB546318F3410D1A7901C7B846A73446311B5164B45A03F0E613F208F234",
-    "appHash": "49C07BEDB5710565CFC82F678DEB4849D2CA1CCD3DFBA6FDA3F1C0F3C39D0AD9"
+    "appHash": "49C07BEDB5710565CFC82F678DEB4849D2CA1CCD3DFBA6FDA3F1C0F3C39D0AD9",
+    "quorumHash": "000000153FE56C83B62D35897F3B05DCB60CFE95715EFB3014F7D2C8997C70F1"
   },
   "txs": [
     {
@@ -330,7 +334,8 @@ GET /validator/B8F90A4F07D9E59C061D41CC8E775093141492A5FD59AB3BBC4241238BB28A18/
             "appVersion": 1,
             "validator": "B8F90A4F07D9E59C061D41CC8E775093141492A5FD59AB3BBC4241238BB28A18",
             "l1LockedHeight": 1337,
-            "appHash": "49C07BEDB5710565CFC82F678DEB4849D2CA1CCD3DFBA6FDA3F1C0F3C39D0AD9"
+            "appHash": "49C07BEDB5710565CFC82F678DEB4849D2CA1CCD3DFBA6FDA3F1C0F3C39D0AD9",
+            "quorumHash": "000000153FE56C83B62D35897F3B05DCB60CFE95715EFB3014F7D2C8997C70F1"
         },
         "txs": ["DEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEF"]
     }, ...
@@ -342,8 +347,13 @@ GET /validator/B8F90A4F07D9E59C061D41CC8E775093141492A5FD59AB3BBC4241238BB28A18/
 Return all blocks with pagination info
 * `limit` cannot be more then 100
 * `page` cannot be less then 1
+* `validator` narrows the page to the blocks that proTxHash proposed
+* `quorum` narrows the page to the blocks that quorum signed, matched on the quorum hash the
+  indexer stores per block, so it is exact and works for quorums long past the signing-active
+  window. It combines with `validator` to give one member's blocks inside that quorum, and is
+  accepted in either case. An unknown quorum gives an empty page rather than an error
 ```
-GET /blocks?epoch_index_min=1000&epoch_index_max=1200&height_min=2000&height_max=4000&gas_min=1&gas_max=99999999999&timestamp_start=2024-08-29T23:24:11.516z&timestamp_end=2025-08-29T23:24:11.516z&tx_count_min=2&tx_count_max=11&validator=C11C1168DCF9479475CB1355855E30EA75C0CDDA8A8F9EA80591568DD1C33BA8
+GET /blocks?epoch_index_min=1000&epoch_index_max=1200&height_min=2000&height_max=4000&gas_min=1&gas_max=99999999999&timestamp_start=2024-08-29T23:24:11.516z&timestamp_end=2025-08-29T23:24:11.516z&tx_count_min=2&tx_count_max=11&validator=C11C1168DCF9479475CB1355855E30EA75C0CDDA8A8F9EA80591568DD1C33BA8&quorum=000000153FE56C83B62D35897F3B05DCB60CFE95715EFB3014F7D2C8997C70F1
 
 {
   "resultSet": [
@@ -357,7 +367,8 @@ GET /blocks?epoch_index_min=1000&epoch_index_max=1200&height_min=2000&height_max
         "l1LockedHeight": 1093395,
         "validator": "C11C1168DCF9479475CB1355855E30EA75C0CDDA8A8F9EA80591568DD1C33BA8",
         "totalGasUsed": 509281140,
-        "appHash": "49C07BEDB5710565CFC82F678DEB4849D2CA1CCD3DFBA6FDA3F1C0F3C39D0AD9"
+        "appHash": "49C07BEDB5710565CFC82F678DEB4849D2CA1CCD3DFBA6FDA3F1C0F3C39D0AD9",
+        "quorumHash": "000000153FE56C83B62D35897F3B05DCB60CFE95715EFB3014F7D2C8997C70F1"
       },
       "txs": [
         "EA0A1997F31D5204EB9FC6E49CDEF1E9A7FB446AB1D4B9995A9C7ED3C6CE718B",
@@ -408,6 +419,61 @@ Response codes:
 500: Internal Server Error
 ```
 ---
+### Block Proposer Schedule
+Returns the proposers scheduled for the blocks after the chain tip, ordered by height, with
+pagination info.
+
+The quorum holding the Platform validator set proposes one full pass of its members in
+ascending `proTxHash` order, one member per block, and the set then rotates to the next older
+quorum, which starts its own pass at its lowest `proTxHash`. Every platform quorum is
+signing-active the whole time, so a quorum's place in [Quorums](#quorums) is only its age and
+not a turn in a queue — the set moving between them is what puts a member on a block.
+
+* `limit` cannot be more then 100
+* `page` cannot be less then 1
+* `order` does not apply: the schedule only runs forward from the chain tip
+* `total` is how far ahead the schedule reaches, which is one walk of the whole rotation. It
+  falls as the current quorum works through its pass and jumps back up when the set rotates
+* a page far enough out leaves the current quorum and continues into the quorums that take the
+  set after it, so `quorumHash` is per entry
+* a member is skipped when it is offline, so an entry further from the tip is more likely to be
+  off by a member or more. Treat this as a schedule, not a guarantee
+```
+GET /blocks/proposerSchedule?page=1&limit=3
+
+{
+    "resultSet": [
+        {
+            "height": 570358,
+            "proTxHash": "8917BB546318F3410D1A7901C7B846A73446311B5164B45A03F0E613F208F234",
+            "quorumHash": "00000045027E2BE378259D5C71B22E3E2B740A38A91B155541A6B970403CB98F"
+        },
+        {
+            "height": 570359,
+            "proTxHash": "8B8D1193AFD22E538CE0C9FB50FEE155D0F6176CA68E65DA684C5DCE2D1E0815",
+            "quorumHash": "00000045027E2BE378259D5C71B22E3E2B740A38A91B155541A6B970403CB98F"
+        },
+        {
+            "height": 570360,
+            "proTxHash": "8E11EB784883D3DC9D0D74A74633F067DC61C408DFDEE49B8F93BB161F2916C0",
+            "quorumHash": "00000045027E2BE378259D5C71B22E3E2B740A38A91B155541A6B970403CB98F"
+        }
+    ],
+    "pagination": {
+        "page": 1,
+        "limit": 3,
+        "total": 579
+    }
+}
+```
+Response codes:
+```
+200: OK
+404: Not Found
+500: Internal Server Error
+503: Service Temporarily Unavailable
+```
+___
 ### Validators
 Return all validators with pagination info.
 * Valid `order` values are `asc` or `desc`
@@ -445,7 +511,8 @@ GET /validators?blocks_proposed_min=1&blocks_proposed_max=9999999&last_proposed_
                 "l1LockedHeight": 1343619,
                 "validator": "05B687978344FA2433B2AA99D41F643E2D8581A789CDC23084889CECA5244EA8",
                 "totalGasUsed": 0,
-                "appHash": "E81BCE0B1787D512CCAFD6D93043131D6FB4E9BEE6CC549C00F7501E7E1949A8"
+                "appHash": "E81BCE0B1787D512CCAFD6D93043131D6FB4E9BEE6CC549C00F7501E7E1949A8",
+                "quorumHash": "000000153FE56C83B62D35897F3B05DCB60CFE95715EFB3014F7D2C8997C70F1"
             },
             "proTxInfo": {
                 "type": "Evo",
@@ -521,7 +588,8 @@ GET /validator/F60A6BF9EC0794BB0CFD1E0F2217933F4B33EDE6FE810692BC275CA18148AEF0
     "appVersion": 1,
     "blockVersion": 13,
     "validator": "F60A6BF9EC0794BB0CFD1E0F2217933F4B33EDE6FE810692BC275CA18148AEF0",
-    "appHash": "49C07BEDB5710565CFC82F678DEB4849D2CA1CCD3DFBA6FDA3F1C0F3C39D0AD9"
+    "appHash": "49C07BEDB5710565CFC82F678DEB4849D2CA1CCD3DFBA6FDA3F1C0F3C39D0AD9",
+    "quorumHash": "000000153FE56C83B62D35897F3B05DCB60CFE95715EFB3014F7D2C8997C70F1"
   },
   "proTxInfo": {
     "type": "Evo",
@@ -612,7 +680,8 @@ GET /validator/identity/8tsWRSwsTM5AXv4ViCF9gu39kzjbtfFDM6rCyL2RcFzd
     "appVersion": 1,
     "blockVersion": 13,
     "validator": "F60A6BF9EC0794BB0CFD1E0F2217933F4B33EDE6FE810692BC275CA18148AEF0",
-    "appHash": "49C07BEDB5710565CFC82F678DEB4849D2CA1CCD3DFBA6FDA3F1C0F3C39D0AD9"
+    "appHash": "49C07BEDB5710565CFC82F678DEB4849D2CA1CCD3DFBA6FDA3F1C0F3C39D0AD9",
+    "quorumHash": "000000153FE56C83B62D35897F3B05DCB60CFE95715EFB3014F7D2C8997C70F1"
   },
   "proTxInfo": {
     "type": "Evo",
@@ -828,6 +897,13 @@ Status can be either `SUCCESS` or `FAIL`. In case of error tx, message will appe
 * `timestamp_start` and `timestamp_end` transaction timestamp 
 * `token_name` name of token
 * Valid `order_by` values are `id`, `gas_used`, `timestamp` or `owner`
+* `amount` is the credits the transaction moved, set for the types that record a transfer
+  (`IDENTITY_CREATE`, `IDENTITY_TOP_UP`, `IDENTITY_CREDIT_WITHDRAWAL`, `IDENTITY_CREDIT_TRANSFER`
+  and document purchases inside a `BATCH`), and `null` for every other type. It is reported the
+  same way by [Transaction by hash](#transaction-by-hash), [Block by hash](#block-by-hash) and
+  [Transactions by Identity](#transactions-by-identity). Note that credits moved between platform
+  addresses are not transfers, [Platform Address Transitions](#platform-address-transitions)
+  reports those per address instead
 
 | Batch type string                   | Batch type number |
 |:------------------------------------|:------------------|
@@ -1476,6 +1552,20 @@ Response codes:
 ### Identity by Identifier
 Return identity by given identifier
 
+`type` tells apart the identities Platform derives for a masternode from the ones users
+register themselves:
+
+| type                  | description                                                |
+|-----------------------|------------------------------------------------------------|
+| `regular`             | registered by a user with an Identity Create transition     |
+| `masternode`          | masternode owner identity, its identifier is the ProTxHash  |
+| `masternode_voting`   | masternode voting identity, votes on contested resources    |
+| `masternode_operator` | masternode operator identity, collects the operator reward  |
+
+All four are indexed, so [Identities](#identities) can filter on any of them with
+`identity_type`. The type is `null` for an identity the indexer has not seen, which happens when
+one is reachable only through the state transitions it owns.
+
 Every endpoint that returns aliases uses the same alias entry shape:
 
 * contested - whether the name matches the DPNS contested-name pattern
@@ -1586,7 +1676,8 @@ GET /identity/EP1g5AGP8QGYMXXUYdmSvhbVxggNURDbvpckF39mTxs3
     "totalWithdrawals": 0,
     "lastWithdrawalTimestamp": null,
     "nonce": "7",
-    "owner": "EP1g5AGP8QGYMXXUYdmSvhbVxggNURDbvpckF39mTxs3"
+    "owner": "EP1g5AGP8QGYMXXUYdmSvhbVxggNURDbvpckF39mTxs3",
+    "type": "regular"
 }
 ```
 Response codes:
@@ -1632,8 +1723,12 @@ Return all identities paged and order by block height, tx count or balance.
 * `data_contracts_min` and `data_contracts_min` allows to filter identities by data contract count
 * `balance_min` and `balance_max` allows to filter identities by balance
 * All range filters can be set with one or two range limit e.g. `balance_min=0` or `balance_min=0&balance_max=1` 
+* `identity_type` allows to filter identities by their `type`, see [Identity by Identifier](#identity-by-identifier).
+  Valid values are `regular`, `masternode`, `masternode_voting` and `masternode_operator`, e.g.
+  `identity_type=regular` for the identities users registered themselves or `identity_type=masternode_voting`
+  for the ones masternodes vote on contested resources with
 ```
-GET /identities?limit=10&order=desc&order_by=tx_count&balance_min=100000&balance_max=100000100000100000100000&documents_count_min=1&documents_count_max=5&data_contracts_min=3&data_contracts_max=4&tx_count_min=2&tx_count_max=10
+GET /identities?limit=10&order=desc&order_by=tx_count&identity_type=regular&balance_min=100000&balance_max=100000100000100000100000&documents_count_min=1&documents_count_max=5&data_contracts_min=3&data_contracts_max=4&tx_count_min=2&tx_count_max=10
 
 {
     "pagination": {
@@ -1673,7 +1768,8 @@ GET /identities?limit=10&order=desc&order_by=tx_count&balance_min=100000&balance
             "totalWithdrawals": null,
             "lastWithdrawalTimestamp": null,
             "nonce": null,
-            "owner": "EhGUnphjMD73JZBt98h7BUK7W17PbnMSUhD4pbEceLMi"
+            "owner": "EhGUnphjMD73JZBt98h7BUK7W17PbnMSUhD4pbEceLMi",
+            "type": "regular"
         }, ...
     ]
 }
@@ -1770,6 +1866,11 @@ _Note: this request does not contain any pagination data in the response_
 * returns 404 `not found` if identity don't have withdrawals
 * Pagination always `null`
 * `status` is a string. Possible values: `QUEUED`, `POOLED`, `BROADCASTED`, `COMPLETE`, `EXPIRED`
+* `hash` is the platform state transition that asked for the withdrawal, not a core transaction id
+* `transactionIndex` is the asset unlock index, the same one carried in the payload of the core
+  asset unlock transaction, so an l1 view can be paired with this record by it. It is `null` until
+  the withdrawal is pooled into a transaction, and `transactionSignHeight` alongside it is the core
+  height the transaction was signed at
 ```
 GET /identity/A1rgGVjRGuznRThdAA316VEEpKuVQ7mV8mBK1BFJvXnb/withdrawals?order=asc&start_at=95eiiqMotMvH23f6cv3BPC4ykcHFWTy2g3baCTWZANAs&timestamp_start=2024-10-10T02:37:39.187Z
 
@@ -1787,7 +1888,9 @@ GET /identity/A1rgGVjRGuznRThdAA316VEEpKuVQ7mV8mBK1BFJvXnb/withdrawals?order=asc
       "amount": 200000,
       "timestamp": "2024-10-10T02:37:39.187Z",
       "withdrawalAddress": "yeRZBWYfeNE4yVUHV4ZLs83Ppn9aMRH57A",
-      "hash": "113F86F4D1F48159B0D6690F3C5F8F33E39243086C041CF016454A66AD63F025"
+      "hash": "113F86F4D1F48159B0D6690F3C5F8F33E39243086C041CF016454A66AD63F025",
+      "transactionIndex": 3441,
+      "transactionSignHeight": 1258334
     },
     ...
   ]
@@ -1927,6 +2030,7 @@ Return all transfers made by the given identity
 * `limit` cannot be more then 100
 * `page` cannot be less then 1
 * `type` cannot be less, then 0 and more then 8
+* `amount` is credits as a string, since credits overflow a JSON number past ~90,000 DASH
 ```
 GET /identity/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec/transfers?hash=445E6F081DEE877867816AD3EF492E2C0BD1DDCCDC9C793B23DDDAF8AEA23118&page=1&limit=10&order=asc&type=6
 
@@ -1938,7 +2042,7 @@ GET /identity/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec/transfers?hash=445E6F
     },
     "resultSet": [
       {
-          "amount": 199997000000,
+          "amount": "199997000000",
           "sender": null,
           "recipient": "46r7vHmNRHFDAH2xcTdhDDeL4kv5aHemgPLThZgCtqt2",
           "timestamp": "2025-07-30T12:20:11.316Z",
@@ -4228,7 +4332,7 @@ ___
 ### Quorums
 Returns the signing-active quorums of the platform LLMQ type, newest first.
 
-The Platform validator set rotates between these quorums, so the one flagged `isCurrent` holds the set right now and the members of the others become validators once the set rotates to their quorum. Members are omitted here — use [Current Quorum](#current-quorum) or [Quorum by Hash](#quorum-by-hash) for them.
+All of them are signing-active at the same time, so a quorum's place in the list is only age, not a turn in a queue. What does move between them is the Platform validator set: the quorum flagged `isCurrent` holds it now, and it passes to the next older quorum once every member of the current one has proposed a block — see [Block Proposer Schedule](#block-proposer-schedule). Members are omitted here — use [Current Quorum](#current-quorum) or [Quorum by Hash](#quorum-by-hash) for them.
 
 * `healthRatio` is Core's health rating of the quorum
 * `isCurrent` marks the quorum currently holding the validator set
@@ -4423,6 +4527,10 @@ ___
 ### Platform Address Info
 Return platform address info by given addres (base58check or bech32m)
 
+* `balance`, `totalIncomingAmount` and `totalOutgoingAmount` are credits as strings, since credits
+  overflow a JSON number past ~90,000 DASH
+* an address with nothing on one side of the ledger reads `"0"` there, not `null`
+
 ```
 GET /platformAddress/tdashevo1zm37f22lmtkysgznz7mnf3d9tmuh9urrflvjul/info
 
@@ -4446,16 +4554,21 @@ Response codes:
 500: Internal Server Error
 ```
 ___
-### Platform Address Transactions
+### Platform Address Transitions
 Return all transitions for platform address paged and ordered by block height and index.
 
 * Valid `order` values are `asc` or `desc`
 * `limit` cannot be more than 100
 * `page` cannot be less than 1
 * `amount` is the net change to the address balance in credits (negative on outcome and positive on income)
+* `incoming` is the sign of `amount` (`amount >= 0`)
+* `addressesCount` is always 1 here — a single address always describes its own transition
+* `transaction_type` narrows the page to the given state transition types, by name or by number,
+  and repeats for more than one of them (`&transaction_type=SHIELD&transaction_type=17`). The
+  total follows the filter, so the filtered set can be paged on its own
 
 ```
-GET /platformAddress/yRpNvoc3hd66c3rNrPRGubVd9vGUoAVpZV/transitions?page=1&limit=10&order=desc
+GET /platformAddress/yRpNvoc3hd66c3rNrPRGubVd9vGUoAVpZV/transitions?page=1&limit=10&order=desc&transaction_type=ADDRESS_FUNDS_TRANSFER
 
 {
     "resultSet": [
@@ -4533,7 +4646,7 @@ Response codes:
 500: Internal Server Error
 ```
 ___
-### Platform Addresses Transactions
+### Platform Addresses Transitions
 Return one merged page of transitions across a set of platform addresses, ordered by block
 height and index.
 
@@ -4544,11 +4657,21 @@ height and index.
 * `page` cannot be less than 1
 * a transition is listed once no matter how many addresses of the set own a row in it, and
   `amount` is the net change across the whole set
-* `base58Address` and `bech32mAddress` name the address the transition belongs to, and are
-  `null` when it touches more than one address of the set
+* `addressesCount` is how many addresses of the requested set own a row in the transition.
+  `base58Address` and `bech32mAddress` name the address the transition belongs to, and are `null`
+  exactly when that count is above one, since no single address of the set describes the row
+* `incoming` is the sign of `amount` (`amount >= 0`), so a transition whose inflow and outflow
+  across the set cancel out exactly reads as `incoming: true`. Read `amount` itself where the
+  direction has to be exact
+* `transaction_type` narrows the page to the given state transition types, by name or by number,
+  and repeats for more than one of them (`&transaction_type=SHIELD&transaction_type=17`). The
+  total follows the filter, so the filtered set can be paged on its own
+* `data` is `null` whenever the request names more than one address — one serialized transition
+  per row across a whole set of them is a large response for something a caller rarely reads, so
+  it is left to `/transaction/:hash`. A request for a single address still carries it
 
 ```
-POST /platformAddresses/transactions?page=1&limit=10&order=desc
+POST /platformAddresses/transitions?page=1&limit=10&order=desc&transaction_type=ADDRESS_FUNDS_TRANSFER
 {"addresses": ["yRpNvoc3hd66c3rNrPRGubVd9vGUoAVpZV", "yjaZy4BRBd99jB4mSpd6hJQkYFaCeprGQm"]}
 
 {
