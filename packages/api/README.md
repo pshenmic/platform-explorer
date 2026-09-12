@@ -897,13 +897,12 @@ Status can be either `SUCCESS` or `FAIL`. In case of error tx, message will appe
 * `timestamp_start` and `timestamp_end` transaction timestamp 
 * `token_name` name of token
 * Valid `order_by` values are `id`, `gas_used`, `timestamp` or `owner`
-* `amount` is the credits the transaction moved, set for the types that record a transfer
-  (`IDENTITY_CREATE`, `IDENTITY_TOP_UP`, `IDENTITY_CREDIT_WITHDRAWAL`, `IDENTITY_CREDIT_TRANSFER`
-  and document purchases inside a `BATCH`), and `null` for every other type. It is reported the
-  same way by [Transaction by hash](#transaction-by-hash), [Block by hash](#block-by-hash) and
-  [Transactions by Identity](#transactions-by-identity). Note that credits moved between platform
-  addresses are not transfers, [Platform Address Transitions](#platform-address-transitions)
-  reports those per address instead
+* `amount` is the credits the transaction moved, reported the same way by
+  [Transaction by hash](#transaction-by-hash), [Block by hash](#block-by-hash) and
+  [Transactions by Identity](#transactions-by-identity). It is `null` for the transitions that
+  move none: `DATA_CONTRACT_CREATE`, `DATA_CONTRACT_UPDATE`, `IDENTITY_UPDATE`, `MASTERNODE_VOTE`,
+  and a `BATCH` that holds no document purchase. Note that [Platform Address Transitions](#platform-address-transitions) has its own
+  `amount`, netted against the address being queried, which is a different figure
 
 | Batch type string                   | Batch type number |
 |:------------------------------------|:------------------|
@@ -1250,6 +1249,7 @@ GET /dataContract/AJqYb8ZvfbA6ZFgpsvLfpMEzwjaYUPyVmeFxSJrafB18/transactions
       "timestamp": "2024-08-26T13:30:22.211Z",
       "gasUsed": 32230560,
       "error": null,
+      "amount": null,
       "hash": "5FBEE4EC0030159C5D25D0C3DEC3AB894ED0DC89B07BEAFAF8A1BE1E3EFCCC10"
     },
     {
