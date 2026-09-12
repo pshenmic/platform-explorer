@@ -2177,4 +2177,51 @@ describe('Transaction routes', () => {
       assert.deepEqual(body.resultSet, expectedResultSet)
     })
   })
+
+  // declared last so the extra transaction does not shift the counts the suites above assert
+  describe('transaction amount', async () => {
+    it('should report the credits a transfer moved and leave other types null', async () => {
+      const amountBlock = await fixtures.block(knex, { height: 9001, timestamp: new Date(0) })
+
+      const withTransfer = await fixtures.transaction(knex, {
+        block_hash: amountBlock.hash,
+        block_height: amountBlock.height,
+        data: '{}',
+        type: StateTransitionEnum.IDENTITY_TOP_UP,
+        owner: identity.identifier
+      })
+      await fixtures.transfer(knex, {
+        amount: 1234567,
+        recipient: identity.identifier,
+        state_transition_hash: withTransfer.hash
+      })
+
+      const withoutTransfer = await fixtures.transaction(knex, {
+        block_hash: amountBlock.hash,
+        block_height: amountBlock.height,
+        data: '{}',
+        type: StateTransitionEnum.DATA_CONTRACT_UPDATE,
+        owner: identity.identifier
+      })
+
+      const { body: single } = await client.get(`/transaction/${withTransfer.hash}`)
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      assert.equal(single.amount, '1234567')
+
+      const { body: none } = await client.get(`/transaction/${withoutTransfer.hash}`)
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      assert.equal(none.amount, null)
+
+      const { body: list } = await client.get('/transactions?limit=100&order=desc')
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      assert.equal(list.resultSet.find(tx => tx.hash === withTransfer.hash).amount, '1234567')
+      assert.equal(list.resultSet.find(tx => tx.hash === withoutTransfer.hash).amount, null)
+    })
+  })
 })

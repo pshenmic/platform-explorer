@@ -6,6 +6,7 @@ const fixtures = require('../utils/fixtures')
 const { getKnex } = require('../../src/utils')
 const tenderdashRpc = require('../../src/tenderdashRpc')
 const DashCoreRPC = require('../../src/dashcoreRpc')
+const StateTransitionEnum = require('../../src/enums/StateTransitionEnum')
 
 const quorumHash = '0'.repeat(63) + '1'
 
@@ -874,6 +875,39 @@ describe('Blocks routes', () => {
     it('should return error when start is after end', async () => {
       await client.get(`/blocks/avgBlockTime/history?timestamp_start=${end.toISOString()}&timestamp_end=${start.toISOString()}`)
         .expect(400)
+    })
+  })
+
+  // declared last so the extra block does not shift the counts the suites above assert
+  describe('block transaction amount', async () => {
+    it('should report the credits a transfer moved', async () => {
+      const block = await fixtures.block(knex, { height: 9001, timestamp: new Date(0), quorum_hash: quorumHash })
+
+      const withTransfer = await fixtures.transaction(knex, {
+        block_hash: block.hash,
+        block_height: block.height,
+        data: '{}',
+        type: StateTransitionEnum.IDENTITY_TOP_UP
+      })
+      await fixtures.transfer(knex, {
+        amount: 1234567,
+        recipient: withTransfer.owner,
+        state_transition_hash: withTransfer.hash
+      })
+
+      const withoutTransfer = await fixtures.transaction(knex, {
+        block_hash: block.hash,
+        block_height: block.height,
+        data: '{}',
+        type: StateTransitionEnum.DATA_CONTRACT_UPDATE
+      })
+
+      const { body } = await client.get(`/block/${block.hash}`)
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      assert.equal(body.txs.find(tx => tx.hash === withTransfer.hash).amount, '1234567')
+      assert.equal(body.txs.find(tx => tx.hash === withoutTransfer.hash).amount, null)
     })
   })
 })

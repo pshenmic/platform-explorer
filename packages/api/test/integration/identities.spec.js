@@ -2110,6 +2110,31 @@ describe('Identities routes', () => {
   })
 
   describe('getTransactionsByIdentity()', async () => {
+    it('should report the credits a transfer moved', async () => {
+      block = await fixtures.block(knex, { height: 1 })
+      identity = await fixtures.identity(knex, { block_hash: block.hash, block_height: block.height })
+
+      const topUp = await fixtures.transaction(knex, {
+        block_hash: block.hash,
+        block_height: block.height,
+        owner: identity.identifier,
+        type: StateTransitionEnum.IDENTITY_TOP_UP
+      })
+      await fixtures.transfer(knex, {
+        amount: 1234567,
+        recipient: identity.identifier,
+        state_transition_hash: topUp.hash
+      })
+
+      const { body } = await client.get(`/identity/${identity.identifier}/transactions`)
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      assert.equal(body.resultSet.find(tx => tx.hash === topUp.hash).amount, '1234567')
+      // the identity create that owns no transfer stays null
+      assert.equal(body.resultSet.find(tx => tx.hash === identity.txHash).amount, null)
+    })
+
     it('should return default set of transactions by identity', async () => {
       block = await fixtures.block(knex, { height: 1 })
       identity = await fixtures.identity(knex, { block_hash: block.hash, block_height: block.height })
