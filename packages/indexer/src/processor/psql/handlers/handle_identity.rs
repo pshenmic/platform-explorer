@@ -1,5 +1,6 @@
 use crate::entities::identity::Identity;
 use crate::entities::transfer::Transfer;
+use crate::enums::identity_type::IdentityType;
 use crate::processor::psql::PSQLProcessor;
 use dashcore_rpc::dashcore::Txid;
 use dashcore_rpc::RpcApi;
@@ -154,6 +155,7 @@ impl PSQLProcessor {
             revision: 0u64,
             balance: None,
             is_system: false,
+            identity_type: IdentityType::Regular,
         };
 
         let transfer = Transfer::from(state_transition);
@@ -182,6 +184,7 @@ impl PSQLProcessor {
             revision: 0u64,
             balance: Some(state_transition.denomination()),
             is_system: false,
+            identity_type: IdentityType::Regular,
         };
 
         let transfer = Transfer {

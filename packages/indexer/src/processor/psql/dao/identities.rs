@@ -26,9 +26,10 @@ impl PostgresDAO {
         let revision_i32 = revision as i32;
         let owner = identity.owner;
         let is_system = identity.is_system;
+        let identity_type = identity.identity_type.to_string();
 
         let query = "INSERT INTO identities(identifier,owner,revision,\
-        state_transition_hash,is_system,state_transition_id) VALUES ($1, $2, $3, $4, $5, $6);";
+        state_transition_hash,is_system,state_transition_id,type) VALUES ($1, $2, $3, $4, $5, $6, $7);";
 
         let stmt = sql_transaction.prepare_cached(query).await.unwrap();
 
@@ -42,12 +43,13 @@ impl PostgresDAO {
                     &st_hash,
                     &is_system,
                     &tx_id,
+                    &identity_type,
                 ],
             )
             .await
             .unwrap();
 
-        println!("Created Identity {}", identifier);
+        println!("Created {} Identity {}", identity_type, identifier);
 
         Ok(())
     }
