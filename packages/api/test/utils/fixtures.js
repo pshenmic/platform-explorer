@@ -130,6 +130,10 @@ const fixtures = {
       throw new Error('type must be provided for transaction fixture')
     }
 
+    const [{ count: indexInBlock }] = await knex('state_transitions')
+      .where('block_hash', block_hash)
+      .count('* as count')
+
     const row = {
       block_hash,
       block_height,
@@ -138,7 +142,7 @@ const fixtures = {
       owner,
       hash: hash ?? generateHash(),
       data: data ?? {},
-      index: index ?? 0,
+      index: index ?? Number(indexInBlock),
       gas_used: gas_used ?? 0,
       status: status ?? 'SUCCESS',
       error: error ?? null

@@ -362,7 +362,11 @@ describe('Identities routes', () => {
       transactions = []
 
       for (let i = 0; i < 10; i++) {
-        block = await fixtures.block(knex)
+        // withdrawals are matched to their state transition by block timestamp, so the blocks
+        // need distinct ones. Left to default they land in the same millisecond and two
+        // withdrawals resolve to the same transition. The height is left alone, the expected
+        // set below orders on it
+        block = await fixtures.block(knex, { timestamp: new Date(i * 1000) })
 
         const transaction = await fixtures.transaction(knex, {
           block_hash: block.hash,
