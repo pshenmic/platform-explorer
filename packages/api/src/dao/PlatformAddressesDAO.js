@@ -10,12 +10,18 @@ module.exports = class PlatformAddressesDAO {
     this.sdk = sdk
   }
 
-  getPlatformAddressInfo = async (address) => {
-    const addressSubquery = this.knex('platform_addresses')
+  addressSubquery = (addresses) => {
+    const lowered = addresses.map(address => address.toLowerCase())
+
+    return this.knex('platform_addresses')
       .select('id', 'address', 'bech32m_address')
-      .whereRaw('LOWER(address) = ?', [address.toLowerCase()])
-      .orWhereRaw('LOWER(bech32m_address) = ?', [address.toLowerCase()])
-      .limit(1)
+      .whereRaw('address = ANY(?)', [addresses])
+      .orWhereRaw('bech32m_address = ANY(?)', [lowered])
+      .limit(addresses.length)
+  }
+
+  getPlatformAddressesRows = async (addresses) => {
+    const addressSubquery = this.addressSubquery(addresses)
 
     const unionTransitions = this.knex
       .with('address_subquery', addressSubquery)
@@ -23,40 +29,50 @@ module.exports = class PlatformAddressesDAO {
         this.knex('platform_address_transitions')
           .join('address_subquery', 'platform_address_transitions.sender_id', 'address_subquery.id')
           .select(
+            'address_subquery.id as address_id',
             'state_transition_id',
             this.knex.raw('0 as incoming'),
             this.knex.raw('SUM(amount) as amount')
           )
-          .groupBy('state_transition_id'),
+          .groupBy('address_subquery.id', 'state_transition_id'),
 
         this.knex('platform_address_transitions')
           .join('address_subquery', 'platform_address_transitions.recipient_id', 'address_subquery.id')
           .select(
+            'address_subquery.id as address_id',
             'state_transition_id',
             this.knex.raw('1 as incoming'),
             this.knex.raw('SUM(amount) as amount')
           )
-          .groupBy('state_transition_id')
+          .groupBy('address_subquery.id', 'state_transition_id')
       ])
 
-    const [row] = await this.knex('address_subquery')
+    return this.knex('address_subquery')
       .with('address_subquery', addressSubquery)
       .with('unique_transitions', unionTransitions)
       .select('address as base58_address', 'bech32m_address')
-      .select('txs_count.total_txs as total_txs', 'txs_count.incoming_txs as incoming_txs', 'txs_count.outgoing_txs as outgoing_txs',
-        'txs_count.total_incoming_amount as total_incoming_amount', 'txs_count.total_outgoing_amount as total_outgoing_amount')
+      .select('txs_count.total_txs as total_txs', 'txs_count.incoming_txs as incoming_txs', 'txs_count.outgoing_txs as outgoing_txs')
+      .select(this.knex.raw('COALESCE(txs_count.total_incoming_amount, 0) as total_incoming_amount'))
+      .select(this.knex.raw('COALESCE(txs_count.total_outgoing_amount, 0) as total_outgoing_amount'))
       .leftJoin(
         this.knex('unique_transitions')
           .select(
+            'address_id',
             this.knex.raw('count(*) as total_txs'),
             this.knex.raw('count(*) FILTER (WHERE incoming = 1) as incoming_txs'),
             this.knex.raw('count(*) FILTER (WHERE incoming = 0) as outgoing_txs'),
             this.knex.raw('SUM(amount) FILTER (WHERE incoming = 1) as total_incoming_amount'),
             this.knex.raw('SUM(amount) FILTER (WHERE incoming = 0) as total_outgoing_amount')
           )
+          .groupBy('address_id')
           .as('txs_count'),
-        this.knex.raw('1 = 1')
+        'txs_count.address_id', 'address_subquery.id'
       )
+      .orderBy('address_subquery.id', 'asc')
+  }
+
+  getPlatformAddressInfo = async (address) => {
+    const [row] = await this.getPlatformAddressesRows([address])
 
     if (!row) {
       return null
@@ -70,6 +86,36 @@ module.exports = class PlatformAddressesDAO {
       ...platformAddressInfo,
       nonce: platformAddressInfoWithBalance.nonce,
       balance: platformAddressInfoWithBalance.balance.toString()
+    })
+  }
+
+  getPlatformAddressesInfo = async (addresses) => {
+    const rows = await this.getPlatformAddressesRows(addresses)
+
+    const platformAddresses = rows.map(PlatformAddress.fromRow)
+    const bech32mAddresses = platformAddresses.map(address => address.bech32mAddress)
+
+    if (bech32mAddresses.length === 0) {
+      return []
+    }
+
+    const addressesInfo = await this.sdk.platformAddresses.getAddressesInfos(bech32mAddresses)
+    const addressesInfoJSON = Object.fromEntries(
+      addressesInfo.map(info => (
+        [info.address.toBech32m(NETWORK), {
+          nonce: info.nonce,
+          balance: info.balance.toString()
+        }]))
+    )
+
+    return platformAddresses.map(address => {
+      const addressInfo = addressesInfoJSON[address.bech32mAddress]
+
+      return PlatformAddress.fromObject({
+        ...address,
+        balance: addressInfo?.balance ?? undefined,
+        nonce: addressInfo?.nonce ?? undefined
+      })
     })
   }
 
@@ -118,23 +164,54 @@ module.exports = class PlatformAddressesDAO {
     return new PaginatedResultSet(resultSet, page, limit, Number(row?.total_count))
   }
 
-  getPlatformAddressTransitions = async (platformAddress, page, limit, order) => {
+  getPlatformAddressTransitions = async (addresses, page, limit, order, transactionTypes) => {
     const fromRank = (page - 1) * limit
 
-    const addressSubquery = this.knex('platform_addresses')
-      .select('id', 'address', 'bech32m_address')
-      .whereRaw('LOWER(address) = ?', [platformAddress.toLowerCase()])
-      .orWhereRaw('LOWER(bech32m_address) = ?', [platformAddress.toLowerCase()])
-      .limit(1)
-      .as('address_subquery')
+    const withData = addresses.length === 1
 
-    const transitionsSubquery = this.knex(addressSubquery)
-      .select('address', 'bech32m_address', 'state_transition_id', 'recipient_id', 'sender_id')
-      .leftJoin('platform_address_transitions', function () {
-        this
-          .on('platform_address_transitions.recipient_id', '=', 'address_subquery.id')
-          .orOn('platform_address_transitions.sender_id', '=', 'address_subquery.id')
+    const addressSubquery = this.addressSubquery(addresses)
+
+    const filterByType = (query) => query
+      .modify(qb => {
+        if (transactionTypes?.length > 0) {
+          qb.whereIn('platform_address_transitions.state_transition_type', transactionTypes)
+        }
       })
+
+    const unionTransitions = this.knex
+      .unionAll([
+        filterByType(
+          this.knex('platform_address_transitions')
+            .join('address_subquery', 'platform_address_transitions.sender_id', 'address_subquery.id')
+            .select(
+              'address_subquery.id as address_id',
+              'state_transition_id',
+              this.knex.raw('0 as incoming'),
+              this.knex.raw('SUM(amount) as amount')
+            )
+            .groupBy('address_subquery.id', 'state_transition_id')
+        ),
+
+        filterByType(
+          this.knex('platform_address_transitions')
+            .join('address_subquery', 'platform_address_transitions.recipient_id', 'address_subquery.id')
+            .select(
+              'address_subquery.id as address_id',
+              'state_transition_id',
+              this.knex.raw('1 as incoming'),
+              this.knex.raw('SUM(amount) as amount')
+            )
+            .groupBy('address_subquery.id', 'state_transition_id')
+        )
+      ])
+
+    // the indexer writes one row per input and one per output
+    const transitionsSubquery = this.knex('unique_transitions')
+      .select('state_transition_id')
+      .select(this.knex.raw('COALESCE(SUM(amount) FILTER (WHERE incoming = 1), 0) - COALESCE(SUM(amount) FILTER (WHERE incoming = 0), 0) as amount'))
+      .select(this.knex.raw('MIN(address_id) as address_id'))
+      .select(this.knex.raw('COUNT(DISTINCT address_id) as addresses_count'))
+      .groupBy('state_transition_id')
 
     const countSubquery = this.knex
       .select(
@@ -143,24 +220,51 @@ module.exports = class PlatformAddressesDAO {
           .as('total_count')
       )
 
-    const transitionsSubqueryWithTotalCount = this.knex
+    const transitionsSubqueryWithTotalCount = this.knex('transitions_subquery')
+      .with('address_subquery', addressSubquery)
+      .with('unique_transitions', unionTransitions)
       .with('transitions_subquery', transitionsSubquery)
-      .select('address', 'bech32m_address', 'state_transition_id')
-      .select(this.knex.raw('recipient_id is not null as incoming'))
+      .leftJoin('address_subquery', 'address_subquery.id', 'transitions_subquery.address_id')
+      .leftJoin('state_transitions', 'state_transitions.id', 'transitions_subquery.state_transition_id')
+      .select('transitions_subquery.state_transition_id as state_transition_id', 'transitions_subquery.amount as amount')
+      .select('state_transitions.hash as tx_hash', 'state_transitions.index as index',
+        'state_transitions.block_hash as block_hash', 'state_transitions.type as type',
+        'state_transitions.gas_used as gas_used', 'state_transitions.status as status',
+        'state_transitions.error as error', 'state_transitions.owner as owner',
+        'state_transitions.block_height as block_height')
+      .modify(qb => {
+        if (withData) {
+          qb.select('state_transitions.data as data')
+        }
+      })
+      .select(this.knex.raw('transitions_subquery.amount >= 0 as incoming'))
+      .select('addresses_count')
+      .select(this.knex.raw('CASE WHEN addresses_count = 1 THEN address_subquery.address END as address'))
+      .select(this.knex.raw('CASE WHEN addresses_count = 1 THEN address_subquery.bech32m_address END as bech32m_address'))
       .select(countSubquery.as('total_count'))
-      .orderBy('state_transition_id', order)
+      .orderBy([
+        { column: 'state_transitions.block_height', order },
+        { column: 'state_transitions.index', order }
+      ])
       .offset(fromRank)
       .limit(limit)
-      .from('transitions_subquery')
       .as('transitions_with_total_count_subquery')
 
     const rows = await this.knex(transitionsSubqueryWithTotalCount)
-      .select('state_transitions.hash as tx_hash', 'index', 'block_hash', 'type',
-        'gas_used', 'status', 'gas_used', 'owner', 'data', 'incoming', 'total_count',
-        'blocks.timestamp as timestamp', 'blocks.height as block_height',
+      .select('tx_hash', 'index', 'block_hash', 'type',
+        'gas_used', 'status', 'error', 'owner', 'incoming', 'amount', 'total_count',
+        'blocks.timestamp as timestamp', 'block_height', 'addresses_count',
         'address as base58_address', 'bech32m_address', 'state_transition_id')
-      .leftJoin('state_transitions', 'state_transitions.id', 'state_transition_id')
-      .leftJoin('blocks', 'state_transitions.block_height', 'blocks.height')
+      .modify(qb => {
+        if (withData) {
+          qb.select('data')
+        }
+      })
+      .leftJoin('blocks', 'transitions_with_total_count_subquery.block_height', 'blocks.height')
+      .orderBy([
+        { column: 'block_height', order },
+        { column: 'index', order }
+      ])
 
     const identifiers = rows.filter(row => row.owner != null).map(row => row.owner?.trim())
 
@@ -175,16 +279,20 @@ module.exports = class PlatformAddressesDAO {
         aliases.push(getAliasFromDocument(aliasDocument))
       }
 
-      return Transaction.fromRow({
+      const transaction = Transaction.fromRow({
         ...row,
         owner: row.owner,
         aliases,
         type: StateTransitionEnum[row.type]
       })
+
+      transaction.addressesCount = Number(row.addresses_count)
+
+      return transaction
     })
 
     const [row] = rows
 
-    return new PaginatedResultSet(resultSet, page, limit, Number(row?.total_count))
+    return new PaginatedResultSet(resultSet, page, limit, Number(row?.total_count ?? 0))
   }
 }

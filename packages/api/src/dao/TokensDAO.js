@@ -123,7 +123,7 @@ module.exports = class TokensDAO {
 
     const subquery = this.knex('token_transitions')
       .select(
-        'action', 'amount', 'state_transition_hash', 'token_transitions.id',
+        'action', 'token_transitions.amount as amount', 'state_transition_hash', 'token_transitions.id',
         'recipient', 'timestamp', 'public_note', 'token_transitions.owner'
       )
       .select(this.knex.raw('count(*) OVER () as total_count'))

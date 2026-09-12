@@ -1,0 +1,1 @@
+ALTER TABLE state_transitions ADD COLUMN "amount" bigint NULL;

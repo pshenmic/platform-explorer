@@ -161,6 +161,12 @@ const schemaTypes = [
         minLength: 64,
         maxLength: 64
       },
+      quorum: {
+        type: 'string',
+        pattern: '^[A-Za-z0-9]+$',
+        minLength: 64,
+        maxLength: 64
+      },
       height_min: {
         type: ['number', 'null'],
         minimum: 1
@@ -231,7 +237,7 @@ const schemaTypes = [
       },
       identity_type: {
         type: ['string', 'null'],
-        enum: ['regular', 'masternode']
+        enum: ['regular', 'masternode', 'masternode_voting', 'masternode_operator']
       },
       with_tokens: {
         type: ['boolean', 'null']
@@ -354,6 +360,23 @@ const schemaTypes = [
         type: ['number', 'null'],
         minimum: 2,
         maximum: 100
+      }
+    }
+  },
+  {
+    $id: 'platformAddresses',
+    type: 'object',
+    required: ['addresses'],
+    properties: {
+      addresses: {
+        type: 'array',
+        minItems: 1,
+        maxItems: 100,
+        items: {
+          type: 'string',
+          maxLength: 100,
+          pattern: '^[A-Za-z0-9]+$'
+        }
       }
     }
   },

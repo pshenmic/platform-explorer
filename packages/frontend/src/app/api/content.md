@@ -14,6 +14,7 @@ Reference:
 * [Blocks by validator](#blocks-by-validator)
 * [Blocks](#blocks)
 * [Average Block Time History](#average-block-time-history)
+* [Block Proposer Schedule](#block-proposer-schedule)
 * [Validators](#validators)
 * [Validator by ProTxHash](#validator-by-protxhash)
 * [Validator by Masternode Identifier](#validator-by-masternode-identifier)
@@ -75,7 +76,7 @@ Reference:
 * [Quorum by Hash](#quorum-by-hash)
 * [Platform Addresses](#platform-addresses)
 * [Platform Address Info](#platform-address-info)
-* [Platform Address Transactions](#platform-address-transactions)
+* [Platform Address Transitions](#platform-address-transitions)
 
 ### Status
 Returns basic stats and epoch info
@@ -231,6 +232,8 @@ HTTP /epoch/2492
 ---
 ### Block by hash
 Get a block by hash
+
+* `quorumHash` on the header is the quorum that signed the block
 ```
 GET /block/12E5592208322B5A3598C98C1811FCDD403DF40F522511D7A965DDE1D96C97C7
 
@@ -243,7 +246,8 @@ GET /block/12E5592208322B5A3598C98C1811FCDD403DF40F522511D7A965DDE1D96C97C7
     "appVersion": 4,
     "l1LockedHeight": 1124953,
     "validator": "8917BB546318F3410D1A7901C7B846A73446311B5164B45A03F0E613F208F234",
-    "appHash": "49C07BEDB5710565CFC82F678DEB4849D2CA1CCD3DFBA6FDA3F1C0F3C39D0AD9"
+    "appHash": "49C07BEDB5710565CFC82F678DEB4849D2CA1CCD3DFBA6FDA3F1C0F3C39D0AD9",
+    "quorumHash": "000000153FE56C83B62D35897F3B05DCB60CFE95715EFB3014F7D2C8997C70F1"
   },
   "txs": [
     {
@@ -297,7 +301,8 @@ GET /validator/B8F90A4F07D9E59C061D41CC8E775093141492A5FD59AB3BBC4241238BB28A18/
             "appVersion": 1,
             "validator": "B8F90A4F07D9E59C061D41CC8E775093141492A5FD59AB3BBC4241238BB28A18",
             "l1LockedHeight": 1337,
-            "appHash": "49C07BEDB5710565CFC82F678DEB4849D2CA1CCD3DFBA6FDA3F1C0F3C39D0AD9"
+            "appHash": "49C07BEDB5710565CFC82F678DEB4849D2CA1CCD3DFBA6FDA3F1C0F3C39D0AD9",
+            "quorumHash": "000000153FE56C83B62D35897F3B05DCB60CFE95715EFB3014F7D2C8997C70F1"
         },
         "txs": ["DEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEF"]
     }, ...
@@ -309,8 +314,13 @@ GET /validator/B8F90A4F07D9E59C061D41CC8E775093141492A5FD59AB3BBC4241238BB28A18/
 Return all blocks with pagination info
 * `limit` cannot be more then 100
 * `page` cannot be less then 1
+* `validator` narrows the page to the blocks that proTxHash proposed
+* `quorum` narrows the page to the blocks that quorum signed, matched on the quorum hash the
+  indexer stores per block, so it is exact and works for quorums long past the signing-active
+  window. It combines with `validator` to give one member's blocks inside that quorum, and is
+  accepted in either case. An unknown quorum gives an empty page rather than an error
 ```
-GET /blocks?epoch_index_min=1000&epoch_index_max=1200&height_min=2000&height_max=4000&gas_min=1&gas_max=99999999999&timestamp_start=2024-08-29T23:24:11.516z&timestamp_end=2025-08-29T23:24:11.516z&tx_count_min=2&tx_count_max=11&validator=C11C1168DCF9479475CB1355855E30EA75C0CDDA8A8F9EA80591568DD1C33BA8
+GET /blocks?epoch_index_min=1000&epoch_index_max=1200&height_min=2000&height_max=4000&gas_min=1&gas_max=99999999999&timestamp_start=2024-08-29T23:24:11.516z&timestamp_end=2025-08-29T23:24:11.516z&tx_count_min=2&tx_count_max=11&validator=C11C1168DCF9479475CB1355855E30EA75C0CDDA8A8F9EA80591568DD1C33BA8&quorum=000000153FE56C83B62D35897F3B05DCB60CFE95715EFB3014F7D2C8997C70F1
 
 {
   "resultSet": [
@@ -324,7 +334,8 @@ GET /blocks?epoch_index_min=1000&epoch_index_max=1200&height_min=2000&height_max
         "l1LockedHeight": 1093395,
         "validator": "C11C1168DCF9479475CB1355855E30EA75C0CDDA8A8F9EA80591568DD1C33BA8",
         "totalGasUsed": 509281140,
-        "appHash": "49C07BEDB5710565CFC82F678DEB4849D2CA1CCD3DFBA6FDA3F1C0F3C39D0AD9"
+        "appHash": "49C07BEDB5710565CFC82F678DEB4849D2CA1CCD3DFBA6FDA3F1C0F3C39D0AD9",
+        "quorumHash": "000000153FE56C83B62D35897F3B05DCB60CFE95715EFB3014F7D2C8997C70F1"
       },
       "txs": [
         "EA0A1997F31D5204EB9FC6E49CDEF1E9A7FB446AB1D4B9995A9C7ED3C6CE718B",
@@ -375,6 +386,61 @@ Response codes:
 500: Internal Server Error
 ```
 ---
+### Block Proposer Schedule
+Returns the proposers scheduled for the blocks after the chain tip, ordered by height, with
+pagination info.
+
+The quorum holding the Platform validator set proposes one full pass of its members in
+ascending `proTxHash` order, one member per block, and the set then rotates to the next older
+quorum, which starts its own pass at its lowest `proTxHash`. Every platform quorum is
+signing-active the whole time, so a quorum's place in [Quorums](#quorums) is only its age and
+not a turn in a queue — the set moving between them is what puts a member on a block.
+
+* `limit` cannot be more then 100
+* `page` cannot be less then 1
+* `order` does not apply: the schedule only runs forward from the chain tip
+* `total` is how far ahead the schedule reaches, which is one walk of the whole rotation. It
+  falls as the current quorum works through its pass and jumps back up when the set rotates
+* a page far enough out leaves the current quorum and continues into the quorums that take the
+  set after it, so `quorumHash` is per entry
+* a member is skipped when it is offline, so an entry further from the tip is more likely to be
+  off by a member or more. Treat this as a schedule, not a guarantee
+```
+GET /blocks/proposerSchedule?page=1&limit=3
+
+{
+    "resultSet": [
+        {
+            "height": 570358,
+            "proTxHash": "8917BB546318F3410D1A7901C7B846A73446311B5164B45A03F0E613F208F234",
+            "quorumHash": "00000045027E2BE378259D5C71B22E3E2B740A38A91B155541A6B970403CB98F"
+        },
+        {
+            "height": 570359,
+            "proTxHash": "8B8D1193AFD22E538CE0C9FB50FEE155D0F6176CA68E65DA684C5DCE2D1E0815",
+            "quorumHash": "00000045027E2BE378259D5C71B22E3E2B740A38A91B155541A6B970403CB98F"
+        },
+        {
+            "height": 570360,
+            "proTxHash": "8E11EB784883D3DC9D0D74A74633F067DC61C408DFDEE49B8F93BB161F2916C0",
+            "quorumHash": "00000045027E2BE378259D5C71B22E3E2B740A38A91B155541A6B970403CB98F"
+        }
+    ],
+    "pagination": {
+        "page": 1,
+        "limit": 3,
+        "total": 579
+    }
+}
+```
+Response codes:
+```
+200: OK
+404: Not Found
+500: Internal Server Error
+503: Service Temporarily Unavailable
+```
+___
 ### Validators
 Return all validators with pagination info.
 * Valid `order` values are `asc` or `desc`
@@ -412,7 +478,8 @@ GET /validators?blocks_proposed_min=1&blocks_proposed_max=9999999&last_proposed_
                 "l1LockedHeight": 1343619,
                 "validator": "05B687978344FA2433B2AA99D41F643E2D8581A789CDC23084889CECA5244EA8",
                 "totalGasUsed": 0,
-                "appHash": "E81BCE0B1787D512CCAFD6D93043131D6FB4E9BEE6CC549C00F7501E7E1949A8"
+                "appHash": "E81BCE0B1787D512CCAFD6D93043131D6FB4E9BEE6CC549C00F7501E7E1949A8",
+                "quorumHash": "000000153FE56C83B62D35897F3B05DCB60CFE95715EFB3014F7D2C8997C70F1"
             },
             "proTxInfo": {
                 "type": "Evo",
@@ -488,7 +555,8 @@ GET /validator/F60A6BF9EC0794BB0CFD1E0F2217933F4B33EDE6FE810692BC275CA18148AEF0
     "appVersion": 1,
     "blockVersion": 13,
     "validator": "F60A6BF9EC0794BB0CFD1E0F2217933F4B33EDE6FE810692BC275CA18148AEF0",
-    "appHash": "49C07BEDB5710565CFC82F678DEB4849D2CA1CCD3DFBA6FDA3F1C0F3C39D0AD9"
+    "appHash": "49C07BEDB5710565CFC82F678DEB4849D2CA1CCD3DFBA6FDA3F1C0F3C39D0AD9",
+    "quorumHash": "000000153FE56C83B62D35897F3B05DCB60CFE95715EFB3014F7D2C8997C70F1"
   },
   "proTxInfo": {
     "type": "Evo",
@@ -579,7 +647,8 @@ GET /validator/identity/8tsWRSwsTM5AXv4ViCF9gu39kzjbtfFDM6rCyL2RcFzd
     "appVersion": 1,
     "blockVersion": 13,
     "validator": "F60A6BF9EC0794BB0CFD1E0F2217933F4B33EDE6FE810692BC275CA18148AEF0",
-    "appHash": "49C07BEDB5710565CFC82F678DEB4849D2CA1CCD3DFBA6FDA3F1C0F3C39D0AD9"
+    "appHash": "49C07BEDB5710565CFC82F678DEB4849D2CA1CCD3DFBA6FDA3F1C0F3C39D0AD9",
+    "quorumHash": "000000153FE56C83B62D35897F3B05DCB60CFE95715EFB3014F7D2C8997C70F1"
   },
   "proTxInfo": {
     "type": "Evo",
@@ -795,6 +864,12 @@ Status can be either `SUCCESS` or `FAIL`. In case of error tx, message will appe
 * `timestamp_start` and `timestamp_end` transaction timestamp
 * `token_name` name of token
 * Valid `order_by` values are `id`, `gas_used`, `timestamp` or `owner`
+* `amount` is the credits the transaction moved, reported the same way by
+  [Transaction by hash](#transaction-by-hash), [Block by hash](#block-by-hash) and
+  [Transactions by Identity](#transactions-by-identity). It is `null` for the transitions that
+  move none: `DATA_CONTRACT_CREATE`, `DATA_CONTRACT_UPDATE`, `IDENTITY_UPDATE`, `MASTERNODE_VOTE`,
+  and a `BATCH` that holds no document purchase. Note that [Platform Address Transitions](#platform-address-transitions) has its own
+  `amount`, netted against the address being queried, which is a different figure
 
 | Batch type string                   | Batch type number |
 |:------------------------------------|:------------------|
@@ -1141,6 +1216,7 @@ GET /dataContract/AJqYb8ZvfbA6ZFgpsvLfpMEzwjaYUPyVmeFxSJrafB18/transactions
       "timestamp": "2024-08-26T13:30:22.211Z",
       "gasUsed": 32230560,
       "error": null,
+      "amount": null,
       "hash": "5FBEE4EC0030159C5D25D0C3DEC3AB894ED0DC89B07BEAFAF8A1BE1E3EFCCC10"
     },
     {
@@ -1443,6 +1519,20 @@ Response codes:
 ### Identity by Identifier
 Return identity by given identifier
 
+`type` tells apart the identities Platform derives for a masternode from the ones users
+register themselves:
+
+| type                  | description                                                |
+|-----------------------|------------------------------------------------------------|
+| `regular`             | registered by a user with an Identity Create transition     |
+| `masternode`          | masternode owner identity, its identifier is the ProTxHash  |
+| `masternode_voting`   | masternode voting identity, votes on contested resources    |
+| `masternode_operator` | masternode operator identity, collects the operator reward  |
+
+All four are indexed, so [Identities](#identities) can filter on any of them with
+`identity_type`. The type is `null` for an identity the indexer has not seen, which happens when
+one is reachable only through the state transitions it owns.
+
 Every endpoint that returns aliases uses the same alias entry shape:
 
 * contested - whether the name matches the DPNS contested-name pattern
@@ -1553,7 +1643,8 @@ GET /identity/EP1g5AGP8QGYMXXUYdmSvhbVxggNURDbvpckF39mTxs3
     "totalWithdrawals": 0,
     "lastWithdrawalTimestamp": null,
     "nonce": "7",
-    "owner": "EP1g5AGP8QGYMXXUYdmSvhbVxggNURDbvpckF39mTxs3"
+    "owner": "EP1g5AGP8QGYMXXUYdmSvhbVxggNURDbvpckF39mTxs3",
+    "type": "regular"
 }
 ```
 Response codes:
@@ -1599,8 +1690,12 @@ Return all identities paged and order by block height, tx count or balance.
 * `data_contracts_min` and `data_contracts_min` allows to filter identities by data contract count
 * `balance_min` and `balance_max` allows to filter identities by balance
 * All range filters can be set with one or two range limit e.g. `balance_min=0` or `balance_min=0&balance_max=1`
+* `identity_type` allows to filter identities by their `type`, see [Identity by Identifier](#identity-by-identifier).
+  Valid values are `regular`, `masternode`, `masternode_voting` and `masternode_operator`, e.g.
+  `identity_type=regular` for the identities users registered themselves or `identity_type=masternode_voting`
+  for the ones masternodes vote on contested resources with
 ```
-GET /identities?limit=10&order=desc&order_by=tx_count&balance_min=100000&balance_max=100000100000100000100000&documents_count_min=1&documents_count_max=5&data_contracts_min=3&data_contracts_max=4&tx_count_min=2&tx_count_max=10
+GET /identities?limit=10&order=desc&order_by=tx_count&identity_type=regular&balance_min=100000&balance_max=100000100000100000100000&documents_count_min=1&documents_count_max=5&data_contracts_min=3&data_contracts_max=4&tx_count_min=2&tx_count_max=10
 
 {
     "pagination": {
@@ -1640,7 +1735,8 @@ GET /identities?limit=10&order=desc&order_by=tx_count&balance_min=100000&balance
             "totalWithdrawals": null,
             "lastWithdrawalTimestamp": null,
             "nonce": null,
-            "owner": "EhGUnphjMD73JZBt98h7BUK7W17PbnMSUhD4pbEceLMi"
+            "owner": "EhGUnphjMD73JZBt98h7BUK7W17PbnMSUhD4pbEceLMi",
+            "type": "regular"
         }, ...
     ]
 }
@@ -1737,6 +1833,11 @@ _Note: this request does not contain any pagination data in the response_
 * returns 404 `not found` if identity don't have withdrawals
 * Pagination always `null`
 * `status` is a string. Possible values: `QUEUED`, `POOLED`, `BROADCASTED`, `COMPLETE`, `EXPIRED`
+* `hash` is the platform state transition that asked for the withdrawal, not a core transaction id
+* `transactionIndex` is the asset unlock index, the same one carried in the payload of the core
+  asset unlock transaction, so an l1 view can be paired with this record by it. It is `null` until
+  the withdrawal is pooled into a transaction, and `transactionSignHeight` alongside it is the core
+  height the transaction was signed at
 ```
 GET /identity/A1rgGVjRGuznRThdAA316VEEpKuVQ7mV8mBK1BFJvXnb/withdrawals?order=asc&start_at=95eiiqMotMvH23f6cv3BPC4ykcHFWTy2g3baCTWZANAs&timestamp_start=2024-10-10T02:37:39.187Z
 
@@ -1754,7 +1855,9 @@ GET /identity/A1rgGVjRGuznRThdAA316VEEpKuVQ7mV8mBK1BFJvXnb/withdrawals?order=asc
       "amount": 200000,
       "timestamp": "2024-10-10T02:37:39.187Z",
       "withdrawalAddress": "yeRZBWYfeNE4yVUHV4ZLs83Ppn9aMRH57A",
-      "hash": "113F86F4D1F48159B0D6690F3C5F8F33E39243086C041CF016454A66AD63F025"
+      "hash": "113F86F4D1F48159B0D6690F3C5F8F33E39243086C041CF016454A66AD63F025",
+      "transactionIndex": 3441,
+      "transactionSignHeight": 1258334
     },
     ...
   ]
@@ -1894,6 +1997,7 @@ Return all transfers made by the given identity
 * `limit` cannot be more then 100
 * `page` cannot be less then 1
 * `type` cannot be less, then 0 and more then 8
+* `amount` is credits as a string, since credits overflow a JSON number past ~90,000 DASH
 ```
 GET /identity/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec/transfers?hash=445E6F081DEE877867816AD3EF492E2C0BD1DDCCDC9C793B23DDDAF8AEA23118&page=1&limit=10&order=asc&type=6
 
@@ -1905,7 +2009,7 @@ GET /identity/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec/transfers?hash=445E6F
     },
     "resultSet": [
       {
-          "amount": 199997000000,
+          "amount": "199997000000",
           "sender": null,
           "recipient": "46r7vHmNRHFDAH2xcTdhDDeL4kv5aHemgPLThZgCtqt2",
           "timestamp": "2025-07-30T12:20:11.316Z",
@@ -2847,7 +2951,7 @@ DOCUMENT TRANSITION
 }
 ```
 ```json lines
-TOKEN TRANSITION 
+TOKEN TRANSITION
 
 {
   "type": 1,
@@ -2877,176 +2981,176 @@ TOKEN TRANSITION
 IDENTITY_CREATE with chainLock
 
 {
-    "type": 2,
-    "typeString": "IDENTITY_CREATE",
+  "type": 2,
+  "typeString": "IDENTITY_CREATE",
+  "fundingAddress": null,
+  "assetLockProof": {
+    "coreChainLockedHeight": 1138871,
+    "type": "chainLock",
+    "fundingAmount": null,
+    "txid": "fc89dd4cbe2518da3cd9737043603e81665df58d4989a38b2942eec56bacad1d",
+    "vout": 0,
     "fundingAddress": null,
-    "assetLockProof": {
-      "coreChainLockedHeight": 1138871,
-      "type": "chainLock",
-      "fundingAmount": null,
-      "txid": "fc89dd4cbe2518da3cd9737043603e81665df58d4989a38b2942eec56bacad1d",
-      "vout": 0,
-      "fundingAddress": null,
-      "instantLock": null
+    "instantLock": null
+  },
+  "userFeeIncrease": 0,
+  "identityId": "awCc9STLEgw8pJozBq24QzGK5Th9mow7V3EjjY9M7aG",
+  "signature": "2015bf50b422df6ccfdc4bcdcae76a11106c8f6c627a284f37d2591184e413249350a722926c8899b5514fd94603598031358bc2a0ac031fb402ecc5b8025f2141",
+  "raw": "0300010000020000000014b23f76cac0218f7637c924e45212bb260cff29250001fc001160b72021007051d2207c45d7592bb7e3e5b4b006a29cfe1899aea8abf00c50ee8a40860000412015bf50b422df6ccfdc4bcdcae76a11106c8f6c627a284f37d2591184e413249350a722926c8899b5514fd94603598031358bc2a0ac031fb402ecc5b8025f214108b1737186062205ee3a5f7e19454121b648e0806c7bc1e8bc073c38217a28e1",
+  "publicKeys": [
+    {
+      "contractBounds": null,
+      "id": 0,
+      "type": "ECDSA_SECP256K1",
+      "data": "0348a6a633850f3c83a0cb30a9fceebbaa3b9ab3f923f123d92728cef234176dc5",
+      "publicKeyHash": "07630dddc55729c043de7bdeb145ee0d44feae3b",
+      "purpose": "AUTHENTICATION",
+      "securityLevel": "MASTER",
+      "readOnly": false,
+      "signature": "2042186a3dec52bfe9a24ee17b98adc5efcbc0a0a6bacbc9627f1405ea5e1bb7ae2bb94a270363400969669e9884ab9967659e9a0d8de7464ee7c47552c8cb0e99"
     },
-    "userFeeIncrease": 0,
-    "identityId": "awCc9STLEgw8pJozBq24QzGK5Th9mow7V3EjjY9M7aG",
-    "signature": "2015bf50b422df6ccfdc4bcdcae76a11106c8f6c627a284f37d2591184e413249350a722926c8899b5514fd94603598031358bc2a0ac031fb402ecc5b8025f2141",
-    "raw": "0300010000020000000014b23f76cac0218f7637c924e45212bb260cff29250001fc001160b72021007051d2207c45d7592bb7e3e5b4b006a29cfe1899aea8abf00c50ee8a40860000412015bf50b422df6ccfdc4bcdcae76a11106c8f6c627a284f37d2591184e413249350a722926c8899b5514fd94603598031358bc2a0ac031fb402ecc5b8025f214108b1737186062205ee3a5f7e19454121b648e0806c7bc1e8bc073c38217a28e1",
-    "publicKeys": [
-        {
-            "contractBounds": null,
-            "id": 0,
-            "type": "ECDSA_SECP256K1",
-            "data": "0348a6a633850f3c83a0cb30a9fceebbaa3b9ab3f923f123d92728cef234176dc5",
-            "publicKeyHash": "07630dddc55729c043de7bdeb145ee0d44feae3b",
-            "purpose": "AUTHENTICATION",
-            "securityLevel": "MASTER",
-            "readOnly": false,
-            "signature": "2042186a3dec52bfe9a24ee17b98adc5efcbc0a0a6bacbc9627f1405ea5e1bb7ae2bb94a270363400969669e9884ab9967659e9a0d8de7464ee7c47552c8cb0e99"
-        },
-        {
-            "contractBounds": null,
-            "id": 1,
-            "type": "ECDSA_SECP256K1",
-            "data": "034278b0d7f5e6d902ec5a30ae5c656937a0323bdc813e851eb8a2d6a1d23c51cf",
-            "publicKeyHash": "e2615c5ef3f910ebe5ada7930e7b2c04a7ffbb23",
-            "purpose": "AUTHENTICATION",
-            "securityLevel": "HIGH",
-            "readOnly": false,
-            "signature": "1fbb0d0bb63d26c0d5b6e1f4b8c0eebef4d256c4e8aa933a2cb6bd6b2d8aae545215312924c7dd41c963071e2ccfe2187a8684d93c55063cb45fdd03e76344d6a4"
-        },
-        {
-            "contractBounds": null,
-            "id": 2,
-            "type": "ECDSA_SECP256K1",
-            "data": "0245c3b0f0323ddbb9ddf123f939bf37296af4f38fa489aad722c50486575cd8f4",
-            "publicKeyHash": "d53ee3b3518fee80816ab26af98a34ea60ae9af7",
-            "purpose": "AUTHENTICATION",
-            "securityLevel": "CRITICAL",
-            "readOnly": false,
-            "signature": "204013dcca13378b820e40cf1da77abe38662546ef0a304545de3c35845b83a7ad4b42051c2b3539c9181b3f0cb3fb4bc970db89663c6bd6ca1468568a62beaa75"
-        }
-    ]
+    {
+      "contractBounds": null,
+      "id": 1,
+      "type": "ECDSA_SECP256K1",
+      "data": "034278b0d7f5e6d902ec5a30ae5c656937a0323bdc813e851eb8a2d6a1d23c51cf",
+      "publicKeyHash": "e2615c5ef3f910ebe5ada7930e7b2c04a7ffbb23",
+      "purpose": "AUTHENTICATION",
+      "securityLevel": "HIGH",
+      "readOnly": false,
+      "signature": "1fbb0d0bb63d26c0d5b6e1f4b8c0eebef4d256c4e8aa933a2cb6bd6b2d8aae545215312924c7dd41c963071e2ccfe2187a8684d93c55063cb45fdd03e76344d6a4"
+    },
+    {
+      "contractBounds": null,
+      "id": 2,
+      "type": "ECDSA_SECP256K1",
+      "data": "0245c3b0f0323ddbb9ddf123f939bf37296af4f38fa489aad722c50486575cd8f4",
+      "publicKeyHash": "d53ee3b3518fee80816ab26af98a34ea60ae9af7",
+      "purpose": "AUTHENTICATION",
+      "securityLevel": "CRITICAL",
+      "readOnly": false,
+      "signature": "204013dcca13378b820e40cf1da77abe38662546ef0a304545de3c35845b83a7ad4b42051c2b3539c9181b3f0cb3fb4bc970db89663c6bd6ca1468568a62beaa75"
+    }
+  ]
 }
 ```
 ```json lines
 IDENTITY_CREATE with instantLock
 
 {
-    "type": 2,
-    "typeString": "IDENTITY_CREATE",
-    "fundingAddress": "yV1ZYoep5FFSBxKWM24JUwKfnAkFHnXXV7",
-    "assetLockProof": {
-        "coreChainLockedHeight": null,
-        "type": "instantSend",
-        "fundingAmount": 34999000,
-        "txid": "fc89dd4cbe2518da3cd9737043603e81665df58d4989a38b2942eec56bacad1d",
-        "vout": 0,
-        "fundingAddress": "yeMdYXBPum8RmHvrq5SsYE9zNYhMEimbUY",
-        "instantLock": 'AQEKM9t1ICNzvddKryjM4enKn0Y5amBn3o6DwDoC4uk5SAAAAAAdraxrxe5CKYujiUmN9V1mgT5gQ3Bz2TzaGCW+TN2J/JQP49yOk0uJ6el6ls9CmNo++yPYoX1Sx1lWEZTTAAAAhXiuCBXgzawuboxMAXDiXQpJCCPi417VE4mdcYPgTa0/Hd+RCHLAR6H+MXhqKazlGddI7AdWxxLZ94ZvQu+qIpe7G9XRRjQWeYwroIyc6MqQF5mKpvV0AUMYUNMXjCsq'
+  "type": 2,
+  "typeString": "IDENTITY_CREATE",
+  "fundingAddress": "yV1ZYoep5FFSBxKWM24JUwKfnAkFHnXXV7",
+  "assetLockProof": {
+    "coreChainLockedHeight": null,
+    "type": "instantSend",
+    "fundingAmount": 34999000,
+    "txid": "fc89dd4cbe2518da3cd9737043603e81665df58d4989a38b2942eec56bacad1d",
+    "vout": 0,
+    "fundingAddress": "yeMdYXBPum8RmHvrq5SsYE9zNYhMEimbUY",
+    "instantLock": 'AQEKM9t1ICNzvddKryjM4enKn0Y5amBn3o6DwDoC4uk5SAAAAAAdraxrxe5CKYujiUmN9V1mgT5gQ3Bz2TzaGCW+TN2J/JQP49yOk0uJ6el6ls9CmNo++yPYoX1Sx1lWEZTTAAAAhXiuCBXgzawuboxMAXDiXQpJCCPi417VE4mdcYPgTa0/Hd+RCHLAR6H+MXhqKazlGddI7AdWxxLZ94ZvQu+qIpe7G9XRRjQWeYwroIyc6MqQF5mKpvV0AUMYUNMXjCsq'
+  },
+  "userFeeIncrease": 0,
+  "identityId": "BHAuKDRVPHkJd99pLoQh8dfjUFobwk5bq6enubEBKpsv",
+  "signature": "1fc5b49ce2feb6cfc94f31de8167b806af0265657d5b8f01584e0db3ca011dba24328998bf40a50dd06b6ab10ed47622f46c07dec4d7cad3625b41aa52c9e11c2f",
+  "raw": "03000400000000000000210258abe04886308feb52b8f3d64eace4913c9d049f4dda9a88a217e6ca6b89a107411f60451588fe72a067daaa0a1ee04279e77ce346128560129162386f76d51eccdc1d88704f2262fe173de57e5598010655d410da94ae2e1cf7086049878b08e966000100000200002103e6680bb560e40adb299a6b940d3dcbe2b08e6e1a64bc8f6bc9ec3d638655c3554120066559ccd6cea8ac2d366980f77a94cbfdfbd978803edbf4066f42bc53adcdb51956fb0d3c9cec2012583d17b66456094a8620109d6dae29dc562b2870592940000200000100002102326a8c19a1c58d30d142e113d0ddf381d95a6306f56c9ec4d3cb8c4823685b29411f5bb82721b58d92e67db9fb699ab939ccc4a6d5e2e498e80dfb8a3535c13f571923f045e645a898762f8305a4a2218bfedb060f8a8492c48ae9c96247ce17710b00030003010000210252a2d08f295871ec4b04cb0bcf7b2899b0b004702d9058982dd797141d527e78412044820dc7651186634326922eda85741bb3f9f005057d94b36845a7edc16ed1df4d5ccabd7e7f003e9c189847fbc06e943252640bc47963c42ae6c0d87b7b506b00c601014fae5c4ed0e736dd25610b65ff51b56cbe1b9467520f0ced40a9e3b58e4555b10100000077ba9d450b94520434c5d15339922aa7df81b51344b98588649a44752f1a355cd0d05ce3df52f3fb7fc6e64cc414fb7cd9d0ffc4d088e77d9e542fade30000008a8678665212af134cfa36ea40984009adca338efa3131667f5a62b489d2fb2713eb7eccd14dd83cc6679b597548feae18bdc393dae2ab2a50844220359d4b87c428507808dc8df62f56dabb8d1eae2c1859b9ca54b3b4820ebc8453f57c34f6ef03000800014fae5c4ed0e736dd25610b65ff51b56cbe1b9467520f0ced40a9e3b58e4555b1010000006a473044022070293df3b93c523373f1f86272c5dba7886ab41cfc50b0b89658c07d0825c16002201afdf3b31393c5b99373597042b4d651028e824fc12f802aa1be51cc165bcf1e012103d55244573359ad586597b9bb4dd31b8f145121b7c01146656bc26c4b99184a47ffffffff0240420f0000000000026a0049ac4c2e000000001976a91441bb9b42b9f0d589008b4a7f6a72a6bb342b386d88ac0000000024010140420f00000000001976a9145f573cd6a8570cb0b74c4b0ea15334e6bd6b34a788ac0000411fc5b49ce2feb6cfc94f31de8167b806af0265657d5b8f01584e0db3ca011dba24328998bf40a50dd06b6ab10ed47622f46c07dec4d7cad3625b41aa52c9e11c2f98b95bbff1488807c3a4ed36c5fde32f9a6f1e05a622938476652041669e4135",
+  "publicKeys": [
+    {
+      "contractBounds": null,
+      "id": 0,
+      "type": "ECDSA_SECP256K1",
+      "data": "0348a6a633850f3c83a0cb30a9fceebbaa3b9ab3f923f123d92728cef234176dc5",
+      "publicKeyHash": "07630dddc55729c043de7bdeb145ee0d44feae3b",
+      "purpose": "AUTHENTICATION",
+      "securityLevel": "MASTER",
+      "readOnly": false,
+      "signature": "2042186a3dec52bfe9a24ee17b98adc5efcbc0a0a6bacbc9627f1405ea5e1bb7ae2bb94a270363400969669e9884ab9967659e9a0d8de7464ee7c47552c8cb0e99"
     },
-    "userFeeIncrease": 0,
-    "identityId": "BHAuKDRVPHkJd99pLoQh8dfjUFobwk5bq6enubEBKpsv",
-    "signature": "1fc5b49ce2feb6cfc94f31de8167b806af0265657d5b8f01584e0db3ca011dba24328998bf40a50dd06b6ab10ed47622f46c07dec4d7cad3625b41aa52c9e11c2f",
-    "raw": "03000400000000000000210258abe04886308feb52b8f3d64eace4913c9d049f4dda9a88a217e6ca6b89a107411f60451588fe72a067daaa0a1ee04279e77ce346128560129162386f76d51eccdc1d88704f2262fe173de57e5598010655d410da94ae2e1cf7086049878b08e966000100000200002103e6680bb560e40adb299a6b940d3dcbe2b08e6e1a64bc8f6bc9ec3d638655c3554120066559ccd6cea8ac2d366980f77a94cbfdfbd978803edbf4066f42bc53adcdb51956fb0d3c9cec2012583d17b66456094a8620109d6dae29dc562b2870592940000200000100002102326a8c19a1c58d30d142e113d0ddf381d95a6306f56c9ec4d3cb8c4823685b29411f5bb82721b58d92e67db9fb699ab939ccc4a6d5e2e498e80dfb8a3535c13f571923f045e645a898762f8305a4a2218bfedb060f8a8492c48ae9c96247ce17710b00030003010000210252a2d08f295871ec4b04cb0bcf7b2899b0b004702d9058982dd797141d527e78412044820dc7651186634326922eda85741bb3f9f005057d94b36845a7edc16ed1df4d5ccabd7e7f003e9c189847fbc06e943252640bc47963c42ae6c0d87b7b506b00c601014fae5c4ed0e736dd25610b65ff51b56cbe1b9467520f0ced40a9e3b58e4555b10100000077ba9d450b94520434c5d15339922aa7df81b51344b98588649a44752f1a355cd0d05ce3df52f3fb7fc6e64cc414fb7cd9d0ffc4d088e77d9e542fade30000008a8678665212af134cfa36ea40984009adca338efa3131667f5a62b489d2fb2713eb7eccd14dd83cc6679b597548feae18bdc393dae2ab2a50844220359d4b87c428507808dc8df62f56dabb8d1eae2c1859b9ca54b3b4820ebc8453f57c34f6ef03000800014fae5c4ed0e736dd25610b65ff51b56cbe1b9467520f0ced40a9e3b58e4555b1010000006a473044022070293df3b93c523373f1f86272c5dba7886ab41cfc50b0b89658c07d0825c16002201afdf3b31393c5b99373597042b4d651028e824fc12f802aa1be51cc165bcf1e012103d55244573359ad586597b9bb4dd31b8f145121b7c01146656bc26c4b99184a47ffffffff0240420f0000000000026a0049ac4c2e000000001976a91441bb9b42b9f0d589008b4a7f6a72a6bb342b386d88ac0000000024010140420f00000000001976a9145f573cd6a8570cb0b74c4b0ea15334e6bd6b34a788ac0000411fc5b49ce2feb6cfc94f31de8167b806af0265657d5b8f01584e0db3ca011dba24328998bf40a50dd06b6ab10ed47622f46c07dec4d7cad3625b41aa52c9e11c2f98b95bbff1488807c3a4ed36c5fde32f9a6f1e05a622938476652041669e4135",
-    "publicKeys": [
-        {
-            "contractBounds": null,
-            "id": 0,
-            "type": "ECDSA_SECP256K1",
-            "data": "0348a6a633850f3c83a0cb30a9fceebbaa3b9ab3f923f123d92728cef234176dc5",
-            "publicKeyHash": "07630dddc55729c043de7bdeb145ee0d44feae3b",
-            "purpose": "AUTHENTICATION",
-            "securityLevel": "MASTER",
-            "readOnly": false,
-            "signature": "2042186a3dec52bfe9a24ee17b98adc5efcbc0a0a6bacbc9627f1405ea5e1bb7ae2bb94a270363400969669e9884ab9967659e9a0d8de7464ee7c47552c8cb0e99"
-        },
-        {
-            "contractBounds": null,
-            "id": 1,
-            "type": "ECDSA_SECP256K1",
-            "data": "034278b0d7f5e6d902ec5a30ae5c656937a0323bdc813e851eb8a2d6a1d23c51cf",
-            "publicKeyHash": "e2615c5ef3f910ebe5ada7930e7b2c04a7ffbb23",
-            "purpose": "AUTHENTICATION",
-            "securityLevel": "HIGH",
-            "readOnly": false,
-            "signature": "1fbb0d0bb63d26c0d5b6e1f4b8c0eebef4d256c4e8aa933a2cb6bd6b2d8aae545215312924c7dd41c963071e2ccfe2187a8684d93c55063cb45fdd03e76344d6a4"
-        },
-        {
-            "contractBounds": null,
-            "id": 2,
-            "type": "ECDSA_SECP256K1",
-            "data": "0245c3b0f0323ddbb9ddf123f939bf37296af4f38fa489aad722c50486575cd8f4",
-            "publicKeyHash": "d53ee3b3518fee80816ab26af98a34ea60ae9af7",
-            "purpose": "AUTHENTICATION",
-            "securityLevel": "CRITICAL",
-            "readOnly": false,
-            "signature": "204013dcca13378b820e40cf1da77abe38662546ef0a304545de3c35845b83a7ad4b42051c2b3539c9181b3f0cb3fb4bc970db89663c6bd6ca1468568a62beaa75"
-        }
-    ]
+    {
+      "contractBounds": null,
+      "id": 1,
+      "type": "ECDSA_SECP256K1",
+      "data": "034278b0d7f5e6d902ec5a30ae5c656937a0323bdc813e851eb8a2d6a1d23c51cf",
+      "publicKeyHash": "e2615c5ef3f910ebe5ada7930e7b2c04a7ffbb23",
+      "purpose": "AUTHENTICATION",
+      "securityLevel": "HIGH",
+      "readOnly": false,
+      "signature": "1fbb0d0bb63d26c0d5b6e1f4b8c0eebef4d256c4e8aa933a2cb6bd6b2d8aae545215312924c7dd41c963071e2ccfe2187a8684d93c55063cb45fdd03e76344d6a4"
+    },
+    {
+      "contractBounds": null,
+      "id": 2,
+      "type": "ECDSA_SECP256K1",
+      "data": "0245c3b0f0323ddbb9ddf123f939bf37296af4f38fa489aad722c50486575cd8f4",
+      "publicKeyHash": "d53ee3b3518fee80816ab26af98a34ea60ae9af7",
+      "purpose": "AUTHENTICATION",
+      "securityLevel": "CRITICAL",
+      "readOnly": false,
+      "signature": "204013dcca13378b820e40cf1da77abe38662546ef0a304545de3c35845b83a7ad4b42051c2b3539c9181b3f0cb3fb4bc970db89663c6bd6ca1468568a62beaa75"
+    }
+  ]
 }
 ```
 ```json
 {
-    "type": 3,
-    "typeString": "IDENTITY_TOP_UP",
-    "assetLockProof": {
-        "coreChainLockedHeight": null,
-        "type": "instantSend",
-        "fundingAmount": 999000,
-        "txid": "7734f498c5b59f64f73070e0a5ec4fa113065da00358223cf888c3c27317ea64",
-        "vout": 0,
-        "fundingAddress": "yWxCwVRgqRmePNPJxezgus1T7xSv5q17SU"
-    },
-    "identityId": "4EfA9Jrvv3nnCFdSf7fad59851iiTRZ6Wcu6YVJ4iSeF",
-    "amount": 300000000,
-    "signature": "810cd0bfe02104362941d35bd05fdf82cdc50c3bc8510077bfa62d47b68710",
-    "raw": "040000c60101ecd6b031477f342806df5740b70f93b8a3e925bbf2d90d979a5ed162a8d7d5660000000064ea1773c2c388f83c225803a05d0613a14feca5e07030f7649fb5c598f43477940fe3dc8e934b89e9e97a96cf4298da3efb23d8a17d52c759561194d3000000a5e81597e94558618bf1464801188ecbc09c7a12e73489225c63684259f075f87aa3d47ea9bbbe1f9c314086ddc35a6d18b30ff4fe579855779f9268b8bf5c79760c7d8c56d34163931f016c2e3036852dd33a6b643dd59dc8c54199f34e3d2def0300080001ecd6b031477f342806df5740b70f93b8a3e925bbf2d90d979a5ed162a8d7d566000000006a4730440220339d4d894eb2ff9c193bd8c33cdb3030a8be18ddbf30d983e8286c08c6c4c7d90220181741d9eed3814ec077030c26c0b9fff63b9ef10e1e6ca1c87069b261b0127a0121034951bbd5d0d500942426507d4b84e6d88406300ed82009a8db087f493017786affffffff02e093040000000000026a0078aa0a00000000001976a914706db5d1e8fb5f925c6db64104f4b77f0c8b73d488ac00000000240101e0930400000000001976a91474a509b4f3b80ce818465dc0f9f66e2103d9178b88ac003012c19b98ec0033addb36cd64b7f510670f2a351a4304b5f6994144286efdac411f810cd0bfe02104362941d35bd05fdf82cdc50c3bc8510077bfa62d47b68710"
+  "type": 3,
+  "typeString": "IDENTITY_TOP_UP",
+  "assetLockProof": {
+    "coreChainLockedHeight": null,
+    "type": "instantSend",
+    "fundingAmount": 999000,
+    "txid": "7734f498c5b59f64f73070e0a5ec4fa113065da00358223cf888c3c27317ea64",
+    "vout": 0,
+    "fundingAddress": "yWxCwVRgqRmePNPJxezgus1T7xSv5q17SU"
+  },
+  "identityId": "4EfA9Jrvv3nnCFdSf7fad59851iiTRZ6Wcu6YVJ4iSeF",
+  "amount": 300000000,
+  "signature": "810cd0bfe02104362941d35bd05fdf82cdc50c3bc8510077bfa62d47b68710",
+  "raw": "040000c60101ecd6b031477f342806df5740b70f93b8a3e925bbf2d90d979a5ed162a8d7d5660000000064ea1773c2c388f83c225803a05d0613a14feca5e07030f7649fb5c598f43477940fe3dc8e934b89e9e97a96cf4298da3efb23d8a17d52c759561194d3000000a5e81597e94558618bf1464801188ecbc09c7a12e73489225c63684259f075f87aa3d47ea9bbbe1f9c314086ddc35a6d18b30ff4fe579855779f9268b8bf5c79760c7d8c56d34163931f016c2e3036852dd33a6b643dd59dc8c54199f34e3d2def0300080001ecd6b031477f342806df5740b70f93b8a3e925bbf2d90d979a5ed162a8d7d566000000006a4730440220339d4d894eb2ff9c193bd8c33cdb3030a8be18ddbf30d983e8286c08c6c4c7d90220181741d9eed3814ec077030c26c0b9fff63b9ef10e1e6ca1c87069b261b0127a0121034951bbd5d0d500942426507d4b84e6d88406300ed82009a8db087f493017786affffffff02e093040000000000026a0078aa0a00000000001976a914706db5d1e8fb5f925c6db64104f4b77f0c8b73d488ac00000000240101e0930400000000001976a91474a509b4f3b80ce818465dc0f9f66e2103d9178b88ac003012c19b98ec0033addb36cd64b7f510670f2a351a4304b5f6994144286efdac411f810cd0bfe02104362941d35bd05fdf82cdc50c3bc8510077bfa62d47b68710"
 }
 ```
 ```json
 {
-    "type": 4,
-    "typeString": "DATA_CONTRACT_UPDATE",
-    "internalConfig": {
-        "canBeDeleted": false,
-        "readonly": false,
-        "keepsHistory": false,
-        "documentsKeepHistoryContractDefault": false,
-        "documentsMutableContractDefault": true,
-        "documentsCanBeDeletedContractDefault": true,
-        "requiresIdentityDecryptionBoundedKey": null,
-        "requiresIdentityEncryptionBoundedKey": null
-    },
-    "tokens": [],
-    "groups": [],
-    "identityContractNonce": 6,
-    "signaturePublicKeyId": 2,
-    "signature": "1ff9a776c62ee371a0e5ed95e8efe27c7955f247d5527670e43cbd837e73cfaef3613592b9798e9afd2526e3b92330f07d0c5f1396390d63ad39b4bebeb9c82903",
-    "userFeeIncrease": 0,
-    "ownerId": "GgZekwh38XcWQTyWWWvmw6CEYFnLU7yiZFPWZEjqKHit",
-    "dataContractId": "AJqYb8ZvfbA6ZFgpsvLfpMEzwjaYUPyVmeFxSJrafB18",
-    "dataContractIdentityNonce": "0",
-    "schema": {
-        "note": {
-            "type": "object",
-            "properties": {
-                "message": {
-                    "type": "string",
-                    "position": 0
-                },
-                "author": {
-                    "type": "string",
-                    "position": 1
-                }
-            },
-            "additionalProperties": false
+  "type": 4,
+  "typeString": "DATA_CONTRACT_UPDATE",
+  "internalConfig": {
+    "canBeDeleted": false,
+    "readonly": false,
+    "keepsHistory": false,
+    "documentsKeepHistoryContractDefault": false,
+    "documentsMutableContractDefault": true,
+    "documentsCanBeDeletedContractDefault": true,
+    "requiresIdentityDecryptionBoundedKey": null,
+    "requiresIdentityEncryptionBoundedKey": null
+  },
+  "tokens": [],
+  "groups": [],
+  "identityContractNonce": 6,
+  "signaturePublicKeyId": 2,
+  "signature": "1ff9a776c62ee371a0e5ed95e8efe27c7955f247d5527670e43cbd837e73cfaef3613592b9798e9afd2526e3b92330f07d0c5f1396390d63ad39b4bebeb9c82903",
+  "userFeeIncrease": 0,
+  "ownerId": "GgZekwh38XcWQTyWWWvmw6CEYFnLU7yiZFPWZEjqKHit",
+  "dataContractId": "AJqYb8ZvfbA6ZFgpsvLfpMEzwjaYUPyVmeFxSJrafB18",
+  "dataContractIdentityNonce": "0",
+  "schema": {
+    "note": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string",
+          "position": 0
+        },
+        "author": {
+          "type": "string",
+          "position": 1
         }
-    },
-    "version": 2,
-    "dataContractOwner": "GgZekwh38XcWQTyWWWvmw6CEYFnLU7yiZFPWZEjqKHit",
-    "raw": "010006008a4af217f340e9c4c95857496cf33b68eb6c712ac6d20a1eb7854d14afd9ffcf00000000000101000002e901dfc172a96ce3f7d334d6c0b69df3b01c86d30ff03a7c24f516838f94340d0001046e6f7465160312047479706512066f626a656374120a70726f70657274696573160212076d65737361676516021204747970651206737472696e671208706f736974696f6e02001206617574686f7216021204747970651206737472696e671208706f736974696f6e020112146164646974696f6e616c50726f7065727469657313000002411ff9a776c62ee371a0e5ed95e8efe27c7955f247d5527670e43cbd837e73cfaef3613592b9798e9afd2526e3b92330f07d0c5f1396390d63ad39b4bebeb9c82903"
+      },
+      "additionalProperties": false
+    }
+  },
+  "version": 2,
+  "dataContractOwner": "GgZekwh38XcWQTyWWWvmw6CEYFnLU7yiZFPWZEjqKHit",
+  "raw": "010006008a4af217f340e9c4c95857496cf33b68eb6c712ac6d20a1eb7854d14afd9ffcf00000000000101000002e901dfc172a96ce3f7d334d6c0b69df3b01c86d30ff03a7c24f516838f94340d0001046e6f7465160312047479706512066f626a656374120a70726f70657274696573160212076d65737361676516021204747970651206737472696e671208706f736974696f6e02001206617574686f7216021204747970651206737472696e671208706f736974696f6e020112146164646974696f6e616c50726f7065727469657313000002411ff9a776c62ee371a0e5ed95e8efe27c7955f247d5527670e43cbd837e73cfaef3613592b9798e9afd2526e3b92330f07d0c5f1396390d63ad39b4bebeb9c82903"
 }
 ```
 ```json
@@ -3058,28 +3162,28 @@ IDENTITY_CREATE with instantLock
   "identityId": "4NGALjtX2t3AXE3ZCqJiSmYuiWEY3ZPQNUBxNWWRrRSp",
   "revision": 2,
   "publicKeysToAdd": [
-      {
-          "contractBounds": null,
-          "id": 5,
-          "type": "ECDSA_HASH160",
-          "data": "c208ded6d1af562b8e5387c02a446ea6e8bb325f",
-          "publicKeyHash": "c208ded6d1af562b8e5387c02a446ea6e8bb325f",
-          "purpose": "AUTHENTICATION",
-          "securityLevel": "HIGH",
-          "readOnly": false,
-          "signature": ""
-      },
-      {
-          "contractBounds": null,
-          "id": 6,
-          "type": "ECDSA_SECP256K1",
-          "data": "026213380930c93c4b53f6ddbc5adc5f5165102d8f92f7d9a495a8f9c6e61b30f0",
-          "publicKeyHash": "d39eda042126256a372c388bd191532a7c9612ce",
-          "purpose": "AUTHENTICATION",
-          "securityLevel": "MASTER",
-          "readOnly": false,
-          "signature": "1faf8b0f16320d0f9e29c1db12ab0d3ec87974b19f6fc1189a988cd85503d79f844d3ff778678d7f4f3829891e8e8d0183456194d9fc76ed66e503154996eefe06"
-      }
+    {
+      "contractBounds": null,
+      "id": 5,
+      "type": "ECDSA_HASH160",
+      "data": "c208ded6d1af562b8e5387c02a446ea6e8bb325f",
+      "publicKeyHash": "c208ded6d1af562b8e5387c02a446ea6e8bb325f",
+      "purpose": "AUTHENTICATION",
+      "securityLevel": "HIGH",
+      "readOnly": false,
+      "signature": ""
+    },
+    {
+      "contractBounds": null,
+      "id": 6,
+      "type": "ECDSA_SECP256K1",
+      "data": "026213380930c93c4b53f6ddbc5adc5f5165102d8f92f7d9a495a8f9c6e61b30f0",
+      "publicKeyHash": "d39eda042126256a372c388bd191532a7c9612ce",
+      "purpose": "AUTHENTICATION",
+      "securityLevel": "MASTER",
+      "readOnly": false,
+      "signature": "1faf8b0f16320d0f9e29c1db12ab0d3ec87974b19f6fc1189a988cd85503d79f844d3ff778678d7f4f3829891e8e8d0183456194d9fc76ed66e503154996eefe06"
+    }
   ],
   "publicKeyIdsToDisable": [],
   "signature": "1f341c8eb7b890f416c7a970406dd37da078dab5f2c4aa8dd18375516933b234873127965dd72ee28b7392fcd87e28c4bfef890791b58fa9c34bce9e96d6536cb1",
@@ -3089,54 +3193,54 @@ IDENTITY_CREATE with instantLock
 ```
 ```json
 {
-    "type": 6,
-    "typeString": "IDENTITY_CREDIT_WITHDRAWAL",
-    "outputAddress": "yifJkXaxe7oM1NgBDTaXnWa6kXZAazBfjk",
-    "userFeeIncrease": 0,
-    "senderId": "8eTDkBhpQjHeqgbVeriwLeZr1tCa6yBGw76SckvD1cwc",
-    "amount": 200000,
-    "identityNonce": 6,
-    "outputScript": "76a914f51453a538d9a0a9fb3fe0f2948a0f80d9cf525a88ac",
-    "coreFeePerByte": 5,
-    "signature": "20cc6d48ed7341d47d6efbdad14ce0f471e67f75110acd56738b7c42c78a71d7da4fd870e1c77934239ea3a0ca0fd1145814b5165bd4ec76e87e774836c680b01b",
-    "signaturePublicKeyId": 3,
-    "pooling": "Standard",
-    "raw": "05017199f1f68404c86ecf60d9cb93aef318fa0f2b08e59ffd176bdef43154ffde6bfc00030d400500011976a914f51453a538d9a0a9fb3fe0f2948a0f80d9cf525a88ac0600034120cc6d48ed7341d47d6efbdad14ce0f471e67f75110acd56738b7c42c78a71d7da4fd870e1c77934239ea3a0ca0fd1145814b5165bd4ec76e87e774836c680b01b"
+  "type": 6,
+  "typeString": "IDENTITY_CREDIT_WITHDRAWAL",
+  "outputAddress": "yifJkXaxe7oM1NgBDTaXnWa6kXZAazBfjk",
+  "userFeeIncrease": 0,
+  "senderId": "8eTDkBhpQjHeqgbVeriwLeZr1tCa6yBGw76SckvD1cwc",
+  "amount": 200000,
+  "identityNonce": 6,
+  "outputScript": "76a914f51453a538d9a0a9fb3fe0f2948a0f80d9cf525a88ac",
+  "coreFeePerByte": 5,
+  "signature": "20cc6d48ed7341d47d6efbdad14ce0f471e67f75110acd56738b7c42c78a71d7da4fd870e1c77934239ea3a0ca0fd1145814b5165bd4ec76e87e774836c680b01b",
+  "signaturePublicKeyId": 3,
+  "pooling": "Standard",
+  "raw": "05017199f1f68404c86ecf60d9cb93aef318fa0f2b08e59ffd176bdef43154ffde6bfc00030d400500011976a914f51453a538d9a0a9fb3fe0f2948a0f80d9cf525a88ac0600034120cc6d48ed7341d47d6efbdad14ce0f471e67f75110acd56738b7c42c78a71d7da4fd870e1c77934239ea3a0ca0fd1145814b5165bd4ec76e87e774836c680b01b"
 }
 ```
 ```json
 {
-    "type": 7,
-    "typeString": "IDENTITY_CREDIT_TRANSFER",
-    "identityNonce": 1,
-    "userFeeIncrease": 0,
-    "senderId": "24YEeZmpy1QNKronDT8enYWLXnfoxYK7hrHUdpWHxURg",
-    "recipientId": "6q9RFbeea73tE31LGMBLFZhtBUX3wZL3TcNynqE18Zgs",
-    "amount": 21856638,
-    "signaturePublicKeyId": 3,
-    "signature": "1f39c5c81434699df7924d68eba4326352ac97883688e3ec3ffed36746d6fb8c227d4a96a40fcd38673f80ed64ab8e3514cf81fe8be319774429071881d3c8b1f8",
-    "raw": "07000fc3bf4a26bff60f4f79a1f4b929ce4d4c5833d226c1c7f68758e71d7ae229db569fd4f616b3dedecbeef95352cf38f1fb04d232a0d20623bc195b0c3f721840fc014d817e010003411f39c5c81434699df7924d68eba4326352ac97883688e3ec3ffed36746d6fb8c227d4a96a40fcd38673f80ed64ab8e3514cf81fe8be319774429071881d3c8b1f8"
+  "type": 7,
+  "typeString": "IDENTITY_CREDIT_TRANSFER",
+  "identityNonce": 1,
+  "userFeeIncrease": 0,
+  "senderId": "24YEeZmpy1QNKronDT8enYWLXnfoxYK7hrHUdpWHxURg",
+  "recipientId": "6q9RFbeea73tE31LGMBLFZhtBUX3wZL3TcNynqE18Zgs",
+  "amount": 21856638,
+  "signaturePublicKeyId": 3,
+  "signature": "1f39c5c81434699df7924d68eba4326352ac97883688e3ec3ffed36746d6fb8c227d4a96a40fcd38673f80ed64ab8e3514cf81fe8be319774429071881d3c8b1f8",
+  "raw": "07000fc3bf4a26bff60f4f79a1f4b929ce4d4c5833d226c1c7f68758e71d7ae229db569fd4f616b3dedecbeef95352cf38f1fb04d232a0d20623bc195b0c3f721840fc014d817e010003411f39c5c81434699df7924d68eba4326352ac97883688e3ec3ffed36746d6fb8c227d4a96a40fcd38673f80ed64ab8e3514cf81fe8be319774429071881d3c8b1f8"
 }
 ```
 ```json
 {
-    "type": 8,
-    "typeString": "IDENTITY_CREDIT_TRANSFER",
-    "indexValues": [
-        "EgRkYXNo",
-        "EgN5MDE="
-    ],
-    "contractId": "GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec",
-    "modifiedDataIds": [
-        "523FUhxg6WEvp24PfjqFAuHFYXW1gkoXdy8QywfriSse"
-    ],
-    "ownerId": "523FUhxg6WEvp24PfjqFAuHFYXW1gkoXdy8QywfriSse",
-    "signature": "2019d90a905092dd3074da3cd42b05abe944d857fc2573e81e1d39a16ba659c00c7b38b88bee46a853c5c30deb9c2ae3abf4fbb781eec12b86a0928ca7b02ced7d",
-    "documentTypeName": "domain",
-    "indexName": "parentNameAndLabel",
-    "choice": "Abstain",
-    "proTxHash": "ad4e38fc81da72d61b14238ee6e5b91915554e24d725718800692d3a863c910b",
-    "raw": "08005b246080ba64350685fe302d3d790f5bb238cb619920d46230c844f079944a233bb2df460e72e3d59e7fe1c082ab3a5bd9445dd0dd5c4894a6d9f0d9ed9404b5000000e668c659af66aee1e72c186dde7b5b7e0a1d712a09c40d5721f622bf53c5315506646f6d61696e12706172656e744e616d65416e644c6162656c021204646173681203793031010c00412019d90a905092dd3074da3cd42b05abe944d857fc2573e81e1d39a16ba659c00c7b38b88bee46a853c5c30deb9c2ae3abf4fbb781eec12b86a0928ca7b02ced7d"
+  "type": 8,
+  "typeString": "IDENTITY_CREDIT_TRANSFER",
+  "indexValues": [
+    "EgRkYXNo",
+    "EgN5MDE="
+  ],
+  "contractId": "GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec",
+  "modifiedDataIds": [
+    "523FUhxg6WEvp24PfjqFAuHFYXW1gkoXdy8QywfriSse"
+  ],
+  "ownerId": "523FUhxg6WEvp24PfjqFAuHFYXW1gkoXdy8QywfriSse",
+  "signature": "2019d90a905092dd3074da3cd42b05abe944d857fc2573e81e1d39a16ba659c00c7b38b88bee46a853c5c30deb9c2ae3abf4fbb781eec12b86a0928ca7b02ced7d",
+  "documentTypeName": "domain",
+  "indexName": "parentNameAndLabel",
+  "choice": "Abstain",
+  "proTxHash": "ad4e38fc81da72d61b14238ee6e5b91915554e24d725718800692d3a863c910b",
+  "raw": "08005b246080ba64350685fe302d3d790f5bb238cb619920d46230c844f079944a233bb2df460e72e3d59e7fe1c082ab3a5bd9445dd0dd5c4894a6d9f0d9ed9404b5000000e668c659af66aee1e72c186dde7b5b7e0a1d712a09c40d5721f622bf53c5315506646f6d61696e12706172656e744e616d65416e644c6162656c021204646173681203793031010c00412019d90a905092dd3074da3cd42b05abe944d857fc2573e81e1d39a16ba659c00c7b38b88bee46a853c5c30deb9c2ae3abf4fbb781eec12b86a0928ca7b02ced7d"
 }
 ```
 ```json
@@ -3189,72 +3293,72 @@ IDENTITY_CREATE with instantLock
 ```
 ```json
 {
-    "type": 13,
-    "typeString": "ADDRESS_FUNDING_FROM_ASSET_LOCK",
-    "assetLockProof": {
-        "coreChainLockedHeight": null,
-        "type": "instantSend",
-        "instantLock": "AQKflfCMay9YZSHo7Yy2u5l0vwE0obDfr8cqfShF9bqn/gEAAAD2vDZ5zvy1mcNCSF5jfsxQkw0veXBo6aJNE/13WYR7awEAAACJfGgEXp9GdjneIf96kXXJEn+b/Qix6fYXJ1hgqBQzH/y3yJZU0Ky99rsWgfhfdvFC4UBFsddngtq6TJgBAAAAix7+tMc2flwUVAB1uquM+dk5TF/nhmAnX9PmNHbUnIUTFWvpfXw7lnqpLERjGgKeF5ITbSsXcFU2TiKYWg7esh/DYYYrbdXBbJ6OoiLVQjjI60Em+1NK4nPycG9g6xOX",
-        "fundingAmount": "100000000",
-        "fundingCoreTx": "1f3314a860582717f6e9b108fd9b7f12c975917aff21de3976469f5e04687c89",
-        "vout": 0
-    },
-    "userFeeIncrease": 0,
-    "inputs": [],
-    "inputWitness": [],
-    "outputs": [
-        {
-            "platformAddress": {
-              "base58": "yRpNvoc3hd66c3rNrPRGubVd9vGUoAVpZV",
-              "bech32m": "tdashevo1qq79z66rh34l4u2axlz3jv34zwshggnenut9k093"
-            },
-            "credits": "0"
-        }
-    ],
-    "feeStrategy": [
-        {
-            "type": "ReduceOutput",
-            "value": 0
-        }
-    ],
-    "signature": "202856c525c2d3c001cfd581bd46df6f73220db84fcbb111c6729bd66d2d07e2d37c84e543627bd9fbb953ff0bf98e0367abedc790970471fec6816df2ad6f4064",
-    "raw": "0d0000ea01029f95f08c6b2f586521e8ed8cb6bb9974bf0134a1b0dfafc72a7d2845f5baa7fe01000000f6bc3679cefcb599c342485e637ecc50930d2f797068e9a24d13fd7759847b6b01000000897c68045e9f467639de21ff7a9175c9127f9bfd08b1e9f617275860a814331ffcb7c89654d0acbdf6bb1681f85f76f142e14045b1d76782daba4c98010000008b1efeb4c7367e5c14540075baab8cf9d9394c5fe78660275fd3e63476d49c8513156be97d7c3b967aa92c44631a029e1792136d2b177055364e22985a0edeb21fc361862b6dd5c16c9e8ea222d54238c8eb4126fb534ae273f2706f60eb1397fb018303000800029f95f08c6b2f586521e8ed8cb6bb9974bf0134a1b0dfafc72a7d2845f5baa7fe010000006b483045022100bbfbd824846523f7d2c6799b47a9dea88c0fb60dd433d0d8971abee63dd4966b022008dcee6d9780aa962d37cfed6ca54e256f6dba1190c01c7a58cc749709179f450121022bb6c14bedb4deb4059a260c7228f0d38f8274e7fadeea4b5739a4c120d651aefffffffff6bc3679cefcb599c342485e637ecc50930d2f797068e9a24d13fd7759847b6b010000006a473044022074bd9c8c4ca4557cdf57017627b6b666c7586b674503f3f26ae8f1fed714d2510220295ea1d64c5745988e94c963972059d20171d0e0f92b07c31469bb622a468f3c0121022bb6c14bedb4deb4059a260c7228f0d38f8274e7fadeea4b5739a4c120d651aeffffffff0200e1f50500000000026a00a008510b000000001976a914f84b203ee59814a41f1aa2379043ab3af98143f188ac0000000024010100e1f505000000001976a91469dccf851a2cb6c2f18ee1274e4fd1669af7685a88ac000001005022deda5da7414a3aa460705a5bb16b1282c97a000101000041202856c525c2d3c001cfd581bd46df6f73220db84fcbb111c6729bd66d2d07e2d37c84e543627bd9fbb953ff0bf98e0367abedc790970471fec6816df2ad6f406400"
+  "type": 13,
+  "typeString": "ADDRESS_FUNDING_FROM_ASSET_LOCK",
+  "assetLockProof": {
+    "coreChainLockedHeight": null,
+    "type": "instantSend",
+    "instantLock": "AQKflfCMay9YZSHo7Yy2u5l0vwE0obDfr8cqfShF9bqn/gEAAAD2vDZ5zvy1mcNCSF5jfsxQkw0veXBo6aJNE/13WYR7awEAAACJfGgEXp9GdjneIf96kXXJEn+b/Qix6fYXJ1hgqBQzH/y3yJZU0Ky99rsWgfhfdvFC4UBFsddngtq6TJgBAAAAix7+tMc2flwUVAB1uquM+dk5TF/nhmAnX9PmNHbUnIUTFWvpfXw7lnqpLERjGgKeF5ITbSsXcFU2TiKYWg7esh/DYYYrbdXBbJ6OoiLVQjjI60Em+1NK4nPycG9g6xOX",
+    "fundingAmount": "100000000",
+    "fundingCoreTx": "1f3314a860582717f6e9b108fd9b7f12c975917aff21de3976469f5e04687c89",
+    "vout": 0
+  },
+  "userFeeIncrease": 0,
+  "inputs": [],
+  "inputWitness": [],
+  "outputs": [
+    {
+      "platformAddress": {
+        "base58": "yRpNvoc3hd66c3rNrPRGubVd9vGUoAVpZV",
+        "bech32m": "tdashevo1qq79z66rh34l4u2axlz3jv34zwshggnenut9k093"
+      },
+      "credits": "0"
+    }
+  ],
+  "feeStrategy": [
+    {
+      "type": "ReduceOutput",
+      "value": 0
+    }
+  ],
+  "signature": "202856c525c2d3c001cfd581bd46df6f73220db84fcbb111c6729bd66d2d07e2d37c84e543627bd9fbb953ff0bf98e0367abedc790970471fec6816df2ad6f4064",
+  "raw": "0d0000ea01029f95f08c6b2f586521e8ed8cb6bb9974bf0134a1b0dfafc72a7d2845f5baa7fe01000000f6bc3679cefcb599c342485e637ecc50930d2f797068e9a24d13fd7759847b6b01000000897c68045e9f467639de21ff7a9175c9127f9bfd08b1e9f617275860a814331ffcb7c89654d0acbdf6bb1681f85f76f142e14045b1d76782daba4c98010000008b1efeb4c7367e5c14540075baab8cf9d9394c5fe78660275fd3e63476d49c8513156be97d7c3b967aa92c44631a029e1792136d2b177055364e22985a0edeb21fc361862b6dd5c16c9e8ea222d54238c8eb4126fb534ae273f2706f60eb1397fb018303000800029f95f08c6b2f586521e8ed8cb6bb9974bf0134a1b0dfafc72a7d2845f5baa7fe010000006b483045022100bbfbd824846523f7d2c6799b47a9dea88c0fb60dd433d0d8971abee63dd4966b022008dcee6d9780aa962d37cfed6ca54e256f6dba1190c01c7a58cc749709179f450121022bb6c14bedb4deb4059a260c7228f0d38f8274e7fadeea4b5739a4c120d651aefffffffff6bc3679cefcb599c342485e637ecc50930d2f797068e9a24d13fd7759847b6b010000006a473044022074bd9c8c4ca4557cdf57017627b6b666c7586b674503f3f26ae8f1fed714d2510220295ea1d64c5745988e94c963972059d20171d0e0f92b07c31469bb622a468f3c0121022bb6c14bedb4deb4059a260c7228f0d38f8274e7fadeea4b5739a4c120d651aeffffffff0200e1f50500000000026a00a008510b000000001976a914f84b203ee59814a41f1aa2379043ab3af98143f188ac0000000024010100e1f505000000001976a91469dccf851a2cb6c2f18ee1274e4fd1669af7685a88ac000001005022deda5da7414a3aa460705a5bb16b1282c97a000101000041202856c525c2d3c001cfd581bd46df6f73220db84fcbb111c6729bd66d2d07e2d37c84e543627bd9fbb953ff0bf98e0367abedc790970471fec6816df2ad6f406400"
 }
 ```
 ```json
 {
-    "type": 14,
-    "typeString": "ADDRESS_CREDIT_WITHDRAWAL",
-    "userFeeIncrease": 0,
-    "inputs": [
-        {
-            "platformAddress": {
-              "base58": "yRpNvoc3hd66c3rNrPRGubVd9vGUoAVpZV",
-              "bech32m": "tdashevo1qq79z66rh34l4u2axlz3jv34zwshggnenut9k093"
-            },
-            "credits": "250000000000",
-            "nonce": "5"
-        }
-    ],
-    "inputWitness": [
-        {
-            "type": "P2PKH",
-            "value": {
-                "signature": "2097d5baef616aeeb6b19e5baf4fdc2bdadcc685bd01161844c199b22b41afe1547a90cef74d70a776263ef723f509711f495a6907a63f89b7ddb260956404299b"
-            }
-        }
-    ],
-    "output": null,
-    "feeStrategy": [
-        {
-            "type": "DeductFromInput",
-            "value": 0
-        }
-    ],
-    "pooling": 0,
-    "outputAddress": "yT6NQzvH2h16ggSKNj2b2Wu3NMFiYVKXeB",
-    "outputScript": "76a9144a4fc56e14aa98799880abbcd46de5d2e09998fb88ac",
-    "raw": "0e000100914e8a18eb34517b7a6a4432cf237f68c5f8332e05fd0000003a352944000001000001001976a9144a4fc56e14aa98799880abbcd46de5d2e09998fb88ac000100412097d5baef616aeeb6b19e5baf4fdc2bdadcc685bd01161844c199b22b41afe1547a90cef74d70a776263ef723f509711f495a6907a63f89b7ddb260956404299b"
+  "type": 14,
+  "typeString": "ADDRESS_CREDIT_WITHDRAWAL",
+  "userFeeIncrease": 0,
+  "inputs": [
+    {
+      "platformAddress": {
+        "base58": "yRpNvoc3hd66c3rNrPRGubVd9vGUoAVpZV",
+        "bech32m": "tdashevo1qq79z66rh34l4u2axlz3jv34zwshggnenut9k093"
+      },
+      "credits": "250000000000",
+      "nonce": "5"
+    }
+  ],
+  "inputWitness": [
+    {
+      "type": "P2PKH",
+      "value": {
+        "signature": "2097d5baef616aeeb6b19e5baf4fdc2bdadcc685bd01161844c199b22b41afe1547a90cef74d70a776263ef723f509711f495a6907a63f89b7ddb260956404299b"
+      }
+    }
+  ],
+  "output": null,
+  "feeStrategy": [
+    {
+      "type": "DeductFromInput",
+      "value": 0
+    }
+  ],
+  "pooling": 0,
+  "outputAddress": "yT6NQzvH2h16ggSKNj2b2Wu3NMFiYVKXeB",
+  "outputScript": "76a9144a4fc56e14aa98799880abbcd46de5d2e09998fb88ac",
+  "raw": "0e000100914e8a18eb34517b7a6a4432cf237f68c5f8332e05fd0000003a352944000001000001001976a9144a4fc56e14aa98799880abbcd46de5d2e09998fb88ac000100412097d5baef616aeeb6b19e5baf4fdc2bdadcc685bd01161844c199b22b41afe1547a90cef74d70a776263ef723f509711f495a6907a63f89b7ddb260956404299b"
 }
 ```
 Response codes:
@@ -4196,7 +4300,7 @@ ___
 ### Quorums
 Returns the signing-active quorums of the platform LLMQ type, newest first.
 
-The Platform validator set rotates between these quorums, so the one flagged `isCurrent` holds the set right now and the members of the others become validators once the set rotates to their quorum. Members are omitted here — use [Current Quorum](#current-quorum) or [Quorum by Hash](#quorum-by-hash) for them.
+All of them are signing-active at the same time, so a quorum's place in the list is only age, not a turn in a queue. What does move between them is the Platform validator set: the quorum flagged `isCurrent` holds it now, and it passes to the next older quorum once every member of the current one has proposed a block — see [Block Proposer Schedule](#block-proposer-schedule). Members are omitted here — use [Current Quorum](#current-quorum) or [Quorum by Hash](#quorum-by-hash) for them.
 
 * `healthRatio` is Core's health rating of the quorum
 * `isCurrent` marks the quorum currently holding the validator set
@@ -4391,6 +4495,10 @@ ___
 ### Platform Address Info
 Return platform address info by given addres (base58check or bech32m)
 
+* `balance`, `totalIncomingAmount` and `totalOutgoingAmount` are credits as strings, since credits
+  overflow a JSON number past ~90,000 DASH
+* an address with nothing on one side of the ledger reads `"0"` there, not `null`
+
 ```
 GET /platformAddress/tdashevo1zm37f22lmtkysgznz7mnf3d9tmuh9urrflvjul/info
 
@@ -4414,15 +4522,21 @@ Response codes:
 500: Internal Server Error
 ```
 ___
-### Platform Address Transactions
-Return all transitions for platform address paged and order by creation height.
+### Platform Address Transitions
+Return all transitions for platform address paged and ordered by block height and index.
 
 * Valid `order` values are `asc` or `desc`
 * `limit` cannot be more than 100
 * `page` cannot be less than 1
+* `amount` is the net change to the address balance in credits (negative on outcome and positive on income)
+* `incoming` is the sign of `amount` (`amount >= 0`)
+* `addressesCount` is always 1 here — a single address always describes its own transition
+* `transaction_type` narrows the page to the given state transition types, by name or by number,
+  and repeats for more than one of them (`&transaction_type=SHIELD&transaction_type=17`). The
+  total follows the filter, so the filtered set can be paged on its own
 
 ```
-GET /platformAddress/yRpNvoc3hd66c3rNrPRGubVd9vGUoAVpZV/transitions?page=1&limit=10&order=desc
+GET /platformAddress/yRpNvoc3hd66c3rNrPRGubVd9vGUoAVpZV/transitions?page=1&limit=10&order=desc&transaction_type=ADDRESS_FUNDS_TRANSFER
 
 {
     "resultSet": [
@@ -4443,6 +4557,7 @@ GET /platformAddress/yRpNvoc3hd66c3rNrPRGubVd9vGUoAVpZV/transitions?page=1&limit
                 "aliases": []
             },
             "incoming": false,
+            "amount": "-1000704433560",
             "base58Address": "yRpNvoc3hd66c3rNrPRGubVd9vGUoAVpZV",
             "bech32mAddress": "tdashevo1qq79z66rh34l4u2axlz3jv34zwshggnenut9k093"
         },
@@ -4452,6 +4567,110 @@ GET /platformAddress/yRpNvoc3hd66c3rNrPRGubVd9vGUoAVpZV/transitions?page=1&limit
         "page": 1,
         "limit": 10,
         "total": 80
+    }
+}
+```
+
+Response codes:
+```
+200: OK
+500: Internal Server Error
+```
+___
+### Platform Addresses Info
+Return info for a set of platform addresses in one request, so a wallet can cover a whole
+DIP-17 window without one request per address.
+
+* `addresses` accepts base58check or bech32m, mixed freely
+* at most 100 addresses per request
+* addresses the indexer has never seen are left out of the response, so a short response means
+  the missing addresses are unused
+* the response is ordered by the order the indexer first saw each address, not by the order of
+  the request — key the result by address rather than by position
+
+```
+POST /platformAddresses/info
+{"addresses": ["yRpNvoc3hd66c3rNrPRGubVd9vGUoAVpZV", "tdashevo1qq79z66rh34l4u2axlz3jv34zwshggnenut9k093"]}
+
+[
+    {
+        "base58Address": "yRpNvoc3hd66c3rNrPRGubVd9vGUoAVpZV",
+        "bech32mAddress": "tdashevo1qq79z66rh34l4u2axlz3jv34zwshggnenut9k093",
+        "totalTxs": 80,
+        "incomingTxs": 1,
+        "outgoingTxs": 79,
+        "nonce": 79,
+        "balance": "39506060",
+        "totalIncomingAmount": "1000000000",
+        "totalOutgoingAmount": "960493940"
+    },
+    ...
+]
+```
+
+Response codes:
+```
+200: OK
+500: Internal Server Error
+```
+___
+### Platform Addresses Transitions
+Return one merged page of transitions across a set of platform addresses, ordered by block
+height and index.
+
+* `addresses` accepts base58check or bech32m, mixed freely
+* at most 100 addresses per request
+* Valid `order` values are `asc` or `desc`
+* `limit` cannot be more than 100
+* `page` cannot be less than 1
+* a transition is listed once no matter how many addresses of the set own a row in it, and
+  `amount` is the net change across the whole set
+* `addressesCount` is how many addresses of the requested set own a row in the transition.
+  `base58Address` and `bech32mAddress` name the address the transition belongs to, and are `null`
+  exactly when that count is above one, since no single address of the set describes the row
+* `incoming` is the sign of `amount` (`amount >= 0`), so a transition whose inflow and outflow
+  across the set cancel out exactly reads as `incoming: true`. Read `amount` itself where the
+  direction has to be exact
+* `transaction_type` narrows the page to the given state transition types, by name or by number,
+  and repeats for more than one of them (`&transaction_type=SHIELD&transaction_type=17`). The
+  total follows the filter, so the filtered set can be paged on its own
+* `data` is `null` whenever the request names more than one address — one serialized transition
+  per row across a whole set of them is a large response for something a caller rarely reads, so
+  it is left to `/transaction/:hash`. A request for a single address still carries it
+
+```
+POST /platformAddresses/transitions?page=1&limit=10&order=desc&transaction_type=ADDRESS_FUNDS_TRANSFER
+{"addresses": ["yRpNvoc3hd66c3rNrPRGubVd9vGUoAVpZV", "yjaZy4BRBd99jB4mSpd6hJQkYFaCeprGQm"]}
+
+{
+    "resultSet": [
+        {
+            "hash": "99C5901B019156C0547472B4C825D05E0510DD60C0EE1DDB7730A2387421D52D",
+            "index": 17,
+            "blockHash": "A3D5152ECA3629D4BD8DE05E77B5BDC1AA6D22F8180630EE10CBC01F946A2885",
+            "blockHeight": 246835,
+            "type": "ADDRESS_FUNDS_TRANSFER",
+            "batchType": null,
+            "data": "DAABADxRa0O8a/rxXTfFGTI1E6F0InmfT/wF9eEAZAADfLzYQY3...",
+            "timestamp": "2026-01-15T16:15:33.127Z",
+            "gasUsed": 704433560,
+            "status": "SUCCESS",
+            "error": null,
+            "owner": {
+                "identifier": null,
+                "aliases": []
+            },
+            "incoming": false,
+            "amount": "-1000704433560",
+            "base58Address": "yRpNvoc3hd66c3rNrPRGubVd9vGUoAVpZV",
+            "bech32mAddress": "tdashevo1qq79z66rh34l4u2axlz3jv34zwshggnenut9k093"
+        },
+        ...
+    ],
+    "pagination": {
+        "page": 1,
+        "limit": 10,
+        "total": 142
     }
 }
 ```

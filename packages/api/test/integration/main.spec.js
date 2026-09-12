@@ -1,5 +1,5 @@
 process.env.EPOCH_CHANGE_TIME = 3600000
-const { describe, it, before, after, mock } = require('node:test')
+const { describe, it, before, beforeEach, after, mock } = require('node:test')
 const assert = require('node:assert').strict
 const supertest = require('supertest')
 const server = require('../../src/server')
@@ -277,6 +277,13 @@ describe('Other routes', () => {
     }
   })
 
+  // re-armed per test: a mock set once in before() is not in force for the later tests, and
+  // any cached entry arms a VALIDATORS_CACHE_LIFE_INTERVAL (5 min) eviction timer that keeps
+  // the test process alive long after the tests themselves have finished
+  beforeEach(() => {
+    mock.method(cache, 'set', () => {})
+  })
+
   after(async () => {
     await server.stop()
     await knex.destroy()
@@ -298,13 +305,15 @@ describe('Other routes', () => {
           l1LockedHeight: block.l1_locked_height,
           validator: block.validator,
           totalGasUsed: 0,
-          appHash: block.app_hash
+          appHash: block.app_hash,
+          quorumHash: block.quorum_hash
         },
         txs: [
           {
             base58Address: null,
             bech32mAddress: null,
             incoming: null,
+            amount: null,
             batchType: null,
             hash: identityTransaction.hash,
             index: identityTransaction.index,
@@ -333,6 +342,7 @@ describe('Other routes', () => {
             base58Address: null,
             bech32mAddress: null,
             incoming: null,
+            amount: null,
             batchType: null,
             hash: dataContractTransaction.hash,
             index: dataContractTransaction.index,
@@ -361,6 +371,7 @@ describe('Other routes', () => {
             base58Address: null,
             bech32mAddress: null,
             incoming: null,
+            amount: null,
             batchType: null,
             hash: documentTransaction.hash,
             index: documentTransaction.index,
@@ -400,6 +411,7 @@ describe('Other routes', () => {
         base58Address: null,
         bech32mAddress: null,
         incoming: null,
+        amount: null,
         batchType: null,
         hash: dataContractTransaction.hash,
         index: dataContractTransaction.index,
@@ -444,7 +456,8 @@ describe('Other routes', () => {
           l1LockedHeight: block.l1_locked_height,
           validator: block.validator,
           totalGasUsed: 0,
-          appHash: block.app_hash
+          appHash: block.app_hash,
+          quorumHash: block.quorum_hash
         },
         txs: [identityTransaction.hash, dataContractTransaction.hash, documentTransaction.hash]
       }
@@ -737,7 +750,8 @@ describe('Other routes', () => {
         fundingCoreTx: null,
         lastWithdrawalTimestamp: null,
         totalTopUps: 0,
-        totalWithdrawals: 0
+        totalWithdrawals: 0,
+        type: 'regular'
       }
 
       assert.deepEqual(body, { identities: [expectedIdentity] })
@@ -767,8 +781,9 @@ describe('Other routes', () => {
         outgoingTxs: 0,
         nonce: 12,
         balance: '111111',
-        totalIncomingAmount: null,
-        totalOutgoingAmount: null
+        // an address with no transitions has moved zero credits, not an unknown amount
+        totalIncomingAmount: '0',
+        totalOutgoingAmount: '0'
       }
 
       assert.deepEqual(body, { platformAddresses: [expectedAddress] })
