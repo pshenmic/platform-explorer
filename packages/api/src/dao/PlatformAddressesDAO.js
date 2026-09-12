@@ -226,7 +226,7 @@ module.exports = class PlatformAddressesDAO {
       .with('transitions_subquery', transitionsSubquery)
       .leftJoin('address_subquery', 'address_subquery.id', 'transitions_subquery.address_id')
       .leftJoin('state_transitions', 'state_transitions.id', 'transitions_subquery.state_transition_id')
-      .select('transitions_subquery.state_transition_id as state_transition_id', 'amount')
+      .select('transitions_subquery.state_transition_id as state_transition_id', 'transitions_subquery.amount as amount')
       .select('state_transitions.hash as tx_hash', 'state_transitions.index as index',
         'state_transitions.block_hash as block_hash', 'state_transitions.type as type',
         'state_transitions.gas_used as gas_used', 'state_transitions.status as status',
@@ -237,7 +237,7 @@ module.exports = class PlatformAddressesDAO {
           qb.select('state_transitions.data as data')
         }
       })
-      .select(this.knex.raw('amount >= 0 as incoming'))
+      .select(this.knex.raw('transitions_subquery.amount >= 0 as incoming'))
       .select('addresses_count')
       .select(this.knex.raw('CASE WHEN addresses_count = 1 THEN address_subquery.address END as address'))
       .select(this.knex.raw('CASE WHEN addresses_count = 1 THEN address_subquery.bech32m_address END as bech32m_address'))
