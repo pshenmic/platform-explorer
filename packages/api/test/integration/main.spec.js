@@ -1,5 +1,5 @@
 process.env.EPOCH_CHANGE_TIME = 3600000
-const { describe, it, before, after, mock } = require('node:test')
+const { describe, it, before, beforeEach, after, mock } = require('node:test')
 const assert = require('node:assert').strict
 const supertest = require('supertest')
 const server = require('../../src/server')
@@ -275,6 +275,13 @@ describe('Other routes', () => {
       transactions.push(transaction.hash)
       blocks.push(tmpBlock)
     }
+  })
+
+  // re-armed per test: a mock set once in before() is not in force for the later tests, and
+  // any cached entry arms a VALIDATORS_CACHE_LIFE_INTERVAL (5 min) eviction timer that keeps
+  // the test process alive long after the tests themselves have finished
+  beforeEach(() => {
+    mock.method(cache, 'set', () => {})
   })
 
   after(async () => {
