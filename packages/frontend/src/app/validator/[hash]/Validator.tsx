@@ -8,8 +8,7 @@ import Pagination from '../../../components/pagination'
 import { ErrorMessageBlock } from '../../../components/Errors'
 import BlocksList from '../../../components/blocks/BlocksList'
 import TransactionsList from '../../../components/transactions/TransactionsList'
-import BlocksChart from './BlocksChart'
-import RewardsChart from './RewardsChart'
+import ValidatorCharts from './ValidatorCharts'
 import Link from 'next/link'
 import {
   Identifier,
@@ -27,8 +26,6 @@ import { CircleIcon } from '../../../components/ui/icons'
 import { RateTooltip } from '../../../components/ui/Tooltips'
 import { WithdrawalsList } from '../../../components/transfers'
 import { useBreadcrumbs } from '../../../contexts/BreadcrumbsContext'
-import { defaultChartConfig } from '../../../components/charts/config'
-import type { TimespanValue } from '../../../components/charts/types'
 import { Badge } from '../../../components/ui/Badge'
 import { Tabs, TabList, TabPanels, Tab, TabPanel } from '../../../components/ui/Tabs'
 import { useActiveNetwork } from 'src/contexts'
@@ -111,11 +108,7 @@ function Validator({ hash }: ValidatorProps) {
   const [currentPage, setCurrentPage] = useState(1)
   const [transactions, setTransactions] = useState(emptyPaginated<Transaction>())
   const [withdrawals, setWithdrawals] = useState(emptyPaginated<Withdrawal>())
-  const [activeChartTab, setActiveChartTab] = useState(0)
   const { l1explorerBaseUrl } = useActiveNetwork()
-  const [timespan, setTimespan] = useState<TimespanValue>(
-    defaultChartConfig.timespan.values[defaultChartConfig.timespan.defaultIndex]
-  )
 
   useEffect(() => {
     setBreadcrumbs([
@@ -542,32 +535,7 @@ function Validator({ hash }: ValidatorProps) {
 
         <div className={'ValidatorPage__Column'}>
           <InfoContainer styles={['tabs']} className={'ValidatorPage__ChartsContainer'}>
-            <Tabs onChange={(index: number) => setActiveChartTab(index)} index={activeChartTab}>
-              <TabList>
-                <Tab>Proposed Blocks</Tab>
-                <Tab>Reward Earned</Tab>
-              </TabList>
-              <TabPanels>
-                <TabPanel className={'ValidatorPage__ChartTab'} position={'relative'}>
-                  <BlocksChart
-                    hash={hash}
-                    isActive={activeChartTab === 0}
-                    loading={validator.loading}
-                    timespanChangeCallback={setTimespan}
-                    timespan={timespan}
-                  />
-                </TabPanel>
-                <TabPanel className={'ValidatorPage__ChartTab'} position={'relative'}>
-                  <RewardsChart
-                    hash={hash}
-                    isActive={activeChartTab === 1}
-                    loading={validator.loading}
-                    timespanChangeCallback={setTimespan}
-                    timespan={timespan}
-                  />
-                </TabPanel>
-              </TabPanels>
-            </Tabs>
+            <ValidatorCharts key={hash} hash={hash} />
           </InfoContainer>
 
           <InfoContainer styles={['tabs']} className={'ValidatorPage__Lists'}>
