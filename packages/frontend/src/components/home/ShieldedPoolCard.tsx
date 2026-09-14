@@ -14,8 +14,9 @@ import { useQuery } from '@tanstack/react-query'
 import useResizeObserver from '@react-hook/resize-observer'
 
 import * as Api from '../../util/Api'
-import { Presets } from '../cards'
 import { PRESETS, presetRange } from './MetricChart'
+import PoolDateRange, { poolRangeLabel } from './PoolDateRange'
+import type { DateRangeFilterValue } from '../filters/types'
 import { Tooltip } from '../ui/Tooltips'
 import DashIcon from '../ui/icons/DashIcon'
 import { creditsToDash, roundUsd } from '../../util'
@@ -73,11 +74,6 @@ function CountedPoolAmount({
   )
 }
 
-const POOL_PRESETS = [
-  ...PRESETS.slice(0, 3),
-  { label: '3M', ms: 90 * DAY_MS, intervals: 100 },
-  ...PRESETS.slice(3)
-]
 const M = { top: 22, right: 16, bottom: 24, left: 48 }
 
 function fmtDash(dash: any) {
@@ -244,8 +240,21 @@ export default function ShieldedPoolCard({
     points: []
   })
   const [period, setPeriod] = useState({ loading: true, loaded: false, in: 0, out: 0 })
-  const [presetIdx, setPresetIdx] = useState(POOL_PRESETS.length - 1)
-  const range = useMemo(() => presetRange(POOL_PRESETS[presetIdx]), [presetIdx])
+  const [dateRange, setDateRange] = useState<DateRangeFilterValue | null>(null)
+  const range = useMemo(() => {
+    const current = presetRange(PRESETS[PRESETS.length - 1])
+    if (!dateRange?.start || !dateRange.end) return current
+    const start = new Date(dateRange.start)
+    const end = new Date(dateRange.end)
+    if (dateRange.mode !== 'rolling') {
+      start.setHours(0, 0, 0, 0)
+      end.setHours(23, 59, 59, 999)
+    }
+    return {
+      start: start.toISOString(),
+      end: new Date(Math.min(end.getTime(), Date.parse(current.end))).toISOString()
+    }
+  }, [dateRange])
   const [hoverI, setHoverI] = useState<number | null>(null)
   const [showDeposits, setShowDeposits] = useState(true)
   const [showWithdrawals, setShowWithdrawals] = useState(true)
@@ -323,10 +332,17 @@ export default function ShieldedPoolCard({
     setSeries(s => ({ ...s, loading: true, error: false }))
     setHoverI(null)
 
-    loadDenseBuckets(start, end)
-      .then(buckets => {
+    const currentEnd = presetRange(PRESETS[PRESETS.length - 1]).end
+    const subsequentFlows =
+      Date.parse(end) < Date.parse(currentEnd)
+        ? Api.getShieldedStatistic(new Date(Date.parse(end) + 1).toISOString(), currentEnd)
+        : Promise.resolve({ totalShieldedIn: 0, totalShieldedOut: 0 })
+    Promise.all([loadDenseBuckets(start, end), subsequentFlows])
+      .then(([buckets, subsequent]) => {
         if (gen !== fetchGen.current) return
-        setSeries({ loading: false, error: false, points: buildTvlSeries(buckets, balance) })
+        const endBalance =
+          balance - Number(subsequent.totalShieldedIn) + Number(subsequent.totalShieldedOut)
+        setSeries({ loading: false, error: false, points: buildTvlSeries(buckets, endBalance) })
       })
       .catch(() => {
         if (gen !== fetchGen.current) return
@@ -365,8 +381,8 @@ export default function ShieldedPoolCard({
 
   const balanceDash = creditsToDash(Number(pool.balance) || 0)
   const points = series.points
-  const isAll = POOL_PRESETS[presetIdx].label === 'All'
-  const windowLabel = isAll ? 'All time' : POOL_PRESETS[presetIdx].label
+  const isAll = dateRange == null
+  const windowLabel = poolRangeLabel(dateRange)
   const rangeInDash = creditsToDash(period.in)
   const rangeOutDash = creditsToDash(period.out)
   const rangeNetDash = rangeInDash - rangeOutDash
@@ -596,7 +612,7 @@ export default function ShieldedPoolCard({
           </Tooltip>
         </div>
         <div className={'ShieldedPool__Controls'}>
-          <Presets options={POOL_PRESETS} value={presetIdx} onChange={setPresetIdx} />
+          <PoolDateRange value={dateRange} onChange={setDateRange} />
           <div
             className={`ShieldedPool__Stat${period.loading && period.loaded ? ' is-updating' : ''}`}
             aria-busy={period.loading}

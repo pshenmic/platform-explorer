@@ -740,18 +740,6 @@
     margin-left: auto;
     flex-shrink: 1;
   }
-  .ShieldedPool .Presets {
-    width: auto;
-    max-width: none;
-    flex-wrap: nowrap;
-    flex-shrink: 0;
-    justify-content: flex-end;
-    gap: 2px;
-  }
-  .ShieldedPool .Presets__Chip {
-    padding: 2px 5px;
-    font-size: 0.5625rem;
-  }
   .ShieldedPool__StatCount,
   .ShieldedPool__StatValue {
     font-size: 1.25rem;
