@@ -4,7 +4,7 @@
 
 .ValidatorPage__ContentContainer {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   gap: var(--pe-space-3);
 }
 
@@ -37,8 +37,7 @@
 .ValidatorPage__Lists {
   display: flex;
   flex-direction: column;
-  flex-grow: 1;
-  margin-top: var(--pe-space-6);
+  min-width: 0;
   margin-top: var(--pe-space-3);
 }
 
@@ -60,99 +59,9 @@
   }
 }
 
-.ValidatorPage__ListContainer {
-  display: flex;
-  flex-direction: column;
-  flex-grow: 1;
-  padding-top: var(--pe-space-3);
-  padding-bottom: 0;
-  padding-left: calc(var(--pe-space-3) + 0px);
-}
-
-@media screen and (min-width: 48em) {
-  .ValidatorPage__ListContainer {
-    padding-left: calc(var(--pe-space-4) + 0px);
-  }
-}
-
-@media screen and (min-width: 62em) {
-  .ValidatorPage__ListContainer {
-    padding-left: calc(var(--pe-space-5) + 0px);
-  }
-}
-
-@media screen and (min-width: 80em) {
-  .ValidatorPage__ListContainer {
-    padding-left: calc(var(--pe-space-6) + 0px);
-  }
-}
-
-.ValidatorPage__ListContainer {
-  padding-right: calc(var(--pe-space-3) + 0px);
-}
-
-@media screen and (min-width: 48em) {
-  .ValidatorPage__ListContainer {
-    padding-right: calc(var(--pe-space-4) + 0px);
-  }
-}
-
-@media screen and (min-width: 62em) {
-  .ValidatorPage__ListContainer {
-    padding-right: calc(var(--pe-space-5) + 0px);
-  }
-}
-
-@media screen and (min-width: 80em) {
-  .ValidatorPage__ListContainer {
-    padding-right: calc(var(--pe-space-6) + 0px);
-  }
-}
-
-.ValidatorPage__ChartsContainer .Chart {
-  overflow: visible;
-}
-
 .ValidatorPage__ChartsContainer {
   padding-bottom: 0;
   overflow-x: hidden;
-}
-
-.ValidatorPage__ListPagination {
-  margin-top: calc(var(--pe-space-3) + 0px);
-}
-
-@media screen and (min-width: 48em) {
-  .ValidatorPage__ListPagination {
-    margin-top: calc(var(--pe-space-4) + 0px);
-  }
-}
-
-@media screen and (min-width: 62em) {
-  .ValidatorPage__ListPagination {
-    margin-top: calc(var(--pe-space-5) + 0px);
-  }
-}
-
-@media screen and (min-width: 80em) {
-  .ValidatorPage__ListPagination {
-    margin-top: calc(var(--pe-space-6) + 0px);
-  }
-}
-
-.ValidatorPage__ListPagination .PageItem--Previous,
-.ValidatorPage__ListPagination .PageItem--Next {
-  display: block;
-}
-
-.ValidatorPage__ListPagination .PageItem--Previous {
-  margin-right: auto;
-  margin-left: 0;
-}
-
-.ValidatorPage__ListPagination .PageItem--Next {
-  margin-left: auto;
-  margin-right: 0;
 }
 
 .ValidatorPage__GroupContainer .InfoLine--Loading .InfoLine__Value {
@@ -165,10 +74,6 @@
 
 .ValidatorPage__ValueContainer .DateBlock {
   margin-bottom: var(--pe-space-1);
-}
-
-.ValidatorPage__List {
-  flex-grow: 1;
 }
 
 .ValidatorPage__GroupContainer {
@@ -209,19 +114,41 @@
   }
 }
 
-@media screen and (min-width: 62em) and (max-width: 1100px) {
-  .ValidatorPage__ListPagination .PageLink {
-    padding: var(--pe-space-2_5) var(--pe-space-2);
-    min-width: 45px;
-  }
-
-  .ValidatorPage__ListPagination .PageItem:not(.PageItem--Previous):not(.PageItem--Next) {
-    margin: 0 var(--pe-space-1);
-  }
-}
-
 @media screen and (max-width: 420px) {
   .ValidatorPage .PageDataContainer__Content {
     padding-bottom: 0;
+  }
+}
+
+.ValidatorPage__ActivityList {
+  min-width: 0;
+  padding: 12px;
+}
+.ValidatorPage__ActivityError {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+  font: 0.75rem var(--pe-font-mono);
+  color: var(--pe-color-fg-muted);
+}
+.ValidatorPage__ActivityError button {
+  padding: 6px 12px;
+  border: 1px solid var(--pe-color-calendar-border);
+  border-radius: 6px;
+  background: transparent;
+  color: var(--pe-color-fg);
+  cursor: pointer;
+}
+.ValidatorPage__Lists .Tabs__TabList {
+  overflow-x: auto;
+}
+.ValidatorPage__Lists .Tabs__Tab {
+  flex-shrink: 0;
+}
+@media screen and (max-width: 420px) {
+  .ValidatorPage .PageDataContainer__ContentContainer {
+    margin-inline: 0;
   }
 }

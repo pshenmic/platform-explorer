@@ -2,7 +2,7 @@
 
 import { columnLayout } from './BlocksList.columns'
 
-import { useMemo } from 'react'
+import { useMemo, type ReactNode } from 'react'
 import { useRouter } from 'next/navigation'
 import { useQuery, useQueries } from '@tanstack/react-query'
 import { Badge } from '../ui/Badge'
@@ -38,7 +38,8 @@ function BlocksList({
   onFilterChange,
   loading,
   skeletonCount,
-  paging
+  paging,
+  title = 'Blocks'
 }: {
   blocks?: any[]
   headerStyles?: string
@@ -48,6 +49,7 @@ function BlocksList({
   loading?: boolean
   skeletonCount?: number
   paging?: DataListProps['paging']
+  title?: ReactNode
 }) {
   const router = useRouter()
   const statusQuery = useQuery({
@@ -210,7 +212,7 @@ function BlocksList({
       onFilterChange={onFilterChange}
       loading={loading}
       skeletonCount={skeletonCount}
-      title={'Blocks'}
+      title={title}
       paging={paging}
     />
   )
