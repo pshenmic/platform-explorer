@@ -1,0 +1,76 @@
+.SliderNavigation {
+  position: relative;
+  width: 100%;
+}
+
+.SliderNavigation__Buttons {
+  display: flex;
+  justify-content: space-between;
+}
+
+.SliderNavigation__Button {
+  display: flex;
+  width: var(--pe-space-8);
+  height: var(--pe-space-8);
+  border-radius: var(--pe-radius-def);
+  align-items: center;
+  justify-content: center;
+  background-color: var(--pe-color-brand-normal);
+}
+
+.SliderNavigation__Button:hover {
+  cursor: pointer;
+  background-color: var(--pe-color-brand-light);
+}
+
+.SliderNavigation__Button--Disabled {
+  background-color: var(--pe-color-gray-800);
+}
+
+.SliderNavigation__Button--Disabled:hover {
+  background-color: var(--pe-color-gray-800);
+  cursor: default;
+}
+
+.SliderNavigation__Button--Next {
+  position: absolute;
+  right: 0;
+}
+
+.SliderNavigation__ProgressBars {
+  position: absolute;
+  display: flex;
+  width: calc(100% - 120px);
+  margin: 0 auto;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.SliderNavigation__ProgressBar {
+  width: 100%;
+  height: 2px;
+  margin-right: var(--pe-space-4);
+}
+
+.Progress {
+  overflow: hidden;
+  background: rgba(var(--pe-color-brand-normal-rgb), 0.3);
+}
+
+.Progress--gray {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.Progress__Fill {
+  height: 100%;
+  background: var(--pe-color-brand-normal);
+}
+
+.Progress--gray .Progress__Fill {
+  background: var(--pe-color-white-50);
+}
+
+.SliderNavigation__ProgressBar:last-child {
+  margin-right: 0;
+}

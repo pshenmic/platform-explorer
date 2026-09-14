@@ -1,0 +1,28 @@
+.ContestedResourceContent__ValueContainer .Alias__SymbolsContainer {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.ContestedResourceContent {
+  display: flex;
+  flex-direction: column;
+  gap: var(--pe-space-2);
+  width: max-content;
+  max-width: 100%;
+}
+
+.ContestedResourceContent__ValueContainer {
+  display: inline-flex;
+  flex-wrap: wrap;
+  width: 100%;
+  gap: var(--pe-space-1);
+  font-weight: var(--pe-font-weight-normal);
+}
+
+.ContestedResourceContent__VoteBadges {
+  margin-bottom: var(--pe-space-1);
+}
+
+.ContestedResourceContent__ContendersBadge {
+  display: inline-block;
+}

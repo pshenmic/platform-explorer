@@ -20,30 +20,36 @@ const useFilters = (defaultFilters: Filters = {}) => {
   }, [])
 
   /** Edit single fields */
-  const handleFilterChange = useCallback((filterName: string, value: FilterValue) => {
-    setFilters(prevFilters => {
-      const newFilters: Filters = {
-        ...prevFilters,
-        [filterName]: value ?? ''
-      }
-      return prepareFilters(newFilters)
-    })
-  }, [prepareFilters])
+  const handleFilterChange = useCallback(
+    (filterName: string, value: FilterValue) => {
+      setFilters(prevFilters => {
+        const newFilters: Filters = {
+          ...prevFilters,
+          [filterName]: value ?? ''
+        }
+        return prepareFilters(newFilters)
+      })
+    },
+    [prepareFilters]
+  )
 
   /** Edit array type filters */
-  const handleMultipleValuesChange = useCallback((fieldName: string, value: string) => {
-    setFilters(prevFilters => {
-      const currentValues = (prevFilters[fieldName] as string[] | undefined) ?? []
-      const newValues = currentValues.includes(value)
-        ? currentValues.filter(v => v !== value)
-        : [...currentValues, value]
+  const handleMultipleValuesChange = useCallback(
+    (fieldName: string, value: string) => {
+      setFilters(prevFilters => {
+        const currentValues = (prevFilters[fieldName] as string[] | undefined) ?? []
+        const newValues = currentValues.includes(value)
+          ? currentValues.filter(v => v !== value)
+          : [...currentValues, value]
 
-      return prepareFilters({
-        ...prevFilters,
-        [fieldName]: newValues
+        return prepareFilters({
+          ...prevFilters,
+          [fieldName]: newValues
+        })
       })
-    })
-  }, [prepareFilters])
+    },
+    [prepareFilters]
+  )
 
   return {
     filters,

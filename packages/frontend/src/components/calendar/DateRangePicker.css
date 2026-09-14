@@ -1,0 +1,297 @@
+.DateRangePicker {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  font-size: var(--pe-text-sm);
+  font-family: var(--pe-font-mono);
+  container-type: inline-size;
+}
+
+.DateRangePicker__Header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: var(--pe-space-2);
+  width: 100%;
+  margin-bottom: var(--pe-space-4);
+}
+.DateRangePicker--Compact .DateRangePicker__Header {
+  justify-content: space-between;
+  margin-bottom: var(--pe-space-2);
+}
+.DateRangePicker--Compact .DateRangePicker__HeaderMonth {
+  flex: 1;
+  width: auto;
+  max-width: none;
+  font-size: var(--pe-text-sm);
+}
+
+.DateRangePicker--SingleCalendar .DateRangePicker__HeaderMonth {
+  width: 100%;
+  max-width: none;
+}
+
+.DateRangePicker__HeaderMonth {
+  width: 50%;
+  max-width: 350px;
+  text-align: center;
+  font-family: var(--pe-font-heading);
+  font-size: var(--pe-text-md);
+  font-weight: var(--pe-font-weight-bold);
+}
+
+.DateRangePicker__Calendar {
+  width: 100%;
+  margin-bottom: var(--pe-space-2_5);
+}
+
+.DateRangePicker__Root {
+  width: 100%;
+}
+
+.DateRangePicker__Months {
+  display: flex;
+  gap: var(--pe-space-6);
+  justify-content: center;
+  width: 100%;
+}
+
+.DateRangePicker--SingleCalendar .DateRangePicker__Months {
+  gap: 0;
+}
+
+.DateRangePicker__Month {
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+.DateRangePicker__Caption {
+  display: none;
+}
+
+.DateRangePicker__Nav {
+  display: none;
+}
+
+.DateRangePicker--NoWeekDay thead {
+  display: none;
+}
+
+.DateRangePicker__Grid {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+.DateRangePicker__Weekday {
+  padding: 0 0 4px;
+  font-family: var(--pe-font-heading);
+  font-size: 0.625rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--pe-color-fg-muted);
+  text-align: center;
+}
+
+.DateRangePicker__Day {
+  padding: 0;
+  text-align: center;
+  vertical-align: middle;
+}
+
+.DateRangePicker__DayBtn {
+  appearance: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: clamp(1.375rem, 7.5cqi, 1.875rem);
+  height: clamp(1.375rem, 7.5cqi, 1.875rem);
+  margin: 0 auto;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: inherit;
+  font-family: var(--pe-font-heading);
+  font-size: clamp(0.6875rem, 3.6cqi, 0.8125rem);
+  cursor: pointer;
+}
+
+.DateRangePicker__DayBtn:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.DateRangePicker__Day--Today .DateRangePicker__DayBtn {
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.22);
+}
+
+.DateRangePicker__Day--RangeMiddle {
+  background: var(--pe-color-white-alpha-200);
+}
+
+.DateRangePicker__Day--RangeMiddle .DateRangePicker__DayBtn {
+  border-radius: 0;
+  background: transparent;
+  color: inherit;
+  font-weight: 500;
+}
+
+.DateRangePicker__Day--RangeMiddle .DateRangePicker__DayBtn:hover {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.DateRangePicker__Day--RangeStart:not(.DateRangePicker__Day--RangeEnd) {
+  background: linear-gradient(90deg, transparent 50%, var(--pe-color-white-alpha-200) 50%);
+}
+
+.DateRangePicker__Day--RangeEnd:not(.DateRangePicker__Day--RangeStart) {
+  background: linear-gradient(90deg, var(--pe-color-white-alpha-200) 50%, transparent 50%);
+}
+
+.DateRangePicker__Day--RangeStart .DateRangePicker__DayBtn,
+.DateRangePicker__Day--RangeEnd .DateRangePicker__DayBtn,
+.DateRangePicker__Day--Selected:not(.DateRangePicker__Day--RangeMiddle) .DateRangePicker__DayBtn {
+  background: var(--pe-color-gray-100);
+  color: var(--pe-color-gray-900);
+  font-weight: 700;
+}
+
+.DateRangePicker__Day--RangeStart .DateRangePicker__DayBtn:hover,
+.DateRangePicker__Day--RangeEnd .DateRangePicker__DayBtn:hover,
+.DateRangePicker__Day--Selected:not(.DateRangePicker__Day--RangeMiddle)
+  .DateRangePicker__DayBtn:hover {
+  background: var(--pe-color-white-50);
+}
+
+.DateRangePicker__Day--Outside .DateRangePicker__DayBtn {
+  color: var(--pe-color-fg-muted);
+  opacity: 0.4;
+}
+
+.DateRangePicker__Day--Disabled .DateRangePicker__DayBtn {
+  opacity: 0.35;
+  pointer-events: none;
+}
+
+.DateRangePicker__MonthSelector {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  margin-top: var(--pe-space-2_5);
+}
+
+.DateRangePicker__MonthButton,
+.DateRangePicker__Arrow {
+  color: var(--pe-color-fg);
+  border: 1px solid var(--pe-color-calendar-border);
+  border-radius: var(--pe-radius-def);
+  background-color: rgba(var(--pe-color-gray-800-rgb), 0.3);
+  cursor: pointer;
+  transition: background-color 0.1s;
+  margin: 0 var(--pe-space-1);
+}
+
+.DateRangePicker__MonthButton:hover,
+.DateRangePicker__Arrow:hover {
+  background-color: rgba(var(--pe-color-gray-800-rgb), 0.5);
+}
+
+.DateRangePicker__MonthButton:disabled,
+.DateRangePicker__Arrow:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.DateRangePicker__MonthButton {
+  color: var(--pe-color-fg-muted);
+  padding: var(--pe-space-2_5) var(--pe-space-4);
+  text-transform: uppercase;
+}
+
+.DateRangePicker__MonthButton:hover {
+  color: var(--pe-color-gray-100);
+}
+
+.DateRangePicker__MonthButton--Active {
+  color: var(--pe-color-fg);
+  background-color: var(--pe-color-brand-normal);
+}
+
+.DateRangePicker__MonthButton--Active:hover {
+  background-color: var(--pe-color-brand-normal);
+  cursor: default;
+}
+
+.DateRangePicker__Arrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+}
+
+.DateRangePicker__Arrow svg {
+  width: var(--pe-space-2);
+  height: var(--pe-space-2);
+}
+
+.DateRangePicker__Arrow--Left {
+  margin-right: auto;
+  margin-left: 0;
+}
+
+.DateRangePicker__Arrow--Left svg {
+  transform: rotate(180deg);
+}
+
+.DateRangePicker__Arrow--Right {
+  margin-left: auto;
+  margin-right: 0;
+}
+
+@media screen and (max-width: 48em) {
+  .DateRangePicker__DayBtn {
+    width: clamp(1.25rem, 8cqi, 1.625rem);
+    height: clamp(1.25rem, 8cqi, 1.625rem);
+    font-size: 0.6875rem;
+  }
+
+  .DateRangePicker:not(.DateRangePicker--SingleCalendar) .DateRangePicker__Months {
+    flex-direction: column;
+    gap: var(--pe-space-6);
+  }
+
+  .DateRangePicker:not(.DateRangePicker--SingleCalendar) .DateRangePicker__Header {
+    flex-direction: column;
+    gap: var(--pe-space-2);
+  }
+
+  .DateRangePicker:not(.DateRangePicker--SingleCalendar) .DateRangePicker__HeaderMonth {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+@container (max-width: 640px) {
+  .DateRangePicker__MonthButton {
+    font-size: var(--pe-text-2xs);
+    padding: var(--pe-space-2_5) var(--pe-space-3_5);
+  }
+
+  .DateRangePicker__Arrow {
+    width: var(--pe-space-6);
+  }
+}
+
+@container (max-width: 450px) {
+  .DateRangePicker__MonthButton {
+    font-size: var(--pe-space-2);
+    padding: var(--pe-space-1_5);
+    margin: 0 2px;
+  }
+
+  .DateRangePicker__Arrow {
+    width: var(--pe-space-4);
+  }
+}

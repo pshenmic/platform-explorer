@@ -1,4 +1,4 @@
-import { ResponseErrorNotFound, ResponseErrorTimeout } from './Errors'
+import { ResponseErrorInternalServer, ResponseErrorNotFound, ResponseErrorTimeout } from './Errors'
 import type {
   Block,
   ContestedResource,
@@ -24,7 +24,7 @@ import type {
 type HttpMethod = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH'
 type SortOrder = 'asc' | 'desc'
 type QueryValue = string | number | boolean | string[] | null | undefined
-type QueryFilters = Record<string, QueryValue>
+export type QueryFilters = Record<string, QueryValue>
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL
 
@@ -57,16 +57,37 @@ const call = async <T>(path: string, method: HttpMethod, body?: unknown): Promis
 
     if (response.status === 200) {
       return response.json() as Promise<T>
-    } else if (response.status === 404) {
-      throw new ResponseErrorNotFound()
-    } else {
-      const text = await response.text()
-      console.error(text)
-      const error = new Error('Unknown status code: ' + response.status)
-      throw error
     }
+    if (response.status === 404) {
+      throw new ResponseErrorNotFound()
+    }
+    const text = await response.text()
+    let message = ''
+    try {
+      const parsed = JSON.parse(text) as { error?: string; message?: string }
+      message = parsed.error || parsed.message || ''
+    } catch {
+      message = text
+    }
+    const backendDown =
+      /tenderdash|dashcore backend is not available/i.test(message) ||
+      response.status === 502 ||
+      response.status === 503 ||
+      response.status === 504 ||
+      response.status === 500
+    if (backendDown) {
+      throw new ResponseErrorInternalServer(message || undefined)
+    }
+    throw new Error(message || `Unknown status code: ${response.status}`)
   } catch (e) {
-    console.error(e)
+    if (
+      !(e instanceof ResponseErrorNotFound) &&
+      !(e instanceof ResponseErrorTimeout) &&
+      !(e instanceof ResponseErrorInternalServer) &&
+      !(e instanceof Error && /Bad timestamp range/i.test(e.message))
+    ) {
+      console.error(e)
+    }
     throw e
   }
 }
@@ -120,12 +141,21 @@ const getTransactionsHistory = (
   )
 }
 
-interface TransactionsStatisticItem {
-  transactionType: string
+interface TransactionsStatisticBatchType {
+  batchType: string
   count: number
 }
 
-const getTransactionsStatistic = (start?: string, end?: string): Promise<TransactionsStatisticItem[]> => {
+interface TransactionsStatisticItem {
+  transactionType: string
+  count: number
+  batchTypes?: TransactionsStatisticBatchType[] | null
+}
+
+const getTransactionsStatistic = (
+  start?: string,
+  end?: string
+): Promise<TransactionsStatisticItem[]> => {
   const range = start && end ? `?timestamp_start=${start}&timestamp_end=${end}` : ''
   return call<TransactionsStatisticItem[]>(`transactions/statistic${range}`, 'GET')
 }
@@ -134,7 +164,7 @@ interface ShieldedStatistic {
   totalShieldedIn: string
   totalShieldedOut: string
   transitionsCount: number
-  types?: Array<{ transactionType: string, count: number, amount: string }>
+  types?: Array<{ transactionType: string; count: number; amount: string }>
 }
 
 // optional time interval; omitted → all-time
@@ -264,6 +294,23 @@ const getBlocks = (
   return call<PaginatedResultSet<Block>>(`blocks?${params.toString()}`, 'GET')
 }
 
+interface AvgBlockTimeHistoryPoint {
+  avgBlockTime: number
+  blockHeight: number | null
+  blockHash: string | null
+}
+
+const getAvgBlockTimeHistory = (
+  start: string,
+  end: string,
+  intervalsCount?: number
+): Promise<Array<SeriesData<AvgBlockTimeHistoryPoint>>> => {
+  return call<Array<SeriesData<AvgBlockTimeHistoryPoint>>>(
+    `blocks/avgBlockTime/history?timestamp_start=${start}&timestamp_end=${end}${intervalsCount ? `&intervalsCount=${intervalsCount}` : ''}`,
+    'GET'
+  )
+}
+
 const getBlocksByValidator = (
   proTxHash: string,
   page: number = 1,
@@ -291,7 +338,10 @@ const getContestedResources = (
     ...filters
   })
 
-  return call<PaginatedResultSet<ContestedResource>>(`contestedResources?${params.toString()}`, 'GET')
+  return call<PaginatedResultSet<ContestedResource>>(
+    `contestedResources?${params.toString()}`,
+    'GET'
+  )
 }
 
 const getContestedResourceByValue = (value: string): Promise<ContestedResource> => {
@@ -312,7 +362,26 @@ const getContestedResourceVotes = (
     ...filters
   })
 
-  return call<PaginatedResultSet<Vote>>(`contestedResource/${value}/votes?${params.toString()}`, 'GET')
+  return call<PaginatedResultSet<Vote>>(
+    `contestedResource/${value}/votes?${params.toString()}`,
+    'GET'
+  )
+}
+
+interface DataContractRatingItem {
+  identifier: string
+  transitionsCount: number
+}
+
+const getDataContractsRating = (
+  page: number = 1,
+  limit: number = 10,
+  order: SortOrder = 'desc'
+): Promise<PaginatedResultSet<DataContractRatingItem>> => {
+  return call<PaginatedResultSet<DataContractRatingItem>>(
+    `dataContracts/rating?page=${page}&limit=${limit}&order=${order}`,
+    'GET'
+  )
 }
 
 const getDataContractByIdentifier = (identifier: string): Promise<DataContract> => {
@@ -401,7 +470,10 @@ const getDocumentsByDataContract = (
     timestamp_start: filters.timestamp_start,
     timestamp_end: filters.timestamp_end
   })
-  return call<PaginatedResultSet<Document>>(`dataContract/${dataContractIdentifier}/documents?${params.toString()}`, 'GET')
+  return call<PaginatedResultSet<Document>>(
+    `dataContract/${dataContractIdentifier}/documents?${params.toString()}`,
+    'GET'
+  )
 }
 
 const getEpoch = (identifier?: number | string): Promise<EpochData> => {
@@ -458,7 +530,10 @@ const getDocumentsByIdentity = (
     timestamp_start: filters.timestamp_start,
     timestamp_end: filters.timestamp_end
   })
-  return call<PaginatedResultSet<Document>>(`identity/${identifier}/documents?${params.toString()}`, 'GET')
+  return call<PaginatedResultSet<Document>>(
+    `identity/${identifier}/documents?${params.toString()}`,
+    'GET'
+  )
 }
 
 const getWithdrawalsByIdentity = (
@@ -532,8 +607,6 @@ const getIdentities = (
     limit,
     order: filters?.order ?? order,
     order_by: filters?.order_by ?? orderBy,
-    // includeMasternodes=true (Show all toggle on) → omit identity_type so backend returns everything
-    // includeMasternodes=false (default) → request only regular identities
     identity_type: filters?.identity_type ?? (includeMasternodes ? null : 'regular'),
     balance_min: filters?.balance_min,
     balance_max: filters?.balance_max,
@@ -562,6 +635,57 @@ const getIdentitiesHistory = (
   )
 }
 
+interface ActiveIdentityItem {
+  identifier: string
+  transactionsCount: number
+  aliases?: Array<{ alias: string; status: string; contested: boolean }>
+}
+
+const getActiveIdentities = (
+  page: number = 1,
+  limit: number = 10,
+  order: SortOrder = 'desc',
+  timestampStart?: string,
+  timestampEnd?: string
+): Promise<PaginatedResultSet<ActiveIdentityItem>> => {
+  const params = prepareQueryParams({
+    page: Math.max(1, Number(page)),
+    limit: Math.max(1, Number(limit)),
+    order,
+    timestamp_start: timestampStart,
+    timestamp_end: timestampEnd
+  })
+  return call<PaginatedResultSet<ActiveIdentityItem>>(
+    `identities/active?${params.toString()}`,
+    'GET'
+  )
+}
+
+interface ActiveDataContractItem {
+  identifier: string
+  transitionsCount: number
+}
+
+const getActiveDataContracts = (
+  page: number = 1,
+  limit: number = 10,
+  order: SortOrder = 'desc',
+  timestampStart?: string,
+  timestampEnd?: string
+): Promise<PaginatedResultSet<ActiveDataContractItem>> => {
+  const params = prepareQueryParams({
+    page: Math.max(1, Number(page)),
+    limit: Math.max(1, Number(limit)),
+    order,
+    timestamp_start: timestampStart,
+    timestamp_end: timestampEnd
+  })
+  return call<PaginatedResultSet<ActiveDataContractItem>>(
+    `dataContracts/active?${params.toString()}`,
+    'GET'
+  )
+}
+
 const getValidators = (
   page: number = 1,
   limit: number = 30,
@@ -572,7 +696,6 @@ const getValidators = (
     page: Math.max(1, Number(page)),
     limit: Math.max(1, Number(limit)),
     order,
-    // order_by: orderBy,
     ...filters
   })
 
@@ -581,6 +704,41 @@ const getValidators = (
 
 const getValidatorByProTxHash = (proTxHash: string): Promise<Validator> => {
   return call<Validator>(`validator/${proTxHash}`, 'GET')
+}
+
+export interface QuorumMember {
+  proTxHash: string
+  service?: string | null
+  pubKeyOperator?: string | null
+  valid?: boolean | null
+}
+
+/** Members are present on /quorums/current and /quorum/:hash, not on /quorums. */
+export interface PlatformQuorum {
+  blockHeight?: number | null
+  creationHeight?: number | null
+  minedBlockHash?: string | null
+  numValidMembers?: number | null
+  healthRatio?: string | number | null
+  type?: string | null
+  quorumHash?: string | null
+  quorumIndex?: number | null
+  quorumPublicKey?: string | null
+  previousConsecutiveDKGFailures?: number | null
+  isCurrent?: boolean | null
+  members?: QuorumMember[] | null
+}
+
+const getQuorums = (): Promise<PlatformQuorum[]> => {
+  return call<PlatformQuorum[]>('quorums', 'GET')
+}
+
+const getCurrentQuorum = (): Promise<PlatformQuorum> => {
+  return call<PlatformQuorum>('quorums/current', 'GET')
+}
+
+const getQuorumByHash = (quorumHash: string): Promise<PlatformQuorum> => {
+  return call<PlatformQuorum>(`quorum/${quorumHash}`, 'GET')
 }
 
 const getValidatorByMasternodeIdentity = (identity: string): Promise<Validator> => {
@@ -692,6 +850,7 @@ const waitForStateTransitionResult = (hash: string): Promise<unknown> => {
 export {
   getStatus,
   getBlocks,
+  getAvgBlockTimeHistory,
   getContestedResources,
   getContestedResourceByValue,
   getContestedResourceVotes,
@@ -714,10 +873,13 @@ export {
   getDocumentByIdentifier,
   getDocumentRevisions,
   getDataContractByIdentifier,
+  getDataContractsRating,
   getDataContracts,
   getIdentities,
   getIdentity,
   getIdentitiesHistory,
+  getActiveIdentities,
+  getActiveDataContracts,
   getTransactionsByIdentity,
   getDataContractsByIdentity,
   getDataContractTransactions,
@@ -727,6 +889,9 @@ export {
   getTokensByIdentity,
   getValidators,
   getValidatorByProTxHash,
+  getQuorums,
+  getCurrentQuorum,
+  getQuorumByHash,
   getBlocksByValidator,
   getBlocksStatsByValidator,
   getRewardsStatsByValidator,

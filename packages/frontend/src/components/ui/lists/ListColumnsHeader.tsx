@@ -1,7 +1,7 @@
 'use client'
 
 import type { ReactNode } from 'react'
-import './ListColumnsHeader.scss'
+import './ListColumnsHeader.css'
 
 interface ListColumn {
   id: string | number
@@ -14,17 +14,18 @@ interface ListColumnsHeaderProps {
   columnClassName?: string
 }
 
-export default function ListColumnsHeader ({ headers, className, columnClassName }: ListColumnsHeaderProps) {
+export default function ListColumnsHeader({
+  headers,
+  className,
+  columnClassName
+}: ListColumnsHeaderProps) {
   return (
     <div className={`ListColumnsHeader ${className || ''}`}>
-        {headers.map((col) => (
-          <div
-            key={col.id}
-            className={`ListColumnsHeader__Column ${columnClassName || ''}`}
-          >
-            <span>{col.column.columnDef?.header}</span>
-          </div>
-        ))}
+      {headers.map(col => (
+        <div key={col.id} className={`ListColumnsHeader__Column ${columnClassName || ''}`}>
+          <span>{col.column.columnDef?.header}</span>
+        </div>
+      ))}
     </div>
   )
 }

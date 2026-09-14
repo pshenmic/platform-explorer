@@ -1,0 +1,199 @@
+.VotesListItem {
+  display: flex;
+  width: 100%;
+  text-decoration: none;
+  padding: var(--pe-list-row-pad-y) var(--pe-list-row-pad-x);
+  margin-bottom: var(--pe-space-2);
+  line-height: var(--pe-space-6);
+  color: var(--pe-color-gray-100);
+  font-family: var(--pe-font-mono);
+  font-size: 12pt;
+  border-radius: var(--pe-list-row-radius);
+  border: 1px solid var(--pe-color-gray-750);
+  background-color: rgba(var(--pe-color-gray-800-rgb), 0.5);
+  transition: all 0.1s;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .VotesListItem:hover {
+    background-color: var(--pe-color-gray-750);
+    text-decoration: none;
+    cursor: pointer;
+  }
+}
+
+.VotesListItem--Timestamp,
+.VotesListItem--Timestamp .DateBlock__Date,
+.VotesListItem__Column--Timestamp,
+.VotesListItem__Column--Timestamp .DateBlock__Date {
+  font-size: var(--pe-text-sm);
+}
+
+.VotesListItem:active {
+  transform: translateY(1px);
+  box-shadow: 0 0 9999px 0 rgba(0, 0, 0, 0.25) inset;
+}
+
+.VotesListItem:last-child {
+  margin-bottom: 0;
+}
+
+.VotesListItem__Column--Credits,
+.VotesListItem__Column--Number {
+  font-size: var(--pe-text-sm);
+  font-weight: var(--pe-font-weight-bold);
+}
+
+.VotesListItem__IdentifierContainer {
+  display: flex;
+  align-items: center;
+  min-width: 50px;
+}
+
+.VotesListItem__Avatar {
+  height: var(--pe-space-6);
+  width: var(--pe-space-6);
+  flex-shrink: 0;
+  margin-right: var(--pe-space-3);
+}
+
+.VotesListItem--Timestamp,
+.VotesListItem__Column--Timestamp {
+  font-family: var(--pe-font-mono);
+  white-space: nowrap;
+  color: var(--pe-color-fg);
+}
+
+.VotesListItem__Content {
+  display: grid;
+  gap: var(--pe-space-4);
+  grid-template-columns: 4rem minmax(8.125rem, 30rem) minmax(8.125rem, 30rem) minmax(
+      8.125rem,
+      30rem
+    ) minmax(8.125rem, 500rem) 4.5rem 3.5rem;
+}
+
+@container (max-width: 62rem) {
+  .VotesListItem__Content {
+    grid-template-columns: 4rem minmax(8.125rem, 30rem) minmax(8.125rem, 30rem) minmax(
+        8.125rem,
+        30rem
+      ) 4.5rem 3.5rem;
+  }
+}
+
+@container (max-width: 55rem) {
+  .VotesListItem__Content {
+    grid-template-columns: 4rem minmax(8.125rem, 30rem) minmax(8.125rem, 30rem) 4.5rem 3.5rem;
+  }
+}
+
+@container (max-width: 37rem) {
+  .VotesListItem__Content {
+    grid-template-columns: 4rem minmax(0rem, 30rem) 4.5rem 3.5rem;
+  }
+}
+
+@container (max-width: 27rem) {
+  .VotesListItem__Content {
+    gap: var(--pe-space-2);
+  }
+}
+
+@container (max-width: 24rem) {
+  .VotesListItem__Content {
+    grid-template-columns: 4rem minmax(0rem, 30rem) 4.5rem;
+  }
+}
+
+.VotesListItem__Content {
+  align-items: center;
+}
+
+.VotesListItem__Content--NoDataContract {
+  display: grid;
+  gap: var(--pe-space-4);
+  grid-template-columns: 4rem minmax(9rem, 30rem) minmax(9rem, 30rem) minmax(9rem, 500rem) 4.5rem 3.5rem;
+}
+
+@container (max-width: 55rem) {
+  .VotesListItem__Content--NoDataContract {
+    grid-template-columns: 4rem minmax(8.125rem, 30rem) minmax(8.125rem, 30rem) 4.5rem 3.5rem;
+  }
+}
+
+@container (max-width: 37rem) {
+  .VotesListItem__Content--NoDataContract {
+    grid-template-columns: 4rem minmax(0rem, 30rem) 4.5rem 3.5rem;
+  }
+}
+
+@container (max-width: 27rem) {
+  .VotesListItem__Content--NoDataContract {
+    gap: var(--pe-space-2);
+  }
+}
+
+@container (max-width: 24rem) {
+  .VotesListItem__Content--NoDataContract {
+    grid-template-columns: 4rem minmax(0rem, 30rem) 4.5rem;
+  }
+}
+
+.VotesListItem__Column {
+  display: flex;
+  align-items: center;
+}
+
+.VotesListItem__Column:last-child {
+  justify-content: flex-end;
+}
+
+@container (max-width: 62rem) {
+  .VotesListItem__Column--DataContract {
+    display: none;
+  }
+}
+
+@container (max-width: 55rem) {
+  .VotesListItem__Column--Document {
+    display: none;
+  }
+}
+
+@container (max-width: 37rem) {
+  .VotesListItem__Column--TowardsIdentity {
+    display: none;
+  }
+}
+
+@container (max-width: 24rem) {
+  .VotesListItem__Column--Power {
+    display: none;
+  }
+
+  .VotesListItem__Column--Choice {
+    justify-content: flex-end;
+  }
+}
+
+.VotesListItem__Column .LinkContainer {
+  width: 100%;
+}
+
+.VotesListItem__Column--Choice .VoteBadge {
+  display: flex;
+}
+
+.VotesListItem__Column--Choice .VoteBadge span {
+  white-space: wrap;
+  width: min-content;
+  border-radius: var(--pe-radius-sm);
+  text-align: center;
+  padding: 0.188rem var(--pe-space-2_5);
+  line-height: 0.8rem;
+}
+
+.VotesListItem__Column {
+  overflow: hidden;
+}

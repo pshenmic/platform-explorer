@@ -1,7 +1,9 @@
 const pad2 = (n: number): string => String(n).padStart(2, '0')
 const DATE_RE = /^(\d{2})_(\d{2})_(\d{4})$/
 
-export const encodeDateToURL = (value: Date | string | number | null | undefined): string | null => {
+export const encodeDateToURL = (
+  value: Date | string | number | null | undefined
+): string | null => {
   if (!value) return null
   const d = value instanceof Date ? value : new Date(value)
   if (isNaN(d.getTime())) return null

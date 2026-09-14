@@ -3,16 +3,16 @@ const Coinbase = require('../coinbase')
 
 class RateController {
   async getUSDRate (request, response) {
-    const kucoinResponse = await Kucoin.getUSDRate()
+    const kucoinResponse = await Kucoin.getRates()
 
-    if (typeof kucoinResponse === 'number') {
-      return response.send({ usd: kucoinResponse, source: 'Kucoin' })
+    if (typeof kucoinResponse.usd === 'number') {
+      return response.send({ ...kucoinResponse, source: 'Kucoin' })
     }
 
-    const coinbaseResponse = await Coinbase.getUSDRate(request)
+    const coinbaseResponse = await Coinbase.getRates()
 
-    if (typeof coinbaseResponse === 'number') {
-      return response.send({ usd: coinbaseResponse, source: 'Coinbase' })
+    if (typeof coinbaseResponse.usd === 'number') {
+      return response.send({ ...coinbaseResponse, source: 'Coinbase' })
     }
 
     response.status(503).send({ error: 'Rate services unavailable' })

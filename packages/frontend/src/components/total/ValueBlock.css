@@ -1,0 +1,222 @@
+.ValueBlock {
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding-left: 44px;
+}
+
+.ValueBlock::before {
+  content: "";
+  display: block;
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 28px;
+  height: 28px;
+}
+
+.ValueBlock--Blocks::before {
+  background: url("/images/icons/block.svg") no-repeat center;
+  background-size: contain;
+}
+
+.ValueBlock--Transactions::before {
+  background: url("/images/icons/transactions.svg") no-repeat center;
+  background-size: contain;
+}
+
+.ValueBlock--Timer::before {
+  background: url("/images/icons/timer.svg") no-repeat center;
+  background-size: contain;
+}
+
+.ValueBlock--Epoch::before {
+  background: url("/images/icons/timer.svg") no-repeat center;
+  background-size: contain;
+}
+
+.ValueBlock--Sandglass::before {
+  background: url("/images/icons/sandglass.svg") no-repeat center;
+  background-size: contain;
+}
+
+.ValueBlock--Nodes::before {
+  background: url("/images/icons/nodes.svg") no-repeat center;
+  background-size: contain;
+}
+
+.ValueBlock--Coins::before {
+  background: url("/images/icons/coins.svg") no-repeat center;
+  background-size: contain;
+}
+
+.ValueBlock--StarCheck::before {
+  background: url("/images/icons/star-check.svg") no-repeat center;
+  background-size: contain;
+}
+
+.ValueBlock:is(.ValueBlock--Christmas.ValueBlock--Blocks)::before {
+  background: url("/images/icons/block-present.svg") no-repeat center;
+  background-size: contain;
+  width: 30px;
+  height: 30px;
+  margin: -1px;
+}
+
+.ValueBlock__Title {
+  color: var(--pe-color-brand-deep);
+  font-size: var(--pe-text-lg);
+  margin-right: var(--pe-space-2_5);
+  white-space: nowrap;
+}
+
+.ValueBlock__Value {
+  font-size: var(--pe-text-xl);
+}
+
+.ValueBlock__Value--Loading {
+  overflow: hidden;
+  position: relative;
+}
+
+@keyframes LoadingLine {
+  0% {
+    left: -100%;
+    width: 100%;
+  }
+
+  50% {
+    left: 100%;
+    width: 100%;
+  }
+
+  100% {
+    left: 100%;
+    width: 100%;
+  }
+}
+
+Tr .ValueBlock__Value--Loading::before {
+  background-color: var(--pe-color-gray-800);
+  opacity: var(--pe-opacity-subtle);
+}
+
+Tr:nth-child(1n) .ValueBlock__Value--Loading::after {
+  animation-delay: -0.5s;
+}
+
+Tr:nth-child(2n) .ValueBlock__Value--Loading::after {
+  animation-delay: 0s;
+}
+
+Tr:nth-child(3n) .ValueBlock__Value--Loading::after {
+  animation-delay: 0.5s;
+}
+
+Tr:nth-child(4n) .ValueBlock__Value--Loading::after {
+  animation-delay: 1s;
+}
+
+Tr:nth-child(5n) .ValueBlock__Value--Loading::after {
+  animation-delay: 1.5s;
+}
+
+Tr:nth-child(6n) .ValueBlock__Value--Loading::after {
+  animation-delay: 2s;
+}
+
+Tr:nth-child(7n) .ValueBlock__Value--Loading::after {
+  animation-delay: 2.5s;
+}
+
+Tr:nth-child(8n) .ValueBlock__Value--Loading::after {
+  animation-delay: 3s;
+}
+
+Tr:nth-child(9n) .ValueBlock__Value--Loading::after {
+  animation-delay: 3.5s;
+}
+
+Tr:nth-child(10n) .ValueBlock__Value--Loading::after {
+  animation-delay: 4s;
+}
+
+.ValueBlock__Value--Loading::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: var(--pe-color-gray-900);
+  border-radius: 5px;
+  opacity: 1;
+}
+
+.ValueBlock__Value--Loading::after {
+  content: "";
+  position: absolute;
+  z-index: 2;
+  top: 0;
+  left: -50%;
+  width: 40%;
+  height: 100%;
+  background: linear-gradient(90deg, rgb(14, 117, 181) 0%, rgb(22, 82, 120) 100%);
+  border-radius: 100px;
+  opacity: var(--pe-opacity-faint);
+  animation: LoadingLine linear 3s infinite;
+}
+
+.ValueBlock__Value--Loading:nth-child(1n)::after {
+  animation-delay: -0.5s;
+}
+
+.ValueBlock__Value--Loading:nth-child(2n)::after {
+  animation-delay: 0s;
+}
+
+.ValueBlock__Value--Loading:nth-child(3n)::after {
+  animation-delay: 0.5s;
+}
+
+.ValueBlock__Value--Loading:nth-child(4n)::after {
+  animation-delay: 1s;
+}
+
+.ValueBlock__Value--Loading:nth-child(5n)::after {
+  animation-delay: 1.5s;
+}
+
+.ValueBlock__Value--Loading:nth-child(6n)::after {
+  animation-delay: 2s;
+}
+
+.ValueBlock__Value--Loading:nth-child(7n)::after {
+  animation-delay: 2.5s;
+}
+
+.ValueBlock__Value--Loading:nth-child(8n)::after {
+  animation-delay: 3s;
+}
+
+.ValueBlock__Value--Loading:nth-child(9n)::after {
+  animation-delay: 3.5s;
+}
+
+.ValueBlock__Value--Loading:nth-child(10n)::after {
+  animation-delay: 4s;
+}
+
+.ValueBlock__Value--Loading {
+  opacity: var(--pe-opacity-muted);
+  border-radius: 5px;
+  animation-delay: 100ms;
+}
+
+.ValueBlock__Value--Elipsed {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

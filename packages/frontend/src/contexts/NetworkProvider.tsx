@@ -56,9 +56,7 @@ export const NetworkProvider = ({ children }: NetworkProviderProps) => {
   }, [network])
 
   return (
-    <NetworkContext.Provider value={NETWORK_OPTIONS[network]}>
-      {children}
-    </NetworkContext.Provider>
+    <NetworkContext.Provider value={NETWORK_OPTIONS[network]}>{children}</NetworkContext.Provider>
   )
 }
 

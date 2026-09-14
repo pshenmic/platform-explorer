@@ -1,6 +1,6 @@
 {
   "name": "platform-explorer",
-  "version": "2.4.3",
+  "version": "2.5.2",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -10,11 +10,13 @@
   },
   "author": "pshenmic <pshenmic@gmail.com>",
   "license": "ISC",
-  "dependencies": {
-  },
   "private": true,
   "workspaces": [
     "packages/*"
   ],
-  "repository": "git@github.com:pshenmic/platform-explorer.git"
+  "repository": "git@github.com:pshenmic/platform-explorer.git",
+  "overrides": {
+    "react": "19.2.8",
+    "react-dom": "19.2.8"
+  }
 }

@@ -7,10 +7,14 @@ interface BackButtonProps extends ComponentPropsWithoutRef<'button'> {
   link?: string
 }
 
-function BackButton ({ link, children, ...props }: BackButtonProps) {
+function BackButton({ link, children, ...props }: BackButtonProps) {
   const router = useRouter()
 
-  return <button onClick={() => router.back()} {...props}>{children}</button>
+  return (
+    <button onClick={() => router.back()} {...props}>
+      {children}
+    </button>
+  )
 }
 
 export default BackButton

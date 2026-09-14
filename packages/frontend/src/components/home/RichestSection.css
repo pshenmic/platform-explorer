@@ -1,0 +1,46 @@
+.HomeRichest__Grid {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  min-width: 0;
+}
+.HomeRichest__Col {
+  min-width: 0;
+  flex: 0 0 auto;
+}
+.HomeRichest--Embedded {
+  display: block;
+  min-width: 0;
+  width: 100%;
+}
+
+.HomeRichestList .DataList__Table {
+  border-spacing: 0 6px;
+}
+.HomeRichestList .DataList__Row {
+  --DataList-row-bg: rgba(255, 255, 255, 0.03);
+  --DataList-row-border: rgba(255, 255, 255, 0.06);
+  --DataList-row-radius: 12px;
+  font-size: 0.75rem;
+  line-height: 1.25;
+  transition:
+    border-color 0.12s ease,
+    background-color 0.12s ease;
+}
+@media (hover: hover) and (pointer: fine) {
+  .HomeRichestList .DataList__Row:hover {
+    --DataList-row-bg: rgba(255, 255, 255, 0.05);
+    --DataList-row-border: rgba(255, 255, 255, 0.12);
+  }
+}
+.HomeRichestList .DataList__Row:active {
+  transform: none;
+  box-shadow: none;
+}
+.HomeRichestList .DataList__Cell {
+  font-family: var(--pe-font-mono);
+  font-size: 0.75rem;
+}
+.HomeRichestList .DataList__Footer {
+  margin-top: 10px;
+}

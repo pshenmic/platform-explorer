@@ -1,0 +1,25 @@
+.NavLinkStatus {
+  position: absolute;
+  inset: auto 0 0;
+  height: 2px;
+  background: var(--pe-color-brand-normal);
+  opacity: 0;
+  animation: nav-link-pending 0.8s ease-in-out 150ms infinite alternate;
+  pointer-events: none;
+}
+
+@keyframes nav-link-pending {
+  from {
+    opacity: 0.4;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .NavLinkStatus {
+    animation: none;
+    opacity: 1;
+  }
+}

@@ -1,0 +1,8 @@
+.TokenEmergencyActionBadge {
+  max-width: max-content;
+}
+.TokenEmergencyActionBadge__Content {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}

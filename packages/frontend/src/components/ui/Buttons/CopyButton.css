@@ -1,0 +1,39 @@
+.CopyButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  height: max-content;
+  padding: 0;
+  flex-shrink: 0;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: inherit;
+}
+
+.CopyButton:hover {
+  color: var(--pe-color-gray-100);
+}
+
+.CopyButton:active {
+  color: #fff;
+}
+
+.CopyButton__Icon {
+  width: 1rem;
+  height: 1rem;
+  padding: 0.25rem;
+  margin: -0.25rem;
+  box-sizing: content-box;
+  color: var(--pe-color-gray-250);
+  transition: 0.2s;
+}
+
+.CopyButton:hover .CopyButton__Icon {
+  color: #fff;
+}
+
+.CopyButton:active .CopyButton__Icon {
+  color: var(--pe-color-gray-100);
+}

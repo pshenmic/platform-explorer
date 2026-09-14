@@ -1,0 +1,115 @@
+.Document__Data {
+  padding: calc(var(--pe-space-3) + 0px);
+}
+
+@media screen and (min-width: 48em) {
+  .Document__Data {
+    padding: calc(var(--pe-space-4) + 0px);
+  }
+}
+
+@media screen and (min-width: 62em) {
+  .Document__Data {
+    padding: calc(var(--pe-space-5) + 0px);
+  }
+}
+
+@media screen and (min-width: 80em) {
+  .Document__Data {
+    padding: calc(var(--pe-space-6) + 0px);
+  }
+}
+
+.Document__Data--Loading .InfoLine__Value {
+  height: var(--pe-space-6);
+}
+
+.Document__Data__InfoContainer .InfoLine__Title svg {
+  width: var(--pe-space-7);
+  height: var(--pe-space-7);
+}
+
+.Document__Data {
+  font-family: var(--pe-font-mono);
+  font-size: var(--pe-text-sm);
+  display: flex;
+  flex-direction: column;
+  gap: var(--pe-space-3_5);
+  background: rgba(var(--pe-color-gray-800-rgb), 0.5);
+  border-radius: var(--pe-radius-def);
+  container-type: inline-size;
+}
+
+.Document__Data--Loading .Document__Data__InfoContainer {
+  overflow: hidden;
+}
+
+.Document__Data--Loading .Document__Data__InfoContainerValue {
+  width: 100px;
+  max-width: 100%;
+}
+
+.Document__Data__RowContainer {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--pe-space-3_5);
+}
+
+.Document__Data__InfoContainer {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--pe-space-1);
+  padding: var(--pe-space-6);
+  background: rgba(var(--pe-color-gray-800-rgb), 0.5);
+  border-radius: var(--pe-radius-def);
+  width: 100%;
+}
+
+.Document__Data__LinesContainer {
+  flex-direction: column;
+}
+
+.Document__Data {
+  border-radius: var(--pe-radius-block);
+  gap: var(--pe-space-2);
+}
+
+.Document__DataTitle {
+  font-family: var(--pe-font-heading);
+  font-weight: var(--pe-font-weight-bold);
+  font-size: var(--pe-text-sm);
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+}
+
+.Document__InfoBlocks {
+  display: flex;
+  gap: var(--pe-space-5);
+}
+
+.Document__InfoBlock {
+  width: 50%;
+}
+
+@media screen and (max-width: 62em) {
+  .Document__InfoBlocks {
+    flex-direction: column;
+  }
+
+  .Document__InfoBlock {
+    width: 100%;
+  }
+}
+
+@media screen and (max-width: 48em) {
+  .Document__InfoBlocks {
+    flex-direction: column;
+    gap: var(--pe-space-3);
+  }
+
+  .Document__InfoBlock {
+    width: 100%;
+  }
+}

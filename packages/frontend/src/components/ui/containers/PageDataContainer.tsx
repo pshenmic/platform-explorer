@@ -1,0 +1,38 @@
+import type { ReactNode } from 'react'
+import { ChevronIcon2 } from '../icons'
+import BackButton from '../Buttons/BackButton'
+import type { WithChildren, WithClassName } from '../../../types/common'
+import './PageDataContainer.css'
+
+interface PageDataContainerProps extends WithChildren, WithClassName {
+  title?: ReactNode
+  isChevronHidden?: boolean
+}
+
+function PageDataContainer({
+  className,
+  title,
+  children,
+  isChevronHidden = false
+}: PageDataContainerProps) {
+  return (
+    <div className={`PageDataContainer ${className || ''}`}>
+      <div className={'PageDataContainer__Inner'}>
+        <div className={'PageDataContainer__Header'}>
+          {!isChevronHidden && (
+            <BackButton className={'PageDataContainer__BackLink'}>
+              <ChevronIcon2 w={'8px'} h={'8px'} color={'brand.normal'} />
+            </BackButton>
+          )}
+          {title && <div className={'PageDataContainer__Title'}>{title}</div>}
+        </div>
+
+        <div className={'PageDataContainer__ContentContainer'}>
+          <div className={'PageDataContainer__Content'}>{children}</div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+export default PageDataContainer

@@ -1,0 +1,4 @@
+const content = `A transaction is a signed change to platform state, such as creating a data contract, writing documents, or managing an identity. Each one is paid for in credits and stored permanently once a validator includes it in a block.
+`
+
+export default content

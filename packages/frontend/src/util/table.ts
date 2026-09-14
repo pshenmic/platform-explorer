@@ -5,7 +5,12 @@ interface NormalizePaginationInput {
   [key: string]: unknown
 }
 
-export const normalizePagination = ({ total, page, pageSize, ...other }: NormalizePaginationInput) => {
+export const normalizePagination = ({
+  total,
+  page,
+  pageSize,
+  ...other
+}: NormalizePaginationInput) => {
   const unknown = total === -1 || total == null
   const safePage = Math.max(1, Number(page) || 1)
   const safePageSize = Math.max(1, Number(pageSize) || 1)
@@ -13,6 +18,7 @@ export const normalizePagination = ({ total, page, pageSize, ...other }: Normali
   if (unknown) {
     return {
       unknownTotal: true,
+      total: null,
       pageCount: 1,
       forcePage: 0,
       ...other
@@ -23,6 +29,7 @@ export const normalizePagination = ({ total, page, pageSize, ...other }: Normali
 
   return {
     unknownTotal: false,
+    total: Number(total),
     pageCount,
     forcePage: Math.max(0, Math.min(pageCount - 1, safePage - 1)),
     ...other

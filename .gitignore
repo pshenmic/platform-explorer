@@ -5,3 +5,4 @@ package-lock.json
 launch.json
 .vscode
 scripts/
+.pr-shots/

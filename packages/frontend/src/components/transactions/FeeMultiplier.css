@@ -1,0 +1,39 @@
+.FeeMultiplier {
+  font-size: var(--pe-text-xs);
+  font-weight: var(--pe-font-weight-normal);
+  font-family: var(--pe-font-mono);
+  text-align: center;
+  padding: var(--pe-space-1_5) var(--pe-space-2_5);
+  border-radius: var(--pe-radius-md);
+  display: inline-block;
+}
+
+.FeeMultiplier--Green {
+  background-color: rgba(91, 244, 88, 0.2);
+  color: #5bf458;
+}
+
+.FeeMultiplier--Yellow {
+  background-color: rgba(223, 244, 88, 0.2);
+  color: #dff458;
+}
+
+.FeeMultiplier--LightOrange {
+  background-color: rgba(244, 210, 88, 0.2);
+  color: #f4d258;
+}
+
+.FeeMultiplier--Orange {
+  background-color: rgba(228, 152, 0, 0.2);
+  color: #e49800;
+}
+
+.FeeMultiplier--RedOrange {
+  background-color: rgba(244, 135, 88, 0.2);
+  color: #f48758;
+}
+
+.FeeMultiplier--Red {
+  background-color: rgba(244, 88, 144, 0.2);
+  color: #f45890;
+}

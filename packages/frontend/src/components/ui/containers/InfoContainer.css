@@ -1,0 +1,262 @@
+.InfoContainer {
+  padding: calc(var(--pe-space-3) + 0px);
+}
+
+@media screen and (min-width: 48em) {
+  .InfoContainer {
+    padding: calc(var(--pe-space-4) + 0px);
+  }
+}
+
+@media screen and (min-width: 62em) {
+  .InfoContainer {
+    padding: calc(var(--pe-space-5) + 0px);
+  }
+}
+
+@media screen and (min-width: 80em) {
+  .InfoContainer {
+    padding: calc(var(--pe-space-6) + 0px);
+  }
+}
+
+.InfoContainer {
+  position: relative;
+  z-index: 1;
+  overflow: hidden;
+  border-radius: 18px;
+  border: 1px solid var(--pe-color-gray-800);
+}
+
+.InfoContainer::before,
+.InfoContainer::after {
+  content: "";
+  display: block;
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  left: 0;
+  top: 0;
+}
+
+.InfoContainer::before {
+  background: var(--pe-color-gray-675);
+  z-index: -2;
+}
+
+.InfoContainer::after {
+  background: radial-gradient(circle at 0% 100%, var(--pe-color-gray-800) 0, transparent);
+  opacity: var(--pe-opacity-muted);
+  z-index: -1;
+}
+
+.InfoContainer--TranslucentBg::before {
+  opacity: var(--pe-opacity-subtle);
+}
+
+.InfoContainer--TranslucentBg::after {
+  opacity: 0.3;
+}
+
+.InfoContainer--Tabs {
+  padding-bottom: calc(var(--pe-space-3) + 0px);
+}
+
+@media screen and (min-width: 48em) {
+  .InfoContainer--Tabs {
+    padding-bottom: calc(var(--pe-space-4) + 0px);
+  }
+}
+
+@media screen and (min-width: 62em) {
+  .InfoContainer--Tabs {
+    padding-bottom: calc(var(--pe-space-5) + 0px);
+  }
+}
+
+@media screen and (min-width: 80em) {
+  .InfoContainer--Tabs {
+    padding-bottom: calc(var(--pe-space-6) + 0px);
+  }
+}
+
+.InfoContainer--Tabs .Tabs__Tab {
+  font-size: var(--pe-text-sm);
+  white-space: nowrap;
+  font-weight: var(--pe-font-weight-bold);
+  font-family: var(--pe-font-heading);
+  text-transform: uppercase;
+}
+
+.InfoContainer--Tabs .Tabs__TabList {
+  scroll-behavior: smooth;
+  scrollbar-width: thin;
+  scrollbar-color: var(--pe-color-brand-normal) transparent;
+}
+
+.InfoContainer--Tabs .Tabs__TabList::-webkit-scrollbar {
+  height: var(--pe-space-2);
+  width: var(--pe-space-2);
+}
+
+.InfoContainer--Tabs .Tabs__TabList::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.InfoContainer--Tabs .Tabs__TabList::-webkit-scrollbar-thumb {
+  background-color: var(--pe-color-brand-normal);
+  border-radius: var(--pe-radius-md);
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+
+.InfoContainer--Tabs .Tabs__TabList::-webkit-scrollbar-thumb:hover {
+  background-color: var(--pe-color-brand-light);
+}
+
+.InfoContainer--Tabs .Tabs__TabList {
+  padding-left: calc(var(--pe-space-3) + -var(--pe-space-2));
+}
+
+.InfoContainer--Tabs {
+  padding: var(--pe-space-2_5) 0 var(--pe-space-6) 0;
+  overflow: hidden;
+}
+
+@media screen and (min-width: 48em) {
+  .InfoContainer--Tabs .Tabs__TabList {
+    padding-left: calc(var(--pe-space-4) + -var(--pe-space-2));
+  }
+}
+
+@media screen and (min-width: 62em) {
+  .InfoContainer--Tabs .Tabs__TabList {
+    padding-left: calc(var(--pe-space-5) + -var(--pe-space-2));
+  }
+}
+
+@media screen and (min-width: 80em) {
+  .InfoContainer--Tabs .Tabs__TabList {
+    padding-left: calc(var(--pe-space-6) + -var(--pe-space-2));
+  }
+}
+
+.InfoContainer--Tabs .Tabs__TabList {
+  padding-right: calc(var(--pe-space-3) + -var(--pe-space-2));
+}
+
+@media screen and (min-width: 48em) {
+  .InfoContainer--Tabs .Tabs__TabList {
+    padding-right: calc(var(--pe-space-4) + -var(--pe-space-2));
+  }
+}
+
+@media screen and (min-width: 62em) {
+  .InfoContainer--Tabs .Tabs__TabList {
+    padding-right: calc(var(--pe-space-5) + -var(--pe-space-2));
+  }
+}
+
+@media screen and (min-width: 80em) {
+  .InfoContainer--Tabs .Tabs__TabList {
+    padding-right: calc(var(--pe-space-6) + -var(--pe-space-2));
+  }
+}
+
+.InfoContainer--Tabs .Tabs__TabList {
+  overflow-y: hidden;
+  overflow-x: auto;
+}
+
+.InfoContainer--Tabs .Tabs__TabPanel {
+  padding-left: calc(var(--pe-space-3) + 0px);
+}
+
+@media screen and (min-width: 48em) {
+  .InfoContainer--Tabs .Tabs__TabPanel {
+    padding-left: calc(var(--pe-space-4) + 0px);
+  }
+}
+
+@media screen and (min-width: 62em) {
+  .InfoContainer--Tabs .Tabs__TabPanel {
+    padding-left: calc(var(--pe-space-5) + 0px);
+  }
+}
+
+@media screen and (min-width: 80em) {
+  .InfoContainer--Tabs .Tabs__TabPanel {
+    padding-left: calc(var(--pe-space-6) + 0px);
+  }
+}
+
+.InfoContainer--Tabs .Tabs__TabPanel {
+  padding-right: calc(var(--pe-space-3) + 0px);
+}
+
+@media screen and (min-width: 48em) {
+  .InfoContainer--Tabs .Tabs__TabPanel {
+    padding-right: calc(var(--pe-space-4) + 0px);
+  }
+}
+
+@media screen and (min-width: 62em) {
+  .InfoContainer--Tabs .Tabs__TabPanel {
+    padding-right: calc(var(--pe-space-5) + 0px);
+  }
+}
+
+@media screen and (min-width: 80em) {
+  .InfoContainer--Tabs .Tabs__TabPanel {
+    padding-right: calc(var(--pe-space-6) + 0px);
+  }
+}
+
+@media screen and (max-width: 30em) {
+  .InfoContainer--Tabs .Tabs__TabList {
+    padding-left: calc(var(--pe-space-3) + -var(--pe-space-1));
+    padding-right: calc(var(--pe-space-3) + -var(--pe-space-1));
+  }
+}
+
+@media screen and (max-width: 30em) and (min-width: 48em) {
+  .InfoContainer--Tabs .Tabs__TabList {
+    padding-left: calc(var(--pe-space-4) + -var(--pe-space-1));
+  }
+}
+
+@media screen and (max-width: 30em) and (min-width: 62em) {
+  .InfoContainer--Tabs .Tabs__TabList {
+    padding-left: calc(var(--pe-space-5) + -var(--pe-space-1));
+  }
+}
+
+@media screen and (max-width: 30em) and (min-width: 80em) {
+  .InfoContainer--Tabs .Tabs__TabList {
+    padding-left: calc(var(--pe-space-6) + -var(--pe-space-1));
+  }
+}
+
+@media screen and (max-width: 30em) and (min-width: 48em) {
+  .InfoContainer--Tabs .Tabs__TabList {
+    padding-right: calc(var(--pe-space-4) + -var(--pe-space-1));
+  }
+}
+
+@media screen and (max-width: 30em) and (min-width: 62em) {
+  .InfoContainer--Tabs .Tabs__TabList {
+    padding-right: calc(var(--pe-space-5) + -var(--pe-space-1));
+  }
+}
+
+@media screen and (max-width: 30em) and (min-width: 80em) {
+  .InfoContainer--Tabs .Tabs__TabList {
+    padding-right: calc(var(--pe-space-6) + -var(--pe-space-1));
+  }
+}
+
+@media screen and (max-width: 30em) {
+  .InfoContainer--Tabs .Tabs__Tab {
+    padding: var(--pe-space-2) var(--pe-space-1);
+  }
+}
