@@ -78,6 +78,7 @@ function ActivityList({
   const loading = props.loading || (Boolean(resourceId) && query.isPending)
   const failed = (kind !== 'blocks' && props.error) || query.isError
   const paging: DataListProps['paging'] = {
+    scrollTarget: 'container',
     mode,
     onModeChange: next => {
       writeListScrollMode(`validator-${kind}`, next)
