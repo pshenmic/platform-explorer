@@ -8,4 +8,6 @@ export interface Withdrawal {
   id: string | null
   amount: string | null
   status: string | null
+  document?: string | null
+  withdrawalAddress?: string | null
 }
