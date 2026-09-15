@@ -2,7 +2,8 @@
 
 import { TimeDelta, BigNumber } from '../../components/data'
 import { useCountUp } from '../../components/home/hooks'
-import { HeroNodes, Skeleton } from '../../components/home'
+import HeroNodes from '../../components/home/HeroNodes'
+import { Skeleton } from '../../components/home/Skeleton'
 import { isNetworkLive } from '../../components/home/utils'
 import './HomeHero.css'
 

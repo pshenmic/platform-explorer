@@ -4,19 +4,18 @@ import { useState, useEffect, useMemo } from 'react'
 import { useQuery, useQueries } from '@tanstack/react-query'
 import * as Api from '../../util/Api'
 import HomeHero from './HomeHero'
-import {
-  EpochsOverview,
-  QuorumCard,
-  TxTypesBar,
-  TxActivityChart,
-  IdentityGrowthChart,
-  ShieldedPoolCard,
-  HomeLeaders,
-  CompactTxList,
-  CompactBlocksList,
-  HeroMeta,
-  HeroNodes
-} from '../../components/home'
+import useNearViewport from '../../hooks/useNearViewport'
+import { EpochsOverview } from '../../components/home/EpochsOverview'
+import QuorumCard from '../../components/home/QuorumCard'
+import TxTypesBar from '../../components/home/TxTypesBar'
+import TxActivityChart from '../../components/home/TxActivityChart'
+import IdentityGrowthChart from '../../components/home/IdentityGrowthChart'
+import ShieldedPoolCard from '../../components/home/ShieldedPoolCard'
+import HomeLeaders from '../../components/home/HomeLeaders'
+import { CompactTxList } from '../../components/home/CompactTxList'
+import { CompactBlocksList } from '../../components/home/CompactBlocksList'
+import { HeroMeta } from '../../components/home/HeroMeta'
+import HeroNodes from '../../components/home/HeroNodes'
 import { fetchHandlerSuccess, fetchHandlerError } from '../../util'
 import type { LoadableState, Rate } from '../../types'
 import type { QueryFilters } from '../../util/Api'
@@ -58,6 +57,9 @@ async function fetchAllValidators(filters?: QueryFilters) {
 }
 
 function Home() {
+  const metricsViewport = useNearViewport()
+  const chartsViewport = useNearViewport()
+  const leadersViewport = useNearViewport()
   const [rate, setRate] = useState<LoadableState<Rate>>({ data: null, loading: true, error: false })
 
   const statusQuery = useQuery({
@@ -76,26 +78,31 @@ function Home() {
     refetchInterval: 30000
   })
   const validatorsQuery = useQuery({
+    enabled: leadersViewport.enabled,
     queryKey: ['home', 'validators', 'total'],
     queryFn: () => Api.getValidators(1, 1, 'desc'),
     staleTime: 60_000
   })
   const validatorsActiveQuery = useQuery({
+    enabled: leadersViewport.enabled,
     queryKey: ['home', 'validators', 'active'],
     queryFn: () => Api.getValidators(1, 1, 'desc', { isActive: 'true' }),
     staleTime: 60_000
   })
   const validatorsBannedQuery = useQuery({
+    enabled: leadersViewport.enabled,
     queryKey: ['home', 'validators', 'banned'],
     queryFn: () => Api.getValidators(1, 1, 'desc', { isBanned: 'true' }),
     staleTime: 60_000
   })
   const validatorsInactiveQuery = useQuery({
+    enabled: leadersViewport.enabled,
     queryKey: ['home', 'validators', 'inactive'],
     queryFn: () => Api.getValidators(1, 1, 'desc', { isActive: 'false', isBanned: 'false' }),
     staleTime: 60_000
   })
   const validatorsPoolHeadQuery = useQuery({
+    enabled: leadersViewport.enabled,
     queryKey: ['home', 'validators', 'pool', 'head', 'unbanned'],
     queryFn: () => Api.getValidators(1, VALIDATORS_PAGE, 'desc', { isBanned: 'false' }),
     staleTime: 60_000,
@@ -136,6 +143,7 @@ function Home() {
     return rows
   }, [validatorsPoolHeadQuery.data, validatorsPoolRestQuery.data])
   const validatorsBannedListQuery = useQuery({
+    enabled: leadersViewport.enabled,
     queryKey: ['home', 'validators', 'banned-list'],
     queryFn: () => fetchAllValidators({ isBanned: 'true' }),
     staleTime: 60_000,
@@ -143,6 +151,7 @@ function Home() {
   })
 
   const currentQuorumQuery = useQuery({
+    enabled: leadersViewport.enabled,
     queryKey: ['home', 'quorums', 'current'],
     queryFn: () => Api.getCurrentQuorum(),
     staleTime: 60_000,
@@ -150,6 +159,7 @@ function Home() {
     retry: 1
   })
   const quorumsListQuery = useQuery({
+    enabled: leadersViewport.enabled,
     queryKey: ['home', 'quorums', 'list'],
     queryFn: () => Api.getQuorums(),
     staleTime: 60_000,
@@ -302,13 +312,13 @@ function Home() {
         />
       </section>
 
-      <div className={'HomeCardPair HomeCardPair--metrics'}>
+      <div ref={metricsViewport.ref} className={'HomeCardPair HomeCardPair--metrics'}>
         <div className={'HomeCardPair__Cell'}>
           <TxActivityChart
             fetcher={Api.getTransactionsHistory}
             field={'txs'}
             yAbbr={'txs'}
-            enabled={belowFoldReady}
+            enabled={belowFoldReady && metricsViewport.enabled}
           />
         </div>
         <div className={'HomeCardPair__Cell'}>
@@ -316,23 +326,23 @@ function Home() {
             fetcher={Api.getIdentitiesHistory}
             field={'registeredIdentities'}
             yAbbr={'identities'}
-            enabled={belowFoldReady}
+            enabled={belowFoldReady && metricsViewport.enabled}
           />
         </div>
       </div>
 
-      <div className={'HomeCardPair HomeCardPair--viz'}>
+      <div ref={chartsViewport.ref} className={'HomeCardPair HomeCardPair--viz'}>
         <div className={'HomeCardPair__Cell'}>
-          <TxTypesBar enabled={belowFoldReady} />
+          <TxTypesBar enabled={belowFoldReady && chartsViewport.enabled} />
         </div>
         <div className={'HomeCardPair__Cell'}>
-          <ShieldedPoolCard rate={rate} enabled={belowFoldReady} />
+          <ShieldedPoolCard rate={rate} enabled={belowFoldReady && chartsViewport.enabled} />
         </div>
       </div>
 
-      <div className={'HomeCardPair HomeCardPair--leaders'}>
+      <div ref={leadersViewport.ref} className={'HomeCardPair HomeCardPair--leaders'}>
         <div className={'HomeCardPair__Cell'}>
-          <HomeLeaders rate={rate} enabled={belowFoldReady} />
+          <HomeLeaders rate={rate} enabled={belowFoldReady && leadersViewport.enabled} />
         </div>
         <div className={'HomeCardPair__Cell'}>
           <QuorumCard
