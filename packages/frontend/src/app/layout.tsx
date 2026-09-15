@@ -8,6 +8,7 @@ import { Montserrat, Open_Sans as OpenSans, Roboto_Mono as RobotoMono } from 'ne
 const montserrat = Montserrat({
   subsets: ['latin'],
   style: ['normal', 'italic'],
+  preload: false,
   variable: '--font-montserrat'
 })
 const openSans = OpenSans({
