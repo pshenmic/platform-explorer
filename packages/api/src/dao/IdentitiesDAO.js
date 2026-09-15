@@ -81,7 +81,7 @@ module.exports = class IdentitiesDAO {
       .select(
         'identifier', 'with_alias.owner as owner', 'revision',
         'transfer_id', 'sender', 'tx_hash', 'is_system', 'with_alias.type as type',
-        'blocks.timestamp as timestamp', 'recipient', 'with_alias.amount as amount',
+        'blocks.timestamp as timestamp', 'with_alias.recipient as recipient', 'with_alias.amount as amount',
         'state_transitions.data as tx_data'
       )
       .select(this.knex('state_transitions').count('*').where('owner', identifier).as('total_txs'))
@@ -111,14 +111,14 @@ module.exports = class IdentitiesDAO {
       )
       .select(this.knex('transfers')
         .select(this.knex.raw('sum(transfers.amount)'))
-        .where('recipient', identifier)
-        .orWhere('sender', identifier)
+        .where('transfers.recipient', identifier)
+        .orWhere('transfers.sender', identifier)
         .andWhere('type', IDENTITY_TOP_UP)
         .leftJoin('state_transitions', 'state_transition_hash', 'hash')
         .as('total_top_ups_amount'))
       .select(this.knex('transfers')
         .select(this.knex.raw('sum(transfers.amount)'))
-        .where('sender', identifier)
+        .where('transfers.sender', identifier)
         .andWhere('type', IDENTITY_CREDIT_WITHDRAWAL)
         .leftJoin('state_transitions', 'state_transition_hash', 'hash')
         .as('total_withdrawals_amount'))
@@ -570,7 +570,7 @@ module.exports = class IdentitiesDAO {
         'state_transitions.owner as owner', 'state_transitions.data as data',
         'state_transitions.amount as amount'
       )
-      .where('state_transitions.owner', '=', identifier)
+      .whereRaw('(state_transitions.owner = ? OR state_transitions.recipient = ?)', [identifier, identifier])
 
     const rows = await this.knex.with('with_alias', subquery)
       .select('state_transition_id', 'tx_hash', 'index', 'block_hash', 'type',

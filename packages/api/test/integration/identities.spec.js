@@ -2139,6 +2139,83 @@ describe('Identities routes', () => {
       assert.equal(body.resultSet.find(tx => tx.hash === identity.txHash).amount, null)
     })
 
+    it('should return transactions where identity is not the owner', async () => {
+      block = await fixtures.block(knex, { height: 1 })
+      identity = await fixtures.identity(knex, { block_hash: block.hash, block_height: block.height })
+      const counterparty = await fixtures.identity(knex, { block_hash: block.hash, block_height: block.height })
+
+      const incoming = await fixtures.transaction(knex, {
+        block_hash: block.hash,
+        block_height: block.height,
+        owner: counterparty.identifier,
+        type: StateTransitionEnum.IDENTITY_CREDIT_TRANSFER
+      })
+      await fixtures.transfer(knex, {
+        amount: 1000,
+        sender: counterparty.identifier,
+        recipient: identity.identifier,
+        state_transition_hash: incoming.hash
+      })
+
+      const outgoing = await fixtures.transaction(knex, {
+        block_hash: block.hash,
+        block_height: block.height,
+        owner: identity.identifier,
+        type: StateTransitionEnum.IDENTITY_CREDIT_TRANSFER
+      })
+      await fixtures.transfer(knex, {
+        amount: 500,
+        sender: identity.identifier,
+        recipient: counterparty.identifier,
+        state_transition_hash: outgoing.hash
+      })
+
+      const { body } = await client.get(`/identity/${identity.identifier}/transactions`)
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      assert.equal(body.pagination.total, 3)
+      assert.deepEqual(
+        body.resultSet.map(tx => tx.hash),
+        [identity.txHash, incoming.hash, outgoing.hash]
+      )
+      // the counterparty identity create never touched our identity
+      assert.equal(body.resultSet.some(tx => tx.hash === counterparty.txHash), false)
+    })
+
+    it('should not duplicate a transaction that moved credits to the identity twice', async () => {
+      block = await fixtures.block(knex, { height: 1 })
+      identity = await fixtures.identity(knex, { block_hash: block.hash, block_height: block.height })
+      const counterparty = await fixtures.identity(knex, { block_hash: block.hash, block_height: block.height })
+
+      const incoming = await fixtures.transaction(knex, {
+        block_hash: block.hash,
+        block_height: block.height,
+        owner: counterparty.identifier,
+        type: StateTransitionEnum.IDENTITY_CREDIT_TRANSFER
+      })
+      await fixtures.transfer(knex, {
+        amount: 1000,
+        sender: counterparty.identifier,
+        recipient: identity.identifier,
+        state_transition_hash: incoming.hash
+      })
+      await fixtures.transfer(knex, {
+        amount: 2000,
+        sender: counterparty.identifier,
+        recipient: identity.identifier,
+        state_transition_hash: incoming.hash
+      })
+
+      const { body } = await client.get(`/identity/${identity.identifier}/transactions`)
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      assert.equal(body.pagination.total, 2)
+      assert.equal(body.resultSet.filter(tx => tx.hash === incoming.hash).length, 1)
+      assert.equal(body.resultSet.find(tx => tx.hash === incoming.hash).amount, '3000')
+    })
+
     it('should return default set of transactions by identity', async () => {
       block = await fixtures.block(knex, { height: 1 })
       identity = await fixtures.identity(knex, { block_hash: block.hash, block_height: block.height })

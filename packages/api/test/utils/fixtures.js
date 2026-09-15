@@ -361,10 +361,13 @@ const fixtures = {
 
     const result = await knex('transfers').insert(row).returning('id')
 
-    // create_transfer in the indexer carries the amount onto the transition itself
+    // create_transfer in the indexer carries the amount and the recipient onto the transition itself
     await knex('state_transitions')
       .where('hash', state_transition_hash)
-      .update({ amount: knex.raw('COALESCE(amount, 0) + ?', [amount]) })
+      .update({
+        amount: knex.raw('COALESCE(amount, 0) + ?', [amount]),
+        recipient: knex.raw('COALESCE(?, recipient)', [recipient ?? null])
+      })
 
     return { ...row, id: result[0].id }
   },
