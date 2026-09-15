@@ -1954,7 +1954,7 @@ Response codes:
 ```
 ---
 ### Transactions by Identity
-Return all transactions made by the given identity
+Return all transactions associated the given identity
 
 Status can be either `SUCCESS` or `FAIL`. In case of error tx, message will appear in the `error` field as Base64 string
 * `limit` cannot be more then 100
