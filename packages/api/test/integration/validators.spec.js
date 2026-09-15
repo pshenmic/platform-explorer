@@ -332,7 +332,8 @@ describe('Validators routes', () => {
             l1LockedHeight: blockHeader.l1LockedHeight,
             validator: blockHeader.validator,
             totalGasUsed: 0,
-            appHash: blockHeader.appHash
+            appHash: blockHeader.appHash,
+            quorumHash: blockHeader.quorumHash
           }))
           .toReversed()[0] ?? null,
         proTxInfo: {
@@ -430,6 +431,7 @@ describe('Validators routes', () => {
             l1LockedHeight: blockHeader.l1LockedHeight,
             validator: blockHeader.validator,
             appHash: blockHeader.appHash,
+            quorumHash: blockHeader.quorumHash,
             totalGasUsed: 0
           }))
           .toReversed()[0] ?? null,
@@ -497,7 +499,8 @@ describe('Validators routes', () => {
                   l1LockedHeight: blockHeader.l1LockedHeight,
                   validator: blockHeader.validator,
                   totalGasUsed: 0,
-                  appHash: blockHeader.appHash
+                  appHash: blockHeader.appHash,
+                  quorumHash: blockHeader.quorumHash
                 }))
                 .sort((a, b) => b.height - a.height)[0] ?? null,
               proTxInfo: {
@@ -554,7 +557,8 @@ describe('Validators routes', () => {
                   l1LockedHeight: blockHeader.l1LockedHeight,
                   validator: blockHeader.validator,
                   totalGasUsed: 0,
-                  appHash: blockHeader.appHash
+                  appHash: blockHeader.appHash,
+                  quorumHash: blockHeader.quorumHash
                 }))
                 .toReversed()[0] ?? null,
               proTxInfo: {
@@ -671,7 +675,8 @@ describe('Validators routes', () => {
                   l1LockedHeight: blockHeader.l1LockedHeight,
                   validator: blockHeader.validator,
                   totalGasUsed: 0,
-                  appHash: blockHeader.appHash
+                  appHash: blockHeader.appHash,
+                  quorumHash: blockHeader.quorumHash
                 }))
                 .toReversed()[0] ?? null,
               proTxInfo: {
@@ -733,6 +738,7 @@ describe('Validators routes', () => {
                     l1LockedHeight: blockHeader.l1LockedHeight,
                     validator: blockHeader.validator,
                     appHash: blockHeader.appHash,
+                    quorumHash: blockHeader.quorumHash,
                     totalGasUsed: 0
                   }))
                   .toReversed()[0] ?? null,
@@ -793,6 +799,7 @@ describe('Validators routes', () => {
                   l1LockedHeight: blockHeader.l1LockedHeight,
                   validator: blockHeader.validator,
                   appHash: blockHeader.appHash,
+                  quorumHash: blockHeader.quorumHash,
                   totalGasUsed: 0
                 }))
                 .toReversed()[0] ?? null,
@@ -989,7 +996,8 @@ describe('Validators routes', () => {
                   l1LockedHeight: blockHeader.l1LockedHeight,
                   validator: blockHeader.validator,
                   totalGasUsed: 0,
-                  appHash: blockHeader.appHash
+                  appHash: blockHeader.appHash,
+                  quorumHash: blockHeader.quorumHash
                 }))
                 .toReversed()[0] ?? null,
               proTxInfo: {
@@ -1057,7 +1065,8 @@ describe('Validators routes', () => {
                   l1LockedHeight: blockHeader.l1LockedHeight,
                   validator: blockHeader.validator,
                   totalGasUsed: 0,
-                  appHash: blockHeader.appHash
+                  appHash: blockHeader.appHash,
+                  quorumHash: blockHeader.quorumHash
                 }))
                 .toReversed()[0] ?? null,
               proTxInfo: {
@@ -1126,7 +1135,8 @@ describe('Validators routes', () => {
                   l1LockedHeight: blockHeader.l1LockedHeight,
                   validator: blockHeader.validator,
                   totalGasUsed: 0,
-                  appHash: blockHeader.appHash
+                  appHash: blockHeader.appHash,
+                  quorumHash: blockHeader.quorumHash
                 }))[0] ?? null,
               proTxInfo: {
                 type: dashCoreRpcResponse.type,
@@ -1182,7 +1192,8 @@ describe('Validators routes', () => {
                   l1LockedHeight: blockHeader.l1LockedHeight,
                   validator: blockHeader.validator,
                   totalGasUsed: 0,
-                  appHash: blockHeader.appHash
+                  appHash: blockHeader.appHash,
+                  quorumHash: blockHeader.quorumHash
                 }))
                 .toReversed()[0] ?? null,
               proTxInfo: {
@@ -1245,6 +1256,7 @@ describe('Validators routes', () => {
                   l1LockedHeight: blockHeader.l1LockedHeight,
                   validator: blockHeader.validator,
                   appHash: blockHeader.appHash,
+                  quorumHash: blockHeader.quorumHash,
                   totalGasUsed: 0
                 }))
                 .toReversed()[0] ?? null,
@@ -1303,6 +1315,7 @@ describe('Validators routes', () => {
                   l1LockedHeight: blockHeader.l1LockedHeight,
                   validator: blockHeader.validator,
                   appHash: blockHeader.appHash,
+                  quorumHash: blockHeader.quorumHash,
                   totalGasUsed: 0
                 }))
                 .toReversed()[0] ?? null,
@@ -1363,6 +1376,7 @@ describe('Validators routes', () => {
                   l1LockedHeight: blockHeader.l1LockedHeight,
                   validator: blockHeader.validator,
                   appHash: blockHeader.appHash,
+                  quorumHash: blockHeader.quorumHash,
                   totalGasUsed: 0
                 }))
                 .toReversed()[0] ?? null,
@@ -1423,6 +1437,7 @@ describe('Validators routes', () => {
                   l1LockedHeight: blockHeader.l1LockedHeight,
                   validator: blockHeader.validator,
                   appHash: blockHeader.appHash,
+                  quorumHash: blockHeader.quorumHash,
                   totalGasUsed: 0
                 }))
                 .toReversed()[0] ?? null,
@@ -1483,6 +1498,7 @@ describe('Validators routes', () => {
                   l1LockedHeight: blockHeader.l1LockedHeight,
                   validator: blockHeader.validator,
                   appHash: blockHeader.appHash,
+                  quorumHash: blockHeader.quorumHash,
                   totalGasUsed: 0
                 }))
                 .toReversed()[0] ?? null,
@@ -1543,6 +1559,7 @@ describe('Validators routes', () => {
                   l1LockedHeight: blockHeader.l1LockedHeight,
                   validator: blockHeader.validator,
                   appHash: blockHeader.appHash,
+                  quorumHash: blockHeader.quorumHash,
                   totalGasUsed: 0
                 }))
                 .toReversed()[0] ?? null,
@@ -1604,6 +1621,7 @@ describe('Validators routes', () => {
                   l1LockedHeight: blockHeader.l1LockedHeight,
                   validator: blockHeader.validator,
                   appHash: blockHeader.appHash,
+                  quorumHash: blockHeader.quorumHash,
                   totalGasUsed: 0
                 }))
                 .toReversed()[0] ?? null,
@@ -1663,6 +1681,7 @@ describe('Validators routes', () => {
                   l1LockedHeight: blockHeader.l1LockedHeight,
                   validator: blockHeader.validator,
                   appHash: blockHeader.appHash,
+                  quorumHash: blockHeader.quorumHash,
                   totalGasUsed: 0
                 }))
                 .toReversed()[0] ?? null,

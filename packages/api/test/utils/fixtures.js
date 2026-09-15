@@ -3,6 +3,8 @@
 const { base58 } = require('@scure/base')
 const crypto = require('crypto')
 const StateTransitionEnum = require('../../src/enums/StateTransitionEnum')
+const TokenTransitionsEnum = require('../../src/enums/TokenTransitionsEnum')
+const DocumentActionEnum = require('../../src/enums/DocumentActionEnum')
 const bech32mEncode = require('./bech32m')
 const base58Address = require('./base58address')
 
@@ -17,6 +19,12 @@ const generateBech32mAddress = () => {
   return bech32mEncode('dashevo', bytes)
 }
 const generateBase58Address = () => base58Address(crypto.randomBytes(21))
+// set_state_transition_recipient in the indexer, for a recipient that receives no credits.
+// A recipient of credits was the more interesting one, so it is never overwritten
+const setStateTransitionRecipient = async (knex, state_transition_hash, recipient) =>
+  knex('state_transitions')
+    .where('hash', state_transition_hash)
+    .update({ recipient: knex.raw('COALESCE(recipient, ?)', [recipient]) })
 
 generateBech32mAddress()
 const fixtures = {
@@ -82,7 +90,8 @@ const fixtures = {
     app_version,
     l1_locked_height,
     validator,
-    app_hash
+    app_hash,
+    quorum_hash
   } = {}) => {
     const validatorObject = validator
       ? await fixtures.getValidator(knex, { pro_tx_hash: validator })
@@ -96,7 +105,8 @@ const fixtures = {
       l1_locked_height: l1_locked_height ?? 1337,
       validator: validatorObject.pro_tx_hash,
       validator_id: validatorObject.id,
-      app_hash: app_hash ?? generateHash()
+      app_hash: app_hash ?? generateHash(),
+      quorum_hash: quorum_hash ?? generateHash()
     }
 
     await knex('blocks').insert(row)
@@ -128,6 +138,10 @@ const fixtures = {
       throw new Error('type must be provided for transaction fixture')
     }
 
+    const [{ count: indexInBlock }] = await knex('state_transitions')
+      .where('block_hash', block_hash)
+      .count('* as count')
+
     const row = {
       block_hash,
       block_height,
@@ -136,7 +150,7 @@ const fixtures = {
       owner,
       hash: hash ?? generateHash(),
       data: data ?? {},
-      index: index ?? 0,
+      index: index ?? Number(indexInBlock),
       gas_used: gas_used ?? 0,
       status: status ?? 'SUCCESS',
       error: error ?? null
@@ -153,7 +167,8 @@ const fixtures = {
     state_transition_hash,
     revision,
     owner,
-    is_system
+    is_system,
+    type
   } = {}) {
     if (!identifier) {
       identifier = generateIdentifier()
@@ -187,7 +202,8 @@ const fixtures = {
       state_transition_hash: state_transition_hash ?? transaction.hash,
       state_transition_id: transaction?.id ?? temp?.id,
       owner: owner ?? identifier,
-      is_system: is_system ?? false
+      is_system: is_system ?? false,
+      type: type ?? 'regular'
     }
 
     const result = await knex('identities').insert(row).returning('id')
@@ -317,6 +333,10 @@ const fixtures = {
 
     const result = await knex('documents').insert(row).returning('id')
 
+    if (state_transition_hash && row.transition_type === DocumentActionEnum.Transfer) {
+      await setStateTransitionRecipient(knex, state_transition_hash, owner)
+    }
+
     const dataContract = await this.getDataContract(knex, {
       id: data_contract_id
     })
@@ -352,6 +372,14 @@ const fixtures = {
     }
 
     const result = await knex('transfers').insert(row).returning('id')
+
+    // create_transfer in the indexer carries the amount and the recipient onto the transition itself
+    await knex('state_transitions')
+      .where('hash', state_transition_hash)
+      .update({
+        amount: knex.raw('COALESCE(amount, 0) + ?', [amount]),
+        recipient: knex.raw('COALESCE(?, recipient)', [recipient ?? null])
+      })
 
     return { ...row, id: result[0].id }
   },
@@ -548,6 +576,10 @@ const fixtures = {
     }
 
     const [result] = await knex('token_transitions').insert(row).returning('id')
+
+    if (recipient && [TokenTransitionsEnum.Mint, TokenTransitionsEnum.Transfer].includes(action)) {
+      await setStateTransitionRecipient(knex, state_transition_hash, recipient)
+    }
 
     const dataContract = await this.getDataContract(knex, {
       id: data_contract_id

@@ -195,6 +195,8 @@ class IdentitiesController {
       timestamp: new Date(Number(document.createdAt)),
       amount: document.properties.amount,
       withdrawalAddress: outputScriptToAddress(Buffer.from(document.properties.outputScript ?? [], 'base64')),
+      transactionIndex: document.properties.transactionIndex ?? null,
+      transactionSignHeight: document.properties.transactionSignHeight ?? null,
       hash: withdrawals.find(
         withdrawal =>
           withdrawal.timestamp.getTime() === Number(document.createdAt)

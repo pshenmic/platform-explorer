@@ -1741,6 +1741,50 @@ const getPlatformQuorums = async () => {
   return platformQuorums
 }
 
+const buildProposerSchedule = (quorums, currentQuorumHash, lastProposer, lastHeight, count) => {
+  const currentIndex = quorums.findIndex(quorum => quorum.quorumHash === currentQuorumHash)
+
+  if (currentIndex === -1) {
+    return null
+  }
+
+  const rotation = [...quorums.slice(currentIndex), ...quorums.slice(0, currentIndex)]
+
+  const membersOf = (quorum) => (quorum.members ?? []).map(member => member.proTxHash).sort()
+
+  let members = membersOf(rotation[0])
+  let rotationIndex = 0
+  // a proposer we cannot place starts the pass at the lowest proTxHash of the quorum
+  let memberIndex = members.indexOf(lastProposer) + 1
+
+  const proposers = []
+
+  while (proposers.length < count) {
+    if (memberIndex >= members.length) {
+      rotationIndex += 1
+
+      if (rotationIndex >= rotation.length) {
+        break
+      }
+
+      members = membersOf(rotation[rotationIndex])
+      memberIndex = 0
+
+      continue
+    }
+
+    proposers.push({
+      height: lastHeight + proposers.length + 1,
+      proTxHash: members[memberIndex],
+      quorumHash: rotation[rotationIndex].quorumHash
+    })
+
+    memberIndex += 1
+  }
+
+  return proposers
+}
+
 // Calculating period and calculate the period
 // and find the interval with less than 2 periods
 // and take the previous interval
@@ -1975,6 +2019,7 @@ module.exports = {
   checkTcpConnect,
   getFinalPoSeBanHeight,
   getPlatformQuorums,
+  buildProposerSchedule,
   calculateInterval,
   iso8601duration,
   getAliasInfo,

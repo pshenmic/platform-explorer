@@ -5,6 +5,8 @@ const server = require('../../src/server')
 const { getKnex } = require('../../src/utils')
 const fixtures = require('../utils/fixtures')
 const StateTransitionEnum = require('../../src/enums/StateTransitionEnum')
+const TokenTransitionsEnum = require('../../src/enums/TokenTransitionsEnum')
+const DocumentActionEnum = require('../../src/enums/DocumentActionEnum')
 const tenderdashRpc = require('../../src/tenderdashRpc')
 const { ContestedResourcesController } = require('dash-platform-sdk/src/contestedResources')
 const { IdentitiesController } = require('dash-platform-sdk/src/identities')
@@ -246,6 +248,7 @@ describe('Identities routes', () => {
         totalDocuments: 0,
         totalDataContracts: 0,
         isSystem: false,
+        type: 'regular',
         aliases: [{
           alias: alias.alias,
           contested: false,
@@ -309,6 +312,38 @@ describe('Identities routes', () => {
       }])
     })
 
+    it('should return masternode identity that has no row in identities table', async () => {
+      const block = await fixtures.block(knex, { timestamp: new Date(0) })
+
+      // masternode voting identities are never indexed, they are only ever visible
+      // through the masternode vote state transitions they own
+      const voterIdentifier = 'e73ZaW2airbBZ7saALtPDJEjpWHGn3Fx4FjzDf5Fwvz'
+
+      await fixtures.transaction(knex, {
+        block_hash: block.hash,
+        block_height: block.height,
+        type: StateTransitionEnum.MASTERNODE_VOTE,
+        owner: voterIdentifier,
+        gas_used: 10000000,
+        data: ''
+      })
+
+      const { body } = await client.get(`/identity/${voterIdentifier}`)
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      assert.equal(body.identifier, voterIdentifier)
+      assert.equal(body.owner, voterIdentifier)
+      assert.equal(body.isSystem, false)
+      assert.equal(body.txHash, null)
+      assert.equal(body.timestamp, null)
+      assert.equal(body.totalTxs, 1)
+      assert.equal(body.totalGasSpent, 10000000)
+      assert.equal(body.revision, String(mockIdentity.revision))
+      assert.equal(body.balance, '0')
+      assert.equal(body.nonce, '0')
+    })
+
     it('should return 404 when identity not found', async () => {
       await client.get('/identity/Cxo56ta5EMrWok8yp2Gpzm8cjBoa3mGYKZaAp9yqD3gW')
         .expect(404)
@@ -329,7 +364,11 @@ describe('Identities routes', () => {
       transactions = []
 
       for (let i = 0; i < 10; i++) {
-        block = await fixtures.block(knex)
+        // withdrawals are matched to their state transition by block timestamp, so the blocks
+        // need distinct ones. Left to default they land in the same millisecond and two
+        // withdrawals resolve to the same transition. The height is left alone, the expected
+        // set below orders on it
+        block = await fixtures.block(knex, { timestamp: new Date(i * 1000) })
 
         const transaction = await fixtures.transaction(knex, {
           block_hash: block.hash,
@@ -353,7 +392,9 @@ describe('Identities routes', () => {
         },
         properties: {
           status: 0,
-          amount: 12345678
+          amount: 12345678,
+          transactionIndex: 7,
+          transactionSignHeight: 1234
         },
         getCreatedAt: () => transaction.block.timestamp,
         getId: () => transaction.transaction.hash,
@@ -374,7 +415,9 @@ describe('Identities routes', () => {
         status: 'QUEUED',
         timestamp: new Date(withdrawal.createdAt).toISOString(),
         amount: withdrawal.properties.amount,
-        withdrawalAddress: null
+        withdrawalAddress: null,
+        transactionIndex: withdrawal.properties.transactionIndex,
+        transactionSignHeight: withdrawal.properties.transactionSignHeight
       })))
     })
 
@@ -495,6 +538,7 @@ describe('Identities routes', () => {
         totalDocuments: 0,
         totalDataContracts: 0,
         isSystem: false,
+        type: 'regular',
         aliases: [
           {
             alias: 'test.test',
@@ -558,6 +602,7 @@ describe('Identities routes', () => {
           totalDocuments: 0,
           totalDataContracts: 0,
           isSystem: false,
+          type: 'regular',
           aliases: [
             {
               alias: 'test.test',
@@ -622,6 +667,7 @@ describe('Identities routes', () => {
           totalDocuments: 0,
           totalDataContracts: 0,
           isSystem: false,
+          type: 'regular',
           aliases: [
             {
               alias: 'test.test',
@@ -687,6 +733,7 @@ describe('Identities routes', () => {
           totalDocuments: 0,
           totalDataContracts: 0,
           isSystem: false,
+          type: 'regular',
           aliases: [
             {
               alias: 'test.test',
@@ -762,6 +809,7 @@ describe('Identities routes', () => {
           totalDocuments: 0,
           totalDataContracts: 0,
           isSystem: false,
+          type: 'regular',
           aliases: [
             {
               alias: 'test.test',
@@ -840,6 +888,7 @@ describe('Identities routes', () => {
           totalDocuments: 0,
           totalDataContracts: 0,
           isSystem: false,
+          type: 'regular',
           aliases: [
             {
               alias: 'test.test',
@@ -928,6 +977,7 @@ describe('Identities routes', () => {
           totalDocuments: _identity.balance / 10000,
           totalDataContracts: _identity.balance / 10000,
           isSystem: false,
+          type: 'regular',
           aliases: [
             {
               alias: 'test.test',
@@ -1010,6 +1060,7 @@ describe('Identities routes', () => {
           totalDocuments: 0,
           totalDataContracts: 0,
           isSystem: false,
+          type: 'regular',
           aliases: [
             {
               alias: 'test.test',
@@ -1115,6 +1166,7 @@ describe('Identities routes', () => {
           totalDocuments: 0,
           totalDataContracts: 0,
           isSystem: false,
+          type: 'regular',
           aliases: [
             {
               alias: 'test.test',
@@ -1154,7 +1206,7 @@ describe('Identities routes', () => {
       for (let i = 0; i < 5; i++) {
         block = await fixtures.block(knex, { height: 100 + i, timestamp: new Date(0) })
         identity = await fixtures.identity(knex, { block_hash: block.hash, block_height: block.height })
-        await knex('identities').where('id', identity.id).update({ state_transition_hash: null, state_transition_id: null })
+        await knex('identities').where('id', identity.id).update({ state_transition_hash: null, state_transition_id: null, type: 'masternode' })
         masternode.push(identity.identifier)
       }
 
@@ -1180,7 +1232,7 @@ describe('Identities routes', () => {
       for (let i = 0; i < 5; i++) {
         block = await fixtures.block(knex, { height: 200 + i, timestamp: new Date(0) })
         identity = await fixtures.identity(knex, { block_hash: block.hash, block_height: block.height })
-        await knex('identities').where('id', identity.id).update({ state_transition_hash: null, state_transition_id: null })
+        await knex('identities').where('id', identity.id).update({ state_transition_hash: null, state_transition_id: null, type: 'masternode' })
         masternode.push(identity.identifier)
       }
 
@@ -1210,7 +1262,7 @@ describe('Identities routes', () => {
       for (let i = 0; i < 5; i++) {
         block = await fixtures.block(knex, { height: 300 + i, timestamp: new Date(0) })
         identity = await fixtures.identity(knex, { block_hash: block.hash, block_height: block.height })
-        await knex('identities').where('id', identity.id).update({ state_transition_hash: null, state_transition_id: null })
+        await knex('identities').where('id', identity.id).update({ state_transition_hash: null, state_transition_id: null, type: 'masternode' })
         masternode.push(identity.identifier)
       }
 
@@ -1223,6 +1275,70 @@ describe('Identities routes', () => {
       for (const reg of regular) {
         assert.equal(returnedIdentifiers.includes(reg), false)
       }
+    })
+
+    it('should report the type of every identity', async () => {
+      mock.method(IdentitiesController.prototype, 'getIdentityBalance', async () => 0)
+
+      const regular = []
+      const masternode = []
+
+      for (let i = 0; i < 5; i++) {
+        block = await fixtures.block(knex, { height: i + 1, timestamp: new Date(0) })
+        identity = await fixtures.identity(knex, { block_hash: block.hash, block_height: block.height })
+        regular.push(identity.identifier)
+      }
+
+      for (let i = 0; i < 5; i++) {
+        block = await fixtures.block(knex, { height: 400 + i, timestamp: new Date(0) })
+        identity = await fixtures.identity(knex, { block_hash: block.hash, block_height: block.height })
+        await knex('identities').where('id', identity.id).update({ state_transition_hash: null, state_transition_id: null, type: 'masternode' })
+        masternode.push(identity.identifier)
+      }
+
+      const { body } = await client.get('/identities?limit=10')
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      const types = body.resultSet.reduce((types, identity) => ({ ...types, [identity.identifier]: identity.type }), {})
+
+      for (const identifier of regular) {
+        assert.equal(types[identifier], 'regular')
+      }
+
+      for (const identifier of masternode) {
+        assert.equal(types[identifier], 'masternode')
+      }
+    })
+
+    it('should filter by the masternode voting and operator types', async () => {
+      mock.method(IdentitiesController.prototype, 'getIdentityBalance', async () => 0)
+
+      const byType = {}
+
+      for (const identityType of ['regular', 'masternode', 'masternode_voting', 'masternode_operator']) {
+        block = await fixtures.block(knex, { height: Object.keys(byType).length + 1, timestamp: new Date(0) })
+        identity = await fixtures.identity(knex, { block_hash: block.hash, block_height: block.height, type: identityType })
+        byType[identityType] = identity.identifier
+      }
+
+      for (const [identityType, identifier] of Object.entries(byType)) {
+        const { body } = await client.get(`/identities?identity_type=${identityType}`)
+          .expect(200)
+          .expect('Content-Type', 'application/json; charset=utf-8')
+
+        assert.deepEqual(body.resultSet.map(identity => identity.identifier), [identifier])
+        assert.deepEqual(body.resultSet.map(identity => identity.type), [identityType])
+      }
+    })
+
+    it('should reject an unknown identity type', async () => {
+      // the schema rejects the value, the shared error handler reports every
+      // validation failure as a 500
+      const { body } = await client.get('/identities?identity_type=SOMETHING')
+        .expect(500)
+
+      assert.equal(body.error, 'querystring/identity_type must be equal to one of the allowed values')
     })
   })
 
@@ -2000,6 +2116,219 @@ describe('Identities routes', () => {
   })
 
   describe('getTransactionsByIdentity()', async () => {
+    it('should report the credits a transfer moved', async () => {
+      block = await fixtures.block(knex, { height: 1 })
+      identity = await fixtures.identity(knex, { block_hash: block.hash, block_height: block.height })
+
+      const topUp = await fixtures.transaction(knex, {
+        block_hash: block.hash,
+        block_height: block.height,
+        owner: identity.identifier,
+        type: StateTransitionEnum.IDENTITY_TOP_UP
+      })
+      await fixtures.transfer(knex, {
+        amount: 1234567,
+        recipient: identity.identifier,
+        state_transition_hash: topUp.hash
+      })
+
+      const { body } = await client.get(`/identity/${identity.identifier}/transactions`)
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      assert.equal(body.resultSet.find(tx => tx.hash === topUp.hash).amount, '1234567')
+      // the identity create that owns no transfer stays null
+      assert.equal(body.resultSet.find(tx => tx.hash === identity.txHash).amount, null)
+    })
+
+    it('should return transactions where identity is not the owner', async () => {
+      block = await fixtures.block(knex, { height: 1 })
+      identity = await fixtures.identity(knex, { block_hash: block.hash, block_height: block.height })
+      const counterparty = await fixtures.identity(knex, { block_hash: block.hash, block_height: block.height })
+
+      const incoming = await fixtures.transaction(knex, {
+        block_hash: block.hash,
+        block_height: block.height,
+        owner: counterparty.identifier,
+        type: StateTransitionEnum.IDENTITY_CREDIT_TRANSFER
+      })
+      await fixtures.transfer(knex, {
+        amount: 1000,
+        sender: counterparty.identifier,
+        recipient: identity.identifier,
+        state_transition_hash: incoming.hash
+      })
+
+      const outgoing = await fixtures.transaction(knex, {
+        block_hash: block.hash,
+        block_height: block.height,
+        owner: identity.identifier,
+        type: StateTransitionEnum.IDENTITY_CREDIT_TRANSFER
+      })
+      await fixtures.transfer(knex, {
+        amount: 500,
+        sender: identity.identifier,
+        recipient: counterparty.identifier,
+        state_transition_hash: outgoing.hash
+      })
+
+      const { body } = await client.get(`/identity/${identity.identifier}/transactions`)
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      assert.equal(body.pagination.total, 3)
+      assert.deepEqual(
+        body.resultSet.map(tx => tx.hash),
+        [identity.txHash, incoming.hash, outgoing.hash]
+      )
+      // the counterparty identity create never touched our identity
+      assert.equal(body.resultSet.some(tx => tx.hash === counterparty.txHash), false)
+    })
+
+    it('should not duplicate a transaction that moved credits to the identity twice', async () => {
+      block = await fixtures.block(knex, { height: 1 })
+      identity = await fixtures.identity(knex, { block_hash: block.hash, block_height: block.height })
+      const counterparty = await fixtures.identity(knex, { block_hash: block.hash, block_height: block.height })
+
+      const incoming = await fixtures.transaction(knex, {
+        block_hash: block.hash,
+        block_height: block.height,
+        owner: counterparty.identifier,
+        type: StateTransitionEnum.IDENTITY_CREDIT_TRANSFER
+      })
+      await fixtures.transfer(knex, {
+        amount: 1000,
+        sender: counterparty.identifier,
+        recipient: identity.identifier,
+        state_transition_hash: incoming.hash
+      })
+      await fixtures.transfer(knex, {
+        amount: 2000,
+        sender: counterparty.identifier,
+        recipient: identity.identifier,
+        state_transition_hash: incoming.hash
+      })
+
+      const { body } = await client.get(`/identity/${identity.identifier}/transactions`)
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      assert.equal(body.pagination.total, 2)
+      assert.equal(body.resultSet.filter(tx => tx.hash === incoming.hash).length, 1)
+      assert.equal(body.resultSet.find(tx => tx.hash === incoming.hash).amount, '3000')
+    })
+
+    it('should return token transitions that handed tokens to the identity', async () => {
+      block = await fixtures.block(knex, { height: 1 })
+      identity = await fixtures.identity(knex, { block_hash: block.hash, block_height: block.height })
+      const tokenOwner = await fixtures.identity(knex, { block_hash: block.hash, block_height: block.height })
+
+      const contractTransaction = await fixtures.transaction(knex, {
+        block_hash: block.hash,
+        block_height: block.height,
+        type: 0,
+        owner: tokenOwner.identifier
+      })
+      dataContract = await fixtures.dataContract(knex, {
+        owner: tokenOwner.identifier,
+        state_transition_hash: contractTransaction.hash,
+        version: 1
+      })
+      const token = await fixtures.token(knex, {
+        position: 0,
+        owner: tokenOwner.identifier,
+        data_contract_id: dataContract.id,
+        state_transition_hash: contractTransaction.hash,
+        decimals: 8,
+        base_supply: 1000
+      })
+
+      const mint = await fixtures.transaction(knex, {
+        block_hash: block.hash,
+        block_height: block.height,
+        type: 0,
+        owner: tokenOwner.identifier
+      })
+      await fixtures.tokeTransition(knex, {
+        token_identifier: token.identifier,
+        owner: tokenOwner.identifier,
+        action: TokenTransitionsEnum.Mint,
+        amount: 100,
+        recipient: identity.identifier,
+        state_transition_hash: mint.hash,
+        token_contract_position: 0,
+        data_contract_id: dataContract.id
+      })
+
+      const transfer = await fixtures.transaction(knex, {
+        block_hash: block.hash,
+        block_height: block.height,
+        type: 0,
+        owner: tokenOwner.identifier
+      })
+      await fixtures.tokeTransition(knex, {
+        token_identifier: token.identifier,
+        owner: tokenOwner.identifier,
+        action: TokenTransitionsEnum.Transfer,
+        amount: 25,
+        recipient: identity.identifier,
+        state_transition_hash: transfer.hash,
+        token_contract_position: 0,
+        data_contract_id: dataContract.id
+      })
+
+      const { body } = await client.get(`/identity/${identity.identifier}/transactions`)
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      assert.equal(body.pagination.total, 3)
+      assert.deepEqual(
+        body.resultSet.map(tx => tx.hash),
+        [identity.txHash, mint.hash, transfer.hash]
+      )
+    })
+
+    it('should return a document transferred to the identity', async () => {
+      block = await fixtures.block(knex, { height: 1 })
+      identity = await fixtures.identity(knex, { block_hash: block.hash, block_height: block.height })
+      const documentOwner = await fixtures.identity(knex, { block_hash: block.hash, block_height: block.height })
+
+      const contractTransaction = await fixtures.transaction(knex, {
+        block_hash: block.hash,
+        block_height: block.height,
+        type: 0,
+        owner: documentOwner.identifier
+      })
+      dataContract = await fixtures.dataContract(knex, {
+        owner: documentOwner.identifier,
+        state_transition_hash: contractTransaction.hash,
+        version: 1
+      })
+
+      const documentTransfer = await fixtures.transaction(knex, {
+        block_hash: block.hash,
+        block_height: block.height,
+        type: 0,
+        owner: documentOwner.identifier
+      })
+      await fixtures.document(knex, {
+        owner: identity.identifier,
+        data_contract_id: dataContract.id,
+        state_transition_hash: documentTransfer.hash,
+        transition_type: DocumentActionEnum.Transfer
+      })
+
+      const { body } = await client.get(`/identity/${identity.identifier}/transactions`)
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      assert.equal(body.pagination.total, 2)
+      assert.deepEqual(
+        body.resultSet.map(tx => tx.hash),
+        [identity.txHash, documentTransfer.hash]
+      )
+    })
+
     it('should return default set of transactions by identity', async () => {
       block = await fixtures.block(knex, { height: 1 })
       identity = await fixtures.identity(knex, { block_hash: block.hash, block_height: block.height })
@@ -2033,6 +2362,7 @@ describe('Identities routes', () => {
           base58Address: null,
           bech32mAddress: null,
           incoming: null,
+          amount: null,
           hash: _transaction.transaction.hash,
           index: 0,
           blockHash: _transaction.transaction.block_hash,
@@ -2086,6 +2416,7 @@ describe('Identities routes', () => {
           base58Address: null,
           bech32mAddress: null,
           incoming: null,
+          amount: null,
           hash: _transaction.transaction.hash,
           index: 0,
           blockHash: _transaction.transaction.block_hash,
@@ -2139,6 +2470,7 @@ describe('Identities routes', () => {
           base58Address: null,
           bech32mAddress: null,
           incoming: null,
+          amount: null,
           hash: _transaction.transaction.hash,
           index: 0,
           blockHash: _transaction.transaction.block_hash,
@@ -2192,6 +2524,7 @@ describe('Identities routes', () => {
           base58Address: null,
           bech32mAddress: null,
           incoming: null,
+          amount: null,
           hash: _transaction.transaction.hash,
           index: 0,
           blockHash: _transaction.transaction.block_hash,
@@ -2250,7 +2583,7 @@ describe('Identities routes', () => {
         .sort((a, b) => a.block.height - b.block.height)
         .slice(0, 10)
         .map((_transfer) => ({
-          amount: parseInt(_transfer.transfer.amount),
+          amount: String(_transfer.transfer.amount),
           sender: _transfer.transfer.sender,
           recipient: _transfer.transfer.recipient,
           timestamp: _transfer.block.timestamp.toISOString(),
@@ -2300,7 +2633,7 @@ describe('Identities routes', () => {
         .sort((a, b) => a.block.height - b.block.height)
         .slice(0, 10)
         .map((_transfer) => ({
-          amount: parseInt(_transfer.transfer.amount),
+          amount: String(_transfer.transfer.amount),
           sender: _transfer.transfer.sender,
           recipient: _transfer.transfer.recipient,
           timestamp: _transfer.block.timestamp.toISOString(),
@@ -2350,7 +2683,7 @@ describe('Identities routes', () => {
         .sort((a, b) => a.block.height - b.block.height)
         .slice(0, 10)
         .map((_transfer) => ({
-          amount: parseInt(_transfer.transfer.amount),
+          amount: String(_transfer.transfer.amount),
           sender: _transfer.transfer.sender,
           recipient: _transfer.transfer.recipient,
           timestamp: _transfer.block.timestamp.toISOString(),
@@ -2392,7 +2725,7 @@ describe('Identities routes', () => {
       assert.equal(body.pagination.limit, 10)
 
       const expectedTransfers = {
-        amount: transfer.amount,
+        amount: String(transfer.amount),
         sender: null,
         recipient: identity.identifier,
         timestamp: block.timestamp.toISOString(),
@@ -2441,7 +2774,7 @@ describe('Identities routes', () => {
         .sort((a, b) => b.block.height - a.block.height)
         .slice(0, 10)
         .map((_transfer) => ({
-          amount: parseInt(_transfer.transfer.amount),
+          amount: String(_transfer.transfer.amount),
           sender: _transfer.transfer.sender,
           recipient: _transfer.transfer.recipient,
           timestamp: _transfer.block.timestamp.toISOString(),
@@ -2490,7 +2823,7 @@ describe('Identities routes', () => {
         .sort((a, b) => a.block.height - b.block.height)
         .slice(7, 14)
         .map((_transfer) => ({
-          amount: parseInt(_transfer.transfer.amount),
+          amount: String(_transfer.transfer.amount),
           sender: _transfer.transfer.sender,
           recipient: _transfer.transfer.recipient,
           timestamp: _transfer.block.timestamp.toISOString(),
@@ -2539,7 +2872,7 @@ describe('Identities routes', () => {
         .sort((a, b) => b.block.height - a.block.height)
         .slice(7, 14)
         .map((_transfer) => ({
-          amount: parseInt(_transfer.transfer.amount),
+          amount: String(_transfer.transfer.amount),
           sender: _transfer.transfer.sender,
           recipient: _transfer.transfer.recipient,
           timestamp: _transfer.block.timestamp.toISOString(),

@@ -24,6 +24,16 @@ impl PostgresDAO {
             .await
             .unwrap();
 
+        let amount_query = "UPDATE state_transitions SET amount = COALESCE(amount, 0) + $1, \
+        recipient = COALESCE($2, recipient) WHERE hash = $3;";
+
+        let amount_stmt = sql_transaction.prepare_cached(amount_query).await.unwrap();
+
+        sql_transaction
+            .execute(&amount_stmt, &[&amount, &recipient, &st_hash])
+            .await
+            .unwrap();
+
         println!("Created Transfer on {}", &st_hash);
 
         Ok(())

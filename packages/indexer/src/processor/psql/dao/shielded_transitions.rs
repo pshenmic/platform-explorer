@@ -28,6 +28,18 @@ impl PostgresDAO {
             )
             .await?;
 
+        // the credits a transition moved are carried on the transition itself so reading them
+        // back needs no join, the same way create_transfer does it
+        let amount_stmt = sql_transaction
+            .prepare_cached(
+                "UPDATE state_transitions SET amount = COALESCE(amount, 0) + $1 WHERE id = $2;",
+            )
+            .await?;
+
+        sql_transaction
+            .execute(&amount_stmt, &[&transition_amount, &transition_id])
+            .await?;
+
         Ok(())
     }
 }

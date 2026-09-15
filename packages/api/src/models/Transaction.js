@@ -15,11 +15,12 @@ module.exports = class Transaction {
   error
   owner
   incoming
+  amount
   base58Address
   bech32mAddress
   duplicates
 
-  constructor (hash, index, blockHash, blockHeight, type, batchType, data, timestamp, gasUsed, status, error, owner, incoming, base58Address, bech32mAddress, duplicates) {
+  constructor (hash, index, blockHash, blockHeight, type, batchType, data, timestamp, gasUsed, status, error, owner, incoming, amount, base58Address, bech32mAddress, duplicates) {
     this.hash = hash ?? null
     this.index = index ?? null
     this.blockHash = blockHash ?? null
@@ -33,6 +34,7 @@ module.exports = class Transaction {
     this.error = error ?? null
     this.owner = owner || null
     this.incoming = incoming ?? null
+    this.amount = amount != null ? String(amount) : null
     this.base58Address = base58Address ?? null
     this.bech32mAddress = bech32mAddress ?? null
     this.duplicates = duplicates
@@ -54,6 +56,7 @@ module.exports = class Transaction {
     owner,
     aliases,
     incoming,
+    amount,
     base58_address,
     bech32m_address,
     duplicates
@@ -79,7 +82,7 @@ module.exports = class Transaction {
         identifier: owner?.trim() ?? null,
         aliases: aliases ?? []
       },
-      incoming, base58_address, bech32m_address,
+      incoming, amount, base58_address, bech32m_address,
       duplicates
     )
   }

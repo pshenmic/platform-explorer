@@ -1903,4 +1903,46 @@ describe('Utils', () => {
       assert.equal(result, 0)
     })
   })
+  describe('buildProposerSchedule()', () => {
+    // three quorums of three members each, newest first, as getPlatformQuorums sorts them
+    const quorums = [
+      { quorumHash: 'CCC', creationHeight: 300, members: [{ proTxHash: 'C1' }, { proTxHash: 'C2' }, { proTxHash: 'C3' }] },
+      { quorumHash: 'BBB', creationHeight: 200, members: [{ proTxHash: 'B3' }, { proTxHash: 'B1' }, { proTxHash: 'B2' }] },
+      { quorumHash: 'AAA', creationHeight: 100, members: [{ proTxHash: 'A1' }, { proTxHash: 'A2' }, { proTxHash: 'A3' }] }
+    ]
+
+    it('should take the member after the last proposer, in ascending proTxHash order', () => {
+      const schedule = utils.buildProposerSchedule(quorums, 'BBB', 'B1', 50, 2)
+
+      assert.deepEqual(schedule, [
+        { height: 51, proTxHash: 'B2', quorumHash: 'BBB' },
+        { height: 52, proTxHash: 'B3', quorumHash: 'BBB' }
+      ])
+    })
+
+    it('should rotate to the next older quorum once the pass is over', () => {
+      const schedule = utils.buildProposerSchedule(quorums, 'BBB', 'B3', 50, 2)
+
+      assert.deepEqual(schedule, [
+        { height: 51, proTxHash: 'A1', quorumHash: 'AAA' },
+        { height: 52, proTxHash: 'A2', quorumHash: 'AAA' }
+      ])
+    })
+
+    it('should wrap back to the newest quorum past the oldest one', () => {
+      const schedule = utils.buildProposerSchedule(quorums, 'AAA', 'A3', 50, 1)
+
+      assert.deepEqual(schedule, [{ height: 51, proTxHash: 'C1', quorumHash: 'CCC' }])
+    })
+
+    it('should start the pass over when the last proposer is not a member', () => {
+      const schedule = utils.buildProposerSchedule(quorums, 'BBB', 'ZZ', 50, 1)
+
+      assert.deepEqual(schedule, [{ height: 51, proTxHash: 'B1', quorumHash: 'BBB' }])
+    })
+
+    it('should return null for a quorum that is not signing-active', () => {
+      assert.equal(utils.buildProposerSchedule(quorums, 'DDD', 'A1', 50, 1), null)
+    })
+  })
 })
