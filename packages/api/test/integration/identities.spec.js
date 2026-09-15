@@ -5,6 +5,8 @@ const server = require('../../src/server')
 const { getKnex } = require('../../src/utils')
 const fixtures = require('../utils/fixtures')
 const StateTransitionEnum = require('../../src/enums/StateTransitionEnum')
+const TokenTransitionsEnum = require('../../src/enums/TokenTransitionsEnum')
+const DocumentActionEnum = require('../../src/enums/DocumentActionEnum')
 const tenderdashRpc = require('../../src/tenderdashRpc')
 const { ContestedResourcesController } = require('dash-platform-sdk/src/contestedResources')
 const { IdentitiesController } = require('dash-platform-sdk/src/identities')
@@ -2214,6 +2216,117 @@ describe('Identities routes', () => {
       assert.equal(body.pagination.total, 2)
       assert.equal(body.resultSet.filter(tx => tx.hash === incoming.hash).length, 1)
       assert.equal(body.resultSet.find(tx => tx.hash === incoming.hash).amount, '3000')
+    })
+
+    it('should return token transitions that handed tokens to the identity', async () => {
+      block = await fixtures.block(knex, { height: 1 })
+      identity = await fixtures.identity(knex, { block_hash: block.hash, block_height: block.height })
+      const tokenOwner = await fixtures.identity(knex, { block_hash: block.hash, block_height: block.height })
+
+      const contractTransaction = await fixtures.transaction(knex, {
+        block_hash: block.hash,
+        block_height: block.height,
+        type: 0,
+        owner: tokenOwner.identifier
+      })
+      dataContract = await fixtures.dataContract(knex, {
+        owner: tokenOwner.identifier,
+        state_transition_hash: contractTransaction.hash,
+        version: 1
+      })
+      const token = await fixtures.token(knex, {
+        position: 0,
+        owner: tokenOwner.identifier,
+        data_contract_id: dataContract.id,
+        state_transition_hash: contractTransaction.hash,
+        decimals: 8,
+        base_supply: 1000
+      })
+
+      const mint = await fixtures.transaction(knex, {
+        block_hash: block.hash,
+        block_height: block.height,
+        type: 0,
+        owner: tokenOwner.identifier
+      })
+      await fixtures.tokeTransition(knex, {
+        token_identifier: token.identifier,
+        owner: tokenOwner.identifier,
+        action: TokenTransitionsEnum.Mint,
+        amount: 100,
+        recipient: identity.identifier,
+        state_transition_hash: mint.hash,
+        token_contract_position: 0,
+        data_contract_id: dataContract.id
+      })
+
+      const transfer = await fixtures.transaction(knex, {
+        block_hash: block.hash,
+        block_height: block.height,
+        type: 0,
+        owner: tokenOwner.identifier
+      })
+      await fixtures.tokeTransition(knex, {
+        token_identifier: token.identifier,
+        owner: tokenOwner.identifier,
+        action: TokenTransitionsEnum.Transfer,
+        amount: 25,
+        recipient: identity.identifier,
+        state_transition_hash: transfer.hash,
+        token_contract_position: 0,
+        data_contract_id: dataContract.id
+      })
+
+      const { body } = await client.get(`/identity/${identity.identifier}/transactions`)
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      assert.equal(body.pagination.total, 3)
+      assert.deepEqual(
+        body.resultSet.map(tx => tx.hash),
+        [identity.txHash, mint.hash, transfer.hash]
+      )
+    })
+
+    it('should return a document transferred to the identity', async () => {
+      block = await fixtures.block(knex, { height: 1 })
+      identity = await fixtures.identity(knex, { block_hash: block.hash, block_height: block.height })
+      const documentOwner = await fixtures.identity(knex, { block_hash: block.hash, block_height: block.height })
+
+      const contractTransaction = await fixtures.transaction(knex, {
+        block_hash: block.hash,
+        block_height: block.height,
+        type: 0,
+        owner: documentOwner.identifier
+      })
+      dataContract = await fixtures.dataContract(knex, {
+        owner: documentOwner.identifier,
+        state_transition_hash: contractTransaction.hash,
+        version: 1
+      })
+
+      const documentTransfer = await fixtures.transaction(knex, {
+        block_hash: block.hash,
+        block_height: block.height,
+        type: 0,
+        owner: documentOwner.identifier
+      })
+      await fixtures.document(knex, {
+        owner: identity.identifier,
+        data_contract_id: dataContract.id,
+        state_transition_hash: documentTransfer.hash,
+        transition_type: DocumentActionEnum.Transfer
+      })
+
+      const { body } = await client.get(`/identity/${identity.identifier}/transactions`)
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      assert.equal(body.pagination.total, 2)
+      assert.deepEqual(
+        body.resultSet.map(tx => tx.hash),
+        [identity.txHash, documentTransfer.hash]
+      )
     })
 
     it('should return default set of transactions by identity', async () => {

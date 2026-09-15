@@ -61,6 +61,15 @@ impl PSQLProcessor {
                         )
                         .await
                         .unwrap();
+
+                    self.dao
+                        .set_state_transition_recipient(
+                            mint.issued_to_identity_id().unwrap(),
+                            st_hash.clone(),
+                            sql_transaction,
+                        )
+                        .await
+                        .unwrap();
                 }
             }
             TokenTransition::Burn(burn) => self
@@ -95,6 +104,15 @@ impl PSQLProcessor {
                         transfer.recipient_id(),
                         transition.token_id(),
                         &sql_transaction,
+                    )
+                    .await
+                    .unwrap();
+
+                self.dao
+                    .set_state_transition_recipient(
+                        transfer.recipient_id(),
+                        st_hash.clone(),
+                        sql_transaction,
                     )
                     .await
                     .unwrap();

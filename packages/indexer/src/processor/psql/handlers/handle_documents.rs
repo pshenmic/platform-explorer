@@ -50,6 +50,21 @@ impl PSQLProcessor {
                     .await
                     .unwrap();
             }
+            DocumentTransition::Transfer(ref transition) => {
+                self.dao
+                    .create_document(document.clone(), Some(st_hash.clone()), sql_transaction)
+                    .await
+                    .unwrap();
+
+                self.dao
+                    .set_state_transition_recipient(
+                        transition.recipient_owner_id(),
+                        st_hash.clone(),
+                        sql_transaction,
+                    )
+                    .await
+                    .unwrap();
+            }
             _ => {
                 self.dao
                     .create_document(document.clone(), Some(st_hash.clone()), sql_transaction)

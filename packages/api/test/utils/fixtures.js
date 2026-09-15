@@ -3,6 +3,8 @@
 const { base58 } = require('@scure/base')
 const crypto = require('crypto')
 const StateTransitionEnum = require('../../src/enums/StateTransitionEnum')
+const TokenTransitionsEnum = require('../../src/enums/TokenTransitionsEnum')
+const DocumentActionEnum = require('../../src/enums/DocumentActionEnum')
 const bech32mEncode = require('./bech32m')
 const base58Address = require('./base58address')
 
@@ -17,6 +19,12 @@ const generateBech32mAddress = () => {
   return bech32mEncode('dashevo', bytes)
 }
 const generateBase58Address = () => base58Address(crypto.randomBytes(21))
+// set_state_transition_recipient in the indexer, for a recipient that receives no credits.
+// A recipient of credits was the more interesting one, so it is never overwritten
+const setStateTransitionRecipient = async (knex, state_transition_hash, recipient) =>
+  knex('state_transitions')
+    .where('hash', state_transition_hash)
+    .update({ recipient: knex.raw('COALESCE(recipient, ?)', [recipient]) })
 
 generateBech32mAddress()
 const fixtures = {
@@ -325,6 +333,10 @@ const fixtures = {
 
     const result = await knex('documents').insert(row).returning('id')
 
+    if (state_transition_hash && row.transition_type === DocumentActionEnum.Transfer) {
+      await setStateTransitionRecipient(knex, state_transition_hash, owner)
+    }
+
     const dataContract = await this.getDataContract(knex, {
       id: data_contract_id
     })
@@ -564,6 +576,10 @@ const fixtures = {
     }
 
     const [result] = await knex('token_transitions').insert(row).returning('id')
+
+    if (recipient && [TokenTransitionsEnum.Mint, TokenTransitionsEnum.Transfer].includes(action)) {
+      await setStateTransitionRecipient(knex, state_transition_hash, recipient)
+    }
 
     const dataContract = await this.getDataContract(knex, {
       id: data_contract_id
