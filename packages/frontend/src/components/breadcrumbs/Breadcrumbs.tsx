@@ -39,8 +39,6 @@ export const Breadcrumbs = () => {
     block: <BlockIcon className={'Breadcrumbs__Icon Breadcrumbs__Icon--Block'} />
   }
 
-  if (!links || links.length === 0) return
-
   const LinkContainer = ({ children, href, ...props }: LinkContainerProps) => {
     if (href) {
       return (

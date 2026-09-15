@@ -218,7 +218,7 @@ function Identity({ identifier }: IdentityProps) {
 
   return (
     <PageDataContainer className={'IdentityPage'} title={'Identity info'}>
-      <IdentityTotalCard identity={identity} rate={rate.data} />
+      <IdentityTotalCard identity={identity} identifier={identifier} rate={rate.data} />
 
       <InfoContainer styles={['tabs']} className={'IdentityPage__ListContainer'}>
         <Tabs onChange={setActiveTab} index={activeTab}>

@@ -11,7 +11,7 @@
 }
 
 .IdentityTotalCard--Loading .InfoLine__Value {
-  height: var(--pe-space-6);
+  min-height: var(--pe-space-6);
 }
 
 .IdentityTotalCard__CommonInfo .HorisontalSeparator {
@@ -41,6 +41,7 @@
 }
 
 .IdentityTotalCard__Avatar {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -119,7 +120,7 @@
 }
 
 .IdentityTotalCard--Loading .IdentityTotalCard__InfoLine .InfoLine__Value {
-  height: var(--pe-space-6);
+  min-height: var(--pe-space-6);
 }
 
 .IdentityTotalCard {
@@ -175,7 +176,6 @@
 
 .IdentityTotalCard--Loading .IdentityTotalCard__Avatar {
   overflow: hidden;
-  position: relative;
   animation: 1s LoadingContainer infinite;
 }
 
@@ -185,7 +185,7 @@
 }
 
 .IdentityTotalCard--Loading .IdentityTotalCard__Avatar::after {
-  animation: 1s loading-process infinite;
+  animation: 1s pe-loading-process infinite;
   z-index: 6;
 }
 
@@ -347,7 +347,7 @@
   }
 
   .IdentityTotalCard--Loading .InfoLine__Value {
-    height: var(--pe-space-6);
+    min-height: var(--pe-space-6);
   }
 
   .IdentityTotalCard__CommonInfo .HorisontalSeparator {
@@ -435,6 +435,14 @@
     position: static;
     width: 100%;
   }
+}
+
+.IdentityTotalCard__InfoLine {
+  min-height: 2rem;
+}
+
+.IdentityTotalCard .IdentityTotalCard__InfoLine--Balance .InfoLine__Value {
+  min-height: 3rem;
 }
 
 @media screen and (max-width: 48em) {
