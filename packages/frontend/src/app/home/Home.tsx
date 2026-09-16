@@ -14,24 +14,42 @@ import type { LoadableState, Rate } from '../../types'
 import type { QueryFilters } from '../../util/Api'
 import './Home.css'
 
+function HomeChunkPlaceholder({ className = '' }: { className?: string }) {
+  return (
+    <div className={`HomeChunkPlaceholder ${className}`} aria-hidden={'true'} aria-busy={'true'} />
+  )
+}
+
 const HeroNodes = dynamic(() => import('../../components/home/HeroNodes'), { ssr: false })
 const EpochsOverview = dynamic(
   () =>
     import('../../components/home/EpochsOverview').then(mod => ({ default: mod.EpochsOverview })),
-  { ssr: false }
+  { loading: () => <HomeChunkPlaceholder className={'HomeChunkPlaceholder--epochs'} /> }
 )
 const TxActivityChart = dynamic(() => import('../../components/home/TxActivityChart'), {
-  ssr: false
+  ssr: false,
+  loading: () => <HomeChunkPlaceholder className={'HomeChunkPlaceholder--chart'} />
 })
 const IdentityGrowthChart = dynamic(() => import('../../components/home/IdentityGrowthChart'), {
-  ssr: false
+  ssr: false,
+  loading: () => <HomeChunkPlaceholder className={'HomeChunkPlaceholder--chart'} />
 })
-const TxTypesBar = dynamic(() => import('../../components/home/TxTypesBar'), { ssr: false })
+const TxTypesBar = dynamic(() => import('../../components/home/TxTypesBar'), {
+  ssr: false,
+  loading: () => <HomeChunkPlaceholder className={'HomeChunkPlaceholder--chart'} />
+})
 const ShieldedPoolCard = dynamic(() => import('../../components/home/ShieldedPoolCard'), {
-  ssr: false
+  ssr: false,
+  loading: () => <HomeChunkPlaceholder className={'HomeChunkPlaceholder--chart'} />
 })
-const HomeLeaders = dynamic(() => import('../../components/home/HomeLeaders'), { ssr: false })
-const QuorumCard = dynamic(() => import('../../components/home/QuorumCard'), { ssr: false })
+const HomeLeaders = dynamic(() => import('../../components/home/HomeLeaders'), {
+  ssr: false,
+  loading: () => <HomeChunkPlaceholder className={'HomeChunkPlaceholder--leaders'} />
+})
+const QuorumCard = dynamic(() => import('../../components/home/QuorumCard'), {
+  ssr: false,
+  loading: () => <HomeChunkPlaceholder className={'HomeChunkPlaceholder--leaders'} />
+})
 
 function computeAvgBlockTime(blocks: any) {
   const stamps = (blocks || [])
