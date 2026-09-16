@@ -22,7 +22,7 @@ const openSans = OpenSans({
 })
 const robotoMono = RobotoMono({
   subsets: ['latin'],
-  display: 'swap',
+  display: 'optional',
   preload: true,
   adjustFontFallback: true,
   variable: '--font-roboto-mono'

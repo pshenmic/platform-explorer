@@ -78,6 +78,12 @@
   }
 }
 
+.HomeEpochs,
+.HomeCardPair {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 24rem;
+}
+
 .HomeCardPair {
   display: grid;
   grid-template-columns: 1fr;
