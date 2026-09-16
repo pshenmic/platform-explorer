@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect, useMemo, type ReactNode } from 'react'
 import dynamic from 'next/dynamic'
 import { useQuery, useQueries } from '@tanstack/react-query'
 import * as Api from '../../util/Api'
@@ -104,7 +104,7 @@ async function fetchAllValidators(filters?: QueryFilters) {
   return rows
 }
 
-function Home() {
+function Home({ brand }: { brand?: ReactNode }) {
   const listsViewport = useNearViewport<HTMLElement>()
   const epochsViewport = useNearViewport<HTMLElement>()
   const metricsViewport = useNearViewport()
@@ -335,6 +335,7 @@ function Home() {
         epochEndTime={currentEpochPayload?.epoch?.endTime}
         avgBlockTimeSec={computeAvgBlockTime(blocksQuery.data?.resultSet)}
         showNodes={showHeroNodes}
+        brand={brand}
       />
 
       <section

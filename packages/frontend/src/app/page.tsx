@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import Home from './home/Home'
+import HomeHeroBrand from './home/HomeHeroBrand'
 
 export const metadata: Metadata = {
   title: 'Dashboard — Dash Platform Explorer',
@@ -21,7 +22,7 @@ export const metadata: Metadata = {
 }
 
 async function HomeRoute() {
-  return <Home />
+  return <Home brand={<HomeHeroBrand />} />
 }
 
 export default HomeRoute
