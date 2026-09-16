@@ -8,7 +8,9 @@ const nextConfig = {
     }
   },
   experimental: {
-    optimizePackageImports: ['d3']
+    optimizePackageImports: ['d3'],
+    // First-visit mobile LCP: skip the render-blocking CSS waterfall.
+    inlineCss: true
   }
 }
 
