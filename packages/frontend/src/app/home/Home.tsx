@@ -90,7 +90,7 @@ async function fetchAllValidators(filters?: QueryFilters) {
 }
 
 function Home() {
-  const epochsViewport = useNearViewport()
+  const epochsViewport = useNearViewport<HTMLElement>()
   const metricsViewport = useNearViewport()
   const chartsViewport = useNearViewport()
   const leadersViewport = useNearViewport()
