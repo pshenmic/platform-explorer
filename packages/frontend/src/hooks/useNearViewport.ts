@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 
 export default function useNearViewport() {
-  const ref = useRef<HTMLDivElement>(null)
+  const ref = useRef<HTMLElement | null>(null)
   const [enabled, setEnabled] = useState(false)
 
   useEffect(() => {

@@ -24,7 +24,10 @@ const HeroNodes = dynamic(() => import('../../components/home/HeroNodes'), { ssr
 const EpochsOverview = dynamic(
   () =>
     import('../../components/home/EpochsOverview').then(mod => ({ default: mod.EpochsOverview })),
-  { loading: () => <HomeChunkPlaceholder className={'HomeChunkPlaceholder--epochs'} /> }
+  {
+    ssr: false,
+    loading: () => <HomeChunkPlaceholder className={'HomeChunkPlaceholder--epochs'} />
+  }
 )
 const TxActivityChart = dynamic(() => import('../../components/home/TxActivityChart'), {
   ssr: false,
@@ -87,10 +90,20 @@ async function fetchAllValidators(filters?: QueryFilters) {
 }
 
 function Home() {
+  const epochsViewport = useNearViewport()
   const metricsViewport = useNearViewport()
   const chartsViewport = useNearViewport()
   const leadersViewport = useNearViewport()
+  const [showHeroNodes, setShowHeroNodes] = useState(false)
   const [rate, setRate] = useState<LoadableState<Rate>>({ data: null, loading: true, error: false })
+
+  useEffect(() => {
+    const mq = window.matchMedia('(min-width: 48em)')
+    const apply = () => setShowHeroNodes(mq.matches)
+    apply()
+    mq.addEventListener('change', apply)
+    return () => mq.removeEventListener('change', apply)
+  }, [])
 
   const statusQuery = useQuery({
     queryKey: ['home', 'status'],
@@ -161,7 +174,7 @@ function Home() {
       }
       return rows
     },
-    enabled: validatorsPoolHeadQuery.isSuccess && poolPages > 1,
+    enabled: leadersViewport.enabled && validatorsPoolHeadQuery.isSuccess && poolPages > 1,
     staleTime: 60_000,
     refetchInterval: 120_000
   })
@@ -221,6 +234,7 @@ function Home() {
     queries: epochNumbers.map(n => ({
       queryKey: ['home', 'epoch', n],
       queryFn: () => Api.getEpoch(n),
+      enabled: n === currentEpochNumber || epochsViewport.enabled,
       staleTime: 30_000,
       refetchInterval: n === currentEpochNumber ? 60_000 : false
     }))
@@ -275,11 +289,18 @@ function Home() {
     error: false
   }
 
+  const rateEnabled =
+    epochsViewport.enabled ||
+    metricsViewport.enabled ||
+    chartsViewport.enabled ||
+    leadersViewport.enabled
+
   useEffect(() => {
+    if (!rateEnabled) return
     Api.getRate()
       .then(res => fetchHandlerSuccess(setRate, res))
       .catch(err => fetchHandlerError(setRate, err))
-  }, [])
+  }, [rateEnabled])
 
   const epochsSettled =
     epochNumbers.length > 0 &&
@@ -295,6 +316,7 @@ function Home() {
         epochNumber={currentEpochNumber}
         epochEndTime={currentEpochPayload?.epoch?.endTime}
         avgBlockTimeSec={computeAvgBlockTime(blocksQuery.data?.resultSet)}
+        showNodes={showHeroNodes}
       />
 
       <section
@@ -303,7 +325,7 @@ function Home() {
       >
         <div className={'HomeOverview__Grid'}>
           <div className={'HomeOverview__Sys'}>
-            <HeroNodes compact className={'HomeOverview__Nodes'} />
+            {showHeroNodes ? <HeroNodes compact className={'HomeOverview__Nodes'} /> : null}
             <HeroMeta status={statusQuery.data ?? {}} loading={statusQuery.isLoading} />
           </div>
           <div className={'HomeOverview__Tx'}>
@@ -328,6 +350,7 @@ function Home() {
       </section>
 
       <section
+        ref={epochsViewport.ref}
         id={'home-epochs'}
         className={'InfoBlock InfoBlock--NoBorder HomeEpochs'}
         tabIndex={-1}

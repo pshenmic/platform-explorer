@@ -57,7 +57,8 @@ export default function HomeHero({
   loading,
   epochNumber,
   epochEndTime,
-  avgBlockTimeSec
+  avgBlockTimeSec,
+  showNodes = false
 }: any) {
   const epochNum = toNumber(epochNumber)
   const epochEndMs = toMs(epochEndTime)
@@ -73,7 +74,7 @@ export default function HomeHero({
 
   return (
     <section className={'InfoBlock InfoBlock--NoBorder HomeHero'}>
-      <HeroNodes />
+      {showNodes ? <HeroNodes /> : null}
 
       <div className={'HomeHero__Inner'}>
         <div className={'HomeHero__Brand'}>
