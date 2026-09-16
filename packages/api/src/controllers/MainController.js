@@ -47,6 +47,10 @@ class MainController {
 
     const indexerSynced = (tdHeight - indexerHeight) <= 1
 
+    if (!indexerSynced) {
+      response.status(503)
+    }
+
     response.send({
       epoch,
       transactionsCount: stats?.transactionsCount,
