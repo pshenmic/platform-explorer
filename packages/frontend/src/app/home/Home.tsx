@@ -6,8 +6,6 @@ import { useQuery, useQueries } from '@tanstack/react-query'
 import * as Api from '../../util/Api'
 import HomeHero from './HomeHero'
 import useNearViewport from '../../hooks/useNearViewport'
-import { CompactTxList } from '../../components/home/CompactTxList'
-import { CompactBlocksList } from '../../components/home/CompactBlocksList'
 import { HeroMeta } from '../../components/home/HeroMeta'
 import { fetchHandlerSuccess, fetchHandlerError } from '../../util'
 import type { LoadableState, Rate } from '../../types'
@@ -20,6 +18,23 @@ function HomeChunkPlaceholder({ className = '' }: { className?: string }) {
   )
 }
 
+const CompactTxList = dynamic(
+  () => import('../../components/home/CompactTxList').then(mod => ({ default: mod.CompactTxList })),
+  {
+    ssr: false,
+    loading: () => <HomeChunkPlaceholder className={'HomeChunkPlaceholder--list'} />
+  }
+)
+const CompactBlocksList = dynamic(
+  () =>
+    import('../../components/home/CompactBlocksList').then(mod => ({
+      default: mod.CompactBlocksList
+    })),
+  {
+    ssr: false,
+    loading: () => <HomeChunkPlaceholder className={'HomeChunkPlaceholder--list'} />
+  }
+)
 const HeroNodes = dynamic(() => import('../../components/home/HeroNodes'), { ssr: false })
 const EpochsOverview = dynamic(
   () =>
@@ -90,6 +105,7 @@ async function fetchAllValidators(filters?: QueryFilters) {
 }
 
 function Home() {
+  const listsViewport = useNearViewport<HTMLElement>()
   const epochsViewport = useNearViewport<HTMLElement>()
   const metricsViewport = useNearViewport()
   const chartsViewport = useNearViewport()
@@ -111,11 +127,13 @@ function Home() {
     refetchInterval: 60000
   })
   const txQuery = useQuery({
+    enabled: listsViewport.enabled,
     queryKey: ['home', 'transactions'],
     queryFn: () => Api.getTransactions(1, 10, 'desc'),
     refetchInterval: 30000
   })
   const blocksQuery = useQuery({
+    enabled: listsViewport.enabled,
     queryKey: ['home', 'blocks'],
     queryFn: () => Api.getBlocks(1, 10, 'desc'),
     refetchInterval: 30000
@@ -320,6 +338,7 @@ function Home() {
       />
 
       <section
+        ref={listsViewport.ref}
         className={'InfoBlock InfoBlock--NoBorder HomeOverview'}
         aria-label={'Network overview'}
       >
