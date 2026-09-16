@@ -990,7 +990,7 @@ describe('Other routes', () => {
       }))
 
       const { body } = await client.get('/status')
-        //syncing
+        // syncing
         .expect(503)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
