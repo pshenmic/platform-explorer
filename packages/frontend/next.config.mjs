@@ -6,6 +6,9 @@ const nextConfig = {
     resolveAlias: {
       'pshenmic-dpp': 'pshenmic-dpp/wasm'
     }
+  },
+  experimental: {
+    optimizePackageImports: ['d3']
   }
 }
 
