@@ -1,6 +1,7 @@
 'use client'
 
 import type { ReactNode } from 'react'
+import dynamic from 'next/dynamic'
 import { NuqsAdapter } from 'nuqs/adapters/next/app'
 import {
   NetworkProvider,
@@ -12,8 +13,9 @@ import {
   TooltipProvider
 } from 'src/contexts'
 import Navbar from './navbar/Navbar'
-import Footer from './footer'
 import Background from './Background'
+
+const Footer = dynamic(() => import('./footer'), { ssr: false })
 
 import '../../styles/tokens/index.css'
 import '../../styles/theme.css'
