@@ -1,11 +1,14 @@
 'use client'
 
-import { TimeDelta, BigNumber } from '../../components/data'
+import dynamic from 'next/dynamic'
+import TimeDelta from '../../components/data/TimeDelta'
+import BigNumber from '../../components/data/BigNumber'
 import { useCountUp } from '../../components/home/hooks'
-import HeroNodes from '../../components/home/HeroNodes'
 import { Skeleton } from '../../components/home/Skeleton'
 import { isNetworkLive } from '../../components/home/utils'
 import './HomeHero.css'
+
+const HeroNodes = dynamic(() => import('../../components/home/HeroNodes'), { ssr: false })
 
 function toMs(value: any) {
   if (value == null) return null

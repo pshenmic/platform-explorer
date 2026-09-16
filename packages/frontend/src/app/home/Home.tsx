@@ -1,25 +1,37 @@
 'use client'
 
 import { useState, useEffect, useMemo } from 'react'
+import dynamic from 'next/dynamic'
 import { useQuery, useQueries } from '@tanstack/react-query'
 import * as Api from '../../util/Api'
 import HomeHero from './HomeHero'
 import useNearViewport from '../../hooks/useNearViewport'
-import { EpochsOverview } from '../../components/home/EpochsOverview'
-import QuorumCard from '../../components/home/QuorumCard'
-import TxTypesBar from '../../components/home/TxTypesBar'
-import TxActivityChart from '../../components/home/TxActivityChart'
-import IdentityGrowthChart from '../../components/home/IdentityGrowthChart'
-import ShieldedPoolCard from '../../components/home/ShieldedPoolCard'
-import HomeLeaders from '../../components/home/HomeLeaders'
 import { CompactTxList } from '../../components/home/CompactTxList'
 import { CompactBlocksList } from '../../components/home/CompactBlocksList'
 import { HeroMeta } from '../../components/home/HeroMeta'
-import HeroNodes from '../../components/home/HeroNodes'
 import { fetchHandlerSuccess, fetchHandlerError } from '../../util'
 import type { LoadableState, Rate } from '../../types'
 import type { QueryFilters } from '../../util/Api'
 import './Home.css'
+
+const HeroNodes = dynamic(() => import('../../components/home/HeroNodes'), { ssr: false })
+const EpochsOverview = dynamic(
+  () =>
+    import('../../components/home/EpochsOverview').then(mod => ({ default: mod.EpochsOverview })),
+  { ssr: false }
+)
+const TxActivityChart = dynamic(() => import('../../components/home/TxActivityChart'), {
+  ssr: false
+})
+const IdentityGrowthChart = dynamic(() => import('../../components/home/IdentityGrowthChart'), {
+  ssr: false
+})
+const TxTypesBar = dynamic(() => import('../../components/home/TxTypesBar'), { ssr: false })
+const ShieldedPoolCard = dynamic(() => import('../../components/home/ShieldedPoolCard'), {
+  ssr: false
+})
+const HomeLeaders = dynamic(() => import('../../components/home/HomeLeaders'), { ssr: false })
+const QuorumCard = dynamic(() => import('../../components/home/QuorumCard'), { ssr: false })
 
 function computeAvgBlockTime(blocks: any) {
   const stamps = (blocks || [])
