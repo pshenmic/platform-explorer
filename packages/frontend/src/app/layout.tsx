@@ -4,6 +4,8 @@ import { Analytics } from '@vercel/analytics/next'
 import { SpeedInsights } from '@vercel/speed-insights/next'
 import RootComponent from '../components/layout/RootComponent'
 import { Montserrat, Open_Sans as OpenSans, Roboto_Mono as RobotoMono } from 'next/font/google'
+import '../styles/tokens/index.css'
+import '../styles/theme.css'
 
 const montserrat = Montserrat({
   subsets: ['latin'],

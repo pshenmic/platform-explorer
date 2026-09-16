@@ -12,13 +12,12 @@ import {
   QueryProvider,
   TooltipProvider
 } from 'src/contexts'
-import Navbar from './navbar/Navbar'
 import Background from './Background'
 
+const Navbar = dynamic(() => import('./navbar/Navbar'), {
+  loading: () => <div className={'NavbarShell'} style={{ minHeight: 56 }} />
+})
 const Footer = dynamic(() => import('./footer'), { ssr: false })
-
-import '../../styles/tokens/index.css'
-import '../../styles/theme.css'
 
 interface RootComponentProps {
   children?: ReactNode
@@ -33,7 +32,7 @@ export default function RootComponent({ children }: RootComponentProps) {
             <ThemeProvider>
               <TooltipProvider>
                 <ModalProvider>
-                  <Background snow={false} />
+                  <Background />
                   <BreadcrumbsProvider>
                     <Navbar />
                     {children}
