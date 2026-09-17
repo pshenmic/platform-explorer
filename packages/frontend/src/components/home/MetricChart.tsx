@@ -5,7 +5,7 @@ import * as d3 from 'd3'
 import useResizeObserver from '@react-hook/resize-observer'
 
 import { CardHead, Presets } from '../cards'
-import { getDaysBetweenDates, currencyRound } from '../../util'
+import { currencyRound } from '../../util'
 import './MetricChart.css'
 
 const DAY = 24 * 60 * 60 * 1000
@@ -26,6 +26,97 @@ export function presetRange(preset: any) {
     start: preset.start ?? new Date(endMs - preset.ms).toISOString(),
     end: new Date(endMs).toISOString()
   }
+}
+
+export function seriesTimeDomain(points: { x: Date }[], preset?: any): [Date, Date] {
+  const xs = points.map(p => Number(p.x)).filter(n => Number.isFinite(n))
+  const dataStart = new Date(Math.min(...xs))
+  const dataEnd = new Date(Math.max(...xs))
+  const presetEnd = preset ? new Date(presetRange(preset).end) : dataEnd
+  const end = presetEnd.getTime() > dataEnd.getTime() ? presetEnd : dataEnd
+  return [dataStart, end]
+}
+
+function presetSpanMs(preset: { ms?: number; start?: string }) {
+  if (typeof preset.ms === 'number') return preset.ms
+  if (preset.start) return Math.max(0, Date.now() - new Date(preset.start).getTime())
+  return DAY
+}
+
+export function axisTimeFormat(preset: { ms?: number; start?: string }) {
+  const span = presetSpanMs(preset)
+  if (span <= DAY) return d3.timeFormat('%H:%M')
+  if (span <= 40 * DAY) return d3.timeFormat('%b %d')
+  return d3.timeFormat('%b %Y')
+}
+
+export function tipTimeFormat(preset: { ms?: number; start?: string }) {
+  const span = presetSpanMs(preset)
+  if (span <= 8 * DAY) return d3.timeFormat('%b %d, %H:%M')
+  if (span <= 40 * DAY) return d3.timeFormat('%b %d')
+  return d3.timeFormat('%b %d, %Y')
+}
+
+const fmtHour = d3.timeFormat('%H:%M')
+const fmtDay = d3.timeFormat('%b %d')
+const fmtMonYear = d3.timeFormat("%b '%y")
+
+export function buildTimeTicks(
+  x: { domain: () => Date[]; ticks: (count: number) => Date[] } & ((value: Date) => number),
+  innerWidth: number
+): { v: number; label: string }[] {
+  const domain = x.domain()
+  const start = domain[0]
+  const end = domain[1]
+  const span = Math.max(3600000, Number(end) - Number(start))
+  const minPx = span <= DAY ? 52 : span <= 45 * DAY ? 58 : 50
+  const maxTicks = Math.max(3, Math.min(6, Math.floor(Math.max(innerWidth, 1) / minPx)))
+
+  let interval = d3.timeHour
+  let step = 1
+  if (span <= DAY) {
+    interval = d3.timeHour
+    step = Math.max(4, Math.ceil(24 / maxTicks))
+  } else if (span <= 10 * DAY) {
+    interval = d3.timeDay
+    step = Math.max(1, Math.ceil(7 / maxTicks))
+  } else if (span <= 45 * DAY) {
+    interval = d3.timeWeek
+    step = Math.max(1, Math.ceil(5 / maxTicks))
+  } else {
+    interval = d3.timeMonth
+    const months = Math.max(1, span / DAY / 30)
+    step = Math.max(1, Math.ceil(months / maxTicks))
+  }
+
+  const dates: Date[] = [new Date(start)]
+  let cursor = interval.offset(new Date(end), -step)
+  const interiors: Date[] = []
+  while (cursor.getTime() > start.getTime() && interiors.length < maxTicks + 4) {
+    interiors.push(new Date(cursor))
+    cursor = interval.offset(cursor, -step)
+  }
+  interiors.reverse()
+  const startX = x(start)
+  const endX = x(end)
+  for (const d of interiors) {
+    const v = x(d)
+    const last = dates[dates.length - 1]
+    if (v - x(last) < minPx || endX - v < minPx) continue
+    dates.push(d)
+  }
+  if (endX - x(dates[dates.length - 1]) >= minPx * 0.5) dates.push(new Date(end))
+  else dates[dates.length - 1] = new Date(end)
+
+  const ticks: { v: number; label: string }[] = []
+  for (const d of dates) {
+    const label = span <= DAY ? fmtHour(d) : span <= 45 * DAY ? fmtDay(d) : fmtMonYear(d)
+    const v = x(d)
+    const last = ticks[ticks.length - 1]
+    if (last && (last.label === label || Math.abs(v - last.v) < minPx * 0.85)) continue
+    ticks.push({ v, label })
+  }
+  return ticks
 }
 
 const formatValue = (v: any) =>
@@ -149,17 +240,8 @@ export function MetricChart({
   const ready = width > 0 && h > 0 && points.length > 1
   let x: any, y: any, areaD: any, lineD: any, bars: any, xTicks: any, yTicks: any, tipFmt: any
   if (ready) {
-    x = d3.scaleTime(
-      d3.extent(points, (p: any) => p.x),
-      [M.left, width - M.right]
-    )
-    const dataSpanDays = getDaysBetweenDates(points[0].x, points[points.length - 1].x)
-    const tickFmt = d3.timeFormat(
-      dataSpanDays > 365 ? '%b %Y' : dataSpanDays > 7 ? '%b %d' : '%H:%M'
-    )
-    tipFmt = d3.timeFormat(
-      dataSpanDays > 365 ? '%b %d, %Y' : dataSpanDays > 3 ? '%b %d' : '%b %d, %H:%M'
-    )
+    x = d3.scaleTime(seriesTimeDomain(points, PRESETS[presetIdx]), [M.left, width - M.right])
+    tipFmt = tipTimeFormat(PRESETS[presetIdx])
     const maxY = d3.max(points, (p: any) => p.y) || 1
     const minY = d3.min(points, (p: any) => p.y) || 0
     // bars from 0; line charts pad the domain around the series range
@@ -191,17 +273,7 @@ export function MetricChart({
       w: bw,
       h: Math.max(0, y(0) - y(p.y))
     }))
-    const tickCount = Math.max(2, Math.min(6, Math.floor((width - M.left - M.right) / 72)))
-    // d3 treats tickCount as a hint, not a cap — for wide ranges (e.g. "All") it can
-    // return more "nice" ticks than the pixel budget allows, so thin them out evenly
-    let rawTicks = x.ticks(tickCount)
-    if (rawTicks.length > tickCount) {
-      const step = (rawTicks.length - 1) / (tickCount - 1)
-      rawTicks = [
-        ...new Set(Array.from({ length: tickCount }, (_, i) => rawTicks[Math.round(i * step)]))
-      ]
-    }
-    xTicks = rawTicks.map((d: any) => ({ v: x(d), label: tickFmt(d) }))
+    xTicks = buildTimeTicks(x, width - M.left - M.right)
     yTicks = y.ticks(4).map((v: any) => ({ v: y(v), label: formatValue(v) }))
   }
 
