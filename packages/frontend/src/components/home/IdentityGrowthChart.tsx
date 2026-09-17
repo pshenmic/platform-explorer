@@ -7,7 +7,13 @@ import useResizeObserver from '@react-hook/resize-observer'
 import { Presets } from '../cards'
 import { currencyRound } from '../../util'
 import { Skeleton } from './Skeleton'
-import { PRESETS, buildTimeTicks, presetRange, seriesTimeDomain, tipTimeFormat } from './MetricChart'
+import {
+  PRESETS,
+  buildTimeTicks,
+  presetRange,
+  seriesTimeDomain,
+  tipTimeFormat
+} from './MetricChart'
 import './IdentityGrowthChart.css'
 
 const DEFAULT_PRESET = PRESETS.length - 1

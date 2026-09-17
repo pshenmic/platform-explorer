@@ -97,7 +97,6 @@ export function buildTimeTicks(
     cursor = interval.offset(cursor, -step)
   }
   interiors.reverse()
-  const startX = x(start)
   const endX = x(end)
   for (const d of interiors) {
     const v = x(d)

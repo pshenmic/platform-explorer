@@ -17,7 +17,13 @@ import { Presets } from '../cards'
 import { Tooltip } from '../ui/Tooltips'
 import { creditsToDash, roundUsd } from '../../util'
 import { Skeleton } from './Skeleton'
-import { PRESETS, buildTimeTicks, presetRange, seriesTimeDomain, tipTimeFormat } from './MetricChart'
+import {
+  PRESETS,
+  buildTimeTicks,
+  presetRange,
+  seriesTimeDomain,
+  tipTimeFormat
+} from './MetricChart'
 import './ShieldedPoolCard.css'
 
 const DEFAULT_PRESET = PRESETS.length - 1
