@@ -1,6 +1,7 @@
 'use client'
 
 import type { ReactNode } from 'react'
+import dynamic from 'next/dynamic'
 import { NuqsAdapter } from 'nuqs/adapters/next/app'
 import {
   NetworkProvider,
@@ -11,12 +12,12 @@ import {
   QueryProvider,
   TooltipProvider
 } from 'src/contexts'
-import Navbar from './navbar/Navbar'
-import Footer from './footer'
 import Background from './Background'
 
-import '../../styles/tokens/index.css'
-import '../../styles/theme.css'
+const Navbar = dynamic(() => import('./navbar/Navbar'), {
+  loading: () => <div className={'NavbarShell'} style={{ minHeight: 56 }} />
+})
+const Footer = dynamic(() => import('./footer'), { ssr: false })
 
 interface RootComponentProps {
   children?: ReactNode
@@ -31,7 +32,7 @@ export default function RootComponent({ children }: RootComponentProps) {
             <ThemeProvider>
               <TooltipProvider>
                 <ModalProvider>
-                  <Background snow={false} />
+                  <Background />
                   <BreadcrumbsProvider>
                     <Navbar />
                     {children}

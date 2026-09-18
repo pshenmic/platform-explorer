@@ -4,18 +4,29 @@ import { Analytics } from '@vercel/analytics/next'
 import { SpeedInsights } from '@vercel/speed-insights/next'
 import RootComponent from '../components/layout/RootComponent'
 import { Montserrat, Open_Sans as OpenSans, Roboto_Mono as RobotoMono } from 'next/font/google'
+import '../styles/tokens/index.css'
+import '../styles/theme.css'
 
 const montserrat = Montserrat({
   subsets: ['latin'],
   style: ['normal', 'italic'],
+  display: 'optional',
+  preload: false,
+  adjustFontFallback: true,
   variable: '--font-montserrat'
 })
 const openSans = OpenSans({
   subsets: ['latin'],
+  display: 'optional',
+  preload: false,
+  adjustFontFallback: true,
   variable: '--font-open-sans'
 })
 const robotoMono = RobotoMono({
   subsets: ['latin'],
+  display: 'optional',
+  preload: true,
+  adjustFontFallback: true,
   variable: '--font-roboto-mono'
 })
 

@@ -1,10 +1,14 @@
 'use client'
 
-import { TimeDelta, BigNumber } from '../../components/data'
+import dynamic from 'next/dynamic'
+import TimeDelta from '../../components/data/TimeDelta'
+import BigNumber from '../../components/data/BigNumber'
 import { useCountUp } from '../../components/home/hooks'
-import { HeroNodes, Skeleton } from '../../components/home'
+import { Skeleton } from '../../components/home/Skeleton'
 import { isNetworkLive } from '../../components/home/utils'
 import './HomeHero.css'
+
+const HeroNodes = dynamic(() => import('../../components/home/HeroNodes'), { ssr: false })
 
 function toMs(value: any) {
   if (value == null) return null
@@ -53,7 +57,9 @@ export default function HomeHero({
   loading,
   epochNumber,
   epochEndTime,
-  avgBlockTimeSec
+  avgBlockTimeSec,
+  showNodes = false,
+  brand
 }: any) {
   const epochNum = toNumber(epochNumber)
   const epochEndMs = toMs(epochEndTime)
@@ -69,22 +75,10 @@ export default function HomeHero({
 
   return (
     <section className={'InfoBlock InfoBlock--NoBorder HomeHero'}>
-      <HeroNodes />
+      {showNodes ? <HeroNodes /> : null}
 
       <div className={'HomeHero__Inner'}>
-        <div className={'HomeHero__Brand'}>
-          <div className={'HomeHero__BrandCopy'}>
-            <p className={'HomeHero__Welcome'}>Welcome to</p>
-            <h1 className={'HomeHero__Title'}>
-              <span className={'HomeHero__TitleShine'}>Platform Explorer</span>
-            </h1>
-            <p className={'HomeHero__Tagline'}>The information resource about Dash Platform</p>
-            <p className={'HomeHero__Description'}>
-              Your portal for real-time and historical data across the Dash blockchain — track and
-              verify transactions, identities, contracts and documents with confidence.
-            </p>
-          </div>
-        </div>
+        {brand}
 
         <div className={`HomeHero__HeightRail ${loading ? 'HomeHero__HeightRail--Loading' : ''}`}>
           <div className={'HomeHero__Stat'}>
