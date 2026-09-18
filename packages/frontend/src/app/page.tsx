@@ -25,11 +25,9 @@ export const metadata: Metadata = {
 async function HomeRoute() {
   return (
     <>
-      <style
-        href={'home-hero-lcp'}
-        precedence={'high'}
-        dangerouslySetInnerHTML={{ __html: HOME_HERO_LCP_CSS }}
-      />
+      <style href={'home-hero-lcp'} precedence={'high'}>
+        {HOME_HERO_LCP_CSS}
+      </style>
       <Home brand={<HomeHeroBrand />} />
     </>
   )

@@ -11,4 +11,6 @@ export const HOME_HERO_LCP_CSS = `
 .HomeHero__Description{margin:0;max-width:28rem;font-size:.8125rem;line-height:1.55;color:#9aa5ad}
 @media(max-width:62em){.HomeHero__Inner{grid-template-columns:1fr;padding:20px 24px}}
 @media(max-width:48em){.HomeHero__Inner{padding:16px}.HomeHero__Title{font-size:1.75rem}.HomeHero__Tagline{font-size:1rem}.HomeHero__Description{font-size:.75rem}}
-`.replace(/\s+/g, ' ').trim()
+`
+  .replace(/\s+/g, ' ')
+  .trim()
