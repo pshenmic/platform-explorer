@@ -2266,7 +2266,7 @@ describe('Validators routes', () => {
       const [firstPeriod] = body.toReversed()
       const firstTimestamp = new Date(firstPeriod.timestamp).getTime()
 
-      const expectedStats = []
+      let expectedStats = []
 
       for (let i = 0; i < 12; i++) {
         const nextPeriod = firstTimestamp - 300000 * i
@@ -2288,7 +2288,15 @@ describe('Validators routes', () => {
         )
       }
 
-      assert.deepEqual(expectedStats.reverse(), body)
+      expectedStats = expectedStats.toReversed().map((seriesData, i, arr) => ({
+        ...seriesData,
+        data: {
+          ...seriesData.data,
+          runningTotal: arr.slice(0, i + 1).map(v => v.data.blocksCount).reduce((a, b) => a + b, 0)
+        }
+      }))
+
+      assert.deepEqual(expectedStats, body)
     })
 
     it('should return stats by proTxHash with custom timespan', async () => {
@@ -2301,7 +2309,7 @@ describe('Validators routes', () => {
       const [firstPeriod] = body.toReversed()
       const firstTimestamp = new Date(firstPeriod.timestamp).getTime()
 
-      const expectedStats = []
+      let expectedStats = []
 
       for (let i = 0; i < body.length; i++) {
         const nextPeriod = firstTimestamp - 7200000 * i
@@ -2323,7 +2331,15 @@ describe('Validators routes', () => {
         )
       }
 
-      assert.deepEqual(expectedStats.reverse(), body)
+      expectedStats = expectedStats.toReversed().map((seriesData, i, arr) => ({
+        ...seriesData,
+        data: {
+          ...seriesData.data,
+          runningTotal: arr.slice(0, i + 1).map(v => v.data.blocksCount).reduce((a, b) => a + b, 0)
+        }
+      }))
+
+      assert.deepEqual(expectedStats, body)
     })
 
     it('should return stats by proTxHash with custom timespan with intervalsCount', async () => {
@@ -2339,7 +2355,7 @@ describe('Validators routes', () => {
       const [firstPeriod] = body.toReversed()
       const firstTimestamp = new Date(firstPeriod.timestamp).getTime()
 
-      const expectedStats = []
+      let expectedStats = []
 
       for (let i = 0; i < body.length; i++) {
         const nextPeriod = firstTimestamp - Math.ceil((end - start) / 1000 / 3) * 1000 * i
@@ -2361,7 +2377,15 @@ describe('Validators routes', () => {
         )
       }
 
-      assert.deepEqual(expectedStats.reverse(), body)
+      expectedStats = expectedStats.toReversed().map((seriesData, i, arr) => ({
+        ...seriesData,
+        data: {
+          ...seriesData.data,
+          runningTotal: arr.slice(0, i + 1).map(v => v.data.blocksCount).reduce((a, b) => a + b, 0)
+        }
+      }))
+
+      assert.deepEqual(expectedStats, body)
     })
 
     it('should return error on wrong bounds', async () => {
