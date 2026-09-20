@@ -1,7 +1,6 @@
 import type { Metadata } from 'next'
 import Home from './home/Home'
 import HomeHeroBrand from './home/HomeHeroBrand'
-import { HOME_HERO_LCP_CSS } from './home/homeHeroLcpCss'
 
 export const metadata: Metadata = {
   title: 'Dashboard — Dash Platform Explorer',
@@ -23,14 +22,7 @@ export const metadata: Metadata = {
 }
 
 async function HomeRoute() {
-  return (
-    <>
-      <style href={'home-hero-lcp'} precedence={'high'}>
-        {HOME_HERO_LCP_CSS}
-      </style>
-      <Home brand={<HomeHeroBrand />} />
-    </>
-  )
+  return <Home brand={<HomeHeroBrand />} />
 }
 
 export default HomeRoute
