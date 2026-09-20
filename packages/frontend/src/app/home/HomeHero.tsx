@@ -146,7 +146,9 @@ export default function HomeHero({
                 </span>
               </span>
             ) : (
-              <Skeleton w={'8ch'} h={'0.7em'} radius={4} />
+              <span className={'HomeHero__LiveMeta'}>
+                <Skeleton w={'8ch'} h={'0.7em'} radius={4} />
+              </span>
             )}
           </div>
         </div>

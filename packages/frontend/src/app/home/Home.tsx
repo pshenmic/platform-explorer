@@ -18,6 +18,22 @@ function HomeChunkPlaceholder({ className = '' }: { className?: string }) {
   )
 }
 
+function HomeViewportContent({
+  enabled,
+  placeholder,
+  children
+}: {
+  enabled: boolean
+  placeholder: 'epochs' | 'chart' | 'leaders'
+  children: ReactNode
+}) {
+  return enabled ? (
+    children
+  ) : (
+    <HomeChunkPlaceholder className={`HomeChunkPlaceholder--${placeholder}`} />
+  )
+}
+
 const CompactTxList = dynamic(
   () => import('../../components/home/CompactTxList').then(mod => ({ default: mod.CompactTxList })),
   {
@@ -352,7 +368,7 @@ function Home({ brand }: { brand?: ReactNode }) {
             <CompactTxList
               transactions={txQuery.data?.resultSet}
               limit={5}
-              loading={txQuery.isLoading}
+              loading={txQuery.isPending}
               moreHref={'/transactions'}
               moreLabel={'View all transactions'}
             />
@@ -361,7 +377,7 @@ function Home({ brand }: { brand?: ReactNode }) {
             <CompactBlocksList
               blocks={blocksQuery.data?.resultSet}
               limit={5}
-              loading={blocksQuery.isLoading}
+              loading={blocksQuery.isPending}
               moreHref={'/blocks'}
               moreLabel={'View all blocks'}
             />
@@ -375,75 +391,89 @@ function Home({ brand }: { brand?: ReactNode }) {
         className={'InfoBlock InfoBlock--NoBorder HomeEpochs'}
         tabIndex={-1}
       >
-        <EpochsOverview
-          title={'Epochs'}
-          epochs={epochsList}
-          currentEpoch={epochData}
-          rate={rate}
-          loading={epochsLoading}
-          slotNumbers={epochNumbers}
-        />
+        <HomeViewportContent enabled={epochsViewport.enabled} placeholder={'epochs'}>
+          <EpochsOverview
+            title={'Epochs'}
+            epochs={epochsList}
+            currentEpoch={epochData}
+            rate={rate}
+            loading={epochsLoading}
+            slotNumbers={epochNumbers}
+          />
+        </HomeViewportContent>
       </section>
 
       <div ref={metricsViewport.ref} className={'HomeCardPair HomeCardPair--metrics'}>
         <div className={'HomeCardPair__Cell'}>
-          <TxActivityChart
-            fetcher={Api.getTransactionsHistory}
-            field={'txs'}
-            yAbbr={'txs'}
-            enabled={belowFoldReady && metricsViewport.enabled}
-          />
+          <HomeViewportContent enabled={metricsViewport.enabled} placeholder={'chart'}>
+            <TxActivityChart
+              fetcher={Api.getTransactionsHistory}
+              field={'txs'}
+              yAbbr={'txs'}
+              enabled={belowFoldReady && metricsViewport.enabled}
+            />
+          </HomeViewportContent>
         </div>
         <div className={'HomeCardPair__Cell'}>
-          <IdentityGrowthChart
-            fetcher={Api.getIdentitiesHistory}
-            field={'registeredIdentities'}
-            yAbbr={'identities'}
-            enabled={belowFoldReady && metricsViewport.enabled}
-          />
+          <HomeViewportContent enabled={metricsViewport.enabled} placeholder={'chart'}>
+            <IdentityGrowthChart
+              fetcher={Api.getIdentitiesHistory}
+              field={'registeredIdentities'}
+              yAbbr={'identities'}
+              enabled={belowFoldReady && metricsViewport.enabled}
+            />
+          </HomeViewportContent>
         </div>
       </div>
 
       <div ref={chartsViewport.ref} className={'HomeCardPair HomeCardPair--viz'}>
         <div className={'HomeCardPair__Cell'}>
-          <TxTypesBar enabled={belowFoldReady && chartsViewport.enabled} />
+          <HomeViewportContent enabled={chartsViewport.enabled} placeholder={'chart'}>
+            <TxTypesBar enabled={belowFoldReady && chartsViewport.enabled} />
+          </HomeViewportContent>
         </div>
         <div className={'HomeCardPair__Cell'}>
-          <ShieldedPoolCard rate={rate} enabled={belowFoldReady && chartsViewport.enabled} />
+          <HomeViewportContent enabled={chartsViewport.enabled} placeholder={'chart'}>
+            <ShieldedPoolCard rate={rate} enabled={belowFoldReady && chartsViewport.enabled} />
+          </HomeViewportContent>
         </div>
       </div>
 
       <div ref={leadersViewport.ref} className={'HomeCardPair HomeCardPair--leaders'}>
         <div className={'HomeCardPair__Cell'}>
-          <HomeLeaders rate={rate} enabled={belowFoldReady && leadersViewport.enabled} />
+          <HomeViewportContent enabled={leadersViewport.enabled} placeholder={'leaders'}>
+            <HomeLeaders rate={rate} enabled={belowFoldReady && leadersViewport.enabled} />
+          </HomeViewportContent>
         </div>
         <div className={'HomeCardPair__Cell'}>
-          <QuorumCard
-            validators={validators}
-            validatorsActive={validatorsActive}
-            validatorsBanned={validatorsBanned}
-            validatorsInactive={validatorsInactive}
-            validatorsList={validatorsPoolList}
-            poolLoading={
-              validatorsPoolHeadQuery.isPending ||
-              (validatorsPoolHeadQuery.isSuccess &&
-                poolPages > 1 &&
-                validatorsPoolRestQuery.isPending)
-            }
-            bannedValidatorsList={validatorsBannedListQuery.data}
-            bannedListLoading={validatorsBannedListQuery.isPending}
-            currentQuorum={currentQuorumQuery.data}
-            currentQuorumLoading={currentQuorumQuery.isPending || currentQuorumQuery.isLoading}
-            currentQuorumError={currentQuorumQuery.isError}
-            quorums={quorumsListQuery.data}
-            l1LockedHeight={blocksQuery.data?.resultSet?.[0]?.header?.l1LockedHeight}
-            lastProposerProTx={blocksQuery.data?.resultSet?.[0]?.header?.validator}
-            avgBlockTimeSec={
-              epochAvgBlockMs > 0
-                ? epochAvgBlockMs / 1000
-                : computeAvgBlockTime(blocksQuery.data?.resultSet)
-            }
-          />
+          <HomeViewportContent enabled={leadersViewport.enabled} placeholder={'leaders'}>
+            <QuorumCard
+              validators={validators}
+              validatorsActive={validatorsActive}
+              validatorsBanned={validatorsBanned}
+              validatorsInactive={validatorsInactive}
+              validatorsList={validatorsPoolList}
+              poolLoading={
+                validatorsPoolHeadQuery.isPending ||
+                (validatorsPoolHeadQuery.isSuccess &&
+                  poolPages > 1 &&
+                  validatorsPoolRestQuery.isPending)
+              }
+              bannedValidatorsList={validatorsBannedListQuery.data}
+              bannedListLoading={validatorsBannedListQuery.isPending}
+              currentQuorum={currentQuorumQuery.data}
+              currentQuorumLoading={currentQuorumQuery.isPending || currentQuorumQuery.isLoading}
+              currentQuorumError={currentQuorumQuery.isError}
+              quorums={quorumsListQuery.data}
+              l1LockedHeight={blocksQuery.data?.resultSet?.[0]?.header?.l1LockedHeight}
+              lastProposerProTx={blocksQuery.data?.resultSet?.[0]?.header?.validator}
+              avgBlockTimeSec={
+                epochAvgBlockMs > 0
+                  ? epochAvgBlockMs / 1000
+                  : computeAvgBlockTime(blocksQuery.data?.resultSet)
+              }
+            />
+          </HomeViewportContent>
         </div>
       </div>
     </div>
