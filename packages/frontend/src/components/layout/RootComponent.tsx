@@ -13,9 +13,10 @@ import {
   TooltipProvider
 } from 'src/contexts'
 import Background from './Background'
+import NavbarPlaceholder from './navbar/NavbarPlaceholder'
 
 const Navbar = dynamic(() => import('./navbar/Navbar'), {
-  loading: () => <div className={'NavbarShell'} style={{ minHeight: 56 }} />
+  loading: NavbarPlaceholder
 })
 const Footer = dynamic(() => import('./footer'), { ssr: false })
 

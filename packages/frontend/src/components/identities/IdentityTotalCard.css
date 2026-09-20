@@ -441,6 +441,14 @@
   min-height: 2rem;
 }
 
+.IdentityTotalCard__InfoLine--Created {
+  min-height: 3.25rem;
+}
+
+.IdentityTotalCard__InfoLine--Names {
+  min-height: 2.125rem;
+}
+
 .IdentityTotalCard .IdentityTotalCard__InfoLine--Balance .InfoLine__Value {
   min-height: 3rem;
 }

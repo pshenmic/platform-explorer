@@ -152,7 +152,7 @@ function IdentityTotalCard({ identity, rate, identifier }: IdentityTotalCardProp
               error={identity.error || (!identity.loading && identity.data?.nonce === undefined)}
             />
             <InfoLine
-              className={'IdentityTotalCard__InfoLine'}
+              className={'IdentityTotalCard__InfoLine IdentityTotalCard__InfoLine--Created'}
               title={'Creation date'}
               value={
                 identity?.data?.txHash ? (
