@@ -13,11 +13,8 @@ import {
   TooltipProvider
 } from 'src/contexts'
 import Background from './Background'
-import NavbarPlaceholder from './navbar/NavbarPlaceholder'
+import Navbar from './navbar/Navbar'
 
-const Navbar = dynamic(() => import('./navbar/Navbar'), {
-  loading: NavbarPlaceholder
-})
 const Footer = dynamic(() => import('./footer'), { ssr: false })
 
 interface RootComponentProps {
