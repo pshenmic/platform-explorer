@@ -1,0 +1,60 @@
+.ValidatorCharts {
+  padding: 20px;
+  min-width: 0;
+  min-height: 22rem;
+}
+.ValidatorCharts .TxActivityChart__Plot {
+  min-height: 11rem;
+}
+.ValidatorCharts .TxActivityChart__Empty {
+  flex-direction: column;
+  gap: 10px;
+}
+.ValidatorCharts .TxActivityChart__Empty button {
+  background: transparent;
+  border: 1px solid var(--pe-color-calendar-border);
+  border-radius: 6px;
+  color: var(--pe-color-fg);
+  padding: 8px 16px;
+  cursor: pointer;
+}
+.ValidatorCharts__Filters {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  min-width: 0;
+}
+.ValidatorCharts__Filters .ChartDateRange__Trigger {
+  width: auto;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+.ValidatorCharts__Metrics {
+  display: flex;
+  flex-shrink: 0;
+  gap: 4px;
+}
+.ValidatorCharts__Metrics button {
+  border: 0;
+  border-radius: 6px;
+  padding: 8px 10px;
+  font: 600 0.75rem var(--pe-font-heading);
+  background: transparent;
+  color: var(--pe-color-fg-muted);
+  cursor: pointer;
+}
+.ValidatorCharts__Metrics button[aria-pressed="true"] {
+  color: var(--pe-color-brand-light);
+  background: rgba(var(--pe-color-brand-light-rgb), 0.12);
+}
+.ValidatorCharts__Metrics button:focus-visible {
+  outline: 2px solid var(--pe-color-brand-light);
+  outline-offset: 2px;
+}
+@media (max-width: 480px) {
+  .ValidatorCharts {
+    padding: 14px;
+  }
+}
