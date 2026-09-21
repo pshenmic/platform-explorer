@@ -1,16 +1,39 @@
 .ValidatorCharts {
   padding: 20px;
   min-width: 0;
+  min-height: 22rem;
 }
-.ValidatorCharts__Toolbar {
+.ValidatorCharts .TxActivityChart__Plot {
+  min-height: 11rem;
+}
+.ValidatorCharts .TxActivityChart__Empty {
+  flex-direction: column;
+  gap: 10px;
+}
+.ValidatorCharts .TxActivityChart__Empty button {
+  background: transparent;
+  border: 1px solid var(--pe-color-calendar-border);
+  border-radius: 6px;
+  color: var(--pe-color-fg);
+  padding: 8px 16px;
+  cursor: pointer;
+}
+.ValidatorCharts__Filters {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   align-items: center;
-  justify-content: space-between;
-  gap: 12px;
+  justify-content: flex-end;
+  gap: 8px;
+  min-width: 0;
+}
+.ValidatorCharts__Filters .ChartDateRange__Trigger {
+  width: auto;
+  flex-shrink: 0;
+  white-space: nowrap;
 }
 .ValidatorCharts__Metrics {
   display: flex;
+  flex-shrink: 0;
   gap: 4px;
 }
 .ValidatorCharts__Metrics button {
@@ -30,98 +53,8 @@
   outline: 2px solid var(--pe-color-brand-light);
   outline-offset: 2px;
 }
-.ValidatorCharts__Summary {
-  margin-top: 24px;
-  min-height: 80px;
-}
-.ValidatorCharts__Value {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  gap: 8px;
-  min-height: 36px;
-  color: var(--pe-color-fg);
-  font: 700 1.75rem var(--pe-font-mono);
-  font-variant-numeric: tabular-nums;
-}
-.ValidatorCharts__Value span {
-  font-size: 0.75rem;
-  color: var(--pe-color-fg-muted);
-}
-.ValidatorCharts__Summary p,
-.ValidatorCharts__Hint {
-  margin: 8px 0 0;
-  color: var(--pe-color-fg-muted);
-  font: 0.6875rem / 1.5 var(--pe-font-mono);
-}
-.ValidatorCharts__Plot {
-  height: 224px;
-  width: 100%;
-  min-width: 0;
-}
-.ValidatorCharts__Plot svg {
-  display: block;
-  touch-action: pan-y;
-}
-.ValidatorCharts__Plot svg:focus-visible {
-  outline: 1px solid var(--pe-color-brand-light);
-  outline-offset: 3px;
-}
-.ValidatorCharts__Axis line {
-  stroke: var(--pe-color-calendar-border);
-  stroke-dasharray: 3 5;
-}
-.ValidatorCharts__Axis text,
-.ValidatorCharts__Date {
-  fill: var(--pe-color-fg-muted);
-  font: 10px var(--pe-font-mono);
-}
-.ValidatorCharts__Bar {
-  fill: var(--pe-color-brand-normal);
-  opacity: 0.7;
-}
-.ValidatorCharts__Bar.is-active {
-  fill: var(--pe-color-brand-light);
-  opacity: 1;
-}
-.ValidatorCharts__Loading {
-  display: flex;
-  align-items: flex-end;
-  gap: 8px;
-  height: 100%;
-  padding: 16px 12px 28px 48px;
-  box-sizing: border-box;
-  opacity: 0.35;
-}
-.ValidatorCharts__Message {
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  color: var(--pe-color-fg-muted);
-  font: 0.75rem var(--pe-font-mono);
-}
-.ValidatorCharts__Message button {
-  background: transparent;
-  border: 1px solid var(--pe-color-calendar-border);
-  border-radius: 6px;
-  color: var(--pe-color-fg);
-  padding: 8px 16px;
-  cursor: pointer;
-}
 @media (max-width: 480px) {
   .ValidatorCharts {
     padding: 14px;
-  }
-  .ValidatorCharts__Toolbar {
-    align-items: stretch;
-  }
-  .ValidatorCharts__Toolbar .ChartDateRange__Trigger {
-    width: 100%;
-  }
-  .ValidatorCharts__Value {
-    font-size: 1.375rem;
   }
 }
