@@ -49,9 +49,7 @@ const call = async <T>(path: string, method: HttpMethod, body?: unknown): Promis
   try {
     const response = await fetchWrapper(`${BASE_URL}/${path}`, {
       method,
-      headers: {
-        'content-type': 'application/json'
-      },
+      headers: body ? { 'content-type': 'application/json' } : undefined,
       body: body ? JSON.stringify(body) : undefined
     })
 

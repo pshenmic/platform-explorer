@@ -21,7 +21,7 @@ const SmoothSize = ({
   easing = 'ease'
 }: SmoothSizeProps) => {
   const containerRef = useRef<HTMLDivElement | null>(null)
-  const [dimensions, setDimensions] = useState({ width: 0, height: 0 })
+  const [dimensions, setDimensions] = useState<{ width: number; height: number } | null>(null)
 
   useResizeObserver(containerRef as never, entry => {
     const { width, height } = entry.contentRect
@@ -35,8 +35,8 @@ const SmoothSize = ({
         position: 'relative',
         overflow: 'hidden',
         transition: `width ${duration}s ${easing}, height ${duration}s ${easing}`,
-        width: smoothWidth ? `${dimensions.width}px` : 'auto',
-        height: smoothHeight ? `${dimensions.height}px` : 'auto'
+        width: smoothWidth && dimensions ? `${dimensions.width}px` : 'auto',
+        height: smoothHeight && dimensions ? `${dimensions.height}px` : 'auto'
       }}
     >
       <div ref={containerRef}>{children as ReactNode}</div>

@@ -9,7 +9,9 @@ import {
   BigNumber as BigNumberJs,
   NotActive as NotActiveJs
 } from '../data'
-import { FirstPlaceIcon, SecondPlaceIcon, ThirdPlaceIcon } from '../ui/icons'
+import FirstPlaceIcon from '../ui/icons/FirstPlaceIcon'
+import SecondPlaceIcon from '../ui/icons/SecondPlaceIcon'
+import ThirdPlaceIcon from '../ui/icons/ThirdPlaceIcon'
 import './IdentitiesListItem.css'
 
 // Untyped JS modules — cast until migrated

@@ -218,7 +218,7 @@ function Identity({ identifier }: IdentityProps) {
 
   return (
     <PageDataContainer className={'IdentityPage'} title={'Identity info'}>
-      <IdentityTotalCard identity={identity} rate={rate.data} />
+      <IdentityTotalCard identity={identity} identifier={identifier} rate={rate.data} />
 
       <InfoContainer styles={['tabs']} className={'IdentityPage__ListContainer'}>
         <Tabs onChange={setActiveTab} index={activeTab}>
@@ -235,7 +235,12 @@ function Identity({ identifier }: IdentityProps) {
                   )}
                 </span>
               ) : (
-                ''
+                <span
+                  className={'Tabs__TabItemsCount Tabs__TabItemsCount--Loading'}
+                  aria-hidden={'true'}
+                >
+                  0
+                </span>
               )}
             </Tab>
             <Tab>
@@ -247,7 +252,12 @@ function Identity({ identifier }: IdentityProps) {
                   {identity.data?.totalDataContracts}
                 </span>
               ) : (
-                ''
+                <span
+                  className={'Tabs__TabItemsCount Tabs__TabItemsCount--Loading'}
+                  aria-hidden={'true'}
+                >
+                  0
+                </span>
               )}
             </Tab>
             <Tab>
@@ -263,7 +273,12 @@ function Identity({ identifier }: IdentityProps) {
                   )}
                 </span>
               ) : (
-                ''
+                <span
+                  className={'Tabs__TabItemsCount Tabs__TabItemsCount--Loading'}
+                  aria-hidden={'true'}
+                >
+                  0
+                </span>
               )}
             </Tab>
             <Tab>
@@ -275,7 +290,12 @@ function Identity({ identifier }: IdentityProps) {
                   {identity.data?.totalTransfers}
                 </span>
               ) : (
-                ''
+                <span
+                  className={'Tabs__TabItemsCount Tabs__TabItemsCount--Loading'}
+                  aria-hidden={'true'}
+                >
+                  0
+                </span>
               )}
             </Tab>
             <Tab>
@@ -287,7 +307,12 @@ function Identity({ identifier }: IdentityProps) {
                   {Math.max(tokens.data?.pagination?.total ?? 0, 0)}
                 </span>
               ) : (
-                ''
+                <span
+                  className={'Tabs__TabItemsCount Tabs__TabItemsCount--Loading'}
+                  aria-hidden={'true'}
+                >
+                  0
+                </span>
               )}
             </Tab>
           </TabList>
