@@ -39,7 +39,9 @@ function BlocksList({
   loading,
   skeletonCount,
   paging,
-  title = 'Blocks'
+  title = 'Blocks',
+  showValidator = true,
+  showGas = true
 }: {
   blocks?: any[]
   headerStyles?: string
@@ -50,6 +52,8 @@ function BlocksList({
   skeletonCount?: number
   paging?: DataListProps['paging']
   title?: ReactNode
+  showValidator?: boolean
+  showGas?: boolean
 }) {
   const router = useRouter()
   const statusQuery = useQuery({
@@ -62,7 +66,7 @@ function BlocksList({
   const rateQuery = useQuery({
     queryKey: ['rate'],
     queryFn: () => Api.getRate(),
-    enabled: blocks.length > 0,
+    enabled: showGas && blocks.length > 0,
     staleTime: 60_000
   })
   const rate = rateQuery.data ?? null
@@ -130,43 +134,52 @@ function BlocksList({
         return epoch ? <EpochTooltip epoch={epoch}>{label}</EpochTooltip> : label
       }
     },
-    {
-      ...columnLayout.validator,
-      filterKey: 'validator',
-      filterType: 'search' as const,
-      filterPlaceholder: 'Validator Pro TX Hash',
-      cell: ({ header }: any) =>
-        header?.validator ? (
-          <LinkContainer
-            onClick={e => {
-              e.stopPropagation()
-              e.preventDefault()
-              router.push(`/validator/${header?.validator}`)
-            }}
-          >
-            <Identifier avatar={true} ellipsis={true} copyButton={true}>
-              {header.validator}
-            </Identifier>
-          </LinkContainer>
-        ) : (
-          <NotActive />
-        )
-    },
-    {
-      ...columnLayout.gas,
-      filterKey: 'gas',
-      filterType: 'range' as const,
-      cell: ({ header }: any) =>
-        typeof header?.totalGasUsed === 'number' || typeof header?.totalGasUsed === 'string' ? (
-          <RateTooltip credits={Number(header.totalGasUsed)} rate={rate}>
-            <span>
-              <BigNumber>{header.totalGasUsed}</BigNumber>
-            </span>
-          </RateTooltip>
-        ) : (
-          <NotActive>-</NotActive>
-        )
-    },
+    ...(showValidator
+      ? [
+          {
+            ...columnLayout.validator,
+            filterKey: 'validator',
+            filterType: 'search' as const,
+            filterPlaceholder: 'Validator Pro TX Hash',
+            cell: ({ header }: any) =>
+              header?.validator ? (
+                <LinkContainer
+                  onClick={e => {
+                    e.stopPropagation()
+                    e.preventDefault()
+                    router.push(`/validator/${header?.validator}`)
+                  }}
+                >
+                  <Identifier avatar={true} ellipsis={true} copyButton={true}>
+                    {header.validator}
+                  </Identifier>
+                </LinkContainer>
+              ) : (
+                <NotActive />
+              )
+          }
+        ]
+      : []),
+    ...(showGas
+      ? [
+          {
+            ...columnLayout.gas,
+            filterKey: 'gas',
+            filterType: 'range' as const,
+            cell: ({ header }: any) =>
+              typeof header?.totalGasUsed === 'number' ||
+              typeof header?.totalGasUsed === 'string' ? (
+                <RateTooltip credits={Number(header.totalGasUsed)} rate={rate}>
+                  <span>
+                    <BigNumber>{header.totalGasUsed}</BigNumber>
+                  </span>
+                </RateTooltip>
+              ) : (
+                <NotActive>-</NotActive>
+              )
+          }
+        ]
+      : []),
     {
       ...columnLayout.txs,
       filterKey: 'tx_count',

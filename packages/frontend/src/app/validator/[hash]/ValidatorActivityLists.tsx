@@ -117,7 +117,8 @@ function ActivityList({
           title={null}
           loading={loading}
           skeletonCount={pageSize}
-          absoluteDate={true}
+          showValidator={false}
+          showGas={false}
           paging={paging}
         />
       ) : kind === 'transactions' ? (
@@ -125,9 +126,9 @@ function ActivityList({
           transactions={items as Transaction[]}
           loading={loading}
           skeletonCount={pageSize}
-          absoluteDate={true}
           rate={props.rate}
           pinFirst={true}
+          showOwner={false}
           paging={paging}
         />
       ) : (
