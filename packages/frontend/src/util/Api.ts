@@ -428,7 +428,7 @@ const getDocumentByIdentifier = (
   if (typeName) params.push(`document_type_name=${typeName}`)
   const queryParams = params.join('&')
 
-  return call<Document>(`document/${identifier}?${queryParams ? `?${queryParams}` : ''}`, 'GET')
+  return call<Document>(`document/${identifier}${queryParams ? `?${queryParams}` : ''}`, 'GET')
 }
 
 const getDocumentRevisions = (
