@@ -1,12 +1,15 @@
 'use client'
 
-import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { DataList } from '../../ui/lists'
 import type { DataListColumn, DataListProps } from '../../ui/lists/DataList/DataList'
-import { Identifier, BigNumber, DateBlock, NotActive } from '../../data'
+import { Identifier, BigNumber, TimeDelta, NotActive } from '../../data'
+import { LinkContainer } from '../../ui/containers'
 import { RateTooltip } from '../../ui/Tooltips'
 import StatusIcon from './StatusIcon'
 import type { Rate, Withdrawal } from '../../../types'
+
+const WITHDRAWAL_CONTRACT_ID = '4fJLR2GYTPFdomuTVvNy3VRrvWgvkKPzqehEBpNf2nk6'
 
 interface WithdrawalsListProps {
   withdrawals?: Withdrawal[]
@@ -29,23 +32,8 @@ function WithdrawalsList({
   skeletonCount,
   paging
 }: WithdrawalsListProps) {
+  const router = useRouter()
   const columns: DataListColumn<Withdrawal>[] = [
-    {
-      key: 'timestamp',
-      header: 'Timestamp',
-      minWidth: 148,
-      cell: withdrawal =>
-        withdrawal.timestamp ? (
-          <DateBlock
-            timestamp={withdrawal.timestamp}
-            format={'dateOnly'}
-            showTime={true}
-            showRelativeTooltip={true}
-          />
-        ) : (
-          <NotActive />
-        )
-    },
     {
       key: 'hash',
       header: 'Tx hash',
@@ -53,55 +41,31 @@ function WithdrawalsList({
       minWidth: 160,
       cell: withdrawal =>
         withdrawal.hash ? (
-          <Link href={`/transaction/${withdrawal.hash}`}>
+          <LinkContainer
+            onClick={e => {
+              e.stopPropagation()
+              e.preventDefault()
+              router.push(`/transaction/${withdrawal.hash}`)
+            }}
+          >
             <Identifier ellipsis={true} copyButton={true}>
               {withdrawal.hash}
             </Identifier>
-          </Link>
+          </LinkContainer>
         ) : (
           <NotActive />
         )
     },
     {
-      key: 'address',
-      header: 'Address',
-      grow: true,
-      minWidth: 160,
-      cell: withdrawal => {
-        const address = withdrawal.withdrawalAddress || defaultPayoutAddress
-        if (!address) return <NotActive />
-        const identifier = (
-          <Identifier ellipsis={true} copyButton={true}>
-            {address}
-          </Identifier>
-        )
-        return l1explorerBaseUrl ? (
-          <a
-            href={`${l1explorerBaseUrl}/address/${address}`}
-            target={'_blank'}
-            rel={'noopener noreferrer'}
-          >
-            {identifier}
-          </a>
-        ) : (
-          identifier
-        )
-      }
-    },
-    {
-      key: 'document',
-      header: 'Document',
-      grow: true,
-      minWidth: 160,
+      key: 'status',
+      header: 'Status',
+      minWidth: 110,
       cell: withdrawal =>
-        withdrawal.document ? (
-          <Link
-            href={`/document/${withdrawal.document}?document-type-name=withdrawal&contract-id=4fJLR2GYTPFdomuTVvNy3VRrvWgvkKPzqehEBpNf2nk6`}
-          >
-            <Identifier ellipsis={true} copyButton={true}>
-              {withdrawal.document}
-            </Identifier>
-          </Link>
+        withdrawal.status ? (
+          <span className={'DataList__Entity'}>
+            <StatusIcon status={withdrawal.status} w={'18px'} h={'18px'} />
+            {withdrawal.status.toLowerCase()}
+          </span>
         ) : (
           <NotActive />
         )
@@ -123,15 +87,69 @@ function WithdrawalsList({
         )
     },
     {
-      key: 'status',
-      header: 'Status',
-      minWidth: 110,
+      key: 'address',
+      header: 'Address',
+      grow: true,
+      minWidth: 160,
+      cell: withdrawal => {
+        const address = withdrawal.withdrawalAddress || defaultPayoutAddress
+        if (!address) return <NotActive />
+        const identifier = (
+          <Identifier ellipsis={true} copyButton={true}>
+            {address}
+          </Identifier>
+        )
+        return l1explorerBaseUrl ? (
+          <LinkContainer
+            onClick={e => {
+              e.stopPropagation()
+              e.preventDefault()
+              window.open(
+                `${l1explorerBaseUrl}/address/${address}`,
+                '_blank',
+                'noopener,noreferrer'
+              )
+            }}
+          >
+            {identifier}
+          </LinkContainer>
+        ) : (
+          identifier
+        )
+      }
+    },
+    {
+      key: 'document',
+      header: 'Document',
+      grow: true,
+      minWidth: 160,
       cell: withdrawal =>
-        withdrawal.status ? (
-          <span className={'DataList__Entity'}>
-            <StatusIcon status={withdrawal.status} w={'18px'} h={'18px'} />
-            {withdrawal.status.toLowerCase()}
-          </span>
+        withdrawal.document ? (
+          <LinkContainer
+            onClick={e => {
+              e.stopPropagation()
+              e.preventDefault()
+              router.push(
+                `/document/${withdrawal.document}?document-type-name=withdrawal&contract-id=${WITHDRAWAL_CONTRACT_ID}`
+              )
+            }}
+          >
+            <Identifier ellipsis={true} copyButton={true}>
+              {withdrawal.document}
+            </Identifier>
+          </LinkContainer>
+        ) : (
+          <NotActive />
+        )
+    },
+    {
+      key: 'timestamp',
+      header: 'Timestamp',
+      minWidth: 128,
+      align: 'right',
+      cell: withdrawal =>
+        withdrawal.timestamp ? (
+          <TimeDelta showTimestampTooltip={true} endDate={new Date(withdrawal.timestamp)} />
         ) : (
           <NotActive />
         )
@@ -149,6 +167,7 @@ function WithdrawalsList({
       skeletonCount={skeletonCount}
       paging={paging}
       pinFirst={true}
+      rowHref={withdrawal => (withdrawal.hash ? `/transaction/${withdrawal.hash}` : undefined)}
       emptyMessage={'There are no withdrawals yet.'}
     />
   )
