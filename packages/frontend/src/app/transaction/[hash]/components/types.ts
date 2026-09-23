@@ -162,7 +162,7 @@ export interface DecodedStateTransition {
     amount?: number | string | null
   }> | null
   nonce?: number | string | null
-  surplusOutput?: unknown
+  surplusOutput?: { platformAddress?: DecodedPlatformAddress | null } | null
   [key: string]: unknown
 }
 

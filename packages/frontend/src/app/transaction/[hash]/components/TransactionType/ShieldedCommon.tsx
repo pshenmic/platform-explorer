@@ -197,9 +197,13 @@ export const FeeStrategyLine = ({ feeStrategy = [] }: FeeStrategyLineProps) => {
 
 interface OutputAddressLineProps {
   outputAddress?: DecodedOutputAddress
+  title?: string
 }
 
-export const OutputAddressLine = ({ outputAddress }: OutputAddressLineProps) => {
+export const OutputAddressLine = ({
+  outputAddress,
+  title = 'Output Address'
+}: OutputAddressLineProps) => {
   if (outputAddress === undefined || outputAddress === null) return null
 
   const bech32m =
@@ -212,7 +216,7 @@ export const OutputAddressLine = ({ outputAddress }: OutputAddressLineProps) => 
   return (
     <InfoLine
       className="TransactionPage__InfoLine TransactionPage__InfoLine--FullWidth"
-      title="Output Address"
+      title={title}
       value={
         <ValueCard {...(link ? { link } : {})}>
           <Identifier avatar={!!bech32m} copyButton ellipsis styles={['highlight-both']}>
