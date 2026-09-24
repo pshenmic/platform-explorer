@@ -10,18 +10,77 @@ import {
   type PointerEvent
 } from 'react'
 import * as d3 from 'd3'
+import { useQuery } from '@tanstack/react-query'
 import useResizeObserver from '@react-hook/resize-observer'
 
 import * as Api from '../../util/Api'
 import { Presets } from '../cards'
+import { PRESETS } from './MetricChart'
 import { Tooltip } from '../ui/Tooltips'
+import DashIcon from '../ui/icons/DashIcon'
 import { creditsToDash, roundUsd } from '../../util'
 import { Skeleton } from './Skeleton'
-import { PRESETS, presetRange } from './MetricChart'
+import { useCountUp } from './hooks/useCountUp'
 import './ShieldedPoolCard.css'
 
-const DEFAULT_PRESET = PRESETS.length - 1
 const DAY_MS = 24 * 60 * 60 * 1000
+
+function PoolAmount({ amount, unit, instant }: { amount: number; unit: string; instant: boolean }) {
+  const [displayed, setDisplayed] = useState({ amount, unit })
+  const changingUnit = displayed.unit !== unit
+
+  if (!changingUnit && displayed.amount !== amount) setDisplayed({ amount, unit })
+
+  useEffect(() => {
+    if (!changingUnit) return
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    const timeout = window.setTimeout(() => setDisplayed({ amount, unit }), reduced ? 0 : 90)
+    return () => window.clearTimeout(timeout)
+  }, [amount, unit, changingUnit])
+
+  return (
+    <span className={changingUnit ? 'ShieldedPool__Amount is-leaving' : 'ShieldedPool__Amount'}>
+      <CountedPoolAmount
+        key={displayed.unit}
+        amount={changingUnit ? displayed.amount : amount}
+        unit={displayed.unit}
+        instant={instant}
+      />
+    </span>
+  )
+}
+
+function CountedPoolAmount({
+  amount,
+  unit,
+  instant
+}: {
+  amount: number
+  unit: string
+  instant: boolean
+}) {
+  const decimals = unit === 'btc' ? 3 : 2
+  const animated = useCountUp(amount, instant ? 0 : 450, true, decimals) as number
+  return (
+    <span className={'ShieldedPool__AmountEnter'}>
+      {animated
+        .toLocaleString('en-US', {
+          minimumFractionDigits: decimals,
+          maximumFractionDigits: decimals
+        })
+        .replace(/,/g, '\u00a0')}
+      <span className={'ShieldedPool__CurrencySymbol'} data-unit={unit} aria-hidden={'true'}>
+        {unit === 'dash' ? <DashIcon boxSize={'1em'} /> : unit === 'usd' ? '$' : '₿'}
+      </span>
+    </span>
+  )
+}
+
+const POOL_PRESETS = [
+  ...PRESETS.slice(0, 3),
+  { label: '3M', ms: 90 * DAY_MS, intervals: 100 },
+  ...PRESETS.slice(3)
+]
 const M = { top: 22, right: 16, bottom: 24, left: 48 }
 
 function fmtDash(dash: any) {
@@ -32,7 +91,7 @@ function fmtDash(dash: any) {
 function fmtCompact(dash: any) {
   const n = Number(dash) || 0
   if (Math.abs(n) >= 1e6) return `${(n / 1e6).toFixed(2)}M`
-  if (Math.abs(n) >= 1e3) return `${(n / 1e3).toFixed(1)}k`
+  if (Math.abs(n) >= 1e3) return `${(n / 1e3).toFixed(Math.abs(n) < 1e5 ? 2 : 1)}k`
   if (Math.abs(n) >= 10) return n.toFixed(1)
   return fmtDash(n)
 }
@@ -44,35 +103,105 @@ function fmtUsd(n: number, compact = false) {
   return `${sign}$${roundUsd(a)}`
 }
 
-function fmtAmt(dash: number, inUsd: boolean, usdPx: number | null, compact = false) {
+function fmtFiatAmount(dash: number, inUsd: boolean, usdPx: number | null, compact = false) {
   if (inUsd && usdPx != null) return fmtUsd(dash * usdPx, compact)
   return compact ? fmtCompact(dash) : fmtDash(dash)
 }
 
-function buildTvlSeries(buckets: any, balanceCredits: any) {
+function fmtFullFiatAmount(dash: number, inUsd: boolean, usdPx: number | null) {
+  const amount = inUsd && usdPx != null ? dash * usdPx : dash
+  const formatted = amount
+    .toLocaleString('en-US', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: amount !== 0 && Math.abs(amount) < 0.01 ? 8 : 2
+    })
+    .replace(/,/g, '\u202f')
+  return inUsd ? `$${formatted}` : `${formatted} DASH`
+}
+
+function fmtBtc(amount: number, compact = false) {
+  if (compact) {
+    const magnitude = Math.abs(amount)
+    if (magnitude >= 1000) return `₿${fmtCompact(amount)}`
+    const decimals =
+      magnitude === 0 || magnitude >= 1
+        ? 2
+        : Math.min(8, Math.max(2, 1 - Math.floor(Math.log10(magnitude))))
+    return `₿${amount.toFixed(decimals)}`
+  }
+  return `₿${amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 8 }).replace(/,/g, '\u202f')}`
+}
+
+async function fetchBtcRate() {
+  const { btc } = await Api.getRate()
+  if (typeof btc !== 'number' || !Number.isFinite(btc) || btc <= 0) {
+    throw new Error('Invalid DASH/BTC rate')
+  }
+  return btc
+}
+
+interface FlowBucket {
+  start: string
+  ts: string
+  inAmt: number
+  outAmt: number
+}
+
+function buildTvlSeries(buckets: FlowBucket[], balanceCredits: number) {
   if (!buckets.length || balanceCredits == null) return []
   const series = new Array(buckets.length)
   let tvl = Number(balanceCredits) || 0
   for (let i = buckets.length - 1; i >= 0; i--) {
     const inAmt = Number(buckets[i].inAmt) || 0
     const outAmt = Number(buckets[i].outAmt) || 0
-    series[i] = { ts: buckets[i].ts, tvl, inAmt, outAmt }
+    series[i] = { ...buckets[i], tvl, inAmt, outAmt }
     tvl -= inAmt - outAmt
   }
   return series
 }
 
-async function fetchFlowBuckets(start: any, end: any, intervals: any) {
+async function fetchFlowBuckets(start: string, end: string, intervals: number) {
   const [shieldRes, unshieldRes] = await Promise.all([
-    Api.getShieldHistory(start, end, intervals).catch(() => []),
-    Api.getUnshieldHistory(start, end, intervals).catch(() => [])
+    Api.getShieldHistory(start, end, intervals),
+    Api.getUnshieldHistory(start, end, intervals)
   ])
-  const count = Math.max(shieldRes?.length || 0, unshieldRes?.length || 0)
-  return Array.from({ length: count }, (_, i) => ({
-    ts: shieldRes?.[i]?.timestamp ?? unshieldRes?.[i]?.timestamp ?? null,
-    inAmt: Number(shieldRes?.[i]?.data?.amount) || 0,
-    outAmt: Number(unshieldRes?.[i]?.data?.amount) || 0
-  }))
+  if (
+    shieldRes.length !== unshieldRes.length ||
+    shieldRes.some((point, index) => point.timestamp !== unshieldRes[index].timestamp)
+  ) {
+    throw new Error('Shielded flow intervals do not match')
+  }
+  const intervalMs = Math.ceil((Date.parse(end) - Date.parse(start)) / intervals / 1000) * 1000
+  const buckets = shieldRes.map((point, index) => {
+    const withdrawal = unshieldRes[index].data
+    if (!point.timestamp || !point.data || !withdrawal) {
+      throw new Error('Incomplete shielded flow interval')
+    }
+    const inAmt = Number(point.data.amount)
+    const outAmt = Number(withdrawal.amount)
+    if (!Number.isSafeInteger(inAmt) || !Number.isSafeInteger(outAmt) || inAmt < 0 || outAmt < 0) {
+      throw new Error('Invalid shielded flow amount')
+    }
+    return {
+      start: point.timestamp,
+      ts: new Date(Date.parse(point.timestamp) + intervalMs).toISOString(),
+      inAmt,
+      outAmt
+    }
+  })
+  const coveredUntil = buckets.length
+    ? Date.parse(buckets[buckets.length - 1].ts)
+    : Date.parse(start)
+  if (coveredUntil < Date.parse(end)) {
+    const tail = await Api.getShieldedStatistic(new Date(coveredUntil + 1).toISOString(), end)
+    buckets.push({
+      start: new Date(coveredUntil).toISOString(),
+      ts: end,
+      inAmt: Number(tail.totalShieldedIn),
+      outAmt: Number(tail.totalShieldedOut)
+    })
+  }
+  return buckets
 }
 
 function trimLeadingEmpty(buckets: any) {
@@ -104,10 +233,10 @@ async function loadDenseBuckets(rangeStart: any, rangeEnd: any) {
   const scout = trimLeadingEmpty(raw)
 
   if (!scout.length) {
-    return [{ ts: rangeEnd, inAmt: 0, outAmt: 0 }]
+    return [{ start: rangeStart, ts: rangeEnd, inAmt: 0, outAmt: 0 }]
   }
 
-  const firstTs = scout[0].ts || rangeStart
+  const firstTs = scout[0].start || rangeStart
   const denseStart = new Date(firstTs).toISOString()
   const intervals = intervalsForSpan(denseStart, rangeEnd)
   const dense = trimLeadingEmpty(await fetchFlowBuckets(denseStart, rangeEnd, intervals))
@@ -121,28 +250,57 @@ export default function ShieldedPoolCard({
   enabled?: boolean
   rate?: { data?: { usd?: number } | null }
 }) {
-  const [pool, setPool] = useState<{ loading: boolean; error: boolean; balance: number | null }>({
+  const [pool, setPool] = useState<{
+    loading: boolean
+    error: boolean
+    balance: number | null
+    asOf: string | null
+  }>({
     loading: true,
     error: false,
-    balance: null
+    balance: null,
+    asOf: null
   })
-  const [series, setSeries] = useState<{ loading: boolean; points: any[] }>({
+  const [series, setSeries] = useState<{ loading: boolean; error: boolean; points: any[] }>({
     loading: true,
+    error: false,
     points: []
   })
-  const [period, setPeriod] = useState({ loading: true, in: 0, out: 0 })
-  const [presetIdx, setPresetIdx] = useState(DEFAULT_PRESET)
+  const [presetIdx, setPresetIdx] = useState(POOL_PRESETS.length - 1)
+  const range = useMemo(() => {
+    if (!pool.asOf) return null
+    const preset = POOL_PRESETS[presetIdx]
+    return {
+      start: preset.start ?? new Date(Date.parse(pool.asOf) - preset.ms!).toISOString(),
+      end: pool.asOf
+    }
+  }, [presetIdx, pool.asOf])
+  const period = useMemo(
+    () => ({
+      loading: series.loading,
+      loaded: series.points.length > 0,
+      in: series.points.reduce((total, point) => total + point.inAmt, 0),
+      out: series.points.reduce((total, point) => total + point.outAmt, 0)
+    }),
+    [series]
+  )
   const [hoverI, setHoverI] = useState<number | null>(null)
   const [showDeposits, setShowDeposits] = useState(true)
   const [showWithdrawals, setShowWithdrawals] = useState(true)
-  const [unit, setUnit] = useState<'dash' | 'usd'>('dash')
+  const [unit, setUnit] = useState<'dash' | 'usd' | 'btc'>('dash')
+  const btcRate = useQuery({
+    queryKey: ['exchange-rate', 'backend', 'DASH', 'BTC'],
+    queryFn: fetchBtcRate,
+    enabled: enabled && unit === 'btc',
+    staleTime: 60000,
+    refetchInterval: unit === 'btc' ? 60000 : false,
+    retry: 1
+  })
   const [width, setWidth] = useState(0)
   const [plotH, setPlotH] = useState(180)
   const wrapRef = useRef<HTMLDivElement | null>(null)
   const rootRef = useRef<HTMLDivElement | null>(null)
   const gid = useId().replace(/:/g, '')
-  const fetchGen = useRef(0)
-  const periodGen = useRef(0)
 
   useEffect(() => {
     const dismissOutside = (event: globalThis.PointerEvent) => {
@@ -178,79 +336,76 @@ export default function ShieldedPoolCard({
       setPool(s => ({ ...s, loading: true, error: false }))
       return
     }
+    let cancelled = false
     Api.getShieldedPool()
-      .then(res =>
-        setPool({
-          loading: false,
-          error: false,
-          balance: res?.poolBalance != null ? Number(res.poolBalance) : null
-        })
-      )
-      .catch(() => setPool({ loading: false, error: true, balance: null }))
+      .then(res => {
+        if (cancelled) return
+        const balance = res?.poolBalance != null ? Number(res.poolBalance) : null
+        if (balance == null || !Number.isSafeInteger(balance) || balance < 0) {
+          throw new Error('Shielded pool balance is unavailable')
+        }
+        setPool({ loading: false, error: false, balance, asOf: new Date().toISOString() })
+      })
+      .catch(() => {
+        if (!cancelled) setPool({ loading: false, error: true, balance: null, asOf: null })
+      })
+    return () => {
+      cancelled = true
+    }
   }, [enabled])
 
   useEffect(() => {
-    if (!enabled || pool.loading || pool.error) {
+    if (!enabled || pool.loading || pool.error || pool.balance == null || !range) {
       if (!enabled) setSeries(s => ({ ...s, loading: true }))
       return
     }
 
-    const gen = ++fetchGen.current
-    const { start, end } = presetRange(PRESETS[presetIdx])
-    const balance = pool.balance ?? 0
-    setSeries(s => ({ ...s, loading: true }))
+    let cancelled = false
+    const { start, end } = range
+    const balance = pool.balance
+    setSeries(s => ({ ...s, loading: true, error: false }))
     setHoverI(null)
 
     loadDenseBuckets(start, end)
       .then(buckets => {
-        if (gen !== fetchGen.current) return
-        setSeries({ loading: false, points: buildTvlSeries(buckets, balance) })
+        if (cancelled) return
+        setSeries({ loading: false, error: false, points: buildTvlSeries(buckets, balance) })
       })
       .catch(() => {
-        if (gen !== fetchGen.current) return
+        if (cancelled) return
         setSeries({
           loading: false,
-          points: [{ ts: new Date().toISOString(), tvl: Number(balance) || 0, inAmt: 0, outAmt: 0 }]
+          error: true,
+          points: []
         })
       })
-  }, [presetIdx, enabled, pool.loading, pool.error, pool.balance])
-
-  // exact deposit/withdraw totals for the selected range
-  useEffect(() => {
-    if (!enabled) {
-      setPeriod({ loading: true, in: 0, out: 0 })
-      return
+    return () => {
+      cancelled = true
     }
-    const gen = ++periodGen.current
-    const { start, end } = presetRange(PRESETS[presetIdx])
-    setPeriod(s => ({ ...s, loading: true }))
-    Api.getShieldedStatistic(start, end)
-      .then(res => {
-        if (gen !== periodGen.current) return
-        setPeriod({
-          loading: false,
-          in: Number(res?.totalShieldedIn) || 0,
-          out: Number(res?.totalShieldedOut) || 0
-        })
-      })
-      .catch(() => {
-        if (gen !== periodGen.current) return
-        setPeriod({ loading: false, in: 0, out: 0 })
-      })
-  }, [presetIdx, enabled])
+  }, [range, enabled, pool.loading, pool.error, pool.balance])
 
   const balanceDash = creditsToDash(Number(pool.balance) || 0)
   const points = series.points
-  const isAll = PRESETS[presetIdx].label === 'All'
-  const windowLabel = isAll ? 'all time' : PRESETS[presetIdx].label
+  const isAll = POOL_PRESETS[presetIdx].label === 'All'
+  const windowLabel = isAll ? 'All time' : POOL_PRESETS[presetIdx].label
   const rangeInDash = creditsToDash(period.in)
   const rangeOutDash = creditsToDash(period.out)
   const rangeNetDash = rangeInDash - rangeOutDash
   const usdPx = typeof rateState?.data?.usd === 'number' ? rateState.data.usd : null
   const inUsd = unit === 'usd' && usdPx != null
-  const k = inUsd && usdPx != null ? usdPx : 1
+  const inBtc = unit === 'btc'
+  const btcPx = btcRate.data ?? null
+  const k = inBtc ? (btcPx ?? 1) : inUsd && usdPx != null ? usdPx : 1
+  const fmtAmt = (dash: number, usd: boolean, rate: number | null, compact = false) =>
+    inBtc
+      ? btcPx == null
+        ? '—'
+        : fmtBtc(dash * btcPx, compact)
+      : fmtFiatAmount(dash, usd, rate, compact)
+  const fmtFullAmount = (dash: number, usd: boolean, rate: number | null) =>
+    inBtc ? (btcPx == null ? '—' : fmtBtc(dash * btcPx)) : fmtFullFiatAmount(dash, usd, rate)
 
-  const ready = width > 0 && plotH > 0 && points.length >= 1 && !series.loading
+  const ready = width > 0 && plotH > 0 && points.length >= 1
 
   const chart = useMemo(() => {
     if (!ready) return null
@@ -381,7 +536,7 @@ export default function ShieldedPoolCard({
   }, [ready, points, width, plotH, showDeposits, showWithdrawals, k, inUsd])
 
   const handleMove = (e: PointerEvent<HTMLDivElement>) => {
-    if (!chart) return
+    if (!chart || series.loading || (inBtc && btcPx == null)) return
     const rect = e.currentTarget.getBoundingClientRect()
     const mx = e.clientX - rect.left
     const t = chart.x.invert(mx)
@@ -402,23 +557,27 @@ export default function ShieldedPoolCard({
     hovered && chart ? Math.min(1, Math.max(0, chart.x(hovered.x) / width)) : 0
 
   const statDash = isAll ? balanceDash : rangeNetDash
+  const statLoading = !hovered && (pool.loading || (!isAll && !period.loaded))
+  const targetAmount = (hovered?.tvlDash ?? statDash) * k
+  const nextUnit =
+    unit === 'dash' ? (usdPx == null ? 'btc' : 'usd') : unit === 'usd' ? 'btc' : 'dash'
   const statCount = (() => {
-    if (pool.loading) return null
-    if (!isAll && period.loading) return null
-    if (!statDash) return inUsd ? fmtUsd(0) : '0'
-    const body = fmtAmt(Math.abs(statDash), inUsd, usdPx)
-    if (isAll) return body
-    return `${statDash >= 0 ? '+' : '−'}${body.replace(/^[−-]/, '')}`
+    if (pool.error || (!isAll && series.error)) return '—'
+    if (inBtc && btcPx == null) return btcRate.isError ? '—' : null
+    if (statLoading) return null
+    return <PoolAmount amount={targetAmount} unit={unit} instant={hovered != null} />
   })()
   const statTone =
-    !isAll && !period.loading
+    !hovered && !isAll && !period.loading
       ? rangeNetDash > 0
         ? ' is-up'
         : rangeNetDash < 0
           ? ' is-down'
           : ''
       : ''
-  const flowsLoading = period.loading
+  const displayedInDash = hovered?.inDash ?? rangeInDash
+  const displayedOutDash = hovered?.outDash ?? rangeOutDash
+  const flowsLoading = !hovered && !period.loaded
 
   return (
     <section
@@ -430,124 +589,132 @@ export default function ShieldedPoolCard({
         <div className={'ShieldedPool__HeadText'}>
           <span className={'ShieldedPool__Eyebrow'}>Privacy layer</span>
           <h2 className={'ShieldedPool__Title'}>Shielded pool</h2>
-          <p className={'ShieldedPool__Lede'}>
-            Pool size over time.
-            <br />
-            In and out{' '}
-            <Tooltip
-              title={'How to read'}
-              content={
-                'The line is total locked in the pool. Bars are deposit and withdrawal volume in each bucket. Switch DASH / USD next to the headline; USD uses the current rate, not historical prices. All starts from the first real pool activity so volumes are not merged into a few coarse columns.'
-              }
-              placement={'top'}
-            >
-              <span className={'ShieldedPool__LedeMore'}>volume</span>
-            </Tooltip>
-            .
-          </p>
+          <p className={'ShieldedPool__Lede'}>Pool size (in DASH) over time.</p>
+          <Tooltip
+            title={'Legend'}
+            content={
+              <div className={'ShieldedPool__LegendContent'}>
+                <ul className={'ShieldedPool__LegendKeys'} aria-label={'Color legend'}>
+                  <li>
+                    <i className={'ShieldedPool__LegendKey is-locked'} aria-hidden={'true'} />
+                    <span>Locked — balance in the pool</span>
+                  </li>
+                  <li>
+                    <i className={'ShieldedPool__LegendKey is-in'} aria-hidden={'true'} />
+                    <span>Deposits — volume per interval</span>
+                  </li>
+                  <li>
+                    <i className={'ShieldedPool__LegendKey is-out'} aria-hidden={'true'} />
+                    <span>Withdrawals — volume per interval</span>
+                  </li>
+                </ul>
+                <p>Dots mark tiny flows. Hover or tap for amounts; select totals to toggle bars.</p>
+                <p>USD and BTC use current rates, not historical prices.</p>
+              </div>
+            }
+            placement={'top'}
+          >
+            <button type={'button'} className={'ShieldedPool__Legend'}>
+              Legend
+            </button>
+          </Tooltip>
         </div>
         <div className={'ShieldedPool__Controls'}>
-          <Presets options={PRESETS} value={presetIdx} onChange={setPresetIdx} />
-          <div className={'ShieldedPool__Stat'}>
+          <Presets options={POOL_PRESETS} value={presetIdx} onChange={setPresetIdx} />
+          <div
+            className={`ShieldedPool__Stat${period.loading && period.loaded ? ' is-updating' : ''}`}
+            aria-busy={period.loading}
+          >
             <div className={'ShieldedPool__StatMain'}>
-              {statCount == null ? (
-                <Skeleton w={'7ch'} h={'1.6em'} />
-              ) : (
+              <div className={'ShieldedPool__StatValue'}>
                 <button
                   type={'button'}
                   className={`ShieldedPool__StatCount${statTone}`}
-                  disabled={usdPx == null}
-                  title={
-                    usdPx == null
-                      ? 'USD rate unavailable'
-                      : inUsd
-                        ? 'Show in DASH'
-                        : 'Show in USD at current rate'
-                  }
-                  aria-label={
-                    inUsd ? 'Amount in USD, switch to DASH' : 'Amount in DASH, switch to USD'
-                  }
-                  onClick={() => usdPx != null && setUnit(u => (u === 'dash' ? 'usd' : 'dash'))}
+                  aria-label={`Amount in ${unit.toUpperCase()}. Switch to ${nextUnit.toUpperCase()}`}
+                  title={`Switch to ${nextUnit.toUpperCase()}`}
+                  onClick={() => setUnit(nextUnit)}
                 >
-                  {statCount}
-                </button>
-              )}
-              <div
-                className={'ShieldedPool__UnitSwitch'}
-                role={'group'}
-                aria-label={'Display unit'}
-              >
-                <button
-                  type={'button'}
-                  className={`ShieldedPool__Unit${!inUsd ? ' is-on' : ''}`}
-                  aria-pressed={!inUsd}
-                  onClick={() => setUnit('dash')}
-                >
-                  DASH
-                </button>
-                <button
-                  type={'button'}
-                  className={`ShieldedPool__Unit${inUsd ? ' is-on' : ''}`}
-                  aria-pressed={inUsd}
-                  disabled={usdPx == null}
-                  title={usdPx == null ? 'USD rate unavailable' : 'USD at current DASH rate'}
-                  onClick={() => usdPx != null && setUnit('usd')}
-                >
-                  USD
+                  {statCount ?? <Skeleton w={'7ch'} h={'1em'} />}
                 </button>
               </div>
+              <span className={'ShieldedPool__CurrencyHint'}>Switch currency</span>
             </div>
-            <div className={'ShieldedPool__Flows'} aria-label={`Flows · ${windowLabel}`}>
-              {flowsLoading ? (
-                <Skeleton w={'16ch'} h={'0.85em'} />
-              ) : (
-                <>
-                  <button
-                    type={'button'}
-                    className={`ShieldedPool__Flow ShieldedPool__Flow--in${showDeposits ? ' is-on' : ' is-off'}`}
-                    aria-pressed={showDeposits}
-                    aria-label={
-                      showDeposits
-                        ? `Hide deposits, ${fmtAmt(rangeInDash, inUsd, usdPx)}`
-                        : `Show deposits, ${fmtAmt(rangeInDash, inUsd, usdPx)}`
-                    }
-                    title={showDeposits ? 'Hide deposits on chart' : 'Show deposits on chart'}
-                    onClick={() => setShowDeposits(v => !v)}
-                  >
-                    <i className={'ShieldedPool__FlowSwatch'} aria-hidden={'true'} />
-                    <b>+{fmtAmt(rangeInDash, inUsd, usdPx)}</b>
-                  </button>
-                  <button
-                    type={'button'}
-                    className={`ShieldedPool__Flow ShieldedPool__Flow--out${showWithdrawals ? ' is-on' : ' is-off'}`}
-                    aria-pressed={showWithdrawals}
-                    aria-label={
-                      showWithdrawals
-                        ? `Hide withdrawals, ${fmtAmt(rangeOutDash, inUsd, usdPx)}`
-                        : `Show withdrawals, ${fmtAmt(rangeOutDash, inUsd, usdPx)}`
-                    }
-                    title={
-                      showWithdrawals ? 'Hide withdrawals on chart' : 'Show withdrawals on chart'
-                    }
-                    onClick={() => setShowWithdrawals(v => !v)}
-                  >
-                    <i className={'ShieldedPool__FlowSwatch'} aria-hidden={'true'} />
-                    <b>−{fmtAmt(rangeOutDash, inUsd, usdPx)}</b>
-                  </button>
-                </>
+            <div className={'ShieldedPool__Summary'}>
+              {inBtc && (btcRate.isError || btcPx == null) && (
+                <span className={'ShieldedPool__RateStatus'} role={'status'}>
+                  {btcRate.isError ? (
+                    <button type={'button'} onClick={() => void btcRate.refetch()}>
+                      BTC rate unavailable · Retry
+                    </button>
+                  ) : (
+                    'Loading BTC rate…'
+                  )}
+                </span>
               )}
+              <div
+                className={'ShieldedPool__Flows'}
+                aria-label={hovered ? 'Flows · selected interval' : `Flows · ${windowLabel}`}
+              >
+                {pool.error || series.error ? (
+                  <span>—</span>
+                ) : flowsLoading ? (
+                  <Skeleton w={'16ch'} h={'0.85em'} />
+                ) : (
+                  <>
+                    <button
+                      type={'button'}
+                      className={`ShieldedPool__Flow ShieldedPool__Flow--in${showDeposits ? ' is-on' : ' is-off'}`}
+                      aria-pressed={showDeposits}
+                      aria-label={
+                        showDeposits
+                          ? `Hide deposits, ${fmtAmt(displayedInDash, inUsd, usdPx)}`
+                          : `Show deposits, ${fmtAmt(displayedInDash, inUsd, usdPx)}`
+                      }
+                      title={showDeposits ? 'Hide deposits on chart' : 'Show deposits on chart'}
+                      onClick={() => setShowDeposits(v => !v)}
+                    >
+                      <i className={'ShieldedPool__FlowSwatch'} aria-hidden={'true'} />
+                      <b>
+                        +{!inUsd && !inBtc && <DashIcon boxSize={'0.85em'} aria-hidden={'true'} />}
+                        {fmtAmt(displayedInDash, inUsd, usdPx, inBtc)}
+                      </b>
+                    </button>
+                    <button
+                      type={'button'}
+                      className={`ShieldedPool__Flow ShieldedPool__Flow--out${showWithdrawals ? ' is-on' : ' is-off'}`}
+                      aria-pressed={showWithdrawals}
+                      aria-label={
+                        showWithdrawals
+                          ? `Hide withdrawals, ${fmtAmt(displayedOutDash, inUsd, usdPx)}`
+                          : `Show withdrawals, ${fmtAmt(displayedOutDash, inUsd, usdPx)}`
+                      }
+                      title={
+                        showWithdrawals ? 'Hide withdrawals on chart' : 'Show withdrawals on chart'
+                      }
+                      onClick={() => setShowWithdrawals(v => !v)}
+                    >
+                      <i className={'ShieldedPool__FlowSwatch'} aria-hidden={'true'} />
+                      <b>
+                        −{!inUsd && !inBtc && <DashIcon boxSize={'0.85em'} aria-hidden={'true'} />}
+                        {fmtAmt(displayedOutDash, inUsd, usdPx, inBtc)}
+                      </b>
+                    </button>
+                  </>
+                )}
+              </div>
             </div>
           </div>
         </div>
       </header>
 
-      {pool.error ? (
-        <div className={'ShieldedPool__Empty'}>No data</div>
+      {pool.error || series.error ? (
+        <div className={'ShieldedPool__Empty'}>Unable to load pool history</div>
       ) : (
         <div className={'ShieldedPool__Body'}>
           <div
             ref={wrapRef}
             className={'ShieldedPool__Chart'}
+            aria-busy={pool.loading || series.loading}
             onPointerDown={handleMove}
             onPointerMove={event => {
               if (event.pointerType === 'mouse') handleMove(event)
@@ -558,16 +725,25 @@ export default function ShieldedPoolCard({
             onPointerCancel={() => setHoverI(null)}
           >
             {(pool.loading || series.loading) && !chart ? (
-              <Skeleton className={'ShieldedPool__ChartSkel'} radius={8} />
+              <div className={'ShieldedPool__ChartSkel'}>
+                <span className={'ShieldedPool__LoadingLabel'} role={'status'}>
+                  Loading pool history…
+                </span>
+              </div>
             ) : chart ? (
               <>
+                {series.loading && (
+                  <span className={'ShieldedPool__LoadingLabel'} role={'status'}>
+                    Updating…
+                  </span>
+                )}
                 <svg
                   className={`ShieldedPool__Svg${series.loading ? ' is-stale' : ''}`}
                   viewBox={`0 0 ${width} ${plotH}`}
                   width={width}
                   height={plotH}
                   role={'img'}
-                  aria-label={'Shielded pool TVL with deposit and withdrawal volume'}
+                  aria-label={'Shielded pool locked balance with deposit and withdrawal volume'}
                 >
                   <defs>
                     <linearGradient id={`pool-tvl-fill-${gid}`} x1={'0'} y1={'0'} x2={'0'} y2={'1'}>
@@ -613,7 +789,13 @@ export default function ShieldedPoolCard({
                         dy={'0.32em'}
                         textAnchor={'end'}
                       >
-                        {inUsd ? fmtUsd(v, true) : fmtCompact(v)}
+                        {inBtc
+                          ? btcPx == null
+                            ? '—'
+                            : fmtBtc(v)
+                          : inUsd
+                            ? fmtUsd(v, true)
+                            : fmtCompact(v)}
                       </text>
                     </g>
                   ))}
@@ -624,7 +806,7 @@ export default function ShieldedPoolCard({
                     y={10}
                     textAnchor={'end'}
                   >
-                    TVL
+                    Locked
                   </text>
 
                   {chart.flowVisible &&
@@ -632,7 +814,7 @@ export default function ShieldedPoolCard({
                       const dim = hoverI != null && hoverI !== b.i
                       return (
                         <g key={b.i} opacity={dim ? 0.22 : 1}>
-                          {showDeposits && b.inH > 0.5 && (
+                          {showDeposits && b.inH >= 1 && (
                             <rect
                               className={'ShieldedPool__Bar ShieldedPool__Bar--in'}
                               fill={`url(#pool-bar-in-${gid})`}
@@ -643,7 +825,17 @@ export default function ShieldedPoolCard({
                               rx={1}
                             />
                           )}
-                          {showWithdrawals && b.outH > 0.5 && (
+                          {showDeposits && b.inH > 0 && b.inH < 1 && (
+                            <circle
+                              className={'ShieldedPool__Activity ShieldedPool__Activity--in'}
+                              cx={b.inX + b.barW / 2}
+                              cy={chart.baseline}
+                              r={1.5}
+                            >
+                              <title>Deposit volume below one pixel; hover for the amount</title>
+                            </circle>
+                          )}
+                          {showWithdrawals && b.outH >= 1 && (
                             <rect
                               className={'ShieldedPool__Bar ShieldedPool__Bar--out'}
                               fill={`url(#pool-bar-out-${gid})`}
@@ -653,6 +845,16 @@ export default function ShieldedPoolCard({
                               height={b.outH}
                               rx={1}
                             />
+                          )}
+                          {showWithdrawals && b.outH > 0 && b.outH < 1 && (
+                            <circle
+                              className={'ShieldedPool__Activity ShieldedPool__Activity--out'}
+                              cx={b.outX + b.barW / 2}
+                              cy={chart.baseline}
+                              r={1.5}
+                            >
+                              <title>Withdrawal volume below one pixel; hover for the amount</title>
+                            </circle>
                           )}
                         </g>
                       )
@@ -719,12 +921,12 @@ export default function ShieldedPoolCard({
                   >
                     <span className={'ShieldedPool__TipDate'}>{chart.tipFmt(hovered.x)}</span>
                     <span className={'ShieldedPool__TipRow is-tvl'}>
-                      <span>TVL</span>
+                      <span>Locked</span>
                       <span className={'ShieldedPool__TipAmounts'}>
-                        <strong>{fmtAmt(hovered.tvlDash, inUsd, usdPx)}</strong>
-                        {usdPx != null && (
+                        <strong>{fmtFullAmount(hovered.tvlDash, inUsd, usdPx)}</strong>
+                        {!inBtc && usdPx != null && (
                           <span className={'ShieldedPool__TipSecondary'}>
-                            ≈ {fmtAmt(hovered.tvlDash, !inUsd, usdPx)}
+                            ≈ {fmtFullAmount(hovered.tvlDash, !inUsd, usdPx)}
                           </span>
                         )}
                       </span>
@@ -732,13 +934,13 @@ export default function ShieldedPoolCard({
                     {showDeposits && (
                       <span className={'ShieldedPool__TipRow is-in'}>
                         <span>Deposits</span>
-                        <strong>+{fmtAmt(hovered.inDash, inUsd, usdPx)}</strong>
+                        <strong>+{fmtFullAmount(hovered.inDash, inUsd, usdPx)}</strong>
                       </span>
                     )}
                     {showWithdrawals && (
                       <span className={'ShieldedPool__TipRow is-out'}>
                         <span>Withdrawals</span>
-                        <strong>−{fmtAmt(hovered.outDash, inUsd, usdPx)}</strong>
+                        <strong>−{fmtFullAmount(hovered.outDash, inUsd, usdPx)}</strong>
                       </span>
                     )}
                   </div>
