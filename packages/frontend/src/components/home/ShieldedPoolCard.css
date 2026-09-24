@@ -161,15 +161,16 @@
   flex-direction: column;
   align-items: flex-end;
   justify-content: flex-end;
-  gap: 10px;
+  gap: 8px;
   min-width: 0;
+  max-width: 100%;
 }
 .ShieldedPool__StatValue {
   position: relative;
   isolation: isolate;
   display: flex;
   align-items: center;
-  height: 1em;
+  min-height: 44px;
   font-size: clamp(1.5rem, 2.8vw, 2rem);
 }
 .ShieldedPool__StatValue::before {
@@ -212,6 +213,8 @@
   border: 0;
   background: transparent;
   cursor: pointer;
+  min-height: 44px;
+  border-radius: var(--pe-radius-sm);
   font-family: var(--pe-font-heading);
   font-weight: 800;
   font-style: italic;
@@ -222,20 +225,6 @@
   text-shadow: 0 0 16px rgba(var(--pe-color-brand-light-rgb), 0.28);
   min-width: 4ch;
 }
-.ShieldedPool__StatCount:disabled {
-  cursor: default;
-}
-.ShieldedPool__UnitSwitch {
-  position: relative;
-  isolation: isolate;
-  display: inline-grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 2px;
-  flex-shrink: 0;
-  padding: 2px;
-  border-radius: var(--pe-radius-sm);
-  background: rgba(255, 255, 255, 0.04);
-}
 .ShieldedPool__Amount {
   opacity: 1;
   transition: opacity 90ms ease-out;
@@ -244,7 +233,36 @@
   opacity: 0;
 }
 .ShieldedPool__AmountEnter {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25em;
   animation: shielded-pool-amount-enter 110ms ease-out;
+}
+.ShieldedPool__CurrencySymbol {
+  display: inline-flex;
+  align-items: center;
+  font-style: normal;
+  font-size: 1em;
+  color: var(--pe-color-brand-light);
+  text-shadow: none;
+}
+.ShieldedPool__CurrencySymbol[data-unit="usd"] {
+  color: #2cffb4;
+}
+.ShieldedPool__CurrencySymbol[data-unit="btc"] {
+  color: var(--pe-color-orange-default);
+}
+.ShieldedPool__CurrencyHint {
+  font-family: var(--pe-font-mono);
+  font-size: 0.625rem;
+  color: var(--pe-color-gray-400);
+}
+.ShieldedPool__StatCount:hover {
+  color: var(--pe-color-brand-light);
+}
+.ShieldedPool__StatCount:focus-visible {
+  outline: 2px solid var(--pe-color-brand-light);
+  outline-offset: 4px;
 }
 @keyframes shielded-pool-amount-enter {
   from {
@@ -253,66 +271,6 @@
   to {
     opacity: 1;
   }
-}
-.ShieldedPool__UnitSwitch::before {
-  content: "";
-  position: absolute;
-  z-index: -1;
-  pointer-events: none;
-  top: 2px;
-  bottom: 2px;
-  left: 2px;
-  width: calc((100% - 8px) / 3);
-  border-radius: 3px;
-  background: rgba(var(--pe-color-brand-normal-rgb), 0.18);
-  box-shadow: inset 0 0 0 1px rgba(var(--pe-color-brand-normal-rgb), 0.45);
-  transition: transform 240ms cubic-bezier(0.22, 1, 0.36, 1);
-}
-.ShieldedPool__UnitSwitch[data-unit="usd"]::before {
-  transform: translateX(calc(100% + 2px));
-}
-.ShieldedPool__UnitSwitch[data-unit="btc"]::before {
-  transform: translateX(calc(200% + 4px));
-}
-.ShieldedPool__Unit {
-  margin: 0;
-  padding: 6px 10px;
-  min-height: 32px;
-  border: 0;
-  border-radius: 3px;
-  background: transparent;
-  cursor: pointer;
-  font-family: var(--pe-font-heading);
-  font-weight: 600;
-  font-style: normal;
-  font-size: 0.6875rem;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--pe-color-gray-500);
-  transition:
-    background-color 200ms ease,
-    box-shadow 200ms ease,
-    color 200ms ease,
-    transform 150ms ease;
-}
-.ShieldedPool__Unit:hover:not(:disabled) {
-  color: var(--pe-color-fg);
-}
-.ShieldedPool__Unit:active:not(:disabled) {
-  transform: scale(0.96);
-}
-.ShieldedPool__DashLabel {
-  display: inline-flex;
-  align-items: center;
-  vertical-align: middle;
-  gap: 0.05em;
-}
-.ShieldedPool__Unit.is-on {
-  color: var(--pe-color-fg);
-}
-.ShieldedPool__Unit:disabled {
-  cursor: not-allowed;
-  opacity: 0.4;
 }
 .ShieldedPool__StatCount.is-up {
   color: #2cffb4;
@@ -522,13 +480,6 @@
   }
   .ShieldedPool__AmountEnter {
     animation: none;
-  }
-  .ShieldedPool__UnitSwitch::before {
-    transition: none;
-  }
-  .ShieldedPool__Unit {
-    transition: none;
-    transform: none;
   }
   .ShieldedPool__ChartSkel::before,
   .ShieldedPool__Svg {
@@ -755,9 +706,5 @@
   .ShieldedPool__StatCount,
   .ShieldedPool__StatValue {
     font-size: 1.25rem;
-  }
-  .ShieldedPool__Unit {
-    padding: 5px 8px;
-    font-size: 0.625rem;
   }
 }

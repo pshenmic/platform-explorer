@@ -69,6 +69,9 @@ function CountedPoolAmount({
           maximumFractionDigits: decimals
         })
         .replace(/,/g, '\u00a0')}
+      <span className={'ShieldedPool__CurrencySymbol'} data-unit={unit} aria-hidden={'true'}>
+        {unit === 'dash' ? <DashIcon boxSize={'1em'} /> : unit === 'usd' ? '$' : '₿'}
+      </span>
     </span>
   )
 }
@@ -556,6 +559,8 @@ export default function ShieldedPoolCard({
   const statDash = isAll ? balanceDash : rangeNetDash
   const statLoading = !hovered && (pool.loading || (!isAll && !period.loaded))
   const targetAmount = (hovered?.tvlDash ?? statDash) * k
+  const nextUnit =
+    unit === 'dash' ? (usdPx == null ? 'btc' : 'usd') : unit === 'usd' ? 'btc' : 'dash'
   const statCount = (() => {
     if (pool.error || (!isAll && series.error)) return '—'
     if (inBtc && btcPx == null) return btcRate.isError ? '—' : null
@@ -622,78 +627,17 @@ export default function ShieldedPoolCard({
           >
             <div className={'ShieldedPool__StatMain'}>
               <div className={'ShieldedPool__StatValue'}>
-                {statCount == null ? (
-                  <Skeleton w={'7ch'} h={'1em'} />
-                ) : (
-                  <button
-                    type={'button'}
-                    className={`ShieldedPool__StatCount${statTone}`}
-                    disabled={!inBtc && usdPx == null}
-                    title={
-                      inBtc
-                        ? 'Show in DASH'
-                        : usdPx == null
-                          ? 'USD rate unavailable'
-                          : inUsd
-                            ? 'Show in DASH'
-                            : 'Show in USD at current rate'
-                    }
-                    aria-label={
-                      inBtc
-                        ? 'Amount in BTC, switch to DASH'
-                        : inUsd
-                          ? 'Amount in USD, switch to DASH'
-                          : 'Amount in DASH, switch to USD'
-                    }
-                    onClick={() => {
-                      if (inBtc) setUnit('dash')
-                      else if (usdPx != null) setUnit(value => (value === 'dash' ? 'usd' : 'dash'))
-                    }}
-                  >
-                    {statCount}
-                  </button>
-                )}
-              </div>
-              <div
-                className={'ShieldedPool__UnitSwitch'}
-                data-unit={unit}
-                role={'group'}
-                aria-label={'Display unit'}
-              >
                 <button
                   type={'button'}
-                  className={`ShieldedPool__Unit${unit === 'dash' ? ' is-on' : ''}`}
-                  aria-pressed={unit === 'dash'}
-                  aria-label={'DASH'}
-                  onClick={() => setUnit('dash')}
+                  className={`ShieldedPool__StatCount${statTone}`}
+                  aria-label={`Amount in ${unit.toUpperCase()}. Switch to ${nextUnit.toUpperCase()}`}
+                  title={`Switch to ${nextUnit.toUpperCase()}`}
+                  onClick={() => setUnit(nextUnit)}
                 >
-                  <span className={'ShieldedPool__DashLabel'} aria-hidden={'true'}>
-                    <DashIcon boxSize={'1em'} />
-                    <span>ASH</span>
-                  </span>
-                </button>
-                <button
-                  type={'button'}
-                  className={`ShieldedPool__Unit${inUsd ? ' is-on' : ''}`}
-                  aria-pressed={inUsd}
-                  aria-label={'USD'}
-                  disabled={usdPx == null}
-                  title={usdPx == null ? 'USD rate unavailable' : 'USD at current DASH rate'}
-                  onClick={() => usdPx != null && setUnit('usd')}
-                >
-                  <span aria-hidden={'true'}>USD</span>
-                </button>
-                <button
-                  type={'button'}
-                  className={`ShieldedPool__Unit${inBtc ? ' is-on' : ''}`}
-                  aria-pressed={inBtc}
-                  aria-label={'BTC'}
-                  title={'BTC at current DASH rate'}
-                  onClick={() => setUnit('btc')}
-                >
-                  <span aria-hidden={'true'}>BTC</span>
+                  {statCount ?? <Skeleton w={'7ch'} h={'1em'} />}
                 </button>
               </div>
+              <span className={'ShieldedPool__CurrencyHint'}>Switch currency</span>
             </div>
             <div className={'ShieldedPool__Summary'}>
               {inBtc && (btcRate.isError || btcPx == null) && (
