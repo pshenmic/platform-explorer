@@ -5,7 +5,6 @@ import TimeDelta from '../../components/data/TimeDelta'
 import BigNumber from '../../components/data/BigNumber'
 import { useCountUp } from '../../components/home/hooks'
 import { Skeleton } from '../../components/home/Skeleton'
-import { isNetworkLive } from '../../components/home/utils'
 import './HomeHero.css'
 
 const HeroNodes = dynamic(() => import('../../components/home/HeroNodes'), { ssr: false })
@@ -54,6 +53,7 @@ function scrollToEpochs(e: { preventDefault: () => void }) {
 
 export default function HomeHero({
   status,
+  health,
   loading,
   epochNumber,
   epochEndTime,
@@ -70,8 +70,8 @@ export default function HomeHero({
   const lastBlockTimestamp = toMs(status?.api?.block?.timestamp)
   const heightCount = useCountUp(height)
   const ready = !loading && status && Object.keys(status).length > 0
-  const live = isNetworkLive(status)
-  const badgeState = !ready ? 'is-loading' : live ? 'is-live' : 'is-down'
+  const badgeState =
+    health.kind === 'live' ? 'is-live' : health.kind === 'delayed' ? 'is-down' : 'is-loading'
 
   return (
     <section className={'InfoBlock InfoBlock--NoBorder HomeHero'}>
@@ -83,8 +83,12 @@ export default function HomeHero({
         <div className={`HomeHero__HeightRail ${loading ? 'HomeHero__HeightRail--Loading' : ''}`}>
           <div className={'HomeHero__Stat'}>
             <p className={'HomeHero__LiveLabel'}>
-              <span role={'status'} className={`HomeHero__LiveBadge ${badgeState}`}>
-                {ready && !live ? 'Offline' : 'Live'}
+              <span
+                role={'status'}
+                title={health.title}
+                className={`HomeHero__LiveBadge ${badgeState}`}
+              >
+                {health.label}
               </span>{' '}
               Block Height
             </p>
