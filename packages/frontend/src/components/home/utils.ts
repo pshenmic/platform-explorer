@@ -23,12 +23,6 @@ export function shortId(id: unknown): string {
   return id.length > 14 ? `${id.slice(0, 7)}…${id.slice(-4)}` : id
 }
 
-export function isNetworkLive(status?: Status | null): boolean {
-  const ts = status?.tenderdash?.block?.timestamp || status?.api?.block?.timestamp
-  if (!ts) return false
-  return (Date.now() - new Date(ts).getTime()) / 1000 / 60 < 15
-}
-
 export function isApiOperational(status?: Status | null): boolean {
   const td = status?.tenderdash?.block?.timestamp
   const api = status?.api?.block?.timestamp

@@ -10,6 +10,7 @@ import { HeroMeta } from '../../components/home/HeroMeta'
 import { fetchHandlerSuccess, fetchHandlerError } from '../../util'
 import type { LoadableState, Rate } from '../../types'
 import type { QueryFilters } from '../../util/Api'
+import { useHomeStatus } from '../../components/home/hooks/useHomeStatus'
 import './Home.css'
 
 function HomeChunkPlaceholder({ className = '' }: { className?: string }) {
@@ -137,11 +138,7 @@ function Home({ brand }: { brand?: ReactNode }) {
     return () => mq.removeEventListener('change', apply)
   }, [])
 
-  const statusQuery = useQuery({
-    queryKey: ['home', 'status'],
-    queryFn: Api.getStatus,
-    refetchInterval: 60000
-  })
+  const { query: statusQuery, health } = useHomeStatus()
   const txQuery = useQuery({
     enabled: listsViewport.enabled,
     queryKey: ['home', 'transactions'],
@@ -328,6 +325,7 @@ function Home({ brand }: { brand?: ReactNode }) {
   return (
     <div className={'HomePage'}>
       <HomeHero
+        health={health}
         status={statusQuery.data ?? {}}
         loading={statusQuery.isLoading}
         epochNumber={currentEpochNumber}
@@ -345,7 +343,11 @@ function Home({ brand }: { brand?: ReactNode }) {
         <div className={'HomeOverview__Grid'}>
           <div className={'HomeOverview__Sys'}>
             {showHeroNodes ? <HeroNodes compact className={'HomeOverview__Nodes'} /> : null}
-            <HeroMeta status={statusQuery.data ?? {}} loading={statusQuery.isLoading} />
+            <HeroMeta
+              health={health}
+              status={statusQuery.data ?? {}}
+              loading={statusQuery.isLoading}
+            />
           </div>
           <div className={'HomeOverview__Tx'}>
             <CompactTxList
