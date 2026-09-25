@@ -227,23 +227,6 @@ function Home({ brand }: { brand?: ReactNode }) {
     refetchInterval: 120_000
   })
 
-  const currentQuorumQuery = useQuery({
-    enabled: leadersViewport.enabled,
-    queryKey: ['home', 'quorums', 'current'],
-    queryFn: () => Api.getCurrentQuorum(),
-    staleTime: 60_000,
-    refetchInterval: 60_000,
-    retry: 1
-  })
-  const quorumsListQuery = useQuery({
-    enabled: leadersViewport.enabled,
-    queryKey: ['home', 'quorums', 'list'],
-    queryFn: () => Api.getQuorums(),
-    staleTime: 60_000,
-    refetchInterval: 60_000,
-    retry: 1
-  })
-
   const validators = {
     data: validatorsQuery.data ?? {},
     loading: validatorsQuery.isPending || validatorsQuery.isLoading
@@ -461,11 +444,6 @@ function Home({ brand }: { brand?: ReactNode }) {
               }
               bannedValidatorsList={validatorsBannedListQuery.data}
               bannedListLoading={validatorsBannedListQuery.isPending}
-              currentQuorum={currentQuorumQuery.data}
-              currentQuorumLoading={currentQuorumQuery.isPending || currentQuorumQuery.isLoading}
-              currentQuorumError={currentQuorumQuery.isError}
-              quorums={quorumsListQuery.data}
-              l1LockedHeight={blocksQuery.data?.resultSet?.[0]?.header?.l1LockedHeight}
               lastProposerProTx={blocksQuery.data?.resultSet?.[0]?.header?.validator}
               avgBlockTimeSec={
                 epochAvgBlockMs > 0
