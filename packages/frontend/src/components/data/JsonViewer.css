@@ -1,5 +1,5 @@
 .JsonViewer .cm-scroller {
-  scroll-behavior: smooth;
+  overscroll-behavior: contain;
   scrollbar-width: thin;
   scrollbar-color: var(--pe-color-brand-normal) transparent;
 }
@@ -36,17 +36,25 @@
 .JsonViewer {
   position: relative;
   width: 100%;
+  min-width: 0;
 }
 
 .JsonViewer__Editor {
   width: 100%;
+  min-width: 0;
 }
 
-.JsonViewer__CopyButton {
-  position: absolute;
-  top: var(--pe-space-2_5);
-  right: var(--pe-space-2_5);
-  z-index: 1;
+.JsonViewer__Toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--pe-space-3);
+  padding: var(--pe-space-2) var(--pe-space-3);
+  color: var(--pe-color-fg-muted);
+  font-size: var(--pe-text-sm);
+}
+.JsonViewer__Toolbar .CopyButton {
+  position: static;
 }
 
 .JsonViewer--Fill {

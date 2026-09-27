@@ -1,22 +1,17 @@
-import type { ComponentType } from 'react'
-import HoldersListItem from './HoldersListItem'
-import type { TokenHolder } from './HoldersListItem'
-import { EmptyListMessage } from '../../ui/lists'
-import PaginationJs from '../../pagination'
-import { LoadingList as LoadingListJs } from '../../loading'
-import { ErrorMessageBlock } from '../../Errors'
+'use client'
+import type { Alias as AliasModel } from '../../../types'
 
-import './HoldersList.css'
-
-const Pagination = PaginationJs as ComponentType<{
-  className?: string
-  onPageChange?: (selectedItem: { selected: number }) => void
-  pageCount?: number
-  forcePage?: number
-  justify?: boolean
-}>
-const LoadingList = LoadingListJs as ComponentType<{ itemsCount?: number }>
-
+export interface TokenHolder {
+  identifier?: string | null
+  aliases?: AliasModel[] | null
+  tokensAmount?: string | number | null
+  dashAmount?: string | number | null
+  lastActivity?: string | Date | null
+}
+import { DataList } from '../../ui/lists'
+import { Alias, Identifier, BigNumber, TimeDelta, NotActive } from '../../data'
+import Pagination from '../../pagination'
+import { findActiveAlias } from '../../../util'
 type HeaderStyles = 'default' | 'light'
 
 interface ListPagination {
@@ -40,47 +35,60 @@ export default function HoldersList({
   loading,
   itemsCount = 10
 }: HoldersListProps) {
-  const headerExtraClass: Record<HeaderStyles, string> = {
-    default: '',
-    light: 'HoldersList__ColumnTitles--Light'
-  }
-
   return (
-    <div className={'HoldersList'}>
-      <div
-        className={`HoldersList__ColumnTitles ${headerStyles ? headerExtraClass[headerStyles] || '' : ''}`}
-      >
-        <div className={'HoldersList__ColumnTitle HoldersList__ColumnTitle--Holder'}>Holder</div>
-        <div className={'HoldersList__ColumnTitle HoldersList__ColumnTitle--TokensAmount'}>
-          Tokens
-        </div>
-        <div className={'HoldersList__ColumnTitle HoldersList__ColumnTitle--DashAmount'}>Dash</div>
-        <div className={'HoldersList__ColumnTitle HoldersList__ColumnTitle--LastActivity'}>
-          Last Activity
-        </div>
-      </div>
-
-      {!loading ? (
-        <div className={'HoldersList__Items'}>
-          {holders?.map((holder, key) => (
-            <HoldersListItem holder={holder} key={key} />
-          ))}
-          {holders?.length === 0 && <EmptyListMessage>There are no holders yet.</EmptyListMessage>}
-          {holders === undefined && <ErrorMessageBlock />}
-        </div>
-      ) : (
-        <LoadingList itemsCount={itemsCount} />
-      )}
-
-      {pagination && (
-        <Pagination
-          className={'HoldersList__Pagination'}
-          onPageChange={pagination.onPageChange}
-          pageCount={pagination.pageCount}
-          forcePage={pagination.forcePage}
-          justify={true}
-        />
-      )}
-    </div>
+    <DataList
+      items={holders}
+      loading={loading}
+      skeletonCount={itemsCount}
+      headerVariant={headerStyles}
+      pinFirst
+      rowKey={(item, index) => item.identifier ?? String(index)}
+      rowHref={item => (item.identifier ? `/identity/${item.identifier}` : undefined)}
+      emptyMessage="There are no holders yet."
+      columns={[
+        {
+          key: 'holder',
+          header: 'Holder',
+          minWidth: 200,
+          grow: true,
+          cell: item => {
+            const alias = findActiveAlias(item.aliases || [])
+            return item.identifier ? (
+              alias ? (
+                <Alias avatarSource={item.identifier}>{alias.alias}</Alias>
+              ) : (
+                <Identifier ellipsis avatar>
+                  {item.identifier}
+                </Identifier>
+              )
+            ) : (
+              <NotActive />
+            )
+          }
+        },
+        {
+          key: 'tokens',
+          header: 'Tokens',
+          minWidth: 120,
+          numeric: true,
+          cell: item => <BigNumber>{item.tokensAmount}</BigNumber>
+        },
+        {
+          key: 'dash',
+          header: 'Dash',
+          minWidth: 120,
+          numeric: true,
+          cell: item => <BigNumber>{item.dashAmount}</BigNumber>
+        },
+        {
+          key: 'timestamp',
+          header: 'Last Activity',
+          minWidth: 128,
+          align: 'right',
+          cell: item => <TimeDelta endDate={item.lastActivity} />
+        }
+      ]}
+      footer={pagination ? <Pagination {...pagination} justify /> : undefined}
+    />
   )
 }

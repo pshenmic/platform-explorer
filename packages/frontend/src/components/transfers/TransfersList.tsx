@@ -1,12 +1,13 @@
-import TransfersListItem from './TransfersListItem'
-import { EmptyListMessage } from '../ui/lists'
-
-import { LoadingList } from '../loading'
+'use client'
+import { DataList } from '../ui/lists'
+import type { DataListProps } from '../ui/lists/DataList/DataList'
+import { BigNumber, Identifier, NotActive, TimeDelta } from '../data'
+import { LinkContainer } from '../ui/containers'
+import { RateTooltip } from '../ui/Tooltips'
 import Pagination from '../pagination'
-import { ErrorMessageBlock } from '../Errors'
+import TypeBadge from './TypeBadge'
+import { useRouter } from 'next/navigation'
 import type { Transfer } from '../../types'
-import './TransfersList.css'
-
 type HeaderStyles = 'default' | 'light'
 
 interface ListPagination {
@@ -16,6 +17,10 @@ interface ListPagination {
 }
 
 interface TransfersListProps {
+  paging?: DataListProps['paging']
+  toolbarTarget?: HTMLElement | null
+  filterValues?: Record<string, unknown>
+  onFilterChange?: (key: string, value: unknown) => void
   transfers?: Transfer[]
   pagination?: ListPagination
   headerStyles?: HeaderStyles
@@ -23,66 +28,138 @@ interface TransfersListProps {
   itemsCount?: number
 }
 
-function TransfersList({
+export default function TransfersList({
   transfers = [],
+  paging,
+  toolbarTarget,
+  filterValues,
+  onFilterChange,
   pagination,
   headerStyles,
   loading,
   itemsCount = 10
 }: TransfersListProps) {
-  const headerExtraClass: Record<HeaderStyles, string> = {
-    default: '',
-    light: 'BlocksList__ColumnTitles--Light'
-  }
-
+  const router = useRouter()
   return (
-    <div className={'TransfersList'}>
-      <div className={'TransfersList__ContentContainer'}>
-        <div
-          className={`TransfersList__ColumnTitles ${headerStyles ? headerExtraClass[headerStyles] || '' : ''}`}
-        >
-          <div className={'TransfersList__ColumnTitle'}>Time</div>
-          <div className={'TransfersList__ColumnTitle TransfersList__ColumnTitle--TxHash'}>
-            Tx hash
-          </div>
-          <div className={'TransfersList__ColumnTitle TransfersList__ColumnTitle--Recipient'}>
-            To
-          </div>
-          <div className={'TransfersList__ColumnTitle TransfersList__ColumnTitle--Amount'}>
-            Amount
-          </div>
-          <div className={'TransfersList__ColumnTitle TransfersList__ColumnTitle--GasUsed'}>
-            Gas used
-          </div>
-          <div className={'TransfersList__ColumnTitle TransfersList__ColumnTitle--Type'}>Type</div>
-        </div>
-
-        {!loading ? (
-          <div className={'TransfersList__Items'}>
-            {transfers?.map((transfer, key) => (
-              <TransfersListItem key={key} transfer={transfer} />
-            ))}
-            {transfers?.length === 0 && (
-              <EmptyListMessage>There are no transfers yet.</EmptyListMessage>
-            )}
-            {transfers === undefined && <ErrorMessageBlock />}
-          </div>
-        ) : (
-          <LoadingList itemsCount={itemsCount} />
-        )}
-
-        {pagination && (
-          <Pagination
-            className={'TransfersList__Pagination'}
-            onPageChange={pagination.onPageChange}
-            pageCount={pagination.pageCount}
-            forcePage={pagination.forcePage}
-            justify={true}
-          />
-        )}
-      </div>
-    </div>
+    <DataList
+      items={transfers}
+      paging={paging}
+      toolbarTarget={toolbarTarget}
+      filterValues={filterValues}
+      onFilterChange={onFilterChange}
+      loading={loading}
+      skeletonCount={itemsCount}
+      headerVariant={headerStyles}
+      pinFirst
+      rowKey={(item, index) => `${item.txHash}-${index}`}
+      rowHref={item => (item.txHash ? `/transaction/${item.txHash}` : undefined)}
+      emptyMessage="There are no transfers yet."
+      columns={[
+        {
+          key: 'hash',
+          filterKey: onFilterChange ? 'hash' : undefined,
+          filterType: 'search' as const,
+          filterPlaceholder: 'Transaction Hash',
+          header: 'Tx Hash',
+          minWidth: 180,
+          grow: true,
+          cell: item =>
+            item.txHash ? <Identifier ellipsis>{item.txHash}</Identifier> : <NotActive />
+        },
+        {
+          key: 'recipient',
+          header: 'To',
+          minWidth: 180,
+          grow: true,
+          cell: item =>
+            item.recipient ? (
+              <LinkContainer
+                onClick={event => {
+                  event.preventDefault()
+                  event.stopPropagation()
+                  router.push(`/identity/${item.recipient}`)
+                }}
+              >
+                <Identifier avatar ellipsis>
+                  {item.recipient}
+                </Identifier>
+              </LinkContainer>
+            ) : (
+              <NotActive />
+            )
+        },
+        {
+          key: 'amount',
+          header: 'Amount',
+          minWidth: 100,
+          numeric: true,
+          cell: item =>
+            item.amount != null ? (
+              <RateTooltip credits={item.amount}>
+                <span>
+                  <BigNumber>{item.amount}</BigNumber>
+                </span>
+              </RateTooltip>
+            ) : (
+              <NotActive />
+            )
+        },
+        {
+          key: 'gas',
+          header: 'Gas Used',
+          minWidth: 100,
+          numeric: true,
+          cell: item =>
+            item.gasUsed != null ? (
+              <RateTooltip credits={item.gasUsed}>
+                <span>
+                  <BigNumber>{item.gasUsed}</BigNumber>
+                </span>
+              </RateTooltip>
+            ) : (
+              <NotActive />
+            )
+        },
+        {
+          key: 'type',
+          filterKey: onFilterChange ? 'type' : undefined,
+          filterType: 'options' as const,
+          filterMultiple: false,
+          filterOptions: [
+            {
+              value: '2',
+              label: <TypeBadge type="IDENTITY_CREATE" />,
+              searchText: 'Identity create'
+            },
+            {
+              value: '3',
+              label: <TypeBadge type="IDENTITY_TOP_UP" />,
+              searchText: 'Credit Top Up'
+            },
+            {
+              value: '7',
+              label: <TypeBadge type="IDENTITY_CREDIT_TRANSFER" />,
+              searchText: 'Credit Transfer'
+            },
+            {
+              value: '6',
+              label: <TypeBadge type="IDENTITY_CREDIT_WITHDRAWAL" />,
+              searchText: 'Credit Withdrawal'
+            }
+          ],
+          header: 'Type',
+          minWidth: 120,
+          cell: item => (item.type ? <TypeBadge type={item.type} /> : <NotActive />)
+        },
+        {
+          key: 'timestamp',
+          header: 'Timestamp',
+          minWidth: 128,
+          align: 'right',
+          cell: item => (item.timestamp ? <TimeDelta endDate={item.timestamp} /> : <NotActive />)
+        }
+      ]}
+      footer={pagination ? <Pagination {...pagination} justify /> : undefined}
+    />
   )
 }
-
-export default TransfersList
