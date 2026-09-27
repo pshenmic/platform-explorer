@@ -25,6 +25,8 @@ import { Badge } from '../../../components/ui/Badge'
 import { useActiveNetwork } from 'src/contexts'
 import type { LoadableState, Rate, Validator as ValidatorType } from '../../../types'
 
+import { getValidatorStatus } from '../../../components/validators/validatorStatus'
+
 import './ValidatorPage.css'
 
 /** API endpoint status may include a free-form message. */
@@ -88,14 +90,10 @@ function Validator({ hash }: ValidatorProps) {
     ])
   }, [setBreadcrumbs, hash])
 
-  const poseBanHeight = validator.data?.proTxInfo?.state?.PoSeBanHeight ?? 0
+  const status = getValidatorStatus(validator.data)
   const posePenalty = validator.data?.proTxInfo?.state?.PoSePenalty ?? 0
   const poseStatusColor =
-    poseBanHeight > 0 && validator.data?.proTxInfo?.state?.PoSeRevivedHeight === -1
-      ? 'red.default'
-      : posePenalty > 0
-        ? 'yellow.default'
-        : 'green.default'
+    status.label === 'Banned' ? 'red.default' : posePenalty > 0 ? 'yellow.default' : 'green.default'
 
   useEffect(() => {
     let cancelled = false
@@ -198,11 +196,7 @@ function Validator({ hash }: ValidatorProps) {
               <InfoLine
                 className={'ValidatorPage__InfoLine'}
                 title={'Status'}
-                value={
-                  <Badge colorScheme={validator?.data?.isActive ? 'green' : 'orange'}>
-                    {validator?.data?.isActive ? 'Proposing' : 'Waiting for Quorum'}
-                  </Badge>
-                }
+                value={<Badge colorScheme={status.colorScheme}>{status.label}</Badge>}
                 loading={validator.loading}
                 error={validator.error}
               />
