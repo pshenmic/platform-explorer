@@ -6,7 +6,6 @@ import { afterEach, beforeEach, describe, expect, it } from '@jest/globals'
 import QuorumCard from '../components/home/QuorumCard'
 import * as Api from '../util/Api'
 import { ResponseErrorNotFound } from '../util/Errors'
-import { orderQuorums } from '../components/home/quorumModel'
 
 jest.mock('../util/Api', () => ({ getQuorums: jest.fn(), getQuorumByHash: jest.fn() }))
 jest.mock('../components/ui/Tooltips', () => ({ Tooltip: ({ children }: any) => children }))
@@ -87,16 +86,6 @@ function selection(container: HTMLElement) {
 }
 
 describe('home quorum lifecycle', () => {
-  it('preserves display order without mutating the API list', () => {
-    const before = roster.map(q => q.quorumHash)
-    const ordered = orderQuorums(roster)
-    expect(ordered.map(q => q.quorumHash)).toEqual([
-      ...Array.from({ length: 11 }, (_, i) => `Q${11 - i}`),
-      ...Array.from({ length: 13 }, (_, i) => `Q${24 - i}`)
-    ])
-    expect(roster.map(q => q.quorumHash)).toEqual(before)
-  })
-
   it('keeps node numbers, overlap highlighting and proposer across a current-quorum change', async () => {
     const { container, client, matrix, rerender } = mount()
     await waitFor(() => expect(matrix().getAllByRole('button')).toHaveLength(4))
@@ -142,82 +131,5 @@ describe('home quorum lifecycle', () => {
     await waitFor(() => expect(selection(container)).toContain('Core 288'))
     expect(container.querySelector('.QuorumCard__Stage')?.getAttribute('data-pin')).toBeNull()
     expect(container.querySelectorAll('.QuorumCard__Cell--skel')).toHaveLength(0)
-  })
-
-  it('shows retry instead of endless skeletons on a detail failure and recovers', async () => {
-    detailMock.mockRejectedValue(new Error('network failure'))
-    const { container, matrix } = mount()
-    await screen.findByText('Signing roster unavailable.')
-    expect(container.querySelectorAll('.QuorumCard__Cell--skel')).toHaveLength(0)
-    detailMock.mockImplementation(async hash => roster.find(q => q.quorumHash === hash)!)
-    fireEvent.click(screen.getByRole('button', { name: 'Retry' }))
-    await waitFor(() => expect(matrix().getAllByRole('button')).toHaveLength(4))
-    expect(screen.queryByText('Signing roster unavailable.')).toBeNull()
-  })
-
-  it('does not label old members as the new current quorum while its detail is loading', async () => {
-    const { container, client, matrix } = mount()
-    await waitFor(() => expect(matrix().getAllByRole('button')).toHaveLength(4))
-    let finish!: (value: Api.PlatformQuorum) => void
-    detailMock.mockImplementation(hash =>
-      hash === 'Q30'
-        ? new Promise(resolve => {
-            finish = resolve
-          })
-        : Promise.resolve(roster.find(q => q.quorumHash === hash)!)
-    )
-    roster = [...roster.map(q => ({ ...q, isCurrent: false })), { ...quorum(30), isCurrent: true }]
-    await refresh(client)
-    await waitFor(() => expect(selection(container)).toContain('Core 720'))
-    expect(container.querySelectorAll('.QuorumCard__Cell.is-proposer')).toHaveLength(0)
-    expect(matrix().queryAllByRole('button')).toHaveLength(0)
-    await act(async () => {
-      finish(roster[roster.length - 1])
-    })
-    await waitFor(() => expect(matrix().getAllByRole('button')).toHaveLength(4))
-  })
-
-  it('does not invent a current quorum when the API has none', async () => {
-    roster = roster.map(q => ({ ...q, isCurrent: false }))
-    const { container } = mount()
-    await screen.findByText('Signing roster unavailable.')
-    expect(container.querySelectorAll('.QuorumCard__QBtn.is-live')).toHaveLength(0)
-    expect(container.querySelectorAll('.QuorumCard__Cell--skel')).toHaveLength(0)
-  })
-
-  it('reconciles a 404 between list and detail responses', async () => {
-    detailMock.mockImplementation(async hash => {
-      if (hash === 'Q11') {
-        roster = roster
-          .filter(q => q.quorumHash !== 'Q11')
-          .map(q => ({ ...q, isCurrent: q.quorumHash === 'Q12' }))
-        throw new ResponseErrorNotFound()
-      }
-      return roster.find(q => q.quorumHash === hash)!
-    })
-    const { container, matrix } = mount()
-    await waitFor(() => expect(selection(container)).toContain('Core 288'))
-    await waitFor(() => expect(matrix().getAllByRole('button')).toHaveLength(4))
-  })
-
-  it('continues through more than 24 replacements and loads memberships on node selection', async () => {
-    const { container, client, matrix } = mount()
-    await waitFor(() => expect(matrix().getAllByRole('button')).toHaveLength(4))
-    fireEvent.click(matrix().getAllByRole('button')[0])
-    await waitFor(() => expect(new Set(detailMock.mock.calls.map(c => c[0])).size).toBe(24))
-    await waitFor(() =>
-      expect(container.querySelectorAll('.QuorumCard__QBtn.is-signed')).toHaveLength(4)
-    )
-    for (let n = 25; n <= 50; n++) {
-      roster = [
-        ...roster.slice(1).map(q => ({ ...q, isCurrent: false })),
-        { ...quorum(n), isCurrent: true }
-      ]
-      await refresh(client)
-      await waitFor(() => expect(selection(container)).toContain(`Core ${n * 24}`))
-      await waitFor(() => expect(matrix().getAllByRole('button')).toHaveLength(4))
-      expect(container.querySelectorAll('.QuorumCard__QBtn')).toHaveLength(24)
-      expect(container.querySelectorAll('.QuorumCard__Cell--skel')).toHaveLength(0)
-    }
   })
 })

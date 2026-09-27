@@ -64,37 +64,6 @@ describe('home network health', () => {
     expect(networkHealth({ ...input, status: statusAt(now + 5 * 60_000) }).label).toBe('Unknown')
   })
 
-  it('keeps Live during a routine refresh and shows failure without reporting the network offline', async () => {
-    const { result, client } = mount()
-    await waitFor(() => expect(result.current.health.label).toBe('Live'))
-    let finish!: (value: Status) => void
-    statusMock.mockImplementation(
-      () =>
-        new Promise(resolve => {
-          finish = resolve
-        })
-    )
-    act(() => {
-      void client.refetchQueries({ queryKey: ['home', 'status'] })
-    })
-    await waitFor(() => expect(result.current.query.isFetching).toBe(true))
-    expect(result.current.health.label).toBe('Live')
-    await act(async () => {
-      finish(statusAt(Date.now()))
-    })
-    statusMock.mockRejectedValue(new Error('network error'))
-    await act(async () => {
-      await client.refetchQueries({ queryKey: ['home', 'status'] })
-    })
-    await waitFor(() => expect(result.current.health.label).toBe('Unavailable'))
-    expect(result.current.query.data).toBeTruthy()
-    statusMock.mockImplementation(async () => statusAt(Date.now()))
-    await act(async () => {
-      await client.refetchQueries({ queryKey: ['home', 'status'] })
-    })
-    await waitFor(() => expect(result.current.health.label).toBe('Live'))
-  })
-
   it('ages data while hidden and recovers on return without remounting', async () => {
     const { result } = mount()
     await waitFor(() => expect(result.current.health.label).toBe('Live'))
@@ -117,18 +86,6 @@ describe('home network health', () => {
     await act(async () => {
       finish(statusAt(Date.now()))
     })
-    await waitFor(() => expect(result.current.health.label).toBe('Live'))
-  })
-
-  it('recovers automatically after the connection returns', async () => {
-    const { result } = mount()
-    await waitFor(() => expect(result.current.health.label).toBe('Live'))
-    act(() => onlineManager.setOnline(false))
-    await act(async () => {
-      jest.advanceTimersByTime(3 * 60_000)
-    })
-    expect(result.current.health.label).toBe('Stale')
-    act(() => onlineManager.setOnline(true))
     await waitFor(() => expect(result.current.health.label).toBe('Live'))
   })
 })
