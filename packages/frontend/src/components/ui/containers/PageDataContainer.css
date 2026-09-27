@@ -2,12 +2,14 @@
   box-sizing: border-box;
   width: 100%;
   margin: 0;
-  padding-block: var(--pe-space-4);
+  padding: var(--pe-space-4) var(--pe-space-3);
+  padding-bottom: calc(var(--layout-footer-h) + var(--pe-space-4));
 }
 
-@media screen and (min-width: 62em) {
+@media screen and (min-width: 48em) {
   .PageDataContainer {
-    padding-block: var(--pe-space-5);
+    padding-inline: var(--pe-space-4);
+    padding-top: var(--pe-space-5);
   }
 }
 
