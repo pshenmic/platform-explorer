@@ -3,7 +3,7 @@ import type { ComponentType, ReactNode } from 'react'
 import { Identifier as IdentifierJs, InfoLine as InfoLineJs } from '../../data'
 import { ValueContainer } from '../../ui/containers'
 import { Badge } from '../../ui/Badge'
-import type { QuorumMember } from './QuorumMembersListItem'
+import type { QuorumMember } from './QuorumMembersList'
 import './QuorumInfo.css'
 
 const Identifier = IdentifierJs as ComponentType<{
