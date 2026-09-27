@@ -1,6 +1,41 @@
 'use client'
 
 import { useId, useState } from 'react'
+import CopyButton from '../../components/ui/Buttons/CopyButton'
+
+export function ApiExample({ text }: { text: string }) {
+  const [expanded, setExpanded] = useState(false)
+  const id = useId()
+  const long = text.split('\n').length > 16
+  return (
+    <div className="ApiExample">
+      <div className="ApiExample__Toolbar">
+        <span>Example</span>
+        <CopyButton text={text} label="Copy example" />
+      </div>
+      <pre
+        id={id}
+        className={long && !expanded ? 'ApiExample__Collapsed' : ''}
+        tabIndex={0}
+        aria-label="API example"
+      >
+        <code>{text}</code>
+      </pre>
+      {long && (
+        <button
+          type="button"
+          className="ApiExample__Toggle"
+          aria-expanded={expanded}
+          aria-controls={id}
+          onClick={() => setExpanded(!expanded)}
+        >
+          {expanded ? 'Show less' : 'Show full example'}
+        </button>
+      )}
+    </div>
+  )
+}
+
 export function ApiNavigation({ entries }: { entries: { title: string; href: string }[] }) {
   const [query, setQuery] = useState('')
   const [open, setOpen] = useState(false)

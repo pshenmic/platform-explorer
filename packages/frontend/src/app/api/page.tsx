@@ -2,8 +2,19 @@ import type { Metadata } from 'next'
 import { readFile } from 'fs/promises'
 import path from 'path'
 import Markdown from '../../components/markdown'
-import { ApiNavigation } from './ApiControls'
+import { Children, isValidElement, type ReactNode } from 'react'
+import { ApiExample, ApiNavigation } from './ApiControls'
 import './Api.css'
+
+function plainText(children: ReactNode): string {
+  return Children.toArray(children)
+    .map(child =>
+      isValidElement<{ children?: ReactNode }>(child)
+        ? plainText(child.props.children)
+        : String(child)
+    )
+    .join('')
+}
 
 export const metadata: Metadata = {
   title: 'API — Dash Platform Explorer',
@@ -45,7 +56,11 @@ async function ApiRoute() {
       <div className="Api__Layout">
         <ApiNavigation entries={entries} />
         <div className="Api__Reference InfoBlock">
-          <Markdown>{body}</Markdown>
+          <Markdown
+            components={{ pre: ({ children }) => <ApiExample text={plainText(children)} /> }}
+          >
+            {body}
+          </Markdown>
         </div>
       </div>
     </div>
