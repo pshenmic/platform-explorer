@@ -6,7 +6,8 @@ import './Api.css'
 
 export const metadata: Metadata = {
   title: 'API — Dash Platform Explorer',
-  description: '',
+  description:
+    'HTTP API reference for querying Dash Platform blocks, transactions, identities, and contracts.',
   keywords: [
     'Dash',
     'platform',
@@ -26,8 +27,14 @@ async function ApiRoute() {
 
   return (
     <div className={'Api'}>
-      <div className={'InfoBlock'}>
-        <h1 className={'InfoBlock__Title'}>How to use Platform Explorer API</h1>
+      <header className="Api__Header InfoBlock">
+        <p className="Api__Eyebrow">Developers</p>
+        <h1 className="Api__Title">Platform Explorer API</h1>
+        <p className="Api__Description">
+          Query Dash Platform blocks, transactions, identities, and contracts over HTTP.
+        </p>
+      </header>
+      <div className="Api__Reference InfoBlock">
         <Markdown>{content}</Markdown>
       </div>
     </div>

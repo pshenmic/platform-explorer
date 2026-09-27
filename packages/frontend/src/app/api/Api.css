@@ -1,10 +1,101 @@
 .Api {
-  max-width: 62rem;
+  max-width: 72rem;
+  min-width: 0;
   margin: 2rem auto;
   color: var(--pe-color-fg);
 }
 
-.Api code {
+.Api__Header {
+  margin-bottom: var(--pe-space-6);
+}
+
+.Api__Eyebrow {
+  margin: 0 0 var(--pe-space-2);
+  color: var(--pe-color-brand-normal);
+  font-family: var(--pe-font-heading);
+  font-size: var(--pe-text-sm);
+  font-weight: var(--pe-font-weight-bold);
+  font-style: italic;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.Api__Title {
+  margin: 0 0 var(--pe-space-3);
+  font-family: var(--pe-font-heading);
+  font-size: clamp(1.75rem, 4vw, 2.5rem);
+  font-weight: var(--pe-font-weight-bold);
+  font-style: italic;
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+}
+
+.Api__Description {
+  margin: 0;
+  color: var(--pe-color-fg-muted);
+}
+
+.Api__Reference,
+.Api .Markdown {
+  min-width: 0;
+}
+
+.Api .Markdown > :first-child {
+  margin-top: 0;
+}
+
+.Api .Markdown :is(h2, h3, h4) {
+  scroll-margin-top: 6rem;
+}
+
+.Api .Markdown h3 {
+  margin-top: var(--pe-space-8);
+  padding-top: var(--pe-space-6);
+  border-top: 1px solid var(--pe-color-gray-800);
+}
+
+.Api .Markdown > ul:first-of-type {
+  columns: 2;
+  column-gap: var(--pe-space-8);
+}
+
+.Api .Markdown li {
+  break-inside: avoid;
+  font-family: inherit;
+}
+
+.Api .Markdown :is(p, li, td, a) {
+  overflow-wrap: anywhere;
+}
+
+.Api pre {
   max-width: 100%;
-  overflow-wrap: break-word;
+  overflow-x: auto;
+  padding: var(--pe-space-4);
+  border: 1px solid var(--pe-color-gray-800);
+  border-radius: var(--pe-radius-lg);
+  background: var(--pe-color-bg);
+  font-size: var(--pe-text-sm);
+  line-height: 1.65;
+  tab-size: 2;
+}
+
+.Api code {
+  font-family: var(--pe-font-mono);
+  overflow-wrap: anywhere;
+}
+
+.Api pre code {
+  white-space: pre;
+  overflow-wrap: normal;
+}
+
+@media (max-width: 48em) {
+  .Api {
+    margin: var(--pe-space-4) auto;
+  }
+
+  .Api .Markdown > ul:first-of-type {
+    columns: 1;
+  }
 }
