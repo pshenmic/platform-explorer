@@ -32,9 +32,18 @@
   border: 0;
   border-radius: 4px 4px 0 0;
   background: transparent;
-  color: inherit;
+  color: var(--pe-color-fg-muted);
   cursor: pointer;
-  font: inherit;
+  font-family: var(--pe-font-heading);
+  font-size: var(--pe-text-sm);
+  font-weight: 700;
+  line-height: 24px;
+  letter-spacing: 0.02em;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--pe-space-2);
+  min-height: 44px;
+  white-space: nowrap;
   padding: 6px;
 }
 
@@ -46,14 +55,14 @@
   left: 50%;
   transform: translateX(-50%);
   width: calc(100% - 36px);
-  height: 1px;
+  height: 2px;
   opacity: 0;
   visibility: hidden;
   transition: all 0.2s;
 }
 
 .Tabs__Tab--Selected {
-  color: var(--pe-color-brand-normal);
+  color: var(--pe-color-white-50);
   border-bottom: 0;
   border-color: transparent;
 }
@@ -66,15 +75,15 @@
 }
 
 .Tabs__Tab:focus-visible {
-  outline: none;
-  box-shadow: none;
+  outline: 2px solid var(--pe-color-brand-normal);
+  outline-offset: -2px;
 }
 
 .Tabs__Tab:hover {
   color: #fff;
 }
 
-.Tabs__Tab:hover::after {
+.Tabs__Tab:not(.Tabs__Tab--Selected):not(:disabled):hover::after {
   background-color: rgba(255, 255, 255, 0.4);
   opacity: 1;
   visibility: visible;
@@ -83,16 +92,6 @@
 
 .Tabs__Tab:active {
   background-color: transparent;
-}
-
-.Tabs__Tab[aria-selected="true"] .Tabs__TabItemsCount {
-  background: rgba(var(--pe-color-brand-normal-rgb), 0.2);
-  color: var(--pe-color-brand-normal);
-}
-
-.Tabs__Tab[aria-selected="false"] .Tabs__TabItemsCount {
-  color: var(--pe-color-fg-muted);
-  background-color: rgba(var(--pe-color-gray-250-rgb), 0.2);
 }
 
 .Tabs__TabPanel[hidden] {
@@ -109,4 +108,94 @@
   .Tabs__Tab {
     padding: 10px;
   }
+}
+
+.Tabs .Tabs__Tab .Tabs__TabItemsCount {
+  padding: 0;
+  margin: 0;
+  border-radius: 0;
+  background: transparent;
+  color: var(--pe-color-gray-500);
+  font-family: var(--pe-font-heading);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  line-height: 24px;
+  letter-spacing: 0.04em;
+  font-variant-numeric: tabular-nums;
+  opacity: 1;
+}
+
+.Tabs__Tab:disabled {
+  cursor: default;
+  opacity: 0.5;
+}
+
+.Tabs__Toolbar {
+  display: flex;
+  align-items: center;
+  gap: var(--pe-space-3);
+  padding: 0 var(--pe-space-4);
+  border-bottom: 1px solid var(--pe-color-gray-800);
+  margin-bottom: var(--pe-space-2);
+}
+
+.Tabs__Toolbar .Tabs__TabList {
+  flex: 1;
+  min-width: 0;
+  padding: 0;
+  gap: var(--pe-space-3);
+}
+
+.Tabs__Toolbar .Tabs__TabList::after {
+  display: none;
+}
+
+.Tabs__Toolbar .DataList__ModeSwitch {
+  flex-shrink: 0;
+}
+
+.Tabs__Toolbar .Tabs__Tab {
+  padding: var(--pe-space-2) 0;
+}
+
+.Tabs__Toolbar .Tabs__Tab::after {
+  width: 100%;
+}
+
+@media (max-width: 48em) {
+  .Tabs__Toolbar {
+    flex-wrap: wrap;
+    padding-right: var(--pe-space-3);
+    gap: var(--pe-space-2);
+  }
+
+  .Tabs__Toolbar .Tabs__TabList {
+    flex-basis: 100%;
+  }
+
+  .Tabs__Toolbar .DataList__ModeSwitch {
+    margin-left: auto;
+  }
+}
+
+.Tabs__TableControls:not([hidden]) {
+  display: flex;
+  align-items: center;
+  gap: var(--pe-space-3);
+  margin-left: auto;
+  min-width: 0;
+}
+
+.Tabs__FilterSlot {
+  min-width: 0;
+}
+
+.Tabs__FilterSlot .DataList__FilterBar {
+  padding: 0;
+  margin: 0;
+  min-height: 0;
+}
+
+.Tabs__FilterSlot .DataList__FilterBar > span:empty {
+  display: none;
 }
