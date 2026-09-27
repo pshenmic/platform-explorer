@@ -4,8 +4,6 @@ Platform Explorer HTTP API allow you to query and see platform blockchain data p
 
 API is still under ongoing development, so refer to this page or repo documentation for the most up-to-date latest specification.
 
-Production (testnet) live URL is [https://platform-explorer.pshenmic.dev](https://platform-explorer.pshenmic.dev)
-
 Reference:
 
 * [Status](#status)
@@ -79,16 +77,23 @@ Reference:
 * [Platform Address Transitions](#platform-address-transitions)
 
 ### Status
+
+<!-- endpoint: GET /status -->
 Returns basic stats and epoch info
 
-* apiHeight - current height available in the API
-* maPeerHeight - max peer height seen in the network
-* tenderdashChainHeight - current blockchain height on the node
+#### Response notes
 
+| Field | Description |
+| --- | --- |
+| `apiHeight` | current height available in the API |
+| `maPeerHeight` | max peer height seen in the network |
+| `tenderdashChainHeight` | current blockchain height on the node |
 
+```http
+GET /status
 ```
-HTTP /status
 
+```json
 {
   "epoch": {
     "number": 3926,
@@ -147,38 +152,59 @@ HTTP /status
 ```
 ---
 ### Epoch Info
+
+<!-- endpoint: GET /epoch/{index} -->
 Returns info about epoch by specific index.
+
+#### Path parameters
+
+| Parameter | Description |
+| --- | --- |
+| `index` | Epoch index. Use `/epoch` for the latest epoch. |
 
 If you want to get the last epoch don't set epoch index
 
-* tps - Transactions per second
-* totalCollectedFees - total number or fees spent per epoch
-* totalTxCount - total number of transactions in the epoch
-* bestValidator - validator with most validated blocks
-* epoch number can be null
+#### Summary fields
 
+| Field | Description |
+| --- | --- |
+| `tps` | Transactions per second |
+| `totalCollectedFees` | total fees spent per epoch |
+| `totalTxCount` | total number of transactions in the epoch |
+| `bestValidator` | validator with most validated blocks |
+
+- Epoch number can be null
 Finalized on-chain totals are provided by the SDK and are only available for
 already-completed epochs. For the current (in-progress) epoch they are `null`.
 
-* epoch.totalBlocksInEpoch - total number of blocks produced in the epoch
-* epoch.totalProcessingFees - total processing fees collected in the epoch (credits)
-* epoch.totalDistributedStorageFees - total storage fees distributed in the epoch (credits)
-* epoch.totalCreatedStorageFees - total storage fees created in the epoch (credits)
-* epoch.coreBlockRewards - core block rewards for the epoch
-* epoch.blockProposers - block proposers of the finalized epoch, each `{ proposer, count }` where `proposer` is the validator ProTxHash (hex) and `count` is the number of blocks it proposed
+#### Completed epoch fields
+
+| Field | Description |
+| --- | --- |
+| `epoch.totalBlocksInEpoch` | total number of blocks produced in the epoch |
+| `epoch.totalProcessingFees` | total processing fees collected in the epoch (credits) |
+| `epoch.totalDistributedStorageFees` | total storage fees distributed in the epoch (credits) |
+| `epoch.totalCreatedStorageFees` | total storage fees created in the epoch (credits) |
+| `epoch.coreBlockRewards` | core block rewards for the epoch |
+| `epoch.blockProposers` | block proposers of the finalized epoch, each `{ proposer, count }` where `proposer` is the validator ProTxHash (hex) and `count` is the number of blocks it proposed |
 
 For the current (in-progress) epoch, live values are computed from the indexed
 data instead. For already-completed epochs they are `null`.
 
-* pendingBlocksInEpoch - number of blocks produced in the epoch so far
-* pendingEpochReward - fees collected in the epoch so far (credits)
+#### Current epoch fields
+
+| Field | Description |
+| --- | --- |
+| `pendingBlocksInEpoch` | number of blocks produced in the epoch so far |
+| `pendingEpochReward` | fees collected in the epoch so far (credits) |
 
 `avgBlockTime` is the average time between consecutive blocks in the epoch in milliseconds, or `null` when the epoch contains less than two blocks.
 
-
+```http
+GET /epoch/2492
 ```
-HTTP /epoch/2492
 
+```json
 {
   "epoch": {
     "number": 2492,
@@ -229,14 +255,37 @@ HTTP /epoch/2492
   "pendingEpochReward": null
 }
 ```
----
+
+#### Status codes
+
+| Status | Meaning |
+| --- | --- |
+| 200 | OK |
+| 400 | Invalid request parameters. |
+
+___
 ### Block by hash
+
+<!-- endpoint: GET /block/{hash} -->
 Get a block by hash
 
-* `quorumHash` on the header is the quorum that signed the block
-```
-GET /block/12E5592208322B5A3598C98C1811FCDD403DF40F522511D7A965DDE1D96C97C7
+#### Path parameters
 
+| Parameter | Description |
+| --- | --- |
+| `hash` | Block hash. |
+
+#### Response notes
+
+| Field | Description |
+| --- | --- |
+| `quorumHash` | on the header is the quorum that signed the block |
+
+```http
+GET /block/12E5592208322B5A3598C98C1811FCDD403DF40F522511D7A965DDE1D96C97C7
+```
+
+```json
 {
   "header": {
     "hash": "04D16F8EE2A892E5F9F884C11DB97CD20BAA4A9539111A9131F847B93422DB26",
@@ -277,14 +326,39 @@ GET /block/12E5592208322B5A3598C98C1811FCDD403DF40F522511D7A965DDE1D96C97C7
   ]
 }
 ```
----
-### Blocks by validator
-Return all blocks proposed by the specific validators
-* `limit` cannot be more then 100
-* `page` cannot be less then 1
-```
-GET /validator/B8F90A4F07D9E59C061D41CC8E775093141492A5FD59AB3BBC4241238BB28A18/blocks
 
+#### Status codes
+
+| Status | Meaning |
+| --- | --- |
+| 200 | OK |
+| 404 | Requested resource not found. |
+
+___
+### Blocks by validator
+
+<!-- endpoint: GET /validator/{validator}/blocks -->
+Return all blocks proposed by the specific validators
+
+#### Path parameters
+
+| Parameter | Description |
+| --- | --- |
+| `validator` | Validator ProTxHash. |
+
+#### Query parameters
+
+| Parameter | Description |
+| --- | --- |
+| `order` | Sort direction: `asc` or `desc`. Default: `asc`. |
+| `limit` | Maximum: 100. |
+| `page` | Minimum: 1. |
+
+```http
+GET /validator/B8F90A4F07D9E59C061D41CC8E775093141492A5FD59AB3BBC4241238BB28A18/blocks
+```
+
+```json
 {
     "pagination": {
         "page": 1,
@@ -309,19 +383,47 @@ GET /validator/B8F90A4F07D9E59C061D41CC8E775093141492A5FD59AB3BBC4241238BB28A18/
     ]
 }
 ```
----
-### Blocks
-Return all blocks with pagination info
-* `limit` cannot be more then 100
-* `page` cannot be less then 1
-* `validator` narrows the page to the blocks that proTxHash proposed
-* `quorum` narrows the page to the blocks that quorum signed, matched on the quorum hash the
-  indexer stores per block, so it is exact and works for quorums long past the signing-active
-  window. It combines with `validator` to give one member's blocks inside that quorum, and is
-  accepted in either case. An unknown quorum gives an empty page rather than an error
-```
-GET /blocks?epoch_index_min=1000&epoch_index_max=1200&height_min=2000&height_max=4000&gas_min=1&gas_max=99999999999&timestamp_start=2024-08-29T23:24:11.516z&timestamp_end=2025-08-29T23:24:11.516z&tx_count_min=2&tx_count_max=11&validator=C11C1168DCF9479475CB1355855E30EA75C0CDDA8A8F9EA80591568DD1C33BA8&quorum=000000153FE56C83B62D35897F3B05DCB60CFE95715EFB3014F7D2C8997C70F1
 
+#### Status codes
+
+| Status | Meaning |
+| --- | --- |
+| 200 | OK |
+| 404 | Requested resource not found. |
+
+___
+### Blocks
+
+<!-- endpoint: GET /blocks -->
+Return all blocks with pagination info
+
+#### Query parameters
+
+| Parameter | Description |
+| --- | --- |
+| `order` | Sort direction: `asc` or `desc`. Default: `asc`. |
+| `epoch_index_min` | Minimum epoch index. |
+| `epoch_index_max` | Maximum epoch index. |
+| `gas_min` | Minimum gas used. |
+| `gas_max` | Maximum gas used. |
+| `height_max` | Maximum block height. |
+| `height_min` | Minimum block height. |
+| `tx_count_min` | Minimum transaction count. |
+| `tx_count_max` | Maximum transaction count. |
+| `timestamp_start` | Start timestamp (ISO 8601). |
+| `timestamp_end` | End timestamp (ISO 8601). |
+| `limit` | Maximum: 100. |
+| `page` | Minimum: 1. |
+| `validator` | narrows the page to the blocks that proTxHash proposed |
+| `quorum` | narrows the page to the blocks that quorum signed, matched on the quorum hash the indexer stores per block, so it is exact and works for quorums long past the signing-active window. It combines with `validator` to give one member's blocks inside that quorum, and is accepted in either case. An unknown quorum gives an empty page rather than an error |
+
+Current limitation: supplying both timestamps with `timestamp_start` earlier than `timestamp_end` returns `400` in this API version. Use a single timestamp boundary until the API validation is corrected.
+
+```http
+GET /blocks?epoch_index_min=1000&epoch_index_max=1200&height_min=2000&height_max=4000&gas_min=1&gas_max=99999999999&timestamp_start=2024-08-29T23:24:11.516z&timestamp_end=2025-08-29T23:24:11.516z&tx_count_min=2&tx_count_max=11&validator=C11C1168DCF9479475CB1355855E30EA75C0CDDA8A8F9EA80591568DD1C33BA8&quorum=000000153FE56C83B62D35897F3B05DCB60CFE95715EFB3014F7D2C8997C70F1
+```
+
+```json
 {
   "resultSet": [
     {
@@ -360,16 +462,33 @@ GET /blocks?epoch_index_min=1000&epoch_index_max=1200&height_min=2000&height_max
   }
 }
 ```
----
+
+#### Status codes
+
+| Status | Meaning |
+| --- | --- |
+| 200 | OK |
+| 400 | Invalid request parameters. |
+
+___
 ### Average Block Time History
+
+<!-- endpoint: GET /blocks/avgBlockTime/history -->
 Return a series data for the average block time chart. `avgBlockTime` is the average time between consecutive blocks in the interval in milliseconds, or `null` when the interval contains less than two blocks
 
-* `timestamp_start` lower interval threshold in ISO string
-* `timestamp_end` upper interval threshold in ISO string
-* `intervalsCount` intervals count in response ( _optional_ )
+#### Query parameters
 
-```
+| Parameter | Description |
+| --- | --- |
+| `timestamp_start` | Start of the interval (ISO 8601). |
+| `timestamp_end` | End of the interval (ISO 8601). |
+| `intervalsCount` | Optional number of intervals in the response. |
+
+```http
 GET /blocks/avgBlockTime/history?timestamp_start=2024-01-01T00:00:00&timestamp_end=2025-01-01T00:00:00
+```
+
+```json
 [
     {
         "timestamp": "2024-06-23T13:51:44.154Z",
@@ -379,14 +498,18 @@ GET /blocks/avgBlockTime/history?timestamp_start=2024-01-01T00:00:00&timestamp_e
     }, ...
 ]
 ```
-Response codes:
-```
-200: OK
-400: Invalid input, check start/end values
-500: Internal Server Error
-```
+#### Status codes
+
+| Status | Meaning |
+| --- | --- |
+| 200 | OK |
+| 400 | Invalid input, check start/end values |
+| 500 | Internal Server Error |
+
 ---
 ### Block Proposer Schedule
+
+<!-- endpoint: GET /blocks/proposerSchedule -->
 Returns the proposers scheduled for the blocks after the chain tip, ordered by height, with
 pagination info.
 
@@ -396,18 +519,27 @@ quorum, which starts its own pass at its lowest `proTxHash`. Every platform quor
 signing-active the whole time, so a quorum's place in [Quorums](#quorums) is only its age and
 not a turn in a queue — the set moving between them is what puts a member on a block.
 
-* `limit` cannot be more then 100
-* `page` cannot be less then 1
-* `order` does not apply: the schedule only runs forward from the chain tip
-* `total` is how far ahead the schedule reaches, which is one walk of the whole rotation. It
-  falls as the current quorum works through its pass and jumps back up when the set rotates
-* a page far enough out leaves the current quorum and continues into the quorums that take the
-  set after it, so `quorumHash` is per entry
-* a member is skipped when it is offline, so an entry further from the tip is more likely to be
-  off by a member or more. Treat this as a schedule, not a guarantee
-```
-GET /blocks/proposerSchedule?page=1&limit=3
+#### Query parameters
 
+| Parameter | Description |
+| --- | --- |
+| `limit` | Maximum: 100. |
+| `page` | Minimum: 1. |
+| `order` | does not apply: the schedule only runs forward from the chain tip |
+
+#### Response notes
+
+| Field | Description |
+| --- | --- |
+| `total` | is how far ahead the schedule reaches, which is one walk of the whole rotation. It falls as the current quorum works through its pass and jumps back up when the set rotates |
+
+- A page far enough out leaves the current quorum and continues into the quorums that take the set after it, so `quorumHash` is per entry
+- A member is skipped when it is offline, so an entry further from the tip is more likely to be off by a member or more. Treat this as a schedule, not a guarantee
+```http
+GET /blocks/proposerSchedule?page=1&limit=3
+```
+
+```json
 {
     "resultSet": [
         {
@@ -433,31 +565,64 @@ GET /blocks/proposerSchedule?page=1&limit=3
     }
 }
 ```
-Response codes:
-```
-200: OK
-404: Not Found
-500: Internal Server Error
-503: Service Temporarily Unavailable
-```
+#### Status codes
+
+| Status | Meaning |
+| --- | --- |
+| 200 | OK |
+| 404 | Not Found |
+| 500 | Internal Server Error |
+| 503 | Service Temporarily Unavailable |
+
 ___
 ### Validators
-Return all validators with pagination info.
-* Valid `order` values are `asc` or `desc`
-* `lastProposedBlockHeader` field is nullable
-* `?isActive=true` boolean can be supplied in the query params to filter by isActive field
-* `?isBanned=true` boolean can be supplied in the query params to filter by PoSe ban status (a banned validator is never active)
-* `limit` cannot be more then 100 (0 = all validators)
-* `page` cannot be less then 1
-* `blocks_proposed_min` and `blocks_proposed_max` minimum and maximum amount of proposed blocks
-* `last_proposed_block_height_min` and `last_proposed_block_height_min` minimum and maximum last proposed blocks height
-* `last_proposed_block_timestamp_start` and `last_proposed_block_timestamp_end` timestamp start and end for last proposed blocks
-* `last_proposed_block_hash` hash of last proposed block
-* `geoIpInfo` contains the node location resolved from its service IP with the [DB-IP City Lite](https://db-ip.com) database; it is `null` when the service address has no IPv4 host, and its fields are `null` when the IP is not present in the database
-* the DB-IP City Lite database is licensed under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/): any page displaying `geoIpInfo` data must include an attribution link back to DB-IP.com, e.g. `<a href='https://db-ip.com'>IP Geolocation by DB-IP</a>`
-```
-GET /validators?blocks_proposed_min=1&blocks_proposed_max=9999999&last_proposed_block_height_min=190458&last_proposed_block_height_max=197458&last_proposed_block_timestamp_start=2025-10-11T02:46:09.433Z&last_proposed_block_timestamp_end=2025-10-12T02:46:09.433Z&last_proposed_block_hash=9151C25609D85610C416450B4648CCB4671E373452EA8FA21AC0DF77D03039E1&is_active=true&limit=10&page=1&order=asc&owner=PJUBWbXWmzEYCs99rAAbnCiHRzrnhKLQrXbmSsuPBYB
 
+<!-- endpoint: GET /validators -->
+
+List validators with pagination and optional filters.
+
+#### Query parameters
+
+All parameters are optional. Omit a filter to include all matching statuses or values.
+
+| Parameter | Description |
+| --- | --- |
+| `page` | Integer. Page number, starting at `1`. Default: `1`. |
+| `limit` | Integer from `0` to `100`. Default: `10`. Use `0` to return all matching validators. |
+| `order` | Sort direction: `asc` or `desc`. Default: `asc`. |
+| `isActive` | Boolean. Filter by current active status. |
+| `isBanned` | Boolean. Filter by PoSe ban status. Validators no longer in the masternode list are also treated as banned. |
+| `owner` | String. Base58 validator identity identifier, 43–44 characters. |
+
+#### Block filters
+
+Use these optional parameters to filter by proposed blocks. Range boundaries are inclusive.
+
+| Parameter | Description |
+| --- | --- |
+| `blocks_proposed_min` | Number. Minimum proposed block count. |
+| `blocks_proposed_max` | Number. Maximum proposed block count. |
+| `last_proposed_block_height_min` | Number. Minimum height of the last proposed block. |
+| `last_proposed_block_height_max` | Number. Maximum height of the last proposed block. |
+| `last_proposed_block_timestamp_start` | ISO 8601 date-time with timezone. Earliest timestamp of the last proposed block. |
+| `last_proposed_block_timestamp_end` | ISO 8601 date-time with timezone. Latest timestamp of the last proposed block. |
+| `last_proposed_block_hash` | String. Last proposed block hash, 64 alphanumeric characters. |
+
+#### Request examples
+
+Start with the first page of active validators:
+
+```http
+GET /validators?isActive=true&page=1&limit=10
+```
+
+The following example combines pagination, owner, and block filters. The response illustrates the payload structure; values depend on the network and current chain state.
+
+```http
+GET /validators?blocks_proposed_min=1&blocks_proposed_max=9999999&last_proposed_block_height_min=190458&last_proposed_block_height_max=197458&last_proposed_block_timestamp_start=2025-10-11T02:46:09.433Z&last_proposed_block_timestamp_end=2025-10-12T02:46:09.433Z&last_proposed_block_hash=9151C25609D85610C416450B4648CCB4671E373452EA8FA21AC0DF77D03039E1&isActive=true&limit=10&page=1&order=asc&owner=PJUBWbXWmzEYCs99rAAbnCiHRzrnhKLQrXbmSsuPBYB
+```
+
+```json
 {
     "pagination": {
         "page": 1,
@@ -534,15 +699,49 @@ GET /validators?blocks_proposed_min=1&blocks_proposed_max=9999999&last_proposed_
     ]
 }
 ```
+
+#### Response notes
+
+| Field | Description |
+| --- | --- |
+| `pagination` | Contains the page, limit, and total result count. |
+| `resultSet` | Array of matching validators. |
+| `lastProposedBlockHeader` | May be `null` when no proposed block is available. |
+| `geoIpInfo` | Location resolved from the node’s service IPv4 address using DB-IP City Lite. The object is `null` if no IPv4 host is available. Location fields may be `null` when the address is not in the database. |
+
+#### Errors
+
+`400 Bad Request` is returned for invalid pagination or parameter values, and for reversed block count, height, or timestamp ranges.
+
+#### Location data attribution
+
+The DB-IP City Lite data is licensed under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/). When displaying `geoIpInfo`, include an attribution link: [IP Geolocation by DB-IP](https://db-ip.com).
+
 ---
 ### Validator by ProTxHash
-Get validator by ProTxHash.
-* `lastProposedBlockHeader` field is nullable
-* `geoIpInfo` contains the node location resolved from its service IP with the [DB-IP City Lite](https://db-ip.com) database; it is `null` when the service address has no IPv4 host, and its fields are `null` when the IP is not present in the database
-* the DB-IP City Lite database is licensed under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/): any page displaying `geoIpInfo` data must include an attribution link back to DB-IP.com, e.g. `<a href='https://db-ip.com'>IP Geolocation by DB-IP</a>`
-```
-GET /validator/F60A6BF9EC0794BB0CFD1E0F2217933F4B33EDE6FE810692BC275CA18148AEF0
 
+<!-- endpoint: GET /validator/{hash} -->
+Get validator by ProTxHash.
+
+#### Path parameters
+
+| Parameter | Description |
+| --- | --- |
+| `hash` | Validator ProTxHash. |
+
+#### Response notes
+
+| Field | Description |
+| --- | --- |
+| `lastProposedBlockHeader` | field is nullable |
+| `geoIpInfo` | contains the node location resolved from its service IP with the [DB-IP City Lite](https://db-ip.com) database; it is `null` when the service address has no IPv4 host, and its fields are `null` when the IP is not present in the database |
+
+- The DB-IP City Lite database is licensed under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/): any page displaying `geoIpInfo` data must include an attribution link back to DB-IP.com, e.g. `<a href='https://db-ip.com'>IP Geolocation by DB-IP</a>`
+```http
+GET /validator/F60A6BF9EC0794BB0CFD1E0F2217933F4B33EDE6FE810692BC275CA18148AEF0
+```
+
+```json
 {
   "proTxHash": "F60A6BF9EC0794BB0CFD1E0F2217933F4B33EDE6FE810692BC275CA18148AEF0",
   "isActive": true,
@@ -581,8 +780,7 @@ GET /validator/F60A6BF9EC0794BB0CFD1E0F2217933F4B33EDE6FE810692BC275CA18148AEF0
       "platformP2PPort": 36656,
       "platformHTTPPort": 1443,
       "payoutAddress": "yeRZBWYfeNE4yVUHV4ZLs83Ppn9aMRH57A",
-      "pubKeyOperator": "b928fa4e127214ccb2b5de1660b5e371d2f3c9845077bc3900fc6aabe82ddd2e61530be3765cea15752e30fc761ab730",
-    }
+      "pubKeyOperator": "b928fa4e127214ccb2b5de1660b5e371d2f3c9845077bc3900fc6aabe82ddd2e61530be3765cea15752e30fc761ab730"}
   },
   "identity": "8tsWRSwsTM5AXv4ViCF9gu39kzjbtfFDM6rCyL2RcFzd",
   "identityBalance": 0,
@@ -628,13 +826,37 @@ GET /validator/F60A6BF9EC0794BB0CFD1E0F2217933F4B33EDE6FE810692BC275CA18148AEF0
   }
 }
 ```
----
-### Validator by Masternode Identifier
-Get validator by Masternode Identity.
-* `lastProposedBlockHeader` field is nullable
-```
-GET /validator/identity/8tsWRSwsTM5AXv4ViCF9gu39kzjbtfFDM6rCyL2RcFzd
 
+#### Status codes
+
+| Status | Meaning |
+| --- | --- |
+| 200 | OK |
+| 404 | Requested resource not found. |
+
+___
+### Validator by Masternode Identifier
+
+<!-- endpoint: GET /validator/identity/{identifier} -->
+Get validator by Masternode Identity.
+
+#### Path parameters
+
+| Parameter | Description |
+| --- | --- |
+| `identifier` | Validator identity identifier. |
+
+#### Response notes
+
+| Field | Description |
+| --- | --- |
+| `lastProposedBlockHeader` | field is nullable |
+
+```http
+GET /validator/identity/8tsWRSwsTM5AXv4ViCF9gu39kzjbtfFDM6rCyL2RcFzd
+```
+
+```json
 {
   "proTxHash": "F60A6BF9EC0794BB0CFD1E0F2217933F4B33EDE6FE810692BC275CA18148AEF0",
   "isActive": true,
@@ -673,8 +895,7 @@ GET /validator/identity/8tsWRSwsTM5AXv4ViCF9gu39kzjbtfFDM6rCyL2RcFzd
       "platformP2PPort": 36656,
       "platformHTTPPort": 1443,
       "payoutAddress": "yeRZBWYfeNE4yVUHV4ZLs83Ppn9aMRH57A",
-      "pubKeyOperator": "b928fa4e127214ccb2b5de1660b5e371d2f3c9845077bc3900fc6aabe82ddd2e61530be3765cea15752e30fc761ab730",
-    }
+      "pubKeyOperator": "b928fa4e127214ccb2b5de1660b5e371d2f3c9845077bc3900fc6aabe82ddd2e61530be3765cea15752e30fc761ab730"}
   },
   "identity": "8tsWRSwsTM5AXv4ViCF9gu39kzjbtfFDM6rCyL2RcFzd",
   "identityBalance": 0,
@@ -722,14 +943,29 @@ GET /validator/identity/8tsWRSwsTM5AXv4ViCF9gu39kzjbtfFDM6rCyL2RcFzd
 ```
 ---
 ### Validator rewards stats by ProTxHash
+
+<!-- endpoint: GET /validator/{hash}/rewards/stats -->
 Return a series data for the reward from proposed blocks by validator chart with
 
-* `timestamp_start` lower interval threshold in ISO string
-* `timestamp_end` upper interval threshold in ISO string
-* `intervalsCount` intervals count in response ( _optional_ )
+#### Path parameters
 
-```
+| Parameter | Description |
+| --- | --- |
+| `hash` | Validator ProTxHash. |
+
+#### Query parameters
+
+| Parameter | Description |
+| --- | --- |
+| `timestamp_start` | Start of the interval (ISO 8601). |
+| `timestamp_end` | End of the interval (ISO 8601). |
+| `intervalsCount` | Optional number of intervals in the response. |
+
+```http
 GET /validator/F60A6BF9EC0794BB0CFD1E0F2217933F4B33EDE6FE810692BC275CA18148AEF0/rewards/stats?timestamp_start=2024-01-01T00:00:00&timestamp_end=2025-01-01T00:00:00
+```
+
+```json
 [
     {
         "timestamp": "2024-06-23T13:51:44.154Z",
@@ -739,16 +975,39 @@ GET /validator/F60A6BF9EC0794BB0CFD1E0F2217933F4B33EDE6FE810692BC275CA18148AEF0/
     },...
 ]
 ```
----
+
+#### Status codes
+
+| Status | Meaning |
+| --- | --- |
+| 200 | OK |
+| 400 | Invalid request parameters. |
+
+___
 ### Validator income stats by ProTxHash
+
+<!-- endpoint: GET /validator/{hash}/income/stats -->
 Return a series data for the validator income chart. Income per interval is estimated as the validator share of collected fees, proportional to the number of blocks it proposed (matching the platform fee pool distribution between epoch proposers)
 
-* `timestamp_start` lower interval threshold in ISO string
-* `timestamp_end` upper interval threshold in ISO string
-* `intervalsCount` intervals count in response ( _optional_ )
+#### Path parameters
 
-```
+| Parameter | Description |
+| --- | --- |
+| `hash` | Validator ProTxHash. |
+
+#### Query parameters
+
+| Parameter | Description |
+| --- | --- |
+| `timestamp_start` | Start of the interval (ISO 8601). |
+| `timestamp_end` | End of the interval (ISO 8601). |
+| `intervalsCount` | Optional number of intervals in the response. |
+
+```http
 GET /validator/F60A6BF9EC0794BB0CFD1E0F2217933F4B33EDE6FE810692BC275CA18148AEF0/income/stats?timestamp_start=2024-01-01T00:00:00&timestamp_end=2025-01-01T00:00:00
+```
+
+```json
 [
     {
         "timestamp": "2024-06-23T13:51:44.154Z",
@@ -758,16 +1017,39 @@ GET /validator/F60A6BF9EC0794BB0CFD1E0F2217933F4B33EDE6FE810692BC275CA18148AEF0/
     },...
 ]
 ```
----
+
+#### Status codes
+
+| Status | Meaning |
+| --- | --- |
+| 200 | OK |
+| 400 | Invalid request parameters. |
+
+___
 ### Validator stats by ProTxHash
+
+<!-- endpoint: GET /validator/{hash}/stats -->
 Return a series data for the amount of proposed blocks by validator chart with
 
-* `timestamp_start` lower interval threshold in ISO string
-* `timestamp_end` upper interval threshold in ISO string
-* `intervalsCount` intervals count in response ( _optional_ )
+#### Path parameters
 
-```
+| Parameter | Description |
+| --- | --- |
+| `hash` | Validator ProTxHash. |
+
+#### Query parameters
+
+| Parameter | Description |
+| --- | --- |
+| `timestamp_start` | Start of the interval (ISO 8601). |
+| `timestamp_end` | End of the interval (ISO 8601). |
+| `intervalsCount` | Optional number of intervals in the response. |
+
+```http
 GET /validator/F60A6BF9EC0794BB0CFD1E0F2217933F4B33EDE6FE810692BC275CA18148AEF0/stats?timestamp_start=2024-01-01T00:00:00&timestamp_end=2025-01-01T00:00:00
+```
+
+```json
 [
     {
         "timestamp": "2024-06-23T13:51:44.154Z",
@@ -777,24 +1059,47 @@ GET /validator/F60A6BF9EC0794BB0CFD1E0F2217933F4B33EDE6FE810692BC275CA18148AEF0/
     },...
 ]
 ```
----
+
+#### Status codes
+
+| Status | Meaning |
+| --- | --- |
+| 200 | OK |
+| 400 | Invalid request parameters. |
+
+___
 ### Transaction by hash
+
+<!-- endpoint: GET /transaction/{hash} -->
 Get a transaction (state transition) by hash
+
+#### Path parameters
+
+| Parameter | Description |
+| --- | --- |
+| `hash` | State transition hash. |
 
 Status can be either `SUCCESS` or `FAIL`. In case of error tx, message will appear in the `error` field as Base64 string
 
 If the same state transition hash was observed in more than one block, the response includes a `duplicates` field — an array of `Transaction` objects, one per occurrence. Each duplicate has `status: "FAIL"` and its own `blockHash`/`blockHeight`/`timestamp`; all other fields are inherited from the canonical state transition.
 
 For shielded state transitions the response also includes a `shielded` object with the transition `amount` (credits, as a string) and its `direction`:
-* `IN` — value moved into the shielded pool (`SHIELD`, `SHIELD_FROM_ASSET_LOCK`)
-* `OUT` — value moved out of the shielded pool (`UNSHIELD`, `SHIELDED_WITHDRAWAL`, `IDENTITY_CREATE_FROM_SHIELDED_POOL`)
-* `TRANSFER` — value stays inside the shielded pool (`SHIELDED_TRANSFER`)
+
+#### Response notes
+
+| Field | Description |
+| --- | --- |
+| `IN` | value moved into the shielded pool (`SHIELD`, `SHIELD_FROM_ASSET_LOCK`) |
+| `OUT` | value moved out of the shielded pool (`UNSHIELD`, `SHIELDED_WITHDRAWAL`, `IDENTITY_CREATE_FROM_SHIELDED_POOL`) |
+| `TRANSFER` | value stays inside the shielded pool (`SHIELDED_TRANSFER`) |
 
 For non-shielded transitions `shielded` is `null`.
 
-```
+```http
 GET /transaction/DEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEF
+```
 
+```json
 {
     "blockHash": "DEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEF",
     "blockHeight": 1337,
@@ -841,35 +1146,44 @@ GET /transaction/DEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEE
 }
 ```
 
-Response codes:
-```
-200: OK
-404: Not found
-500: Internal Server Error
-```
+#### Status codes
+
+| Status | Meaning |
+| --- | --- |
+| 200 | OK |
+| 404 | Not found |
+| 500 | Internal Server Error |
+
 ---
 ### Transactions
+
+<!-- endpoint: GET /transactions -->
 Return transaction set paged
 
 Status can be either `SUCCESS` or `FAIL`. In case of error tx, message will appear in the `error` field as Base64 string
 
-* `limit` cannot be more then 100
-* `page` cannot be less then 1
-* `owner` Identity identifier
-* `status` can be `SUCCESS`, `FAIL` or `ALL`
-* `transaction_type` number or string of tx type. Can be set multiple times
-* `batch_type` number or string of batch type. Can be set multiple times.
-* `gas_min` number of min `gas_used`
-* `gas_max` number of max `gas_used`
-* `timestamp_start` and `timestamp_end` transaction timestamp
-* `token_name` name of token
-* Valid `order_by` values are `id`, `gas_used`, `timestamp` or `owner`
-* `amount` is the credits the transaction moved, reported the same way by
-  [Transaction by hash](#transaction-by-hash), [Block by hash](#block-by-hash) and
-  [Transactions by Identity](#transactions-by-identity). It is `null` for the transitions that
-  move none: `DATA_CONTRACT_CREATE`, `DATA_CONTRACT_UPDATE`, `IDENTITY_UPDATE`, `MASTERNODE_VOTE`,
-  and a `BATCH` that holds no document purchase. Note that [Platform Address Transitions](#platform-address-transitions) has its own
-  `amount`, netted against the address being queried, which is a different figure
+#### Query parameters
+
+| Parameter | Description |
+| --- | --- |
+| `order` | Sort direction: `asc` or `desc`. Default: `asc`. |
+| `limit` | Maximum: 100. |
+| `page` | Minimum: 1. |
+| `owner` | Identity identifier |
+| `status` | can be `SUCCESS`, `FAIL` or `ALL` |
+| `transaction_type` | number or string of tx type. Can be set multiple times |
+| `batch_type` | number or string of batch type. Can be set multiple times. |
+| `gas_min` | number of min `gas_used` |
+| `gas_max` | number of max `gas_used` |
+| `timestamp_start`, `timestamp_end` | transaction timestamp |
+| `token_name` | name of token |
+| `orderBy` | Values: `id`, `gas_used`, `timestamp` or `owner` |
+
+#### Response notes
+
+| Field | Description |
+| --- | --- |
+| `amount` | is the credits the transaction moved, reported the same way by [Transaction by hash](#transaction-by-hash), [Block by hash](#block-by-hash) and [Transactions by Identity](#transactions-by-identity). It is `null` for the transitions that move none: `DATA_CONTRACT_CREATE`, `DATA_CONTRACT_UPDATE`, `IDENTITY_UPDATE`, `MASTERNODE_VOTE`, and a `BATCH` that holds no document purchase. Note that [Platform Address Transitions](#platform-address-transitions) has its own `amount`, netted against the address being queried, which is a different figure |
 
 | Batch type string                   | Batch type number |
 |:------------------------------------|:------------------|
@@ -915,10 +1229,11 @@ Status can be either `SUCCESS` or `FAIL`. In case of error tx, message will appe
 | `SHIELDED_WITHDRAWAL`                 | 19         |
 | `IDENTITY_CREATE_FROM_SHIELDED_POOL`  | 20         |
 
-
+```http
+GET /transactions?page=1&limit=10&orderBy=id&order=asc&owner=6q9RFbeea73tE31LGMBLFZhtBUX3wZL3TcNynqE18Zgs&transaction_type=0&transaction_type=1&status=ALL&gas_min=0&gas_max=9999999
 ```
-GET /transactions?=1&limit=10&orderBy=id&order=asc&owner=6q9RFbeea73tE31LGMBLFZhtBUX3wZL3TcNynqE18Zgs&transaction_type=0&transaction_type=1&status=ALL&gas_min=0&gas_max=9999999
 
+```json
 {
     "pagination": {
         "page": 1,
@@ -946,22 +1261,33 @@ GET /transactions?=1&limit=10&orderBy=id&order=asc&owner=6q9RFbeea73tE31LGMBLFZh
     ]
 }
 ```
-Response codes:
-```
-200: OK
-500: Internal Server Error
-```
+#### Status codes
+
+| Status | Meaning |
+| --- | --- |
+| 200 | OK |
+| 400 | Invalid request parameters. |
+| 500 | Internal Server Error |
+
 ---
 ### Duplicated Transactions
+
+<!-- endpoint: GET /transactions/duplicates -->
 Return paged set of state transitions that appeared in more than one block. Each entry is a `Transaction` object representing the shared state-transition data (`blockHash`/`blockHeight`/`timestamp` are `null` since the tx spans multiple blocks), with a `duplicates` array listing one `Transaction` per occurrence (status `FAIL`, with the per-block fields populated).
 
-* `limit` cannot be more then 100
-* `page` cannot be less then 1
-* `order` can be `asc` or `desc`
+#### Query parameters
 
-```
+| Parameter | Description |
+| --- | --- |
+| `limit` | Maximum: 100. |
+| `page` | Minimum: 1. |
+| `order` | can be `asc` or `desc` |
+
+```http
 GET /transactions/duplicates?page=1&limit=10&order=asc
+```
 
+```json
 {
     "pagination": {
         "page": 1,
@@ -1008,21 +1334,37 @@ GET /transactions/duplicates?page=1&limit=10&order=asc
     ]
 }
 ```
-Response codes:
-```
-200: OK
-500: Internal Server Error
-```
+#### Status codes
+
+| Status | Meaning |
+| --- | --- |
+| 200 | OK |
+| 500 | Internal Server Error |
+
 ---
 ### Data Contract by Identifier
+
+<!-- endpoint: GET /dataContract/{identifier} -->
 Return data contract by given identifier
 
-* `name` field is nullable
-* `topIdentity` - identity with the largest number of documents
+#### Path parameters
 
-```
+| Parameter | Description |
+| --- | --- |
+| `identifier` | Data contract identifier. |
+
+#### Response notes
+
+| Field | Description |
+| --- | --- |
+| `name` | field is nullable |
+| `topIdentity` | identity with the largest number of documents |
+
+```http
 GET /dataContract/HzMke6E5SnSqLdCX1u3WdwpWx1hFFkSnFQpahTPdYUSF
+```
 
+```json
 {
     "identifier": "HzMke6E5SnSqLdCX1u3WdwpWx1hFFkSnFQpahTPdYUSF",
     "name": null,
@@ -1097,46 +1439,76 @@ GET /dataContract/HzMke6E5SnSqLdCX1u3WdwpWx1hFFkSnFQpahTPdYUSF
     "keywords": ["keyword1", "keyword2"]
 }
 ```
-Response codes:
-```
-200: OK
-404: Not found
-500: Internal Server Error
-```
+#### Status codes
+
+| Status | Meaning |
+| --- | --- |
+| 200 | OK |
+| 404 | Not found |
+| 500 | Internal Server Error |
+
 ---
 ### RAW Data Contract by Identifier
+
+<!-- endpoint: GET /dataContract/{identifier}/raw -->
 Return raw base64 data contract from dpp
 
-```
-GET /dataContract/6hVQW16jyvZyGSQk2YVty4ND6bgFXozizYWnPt753uW5/raw
+#### Path parameters
 
+| Parameter | Description |
+| --- | --- |
+| `identifier` | Data contract identifier. |
+
+```http
+GET /dataContract/6hVQW16jyvZyGSQk2YVty4ND6bgFXozizYWnPt753uW5/raw
+```
+
+```json
 {
     "base64": "AFSpyOpeUrxGdPgqZwWB5c2Lwlk5O8Mn0bV/hUjj3HT2AAAAAAABAQAAAvSPZWjyiqAx4cW2gLlcoXK8zI3nJech+VU74QHIqJk3AAEHdG9ycmVudBYEEgR0eXBlEgZvYmplY3QSCHJlcXVpcmVkFQISCiRjcmVhdGVkQXQSCiR1cGRhdGVkQXQSCnByb3BlcnRpZXMWAxIEbmFtZRYFEgR0eXBlEgZzdHJpbmcSCHBvc2l0aW9uAgESCW1heExlbmd0aAKgEgltaW5MZW5ndGgCBhILZGVzY3JpcHRpb24SH05hbWUgb2YgdGhlIGRpc3RyaWJ1dGVkIHRvcnJlbnQSBm1hZ25ldBYFEgR0eXBlEgZzdHJpbmcSCHBvc2l0aW9uAgASCW1heExlbmd0aAL7A+gSCW1pbkxlbmd0aAIQEgtkZXNjcmlwdGlvbhIoTWFnbmV0IGxpbmtzIHVzZWQgaW4gQml0VG9ycmVudCBwcm90b2NvbBILZGVzY3JpcHRpb24WBRIEdHlwZRIGc3RyaW5nEghwb3NpdGlvbgICEgltYXhMZW5ndGgCoBIJbWluTGVuZ3RoAhASC2Rlc2NyaXB0aW9uEiREZXNjcmlwdGlvbiBmb3IgYSBnaXZlbiB0b3JyZW50IGZpbGUSFGFkZGl0aW9uYWxQcm9wZXJ0aWVzEwA="
 }
 ```
-Response codes:
-```
-200: OK
-404: Not found
-500: Internal Server Error
-```
+#### Status codes
+
+| Status | Meaning |
+| --- | --- |
+| 200 | OK |
+| 404 | Not found |
+| 500 | Internal Server Error |
+
 ---
 ### Data Contracts
+
+<!-- endpoint: GET /dataContracts -->
 Return dataContracts set paged and order by block height or documents count.
 
-* Valid `order_by` values are `block_height` or `documents_count`
-* `name` field is nullable
-* `limit` cannot be more then 100
-* `page` cannot be less then 1
-* `owner` data contracts owner identifier
-* `is_system` bool field for system data contracts
-* `with_tokens` bool field data contracts with tokens
-* `timestamp_start` and `timestamp_end` timestamp start and end of data contracts creation date
-* `documents_count_min` and `documents_count_max` minimum and maximum count of documents for data contract
+#### Query parameters
 
-```
+| Parameter | Description |
+| --- | --- |
+| `order` | Sort direction: `asc` or `desc`. Default: `asc`. |
+| `description` | Case-insensitive prefix of the contract description. |
+| `keywords` | Filter contracts containing the requested keywords. |
+| `order_by` | Values: `block_height` or `documents_count` |
+| `limit` | Maximum: 100. |
+| `page` | Minimum: 1. |
+| `owner` | data contracts owner identifier |
+| `is_system` | bool field for system data contracts |
+| `with_tokens` | bool field data contracts with tokens |
+| `timestamp_start`, `timestamp_end` | timestamp start and end of data contracts creation date |
+| `documents_count_min`, `documents_count_max` | minimum and maximum count of documents for data contract |
+
+#### Response notes
+
+| Field | Description |
+| --- | --- |
+| `name` | field is nullable |
+
+```http
 GET /dataContracts?page=1&limit=10&order=asc&order_by=block_height&timestamp_start=2025-01-22T11:09:23.892Z&timestamp_end=2025-03-22T11:09:23.892Z&owner=G3yCKwx9ePsBriBoag5FEhDkad5Qq77cyqLG1FRyhhSi&is_system=false&with_tokens=false&documents_count_min=1&documents_count_max=5&description=Sansnote&keywords=dash&keywords=evo
+```
 
+```json
 {
     "resultSet": [
         {
@@ -1173,22 +1545,39 @@ GET /dataContracts?page=1&limit=10&order=asc&order_by=block_height&timestamp_sta
     }
 }
 ```
-Response codes:
-```
-200: OK
-500: Internal Server Error
-```
+#### Status codes
+
+| Status | Meaning |
+| --- | --- |
+| 200 | OK |
+| 400 | Invalid request parameters. |
+| 500 | Internal Server Error |
+
 ---
 ### Data Contract Transactions
+
+<!-- endpoint: GET /dataContract/{identifier}/transactions -->
 Return set of transactions for data contract
 
-* Valid `order` values are `asc` or `desc`
-* `limit` cannot be more then 100
-* `page` cannot be less then 1
+#### Path parameters
 
-```
+| Parameter | Description |
+| --- | --- |
+| `identifier` | Data contract identifier. |
+
+#### Query parameters
+
+| Parameter | Description |
+| --- | --- |
+| `order` | Values: `asc` or `desc` |
+| `limit` | Maximum: 100. |
+| `page` | Minimum: 1. |
+
+```http
 GET /dataContract/AJqYb8ZvfbA6ZFgpsvLfpMEzwjaYUPyVmeFxSJrafB18/transactions
+```
 
+```json
 {
   "resultSet": [
     {
@@ -1211,8 +1600,7 @@ GET /dataContract/AJqYb8ZvfbA6ZFgpsvLfpMEzwjaYUPyVmeFxSJrafB18/transactions
           "timestamp": null,
           "txHash": "2508B35FDDB3E2E797D4F2CB9C1FAEE71D4DC43B91CE2043BEC8CE2B4A442DD7"
         }
-      ],
-      }
+      ]}
       "timestamp": "2024-08-26T13:30:22.211Z",
       "gasUsed": 32230560,
       "error": null,
@@ -1258,26 +1646,37 @@ GET /dataContract/AJqYb8ZvfbA6ZFgpsvLfpMEzwjaYUPyVmeFxSJrafB18/transactions
   }
 }
 ```
-Response codes:
-```
-200: OK
-500: Internal Server Error
-```
+#### Status codes
+
+| Status | Meaning |
+| --- | --- |
+| 200 | OK |
+| 404 | Requested resource not found. |
+| 500 | Internal Server Error |
+
 ---
 ### Data Contracts Rating
+
+<!-- endpoint: GET /dataContracts/rating -->
 Return Data Contracts rating based on txs in selected interval
 
 If it is not possible to get data contract transitions for selected period,
 then will be returned list of data contracts in order of creation date
 
-* Valid `order` values are `asc` or `desc`
-* `limit` cannot be more then 100
-* `page` cannot be less then 1
-* `timestamp_start` and `timestamp_end` can be null and `timestamp_end` must be greater then `timestamp_start` if they are used. Default value is equal to the interval in the past 30 days
+#### Query parameters
 
-```
+| Parameter | Description |
+| --- | --- |
+| `order` | Values: `asc` or `desc` |
+| `limit` | Maximum: 100. |
+| `page` | Minimum: 1. |
+| `timestamp_start`, `timestamp_end` | can be null and `timestamp_end` must be greater than `timestamp_start` if they are used. Default value is equal to the interval in the past 30 days |
+
+```http
 GET /dataContracts/rating?timestamp_start=2025-08-18T21:13:57.191Z&timestamp_end=2025-09-18T21:13:57.191Z&limit=5&page=2&order=desc
+```
 
+```json
 {
     "resultSet": [
         {
@@ -1308,25 +1707,37 @@ GET /dataContracts/rating?timestamp_start=2025-08-18T21:13:57.191Z&timestamp_end
     }
 }
 ```
-Response codes:
-```
-200: OK
-500: Internal Server Error
-```
+#### Status codes
+
+| Status | Meaning |
+| --- | --- |
+| 200 | OK |
+| 400 | Invalid request parameters. |
+| 500 | Internal Server Error |
+
 ---
 ### Active Data Contracts
+
+<!-- endpoint: GET /dataContracts/active -->
 Return data contracts that had state transitions within a time range, ordered by their
 transitions count in that range, paged. Unlike the rating endpoint, contracts without
 activity in the range are not included
 
-* `timestamp_start` lower interval threshold (defaults to one hour ago)
-* `timestamp_end` upper interval threshold (defaults to now)
-* `limit` cannot be more than 100
-* `page` cannot be less than 1
-* Valid `order` values are `asc` or `desc`
-```
-GET /dataContracts/active?timestamp_start=2025-01-01T00:00:00.000Z&timestamp_end=2025-01-02T00:00:00.000Z&page=1&limit=10&order=desc
+#### Query parameters
 
+| Parameter | Description |
+| --- | --- |
+| `timestamp_start` | lower interval threshold (defaults to one hour ago) |
+| `timestamp_end` | upper interval threshold (defaults to now) |
+| `limit` | Maximum: 100. |
+| `page` | Minimum: 1. |
+| `order` | Values: `asc` or `desc` |
+
+```http
+GET /dataContracts/active?timestamp_start=2025-01-01T00:00:00.000Z&timestamp_end=2025-01-02T00:00:00.000Z&page=1&limit=10&order=desc
+```
+
+```json
 {
     "resultSet": [
         {
@@ -1345,20 +1756,39 @@ GET /dataContracts/active?timestamp_start=2025-01-01T00:00:00.000Z&timestamp_end
     }
 }
 ```
-Response codes:
-```
-200: OK
-400: Bad timestamp range
-500: Internal Server Error
-```
+#### Status codes
+
+| Status | Meaning |
+| --- | --- |
+| 200 | OK |
+| 400 | Bad timestamp range |
+| 500 | Internal Server Error |
+
 ---
 ### Document by Identifier
+
+<!-- endpoint: GET /document/{identifier} -->
 Return last revision of the document by given identifier.
 
-Allows to get withdrawals documents by contract id and document type
-```
-GET /document/FUJsiMpQZWGfdrWPEUhBRExMAQB9q6MNfFgRqCdz42UJ?document_type_name=preorder&contract_id=GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec
+#### Path parameters
 
+| Parameter | Description |
+| --- | --- |
+| `identifier` | Document identifier. |
+
+Allows to get withdrawals documents by contract id and document type
+#### Query parameters
+
+| Parameter | Description |
+| --- | --- |
+| `document_type_name` | Document type name. Required for a network lookup when the document is not indexed. |
+| `contract_id` | Data contract identifier. Required for a network lookup when the document is not indexed. |
+
+```http
+GET /document/FUJsiMpQZWGfdrWPEUhBRExMAQB9q6MNfFgRqCdz42UJ?document_type_name=preorder&contract_id=GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec
+```
+
+```json
 {
   "identifier": "47JuExXJrZaG3dLfrL2gnAH8zhYh6z9VutF8NvgRQbQJ",
   "dataContractIdentifier": "GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec",
@@ -1391,42 +1821,76 @@ GET /document/FUJsiMpQZWGfdrWPEUhBRExMAQB9q6MNfFgRqCdz42UJ?document_type_name=pr
   }
 }
 ```
-Response codes:
-```
-200: OK
-404: Not found
-500: Internal Server Error
-```
+#### Status codes
+
+| Status | Meaning |
+| --- | --- |
+| 200 | OK |
+| 400 | Invalid request parameters. |
+| 404 | Not found |
+| 500 | Internal Server Error |
+
 ---
 ### RAW Document by Identifier
+
+<!-- endpoint: GET /document/{identifier}/raw -->
 Return raw document from dapi in base64
 
-* `document_type_name` required
-* `contract_id` required
-```
-GET /document/9eCqy4HPK1bqMZSVJvX6DvF78YNknczLrjNoccyiZfdF/raw?document_type_name=preorder&contract_id=GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec
+#### Path parameters
 
+| Parameter | Description |
+| --- | --- |
+| `identifier` | Document identifier. |
+
+#### Query parameters
+
+| Parameter | Description |
+| --- | --- |
+| `document_type_name` | required |
+| `contract_id` | required |
+
+```http
+GET /document/9eCqy4HPK1bqMZSVJvX6DvF78YNknczLrjNoccyiZfdF/raw?document_type_name=preorder&contract_id=GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec
+```
+
+```json
 {
     "base64": "AADmaMZZr2au4ecsGG3ee1t+Ch1xKgnEDVch9iK/U8UxVQAAAAAAAQEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACBmRvbWFpbhYLEgR0eXBlEgZvYmplY3QSB2luZGljZXMVAhYEEgRuYW1lEhJwYXJlbnROYW1lQW5kTGFiZWwSBnVuaXF1ZRMBEgljb250ZXN0ZWQWAxIKcmVzb2x1dGlvbgIAEgtkZXNjcmlwdGlvbhKqSWYgdGhlIG5vcm1hbGl6ZWQgbGFiZWwgcGFydCBvZiB0aGlzIGluZGV4IGlzIGxlc3MgdGhhbiAyMCBjaGFyYWN0ZXJzIChhbGwgYWxwaGFiZXQgYS16LCBBLVosIDAsIDEsIGFuZCAtKSB0aGVuIGEgbWFzdGVybm9kZSB2b3RlIGNvbnRlc3QgdGFrZXMgcGxhY2UgdG8gZ2l2ZSBvdXQgdGhlIG5hbWUSDGZpZWxkTWF0Y2hlcxUBFgISBWZpZWxkEg9ub3JtYWxpemVkTGFiZWwSDHJlZ2V4UGF0dGVybhITXlthLXpBLVowMS1dezMsMTl9JBIKcHJvcGVydGllcxUCFgESGm5vcm1hbGl6ZWRQYXJlbnREb21haW5OYW1lEgNhc2MWARIPbm9ybWFsaXplZExhYmVsEgNhc2MWAxIEbmFtZRIKaWRlbnRpdHlJZBIKcHJvcGVydGllcxUBFgESEHJlY29yZHMuaWRlbnRpdHkSA2FzYxIObnVsbFNlYXJjaGFibGUTABIIJGNvbW1lbnQS+wE3SW4gb3JkZXIgdG8gcmVnaXN0ZXIgYSBkb21haW4geW91IG5lZWQgdG8gY3JlYXRlIGEgcHJlb3JkZXIuIFRoZSBwcmVvcmRlciBzdGVwIGlzIG5lZWRlZCB0byBwcmV2ZW50IG1hbi1pbi10aGUtbWlkZGxlIGF0dGFja3MuIG5vcm1hbGl6ZWRMYWJlbCArICcuJyArIG5vcm1hbGl6ZWRQYXJlbnREb21haW4gbXVzdCBub3QgYmUgbG9uZ2VyIHRoYW4gMjUzIGNoYXJzIGxlbmd0aCBhcyBkZWZpbmVkIGJ5IFJGQyAxMDM1LiBEb21haW4gZG9jdW1lbnRzIGFyZSBpbW11dGFibGU6IG1vZGlmaWNhdGlvbiBhbmQgZGVsZXRpb24gYXJlIHJlc3RyaWN0ZWQSCHJlcXVpcmVkFQkSCiRjcmVhdGVkQXQSCiR1cGRhdGVkQXQSDiR0cmFuc2ZlcnJlZEF0EgVsYWJlbBIPbm9ybWFsaXplZExhYmVsEhpub3JtYWxpemVkUGFyZW50RG9tYWluTmFtZRIMcHJlb3JkZXJTYWx0EgdyZWNvcmRzEg5zdWJkb21haW5SdWxlcxIJdHJhZGVNb2RlAgESCXRyYW5zaWVudBUBEgxwcmVvcmRlclNhbHQSCnByb3BlcnRpZXMWBxIFbGFiZWwWBhIEdHlwZRIGc3RyaW5nEgdwYXR0ZXJuEipeW2EtekEtWjAtOV1bYS16QS1aMC05LV17MCw2MX1bYS16QS1aMC05XSQSCHBvc2l0aW9uAgASCW1heExlbmd0aAI/EgltaW5MZW5ndGgCAxILZGVzY3JpcHRpb24SGURvbWFpbiBsYWJlbC4gZS5nLiAnQm9iJy4SB3JlY29yZHMWBRIEdHlwZRIGb2JqZWN0Eghwb3NpdGlvbgIFEgpwcm9wZXJ0aWVzFgESCGlkZW50aXR5FgcSBHR5cGUSBWFycmF5EghtYXhJdGVtcwIgEghtaW5JdGVtcwIgEghwb3NpdGlvbgIBEglieXRlQXJyYXkTARILZGVzY3JpcHRpb24SMUlkZW50aWZpZXIgbmFtZSByZWNvcmQgdGhhdCByZWZlcnMgdG8gYW4gSWRlbnRpdHkSEGNvbnRlbnRNZWRpYVR5cGUSIWFwcGxpY2F0aW9uL3guZGFzaC5kcHAuaWRlbnRpZmllchINbWluUHJvcGVydGllcwIBEhRhZGRpdGlvbmFsUHJvcGVydGllcxMAEgxwcmVvcmRlclNhbHQWBhIEdHlwZRIFYXJyYXkSCG1heEl0ZW1zAiASCG1pbkl0ZW1zAiASCHBvc2l0aW9uAgQSCWJ5dGVBcnJheRMBEgtkZXNjcmlwdGlvbhIiU2FsdCB1c2VkIGluIHRoZSBwcmVvcmRlciBkb2N1bWVudBIOc3ViZG9tYWluUnVsZXMWBhIEdHlwZRIGb2JqZWN0Eghwb3NpdGlvbgIGEghyZXF1aXJlZBUBEg9hbGxvd1N1YmRvbWFpbnMSCnByb3BlcnRpZXMWARIPYWxsb3dTdWJkb21haW5zFgQSBHR5cGUSB2Jvb2xlYW4SCCRjb21tZW50Ek9Pbmx5IHRoZSBkb21haW4gb3duZXIgaXMgYWxsb3dlZCB0byBjcmVhdGUgc3ViZG9tYWlucyBmb3Igbm9uIHRvcC1sZXZlbCBkb21haW5zEghwb3NpdGlvbgIAEgtkZXNjcmlwdGlvbhJbVGhpcyBvcHRpb24gZGVmaW5lcyB3aG8gY2FuIGNyZWF0ZSBzdWJkb21haW5zOiB0cnVlIC0gYW55b25lOyBmYWxzZSAtIG9ubHkgdGhlIGRvbWFpbiBvd25lchILZGVzY3JpcHRpb24SQlN1YmRvbWFpbiBydWxlcyBhbGxvdyBkb21haW4gb3duZXJzIHRvIGRlZmluZSBydWxlcyBmb3Igc3ViZG9tYWlucxIUYWRkaXRpb25hbFByb3BlcnRpZXMTABIPbm9ybWFsaXplZExhYmVsFgYSBHR5cGUSBnN0cmluZxIHcGF0dGVybhI8XlthLWhqLWttLW5wLXowLTldW2EtaGota20tbnAtejAtOS1dezAsNjF9W2EtaGota20tbnAtejAtOV0kEggkY29tbWVudBJcTXVzdCBiZSBlcXVhbCB0byB0aGUgbGFiZWwgaW4gbG93ZXJjYXNlLiAibyIsICJpIiBhbmQgImwiIG11c3QgYmUgcmVwbGFjZWQgd2l0aCAiMCIgYW5kICIxIi4SCHBvc2l0aW9uAgESCW1heExlbmd0aAI/EgtkZXNjcmlwdGlvbhKjRG9tYWluIGxhYmVsIGNvbnZlcnRlZCB0byBsb3dlcmNhc2UgZm9yIGNhc2UtaW5zZW5zaXRpdmUgdW5pcXVlbmVzcyB2YWxpZGF0aW9uLiAibyIsICJpIiBhbmQgImwiIHJlcGxhY2VkIHdpdGggIjAiIGFuZCAiMSIgdG8gbWl0aWdhdGUgaG9tb2dyYXBoIGF0dGFjay4gZS5nLiAnYjBiJxIQcGFyZW50RG9tYWluTmFtZRYGEgR0eXBlEgZzdHJpbmcSB3BhdHRlcm4SLV4kfF5bYS16QS1aMC05XVthLXpBLVowLTktXXswLDYxfVthLXpBLVowLTldJBIIcG9zaXRpb24CAhIJbWF4TGVuZ3RoAj8SCW1pbkxlbmd0aAIAEgtkZXNjcmlwdGlvbhInQSBmdWxsIHBhcmVudCBkb21haW4gbmFtZS4gZS5nLiAnZGFzaCcuEhpub3JtYWxpemVkUGFyZW50RG9tYWluTmFtZRYHEgR0eXBlEgZzdHJpbmcSB3BhdHRlcm4SQV4kfF5bYS1oai1rbS1ucC16MC05XVthLWhqLWttLW5wLXowLTktXC5dezAsNjF9W2EtaGota20tbnAtejAtOV0kEggkY29tbWVudBLATXVzdCBlaXRoZXIgYmUgZXF1YWwgdG8gYW4gZXhpc3RpbmcgZG9tYWluIG9yIGVtcHR5IHRvIGNyZWF0ZSBhIHRvcCBsZXZlbCBkb21haW4uICJvIiwgImkiIGFuZCAibCIgbXVzdCBiZSByZXBsYWNlZCB3aXRoICIwIiBhbmQgIjEiLiBPbmx5IHRoZSBkYXRhIGNvbnRyYWN0IG93bmVyIGNhbiBjcmVhdGUgdG9wIGxldmVsIGRvbWFpbnMuEghwb3NpdGlvbgIDEgltYXhMZW5ndGgCPxIJbWluTGVuZ3RoAgASC2Rlc2NyaXB0aW9uEqJBIHBhcmVudCBkb21haW4gbmFtZSBpbiBsb3dlcmNhc2UgZm9yIGNhc2UtaW5zZW5zaXRpdmUgdW5pcXVlbmVzcyB2YWxpZGF0aW9uLiAibyIsICJpIiBhbmQgImwiIHJlcGxhY2VkIHdpdGggIjAiIGFuZCAiMSIgdG8gbWl0aWdhdGUgaG9tb2dyYXBoIGF0dGFjay4gZS5nLiAnZGFzaCcSDGNhbkJlRGVsZXRlZBMBEgx0cmFuc2ZlcmFibGUCARIQZG9jdW1lbnRzTXV0YWJsZRMAEhRhZGRpdGlvbmFsUHJvcGVydGllcxMACHByZW9yZGVyFggSBHR5cGUSBm9iamVjdBIHaW5kaWNlcxUBFgMSBG5hbWUSCnNhbHRlZEhhc2gSBnVuaXF1ZRMBEgpwcm9wZXJ0aWVzFQEWARIQc2FsdGVkRG9tYWluSGFzaBIDYXNjEggkY29tbWVudBJKUHJlb3JkZXIgZG9jdW1lbnRzIGFyZSBpbW11dGFibGU6IG1vZGlmaWNhdGlvbiBhbmQgZGVsZXRpb24gYXJlIHJlc3RyaWN0ZWQSCHJlcXVpcmVkFQESEHNhbHRlZERvbWFpbkhhc2gSCnByb3BlcnRpZXMWARIQc2FsdGVkRG9tYWluSGFzaBYGEgR0eXBlEgVhcnJheRIIbWF4SXRlbXMCIBIIbWluSXRlbXMCIBIIcG9zaXRpb24CABIJYnl0ZUFycmF5EwESC2Rlc2NyaXB0aW9uEllEb3VibGUgc2hhLTI1NiBvZiB0aGUgY29uY2F0ZW5hdGlvbiBvZiBhIDMyIGJ5dGUgcmFuZG9tIHNhbHQgYW5kIGEgbm9ybWFsaXplZCBkb21haW4gbmFtZRIMY2FuQmVEZWxldGVkEwESEGRvY3VtZW50c011dGFibGUTABIUYWRkaXRpb25hbFByb3BlcnRpZXMTAAhwcmVvcmRlcgCAZWCvzw8hJFXtR5FzadoUU5o4+eebw+8vHW4FWMjNXlaf1PYWs97ey+75U1LPOPH7BNIyoNIGI7wZWww/chhAAACXCdoaj7/2gVG0qlOq38PqicCzWg4JrUrIpk1zwzifOQ=="
 }
 ```
-Response codes:
-```
-200: OK
-404: Not found
-500: Internal Server Error
-```
+#### Status codes
+
+| Status | Meaning |
+| --- | --- |
+| 200 | OK |
+| 404 | Not found |
+| 500 | Internal Server Error |
+
 ---
 ### Document Revisions
+
+<!-- endpoint: GET /document/{identifier}/revisions -->
 Return revisions for selected document
 
-* Valid `order` values are `asc` or `desc`
-* `limit` cannot be more then 100
-* `page` cannot be less then 1
+#### Path parameters
 
-```
+| Parameter | Description |
+| --- | --- |
+| `identifier` | Document identifier. |
+
+#### Query parameters
+
+| Parameter | Description |
+| --- | --- |
+| `order` | Values: `asc` or `desc` |
+| `limit` | Maximum: 100. |
+| `page` | Minimum: 1. |
+
+```http
 GET /document/5Quf1y4GrqygGLLUwNHntxHBCguvUiVaMv2kWh7HNFAd/revisions
+```
 
+```json
 {
   "resultSet": [
     {
@@ -1449,8 +1913,7 @@ GET /document/5Quf1y4GrqygGLLUwNHntxHBCguvUiVaMv2kWh7HNFAd/revisions
         "identifier": "HTfJKDuW8omFfFrSQuNTkgW39WpncdwFUrL91VJyJXUS",
         "aliases": []
       }
-    },
-  ],
+    }],
   "pagination": {
     "page": 1,
     "limit": 10,
@@ -1458,21 +1921,45 @@ GET /document/5Quf1y4GrqygGLLUwNHntxHBCguvUiVaMv2kWh7HNFAd/revisions
   }
 }
 ```
-Response codes:
-```
-200: OK
-404: Not found
-500: Internal Server Error
-```
+#### Status codes
+
+| Status | Meaning |
+| --- | --- |
+| 200 | OK |
+| 404 | Not found |
+| 500 | Internal Server Error |
+
 ---
 ### Documents by Data Contract
-Return all documents by the given data contract identifier
-* `limit` cannot be more then 100
-* `page` cannot be less then 1
-* `document_type_name` optional
-```
-GET /dataContract/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec/documents?document_type_name=domain&page=1&limit=10&order=desc
 
+<!-- endpoint: GET /dataContract/{identifier}/documents -->
+Return all documents by the given data contract identifier
+
+#### Path parameters
+
+| Parameter | Description |
+| --- | --- |
+| `identifier` | Data contract identifier. |
+
+#### Query parameters
+
+| Parameter | Description |
+| --- | --- |
+| `order` | Sort direction: `asc` or `desc`. Default: `asc`. |
+| `owner` | Document owner identity identifier. |
+| `revision_min` | Minimum document revision. |
+| `revision_max` | Maximum document revision. |
+| `timestamp_start` | Start timestamp (ISO 8601). |
+| `timestamp_end` | End timestamp (ISO 8601). |
+| `limit` | Maximum: 100. |
+| `page` | Minimum: 1. |
+| `document_type_name` | optional |
+
+```http
+GET /dataContract/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec/documents?document_type_name=domain&page=1&limit=10&order=desc
+```
+
+```json
 {
   "resultSet": [
     {
@@ -1510,14 +1997,25 @@ GET /dataContract/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec/documents?documen
   }
 }
 ```
-Response codes:
-```
-200: OK
-500: Internal Server Error
-```
+#### Status codes
+
+| Status | Meaning |
+| --- | --- |
+| 200 | OK |
+| 400 | Invalid request parameters. |
+| 500 | Internal Server Error |
+
 ---
 ### Identity by Identifier
+
+<!-- endpoint: GET /identity/{identifier} -->
 Return identity by given identifier
+
+#### Path parameters
+
+| Parameter | Description |
+| --- | --- |
+| `identifier` | Identity identifier. |
 
 `type` tells apart the identities Platform derives for a masternode from the ones users
 register themselves:
@@ -1535,15 +2033,18 @@ one is reachable only through the state transitions it owns.
 
 Every endpoint that returns aliases uses the same alias entry shape:
 
-* contested - whether the name matches the DPNS contested-name pattern
-* status - alias state:
-  * `ok` - the identity owns the alias
-  * `pending` - the masternode vote for the contested name is still in progress
-  * `locked` - the contested name was locked or won by another identity
-  * `unknown` - the name was contested, but dapi doesn't provide contested vote state
-```
-GET /identity/EP1g5AGP8QGYMXXUYdmSvhbVxggNURDbvpckF39mTxs3
+#### Response notes
 
+| Field | Description |
+| --- | --- |
+| `contested` | whether the name matches the DPNS contested-name pattern |
+| `status` | alias state:<br>`ok` - the identity owns the alias<br>`pending` - the masternode vote for the contested name is still in progress<br>`locked` - the contested name was locked or won by another identity<br>`unknown` - the name was contested, but dapi doesn't provide contested vote state |
+
+```http
+GET /identity/EP1g5AGP8QGYMXXUYdmSvhbVxggNURDbvpckF39mTxs3
+```
+
+```json
 {
     "identifier": "EP1g5AGP8QGYMXXUYdmSvhbVxggNURDbvpckF39mTxs3",
     "revision": "2",
@@ -1647,18 +2148,30 @@ GET /identity/EP1g5AGP8QGYMXXUYdmSvhbVxggNURDbvpckF39mTxs3
     "type": "regular"
 }
 ```
-Response codes:
-```
-200: OK
-404: Not found
-500: Internal Server Error
-```
+#### Status codes
+
+| Status | Meaning |
+| --- | --- |
+| 200 | OK |
+| 404 | Not found |
+| 500 | Internal Server Error |
+
 ---
 ### Identity by DPNS
-Return identity by given DPNS/alias
-```
-GET /dpns/identity?dpns=canuseethat2.dash
 
+<!-- endpoint: GET /dpns/identity -->
+Return identity by given DPNS/alias
+#### Query parameters
+
+| Parameter | Description |
+| --- | --- |
+| `dpns` | DPNS name to look up. |
+
+```http
+GET /dpns/identity?dpns=canuseethat2.dash
+```
+
+```json
 [
   {
     "identity_identifier": "8eTDkBhpQjHeqgbVeriwLeZr1tCa6yBGw76SckvD1cwc",
@@ -1672,31 +2185,41 @@ GET /dpns/identity?dpns=canuseethat2.dash
   }
 ]
 ```
-Response codes:
-```
-200: OK
-404: Not found
-500: Internal Server Error
-```
+#### Status codes
+
+| Status | Meaning |
+| --- | --- |
+| 200 | OK |
+| 404 | Not found |
+| 500 | Internal Server Error |
+
 ---
 ### Identities
+
+<!-- endpoint: GET /identities -->
 Return all identities paged and order by block height, tx count or balance.
 
-* Valid `order_by` values are `block_height`, `tx_count` or `balance`
-* `limit` cannot be more than 100
-* `page` cannot be less than 1
-* `tx_count_min` and `tx_count_max` allows to filter identities by transaction count
-* `documents_count_min` and `documents_count_max` allows to filter identities by document count
-* `data_contracts_min` and `data_contracts_min` allows to filter identities by data contract count
-* `balance_min` and `balance_max` allows to filter identities by balance
-* All range filters can be set with one or two range limit e.g. `balance_min=0` or `balance_min=0&balance_max=1`
-* `identity_type` allows to filter identities by their `type`, see [Identity by Identifier](#identity-by-identifier).
-  Valid values are `regular`, `masternode`, `masternode_voting` and `masternode_operator`, e.g.
-  `identity_type=regular` for the identities users registered themselves or `identity_type=masternode_voting`
-  for the ones masternodes vote on contested resources with
-```
-GET /identities?limit=10&order=desc&order_by=tx_count&identity_type=regular&balance_min=100000&balance_max=100000100000100000100000&documents_count_min=1&documents_count_max=5&data_contracts_min=3&data_contracts_max=4&tx_count_min=2&tx_count_max=10
+#### Query parameters
 
+| Parameter | Description |
+| --- | --- |
+| `order` | Sort direction: `asc` or `desc`. Default: `asc`. |
+| `order_by` | Values: `block_height`, `tx_count` or `balance` |
+| `limit` | Maximum: 100. |
+| `page` | Minimum: 1. |
+| `tx_count_min`, `tx_count_max` | allows to filter identities by transaction count |
+| `documents_count_min`, `documents_count_max` | allows to filter identities by document count |
+| `data_contracts_min`, `data_contracts_max` | allows to filter identities by data contract count |
+| `balance_min`, `balance_max` | allows to filter identities by balance |
+| `identity_type` | allows to filter identities by their `type`, see [Identity by Identifier](#identity-by-identifier). Valid values are `regular`, `masternode`, `masternode_voting` and `masternode_operator`, e.g. `identity_type=regular` for the identities users registered themselves or `identity_type=masternode_voting` for the ones masternodes vote on contested resources with |
+
+Range filters accept either boundary or both, for example `balance_min=0&balance_max=1`.
+
+```http
+GET /identities?limit=10&order=desc&order_by=tx_count&identity_type=regular&balance_min=100000&balance_max=100000100000100000100000&documents_count_min=1&documents_count_max=5&data_contracts_min=3&data_contracts_max=4&tx_count_min=2&tx_count_max=10
+```
+
+```json
 {
     "pagination": {
         "page": 1,
@@ -1741,24 +2264,37 @@ GET /identities?limit=10&order=desc&order_by=tx_count&identity_type=regular&bala
     ]
 }
 ```
-Response codes:
-```
-200: OK
-500: Internal Server Error
-```
+#### Status codes
+
+| Status | Meaning |
+| --- | --- |
+| 200 | OK |
+| 400 | Invalid request parameters. |
+| 500 | Internal Server Error |
+
 ---
 ### Active Identities
+
+<!-- endpoint: GET /identities/active -->
+
 Return identities that owned state transitions within a time range, ordered by their
 transaction count in that range, paged.
 
-* `timestamp_start` lower interval threshold (defaults to one hour ago)
-* `timestamp_end` upper interval threshold (defaults to now)
-* `limit` cannot be more than 100
-* `page` cannot be less than 1
-* Valid `order` values are `asc` or `desc`
-```
-GET /identities/active?timestamp_start=2025-01-01T00:00:00.000Z&timestamp_end=2025-01-02T00:00:00.000Z&page=1&limit=10&order=desc
+#### Query parameters
 
+| Parameter | Description |
+| --- | --- |
+| `timestamp_start` | lower interval threshold (defaults to one hour ago) |
+| `timestamp_end` | upper interval threshold (defaults to now) |
+| `limit` | Maximum: 100. |
+| `page` | Minimum: 1. |
+| `order` | Values: `asc` or `desc` |
+
+```http
+GET /identities/active?timestamp_start=2025-01-01T00:00:00.000Z&timestamp_end=2025-01-02T00:00:00.000Z&page=1&limit=10&order=desc
+```
+
+```json
 {
     "pagination": {
         "page": 1,
@@ -1780,67 +2316,95 @@ GET /identities/active?timestamp_start=2025-01-01T00:00:00.000Z&timestamp_end=20
     ]
 }
 ```
-Response codes:
-```
-200: OK
-400: Bad timestamp range
-500: Internal Server Error
-```
+#### Status codes
+
+| Status | Meaning |
+| --- | --- |
+| 200 | OK |
+| 400 | Bad timestamp range |
+| 500 | Internal Server Error |
+
 ---
 ### Identities history
+
+<!-- endpoint: GET /identities/history -->
+
 Return a series data for the amount of registered identities
 
-* `timestamp_start` lower interval threshold in ISO string
-* `timestamp_end` upper interval threshold in ISO string
-* `intervalsCount` intervals count in response ( _optional_ )
+#### Query parameters
 
-```
+| Parameter | Description |
+| --- | --- |
+| `timestamp_start` | Start of the interval (ISO 8601). |
+| `timestamp_end` | End of the interval (ISO 8601). |
+| `intervalsCount` | Optional number of intervals in the response. |
+
+```http
 GET /identities/history?timestamp_start=2025-09-09T00:00:00.000Z&timestamp_end=2025-09-10T00:00:00.000Z&intervalsCount=3
+```
 
+```json
 [
     {
         "timestamp": "2025-09-09T00:00:00.000Z",
         "data": {
-            "registeredIdentities": 0,
-        }
+            "registeredIdentities": 0}
     },
     {
         "timestamp": "2025-09-09T08:00:00.000Z",
         "data": {
-            "registeredIdentities": 26,
-        }
+            "registeredIdentities": 26}
     },
     {
         "timestamp": "2025-09-09T16:00:00.000Z",
         "data": {
-            "registeredIdentities": 30,
-        }
+            "registeredIdentities": 30}
     }
 ]
 ```
-Response codes:
-```
-200: OK
-500: Internal Server Error
-```
+#### Status codes
+
+| Status | Meaning |
+| --- | --- |
+| 200 | OK |
+| 400 | Invalid request parameters. |
+| 500 | Internal Server Error |
+
 ---
 ### Identity Withdrawals
+
+<!-- endpoint: GET /identity/{identifier}/withdrawals -->
 Return all withdrawals for identity
+
+#### Path parameters
+
+| Parameter | Description |
+| --- | --- |
+| `identifier` | Identity identifier. |
 
 _Note: this request does not contain any pagination data in the response_
 
-* `order` `asc` or `desc`
-* returns 404 `not found` if identity don't have withdrawals
-* Pagination always `null`
-* `status` is a string. Possible values: `QUEUED`, `POOLED`, `BROADCASTED`, `COMPLETE`, `EXPIRED`
-* `hash` is the platform state transition that asked for the withdrawal, not a core transaction id
-* `transactionIndex` is the asset unlock index, the same one carried in the payload of the core
-  asset unlock transaction, so an l1 view can be paired with this record by it. It is `null` until
-  the withdrawal is pooled into a transaction, and `transactionSignHeight` alongside it is the core
-  height the transaction was signed at
-```
-GET /identity/A1rgGVjRGuznRThdAA316VEEpKuVQ7mV8mBK1BFJvXnb/withdrawals?order=asc&start_at=95eiiqMotMvH23f6cv3BPC4ykcHFWTy2g3baCTWZANAs&timestamp_start=2024-10-10T02:37:39.187Z
+#### Query parameters
 
+| Parameter | Description |
+| --- | --- |
+| `order` | `asc` or `desc` |
+
+#### Response notes
+
+| Field | Description |
+| --- | --- |
+| `status` | is a string. Possible values: `QUEUED`, `POOLED`, `BROADCASTED`, `COMPLETE`, `EXPIRED` |
+| `hash` | is the platform state transition that asked for the withdrawal, not a core transaction id |
+| `transactionIndex` | is the asset unlock index, the same one carried in the payload of the core asset unlock transaction, so an l1 view can be paired with this record by it. It is `null` until the withdrawal is pooled into a transaction, and `transactionSignHeight` alongside it is the core height the transaction was signed at |
+
+- Returns 404 `not found` if identity don't have withdrawals
+- Pagination always `null`
+```http
+GET /identity/A1rgGVjRGuznRThdAA316VEEpKuVQ7mV8mBK1BFJvXnb/withdrawals?order=asc&start_at=95eiiqMotMvH23f6cv3BPC4ykcHFWTy2g3baCTWZANAs&timestamp_start=2024-10-10T02:37:39.187Z
+```
+
+```json
 {
   "pagination": {
     "limit": null,
@@ -1863,22 +2427,45 @@ GET /identity/A1rgGVjRGuznRThdAA316VEEpKuVQ7mV8mBK1BFJvXnb/withdrawals?order=asc
   ]
 }
 ```
-Response codes:
-```
-200: OK
-404: Not Found
-500: Internal Server Error
-```
+#### Status codes
+
+| Status | Meaning |
+| --- | --- |
+| 200 | OK |
+| 404 | Not Found |
+| 500 | Internal Server Error |
+
 ---
 ### Data contracts by Identity
+
+<!-- endpoint: GET /identity/{identifier}/dataContracts -->
 Return all data contracts by the given identity
 
-* `name` field is nullable
-* `limit` cannot be more then 100
-* `page` cannot be less then 1
-```
-GET /identities/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec/dataContracts?page=1&limit=10&order=asc
+#### Path parameters
 
+| Parameter | Description |
+| --- | --- |
+| `identifier` | Identity identifier. |
+
+#### Response notes
+
+| Field | Description |
+| --- | --- |
+| `name` | field is nullable |
+
+#### Query parameters
+
+| Parameter | Description |
+| --- | --- |
+| `order` | Sort direction: `asc` or `desc`. Default: `asc`. |
+| `limit` | Maximum: 100. |
+| `page` | Minimum: 1. |
+
+```http
+GET /identity/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec/dataContracts?page=1&limit=10&order=asc
+```
+
+```json
 {
     "pagination": {
         "page": 1,
@@ -1903,22 +2490,41 @@ GET /identities/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec/dataContracts?page=
     ]
 }
 ```
-Response codes:
-```
-200: OK
-500: Internal Server Error
-```
+#### Status codes
+
+| Status | Meaning |
+| --- | --- |
+| 200 | OK |
+| 500 | Internal Server Error |
+
 ---
 ### Documents by Identity
-Return all documents by the given identity
-* `limit` cannot be more then 100
-* `page` cannot be less then 1
-* `document_type_name` document type name _optional_
-* `timestamp_start` and `timestamp_end` timestamp start and end of documents creation date, must be used together _optional_
-* `deleted` bool field to filter documents by deleted status _optional_
-```
-GET /identities/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec/documents?page=1&limit=10&order=asc&document_type_name=preorder&timestamp_start=2024-01-01T00:00:00.000Z&timestamp_end=2025-01-01T00:00:00.000Z&deleted=false
 
+<!-- endpoint: GET /identity/{identifier}/documents -->
+Return all documents by the given identity
+
+#### Path parameters
+
+| Parameter | Description |
+| --- | --- |
+| `identifier` | Identity identifier. |
+
+#### Query parameters
+
+| Parameter | Description |
+| --- | --- |
+| `order` | Sort direction: `asc` or `desc`. Default: `asc`. |
+| `limit` | Maximum: 100. |
+| `page` | Minimum: 1. |
+| `document_type_name` | document type name _optional_ |
+| `timestamp_start`, `timestamp_end` | timestamp start and end of documents creation date, must be used together _optional_ |
+| `deleted` | bool field to filter documents by deleted status _optional_ |
+
+```http
+GET /identity/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec/documents?page=1&limit=10&order=asc&document_type_name=preorder&timestamp_start=2024-01-01T00:00:00.000Z&timestamp_end=2025-01-01T00:00:00.000Z&deleted=false
+```
+
+```json
 {
   "resultSet": [
     {
@@ -1946,23 +2552,41 @@ GET /identities/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec/documents?page=1&li
   }
 }
 ```
-Response codes:
-```
-200: OK
-400: Invalid input, check start/end values
-500: Internal Server Error
-```
+#### Status codes
+
+| Status | Meaning |
+| --- | --- |
+| 200 | OK |
+| 400 | Invalid input, check start/end values |
+| 500 | Internal Server Error |
+
 ---
 ### Transactions by Identity
+
+<!-- endpoint: GET /identity/{identifier}/transactions -->
 Return all transactions associated the given identity
 
+#### Path parameters
+
+| Parameter | Description |
+| --- | --- |
+| `identifier` | Identity identifier. |
+
 Status can be either `SUCCESS` or `FAIL`. In case of error tx, message will appear in the `error` field as Base64 string
-* `limit` cannot be more then 100
-* `page` cannot be less then 1
 
-```
+#### Query parameters
+
+| Parameter | Description |
+| --- | --- |
+| `order` | Sort direction: `asc` or `desc`. Default: `asc`. |
+| `limit` | Maximum: 100. |
+| `page` | Minimum: 1. |
+
+```http
 GET /identity/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec/transactions?page=1&limit=10&order=asc
+```
 
+```json
 {
     "pagination": {
         "page": 1,
@@ -1986,21 +2610,46 @@ GET /identity/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec/transactions?page=1&l
     ]
 }
 ```
-Response codes:
-```
-200: OK
-500: Internal Server Error
-```
+#### Status codes
+
+| Status | Meaning |
+| --- | --- |
+| 200 | OK |
+| 500 | Internal Server Error |
+
 ---
 ### Transfers by Identity
-Return all transfers made by the given identity
-* `limit` cannot be more then 100
-* `page` cannot be less then 1
-* `type` cannot be less, then 0 and more then 8
-* `amount` is credits as a string, since credits overflow a JSON number past ~90,000 DASH
-```
-GET /identity/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec/transfers?hash=445E6F081DEE877867816AD3EF492E2C0BD1DDCCDC9C793B23DDDAF8AEA23118&page=1&limit=10&order=asc&type=6
 
+<!-- endpoint: GET /identity/{identifier}/transfers -->
+Return all transfers made by the given identity
+
+#### Path parameters
+
+| Parameter | Description |
+| --- | --- |
+| `identifier` | Identity identifier. |
+
+#### Query parameters
+
+| Parameter | Description |
+| --- | --- |
+| `order` | Sort direction: `asc` or `desc`. Default: `asc`. |
+| `hash` | Filter by state transition hash. |
+| `limit` | Maximum: 100. |
+| `page` | Minimum: 1. |
+| `type` | Integer from 0 to 8. |
+
+#### Response notes
+
+| Field | Description |
+| --- | --- |
+| `amount` | is credits as a string, since credits overflow a JSON number past ~90,000 DASH |
+
+```http
+GET /identity/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec/transfers?hash=445E6F081DEE877867816AD3EF492E2C0BD1DDCCDC9C793B23DDDAF8AEA23118&page=1&limit=10&order=asc&type=6
+```
+
+```json
 {
     "pagination": {
         "page": 1,
@@ -2021,20 +2670,38 @@ GET /identity/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec/transfers?hash=445E6F
     ]
 }
 ```
-Response codes:
-```
-200: OK
-500: Internal Server Error
-```
+#### Status codes
+
+| Status | Meaning |
+| --- | --- |
+| 200 | OK |
+| 500 | Internal Server Error |
+
 ---
 ### Masternode Votes
-Return list of votes by params
-* `limit` cannot be more than 100
-* `type` cannot be less than 0 and more than 8
-* `choice` cannot be less than 0 and more than 3
-```
-GET /masternodes/votes?timestamp_start=2024-09-18T01:10:57.833Z&timestamp_end=2024-09-19T01:10:57.833Z&voter_identity=2Ey6wdP5YYSqhq96KmU349CeSCsV4avrsNCaXqogGEr9&choice=0&towards_identity=LgdvpQHb7mvrab6Vv49iTz912aHBVjpTJ6rXGRDQL2s
 
+<!-- endpoint: GET /masternodes/votes -->
+Return list of votes by params
+
+#### Query parameters
+
+| Parameter | Description |
+| --- | --- |
+| `page` | Page number, starting at `1`. Default: `1`. |
+| `order` | Sort direction: `asc` or `desc`. Default: `asc`. |
+| `timestamp_start` | Start timestamp (ISO 8601). |
+| `timestamp_end` | End timestamp (ISO 8601). |
+| `voter_identity` | Identity identifier of the voter. |
+| `towards_identity` | Identity identifier receiving the vote. |
+| `power` | Filter by voting power. |
+| `limit` | Maximum: 100. |
+| `choice` | Integer from 0 to 3. |
+
+```http
+GET /masternodes/votes?timestamp_start=2024-09-18T01:10:57.833Z&timestamp_end=2024-09-19T01:10:57.833Z&voter_identity=2Ey6wdP5YYSqhq96KmU349CeSCsV4avrsNCaXqogGEr9&choice=0&towards_identity=LgdvpQHb7mvrab6Vv49iTz912aHBVjpTJ6rXGRDQL2s
+```
+
+```json
 {
   "resultSet": [
     {
@@ -2061,46 +2728,47 @@ GET /masternodes/votes?timestamp_start=2024-09-18T01:10:57.833Z&timestamp_end=20
   }
 }
 ```
-Response codes:
-```
-200: OK
-500: Internal Server Error
-```
+#### Status codes
+
+| Status | Meaning |
+| --- | --- |
+| 200 | OK |
+| 400 | Invalid request parameters. |
+| 500 | Internal Server Error |
+
 ---
 ### Search
+
+<!-- endpoint: GET /search -->
 This endpoint allows search any types of data
 
-* `query` required and must contains data for search
-* Response may contain array for Identity and Data Contract when searching by part of field
+#### Query parameters
 
-#### Can be found:
-* Blocks
-  * Full `height`
-  * Full `hash`
-* Transaction
-  * Full `hash`
-* Validator
-  * Full `proTxHash`
-  * Full `Identifier` of Masternode Identity
-* Identity
-  * Full `Identifier`
-  * Part `alias`
-* Data Contract
-  * Full `Identifier`
-  * Part `name`
-  * One of `keyword`
-  * Part `description`
-* Document
-  * Full `Identifier`
-* Tokens
-  * Full `Identifier`
-  * Part `name`
-* Platform Address
-  * Full `Bech32m`
+| Parameter | Description |
+| --- | --- |
+| `query` | required and must contains data for search |
 
-```
+#### Response notes
+
+- Response may contain array for Identity and Data Contract when searching by part of field
+#### Searchable resources
+
+| Field | Description |
+| --- | --- |
+| Blocks | Full `height`<br>Full `hash` |
+| Transaction | Full `hash` |
+| Validator | Full `proTxHash`<br>Full `Identifier` of Masternode Identity |
+| Identity | Full `Identifier`<br>Part `alias` |
+| Data Contract | Full `Identifier`<br>Part `name`<br>One of `keyword`<br>Part `description` |
+| Document | Full `Identifier` |
+| Tokens | Full `Identifier`<br>Part `name` |
+| Platform Address | Full `Bech32m` |
+
+```http
 GET /search?query=xyz
+```
 
+```json
 {
   "identities": [
     {
@@ -2128,21 +2796,33 @@ GET /search?query=xyz
   ]
 }
 ```
-Response codes:
-```
-200: OK
-500: Internal Server Error
-```
+#### Status codes
+
+| Status | Meaning |
+| --- | --- |
+| 200 | OK |
+| 404 | Requested resource not found. |
+| 500 | Internal Server Error |
+
 ___
 ### Transactions history
+
+<!-- endpoint: GET /transactions/history -->
 Return a series data for the amount of transactions chart
 
-* `timestamp_start` lower interval threshold in ISO string
-* `timestamp_end` upper interval threshold in ISO string
-* `intervalsCount` intervals count in response ( _optional_ )
+#### Query parameters
 
-```
+| Parameter | Description |
+| --- | --- |
+| `timestamp_start` | Start of the interval (ISO 8601). |
+| `timestamp_end` | End of the interval (ISO 8601). |
+| `intervalsCount` | Optional number of intervals in the response. |
+
+```http
 GET /transactions/history?timestamp_start=2024-01-01T00:00:00&timestamp_end=2025-01-01T00:00:00
+```
+
+```json
 [
     {
         "timestamp": "2024-04-22T08:45:20.911Z",
@@ -2162,22 +2842,33 @@ GET /transactions/history?timestamp_start=2024-01-01T00:00:00&timestamp_end=2025
     }, ...
 ]
 ```
-Response codes:
-```
-200: OK
-400: Invalid input, check start/end values
-500: Internal Server Error
-```
+#### Status codes
+
+| Status | Meaning |
+| --- | --- |
+| 200 | OK |
+| 400 | Invalid input, check start/end values |
+| 500 | Internal Server Error |
+
 ___
 ### Transactions Gas history
+
+<!-- endpoint: GET /transactions/gas/history -->
 Return a series data for the used gas of transactions chart
 
-* `timestamp_start` lower interval threshold in ISO string
-* `timestamp_end` upper interval threshold in ISO string
-* `intervalsCount` intervals count in response ( _optional_ )
+#### Query parameters
 
-```
+| Parameter | Description |
+| --- | --- |
+| `timestamp_start` | Start of the interval (ISO 8601). |
+| `timestamp_end` | End of the interval (ISO 8601). |
+| `intervalsCount` | Optional number of intervals in the response. |
+
+```http
 GET /transactions/gas/history?timestamp_start=2024-01-01T00:00:00&timestamp_end=2025-01-01T00:00:00
+```
+
+```json
 [
     {
         "timestamp": "2024-04-22T08:45:20.911Z",
@@ -2197,22 +2888,33 @@ GET /transactions/gas/history?timestamp_start=2024-01-01T00:00:00&timestamp_end=
     }, ...
 ]
 ```
-Response codes:
-```
-200: OK
-400: Invalid input, check start/end values
-500: Internal Server Error
-```
+#### Status codes
+
+| Status | Meaning |
+| --- | --- |
+| 200 | OK |
+| 400 | Invalid input, check start/end values |
+| 500 | Internal Server Error |
+
 ___
 ### Transactions Shield history
+
+<!-- endpoint: GET /transactions/shield/history -->
 Return a series data for the total shielded amount chart (shield and shield-from-asset-lock transitions)
 
-* `timestamp_start` lower interval threshold in ISO string
-* `timestamp_end` upper interval threshold in ISO string
-* `intervalsCount` intervals count in response ( _optional_ )
+#### Query parameters
 
-```
+| Parameter | Description |
+| --- | --- |
+| `timestamp_start` | Start of the interval (ISO 8601). |
+| `timestamp_end` | End of the interval (ISO 8601). |
+| `intervalsCount` | Optional number of intervals in the response. |
+
+```http
 GET /transactions/shield/history?timestamp_start=2024-01-01T00:00:00&timestamp_end=2025-01-01T00:00:00
+```
+
+```json
 [
     {
         "timestamp": "2024-04-22T08:45:20.911Z",
@@ -2224,22 +2926,33 @@ GET /transactions/shield/history?timestamp_start=2024-01-01T00:00:00&timestamp_e
     }, ...
 ]
 ```
-Response codes:
-```
-200: OK
-400: Invalid input, check start/end values
-500: Internal Server Error
-```
+#### Status codes
+
+| Status | Meaning |
+| --- | --- |
+| 200 | OK |
+| 400 | Invalid input, check start/end values |
+| 500 | Internal Server Error |
+
 ___
 ### Transactions Unshield history
+
+<!-- endpoint: GET /transactions/unshield/history -->
 Return a series data for the total unshielded amount chart (unshield, shielded withdrawal and identity-create-from-shielded-pool transitions)
 
-* `timestamp_start` lower interval threshold in ISO string
-* `timestamp_end` upper interval threshold in ISO string
-* `intervalsCount` intervals count in response ( _optional_ )
+#### Query parameters
 
-```
+| Parameter | Description |
+| --- | --- |
+| `timestamp_start` | Start of the interval (ISO 8601). |
+| `timestamp_end` | End of the interval (ISO 8601). |
+| `intervalsCount` | Optional number of intervals in the response. |
+
+```http
 GET /transactions/unshield/history?timestamp_start=2024-01-01T00:00:00&timestamp_end=2025-01-01T00:00:00
+```
+
+```json
 [
     {
         "timestamp": "2024-04-22T08:45:20.911Z",
@@ -2251,22 +2964,33 @@ GET /transactions/unshield/history?timestamp_start=2024-01-01T00:00:00&timestamp
     }, ...
 ]
 ```
-Response codes:
-```
-200: OK
-400: Invalid input, check start/end values
-500: Internal Server Error
-```
+#### Status codes
+
+| Status | Meaning |
+| --- | --- |
+| 200 | OK |
+| 400 | Invalid input, check start/end values |
+| 500 | Internal Server Error |
+
 ___
 ### Transactions Input history
+
+<!-- endpoint: GET /transactions/input/history -->
 Return a series data for the chart of the total amount entering the platform from the core chain (identity create, identity top up, address funding from asset lock and shield-from-asset-lock transitions)
 
-* `timestamp_start` lower interval threshold in ISO string
-* `timestamp_end` upper interval threshold in ISO string
-* `intervalsCount` intervals count in response ( _optional_ )
+#### Query parameters
 
-```
+| Parameter | Description |
+| --- | --- |
+| `timestamp_start` | Start of the interval (ISO 8601). |
+| `timestamp_end` | End of the interval (ISO 8601). |
+| `intervalsCount` | Optional number of intervals in the response. |
+
+```http
 GET /transactions/input/history?timestamp_start=2024-01-01T00:00:00&timestamp_end=2025-01-01T00:00:00
+```
+
+```json
 [
     {
         "timestamp": "2024-04-22T08:45:20.911Z",
@@ -2278,22 +3002,33 @@ GET /transactions/input/history?timestamp_start=2024-01-01T00:00:00&timestamp_en
     }, ...
 ]
 ```
-Response codes:
-```
-200: OK
-400: Invalid input, check start/end values
-500: Internal Server Error
-```
+#### Status codes
+
+| Status | Meaning |
+| --- | --- |
+| 200 | OK |
+| 400 | Invalid input, check start/end values |
+| 500 | Internal Server Error |
+
 ___
 ### Transactions Output history
+
+<!-- endpoint: GET /transactions/output/history -->
 Return a series data for the chart of the total amount leaving the platform to the core chain (identity credit withdrawal, address credit withdrawal and shielded withdrawal transitions)
 
-* `timestamp_start` lower interval threshold in ISO string
-* `timestamp_end` upper interval threshold in ISO string
-* `intervalsCount` intervals count in response ( _optional_ )
+#### Query parameters
 
-```
+| Parameter | Description |
+| --- | --- |
+| `timestamp_start` | Start of the interval (ISO 8601). |
+| `timestamp_end` | End of the interval (ISO 8601). |
+| `intervalsCount` | Optional number of intervals in the response. |
+
+```http
 GET /transactions/output/history?timestamp_start=2024-01-01T00:00:00&timestamp_end=2025-01-01T00:00:00
+```
+
+```json
 [
     {
         "timestamp": "2024-04-22T08:45:20.911Z",
@@ -2305,23 +3040,39 @@ GET /transactions/output/history?timestamp_start=2024-01-01T00:00:00&timestamp_e
     }, ...
 ]
 ```
-Response codes:
-```
-200: OK
-400: Invalid input, check start/end values
-500: Internal Server Error
-```
+#### Status codes
+
+| Status | Meaning |
+| --- | --- |
+| 200 | OK |
+| 400 | Invalid input, check start/end values |
+| 500 | Internal Server Error |
+
 ___
 ### Transactions Statistic
+
+<!-- endpoint: GET /transactions/statistic -->
 Return the count of state transitions grouped by transaction type.
 
 Optionally accepts a time interval. Without parameters the statistic is calculated over all time.
 
-* `timestamp_start` and `timestamp_end` must be set together
-* `batchTypes` — per-batch-type breakdown, present only on the `BATCH` entry, `null` for every other transaction type. Counts sum to the entry's `count`
+#### Query parameters
 
-```
+| Parameter | Description |
+| --- | --- |
+| `timestamp_start`, `timestamp_end` | must be set together |
+
+#### Response notes
+
+| Field | Description |
+| --- | --- |
+| `batchTypes` | per-batch-type breakdown, present only on the `BATCH` entry, `null` for every other transaction type. Counts sum to the entry's `count` |
+
+```http
 GET /transactions/statistic?timestamp_start=2024-10-01T00:00:00.000Z&timestamp_end=2024-11-01T00:00:00.000Z
+```
+
+```json
 [
     {
         "transactionType": "DATA_CONTRACT_CREATE",
@@ -2347,32 +3098,48 @@ GET /transactions/statistic?timestamp_start=2024-10-01T00:00:00.000Z&timestamp_e
     }, ...
 ]
 ```
-Response codes:
-```
-200: OK
-400: Invalid input, check start/end values
-500: Internal Server Error
-```
+#### Status codes
+
+| Status | Meaning |
+| --- | --- |
+| 200 | OK |
+| 400 | Invalid input, check start/end values |
+| 500 | Internal Server Error |
+
 ___
 ### Shielded Statistic
+
+<!-- endpoint: GET /transactions/shielded/statistic -->
 Return shielded transition activity, aggregated by transaction type.
 
 Optionally accepts a time interval. Without parameters the statistic is calculated over all time. The current pool size is available separately via [Shielded Pool](#shielded-pool).
 
-* `timestamp_start` and `timestamp_end` must be set together
-* When an interval is given, all fields are scoped to that interval
+#### Query parameters
+
+| Parameter | Description |
+| --- | --- |
+| `timestamp_start`, `timestamp_end` | must be set together |
+
+When an interval is given, all response fields are scoped to that interval.
 
 Fields:
 
-* `totalShieldedIn` — credits moved into the pool (`SHIELD` + `SHIELD_FROM_ASSET_LOCK`), as a string
-* `totalShieldedOut` — credits moved out of the pool (`UNSHIELD` + `SHIELDED_WITHDRAWAL` + `IDENTITY_CREATE_FROM_SHIELDED_POOL`), as a string
-* `transitionsCount` — number of shielded transitions
-* `types` — per-type breakdown with `count` and summed `amount` (string)
+#### Response notes
+
+| Field | Description |
+| --- | --- |
+| `totalShieldedIn` | credits moved into the pool (`SHIELD` + `SHIELD_FROM_ASSET_LOCK`), as a string |
+| `totalShieldedOut` | credits moved out of the pool (`UNSHIELD` + `SHIELDED_WITHDRAWAL` + `IDENTITY_CREATE_FROM_SHIELDED_POOL`), as a string |
+| `transitionsCount` | number of shielded transitions |
+| `types` | per-type breakdown with `count` and summed `amount` (string) |
 
 Note: `SHIELDED_TRANSFER` stays inside the pool and is counted in `types`/`transitionsCount` but excluded from `totalShieldedIn`/`totalShieldedOut`.
 
-```
+```http
 GET /transactions/shielded/statistic?timestamp_start=2024-10-01T00:00:00.000Z&timestamp_end=2024-11-01T00:00:00.000Z
+```
+
+```json
 {
     "totalShieldedIn": "300000000",
     "totalShieldedOut": "150000000",
@@ -2386,41 +3153,71 @@ GET /transactions/shielded/statistic?timestamp_start=2024-10-01T00:00:00.000Z&ti
     ]
 }
 ```
-Response codes:
-```
-200: OK
-400: Invalid input, check start/end values
-500: Internal Server Error
-```
+#### Status codes
+
+| Status | Meaning |
+| --- | --- |
+| 200 | OK |
+| 400 | Invalid input, check start/end values |
+| 500 | Internal Server Error |
+
 ___
 ### Shielded Pool
+
+<!-- endpoint: GET /transactions/shielded/pool -->
 Return the current state of the shielded pool. Takes no parameters.
 
-* `poolBalance` — total balance currently held in the shielded pool, fetched (and cryptographically verified) from the platform, as a string; `null` when unavailable
-* `notesCount` — total count of notes (leaves) in the shielded notes commitment tree, fetched from the platform; `null` when unavailable
+#### Response notes
 
-```
+| Field | Description |
+| --- | --- |
+| `poolBalance` | total balance currently held in the shielded pool, fetched (and cryptographically verified) from the platform, as a string; `null` when unavailable |
+| `notesCount` | total count of notes (leaves) in the shielded notes commitment tree, fetched from the platform; `null` when unavailable |
+
+```http
 GET /transactions/shielded/pool
+```
+
+```json
 {
     "poolBalance": "150000000",
     "notesCount": 14
 }
 ```
-Response codes:
-```
-200: OK
-500: Internal Server Error
-```
+#### Status codes
+
+| Status | Meaning |
+| --- | --- |
+| 200 | OK |
+| 500 | Internal Server Error |
+
 ___
 ### Votes for Contested Resource
+
+<!-- endpoint: GET /contestedResource/{resourceValue}/votes -->
 Returns set of votes for selected resource
 
-* `resourceValue` must be specified after `/contested/` in json base64
-  * `WyJkYXNoIiwieHl6Il0=` = `'["dash", "xyz"]'`
-* `choice` optional
-* `pro_tx_hash` optional hash of vote owner
-```
+#### Path parameters
+
+| Parameter | Description |
+| --- | --- |
+| `resourceValue` | Base64-encoded JSON array in the path. Example:<br>`WyJkYXNoIiwieHl6Il0=` = `'["dash", "xyz"]'` |
+
+#### Query parameters
+
+| Parameter | Description |
+| --- | --- |
+| `page` | Page number, starting at `1`. Default: `1`. |
+| `limit` | Page size from `0` to `100`. Default: `10`. |
+| `order` | Sort direction: `asc` or `desc`. Default: `asc`. |
+| `choice` | optional |
+| `pro_tx_hash` | optional hash of vote owner |
+
+```http
 GET /contestedResource/WyJkYXNoIiwieHl6Il0=/votes?choice=1&pro_tx_hash=36011F1807FED828951DAA04B44E38163FB0162108FD1341038DBE58051F4421&page=1&limit=10&order=asc
+```
+
+```json
 {
   "resultSet": [
     {
@@ -2449,21 +3246,32 @@ GET /contestedResource/WyJkYXNoIiwieHl6Il0=/votes?choice=1&pro_tx_hash=36011F180
   }
 }
 ```
-Response codes:
-```
-200: OK
-400: Invalid input, check start/end values
-500: Internal Server Error
-```
+#### Status codes
+
+| Status | Meaning |
+| --- | --- |
+| 200 | OK |
+| 400 | Invalid input, check start/end values |
+| 404 | Requested resource not found. |
+| 500 | Internal Server Error |
+
 ___
 ### Contested Resource Value
+
+<!-- endpoint: GET /contestedResource/{resourceValue} -->
 Return info about contested resource value
 
-* `resourceValue` must be specified after `/contested/` in json base64
-  * `WyJkYXNoIiwieHl6Il0=` = `'["dash", "xyz"]'`
+#### Path parameters
 
-```
+| Parameter | Description |
+| --- | --- |
+| `resourceValue` | Base64-encoded JSON array in the path. Example:<br>`WyJkYXNoIiwieHl6Il0=` = `'["dash", "xyz"]'` |
+
+```http
 GET /contestedResource/WyJkYXNoIiwieHl6Il0=
+```
+
+```json
 {
   "contenders": [
     {
@@ -2538,26 +3346,38 @@ GET /contestedResource/WyJkYXNoIiwieHl6Il0=
   "endTimestamp": null
 }
 ```
-Response codes:
-```
-200: OK
-400: Invalid input, check start/end values
-500: Internal Server Error
-```
+#### Status codes
+
+| Status | Meaning |
+| --- | --- |
+| 200 | OK |
+| 400 | Invalid input, check start/end values |
+| 404 | Requested resource not found. |
+| 500 | Internal Server Error |
+
 ___
 ### Contested Resources
+
+<!-- endpoint: GET /contestedResources -->
 Return set of contested resources
 
-* `page` cannot be less than 1
-* `limit` cannot be more than 100
-* `document_type_name` filter by document type name
-* `contract_id` filter by data contract identifier
-* `voting_finished` bool field, filter resources whose voting deadline has passed (`true`) or is still pending (`false`)
-* `timestamp_start` and `timestamp_end` timestamp start and end of the contested resource creation date
+#### Query parameters
 
-```
+| Parameter | Description |
+| --- | --- |
+| `order` | Sort direction: `asc` or `desc`. Default: `asc`. |
+| `page` | Minimum: 1. |
+| `limit` | Maximum: 100. |
+| `document_type_name` | filter by document type name |
+| `contract_id` | filter by data contract identifier |
+| `voting_finished` | bool field, filter resources whose voting deadline has passed (`true`) or is still pending (`false`) |
+| `timestamp_start`, `timestamp_end` | timestamp start and end of the contested resource creation date |
+
+```http
 GET /contestedResources?page=1&limit=10&order=asc&document_type_name=domain&contract_id=GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec&voting_finished=true&timestamp_start=2024-08-01T00:00:00.000Z&timestamp_end=2025-08-01T00:00:00.000Z
+```
 
+```json
 {
     "resultSet": [
         {
@@ -2592,18 +3412,24 @@ GET /contestedResources?page=1&limit=10&order=asc&document_type_name=domain&cont
     }
 }
 ```
-Response codes:
-```
-200: OK
-500: Internal Server Error
-```
+#### Status codes
+
+| Status | Meaning |
+| --- | --- |
+| 200 | OK |
+| 500 | Internal Server Error |
+
 ___
 ### Contested Resources Stats
+
+<!-- endpoint: GET /contestedResources/stats -->
 Return info about stats about resource values
 
-```
+```http
 GET /contestedResources/stats
+```
 
+```json
 {
     "totalContestedResources": 235,
     "totalPendingContestedResources": 3,
@@ -2633,33 +3459,50 @@ GET /contestedResources/stats
     }
 }
 ```
-Response codes:
-```
-200: OK
-500: Internal Server Error
-```
+#### Status codes
+
+| Status | Meaning |
+| --- | --- |
+| 200 | OK |
+| 500 | Internal Server Error |
+
 ___
 ### Rate
+
+<!-- endpoint: GET /rate -->
 Return a rate DASH to USD and DASH to BTC
-```
+```http
 GET /rate
+```
+
+```json
 {
     "usd": 24.45,
     "btc": 0.00073,
     "source": "Kucoin"
 }
 ```
-Response codes:
-```
-200: OK
-500: Internal Server Error
-503: Service Temporarily Unavailable
-```
+#### Status codes
+
+| Status | Meaning |
+| --- | --- |
+| 200 | OK |
+| 500 | Internal Server Error |
+| 503 | Service Temporarily Unavailable |
+
 ___
 ### Decode Raw Transaction
+
+<!-- endpoint: POST /transaction/decode -->
 Return a decoded State Transition
 
-Available transactions type for decode
+#### Request body
+
+| Parameter | Description |
+| --- | --- |
+| `base64` | Required string. State transition encoded as Base64. |
+
+#### Supported transaction types
 
 | Transition type                       | type index |
 |---------------------------------------|------------|
@@ -2685,18 +3528,22 @@ Available transactions type for decode
 | `SHIELDED_WITHDRAWAL`                 | 19         |
 | `IDENTITY_CREATE_FROM_SHIELDED_POOL`  | 20         |
 
-- `fundingAddress` can be null
-- `prefundedVotingBalance` can be null
-- `output` can be null
+#### Response notes
 
-```
+| Field | Description |
+| --- | --- |
+| `fundingAddress` | can be null |
+| `prefundedVotingBalance` | can be null |
+| `output` | can be null |
+
+```http
 POST /transaction/decode
+Content-Type: application/json
 
 {
     "base64": "AAAA56Y/VzBp5vlrJR8JRCPSDLlaZjngwyM50w8dQAmAe3EAAAAAAAEBAAABYpzp8+tOQ8j6k24W7FXjqo7zZmMZcybMIDLw7VfLT0EAAQZsYWJsZXIWBBIEdHlwZRIGb2JqZWN0Egpwcm9wZXJ0aWVzFgISCmNvbnRyYWN0SWQWBBIEdHlwZRIGc3RyaW5nEgltaW5MZW5ndGgDVhIJbWF4TGVuZ3RoA1gSCHBvc2l0aW9uAwASCXNob3J0TmFtZRYEEgR0eXBlEgZzdHJpbmcSCW1heExlbmd0aANAEgltaW5MZW5ndGgDBhIIcG9zaXRpb24DAhIIcmVxdWlyZWQVAhIJc2hvcnROYW1lEgpjb250cmFjdElkEhRhZGRpdGlvbmFsUHJvcGVydGllcxMACgACQR8AOrSAQ3S/emVWILS8WyHcMA97CtY5rH7dB4DSjAm/0x6DZdZcm8jyGIdIuuTUALR8/N724YhxwhOQHqUm5ipN"
 }
 ```
-#### Responses:
 ```json
 {
   "type": 0,
@@ -3361,57 +4208,98 @@ IDENTITY_CREATE with instantLock
   "raw": "0e000100914e8a18eb34517b7a6a4432cf237f68c5f8332e05fd0000003a352944000001000001001976a9144a4fc56e14aa98799880abbcd46de5d2e09998fb88ac000100412097d5baef616aeeb6b19e5baf4fdc2bdadcc685bd01161844c199b22b41afe1547a90cef74d70a776263ef723f509711f495a6907a63f89b7ddb260956404299b"
 }
 ```
-Response codes:
-```
-200: OK
-500: Internal Server Error
-503: Service Temporarily Unavailable
-```
+#### Status codes
+
+| Status | Meaning |
+| --- | --- |
+| 200 | OK |
+| 400 | Missing or invalid `base64` field. |
+| 500 | Internal Server Error |
+| 503 | Service Temporarily Unavailable |
+
 ___
 ### Identity Nonce
+
+<!-- endpoint: GET /identity/{identifier}/nonce -->
 Return Identity Nonce
-```
+
+#### Path parameters
+
+| Parameter | Description |
+| --- | --- |
+| `identifier` | Identity identifier. |
+
+```http
 GET /identity/HTfJKDuW8omFfFrSQuNTkgW39WpncdwFUrL91VJyJXUS/nonce
+```
+
+```json
 {
     "identityNonce": "1"
 }
 ```
-Response codes:
-```
-200: OK
-500: Internal Server Error
-503: Service Temporarily Unavailable
-```
+#### Status codes
+
+| Status | Meaning |
+| --- | --- |
+| 200 | OK |
+| 500 | Internal Server Error |
+| 503 | Service Temporarily Unavailable |
+
 ___
 ### Identity Contract Nonce
+
+<!-- endpoint: GET /identity/{identifier}/contract/{data_contract_id}/nonce -->
 Return Identity Contract Nonce
-```
+
+#### Path parameters
+
+| Parameter | Description |
+| --- | --- |
+| `identifier` | Identity identifier. |
+| `data_contract_id` | Data contract identifier. |
+
+```http
 GET /identity/HTfJKDuW8omFfFrSQuNTkgW39WpncdwFUrL91VJyJXUS/contract/6hVQW16jyvZyGSQk2YVty4ND6bgFXozizYWnPt753uW5/nonce
+```
+
+```json
 {
     "identityContractNonce": "2"
 }
 ```
-Response codes:
-```
-200: OK
-500: Internal Server Error
-503: Service Temporarily Unavailable
-```
+#### Status codes
+
+| Status | Meaning |
+| --- | --- |
+| 200 | OK |
+| 500 | Internal Server Error |
+| 503 | Service Temporarily Unavailable |
+
 ___
 ### Tokens
+
+<!-- endpoint: GET /tokens -->
 Return list of tokens
 
-* Valid `order` values are `asc` or `desc`
-* `limit` cannot be more then 100
-* `page` cannot be less then 1
-* `owner` tokens owner identifier
-* `position` tokens position in data contract
-* `contract_id` contract identifier which contains tokens
-* `token_name` part of token name in EN locale. Case insensetive. Minimum 3 symbols
-* `token_id` identifier of token
-```
-GET /tokens?limit=10&page=1&order=asc&owner=5DbLwAxGBzUzo81VewMUwn4b5P4bpv9FNFybi25XB5Bk&position=0&contract_id=ALybvzfcCwMs7sinDwmtumw17NneuW7RgFtFHgjKmF3A
+#### Query parameters
 
+| Parameter | Description |
+| --- | --- |
+| `order` | Values: `asc` or `desc` |
+| `limit` | Maximum: 100. |
+| `page` | Minimum: 1. |
+| `owner` | tokens owner identifier |
+| `position` | tokens position in data contract |
+| `contract_id` | contract identifier which contains tokens |
+| `token_name` | part of token name in EN locale. Case-insensitive. Minimum 3 characters |
+| `token_id` | identifier of token |
+
+```http
+GET /tokens?limit=10&page=1&order=asc&owner=5DbLwAxGBzUzo81VewMUwn4b5P4bpv9FNFybi25XB5Bk&position=0&contract_id=ALybvzfcCwMs7sinDwmtumw17NneuW7RgFtFHgjKmF3A
+```
+
+```json
 {
     "resultSet": [
         {
@@ -3477,91 +4365,50 @@ GET /tokens?limit=10&page=1&order=asc&owner=5DbLwAxGBzUzo81VewMUwn4b5P4bpv9FNFyb
     }
 }
 ```
-Response codes:
-```
-200: OK
-500: Internal Server Error
-503: Service Temporarily Unavailable
-```
+#### Status codes
+
+| Status | Meaning |
+| --- | --- |
+| 200 | OK |
+| 500 | Internal Server Error |
+| 503 | Service Temporarily Unavailable |
+
 ___
 ### Token By Identifier
+
+<!-- endpoint: GET /token/{identifier} -->
 Return token info by token identifier
 
-* `perpetualDistribution` can have a different structure due to the extensive range of data formats for functions:
-  * FixedAmount
-    * `amount`
-  * Random
-    * `min`
-    * `max`
-  * StepDecreasingAmount
-    * `stepCount`
-    * `decreasePerIntervalNumerator`
-    * `decreasePerIntervalDenominator`
-    * `startDecreasingOffset`
-    * `maxIntervalCount`
-    * `distributionStartAmount`
-    * `trailingDistributionIntervalAmount`
-    * `minValue`
-  * Linear
-    * `a`
-    * `d`
-    * `startStep`
-    * `startingAmount`
-    * `minValue`
-    * `maxValue`
-  * Polynomial
-    * `a`
-    * `b`
-    * `d`
-    * `m`
-    * `n`
-    * `o`
-    * `startMoment`
-    * `minValue`
-    * `maxValue`
-  * Exponential
-    * `a`
-    * `b`
-    * `d`
-    * `m`
-    * `n`
-    * `o`
-    * `startMoment`
-    * `minValue`
-    * `maxValue`
-  * Exponential
-    * `a`
-    * `b`
-    * `d`
-    * `m`
-    * `n`
-    * `o`
-    * `startMoment`
-    * `minValue`
-    * `maxValue`
-  * Logarithmic
-    * `a`
-    * `b`
-    * `d`
-    * `m`
-    * `n`
-    * `o`
-    * `startMoment`
-    * `minValue`
-    * `maxValue`
-  * InvertedLogarithmic
-    * `a`
-    * `b`
-    * `d`
-    * `m`
-    * `n`
-    * `o`
-    * `startMoment`
-    * `minValue`
-    * `maxValue`
+#### Path parameters
 
-```
+| Parameter | Description |
+| --- | --- |
+| `identifier` | Token identifier. |
+
+#### Response notes
+
+| Field | Description |
+| --- | --- |
+| `perpetualDistribution` | Fields depend on the distribution function below. |
+
+#### Distribution functions
+
+| Function | Fields |
+| --- | --- |
+| FixedAmount | `amount` |
+| Random | `min`, `max` |
+| StepDecreasingAmount | `stepCount`, `decreasePerIntervalNumerator`, `decreasePerIntervalDenominator`, `startDecreasingOffset`, `maxIntervalCount`, `distributionStartAmount`, `trailingDistributionIntervalAmount`, `minValue` |
+| Linear | `a`, `d`, `startStep`, `startingAmount`, `minValue`, `maxValue` |
+| Polynomial | `a`, `b`, `d`, `m`, `n`, `o`, `startMoment`, `minValue`, `maxValue` |
+| Exponential | `a`, `b`, `d`, `m`, `n`, `o`, `startMoment`, `minValue`, `maxValue` |
+| Logarithmic | `a`, `b`, `d`, `m`, `n`, `o`, `startMoment`, `minValue`, `maxValue` |
+| InvertedLogarithmic | `a`, `b`, `d`, `m`, `n`, `o`, `startMoment`, `minValue`, `maxValue` |
+
+```http
 GET /token/4xd9usiX6WCPE4h1AFPQBJ4Rje6TfZw8kiBzkSAzvmCL
+```
+
+```json
 {
     "identifier": "4xd9usiX6WCPE4h1AFPQBJ4Rje6TfZw8kiBzkSAzvmCL",
     "position": 0,
@@ -3605,7 +4452,7 @@ GET /token/4xd9usiX6WCPE4h1AFPQBJ4Rje6TfZw8kiBzkSAzvmCL
     "decimals": 10,
     "totalBurnTransitionsCount": 0,
     "balance": "10",
-    "balances": null
+    "balances": null,
     "perpetualDistribution": null,
     "preProgrammedDistribution": [
         {
@@ -3657,7 +4504,7 @@ GET /token/4tyvbA2ZGFLvjXLnJRCacSoMbFfpmBwGRrAZsVwnfYri
     "decimals": 10,
     "totalBurnTransitionsCount": 0,
     "balance": "10",
-    "balances": null
+    "balances": null,
     "perpetualDistribution": {
         "type": "BlockBasedDistribution",
         "recipientType": "ContractOwner",
@@ -3671,22 +4518,40 @@ GET /token/4tyvbA2ZGFLvjXLnJRCacSoMbFfpmBwGRrAZsVwnfYri
     "preProgrammedDistribution": null
 }
 ```
-Response codes:
-```
-200: OK
-500: Internal Server Error
-503: Service Temporarily Unavailable
-404: Not Found
-```
+#### Status codes
+
+| Status | Meaning |
+| --- | --- |
+| 200 | OK |
+| 500 | Internal Server Error |
+| 503 | Service Temporarily Unavailable |
+| 404 | Not Found |
+
 ___
 ### Token Transitions
+
+<!-- endpoint: GET /token/{identifier}/transitions -->
 Return list of transitions for token
 
-* Valid `order` values are `asc` or `desc`
-* `limit` cannot be more then 100
-* `page` cannot be less then 1
-```
+#### Path parameters
+
+| Parameter | Description |
+| --- | --- |
+| `identifier` | Token identifier. |
+
+#### Query parameters
+
+| Parameter | Description |
+| --- | --- |
+| `order` | Values: `asc` or `desc` |
+| `limit` | Maximum: 100. |
+| `page` | Minimum: 1. |
+
+```http
 GET /token/4xd9usiX6WCPE4h1AFPQBJ4Rje6TfZw8kiBzkSAzvmCL/transitions?limit=10&order=desc&page=1
+```
+
+```json
 {
     "resultSet": [
         {
@@ -3738,26 +4603,38 @@ GET /token/4xd9usiX6WCPE4h1AFPQBJ4Rje6TfZw8kiBzkSAzvmCL/transitions?limit=10&ord
     }
 }
 ```
-Response codes:
-```
-200: OK
-500: Internal Server Error
-503: Service Temporarily Unavailable
-404: Not Found
-```
+#### Status codes
+
+| Status | Meaning |
+| --- | --- |
+| 200 | OK |
+| 500 | Internal Server Error |
+| 503 | Service Temporarily Unavailable |
+| 404 | Not Found |
+
 ___
 ### Tokens Rating
+
+<!-- endpoint: GET /tokens/rating -->
 Return list of tokens identifier with order by transactions count.
 
 If it is not possible to get tokens transitions for selected period,
 then will be returned list of tokens in order of creation date
 
-* Valid `order` values are `asc` or `desc`
-* `limit` cannot be more then 100
-* `page` cannot be less then 1
-* `timestamp_start` and `timestamp_end` can be null and `timestamp_end` must be greater then `timestamp_start` if they are used. Default value is equal to the interval in the past 30 days
+#### Query parameters
+
+| Parameter | Description |
+| --- | --- |
+| `order` | Values: `asc` or `desc` |
+| `limit` | Maximum: 100. |
+| `page` | Minimum: 1. |
+| `timestamp_start`, `timestamp_end` | can be null and `timestamp_end` must be greater than `timestamp_start` if they are used. Default value is equal to the interval in the past 30 days |
+
+```http
+GET /tokens/rating?order=desc&limit=10&page=1&timestamp_start=2025-06-20T17:10:28.585Z&timestamp_end=2025-07-28T20:37:28.585Z
 ```
-GET tokens/rating?order=desc&limit=10&page=1&timestamp_start=2025-06-20T17:10:28.585Z&timestamp_end=2025-07-28T20:37:28.585Z
+
+```json
 {
     "resultSet": [
         {
@@ -3795,8 +4672,7 @@ GET tokens/rating?order=desc&limit=10&page=1&timestamp_start=2025-06-20T17:10:28
                 },
                 "tokenIdentifier": "8Uv6WJEf7pyw17AtcJpGdURkU3wrmz86RkXxUdNNx575",
                 "transitionCount": 2
-            },
-        },
+            }},
         ...
     ],
     "pagination": {
@@ -3806,21 +4682,40 @@ GET tokens/rating?order=desc&limit=10&page=1&timestamp_start=2025-06-20T17:10:28
     }
 }
 ```
-Response codes:
-```
-200: OK
-500: Internal Server Error
-503: Service Temporarily Unavailable
-```
+#### Status codes
+
+| Status | Meaning |
+| --- | --- |
+| 200 | OK |
+| 400 | Invalid request parameters. |
+| 500 | Internal Server Error |
+| 503 | Service Temporarily Unavailable |
+
 ___
 ### Tokens By Identity
+
+<!-- endpoint: GET /identity/{identifier}/tokens -->
 Return list of tokens which created by identity
 
-* Valid `order` values are `asc` or `desc`
-* `limit` cannot be more then 100
-* `page` cannot be less then 1
-```
+#### Path parameters
+
+| Parameter | Description |
+| --- | --- |
+| `identifier` | Identity identifier. |
+
+#### Query parameters
+
+| Parameter | Description |
+| --- | --- |
+| `order` | Values: `asc` or `desc` |
+| `limit` | Maximum: 100. |
+| `page` | Minimum: 1. |
+
+```http
 GET /identity/5DbLwAxGBzUzo81VewMUwn4b5P4bpv9FNFybi25XB5B1/tokens?limit=10&page=1&order=asc
+```
+
+```json
 {
     "resultSet": [
         {
@@ -3885,21 +4780,39 @@ GET /identity/5DbLwAxGBzUzo81VewMUwn4b5P4bpv9FNFybi25XB5B1/tokens?limit=10&page=
     }
 }
 ```
-Response codes:
-```
-200: OK
-500: Internal Server Error
-503: Service Temporarily Unavailable
-```
+#### Status codes
+
+| Status | Meaning |
+| --- | --- |
+| 200 | OK |
+| 500 | Internal Server Error |
+| 503 | Service Temporarily Unavailable |
+
 ___
 ### Token Holders
+
+<!-- endpoint: GET /token/{identifier}/holders -->
 Return list of token holders
 
-* Valid `order` values are `asc` or `desc`
-* `limit` cannot be more then 100
-* `page` cannot be less then 1
-```
+#### Path parameters
+
+| Parameter | Description |
+| --- | --- |
+| `identifier` | Token identifier. |
+
+#### Query parameters
+
+| Parameter | Description |
+| --- | --- |
+| `order` | Values: `asc` or `desc` |
+| `limit` | Maximum: 100. |
+| `page` | Minimum: 1. |
+
+```http
 GET /token/Bu2749WKcP5HFNm8v3k5kshRKDSVyfsJMqoWnXmK4q7h/holders?order=desc&limit=10&page=1
+```
+
+```json
 {
     "resultSet": [
         {
@@ -3940,22 +4853,39 @@ GET /token/Bu2749WKcP5HFNm8v3k5kshRKDSVyfsJMqoWnXmK4q7h/holders?order=desc&limit
     }
 }
 ```
-Response codes:
-```
-200: OK
-500: Internal Server Error
-503: Service Temporarily Unavailable
-```
+#### Status codes
+
+| Status | Meaning |
+| --- | --- |
+| 200 | OK |
+| 500 | Internal Server Error |
+| 503 | Service Temporarily Unavailable |
+
 ___
 ### Tokens By Name
+
+<!-- endpoint: GET /tokens/{name}/info -->
 Return list of tokens info with selected part name
 
-* Valid `order` values are `asc` or `desc`
-* `limit` cannot be more then 100
-* `page` cannot be less then 1
+#### Path parameters
 
-```
+| Parameter | Description |
+| --- | --- |
+| `name` | Token name. |
+
+#### Query parameters
+
+| Parameter | Description |
+| --- | --- |
+| `order` | Values: `asc` or `desc` |
+| `limit` | Maximum: 100. |
+| `page` | Minimum: 1. |
+
+```http
 GET /tokens/psh/info?limit=10&page=1&order=asc
+```
+
+```json
 {
     "resultSet": [
         {
@@ -4013,122 +4943,157 @@ GET /tokens/psh/info?limit=10&page=1&order=asc
     }
 }
 ```
-Response codes:
-```
-200: OK
-500: Internal Server Error
-503: Service Temporarily Unavailable
-```
+#### Status codes
+
+| Status | Meaning |
+| --- | --- |
+| 200 | OK |
+| 500 | Internal Server Error |
+| 503 | Service Temporarily Unavailable |
+
 ___
 ### Verify Transaction
-Send Transaction for Broadcast
 
-* `base64` optional field. State transition buffer in base64
-* `hex` optional field. State transition buffer in hex
-* You must pass `hex` or `base64`
+<!-- endpoint: POST /transaction/verify -->
+Verify a state transition without broadcasting it.
 
-```
+#### Request body
+
+| Parameter | Description |
+| --- | --- |
+| `base64` | optional field. State transition buffer in base64 |
+| `hex` | optional field. State transition buffer in hex |
+
+Provide exactly one of `hex` or `base64`.
+
+```http
 POST /transaction/verify
-BODY:
+Content-Type: application/json
+
 {
     "base64": "AgDpAd/Bcqls4/fTNNbAtp3zsByG0w/wOnwk9RaDj5Q0DQEAAAAetrSpdOHzvWhmll5EyXQFOW6JEoHRY2Alb0wBP6ic9AcEbm90ZYpK8hfzQOnEyVhXSWzzO2jrbHEqxtIKHreFTRSv2f/PxVTtZXkupT+mJytiIWsAU0U1Ke1abN0JJvNNU1182eoCBmF1dGhvchIGb3dsMzUyB21lc3NhZ2USBHRlc3QAAAAA"
 }
+```
 
-INVALID TX RESPONSE:
+#### Invalid transaction response
+
+```json
 {
   "result": "error",
   "error": "IdentityInsufficientBalanceError",
   "code": 40210,
   "info": "oWRkYXRhoW9zZXJpYWxpemVkRXJyb3KYLAIYHQUY+xi3GKIYoRgtGLMYug4Y+hiwGK4LGDESGO4YKQ8YtxjqGMQYlRiOGGkYgxjRGEIYbhjPGM8YSAMY/AQYlRg8GKIY/AoY5xj9GFs=",
-  "gasWanted": "182975835",
+  "gasWanted": "182975835"
 }
+```
 
-VALID TX RESPONSE:
+#### Valid transaction response
+
+```json
 {
   "result": "ok",
   "error": null,
   "code": 0,
   "info": "oWRkYXRhoW9zZXJpYWxpemVkRXJyb3KYLAIYHQUY+xi3GKIYoRgtGLMYug4Y+hiwGK4LGDESGO4YKQ8YtxjqGMQYlRiOGGkYgxjRGEIYbhjPGM8YSAMY/AQYlRg8GKIY/AoY5xj9GFs=",
-  "gasWanted": "182975835",
+  "gasWanted": "182975835"
 }
 ```
-Response codes:
-```
-200: OK
-500: Internal Server Error
-503: Service Temporarily Unavailable
-```
+#### Status codes
+
+| Status | Meaning |
+| --- | --- |
+| 200 | OK |
+| 400 | Missing, conflicting, or invalid transaction encoding. |
+| 500 | Internal Server Error |
+| 503 | Service Temporarily Unavailable |
+
 ___
 ### Broadcast Transaction
+
+<!-- endpoint: POST /transaction/broadcast -->
 Send Transaction for Broadcast
 
-* `base64` optional field. State transition buffer in base64
-* `hex` optional field. State transition buffer in hex
-* You must pass `hex` or `base64`
+#### Request body
 
-```
+| Parameter | Description |
+| --- | --- |
+| `base64` | optional field. State transition buffer in base64 |
+| `hex` | optional field. State transition buffer in hex |
+
+Provide exactly one of `hex` or `base64`.
+
+```http
 POST /transaction/broadcast
-BODY:
+Content-Type: application/json
+
 {
     "base64": "AgDpAd/Bcqls4/fTNNbAtp3zsByG0w/wOnwk9RaDj5Q0DQEAAAAetrSpdOHzvWhmll5EyXQFOW6JEoHRY2Alb0wBP6ic9AcEbm90ZYpK8hfzQOnEyVhXSWzzO2jrbHEqxtIKHreFTRSv2f/PxVTtZXkupT+mJytiIWsAU0U1Ke1abN0JJvNNU1182eoCBmF1dGhvchIGb3dsMzUyB21lc3NhZ2USBHRlc3QAAAAA"
 }
+```
 
-RESPONSE:
+```json
 {
   "message": "broadcasted"
 }
 ```
-Response codes:
-```
-200: OK
-500: Internal Server Error
-503: Service Temporarily Unavailable
-```
+#### Status codes
+
+| Status | Meaning |
+| --- | --- |
+| 200 | OK |
+| 400 | Missing, conflicting, or invalid transaction encoding. |
+| 500 | Internal Server Error |
+| 503 | Service Temporarily Unavailable |
+
 ___
 ### Wait For State Transition Result
+
+<!-- endpoint: GET /waitForStateTransitionResult/{hash} -->
 Awaits for a state transition confirmation in the network
 
 Assumes transaction already in mempool when this query is requested.
 Always returns 200, 500 in the unexpected states
 
-* `hash` state transitions hash
+#### Path parameters
 
-```
+| Parameter | Description |
+| --- | --- |
+| `hash` | state transitions hash |
+
+```http
 GET /waitForStateTransitionResult/:hash
-RESPONSE:
+```
+
+```json
 {
-  "message": "ok" // or "tx is not in mempool or already confirmed" 
+  "message": "ok"
 }
 ```
-Response codes:
-```
-200: OK
-500: Internal Server Error
-```
+#### Status codes
+
+| Status | Meaning |
+| --- | --- |
+| 200 | OK |
+| 500 | Internal Server Error |
+
 ___
 ### Quorum Info
+
+<!-- endpoint: GET /quorum/info -->
 Returns info about quorum by type and hash
 
-* `quorumType` contains quorum type number
-  * `llmq_50_60` - 1
-  * `llmq_400_60` - 2
-  * `llmq_400_85` - 3
-  * `llmq_100_67` - 4
-  * `llmq_60_75` - 5
-  * `llmq_25_67` - 6
-  * `llmq_test` - 100
-  * `llmq_devnet` - 101
-  * `llmq_test_v17` - 102
-  * `llmq_test_dip0024` - 103
-  * `llmq_test_instantsend` - 104
-  * `llmq_devnet_dip0024` - 105
-  * `llmq_test_platform` - 106
-  * `llmq_devnet_platform` - 107
-* `quorumHash` optional. hash of quorum
+#### Query parameters
 
+| Parameter | Description |
+| --- | --- |
+| `quorumType` | Required quorum type number<br>`llmq_50_60` - 1<br>`llmq_400_60` - 2<br>`llmq_400_85` - 3<br>`llmq_100_67` - 4<br>`llmq_60_75` - 5<br>`llmq_25_67` - 6<br>`llmq_test` - 100<br>`llmq_devnet` - 101<br>`llmq_test_v17` - 102<br>`llmq_test_dip0024` - 103<br>`llmq_test_instantsend` - 104<br>`llmq_devnet_dip0024` - 105<br>`llmq_test_platform` - 106<br>`llmq_devnet_platform` - 107 |
+| `quorumHash` | optional. hash of quorum |
+
+```http
+GET /quorum/info?quorumType=6&quorumHash=000001148d84a95dd1dbbe309900f3ed434c10039dcc824b18543d413b83f7c8
 ```
-GET /quorum/info?type=6&hash=000001148d84a95dd1dbbe309900f3ed434c10039dcc824b18543d413b83f7c8
 
+```json
 {
     "height": 1306464,
     "type": "llmq_25_67",
@@ -4290,23 +5255,35 @@ GET /quorum/info?type=6&hash=000001148d84a95dd1dbbe309900f3ed434c10039dcc824b185
     "quorumPublicKey": "a745d35df9873944150bf2244b97f791a844a09c9fb25e8adc3e3992846a348e571deb3b50e247a4682bf681c595ca87"
 }
 ```
-Response codes:
-```
-200: OK
-500: Internal Server Error
-503: Service Temporarily Unavailable
-```
+#### Status codes
+
+| Status | Meaning |
+| --- | --- |
+| 200 | OK |
+| 400 | Invalid request parameters. |
+| 500 | Internal Server Error |
+| 503 | Service Temporarily Unavailable |
+
 ___
 ### Quorums
+
+<!-- endpoint: GET /quorums -->
 Returns the signing-active quorums of the platform LLMQ type, newest first.
 
 All of them are signing-active at the same time, so a quorum's place in the list is only age, not a turn in a queue. What does move between them is the Platform validator set: the quorum flagged `isCurrent` holds it now, and it passes to the next older quorum once every member of the current one has proposed a block — see [Block Proposer Schedule](#block-proposer-schedule). Members are omitted here — use [Current Quorum](#current-quorum) or [Quorum by Hash](#quorum-by-hash) for them.
 
-* `healthRatio` is Core's health rating of the quorum
-* `isCurrent` marks the quorum currently holding the validator set
-```
-GET /quorums
+#### Response notes
 
+| Field | Description |
+| --- | --- |
+| `healthRatio` | is Core's health rating of the quorum |
+| `isCurrent` | marks the quorum currently holding the validator set |
+
+```http
+GET /quorums
+```
+
+```json
 [
     {
         "blockHeight": 1531632,
@@ -4323,18 +5300,24 @@ GET /quorums
     }
 ]
 ```
-Response codes:
-```
-200: OK
-500: Internal Server Error
-503: Service Temporarily Unavailable
-```
+#### Status codes
+
+| Status | Meaning |
+| --- | --- |
+| 200 | OK |
+| 500 | Internal Server Error |
+| 503 | Service Temporarily Unavailable |
+
 ___
 ### Current Quorum
-Returns the quorum currently holding the Platform validator set, with its members.
-```
-GET /quorums/current
 
+<!-- endpoint: GET /quorums/current -->
+Returns the quorum currently holding the Platform validator set, with its members.
+```http
+GET /quorums/current
+```
+
+```json
 {
     "blockHeight": 1531632,
     "creationHeight": 1531632,
@@ -4362,19 +5345,32 @@ GET /quorums/current
     ]
 }
 ```
-Response codes:
-```
-200: OK
-404: Not Found
-500: Internal Server Error
-503: Service Temporarily Unavailable
-```
+#### Status codes
+
+| Status | Meaning |
+| --- | --- |
+| 200 | OK |
+| 404 | Not Found |
+| 500 | Internal Server Error |
+| 503 | Service Temporarily Unavailable |
+
 ___
 ### Quorum by Hash
-Returns a single active platform quorum with its members. Responds 404 for a quorum that is no longer signing-active.
-```
-GET /quorum/000000153FE56C83B62D35897F3B05DCB60CFE95715EFB3014F7D2C8997C70F1
 
+<!-- endpoint: GET /quorum/{hash} -->
+Returns a single active platform quorum with its members. Responds 404 for a quorum that is no longer signing-active.
+
+#### Path parameters
+
+| Parameter | Description |
+| --- | --- |
+| `hash` | Quorum hash. |
+
+```http
+GET /quorum/000000153FE56C83B62D35897F3B05DCB60CFE95715EFB3014F7D2C8997C70F1
+```
+
+```json
 {
     "blockHeight": 1531632,
     "creationHeight": 1531632,
@@ -4397,19 +5393,32 @@ GET /quorum/000000153FE56C83B62D35897F3B05DCB60CFE95715EFB3014F7D2C8997C70F1
     ]
 }
 ```
-Response codes:
-```
-200: OK
-404: Not Found
-500: Internal Server Error
-503: Service Temporarily Unavailable
-```
+#### Status codes
+
+| Status | Meaning |
+| --- | --- |
+| 200 | OK |
+| 404 | Not Found |
+| 500 | Internal Server Error |
+| 503 | Service Temporarily Unavailable |
+
 ___
 ### Validator Quorums
-Returns every active platform quorum the validator is a member of, newest first. An empty array means the validator is in no quorum and will not propose blocks until it is included in one.
-```
-GET /validator/87075234AC47353B42BB97CE46330CB67CD4648C01F0B2393D7E729B0D678918/quorums
 
+<!-- endpoint: GET /validator/{hash}/quorums -->
+Returns every active platform quorum the validator is a member of, newest first. An empty array means the validator is in no quorum and will not propose blocks until it is included in one.
+
+#### Path parameters
+
+| Parameter | Description |
+| --- | --- |
+| `hash` | Validator ProTxHash. |
+
+```http
+GET /validator/87075234AC47353B42BB97CE46330CB67CD4648C01F0B2393D7E729B0D678918/quorums
+```
+
+```json
 [
     {
         "blockHeight": 1531632,
@@ -4434,24 +5443,34 @@ GET /validator/87075234AC47353B42BB97CE46330CB67CD4648C01F0B2393D7E729B0D678918/
     }
 ]
 ```
-Response codes:
-```
-200: OK
-404: Not Found
-500: Internal Server Error
-503: Service Temporarily Unavailable
-```
+#### Status codes
+
+| Status | Meaning |
+| --- | --- |
+| 200 | OK |
+| 404 | Not Found |
+| 500 | Internal Server Error |
+| 503 | Service Temporarily Unavailable |
+
 ___
 ### Platform Addresses
+
+<!-- endpoint: GET /platformAddresses -->
 Return all platform addresses paged and order by creation height.
 
-* Valid `order` values are `asc` or `desc`
-* `limit` cannot be more than 100
-* `page` cannot be less than 1
+#### Query parameters
 
-```
+| Parameter | Description |
+| --- | --- |
+| `order` | Values: `asc` or `desc` |
+| `limit` | Maximum: 100. |
+| `page` | Minimum: 1. |
+
+```http
 GET /platformAddresses?page=1&limit=10&order=desc
+```
 
+```json
 {
     "resultSet": [
         {
@@ -4486,22 +5505,37 @@ GET /platformAddresses?page=1&limit=10&order=desc
 }
 ```
 
-Response codes:
-```
-200: OK
-500: Internal Server Error
-```
+#### Status codes
+
+| Status | Meaning |
+| --- | --- |
+| 200 | OK |
+| 500 | Internal Server Error |
+
 ___
 ### Platform Address Info
+
+<!-- endpoint: GET /platformAddress/{platform_address}/info -->
 Return platform address info by given addres (base58check or bech32m)
 
-* `balance`, `totalIncomingAmount` and `totalOutgoingAmount` are credits as strings, since credits
-  overflow a JSON number past ~90,000 DASH
-* an address with nothing on one side of the ledger reads `"0"` there, not `null`
+#### Path parameters
 
-```
+| Parameter | Description |
+| --- | --- |
+| `platform_address` | Platform address. |
+
+#### Response notes
+
+| Field | Description |
+| --- | --- |
+| `balance`, `totalIncomingAmount`, `totalOutgoingAmount` | Credits as strings to preserve precision above JavaScript’s safe integer range. |
+
+- An address with nothing on one side of the ledger reads `"0"` there, not `null`
+```http
 GET /platformAddress/tdashevo1zm37f22lmtkysgznz7mnf3d9tmuh9urrflvjul/info
+```
 
+```json
 {
     "base58Address": "yRpNvoc3hd66c3rNrPRGubVd9vGUoAVpZV",
     "bech32mAddress": "tdashevo1qq79z66rh34l4u2axlz3jv34zwshggnenut9k093",
@@ -4515,29 +5549,48 @@ GET /platformAddress/tdashevo1zm37f22lmtkysgznz7mnf3d9tmuh9urrflvjul/info
 }
 ```
 
-Response codes:
-```
-200: OK
-404: Not found
-500: Internal Server Error
-```
+#### Status codes
+
+| Status | Meaning |
+| --- | --- |
+| 200 | OK |
+| 404 | Not found |
+| 500 | Internal Server Error |
+
 ___
 ### Platform Address Transitions
+
+<!-- endpoint: GET /platformAddress/{platform_address}/transitions -->
 Return all transitions for platform address paged and ordered by block height and index.
 
-* Valid `order` values are `asc` or `desc`
-* `limit` cannot be more than 100
-* `page` cannot be less than 1
-* `amount` is the net change to the address balance in credits (negative on outcome and positive on income)
-* `incoming` is the sign of `amount` (`amount >= 0`)
-* `addressesCount` is always 1 here — a single address always describes its own transition
-* `transaction_type` narrows the page to the given state transition types, by name or by number,
-  and repeats for more than one of them (`&transaction_type=SHIELD&transaction_type=17`). The
-  total follows the filter, so the filtered set can be paged on its own
+#### Path parameters
 
-```
+| Parameter | Description |
+| --- | --- |
+| `platform_address` | Platform address. |
+
+#### Query parameters
+
+| Parameter | Description |
+| --- | --- |
+| `order` | Values: `asc` or `desc` |
+| `limit` | Maximum: 100. |
+| `page` | Minimum: 1. |
+| `transaction_type` | narrows the page to the given state transition types, by name or by number, and repeats for more than one of them (`&transaction_type=SHIELD&transaction_type=17`). The total follows the filter, so the filtered set can be paged on its own |
+
+#### Response notes
+
+| Field | Description |
+| --- | --- |
+| `amount` | is the net change to the address balance in credits (negative on outcome and positive on income) |
+| `incoming` | is the sign of `amount` (`amount >= 0`) |
+| `addressesCount` | is always 1 here — a single address always describes its own transition |
+
+```http
 GET /platformAddress/yRpNvoc3hd66c3rNrPRGubVd9vGUoAVpZV/transitions?page=1&limit=10&order=desc&transaction_type=ADDRESS_FUNDS_TRANSFER
+```
 
+```json
 {
     "resultSet": [
         {
@@ -4571,27 +5624,37 @@ GET /platformAddress/yRpNvoc3hd66c3rNrPRGubVd9vGUoAVpZV/transitions?page=1&limit
 }
 ```
 
-Response codes:
-```
-200: OK
-500: Internal Server Error
-```
+#### Status codes
+
+| Status | Meaning |
+| --- | --- |
+| 200 | OK |
+| 500 | Internal Server Error |
+
 ___
 ### Platform Addresses Info
-Return info for a set of platform addresses in one request, so a wallet can cover a whole
-DIP-17 window without one request per address.
 
-* `addresses` accepts base58check or bech32m, mixed freely
-* at most 100 addresses per request
-* addresses the indexer has never seen are left out of the response, so a short response means
-  the missing addresses are unused
-* the response is ordered by the order the indexer first saw each address, not by the order of
-  the request — key the result by address rather than by position
+<!-- endpoint: POST /platformAddresses/info -->
+Get information for up to 100 platform addresses in one request.
 
-```
+#### Request body
+
+| Parameter | Description |
+| --- | --- |
+| `addresses` | Required array of 1–100 addresses. Accepts `base58check` and `bech32m`; formats can be mixed. |
+
+#### Response notes
+
+- Addresses not found in the index are omitted.
+- Results may appear in a different order from the request. Match them by address, not by position.
+```http
 POST /platformAddresses/info
-{"addresses": ["yRpNvoc3hd66c3rNrPRGubVd9vGUoAVpZV", "tdashevo1qq79z66rh34l4u2axlz3jv34zwshggnenut9k093"]}
+Content-Type: application/json
 
+{"addresses": ["yRpNvoc3hd66c3rNrPRGubVd9vGUoAVpZV", "tdashevo1qq79z66rh34l4u2axlz3jv34zwshggnenut9k093"]}
+```
+
+```json
 [
     {
         "base58Address": "yRpNvoc3hd66c3rNrPRGubVd9vGUoAVpZV",
@@ -4608,40 +5671,53 @@ POST /platformAddresses/info
 ]
 ```
 
-Response codes:
-```
-200: OK
-500: Internal Server Error
-```
+#### Status codes
+
+| Status | Meaning |
+| --- | --- |
+| 200 | OK |
+| 400 | Invalid request parameters. |
+| 500 | Internal Server Error |
+
 ___
 ### Platform Addresses Transitions
+
+<!-- endpoint: POST /platformAddresses/transitions -->
 Return one merged page of transitions across a set of platform addresses, ordered by block
 height and index.
 
-* `addresses` accepts base58check or bech32m, mixed freely
-* at most 100 addresses per request
-* Valid `order` values are `asc` or `desc`
-* `limit` cannot be more than 100
-* `page` cannot be less than 1
-* a transition is listed once no matter how many addresses of the set own a row in it, and
-  `amount` is the net change across the whole set
-* `addressesCount` is how many addresses of the requested set own a row in the transition.
-  `base58Address` and `bech32mAddress` name the address the transition belongs to, and are `null`
-  exactly when that count is above one, since no single address of the set describes the row
-* `incoming` is the sign of `amount` (`amount >= 0`), so a transition whose inflow and outflow
-  across the set cancel out exactly reads as `incoming: true`. Read `amount` itself where the
-  direction has to be exact
-* `transaction_type` narrows the page to the given state transition types, by name or by number,
-  and repeats for more than one of them (`&transaction_type=SHIELD&transaction_type=17`). The
-  total follows the filter, so the filtered set can be paged on its own
-* `data` is `null` whenever the request names more than one address — one serialized transition
-  per row across a whole set of them is a large response for something a caller rarely reads, so
-  it is left to `/transaction/:hash`. A request for a single address still carries it
+#### Request body
 
-```
+| Parameter | Description |
+| --- | --- |
+| `addresses` | Required array of 1–100 addresses. Accepts `base58check` and `bech32m`; formats can be mixed. |
+
+#### Query parameters
+
+| Parameter | Description |
+| --- | --- |
+| `order` | Values: `asc` or `desc` |
+| `limit` | Maximum: 100. |
+| `page` | Minimum: 1. |
+| `transaction_type` | narrows the page to the given state transition types, by name or by number, and repeats for more than one of them (`&transaction_type=SHIELD&transaction_type=17`). The total follows the filter, so the filtered set can be paged on its own |
+
+#### Response notes
+
+| Field | Description |
+| --- | --- |
+| `addressesCount` | is how many addresses of the requested set own a row in the transition. `base58Address` and `bech32mAddress` name the address the transition belongs to, and are `null` exactly when that count is above one, since no single address of the set describes the row |
+| `incoming` | is the sign of `amount` (`amount >= 0`), so a transition whose inflow and outflow across the set cancel out exactly reads as `incoming: true`. Read `amount` itself where the direction has to be exact |
+| `data` | is `null` whenever the request names more than one address — one serialized transition per row across a whole set of them is a large response for something a caller rarely reads, so it is left to `/transaction/:hash`. A request for a single address still carries it |
+
+- A transition is listed once no matter how many addresses of the set own a row in it, and `amount` is the net change across the whole set
+```http
 POST /platformAddresses/transitions?page=1&limit=10&order=desc&transaction_type=ADDRESS_FUNDS_TRANSFER
-{"addresses": ["yRpNvoc3hd66c3rNrPRGubVd9vGUoAVpZV", "yjaZy4BRBd99jB4mSpd6hJQkYFaCeprGQm"]}
+Content-Type: application/json
 
+{"addresses": ["yRpNvoc3hd66c3rNrPRGubVd9vGUoAVpZV", "yjaZy4BRBd99jB4mSpd6hJQkYFaCeprGQm"]}
+```
+
+```json
 {
     "resultSet": [
         {
@@ -4675,8 +5751,10 @@ POST /platformAddresses/transitions?page=1&limit=10&order=desc&transaction_type=
 }
 ```
 
-Response codes:
-```
-200: OK
-500: Internal Server Error
-```
+#### Status codes
+
+| Status | Meaning |
+| --- | --- |
+| 200 | OK |
+| 400 | Invalid request parameters. |
+| 500 | Internal Server Error |

@@ -8,9 +8,10 @@ import './Markdown.css'
 
 interface CustomMarkdownProps {
   children?: string | null
+  components?: Components
 }
 
-export default function CustomMarkdown({ children }: CustomMarkdownProps) {
+export default function CustomMarkdown({ children, components: overrides }: CustomMarkdownProps) {
   const components: Components = {
     h1: HeadingRenderer as Components['h1'],
     h2: HeadingRenderer as Components['h2'],
@@ -30,7 +31,11 @@ export default function CustomMarkdown({ children }: CustomMarkdownProps) {
 
   return (
     <div className={'Markdown'}>
-      <Markdown rehypePlugins={[rehypeRaw]} remarkPlugins={[remarkGfm]} components={components}>
+      <Markdown
+        rehypePlugins={[rehypeRaw]}
+        remarkPlugins={[remarkGfm]}
+        components={{ ...components, ...overrides }}
+      >
         {children ?? ''}
       </Markdown>
     </div>

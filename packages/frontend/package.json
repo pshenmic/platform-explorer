@@ -3,6 +3,7 @@
   "version": "2.5.3",
   "private": true,
   "dependencies": {
+    "@lezer/highlight": "^1.2.3",
     "@codemirror/lang-json": "^6.0.2",
     "@codemirror/theme-one-dark": "^6.1.3",
     "@react-hook/resize-observer": "^1.2.6",
