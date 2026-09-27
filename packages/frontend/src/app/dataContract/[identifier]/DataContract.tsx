@@ -5,7 +5,7 @@ import * as Api from '../../../util/Api'
 import DocumentsList from '../../../components/documents/DocumentsList'
 import { LoadingBlock } from '../../../components/loading'
 import { ErrorMessageBlock } from '../../../components/Errors'
-import { CodeBlock } from '../../../components/data'
+import dynamic from 'next/dynamic'
 import { InfoContainer, PageDataContainer } from '../../../components/ui/containers'
 import {
   DataContractDigestCard,
@@ -30,6 +30,10 @@ import type {
 } from '../../../types'
 
 import './DataContract.css'
+
+const JsonViewer = dynamic(() => import('../../../components/data/JsonViewer'), {
+  loading: () => <LoadingBlock h="450px" loading />
+})
 
 const pagintationConfig = {
   itemsOnPage: {
@@ -303,13 +307,19 @@ function DataContract({ identifier }: DataContractProps) {
             </TabPanel>
             <TabPanel position={'relative'}>
               {!dataContractQuery.isError ? (
-                <LoadingBlock h={'250px'} loading={dataContractQuery.isLoading}>
+                <LoadingBlock
+                  h={dataContractQuery.isLoading ? '250px' : 'auto'}
+                  loading={dataContractQuery.isLoading}
+                >
                   {dataContract.data?.schema ? (
-                    <CodeBlock
-                      smoothSize={activeTab === 'schema'}
-                      className={'DataContract__Schema'}
-                      code={dataContract.data?.schema}
-                    />
+                    activeTab === 'schema' && (
+                      <JsonViewer
+                        maxHeight="min(65vh, 600px)"
+                        label="Data contract schema"
+                        className={'DataContract__Schema'}
+                        value={dataContract.data?.schema}
+                      />
+                    )
                   ) : (
                     <div className={'Tabs__PanelSpacer'}>
                       <ErrorMessageBlock />
