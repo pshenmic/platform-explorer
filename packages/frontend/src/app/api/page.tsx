@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { readFile } from 'fs/promises'
 import path from 'path'
 import Markdown from '../../components/markdown'
+import { ApiNavigation } from './ApiControls'
 import './Api.css'
 
 export const metadata: Metadata = {
@@ -25,6 +26,13 @@ async function ApiRoute() {
   // Server Component: load markdown as content data (no webpack raw-loader)
   const content = await readFile(path.join(process.cwd(), 'src/app/api/content.md'), 'utf8')
 
+  const referenceStart = content.indexOf('Reference:')
+  const referenceEnd = content.indexOf('### ', referenceStart)
+  const entries = [
+    ...content.slice(referenceStart, referenceEnd).matchAll(/\* \[([^\]]+)\]\((#[^)]+)\)/g)
+  ].map(([, title, href]) => ({ title, href }))
+  const body = content.slice(0, referenceStart) + content.slice(referenceEnd)
+
   return (
     <div className={'Api'}>
       <header className="Api__Header InfoBlock">
@@ -34,8 +42,11 @@ async function ApiRoute() {
           Query Dash Platform blocks, transactions, identities, and contracts over HTTP.
         </p>
       </header>
-      <div className="Api__Reference InfoBlock">
-        <Markdown>{content}</Markdown>
+      <div className="Api__Layout">
+        <ApiNavigation entries={entries} />
+        <div className="Api__Reference InfoBlock">
+          <Markdown>{body}</Markdown>
+        </div>
       </div>
     </div>
   )

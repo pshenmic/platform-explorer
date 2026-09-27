@@ -54,11 +54,6 @@
   border-top: 1px solid var(--pe-color-gray-800);
 }
 
-.Api .Markdown > ul:first-of-type {
-  columns: 2;
-  column-gap: var(--pe-space-8);
-}
-
 .Api .Markdown li {
   break-inside: avoid;
   font-family: inherit;
@@ -94,8 +89,92 @@
   .Api {
     margin: var(--pe-space-4) auto;
   }
+}
 
-  .Api .Markdown > ul:first-of-type {
-    columns: 1;
+.Api__Layout {
+  display: grid;
+  grid-template-columns: 15rem minmax(0, 1fr);
+  gap: var(--pe-space-6);
+  align-items: start;
+}
+.ApiNavigation {
+  position: sticky;
+  top: 5rem;
+  min-width: 0;
+}
+.ApiNavigation__Toggle {
+  display: none;
+}
+.ApiNavigation__Content {
+  max-height: calc(100dvh - 11rem);
+  overflow-y: auto;
+  padding: var(--pe-space-3);
+  border: 1px solid var(--pe-color-gray-800);
+  border-radius: var(--pe-radius-lg);
+  background: var(--pe-color-bg);
+}
+.ApiNavigation label {
+  display: block;
+  font-weight: var(--pe-font-weight-bold);
+  margin-bottom: var(--pe-space-3);
+}
+.ApiNavigation input {
+  width: 100%;
+  min-width: 0;
+  padding: var(--pe-space-2);
+  border: 1px solid var(--pe-color-gray-800);
+  border-radius: var(--pe-radius-lg);
+  background: var(--pe-color-bg);
+  color: var(--pe-color-fg);
+}
+.ApiNavigation ul {
+  list-style: none;
+  padding: 0;
+  margin: var(--pe-space-3) 0 0;
+}
+.ApiNavigation a {
+  display: block;
+  padding: var(--pe-space-2);
+  color: var(--pe-color-fg-muted);
+  font-size: var(--pe-text-md);
+  border-radius: var(--pe-radius-lg);
+  overflow-wrap: anywhere;
+}
+.ApiNavigation a:hover {
+  color: var(--pe-color-brand-normal);
+  background: rgba(0, 141, 228, 0.08);
+}
+.ApiNavigation__Toggle {
+  padding: var(--pe-space-3);
+  color: var(--pe-color-brand-normal);
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  font: inherit;
+}
+.Api :is(button, input, a, pre):focus-visible {
+  outline: 2px solid var(--pe-color-brand-normal);
+  outline-offset: 2px;
+}
+@media (max-width: 62em) {
+  .Api__Layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .ApiNavigation {
+    position: static;
+  }
+  .ApiNavigation__Toggle {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    border: 1px solid var(--pe-color-gray-800);
+    border-radius: var(--pe-radius-lg);
+  }
+  .ApiNavigation__Content {
+    display: none;
+    max-height: 22rem;
+  }
+  .ApiNavigation__Content.is-open {
+    display: block;
   }
 }
