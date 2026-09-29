@@ -48,6 +48,9 @@ interface ValidatorsListProps {
   paging?: DataListProps['paging']
   title?: ReactNode
   pinFirst?: boolean
+  sort?: { order_by?: string; order?: string }
+  sortDefault?: { order_by: string; order: string }
+  onSortChange?: (sort: { order_by: string; order: string }) => void
 }
 
 function validatorColumns(canFilter: boolean) {
@@ -111,6 +114,7 @@ function validatorColumns(canFilter: boolean) {
     },
     {
       ...columnLayout.timestamp,
+      sortKey: 'latest_timestamp',
       filterKey: canFilter ? 'timestamp' : undefined,
       filterType: canFilter ? ('daterange' as const) : undefined,
       cell: (validator: Validator) => {
@@ -130,7 +134,10 @@ export const ValidatorsList = ({
   onFilterChange,
   paging,
   title,
-  pinFirst = false
+  pinFirst = false,
+  sort,
+  sortDefault,
+  onSortChange
 }: ValidatorsListProps) => {
   const canFilter = Boolean(onFilterChange)
 
@@ -160,6 +167,9 @@ export const ValidatorsList = ({
       filterValues={filterValues}
       onFilterChange={onFilterChange}
       paging={paging}
+      sort={sort}
+      sortDefault={sortDefault}
+      onSortChange={onSortChange}
       title={title}
     />
   )
