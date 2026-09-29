@@ -185,17 +185,26 @@ class ValidatorsController {
     const epochInfo = Epoch.fromObject(currentEpoch)
 
     let validatorsWithoutBan = []
+    let banListLoaded = false
 
     // Ban status is derived from the current masternode list. A validator that
     // has left the list (collateral spent) is treated as banned here: resolving
     // its precise final ban state requires a per-node historical lookup that is
     // too expensive for the list endpoint (see getFinalPoSeBanHeight, used only
-    // on the single-validator endpoint).
-    if (isBanned !== undefined) {
+    // on the single-validator endpoint). The list is loaded for every response
+    // so those rows can be badged Banned; a Core failure still serves an
+    // unfiltered list, and only fails the request when the caller asked to filter.
+    try {
       const registeredMasternodes = await DashCoreRPC.getProTxList('registered', true)
 
       validatorsWithoutBan = registeredMasternodes.filter(masternode => masternode.state?.PoSeBanHeight === -1)
+      banListLoaded = true
+    } catch (e) {
+      if (isBanned !== undefined) throw e
+      console.error(e)
     }
+
+    const unbannedHashes = new Set(validatorsWithoutBan.map(masternode => String(masternode.proTxHash).toUpperCase()))
 
     const validators = await this.validatorsDAO.getValidators(
       Number(page ?? 1),
@@ -251,10 +260,31 @@ class ValidatorsController {
         }
 
         // isActive is applied outside the per-validator cache: the validator set
-        // rotates independently of the cached ProTx and identity data
+        // rotates independently of the cached ProTx and identity data.
+        // getProTxInfo falls back to the registration block for a validator that
+        // has left the list, and that block still reports PoSeBanHeight -1.
+        // Stamp a coarse ban on a copy so the list badge matches this endpoint's
+        // ban rule without writing the sentinel into the cached ProTx.
+        const rowIsActive = activeValidatorsHashes.has(validator.proTxHash)
+        const banHeight = validatorInfo.proTxInfo?.state?.PoSeBanHeight
+        const knownBan = typeof banHeight === 'number' && Number.isFinite(banHeight) && banHeight >= 0
+        const coarselyBanned = banListLoaded &&
+          !rowIsActive &&
+          !unbannedHashes.has(String(validator.proTxHash).toUpperCase())
+
+        let proTxInfo = validatorInfo.proTxInfo
+
+        if (coarselyBanned && !knownBan && proTxInfo?.state) {
+          proTxInfo = ProTxInfo.fromObject({
+            ...proTxInfo,
+            state: { ...proTxInfo.state, PoSeBanHeight: 0 }
+          })
+        }
+
         return Validator.fromObject({
           ...validatorInfo,
-          isActive: activeValidatorsHashes.has(validator.proTxHash)
+          isActive: rowIsActive,
+          proTxInfo
         })
       }))
 
