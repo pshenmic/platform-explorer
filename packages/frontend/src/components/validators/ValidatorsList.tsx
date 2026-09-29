@@ -99,6 +99,7 @@ function validatorColumns(canFilter: boolean) {
     },
     {
       ...columnLayout.proposedBlocksAmount,
+      sortKey: 'proposed_blocks_amount',
       filterKey: canFilter ? 'blocks_proposed' : undefined,
       filterType: canFilter ? ('range' as const) : undefined,
       priority: 1,
