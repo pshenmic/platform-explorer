@@ -25,6 +25,22 @@ function sameDay(a: Date | null | undefined, b: Date | null | undefined): boolea
   return a.getTime() === b.getTime()
 }
 
+function presetMatching(
+  value: DateRangeFilterValue | null | undefined,
+  config: ChartConfig
+): TimespanValue | null {
+  if (!value?.start || !value.end || (value.mode ?? 'days') !== 'rolling') return null
+  const duration = value.end.getTime() - value.start.getTime()
+  const byDuration = config.timespan.values.find(item => item.durationMs === duration)
+  if (byDuration) return byDuration
+  return (
+    config.timespan.values.find(item => {
+      if (typeof item.durationMs === 'number' || !item.range.start) return false
+      return new Date(item.range.start).getTime() === value.start!.getTime()
+    }) ?? null
+  )
+}
+
 function sameRange(
   a: DateRangeFilterValue | null | undefined,
   b: DateRangeFilterValue | null | undefined
@@ -43,7 +59,9 @@ export const DateRangeFilter = ({
   config = defaultChartConfig,
   compact = false
 }: DateRangeFilterProps) => {
-  const [timespan, setTimespan] = useState<TimespanValue | null>(null)
+  const [timespan, setTimespan] = useState<TimespanValue | null>(() =>
+    presetMatching(value, config)
+  )
   const [calendarValue, setCalendarValue] = useState<CalendarRange>([
     value?.start ?? null,
     value?.end ?? null
@@ -55,7 +73,8 @@ export const DateRangeFilter = ({
       if (sameDay(prev[0], next[0]) && sameDay(prev[1], next[1])) return prev
       return next
     })
-  }, [value?.start, value?.end])
+    setTimespan(presetMatching(value, config))
+  }, [value, config])
 
   const emitChange = (next: DateRangeFilterValue | null) => {
     if (sameRange(next, value)) return
@@ -67,7 +86,10 @@ export const DateRangeFilter = ({
     const rolling =
       typeof timespanValue.durationMs === 'number'
         ? getDynamicRange(timespanValue.durationMs)
-        : timespanValue.range
+        : {
+            start: timespanValue.range.start,
+            end: timespanValue.range.end || new Date().toISOString()
+          }
     const next: DateRangeFilterValue = {
       start: rolling?.start ? new Date(rolling.start) : null,
       end: rolling?.end ? new Date(rolling.end) : null,

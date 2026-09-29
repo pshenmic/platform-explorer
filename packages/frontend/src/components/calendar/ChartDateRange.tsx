@@ -7,27 +7,35 @@ import type { DateRangeFilterValue } from '../filters/types'
 import './ChartDateRange.css'
 
 const DAY = 86400000
-const presets = [
+export const CHART_ALL_START = new Date(Date.UTC(2020, 0, 1))
+const presets: { label: string; durationMs?: number }[] = [
   { label: '24h', durationMs: DAY },
   { label: '1W', durationMs: 7 * DAY },
   { label: '1M', durationMs: 30 * DAY },
   { label: '3M', durationMs: 90 * DAY },
-  { label: '1Y', durationMs: 365 * DAY }
+  { label: '1Y', durationMs: 365 * DAY },
+  { label: 'All' }
 ]
 const config = {
   timespan: {
-    defaultIndex: 2,
-    values: presets.map(preset => ({ ...preset, range: { start: '', end: '' } }))
+    defaultIndex: presets.length - 1,
+    values: presets.map(preset => ({
+      ...preset,
+      range: {
+        start: preset.durationMs == null ? CHART_ALL_START.toISOString() : '',
+        end: ''
+      }
+    }))
   }
 }
 
 export function defaultChartRange(): DateRangeFilterValue {
-  const end = new Date()
-  return { start: new Date(end.getTime() - 30 * DAY), end, mode: 'rolling' }
+  return { start: new Date(CHART_ALL_START), end: new Date(), mode: 'rolling' }
 }
 
 export function chartDateLabel(value: DateRangeFilterValue) {
   if (!value.start || !value.end) return 'Select dates'
+  if (value.mode === 'rolling' && value.start.getTime() === CHART_ALL_START.getTime()) return 'All'
   const duration = value.end.getTime() - value.start.getTime()
   const preset = value.mode === 'rolling' && presets.find(item => item.durationMs === duration)
   if (preset) return preset.label
@@ -92,7 +100,7 @@ export default function ChartDateRange({
             triggerRef.current?.focus()
           }}
         />
-        <p className={'ChartDateRange__Hint'}>Local time · Clear resets to 1M</p>
+        <p className={'ChartDateRange__Hint'}>Local time · Clear resets to All</p>
       </div>
     </>
   )
