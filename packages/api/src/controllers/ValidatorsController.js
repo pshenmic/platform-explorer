@@ -175,7 +175,7 @@ class ValidatorsController {
       return response.status(400).send({ message: 'Bad last proposed block timestamp range' })
     }
 
-    if (!['id', 'latest_timestamp'].includes(orderBy)) {
+    if (!['id', 'latest_timestamp', 'proposed_blocks_amount'].includes(orderBy)) {
       return response.status(400).send({ message: 'invalid ordering field' })
     }
 
