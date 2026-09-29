@@ -18,6 +18,53 @@
   padding: 8px 16px;
   cursor: pointer;
 }
+.ValidatorCharts .TxActivityChart__Head {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  column-gap: 16px;
+  row-gap: 8px;
+}
+.ValidatorCharts .TxActivityChart__HeadText {
+  max-width: none;
+}
+.ValidatorCharts .TxActivityChart__Controls {
+  align-items: flex-end;
+}
+.ValidatorCharts .TxActivityChart__Title {
+  margin-bottom: 0;
+}
+.ValidatorCharts__Readout {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  min-width: 0;
+}
+.ValidatorCharts__ReadoutLabel {
+  font-family: var(--pe-font-mono);
+  font-size: 0.8125rem;
+  line-height: 1.25;
+  color: var(--pe-color-gray-400);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+.ValidatorCharts__Readout.is-on .ValidatorCharts__ReadoutLabel {
+  color: rgba(var(--pe-color-brand-light-rgb), 0.95);
+}
+.ValidatorCharts__Readout.is-pinned .ValidatorCharts__ReadoutLabel {
+  color: var(--pe-color-brand-light);
+}
+.ValidatorCharts__ReadoutValue {
+  display: flex;
+  align-items: baseline;
+  justify-content: flex-end;
+  gap: 10px;
+  flex-shrink: 0;
+}
 .ValidatorCharts__Filters {
   display: flex;
   flex-wrap: nowrap;
@@ -52,6 +99,18 @@
 .ValidatorCharts__Metrics button:focus-visible {
   outline: 2px solid var(--pe-color-brand-light);
   outline-offset: 2px;
+}
+@media screen and (max-width: 47.99em) {
+  .ValidatorCharts .TxActivityChart__Head {
+    column-gap: 8px;
+    row-gap: 6px;
+  }
+  .ValidatorCharts .TxActivityChart__HeadText {
+    max-width: none;
+  }
+  .ValidatorCharts__ReadoutLabel {
+    font-size: 0.6875rem;
+  }
 }
 @media (max-width: 480px) {
   .ValidatorCharts {
