@@ -22,7 +22,12 @@ const ACTIVE_OPTIONS = [
   {
     value: 'queued',
     label: <Badge colorScheme={'gray'}>Inactive</Badge>,
-    searchText: 'inactive banned'
+    searchText: 'inactive'
+  },
+  {
+    value: 'banned',
+    label: <Badge colorScheme={'red'}>Banned</Badge>,
+    searchText: 'banned pose'
   }
 ]
 
