@@ -113,6 +113,23 @@ function isEmptyFilterValue(value: unknown) {
   return false
 }
 
+function hasOpenRange(value: unknown) {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return false
+  const range = value as { min?: unknown; max?: unknown }
+  return String(range.min ?? '').trim() !== '' || String(range.max ?? '').trim() !== ''
+}
+
+// Status is a click. Search and numeric ranges are typed, so those wait.
+function filterCommitDelay(state: Record<string, unknown>) {
+  const ts = state.timestamp as { start?: unknown; end?: unknown } | undefined
+  if (ts?.start && ts?.end) return 0
+  const typing =
+    (typeof state.identifier === 'string' && state.identifier.trim() !== '') ||
+    hasOpenRange(state.blocks_proposed) ||
+    hasOpenRange(state.last_proposed_block_height)
+  return typing ? 400 : 0
+}
+
 function asListResult(validator: Validator, pageSize: number): PaginatedResultSet<Validator> {
   return {
     resultSet: [validator],
@@ -157,7 +174,12 @@ function Validators() {
     const gen = ++fetchGen.current
     const replace = scrollMode === 'pages' || currentPage === 0
     if (replace) {
-      setValidators(prev => ({ ...prev, loading: true, error: false }))
+      setValidators(prev => ({
+        ...prev,
+        loading: true,
+        error: false,
+        data: prev.data ? { ...prev.data, resultSet: [] } : prev.data
+      }))
       setLoadingMore(false)
     } else {
       setLoadingMore(true)
@@ -280,7 +302,7 @@ function Validators() {
           return next
         })
       },
-      dateRangeReady ? 0 : 400
+      dateRangeReady ? 0 : filterCommitDelay(columnFilters)
     )
     return () => window.clearTimeout(id)
   }, [columnFilters])
