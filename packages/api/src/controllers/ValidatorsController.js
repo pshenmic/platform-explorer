@@ -150,6 +150,7 @@ class ValidatorsController {
       page = 1,
       limit = 10,
       order = 'asc',
+      order_by: orderBy = 'id',
       isActive = undefined,
       isBanned = undefined,
       owner,
@@ -172,6 +173,10 @@ class ValidatorsController {
 
     if (lastProposedBlockTimestampStart && lastProposedBlockTimestampEnd && new Date(lastProposedBlockTimestampStart).getTime() > new Date(lastProposedBlockTimestampEnd).getTime()) {
       return response.status(400).send({ message: 'Bad last proposed block timestamp range' })
+    }
+
+    if (!['id', 'latest_timestamp'].includes(orderBy)) {
+      return response.status(400).send({ message: 'invalid ordering field' })
     }
 
     const { validators: activeValidators } = await TenderdashRPC.getValidators()
@@ -207,7 +212,8 @@ class ValidatorsController {
       lastProposedBlockHeightMax,
       lastProposedBlockTimestampStart,
       lastProposedBlockTimestampEnd,
-      lastProposedBlockHash
+      lastProposedBlockHash,
+      orderBy
     )
 
     const activeValidatorsHashes = new Set(activeValidators.map(validator => validator.pro_tx_hash))
