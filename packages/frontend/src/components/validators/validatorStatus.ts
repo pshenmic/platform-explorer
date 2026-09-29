@@ -9,6 +9,6 @@ export function getValidatorStatus(validator?: ValidatorStatusData | null) {
     return { label: 'Banned', colorScheme: 'red' } as const
   }
   if (validator?.isActive === true) return { label: 'Active', colorScheme: 'green' } as const
-  if (validator?.isActive === false) return { label: 'Inactive', colorScheme: 'gray' } as const
+  if (validator?.isActive === false) return { label: 'Waiting for Quorum', colorScheme: 'gray' } as const
   return { label: 'Unknown', colorScheme: 'gray' } as const
 }

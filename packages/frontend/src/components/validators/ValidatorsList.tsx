@@ -21,8 +21,8 @@ const ACTIVE_OPTIONS = [
   },
   {
     value: 'queued',
-    label: <Badge colorScheme={'gray'}>Inactive</Badge>,
-    searchText: 'inactive banned'
+    label: <Badge colorScheme={'gray'}>Waiting for Quorum</Badge>,
+    searchText: 'waiting quorum'
   }
 ]
 
