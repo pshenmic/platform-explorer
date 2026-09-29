@@ -9,5 +9,5 @@ export const columnLayout = {
     minWidth: 120,
     align: 'center'
   },
-  timestamp: { key: 'timestamp', header: 'Last block', minWidth: 128, align: 'right' }
+  timestamp: { key: 'timestamp', header: 'Timestamp', minWidth: 128, align: 'right' }
 } as const
