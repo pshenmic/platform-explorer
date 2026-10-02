@@ -2027,6 +2027,9 @@ Response codes:
 ---
 ### Transfers by Identity
 Return all transfers made by the given identity
+
+`status` is the associated transaction's `SUCCESS` or `FAIL` status. `error` is `null` when no error is present, otherwise the decoded consensus error message. Errors that cannot be decoded return `"Cannot deserialize"`.
+
 * `limit` cannot be more then 100
 * `page` cannot be less then 1
 * `type` cannot be less, then 0 and more then 8
@@ -2049,7 +2052,9 @@ GET /identity/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec/transfers?hash=445E6F
           "txHash": "705C8F9C5010BFA50AC1A05E8E6D54B5F7B2D866ECD0C958BD8B9191CADB02EE",
           "type": "IDENTITY_TOP_UP",
           "blockHash": "10B265FA3B46CEF229A78E6ACE10ABDB168DDD5FFA445079181FA8FD2E77BE3E",
-          "gasUsed": 7880180
+          "gasUsed": 7880180,
+          "status": "SUCCESS",
+          "error": null
       }
     ]
 }
