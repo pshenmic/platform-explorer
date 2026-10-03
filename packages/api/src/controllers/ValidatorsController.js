@@ -6,6 +6,9 @@ const ProTxInfo = require('../models/ProTxInfo')
 const GeoIP = require('../geoip')
 const { checkTcpConnect, calculateInterval, iso8601duration, getFinalPoSeBanHeight, getPlatformQuorums } = require('../utils')
 const Epoch = require('../models/Epoch')
+const ValidatorCore = require('../services/validatorCore')
+const ValidatorEarnings = require('../services/validatorEarnings')
+const getValidatorEpochs = require('../services/validatorEpochs')
 const { base58 } = require('@scure/base')
 const Intervals = require('../enums/IntervalsEnum')
 
@@ -16,6 +19,12 @@ class ValidatorsController {
   constructor (knex, sdk) {
     this.validatorsDAO = new ValidatorsDAO(knex)
     this.sdk = sdk
+    this.core = new ValidatorCore(DashCoreRPC)
+    this.earnings = new ValidatorEarnings(sdk.node, this.core)
+  }
+
+  getValidatorEarnings = async (request, response) => {
+    response.send(await this.earnings.get(request.params.hash))
   }
 
   getValidatorByProTxHash = async (request, response) => {
@@ -62,6 +71,30 @@ class ValidatorsController {
       cache.set(`${VALIDATORS_CACHE_KEY}_${validator.proTxHash}`, validatorInfo, VALIDATORS_CACHE_LIFE_INTERVAL)
     }
 
+    // The list endpoint caches the same object without a voting identity.
+    // Fill it here so a prior list request does not hide the balance.
+    if (validatorInfo.votingIdentity == null) {
+      const votingAddress = validatorInfo.proTxInfo?.state?.votingAddress
+      const publicKeyHash = votingAddress ? Buffer.from(base58.decode(votingAddress)).subarray(1, 21).toString('hex') : null
+      const votingIdentity = publicKeyHash
+        ? (await this.sdk.utils.createVoterIdentifier(validator.proTxHash, publicKeyHash)).base58()
+        : null
+      let votingIdentityBalance = null
+      if (votingIdentity) {
+        try {
+          votingIdentityBalance = String(await this.sdk.identities.getIdentityBalance(votingIdentity))
+        } catch {
+          votingIdentityBalance = null
+        }
+      }
+      validatorInfo = Validator.fromObject({
+        ...validatorInfo,
+        votingIdentity,
+        votingIdentityBalance
+      })
+      cache.set(`${VALIDATORS_CACHE_KEY}_${validator.proTxHash}`, validatorInfo, VALIDATORS_CACHE_LIFE_INTERVAL)
+    }
+
     // For a validator that has left the masternode list, getProTxInfo resolves
     // its state from the registration block, which reports it as not banned.
     // This endpoint reports the precise final ban state instead (the list
@@ -80,11 +113,16 @@ class ValidatorsController {
     const [host] = proTxInfo?.state?.service?.match(/^\d+\.\d+\.\d+\.\d+/) ?? [null]
     const [servicePort] = proTxInfo?.state?.service?.match(/\d+$/) ?? [null]
 
-    const [coreStatus, platformStatus, grpcStatus] = (await Promise.allSettled([
-      checkTcpConnect(servicePort, host),
-      checkTcpConnect(proTxInfo?.state.platformP2PPort, host),
-      checkTcpConnect(proTxInfo?.state.platformHTTPPort, host)
-    ])).map(
+    const grpcPort = Number(proTxInfo?.state.platformHTTPPort ?? 0)
+    const [portChecks, coreDetails] = await Promise.all([
+      Promise.allSettled([
+        checkTcpConnect(servicePort, host),
+        checkTcpConnect(proTxInfo?.state.platformP2PPort, host),
+        checkTcpConnect(grpcPort, host)
+      ]),
+      this.core.details(validator.proTxHash, proTxInfo?.state?.registeredHeight)
+    ])
+    const [coreStatus, platformStatus, grpcStatus] = portChecks.map(
       (e) => ({
         status: e.value ?? e.reason?.code,
         message: e.reason?.message ?? null
@@ -103,7 +141,7 @@ class ValidatorsController {
       },
       platformGrpcPortStatus: {
         host,
-        port: Number(proTxInfo?.state.platformHTTPPort ?? 0),
+        port: grpcPort,
         ...grpcStatus
       }
     }
@@ -114,7 +152,8 @@ class ValidatorsController {
           ...validatorInfo,
           isActive,
           epochInfo,
-          endpoints
+          endpoints,
+          ...coreDetails
         }
       )
     )
@@ -362,6 +401,24 @@ class ValidatorsController {
       interval,
       isNaN(intervalInMs) ? Intervals[interval] : intervalInMs
     )
+
+    response.send(stats)
+  }
+
+  getValidatorEpochStatsByProTxHash = async (request, response) => {
+    const { hash } = request.params
+    const {
+      timestamp_start: timestampStart = new Date().getTime() - 3600000,
+      timestamp_end: timestampEnd = new Date().getTime()
+    } = request.query
+
+    const start = new Date(timestampStart)
+    const end = new Date(timestampEnd)
+    if (!Number.isFinite(start.getTime()) || !Number.isFinite(end.getTime()) || start > end) {
+      return response.status(400).send({ message: 'Invalid timestamp range' })
+    }
+    const epochs = await getValidatorEpochs(this.sdk.node, start, end)
+    const stats = await this.validatorsDAO.getValidatorEpochStatsByProTxHash(hash, start, end, epochs)
 
     response.send(stats)
   }

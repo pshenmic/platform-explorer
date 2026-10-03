@@ -2551,7 +2551,7 @@ describe('Identities routes', () => {
     for (const { name, error, expectedError } of [
       {
         name: 'decoded consensus error',
-        error: cbor.encode({ data: { serializedError: Buffer.alloc(8) } }).toString('base64'),
+        error: (await cbor.encodeAsync({ data: { serializedError: Buffer.alloc(8) } })).toString('base64'),
         expectedError: 'default error'
       },
       {

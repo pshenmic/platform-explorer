@@ -17,6 +17,14 @@ module.exports = class Validator {
   lastWithdrawalTime
   endpoints
   geoIpInfo
+  registeredAt
+  poseScoreMax
+  votingIdentity
+  votingIdentityBalance
+  coreYieldPerYear
+  coreTipTime
+  coreBlockIntervalMs
+  blocksUntilCorePayment
 
   constructor (
     proTxHash,
@@ -33,7 +41,15 @@ module.exports = class Validator {
     identityBalance,
     epochInfo,
     endpoints,
-    geoIpInfo
+    geoIpInfo,
+    registeredAt,
+    poseScoreMax,
+    votingIdentity,
+    votingIdentityBalance,
+    coreYieldPerYear,
+    coreTipTime,
+    coreBlockIntervalMs,
+    blocksUntilCorePayment
   ) {
     this.proTxHash = proTxHash ?? null
     this.isActive = isActive ?? null
@@ -50,6 +66,14 @@ module.exports = class Validator {
     this.lastWithdrawalTime = lastWithdrawalTime ?? null
     this.endpoints = endpoints ?? null
     this.geoIpInfo = geoIpInfo ?? null
+    this.registeredAt = registeredAt ?? null
+    this.poseScoreMax = poseScoreMax ?? null
+    this.votingIdentity = votingIdentity ?? null
+    this.votingIdentityBalance = votingIdentityBalance ?? null
+    this.coreYieldPerYear = coreYieldPerYear ?? null
+    this.coreTipTime = coreTipTime ?? null
+    this.coreBlockIntervalMs = coreBlockIntervalMs ?? null
+    this.blocksUntilCorePayment = blocksUntilCorePayment ?? null
   }
 
   static fromRow ({
@@ -111,7 +135,15 @@ module.exports = class Validator {
     identityBalance,
     epochInfo,
     endpoints,
-    geoIpInfo
+    geoIpInfo,
+    registeredAt,
+    poseScoreMax,
+    votingIdentity,
+    votingIdentityBalance,
+    coreYieldPerYear,
+    coreTipTime,
+    coreBlockIntervalMs,
+    blocksUntilCorePayment
   }) {
     return new Validator(
       proTxHash,
@@ -128,7 +160,15 @@ module.exports = class Validator {
       identityBalance,
       epochInfo,
       endpoints,
-      geoIpInfo
+      geoIpInfo,
+      registeredAt,
+      poseScoreMax,
+      votingIdentity,
+      votingIdentityBalance,
+      coreYieldPerYear,
+      coreTipTime,
+      coreBlockIntervalMs,
+      blocksUntilCorePayment
     )
   }
 }

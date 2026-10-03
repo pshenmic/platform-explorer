@@ -51,6 +51,8 @@ Reference:
 * [Validators](#validators)
 * [Validator by ProTxHash](#validator-by-protxhash)
 * [Validator by Masternode Identifier](#validator-by-masternode-identifier)
+* [Validator Estimated Earnings](#validator-estimated-earnings-by-protxhash)
+* [Validator Epoch Fee Statistic](#validator-epoch-fee-stats-by-protxhash)
 * [Validator Rewards Statistic](#validator-rewards-stats-by-protxhash)
 * [Validator Income Statistic](#validator-income-stats-by-protxhash)
 * [Validator Blocks Statistic](#validator-stats-by-protxhash)
@@ -573,6 +575,15 @@ Get validator by ProTxHash.
 * `lastProposedBlockHeader` field is nullable
 * `geoIpInfo` contains the node location resolved from its service IP with the [DB-IP City Lite](https://db-ip.com) database; it is `null` when the service address has no IPv4 host, and its fields are `null` when the IP is not present in the database
 * the DB-IP City Lite database is licensed under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/): any page displaying `geoIpInfo` data must include an attribution link back to DB-IP.com, e.g. `<a href='https://db-ip.com'>IP Geolocation by DB-IP</a>`
+* `registeredAt` is the registration Core block time (ISO 8601), or `null` when unavailable.
+* `poseScoreMax` is the current PoSe penalty limit (at least 100).
+* `votingIdentity` is derived with the Platform SDK from ProTxHash and the voting key; `votingIdentityBalance` is a decimal credit string. Unavailable values are `null`.
+* `coreYieldPerYear` is an estimated gross annual Core payout in DASH: the latest spendable Core masternode payment (excluding the Platform pool output), annualized at the mean interval of up to 576 recent Core block intervals and divided by the enabled masternode count. It includes the owner/operator payment together, excludes Platform payouts and expenses, and assumes unchanged network conditions. It is not guaranteed income or total APR. It is null for banned or unregistered nodes.
+* `coreTipTime` is the observed Core tip time (ISO 8601); `coreBlockIntervalMs` is the recent mean interval in milliseconds.
+* `blocksUntilCorePayment` is the estimated queue position (1 means next block), or `null` for absent/banned nodes or unavailable data. Changes in the masternode list can change the estimate.
+* Core details are cached for up to 60 seconds. Optional Core fields are `null` if their RPC data is unavailable.
+* Legacy `totalReward` and `epochReward` fields contain transaction fees in indexed proposed blocks, not distributed validator payouts.
+
 ```
 GET /validator/F60A6BF9EC0794BB0CFD1E0F2217933F4B33EDE6FE810692BC275CA18148AEF0
 
@@ -665,6 +676,15 @@ GET /validator/F60A6BF9EC0794BB0CFD1E0F2217933F4B33EDE6FE810692BC275CA18148AEF0
 ### Validator by Masternode Identifier
 Get validator by Masternode Identity.
 * `lastProposedBlockHeader` field is nullable
+* `registeredAt` is the registration Core block time (ISO 8601), or `null` when unavailable.
+* `poseScoreMax` is the current PoSe penalty limit (at least 100).
+* `votingIdentity` is derived with the Platform SDK from ProTxHash and the voting key; `votingIdentityBalance` is a decimal credit string. Unavailable values are `null`.
+* `coreYieldPerYear` is an estimated gross annual Core payout in DASH: the latest spendable Core masternode payment (excluding the Platform pool output), annualized at the mean interval of up to 576 recent Core block intervals and divided by the enabled masternode count. It includes the owner/operator payment together, excludes Platform payouts and expenses, and assumes unchanged network conditions. It is not guaranteed income or total APR. It is null for banned or unregistered nodes.
+* `coreTipTime` is the observed Core tip time (ISO 8601); `coreBlockIntervalMs` is the recent mean interval in milliseconds.
+* `blocksUntilCorePayment` is the estimated queue position (1 means next block), or `null` for absent/banned nodes or unavailable data. Changes in the masternode list can change the estimate.
+* Core details are cached for up to 60 seconds. Optional Core fields are `null` if their RPC data is unavailable.
+* Legacy `totalReward` and `epochReward` fields contain transaction fees in indexed proposed blocks, not distributed validator payouts.
+
 ```
 GET /validator/identity/8tsWRSwsTM5AXv4ViCF9gu39kzjbtfFDM6rCyL2RcFzd
 
@@ -754,6 +774,49 @@ GET /validator/identity/8tsWRSwsTM5AXv4ViCF9gu39kzjbtfFDM6rCyL2RcFzd
 }
 ```
 ---
+### Validator estimated earnings by ProTxHash
+
+Return an approximate gross 30-day income in DASH, split into Core and Platform. This is not net profit or the owner's individual payout.
+
+* `corePerMonth` uses the latest spendable Core payment, the observed mean over up to 576 block intervals, and the enabled masternode count.
+* `platformPerMonth` extrapolates gross proposer shares from six consecutive finalized epochs over their actual elapsed time. Each share uses processing fees + distributed storage fees + Core rewards, multiplied by the validator's fraction of proposed blocks. Newly created storage fees are not added to this pool. Integer division can omit residual payout rounding.
+* Estimates are before operator splits, reward shares and expenses, and assume unchanged network conditions.
+* `platformHistory` describes the observation window and its `grossCredits` as an integer string (1 DASH = 100,000,000,000 credits). It is independent of the explorer's indexed transaction history.
+* `eligible` is false for a banned or unregistered node, or null when Core status is unavailable. Forecasts are null unless eligibility is confirmed. Platform also requires registration before the observation window.
+* Missing or incomplete source data produces null, not zero. `totalPerMonth` is only supplied when both estimates are available. A confirmed epoch with no proposed blocks contributes zero and remains in the observation period.
+
+```http
+GET /validator/F60A6BF9EC0794BB0CFD1E0F2217933F4B33EDE6FE810692BC275CA18148AEF0/earnings
+```
+
+Response fields: `periodDays` (30), `eligible`, `corePerMonth`, `platformPerMonth`, `totalPerMonth`, and nullable `platformHistory` containing `firstEpoch`, `lastEpoch`, `startTime`, `endTime`, `grossCredits`.
+
+### Validator epoch fee stats by ProTxHash
+Return indexed transaction fees and proposed block counts grouped by actual Platform epochs.
+
+* `timestamp_start` and `timestamp_end` are optional ISO 8601 dates; defaults cover the last hour. Start must not exceed end.
+* Returns at most 84 points. Long ranges group consecutive epochs; unavailable internal historical boundaries merge adjacent groups without dropping their blocks or fees; `epoch` and `endEpoch` are inclusive epoch numbers.
+* `timestamp` is the first epoch start; `endTime` is the next epoch boundary (exclusive), or `null` when the group includes the current epoch. The sums are clipped to the requested dates and include only indexed blocks.
+* `fees` is a decimal string in credits, not a validator payout. `blocksCount` counts distinct proposed blocks. Empty groups have zero values; unavailable epoch metadata produces an error rather than zero-filled data.
+* Historical and current epoch metadata are cached for up to 60 seconds. Future epochs are not fabricated. A future-only range returns an empty array.
+
+```
+GET /validator/F60A6BF9EC0794BB0CFD1E0F2217933F4B33EDE6FE810692BC275CA18148AEF0/epochs/stats?timestamp_start=2026-10-01T00:00:00Z&timestamp_end=2026-10-02T00:00:00Z
+
+[
+  {
+    "timestamp": "2026-10-01T00:00:00.000Z",
+    "data": {
+      "epoch": 19000,
+      "endEpoch": 19000,
+      "endTime": "2026-10-01T01:02:00.000Z",
+      "blocksCount": 2,
+      "fees": "1500"
+    }
+  }
+]
+```
+
 ### Validator rewards stats by ProTxHash
 Return a series data for the reward from proposed blocks by validator chart with
 
