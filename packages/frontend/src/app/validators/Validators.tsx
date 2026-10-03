@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useCallback, useRef } from 'react'
 import * as Api from '../../util/Api'
+import { ResponseErrorNotFound } from '../../util/Errors'
 import { ValidatorsList } from '../../components/validators'
 import {
   readListScrollMode,
@@ -23,8 +24,8 @@ const paginateConfig = {
 }
 
 type QueryFilters = Record<string, string | number | boolean | string[] | null | undefined>
-const IDENTIFIER_RE = new RegExp('^[A-Za-z0-9]{43,44}$')
-const HASH_RE = new RegExp('^[A-Fa-f0-9]{64}$')
+const IDENTIFIER_RE = /^[A-Za-z0-9]{43,44}$/
+const HASH_RE = /^[A-Fa-f0-9]{64}$/
 
 function toNumber(value: unknown): number | null {
   if (value === '' || value == null) return null
@@ -175,7 +176,10 @@ function Validators() {
               Api.getValidators(Math.max(1, currentPage + 1), Math.max(1, pageSize), 'asc', {
                 ...listFilters,
                 owner
-              }).catch(() => emptyList(pageSize))
+              }).catch(err => {
+                if (err instanceof ResponseErrorNotFound) return emptyList(pageSize)
+                throw err
+              })
             )
         : Api.getValidators(Math.max(1, currentPage + 1), Math.max(1, pageSize), 'asc', listFilters)
 
@@ -301,18 +305,27 @@ function Validators() {
       <div className={'InfoBlock'}>
         {validators.error ? (
           <div className={'ListPage__Error'}>
-            <ErrorMessageBlock />
+            <ErrorMessageBlock text={'Unable to load validators'} />
+            <button
+              type={'button'}
+              className={'DataList__ModeBtn'}
+              onClick={() => setFilters(value => ({ ...value }))}
+            >
+              Retry
+            </button>
           </div>
         ) : null}
-        <ValidatorsList
-          list={items}
-          loading={validators.loading && (scrollMode === 'pages' || items.length === 0)}
-          filterValues={columnFilters}
-          onFilterChange={onColumnFilterChange}
-          paging={paging}
-          title={'Validators'}
-          pinFirst={true}
-        />
+        {!validators.error && (
+          <ValidatorsList
+            list={items}
+            loading={validators.loading && (scrollMode === 'pages' || items.length === 0)}
+            filterValues={columnFilters}
+            onFilterChange={onColumnFilterChange}
+            paging={paging}
+            title={'Validators'}
+            pinFirst={true}
+          />
+        )}
       </div>
     </div>
   )
