@@ -95,7 +95,7 @@ function Document({ identifier }: DocumentProps) {
       .catch(err => fetchHandlerError(setRate, err))
   }
 
-  useEffect(fetchData, [identifier])
+  useEffect(fetchData, [identifier, DocumentId, typeName])
 
   useEffect(() => {
     if (!identifier) return
