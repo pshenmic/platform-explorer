@@ -706,6 +706,24 @@ const getValidatorByProTxHash = (proTxHash: string): Promise<Validator> => {
   return call<Validator>(`validator/${proTxHash}`, 'GET')
 }
 
+export interface ValidatorEarnings {
+  periodDays: number
+  eligible: boolean | null
+  corePerMonth: number | null
+  platformPerMonth: number | null
+  totalPerMonth: number | null
+  platformHistory: {
+    firstEpoch: number
+    lastEpoch: number
+    startTime: string
+    endTime: string
+    grossCredits: string
+  } | null
+}
+
+export const getValidatorEarnings = (hash: string): Promise<ValidatorEarnings> =>
+  call<ValidatorEarnings>(`validator/${hash}/earnings`, 'GET')
+
 export interface QuorumMember {
   proTxHash: string
   service?: string | null
@@ -753,6 +771,14 @@ interface ValidatorRewardsStatsPoint {
   reward: number
 }
 
+interface ValidatorEpochStatsPoint {
+  epoch: number
+  endEpoch: number
+  endTime: string | null
+  blocksCount: number
+  fees: string
+}
+
 const getBlocksStatsByValidator = (
   proTxHash: string,
   start: string,
@@ -775,6 +801,26 @@ const getRewardsStatsByValidator = (
     `validator/${proTxHash}/rewards/stats?timestamp_start=${start}&timestamp_end=${end}${intervalsCount ? `&intervalsCount=${intervalsCount}` : ''}`,
     'GET'
   )
+}
+
+const getEpochStatsByValidator = async (
+  proTxHash: string,
+  start: string,
+  end: string
+): Promise<Array<SeriesData<ValidatorEpochStatsPoint>>> => {
+  const points = await call<Array<SeriesData<ValidatorEpochStatsPoint>>>(
+    `validator/${proTxHash}/epochs/stats?timestamp_start=${start}&timestamp_end=${end}`,
+    'GET'
+  )
+  if (
+    !Array.isArray(points) ||
+    points.some(
+      point => !point.data || typeof point.data.fees !== 'string' || !('endTime' in point.data)
+    )
+  ) {
+    throw new Error('Epoch statistics require the updated API. Restart the local API and retry.')
+  }
+  return points
 }
 
 const getMasternodeVotes = (
@@ -895,6 +941,7 @@ export {
   getBlocksByValidator,
   getBlocksStatsByValidator,
   getRewardsStatsByValidator,
+  getEpochStatsByValidator,
   getEpoch,
   getContestedResourcesStats,
   getMasternodeVotes,

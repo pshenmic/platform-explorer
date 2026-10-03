@@ -403,7 +403,7 @@ export default function DataList<T = any>({
       aria-busy={loading || paging?.loadingMore ? true : undefined}
       {...wrapperProps}
     >
-      {canFilter || title || paging ? (
+      {title || canFilter || (paging && !paging.hideModeSwitch) ? (
         <div className={'DataList__FilterBar'}>
           {title ? (
             <div className={'DataList__TitleRow'}>
@@ -472,7 +472,7 @@ export default function DataList<T = any>({
               </button>
             ) : null}
           </div>
-          {paging && !showCenteredEmpty ? (
+          {paging && !paging.hideModeSwitch && !showCenteredEmpty ? (
             <DataListPagingBar
               paging={paging}
               itemCount={items.length}
@@ -483,6 +483,16 @@ export default function DataList<T = any>({
             />
           ) : null}
         </div>
+      ) : null}
+      {paging?.hideModeSwitch && !showCenteredEmpty ? (
+        <DataListPagingBar
+          paging={paging}
+          itemCount={items.length}
+          scrollRef={scrollRef}
+          sentinelRef={sentinelRef}
+          loading={loading}
+          pageScroll={!containedScroll}
+        />
       ) : null}
       <div
         ref={scrollRef}

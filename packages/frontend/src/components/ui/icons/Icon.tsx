@@ -31,9 +31,18 @@ function toCssColor(value: string | undefined): string | undefined {
   if (value.startsWith('var(') || value.startsWith('#') || value.startsWith('rgb')) return value
   const token: Record<string, string> = {
     'brand.normal': 'var(--pe-color-brand-normal)',
-    'brand.light': 'var(--pe-color-brand-light)'
+    'brand.light': 'var(--pe-color-brand-light)',
+    'green.label': 'var(--pe-color-green-label)',
+    'green.default': 'var(--pe-color-green-default)',
+    'yellow.default': 'var(--pe-color-yellow-default)',
+    'red.default': 'var(--pe-color-red-default)',
+    'gray.250': 'var(--pe-color-gray-250)'
   }
-  return token[value] ?? value
+  if (token[value]) return token[value]
+  if (/^[a-z]+\.[a-z0-9]+$/i.test(value)) {
+    return `var(--pe-color-${value.replace('.', '-')})`
+  }
+  return value
 }
 
 function Icon({
