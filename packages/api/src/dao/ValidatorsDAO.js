@@ -380,4 +380,38 @@ module.exports = class ValidatorsDAO {
       }))
       .map(({ timestamp, data }) => new SeriesData(timestamp, data))
   }
+
+  getValidatorEpochStatsByProTxHash = async (proTxHash, start, end, epochs) => {
+    if (!epochs.length) return []
+    const boundaries = epochs.map(epoch => ({
+      epoch: epoch.number,
+      end_epoch: epoch.endNumber,
+      start_time: new Date(epoch.startTime).toISOString(),
+      end_time: epoch.endTime == null ? null : new Date(epoch.endTime).toISOString()
+    }))
+    const raw = this.knex.raw.bind(this.knex)
+    const rows = await this.knex
+      .from(this.knex.raw('json_to_recordset(?::json) as epochs(epoch int, end_epoch int, start_time timestamptz, end_time timestamptz)', [JSON.stringify(boundaries)]))
+      .leftJoin('blocks', function () {
+        this.on('blocks.validator', '=', raw('?', [proTxHash.toUpperCase()]))
+          .andOn('blocks.timestamp', '>=', 'epochs.start_time')
+          .andOn(raw('(epochs.end_time IS NULL OR blocks.timestamp < epochs.end_time)'))
+          .andOn('blocks.timestamp', '>=', raw('?', [start.toISOString()]))
+          .andOn('blocks.timestamp', '<=', raw('?', [end.toISOString()]))
+      })
+      .leftJoin('state_transitions', 'state_transitions.block_hash', 'blocks.hash')
+      .select('epochs.epoch', 'epochs.end_epoch', 'epochs.start_time', 'epochs.end_time')
+      .select(this.knex.raw('COUNT(DISTINCT blocks.hash)::int as blocks_count'))
+      .select(this.knex.raw('COALESCE(SUM(state_transitions.gas_used), 0)::text as fees'))
+      .groupBy('epochs.epoch', 'epochs.end_epoch', 'epochs.start_time', 'epochs.end_time')
+      .orderBy('epochs.epoch', 'asc')
+
+    return rows.map(row => new SeriesData(new Date(row.start_time).toISOString(), {
+      epoch: row.epoch,
+      endEpoch: row.end_epoch,
+      endTime: row.end_time ? new Date(row.end_time).toISOString() : null,
+      blocksCount: row.blocks_count,
+      fees: row.fees
+    }))
+  }
 }

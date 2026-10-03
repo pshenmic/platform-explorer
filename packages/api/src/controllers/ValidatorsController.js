@@ -8,6 +8,7 @@ const { checkTcpConnect, calculateInterval, iso8601duration, getFinalPoSeBanHeig
 const Epoch = require('../models/Epoch')
 const ValidatorCore = require('../services/validatorCore')
 const ValidatorEarnings = require('../services/validatorEarnings')
+const getValidatorEpochs = require('../services/validatorEpochs')
 const { base58 } = require('@scure/base')
 const Intervals = require('../enums/IntervalsEnum')
 
@@ -400,6 +401,24 @@ class ValidatorsController {
       interval,
       isNaN(intervalInMs) ? Intervals[interval] : intervalInMs
     )
+
+    response.send(stats)
+  }
+
+  getValidatorEpochStatsByProTxHash = async (request, response) => {
+    const { hash } = request.params
+    const {
+      timestamp_start: timestampStart = new Date().getTime() - 3600000,
+      timestamp_end: timestampEnd = new Date().getTime()
+    } = request.query
+
+    const start = new Date(timestampStart)
+    const end = new Date(timestampEnd)
+    if (!Number.isFinite(start.getTime()) || !Number.isFinite(end.getTime()) || start > end) {
+      return response.status(400).send({ message: 'Invalid timestamp range' })
+    }
+    const epochs = await getValidatorEpochs(this.sdk.node, start, end)
+    const stats = await this.validatorsDAO.getValidatorEpochStatsByProTxHash(hash, start, end, epochs)
 
     response.send(stats)
   }

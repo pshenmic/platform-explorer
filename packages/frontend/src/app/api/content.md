@@ -756,6 +756,32 @@ GET /validator/F60A6BF9EC0794BB0CFD1E0F2217933F4B33EDE6FE810692BC275CA18148AEF0/
 
 Response fields: `periodDays` (30), `eligible`, `corePerMonth`, `platformPerMonth`, `totalPerMonth`, and nullable `platformHistory` containing `firstEpoch`, `lastEpoch`, `startTime`, `endTime`, `grossCredits`.
 
+### Validator epoch fee stats by ProTxHash
+Return indexed transaction fees and proposed block counts grouped by actual Platform epochs.
+
+* `timestamp_start` and `timestamp_end` are optional ISO 8601 dates; defaults cover the last hour. Start must not exceed end.
+* Returns at most 84 points. Long ranges group consecutive epochs; unavailable internal historical boundaries merge adjacent groups without dropping their blocks or fees; `epoch` and `endEpoch` are inclusive epoch numbers.
+* `timestamp` is the first epoch start; `endTime` is the next epoch boundary (exclusive), or `null` when the group includes the current epoch. The sums are clipped to the requested dates and include only indexed blocks.
+* `fees` is a decimal string in credits, not a validator payout. `blocksCount` counts distinct proposed blocks. Empty groups have zero values; unavailable epoch metadata produces an error rather than zero-filled data.
+* Historical and current epoch metadata are cached for up to 60 seconds. Future epochs are not fabricated. A future-only range returns an empty array.
+
+```
+GET /validator/F60A6BF9EC0794BB0CFD1E0F2217933F4B33EDE6FE810692BC275CA18148AEF0/epochs/stats?timestamp_start=2026-10-01T00:00:00Z&timestamp_end=2026-10-02T00:00:00Z
+
+[
+  {
+    "timestamp": "2026-10-01T00:00:00.000Z",
+    "data": {
+      "epoch": 19000,
+      "endEpoch": 19000,
+      "endTime": "2026-10-01T01:02:00.000Z",
+      "blocksCount": 2,
+      "fees": "1500"
+    }
+  }
+]
+```
+
 ### Validator rewards stats by ProTxHash
 Return a series data for the reward from proposed blocks by validator chart with
 

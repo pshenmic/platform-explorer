@@ -533,6 +533,27 @@ module.exports = ({
       }
     },
     {
+      path: '/validator/:hash/epochs/stats',
+      method: 'GET',
+      handler: validatorsController.getValidatorEpochStatsByProTxHash,
+      schema: {
+        params: {
+          type: 'object',
+          properties: {
+            hash: { $ref: 'hash#' }
+          }
+        },
+        querystring: {
+          type: 'object',
+          additionalProperties: false,
+          properties: {
+            timestamp_start: { type: 'string', format: 'date-time' },
+            timestamp_end: { type: 'string', format: 'date-time' }
+          }
+        }
+      }
+    },
+    {
       path: '/validator/:hash/quorums',
       method: 'GET',
       handler: validatorsController.getValidatorQuorumsByProTxHash,

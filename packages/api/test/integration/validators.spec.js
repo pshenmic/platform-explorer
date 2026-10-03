@@ -2548,4 +2548,89 @@ describe('Validators routes', () => {
         .expect('Content-Type', 'application/json; charset=utf-8')
     })
   })
+
+  describe('getValidatorEpochStatsByProTxHash()', async () => {
+    let validatorA
+    let start
+    let end
+    let epochs
+    let epochMock
+
+    before(async () => {
+      validatorA = await fixtures.validator(knex)
+      const anchor = Date.now() - 4 * 3600000
+      epochs = [0, 60, 125].map((minutes, number) => ({ number, startTime: anchor + minutes * 60000 }))
+      epochMock = mock.method(NodeController.prototype, 'getEpochsInfo', async (count, ascending, from = 0) =>
+        ascending ? epochs.slice(from, from + count) : [epochs[2]])
+      start = new Date(anchor)
+      end = new Date(anchor + 3 * 3600000)
+
+      let height = 4000
+      const createBlockWithGas = async (epochOffset, gasUsed) => {
+        const block = await fixtures.block(knex, {
+          validator: validatorA.pro_tx_hash,
+          height: height++,
+          timestamp: new Date(epochs[epochOffset].startTime + 1000)
+        })
+        await fixtures.transaction(knex, {
+          block_hash: block.hash,
+          block_height: block.height,
+          type: IDENTITY_CREDIT_WITHDRAWAL,
+          owner: identities[0].identifier,
+          gas_used: gasUsed
+        })
+      }
+
+      await createBlockWithGas(0, 1000)
+      await createBlockWithGas(0, 500)
+      await createBlockWithGas(1, 200)
+      await createBlockWithGas(2, 300)
+    })
+
+    after(() => epochMock.mock.restore())
+
+    it('should group indexed block fees using actual epoch boundaries', async () => {
+      const { body } = await client.get(`/validator/${validatorA.pro_tx_hash}/epochs/stats?timestamp_start=${start.toISOString()}&timestamp_end=${end.toISOString()}`)
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      assert.equal(body.length, 3)
+      assert.deepEqual(body.map((point) => point.data), [
+        { epoch: 0, endEpoch: 0, endTime: new Date(epochs[1].startTime).toISOString(), blocksCount: 2, fees: '1500' },
+        { epoch: 1, endEpoch: 1, endTime: new Date(epochs[2].startTime).toISOString(), blocksCount: 1, fees: '200' },
+        { epoch: 2, endEpoch: 2, endTime: null, blocksCount: 1, fees: '300' }
+      ])
+      assert.equal(new Date(body[0].timestamp).getTime(), epochs[0].startTime)
+      assert.equal(new Date(body[1].timestamp).getTime(), epochs[1].startTime)
+    })
+
+    it('preserves block counts and fees when adjacent epochs are grouped', async () => {
+      const ValidatorsDAO = require('../../src/dao/ValidatorsDAO')
+      const points = await new ValidatorsDAO(knex).getValidatorEpochStatsByProTxHash(validatorA.pro_tx_hash, start, end, [
+        { number: 0, endNumber: 1, startTime: epochs[0].startTime, endTime: epochs[2].startTime },
+        { number: 2, endNumber: 2, startTime: epochs[2].startTime, endTime: null }
+      ])
+      assert.deepEqual(points.map(point => [point.data.epoch, point.data.endEpoch, point.data.blocksCount, point.data.fees]), [
+        [0, 1, 3, '1700'], [2, 2, 1, '300']
+      ])
+    })
+
+    it('should return zero-filled epochs for a validator without blocks', async () => {
+      const validator = await fixtures.validator(knex)
+
+      const { body } = await client.get(`/validator/${validator.pro_tx_hash}/epochs/stats?timestamp_start=${start.toISOString()}&timestamp_end=${end.toISOString()}`)
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      assert.equal(body.length, 3)
+      assert.ok(body.every((point) => point.data.blocksCount === 0 && point.data.fees === '0'))
+      assert.deepEqual(body.map((point) => point.data.epoch), [0, 1, 2])
+    })
+
+    it('should return error on wrong bounds', async () => {
+      await client.get(`/validator/${validatorA.pro_tx_hash}/epochs/stats?timestamp_start=2025-01-02T00:00:00&timestamp_end=2024-01-08T00:00:00`)
+        .expect(400)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+    })
+  })
 })
