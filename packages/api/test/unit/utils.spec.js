@@ -1946,3 +1946,23 @@ describe('Utils', () => {
     })
   })
 })
+
+describe('Core payment queue', () => {
+  const node = (hash, lastPaidHeight, registeredHeight, PoSeRevivedHeight = -1, PoSeBanHeight = -1) => ({
+    proTxHash: hash,
+    state: { lastPaidHeight, registeredHeight, PoSeRevivedHeight, PoSeBanHeight }
+  })
+  it('uses registration and revival heights and excludes banned nodes', () => {
+    const hashes = [1, 2, 3, 4].map(n => n.toString(16).padStart(64, '0'))
+    const nodes = [node(hashes[0], 0, 200), node(hashes[1], 100, 1), node(hashes[2], 50, 1, 300), node(hashes[3], 1, 1, -1, 10)]
+    assert.equal(utils.blocksUntilCorePayment(hashes[1], nodes), 1)
+    assert.equal(utils.blocksUntilCorePayment(hashes[0], nodes), 2)
+    assert.equal(utils.blocksUntilCorePayment(hashes[2], nodes), 3)
+    assert.equal(utils.blocksUntilCorePayment(hashes[3], nodes), null)
+  })
+  it('breaks ties with Core uint256 byte order', () => {
+    const a = '01' + '00'.repeat(31)
+    const b = '00'.repeat(31) + '01'
+    assert.equal(utils.blocksUntilCorePayment(a, [node(b, 10, 1), node(a, 10, 1)]), 1)
+  })
+})

@@ -64,6 +64,14 @@ class DashCoreRPC {
     return await this.callMethod('getblockhash', [height])
   }
 
+  static async getMasternodePayments (hash) {
+    return await this.callMethod('masternode', ['payments', hash, 1])
+  }
+
+  static async getBlock (hash) {
+    return await this.callMethod('getblock', [hash])
+  }
+
   static async getProTxList (type, detailed, blockHeight = undefined) {
     const args = ['list', type, detailed]
     if (blockHeight) args.push(blockHeight)

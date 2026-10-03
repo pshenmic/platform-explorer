@@ -522,6 +522,17 @@ module.exports = ({
       }
     },
     {
+      path: '/validator/:hash/earnings',
+      method: 'GET',
+      handler: validatorsController.getValidatorEarnings,
+      schema: {
+        params: {
+          type: 'object',
+          properties: { hash: { $ref: 'hash#' } }
+        }
+      }
+    },
+    {
       path: '/validator/:hash/quorums',
       method: 'GET',
       handler: validatorsController.getValidatorQuorumsByProTxHash,

@@ -1617,6 +1617,31 @@ const decodeStateTransition = async (base64) => {
   return decoded
 }
 
+// DIP3 payment queue: enabled masternodes, effective payment height first,
+// ProTx hash as the tie break. Returns how many blocks until this node is
+// paid. 1 means the next block.
+const blocksUntilCorePayment = (proTxHash, masternodes) => {
+  const mine = String(proTxHash || '').toLowerCase()
+  if (!mine) return null
+  const queue = []
+  for (const node of masternodes || []) {
+    const state = node?.state || {}
+    const ban = Number(state.PoSeBanHeight)
+    if (Number.isInteger(ban) && ban >= 0) continue
+    let paid = Number(state.lastPaidHeight)
+    const revived = Number(state.PoSeRevivedHeight)
+    if (Number.isInteger(revived) && revived !== -1 && revived > paid) paid = revived
+    else if (paid === 0) paid = Number(state.registeredHeight)
+    const hash = String(node?.proTxHash || '').toLowerCase()
+    if (!hash || !Number.isFinite(paid)) continue
+    queue.push({ hash, paid, order: Buffer.from(hash, 'hex').reverse() })
+  }
+  // Core compares uint256 storage bytes, the reverse of displayed hexadecimal.
+  queue.sort((a, b) => a.paid - b.paid || Buffer.compare(a.order, b.order))
+  const index = queue.findIndex((node) => node.hash === mine)
+  return index < 0 ? null : index + 1
+}
+
 const checkTcpConnect = (port, host) => {
   return new Promise((resolve, reject) => {
     let connection
@@ -2017,6 +2042,7 @@ module.exports = {
   getKnex,
   sleep,
   checkTcpConnect,
+  blocksUntilCorePayment,
   getFinalPoSeBanHeight,
   getPlatformQuorums,
   buildProposerSchedule,

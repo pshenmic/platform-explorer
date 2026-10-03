@@ -18,6 +18,20 @@ const cache = require('../../src/cache')
 const { NodeController } = require('dash-platform-sdk/src/node')
 const { IdentitiesController } = require('dash-platform-sdk/src/identities')
 
+const emptyDetailFields = {
+  registeredAt: null,
+  poseScoreMax: null,
+  votingIdentity: null,
+  votingIdentityBalance: null,
+  coreYieldPerYear: null,
+  coreTipTime: null,
+  coreBlockIntervalMs: null,
+  blocksUntilCorePayment: null
+}
+
+const { createVoterIdentityId } = require('dash-platform-sdk/src/utils/createVoterIdentityId')
+const expectedVoterIdentity = async hash => (await createVoterIdentityId(hash, Buffer.from(base58.decode('yM1dzQB3cagstSbAsbyaz2uCcn5BxbiX69')).subarray(1, 21).toString('hex'))).base58()
+
 const currentQuorumHash = '0'.repeat(63) + '1'
 const upcomingQuorumHash = '0'.repeat(63) + '2'
 
@@ -245,6 +259,9 @@ describe('Validators routes', () => {
     }))
 
     mock.method(DashCoreRPC, 'getProTxInfo', async () => dashCoreRpcResponse)
+    mock.method(DashCoreRPC, 'getBlockHash', async () => {
+      throw new Error('block time is not used in this test')
+    })
 
     mock.method(GeoIP, 'lookup', () => geoIpInfo)
 
@@ -255,6 +272,7 @@ describe('Validators routes', () => {
     mock.method(GeoIP, 'lookup', () => geoIpInfo)
 
     mock.method(NodeController.prototype, 'getEpochsInfo', epochInfo)
+    mock.method(DashCoreRPC, 'getBlockCount', async () => { throw new Error('Core unavailable in this fixture') })
 
     mock.method(IdentitiesController.prototype, 'getIdentityBalance', async () => 0)
 
@@ -264,6 +282,18 @@ describe('Validators routes', () => {
   after(async () => {
     await server.stop()
     await knex.destroy()
+  })
+
+  it('returns unavailable earnings instead of zeros when source history is missing', async () => {
+    const { body } = await client.get(`/validator/${validators[0].pro_tx_hash}/earnings`).expect(200)
+    assert.deepEqual(body, {
+      periodDays: 30,
+      eligible: true,
+      corePerMonth: null,
+      platformPerMonth: null,
+      totalPerMonth: null,
+      platformHistory: null
+    })
   })
 
   describe('getValidatorByProTxHash()', async () => {
@@ -300,7 +330,15 @@ describe('Validators routes', () => {
         lastWithdrawal: transactions[transactions.length - 1].hash,
         lastWithdrawalTime: timestamp.toISOString(),
         endpoints,
-        geoIpInfo
+        geoIpInfo,
+        registeredAt: null,
+        poseScoreMax: 100,
+        votingIdentity: await expectedVoterIdentity(validator.pro_tx_hash),
+        votingIdentityBalance: '0',
+        coreYieldPerYear: null,
+        blocksUntilCorePayment: null,
+        coreTipTime: null,
+        coreBlockIntervalMs: null
       }
 
       assert.deepEqual(body, expectedValidator)
@@ -354,7 +392,15 @@ describe('Validators routes', () => {
         lastWithdrawal: transactions[transactions.length - 2].hash,
         lastWithdrawalTime: timestamp.toISOString(),
         endpoints,
-        geoIpInfo
+        geoIpInfo,
+        registeredAt: null,
+        poseScoreMax: 100,
+        votingIdentity: await expectedVoterIdentity(validator.pro_tx_hash),
+        votingIdentityBalance: '0',
+        coreYieldPerYear: null,
+        blocksUntilCorePayment: null,
+        coreTipTime: null,
+        coreBlockIntervalMs: null
       }
 
       assert.deepEqual(body, expectedValidator)
@@ -400,7 +446,15 @@ describe('Validators routes', () => {
         lastWithdrawal: transactions[transactions.length - 1].hash,
         lastWithdrawalTime: timestamp.toISOString(),
         endpoints,
-        geoIpInfo
+        geoIpInfo,
+        registeredAt: null,
+        poseScoreMax: 100,
+        votingIdentity: await expectedVoterIdentity(validator.pro_tx_hash),
+        votingIdentityBalance: '0',
+        coreYieldPerYear: null,
+        blocksUntilCorePayment: null,
+        coreTipTime: null,
+        coreBlockIntervalMs: null
       }
 
       assert.deepEqual(body, expectedValidator)
@@ -453,7 +507,15 @@ describe('Validators routes', () => {
         lastWithdrawal: transactions[transactions.length - 2].hash,
         lastWithdrawalTime: timestamp.toISOString(),
         endpoints,
-        geoIpInfo
+        geoIpInfo,
+        registeredAt: null,
+        poseScoreMax: 100,
+        votingIdentity: await expectedVoterIdentity(validator.pro_tx_hash),
+        votingIdentityBalance: '0',
+        coreYieldPerYear: null,
+        blocksUntilCorePayment: null,
+        coreTipTime: null,
+        coreBlockIntervalMs: null
       }
 
       assert.deepEqual(body, expectedValidator)
@@ -521,7 +583,8 @@ describe('Validators routes', () => {
               lastWithdrawal: null,
               lastWithdrawalTime: null,
               endpoints: null,
-              geoIpInfo
+              geoIpInfo,
+              ...emptyDetailFields
             }
           })
 
@@ -579,7 +642,8 @@ describe('Validators routes', () => {
               lastWithdrawal: null,
               lastWithdrawalTime: null,
               endpoints: null,
-              geoIpInfo
+              geoIpInfo,
+              ...emptyDetailFields
             }
           })
 
@@ -637,7 +701,8 @@ describe('Validators routes', () => {
               lastWithdrawal: null,
               lastWithdrawalTime: null,
               endpoints: null,
-              geoIpInfo
+              geoIpInfo,
+              ...emptyDetailFields
             }
           })
 
@@ -697,7 +762,8 @@ describe('Validators routes', () => {
               lastWithdrawal: null,
               lastWithdrawalTime: null,
               endpoints: null,
-              geoIpInfo
+              geoIpInfo,
+              ...emptyDetailFields
             }
           })
 
@@ -761,7 +827,8 @@ describe('Validators routes', () => {
               lastWithdrawal: null,
               lastWithdrawalTime: null,
               endpoints: null,
-              geoIpInfo
+              geoIpInfo,
+              ...emptyDetailFields
             }
           })
 
@@ -821,7 +888,8 @@ describe('Validators routes', () => {
               lastWithdrawal: null,
               lastWithdrawalTime: null,
               endpoints: null,
-              geoIpInfo
+              geoIpInfo,
+              ...emptyDetailFields
             }
           })
 
@@ -880,7 +948,8 @@ describe('Validators routes', () => {
               lastWithdrawal: null,
               lastWithdrawalTime: null,
               endpoints: null,
-              geoIpInfo
+              geoIpInfo,
+              ...emptyDetailFields
             }
           })
 
@@ -937,7 +1006,8 @@ describe('Validators routes', () => {
               lastWithdrawal: null,
               lastWithdrawalTime: null,
               endpoints: null,
-              geoIpInfo
+              geoIpInfo,
+              ...emptyDetailFields
             }
           })
 
@@ -1018,7 +1088,8 @@ describe('Validators routes', () => {
               lastWithdrawal: null,
               lastWithdrawalTime: null,
               endpoints: null,
-              geoIpInfo
+              geoIpInfo,
+              ...emptyDetailFields
             }
           })
 
@@ -1087,7 +1158,8 @@ describe('Validators routes', () => {
               lastWithdrawal: null,
               lastWithdrawalTime: null,
               endpoints: null,
-              geoIpInfo
+              geoIpInfo,
+              ...emptyDetailFields
             }
           })
 
@@ -1156,7 +1228,8 @@ describe('Validators routes', () => {
               lastWithdrawal: null,
               lastWithdrawalTime: null,
               endpoints: null,
-              geoIpInfo
+              geoIpInfo,
+              ...emptyDetailFields
             }
           })
 
@@ -1214,7 +1287,8 @@ describe('Validators routes', () => {
               lastWithdrawal: null,
               lastWithdrawalTime: null,
               endpoints: null,
-              geoIpInfo
+              geoIpInfo,
+              ...emptyDetailFields
             }
           })
 
@@ -1278,7 +1352,8 @@ describe('Validators routes', () => {
               lastWithdrawal: null,
               lastWithdrawalTime: null,
               endpoints: null,
-              geoIpInfo
+              geoIpInfo,
+              ...emptyDetailFields
             }
           })
 
@@ -1337,7 +1412,8 @@ describe('Validators routes', () => {
               lastWithdrawal: null,
               lastWithdrawalTime: null,
               endpoints: null,
-              geoIpInfo
+              geoIpInfo,
+              ...emptyDetailFields
             }
           })
 
@@ -1398,7 +1474,8 @@ describe('Validators routes', () => {
               lastWithdrawal: null,
               lastWithdrawalTime: null,
               endpoints: null,
-              geoIpInfo
+              geoIpInfo,
+              ...emptyDetailFields
             }
           })
 
@@ -1459,7 +1536,8 @@ describe('Validators routes', () => {
               lastWithdrawal: null,
               lastWithdrawalTime: null,
               endpoints: null,
-              geoIpInfo
+              geoIpInfo,
+              ...emptyDetailFields
             }
           })
 
@@ -1520,7 +1598,8 @@ describe('Validators routes', () => {
               lastWithdrawal: null,
               lastWithdrawalTime: null,
               endpoints: null,
-              geoIpInfo
+              geoIpInfo,
+              ...emptyDetailFields
             }
           })
 
@@ -1581,7 +1660,8 @@ describe('Validators routes', () => {
               lastWithdrawal: null,
               lastWithdrawalTime: null,
               endpoints: null,
-              geoIpInfo
+              geoIpInfo,
+              ...emptyDetailFields
             }
           })
 
@@ -1643,7 +1723,8 @@ describe('Validators routes', () => {
               lastWithdrawal: null,
               lastWithdrawalTime: null,
               endpoints: null,
-              geoIpInfo
+              geoIpInfo,
+              ...emptyDetailFields
             }
           })
 
@@ -1703,7 +1784,8 @@ describe('Validators routes', () => {
               lastWithdrawal: null,
               lastWithdrawalTime: null,
               endpoints: null,
-              geoIpInfo
+              geoIpInfo,
+              ...emptyDetailFields
             }
           })
 
@@ -1765,7 +1847,8 @@ describe('Validators routes', () => {
               lastWithdrawal: null,
               lastWithdrawalTime: null,
               endpoints: null,
-              geoIpInfo
+              geoIpInfo,
+              ...emptyDetailFields
             }
           })
 
@@ -1808,7 +1891,8 @@ describe('Validators routes', () => {
               lastWithdrawal: null,
               lastWithdrawalTime: null,
               endpoints: null,
-              geoIpInfo
+              geoIpInfo,
+              ...emptyDetailFields
             }
           })
 
@@ -1854,7 +1938,8 @@ describe('Validators routes', () => {
               lastWithdrawal: null,
               lastWithdrawalTime: null,
               endpoints: null,
-              geoIpInfo
+              geoIpInfo,
+              ...emptyDetailFields
             }
           })
 
@@ -1899,7 +1984,8 @@ describe('Validators routes', () => {
               lastWithdrawal: null,
               lastWithdrawalTime: null,
               endpoints: null,
-              geoIpInfo
+              geoIpInfo,
+              ...emptyDetailFields
             }
           })
 
@@ -1944,7 +2030,8 @@ describe('Validators routes', () => {
               lastWithdrawal: null,
               lastWithdrawalTime: null,
               endpoints: null,
-              geoIpInfo
+              geoIpInfo,
+              ...emptyDetailFields
             }
           })
 
@@ -1989,7 +2076,8 @@ describe('Validators routes', () => {
               lastWithdrawal: null,
               lastWithdrawalTime: null,
               endpoints: null,
-              geoIpInfo
+              geoIpInfo,
+              ...emptyDetailFields
             }
           })
 
@@ -2047,7 +2135,8 @@ describe('Validators routes', () => {
               lastWithdrawal: null,
               lastWithdrawalTime: null,
               endpoints: null,
-              geoIpInfo
+              geoIpInfo,
+              ...emptyDetailFields
             }
           })
 
@@ -2104,7 +2193,8 @@ describe('Validators routes', () => {
               lastWithdrawal: null,
               lastWithdrawalTime: null,
               endpoints: null,
-              geoIpInfo
+              geoIpInfo,
+              ...emptyDetailFields
             }
           })
 
