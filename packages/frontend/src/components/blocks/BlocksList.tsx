@@ -2,7 +2,7 @@
 
 import { columnLayout } from './BlocksList.columns'
 
-import { useMemo } from 'react'
+import { useMemo, type ReactNode } from 'react'
 import { useRouter } from 'next/navigation'
 import { useQuery, useQueries } from '@tanstack/react-query'
 import { Badge } from '../ui/Badge'
@@ -38,7 +38,10 @@ function BlocksList({
   onFilterChange,
   loading,
   skeletonCount,
-  paging
+  paging,
+  title = 'Blocks',
+  showValidator = true,
+  showGas = true
 }: {
   blocks?: any[]
   headerStyles?: string
@@ -48,6 +51,9 @@ function BlocksList({
   loading?: boolean
   skeletonCount?: number
   paging?: DataListProps['paging']
+  title?: ReactNode
+  showValidator?: boolean
+  showGas?: boolean
 }) {
   const router = useRouter()
   const statusQuery = useQuery({
@@ -60,7 +66,7 @@ function BlocksList({
   const rateQuery = useQuery({
     queryKey: ['rate'],
     queryFn: () => Api.getRate(),
-    enabled: blocks.length > 0,
+    enabled: showGas && blocks.length > 0,
     staleTime: 60_000
   })
   const rate = rateQuery.data ?? null
@@ -128,43 +134,52 @@ function BlocksList({
         return epoch ? <EpochTooltip epoch={epoch}>{label}</EpochTooltip> : label
       }
     },
-    {
-      ...columnLayout.validator,
-      filterKey: 'validator',
-      filterType: 'search' as const,
-      filterPlaceholder: 'Validator Pro TX Hash',
-      cell: ({ header }: any) =>
-        header?.validator ? (
-          <LinkContainer
-            onClick={e => {
-              e.stopPropagation()
-              e.preventDefault()
-              router.push(`/validator/${header?.validator}`)
-            }}
-          >
-            <Identifier avatar={true} ellipsis={true} copyButton={true}>
-              {header.validator}
-            </Identifier>
-          </LinkContainer>
-        ) : (
-          <NotActive />
-        )
-    },
-    {
-      ...columnLayout.gas,
-      filterKey: 'gas',
-      filterType: 'range' as const,
-      cell: ({ header }: any) =>
-        typeof header?.totalGasUsed === 'number' || typeof header?.totalGasUsed === 'string' ? (
-          <RateTooltip credits={Number(header.totalGasUsed)} rate={rate}>
-            <span>
-              <BigNumber>{header.totalGasUsed}</BigNumber>
-            </span>
-          </RateTooltip>
-        ) : (
-          <NotActive>-</NotActive>
-        )
-    },
+    ...(showValidator
+      ? [
+          {
+            ...columnLayout.validator,
+            filterKey: 'validator',
+            filterType: 'search' as const,
+            filterPlaceholder: 'Validator Pro TX Hash',
+            cell: ({ header }: any) =>
+              header?.validator ? (
+                <LinkContainer
+                  onClick={e => {
+                    e.stopPropagation()
+                    e.preventDefault()
+                    router.push(`/validator/${header?.validator}`)
+                  }}
+                >
+                  <Identifier avatar={true} ellipsis={true} copyButton={true}>
+                    {header.validator}
+                  </Identifier>
+                </LinkContainer>
+              ) : (
+                <NotActive />
+              )
+          }
+        ]
+      : []),
+    ...(showGas
+      ? [
+          {
+            ...columnLayout.gas,
+            filterKey: 'gas',
+            filterType: 'range' as const,
+            cell: ({ header }: any) =>
+              typeof header?.totalGasUsed === 'number' ||
+              typeof header?.totalGasUsed === 'string' ? (
+                <RateTooltip credits={Number(header.totalGasUsed)} rate={rate}>
+                  <span>
+                    <BigNumber>{header.totalGasUsed}</BigNumber>
+                  </span>
+                </RateTooltip>
+              ) : (
+                <NotActive>-</NotActive>
+              )
+          }
+        ]
+      : []),
     {
       ...columnLayout.txs,
       filterKey: 'tx_count',
@@ -210,7 +225,7 @@ function BlocksList({
       onFilterChange={onFilterChange}
       loading={loading}
       skeletonCount={skeletonCount}
-      title={'Blocks'}
+      title={title}
       paging={paging}
     />
   )
