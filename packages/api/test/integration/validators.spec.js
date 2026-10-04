@@ -2196,6 +2196,7 @@ describe('Validators routes', () => {
 
     describe('filter isBanned', async () => {
       let bannedValidators
+      let departedValidators
 
       before(() => {
         // restore the healthy mocks (preceding describes leave some throwing)
@@ -2208,17 +2209,17 @@ describe('Validators routes', () => {
 
         mock.method(DashCoreRPC, 'getProTxInfo', async () => dashCoreRpcResponse)
 
-        // a banned validator can never be active, so ban a subset of the
-        // inactive validators by dropping them from the registered masternode
-        // list — the list endpoint treats any removed validator as banned
         bannedValidators = inactiveValidators.slice(0, 10)
+        departedValidators = inactiveValidators.slice(10, 12)
 
         mock.method(DashCoreRPC, 'getProTxList', async () =>
           validators
-            .filter(validator => !bannedValidators.some(banned =>
-              banned.pro_tx_hash === validator.pro_tx_hash))
-            .map(validator =>
-              ({ proTxHash: validator.pro_tx_hash, state: { PoSeBanHeight: -1 } })))
+            .filter(validator => !departedValidators.some(departed =>
+              departed.pro_tx_hash === validator.pro_tx_hash))
+            .map(validator => ({
+              proTxHash: validator.pro_tx_hash,
+              state: { PoSeBanHeight: bannedValidators.some(banned => banned.pro_tx_hash === validator.pro_tx_hash) ? 100 : -1 }
+            })))
       })
 
       after(() => {
@@ -2239,6 +2240,7 @@ describe('Validators routes', () => {
         const expectedHashes = bannedValidators.map(validator => validator.pro_tx_hash).sort()
 
         assert.deepEqual(returnedHashes, expectedHashes)
+        assert.ok(body.resultSet.every(validator => validator.proTxInfo.state.PoSeBanHeight === 100))
       })
 
       it('should return only not banned validators', async () => {
@@ -2246,14 +2248,14 @@ describe('Validators routes', () => {
           .expect(200)
           .expect('Content-Type', 'application/json; charset=utf-8')
 
-        const notBannedCount = validators.length - bannedValidators.length
+        const notBannedCount = validators.length - bannedValidators.length - departedValidators.length
 
         assert.equal(body.pagination.total, notBannedCount)
         assert.equal(body.resultSet.length, notBannedCount)
 
         const returnedHashes = body.resultSet.map(validator => validator.proTxHash)
 
-        for (const banned of bannedValidators) {
+        for (const banned of [...bannedValidators, ...departedValidators]) {
           assert.equal(returnedHashes.includes(banned.pro_tx_hash), false)
         }
       })

@@ -384,7 +384,8 @@ Return all validators with pagination info.
 * Valid `order` values are `asc` or `desc`
 * `lastProposedBlockHeader` field is nullable
 * `?isActive=true` boolean can be supplied in the query params to filter by isActive field
-* `?isBanned=true` boolean can be supplied in the query params to filter by PoSe ban status (a banned validator is never active)
+* `isBanned=true` returns currently registered nodes with `PoSeBanHeight >= 0`, excluding active validators; `isBanned=false` returns registered nodes with `PoSeBanHeight = -1`
+* Nodes absent from the current Core registered list are excluded from both `isBanned` filters; their historical ban status is not inferred from their absence
 * `limit` cannot be more then 100 (0 = all validators)
 * `page` cannot be less then 1
 * `blocks_proposed_min` and `blocks_proposed_max` minimum and maximum amount of proposed blocks

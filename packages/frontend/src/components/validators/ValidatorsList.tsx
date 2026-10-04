@@ -81,6 +81,7 @@ function validatorColumns(canFilter: boolean) {
       filterKey: canFilter ? 'isActive' : undefined,
       filterType: canFilter ? ('options' as const) : undefined,
       filterOptions: ACTIVE_OPTIONS,
+      filterMultiple: false,
       cell: (validator: Validator) => {
         const status = getValidatorStatus(validator)
         return <Badge colorScheme={status.colorScheme}>{status.label}</Badge>

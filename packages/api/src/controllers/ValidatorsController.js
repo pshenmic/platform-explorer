@@ -180,19 +180,16 @@ class ValidatorsController {
     const [currentEpoch] = await this.sdk.node.getEpochsInfo(1)
     const epochInfo = Epoch.fromObject(currentEpoch)
 
-    let validatorsWithoutBan = []
-
-    // Ban status is derived from the current masternode list. A validator that
-    // has left the list (collateral spent) is treated as banned here: resolving
-    // its precise final ban state requires a per-node historical lookup that is
-    // too expensive for the list endpoint (see getFinalPoSeBanHeight, used only
-    // on the single-validator endpoint). The list badge uses the ProTx PoSe
-    // height, so a departed node is not painted Banned.
+    let validatorsByBanStatus = []
+    // Only current registered nodes have a known current PoSe ban status.
     if (isBanned !== undefined) {
       const registeredMasternodes = await DashCoreRPC.getProTxList('registered', true)
-
-      validatorsWithoutBan = registeredMasternodes.filter(masternode => masternode.state?.PoSeBanHeight === -1)
+      validatorsByBanStatus = registeredMasternodes.filter(masternode => {
+        const height = masternode.state?.PoSeBanHeight
+        return Number.isInteger(height) && (isBanned ? height >= 0 : height === -1)
+      })
     }
+    const banHeights = new Map(validatorsByBanStatus.map(node => [node.proTxHash.toUpperCase(), node.state.PoSeBanHeight]))
 
     const validators = await this.validatorsDAO.getValidators(
       Number(page ?? 1),
@@ -201,7 +198,7 @@ class ValidatorsController {
       isActive,
       activeValidators,
       isBanned,
-      validatorsWithoutBan,
+      validatorsByBanStatus,
       owner,
       blocksProposedMin,
       blocksProposedMax,
@@ -251,7 +248,13 @@ class ValidatorsController {
         // rotates independently of the cached ProTx and identity data
         return Validator.fromObject({
           ...validatorInfo,
-          isActive: activeValidatorsHashes.has(validator.proTxHash)
+          isActive: activeValidatorsHashes.has(validator.proTxHash),
+          proTxInfo: banHeights.has(validator.proTxHash)
+            ? ProTxInfo.fromObject({
+              ...validatorInfo.proTxInfo,
+              state: { ...validatorInfo.proTxInfo?.state, PoSeBanHeight: banHeights.get(validator.proTxHash) }
+            })
+            : validatorInfo.proTxInfo
         })
       }))
 
