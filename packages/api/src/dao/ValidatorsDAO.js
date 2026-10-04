@@ -251,7 +251,7 @@ module.exports = class ValidatorsDAO {
       filteredSubquery.orderBy('latest_timestamp', order, 'last').orderBy('id', order)
     } else if (orderBy === 'proposed_blocks_amount') {
       filteredSubquery.orderBy('proposed_blocks_amount', order).orderBy('id', order)
-    } else {
+    } else if (orderBy === 'id') {
       filteredSubquery.orderBy('id', order)
     }
 

@@ -660,6 +660,23 @@ describe('Validators routes', () => {
         assert.deepEqual(dated, sorted)
       })
 
+      it('should order validators by last proposed block timestamp asc', async () => {
+        const { body } = await client.get('/validators?order_by=latest_timestamp&order=asc&limit=0')
+          .expect(200)
+          .expect('Content-Type', 'application/json; charset=utf-8')
+
+        assert.equal(body.resultSet.length, validators.length)
+
+        const stamps = body.resultSet.map(validator => validator.lastProposedBlockHeader?.timestamp ?? null)
+        const firstNull = stamps.findIndex(stamp => stamp == null)
+        const dated = firstNull === -1 ? stamps : stamps.slice(0, firstNull)
+        const sorted = dated.slice().sort((a, b) => new Date(a) - new Date(b))
+
+        assert.notEqual(firstNull, -1)
+        assert.ok(stamps.slice(firstNull).every(stamp => stamp == null))
+        assert.deepEqual(dated, sorted)
+      })
+
       it('should order validators by proposed blocks desc', async () => {
         const { body } = await client.get('/validators?order_by=proposed_blocks_amount&order=desc&limit=0')
           .expect(200)
@@ -679,12 +696,14 @@ describe('Validators routes', () => {
         assert.deepEqual(amounts, sorted)
       })
 
-      it('should reject an unknown validators order field', async () => {
-        const { body } = await client.get('/validators?order_by=name')
-          .expect(400)
+      it('should use id ordering for an unknown validators order field', async () => {
+        const { body: expected } = await client.get('/validators?order_by=id&order=desc')
+          .expect(200)
+        const { body } = await client.get('/validators?order_by=name&order=desc')
+          .expect(200)
           .expect('Content-Type', 'application/json; charset=utf-8')
 
-        assert.equal(body.message, 'invalid ordering field')
+        assert.deepEqual(body, expected)
       })
 
       it('should be able to walk through pages', async () => {

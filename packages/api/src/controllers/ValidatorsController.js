@@ -175,10 +175,6 @@ class ValidatorsController {
       return response.status(400).send({ message: 'Bad last proposed block timestamp range' })
     }
 
-    if (!['id', 'latest_timestamp', 'proposed_blocks_amount'].includes(orderBy)) {
-      return response.status(400).send({ message: 'invalid ordering field' })
-    }
-
     const { validators: activeValidators } = await TenderdashRPC.getValidators()
 
     const [currentEpoch] = await this.sdk.node.getEpochsInfo(1)
@@ -213,7 +209,7 @@ class ValidatorsController {
       lastProposedBlockTimestampStart,
       lastProposedBlockTimestampEnd,
       lastProposedBlockHash,
-      orderBy
+      ['id', 'latest_timestamp', 'proposed_blocks_amount'].includes(orderBy) ? orderBy : 'id'
     )
 
     const activeValidatorsHashes = new Set(activeValidators.map(validator => validator.pro_tx_hash))
