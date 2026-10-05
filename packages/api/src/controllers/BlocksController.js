@@ -7,11 +7,32 @@ const TenderdashRPC = require('../tenderdashRpc')
 const PaginatedResultSet = require('../models/PaginatedResultSet')
 const Quorum = require('../models/Quorum')
 const QuorumTypeEnum = require('../enums/QuorumTypeEnum')
+const cache = require('../cache')
+const ServiceNotAvailableError = require('../errors/ServiceNotAvailableError')
 
 class BlocksController {
   constructor (knex, sdk) {
     this.blocksDAO = new BlocksDAO(knex, sdk)
     this.sdk = sdk
+    this.coreBlockCache = cache.create()
+  }
+
+  getCoreBlockHash = async (request, response) => {
+    const { height } = request.params
+
+    try {
+      const hash = await this.coreBlockCache.getOrLoad(height, async () => {
+        const result = await DashCoreRPC.getBlockHash(height)
+        if (typeof result !== 'string' || !/^[a-f0-9]{64}$/i.test(result)) {
+          throw new ServiceNotAvailableError()
+        }
+        return result.toLowerCase()
+      })
+
+      response.header('Cache-Control', 'no-store').send({ height, hash, network: NETWORK })
+    } catch {
+      throw new ServiceNotAvailableError()
+    }
   }
 
   getBlockByHash = async (request, response) => {

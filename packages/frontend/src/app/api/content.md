@@ -11,6 +11,7 @@ Reference:
 * [Status](#status)
 * [Epoch info](#epoch-info)
 * [Block by hash](#block-by-hash)
+* [Core block hash by height](#core-block-hash-by-height)
 * [Blocks by validator](#blocks-by-validator)
 * [Blocks](#blocks)
 * [Average Block Time History](#average-block-time-history)
@@ -230,6 +231,22 @@ HTTP /epoch/2492
 }
 ```
 ---
+### Core block hash by height
+
+`GET /core/block/:height` resolves a Dash Core (L1) block height on the API's
+configured network. It does not query Platform block heights.
+
+The height must be an integer from 0 to 2147483647. A successful response contains
+`height`, the lowercase 64-character `hash`, and `network` (`mainnet` or `testnet`).
+Invalid parameters return 400. Unavailable heights, RPC failures, timeouts, or
+invalid RPC data return 503; clients should display the height without a link.
+
+Successful lookups are cached for 60 seconds in a bounded, 256-entry cache with
+concurrent request deduplication and a 15-second timeout. Failures are not cached.
+Responses use `Cache-Control: no-store`; the short server TTL allows block hashes
+to refresh after a Core reorganization. Clients must not use results from another
+network to construct explorer links.
+
 ### Block by hash
 Get a block by hash
 

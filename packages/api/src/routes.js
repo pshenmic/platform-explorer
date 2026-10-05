@@ -61,6 +61,20 @@ module.exports = ({
       handler: epochController.getEpochByIndex
     },
     {
+      path: '/core/block/:height',
+      method: 'GET',
+      handler: blocksController.getCoreBlockHash,
+      schema: {
+        params: {
+          type: 'object',
+          required: ['height'],
+          properties: {
+            height: { type: 'integer', minimum: 0, maximum: 2147483647 }
+          }
+        }
+      }
+    },
+    {
       path: '/block/:hash',
       method: 'GET',
       handler: blocksController.getBlockByHash,
