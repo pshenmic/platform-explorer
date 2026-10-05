@@ -22,10 +22,10 @@ module.exports = class Validator {
   votingIdentityBalance
   poseScoreMax
   blocksUntilCorePayment
-  registeredBlockHash
-  lastPaidBlockHash
-  poseRevivedBlockHash
-  poseBanBlockHash
+  registeredCoreBlockHash
+  lastPaidCoreBlockHash
+  poseRevivedCoreBlockHash
+  poseBanCoreBlockHash
   coreYieldPerYear
   coreTipTime
   coreBlockIntervalMs
@@ -51,10 +51,10 @@ module.exports = class Validator {
     votingIdentityBalance,
     poseScoreMax,
     blocksUntilCorePayment,
-    registeredBlockHash,
-    lastPaidBlockHash,
-    poseRevivedBlockHash,
-    poseBanBlockHash,
+    registeredCoreBlockHash,
+    lastPaidCoreBlockHash,
+    poseRevivedCoreBlockHash,
+    poseBanCoreBlockHash,
     coreYieldPerYear,
     coreTipTime,
     coreBlockIntervalMs
@@ -79,10 +79,10 @@ module.exports = class Validator {
     this.votingIdentityBalance = votingIdentityBalance ?? null
     this.poseScoreMax = poseScoreMax ?? null
     this.blocksUntilCorePayment = blocksUntilCorePayment ?? null
-    this.registeredBlockHash = registeredBlockHash ?? null
-    this.lastPaidBlockHash = lastPaidBlockHash ?? null
-    this.poseRevivedBlockHash = poseRevivedBlockHash ?? null
-    this.poseBanBlockHash = poseBanBlockHash ?? null
+    this.registeredCoreBlockHash = registeredCoreBlockHash ?? null
+    this.lastPaidCoreBlockHash = lastPaidCoreBlockHash ?? null
+    this.poseRevivedCoreBlockHash = poseRevivedCoreBlockHash ?? null
+    this.poseBanCoreBlockHash = poseBanCoreBlockHash ?? null
     this.coreYieldPerYear = coreYieldPerYear ?? null
     this.coreTipTime = coreTipTime ?? null
     this.coreBlockIntervalMs = coreBlockIntervalMs ?? null
@@ -153,10 +153,10 @@ module.exports = class Validator {
     votingIdentityBalance,
     poseScoreMax,
     blocksUntilCorePayment,
-    registeredBlockHash,
-    lastPaidBlockHash,
-    poseRevivedBlockHash,
-    poseBanBlockHash,
+    registeredCoreBlockHash,
+    lastPaidCoreBlockHash,
+    poseRevivedCoreBlockHash,
+    poseBanCoreBlockHash,
     coreYieldPerYear,
     coreTipTime,
     coreBlockIntervalMs
@@ -182,10 +182,10 @@ module.exports = class Validator {
       votingIdentityBalance,
       poseScoreMax,
       blocksUntilCorePayment,
-      registeredBlockHash,
-      lastPaidBlockHash,
-      poseRevivedBlockHash,
-      poseBanBlockHash,
+      registeredCoreBlockHash,
+      lastPaidCoreBlockHash,
+      poseRevivedCoreBlockHash,
+      poseBanCoreBlockHash,
       coreYieldPerYear,
       coreTipTime,
       coreBlockIntervalMs

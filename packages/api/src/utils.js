@@ -2,7 +2,7 @@ const crypto = require('crypto')
 const StateTransitionEnum = require('./enums/StateTransitionEnum')
 const DocumentActionEnum = require('./enums/DocumentActionEnum')
 const net = require('net')
-const { TCP_CONNECT_TIMEOUT, NETWORK, DPNS_CONTRACT, BANNED_STATE_CACHE_KEY, PLATFORM_QUORUMS_CACHE_KEY, VALIDATORS_CACHE_LIFE_INTERVAL, MASTERNODE_LIST_CACHE_KEY, MASTERNODE_LIST_CACHE_LIFE_INTERVAL, CORE_BLOCK_HASH_CACHE_KEY, CORE_BLOCK_HASH_CACHE_MAX_ENTRIES, CORE_BLOCK_HASH_CACHE_LIFE_INTERVAL, CORE_NETWORK_CACHE_KEY, CORE_NETWORK_CACHE_LIFE_INTERVAL, DUFFS_PER_DASH, CORE_BLOCKS_PER_DAY } = require('./constants')
+const { TCP_CONNECT_TIMEOUT, NETWORK, DPNS_CONTRACT, BANNED_STATE_CACHE_KEY, PLATFORM_QUORUMS_CACHE_KEY, VALIDATORS_CACHE_LIFE_INTERVAL, PROTX_LIST_CACHE_KEY, PROTX_LIST_CACHE_LIFE_INTERVAL, CORE_BLOCK_HASH_CACHE_KEY, CORE_BLOCK_HASH_CACHE_MAX_ENTRIES, CORE_BLOCK_HASH_CACHE_LIFE_INTERVAL, CORE_NETWORK_CACHE_KEY, CORE_NETWORK_CACHE_LIFE_INTERVAL, DUFFS_PER_DASH, CORE_BLOCKS_PER_DAY } = require('./constants')
 const DashCoreRPC = require('./dashcoreRpc')
 const TenderdashRPC = require('./tenderdashRpc')
 const Quorum = require('./models/Quorum')
@@ -1801,8 +1801,8 @@ const getCoreYieldPerYear = async (corePayments, type, masternodes) => {
   return amount / DUFFS_PER_DASH * 365 * 86400000 / (endTime - startTime)
 }
 
-const getMasternodeList = async () => {
-  const cached = cache.get(MASTERNODE_LIST_CACHE_KEY)
+const getProTxList = async () => {
+  const cached = cache.get(PROTX_LIST_CACHE_KEY)
 
   if (cached) {
     return cached
@@ -1810,7 +1810,7 @@ const getMasternodeList = async () => {
 
   const masternodes = await DashCoreRPC.getProTxList('registered', true)
 
-  cache.set(MASTERNODE_LIST_CACHE_KEY, masternodes, MASTERNODE_LIST_CACHE_LIFE_INTERVAL)
+  cache.set(PROTX_LIST_CACHE_KEY, masternodes, PROTX_LIST_CACHE_LIFE_INTERVAL)
 
   return masternodes
 }
@@ -2161,7 +2161,7 @@ module.exports = {
   getCoreBlockTime,
   getCoreNetworkInfo,
   getCoreYieldPerYear,
-  getMasternodeList,
+  getProTxList,
   blocksUntilCorePayment,
   getFinalPoSeBanHeight,
   getPlatformQuorums,

@@ -11,7 +11,7 @@ module.exports = {
   VALIDATORS_CACHE_KEY: 'validators',
   BANNED_STATE_CACHE_KEY: 'banned_state',
   PLATFORM_QUORUMS_CACHE_KEY: 'platform_quorums',
-  MASTERNODE_LIST_CACHE_KEY: 'masternode_list',
+  PROTX_LIST_CACHE_KEY: 'protx_list',
   CORE_BLOCK_HASH_CACHE_KEY: 'core_block_hash',
   CORE_BLOCK_HASH_CACHE_MAX_ENTRIES: 100000,
   CORE_BLOCK_HASH_CACHE_LIFE_INTERVAL: 14 * 86400000,
@@ -22,8 +22,7 @@ module.exports = {
   DUFFS_PER_DASH: 100000000,
   CREDITS_PER_DASH: 100000000000,
   EPOCH_STATS_MAX_POINTS: 84,
-  // the Core payment queue moves by one masternode every Core block (2.5 minutes)
-  MASTERNODE_LIST_CACHE_LIFE_INTERVAL: 60000,
+  PROTX_LIST_CACHE_LIFE_INTERVAL: 60000,
   DPNS_CONTRACT: 'GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec',
   WITHDRAWAL_CONTRACT: '4fJLR2GYTPFdomuTVvNy3VRrvWgvkKPzqehEBpNf2nk6',
   NETWORK: process.env.NETWORK ?? 'testnet',

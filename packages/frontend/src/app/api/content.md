@@ -546,7 +546,7 @@ Get validator by ProTxHash.
 * `votingIdentity` is derived from the current voting key of the masternode, `votingIdentityBalance` is `null` when the identity does not exist
 * `poseScoreMax` is the PoSe penalty that bans the masternode: the size of the masternode list, at least 100
 * `blocksUntilCorePayment` is the position in the Core payment queue, `1` means the next Core block. `null` for a banned or removed masternode
-* `registeredBlockHash`, `lastPaidBlockHash`, `poseRevivedBlockHash` and `poseBanBlockHash` are the hashes of the Core blocks at `registeredHeight`, `lastPaidHeight`, `PoSeRevivedHeight` and `PoSeBanHeight` of `proTxInfo.state`, `null` when the height is not set
+* `registeredCoreBlockHash`, `lastPaidCoreBlockHash`, `poseRevivedCoreBlockHash` and `poseBanCoreBlockHash` are the hashes of the Core blocks at `registeredHeight`, `lastPaidHeight`, `PoSeRevivedHeight` and `PoSeBanHeight` of `proTxInfo.state`, `null` when the height is not set
 * `coreYieldPerYear` is the estimated gross Core payout of the masternode in DASH per year, owner and operator outputs together: the median of what the enabled masternodes of its type were paid in the last 30 days of Core blocks, annualized. It does not include Platform rewards and expenses. `null` for a banned or removed masternode
 * `coreTipTime` is the time of the latest Core block, `coreBlockIntervalMs` is the mean Core block interval of the last day (576 blocks)
 * `geoIpInfo` contains the node location resolved from its service IP with the [DB-IP City Lite](https://db-ip.com) database; it is `null` when the service address has no IPv4 host, and its fields are `null` when the IP is not present in the database
@@ -642,10 +642,10 @@ GET /validator/F60A6BF9EC0794BB0CFD1E0F2217933F4B33EDE6FE810692BC275CA18148AEF0
   "votingIdentityBalance": "0",
   "poseScoreMax": 391,
   "blocksUntilCorePayment": 12,
-  "registeredBlockHash": "0000011b36ac5d60ab17bcdd2443e02b4c349ceabc3a6fca5e20ca1eab6eb145",
-  "lastPaidBlockHash": "000000a71d7d146f921a12a1acb4307e7f351f45d87373da1c4e3c121dba2772",
-  "poseRevivedBlockHash": "0000004f429c99291be00994841ec9fc9288413b9e0384cbf5750a20a21e11e4",
-  "poseBanBlockHash": null,
+  "registeredCoreBlockHash": "0000011b36ac5d60ab17bcdd2443e02b4c349ceabc3a6fca5e20ca1eab6eb145",
+  "lastPaidCoreBlockHash": "000000a71d7d146f921a12a1acb4307e7f351f45d87373da1c4e3c121dba2772",
+  "poseRevivedCoreBlockHash": "0000004f429c99291be00994841ec9fc9288413b9e0384cbf5750a20a21e11e4",
+  "poseBanCoreBlockHash": null,
   "coreYieldPerYear": 2818.752623913541,
   "coreTipTime": "2026-10-05T15:24:15.000Z",
   "coreBlockIntervalMs": 132675
@@ -746,10 +746,10 @@ GET /validator/identity/8tsWRSwsTM5AXv4ViCF9gu39kzjbtfFDM6rCyL2RcFzd
   "votingIdentityBalance": "0",
   "poseScoreMax": 391,
   "blocksUntilCorePayment": 12,
-  "registeredBlockHash": "0000011b36ac5d60ab17bcdd2443e02b4c349ceabc3a6fca5e20ca1eab6eb145",
-  "lastPaidBlockHash": "000000a71d7d146f921a12a1acb4307e7f351f45d87373da1c4e3c121dba2772",
-  "poseRevivedBlockHash": "0000004f429c99291be00994841ec9fc9288413b9e0384cbf5750a20a21e11e4",
-  "poseBanBlockHash": null,
+  "registeredCoreBlockHash": "0000011b36ac5d60ab17bcdd2443e02b4c349ceabc3a6fca5e20ca1eab6eb145",
+  "lastPaidCoreBlockHash": "000000a71d7d146f921a12a1acb4307e7f351f45d87373da1c4e3c121dba2772",
+  "poseRevivedCoreBlockHash": "0000004f429c99291be00994841ec9fc9288413b9e0384cbf5750a20a21e11e4",
+  "poseBanCoreBlockHash": null,
   "coreYieldPerYear": 2818.752623913541,
   "coreTipTime": "2026-10-05T15:24:15.000Z",
   "coreBlockIntervalMs": 132675
