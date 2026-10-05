@@ -1,3 +1,25 @@
+.TransactionPage.PageDataContainer {
+  max-width: 1920px;
+  margin-inline: auto;
+  padding-inline: var(--pe-space-3);
+}
+
+.TransactionPage .PageDataContainer__Header,
+.TransactionPage .PageDataContainer__Content {
+  padding-inline: var(--pe-space-4);
+}
+
+@media screen and (min-width: 48.01em) {
+  .TransactionPage.PageDataContainer {
+    padding-inline: var(--pe-space-4);
+  }
+
+  .TransactionPage .PageDataContainer__Header,
+  .TransactionPage .PageDataContainer__Content {
+    padding-inline: var(--pe-space-6);
+  }
+}
+
 .TransactionPage__CommonInfo > .InfoLine--Loading .InfoLine__Value,
 .TransactionPage__DetailsInfo > .InfoLine--Loading .InfoLine__Value {
   height: 28px;
