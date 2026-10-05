@@ -389,25 +389,53 @@ module.exports = class ValidatorsDAO {
       .select('id', 'pro_tx_hash')
       .whereILike('pro_tx_hash', proTxHash)
 
+    const bounds = this.knex.select(
+      this.knex.raw('COALESCE((?), 0) as first_epoch', [this.getBlockAt(start).select('epoch')]),
+      this.knex.raw('(?) as last_epoch', [this.getBlockAt(end).select('epoch')])
+    )
+
     const epochs = this.knex('blocks')
       .select(
-        'blocks.epoch',
-        this.knex.raw('MIN(blocks.timestamp) as start_time'),
-        this.knex.raw('(SELECT next_blocks.timestamp FROM blocks AS next_blocks WHERE next_blocks.height = MAX(blocks.height) + 1) as end_time'),
-        this.knex.raw('COUNT(DISTINCT blocks.hash) as total_blocks'),
-        this.knex.raw('COUNT(DISTINCT blocks.hash) FILTER (WHERE blocks.validator_id = (SELECT id FROM validator)) as blocks_proposed'),
-        this.knex.raw('COALESCE(SUM(state_transitions.gas_used) FILTER (WHERE blocks.validator_id = (SELECT id FROM validator)), 0) as fees'),
-        this.knex.raw('(SELECT CASE WHEN COUNT(*) > 0 THEN COALESCE(SUM(amount) FILTER (WHERE platform_rewards.pro_tx_hash = (SELECT pro_tx_hash FROM validator)), 0) END FROM platform_rewards WHERE platform_rewards.epoch = blocks.epoch) as reward'),
-        this.knex.raw('NTILE(?) OVER (ORDER BY blocks.epoch) as point', [intervalsCount])
+        'epoch',
+        this.knex.raw('MIN(timestamp) as start_time'),
+        this.knex.raw('MAX(height) as last_height'),
+        this.knex.raw('COUNT(*) as total_blocks'),
+        this.knex.raw('COUNT(*) FILTER (WHERE validator_id = (SELECT id FROM validator)) as blocks_proposed')
       )
-      .leftJoin('state_transitions', 'state_transitions.block_hash', 'blocks.hash')
-      .whereRaw('blocks.epoch >= COALESCE((?), 0)', [this.getBlockAt(start).select('epoch')])
-      .andWhereRaw('blocks.epoch <= (?)', [this.getBlockAt(end).select('epoch')])
+      .whereRaw('epoch BETWEEN (SELECT first_epoch FROM bounds) AND (SELECT last_epoch FROM bounds)')
+      .groupBy('epoch')
+
+    const fees = this.knex('blocks')
+      .select('blocks.epoch', this.knex.raw('SUM(state_transitions.gas_used) as fees'))
+      .join('state_transitions', 'state_transitions.block_hash', 'blocks.hash')
+      .whereRaw('blocks.validator_id = (SELECT id FROM validator)')
+      .whereRaw('blocks.epoch BETWEEN (SELECT first_epoch FROM bounds) AND (SELECT last_epoch FROM bounds)')
       .groupBy('blocks.epoch')
+
+    const rewards = this.knex('platform_rewards')
+      .select('epoch', this.knex.raw('COALESCE(SUM(amount) FILTER (WHERE pro_tx_hash = (SELECT pro_tx_hash FROM validator)), 0) as reward'))
+      .whereRaw('epoch BETWEEN (SELECT first_epoch FROM bounds) AND (SELECT last_epoch FROM bounds)')
+      .groupBy('epoch')
+
+    const points = this.knex('epochs')
+      .select(
+        'epochs.*',
+        'next_blocks.timestamp as end_time',
+        this.knex.raw('COALESCE(fees.fees, 0) as fees'),
+        'rewards.reward',
+        this.knex.raw('NTILE(?) OVER (ORDER BY epochs.epoch) as point', [intervalsCount])
+      )
+      .leftJoin('fees', 'fees.epoch', 'epochs.epoch')
+      .leftJoin('rewards', 'rewards.epoch', 'epochs.epoch')
+      .leftJoin('blocks as next_blocks', 'next_blocks.height', this.knex.raw('epochs.last_height + 1'))
 
     const rows = await this.knex
       .with('validator', validator)
+      .with('bounds', bounds)
       .with('epochs', epochs)
+      .with('fees', fees)
+      .with('rewards', rewards)
+      .with('points', points)
       .select(
         this.knex.raw('MIN(epoch) as epoch'),
         this.knex.raw('MAX(epoch) as end_epoch'),
@@ -418,7 +446,7 @@ module.exports = class ValidatorsDAO {
         this.knex.raw('SUM(fees) as fees'),
         this.knex.raw('SUM(reward) as reward')
       )
-      .from('epochs')
+      .from('points')
       .groupBy('point')
       .orderBy('point', 'asc')
 
@@ -440,28 +468,31 @@ module.exports = class ValidatorsDAO {
       .select('id', 'pro_tx_hash')
       .whereILike('pro_tx_hash', proTxHash)
 
+    const bounds = this.knex.select(
+      this.knex.raw('COALESCE((?), 0) as start_height', [this.getBlockAt(start).select('height')]),
+      this.knex.raw('COALESCE((?), 0) as start_l1_locked_height', [this.getBlockAt(start).select('l1_locked_height')]),
+      this.knex.raw('COALESCE((?), 0) as end_height', [this.getBlockAt(end).select('height')]),
+      this.knex.raw('COALESCE((?), 0) as end_l1_locked_height', [this.getBlockAt(end).select('l1_locked_height')])
+    )
+
     const corePayments = this.knex('core_payments')
-      .whereRaw('core_payments.pro_tx_hash = (SELECT pro_tx_hash FROM validator)')
-      .andWhere('core_block_height', '>', this.knex.raw('COALESCE((?), 0)', [this.getBlockAt(start).select('l1_locked_height')]))
-      .andWhere('core_block_height', '<=', this.knex.raw('COALESCE((?), 0)', [this.getBlockAt(end).select('l1_locked_height')]))
+      .select(this.knex.raw('COUNT(*) as core_payments'), this.knex.raw('SUM(amount) as core_amount'))
+      .whereRaw('pro_tx_hash = (SELECT pro_tx_hash FROM validator)')
+      .whereRaw('core_block_height > (SELECT start_l1_locked_height FROM bounds)')
+      .whereRaw('core_block_height <= (SELECT end_l1_locked_height FROM bounds)')
 
-    const platformRewards = this.knex('platform_rewards')
+    const rewards = this.knex('platform_rewards')
       .select('epoch', 'amount')
-      .whereRaw('platform_rewards.pro_tx_hash = (SELECT pro_tx_hash FROM validator)')
-      .andWhere('block_height', '>', this.knex.raw('COALESCE((?), 0)', [this.getBlockAt(start).select('height')]))
-      .andWhere('block_height', '<=', this.knex.raw('COALESCE((?), 0)', [this.getBlockAt(end).select('height')]))
+      .whereRaw('pro_tx_hash = (SELECT pro_tx_hash FROM validator)')
+      .whereRaw('block_height > (SELECT start_height FROM bounds)')
+      .whereRaw('block_height <= (SELECT end_height FROM bounds)')
 
-    const [row] = await this.knex
-      .with('validator', validator)
-      .with('rewards', platformRewards)
+    const platformRewards = this.knex('rewards')
       .select(
-        this.knex('validator').select('id').as('validator_id'),
-        corePayments.clone().count('*').as('core_payments'),
-        corePayments.clone().sum('amount').as('core_amount'),
-        this.knex('rewards').count('*').as('epochs'),
-        this.knex('rewards').min('epoch').as('first_epoch'),
-        this.knex('rewards').max('epoch').as('last_epoch'),
-        this.knex('rewards').sum('amount').as('reward'),
+        this.knex.raw('COUNT(*) as epochs'),
+        this.knex.raw('MIN(epoch) as first_epoch'),
+        this.knex.raw('MAX(epoch) as last_epoch'),
+        this.knex.raw('SUM(amount) as reward'),
         this.knex('blocks')
           .count('*')
           .whereRaw('blocks.validator_id = (SELECT id FROM validator)')
@@ -469,7 +500,18 @@ module.exports = class ValidatorsDAO {
           .as('blocks_proposed')
       )
 
-    if (row.validator_id === null) {
+    const [row] = await this.knex
+      .with('validator', validator)
+      .with('bounds', bounds)
+      .with('core', corePayments)
+      .with('rewards', rewards)
+      .with('platform', platformRewards)
+      .select('core.*', 'platform.*')
+      .from('validator')
+      .crossJoin('core')
+      .crossJoin('platform')
+
+    if (!row) {
       return null
     }
 
