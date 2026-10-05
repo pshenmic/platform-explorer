@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useRef, useState, type MouseEvent, type ReactNode, type RefObject } from 'react'
+import { createPortal } from 'react-dom'
 import { useRouter } from 'next/navigation'
 import { ChevronDown, X } from 'lucide-react'
 import { DataListPageFooter, DataListPagingBar, type DataListPagingConfig } from './DataListPaging'
@@ -29,6 +30,7 @@ export interface DataListColumn<T = any> {
   sortKey?: string
   filterKey?: string
   filterType?: DataListHeaderFilterType
+  filterMultiple?: boolean
   filterOptions?: DataListHeaderMenuOption[]
   filterPlaceholder?: string
   cell?: (item: T, index?: number) => ReactNode
@@ -58,6 +60,7 @@ export interface DataListProps<T = any> {
   filterValues?: Record<string, unknown>
   onFilterChange?: (key: string, value: unknown) => void
   title?: ReactNode
+  toolbarTarget?: HTMLElement | null
   titleExtra?: ReactNode
   paging?: DataListPagingConfig
 }
@@ -216,6 +219,7 @@ export default function DataList<T = any>({
   onFilterChange,
   title,
   titleExtra,
+  toolbarTarget,
   paging
 }: DataListProps<T>) {
   const wrapRef = useRef<HTMLDivElement | null>(null)
@@ -385,6 +389,89 @@ export default function DataList<T = any>({
       (!sortDefault || sort.order_by !== sortDefault.order_by || sort.order !== sortDefault.order)
   )
 
+  const toolbar =
+    activeFilters.length > 0 || isCustomSort || title || (paging && !paging.hideModeSwitch) ? (
+      <div className={'DataList__FilterBar'}>
+        {title ? (
+          <div className={'DataList__TitleRow'}>
+            <h1 className={'DataList__Title'}>{title}</h1>
+            {paging && paging.total > 0 ? (
+              <span className={'DataList__Total'} title={paging.total.toLocaleString('en-US')}>
+                {compactCount(paging.total)}
+              </span>
+            ) : null}
+            {titleExtra ? <div className={'DataList__TitleExtra'}>{titleExtra}</div> : null}
+          </div>
+        ) : (
+          <span />
+        )}
+        <div
+          className={`DataList__FilterChips${
+            activeFilters.length > 0 || isCustomSort ? '' : ' DataList__FilterChips--Empty'
+          }`}
+        >
+          {isCustomSort ? (
+            <button
+              type={'button'}
+              className={'DataList__FilterChip'}
+              aria-label={`Clear sort: ${String(sortColumn?.header)} ${formatSortChip(sort?.order)}`}
+              onClick={() => {
+                if (!sortDefault || !onSortChange) return
+                onSortChange(sortDefault)
+              }}
+            >
+              <span className={'DataList__FilterChipLabel'}>
+                Sort: {String(sortColumn?.header)} · {formatSortChip(sort?.order)}
+              </span>
+              <X size={10} strokeWidth={2.5} aria-hidden />
+            </button>
+          ) : null}
+          {activeFilters.map(column => {
+            const key = column.filterKey as string
+            return (
+              <button
+                type={'button'}
+                key={key}
+                className={'DataList__FilterChip'}
+                onClick={() => onFilterChange?.(key, emptyFilterValue(column.filterType))}
+              >
+                <span className={'DataList__FilterChipLabel'}>
+                  {column.header}: {formatFilterChip(column.filterType, filterValues[key])}
+                </span>
+                <X size={10} strokeWidth={2.5} aria-hidden />
+              </button>
+            )
+          })}
+          {activeFilters.length > 0 || isCustomSort ? (
+            <button
+              type={'button'}
+              className={'DataList__FilterChip DataList__FilterChip--Clear'}
+              onClick={() => {
+                activeFilters.forEach(column => {
+                  if (column.filterKey) {
+                    onFilterChange?.(column.filterKey, emptyFilterValue(column.filterType))
+                  }
+                })
+                if (sortDefault && onSortChange) onSortChange(sortDefault)
+              }}
+            >
+              Clear
+            </button>
+          ) : null}
+        </div>
+        {paging && !paging.hideModeSwitch && !showCenteredEmpty ? (
+          <DataListPagingBar
+            paging={paging}
+            itemCount={items.length}
+            scrollRef={scrollRef}
+            sentinelRef={sentinelRef}
+            loading={loading}
+            pageScroll={true}
+          />
+        ) : null}
+      </div>
+    ) : null
+
   return (
     <div
       ref={wrapRef}
@@ -392,86 +479,16 @@ export default function DataList<T = any>({
       aria-busy={loading || paging?.loadingMore ? true : undefined}
       {...wrapperProps}
     >
-      {canFilter || title || paging ? (
-        <div className={'DataList__FilterBar'}>
-          {title ? (
-            <div className={'DataList__TitleRow'}>
-              <h1 className={'DataList__Title'}>{title}</h1>
-              {paging && paging.total > 0 ? (
-                <span className={'DataList__Total'} title={paging.total.toLocaleString('en-US')}>
-                  {compactCount(paging.total)}
-                </span>
-              ) : null}
-              {titleExtra ? <div className={'DataList__TitleExtra'}>{titleExtra}</div> : null}
-            </div>
-          ) : (
-            <span />
-          )}
-          <div
-            className={`DataList__FilterChips${
-              activeFilters.length > 0 || isCustomSort ? '' : ' DataList__FilterChips--Empty'
-            }`}
-          >
-            {isCustomSort ? (
-              <button
-                type={'button'}
-                className={'DataList__FilterChip'}
-                aria-label={`Clear sort: ${String(sortColumn?.header)} ${formatSortChip(sort?.order)}`}
-                onClick={() => {
-                  if (!sortDefault || !onSortChange) return
-                  onSortChange(sortDefault)
-                }}
-              >
-                <span className={'DataList__FilterChipLabel'}>
-                  Sort: {String(sortColumn?.header)} · {formatSortChip(sort?.order)}
-                </span>
-                <X size={10} strokeWidth={2.5} aria-hidden />
-              </button>
-            ) : null}
-            {activeFilters.map(column => {
-              const key = column.filterKey as string
-              return (
-                <button
-                  type={'button'}
-                  key={key}
-                  className={'DataList__FilterChip'}
-                  onClick={() => onFilterChange?.(key, emptyFilterValue(column.filterType))}
-                >
-                  <span className={'DataList__FilterChipLabel'}>
-                    {column.header}: {formatFilterChip(column.filterType, filterValues[key])}
-                  </span>
-                  <X size={10} strokeWidth={2.5} aria-hidden />
-                </button>
-              )
-            })}
-            {activeFilters.length > 0 || isCustomSort ? (
-              <button
-                type={'button'}
-                className={'DataList__FilterChip DataList__FilterChip--Clear'}
-                onClick={() => {
-                  activeFilters.forEach(column => {
-                    if (column.filterKey) {
-                      onFilterChange?.(column.filterKey, emptyFilterValue(column.filterType))
-                    }
-                  })
-                  if (sortDefault && onSortChange) onSortChange(sortDefault)
-                }}
-              >
-                Clear
-              </button>
-            ) : null}
-          </div>
-          {paging && !showCenteredEmpty ? (
-            <DataListPagingBar
-              paging={paging}
-              itemCount={items.length}
-              scrollRef={scrollRef}
-              sentinelRef={sentinelRef}
-              loading={loading}
-              pageScroll={true}
-            />
-          ) : null}
-        </div>
+      {toolbarTarget ? createPortal(toolbar, toolbarTarget) : toolbar}
+      {paging?.hideModeSwitch && !showCenteredEmpty ? (
+        <DataListPagingBar
+          paging={paging}
+          itemCount={items.length}
+          scrollRef={scrollRef}
+          sentinelRef={sentinelRef}
+          loading={loading}
+          pageScroll
+        />
       ) : null}
       <div ref={scrollRef} className={'DataList__Scroll pe-QuietScroll'}>
         {showCenteredEmpty ? (
@@ -502,6 +519,7 @@ export default function DataList<T = any>({
               filterType={canFilterColumn ? column.filterType : undefined}
               value={canFilterColumn ? filterValues[column.filterKey as string] : undefined}
               options={column.filterOptions}
+              multiple={column.filterMultiple}
               placeholder={column.filterPlaceholder}
               onChange={
                 canFilterColumn

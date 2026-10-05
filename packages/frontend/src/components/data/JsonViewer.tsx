@@ -1,5 +1,6 @@
 'use client'
 
+import { useMemo } from 'react'
 import CodeMirror from '@uiw/react-codemirror'
 import { json } from '@codemirror/lang-json'
 import { oneDark } from '@codemirror/theme-one-dark'
@@ -15,21 +16,23 @@ const editorTheme = EditorView.theme({
     border: '1px solid #404E53',
     borderRadius: '0.625rem',
     overflow: 'hidden',
-    fontSize: '12px'
+    fontSize: '13px'
   },
   '.cm-gutters': {
     backgroundColor: '#1F2528',
     borderRight: '1px solid #404E53',
-    color: '#6B7780'
+    color: '#9AAEB6'
   },
   '.cm-activeLineGutter': { backgroundColor: 'transparent' },
   '.cm-activeLine': { backgroundColor: 'transparent' },
-  '.cm-content': { caretColor: 'transparent' },
-  '&.cm-focused': { outline: 'none' }
+  '.cm-content': { caretColor: 'transparent', padding: '12px 0' },
+  '.cm-scroller': { fontFamily: 'var(--pe-font-mono)', lineHeight: '1.6' },
+  '&.cm-focused': { outline: '2px solid var(--pe-color-brand-normal)', outlineOffset: '-2px' }
 })
 
 interface JsonViewerProps extends WithClassName {
   value?: unknown
+  label?: string
   minHeight?: string
   maxHeight?: string
   fill?: boolean
@@ -39,6 +42,7 @@ interface JsonViewerProps extends WithClassName {
 
 function JsonViewer({
   value,
+  label = 'JSON',
   minHeight = '100px',
   maxHeight = '500px',
   fill = false,
@@ -46,17 +50,36 @@ function JsonViewer({
   placeholder,
   className = ''
 }: JsonViewerProps) {
-  const text =
-    value == null ? '' : typeof value === 'string' ? value : JSON.stringify(value, null, 2)
+  const text = useMemo(() => {
+    if (value == null) return ''
+    if (typeof value !== 'string') return JSON.stringify(value, null, 2)
+    try {
+      return JSON.stringify(JSON.parse(value), null, 2)
+    } catch {
+      return value
+    }
+  }, [value])
 
-  const extensions: Extension[] = [json(), editorTheme, EditorView.editable.of(false)]
+  const extensions: Extension[] = [
+    json(),
+    editorTheme,
+    EditorView.editable.of(false),
+    EditorView.contentAttributes.of({ tabindex: '0', 'aria-label': label })
+  ]
   if (!text && placeholder) extensions.push(cmPlaceholder(placeholder))
 
   return (
     <div className={`JsonViewer ${fill ? 'JsonViewer--Fill' : ''} ${className}`}>
+      {showCopy && text && (
+        <div className="JsonViewer__Toolbar">
+          <span>{label}</span>
+          <CopyButton text={text} label="Copy JSON" />
+        </div>
+      )}
       <CodeMirror
         className={'JsonViewer__Editor'}
         value={text}
+        readOnly
         extensions={extensions}
         theme={oneDark}
         basicSetup={{
@@ -71,7 +94,6 @@ function JsonViewer({
         minHeight={fill ? undefined : minHeight}
         maxHeight={fill ? undefined : maxHeight}
       />
-      {showCopy && text && <CopyButton className={'JsonViewer__CopyButton'} text={text} />}
     </div>
   )
 }
