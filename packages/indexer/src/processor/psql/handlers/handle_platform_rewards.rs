@@ -10,9 +10,8 @@ use dapi_grpc::platform::v0::GetFinalizedEpochInfosRequest;
 use deadpool_postgres::Transaction;
 
 impl PSQLProcessor {
-    // The first block of every epoch pays the proposers of the previous one. Platform keeps the
-    // finalized info of the paid epochs since protocol version 9, the rewards of the epochs paid
-    // before are not indexed.
+    // The first block of every epoch pays the proposers of the previous one,
+    // Platform keeps the finalized info of the paid epochs since protocol version 9
     pub async fn handle_platform_rewards(
         &self,
         block_header: &BlockHeader,

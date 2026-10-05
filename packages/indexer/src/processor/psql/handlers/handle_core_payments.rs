@@ -5,7 +5,7 @@ use dashcore_rpc::RpcApi;
 use deadpool_postgres::Transaction;
 use std::cmp::min;
 
-// Core answers 1000 blocks of masternode payments in about half a second
+// Core blocks per masternode payments request
 const CORE_PAYMENTS_PAGE: usize = 1000;
 
 impl PSQLProcessor {

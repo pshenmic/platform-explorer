@@ -1774,10 +1774,8 @@ const getCoreNetworkInfo = async () => {
   return coreNetworkInfo
 }
 
-// Gross Core payout of an enabled masternode of the type in DASH per year: the median of what
-// the enabled masternodes of the type were paid in the Core blocks of the payments.
-// It follows how Core actually pays every masternode type rather than assuming it, and the
-// median skips the masternodes that were enabled for a part of the period only.
+// Gross Core payout per year in DASH of an enabled masternode of the type: the median
+// of what the enabled masternodes of the type were paid in the Core blocks of the payments
 const getCoreYieldPerYear = async (corePayments, type, masternodes) => {
   const enabled = masternodes
     .filter(masternode => masternode.type === type && masternode.state.PoSeBanHeight === -1)
@@ -1815,9 +1813,8 @@ const getProTxList = async () => {
   return masternodes
 }
 
-// DIP3 payment queue: enabled masternodes ordered by the height they were last
-// paid (or revived, or registered when never paid), ProTx hash as the tie break.
-// Returns in how many Core blocks the masternode is paid, 1 means the next block.
+// Position in the DIP3 payment queue, 1 means the next Core block: enabled masternodes ordered
+// by the last paid (or revived, or registered) height, ProTx hash as the tie break
 const blocksUntilCorePayment = (proTxHash, masternodes) => {
   const queue = masternodes
     .filter(masternode => masternode.state.PoSeBanHeight === -1)

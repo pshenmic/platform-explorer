@@ -383,9 +383,8 @@ module.exports = class ValidatorsDAO {
       .map(({ timestamp, data }) => new SeriesData(timestamp, data))
   }
 
-  // Epochs come from the blocks: an epoch starts with its first block and ends
-  // with the first block of the next one. The reward is null until the epoch is paid,
-  // and for the epochs Platform paid before it started to keep their finalized info
+  // An epoch lasts from its first block to the first block of the next one,
+  // the reward is null until the epoch is paid
   getValidatorEpochStatsByProTxHash = async (proTxHash, start, end) => {
     const validator = await this.knex('validators')
       .select('id', 'pro_tx_hash')
