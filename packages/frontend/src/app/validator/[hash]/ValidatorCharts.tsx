@@ -37,14 +37,9 @@ async function loadActivity(
           x: new Date(point.timestamp!),
           y: creditsToDash(Number(point.data?.reward ?? 0))
         }))
-  const unique = [...new Map(points.map(point => [+point.x, point])).values()].filter(
+  return [...new Map(points.map(point => [+point.x, point])).values()].filter(
     point => typeof point.y === 'number' && !Number.isNaN(point.y)
   )
-  let from = 0
-  let to = unique.length - 1
-  while (from < to && unique[from].y === 0) from++
-  while (to > from && unique[to].y === 0) to--
-  return unique.slice(from, to + 1)
 }
 
 export default function ValidatorCharts({ hash }: { hash: string }) {
@@ -86,21 +81,27 @@ export default function ValidatorCharts({ hash }: { hash: string }) {
   })
   const points = query.data ?? []
   const h = plotH
-  const ready = width > 0 && h > 0 && points.length > 1
+  const ready = width > 0 && h > 0 && query.isSuccess
   const isBlocks = metric === 'blocks'
   const yAbbr = isBlocks ? 'blocks' : 'DASH'
   const chart = useMemo(() => {
     if (!ready) return null
-    const x = d3.scaleTime(
-      d3.extent(points, (p: any) => p.x),
-      [M.left, width - M.right]
+    const domainStart = new Date(range.start)
+    const domainEnd = new Date(range.end)
+    const x = d3.scaleTime([domainStart, domainEnd], [M.left, width - M.right])
+    const spanDays = getDaysBetweenDates(domainStart, domainEnd)
+    const crossesYear = domainStart.getFullYear() !== domainEnd.getFullYear()
+    const tickFmt = d3.timeFormat(
+      spanDays > 400
+        ? '%Y'
+        : spanDays > 45 || crossesYear
+          ? '%b %Y'
+          : spanDays > 2
+            ? '%b %d'
+            : '%H:%M'
     )
-    const spanDays = getDaysBetweenDates(points[0].x, points[points.length - 1].x)
-    const tickFmt = d3.timeFormat(spanDays > 365 ? '%b %Y' : spanDays > 7 ? '%b %d' : '%H:%M')
-    const tipFmt = d3.timeFormat(
-      spanDays > 365 ? '%b %d, %Y' : spanDays > 3 ? '%b %d' : '%b %d, %H:%M'
-    )
-    const maxY = d3.max(points, (p: any) => p.y) || (isBlocks ? 1 : 0.00000001)
+    const tipFmt = d3.timeFormat(spanDays > 2 ? '%b %d, %Y' : '%b %d, %Y, %H:%M')
+    const maxY = d3.max(points, (p: any) => p.y) || 1
     const y = d3.scaleLinear([0, maxY], [h - M.bottom, M.top]).nice()
     const step = points.length > 1 ? Math.abs(x(points[1].x) - x(points[0].x)) : 8
     const bw = Math.max(2, Math.min(step * 0.72, 18))
@@ -115,22 +116,29 @@ export default function ValidatorCharts({ hash }: { hash: string }) {
       date: p.x
     }))
     const tickCount = Math.max(2, Math.min(6, Math.floor((width - M.left - M.right) / 72)))
-    const xTicks = x.ticks(tickCount).map((d: any) => ({ v: x(d), label: tickFmt(d) }))
+    let tickDates = x.ticks(tickCount).filter((d: Date) => d >= domainStart && d <= domainEnd)
+    if (tickDates.length < 2) tickDates = [domainStart, domainEnd]
+    const xTicks = tickDates.map((d: Date) => ({ v: x(d), label: tickFmt(d) }))
     const yTicks = y
       .ticks(4)
       .filter((v: number) => !isBlocks || Number.isInteger(v))
       .map((v: any) => ({ v: y(v), label: formatValue(v, isBlocks) }))
     const total = points.reduce((sum, p) => sum + p.y, 0)
     return { bars, xTicks, yTicks, tipFmt, total }
-  }, [ready, points, width, h, isBlocks])
+  }, [ready, points, width, h, isBlocks, range.start, range.end])
   const activeI = pinI != null ? pinI : hoverI
   const activeBar = chart && activeI != null ? chart.bars[activeI] : null
-  const rangeTotal = chart ? formatValue(chart.total, isBlocks) : '—'
-  const statMeta = activeBar
-    ? `${chart!.tipFmt(activeBar.date)} · ${formatValue(activeBar.value, isBlocks)} ${yAbbr}`
-    : 'in selected period'
+  const rangeTotal =
+    query.isPending && query.data == null
+      ? '—'
+      : formatValue(
+          (query.data ?? []).reduce((sum, point) => sum + point.y, 0),
+          isBlocks
+        )
+  const statLabel = activeBar ? chart!.tipFmt(activeBar.date) : 'in selected period'
+  const statValue = activeBar ? formatValue(activeBar.value, isBlocks) : rangeTotal
   const onMove = (e: any) => {
-    if (!chart) return
+    if (!chart || chart.bars.length === 0) return
     const rect = e.currentTarget.getBoundingClientRect()
     const px = e.clientX - rect.left
     let best = 0
@@ -150,9 +158,6 @@ export default function ValidatorCharts({ hash }: { hash: string }) {
         <div className={'TxActivityChart__HeadText'}>
           <span className={'TxActivityChart__Eyebrow'}>Activity</span>
           <h2 className={'TxActivityChart__Title'}>{isBlocks ? 'Proposed blocks' : 'Rewards'}</h2>
-          <p className={'TxActivityChart__Lede'}>
-            {isBlocks ? 'Blocks proposed per interval.' : 'DASH earned per interval.'}
-          </p>
         </div>
         <div className={'TxActivityChart__Controls'}>
           <div className={'ValidatorCharts__Filters'}>
@@ -181,15 +186,15 @@ export default function ValidatorCharts({ hash }: { hash: string }) {
               }}
             />
           </div>
-          <div
-            className={`TxActivityChart__Stat${activeBar ? ' is-on' : ''}${pinI != null ? ' is-pinned' : ''}`}
-          >
-            <div className={'TxActivityChart__StatMain'}>
-              <span className={'TxActivityChart__StatCount'}>{rangeTotal}</span>
-              <span className={'TxActivityChart__StatUnit'}>{yAbbr}</span>
-            </div>
-            <span className={'TxActivityChart__StatMeta'}>{statMeta}</span>
-          </div>
+        </div>
+        <div
+          className={`ValidatorCharts__Readout${activeBar ? ' is-on' : ''}${pinI != null ? ' is-pinned' : ''}`}
+        >
+          <span className={'ValidatorCharts__ReadoutLabel'}>{statLabel}</span>
+          <span className={'ValidatorCharts__ReadoutValue'}>
+            <span className={'TxActivityChart__StatCount'}>{statValue}</span>
+            <span className={'TxActivityChart__StatUnit'}>{yAbbr}</span>
+          </span>
         </div>
       </header>
       <div ref={wrapRef} className={'TxActivityChart__Plot'}>
@@ -212,11 +217,7 @@ export default function ValidatorCharts({ hash }: { hash: string }) {
               />
             ))}
           </div>
-        ) : !chart ? (
-          <div className={'TxActivityChart__Empty'}>
-            No {isBlocks ? 'proposed blocks' : 'rewards'} in this period
-          </div>
-        ) : (
+        ) : chart ? (
           <svg
             className={`TxActivityChart__Svg${query.isFetching ? ' is-stale' : ''}`}
             viewBox={`0 0 ${width} ${h}`}
@@ -316,7 +317,7 @@ export default function ValidatorCharts({ hash }: { hash: string }) {
               />
             )}
           </svg>
-        )}
+        ) : null}
       </div>
     </section>
   )
