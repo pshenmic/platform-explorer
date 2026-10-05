@@ -88,8 +88,7 @@ pub fn state_transition_duplicates(network: Network) -> Vec<(String, String)> {
     }
 }
 
-// Platform starts a new epoch with the first block after every epoch time length since the
-// genesis block, in milliseconds
+// in milliseconds
 pub fn epoch_time_length(network: Network) -> i64 {
     match network {
         Network::Mainnet => 788400000,

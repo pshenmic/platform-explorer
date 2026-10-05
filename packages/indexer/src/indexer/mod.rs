@@ -2,7 +2,9 @@ use crate::processor::psql::{state_transition_duplicates, PSQLProcessor};
 use crate::utils::TenderdashRpcApi;
 use dapi_grpc::platform::v0::platform_client::PlatformClient;
 use dapi_grpc::tonic::transport::Channel;
+use chrono::{DateTime, Utc};
 use dashcore_rpc::{Auth, Client};
+use dpp::dashcore::Network;
 use std::cell::Cell;
 use std::env;
 
@@ -15,6 +17,8 @@ pub struct Indexer {
     processor: PSQLProcessor,
     last_block_height: Cell<i32>,
     txs_to_skip: Vec<String>,
+    network: Network,
+    genesis_time: Cell<Option<DateTime<Utc>>>,
 }
 
 impl Indexer {
@@ -77,6 +81,8 @@ impl Indexer {
             processor,
             last_block_height: Cell::new(start_height),
             txs_to_skip,
+            network,
+            genesis_time: Cell::new(None),
         }
     }
 }
