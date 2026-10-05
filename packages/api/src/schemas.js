@@ -23,7 +23,6 @@ const schemaTypes = [
         type: ['string', 'null'],
         enum: ['asc', 'desc']
       },
-      order_by: { type: ['string', 'null'] },
       orderBy: {
         type: ['string', 'null'],
         enum: ['block_height', 'documents_count', 'tx_count', 'balance', 'gas_used', 'timestamp', 'id', 'owner']
@@ -373,5 +372,17 @@ const schemaTypes = [
     }
   }
 ]
+
+const paginationOptions = schemaTypes.find(schema => schema.$id === 'paginationOptions')
+
+schemaTypes.push({
+  ...paginationOptions,
+  $id: 'validatorsPaginationOptions',
+  properties: {
+    ...paginationOptions.properties,
+    orderBy: { type: ['string', 'null'] },
+    order_by: { $ref: 'validatorsPaginationOptions#/properties/orderBy' }
+  }
+})
 
 module.exports = schemaTypes
