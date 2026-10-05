@@ -687,6 +687,24 @@ describe('Validators routes', () => {
         assert.deepEqual(body, expected)
       })
 
+      it('should support orderBy and prefer it over the legacy order_by parameter', async () => {
+        const { body: expected } = await client.get('/validators?order_by=latest_timestamp&order=desc&limit=0')
+          .expect(200)
+        const { body } = await client.get('/validators?orderBy=latest_timestamp&order_by=id&order=desc&limit=0')
+          .expect(200)
+
+        assert.deepEqual(body, expected)
+      })
+
+      it('should use id ordering for an unknown orderBy value', async () => {
+        const { body: expected } = await client.get('/validators?orderBy=id&order=desc')
+          .expect(200)
+        const { body } = await client.get('/validators?orderBy=unknown&order=desc')
+          .expect(200)
+
+        assert.deepEqual(body, expected)
+      })
+
       it('should be able to walk through pages', async () => {
         const { body } = await client.get('/validators?page=2')
           .expect(200)

@@ -150,7 +150,7 @@ class ValidatorsController {
       page = 1,
       limit = 10,
       order = 'asc',
-      order_by: orderBy = 'id',
+      orderBy = request.query.order_by ?? 'id',
       isActive = undefined,
       isBanned = undefined,
       owner,

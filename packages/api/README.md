@@ -411,7 +411,8 @@ Response codes:
 ### Validators
 Return all validators with pagination info.
 
-* Supported `order_by` values are `id` or `latest_timestamp`; omitted or unsupported values use `id`
+* Supported `orderBy` values are `id` or `latest_timestamp`; omitted or unsupported values use `id`
+* `order_by` remains supported for compatibility. If both names are supplied, `orderBy` takes precedence.
 * `latest_timestamp` sorts by the last proposed block time, with validators that have no proposed block placed last in both directions
 * Equal sort values are ordered by `id` in the requested `order` direction
 * Valid `order` values are `asc` or `desc`

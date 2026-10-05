@@ -248,10 +248,10 @@ module.exports = class ValidatorsDAO {
       .from('subquery')
 
     if (orderBy === 'latest_timestamp') {
-      filteredSubquery.orderBy('latest_timestamp', order, 'last').orderBy('id', order)
-    } else if (orderBy === 'id') {
-      filteredSubquery.orderBy('id', order)
+      filteredSubquery.orderBy('latest_timestamp', order, 'last')
     }
+
+    filteredSubquery.orderBy('id', order)
 
     if (limit > 0) {
       filteredSubquery.limit(limit)
