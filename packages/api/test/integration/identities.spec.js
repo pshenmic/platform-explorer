@@ -1,6 +1,7 @@
 const { describe, it, before, after, beforeEach, mock } = require('node:test')
 const assert = require('node:assert').strict
 const supertest = require('supertest')
+const cbor = require('cbor')
 const server = require('../../src/server')
 const { getKnex } = require('../../src/utils')
 const fixtures = require('../utils/fixtures')
@@ -2547,6 +2548,46 @@ describe('Identities routes', () => {
   })
 
   describe('getTransfersByIdentity()', async () => {
+    for (const { name, error, expectedError } of [
+      {
+        name: 'decoded consensus error',
+        error: cbor.encode({ data: { serializedError: Buffer.alloc(8) } }).toString('base64'),
+        expectedError: 'default error'
+      },
+      {
+        name: 'malformed error fallback',
+        error: 'Cannot deserialize',
+        expectedError: 'Cannot deserialize'
+      }
+    ]) {
+      it(`should return failed transfer status and ${name}`, async () => {
+        block = await fixtures.block(knex, { height: 1 })
+        identity = await fixtures.identity(knex, { block_hash: block.hash, block_height: block.height })
+        transaction = await fixtures.transaction(knex, {
+          block_hash: block.hash,
+          block_height: block.height,
+          owner: identity.identifier,
+          type: StateTransitionEnum.IDENTITY_TOP_UP,
+          status: 'FAIL',
+          error
+        })
+        await fixtures.transfer(knex, {
+          amount: 1000,
+          recipient: identity.identifier,
+          sender: null,
+          state_transition_hash: transaction.hash
+        })
+
+        const { body } = await client.get(`/identity/${identity.identifier}/transfers?hash=${transaction.hash}`)
+          .expect(200)
+
+        assert.equal(body.pagination.total, 1)
+        assert.equal(body.resultSet.length, 1)
+        assert.equal(body.resultSet[0].status, 'FAIL')
+        assert.equal(body.resultSet[0].error, expectedError)
+      })
+    }
+
     it('should return default set of transfers by identity', async () => {
       block = await fixtures.block(knex, { height: 1 })
       identity = await fixtures.identity(knex, { block_hash: block.hash, block_height: block.height })
@@ -2575,7 +2616,7 @@ describe('Identities routes', () => {
         .expect('Content-Type', 'application/json; charset=utf-8')
 
       assert.equal(body.resultSet.length, 10)
-      assert.equal(body.pagination.total, documents.length)
+      assert.equal(body.pagination.total, transfers.length)
       assert.equal(body.pagination.page, 1)
       assert.equal(body.pagination.limit, 10)
 
@@ -2590,7 +2631,9 @@ describe('Identities routes', () => {
           txHash: _transfer.transfer.state_transition_hash,
           type: StateTransitionEnum[_transfer.transaction.type],
           blockHash: _transfer.block.hash,
-          gasUsed: _transfer.transaction.gas_used
+          gasUsed: _transfer.transaction.gas_used,
+          status: _transfer.transaction.status,
+          error: _transfer.transaction.error
         }))
 
       assert.deepEqual(body.resultSet, expectedTransfers)
@@ -2640,7 +2683,9 @@ describe('Identities routes', () => {
           txHash: _transfer.transfer.state_transition_hash,
           type: StateTransitionEnum[_transfer.transaction.type],
           blockHash: _transfer.block.hash,
-          gasUsed: _transfer.transaction.gas_used
+          gasUsed: _transfer.transaction.gas_used,
+          status: _transfer.transaction.status,
+          error: _transfer.transaction.error
         }))
 
       assert.deepEqual(body.resultSet, expectedTransfers)
@@ -2690,7 +2735,9 @@ describe('Identities routes', () => {
           txHash: _transfer.transfer.state_transition_hash,
           type: StateTransitionEnum[_transfer.transaction.type],
           blockHash: _transfer.block.hash,
-          gasUsed: _transfer.transaction.gas_used
+          gasUsed: _transfer.transaction.gas_used,
+          status: _transfer.transaction.status,
+          error: _transfer.transaction.error
         }))
 
       assert.deepEqual(body.resultSet, expectedTransfers)
@@ -2732,7 +2779,9 @@ describe('Identities routes', () => {
         txHash: transaction.hash,
         type: StateTransitionEnum[transaction.type],
         blockHash: block.hash,
-        gasUsed: transaction.gas_used
+        gasUsed: transaction.gas_used,
+        status: transaction.status,
+        error: transaction.error
       }
 
       assert.deepEqual(body.resultSet, [expectedTransfers])
@@ -2766,7 +2815,7 @@ describe('Identities routes', () => {
         .expect('Content-Type', 'application/json; charset=utf-8')
 
       assert.equal(body.resultSet.length, 10)
-      assert.equal(body.pagination.total, documents.length)
+      assert.equal(body.pagination.total, transfers.length)
       assert.equal(body.pagination.page, 1)
       assert.equal(body.pagination.limit, 10)
 
@@ -2781,7 +2830,9 @@ describe('Identities routes', () => {
           txHash: _transfer.transfer.state_transition_hash,
           type: StateTransitionEnum[_transfer.transaction.type],
           blockHash: _transfer.block.hash,
-          gasUsed: _transfer.transaction.gas_used
+          gasUsed: _transfer.transaction.gas_used,
+          status: _transfer.transaction.status,
+          error: _transfer.transaction.error
         }))
 
       assert.deepEqual(body.resultSet, expectedTransfers)
@@ -2815,7 +2866,7 @@ describe('Identities routes', () => {
         .expect('Content-Type', 'application/json; charset=utf-8')
 
       assert.equal(body.resultSet.length, 7)
-      assert.equal(body.pagination.total, documents.length)
+      assert.equal(body.pagination.total, transfers.length)
       assert.equal(body.pagination.page, 2)
       assert.equal(body.pagination.limit, 7)
 
@@ -2830,7 +2881,9 @@ describe('Identities routes', () => {
           txHash: _transfer.transfer.state_transition_hash,
           type: StateTransitionEnum[_transfer.transaction.type],
           blockHash: _transfer.block.hash,
-          gasUsed: _transfer.transaction.gas_used
+          gasUsed: _transfer.transaction.gas_used,
+          status: _transfer.transaction.status,
+          error: _transfer.transaction.error
         }))
 
       assert.deepEqual(body.resultSet, expectedTransfers)
@@ -2864,7 +2917,7 @@ describe('Identities routes', () => {
         .expect('Content-Type', 'application/json; charset=utf-8')
 
       assert.equal(body.resultSet.length, 7)
-      assert.equal(body.pagination.total, documents.length)
+      assert.equal(body.pagination.total, transfers.length)
       assert.equal(body.pagination.page, 2)
       assert.equal(body.pagination.limit, 7)
 
@@ -2879,7 +2932,9 @@ describe('Identities routes', () => {
           txHash: _transfer.transfer.state_transition_hash,
           type: StateTransitionEnum[_transfer.transaction.type],
           blockHash: _transfer.block.hash,
-          gasUsed: _transfer.transaction.gas_used
+          gasUsed: _transfer.transaction.gas_used,
+          status: _transfer.transaction.status,
+          error: _transfer.transaction.error
         }))
 
       assert.deepEqual(body.resultSet, expectedTransfers)

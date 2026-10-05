@@ -20,7 +20,7 @@
   "homepage": "https://github.com/pshenmic/platform-explorer#readme",
   "description": "",
   "dependencies": {
-    "dash": "4.7.0",
+    "dash-platform-sdk": "1.5.0-dev.7",
     "dotenv": "^16.4.5"
   },
   "devDependencies": {
