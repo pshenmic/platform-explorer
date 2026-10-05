@@ -542,6 +542,7 @@ GET /validators?blocks_proposed_min=1&blocks_proposed_max=9999999&last_proposed_
 ### Validator by ProTxHash
 Get validator by ProTxHash.
 * `lastProposedBlockHeader` field is nullable
+* `totalReward` is what Platform paid the validator for its proposed blocks, in credits, `epochReward` is what it was paid in the current epoch, which pays the previous one
 * `registeredAt` is the time of the Core block the masternode was registered in
 * `votingIdentity` is derived from the current voting key of the masternode, `votingIdentityBalance` is `null` when the identity does not exist
 * `poseScoreMax` is the PoSe penalty that bans the masternode: the size of the masternode list, at least 100
@@ -655,6 +656,7 @@ GET /validator/F60A6BF9EC0794BB0CFD1E0F2217933F4B33EDE6FE810692BC275CA18148AEF0
 ### Validator by Masternode Identifier
 Get validator by Masternode Identity.
 * `lastProposedBlockHeader` field is nullable
+* `totalReward` is what Platform paid the validator for its proposed blocks, in credits, `epochReward` is what it was paid in the current epoch, which pays the previous one
 ```
 GET /validator/identity/8tsWRSwsTM5AXv4ViCF9gu39kzjbtfFDM6rCyL2RcFzd
 
