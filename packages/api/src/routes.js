@@ -455,7 +455,7 @@ module.exports = ({
       method: 'GET',
       handler: validatorsController.getValidators,
       schema: {
-        querystring: { $ref: 'paginationOptions#' }
+        querystring: { $ref: 'validatorsPaginationOptions#' }
       }
     },
     {

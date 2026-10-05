@@ -190,7 +190,7 @@ function Validators() {
     const listFilters: QueryFilters = { ...filters }
     delete listFilters.hash
     delete listFilters.owner
-    if (sort.order_by !== 'id') listFilters.order_by = sort.order_by
+    if (sort.order_by !== 'id') listFilters.orderBy = sort.order_by
 
     const request = hash
       ? Api.getValidatorByProTxHash(hash)
