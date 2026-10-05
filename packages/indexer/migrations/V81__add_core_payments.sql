@@ -7,3 +7,4 @@ CREATE TABLE core_payments (
 );
 
 CREATE INDEX core_payments_pro_tx_hash ON core_payments(pro_tx_hash, core_block_height);
+CREATE INDEX core_payments_core_block_height ON core_payments(core_block_height);
