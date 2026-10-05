@@ -22,7 +22,7 @@ import { Badge } from '../../../components/ui/Badge/Badge'
 import ImageGenerator from '../../../components/imageGenerator'
 import { BlockIcon, CircleIcon } from '../../../components/ui/icons'
 
-import { RateTooltip, Tooltip } from '../../../components/ui/Tooltips'
+import { Tooltip } from '../../../components/ui/Tooltips'
 import { useBreadcrumbs } from '../../../contexts/BreadcrumbsContext'
 import { useActiveNetwork } from 'src/contexts'
 import type { Validator as ValidatorType } from '../../../types/Validator'
@@ -421,15 +421,6 @@ function Validator({ hash }: ValidatorProps) {
   const countryCode = validator.data?.geoIpInfo?.countryCode
   const region = [validator.data?.geoIpInfo?.city, countryCode].filter(Boolean).join(', ')
   const typeLabel = nodeTypeLabel(validator.data?.proTxInfo?.type)
-  const totalReward = Number(validator.data?.totalReward)
-  const hasTotalReward = validator.data?.totalReward != null && Number.isFinite(totalReward)
-  const totalRewardUsd =
-    hasTotalReward && typeof rate.data?.usd === 'number'
-      ? (creditsToDash(totalReward) * rate.data.usd).toLocaleString('en-US', {
-          style: 'currency',
-          currency: 'USD'
-        })
-      : null
 
   useEffect(() => {
     let cancelled = false
@@ -892,24 +883,6 @@ function Validator({ hash }: ValidatorProps) {
                         ? `${dashAmount(Number(validator.data.votingIdentityBalance))} DASH`
                         : '—'
                     }`
-              }
-            />
-            <SummaryCard
-              label={'Indexed transaction fees'}
-              loading={validator.loading}
-              value={
-                hasTotalReward && !validator.error ? (
-                  <RateTooltip credits={totalReward} rate={rate.data}>
-                    <span>{dashAmount(totalReward)} DASH</span>
-                  </RateTooltip>
-                ) : (
-                  <NotActive />
-                )
-              }
-              hint={
-                !validator.loading && !validator.error
-                  ? `All time${totalRewardUsd ? ` · ${totalRewardUsd}` : ''}`
-                  : null
               }
             />
             <WithdrawalsCard
