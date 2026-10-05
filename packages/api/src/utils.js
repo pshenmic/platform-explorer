@@ -1759,14 +1759,16 @@ const getCoreNetworkInfo = async () => {
 
   const height = await DashCoreRPC.getBlockCount()
 
-  const [tipTime, dayAgoTime] = await Promise.all([
+  const intervals = Math.min(CORE_BLOCKS_PER_DAY, height - 1)
+
+  const [tipTime, startTime] = await Promise.all([
     getCoreBlockTime(height),
-    getCoreBlockTime(height - CORE_BLOCKS_PER_DAY)
+    intervals > 0 ? getCoreBlockTime(height - intervals) : null
   ])
 
   const coreNetworkInfo = {
-    coreTipTime: new Date(tipTime).toISOString(),
-    coreBlockIntervalMs: Math.round((tipTime - dayAgoTime) / CORE_BLOCKS_PER_DAY)
+    coreTipTime: tipTime !== null ? new Date(tipTime).toISOString() : null,
+    coreBlockIntervalMs: startTime !== null ? Math.round((tipTime - startTime) / intervals) : null
   }
 
   cache.set(CORE_NETWORK_CACHE_KEY, coreNetworkInfo, CORE_NETWORK_CACHE_LIFE_INTERVAL)
