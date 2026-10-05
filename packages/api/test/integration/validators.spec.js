@@ -2873,288 +2873,206 @@ describe('Validators routes', () => {
     })
   })
 
-  describe('epochs and earnings', async () => {
+  // epochs 10, 12 and 13 of the validators A and B, epoch 11 had no blocks and Platform skips it
+  const createEpochsFixtures = async () => {
+    const validatorA = await fixtures.validator(knex)
+    const validatorB = await fixtures.validator(knex)
+
+    const epochBlocks = [
+      { height: 1000, validator: validatorA, epoch: 10, timestamp: '2024-01-01T00:00:10Z' },
+      { height: 1001, validator: validatorA, epoch: 10, timestamp: '2024-01-01T00:10:00Z' },
+      { height: 1002, validator: validatorA, epoch: 10, timestamp: '2024-01-01T00:20:00Z' },
+      { height: 1003, validator: validatorB, epoch: 10, timestamp: '2024-01-01T00:40:00Z' },
+      { height: 1004, validator: validatorB, epoch: 12, timestamp: '2024-01-01T01:00:10Z' },
+      { height: 1005, validator: validatorB, epoch: 12, timestamp: '2024-01-01T01:20:00Z' },
+      { height: 1006, validator: validatorA, epoch: 13, timestamp: '2024-01-01T02:00:10Z' }
+    ]
+
+    const createdBlocks = []
+
+    for (const { height, validator, epoch, timestamp } of epochBlocks) {
+      createdBlocks.push(await fixtures.block(knex, {
+        height,
+        epoch,
+        validator: validator.pro_tx_hash,
+        timestamp: new Date(timestamp),
+        l1_locked_height: 500 + (height - 1000) * 10
+      }))
+    }
+
+    for (const [block, gasUsed] of [[createdBlocks[0], 100], [createdBlocks[1], 50], [createdBlocks[3], 1000]]) {
+      await fixtures.transaction(knex, {
+        type: IDENTITY_CREATE,
+        block_hash: block.hash,
+        block_height: block.height,
+        gas_used: gasUsed
+      })
+    }
+
+    for (const [coreBlockHeight, proTxHash, amount] of [
+      [505, validatorA.pro_tx_hash, 100],
+      [515, validatorB.pro_tx_hash, 150],
+      [525, validatorA.pro_tx_hash, 200],
+      [565, validatorA.pro_tx_hash, 400]
+    ]) {
+      await fixtures.corePayment(knex, { core_block_height: coreBlockHeight, pro_tx_hash: proTxHash, amount })
+    }
+
+    // the first block of an epoch pays the previous one, epoch 13 is not paid yet
+    for (const [blockHeight, epoch, proTxHash, amount] of [
+      [1004, 10, validatorA.pro_tx_hash, 2997],
+      [1004, 10, validatorB.pro_tx_hash, 1000],
+      [1006, 12, validatorB.pro_tx_hash, 1000]
+    ]) {
+      await fixtures.platformReward(knex, { block_height: blockHeight, epoch, pro_tx_hash: proTxHash, amount })
+    }
+
+    return { validatorA, validatorB }
+  }
+
+  describe('getValidatorEpochStatsByProTxHash()', async () => {
     let validatorA
-    let validatorB
 
     before(async () => {
-      validatorA = await fixtures.validator(knex)
-      validatorB = await fixtures.validator(knex)
-
-      // epoch 11 had no blocks, Platform skips such epochs
-      const epochBlocks = [
-        { height: 1000, validator: validatorA, epoch: 10, timestamp: '2024-01-01T00:00:10Z' },
-        { height: 1001, validator: validatorA, epoch: 10, timestamp: '2024-01-01T00:10:00Z' },
-        { height: 1002, validator: validatorA, epoch: 10, timestamp: '2024-01-01T00:20:00Z' },
-        { height: 1003, validator: validatorB, epoch: 10, timestamp: '2024-01-01T00:40:00Z' },
-        { height: 1004, validator: validatorB, epoch: 12, timestamp: '2024-01-01T01:00:10Z' },
-        { height: 1005, validator: validatorB, epoch: 12, timestamp: '2024-01-01T01:20:00Z' },
-        { height: 1006, validator: validatorA, epoch: 13, timestamp: '2024-01-01T02:00:10Z' }
-      ]
-
-      const createdBlocks = []
-
-      for (const { height, validator, epoch, timestamp } of epochBlocks) {
-        createdBlocks.push(await fixtures.block(knex, {
-          height,
-          epoch,
-          validator: validator.pro_tx_hash,
-          timestamp: new Date(timestamp),
-          l1_locked_height: 500 + (height - 1000) * 10
-        }))
-      }
-
-      for (const [block, gasUsed] of [[createdBlocks[0], 100], [createdBlocks[1], 50], [createdBlocks[3], 1000]]) {
-        await fixtures.transaction(knex, {
-          type: IDENTITY_CREATE,
-          block_hash: block.hash,
-          block_height: block.height,
-          gas_used: gasUsed
-        })
-      }
-
-      for (const [coreBlockHeight, proTxHash, amount] of [
-        [505, validatorA.pro_tx_hash, 100],
-        [515, validatorB.pro_tx_hash, 150],
-        [525, validatorA.pro_tx_hash, 200],
-        [565, validatorA.pro_tx_hash, 400]
-      ]) {
-        await fixtures.corePayment(knex, { core_block_height: coreBlockHeight, pro_tx_hash: proTxHash, amount })
-      }
-
-      // the first block of an epoch pays the previous one, epoch 13 is not paid yet
-      for (const [blockHeight, epoch, proTxHash, amount] of [
-        [1004, 10, validatorA.pro_tx_hash, 2997],
-        [1004, 10, validatorB.pro_tx_hash, 1000],
-        [1006, 12, validatorB.pro_tx_hash, 1000]
-      ]) {
-        await fixtures.platformReward(knex, { block_height: blockHeight, epoch, pro_tx_hash: proTxHash, amount })
-      }
+      ({ validatorA } = await createEpochsFixtures())
     })
 
-    describe('getValidatorEpochStatsByProTxHash()', async () => {
-      it('should return the epochs overlapping the period', async () => {
-        const { body } = await client.get(`/validator/${validatorA.pro_tx_hash}/epochs/stats?timestamp_start=2024-01-01T00:30:00Z&timestamp_end=2024-01-01T01:30:00Z`)
-          .expect(200)
-          .expect('Content-Type', 'application/json; charset=utf-8')
+    it('should return the epochs overlapping the period', async () => {
+      const { body } = await client.get(`/validator/${validatorA.pro_tx_hash}/epochs/stats?timestamp_start=2024-01-01T00:30:00Z&timestamp_end=2024-01-01T01:30:00Z`)
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
 
-        assert.deepEqual(body, [
-          {
-            timestamp: '2024-01-01T00:00:10.000Z',
-            data: {
-              epoch: 10,
-              endEpoch: 10,
-              endTime: '2024-01-01T01:00:10.000Z',
-              blocksProposed: 3,
-              totalBlocks: 4,
-              fees: 150,
-              reward: 2997
-            }
-          },
-          {
-            timestamp: '2024-01-01T01:00:10.000Z',
-            data: {
-              epoch: 12,
-              endEpoch: 12,
-              endTime: '2024-01-01T02:00:10.000Z',
-              blocksProposed: 0,
-              totalBlocks: 2,
-              fees: 0,
-              reward: 0
-            }
-          }
-        ])
-      })
-
-      it('should return the current epoch without reward', async () => {
-        const { body } = await client.get(`/validator/${validatorA.pro_tx_hash}/epochs/stats?timestamp_start=2024-01-01T02:30:00Z&timestamp_end=2024-01-01T03:00:00Z`)
-          .expect(200)
-          .expect('Content-Type', 'application/json; charset=utf-8')
-
-        assert.deepEqual(body, [
-          {
-            timestamp: '2024-01-01T02:00:10.000Z',
-            data: {
-              epoch: 13,
-              endEpoch: 13,
-              endTime: null,
-              blocksProposed: 1,
-              totalBlocks: 1,
-              fees: 0,
-              reward: null
-            }
-          }
-        ])
-      })
-
-      it('should group consecutive epochs of a long interval', async () => {
-        const validator = await fixtures.validator(knex)
-
-        // 170 epochs of 2025 with a block each, grouped by 3 into 57 points
-        for (let i = 0; i < 170; i++) {
-          await fixtures.block(knex, {
-            height: 5000 + i,
-            epoch: 100 + i,
-            validator: validator.pro_tx_hash,
-            timestamp: new Date(Date.UTC(2025, 0, 1) + i * 3600000),
-            l1_locked_height: 5000
-          })
-        }
-
-        await fixtures.platformReward(knex, { block_height: 5001, epoch: 100, pro_tx_hash: validator.pro_tx_hash, amount: 1000 })
-        await fixtures.platformReward(knex, { block_height: 5002, epoch: 101, pro_tx_hash: validator.pro_tx_hash, amount: 2000 })
-
-        const { body } = await client.get(`/validator/${validator.pro_tx_hash}/epochs/stats?timestamp_start=2025-01-01T00:00:00Z&timestamp_end=2025-01-31T00:00:00Z`)
-          .expect(200)
-          .expect('Content-Type', 'application/json; charset=utf-8')
-
-        assert.equal(body.length, 57)
-        assert.deepEqual(body[0], {
-          timestamp: '2025-01-01T00:00:00.000Z',
+      assert.deepEqual(body, [
+        {
+          timestamp: '2024-01-01T00:00:10.000Z',
           data: {
-            epoch: 100,
-            endEpoch: 102,
-            endTime: '2025-01-01T03:00:00.000Z',
+            epoch: 10,
+            endEpoch: 10,
+            endTime: '2024-01-01T01:00:10.000Z',
             blocksProposed: 3,
-            totalBlocks: 3,
-            fees: 0,
-            // epoch 102 is not paid yet
-            reward: 3000
+            totalBlocks: 4,
+            fees: 150,
+            reward: 2997
           }
+        },
+        {
+          timestamp: '2024-01-01T01:00:10.000Z',
+          data: {
+            epoch: 12,
+            endEpoch: 12,
+            endTime: '2024-01-01T02:00:10.000Z',
+            blocksProposed: 0,
+            totalBlocks: 2,
+            fees: 0,
+            reward: 0
+          }
+        }
+      ])
+    })
+
+    it('should return the current epoch without reward', async () => {
+      const { body } = await client.get(`/validator/${validatorA.pro_tx_hash}/epochs/stats?timestamp_start=2024-01-01T02:30:00Z&timestamp_end=2024-01-01T03:00:00Z`)
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      assert.deepEqual(body, [
+        {
+          timestamp: '2024-01-01T02:00:10.000Z',
+          data: {
+            epoch: 13,
+            endEpoch: 13,
+            endTime: null,
+            blocksProposed: 1,
+            totalBlocks: 1,
+            fees: 0,
+            reward: null
+          }
+        }
+      ])
+    })
+
+    it('should group consecutive epochs of a long interval', async () => {
+      const validator = await fixtures.validator(knex)
+
+      // 170 epochs of 2025 with a block each, grouped by 3 into 57 points
+      for (let i = 0; i < 170; i++) {
+        await fixtures.block(knex, {
+          height: 5000 + i,
+          epoch: 100 + i,
+          validator: validator.pro_tx_hash,
+          timestamp: new Date(Date.UTC(2025, 0, 1) + i * 3600000),
+          l1_locked_height: 5000
         })
-        assert.deepEqual(body.at(-1).data, {
-          epoch: 268,
-          endEpoch: 269,
-          endTime: null,
-          blocksProposed: 2,
-          totalBlocks: 2,
+      }
+
+      await fixtures.platformReward(knex, { block_height: 5001, epoch: 100, pro_tx_hash: validator.pro_tx_hash, amount: 1000 })
+      await fixtures.platformReward(knex, { block_height: 5002, epoch: 101, pro_tx_hash: validator.pro_tx_hash, amount: 2000 })
+
+      const { body } = await client.get(`/validator/${validator.pro_tx_hash}/epochs/stats?timestamp_start=2025-01-01T00:00:00Z&timestamp_end=2025-01-31T00:00:00Z`)
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      assert.equal(body.length, 57)
+      assert.deepEqual(body[0], {
+        timestamp: '2025-01-01T00:00:00.000Z',
+        data: {
+          epoch: 100,
+          endEpoch: 102,
+          endTime: '2025-01-01T03:00:00.000Z',
+          blocksProposed: 3,
+          totalBlocks: 3,
           fees: 0,
-          reward: null
-        })
+          // epoch 102 is not paid yet
+          reward: 3000
+        }
       })
-
-      it('should return 404 for an unknown validator', async () => {
-        await client.get('/validator/DEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEF/epochs/stats')
-          .expect(404)
-          .expect('Content-Type', 'application/json; charset=utf-8')
-      })
-
-      it('should return error on wrong bounds', async () => {
-        await client.get(`/validator/${validatorA.pro_tx_hash}/epochs/stats?timestamp_start=2025-01-02T00:00:00&timestamp_end=2024-01-08T00:00:00`)
-          .expect(400)
-          .expect('Content-Type', 'application/json; charset=utf-8')
+      assert.deepEqual(body.at(-1).data, {
+        epoch: 268,
+        endEpoch: 269,
+        endTime: null,
+        blocksProposed: 2,
+        totalBlocks: 2,
+        fees: 0,
+        reward: null
       })
     })
 
-    describe('getValidatorEarningsByProTxHash()', async () => {
-      it('should return Core payments and Platform rewards paid during the period', async () => {
-        const { body } = await client.get(`/validator/${validatorA.pro_tx_hash}/earnings?timestamp_start=2024-01-01T00:00:00Z&timestamp_end=2024-01-01T01:30:00Z`)
-          .expect(200)
-          .expect('Content-Type', 'application/json; charset=utf-8')
+    it('should return 404 for an unknown validator', async () => {
+      await client.get('/validator/DEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEF/epochs/stats')
+        .expect(404)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+    })
 
-        // Core block 565 was chain locked after the period
-        assert.deepEqual(body, {
-          core: {
-            payments: 2,
-            amount: 300
-          },
-          platform: {
-            epochs: 1,
-            firstEpoch: 10,
-            lastEpoch: 10,
-            blocksProposed: 3,
-            reward: 2997
-          },
-          // the validator is not in the masternode list
-          estimate: {
-            periodDays: 30,
-            eligible: false,
-            corePerMonth: null,
-            platformPerMonth: null,
-            totalPerMonth: null,
-            platformHistory: null
-          }
-        })
-      })
-
-      it('should skip rewards paid before the period', async () => {
-        const { body } = await client.get(`/validator/${validatorB.pro_tx_hash}/earnings?timestamp_start=2024-01-01T01:10:00Z&timestamp_end=2024-01-01T03:00:00Z`)
-          .expect(200)
-          .expect('Content-Type', 'application/json; charset=utf-8')
-
-        assert.deepEqual(body.platform, {
-          epochs: 1,
-          firstEpoch: 12,
-          lastEpoch: 12,
-          blocksProposed: 2,
-          reward: 1000
-        })
-      })
-
-      it('should return zero earnings for a validator without payments', async () => {
-        const validator = await fixtures.validator(knex)
-
-        const { body } = await client.get(`/validator/${validator.pro_tx_hash}/earnings?timestamp_start=2024-01-01T00:00:00Z&timestamp_end=2024-01-01T03:00:00Z`)
-          .expect(200)
-          .expect('Content-Type', 'application/json; charset=utf-8')
-
-        assert.deepEqual(body, {
-          core: {
-            payments: 0,
-            amount: 0
-          },
-          platform: {
-            epochs: 0,
-            firstEpoch: null,
-            lastEpoch: null,
-            blocksProposed: 0,
-            reward: 0
-          },
-          // the validator is not in the masternode list
-          estimate: {
-            periodDays: 30,
-            eligible: false,
-            corePerMonth: null,
-            platformPerMonth: null,
-            totalPerMonth: null,
-            platformHistory: null
-          }
-        })
-      })
-
-      it('should return 404 for an unknown validator', async () => {
-        await client.get('/validator/DEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEF/earnings')
-          .expect(404)
-          .expect('Content-Type', 'application/json; charset=utf-8')
-      })
-
-      it('should return error on wrong bounds', async () => {
-        await client.get(`/validator/${validatorA.pro_tx_hash}/earnings?timestamp_start=2025-01-02T00:00:00&timestamp_end=2024-01-08T00:00:00`)
-          .expect(400)
-          .expect('Content-Type', 'application/json; charset=utf-8')
-      })
+    it('should return error on wrong bounds', async () => {
+      await client.get(`/validator/${validatorA.pro_tx_hash}/epochs/stats?timestamp_start=2025-01-02T00:00:00&timestamp_end=2024-01-08T00:00:00`)
+        .expect(400)
+        .expect('Content-Type', 'application/json; charset=utf-8')
     })
   })
 
-  describe('getValidatorEarningsByProTxHash() estimate', async () => {
+  describe('getValidatorEarningsByProTxHash()', async () => {
+    let validatorA
+    let validatorB
     let validator
 
     before(async () => {
       await fixtures.cleanup(knex)
 
+      ;({ validatorA, validatorB } = await createEpochsFixtures())
+
+      // a masternode Core pays with a Platform reward paid by the block 2001 ten days ago,
+      // the validators A and B are not in the masternode list
       validator = await fixtures.validator(knex)
       const other = await fixtures.validator(knex)
 
-      // the block 2001 pays the epoch 1 started 40 days ago
       const now = Date.now()
 
       for (const [height, epoch, timestamp] of [[2000, 1, now - 40 * 86400000], [2001, 2, now - 10 * 86400000], [2002, 2, now - 60000]]) {
-        await fixtures.block(knex, { height, epoch, validator: validator.pro_tx_hash, timestamp: new Date(timestamp), l1_locked_height: 200 })
+        await fixtures.block(knex, { height, epoch, validator: validator.pro_tx_hash, timestamp: new Date(timestamp), l1_locked_height: 600 })
       }
 
       await fixtures.platformReward(knex, { block_height: 2001, epoch: 1, pro_tx_hash: validator.pro_tx_hash, amount: 500000000000 })
 
-      // 1 and 3 DASH paid in the Core blocks 101 - 200, which are 15000 seconds
       await fixtures.corePayment(knex, { core_block_height: 101, pro_tx_hash: validator.pro_tx_hash, amount: 100000000 })
       await fixtures.corePayment(knex, { core_block_height: 200, pro_tx_hash: other.pro_tx_hash, amount: 300000000 })
 
@@ -3162,13 +3080,88 @@ describe('Validators routes', () => {
         .map(({ pro_tx_hash: proTxHash }) => ({ proTxHash, type: 'Evo', state: { PoSeBanHeight: -1, registeredHeight: 1 } })))
     })
 
-    it('should estimate the monthly earnings from the last 30 days', async () => {
+    it('should return Core payments and Platform rewards paid during the period', async () => {
+      const { body } = await client.get(`/validator/${validatorA.pro_tx_hash}/earnings?timestamp_start=2024-01-01T00:00:00Z&timestamp_end=2024-01-01T01:30:00Z`)
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      // Core block 565 was chain locked after the period
+      assert.deepEqual(body, {
+        core: {
+          payments: 2,
+          amount: 300
+        },
+        platform: {
+          epochs: 1,
+          firstEpoch: 10,
+          lastEpoch: 10,
+          blocksProposed: 3,
+          reward: 2997
+        },
+        // the validator is not in the masternode list
+        estimate: {
+          periodDays: 30,
+          eligible: false,
+          corePerMonth: null,
+          platformPerMonth: null,
+          totalPerMonth: null,
+          platformHistory: null
+        }
+      })
+    })
+
+    it('should skip rewards paid before the period', async () => {
+      const { body } = await client.get(`/validator/${validatorB.pro_tx_hash}/earnings?timestamp_start=2024-01-01T01:10:00Z&timestamp_end=2024-01-01T03:00:00Z`)
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      assert.deepEqual(body.platform, {
+        epochs: 1,
+        firstEpoch: 12,
+        lastEpoch: 12,
+        blocksProposed: 2,
+        reward: 1000
+      })
+    })
+
+    it('should return zero earnings for a validator without payments', async () => {
+      const validator = await fixtures.validator(knex)
+
+      const { body } = await client.get(`/validator/${validator.pro_tx_hash}/earnings?timestamp_start=2024-01-01T00:00:00Z&timestamp_end=2024-01-01T03:00:00Z`)
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      assert.deepEqual(body, {
+        core: {
+          payments: 0,
+          amount: 0
+        },
+        platform: {
+          epochs: 0,
+          firstEpoch: null,
+          lastEpoch: null,
+          blocksProposed: 0,
+          reward: 0
+        },
+        // the validator is not in the masternode list
+        estimate: {
+          periodDays: 30,
+          eligible: false,
+          corePerMonth: null,
+          platformPerMonth: null,
+          totalPerMonth: null,
+          platformHistory: null
+        }
+      })
+    })
+
+    it('should estimate the monthly earnings by the last 30 days', async () => {
       const { body } = await client.get(`/validator/${validator.pro_tx_hash}/earnings`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
-      // the median Core payout is 2 DASH per 15000 seconds
-      const corePerMonth = 2 * 365 * 86400 / 15000 * 30 / 365
+      // the median Core payout is 2 DASH per the Core blocks 101 - 565 of 150 seconds
+      const corePerMonth = 2 * 365 * 86400 / (465 * 150) * 30 / 365
 
       const { platformHistory, ...estimate } = body.estimate
 
@@ -3188,6 +3181,18 @@ describe('Validators routes', () => {
         reward: 500000000000
       })
       assert.equal(new Date(platformHistory.endTime) - new Date(platformHistory.startTime), 30 * 86400000)
+    })
+
+    it('should return 404 for an unknown validator', async () => {
+      await client.get('/validator/DEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEF/earnings')
+        .expect(404)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+    })
+
+    it('should return error on wrong bounds', async () => {
+      await client.get(`/validator/${validatorA.pro_tx_hash}/earnings?timestamp_start=2025-01-02T00:00:00&timestamp_end=2024-01-08T00:00:00`)
+        .expect(400)
+        .expect('Content-Type', 'application/json; charset=utf-8')
     })
   })
 })

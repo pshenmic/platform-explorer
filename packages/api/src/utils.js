@@ -2,7 +2,7 @@ const crypto = require('crypto')
 const StateTransitionEnum = require('./enums/StateTransitionEnum')
 const DocumentActionEnum = require('./enums/DocumentActionEnum')
 const net = require('net')
-const { TCP_CONNECT_TIMEOUT, NETWORK, DPNS_CONTRACT, BANNED_STATE_CACHE_KEY, PLATFORM_QUORUMS_CACHE_KEY, VALIDATORS_CACHE_LIFE_INTERVAL, MASTERNODE_LIST_CACHE_KEY, MASTERNODE_LIST_CACHE_LIFE_INTERVAL, CORE_BLOCK_HASH_CACHE_KEY, CORE_BLOCK_HASH_CACHE_MAX_ENTRIES, CORE_BLOCK_HASH_CACHE_LIFE_INTERVAL, CORE_NETWORK_CACHE_KEY, CORE_YIELD_CACHE_KEY, CORE_BLOCKS_PER_DAY, DUFFS_PER_DASH } = require('./constants')
+const { TCP_CONNECT_TIMEOUT, NETWORK, DPNS_CONTRACT, BANNED_STATE_CACHE_KEY, PLATFORM_QUORUMS_CACHE_KEY, VALIDATORS_CACHE_LIFE_INTERVAL, MASTERNODE_LIST_CACHE_KEY, MASTERNODE_LIST_CACHE_LIFE_INTERVAL, CORE_BLOCK_HASH_CACHE_KEY, CORE_BLOCK_HASH_CACHE_MAX_ENTRIES, CORE_BLOCK_HASH_CACHE_LIFE_INTERVAL, CORE_NETWORK_CACHE_KEY, CORE_NETWORK_CACHE_LIFE_INTERVAL, DUFFS_PER_DASH, CORE_BLOCKS_PER_DAY } = require('./constants')
 const DashCoreRPC = require('./dashcoreRpc')
 const TenderdashRPC = require('./tenderdashRpc')
 const Quorum = require('./models/Quorum')
@@ -1740,7 +1740,13 @@ const getCoreBlockHash = async (height) => {
 }
 
 const getCoreBlockTime = async (height) => {
-  const { time } = await DashCoreRPC.getBlockHeader(await getCoreBlockHash(height))
+  const hash = await getCoreBlockHash(height)
+
+  if (!hash) {
+    return null
+  }
+
+  const { time } = await DashCoreRPC.getBlockHeader(hash)
 
   return time * 1000
 }
@@ -1763,48 +1769,36 @@ const getCoreNetworkInfo = async () => {
     coreBlockIntervalMs: Math.round((tipTime * 1000 - dayAgoTime) / CORE_BLOCKS_PER_DAY)
   }
 
-  cache.set(CORE_NETWORK_CACHE_KEY, coreNetworkInfo, MASTERNODE_LIST_CACHE_LIFE_INTERVAL)
+  cache.set(CORE_NETWORK_CACHE_KEY, coreNetworkInfo, CORE_NETWORK_CACHE_LIFE_INTERVAL)
 
   return coreNetworkInfo
 }
 
 // Gross Core payout of an enabled masternode of the type in DASH per year: the median of what
-// the enabled masternodes of the type were paid in the last 30 days of indexed Core blocks.
+// the enabled masternodes of the type were paid in the Core blocks of the payments.
 // It follows how Core actually pays every masternode type rather than assuming it, and the
 // median skips the masternodes that were enabled for a part of the period only.
-const getCoreYieldPerYear = async (validatorsDAO, type, masternodes) => {
-  const cached = cache.get(`${CORE_YIELD_CACHE_KEY}_${type}`)
-
-  if (cached !== undefined) {
-    return cached
-  }
-
-  const corePayments = await validatorsDAO.getCorePaymentsByMasternode(30 * CORE_BLOCKS_PER_DAY)
-
+const getCoreYieldPerYear = async (corePayments, type, masternodes) => {
   const enabled = masternodes
     .filter(masternode => masternode.type === type && masternode.state.PoSeBanHeight === -1)
 
-  let coreYieldPerYear = null
-
-  if (corePayments && enabled.length && corePayments.lastHeight > corePayments.firstHeight) {
-    const amounts = enabled
-      .map(({ proTxHash }) => corePayments.amounts.get(proTxHash.toUpperCase()) ?? 0)
-      .sort((a, b) => a - b)
-
-    const middle = Math.floor(amounts.length / 2)
-    const amount = amounts.length % 2 ? amounts[middle] : (amounts[middle - 1] + amounts[middle]) / 2
-
-    const [startTime, endTime] = await Promise.all([
-      getCoreBlockTime(corePayments.firstHeight - 1),
-      getCoreBlockTime(corePayments.lastHeight)
-    ])
-
-    coreYieldPerYear = amount / DUFFS_PER_DASH * 365 * 86400000 / (endTime - startTime)
+  if (!corePayments || !enabled.length || corePayments.lastHeight <= corePayments.firstHeight) {
+    return null
   }
 
-  cache.set(`${CORE_YIELD_CACHE_KEY}_${type}`, coreYieldPerYear, MASTERNODE_LIST_CACHE_LIFE_INTERVAL)
+  const amounts = enabled
+    .map(({ proTxHash }) => corePayments.amounts.get(proTxHash.toUpperCase()) ?? 0)
+    .sort((a, b) => a - b)
 
-  return coreYieldPerYear
+  const middle = Math.floor(amounts.length / 2)
+  const amount = amounts.length % 2 ? amounts[middle] : (amounts[middle - 1] + amounts[middle]) / 2
+
+  const [startTime, endTime] = await Promise.all([
+    getCoreBlockTime(corePayments.firstHeight - 1),
+    getCoreBlockTime(corePayments.lastHeight)
+  ])
+
+  return amount / DUFFS_PER_DASH * 365 * 86400000 / (endTime - startTime)
 }
 
 const getMasternodeList = async () => {

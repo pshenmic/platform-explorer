@@ -2032,37 +2032,23 @@ describe('Utils', () => {
     })
 
     it('should return the median payout of the enabled masternodes of the type', async () => {
-      const storage = new Map()
-
-      mock.method(cache, 'get', (key) => storage.get(key))
-      mock.method(cache, 'set', (key, value) => storage.set(key, value))
-
-      const validatorsDAO = {
-        getCorePaymentsByMasternode: async () => ({
-          firstHeight: 101,
-          lastHeight: 200,
-          amounts: new Map([
-            [hashes[0].toUpperCase(), 100e8],
-            [hashes[1].toUpperCase(), 300e8],
-            [hashes[2].toUpperCase(), 200e8],
-            [hashes[3].toUpperCase(), 900e8],
-            [hashes[4].toUpperCase(), 900e8]
-          ])
-        })
+      const corePayments = {
+        firstHeight: 101,
+        lastHeight: 200,
+        amounts: new Map([
+          [hashes[0].toUpperCase(), 100e8],
+          [hashes[1].toUpperCase(), 300e8],
+          [hashes[2].toUpperCase(), 200e8],
+          [hashes[3].toUpperCase(), 900e8],
+          [hashes[4].toUpperCase(), 900e8]
+        ])
       }
 
-      assert.equal(await utils.getCoreYieldPerYear(validatorsDAO, 'Evo', masternodes), 200)
+      assert.equal(await utils.getCoreYieldPerYear(corePayments, 'Evo', masternodes), 200)
     })
 
     it('should return null without indexed Core payments', async () => {
-      const storage = new Map()
-
-      mock.method(cache, 'get', (key) => storage.get(key))
-      mock.method(cache, 'set', (key, value) => storage.set(key, value))
-
-      const validatorsDAO = { getCorePaymentsByMasternode: async () => null }
-
-      assert.equal(await utils.getCoreYieldPerYear(validatorsDAO, 'Evo', masternodes), null)
+      assert.equal(await utils.getCoreYieldPerYear(null, 'Evo', masternodes), null)
     })
   })
 
