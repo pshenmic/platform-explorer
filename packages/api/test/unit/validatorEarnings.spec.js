@@ -1,6 +1,6 @@
 const { test } = require('node:test')
 const assert = require('node:assert/strict')
-const ValidatorEarnings = require('../../src/services/validatorEarnings')
+const ValidatorEarnings = require('../../src/validatorEarnings')
 
 const day = 86400000
 const rows = Array.from({ length: 6 }, (_, epochIndex) => ({

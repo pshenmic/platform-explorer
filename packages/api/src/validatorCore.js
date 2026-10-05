@@ -1,7 +1,6 @@
-const cache = require('../cache')
-const { blocksUntilCorePayment } = require('../utils')
-const YEAR_MS = 365 * 86400000
-const DUFFS_PER_DASH = 100000000
+const cache = require('./cache')
+const { blocksUntilCorePayment } = require('./utils')
+const { YEAR_MS, DUFFS_PER_DASH } = require('./constants')
 
 module.exports = class ValidatorCore {
   constructor (rpc) {

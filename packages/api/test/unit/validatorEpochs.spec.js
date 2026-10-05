@@ -1,6 +1,6 @@
 const { test } = require('node:test')
 const assert = require('node:assert/strict')
-const getValidatorEpochs = require('../../src/services/validatorEpochs')
+const getValidatorEpochs = require('../../src/validatorEpochs')
 
 const epochs = [1000, 4000, 10000, 13000].map((startTime, number) => ({ number, startTime }))
 const node = {

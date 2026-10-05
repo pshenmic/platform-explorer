@@ -1,6 +1,6 @@
 const { test } = require('node:test')
 const assert = require('node:assert/strict')
-const ValidatorCore = require('../../src/services/validatorCore')
+const ValidatorCore = require('../../src/validatorCore')
 
 test('derives Core income from RPC duffs and shares the network snapshot', async () => {
   let listCalls = 0
