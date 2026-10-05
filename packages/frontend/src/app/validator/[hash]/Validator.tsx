@@ -806,6 +806,17 @@ function Validator({ hash }: ValidatorProps) {
         </div>
 
         <div className={'ValidatorPage__Column'}>
+          <InfoContainer className={'ValidatorPage__Epochs'}>
+            <ValidatorEpochs
+              hash={hash}
+              epochNumber={typeof epochNumber === 'number' ? epochNumber : null}
+              epochStart={validator.data?.epochInfo?.startTime ?? null}
+              epochEnd={validator.data?.epochInfo?.endTime ?? null}
+              epochReward={
+                validator.loading || validator.error || epochReward == null ? null : epochReward
+              }
+            />
+          </InfoContainer>
           <div className={'ValidatorPage__Summary'}>
             <SummaryCard
               label={
@@ -951,17 +962,6 @@ function Validator({ hash }: ValidatorProps) {
               }
             />
           </div>
-          <InfoContainer className={'ValidatorPage__Epochs'}>
-            <ValidatorEpochs
-              hash={hash}
-              epochNumber={typeof epochNumber === 'number' ? epochNumber : null}
-              epochStart={validator.data?.epochInfo?.startTime ?? null}
-              epochEnd={validator.data?.epochInfo?.endTime ?? null}
-              epochReward={
-                validator.loading || validator.error || epochReward == null ? null : epochReward
-              }
-            />
-          </InfoContainer>
         </div>
 
         <InfoContainer styles={['tabs']} className={'ValidatorPage__Lists'}>
