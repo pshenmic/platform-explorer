@@ -420,7 +420,8 @@ class ValidatorsController {
     const { hash } = request.params
     const {
       timestamp_start: timestampStart = new Date().getTime() - 3600000,
-      timestamp_end: timestampEnd = new Date().getTime()
+      timestamp_end: timestampEnd = new Date().getTime(),
+      intervalsCount = null
     } = request.query
 
     if (!timestampStart || !timestampEnd) {
@@ -431,15 +432,15 @@ class ValidatorsController {
       return response.status(400).send({ message: 'start timestamp cannot be more than end timestamp' })
     }
 
+    const start = new Date(timestampStart)
+    const end = new Date(timestampEnd)
+
     const stats = await this.validatorsDAO.getValidatorEpochStatsByProTxHash(
       hash,
-      new Date(timestampStart),
-      new Date(timestampEnd)
+      start,
+      end,
+      intervalsCount ?? Math.max(1, Math.ceil((end.getTime() - start.getTime()) / Intervals[calculateInterval(start, end)]))
     )
-
-    if (!stats) {
-      return response.status(404).send({ message: 'not found' })
-    }
 
     response.send(stats)
   }

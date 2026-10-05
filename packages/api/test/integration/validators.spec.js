@@ -2991,10 +2991,10 @@ describe('Validators routes', () => {
       ])
     })
 
-    it('should group consecutive epochs of a long interval', async () => {
+    it('should group consecutive epochs by intervals count', async () => {
       const validator = await fixtures.validator(knex)
 
-      // 170 epochs of 2025 with a block each, grouped by 3 into 57 points
+      // 170 epochs of 2025 with a block each, 57 intervals group them by 3
       for (let i = 0; i < 170; i++) {
         await fixtures.block(knex, {
           height: 5000 + i,
@@ -3008,7 +3008,7 @@ describe('Validators routes', () => {
       await fixtures.platformReward(knex, { block_height: 5001, epoch: 100, pro_tx_hash: validator.pro_tx_hash, amount: 1000 })
       await fixtures.platformReward(knex, { block_height: 5002, epoch: 101, pro_tx_hash: validator.pro_tx_hash, amount: 2000 })
 
-      const { body } = await client.get(`/validator/${validator.pro_tx_hash}/epochs/stats?timestamp_start=2025-01-01T00:00:00Z&timestamp_end=2025-01-31T00:00:00Z`)
+      const { body } = await client.get(`/validator/${validator.pro_tx_hash}/epochs/stats?timestamp_start=2025-01-01T00:00:00Z&timestamp_end=2025-01-31T00:00:00Z&intervalsCount=57`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -3035,12 +3035,6 @@ describe('Validators routes', () => {
         fees: 0,
         reward: null
       })
-    })
-
-    it('should return 404 for an unknown validator', async () => {
-      await client.get('/validator/DEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEF/epochs/stats')
-        .expect(404)
-        .expect('Content-Type', 'application/json; charset=utf-8')
     })
 
     it('should return error on wrong bounds', async () => {

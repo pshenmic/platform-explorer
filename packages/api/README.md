@@ -851,7 +851,7 @@ Return the Platform epochs overlapping the interval with the blocks the validato
 
 * `timestamp_start` lower interval threshold in ISO string ( _optional_, an hour ago by default )
 * `timestamp_end` upper interval threshold in ISO string ( _optional_, now by default )
-* returns at most 84 points, long intervals group consecutive epochs: `epoch` and `endEpoch` are the first and the last epoch of the point, the other fields are the sums of its epochs
+* `intervalsCount` intervals count in response ( _optional_ ), consecutive epochs are grouped into the intervals: `epoch` and `endEpoch` are the first and the last epoch of the interval, the other fields are the sums of its epochs
 * `endTime` is the start of the next epoch, `null` for the current epoch
 * `fees` are the fees of the transactions in the blocks proposed by the validator, in credits
 * `reward` is what Platform paid the validator for the epoch: its part of the epoch pool (processing fees, distributed storage fees and Core block rewards) by the proposed blocks, in credits, before the masternode reward shares. `0` when the validator proposed no blocks in the epoch, `null` until the first block of the next epoch pays it, and for the epochs paid before Platform protocol version 9. A point of grouped epochs sums the paid ones
