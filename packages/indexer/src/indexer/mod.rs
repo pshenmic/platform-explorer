@@ -1,5 +1,7 @@
 use crate::processor::psql::{state_transition_duplicates, PSQLProcessor};
 use crate::utils::TenderdashRpcApi;
+use dapi_grpc::platform::v0::platform_client::PlatformClient;
+use dapi_grpc::tonic::transport::Channel;
 use dashcore_rpc::{Auth, Client};
 use std::cell::Cell;
 use std::env;
@@ -48,7 +50,14 @@ impl Indexer {
             .await
             .expect("Failed to get network");
 
-        let processor = PSQLProcessor::new(dashcore_rpc, network);
+        let dapi_url = env::var("DAPI_URL").expect("You've not set the DAPI_URL");
+        let dapi_client = PlatformClient::new(
+            Channel::from_shared(dapi_url)
+                .expect("Failed to parse DAPI_URL env")
+                .connect_lazy(),
+        );
+
+        let processor = PSQLProcessor::new(dashcore_rpc, dapi_client, network);
         let txs_to_skip_str = env::var("TXS_TO_SKIP").unwrap_or(String::from(""));
 
         let mut txs_to_skip = txs_to_skip_str

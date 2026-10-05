@@ -1,11 +1,13 @@
 pub mod block;
 pub mod block_header;
+pub mod core_payment;
 pub mod data_contract;
 pub mod document;
 pub mod identity;
 pub mod identity_token;
 pub mod masternode_vote;
 pub mod platform_address_transition;
+pub mod platform_reward;
 pub mod shielded_transition;
 pub mod token_config;
 pub mod transfer;

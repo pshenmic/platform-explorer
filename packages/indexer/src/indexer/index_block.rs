@@ -88,6 +88,7 @@ impl Indexer {
                 app_hash,
                 proposer_pro_tx_hash: block.block.header.proposer_pro_tx_hash,
                 quorum_hash: Some(quorum_hash),
+                epoch: None,
             },
             txs,
         };
