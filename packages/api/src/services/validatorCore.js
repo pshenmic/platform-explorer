@@ -1,4 +1,4 @@
-const cachedRequest = require('./cachedRequest')
+const cache = require('../cache')
 const { blocksUntilCorePayment } = require('../utils')
 const YEAR_MS = 365 * 86400000
 const DUFFS_PER_DASH = 100000000
@@ -6,19 +6,19 @@ const DUFFS_PER_DASH = 100000000
 module.exports = class ValidatorCore {
   constructor (rpc) {
     this.rpc = rpc
-    this.cached = cachedRequest()
+    this.cache = cache.create()
   }
 
   blockTime = height => {
     if (!Number.isInteger(height) || height <= 0) return Promise.resolve(null)
-    return this.cached(`block:${height}`, async () => {
+    return this.cache.getOrLoad(`block:${height}`, async () => {
       const block = await this.rpc.getBlock(await this.rpc.getBlockHash(height))
       if (!Number.isFinite(block?.time)) throw new Error('Core block time unavailable')
       return new Date(block.time * 1000).toISOString()
     })
   }
 
-  snapshot = () => this.cached('snapshot', async () => {
+  snapshot = () => this.cache.getOrLoad('snapshot', async () => {
     const [nodes, height] = await Promise.allSettled([
       this.rpc.getProTxList('registered', true),
       this.rpc.getBlockCount()

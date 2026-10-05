@@ -31,6 +31,19 @@ Prepare an .env file with all necessary environments and then start a docker con
 docker run -d -p 3005:3005 --restart always --env-file .env ghcr.io/pshenmic/platform-explorer:api
 ```
 
+### Internal cache
+
+`src/cache.js` exports the shared `get`, `set` and `delete` cache. Values set
+without a lifetime remain until deleted; replacing a value cancels its old expiry.
+
+Use `cache.create({ ttl, maxEntries, timeout })` for an isolated request cache,
+then `getOrLoad(key, load)` to share concurrent loads and reuse successful results.
+Request defaults are defined in `src/constants.js`: a 60-second TTL after success,
+256 entries and a 15-second timeout. The oldest inserted entry is evicted at the
+limit; failures are removed so callers can retry. Expiry timers do not keep the
+process alive. A timeout stops waiting but does not cancel the underlying RPC.
+The shared cache retains its existing unlimited capacity and explicit lifetimes.
+
 ## HTTP API
 
 Platform Explorer HTTP API allow you to query and see platform blockchain data programmatically with a REST interface via HTTP calls. You can use it to build, test, or improve your applications.

@@ -1,12 +1,12 @@
-const cachedRequest = require('./cachedRequest')
+const cache = require('../cache')
 const caches = new WeakMap()
 const MAX_POINTS = 84
 
 // Long ranges are grouped using real epoch boundaries, never an assumed duration.
 module.exports = async (node, start, end) => {
-  if (!caches.has(node)) caches.set(node, cachedRequest({ maxEntries: 512 }))
+  if (!caches.has(node)) caches.set(node, cache.create({ maxEntries: 512 }))
   const cached = caches.get(node)
-  const read = (count, from) => cached(`epochs:${from ?? 'latest'}:${count}`, async () => {
+  const read = (count, from) => cached.getOrLoad(`epochs:${from ?? 'latest'}:${count}`, async () => {
     const rows = await node.getEpochsInfo(count, from != null, from)
     return rows.map((row, i) => {
       const epoch = { number: Number(row.number), startTime: Number(row.startTime) }

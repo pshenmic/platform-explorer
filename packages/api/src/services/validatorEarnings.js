@@ -1,4 +1,4 @@
-const cachedRequest = require('./cachedRequest')
+const cache = require('../cache')
 
 const MONTH_MS = 30 * 86400000
 const CREDITS_PER_DASH = 100000000000
@@ -10,10 +10,10 @@ module.exports = class ValidatorEarnings {
   constructor (node, core) {
     this.node = node
     this.core = core
-    this.cached = cachedRequest({ maxEntries: 1 })
+    this.cache = cache.create({ maxEntries: 1 })
   }
 
-  epochs = () => this.cached('epochs', async () => {
+  epochs = () => this.cache.getOrLoad('epochs', async () => {
     const [current] = await this.node.getEpochsInfo(1)
     if (!current || current.number < EPOCH_COUNT) throw new Error('Insufficient epoch history')
     const rows = await this.node.getFinalizedEpochsInfo(current.number - EPOCH_COUNT, true, current.number, false)
