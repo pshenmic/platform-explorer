@@ -1740,13 +1740,11 @@ const getCoreBlockHash = async (height) => {
 }
 
 const getCoreBlockTime = async (height) => {
-  const hash = await getCoreBlockHash(height)
-
-  if (!hash) {
+  if (!(height > 0)) {
     return null
   }
 
-  const { time } = await DashCoreRPC.getBlockHeader(hash)
+  const { time } = await DashCoreRPC.getBlockStats(height, ['time'])
 
   return time * 1000
 }
@@ -1761,12 +1759,14 @@ const getCoreNetworkInfo = async () => {
 
   const height = await DashCoreRPC.getBlockCount()
 
-  const { time: tipTime } = await DashCoreRPC.getBlockHeader(await DashCoreRPC.getBlockHash(height))
-  const dayAgoTime = await getCoreBlockTime(height - CORE_BLOCKS_PER_DAY)
+  const [tipTime, dayAgoTime] = await Promise.all([
+    getCoreBlockTime(height),
+    getCoreBlockTime(height - CORE_BLOCKS_PER_DAY)
+  ])
 
   const coreNetworkInfo = {
-    coreTipTime: new Date(tipTime * 1000).toISOString(),
-    coreBlockIntervalMs: Math.round((tipTime * 1000 - dayAgoTime) / CORE_BLOCKS_PER_DAY)
+    coreTipTime: new Date(tipTime).toISOString(),
+    coreBlockIntervalMs: Math.round((tipTime - dayAgoTime) / CORE_BLOCKS_PER_DAY)
   }
 
   cache.set(CORE_NETWORK_CACHE_KEY, coreNetworkInfo, CORE_NETWORK_CACHE_LIFE_INTERVAL)

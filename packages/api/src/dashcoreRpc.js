@@ -64,8 +64,8 @@ class DashCoreRPC {
     return await this.callMethod('getblockhash', [height])
   }
 
-  static async getBlockHeader (blockHash) {
-    return await this.callMethod('getBlockHeader', [blockHash, true])
+  static async getBlockStats (height, stats) {
+    return await this.callMethod('getblockstats', [height, stats])
   }
 
   static async getProTxList (type, detailed, blockHeight = undefined) {

@@ -255,7 +255,7 @@ describe('Validators routes', () => {
     mock.method(DashCoreRPC, 'getBlockHash', async (height) => height.toString(16).padStart(64, '0'))
 
     // a Core block every 150 seconds
-    mock.method(DashCoreRPC, 'getBlockHeader', async (hash) => ({ time: parseInt(hash, 16) * 150 }))
+    mock.method(DashCoreRPC, 'getBlockStats', async (height) => ({ time: height * 150 }))
 
     mock.method(DashCoreRPC, 'getBlockCount', async () => 1100000)
 
