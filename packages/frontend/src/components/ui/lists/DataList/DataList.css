@@ -1253,3 +1253,19 @@
     animation: none;
   }
 }
+.DataList.DataList--contained .DataList__Scroll {
+  max-height: min(32rem, 60dvh);
+  overflow: auto;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
+}
+.DataList--contained .DataList__Head {
+  position: sticky;
+  top: 0;
+  z-index: 12;
+  background: var(--pe-color-gray-800);
+}
+.DataList--contained .DataList__Scroll:focus-visible {
+  outline: 2px solid var(--pe-color-brand-light);
+  outline-offset: -2px;
+}
