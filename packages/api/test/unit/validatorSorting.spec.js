@@ -32,6 +32,8 @@ test('validator sorting supports both parameter names without changing other rou
     ['', 'id'],
     ['orderBy=latest_timestamp', 'latest_timestamp'],
     ['order_by=latest_timestamp', 'latest_timestamp'],
+    ['orderBy=proposed_blocks_amount', 'proposed_blocks_amount'],
+    ['order_by=proposed_blocks_amount', 'proposed_blocks_amount'],
     ['orderBy=id', 'id'],
     ['order_by=id', 'id'],
     ['orderBy=unknown', 'id'],
@@ -66,7 +68,7 @@ test('validator SQL always uses id as the final sorting criterion', async contex
   const dao = new ValidatorsDAO(knex)
 
   for (const direction of ['asc', 'desc']) {
-    for (const field of ['latest_timestamp', 'id', 'unknown']) {
+    for (const field of ['latest_timestamp', 'proposed_blocks_amount', 'id', 'unknown']) {
       await dao.getValidators(
         1, 10, direction, undefined, [], undefined, [], undefined,
         undefined, undefined, undefined, undefined, undefined, undefined,
@@ -75,7 +77,9 @@ test('validator SQL always uses id as the final sorting criterion', async contex
 
       const expected = field === 'latest_timestamp'
         ? `order by "latest_timestamp" ${direction} nulls last, "id" ${direction}`
-        : `order by "id" ${direction}`
+        : field === 'proposed_blocks_amount'
+          ? `order by "proposed_blocks_amount" ${direction}, "id" ${direction}`
+          : `order by "id" ${direction}`
 
       assert.ok(query.sql.endsWith(`${expected} limit ?`), query.sql)
     }

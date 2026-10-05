@@ -677,6 +677,25 @@ describe('Validators routes', () => {
         assert.deepEqual(dated, sorted)
       })
 
+      it('should order validators by proposed blocks desc', async () => {
+        const { body } = await client.get('/validators?order_by=proposed_blocks_amount&order=desc&limit=0')
+          .expect(200)
+          .expect('Content-Type', 'application/json; charset=utf-8')
+
+        const counts = new Map()
+        for (const block of blocks) {
+          counts.set(block.validator, (counts.get(block.validator) ?? 0) + 1)
+        }
+        const [topHash] = [...counts.entries()].reduce((best, entry) => entry[1] > best[1] ? entry : best)
+
+        assert.equal(body.resultSet.length, validators.length)
+        assert.equal(body.resultSet[0].proTxHash, topHash)
+
+        const amounts = body.resultSet.map(validator => validator.proposedBlocksAmount)
+        const sorted = amounts.slice().sort((a, b) => b - a)
+        assert.deepEqual(amounts, sorted)
+      })
+
       it('should use id ordering for an unknown validators order field', async () => {
         const { body: expected } = await client.get('/validators?order_by=id&order=desc')
           .expect(200)

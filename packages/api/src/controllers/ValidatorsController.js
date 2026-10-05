@@ -209,7 +209,7 @@ class ValidatorsController {
       lastProposedBlockTimestampStart,
       lastProposedBlockTimestampEnd,
       lastProposedBlockHash,
-      ['id', 'latest_timestamp'].includes(orderBy) ? orderBy : 'id'
+      ['id', 'latest_timestamp', 'proposed_blocks_amount'].includes(orderBy) ? orderBy : 'id'
     )
 
     const activeValidatorsHashes = new Set(activeValidators.map(validator => validator.pro_tx_hash))
