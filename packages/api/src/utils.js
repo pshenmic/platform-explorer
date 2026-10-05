@@ -2,7 +2,7 @@ const crypto = require('crypto')
 const StateTransitionEnum = require('./enums/StateTransitionEnum')
 const DocumentActionEnum = require('./enums/DocumentActionEnum')
 const net = require('net')
-const { TCP_CONNECT_TIMEOUT, NETWORK, DPNS_CONTRACT, BANNED_STATE_CACHE_KEY, PLATFORM_QUORUMS_CACHE_KEY, VALIDATORS_CACHE_LIFE_INTERVAL, MASTERNODE_LIST_CACHE_KEY, MASTERNODE_LIST_CACHE_LIFE_INTERVAL, CORE_BLOCK_HASH_CACHE_KEY, CORE_NETWORK_CACHE_KEY, CORE_YIELD_CACHE_KEY, CORE_BLOCKS_PER_DAY, DUFFS_PER_DASH } = require('./constants')
+const { TCP_CONNECT_TIMEOUT, NETWORK, DPNS_CONTRACT, BANNED_STATE_CACHE_KEY, PLATFORM_QUORUMS_CACHE_KEY, VALIDATORS_CACHE_LIFE_INTERVAL, MASTERNODE_LIST_CACHE_KEY, MASTERNODE_LIST_CACHE_LIFE_INTERVAL, CORE_BLOCK_HASH_CACHE_KEY, CORE_BLOCK_HASH_CACHE_MAX_ENTRIES, CORE_BLOCK_HASH_CACHE_LIFE_INTERVAL, CORE_NETWORK_CACHE_KEY, CORE_YIELD_CACHE_KEY, CORE_BLOCKS_PER_DAY, DUFFS_PER_DASH } = require('./constants')
 const DashCoreRPC = require('./dashcoreRpc')
 const TenderdashRPC = require('./tenderdashRpc')
 const Quorum = require('./models/Quorum')
@@ -1700,12 +1700,19 @@ const getFinalPoSeBanHeight = async (proTxHash) => {
   return finalPoSeBanHeight
 }
 
+// The cached Core block hashes from the oldest, the hashes never change but the blocks of every
+// page would grow the cache without a bound
+let coreBlockHashKeys = []
+let oldestCoreBlockHashKey = 0
+
 const getCoreBlockHash = async (height) => {
   if (!(height > 0)) {
     return null
   }
 
-  const cached = cache.get(`${CORE_BLOCK_HASH_CACHE_KEY}_${height}`)
+  const key = `${CORE_BLOCK_HASH_CACHE_KEY}_${height}`
+
+  const cached = cache.get(key)
 
   if (cached) {
     return cached
@@ -1713,7 +1720,21 @@ const getCoreBlockHash = async (height) => {
 
   const hash = await DashCoreRPC.getBlockHash(height)
 
-  cache.set(`${CORE_BLOCK_HASH_CACHE_KEY}_${height}`, hash)
+  cache.set(key, hash, CORE_BLOCK_HASH_CACHE_LIFE_INTERVAL)
+
+  coreBlockHashKeys.push(key)
+
+  if (coreBlockHashKeys.length - oldestCoreBlockHashKey > CORE_BLOCK_HASH_CACHE_MAX_ENTRIES) {
+    cache.delete(coreBlockHashKeys[oldestCoreBlockHashKey])
+
+    oldestCoreBlockHashKey++
+  }
+
+  // drop the deleted keys from the queue once in a while
+  if (oldestCoreBlockHashKey >= CORE_BLOCK_HASH_CACHE_MAX_ENTRIES) {
+    coreBlockHashKeys = coreBlockHashKeys.slice(oldestCoreBlockHashKey)
+    oldestCoreBlockHashKey = 0
+  }
 
   return hash
 }

@@ -13,6 +13,8 @@ module.exports = {
   PLATFORM_QUORUMS_CACHE_KEY: 'platform_quorums',
   MASTERNODE_LIST_CACHE_KEY: 'masternode_list',
   CORE_BLOCK_HASH_CACHE_KEY: 'core_block_hash',
+  CORE_BLOCK_HASH_CACHE_MAX_ENTRIES: 100000,
+  CORE_BLOCK_HASH_CACHE_LIFE_INTERVAL: 14 * 86400000,
   CORE_NETWORK_CACHE_KEY: 'core_network',
   CORE_YIELD_CACHE_KEY: 'core_yield',
   // Core targets a block every 2.5 minutes

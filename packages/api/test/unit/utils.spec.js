@@ -1957,17 +1957,39 @@ describe('Utils', () => {
       getBlockHash.mock.restore()
     })
 
-    it('should cache the hash of the height', async () => {
+    it('should cache the hash of the height for 14 days', async () => {
       const storage = new Map()
 
       mock.method(cache, 'get', (key) => storage.get(key))
-      mock.method(cache, 'set', (key, value) => storage.set(key, value))
+      const set = mock.method(cache, 'set', (key, value) => storage.set(key, value))
+      mock.method(cache, 'delete', (key) => storage.delete(key))
 
       const getBlockHash = mock.method(DashCoreRPC, 'getBlockHash', async (height) => height.toString(16).padStart(64, '0'))
 
       assert.equal(await utils.getCoreBlockHash(1287772), (1287772).toString(16).padStart(64, '0'))
       assert.equal(await utils.getCoreBlockHash(1287772), (1287772).toString(16).padStart(64, '0'))
       assert.equal(getBlockHash.mock.callCount(), 1)
+      assert.deepEqual(set.mock.calls[0].arguments, ['core_block_hash_1287772', (1287772).toString(16).padStart(64, '0'), 14 * 86400000])
+
+      getBlockHash.mock.restore()
+    })
+
+    it('should drop the oldest height past 100000 heights', async () => {
+      const storage = new Map()
+
+      mock.method(cache, 'get', (key) => storage.get(key))
+      mock.method(cache, 'set', (key, value) => storage.set(key, value))
+      mock.method(cache, 'delete', (key) => storage.delete(key))
+
+      const getBlockHash = mock.method(DashCoreRPC, 'getBlockHash', async (height) => height.toString(16).padStart(64, '0'))
+
+      for (let height = 1; height <= 100001; height++) {
+        await utils.getCoreBlockHash(height)
+      }
+
+      assert.equal(storage.has('core_block_hash_1'), false)
+      assert.equal(storage.has('core_block_hash_2'), true)
+      assert.equal(storage.size, 100000)
 
       getBlockHash.mock.restore()
     })
