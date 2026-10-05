@@ -21,6 +21,8 @@ Reference:
 * [Validator Rewards Statistic](#validator-rewards-stats-by-protxhash)
 * [Validator Income Statistic](#validator-income-stats-by-protxhash)
 * [Validator Blocks Statistic](#validator-stats-by-protxhash)
+* [Validator Epochs Statistic](#validator-epochs-stats-by-protxhash)
+* [Validator Earnings](#validator-earnings-by-protxhash)
 * [Validator Quorums](#validator-quorums)
 * [Transaction by hash](#transaction-by-hash)
 * [Transactions](#transactions)
@@ -234,6 +236,7 @@ HTTP /epoch/2492
 Get a block by hash
 
 * `quorumHash` on the header is the quorum that signed the block
+* `l1LockedBlockHash` on the header is the hash of the Core block at `l1LockedHeight`
 ```
 GET /block/12E5592208322B5A3598C98C1811FCDD403DF40F522511D7A965DDE1D96C97C7
 
@@ -247,7 +250,8 @@ GET /block/12E5592208322B5A3598C98C1811FCDD403DF40F522511D7A965DDE1D96C97C7
     "l1LockedHeight": 1124953,
     "validator": "8917BB546318F3410D1A7901C7B846A73446311B5164B45A03F0E613F208F234",
     "appHash": "49C07BEDB5710565CFC82F678DEB4849D2CA1CCD3DFBA6FDA3F1C0F3C39D0AD9",
-    "quorumHash": "000000153FE56C83B62D35897F3B05DCB60CFE95715EFB3014F7D2C8997C70F1"
+    "quorumHash": "000000153FE56C83B62D35897F3B05DCB60CFE95715EFB3014F7D2C8997C70F1",
+    "l1LockedBlockHash": "000000ff8b6f2d201bf4319d7503f962f602bf75c6aa749243bff0dd14afb4e1"
   },
   "txs": [
     {
@@ -538,6 +542,13 @@ GET /validators?blocks_proposed_min=1&blocks_proposed_max=9999999&last_proposed_
 ### Validator by ProTxHash
 Get validator by ProTxHash.
 * `lastProposedBlockHeader` field is nullable
+* `registeredAt` is the time of the Core block the masternode was registered in
+* `votingIdentity` is derived from the current voting key of the masternode, `votingIdentityBalance` is `null` when the identity does not exist
+* `poseScoreMax` is the PoSe penalty that bans the masternode: the size of the masternode list, at least 100
+* `blocksUntilCorePayment` is the position in the Core payment queue, `1` means the next Core block. `null` for a banned or removed masternode
+* `registeredBlockHash`, `lastPaidBlockHash`, `poseRevivedBlockHash` and `poseBanBlockHash` are the hashes of the Core blocks at `registeredHeight`, `lastPaidHeight`, `PoSeRevivedHeight` and `PoSeBanHeight` of `proTxInfo.state`, `null` when the height is not set
+* `coreYieldPerYear` is the estimated gross Core payout of the masternode in DASH per year, owner and operator outputs together: the median of what the enabled masternodes of its type were paid in the last 30 days of Core blocks, annualized. It does not include Platform rewards and expenses. `null` for a banned or removed masternode
+* `coreTipTime` is the time of the latest Core block, `coreBlockIntervalMs` is the mean Core block interval of the last day (576 blocks)
 * `geoIpInfo` contains the node location resolved from its service IP with the [DB-IP City Lite](https://db-ip.com) database; it is `null` when the service address has no IPv4 host, and its fields are `null` when the IP is not present in the database
 * the DB-IP City Lite database is licensed under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/): any page displaying `geoIpInfo` data must include an attribution link back to DB-IP.com, e.g. `<a href='https://db-ip.com'>IP Geolocation by DB-IP</a>`
 ```
@@ -625,7 +636,19 @@ GET /validator/F60A6BF9EC0794BB0CFD1E0F2217933F4B33EDE6FE810692BC275CA18148AEF0
     "city": "Boardman",
     "latitude": 45.8399,
     "longitude": -119.7009
-  }
+  },
+  "registeredAt": "2023-06-15T20:10:40.000Z",
+  "votingIdentity": "3fA9mocowUELkqG7ybNzd9mB9ZJ73nP3GkPqE14Wneno",
+  "votingIdentityBalance": "0",
+  "poseScoreMax": 391,
+  "blocksUntilCorePayment": 12,
+  "registeredBlockHash": "0000011b36ac5d60ab17bcdd2443e02b4c349ceabc3a6fca5e20ca1eab6eb145",
+  "lastPaidBlockHash": "000000a71d7d146f921a12a1acb4307e7f351f45d87373da1c4e3c121dba2772",
+  "poseRevivedBlockHash": "0000004f429c99291be00994841ec9fc9288413b9e0384cbf5750a20a21e11e4",
+  "poseBanBlockHash": null,
+  "coreYieldPerYear": 2818.752623913541,
+  "coreTipTime": "2026-10-05T15:24:15.000Z",
+  "coreBlockIntervalMs": 132675
 }
 ```
 ---
@@ -717,7 +740,19 @@ GET /validator/identity/8tsWRSwsTM5AXv4ViCF9gu39kzjbtfFDM6rCyL2RcFzd
     "city": "Boardman",
     "latitude": 45.8399,
     "longitude": -119.7009
-  }
+  },
+  "registeredAt": "2023-06-15T20:10:40.000Z",
+  "votingIdentity": "3fA9mocowUELkqG7ybNzd9mB9ZJ73nP3GkPqE14Wneno",
+  "votingIdentityBalance": "0",
+  "poseScoreMax": 391,
+  "blocksUntilCorePayment": 12,
+  "registeredBlockHash": "0000011b36ac5d60ab17bcdd2443e02b4c349ceabc3a6fca5e20ca1eab6eb145",
+  "lastPaidBlockHash": "000000a71d7d146f921a12a1acb4307e7f351f45d87373da1c4e3c121dba2772",
+  "poseRevivedBlockHash": "0000004f429c99291be00994841ec9fc9288413b9e0384cbf5750a20a21e11e4",
+  "poseBanBlockHash": null,
+  "coreYieldPerYear": 2818.752623913541,
+  "coreTipTime": "2026-10-05T15:24:15.000Z",
+  "coreBlockIntervalMs": 132675
 }
 ```
 ---
@@ -776,6 +811,76 @@ GET /validator/F60A6BF9EC0794BB0CFD1E0F2217933F4B33EDE6FE810692BC275CA18148AEF0/
         }
     },...
 ]
+```
+---
+### Validator epochs stats by ProTxHash
+Return the Platform epochs overlapping the interval with the blocks the validator proposed in them
+
+* `timestamp_start` lower interval threshold in ISO string ( _optional_, an hour ago by default )
+* `timestamp_end` upper interval threshold in ISO string ( _optional_, now by default )
+* returns at most 84 points, long intervals group consecutive epochs: `epoch` and `endEpoch` are the first and the last epoch of the point, the other fields are the sums of its epochs
+* `endTime` is the start of the next epoch, `null` for the current epoch
+* `fees` are the fees of the transactions in the blocks proposed by the validator, in credits
+* `reward` is what Platform paid the validator for the epoch: its part of the epoch pool (processing fees, distributed storage fees and Core block rewards) by the proposed blocks, in credits, before the masternode reward shares. `0` when the validator proposed no blocks in the epoch, `null` until the first block of the next epoch pays it, and for the epochs paid before Platform protocol version 9. A point of grouped epochs sums the paid ones
+* `totalBlocks` is the amount of blocks in the epoch, still growing for the current epoch
+
+```
+GET /validator/88251BD4B124EFEB87537DEABEEC54F6C8F575F4DF81F10CF5E8EEA073092B6F/epochs/stats?timestamp_start=2025-07-13T13:41:11.493Z&timestamp_end=2025-07-13T13:41:11.493Z
+[
+    {
+        "timestamp": "2025-07-13T13:41:11.493Z",
+        "data": {
+            "epoch": 8628,
+            "endEpoch": 8628,
+            "endTime": "2025-07-13T14:43:09.030Z",
+            "blocksProposed": 2,
+            "totalBlocks": 39,
+            "fees": 0,
+            "reward": 97388808088
+        }
+    }
+]
+```
+---
+### Validator earnings by ProTxHash
+Return what the validator earned during the interval
+
+* `timestamp_start` lower interval threshold in ISO string ( _optional_, 30 days ago by default )
+* `timestamp_end` upper interval threshold in ISO string ( _optional_, now by default )
+* `core` contains the Core payments of the Core blocks chain locked by Platform during the interval, `amount` is in duffs and contains the owner and operator outputs
+* `platform` contains the Platform rewards paid during the interval, every epoch is paid by the first block of the next one. `epochs` is the amount of paid epochs the validator proposed blocks in, `reward` is in credits, before the masternode reward shares
+* `estimate` is the gross monthly income in DASH expected from the last 30 days, regardless of the interval, before the operator and reward shares and expenses: `corePerMonth` from `coreYieldPerYear` and `platformPerMonth` from the Platform rewards paid during the last 30 days. `eligible` is `false` for a banned or removed masternode, then the estimates are `null`. `platformPerMonth` is also `null` for a masternode registered less than 30 days ago and when no Platform rewards were indexed for the period, `totalPerMonth` is `null` when any estimate is
+* `platformHistory` describes the period of `platformPerMonth`: the first and the last paid epoch, the period bounds and the `reward` paid in it, in credits. `null` when `platformPerMonth` is
+
+```
+GET /validator/88251BD4B124EFEB87537DEABEEC54F6C8F575F4DF81F10CF5E8EEA073092B6F/earnings?timestamp_start=2025-07-13T00:00:00.000Z&timestamp_end=2025-07-14T00:00:00.000Z
+{
+    "core": {
+        "payments": 8,
+        "amount": 961575374
+    },
+    "platform": {
+        "epochs": 23,
+        "firstEpoch": 8614,
+        "lastEpoch": 8637,
+        "blocksProposed": 24,
+        "reward": 2205508351284
+    },
+    "estimate": {
+        "periodDays": 30,
+        "eligible": true,
+        "corePerMonth": 231.73198881568877,
+        "platformPerMonth": 382.95264591643,
+        "totalPerMonth": 614.6846347321188,
+        "platformHistory": {
+            "firstEpoch": 18685,
+            "lastEpoch": 19404,
+            "startTime": "2026-09-05T15:24:15.000Z",
+            "endTime": "2026-10-05T15:24:15.000Z",
+            "reward": 38295264591643
+        }
+    }
+}
 ```
 ---
 ### Transaction by hash

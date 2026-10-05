@@ -17,6 +17,18 @@ module.exports = class Validator {
   lastWithdrawalTime
   endpoints
   geoIpInfo
+  registeredAt
+  votingIdentity
+  votingIdentityBalance
+  poseScoreMax
+  blocksUntilCorePayment
+  registeredBlockHash
+  lastPaidBlockHash
+  poseRevivedBlockHash
+  poseBanBlockHash
+  coreYieldPerYear
+  coreTipTime
+  coreBlockIntervalMs
 
   constructor (
     proTxHash,
@@ -33,7 +45,19 @@ module.exports = class Validator {
     identityBalance,
     epochInfo,
     endpoints,
-    geoIpInfo
+    geoIpInfo,
+    registeredAt,
+    votingIdentity,
+    votingIdentityBalance,
+    poseScoreMax,
+    blocksUntilCorePayment,
+    registeredBlockHash,
+    lastPaidBlockHash,
+    poseRevivedBlockHash,
+    poseBanBlockHash,
+    coreYieldPerYear,
+    coreTipTime,
+    coreBlockIntervalMs
   ) {
     this.proTxHash = proTxHash ?? null
     this.isActive = isActive ?? null
@@ -50,6 +74,18 @@ module.exports = class Validator {
     this.lastWithdrawalTime = lastWithdrawalTime ?? null
     this.endpoints = endpoints ?? null
     this.geoIpInfo = geoIpInfo ?? null
+    this.registeredAt = registeredAt ?? null
+    this.votingIdentity = votingIdentity ?? null
+    this.votingIdentityBalance = votingIdentityBalance ?? null
+    this.poseScoreMax = poseScoreMax ?? null
+    this.blocksUntilCorePayment = blocksUntilCorePayment ?? null
+    this.registeredBlockHash = registeredBlockHash ?? null
+    this.lastPaidBlockHash = lastPaidBlockHash ?? null
+    this.poseRevivedBlockHash = poseRevivedBlockHash ?? null
+    this.poseBanBlockHash = poseBanBlockHash ?? null
+    this.coreYieldPerYear = coreYieldPerYear ?? null
+    this.coreTipTime = coreTipTime ?? null
+    this.coreBlockIntervalMs = coreBlockIntervalMs ?? null
   }
 
   static fromRow ({
@@ -111,7 +147,19 @@ module.exports = class Validator {
     identityBalance,
     epochInfo,
     endpoints,
-    geoIpInfo
+    geoIpInfo,
+    registeredAt,
+    votingIdentity,
+    votingIdentityBalance,
+    poseScoreMax,
+    blocksUntilCorePayment,
+    registeredBlockHash,
+    lastPaidBlockHash,
+    poseRevivedBlockHash,
+    poseBanBlockHash,
+    coreYieldPerYear,
+    coreTipTime,
+    coreBlockIntervalMs
   }) {
     return new Validator(
       proTxHash,
@@ -128,7 +176,19 @@ module.exports = class Validator {
       identityBalance,
       epochInfo,
       endpoints,
-      geoIpInfo
+      geoIpInfo,
+      registeredAt,
+      votingIdentity,
+      votingIdentityBalance,
+      poseScoreMax,
+      blocksUntilCorePayment,
+      registeredBlockHash,
+      lastPaidBlockHash,
+      poseRevivedBlockHash,
+      poseBanBlockHash,
+      coreYieldPerYear,
+      coreTipTime,
+      coreBlockIntervalMs
     )
   }
 }

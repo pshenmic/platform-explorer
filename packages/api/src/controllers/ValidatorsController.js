@@ -4,13 +4,13 @@ const Validator = require('../models/Validator')
 const DashCoreRPC = require('../dashcoreRpc')
 const ProTxInfo = require('../models/ProTxInfo')
 const GeoIP = require('../geoip')
-const { checkTcpConnect, calculateInterval, iso8601duration, getFinalPoSeBanHeight, getPlatformQuorums } = require('../utils')
+const { checkTcpConnect, calculateInterval, iso8601duration, getFinalPoSeBanHeight, getPlatformQuorums, getMasternodeList, blocksUntilCorePayment, getCoreBlockHash, getCoreNetworkInfo, getCoreYieldPerYear, getCoreBlockTime } = require('../utils')
 const Epoch = require('../models/Epoch')
 const { base58 } = require('@scure/base')
 const Intervals = require('../enums/IntervalsEnum')
 
 const cache = require('../cache')
-const { VALIDATORS_CACHE_KEY, VALIDATORS_CACHE_LIFE_INTERVAL } = require('../constants')
+const { VALIDATORS_CACHE_KEY, VALIDATORS_CACHE_LIFE_INTERVAL, CREDITS_PER_DASH } = require('../constants')
 
 class ValidatorsController {
   constructor (knex, sdk) {
@@ -47,6 +47,18 @@ class ValidatorsController {
 
       const [serviceHost] = proTxInfo?.state?.service?.match(/^\d+\.\d+\.\d+\.\d+/) ?? [null]
 
+      const registrationBlockHash = await getCoreBlockHash(proTxInfo?.state?.registeredHeight)
+      const registrationBlock = registrationBlockHash ? await DashCoreRPC.getBlockHeader(registrationBlockHash) : null
+
+      // the voting identity is derived from the current voting key, its public key hash is
+      // the voting address payload without the version byte and the checksum
+      const votingIdentity = proTxInfo?.state?.votingAddress
+        ? (await this.sdk.utils.createVoterIdentifier(
+            validator.proTxHash,
+            Buffer.from(base58.decode(proTxInfo.state.votingAddress).subarray(1, 21)).toString('hex')
+          )).base58()
+        : null
+
       validatorInfo = Validator.fromObject(
         {
           ...validator,
@@ -55,7 +67,9 @@ class ValidatorsController {
           identity: identifier,
           identityBalance: String(identityBalance),
           epochInfo,
-          geoIpInfo: serviceHost ? GeoIP.lookup(serviceHost) : null
+          geoIpInfo: serviceHost ? GeoIP.lookup(serviceHost) : null,
+          registeredAt: registrationBlock ? new Date(registrationBlock.time * 1000).toISOString() : null,
+          votingIdentity
         }
       )
 
@@ -79,6 +93,28 @@ class ValidatorsController {
 
     const [host] = proTxInfo?.state?.service?.match(/^\d+\.\d+\.\d+\.\d+/) ?? [null]
     const [servicePort] = proTxInfo?.state?.service?.match(/\d+$/) ?? [null]
+
+    const { state } = proTxInfo ?? {}
+
+    const [votingIdentityBalance, masternodes, coreNetworkInfo, registeredBlockHash, lastPaidBlockHash, poseRevivedBlockHash, poseBanBlockHash] = await Promise.all([
+      validatorInfo.votingIdentity
+        ? this.sdk.identities.getIdentityBalance(validatorInfo.votingIdentity).then(String, () => null)
+        : null,
+      getMasternodeList(),
+      getCoreNetworkInfo(),
+      getCoreBlockHash(state?.registeredHeight),
+      getCoreBlockHash(state?.lastPaidHeight),
+      getCoreBlockHash(state?.PoSeRevivedHeight),
+      getCoreBlockHash(state?.PoSeBanHeight)
+    ])
+
+    // a banned or removed masternode is not paid by Core
+    const masternode = masternodes
+      .find(masternode => masternode.proTxHash.toLowerCase() === validator.proTxHash.toLowerCase())
+
+    const coreYieldPerYear = masternode?.state.PoSeBanHeight === -1
+      ? await getCoreYieldPerYear(this.validatorsDAO, masternode.type, masternodes)
+      : null
 
     const [coreStatus, platformStatus, grpcStatus] = (await Promise.allSettled([
       checkTcpConnect(servicePort, host),
@@ -114,7 +150,17 @@ class ValidatorsController {
           ...validatorInfo,
           isActive,
           epochInfo,
-          endpoints
+          endpoints,
+          votingIdentityBalance,
+          // Core caps the PoSe penalty at the size of the masternode list, at least 100
+          poseScoreMax: Math.max(100, masternodes.length),
+          blocksUntilCorePayment: blocksUntilCorePayment(validator.proTxHash, masternodes),
+          registeredBlockHash,
+          lastPaidBlockHash,
+          poseRevivedBlockHash,
+          poseBanBlockHash,
+          coreYieldPerYear,
+          ...coreNetworkInfo
         }
       )
     )
@@ -364,6 +410,114 @@ class ValidatorsController {
     )
 
     response.send(stats)
+  }
+
+  getValidatorEpochStatsByProTxHash = async (request, response) => {
+    const { hash } = request.params
+    const {
+      timestamp_start: timestampStart = new Date().getTime() - 3600000,
+      timestamp_end: timestampEnd = new Date().getTime()
+    } = request.query
+
+    if (!timestampStart || !timestampEnd) {
+      return response.status(400).send({ message: 'start and end must be set' })
+    }
+
+    if (timestampStart > timestampEnd) {
+      return response.status(400).send({ message: 'start timestamp cannot be more than end timestamp' })
+    }
+
+    const stats = await this.validatorsDAO.getValidatorEpochStatsByProTxHash(
+      hash,
+      new Date(timestampStart),
+      new Date(timestampEnd)
+    )
+
+    if (!stats) {
+      return response.status(404).send({ message: 'not found' })
+    }
+
+    response.send(stats)
+  }
+
+  getValidatorEarningsByProTxHash = async (request, response) => {
+    const { hash } = request.params
+    const {
+      timestamp_start: timestampStart = new Date().getTime() - 30 * 86400000,
+      timestamp_end: timestampEnd = new Date().getTime()
+    } = request.query
+
+    if (!timestampStart || !timestampEnd) {
+      return response.status(400).send({ message: 'start and end must be set' })
+    }
+
+    if (timestampStart > timestampEnd) {
+      return response.status(400).send({ message: 'start timestamp cannot be more than end timestamp' })
+    }
+
+    const earnings = await this.validatorsDAO.getValidatorEarningsByProTxHash(
+      hash,
+      new Date(timestampStart),
+      new Date(timestampEnd)
+    )
+
+    if (!earnings) {
+      return response.status(404).send({ message: 'not found' })
+    }
+
+    response.send({
+      ...earnings,
+      estimate: await this.getValidatorEarningsEstimate(hash)
+    })
+  }
+
+  // Gross monthly earnings in DASH expected from the last 30 days, before the operator and
+  // reward shares and expenses. Only for a masternode Core pays, and the Platform part only
+  // when the masternode was registered for the whole period and the period has Platform rewards.
+  getValidatorEarningsEstimate = async (hash) => {
+    const end = new Date()
+    const start = new Date(end.getTime() - 30 * 86400000)
+
+    const [trailing, hasPlatformRewards, masternodes] = await Promise.all([
+      this.validatorsDAO.getValidatorEarningsByProTxHash(hash, start, end),
+      this.validatorsDAO.hasPlatformRewards(start, end),
+      getMasternodeList()
+    ])
+
+    const masternode = masternodes
+      .find(masternode => masternode.proTxHash.toLowerCase() === hash.toLowerCase())
+
+    const eligible = masternode?.state.PoSeBanHeight === -1
+
+    const [coreYieldPerYear, registeredAt] = eligible
+      ? await Promise.all([
+        getCoreYieldPerYear(this.validatorsDAO, masternode.type, masternodes),
+        getCoreBlockTime(masternode.state.registeredHeight)
+      ])
+      : [null, null]
+
+    const corePerMonth = coreYieldPerYear !== null ? coreYieldPerYear * 30 / 365 : null
+
+    const platformPerMonth = eligible && hasPlatformRewards && registeredAt <= start.getTime()
+      ? trailing.platform.reward / CREDITS_PER_DASH
+      : null
+
+    return {
+      periodDays: 30,
+      eligible,
+      corePerMonth,
+      platformPerMonth,
+      totalPerMonth: corePerMonth !== null && platformPerMonth !== null ? corePerMonth + platformPerMonth : null,
+      platformHistory: platformPerMonth !== null
+        ? {
+            firstEpoch: trailing.platform.firstEpoch,
+            lastEpoch: trailing.platform.lastEpoch,
+            startTime: start.toISOString(),
+            endTime: end.toISOString(),
+            reward: trailing.platform.reward
+          }
+        : null
+    }
   }
 }
 

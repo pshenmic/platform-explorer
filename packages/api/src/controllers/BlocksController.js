@@ -1,5 +1,5 @@
 const BlocksDAO = require('../dao/BlocksDAO')
-const { calculateInterval, iso8601duration, getPlatformQuorums, buildProposerSchedule } = require('../utils')
+const { calculateInterval, iso8601duration, getPlatformQuorums, buildProposerSchedule, getCoreBlockHash } = require('../utils')
 const Intervals = require('../enums/IntervalsEnum')
 const { EPOCH_CHANGE_TIME, NETWORK } = require('../constants')
 const DashCoreRPC = require('../dashcoreRpc')
@@ -55,7 +55,8 @@ class BlocksController {
       {
         ...block,
         header: {
-          ...block.header
+          ...block.header,
+          l1LockedBlockHash: await getCoreBlockHash(block.header.l1LockedHeight)
         },
         quorum
       }

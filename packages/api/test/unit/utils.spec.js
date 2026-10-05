@@ -1945,4 +1945,133 @@ describe('Utils', () => {
       assert.equal(utils.buildProposerSchedule(quorums, 'DDD', 'A1', 50, 1), null)
     })
   })
+  describe('getCoreBlockHash()', () => {
+    it('should return null for the heights Core does not set', async () => {
+      const getBlockHash = mock.method(DashCoreRPC, 'getBlockHash', async () => 'a'.repeat(64))
+
+      assert.equal(await utils.getCoreBlockHash(-1), null)
+      assert.equal(await utils.getCoreBlockHash(0), null)
+      assert.equal(await utils.getCoreBlockHash(undefined), null)
+      assert.equal(getBlockHash.mock.callCount(), 0)
+
+      getBlockHash.mock.restore()
+    })
+
+    it('should cache the hash of the height', async () => {
+      const storage = new Map()
+
+      mock.method(cache, 'get', (key) => storage.get(key))
+      mock.method(cache, 'set', (key, value) => storage.set(key, value))
+
+      const getBlockHash = mock.method(DashCoreRPC, 'getBlockHash', async (height) => height.toString(16).padStart(64, '0'))
+
+      assert.equal(await utils.getCoreBlockHash(1287772), (1287772).toString(16).padStart(64, '0'))
+      assert.equal(await utils.getCoreBlockHash(1287772), (1287772).toString(16).padStart(64, '0'))
+      assert.equal(getBlockHash.mock.callCount(), 1)
+
+      getBlockHash.mock.restore()
+    })
+  })
+
+  describe('getCoreNetworkInfo()', () => {
+    it('should return the Core tip time and the mean block interval of the last day', async () => {
+      const storage = new Map()
+
+      mock.method(cache, 'get', (key) => storage.get(key))
+      mock.method(cache, 'set', (key, value) => storage.set(key, value))
+      mock.method(DashCoreRPC, 'getBlockCount', async () => 10000)
+      mock.method(DashCoreRPC, 'getBlockHash', async (height) => height.toString(16).padStart(64, '0'))
+      mock.method(DashCoreRPC, 'getBlockHeader', async (hash) => ({ time: parseInt(hash, 16) * 150 }))
+
+      assert.deepEqual(await utils.getCoreNetworkInfo(), {
+        coreTipTime: new Date(10000 * 150 * 1000).toISOString(),
+        coreBlockIntervalMs: 150000
+      })
+    })
+  })
+
+  describe('getCoreYieldPerYear()', () => {
+    const masternode = (proTxHash, type, PoSeBanHeight = -1) => ({ proTxHash, type, state: { PoSeBanHeight } })
+
+    const hashes = [1, 2, 3, 4, 5].map(n => n.toString(16).padStart(64, '0'))
+
+    const masternodes = [
+      masternode(hashes[0], 'Evo'),
+      masternode(hashes[1], 'Evo'),
+      masternode(hashes[2], 'Evo'),
+      masternode(hashes[3], 'Evo', 150),
+      masternode(hashes[4], 'Regular')
+    ]
+
+    before(() => {
+      // a year passes between the Core blocks 100 and 200
+      mock.method(DashCoreRPC, 'getBlockHash', async (height) => height.toString(16).padStart(64, '0'))
+      mock.method(DashCoreRPC, 'getBlockHeader', async (hash) => ({ time: parseInt(hash, 16) * 315360 }))
+    })
+
+    it('should return the median payout of the enabled masternodes of the type', async () => {
+      const storage = new Map()
+
+      mock.method(cache, 'get', (key) => storage.get(key))
+      mock.method(cache, 'set', (key, value) => storage.set(key, value))
+
+      const validatorsDAO = {
+        getCorePaymentsByMasternode: async () => ({
+          firstHeight: 101,
+          lastHeight: 200,
+          amounts: new Map([
+            [hashes[0].toUpperCase(), 100e8],
+            [hashes[1].toUpperCase(), 300e8],
+            [hashes[2].toUpperCase(), 200e8],
+            [hashes[3].toUpperCase(), 900e8],
+            [hashes[4].toUpperCase(), 900e8]
+          ])
+        })
+      }
+
+      assert.equal(await utils.getCoreYieldPerYear(validatorsDAO, 'Evo', masternodes), 200)
+    })
+
+    it('should return null without indexed Core payments', async () => {
+      const storage = new Map()
+
+      mock.method(cache, 'get', (key) => storage.get(key))
+      mock.method(cache, 'set', (key, value) => storage.set(key, value))
+
+      const validatorsDAO = { getCorePaymentsByMasternode: async () => null }
+
+      assert.equal(await utils.getCoreYieldPerYear(validatorsDAO, 'Evo', masternodes), null)
+    })
+  })
+
+  describe('blocksUntilCorePayment()', () => {
+    const masternode = (proTxHash, lastPaidHeight, registeredHeight, PoSeRevivedHeight = -1, PoSeBanHeight = -1) =>
+      ({ proTxHash, state: { lastPaidHeight, registeredHeight, PoSeRevivedHeight, PoSeBanHeight } })
+
+    const hashes = [1, 2, 3, 4].map(n => n.toString(16).padStart(64, '0'))
+
+    const masternodes = [
+      masternode(hashes[0], 0, 200),
+      masternode(hashes[1], 100, 1),
+      masternode(hashes[2], 50, 1, 300),
+      masternode(hashes[3], 1, 1, -1, 10)
+    ]
+
+    it('should order by the last paid, revived or registration height', () => {
+      assert.equal(utils.blocksUntilCorePayment(hashes[1], masternodes), 1)
+      assert.equal(utils.blocksUntilCorePayment(hashes[0], masternodes), 2)
+      assert.equal(utils.blocksUntilCorePayment(hashes[2], masternodes), 3)
+    })
+
+    it('should return null for a banned masternode', () => {
+      assert.equal(utils.blocksUntilCorePayment(hashes[3], masternodes), null)
+    })
+
+    it('should break ties by the uint256 byte order', () => {
+      const a = '01' + '00'.repeat(31)
+      const b = '00'.repeat(31) + '01'
+
+      assert.equal(utils.blocksUntilCorePayment(a.toUpperCase(), [masternode(b, 10, 1), masternode(a, 10, 1)]), 1)
+    })
+  })
 })

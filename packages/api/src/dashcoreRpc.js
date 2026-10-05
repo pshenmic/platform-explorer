@@ -64,6 +64,10 @@ class DashCoreRPC {
     return await this.callMethod('getblockhash', [height])
   }
 
+  static async getBlockHeader (blockHash) {
+    return await this.callMethod('getBlockHeader', [blockHash, true])
+  }
+
   static async getProTxList (type, detailed, blockHeight = undefined) {
     const args = ['list', type, detailed]
     if (blockHeight) args.push(blockHeight)
