@@ -17,9 +17,9 @@
 }
 
 .ValidatorEpochs .EpochsOverview__Title {
-  font-family: var(--pe-font-heading);
-  font-style: italic;
-  font-weight: 800;
+  font-family: var(--pe-font-mono);
+  font-style: normal;
+  font-weight: 400;
   font-size: 1rem;
   line-height: 1.15;
   letter-spacing: 0;
@@ -32,8 +32,8 @@
 }
 
 .ValidatorEpochs__Now {
-  font-family: var(--pe-font-heading);
-  font-weight: 700;
+  font-family: var(--pe-font-mono);
+  font-weight: 400;
   font-size: 0.875rem;
   line-height: 1.35;
   letter-spacing: 0;

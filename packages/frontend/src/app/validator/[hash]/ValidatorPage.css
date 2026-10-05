@@ -89,9 +89,8 @@
 
 .ValidatorPage__YieldRows dt {
   flex: 0 0 auto;
-  font-family: var(--pe-font-heading);
-  font-style: italic;
-  font-weight: 700;
+  font-family: var(--pe-font-mono);
+  font-weight: 400;
   font-size: 0.8125rem;
   letter-spacing: 0.04em;
   line-height: 21px;
@@ -155,10 +154,9 @@
 }
 
 .ValidatorPage__SummaryLabel {
-  font-family: var(--pe-font-heading);
+  font-family: var(--pe-font-mono);
   font-size: 0.9375rem;
-  font-style: italic;
-  font-weight: 800;
+  font-weight: 400;
   letter-spacing: 0;
   line-height: 1.15;
   text-transform: none;
@@ -178,8 +176,8 @@
 }
 
 .ValidatorPage__SummaryValue {
-  font-family: var(--pe-font-heading);
-  font-weight: 700;
+  font-family: var(--pe-font-mono);
+  font-weight: 400;
   font-size: 1.25rem;
   line-height: 1.2;
   color: var(--pe-color-fg-muted);
@@ -294,9 +292,8 @@
 
 .ValidatorPage__ServiceRowTitle {
   flex: 0 0 auto;
-  font-family: var(--pe-font-heading);
-  font-style: italic;
-  font-weight: 700;
+  font-family: var(--pe-font-mono);
+  font-weight: 400;
   font-size: 0.8125rem;
   letter-spacing: 0.04em;
   line-height: 21px;
@@ -482,10 +479,10 @@ a.ValidatorPage__Port:hover {
 
 .ValidatorPage__GroupTitle {
   margin-bottom: 10px;
-  font-family: var(--pe-font-heading);
+  font-family: var(--pe-font-mono);
   font-size: 1rem;
-  font-style: italic;
-  font-weight: 800;
+  font-style: normal;
+  font-weight: 400;
   letter-spacing: 0;
   line-height: 1.15;
   text-transform: none;
@@ -493,9 +490,6 @@ a.ValidatorPage__Port:hover {
 }
 
 .ValidatorPage .InfoLine__Title {
-  font-family: var(--pe-font-heading);
-  font-style: italic;
-  font-weight: 700;
   letter-spacing: 0;
   text-transform: none;
   color: #fff;
