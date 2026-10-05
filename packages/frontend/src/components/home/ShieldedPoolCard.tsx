@@ -14,8 +14,9 @@ import { useQuery } from '@tanstack/react-query'
 import useResizeObserver from '@react-hook/resize-observer'
 
 import * as Api from '../../util/Api'
-import { Presets } from '../cards'
 import { PRESETS } from './MetricChart'
+import PoolDateRange, { poolRangeLabel } from './PoolDateRange'
+import type { DateRangeFilterValue } from '../filters/types'
 import { Tooltip } from '../ui/Tooltips'
 import DashIcon from '../ui/icons/DashIcon'
 import { creditsToDash, roundUsd } from '../../util'
@@ -76,11 +77,6 @@ function CountedPoolAmount({
   )
 }
 
-const POOL_PRESETS = [
-  ...PRESETS.slice(0, 3),
-  { label: '3M', ms: 90 * DAY_MS, intervals: 100 },
-  ...PRESETS.slice(3)
-]
 const M = { top: 22, right: 16, bottom: 24, left: 48 }
 
 function fmtDash(dash: any) {
@@ -266,15 +262,30 @@ export default function ShieldedPoolCard({
     error: false,
     points: []
   })
-  const [presetIdx, setPresetIdx] = useState(POOL_PRESETS.length - 1)
+  const [dateRange, setDateRange] = useState<DateRangeFilterValue | null>(null)
   const range = useMemo(() => {
     if (!pool.asOf) return null
-    const preset = POOL_PRESETS[presetIdx]
-    return {
+    const preset = PRESETS[PRESETS.length - 1]
+    const current = {
       start: preset.start ?? new Date(Date.parse(pool.asOf) - preset.ms!).toISOString(),
       end: pool.asOf
     }
-  }, [presetIdx, pool.asOf])
+    if (!dateRange?.start || !dateRange.end) return current
+    const start = new Date(dateRange.start)
+    const end = new Date(dateRange.end)
+    if (dateRange.mode === 'rolling') {
+      const duration = end.getTime() - start.getTime()
+      end.setTime(Date.parse(current.end))
+      start.setTime(end.getTime() - duration)
+    } else {
+      start.setHours(0, 0, 0, 0)
+      end.setHours(23, 59, 59, 999)
+    }
+    return {
+      start: start.toISOString(),
+      end: new Date(Math.min(end.getTime(), Date.parse(current.end))).toISOString()
+    }
+  }, [dateRange, pool.asOf])
   const period = useMemo(
     () => ({
       loading: series.loading,
@@ -366,10 +377,17 @@ export default function ShieldedPoolCard({
     setSeries(s => ({ ...s, loading: true, error: false }))
     setHoverI(null)
 
-    loadDenseBuckets(start, end)
-      .then(buckets => {
+    const currentEnd = pool.asOf!
+    const subsequentFlows =
+      Date.parse(end) < Date.parse(currentEnd)
+        ? Api.getShieldedStatistic(new Date(Date.parse(end) + 1).toISOString(), currentEnd)
+        : Promise.resolve({ totalShieldedIn: 0, totalShieldedOut: 0 })
+    Promise.all([loadDenseBuckets(start, end), subsequentFlows])
+      .then(([buckets, subsequent]) => {
         if (cancelled) return
-        setSeries({ loading: false, error: false, points: buildTvlSeries(buckets, balance) })
+        const endBalance =
+          balance - Number(subsequent.totalShieldedIn) + Number(subsequent.totalShieldedOut)
+        setSeries({ loading: false, error: false, points: buildTvlSeries(buckets, endBalance) })
       })
       .catch(() => {
         if (cancelled) return
@@ -382,12 +400,12 @@ export default function ShieldedPoolCard({
     return () => {
       cancelled = true
     }
-  }, [range, enabled, pool.loading, pool.error, pool.balance])
+  }, [range, enabled, pool.loading, pool.error, pool.balance, pool.asOf])
 
   const balanceDash = creditsToDash(Number(pool.balance) || 0)
   const points = series.points
-  const isAll = POOL_PRESETS[presetIdx].label === 'All'
-  const windowLabel = isAll ? 'All time' : POOL_PRESETS[presetIdx].label
+  const isAll = dateRange == null
+  const windowLabel = poolRangeLabel(dateRange)
   const rangeInDash = creditsToDash(period.in)
   const rangeOutDash = creditsToDash(period.out)
   const rangeNetDash = rangeInDash - rangeOutDash
@@ -620,7 +638,7 @@ export default function ShieldedPoolCard({
           </Tooltip>
         </div>
         <div className={'ShieldedPool__Controls'}>
-          <Presets options={POOL_PRESETS} value={presetIdx} onChange={setPresetIdx} />
+          <PoolDateRange value={dateRange} onChange={setDateRange} />
           <div
             className={`ShieldedPool__Stat${period.loading && period.loaded ? ' is-updating' : ''}`}
             aria-busy={period.loading}
