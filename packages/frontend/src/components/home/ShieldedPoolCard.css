@@ -6,6 +6,7 @@
   min-height: 0;
   overflow: hidden;
   contain: layout style;
+  container: shielded-pool / inline-size;
 }
 .HomeCardPair .ShieldedPool {
   height: 100%;
@@ -18,8 +19,8 @@
   overflow: hidden;
 }
 .HomeCardPair .ShieldedPool .ShieldedPool__Chart {
-  flex: 1 1 auto;
-  min-height: 0;
+  flex: 1 0 12rem;
+  min-height: 12rem;
   height: auto;
   max-height: none;
 }
@@ -43,18 +44,13 @@
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  gap: 16px 24px;
+  gap: 16px 12px;
   flex-wrap: wrap;
   flex-shrink: 0;
   margin-bottom: 16px;
 }
-@media screen and (min-width: 48em) {
-  .ShieldedPool__Head {
-    flex-wrap: nowrap;
-  }
-}
 .ShieldedPool__HeadText {
-  flex: 1 1 auto;
+  flex: 1 1 8rem;
   min-width: 0;
   max-width: 18rem;
 }
@@ -83,12 +79,61 @@
   color: var(--pe-color-gray-500);
   margin: 0;
 }
-.ShieldedPool__LedeMore {
-  margin-left: 6px;
+.ShieldedPool__Legend {
+  appearance: none;
+  margin: 8px 0 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  font-family: var(--pe-font-mono);
+  font-size: 0.625rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
   color: var(--pe-color-brand-light);
-  border-bottom: 1px dotted rgba(var(--pe-color-brand-light-rgb), 0.6);
   cursor: help;
   white-space: nowrap;
+  line-height: 1.4;
+}
+.ShieldedPool__Legend:hover {
+  color: var(--pe-color-brand-pressed);
+}
+.ShieldedPool__LegendContent {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.ShieldedPool__LegendContent p {
+  margin: 0;
+}
+.ShieldedPool__LegendKeys {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.ShieldedPool__LegendKeys li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.ShieldedPool__LegendKey {
+  width: 12px;
+  height: 12px;
+  flex-shrink: 0;
+  border-radius: 3px;
+}
+.ShieldedPool__LegendKey.is-locked {
+  height: 3px;
+  background: var(--pe-color-brand-light);
+}
+.ShieldedPool__LegendKey.is-in {
+  background: #2cffb4;
+}
+.ShieldedPool__LegendKey.is-out {
+  background: #ff5c7a;
 }
 .ShieldedPool__Controls {
   display: flex;
@@ -96,6 +141,7 @@
   align-items: flex-end;
   gap: 14px;
   flex-shrink: 0;
+  max-width: 100%;
   margin-left: auto;
   min-width: 0;
 }
@@ -105,21 +151,68 @@
   align-items: flex-end;
   gap: 8px;
   min-width: 0;
+  max-width: 100%;
   text-align: right;
 }
 .ShieldedPool__StatMain {
   display: flex;
-  align-items: baseline;
+  flex-direction: column;
+  align-items: flex-end;
   justify-content: flex-end;
-  gap: 10px;
+  gap: 8px;
   min-width: 0;
+  max-width: 100%;
+}
+.ShieldedPool__StatValue {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+  font-size: clamp(1.5rem, 2.8vw, 2rem);
+}
+.ShieldedPool__StatValue::before {
+  content: "";
+  position: absolute;
+  inset: -8px -12px -5px;
+  z-index: -1;
+  pointer-events: none;
+  background: radial-gradient(
+    ellipse at center,
+    rgba(var(--pe-color-brand-light-rgb), 0.12),
+    rgba(var(--pe-color-brand-light-rgb), 0) 72%
+  );
+}
+.ShieldedPool__StatValue::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  bottom: -5px;
+  left: 0;
+  height: 1px;
+  pointer-events: none;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(var(--pe-color-brand-light-rgb), 0.55),
+    transparent
+  );
+}
+.ShieldedPool__Stat.is-updating {
+  opacity: 0.55;
 }
 .ShieldedPool__StatCount {
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3em;
   margin: 0;
   padding: 0;
   border: 0;
   background: transparent;
   cursor: pointer;
+  min-height: 44px;
+  border-radius: var(--pe-radius-sm);
   font-family: var(--pe-font-heading);
   font-weight: 800;
   font-style: italic;
@@ -130,41 +223,52 @@
   text-shadow: 0 0 16px rgba(var(--pe-color-brand-light-rgb), 0.28);
   min-width: 4ch;
 }
-.ShieldedPool__StatCount:disabled {
-  cursor: default;
+.ShieldedPool__Amount {
+  opacity: 1;
+  transition: opacity 90ms ease-out;
 }
-.ShieldedPool__UnitSwitch {
+.ShieldedPool__Amount.is-leaving {
+  opacity: 0;
+}
+.ShieldedPool__AmountEnter {
   display: inline-flex;
-  gap: 2px;
-  flex-shrink: 0;
-  padding: 2px;
-  border-radius: var(--pe-radius-sm);
-  background: rgba(255, 255, 255, 0.04);
+  align-items: center;
+  gap: 0.25em;
+  animation: shielded-pool-amount-enter 110ms ease-out;
 }
-.ShieldedPool__Unit {
-  margin: 0;
-  padding: 3px 7px;
-  border: 0;
-  border-radius: 3px;
-  background: transparent;
-  cursor: pointer;
+.ShieldedPool__CurrencySymbol {
+  display: inline-flex;
+  align-items: center;
+  font-style: normal;
+  font-size: 1em;
+  color: var(--pe-color-brand-light);
+  text-shadow: none;
+}
+.ShieldedPool__CurrencySymbol[data-unit="usd"] {
+  color: #2cffb4;
+}
+.ShieldedPool__CurrencySymbol[data-unit="btc"] {
+  color: var(--pe-color-orange-default);
+}
+.ShieldedPool__CurrencyHint {
   font-family: var(--pe-font-mono);
-  font-size: 0.5625rem;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--pe-color-gray-500);
+  font-size: 0.625rem;
+  color: var(--pe-color-gray-400);
 }
-.ShieldedPool__Unit:hover:not(:disabled) {
-  color: var(--pe-color-fg);
+.ShieldedPool__StatCount:hover {
+  color: var(--pe-color-brand-light);
 }
-.ShieldedPool__Unit.is-on {
-  color: var(--pe-color-fg);
-  background: rgba(var(--pe-color-brand-normal-rgb), 0.18);
-  box-shadow: inset 0 0 0 1px rgba(var(--pe-color-brand-normal-rgb), 0.45);
+.ShieldedPool__StatCount:focus-visible {
+  outline: 2px solid var(--pe-color-brand-light);
+  outline-offset: 4px;
 }
-.ShieldedPool__Unit:disabled {
-  cursor: not-allowed;
-  opacity: 0.4;
+@keyframes shielded-pool-amount-enter {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 .ShieldedPool__StatCount.is-up {
   color: #2cffb4;
@@ -180,12 +284,36 @@
   color: var(--pe-color-gray-500);
 }
 .ShieldedPool__Flows {
+  order: -1;
+  min-height: calc(0.6875rem * 1.3 + 4px);
   display: flex;
   flex-direction: row;
   flex-wrap: nowrap;
   justify-content: flex-end;
   align-items: baseline;
   gap: 4px 14px;
+}
+.ShieldedPool__Summary {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px 14px;
+  max-width: 100%;
+}
+.ShieldedPool__RateStatus {
+  color: var(--pe-color-gray-400);
+  font-family: var(--pe-font-mono);
+  font-size: 0.625rem;
+}
+.ShieldedPool__RateStatus button {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-decoration: underline;
+  cursor: pointer;
 }
 .ShieldedPool__Flow {
   display: inline-flex;
@@ -207,6 +335,9 @@
     color 0.15s ease;
 }
 .ShieldedPool__Flow b {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.08em;
   font-weight: 700;
   margin-left: 0.15em;
   color: #fff;
@@ -283,18 +414,76 @@
 }
 .ShieldedPool__ChartSkel {
   position: absolute;
+  inset: 22px 16px 24px 48px;
+  overflow: hidden;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  background: repeating-linear-gradient(
+    to top,
+    transparent 0,
+    transparent calc(25% - 1px),
+    rgba(255, 255, 255, 0.05) calc(25% - 1px),
+    rgba(255, 255, 255, 0.05) 25%
+  );
+}
+.ShieldedPool__ChartSkel::before {
+  content: "";
+  position: absolute;
   inset: 0;
-  width: 100%;
-  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(80, 200, 240, 0.1), transparent);
+  animation: shielded-pool-scan 2.4s ease-in-out infinite;
+}
+.ShieldedPool__LoadingLabel {
+  position: absolute;
+  top: 8px;
+  right: 16px;
+  z-index: 2;
+  color: var(--pe-color-gray-400);
+  font-family: var(--pe-font-mono);
+  font-size: 0.6875rem;
+  pointer-events: none;
+}
+@keyframes shielded-pool-scan {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(100%);
+  }
+}
+@keyframes shielded-pool-reveal {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 .ShieldedPool__Svg {
   display: block;
   width: 100%;
   height: 100%;
   overflow: visible;
+  animation: shielded-pool-reveal 180ms ease-out;
+  transition: opacity 180ms ease-out;
 }
 .ShieldedPool__Svg.is-stale {
   opacity: 0.45;
+}
+@media (prefers-reduced-motion: reduce) {
+  .ShieldedPool__Amount {
+    transition: none;
+  }
+  .ShieldedPool__Amount.is-leaving {
+    opacity: 1;
+  }
+  .ShieldedPool__AmountEnter {
+    animation: none;
+  }
+  .ShieldedPool__ChartSkel::before,
+  .ShieldedPool__Svg {
+    animation: none;
+    transition: none;
+  }
 }
 .ShieldedPool__Grid {
   stroke: rgba(255, 255, 255, 0.05);
@@ -339,20 +528,20 @@
   stroke-linecap: round;
 }
 .ShieldedPool__BarInTop {
-  stop-color: rgba(44, 255, 180, 0.42);
+  stop-color: rgba(44, 255, 180, 0.7);
 }
 .ShieldedPool__BarInBot {
-  stop-color: rgba(44, 255, 180, 0.12);
+  stop-color: rgba(44, 255, 180, 0.35);
 }
 .ShieldedPool__BarOutTop {
-  stop-color: rgba(255, 92, 122, 0.42);
+  stop-color: rgba(255, 92, 122, 0.7);
 }
 .ShieldedPool__BarOutBot {
-  stop-color: rgba(255, 92, 122, 0.12);
+  stop-color: rgba(255, 92, 122, 0.35);
 }
 .ShieldedPool__Bar {
   stroke-width: 0.5;
-  opacity: 0.72;
+  opacity: 0.9;
   transition: opacity 0.12s ease;
 }
 .ShieldedPool__Bar--in {
@@ -360,6 +549,12 @@
 }
 .ShieldedPool__Bar--out {
   stroke: rgba(255, 92, 122, 0.28);
+}
+.ShieldedPool__Activity--in {
+  fill: rgba(44, 255, 180, 0.85);
+}
+.ShieldedPool__Activity--out {
+  fill: rgba(255, 92, 122, 0.85);
 }
 .ShieldedPool__Chart:has(.ShieldedPool__Bar--in):not(:has(.ShieldedPool__Bar--out))
   .ShieldedPool__Bar,
@@ -453,25 +648,63 @@
   font-size: 0.8125rem;
   color: var(--pe-color-gray-500);
 }
+@container shielded-pool (max-width: 32rem) {
+  .ShieldedPool__Title {
+    font-size: 1.125rem;
+  }
+  .ShieldedPool__StatCount,
+  .ShieldedPool__StatValue {
+    font-size: 1.5rem;
+  }
+  .ShieldedPool__Controls {
+    gap: 8px;
+  }
+  .ShieldedPool .Presets {
+    gap: 2px;
+  }
+  .ShieldedPool .Presets__Chip {
+    padding: 2px 5px;
+    font-size: 0.5625rem;
+  }
+}
 @media screen and (max-width: 47.99em) {
   .ShieldedPool__Head {
-    flex-wrap: nowrap;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
     gap: 8px 12px;
     margin-bottom: 12px;
   }
   .ShieldedPool__HeadText {
-    flex: 1 1 0;
-    min-width: 0;
-    max-width: 9.5rem;
+    display: contents;
+  }
+  .ShieldedPool__Eyebrow {
+    grid-column: 1;
+    grid-row: 1;
+    margin-bottom: 0;
+    align-self: end;
   }
   .ShieldedPool__Title {
+    grid-column: 1;
+    grid-row: 2;
     font-size: 1.125rem;
+    margin-bottom: 0;
   }
   .ShieldedPool__Lede {
+    grid-column: 1 / -1;
+    grid-row: 4;
     font-size: 0.5625rem;
     line-height: 1.45;
   }
+  .ShieldedPool__Legend {
+    grid-column: 1 / -1;
+    grid-row: 5;
+    justify-self: start;
+    margin-top: 0;
+  }
   .ShieldedPool__Controls {
+    grid-column: 1;
+    grid-row: 3;
+    width: 100%;
     gap: 8px;
     margin-left: auto;
     flex-shrink: 1;
@@ -488,11 +721,8 @@
     padding: 2px 5px;
     font-size: 0.5625rem;
   }
-  .ShieldedPool__StatCount {
+  .ShieldedPool__StatCount,
+  .ShieldedPool__StatValue {
     font-size: 1.25rem;
-  }
-  .ShieldedPool__Unit {
-    padding: 2px 5px;
-    font-size: 0.5rem;
   }
 }

@@ -169,6 +169,12 @@
   }
 }
 
+@media screen and (min-width: 48em) and (max-width: 55.99em) {
+  .HomeCardPair--viz {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
 .HomePage .HomeOverview {
   background: transparent;
 }
