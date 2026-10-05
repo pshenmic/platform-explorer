@@ -17,7 +17,13 @@ import { Presets } from '../cards'
 import { Tooltip } from '../ui/Tooltips'
 import { creditsToDash, roundUsd } from '../../util'
 import { Skeleton } from './Skeleton'
-import { PRESETS, presetRange } from './MetricChart'
+import {
+  PRESETS,
+  buildTimeTicks,
+  presetRange,
+  seriesTimeDomain,
+  tipTimeFormat
+} from './MetricChart'
 import './ShieldedPoolCard.css'
 
 const DEFAULT_PRESET = PRESETS.length - 1
@@ -279,7 +285,10 @@ export default function ShieldedPoolCard({
     }
 
     const x = d3.scaleTime(
-      d3.extent(pts, (p: any) => p.x),
+      seriesTimeDomain(
+        pts.filter(p => p.x).map(p => ({ x: p.x as Date })),
+        PRESETS[presetIdx]
+      ),
       [M.left, width - M.right]
     )
 
@@ -313,16 +322,8 @@ export default function ShieldedPoolCard({
       .y1((p: any) => yTvl(p.tvl))
       .curve(d3.curveMonotoneX)
 
-    const spanMs = Number(pts[pts.length - 1].x) - Number(pts[0].x)
-    const tickFmt = d3.timeFormat(
-      spanMs > 365 * DAY_MS ? '%b %Y' : spanMs > 3 * DAY_MS ? '%b %d' : '%H:%M'
-    )
-    const tipFmt = d3.timeFormat(
-      spanMs > 365 * DAY_MS ? '%b %d, %Y' : spanMs > 3 * DAY_MS ? '%b %d' : '%b %d, %H:%M'
-    )
-
-    const xTickN = Math.max(2, Math.min(6, Math.floor((width - M.left - M.right) / 72)))
-    const xTicks = x.ticks(xTickN)
+    const tipFmt = tipTimeFormat(PRESETS[presetIdx])
+    const xTicks = buildTimeTicks(x, width - M.left - M.right)
     const yTvlTicks = yTvl.ticks(4)
 
     const step =
@@ -369,7 +370,6 @@ export default function ShieldedPoolCard({
       yTvl,
       line: line(pts),
       area: area(pts),
-      tickFmt,
       tipFmt,
       xTicks,
       yTvlTicks,
@@ -378,7 +378,7 @@ export default function ShieldedPoolCard({
       flowVisible,
       inUsd
     }
-  }, [ready, points, width, plotH, showDeposits, showWithdrawals, k, inUsd])
+  }, [ready, points, width, plotH, showDeposits, showWithdrawals, k, inUsd, presetIdx])
 
   const handleMove = (e: PointerEvent<HTMLDivElement>) => {
     if (!chart) return
@@ -701,10 +701,10 @@ export default function ShieldedPoolCard({
                         textAnchor:
                           i === 0 ? 'start' : i === chart.xTicks.length - 1 ? 'end' : 'middle'
                       }}
-                      x={chart.x(t)}
+                      x={t.v}
                       y={plotH - 4}
                     >
-                      {chart.tickFmt(t)}
+                      {t.label}
                     </text>
                   ))}
                 </svg>
