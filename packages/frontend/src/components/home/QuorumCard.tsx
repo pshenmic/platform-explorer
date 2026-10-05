@@ -8,6 +8,8 @@ import { useQueries, useQueryClient } from '@tanstack/react-query'
 import { Tooltip } from '../ui/Tooltips'
 import { BlockIcon } from '../ui/icons'
 import * as Api from '../../util/Api'
+import { useActiveNetwork } from '../../contexts'
+import { getL1ExplorerLink } from '../../util/l1Explorer'
 import { ResponseErrorNotFound } from '../../util/Errors'
 import { TimeDelta } from '../data'
 import { useCountUp } from './hooks'
@@ -750,7 +752,8 @@ export default function QuorumCard({
     typeof selectedMeta?.quorumHash === 'string' && selectedMeta.quorumHash.length > 0
       ? selectedMeta.quorumHash.toLowerCase()
       : null
-  const headHref = headHash ? `https://dashscan.io/blocks/${headHash}` : null
+  const { l1explorerBaseUrl } = useActiveNetwork()
+  const headHref = getL1ExplorerLink(l1explorerBaseUrl, 'block', headHash)
 
   const togglePin = (key: any) => setPin(p => (p === key ? null : key))
 

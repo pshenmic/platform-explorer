@@ -28,6 +28,9 @@ export type QueryFilters = Record<string, QueryValue>
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL
 
+export const getCoreBlockHash = (height: number) =>
+  call<{ height: number; hash: string; network: string }>(`core/block/${height}`, 'GET')
+
 const fetchWrapper = (url: string, options: RequestInit): Promise<Response> => {
   const controller = new AbortController()
   return new Promise((resolve, reject) => {

@@ -3,6 +3,8 @@
 import { Fragment, useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import * as Api from '../../../util/Api'
+import { getL1ExplorerLink } from '../../../util/l1Explorer'
+import { useCoreBlockLink } from '../../../util/useCoreBlockLink'
 import {
   fetchHandlerSuccess,
   fetchHandlerError,
@@ -414,6 +416,8 @@ function Validator({ hash }: ValidatorProps) {
   const epochNumber = validator.data?.epochInfo?.number
   const registeredHeight = Number(validator.data?.proTxInfo?.state?.registeredHeight)
   const hasRegisteredHeight = Number.isInteger(registeredHeight) && registeredHeight > 0
+  const registeredBlockLink = useCoreBlockLink(registeredHeight, l1explorerBaseUrl)
+  const bannedBlockLink = useCoreBlockLink(poseBanHeight, l1explorerBaseUrl)
   const countryCode = validator.data?.geoIpInfo?.countryCode
   const region = [validator.data?.geoIpInfo?.city, countryCode].filter(Boolean).join(', ')
   const typeLabel = nodeTypeLabel(validator.data?.proTxInfo?.type)
@@ -480,7 +484,7 @@ function Validator({ hash }: ValidatorProps) {
               value={proTxState?.payoutAddress || ''}
               href={
                 l1explorerBaseUrl
-                  ? `${l1explorerBaseUrl}/address/${proTxState?.payoutAddress}`
+                  ? getL1ExplorerLink(l1explorerBaseUrl, 'address', proTxState?.payoutAddress)
                   : '#'
               }
               external={true}
@@ -520,7 +524,7 @@ function Validator({ hash }: ValidatorProps) {
               value={validator.data?.proTxInfo?.collateralAddress || ''}
               href={
                 l1explorerBaseUrl
-                  ? `${l1explorerBaseUrl}/address/${validator.data?.proTxInfo?.collateralAddress}`
+                  ? getL1ExplorerLink(l1explorerBaseUrl, 'address', validator.data?.proTxInfo?.collateralAddress)
                   : '#'
               }
               external={true}
@@ -554,7 +558,7 @@ function Validator({ hash }: ValidatorProps) {
             <KeyIdentifier
               value={proTxState?.ownerAddress || ''}
               href={
-                l1explorerBaseUrl ? `${l1explorerBaseUrl}/address/${proTxState?.ownerAddress}` : '#'
+                getL1ExplorerLink(l1explorerBaseUrl, 'address', proTxState?.ownerAddress)
               }
               external={true}
             />
@@ -590,7 +594,7 @@ function Validator({ hash }: ValidatorProps) {
                     value={proTxState.votingAddress}
                     href={
                       l1explorerBaseUrl
-                        ? `${l1explorerBaseUrl}/address/${proTxState.votingAddress}`
+                        ? getL1ExplorerLink(l1explorerBaseUrl, 'address', proTxState.votingAddress)
                         : '#'
                     }
                     external={true}
@@ -639,7 +643,7 @@ function Validator({ hash }: ValidatorProps) {
               value={validator.data?.proTxHash || ''}
               href={
                 l1explorerBaseUrl
-                  ? `${l1explorerBaseUrl}/tx/${validator.data?.proTxHash || ''}`
+                  ? getL1ExplorerLink(l1explorerBaseUrl, 'transaction', validator.data?.proTxHash)
                   : undefined
               }
               external={true}
@@ -821,10 +825,10 @@ function Validator({ hash }: ValidatorProps) {
                 !validator.loading && !validator.error ? (
                   <span className={'ValidatorPage__StatusHint'}>
                     {poseKnown ? (
-                      isPoseBanned && l1explorerBaseUrl ? (
+                      isPoseBanned && bannedBlockLink ? (
                         <a
                           className={'ValidatorPage__PoseLink'}
-                          href={`${l1explorerBaseUrl}/block/${poseBanHeight}`}
+                          href={bannedBlockLink}
                           target={'_blank'}
                           rel={'noreferrer'}
                         >
@@ -936,13 +940,9 @@ function Validator({ hash }: ValidatorProps) {
                 hasRegisteredHeight && !validator.error ? (
                   <a
                     className={'ValidatorPage__Registered'}
-                    href={
-                      l1explorerBaseUrl
-                        ? `${l1explorerBaseUrl}/block/${registeredHeight}`
-                        : undefined
-                    }
-                    target={l1explorerBaseUrl ? '_blank' : undefined}
-                    rel={l1explorerBaseUrl ? 'noopener noreferrer' : undefined}
+                    href={registeredBlockLink}
+                    target={registeredBlockLink ? '_blank' : undefined}
+                    rel={registeredBlockLink ? 'noopener noreferrer' : undefined}
                     title={'Core block where this node was registered'}
                   >
                     <BlockIcon w={'14px'} h={'14px'} />#{registeredHeight.toLocaleString('en-US')}

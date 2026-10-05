@@ -20,7 +20,7 @@ export const NETWORK_OPTIONS: Record<string, NetworkOption> = {
     subname: '',
     disabled: false,
     explorerBaseUrl: process.env.NEXT_PUBLIC_MAINNET_BASE_URL,
-    l1explorerBaseUrl: process.env.NEXT_PUBLIC_MAINNET_INSIGHT_URL,
+    l1explorerBaseUrl: 'https://dashscan.io',
     dataContractPE: process.env.NEXT_PUBLIC_MAINNET_PLATFORM_EXPLORER_DATA_CONTRACT_IDENTITY
   },
   [NETWORKS_ENUM.TESTNET]: {
@@ -28,7 +28,7 @@ export const NETWORK_OPTIONS: Record<string, NetworkOption> = {
     subname: '',
     disabled: false,
     explorerBaseUrl: process.env.NEXT_PUBLIC_TESTNET_BASE_URL,
-    l1explorerBaseUrl: process.env.NEXT_PUBLIC_TESTNET_INSIGHT_URL,
+    l1explorerBaseUrl: 'https://testnet.dashscan.io',
     dataContractPE: process.env.NEXT_PUBLIC_TESTNET_PLATFORM_EXPLORER_DATA_CONTRACT_IDENTITY
   }
 }

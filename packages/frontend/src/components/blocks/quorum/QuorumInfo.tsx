@@ -1,4 +1,8 @@
+'use client'
+
 import type { ComponentType, ReactNode } from 'react'
+import { getL1ExplorerLink } from '../../../util/l1Explorer'
+import { useCoreBlockLink } from '../../../util/useCoreBlockLink'
 // Untyped JS components — loose wrappers until data/* is migrated
 import { Identifier as IdentifierJs, InfoLine as InfoLineJs } from '../../data'
 import { ValueContainer } from '../../ui/containers'
@@ -46,6 +50,9 @@ export default function QuorumInfo({
   l1explorerBaseUrl,
   showQuorumMembers
 }: QuorumInfoProps) {
+  const blockLink = useCoreBlockLink(quorum?.blockHeight, l1explorerBaseUrl)
+  const creationLink = useCoreBlockLink(quorum?.creationHeight, l1explorerBaseUrl)
+
   return (
     <div className={'QuorumInfo'}>
       <div className={'QuorumInfo__LineContainer'}>
@@ -90,7 +97,7 @@ export default function QuorumInfo({
             <ValueContainer
               size={'md'}
               external={true}
-              link={`${l1explorerBaseUrl}/block/${quorum?.blockHeight}`}
+              link={blockLink}
             >
               {quorum?.blockHeight}
             </ValueContainer>
@@ -108,7 +115,7 @@ export default function QuorumInfo({
             <ValueContainer
               size={'md'}
               external={true}
-              link={`${l1explorerBaseUrl}/block/${quorum?.creationHeight}`}
+              link={creationLink}
             >
               {quorum?.creationHeight}
             </ValueContainer>
@@ -126,7 +133,7 @@ export default function QuorumInfo({
             <ValueContainer
               size={'md'}
               external={true}
-              link={`${l1explorerBaseUrl}/block/${quorum?.minedBlockHash}`}
+              link={getL1ExplorerLink(l1explorerBaseUrl, 'block', quorum?.minedBlockHash)}
             >
               <Identifier styles={['highlight-both']} ellipsis={false}>
                 {quorum?.minedBlockHash}
