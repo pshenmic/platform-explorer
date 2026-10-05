@@ -135,6 +135,10 @@ function Validators() {
   const fetchGen = useRef(0)
   const [filters, setFilters] = useState<QueryFilters>({})
   const [columnFilters, setColumnFilters] = useState<Record<string, unknown>>({})
+  const [sort, setSort] = useState<{ order_by: string; order: 'asc' | 'desc' }>({
+    order_by: 'id',
+    order: 'asc'
+  })
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
@@ -158,12 +162,13 @@ function Validators() {
     const listFilters: QueryFilters = { ...filters }
     delete listFilters.hash
     delete listFilters.owner
+    if (sort.order_by !== 'id') listFilters.orderBy = sort.order_by
 
     const request = hash
       ? Api.getValidatorByProTxHash(hash)
           .then(validator => asListResult(validator, pageSize))
           .catch(() =>
-            Api.getValidators(Math.max(1, currentPage + 1), Math.max(1, pageSize), 'asc', {
+            Api.getValidators(Math.max(1, currentPage + 1), Math.max(1, pageSize), sort.order, {
               ...listFilters,
               last_proposed_block_hash: hash
             })
@@ -172,12 +177,17 @@ function Validators() {
         ? Api.getValidatorByMasternodeIdentity(owner)
             .then(validator => asListResult(validator, pageSize))
             .catch(() =>
-              Api.getValidators(Math.max(1, currentPage + 1), Math.max(1, pageSize), 'asc', {
+              Api.getValidators(Math.max(1, currentPage + 1), Math.max(1, pageSize), sort.order, {
                 ...listFilters,
                 owner
               }).catch(() => emptyList(pageSize))
             )
-        : Api.getValidators(Math.max(1, currentPage + 1), Math.max(1, pageSize), 'asc', listFilters)
+        : Api.getValidators(
+            Math.max(1, currentPage + 1),
+            Math.max(1, pageSize),
+            sort.order,
+            listFilters
+          )
 
     request
       .then(res => {
@@ -213,7 +223,7 @@ function Validators() {
         }
         setLoadingMore(false)
       })
-  }, [currentPage, pageSize, filters, scrollMode])
+  }, [currentPage, pageSize, filters, scrollMode, sort.order, sort.order_by])
 
   useEffect(() => {
     setPageSize(
@@ -310,6 +320,15 @@ function Validators() {
           filterValues={columnFilters}
           onFilterChange={onColumnFilterChange}
           paging={paging}
+          sort={sort}
+          sortDefault={{ order_by: 'id', order: 'asc' }}
+          onSortChange={next => {
+            setSort({
+              order_by: next.order_by,
+              order: next.order === 'asc' ? 'asc' : 'desc'
+            })
+            setCurrentPage(0)
+          }}
           title={'Validators'}
           pinFirst={true}
         />

@@ -640,6 +640,71 @@ describe('Validators routes', () => {
         assert.deepEqual(body.resultSet, expectedValidators)
       })
 
+      it('should order validators by last proposed block timestamp desc', async () => {
+        const { body } = await client.get('/validators?order_by=latest_timestamp&order=desc&limit=0')
+          .expect(200)
+          .expect('Content-Type', 'application/json; charset=utf-8')
+
+        const newest = blocks.reduce((latest, block) => block.height > latest.height ? block : latest)
+
+        assert.equal(body.resultSet.length, validators.length)
+        assert.equal(body.resultSet[0].proTxHash, newest.validator)
+
+        const stamps = body.resultSet.map(validator => validator.lastProposedBlockHeader?.timestamp ?? null)
+        const firstNull = stamps.findIndex(stamp => stamp == null)
+        const dated = firstNull === -1 ? stamps : stamps.slice(0, firstNull)
+        const sorted = dated.slice().sort((a, b) => new Date(b) - new Date(a))
+
+        assert.notEqual(firstNull, -1)
+        assert.ok(stamps.slice(firstNull).every(stamp => stamp == null))
+        assert.deepEqual(dated, sorted)
+      })
+
+      it('should order validators by last proposed block timestamp asc', async () => {
+        const { body } = await client.get('/validators?order_by=latest_timestamp&order=asc&limit=0')
+          .expect(200)
+          .expect('Content-Type', 'application/json; charset=utf-8')
+
+        assert.equal(body.resultSet.length, validators.length)
+
+        const stamps = body.resultSet.map(validator => validator.lastProposedBlockHeader?.timestamp ?? null)
+        const firstNull = stamps.findIndex(stamp => stamp == null)
+        const dated = firstNull === -1 ? stamps : stamps.slice(0, firstNull)
+        const sorted = dated.slice().sort((a, b) => new Date(a) - new Date(b))
+
+        assert.notEqual(firstNull, -1)
+        assert.ok(stamps.slice(firstNull).every(stamp => stamp == null))
+        assert.deepEqual(dated, sorted)
+      })
+
+      it('should use id ordering for an unknown validators order field', async () => {
+        const { body: expected } = await client.get('/validators?order_by=id&order=desc')
+          .expect(200)
+        const { body } = await client.get('/validators?order_by=name&order=desc')
+          .expect(200)
+          .expect('Content-Type', 'application/json; charset=utf-8')
+
+        assert.deepEqual(body, expected)
+      })
+
+      it('should support orderBy and prefer it over the legacy order_by parameter', async () => {
+        const { body: expected } = await client.get('/validators?order_by=latest_timestamp&order=desc&limit=0')
+          .expect(200)
+        const { body } = await client.get('/validators?orderBy=latest_timestamp&order_by=id&order=desc&limit=0')
+          .expect(200)
+
+        assert.deepEqual(body, expected)
+      })
+
+      it('should use id ordering for an unknown orderBy value', async () => {
+        const { body: expected } = await client.get('/validators?orderBy=id&order=desc')
+          .expect(200)
+        const { body } = await client.get('/validators?orderBy=unknown&order=desc')
+          .expect(200)
+
+        assert.deepEqual(body, expected)
+      })
+
       it('should be able to walk through pages', async () => {
         const { body } = await client.get('/validators?page=2')
           .expect(200)
