@@ -547,8 +547,8 @@ module.exports = ({
           type: 'object',
           additionalProperties: false,
           properties: {
-            timestamp_start: { type: 'string', format: 'date-time' },
-            timestamp_end: { type: 'string', format: 'date-time' }
+            timestamp_start: { $ref: 'paginationOptions#/properties/timestamp_start', type: 'string' },
+            timestamp_end: { $ref: 'paginationOptions#/properties/timestamp_end', type: 'string' }
           }
         }
       }
