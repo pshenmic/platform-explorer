@@ -4,6 +4,9 @@ use crate::decoder::decoder::StateTransitionDecoder;
 use crate::entities::data_contract::DataContract;
 use crate::entities::document::Document;
 pub use crate::processor::psql::dao::PostgresDAO;
+use dapi_grpc::platform::v0::platform_client::PlatformClient;
+use dapi_grpc::tonic::transport::Channel;
+use dapi_grpc::tonic::Status;
 use dashcore_rpc::Client;
 use data_contracts::SystemDataContract;
 use deadpool_postgres::{PoolError, Transaction};
@@ -38,6 +41,20 @@ impl From<reqwest::Error> for ProcessorError {
     }
 }
 
+impl From<dashcore_rpc::Error> for ProcessorError {
+    fn from(value: dashcore_rpc::Error) -> Self {
+        println!("{}", value);
+        ProcessorError::UnexpectedError
+    }
+}
+
+impl From<Status> for ProcessorError {
+    fn from(value: Status) -> Self {
+        println!("{}", value);
+        ProcessorError::UnexpectedError
+    }
+}
+
 impl From<ParseIntError> for ProcessorError {
     fn from(value: ParseIntError) -> Self {
         println!("{}", value);
@@ -50,6 +67,7 @@ pub struct PSQLProcessor {
     dao: PostgresDAO,
     platform_explorer_identifier: Identifier,
     dashcore_rpc: Client,
+    dapi_client: PlatformClient<Channel>,
     network: Network,
 }
 
@@ -70,8 +88,20 @@ pub fn state_transition_duplicates(network: Network) -> Vec<(String, String)> {
     }
 }
 
+// in milliseconds
+pub fn epoch_time_length(network: Network) -> i64 {
+    match network {
+        Network::Mainnet => 788400000,
+        _ => 3600000,
+    }
+}
+
 impl PSQLProcessor {
-    pub fn new(dashcore_rpc: Client, network: Network) -> PSQLProcessor {
+    pub fn new(
+        dashcore_rpc: Client,
+        dapi_client: PlatformClient<Channel>,
+        network: Network,
+    ) -> PSQLProcessor {
         let dao = PostgresDAO::new(network);
         let decoder = StateTransitionDecoder::new();
 
@@ -88,6 +118,7 @@ impl PSQLProcessor {
             dao,
             platform_explorer_identifier,
             dashcore_rpc,
+            dapi_client,
             network,
         }
     }

@@ -2,7 +2,7 @@ use crate::entities::block::Block;
 use crate::entities::block_header::BlockHeader;
 use crate::indexer::Indexer;
 use crate::models::{TransactionResult, TransactionStatus};
-use crate::processor::psql::ProcessorError;
+use crate::processor::psql::{epoch_time_length, ProcessorError};
 use base64::engine::general_purpose;
 use base64::Engine;
 
@@ -77,6 +77,24 @@ impl Indexer {
         let core_chain_locked_height = block.block.header.core_chain_locked_height;
         let app_hash = block.block.header.app_hash;
 
+        // Platform starts a new epoch every epoch time length since the genesis block
+        let genesis_time = match (self.genesis_time.get(), block_height) {
+            (Some(genesis_time), _) => genesis_time,
+            (None, 1) => timestamp,
+            (None, _) => {
+                self.tenderdash_rpc
+                    .get_block_by_height(1)
+                    .await?
+                    .block
+                    .header
+                    .timestamp
+            }
+        };
+
+        self.genesis_time.set(Some(genesis_time));
+
+        let epoch = (timestamp - genesis_time).num_milliseconds() / epoch_time_length(self.network);
+
         let block = Block {
             header: BlockHeader {
                 hash: block_hash,
@@ -88,6 +106,7 @@ impl Indexer {
                 app_hash,
                 proposer_pro_tx_hash: block.block.header.proposer_pro_tx_hash,
                 quorum_hash: Some(quorum_hash),
+                epoch: Some(epoch as i32),
             },
             txs,
         };

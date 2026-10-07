@@ -25,8 +25,8 @@ impl PostgresDAO {
         let stmt = sql_transaction
             .prepare_cached(
                 "INSERT INTO blocks(hash, height, \
-        timestamp, block_version, app_version, l1_locked_height, validator, validator_id, app_hash, quorum_hash) \
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING hash;",
+        timestamp, block_version, app_version, l1_locked_height, validator, validator_id, app_hash, quorum_hash, epoch) \
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING hash;",
             )
             .await
             .unwrap();
@@ -45,6 +45,7 @@ impl PostgresDAO {
                     &validator.id,
                     &block_header.app_hash,
                     &block_header.quorum_hash,
+                    &block_header.epoch,
                 ],
             )
             .await
@@ -62,7 +63,7 @@ impl PostgresDAO {
         let client = self.connection_pool.get().await?;
 
         let stmt = client.prepare_cached("SELECT hash,height,timestamp,\
-        block_version,app_version,l1_locked_height,validator,app_hash,quorum_hash FROM blocks where height = $1;").await.unwrap();
+        block_version,app_version,l1_locked_height,validator,app_hash,quorum_hash,epoch FROM blocks where height = $1;").await.unwrap();
 
         let rows: Vec<Row> = client.query(&stmt, &[&block_height]).await.unwrap();
 
