@@ -43,6 +43,10 @@ export interface Validator {
   endpoints: ValidatorEndpoints | null
   geoIpInfo?: GeoIpInfo | null
   registeredAt?: string | null
+  registeredCoreBlockHash?: string | null
+  lastPaidCoreBlockHash?: string | null
+  poseRevivedCoreBlockHash?: string | null
+  poseBanCoreBlockHash?: string | null
   poseScoreMax?: number | null
   votingIdentity?: string | null
   votingIdentityBalance?: string | null

@@ -2,7 +2,6 @@
 
 import type { ComponentType, ReactNode } from 'react'
 import { getL1ExplorerLink } from '../../../util/l1Explorer'
-import { useCoreBlockLink } from '../../../util/useCoreBlockLink'
 // Untyped JS components — loose wrappers until data/* is migrated
 import { Identifier as IdentifierJs, InfoLine as InfoLineJs } from '../../data'
 import { ValueContainer } from '../../ui/containers'
@@ -50,8 +49,7 @@ export default function QuorumInfo({
   l1explorerBaseUrl,
   showQuorumMembers
 }: QuorumInfoProps) {
-  const blockLink = useCoreBlockLink(quorum?.blockHeight, l1explorerBaseUrl)
-  const creationLink = useCoreBlockLink(quorum?.creationHeight, l1explorerBaseUrl)
+  const blockLink = getL1ExplorerLink(l1explorerBaseUrl, 'block', quorum?.quorumHash)
 
   return (
     <div className={'QuorumInfo'}>
@@ -114,8 +112,6 @@ export default function QuorumInfo({
           value={
             <ValueContainer
               size={'md'}
-              external={true}
-              link={creationLink}
             >
               {quorum?.creationHeight}
             </ValueContainer>

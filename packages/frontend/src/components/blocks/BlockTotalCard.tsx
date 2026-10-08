@@ -1,7 +1,7 @@
 'use client'
 
 import * as Api from '../../util/Api'
-import { useCoreBlockLink } from '../../util/useCoreBlockLink'
+import { getL1ExplorerLink } from '../../util/l1Explorer'
 import { Identifier, InfoLine, TimeDelta } from '../data'
 import { HorisontalSeparator } from '../ui/separators'
 import { ValueContainer } from '../ui/containers'
@@ -14,7 +14,7 @@ import './BlockTotalCard.css'
 function BlockTotalCard({ block, l1explorerBaseUrl, className }: any) {
   const [blocks, setBlocks] = useState<any>({ data: {}, loading: true, error: false })
   const blockData = block?.data?.header
-  const coreBlockLink = useCoreBlockLink(blockData?.l1LockedHeight, l1explorerBaseUrl)
+  const coreBlockLink = getL1ExplorerLink(l1explorerBaseUrl, 'block', blockData?.l1LockedBlockHash)
   const [previousBlock] =
     blocks.data?.resultSet?.filter((b: any) => b?.header?.height === blockData?.height - 1) || []
   const [nextBlock] =

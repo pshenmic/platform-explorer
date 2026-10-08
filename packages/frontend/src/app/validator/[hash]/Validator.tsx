@@ -4,7 +4,6 @@ import { Fragment, useEffect, useMemo, useRef, useState, type ReactNode } from '
 import { useQuery } from '@tanstack/react-query'
 import * as Api from '../../../util/Api'
 import { getL1ExplorerLink } from '../../../util/l1Explorer'
-import { useCoreBlockLink } from '../../../util/useCoreBlockLink'
 import {
   fetchHandlerSuccess,
   fetchHandlerError,
@@ -201,7 +200,7 @@ function EarningsCard({
     retry: 1,
     queryFn: () => Api.getValidatorEarnings(hash)
   })
-  const data = query.isError ? undefined : query.data
+  const data = query.isError ? undefined : query.data?.estimate
   const pending = loading || query.isPending
   const ineligible = banned || data?.eligible === false
   const amount = (value?: number | null) =>
@@ -212,17 +211,19 @@ function EarningsCard({
     ) : (
       `≈ ${yieldDash(value)} DASH`
     )
-  const history = data?.platformHistory
+  const history = data?.platformHistory?.firstEpoch != null && data.platformHistory.lastEpoch != null
+    ? data.platformHistory
+    : null
   const period = history
-    ? `Platform: epochs ${history.firstEpoch.toLocaleString('en-US')}–${history.lastEpoch.toLocaleString('en-US')} (${new Date(history.startTime).toLocaleDateString('en-GB')}–${new Date(history.endTime).toLocaleDateString('en-GB')}).`
-    : 'Platform requires six complete finalized epochs.'
+    ? `Platform: epochs ${history.firstEpoch?.toLocaleString('en-US')}–${history.lastEpoch?.toLocaleString('en-US')} (${new Date(history.startTime).toLocaleDateString('en-GB')}–${new Date(history.endTime).toLocaleDateString('en-GB')}).`
+    : 'Platform uses indexed payouts over the last 30 days; historical coverage depends on the indexer.'
 
   return (
     <InfoContainer className={'ValidatorPage__Group ValidatorPage__Yield'}>
       <div className={'ValidatorPage__EarningsHeader'}>
         <div className={'ValidatorPage__SummaryLabel'}>
           <Tooltip
-            content={`Gross node earnings before owner/operator splits, reward shares and expenses. Core uses the latest payment and up to 576 block intervals. ${period} A month means 30 days; future earnings can change.`}
+            content={`Gross node earnings before owner/operator splits, reward shares and expenses. Core uses median indexed payouts to enabled nodes of the same type over the latest 17,280 Core blocks. ${period} A month means 30 days; future earnings can change.`}
           >
             <span tabIndex={0}>Estimated earnings ⓘ</span>
           </Tooltip>
@@ -276,8 +277,8 @@ function EarningsCard({
             {history && (
               <>
                 <br />
-                Platform based on epochs {history.firstEpoch.toLocaleString('en-US')}–
-                {history.lastEpoch.toLocaleString('en-US')}
+                Platform based on epochs {history.firstEpoch?.toLocaleString('en-US')}–
+                {history.lastEpoch?.toLocaleString('en-US')}
               </>
             )}
           </>
@@ -413,11 +414,10 @@ function Validator({ hash }: ValidatorProps) {
   const balance = Number(validator.data?.identityBalance)
   const hasBalance = Number.isFinite(balance) && validator.data?.identityBalance != null
   const epochReward = validator.data?.epochReward
-  const epochNumber = validator.data?.epochInfo?.number
   const registeredHeight = Number(validator.data?.proTxInfo?.state?.registeredHeight)
   const hasRegisteredHeight = Number.isInteger(registeredHeight) && registeredHeight > 0
-  const registeredBlockLink = useCoreBlockLink(registeredHeight, l1explorerBaseUrl)
-  const bannedBlockLink = useCoreBlockLink(poseBanHeight, l1explorerBaseUrl)
+  const registeredBlockLink = getL1ExplorerLink(l1explorerBaseUrl, 'block', validator.data?.registeredCoreBlockHash)
+  const bannedBlockLink = getL1ExplorerLink(l1explorerBaseUrl, 'block', validator.data?.poseBanCoreBlockHash)
   const countryCode = validator.data?.geoIpInfo?.countryCode
   const region = [validator.data?.geoIpInfo?.city, countryCode].filter(Boolean).join(', ')
   const typeLabel = nodeTypeLabel(validator.data?.proTxInfo?.type)
@@ -800,9 +800,6 @@ function Validator({ hash }: ValidatorProps) {
           <InfoContainer className={'ValidatorPage__Epochs'}>
             <ValidatorEpochs
               hash={hash}
-              epochNumber={typeof epochNumber === 'number' ? epochNumber : null}
-              epochStart={validator.data?.epochInfo?.startTime ?? null}
-              epochEnd={validator.data?.epochInfo?.endTime ?? null}
               epochReward={
                 validator.loading || validator.error || epochReward == null ? null : epochReward
               }

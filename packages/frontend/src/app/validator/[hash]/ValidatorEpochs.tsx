@@ -16,6 +16,7 @@ import '../../../app/home/HomeHero.css'
 import './ValidatorEpochs.css'
 
 const M = { top: 8, right: 4, bottom: 20 }
+const MAX_EPOCH_POINTS = 84
 
 function dashAmount(credits: number) {
   const dash = creditsToDash(credits)
@@ -41,9 +42,6 @@ export default function ValidatorEpochs({
   epochReward
 }: {
   hash: string
-  epochNumber: number | null
-  epochStart: number | string | null
-  epochEnd: number | string | null
   epochReward?: number | string | null
 }) {
   const gradId = useId().replace(/:/g, '')
@@ -86,8 +84,8 @@ export default function ValidatorEpochs({
   }, [selection])
 
   const statsQuery = useQuery({
-    queryKey: ['validator-epochs', hash, queryRange?.start, queryRange?.end],
-    queryFn: () => Api.getEpochStatsByValidator(hash, queryRange!.start, queryRange!.end),
+    queryKey: ['validator-epochs', hash, queryRange?.start, queryRange?.end, MAX_EPOCH_POINTS],
+    queryFn: () => Api.getEpochStatsByValidator(hash, queryRange!.start, queryRange!.end, MAX_EPOCH_POINTS),
     enabled: Boolean(hash && queryRange),
     staleTime: 60000,
     retry: 1
@@ -106,8 +104,8 @@ export default function ValidatorEpochs({
       (statsQuery.data ?? []).map(point => ({
         from: point.data!.epoch,
         to: point.data!.endEpoch ?? point.data!.epoch,
-        reward: Number(point.data!.fees),
-        blocks: point.data!.blocksCount
+        fees: point.data!.fees,
+        blocks: point.data!.blocksProposed
       })),
     [statsQuery.data]
   )
@@ -120,8 +118,8 @@ export default function ValidatorEpochs({
   const h = plotH
   const chart = useMemo(() => {
     if (width <= 0 || !epochWindow || slots.length === 0) return null
-    const rewards = slots.map(slot => creditsToDash(slot.reward))
-    const maxY = d3.max(rewards) || 0
+    const feesInDash = slots.map(slot => creditsToDash(slot.fees))
+    const maxY = d3.max(feesInDash) || 0
     const y = d3.scaleLinear([0, maxY > 0 ? maxY : 1], [h - M.bottom, M.top]).nice()
     const yTickValues: number[] = maxY > 0 ? y.ticks(4) : [0]
     const left = axisGutter(yTickValues.map(axisDash))
@@ -134,8 +132,8 @@ export default function ValidatorEpochs({
       from: slot.from,
       to: slot.to,
       cx: x((slot.from + slot.to) / 2),
-      cy: y(rewards[i]),
-      reward: slot.reward,
+      cy: y(feesInDash[i]),
+      fees: slot.fees,
       blocks: slot.blocks
     }))
     const lineD =
@@ -168,9 +166,9 @@ export default function ValidatorEpochs({
     )
     const xTicks = tickEpochs.map(epoch => ({ v: x(epoch), label: `#${epoch}` }))
     const yTicks = yTickValues.map((v: number) => ({ v: y(v), label: axisDash(v) }))
-    const totalReward = slots.reduce((sum, slot) => sum + slot.reward, 0)
+    const totalFees = slots.reduce((sum, slot) => sum + slot.fees, 0)
     const totalBlocks = slots.reduce((sum, slot) => sum + slot.blocks, 0)
-    return { nodes, lineD, areaD, xTicks, yTicks, totalReward, totalBlocks, left }
+    return { nodes, lineD, areaD, xTicks, yTicks, totalFees, totalBlocks, left }
   }, [width, h, slots, epochWindow])
 
   const activeI = hoverI != null ? hoverI : pinI
@@ -230,8 +228,8 @@ export default function ValidatorEpochs({
           <div className={'EpochsOverview__TitleRow'}>
             <h2 className={'EpochsOverview__Title'}>Fees by epoch</h2>
             {epochReward != null && (
-              <span className={'ValidatorEpochs__Now'} title={'Current epoch fees'}>
-                {dashAmount(Number(epochReward))} DASH
+              <span className={'ValidatorEpochs__Now'} title={'Platform reward paid in the current epoch for the previous epoch; not transaction fees'}>
+                Paid: {dashAmount(Number(epochReward))} DASH
               </span>
             )}
           </div>
@@ -273,7 +271,7 @@ export default function ValidatorEpochs({
             width={width}
             height={h}
             role={'img'}
-            aria-label={`Fees by epoch, ${dashAmount(chart.totalReward)} DASH`}
+            aria-label={`Fees by epoch, ${dashAmount(chart.totalFees)} DASH`}
             onMouseMove={onMove}
             onMouseLeave={() => setHoverI(null)}
             onClick={() => {
@@ -347,7 +345,7 @@ export default function ValidatorEpochs({
               />
             ) : null}
             {chart.nodes.map(node =>
-              node.reward > 0 || chart.nodes.length <= 24 || node.i === activeI ? (
+              node.fees > 0 || chart.nodes.length <= 24 || node.i === activeI ? (
                 <circle
                   key={`${node.from}-${node.to}`}
                   className={'ValidatorEpochs__Vertex'}
@@ -390,7 +388,7 @@ export default function ValidatorEpochs({
               <Skeleton w={'64px'} h={'1.1em'} />
             ) : (
               <span className={'EpochsOverview__Stat'}>
-                {chart ? `${dashAmount(shown ? shown.reward : chart.totalReward)} DASH` : '—'}
+                {chart ? `${dashAmount(shown ? shown.fees : chart.totalFees)} DASH` : '—'}
               </span>
             )}
           </StatusCell>
