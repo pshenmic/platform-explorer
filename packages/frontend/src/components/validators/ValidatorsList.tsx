@@ -28,6 +28,11 @@ const ACTIVE_OPTIONS = [
     value: 'banned',
     label: <Badge colorScheme={'red'}>Banned</Badge>,
     searchText: 'banned pose'
+  },
+  {
+    value: 'unregistered',
+    label: <Badge colorScheme={'gray'}>Unregistered</Badge>,
+    searchText: 'unregistered departed'
   }
 ]
 

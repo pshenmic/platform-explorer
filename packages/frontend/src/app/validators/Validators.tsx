@@ -70,14 +70,15 @@ function toApiFilters(state: Record<string, unknown>): QueryFilters {
   }
 
   const active = Array.isArray(state.isActive)
-    ? (state.isActive as string[]).filter(v => v === 'current' || v === 'queued' || v === 'banned')
+    ? (state.isActive as string[]).filter(v => v === 'current' || v === 'queued' || v === 'banned' || v === 'unregistered')
     : []
   if (active.length === 1) {
     if (active[0] === 'current') out.isActive = 'true'
     else if (active[0] === 'queued') {
       out.isActive = 'false'
       out.isBanned = 'false'
-    } else out.isBanned = 'true'
+    } else if (active[0] === 'unregistered') out.isRegistered = 'false'
+    else out.isBanned = 'true'
   }
 
   const ts = state.timestamp as {

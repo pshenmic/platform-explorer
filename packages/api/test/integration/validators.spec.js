@@ -279,6 +279,7 @@ describe('Validators routes', () => {
 
       const expectedValidator = {
         proTxHash: validator.pro_tx_hash,
+        isRegistered: true,
         isActive: false,
         proposedBlocksAmount: 0,
         lastProposedBlockHeader: null,
@@ -318,6 +319,7 @@ describe('Validators routes', () => {
 
       const expectedValidator = {
         proTxHash: validator.pro_tx_hash,
+        isRegistered: true,
         isActive: true,
         proposedBlocksAmount: blocks.filter((block) => block.validator === validator.pro_tx_hash).length,
         lastProposedBlockHeader: blocks
@@ -378,6 +380,7 @@ describe('Validators routes', () => {
 
       const expectedValidator = {
         proTxHash: validator.pro_tx_hash,
+        isRegistered: true,
         isActive: false,
         proposedBlocksAmount: 0,
         lastProposedBlockHeader: null,
@@ -416,6 +419,7 @@ describe('Validators routes', () => {
 
       const expectedValidator = {
         proTxHash: validator.pro_tx_hash,
+        isRegistered: true,
         isActive: true,
         proposedBlocksAmount: blocks.filter((block) => block.validator === validator.pro_tx_hash).length,
         lastProposedBlockHeader: blocks
@@ -483,6 +487,7 @@ describe('Validators routes', () => {
               identity.identifier === base58.encode(Buffer.from(row.pro_tx_hash, 'hex')))
             return {
               proTxHash: row.pro_tx_hash,
+              isRegistered: true,
               isActive: activeValidators.some(validator => validator.pro_tx_hash === row.pro_tx_hash),
               proposedBlocksAmount: blocks.filter((block) => block.validator === row.pro_tx_hash).length,
               lastProposedBlockHeader: blocks
@@ -540,6 +545,7 @@ describe('Validators routes', () => {
               identity.identifier === base58.encode(Buffer.from(row.pro_tx_hash, 'hex')))
             return {
               proTxHash: row.pro_tx_hash,
+              isRegistered: true,
               isActive: activeValidators.some(validator => validator.pro_tx_hash === row.pro_tx_hash),
               proposedBlocksAmount: blocks.filter((block) => block.validator === row.pro_tx_hash).length,
               lastProposedBlockHeader: blocks
@@ -600,6 +606,7 @@ describe('Validators routes', () => {
               identity.identifier === base58.encode(Buffer.from(row.pro_tx_hash, 'hex')))
             return {
               proTxHash: row.pro_tx_hash,
+              isRegistered: true,
               isActive: activeValidators.some(validator => validator.pro_tx_hash === row.pro_tx_hash),
               proposedBlocksAmount: blocks.filter((block) => block.validator === row.pro_tx_hash).length,
               lastProposedBlockHeader: blocks
@@ -741,6 +748,7 @@ describe('Validators routes', () => {
               identity.identifier === base58.encode(Buffer.from(row.pro_tx_hash, 'hex')))
             return {
               proTxHash: row.pro_tx_hash,
+              isRegistered: true,
               isActive: validators.some(validator => validator.pro_tx_hash === row.pro_tx_hash),
               proposedBlocksAmount: blocks.filter((block) => block.validator === row.pro_tx_hash).length,
               lastProposedBlockHeader: blocks
@@ -800,6 +808,7 @@ describe('Validators routes', () => {
               identity.identifier === base58.encode(Buffer.from(row.pro_tx_hash, 'hex')))
             return {
               proTxHash: row.pro_tx_hash,
+              isRegistered: true,
               isActive:
                 validators.some(validator => validator.pro_tx_hash === row.pro_tx_hash),
               proposedBlocksAmount:
@@ -863,6 +872,7 @@ describe('Validators routes', () => {
               identity.identifier === base58.encode(Buffer.from(row.pro_tx_hash, 'hex')))
             return {
               proTxHash: row.pro_tx_hash,
+              isRegistered: true,
               isActive: activeValidators.some(validator => validator.pro_tx_hash === row.pro_tx_hash),
               proposedBlocksAmount: blocks.filter((block) => block.validator === row.pro_tx_hash).length,
               lastProposedBlockHeader: blocks
@@ -924,6 +934,7 @@ describe('Validators routes', () => {
 
             return {
               proTxHash: row.pro_tx_hash,
+              isRegistered: true,
               isActive: activeValidators.some(validator => validator.pro_tx_hash === row.pro_tx_hash),
               proposedBlocksAmount: blocks.filter((block) => block.validator === row.pro_tx_hash).length,
               lastProposedBlockHeader: blocks
@@ -981,6 +992,7 @@ describe('Validators routes', () => {
               identity.identifier === base58.encode(Buffer.from(row.pro_tx_hash, 'hex')))
             return {
               proTxHash: row.pro_tx_hash,
+              isRegistered: true,
               isActive: activeValidators.some(validator => validator.pro_tx_hash === row.pro_tx_hash),
               proposedBlocksAmount: blocks.filter((block) => block.validator === row.pro_tx_hash).length,
               lastProposedBlockHeader: blocks
@@ -1059,6 +1071,7 @@ describe('Validators routes', () => {
               identity.identifier === base58.encode(Buffer.from(row.pro_tx_hash, 'hex')))
             return {
               proTxHash: row.pro_tx_hash,
+              isRegistered: true,
               isActive: activeValidators.some(validator => validator.pro_tx_hash === row.pro_tx_hash),
               proposedBlocksAmount: blocks.filter((block) => block.validator === row.pro_tx_hash).length,
               lastProposedBlockHeader: blocks
@@ -1127,6 +1140,7 @@ describe('Validators routes', () => {
               identity.identifier === base58.encode(Buffer.from(row.pro_tx_hash, 'hex')))
             return {
               proTxHash: row.pro_tx_hash,
+              isRegistered: true,
               isActive: activeValidators.some(validator => validator.pro_tx_hash === row.pro_tx_hash),
               proposedBlocksAmount: blocks.filter((block) => block.validator === row.pro_tx_hash).length,
               lastProposedBlockHeader: blocks
@@ -1196,6 +1210,7 @@ describe('Validators routes', () => {
               identity.identifier === base58.encode(Buffer.from(row.pro_tx_hash, 'hex')))
             return {
               proTxHash: row.pro_tx_hash,
+              isRegistered: true,
               isActive: activeValidators.some(validator => validator.pro_tx_hash === row.pro_tx_hash),
               proposedBlocksAmount: blocks.filter((block) => block.validator === row.pro_tx_hash).length,
               lastProposedBlockHeader: blocks
@@ -1252,6 +1267,7 @@ describe('Validators routes', () => {
               identity.identifier === base58.encode(Buffer.from(row.pro_tx_hash, 'hex')))
             return {
               proTxHash: row.pro_tx_hash,
+              isRegistered: true,
               isActive: true,
               proposedBlocksAmount: blocks.filter((block) => block.validator === row.pro_tx_hash).length,
               lastProposedBlockHeader: blocks
@@ -1314,6 +1330,7 @@ describe('Validators routes', () => {
               identity.identifier === base58.encode(Buffer.from(row.pro_tx_hash, 'hex')))
             return {
               proTxHash: row.pro_tx_hash,
+              isRegistered: true,
               isActive: true,
               proposedBlocksAmount: blocks.filter((block) => block.validator === row.pro_tx_hash).length,
               lastProposedBlockHeader: blocks
@@ -1372,6 +1389,7 @@ describe('Validators routes', () => {
               identity.identifier === base58.encode(Buffer.from(row.pro_tx_hash, 'hex')))
             return {
               proTxHash: row.pro_tx_hash,
+              isRegistered: true,
               isActive: true,
               proposedBlocksAmount: blocks.filter((block) => block.validator === row.pro_tx_hash).length,
               lastProposedBlockHeader: blocks
@@ -1432,6 +1450,7 @@ describe('Validators routes', () => {
               identity.identifier === base58.encode(Buffer.from(row.pro_tx_hash, 'hex')))
             return {
               proTxHash: row.pro_tx_hash,
+              isRegistered: true,
               isActive: true,
               proposedBlocksAmount: blocks.filter((block) => block.validator === row.pro_tx_hash).length,
               lastProposedBlockHeader: blocks
@@ -1492,6 +1511,7 @@ describe('Validators routes', () => {
               identity.identifier === base58.encode(Buffer.from(row.pro_tx_hash, 'hex')))
             return {
               proTxHash: row.pro_tx_hash,
+              isRegistered: true,
               isActive: true,
               proposedBlocksAmount: blocks.filter((block) => block.validator === row.pro_tx_hash).length,
               lastProposedBlockHeader: blocks
@@ -1552,6 +1572,7 @@ describe('Validators routes', () => {
               identity.identifier === base58.encode(Buffer.from(row.pro_tx_hash, 'hex')))
             return {
               proTxHash: row.pro_tx_hash,
+              isRegistered: true,
               isActive: true,
               proposedBlocksAmount: blocks.filter((block) => block.validator === row.pro_tx_hash).length,
               lastProposedBlockHeader: blocks
@@ -1612,6 +1633,7 @@ describe('Validators routes', () => {
               identity.identifier === base58.encode(Buffer.from(row.pro_tx_hash, 'hex')))
             return {
               proTxHash: row.pro_tx_hash,
+              isRegistered: true,
               isActive: true,
               proposedBlocksAmount: blocks.filter((block) => block.validator === row.pro_tx_hash).length,
               lastProposedBlockHeader: blocks
@@ -1673,6 +1695,7 @@ describe('Validators routes', () => {
               identity.identifier === base58.encode(Buffer.from(row.pro_tx_hash, 'hex')))
             return {
               proTxHash: row.pro_tx_hash,
+              isRegistered: true,
               isActive: true,
               proposedBlocksAmount: blocks.filter((block) => block.validator === row.pro_tx_hash).length,
               lastProposedBlockHeader: blocks
@@ -1733,6 +1756,7 @@ describe('Validators routes', () => {
               identity.identifier === base58.encode(Buffer.from(row.pro_tx_hash, 'hex')))
             return {
               proTxHash: row.pro_tx_hash,
+              isRegistered: true,
               isActive: true,
               proposedBlocksAmount: blocks.filter((block) => block.validator === row.pro_tx_hash).length,
               lastProposedBlockHeader: blocks
@@ -1809,6 +1833,7 @@ describe('Validators routes', () => {
               identity.identifier === base58.encode(Buffer.from(row.pro_tx_hash, 'hex')))
             return {
               proTxHash: row.pro_tx_hash,
+              isRegistered: true,
               isActive: false,
               proposedBlocksAmount: 0,
               lastProposedBlockHeader: null,
@@ -1852,6 +1877,7 @@ describe('Validators routes', () => {
               identity.identifier === base58.encode(Buffer.from(row.pro_tx_hash, 'hex')))
             return {
               proTxHash: row.pro_tx_hash,
+              isRegistered: true,
               isActive: false,
               proposedBlocksAmount: 0,
               lastProposedBlockHeader: null,
@@ -1898,6 +1924,7 @@ describe('Validators routes', () => {
               identity.identifier === base58.encode(Buffer.from(row.pro_tx_hash, 'hex')))
             return {
               proTxHash: row.pro_tx_hash,
+              isRegistered: true,
               isActive: false,
               proposedBlocksAmount: 0,
               lastProposedBlockHeader: null,
@@ -1943,6 +1970,7 @@ describe('Validators routes', () => {
               identity.identifier === base58.encode(Buffer.from(row.pro_tx_hash, 'hex')))
             return {
               proTxHash: row.pro_tx_hash,
+              isRegistered: true,
               isActive: false,
               proposedBlocksAmount: 0,
               lastProposedBlockHeader: null,
@@ -1988,6 +2016,7 @@ describe('Validators routes', () => {
               identity.identifier === base58.encode(Buffer.from(row.pro_tx_hash, 'hex')))
             return {
               proTxHash: row.pro_tx_hash,
+              isRegistered: true,
               isActive: false,
               proposedBlocksAmount: 0,
               lastProposedBlockHeader: null,
@@ -2033,6 +2062,7 @@ describe('Validators routes', () => {
               identity.identifier === base58.encode(Buffer.from(row.pro_tx_hash, 'hex')))
             return {
               proTxHash: row.pro_tx_hash,
+              isRegistered: true,
               isActive: false,
               proposedBlocksAmount: 0,
               lastProposedBlockHeader: null,
@@ -2079,6 +2109,7 @@ describe('Validators routes', () => {
               identity.identifier === base58.encode(Buffer.from(row.pro_tx_hash, 'hex')))
             return {
               proTxHash: row.pro_tx_hash,
+              isRegistered: true,
               isActive: false,
               proposedBlocksAmount: blocks.filter((block) => block.validator === row.pro_tx_hash).length,
               lastProposedBlockHeader: blocks
@@ -2136,6 +2167,7 @@ describe('Validators routes', () => {
               identity.identifier === base58.encode(Buffer.from(row.pro_tx_hash, 'hex')))
             return {
               proTxHash: row.pro_tx_hash,
+              isRegistered: true,
               isActive: false,
               proposedBlocksAmount: blocks.filter((block) => block.validator === row.pro_tx_hash).length,
               lastProposedBlockHeader: blocks
@@ -2259,6 +2291,24 @@ describe('Validators routes', () => {
 
         assert.deepEqual(returnedHashes, expectedHashes)
         assert.ok(body.resultSet.every(validator => validator.proTxInfo.state.PoSeBanHeight === 100))
+        assert.ok(body.resultSet.every(validator => validator.isRegistered === true))
+      })
+
+      it('should return only departed validators without a current ban', async () => {
+        const { body } = await client.get('/validators?isRegistered=false&limit=0').expect(200)
+        assert.equal(body.pagination.total, departedValidators.length)
+        assert.deepEqual(body.resultSet.map(validator => validator.proTxHash).sort(),
+          departedValidators.map(validator => validator.pro_tx_hash).sort())
+        assert.ok(body.resultSet.every(validator => validator.isRegistered === false && validator.proTxInfo.state.PoSeBanHeight === null))
+      })
+
+      it('should intersect registration and ban filters before pagination', async () => {
+        const { body } = await client.get('/validators?isRegistered=false&isBanned=true&limit=1').expect(200)
+        assert.equal(body.pagination.total, -1)
+        assert.equal(body.resultSet.length, 0)
+        const registered = await client.get('/validators?isRegistered=true&limit=1').expect(200)
+        assert.equal(registered.body.pagination.total, validators.length - departedValidators.length)
+        assert.equal(registered.body.resultSet[0].isRegistered, true)
       })
 
       it('should return only not banned validators', async () => {

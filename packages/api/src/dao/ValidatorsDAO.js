@@ -121,7 +121,7 @@ module.exports = class ValidatorsDAO {
     return rows.map(r => r.pro_tx_hash)
   }
 
-  getValidators = async (page, limit, order, isActive, activeValidators, isBanned, validatorsByBanStatus, owner, blocksProposedMin, blocksProposedMax, lastProposedBlockHeightMin, lastProposedBlockHeightMax, lastProposedBlockTimestampStart, lastProposedBlockTimestampEnd, lastProposedBlockHash, orderBy = 'id') => {
+  getValidators = async (page, limit, order, isActive, activeValidators, isBanned, validatorsByBanStatus, owner, blocksProposedMin, blocksProposedMax, lastProposedBlockHeightMin, lastProposedBlockHeightMax, lastProposedBlockTimestampStart, lastProposedBlockTimestampEnd, lastProposedBlockHash, orderBy = 'id', isRegistered, registeredHashes = []) => {
     const fromRank = ((page - 1) * limit)
 
     const proTxHash = owner ? Buffer.from(base58.decode(owner)).toString('hex') : null
@@ -181,6 +181,10 @@ module.exports = class ValidatorsDAO {
     }
 
     const subquery = this.knex(validatorsSubquery)
+      .modify(function (query) {
+        if (isRegistered === true) query.whereIn('pro_tx_hash', registeredHashes)
+        else if (isRegistered === false) query.whereNotIn('pro_tx_hash', registeredHashes)
+      })
       .select(
         'pro_tx_hash',
         'id'

@@ -387,6 +387,10 @@ Return all validators with pagination info.
 * `?isActive=true` boolean can be supplied in the query params to filter by isActive field
 * `isBanned=true` returns currently registered nodes with `PoSeBanHeight >= 0`, excluding active validators; `isBanned=false` returns registered nodes with `PoSeBanHeight = -1`
 * Nodes absent from the current Core registered list are excluded from both `isBanned` filters; their historical ban status is not inferred from their absence
+* `isRegistered=true` selects currently registered nodes; `isRegistered=false` selects historical validators absent from the current Core list. Filters are intersected before pagination.
+* List and validator-detail responses include `isRegistered`: `true`, `false`, or `null` when the current Core list is unavailable. Registration and current ban state are refreshed independently of cached validator metadata; historical `proTxInfo` does not imply current registration.
+* When the Core list is unavailable, registration or ban filters return HTTP 503 instead of an incomplete result. Unfiltered responses may return `isRegistered: null`.
+* UI statuses distinguish registered non-banned nodes outside the active set (Waiting for Quorum), registered banned nodes (Banned), and departed nodes (Unregistered). TCP reachability is independent of these statuses.
 * `limit` cannot be more then 100 (0 = all validators)
 * `page` cannot be less then 1
 * `blocks_proposed_min` and `blocks_proposed_max` minimum and maximum amount of proposed blocks
