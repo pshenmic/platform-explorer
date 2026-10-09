@@ -7,18 +7,20 @@ const Routes = require('../../src/routes')
 const ValidatorsController = require('../../src/controllers/ValidatorsController')
 const ValidatorsDAO = require('../../src/dao/ValidatorsDAO')
 const TenderdashRPC = require('../../src/tenderdashRpc')
+const DashCoreRPC = require('../../src/dashcoreRpc')
 
 test('validator sorting supports both parameter names without changing other routes', async context => {
   const app = Fastify()
   context.after(() => app.close())
   context.mock.method(TenderdashRPC, 'getValidators', async () => ({ validators: [] }))
+  context.mock.method(DashCoreRPC, 'getProTxList', async () => [])
 
   const controller = new ValidatorsController(null, {
     node: { getEpochsInfo: async () => [{ number: 1, startTime: 1000 }] }
   })
   let selectedOrder
   controller.validatorsDAO.getValidators = async (...args) => {
-    selectedOrder = args.at(-1)
+    selectedOrder = args[15]
     return { resultSet: [], pagination: {} }
   }
 
@@ -53,6 +55,8 @@ test('validator sorting supports both parameter names without changing other rou
   assert.equal(transactions.statusCode, 400)
   const invalidLimit = await app.inject('/validators?limit=101')
   assert.equal(invalidLimit.statusCode, 400)
+  const invalidRegistration = await app.inject('/validators?isRegistered=invalid')
+  assert.equal(invalidRegistration.statusCode, 400)
 })
 
 test('validator SQL always uses id as the final sorting criterion', async context => {

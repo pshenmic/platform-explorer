@@ -19,6 +19,7 @@ export interface DataListHeaderMenuProps {
   filterType?: DataListHeaderFilterType
   value?: unknown
   options?: DataListHeaderMenuOption[]
+  multiple?: boolean
   placeholder?: string
   onChange?: (value: unknown) => void
   onClose: () => void
@@ -34,6 +35,7 @@ export default function DataListHeaderMenu({
   filterType,
   value,
   options,
+  multiple = true,
   placeholder = 'Search…',
   onChange,
   onClose,
@@ -129,6 +131,10 @@ export default function DataListHeaderMenu({
       onChange?.([])
       return
     }
+    if (!multiple) {
+      onChange?.(selected.includes(next) ? [] : [next])
+      return
+    }
     onChange?.(
       selected.includes(next) ? selected.filter(item => item !== next) : [...selected, next]
     )
@@ -220,6 +226,7 @@ export default function DataListHeaderMenu({
             <button
               type={'button'}
               className={'DataListHeaderMenu__Item'}
+              aria-pressed={selected.length === 0}
               onClick={() => toggleOption('')}
             >
               <span className={'DataListHeaderMenu__Check'}>
@@ -235,6 +242,7 @@ export default function DataListHeaderMenu({
                 title={
                   option.searchText ?? (typeof option.label === 'string' ? option.label : undefined)
                 }
+                aria-pressed={selected.includes(option.value)}
                 onClick={() => toggleOption(option.value)}
               >
                 <span className={'DataListHeaderMenu__Check'}>

@@ -8,6 +8,8 @@ const { checkTcpConnect, calculateInterval, iso8601duration, getFinalPoSeBanHeig
 const Epoch = require('../models/Epoch')
 const { base58 } = require('@scure/base')
 const Intervals = require('../enums/IntervalsEnum')
+const getValidatorRegistration = require('../validatorRegistration')
+const ServiceNotAvailableError = require('../errors/ServiceNotAvailableError')
 
 const cache = require('../cache')
 const { VALIDATORS_CACHE_KEY, VALIDATORS_CACHE_LIFE_INTERVAL } = require('../constants')
@@ -62,18 +64,23 @@ class ValidatorsController {
       cache.set(`${VALIDATORS_CACHE_KEY}_${validator.proTxHash}`, validatorInfo, VALIDATORS_CACHE_LIFE_INTERVAL)
     }
 
-    // For a validator that has left the masternode list, getProTxInfo resolves
-    // its state from the registration block, which reports it as not banned.
-    // This endpoint reports the precise final ban state instead (the list
-    // endpoint stays coarse). A present validator (no-fallback lookup succeeds)
-    // already carries its accurate ban height.
-    if (!isActive && validatorInfo.proTxInfo?.state) {
-      const currentProTxInfo = await DashCoreRPC.getProTxInfo(validator.proTxHash, undefined, false)
-
-      if (!currentProTxInfo) {
-        validatorInfo.proTxInfo.state.PoSeBanHeight = await getFinalPoSeBanHeight(validator.proTxHash)
-      }
+    const registeredNodes = await getValidatorRegistration()
+    const registeredNode = registeredNodes?.get(validator.proTxHash.toUpperCase())
+    const isRegistered = registeredNodes === null ? null : Boolean(registeredNode)
+    let banHeight = registeredNode?.state?.PoSeBanHeight ?? null
+    if (isRegistered === false && !isActive && validatorInfo.proTxInfo?.state) {
+      banHeight = await getFinalPoSeBanHeight(validator.proTxHash)
     }
+    validatorInfo = Validator.fromObject({
+      ...validatorInfo,
+      isRegistered,
+      proTxInfo: validatorInfo.proTxInfo
+        ? ProTxInfo.fromObject({
+          ...validatorInfo.proTxInfo,
+          state: { ...validatorInfo.proTxInfo.state, PoSeBanHeight: banHeight }
+        })
+        : null
+    })
 
     const { proTxInfo } = validatorInfo
 
@@ -153,6 +160,7 @@ class ValidatorsController {
       orderBy = request.query.order_by ?? 'id',
       isActive = undefined,
       isBanned = undefined,
+      isRegistered = undefined,
       owner,
       blocks_proposed_min: blocksProposedMin,
       blocks_proposed_max: blocksProposedMax,
@@ -180,18 +188,16 @@ class ValidatorsController {
     const [currentEpoch] = await this.sdk.node.getEpochsInfo(1)
     const epochInfo = Epoch.fromObject(currentEpoch)
 
-    let validatorsWithoutBan = []
-
-    // Ban status is derived from the current masternode list. A validator that
-    // has left the list (collateral spent) is treated as banned here: resolving
-    // its precise final ban state requires a per-node historical lookup that is
-    // too expensive for the list endpoint (see getFinalPoSeBanHeight, used only
-    // on the single-validator endpoint).
-    if (isBanned !== undefined) {
-      const registeredMasternodes = await DashCoreRPC.getProTxList('registered', true)
-
-      validatorsWithoutBan = registeredMasternodes.filter(masternode => masternode.state?.PoSeBanHeight === -1)
+    const registeredNodes = await getValidatorRegistration()
+    if (registeredNodes === null && (isBanned !== undefined || isRegistered !== undefined)) {
+      throw new ServiceNotAvailableError()
     }
+    const registeredMasternodes = [...(registeredNodes?.values() ?? [])]
+    const validatorsByBanStatus = registeredMasternodes.filter(masternode => {
+      const height = masternode.state?.PoSeBanHeight
+      return Number.isInteger(height) && (isBanned ? height >= 0 : height === -1)
+    })
+    const banHeights = new Map(registeredMasternodes.map(node => [node.proTxHash.toUpperCase(), node.state?.PoSeBanHeight ?? null]))
 
     const validators = await this.validatorsDAO.getValidators(
       Number(page ?? 1),
@@ -200,7 +206,7 @@ class ValidatorsController {
       isActive,
       activeValidators,
       isBanned,
-      validatorsWithoutBan,
+      validatorsByBanStatus,
       owner,
       blocksProposedMin,
       blocksProposedMax,
@@ -209,7 +215,9 @@ class ValidatorsController {
       lastProposedBlockTimestampStart,
       lastProposedBlockTimestampEnd,
       lastProposedBlockHash,
-      ['id', 'latest_timestamp', 'proposed_blocks_amount'].includes(orderBy) ? orderBy : 'id'
+      ['id', 'latest_timestamp', 'proposed_blocks_amount'].includes(orderBy) ? orderBy : 'id',
+      isRegistered,
+      [...(registeredNodes?.keys() ?? [])]
     )
 
     const activeValidatorsHashes = new Set(activeValidators.map(validator => validator.pro_tx_hash))
@@ -250,7 +258,14 @@ class ValidatorsController {
         // rotates independently of the cached ProTx and identity data
         return Validator.fromObject({
           ...validatorInfo,
-          isActive: activeValidatorsHashes.has(validator.proTxHash)
+          isActive: activeValidatorsHashes.has(validator.proTxHash),
+          isRegistered: registeredNodes === null ? null : registeredNodes.has(validator.proTxHash.toUpperCase()),
+          proTxInfo: validatorInfo.proTxInfo
+            ? ProTxInfo.fromObject({
+              ...validatorInfo.proTxInfo,
+              state: { ...validatorInfo.proTxInfo?.state, PoSeBanHeight: banHeights.get(validator.proTxHash.toUpperCase()) ?? null }
+            })
+            : validatorInfo.proTxInfo
         })
       }))
 

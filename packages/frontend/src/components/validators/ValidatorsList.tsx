@@ -23,6 +23,16 @@ const ACTIVE_OPTIONS = [
     value: 'queued',
     label: <Badge colorScheme={'gray'}>Waiting for Quorum</Badge>,
     searchText: 'waiting quorum'
+  },
+  {
+    value: 'banned',
+    label: <Badge colorScheme={'red'}>Banned</Badge>,
+    searchText: 'banned pose'
+  },
+  {
+    value: 'unregistered',
+    label: <Badge colorScheme={'gray'}>Unregistered</Badge>,
+    searchText: 'unregistered departed'
   }
 ]
 
@@ -76,6 +86,7 @@ function validatorColumns(canFilter: boolean) {
       filterKey: canFilter ? 'isActive' : undefined,
       filterType: canFilter ? ('options' as const) : undefined,
       filterOptions: ACTIVE_OPTIONS,
+      filterMultiple: false,
       cell: (validator: Validator) => {
         const status = getValidatorStatus(validator)
         return <Badge colorScheme={status.colorScheme}>{status.label}</Badge>
