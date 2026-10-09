@@ -8,6 +8,7 @@ const createJestConfig = nextJest({
 const config = {
   coverageProvider: 'v8',
   testEnvironment: 'jsdom',
+  modulePaths: ['<rootDir>/node_modules'],
 }
  
 module.exports = createJestConfig(config)

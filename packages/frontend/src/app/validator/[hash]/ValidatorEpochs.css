@@ -1,0 +1,215 @@
+.ValidatorPage__Epochs {
+  min-width: 0;
+  container-type: inline-size;
+}
+
+.ValidatorEpochs .EpochsOverview__Head {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: start;
+  gap: 8px 12px;
+  margin-bottom: 8px;
+  padding: 0;
+}
+
+.ValidatorEpochs .EpochsOverview__TitleRow {
+  margin: 0 0 4px;
+}
+
+.ValidatorEpochs .EpochsOverview__Title {
+  font-family: var(--pe-font-mono);
+  font-style: normal;
+  font-weight: 400;
+  font-size: 1rem;
+  line-height: 1.15;
+  letter-spacing: 0;
+  text-transform: none;
+  color: #fff;
+}
+
+.ValidatorEpochs .EpochsOverview__Title {
+  margin: 0;
+}
+
+.ValidatorEpochs .EpochsOverview__Lede {
+  max-width: none;
+  margin: 0;
+  font-family: var(--pe-font-mono);
+  font-size: 0.875rem;
+  line-height: 1.35;
+  color: var(--pe-color-gray-400);
+  overflow-wrap: break-word;
+}
+
+.ValidatorEpochs .IdentityGrowthChart__Tick {
+  font-size: 0.75rem;
+  fill: var(--pe-color-fg-muted);
+}
+
+.ValidatorEpochs__Filters {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.ValidatorEpochs__Filters .ChartDateRange__Trigger {
+  width: auto;
+  white-space: nowrap;
+}
+
+.ValidatorEpochs__Plot {
+  position: relative;
+  height: 12rem;
+  min-height: 12rem;
+  width: 100%;
+}
+
+.ValidatorEpochs__Bar {
+  pointer-events: none;
+}
+
+.ValidatorEpochs__Bar.is-missing {
+  stroke: var(--pe-color-fg-muted);
+  stroke-opacity: 0.3;
+}
+
+.ValidatorEpochs__Hatch {
+  stroke: var(--pe-color-fg-muted);
+  stroke-opacity: 0.35;
+}
+
+.ValidatorEpochs__TimeFill {
+  fill: var(--pe-color-fg-muted);
+  fill-opacity: 0.3;
+  pointer-events: none;
+}
+
+.ValidatorEpochs__ProgressLabel {
+  fill: var(--pe-color-fg);
+  text-anchor: middle;
+  font-size: 0.75rem;
+  pointer-events: none;
+}
+
+.ValidatorEpochs__Hit {
+  fill: transparent;
+  cursor: pointer;
+}
+
+.ValidatorEpochs__Hit:focus-visible {
+  outline: 2px solid var(--pe-color-fg);
+  outline-offset: -2px;
+}
+
+.ValidatorEpochs .EpochsOverview__Wash {
+  display: none;
+}
+
+.ValidatorEpochs .IdentityGrowthChart__Empty {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  height: 100%;
+}
+
+.ValidatorEpochs .IdentityGrowthChart__Empty button {
+  background: transparent;
+  border: 1px solid var(--pe-color-calendar-border);
+  border-radius: 6px;
+  color: var(--pe-color-fg);
+  padding: 8px 16px;
+  cursor: pointer;
+}
+
+.ValidatorEpochs .HomeHero__StatusBar,
+.ValidatorEpochs .EpochsOverview__Cells.HomeHero__StatusBar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: stretch;
+  gap: 0;
+  margin-top: 8px;
+  padding-top: 16px;
+}
+
+.ValidatorEpochs .HomeHero__StatusCell,
+.ValidatorEpochs .HomeHero__StatusCell:first-child,
+.ValidatorEpochs .HomeHero__StatusCell:last-child {
+  flex: 1 1 0;
+  min-width: 0;
+  padding: 0 10px;
+  border-right: 1px solid rgba(var(--pe-color-gray-800-rgb), 0.6);
+  border-bottom: none;
+}
+
+.ValidatorEpochs .HomeHero__StatusCell:first-child {
+  flex: 1.7 1 0;
+  padding-left: 0;
+}
+
+.ValidatorEpochs .HomeHero__StatusCell:last-child {
+  flex: 1.15 1 0;
+  padding-right: 0;
+  border-right: none;
+}
+
+.ValidatorEpochs .EpochsOverview__Cells .HomeHero__StatusHead,
+.ValidatorEpochs .EpochsOverview__Cells .HomeHero__StatusValue,
+.ValidatorEpochs .EpochsOverview__Cells .EpochsOverview__Stat {
+  justify-content: flex-start;
+  text-align: left;
+  width: auto;
+}
+
+.ValidatorEpochs .EpochsOverview__Cells .EpochsOverview__Stat {
+  font-size: 0.875rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+.ValidatorEpochs .HomeHero__StatusLabel {
+  white-space: nowrap;
+  font-size: 0.8125rem;
+}
+
+@container (min-width: 32rem) {
+  .ValidatorEpochs .HomeHero__StatusCell:last-child {
+    flex: 1.6 1 0;
+  }
+
+  .ValidatorEpochs .HomeHero__StatusCell:last-child .EpochsOverview__Stat {
+    font-size: 0.875rem;
+  }
+}
+
+@container (max-width: 31.99rem) {
+  .ValidatorEpochs .HomeHero__StatusCell,
+  .ValidatorEpochs .HomeHero__StatusCell:first-child,
+  .ValidatorEpochs .HomeHero__StatusCell:last-child {
+    flex: 1 1 45%;
+    padding: 0 8px 10px;
+    border-bottom: 1px solid rgba(var(--pe-color-gray-800-rgb), 0.6);
+  }
+
+  .ValidatorEpochs .HomeHero__StatusCell:nth-child(2) {
+    border-right: none;
+  }
+
+  .ValidatorEpochs .HomeHero__StatusCell:nth-child(3) {
+    padding-left: 0;
+    padding-bottom: 0;
+    border-bottom: none;
+  }
+
+  .ValidatorEpochs .HomeHero__StatusCell:last-child {
+    padding-bottom: 0;
+    border-bottom: none;
+    border-right: none;
+  }
+
+  .ValidatorEpochs .EpochsOverview__Cells .EpochsOverview__Stat {
+    font-size: 0.875rem;
+  }
+}

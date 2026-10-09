@@ -1,4 +1,5 @@
 import { InfoLine, Identifier } from '@components/data'
+import { getL1ExplorerLink } from 'src/util/l1Explorer'
 import { ValueCard } from '@components/cards'
 import { useEffect, useState } from 'react'
 import * as Api from '@utils/Api'
@@ -67,7 +68,7 @@ export const PayoutAddress = ({ outputScript, loading, identity }: PayoutAddress
       title={'Payout address'}
       value={
         <a
-          href={l1explorerBaseUrl ? `${l1explorerBaseUrl}/address/${payoutAddress}` : '#'}
+          href={getL1ExplorerLink(l1explorerBaseUrl, 'address', payoutAddress)}
           target={'_blank'}
           rel={'noopener noreferrer'}
         >

@@ -5,30 +5,14 @@
 .ValidatorPage__ContentContainer {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-  gap: var(--pe-space-3);
-}
-
-@media screen and (min-width: 48em) {
-  .ValidatorPage__ContentContainer {
-    gap: var(--pe-space-4);
-  }
-}
-
-@media screen and (min-width: 62em) {
-  .ValidatorPage__ContentContainer {
-    gap: var(--pe-space-5);
-  }
-}
-
-@media screen and (min-width: 80em) {
-  .ValidatorPage__ContentContainer {
-    gap: var(--pe-space-6);
-  }
+  gap: 16px;
+  align-items: stretch;
 }
 
 .ValidatorPage__Column {
   display: flex;
   flex-direction: column;
+  gap: 16px;
   position: relative;
   overflow: hidden;
   flex-shrink: 0;
@@ -37,30 +21,618 @@
 .ValidatorPage__Lists {
   display: flex;
   flex-direction: column;
+  grid-column: 1 / -1;
   min-width: 0;
-  margin-top: var(--pe-space-3);
 }
 
-@media screen and (min-width: 48em) {
-  .ValidatorPage__Lists {
-    margin-top: var(--pe-space-4);
-  }
+.ValidatorPage__Summary {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  align-items: stretch;
+}
+
+.ValidatorPage .InfoContainer.ValidatorPage__SummaryCard,
+.ValidatorPage .InfoContainer.ValidatorPage__Group {
+  padding: 16px;
+}
+
+.ValidatorPage__SummaryCard {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 0;
+  height: auto;
+  min-height: 9.25rem;
+  box-sizing: border-box;
+}
+
+.ValidatorPage__SummaryHint {
+  margin-top: 0;
+}
+
+.ValidatorPage__Yield {
+  display: flex;
+  flex-direction: column;
+}
+
+.ValidatorPage__YieldRows {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+}
+
+.ValidatorPage__YieldRows div {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-width: 0;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--pe-color-border);
+}
+
+.ValidatorPage__YieldRows div:first-child {
+  padding-top: 0;
+}
+
+.ValidatorPage__YieldRows div:last-child {
+  border-bottom: 0;
+  padding-bottom: 0;
+}
+
+.ValidatorPage__YieldRows dt,
+.ValidatorPage__YieldRows dd {
+  margin: 0;
+  min-width: 0;
+}
+
+.ValidatorPage__YieldRows dt {
+  flex: 0 0 auto;
+  font-family: var(--pe-font-mono);
+  font-weight: 400;
+  font-size: 0.8125rem;
+  letter-spacing: 0.04em;
+  line-height: 21px;
+  text-transform: uppercase;
+  color: #fff;
+}
+
+.ValidatorPage__YieldRows dd {
+  flex: 1 1 auto;
+  font-family: var(--pe-font-mono);
+  font-size: 0.875rem;
+  font-weight: 400;
+  line-height: 21px;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+  color: var(--pe-color-fg-muted);
 }
 
 @media screen and (min-width: 62em) {
-  .ValidatorPage__Lists {
-    margin-top: var(--pe-space-5);
+  .ValidatorPage__Summary {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+  }
+
+  .ValidatorPage__Summary > * {
+    grid-column: span 2;
   }
 }
 
-@media screen and (min-width: 80em) {
-  .ValidatorPage__Lists {
-    margin-top: var(--pe-space-6);
-  }
+.ValidatorPage__SummaryValue .DateBlock__Delta {
+  font: inherit;
+  color: inherit;
 }
 
-.ValidatorPage__ChartsContainer {
+.ValidatorPage__WithdrawalCard {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.ValidatorPage__WithdrawalCount {
+  color: var(--pe-color-gray-400);
+}
+
+.ValidatorPage__WithdrawalRow {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  min-width: 0;
+  color: var(--pe-color-fg);
+  text-decoration: none;
+}
+
+.ValidatorPage__WithdrawalRow span:last-child {
+  flex-shrink: 0;
+  font-variant-numeric: tabular-nums;
+}
+
+.ValidatorPage__WithdrawalMore {
+  color: var(--pe-color-brand-light);
+  text-decoration: none;
+}
+
+.ValidatorPage__SummaryLabel {
+  font-family: var(--pe-font-mono);
+  font-size: 0.9375rem;
+  font-weight: 400;
+  letter-spacing: 0;
+  line-height: 1.15;
+  text-transform: none;
+  color: #fff;
+  overflow-wrap: break-word;
+}
+
+.ValidatorPage__StatusLabel {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ValidatorPage__StatusLabel .Badge {
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.ValidatorPage__SummaryValue {
+  font-family: var(--pe-font-mono);
+  font-weight: 400;
+  font-size: 1.25rem;
+  line-height: 1.2;
+  color: var(--pe-color-fg-muted);
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere;
+}
+
+.ValidatorPage__SummaryValue--green {
+  color: var(--pe-color-green-label);
+}
+
+.ValidatorPage__SummaryValue--red {
+  color: var(--pe-color-red-default);
+}
+
+.ValidatorPage__SummaryValue--gray {
+  color: var(--pe-color-gray-250);
+}
+
+.ValidatorPage__SummaryValue--yellow {
+  color: var(--pe-color-yellow-badge);
+}
+
+.ValidatorPage__StatusHint {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+}
+
+.ValidatorPage__PoseLink {
+  color: var(--pe-color-brand-light);
+  text-decoration: none;
+}
+
+.ValidatorPage__Registered {
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+
+.ValidatorPage__SummaryHint a {
+  color: var(--pe-color-brand-light);
+  text-decoration: none;
+}
+
+.ValidatorPage__SummaryHint {
+  min-height: 1rem;
+  font-family: var(--pe-font-mono);
+  font-size: 0.75rem;
+  line-height: 1.3;
+  color: var(--pe-color-gray-400);
+  overflow-wrap: anywhere;
+}
+
+.ValidatorPage__Service {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  gap: 12px;
+}
+
+.ValidatorPage__ServiceBody {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: center;
+  min-width: 0;
+}
+
+.ValidatorPage__ServiceMain {
+  display: contents;
+}
+
+.ValidatorPage__ServiceHead {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  min-width: 0;
+  min-height: 21px;
+}
+
+.ValidatorPage__Host {
+  flex-shrink: 0;
+}
+
+.ValidatorPage__ServiceRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  grid-column: 1;
+  grid-row: 1;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--pe-color-border);
+}
+
+.ValidatorPage__ServiceRow + .ValidatorPage__ServiceRow {
+  grid-column: 1 / -1;
+  grid-row: 2;
+}
+
+.ValidatorPage__ServiceRow:first-child {
+  padding-top: 0;
+}
+
+.ValidatorPage__ServiceRow:last-child {
+  border-bottom: 0;
   padding-bottom: 0;
+}
+
+.ValidatorPage__ServiceRowTitle {
+  flex: 0 0 auto;
+  font-family: var(--pe-font-mono);
+  font-weight: 400;
+  font-size: 0.8125rem;
+  letter-spacing: 0.04em;
+  line-height: 21px;
+  text-transform: uppercase;
+  color: #fff;
+}
+
+.ValidatorPage__ServiceRowValue {
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+.ValidatorPage__ServiceMeta {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  color: var(--pe-color-gray-400);
+  font-family: var(--pe-font-mono);
+  font-size: 0.875rem;
+  font-weight: 400;
+  line-height: 21px;
+  white-space: nowrap;
+  text-decoration: none;
+}
+
+.ValidatorPage__ServiceMeta:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.ValidatorPage__Ports {
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
+}
+
+.ValidatorPage__Port {
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.ValidatorPage__Identicon {
+  position: relative;
+  flex: 0 0 48px;
+  width: 48px;
+  height: 48px;
+  overflow: hidden;
+}
+
+.ValidatorPage__Identicon .ImageGenerator__Image {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.ValidatorPage__Port {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  padding: 0 4px;
+  line-height: 19px;
+  border: 1px solid var(--pe-color-border);
+  border-radius: 6px;
+  color: var(--pe-color-fg-muted);
+  font-family: var(--pe-font-mono);
+  font-size: 0.875rem;
+  text-decoration: none;
+}
+
+a.ValidatorPage__Port:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.ValidatorPage__PortName {
+  color: #fff;
+  font-family: var(--pe-font-mono);
+  font-size: 0.875rem;
+  font-weight: 400;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.ValidatorPage__PortValue {
+  font-variant-numeric: tabular-nums;
+}
+
+@media screen and (max-width: 42em) {
+  .ValidatorPage__ServiceRowValue,
+  .ValidatorPage__Ports {
+    flex-wrap: wrap;
+    justify-content: flex-start;
+  }
+
+  .ValidatorPage__ServiceRow + .ValidatorPage__ServiceRow {
+    align-items: flex-start;
+  }
+}
+
+.ValidatorPage__Host {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  color: var(--pe-color-gray-400);
+  font-family: var(--pe-font-mono);
+  font-size: 0.875rem;
+  font-weight: 400;
+}
+
+.ValidatorPage__Host .IpAddress,
+.ValidatorPage__Host .IpAddress__Host,
+.ValidatorPage__Host .IpAddress__Port {
+  font-family: var(--pe-font-mono);
+  font-size: 0.875rem;
+  font-weight: 400;
+  color: var(--pe-color-gray-400);
+}
+
+.ValidatorPage__Flag {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.12);
+}
+
+.ValidatorPage__Group {
+  padding: 12px 16px;
+}
+
+.ValidatorPage__Ledger .Identifier__CopyButton {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.15s;
+}
+
+.ValidatorPage__Ledger .InfoLine:hover .Identifier__CopyButton,
+.ValidatorPage__Ledger .InfoLine:focus-within .Identifier__CopyButton {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+@media (hover: none) {
+  .ValidatorPage__Ledger .Identifier__CopyButton {
+    opacity: 1;
+    pointer-events: auto;
+  }
+}
+
+.ValidatorPage__Ledger .ValidatorPage__GroupTitle {
+  margin-top: 16px;
+  margin-bottom: 8px;
+  line-height: 1.35;
+  overflow-wrap: break-word;
+}
+
+.ValidatorPage__Ledger > .ValidatorPage__GroupTitle:first-child {
+  margin-top: 0;
+}
+
+.ValidatorPage__KeyLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  color: var(--pe-color-fg-muted);
+  text-decoration: none;
+}
+
+.ValidatorPage__GroupTitle {
+  margin-bottom: 10px;
+  font-family: var(--pe-font-mono);
+  font-size: 1rem;
+  font-style: normal;
+  font-weight: 400;
+  letter-spacing: 0;
+  line-height: 1.15;
+  text-transform: none;
+  color: #fff;
+}
+
+.ValidatorPage .InfoLine__Title {
+  letter-spacing: 0;
+  text-transform: none;
+  color: #fff;
+}
+
+.ValidatorPage .InfoLine__Value {
+  color: var(--pe-color-fg-muted);
+}
+
+.ValidatorPage__Ledger .Endpoint {
+  justify-content: flex-end;
+}
+
+.ValidatorPage__Ledger .Endpoint__Value {
+  white-space: nowrap;
+}
+
+.ValidatorPage__Ledger {
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+.ValidatorPage__Ledger .InfoLine {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 12px;
+  margin: 0;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--pe-color-border);
+}
+
+.ValidatorPage__Ledger .InfoLine:first-child {
+  padding-top: 0;
+}
+
+.ValidatorPage__Ledger .InfoLine:last-child {
+  border-bottom: 0;
+  padding-bottom: 0;
+}
+
+.ValidatorPage__Ledger .InfoLine__Title {
+  flex: 0 0 auto;
+  font-size: 0.8125rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #fff;
+}
+
+.ValidatorPage__Ledger .InfoLine__Value a,
+.ValidatorPage__Ledger .Identifier,
+.ValidatorPage__Ledger .Identifier__Symbols {
+  color: var(--pe-color-fg-muted);
+}
+
+.ValidatorPage__Ledger .InfoLine__Value {
+  display: flex;
+  justify-content: flex-start;
+  min-width: 0;
+  flex: 1 1 auto;
+  text-align: left;
+}
+
+.ValidatorPage__Ledger .Identifier,
+.ValidatorPage__Ledger .ValidatorPage__KeyLine {
+  width: max-content;
+  max-width: 100%;
+  min-width: 0;
+  justify-content: flex-start;
+}
+
+.ValidatorPage__Ledger .Identifier {
+  align-items: center;
+  font-size: 0.875rem;
+}
+
+.ValidatorPage__Ledger .ValidatorPage__KeyLine > a {
+  flex: 0 1 auto;
+}
+
+.ValidatorPage__KeyLine {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  width: 100%;
+  min-width: 0;
+  gap: 8px;
+}
+
+.ValidatorPage__Withdrawal {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  width: 100%;
+  min-width: 0;
+}
+
+.ValidatorPage__Withdrawal > a {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.ValidatorPage__WithdrawalAmount {
+  flex: 0 0 auto;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.ValidatorPage__KeyLine > a {
+  flex: 1 1 auto;
+  min-width: 0;
+  color: inherit;
+  text-decoration: none;
+}
+
+.ValidatorPage__KeyLine > a:hover .Identifier__SymbolsContainer {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.ValidatorPage__KeyLine .DateBlock {
+  flex: 0 0 auto;
+}
+
+.ValidatorPage__KeyLine--dated > a {
+  flex: 1 1 auto;
+}
+
+.ValidatorPage__KeyLine--dated .Identifier {
+  justify-content: flex-start;
+}
+
+.ValidatorPage__Ledger .InfoLine--Loading .InfoLine__Value {
+  width: 100%;
+  max-width: 28rem;
+}
+
+.ValidatorPage__Group .InfoLine:last-child {
+  margin-bottom: 0;
+}
+
+.ValidatorPage__Epochs {
   overflow-x: hidden;
 }
 
@@ -83,7 +655,7 @@
 }
 
 .ValidatorPage__InfoLine {
-  margin-bottom: var(--pe-space-3_5);
+  margin-bottom: 8px;
 }
 
 .ValidatorPage__ValueContainer {
@@ -95,6 +667,7 @@
 .ValidatorPage__PoseScroreValue {
   display: flex;
   align-items: center;
+  justify-content: flex-end;
 }
 
 @media screen and (max-width: 62em) {
@@ -122,7 +695,11 @@
 
 .ValidatorPage__ActivityList {
   min-width: 0;
-  padding: 12px;
+  padding: 0 12px 12px;
+}
+
+.ValidatorPage__Lists .Tabs__Toolbar {
+  margin-bottom: 0;
 }
 .ValidatorPage__ActivityError {
   display: flex;
@@ -147,8 +724,126 @@
 .ValidatorPage__Lists .Tabs__Tab {
   flex-shrink: 0;
 }
+
 @media screen and (max-width: 420px) {
   .ValidatorPage .PageDataContainer__ContentContainer {
     margin-inline: 0;
+  }
+}
+
+.ValidatorPage__LoadError {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 0.8125rem;
+  font-weight: 400;
+}
+
+.ValidatorPage__LoadError button {
+  align-self: flex-start;
+  color: var(--pe-color-brand-light);
+  background: transparent;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+  font: inherit;
+  text-decoration: underline;
+}
+
+.ValidatorPage__EarningsTotal {
+  margin: 0;
+  font-family: var(--pe-font-mono);
+  font-size: 1.125rem;
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere;
+}
+
+.ValidatorPage__EarningsTotal > span {
+  color: var(--pe-color-fg-muted);
+  font-size: 0.8125rem;
+}
+
+.ValidatorPage__Yield > .ValidatorPage__SummaryHint {
+  margin-top: 16px;
+}
+
+.ValidatorPage__RegistrationCard {
+  position: relative;
+}
+
+.ValidatorPage__RegistrationHeading {
+  display: block;
+  padding-right: 72px;
+  font-size: 0.8125rem;
+  white-space: nowrap;
+}
+
+.ValidatorPage__RegistrationCard .ValidatorPage__Identicon {
+  position: absolute;
+  top: 50%;
+  right: 12px;
+  transform: translateY(-50%);
+  width: 64px;
+  height: 64px;
+}
+
+.ValidatorPage__RegistrationCard .ValidatorPage__SummaryValue {
+  padding-right: 72px;
+  font-family: var(--pe-font-mono);
+  font-size: 0.8125rem;
+  white-space: nowrap;
+}
+
+.ValidatorPage__RegistrationCard .ValidatorPage__SummaryHint {
+  padding-right: 72px;
+}
+
+.ValidatorPage__EarningsHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 20px;
+  white-space: nowrap;
+}
+
+.ValidatorPage__EarningsHeader .ValidatorPage__EarningsTotal {
+  white-space: nowrap;
+}
+
+@media screen and (max-width: 42em) {
+  .ValidatorPage__EarningsHeader .ValidatorPage__SummaryLabel {
+    font-size: 0.8125rem;
+  }
+
+  .ValidatorPage__EarningsTotal {
+    font-size: 0.9375rem;
+  }
+
+  .ValidatorPage__EarningsTotal > span {
+    font-size: 0.6875rem;
+  }
+}
+
+@media screen and (max-width: 23em) {
+  .ValidatorPage__EarningsHeader .ValidatorPage__SummaryLabel {
+    font-size: 0.75rem;
+  }
+
+  .ValidatorPage__EarningsTotal {
+    font-size: 0.8125rem;
+  }
+}
+
+@media screen and (max-width: 42em) {
+  .ValidatorPage__RegistrationCard .ValidatorPage__Identicon {
+    width: 48px;
+    height: 48px;
+  }
+
+  .ValidatorPage__RegistrationHeading,
+  .ValidatorPage__RegistrationCard .ValidatorPage__SummaryValue,
+  .ValidatorPage__RegistrationCard .ValidatorPage__SummaryHint {
+    padding-right: 56px;
   }
 }
