@@ -4,6 +4,7 @@ import { Fragment, useEffect, useMemo, useRef, useState, type ReactNode } from '
 import { useQuery } from '@tanstack/react-query'
 import * as Api from '../../../util/Api'
 import { getL1ExplorerLink } from '../../../util/l1Explorer'
+import { validatorApr } from '../../../util/validatorApr'
 import {
   fetchHandlerSuccess,
   fetchHandlerError,
@@ -164,7 +165,6 @@ function PaymentCountdown({
 
   return (
     <>
-      {blocks.toLocaleString('en-US')} {blocks === 1 ? 'block' : 'blocks'} ·{' '}
       {formatCountdown(remain)}
     </>
   )
@@ -177,8 +177,31 @@ function yieldDash(dash: number) {
   return String(removeTrailingZeros(dash.toFixed(digits)))
 }
 
+function EpochCountdown() {
+  const [now, setNow] = useState(() => Date.now())
+  const query = useQuery({
+    queryKey: ['validator-current-epoch'],
+    queryFn: () => Api.getEpoch(),
+    staleTime: 60000,
+    refetchInterval: 60000
+  })
+  useEffect(() => {
+    const timer = setInterval(() => setNow(Date.now()), 1000)
+    return () => clearInterval(timer)
+  }, [])
+  if (query.isPending) return <Skeleton w={100} h={'1em'} />
+  const end = query.data?.epoch.endTime
+  if (query.isError || end == null || !Number.isFinite(end)) return <>Unavailable</>
+  const remaining = end - now
+  if (remaining <= 0) return <>Awaiting next epoch</>
+  return <span title={'Estimated epoch end, not the time of the next Platform payment.'}>
+    {formatCountdown(remaining)}
+  </span>
+}
+
 function EarningsCard({
   hash,
+  nodeType,
   loading,
   blocksUntilCorePayment,
   coreTipTime,
@@ -186,6 +209,7 @@ function EarningsCard({
   banned
 }: {
   hash: string
+  nodeType?: string | null
   loading: boolean
   blocksUntilCorePayment?: number | null
   coreTipTime?: string | null
@@ -211,19 +235,14 @@ function EarningsCard({
     ) : (
       `≈ ${yieldDash(value)} DASH`
     )
-  const history = data?.platformHistory?.firstEpoch != null && data.platformHistory.lastEpoch != null
-    ? data.platformHistory
-    : null
-  const period = history
-    ? `Platform: epochs ${history.firstEpoch?.toLocaleString('en-US')}–${history.lastEpoch?.toLocaleString('en-US')} (${new Date(history.startTime).toLocaleDateString('en-GB')}–${new Date(history.endTime).toLocaleDateString('en-GB')}).`
-    : 'Platform uses indexed payouts over the last 30 days; historical coverage depends on the indexer.'
+  const apr = ineligible ? null : validatorApr(data?.totalPerMonth, nodeType)
 
   return (
     <InfoContainer className={'ValidatorPage__Group ValidatorPage__Yield'}>
       <div className={'ValidatorPage__EarningsHeader'}>
         <div className={'ValidatorPage__SummaryLabel'}>
           <Tooltip
-            content={`Gross node earnings before owner/operator splits, reward shares and expenses. Core uses median indexed payouts to enabled nodes of the same type over the latest 17,280 Core blocks. ${period} A month means 30 days; future earnings can change.`}
+            content={'Estimated gross earnings based on indexed payouts. Before reward splits and expenses. A month means 30 days. Not guaranteed.'}
           >
             <span tabIndex={0}>Estimated earnings ⓘ</span>
           </Tooltip>
@@ -235,12 +254,16 @@ function EarningsCard({
       </div>
       <dl className={'ValidatorPage__YieldRows'}>
         <div>
-          <dt>Core / month</dt>
-          <dd>{amount(data?.corePerMonth)}</dd>
+          <dt>
+            <Tooltip content={'Core + Platform monthly estimate × 365 / 30 ÷ node collateral × 100. Gross annualized return without compounding, before reward splits and expenses; indexed history may be incomplete.'}>
+              <span tabIndex={0}>Estimated APR ⓘ</span>
+            </Tooltip>
+          </dt>
+          <dd>{pending ? <Skeleton w={100} h={'1em'} /> : apr == null ? 'Unavailable' : `≈ ${apr.toFixed(2)}%`}</dd>
         </div>
         <div>
-          <dt>Platform / month</dt>
-          <dd>{amount(data?.platformPerMonth)}</dd>
+          <dt>Core / month</dt>
+          <dd>{amount(data?.corePerMonth)}</dd>
         </div>
         <div>
           <dt>Next Core payment</dt>
@@ -260,7 +283,16 @@ function EarningsCard({
             )}
           </dd>
         </div>
+        <div>
+          <dt>Platform / month</dt>
+          <dd>{amount(data?.platformPerMonth)}</dd>
+        </div>
+        <div>
+          <dt>Epoch ends in</dt>
+          <dd><EpochCountdown /></dd>
+        </div>
       </dl>
+      {(query.isError || ineligible) && (
       <div className={'ValidatorPage__SummaryHint'}>
         {query.isError ? (
           <span className={'ValidatorPage__LoadError'}>
@@ -269,21 +301,11 @@ function EarningsCard({
               Retry
             </button>
           </span>
-        ) : ineligible ? (
-          'No forecast while the node is banned or unregistered.'
         ) : (
-          <>
-            Gross estimate · 30-day month
-            {history && (
-              <>
-                <br />
-                Platform based on epochs {history.firstEpoch?.toLocaleString('en-US')}–
-                {history.lastEpoch?.toLocaleString('en-US')}
-              </>
-            )}
-          </>
+          'No forecast while the node is banned or unregistered.'
         )}
       </div>
+      )}
     </InfoContainer>
   )
 }
@@ -413,7 +435,6 @@ function Validator({ hash }: ValidatorProps) {
   const isPoseBanned = Number.isInteger(poseBanHeight) && poseBanHeight >= 0
   const balance = Number(validator.data?.identityBalance)
   const hasBalance = Number.isFinite(balance) && validator.data?.identityBalance != null
-  const epochReward = validator.data?.epochReward
   const registeredHeight = Number(validator.data?.proTxInfo?.state?.registeredHeight)
   const hasRegisteredHeight = Number.isInteger(registeredHeight) && registeredHeight > 0
   const registeredBlockLink = getL1ExplorerLink(l1explorerBaseUrl, 'block', validator.data?.registeredCoreBlockHash)
@@ -782,6 +803,7 @@ function Validator({ hash }: ValidatorProps) {
 
           <EarningsCard
             loading={validator.loading}
+            nodeType={validator.data?.proTxInfo?.type}
             hash={hash}
             blocksUntilCorePayment={validator.data?.blocksUntilCorePayment}
             coreTipTime={validator.data?.coreTipTime}
@@ -798,12 +820,7 @@ function Validator({ hash }: ValidatorProps) {
 
         <div className={'ValidatorPage__Column'}>
           <InfoContainer className={'ValidatorPage__Epochs'}>
-            <ValidatorEpochs
-              hash={hash}
-              epochReward={
-                validator.loading || validator.error || epochReward == null ? null : epochReward
-              }
-            />
+            <ValidatorEpochs hash={hash} />
           </InfoContainer>
           <div className={'ValidatorPage__Summary'}>
             <SummaryCard
@@ -906,7 +923,7 @@ function Validator({ hash }: ValidatorProps) {
               loading={validator.loading}
               value={
                 validator.error || !validator.data?.registeredAt ? (
-                  <NotActive />
+                  <span>Date unavailable</span>
                 ) : (
                   (() => {
                     const date = new Date(validator.data.registeredAt)

@@ -31,17 +31,6 @@
   margin: 0;
 }
 
-.ValidatorEpochs__Now {
-  font-family: var(--pe-font-mono);
-  font-weight: 400;
-  font-size: 0.875rem;
-  line-height: 1.35;
-  letter-spacing: 0;
-  text-transform: none;
-  color: var(--pe-color-fg-muted);
-  font-variant-numeric: tabular-nums;
-}
-
 .ValidatorEpochs .EpochsOverview__Lede {
   max-width: none;
   margin: 0;
@@ -76,10 +65,41 @@
   width: 100%;
 }
 
-.ValidatorEpochs__Vertex {
-  fill: var(--pe-color-brand-light);
-  stroke: none;
+.ValidatorEpochs__Bar {
   pointer-events: none;
+}
+
+.ValidatorEpochs__Bar.is-missing {
+  stroke: var(--pe-color-fg-muted);
+  stroke-opacity: 0.3;
+}
+
+.ValidatorEpochs__Hatch {
+  stroke: var(--pe-color-fg-muted);
+  stroke-opacity: 0.35;
+}
+
+.ValidatorEpochs__TimeFill {
+  fill: var(--pe-color-fg-muted);
+  fill-opacity: 0.3;
+  pointer-events: none;
+}
+
+.ValidatorEpochs__ProgressLabel {
+  fill: var(--pe-color-fg);
+  text-anchor: middle;
+  font-size: 0.75rem;
+  pointer-events: none;
+}
+
+.ValidatorEpochs__Hit {
+  fill: transparent;
+  cursor: pointer;
+}
+
+.ValidatorEpochs__Hit:focus-visible {
+  outline: 2px solid var(--pe-color-fg);
+  outline-offset: -2px;
 }
 
 .ValidatorEpochs .EpochsOverview__Wash {

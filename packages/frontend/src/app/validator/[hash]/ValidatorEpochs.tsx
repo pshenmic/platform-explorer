@@ -5,12 +5,14 @@ import { useQuery } from '@tanstack/react-query'
 import useResizeObserver from '@react-hook/resize-observer'
 import * as d3 from 'd3'
 import * as Api from '../../../util/Api'
+import { epochProgress } from '../../../util/epochProgress'
 import { creditsToDash, removeTrailingZeros } from '../../../util'
 import { BigNumber } from '../../../components/data'
 import { StatusCell } from '../../../components/home/StatusCell'
 import { Skeleton } from '../../../components/home/Skeleton'
 import ChartDateRange, { defaultChartRange } from '../../../components/calendar/ChartDateRange'
 import '../../../components/home/IdentityGrowthChart.css'
+import '../../../components/home/TxActivityChart.css'
 import '../../../app/home/Home.css'
 import '../../../app/home/HomeHero.css'
 import './ValidatorEpochs.css'
@@ -37,13 +39,7 @@ function axisGutter(labels: string[]) {
   return Math.ceil(widest * 7.4) + 8
 }
 
-export default function ValidatorEpochs({
-  hash,
-  epochReward
-}: {
-  hash: string
-  epochReward?: number | string | null
-}) {
+export default function ValidatorEpochs({ hash }: { hash: string }) {
   const gradId = useId().replace(/:/g, '')
   const wrapRef = useRef<HTMLDivElement | null>(null)
   const [width, setWidth] = useState(0)
@@ -51,6 +47,32 @@ export default function ValidatorEpochs({
   const [selection, setSelection] = useState(defaultChartRange)
   const [pinI, setPinI] = useState<number | null>(null)
   const [hoverI, setHoverI] = useState<number | null>(null)
+  useEffect(() => {
+    const clearSelection = (event: PointerEvent) => {
+      if (event.target instanceof Element &&
+        wrapRef.current?.contains(event.target) &&
+        event.target.closest('.ValidatorEpochs__Hit')) return
+      setPinI(null)
+      setHoverI(null)
+    }
+    document.addEventListener('pointerdown', clearSelection)
+    return () => document.removeEventListener('pointerdown', clearSelection)
+  }, [])
+  const [now, setNow] = useState(() => Date.now())
+
+  useEffect(() => {
+    const timer = setInterval(() => setNow(Date.now()), 60000)
+    return () => clearInterval(timer)
+  }, [])
+
+  const currentEpoch = useQuery({
+    queryKey: ['validator-current-epoch'],
+    queryFn: () => Api.getEpoch(),
+    staleTime: 60000,
+    refetchInterval: 60000
+  })
+  const epoch = currentEpoch.isError ? undefined : currentEpoch.data?.epoch
+  const progress = epoch ? epochProgress(epoch.startTime, epoch.endTime, now) : null
 
   useResizeObserver(wrapRef as RefObject<HTMLElement>, entry => {
     setWidth(Math.max(0, Math.floor(entry.contentRect.width)))
@@ -91,23 +113,32 @@ export default function ValidatorEpochs({
     retry: 1
   })
 
+  const visiblePoints = useMemo(() => {
+    const points = statsQuery.data ?? []
+    const firstKnown = points.findIndex(point => point.data?.reward != null || point.data?.endTime == null)
+    return firstKnown < 0 ? [] : points.slice(firstKnown)
+  }, [statsQuery.data])
+
   const epochWindow = useMemo(() => {
-    const points = statsQuery.data
+    const points = visiblePoints
     const first = points?.[0]?.data
     const last = points?.[points.length - 1]?.data
     if (!first || !last || statsQuery.isError) return null
     return { fromEpoch: first.epoch, toEpoch: last.endEpoch ?? last.epoch }
-  }, [statsQuery.data, statsQuery.isError])
+  }, [visiblePoints, statsQuery.isError])
 
   const slots = useMemo(
     () =>
-      (statsQuery.data ?? []).map(point => ({
+      visiblePoints.map(point => ({
         from: point.data!.epoch,
         to: point.data!.endEpoch ?? point.data!.epoch,
-        fees: point.data!.fees,
+        payout: point.data!.reward,
+        ongoing: point.data!.endTime == null,
+        progress: point.data!.endTime == null && point.data!.epoch === epoch?.number &&
+          point.data!.endEpoch === epoch?.number ? progress : null,
         blocks: point.data!.blocksProposed
       })),
-    [statsQuery.data]
+    [visiblePoints, epoch?.number, progress]
   )
 
   useEffect(() => {
@@ -118,13 +149,13 @@ export default function ValidatorEpochs({
   const h = plotH
   const chart = useMemo(() => {
     if (width <= 0 || !epochWindow || slots.length === 0) return null
-    const feesInDash = slots.map(slot => creditsToDash(slot.fees))
-    const maxY = d3.max(feesInDash) || 0
+    const payoutsInDash = slots.map(slot => slot.payout == null ? 0 : creditsToDash(slot.payout))
+    const maxY = d3.max(payoutsInDash) || 0
     const y = d3.scaleLinear([0, maxY > 0 ? maxY : 1], [h - M.bottom, M.top]).nice()
     const yTickValues: number[] = maxY > 0 ? y.ticks(4) : [0]
     const left = axisGutter(yTickValues.map(axisDash))
     const x = d3.scaleLinear(
-      [epochWindow.fromEpoch, Math.max(epochWindow.fromEpoch + 1, epochWindow.toEpoch)],
+      [epochWindow.fromEpoch - 0.5, epochWindow.toEpoch + 0.5],
       [left, width - M.right]
     )
     const nodes = slots.map((slot, i) => ({
@@ -132,27 +163,14 @@ export default function ValidatorEpochs({
       from: slot.from,
       to: slot.to,
       cx: x((slot.from + slot.to) / 2),
-      cy: y(feesInDash[i]),
-      fees: slot.fees,
+      barX: x(slot.from - 0.5) + 1,
+      barWidth: Math.max(1, x(slot.to + 0.5) - x(slot.from - 0.5) - 2),
+      cy: y(payoutsInDash[i]),
+      payout: slot.payout,
+      ongoing: slot.ongoing,
+      progress: slot.progress,
       blocks: slot.blocks
     }))
-    const lineD =
-      nodes.length > 1
-        ? d3
-            .line()
-            .x((n: (typeof nodes)[number]) => n.cx)
-            .y((n: (typeof nodes)[number]) => n.cy)
-            .curve(d3.curveLinear)(nodes)
-        : ''
-    const areaD =
-      nodes.length > 1
-        ? d3
-            .area()
-            .x((n: (typeof nodes)[number]) => n.cx)
-            .y0(h - M.bottom)
-            .y1((n: (typeof nodes)[number]) => n.cy)
-            .curve(d3.curveLinear)(nodes)
-        : ''
     const tickCount = Math.max(2, Math.min(5, Math.floor((width - left - M.right) / 64)))
     const tickEpochs = Array.from(
       new Set(
@@ -166,9 +184,11 @@ export default function ValidatorEpochs({
     )
     const xTicks = tickEpochs.map(epoch => ({ v: x(epoch), label: `#${epoch}` }))
     const yTicks = yTickValues.map((v: number) => ({ v: y(v), label: axisDash(v) }))
-    const totalFees = slots.reduce((sum, slot) => sum + slot.fees, 0)
+    const totalPayouts = slots.some(slot => slot.payout != null)
+      ? slots.reduce((sum, slot) => sum + (slot.payout ?? 0), 0)
+      : null
     const totalBlocks = slots.reduce((sum, slot) => sum + slot.blocks, 0)
-    return { nodes, lineD, areaD, xTicks, yTicks, totalFees, totalBlocks, left }
+    return { nodes, xTicks, yTicks, totalPayouts, totalBlocks, left }
   }, [width, h, slots, epochWindow])
 
   const activeI = hoverI != null ? hoverI : pinI
@@ -226,15 +246,10 @@ export default function ValidatorEpochs({
       <header className={'EpochsOverview__Head'}>
         <div className={'EpochsOverview__HeadText'}>
           <div className={'EpochsOverview__TitleRow'}>
-            <h2 className={'EpochsOverview__Title'}>Fees by epoch</h2>
-            {epochReward != null && (
-              <span className={'ValidatorEpochs__Now'} title={'Platform reward paid in the current epoch for the previous epoch; not transaction fees'}>
-                Paid: {dashAmount(Number(epochReward))} DASH
-              </span>
-            )}
+            <h2 className={'EpochsOverview__Title'}>Platform payouts</h2>
           </div>
           <p className={'EpochsOverview__Lede'}>
-            Transaction fees in indexed blocks proposed by this node.
+            Rewards paid to this validator by epoch.
           </p>
         </div>
         <div className={'ValidatorEpochs__Filters'}>
@@ -258,8 +273,8 @@ export default function ValidatorEpochs({
               Retry
             </button>
           </div>
-        ) : statsQuery.isSuccess && statsQuery.data?.length === 0 ? (
-          <div className={'IdentityGrowthChart__Empty'}>No epochs in this range</div>
+        ) : statsQuery.isSuccess && visiblePoints.length === 0 ? (
+          <div className={'IdentityGrowthChart__Empty'}>No payout data in this range</div>
         ) : loading && !chart ? (
           <div className={'IdentityGrowthChart__Ghost'}>
             <Skeleton w={'100%'} h={'70%'} radius={8} />
@@ -270,33 +285,23 @@ export default function ValidatorEpochs({
             viewBox={`0 0 ${width} ${h}`}
             width={width}
             height={h}
-            role={'img'}
-            aria-label={`Fees by epoch, ${dashAmount(chart.totalFees)} DASH`}
+            role={'group'}
+            aria-label={`Platform payouts by epoch, ${chart.totalPayouts == null ? 'unavailable' : `${dashAmount(chart.totalPayouts)} DASH indexed`}`}
             onMouseMove={onMove}
             onMouseLeave={() => setHoverI(null)}
-            onClick={() => {
-              if (hoverI == null) return
-              setPinI(pin => (pin === hoverI ? null : hoverI))
-            }}
           >
             <defs>
-              <linearGradient id={`epochArea-${gradId}`} x1={'0'} y1={'0'} x2={'0'} y2={'1'}>
-                <stop className={'IdentityGrowthChart__AreaTop'} offset={'0%'} />
-                <stop className={'IdentityGrowthChart__AreaBot'} offset={'100%'} />
+              <linearGradient id={`epochBar-${gradId}`} x1={'0'} y1={'0'} x2={'0'} y2={'1'}>
+                <stop className={'TxActivityChart__GradTop'} offset={'0%'} />
+                <stop className={'TxActivityChart__GradBot'} offset={'100%'} />
               </linearGradient>
-              <filter
-                id={`epochGlow-${gradId}`}
-                x={'-40%'}
-                y={'-40%'}
-                width={'180%'}
-                height={'180%'}
-              >
-                <feGaussianBlur stdDeviation={'2'} result={'b'} />
-                <feMerge>
-                  <feMergeNode in={'b'} />
-                  <feMergeNode in={'SourceGraphic'} />
-                </feMerge>
-              </filter>
+              <linearGradient id={`epochBarOn-${gradId}`} x1={'0'} y1={'0'} x2={'0'} y2={'1'}>
+                <stop className={'TxActivityChart__GradOnTop'} offset={'0%'} />
+                <stop className={'TxActivityChart__GradOnBot'} offset={'100%'} />
+              </linearGradient>
+              <pattern id={`epochMissing-${gradId}`} width={8} height={8} patternUnits={'userSpaceOnUse'}>
+                <path d={'M0 8L8 0'} className={'ValidatorEpochs__Hatch'} />
+              </pattern>
             </defs>
             {chart.yTicks.map((tick, i) => (
               <g key={`y${i}`}>
@@ -330,65 +335,74 @@ export default function ValidatorEpochs({
                 {tick.label}
               </text>
             ))}
-            {chart.areaD ? (
-              <path
-                className={'IdentityGrowthChart__Area'}
-                d={chart.areaD}
-                fill={`url(#epochArea-${gradId})`}
-              />
-            ) : null}
-            {chart.lineD ? (
-              <path
-                className={'IdentityGrowthChart__Line'}
-                d={chart.lineD}
-                filter={`url(#epochGlow-${gradId})`}
-              />
-            ) : null}
-            {chart.nodes.map(node =>
-              node.fees > 0 || chart.nodes.length <= 24 || node.i === activeI ? (
-                <circle
-                  key={`${node.from}-${node.to}`}
-                  className={'ValidatorEpochs__Vertex'}
-                  cx={node.cx}
-                  cy={node.cy}
-                  r={node.i === activeI ? 2.75 : chart.nodes.length <= 24 ? 2.75 : 1.75}
+            {chart.nodes.map(node => (
+              <g key={`${node.from}-${node.to}`}>
+                <rect
+                  className={`TxActivityChart__Bar ValidatorEpochs__Bar${node.i === activeI ? ' is-on' : activeI != null ? ' is-dim' : ''}${node.payout == null ? ' is-missing' : ''}`}
+                  x={node.barX}
+                  width={node.barWidth}
+                  y={node.payout == null ? M.top : Math.min(node.cy, h - M.bottom - 2)}
+                  height={node.payout == null ? h - M.bottom - M.top : Math.max(2, h - M.bottom - node.cy)}
+                  fill={node.payout == null ? `url(#epochMissing-${gradId})` : `url(#${node.i === activeI ? 'epochBarOn' : 'epochBar'}-${gradId})`}
+                  rx={Math.min(3, node.barWidth / 2)}
                 />
-              ) : null
-            )}
-            {shown && (
-              <>
-                <line
-                  className={'IdentityGrowthChart__Guide'}
-                  x1={shown.cx}
-                  x2={shown.cx}
-                  y1={M.top}
-                  y2={h - M.bottom}
+                {node.payout == null && node.progress != null && (
+                  <>
+                    <rect
+                      className={'ValidatorEpochs__TimeFill'}
+                      x={node.barX}
+                      width={node.barWidth}
+                      y={h - M.bottom - (h - M.bottom - M.top) * node.progress / 100}
+                      height={(h - M.bottom - M.top) * node.progress / 100}
+                      rx={Math.min(3, node.barWidth / 2)}
+                    />
+                    {node.barWidth >= 60 && (
+                      <text className={'ValidatorEpochs__ProgressLabel'} x={node.cx} y={M.top + 16}>
+                        {Math.floor(node.progress)}% time
+                      </text>
+                    )}
+                  </>
+                )}
+                <rect
+                  className={'ValidatorEpochs__Hit'}
+                  x={node.barX}
+                  width={node.barWidth}
+                  y={M.top}
+                  height={h - M.bottom - M.top}
+                  tabIndex={0}
+                  role={'button'}
+                  aria-pressed={pinI === node.i}
+                  aria-label={`Epoch ${node.from === node.to ? node.from : `${node.from}–${node.to}`}: ${node.payout == null ? node.progress != null ? `${Math.floor(node.progress)}% of estimated duration elapsed; payout unavailable` : node.ongoing ? 'Epoch in progress; payout unavailable' : 'Payout unavailable' : `${dashAmount(node.payout)} DASH`}`}
+                  onFocus={() => { setHoverI(null); setPinI(node.i) }}
+                  onClick={() => { setHoverI(null); setPinI(node.i) }}
+                  onKeyDown={event => {
+                    if (event.key === 'Enter' || event.key === ' ') {
+                      event.preventDefault()
+                      setPinI(node.i)
+                    }
+                    if (event.key === 'Escape') { setPinI(null); setHoverI(null) }
+                  }}
                 />
-                <circle
-                  className={'IdentityGrowthChart__DotRing'}
-                  cx={shown.cx}
-                  cy={shown.cy}
-                  r={8}
-                />
-                <circle className={'IdentityGrowthChart__Dot'} cx={shown.cx} cy={shown.cy} r={4} />
-              </>
-            )}
+              </g>
+            ))}
           </svg>
         ) : null}
       </div>
       <div className={'EpochsOverview__Detail'}>
         <div className={'EpochsOverview__Cells HomeHero__StatusBar ValidatorEpochs__Kpis'}>
           <StatusCell
-            label={'Fees'}
+            label={'Platform payouts'}
             hint={
-              'Sum of this node’s proposed-block fees in the selected range. Hover a point to read that stretch.'
+              'Sum of available indexed payouts, not fees or a forecast. Hatched columns mean unavailable data, not zero. History may be incomplete. Select a column to inspect its epochs; Tab and Escape also work.'
             }
           >
             {loading && !chart ? (
               <Skeleton w={'64px'} h={'1.1em'} />
             ) : (
               <span className={'EpochsOverview__Stat'}>
-                {chart ? `${dashAmount(shown ? shown.fees : chart.totalFees)} DASH` : '—'}
+                {chart && (shown ? shown.payout : chart.totalPayouts) != null
+                  ? `${dashAmount((shown ? shown.payout : chart.totalPayouts)!)} DASH`
+                  : shown?.ongoing ? 'In progress' : 'Unavailable'}
               </span>
             )}
           </StatusCell>

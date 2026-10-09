@@ -98,6 +98,25 @@ describe('indexed validator API', () => {
     expect(fetchMock.mock.calls[0][0]).toEqual(expect.stringContaining('&intervalsCount=42'))
   })
 
+  test.each([2240194064482, 0, null])('preserves payout %s independently of fees', async reward => {
+    const points = [{ timestamp: start, data: {
+      epoch: 81, endEpoch: 83, endTime: end, blocksProposed: 56,
+      totalBlocks: 100, fees: 16574036760, reward
+    } }]
+    respond(points)
+    const result = await getEpochStatsByValidator(hash, start, end, 84)
+    expect(result[0].data?.reward).toBe(reward)
+    expect(result[0].data?.fees).toBe(16574036760)
+  })
+
+  test.each([undefined, '1000', NaN])('rejects invalid payout %s', async reward => {
+    respond([{ timestamp: start, data: {
+      epoch: 81, endEpoch: 83, endTime: end, blocksProposed: 56,
+      totalBlocks: 100, fees: 0, reward
+    } }])
+    await expect(getEpochStatsByValidator(hash, start, end, 84)).rejects.toThrow('updated API')
+  })
+
   test('preserves an empty epoch history and optional intervals count', async () => {
     respond([])
     expect(await getEpochStatsByValidator(hash, start, end)).toEqual([])
