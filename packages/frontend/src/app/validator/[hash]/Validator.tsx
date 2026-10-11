@@ -59,7 +59,7 @@ type ValidatorDetail = Omit<Partial<ValidatorType>, 'epochInfo' | 'endpoints' | 
     collateralAddress?: string | null
     state?: {
       registeredHeight?: number
-      PoSeBanHeight?: number | null
+      PoSeBanHeight?: number
       PoSeRevivedHeight?: number
       PoSePenalty?: number
       ownerAddress?: string
@@ -431,7 +431,8 @@ function Validator({ hash }: ValidatorProps) {
   const poseKnown = Number.isFinite(posePenalty)
   const poseScoreMax = Number(validator.data?.poseScoreMax)
   const hasPoseScoreMax = Number.isInteger(poseScoreMax) && poseScoreMax > 0
-  const isPoseBanned = status.key === 'banned'
+  const poseBanHeight = Number(validator.data?.proTxInfo?.state?.PoSeBanHeight)
+  const isPoseBanned = Number.isInteger(poseBanHeight) && poseBanHeight >= 0
   const balance = Number(validator.data?.identityBalance)
   const hasBalance = Number.isFinite(balance) && validator.data?.identityBalance != null
   const registeredHeight = Number(validator.data?.proTxInfo?.state?.registeredHeight)
@@ -807,7 +808,7 @@ function Validator({ hash }: ValidatorProps) {
             blocksUntilCorePayment={validator.data?.blocksUntilCorePayment}
             coreTipTime={validator.data?.coreTipTime}
             coreBlockIntervalMs={validator.data?.coreBlockIntervalMs}
-            banned={isPoseBanned}
+            banned={Number(validator.data?.proTxInfo?.state?.PoSeBanHeight) >= 0}
           />
 
           <InfoContainer className={'ValidatorPage__Group ValidatorPage__Ledger'}>

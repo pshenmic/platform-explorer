@@ -29,7 +29,6 @@ export interface GeoIpInfo {
 export interface Validator {
   proTxHash: string | null
   isActive: boolean | null
-  isRegistered?: boolean | null
   proposedBlocksAmount: number | null
   lastProposedBlockHeader: BlockHeader | null
   proTxInfo: ProTxInfo | null
