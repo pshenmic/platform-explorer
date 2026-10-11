@@ -29,7 +29,6 @@ const schemaTypes = [
       },
       isActive: { type: ['boolean', 'null'] },
       isBanned: { type: ['boolean', 'null'] },
-      isRegistered: { type: 'boolean' },
       type: {
         oneOf: [
           {

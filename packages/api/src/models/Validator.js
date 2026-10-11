@@ -4,7 +4,6 @@ const BlockHeader = require('./BlockHeader')
 module.exports = class Validator {
   proTxHash
   isActive
-  isRegistered
   proposedBlocksAmount
   lastProposedBlockHeader
   proTxInfo
@@ -34,12 +33,10 @@ module.exports = class Validator {
     identityBalance,
     epochInfo,
     endpoints,
-    geoIpInfo,
-    isRegistered
+    geoIpInfo
   ) {
     this.proTxHash = proTxHash ?? null
     this.isActive = isActive ?? null
-    this.isRegistered = isRegistered ?? null
     this.proposedBlocksAmount = proposedBlocksAmount ?? null
     this.lastProposedBlockHeader = lastProposedBlockHeader ?? null
     this.proTxInfo = proTxInfo ?? null
@@ -112,8 +109,7 @@ module.exports = class Validator {
     identityBalance,
     epochInfo,
     endpoints,
-    geoIpInfo,
-    isRegistered
+    geoIpInfo
   }) {
     return new Validator(
       proTxHash,
@@ -130,8 +126,7 @@ module.exports = class Validator {
       identityBalance,
       epochInfo,
       endpoints,
-      geoIpInfo,
-      isRegistered
+      geoIpInfo
     )
   }
 }
