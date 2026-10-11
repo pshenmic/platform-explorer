@@ -30,6 +30,7 @@ export interface DataListColumn<T = any> {
   filterKey?: string
   filterType?: DataListHeaderFilterType
   filterOptions?: DataListHeaderMenuOption[]
+  filterMultiple?: boolean
   filterPlaceholder?: string
   cell?: (item: T, index?: number) => ReactNode
 }
@@ -519,6 +520,7 @@ export default function DataList<T = any>({
               filterType={canFilterColumn ? column.filterType : undefined}
               value={canFilterColumn ? filterValues[column.filterKey as string] : undefined}
               options={column.filterOptions}
+              multiple={column.filterMultiple}
               placeholder={column.filterPlaceholder}
               onChange={
                 canFilterColumn

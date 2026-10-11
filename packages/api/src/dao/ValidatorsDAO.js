@@ -121,7 +121,7 @@ module.exports = class ValidatorsDAO {
     return rows.map(r => r.pro_tx_hash)
   }
 
-  getValidators = async (page, limit, order, isActive, activeValidators, isBanned, validatorsWithoutBan, owner, blocksProposedMin, blocksProposedMax, lastProposedBlockHeightMin, lastProposedBlockHeightMax, lastProposedBlockTimestampStart, lastProposedBlockTimestampEnd, lastProposedBlockHash, orderBy = 'id') => {
+  getValidators = async (page, limit, order, isActive, activeValidators, isBanned, validatorsByBanStatus, owner, blocksProposedMin, blocksProposedMax, lastProposedBlockHeightMin, lastProposedBlockHeightMax, lastProposedBlockTimestampStart, lastProposedBlockTimestampEnd, lastProposedBlockHash, orderBy = 'id') => {
     const fromRank = ((page - 1) * limit)
 
     const proTxHash = owner ? Buffer.from(base58.decode(owner)).toString('hex') : null
@@ -193,14 +193,11 @@ module.exports = class ValidatorsDAO {
         }
       })
       .modify(function (knex) {
-        if (isBanned !== undefined && isBanned) {
-          knex
-            .whereNotIn('pro_tx_hash', validatorsWithoutBan.map(validator => validator.proTxHash.toUpperCase()))
-          // banned validator cannot be active
-          knex
-            .whereNotIn('pro_tx_hash', activeValidators.map(validator => validator.pro_tx_hash))
-        } else if (isBanned !== undefined && !isBanned) {
-          knex.whereIn('pro_tx_hash', validatorsWithoutBan.map(validator => validator.proTxHash.toUpperCase()))
+        if (isBanned !== undefined) {
+          knex.whereIn('pro_tx_hash', validatorsByBanStatus.map(validator => validator.proTxHash.toUpperCase()))
+          if (isBanned) {
+            knex.whereNotIn('pro_tx_hash', activeValidators.map(validator => validator.pro_tx_hash))
+          }
         }
       })
 
