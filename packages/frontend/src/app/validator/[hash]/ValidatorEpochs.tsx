@@ -6,11 +6,12 @@ import useResizeObserver from '@react-hook/resize-observer'
 import * as d3 from 'd3'
 import * as Api from '../../../util/Api'
 import { epochProgress } from '../../../util/epochProgress'
+import { validatorChartHistory, validatorChartRange } from '../../../util/validatorChart'
 import { creditsToDash, removeTrailingZeros } from '../../../util'
 import { BigNumber } from '../../../components/data'
 import { StatusCell } from '../../../components/home/StatusCell'
 import { Skeleton } from '../../../components/home/Skeleton'
-import ChartDateRange, { defaultChartRange } from '../../../components/calendar/ChartDateRange'
+import ChartDateRange, { CHART_ALL_START, defaultChartRange } from '../../../components/calendar/ChartDateRange'
 import '../../../components/home/IdentityGrowthChart.css'
 import '../../../components/home/TxActivityChart.css'
 import '../../../app/home/Home.css'
@@ -91,33 +92,28 @@ export default function ValidatorEpochs({ hash }: { hash: string }) {
     setHoverI(null)
   }, [hash])
 
-  const queryRange = useMemo(() => {
-    if (!selection.start || !selection.end) return null
-    const start = new Date(selection.start)
-    const end = new Date(selection.end)
-    if (selection.mode !== 'rolling') {
-      start.setHours(0, 0, 0, 0)
-      end.setHours(24, 0, 0, 0)
-    }
-    return {
-      start: new Date(Math.floor(start.getTime() / 60000) * 60000).toISOString(),
-      end: new Date(Math.floor(Math.min(end.getTime(), Date.now()) / 60000) * 60000).toISOString()
-    }
-  }, [selection])
+  const queryRange = useMemo(
+    () => validatorChartRange(selection, now, CHART_ALL_START),
+    [selection, now]
+  )
+  const selectionKey = JSON.stringify(selection)
 
   const statsQuery = useQuery({
-    queryKey: ['validator-epochs', hash, queryRange?.start, queryRange?.end, MAX_EPOCH_POINTS],
+    queryKey: ['validator-epochs', hash, queryRange?.start, queryRange?.end, MAX_EPOCH_POINTS, selectionKey],
     queryFn: () => Api.getEpochStatsByValidator(hash, queryRange!.start, queryRange!.end, MAX_EPOCH_POINTS),
     enabled: Boolean(hash && queryRange),
     staleTime: 60000,
+    placeholderData: (previousData, previousQuery) =>
+      previousQuery?.queryKey[1] === hash && previousQuery?.queryKey[5] === selectionKey
+        ? previousData
+        : undefined,
     retry: 1
   })
 
-  const visiblePoints = useMemo(() => {
-    const points = statsQuery.data ?? []
-    const firstKnown = points.findIndex(point => point.data?.reward != null || point.data?.endTime == null)
-    return firstKnown < 0 ? [] : points.slice(firstKnown)
-  }, [statsQuery.data])
+  const { visiblePoints, totalBlocks } = useMemo(
+    () => validatorChartHistory(statsQuery.data ?? []),
+    [statsQuery.data]
+  )
 
   const epochWindow = useMemo(() => {
     const points = visiblePoints
@@ -187,8 +183,7 @@ export default function ValidatorEpochs({ hash }: { hash: string }) {
     const totalPayouts = slots.some(slot => slot.payout != null)
       ? slots.reduce((sum, slot) => sum + (slot.payout ?? 0), 0)
       : null
-    const totalBlocks = slots.reduce((sum, slot) => sum + slot.blocks, 0)
-    return { nodes, xTicks, yTicks, totalPayouts, totalBlocks, left }
+    return { nodes, xTicks, yTicks, totalPayouts, left }
   }, [width, h, slots, epochWindow])
 
   const activeI = hoverI != null ? hoverI : pinI
@@ -256,6 +251,7 @@ export default function ValidatorEpochs({ hash }: { hash: string }) {
           <ChartDateRange
             value={selection}
             onChange={next => {
+              setNow(Date.now())
               setSelection(next)
               setPinI(null)
               setHoverI(null)
@@ -414,7 +410,7 @@ export default function ValidatorEpochs({ hash }: { hash: string }) {
               <Skeleton w={'40px'} h={'1.1em'} />
             ) : (
               <span className={'EpochsOverview__Stat'}>
-                {chart ? <BigNumber>{shown ? shown.blocks : chart.totalBlocks}</BigNumber> : '—'}
+                {statsQuery.isSuccess ? <BigNumber>{shown ? shown.blocks : totalBlocks}</BigNumber> : '—'}
               </span>
             )}
           </StatusCell>
