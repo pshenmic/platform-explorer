@@ -66,6 +66,7 @@ services:
       - "host.docker.internal:host-gateway"
     environment:
       <<: *postgres_env
+      DAPI_URL: ${DAPI_URL:?DAPI_URL must be set}
       TENDERDASH_URL: ${TENDERDASH_URL:?TENDERDASH_URL must be set}
       CORE_RPC_HOST: ${CORE_RPC_HOST:?CORE_RPC_HOST must be set}
       CORE_RPC_PORT: ${CORE_RPC_PORT:?CORE_RPC_PORT must be set}
