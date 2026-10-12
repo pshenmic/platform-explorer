@@ -55,7 +55,7 @@ impl Indexer {
                 Ok(network) => break network,
                 Err(err) => {
                     println!("Failed to get network, retrying in 3s: {}", err);
-                    tokio::time::sleep(Duration::from_millis(3000)).await;
+                    tokio::time::sleep(Duration::from_millis(30000)).await;
                 }
             }
         };
