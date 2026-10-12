@@ -2,7 +2,7 @@ const crypto = require('crypto')
 const StateTransitionEnum = require('./enums/StateTransitionEnum')
 const DocumentActionEnum = require('./enums/DocumentActionEnum')
 const net = require('net')
-const { TCP_CONNECT_TIMEOUT, NETWORK, DPNS_CONTRACT, BANNED_STATE_CACHE_KEY, PLATFORM_QUORUMS_CACHE_KEY, VALIDATORS_CACHE_LIFE_INTERVAL } = require('./constants')
+const { TCP_CONNECT_TIMEOUT, NETWORK, DPNS_CONTRACT, BANNED_STATE_CACHE_KEY, PLATFORM_QUORUMS_CACHE_KEY, VALIDATORS_CACHE_LIFE_INTERVAL, PROTX_LIST_CACHE_KEY, PROTX_LIST_CACHE_LIFE_INTERVAL, CORE_BLOCK_HASH_CACHE_KEY, CORE_BLOCK_HASH_CACHE_MAX_ENTRIES, CORE_BLOCK_HASH_CACHE_LIFE_INTERVAL, CORE_NETWORK_CACHE_KEY, CORE_NETWORK_CACHE_LIFE_INTERVAL, DUFFS_PER_DASH, CORE_BLOCKS_PER_DAY } = require('./constants')
 const DashCoreRPC = require('./dashcoreRpc')
 const TenderdashRPC = require('./tenderdashRpc')
 const Quorum = require('./models/Quorum')
@@ -1700,6 +1700,145 @@ const getFinalPoSeBanHeight = async (proTxHash) => {
   return finalPoSeBanHeight
 }
 
+// The cached Core block hashes from the oldest, the hashes never change but the blocks of every
+// page would grow the cache without a bound
+let coreBlockHashKeys = []
+let oldestCoreBlockHashKey = 0
+
+const getCoreBlockHash = async (height) => {
+  if (!(height > 0)) {
+    return null
+  }
+
+  const key = `${CORE_BLOCK_HASH_CACHE_KEY}_${height}`
+
+  const cached = cache.get(key)
+
+  if (cached) {
+    return cached
+  }
+
+  const hash = await DashCoreRPC.getBlockHash(height)
+
+  cache.set(key, hash, CORE_BLOCK_HASH_CACHE_LIFE_INTERVAL)
+
+  coreBlockHashKeys.push(key)
+
+  if (coreBlockHashKeys.length - oldestCoreBlockHashKey > CORE_BLOCK_HASH_CACHE_MAX_ENTRIES) {
+    cache.delete(coreBlockHashKeys[oldestCoreBlockHashKey])
+
+    oldestCoreBlockHashKey++
+  }
+
+  // drop the deleted keys from the queue once in a while
+  if (oldestCoreBlockHashKey >= CORE_BLOCK_HASH_CACHE_MAX_ENTRIES) {
+    coreBlockHashKeys = coreBlockHashKeys.slice(oldestCoreBlockHashKey)
+    oldestCoreBlockHashKey = 0
+  }
+
+  return hash
+}
+
+const getCoreBlockTime = async (height) => {
+  if (!(height > 0)) {
+    return null
+  }
+
+  const { time } = await DashCoreRPC.getBlockStats(height, ['time'])
+
+  return time * 1000
+}
+
+// The Core tip and the mean Core block interval of the last day
+const getCoreNetworkInfo = async () => {
+  const cached = cache.get(CORE_NETWORK_CACHE_KEY)
+
+  if (cached) {
+    return cached
+  }
+
+  const height = await DashCoreRPC.getBlockCount()
+
+  const intervals = Math.min(CORE_BLOCKS_PER_DAY, height - 1)
+
+  const [tipTime, startTime] = await Promise.all([
+    getCoreBlockTime(height),
+    intervals > 0 ? getCoreBlockTime(height - intervals) : null
+  ])
+
+  const coreNetworkInfo = {
+    coreTipTime: tipTime !== null ? new Date(tipTime).toISOString() : null,
+    coreBlockIntervalMs: startTime !== null ? Math.round((tipTime - startTime) / intervals) : null
+  }
+
+  cache.set(CORE_NETWORK_CACHE_KEY, coreNetworkInfo, CORE_NETWORK_CACHE_LIFE_INTERVAL)
+
+  return coreNetworkInfo
+}
+
+// Gross Core payout per year in DASH of an enabled masternode of the type: the median
+// of what the enabled masternodes of the type were paid in the Core blocks of the payments
+const getCoreYieldPerYear = async (corePayments, type, masternodes) => {
+  const enabled = masternodes
+    .filter(masternode => masternode.type === type && masternode.state.PoSeBanHeight === -1)
+
+  if (!corePayments || !enabled.length || corePayments.lastHeight <= corePayments.firstHeight) {
+    return null
+  }
+
+  const amounts = enabled
+    .map(({ proTxHash }) => corePayments.amounts.get(proTxHash.toUpperCase()) ?? 0)
+    .sort((a, b) => a - b)
+
+  const middle = Math.floor(amounts.length / 2)
+  const amount = amounts.length % 2 ? amounts[middle] : (amounts[middle - 1] + amounts[middle]) / 2
+
+  const [startTime, endTime] = await Promise.all([
+    getCoreBlockTime(corePayments.firstHeight - 1),
+    getCoreBlockTime(corePayments.lastHeight)
+  ])
+
+  return amount / DUFFS_PER_DASH * 365 * 86400000 / (endTime - startTime)
+}
+
+const getProTxList = async () => {
+  const cached = cache.get(PROTX_LIST_CACHE_KEY)
+
+  if (cached) {
+    return cached
+  }
+
+  const masternodes = await DashCoreRPC.getProTxList('registered', true)
+
+  cache.set(PROTX_LIST_CACHE_KEY, masternodes, PROTX_LIST_CACHE_LIFE_INTERVAL)
+
+  return masternodes
+}
+
+// Position in the DIP3 payment queue, 1 means the next Core block: enabled masternodes ordered
+// by the last paid (or revived, or registered) height, ProTx hash as the tie break
+const blocksUntilCorePayment = (proTxHash, masternodes) => {
+  const queue = masternodes
+    .filter(masternode => masternode.state.PoSeBanHeight === -1)
+    .map(({ proTxHash, state }) => {
+      let paidHeight = state.lastPaidHeight
+
+      if (state.PoSeRevivedHeight > paidHeight) {
+        paidHeight = state.PoSeRevivedHeight
+      } else if (paidHeight === 0) {
+        paidHeight = state.registeredHeight
+      }
+
+      // Core compares the uint256 bytes, which are the displayed hex reversed
+      return { proTxHash: proTxHash.toLowerCase(), paidHeight, order: Buffer.from(proTxHash, 'hex').reverse() }
+    })
+    .sort((a, b) => a.paidHeight - b.paidHeight || Buffer.compare(a.order, b.order))
+
+  const position = queue.findIndex(masternode => masternode.proTxHash === proTxHash.toLowerCase())
+
+  return position === -1 ? null : position + 1
+}
+
 const getPlatformQuorums = async () => {
   const cached = cache.get(PLATFORM_QUORUMS_CACHE_KEY)
 
@@ -2017,6 +2156,12 @@ module.exports = {
   getKnex,
   sleep,
   checkTcpConnect,
+  getCoreBlockHash,
+  getCoreBlockTime,
+  getCoreNetworkInfo,
+  getCoreYieldPerYear,
+  getProTxList,
+  blocksUntilCorePayment,
   getFinalPoSeBanHeight,
   getPlatformQuorums,
   buildProposerSchedule,

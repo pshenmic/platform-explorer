@@ -78,11 +78,13 @@ const PublicKeys = ({ className, show, publicKeys = [] }: PublicKeysProps) => (
 )
 
 interface IdentityTotalCardProps {
+  identifier?: string
   identity: LoadableState<Identity>
   rate?: Rate | null
 }
 
-function IdentityTotalCard({ identity, rate }: IdentityTotalCardProps) {
+function IdentityTotalCard({ identity, rate, identifier }: IdentityTotalCardProps) {
+  const identityId = identifier ?? identity.data?.identifier
   const activeAlias = findActiveAlias(identity.data?.aliases)
   const [showPublicKeys, setShowPublicKeys] = useState(false)
 
@@ -90,11 +92,9 @@ function IdentityTotalCard({ identity, rate }: IdentityTotalCardProps) {
     <div
       className={`InfoBlock InfoBlock--Gradient IdentityPage__CommonInfo IdentityTotalCard ${identity.loading ? 'IdentityTotalCard--Loading' : ''} `}
     >
-      {activeAlias && (
-        <div className={'IdentityTotalCard__Title'}>
-          <Alias ellipsis={false}>{activeAlias.alias}</Alias>
-        </div>
-      )}
+      <div className={'IdentityTotalCard__Title'}>
+        <Alias ellipsis={false}>{activeAlias?.alias ?? 'Identity'}</Alias>
+      </div>
 
       <div className={'IdentityTotalCard__ContentContainer'}>
         <div className={'IdentityTotalCard__Column'}>
@@ -103,11 +103,11 @@ function IdentityTotalCard({ identity, rate }: IdentityTotalCardProps) {
               <InfoLine
                 className={'IdentityTotalCard__InfoLine IdentityTotalCard__InfoLine--Identifier'}
                 title={'Identifier'}
-                loading={identity.loading}
+                loading={identity.loading && !identityId}
                 error={identity.error || (!identity.loading && !identity.data?.identifier)}
                 value={
                   <Identifier copyButton={true} styles={['highlight-both']} ellipsis={false}>
-                    {identity.data?.identifier}
+                    {identityId}
                   </Identifier>
                 }
               />
@@ -122,7 +122,7 @@ function IdentityTotalCard({ identity, rate }: IdentityTotalCardProps) {
             <div className={'IdentityTotalCard__Avatar'}>
               {!identity.error ? (
                 <ImageGenerator
-                  username={identity.data?.identifier}
+                  username={identityId}
                   lightness={50}
                   saturation={50}
                   width={88}
@@ -152,7 +152,7 @@ function IdentityTotalCard({ identity, rate }: IdentityTotalCardProps) {
               error={identity.error || (!identity.loading && identity.data?.nonce === undefined)}
             />
             <InfoLine
-              className={'IdentityTotalCard__InfoLine'}
+              className={'IdentityTotalCard__InfoLine IdentityTotalCard__InfoLine--Created'}
               title={'Creation date'}
               value={
                 identity?.data?.txHash ? (

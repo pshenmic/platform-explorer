@@ -9,6 +9,7 @@ import { useCountUp, useScramble } from './hooks'
 import { StatusCell } from './StatusCell'
 import { Skeleton } from './Skeleton'
 import { compact, shortId } from './utils'
+import './EpochsOverview.css'
 
 const X_POSITIONS = [12.5, 37.5, 62.5, 87.5]
 const EDGE_L = 0

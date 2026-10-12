@@ -41,10 +41,34 @@ impl PSQLProcessor {
                         .await?;
                 }
 
+                let previous_block_header = match block.header.height {
+                    1 => None,
+                    height => Some(
+                        self.dao
+                            .get_block_header_by_height(height - 1)
+                            .await?
+                            .expect("Previous block must be indexed"),
+                    ),
+                };
+
                 let block_hash = self
                     .dao
                     .create_block(block.header.clone(), &sql_transaction)
                     .await;
+
+                self.handle_core_payments(
+                    &block.header,
+                    previous_block_header.as_ref(),
+                    &sql_transaction,
+                )
+                .await?;
+
+                self.handle_platform_rewards(
+                    &block.header,
+                    previous_block_header.as_ref(),
+                    &sql_transaction,
+                )
+                .await?;
 
                 if block.txs.len() as i32 == 0 {
                     println!(

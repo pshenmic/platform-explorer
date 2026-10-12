@@ -11,7 +11,6 @@ import PrefundedBalance from './PrefundedBalance'
 import TimeDelta from './TimeDelta'
 import BigNumber from './BigNumber'
 import CodeBlock from './CodeBlock'
-import JsonViewer from './JsonViewer'
 import NotActive from './NotActive'
 import TimeRemaining from './TimeRemaining'
 
@@ -29,7 +28,6 @@ export {
   TimeDelta,
   BigNumber,
   CodeBlock,
-  JsonViewer,
   NotActive,
   TimeRemaining
 }

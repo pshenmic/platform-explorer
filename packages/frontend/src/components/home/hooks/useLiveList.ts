@@ -41,5 +41,5 @@ export function useLiveList<T>(items: T[] | null | undefined, keyOf: (item: T) =
     }
   }
 
-  return { shown, newKeys, hoverBind }
+  return { shown: shown ?? items, newKeys, hoverBind }
 }

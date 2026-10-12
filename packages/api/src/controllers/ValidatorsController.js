@@ -4,13 +4,14 @@ const Validator = require('../models/Validator')
 const DashCoreRPC = require('../dashcoreRpc')
 const ProTxInfo = require('../models/ProTxInfo')
 const GeoIP = require('../geoip')
-const { checkTcpConnect, calculateInterval, iso8601duration, getFinalPoSeBanHeight, getPlatformQuorums } = require('../utils')
+const { checkTcpConnect, calculateInterval, iso8601duration, getFinalPoSeBanHeight, getPlatformQuorums, getProTxList, blocksUntilCorePayment, getCoreBlockHash, getCoreBlockTime, getCoreNetworkInfo, getCoreYieldPerYear } = require('../utils')
 const Epoch = require('../models/Epoch')
 const { base58 } = require('@scure/base')
 const Intervals = require('../enums/IntervalsEnum')
+const ValidatorEarnings = require('../models/ValidatorEarnings')
 
 const cache = require('../cache')
-const { VALIDATORS_CACHE_KEY, VALIDATORS_CACHE_LIFE_INTERVAL } = require('../constants')
+const { VALIDATORS_CACHE_KEY, VALIDATORS_CACHE_LIFE_INTERVAL, CREDITS_PER_DASH, CORE_BLOCKS_PER_DAY } = require('../constants')
 
 class ValidatorsController {
   constructor (knex, sdk) {
@@ -47,6 +48,17 @@ class ValidatorsController {
 
       const [serviceHost] = proTxInfo?.state?.service?.match(/^\d+\.\d+\.\d+\.\d+/) ?? [null]
 
+      const registeredAt = await getCoreBlockTime(proTxInfo?.state?.registeredHeight)
+
+      // the voting identity is derived from the current voting key, its public key hash is
+      // the voting address payload without the version byte and the checksum
+      const votingIdentity = proTxInfo?.state?.votingAddress
+        ? (await this.sdk.utils.createVoterIdentifier(
+            validator.proTxHash,
+            Buffer.from(base58.decode(proTxInfo.state.votingAddress).subarray(1, 21)).toString('hex')
+          )).base58()
+        : null
+
       validatorInfo = Validator.fromObject(
         {
           ...validator,
@@ -55,7 +67,9 @@ class ValidatorsController {
           identity: identifier,
           identityBalance: String(identityBalance),
           epochInfo,
-          geoIpInfo: serviceHost ? GeoIP.lookup(serviceHost) : null
+          geoIpInfo: serviceHost ? GeoIP.lookup(serviceHost) : null,
+          registeredAt: registeredAt ? new Date(registeredAt).toISOString() : null,
+          votingIdentity
         }
       )
 
@@ -79,6 +93,32 @@ class ValidatorsController {
 
     const [host] = proTxInfo?.state?.service?.match(/^\d+\.\d+\.\d+\.\d+/) ?? [null]
     const [servicePort] = proTxInfo?.state?.service?.match(/\d+$/) ?? [null]
+
+    const { state } = proTxInfo ?? {}
+
+    const [votingIdentityBalance, masternodes, coreNetworkInfo, registeredCoreBlockHash, lastPaidCoreBlockHash, poseRevivedCoreBlockHash, poseBanCoreBlockHash] = await Promise.all([
+      validatorInfo.votingIdentity
+        ? this.sdk.identities.getIdentityBalance(validatorInfo.votingIdentity).then(String, () => null)
+        : null,
+      getProTxList(),
+      getCoreNetworkInfo(),
+      getCoreBlockHash(state?.registeredHeight),
+      getCoreBlockHash(state?.lastPaidHeight),
+      getCoreBlockHash(state?.PoSeRevivedHeight),
+      getCoreBlockHash(state?.PoSeBanHeight)
+    ])
+
+    // a banned or removed masternode is not paid by Core
+    const masternode = masternodes
+      .find(masternode => masternode.proTxHash.toLowerCase() === validator.proTxHash.toLowerCase())
+
+    const coreYieldPerYear = masternode?.state.PoSeBanHeight === -1
+      ? await getCoreYieldPerYear(
+        await this.validatorsDAO.getCorePaymentsByMasternode(30 * CORE_BLOCKS_PER_DAY),
+        masternode.type,
+        masternodes
+      )
+      : null
 
     const [coreStatus, platformStatus, grpcStatus] = (await Promise.allSettled([
       checkTcpConnect(servicePort, host),
@@ -114,7 +154,17 @@ class ValidatorsController {
           ...validatorInfo,
           isActive,
           epochInfo,
-          endpoints
+          endpoints,
+          votingIdentityBalance,
+          // Core caps the PoSe penalty at the size of the masternode list, at least 100
+          poseScoreMax: Math.max(100, masternodes.length),
+          blocksUntilCorePayment: blocksUntilCorePayment(validator.proTxHash, masternodes),
+          registeredCoreBlockHash,
+          lastPaidCoreBlockHash,
+          poseRevivedCoreBlockHash,
+          poseBanCoreBlockHash,
+          coreYieldPerYear,
+          ...coreNetworkInfo
         }
       )
     )
@@ -187,7 +237,7 @@ class ValidatorsController {
     // too expensive for the list endpoint (see getFinalPoSeBanHeight, used only
     // on the single-validator endpoint).
     if (isBanned !== undefined) {
-      const registeredMasternodes = await DashCoreRPC.getProTxList('registered', true)
+      const registeredMasternodes = await getProTxList()
 
       validatorsWithoutBan = registeredMasternodes.filter(masternode => masternode.state?.PoSeBanHeight === -1)
     }
@@ -364,6 +414,108 @@ class ValidatorsController {
     )
 
     response.send(stats)
+  }
+
+  getValidatorEpochStatsByProTxHash = async (request, response) => {
+    const { hash } = request.params
+    const {
+      timestamp_start: timestampStart = new Date().getTime() - 3600000,
+      timestamp_end: timestampEnd = new Date().getTime(),
+      intervalsCount = null
+    } = request.query
+
+    if (!timestampStart || !timestampEnd) {
+      return response.status(400).send({ message: 'start and end must be set' })
+    }
+
+    if (timestampStart > timestampEnd) {
+      return response.status(400).send({ message: 'start timestamp cannot be more than end timestamp' })
+    }
+
+    const start = new Date(timestampStart)
+    const end = new Date(timestampEnd)
+
+    const stats = await this.validatorsDAO.getValidatorEpochStatsByProTxHash(
+      hash,
+      start,
+      end,
+      intervalsCount ?? Math.max(1, Math.ceil((end.getTime() - start.getTime()) / Intervals[calculateInterval(start, end)]))
+    )
+
+    response.send(stats)
+  }
+
+  getValidatorEarningsByProTxHash = async (request, response) => {
+    const { hash } = request.params
+    const {
+      timestamp_start: timestampStart = new Date().getTime() - 30 * 86400000,
+      timestamp_end: timestampEnd = new Date().getTime()
+    } = request.query
+
+    if (!timestampStart || !timestampEnd) {
+      return response.status(400).send({ message: 'start and end must be set' })
+    }
+
+    if (timestampStart > timestampEnd) {
+      return response.status(400).send({ message: 'start timestamp cannot be more than end timestamp' })
+    }
+
+    // the estimate is the gross monthly earnings in DASH by the last 30 days, before the
+    // operator and reward shares and expenses, for a masternode Core pays only
+    const estimateEnd = new Date()
+    const estimateStart = new Date(estimateEnd.getTime() - 30 * 86400000)
+
+    const [earnings, trailingEarnings, masternodes, corePayments] = await Promise.all([
+      this.validatorsDAO.getValidatorEarningsByProTxHash(hash, new Date(timestampStart), new Date(timestampEnd)),
+      this.validatorsDAO.getValidatorEarningsByProTxHash(hash, estimateStart, estimateEnd),
+      getProTxList(),
+      this.validatorsDAO.getCorePaymentsByMasternode(30 * CORE_BLOCKS_PER_DAY)
+    ])
+
+    if (!earnings) {
+      return response.status(404).send({ message: 'not found' })
+    }
+
+    const masternode = masternodes
+      .find(masternode => masternode.proTxHash.toLowerCase() === hash.toLowerCase())
+
+    const eligible = masternode?.state.PoSeBanHeight === -1
+
+    const [coreYieldPerYear, registeredAt] = eligible
+      ? await Promise.all([
+        getCoreYieldPerYear(corePayments, masternode.type, masternodes),
+        getCoreBlockTime(masternode.state.registeredHeight)
+      ])
+      : [null, null]
+
+    const corePerMonth = coreYieldPerYear !== null ? coreYieldPerYear * 30 / 365 : null
+
+    // the Platform rewards of a masternode registered during the period are not a month yet
+    const platformPerMonth = eligible && registeredAt <= estimateStart.getTime()
+      ? trailingEarnings.platform.reward / CREDITS_PER_DASH
+      : null
+
+    response.send(
+      ValidatorEarnings.fromObject({
+        ...earnings,
+        estimate: {
+          periodDays: 30,
+          eligible,
+          corePerMonth,
+          platformPerMonth,
+          totalPerMonth: corePerMonth !== null && platformPerMonth !== null ? corePerMonth + platformPerMonth : null,
+          platformHistory: platformPerMonth !== null
+            ? {
+                firstEpoch: trailingEarnings.platform.firstEpoch,
+                lastEpoch: trailingEarnings.platform.lastEpoch,
+                startTime: estimateStart.toISOString(),
+                endTime: estimateEnd.toISOString(),
+                reward: trailingEarnings.platform.reward
+              }
+            : null
+        }
+      })
+    )
   }
 }
 

@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import type { ReactNode } from 'react'
 import { getTimeDelta } from '../../util'
-import { NotActive } from './index'
+import NotActive from './NotActive'
 import { Tooltip } from '../ui/Tooltips'
 import './TimeDelta.css'
 

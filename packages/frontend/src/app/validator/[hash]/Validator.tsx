@@ -212,6 +212,7 @@ function Validator({ hash }: ValidatorProps) {
         <div className={'ValidatorPage__Column'}>
           <InfoContainer className={'ValidatorPage__GroupContainer'}>
             <ValidatorCard
+              proTxHash={hash}
               validator={validator as LoadableState<ValidatorType>}
               rate={rate.data}
               className={'ValidatorPage__Card'}

@@ -622,7 +622,9 @@ module.exports = class IdentitiesDAO {
         'transfers.state_transition_hash as tx_hash',
         'state_transitions.block_hash as block_hash',
         'state_transitions.type as type',
-        'state_transitions.gas_used as gas_used'
+        'state_transitions.gas_used as gas_used',
+        'state_transitions.status as status',
+        'state_transitions.error as error'
       )
       .whereRaw(searchQuery, searchBingings)
       .leftJoin('state_transitions', 'state_transitions.hash', 'transfers.state_transition_hash')
@@ -633,7 +635,7 @@ module.exports = class IdentitiesDAO {
         'amount', 'block_hash', 'type',
         'sender', 'recipient', 'with_alias.id',
         'tx_hash', 'blocks.timestamp as timestamp',
-        'block_hash', 'gas_used'
+        'gas_used', 'status', 'error'
       )
       .select(this.knex('with_alias').count('*').as('total_count'))
       .leftJoin('blocks', 'blocks.hash', 'with_alias.block_hash')

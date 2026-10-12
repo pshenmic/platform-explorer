@@ -1,6 +1,4 @@
-.NavbarShell {
-  position: relative;
-}
+@import "./NavbarShell.css";
 
 .Navbar {
   padding-left: var(--pe-space-4);
@@ -208,10 +206,6 @@
   .Navbar__Menu {
     gap: var(--pe-space-4);
   }
-
-  .NavbarStub {
-    height: var(--layout-nav-h);
-  }
 }
 
 @media screen and (max-width: 30em) {
@@ -223,8 +217,4 @@
   .Navbar__SearchContainer {
     width: 10rem;
   }
-}
-
-.NavbarStub {
-  height: 66px;
 }

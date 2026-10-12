@@ -13,6 +13,7 @@ tokio = { version = "1.12.0", features = ["full"] }
 futures = "0.3"
 dpp = { git = "https://github.com/dashpay/platform", tag = "v4.1.0" }
 data-contracts = { git = "https://github.com/dashpay/platform", tag = "v4.1.0" }
+dapi-grpc = { git = "https://github.com/dashpay/platform", tag = "v4.1.0", default-features = false, features = ["platform", "client"] }
 async-trait = { version = "0.1"}
 anyhow = { version = "1.0"}
 base64 = "0.21.2"

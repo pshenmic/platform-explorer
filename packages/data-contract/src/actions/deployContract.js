@@ -1,13 +1,13 @@
 require('dotenv').config()
 const schema = require('../../schema.json')
 
-const { initClient } = require('../utils')
+const { initClient, signAndBroadcast } = require('../utils')
 
 async function deployContract () {
   console.log('Deploying Contract')
 
   if (!process.env.MNEMONIC) {
-    throw new Error('Mnemonic not setted')
+    throw new Error('Mnemonic not set')
   }
 
   if (!process.env.OWNER_IDENTIFIER) {
@@ -15,17 +15,21 @@ async function deployContract () {
   }
 
   const client = initClient()
+  const identity = await client.identities.getIdentityByIdentifier(process.env.OWNER_IDENTIFIER)
+  const nonce = await client.identities.getIdentityNonce(identity.id) + 1n
 
-  const identity = await client.platform.identities.get(process.env.OWNER_IDENTIFIER)
+  console.log(`Using: ${identity.id.base58()}`)
 
-  console.log(`Using: ${identity.toJSON().id}`)
-
-  const contract = await client.platform.contracts.create(schema, identity)
-  const deployedContract = await client.platform.contracts.publish(contract, identity)
+  const contract = client.dataContracts.create(identity.id, nonce, schema)
+  const transition = client.dataContracts.createStateTransition(contract, 'create', nonce)
+  await signAndBroadcast(client, transition, identity)
 
   console.log('All Done!')
-  console.log(`Contract deployed at: ${deployedContract.getDataContract().getId()}`)
-  console.log(`Used id: ${identity.toJSON().id}`)
+  console.log(`Contract deployed at: ${contract.id.base58()}`)
+  console.log(`Used id: ${identity.id.base58()}`)
 }
 
-deployContract().catch(console.error)
+deployContract().catch(error => {
+  console.error(error)
+  process.exitCode = 1
+})

@@ -159,6 +159,10 @@
   height: 28px;
 }
 
+.ValidatorPage__InfoLine {
+  min-height: 28px;
+}
+
 .ValidatorPage__InfoLine .DateBlock__InfoContainer {
   justify-content: flex-end;
 }

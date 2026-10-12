@@ -13,8 +13,13 @@
 }
 
 .Identifier__SymbolsContainer {
+  min-width: 0;
   text-align: left;
   color: var(--pe-color-fg-muted);
+}
+
+.Identifier--Balanced .Identifier__SymbolsContainer {
+  text-wrap: balance;
 }
 
 .Identifier--Size32,

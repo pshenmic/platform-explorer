@@ -1,4 +1,6 @@
-import { FirstPlaceIcon, SecondPlaceIcon, ThirdPlaceIcon } from '../ui/icons'
+import FirstPlaceIcon from '../ui/icons/FirstPlaceIcon'
+import SecondPlaceIcon from '../ui/icons/SecondPlaceIcon'
+import ThirdPlaceIcon from '../ui/icons/ThirdPlaceIcon'
 
 const placeIcons = {
   1: FirstPlaceIcon,

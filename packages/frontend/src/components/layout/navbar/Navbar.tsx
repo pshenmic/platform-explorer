@@ -2,19 +2,22 @@
 
 import { useOutsideClick } from '../../../hooks/useOutsideClick'
 import { useBreakpointKey } from '../../../hooks'
+import dynamic from 'next/dynamic'
 import GlobalSearchInput from '../../search/GlobalSearchInput'
-import { Breadcrumbs, breadcrumbsActiveRoutes } from '../../breadcrumbs/Breadcrumbs'
+import { Breadcrumbs } from '../../breadcrumbs/Breadcrumbs'
+import { breadcrumbsActiveRoutes } from '../../breadcrumbs/routes'
 import NetworkSelect from './NetworkSelect'
 import { usePathname } from 'next/navigation'
 import { useEffect, useState, useRef, useMemo, useCallback } from 'react'
 import type { MouseEvent } from 'react'
-import { SearchResultsList } from '../../search'
 import NavItem from './NavItem'
-import NavbarMobileMenu from './NavbarMobileMenu'
 import type { BreakpointKey, BreakpointVisibility, NavMenuItem } from './types'
 import type { LoadableState } from '../../../types/common'
 import type { SearchResultsData } from '../../search/SearchResultsList'
 import './Navbar.css'
+
+const SearchResultsList = dynamic(() => import('../../search/SearchResultsList'), { ssr: false })
+const NavbarMobileMenu = dynamic(() => import('./NavbarMobileMenu'), { ssr: false })
 
 const menuItems: NavMenuItem[] = [
   { title: 'Home', href: '/' },
@@ -348,18 +351,20 @@ function Navbar() {
                 padding: searchResultIsDisplay ? '0 0.75rem' : 0
               }}
             >
-              <SearchResultsList results={searchState.results} />
+              {searchState.focused ? <SearchResultsList results={searchState.results} /> : null}
             </div>
           </div>
         </div>
       </header>
 
-      <NavbarMobileMenu
-        items={mobileMenuItems}
-        isOpen={isMobileMenuOpen && !searchState.focused}
-        onClose={closeMobileMenu}
-        burgerRef={burgerRef}
-      />
+      {isMobileMenuOpen && !searchState.focused ? (
+        <NavbarMobileMenu
+          items={mobileMenuItems}
+          isOpen={true}
+          onClose={closeMobileMenu}
+          burgerRef={burgerRef}
+        />
+      ) : null}
 
       {displayBreadcrumbs && <Breadcrumbs />}
     </div>
