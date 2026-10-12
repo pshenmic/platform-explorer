@@ -7,6 +7,7 @@ use dashcore_rpc::{Auth, Client};
 use dpp::dashcore::Network;
 use std::cell::Cell;
 use std::env;
+use std::time::Duration;
 
 pub mod index_block;
 pub mod process_block;
@@ -49,10 +50,15 @@ impl Indexer {
         let tenderdash_url = env::var("TENDERDASH_URL").expect("You've not set the TENDERDASH_URL");
         let tenderdash_rpc = TenderdashRpcApi::new(tenderdash_url);
 
-        let network = tenderdash_rpc
-            .get_network()
-            .await
-            .expect("Failed to get network");
+        let network = loop {
+            match tenderdash_rpc.get_network().await {
+                Ok(network) => break network,
+                Err(err) => {
+                    println!("Failed to get network, retrying in 3s: {}", err);
+                    tokio::time::sleep(Duration::from_millis(3000)).await;
+                }
+            }
+        };
 
         let dapi_url = env::var("DAPI_URL").expect("You've not set the DAPI_URL");
         let dapi_client = PlatformClient::new(
