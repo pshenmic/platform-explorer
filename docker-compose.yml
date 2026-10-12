@@ -1,0 +1,219 @@
+name: platform-explorer
+
+services:
+  # Opt-in only: starts with `--profile local-db`. Production leaves this
+  # profile off and points POSTGRES_HOST at an external postgres.
+  postgres:
+    image: postgres:17-alpine
+    profiles: ["local-db"]
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:?POSTGRES_USER must be set}
+      POSTGRES_PASSWORD: ${POSTGRES_PASS:?POSTGRES_PASS must be set}
+      POSTGRES_DB: ${POSTGRES_DB:?POSTGRES_DB must be set}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+
+  # One-shot schema migration. The indexer only applies migrations via its
+  # `migrate` subcommand (which exits when done) — a normal indexer start does
+  # NOT migrate — so this runs first and everything touching the DB waits for
+  # it to exit 0. Refinery records applied migrations in refinery_schema_history,
+  # so re-running on every `up` is a no-op once the schema is current.
+  migrate:
+    image: ${REGISTRY:-ghcr.io}/${IMAGE_PREFIX:-pshenmic/platform-explorer}-indexer:${VERSION:-nightly}
+    # `build` is for local development; production pulls the tag above.
+    build:
+      context: ./packages/indexer
+    # The indexer image has no ENTRYPOINT/CMD of its own.
+    entrypoint: ["/app/indexer"]
+    command: ["migrate"]
+    # Must not be `unless-stopped`: this container is meant to exit.
+    restart: "no"
+    depends_on:
+      postgres:
+        condition: service_healthy
+        required: false
+    environment: &postgres_env
+      POSTGRES_HOST: ${POSTGRES_HOST:?POSTGRES_HOST must be set}
+      POSTGRES_PORT: ${POSTGRES_PORT:-5432}
+      POSTGRES_DB: ${POSTGRES_DB:?POSTGRES_DB must be set}
+      POSTGRES_USER: ${POSTGRES_USER:?POSTGRES_USER must be set}
+      POSTGRES_PASS: ${POSTGRES_PASS:?POSTGRES_PASS must be set}
+
+  indexer:
+    image: ${REGISTRY:-ghcr.io}/${IMAGE_PREFIX:-pshenmic/platform-explorer}-indexer:${VERSION:-nightly}
+    build:
+      context: ./packages/indexer
+    entrypoint: ["/app/indexer"]
+    restart: unless-stopped
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+      # required: false lets this reference survive when the local-db profile
+      # is off; when it is on, startup still waits for postgres to be healthy.
+      postgres:
+        condition: service_healthy
+        required: false
+    # Lets TENDERDASH_URL / CORE_RPC_HOST=host.docker.internal reach a dashmate
+    # node running on the host.
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    environment:
+      <<: *postgres_env
+      TENDERDASH_URL: ${TENDERDASH_URL:?TENDERDASH_URL must be set}
+      CORE_RPC_HOST: ${CORE_RPC_HOST:?CORE_RPC_HOST must be set}
+      CORE_RPC_PORT: ${CORE_RPC_PORT:?CORE_RPC_PORT must be set}
+      CORE_RPC_USER: ${CORE_RPC_USER:?CORE_RPC_USER must be set}
+      CORE_RPC_PASSWORD: ${CORE_RPC_PASSWORD:?CORE_RPC_PASSWORD must be set}
+      PLATFORM_EXPLORER_DATA_CONTRACT_IDENTIFIER: ${PLATFORM_EXPLORER_DATA_CONTRACT_IDENTIFIER:?PLATFORM_EXPLORER_DATA_CONTRACT_IDENTIFIER must be set}
+      TXS_TO_SKIP: ${TXS_TO_SKIP:-}
+
+  api:
+    image: ${REGISTRY:-ghcr.io}/${IMAGE_PREFIX:-pshenmic/platform-explorer}-api:${VERSION:-nightly}
+    build:
+      # The api Dockerfile copies from packages/api and packages/indexer, so
+      # its context is the repo root (same as the publish workflow).
+      context: .
+      dockerfile: packages/api/Dockerfile
+    restart: unless-stopped
+    depends_on:
+      # The API queries indexer-owned tables at startup, so it waits too.
+      migrate:
+        condition: service_completed_successfully
+      postgres:
+        condition: service_healthy
+        required: false
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    environment:
+      <<: *postgres_env
+      POSTGRES_SSL: ${POSTGRES_SSL:-}
+      NETWORK: ${NETWORK:-testnet}
+      TENDERDASH_URL: ${TENDERDASH_URL:?TENDERDASH_URL must be set}
+      DAPI_URL: ${DAPI_URL:?DAPI_URL must be set}
+      DASHCORE_HOST: ${CORE_RPC_HOST:?CORE_RPC_HOST must be set}
+      DASHCORE_PORT: ${CORE_RPC_PORT:?CORE_RPC_PORT must be set}
+      DASHCORE_USER: ${CORE_RPC_USER:?CORE_RPC_USER must be set}
+      DASHCORE_PASS: ${CORE_RPC_PASSWORD:?CORE_RPC_PASSWORD must be set}
+      EPOCH_CHANGE_TIME: ${EPOCH_CHANGE_TIME:-3600000}
+      TCP_CONNECT_TIMEOUT: ${TCP_CONNECT_TIMEOUT:-400}
+    # No `ports:` here on purpose — a fixed host port cannot be published by
+    # more than one replica. haproxy fronts these and publishes API_PORT.
+    expose:
+      - "3005"
+    deploy:
+      replicas: ${API_REPLICAS:-4}
+
+  # Load balancer in front of the api replicas. This is what actually listens
+  # on API_PORT; it discovers replicas via Docker's DNS, so `docker compose up
+  # -d --scale api=N` needs no haproxy restart (keep N <= the server-template
+  # count in the haproxy config below).
+  haproxy:
+    image: haproxy:3.1-alpine
+    restart: unless-stopped
+    depends_on:
+      - api
+    # Config is inlined at the bottom of this file (top-level `configs:`), so
+    # docker-compose.yml + .env are the only files a deploy host needs.
+    configs:
+      - source: haproxy_cfg
+        target: /usr/local/etc/haproxy/haproxy.cfg
+    ports:
+      # Binds to 127.0.0.1 by default so a host-level reverse proxy (system
+      # haproxy/nginx) fronts it and the API is not exposed directly. Set
+      # BIND_ADDR=0.0.0.0 to publish on all interfaces.
+      - "${BIND_ADDR:-127.0.0.1}:${API_PORT:-3005}:3005"
+    healthcheck:
+      test: ["CMD-SHELL", "haproxy -c -f /usr/local/etc/haproxy/haproxy.cfg || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  # Opt-in only: starts with `--profile local-frontend`. Leave the profile off
+  # when the frontend is served from somewhere else (Vercel, CDN, separate
+  # deploy) and this stack only provides the API.
+  # NOTE: unlike api/indexer, CI does not publish a frontend image, so this is
+  # built locally rather than pulled by tag. NEXT_PUBLIC_* values are baked into
+  # the bundle at build time, so changing them needs a rebuild, not a restart.
+  frontend:
+    profiles: ["local-frontend"]
+    image: platform-explorer-frontend:${VERSION:-local}
+    build:
+      context: ./packages/frontend
+      args:
+        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:?NEXT_PUBLIC_API_URL must be set}
+        NEXT_PUBLIC_BASE_URL: ${NEXT_PUBLIC_BASE_URL:?NEXT_PUBLIC_BASE_URL must be set}
+    restart: unless-stopped
+    depends_on:
+      - api
+    ports:
+      - "${BIND_ADDR:-127.0.0.1}:${FRONTEND_PORT:-3000}:3000"
+
+volumes:
+  postgres_data:
+
+# Inlined so this file is self-contained — nothing to copy to the deploy host.
+configs:
+  haproxy_cfg:
+    content: |
+      global
+          log stdout format raw local0 info
+          maxconn 8192
+
+      defaults
+          log     global
+          mode    http
+          option  httplog
+          option  dontlognull
+          option  forwardfor
+          # Retry on another backend if one dies mid-request.
+          option  redispatch
+          retries 3
+          timeout connect 5s
+          timeout client  60s
+          timeout server  60s
+          timeout http-request 15s
+
+      # Docker's embedded DNS. Compose gives every api replica the same `api` DNS
+      # name, so resolving it repeatedly is what discovers containers as they come
+      # and go — no restart needed when replicas are rescaled.
+      resolvers docker
+          nameserver dns 127.0.0.11:53
+          resolve_retries 3
+          timeout resolve 1s
+          timeout retry   1s
+          hold valid   10s
+          hold other   10s
+          hold refused 10s
+          hold nx      10s
+          hold timeout 10s
+
+      frontend api_front
+          bind *:3005
+          default_backend api_back
+
+      backend api_back
+          balance roundrobin
+          # No health checks by design: every replica stays in rotation and
+          # whatever it answers (including 503 while syncing) is passed straight
+          # through. Hard failures are still covered by `option redispatch` +
+          # `retries` in defaults — a refused connection is retried on the next
+          # server rather than being returned to the client.
+          #
+          # server-template pre-creates N slots resolved from the `api` DNS name.
+          # Keep this >= API_REPLICAS; spare slots sit idle until they resolve.
+          server-template api 8 api:3005 resolvers docker init-addr none
+
+      # Stats/monitoring UI. Not published to the host — reach it with
+      # `docker compose exec haproxy wget -qO- http://127.0.0.1:8404/`.
+      frontend stats
+          bind *:8404
+          stats enable
+          stats uri /
+          stats refresh 10s
