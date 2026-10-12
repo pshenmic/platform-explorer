@@ -136,6 +136,23 @@ services:
       timeout: 5s
       retries: 3
 
+  # Opt-in only: starts with `--profile metrics`. Publishes haproxy's built-in
+  # Prometheus exporter (frontend `prometheus` in haproxy_cfg) on
+  # ${BIND_ADDR}:${HAPROXY_METRICS_PORT}/metrics for an external Prometheus.
+  # A profile can only toggle services, not ports on an existing one, so this
+  # is a small TCP forwarder rather than an extra `ports:` entry on haproxy.
+  haproxy-metrics:
+    image: haproxy:3.1-alpine
+    profiles: ["metrics"]
+    restart: unless-stopped
+    depends_on:
+      - haproxy
+    configs:
+      - source: haproxy_metrics_cfg
+        target: /usr/local/etc/haproxy/haproxy.cfg
+    ports:
+      - "${BIND_ADDR:-127.0.0.1}:${HAPROXY_METRICS_PORT:-8405}:8405"
+
   # Opt-in only: starts with `--profile local-frontend`. Leave the profile off
   # when the frontend is served from somewhere else (Vercel, CDN, separate
   # deploy) and this stack only provides the API.
@@ -218,3 +235,34 @@ configs:
           stats enable
           stats uri /
           stats refresh 10s
+
+      # Prometheus exporter. Only reachable on the compose network; the
+      # `metrics` profile (haproxy-metrics service) publishes it to the host.
+      frontend prometheus
+          bind *:8405
+          mode http
+          no log
+          http-request use-service prometheus-exporter if { path /metrics }
+
+  haproxy_metrics_cfg:
+    content: |
+      global
+          log stdout format raw local0 info
+
+      defaults
+          log     global
+          mode    tcp
+          timeout connect 5s
+          timeout client  30s
+          timeout server  30s
+
+      resolvers docker
+          nameserver dns 127.0.0.11:53
+          hold valid 10s
+
+      frontend metrics_front
+          bind *:8405
+          default_backend metrics_back
+
+      backend metrics_back
+          server haproxy haproxy:8405 resolvers docker init-addr none
