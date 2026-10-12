@@ -6,3 +6,4 @@ launch.json
 .vscode
 scripts/
 .pr-shots/
+/.env
