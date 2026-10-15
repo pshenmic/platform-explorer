@@ -1,5 +1,4 @@
 'use client'
-
 import { Fragment, useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import * as Api from '../../../util/Api'
@@ -20,7 +19,7 @@ import { PageDataContainer, InfoContainer } from '../../../components/ui/contain
 import { CopyButton } from '../../../components/ui/Buttons'
 import { Badge } from '../../../components/ui/Badge/Badge'
 import ImageGenerator from '../../../components/imageGenerator'
-import { BlockIcon, CircleIcon } from '../../../components/ui/icons'
+import { BlockIcon } from '../../../components/ui/icons'
 
 import { Tooltip } from '../../../components/ui/Tooltips'
 import { useBreadcrumbs } from '../../../contexts/BreadcrumbsContext'
@@ -709,96 +708,6 @@ function Validator({ hash }: ValidatorProps) {
     <PageDataContainer className={'ValidatorPage'} title={'Validator Info'}>
       <div className={'ValidatorPage__ContentContainer'}>
         <div className={'ValidatorPage__Column'}>
-          <InfoContainer className={'ValidatorPage__Group ValidatorPage__Service'}>
-            <div className={'ValidatorPage__ServiceBody'}>
-              <div className={'ValidatorPage__ServiceMain'}>
-                <div className={'ValidatorPage__ServiceRow'}>
-                  <div className={'ValidatorPage__ServiceRowTitle'}>Service</div>
-                  <div className={'ValidatorPage__ServiceRowValue'}>
-                    <div className={'ValidatorPage__ServiceHead'}>
-                      {validator.loading ? (
-                        <span className={'ValidatorPage__ServiceHost'}>…</span>
-                      ) : validator.error || !validator.data?.endpoints?.coreP2PPortStatus?.host ? (
-                        <NotActive />
-                      ) : (
-                        <HostWithFlag
-                          host={validator.data.endpoints.coreP2PPortStatus.host}
-                          countryCode={countryCode}
-                          place={region}
-                        />
-                      )}
-                    </div>
-                    <div className={'ValidatorPage__Ports'}>
-                      {(
-                        [
-                          {
-                            key: 'core',
-                            label: 'Core',
-                            endpoint: validator.data?.endpoints?.coreP2PPortStatus,
-                            link: null
-                          },
-                          {
-                            key: 'platform',
-                            label: 'Platform',
-                            endpoint: validator.data?.endpoints?.platformP2PPortStatus,
-                            link: null
-                          },
-                          {
-                            key: 'grpc',
-                            label: 'gRPC',
-                            endpoint: validator.data?.endpoints?.platformGrpcPortStatus,
-                            link: validator.data?.endpoints?.platformGrpcPortStatus?.host
-                              ? `https://${validator.data.endpoints.platformGrpcPortStatus.host}${
-                                  validator.data.endpoints.platformGrpcPortStatus.port
-                                    ? ':' + validator.data.endpoints.platformGrpcPortStatus.port
-                                    : ''
-                                }`
-                              : null
-                          }
-                        ] as const
-                      ).map(item => {
-                        const status = item.endpoint?.status || 'UNKNOWN'
-                        const color =
-                          status === 'OK'
-                            ? 'green.label'
-                            : status === 'UNKNOWN'
-                              ? 'yellow.default'
-                              : 'red.default'
-                        const content = (
-                          <>
-                            <CircleIcon w={'8px'} h={'8px'} color={color} />
-                            <span className={'ValidatorPage__PortName'}>
-                              {item.label} :{item.endpoint?.port || '—'}
-                            </span>
-                          </>
-                        )
-                        return item.link ? (
-                          <a
-                            key={item.key}
-                            className={'ValidatorPage__Port'}
-                            href={item.link}
-                            target={'_blank'}
-                            rel={'noreferrer'}
-                            title={item.endpoint?.message || undefined}
-                          >
-                            {content}
-                          </a>
-                        ) : (
-                          <span
-                            key={item.key}
-                            className={'ValidatorPage__Port'}
-                            title={item.endpoint?.message || undefined}
-                          >
-                            {content}
-                          </span>
-                        )
-                      })}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </InfoContainer>
 
           <EarningsCard
             loading={validator.loading}
@@ -861,47 +770,57 @@ function Validator({ hash }: ValidatorProps) {
                 ) : null
               }
             />
-            <SummaryCard
-              label={'Last proposed'}
-              loading={validator.loading}
-              value={
-                validator.error || !validator.data?.lastProposedBlockHeader?.timestamp ? (
+            <InfoContainer className={'ValidatorPage__SummaryCard ValidatorPage__Service'}>
+              <div className={'ValidatorPage__ServiceHead'}>
+                {validator.loading ? (
+                  <Skeleton w={'140px'} h={'21px'} />
+                ) : validator.error || !validator.data?.endpoints?.coreP2PPortStatus?.host ? (
                   <NotActive />
                 ) : (
-                  <DateBlock
-                    timestamp={validator.data.lastProposedBlockHeader.timestamp}
-                    format={'deltaOnly'}
-                  />
-                )
-              }
-              hint={
-                validator.data?.lastProposedBlockHeader?.hash ? (
-                  <Link href={`/block/${validator.data.lastProposedBlockHeader.hash}`}>
-                    {typeof validator.data.lastProposedBlockHeader.height === 'number'
-                      ? `Block ${validator.data.lastProposedBlockHeader.height.toLocaleString('en-US')}`
-                      : 'View block'}
-                  </Link>
-                ) : null
-              }
-            />
-            <SummaryCard
-              label={'Balance Identity'}
-              loading={validator.loading}
-              value={hasBalance && !validator.error ? `${dashAmount(balance)} DASH` : <NotActive />}
-              hint={
-                validator.loading || validator.error
-                  ? null
-                  : `Voting · ${
-                      validator.data?.votingIdentityBalance != null
-                        ? `${dashAmount(Number(validator.data.votingIdentityBalance))} DASH`
-                        : '—'
-                    }`
-              }
-            />
-            <WithdrawalsCard
-              identity={validator.error ? null : validator.data?.identity}
-              loading={validator.loading}
-            />
+                  <>
+                    <HostWithFlag
+                      host={validator.data.endpoints.coreP2PPortStatus.host}
+                      countryCode={countryCode}
+                      place={region}
+                    />
+                    <span role={'group'} aria-label={'Copy IP address'} title={'Copy IP address'}>
+                      <CopyButton text={validator.data.endpoints.coreP2PPortStatus.host} />
+                    </span>
+                  </>
+                )}
+              </div>
+              <table className={'ValidatorPage__Ports'} aria-label={'TCP port availability from the explorer server'}>
+                <tbody>
+                  {[
+                    { label: 'Core', description: 'Core P2P', endpoint: validator.data?.endpoints?.coreP2PPortStatus },
+                    { label: 'Platform', description: 'Platform P2P', endpoint: validator.data?.endpoints?.platformP2PPortStatus },
+                    { label: 'gRPC', description: 'gRPC', endpoint: validator.data?.endpoints?.platformGrpcPortStatus }
+                  ].map(({ label, description, endpoint }) => {
+                    const status = validator.loading || validator.error ? 'UNKNOWN' : endpoint?.status || 'UNKNOWN'
+                    const statusLabel = validator.loading ? '…' : status === 'OK' ? 'Reachable' : status === 'UNKNOWN' ? 'Unknown' : 'Unreachable'
+                    const hint = `${description}: TCP check from the explorer server. ${validator.loading ? 'Loading' : statusLabel}${endpoint?.message ? ': ' + endpoint.message : ''}`
+                    return (
+                      <tr key={label}>
+                        <th scope={'row'} className={'ValidatorPage__PortName'}>{label}</th>
+                        <td className={'ValidatorPage__PortValue'}>{endpoint?.port || '—'}</td>
+                        <td>
+                          <Tooltip content={hint}>
+                            <Badge
+                              className={'ValidatorPage__PortResult'}
+                              size={'xs'}
+                              colorScheme={status === 'OK' ? 'green' : status === 'UNKNOWN' ? 'gray' : 'red'}
+                              tabIndex={0}
+                            >
+                              {statusLabel}
+                            </Badge>
+                          </Tooltip>
+                        </td>
+                      </tr>
+                    )
+                  })}
+                </tbody>
+              </table>
+            </InfoContainer>
             <SummaryCard
               className={'ValidatorPage__RegistrationCard'}
               label={
@@ -922,7 +841,9 @@ function Validator({ hash }: ValidatorProps) {
               loading={validator.loading}
               value={
                 validator.error || !validator.data?.registeredAt ? (
-                  <span>Date unavailable</span>
+                  <Tooltip content={'Registration date is unavailable in the API. The Core registration block is shown below.'}>
+                    <span tabIndex={0} aria-label={'Registration date unavailable'}>—</span>
+                  </Tooltip>
                 ) : (
                   (() => {
                     const date = new Date(validator.data.registeredAt)
@@ -944,6 +865,47 @@ function Validator({ hash }: ValidatorProps) {
                   >
                     <BlockIcon w={'14px'} h={'14px'} />#{registeredHeight.toLocaleString('en-US')}
                   </a>
+                ) : null
+              }
+            />
+            <WithdrawalsCard
+              identity={validator.error ? null : validator.data?.identity}
+              loading={validator.loading}
+            />
+            <SummaryCard
+              label={'Balance Identity'}
+              loading={validator.loading}
+              value={hasBalance && !validator.error ? `${dashAmount(balance)} DASH` : <NotActive />}
+              hint={
+                validator.loading || validator.error
+                  ? null
+                  : `Voting · ${
+                      validator.data?.votingIdentityBalance != null
+                        ? `${dashAmount(Number(validator.data.votingIdentityBalance))} DASH`
+                        : '—'
+                    }`
+              }
+            />
+            <SummaryCard
+              label={'Last proposed'}
+              loading={validator.loading}
+              value={
+                validator.error || !validator.data?.lastProposedBlockHeader?.timestamp ? (
+                  <NotActive />
+                ) : (
+                  <DateBlock
+                    timestamp={validator.data.lastProposedBlockHeader.timestamp}
+                    format={'deltaOnly'}
+                  />
+                )
+              }
+              hint={
+                validator.data?.lastProposedBlockHeader?.hash ? (
+                  <Link href={`/block/${validator.data.lastProposedBlockHeader.hash}`}>
+                    {typeof validator.data.lastProposedBlockHeader.height === 'number'
+                      ? `Block ${validator.data.lastProposedBlockHeader.height.toLocaleString('en-US')}`
+                      : 'View block'}
+                  </Link>
                 ) : null
               }
             />

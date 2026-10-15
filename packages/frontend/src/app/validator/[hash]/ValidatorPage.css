@@ -242,105 +242,40 @@
   gap: 12px;
 }
 
-.ValidatorPage__ServiceBody {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  align-items: center;
-  min-width: 0;
-}
-
-.ValidatorPage__ServiceMain {
-  display: contents;
-}
-
 .ValidatorPage__ServiceHead {
   display: flex;
   align-items: center;
-  justify-content: flex-end;
+  justify-content: space-between;
+  gap: 6px;
   min-width: 0;
   min-height: 21px;
 }
 
-.ValidatorPage__Host {
-  flex-shrink: 0;
-}
-
-.ValidatorPage__ServiceRow {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 12px;
-  grid-column: 1;
-  grid-row: 1;
-  padding: 12px 0;
-  border-bottom: 1px solid var(--pe-color-border);
-}
-
-.ValidatorPage__ServiceRow + .ValidatorPage__ServiceRow {
-  grid-column: 1 / -1;
-  grid-row: 2;
-}
-
-.ValidatorPage__ServiceRow:first-child {
-  padding-top: 0;
-}
-
-.ValidatorPage__ServiceRow:last-child {
-  border-bottom: 0;
-  padding-bottom: 0;
-}
-
-.ValidatorPage__ServiceRowTitle {
-  flex: 0 0 auto;
+.ValidatorPage__Ports {
+  width: 100%;
+  border-collapse: collapse;
   font-family: var(--pe-font-mono);
-  font-weight: 400;
-  font-size: 0.8125rem;
-  letter-spacing: 0.04em;
-  line-height: 21px;
-  text-transform: uppercase;
-  color: #fff;
+  font-size: 0.75rem;
+  line-height: 24px;
 }
 
-.ValidatorPage__ServiceRowValue {
-  display: flex;
-  flex-flow: row nowrap;
-  align-items: center;
-  justify-content: flex-end;
-  gap: 8px;
-  min-width: 0;
-  flex: 1 1 auto;
+.ValidatorPage__Ports th,
+.ValidatorPage__Ports td {
+  padding: 0;
+  text-align: left;
+  vertical-align: middle;
 }
 
-.ValidatorPage__ServiceMeta {
+.ValidatorPage__Ports td:last-child {
+  text-align: right;
+}
+
+.ValidatorPage__PortResult {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  min-width: 0;
-  color: var(--pe-color-gray-400);
-  font-family: var(--pe-font-mono);
-  font-size: 0.875rem;
-  font-weight: 400;
-  line-height: 21px;
+  gap: 5px;
   white-space: nowrap;
-  text-decoration: none;
-}
-
-.ValidatorPage__ServiceMeta:hover {
-  text-decoration: underline;
-  text-underline-offset: 3px;
-}
-
-.ValidatorPage__Ports {
-  display: flex;
-  flex-flow: row nowrap;
-  align-items: center;
-  gap: 4px;
-  min-width: 0;
-}
-
-.ValidatorPage__Port {
-  flex-shrink: 0;
-  white-space: nowrap;
+  color: var(--pe-color-fg-muted);
 }
 
 .ValidatorPage__Identicon {
@@ -360,48 +295,47 @@
   object-fit: contain;
 }
 
-.ValidatorPage__Port {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  min-width: 0;
-  padding: 0 4px;
-  line-height: 19px;
-  border: 1px solid var(--pe-color-border);
-  border-radius: 6px;
-  color: var(--pe-color-fg-muted);
-  font-family: var(--pe-font-mono);
-  font-size: 0.875rem;
-  text-decoration: none;
-}
-
-a.ValidatorPage__Port:hover {
-  text-decoration: underline;
-  text-underline-offset: 3px;
-}
 
 .ValidatorPage__PortName {
-  color: #fff;
-  font-family: var(--pe-font-mono);
-  font-size: 0.875rem;
   font-weight: 400;
-  letter-spacing: 0;
-  text-transform: none;
+  color: var(--pe-color-fg);
 }
 
 .ValidatorPage__PortValue {
+  color: var(--pe-color-fg-muted);
   font-variant-numeric: tabular-nums;
 }
 
-@media screen and (max-width: 42em) {
-  .ValidatorPage__ServiceRowValue,
-  .ValidatorPage__Ports {
-    flex-wrap: wrap;
-    justify-content: flex-start;
-  }
+.ValidatorPage__PortStatus {
+  display: inline-block;
+  flex: 0 0 8px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: currentColor;
+}
 
-  .ValidatorPage__ServiceRow + .ValidatorPage__ServiceRow {
-    align-items: flex-start;
+.ValidatorPage__PortStatus--ok {
+  color: var(--pe-color-green-label);
+}
+
+.ValidatorPage__PortStatus--unknown {
+  color: var(--pe-color-yellow-default);
+}
+
+.ValidatorPage__PortStatus--error {
+  color: var(--pe-color-red-default);
+}
+
+.ValidatorPage__ServiceHead .IpAddress__Host {
+  color: var(--pe-color-fg);
+  font-size: 1rem;
+}
+
+
+@media screen and (max-width: 42em) {
+  .ValidatorPage__Service {
+    grid-column: 1 / -1;
   }
 }
 
@@ -768,34 +702,31 @@ a.ValidatorPage__Port:hover {
 }
 
 .ValidatorPage__RegistrationCard {
+  --registration-icon-width: clamp(24px, calc(100% - 164px), 120px);
   position: relative;
 }
 
 .ValidatorPage__RegistrationHeading {
   display: block;
-  padding-right: 72px;
-  font-size: 0.8125rem;
-  white-space: nowrap;
+  padding-right: calc(var(--registration-icon-width) + 8px);
 }
 
 .ValidatorPage__RegistrationCard .ValidatorPage__Identicon {
   position: absolute;
-  top: 50%;
-  right: 12px;
-  transform: translateY(-50%);
-  width: 64px;
-  height: 64px;
+  inset: 16px 8px 16px auto;
+  width: var(--registration-icon-width);
+  height: calc(100% - 32px);
+  pointer-events: none;
 }
 
 .ValidatorPage__RegistrationCard .ValidatorPage__SummaryValue {
-  padding-right: 72px;
-  font-family: var(--pe-font-mono);
-  font-size: 0.8125rem;
-  white-space: nowrap;
+  position: relative;
+  padding-right: calc(var(--registration-icon-width) + 8px);
 }
 
 .ValidatorPage__RegistrationCard .ValidatorPage__SummaryHint {
-  padding-right: 72px;
+  position: relative;
+  padding-right: calc(var(--registration-icon-width) + 8px);
 }
 
 .ValidatorPage__EarningsHeader {
@@ -832,18 +763,5 @@ a.ValidatorPage__Port:hover {
 
   .ValidatorPage__EarningsTotal {
     font-size: 0.8125rem;
-  }
-}
-
-@media screen and (max-width: 42em) {
-  .ValidatorPage__RegistrationCard .ValidatorPage__Identicon {
-    width: 48px;
-    height: 48px;
-  }
-
-  .ValidatorPage__RegistrationHeading,
-  .ValidatorPage__RegistrationCard .ValidatorPage__SummaryValue,
-  .ValidatorPage__RegistrationCard .ValidatorPage__SummaryHint {
-    padding-right: 56px;
   }
 }
