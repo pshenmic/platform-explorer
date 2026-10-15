@@ -7,6 +7,7 @@ export interface BlockHeader {
   blockVersion: number
   appVersion: number
   l1LockedHeight: number
+  l1LockedBlockHash?: string | null
   validator: string
   totalGasUsed: number
   appHash: string

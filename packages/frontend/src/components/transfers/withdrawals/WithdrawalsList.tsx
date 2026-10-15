@@ -1,6 +1,7 @@
 'use client'
 
 import { useRouter } from 'next/navigation'
+import { getL1ExplorerLink } from '../../../util/l1Explorer'
 import { DataList } from '../../ui/lists'
 import type { DataListColumn, DataListProps } from '../../ui/lists/DataList/DataList'
 import { Identifier, BigNumber, TimeDelta, NotActive } from '../../data'
@@ -105,7 +106,7 @@ function WithdrawalsList({
               e.stopPropagation()
               e.preventDefault()
               window.open(
-                `${l1explorerBaseUrl}/address/${address}`,
+                getL1ExplorerLink(l1explorerBaseUrl, 'address', address),
                 '_blank',
                 'noopener,noreferrer'
               )

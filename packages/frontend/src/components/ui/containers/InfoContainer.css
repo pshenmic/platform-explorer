@@ -80,6 +80,11 @@
   }
 }
 
+/* Embedded empty lists should not inherit the standalone mobile page height. */
+.InfoContainer--Tabs .DataList--empty.DataList--compactFirst {
+  min-height: 0;
+}
+
 .InfoContainer--Tabs .Tabs__Tab {
   font-size: var(--pe-text-sm);
   white-space: nowrap;

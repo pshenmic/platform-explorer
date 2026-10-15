@@ -7,8 +7,11 @@ import {
   isValidElement,
   useCallback,
   useContext,
+  useEffect,
   useId,
+  useLayoutEffect,
   useMemo,
+  useRef,
   useState,
   type CSSProperties,
   type HTMLAttributes,
@@ -37,6 +40,7 @@ export interface TabsProps extends Omit<HTMLAttributes<HTMLDivElement>, 'onChang
   defaultIndex?: number
   onChange?: (index: number) => void
   isLazy?: boolean
+  preserveScroll?: boolean
   variant?: string
   children?: ReactNode
 }
@@ -46,6 +50,7 @@ export function Tabs({
   defaultIndex = 0,
   onChange,
   isLazy = false,
+  preserveScroll = false,
   variant,
   className,
   children,
@@ -54,13 +59,61 @@ export function Tabs({
   const [uncontrolled, setUncontrolled] = useState(defaultIndex)
   const selectedIndex = index ?? uncontrolled
   const baseId = useId()
+  const rootRef = useRef<HTMLDivElement>(null)
+  const scrollReserve = useRef<{ panel: HTMLElement; height: number; scrollY: number } | null>(null)
+  const pendingReserve = useRef(false)
+
+  useLayoutEffect(() => {
+    const reserve = scrollReserve.current
+    const root = rootRef.current
+    if (!pendingReserve.current || !reserve || !root) return
+    pendingReserve.current = false
+    const toolbarHeight =
+      root.getBoundingClientRect().height - reserve.panel.getBoundingClientRect().height
+    const height = Math.max(0, reserve.height - toolbarHeight)
+    reserve.panel.style.minHeight = height ? `${height}px` : ''
+    scrollReserve.current = height ? { ...reserve, height } : null
+  }, [selectedIndex])
+
+  useEffect(() => {
+    const releaseReserve = () => {
+      const reserve = scrollReserve.current
+      if (!reserve || window.scrollY >= reserve.scrollY) return
+      const height =
+        window.scrollY === 0 ? 0 : Math.max(0, reserve.height - (reserve.scrollY - window.scrollY))
+      reserve.panel.style.minHeight = height ? `${height}px` : ''
+      scrollReserve.current = height ? { ...reserve, height, scrollY: window.scrollY } : null
+    }
+    window.addEventListener('scroll', releaseReserve, { passive: true })
+    return () => window.removeEventListener('scroll', releaseReserve)
+  }, [])
 
   const setSelectedIndex = useCallback(
     (next: number) => {
+      // Keep enough panel height that a shorter tab does not pull the page up.
+      const root = rootRef.current
+      const panel = root?.querySelector<HTMLElement>(':scope > .Tabs__TabPanels')
+      if (
+        preserveScroll &&
+        next !== selectedIndex &&
+        panel &&
+        root?.closest('.InfoContainer--Tabs')
+      ) {
+        const scrollY = window.scrollY
+        const spareHeight = Math.max(
+          0,
+          document.documentElement.scrollHeight - window.innerHeight - scrollY
+        )
+        const height =
+          scrollY > 0 ? Math.max(0, root.getBoundingClientRect().height - spareHeight) : 0
+        pendingReserve.current = height > 0
+        panel.style.minHeight = height ? `${height}px` : ''
+        scrollReserve.current = height ? { panel, height, scrollY } : null
+      }
       if (index === undefined) setUncontrolled(next)
       onChange?.(next)
     },
-    [index, onChange]
+    [index, onChange, selectedIndex, preserveScroll]
   )
 
   const value = useMemo(
@@ -71,6 +124,7 @@ export function Tabs({
   return (
     <TabsContext.Provider value={value}>
       <div
+        ref={rootRef}
         className={['Tabs', variant ? `Tabs--${variant}` : '', className || '']
           .filter(Boolean)
           .join(' ')}

@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect } from 'react'
+import { getL1ExplorerLink } from '../../../../util/l1Explorer'
 import { CreditsBlock, InfoLine, DateBlock, Identifier } from '../../../../components/data'
 import { TransactionType } from './TransactionType'
 import { PageDataContainer, ValueContainer } from '../../../../components/ui/containers'
@@ -249,13 +250,13 @@ export const Transaction = () => {
               value={
                 <a
                   href={
-                    l1explorerBaseUrl
-                      ? `${l1explorerBaseUrl}/address/${
-                          typeof decodedST.data?.outputAddress === 'string'
-                            ? decodedST.data.outputAddress
-                            : ''
-                        }`
-                      : '#'
+                    getL1ExplorerLink(
+                      l1explorerBaseUrl,
+                      'address',
+                      typeof decodedST.data?.outputAddress === 'string'
+                        ? decodedST.data.outputAddress
+                        : undefined
+                    )
                   }
                   target={'_blank'}
                   rel={'noopener noreferrer'}

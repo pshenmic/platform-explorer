@@ -16,12 +16,12 @@ import { ErrorMessageBlock } from '../Errors'
 const ACTIVE_OPTIONS = [
   {
     value: 'current',
-    label: <Badge colorScheme={'green'}>Active</Badge>,
-    searchText: 'active'
+    label: <Badge colorScheme={'green'}>In quorum</Badge>,
+    searchText: 'in quorum'
   },
   {
     value: 'queued',
-    label: <Badge colorScheme={'gray'}>Waiting for Quorum</Badge>,
+    label: <Badge colorScheme={'gray'}>Waiting for quorum</Badge>,
     searchText: 'waiting quorum'
   }
 ]
