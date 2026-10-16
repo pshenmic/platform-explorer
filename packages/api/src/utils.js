@@ -2,7 +2,7 @@ const crypto = require('crypto')
 const StateTransitionEnum = require('./enums/StateTransitionEnum')
 const DocumentActionEnum = require('./enums/DocumentActionEnum')
 const net = require('net')
-const { TCP_CONNECT_TIMEOUT, NETWORK, DPNS_CONTRACT, BANNED_STATE_CACHE_KEY, PLATFORM_QUORUMS_CACHE_KEY, VALIDATORS_CACHE_LIFE_INTERVAL, PROTX_LIST_CACHE_KEY, PROTX_LIST_CACHE_LIFE_INTERVAL, CORE_BLOCK_HASH_CACHE_KEY, CORE_BLOCK_HASH_CACHE_MAX_ENTRIES, CORE_BLOCK_HASH_CACHE_LIFE_INTERVAL, CORE_NETWORK_CACHE_KEY, CORE_NETWORK_CACHE_LIFE_INTERVAL, DUFFS_PER_DASH, CORE_BLOCKS_PER_DAY } = require('./constants')
+const { TCP_CONNECT_TIMEOUT, NETWORK, DPNS_CONTRACT, DAPI_DOCUMENTS_QUERY_LIMIT, BANNED_STATE_CACHE_KEY, PLATFORM_QUORUMS_CACHE_KEY, VALIDATORS_CACHE_LIFE_INTERVAL, PROTX_LIST_CACHE_KEY, PROTX_LIST_CACHE_LIFE_INTERVAL, CORE_BLOCK_HASH_CACHE_KEY, CORE_BLOCK_HASH_CACHE_MAX_ENTRIES, CORE_BLOCK_HASH_CACHE_LIFE_INTERVAL, CORE_NETWORK_CACHE_KEY, CORE_NETWORK_CACHE_LIFE_INTERVAL, DUFFS_PER_DASH, CORE_BLOCKS_PER_DAY } = require('./constants')
 const DashCoreRPC = require('./dashcoreRpc')
 const TenderdashRPC = require('./tenderdashRpc')
 const Quorum = require('./models/Quorum')
@@ -37,7 +37,8 @@ const {
   ShieldedTransferTransitionWASM,
   UnshieldTransitionWASM,
   ShieldedWithdrawalTransitionWASM,
-  IdentityCreateFromShieldedPoolTransitionWASM
+  IdentityCreateFromShieldedPoolTransitionWASM,
+  IdentifierWASM
 } = require('pshenmic-dpp')
 const BatchEnum = require('./enums/BatchEnum')
 const dpnsContract = require('../data_contracts/dpns.json')
@@ -95,16 +96,31 @@ const fetchTokenInfoByRows = async (rows, sdk) => {
     .filter(row => row.owner)
     .map(row => row.owner?.trim())
 
-  const aliasDocuments = await getAliasDocumentForIdentifiers(owners, sdk)
+  const dataContractIdentifiers = [...new Set(rows.map(row => row.data_contract_identifier))]
+
+  const [aliasDocuments, ...dataContracts] = await Promise.all([
+    getAliasDocumentForIdentifiers(owners, sdk),
+    ...dataContractIdentifiers.map(identifier => sdk.dataContracts.getDataContractByIdentifier(identifier))
+  ])
+
+  const dataContractsByIdentifier = Object.fromEntries(
+    dataContractIdentifiers.map((identifier, i) => [identifier, dataContracts[i]])
+  )
 
   const dataContractsWithTokens = await Promise.all(rows.map(async (row) => {
-    const dataContract = await sdk.dataContracts.getDataContractByIdentifier(row.data_contract_identifier)
+    const dataContract = dataContractsByIdentifier[row.data_contract_identifier]
 
     if (!dataContract) {
       return undefined
     }
 
-    return await Promise.all(dataContract.tokens.map(async (tokenConfig) => {
+    // a row stands for one token (or a list of them), not every token of its contract
+    const positions = (row.tokens ?? [row]).map(({ position }) => Number(position))
+
+    const tokenConfigs = dataContract.tokens
+      .filter(tokenConfig => positions.includes(Number(tokenConfig.position)))
+
+    return await Promise.all(tokenConfigs.map(async (tokenConfig) => {
       const tokenIdentifier = TokenConfigurationWASM.calculateTokenId(dataContract.id, Number(tokenConfig.position))
 
       const tokenTotalSupply = await sdk.tokens.getTokenTotalSupply(tokenIdentifier)
@@ -2130,21 +2146,43 @@ const getAliasDocumentForIdentifier = async (identifier, sdk) => {
 const getAliasDocumentForIdentifiers = async (identifiers, sdk) => {
   const identifiersWithoutDuplicates = identifiers.filter((item, pos) => identifiers.indexOf(item) === pos)
 
-  const identifiersWithAliasDocument = await Promise.all(identifiersWithoutDuplicates.map(
-    async (identifier) => {
-      const alias = await getAliasDocumentForIdentifier(identifier, sdk)
+  if (identifiersWithoutDuplicates.length < 2) {
+    const [identifier] = identifiersWithoutDuplicates
 
-      return {
-        owner: identifier,
-        alias
-      }
+    return identifier ? { [identifier]: await getAliasDocumentForIdentifier(identifier, sdk) } : {}
+  }
+
+  const aliasDocuments = {}
+
+  // one DPNS query per chunk instead of one per identifier, Drive caps both values and results at 100
+  for (let i = 0; i < identifiersWithoutDuplicates.length; i += DAPI_DOCUMENTS_QUERY_LIMIT) {
+    const chunk = identifiersWithoutDuplicates.slice(i, i + DAPI_DOCUMENTS_QUERY_LIMIT)
+
+    const documents = await sdk.documents.query(
+      DPNS_CONTRACT,
+      'domain',
+      [['records.identity', 'in', chunk.map(identifier => Buffer.from(new IdentifierWASM(identifier).bytes()))]],
+      [['records.identity', 'asc']],
+      DAPI_DOCUMENTS_QUERY_LIMIT
+    )
+
+    for (const document of documents) {
+      const identifier = new IdentifierWASM(document.properties.records.identity).base58()
+
+      aliasDocuments[identifier] = aliasDocuments[identifier] ?? document
     }
-  ))
 
-  return identifiersWithAliasDocument.reduce((acc, identifierWithAliasDocument) => ({
-    ...acc,
-    [identifierWithAliasDocument.owner]: identifierWithAliasDocument.alias
-  }), {})
+    // a full page may have cut off the identities sorted last
+    if (documents.length === DAPI_DOCUMENTS_QUERY_LIMIT) {
+      await Promise.all(chunk
+        .filter(identifier => aliasDocuments[identifier] === undefined)
+        .map(async identifier => {
+          aliasDocuments[identifier] = await getAliasDocumentForIdentifier(identifier, sdk)
+        }))
+    }
+  }
+
+  return Object.fromEntries(identifiersWithoutDuplicates.map(identifier => [identifier, aliasDocuments[identifier]]))
 }
 
 // replace all wildcard characters to "safe" characters

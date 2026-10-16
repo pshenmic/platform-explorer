@@ -4,6 +4,7 @@ const assert = require('node:assert').strict
 const supertest = require('supertest')
 const server = require('../../src/server')
 const fixtures = require('../utils/fixtures')
+const mockDocumentsQuery = require('../utils/mockDocumentsQuery')
 const StateTransitionEnum = require('../../src/enums/StateTransitionEnum')
 const { getKnex } = require('../../src/utils')
 const tenderdashRpc = require('../../src/tenderdashRpc')
@@ -73,7 +74,7 @@ describe('Other routes', () => {
       }
     }))
 
-    mock.method(DocumentsController.prototype, 'query', async () => [{
+    mock.method(DocumentsController.prototype, 'query', mockDocumentsQuery({
       properties: {
         label: 'alias',
         parentDomainName: 'dash',
@@ -81,7 +82,7 @@ describe('Other routes', () => {
       },
       id: new IdentifierWASM('AQV2G2Egvqk8jwDBAcpngjKYcwAkck8Cecs5AjYJxfvW'),
       createdAt: BigInt(aliasTimestamp.getTime())
-    }])
+    }))
 
     mock.method(TokensController.prototype, 'getTokenTotalSupply', async () => ({
       totalSystemAmount: 1000,

@@ -23,6 +23,8 @@ module.exports = {
   CREDITS_PER_DASH: 100000000000,
   PROTX_LIST_CACHE_LIFE_INTERVAL: 60000,
   DPNS_CONTRACT: 'GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec',
+  // Drive limit for both the values of an 'in' clause and the documents returned
+  DAPI_DOCUMENTS_QUERY_LIMIT: 100,
   WITHDRAWAL_CONTRACT: '4fJLR2GYTPFdomuTVvNy3VRrvWgvkKPzqehEBpNf2nk6',
   NETWORK: process.env.NETWORK ?? 'testnet',
   GEOIP_PROVIDER: '@ip-location-db/dbip-city-mmdb',

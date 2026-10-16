@@ -51,8 +51,10 @@ module.exports = class BlockDAO {
         'state_transitions.index as index', 'state_transitions.type as type', 'app_hash',
         'blocks.quorum_hash as quorum_hash', 'state_transitions.amount as amount'
       )
+      .select(this.knex.raw('sum(state_transitions.gas_used) over () as total_gas_used'))
       .leftJoin('state_transitions', 'state_transitions.block_height', 'blocks.height')
-      .whereILike('blocks.hash', blockHash)
+      // the indexer stores hashes uppercase, an exact match can use the unique index
+      .where('blocks.hash', blockHash.toUpperCase())
       .orderBy('state_transitions.index', 'asc')
       .as('subquery')
 
@@ -65,9 +67,9 @@ module.exports = class BlockDAO {
         'height', 'timestamp',
         'gas_used', 'data',
         'hash', 'tx_hash',
-        'status', 'owner', 'quorum_hash', 'amount'
+        'status', 'owner', 'quorum_hash', 'amount',
+        'total_gas_used'
       )
-      .select(this.knex(subquery).sum('gas_used').as('total_gas_used'))
 
     const [block] = rows
 

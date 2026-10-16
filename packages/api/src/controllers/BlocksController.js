@@ -191,22 +191,16 @@ class BlocksController {
         return response.status(400).send('Bad epochs range')
       }
 
-      if (epochIndexMin) {
-        const [startEpoch] = await this.sdk.node.getEpochsInfo(
-          1,
-          true,
-          Number(epochIndexMin)
-        )
+      const [[startEpoch], [endEpoch]] = await Promise.all([
+        epochIndexMin ? this.sdk.node.getEpochsInfo(1, true, Number(epochIndexMin)) : [],
+        epochIndexMax ? this.sdk.node.getEpochsInfo(1, true, Number(epochIndexMax)) : []
+      ])
 
+      if (epochIndexMin) {
         epochStartTimestamp = Number(startEpoch?.startTime)
       }
 
       if (epochIndexMax) {
-        const [endEpoch] = await this.sdk.node.getEpochsInfo(
-          1,
-          true,
-          Number(epochIndexMax)
-        )
         epochEndTimestamp = Number(endEpoch?.startTime) + EPOCH_CHANGE_TIME
       }
     }

@@ -29,7 +29,8 @@ module.exports = class TransactionsDAO {
         'state_transitions.amount as amount'
       )
       .select(duplicatesSubquery.as('duplicates'))
-      .whereILike('state_transitions.hash', hash)
+      // the indexer stores hashes uppercase, an exact match can use the unique index
+      .where('state_transitions.hash', hash.toUpperCase())
       .leftJoin('blocks', 'blocks.hash', 'state_transitions.block_hash')
       .leftJoin('shielded_transitions', 'shielded_transitions.state_transition_id', 'state_transitions.id')
 
@@ -167,6 +168,18 @@ module.exports = class TransactionsDAO {
       .from('subquery')
       .as('sorted_subquery')
 
+    // blocks are only needed to count by timestamp, joining them for every row dominates the query
+    const countSubquery = this.knex(transactionSubquery.clone().as('state_transitions_subquery'))
+      .count('* as total_count')
+      .whereRaw(filtersQuery, filtersBindings)
+      .modify(qb => {
+        if (timestampsQuery) {
+          qb.leftJoin('blocks', 'blocks.height', 'block_height')
+            .whereRaw(timestampsQuery, timestampBindings)
+        }
+      })
+      .as('total_count')
+
     const rows = await this.knex(sortedSubquery)
       .select('tx_hash',
         'data', 'type', 'index', 'batch_type',
@@ -174,7 +187,7 @@ module.exports = class TransactionsDAO {
         'block_hash', 'id', 'owner',
         'block_height', 'timestamp',
         'total_count.total_count')
-      .join(this.knex.with('subquery', subquery).select(this.knex.raw('count(*) over () as total_count')).limit(1).from('subquery').as('total_count'), this.knex.raw(true), '=', this.knex.raw(true))
+      .join(countSubquery, this.knex.raw(true), '=', this.knex.raw(true))
 
     const totalCount = rows.length > 0 ? Number(rows[0].total_count) : 0
 

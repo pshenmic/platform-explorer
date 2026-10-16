@@ -3,6 +3,7 @@ const assert = require('node:assert').strict
 const supertest = require('supertest')
 const server = require('../../src/server')
 const fixtures = require('../utils/fixtures')
+const mockDocumentsQuery = require('../utils/mockDocumentsQuery')
 const { getKnex } = require('../../src/utils')
 const { CONTESTED_RESOURCE_VOTE_DEADLINE } = require('../../src/constants')
 const ChoiceEnum = require('../../src/enums/ChoiceEnum')
@@ -30,7 +31,7 @@ describe('Contested documents routes', () => {
 
     mock.method(DataContractsController.prototype, 'getDataContractByIdentifier', async () => {})
 
-    mock.method(DocumentsController.prototype, 'query', async () => [{
+    mock.method(DocumentsController.prototype, 'query', mockDocumentsQuery({
       properties: {
         label: 'alias',
         parentDomainName: 'dash',
@@ -38,7 +39,7 @@ describe('Contested documents routes', () => {
       },
       id: new IdentifierWASM('AQV2G2Egvqk8jwDBAcpngjKYcwAkck8Cecs5AjYJxfvW'),
       createdAt: BigInt(aliasTimestamp.getTime())
-    }])
+    }))
 
     mock.method(ContestedResourcesController.prototype, 'getContestedResourceVoteState', async () => ({ finishedVoteInfo: {} }))
 
