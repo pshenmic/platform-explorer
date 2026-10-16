@@ -270,26 +270,31 @@ module.exports = class BlockDAO {
       .andWhereRaw(...quorumQuery)
       .as('blocks')
 
+    // aggregated per block, so a page only touches the transactions of its own blocks
     const transactionsSubquery = this.knex('state_transitions')
-      .select('block_height', this.knex.raw('sum(gas_used) as total_gas_used'), this.knex.raw('array_agg(state_transitions.hash) as txs'))
-      .groupBy('block_height')
-      .as('txs')
+      .select(this.knex.raw('sum(gas_used) as total_gas_used'), this.knex.raw('array_agg(state_transitions.hash order by state_transitions.id) as txs'))
+      .whereRaw('state_transitions.block_height = blocks.height')
 
     const gasSubQuery = this.knex(subquery)
       .select(
         'hash', 'blocks.height', 'timestamp', 'block_version', 'app_hash',
         'app_version', 'l1_locked_height', 'txs.txs', 'validator', 'total_gas_used', 'quorum_hash')
-      .leftJoin(transactionsSubquery, 'txs.block_height', 'blocks.height')
+      .joinRaw('left join lateral (?) as txs on true', [transactionsSubquery])
       .whereRaw(gasQueryString, gasQueryBindings)
       .andWhereRaw(transactionsQueryString, transactionsQueryBindings)
       .as('gas')
+
+    // transactions are only needed to count by gas or transactions count
+    const countSubquery = (gasQueryString || transactionsQueryString ? this.knex(gasSubQuery) : this.knex(subquery))
+      .count('* as total_count')
+      .as('total_count')
 
     const rows = await this.knex(gasSubQuery)
       .select('hash', 'height', 'timestamp', 'block_version', 'app_hash',
         'app_version', 'l1_locked_height', 'txs', 'validator', 'total_gas_used',
         'quorum_hash', 'total_count.total_count'
       )
-      .join(this.knex(gasSubQuery).select(this.knex.raw('count(*) over () as total_count')).limit(1).as('total_count'), this.knex.raw(true), '=', this.knex.raw(true))
+      .join(countSubquery, this.knex.raw(true), '=', this.knex.raw(true))
       .limit(limit)
       .offset(fromRank)
       .orderBy('height', order)
