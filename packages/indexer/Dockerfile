@@ -1,4 +1,4 @@
-FROM rust:1.92.0-alpine3.22 as build
+FROM rust:1.98.1-alpine3.22 as build
 
 RUN apk add --no-cache git cmake clang openssl openssl-dev openssl-libs-static build-base protobuf-dev
 WORKDIR /app
