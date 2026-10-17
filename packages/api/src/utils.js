@@ -38,6 +38,14 @@ const {
   UnshieldTransitionWASM,
   ShieldedWithdrawalTransitionWASM,
   IdentityCreateFromShieldedPoolTransitionWASM,
+  ShieldFromIdentityTransitionWASM,
+  IdentityTopUpFromShieldedPoolTransitionWASM,
+  IdentityKeyLimitsUpdateTransitionWASM,
+  ContractUserModerationTransitionWASM,
+  ContractFeeClaimTransitionWASM,
+  TokenShieldedTransferWithShieldedFeeTransitionWASM,
+  TokenUnshieldWithShieldedFeeTransitionWASM,
+  TokenPurchaseFromShieldedPoolTransitionWASM,
   IdentifierWASM
 } = require('pshenmic-dpp')
 const BatchEnum = require('./enums/BatchEnum')
@@ -799,12 +807,132 @@ const decodeStateTransition = async (base64) => {
                 }
                 break
               }
+              case TokenTransitionEnum.Shield: {
+                out.amount = tokenTransition.amount.toString()
+                out.actions = tokenTransition.actions.map((action) => ({
+                  nullifier: Buffer.from(action.nullifier).toString('hex'),
+                  rk: Buffer.from(action.rk).toString('hex'),
+                  cmx: Buffer.from(action.cmx).toString('hex'),
+                  encryptedNote: Buffer.from(action.encryptedNote).toString('hex'),
+                  cvNet: Buffer.from(action.cvNet).toString('hex'),
+                  spendAuthSig: Buffer.from(action.spendAuthSig).toString('hex')
+                }))
+                out.anchor = Buffer.from(tokenTransition.anchor).toString('hex')
+                out.proof = Buffer.from(tokenTransition.proof).toString('hex')
+                out.bindingsSignature = Buffer.from(tokenTransition.bindingsSignature).toString('hex')
+
+                break
+              }
+              case TokenTransitionEnum.Unshield: {
+                out.recipient = tokenTransition.recipientId.base58()
+                out.amount = tokenTransition.amount.toString()
+                out.actions = tokenTransition.actions.map((action) => ({
+                  nullifier: Buffer.from(action.nullifier).toString('hex'),
+                  rk: Buffer.from(action.rk).toString('hex'),
+                  cmx: Buffer.from(action.cmx).toString('hex'),
+                  encryptedNote: Buffer.from(action.encryptedNote).toString('hex'),
+                  cvNet: Buffer.from(action.cvNet).toString('hex'),
+                  spendAuthSig: Buffer.from(action.spendAuthSig).toString('hex')
+                }))
+                out.anchor = Buffer.from(tokenTransition.anchor).toString('hex')
+                out.proof = Buffer.from(tokenTransition.proof).toString('hex')
+                out.bindingsSignature = Buffer.from(tokenTransition.bindingsSignature).toString('hex')
+
+                break
+              }
+              case TokenTransitionEnum.ShieldedTransfer: {
+                out.actions = tokenTransition.actions.map((action) => ({
+                  nullifier: Buffer.from(action.nullifier).toString('hex'),
+                  rk: Buffer.from(action.rk).toString('hex'),
+                  cmx: Buffer.from(action.cmx).toString('hex'),
+                  encryptedNote: Buffer.from(action.encryptedNote).toString('hex'),
+                  cvNet: Buffer.from(action.cvNet).toString('hex'),
+                  spendAuthSig: Buffer.from(action.spendAuthSig).toString('hex')
+                }))
+                out.anchor = Buffer.from(tokenTransition.anchor).toString('hex')
+                out.proof = Buffer.from(tokenTransition.proof).toString('hex')
+                out.bindingsSignature = Buffer.from(tokenTransition.bindingsSignature).toString('hex')
+
+                break
+              }
+              case TokenTransitionEnum.MintToPool: {
+                out.publicNote = tokenTransition.publicNote ?? null
+                out.amount = tokenTransition.amount.toString()
+                out.actions = tokenTransition.actions.map((action) => ({
+                  nullifier: Buffer.from(action.nullifier).toString('hex'),
+                  rk: Buffer.from(action.rk).toString('hex'),
+                  cmx: Buffer.from(action.cmx).toString('hex'),
+                  encryptedNote: Buffer.from(action.encryptedNote).toString('hex'),
+                  cvNet: Buffer.from(action.cvNet).toString('hex'),
+                  spendAuthSig: Buffer.from(action.spendAuthSig).toString('hex')
+                }))
+                out.anchor = Buffer.from(tokenTransition.anchor).toString('hex')
+                out.proof = Buffer.from(tokenTransition.proof).toString('hex')
+                out.bindingsSignature = Buffer.from(tokenTransition.bindingsSignature).toString('hex')
+
+                break
+              }
+              case TokenTransitionEnum.BurnFromPool: {
+                out.publicNote = tokenTransition.publicNote ?? null
+                out.burnAmount = tokenTransition.amount.toString()
+                out.actions = tokenTransition.actions.map((action) => ({
+                  nullifier: Buffer.from(action.nullifier).toString('hex'),
+                  rk: Buffer.from(action.rk).toString('hex'),
+                  cmx: Buffer.from(action.cmx).toString('hex'),
+                  encryptedNote: Buffer.from(action.encryptedNote).toString('hex'),
+                  cvNet: Buffer.from(action.cvNet).toString('hex'),
+                  spendAuthSig: Buffer.from(action.spendAuthSig).toString('hex')
+                }))
+                out.anchor = Buffer.from(tokenTransition.anchor).toString('hex')
+                out.proof = Buffer.from(tokenTransition.proof).toString('hex')
+                out.bindingsSignature = Buffer.from(tokenTransition.bindingsSignature).toString('hex')
+
+                break
+              }
+              case TokenTransitionEnum.ClaimToPool: {
+                out.publicNote = tokenTransition.publicNote ?? null
+                out.distributionType = tokenTransition.distributionType
+                out.claimUpTo = tokenTransition.claimUpTo?.toString() ?? null
+                out.actions = tokenTransition.actions.map((action) => ({
+                  nullifier: Buffer.from(action.nullifier).toString('hex'),
+                  rk: Buffer.from(action.rk).toString('hex'),
+                  cmx: Buffer.from(action.cmx).toString('hex'),
+                  encryptedNote: Buffer.from(action.encryptedNote).toString('hex'),
+                  cvNet: Buffer.from(action.cvNet).toString('hex'),
+                  spendAuthSig: Buffer.from(action.spendAuthSig).toString('hex')
+                }))
+                out.anchor = Buffer.from(tokenTransition.anchor).toString('hex')
+                out.proof = Buffer.from(tokenTransition.proof).toString('hex')
+                out.bindingsSignature = Buffer.from(tokenTransition.bindingsSignature).toString('hex')
+
+                break
+              }
+              case TokenTransitionEnum.DirectPurchaseToPool: {
+                out.totalAgreedPrice = tokenTransition.totalAgreedPrice.toString()
+                out.amount = tokenTransition.tokenCount.toString()
+                out.actions = tokenTransition.actions.map((action) => ({
+                  nullifier: Buffer.from(action.nullifier).toString('hex'),
+                  rk: Buffer.from(action.rk).toString('hex'),
+                  cmx: Buffer.from(action.cmx).toString('hex'),
+                  encryptedNote: Buffer.from(action.encryptedNote).toString('hex'),
+                  cvNet: Buffer.from(action.cvNet).toString('hex'),
+                  spendAuthSig: Buffer.from(action.spendAuthSig).toString('hex')
+                }))
+                out.anchor = Buffer.from(tokenTransition.anchor).toString('hex')
+                out.proof = Buffer.from(tokenTransition.proof).toString('hex')
+                out.bindingsSignature = Buffer.from(tokenTransition.bindingsSignature).toString('hex')
+
+                break
+              }
             }
             break
           }
           case true: {
             out = {
-              action: BatchEnum[transition.actionTypeNumber],
+              // pshenmic-dpp numbers index only delete as 7, which is TOKEN_MINT in BatchEnum
+              action: transition.actionTypeNumber === DocumentActionEnum.IndexOnlyDelete
+                ? BatchEnum.IndexOnlyDelete
+                : BatchEnum[transition.actionTypeNumber],
               id: transition.id.base58(),
               dataContractId: transition.dataContractId.base58(),
               revision: String(transition.revision ?? 0),
@@ -918,6 +1046,23 @@ const decodeStateTransition = async (base64) => {
                       minimumTokenCost: transferTransition.base.tokenPaymentInfo.minimumTokenCost?.toString() ?? null,
                       maximumTokenCost: transferTransition.base.tokenPaymentInfo.maximumTokenCost?.toString() ?? null,
                       gasFeesPaidBy: transferTransition.base.tokenPaymentInfo.gasFeesPaidBy
+                    }
+                  : null
+
+                break
+              }
+              case DocumentActionEnum.IndexOnlyDelete: {
+                const indexOnlyDeleteTransition = transition.indexOnlyDeleteTransition
+
+                out.data = indexOnlyDeleteTransition.data
+
+                out.tokenPaymentInfo = indexOnlyDeleteTransition.base.tokenPaymentInfo
+                  ? {
+                      paymentTokenContractId: indexOnlyDeleteTransition.base.tokenPaymentInfo.paymentTokenContractId?.base58() ?? null,
+                      tokenContractPosition: indexOnlyDeleteTransition.base.tokenPaymentInfo.tokenContractPosition,
+                      minimumTokenCost: indexOnlyDeleteTransition.base.tokenPaymentInfo.minimumTokenCost?.toString() ?? null,
+                      maximumTokenCost: indexOnlyDeleteTransition.base.tokenPaymentInfo.maximumTokenCost?.toString() ?? null,
+                      gasFeesPaidBy: indexOnlyDeleteTransition.base.tokenPaymentInfo.gasFeesPaidBy
                     }
                   : null
 
@@ -1622,6 +1767,219 @@ const decodeStateTransition = async (base64) => {
           bech32m: identityCreateFromShieldedPool.sendToAddressOnCreationFailure.toBech32m(NETWORK)
         }
       }
+      decoded.raw = Buffer.from(stateTransition.bytes()).toString('hex')
+
+      break
+    }
+    case StateTransitionEnum.SHIELD_FROM_IDENTITY: {
+      const shieldFromIdentityTransition = ShieldFromIdentityTransitionWASM.fromStateTransition(stateTransition)
+
+      decoded.identityId = shieldFromIdentityTransition.identityId.base58()
+      decoded.identityNonce = String(shieldFromIdentityTransition.nonce)
+      decoded.userFeeIncrease = shieldFromIdentityTransition.userFeeIncrease
+      decoded.amount = shieldFromIdentityTransition.amount.toString()
+      decoded.actions = shieldFromIdentityTransition.actions.map((action) => ({
+        nullifier: Buffer.from(action.nullifier).toString('hex'),
+        rk: Buffer.from(action.rk).toString('hex'),
+        cmx: Buffer.from(action.cmx).toString('hex'),
+        encryptedNote: Buffer.from(action.encryptedNote).toString('hex'),
+        cvNet: Buffer.from(action.cvNet).toString('hex'),
+        spendAuthSig: Buffer.from(action.spendAuthSig).toString('hex')
+      }))
+      decoded.anchor = Buffer.from(shieldFromIdentityTransition.anchor).toString('hex')
+      decoded.proof = Buffer.from(shieldFromIdentityTransition.proof).toString('hex')
+      decoded.bindingsSignature = Buffer.from(shieldFromIdentityTransition.bindingsSignature).toString('hex')
+      decoded.signaturePublicKeyId = shieldFromIdentityTransition.signaturePublicKeyId
+      decoded.signature = Buffer.from(shieldFromIdentityTransition.signature).toString('hex')
+      decoded.raw = Buffer.from(stateTransition.bytes()).toString('hex')
+
+      break
+    }
+    case StateTransitionEnum.IDENTITY_TOP_UP_FROM_SHIELDED_POOL: {
+      const identityTopUpFromShieldedPool = IdentityTopUpFromShieldedPoolTransitionWASM.fromStateTransition(stateTransition)
+
+      decoded.identityId = identityTopUpFromShieldedPool.identityId.base58()
+      decoded.topUpAmount = identityTopUpFromShieldedPool.topUpAmount.toString()
+      decoded.actions = identityTopUpFromShieldedPool.actions.map((action) => ({
+        nullifier: Buffer.from(action.nullifier).toString('hex'),
+        rk: Buffer.from(action.rk).toString('hex'),
+        cmx: Buffer.from(action.cmx).toString('hex'),
+        encryptedNote: Buffer.from(action.encryptedNote).toString('hex'),
+        cvNet: Buffer.from(action.cvNet).toString('hex'),
+        spendAuthSig: Buffer.from(action.spendAuthSig).toString('hex')
+      }))
+      decoded.anchor = Buffer.from(identityTopUpFromShieldedPool.anchor).toString('hex')
+      decoded.proof = Buffer.from(identityTopUpFromShieldedPool.proof).toString('hex')
+      decoded.bindingsSignature = Buffer.from(identityTopUpFromShieldedPool.bindingsSignature).toString('hex')
+      decoded.raw = Buffer.from(stateTransition.bytes()).toString('hex')
+
+      break
+    }
+    case StateTransitionEnum.IDENTITY_KEY_LIMITS_UPDATE: {
+      const identityKeyLimitsUpdateTransition = IdentityKeyLimitsUpdateTransitionWASM.fromStateTransition(stateTransition)
+
+      decoded.identityId = identityKeyLimitsUpdateTransition.identityId.base58()
+      decoded.identityNonce = String(identityKeyLimitsUpdateTransition.nonce)
+      decoded.userFeeIncrease = identityKeyLimitsUpdateTransition.userFeeIncrease
+      decoded.keyId = identityKeyLimitsUpdateTransition.keyId
+      decoded.totalBudget = identityKeyLimitsUpdateTransition.totalBudget?.toString() ?? null
+      decoded.expiresAt = identityKeyLimitsUpdateTransition.expiresAt?.toString() ?? null
+      decoded.signaturePublicKeyId = identityKeyLimitsUpdateTransition.signaturePublicKeyId
+      decoded.signature = Buffer.from(identityKeyLimitsUpdateTransition.signature).toString('hex')
+      decoded.raw = Buffer.from(stateTransition.bytes()).toString('hex')
+
+      break
+    }
+    case StateTransitionEnum.CONTRACT_USER_MODERATION: {
+      const contractUserModerationTransition = ContractUserModerationTransitionWASM.fromStateTransition(stateTransition)
+
+      const { action } = contractUserModerationTransition
+
+      decoded.ownerId = contractUserModerationTransition.ownerId.base58()
+      decoded.dataContractId = contractUserModerationTransition.dataContractId.base58()
+      decoded.identityContractNonce = String(contractUserModerationTransition.identityContractNonce)
+      decoded.userFeeIncrease = contractUserModerationTransition.userFeeIncrease
+      decoded.action = {
+        type: action.$type,
+        identityId: action.identityId ? new IdentifierWASM(action.identityId).base58() : null,
+        until: action.until !== undefined ? String(action.until) : null,
+        documentTypeName: action.documentTypeName ?? null,
+        documentId: action.documentId ? new IdentifierWASM(action.documentId).base58() : null,
+        document: action.document ? Buffer.from(action.document).toString('hex') : null,
+        fields: action.fields ?? null,
+        reason: action.reason
+          ? {
+              code: action.reason.code ?? null,
+              text: action.reason.text,
+              documents: (action.reason.documents ?? []).map(document => ({
+                documentTypeName: document.documentTypeName,
+                documentId: new IdentifierWASM(document.documentId).base58()
+              })),
+              reasonDocumentId: action.reason.reasonDocumentId
+                ? new IdentifierWASM(action.reason.reasonDocumentId).base58()
+                : null
+            }
+          : null
+      }
+      decoded.signaturePublicKeyId = contractUserModerationTransition.signaturePublicKeyId
+      decoded.signature = Buffer.from(contractUserModerationTransition.signature).toString('hex')
+      decoded.raw = Buffer.from(stateTransition.bytes()).toString('hex')
+
+      break
+    }
+    case StateTransitionEnum.CONTRACT_FEE_CLAIM: {
+      const contractFeeClaimTransition = ContractFeeClaimTransitionWASM.fromStateTransition(stateTransition)
+
+      decoded.ownerId = contractFeeClaimTransition.ownerId.base58()
+      decoded.dataContractId = contractFeeClaimTransition.dataContractId.base58()
+      decoded.identityContractNonce = String(contractFeeClaimTransition.identityContractNonce)
+      decoded.userFeeIncrease = contractFeeClaimTransition.userFeeIncrease
+      decoded.pot = contractFeeClaimTransition.pot
+      decoded.signaturePublicKeyId = contractFeeClaimTransition.signaturePublicKeyId
+      decoded.signature = Buffer.from(contractFeeClaimTransition.signature).toString('hex')
+      decoded.raw = Buffer.from(stateTransition.bytes()).toString('hex')
+
+      break
+    }
+    case StateTransitionEnum.TOKEN_SHIELDED_TRANSFER_WITH_SHIELDED_FEE: {
+      const tokenShieldedTransferTransition = TokenShieldedTransferWithShieldedFeeTransitionWASM.fromStateTransition(stateTransition)
+
+      decoded.dataContractId = tokenShieldedTransferTransition.dataContractId.base58()
+      decoded.tokenContractPosition = tokenShieldedTransferTransition.tokenContractPosition
+      decoded.tokenId = tokenShieldedTransferTransition.tokenId.base58()
+      decoded.tokenActions = tokenShieldedTransferTransition.tokenActions.map((action) => ({
+        nullifier: Buffer.from(action.nullifier).toString('hex'),
+        rk: Buffer.from(action.rk).toString('hex'),
+        cmx: Buffer.from(action.cmx).toString('hex'),
+        encryptedNote: Buffer.from(action.encryptedNote).toString('hex'),
+        cvNet: Buffer.from(action.cvNet).toString('hex'),
+        spendAuthSig: Buffer.from(action.spendAuthSig).toString('hex')
+      }))
+      decoded.tokenAnchor = Buffer.from(tokenShieldedTransferTransition.tokenAnchor).toString('hex')
+      decoded.tokenProof = Buffer.from(tokenShieldedTransferTransition.tokenProof).toString('hex')
+      decoded.tokenBindingSignature = Buffer.from(tokenShieldedTransferTransition.tokenBindingSignature).toString('hex')
+      decoded.feeActions = tokenShieldedTransferTransition.feeActions.map((action) => ({
+        nullifier: Buffer.from(action.nullifier).toString('hex'),
+        rk: Buffer.from(action.rk).toString('hex'),
+        cmx: Buffer.from(action.cmx).toString('hex'),
+        encryptedNote: Buffer.from(action.encryptedNote).toString('hex'),
+        cvNet: Buffer.from(action.cvNet).toString('hex'),
+        spendAuthSig: Buffer.from(action.spendAuthSig).toString('hex')
+      }))
+      decoded.feeAnchor = Buffer.from(tokenShieldedTransferTransition.feeAnchor).toString('hex')
+      decoded.feeProof = Buffer.from(tokenShieldedTransferTransition.feeProof).toString('hex')
+      decoded.feeBindingSignature = Buffer.from(tokenShieldedTransferTransition.feeBindingSignature).toString('hex')
+      decoded.creditAmount = tokenShieldedTransferTransition.creditAmount.toString()
+      decoded.raw = Buffer.from(stateTransition.bytes()).toString('hex')
+
+      break
+    }
+    case StateTransitionEnum.TOKEN_UNSHIELD_WITH_SHIELDED_FEE: {
+      const tokenUnshieldTransition = TokenUnshieldWithShieldedFeeTransitionWASM.fromStateTransition(stateTransition)
+
+      decoded.dataContractId = tokenUnshieldTransition.dataContractId.base58()
+      decoded.tokenContractPosition = tokenUnshieldTransition.tokenContractPosition
+      decoded.tokenId = tokenUnshieldTransition.tokenId.base58()
+      decoded.recipientId = tokenUnshieldTransition.recipientId.base58()
+      decoded.amount = tokenUnshieldTransition.amount.toString()
+      decoded.tokenActions = tokenUnshieldTransition.tokenActions.map((action) => ({
+        nullifier: Buffer.from(action.nullifier).toString('hex'),
+        rk: Buffer.from(action.rk).toString('hex'),
+        cmx: Buffer.from(action.cmx).toString('hex'),
+        encryptedNote: Buffer.from(action.encryptedNote).toString('hex'),
+        cvNet: Buffer.from(action.cvNet).toString('hex'),
+        spendAuthSig: Buffer.from(action.spendAuthSig).toString('hex')
+      }))
+      decoded.tokenAnchor = Buffer.from(tokenUnshieldTransition.tokenAnchor).toString('hex')
+      decoded.tokenProof = Buffer.from(tokenUnshieldTransition.tokenProof).toString('hex')
+      decoded.tokenBindingSignature = Buffer.from(tokenUnshieldTransition.tokenBindingSignature).toString('hex')
+      decoded.feeActions = tokenUnshieldTransition.feeActions.map((action) => ({
+        nullifier: Buffer.from(action.nullifier).toString('hex'),
+        rk: Buffer.from(action.rk).toString('hex'),
+        cmx: Buffer.from(action.cmx).toString('hex'),
+        encryptedNote: Buffer.from(action.encryptedNote).toString('hex'),
+        cvNet: Buffer.from(action.cvNet).toString('hex'),
+        spendAuthSig: Buffer.from(action.spendAuthSig).toString('hex')
+      }))
+      decoded.feeAnchor = Buffer.from(tokenUnshieldTransition.feeAnchor).toString('hex')
+      decoded.feeProof = Buffer.from(tokenUnshieldTransition.feeProof).toString('hex')
+      decoded.feeBindingSignature = Buffer.from(tokenUnshieldTransition.feeBindingSignature).toString('hex')
+      decoded.creditAmount = tokenUnshieldTransition.creditAmount.toString()
+      decoded.raw = Buffer.from(stateTransition.bytes()).toString('hex')
+
+      break
+    }
+    case StateTransitionEnum.TOKEN_PURCHASE_FROM_SHIELDED_POOL: {
+      const tokenPurchaseTransition = TokenPurchaseFromShieldedPoolTransitionWASM.fromStateTransition(stateTransition)
+
+      decoded.dataContractId = tokenPurchaseTransition.dataContractId.base58()
+      decoded.tokenContractPosition = tokenPurchaseTransition.tokenContractPosition
+      decoded.tokenId = tokenPurchaseTransition.tokenId.base58()
+      decoded.amount = tokenPurchaseTransition.tokenCount.toString()
+      decoded.totalAgreedPrice = tokenPurchaseTransition.totalAgreedPrice.toString()
+      decoded.tokenActions = tokenPurchaseTransition.tokenActions.map((action) => ({
+        nullifier: Buffer.from(action.nullifier).toString('hex'),
+        rk: Buffer.from(action.rk).toString('hex'),
+        cmx: Buffer.from(action.cmx).toString('hex'),
+        encryptedNote: Buffer.from(action.encryptedNote).toString('hex'),
+        cvNet: Buffer.from(action.cvNet).toString('hex'),
+        spendAuthSig: Buffer.from(action.spendAuthSig).toString('hex')
+      }))
+      decoded.tokenAnchor = Buffer.from(tokenPurchaseTransition.tokenAnchor).toString('hex')
+      decoded.tokenProof = Buffer.from(tokenPurchaseTransition.tokenProof).toString('hex')
+      decoded.tokenBindingSignature = Buffer.from(tokenPurchaseTransition.tokenBindingSignature).toString('hex')
+      decoded.feeActions = tokenPurchaseTransition.feeActions.map((action) => ({
+        nullifier: Buffer.from(action.nullifier).toString('hex'),
+        rk: Buffer.from(action.rk).toString('hex'),
+        cmx: Buffer.from(action.cmx).toString('hex'),
+        encryptedNote: Buffer.from(action.encryptedNote).toString('hex'),
+        cvNet: Buffer.from(action.cvNet).toString('hex'),
+        spendAuthSig: Buffer.from(action.spendAuthSig).toString('hex')
+      }))
+      decoded.feeAnchor = Buffer.from(tokenPurchaseTransition.feeAnchor).toString('hex')
+      decoded.feeProof = Buffer.from(tokenPurchaseTransition.feeProof).toString('hex')
+      decoded.feeBindingSignature = Buffer.from(tokenPurchaseTransition.feeBindingSignature).toString('hex')
+      decoded.creditAmount = tokenPurchaseTransition.creditAmount.toString()
       decoded.raw = Buffer.from(stateTransition.bytes()).toString('hex')
 
       break

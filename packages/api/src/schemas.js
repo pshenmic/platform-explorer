@@ -83,12 +83,20 @@ const schemaTypes = [
                 'UNSHIELD',
                 'SHIELD_FROM_ASSET_LOCK',
                 'SHIELDED_WITHDRAWAL',
-                'IDENTITY_CREATE_FROM_SHIELDED_POOL'
+                'IDENTITY_CREATE_FROM_SHIELDED_POOL',
+                'SHIELD_FROM_IDENTITY',
+                'IDENTITY_TOP_UP_FROM_SHIELDED_POOL',
+                'IDENTITY_KEY_LIMITS_UPDATE',
+                'CONTRACT_USER_MODERATION',
+                'CONTRACT_FEE_CLAIM',
+                'TOKEN_SHIELDED_TRANSFER_WITH_SHIELDED_FEE',
+                'TOKEN_UNSHIELD_WITH_SHIELDED_FEE',
+                'TOKEN_PURCHASE_FROM_SHIELDED_POOL'
               ]
             },
             {
               type: 'number',
-              enum: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
+              enum: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28]
             }
           ]
         }
@@ -116,12 +124,20 @@ const schemaTypes = [
                 'TOKEN_EMERGENCY_ACTION',
                 'TOKEN_CONFIG_UPDATE',
                 'TOKEN_DIRECT_PURCHASE',
-                'TOKEN_SET_PRICE_FOR_DIRECT_PURCHASE'
+                'TOKEN_SET_PRICE_FOR_DIRECT_PURCHASE',
+                'DOCUMENT_INDEX_ONLY_DELETE',
+                'TOKEN_SHIELD',
+                'TOKEN_MINT_TO_POOL',
+                'TOKEN_BURN_FROM_POOL',
+                'TOKEN_CLAIM_TO_POOL',
+                'TOKEN_DIRECT_PURCHASE_TO_POOL',
+                'TOKEN_UNSHIELD',
+                'TOKEN_SHIELDED_TRANSFER'
               ]
             },
             {
               type: 'number',
-              enum: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]
+              enum: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24]
             }
           ]
         }

@@ -10,6 +10,13 @@ const TokenTransitionsEnum = {
   ConfigUpdate: 8,
   DirectPurchase: 9,
   SetPriceForDirectPurchase: 10,
+  Shield: 11,
+  Unshield: 12,
+  ShieldedTransfer: 13,
+  MintToPool: 14,
+  BurnFromPool: 15,
+  ClaimToPool: 16,
+  DirectPurchaseToPool: 17,
 
   0: 'Burn',
   1: 'Mint',
@@ -21,7 +28,14 @@ const TokenTransitionsEnum = {
   7: 'EmergencyAction',
   8: 'ConfigUpdate',
   9: 'DirectPurchase',
-  10: 'SetPriceForDirectPurchase'
+  10: 'SetPriceForDirectPurchase',
+  11: 'Shield',
+  12: 'Unshield',
+  13: 'ShieldedTransfer',
+  14: 'MintToPool',
+  15: 'BurnFromPool',
+  16: 'ClaimToPool',
+  17: 'DirectPurchaseToPool'
 }
 
 module.exports = TokenTransitionsEnum
