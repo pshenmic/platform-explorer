@@ -1,3 +1,5 @@
+const DocumentActionEnum = require('./DocumentActionEnum')
+
 const BatchEnum = {
   DOCUMENT_CREATE: 0,
   DOCUMENT_REPLACE: 1,
@@ -78,5 +80,10 @@ BatchEnum.ClaimToPool = BatchEnum[21]
 BatchEnum.DirectPurchaseToPool = BatchEnum[22]
 BatchEnum.Unshield = BatchEnum[23]
 BatchEnum.ShieldedTransfer = BatchEnum[24]
+
+// documents keep the dpp action number, index only delete is 7 there, which is TOKEN_MINT here
+BatchEnum.fromDocumentAction = (actionTypeNumber) => actionTypeNumber === DocumentActionEnum.IndexOnlyDelete
+  ? BatchEnum.IndexOnlyDelete
+  : BatchEnum[actionTypeNumber]
 
 module.exports = BatchEnum

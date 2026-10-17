@@ -929,7 +929,7 @@ const decodeStateTransition = async (base64) => {
           }
           case true: {
             out = {
-              action: BatchEnum[transition.actionTypeNumber],
+              action: BatchEnum.fromDocumentAction(transition.actionTypeNumber),
               id: transition.id.base58(),
               dataContractId: transition.dataContractId.base58(),
               revision: String(transition.revision ?? 0),
