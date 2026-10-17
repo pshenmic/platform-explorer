@@ -189,13 +189,6 @@ const fetchTokenInfoByRows = async (rows, sdk) => {
   return dataContractsWithTokens.reduce((acc, contract) => contract ? [...acc, ...contract.filter((token) => token !== undefined)] : acc, [])
 }
 
-// documents store the dpp document action number, which matches BatchEnum only up to
-// UpdatePrice, index only delete is 7 there but 17 in BatchEnum, where 7 is TOKEN_MINT
-const getDocumentBatchType = (actionTypeNumber) =>
-  actionTypeNumber === DocumentActionEnum.IndexOnlyDelete
-    ? BatchEnum.IndexOnlyDelete
-    : BatchEnum[actionTypeNumber]
-
 const getActionTakersValue = (actionTakers) => {
   const value = actionTakers
   return typeof value === 'number' ? value : value?.base58()
@@ -936,7 +929,7 @@ const decodeStateTransition = async (base64) => {
           }
           case true: {
             out = {
-              action: getDocumentBatchType(transition.actionTypeNumber),
+              action: BatchEnum[transition.actionTypeNumber],
               id: transition.id.base58(),
               dataContractId: transition.dataContractId.base58(),
               revision: String(transition.revision ?? 0),
@@ -2571,7 +2564,6 @@ module.exports = {
   getAliasStateByVote,
   buildIndexBuffer,
   outputScriptToAddress,
-  getDocumentBatchType,
   getAliasFromDocument,
   fetchTokenInfoByRows,
   convertToHomographSafeChars,

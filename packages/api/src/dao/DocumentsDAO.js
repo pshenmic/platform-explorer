@@ -1,7 +1,8 @@
 const Document = require('../models/Document')
 const PaginatedResultSet = require('../models/PaginatedResultSet')
 const DocumentActionEnum = require('../enums/DocumentActionEnum')
-const { decodeStateTransition, getAliasFromDocument, getAliasDocumentForIdentifier, getAliasDocumentForIdentifiers, getDocumentBatchType } = require('../utils')
+const { decodeStateTransition, getAliasFromDocument, getAliasDocumentForIdentifier, getAliasDocumentForIdentifiers } = require('../utils')
+const BatchEnum = require('../enums/BatchEnum')
 
 module.exports = class DocumentsDAO {
   constructor (knex, sdk) {
@@ -78,7 +79,7 @@ module.exports = class DocumentsDAO {
     const document = Document.fromRow({
       ...row,
       data: !row.deleted ? row.data : undefined,
-      transition_type: getDocumentBatchType(row.transition_type),
+      transition_type: BatchEnum[row.transition_type],
       owner: {
         identifier: row.document_owner?.trim(),
         aliases: aliases ?? []
@@ -181,7 +182,7 @@ module.exports = class DocumentsDAO {
       return Document.fromRow({
         ...row,
         data: row.document_data,
-        transition_type: getDocumentBatchType(row.transition_type),
+        transition_type: BatchEnum[row.transition_type],
         owner: {
           identifier: row.document_owner?.trim(),
           aliases: aliases ?? []
@@ -241,7 +242,7 @@ module.exports = class DocumentsDAO {
 
       const document = Document.fromRow({
         ...row,
-        transition_type: getDocumentBatchType(row.transition_type),
+        transition_type: BatchEnum[row.transition_type],
         owner: {
           identifier: row.owner?.trim(),
           aliases: aliases ?? []
