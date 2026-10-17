@@ -29,7 +29,8 @@ module.exports = class TransactionsDAO {
         'state_transitions.amount as amount'
       )
       .select(duplicatesSubquery.as('duplicates'))
-      .whereILike('state_transitions.hash', hash)
+      // the indexer stores hashes uppercase, an exact match can use the unique index
+      .where('state_transitions.hash', hash.toUpperCase())
       .leftJoin('blocks', 'blocks.hash', 'state_transitions.block_hash')
       .leftJoin('shielded_transitions', 'shielded_transitions.state_transition_id', 'state_transitions.id')
 
@@ -167,6 +168,18 @@ module.exports = class TransactionsDAO {
       .from('subquery')
       .as('sorted_subquery')
 
+    // blocks are only needed to count by timestamp, joining them for every row dominates the query
+    const countSubquery = this.knex(transactionSubquery.clone().as('state_transitions_subquery'))
+      .count('* as total_count')
+      .whereRaw(filtersQuery, filtersBindings)
+      .modify(qb => {
+        if (timestampsQuery) {
+          qb.leftJoin('blocks', 'blocks.height', 'block_height')
+            .whereRaw(timestampsQuery, timestampBindings)
+        }
+      })
+      .as('total_count')
+
     const rows = await this.knex(sortedSubquery)
       .select('tx_hash',
         'data', 'type', 'index', 'batch_type',
@@ -174,7 +187,7 @@ module.exports = class TransactionsDAO {
         'block_hash', 'id', 'owner',
         'block_height', 'timestamp',
         'total_count.total_count')
-      .join(this.knex.with('subquery', subquery).select(this.knex.raw('count(*) over () as total_count')).limit(1).from('subquery').as('total_count'), this.knex.raw(true), '=', this.knex.raw(true))
+      .join(countSubquery, this.knex.raw(true), '=', this.knex.raw(true))
 
     const totalCount = rows.length > 0 ? Number(rows[0].total_count) : 0
 
@@ -217,40 +230,20 @@ module.exports = class TransactionsDAO {
         )
       )
 
-    const subRanges = this.knex('ranges')
-      .select(this.knex.raw('min(date_from) as min_date'))
-      .select(this.knex.raw('max(date_to) as max_date'))
-      .limit(1)
+    // aggregated per range through an index range scan, a join on the range bounds rescans every block per range
+    const rangeData = this.knex('blocks')
+      .leftJoin('state_transitions', 'state_transitions.block_height', 'blocks.height')
+      .whereRaw('blocks.timestamp > ranges.date_from and blocks.timestamp <= ranges.date_to')
+      .select(this.knex.raw('count(state_transitions.gas_used) as tx_count'))
+      .select(this.knex.raw('min(blocks.height) as block_height'))
 
-    const blocksSubquery = this.knex('blocks')
-      .with('sub_ranges', subRanges)
-      .whereRaw('blocks.timestamp > (SELECT min_date FROM sub_ranges) AND blocks.timestamp <= (SELECT max_date FROM sub_ranges)')
-      .as('blocks_sub')
-
-    const dataSubquery = this.knex(blocksSubquery)
-      .leftJoin('state_transitions', 'state_transitions.block_height', 'blocks_sub.height')
-      .select('blocks_sub.timestamp', 'state_transitions.gas_used', 'blocks_sub.hash', 'blocks_sub.height')
-
-    const heightSubquery = this.knex
+    const rows = await this.knex
       .with('ranges', ranges)
-      .with(
-        'filtered_data',
-        dataSubquery
-      )
-      .select('date_from')
-      .select(this.knex.raw('count(gas_used) as tx_count'))
-      .select(this.knex.raw('min(height) as block_height'))
-      .leftJoin('filtered_data', function () {
-        this.on('timestamp', '>', 'date_from').andOn('timestamp', '<=', 'date_to')
-      })
+      .select('tx_count', 'range_data.block_height as block_height', 'blocks.hash as block_hash', 'date_from')
       .from('ranges')
-      .groupBy('date_from')
-      .as('sub')
-
-    const rows = await this.knex(heightSubquery)
-      .select('tx_count', 'block_height', 'hash as block_hash', 'date_from')
+      .joinRaw('left join lateral (?) as range_data on true', [rangeData])
       .leftJoin('blocks', function () {
-        this.on('blocks.height', '=', 'block_height').andOnNotNull('block_height')
+        this.on('blocks.height', '=', 'range_data.block_height').andOnNotNull('range_data.block_height')
       })
 
     return rows
@@ -455,45 +448,26 @@ module.exports = class TransactionsDAO {
         )
       )
 
-    const subRanges = this.knex('ranges')
-      .select(this.knex.raw('min(date_from) as min_date'))
-      .select(this.knex.raw('max(date_to) as max_date'))
-      .limit(1)
-
-    const blocksSubquery = this.knex('blocks')
-      .with('sub_ranges', subRanges)
-      .whereRaw('blocks.timestamp > (SELECT min_date FROM sub_ranges) AND blocks.timestamp <= (SELECT max_date FROM sub_ranges)')
-      .as('blocks_sub')
-
     const shieldedTransitionsSubquery = this.knex('shielded_transitions')
       .select('shielded_transitions.amount as amount', 'state_transitions.block_height as block_height')
       .whereIn('state_transition_type', transitionTypes)
       .leftJoin('state_transitions', 'shielded_transitions.state_transition_id', 'state_transitions.id')
       .as('shielded_transitions_subquery')
 
-    const dataSubquery = this.knex(blocksSubquery)
-      .leftJoin(shieldedTransitionsSubquery, 'shielded_transitions_subquery.block_height', 'blocks_sub.height')
-      .select('blocks_sub.timestamp', 'shielded_transitions_subquery.amount', 'blocks_sub.hash', 'blocks_sub.height')
+    // aggregated per range through an index range scan, a join on the range bounds rescans every block per range
+    const rangeData = this.knex('blocks')
+      .leftJoin(shieldedTransitionsSubquery, 'shielded_transitions_subquery.block_height', 'blocks.height')
+      .whereRaw('blocks.timestamp > ranges.date_from and blocks.timestamp <= ranges.date_to')
+      .select(this.knex.raw('sum(shielded_transitions_subquery.amount) as total_amount'))
+      .select(this.knex.raw('min(blocks.height) as block_height'))
 
-    const heightSubquery = this.knex.with('ranges', ranges)
-      .with(
-        'filtered_data',
-        dataSubquery
-      )
-      .select('date_from')
-      .select(this.knex.raw('sum(amount) as total_amount'))
-      .select(this.knex.raw('min(height) as block_height'))
-      .leftJoin('filtered_data', function () {
-        this.on('timestamp', '>', 'date_from').andOn('timestamp', '<=', 'date_to')
-      })
+    const rows = await this.knex
+      .with('ranges', ranges)
+      .select('total_amount', 'range_data.block_height as block_height', 'blocks.hash as block_hash', 'date_from')
       .from('ranges')
-      .groupBy('date_from')
-      .as('sub')
-
-    const rows = await this.knex(heightSubquery)
-      .select('total_amount', 'block_height', 'hash as block_hash', 'date_from')
+      .joinRaw('left join lateral (?) as range_data on true', [rangeData])
       .leftJoin('blocks', function () {
-        this.on('blocks.height', '=', 'block_height').andOnNotNull('block_height')
+        this.on('blocks.height', '=', 'range_data.block_height').andOnNotNull('range_data.block_height')
       })
 
     return rows

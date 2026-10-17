@@ -4,6 +4,7 @@ const supertest = require('supertest')
 const server = require('../../src/server')
 const { getKnex } = require('../../src/utils')
 const fixtures = require('../utils/fixtures')
+const mockDocumentsQuery = require('../utils/mockDocumentsQuery')
 const StateTransitionEnum = require('../../src/enums/StateTransitionEnum')
 const tenderdashRpc = require('../../src/tenderdashRpc')
 const { IdentifierWASM } = require('pshenmic-dpp')
@@ -32,7 +33,7 @@ describe('Transaction routes', () => {
       }
     }))
 
-    mock.method(DocumentsController.prototype, 'query', async () => [{
+    mock.method(DocumentsController.prototype, 'query', mockDocumentsQuery({
       properties: {
         label: 'alias',
         parentDomainName: 'dash',
@@ -40,7 +41,7 @@ describe('Transaction routes', () => {
       },
       id: new IdentifierWASM('AQV2G2Egvqk8jwDBAcpngjKYcwAkck8Cecs5AjYJxfvW'),
       createdAt: BigInt(aliasTimestamp.getTime())
-    }])
+    }))
 
     const startDate = new Date(new Date() - 1000 * 60 * 60)
 

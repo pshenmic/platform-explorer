@@ -83,7 +83,8 @@ module.exports = class DataContractsDAO {
         'state_transition_hash',
         'keywords',
         'description',
-        this.knex.raw('ROW_NUMBER() OVER(PARTITION BY identifier ORDER BY version DESC) as rank')
+        this.knex.raw('ROW_NUMBER() OVER(PARTITION BY identifier ORDER BY version DESC) as rank'),
+        this.knex.raw('FIRST_VALUE(state_transition_hash) OVER(PARTITION BY identifier ORDER BY version ASC) as first_state_transition_hash')
       )
 
     const subquery = this.knex
@@ -105,13 +106,8 @@ module.exports = class DataContractsDAO {
         .andWhere('revision', '=', '1')
         .leftJoin('data_contracts', 'data_contracts.id', 'documents.data_contract_id')
         .as('documents_count'))
-      .select(this.knex
-        .select('state_transition_hash')
-        .whereRaw('data_contracts_with_version.identifier = d.identifier')
-        .orderBy('rank', 'DESC')
-        .limit(1)
-        .fromRaw('data_contracts_with_version d')
-        .as('tx_hash'))
+      // the creation transaction, taken from the oldest version
+      .select('first_state_transition_hash as tx_hash')
       .leftJoin(
         this.knex('tokens')
           .select('data_contract_id')

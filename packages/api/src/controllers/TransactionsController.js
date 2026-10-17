@@ -434,9 +434,10 @@ class TransactionsController {
   }
 
   getShieldedPool = async (request, response) => {
-    const poolBalance = await this.sdk.shielded.getShieldedPoolState()
-
-    const notesCount = await this.sdk.shielded.getShieldedNotesCount()
+    const [poolBalance, notesCount] = await Promise.all([
+      this.sdk.shielded.getShieldedPoolState(),
+      this.sdk.shielded.getShieldedNotesCount()
+    ])
 
     response.send({
       poolBalance: poolBalance !== undefined ? String(poolBalance) : null,

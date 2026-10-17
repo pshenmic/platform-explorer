@@ -216,6 +216,8 @@ impl PSQLProcessor {
             SystemDataContract::TokenHistory => {}
             SystemDataContract::KeywordSearch => {}
             SystemDataContract::DocumentHistory => {}
+            SystemDataContract::AppConnect => {}
+            SystemDataContract::ModerationCharters => {}
         }
     }
 }

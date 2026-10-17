@@ -5,6 +5,7 @@ const cbor = require('cbor')
 const server = require('../../src/server')
 const { getKnex } = require('../../src/utils')
 const fixtures = require('../utils/fixtures')
+const mockDocumentsQuery = require('../utils/mockDocumentsQuery')
 const StateTransitionEnum = require('../../src/enums/StateTransitionEnum')
 const TokenTransitionsEnum = require('../../src/enums/TokenTransitionsEnum')
 const DocumentActionEnum = require('../../src/enums/DocumentActionEnum')
@@ -497,7 +498,7 @@ describe('Identities routes', () => {
 
   describe('getIdentities()', async () => {
     before(() => {
-      mock.method(DocumentsController.prototype, 'query', async () => [{
+      mock.method(DocumentsController.prototype, 'query', mockDocumentsQuery({
         properties: {
           label: 'test',
           parentDomainName: 'test',
@@ -505,7 +506,7 @@ describe('Identities routes', () => {
         },
         id: new IdentifierWASM('Bwr4WHCPz5rFVAD87RqTs3izo4zpzwsEdKPWUT1NS1C7'),
         createdAt: 0
-      }])
+      }))
     })
 
     it('should return default set of identities', async () => {
@@ -763,7 +764,14 @@ describe('Identities routes', () => {
       const identities = []
       const aliases = []
 
-      mock.method(IdentitiesController.prototype, 'getIdentityBalance', async (identifier) => identities.find(({ identity }) => identity.identifier === identifier)?.balance)
+      mock.method(IdentitiesController.prototype, 'getIdentityByIdentifier', async (identifier) => {
+        const identityWASM = new IdentityWASM(identifier)
+
+        identityWASM.revision = mockIdentity.revision
+        identityWASM.balance = BigInt(identities.find(({ identity }) => identity.identifier === identifier)?.balance ?? 0)
+
+        return identityWASM
+      })
 
       for (let i = 0; i < 100; i++) {
         block = await fixtures.block(knex, { height: i + 1, timestamp: new Date(0) })
@@ -839,7 +847,14 @@ describe('Identities routes', () => {
       const identities = []
       const aliases = []
 
-      mock.method(IdentitiesController.prototype, 'getIdentityBalance', async (identifier) => identities.find(({ identity }) => identity.identifier === identifier)?.balance)
+      mock.method(IdentitiesController.prototype, 'getIdentityByIdentifier', async (identifier) => {
+        const identityWASM = new IdentityWASM(identifier)
+
+        identityWASM.revision = mockIdentity.revision
+        identityWASM.balance = BigInt(identities.find(({ identity }) => identity.identifier === identifier)?.balance ?? 0)
+
+        return identityWASM
+      })
 
       for (let i = 0; i < 100; i++) {
         block = await fixtures.block(knex, { height: i + 1, timestamp: new Date(0) })
@@ -918,7 +933,14 @@ describe('Identities routes', () => {
       const identities = []
       const aliases = []
 
-      mock.method(IdentitiesController.prototype, 'getIdentityBalance', async (identifier) => identities.find(({ identity }) => identity.identifier === identifier)?.balance)
+      mock.method(IdentitiesController.prototype, 'getIdentityByIdentifier', async (identifier) => {
+        const identityWASM = new IdentityWASM(identifier)
+
+        identityWASM.revision = mockIdentity.revision
+        identityWASM.balance = BigInt(identities.find(({ identity }) => identity.identifier === identifier)?.balance ?? 0)
+
+        return identityWASM
+      })
 
       for (let i = 0; i < 100; i++) {
         block = await fixtures.block(knex, { height: i + 1, timestamp: new Date(0) })
@@ -1004,7 +1026,7 @@ describe('Identities routes', () => {
     })
 
     it('should allow sort by tx count', async () => {
-      mock.method(IdentitiesController.prototype, 'getIdentityBalance', async () => BigInt(0))
+      mock.method(IdentitiesController.prototype, 'getIdentityByIdentifier', async () => mockIdentity)
       const identities = []
       const aliases = []
 
@@ -1087,7 +1109,7 @@ describe('Identities routes', () => {
     })
 
     it('should allow sort by balance', async () => {
-      mock.method(DocumentsController.prototype, 'query', async () => [{
+      mock.method(DocumentsController.prototype, 'query', mockDocumentsQuery({
         properties: {
           label: 'test',
           parentDomainName: 'test',
@@ -1095,7 +1117,7 @@ describe('Identities routes', () => {
         },
         id: new IdentifierWASM('Bwr4WHCPz5rFVAD87RqTs3izo4zpzwsEdKPWUT1NS1C7'),
         createdAt: 0
-      }])
+      }))
 
       const identities = []
       const aliases = []
@@ -1128,11 +1150,15 @@ describe('Identities routes', () => {
 
       mock.reset()
 
-      mock.method(IdentitiesController.prototype, 'getIdentityByIdentifier', async () => mockIdentity)
-
-      mock.method(IdentitiesController.prototype, 'getIdentityBalance', async (identifier) => {
+      mock.method(IdentitiesController.prototype, 'getIdentityByIdentifier', async (identifier) => {
         const { identity } = identities.find(({ identity }) => identity.identifier === identifier)
-        return identity.balance
+
+        const identityWASM = new IdentityWASM(identifier)
+
+        identityWASM.revision = mockIdentity.revision
+        identityWASM.balance = BigInt(identity.balance)
+
+        return identityWASM
       })
       mock.method(tenderdashRpc, 'getBlockByHeight', async () => ({
         block: {
@@ -1193,7 +1219,7 @@ describe('Identities routes', () => {
     })
 
     it('should return all identities when identity_type is omitted', async () => {
-      mock.method(IdentitiesController.prototype, 'getIdentityBalance', async () => 0)
+      mock.method(IdentitiesController.prototype, 'getIdentityByIdentifier', async () => mockIdentity)
 
       const regular = []
       const masternode = []
@@ -1219,7 +1245,7 @@ describe('Identities routes', () => {
     })
 
     it('should return only regular identities when identity_type=regular', async () => {
-      mock.method(IdentitiesController.prototype, 'getIdentityBalance', async () => 0)
+      mock.method(IdentitiesController.prototype, 'getIdentityByIdentifier', async () => mockIdentity)
 
       const regular = []
       const masternode = []
@@ -1249,7 +1275,7 @@ describe('Identities routes', () => {
     })
 
     it('should return only masternode identities when identity_type=masternode', async () => {
-      mock.method(IdentitiesController.prototype, 'getIdentityBalance', async () => 0)
+      mock.method(IdentitiesController.prototype, 'getIdentityByIdentifier', async () => mockIdentity)
 
       const regular = []
       const masternode = []
@@ -1279,7 +1305,7 @@ describe('Identities routes', () => {
     })
 
     it('should report the type of every identity', async () => {
-      mock.method(IdentitiesController.prototype, 'getIdentityBalance', async () => 0)
+      mock.method(IdentitiesController.prototype, 'getIdentityByIdentifier', async () => mockIdentity)
 
       const regular = []
       const masternode = []
@@ -1313,7 +1339,7 @@ describe('Identities routes', () => {
     })
 
     it('should filter by the masternode voting and operator types', async () => {
-      mock.method(IdentitiesController.prototype, 'getIdentityBalance', async () => 0)
+      mock.method(IdentitiesController.prototype, 'getIdentityByIdentifier', async () => mockIdentity)
 
       const byType = {}
 

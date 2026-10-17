@@ -17,12 +17,16 @@ module.exports = {
   CORE_BLOCK_HASH_CACHE_LIFE_INTERVAL: 14 * 86400000,
   CORE_NETWORK_CACHE_KEY: 'core_network',
   CORE_NETWORK_CACHE_LIFE_INTERVAL: 60000,
+  RATE_CACHE_KEY: 'rate',
+  RATE_CACHE_LIFE_INTERVAL: 60000,
   // Core targets a block every 2.5 minutes
   CORE_BLOCKS_PER_DAY: 576,
   DUFFS_PER_DASH: 100000000,
   CREDITS_PER_DASH: 100000000000,
   PROTX_LIST_CACHE_LIFE_INTERVAL: 60000,
   DPNS_CONTRACT: 'GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec',
+  // Drive limit for both the values of an 'in' clause and the documents returned
+  DAPI_DOCUMENTS_QUERY_LIMIT: 100,
   WITHDRAWAL_CONTRACT: '4fJLR2GYTPFdomuTVvNy3VRrvWgvkKPzqehEBpNf2nk6',
   NETWORK: process.env.NETWORK ?? 'testnet',
   GEOIP_PROVIDER: '@ip-location-db/dbip-city-mmdb',

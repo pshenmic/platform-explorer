@@ -13,6 +13,12 @@ use dpp::state_transition::batch_transition::token_mint_transition::v0::v0_metho
 use dpp::state_transition::batch_transition::token_set_price_for_direct_purchase_transition::v0::v0_methods::TokenSetPriceForDirectPurchaseTransitionV0Methods;
 use dpp::state_transition::batch_transition::token_transfer_transition::v0::v0_methods::TokenTransferTransitionV0Methods;
 use dpp::state_transition::batch_transition::token_unfreeze_transition::v0::v0_methods::TokenUnfreezeTransitionV0Methods;
+use dpp::state_transition::batch_transition::batched_transition::token_burn_from_pool_transition::v0::v0_methods::TokenBurnFromPoolTransitionV0Methods;
+use dpp::state_transition::batch_transition::batched_transition::token_claim_to_pool_transition::v0::v0_methods::TokenClaimToPoolTransitionV0Methods;
+use dpp::state_transition::batch_transition::batched_transition::token_direct_purchase_to_pool_transition::v0::v0_methods::TokenDirectPurchaseToPoolTransitionV0Methods;
+use dpp::state_transition::batch_transition::batched_transition::token_mint_to_pool_transition::v0::v0_methods::TokenMintToPoolTransitionV0Methods;
+use dpp::state_transition::batch_transition::batched_transition::token_shield_transition::v0::v0_methods::TokenShieldTransitionV0Methods;
+use dpp::state_transition::batch_transition::batched_transition::token_unshield_transition::v0::v0_methods::TokenUnshieldTransitionV0Methods;
 use crate::processor::psql::PSQLProcessor;
 
 impl PSQLProcessor {
@@ -234,6 +240,116 @@ impl PSQLProcessor {
                     transition.clone(),
                     None,
                     set_price.public_note(),
+                    owner_id,
+                    None,
+                    st_hash.clone(),
+                    sql_transaction,
+                )
+                .await
+                .unwrap(),
+            TokenTransition::Shield(shield) => self
+                .dao
+                .token_transition(
+                    transition.clone(),
+                    Some(shield.amount()),
+                    None,
+                    owner_id,
+                    None,
+                    st_hash.clone(),
+                    sql_transaction,
+                )
+                .await
+                .unwrap(),
+            TokenTransition::MintToPool(mint) => self
+                .dao
+                .token_transition(
+                    transition.clone(),
+                    Some(mint.amount()),
+                    mint.public_note(),
+                    owner_id,
+                    None,
+                    st_hash.clone(),
+                    sql_transaction,
+                )
+                .await
+                .unwrap(),
+            TokenTransition::BurnFromPool(burn) => self
+                .dao
+                .token_transition(
+                    transition.clone(),
+                    Some(burn.amount()),
+                    burn.public_note(),
+                    owner_id,
+                    None,
+                    st_hash.clone(),
+                    sql_transaction,
+                )
+                .await
+                .unwrap(),
+            TokenTransition::ClaimToPool(claim) => self
+                .dao
+                .token_transition(
+                    transition.clone(),
+                    None,
+                    claim.public_note(),
+                    owner_id,
+                    None,
+                    st_hash.clone(),
+                    sql_transaction,
+                )
+                .await
+                .unwrap(),
+            TokenTransition::DirectPurchaseToPool(purchase) => self
+                .dao
+                .token_transition(
+                    transition.clone(),
+                    Some(purchase.token_count()),
+                    None,
+                    owner_id,
+                    None,
+                    st_hash.clone(),
+                    sql_transaction,
+                )
+                .await
+                .unwrap(),
+            TokenTransition::Unshield(unshield) => {
+                self.dao
+                    .token_transition(
+                        transition.clone(),
+                        Some(unshield.amount()),
+                        None,
+                        owner_id,
+                        Some(unshield.recipient_id()),
+                        st_hash.clone(),
+                        sql_transaction,
+                    )
+                    .await
+                    .unwrap();
+
+                self.dao
+                    .token_holder(
+                        unshield.recipient_id(),
+                        transition.token_id(),
+                        &sql_transaction,
+                    )
+                    .await
+                    .unwrap();
+
+                self.dao
+                    .set_state_transition_recipient(
+                        unshield.recipient_id(),
+                        st_hash.clone(),
+                        sql_transaction,
+                    )
+                    .await
+                    .unwrap();
+            }
+            TokenTransition::ShieldedTransfer(_) => self
+                .dao
+                .token_transition(
+                    transition.clone(),
+                    None,
+                    None,
                     owner_id,
                     None,
                     st_hash.clone(),

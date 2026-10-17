@@ -59,18 +59,6 @@ module.exports = class IdentitiesDAO {
       })
       .leftJoin('transfers', 'transfers.recipient', 'requested_identity.identifier')
 
-    const documentsSubQuery = this.knex('documents')
-      .select('documents.id', 'documents.state_transition_hash', 'documents.owner as owner')
-      .select(this.knex.raw('rank() over (partition by documents.identifier order by documents.id desc) rank'))
-      .where('documents.owner', identifier)
-      .as('as_documents')
-
-    const dataContractsSubQuery = this.knex('data_contracts')
-      .select('data_contracts.id', 'data_contracts.state_transition_hash', 'data_contracts.owner as owner')
-      .select(this.knex.raw('rank() over (partition by data_contracts.identifier order by data_contracts.id desc) rank'))
-      .where('data_contracts.owner', identifier)
-      .as('as_data_contracts')
-
     const transfersSubquery = this.knex('transfers')
       .select('transfers.id as id', 'transfers.sender as sender', 'transfers.recipient as recipient')
       .where('sender', identifier)
@@ -86,8 +74,9 @@ module.exports = class IdentitiesDAO {
       )
       .select(this.knex('state_transitions').count('*').where('owner', identifier).as('total_txs'))
       .select(this.knex('state_transitions').sum('gas_used').where('owner', identifier).as('total_gas_spent'))
-      .select(this.knex(documentsSubQuery).count('*').where('rank', 1).as('total_documents'))
-      .select(this.knex(dataContractsSubQuery).count('*').where('rank', 1).as('total_data_contracts'))
+      // one per identifier, revisions are separate rows
+      .select(this.knex('documents').countDistinct('identifier').where('owner', identifier).as('total_documents'))
+      .select(this.knex('data_contracts').countDistinct('identifier').where('owner', identifier).as('total_data_contracts'))
       .select(this.knex(transfersSubquery).count('*').as('total_transfers'))
       .select(this.knex(aliasSubquery).select('aliases').limit(1).as('aliases'))
       .leftJoin('state_transitions', 'state_transitions.id', 'tx_id')
@@ -162,24 +151,21 @@ module.exports = class IdentitiesDAO {
 
     const identity = Identity.fromRow(row)
 
-    const aliases = await Promise.all(identity.aliases.map(async alias => {
-      const aliasInfo = await getAliasInfo(alias.alias, this.sdk)
+    const [aliases, identityNonce, identityInfo, fundingCoreTx] = await Promise.all([
+      Promise.all(identity.aliases.map(async alias => {
+        const aliasInfo = await getAliasInfo(alias.alias, this.sdk)
 
-      return getAliasStateByVote(aliasInfo, alias, identifier)
-    }))
+        return getAliasStateByVote(aliasInfo, alias, identifier)
+      })),
+      this.sdk.identities.getIdentityNonce(identity.identifier),
+      this.sdk.identities.getIdentityByIdentifier(identity.identifier),
+      row.tx_data
+        ? decodeStateTransition(row.tx_data).then(({ assetLockProof }) => assetLockProof?.fundingCoreTx ?? null)
+        : null
+    ])
 
-    const publicKeys = await this.sdk.identities.getIdentityPublicKeys(identity.identifier)
-
-    let fundingCoreTx = null
-
-    if (row.tx_data) {
-      const { assetLockProof } = await decodeStateTransition(row.tx_data)
-
-      fundingCoreTx = assetLockProof?.fundingCoreTx
-    }
-
-    const identityNonce = await this.sdk.identities.getIdentityNonce(identity.identifier)
-    const identityInfo = await this.sdk.identities.getIdentityByIdentifier(identity.identifier)
+    // the identity response already carries all of its public keys
+    const publicKeys = identityInfo.getPublicKeys()
 
     return Identity.fromObject({
       ...identity,
@@ -389,8 +375,8 @@ module.exports = class IdentitiesDAO {
     const aliasDocuments = await getAliasDocumentForIdentifiers(identifiers, this.sdk)
 
     const resultSet = await Promise.all(rows.map(async row => {
-      const balance = await this.sdk.identities.getIdentityBalance(row.identifier.trim())
       const identityInfo = await this.sdk.identities.getIdentityByIdentifier(row.identifier)
+      const balance = identityInfo.balance
 
       const aliasDocument = aliasDocuments[row.identifier.trim()]
 

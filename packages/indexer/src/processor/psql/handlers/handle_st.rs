@@ -14,6 +14,11 @@ use dpp::state_transition::batch_transition::batched_transition::document_transi
 use dpp::state_transition::batch_transition::batched_transition::token_transition::TokenTransition;
 use dpp::state_transition::batch_transition::batched_transition::BatchedTransition;
 use dpp::state_transition::batch_transition::BatchTransition;
+use dpp::state_transition::contract_fee_claim_transition::accessors::ContractFeeClaimTransitionAccessorsV0;
+use dpp::state_transition::contract_user_moderation_transition::accessors::ContractUserModerationTransitionAccessorsV0;
+use dpp::state_transition::token_purchase_from_shielded_pool_transition::accessors::TokenPurchaseFromShieldedPoolTransitionAccessorsV0;
+use dpp::state_transition::token_shielded_transfer_with_shielded_fee_transition::accessors::TokenShieldedTransferWithShieldedFeeTransitionAccessorsV0;
+use dpp::state_transition::token_unshield_with_shielded_fee_transition::accessors::TokenUnshieldWithShieldedFeeTransitionAccessorsV0;
 use dpp::state_transition::{StateTransition, StateTransitionOwned};
 use sha256::digest;
 
@@ -42,6 +47,9 @@ impl PSQLProcessor {
                         Some(BatchType::DocumentUpdatePriceTransition)
                     }
                     DocumentTransition::Purchase(_) => Some(BatchType::DocumentPurchaseTransition),
+                    DocumentTransition::IndexOnlyDelete(_) => {
+                        Some(BatchType::DocumentIndexOnlyDeleteTransition)
+                    }
                 },
                 BatchTransition::V1(v1) => match v1.transitions.first().unwrap() {
                     BatchedTransition::Document(document_transition) => match document_transition {
@@ -58,6 +66,9 @@ impl PSQLProcessor {
                         }
                         DocumentTransition::Purchase(_) => {
                             Some(BatchType::DocumentPurchaseTransition)
+                        }
+                        DocumentTransition::IndexOnlyDelete(_) => {
+                            Some(BatchType::DocumentIndexOnlyDeleteTransition)
                         }
                     },
                     BatchedTransition::Token(token_transition) => match token_transition {
@@ -81,6 +92,23 @@ impl PSQLProcessor {
                         }
                         TokenTransition::SetPriceForDirectPurchase(_) => {
                             Some(BatchType::TokenSetPriceForDirectPurchaseTransition)
+                        }
+                        TokenTransition::Shield(_) => Some(BatchType::TokenShieldTransition),
+                        TokenTransition::MintToPool(_) => {
+                            Some(BatchType::TokenMintToPoolTransition)
+                        }
+                        TokenTransition::BurnFromPool(_) => {
+                            Some(BatchType::TokenBurnFromPoolTransition)
+                        }
+                        TokenTransition::ClaimToPool(_) => {
+                            Some(BatchType::TokenClaimToPoolTransition)
+                        }
+                        TokenTransition::DirectPurchaseToPool(_) => {
+                            Some(BatchType::TokenDirectPurchaseToPoolTransition)
+                        }
+                        TokenTransition::Unshield(_) => Some(BatchType::TokenUnshieldTransition),
+                        TokenTransition::ShieldedTransfer(_) => {
+                            Some(BatchType::TokenShieldedTransferTransition)
                         }
                     },
                 },
@@ -468,6 +496,163 @@ impl PSQLProcessor {
                 self.handle_shielded_transition(shielded_transition, sql_transaction)
                     .await
                     .unwrap();
+            }
+            StateTransition::ShieldFromIdentity(st) => {
+                self.handle_shield_from_identity(st.clone(), st_hash.clone(), sql_transaction)
+                    .await;
+
+                let shielded_transition = ShieldedTransition::from_shield_from_identity_transition(
+                    st.clone(),
+                    st_hash.clone(),
+                );
+                self.handle_shielded_transition(shielded_transition, sql_transaction)
+                    .await
+                    .unwrap();
+
+                println!("Processed ShieldFromIdentity at block hash {}", block_hash);
+            }
+            StateTransition::IdentityTopUpFromShieldedPool(st) => {
+                self.handle_identity_top_up_from_shielded_pool(
+                    st.clone(),
+                    st_hash.clone(),
+                    gas_used,
+                    sql_transaction,
+                )
+                .await;
+
+                let shielded_transition =
+                    ShieldedTransition::from_identity_top_up_from_shielded_pool_transition(
+                        st.clone(),
+                        st_hash.clone(),
+                    );
+                self.handle_shielded_transition(shielded_transition, sql_transaction)
+                    .await
+                    .unwrap();
+
+                println!(
+                    "Processed IdentityTopUpFromShieldedPool at block hash {}",
+                    block_hash
+                );
+            }
+            StateTransition::IdentityKeyLimitsUpdate(_) => {
+                println!(
+                    "Processed IdentityKeyLimitsUpdate at block hash {}",
+                    block_hash
+                );
+            }
+            StateTransition::ContractUserModeration(st) => {
+                self.handle_data_contract_transition(
+                    Some(st_hash.clone()),
+                    st.data_contract_id(),
+                    sql_transaction,
+                )
+                .await;
+
+                if let Some(target_identity_id) = st.target_identity_id() {
+                    self.dao
+                        .set_state_transition_recipient(
+                            target_identity_id,
+                            st_hash.clone(),
+                            sql_transaction,
+                        )
+                        .await
+                        .unwrap();
+                }
+
+                println!(
+                    "Processed ContractUserModeration at block hash {}",
+                    block_hash
+                );
+            }
+            StateTransition::ContractFeeClaim(st) => {
+                self.handle_data_contract_transition(
+                    Some(st_hash.clone()),
+                    st.data_contract_id(),
+                    sql_transaction,
+                )
+                .await;
+
+                println!("Processed ContractFeeClaim at block hash {}", block_hash);
+            }
+            StateTransition::TokenShieldedTransferWithShieldedFee(st) => {
+                self.handle_data_contract_transition(
+                    Some(st_hash.clone()),
+                    st.data_contract_id(),
+                    sql_transaction,
+                )
+                .await;
+
+                let shielded_transition =
+                    ShieldedTransition::from_token_shielded_transfer_with_shielded_fee_transition(
+                        st.clone(),
+                        st_hash.clone(),
+                    );
+                self.handle_shielded_transition(shielded_transition, sql_transaction)
+                    .await
+                    .unwrap();
+
+                println!(
+                    "Processed TokenShieldedTransferWithShieldedFee at block hash {}",
+                    block_hash
+                );
+            }
+            StateTransition::TokenUnshieldWithShieldedFee(st) => {
+                self.handle_data_contract_transition(
+                    Some(st_hash.clone()),
+                    st.data_contract_id(),
+                    sql_transaction,
+                )
+                .await;
+
+                self.dao
+                    .token_holder(st.recipient_id(), st.token_id(), sql_transaction)
+                    .await
+                    .unwrap();
+
+                self.dao
+                    .set_state_transition_recipient(
+                        st.recipient_id(),
+                        st_hash.clone(),
+                        sql_transaction,
+                    )
+                    .await
+                    .unwrap();
+
+                let shielded_transition =
+                    ShieldedTransition::from_token_unshield_with_shielded_fee_transition(
+                        st.clone(),
+                        st_hash.clone(),
+                    );
+                self.handle_shielded_transition(shielded_transition, sql_transaction)
+                    .await
+                    .unwrap();
+
+                println!(
+                    "Processed TokenUnshieldWithShieldedFee at block hash {}",
+                    block_hash
+                );
+            }
+            StateTransition::TokenPurchaseFromShieldedPool(st) => {
+                self.handle_data_contract_transition(
+                    Some(st_hash.clone()),
+                    st.data_contract_id(),
+                    sql_transaction,
+                )
+                .await;
+
+                let shielded_transition =
+                    ShieldedTransition::from_token_purchase_from_shielded_pool_transition(
+                        st.clone(),
+                        st_hash.clone(),
+                    );
+                self.handle_shielded_transition(shielded_transition, sql_transaction)
+                    .await
+                    .unwrap();
+
+                println!(
+                    "Processed TokenPurchaseFromShieldedPool at block hash {}",
+                    block_hash
+                );
             }
         }
     }

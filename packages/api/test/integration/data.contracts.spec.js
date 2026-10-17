@@ -4,6 +4,7 @@ const supertest = require('supertest')
 const server = require('../../src/server')
 const { getKnex } = require('../../src/utils')
 const fixtures = require('../utils/fixtures')
+const mockDocumentsQuery = require('../utils/mockDocumentsQuery')
 const StateTransitionEnum = require('../../src/enums/StateTransitionEnum')
 const { IdentifierWASM } = require('pshenmic-dpp')
 const { DocumentsController } = require('dash-platform-sdk/src/documents')
@@ -28,7 +29,7 @@ describe('DataContracts routes', () => {
   before(async () => {
     aliasTimestamp = new Date()
 
-    mock.method(DocumentsController.prototype, 'query', async () => [{
+    mock.method(DocumentsController.prototype, 'query', mockDocumentsQuery({
       properties: {
         label: 'alias',
         parentDomainName: 'dash',
@@ -36,7 +37,7 @@ describe('DataContracts routes', () => {
       },
       id: new IdentifierWASM('AQV2G2Egvqk8jwDBAcpngjKYcwAkck8Cecs5AjYJxfvW'),
       createdAt: BigInt(aliasTimestamp.getTime())
-    }])
+    }))
 
     mock.method(DataContractsController.prototype, 'getDataContractByIdentifier', async () => ({ groups: undefined }))
 
