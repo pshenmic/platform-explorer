@@ -666,38 +666,31 @@ module.exports = class IdentitiesDAO {
         )
       )
 
-    const subRanges = this.knex('ranges')
-      .select(this.knex.raw('min(date_from) as min_date'))
-      .select(this.knex.raw('max(date_to) as max_date'))
+    const lastBlock = this.knex('blocks')
+      .select('height')
+      .whereRaw('blocks.timestamp <= ranges.date_to')
+      .orderBy('blocks.timestamp', 'desc')
       .limit(1)
 
-    const blocksSubquery = this.knex('blocks')
-      .with('sub_ranges', subRanges)
-      .whereRaw('blocks.timestamp <= (SELECT max_date FROM sub_ranges)')
-      .as('blocks_sub')
+    const bounds = this.knex('ranges')
+      .select('date_from', 'last_block.height as last_height')
+      .joinRaw('left join lateral (?) as last_block on true', [lastBlock])
 
-    const dataSubquery = this.knex(blocksSubquery)
-      .select('blocks_sub.timestamp', 'identifier', 'blocks_sub.height')
-      .leftJoin('state_transitions', function () {
-        this.onIn('type', [StateTransitionEnum.IDENTITY_CREATE, StateTransitionEnum.IDENTITY_CREATE_FROM_SHIELDED_POOL, StateTransitionEnum.IDENTITY_CREATE_FROM_ADDRESSES]).andOn('state_transitions.block_height', '=', 'blocks_sub.height')
-      })
+    const dataSubquery = this.knex('state_transitions')
+      .select('identifier', 'state_transitions.block_height')
+      .whereIn('state_transitions.type', [StateTransitionEnum.IDENTITY_CREATE, StateTransitionEnum.IDENTITY_CREATE_FROM_SHIELDED_POOL, StateTransitionEnum.IDENTITY_CREATE_FROM_ADDRESSES])
       .whereRaw('identifier is not null')
       .leftJoin('identities', 'state_transition_id', 'state_transitions.id')
+      .as('filtered_data')
 
     const rows = await this.knex
       .with('ranges', ranges)
-      .with(
-        'filtered_data',
-        dataSubquery
-      )
+      .with('bounds', bounds)
       .select('date_from')
       .select(this.knex.raw('count(identifier) as identities_count'))
-      .select(this.knex.raw('min(height) as block_height'))
-      .leftJoin('filtered_data', function () {
-        this.on('timestamp', '<=', 'date_to')
-      })
+      .leftJoin(dataSubquery, 'filtered_data.block_height', '<=', 'bounds.last_height')
       .groupBy('date_from')
-      .from('ranges')
+      .from('bounds')
 
     return rows.map(row => ({
       timestamp: row.date_from.toISOString(),

@@ -317,15 +317,25 @@ module.exports = class BlockDAO {
       .from(this.knex.raw(`generate_series(${startSql}, ${endSql}, '${interval}'::interval) date_to`))
       .select('date_to', this.knex.raw(`LAG(date_to, 1, '${start.toISOString()}'::timestamptz) over (order by date_to asc) date_from`))
 
+    const firstBlock = this.knex('blocks')
+      .select('height', 'timestamp')
+      .whereRaw('blocks.timestamp > ranges.date_from and blocks.timestamp <= ranges.date_to')
+      .orderBy('blocks.timestamp', 'asc')
+      .limit(1)
+
+    const lastBlock = this.knex('blocks')
+      .select('height', 'timestamp')
+      .whereRaw('blocks.timestamp > ranges.date_from and blocks.timestamp <= ranges.date_to')
+      .orderBy('blocks.timestamp', 'desc')
+      .limit(1)
+
     const rows = await this.knex.with('ranges', ranges)
       .select('date_from')
-      .select(
-        this.knex('blocks')
-          .whereRaw('blocks.timestamp > date_from and blocks.timestamp <= date_to')
-          .select(this.knex.raw('CASE WHEN count(*) > 1 THEN round(extract(epoch from max(timestamp) - min(timestamp)) * 1000 / (count(*) - 1)) ELSE NULL END'))
-          .as('avg_block_time')
-      )
+      .select(this.knex.raw('CASE WHEN last_block.height > first_block.height THEN round(extract(epoch from last_block.timestamp - first_block.timestamp) * 1000 / (last_block.height - first_block.height)) ELSE NULL END as avg_block_time'))
       .from('ranges')
+      .joinRaw('left join lateral (?) as first_block on true', [firstBlock])
+      .joinRaw('left join lateral (?) as last_block on true', [lastBlock])
+      .orderBy('date_from', 'asc')
 
     return rows
       .map(row => ({

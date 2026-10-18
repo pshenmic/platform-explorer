@@ -271,16 +271,47 @@ module.exports = class ValidatorsDAO {
       .from(this.knex.raw(`generate_series(${startSql}, ${endSql}, '${interval}'::interval) date_to`))
       .select('date_to', this.knex.raw(`LAG(date_to, 1, '${start.toISOString()}'::timestamptz) over (order by date_to asc) date_from`))
 
-    const rows = await this.knex.with('ranges', ranges)
+    const validator = this.knex('validators')
+      .select('id')
+      .whereILike('pro_tx_hash', proTxHash)
+
+    // block timestamps strictly increase with height, so every range is a contiguous height interval
+    // found by two index lookups, the validator blocks are read once and matched to these intervals
+    const firstBlock = this.knex('blocks')
+      .select('height')
+      .whereRaw('blocks.timestamp > ranges.date_from and blocks.timestamp <= ranges.date_to')
+      .orderBy('blocks.timestamp', 'asc')
+      .limit(1)
+
+    const lastBlock = this.knex('blocks')
+      .select('height')
+      .whereRaw('blocks.timestamp > ranges.date_from and blocks.timestamp <= ranges.date_to')
+      .orderBy('blocks.timestamp', 'desc')
+      .limit(1)
+
+    const bounds = this.knex('ranges')
+      .select('date_from', 'date_to', 'first_block.height as first_height', 'last_block.height as last_height')
+      .joinRaw('left join lateral (?) as first_block on true', [firstBlock])
+      .joinRaw('left join lateral (?) as last_block on true', [lastBlock])
+
+    const validatorBlocks = this.knex('blocks')
+      .select('height')
+      .whereRaw('blocks.validator_id = (SELECT id FROM validator)')
+      .whereRaw('blocks.height between (SELECT min(first_height) FROM bounds) and (SELECT max(last_height) FROM bounds)')
+      .as('validator_blocks')
+
+    const rows = await this.knex
+      .with('validator', validator)
+      .with('ranges', ranges)
+      .with('bounds', bounds)
       .select('date_from')
-      .select(
-        this.knex('blocks')
-          .whereRaw('blocks.timestamp > date_from and blocks.timestamp <= date_to')
-          .whereILike('validator', proTxHash)
-          .count('*')
-          .as('blocks_count')
-      )
-      .from('ranges')
+      .select(this.knex.raw('count(validator_blocks.height) as blocks_count'))
+      .from('bounds')
+      .leftJoin(validatorBlocks, function () {
+        this.on('validator_blocks.height', '>=', 'bounds.first_height').andOn('validator_blocks.height', '<=', 'bounds.last_height')
+      })
+      .groupBy('date_from', 'date_to')
+      .orderBy('date_to', 'asc')
 
     return rows
       .map(row => ({
@@ -301,29 +332,56 @@ module.exports = class ValidatorsDAO {
       .from(this.knex.raw(`generate_series(${startSql}, ${endSql}, '${interval}'::interval) date_to`))
       .select('date_to', this.knex.raw(`LAG(date_to, 1, '${start.toISOString()}'::timestamptz) over (order by date_to asc) date_from`))
 
-    const rows = await this.knex.with('ranges', ranges)
-      .select('date_from')
+    const validator = this.knex('validators')
+      .select('id')
+      .whereILike('pro_tx_hash', proTxHash)
+
+    // ranges are resolved to contiguous height intervals, see getValidatorStatsByProTxHash,
+    // heights have no gaps so the blocks count of a range comes from its bounds
+    const firstBlock = this.knex('blocks')
+      .select('height')
+      .whereRaw('blocks.timestamp > ranges.date_from and blocks.timestamp <= ranges.date_to')
+      .orderBy('blocks.timestamp', 'asc')
+      .limit(1)
+
+    const lastBlock = this.knex('blocks')
+      .select('height')
+      .whereRaw('blocks.timestamp > ranges.date_from and blocks.timestamp <= ranges.date_to')
+      .orderBy('blocks.timestamp', 'desc')
+      .limit(1)
+
+    const collectedFees = this.knex('state_transitions')
+      .whereRaw('state_transitions.block_height between first_block.height and last_block.height')
+      .select(this.knex.raw('sum(state_transitions.gas_used) as collected_fees'))
+
+    const bounds = this.knex('ranges')
       .select(
-        this.knex('blocks')
-          .whereRaw('blocks.timestamp > date_from and blocks.timestamp <= date_to')
-          .whereILike('validator', proTxHash)
-          .count('*')
-          .as('proposed_blocks_count')
+        'date_from', 'date_to', 'first_block.height as first_height', 'last_block.height as last_height',
+        this.knex.raw('last_block.height - first_block.height + 1 as total_blocks_count'),
+        'range_fees.collected_fees'
       )
-      .select(
-        this.knex('blocks')
-          .whereRaw('blocks.timestamp > date_from and blocks.timestamp <= date_to')
-          .count('*')
-          .as('total_blocks_count')
-      )
-      .select(
-        this.knex('blocks')
-          .whereRaw('blocks.timestamp > date_from and blocks.timestamp <= date_to')
-          .sum('gas_used')
-          .leftJoin('state_transitions', 'state_transitions.block_hash', 'blocks.hash')
-          .as('collected_fees')
-      )
-      .from('ranges')
+      .joinRaw('left join lateral (?) as first_block on true', [firstBlock])
+      .joinRaw('left join lateral (?) as last_block on true', [lastBlock])
+      .joinRaw('left join lateral (?) as range_fees on true', [collectedFees])
+
+    const validatorBlocks = this.knex('blocks')
+      .select('height')
+      .whereRaw('blocks.validator_id = (SELECT id FROM validator)')
+      .whereRaw('blocks.height between (SELECT min(first_height) FROM bounds) and (SELECT max(last_height) FROM bounds)')
+      .as('validator_blocks')
+
+    const rows = await this.knex
+      .with('validator', validator)
+      .with('ranges', ranges)
+      .with('bounds', bounds)
+      .select('date_from', 'total_blocks_count', 'collected_fees')
+      .select(this.knex.raw('count(validator_blocks.height) as proposed_blocks_count'))
+      .from('bounds')
+      .leftJoin(validatorBlocks, function () {
+        this.on('validator_blocks.height', '>=', 'bounds.first_height').andOn('validator_blocks.height', '<=', 'bounds.last_height')
+      })
+      .groupBy('date_from', 'date_to', 'total_blocks_count', 'collected_fees')
+      .orderBy('date_to', 'asc')
 
     return rows
       .slice(1)
@@ -357,17 +415,47 @@ module.exports = class ValidatorsDAO {
       .from(this.knex.raw(`generate_series(${startSql}, ${endSql}, '${interval}'::interval) date_to`))
       .select('date_to', this.knex.raw(`LAG(date_to, 1, '${start.toISOString()}'::timestamptz) over (order by date_to asc) date_from`))
 
-    const rows = await this.knex.with('ranges', ranges)
+    const validator = this.knex('validators')
+      .select('id')
+      .whereILike('pro_tx_hash', proTxHash)
+
+    // ranges are resolved to contiguous height intervals, see getValidatorStatsByProTxHash
+    const firstBlock = this.knex('blocks')
+      .select('height')
+      .whereRaw('blocks.timestamp > ranges.date_from and blocks.timestamp <= ranges.date_to')
+      .orderBy('blocks.timestamp', 'asc')
+      .limit(1)
+
+    const lastBlock = this.knex('blocks')
+      .select('height')
+      .whereRaw('blocks.timestamp > ranges.date_from and blocks.timestamp <= ranges.date_to')
+      .orderBy('blocks.timestamp', 'desc')
+      .limit(1)
+
+    const bounds = this.knex('ranges')
+      .select('date_from', 'date_to', 'first_block.height as first_height', 'last_block.height as last_height')
+      .joinRaw('left join lateral (?) as first_block on true', [firstBlock])
+      .joinRaw('left join lateral (?) as last_block on true', [lastBlock])
+
+    const validatorTransitions = this.knex('blocks')
+      .select('blocks.height', 'state_transitions.gas_used')
+      .join('state_transitions', 'state_transitions.block_height', 'blocks.height')
+      .whereRaw('blocks.validator_id = (SELECT id FROM validator)')
+      .whereRaw('blocks.height between (SELECT min(first_height) FROM bounds) and (SELECT max(last_height) FROM bounds)')
+      .as('validator_transitions')
+
+    const rows = await this.knex
+      .with('validator', validator)
+      .with('ranges', ranges)
+      .with('bounds', bounds)
       .select('date_from')
-      .select(
-        this.knex('blocks')
-          .whereRaw('blocks.timestamp > date_from and blocks.timestamp <= date_to')
-          .whereILike('validator', proTxHash)
-          .sum('gas_used')
-          .leftJoin('state_transitions', 'state_transitions.block_hash', 'blocks.hash')
-          .as('gas_used')
-      )
-      .from('ranges')
+      .select(this.knex.raw('sum(validator_transitions.gas_used) as gas_used'))
+      .from('bounds')
+      .leftJoin(validatorTransitions, function () {
+        this.on('validator_transitions.height', '>=', 'bounds.first_height').andOn('validator_transitions.height', '<=', 'bounds.last_height')
+      })
+      .groupBy('date_from', 'date_to')
+      .orderBy('date_to', 'asc')
 
     return rows
       .slice(1)
