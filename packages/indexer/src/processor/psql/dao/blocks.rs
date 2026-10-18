@@ -51,6 +51,19 @@ impl PostgresDAO {
             .await
             .unwrap();
 
+        let validator_stmt = sql_transaction
+            .prepare_cached(
+                "UPDATE validators SET proposed_blocks_count = proposed_blocks_count + 1, \
+        last_proposed_block_height = GREATEST(last_proposed_block_height, $1) WHERE id = $2;",
+            )
+            .await
+            .unwrap();
+
+        sql_transaction
+            .execute(&validator_stmt, &[&block_header.height, &validator.id])
+            .await
+            .unwrap();
+
         let block_hash: String = block_header.hash;
 
         block_hash
