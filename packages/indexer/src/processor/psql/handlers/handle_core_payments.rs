@@ -7,7 +7,7 @@ use deadpool_postgres::Transaction;
 use std::cmp::{max, min};
 
 // Core blocks per masternode payments request
-const CORE_PAYMENTS_PAGE: i32 = 1000;
+const CORE_PAYMENTS_PAGE: i32 = 50;
 
 impl PSQLProcessor {
     // Indexes the masternode payments of the Core blocks the block chain locks on top of the
