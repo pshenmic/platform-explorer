@@ -27,14 +27,10 @@ module.exports = class ValidatorsDAO {
       .select(
         'validators.pro_tx_hash as pro_tx_hash',
         'validators.id',
-        this.knex('blocks')
-          .count('*')
-          .whereRaw('blocks.validator_id = validators.id')
-          .as('proposed_blocks_amount'),
+        'validators.proposed_blocks_count as proposed_blocks_amount',
         this.knex('blocks')
           .select('hash')
-          .whereRaw('blocks.validator_id = validators.id')
-          .orderBy('height', 'desc')
+          .whereRaw('blocks.height = validators.last_proposed_block_height')
           .limit(1)
           .as('proposed_block_hash'),
         this.knex('platform_rewards')
@@ -205,13 +201,12 @@ module.exports = class ValidatorsDAO {
         }
       })
 
-    const blocksSubquery = this.knex('blocks')
+    const blocksSubquery = this.knex('validators')
       .select(
-        'blocks.validator_id as validator_id'
+        'validators.id as validator_id',
+        'validators.last_proposed_block_height as max_height',
+        'validators.proposed_blocks_count as proposed_blocks_amount'
       )
-      .select(this.knex.raw('MAX(height) AS max_height'))
-      .select(this.knex.raw('count(height) as proposed_blocks_amount'))
-      .groupBy('blocks.validator_id')
       .as('blocks_subquery')
 
     const joinedBlocksSubqeury = this.knex(blocksSubquery)
