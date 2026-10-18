@@ -582,6 +582,27 @@ module.exports = class TransactionsDAO {
       .sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime())
   }
 
+  getHeightInterval = async (timestampStart, timestampEnd) => {
+    const firstBlock = this.knex('blocks')
+      .select('height')
+      .where('blocks.timestamp', '>=', new Date(timestampStart).toISOString())
+      .orderBy('blocks.timestamp', 'asc')
+      .limit(1)
+
+    const lastBlock = this.knex('blocks')
+      .select('height')
+      .where('blocks.timestamp', '<=', new Date(timestampEnd).toISOString())
+      .orderBy('blocks.timestamp', 'desc')
+      .limit(1)
+
+    const [row] = await this.knex.select(
+      this.knex.raw('(?) as first_height', [firstBlock]),
+      this.knex.raw('(?) as last_height', [lastBlock])
+    )
+
+    return { firstHeight: row.first_height, lastHeight: row.last_height }
+  }
+
   getTransactionStatistic = async (timestampStart, timestampEnd) => {
     let query = this.knex('state_transitions')
       .select('type', 'batch_type')
@@ -589,10 +610,10 @@ module.exports = class TransactionsDAO {
       .count()
 
     if (timestampStart && timestampEnd) {
+      const { firstHeight, lastHeight } = await this.getHeightInterval(timestampStart, timestampEnd)
+
       query = query
-        .leftJoin('blocks', 'blocks.hash', 'state_transitions.block_hash')
-        .where('blocks.timestamp', '>=', new Date(timestampStart).toISOString())
-        .andWhere('blocks.timestamp', '<=', new Date(timestampEnd).toISOString())
+        .whereBetween('state_transitions.block_height', [firstHeight, lastHeight])
     }
 
     const rows = await query
@@ -635,11 +656,11 @@ module.exports = class TransactionsDAO {
       .groupBy('state_transition_type')
 
     if (timestampStart && timestampEnd) {
+      const { firstHeight, lastHeight } = await this.getHeightInterval(timestampStart, timestampEnd)
+
       query = query
         .leftJoin('state_transitions', 'state_transitions.id', 'shielded_transitions.state_transition_id')
-        .leftJoin('blocks', 'blocks.hash', 'state_transitions.block_hash')
-        .where('blocks.timestamp', '>=', new Date(timestampStart).toISOString())
-        .andWhere('blocks.timestamp', '<=', new Date(timestampEnd).toISOString())
+        .whereBetween('state_transitions.block_height', [firstHeight, lastHeight])
     }
 
     const rows = await query
