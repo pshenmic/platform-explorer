@@ -113,6 +113,13 @@ const fixtures = {
 
     await knex('blocks').insert(row)
 
+    await knex('validators')
+      .where('id', validatorObject.id)
+      .update({
+        proposed_blocks_count: knex.raw('proposed_blocks_count + 1'),
+        last_proposed_block_height: knex.raw('GREATEST(last_proposed_block_height, ?)', [row.height])
+      })
+
     return row
   },
   transaction: async (knex, {
