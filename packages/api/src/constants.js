@@ -9,6 +9,7 @@ module.exports = {
   TCP_CONNECT_TIMEOUT: Number(process.env.TCP_CONNECT_TIMEOUT),
   VALIDATORS_CACHE_LIFE_INTERVAL: Number(process.env.VALIDATORS_CACHE_LIFE_INTERVAL ?? 300000),
   VALIDATORS_CACHE_KEY: 'validators',
+  VALIDATORS_LIST_CACHE_KEY: 'validators_list',
   BANNED_STATE_CACHE_KEY: 'banned_state',
   PLATFORM_QUORUMS_CACHE_KEY: 'platform_quorums',
   PROTX_LIST_CACHE_KEY: 'protx_list',

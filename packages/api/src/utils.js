@@ -2179,11 +2179,14 @@ const getProTxList = async () => {
     return cached
   }
 
-  const masternodes = await DashCoreRPC.getProTxList('registered', true)
+  // the pending request is cached, so concurrent callers share it
+  const masternodes = DashCoreRPC.getProTxList('registered', true)
 
   cache.set(PROTX_LIST_CACHE_KEY, masternodes, PROTX_LIST_CACHE_LIFE_INTERVAL)
 
-  return masternodes
+  masternodes.catch(() => cache.delete(PROTX_LIST_CACHE_KEY))
+
+  return await masternodes
 }
 
 // Position in the DIP3 payment queue, 1 means the next Core block: enabled masternodes ordered

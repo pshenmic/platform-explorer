@@ -11,7 +11,7 @@ const Intervals = require('../enums/IntervalsEnum')
 const ValidatorEarnings = require('../models/ValidatorEarnings')
 
 const cache = require('../cache')
-const { VALIDATORS_CACHE_KEY, VALIDATORS_CACHE_LIFE_INTERVAL, CREDITS_PER_DASH, CORE_BLOCKS_PER_DAY } = require('../constants')
+const { VALIDATORS_CACHE_KEY, VALIDATORS_LIST_CACHE_KEY, VALIDATORS_CACHE_LIFE_INTERVAL, CREDITS_PER_DASH, CORE_BLOCKS_PER_DAY } = require('../constants')
 
 class ValidatorsController {
   constructor (knex, sdk) {
@@ -264,35 +264,39 @@ class ValidatorsController {
 
     const resultSet = await Promise.all(
       validators.resultSet.map(async (validator) => {
-        const cached = cache.get(`${VALIDATORS_CACHE_KEY}_${validator.proTxHash}`)
+        // the list caches its own shape, the single validator endpoint caches more fields under its key.
+        // The pending fetch is cached, so concurrent requests share it instead of fetching the same validator
+        const cacheKey = `${VALIDATORS_LIST_CACHE_KEY}_${validator.proTxHash}`
 
-        let validatorInfo = null
+        let validatorInfoPromise = cache.get(cacheKey)
 
-        // first run needed for pose ban info, but it doesn't contain all needed info
-        // re-cache validators with actual data when they don't have identifier field
-        if (cached && cached?.identifier != null) {
-          validatorInfo = cached
-        } else {
-          const proTxInfo = await DashCoreRPC.getProTxInfo(validator.proTxHash)
-          const identifier = validator.proTxHash ? base58.encode(Buffer.from(validator.proTxHash, 'hex')) : null
-          const identityBalance = identifier ? await this.sdk.identities.getIdentityBalance(identifier) : null
+        if (!validatorInfoPromise) {
+          validatorInfoPromise = (async () => {
+            const proTxInfo = await DashCoreRPC.getProTxInfo(validator.proTxHash)
+            const identifier = validator.proTxHash ? base58.encode(Buffer.from(validator.proTxHash, 'hex')) : null
+            const identityBalance = identifier ? await this.sdk.identities.getIdentityBalance(identifier) : null
 
-          const [serviceHost] = proTxInfo?.state?.service?.match(/^\d+\.\d+\.\d+\.\d+/) ?? [null]
+            const [serviceHost] = proTxInfo?.state?.service?.match(/^\d+\.\d+\.\d+\.\d+/) ?? [null]
 
-          validatorInfo = Validator.fromObject(
-            {
-              ...validator,
-              isActive: activeValidatorsHashes.has(validator.proTxHash),
-              proTxInfo: ProTxInfo.fromObject(proTxInfo),
-              identity: identifier,
-              identityBalance: String(identityBalance),
-              epochInfo,
-              geoIpInfo: serviceHost ? GeoIP.lookup(serviceHost) : null
-            }
-          )
+            return Validator.fromObject(
+              {
+                ...validator,
+                isActive: activeValidatorsHashes.has(validator.proTxHash),
+                proTxInfo: ProTxInfo.fromObject(proTxInfo),
+                identity: identifier,
+                identityBalance: String(identityBalance),
+                epochInfo,
+                geoIpInfo: serviceHost ? GeoIP.lookup(serviceHost) : null
+              }
+            )
+          })()
 
-          cache.set(`${VALIDATORS_CACHE_KEY}_${validator.proTxHash}`, validatorInfo, VALIDATORS_CACHE_LIFE_INTERVAL)
+          cache.set(cacheKey, validatorInfoPromise, VALIDATORS_CACHE_LIFE_INTERVAL)
+
+          validatorInfoPromise.catch(() => cache.delete(cacheKey))
         }
+
+        const validatorInfo = await validatorInfoPromise
 
         // isActive is applied outside the per-validator cache: the validator set
         // rotates independently of the cached ProTx and identity data

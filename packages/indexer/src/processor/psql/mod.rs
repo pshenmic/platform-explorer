@@ -2,6 +2,7 @@ mod dao;
 
 use crate::decoder::decoder::StateTransitionDecoder;
 use crate::entities::data_contract::DataContract;
+use crate::entities::block_header::BlockHeader;
 use crate::entities::document::Document;
 pub use crate::processor::psql::dao::PostgresDAO;
 use dapi_grpc::platform::v0::platform_client::PlatformClient;
@@ -14,6 +15,9 @@ use dpp::identifier::Identifier;
 use dpp::platform_value::string_encoding::Encoding::Base58;
 use dpp::platform_value::{platform_value, BinaryData};
 use dpp::state_transition::state_transitions::batch_transition::batched_transition::document_transition_action_type::DocumentTransitionActionType;
+use dashcore_rpc::json::GetMasternodePaymentsResult;
+use std::cell::RefCell;
+use std::collections::{HashMap, VecDeque};
 use std::env;
 use std::num::ParseIntError;
 use dpp::dashcore::Network;
@@ -69,6 +73,10 @@ pub struct PSQLProcessor {
     dashcore_rpc: Client,
     dapi_client: PlatformClient<Channel>,
     network: Network,
+    // committed state of the previous blocks, so it is not queried again for every block
+    known_validators: RefCell<HashMap<String, i32>>,
+    last_block_header: RefCell<Option<BlockHeader>>,
+    core_payments: RefCell<VecDeque<GetMasternodePaymentsResult>>,
 }
 
 // ST HASH, BLOCK HASH
@@ -120,6 +128,9 @@ impl PSQLProcessor {
             dashcore_rpc,
             dapi_client,
             network,
+            known_validators: RefCell::new(HashMap::new()),
+            last_block_header: RefCell::new(None),
+            core_payments: RefCell::new(VecDeque::new()),
         }
     }
 

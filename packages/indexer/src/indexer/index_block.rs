@@ -1,5 +1,6 @@
 use crate::entities::block::Block;
 use crate::entities::block_header::BlockHeader;
+use crate::entities::validator::Validator;
 use crate::indexer::Indexer;
 use crate::models::{TransactionResult, TransactionStatus};
 use crate::processor::psql::{epoch_time_length, ProcessorError};
@@ -7,19 +8,17 @@ use base64::engine::general_purpose;
 use base64::Engine;
 
 impl Indexer {
-    pub(crate) async fn index_block(&self, block_height: i32) -> Result<(), ProcessorError> {
-        let block = self
-            .tenderdash_rpc
-            .get_block_by_height(block_height.clone())
-            .await?;
-        let block_results_response = self
-            .tenderdash_rpc
-            .get_block_results_by_height(block_height.clone())
-            .await?;
-        let (validators, quorum_hash) = self
-            .tenderdash_rpc
-            .get_validators_by_block_height(block_height.clone())
-            .await?;
+    pub(crate) async fn fetch_block(
+        &self,
+        block_height: i32,
+    ) -> Result<(Block, Vec<Validator>), ProcessorError> {
+        let (block, block_results_response, (validators, quorum_hash)) = tokio::try_join!(
+            self.tenderdash_rpc.get_block_by_height(block_height.clone()),
+            self.tenderdash_rpc
+                .get_block_results_by_height(block_height.clone()),
+            self.tenderdash_rpc
+                .get_validators_by_block_height(block_height.clone()),
+        )?;
 
         let tx_results = block_results_response.txs_results.unwrap_or(vec![]);
 
@@ -110,6 +109,16 @@ impl Indexer {
             },
             txs,
         };
+
+        Ok((block, validators))
+    }
+
+    pub(crate) async fn index_block(
+        &self,
+        block: Block,
+        validators: Vec<Validator>,
+    ) -> Result<(), ProcessorError> {
+        let block_height = block.header.height;
 
         self.processor.handle_block(block, validators).await?;
 

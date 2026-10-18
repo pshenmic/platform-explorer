@@ -51,6 +51,8 @@ impl PostgresDAO {
         cfg.dbname = Some(postgres_db);
         cfg.user = Some(postgres_user);
         cfg.password = Some(postgres_pass);
+        // a crash loses the last commits only, the indexer then reindexes them from the chain
+        cfg.options = Some(String::from("-c synchronous_commit=off"));
         cfg.manager = Some(ManagerConfig {
             recycling_method: RecyclingMethod::Fast,
         });

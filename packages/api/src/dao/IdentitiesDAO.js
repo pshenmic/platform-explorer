@@ -326,6 +326,8 @@ module.exports = class IdentitiesDAO {
       .where('version', 1)
       .groupBy('owner')
 
+    const txCountRequired = orderBy === 'tx_count' || txCountMin != null || txCountMax != null
+
     const subqueryAdditionalInfo = this.knex(subqueryLastRevision)
       .with('as_documents', documentsSubQuery)
       .with('as_data_contracts', dataContractsSubQuery)
@@ -334,17 +336,22 @@ module.exports = class IdentitiesDAO {
       .select(
         this.knex.raw('COALESCE(balance, 0) as balance'),
         this.knex.raw('COALESCE(data_contracts_count, 0) as total_data_contracts'),
-        this.knex.raw('COALESCE(documents_count, 0) as total_documents'),
-        this.knex('state_transitions').count('*').whereRaw('owner = identities.identifier').as('total_txs')
+        this.knex.raw('COALESCE(documents_count, 0) as total_documents')
       )
+      .modify(qb => {
+        if (txCountRequired) qb.select(this.knex('state_transitions').count('*').whereRaw('owner = identities.identifier').as('total_txs'))
+      })
       .leftJoin(transfersStatsSubquery, 'transfers_subquery.identifier', 'identities.identifier')
       .leftJoin('as_documents', 'as_documents.owner', 'identities.identifier')
       .leftJoin('as_data_contracts', 'as_data_contracts.owner', 'identities.identifier')
       .as('identities')
 
     const filteredIdentities = this.knex(subqueryAdditionalInfo)
-      .select('balance', 'total_txs', 'identity_id', 'identifier', 'total_data_contracts',
+      .select('balance', 'identity_id', 'identifier', 'total_data_contracts',
         'identity_owner', 'tx_hash', 'tx_id', 'revision', 'is_system', 'type', 'total_transfers', 'total_documents')
+      .modify(qb => {
+        if (txCountRequired) qb.select('total_txs')
+      })
       .whereRaw(txCountQueryString, txCountQueryBindings)
       .whereRaw(documentCountQueryString, documentCountQueryBindings)
       .whereRaw(dataContractCountQueryString, dataContractsCountQueryBindings)
@@ -353,20 +360,29 @@ module.exports = class IdentitiesDAO {
         if (identityType != null) qb.where('type', identityType)
       })
 
-    const rows = await this.knex
-      .with('with_alias', filteredIdentities)
-      .select(
-        'total_txs', 'identity_id', 'identifier', 'identity_owner', 'revision', 'tx_hash',
-        'tx_id', 'blocks.timestamp as timestamp', 'is_system', 'with_alias.type as type',
-        'balance', 'total_transfers', 'total_documents', 'total_data_contracts'
-      )
+    // the page is cut before joining the creation block, so only its rows are joined
+    const pageSubquery = this.knex('with_alias')
+      .select('*')
       .select(this.knex('with_alias').count('*').as('total_count'))
-      .leftJoin('state_transitions', 'state_transitions.id', 'tx_id')
-      .leftJoin('blocks', 'state_transitions.block_height', 'blocks.height')
       .offset(fromRank)
       .limit(limit)
       .orderBy(orderByOptions)
-      .from('with_alias')
+      .as('page')
+
+    const rows = await this.knex
+      .with('with_alias', filteredIdentities)
+      .select(
+        'identity_id', 'identifier', 'identity_owner', 'revision', 'tx_hash',
+        'tx_id', 'blocks.timestamp as timestamp', 'is_system', 'page.type as type',
+        'balance', 'total_transfers', 'total_documents', 'total_data_contracts', 'total_count'
+      )
+      .select(txCountRequired
+        ? 'total_txs'
+        : this.knex('state_transitions as owner_transitions').count('*').whereRaw('owner_transitions.owner = page.identifier').as('total_txs'))
+      .leftJoin('state_transitions', 'state_transitions.id', 'tx_id')
+      .leftJoin('blocks', 'state_transitions.block_height', 'blocks.height')
+      .orderBy(orderByOptions)
+      .from(pageSubquery)
 
     const totalCount = rows.length > 0 ? Number(rows[0].total_count) : 0
 
@@ -666,38 +682,31 @@ module.exports = class IdentitiesDAO {
         )
       )
 
-    const subRanges = this.knex('ranges')
-      .select(this.knex.raw('min(date_from) as min_date'))
-      .select(this.knex.raw('max(date_to) as max_date'))
+    const lastBlock = this.knex('blocks')
+      .select('height')
+      .whereRaw('blocks.timestamp <= ranges.date_to')
+      .orderBy('blocks.timestamp', 'desc')
       .limit(1)
 
-    const blocksSubquery = this.knex('blocks')
-      .with('sub_ranges', subRanges)
-      .whereRaw('blocks.timestamp <= (SELECT max_date FROM sub_ranges)')
-      .as('blocks_sub')
+    const bounds = this.knex('ranges')
+      .select('date_from', 'last_block.height as last_height')
+      .joinRaw('left join lateral (?) as last_block on true', [lastBlock])
 
-    const dataSubquery = this.knex(blocksSubquery)
-      .select('blocks_sub.timestamp', 'identifier', 'blocks_sub.height')
-      .leftJoin('state_transitions', function () {
-        this.onIn('type', [StateTransitionEnum.IDENTITY_CREATE, StateTransitionEnum.IDENTITY_CREATE_FROM_SHIELDED_POOL, StateTransitionEnum.IDENTITY_CREATE_FROM_ADDRESSES]).andOn('state_transitions.block_height', '=', 'blocks_sub.height')
-      })
+    const dataSubquery = this.knex('state_transitions')
+      .select('identifier', 'state_transitions.block_height')
+      .whereIn('state_transitions.type', [StateTransitionEnum.IDENTITY_CREATE, StateTransitionEnum.IDENTITY_CREATE_FROM_SHIELDED_POOL, StateTransitionEnum.IDENTITY_CREATE_FROM_ADDRESSES])
       .whereRaw('identifier is not null')
       .leftJoin('identities', 'state_transition_id', 'state_transitions.id')
+      .as('filtered_data')
 
     const rows = await this.knex
       .with('ranges', ranges)
-      .with(
-        'filtered_data',
-        dataSubquery
-      )
+      .with('bounds', bounds)
       .select('date_from')
       .select(this.knex.raw('count(identifier) as identities_count'))
-      .select(this.knex.raw('min(height) as block_height'))
-      .leftJoin('filtered_data', function () {
-        this.on('timestamp', '<=', 'date_to')
-      })
+      .leftJoin(dataSubquery, 'filtered_data.block_height', '<=', 'bounds.last_height')
       .groupBy('date_from')
-      .from('ranges')
+      .from('bounds')
 
     return rows.map(row => ({
       timestamp: row.date_from.toISOString(),
