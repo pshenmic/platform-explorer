@@ -31,17 +31,17 @@ impl PostgresDAO {
         &self,
         validator: Validator,
         sql_transaction: &Transaction<'_>,
-    ) -> Result<(), PoolError> {
+    ) -> Result<i32, PoolError> {
         let stmt = sql_transaction
             .prepare_cached(
                 "INSERT INTO validators(pro_tx_hash) \
-        VALUES ($1);",
+        VALUES ($1) RETURNING id;",
             )
             .await
             .unwrap();
 
-        sql_transaction
-            .execute(&stmt, &[&validator.pro_tx_hash])
+        let row = sql_transaction
+            .query_one(&stmt, &[&validator.pro_tx_hash])
             .await
             .unwrap();
 
@@ -50,6 +50,6 @@ impl PostgresDAO {
             &validator.pro_tx_hash
         );
 
-        Ok(())
+        Ok(row.get(0))
     }
 }

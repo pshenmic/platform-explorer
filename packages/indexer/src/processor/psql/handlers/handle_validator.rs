@@ -30,7 +30,7 @@ impl PSQLProcessor {
         &self,
         validator: Validator,
         sql_transaction: &Transaction<'_>,
-    ) -> Result<(), ProcessorError> {
+    ) -> Result<i32, ProcessorError> {
         let existing = self
             .dao
             .get_validator_by_pro_tx_hash(validator.pro_tx_hash.clone(), sql_transaction)
@@ -38,7 +38,8 @@ impl PSQLProcessor {
 
         match existing {
             None => {
-                self.dao
+                let id = self
+                    .dao
                     .create_validator(validator.clone(), sql_transaction)
                     .await?;
 
@@ -68,9 +69,9 @@ impl PSQLProcessor {
                     }
                 }
 
-                Ok(())
+                Ok(id)
             }
-            Some(_) => Ok(()),
+            Some(existing) => Ok(existing.id.expect("Validator id must be set")),
         }
     }
 }

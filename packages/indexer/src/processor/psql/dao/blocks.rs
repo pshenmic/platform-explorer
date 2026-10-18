@@ -8,19 +8,9 @@ impl PostgresDAO {
     pub async fn create_block(
         &self,
         block_header: BlockHeader,
+        validator_id: i32,
         sql_transaction: &Transaction<'_>,
     ) -> String {
-        let validator = self
-            .get_validator_by_pro_tx_hash(
-                block_header.proposer_pro_tx_hash.clone(),
-                sql_transaction,
-            )
-            .await
-            .expect(&format!(
-                "Cannot find validator {}",
-                block_header.proposer_pro_tx_hash
-            ))
-            .unwrap();
 
         let stmt = sql_transaction
             .prepare_cached(
@@ -42,7 +32,7 @@ impl PostgresDAO {
                     &block_header.app_version,
                     &block_header.l1_locked_height,
                     &block_header.proposer_pro_tx_hash,
-                    &validator.id,
+                    &validator_id,
                     &block_header.app_hash,
                     &block_header.quorum_hash,
                     &block_header.epoch,
@@ -60,7 +50,7 @@ impl PostgresDAO {
             .unwrap();
 
         sql_transaction
-            .execute(&validator_stmt, &[&block_header.height, &validator.id])
+            .execute(&validator_stmt, &[&block_header.height, &validator_id])
             .await
             .unwrap();
 

@@ -3,6 +3,7 @@ use crate::entities::validator::Validator;
 use crate::processor::psql::{PSQLProcessor, ProcessorError};
 use base64::engine::general_purpose;
 use base64::Engine;
+use std::collections::HashMap;
 use deadpool_postgres::GenericClient;
 
 impl PSQLProcessor {
@@ -11,10 +12,17 @@ impl PSQLProcessor {
         block: Block,
         validators: Vec<Validator>,
     ) -> Result<(), ProcessorError> {
-        let processed = self
-            .dao
-            .get_block_header_by_height(block.header.height.clone())
-            .await?;
+        let last_block_header = self.last_block_header.borrow().clone();
+
+        // the block next to the one this indexer has committed cannot be processed yet
+        let processed = match &last_block_header {
+            Some(last_block_header) if last_block_header.height == block.header.height - 1 => None,
+            _ => {
+                self.dao
+                    .get_block_header_by_height(block.header.height.clone())
+                    .await?
+            }
+        };
 
         match processed {
             None => {
@@ -36,14 +44,56 @@ impl PSQLProcessor {
                         .expect("Cannot create initial data");
                 }
 
-                for (_, validator) in validators.iter().enumerate() {
-                    self.handle_validator(validator.clone(), &sql_transaction)
+                // the validator set only changes on quorum rotation, so mostly all of them are known
+                let new_validators = validators
+                    .iter()
+                    .filter(|validator| {
+                        !self
+                            .known_validators
+                            .borrow()
+                            .contains_key(&validator.pro_tx_hash)
+                    })
+                    .cloned()
+                    .collect::<Vec<Validator>>();
+
+                let mut new_validator_ids: HashMap<String, i32> = HashMap::new();
+
+                for validator in new_validators.iter() {
+                    let id = self
+                        .handle_validator(validator.clone(), &sql_transaction)
                         .await?;
+
+                    new_validator_ids.insert(validator.pro_tx_hash.clone(), id);
                 }
 
-                let previous_block_header = match block.header.height {
-                    1 => None,
-                    height => Some(
+                let proposer_pro_tx_hash = &block.header.proposer_pro_tx_hash;
+
+                let known_proposer_id = self
+                    .known_validators
+                    .borrow()
+                    .get(proposer_pro_tx_hash)
+                    .or(new_validator_ids.get(proposer_pro_tx_hash))
+                    .cloned();
+
+                let proposer_id = match known_proposer_id {
+                    Some(id) => id,
+                    None => self
+                        .dao
+                        .get_validator_by_pro_tx_hash(
+                            proposer_pro_tx_hash.clone(),
+                            &sql_transaction,
+                        )
+                        .await?
+                        .and_then(|validator| validator.id)
+                        .expect(&format!("Cannot find validator {}", proposer_pro_tx_hash)),
+                };
+
+                let previous_block_header = match (block.header.height, last_block_header) {
+                    (1, _) => None,
+                    (height, Some(last_block_header)) if last_block_header.height == height - 1 => {
+                        Some(last_block_header)
+                    }
+                    (height, _) => Some(
                         self.dao
                             .get_block_header_by_height(height - 1)
                             .await?
@@ -53,7 +103,7 @@ impl PSQLProcessor {
 
                 let block_hash = self
                     .dao
-                    .create_block(block.header.clone(), &sql_transaction)
+                    .create_block(block.header.clone(), proposer_id, &sql_transaction)
                     .await;
 
                 self.handle_core_payments(
@@ -99,6 +149,12 @@ impl PSQLProcessor {
                     .commit()
                     .await
                     .expect("SQL Transaction Error");
+
+                // only committed state is cached, a failed block is retried from scratch
+                self.known_validators
+                    .borrow_mut()
+                    .extend(new_validator_ids);
+                self.last_block_header.replace(Some(block.header.clone()));
 
                 Ok(())
             }
