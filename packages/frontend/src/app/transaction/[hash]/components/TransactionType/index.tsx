@@ -19,15 +19,15 @@ import {
   Unshield,
   ShieldFromAssetLock,
   ShieldedWithdrawal,
-  IdentityCreateFromShieldedPool
+  IdentityCreateFromShieldedPool,
+  IdentityKeyLimitsUpdate,
 } from './variants'
 import type { DecodedStateTransition, WithRate } from '../types'
+import { JsonDetails } from '../../../../../components/transactions/TransactionDetails'
 
 export type TransactionTypeProps = DecodedStateTransition & WithRate
 
 export const TransactionType = ({ typeString: type, ...other }: TransactionTypeProps) => {
-  if (other.data === null) return <></>
-
   // Variants are still largely JS with JSDoc props; cast until all are migrated.
   const props = other as Record<string, unknown>
 
@@ -115,5 +115,10 @@ export const TransactionType = ({ typeString: type, ...other }: TransactionTypeP
     return <IdentityCreateFromShieldedPool {...props} />
   }
 
-  return <></>
+  if (type === 'IDENTITY_KEY_LIMITS_UPDATE') {
+    return <IdentityKeyLimitsUpdate {...other} />
+  }
+
+  const { rate, ...decoded } = other
+  return <JsonDetails title="Decoded transaction" value={{ typeString: type, ...decoded }} />
 }
