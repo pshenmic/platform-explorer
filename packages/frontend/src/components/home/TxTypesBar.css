@@ -688,6 +688,50 @@
   background: rgba(255, 255, 255, 0.25);
   color: rgba(255, 255, 255, 0.25);
 }
+.TxTypesBar__Seg--SHIELD_FROM_IDENTITY,
+.TxTypesBar__Dot--SHIELD_FROM_IDENTITY,
+.TxTypesBar__Seg--IDENTITY_TOP_UP_FROM_SHIELDED_POOL,
+.TxTypesBar__Dot--IDENTITY_TOP_UP_FROM_SHIELDED_POOL,
+.TxTypesBar__Seg--TOKEN_SHIELDED_TRANSFER_WITH_SHIELDED_FEE,
+.TxTypesBar__Dot--TOKEN_SHIELDED_TRANSFER_WITH_SHIELDED_FEE,
+.TxTypesBar__Seg--TOKEN_UNSHIELD_WITH_SHIELDED_FEE,
+.TxTypesBar__Dot--TOKEN_UNSHIELD_WITH_SHIELDED_FEE,
+.TxTypesBar__Seg--TOKEN_PURCHASE_FROM_SHIELDED_POOL,
+.TxTypesBar__Dot--TOKEN_PURCHASE_FROM_SHIELDED_POOL,
+.TxTypesBar__Seg--TOKEN_SHIELD,
+.TxTypesBar__Dot--TOKEN_SHIELD,
+.TxTypesBar__Seg--TOKEN_MINT_TO_POOL,
+.TxTypesBar__Dot--TOKEN_MINT_TO_POOL,
+.TxTypesBar__Seg--TOKEN_CLAIM_TO_POOL,
+.TxTypesBar__Dot--TOKEN_CLAIM_TO_POOL,
+.TxTypesBar__Seg--TOKEN_DIRECT_PURCHASE_TO_POOL,
+.TxTypesBar__Dot--TOKEN_DIRECT_PURCHASE_TO_POOL,
+.TxTypesBar__Seg--TOKEN_UNSHIELD,
+.TxTypesBar__Dot--TOKEN_UNSHIELD,
+.TxTypesBar__Seg--TOKEN_SHIELDED_TRANSFER,
+.TxTypesBar__Dot--TOKEN_SHIELDED_TRANSFER,
+.TxTypesBar__Seg--CONTRACT_FEE_CLAIM,
+.TxTypesBar__Dot--CONTRACT_FEE_CLAIM {
+  background: #66cba3;
+  color: #66cba3;
+}
+.TxTypesBar__Seg--IDENTITY_KEY_LIMITS_UPDATE,
+.TxTypesBar__Dot--IDENTITY_KEY_LIMITS_UPDATE {
+  background: #e8ca70;
+  color: #e8ca70;
+}
+.TxTypesBar__Seg--CONTRACT_USER_MODERATION,
+.TxTypesBar__Dot--CONTRACT_USER_MODERATION {
+  background: #e8a570;
+  color: #e8a570;
+}
+.TxTypesBar__Seg--DOCUMENT_INDEX_ONLY_DELETE,
+.TxTypesBar__Dot--DOCUMENT_INDEX_ONLY_DELETE,
+.TxTypesBar__Seg--TOKEN_BURN_FROM_POOL,
+.TxTypesBar__Dot--TOKEN_BURN_FROM_POOL {
+  background: #e88080;
+  color: #e88080;
+}
 .TxTypesBar__Dot--UNKNOWN {
   background: rgba(255, 255, 255, 0.25);
   color: rgba(255, 255, 255, 0.25);
