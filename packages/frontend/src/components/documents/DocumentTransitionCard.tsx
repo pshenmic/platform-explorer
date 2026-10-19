@@ -8,6 +8,7 @@ import {
   PrefundedBalance as PrefundedBalanceJs
 } from '../data'
 import BatchTypeBadgeJs from '../transactions/BatchTypeBadge'
+import { JsonDetails } from '../transactions/TransactionDetails'
 import { ValueContainer } from '../ui/containers'
 import './DocumentTransitionCard.css'
 
@@ -44,6 +45,14 @@ const BatchTypeBadge = BatchTypeBadgeJs as ComponentType<{
 }>
 
 const fieldsOfTypes: Record<string, string[]> = {
+  DOCUMENT_INDEX_ONLY_DELETE: [
+    'DataContractIdentifier',
+    'DocumentIdentifier',
+    'DocumentType',
+    'Revision',
+    'IdentityContractNonce',
+    'Data'
+  ],
   DOCUMENT_CREATE: [
     'DataContractIdentifier',
     'DocumentIdentifier',
@@ -272,13 +281,19 @@ const DocumentTransitionCard = ({
           className={'DocumentTransitionCard__InfoLine DocumentTransitionCard__InfoLine--Data'}
           title={'Data'}
           value={
-            <pre className={'DocumentTransitionCard__Code'}>
-              {JSON.stringify(transition?.data, null, 2)}
-            </pre>
+            transition.action === 'DOCUMENT_INDEX_ONLY_DELETE' ? (
+              <JsonDetails title="Document data" value={transition.data} />
+            ) : (
+              <pre className={'DocumentTransitionCard__Code'}>
+                {JSON.stringify(transition?.data, null, 2)}
+              </pre>
+            )
           }
           error={transition?.data === undefined}
         />
       )}
+
+      {fields.length === 0 && <JsonDetails title="Document operation" value={transition} />}
 
       {transition?.prefundedVotingBalance && (
         <InfoLine
