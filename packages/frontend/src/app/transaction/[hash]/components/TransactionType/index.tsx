@@ -23,6 +23,11 @@ import {
   IdentityKeyLimitsUpdate,
   ContractUserModeration,
   ContractFeeClaim,
+  ShieldFromIdentity,
+  IdentityTopUpFromShieldedPool,
+  TokenShieldedTransferWithShieldedFee,
+  TokenUnshieldWithShieldedFee,
+  TokenPurchaseFromShieldedPool
 } from './variants'
 import type { DecodedStateTransition, WithRate } from '../types'
 import { JsonDetails } from '../../../../../components/transactions/TransactionDetails'
@@ -127,6 +132,26 @@ export const TransactionType = ({ typeString: type, ...other }: TransactionTypeP
 
   if (type === 'CONTRACT_FEE_CLAIM') {
     return <ContractFeeClaim {...other} />
+  }
+
+  if (type === 'SHIELD_FROM_IDENTITY') {
+    return <ShieldFromIdentity {...other} />
+  }
+
+  if (type === 'IDENTITY_TOP_UP_FROM_SHIELDED_POOL') {
+    return <IdentityTopUpFromShieldedPool {...other} />
+  }
+
+  if (type === 'TOKEN_SHIELDED_TRANSFER_WITH_SHIELDED_FEE') {
+    return <TokenShieldedTransferWithShieldedFee {...other} />
+  }
+
+  if (type === 'TOKEN_UNSHIELD_WITH_SHIELDED_FEE') {
+    return <TokenUnshieldWithShieldedFee {...other} />
+  }
+
+  if (type === 'TOKEN_PURCHASE_FROM_SHIELDED_POOL') {
+    return <TokenPurchaseFromShieldedPool {...other} />
   }
 
   const { rate, ...decoded } = other
