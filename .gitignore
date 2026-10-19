@@ -5,5 +5,7 @@ package-lock.json
 launch.json
 .vscode
 scripts/
+!packages/api/scripts/
 .pr-shots/
 /.env
+packages/api/geoip
