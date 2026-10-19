@@ -21,6 +21,8 @@ import {
   ShieldedWithdrawal,
   IdentityCreateFromShieldedPool,
   IdentityKeyLimitsUpdate,
+  ContractUserModeration,
+  ContractFeeClaim,
 } from './variants'
 import type { DecodedStateTransition, WithRate } from '../types'
 import { JsonDetails } from '../../../../../components/transactions/TransactionDetails'
@@ -117,6 +119,14 @@ export const TransactionType = ({ typeString: type, ...other }: TransactionTypeP
 
   if (type === 'IDENTITY_KEY_LIMITS_UPDATE') {
     return <IdentityKeyLimitsUpdate {...other} />
+  }
+
+  if (type === 'CONTRACT_USER_MODERATION') {
+    return <ContractUserModeration {...other} />
+  }
+
+  if (type === 'CONTRACT_FEE_CLAIM') {
+    return <ContractFeeClaim {...other} />
   }
 
   const { rate, ...decoded } = other
