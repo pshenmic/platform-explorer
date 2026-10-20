@@ -35,7 +35,7 @@ class DocumentsController {
     }
 
     const [dapiDocument] = await this.sdk.documents.query(
-      dataContract.owner.identifier,
+      dataContract.identifier,
       documentTypeName,
       [['$id', '=', new IdentifierWASM(identifier).base58()]],
       1
