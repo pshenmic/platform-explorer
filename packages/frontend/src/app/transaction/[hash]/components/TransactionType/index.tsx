@@ -30,7 +30,7 @@ import {
   TokenPurchaseFromShieldedPool
 } from './variants'
 import type { DecodedStateTransition, WithRate } from '../types'
-import { JsonDetails } from '../../../../../components/transactions/TransactionDetails'
+import { JsonDetails } from '@components/transactions/TransactionDetails'
 
 export type TransactionTypeProps = DecodedStateTransition & WithRate
 

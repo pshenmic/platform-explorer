@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { skipToken, useQuery } from '@tanstack/react-query'
 import { getToken } from '../../util/Api'
 import type { ShieldedTokenPayload } from '../../types/ShieldedTransaction'
 import { formatTransactionAmount } from '../../util/transactionAmounts'
@@ -23,25 +23,15 @@ export function ShieldedTokenDetails({
   type: string
   payload: ShieldedTokenPayload
 }) {
-  const [metadata, setMetadata] = useState<{ id: string; decimals: number | null } | null>(null)
   const tokenId = payload.tokenId
-  useEffect(() => {
-    let current = true
-    if (tokenId) {
-      getToken(tokenId)
-        .then(token => {
-          if (current) setMetadata({ id: tokenId, decimals: token.decimals })
-        })
-        .catch(() => {
-          if (current) setMetadata(null)
-        })
-    }
-    return () => {
-      current = false
-    }
-  }, [tokenId])
+  const { data: token } = useQuery({
+    queryKey: ['token', tokenId],
+    queryFn: tokenId ? () => getToken(tokenId) : skipToken,
+    staleTime: 60_000,
+    retry: false
+  })
 
-  const decimals = metadata?.id === tokenId ? metadata?.decimals : null
+  const decimals = token?.decimals
   const knownDecimals =
     decimals != null && Number.isInteger(decimals) && decimals >= 0 && decimals <= 18
   const amount = type === 'TOKEN_BURN_FROM_POOL' ? payload.burnAmount : payload.amount
