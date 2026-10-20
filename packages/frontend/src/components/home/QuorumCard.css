@@ -357,6 +357,15 @@ a.QuorumCard__HelpMark:hover {
 .QuorumCard__FallbackNote--inline {
   margin: 8px 0 0;
 }
+.QuorumCard__FallbackNote button {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-decoration: underline;
+  cursor: pointer;
+}
 .QuorumCard__Diff {
   display: flex;
   flex-wrap: wrap;
@@ -602,10 +611,6 @@ a.QuorumCard__HelpMark:hover {
   line-height: 1.45;
   color: var(--pe-color-gray-500);
   text-align: right;
-}
-.QuorumCard__QEta {
-  white-space: nowrap;
-  color: var(--pe-color-gray-250);
 }
 .QuorumCard__QCaption b {
   font-weight: 800;

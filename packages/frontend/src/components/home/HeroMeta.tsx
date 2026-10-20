@@ -1,7 +1,8 @@
 import type { ReactNode } from 'react'
+import type { NetworkHealth } from './networkHealth'
 import { ArrowCornerIcon } from '../ui/icons'
 import { Skeleton } from './Skeleton'
-import { isNetworkLive, isApiOperational, formatNetworkLabel } from './utils'
+import { isApiOperational, formatNetworkLabel } from './utils'
 
 function VersionValue({
   version,
@@ -39,15 +40,20 @@ function VersionValue({
 function StatusValue({
   ok,
   loading,
-  children
+  children,
+  title
 }: {
-  ok: boolean
+  title?: string
+  ok: boolean | null
   loading: boolean
   children: ReactNode
 }) {
-  const state = loading ? 'is-loading' : ok ? 'is-ok' : 'is-down'
+  const state = loading ? 'is-loading' : ok === null ? 'is-unknown' : ok ? 'is-ok' : 'is-down'
   return (
-    <span className={`HomeHero__MetaValue HomeHero__MetaChip HomeHero__MetaChip--Status ${state}`}>
+    <span
+      title={title}
+      className={`HomeHero__MetaValue HomeHero__MetaChip HomeHero__MetaChip--Status ${state}`}
+    >
       {loading ? <Skeleton w={'82px'} h={'0.8em'} /> : children}
     </span>
   )
@@ -62,24 +68,41 @@ function MetaItem({ label, children }: { label: string; children: ReactNode }) {
   )
 }
 
-export function HeroMeta({ status, loading }: { status?: any; loading?: boolean }) {
+export function HeroMeta({
+  status,
+  loading,
+  health
+}: {
+  status?: any
+  loading?: boolean
+  health: NetworkHealth
+}) {
   const ready = !loading && status && Object.keys(status).length > 0
-  const live = isNetworkLive(status)
   const apiOk = isApiOperational(status)
   const drive = status?.versions?.software?.drive
   const tenderdash = status?.versions?.software?.tenderdash
-  const networkLabel = formatNetworkLabel(status?.network) || status?.network || 'n/a'
+  const networkLabel = formatNetworkLabel(status?.network) || status?.network || 'Unknown'
 
   return (
     <div className={'HomeHero__Meta'}>
       <MetaItem label={'Network'}>
-        <StatusValue ok={live} loading={!ready}>
+        <StatusValue
+          ok={
+            health.kind === 'unknown' || health.kind === 'loading' ? null : health.kind === 'live'
+          }
+          loading={health.kind === 'loading'}
+          title={health.title}
+        >
           {networkLabel}
         </StatusValue>
       </MetaItem>
       <MetaItem label={'API'}>
-        <StatusValue ok={apiOk} loading={!ready}>
-          {apiOk ? 'online' : 'offline'}
+        <StatusValue
+          ok={health.fresh ? apiOk : null}
+          loading={health.kind === 'loading'}
+          title={health.fresh ? 'Indexer block time compared with Tenderdash.' : health.title}
+        >
+          {health.fresh ? (apiOk ? 'online' : 'behind') : 'unknown'}
         </StatusValue>
       </MetaItem>
       <MetaItem label={'Drive'}>
