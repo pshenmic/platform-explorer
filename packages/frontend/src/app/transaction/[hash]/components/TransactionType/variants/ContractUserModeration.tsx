@@ -1,5 +1,7 @@
 import { MODERATION_ACTION_LABELS } from 'src/enums/contractModeration'
 import type { ModerationAction } from 'src/types/ContractModeration'
+import InfoLine from '@components/data/InfoLine'
+import JsonViewer from '@components/data/JsonViewer'
 import {
   DetailLine,
   EntityLine,
@@ -65,7 +67,11 @@ function ModerationDetails({ action }: { action?: ModerationAction | null }) {
         <JsonDetails title="Serialized document" value={action.document} />
       )}
       {action.type === 'changeDocumentFields' && (
-        <JsonDetails title="Changed fields" value={action.fields} />
+        <InfoLine
+          className="TransactionPage__InfoLine TransactionPage__InfoLine--Schema"
+          title="Changed fields"
+          value={action.fields == null ? 'Unavailable' : <JsonViewer value={action.fields} />}
+        />
       )}
       {reason?.code != null && <DetailLine title="Reason Code">{reason.code}</DetailLine>}
       {reason?.text != null && <DetailLine title="Reason">{reason.text}</DetailLine>}
