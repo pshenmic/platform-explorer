@@ -1,5 +1,7 @@
 'use client'
 
+import { getValidatorStatus } from './validatorStatus'
+
 import { columnLayout } from './ValidatorsList.columns'
 
 import type { ReactNode } from 'react'
@@ -14,13 +16,13 @@ import { ErrorMessageBlock } from '../Errors'
 const ACTIVE_OPTIONS = [
   {
     value: 'current',
-    label: <Badge colorScheme={'orange'}>Current</Badge>,
-    searchText: 'current active'
+    label: <Badge colorScheme={'green'}>Active</Badge>,
+    searchText: 'active'
   },
   {
     value: 'queued',
-    label: <Badge colorScheme={'gray'}>Queued</Badge>,
-    searchText: 'queued inactive'
+    label: <Badge colorScheme={'gray'}>Waiting for Quorum</Badge>,
+    searchText: 'waiting quorum'
   }
 ]
 
@@ -71,14 +73,10 @@ function validatorColumns(canFilter: boolean) {
       filterKey: canFilter ? 'isActive' : undefined,
       filterType: canFilter ? ('options' as const) : undefined,
       filterOptions: ACTIVE_OPTIONS,
-      cell: (validator: Validator) =>
-        validator?.isActive != null ? (
-          <Badge colorScheme={validator.isActive ? 'orange' : 'gray'}>
-            {validator.isActive ? 'Current' : 'Queued'}
-          </Badge>
-        ) : (
-          <NotActive />
-        )
+      cell: (validator: Validator) => {
+        const status = getValidatorStatus(validator)
+        return <Badge colorScheme={status.colorScheme}>{status.label}</Badge>
+      }
     },
     {
       ...columnLayout.lastBlockHeight,
