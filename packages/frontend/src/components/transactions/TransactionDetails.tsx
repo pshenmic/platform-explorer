@@ -80,7 +80,10 @@ export function JsonDetails({ title = 'Decoded data', value }: { title?: string;
 
 export function ProofDetails({
   title = 'Proof data',
-  ...values
+  actions,
+  anchor,
+  proof,
+  bindingsSignature
 }: {
   title?: string
   actions?: unknown[] | null
@@ -88,6 +91,17 @@ export function ProofDetails({
   proof?: string | null
   bindingsSignature?: string | null
 }) {
-  const present = Object.fromEntries(Object.entries(values).filter(([, value]) => value != null))
-  return Object.keys(present).length ? <JsonDetails title={title} value={present} /> : null
+  if (actions == null && anchor == null && proof == null && bindingsSignature == null) return null
+
+  return (
+    <details className="TransactionDetails__Data">
+      <summary>{title}</summary>
+      {anchor != null && <EntityLine title="Anchor" identifier={anchor} />}
+      {bindingsSignature != null && (
+        <EntityLine title="Bindings Signature" identifier={bindingsSignature} />
+      )}
+      {proof != null && <EntityLine title="Proof" identifier={proof} />}
+      {actions != null && <JsonDetails title={`Actions (${actions.length})`} value={actions} />}
+    </details>
+  )
 }
