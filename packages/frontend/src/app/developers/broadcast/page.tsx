@@ -13,7 +13,7 @@ function BroadcastPage() {
   }, [setBreadcrumbs])
 
   return (
-    <PageDataContainer title={'BROADCAST TRANSACTION'}>
+    <PageDataContainer title={'Broadcast transaction'}>
       <BroadcastForm />
     </PageDataContainer>
   )

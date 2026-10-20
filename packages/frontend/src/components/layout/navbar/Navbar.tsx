@@ -4,8 +4,6 @@ import { useOutsideClick } from '../../../hooks/useOutsideClick'
 import { useBreakpointKey } from '../../../hooks'
 import dynamic from 'next/dynamic'
 import GlobalSearchInput from '../../search/GlobalSearchInput'
-import { Breadcrumbs } from '../../breadcrumbs/Breadcrumbs'
-import { breadcrumbsActiveRoutes } from '../../breadcrumbs/routes'
 import NetworkSelect from './NetworkSelect'
 import { usePathname } from 'next/navigation'
 import { useEffect, useState, useRef, useMemo, useCallback } from 'react'
@@ -146,11 +144,6 @@ const defaultSearchState: SearchState = {
 
 function Navbar() {
   const pathname = usePathname()
-  const displayBreadcrumbs = useMemo(
-    () => breadcrumbsActiveRoutes.some(route => pathname.indexOf(route) !== -1),
-    [pathname]
-  )
-
   const [isMobileMenuOpen, setMobileMenuOpen] = useState(false)
   const openMobileMenu = useCallback(() => setMobileMenuOpen(true), [])
   const closeMobileMenu = useCallback(() => setMobileMenuOpen(false), [])
@@ -365,8 +358,6 @@ function Navbar() {
           burgerRef={burgerRef}
         />
       ) : null}
-
-      {displayBreadcrumbs && <Breadcrumbs />}
     </div>
   )
 }
