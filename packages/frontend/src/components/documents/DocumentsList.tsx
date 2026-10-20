@@ -6,34 +6,47 @@ import { Alias, Identifier, NotActive, TimeDelta } from '../data'
 import { LinkContainer } from '../ui/containers'
 import BatchTypeBadge from '../transactions/BatchTypeBadge'
 import { DataList } from '../ui/lists'
+import type { DataListProps } from '../ui/lists/DataList/DataList'
 import { useRouter } from 'next/navigation'
 import { findActiveAlias } from '../../util'
 import Pagination from '../pagination'
 import { ErrorMessageBlock } from '../Errors'
 
 interface DocumentsListProps {
-  documents?: Array<Document & { gasUsed?: number }>
+  allowedFilters?: string[]
+  toolbarTarget?: HTMLElement | null
+  documentTypes?: string[]
+  documents?: Document[]
   headerStyles?: string
   pagination?: {
     onPageChange?: (p: { selected: number }) => void
     pageCount?: number
     forcePage?: number
   } | null
+  paging?: DataListProps['paging']
   loading?: boolean
   itemsCount?: number
   showDataContract?: boolean
   showAction?: boolean
+  filterValues?: Record<string, unknown>
+  onFilterChange?: (key: string, value: unknown) => void
   showGas?: boolean
 }
 
 export default function DocumentsList({
   documents = [],
+  allowedFilters = ['type', 'revision', 'owner', 'timestamp'],
+  documentTypes,
+  toolbarTarget,
   headerStyles,
   pagination,
+  paging,
   loading,
   itemsCount = 10,
   showDataContract = false,
   showAction = true,
+  filterValues,
+  onFilterChange,
   showGas = true
 }: DocumentsListProps) {
   const router = useRouter()
@@ -42,13 +55,18 @@ export default function DocumentsList({
 
   const columns = [
     {
-      key: 'timestamp',
-      header: 'Timestamp',
-      minWidth: 128,
-      align: 'right',
-      cell: (document: Document & { gasUsed?: number }) => (
-        <TimeDelta endDate={document?.timestamp} />
-      )
+      key: 'identifier',
+      header: 'Identifier',
+      grow: true,
+      minWidth: 120,
+      cell: (document: Document) =>
+        document?.identifier ? (
+          <Identifier ellipsis={true} styles={['highlight-both']}>
+            {document?.identifier}
+          </Identifier>
+        ) : (
+          <NotActive />
+        )
     },
     ...(showAction
       ? [
@@ -57,7 +75,7 @@ export default function DocumentsList({
             header: 'Action',
             minWidth: 100,
             priority: 2,
-            cell: (document: Document & { gasUsed?: number }) =>
+            cell: (document: Document) =>
               document?.transitionType ? (
                 <BatchTypeBadge batchType={document.transitionType} />
               ) : (
@@ -68,42 +86,42 @@ export default function DocumentsList({
       : []),
     {
       key: 'type',
+      filterKey:
+        onFilterChange &&
+        (documentTypes?.length !== 1 ||
+          (Array.isArray(filterValues?.type) && filterValues.type.length > 0))
+          ? 'type'
+          : undefined,
+      filterType: documentTypes?.length ? ('options' as const) : ('search' as const),
+      filterOptions: documentTypes?.map(value => ({ value, label: value })),
+      filterMultiple: false,
+      filterPlaceholder: 'Document type',
       header: 'Type',
       minWidth: 88,
       priority: 3,
-      cell: (document: Document & { gasUsed?: number }) =>
-        document?.documentTypeName ?? <NotActive />
+      cell: (document: Document) => document?.documentTypeName ?? <NotActive />
     },
     {
       key: 'revision',
+      filterKey: onFilterChange ? 'revision' : undefined,
+      filterType: 'range' as const,
       numeric: true,
       header: 'Rev',
       minWidth: 48,
       align: 'center',
       priority: 1,
-      cell: (document: Document & { gasUsed?: number }) => document?.revision ?? <NotActive />
-    },
-    {
-      key: 'identifier',
-      header: 'Identifier',
-      grow: true,
-      minWidth: 120,
-      cell: (document: Document & { gasUsed?: number }) =>
-        document?.identifier ? (
-          <Identifier ellipsis={true} styles={['highlight-both']}>
-            {document?.identifier}
-          </Identifier>
-        ) : (
-          <NotActive />
-        )
+      cell: (document: Document) => document?.revision ?? <NotActive />
     },
     {
       key: 'ownerOrContract',
+      filterKey: onFilterChange && !showDataContract ? 'owner' : undefined,
+      filterType: 'search' as const,
+      filterPlaceholder: 'Owner ID',
       header: showDataContract ? 'Data Contract' : 'Owner',
       grow: true,
       minWidth: 120,
       priority: 2,
-      cell: (document: Document & { gasUsed?: number }) => {
+      cell: (document: Document) => {
         if (showDataContract) {
           return document?.dataContractIdentifier ? (
             <LinkContainer
@@ -152,22 +170,42 @@ export default function DocumentsList({
             minWidth: 72,
             align: 'right',
             priority: 1,
-            cell: (document: Document & { gasUsed?: number }) =>
-              Number.isFinite(document?.gasUsed) ? document.gasUsed.toLocaleString() : <NotActive />
+            cell: (document: Document) =>
+              typeof document?.gasUsed === 'number' && Number.isFinite(document.gasUsed) ? (
+                document.gasUsed.toLocaleString()
+              ) : (
+                <NotActive />
+              )
           }
         ]
       : []),
     {
       key: 'status',
+      filterKey: onFilterChange ? 'status' : undefined,
+      filterType: 'options' as const,
+      filterOptions: [
+        { value: 'active', label: 'Active' },
+        { value: 'deleted', label: 'Deleted' }
+      ],
+      filterMultiple: false,
       header: 'Status',
       minWidth: 80,
       align: 'center',
-      cell: (document: Document & { gasUsed?: number }) =>
+      cell: (document: Document) =>
         document?.deleted ? (
           <Badge colorScheme={'red'}>Deleted</Badge>
         ) : (
           <Badge colorScheme={'green'}>Active</Badge>
         )
+    },
+    {
+      key: 'timestamp',
+      filterKey: onFilterChange ? 'timestamp' : undefined,
+      filterType: 'daterange' as const,
+      header: 'Timestamp',
+      minWidth: 128,
+      align: 'right',
+      cell: (document: Document) => <TimeDelta endDate={document?.timestamp} />
     }
   ]
 
@@ -175,13 +213,32 @@ export default function DocumentsList({
     <DataList
       className={'DocumentsList'}
       items={documents || []}
-      columns={columns}
+      columns={columns.map(column =>
+        'filterKey' in column && !allowedFilters.includes(column.filterKey ?? '')
+          ? { ...column, filterKey: undefined }
+          : column
+      )}
+      paging={paging}
+      toolbarTarget={toolbarTarget}
+      pinFirst
+      filterValues={filterValues}
+      onFilterChange={onFilterChange}
       loading={loading}
       skeletonCount={itemsCount}
       rowHref={document => `/document/${document?.identifier}`}
       rowKey={document => document?.identifier}
       headerVariant={headerStyles === 'light' ? 'light' : 'default'}
-      emptyMessage={'There are no documents created yet.'}
+      emptyMessage={
+        filterValues &&
+        Object.values(filterValues).some(
+          value =>
+            value &&
+            (typeof value !== 'object' ||
+              Object.values(value).some(item => item != null && item !== ''))
+        )
+          ? 'No documents match these filters.'
+          : 'There are no documents created yet.'
+      }
       footer={
         pagination ? (
           <Pagination

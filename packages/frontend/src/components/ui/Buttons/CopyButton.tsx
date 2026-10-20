@@ -9,6 +9,7 @@ const copyMessageSuccess = 'Copied'
 const copyMessageError = 'Copy Failed'
 
 interface CopyButtonProps {
+  label?: string
   text?: string
   className?: string
 }
@@ -21,7 +22,7 @@ function CopyIcon() {
   )
 }
 
-function CopyButton({ text, className }: CopyButtonProps) {
+function CopyButton({ text, className, label = 'Copy' }: CopyButtonProps) {
   const [messageState, setMessageState] = useState({
     active: false,
     text: copyMessageSuccess
@@ -45,6 +46,7 @@ function CopyButton({ text, className }: CopyButtonProps) {
   return (
     <button
       type={'button'}
+      aria-label={label}
       onClick={event => {
         event.stopPropagation()
         event.preventDefault()

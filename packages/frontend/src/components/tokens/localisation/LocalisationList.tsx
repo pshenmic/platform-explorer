@@ -1,52 +1,54 @@
-import LocalisationListItem from './LocalisationListItem'
-import { EmptyListMessage } from '../../ui/lists'
+'use client'
+import { DataList } from '../../ui/lists'
+import { NotActive } from '../../data'
+import { Badge } from '../../ui/Badge'
 import type { Localization } from '../../../types'
 import type { WithClassName } from '../../../types/common'
-import './LocalisationList.css'
-import './LocalisationListItem.css'
-
 interface LocalisationListProps extends WithClassName {
   localisations?: Record<string, Partial<Localization>> | null
 }
 
-function LocalisationList({ localisations = {}, className }: LocalisationListProps) {
-  const localisationEntries = Object.entries(localisations || {})
-
+export default function LocalisationList({ localisations = {}, className }: LocalisationListProps) {
+  const items = Object.entries(localisations || {}).map(([language, value]) => ({
+    language,
+    ...value
+  }))
   return (
-    <div className={`LocalisationList ${className || ''}`}>
-      <div className={'LocalisationList__ScrollZone'}>
-        <div className={'LocalisationList__ColumnTitles'}>
-          <div className={'LocalisationList__ColumnTitle LocalisationList__ColumnTitle--Language'}>
-            Language
-          </div>
-          <div className={'LocalisationList__ColumnTitle LocalisationList__ColumnTitle--Singular'}>
-            Singular
-          </div>
-          <div className={'LocalisationList__ColumnTitle LocalisationList__ColumnTitle--Plural'}>
-            Plural
-          </div>
-          <div
-            className={'LocalisationList__ColumnTitle LocalisationList__ColumnTitle--Capitalize'}
-          >
-            Capitalize
-          </div>
-        </div>
-
-        {localisationEntries?.length > 0 &&
-          localisationEntries.map(([langCode, localisationData]) => (
-            <LocalisationListItem
-              key={langCode}
-              langCode={langCode}
-              localisation={localisationData}
-            />
-          ))}
-
-        {localisationEntries?.length === 0 && (
-          <EmptyListMessage>There are no localisations</EmptyListMessage>
-        )}
-      </div>
-    </div>
+    <DataList
+      items={items}
+      className={className}
+      rowKey={item => item.language}
+      emptyMessage="There are no localisations"
+      columns={[
+        { key: 'language', header: 'Language', minWidth: 100, cell: item => item.language },
+        {
+          key: 'singular',
+          header: 'Singular',
+          minWidth: 140,
+          grow: true,
+          cell: item => item.singularForm ?? <NotActive />
+        },
+        {
+          key: 'plural',
+          header: 'Plural',
+          minWidth: 140,
+          grow: true,
+          cell: item => item.pluralForm ?? <NotActive />
+        },
+        {
+          key: 'capitalize',
+          header: 'Capitalize',
+          minWidth: 100,
+          cell: item =>
+            item.shouldCapitalize !== undefined ? (
+              <Badge colorScheme={item.shouldCapitalize ? 'orange' : 'gray'}>
+                {String(item.shouldCapitalize)}
+              </Badge>
+            ) : (
+              <NotActive />
+            )
+        }
+      ]}
+    />
   )
 }
-
-export default LocalisationList

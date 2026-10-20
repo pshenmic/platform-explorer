@@ -22,7 +22,7 @@ import { PriceList } from './prices'
 import { useState } from 'react'
 import ImageGeneratorJs from '../imageGenerator'
 import type { Localization, Rate } from '../../types'
-import type { PriceData } from './prices/PriceListItem'
+import type { PriceData } from './prices/PriceList'
 import './TokenTotalCard.css'
 
 const Alias = AliasJs as ComponentType<{

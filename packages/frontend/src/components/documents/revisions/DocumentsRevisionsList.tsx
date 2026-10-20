@@ -1,12 +1,13 @@
+'use client'
 import type { Document } from '../../../types'
-import DocumentsRevisionsListItem from './DocumentsRevisionsListItem'
-import { EmptyListMessage } from '../../ui/lists'
+import { DataList } from '../../ui/lists'
+import { Alias, Identifier, BigNumber, TimeDelta, NotActive } from '../../data'
+import { LinkContainer } from '../../ui/containers'
+import BatchTypeBadge from '../../transactions/BatchTypeBadge'
 import Pagination from '../../pagination'
-import { LoadingList } from '../../loading'
-import { ErrorMessageBlock } from '../../Errors'
-
-import './DocumentsRevisionsList.css'
-
+import { RateTooltip } from '../../ui/Tooltips'
+import { findActiveAlias } from '../../../util'
+import { useRouter } from 'next/navigation'
 interface DocumentsRevisionsListProps {
   revisions?: Array<Record<string, unknown>>
   headerStyles?: string
@@ -26,83 +27,107 @@ export default function DocumentsRevisionsList({
   loading,
   itemsCount = 10
 }: DocumentsRevisionsListProps) {
-  const headerExtraClass: Record<string, string> = {
-    default: '',
-    light: 'DocumentsRevisionsList__ColumnTitles--Light'
-  }
-
+  const router = useRouter()
+  const items = revisions as unknown as (Document & { txHash?: string })[]
   return (
-    <div className={'DocumentsRevisionsList'}>
-      <div
-        className={`DocumentsRevisionsList__ColumnTitles ${headerExtraClass[headerStyles ?? 'default'] || ''}`}
-      >
-        <div
-          className={
-            'DocumentsRevisionsList__ColumnTitle DocumentsRevisionsList__ColumnTitle--Timestamp'
+    <DataList
+      items={items}
+      loading={loading}
+      skeletonCount={itemsCount}
+      headerVariant={headerStyles === 'light' ? 'light' : 'default'}
+      pinFirst
+      rowKey={(item, index) => item.txHash ?? String(index)}
+      rowHref={item => (item.txHash ? `/transaction/${item.txHash}` : undefined)}
+      emptyMessage="There are no documents created yet."
+      columns={[
+        {
+          key: 'hash',
+          header: 'Tx Hash',
+          minWidth: 180,
+          grow: true,
+          cell: item =>
+            item.txHash ? <Identifier ellipsis>{item.txHash}</Identifier> : <NotActive />
+        },
+        {
+          key: 'owner',
+          header: 'Owner',
+          minWidth: 180,
+          grow: true,
+          cell: item => {
+            const alias = findActiveAlias(item.owner?.aliases)
+            return item.owner?.identifier ? (
+              <LinkContainer
+                onClick={event => {
+                  event.preventDefault()
+                  event.stopPropagation()
+                  router.push(`/identity/${item.owner?.identifier}`)
+                }}
+              >
+                {alias ? (
+                  <Alias avatarSource={item.owner.identifier}>{alias.alias}</Alias>
+                ) : (
+                  <Identifier ellipsis avatar>
+                    {item.owner.identifier}
+                  </Identifier>
+                )}
+              </LinkContainer>
+            ) : (
+              <NotActive />
+            )
           }
-        >
-          Time
-        </div>
-        <div
-          className={
-            'DocumentsRevisionsList__ColumnTitle DocumentsRevisionsList__ColumnTitle--TxHash'
-          }
-        >
-          Tx Hash
-        </div>
-        <div
-          className={
-            'DocumentsRevisionsList__ColumnTitle DocumentsRevisionsList__ColumnTitle--Owner'
-          }
-        >
-          Owner
-        </div>
-        <div
-          className={
-            'DocumentsRevisionsList__ColumnTitle DocumentsRevisionsList__ColumnTitle--GasUsed'
-          }
-        >
-          Gas Used
-        </div>
-        <div
-          className={
-            'DocumentsRevisionsList__ColumnTitle DocumentsRevisionsList__ColumnTitle--TransitionType'
-          }
-        >
-          Transition
-        </div>
-        <div
-          className={
-            'DocumentsRevisionsList__ColumnTitle DocumentsRevisionsList__ColumnTitle--Revision'
-          }
-        >
-          Revision
-        </div>
-      </div>
-
-      {!loading ? (
-        <div className={'DocumentsRevisionsList__Items'}>
-          {revisions?.map((revision, key) => (
-            <DocumentsRevisionsListItem revision={revision} key={key} />
-          ))}
-          {revisions?.length === 0 && (
-            <EmptyListMessage>There are no documents created yet.</EmptyListMessage>
-          )}
-          {revisions === undefined && <ErrorMessageBlock />}
-        </div>
-      ) : (
-        <LoadingList itemsCount={itemsCount} />
-      )}
-
-      {pagination && (
-        <Pagination
-          className={'DocumentsRevisionsList__Pagination'}
-          onPageChange={pagination.onPageChange}
-          pageCount={pagination.pageCount ?? 0}
-          forcePage={pagination.forcePage ?? 0}
-          justify={true}
-        />
-      )}
-    </div>
+        },
+        {
+          key: 'gas',
+          header: 'Gas Used',
+          minWidth: 100,
+          numeric: true,
+          cell: item =>
+            item.gasUsed != null ? (
+              <RateTooltip credits={item.gasUsed}>
+                <span>
+                  <BigNumber>{item.gasUsed}</BigNumber>
+                </span>
+              </RateTooltip>
+            ) : (
+              <NotActive />
+            )
+        },
+        {
+          key: 'type',
+          header: 'Transition',
+          minWidth: 140,
+          cell: item =>
+            item.transitionType != null ? (
+              <BatchTypeBadge batchType={item.transitionType} />
+            ) : (
+              <NotActive />
+            )
+        },
+        {
+          key: 'revision',
+          header: 'Revision',
+          minWidth: 80,
+          numeric: true,
+          cell: item => item.revision ?? <NotActive />
+        },
+        {
+          key: 'timestamp',
+          header: 'Timestamp',
+          minWidth: 128,
+          align: 'right',
+          cell: item => (item.timestamp ? <TimeDelta endDate={item.timestamp} /> : <NotActive />)
+        }
+      ]}
+      footer={
+        pagination ? (
+          <Pagination
+            onPageChange={pagination.onPageChange}
+            pageCount={pagination.pageCount ?? 0}
+            forcePage={pagination.forcePage ?? 0}
+            justify
+          />
+        ) : undefined
+      }
+    />
   )
 }

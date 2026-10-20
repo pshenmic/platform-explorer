@@ -505,7 +505,7 @@ const getDataContractsByIdentity = (
 interface DocumentsByIdentityFilters {
   document_type_name?: string
   transition_type?: string
-  deleted?: boolean
+  deleted?: boolean | 'true' | 'false'
   timestamp_start?: string
   timestamp_end?: string
 }
@@ -521,7 +521,6 @@ const getDocumentsByIdentity = (
     page,
     limit,
     order,
-    // document_type_name works today; transition_type/deleted/timestamp_* await backend (see #798)
     document_type_name: filters.document_type_name,
     transition_type: filters.transition_type,
     deleted: filters.deleted,
@@ -550,10 +549,12 @@ const getTransfersByIdentity = (
   identifier: string,
   page: number = 1,
   limit: number = 10,
-  order: SortOrder = 'asc'
+  order: SortOrder = 'asc',
+  filters: { hash?: string; type?: number } = {}
 ): Promise<PaginatedResultSet<Transfer>> => {
+  const params = prepareQueryParams({ page, limit, order, ...filters })
   return call<PaginatedResultSet<Transfer>>(
-    `identity/${identifier}/transfers?page=${page}&limit=${limit}&order=${order}`,
+    `identity/${identifier}/transfers?${params.toString()}`,
     'GET'
   )
 }

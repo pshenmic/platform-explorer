@@ -1,11 +1,11 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import * as Api from '../../../util/Api'
 import DocumentsList from '../../../components/documents/DocumentsList'
 import { LoadingBlock } from '../../../components/loading'
 import { ErrorMessageBlock } from '../../../components/Errors'
-import { CodeBlock } from '../../../components/data'
+import dynamic from 'next/dynamic'
 import { InfoContainer, PageDataContainer } from '../../../components/ui/containers'
 import {
   DataContractDigestCard,
@@ -18,10 +18,8 @@ import { TransactionsList } from '../../../components/transactions'
 import TokensList from '../../../components/tokens/TokensList'
 import type { Token as TokenListItemData } from '../../../types'
 import { useDataContractDocumentsFilters } from '../../../components/documents/hooks/useDataContractDocumentsFilters'
-import { DocumentsFilter } from '../../../components/documents/DocumentsFilter'
-import { useQuery, keepPreviousData } from '@tanstack/react-query'
+import { useQuery, useInfiniteQuery } from '@tanstack/react-query'
 import { useQueryState, parseAsStringEnum, parseAsString } from 'nuqs'
-import { normalizePagination } from '@utils/table'
 import type {
   DataContract as DataContractModel,
   LoadableState,
@@ -29,7 +27,17 @@ import type {
   Transaction
 } from '../../../types'
 
+import { DataListModeSwitch } from '../../../components/ui/lists/DataList/DataListPaging'
+import {
+  readListScrollMode,
+  writeListScrollMode,
+  type ListScrollMode
+} from '../../../components/ui/lists/DataList/listScrollMode'
 import './DataContract.css'
+
+const JsonViewer = dynamic(() => import('../../../components/data/JsonViewer'), {
+  loading: () => <LoadingBlock h="450px" loading />
+})
 
 const pagintationConfig = {
   itemsOnPage: {
@@ -53,17 +61,25 @@ interface DataContractProps {
 
 function DataContract({ identifier }: DataContractProps) {
   const { setBreadcrumbs } = useBreadcrumbs()
-  const [isMobile, setIsMobile] = useState(false)
-
-  useEffect(() => {
-    const mq = window.matchMedia('(max-width: 767px)')
-    const update = () => setIsMobile(mq.matches)
-    update()
-    mq.addEventListener('change', update)
-    return () => mq.removeEventListener('change', update)
-  }, [])
   const [txPage, setTxPage] = useState(pagintationConfig.defaultPage)
+  const [txPageSize, setTxPageSize] = useState(pageSize)
+  const [txMode, setTxMode] = useState<ListScrollMode>('continuous')
+  useEffect(() => setTxMode(readListScrollMode('data-contract-transactions')), [])
+  const handleTxMode = (mode: ListScrollMode) => {
+    writeListScrollMode('data-contract-transactions', mode)
+    setTxMode(mode)
+    setTxPage(1)
+  }
+  const [docToolbarTarget, setDocToolbarTarget] = useState<HTMLDivElement | null>(null)
   const [docPage, setDocPage] = useState(pagintationConfig.defaultPage)
+  const [docPageSize, setDocPageSize] = useState(pageSize)
+  const [docMode, setDocMode] = useState<ListScrollMode>('continuous')
+  useEffect(() => setDocMode(readListScrollMode('data-contract-documents')), [])
+  const handleDocMode = (mode: ListScrollMode) => {
+    writeListScrollMode('data-contract-documents', mode)
+    setDocMode(mode)
+    setDocPage(1)
+  }
   const { filters: docFilters, setFilters: setDocFilters } = useDataContractDocumentsFilters()
 
   const dataContractQuery = useQuery({
@@ -74,60 +90,43 @@ function DataContract({ identifier }: DataContractProps) {
     queryKey: ['rate'],
     queryFn: () => Api.getRate()
   })
-  const transactions = useQuery({
-    queryKey: ['transactions', identifier, txPage],
-    queryFn: () => Api.getDataContractTransactions(identifier, txPage, pageSize, 'desc'),
+  const transactions = useInfiniteQuery({
+    queryKey: ['contractTransactions', identifier, txMode, txPage, txPageSize],
+    initialPageParam: txPage,
+    queryFn: ({ pageParam }) =>
+      Api.getDataContractTransactions(identifier, pageParam, txPageSize, 'desc'),
     enabled: !!identifier,
-    select: ({
-      pagination,
-      ...data
-    }: Awaited<ReturnType<typeof Api.getDataContractTransactions>>) => {
-      const normalized = normalizePagination({
-        ...pagination,
-        page: txPage,
-        pageSize
-      })
-      return {
-        pagination: {
-          ...normalized,
-          total: pagination?.total ?? null
-        },
-        list: data.resultSet.map(
-          (transaction: Transaction & { action?: Array<{ action?: string }> }) => ({
-            ...transaction,
-            batchType:
-              transaction?.action?.[0]?.action != null
-                ? String(transaction.action[0].action)
-                : transaction.batchType
-          })
-        ) as Transaction[]
-      }
-    }
+    getNextPageParam: (lastPage, _pages, lastPageParam) =>
+      lastPage.resultSet.length === txPageSize &&
+      lastPageParam * txPageSize < (lastPage.pagination?.total ?? 0)
+        ? lastPageParam + 1
+        : undefined
   })
+  const txTotal = transactions.data?.pages[0]?.pagination?.total
+  const txItems = transactions.data?.pages
+    .flatMap(page => page.resultSet)
+    .map((transaction: Transaction & { action?: Array<{ action?: string }> }) => ({
+      ...transaction,
+      batchType:
+        transaction.action?.[0]?.action != null
+          ? String(transaction.action[0].action)
+          : transaction.batchType
+    }))
 
-  const documents = useQuery({
-    queryKey: ['documents', identifier, docPage, ...Object.values(docFilters)],
-    queryFn: () =>
-      Api.getDocumentsByDataContract(identifier, docPage, pageSize, 'desc', docFilters),
-    placeholderData: keepPreviousData,
-    select: ({
-      pagination,
-      resultSet
-    }: Awaited<ReturnType<typeof Api.getDocumentsByDataContract>>) => {
-      const normalized = normalizePagination({
-        ...pagination,
-        page: docPage,
-        pageSize
-      })
-      return {
-        pagination: {
-          ...normalized,
-          total: pagination?.total ?? null
-        },
-        resultSet
-      }
-    }
+  const documents = useInfiniteQuery({
+    queryKey: ['contractDocuments', identifier, docMode, docPage, docPageSize, docFilters],
+    initialPageParam: docPage,
+    queryFn: ({ pageParam }) =>
+      Api.getDocumentsByDataContract(identifier, pageParam, docPageSize, 'desc', docFilters),
+    enabled: !!identifier,
+    getNextPageParam: (lastPage, _pages, lastPageParam) =>
+      lastPage.resultSet.length === docPageSize &&
+      lastPageParam * docPageSize < (lastPage.pagination?.total ?? 0)
+        ? lastPageParam + 1
+        : undefined
   })
+  const docTotal = documents.data?.pages[0]?.pagination?.total
+  const docItems = documents.data?.pages.flatMap(page => page.resultSet)
 
   // Cards expect LoadableState shape (loading/error booleans), not raw UseQueryResult.
   const dataContract: LoadableState<DataContractModel> = {
@@ -141,8 +140,51 @@ function DataContract({ identifier }: DataContractProps) {
     error: rateQuery.isError
   }
 
-  const handleDocFiltersChange = (next: Record<string, unknown>) => {
-    setDocFilters(next)
+  const documentTypes = useMemo(() => {
+    try {
+      const schema =
+        typeof dataContract.data?.schema === 'string'
+          ? JSON.parse(dataContract.data.schema)
+          : dataContract.data?.schema
+      if (!schema || typeof schema !== 'object' || Array.isArray(schema)) return []
+      return Object.keys(schema).sort((a, b) => a.localeCompare(b))
+    } catch {
+      return []
+    }
+  }, [dataContract.data?.schema])
+
+  useEffect(() => {
+    if (documentTypes.length === 1 && docFilters.document_type_name === documentTypes[0]) {
+      setDocFilters({ document_type_name: undefined })
+      setDocPage(1)
+    }
+  }, [documentTypes, docFilters.document_type_name, setDocFilters])
+
+  const docColumnFilters = {
+    type: documentTypes.length
+      ? docFilters.document_type_name
+        ? [docFilters.document_type_name]
+        : []
+      : docFilters.document_type_name,
+    owner: docFilters.owner,
+    revision: { min: docFilters.revision_min ?? '', max: docFilters.revision_max ?? '' },
+    timestamp: {
+      start: docFilters.timestamp_start ? new Date(docFilters.timestamp_start) : null,
+      end: docFilters.timestamp_end ? new Date(docFilters.timestamp_end) : null
+    }
+  }
+  const handleDocFilterChange = (key: string, value: unknown) => {
+    if (key === 'type') {
+      setDocFilters({ document_type_name: Array.isArray(value) ? value[0] : value })
+    } else if (key === 'revision') {
+      const range = value as { min?: string | number; max?: string | number }
+      setDocFilters({ revision_min: range?.min, revision_max: range?.max })
+    } else if (key === 'timestamp') {
+      const range = value as { start?: Date | null; end?: Date | null }
+      setDocFilters({ timestamp_start: range?.start, timestamp_end: range?.end })
+    } else {
+      setDocFilters({ [key === 'type' ? 'document_type_name' : key]: value })
+    }
     setDocPage(pagintationConfig.defaultPage)
   }
 
@@ -177,9 +219,6 @@ function DataContract({ identifier }: DataContractProps) {
     if (next) setActiveTab(next)
   }
 
-  const txPagination = transactions.data?.pagination
-  const docPagination = documents.data?.pagination
-
   useEffect(() => {
     setBreadcrumbs([
       { label: 'Home', path: '/' },
@@ -198,67 +237,98 @@ function DataContract({ identifier }: DataContractProps) {
     <PageDataContainer className={'DataContract'} title={'Data Contract info'}>
       <div className={'DataContract__InfoBlocks'}>
         <DataContractTotalCard className={'DataContract__InfoBlock'} dataContract={dataContract} />
-        <DataContractDigestCard
-          dataContract={dataContract}
-          rate={rate}
-          txCount={transactions.data?.pagination?.total}
-        />
+        <DataContractDigestCard dataContract={dataContract} rate={rate} txCount={txTotal} />
       </div>
 
       <InfoContainer styles={['tabs']} id={'tabs'}>
         <Tabs onChange={handleTab} index={tabs.indexOf(activeTab)}>
-          <TabList>
-            <Tab>
-              Transactions{' '}
-              {transactions.data?.pagination?.total != null ? (
-                <span
-                  className={`Tabs__TabItemsCount ${transactions.data?.pagination?.total === 0 ? 'Tabs__TabItemsCount--Empty' : ''}`}
-                >
-                  {transactions.data?.pagination?.total}
-                </span>
-              ) : (
-                ''
-              )}
-            </Tab>
-            <Tab>
-              Documents{' '}
-              {dataContract.data?.documentsCount != null ? (
-                <span
-                  className={`Tabs__TabItemsCount ${dataContract.data?.documentsCount === 0 ? 'Tabs__TabItemsCount--Empty' : ''}`}
-                >
-                  {dataContract.data?.documentsCount}
-                </span>
-              ) : (
-                ''
-              )}
-            </Tab>
-            <Tab>
-              Tokens{' '}
-              {dataContract.data?.tokens?.length != null ? (
-                <span
-                  className={`Tabs__TabItemsCount ${dataContract.data?.tokens?.length === 0 ? 'Tabs__TabItemsCount--Empty' : ''}`}
-                >
-                  {dataContract.data?.tokens?.length}
-                </span>
-              ) : (
-                ''
-              )}
-            </Tab>
-            <Tab>Schema</Tab>
-            <Tab>Groups</Tab>
-          </TabList>
+          <div className="Tabs__Toolbar">
+            <TabList aria-label="Data contract sections">
+              <Tab>
+                Transactions{' '}
+                {txTotal != null ? (
+                  <span
+                    className={`Tabs__TabItemsCount ${txTotal === 0 ? 'Tabs__TabItemsCount--Empty' : ''}`}
+                  >
+                    {txTotal?.toLocaleString('en-US')}
+                  </span>
+                ) : (
+                  ''
+                )}
+              </Tab>
+              <Tab>
+                Documents{' '}
+                {dataContract.data?.documentsCount != null ? (
+                  <span
+                    className={`Tabs__TabItemsCount ${dataContract.data?.documentsCount === 0 ? 'Tabs__TabItemsCount--Empty' : ''}`}
+                  >
+                    {dataContract.data?.documentsCount.toLocaleString('en-US')}
+                  </span>
+                ) : (
+                  ''
+                )}
+              </Tab>
+              <Tab>
+                Tokens{' '}
+                {dataContract.data?.tokens?.length != null ? (
+                  <span
+                    className={`Tabs__TabItemsCount ${dataContract.data?.tokens?.length === 0 ? 'Tabs__TabItemsCount--Empty' : ''}`}
+                  >
+                    {dataContract.data?.tokens?.length}
+                  </span>
+                ) : (
+                  ''
+                )}
+              </Tab>
+              <Tab>Schema</Tab>
+              <Tab>Groups</Tab>
+            </TabList>
+            {activeTab === 'transactions' && (
+              <DataListModeSwitch mode={txMode} onModeChange={handleTxMode} />
+            )}
+            <div className="Tabs__TableControls" hidden={activeTab !== 'documents'}>
+              <div ref={setDocToolbarTarget} className="Tabs__FilterSlot" />
+              <DataListModeSwitch mode={docMode} onModeChange={handleDocMode} />
+            </div>
+          </div>
           <TabPanels>
             <TabPanel position={'relative'}>
-              {!transactions.isError ? (
-                <TransactionsList
-                  transactions={transactions.data?.list}
-                  loading={transactions.isLoading}
-                  pagination={{
-                    onPageChange: ({ selected }: { selected: number }) => setTxPage(selected + 1),
-                    pageCount: txPagination?.pageCount ?? 0,
-                    forcePage: txPagination?.forcePage
-                  }}
-                />
+              {!transactions.isError || transactions.data ? (
+                <>
+                  <TransactionsList
+                    transactions={txItems}
+                    rate={rate.data}
+                    hiddenColumns={['status', 'block']}
+                    pinFirst
+                    loading={transactions.isLoading}
+                    paging={{
+                      mode: txMode,
+                      onModeChange: handleTxMode,
+                      hideModeSwitch: true,
+                      total: txTotal ?? 0,
+                      pageSize: txPageSize,
+                      page: txPage - 1,
+                      onPageChange: page => setTxPage(page + 1),
+                      onPageSizeChange: size => {
+                        setTxPageSize(size)
+                        setTxPage(1)
+                      },
+                      onLoadMore: () => {
+                        if (!transactions.isFetching) void transactions.fetchNextPage()
+                      },
+                      loadingMore: transactions.isFetching && !transactions.isLoading,
+                      hasMore:
+                        activeTab === 'transactions' &&
+                        transactions.hasNextPage &&
+                        !transactions.isFetchNextPageError
+                    }}
+                  />
+                  {transactions.isFetchNextPageError && (
+                    <button type="button" onClick={() => void transactions.fetchNextPage()}>
+                      Could not load more transactions. Retry
+                    </button>
+                  )}
+                </>
               ) : (
                 <div className={'Tabs__PanelSpacer'}>
                   <ErrorMessageBlock />
@@ -266,26 +336,43 @@ function DataContract({ identifier }: DataContractProps) {
               )}
             </TabPanel>
             <TabPanel position={'relative'}>
-              <div style={{ marginBottom: '0.75rem' }}>
-                <DocumentsFilter
-                  onFilterChange={handleDocFiltersChange}
-                  isMobile={isMobile}
-                  excludeFilters={['transition_type', 'status']}
-                  className={'DataContract__DocumentsFilter'}
-                />
-              </div>
-              {!documents.isError ? (
-                <DocumentsList
-                  documents={
-                    documents.data?.resultSet as Parameters<typeof DocumentsList>[0]['documents']
-                  }
-                  loading={documents.isLoading}
-                  pagination={{
-                    onPageChange: ({ selected }) => setDocPage(selected + 1),
-                    pageCount: docPagination?.pageCount,
-                    forcePage: docPagination?.forcePage
-                  }}
-                />
+              {!documents.isError || documents.data ? (
+                <>
+                  <DocumentsList
+                    documents={docItems}
+                    documentTypes={documentTypes}
+                    toolbarTarget={docToolbarTarget}
+                    filterValues={docColumnFilters}
+                    onFilterChange={handleDocFilterChange}
+                    loading={documents.isLoading}
+                    paging={{
+                      mode: docMode,
+                      onModeChange: handleDocMode,
+                      hideModeSwitch: true,
+                      total: docTotal ?? 0,
+                      pageSize: docPageSize,
+                      page: docPage - 1,
+                      onPageChange: page => setDocPage(page + 1),
+                      onPageSizeChange: size => {
+                        setDocPageSize(size)
+                        setDocPage(1)
+                      },
+                      onLoadMore: () => {
+                        if (!documents.isFetching) void documents.fetchNextPage()
+                      },
+                      loadingMore: documents.isFetching && !documents.isLoading,
+                      hasMore:
+                        activeTab === 'documents' &&
+                        documents.hasNextPage &&
+                        !documents.isFetchNextPageError
+                    }}
+                  />
+                  {documents.isFetchNextPageError && (
+                    <button type="button" onClick={() => void documents.fetchNextPage()}>
+                      Could not load more documents. Retry
+                    </button>
+                  )}
+                </>
               ) : (
                 <div className={'Tabs__PanelSpacer'}>
                   <ErrorMessageBlock />
@@ -303,13 +390,19 @@ function DataContract({ identifier }: DataContractProps) {
             </TabPanel>
             <TabPanel position={'relative'}>
               {!dataContractQuery.isError ? (
-                <LoadingBlock h={'250px'} loading={dataContractQuery.isLoading}>
+                <LoadingBlock
+                  h={dataContractQuery.isLoading ? '250px' : 'auto'}
+                  loading={dataContractQuery.isLoading}
+                >
                   {dataContract.data?.schema ? (
-                    <CodeBlock
-                      smoothSize={activeTab === 'schema'}
-                      className={'DataContract__Schema'}
-                      code={dataContract.data?.schema}
-                    />
+                    activeTab === 'schema' && (
+                      <JsonViewer
+                        maxHeight="min(65vh, 600px)"
+                        label="Data contract schema"
+                        className={'DataContract__Schema'}
+                        value={dataContract.data?.schema}
+                      />
+                    )
                   ) : (
                     <div className={'Tabs__PanelSpacer'}>
                       <ErrorMessageBlock />
@@ -324,7 +417,10 @@ function DataContract({ identifier }: DataContractProps) {
             </TabPanel>
             <TabPanel position={'relative'}>
               {!dataContractQuery.isError ? (
-                <LoadingBlock h={'250px'} loading={dataContractQuery.isLoading}>
+                <LoadingBlock
+                  h={dataContractQuery.isLoading ? '250px' : 'auto'}
+                  loading={dataContractQuery.isLoading}
+                >
                   <GroupsList
                     groups={dataContract.data?.groups || {}}
                     expandedGroup={group}
