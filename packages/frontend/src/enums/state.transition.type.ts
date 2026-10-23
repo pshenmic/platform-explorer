@@ -108,5 +108,45 @@ export const TransactionTypesInfo = {
     title: 'Identity Create From Shielded Pool',
     description: 'Creates a new identity funded from the shielded (private) pool.',
     colorScheme: 'green'
+  },
+  SHIELD_FROM_IDENTITY: {
+    title: 'Shield From Identity',
+    description: 'Moves identity credits into the shielded pool.',
+    colorScheme: 'green'
+  },
+  IDENTITY_TOP_UP_FROM_SHIELDED_POOL: {
+    title: 'Identity Top Up From Shielded Pool',
+    description: 'Funds an existing identity from the shielded pool.',
+    colorScheme: 'green'
+  },
+  IDENTITY_KEY_LIMITS_UPDATE: {
+    title: 'Identity Key Limits Update',
+    description: 'Raises an authentication key’s total budget or extends its expiry.',
+    colorScheme: 'yellow'
+  },
+  CONTRACT_USER_MODERATION: {
+    title: 'Contract User Moderation',
+    description: 'Moderates users or documents within a data contract.',
+    colorScheme: 'orange'
+  },
+  CONTRACT_FEE_CLAIM: {
+    title: 'Contract Fee Claim',
+    description: 'Claims accumulated contract fees from an owner or moderators fee pot.',
+    colorScheme: 'emerald'
+  },
+  TOKEN_SHIELDED_TRANSFER_WITH_SHIELDED_FEE: {
+    title: 'Token Shielded Transfer With Shielded Fee',
+    description: 'Transfers tokens privately and pays the fee from shielded credits.',
+    colorScheme: 'green'
+  },
+  TOKEN_UNSHIELD_WITH_SHIELDED_FEE: {
+    title: 'Token Unshield With Shielded Fee',
+    description: 'Unshields tokens to an identity and pays the fee from shielded credits.',
+    colorScheme: 'green'
+  },
+  TOKEN_PURCHASE_FROM_SHIELDED_POOL: {
+    title: 'Token Purchase From Shielded Pool',
+    description: 'Purchases tokens using shielded credits.',
+    colorScheme: 'green'
   }
 }
