@@ -13,7 +13,7 @@
     "geoip": "node scripts/download-geoip.mjs"
   },
   "dependencies": {
-    "@dashevo/dashd-rpc": "github:owl352/dashd-rpc",
+    "@dashevo/dashd-rpc": "github:owl352/dashd-rpc#929a774c66f49f31863b8307f1e5a8b975d37ff4",
     "@fastify/cors": "^8.3.0",
     "@scure/base": "^1.1.5",
     "bs58": "^6.0.0",
