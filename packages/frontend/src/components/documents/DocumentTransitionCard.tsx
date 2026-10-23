@@ -8,6 +8,7 @@ import {
   PrefundedBalance as PrefundedBalanceJs
 } from '../data'
 import BatchTypeBadgeJs from '../transactions/BatchTypeBadge'
+import JsonViewer from '../data/JsonViewer'
 import { JsonDetails } from '../transactions/TransactionDetails'
 import { ValueContainer } from '../ui/containers'
 import './DocumentTransitionCard.css'
@@ -282,7 +283,7 @@ const DocumentTransitionCard = ({
           title={'Data'}
           value={
             transition.action === 'DOCUMENT_INDEX_ONLY_DELETE' ? (
-              <JsonDetails title="Document data" value={transition.data} />
+              <JsonViewer value={transition.data} />
             ) : (
               <pre className={'DocumentTransitionCard__Code'}>
                 {JSON.stringify(transition?.data, null, 2)}
