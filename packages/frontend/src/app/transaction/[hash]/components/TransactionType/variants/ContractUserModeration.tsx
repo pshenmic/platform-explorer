@@ -2,6 +2,8 @@ import { MODERATION_ACTION_LABELS } from 'src/enums/contractModeration'
 import type { ModerationAction } from 'src/types/ContractModeration'
 import InfoLine from '@components/data/InfoLine'
 import JsonViewer from '@components/data/JsonViewer'
+import Identifier from '@components/data/Identifier'
+import ValueCard from '@components/cards/ValueCard'
 import {
   DetailLine,
   EntityLine,
@@ -64,7 +66,21 @@ function ModerationDetails({ action }: { action?: ModerationAction | null }) {
         <EntityLine title="Action ID" identifier={action.actionId} />
       )}
       {action.type === 'restoreDocument' && (
-        <JsonDetails title="Serialized document" value={action.document} />
+        <InfoLine
+          className="TransactionPage__InfoLine TransactionPage__InfoLine--Schema"
+          title="Serialized document"
+          value={
+            action.document ? (
+              <ValueCard className="TransactionDetails__RawValue">
+                <Identifier copyButton ellipsis={false} linesAdjustment={false}>
+                  {action.document}
+                </Identifier>
+              </ValueCard>
+            ) : (
+              'Unavailable'
+            )
+          }
+        />
       )}
       {action.type === 'changeDocumentFields' && (
         <InfoLine
