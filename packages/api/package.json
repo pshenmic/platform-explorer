@@ -9,12 +9,12 @@
     "test:integration": "node --test --test-concurrency=1 test/integration/*.spec.js",
     "db:migrate": "node ./test/utils/migrate.js ../indexer/migrations",
     "db:drop": "node ./test/utils/drop.js",
-    "lint": "standard ."
+    "lint": "standard .",
+    "geoip": "node scripts/download-geoip.mjs"
   },
   "dependencies": {
     "@dashevo/dashd-rpc": "github:owl352/dashd-rpc",
     "@fastify/cors": "^8.3.0",
-    "@ip-location-db/dbip-city-mmdb": "latest",
     "@scure/base": "^1.1.5",
     "bs58": "^6.0.0",
     "cbor": "^9.0.2",

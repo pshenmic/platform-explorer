@@ -1,7 +1,7 @@
 const { readFileSync } = require('fs')
 const { resolve } = require('path')
 const { Reader } = require('mmdb-lib')
-const { GEOIP_PROVIDER, GEOIP_TABLE_NAME } = require('./constants')
+const { GEOIP_DB_PATH } = require('./constants')
 
 const cacheStorage = {}
 
@@ -9,13 +9,7 @@ let reader
 
 function getReader () {
   if (!reader) {
-    const mmdbPath = resolve(
-      require.resolve(`${GEOIP_PROVIDER}/package.json`),
-      '..',
-      GEOIP_TABLE_NAME
-    )
-
-    reader = new Reader(readFileSync(mmdbPath), {
+    reader = new Reader(readFileSync(resolve(GEOIP_DB_PATH)), {
       cache: {
         get: (key) => cacheStorage[key],
         set: (key, value) => (cacheStorage[key] = value)
