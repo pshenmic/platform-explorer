@@ -69,9 +69,17 @@ impl PSQLProcessor {
 
             let block_hash = self.dashcore_rpc.get_block_hash(core_block_height as u32)?;
 
+            // Core v24 rejects a string count, which get_masternode_payments always sends
             *core_payments = self
                 .dashcore_rpc
-                .get_masternode_payments(Some(&block_hash.to_string()), Some(&count.to_string()))?
+                .call::<Vec<GetMasternodePaymentsResult>>(
+                    "masternode",
+                    &[
+                        "payments".into(),
+                        block_hash.to_string().into(),
+                        count.into(),
+                    ],
+                )?
                 .into();
         }
 
