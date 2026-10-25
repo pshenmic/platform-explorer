@@ -5,9 +5,15 @@ import { useState, useEffect, useRef, useId, useMemo, type RefObject } from 'rea
 import * as d3 from 'd3'
 import useResizeObserver from '@react-hook/resize-observer'
 import { Presets } from '../cards'
-import { getDaysBetweenDates, currencyRound } from '../../util'
+import { currencyRound } from '../../util'
 import { Skeleton } from './Skeleton'
-import { PRESETS, presetRange } from './MetricChart'
+import {
+  PRESETS,
+  buildTimeTicks,
+  presetRange,
+  seriesTimeDomain,
+  tipTimeFormat
+} from './MetricChart'
 import './IdentityGrowthChart.css'
 
 const DEFAULT_PRESET = PRESETS.length - 1
@@ -103,17 +109,8 @@ export default function IdentityGrowthChart({
 
   const chart = useMemo(() => {
     if (!ready) return null
-    const x = d3.scaleTime(
-      d3.extent(points, (p: any) => p.x),
-      [M.left, width - M.right]
-    )
-    const dataSpanDays = getDaysBetweenDates(points[0].x, points[points.length - 1].x)
-    const tickFmt = d3.timeFormat(
-      dataSpanDays > 365 ? '%b %Y' : dataSpanDays > 7 ? '%b %d' : '%H:%M'
-    )
-    const tipFmt = d3.timeFormat(
-      dataSpanDays > 365 ? '%b %d, %Y' : dataSpanDays > 3 ? '%b %d' : '%b %d, %H:%M'
-    )
+    const x = d3.scaleTime(seriesTimeDomain(points, PRESETS[presetIdx]), [M.left, width - M.right])
+    const tipFmt = tipTimeFormat(PRESETS[presetIdx])
     const maxY = d3.max(points, (p: any) => p.y) || 1
     const minY = d3.min(points, (p: any) => p.y) || 0
     const pad = (maxY - minY) * 0.12 || maxY * 0.05 || 1
@@ -137,15 +134,14 @@ export default function IdentityGrowthChart({
       value: p.y,
       date: p.x
     }))
-    const tickCount = Math.max(2, Math.min(6, Math.floor((width - M.left - M.right) / 72)))
-    const xTicks = x.ticks(tickCount).map((d: any) => ({ v: x(d), label: tickFmt(d) }))
+    const xTicks = buildTimeTicks(x, width - M.left - M.right)
     const yTicks = y.ticks(4).map((v: any) => ({ v: y(v), label: formatValue(v) }))
     const first = points[0]
     const latest = points[points.length - 1]
     const delta = latest.y - first.y
     const growthPct = first.y > 0 ? (delta / first.y) * 100 : null
     return { lineD, areaD, nodes, xTicks, yTicks, tipFmt, first, latest, delta, growthPct }
-  }, [ready, points, width, h])
+  }, [ready, points, width, h, presetIdx])
 
   const activeI = pinI != null ? pinI : hoverI
   const active = chart && activeI != null ? chart.nodes[activeI] : null
