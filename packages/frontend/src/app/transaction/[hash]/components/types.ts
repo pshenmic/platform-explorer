@@ -2,6 +2,8 @@ import type { LoadableState } from '../../../../types/common'
 import type { Rate } from '../../../../types'
 import type { PublicKeyData } from '../../../../components/transactions/PublicKeyCard'
 import type { TransitionData } from '../../../../components/transactions/TransitionCard'
+import type { ShieldedTokenPayload } from '../../../../types/ShieldedTransaction'
+import type { ModerationAction } from '../../../../types/ContractModeration'
 
 /** Nested platform address as returned by decodeTx for address-based transitions. */
 export interface DecodedPlatformAddress {
@@ -108,7 +110,13 @@ export interface TokenConfigurationData {
  * Decoded state transition payload from `Api.decodeTx`.
  * Shape varies widely by `typeString`; fields are optional and loosely typed.
  */
-export interface DecodedStateTransition {
+export interface DecodedStateTransition extends ShieldedTokenPayload {
+  keyId?: number | null
+  totalBudget?: number | string | null
+  expiresAt?: number | string | null
+  topUpAmount?: number | string | null
+  action?: ModerationAction | null
+  pot?: string | null
   type?: number | string | null
   typeString?: string | null
   userFeeIncrease?: number | null
