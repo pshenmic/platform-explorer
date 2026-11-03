@@ -6,19 +6,27 @@ import useResizeObserver from '@react-hook/resize-observer'
 import * as d3 from 'd3'
 import * as Api from '../../../util/Api'
 import { epochProgress } from '../../../util/epochProgress'
-import { validatorChartHistory, validatorChartRange } from '../../../util/validatorChart'
+import {
+  validatorChartDateLabel,
+  validatorChartHistory,
+  validatorChartRange
+} from '../../../util/validatorChart'
 import { creditsToDash, removeTrailingZeros } from '../../../util'
 import { BigNumber } from '../../../components/data'
-import { StatusCell } from '../../../components/home/StatusCell'
+import { Badge } from '../../../components/ui/Badge/Badge'
+import { validatorDashAmount } from '../../../util/validatorAmount'
+import { Tooltip } from '../../../components/ui/Tooltips'
+import ValidatorPayouts, { type ValidatorPayoutsProps } from './ValidatorPayouts'
 import { Skeleton } from '../../../components/home/Skeleton'
-import ChartDateRange, { CHART_ALL_START, defaultChartRange } from '../../../components/calendar/ChartDateRange'
+import ChartDateRange, {
+  CHART_ALL_START,
+  defaultChartRange
+} from '../../../components/calendar/ChartDateRange'
 import '../../../components/home/IdentityGrowthChart.css'
-import '../../../components/home/TxActivityChart.css'
 import '../../../app/home/Home.css'
-import '../../../app/home/HomeHero.css'
 import './ValidatorEpochs.css'
 
-const M = { top: 8, right: 4, bottom: 20 }
+const M = { top: 12, right: 4, bottom: 20 }
 const MAX_EPOCH_POINTS = 84
 
 function dashAmount(credits: number) {
@@ -37,10 +45,35 @@ function axisDash(dash: number) {
 
 function axisGutter(labels: string[]) {
   const widest = labels.reduce((max, label) => Math.max(max, label.length), 1)
-  return Math.ceil(widest * 7.4) + 8
+  return Math.ceil(widest * 6.7) + 20
 }
 
-export default function ValidatorEpochs({ hash }: { hash: string }) {
+function barPath(left: number, top: number, width: number, bottom: number) {
+  const radius = width < 6 ? 0 : Math.min(2, (bottom - top) / 2)
+  const right = left + width
+  return `M${left},${bottom}V${top + radius}Q${left},${top} ${left + radius},${top}H${right - radius}Q${right},${top} ${right},${top + radius}V${bottom}Z`
+}
+
+function PayoutAmount({ credits }: { credits: number }) {
+  return (
+    <Badge
+      className="ValidatorPage__AmountBadge"
+      size="xs"
+      colorScheme={credits > 0 ? 'blue' : 'dimGray'}
+      title={`${removeTrailingZeros(creditsToDash(credits).toFixed(8))} DASH`}
+    >
+      {validatorDashAmount(credits)} DASH
+    </Badge>
+  )
+}
+
+export default function ValidatorEpochs({
+  hash,
+  payouts
+}: {
+  hash: string
+  payouts: ValidatorPayoutsProps & { paidThisEpoch?: number | null }
+}) {
   const gradId = useId().replace(/:/g, '')
   const wrapRef = useRef<HTMLDivElement | null>(null)
   const [width, setWidth] = useState(0)
@@ -48,13 +81,26 @@ export default function ValidatorEpochs({ hash }: { hash: string }) {
   const [selection, setSelection] = useState(defaultChartRange)
   const [pinI, setPinI] = useState<number | null>(null)
   const [hoverI, setHoverI] = useState<number | null>(null)
+  const [focusedEpoch, setFocusedEpoch] = useState<number | null>(null)
+  const [periodDetailsFocused, setPeriodDetailsFocused] = useState(false)
   useEffect(() => {
     const clearSelection = (event: PointerEvent) => {
-      if (event.target instanceof Element &&
+      if (
+        event.target instanceof Element &&
         wrapRef.current?.contains(event.target) &&
-        event.target.closest('.ValidatorEpochs__Hit')) return
+        event.target.closest('.ValidatorEpochs__Hit')
+      )
+        return
       setPinI(null)
       setHoverI(null)
+      const focused = document.activeElement
+      if (
+        focused instanceof SVGElement &&
+        wrapRef.current?.contains(focused) &&
+        focused.classList.contains('ValidatorEpochs__Hit')
+      ) {
+        focused.blur()
+      }
     }
     document.addEventListener('pointerdown', clearSelection)
     return () => document.removeEventListener('pointerdown', clearSelection)
@@ -99,8 +145,16 @@ export default function ValidatorEpochs({ hash }: { hash: string }) {
   const selectionKey = JSON.stringify(selection)
 
   const statsQuery = useQuery({
-    queryKey: ['validator-epochs', hash, queryRange?.start, queryRange?.end, MAX_EPOCH_POINTS, selectionKey],
-    queryFn: () => Api.getEpochStatsByValidator(hash, queryRange!.start, queryRange!.end, MAX_EPOCH_POINTS),
+    queryKey: [
+      'validator-epochs',
+      hash,
+      queryRange?.start,
+      queryRange?.end,
+      MAX_EPOCH_POINTS,
+      selectionKey
+    ],
+    queryFn: () =>
+      Api.getEpochStatsByValidator(hash, queryRange!.start, queryRange!.end, MAX_EPOCH_POINTS),
     enabled: Boolean(hash && queryRange),
     staleTime: 60000,
     placeholderData: (previousData, previousQuery) =>
@@ -126,12 +180,18 @@ export default function ValidatorEpochs({ hash }: { hash: string }) {
   const slots = useMemo(
     () =>
       visiblePoints.map(point => ({
+        timestamp: point.timestamp,
+        endTime: point.data!.endTime,
         from: point.data!.epoch,
         to: point.data!.endEpoch ?? point.data!.epoch,
         payout: point.data!.reward,
         ongoing: point.data!.endTime == null,
-        progress: point.data!.endTime == null && point.data!.epoch === epoch?.number &&
-          point.data!.endEpoch === epoch?.number ? progress : null,
+        progress:
+          point.data!.endTime == null &&
+          point.data!.epoch === epoch?.number &&
+          point.data!.endEpoch === epoch?.number
+            ? progress
+            : null,
         blocks: point.data!.blocksProposed
       })),
     [visiblePoints, epoch?.number, progress]
@@ -144,8 +204,8 @@ export default function ValidatorEpochs({ hash }: { hash: string }) {
 
   const h = plotH
   const chart = useMemo(() => {
-    if (width <= 0 || !epochWindow || slots.length === 0) return null
-    const payoutsInDash = slots.map(slot => slot.payout == null ? 0 : creditsToDash(slot.payout))
+    if (width <= 0 || !epochWindow || !queryRange || slots.length === 0) return null
+    const payoutsInDash = slots.map(slot => (slot.payout == null ? 0 : creditsToDash(slot.payout)))
     const maxY = d3.max(payoutsInDash) || 0
     const y = d3.scaleLinear([0, maxY > 0 ? maxY : 1], [h - M.bottom, M.top]).nice()
     const yTickValues: number[] = maxY > 0 ? y.ticks(4) : [0]
@@ -154,40 +214,84 @@ export default function ValidatorEpochs({ hash }: { hash: string }) {
       [epochWindow.fromEpoch - 0.5, epochWindow.toEpoch + 0.5],
       [left, width - M.right]
     )
-    const nodes = slots.map((slot, i) => ({
-      i,
-      from: slot.from,
-      to: slot.to,
-      cx: x((slot.from + slot.to) / 2),
-      barX: x(slot.from - 0.5) + 1,
-      barWidth: Math.max(1, x(slot.to + 0.5) - x(slot.from - 0.5) - 2),
-      cy: y(payoutsInDash[i]),
-      payout: slot.payout,
-      ongoing: slot.ongoing,
-      progress: slot.progress,
-      blocks: slot.blocks
-    }))
-    const tickCount = Math.max(2, Math.min(5, Math.floor((width - left - M.right) / 64)))
-    const tickEpochs = Array.from(
+    const nodes = slots.map((slot, index) => {
+      const slotX = x(slot.from - 0.5)
+      const slotWidth = x(slot.to + 0.5) - slotX
+      const gap = Math.min(4, slotWidth * 0.32)
+      return {
+        i: index,
+        from: slot.from,
+        to: slot.to,
+        cx: x((slot.from + slot.to) / 2),
+        slotX,
+        slotWidth,
+        barX: slotX + gap / 2,
+        barWidth: slotWidth - gap,
+        cy: y(payoutsInDash[index]),
+        payout: slot.payout,
+        ongoing: slot.ongoing,
+        progress: slot.progress,
+        blocks: slot.blocks
+      }
+    })
+    const tickCount = Math.max(2, Math.min(5, Math.floor((width - left - M.right) / 110)))
+    const tickIndices = Array.from(
       new Set(
         Array.from({ length: tickCount }, (_, i) =>
-          Math.round(
-            epochWindow.fromEpoch +
-              (i * (epochWindow.toEpoch - epochWindow.fromEpoch)) / Math.max(1, tickCount - 1)
-          )
+          Math.round((i * (slots.length - 1)) / Math.max(1, tickCount - 1))
         )
       )
     )
-    const xTicks = tickEpochs.map(epoch => ({ v: x(epoch), label: `#${epoch}` }))
-    const yTicks = yTickValues.map((v: number) => ({ v: y(v), label: axisDash(v) }))
+    const firstTimestamp = new Date(
+      Math.max(Date.parse(slots[0].timestamp || queryRange.start), Date.parse(queryRange.start))
+    ).toISOString()
+    const lastTimestamp = new Date(
+      Math.min(
+        Date.parse(slots[slots.length - 1].endTime || queryRange.end),
+        Date.parse(queryRange.end)
+      )
+    ).toISOString()
+    const xTicks =
+      slots.length === 1
+        ? [
+            {
+              v: left,
+              label: validatorChartDateLabel(firstTimestamp, firstTimestamp, lastTimestamp)
+            },
+            {
+              v: width - M.right,
+              label: validatorChartDateLabel(lastTimestamp, firstTimestamp, lastTimestamp)
+            }
+          ]
+        : tickIndices.map(index => ({
+            v: nodes[index].cx,
+            label: validatorChartDateLabel(
+              index === 0 ? firstTimestamp : slots[index].timestamp,
+              firstTimestamp,
+              lastTimestamp
+            )
+          }))
+    const yTicks = yTickValues.map((value: number) => ({
+      v: y(value),
+      label: axisDash(value)
+    }))
     const totalPayouts = slots.some(slot => slot.payout != null)
       ? slots.reduce((sum, slot) => sum + (slot.payout ?? 0), 0)
       : null
     return { nodes, xTicks, yTicks, totalPayouts, left }
-  }, [width, h, slots, epochWindow])
+  }, [width, h, slots, epochWindow, queryRange])
 
   const activeI = hoverI != null ? hoverI : pinI
   const shown = activeI != null ? chart?.nodes[activeI] : null
+  const showsCurrentEpoch = Boolean(
+    shown && epoch && shown.from <= epoch.number && shown.to >= epoch.number
+  )
+  const onlyCurrentEpoch = showsCurrentEpoch && shown?.from === shown?.to
+  const paidThisEpoch = payouts.loading
+    ? 'Loading…'
+    : payouts.error || payouts.paidThisEpoch == null || !Number.isFinite(payouts.paidThisEpoch)
+      ? 'Unavailable'
+      : `${removeTrailingZeros(creditsToDash(payouts.paidThisEpoch).toFixed(8))} DASH`
   const focusFrom = shown ? shown.from : epochWindow?.fromEpoch
   const focusTo = shown ? shown.to : epochWindow?.toEpoch
   const focusDate = (() => {
@@ -224,6 +328,11 @@ export default function ValidatorEpochs({ hash }: { hash: string }) {
     if (!chart || chart.nodes.length === 0) return
     const rect = e.currentTarget.getBoundingClientRect()
     const px = e.clientX - rect.left
+    const py = e.clientY - rect.top
+    if (px < chart.left || px > width - M.right || py < M.top || py > h - M.bottom) {
+      setHoverI(null)
+      return
+    }
     let best = 0
     let bestDist = Infinity
     for (const node of chart.nodes) {
@@ -236,16 +345,108 @@ export default function ValidatorEpochs({ hash }: { hash: string }) {
     if (hoverI !== best) setHoverI(best)
   }
 
+  const payoutDetails = (
+    <div>
+      <dl className="ValidatorEpochs__TooltipDetails">
+        <div>
+          <dt>
+            {onlyCurrentEpoch ? 'Paid this epoch' : shown ? 'Platform payout' : 'Period payouts'}
+          </dt>
+          <dd>
+            {onlyCurrentEpoch ? (
+              payouts.loading ||
+              payouts.error ||
+              payouts.paidThisEpoch == null ||
+              !Number.isFinite(payouts.paidThisEpoch) ? (
+                paidThisEpoch
+              ) : (
+                <PayoutAmount credits={payouts.paidThisEpoch} />
+              )
+            ) : chart && (shown ? shown.payout : chart.totalPayouts) != null ? (
+              <PayoutAmount credits={(shown ? shown.payout : chart.totalPayouts)!} />
+            ) : shown?.ongoing ? (
+              'In progress'
+            ) : (
+              'Unavailable'
+            )}
+          </dd>
+        </div>
+        {showsCurrentEpoch && !onlyCurrentEpoch && (
+          <div>
+            <dt>Paid this epoch</dt>
+            <dd>
+              {!payouts.loading &&
+              !payouts.error &&
+              payouts.paidThisEpoch != null &&
+              Number.isFinite(payouts.paidThisEpoch) ? (
+                <PayoutAmount credits={payouts.paidThisEpoch} />
+              ) : (
+                paidThisEpoch
+              )}
+            </dd>
+          </div>
+        )}
+        {shown?.progress != null && (
+          <div>
+            <dt>Time elapsed</dt>
+            <dd>{Math.floor(shown.progress)}%</dd>
+          </div>
+        )}
+        <div>
+          <dt>Blocks proposed</dt>
+          <dd>
+            {statsQuery.isSuccess ? (
+              <BigNumber>{shown ? shown.blocks : totalBlocks}</BigNumber>
+            ) : (
+              'Unavailable'
+            )}
+          </dd>
+        </div>
+        <div>
+          <dt>Epoch</dt>
+          <dd>
+            {focusFrom == null
+              ? '—'
+              : focusFrom === focusTo
+                ? `#${focusFrom}`
+                : `#${focusFrom}–#${focusTo}`}
+          </dd>
+        </div>
+        <div>
+          <dt>Date (UTC)</dt>
+          <dd>{focusDate ?? '—'}</dd>
+        </div>
+      </dl>
+    </div>
+  )
+
   return (
     <div className={'EpochsOverview ValidatorEpochs'} aria-label={'Validator epochs'}>
       <header className={'EpochsOverview__Head'}>
-        <div className={'EpochsOverview__HeadText'}>
-          <div className={'EpochsOverview__TitleRow'}>
-            <h2 className={'EpochsOverview__Title'}>Platform payouts</h2>
+        <div className={'EpochsOverview__TitleRow'}>
+          <h2 className={'EpochsOverview__Title'}>Platform paid</h2>
+          <div className="ValidatorEpochs__Summary">
+            <ValidatorPayouts {...payouts} />
+            <Tooltip
+              className="ValidatorPage__Tooltip"
+              title={shown ? 'Selected epochs' : 'Selected period'}
+              content={payoutDetails}
+              isOpen={periodDetailsFocused || undefined}
+            >
+              <button
+                type="button"
+                className="ValidatorEpochs__Info"
+                aria-label="Payout details for the selected period or epoch"
+                onFocus={() => setPeriodDetailsFocused(true)}
+                onBlur={() => setPeriodDetailsFocused(false)}
+                onKeyDown={event => {
+                  if (event.key === 'Escape') setPeriodDetailsFocused(false)
+                }}
+              >
+                ⓘ
+              </button>
+            </Tooltip>
           </div>
-          <p className={'EpochsOverview__Lede'}>
-            Rewards paid to this validator by epoch.
-          </p>
         </div>
         <div className={'ValidatorEpochs__Filters'}>
           <ChartDateRange
@@ -260,8 +461,28 @@ export default function ValidatorEpochs({ hash }: { hash: string }) {
         </div>
       </header>
       <div ref={wrapRef} className={'ValidatorEpochs__Plot'}>
+        <Tooltip
+          className="ValidatorPage__Tooltip"
+          title={
+            !shown
+              ? 'Epoch payout'
+              : shown.from === shown.to
+                ? `Epoch #${shown.from}`
+                : `Epochs #${shown.from}–#${shown.to}`
+          }
+          content={payoutDetails}
+          isOpen={Boolean(shown)}
+        >
+          <span
+            className="ValidatorEpochs__TooltipAnchor"
+            style={{
+              left: shown?.cx ?? 0,
+              top: !shown || shown.payout == null ? M.top : Math.min(shown.cy, h - M.bottom - 2)
+            }}
+          />
+        </Tooltip>
         {statsQuery.isError ? (
-          <div className={'IdentityGrowthChart__Empty'}>
+          <div className={'IdentityGrowthChart__Empty'} role="status">
             {statsQuery.error instanceof Error && statsQuery.error.message.includes('updated API')
               ? statsQuery.error.message
               : 'Unable to load epochs. Try a shorter date range or retry.'}
@@ -270,9 +491,15 @@ export default function ValidatorEpochs({ hash }: { hash: string }) {
             </button>
           </div>
         ) : statsQuery.isSuccess && visiblePoints.length === 0 ? (
-          <div className={'IdentityGrowthChart__Empty'}>No payout data in this range</div>
+          <div className={'IdentityGrowthChart__Empty'} role="status">
+            No payout data in this range
+          </div>
         ) : loading && !chart ? (
-          <div className={'IdentityGrowthChart__Ghost'}>
+          <div
+            className={'IdentityGrowthChart__Ghost'}
+            role="status"
+            aria-label="Loading Platform payouts"
+          >
             <Skeleton w={'100%'} h={'70%'} radius={8} />
           </div>
         ) : chart ? (
@@ -287,20 +514,18 @@ export default function ValidatorEpochs({ hash }: { hash: string }) {
             onMouseLeave={() => setHoverI(null)}
           >
             <defs>
-              <linearGradient id={`epochBar-${gradId}`} x1={'0'} y1={'0'} x2={'0'} y2={'1'}>
-                <stop className={'TxActivityChart__GradTop'} offset={'0%'} />
-                <stop className={'TxActivityChart__GradBot'} offset={'100%'} />
-              </linearGradient>
-              <linearGradient id={`epochBarOn-${gradId}`} x1={'0'} y1={'0'} x2={'0'} y2={'1'}>
-                <stop className={'TxActivityChart__GradOnTop'} offset={'0%'} />
-                <stop className={'TxActivityChart__GradOnBot'} offset={'100%'} />
-              </linearGradient>
-              <pattern id={`epochMissing-${gradId}`} width={8} height={8} patternUnits={'userSpaceOnUse'}>
+              <pattern
+                id={`epochMissing-${gradId}`}
+                width={8}
+                height={8}
+                patternUnits={'userSpaceOnUse'}
+              >
                 <path d={'M0 8L8 0'} className={'ValidatorEpochs__Hatch'} />
               </pattern>
             </defs>
             {chart.yTicks.map((tick, i) => (
               <g key={`y${i}`}>
+                <title>{`${tick.label} DASH`}</title>
                 <line
                   className={'IdentityGrowthChart__Grid'}
                   x1={chart.left}
@@ -308,14 +533,37 @@ export default function ValidatorEpochs({ hash }: { hash: string }) {
                   y1={tick.v}
                   y2={tick.v}
                 />
-                <text
-                  className={'IdentityGrowthChart__Tick IdentityGrowthChart__Tick--Y'}
-                  x={chart.left - 6}
-                  y={tick.v}
-                  dy={'0.32em'}
-                >
-                  {tick.label}
-                </text>
+                {tick.label === '0' ? (
+                  <image
+                    href="/images/icons/dash.svg"
+                    x={chart.left - 28}
+                    y={tick.v - 5.5}
+                    width={14}
+                    height={11}
+                    tabIndex={-1}
+                    aria-hidden="true"
+                  />
+                ) : (
+                  <>
+                    <rect
+                      className="ValidatorEpochs__AxisBadge"
+                      x={chart.left - 8 - Math.ceil(tick.label.length * 6.7) - 12}
+                      y={tick.v - 9}
+                      width={Math.ceil(tick.label.length * 6.7) + 12}
+                      height={18}
+                      rx={9}
+                    />
+                    <text
+                      className="ValidatorEpochs__AxisValue"
+                      x={chart.left - 14}
+                      y={tick.v}
+                      dy={'0.32em'}
+                      textAnchor="end"
+                    >
+                      {tick.label}
+                    </text>
+                  </>
+                )}
               </g>
             ))}
             {chart.xTicks.map((tick, i) => (
@@ -332,25 +580,27 @@ export default function ValidatorEpochs({ hash }: { hash: string }) {
               </text>
             ))}
             {chart.nodes.map(node => (
-              <g key={`${node.from}-${node.to}`}>
-                <rect
-                  className={`TxActivityChart__Bar ValidatorEpochs__Bar${node.i === activeI ? ' is-on' : activeI != null ? ' is-dim' : ''}${node.payout == null ? ' is-missing' : ''}`}
-                  x={node.barX}
-                  width={node.barWidth}
-                  y={node.payout == null ? M.top : Math.min(node.cy, h - M.bottom - 2)}
-                  height={node.payout == null ? h - M.bottom - M.top : Math.max(2, h - M.bottom - node.cy)}
-                  fill={node.payout == null ? `url(#epochMissing-${gradId})` : `url(#${node.i === activeI ? 'epochBarOn' : 'epochBar'}-${gradId})`}
-                  rx={Math.min(3, node.barWidth / 2)}
+              <g className="ValidatorEpochs__Datum" key={`${node.from}-${node.to}`}>
+                <path
+                  className={`ValidatorEpochs__Bar${node.i === activeI ? ' is-on' : ''}${node.payout == null ? ' is-missing' : ''}`}
+                  d={barPath(
+                    node.barX,
+                    node.payout == null ? M.top : Math.min(node.cy, h - M.bottom - 2),
+                    node.barWidth,
+                    h - M.bottom
+                  )}
+                  fill={node.payout == null ? `url(#epochMissing-${gradId})` : undefined}
                 />
                 {node.payout == null && node.progress != null && (
                   <>
-                    <rect
+                    <path
                       className={'ValidatorEpochs__TimeFill'}
-                      x={node.barX}
-                      width={node.barWidth}
-                      y={h - M.bottom - (h - M.bottom - M.top) * node.progress / 100}
-                      height={(h - M.bottom - M.top) * node.progress / 100}
-                      rx={Math.min(3, node.barWidth / 2)}
+                      d={barPath(
+                        node.barX,
+                        h - M.bottom - ((h - M.bottom - M.top) * node.progress) / 100,
+                        node.barWidth,
+                        h - M.bottom
+                      )}
                     />
                     {node.barWidth >= 60 && (
                       <text className={'ValidatorEpochs__ProgressLabel'} x={node.cx} y={M.top + 16}>
@@ -361,77 +611,67 @@ export default function ValidatorEpochs({ hash }: { hash: string }) {
                 )}
                 <rect
                   className={'ValidatorEpochs__Hit'}
-                  x={node.barX}
-                  width={node.barWidth}
+                  x={node.slotX}
+                  width={node.slotWidth}
                   y={M.top}
                   height={h - M.bottom - M.top}
-                  tabIndex={0}
+                  tabIndex={
+                    node.i ===
+                    (chart.nodes.some(item => item.i === focusedEpoch)
+                      ? focusedEpoch
+                      : chart.nodes[0]?.i)
+                      ? 0
+                      : -1
+                  }
                   role={'button'}
                   aria-pressed={pinI === node.i}
-                  aria-label={`Epoch ${node.from === node.to ? node.from : `${node.from}–${node.to}`}: ${node.payout == null ? node.progress != null ? `${Math.floor(node.progress)}% of estimated duration elapsed; payout unavailable` : node.ongoing ? 'Epoch in progress; payout unavailable' : 'Payout unavailable' : `${dashAmount(node.payout)} DASH`}`}
-                  onFocus={() => { setHoverI(null); setPinI(node.i) }}
-                  onClick={() => { setHoverI(null); setPinI(node.i) }}
+                  aria-label={`Epoch ${node.from === node.to ? node.from : `${node.from}–${node.to}`}: ${node.payout == null ? (node.progress != null ? `${Math.floor(node.progress)}% of estimated duration elapsed; payout unavailable` : node.ongoing ? 'Epoch in progress; payout unavailable' : 'Payout unavailable') : `${dashAmount(node.payout)} DASH`}${epoch && node.from <= epoch.number && node.to >= epoch.number ? `; paid this epoch: ${paidThisEpoch}` : ''}`}
+                  onFocus={() => {
+                    setFocusedEpoch(node.i)
+                    setHoverI(node.i)
+                  }}
+                  onBlur={() => setHoverI(null)}
+                  onClick={() => {
+                    setHoverI(null)
+                    setPinI(previous => (previous === node.i ? null : node.i))
+                  }}
                   onKeyDown={event => {
+                    if (['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) {
+                      event.preventDefault()
+                      const targets = Array.from(
+                        event.currentTarget.ownerSVGElement?.querySelectorAll<SVGRectElement>(
+                          '.ValidatorEpochs__Hit'
+                        ) || []
+                      )
+                      const current = targets.indexOf(event.currentTarget)
+                      const next =
+                        event.key === 'Home'
+                          ? 0
+                          : event.key === 'End'
+                            ? targets.length - 1
+                            : Math.max(
+                                0,
+                                Math.min(
+                                  targets.length - 1,
+                                  current + (event.key === 'ArrowRight' ? 1 : -1)
+                                )
+                              )
+                      targets[next]?.focus()
+                    }
                     if (event.key === 'Enter' || event.key === ' ') {
                       event.preventDefault()
-                      setPinI(node.i)
+                      setPinI(previous => (previous === node.i ? null : node.i))
                     }
-                    if (event.key === 'Escape') { setPinI(null); setHoverI(null) }
+                    if (event.key === 'Escape') {
+                      setPinI(null)
+                      setHoverI(null)
+                    }
                   }}
                 />
               </g>
             ))}
           </svg>
         ) : null}
-      </div>
-      <div className={'EpochsOverview__Detail'}>
-        <div className={'EpochsOverview__Cells HomeHero__StatusBar ValidatorEpochs__Kpis'}>
-          <StatusCell
-            label={'Platform payouts'}
-            hint={
-              'Sum of available indexed payouts, not fees or a forecast. Hatched columns mean unavailable data, not zero. History may be incomplete. Select a column to inspect its epochs; Tab and Escape also work.'
-            }
-          >
-            {loading && !chart ? (
-              <Skeleton w={'64px'} h={'1.1em'} />
-            ) : (
-              <span className={'EpochsOverview__Stat'}>
-                {chart && (shown ? shown.payout : chart.totalPayouts) != null
-                  ? `${dashAmount((shown ? shown.payout : chart.totalPayouts)!)} DASH`
-                  : shown?.ongoing ? 'In progress' : 'Unavailable'}
-              </span>
-            )}
-          </StatusCell>
-          <StatusCell
-            label={'Blocks'}
-            hint={'Platform blocks this node proposed in the selected range or point.'}
-          >
-            {loading && !chart ? (
-              <Skeleton w={'40px'} h={'1.1em'} />
-            ) : (
-              <span className={'EpochsOverview__Stat'}>
-                {statsQuery.isSuccess ? <BigNumber>{shown ? shown.blocks : totalBlocks}</BigNumber> : '—'}
-              </span>
-            )}
-          </StatusCell>
-          <StatusCell
-            label={'Epoch'}
-            hint={
-              'Actual Platform epochs in the selected range. Long ranges group adjacent epochs.'
-            }
-          >
-            <span className={'EpochsOverview__Stat'}>
-              {focusFrom == null
-                ? '—'
-                : focusFrom === focusTo
-                  ? `#${focusFrom}`
-                  : `#${focusFrom}–#${focusTo}`}
-            </span>
-          </StatusCell>
-          <StatusCell label={'Date'}>
-            <span className={'EpochsOverview__Stat'}>{focusDate ?? '—'}</span>
-          </StatusCell>
-        </div>
       </div>
     </div>
   )

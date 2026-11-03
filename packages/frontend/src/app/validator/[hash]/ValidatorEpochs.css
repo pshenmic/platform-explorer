@@ -1,52 +1,59 @@
 .ValidatorPage__Epochs {
   min-width: 0;
+  margin-block: var(--pe-space-2);
   container-type: inline-size;
 }
 
 .ValidatorEpochs .EpochsOverview__Head {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
-  align-items: start;
+  align-items: center;
   gap: 8px 12px;
-  margin-bottom: 8px;
+  margin-bottom: var(--pe-space-2);
   padding: 0;
 }
 
 .ValidatorEpochs .EpochsOverview__TitleRow {
-  margin: 0 0 4px;
-}
-
-.ValidatorEpochs .EpochsOverview__Title {
-  font-family: var(--pe-font-mono);
-  font-style: normal;
-  font-weight: 400;
-  font-size: 1rem;
-  line-height: 1.15;
-  letter-spacing: 0;
-  text-transform: none;
-  color: #fff;
-}
-
-.ValidatorEpochs .EpochsOverview__Title {
-  margin: 0;
-}
-
-.ValidatorEpochs .EpochsOverview__Lede {
-  max-width: none;
+  display: flex;
+  min-height: 36px;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--pe-space-2);
   margin: 0;
   font-family: var(--pe-font-mono);
-  font-size: 0.875rem;
-  line-height: 1.35;
-  color: var(--pe-color-gray-400);
-  overflow-wrap: break-word;
+  font-size: var(--pe-text-sm);
+  line-height: var(--pe-leading-normal);
+}
+
+.ValidatorEpochs__Summary {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--pe-space-2);
+  min-width: 0;
+}
+
+.ValidatorEpochs .ValidatorEpochs__PayoutMetric.ValidatorPage__AmountBadge {
+  min-width: 0;
+  min-height: 36px;
+  max-width: 100%;
+  padding: 0 var(--pe-space-3);
+  font-size: var(--pe-text-md);
+  line-height: 1.25;
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere;
+  text-align: right;
 }
 
 .ValidatorEpochs .IdentityGrowthChart__Tick {
-  font-size: 0.75rem;
+  font-size: var(--pe-text-xs);
   fill: var(--pe-color-fg-muted);
 }
 
 .ValidatorEpochs__Filters {
+  grid-column: 2;
+  grid-row: 1;
+  align-self: center;
   display: flex;
   flex-shrink: 0;
   align-items: center;
@@ -55,28 +62,93 @@
 
 .ValidatorEpochs__Filters .ChartDateRange__Trigger {
   width: auto;
+  min-height: 36px;
+  font-size: var(--pe-text-md);
   white-space: nowrap;
 }
 
 .ValidatorEpochs__Plot {
   position: relative;
-  height: 12rem;
-  min-height: 12rem;
+  height: 11rem;
+  min-height: 10.25rem;
   width: 100%;
+}
+
+@container (max-width: 30rem) {
+  .ValidatorEpochs__Plot {
+    height: 10.25rem;
+  }
+}
+
+@container (max-width: 24rem) {
+  .ValidatorEpochs .EpochsOverview__Title {
+    font-size: 1.125rem;
+  }
+
+  .ValidatorEpochs .EpochsOverview__Head {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+
+  .ValidatorEpochs .EpochsOverview__TitleRow {
+    display: contents;
+  }
+
+  .ValidatorEpochs .EpochsOverview__Title {
+    grid-column: 1 / -1;
+  }
+
+  .ValidatorEpochs__Summary {
+    grid-column: 1;
+    grid-row: 2;
+  }
+
+  .ValidatorEpochs__Filters {
+    grid-column: 2;
+    grid-row: 2;
+    justify-self: end;
+  }
 }
 
 .ValidatorEpochs__Bar {
   pointer-events: none;
+  stroke: none;
+  stroke-width: 1;
+  stroke-linejoin: miter;
+}
+
+.ValidatorEpochs__Bar:not(.is-missing) {
+  fill: var(--pe-color-brand-normal);
+}
+
+.ValidatorEpochs__Bar.is-on:not(.is-missing) {
+  fill: rgba(var(--pe-color-brand-light-rgb), 0.75);
+  stroke: var(--pe-color-brand-light);
+}
+
+.ValidatorEpochs__AxisBadge {
+  fill: rgba(var(--pe-color-brand-normal-rgb), 0.2);
+}
+
+.ValidatorEpochs__AxisValue {
+  fill: var(--pe-color-fg);
+  font-family: var(--pe-font-mono);
+  font-size: var(--pe-text-xs);
+  font-variant-numeric: tabular-nums;
 }
 
 .ValidatorEpochs__Bar.is-missing {
   stroke: var(--pe-color-fg-muted);
-  stroke-opacity: 0.3;
+  stroke-opacity: 1;
+}
+
+.ValidatorEpochs__Bar.is-missing.is-on {
+  stroke: var(--pe-color-brand-light);
+  stroke-opacity: 1;
 }
 
 .ValidatorEpochs__Hatch {
   stroke: var(--pe-color-fg-muted);
-  stroke-opacity: 0.35;
+  stroke-opacity: 0.75;
 }
 
 .ValidatorEpochs__TimeFill {
@@ -88,7 +160,7 @@
 .ValidatorEpochs__ProgressLabel {
   fill: var(--pe-color-fg);
   text-anchor: middle;
-  font-size: 0.75rem;
+  font-size: var(--pe-text-xs);
   pointer-events: none;
 }
 
@@ -97,9 +169,14 @@
   cursor: pointer;
 }
 
-.ValidatorEpochs__Hit:focus-visible {
-  outline: 2px solid var(--pe-color-fg);
-  outline-offset: -2px;
+.ValidatorEpochs__Hit:focus {
+  outline: none;
+}
+
+.ValidatorEpochs__Datum:has(.ValidatorEpochs__Hit:focus-visible) .ValidatorEpochs__Bar {
+  stroke: var(--pe-color-fg);
+  stroke-width: 2;
+  stroke-opacity: 1;
 }
 
 .ValidatorEpochs .EpochsOverview__Wash {
@@ -122,94 +199,55 @@
   cursor: pointer;
 }
 
-.ValidatorEpochs .HomeHero__StatusBar,
-.ValidatorEpochs .EpochsOverview__Cells.HomeHero__StatusBar {
+.ValidatorEpochs__Info {
+  padding: 0;
+  flex-shrink: 0;
+  border: 0;
+  background: transparent;
+  color: var(--pe-color-fg-muted);
+  font: inherit;
+  cursor: help;
+}
+
+.ValidatorEpochs__Info:focus-visible {
+  outline: 2px solid var(--pe-color-brand-light);
+  outline-offset: 3px;
+  border-radius: 3px;
+}
+
+.ValidatorEpochs__TooltipAnchor {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  pointer-events: none;
+}
+
+.ValidatorEpochs__TooltipDetails {
   display: flex;
-  flex-wrap: wrap;
-  align-items: stretch;
-  gap: 0;
-  margin-top: 8px;
-  padding-top: 16px;
+  flex-direction: column;
+  gap: var(--pe-space-2);
+  margin: 0;
+  min-width: min(15rem, calc(100vw - 3rem));
+  font-family: var(--pe-font-mono);
+  font-size: var(--pe-text-sm);
 }
 
-.ValidatorEpochs .HomeHero__StatusCell,
-.ValidatorEpochs .HomeHero__StatusCell:first-child,
-.ValidatorEpochs .HomeHero__StatusCell:last-child {
-  flex: 1 1 0;
+.ValidatorEpochs__TooltipDetails > div {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--pe-space-4);
+}
+
+.ValidatorEpochs__TooltipDetails dt {
+  color: var(--pe-color-fg-muted);
+  flex-shrink: 0;
+}
+
+.ValidatorEpochs__TooltipDetails dd {
+  margin: 0;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
   min-width: 0;
-  padding: 0 10px;
-  border-right: 1px solid rgba(var(--pe-color-gray-800-rgb), 0.6);
-  border-bottom: none;
-}
-
-.ValidatorEpochs .HomeHero__StatusCell:first-child {
-  flex: 1.7 1 0;
-  padding-left: 0;
-}
-
-.ValidatorEpochs .HomeHero__StatusCell:last-child {
-  flex: 1.15 1 0;
-  padding-right: 0;
-  border-right: none;
-}
-
-.ValidatorEpochs .EpochsOverview__Cells .HomeHero__StatusHead,
-.ValidatorEpochs .EpochsOverview__Cells .HomeHero__StatusValue,
-.ValidatorEpochs .EpochsOverview__Cells .EpochsOverview__Stat {
-  justify-content: flex-start;
-  text-align: left;
-  width: auto;
-}
-
-.ValidatorEpochs .EpochsOverview__Cells .EpochsOverview__Stat {
-  font-size: 0.875rem;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 100%;
-}
-
-.ValidatorEpochs .HomeHero__StatusLabel {
-  white-space: nowrap;
-  font-size: 0.8125rem;
-}
-
-@container (min-width: 32rem) {
-  .ValidatorEpochs .HomeHero__StatusCell:last-child {
-    flex: 1.6 1 0;
-  }
-
-  .ValidatorEpochs .HomeHero__StatusCell:last-child .EpochsOverview__Stat {
-    font-size: 0.875rem;
-  }
-}
-
-@container (max-width: 31.99rem) {
-  .ValidatorEpochs .HomeHero__StatusCell,
-  .ValidatorEpochs .HomeHero__StatusCell:first-child,
-  .ValidatorEpochs .HomeHero__StatusCell:last-child {
-    flex: 1 1 45%;
-    padding: 0 8px 10px;
-    border-bottom: 1px solid rgba(var(--pe-color-gray-800-rgb), 0.6);
-  }
-
-  .ValidatorEpochs .HomeHero__StatusCell:nth-child(2) {
-    border-right: none;
-  }
-
-  .ValidatorEpochs .HomeHero__StatusCell:nth-child(3) {
-    padding-left: 0;
-    padding-bottom: 0;
-    border-bottom: none;
-  }
-
-  .ValidatorEpochs .HomeHero__StatusCell:last-child {
-    padding-bottom: 0;
-    border-bottom: none;
-    border-right: none;
-  }
-
-  .ValidatorEpochs .EpochsOverview__Cells .EpochsOverview__Stat {
-    font-size: 0.875rem;
-  }
+  overflow-wrap: anywhere;
 }
