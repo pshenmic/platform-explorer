@@ -129,6 +129,22 @@
   font-variant-numeric: tabular-nums;
 }
 
+.ValidatorPage__Ledger .ValidatorPage__RegistrationRow .InfoLine__Title {
+  width: auto;
+  flex-shrink: 1;
+}
+
+.ValidatorPage__RegistrationLabel {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--pe-space-2);
+}
+
+.ValidatorPage__RegistrationLabel .ValidatorPage__RegistrationAge {
+  color: var(--pe-color-fg-muted);
+}
+
 .ValidatorPage__RegistrationAge:focus-visible {
   outline: 2px solid var(--pe-color-focus-ring);
   outline-offset: 3px;

@@ -286,9 +286,29 @@ function Validator({ hash }: ValidatorProps) {
       key: 'registration',
       line: (
         <InfoLine
-          className="ValidatorPage__Key ValidatorPage__CompactRow"
+          className="ValidatorPage__Key ValidatorPage__CompactRow ValidatorPage__RegistrationRow"
           postfix=""
-          title="Registration"
+          title={
+            <span className="ValidatorPage__RegistrationLabel">
+              Registration
+              {!validator.loading &&
+                !validator.error &&
+                (registrationDate ? (
+                  <Tooltip className="ValidatorPage__Tooltip" content={`${registrationDate} (UTC)`}>
+                    <span className="ValidatorPage__RegistrationAge" tabIndex={0}>
+                      <TimeDelta endDate={registeredDate} showTimestampTooltip={false} />
+                    </span>
+                  </Tooltip>
+                ) : (
+                  <Tooltip
+                    className="ValidatorPage__Tooltip"
+                    content="Registration date not returned by the API"
+                  >
+                    <span tabIndex={0}>Unavailable</span>
+                  </Tooltip>
+                ))}
+            </span>
+          }
           loading={validator.loading}
           error={validator.error}
           value={
@@ -310,21 +330,6 @@ function Validator({ hash }: ValidatorProps) {
                     <BlockIcon w="14px" h="14px" />#{registeredHeight.toLocaleString('en-US')}
                   </span>
                 ))}
-              {hasRegisteredHeight && !validator.error && <span aria-hidden="true">·</span>}
-              {registrationDate && !validator.error ? (
-                <Tooltip className="ValidatorPage__Tooltip" content={`${registrationDate} (UTC)`}>
-                  <span className="ValidatorPage__RegistrationAge" tabIndex={0}>
-                    <TimeDelta endDate={registeredDate} showTimestampTooltip={false} />
-                  </span>
-                </Tooltip>
-              ) : (
-                <Tooltip
-                  className="ValidatorPage__Tooltip"
-                  content="Registration date not returned by the API"
-                >
-                  <span tabIndex={0}>Unavailable</span>
-                </Tooltip>
-              )}
             </span>
           }
         />
