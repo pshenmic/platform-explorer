@@ -54,7 +54,7 @@ export const Breadcrumbs = () => {
   }
 
   return (
-    <div className={'Breadcrumbs'}>
+    <nav className={'Breadcrumbs'} aria-label="Breadcrumbs">
       <ul className={'Breadcrumbs__LinksContainer'}>
         {links.map((link, i) =>
           link?.label ? (
@@ -69,6 +69,7 @@ export const Breadcrumbs = () => {
 
                 {(link?.avatar || link?.avatarSource) && (
                   <ImageGenerator
+                    aria-hidden="true"
                     className={'Breadcrumbs__Avatar'}
                     username={link?.avatarSource || link.label}
                     lightness={50}
@@ -91,6 +92,6 @@ export const Breadcrumbs = () => {
           )
         )}
       </ul>
-    </div>
+    </nav>
   )
 }

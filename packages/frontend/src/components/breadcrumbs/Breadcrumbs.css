@@ -45,7 +45,7 @@
   align-items: center;
   padding: var(--pe-space-2) var(--pe-space-3);
   background: rgba(var(--pe-color-brand-normal-rgb), 0.2);
-  color: var(--pe-color-brand-normal);
+  color: var(--pe-color-fg);
   transition: var(--pe-transition-def);
   border-radius: var(--pe-radius-def);
   font-size: var(--pe-text-sm);

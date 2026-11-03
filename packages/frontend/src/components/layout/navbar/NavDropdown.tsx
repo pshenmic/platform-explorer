@@ -73,6 +73,8 @@ const NavDropdown = ({ item }: NavDropdownProps) => {
     >
       {title}
       <ArrowButton
+        aria-label={`${title} menu`}
+        aria-expanded={isOpen}
         className={`NavItem__DropdownIcon ${isOpen ? 'NavItem__DropdownIcon--Open' : ''}`}
       />
     </div>
