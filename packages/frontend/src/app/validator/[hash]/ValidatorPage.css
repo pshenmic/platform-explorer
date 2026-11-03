@@ -254,11 +254,16 @@
 }
 
 @media (min-width: 62.01em) {
+  .ValidatorPage__Column--Metrics {
+    justify-content: center;
+  }
+
   .ValidatorPage__Column--Details > .InfoContainer:last-child {
     flex: 1 1 auto;
   }
 
   .ValidatorPage__Column--Metrics > .ValidatorPage__Epochs {
+    margin-block-start: 0;
     display: flex;
     flex-direction: column;
     flex: 0 0 auto;
