@@ -14,8 +14,8 @@
   width: max-content;
   max-width: min(20rem, calc(100vw - 24px));
   min-width: 0;
-  overflow: visible;
-  max-height: none;
+  overflow: auto;
+  max-height: calc(100dvh - 24px);
   white-space: normal;
   font-family: var(--pe-font-heading);
   font-size: 0.75rem;

@@ -140,7 +140,7 @@ export interface TabListProps extends HTMLAttributes<HTMLDivElement> {
   children?: ReactNode
 }
 
-export function TabList({ className, children, ...props }: TabListProps) {
+export function TabList({ className, children, onKeyDown, ...props }: TabListProps) {
   const { selectedIndex, setSelectedIndex, baseId } = useTabsContext()
   let tabIndex = 0
 
@@ -149,6 +149,28 @@ export function TabList({ className, children, ...props }: TabListProps) {
       role={'tablist'}
       className={['Tabs__TabList', className || ''].filter(Boolean).join(' ')}
       {...props}
+      onKeyDown={event => {
+        onKeyDown?.(event)
+        if (event.defaultPrevented) return
+        const vertical = event.currentTarget.getAttribute('aria-orientation') === 'vertical'
+        const forward = vertical ? 'ArrowDown' : 'ArrowRight'
+        const backward = vertical ? 'ArrowUp' : 'ArrowLeft'
+        if (![forward, backward, 'Home', 'End'].includes(event.key)) return
+        const tabs = Array.from(
+          event.currentTarget.querySelectorAll<HTMLButtonElement>('[role="tab"]:not(:disabled)')
+        ).filter(tab => tab.closest('[role="tablist"]') === event.currentTarget)
+        const current = tabs.indexOf(event.target as HTMLButtonElement)
+        if (current < 0) return
+        event.preventDefault()
+        const next =
+          event.key === 'Home'
+            ? 0
+            : event.key === 'End'
+              ? tabs.length - 1
+              : (current + (event.key === forward ? 1 : -1) + tabs.length) % tabs.length
+        tabs[next].focus()
+        tabs[next].click()
+      }}
     >
       {Children.map(children, child => {
         if (!isValidElement(child) || child.type !== Tab) return child

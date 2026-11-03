@@ -128,6 +128,7 @@ export const DateRangeFilter = ({
           {config.timespan.values.map((iTimespan, i) => (
             <button
               type={'button'}
+              aria-pressed={iTimespan.label === timespan?.label}
               className={`DateRangeFilter__ValueButton ${iTimespan.label === timespan?.label ? 'DateRangeFilter__ValueButton--Active' : ''}`}
               onClick={() => timeframeButtonHandler(iTimespan)}
               key={i}
