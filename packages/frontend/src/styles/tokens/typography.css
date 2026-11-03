@@ -23,6 +23,7 @@
   --pe-text-lg: 1rem; /* 16px */
   --pe-text-xl: 1.125rem; /* 18px */
   --pe-text-2xl: 1.5rem; /* 24px */
+  --pe-text-3xl: 2rem;
 
   --pe-font-weight-normal: 400;
   --pe-font-weight-medium: 500;

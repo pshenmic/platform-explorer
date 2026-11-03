@@ -1,0 +1,46 @@
+.ValidatorSurface {
+  display: none;
+}
+
+.ValidatorPage__Surface--profile .ValidatorPage__ProfileAvatar {
+  border-radius: var(--pe-radius-block);
+  background: var(--pe-color-bg);
+}
+
+@media (min-width: 80.01em) {
+  .ValidatorPage__Surface--participation .ValidatorPage__PoseValue {
+    margin-inline-end: var(--pe-space-3);
+  }
+
+  .ValidatorPage .InfoContainer.ValidatorPage__Surface {
+    border-color: transparent;
+    border-radius: 0;
+  }
+
+  .ValidatorPage__Surface::before,
+  .ValidatorPage__Surface::after {
+    display: none;
+  }
+
+  .ValidatorSurface {
+    display: block;
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    pointer-events: none;
+    fill: color-mix(in srgb, var(--pe-color-surface) 30%, var(--pe-color-gray-675));
+  }
+
+  [data-theme="light"] .ValidatorSurface {
+    fill: var(--pe-color-surface);
+  }
+
+  .ValidatorSurface path {
+    stroke: var(--pe-color-border-subtle);
+    stroke-width: 1;
+    stroke-linejoin: round;
+    vector-effect: non-scaling-stroke;
+  }
+}

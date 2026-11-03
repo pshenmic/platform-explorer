@@ -1,0 +1,154 @@
+.ValidatorPage .InfoContainer.ValidatorPage__EarningsPanel {
+  border-color: var(--pe-color-border);
+  box-shadow:
+    inset 0 1px 2px var(--pe-color-border-subtle),
+    inset 0 -2px 6px color-mix(in srgb, var(--pe-color-bg) 40%, transparent);
+}
+
+.ValidatorPage__EarningsPanel::before {
+  display: block;
+  background: linear-gradient(145deg, var(--pe-color-surface), var(--pe-color-surface-elevated));
+  box-shadow: inset 0 2px 5px var(--pe-color-border-subtle);
+}
+
+.ValidatorPage__EarningsPanel::after {
+  display: none;
+}
+
+.ValidatorPage__EarningsPanel .ValidatorPage__EarningsOverview::before,
+.ValidatorPage__EarningsPanel .ValidatorPage__EarningsSource::before {
+  content: "";
+  display: block;
+  position: absolute;
+  z-index: -1;
+  pointer-events: none;
+  background: linear-gradient(
+    155deg,
+    color-mix(in srgb, var(--pe-color-surface) 24%, var(--pe-color-gray-675)),
+    var(--pe-color-gray-675)
+  );
+  box-shadow:
+    inset 0 3px 8px color-mix(in srgb, var(--pe-color-bg) 45%, transparent),
+    inset 0 -1px 2px var(--pe-color-border-subtle),
+    0 1px 3px var(--pe-color-border);
+  opacity: 1;
+}
+
+[data-theme="light"] .ValidatorPage__EarningsPanel .ValidatorPage__EarningsOverview::before,
+[data-theme="light"] .ValidatorPage__EarningsPanel .ValidatorPage__EarningsSource::before {
+  background: var(--pe-color-surface);
+}
+
+.ValidatorPage__EarningsPanel .ValidatorPage__EarningsOverview::before {
+  inset: calc(-1 * var(--pe-space-4)) calc(-1 * var(--pe-space-2)) calc(-1 * var(--pe-space-4))
+    calc(-1 * var(--pe-space-4));
+  border-radius: 18px 38px 54px 18px;
+}
+
+.ValidatorPage__EarningsPanel .ValidatorPage__EarningsSource::before {
+  inset: 0;
+  border-radius: 32px 18px 30px 24px;
+}
+
+.ValidatorPage__EarningsPanel .ValidatorPage__EarningsSource:first-child::before {
+  inset: var(--pe-space-1);
+  box-shadow:
+    inset 0 4px 10px color-mix(in srgb, var(--pe-color-bg) 55%, transparent),
+    inset 0 -1px 2px var(--pe-color-border-subtle),
+    0 2px 4px var(--pe-color-border-subtle);
+}
+
+.ValidatorPage__EarningsPanel .ValidatorPage__EarningsSources {
+  align-self: stretch;
+  grid-template-rows: repeat(2, minmax(min-content, 1fr));
+  margin: calc(-1 * var(--pe-space-5)) calc(-1 * var(--pe-space-5)) calc(-1 * var(--pe-space-5))
+    calc(-1 * var(--pe-space-1));
+}
+
+.ValidatorPage__EarningsPanel .ValidatorPage__EarningsSource {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr);
+  align-content: center;
+  padding: var(--pe-space-3) var(--pe-space-4);
+}
+
+.ValidatorPage__EarningsPanel .ValidatorPage__EarningsSourceHead,
+.ValidatorPage__EarningsPanel .ValidatorPage__EarningsAmount {
+  width: min(100%, 7rem);
+  justify-self: center;
+  box-sizing: border-box;
+  padding-inline-start: 0;
+  text-align: left;
+}
+
+.ValidatorPage__EarningsPanel .ValidatorPage__EarningsSourceHead {
+  justify-content: flex-start;
+}
+
+.ValidatorPage__MonthlyAmount {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--pe-space-1);
+  max-width: 100%;
+}
+
+.ValidatorPage__MonthlyAmount > .ValidatorPage__EarningsUnit {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--pe-space-1);
+  font-size: var(--pe-text-sm);
+}
+
+.ValidatorPage__EarningsAmount .ValidatorPage__MonthlyAmount {
+  min-height: 36px;
+  align-content: center;
+  font-size: var(--pe-text-lg);
+}
+
+.ValidatorPage__DashLogo {
+  display: inline-block;
+  width: 1.2em;
+  height: 1em;
+  flex-shrink: 0;
+  background: currentColor;
+  mask: url("/images/icons/dash.svg") center / contain no-repeat;
+}
+
+.ValidatorPage__EarningsPanel .ValidatorPage__EarningsSource + .ValidatorPage__EarningsSource {
+  border-top: 0;
+  padding: var(--pe-space-3) var(--pe-space-4);
+}
+
+.ValidatorPage__EarningsPanel
+  .ValidatorPage__EarningsSource
+  + .ValidatorPage__EarningsSource::before {
+  inset: var(--pe-space-1);
+  border-radius: 28px 20px 18px 40px;
+  box-shadow:
+    inset 0 4px 10px color-mix(in srgb, var(--pe-color-bg) 55%, transparent),
+    inset 0 -1px 2px var(--pe-color-border-subtle),
+    0 2px 4px var(--pe-color-border-subtle);
+}
+
+@container validator-earnings (max-width: 38rem) {
+  .ValidatorPage__EarningsPanel .ValidatorPage__EarningsOverview::before {
+    inset: var(--pe-space-1) 0 var(--pe-space-1) var(--pe-space-1);
+    border-radius: 18px;
+  }
+
+  .ValidatorPage__EarningsPanel .ValidatorPage__EarningsSource::before {
+    inset: 0;
+    border-radius: 18px;
+  }
+
+  .ValidatorPage__EarningsPanel .ValidatorPage__EarningsSources {
+    margin: calc(-1 * var(--pe-space-2));
+  }
+
+  .ValidatorPage__EarningsPanel
+    .ValidatorPage__EarningsSource
+    + .ValidatorPage__EarningsSource::before {
+    inset: var(--pe-space-1);
+    border-radius: 18px;
+  }
+}
