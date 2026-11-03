@@ -73,9 +73,9 @@ function WithdrawalsList({
     },
     {
       key: 'amount',
-      header: 'Amount',
+      header: 'Amount (credits)',
       numeric: true,
-      minWidth: 100,
+      minWidth: 144,
       cell: withdrawal =>
         withdrawal.amount != null ? (
           <RateTooltip credits={Number(withdrawal.amount)} rate={rate}>

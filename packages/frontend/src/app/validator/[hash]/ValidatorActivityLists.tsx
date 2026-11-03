@@ -24,7 +24,6 @@ interface ActivityProps {
   identity?: string | null
   votingIdentity?: string | null
   blocksCount?: number | null
-  withdrawalsCount?: number | null
   loading: boolean
   error: boolean
   rate?: Rate | null
@@ -32,10 +31,30 @@ interface ActivityProps {
   l1explorerBaseUrl?: string | null
 }
 
-function TabCount({ value }: { value?: number | string | null }) {
+function TabCount({
+  value,
+  loading = false,
+  error = false
+}: {
+  value?: number | string | null
+  loading?: boolean
+  error?: boolean
+}) {
   const count = Number(value)
-  if (value == null || !Number.isFinite(count)) return null
-  return <span className={'Tabs__TabItemsCount'}>{Math.max(0, count).toLocaleString('en-US')}</span>
+  const known = value != null && Number.isFinite(count)
+  const state = loading ? 'loading' : error ? 'error' : known ? 'ready' : 'unknown'
+  const label = loading
+    ? 'Loading count'
+    : error
+      ? 'Could not load count'
+      : known
+        ? undefined
+        : 'Count unavailable'
+  return (
+    <span className="Tabs__TabItemsCount" data-state={state} title={label} aria-label={label}>
+      {loading ? '…' : error ? 'Error' : known ? Math.max(0, count).toLocaleString('en-US') : '—'}
+    </span>
+  )
 }
 
 function ActivityList({
@@ -58,10 +77,22 @@ function ActivityList({
     queryKey: ['validator-activity', kind, resourceId, mode, pageSize, mode === 'pages' ? page : 0],
     initialPageParam: mode === 'pages' ? page + 1 : 1,
     queryFn: async ({ pageParam }): Promise<PaginatedResultSet<ActivityItem>> => {
-      if (kind === 'blocks')
-        return Api.getBlocksByValidator(resourceId!, pageParam, pageSize, 'desc')
-      if (kind === 'transactions')
-        return Api.getTransactionsByIdentity(resourceId!, pageParam, pageSize, 'desc')
+      if (kind === 'blocks') {
+        const result = await Api.getBlocksByValidator(resourceId!, pageParam, pageSize, 'desc')
+        queryClient.setQueryData(
+          ['validator-block-total', resourceId],
+          Math.max(0, result.pagination.total)
+        )
+        return result
+      }
+      if (kind === 'transactions') {
+        const result = await Api.getTransactionsByIdentity(resourceId!, pageParam, pageSize, 'desc')
+        queryClient.setQueryData(
+          ['validator-tx-total', resourceId],
+          Math.max(0, result.pagination.total)
+        )
+        return result
+      }
       const result = await queryClient.fetchQuery({
         queryKey: ['identity-withdrawals', resourceId],
         queryFn: () => Api.getWithdrawalsByIdentity(resourceId!, 1, 100, 'desc'),
@@ -92,7 +123,8 @@ function ActivityList({
   const items = [...new Map(rows.map((item, index) => [keyFor(item) ?? index, item])).values()]
   const total = Math.max(0, query.data?.pages[0]?.pagination.total ?? 0)
   const loading = props.loading || (Boolean(resourceId) && query.isPending)
-  const failed = (kind !== 'blocks' && props.error) || query.isError
+  const unavailable = !props.loading && !resourceId
+  const failed = query.isError || unavailable
   const paging: DataListProps['paging'] = {
     scrollTarget: 'container',
     mode,
@@ -119,7 +151,7 @@ function ActivityList({
     <div className={'ValidatorPage__ActivityList'}>
       {failed && (
         <div role={'status'} className={'ValidatorPage__ActivityError'}>
-          <span>Unable to load {kind}.</span>
+          <span>{unavailable ? 'Platform identity unavailable' : `Unable to load ${kind}.`}</span>
           {resourceId && (
             <button type={'button'} onClick={() => void query.refetch()}>
               Retry
@@ -127,7 +159,7 @@ function ActivityList({
           )}
         </div>
       )}
-      {kind === 'blocks' ? (
+      {failed && items.length === 0 ? null : kind === 'blocks' ? (
         <BlocksList
           blocks={items as Block[]}
           title={null}
@@ -172,23 +204,29 @@ function VotesActivity({
   votingIdentity,
   active,
   loading,
-  error,
   mode,
   onModeChange
-}: Pick<ActivityProps, 'votingIdentity' | 'loading' | 'error'> & {
+}: Pick<ActivityProps, 'votingIdentity' | 'loading'> & {
   active: boolean
   mode: ListScrollMode
   onModeChange: (mode: ListScrollMode) => void
 }) {
   const [page, setPage] = useState(0)
   const [pageSize, setPageSize] = useState(25)
+  const queryClient = useQueryClient()
   const query = useInfiniteQuery({
     queryKey: ['validator-votes', votingIdentity, mode, pageSize, mode === 'pages' ? page : 0],
     initialPageParam: mode === 'pages' ? page + 1 : 1,
-    queryFn: ({ pageParam }) =>
-      Api.getMasternodeVotes(pageParam, pageSize, 'desc', {
+    queryFn: async ({ pageParam }) => {
+      const result = await Api.getMasternodeVotes(pageParam, pageSize, 'desc', {
         voter_identity: votingIdentity as string
-      }),
+      })
+      queryClient.setQueryData(
+        ['validator-vote-total', votingIdentity],
+        Math.max(0, result.pagination.total)
+      )
+      return result
+    },
     getNextPageParam: (last, pages) => {
       const loaded = pages.reduce((sum, result) => sum + result.resultSet.length, 0)
       return last.resultSet.length && loaded < last.pagination.total ? pages.length + 1 : undefined
@@ -201,13 +239,16 @@ function VotesActivity({
   const items = [...new Map(rows.map((item, index) => [item.txHash ?? index, item])).values()]
   const total = Math.max(0, query.data?.pages[0]?.pagination.total ?? 0)
   const pending = loading || (Boolean(votingIdentity) && active && query.isPending)
-  const failed = error || query.isError
+  const unavailable = !loading && !votingIdentity
+  const failed = query.isError || unavailable
 
   return (
     <div className={'ValidatorPage__ActivityList'}>
       {failed && (
         <div role={'status'} className={'ValidatorPage__ActivityError'}>
-          <span>Unable to load votes.</span>
+          <span>
+            {unavailable ? 'Voting identity unavailable' : 'Unable to load masternode votes.'}
+          </span>
           {votingIdentity && (
             <button type={'button'} onClick={() => void query.refetch()}>
               Retry
@@ -215,47 +256,58 @@ function VotesActivity({
           )}
         </div>
       )}
-      <VotesList
-        votes={items as Vote[]}
-        loading={pending}
-        itemsCount={pageSize}
-        showVoter={false}
-        showDataContract={false}
-        resourceFirst={true}
-        blankMissing={true}
-        pinFirst={true}
-        paging={{
-          scrollTarget: 'container',
-          mode,
-          hideModeSwitch: true,
-          onModeChange: next => {
-            onModeChange(next)
-            setPage(0)
-          },
-          total,
-          pageSize,
-          page,
-          onPageChange: setPage,
-          onPageSizeChange: size => {
-            setPageSize(size)
-            setPage(0)
-          },
-          onLoadMore: () => {
-            if (active && query.hasNextPage && !query.isFetching) void query.fetchNextPage()
-          },
-          loadingMore: query.isFetchingNextPage,
-          hasMore: active && !failed && Boolean(query.hasNextPage)
-        }}
-      />
+      {(!failed || items.length > 0) && (
+        <VotesList
+          votes={items as Vote[]}
+          loading={pending}
+          itemsCount={pageSize}
+          showVoter={false}
+          showDataContract={false}
+          resourceFirst={true}
+          blankMissing={true}
+          pinFirst={true}
+          paging={{
+            scrollTarget: 'container',
+            mode,
+            hideModeSwitch: true,
+            onModeChange: next => {
+              onModeChange(next)
+              setPage(0)
+            },
+            total,
+            pageSize,
+            page,
+            onPageChange: setPage,
+            onPageSizeChange: size => {
+              setPageSize(size)
+              setPage(0)
+            },
+            onLoadMore: () => {
+              if (active && query.hasNextPage && !query.isFetching) void query.fetchNextPage()
+            },
+            loadingMore: query.isFetchingNextPage,
+            hasMore: active && !failed && Boolean(query.hasNextPage)
+          }}
+        />
+      )}
     </div>
   )
 }
 
 const LIST_MODE_KEY = 'validator-activity'
+const ACTIVITY_ORDER = ['withdrawals', 'blocks', 'votes', 'transactions'] as const
 
 export default function ValidatorActivityLists(props: ActivityProps) {
   const [active, setActive] = useState(0)
   const [mode, setMode] = useState<ListScrollMode>('continuous')
+  const blockCount = useQuery({
+    queryKey: ['validator-block-total', props.hash],
+    enabled: false,
+    queryFn: () =>
+      Api.getBlocksByValidator(props.hash, 1, 1, 'desc').then(result =>
+        Math.max(0, result.pagination.total)
+      )
+  })
   const voteCount = useQuery({
     queryKey: ['validator-vote-total', props.votingIdentity],
     enabled: Boolean(props.votingIdentity),
@@ -273,6 +325,13 @@ export default function ValidatorActivityLists(props: ActivityProps) {
         Math.max(0, result.pagination.total)
       )
   })
+  const withdrawals = useQuery({
+    queryKey: ['identity-withdrawals', props.identity],
+    enabled: Boolean(props.identity),
+    staleTime: 60000,
+    retry: 1,
+    queryFn: () => Api.getWithdrawalsByIdentity(props.identity as string, 1, 100, 'desc')
+  })
   useEffect(() => {
     setMode(readListScrollMode(LIST_MODE_KEY))
   }, [])
@@ -282,8 +341,8 @@ export default function ValidatorActivityLists(props: ActivityProps) {
   }
   useEffect(() => {
     const openFromHash = () => {
-      if (window.location.hash === '#withdrawals') setActive(2)
-      if (window.location.hash === '#votes') setActive(3)
+      if (window.location.hash === '#withdrawals') setActive(ACTIVITY_ORDER.indexOf('withdrawals'))
+      if (window.location.hash === '#votes') setActive(ACTIVITY_ORDER.indexOf('votes'))
     }
     openFromHash()
     window.addEventListener('hashchange', openFromHash)
@@ -293,49 +352,65 @@ export default function ValidatorActivityLists(props: ActivityProps) {
     <Tabs preserveScroll id={'withdrawals'} index={active} onChange={setActive}>
       <div className={'Tabs__Toolbar'}>
         <TabList>
-          <Tab>
-            Proposed Blocks
-            <TabCount value={props.blocksCount} />
+          <Tab title="Platform identity withdrawals to Core, including pending and expired requests">
+            Identity withdrawals{' '}
+            <TabCount
+              value={withdrawals.data?.resultSet.length}
+              loading={props.loading || (Boolean(props.identity) && withdrawals.isPending)}
+              error={withdrawals.isError || (props.error && !props.identity)}
+            />
           </Tab>
           <Tab>
-            Transactions
-            <TabCount value={transactionCount.data} />
+            Proposed blocks{' '}
+            <TabCount
+              value={blockCount.data ?? props.blocksCount}
+              loading={props.loading && blockCount.data == null}
+              error={props.error && blockCount.data == null && props.blocksCount == null}
+            />
+          </Tab>
+          <Tab title="Platform contested-resource votes cast by this masternode's voting identity, not Core governance votes">
+            Masternode votes{' '}
+            <TabCount
+              value={voteCount.data}
+              loading={props.loading || (Boolean(props.votingIdentity) && voteCount.isPending)}
+              error={voteCount.isError || (props.error && !props.votingIdentity)}
+            />
           </Tab>
           <Tab>
-            Withdrawals
-            <TabCount value={props.withdrawalsCount} />
-          </Tab>
-          <Tab>
-            Votes
-            <TabCount value={voteCount.data} />
+            Identity transactions{' '}
+            <TabCount
+              value={transactionCount.data}
+              loading={props.loading || (Boolean(props.identity) && transactionCount.isPending)}
+              error={transactionCount.isError || (props.error && !props.identity)}
+            />
           </Tab>
         </TabList>
         <DataListModeSwitch mode={mode} onModeChange={changeMode} />
       </div>
       <TabPanels>
-        {(['blocks', 'transactions', 'withdrawals'] as const).map((kind, index) => (
+        {ACTIVITY_ORDER.map((kind, index) => (
           <TabPanel key={kind}>
-            <ActivityList
-              key={`${props.hash}-${mode}`}
-              {...props}
-              kind={kind}
-              active={active === index}
-              mode={mode}
-              onModeChange={changeMode}
-            />
+            {kind === 'votes' ? (
+              <VotesActivity
+                key={`${props.votingIdentity}-${mode}`}
+                votingIdentity={props.votingIdentity}
+                active={active === index}
+                loading={props.loading}
+                mode={mode}
+                onModeChange={changeMode}
+              />
+            ) : (
+              <ActivityList
+                key={`${props.hash}-${mode}`}
+                {...props}
+                kind={kind}
+                active={active === index}
+                mode={mode}
+                onModeChange={changeMode}
+              />
+            )}
           </TabPanel>
         ))}
-        <TabPanel>
-          <VotesActivity
-            key={`${props.votingIdentity}-${mode}`}
-            votingIdentity={props.votingIdentity}
-            active={active === 3}
-            loading={props.loading}
-            error={props.error}
-            mode={mode}
-            onModeChange={changeMode}
-          />
-        </TabPanel>
       </TabPanels>
     </Tabs>
   )
