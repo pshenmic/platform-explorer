@@ -1,6 +1,7 @@
 'use client'
 
 import { getValidatorStatus } from './validatorStatus'
+import ValidatorStatus from './ValidatorStatusIndicator'
 
 import { columnLayout } from './ValidatorsList.columns'
 
@@ -16,12 +17,12 @@ import { ErrorMessageBlock } from '../Errors'
 const ACTIVE_OPTIONS = [
   {
     value: 'current',
-    label: <Badge colorScheme={'green'}>In quorum</Badge>,
-    searchText: 'in quorum'
+    label: <ValidatorStatus status={getValidatorStatus({ isActive: true })} />,
+    searchText: 'proposing in quorum'
   },
   {
     value: 'queued',
-    label: <Badge colorScheme={'gray'}>Waiting for quorum</Badge>,
+    label: <ValidatorStatus status={getValidatorStatus({ isActive: false })} />,
     searchText: 'waiting quorum'
   }
 ]
@@ -75,7 +76,7 @@ function validatorColumns(canFilter: boolean) {
       filterOptions: ACTIVE_OPTIONS,
       cell: (validator: Validator) => {
         const status = getValidatorStatus(validator)
-        return <Badge colorScheme={status.colorScheme}>{status.label}</Badge>
+        return <ValidatorStatus status={status} />
       }
     },
     {

@@ -1,0 +1,28 @@
+.ValidatorStatus {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--pe-space-1_5);
+  max-width: 100%;
+  color: var(--pe-color-fg);
+  font-family: var(--pe-font-mono);
+  font-size: var(--pe-text-sm);
+  font-weight: var(--pe-font-weight-normal);
+  line-height: var(--pe-leading-normal);
+  text-align: start;
+}
+
+.ValidatorStatus__Icon {
+  flex-shrink: 0;
+  color: var(--pe-color-fg-muted);
+}
+
+.ValidatorStatus[data-status="quorum"] .ValidatorStatus__Icon {
+  color: var(--pe-color-green-label);
+  fill: currentColor;
+  padding: 3px;
+  box-sizing: border-box;
+}
+
+.ValidatorStatus[data-status="banned"] .ValidatorStatus__Icon {
+  color: var(--pe-color-red-default);
+}
