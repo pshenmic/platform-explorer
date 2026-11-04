@@ -171,6 +171,7 @@ function ActivityList({
         />
       ) : kind === 'transactions' ? (
         <TransactionsList
+          compactStatus
           transactions={items as Transaction[]}
           loading={loading}
           skeletonCount={pageSize}
@@ -181,6 +182,8 @@ function ActivityList({
         />
       ) : (
         <WithdrawalsList
+          compactStatus
+          amountUnit="dash"
           withdrawals={items as Withdrawal[]}
           loading={loading}
           skeletonCount={pageSize}
@@ -353,7 +356,7 @@ export default function ValidatorActivityLists(props: ActivityProps) {
       <div className={'Tabs__Toolbar'}>
         <TabList>
           <Tab title="Platform identity withdrawals to Core, including pending and expired requests">
-            Identity withdrawals{' '}
+            Withdrawn to Core{' '}
             <TabCount
               value={withdrawals.data?.resultSet.length}
               loading={props.loading || (Boolean(props.identity) && withdrawals.isPending)}

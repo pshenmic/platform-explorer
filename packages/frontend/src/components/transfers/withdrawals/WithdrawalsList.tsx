@@ -2,12 +2,14 @@
 
 import { useRouter } from 'next/navigation'
 import { getL1ExplorerLink } from '../../../util/l1Explorer'
+import { creditsToDash, removeTrailingZeros } from '../../../util'
 import { DataList } from '../../ui/lists'
 import type { DataListColumn, DataListProps } from '../../ui/lists/DataList/DataList'
 import { Identifier, BigNumber, TimeDelta, NotActive } from '../../data'
 import { LinkContainer } from '../../ui/containers'
 import { RateTooltip } from '../../ui/Tooltips'
 import StatusIcon from './StatusIcon'
+import TransactionStatusIndicator from '../../transactions/TransactionStatusIndicator'
 import type { Rate, Withdrawal } from '../../../types'
 
 const WITHDRAWAL_CONTRACT_ID = '4fJLR2GYTPFdomuTVvNy3VRrvWgvkKPzqehEBpNf2nk6'
@@ -20,6 +22,8 @@ interface WithdrawalsListProps {
   l1explorerBaseUrl?: string | null
   loading?: boolean
   skeletonCount?: number
+  compactStatus?: boolean
+  amountUnit?: 'credits' | 'dash'
   paging?: DataListProps['paging']
 }
 
@@ -31,6 +35,8 @@ function WithdrawalsList({
   l1explorerBaseUrl,
   loading,
   skeletonCount,
+  compactStatus = false,
+  amountUnit = 'credits',
   paging
 }: WithdrawalsListProps) {
   const router = useRouter()
@@ -60,9 +66,12 @@ function WithdrawalsList({
     {
       key: 'status',
       header: 'Status',
-      minWidth: 110,
+      minWidth: compactStatus ? 64 : 110,
+      align: compactStatus ? 'center' : 'left',
       cell: withdrawal =>
-        withdrawal.status ? (
+        compactStatus ? (
+          <TransactionStatusIndicator status={withdrawal.status} />
+        ) : withdrawal.status ? (
           <span className={'DataList__Entity'}>
             <StatusIcon status={withdrawal.status} w={'18px'} h={'18px'} />
             {withdrawal.status.toLowerCase()}
@@ -73,14 +82,18 @@ function WithdrawalsList({
     },
     {
       key: 'amount',
-      header: 'Amount (credits)',
+      header: amountUnit === 'dash' ? 'Amount (DASH)' : 'Amount (credits)',
       numeric: true,
       minWidth: 144,
       cell: withdrawal =>
         withdrawal.amount != null ? (
           <RateTooltip credits={Number(withdrawal.amount)} rate={rate}>
             <span>
-              <BigNumber>{withdrawal.amount}</BigNumber>
+              {amountUnit === 'dash' ? (
+                removeTrailingZeros(creditsToDash(Number(withdrawal.amount)).toFixed(8))
+              ) : (
+                <BigNumber>{withdrawal.amount}</BigNumber>
+              )}
             </span>
           </RateTooltip>
         ) : (
@@ -159,7 +172,14 @@ function WithdrawalsList({
   return (
     <DataList
       items={withdrawals}
-      columns={columns}
+      columns={
+        compactStatus
+          ? [
+              ...columns.filter(column => column.key === 'status'),
+              ...columns.filter(column => column.key !== 'status')
+            ]
+          : columns
+      }
       rowKey={(withdrawal, index) =>
         withdrawal.document ?? withdrawal.id ?? withdrawal.hash ?? index ?? 0
       }
