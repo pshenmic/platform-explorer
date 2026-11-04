@@ -72,7 +72,7 @@ export default function ValidatorEpochs({
   payouts
 }: {
   hash: string
-  payouts: ValidatorPayoutsProps & { paidThisEpoch?: number | null }
+  payouts: ValidatorPayoutsProps
 }) {
   const gradId = useId().replace(/:/g, '')
   const wrapRef = useRef<HTMLDivElement | null>(null)
@@ -208,7 +208,8 @@ export default function ValidatorEpochs({
     const payoutsInDash = slots.map(slot => (slot.payout == null ? 0 : creditsToDash(slot.payout)))
     const maxY = d3.max(payoutsInDash) || 0
     const y = d3.scaleLinear([0, maxY > 0 ? maxY : 1], [h - M.bottom, M.top]).nice()
-    const yTickValues: number[] = maxY > 0 ? y.ticks(4) : [0]
+    const yTickCount = Math.max(2, Math.min(4, Math.floor((h - M.top - M.bottom) / 40)))
+    const yTickValues: number[] = maxY > 0 ? y.ticks(yTickCount) : [0]
     const left = axisGutter(yTickValues.map(axisDash))
     const x = d3.scaleLinear(
       [epochWindow.fromEpoch - 0.5, epochWindow.toEpoch + 0.5],
@@ -283,15 +284,6 @@ export default function ValidatorEpochs({
 
   const activeI = hoverI != null ? hoverI : pinI
   const shown = activeI != null ? chart?.nodes[activeI] : null
-  const showsCurrentEpoch = Boolean(
-    shown && epoch && shown.from <= epoch.number && shown.to >= epoch.number
-  )
-  const onlyCurrentEpoch = showsCurrentEpoch && shown?.from === shown?.to
-  const paidThisEpoch = payouts.loading
-    ? 'Loading…'
-    : payouts.error || payouts.paidThisEpoch == null || !Number.isFinite(payouts.paidThisEpoch)
-      ? 'Unavailable'
-      : `${removeTrailingZeros(creditsToDash(payouts.paidThisEpoch).toFixed(8))} DASH`
   const focusFrom = shown ? shown.from : epochWindow?.fromEpoch
   const focusTo = shown ? shown.to : epochWindow?.toEpoch
   const focusDate = (() => {
@@ -349,20 +341,9 @@ export default function ValidatorEpochs({
     <div>
       <dl className="ValidatorEpochs__TooltipDetails">
         <div>
-          <dt>
-            {onlyCurrentEpoch ? 'Paid this epoch' : shown ? 'Platform payout' : 'Period payouts'}
-          </dt>
+          <dt>{shown ? 'Epoch reward' : 'Period rewards'}</dt>
           <dd>
-            {onlyCurrentEpoch ? (
-              payouts.loading ||
-              payouts.error ||
-              payouts.paidThisEpoch == null ||
-              !Number.isFinite(payouts.paidThisEpoch) ? (
-                paidThisEpoch
-              ) : (
-                <PayoutAmount credits={payouts.paidThisEpoch} />
-              )
-            ) : chart && (shown ? shown.payout : chart.totalPayouts) != null ? (
+            {chart && (shown ? shown.payout : chart.totalPayouts) != null ? (
               <PayoutAmount credits={(shown ? shown.payout : chart.totalPayouts)!} />
             ) : shown?.ongoing ? (
               'In progress'
@@ -371,21 +352,6 @@ export default function ValidatorEpochs({
             )}
           </dd>
         </div>
-        {showsCurrentEpoch && !onlyCurrentEpoch && (
-          <div>
-            <dt>Paid this epoch</dt>
-            <dd>
-              {!payouts.loading &&
-              !payouts.error &&
-              payouts.paidThisEpoch != null &&
-              Number.isFinite(payouts.paidThisEpoch) ? (
-                <PayoutAmount credits={payouts.paidThisEpoch} />
-              ) : (
-                paidThisEpoch
-              )}
-            </dd>
-          </div>
-        )}
         {shown?.progress != null && (
           <div>
             <dt>Time elapsed</dt>
@@ -424,9 +390,7 @@ export default function ValidatorEpochs({
     <div className={'EpochsOverview ValidatorEpochs'} aria-label={'Validator epochs'}>
       <header className={'EpochsOverview__Head'}>
         <div className={'EpochsOverview__TitleRow'}>
-          <h2 className={'EpochsOverview__Title'}>Platform paid</h2>
-          <div className="ValidatorEpochs__Summary">
-            <ValidatorPayouts {...payouts} />
+          <h2 className={'EpochsOverview__Title'}>
             <Tooltip
               className="ValidatorPage__Tooltip"
               title={shown ? 'Selected epochs' : 'Selected period'}
@@ -443,9 +407,12 @@ export default function ValidatorEpochs({
                   if (event.key === 'Escape') setPeriodDetailsFocused(false)
                 }}
               >
-                ⓘ
+                Epoch rewards
               </button>
             </Tooltip>
+          </h2>
+          <div className="ValidatorEpochs__Summary">
+            <ValidatorPayouts {...payouts} />
           </div>
         </div>
         <div className={'ValidatorEpochs__Filters'}>
@@ -534,15 +501,15 @@ export default function ValidatorEpochs({
                   y2={tick.v}
                 />
                 {tick.label === '0' ? (
-                  <image
-                    href="/images/icons/dash.svg"
-                    x={chart.left - 28}
-                    y={tick.v - 5.5}
-                    width={14}
-                    height={11}
-                    tabIndex={-1}
-                    aria-hidden="true"
-                  />
+                  <text
+                    className="IdentityGrowthChart__Tick"
+                    x={chart.left - 8}
+                    y={tick.v}
+                    dy="0.32em"
+                    textAnchor="end"
+                  >
+                    DASH
+                  </text>
                 ) : (
                   <>
                     <rect
@@ -625,7 +592,7 @@ export default function ValidatorEpochs({
                   }
                   role={'button'}
                   aria-pressed={pinI === node.i}
-                  aria-label={`Epoch ${node.from === node.to ? node.from : `${node.from}–${node.to}`}: ${node.payout == null ? (node.progress != null ? `${Math.floor(node.progress)}% of estimated duration elapsed; payout unavailable` : node.ongoing ? 'Epoch in progress; payout unavailable' : 'Payout unavailable') : `${dashAmount(node.payout)} DASH`}${epoch && node.from <= epoch.number && node.to >= epoch.number ? `; paid this epoch: ${paidThisEpoch}` : ''}`}
+                  aria-label={`Epoch ${node.from === node.to ? node.from : `${node.from}–${node.to}`}: ${node.payout == null ? (node.progress != null ? `${Math.floor(node.progress)}% of estimated duration elapsed; payout unavailable` : node.ongoing ? 'Epoch in progress; payout unavailable' : 'Payout unavailable') : `${dashAmount(node.payout)} DASH`}`}
                   onFocus={() => {
                     setFocusedEpoch(node.i)
                     setHoverI(node.i)

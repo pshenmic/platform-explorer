@@ -44,13 +44,13 @@ export default function ValidatorService({
                 <span className="ValidatorPage__ServiceEndpoint" key={label}>
                   <Tooltip
                     className="ValidatorPage__Tooltip"
-                    content={`${label}: ${result}. TCP check, not a protocol health check.${endpoint?.message ? ` ${endpoint.message}` : ''}`}
+                    content={`${label}: ${result}. TCP connection check.`}
                   >
                     <span
                       role="group"
                       aria-label={`${label} port ${endpoint?.port || 'unknown'}: ${result}`}
                       tabIndex={grpcUrl ? undefined : 0}
-                      className="ValidatorPage__ServiceEndpointValue"
+                      className={`ValidatorPage__ServiceEndpointValue${grpcUrl ? '' : ' ValidatorPage__Help'}`}
                     >
                       <span
                         className="ValidatorPage__EndpointDot"
@@ -66,11 +66,11 @@ export default function ValidatorService({
                           aria-label={`${label} port ${endpoint?.port}: ${result}. Open endpoint in a new tab`}
                           title={grpcUrl}
                         >
-                          {label} :{endpoint?.port}
+                          {label}:{endpoint?.port}
                         </a>
                       ) : (
                         <span>
-                          {label} :{endpoint?.port || '—'}
+                          {label}:{endpoint?.port || '—'}
                         </span>
                       )}
                     </span>

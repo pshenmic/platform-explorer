@@ -36,7 +36,7 @@ export default function ValidatorPayouts({ total, loading, error }: ValidatorPay
     : failed
       ? 'Could not load a valid payout total'
       : hasTotal
-        ? 'Independent of date range. History may be incomplete.'
+        ? 'All indexed epochs'
         : 'API returned no payout total'
 
   return (
@@ -56,7 +56,7 @@ export default function ValidatorPayouts({ total, loading, error }: ValidatorPay
       }
     >
       <Badge
-        className="ValidatorEpochs__PayoutMetric ValidatorPage__AmountBadge"
+        className="ValidatorEpochs__PayoutMetric ValidatorPage__AmountBadge ValidatorPage__Help"
         size="xs"
         colorScheme={colorScheme}
         tabIndex={0}

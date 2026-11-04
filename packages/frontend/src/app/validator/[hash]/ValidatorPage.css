@@ -1,7 +1,3 @@
-.ValidatorPage__Card {
-  margin-bottom: var(--pe-space-6);
-}
-
 .ValidatorPage__Title {
   margin: 0;
   font: inherit;
@@ -75,6 +71,24 @@
   min-width: 0;
 }
 
+.ValidatorPage__ProfileBalance {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--pe-space-1);
+  min-width: 0;
+  max-width: 100%;
+  text-align: center;
+}
+
+.ValidatorPage__ActivityValue {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: flex-end;
+  gap: var(--pe-space-2);
+}
+
 .ValidatorPage__ProfileIpAddress {
   grid-column: 2;
   grid-row: 1;
@@ -124,31 +138,9 @@
   min-width: 0;
 }
 
-.ValidatorPage__RegistrationAge {
-  white-space: nowrap;
-  font-variant-numeric: tabular-nums;
-}
-
 .ValidatorPage__Ledger .ValidatorPage__RegistrationRow .InfoLine__Title {
   width: auto;
   flex-shrink: 1;
-}
-
-.ValidatorPage__RegistrationLabel {
-  display: inline-flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--pe-space-2);
-}
-
-.ValidatorPage__RegistrationLabel .ValidatorPage__RegistrationAge {
-  color: var(--pe-color-fg-muted);
-}
-
-.ValidatorPage__RegistrationAge:focus-visible {
-  outline: 2px solid var(--pe-color-focus-ring);
-  outline-offset: 3px;
-  border-radius: var(--pe-radius-sm);
 }
 
 .ValidatorPage__PoseValue {
@@ -241,16 +233,14 @@
 }
 
 .ValidatorPage__CollateralInfo {
-  grid-column: 3;
+  grid-column: 1;
   grid-row: 1;
   justify-self: start;
   border: 0;
   padding: 0;
   background: transparent;
   color: var(--pe-color-fg-muted);
-  font-family: var(--pe-font-mono);
-  font-size: var(--pe-text-sm);
-  line-height: 1;
+  font: inherit;
   cursor: help;
 }
 
@@ -269,20 +259,20 @@
   display: none;
 }
 
-@media (min-width: 62.01em) {
+@media (min-width: 80.01em) {
   .ValidatorPage__Column--Metrics {
-    justify-content: center;
+    justify-content: flex-start;
   }
 
-  .ValidatorPage__Column--Details > .InfoContainer:last-child {
-    flex: 1 1 auto;
+  .ValidatorPage__Column--Details > .InfoContainer {
+    flex: 0 0 auto;
   }
 
   .ValidatorPage__Column--Metrics > .ValidatorPage__Epochs {
     margin-block-start: 0;
     display: flex;
     flex-direction: column;
-    flex: 0 0 auto;
+    flex: 1 1 0;
     min-height: 0;
   }
 
@@ -298,8 +288,9 @@
   }
 
   .ValidatorPage__Column--Metrics .ValidatorEpochs__Plot {
-    flex: 0 0 auto;
-    height: clamp(10.25rem, calc(16vw - 1rem), 12.75rem);
+    flex: 1 1 0;
+    height: auto;
+    min-height: 140px;
   }
 
   .ValidatorPage__Column--Metrics .ValidatorEpochs__Plot > .IdentityGrowthChart__Svg {
@@ -339,21 +330,24 @@
   min-height: 1.125rem;
 }
 
-.ValidatorPage__BalanceBadge {
-  min-height: 1.125rem;
+.ValidatorPage__Ledger .Badge,
+.ValidatorPage .ValidatorPage__AmountBadge,
+.ValidatorEpochs__TooltipDetails .ValidatorPage__AmountBadge {
+  min-height: 1.25rem;
+  max-width: 100%;
+  padding: 0 var(--pe-space-2);
+  border-radius: var(--pe-radius-full);
+  font-size: var(--pe-text-sm);
+  font-weight: var(--pe-font-weight-normal);
+  font-variant-numeric: tabular-nums;
+  line-height: 1.25rem;
 }
 
 .ValidatorPage .ValidatorPage__AmountBadge,
 .ValidatorEpochs__TooltipDetails .ValidatorPage__AmountBadge {
-  min-height: 1.125rem;
-  max-width: 100%;
-  padding: 0 var(--pe-space-1_5);
-  border-radius: var(--pe-radius-full);
   color: var(--pe-color-fg);
-  font-size: var(--pe-text-xs);
-  font-weight: var(--pe-font-weight-normal);
-  font-variant-numeric: tabular-nums;
-  line-height: 1.125rem;
+  border-radius: 4px;
+  padding-inline: var(--pe-space-1_5);
 }
 
 .ValidatorPage .ValidatorPage__AmountBadge.Badge--dimGray,
@@ -389,18 +383,6 @@
 .ValidatorPage__StatusLabel .Badge {
   text-transform: none;
   letter-spacing: 0;
-}
-
-.ValidatorPage__StatusHint {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 4px;
-}
-
-.ValidatorPage__PoseLink {
-  color: var(--pe-color-brand-light);
-  text-decoration: none;
 }
 
 .ValidatorPage__Registered {
@@ -463,17 +445,6 @@
   }
 }
 
-.ValidatorPage__Ledger .ValidatorPage__GroupTitle {
-  margin-top: 16px;
-  margin-bottom: 8px;
-  line-height: 1.35;
-  overflow-wrap: break-word;
-}
-
-.ValidatorPage__Ledger > .ValidatorPage__GroupTitle:first-child {
-  margin-top: 0;
-}
-
 .ValidatorPage__KeyLink {
   display: inline-flex;
   align-items: center;
@@ -520,18 +491,6 @@
   outline: 2px solid var(--pe-color-focus-ring);
   outline-offset: 3px;
   border-radius: var(--pe-radius-sm);
-}
-
-.ValidatorPage__GroupTitle {
-  margin-bottom: 10px;
-  font-family: var(--pe-font-mono);
-  font-size: 1rem;
-  font-style: normal;
-  font-weight: 400;
-  letter-spacing: 0;
-  line-height: 1.15;
-  text-transform: none;
-  color: #fff;
 }
 
 .ValidatorPage .InfoLine__Title {
@@ -717,14 +676,6 @@
   flex: 0 0 auto;
 }
 
-.ValidatorPage__KeyLine--dated > a {
-  flex: 1 1 auto;
-}
-
-.ValidatorPage__KeyLine--dated .Identifier {
-  justify-content: flex-start;
-}
-
 .ValidatorPage__Ledger .InfoLine--Loading .InfoLine__Value {
   width: 100%;
   max-width: 28rem;
@@ -738,7 +689,7 @@
   overflow-x: hidden;
 }
 
-@media screen and (max-width: 62em) {
+@media screen and (max-width: 80em) {
   .ValidatorPage .PageDataContainer__Content {
     border-radius: 0;
     background: transparent;
@@ -783,10 +734,19 @@
 
 .ValidatorPage__ActivityList {
   min-width: 0;
-  padding: 0 12px 12px;
+  padding: 0 0 12px;
+}
+
+.ValidatorPage .InfoContainer.ValidatorPage__Lists {
+  padding: var(--pe-space-3);
+}
+
+.ValidatorPage__Lists .Tabs__TabPanel {
+  padding-inline: 0;
 }
 
 .ValidatorPage__Lists .Tabs__Toolbar {
+  padding-inline: 0;
   padding-block: var(--pe-space-2);
   margin-bottom: var(--pe-space-2);
 }
@@ -811,6 +771,7 @@
 }
 .ValidatorPage__Lists .Tabs__TabList {
   overflow-x: auto;
+  padding-inline: 0;
 }
 .ValidatorPage__Lists .Tabs__Tab {
   display: inline-flex;
@@ -819,9 +780,9 @@
   flex-shrink: 0;
   font-family: var(--pe-font-mono);
   min-height: var(--pe-space-10);
-  padding: var(--pe-space-2);
-  border: 1px solid transparent;
-  border-radius: var(--pe-radius-md);
+  padding: var(--pe-space-2) var(--pe-space-3);
+  border: 0;
+  border-radius: 0;
   box-sizing: border-box;
   color: var(--pe-color-fg-muted);
   font-size: var(--pe-text-md);
@@ -832,19 +793,19 @@
 }
 
 .ValidatorPage__Lists .Tabs__Toolbar .Tabs__Tab::after {
-  display: none;
+  display: block;
+  height: 2px;
 }
 
 .ValidatorPage__Lists .Tabs__Tab[aria-selected="true"] {
   color: var(--pe-color-brand-light);
-  background: rgba(var(--pe-color-brand-light-rgb), 0.12);
-  border-color: rgba(var(--pe-color-brand-light-rgb), 0.24);
+  background: transparent;
   font-weight: var(--pe-font-weight-semibold);
 }
 
 .ValidatorPage__Lists .Tabs__Tab[aria-selected="false"]:hover {
   color: var(--pe-color-fg);
-  background: var(--pe-color-surface-elevated);
+  background: transparent;
 }
 
 .ValidatorPage__Lists .Tabs__TabItemsCount {
@@ -961,38 +922,9 @@
 }
 
 .ValidatorPage__Earnings .ValidatorPage__SummaryLabel {
-  font-size: var(--pe-text-md);
-}
-
-.ValidatorPage__Earnings .ValidatorPage__EarningsTitle {
-  margin: 0;
-  font-family: var(--pe-font-heading);
-  font-size: 1.375rem;
-  font-weight: 800;
-  font-style: italic;
-  line-height: 1.1;
-  color: var(--pe-color-fg);
-}
-
-.ValidatorPage .ValidatorPage__AmountBadge.ValidatorPage__EarningsBadge {
-  min-height: 36px;
-  padding: 0 var(--pe-space-3);
-  font-size: var(--pe-text-md);
-  line-height: 1.25;
-}
-
-.ValidatorPage__InfoMark {
-  color: var(--pe-color-fg-muted);
-  font-size: var(--pe-text-xs);
-}
-
-.ValidatorPage__EarningsTotal {
-  margin-top: var(--pe-space-2);
-  font-family: var(--pe-font-mono);
-  font-size: var(--pe-text-3xl);
-  font-variant-numeric: tabular-nums;
-  line-height: var(--pe-leading-tight);
-  overflow-wrap: anywhere;
+  font-size: var(--pe-text-sm);
+  font-weight: var(--pe-font-weight-normal);
+  line-height: var(--pe-leading-normal);
 }
 
 .ValidatorPage__EarningsUnit {
@@ -1011,18 +943,6 @@
   border-top: 1px solid var(--pe-color-border);
   padding-top: var(--pe-space-2);
   max-width: 100%;
-}
-
-.ValidatorPage__EarningsOverview > div:first-of-type .ValidatorPage__EarningsUnit {
-  display: block;
-  margin-top: 0;
-}
-
-.ValidatorPage__Apr .ValidatorPage__EarningsTotal {
-  margin-top: 0;
-  font-size: var(--pe-text-2xl);
-  line-height: var(--pe-leading-normal);
-  color: var(--pe-color-fg-muted);
 }
 
 .ValidatorPage__EarningsSources {
@@ -1073,37 +993,6 @@
   line-height: var(--pe-leading-normal);
 }
 
-.ValidatorPage__LastBlock {
-  display: inline-flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  align-items: flex-start;
-  gap: var(--pe-space-1);
-  min-height: var(--pe-space-6);
-  color: var(--pe-color-fg);
-  font-family: var(--pe-font-mono);
-  font-size: var(--pe-text-sm);
-  line-height: var(--pe-leading-normal);
-  font-variant-numeric: tabular-nums;
-  text-decoration: none;
-}
-
-.ValidatorPage__LastBlockValue {
-  color: inherit;
-}
-
-a.ValidatorPage__LastBlock:hover {
-  color: var(--pe-color-brand-light);
-  text-decoration: underline;
-  text-underline-offset: 3px;
-}
-
-.ValidatorPage__LastBlock:focus-visible {
-  outline: 2px solid var(--pe-color-brand-light);
-  outline-offset: 3px;
-  border-radius: var(--pe-radius-sm);
-}
-
 .ValidatorPage__EarningsAmount {
   grid-column: 1;
   font-family: var(--pe-font-mono);
@@ -1120,14 +1009,14 @@ a.ValidatorPage__LastBlock:hover {
   gap: var(--pe-space-2);
   padding-top: var(--pe-space-3);
   font-family: var(--pe-font-mono);
-  font-size: var(--pe-text-md);
+  font-size: var(--pe-text-sm);
   line-height: var(--pe-leading-normal);
   color: var(--pe-color-fg-muted);
 }
 
 .ValidatorPage__EarningsNext > span:last-child {
   color: var(--pe-color-fg);
-  font-size: var(--pe-text-lg);
+  font-size: var(--pe-text-md);
   font-variant-numeric: tabular-nums;
 }
 
@@ -1144,10 +1033,6 @@ a.ValidatorPage__LastBlock:hover {
 }
 
 @container validator-earnings (max-width: 38rem) {
-  .ValidatorPage__Earnings .ValidatorPage__EarningsTitle {
-    font-size: 1.125rem;
-  }
-
   .ValidatorPage__EarningsPanel {
     grid-template-columns: minmax(0, 1fr);
   }
@@ -1171,11 +1056,6 @@ a.ValidatorPage__LastBlock:hover {
     gap: var(--pe-space-4);
   }
 
-  .ValidatorPage__EarningsTotal {
-    font-size: var(--pe-text-2xl);
-  }
-
-  .ValidatorPage__Apr .ValidatorPage__EarningsTotal,
   .ValidatorPage__EarningsAmount {
     font-size: var(--pe-text-xl);
   }
@@ -1223,10 +1103,6 @@ a.ValidatorPage__LastBlock:hover {
     gap: var(--pe-space-2);
     text-align: start;
   }
-
-  .ValidatorPage__Apr .ValidatorPage__EarningsTotal {
-    margin-top: 0;
-  }
 }
 
 @media (max-width: 30em) {
@@ -1251,23 +1127,19 @@ a.ValidatorPage__LastBlock:hover {
     padding-bottom: var(--pe-space-4);
   }
 
-  .ValidatorPage__EarningsTotal {
-    font-size: var(--pe-text-2xl);
-  }
-
   .ValidatorPage__EarningsAmount {
     font-size: var(--pe-text-xl);
   }
 
   .ValidatorPage__ProfileIdentifiers {
-    grid-template-columns: minmax(0, 1fr) 8rem;
+    grid-template-columns: minmax(0, 1fr);
     column-gap: var(--pe-space-2);
     row-gap: 0;
   }
 
   .ValidatorPage__ProfileAvatar {
-    width: 64px;
-    height: 64px;
+    width: 48px;
+    height: 48px;
   }
 
   .ValidatorPage__ProfileIp {
@@ -1292,13 +1164,52 @@ a.ValidatorPage__LastBlock:hover {
   }
 
   .ValidatorPage__ProfileRows > .ValidatorPage__ProTxHashRow {
-    grid-column: 1;
-    justify-content: center;
-    align-self: stretch;
+    grid-column: 1 / -1;
+    padding-top: var(--pe-space-2);
   }
 
   .ValidatorPage__ProfileState {
+    grid-column: 1;
     grid-row: 1;
+    display: grid;
+    grid-template-columns: 48px minmax(0, 1fr);
+    width: 100%;
+    padding-bottom: var(--pe-space-1);
+  }
+
+  .ValidatorPage__ProfileAvatar {
+    grid-column: 1;
+    grid-row: 1 / 3;
+  }
+
+  .ValidatorPage__ProfileBalance {
+    grid-column: 2;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: var(--pe-space-2);
+  }
+
+  .ValidatorPage__ProfileIp {
+    grid-column: 2;
+    justify-self: end;
+    width: auto;
+    max-width: 100%;
+  }
+
+  .ValidatorPage__Ledger .InfoLine:not(.ValidatorPage__CompactRow) .InfoLine__Value,
+  .ValidatorPage__Ledger .InfoLine:not(.ValidatorPage__CompactRow) .ValidatorPage__KeyLine,
+  .ValidatorPage__Ledger .InfoLine:not(.ValidatorPage__CompactRow) .Identifier {
+    justify-content: flex-start;
+    text-align: left;
+  }
+
+  .ValidatorPage__Ledger .InfoLine:not(.ValidatorPage__CompactRow) .Identifier__SymbolsContainer {
+    text-align: left;
+  }
+
+  .ValidatorPage__Ledger .ValidatorPage__ProTxHashRow .ValidatorPage__BalancedKey {
+    width: 100%;
   }
 
   .ValidatorPage__ProfileRows > .ValidatorPage__ServiceRow {
@@ -1309,7 +1220,7 @@ a.ValidatorPage__LastBlock:hover {
   .ValidatorPage .ValidatorPage__Ledger .InfoLine {
     align-items: stretch;
     gap: var(--pe-space-1);
-    padding: var(--pe-space-2) 0;
+    padding: var(--pe-space-1_5) 0;
   }
 
   .ValidatorPage .ValidatorPage__Ledger .InfoLine:first-child {
@@ -1349,10 +1260,10 @@ a.ValidatorPage__LastBlock:hover {
 
 .ValidatorPage__ServiceEndpoints {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   justify-content: flex-end;
   align-items: center;
-  gap: var(--pe-space-2);
+  gap: var(--pe-space-1_5);
   max-width: 100%;
 }
 
@@ -1364,7 +1275,17 @@ a.ValidatorPage__LastBlock:hover {
 }
 
 .ValidatorPage__ServiceEndpointValue {
-  gap: var(--pe-space-1_5);
+  gap: var(--pe-space-1);
+}
+
+@media (max-width: 30em) {
+  .ValidatorPage__ServiceInline {
+    font-size: var(--pe-text-xs);
+  }
+
+  .ValidatorPage__ServiceEndpoints {
+    gap: 2px;
+  }
 }
 
 .ValidatorPage__ServiceEndpoint > span {
@@ -1379,6 +1300,10 @@ a.ValidatorPage__LastBlock:hover {
 .ValidatorPage__ServiceEndpoint a {
   color: var(--pe-color-brand-light);
   text-underline-offset: 3px;
+}
+
+.ValidatorPage__Help {
+  cursor: help;
 }
 
 .Tooltip.ValidatorPage__Tooltip {
@@ -1424,13 +1349,11 @@ a.ValidatorPage__LastBlock:hover {
 }
 
 .ValidatorPage__CollateralInfo,
-.ValidatorPage__AprInfo,
 .ValidatorEpochs__Info {
   position: relative;
 }
 
 .ValidatorPage__CollateralInfo::after,
-.ValidatorPage__AprInfo::after,
 .ValidatorEpochs__Info::after {
   content: "";
   position: absolute;

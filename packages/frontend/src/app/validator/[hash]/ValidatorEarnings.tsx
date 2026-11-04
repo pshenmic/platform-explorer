@@ -9,6 +9,7 @@ import { Skeleton } from '../../../components/home/Skeleton'
 import { InfoContainer } from '../../../components/ui/containers'
 import { Badge } from '../../../components/ui/Badge/Badge'
 import { Tooltip } from '../../../components/ui/Tooltips'
+import ValidatorSurface from './ValidatorSurface'
 import './ValidatorEarnings.css'
 
 const BLOCK_MS = 150_000
@@ -81,7 +82,7 @@ function EpochCountdown() {
   return (
     <span
       className="ValidatorPage__EpochCountdown"
-      title={`${progress == null ? '' : `${Math.floor(progress)}% of epoch time elapsed. `}Estimated epoch end, not the time of the next Platform payment.`}
+      title={`${progress == null ? '' : `${Math.floor(progress)}% of epoch time elapsed\n`}Estimated epoch end`}
     >
       {formatCountdown(remaining)}
     </span>
@@ -97,7 +98,8 @@ export default function ValidatorEarnings({
   coreBlockIntervalMs,
   banned,
   collateral,
-  collateralAmount
+  collateralAmount,
+  activity
 }: {
   hash: string
   nodeType?: string | null
@@ -108,6 +110,7 @@ export default function ValidatorEarnings({
   banned: boolean
   collateral: ReactNode
   collateralAmount: string
+  activity: ReactNode
 }) {
   const query = useQuery({
     queryKey: ['validator-earnings', hash],
@@ -120,79 +123,75 @@ export default function ValidatorEarnings({
   const data = query.isError ? undefined : query.data?.estimate
   const pending = loading || query.isPending
   const ineligible = banned || data?.eligible === false
-  const amount = (value?: number | null) =>
+  const amount = (value?: number | null, showPeriod = true) =>
     pending ? (
       <Skeleton w={100} h={'1em'} />
-    ) : ineligible || value == null ? (
+    ) : ineligible || value == null || !Number.isFinite(value) || value < 0 ? (
       'Unavailable'
     ) : (
       <span className="ValidatorPage__MonthlyAmount">
         <span>{yieldDash(value)}</span>
         <span className="ValidatorPage__EarningsUnit">
-          <span className="ValidatorPage__DashLogo" role="img" aria-label="DASH" />
-          <span title="per month">/ mo</span>
+          <span>DASH</span>
+          {showPeriod && <span>/ month</span>}
         </span>
       </span>
     )
   const apr = ineligible ? null : validatorApr(data?.totalPerMonth, nodeType)
+  const annual = data?.totalPerMonth == null ? null : data.totalPerMonth * (365 / 30)
 
   return (
     <section className="ValidatorPage__Earnings" aria-label="Estimated earnings">
-      <InfoContainer className="ValidatorPage__Group ValidatorPage__EarningsPanel">
+      <InfoContainer className="ValidatorPage__Group ValidatorPage__EarningsPanel ValidatorPage__Surface ValidatorPage__Surface--earnings">
+        <ValidatorSurface kind="earnings" />
         <div className="ValidatorPage__EarningsOverview">
-          <div className="ValidatorPage__CollateralHeader">
-            <h2 className="ValidatorPage__EarningsTitle">Collateral</h2>
-            <Badge
-              className="ValidatorPage__AmountBadge ValidatorPage__EarningsBadge"
-              colorScheme={collateralAmount && !loading ? 'blue' : 'dimGray'}
-            >
-              {loading ? <Skeleton w={80} h="1em" /> : collateralAmount || 'Unavailable'}
-            </Badge>
+          <div className="ValidatorPage__ForecastRow ValidatorPage__ForecastRow--Monthly">
+            <span className="ValidatorPage__SummaryLabel">Monthly</span>
             <Tooltip
               className="ValidatorPage__Tooltip"
-              content={
-                <>
-                  Collateral: required DASH backing the node, not an expense.
-                  <br />
-                  APR: monthly forecast × 365 / 30 ÷ collateral × 100.
-                  <br />
-                  Gross estimate before splits and expenses; no compounding or guaranteed return.
-                </>
-              }
+              content="Estimated Core + Platform rewards over 30 days. Before splits and expenses."
             >
-              <button
-                type="button"
-                className="ValidatorPage__CollateralInfo"
-                aria-label="About collateral and estimated APR"
-              >
-                ⓘ
-              </button>
-            </Tooltip>
-            <div className="ValidatorPage__Collateral" aria-label="Collateral address">
-              {collateral}
-            </div>
-          </div>
-          <div>
-            <Tooltip
-              className="ValidatorPage__Tooltip"
-              content="Gross forecast for a 30-day month, based on indexed payouts. Core and Platform are the monthly components. Before splits and expenses; not guaranteed."
-            >
-              <div
-                className="ValidatorPage__EarningsTotal"
+              <Badge
+                className="ValidatorPage__AmountBadge ValidatorPage__Help"
+                colorScheme="gray"
                 tabIndex={0}
                 aria-label="Estimated monthly earnings"
                 data-unavailable={
                   (!pending && (ineligible || data?.totalPerMonth == null)) || undefined
                 }
               >
-                {amount(data?.totalPerMonth)}
-              </div>
+                {amount(data?.totalPerMonth, false)}
+              </Badge>
+            </Tooltip>
+          </div>
+          <div className="ValidatorPage__ForecastRow ValidatorPage__ForecastRow--Yearly">
+            <span className="ValidatorPage__SummaryLabel">Yearly</span>
+            <Tooltip
+              className="ValidatorPage__Tooltip"
+              content={
+                <>
+                  Monthly estimate × 365 / 30.
+                  <br />
+                  Without compounding.
+                </>
+              }
+            >
+              <Badge
+                className="ValidatorPage__AmountBadge ValidatorPage__Help"
+                colorScheme="gray"
+                tabIndex={0}
+                aria-label="Estimated yearly earnings"
+                data-unavailable={(!pending && (ineligible || annual == null)) || undefined}
+              >
+                {amount(annual, false)}
+              </Badge>
             </Tooltip>
           </div>
           <div className="ValidatorPage__Apr">
             <span className="ValidatorPage__SummaryLabel">APR</span>
-            <div
-              className="ValidatorPage__EarningsTotal"
+            <Badge
+              className="ValidatorPage__AmountBadge"
+              colorScheme="gray"
               data-unavailable={(!pending && apr == null) || undefined}
             >
               {pending ? (
@@ -202,6 +201,28 @@ export default function ValidatorEarnings({
               ) : (
                 `${apr.toFixed(2)}%`
               )}
+            </Badge>
+          </div>
+          <div className="ValidatorPage__CollateralHeader">
+            <Tooltip
+              className="ValidatorPage__Tooltip"
+              content="DASH held as collateral to operate this node."
+            >
+              <button
+                type="button"
+                className="ValidatorPage__CollateralInfo ValidatorPage__SummaryLabel"
+              >
+                Collateral
+              </button>
+            </Tooltip>
+            <Badge
+              className="ValidatorPage__AmountBadge ValidatorPage__EarningsBadge"
+              colorScheme={collateralAmount && !loading ? 'blue' : 'dimGray'}
+            >
+              {loading ? <Skeleton w={80} h="1em" /> : collateralAmount || 'Unavailable'}
+            </Badge>
+            <div className="ValidatorPage__Collateral" aria-label="Collateral address">
+              {collateral}
             </div>
           </div>
         </div>
@@ -224,13 +245,10 @@ export default function ValidatorEarnings({
             <div className="ValidatorPage__EarningsNext">
               <Tooltip
                 className="ValidatorPage__Tooltip"
-                content="Estimated time to the next Core payment, based on remaining blocks and block interval. Actual timing may change."
+                content="Estimated payment time based on remaining Core blocks."
               >
-                <span tabIndex={0}>
-                  Next payment{' '}
-                  <span className="ValidatorPage__InfoMark" aria-hidden="true">
-                    ⓘ
-                  </span>
+                <span className="ValidatorPage__Help" tabIndex={0}>
+                  Next payment
                 </span>
               </Tooltip>
               <span>
@@ -269,13 +287,10 @@ export default function ValidatorEarnings({
               <div className="ValidatorPage__EarningsNext">
                 <Tooltip
                   className="ValidatorPage__Tooltip"
-                  content="Countdown to the estimated epoch end, used as a reference for Platform rewards. It does not guarantee when this validator will receive a payment."
+                  content="Estimated time until the current Platform epoch ends."
                 >
-                  <span tabIndex={0}>
-                    Next payment{' '}
-                    <span className="ValidatorPage__InfoMark" aria-hidden="true">
-                      ⓘ
-                    </span>
+                  <span className="ValidatorPage__Help" tabIndex={0}>
+                    Epoch ends in
                   </span>
                 </Tooltip>
                 <span>
@@ -284,6 +299,13 @@ export default function ValidatorEarnings({
               </div>
             </div>
           </div>
+        </div>
+        <div
+          className="ValidatorPage__EarningsActivity"
+          role="group"
+          aria-label="Validator activity"
+        >
+          {activity}
         </div>
         {(query.isError || ineligible) && (
           <div className="ValidatorPage__SummaryHint">

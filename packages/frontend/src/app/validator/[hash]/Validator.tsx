@@ -23,7 +23,6 @@ import { PageDataContainer, InfoContainer } from '../../../components/ui/contain
 import { CopyButton } from '../../../components/ui/Buttons'
 import { Badge } from '../../../components/ui/Badge/Badge'
 import ImageGenerator from '../../../components/imageGenerator'
-import { BlockIcon } from '../../../components/ui/icons'
 
 import { Tooltip } from '../../../components/ui/Tooltips'
 import { useBreadcrumbs } from '../../../contexts/BreadcrumbsContext'
@@ -32,6 +31,7 @@ import type { Validator as ValidatorType } from '../../../types/Validator'
 import type { LoadableState, Rate } from '../../../types'
 
 import { getValidatorStatus } from '../../../components/validators/validatorStatus'
+import ValidatorStatus from '../../../components/validators/ValidatorStatusIndicator'
 
 import './ValidatorPage.css'
 
@@ -133,51 +133,29 @@ function WithdrawalsBadge({ identity, loading }: { identity?: string | null; loa
     query.isError || !identity || total == null || !Number.isFinite(total)
       ? 'Unavailable'
       : `${dashAmount(total)} DASH`
-  const preciseAmount = pending
-    ? 'Loading…'
-    : query.isError || !identity || total == null || !Number.isFinite(total)
-      ? 'Unavailable'
-      : `${removeTrailingZeros(creditsToDash(total).toFixed(8))} DASH`
-
   return (
-    <Tooltip
-      className="ValidatorPage__Tooltip"
-      title="Withdrawn to Core"
-      content={
-        <>
-          {preciseAmount}
-          {!pending && query.isSuccess && identity && total != null && Number.isFinite(total) && (
-            <>
-              <br />
-              {completed.length} completed · all addresses
-            </>
-          )}
-        </>
-      }
+    <a
+      href="#withdrawals"
+      className="ValidatorPage__WithdrawalsBadge"
+      aria-label={`Withdrawn to Core: ${pending ? 'loading' : amount}. View history.`}
     >
-      <a
-        href="#withdrawals"
-        className="ValidatorPage__WithdrawalsBadge"
-        aria-label={`Withdrawn to Core: ${pending ? 'loading' : amount}. View history.`}
+      <Badge
+        size="xs"
+        className="ValidatorPage__AmountBadge"
+        colorScheme={
+          !pending &&
+          !query.isError &&
+          identity &&
+          total != null &&
+          Number.isFinite(total) &&
+          total > 0
+            ? 'red'
+            : 'dimGray'
+        }
       >
-        <Badge
-          size="xs"
-          className="ValidatorPage__AmountBadge"
-          colorScheme={
-            !pending &&
-            !query.isError &&
-            identity &&
-            total != null &&
-            Number.isFinite(total) &&
-            total > 0
-              ? 'red'
-              : 'dimGray'
-          }
-        >
-          {pending ? <Skeleton w={64} h="1em" /> : amount}
-        </Badge>
-      </a>
-    </Tooltip>
+        {pending ? <Skeleton w={64} h="1em" /> : amount}
+      </Badge>
+    </a>
   )
 }
 
@@ -212,8 +190,6 @@ function Validator({ hash }: ValidatorProps) {
   const isPoseBanned = status.key === 'banned'
   const balance = Number(validator.data?.identityBalance)
   const hasBalance = Number.isFinite(balance) && validator.data?.identityBalance != null
-  const registeredHeight = Number(validator.data?.proTxInfo?.state?.registeredHeight)
-  const hasRegisteredHeight = Number.isInteger(registeredHeight) && registeredHeight > 0
   const registeredDate = validator.data?.registeredAt ? new Date(validator.data.registeredAt) : null
   const registrationDate =
     registeredDate && Number.isFinite(registeredDate.getTime())
@@ -288,48 +264,38 @@ function Validator({ hash }: ValidatorProps) {
         <InfoLine
           className="ValidatorPage__Key ValidatorPage__CompactRow ValidatorPage__RegistrationRow"
           postfix=""
-          title={
-            <span className="ValidatorPage__RegistrationLabel">
-              Registration
-              {!validator.loading &&
-                !validator.error &&
-                (registrationDate ? (
-                  <Tooltip className="ValidatorPage__Tooltip" content={`${registrationDate} (UTC)`}>
-                    <span className="ValidatorPage__RegistrationAge" tabIndex={0}>
-                      <TimeDelta endDate={registeredDate} showTimestampTooltip={false} />
-                    </span>
-                  </Tooltip>
-                ) : (
-                  <Tooltip
-                    className="ValidatorPage__Tooltip"
-                    content="Registration date not returned by the API"
-                  >
-                    <span tabIndex={0}>Unavailable</span>
-                  </Tooltip>
-                ))}
-            </span>
-          }
+          title="Registration"
           loading={validator.loading}
           error={validator.error}
           value={
             <span className="ValidatorPage__RegistrationDetails">
-              {hasRegisteredHeight &&
-                !validator.error &&
-                (registeredBlockLink ? (
+              <Tooltip
+                className="ValidatorPage__Tooltip"
+                content={
+                  registrationDate
+                    ? `${registrationDate} (UTC)`
+                    : 'Registration date not returned by the API'
+                }
+              >
+                {registrationDate && registeredBlockLink ? (
                   <a
                     className="ValidatorPage__Registered ValidatorPage__Link"
                     href={registeredBlockLink}
                     target="_blank"
                     rel="noopener noreferrer"
-                    title="Core registration block"
                   >
-                    <BlockIcon w="14px" h="14px" />#{registeredHeight.toLocaleString('en-US')}
+                    <TimeDelta endDate={registeredDate} showTimestampTooltip={false} />
                   </a>
                 ) : (
-                  <span className="ValidatorPage__Registered">
-                    <BlockIcon w="14px" h="14px" />#{registeredHeight.toLocaleString('en-US')}
+                  <span className="ValidatorPage__Registered ValidatorPage__Help" tabIndex={0}>
+                    {registrationDate ? (
+                      <TimeDelta endDate={registeredDate} showTimestampTooltip={false} />
+                    ) : (
+                      'Unavailable'
+                    )}
                   </span>
-                ))}
+                )}
+              </Tooltip>
             </span>
           }
         />
@@ -341,13 +307,9 @@ function Validator({ hash }: ValidatorProps) {
         <InfoLine
           className="ValidatorPage__Key ValidatorPage__CompactRow"
           postfix=""
-          title="Quorum"
+          title="Status"
           loading={validator.loading}
-          value={
-            <Badge size="xs" colorScheme={validator.error ? 'gray' : status.colorScheme}>
-              {validator.error ? 'Unavailable' : status.label}
-            </Badge>
-          }
+          value={<ValidatorStatus status={status} unavailable={Boolean(validator.error)} />}
         />
       )
     },
@@ -397,15 +359,7 @@ function Validator({ hash }: ValidatorProps) {
         <InfoLine
           className={'ValidatorPage__Key'}
           postfix={''}
-          title={
-            <span className="ValidatorPage__StatusLabel">
-              Payout
-              <WithdrawalsBadge
-                identity={validator.error ? null : validator.data?.identity}
-                loading={validator.loading}
-              />
-            </span>
-          }
+          title="Payout"
           value={
             <KeyIdentifier
               value={proTxState?.payoutAddress || ''}
@@ -533,48 +487,7 @@ function Validator({ hash }: ValidatorProps) {
         <InfoLine
           className={'ValidatorPage__Key'}
           postfix={''}
-          title={
-            <span className="ValidatorPage__StatusLabel">
-              Identity
-              <Tooltip
-                className="ValidatorPage__Tooltip"
-                title="Identity balance"
-                content={
-                  validator.loading ? (
-                    'Loading…'
-                  ) : hasBalance && !validator.error ? (
-                    <>
-                      {removeTrailingZeros(creditsToDash(balance).toFixed(8))} DASH
-                      <br />
-                      {validator.data?.identityBalance} CREDITS
-                    </>
-                  ) : (
-                    'Unavailable'
-                  )
-                }
-              >
-                <Badge
-                  size="xs"
-                  colorScheme={
-                    !validator.loading && !validator.error && hasBalance && balance > 0
-                      ? 'blue'
-                      : 'dimGray'
-                  }
-                  className="ValidatorPage__BalanceBadge ValidatorPage__AmountBadge"
-                  tabIndex={0}
-                  aria-label="Platform identity balance"
-                >
-                  {validator.loading ? (
-                    <Skeleton w={64} h="1em" />
-                  ) : hasBalance && !validator.error ? (
-                    `${dashAmount(balance)} DASH`
-                  ) : (
-                    'Unavailable'
-                  )}
-                </Badge>
-              </Tooltip>
-            </span>
-          }
+          title="Identity"
           value={
             <KeyIdentifier
               value={validator.data?.identity || ''}
@@ -612,13 +525,12 @@ function Validator({ hash }: ValidatorProps) {
       key: 'proTxHash',
       line: (
         <InfoLine
-          className="ValidatorPage__Key ValidatorPage__ProTxHashRow"
+          className="ValidatorPage__Key ValidatorPage__ProTxHashRow ValidatorPage__CompactRow"
           postfix={''}
-          title={'ProTxHash'}
+          title="ProTxHash"
           value={
             <KeyIdentifier
               value={validator.data?.proTxHash || ''}
-              wrap
               href={
                 l1explorerBaseUrl
                   ? getL1ExplorerLink(l1explorerBaseUrl, 'transaction', validator.data?.proTxHash)
@@ -638,10 +550,82 @@ function Validator({ hash }: ValidatorProps) {
         <InfoLine
           className={'ValidatorPage__Key'}
           postfix={''}
-          title={'Evonode ID'}
+          title="Evonode ID"
           value={<KeyIdentifier value={proTxState?.platformNodeID || ''} />}
           loading={validator.loading}
           error={validator.error || !proTxState?.platformNodeID}
+        />
+      )
+    },
+    {
+      key: 'lastBlock',
+      line: (
+        <InfoLine
+          className="ValidatorPage__Key ValidatorPage__CompactRow"
+          postfix=""
+          title="Last proposed"
+          loading={validator.loading}
+          error={validator.error}
+          value={
+            validator.data?.lastProposedBlockHeader?.hash ? (
+              <Link
+                className="ValidatorPage__Link ValidatorPage__ActivityValue"
+                href={`/block/${validator.data.lastProposedBlockHeader.hash}`}
+              >
+                <TimeDelta endDate={validator.data.lastProposedBlockHeader.timestamp} />
+              </Link>
+            ) : (
+              'Unavailable'
+            )
+          }
+        />
+      )
+    },
+    {
+      key: 'withdrawn',
+      line: (
+        <InfoLine
+          className="ValidatorPage__Key ValidatorPage__CompactRow"
+          postfix=""
+          title="Withdrawn to Core"
+          loading={validator.loading}
+          error={validator.error}
+          value={
+            <WithdrawalsBadge
+              identity={validator.error ? null : validator.data?.identity}
+              loading={validator.loading}
+            />
+          }
+        />
+      )
+    },
+    {
+      key: 'lastWithdrawal',
+      line: (
+        <InfoLine
+          className="ValidatorPage__Key ValidatorPage__CompactRow"
+          postfix=""
+          title="Last withdrawal"
+          loading={validator.loading}
+          error={validator.error}
+          value={
+            validator.data?.lastWithdrawal ? (
+              <Link
+                className="ValidatorPage__Link"
+                href={`/transaction/${validator.data.lastWithdrawal}`}
+              >
+                {validator.data.lastWithdrawalTime ? (
+                  <TimeDelta endDate={validator.data.lastWithdrawalTime} />
+                ) : (
+                  'View transaction'
+                )}
+              </Link>
+            ) : validator.data?.withdrawalsCount === 0 ? (
+              'No withdrawals'
+            ) : (
+              'Unavailable'
+            )
+          }
         />
       )
     },
@@ -651,7 +635,7 @@ function Validator({ hash }: ValidatorProps) {
         <InfoLine
           className={'ValidatorPage__Key'}
           postfix={''}
-          title={'Operator'}
+          title="Operator"
           value={<KeyIdentifier value={proTxState?.pubKeyOperator || ''} wrap />}
           loading={validator.loading}
           error={validator.error || !proTxState?.pubKeyOperator}
@@ -662,9 +646,11 @@ function Validator({ hash }: ValidatorProps) {
   const profileKeys = ['proTxHash', 'registration', 'identity', 'service']
   const stateKeys = ['node', 'votingIdentity', 'quorum', 'pose']
   const detailKeys = ['payout', 'owner', 'voting', 'operator']
+  const activityKeys = ['withdrawn', 'lastWithdrawal', 'lastBlock']
   const profileRows = profileKeys.flatMap(key => keyRows.filter(row => row.key === key))
   const stateRows = stateKeys.flatMap(key => keyRows.filter(row => row.key === key))
   const detailRows = detailKeys.flatMap(key => keyRows.filter(row => row.key === key))
+  const activityRows = activityKeys.flatMap(key => keyRows.filter(row => row.key === key))
 
   return (
     <PageDataContainer
@@ -686,7 +672,10 @@ function Validator({ hash }: ValidatorProps) {
                   <Fragment key={row.key}>{row.line}</Fragment>
                 ))}
               </div>
-              <aside className="ValidatorPage__ProfileState" aria-label="Validator avatar and IP">
+              <aside
+                className="ValidatorPage__ProfileState"
+                aria-label="Validator avatar, balance and IP"
+              >
                 <ImageGenerator
                   className="ValidatorPage__ProfileAvatar"
                   username={hash}
@@ -695,6 +684,41 @@ function Validator({ hash }: ValidatorProps) {
                   width={88}
                   height={88}
                 />
+                <div className="ValidatorPage__ProfileBalance">
+                  <Tooltip
+                    className="ValidatorPage__Tooltip"
+                    title="Identity balance"
+                    content={
+                      hasBalance && !validator.error && !validator.loading ? (
+                        <>
+                          {removeTrailingZeros(creditsToDash(balance).toFixed(8))} DASH
+                          <br />
+                          {validator.data?.identityBalance} CREDITS
+                        </>
+                      ) : (
+                        'Unavailable'
+                      )
+                    }
+                  >
+                    <Badge
+                      size="xs"
+                      colorScheme={
+                        !validator.error && hasBalance && balance > 0 ? 'blue' : 'dimGray'
+                      }
+                      className="ValidatorPage__AmountBadge ValidatorPage__Help"
+                      tabIndex={0}
+                      aria-label="Platform identity balance"
+                    >
+                      {validator.loading ? (
+                        <Skeleton w={64} h="1em" />
+                      ) : hasBalance && !validator.error ? (
+                        `${dashAmount(balance)} DASH`
+                      ) : (
+                        'Unavailable'
+                      )}
+                    </Badge>
+                  </Tooltip>
+                </div>
                 {validator.loading ? (
                   <Skeleton w={88} h="1em" />
                 ) : (
@@ -744,7 +768,6 @@ function Validator({ hash }: ValidatorProps) {
               hash={hash}
               payouts={{
                 total: validator.data?.totalReward,
-                paidThisEpoch: validator.data?.epochReward,
                 loading: validator.loading,
                 error: Boolean(validator.error)
               }}
@@ -760,6 +783,7 @@ function Validator({ hash }: ValidatorProps) {
             banned={isPoseBanned}
             collateral={keyRows.find(row => row.key === 'collateral')?.line}
             collateralAmount={validator.error ? '' : collateralBadge}
+            activity={activityRows.map(row => <div key={row.key}>{row.line}</div>)}
           />
         </div>
 
