@@ -2,6 +2,7 @@ import { CopyButton } from '@components/ui/Buttons'
 import { Tooltip } from '@components/ui/Tooltips'
 import InfoLine from '@components/data/InfoLine'
 import type { ValidatorEndpoints } from 'src/types/Validator'
+import ValidatorFieldLabel from './ValidatorFieldLabel'
 
 export default function ValidatorService({
   endpoints,
@@ -21,7 +22,12 @@ export default function ValidatorService({
   return (
     <InfoLine
       className="ValidatorPage__Key ValidatorPage__ServiceRow"
-      title="Service"
+      title={
+        <ValidatorFieldLabel
+          label="Service"
+          description="Network ports for Core, Platform and gRPC."
+        />
+      }
       postfix=""
       loading={loading}
       error={error}

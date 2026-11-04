@@ -16,6 +16,7 @@ import ValidatorEpochs from './ValidatorEpochs'
 import ValidatorEarnings from './ValidatorEarnings'
 import ValidatorSurface from './ValidatorSurface'
 import ValidatorService from './ValidatorService'
+import ValidatorFieldLabel from './ValidatorFieldLabel'
 import Link from 'next/link'
 import Image from 'next/image'
 import { Identifier, TimeDelta, InfoLine, NotActive } from '../../../components/data'
@@ -264,7 +265,12 @@ function Validator({ hash }: ValidatorProps) {
         <InfoLine
           className="ValidatorPage__Key ValidatorPage__CompactRow ValidatorPage__RegistrationRow"
           postfix=""
-          title="Registration"
+          title={
+            <ValidatorFieldLabel
+              label="Registration"
+              description="When this masternode was registered on Dash Core."
+            />
+          }
           loading={validator.loading}
           error={validator.error}
           value={
@@ -307,7 +313,12 @@ function Validator({ hash }: ValidatorProps) {
         <InfoLine
           className="ValidatorPage__Key ValidatorPage__CompactRow"
           postfix=""
-          title="Status"
+          title={
+            <ValidatorFieldLabel
+              label="Status"
+              description="Platform quorum participation and PoSe ban status."
+            />
+          }
           loading={validator.loading}
           value={<ValidatorStatus status={status} unavailable={Boolean(validator.error)} />}
         />
@@ -320,12 +331,10 @@ function Validator({ hash }: ValidatorProps) {
           className="ValidatorPage__Key ValidatorPage__CompactRow"
           postfix=""
           title={
-            <Tooltip
-              className="ValidatorPage__Tooltip"
-              content="Proof of Service penalty, not a health percentage. Lower is better; the limit depends on the masternode list size."
-            >
-              <span tabIndex={0}>PoSe ⓘ</span>
-            </Tooltip>
+            <ValidatorFieldLabel
+              label="PoSe"
+              description="Current Proof of Service penalty and the threshold for a ban. A lower penalty is better."
+            />
           }
           loading={validator.loading}
           error={validator.error}
@@ -359,7 +368,12 @@ function Validator({ hash }: ValidatorProps) {
         <InfoLine
           className={'ValidatorPage__Key'}
           postfix={''}
-          title="Payout"
+          title={
+            <ValidatorFieldLabel
+              label="Payout"
+              description="Address receiving the owner’s Core masternode rewards."
+            />
+          }
           value={
             <KeyIdentifier
               value={proTxState?.payoutAddress || ''}
@@ -411,7 +425,14 @@ function Validator({ hash }: ValidatorProps) {
           postfix={''}
           title={
             <span className={'ValidatorPage__StatusLabel'}>
-              {ownerVotes ? 'Owner, voting' : 'Owner'}
+              <ValidatorFieldLabel
+                label={ownerVotes ? 'Owner, voting' : 'Owner'}
+                description={
+                  ownerVotes
+                    ? 'The same address is used for ownership and governance voting.'
+                    : 'Address associated with the key that controls this masternode’s registration.'
+                }
+              />
               {ownerVotes && votingBadge ? (
                 <Badge
                   size="xs"
@@ -448,7 +469,10 @@ function Validator({ hash }: ValidatorProps) {
                 postfix={''}
                 title={
                   <span className={'ValidatorPage__StatusLabel'}>
-                    Voting
+                    <ValidatorFieldLabel
+                      label="Voting"
+                      description="Address associated with the masternode’s governance voting key."
+                    />
                     {votingBadge ? (
                       <Badge
                         size="xs"
@@ -487,7 +511,12 @@ function Validator({ hash }: ValidatorProps) {
         <InfoLine
           className={'ValidatorPage__Key'}
           postfix={''}
-          title="Identity"
+          title={
+            <ValidatorFieldLabel
+              label="Identity"
+              description="Platform identity associated with this validator."
+            />
+          }
           value={
             <KeyIdentifier
               value={validator.data?.identity || ''}
@@ -505,7 +534,12 @@ function Validator({ hash }: ValidatorProps) {
         <InfoLine
           className="ValidatorPage__Key"
           postfix=""
-          title="Voting identity"
+          title={
+            <ValidatorFieldLabel
+              label="Voting identity"
+              description="Platform identity associated with the masternode’s voting key."
+            />
+          }
           value={
             validator.data?.votingIdentity ? (
               <KeyIdentifier
@@ -527,7 +561,12 @@ function Validator({ hash }: ValidatorProps) {
         <InfoLine
           className="ValidatorPage__Key ValidatorPage__ProTxHashRow ValidatorPage__CompactRow"
           postfix={''}
-          title="ProTxHash"
+          title={
+            <ValidatorFieldLabel
+              label="ProTxHash"
+              description="Registration transaction hash. Identifies this masternode on Dash Core."
+            />
+          }
           value={
             <KeyIdentifier
               value={validator.data?.proTxHash || ''}
@@ -550,7 +589,12 @@ function Validator({ hash }: ValidatorProps) {
         <InfoLine
           className={'ValidatorPage__Key'}
           postfix={''}
-          title="Evonode ID"
+          title={
+            <ValidatorFieldLabel
+              label="Evonode ID"
+              description="Identifies this node on the Platform peer-to-peer network."
+            />
+          }
           value={<KeyIdentifier value={proTxState?.platformNodeID || ''} />}
           loading={validator.loading}
           error={validator.error || !proTxState?.platformNodeID}
@@ -635,7 +679,12 @@ function Validator({ hash }: ValidatorProps) {
         <InfoLine
           className={'ValidatorPage__Key'}
           postfix={''}
-          title="Operator"
+          title={
+            <ValidatorFieldLabel
+              label="Operator"
+              description="BLS public key used by the masternode operator."
+            />
+          }
           value={<KeyIdentifier value={proTxState?.pubKeyOperator || ''} wrap />}
           loading={validator.loading}
           error={validator.error || !proTxState?.pubKeyOperator}
