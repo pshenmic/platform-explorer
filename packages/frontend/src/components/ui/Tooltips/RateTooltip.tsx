@@ -4,6 +4,7 @@ import type { ReactElement } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import Tooltip from './Tooltip'
 import { roundUsd, removeTrailingZeros, creditsToDash } from '../../../util'
+import { formatNumberWithSpaces } from '../../../util/numbers'
 import * as Api from '../../../util/Api'
 import type { Rate } from '../../../types'
 import './RateTooltip.css'
@@ -23,12 +24,12 @@ function formatDash(value: number) {
 
 function formatUsd(value: number) {
   if (value >= 0.01) {
-    return new Intl.NumberFormat('en-US', {
+    return formatNumberWithSpaces(value, {
       style: 'currency',
       currency: 'USD',
       minimumFractionDigits: 2,
       maximumFractionDigits: 2
-    }).format(value)
+    })
   }
   return `$${roundUsd(value)}`
 }
@@ -74,7 +75,7 @@ export default function RateTooltip({
       label={
         <div className={'RateTooltip'}>
           {typeof credits === 'number' && Number.isFinite(credits) && (
-            <Row value={credits.toLocaleString('en-US')} unit={'Credits'} />
+            <Row value={formatNumberWithSpaces(credits)} unit={'Credits'} />
           )}
           {typeof resolvedDash === 'number' && Number.isFinite(resolvedDash) && (
             <Row value={formatDash(resolvedDash)} unit={'Dash'} />

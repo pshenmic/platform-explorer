@@ -12,6 +12,7 @@ import DataListHeaderMenu, {
 } from './DataListHeaderMenu'
 import type { DateRangeFilterValue, RangeFilterValue } from '../../../filters/types'
 import './DataList.css'
+import { formatNumberWithSpaces } from '../../../../util/numbers'
 
 const COMPACT_FIRST_MAX = 768
 const DEFAULT_SKELETON_ROWS = 8
@@ -99,9 +100,7 @@ function formatChipDate(value: unknown): string {
 }
 
 function compactCount(value: number) {
-  return new Intl.NumberFormat('en', { notation: 'compact', maximumFractionDigits: 1 }).format(
-    value
-  )
+  return formatNumberWithSpaces(value, { notation: 'compact', maximumFractionDigits: 1 })
 }
 
 function formatFilterChip(type: DataListHeaderFilterType | undefined, value: unknown): string {
@@ -409,7 +408,7 @@ export default function DataList<T = any>({
             <div className={'DataList__TitleRow'}>
               <h1 className={'DataList__Title'}>{title}</h1>
               {paging && paging.total > 0 ? (
-                <span className={'DataList__Total'} title={paging.total.toLocaleString('en-US')}>
+                <span className={'DataList__Total'} title={formatNumberWithSpaces(paging.total)}>
                   {compactCount(paging.total)}
                 </span>
               ) : null}

@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState, type RefObject } from 'react'
 import { Check, ChevronDown, ChevronLeft, ChevronRight, MoreHorizontal } from 'lucide-react'
 import type { ListScrollMode } from './listScrollMode'
+import { formatNumberWithSpaces } from '../../../../util/numbers'
 
 const DEFAULT_PAGE_SIZES = [10, 25, 50, 75, 100]
 
@@ -160,7 +161,7 @@ export function DataListPageFooter({
               disabled={loading}
               onClick={() => go(item)}
             >
-              {item.toLocaleString('en-US')}
+              {formatNumberWithSpaces(item)}
             </button>
           )
         )}

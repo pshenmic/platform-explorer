@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useInfiniteQuery, useQuery, useQueryClient } from '@tanstack/react-query'
 import * as Api from '../../../util/Api'
+import { formatNumberWithSpaces } from '../../../util/numbers'
 import BlocksList from '../../../components/blocks/BlocksList'
 import TransactionsList from '../../../components/transactions/TransactionsList'
 import { WithdrawalsList } from '../../../components/transfers'
@@ -52,7 +53,7 @@ function TabCount({
         : 'Count unavailable'
   return (
     <span className="Tabs__TabItemsCount" data-state={state} title={label} aria-label={label}>
-      {loading ? '…' : error ? 'Error' : known ? Math.max(0, count).toLocaleString('en-US') : '—'}
+      {loading ? '…' : error ? 'Error' : known ? formatNumberWithSpaces(Math.max(0, count)) : '—'}
     </span>
   )
 }

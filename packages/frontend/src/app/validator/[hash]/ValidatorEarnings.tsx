@@ -4,6 +4,7 @@ import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import * as Api from '../../../util/Api'
 import { validatorApr } from '../../../util/validatorApr'
+import { formatNumberWithSpaces } from '../../../util/numbers'
 import { epochProgress } from '../../../util/epochProgress'
 import { Skeleton } from '../../../components/home/Skeleton'
 import { InfoContainer } from '../../../components/ui/containers'
@@ -58,7 +59,7 @@ function PaymentCountdown({
 
 function yieldDash(dash: number) {
   if (dash > 0 && dash < 0.01) return '<0.01'
-  return dash.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+  return formatNumberWithSpaces(dash, { minimumFractionDigits: 2, maximumFractionDigits: 2 })
 }
 
 function EpochCountdown() {
@@ -190,7 +191,7 @@ export default function ValidatorEarnings({
                 ) : collateralAmount == null ? (
                   'Unavailable'
                 ) : (
-                  `${collateralAmount.toLocaleString('en-US')} DASH`
+                  `${formatNumberWithSpaces(collateralAmount)} DASH`
                 )}
               </Badge>
             </Tooltip>
