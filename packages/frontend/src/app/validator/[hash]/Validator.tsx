@@ -4,11 +4,12 @@ import { useQuery } from '@tanstack/react-query'
 import * as Api from '../../../util/Api'
 import { getL1ExplorerLink } from '../../../util/l1Explorer'
 import { validatorDashAmount as dashAmount } from '../../../util/validatorAmount'
-import { creditsToDash, removeTrailingZeros } from '../../../util'
+import { creditsToDash } from '../../../util'
 import { Skeleton } from '../../../components/home/Skeleton'
 import ValidatorActivityLists from './ValidatorActivityLists'
 import ValidatorEpochs from './ValidatorEpochs'
 import ValidatorEarnings from './ValidatorEarnings'
+import ValidatorAmountDetails from './ValidatorAmountDetails'
 import ValidatorSurface from './ValidatorSurface'
 import ValidatorService from './ValidatorService'
 import ValidatorFieldLabel from './ValidatorFieldLabel'
@@ -101,28 +102,38 @@ function WithdrawalsBadge({ identity, loading }: { identity?: string | null; loa
       ? 'Unavailable'
       : `${dashAmount(total)} DASH`
   return (
-    <a
-      href="#withdrawals"
-      className="ValidatorPage__WithdrawalsBadge"
-      aria-label={`Withdrawn to Core: ${pending ? 'loading' : amount}. View history.`}
+    <Tooltip
+      className="ValidatorPage__Tooltip"
+      title="Withdrawn to Core"
+      content={
+        <ValidatorAmountDetails
+          dash={!pending && amount !== 'Unavailable' && total != null ? creditsToDash(total) : null}
+        />
+      }
     >
-      <Badge
-        size="xs"
-        className="ValidatorPage__AmountBadge"
-        colorScheme={
-          !pending &&
-          !query.isError &&
-          identity &&
-          total != null &&
-          Number.isFinite(total) &&
-          total > 0
-            ? 'red'
-            : 'dimGray'
-        }
+      <a
+        href="#withdrawals"
+        className="ValidatorPage__WithdrawalsBadge"
+        aria-label={`Withdrawn to Core: ${pending ? 'loading' : amount}. View history.`}
       >
-        {pending ? <Skeleton w={64} h="1em" /> : amount}
-      </Badge>
-    </a>
+        <Badge
+          size="xs"
+          className="ValidatorPage__AmountBadge"
+          colorScheme={
+            !pending &&
+            !query.isError &&
+            identity &&
+            total != null &&
+            Number.isFinite(total) &&
+            total > 0
+              ? 'red'
+              : 'dimGray'
+          }
+        >
+          {pending ? <Skeleton w={64} h="1em" /> : amount}
+        </Badge>
+      </a>
+    </Tooltip>
   )
 }
 
@@ -380,16 +391,30 @@ function Validator({ hash }: ValidatorProps) {
                 }
               />
               {ownerVotes && votingBadge ? (
-                <Badge
-                  size="xs"
-                  className="ValidatorPage__AmountBadge"
-                  title={`${validator.data?.votingIdentityBalance} CREDITS`}
-                  colorScheme={
-                    Number(validator.data?.votingIdentityBalance) > 0 ? 'blue' : 'dimGray'
+                <Tooltip
+                  className="ValidatorPage__Tooltip"
+                  title="Voting identity balance"
+                  content={
+                    <ValidatorAmountDetails
+                      dash={
+                        !validator.loading && !validator.error
+                          ? creditsToDash(Number(validator.data?.votingIdentityBalance))
+                          : null
+                      }
+                    />
                   }
                 >
-                  {votingBadge}
-                </Badge>
+                  <Badge
+                    size="xs"
+                    className="ValidatorPage__AmountBadge ValidatorPage__Help"
+                    tabIndex={0}
+                    colorScheme={
+                      Number(validator.data?.votingIdentityBalance) > 0 ? 'blue' : 'dimGray'
+                    }
+                  >
+                    {votingBadge}
+                  </Badge>
+                </Tooltip>
               ) : null}
             </span>
           }
@@ -420,16 +445,30 @@ function Validator({ hash }: ValidatorProps) {
                       description="Address associated with the masternode’s governance voting key."
                     />
                     {votingBadge ? (
-                      <Badge
-                        size="xs"
-                        className="ValidatorPage__AmountBadge"
-                        title={`${validator.data?.votingIdentityBalance} CREDITS`}
-                        colorScheme={
-                          Number(validator.data?.votingIdentityBalance) > 0 ? 'blue' : 'dimGray'
+                      <Tooltip
+                        className="ValidatorPage__Tooltip"
+                        title="Voting identity balance"
+                        content={
+                          <ValidatorAmountDetails
+                            dash={
+                              !validator.loading && !validator.error
+                                ? creditsToDash(Number(validator.data?.votingIdentityBalance))
+                                : null
+                            }
+                          />
                         }
                       >
-                        {votingBadge}
-                      </Badge>
+                        <Badge
+                          size="xs"
+                          className="ValidatorPage__AmountBadge ValidatorPage__Help"
+                          tabIndex={0}
+                          colorScheme={
+                            Number(validator.data?.votingIdentityBalance) > 0 ? 'blue' : 'dimGray'
+                          }
+                        >
+                          {votingBadge}
+                        </Badge>
+                      </Tooltip>
                     ) : null}
                   </span>
                 }
@@ -685,11 +724,7 @@ function Validator({ hash }: ValidatorProps) {
                     title="Identity balance"
                     content={
                       hasBalance && !validator.error && !validator.loading ? (
-                        <>
-                          {removeTrailingZeros(creditsToDash(balance).toFixed(8))} DASH
-                          <br />
-                          {validator.data?.identityBalance} CREDITS
-                        </>
+                        <ValidatorAmountDetails dash={creditsToDash(balance)} />
                       ) : (
                         'Unavailable'
                       )

@@ -3,6 +3,7 @@ import { Skeleton } from '@components/home/Skeleton'
 import { Badge } from '@components/ui/Badge/Badge'
 import { creditsToDash, removeTrailingZeros } from '@utils'
 import { validatorDashAmount } from '../../../util/validatorAmount'
+import ValidatorAmountDetails from './ValidatorAmountDetails'
 
 export interface ValidatorPayoutsProps {
   total?: number | null
@@ -46,10 +47,7 @@ export default function ValidatorPayouts({ total, loading, error }: ValidatorPay
       content={
         <>
           {hasTotal && !loading && !failed && (
-            <>
-              {preciseAmount}
-              <br />
-            </>
+            <ValidatorAmountDetails dash={creditsToDash(total)} />
           )}
           {description}
         </>

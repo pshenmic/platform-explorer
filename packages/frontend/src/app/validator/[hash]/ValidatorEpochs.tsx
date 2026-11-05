@@ -13,8 +13,7 @@ import {
 } from '../../../util/validatorChart'
 import { creditsToDash, removeTrailingZeros } from '../../../util'
 import { BigNumber } from '../../../components/data'
-import { Badge } from '../../../components/ui/Badge/Badge'
-import { validatorDashAmount } from '../../../util/validatorAmount'
+import ValidatorAmountDetails from './ValidatorAmountDetails'
 import { Tooltip } from '../../../components/ui/Tooltips'
 import ValidatorPayouts, { type ValidatorPayoutsProps } from './ValidatorPayouts'
 import { Skeleton } from '../../../components/home/Skeleton'
@@ -52,19 +51,6 @@ function barPath(left: number, top: number, width: number, bottom: number) {
   const radius = width < 6 ? 0 : Math.min(2, (bottom - top) / 2)
   const right = left + width
   return `M${left},${bottom}V${top + radius}Q${left},${top} ${left + radius},${top}H${right - radius}Q${right},${top} ${right},${top + radius}V${bottom}Z`
-}
-
-function PayoutAmount({ credits }: { credits: number }) {
-  return (
-    <Badge
-      className="ValidatorPage__AmountBadge"
-      size="xs"
-      colorScheme={credits > 0 ? 'blue' : 'dimGray'}
-      title={`${removeTrailingZeros(creditsToDash(credits).toFixed(8))} DASH`}
-    >
-      {validatorDashAmount(credits)} DASH
-    </Badge>
-  )
 }
 
 export default function ValidatorEpochs({
@@ -344,7 +330,9 @@ export default function ValidatorEpochs({
           <dt>{shown ? 'Epoch reward' : 'Period rewards'}</dt>
           <dd>
             {chart && (shown ? shown.payout : chart.totalPayouts) != null ? (
-              <PayoutAmount credits={(shown ? shown.payout : chart.totalPayouts)!} />
+              <ValidatorAmountDetails
+                dash={creditsToDash((shown ? shown.payout : chart.totalPayouts)!)}
+              />
             ) : shown?.ongoing ? (
               'In progress'
             ) : (

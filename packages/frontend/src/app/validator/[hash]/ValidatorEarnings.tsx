@@ -10,6 +10,7 @@ import { InfoContainer } from '../../../components/ui/containers'
 import { Badge } from '../../../components/ui/Badge/Badge'
 import { Tooltip } from '../../../components/ui/Tooltips'
 import ValidatorSurface from './ValidatorSurface'
+import ValidatorAmountDetails from './ValidatorAmountDetails'
 import './ValidatorEarnings.css'
 
 const BLOCK_MS = 150_000
@@ -168,7 +169,16 @@ export default function ValidatorEarnings({
             <span className="ValidatorPage__SummaryLabel">Estimated monthly</span>
             <Tooltip
               className="ValidatorPage__Tooltip"
-              content="Estimated Core + Platform rewards over 30 days. Before splits and expenses."
+              content={
+                <>
+                  <ValidatorAmountDetails
+                    dash={!pending && !ineligible ? data?.totalPerMonth : null}
+                  />
+                  <div>
+                    Estimated Core + Platform rewards over 30 days. Before splits and expenses.
+                  </div>
+                </>
+              }
             >
               <Badge
                 className="ValidatorPage__AmountBadge ValidatorPage__Help"
@@ -217,6 +227,7 @@ export default function ValidatorEarnings({
               className="ValidatorPage__Tooltip"
               content={
                 <>
+                  <ValidatorAmountDetails dash={!pending && !ineligible ? annual : null} />
                   Monthly estimate × 365 / 30.
                   <br />
                   Without compounding.
@@ -287,7 +298,19 @@ export default function ValidatorEarnings({
                 (!pending && (ineligible || data?.corePerMonth == null)) || undefined
               }
             >
-              {amount(data?.corePerMonth)}
+              <Tooltip
+                className="ValidatorPage__Tooltip"
+                title="Estimated Core rewards per month"
+                content={
+                  <ValidatorAmountDetails
+                    dash={!pending && !ineligible ? data?.corePerMonth : null}
+                  />
+                }
+              >
+                <span className="ValidatorPage__Help" tabIndex={0}>
+                  {amount(data?.corePerMonth)}
+                </span>
+              </Tooltip>
             </div>
             <div className="ValidatorPage__EarningsNext">
               <Tooltip
@@ -328,7 +351,19 @@ export default function ValidatorEarnings({
                 (!pending && (ineligible || data?.platformPerMonth == null)) || undefined
               }
             >
-              {amount(data?.platformPerMonth)}
+              <Tooltip
+                className="ValidatorPage__Tooltip"
+                title="Estimated Platform rewards per month"
+                content={
+                  <ValidatorAmountDetails
+                    dash={!pending && !ineligible ? data?.platformPerMonth : null}
+                  />
+                }
+              >
+                <span className="ValidatorPage__Help" tabIndex={0}>
+                  {amount(data?.platformPerMonth)}
+                </span>
+              </Tooltip>
             </div>
             <div className="ValidatorPage__PlatformTiming">
               <div className="ValidatorPage__EarningsNext">
