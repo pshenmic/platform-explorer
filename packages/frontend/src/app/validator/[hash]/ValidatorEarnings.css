@@ -101,6 +101,10 @@
   font-size: inherit;
 }
 
+.ValidatorPage__Collateral .Identifier__CopyButton {
+  margin-left: 0;
+}
+
 .ValidatorPage__Earnings .ValidatorPage__SummaryLabel {
   color: var(--pe-color-fg-muted);
 }
@@ -117,7 +121,16 @@
 }
 
 .ValidatorPage__EarningsOverview .ValidatorPage__ForecastRow--Monthly .Badge {
-  font-size: var(--pe-text-xl);
+  font-size: var(--pe-text-2xl);
+  line-height: 1.25;
+}
+
+.ValidatorPage__Earnings .ValidatorPage__ForecastRow--Monthly {
+  gap: var(--pe-space-1);
+}
+
+.ValidatorPage__Earnings .ValidatorPage__ForecastRow--Monthly .ValidatorPage__SummaryLabel {
+  color: var(--pe-color-fg);
 }
 
 .ValidatorPage__MonthlyAmount {
@@ -133,7 +146,7 @@
   display: inline-flex;
   align-items: center;
   gap: var(--pe-space-1);
-  font-size: var(--pe-text-xs);
+  font-size: var(--pe-text-sm);
 }
 
 .ValidatorPage__Earnings .ValidatorPage__EarningsSources {
@@ -193,7 +206,8 @@
   justify-content: space-between;
   gap: var(--pe-space-1) var(--pe-space-2);
   padding: 0;
-  font-size: var(--pe-text-xs);
+  font-size: var(--pe-text-sm);
+  line-height: var(--pe-leading-normal);
 }
 
 .ValidatorPage__Earnings .ValidatorPage__EarningsNext > span:last-child {
@@ -228,10 +242,10 @@
   border: 0;
 }
 
-.ValidatorPage__EarningsActivity .InfoLine__Title {
+.ValidatorPage .ValidatorPage__EarningsActivity .InfoLine__Title {
   flex: none;
   width: auto;
-  font-size: var(--pe-text-xs);
+  font-size: var(--pe-text-sm);
   font-weight: var(--pe-font-weight-normal);
   color: var(--pe-color-fg-muted);
 }

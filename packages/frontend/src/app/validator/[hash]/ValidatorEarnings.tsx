@@ -146,7 +146,7 @@ export default function ValidatorEarnings({
         <ValidatorSurface kind="earnings" />
         <div className="ValidatorPage__EarningsOverview">
           <div className="ValidatorPage__ForecastRow ValidatorPage__ForecastRow--Monthly">
-            <span className="ValidatorPage__SummaryLabel">Monthly</span>
+            <span className="ValidatorPage__SummaryLabel">Estimated monthly</span>
             <Tooltip
               className="ValidatorPage__Tooltip"
               content="Estimated Core + Platform rewards over 30 days. Before splits and expenses."
@@ -217,7 +217,7 @@ export default function ValidatorEarnings({
             </Tooltip>
             <Badge
               className="ValidatorPage__AmountBadge ValidatorPage__EarningsBadge"
-              colorScheme={collateralAmount && !loading ? 'blue' : 'dimGray'}
+              colorScheme={collateralAmount && !loading ? 'gray' : 'dimGray'}
             >
               {loading ? <Skeleton w={80} h="1em" /> : collateralAmount || 'Unavailable'}
             </Badge>
