@@ -85,8 +85,9 @@ function validatorColumns(canFilter: boolean) {
       filterType: canFilter ? ('range' as const) : undefined,
       priority: 1,
       cell: (validator: Validator) => {
-        const count = Number(validator?.proposedBlocksAmount)
-        if (!Number.isFinite(count)) return <NotActive>—</NotActive>
+        const count = validator?.proposedBlocksAmount
+        if (count == null || !Number.isSafeInteger(count) || count < 0)
+          return <NotActive>—</NotActive>
         return (
           <Badge colorScheme={count > 0 ? 'gray' : 'dimGray'} size={'xs'}>
             <BigNumber>{String(count)}</BigNumber>
@@ -101,7 +102,8 @@ function validatorColumns(canFilter: boolean) {
       priority: 1,
       cell: (validator: Validator) => {
         const height = validator?.lastProposedBlockHeader?.height
-        if (height == null) return <NotActive>—</NotActive>
+        if (height == null || !Number.isSafeInteger(height) || height < 0)
+          return <NotActive>—</NotActive>
         return (
           <span className={'DataList__Entity'}>
             <BlockIcon w={'1.125rem'} h={'1.125rem'} mr={'0.5rem'} />
