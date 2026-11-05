@@ -17,7 +17,7 @@ function CreateTokenRoute() {
   }, [setBreadcrumbs])
 
   return (
-    <PageDataContainer title="CREATE TOKEN">
+    <PageDataContainer title="Create token">
       <CreateTokenPage />
     </PageDataContainer>
   )
