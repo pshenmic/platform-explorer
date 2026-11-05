@@ -14,8 +14,7 @@
   width: max-content;
   max-width: min(20rem, calc(100vw - 24px));
   min-width: 0;
-  overflow: auto;
-  max-height: calc(100dvh - 24px);
+  overflow: visible;
   white-space: normal;
   font-family: var(--pe-font-heading);
   font-size: 0.75rem;
@@ -31,11 +30,6 @@
   box-sizing: border-box;
   padding: 0.65rem 0.85rem;
   filter: drop-shadow(0 8px 24px rgba(0, 0, 0, 0.35));
-}
-.Tooltip::-webkit-scrollbar {
-  display: none;
-  width: 0;
-  height: 0;
 }
 .Tooltip::after {
   content: "";
