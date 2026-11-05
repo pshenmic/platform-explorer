@@ -11,9 +11,30 @@
   box-shadow: none;
 }
 
-.ValidatorPage__EarningsPanel::before,
-.ValidatorPage__EarningsPanel::after {
-  display: none;
+.ValidatorPage .InfoContainer.ValidatorPage__EarningsPanel::before,
+.ValidatorPage .InfoContainer.ValidatorPage__EarningsPanel::after {
+  content: "";
+  display: block;
+  position: absolute;
+  inset: 1px;
+  width: auto;
+  height: auto;
+  z-index: 0;
+  border: 0;
+  border-radius: 16px;
+  box-shadow: none;
+  background-color: transparent;
+  opacity: 1;
+  background-image: url("/images/validators/earnings-edge.webp");
+  background-position: top right;
+  background-size: 160px 16px;
+  background-repeat: no-repeat;
+  transform: scaleX(-1);
+  pointer-events: none;
+}
+
+.ValidatorPage .InfoContainer.ValidatorPage__EarningsPanel::after {
+  transform: scaleY(-1);
 }
 
 @media (min-width: 80.01em) {
@@ -215,12 +236,27 @@
 }
 
 .ValidatorPage__Earnings .ValidatorPage__EarningsSource {
+  --earnings-source-accent: var(--earnings-core-color);
   grid-template-columns: auto minmax(0, 1fr);
   grid-template-rows: auto auto;
   align-items: baseline;
   align-content: center;
   gap: var(--pe-space-3) var(--pe-space-2);
   padding-block: var(--pe-space-4);
+  border-radius: 8px;
+  background-image: linear-gradient(
+    110deg,
+    color-mix(in srgb, var(--earnings-source-accent) 12%, transparent),
+    color-mix(in srgb, var(--earnings-source-accent) 3%, transparent) 55%,
+    transparent
+  );
+  background-position: center;
+  background-size: 100% calc(100% - 16px);
+  background-repeat: no-repeat;
+}
+
+.ValidatorPage__Earnings .ValidatorPage__EarningsSource--Platform {
+  --earnings-source-accent: var(--earnings-platform-color);
 }
 
 .ValidatorPage__Earnings .ValidatorPage__EarningsSource + .ValidatorPage__EarningsSource {
