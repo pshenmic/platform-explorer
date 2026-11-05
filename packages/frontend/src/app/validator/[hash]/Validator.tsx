@@ -25,6 +25,7 @@ import { Badge } from '../../../components/ui/Badge/Badge'
 import ImageGenerator from '../../../components/imageGenerator'
 
 import { Tooltip } from '../../../components/ui/Tooltips'
+import { FloatingTooltipScope } from '../../../components/ui/Tooltips/FloatingTooltip'
 import { useBreadcrumbs } from '../../../contexts/BreadcrumbsContext'
 import { useActiveNetwork } from 'src/contexts'
 
@@ -841,4 +842,10 @@ function Validator({ hash }: ValidatorProps) {
   )
 }
 
-export default Validator
+export default function ValidatorPage(props: ValidatorProps) {
+  return (
+    <FloatingTooltipScope value={true}>
+      <Validator {...props} />
+    </FloatingTooltipScope>
+  )
+}

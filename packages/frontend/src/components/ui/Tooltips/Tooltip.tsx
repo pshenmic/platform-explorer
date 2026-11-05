@@ -2,6 +2,7 @@
 
 import {
   useState,
+  useContext,
   useRef,
   useEffect,
   useId,
@@ -15,6 +16,7 @@ import { createPortal } from 'react-dom'
 import { useOutsideClick } from '../../../hooks/useOutsideClick'
 import { useTooltipActive } from '../../../contexts/TooltipProvider'
 import './Tooltip.css'
+import FloatingTooltip, { FloatingTooltipScope } from './FloatingTooltip'
 
 const LEAVE_GRACE_MS = 420
 const GUTTER = 10
@@ -74,7 +76,8 @@ function placeFixed(rect: DOMRect, placement: string, tipW = 240, tipH = 80): Ti
 }
 
 // `label` is an alias of `content` for existing call sites.
-interface TooltipProps {
+export interface TooltipProps {
+  id?: string
   title?: ReactNode
   content?: ReactNode
   label?: ReactNode
@@ -84,10 +87,19 @@ interface TooltipProps {
   asChild?: boolean
   isOpen?: boolean
   isDisabled?: boolean
+  onOpenChange?: (open: boolean) => void
+  onFloatingEnter?: () => void
+  onFloatingLeave?: () => void
+  chart?: boolean
   [key: string]: unknown
 }
 
-export default function Tooltip({
+export default function Tooltip(props: TooltipProps) {
+  const floating = useContext(FloatingTooltipScope)
+  return floating ? <FloatingTooltip {...props} /> : <LegacyTooltip {...props} />
+}
+
+function LegacyTooltip({
   title = '',
   content = '',
   label,

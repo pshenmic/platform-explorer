@@ -61,6 +61,7 @@ export default function ValidatorEpochs({
   payouts: ValidatorPayoutsProps
 }) {
   const gradId = useId().replace(/:/g, '')
+  const tooltipId = useId()
   const wrapRef = useRef<HTMLDivElement | null>(null)
   const [width, setWidth] = useState(0)
   const [plotH, setPlotH] = useState(168)
@@ -68,13 +69,22 @@ export default function ValidatorEpochs({
   const [pinI, setPinI] = useState<number | null>(null)
   const [hoverI, setHoverI] = useState<number | null>(null)
   const [focusedEpoch, setFocusedEpoch] = useState<number | null>(null)
-  const [periodDetailsFocused, setPeriodDetailsFocused] = useState(false)
+  const hoverCloseTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const keepHover = () => {
+    if (hoverCloseTimer.current) clearTimeout(hoverCloseTimer.current)
+    hoverCloseTimer.current = null
+  }
+  const leaveHover = () => {
+    keepHover()
+    hoverCloseTimer.current = setTimeout(() => setHoverI(null), 150)
+  }
   useEffect(() => {
     const clearSelection = (event: PointerEvent) => {
       if (
         event.target instanceof Element &&
-        wrapRef.current?.contains(event.target) &&
-        event.target.closest('.ValidatorEpochs__Hit')
+        (event.target.closest('[data-chart-tooltip]') ||
+          (wrapRef.current?.contains(event.target) &&
+            event.target.closest('.ValidatorEpochs__Hit')))
       )
         return
       setPinI(null)
@@ -89,7 +99,10 @@ export default function ValidatorEpochs({
       }
     }
     document.addEventListener('pointerdown', clearSelection)
-    return () => document.removeEventListener('pointerdown', clearSelection)
+    return () => {
+      document.removeEventListener('pointerdown', clearSelection)
+      if (hoverCloseTimer.current) clearTimeout(hoverCloseTimer.current)
+    }
   }, [])
   const [now, setNow] = useState(() => Date.now())
 
@@ -268,7 +281,7 @@ export default function ValidatorEpochs({
     return { nodes, xTicks, yTicks, totalPayouts, left }
   }, [width, h, slots, epochWindow, queryRange])
 
-  const activeI = hoverI != null ? hoverI : pinI
+  const activeI = pinI ?? hoverI
   const shown = activeI != null ? chart?.nodes[activeI] : null
   const focusFrom = shown ? shown.from : epochWindow?.fromEpoch
   const focusTo = shown ? shown.to : epochWindow?.toEpoch
@@ -303,6 +316,8 @@ export default function ValidatorEpochs({
   const loading = statsQuery.isPending
 
   const onMove = (e: React.MouseEvent<SVGSVGElement>) => {
+    keepHover()
+    if (pinI != null) return
     if (!chart || chart.nodes.length === 0) return
     const rect = e.currentTarget.getBoundingClientRect()
     const px = e.clientX - rect.left
@@ -383,17 +398,11 @@ export default function ValidatorEpochs({
               className="ValidatorPage__Tooltip"
               title={shown ? 'Selected epochs' : 'Selected period'}
               content={payoutDetails}
-              isOpen={periodDetailsFocused || undefined}
             >
               <button
                 type="button"
                 className="ValidatorEpochs__Info"
                 aria-label="Payout details for the selected period or epoch"
-                onFocus={() => setPeriodDetailsFocused(true)}
-                onBlur={() => setPeriodDetailsFocused(false)}
-                onKeyDown={event => {
-                  if (event.key === 'Escape') setPeriodDetailsFocused(false)
-                }}
               >
                 Rewards chart
               </button>
@@ -427,6 +436,17 @@ export default function ValidatorEpochs({
           }
           content={payoutDetails}
           isOpen={Boolean(shown)}
+          id={tooltipId}
+          chart
+          onOpenChange={open => {
+            if (!open) {
+              keepHover()
+              setPinI(null)
+              setHoverI(null)
+            }
+          }}
+          onFloatingEnter={keepHover}
+          onFloatingLeave={leaveHover}
         >
           <span
             className="ValidatorEpochs__TooltipAnchor"
@@ -466,7 +486,7 @@ export default function ValidatorEpochs({
             role={'group'}
             aria-label={`Platform payouts by epoch, ${chart.totalPayouts == null ? 'unavailable' : `${dashAmount(chart.totalPayouts)} DASH indexed`}`}
             onMouseMove={onMove}
-            onMouseLeave={() => setHoverI(null)}
+            onMouseLeave={leaveHover}
           >
             <defs>
               <pattern
@@ -580,6 +600,7 @@ export default function ValidatorEpochs({
                   }
                   role={'button'}
                   aria-pressed={pinI === node.i}
+                  aria-describedby={activeI === node.i ? tooltipId : undefined}
                   aria-label={`Epoch ${node.from === node.to ? node.from : `${node.from}–${node.to}`}: ${node.payout == null ? (node.progress != null ? `${Math.floor(node.progress)}% of estimated duration elapsed; payout unavailable` : node.ongoing ? 'Epoch in progress; payout unavailable' : 'Payout unavailable') : `${dashAmount(node.payout)} DASH`}`}
                   onFocus={() => {
                     setFocusedEpoch(node.i)

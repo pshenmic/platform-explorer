@@ -38,6 +38,9 @@
   right: 0;
   height: 12px;
 }
+.Tooltip--Floating::after {
+  display: none;
+}
 .Tooltip[data-placement="top"]::after {
   top: 100%;
 }
