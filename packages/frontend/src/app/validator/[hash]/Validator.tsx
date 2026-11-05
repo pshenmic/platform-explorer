@@ -1,15 +1,10 @@
 'use client'
-import { Fragment, useEffect, useState } from 'react'
+import { Fragment, useEffect } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import * as Api from '../../../util/Api'
 import { getL1ExplorerLink } from '../../../util/l1Explorer'
 import { validatorDashAmount as dashAmount } from '../../../util/validatorAmount'
-import {
-  fetchHandlerSuccess,
-  fetchHandlerError,
-  creditsToDash,
-  removeTrailingZeros
-} from '../../../util'
+import { creditsToDash, removeTrailingZeros } from '../../../util'
 import { Skeleton } from '../../../components/home/Skeleton'
 import ValidatorActivityLists from './ValidatorActivityLists'
 import ValidatorEpochs from './ValidatorEpochs'
@@ -28,40 +23,11 @@ import ImageGenerator from '../../../components/imageGenerator'
 import { Tooltip } from '../../../components/ui/Tooltips'
 import { useBreadcrumbs } from '../../../contexts/BreadcrumbsContext'
 import { useActiveNetwork } from 'src/contexts'
-import type { Validator as ValidatorType } from '../../../types/Validator'
-import type { LoadableState, Rate } from '../../../types'
 
 import { getValidatorStatus } from '../../../components/validators/validatorStatus'
 import ValidatorStatus from '../../../components/validators/ValidatorStatusIndicator'
 
 import './ValidatorPage.css'
-
-/** Epoch fields used on the page (API may flatten Epoch onto epochInfo). */
-type EpochInfo = {
-  number?: number
-  startTime?: number | string
-  endTime?: number | string
-} | null
-
-type ValidatorDetail = Omit<Partial<ValidatorType>, 'epochInfo' | 'endpoints' | 'proTxInfo'> & {
-  epochInfo?: EpochInfo
-  endpoints?: ValidatorType['endpoints']
-  proTxInfo?: {
-    type?: string
-    collateralAddress?: string | null
-    state?: {
-      registeredHeight?: number
-      PoSeBanHeight?: number
-      PoSeRevivedHeight?: number
-      PoSePenalty?: number
-      ownerAddress?: string
-      votingAddress?: string
-      payoutAddress?: string
-      pubKeyOperator?: string
-      platformNodeID?: string
-    } | null
-  } | null
-}
 
 interface ValidatorProps {
   hash: string
@@ -162,15 +128,22 @@ function WithdrawalsBadge({ identity, loading }: { identity?: string | null; loa
 
 function Validator({ hash }: ValidatorProps) {
   const { setBreadcrumbs } = useBreadcrumbs()
-  const [validator, setValidator] = useState<LoadableState<ValidatorDetail>>({
-    data: {} as ValidatorDetail,
-    loading: true,
-    error: false
+  const validatorQuery = useQuery({
+    queryKey: ['validator-detail', hash],
+    queryFn: () => Api.getValidatorByProTxHash(hash),
+    staleTime: 60_000,
+    refetchInterval: 60_000,
+    retry: 1
   })
-  const [rate, setRate] = useState<LoadableState<Rate>>({
-    data: {} as Rate,
-    loading: true,
-    error: false
+  const validator = {
+    data: validatorQuery.data,
+    loading: validatorQuery.isPending,
+    error: validatorQuery.isError && validatorQuery.data == null
+  }
+  const rate = useQuery({
+    queryKey: ['rate'],
+    queryFn: () => Api.getRate(),
+    staleTime: 60_000
   })
   const { l1explorerBaseUrl } = useActiveNetwork()
 
@@ -210,33 +183,6 @@ function Validator({ hash }: ValidatorProps) {
   const country = countryCode?.trim().toLowerCase()
   const host = validator.error ? null : validator.data?.endpoints?.coreP2PPortStatus?.host
   const region = [validator.data?.geoIpInfo?.city, countryCode].filter(Boolean).join(', ')
-
-  useEffect(() => {
-    let cancelled = false
-    const loadValidator = (first: boolean) => {
-      if (first) setValidator(state => ({ ...state, loading: true, error: false }))
-      Api.getValidatorByProTxHash(hash)
-        .then(res => {
-          if (!cancelled) fetchHandlerSuccess(setValidator, res as Partial<ValidatorDetail>)
-        })
-        .catch(err => {
-          if (!cancelled && first) fetchHandlerError(setValidator, err)
-        })
-    }
-    loadValidator(true)
-    const refresh = window.setInterval(() => loadValidator(false), 60000)
-    Api.getRate()
-      .then(res => {
-        if (!cancelled) fetchHandlerSuccess(setRate, res)
-      })
-      .catch(err => {
-        if (!cancelled) fetchHandlerError(setRate, err)
-      })
-    return () => {
-      cancelled = true
-      window.clearInterval(refresh)
-    }
-  }, [hash])
 
   const proTxState = validator.data?.proTxInfo?.state
   const ownerVotes =
@@ -845,7 +791,7 @@ function Validator({ hash }: ValidatorProps) {
             blocksCount={validator.loading ? null : validator.data?.proposedBlocksAmount}
             loading={validator.loading}
             error={validator.error}
-            rate={rate.data}
+            rate={rate.isError ? null : rate.data}
             defaultPayoutAddress={validator.data?.proTxInfo?.state?.payoutAddress}
             l1explorerBaseUrl={l1explorerBaseUrl}
           />
