@@ -16,6 +16,19 @@
   color: var(--pe-color-fg-muted);
 }
 
+.ValidatorStatus--compact {
+  width: 24px;
+  height: 24px;
+  justify-content: center;
+  cursor: help;
+}
+
+.ValidatorStatus--compact:focus-visible {
+  outline: 2px solid var(--pe-color-focus-ring);
+  outline-offset: 2px;
+  border-radius: var(--pe-radius-sm);
+}
+
 .ValidatorStatus[data-status="quorum"] .ValidatorStatus__Icon {
   color: var(--pe-color-green-label);
   fill: currentColor;

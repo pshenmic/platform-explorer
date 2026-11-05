@@ -17,12 +17,12 @@ import { ErrorMessageBlock } from '../Errors'
 const ACTIVE_OPTIONS = [
   {
     value: 'current',
-    label: <ValidatorStatus status={getValidatorStatus({ isActive: true })} />,
+    label: <ValidatorStatus status={getValidatorStatus({ isActive: true })} showLabel />,
     searchText: 'proposing in quorum'
   },
   {
     value: 'queued',
-    label: <ValidatorStatus status={getValidatorStatus({ isActive: false })} />,
+    label: <ValidatorStatus status={getValidatorStatus({ isActive: false })} showLabel />,
     searchText: 'waiting quorum'
   }
 ]
@@ -54,6 +54,16 @@ interface ValidatorsListProps {
 function validatorColumns(canFilter: boolean) {
   return [
     {
+      ...columnLayout.active,
+      filterKey: canFilter ? 'isActive' : undefined,
+      filterType: canFilter ? ('options' as const) : undefined,
+      filterOptions: ACTIVE_OPTIONS,
+      cell: (validator: Validator) => {
+        const status = getValidatorStatus(validator)
+        return <ValidatorStatus status={status} />
+      }
+    },
+    {
       ...columnLayout.identifier,
       filterKey: canFilter ? 'identifier' : undefined,
       filterType: canFilter ? ('search' as const) : undefined,
@@ -70,13 +80,18 @@ function validatorColumns(canFilter: boolean) {
         )
     },
     {
-      ...columnLayout.active,
-      filterKey: canFilter ? 'isActive' : undefined,
-      filterType: canFilter ? ('options' as const) : undefined,
-      filterOptions: ACTIVE_OPTIONS,
+      ...columnLayout.proposedBlocksAmount,
+      filterKey: canFilter ? 'blocks_proposed' : undefined,
+      filterType: canFilter ? ('range' as const) : undefined,
+      priority: 1,
       cell: (validator: Validator) => {
-        const status = getValidatorStatus(validator)
-        return <ValidatorStatus status={status} />
+        const count = Number(validator?.proposedBlocksAmount)
+        if (!Number.isFinite(count)) return <NotActive>—</NotActive>
+        return (
+          <Badge colorScheme={count > 0 ? 'gray' : 'dimGray'} size={'xs'}>
+            <BigNumber>{String(count)}</BigNumber>
+          </Badge>
+        )
       }
     },
     {
@@ -90,23 +105,8 @@ function validatorColumns(canFilter: boolean) {
         return (
           <span className={'DataList__Entity'}>
             <BlockIcon w={'1.125rem'} h={'1.125rem'} mr={'0.5rem'} />
-            {height}
+            <BigNumber>{String(height)}</BigNumber>
           </span>
-        )
-      }
-    },
-    {
-      ...columnLayout.proposedBlocksAmount,
-      filterKey: canFilter ? 'blocks_proposed' : undefined,
-      filterType: canFilter ? ('range' as const) : undefined,
-      priority: 1,
-      cell: (validator: Validator) => {
-        const n = Number(validator?.proposedBlocksAmount)
-        if (!Number.isFinite(n)) return <NotActive>—</NotActive>
-        return (
-          <Badge colorScheme={n > 0 ? 'gray' : 'dimGray'} size={'xs'}>
-            <BigNumber>{String(n)}</BigNumber>
-          </Badge>
         )
       }
     },
