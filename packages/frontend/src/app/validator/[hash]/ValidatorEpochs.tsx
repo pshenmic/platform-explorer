@@ -389,6 +389,25 @@ export default function ValidatorEpochs({
     </div>
   )
 
+  const epochDetails = shown && (
+    <div className="ValidatorEpochs__BarDetails">
+      <div className="ValidatorEpochs__BarDates">{focusDate ?? '—'} UTC</div>
+      <div className="ValidatorEpochs__BarAmount">
+        {shown.payout != null ? (
+          <ValidatorAmountDetails dash={creditsToDash(shown.payout)} />
+        ) : shown.ongoing ? (
+          'In progress'
+        ) : (
+          'Unavailable'
+        )}
+      </div>
+      <div>
+        <BigNumber>{shown.blocks}</BigNumber> blocks proposed
+      </div>
+      {shown.progress != null && <div>{Math.floor(shown.progress)}% time elapsed</div>}
+    </div>
+  )
+
   return (
     <div className={'EpochsOverview ValidatorEpochs'} aria-label={'Validator epochs'}>
       <header className={'EpochsOverview__Head'}>
@@ -434,7 +453,8 @@ export default function ValidatorEpochs({
                 ? `Epoch #${shown.from}`
                 : `Epochs #${shown.from}–#${shown.to}`
           }
-          content={payoutDetails}
+          content={epochDetails}
+          placement="right"
           isOpen={Boolean(shown)}
           id={tooltipId}
           chart
@@ -451,8 +471,12 @@ export default function ValidatorEpochs({
           <span
             className="ValidatorEpochs__TooltipAnchor"
             style={{
-              left: shown?.cx ?? 0,
-              top: !shown || shown.payout == null ? M.top : Math.min(shown.cy, h - M.bottom - 2)
+              left: shown?.barX ?? 0,
+              width: shown?.barWidth ?? 1,
+              top: !shown || shown.payout == null ? M.top : Math.min(shown.cy, h - M.bottom - 2),
+              height: shown
+                ? Math.max(1, h - M.bottom - (shown.payout == null ? M.top : shown.cy))
+                : 1
             }}
           />
         </Tooltip>

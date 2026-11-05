@@ -270,3 +270,20 @@
   min-width: 0;
   overflow-wrap: anywhere;
 }
+
+.ValidatorEpochs__BarDetails {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-family: var(--pe-font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+.ValidatorEpochs__BarDates,
+.ValidatorEpochs__BarAmount > div + div {
+  color: var(--pe-color-fg-muted);
+}
+
+.ValidatorEpochs__BarAmount {
+  margin-block: 2px;
+}
