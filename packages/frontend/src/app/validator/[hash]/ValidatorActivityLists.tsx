@@ -356,14 +356,14 @@ export default function ValidatorActivityLists(props: ActivityProps) {
       <div className={'Tabs__Toolbar'}>
         <TabList>
           <Tab title="Platform identity withdrawals to Core, including pending and expired requests">
-            Withdrawn to Core{' '}
+            Withdrawals{' '}
             <TabCount
               value={withdrawals.data?.resultSet.length}
               loading={props.loading || (Boolean(props.identity) && withdrawals.isPending)}
               error={withdrawals.isError || (props.error && !props.identity)}
             />
           </Tab>
-          <Tab>
+          <Tab title="Platform blocks proposed by this validator.">
             Proposed blocks{' '}
             <TabCount
               value={blockCount.data ?? props.blocksCount}
@@ -371,16 +371,16 @@ export default function ValidatorActivityLists(props: ActivityProps) {
               error={props.error && blockCount.data == null && props.blocksCount == null}
             />
           </Tab>
-          <Tab title="Platform contested-resource votes cast by this masternode's voting identity, not Core governance votes">
-            Masternode votes{' '}
+          <Tab title="Votes on Platform contested resources. Not Core governance votes.">
+            Platform votes{' '}
             <TabCount
               value={voteCount.data}
               loading={props.loading || (Boolean(props.votingIdentity) && voteCount.isPending)}
               error={voteCount.isError || (props.error && !props.votingIdentity)}
             />
           </Tab>
-          <Tab>
-            Identity transactions{' '}
+          <Tab title="Transactions associated with this validator's Platform identity.">
+            Transactions{' '}
             <TabCount
               value={transactionCount.data}
               loading={props.loading || (Boolean(props.identity) && transactionCount.isPending)}

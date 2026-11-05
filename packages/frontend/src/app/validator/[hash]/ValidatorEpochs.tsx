@@ -395,7 +395,7 @@ export default function ValidatorEpochs({
                   if (event.key === 'Escape') setPeriodDetailsFocused(false)
                 }}
               >
-                Epoch rewards
+                Rewards chart
               </button>
             </Tooltip>
           </h2>
