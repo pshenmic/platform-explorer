@@ -1026,6 +1026,10 @@
     padding: var(--pe-space-3);
   }
 
+  .ValidatorPage .InfoContainer.ValidatorPage__Ledger {
+    padding: var(--pe-space-4);
+  }
+
   .ValidatorPage__EarningsPanel {
     gap: var(--pe-space-4);
   }
@@ -1081,7 +1085,7 @@
     display: grid;
     grid-template-columns: 48px minmax(0, 1fr);
     width: 100%;
-    padding-bottom: var(--pe-space-1);
+    padding-bottom: var(--pe-space-3);
   }
 
   .ValidatorPage__ProfileAvatar {
@@ -1126,8 +1130,8 @@
 
   .ValidatorPage .ValidatorPage__Ledger .InfoLine {
     align-items: stretch;
-    gap: var(--pe-space-1);
-    padding: var(--pe-space-1_5) 0;
+    gap: var(--pe-space-1_5);
+    padding: var(--pe-space-3) 0;
   }
 
   .ValidatorPage .ValidatorPage__Ledger .InfoLine:first-child {
@@ -1151,6 +1155,27 @@
   .ValidatorPage__Ledger .InfoLine__Value {
     width: 100%;
     max-width: 100%;
+  }
+
+  .ValidatorPage__Ledger .InfoLine__Value:not(:has(.Identifier__CopyButton)) {
+    padding-inline-end: 0;
+  }
+
+  .ValidatorPage__Ledger .ValidatorPage__KeyLine,
+  .ValidatorPage__Ledger .Identifier {
+    width: 100%;
+  }
+
+  .ValidatorPage__Ledger .ValidatorPage__KeyLine > a {
+    flex: 1 1 auto;
+  }
+
+  .ValidatorPage__Ledger .ValidatorPage__BalancedKey {
+    gap: var(--validator-copy-gap);
+  }
+
+  .ValidatorPage__Ledger .ValidatorPage__BalancedKey .Identifier__CopyButton {
+    margin-inline-start: auto;
   }
 }
 
@@ -1192,6 +1217,8 @@
 
   .ValidatorPage__ServiceEndpoints {
     gap: 2px;
+    flex-wrap: wrap;
+    justify-content: flex-start;
   }
 }
 
