@@ -98,7 +98,6 @@ export default function ValidatorEarnings({
   coreTipTime,
   coreBlockIntervalMs,
   banned,
-  collateral,
   collateralAmount,
   activity
 }: {
@@ -109,8 +108,7 @@ export default function ValidatorEarnings({
   coreTipTime?: string | null
   coreBlockIntervalMs?: number | null
   banned: boolean
-  collateral: ReactNode
-  collateralAmount: string
+  collateralAmount: number | null
   activity: ReactNode
 }) {
   const query = useQuery({
@@ -165,6 +163,38 @@ export default function ValidatorEarnings({
       <InfoContainer className="ValidatorPage__Group ValidatorPage__EarningsPanel ValidatorPage__Surface ValidatorPage__Surface--earnings">
         <ValidatorSurface kind="earnings" />
         <div className="ValidatorPage__EarningsOverview">
+          <div className="ValidatorPage__CollateralHeader">
+            <Tooltip
+              className="ValidatorPage__Tooltip"
+              content="DASH held as collateral to operate this node."
+            >
+              <button
+                type="button"
+                className="ValidatorPage__CollateralInfo ValidatorPage__SummaryLabel"
+              >
+                Staked
+              </button>
+            </Tooltip>
+            <Tooltip
+              className="ValidatorPage__Tooltip"
+              title="Staked"
+              content={<ValidatorAmountDetails dash={loading ? null : collateralAmount} />}
+            >
+              <Badge
+                className="ValidatorPage__AmountBadge ValidatorPage__EarningsBadge"
+                tabIndex={0}
+                colorScheme={collateralAmount && !loading ? 'gray' : 'dimGray'}
+              >
+                {loading ? (
+                  <Skeleton w={80} h="1em" />
+                ) : collateralAmount == null ? (
+                  'Unavailable'
+                ) : (
+                  `${collateralAmount.toLocaleString('en-US')} DASH`
+                )}
+              </Badge>
+            </Tooltip>
+          </div>
           <div className="ValidatorPage__ForecastRow ValidatorPage__ForecastRow--Monthly">
             <span className="ValidatorPage__SummaryLabel">Estimated monthly</span>
             <Tooltip
@@ -260,28 +290,6 @@ export default function ValidatorEarnings({
                 `${apr.toFixed(2)}%`
               )}
             </Badge>
-          </div>
-          <div className="ValidatorPage__CollateralHeader">
-            <Tooltip
-              className="ValidatorPage__Tooltip"
-              content="DASH held as collateral to operate this node."
-            >
-              <button
-                type="button"
-                className="ValidatorPage__CollateralInfo ValidatorPage__SummaryLabel"
-              >
-                Collateral
-              </button>
-            </Tooltip>
-            <Badge
-              className="ValidatorPage__AmountBadge ValidatorPage__EarningsBadge"
-              colorScheme={collateralAmount && !loading ? 'gray' : 'dimGray'}
-            >
-              {loading ? <Skeleton w={80} h="1em" /> : collateralAmount || 'Unavailable'}
-            </Badge>
-            <div className="ValidatorPage__Collateral" aria-label="Collateral address">
-              {collateral}
-            </div>
           </div>
         </div>
         <div className="ValidatorPage__EarningsSources">

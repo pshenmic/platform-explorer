@@ -3,7 +3,10 @@ import { Fragment, useEffect } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import * as Api from '../../../util/Api'
 import { getL1ExplorerLink } from '../../../util/l1Explorer'
-import { validatorDashAmount as dashAmount } from '../../../util/validatorAmount'
+import {
+  validatorCollateral,
+  validatorDashAmount as dashAmount
+} from '../../../util/validatorAmount'
 import { creditsToDash } from '../../../util'
 import { Skeleton } from '../../../components/home/Skeleton'
 import ValidatorActivityLists from './ValidatorActivityLists'
@@ -198,9 +201,7 @@ function Validator({ hash }: ValidatorProps) {
   const proTxState = validator.data?.proTxInfo?.state
   const ownerVotes =
     !!proTxState?.ownerAddress && proTxState.ownerAddress === proTxState.votingAddress
-  const collateralBadge = validator.data?.proTxInfo?.type
-    ? `${validator.data.proTxInfo.type.toLowerCase() === 'evo' ? '4,000' : '1,000'} DASH`
-    : ''
+  const collateralAmount = validatorCollateral(validator.data?.proTxInfo?.type)
   const votingBadge =
     validator.data?.votingIdentityBalance != null
       ? `${dashAmount(Number(validator.data.votingIdentityBalance))} DASH`
@@ -353,7 +354,12 @@ function Validator({ hash }: ValidatorProps) {
         <InfoLine
           className={'ValidatorPage__Key'}
           postfix={''}
-          title=""
+          title={
+            <ValidatorFieldLabel
+              label="Collateral"
+              description="Core address holding the masternode collateral."
+            />
+          }
           value={
             <KeyIdentifier
               value={validator.data?.proTxInfo?.collateralAddress || ''}
@@ -679,7 +685,7 @@ function Validator({ hash }: ValidatorProps) {
   ]
   const profileKeys = ['proTxHash', 'registration', 'identity', 'service']
   const stateKeys = ['node', 'votingIdentity', 'quorum', 'pose']
-  const detailKeys = ['payout', 'owner', 'voting', 'operator']
+  const detailKeys = ['payout', 'collateral', 'owner', 'voting', 'operator']
   const activityKeys = ['withdrawn', 'lastWithdrawal', 'lastBlock']
   const profileRows = profileKeys.flatMap(key => keyRows.filter(row => row.key === key))
   const stateRows = stateKeys.flatMap(key => keyRows.filter(row => row.key === key))
@@ -811,8 +817,7 @@ function Validator({ hash }: ValidatorProps) {
             coreTipTime={validator.data?.coreTipTime}
             coreBlockIntervalMs={validator.data?.coreBlockIntervalMs}
             banned={isPoseBanned}
-            collateral={keyRows.find(row => row.key === 'collateral')?.line}
-            collateralAmount={validator.error ? '' : collateralBadge}
+            collateralAmount={validator.error ? null : collateralAmount}
             activity={activityRows.map(row => <div key={row.key}>{row.line}</div>)}
           />
         </div>

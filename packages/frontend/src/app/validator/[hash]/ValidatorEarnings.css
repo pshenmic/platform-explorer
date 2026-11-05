@@ -75,17 +75,17 @@
 
 .ValidatorPage__ForecastRow--Monthly {
   grid-column: 1 / -1;
-  grid-row: 1;
+  grid-row: 2;
 }
 
 .ValidatorPage__ForecastRow--Yearly {
   grid-column: 1;
-  grid-row: 2;
+  grid-row: 3;
 }
 
 .ValidatorPage__Earnings .ValidatorPage__Apr {
   grid-column: 2;
-  grid-row: 2;
+  grid-row: 3;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -96,36 +96,19 @@
 }
 
 .ValidatorPage__Earnings .ValidatorPage__CollateralHeader {
-  grid-row: 3;
+  grid-row: 1;
   grid-column: 1 / -1;
   grid-template-columns: auto minmax(0, 1fr);
   justify-content: stretch;
   gap: var(--pe-space-2) var(--pe-space-1);
-  padding-top: var(--pe-space-3);
-  border-top: 1px solid var(--pe-color-border-subtle);
+  padding-top: 0;
+  border-top: 0;
+  padding-bottom: var(--pe-space-3);
+  border-bottom: 1px solid var(--pe-color-border-subtle);
 }
 
 .ValidatorPage__Earnings .ValidatorPage__CollateralHeader > .Badge {
   justify-self: end;
-}
-
-.ValidatorPage__Earnings .ValidatorPage__Collateral {
-  grid-column: 1 / -1;
-}
-
-.ValidatorPage__Collateral .InfoLine,
-.ValidatorPage__Collateral .InfoLine__Value,
-.ValidatorPage__Collateral .Identifier {
-  width: 100%;
-  min-width: 0;
-}
-
-.ValidatorPage__Collateral .Identifier {
-  font-size: inherit;
-}
-
-.ValidatorPage__Collateral .Identifier__CopyButton {
-  margin-left: 0;
 }
 
 .ValidatorPage__Earnings .ValidatorPage__SummaryLabel {
