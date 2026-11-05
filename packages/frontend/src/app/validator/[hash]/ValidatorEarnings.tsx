@@ -139,6 +139,25 @@ export default function ValidatorEarnings({
     )
   const apr = ineligible ? null : validatorApr(data?.totalPerMonth, nodeType)
   const annual = data?.totalPerMonth == null ? null : data.totalPerMonth * (365 / 30)
+  const core = data?.corePerMonth
+  const platform = data?.platformPerMonth
+  const coreShare =
+    !pending &&
+    !ineligible &&
+    core != null &&
+    platform != null &&
+    Number.isFinite(core) &&
+    Number.isFinite(platform) &&
+    core >= 0 &&
+    platform >= 0 &&
+    Number.isFinite(core + platform) &&
+    core + platform > 0
+      ? (core / (core + platform)) * 100
+      : null
+  const compositionLabel =
+    coreShare == null
+      ? ''
+      : `Estimated monthly rewards. Core: ${Math.round(coreShare)}%. Platform: ${100 - Math.round(coreShare)}%.`
 
   return (
     <section className="ValidatorPage__Earnings" aria-label="Estimated earnings">
@@ -163,6 +182,34 @@ export default function ValidatorEarnings({
                 {amount(data?.totalPerMonth, false)}
               </Badge>
             </Tooltip>
+            {coreShare != null && (
+              <Tooltip
+                className="ValidatorPage__Tooltip"
+                title="Estimated monthly rewards"
+                content={
+                  <dl className="ValidatorPage__TooltipMetrics">
+                    <div>
+                      <dt>Core</dt>
+                      <dd>{Math.round(coreShare)}%</dd>
+                    </div>
+                    <div>
+                      <dt>Platform</dt>
+                      <dd>{100 - Math.round(coreShare)}%</dd>
+                    </div>
+                  </dl>
+                }
+              >
+                <span
+                  className="ValidatorPage__EarningsComposition ValidatorPage__Help"
+                  role="img"
+                  aria-label={compositionLabel}
+                  tabIndex={0}
+                >
+                  <span style={{ width: `${coreShare}%` }} />
+                  <span style={{ width: `${100 - coreShare}%` }} />
+                </span>
+              </Tooltip>
+            )}
           </div>
           <div className="ValidatorPage__ForecastRow ValidatorPage__ForecastRow--Yearly">
             <span className="ValidatorPage__SummaryLabel">Yearly</span>
@@ -228,7 +275,7 @@ export default function ValidatorEarnings({
         </div>
         <div className="ValidatorPage__EarningsSources">
           <div
-            className="ValidatorPage__EarningsSource"
+            className="ValidatorPage__EarningsSource ValidatorPage__EarningsSource--Core"
             aria-label="Estimated Core earnings per month"
           >
             <div className="ValidatorPage__EarningsSourceHead">
@@ -269,7 +316,7 @@ export default function ValidatorEarnings({
             </div>
           </div>
           <div
-            className="ValidatorPage__EarningsSource"
+            className="ValidatorPage__EarningsSource ValidatorPage__EarningsSource--Platform"
             aria-label="Estimated Platform earnings per month"
           >
             <div className="ValidatorPage__EarningsSourceHead">

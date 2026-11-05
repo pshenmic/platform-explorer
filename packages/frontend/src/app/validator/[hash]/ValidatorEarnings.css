@@ -1,4 +1,6 @@
 .ValidatorPage .InfoContainer.ValidatorPage__EarningsPanel {
+  --earnings-core-color: var(--pe-color-fg-muted);
+  --earnings-platform-color: var(--pe-color-brand-light);
   grid-template-columns: minmax(0, 42fr) minmax(0, 58fr);
   align-items: stretch;
   gap: 0;
@@ -127,6 +129,61 @@
 
 .ValidatorPage__Earnings .ValidatorPage__ForecastRow--Monthly {
   gap: var(--pe-space-1);
+}
+
+.ValidatorPage__EarningsComposition {
+  display: flex;
+  width: 100%;
+  height: 24px;
+  padding-block: 10px;
+  box-sizing: border-box;
+  border-radius: 2px;
+}
+
+.ValidatorPage__EarningsComposition:focus-visible {
+  outline: 2px solid var(--pe-color-focus-ring);
+  outline-offset: 2px;
+}
+
+.ValidatorPage__EarningsComposition > span:first-child {
+  background: var(--earnings-core-color);
+  border-radius: 2px 0 0 2px;
+}
+
+.ValidatorPage__EarningsComposition > span:last-child {
+  background: var(--earnings-platform-color);
+  border-radius: 0 2px 2px 0;
+}
+
+.ValidatorPage__TooltipMetrics {
+  display: grid;
+  gap: var(--pe-space-2);
+  margin: 0;
+}
+
+.ValidatorPage__TooltipMetrics > div {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--pe-space-6);
+}
+
+.ValidatorPage__TooltipMetrics dd {
+  margin: 0;
+  font-variant-numeric: tabular-nums;
+}
+
+.ValidatorPage__EarningsSourceHead .ValidatorPage__SummaryLabel::before {
+  content: "";
+  display: inline-block;
+  width: 3px;
+  height: 10px;
+  margin-inline-end: 6px;
+  border-radius: 2px;
+  background: var(--earnings-core-color);
+}
+
+.ValidatorPage__EarningsSource--Platform .ValidatorPage__SummaryLabel::before {
+  background: var(--earnings-platform-color);
 }
 
 .ValidatorPage__Earnings .ValidatorPage__ForecastRow--Monthly .ValidatorPage__SummaryLabel {
