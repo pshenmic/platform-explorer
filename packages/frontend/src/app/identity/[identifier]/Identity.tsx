@@ -3,17 +3,19 @@
 import { useState, useEffect } from 'react'
 import * as Api from '../../../util/Api'
 import TransactionsList from '../../../components/transactions/TransactionsList'
-import TransactionsFilter from '../../../components/transactions/TransactionsFilter'
+import { toTransactionsApiFilters } from '../../../components/transactions/transactionsApiFilters'
+import { useInfiniteQuery } from '@tanstack/react-query'
+import { DataListModeSwitch } from '../../../components/ui/lists/DataList/DataListPaging'
+import {
+  readListScrollMode,
+  writeListScrollMode,
+  type ListScrollMode
+} from '../../../components/ui/lists/DataList/listScrollMode'
 import DocumentsList from '../../../components/documents/DocumentsList'
-import { DocumentsFilter } from '../../../components/documents/DocumentsFilter'
+import { useIdentityList } from './useIdentityList'
 import DataContractsList from '../../../components/dataContracts/DataContractsList'
 import TransfersList from '../../../components/transfers/TransfersList'
-import {
-  fetchHandlerSuccess,
-  fetchHandlerError,
-  paginationHandler,
-  setLoadingProp
-} from '../../../util'
+import { fetchHandlerSuccess, fetchHandlerError } from '../../../util'
 import { ErrorMessageBlock } from '../../../components/Errors'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { useBreadcrumbs } from '../../../contexts/BreadcrumbsContext'
@@ -21,36 +23,15 @@ import { Tabs, TabList, TabPanels, Tab, TabPanel } from '../../../components/ui/
 import { InfoContainer, PageDataContainer } from '../../../components/ui/containers'
 import { IdentityTotalCard } from '../../../components/identities'
 import TokensList from '../../../components/tokens/TokensList'
-import type {
-  DataContract,
-  Document,
-  Identity as IdentityType,
-  LoadableState,
-  PaginatedResultSet,
-  Rate,
-  Token,
-  Transaction,
-  Transfer
-} from '../../../types'
+import type { Identity as IdentityType, LoadableState, Rate } from '../../../types'
 import './Identity.css'
 
 const tabs = ['transactions', 'datacontracts', 'documents', 'transfers', 'tokens'] as const
 
 const defaultTabName = 'transactions'
 
-type PaginatedProps = { currentPage: number }
-
 interface IdentityProps {
   identifier: string
-}
-
-function emptyPaginated<T>(): LoadableState<PaginatedResultSet<T>> {
-  return {
-    data: {} as PaginatedResultSet<T>,
-    props: { currentPage: 0 },
-    loading: true,
-    error: false
-  }
 }
 
 function Identity({ identifier }: IdentityProps) {
@@ -63,19 +44,52 @@ function Identity({ identifier }: IdentityProps) {
     loading: true,
     error: false
   })
-  const [dataContracts, setDataContracts] = useState(emptyPaginated<DataContract>())
-  const [documents, setDocuments] = useState(emptyPaginated<Document>())
-  const [tokens, setTokens] = useState(emptyPaginated<Token>())
-  const [transactions, setTransactions] = useState(emptyPaginated<Transaction>())
-  const [transfers, setTransfers] = useState(emptyPaginated<Transfer>())
   const [txFilters, setTxFilters] = useState<Record<string, unknown>>({})
-  const [docFilters, setDocFilters] = useState<Record<string, unknown>>({})
+  const [txColumnFilters, setTxColumnFilters] = useState<Record<string, unknown>>({})
+  const [txToolbarTarget, setTxToolbarTarget] = useState<HTMLDivElement | null>(null)
+  const [txPage, setTxPage] = useState(1)
+  const [txPageSize, setTxPageSize] = useState(10)
+  const [txMode, setTxMode] = useState<ListScrollMode>('continuous')
+  useEffect(() => setTxMode(readListScrollMode('identity-transactions')), [])
+  const handleTxMode = (mode: ListScrollMode) => {
+    writeListScrollMode('identity-transactions', mode)
+    setTxMode(mode)
+    setTxPage(1)
+  }
+  useEffect(() => {
+    const timer = window.setTimeout(() => {
+      setTxFilters(toTransactionsApiFilters(txColumnFilters))
+      setTxPage(1)
+    }, 400)
+    return () => window.clearTimeout(timer)
+  }, [txColumnFilters])
+  const transactions = useInfiniteQuery({
+    queryKey: ['identityTransactions', identifier, txMode, txPage, txPageSize, txFilters],
+    initialPageParam: txPage,
+    queryFn: ({ pageParam }) =>
+      Api.getTransactions(pageParam, txPageSize, 'desc', { ...txFilters, owner: identifier }),
+    enabled: !!identifier,
+    getNextPageParam: (lastPage, _pages, lastPageParam) =>
+      lastPage.resultSet.length === txPageSize &&
+      lastPageParam * txPageSize < (lastPage.pagination?.total ?? 0)
+        ? lastPageParam + 1
+        : undefined
+  })
+  const txTotal = transactions.data?.pages[0]?.pagination?.total
+  const txItems = transactions.data?.pages.flatMap(page => page.resultSet)
+  const [docColumns, setDocColumns] = useState<Record<string, unknown>>({})
+  const [transferColumns, setTransferColumns] = useState<Record<string, unknown>>({})
+  const [docFilters, setDocFilters] = useState<Parameters<typeof Api.getDocumentsByIdentity>[4]>({})
+  const [transferFilters, setTransferFilters] = useState<
+    NonNullable<Parameters<typeof Api.getTransfersByIdentity>[4]>
+  >({})
+  const [docToolbar, setDocToolbar] = useState<HTMLDivElement | null>(null)
+  const [transferToolbar, setTransferToolbar] = useState<HTMLDivElement | null>(null)
   const [rate, setRate] = useState<LoadableState<Rate>>({
     data: {} as Rate,
     loading: true,
     error: false
   })
-  const pageSize = 10
   const [activeTab, setActiveTab] = useState(
     tabs.indexOf(defaultTabName.toLowerCase() as (typeof tabs)[number]) !== -1
       ? tabs.indexOf(defaultTabName.toLowerCase() as (typeof tabs)[number])
@@ -100,89 +114,60 @@ function Identity({ identifier }: IdentityProps) {
       .catch(err => fetchHandlerError(setRate, err))
   }, [identifier])
 
-  useEffect(() => {
-    if (!identifier) return
-    setLoadingProp(setTransactions)
-
-    Api.getTransactions(
-      Number((transactions.props as PaginatedProps).currentPage) + 1,
-      pageSize,
-      'desc',
-      { owner: identifier, ...txFilters }
-    )
-      .then(paginatedTransactions => fetchHandlerSuccess(setTransactions, paginatedTransactions))
-      .catch(err => fetchHandlerError(setTransactions, err))
-  }, [identifier, (transactions.props as PaginatedProps).currentPage, txFilters])
-
-  const txFiltersChangeHandler = (newFilters: Record<string, unknown>) => {
-    if (JSON.stringify(newFilters) === JSON.stringify(txFilters)) return
-    setTxFilters(newFilters)
-    setTransactions(prev => ({ ...prev, props: { ...prev.props, currentPage: 0 } }))
-  }
-
-  useEffect(() => {
-    if (!identifier) return
-    setLoadingProp(setDataContracts)
-
-    Api.getDataContractsByIdentity(
-      identifier,
-      Number((dataContracts.props as PaginatedProps).currentPage) + 1,
-      pageSize,
-      'desc'
-    )
-      .then(paginatedDataContracts => fetchHandlerSuccess(setDataContracts, paginatedDataContracts))
-      .catch(err => fetchHandlerError(setDataContracts, err))
-  }, [identifier, (dataContracts.props as PaginatedProps).currentPage])
+  const dataContracts = useIdentityList(
+    'contracts',
+    identifier,
+    activeTab === 1,
+    {},
+    (page, size) => Api.getDataContractsByIdentity(identifier, page, size, 'desc')
+  )
+  const documents = useIdentityList(
+    'documents',
+    identifier,
+    activeTab === 2,
+    docFilters ?? {},
+    (page, size) => Api.getDocumentsByIdentity(identifier, page, size, 'desc', docFilters)
+  )
+  const transfers = useIdentityList(
+    'transfers',
+    identifier,
+    activeTab === 3,
+    transferFilters,
+    (page, size) => Api.getTransfersByIdentity(identifier, page, size, 'desc', transferFilters)
+  )
+  const tokens = useIdentityList('tokens', identifier, activeTab === 4, {}, (page, size) =>
+    Api.getTokensByIdentity(identifier, page, size, 'desc')
+  )
 
   useEffect(() => {
-    if (!identifier) return
-    setLoadingProp(setTransfers)
-
-    Api.getTransfersByIdentity(
-      identifier,
-      Number((transfers.props as PaginatedProps).currentPage) + 1,
-      pageSize,
-      'desc'
-    )
-      .then(paginatedDataContracts => fetchHandlerSuccess(setTransfers, paginatedDataContracts))
-      .catch(err => fetchHandlerError(setTransfers, err))
-  }, [identifier, (transfers.props as PaginatedProps).currentPage])
-
+    const timer = window.setTimeout(() => {
+      const dates = toTransactionsApiFilters({ timestamp: docColumns.timestamp })
+      const status = Array.isArray(docColumns.status) ? docColumns.status[0] : undefined
+      setDocFilters({
+        document_type_name: typeof docColumns.type === 'string' ? docColumns.type : undefined,
+        deleted: status === 'active' ? 'false' : status === 'deleted' ? 'true' : undefined,
+        timestamp_start: dates.timestamp_start as string | undefined,
+        timestamp_end: dates.timestamp_end as string | undefined
+      })
+      documents.resetPage()
+    }, 400)
+    return () => window.clearTimeout(timer)
+  }, [docColumns, documents.resetPage])
   useEffect(() => {
-    if (!identifier) return
-    setLoadingProp(setDocuments)
-
-    Api.getDocumentsByIdentity(
-      identifier,
-      Number((documents.props as PaginatedProps).currentPage) + 1,
-      pageSize,
-      'desc',
-      docFilters
-    )
-      .then(paginatedDataContracts => fetchHandlerSuccess(setDocuments, paginatedDataContracts))
-      .catch(err => fetchHandlerError(setDocuments, err))
-  }, [identifier, (documents.props as PaginatedProps).currentPage, docFilters])
-
-  const docFiltersChangeHandler = (newFilters: Record<string, unknown>) => {
-    if (JSON.stringify(newFilters) === JSON.stringify(docFilters)) return
-    setDocFilters(newFilters)
-    setDocuments(prev => ({ ...prev, props: { ...prev.props, currentPage: 0 } }))
-  }
-
-  useEffect(() => {
-    if (!identifier) return
-    setLoadingProp(setTokens)
-
-    Api.getTokensByIdentity(
-      identifier,
-      Number((tokens.props as PaginatedProps).currentPage) + 1,
-      pageSize,
-      'desc'
-    )
-      .then(paginatedDataContracts => fetchHandlerSuccess(setTokens, paginatedDataContracts))
-      .catch(err => fetchHandlerError(setTokens, err))
-  }, [identifier, (tokens.props as PaginatedProps).currentPage])
-
+    const timer = window.setTimeout(() => {
+      setTransferFilters({
+        hash: toTransactionsApiFilters(transferColumns).hash as string | undefined,
+        type:
+          Array.isArray(transferColumns.type) && transferColumns.type.length
+            ? Number(transferColumns.type[0])
+            : undefined
+      })
+      transfers.resetPage()
+    }, 400)
+    return () => window.clearTimeout(timer)
+  }, [transferColumns, transfers.resetPage])
+  const otherLists = [dataContracts, documents, transfers, tokens]
+  const otherPaging = otherLists[activeTab - 1]?.paging
   useEffect(() => {
     const tab = searchParams.get('tab')
 
@@ -222,201 +207,235 @@ function Identity({ identifier }: IdentityProps) {
 
       <InfoContainer styles={['tabs']} className={'IdentityPage__ListContainer'}>
         <Tabs onChange={setActiveTab} index={activeTab}>
-          <TabList>
-            <Tab>
-              Transactions{' '}
-              {(transactions.data?.pagination?.total ?? identity.data?.totalTxs) !== undefined ? (
-                <span
-                  className={`Tabs__TabItemsCount ${(transactions.data?.pagination?.total ?? identity.data?.totalTxs) === 0 ? 'Tabs__TabItemsCount--Empty' : ''}`}
-                >
-                  {Math.max(
-                    transactions.data?.pagination?.total ?? identity.data?.totalTxs ?? 0,
+          <div className="Tabs__Toolbar">
+            <TabList>
+              <Tab>
+                Transactions{' '}
+                {(txTotal ?? identity.data?.totalTxs) !== undefined ? (
+                  <span
+                    className={`Tabs__TabItemsCount ${(txTotal ?? identity.data?.totalTxs) === 0 ? 'Tabs__TabItemsCount--Empty' : ''}`}
+                  >
+                    {Math.max(txTotal ?? identity.data?.totalTxs ?? 0, 0)}
+                  </span>
+                ) : (
+                  <span
+                    className={'Tabs__TabItemsCount Tabs__TabItemsCount--Loading'}
+                    aria-hidden={'true'}
+                  >
                     0
-                  )}
-                </span>
-              ) : (
-                <span
-                  className={'Tabs__TabItemsCount Tabs__TabItemsCount--Loading'}
-                  aria-hidden={'true'}
-                >
-                  0
-                </span>
-              )}
-            </Tab>
-            <Tab>
-              Data contracts{' '}
-              {identity.data?.totalDataContracts !== undefined ? (
-                <span
-                  className={`Tabs__TabItemsCount ${identity.data?.totalDataContracts === 0 ? 'Tabs__TabItemsCount--Empty' : ''}`}
-                >
-                  {identity.data?.totalDataContracts}
-                </span>
-              ) : (
-                <span
-                  className={'Tabs__TabItemsCount Tabs__TabItemsCount--Loading'}
-                  aria-hidden={'true'}
-                >
-                  0
-                </span>
-              )}
-            </Tab>
-            <Tab>
-              Documents{' '}
-              {(documents.data?.pagination?.total ?? identity.data?.totalDocuments) !==
-              undefined ? (
-                <span
-                  className={`Tabs__TabItemsCount ${(documents.data?.pagination?.total ?? identity.data?.totalDocuments) === 0 ? 'Tabs__TabItemsCount--Empty' : ''}`}
-                >
-                  {Math.max(
-                    documents.data?.pagination?.total ?? identity.data?.totalDocuments ?? 0,
+                  </span>
+                )}
+              </Tab>
+              <Tab>
+                Data contracts{' '}
+                {identity.data?.totalDataContracts !== undefined ? (
+                  <span
+                    className={`Tabs__TabItemsCount ${identity.data?.totalDataContracts === 0 ? 'Tabs__TabItemsCount--Empty' : ''}`}
+                  >
+                    {identity.data?.totalDataContracts}
+                  </span>
+                ) : (
+                  <span
+                    className={'Tabs__TabItemsCount Tabs__TabItemsCount--Loading'}
+                    aria-hidden={'true'}
+                  >
                     0
-                  )}
-                </span>
-              ) : (
-                <span
-                  className={'Tabs__TabItemsCount Tabs__TabItemsCount--Loading'}
-                  aria-hidden={'true'}
-                >
-                  0
-                </span>
-              )}
-            </Tab>
-            <Tab>
-              Credit Transfers{' '}
-              {identity.data?.totalTransfers !== undefined ? (
-                <span
-                  className={`Tabs__TabItemsCount ${identity.data?.totalTransfers === 0 ? 'Tabs__TabItemsCount--Empty' : ''}`}
-                >
-                  {identity.data?.totalTransfers}
-                </span>
-              ) : (
-                <span
-                  className={'Tabs__TabItemsCount Tabs__TabItemsCount--Loading'}
-                  aria-hidden={'true'}
-                >
-                  0
-                </span>
-              )}
-            </Tab>
-            <Tab>
-              Tokens{' '}
-              {tokens.data?.pagination?.total !== undefined ? (
-                <span
-                  className={`Tabs__TabItemsCount ${tokens.data?.pagination?.total === 0 ? 'Tabs__TabItemsCount--Empty' : ''}`}
-                >
-                  {Math.max(tokens.data?.pagination?.total ?? 0, 0)}
-                </span>
-              ) : (
-                <span
-                  className={'Tabs__TabItemsCount Tabs__TabItemsCount--Loading'}
-                  aria-hidden={'true'}
-                >
-                  0
-                </span>
-              )}
-            </Tab>
-          </TabList>
+                  </span>
+                )}
+              </Tab>
+              <Tab>
+                Documents{' '}
+                {(documents.total ?? identity.data?.totalDocuments) !== undefined ? (
+                  <span
+                    className={`Tabs__TabItemsCount ${(documents.total ?? identity.data?.totalDocuments) === 0 ? 'Tabs__TabItemsCount--Empty' : ''}`}
+                  >
+                    {Math.max(documents.total ?? identity.data?.totalDocuments ?? 0, 0)}
+                  </span>
+                ) : (
+                  <span
+                    className={'Tabs__TabItemsCount Tabs__TabItemsCount--Loading'}
+                    aria-hidden={'true'}
+                  >
+                    0
+                  </span>
+                )}
+              </Tab>
+              <Tab>
+                Credit Transfers{' '}
+                {identity.data?.totalTransfers !== undefined ? (
+                  <span
+                    className={`Tabs__TabItemsCount ${identity.data?.totalTransfers === 0 ? 'Tabs__TabItemsCount--Empty' : ''}`}
+                  >
+                    {identity.data?.totalTransfers}
+                  </span>
+                ) : (
+                  <span
+                    className={'Tabs__TabItemsCount Tabs__TabItemsCount--Loading'}
+                    aria-hidden={'true'}
+                  >
+                    0
+                  </span>
+                )}
+              </Tab>
+              <Tab>
+                Tokens{' '}
+                {tokens.total !== undefined ? (
+                  <span
+                    className={`Tabs__TabItemsCount ${tokens.total === 0 ? 'Tabs__TabItemsCount--Empty' : ''}`}
+                  >
+                    {Math.max(tokens.total ?? 0, 0)}
+                  </span>
+                ) : (
+                  <span
+                    className={'Tabs__TabItemsCount Tabs__TabItemsCount--Loading'}
+                    aria-hidden={'true'}
+                  >
+                    0
+                  </span>
+                )}
+              </Tab>
+            </TabList>
+            <div className="Tabs__TableControls" hidden={activeTab !== 0}>
+              <div ref={setTxToolbarTarget} className="Tabs__FilterSlot" />
+              <DataListModeSwitch mode={txMode} onModeChange={handleTxMode} />
+            </div>
+            <div className="Tabs__TableControls" hidden={activeTab === 0}>
+              <div ref={setDocToolbar} className="Tabs__FilterSlot" hidden={activeTab !== 2} />
+              <div ref={setTransferToolbar} className="Tabs__FilterSlot" hidden={activeTab !== 3} />
+              {otherPaging && <DataListModeSwitch {...otherPaging} />}
+            </div>
+          </div>
           <TabPanels>
             <TabPanel>
-              <TransactionsFilter
-                onFilterChange={txFiltersChangeHandler}
-                excludeFilters={['owner']}
-                className={'IdentityPage__TransactionsFilter'}
-              />
-              {!transactions.error ? (
-                <TransactionsList
-                  transactions={transactions.data?.resultSet}
-                  pagination={{
-                    onPageChange: (pagination: { selected: number }) =>
-                      paginationHandler(setTransactions, pagination.selected),
-                    pageCount:
-                      Math.ceil((transactions.data?.pagination?.total ?? 0) / pageSize) || 1,
-                    forcePage: (transactions?.props as PaginatedProps)?.currentPage
-                  }}
-                  loading={transactions.loading}
-                  itemsCount={pageSize}
-                />
+              {!transactions.isError || transactions.data ? (
+                <>
+                  <TransactionsList
+                    transactions={txItems}
+                    loading={transactions.isLoading}
+                    rate={rate.data}
+                    pinFirst
+                    filterValues={txColumnFilters}
+                    excludeFilters={['owner']}
+                    onFilterChange={(key, value) =>
+                      setTxColumnFilters(previous => ({ ...previous, [key]: value }))
+                    }
+                    toolbarTarget={txToolbarTarget}
+                    paging={{
+                      mode: txMode,
+                      onModeChange: handleTxMode,
+                      hideModeSwitch: true,
+                      total: txTotal ?? 0,
+                      pageSize: txPageSize,
+                      page: txPage - 1,
+                      onPageChange: page => setTxPage(page + 1),
+                      onPageSizeChange: size => {
+                        setTxPageSize(size)
+                        setTxPage(1)
+                      },
+                      onLoadMore: () => {
+                        if (!transactions.isFetching) void transactions.fetchNextPage()
+                      },
+                      loadingMore: transactions.isFetching && !transactions.isLoading,
+                      hasMore:
+                        activeTab === 0 &&
+                        transactions.hasNextPage &&
+                        !transactions.isFetchNextPageError
+                    }}
+                  />
+                  {transactions.isFetchNextPageError && (
+                    <button type="button" onClick={() => void transactions.fetchNextPage()}>
+                      Could not load more transactions. Retry
+                    </button>
+                  )}
+                </>
               ) : (
                 <ErrorMessageBlock />
               )}
             </TabPanel>
             <TabPanel>
-              {!dataContracts.error ? (
-                <DataContractsList
-                  dataContracts={dataContracts.data?.resultSet}
-                  pagination={{
-                    onPageChange: pagination =>
-                      paginationHandler(setDataContracts, pagination.selected),
-                    pageCount:
-                      Math.ceil((dataContracts.data?.pagination?.total ?? 0) / pageSize) || 1,
-                    forcePage: (dataContracts?.props as PaginatedProps)?.currentPage
-                  }}
-                  loading={dataContracts.loading}
-                  itemsCount={pageSize}
-                />
+              {!dataContracts.query.isError || dataContracts.query.data ? (
+                <>
+                  <DataContractsList
+                    dataContracts={dataContracts.items}
+                    loading={dataContracts.query.isLoading}
+                    paging={dataContracts.paging}
+                  />
+                  {dataContracts.query.isFetchNextPageError && (
+                    <button type="button" onClick={() => void dataContracts.query.fetchNextPage()}>
+                      Could not load more records. Retry
+                    </button>
+                  )}
+                </>
               ) : (
                 <ErrorMessageBlock />
               )}
             </TabPanel>
             <TabPanel>
-              <DocumentsFilter
-                onFilterChange={docFiltersChangeHandler}
-                excludeFilters={['owner', 'revision', 'transition_type']}
-                className={'IdentityPage__DocumentsFilter'}
-              />
-              {!documents.error ? (
-                <DocumentsList
-                  documents={
-                    documents.data?.resultSet as Array<Document & { gasUsed?: number }> | undefined
-                  }
-                  showDataContract={true}
-                  showAction={false}
-                  showGas={false}
-                  pagination={{
-                    onPageChange: pagination =>
-                      paginationHandler(setDocuments, pagination.selected),
-                    pageCount: Math.ceil((documents.data?.pagination?.total ?? 0) / pageSize) || 1,
-                    forcePage: (documents?.props as PaginatedProps)?.currentPage
-                  }}
-                  loading={documents.loading}
-                  itemsCount={pageSize}
-                />
+              {!documents.query.isError || documents.query.data ? (
+                <>
+                  <DocumentsList
+                    documents={documents.items}
+                    loading={documents.query.isLoading}
+                    paging={documents.paging}
+                    showDataContract
+                    showAction={false}
+                    showGas={false}
+                    allowedFilters={['type', 'status', 'timestamp']}
+                    filterValues={docColumns}
+                    onFilterChange={(key, value) =>
+                      setDocColumns(previous => ({ ...previous, [key]: value }))
+                    }
+                    toolbarTarget={docToolbar}
+                  />
+                  {documents.query.isFetchNextPageError && (
+                    <button type="button" onClick={() => void documents.query.fetchNextPage()}>
+                      Could not load more records. Retry
+                    </button>
+                  )}
+                </>
               ) : (
                 <ErrorMessageBlock />
               )}
             </TabPanel>
             <TabPanel>
-              {!transfers.error ? (
-                <TransfersList
-                  transfers={transfers.data?.resultSet}
-                  pagination={{
-                    onPageChange: pagination =>
-                      paginationHandler(setTransfers, pagination.selected),
-                    pageCount: Math.ceil((transfers.data?.pagination?.total ?? 0) / pageSize) || 1,
-                    forcePage: (transfers?.props as PaginatedProps)?.currentPage
-                  }}
-                  loading={transfers.loading}
-                  itemsCount={pageSize}
-                />
+              {!transfers.query.isError || transfers.query.data ? (
+                <>
+                  <TransfersList
+                    transfers={transfers.items}
+                    loading={transfers.query.isLoading}
+                    paging={transfers.paging}
+                    filterValues={transferColumns}
+                    onFilterChange={(key, value) =>
+                      setTransferColumns(previous => ({ ...previous, [key]: value }))
+                    }
+                    toolbarTarget={transferToolbar}
+                  />
+                  {transfers.query.isFetchNextPageError && (
+                    <button type="button" onClick={() => void transfers.query.fetchNextPage()}>
+                      Could not load more records. Retry
+                    </button>
+                  )}
+                </>
               ) : (
                 <ErrorMessageBlock />
               )}
             </TabPanel>
             <TabPanel>
-              {!tokens.error ? (
-                <TokensList
-                  tokens={tokens.data?.resultSet as never}
-                  variant={'balance'}
-                  rate={rate.data}
-                  pagination={{
-                    onPageChange: (pagination: { selected: number }) =>
-                      paginationHandler(setTokens, pagination.selected),
-                    pageCount: Math.ceil((tokens.data?.pagination?.total ?? 0) / pageSize) || 1,
-                    forcePage: (tokens?.props as PaginatedProps)?.currentPage
-                  }}
-                  loading={tokens.loading}
-                  itemsCount={pageSize}
-                />
+              {!tokens.query.isError || tokens.query.data ? (
+                <>
+                  <TokensList
+                    tokens={tokens.items}
+                    loading={tokens.query.isLoading}
+                    paging={tokens.paging}
+                    variant="balance"
+                    rate={rate.data}
+                  />
+                  {tokens.query.isFetchNextPageError && (
+                    <button type="button" onClick={() => void tokens.query.fetchNextPage()}>
+                      Could not load more records. Retry
+                    </button>
+                  )}
+                </>
               ) : (
                 <ErrorMessageBlock />
               )}
