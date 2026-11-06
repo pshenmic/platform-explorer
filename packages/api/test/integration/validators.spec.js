@@ -53,7 +53,8 @@ describe('Validators routes', () => {
     processingFees: '1000',
     distributedStorageFees: '2000',
     coreBlockRewards: '1125000000000',
-    reward: '225000000600'
+    reward: '225000000600',
+    estimatedReward: '450000001200'
   }
 
   before(async () => {
@@ -283,7 +284,9 @@ describe('Validators routes', () => {
     mock.method(NodeController.prototype, 'getEpochsInfo', epochInfo)
 
     mock.method(NodeController.prototype, 'status', async () => ({
-      chain: { latestBlockHeight: '9', coreChainLockedHeight: 11 }
+      chain: { latestBlockHeight: '9', coreChainLockedHeight: 11 },
+      // half of the epoch has passed
+      time: { block: String(date + 1800000) }
     }))
 
     mock.method(NodeController.prototype, 'getPathElements', async (path, keys) => {

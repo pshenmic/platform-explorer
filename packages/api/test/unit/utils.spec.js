@@ -1968,8 +1968,9 @@ describe('Utils', () => {
 
   describe('getPendingEpochReward()', () => {
     const proTxHash = '27'.repeat(32)
-    const epoch = { number: 20147, firstBlockHeight: '661227', firstCoreBlockHeight: 1585963 }
-    const status = { chain: { latestBlockHeight: '661268', coreChainLockedHeight: 1585991 } }
+    const epoch = { number: 20147, firstBlockHeight: '661227', firstCoreBlockHeight: 1585963, startTime: 1000000, endTime: 4600000 }
+    // half of the epoch has passed
+    const status = { chain: { latestBlockHeight: '661268', coreChainLockedHeight: 1585991 }, time: { block: '2800000' } }
 
     const proposerCount = (count) => {
       const value = Buffer.alloc(8)
@@ -2007,7 +2008,8 @@ describe('Utils', () => {
         distributedStorageFees: '1963947278',
         // 28 Core blocks since the epoch start
         coreBlockRewards: '1875071229584',
-        reward: '134143305400'
+        reward: '134143305400',
+        estimatedReward: '268286610800'
       })
 
       const [poolsCall, proposersCall] = sdk.node.getPathElements.mock.calls
@@ -2029,10 +2031,20 @@ describe('Utils', () => {
 
       assert.equal(pendingEpochReward.proposedBlocks, 0)
       assert.equal(pendingEpochReward.reward, '0')
+      assert.equal(pendingEpochReward.estimatedReward, '0')
+    })
+
+    it('should not scale the reward after the epoch end time', async () => {
+      const lateStatus = { ...status, time: { block: '5000000' } }
+      const sdk = createSdk([lateStatus, lateStatus], pools, [proposerCount(3n)])
+
+      const pendingEpochReward = await utils.getPendingEpochReward(sdk, proTxHash, epoch)
+
+      assert.equal(pendingEpochReward.estimatedReward, pendingEpochReward.reward)
     })
 
     it('should read again if a block was committed between the reads', async () => {
-      const nextStatus = { chain: { latestBlockHeight: '661269', coreChainLockedHeight: 1585991 } }
+      const nextStatus = { chain: { latestBlockHeight: '661269', coreChainLockedHeight: 1585991 }, time: { block: '2800000' } }
       const sdk = createSdk([status, nextStatus, nextStatus, nextStatus], pools, [proposerCount(3n)])
 
       const pendingEpochReward = await utils.getPendingEpochReward(sdk, proTxHash, epoch)

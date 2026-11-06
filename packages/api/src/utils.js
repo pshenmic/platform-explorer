@@ -2216,7 +2216,7 @@ const getPendingEpochReward = async (sdk, proTxHash, epoch) => {
 
   // the reads are separate requests, they are consistent only if no block was committed in between
   for (let attempt = 0; attempt < 3; attempt++) {
-    const { chain } = await sdk.node.status()
+    const { chain, time } = await sdk.node.status()
 
     const [pools, proposers] = await Promise.all([
       sdk.node.getPathElements(epochPath, [Buffer.from('p'), Buffer.from('s')]),
@@ -2250,6 +2250,16 @@ const getPendingEpochReward = async (sdk, proTxHash, epoch) => {
 
     const epochPool = pool.p + pool.s + coreBlockRewards
 
+    const reward = epochPool * proposedBlocks / BigInt(totalBlocks)
+
+    // income for the whole epoch if the validator keeps earning at the same rate until its end
+    const elapsed = Number(time?.block) - Number(epoch.startTime)
+    const duration = Number(epoch.endTime) - Number(epoch.startTime)
+
+    const estimatedReward = elapsed > 0 && duration > 0
+      ? (elapsed < duration ? reward * BigInt(duration) / BigInt(elapsed) : reward)
+      : null
+
     return {
       epoch: epoch.number,
       blockHeight: Number(chain.latestBlockHeight),
@@ -2258,7 +2268,8 @@ const getPendingEpochReward = async (sdk, proTxHash, epoch) => {
       processingFees: String(pool.p),
       distributedStorageFees: String(pool.s),
       coreBlockRewards: String(coreBlockRewards),
-      reward: String(epochPool * proposedBlocks / BigInt(totalBlocks))
+      reward: String(reward),
+      estimatedReward: estimatedReward !== null ? String(estimatedReward) : null
     }
   }
 
