@@ -696,19 +696,6 @@
   padding: 0 0 12px;
 }
 
-.ValidatorPage .InfoContainer.ValidatorPage__Lists {
-  padding: var(--pe-space-3);
-}
-
-.ValidatorPage__Lists .Tabs__TabPanel {
-  padding-inline: 0;
-}
-
-.ValidatorPage__Lists .Tabs__Toolbar {
-  padding-inline: 0;
-  padding-block: var(--pe-space-2);
-  margin-bottom: var(--pe-space-2);
-}
 .ValidatorPage__ActivityError {
   display: flex;
   align-items: center;
@@ -730,7 +717,6 @@
 }
 .ValidatorPage__Lists .Tabs__TabList {
   overflow-x: auto;
-  padding-inline: 0;
 }
 .ValidatorPage__Lists .Tabs__Tab {
   flex-shrink: 0;
