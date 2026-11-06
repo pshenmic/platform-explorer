@@ -22,7 +22,7 @@ interface WithdrawalsListProps {
   l1explorerBaseUrl?: string | null
   loading?: boolean
   skeletonCount?: number
-  compactStatus?: boolean
+  statusFirst?: boolean
   amountUnit?: 'credits' | 'dash'
   paging?: DataListProps['paging']
 }
@@ -35,7 +35,7 @@ function WithdrawalsList({
   l1explorerBaseUrl,
   loading,
   skeletonCount,
-  compactStatus = false,
+  statusFirst = false,
   amountUnit = 'credits',
   paging
 }: WithdrawalsListProps) {
@@ -66,11 +66,11 @@ function WithdrawalsList({
     {
       key: 'status',
       header: 'Status',
-      minWidth: compactStatus ? 64 : 110,
-      align: compactStatus ? 'center' : 'left',
+      minWidth: 110,
+      align: 'left',
       cell: withdrawal =>
-        compactStatus ? (
-          <TransactionStatusIndicator status={withdrawal.status} />
+        statusFirst ? (
+          <TransactionStatusIndicator status={withdrawal.status} showLabel />
         ) : withdrawal.status ? (
           <span className={'DataList__Entity'}>
             <StatusIcon status={withdrawal.status} w={'18px'} h={'18px'} />
@@ -173,7 +173,7 @@ function WithdrawalsList({
     <DataList
       items={withdrawals}
       columns={
-        compactStatus
+        statusFirst
           ? [
               ...columns.filter(column => column.key === 'status'),
               ...columns.filter(column => column.key !== 'status')

@@ -2,6 +2,7 @@ import { Check, Clock, Layers, Send, CircleX, TimerOff } from 'lucide-react'
 import { NotActive } from '../data'
 import { Badge } from '../ui/Badge'
 import { Tooltip } from '../ui/Tooltips'
+import TransactionStatusBadge from './TransactionStatusBadge'
 import './TransactionStatusIndicator.css'
 
 const statuses = {
@@ -14,13 +15,30 @@ const statuses = {
   BROADCASTED: { label: 'Broadcasted', icon: Send, color: 'blue' }
 }
 
-export default function TransactionStatusIndicator({ status }: { status?: string | null }) {
+export default function TransactionStatusIndicator({
+  status,
+  showLabel = false
+}: {
+  status?: string | null
+  showLabel?: boolean
+}) {
   if (!status) return <NotActive />
   const info = Object.hasOwn(statuses, status)
     ? statuses[status as keyof typeof statuses]
     : undefined
   if (!info) return <Badge colorScheme="dimGray">{status}</Badge>
   const Icon = info.icon
+  if (showLabel) {
+    if (status === 'SUCCESS' || status === 'COMPLETE') {
+      return <TransactionStatusBadge status="SUCCESS" />
+    }
+    return (
+      <Badge className="TransactionStatusIndicator--labelled" colorScheme={info.color}>
+        <Icon size={12} aria-hidden="true" focusable="false" />
+        {status}
+      </Badge>
+    )
+  }
   return (
     <Tooltip content={info.label}>
       <Badge

@@ -8,7 +8,6 @@ import type { ReactNode } from 'react'
 import TypeBadge from './TypeBadge'
 import BatchTypeBadge from './BatchTypeBadge'
 import TransactionStatusBadge from './TransactionStatusBadge'
-import TransactionStatusIndicator from './TransactionStatusIndicator'
 import { Identifier, BigNumber, Alias, TimeDelta, NotActive, DateBlock } from '../data'
 import { RateTooltip } from '../ui/Tooltips'
 import ImageGenerator from '../imageGenerator'
@@ -35,7 +34,7 @@ function TransactionsList({
   title,
   pinFirst = false,
   showOwner = true,
-  compactStatus = false
+  statusFirst = false
 }: {
   transactions?: Transaction[]
   showMoreLink?: any
@@ -52,7 +51,7 @@ function TransactionsList({
   title?: ReactNode
   pinFirst?: boolean
   showOwner?: boolean
-  compactStatus?: boolean
+  statusFirst?: boolean
 }) {
   const router = useRouter()
   const canFilter = Boolean(onFilterChange)
@@ -76,19 +75,12 @@ function TransactionsList({
     },
     {
       ...columnLayout.status,
-      minWidth: compactStatus ? 64 : columnLayout.status.minWidth,
       filterKey: canFilter ? 'status' : undefined,
       filterType: canFilter ? ('options' as const) : undefined,
       filterOptions: STATUS_FILTER_OPTIONS,
       priority: 2,
       cell: (tx: Transaction) =>
-        compactStatus ? (
-          <TransactionStatusIndicator status={tx?.status} />
-        ) : tx?.status ? (
-          <TransactionStatusBadge status={tx.status} />
-        ) : (
-          <NotActive />
-        )
+        tx?.status ? <TransactionStatusBadge status={tx.status} /> : <NotActive />
     },
     {
       ...columnLayout.type,
@@ -214,7 +206,7 @@ function TransactionsList({
       className={'TransactionsList'}
       items={transactions}
       columns={
-        compactStatus
+        statusFirst
           ? [
               ...columns.filter(column => column.key === 'status'),
               ...columns.filter(column => column.key !== 'status')

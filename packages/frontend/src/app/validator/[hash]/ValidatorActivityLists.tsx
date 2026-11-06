@@ -172,7 +172,7 @@ function ActivityList({
         />
       ) : kind === 'transactions' ? (
         <TransactionsList
-          compactStatus
+          statusFirst
           transactions={items as Transaction[]}
           loading={loading}
           skeletonCount={pageSize}
@@ -183,7 +183,7 @@ function ActivityList({
         />
       ) : (
         <WithdrawalsList
-          compactStatus
+          statusFirst
           amountUnit="dash"
           withdrawals={items as Withdrawal[]}
           loading={loading}
