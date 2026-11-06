@@ -13,6 +13,7 @@ const tenderdashRpc = require('../../src/tenderdashRpc')
 const { ContestedResourcesController } = require('dash-platform-sdk/src/contestedResources')
 const { IdentitiesController } = require('dash-platform-sdk/src/identities')
 const { DocumentsController } = require('dash-platform-sdk/src/documents')
+const { DataContractsController } = require('dash-platform-sdk/src/dataContracts')
 const { IdentifierWASM, IdentityWASM } = require('pshenmic-dpp')
 
 describe('Identities routes', () => {
@@ -184,6 +185,7 @@ describe('Identities routes', () => {
 
     mock.method(IdentitiesController.prototype, 'getIdentityPublicKeys', async () => null)
 
+    mock.method(DataContractsController.prototype, 'getDataContractByIdentifier', async () => ({}))
     mock.method(ContestedResourcesController.prototype, 'getContestedResourceVoteState', async () => null)
 
     mock.method(tenderdashRpc, 'getBlockByHeight', async () => ({
