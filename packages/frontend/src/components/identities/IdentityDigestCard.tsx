@@ -1,4 +1,5 @@
 import type { ComponentType, ReactNode } from 'react'
+import { getL1ExplorerLink } from '../../util/l1Explorer'
 import type { Identity, Rate } from '../../types'
 import type { LoadableState } from '../../types/common'
 import {
@@ -79,7 +80,7 @@ function IdentityDigestCard({ identity, rate, className }: IdentityDigestCardPro
           value={
             <a
               {...(l1explorerBaseUrl && {
-                href: `${l1explorerBaseUrl}/tx/${identity.data?.fundingCoreTx}`,
+                href: getL1ExplorerLink(l1explorerBaseUrl, 'transaction', identity.data?.fundingCoreTx),
                 target: '_blank',
                 rel: 'noopener noreferrer'
               })}

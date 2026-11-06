@@ -1,0 +1,289 @@
+.ValidatorPage__Epochs {
+  min-width: 0;
+  margin-block: 0;
+  container-type: inline-size;
+}
+
+.ValidatorPage .InfoContainer.ValidatorPage__Epochs {
+  padding: var(--pe-space-4);
+}
+
+.ValidatorEpochs .EpochsOverview__Head {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 8px 12px;
+  margin-bottom: var(--pe-space-2);
+  padding: 0;
+}
+
+.ValidatorEpochs .EpochsOverview__TitleRow {
+  display: flex;
+  min-height: 28px;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--pe-space-2);
+  margin: 0;
+  font-family: var(--pe-font-mono);
+  font-size: var(--pe-text-sm);
+  line-height: var(--pe-leading-normal);
+}
+
+.ValidatorEpochs .EpochsOverview__Title {
+  color: var(--pe-color-fg-muted);
+  font-family: var(--pe-font-mono);
+  font-size: var(--pe-text-md);
+  font-weight: var(--pe-font-weight-normal);
+  font-style: normal;
+  line-height: var(--pe-leading-normal);
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.ValidatorEpochs__Summary {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--pe-space-2);
+  min-width: 0;
+}
+
+.ValidatorEpochs .ValidatorEpochs__PayoutMetric.ValidatorPage__AmountBadge {
+  min-width: 0;
+  max-width: 100%;
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere;
+  text-align: right;
+}
+
+.ValidatorEpochs .IdentityGrowthChart__Tick {
+  font-size: var(--pe-text-xs);
+  fill: var(--pe-color-fg-muted);
+}
+
+.ValidatorEpochs__Filters {
+  grid-column: 2;
+  grid-row: 1;
+  align-self: center;
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.ValidatorEpochs__Filters .ChartDateRange__Trigger {
+  width: auto;
+  min-height: 28px;
+  padding: 4px 8px;
+  font-size: var(--pe-text-sm);
+  white-space: nowrap;
+}
+
+.ValidatorEpochs__Filters .ChartDateRange__Trigger svg {
+  width: 14px;
+  height: 14px;
+}
+
+@media (pointer: coarse) {
+  .ValidatorEpochs__Filters .ChartDateRange__Trigger {
+    min-height: 36px;
+  }
+}
+
+.ValidatorEpochs__Plot {
+  position: relative;
+  height: 11rem;
+  min-height: 10.25rem;
+  width: 100%;
+}
+
+@container (max-width: 30rem) {
+  .ValidatorEpochs__Plot {
+    height: 10.25rem;
+  }
+}
+
+@container (max-width: 24rem) {
+  .ValidatorEpochs .EpochsOverview__Head {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+
+  .ValidatorEpochs .EpochsOverview__TitleRow {
+    display: contents;
+  }
+
+  .ValidatorEpochs .EpochsOverview__Title {
+    grid-column: 1 / -1;
+  }
+
+  .ValidatorEpochs__Summary {
+    grid-column: 1;
+    grid-row: 2;
+  }
+
+  .ValidatorEpochs__Filters {
+    grid-column: 2;
+    grid-row: 2;
+    justify-self: end;
+  }
+}
+
+.ValidatorEpochs__Bar {
+  pointer-events: none;
+  stroke: none;
+  stroke-width: 1;
+  stroke-linejoin: miter;
+}
+
+.ValidatorEpochs__Bar:not(.is-missing) {
+  fill: var(--pe-color-brand-normal);
+}
+
+.ValidatorEpochs__Bar.is-on:not(.is-missing) {
+  fill: rgba(var(--pe-color-brand-light-rgb), 0.75);
+  stroke: var(--pe-color-brand-light);
+}
+
+.ValidatorEpochs__AxisBadge {
+  fill: rgba(var(--pe-color-brand-normal-rgb), 0.2);
+}
+
+.ValidatorEpochs__AxisValue {
+  fill: var(--pe-color-fg);
+  font-family: var(--pe-font-mono);
+  font-size: var(--pe-text-xs);
+  font-variant-numeric: tabular-nums;
+}
+
+.ValidatorEpochs__Bar.is-missing {
+  stroke: var(--pe-color-fg-muted);
+  stroke-opacity: 1;
+}
+
+.ValidatorEpochs__Bar.is-missing.is-on {
+  stroke: var(--pe-color-brand-light);
+  stroke-opacity: 1;
+}
+
+.ValidatorEpochs__Hatch {
+  stroke: var(--pe-color-fg-muted);
+  stroke-opacity: 0.75;
+}
+
+.ValidatorEpochs__TimeFill {
+  fill: var(--pe-color-fg-muted);
+  fill-opacity: 0.3;
+  pointer-events: none;
+}
+
+.ValidatorEpochs__ProgressLabel {
+  fill: var(--pe-color-fg);
+  text-anchor: middle;
+  font-size: var(--pe-text-xs);
+  pointer-events: none;
+}
+
+.ValidatorEpochs__Hit {
+  fill: transparent;
+  cursor: pointer;
+}
+
+.ValidatorEpochs__Hit:focus {
+  outline: none;
+}
+
+.ValidatorEpochs__Datum:has(.ValidatorEpochs__Hit:focus-visible) .ValidatorEpochs__Bar {
+  stroke: var(--pe-color-fg);
+  stroke-width: 2;
+  stroke-opacity: 1;
+}
+
+.ValidatorEpochs .EpochsOverview__Wash {
+  display: none;
+}
+
+.ValidatorEpochs .IdentityGrowthChart__Empty {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  height: 100%;
+}
+
+.ValidatorEpochs .IdentityGrowthChart__Empty button {
+  background: transparent;
+  border: 1px solid var(--pe-color-calendar-border);
+  border-radius: 6px;
+  color: var(--pe-color-fg);
+  padding: 8px 16px;
+  cursor: pointer;
+}
+
+.ValidatorEpochs__Info {
+  padding: 0;
+  flex-shrink: 0;
+  border: 0;
+  background: transparent;
+  color: var(--pe-color-fg-muted);
+  font: inherit;
+  cursor: help;
+}
+
+.ValidatorEpochs__Info:focus-visible {
+  outline: 2px solid var(--pe-color-brand-light);
+  outline-offset: 3px;
+  border-radius: 3px;
+}
+
+.ValidatorEpochs__TooltipAnchor {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  pointer-events: none;
+}
+
+.ValidatorEpochs__TooltipDetails {
+  display: flex;
+  flex-direction: column;
+  gap: var(--pe-space-2);
+  margin: 0;
+  min-width: min(15rem, calc(100vw - 3rem));
+  font-family: var(--pe-font-mono);
+  font-size: var(--pe-text-sm);
+}
+
+.ValidatorEpochs__TooltipDetails > div {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--pe-space-4);
+}
+
+.ValidatorEpochs__TooltipDetails dt {
+  color: var(--pe-color-fg-muted);
+  flex-shrink: 0;
+}
+
+.ValidatorEpochs__TooltipDetails dd {
+  margin: 0;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.ValidatorEpochs__BarDetails {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-family: var(--pe-font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+.ValidatorEpochs__BarDates,
+.ValidatorEpochs__BarAmount > div + div {
+  color: var(--pe-color-fg-muted);
+}
+
+.ValidatorEpochs__BarAmount {
+  margin-block: 2px;
+}

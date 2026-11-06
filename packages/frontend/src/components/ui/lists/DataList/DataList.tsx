@@ -12,6 +12,7 @@ import DataListHeaderMenu, {
 } from './DataListHeaderMenu'
 import type { DateRangeFilterValue, RangeFilterValue } from '../../../filters/types'
 import './DataList.css'
+import { formatNumberWithSpaces } from '../../../../util/numbers'
 
 const COMPACT_FIRST_MAX = 768
 const DEFAULT_SKELETON_ROWS = 8
@@ -99,9 +100,7 @@ function formatChipDate(value: unknown): string {
 }
 
 function compactCount(value: number) {
-  return new Intl.NumberFormat('en', { notation: 'compact', maximumFractionDigits: 1 }).format(
-    value
-  )
+  return formatNumberWithSpaces(value, { notation: 'compact', maximumFractionDigits: 1 })
 }
 
 function formatFilterChip(type: DataListHeaderFilterType | undefined, value: unknown): string {
@@ -403,13 +402,13 @@ export default function DataList<T = any>({
       aria-busy={loading || paging?.loadingMore ? true : undefined}
       {...wrapperProps}
     >
-      {canFilter || title || paging ? (
+      {title || canFilter || (paging && !paging.hideModeSwitch) ? (
         <div className={'DataList__FilterBar'}>
           {title ? (
             <div className={'DataList__TitleRow'}>
               <h1 className={'DataList__Title'}>{title}</h1>
               {paging && paging.total > 0 ? (
-                <span className={'DataList__Total'} title={paging.total.toLocaleString('en-US')}>
+                <span className={'DataList__Total'} title={formatNumberWithSpaces(paging.total)}>
                   {compactCount(paging.total)}
                 </span>
               ) : null}
@@ -472,7 +471,7 @@ export default function DataList<T = any>({
               </button>
             ) : null}
           </div>
-          {paging && !showCenteredEmpty ? (
+          {paging && !paging.hideModeSwitch && !showCenteredEmpty ? (
             <DataListPagingBar
               paging={paging}
               itemCount={items.length}
@@ -483,6 +482,16 @@ export default function DataList<T = any>({
             />
           ) : null}
         </div>
+      ) : null}
+      {paging?.hideModeSwitch && !showCenteredEmpty ? (
+        <DataListPagingBar
+          paging={paging}
+          itemCount={items.length}
+          scrollRef={scrollRef}
+          sentinelRef={sentinelRef}
+          loading={loading}
+          pageScroll={!containedScroll}
+        />
       ) : null}
       <div
         ref={scrollRef}

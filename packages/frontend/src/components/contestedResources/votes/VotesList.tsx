@@ -61,6 +61,9 @@ interface VotesListProps {
   loading?: boolean
   itemsCount?: number
   showDataContract?: boolean
+  showVoter?: boolean
+  resourceFirst?: boolean
+  blankMissing?: boolean
   filterValues?: Record<string, unknown>
   onFilterChange?: (key: string, value: unknown) => void
   paging?: DataListProps['paging']
@@ -75,6 +78,9 @@ function VotesList({
   loading,
   itemsCount,
   showDataContract = true,
+  showVoter = true,
+  resourceFirst = false,
+  blankMissing = false,
   filterValues,
   onFilterChange,
   paging,
@@ -83,49 +89,54 @@ function VotesList({
 }: VotesListProps) {
   const router = useRouter()
   const canFilter = Boolean(onFilterChange)
+  const missing = () => (blankMissing ? null : <NotActive />)
 
   const columns = [
-    {
-      ...columnLayout.voter,
-      filterKey: canFilter ? 'voter_identity' : undefined,
-      filterType: canFilter ? ('search' as const) : undefined,
-      filterPlaceholder: 'Voter identity',
-      cell: (vote: Vote) =>
-        vote?.proTxHash ? (
-          <LinkContainer
-            onClick={(e: MouseEvent) => {
-              e.stopPropagation()
-              e.preventDefault()
-              router.push(`/validator/${vote.proTxHash?.toUpperCase()}`)
-            }}
-          >
-            <Identifier avatar={true} ellipsis={true} styles={['highlight-both']}>
-              {vote.proTxHash.toUpperCase()}
-            </Identifier>
-          </LinkContainer>
-        ) : vote?.voterIdentifier ? (
-          <LinkContainer
-            onClick={(e: MouseEvent) => {
-              e.stopPropagation()
-              e.preventDefault()
-              router.push(`/identity/${vote.voterIdentifier}`)
-            }}
-          >
-            <Identifier avatar={true} ellipsis={true} styles={['highlight-both']}>
-              {vote.voterIdentifier}
-            </Identifier>
-          </LinkContainer>
-        ) : (
-          <NotActive />
-        )
-    },
+    ...(showVoter
+      ? [
+          {
+            ...columnLayout.voter,
+            filterKey: canFilter ? 'voter_identity' : undefined,
+            filterType: canFilter ? ('search' as const) : undefined,
+            filterPlaceholder: 'Voter identity',
+            cell: (vote: Vote) =>
+              vote?.proTxHash ? (
+                <LinkContainer
+                  onClick={(e: MouseEvent) => {
+                    e.stopPropagation()
+                    e.preventDefault()
+                    router.push(`/validator/${vote.proTxHash?.toUpperCase()}`)
+                  }}
+                >
+                  <Identifier avatar={true} ellipsis={true} styles={['highlight-both']}>
+                    {vote.proTxHash.toUpperCase()}
+                  </Identifier>
+                </LinkContainer>
+              ) : vote?.voterIdentifier ? (
+                <LinkContainer
+                  onClick={(e: MouseEvent) => {
+                    e.stopPropagation()
+                    e.preventDefault()
+                    router.push(`/identity/${vote.voterIdentifier}`)
+                  }}
+                >
+                  <Identifier avatar={true} ellipsis={true} styles={['highlight-both']}>
+                    {vote.voterIdentifier}
+                  </Identifier>
+                </LinkContainer>
+              ) : (
+                missing()
+              )
+          }
+        ]
+      : []),
     {
       ...columnLayout.choice,
       filterKey: canFilter ? 'choice' : undefined,
       filterType: canFilter ? ('options' as const) : undefined,
       filterOptions: CHOICE_OPTIONS,
       cell: (vote: Vote) =>
-        typeof vote?.choice === 'number' ? <ChoiceBadge choice={vote.choice} /> : <NotActive />
+        typeof vote?.choice === 'number' ? <ChoiceBadge choice={vote.choice} /> : missing()
     },
     {
       ...columnLayout.document,
@@ -150,7 +161,7 @@ function VotesList({
         if (resourceLabel) {
           return <span className={'DataList__Entity'}>{resourceLabel}</span>
         }
-        return <NotActive />
+        return missing()
       }
     },
     {
@@ -160,7 +171,7 @@ function VotesList({
       filterPlaceholder: 'Identity ID',
       priority: 1,
       cell: (vote: Vote) => {
-        if (!vote?.towardsIdentity) return <NotActive />
+        if (!vote?.towardsIdentity) return missing()
         const alias = findActiveAlias(vote.identityAliases || [])
         return (
           <LinkContainer
@@ -190,7 +201,7 @@ function VotesList({
         typeof vote?.power === 'number' ? (
           <Badge colorScheme={vote.power > 1 ? 'green' : 'blue'}>x{vote.power}</Badge>
         ) : (
-          <NotActive />
+          missing()
         )
     },
     ...(showDataContract
@@ -212,7 +223,7 @@ function VotesList({
                   </Identifier>
                 </LinkContainer>
               ) : (
-                <NotActive />
+                missing()
               )
           }
         ]
@@ -225,10 +236,15 @@ function VotesList({
         vote?.timestamp ? (
           <TimeDelta showTimestampTooltip={true} endDate={new Date(vote.timestamp)} />
         ) : (
-          <NotActive />
+          missing()
         )
     }
   ]
+  const orderedColumns = resourceFirst
+    ? ['document', 'choice', 'towards', 'power', 'contract', 'timestamp', 'voter'].flatMap(key =>
+        columns.filter(column => column.key === key)
+      )
+    : columns
 
   if (votes === undefined) return <ErrorMessageBlock />
 
@@ -236,7 +252,7 @@ function VotesList({
     <DataList
       className={'VotesList'}
       items={votes}
-      columns={columns}
+      columns={orderedColumns}
       pinFirst={pinFirst}
       loading={loading}
       skeletonCount={itemsCount}

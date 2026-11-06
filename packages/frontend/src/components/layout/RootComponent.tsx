@@ -34,7 +34,7 @@ export default function RootComponent({ children }: RootComponentProps) {
                   <Background snow={false} />
                   <BreadcrumbsProvider>
                     <Navbar />
-                    {children}
+                    <main>{children}</main>
                   </BreadcrumbsProvider>
                   <Footer />
                 </ModalProvider>

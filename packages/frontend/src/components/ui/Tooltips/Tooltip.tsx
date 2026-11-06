@@ -2,6 +2,7 @@
 
 import {
   useState,
+  useContext,
   useRef,
   useEffect,
   useId,
@@ -10,11 +11,12 @@ import {
   cloneElement,
   isValidElement
 } from 'react'
-import type { MouseEvent, ReactElement, ReactNode, Ref } from 'react'
+import type { FocusEvent, MouseEvent, ReactElement, ReactNode, Ref } from 'react'
 import { createPortal } from 'react-dom'
 import { useOutsideClick } from '../../../hooks/useOutsideClick'
-import { useTooltipActive } from 'src/contexts/TooltipProvider'
+import { useTooltipActive } from '../../../contexts/TooltipProvider'
 import './Tooltip.css'
+import FloatingTooltip, { FloatingTooltipScope } from './FloatingTooltip'
 
 const LEAVE_GRACE_MS = 420
 const GUTTER = 10
@@ -59,6 +61,9 @@ function placeFixed(rect: DOMRect, placement: string, tipW = 240, tipH = 80): Ti
     const maxCenter = window.innerWidth - VIEW_PAD - half
     left =
       maxCenter > minCenter ? Math.min(maxCenter, Math.max(minCenter, left)) : window.innerWidth / 2
+    const topEdge = next === 'top' ? top - tipH : top
+    const boundedTop = Math.max(VIEW_PAD, Math.min(topEdge, window.innerHeight - tipH - VIEW_PAD))
+    top = next === 'top' ? boundedTop + tipH : boundedTop
   } else {
     const half = tipH / 2
     const minCenter = VIEW_PAD + half
@@ -71,7 +76,8 @@ function placeFixed(rect: DOMRect, placement: string, tipW = 240, tipH = 80): Ti
 }
 
 // `label` is an alias of `content` for existing call sites.
-interface TooltipProps {
+export interface TooltipProps {
+  id?: string
   title?: ReactNode
   content?: ReactNode
   label?: ReactNode
@@ -81,10 +87,19 @@ interface TooltipProps {
   asChild?: boolean
   isOpen?: boolean
   isDisabled?: boolean
+  onOpenChange?: (open: boolean) => void
+  onFloatingEnter?: () => void
+  onFloatingLeave?: () => void
+  chart?: boolean
   [key: string]: unknown
 }
 
-export default function Tooltip({
+export default function Tooltip(props: TooltipProps) {
+  const floating = useContext(FloatingTooltipScope)
+  return floating ? <FloatingTooltip {...props} /> : <LegacyTooltip {...props} />
+}
+
+function LegacyTooltip({
   title = '',
   content = '',
   label,
@@ -100,7 +115,9 @@ export default function Tooltip({
   const extraClass = title && body ? 'Tooltip--Extended' : ''
   const id = useId()
   const active = useTooltipActive()
+  const deactivate = active?.deactivate
   const [hovered, setHovered] = useState(false)
+  const [focused, setFocused] = useState(false)
   const [pos, setPos] = useState<TipPos | null>(null)
   const triggerRef = useRef<HTMLElement | null>(null)
   const tipRef = useRef<HTMLDivElement | null>(null)
@@ -112,28 +129,38 @@ export default function Tooltip({
   pinnedRef.current = pinned
   const locked = Boolean(active?.pinnedId && active.pinnedId !== id)
   const isMine = !active || active.activeId === id
-  const openByInteraction = pinned || (hovered && !locked)
+  const openByInteraction = pinned || ((hovered || focused) && !locked)
   const openByProp = typeof isOpenProp === 'boolean' ? isOpenProp : openByInteraction
-  const isOpen = !isDisabled && openByProp && (isMine || pinned)
+  const isOpen = !isDisabled && openByProp && (typeof isOpenProp === 'boolean' || isMine || pinned)
 
   useEffect(() => {
     setMounted(true)
   }, [])
 
-  const clearLeave = () => {
+  const clearLeave = useCallback(() => {
     if (leaveTimer.current) {
       clearTimeout(leaveTimer.current)
       leaveTimer.current = null
     }
-  }
+  }, [])
 
   const release = useCallback(() => {
     clearLeave()
     setHovered(false)
+    setFocused(false)
     setPos(null)
     active?.unpin(id)
     active?.deactivate(id)
-  }, [active, id])
+  }, [active, id, clearLeave])
+
+  useEffect(() => {
+    if (!isOpen) return
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') release()
+    }
+    document.addEventListener('keydown', onKeyDown)
+    return () => document.removeEventListener('keydown', onKeyDown)
+  }, [isOpen, release])
 
   const updatePos = useCallback(() => {
     const el = triggerRef.current
@@ -175,19 +202,19 @@ export default function Tooltip({
   useEffect(
     () => () => {
       clearLeave()
-      active?.deactivate(id)
-      // eslint-disable-next-line react-hooks/exhaustive-deps
+      deactivate?.(id)
     },
-    [id]
+    [id, deactivate, clearLeave]
   )
 
   useEffect(() => {
     if (active && active.activeId != null && active.activeId !== id && !pinned) {
       clearLeave()
       setHovered(false)
+      setFocused(false)
       setPos(null)
     }
-  }, [active?.activeId, id, active, pinned])
+  }, [id, active, pinned, clearLeave])
 
   const hoverIn = () => {
     if (locked) return
@@ -200,11 +227,23 @@ export default function Tooltip({
     clearLeave()
     leaveTimer.current = setTimeout(() => {
       setHovered(false)
-      if (!pinned) {
+      if (!pinned && !focused) {
         active?.deactivate(id)
         setPos(null)
       }
     }, LEAVE_GRACE_MS)
+  }
+
+  const onTriggerFocus = () => {
+    clearLeave()
+    if (active?.pinnedId && active.pinnedId !== id) active.unpin(active.pinnedId)
+    setFocused(true)
+    active?.activate(id)
+  }
+
+  const onTriggerBlur = (event: FocusEvent<HTMLElement>) => {
+    if (event.currentTarget.contains(event.relatedTarget)) return
+    release()
   }
 
   const onTriggerClick = (e: MouseEvent) => {
@@ -216,6 +255,7 @@ export default function Tooltip({
     clearLeave()
     if (pinned) {
       setHovered(false)
+      setFocused(false)
       setPos(null)
       active?.unpin(id)
       return
@@ -234,11 +274,18 @@ export default function Tooltip({
       onMouseEnter?: (e: MouseEvent) => void
       onMouseLeave?: (e: MouseEvent) => void
       onClick?: (e: MouseEvent) => void
-    }> & { ref?: Ref<HTMLElement> }
+      onFocus?: (e: FocusEvent<HTMLElement>) => void
+      onBlur?: (e: FocusEvent<HTMLElement>) => void
+      ref?: Ref<HTMLElement>
+      'aria-describedby'?: string
+    }>
     trigger = cloneElement(child, {
+      'aria-describedby':
+        [child.props['aria-describedby'], isOpen ? id : undefined].filter(Boolean).join(' ') ||
+        undefined,
       ref: (node: HTMLElement | null) => {
         setTriggerNode(node)
-        const r = child.ref
+        const r = child.props.ref
         if (typeof r === 'function') r(node)
         else if (r && typeof r === 'object' && 'current' in r) {
           ;(r as { current: HTMLElement | null }).current = node
@@ -255,6 +302,14 @@ export default function Tooltip({
       onClick: (e: MouseEvent) => {
         child.props?.onClick?.(e)
         onTriggerClick(e)
+      },
+      onFocus: (e: FocusEvent<HTMLElement>) => {
+        child.props?.onFocus?.(e)
+        onTriggerFocus()
+      },
+      onBlur: (e: FocusEvent<HTMLElement>) => {
+        child.props?.onBlur?.(e)
+        onTriggerBlur(e)
       }
     } as never)
   } else {
@@ -262,9 +317,12 @@ export default function Tooltip({
       <span
         ref={setTriggerNode}
         className={'Tooltip__Trigger'}
+        aria-describedby={isOpen ? id : undefined}
         onMouseEnter={hoverIn}
         onMouseLeave={hoverOut}
         onClick={onTriggerClick}
+        onFocus={onTriggerFocus}
+        onBlur={onTriggerBlur}
       >
         {children}
       </span>
@@ -274,6 +332,7 @@ export default function Tooltip({
   const tipNode =
     isOpen && mounted ? (
       <div
+        id={id}
         ref={tipRef}
         className={`Tooltip ${extraClass}${className ? ` ${className}` : ''}`}
         data-placement={pos?.placement || placement}

@@ -1,84 +1,165 @@
 'use client'
-
-import { useState, useEffect } from 'react'
+import { Fragment, useEffect } from 'react'
+import { useQuery } from '@tanstack/react-query'
 import * as Api from '../../../util/Api'
-import { fetchHandlerSuccess, fetchHandlerError } from '../../../util'
-import ValidatorActivityLists from './ValidatorActivityLists'
-import ValidatorCharts from './ValidatorCharts'
-import Link from 'next/link'
+import { getL1ExplorerLink } from '../../../util/l1Explorer'
 import {
-  Identifier,
-  DateBlock,
-  Endpoint,
-  IpAddress,
-  InfoLine,
-  BigNumber,
-  TimeDelta
-} from '../../../components/data'
-import { ValueContainer, PageDataContainer, InfoContainer } from '../../../components/ui/containers'
-import { HorisontalSeparator } from '../../../components/ui/separators'
-import { ValidatorCard } from '../../../components/validators'
-import { CircleIcon } from '../../../components/ui/icons'
-import { RateTooltip } from '../../../components/ui/Tooltips'
+  validatorCollateral,
+  validatorDashAmount as dashAmount
+} from '../../../util/validatorAmount'
+import { creditsToDash } from '../../../util'
+import { formatNumberWithSpaces } from '../../../util/numbers'
+import { Skeleton } from '../../../components/home/Skeleton'
+import ValidatorActivityLists from './ValidatorActivityLists'
+import ValidatorEpochs from './ValidatorEpochs'
+import ValidatorEarnings from './ValidatorEarnings'
+import ValidatorAmountDetails from './ValidatorAmountDetails'
+import ValidatorSurface from './ValidatorSurface'
+import ValidatorService from './ValidatorService'
+import ValidatorFieldLabel from './ValidatorFieldLabel'
+import Link from 'next/link'
+import Image from 'next/image'
+import { Identifier, TimeDelta, InfoLine, NotActive } from '../../../components/data'
+import { PageDataContainer, InfoContainer } from '../../../components/ui/containers'
+import { CopyButton } from '../../../components/ui/Buttons'
+import { Badge } from '../../../components/ui/Badge/Badge'
+import ImageGenerator from '../../../components/imageGenerator'
+
+import { Tooltip } from '../../../components/ui/Tooltips'
+import { FloatingTooltipScope } from '../../../components/ui/Tooltips/FloatingTooltip'
 import { useBreadcrumbs } from '../../../contexts/BreadcrumbsContext'
-import { Badge } from '../../../components/ui/Badge'
 import { useActiveNetwork } from 'src/contexts'
-import type { LoadableState, Rate, Validator as ValidatorType } from '../../../types'
 
 import { getValidatorStatus } from '../../../components/validators/validatorStatus'
+import ValidatorStatus from '../../../components/validators/ValidatorStatusIndicator'
 
 import './ValidatorPage.css'
-
-/** API endpoint status may include a free-form message. */
-type EndpointStatus = {
-  host?: string
-  port?: number
-  status?: string
-  message?: string
-} | null
-
-/** Epoch fields used on the page (API may flatten Epoch onto epochInfo). */
-type EpochInfo = {
-  number?: number
-  endTime?: number | string
-} | null
-
-type ValidatorDetail = Omit<Partial<ValidatorType>, 'epochInfo' | 'endpoints' | 'proTxInfo'> & {
-  epochInfo?: EpochInfo
-  endpoints?: {
-    coreP2PPortStatus?: EndpointStatus
-    platformP2PPortStatus?: EndpointStatus
-    platformGrpcPortStatus?: EndpointStatus
-  } | null
-  proTxInfo?: {
-    collateralAddress?: string | null
-    state?: {
-      PoSeBanHeight?: number
-      PoSeRevivedHeight?: number
-      PoSePenalty?: number
-      ownerAddress?: string
-      votingAddress?: string
-      payoutAddress?: string
-      pubKeyOperator?: string
-    } | null
-  } | null
-}
 
 interface ValidatorProps {
   hash: string
 }
 
+function KeyIdentifier({
+  value,
+  href,
+  external,
+  wrap = false
+}: {
+  value: string
+  href?: string
+  external?: boolean
+  wrap?: boolean
+}) {
+  const identifier = (
+    <Identifier
+      ellipsis={!wrap}
+      linesAdjustment={wrap}
+      className={wrap ? 'ValidatorPage__BalancedKey' : undefined}
+      styles={['highlight-both']}
+      copyButton={!href}
+    >
+      {value}
+    </Identifier>
+  )
+
+  if (!href) return identifier
+
+  const linked = external ? (
+    <a
+      className={'ValidatorPage__KeyLink ValidatorPage__Link'}
+      href={href}
+      target={'_blank'}
+      rel={'noopener noreferrer'}
+    >
+      {identifier}
+    </a>
+  ) : (
+    <Link className={'ValidatorPage__KeyLink ValidatorPage__Link'} href={href}>
+      {identifier}
+    </Link>
+  )
+
+  return (
+    <span className={'ValidatorPage__KeyLine'}>
+      {linked}
+      <CopyButton className={'Identifier__CopyButton'} text={value} />
+    </span>
+  )
+}
+
+function WithdrawalsBadge({ identity, loading }: { identity?: string | null; loading: boolean }) {
+  const query = useQuery({
+    queryKey: ['identity-withdrawals', identity],
+    enabled: Boolean(identity),
+    staleTime: 60000,
+    retry: 1,
+    queryFn: () => Api.getWithdrawalsByIdentity(identity as string, 1, 100, 'desc')
+  })
+  const rows = query.data?.resultSet ?? []
+  const completed = rows.filter(row => row.status === 'COMPLETE')
+  const total = completed.reduce<number | null>((sum, row) => {
+    const amount = row.amount == null ? NaN : Number(row.amount)
+    return sum == null || !Number.isFinite(amount) || amount < 0 ? null : sum + amount
+  }, 0)
+  const pending = loading || (Boolean(identity) && query.isPending)
+  const amount =
+    query.isError || !identity || total == null || !Number.isFinite(total)
+      ? 'Unavailable'
+      : `${dashAmount(total)} DASH`
+  return (
+    <Tooltip
+      className="ValidatorPage__Tooltip"
+      title="Withdrawn to Core"
+      content={
+        <ValidatorAmountDetails
+          dash={!pending && amount !== 'Unavailable' && total != null ? creditsToDash(total) : null}
+        />
+      }
+    >
+      <a
+        href="#withdrawals"
+        className="ValidatorPage__WithdrawalsBadge"
+        aria-label={`Withdrawn to Core: ${pending ? 'loading' : amount}. View history.`}
+      >
+        <Badge
+          size="xs"
+          className="ValidatorPage__AmountBadge"
+          colorScheme={
+            !pending &&
+            !query.isError &&
+            identity &&
+            total != null &&
+            Number.isFinite(total) &&
+            total > 0
+              ? 'red'
+              : 'dimGray'
+          }
+        >
+          {pending ? <Skeleton w={64} h="1em" /> : amount}
+        </Badge>
+      </a>
+    </Tooltip>
+  )
+}
+
 function Validator({ hash }: ValidatorProps) {
   const { setBreadcrumbs } = useBreadcrumbs()
-  const [validator, setValidator] = useState<LoadableState<ValidatorDetail>>({
-    data: {} as ValidatorDetail,
-    loading: true,
-    error: false
+  const validatorQuery = useQuery({
+    queryKey: ['validator-detail', hash],
+    queryFn: () => Api.getValidatorByProTxHash(hash),
+    staleTime: 60_000,
+    refetchInterval: 60_000,
+    retry: 1
   })
-  const [rate, setRate] = useState<LoadableState<Rate>>({
-    data: {} as Rate,
-    loading: true,
-    error: false
+  const validator = {
+    data: validatorQuery.data,
+    loading: validatorQuery.isPending,
+    error: validatorQuery.isError && validatorQuery.data == null
+  }
+  const rate = useQuery({
+    queryKey: ['rate'],
+    queryFn: () => Api.getRate(),
+    staleTime: 60_000
   })
   const { l1explorerBaseUrl } = useActiveNetwork()
 
@@ -91,383 +172,681 @@ function Validator({ hash }: ValidatorProps) {
   }, [setBreadcrumbs, hash])
 
   const status = getValidatorStatus(validator.data)
-  const posePenalty = validator.data?.proTxInfo?.state?.PoSePenalty ?? 0
-  const poseStatusColor =
-    status.label === 'Banned' ? 'red.default' : posePenalty > 0 ? 'yellow.default' : 'green.default'
+  const poseValue = validator.data?.proTxInfo?.state?.PoSePenalty
+  const posePenalty = Number(poseValue)
+  const poseKnown = poseValue != null && Number.isFinite(posePenalty) && posePenalty >= 0
+  const poseScoreMax = Number(validator.data?.poseScoreMax)
+  const hasPoseScoreMax = Number.isInteger(poseScoreMax) && poseScoreMax > 0
+  const isPoseBanned = status.key === 'banned'
+  const balance = Number(validator.data?.identityBalance)
+  const hasBalance = Number.isFinite(balance) && validator.data?.identityBalance != null
+  const registeredDate = validator.data?.registeredAt ? new Date(validator.data.registeredAt) : null
+  const registrationDate =
+    registeredDate && Number.isFinite(registeredDate.getTime())
+      ? registeredDate.toLocaleDateString('en-GB', { timeZone: 'UTC' }).replaceAll('/', '.')
+      : null
+  const registeredBlockLink = getL1ExplorerLink(
+    l1explorerBaseUrl,
+    'block',
+    validator.data?.registeredCoreBlockHash
+  )
+  const bannedBlockLink = getL1ExplorerLink(
+    l1explorerBaseUrl,
+    'block',
+    validator.data?.poseBanCoreBlockHash
+  )
+  const countryCode = validator.data?.geoIpInfo?.countryCode
+  const country = countryCode?.trim().toLowerCase()
+  const host = validator.error ? null : validator.data?.endpoints?.coreP2PPortStatus?.host
+  const region = [validator.data?.geoIpInfo?.city, countryCode].filter(Boolean).join(', ')
 
-  useEffect(() => {
-    let cancelled = false
-    setValidator(state => ({ ...state, loading: true, error: false }))
-    Api.getValidatorByProTxHash(hash)
-      .then(res => {
-        if (!cancelled) fetchHandlerSuccess(setValidator, res as Partial<ValidatorDetail>)
-      })
-      .catch(err => {
-        if (!cancelled) fetchHandlerError(setValidator, err)
-      })
-    Api.getRate()
-      .then(res => {
-        if (!cancelled) fetchHandlerSuccess(setRate, res)
-      })
-      .catch(err => {
-        if (!cancelled) fetchHandlerError(setRate, err)
-      })
-    return () => {
-      cancelled = true
+  const proTxState = validator.data?.proTxInfo?.state
+  const ownerVotes =
+    !!proTxState?.ownerAddress && proTxState.ownerAddress === proTxState.votingAddress
+  const collateralAmount = validatorCollateral(validator.data?.proTxInfo?.type)
+  const votingBadge =
+    validator.data?.votingIdentityBalance != null
+      ? `${dashAmount(Number(validator.data.votingIdentityBalance))} DASH`
+      : ''
+  const keyRows = [
+    {
+      key: 'service',
+      line: (
+        <ValidatorService
+          endpoints={validator.error ? null : validator.data?.endpoints}
+          loading={validator.loading}
+          error={Boolean(validator.error)}
+        />
+      )
+    },
+    {
+      key: 'registration',
+      line: (
+        <InfoLine
+          className="ValidatorPage__Key ValidatorPage__CompactRow ValidatorPage__RegistrationRow"
+          postfix=""
+          title={
+            <ValidatorFieldLabel
+              label="Registration"
+              description="When this masternode was registered on Dash Core."
+            />
+          }
+          loading={validator.loading}
+          error={validator.error}
+          value={
+            <span className="ValidatorPage__RegistrationDetails">
+              <Tooltip
+                className="ValidatorPage__Tooltip"
+                content={
+                  registrationDate
+                    ? `${registrationDate} (UTC)`
+                    : 'Registration date not returned by the API'
+                }
+              >
+                {registrationDate && registeredBlockLink ? (
+                  <a
+                    className="ValidatorPage__Registered ValidatorPage__Link"
+                    href={registeredBlockLink}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <TimeDelta endDate={registeredDate} showTimestampTooltip={false} />
+                  </a>
+                ) : (
+                  <span className="ValidatorPage__Registered ValidatorPage__Help" tabIndex={0}>
+                    {registrationDate ? (
+                      <TimeDelta endDate={registeredDate} showTimestampTooltip={false} />
+                    ) : (
+                      'Unavailable'
+                    )}
+                  </span>
+                )}
+              </Tooltip>
+            </span>
+          }
+        />
+      )
+    },
+    {
+      key: 'quorum',
+      line: (
+        <InfoLine
+          className="ValidatorPage__Key ValidatorPage__CompactRow"
+          postfix=""
+          title={
+            <ValidatorFieldLabel
+              label="Status"
+              description="Platform quorum participation and PoSe ban status."
+            />
+          }
+          loading={validator.loading}
+          value={<ValidatorStatus status={status} unavailable={Boolean(validator.error)} />}
+        />
+      )
+    },
+    {
+      key: 'pose',
+      line: (
+        <InfoLine
+          className="ValidatorPage__Key ValidatorPage__CompactRow"
+          postfix=""
+          title={
+            <ValidatorFieldLabel
+              label="PoSe"
+              description="Current Proof of Service penalty and the threshold for a ban. A lower penalty is better."
+            />
+          }
+          loading={validator.loading}
+          error={validator.error}
+          value={
+            validator.error || !poseKnown ? (
+              'Unavailable'
+            ) : (
+              <span className="ValidatorPage__PoseValue">
+                {isPoseBanned && bannedBlockLink ? (
+                  <a
+                    className="ValidatorPage__Link"
+                    href={bannedBlockLink}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    {formatNumberWithSpaces(posePenalty)}
+                  </a>
+                ) : (
+                  formatNumberWithSpaces(posePenalty)
+                )}
+                {hasPoseScoreMax ? ` / ${formatNumberWithSpaces(poseScoreMax)}` : ''}
+              </span>
+            )
+          }
+        />
+      )
+    },
+    {
+      key: 'payout',
+      line: (
+        <InfoLine
+          className={'ValidatorPage__Key'}
+          postfix={''}
+          title={
+            <ValidatorFieldLabel
+              label="Payout"
+              description="Address receiving the owner’s Core masternode rewards."
+            />
+          }
+          value={
+            <KeyIdentifier
+              value={proTxState?.payoutAddress || ''}
+              href={
+                l1explorerBaseUrl
+                  ? getL1ExplorerLink(l1explorerBaseUrl, 'address', proTxState?.payoutAddress)
+                  : '#'
+              }
+              external={true}
+            />
+          }
+          loading={validator.loading}
+          error={validator.error || !proTxState?.payoutAddress}
+        />
+      )
+    },
+    {
+      key: 'collateral',
+      line: (
+        <InfoLine
+          className={'ValidatorPage__Key'}
+          postfix={''}
+          title={
+            <ValidatorFieldLabel
+              label="Collateral"
+              description="Core address holding the masternode collateral."
+            />
+          }
+          value={
+            <KeyIdentifier
+              value={validator.data?.proTxInfo?.collateralAddress || ''}
+              href={
+                l1explorerBaseUrl
+                  ? getL1ExplorerLink(
+                      l1explorerBaseUrl,
+                      'address',
+                      validator.data?.proTxInfo?.collateralAddress
+                    )
+                  : '#'
+              }
+              external={true}
+            />
+          }
+          loading={validator.loading}
+          error={validator.error || !validator.data?.proTxInfo?.collateralAddress}
+        />
+      )
+    },
+    {
+      key: 'owner',
+      line: (
+        <InfoLine
+          className={'ValidatorPage__Key'}
+          postfix={''}
+          title={
+            <span className={'ValidatorPage__StatusLabel'}>
+              <ValidatorFieldLabel
+                label={ownerVotes ? 'Owner, voting' : 'Owner'}
+                description={
+                  ownerVotes
+                    ? 'The same address is used for ownership and governance voting.'
+                    : 'Address associated with the key that controls this masternode’s registration.'
+                }
+              />
+              {ownerVotes && votingBadge ? (
+                <Tooltip
+                  className="ValidatorPage__Tooltip"
+                  title="Voting identity balance"
+                  content={
+                    <ValidatorAmountDetails
+                      dash={
+                        !validator.loading && !validator.error
+                          ? creditsToDash(Number(validator.data?.votingIdentityBalance))
+                          : null
+                      }
+                    />
+                  }
+                >
+                  <Badge
+                    size="xs"
+                    className="ValidatorPage__AmountBadge ValidatorPage__Help"
+                    tabIndex={0}
+                    colorScheme={
+                      Number(validator.data?.votingIdentityBalance) > 0 ? 'blue' : 'dimGray'
+                    }
+                  >
+                    {votingBadge}
+                  </Badge>
+                </Tooltip>
+              ) : null}
+            </span>
+          }
+          value={
+            <KeyIdentifier
+              value={proTxState?.ownerAddress || ''}
+              href={getL1ExplorerLink(l1explorerBaseUrl, 'address', proTxState?.ownerAddress)}
+              external={true}
+            />
+          }
+          loading={validator.loading}
+          error={validator.error || !proTxState?.ownerAddress}
+        />
+      )
+    },
+    ...(!ownerVotes && proTxState?.votingAddress
+      ? [
+          {
+            key: 'voting',
+            line: (
+              <InfoLine
+                className={'ValidatorPage__Key'}
+                postfix={''}
+                title={
+                  <span className={'ValidatorPage__StatusLabel'}>
+                    <ValidatorFieldLabel
+                      label="Voting"
+                      description="Address associated with the masternode’s governance voting key."
+                    />
+                    {votingBadge ? (
+                      <Tooltip
+                        className="ValidatorPage__Tooltip"
+                        title="Voting identity balance"
+                        content={
+                          <ValidatorAmountDetails
+                            dash={
+                              !validator.loading && !validator.error
+                                ? creditsToDash(Number(validator.data?.votingIdentityBalance))
+                                : null
+                            }
+                          />
+                        }
+                      >
+                        <Badge
+                          size="xs"
+                          className="ValidatorPage__AmountBadge ValidatorPage__Help"
+                          tabIndex={0}
+                          colorScheme={
+                            Number(validator.data?.votingIdentityBalance) > 0 ? 'blue' : 'dimGray'
+                          }
+                        >
+                          {votingBadge}
+                        </Badge>
+                      </Tooltip>
+                    ) : null}
+                  </span>
+                }
+                value={
+                  <KeyIdentifier
+                    value={proTxState.votingAddress}
+                    href={
+                      l1explorerBaseUrl
+                        ? getL1ExplorerLink(l1explorerBaseUrl, 'address', proTxState.votingAddress)
+                        : '#'
+                    }
+                    external={true}
+                  />
+                }
+                loading={validator.loading}
+                error={!proTxState.votingAddress}
+              />
+            )
+          }
+        ]
+      : []),
+    {
+      key: 'identity',
+      line: (
+        <InfoLine
+          className={'ValidatorPage__Key'}
+          postfix={''}
+          title={
+            <ValidatorFieldLabel
+              label="Identity"
+              description="Platform identity associated with this validator."
+            />
+          }
+          value={
+            <KeyIdentifier
+              value={validator.data?.identity || ''}
+              href={`/identity/${validator.data?.identity || ''}`}
+            />
+          }
+          loading={validator.loading}
+          error={validator.error || !validator.data?.identity}
+        />
+      )
+    },
+    {
+      key: 'votingIdentity',
+      line: (
+        <InfoLine
+          className="ValidatorPage__Key"
+          postfix=""
+          title={
+            <ValidatorFieldLabel
+              label="Voting identity"
+              description="Platform identity associated with the masternode’s voting key."
+            />
+          }
+          value={
+            validator.data?.votingIdentity ? (
+              <KeyIdentifier
+                value={validator.data.votingIdentity}
+                href={`/identity/${validator.data.votingIdentity}`}
+              />
+            ) : (
+              <NotActive />
+            )
+          }
+          loading={validator.loading}
+          error={validator.error}
+        />
+      )
+    },
+    {
+      key: 'proTxHash',
+      line: (
+        <InfoLine
+          className="ValidatorPage__Key ValidatorPage__ProTxHashRow ValidatorPage__CompactRow"
+          postfix={''}
+          title={
+            <ValidatorFieldLabel
+              label="ProTxHash"
+              description="Registration transaction hash. Identifies this masternode on Dash Core."
+            />
+          }
+          value={
+            <KeyIdentifier
+              value={validator.data?.proTxHash || ''}
+              href={
+                l1explorerBaseUrl
+                  ? getL1ExplorerLink(l1explorerBaseUrl, 'transaction', validator.data?.proTxHash)
+                  : undefined
+              }
+              external={true}
+            />
+          }
+          loading={validator.loading}
+          error={validator.error || !validator.data?.proTxHash}
+        />
+      )
+    },
+    {
+      key: 'node',
+      line: (
+        <InfoLine
+          className={'ValidatorPage__Key'}
+          postfix={''}
+          title={
+            <ValidatorFieldLabel
+              label="Evonode ID"
+              description="Identifies this node on the Platform peer-to-peer network."
+            />
+          }
+          value={<KeyIdentifier value={proTxState?.platformNodeID || ''} />}
+          loading={validator.loading}
+          error={validator.error || !proTxState?.platformNodeID}
+        />
+      )
+    },
+    {
+      key: 'lastBlock',
+      line: (
+        <InfoLine
+          className="ValidatorPage__Key ValidatorPage__CompactRow"
+          postfix=""
+          title="Last proposed"
+          loading={validator.loading}
+          error={validator.error}
+          value={
+            validator.data?.lastProposedBlockHeader?.hash ? (
+              <Link
+                className="ValidatorPage__Link ValidatorPage__ActivityValue"
+                href={`/block/${validator.data.lastProposedBlockHeader.hash}`}
+              >
+                <TimeDelta endDate={validator.data.lastProposedBlockHeader.timestamp} />
+              </Link>
+            ) : (
+              'Unavailable'
+            )
+          }
+        />
+      )
+    },
+    {
+      key: 'withdrawn',
+      line: (
+        <InfoLine
+          className="ValidatorPage__Key ValidatorPage__CompactRow"
+          postfix=""
+          title="Withdrawn to Core"
+          loading={validator.loading}
+          error={validator.error}
+          value={
+            <WithdrawalsBadge
+              identity={validator.error ? null : validator.data?.identity}
+              loading={validator.loading}
+            />
+          }
+        />
+      )
+    },
+    {
+      key: 'lastWithdrawal',
+      line: (
+        <InfoLine
+          className="ValidatorPage__Key ValidatorPage__CompactRow"
+          postfix=""
+          title="Last withdrawal"
+          loading={validator.loading}
+          error={validator.error}
+          value={
+            validator.data?.lastWithdrawal ? (
+              <Link
+                className="ValidatorPage__Link"
+                href={`/transaction/${validator.data.lastWithdrawal}`}
+              >
+                {validator.data.lastWithdrawalTime ? (
+                  <TimeDelta endDate={validator.data.lastWithdrawalTime} />
+                ) : (
+                  'View transaction'
+                )}
+              </Link>
+            ) : validator.data?.withdrawalsCount === 0 ? (
+              'No withdrawals'
+            ) : (
+              'Unavailable'
+            )
+          }
+        />
+      )
+    },
+    {
+      key: 'operator',
+      line: (
+        <InfoLine
+          className={'ValidatorPage__Key'}
+          postfix={''}
+          title={
+            <ValidatorFieldLabel
+              label="Operator"
+              description="BLS public key used by the masternode operator."
+            />
+          }
+          value={<KeyIdentifier value={proTxState?.pubKeyOperator || ''} wrap />}
+          loading={validator.loading}
+          error={validator.error || !proTxState?.pubKeyOperator}
+        />
+      )
     }
-  }, [hash])
+  ]
+  const profileKeys = ['proTxHash', 'registration', 'identity', 'service']
+  const stateKeys = ['node', 'votingIdentity', 'quorum', 'pose']
+  const detailKeys = ['payout', 'collateral', 'owner', 'voting', 'operator']
+  const activityKeys = ['withdrawn', 'lastWithdrawal', 'lastBlock']
+  const profileRows = profileKeys.flatMap(key => keyRows.filter(row => row.key === key))
+  const stateRows = stateKeys.flatMap(key => keyRows.filter(row => row.key === key))
+  const detailRows = detailKeys.flatMap(key => keyRows.filter(row => row.key === key))
+  const activityRows = activityKeys.flatMap(key => keyRows.filter(row => row.key === key))
 
   return (
-    <PageDataContainer className={'ValidatorPage'} title={'Validator Info'}>
+    <PageDataContainer
+      className={'ValidatorPage'}
+      title={
+        <h1 className="ValidatorPage__Title">
+          Validator <Identifier copyButton>{hash}</Identifier>
+        </h1>
+      }
+    >
       <div className={'ValidatorPage__ContentContainer'}>
-        <div className={'ValidatorPage__Column'}>
-          <InfoContainer className={'ValidatorPage__GroupContainer'}>
-            <ValidatorCard
-              validator={validator as LoadableState<ValidatorType>}
-              rate={rate.data}
-              className={'ValidatorPage__Card'}
-            />
-
-            <div>
-              <InfoLine
-                className={'ValidatorPage__InfoLine'}
-                title={'CORE P2P'}
-                value={
-                  <Endpoint
-                    value={
-                      <IpAddress
-                        host={validator.data?.endpoints?.coreP2PPortStatus?.host}
-                        port={validator.data?.endpoints?.coreP2PPortStatus?.port}
-                      />
+        <div className="ValidatorPage__Column ValidatorPage__Column--Details">
+          <InfoContainer className="ValidatorPage__Group ValidatorPage__Ledger ValidatorPage__Surface ValidatorPage__Surface--profile">
+            <ValidatorSurface kind="profile" />
+            <h2 className="ValidatorPage__SectionTitle">Validator</h2>
+            <div className="ValidatorPage__ProfileIdentifiers">
+              <div className="ValidatorPage__ProfileRows">
+                {profileRows.map(row => (
+                  <Fragment key={row.key}>{row.line}</Fragment>
+                ))}
+              </div>
+              <aside
+                className="ValidatorPage__ProfileState"
+                aria-label="Validator avatar, balance and IP"
+              >
+                <ImageGenerator
+                  className="ValidatorPage__ProfileAvatar"
+                  username={hash}
+                  lightness={50}
+                  saturation={50}
+                  width={88}
+                  height={88}
+                />
+                <div className="ValidatorPage__ProfileBalance">
+                  <Tooltip
+                    className="ValidatorPage__Tooltip"
+                    title="Identity balance"
+                    content={
+                      hasBalance && !validator.error && !validator.loading ? (
+                        <ValidatorAmountDetails dash={creditsToDash(balance)} />
+                      ) : (
+                        'Unavailable'
+                      )
                     }
-                    status={validator.data?.endpoints?.coreP2PPortStatus?.status || 'UNKNOWN'}
-                    message={validator.data?.endpoints?.coreP2PPortStatus?.message}
-                  />
-                }
-                loading={validator.loading}
-                error={validator.error || !validator.data?.endpoints?.coreP2PPortStatus}
-              />
-              <InfoLine
-                className={'ValidatorPage__InfoLine'}
-                title={'Platform P2P'}
-                value={
-                  <Endpoint
-                    value={
-                      <IpAddress
-                        host={validator.data?.endpoints?.platformP2PPortStatus?.host}
-                        port={validator.data?.endpoints?.platformP2PPortStatus?.port}
-                      />
-                    }
-                    status={validator.data?.endpoints?.platformP2PPortStatus?.status || 'UNKNOWN'}
-                    message={validator.data?.endpoints?.platformP2PPortStatus?.message}
-                  />
-                }
-                loading={validator.loading}
-                error={validator.error || !validator.data?.endpoints?.platformP2PPortStatus}
-              />
-              <InfoLine
-                className={'ValidatorPage__InfoLine'}
-                title={'Platform GRPC'}
-                value={
-                  <Endpoint
-                    value={
-                      <IpAddress
-                        host={validator.data?.endpoints?.platformGrpcPortStatus?.host}
-                        port={validator.data?.endpoints?.platformGrpcPortStatus?.port}
-                      />
-                    }
-                    status={validator.data?.endpoints?.platformGrpcPortStatus?.status || 'UNKNOWN'}
-                    message={validator.data?.endpoints?.platformGrpcPortStatus?.message}
-                    link={`https://${validator.data?.endpoints?.platformGrpcPortStatus?.host}${
-                      validator.data?.endpoints?.platformGrpcPortStatus?.port
-                        ? ':' + validator.data?.endpoints?.platformGrpcPortStatus?.port
-                        : ''
-                    }`}
-                  />
-                }
-                loading={validator.loading}
-                error={validator.error || !validator.data?.endpoints?.platformGrpcPortStatus}
-              />
-            </div>
-
-            <HorisontalSeparator />
-
-            <div>
-              <InfoLine
-                className={'ValidatorPage__InfoLine'}
-                title={'Status'}
-                value={<Badge colorScheme={status.colorScheme}>{status.label}</Badge>}
-                loading={validator.loading}
-                error={validator.error}
-              />
-              <InfoLine
-                className={'ValidatorPage__InfoLine'}
-                title={'Epoch'}
-                value={`#${validator.data?.epochInfo?.number}`}
-                loading={validator.loading}
-                error={validator.error || !validator.data?.epochInfo?.number}
-              />
-              <InfoLine
-                className={'ValidatorPage__InfoLine'}
-                title={'Next epoch starts in'}
-                value={
-                  <TimeDelta endDate={validator.data?.epochInfo?.endTime} format={'detailed'} />
-                }
-                loading={validator.loading}
-                error={validator.error || !validator.data?.epochInfo?.endTime}
-              />
-              <InfoLine
-                className={'ValidatorPage__InfoLine'}
-                title={'Rewards This Epoch'}
-                value={
-                  <RateTooltip credits={validator.data?.epochReward ?? undefined} rate={rate.data}>
-                    <span>
-                      <BigNumber>{validator.data?.epochReward}</BigNumber>
-                    </span>
-                  </RateTooltip>
-                }
-                loading={validator.loading}
-                error={validator.error || !(typeof validator.data?.epochReward === 'number')}
-              />
-              <InfoLine
-                className={'ValidatorPage__InfoLine'}
-                title={'Total Rewards Earned'}
-                value={
-                  <RateTooltip credits={validator.data?.totalReward ?? undefined} rate={rate.data}>
-                    <span>
-                      <BigNumber>{validator.data?.totalReward}</BigNumber>
-                    </span>
-                  </RateTooltip>
-                }
-                loading={validator.loading}
-                error={validator.error || !(typeof validator.data?.totalReward === 'number')}
-              />
-              <InfoLine
-                className={'ValidatorPage__InfoLine'}
-                title={'Blocks Proposed'}
-                value={validator.data?.proposedBlocksAmount}
-                loading={validator.loading}
-                error={validator.error || typeof validator.data?.proposedBlocksAmount !== 'number'}
-              />
-              <InfoLine
-                className={'ValidatorPage__InfoLine'}
-                title={'Last Proposed Block'}
-                value={
-                  <Link href={`/block/${validator.data?.lastProposedBlockHeader?.hash}`}>
-                    <ValueContainer className={'ValidatorPage__ValueContainer'} clickable={true}>
-                      {validator.data?.lastProposedBlockHeader?.timestamp && (
-                        <DateBlock
-                          timestamp={validator.data.lastProposedBlockHeader.timestamp}
-                          format={'deltaOnly'}
-                        />
+                  >
+                    <Badge
+                      size="xs"
+                      colorScheme={
+                        !validator.error && hasBalance && balance > 0 ? 'blue' : 'dimGray'
+                      }
+                      className="ValidatorPage__AmountBadge ValidatorPage__Help"
+                      tabIndex={0}
+                      aria-label="Platform identity balance"
+                    >
+                      {validator.loading ? (
+                        <Skeleton w={64} h="1em" />
+                      ) : hasBalance && !validator.error ? (
+                        `${dashAmount(balance)} DASH`
+                      ) : (
+                        'Unavailable'
                       )}
-                      <Identifier ellipsis={false} styles={['highlight-both']}>
-                        {validator.data?.lastProposedBlockHeader?.hash || ''}
-                      </Identifier>
-                    </ValueContainer>
-                  </Link>
-                }
-                loading={validator.loading}
-                error={validator.error || !validator.data?.lastProposedBlockHeader?.hash}
-              />
-              <InfoLine
-                className={'ValidatorPage__InfoLine'}
-                title={'Withdrawals Count'}
-                value={validator.data?.withdrawalsCount}
-                loading={validator.loading}
-                error={validator.error || typeof validator.data?.withdrawalsCount !== 'number'}
-              />
-              <InfoLine
-                className={'ValidatorPage__InfoLine'}
-                title={'Last Withdrawal'}
-                value={
-                  <Link href={`/transaction/${validator.data?.lastWithdrawal}`}>
-                    <ValueContainer className={'ValidatorPage__ValueContainer'} clickable={true}>
-                      {validator.data?.lastWithdrawalTime && (
-                        <DateBlock
-                          timestamp={validator.data.lastWithdrawalTime}
-                          format={'deltaOnly'}
-                        />
-                      )}
-                      <Identifier ellipsis={false} styles={['highlight-both']}>
-                        {validator.data?.lastWithdrawal}
-                      </Identifier>
-                    </ValueContainer>
-                  </Link>
-                }
-                loading={validator.loading}
-                error={validator.error || !validator.data?.lastWithdrawal}
-              />
-            </div>
-
-            <HorisontalSeparator />
-
-            <div>
-              <InfoLine
-                className={'ValidatorPage__InfoLine'}
-                title={'PoSe Score'}
-                value={
-                  <div className={'ValidatorPage__PoseScroreValue'}>
-                    <span>{validator.data?.proTxInfo?.state?.PoSePenalty}</span>
-                    <CircleIcon
-                      w={'8px'}
-                      h={'8px'}
-                      ml={'4px'}
-                      mb={'-1px'}
-                      color={poseStatusColor}
-                    />
+                    </Badge>
+                  </Tooltip>
+                </div>
+                {validator.loading ? (
+                  <Skeleton w={88} h="1em" />
+                ) : (
+                  <div className="ValidatorPage__ProfileIp" aria-label="IP address">
+                    {country && /^[a-z]{2}$/.test(country) && host && (
+                      <Image
+                        className="ValidatorPage__Flag"
+                        src={`/flags/circle/${country}.svg`}
+                        alt=""
+                        title={region}
+                        width={16}
+                        height={16}
+                      />
+                    )}
+                    <span className="ValidatorPage__ProfileIpAddress">
+                      <span>{host || 'Unavailable'}</span>
+                    </span>
+                    {host && <CopyButton className="Identifier__CopyButton" text={host} />}
                   </div>
-                }
-                loading={validator.loading}
-                error={
-                  validator.error ||
-                  typeof validator.data?.proTxInfo?.state?.PoSePenalty !== 'number'
-                }
-              />
-              <InfoLine
-                className={'ValidatorPage__InfoLine'}
-                title={'Collateral address'}
-                value={
-                  <a
-                    href={
-                      l1explorerBaseUrl
-                        ? `${l1explorerBaseUrl}/address/${validator.data?.proTxInfo?.collateralAddress}`
-                        : '#'
-                    }
-                    target={'_blank'}
-                    rel={'noopener noreferrer'}
-                  >
-                    <ValueContainer
-                      className={'ValidatorPage__ValueContainer'}
-                      clickable={true}
-                      external={true}
-                    >
-                      <Identifier styles={['highlight-both']} ellipsis={false}>
-                        {validator.data?.proTxInfo?.collateralAddress || ''}
-                      </Identifier>
-                    </ValueContainer>
-                  </a>
-                }
-                loading={validator.loading}
-                error={validator.error || !validator.data?.proTxInfo?.collateralAddress}
-              />
-              <InfoLine
-                className={'ValidatorPage__InfoLine'}
-                title={'Owner address'}
-                value={
-                  <a
-                    href={
-                      l1explorerBaseUrl
-                        ? `${l1explorerBaseUrl}/address/${validator.data?.proTxInfo?.state?.ownerAddress}`
-                        : '#'
-                    }
-                    target={'_blank'}
-                    rel={'noopener noreferrer'}
-                  >
-                    <ValueContainer
-                      className={'ValidatorPage__ValueContainer'}
-                      clickable={true}
-                      external={true}
-                    >
-                      <Identifier styles={['highlight-both']} ellipsis={false}>
-                        {validator.data?.proTxInfo?.state?.ownerAddress || ''}
-                      </Identifier>
-                    </ValueContainer>
-                  </a>
-                }
-                loading={validator.loading}
-                error={validator.error || !validator.data?.proTxInfo?.state?.ownerAddress}
-              />
-              <InfoLine
-                className={'ValidatorPage__InfoLine'}
-                title={'Voting address'}
-                value={
-                  <a
-                    href={
-                      l1explorerBaseUrl
-                        ? `${l1explorerBaseUrl}/address/${validator.data?.proTxInfo?.state?.votingAddress}`
-                        : '#'
-                    }
-                    target={'_blank'}
-                    rel={'noopener noreferrer'}
-                  >
-                    <ValueContainer
-                      className={'ValidatorPage__ValueContainer'}
-                      clickable={true}
-                      external={true}
-                    >
-                      <Identifier styles={['highlight-both']} ellipsis={false}>
-                        {validator.data?.proTxInfo?.state?.votingAddress || ''}
-                      </Identifier>
-                    </ValueContainer>
-                  </a>
-                }
-                loading={validator.loading}
-                error={validator.error || !validator.data?.proTxInfo?.state?.votingAddress}
-              />
-              <InfoLine
-                className={'ValidatorPage__InfoLine'}
-                title={'Payout address'}
-                value={
-                  <a
-                    href={
-                      l1explorerBaseUrl
-                        ? `${l1explorerBaseUrl}/address/${validator.data?.proTxInfo?.state?.payoutAddress}`
-                        : '#'
-                    }
-                    target={'_blank'}
-                    rel={'noopener noreferrer'}
-                  >
-                    <ValueContainer
-                      className={'ValidatorPage__ValueContainer'}
-                      clickable={true}
-                      external={true}
-                    >
-                      <Identifier styles={['highlight-both']} ellipsis={false}>
-                        {validator.data?.proTxInfo?.state?.payoutAddress || ''}
-                      </Identifier>
-                    </ValueContainer>
-                  </a>
-                }
-                loading={validator.loading}
-                error={validator.error || !validator.data?.proTxInfo?.state?.payoutAddress}
-              />
-              <InfoLine
-                className={'ValidatorPage__InfoLine'}
-                title={'Operator Public Key'}
-                value={
-                  <Identifier copyButton={true} styles={['highlight-both']} ellipsis={false}>
-                    {validator.data?.proTxInfo?.state?.pubKeyOperator || ''}
-                  </Identifier>
-                }
-                loading={validator.loading}
-                error={validator.error || !validator.data?.proTxInfo?.state?.pubKeyOperator}
-              />
+                )}
+              </aside>
             </div>
           </InfoContainer>
+          <InfoContainer className="ValidatorPage__Group ValidatorPage__Ledger ValidatorPage__Surface ValidatorPage__Surface--participation">
+            <ValidatorSurface kind="participation" />
+            <h2 className="ValidatorPage__SectionTitle">Participation</h2>
+            <section className="ValidatorPage__ProfileDetails" aria-label="Participation">
+              {stateRows.map(row => (
+                <Fragment key={row.key}>{row.line}</Fragment>
+              ))}
+            </section>
+          </InfoContainer>
+          <InfoContainer className="ValidatorPage__Group ValidatorPage__Ledger ValidatorPage__Surface ValidatorPage__Surface--ownership">
+            <ValidatorSurface kind="ownership" />
+            <h2 className="ValidatorPage__SectionTitle">Ownership &amp; payments</h2>
+            <section className="ValidatorPage__ProfileDetails" aria-label="Addresses and keys">
+              {detailRows.map(row => (
+                <Fragment key={row.key}>{row.line}</Fragment>
+              ))}
+            </section>
+          </InfoContainer>
         </div>
 
-        <div className={'ValidatorPage__Column'}>
-          <InfoContainer styles={['tabs']} className={'ValidatorPage__ChartsContainer'}>
-            <ValidatorCharts key={hash} hash={hash} />
-          </InfoContainer>
-
-          <InfoContainer styles={['tabs']} className={'ValidatorPage__Lists'}>
-            <ValidatorActivityLists
-              key={hash}
+        <div className="ValidatorPage__Column ValidatorPage__Column--Metrics">
+          <InfoContainer className={'ValidatorPage__Epochs'}>
+            <ValidatorEpochs
               hash={hash}
-              identity={validator.loading ? null : validator.data?.identity}
-              loading={validator.loading}
-              error={validator.error}
-              rate={rate.data}
-              defaultPayoutAddress={validator.data?.proTxInfo?.state?.payoutAddress}
-              l1explorerBaseUrl={l1explorerBaseUrl}
+              payouts={{
+                total: validator.data?.totalReward,
+                loading: validator.loading,
+                error: Boolean(validator.error)
+              }}
             />
           </InfoContainer>
+          <ValidatorEarnings
+            loading={validator.loading}
+            nodeType={validator.data?.proTxInfo?.type}
+            hash={hash}
+            blocksUntilCorePayment={validator.data?.blocksUntilCorePayment}
+            coreTipTime={validator.data?.coreTipTime}
+            coreBlockIntervalMs={validator.data?.coreBlockIntervalMs}
+            banned={isPoseBanned}
+            collateralAmount={validator.error ? null : collateralAmount}
+            activity={activityRows.map(row => <div key={row.key}>{row.line}</div>)}
+          />
         </div>
+
+        <InfoContainer styles={['tabs']} className={'ValidatorPage__Lists'}>
+          <ValidatorActivityLists
+            key={hash}
+            hash={hash}
+            identity={validator.loading ? null : validator.data?.identity}
+            votingIdentity={validator.loading ? null : validator.data?.votingIdentity}
+            blocksCount={validator.loading ? null : validator.data?.proposedBlocksAmount}
+            loading={validator.loading}
+            error={validator.error}
+            rate={rate.isError ? null : rate.data}
+            defaultPayoutAddress={validator.data?.proTxInfo?.state?.payoutAddress}
+            l1explorerBaseUrl={l1explorerBaseUrl}
+          />
+        </InfoContainer>
       </div>
     </PageDataContainer>
   )
 }
 
-export default Validator
+export default function ValidatorPage(props: ValidatorProps) {
+  return (
+    <FloatingTooltipScope value={true}>
+      <Validator {...props} />
+    </FloatingTooltipScope>
+  )
+}

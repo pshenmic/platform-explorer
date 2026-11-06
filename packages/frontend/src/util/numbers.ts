@@ -1,3 +1,9 @@
+export const formatNumberWithSpaces = (value: number, options?: Intl.NumberFormatOptions): string =>
+  new Intl.NumberFormat('en-US', options)
+    .formatToParts(value)
+    .map(part => (part.type === 'group' ? '\u00a0' : part.value))
+    .join('')
+
 export const sliceNumberByDecimals = (
   str: string | null | undefined,
   decimalPlaces: number | string

@@ -1,12 +1,15 @@
 'use client'
 
 import { useRouter } from 'next/navigation'
+import { getL1ExplorerLink } from '../../../util/l1Explorer'
+import { creditsToDash, removeTrailingZeros } from '../../../util'
 import { DataList } from '../../ui/lists'
 import type { DataListColumn, DataListProps } from '../../ui/lists/DataList/DataList'
 import { Identifier, BigNumber, TimeDelta, NotActive } from '../../data'
 import { LinkContainer } from '../../ui/containers'
 import { RateTooltip } from '../../ui/Tooltips'
 import StatusIcon from './StatusIcon'
+import TransactionStatusIndicator from '../../transactions/TransactionStatusIndicator'
 import type { Rate, Withdrawal } from '../../../types'
 
 const WITHDRAWAL_CONTRACT_ID = '4fJLR2GYTPFdomuTVvNy3VRrvWgvkKPzqehEBpNf2nk6'
@@ -19,6 +22,8 @@ interface WithdrawalsListProps {
   l1explorerBaseUrl?: string | null
   loading?: boolean
   skeletonCount?: number
+  statusFirst?: boolean
+  amountUnit?: 'credits' | 'dash'
   paging?: DataListProps['paging']
 }
 
@@ -30,6 +35,8 @@ function WithdrawalsList({
   l1explorerBaseUrl,
   loading,
   skeletonCount,
+  statusFirst = false,
+  amountUnit = 'credits',
   paging
 }: WithdrawalsListProps) {
   const router = useRouter()
@@ -60,8 +67,11 @@ function WithdrawalsList({
       key: 'status',
       header: 'Status',
       minWidth: 110,
+      align: 'left',
       cell: withdrawal =>
-        withdrawal.status ? (
+        statusFirst ? (
+          <TransactionStatusIndicator status={withdrawal.status} showLabel />
+        ) : withdrawal.status ? (
           <span className={'DataList__Entity'}>
             <StatusIcon status={withdrawal.status} w={'18px'} h={'18px'} />
             {withdrawal.status.toLowerCase()}
@@ -72,14 +82,18 @@ function WithdrawalsList({
     },
     {
       key: 'amount',
-      header: 'Amount',
+      header: amountUnit === 'dash' ? 'Amount (DASH)' : 'Amount (credits)',
       numeric: true,
-      minWidth: 100,
+      minWidth: 144,
       cell: withdrawal =>
         withdrawal.amount != null ? (
           <RateTooltip credits={Number(withdrawal.amount)} rate={rate}>
             <span>
-              <BigNumber>{withdrawal.amount}</BigNumber>
+              {amountUnit === 'dash' ? (
+                removeTrailingZeros(creditsToDash(Number(withdrawal.amount)).toFixed(8))
+              ) : (
+                <BigNumber>{withdrawal.amount}</BigNumber>
+              )}
             </span>
           </RateTooltip>
         ) : (
@@ -105,7 +119,7 @@ function WithdrawalsList({
               e.stopPropagation()
               e.preventDefault()
               window.open(
-                `${l1explorerBaseUrl}/address/${address}`,
+                getL1ExplorerLink(l1explorerBaseUrl, 'address', address),
                 '_blank',
                 'noopener,noreferrer'
               )
@@ -158,7 +172,14 @@ function WithdrawalsList({
   return (
     <DataList
       items={withdrawals}
-      columns={columns}
+      columns={
+        statusFirst
+          ? [
+              ...columns.filter(column => column.key === 'status'),
+              ...columns.filter(column => column.key !== 'status')
+            ]
+          : columns
+      }
       rowKey={(withdrawal, index) =>
         withdrawal.document ?? withdrawal.id ?? withdrawal.hash ?? index ?? 0
       }

@@ -66,6 +66,8 @@ export default function ChartDateRange({
         className={'ChartDateRange__Trigger'}
         popoverTarget={id}
         aria-expanded={open}
+        aria-haspopup="dialog"
+        aria-controls={id}
         aria-label={`Chart date range: ${chartDateLabel(value)}`}
         onClick={() => {
           const rect = triggerRef.current!.getBoundingClientRect()
@@ -88,7 +90,13 @@ export default function ChartDateRange({
         aria-label={'Chart date range'}
         className={'ChartDateRange__Panel'}
         style={position}
-        onToggle={event => setOpen(event.newState === 'open')}
+        onToggle={event => {
+          const isOpen = event.newState === 'open'
+          setOpen(isOpen)
+          if (isOpen) {
+            panelRef.current?.querySelector<HTMLButtonElement>('button:not(:disabled)')?.focus()
+          }
+        }}
       >
         <DateRangeFilter
           compact={true}

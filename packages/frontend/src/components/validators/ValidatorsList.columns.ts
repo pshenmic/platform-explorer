@@ -1,13 +1,12 @@
 export const columnLayout = {
   identifier: { key: 'identifier', header: 'Validator', grow: true, minWidth: 176 },
-  active: { key: 'active', header: 'Status', minWidth: 176 },
+  active: { key: 'active', header: 'Status', minWidth: 88, align: 'center' },
   lastBlockHeight: { key: 'lastBlockHeight', numeric: true, header: 'Last height', minWidth: 128 },
   proposedBlocksAmount: {
     key: 'proposedBlocksAmount',
     numeric: true,
     header: 'Blocks proposed',
-    minWidth: 120,
-    align: 'center'
+    minWidth: 120
   },
   timestamp: { key: 'timestamp', header: 'Last block', minWidth: 128, align: 'right' }
 } as const

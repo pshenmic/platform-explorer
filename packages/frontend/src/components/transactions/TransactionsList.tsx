@@ -33,7 +33,8 @@ function TransactionsList({
   paging,
   title,
   pinFirst = false,
-  showOwner = true
+  showOwner = true,
+  statusFirst = false
 }: {
   transactions?: Transaction[]
   showMoreLink?: any
@@ -50,6 +51,7 @@ function TransactionsList({
   title?: ReactNode
   pinFirst?: boolean
   showOwner?: boolean
+  statusFirst?: boolean
 }) {
   const router = useRouter()
   const canFilter = Boolean(onFilterChange)
@@ -203,7 +205,14 @@ function TransactionsList({
     <DataList
       className={'TransactionsList'}
       items={transactions}
-      columns={columns}
+      columns={
+        statusFirst
+          ? [
+              ...columns.filter(column => column.key === 'status'),
+              ...columns.filter(column => column.key !== 'status')
+            ]
+          : columns
+      }
       pinFirst={pinFirst}
       loading={loading}
       skeletonCount={skeletonCount}

@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState, type RefObject } from 'react'
 import { Check, ChevronDown, ChevronLeft, ChevronRight, MoreHorizontal } from 'lucide-react'
 import type { ListScrollMode } from './listScrollMode'
+import { formatNumberWithSpaces } from '../../../../util/numbers'
 
 const DEFAULT_PAGE_SIZES = [10, 25, 50, 75, 100]
 
@@ -10,6 +11,7 @@ export type DataListPagingConfig = {
   scrollTarget?: 'page' | 'container'
   mode: ListScrollMode
   onModeChange: (mode: ListScrollMode) => void
+  hideModeSwitch?: boolean
   total: number
   pageSize: number
   page: number
@@ -79,24 +81,32 @@ export function DataListPagingBar({
     return () => observer.disconnect()
   }, [continuous, loadingMore, loading, hasMore, scrollRef, sentinelRef, pageScroll])
 
+  if (paging.hideModeSwitch) return null
+
   return (
     <div className={'DataList__StatusBar'}>
-      <div className={'DataList__ModeSwitch'} role={'group'} aria-label={'List view'}>
+      <DataListModeSwitch mode={paging.mode} onModeChange={paging.onModeChange} />
+    </div>
+  )
+}
+
+export function DataListModeSwitch({
+  mode,
+  onModeChange
+}: Pick<DataListPagingConfig, 'mode' | 'onModeChange'>) {
+  return (
+    <div className={'DataList__ModeSwitch'} role={'group'} aria-label={'List view'}>
+      {(['continuous', 'pages'] as const).map(value => (
         <button
+          key={value}
           type={'button'}
-          className={`DataList__ModeBtn${continuous ? ' DataList__ModeBtn--On' : ''}`}
-          onClick={() => paging.onModeChange('continuous')}
+          aria-pressed={mode === value}
+          className={`DataList__ModeBtn${mode === value ? ' DataList__ModeBtn--On' : ''}`}
+          onClick={() => onModeChange(value)}
         >
-          Scroll
+          {value === 'continuous' ? 'Scroll' : 'Pages'}
         </button>
-        <button
-          type={'button'}
-          className={`DataList__ModeBtn${mode === 'pages' ? ' DataList__ModeBtn--On' : ''}`}
-          onClick={() => paging.onModeChange('pages')}
-        >
-          Pages
-        </button>
-      </div>
+      ))}
     </div>
   )
 }
@@ -151,7 +161,7 @@ export function DataListPageFooter({
               disabled={loading}
               onClick={() => go(item)}
             >
-              {item.toLocaleString('en-US')}
+              {formatNumberWithSpaces(item)}
             </button>
           )
         )}
