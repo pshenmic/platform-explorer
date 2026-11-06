@@ -147,7 +147,7 @@ impl From<DataContractUpdateTransition> for DataContract {
 
 impl From<SystemDataContract> for DataContract {
     fn from(data_contract: SystemDataContract) -> Self {
-        let platform_version = dpp::version::PLATFORM_VERSIONS.first().unwrap();
+        let platform_version = dpp::version::PLATFORM_VERSIONS.last().unwrap();
         let name = match data_contract {
             SystemDataContract::Withdrawals => "Withdrawals",
             SystemDataContract::MasternodeRewards => "MasternodeRewards",
