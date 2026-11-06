@@ -1945,4 +1945,126 @@ describe('Utils', () => {
       assert.equal(utils.buildProposerSchedule(quorums, 'DDD', 'A1', 50, 1), null)
     })
   })
+  describe('getCoreBlockRewards()', () => {
+    it('should return the Core block rewards finalized for testnet epochs', () => {
+      // epoch 20147: 29 Core blocks of the 8th Core reward year
+      assert.equal(utils.getCoreBlockRewards(1585964, 1585992), 1942038059212n)
+      // epoch 19909
+      assert.equal(utils.getCoreBlockRewards(1579804, 1579827), 1607203911072n)
+    })
+
+    it('should decline the subsidy with the Core reward year', () => {
+      const subsidy = 112500000000n
+
+      // the new year starts one block after the halving interval
+      assert.equal(utils.getCoreBlockRewards(210239, 210241), subsidy * 2n + subsidy - subsidy / 14n)
+      assert.equal(utils.getCoreBlockRewards(1, 210240), subsidy * 210240n)
+    })
+
+    it('should return zero for an empty range', () => {
+      assert.equal(utils.getCoreBlockRewards(1585964, 1585963), 0n)
+    })
+  })
+
+  describe('getPendingEpochReward()', () => {
+    const proTxHash = '27'.repeat(32)
+    const epoch = { number: 20147, firstBlockHeight: '661227', firstCoreBlockHeight: 1585963, startTime: 1000000, endTime: 4600000 }
+    // half of the epoch has passed
+    const status = { chain: { latestBlockHeight: '661268', coreChainLockedHeight: 1585991 }, time: { block: '2800000' } }
+
+    const proposerCount = (count) => {
+      const value = Buffer.alloc(8)
+      value.writeBigUInt64BE(count)
+      return { key: Buffer.from(proTxHash, 'hex'), element: { type: 'Item', value } }
+    }
+
+    const pools = [
+      { key: Buffer.from('p'), element: { type: 'SumItem', sum: 971098740n } },
+      { key: Buffer.from('s'), element: { type: 'SumItem', sum: 1963947278n } }
+    ]
+
+    const createSdk = (statuses, poolElements, proposerElements) => {
+      const getPathElements = mock.fn(async (path) => path.length === 2 ? poolElements : proposerElements)
+
+      return {
+        node: {
+          status: mock.fn(async () => statuses.shift()),
+          getPathElements
+        }
+      }
+    }
+
+    it('should share the epoch pool by proposed blocks', async () => {
+      const sdk = createSdk([status, status], pools, [proposerCount(3n)])
+
+      const pendingEpochReward = await utils.getPendingEpochReward(sdk, proTxHash, epoch)
+
+      assert.deepEqual(pendingEpochReward, {
+        epoch: 20147,
+        blockHeight: 661268,
+        proposedBlocks: 3,
+        totalBlocks: 42,
+        processingFees: '971098740',
+        distributedStorageFees: '1963947278',
+        // 28 Core blocks since the epoch start
+        coreBlockRewards: '1875071229584',
+        reward: '134143305400',
+        estimatedReward: '268286610800'
+      })
+
+      const [poolsCall, proposersCall] = sdk.node.getPathElements.mock.calls
+
+      assert.deepEqual(poolsCall.arguments, [
+        [Buffer.from([48]), Buffer.from([0x4f, 0xb3])],
+        [Buffer.from('p'), Buffer.from('s')]
+      ])
+      assert.deepEqual(proposersCall.arguments, [
+        [Buffer.from([48]), Buffer.from([0x4f, 0xb3]), Buffer.from('m')],
+        [Buffer.from(proTxHash, 'hex')]
+      ])
+    })
+
+    it('should return zero reward for a validator without blocks in the epoch', async () => {
+      const sdk = createSdk([status, status], pools, [])
+
+      const pendingEpochReward = await utils.getPendingEpochReward(sdk, proTxHash, epoch)
+
+      assert.equal(pendingEpochReward.proposedBlocks, 0)
+      assert.equal(pendingEpochReward.reward, '0')
+      assert.equal(pendingEpochReward.estimatedReward, '0')
+    })
+
+    it('should not scale the reward after the epoch end time', async () => {
+      const lateStatus = { ...status, time: { block: '5000000' } }
+      const sdk = createSdk([lateStatus, lateStatus], pools, [proposerCount(3n)])
+
+      const pendingEpochReward = await utils.getPendingEpochReward(sdk, proTxHash, epoch)
+
+      assert.equal(pendingEpochReward.estimatedReward, pendingEpochReward.reward)
+    })
+
+    it('should read again if a block was committed between the reads', async () => {
+      const nextStatus = { chain: { latestBlockHeight: '661269', coreChainLockedHeight: 1585991 }, time: { block: '2800000' } }
+      const sdk = createSdk([status, nextStatus, nextStatus, nextStatus], pools, [proposerCount(3n)])
+
+      const pendingEpochReward = await utils.getPendingEpochReward(sdk, proTxHash, epoch)
+
+      assert.equal(pendingEpochReward.blockHeight, 661269)
+      assert.equal(pendingEpochReward.totalBlocks, 43)
+      assert.equal(sdk.node.status.mock.callCount(), 4)
+    })
+
+    it('should return null if no consistent read is possible', async () => {
+      const statuses = [0, 1, 2, 3, 4, 5].map(i => ({ chain: { latestBlockHeight: String(661268 + i), coreChainLockedHeight: 1585991 } }))
+      const sdk = createSdk(statuses, pools, [proposerCount(3n)])
+
+      assert.equal(await utils.getPendingEpochReward(sdk, proTxHash, epoch), null)
+    })
+
+    it('should return null if the epoch pool is missing', async () => {
+      const sdk = createSdk([status, status], [], [proposerCount(3n)])
+
+      assert.equal(await utils.getPendingEpochReward(sdk, proTxHash, epoch), null)
+    })
+  })
 })

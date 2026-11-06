@@ -12,6 +12,7 @@ module.exports = class Validator {
   epochInfo
   totalReward
   epochReward
+  pendingEpochReward
   withdrawalsCount
   lastWithdrawal
   lastWithdrawalTime
@@ -57,7 +58,8 @@ module.exports = class Validator {
     poseBanCoreBlockHash,
     coreYieldPerYear,
     coreTipTime,
-    coreBlockIntervalMs
+    coreBlockIntervalMs,
+    pendingEpochReward
   ) {
     this.proTxHash = proTxHash ?? null
     this.isActive = isActive ?? null
@@ -86,6 +88,7 @@ module.exports = class Validator {
     this.coreYieldPerYear = coreYieldPerYear ?? null
     this.coreTipTime = coreTipTime ?? null
     this.coreBlockIntervalMs = coreBlockIntervalMs ?? null
+    this.pendingEpochReward = pendingEpochReward ?? null
   }
 
   static fromRow ({
@@ -159,7 +162,8 @@ module.exports = class Validator {
     poseBanCoreBlockHash,
     coreYieldPerYear,
     coreTipTime,
-    coreBlockIntervalMs
+    coreBlockIntervalMs,
+    pendingEpochReward
   }) {
     return new Validator(
       proTxHash,
@@ -188,7 +192,8 @@ module.exports = class Validator {
       poseBanCoreBlockHash,
       coreYieldPerYear,
       coreTipTime,
-      coreBlockIntervalMs
+      coreBlockIntervalMs,
+      pendingEpochReward
     )
   }
 }

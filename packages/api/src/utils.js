@@ -2,7 +2,7 @@ const crypto = require('crypto')
 const StateTransitionEnum = require('./enums/StateTransitionEnum')
 const DocumentActionEnum = require('./enums/DocumentActionEnum')
 const net = require('net')
-const { TCP_CONNECT_TIMEOUT, NETWORK, DPNS_CONTRACT, DAPI_DOCUMENTS_QUERY_LIMIT, BANNED_STATE_CACHE_KEY, PLATFORM_QUORUMS_CACHE_KEY, VALIDATORS_CACHE_LIFE_INTERVAL, PROTX_LIST_CACHE_KEY, PROTX_LIST_CACHE_LIFE_INTERVAL, CORE_BLOCK_HASH_CACHE_KEY, CORE_BLOCK_HASH_CACHE_MAX_ENTRIES, CORE_BLOCK_HASH_CACHE_LIFE_INTERVAL, CORE_NETWORK_CACHE_KEY, CORE_NETWORK_CACHE_LIFE_INTERVAL, DUFFS_PER_DASH, CORE_BLOCKS_PER_DAY } = require('./constants')
+const { TCP_CONNECT_TIMEOUT, NETWORK, DPNS_CONTRACT, DAPI_DOCUMENTS_QUERY_LIMIT, BANNED_STATE_CACHE_KEY, PLATFORM_QUORUMS_CACHE_KEY, VALIDATORS_CACHE_LIFE_INTERVAL, PROTX_LIST_CACHE_KEY, PROTX_LIST_CACHE_LIFE_INTERVAL, CORE_BLOCK_HASH_CACHE_KEY, CORE_BLOCK_HASH_CACHE_MAX_ENTRIES, CORE_BLOCK_HASH_CACHE_LIFE_INTERVAL, CORE_NETWORK_CACHE_KEY, CORE_NETWORK_CACHE_LIFE_INTERVAL, DUFFS_PER_DASH, CORE_BLOCKS_PER_DAY, CORE_GENESIS_BLOCK_SUBSIDY, CORE_SUBSIDY_HALVING_INTERVAL, POOLS_ROOT_TREE, EPOCH_KEY_OFFSET } = require('./constants')
 const DashCoreRPC = require('./dashcoreRpc')
 const TenderdashRPC = require('./tenderdashRpc')
 const Quorum = require('./models/Quorum')
@@ -2172,6 +2172,110 @@ const getCoreYieldPerYear = async (corePayments, type, masternodes) => {
   return amount / DUFFS_PER_DASH * 365 * 86400000 / (endTime - startTime)
 }
 
+// Platform credits of the Core block subsidy of the Core blocks from fromHeight to toHeight
+// (included), as Drive pays them to an epoch (rs-dpp epoch_core_reward_credits_for_distribution_v0)
+const getCoreBlockRewards = (fromHeight, toHeight) => {
+  if (fromHeight > toHeight) {
+    return 0n
+  }
+
+  // Core starts a new reward year one block after the halving interval
+  const previousFromHeight = Math.max(fromHeight - 1, 0)
+
+  const startYear = Math.floor(previousFromHeight / CORE_SUBSIDY_HALVING_INTERVAL)
+  const endYear = Math.floor(Math.max(toHeight - 1, 0) / CORE_SUBSIDY_HALVING_INTERVAL)
+
+  let subsidy = CORE_GENESIS_BLOCK_SUBSIDY
+
+  for (let year = 0; year < startYear; year++) {
+    subsidy -= subsidy / 14n
+  }
+
+  let rewards = 0n
+
+  for (let year = startYear; year <= endYear; year++) {
+    const yearStartHeight = year === startYear ? previousFromHeight : year * CORE_SUBSIDY_HALVING_INTERVAL
+    const yearEndHeight = year === endYear ? toHeight : (year + 1) * CORE_SUBSIDY_HALVING_INTERVAL
+
+    rewards += BigInt(yearEndHeight - yearStartHeight) * subsidy
+    subsidy -= subsidy / 14n
+  }
+
+  return rewards
+}
+
+// Platform reward of the proposer for the current epoch so far, as Drive would pay it if the
+// epoch ended at the latest block: the epoch pool (processing fees, distributed storage fees and
+// the Core block rewards since the epoch start) shared by proposed blocks, before masternode
+// reward shares. null when the pool can't be read at a single block height
+const getPendingEpochReward = async (sdk, proTxHash, epoch) => {
+  const epochKey = Buffer.alloc(2)
+  epochKey.writeUInt16BE(epoch.number + EPOCH_KEY_OFFSET)
+
+  const epochPath = [Buffer.from([POOLS_ROOT_TREE]), epochKey]
+
+  // the reads are separate requests, they are consistent only if no block was committed in between
+  for (let attempt = 0; attempt < 3; attempt++) {
+    const { chain, time } = await sdk.node.status()
+
+    const [pools, proposers] = await Promise.all([
+      sdk.node.getPathElements(epochPath, [Buffer.from('p'), Buffer.from('s')]),
+      sdk.node.getPathElements([...epochPath, Buffer.from('m')], [Buffer.from(proTxHash, 'hex')])
+    ])
+
+    const { chain: chainAfter } = await sdk.node.status()
+
+    if (chain?.latestBlockHeight !== chainAfter?.latestBlockHeight) {
+      continue
+    }
+
+    const pool = Object.fromEntries(pools.map(({ key, element }) => [Buffer.from(key).toString(), element?.sum]))
+
+    const totalBlocks = Number(chain.latestBlockHeight) - Number(epoch.firstBlockHeight) + 1
+
+    // the pool of a paid epoch is deleted, so it is missing when the epoch has changed
+    if (pool.p === undefined || pool.s === undefined || !chain.coreChainLockedHeight || !(totalBlocks > 0)) {
+      return null
+    }
+
+    // a proposer without blocks in the epoch has no entry
+    const [proposer] = proposers
+
+    const proposedBlocks = proposer?.element?.value
+      ? Buffer.from(proposer.element.value).readBigUInt64BE()
+      : 0n
+
+    // Drive pays the epoch from the Core block after its first one
+    const coreBlockRewards = getCoreBlockRewards(epoch.firstCoreBlockHeight + 1, chain.coreChainLockedHeight)
+
+    const epochPool = pool.p + pool.s + coreBlockRewards
+
+    const reward = epochPool * proposedBlocks / BigInt(totalBlocks)
+
+    // income for the whole epoch if the validator keeps earning at the same rate until its end
+    const elapsed = Number(time?.block) - Number(epoch.startTime)
+    const duration = Number(epoch.endTime) - Number(epoch.startTime)
+
+    const estimatedReward = elapsed > 0 && duration > 0
+      ? (elapsed < duration ? reward * BigInt(duration) / BigInt(elapsed) : reward)
+      : null
+
+    return {
+      epoch: epoch.number,
+      blockHeight: Number(chain.latestBlockHeight),
+      proposedBlocks: Number(proposedBlocks),
+      totalBlocks,
+      processingFees: String(pool.p),
+      distributedStorageFees: String(pool.s),
+      coreBlockRewards: String(coreBlockRewards),
+      reward: String(reward),
+      estimatedReward: estimatedReward !== null ? String(estimatedReward) : null
+    }
+  }
+
+  return null
+}
+
 const getProTxList = async () => {
   const cached = cache.get(PROTX_LIST_CACHE_KEY)
 
@@ -2556,6 +2660,8 @@ module.exports = {
   getCoreBlockTime,
   getCoreNetworkInfo,
   getCoreYieldPerYear,
+  getCoreBlockRewards,
+  getPendingEpochReward,
   getProTxList,
   blocksUntilCorePayment,
   getFinalPoSeBanHeight,
