@@ -2,6 +2,11 @@
   display: none;
 }
 
+.ValidatorSurface .ValidatorSurface__Accent {
+  fill: none;
+  stroke-width: 1.5;
+}
+
 .ValidatorPage__Surface--profile .ValidatorPage__ProfileAvatar {
   border-radius: var(--pe-radius-block);
   background: var(--pe-color-bg);

@@ -1,3 +1,4 @@
+import { useId } from 'react'
 import './ValidatorSurface.css'
 
 const contours = {
@@ -11,6 +12,8 @@ const contours = {
 }
 
 export default function ValidatorSurface({ kind }: { kind: keyof typeof contours }) {
+  const accentId = useId()
+  const accented = kind === 'earnings'
   return (
     <svg
       className="ValidatorSurface"
@@ -19,7 +22,47 @@ export default function ValidatorSurface({ kind }: { kind: keyof typeof contours
       aria-hidden="true"
       focusable="false"
     >
+      {accented && (
+        <defs>
+          <radialGradient
+            id={`${accentId}-top`}
+            cx="0"
+            cy="0"
+            r="1"
+            gradientTransform="scale(.34 .45)"
+          >
+            <stop stopColor="var(--earnings-core-color)" stopOpacity="0.9" />
+            <stop offset="0.4" stopColor="var(--earnings-core-color)" stopOpacity="0.6" />
+            <stop offset="1" stopColor="var(--earnings-core-color)" stopOpacity="0" />
+          </radialGradient>
+          <radialGradient
+            id={`${accentId}-bottom`}
+            cx="0"
+            cy="0"
+            r="1"
+            gradientTransform="translate(1 1) scale(.34 .45)"
+          >
+            <stop stopColor="var(--earnings-platform-color)" stopOpacity="0.9" />
+            <stop offset="0.4" stopColor="var(--earnings-platform-color)" stopOpacity="0.6" />
+            <stop offset="1" stopColor="var(--earnings-platform-color)" stopOpacity="0" />
+          </radialGradient>
+        </defs>
+      )}
       <path d={contours[kind]} />
+      {accented && (
+        <>
+          <path
+            className="ValidatorSurface__Accent"
+            d={contours[kind]}
+            style={{ stroke: `url(#${accentId}-top)` }}
+          />
+          <path
+            className="ValidatorSurface__Accent"
+            d={contours[kind]}
+            style={{ stroke: `url(#${accentId}-bottom)` }}
+          />
+        </>
+      )}
     </svg>
   )
 }
