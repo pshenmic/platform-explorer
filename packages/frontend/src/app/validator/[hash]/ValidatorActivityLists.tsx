@@ -299,7 +299,7 @@ function VotesActivity({
 }
 
 const LIST_MODE_KEY = 'validator-activity'
-const ACTIVITY_ORDER = ['withdrawals', 'blocks', 'votes', 'transactions'] as const
+const ACTIVITY_ORDER = ['withdrawals', 'transactions', 'votes', 'blocks'] as const
 
 export default function ValidatorActivityLists(props: ActivityProps) {
   const [active, setActive] = useState(0)
@@ -364,12 +364,12 @@ export default function ValidatorActivityLists(props: ActivityProps) {
               error={withdrawals.isError || (props.error && !props.identity)}
             />
           </Tab>
-          <Tab title="Platform blocks proposed by this validator.">
-            Proposed blocks{' '}
+          <Tab title="Transactions associated with this validator's Platform identity.">
+            Transactions{' '}
             <TabCount
-              value={blockCount.data ?? props.blocksCount}
-              loading={props.loading && blockCount.data == null}
-              error={props.error && blockCount.data == null && props.blocksCount == null}
+              value={transactionCount.data}
+              loading={props.loading || (Boolean(props.identity) && transactionCount.isPending)}
+              error={transactionCount.isError || (props.error && !props.identity)}
             />
           </Tab>
           <Tab title="Votes on Platform contested resources. Not Core governance votes.">
@@ -380,12 +380,12 @@ export default function ValidatorActivityLists(props: ActivityProps) {
               error={voteCount.isError || (props.error && !props.votingIdentity)}
             />
           </Tab>
-          <Tab title="Transactions associated with this validator's Platform identity.">
-            Transactions{' '}
+          <Tab title="Platform blocks proposed by this validator.">
+            Proposed blocks{' '}
             <TabCount
-              value={transactionCount.data}
-              loading={props.loading || (Boolean(props.identity) && transactionCount.isPending)}
-              error={transactionCount.isError || (props.error && !props.identity)}
+              value={blockCount.data ?? props.blocksCount}
+              loading={props.loading && blockCount.data == null}
+              error={props.error && blockCount.data == null && props.blocksCount == null}
             />
           </Tab>
         </TabList>
