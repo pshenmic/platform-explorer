@@ -2,8 +2,12 @@ mod dao;
 
 use crate::decoder::decoder::StateTransitionDecoder;
 use crate::entities::data_contract::DataContract;
+use crate::entities::block_header::BlockHeader;
 use crate::entities::document::Document;
 pub use crate::processor::psql::dao::PostgresDAO;
+use dapi_grpc::platform::v0::platform_client::PlatformClient;
+use dapi_grpc::tonic::transport::Channel;
+use dapi_grpc::tonic::Status;
 use dashcore_rpc::Client;
 use data_contracts::SystemDataContract;
 use deadpool_postgres::{PoolError, Transaction};
@@ -11,6 +15,9 @@ use dpp::identifier::Identifier;
 use dpp::platform_value::string_encoding::Encoding::Base58;
 use dpp::platform_value::{platform_value, BinaryData};
 use dpp::state_transition::state_transitions::batch_transition::batched_transition::document_transition_action_type::DocumentTransitionActionType;
+use dashcore_rpc::json::GetMasternodePaymentsResult;
+use std::cell::RefCell;
+use std::collections::{HashMap, VecDeque};
 use std::env;
 use std::num::ParseIntError;
 use dpp::dashcore::Network;
@@ -38,6 +45,20 @@ impl From<reqwest::Error> for ProcessorError {
     }
 }
 
+impl From<dashcore_rpc::Error> for ProcessorError {
+    fn from(value: dashcore_rpc::Error) -> Self {
+        println!("{}", value);
+        ProcessorError::UnexpectedError
+    }
+}
+
+impl From<Status> for ProcessorError {
+    fn from(value: Status) -> Self {
+        println!("{}", value);
+        ProcessorError::UnexpectedError
+    }
+}
+
 impl From<ParseIntError> for ProcessorError {
     fn from(value: ParseIntError) -> Self {
         println!("{}", value);
@@ -50,7 +71,12 @@ pub struct PSQLProcessor {
     dao: PostgresDAO,
     platform_explorer_identifier: Identifier,
     dashcore_rpc: Client,
+    dapi_client: PlatformClient<Channel>,
     network: Network,
+    // committed state of the previous blocks, so it is not queried again for every block
+    known_validators: RefCell<HashMap<String, i32>>,
+    last_block_header: RefCell<Option<BlockHeader>>,
+    core_payments: RefCell<VecDeque<GetMasternodePaymentsResult>>,
 }
 
 // ST HASH, BLOCK HASH
@@ -70,8 +96,20 @@ pub fn state_transition_duplicates(network: Network) -> Vec<(String, String)> {
     }
 }
 
+// in milliseconds
+pub fn epoch_time_length(network: Network) -> i64 {
+    match network {
+        Network::Mainnet => 788400000,
+        _ => 3600000,
+    }
+}
+
 impl PSQLProcessor {
-    pub fn new(dashcore_rpc: Client, network: Network) -> PSQLProcessor {
+    pub fn new(
+        dashcore_rpc: Client,
+        dapi_client: PlatformClient<Channel>,
+        network: Network,
+    ) -> PSQLProcessor {
         let dao = PostgresDAO::new(network);
         let decoder = StateTransitionDecoder::new();
 
@@ -88,7 +126,11 @@ impl PSQLProcessor {
             dao,
             platform_explorer_identifier,
             dashcore_rpc,
+            dapi_client,
             network,
+            known_validators: RefCell::new(HashMap::new()),
+            last_block_header: RefCell::new(None),
+            core_payments: RefCell::new(VecDeque::new()),
         }
     }
 
@@ -185,6 +227,8 @@ impl PSQLProcessor {
             SystemDataContract::TokenHistory => {}
             SystemDataContract::KeywordSearch => {}
             SystemDataContract::DocumentHistory => {}
+            SystemDataContract::AppConnect => {}
+            SystemDataContract::ModerationCharters => {}
         }
     }
 }

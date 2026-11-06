@@ -102,6 +102,26 @@ impl From<DocumentTransition> for Document {
                     prefunded_voting_balance: None,
                 }
             }
+            DocumentTransition::IndexOnlyDelete(transition) => {
+                let base = transition.base().clone();
+                let identifier = base.id();
+                let data_contract_identifier = base.data_contract_id();
+                let document_type_name = base.document_type_name().clone();
+
+                Document {
+                    identifier,
+                    document_type_name,
+                    transition_type,
+                    owner: None,
+                    price: None,
+                    data: None,
+                    data_contract_identifier,
+                    revision: None,
+                    deleted: true,
+                    is_system: false,
+                    prefunded_voting_balance: None,
+                }
+            }
             DocumentTransition::Transfer(transition) => {
                 let base = transition.base().clone();
                 let identifier = base.id();
@@ -192,6 +212,8 @@ impl From<Row> for Document {
             3 => DocumentTransitionActionType::Transfer,
             4 => DocumentTransitionActionType::Purchase,
             5 => DocumentTransitionActionType::UpdatePrice,
+            6 => DocumentTransitionActionType::IgnoreWhileBumpingRevision,
+            7 => DocumentTransitionActionType::IndexOnlyDelete,
             _ => panic!("Unknown document transition type"),
         };
 

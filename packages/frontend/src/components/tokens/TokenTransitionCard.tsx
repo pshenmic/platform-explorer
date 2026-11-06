@@ -19,6 +19,12 @@ import type { LoadableState, Rate, Token } from '../../types'
 import type { WithClassName } from '../../types/common'
 import type { PriceData } from './prices/PriceListItem'
 import './TokenTransitionCard.css'
+import type { ShieldedTokenPayload } from '../../types/ShieldedTransaction'
+import {
+  ShieldedTokenDetails,
+  SHIELDED_TOKEN_BATCH_TYPES
+} from '../transactions/ShieldedTokenDetails'
+import { JsonDetails } from '../transactions/TransactionDetails'
 
 const BigNumber = BigNumberJs as ComponentType<{ children?: ReactNode; className?: string }>
 const CreditsBlock = CreditsBlockJs as ComponentType<{
@@ -146,7 +152,7 @@ const fieldsOfTypes: Record<string, string[]> = {
 }
 
 /** Token transition payload embedded in state transitions (richer than TokenTransition model). */
-export interface TokenTransitionView {
+export interface TokenTransitionView extends ShieldedTokenPayload {
   action?: string | null
   amount?: string | number | null
   tokenId?: string | null
@@ -171,7 +177,7 @@ interface TokenTransitionCardProps extends WithClassName {
   rate?: Pick<Rate, 'usd'> | null
 }
 
-const TokenTransitionCard = ({ transition, rate, className }: TokenTransitionCardProps) => {
+const LegacyTokenTransitionCard = ({ transition, rate, className }: TokenTransitionCardProps) => {
   const action = transition?.action ?? undefined
   const fields = (action && fieldsOfTypes[action]) || []
   const [token, setToken] = useState<LoadableState<Token>>({
@@ -194,6 +200,10 @@ const TokenTransitionCard = ({ transition, rate, className }: TokenTransitionCar
     }
     tokensInfo()
   }, [transition])
+
+  if (fields.length === 0) {
+    return <JsonDetails title="Token operation" value={transition} />
+  }
 
   return (
     <div className={`InfoBlock InfoBlock--Gradient TokenTransitionCard ${className || ''}`}>
@@ -398,4 +408,15 @@ const TokenTransitionCard = ({ transition, rate, className }: TokenTransitionCar
   )
 }
 
-export default TokenTransitionCard
+export default function TokenTransitionCard(props: TokenTransitionCardProps) {
+  const { transition, className } = props
+  if (SHIELDED_TOKEN_BATCH_TYPES.some(type => type === transition?.action)) {
+    return (
+      <div className={`InfoBlock InfoBlock--Gradient TokenTransitionCard ${className || ''}`}>
+        <InfoLine title="Action" value={<BatchTypeBadge batchType={transition?.action ?? ''} />} />
+        <ShieldedTokenDetails type={transition?.action ?? ''} payload={transition ?? {}} />
+      </div>
+    )
+  }
+  return <LegacyTokenTransitionCard {...props} />
+}

@@ -1,5 +1,5 @@
 const BlocksDAO = require('../dao/BlocksDAO')
-const { calculateInterval, iso8601duration, getPlatformQuorums, buildProposerSchedule } = require('../utils')
+const { calculateInterval, iso8601duration, getPlatformQuorums, buildProposerSchedule, getCoreBlockHash } = require('../utils')
 const Intervals = require('../enums/IntervalsEnum')
 const { EPOCH_CHANGE_TIME, NETWORK } = require('../constants')
 const DashCoreRPC = require('../dashcoreRpc')
@@ -55,7 +55,8 @@ class BlocksController {
       {
         ...block,
         header: {
-          ...block.header
+          ...block.header,
+          l1LockedBlockHash: await getCoreBlockHash(block.header.l1LockedHeight)
         },
         quorum
       }
@@ -190,22 +191,16 @@ class BlocksController {
         return response.status(400).send('Bad epochs range')
       }
 
-      if (epochIndexMin) {
-        const [startEpoch] = await this.sdk.node.getEpochsInfo(
-          1,
-          true,
-          Number(epochIndexMin)
-        )
+      const [[startEpoch], [endEpoch]] = await Promise.all([
+        epochIndexMin ? this.sdk.node.getEpochsInfo(1, true, Number(epochIndexMin)) : [],
+        epochIndexMax ? this.sdk.node.getEpochsInfo(1, true, Number(epochIndexMax)) : []
+      ])
 
+      if (epochIndexMin) {
         epochStartTimestamp = Number(startEpoch?.startTime)
       }
 
       if (epochIndexMax) {
-        const [endEpoch] = await this.sdk.node.getEpochsInfo(
-          1,
-          true,
-          Number(epochIndexMax)
-        )
         epochEndTimestamp = Number(endEpoch?.startTime) + EPOCH_CHANGE_TIME
       }
     }

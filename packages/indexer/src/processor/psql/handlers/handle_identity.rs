@@ -14,9 +14,12 @@ use dpp::state_transition::identity_create_transition::IdentityCreateTransition;
 use dpp::state_transition::identity_credit_transfer_to_addresses_transition::IdentityCreditTransferToAddressesTransition;
 use dpp::state_transition::identity_credit_transfer_transition::IdentityCreditTransferTransition;
 use dpp::state_transition::identity_credit_withdrawal_transition::IdentityCreditWithdrawalTransition;
+use dpp::state_transition::identity_top_up_from_shielded_pool_transition::accessors::IdentityTopUpFromShieldedPoolTransitionAccessorsV0;
+use dpp::state_transition::identity_top_up_from_shielded_pool_transition::IdentityTopUpFromShieldedPoolTransition;
 use dpp::state_transition::identity_topup_from_addresses_transition::IdentityTopUpFromAddressesTransition;
 use dpp::state_transition::identity_topup_transition::IdentityTopUpTransition;
 use dpp::state_transition::identity_update_transition::IdentityUpdateTransition;
+use dpp::state_transition::shield_from_identity_transition::ShieldFromIdentityTransition;
 use dpp::state_transition::StateTransitionIdentityIdFromInputs;
 
 impl PSQLProcessor {
@@ -206,6 +209,41 @@ impl PSQLProcessor {
     pub async fn handle_identity_top_up_from_address(
         &self,
         state_transition: IdentityTopUpFromAddressesTransition,
+        st_hash: String,
+        sql_transaction: &Transaction<'_>,
+    ) -> () {
+        let transfer = Transfer::from(state_transition);
+
+        self.dao
+            .create_transfer(transfer, st_hash.clone(), sql_transaction)
+            .await
+            .unwrap();
+    }
+
+    pub async fn handle_identity_top_up_from_shielded_pool(
+        &self,
+        state_transition: IdentityTopUpFromShieldedPoolTransition,
+        st_hash: String,
+        gas_used: u64,
+        sql_transaction: &Transaction<'_>,
+    ) -> () {
+        // the top up amount leaving the pool covers the fee as well, so the identity
+        // only receives what is left of it
+        let transfer = Transfer {
+            sender: None,
+            recipient: Some(state_transition.identity_id()),
+            amount: state_transition.top_up_amount().saturating_sub(gas_used),
+        };
+
+        self.dao
+            .create_transfer(transfer, st_hash.clone(), sql_transaction)
+            .await
+            .unwrap();
+    }
+
+    pub async fn handle_shield_from_identity(
+        &self,
+        state_transition: ShieldFromIdentityTransition,
         st_hash: String,
         sql_transaction: &Transaction<'_>,
     ) -> () {

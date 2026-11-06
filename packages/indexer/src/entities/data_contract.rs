@@ -26,58 +26,61 @@ pub struct DataContract {
 
 impl From<DataContractCreateTransition> for DataContract {
     fn from(state_transition: DataContractCreateTransition) -> Self {
-        match state_transition {
+        let data_contract = match state_transition {
             DataContractCreateTransition::V0(data_contract_create_transition) => {
-                let data_contract = data_contract_create_transition.data_contract;
+                data_contract_create_transition.data_contract
+            }
+            DataContractCreateTransition::V1(data_contract_create_transition) => {
+                data_contract_create_transition.data_contract
+            }
+        };
 
-                match data_contract {
-                    DataContractInSerializationFormat::V0(data_contract) => {
-                        let identifier = data_contract.id;
-                        let version = data_contract.version;
-                        let owner = data_contract.owner_id;
-                        let schema = data_contract.document_schemas;
-                        let schema_decoded = serde_json::to_value(schema).unwrap();
+        match data_contract {
+            DataContractInSerializationFormat::V0(data_contract) => {
+                let identifier = data_contract.id;
+                let version = data_contract.version;
+                let owner = data_contract.owner_id;
+                let schema = data_contract.document_schemas;
+                let schema_decoded = serde_json::to_value(schema).unwrap();
 
-                        return DataContract {
-                            id: None,
-                            name: None,
-                            owner,
-                            identifier,
-                            schema: Some(schema_decoded),
-                            version,
-                            is_system: false,
-                            tokens: None,
-                            format_version: Some(0u32),
-                            description: None,
-                            keywords: vec![],
-                        };
-                    }
+                return DataContract {
+                    id: None,
+                    name: None,
+                    owner,
+                    identifier,
+                    schema: Some(schema_decoded),
+                    version,
+                    is_system: false,
+                    tokens: None,
+                    format_version: Some(0u32),
+                    description: None,
+                    keywords: vec![],
+                };
+            }
 
-                    DataContractInSerializationFormat::V1(data_contract) => {
-                        let identifier = data_contract.id;
-                        let version = data_contract.version;
-                        let owner = data_contract.owner_id;
-                        let schema = data_contract.document_schemas;
-                        let schema_decoded = serde_json::to_value(schema).unwrap();
-                        let tokens = data_contract.tokens;
-                        let description = data_contract.description;
-                        let keywords = data_contract.keywords;
+            DataContractInSerializationFormat::V1(data_contract) => {
+                let identifier = data_contract.id;
+                let version = data_contract.version;
+                let owner = data_contract.owner_id;
+                let schema = data_contract.document_schemas;
+                let schema_decoded = serde_json::to_value(schema).unwrap();
+                let tokens = data_contract.tokens;
+                let description = data_contract.description;
+                let keywords = data_contract.keywords;
 
-                        return DataContract {
-                            id: None,
-                            name: None,
-                            owner,
-                            identifier,
-                            schema: Some(schema_decoded),
-                            version,
-                            is_system: false,
-                            tokens: Some(tokens),
-                            format_version: Some(1u32),
-                            description,
-                            keywords,
-                        };
-                    }
-                }
+                return DataContract {
+                    id: None,
+                    name: None,
+                    owner,
+                    identifier,
+                    schema: Some(schema_decoded),
+                    version,
+                    is_system: false,
+                    tokens: Some(tokens),
+                    format_version: Some(1u32),
+                    description,
+                    keywords,
+                };
             }
         }
     }
@@ -155,6 +158,8 @@ impl From<SystemDataContract> for DataContract {
             SystemDataContract::TokenHistory => "TokenHistory",
             SystemDataContract::KeywordSearch => "KeywordSearch",
             SystemDataContract::DocumentHistory => "DocumentHistory",
+            SystemDataContract::AppConnect => "AppConnect",
+            SystemDataContract::ModerationCharters => "ModerationCharters",
         };
         let identifier = data_contract.id();
         let source = data_contract.source(platform_version).ok();
@@ -162,8 +167,7 @@ impl From<SystemDataContract> for DataContract {
             .as_ref()
             .map(|s| Identifier::from(s.owner_id_bytes))
             .unwrap_or(identifier);
-        let schema_decoded = source
-            .map(|s| serde_json::to_value(s.document_schemas).unwrap());
+        let schema_decoded = source.map(|s| serde_json::to_value(s.document_schemas).unwrap());
 
         DataContract {
             id: None,
