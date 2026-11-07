@@ -2209,6 +2209,14 @@ const getCoreBlockRewards = (fromHeight, toHeight) => {
 // the Core block rewards since the epoch start) shared by proposed blocks, before masternode
 // reward shares. null when the pool can't be read at a single block height
 const getPendingEpochReward = async (sdk, proTxHash, epoch) => {
+  // getPathElements(path, keys) returns the elements stored under the keys of the tree at the path:
+  //
+  //   [48] pools
+  //   └── [epoch + 256, 2 bytes] epoch
+  //       ├── 'p' processing fees (sum)
+  //       ├── 's' storage fees (sum)
+  //       └── 'm' proposers
+  //           └── proTxHash: blocks proposed in the epoch (u64)
   const epochKey = Buffer.alloc(2)
   epochKey.writeUInt16BE(epoch.number + EPOCH_KEY_OFFSET)
 
@@ -2219,7 +2227,9 @@ const getPendingEpochReward = async (sdk, proTxHash, epoch) => {
     const { chain, time } = await sdk.node.status()
 
     const [pools, proposers] = await Promise.all([
+      // fees of the epoch
       sdk.node.getPathElements(epochPath, [Buffer.from('p'), Buffer.from('s')]),
+      // blocks proposed by the validator
       sdk.node.getPathElements([...epochPath, Buffer.from('m')], [Buffer.from(proTxHash, 'hex')])
     ])
 
