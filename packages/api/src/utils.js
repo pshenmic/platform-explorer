@@ -2,7 +2,7 @@ const crypto = require('crypto')
 const StateTransitionEnum = require('./enums/StateTransitionEnum')
 const DocumentActionEnum = require('./enums/DocumentActionEnum')
 const net = require('net')
-const { TCP_CONNECT_TIMEOUT, NETWORK, DPNS_CONTRACT, DAPI_DOCUMENTS_QUERY_LIMIT, BANNED_STATE_CACHE_KEY, PLATFORM_QUORUMS_CACHE_KEY, VALIDATORS_CACHE_LIFE_INTERVAL, PROTX_LIST_CACHE_KEY, PROTX_LIST_CACHE_LIFE_INTERVAL, CORE_BLOCK_HASH_CACHE_KEY, CORE_BLOCK_HASH_CACHE_MAX_ENTRIES, CORE_BLOCK_HASH_CACHE_LIFE_INTERVAL, CORE_NETWORK_CACHE_KEY, CORE_NETWORK_CACHE_LIFE_INTERVAL, DUFFS_PER_DASH, CORE_BLOCKS_PER_DAY } = require('./constants')
+const { TCP_CONNECT_TIMEOUT, NETWORK, DPNS_CONTRACT, DAPI_DOCUMENTS_QUERY_LIMIT, BANNED_STATE_CACHE_KEY, PLATFORM_QUORUMS_CACHE_KEY, VALIDATORS_CACHE_LIFE_INTERVAL, PROTX_LIST_CACHE_KEY, PROTX_LIST_CACHE_LIFE_INTERVAL, CORE_BLOCK_HASH_CACHE_KEY, CORE_BLOCK_HASH_CACHE_MAX_ENTRIES, CORE_BLOCK_HASH_CACHE_LIFE_INTERVAL, CORE_NETWORK_CACHE_KEY, CORE_NETWORK_CACHE_LIFE_INTERVAL, DPNS_CONTRACT_CACHE_KEY, DUFFS_PER_DASH, CORE_BLOCKS_PER_DAY } = require('./constants')
 const DashCoreRPC = require('./dashcoreRpc')
 const TenderdashRPC = require('./tenderdashRpc')
 const Quorum = require('./models/Quorum')
@@ -26,7 +26,6 @@ const {
   IdentityCreditWithdrawalTransitionWASM,
   MasternodeVoteTransitionWASM,
   PlatformVersionWASM,
-  DataContractWASM,
   IdentityCreateFromAddressesTransitionWASM,
   IdentityTopUpFromAddressesTransitionWASM,
   AddressFundsTransferTransitionWASM,
@@ -49,7 +48,6 @@ const {
   IdentifierWASM
 } = require('pshenmic-dpp')
 const BatchEnum = require('./enums/BatchEnum')
-const dpnsContract = require('../data_contracts/dpns.json')
 const { ContestedStateResultType } = require('dash-platform-sdk/types')
 const PreProgrammedDistribution = require('./models/PreProgrammedDistribution')
 const Token = require('./models/Token')
@@ -2456,6 +2454,23 @@ const getAliasFromDocument = (aliasDocument) => {
   }
 }
 
+const getDpnsContract = async (sdk) => {
+  const cached = cache.get(DPNS_CONTRACT_CACHE_KEY)
+
+  if (cached) {
+    return cached
+  }
+
+  // the pending request is cached for the whole run, so concurrent callers share it
+  const dataContract = sdk.dataContracts.getDataContractByIdentifier(DPNS_CONTRACT)
+
+  cache.set(DPNS_CONTRACT_CACHE_KEY, dataContract)
+
+  dataContract.catch(() => cache.delete(DPNS_CONTRACT_CACHE_KEY))
+
+  return await dataContract
+}
+
 const getAliasInfo = async (aliasText, sdk) => {
   const [label, domain] = aliasText.split('.')
 
@@ -2468,7 +2483,7 @@ const getAliasInfo = async (aliasText, sdk) => {
 
     try {
       const contestedState = await sdk.contestedResources.getContestedResourceVoteState(
-        DataContractWASM.fromValue(dpnsContract, true),
+        await getDpnsContract(sdk),
         'domain',
         'parentNameAndLabel',
         [
