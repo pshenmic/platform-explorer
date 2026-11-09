@@ -3,9 +3,10 @@ const assert = require('node:assert').strict
 const supertest = require('supertest')
 const server = require('../../src/server')
 const fixtures = require('../utils/fixtures')
+const mockDocumentsQuery = require('../utils/mockDocumentsQuery')
 const { getKnex } = require('../../src/utils')
 const BatchEnum = require('../../src/enums/BatchEnum')
-const { IdentifierWASM } = require('pshenmic-dpp')
+const { IdentifierWASM, TokenConfigurationWASM } = require('pshenmic-dpp')
 const { DocumentsController } = require('dash-platform-sdk/src/documents')
 const { TokensController } = require('dash-platform-sdk/src/tokens')
 const { DataContractsController } = require('dash-platform-sdk/src/dataContracts')
@@ -29,7 +30,7 @@ describe('Tokens', () => {
 
     aliasTimestamp = new Date()
 
-    mock.method(DocumentsController.prototype, 'query', async () => [{
+    mock.method(DocumentsController.prototype, 'query', mockDocumentsQuery({
       properties: {
         label: 'alias',
         parentDomainName: 'dash',
@@ -37,7 +38,7 @@ describe('Tokens', () => {
       },
       id: new IdentifierWASM('AQV2G2Egvqk8jwDBAcpngjKYcwAkck8Cecs5AjYJxfvW'),
       createdAt: BigInt(aliasTimestamp.getTime())
-    }])
+    }))
 
     mock.method(TokensController.prototype, 'getTokenTotalSupply', async () => ({
       totalSystemAmount: 1000,
@@ -187,7 +188,7 @@ describe('Tokens', () => {
       })
 
       const token = await fixtures.token(knex, {
-        position: 0,
+        position: 29,
         identifier: 'BZZUT4W8mPvH7bs7hCu3FtQVaKeZEtLbNHC2kESvNoEv',
         owner: identity.identifier,
         data_contract_id: dataContract.id,
@@ -227,7 +228,7 @@ describe('Tokens', () => {
       })
 
       const token = await fixtures.token(knex, {
-        position: 0,
+        position: 29,
         identifier: 'BZZUT4W8mPvH7bs7hCu3FtQVaKeZEtLbNHC2kESvNoEv',
         owner: identity.identifier,
         data_contract_id: dataContract.id,
@@ -694,7 +695,7 @@ describe('Tokens', () => {
 
       assert.equal(body.pagination.page, 2)
       assert.equal(body.pagination.limit, 11)
-      assert.equal(body.pagination.total, 30)
+      assert.equal(body.pagination.total, 35)
 
       const expectedTokens = tokens
         .filter(({ token }) => token.owner === identity.identifier)
@@ -761,7 +762,7 @@ describe('Tokens', () => {
     })
 
     it('should return tokens set with order desc and custom limit and filter by owner, position, contract_id', async () => {
-      const { body } = await client.get(`/tokens?order=desc&limit=11&page=1&owner=${identities[0].identifier}&position=0&contract_id=${dataContract.identifier}`)
+      const { body } = await client.get(`/tokens?order=desc&limit=11&page=1&owner=${identities[0].identifier}&position=29&contract_id=${dataContract.identifier}`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8')
 
@@ -771,7 +772,7 @@ describe('Tokens', () => {
 
       const expectedTokens = tokens
         .filter(({ token }) => token.owner === identities[0].identifier)
-        .filter(({ token }) => token.position === 0)
+        .filter(({ token }) => token.position === 29)
         .filter(({ token }) => token.data_contract_id === dataContract.id)
         .sort((a, b) => b.token.id - a.token.id)
         .slice(0, 11)
@@ -1573,6 +1574,20 @@ describe('Tokens', () => {
   })
 
   describe('getTokensByName()', () => {
+    before(async () => {
+      // created by the getTokenByIdentifier() fixtures, matched by name as well
+      tokens.push({ token: await knex('tokens').where('name', 'test_000').first() })
+
+      // the tokens matched by name sit at positions 29 and 30 of the same contract
+      const getDataContractByIdentifier = DataContractsController.prototype.getDataContractByIdentifier
+
+      mock.method(DataContractsController.prototype, 'getDataContractByIdentifier', async (identifier) => {
+        const dataContract = await getDataContractByIdentifier(identifier)
+
+        return { ...dataContract, tokens: [29, 30].map(position => ({ ...dataContract.tokens[0], position })) }
+      })
+    })
+
     it('should return default list of tokens with name', async () => {
       const { body } = await client.get('/tokens/test/info')
         .expect(200)
@@ -1587,8 +1602,8 @@ describe('Tokens', () => {
         .sort((a, b) => a.token.id - b.token.id)
         .slice(0, 10)
         .map(({ token }) => ({
-          identifier: '8xapVbQzGxiA6o3t1mJ3e2eVthFphZEmTL5bWZ7jQ2nB',
-          position: 30,
+          identifier: TokenConfigurationWASM.calculateTokenId(new IdentifierWASM('9YmVyhsWkijVksa3gfgdegW8dQkJ864HQKPwdkRfGTP'), token.position).base58(),
+          position: token.position,
           timestamp: block.timestamp.toISOString(),
           description: null,
           localizations: {
@@ -1669,8 +1684,8 @@ describe('Tokens', () => {
         .sort((a, b) => b.token.id - a.token.id)
         .slice(0, 10)
         .map(({ token }) => ({
-          identifier: '8xapVbQzGxiA6o3t1mJ3e2eVthFphZEmTL5bWZ7jQ2nB',
-          position: 30,
+          identifier: TokenConfigurationWASM.calculateTokenId(new IdentifierWASM('9YmVyhsWkijVksa3gfgdegW8dQkJ864HQKPwdkRfGTP'), token.position).base58(),
+          position: token.position,
           timestamp: block.timestamp.toISOString(),
           description: null,
           localizations: {
@@ -1751,8 +1766,8 @@ describe('Tokens', () => {
         .sort((a, b) => b.token.id - a.token.id)
         .slice(0, 11)
         .map(({ token }) => ({
-          identifier: '8xapVbQzGxiA6o3t1mJ3e2eVthFphZEmTL5bWZ7jQ2nB',
-          position: 30,
+          identifier: TokenConfigurationWASM.calculateTokenId(new IdentifierWASM('9YmVyhsWkijVksa3gfgdegW8dQkJ864HQKPwdkRfGTP'), token.position).base58(),
+          position: token.position,
           timestamp: block.timestamp.toISOString(),
           description: null,
           localizations: {
@@ -1833,8 +1848,8 @@ describe('Tokens', () => {
         .sort((a, b) => b.token.id - a.token.id)
         .slice(11, 22)
         .map(({ token }) => ({
-          identifier: '8xapVbQzGxiA6o3t1mJ3e2eVthFphZEmTL5bWZ7jQ2nB',
-          position: 30,
+          identifier: TokenConfigurationWASM.calculateTokenId(new IdentifierWASM('9YmVyhsWkijVksa3gfgdegW8dQkJ864HQKPwdkRfGTP'), token.position).base58(),
+          position: token.position,
           timestamp: block.timestamp.toISOString(),
           description: null,
           localizations: {
@@ -2138,7 +2153,7 @@ describe('Tokens', () => {
         })
 
         const token = await fixtures.token(knex, {
-          position: 29,
+          position: 30,
           owner: identity.identifier,
           data_contract_id: dataContract.id,
           decimals: i,

@@ -1,21 +1,11 @@
 // Mirrors packages/api/src/models/Transaction.js
 
 import type { Owner } from './Owner'
+import type { TransactionTypesInfo } from '../enums/state.transition.type'
 
 export type TransactionStatus = 'SUCCESS' | 'FAIL'
 
-export type TransitionType =
-  | 'DATA_CONTRACT_CREATE'
-  | 'DOCUMENTS_BATCH'
-  | 'IDENTITY_CREATE'
-  | 'IDENTITY_TOP_UP'
-  | 'DATA_CONTRACT_UPDATE'
-  | 'IDENTITY_UPDATE'
-  | 'IDENTITY_CREDIT_WITHDRAWAL'
-  | 'IDENTITY_CREDIT_TRANSFER'
-  | 'MASTERNODE_VOTE'
-  | 'BATCH'
-  | 'TOKEN_TRANSFER'
+export type TransitionType = keyof typeof TransactionTypesInfo
 
 export interface TransactionDuplicate {
   hash: string

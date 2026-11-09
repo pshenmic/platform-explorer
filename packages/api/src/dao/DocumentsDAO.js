@@ -79,7 +79,7 @@ module.exports = class DocumentsDAO {
     const document = Document.fromRow({
       ...row,
       data: !row.deleted ? row.data : undefined,
-      transition_type: BatchEnum[row.transition_type],
+      transition_type: BatchEnum.fromDocumentAction(row.transition_type),
       owner: {
         identifier: row.document_owner?.trim(),
         aliases: aliases ?? []
@@ -182,7 +182,7 @@ module.exports = class DocumentsDAO {
       return Document.fromRow({
         ...row,
         data: row.document_data,
-        transition_type: BatchEnum[row.transition_type],
+        transition_type: BatchEnum.fromDocumentAction(row.transition_type),
         owner: {
           identifier: row.document_owner?.trim(),
           aliases: aliases ?? []
@@ -242,7 +242,7 @@ module.exports = class DocumentsDAO {
 
       const document = Document.fromRow({
         ...row,
-        transition_type: BatchEnum[row.transition_type],
+        transition_type: BatchEnum.fromDocumentAction(row.transition_type),
         owner: {
           identifier: row.owner?.trim(),
           aliases: aliases ?? []

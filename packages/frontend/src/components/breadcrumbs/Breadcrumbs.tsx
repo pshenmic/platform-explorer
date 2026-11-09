@@ -6,18 +6,6 @@ import { useBreadcrumbs } from '../../contexts/BreadcrumbsContext'
 import type { Breadcrumb } from '../../contexts/BreadcrumbsContext'
 import ImageGenerator from '../imageGenerator'
 
-export const breadcrumbsActiveRoutes = [
-  '/validator/',
-  '/transaction/',
-  '/identity/',
-  '/dataContract/',
-  '/document/',
-  '/block/',
-  '/contestedResource/',
-  '/tokens/',
-  '/developers/'
-]
-
 /** Extra fields used by callers beyond the base Breadcrumb context type. */
 interface BreadcrumbLink extends Breadcrumb {
   icon?: string
@@ -38,8 +26,6 @@ export const Breadcrumbs = () => {
   const icons: Record<string, ReactNode> = {
     block: <BlockIcon className={'Breadcrumbs__Icon Breadcrumbs__Icon--Block'} />
   }
-
-  if (!links || links.length === 0) return
 
   const LinkContainer = ({ children, href, ...props }: LinkContainerProps) => {
     if (href) {
