@@ -15,7 +15,7 @@ import useResizeObserver from '@react-hook/resize-observer'
 
 import * as Api from '../../util/Api'
 import { Presets } from '../cards'
-import { PRESETS } from './MetricChart'
+import { ChartGhost, PRESETS } from './MetricChart'
 import { Tooltip } from '../ui/Tooltips'
 import DashIcon from '../ui/icons/DashIcon'
 import { creditsToDash, roundUsd } from '../../util'
@@ -725,18 +725,9 @@ export default function ShieldedPoolCard({
             onPointerCancel={() => setHoverI(null)}
           >
             {(pool.loading || series.loading) && !chart ? (
-              <div className={'ShieldedPool__ChartSkel'}>
-                <span className={'ShieldedPool__LoadingLabel'} role={'status'}>
-                  Loading pool history…
-                </span>
-              </div>
+              <ChartGhost type="line" />
             ) : chart ? (
               <>
-                {series.loading && (
-                  <span className={'ShieldedPool__LoadingLabel'} role={'status'}>
-                    Updating…
-                  </span>
-                )}
                 <svg
                   className={`ShieldedPool__Svg${series.loading ? ' is-stale' : ''}`}
                   viewBox={`0 0 ${width} ${plotH}`}
