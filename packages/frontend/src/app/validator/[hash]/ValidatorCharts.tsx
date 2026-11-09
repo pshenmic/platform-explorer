@@ -86,7 +86,7 @@ export default function ValidatorCharts({ hash }: { hash: string }) {
   })
   const points = query.data ?? []
   const h = plotH
-  const ready = width > 0 && h > 0 && points.length > 1
+  const ready = width > 0 && h > 0 && points.some(point => point.y > 0)
   const isBlocks = metric === 'blocks'
   const yAbbr = isBlocks ? 'blocks' : 'DASH'
   const chart = useMemo(() => {
