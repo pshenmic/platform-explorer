@@ -1,9 +1,11 @@
 const { describe, it, before, after, beforeEach, mock } = require('node:test')
 const assert = require('node:assert').strict
 const supertest = require('supertest')
+const cbor = require('cbor')
 const server = require('../../src/server')
 const { getKnex } = require('../../src/utils')
 const fixtures = require('../utils/fixtures')
+const mockDocumentsQuery = require('../utils/mockDocumentsQuery')
 const StateTransitionEnum = require('../../src/enums/StateTransitionEnum')
 const TokenTransitionsEnum = require('../../src/enums/TokenTransitionsEnum')
 const DocumentActionEnum = require('../../src/enums/DocumentActionEnum')
@@ -11,6 +13,7 @@ const tenderdashRpc = require('../../src/tenderdashRpc')
 const { ContestedResourcesController } = require('dash-platform-sdk/src/contestedResources')
 const { IdentitiesController } = require('dash-platform-sdk/src/identities')
 const { DocumentsController } = require('dash-platform-sdk/src/documents')
+const { DataContractsController } = require('dash-platform-sdk/src/dataContracts')
 const { IdentifierWASM, IdentityWASM } = require('pshenmic-dpp')
 
 describe('Identities routes', () => {
@@ -182,6 +185,7 @@ describe('Identities routes', () => {
 
     mock.method(IdentitiesController.prototype, 'getIdentityPublicKeys', async () => null)
 
+    mock.method(DataContractsController.prototype, 'getDataContractByIdentifier', async () => ({}))
     mock.method(ContestedResourcesController.prototype, 'getContestedResourceVoteState', async () => null)
 
     mock.method(tenderdashRpc, 'getBlockByHeight', async () => ({
@@ -496,7 +500,7 @@ describe('Identities routes', () => {
 
   describe('getIdentities()', async () => {
     before(() => {
-      mock.method(DocumentsController.prototype, 'query', async () => [{
+      mock.method(DocumentsController.prototype, 'query', mockDocumentsQuery({
         properties: {
           label: 'test',
           parentDomainName: 'test',
@@ -504,7 +508,7 @@ describe('Identities routes', () => {
         },
         id: new IdentifierWASM('Bwr4WHCPz5rFVAD87RqTs3izo4zpzwsEdKPWUT1NS1C7'),
         createdAt: 0
-      }])
+      }))
     })
 
     it('should return default set of identities', async () => {
@@ -762,7 +766,14 @@ describe('Identities routes', () => {
       const identities = []
       const aliases = []
 
-      mock.method(IdentitiesController.prototype, 'getIdentityBalance', async (identifier) => identities.find(({ identity }) => identity.identifier === identifier)?.balance)
+      mock.method(IdentitiesController.prototype, 'getIdentityByIdentifier', async (identifier) => {
+        const identityWASM = new IdentityWASM(identifier)
+
+        identityWASM.revision = mockIdentity.revision
+        identityWASM.balance = BigInt(identities.find(({ identity }) => identity.identifier === identifier)?.balance ?? 0)
+
+        return identityWASM
+      })
 
       for (let i = 0; i < 100; i++) {
         block = await fixtures.block(knex, { height: i + 1, timestamp: new Date(0) })
@@ -838,7 +849,14 @@ describe('Identities routes', () => {
       const identities = []
       const aliases = []
 
-      mock.method(IdentitiesController.prototype, 'getIdentityBalance', async (identifier) => identities.find(({ identity }) => identity.identifier === identifier)?.balance)
+      mock.method(IdentitiesController.prototype, 'getIdentityByIdentifier', async (identifier) => {
+        const identityWASM = new IdentityWASM(identifier)
+
+        identityWASM.revision = mockIdentity.revision
+        identityWASM.balance = BigInt(identities.find(({ identity }) => identity.identifier === identifier)?.balance ?? 0)
+
+        return identityWASM
+      })
 
       for (let i = 0; i < 100; i++) {
         block = await fixtures.block(knex, { height: i + 1, timestamp: new Date(0) })
@@ -917,7 +935,14 @@ describe('Identities routes', () => {
       const identities = []
       const aliases = []
 
-      mock.method(IdentitiesController.prototype, 'getIdentityBalance', async (identifier) => identities.find(({ identity }) => identity.identifier === identifier)?.balance)
+      mock.method(IdentitiesController.prototype, 'getIdentityByIdentifier', async (identifier) => {
+        const identityWASM = new IdentityWASM(identifier)
+
+        identityWASM.revision = mockIdentity.revision
+        identityWASM.balance = BigInt(identities.find(({ identity }) => identity.identifier === identifier)?.balance ?? 0)
+
+        return identityWASM
+      })
 
       for (let i = 0; i < 100; i++) {
         block = await fixtures.block(knex, { height: i + 1, timestamp: new Date(0) })
@@ -1003,7 +1028,7 @@ describe('Identities routes', () => {
     })
 
     it('should allow sort by tx count', async () => {
-      mock.method(IdentitiesController.prototype, 'getIdentityBalance', async () => BigInt(0))
+      mock.method(IdentitiesController.prototype, 'getIdentityByIdentifier', async () => mockIdentity)
       const identities = []
       const aliases = []
 
@@ -1086,7 +1111,7 @@ describe('Identities routes', () => {
     })
 
     it('should allow sort by balance', async () => {
-      mock.method(DocumentsController.prototype, 'query', async () => [{
+      mock.method(DocumentsController.prototype, 'query', mockDocumentsQuery({
         properties: {
           label: 'test',
           parentDomainName: 'test',
@@ -1094,7 +1119,7 @@ describe('Identities routes', () => {
         },
         id: new IdentifierWASM('Bwr4WHCPz5rFVAD87RqTs3izo4zpzwsEdKPWUT1NS1C7'),
         createdAt: 0
-      }])
+      }))
 
       const identities = []
       const aliases = []
@@ -1127,11 +1152,15 @@ describe('Identities routes', () => {
 
       mock.reset()
 
-      mock.method(IdentitiesController.prototype, 'getIdentityByIdentifier', async () => mockIdentity)
-
-      mock.method(IdentitiesController.prototype, 'getIdentityBalance', async (identifier) => {
+      mock.method(IdentitiesController.prototype, 'getIdentityByIdentifier', async (identifier) => {
         const { identity } = identities.find(({ identity }) => identity.identifier === identifier)
-        return identity.balance
+
+        const identityWASM = new IdentityWASM(identifier)
+
+        identityWASM.revision = mockIdentity.revision
+        identityWASM.balance = BigInt(identity.balance)
+
+        return identityWASM
       })
       mock.method(tenderdashRpc, 'getBlockByHeight', async () => ({
         block: {
@@ -1192,7 +1221,7 @@ describe('Identities routes', () => {
     })
 
     it('should return all identities when identity_type is omitted', async () => {
-      mock.method(IdentitiesController.prototype, 'getIdentityBalance', async () => 0)
+      mock.method(IdentitiesController.prototype, 'getIdentityByIdentifier', async () => mockIdentity)
 
       const regular = []
       const masternode = []
@@ -1218,7 +1247,7 @@ describe('Identities routes', () => {
     })
 
     it('should return only regular identities when identity_type=regular', async () => {
-      mock.method(IdentitiesController.prototype, 'getIdentityBalance', async () => 0)
+      mock.method(IdentitiesController.prototype, 'getIdentityByIdentifier', async () => mockIdentity)
 
       const regular = []
       const masternode = []
@@ -1248,7 +1277,7 @@ describe('Identities routes', () => {
     })
 
     it('should return only masternode identities when identity_type=masternode', async () => {
-      mock.method(IdentitiesController.prototype, 'getIdentityBalance', async () => 0)
+      mock.method(IdentitiesController.prototype, 'getIdentityByIdentifier', async () => mockIdentity)
 
       const regular = []
       const masternode = []
@@ -1278,7 +1307,7 @@ describe('Identities routes', () => {
     })
 
     it('should report the type of every identity', async () => {
-      mock.method(IdentitiesController.prototype, 'getIdentityBalance', async () => 0)
+      mock.method(IdentitiesController.prototype, 'getIdentityByIdentifier', async () => mockIdentity)
 
       const regular = []
       const masternode = []
@@ -1312,7 +1341,7 @@ describe('Identities routes', () => {
     })
 
     it('should filter by the masternode voting and operator types', async () => {
-      mock.method(IdentitiesController.prototype, 'getIdentityBalance', async () => 0)
+      mock.method(IdentitiesController.prototype, 'getIdentityByIdentifier', async () => mockIdentity)
 
       const byType = {}
 
@@ -2547,6 +2576,46 @@ describe('Identities routes', () => {
   })
 
   describe('getTransfersByIdentity()', async () => {
+    for (const { name, error, expectedError } of [
+      {
+        name: 'decoded consensus error',
+        error: cbor.encode({ data: { serializedError: Buffer.alloc(8) } }).toString('base64'),
+        expectedError: 'default error'
+      },
+      {
+        name: 'malformed error fallback',
+        error: 'Cannot deserialize',
+        expectedError: 'Cannot deserialize'
+      }
+    ]) {
+      it(`should return failed transfer status and ${name}`, async () => {
+        block = await fixtures.block(knex, { height: 1 })
+        identity = await fixtures.identity(knex, { block_hash: block.hash, block_height: block.height })
+        transaction = await fixtures.transaction(knex, {
+          block_hash: block.hash,
+          block_height: block.height,
+          owner: identity.identifier,
+          type: StateTransitionEnum.IDENTITY_TOP_UP,
+          status: 'FAIL',
+          error
+        })
+        await fixtures.transfer(knex, {
+          amount: 1000,
+          recipient: identity.identifier,
+          sender: null,
+          state_transition_hash: transaction.hash
+        })
+
+        const { body } = await client.get(`/identity/${identity.identifier}/transfers?hash=${transaction.hash}`)
+          .expect(200)
+
+        assert.equal(body.pagination.total, 1)
+        assert.equal(body.resultSet.length, 1)
+        assert.equal(body.resultSet[0].status, 'FAIL')
+        assert.equal(body.resultSet[0].error, expectedError)
+      })
+    }
+
     it('should return default set of transfers by identity', async () => {
       block = await fixtures.block(knex, { height: 1 })
       identity = await fixtures.identity(knex, { block_hash: block.hash, block_height: block.height })
@@ -2575,7 +2644,7 @@ describe('Identities routes', () => {
         .expect('Content-Type', 'application/json; charset=utf-8')
 
       assert.equal(body.resultSet.length, 10)
-      assert.equal(body.pagination.total, documents.length)
+      assert.equal(body.pagination.total, transfers.length)
       assert.equal(body.pagination.page, 1)
       assert.equal(body.pagination.limit, 10)
 
@@ -2590,7 +2659,9 @@ describe('Identities routes', () => {
           txHash: _transfer.transfer.state_transition_hash,
           type: StateTransitionEnum[_transfer.transaction.type],
           blockHash: _transfer.block.hash,
-          gasUsed: _transfer.transaction.gas_used
+          gasUsed: _transfer.transaction.gas_used,
+          status: _transfer.transaction.status,
+          error: _transfer.transaction.error
         }))
 
       assert.deepEqual(body.resultSet, expectedTransfers)
@@ -2640,7 +2711,9 @@ describe('Identities routes', () => {
           txHash: _transfer.transfer.state_transition_hash,
           type: StateTransitionEnum[_transfer.transaction.type],
           blockHash: _transfer.block.hash,
-          gasUsed: _transfer.transaction.gas_used
+          gasUsed: _transfer.transaction.gas_used,
+          status: _transfer.transaction.status,
+          error: _transfer.transaction.error
         }))
 
       assert.deepEqual(body.resultSet, expectedTransfers)
@@ -2690,7 +2763,9 @@ describe('Identities routes', () => {
           txHash: _transfer.transfer.state_transition_hash,
           type: StateTransitionEnum[_transfer.transaction.type],
           blockHash: _transfer.block.hash,
-          gasUsed: _transfer.transaction.gas_used
+          gasUsed: _transfer.transaction.gas_used,
+          status: _transfer.transaction.status,
+          error: _transfer.transaction.error
         }))
 
       assert.deepEqual(body.resultSet, expectedTransfers)
@@ -2732,7 +2807,9 @@ describe('Identities routes', () => {
         txHash: transaction.hash,
         type: StateTransitionEnum[transaction.type],
         blockHash: block.hash,
-        gasUsed: transaction.gas_used
+        gasUsed: transaction.gas_used,
+        status: transaction.status,
+        error: transaction.error
       }
 
       assert.deepEqual(body.resultSet, [expectedTransfers])
@@ -2766,7 +2843,7 @@ describe('Identities routes', () => {
         .expect('Content-Type', 'application/json; charset=utf-8')
 
       assert.equal(body.resultSet.length, 10)
-      assert.equal(body.pagination.total, documents.length)
+      assert.equal(body.pagination.total, transfers.length)
       assert.equal(body.pagination.page, 1)
       assert.equal(body.pagination.limit, 10)
 
@@ -2781,7 +2858,9 @@ describe('Identities routes', () => {
           txHash: _transfer.transfer.state_transition_hash,
           type: StateTransitionEnum[_transfer.transaction.type],
           blockHash: _transfer.block.hash,
-          gasUsed: _transfer.transaction.gas_used
+          gasUsed: _transfer.transaction.gas_used,
+          status: _transfer.transaction.status,
+          error: _transfer.transaction.error
         }))
 
       assert.deepEqual(body.resultSet, expectedTransfers)
@@ -2815,7 +2894,7 @@ describe('Identities routes', () => {
         .expect('Content-Type', 'application/json; charset=utf-8')
 
       assert.equal(body.resultSet.length, 7)
-      assert.equal(body.pagination.total, documents.length)
+      assert.equal(body.pagination.total, transfers.length)
       assert.equal(body.pagination.page, 2)
       assert.equal(body.pagination.limit, 7)
 
@@ -2830,7 +2909,9 @@ describe('Identities routes', () => {
           txHash: _transfer.transfer.state_transition_hash,
           type: StateTransitionEnum[_transfer.transaction.type],
           blockHash: _transfer.block.hash,
-          gasUsed: _transfer.transaction.gas_used
+          gasUsed: _transfer.transaction.gas_used,
+          status: _transfer.transaction.status,
+          error: _transfer.transaction.error
         }))
 
       assert.deepEqual(body.resultSet, expectedTransfers)
@@ -2864,7 +2945,7 @@ describe('Identities routes', () => {
         .expect('Content-Type', 'application/json; charset=utf-8')
 
       assert.equal(body.resultSet.length, 7)
-      assert.equal(body.pagination.total, documents.length)
+      assert.equal(body.pagination.total, transfers.length)
       assert.equal(body.pagination.page, 2)
       assert.equal(body.pagination.limit, 7)
 
@@ -2879,7 +2960,9 @@ describe('Identities routes', () => {
           txHash: _transfer.transfer.state_transition_hash,
           type: StateTransitionEnum[_transfer.transaction.type],
           blockHash: _transfer.block.hash,
-          gasUsed: _transfer.transaction.gas_used
+          gasUsed: _transfer.transaction.gas_used,
+          status: _transfer.transaction.status,
+          error: _transfer.transaction.error
         }))
 
       assert.deepEqual(body.resultSet, expectedTransfers)

@@ -5,7 +5,7 @@ use deadpool_postgres::Transaction;
 use dpp::data_contract::associated_token::token_configuration::accessors::v0::TokenConfigurationV0Getters;
 use dpp::data_contract::associated_token::token_configuration_convention::accessors::v0::TokenConfigurationConventionV0Getters;
 use dpp::data_contract::associated_token::token_configuration_localization::accessors::v0::TokenConfigurationLocalizationV0Getters;
-use dpp::data_contract::associated_token::token_distribution_rules::TokenDistributionRules;
+use dpp::data_contract::associated_token::token_distribution_rules::accessors::v0::TokenDistributionRulesV0Getters;
 use dpp::data_contract::associated_token::token_keeps_history_rules::accessors::v0::TokenKeepsHistoryRulesV0Getters;
 use dpp::data_contract::associated_token::token_perpetual_distribution::distribution_recipient::TokenDistributionRecipient;
 use dpp::data_contract::associated_token::token_perpetual_distribution::TokenPerpetualDistribution;
@@ -87,63 +87,59 @@ impl PSQLProcessor {
                     .await
                     .unwrap();
 
-                match v.distribution_rules() {
-                    TokenDistributionRules::V0(v0) => {
-                        match v0.perpetual_distribution.clone() {
-                            None => {}
-                            Some(perpetual) => {
-                                match perpetual {
-                                    TokenPerpetualDistribution::V0(perpetual_v0) => {
-                                        match perpetual_v0.distribution_recipient {
-                                            TokenDistributionRecipient::Identity(id) => {
-                                                self.dao
-                                                    .token_holder(
-                                                        id,
-                                                        Identifier::from(token_id),
-                                                        &sql_transaction,
-                                                    )
-                                                    .await
-                                                    .unwrap();
-                                            }
-                                            TokenDistributionRecipient::EvonodesByParticipation => {
-                                                // TODO: need to implement
-                                            }
-                                            _ => {}
-                                        }
-                                    }
+                let distribution_rules = v.distribution_rules();
+
+                match distribution_rules.perpetual_distribution().cloned() {
+                    None => {}
+                    Some(perpetual) => match perpetual {
+                        TokenPerpetualDistribution::V0(perpetual_v0) => {
+                            match perpetual_v0.distribution_recipient {
+                                TokenDistributionRecipient::Identity(id) => {
+                                    self.dao
+                                        .token_holder(
+                                            id,
+                                            Identifier::from(token_id),
+                                            &sql_transaction,
+                                        )
+                                        .await
+                                        .unwrap();
+                                }
+                                TokenDistributionRecipient::EvonodesByParticipation => {
+                                    // TODO: need to implement
+                                }
+                                _ => {}
+                            }
+                        }
+                    },
+                }
+
+                match distribution_rules.pre_programmed_distribution().cloned() {
+                    None => {}
+                    Some(pre_prog) => match pre_prog {
+                        TokenPreProgrammedDistribution::V0(pre_prog_v0) => {
+                            for timestamp in pre_prog_v0.distributions.iter() {
+                                for distribution in timestamp.1.iter() {
+                                    self.dao
+                                        .token_holder(
+                                            distribution.0.clone(),
+                                            Identifier::from(token_id),
+                                            &sql_transaction,
+                                        )
+                                        .await
+                                        .unwrap();
                                 }
                             }
                         }
+                    },
+                }
 
-                        match v0.pre_programmed_distribution.clone() {
-                            None => {}
-                            Some(pre_prog) => match pre_prog {
-                                TokenPreProgrammedDistribution::V0(pre_prog_v0) => {
-                                    for timestamp in pre_prog_v0.distributions.iter() {
-                                        for distribution in timestamp.1.iter() {
-                                            self.dao
-                                                .token_holder(
-                                                    distribution.0.clone(),
-                                                    Identifier::from(token_id),
-                                                    &sql_transaction,
-                                                )
-                                                .await
-                                                .unwrap();
-                                        }
-                                    }
-                                }
-                            },
-                        }
-
-                        match v0.new_tokens_destination_identity {
-                            None => {}
-                            Some(id) => {
-                                self.dao
-                                    .token_holder(id, Identifier::from(token_id), &sql_transaction)
-                                    .await
-                                    .unwrap();
-                            }
-                        }
+                match distribution_rules.new_tokens_destination_identity() {
+                    None => {}
+                    Some(id) => {
+                        self.dao
+                            .token_holder(id.clone(), Identifier::from(token_id), &sql_transaction)
+                            .await
+                            .unwrap();
                     }
                 }
             }
