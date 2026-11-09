@@ -91,7 +91,8 @@ const fixtures = {
     l1_locked_height,
     validator,
     app_hash,
-    quorum_hash
+    quorum_hash,
+    epoch
   } = {}) => {
     const validatorObject = validator
       ? await fixtures.getValidator(knex, { pro_tx_hash: validator })
@@ -106,10 +107,18 @@ const fixtures = {
       validator: validatorObject.pro_tx_hash,
       validator_id: validatorObject.id,
       app_hash: app_hash ?? generateHash(),
-      quorum_hash: quorum_hash ?? generateHash()
+      quorum_hash: quorum_hash ?? generateHash(),
+      epoch: epoch ?? null
     }
 
     await knex('blocks').insert(row)
+
+    await knex('validators')
+      .where('id', validatorObject.id)
+      .update({
+        proposed_blocks_count: knex.raw('proposed_blocks_count + 1'),
+        last_proposed_block_height: knex.raw('GREATEST(last_proposed_block_height, ?)', [row.height])
+      })
 
     return row
   },
@@ -391,6 +400,46 @@ const fixtures = {
     }
 
     const [result] = await knex('validators').insert(row).returning('id')
+
+    return { ...row, id: result.id }
+  },
+  corePayment: async (knex, {
+    core_block_height,
+    pro_tx_hash,
+    amount
+  } = {}) => {
+    if (!core_block_height || !pro_tx_hash) {
+      throw new Error('core_block_height and pro_tx_hash must be provided for corePayment fixture')
+    }
+
+    const row = {
+      core_block_height,
+      pro_tx_hash,
+      amount: amount ?? 0
+    }
+
+    const [result] = await knex('core_payments').insert(row).returning('id')
+
+    return { ...row, id: result.id }
+  },
+  platformReward: async (knex, {
+    block_height,
+    epoch,
+    pro_tx_hash,
+    amount
+  } = {}) => {
+    if (!block_height || epoch === undefined || !pro_tx_hash) {
+      throw new Error('block_height, epoch and pro_tx_hash must be provided for platformReward fixture')
+    }
+
+    const row = {
+      block_height,
+      epoch,
+      pro_tx_hash,
+      amount: amount ?? 0
+    }
+
+    const [result] = await knex('platform_rewards').insert(row).returning('id')
 
     return { ...row, id: result.id }
   },
@@ -712,6 +761,8 @@ const fixtures = {
     await knex.raw('DELETE FROM state_transitions')
     await knex.raw('DELETE FROM blocks')
     await knex.raw('DELETE FROM validators')
+    await knex.raw('DELETE FROM core_payments')
+    await knex.raw('DELETE FROM platform_rewards')
   }
 }
 

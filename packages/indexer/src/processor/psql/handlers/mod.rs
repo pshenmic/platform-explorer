@@ -1,11 +1,13 @@
 mod handle_batch;
 mod handle_block;
+mod handle_core_payments;
 mod handle_data_contract;
 mod handle_documents;
 mod handle_identity;
 mod handle_init_chain;
 mod handle_masternode_vote;
 mod handle_platform_address_transition;
+mod handle_platform_rewards;
 mod handle_shielded_transition;
 mod handle_st;
 mod handle_token_configuration;
