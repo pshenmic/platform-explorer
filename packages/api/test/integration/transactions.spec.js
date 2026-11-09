@@ -4,6 +4,7 @@ const supertest = require('supertest')
 const server = require('../../src/server')
 const { getKnex } = require('../../src/utils')
 const fixtures = require('../utils/fixtures')
+const mockDocumentsQuery = require('../utils/mockDocumentsQuery')
 const StateTransitionEnum = require('../../src/enums/StateTransitionEnum')
 const tenderdashRpc = require('../../src/tenderdashRpc')
 const { IdentifierWASM } = require('pshenmic-dpp')
@@ -32,7 +33,7 @@ describe('Transaction routes', () => {
       }
     }))
 
-    mock.method(DocumentsController.prototype, 'query', async () => [{
+    mock.method(DocumentsController.prototype, 'query', mockDocumentsQuery({
       properties: {
         label: 'alias',
         parentDomainName: 'dash',
@@ -40,7 +41,7 @@ describe('Transaction routes', () => {
       },
       id: new IdentifierWASM('AQV2G2Egvqk8jwDBAcpngjKYcwAkck8Cecs5AjYJxfvW'),
       createdAt: BigInt(aliasTimestamp.getTime())
-    }])
+    }))
 
     const startDate = new Date(new Date() - 1000 * 60 * 60)
 
@@ -154,6 +155,7 @@ describe('Transaction routes', () => {
         base58Address: null,
         bech32mAddress: null,
         incoming: null,
+        amount: null,
         blockHash: transaction.block.hash,
         blockHeight: transaction.block.height,
         data: '{}',
@@ -193,6 +195,7 @@ describe('Transaction routes', () => {
         base58Address: null,
         bech32mAddress: null,
         incoming: null,
+        amount: null,
         blockHash: transaction.block.hash,
         blockHeight: transaction.block.height,
         data: '{}',
@@ -273,6 +276,7 @@ describe('Transaction routes', () => {
         base58Address: null,
         bech32mAddress: null,
         incoming: null,
+        amount: null,
         blockHash: transaction.block.hash,
         blockHeight: transaction.block.height,
         data: '{}',
@@ -301,6 +305,7 @@ describe('Transaction routes', () => {
           base58Address: null,
           bech32mAddress: null,
           incoming: null,
+          amount: null,
           blockHash: transaction.block.hash,
           blockHeight: transaction.block.height,
           data: '{}',
@@ -351,6 +356,7 @@ describe('Transaction routes', () => {
           base58Address: null,
           bech32mAddress: null,
           incoming: null,
+          amount: null,
           blockHash: transaction.block.hash,
           blockHeight: transaction.block.height,
           data: '{}',
@@ -396,6 +402,7 @@ describe('Transaction routes', () => {
           base58Address: null,
           bech32mAddress: null,
           incoming: null,
+          amount: null,
           blockHash: transaction.block.hash,
           blockHeight: transaction.block.height,
           data: '{}',
@@ -444,6 +451,7 @@ describe('Transaction routes', () => {
           base58Address: null,
           bech32mAddress: null,
           incoming: null,
+          amount: null,
           blockHash: transaction.block.hash,
           blockHeight: transaction.block.height,
           data: '{}',
@@ -494,6 +502,7 @@ describe('Transaction routes', () => {
           base58Address: null,
           bech32mAddress: null,
           incoming: null,
+          amount: null,
           blockHash: transaction.block.hash,
           blockHeight: transaction.block.height,
           data: '{}',
@@ -544,6 +553,7 @@ describe('Transaction routes', () => {
           base58Address: null,
           bech32mAddress: null,
           incoming: null,
+          amount: null,
           blockHash: transaction.block.hash,
           blockHeight: transaction.block.height,
           data: '{}',
@@ -594,6 +604,7 @@ describe('Transaction routes', () => {
           base58Address: null,
           bech32mAddress: null,
           incoming: null,
+          amount: null,
           blockHash: transaction.block.hash,
           blockHeight: transaction.block.height,
           data: '{}',
@@ -644,6 +655,7 @@ describe('Transaction routes', () => {
           base58Address: null,
           bech32mAddress: null,
           incoming: null,
+          amount: null,
           blockHash: transaction.block.hash,
           blockHeight: transaction.block.height,
           data: '{}',
@@ -692,6 +704,7 @@ describe('Transaction routes', () => {
           base58Address: null,
           bech32mAddress: null,
           incoming: null,
+          amount: null,
           blockHash: transaction.block.hash,
           blockHeight: transaction.block.height,
           data: '{}',
@@ -742,6 +755,7 @@ describe('Transaction routes', () => {
           base58Address: null,
           bech32mAddress: null,
           incoming: null,
+          amount: null,
           blockHash: transaction.block.hash,
           blockHeight: transaction.block.height,
           data: '{}',
@@ -796,6 +810,7 @@ describe('Transaction routes', () => {
           base58Address: null,
           bech32mAddress: null,
           incoming: null,
+          amount: null,
           blockHash: transaction.block.hash,
           blockHeight: transaction.block.height,
           data: '{}',
@@ -851,6 +866,7 @@ describe('Transaction routes', () => {
           base58Address: null,
           bech32mAddress: null,
           incoming: null,
+          amount: null,
           blockHash: transaction.block.hash,
           blockHeight: transaction.block.height,
           data: '{}',
@@ -896,6 +912,7 @@ describe('Transaction routes', () => {
           base58Address: null,
           bech32mAddress: null,
           incoming: null,
+          amount: null,
           blockHash: transaction.block.hash,
           blockHeight: transaction.block.height,
           data: '{}',
@@ -941,6 +958,7 @@ describe('Transaction routes', () => {
           base58Address: null,
           bech32mAddress: null,
           incoming: null,
+          amount: null,
           blockHash: transaction.block.hash,
           blockHeight: transaction.block.height,
           data: '{}',
@@ -986,6 +1004,7 @@ describe('Transaction routes', () => {
           base58Address: null,
           bech32mAddress: null,
           incoming: null,
+          amount: null,
           blockHash: transaction.block.hash,
           blockHeight: transaction.block.height,
           data: '{}',
@@ -1034,6 +1053,7 @@ describe('Transaction routes', () => {
           base58Address: null,
           bech32mAddress: null,
           incoming: null,
+          amount: null,
           hash: transaction.transaction.hash,
           index: transaction.transaction.index,
           blockHash: transaction.block.hash,
@@ -1079,6 +1099,7 @@ describe('Transaction routes', () => {
           base58Address: null,
           bech32mAddress: null,
           incoming: null,
+          amount: null,
           hash: transaction.transaction.hash,
           index: transaction.transaction.index,
           blockHash: transaction.block.hash,
@@ -2024,6 +2045,7 @@ describe('Transaction routes', () => {
           base58Address: null,
           bech32mAddress: null,
           incoming: null,
+          amount: null,
           hash: transaction.hash.toLowerCase(),
           index: transaction.index,
           blockHash: null,
@@ -2051,6 +2073,7 @@ describe('Transaction routes', () => {
             base58Address: null,
             bech32mAddress: null,
             incoming: null,
+            amount: null,
             hash: transaction.hash.toLowerCase(),
             index: transaction.index,
             blockHash: block.hash,
@@ -2094,6 +2117,7 @@ describe('Transaction routes', () => {
           base58Address: null,
           bech32mAddress: null,
           incoming: null,
+          amount: null,
           hash: transaction.hash.toLowerCase(),
           index: transaction.index,
           blockHash: null,
@@ -2121,6 +2145,7 @@ describe('Transaction routes', () => {
             base58Address: null,
             bech32mAddress: null,
             incoming: null,
+            amount: null,
             hash: transaction.hash.toLowerCase(),
             index: transaction.index,
             blockHash: block.hash,
@@ -2151,6 +2176,53 @@ describe('Transaction routes', () => {
       assert.equal(body.pagination.limit, 3)
       assert.equal(body.pagination.total, duplicatedTxs.length)
       assert.deepEqual(body.resultSet, expectedResultSet)
+    })
+  })
+
+  // declared last so the extra transaction does not shift the counts the suites above assert
+  describe('transaction amount', async () => {
+    it('should report the credits a transfer moved and leave other types null', async () => {
+      const amountBlock = await fixtures.block(knex, { height: 9001, timestamp: new Date(0) })
+
+      const withTransfer = await fixtures.transaction(knex, {
+        block_hash: amountBlock.hash,
+        block_height: amountBlock.height,
+        data: '{}',
+        type: StateTransitionEnum.IDENTITY_TOP_UP,
+        owner: identity.identifier
+      })
+      await fixtures.transfer(knex, {
+        amount: 1234567,
+        recipient: identity.identifier,
+        state_transition_hash: withTransfer.hash
+      })
+
+      const withoutTransfer = await fixtures.transaction(knex, {
+        block_hash: amountBlock.hash,
+        block_height: amountBlock.height,
+        data: '{}',
+        type: StateTransitionEnum.DATA_CONTRACT_UPDATE,
+        owner: identity.identifier
+      })
+
+      const { body: single } = await client.get(`/transaction/${withTransfer.hash}`)
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      assert.equal(single.amount, '1234567')
+
+      const { body: none } = await client.get(`/transaction/${withoutTransfer.hash}`)
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      assert.equal(none.amount, null)
+
+      const { body: list } = await client.get('/transactions?limit=100&order=desc')
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      assert.equal(list.resultSet.find(tx => tx.hash === withTransfer.hash).amount, '1234567')
+      assert.equal(list.resultSet.find(tx => tx.hash === withoutTransfer.hash).amount, null)
     })
   })
 })

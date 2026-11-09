@@ -35,6 +35,55 @@
   }
 }
 
+.HomeChunkPlaceholder {
+  width: 100%;
+  min-width: 0;
+  flex: 1 1 auto;
+  border-radius: var(--pe-radius-block);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: linear-gradient(
+    90deg,
+    rgba(var(--pe-color-brand-normal-rgb), 0.1) 25%,
+    rgba(var(--pe-color-brand-normal-rgb), 0.28) 50%,
+    rgba(var(--pe-color-brand-normal-rgb), 0.1) 75%
+  );
+  background-size: 200% 100%;
+  animation: HomeChunkShimmer 1.6s linear infinite;
+}
+.HomeChunkPlaceholder--list {
+  min-height: 16rem;
+}
+.HomeChunkPlaceholder--epochs {
+  min-height: 22rem;
+}
+.HomeChunkPlaceholder--chart {
+  min-height: var(--home-chart-row);
+  height: 100%;
+}
+.HomeChunkPlaceholder--leaders {
+  min-height: 28rem;
+}
+@keyframes HomeChunkShimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .HomeChunkPlaceholder {
+    animation: none;
+    background: rgba(var(--pe-color-brand-normal-rgb), 0.15);
+  }
+}
+
+.HomeEpochs,
+.HomeCardPair {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 24rem;
+}
+
 .HomeCardPair {
   display: grid;
   grid-template-columns: 1fr;

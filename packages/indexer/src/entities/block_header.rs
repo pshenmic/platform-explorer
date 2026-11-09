@@ -12,6 +12,8 @@ pub struct BlockHeader {
     pub l1_locked_height: i32,
     pub app_hash: String,
     pub proposer_pro_tx_hash: String,
+    pub quorum_hash: Option<String>,
+    pub epoch: Option<i32>,
 }
 
 impl From<Row> for BlockHeader {
@@ -24,6 +26,8 @@ impl From<Row> for BlockHeader {
         let l1_locked_height: i32 = row.get(5);
         let proposer_pro_tx_hash: String = row.get(6);
         let app_hash: String = row.get(7);
+        let quorum_hash: Option<String> = row.get(8);
+        let epoch: Option<i32> = row.get(9);
 
         return BlockHeader {
             hash,
@@ -34,6 +38,8 @@ impl From<Row> for BlockHeader {
             l1_locked_height,
             proposer_pro_tx_hash,
             app_hash,
+            quorum_hash,
+            epoch,
         };
     }
 }

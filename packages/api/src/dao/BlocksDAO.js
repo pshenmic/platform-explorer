@@ -48,10 +48,13 @@ module.exports = class BlockDAO {
         'state_transitions.gas_used as gas_used', 'state_transitions.data as data',
         'state_transitions.status as status', 'state_transitions.owner as owner',
         'state_transitions.error as error', 'block_hash',
-        'state_transitions.index as index', 'state_transitions.type as type', 'app_hash'
+        'state_transitions.index as index', 'state_transitions.type as type', 'app_hash',
+        'blocks.quorum_hash as quorum_hash', 'state_transitions.amount as amount'
       )
+      .select(this.knex.raw('sum(state_transitions.gas_used) over () as total_gas_used'))
       .leftJoin('state_transitions', 'state_transitions.block_height', 'blocks.height')
-      .whereILike('blocks.hash', blockHash)
+      // the indexer stores hashes uppercase, an exact match can use the unique index
+      .where('blocks.hash', blockHash.toUpperCase())
       .orderBy('state_transitions.index', 'asc')
       .as('subquery')
 
@@ -64,9 +67,9 @@ module.exports = class BlockDAO {
         'height', 'timestamp',
         'gas_used', 'data',
         'hash', 'tx_hash',
-        'status', 'owner'
+        'status', 'owner', 'quorum_hash', 'amount',
+        'total_gas_used'
       )
-      .select(this.knex(subquery).sum('gas_used').as('total_gas_used'))
 
     const [block] = rows
 
@@ -113,7 +116,8 @@ module.exports = class BlockDAO {
         'blocks.app_version as app_version',
         'blocks.l1_locked_height as l1_locked_height',
         'blocks.validator as validator',
-        'blocks.app_hash as app_hash'
+        'blocks.app_hash as app_hash',
+        'blocks.quorum_hash as quorum_hash'
       )
       .whereILike('blocks.validator', validator)
       .as('blocks')
@@ -121,7 +125,7 @@ module.exports = class BlockDAO {
     const rows = await this.knex(subquery)
       .select(this.knex('blocks').count('height').as('total_count').whereILike('blocks.validator', validator),
         'blocks.hash as hash', 'height', 'timestamp', 'block_version', 'app_hash',
-        'app_version', 'l1_locked_height', 'state_transitions.hash as st_hash', 'validator')
+        'app_version', 'l1_locked_height', 'state_transitions.hash as st_hash', 'validator', 'quorum_hash')
       .offset(fromRank)
       .limit(limit)
       .orderBy('blocks.height', order)
@@ -153,7 +157,8 @@ module.exports = class BlockDAO {
       .select(
         'blocks.hash as hash', 'state_transitions.hash as st_hash', 'blocks.height as height',
         'blocks.timestamp as timestamp', 'blocks.block_version as block_version', 'blocks.app_version as app_version',
-        'blocks.l1_locked_height as l1_locked_height', 'blocks.validator as validator', 'blocks.app_hash as app_hash')
+        'blocks.l1_locked_height as l1_locked_height', 'blocks.validator as validator', 'blocks.app_hash as app_hash',
+        'blocks.quorum_hash as quorum_hash')
       .from('blocks')
       .leftJoin('state_transitions', 'state_transitions.block_height', 'blocks.height')
       .where('blocks.height', height)
@@ -171,7 +176,7 @@ module.exports = class BlockDAO {
 
   getBlocks = async (
     page, limit, order,
-    validator,
+    validator, quorum,
     gasMin, gasMax,
     heightMin, heightMax,
     startTimestamp, endTimestamp,
@@ -226,6 +231,13 @@ module.exports = class BlockDAO {
         ]
       : ['true']
 
+    const quorumQuery = quorum
+      ? [
+          'quorum_hash = ?',
+          quorum
+        ]
+      : ['true']
+
     if (gasMin) {
       gasQueryString = 'COALESCE(total_gas_used, 0) >= ?'
       gasQueryBindings.push(gasMin)
@@ -249,34 +261,40 @@ module.exports = class BlockDAO {
         'blocks.hash as hash', 'blocks.height as height', 'blocks.timestamp as timestamp',
         'blocks.block_version as block_version', 'blocks.app_version as app_version',
         'blocks.l1_locked_height as l1_locked_height', 'blocks.validator as validator',
-        'blocks.app_hash as app_hash'
+        'blocks.app_hash as app_hash', 'blocks.quorum_hash as quorum_hash'
       )
       .whereRaw(epochQueryString, epochQueryBindings)
       .andWhereRaw(heightQueryString, heightQueryBindings)
       .andWhereRaw(timestampQueryString, timestampQueryBindings)
       .andWhereRaw(...validatorQuery)
+      .andWhereRaw(...quorumQuery)
       .as('blocks')
 
+    // aggregated per block, so a page only touches the transactions of its own blocks
     const transactionsSubquery = this.knex('state_transitions')
-      .select('block_height', this.knex.raw('sum(gas_used) as total_gas_used'), this.knex.raw('array_agg(state_transitions.hash) as txs'))
-      .groupBy('block_height')
-      .as('txs')
+      .select(this.knex.raw('sum(gas_used) as total_gas_used'), this.knex.raw('array_agg(state_transitions.hash order by state_transitions.id) as txs'))
+      .whereRaw('state_transitions.block_height = blocks.height')
 
     const gasSubQuery = this.knex(subquery)
       .select(
         'hash', 'blocks.height', 'timestamp', 'block_version', 'app_hash',
-        'app_version', 'l1_locked_height', 'txs.txs', 'validator', 'total_gas_used')
-      .leftJoin(transactionsSubquery, 'txs.block_height', 'blocks.height')
+        'app_version', 'l1_locked_height', 'txs.txs', 'validator', 'total_gas_used', 'quorum_hash')
+      .joinRaw('left join lateral (?) as txs on true', [transactionsSubquery])
       .whereRaw(gasQueryString, gasQueryBindings)
       .andWhereRaw(transactionsQueryString, transactionsQueryBindings)
       .as('gas')
 
+    // transactions are only needed to count by gas or transactions count
+    const countSubquery = (gasQueryString || transactionsQueryString ? this.knex(gasSubQuery) : this.knex(subquery))
+      .count('* as total_count')
+      .as('total_count')
+
     const rows = await this.knex(gasSubQuery)
       .select('hash', 'height', 'timestamp', 'block_version', 'app_hash',
         'app_version', 'l1_locked_height', 'txs', 'validator', 'total_gas_used',
-        'total_count.total_count'
+        'quorum_hash', 'total_count.total_count'
       )
-      .join(this.knex(gasSubQuery).select(this.knex.raw('count(*) over () as total_count')).limit(1).as('total_count'), this.knex.raw(true), '=', this.knex.raw(true))
+      .join(countSubquery, this.knex.raw(true), '=', this.knex.raw(true))
       .limit(limit)
       .offset(fromRank)
       .orderBy('height', order)
@@ -299,15 +317,25 @@ module.exports = class BlockDAO {
       .from(this.knex.raw(`generate_series(${startSql}, ${endSql}, '${interval}'::interval) date_to`))
       .select('date_to', this.knex.raw(`LAG(date_to, 1, '${start.toISOString()}'::timestamptz) over (order by date_to asc) date_from`))
 
+    const firstBlock = this.knex('blocks')
+      .select('height', 'timestamp')
+      .whereRaw('blocks.timestamp > ranges.date_from and blocks.timestamp <= ranges.date_to')
+      .orderBy('blocks.timestamp', 'asc')
+      .limit(1)
+
+    const lastBlock = this.knex('blocks')
+      .select('height', 'timestamp')
+      .whereRaw('blocks.timestamp > ranges.date_from and blocks.timestamp <= ranges.date_to')
+      .orderBy('blocks.timestamp', 'desc')
+      .limit(1)
+
     const rows = await this.knex.with('ranges', ranges)
       .select('date_from')
-      .select(
-        this.knex('blocks')
-          .whereRaw('blocks.timestamp > date_from and blocks.timestamp <= date_to')
-          .select(this.knex.raw('CASE WHEN count(*) > 1 THEN round(extract(epoch from max(timestamp) - min(timestamp)) * 1000 / (count(*) - 1)) ELSE NULL END'))
-          .as('avg_block_time')
-      )
+      .select(this.knex.raw('CASE WHEN last_block.height > first_block.height THEN round(extract(epoch from last_block.timestamp - first_block.timestamp) * 1000 / (last_block.height - first_block.height)) ELSE NULL END as avg_block_time'))
       .from('ranges')
+      .joinRaw('left join lateral (?) as first_block on true', [firstBlock])
+      .joinRaw('left join lateral (?) as last_block on true', [lastBlock])
+      .orderBy('date_from', 'asc')
 
     return rows
       .map(row => ({
@@ -325,7 +353,7 @@ module.exports = class BlockDAO {
         'blocks.hash as hash', 'blocks.height as height', 'blocks.timestamp as timestamp',
         'blocks.block_version as block_version', 'blocks.app_version as app_version',
         'blocks.l1_locked_height as l1_locked_height', 'blocks.validator as validator',
-        'blocks.app_hash as app_hash'
+        'blocks.app_hash as app_hash', 'blocks.quorum_hash as quorum_hash'
       )
       .limit(1)
       .orderBy('height', 'desc')

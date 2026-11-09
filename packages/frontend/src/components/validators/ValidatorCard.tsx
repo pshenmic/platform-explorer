@@ -36,12 +36,19 @@ const CreditsBlock = CreditsBlockJs as ComponentType<{
 }>
 
 interface ValidatorCardProps {
+  proTxHash?: string
   validator: LoadableState<Validator>
   rate?: Rate | null
   className?: string
 }
 
-export default function ValidatorCard({ validator, rate, className }: ValidatorCardProps) {
+export default function ValidatorCard({
+  validator,
+  rate,
+  className,
+  proTxHash
+}: ValidatorCardProps) {
+  const hash = proTxHash ?? validator.data?.proTxHash
   return (
     <div
       className={`InfoBlock InfoBlock--Gradient ValidatorCard ${validator.loading ? 'ValidatorCard--Loading' : ''} ${className || ''}`}
@@ -51,7 +58,7 @@ export default function ValidatorCard({ validator, rate, className }: ValidatorC
           <InfoLine
             className={'ValidatorCard__ProTxHash'}
             title={'Pro TX Hash'}
-            loading={validator.loading}
+            loading={validator.loading && !hash}
             error={validator.error}
             value={
               !validator.error ? (
@@ -61,7 +68,7 @@ export default function ValidatorCard({ validator, rate, className }: ValidatorC
                   styles={['highlight-both']}
                   ellipsis={false}
                 >
-                  {validator.data?.proTxHash}
+                  {hash}
                 </Identifier>
               ) : (
                 'n/a'
@@ -69,6 +76,7 @@ export default function ValidatorCard({ validator, rate, className }: ValidatorC
             }
           />
           <InfoLine
+            className={'ValidatorCard__Balance'}
             title={'Balance'}
             value={<CreditsBlock credits={validator.data?.identityBalance} rate={rate} />}
             loading={validator.loading}
@@ -77,13 +85,7 @@ export default function ValidatorCard({ validator, rate, className }: ValidatorC
         </div>
         <div className={'ValidatorCard__Avatar'}>
           {!validator.error ? (
-            <ImageGenerator
-              username={validator.data?.proTxHash}
-              lightness={50}
-              saturation={50}
-              width={88}
-              height={88}
-            />
+            <ImageGenerator username={hash} lightness={50} saturation={50} width={88} height={88} />
           ) : (
             'n/a'
           )}

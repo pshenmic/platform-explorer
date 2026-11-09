@@ -412,44 +412,6 @@
   max-height: 220px;
   cursor: crosshair;
 }
-.ShieldedPool__ChartSkel {
-  position: absolute;
-  inset: 22px 16px 24px 48px;
-  overflow: hidden;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-  background: repeating-linear-gradient(
-    to top,
-    transparent 0,
-    transparent calc(25% - 1px),
-    rgba(255, 255, 255, 0.05) calc(25% - 1px),
-    rgba(255, 255, 255, 0.05) 25%
-  );
-}
-.ShieldedPool__ChartSkel::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(90deg, transparent, rgba(80, 200, 240, 0.1), transparent);
-  animation: shielded-pool-scan 2.4s ease-in-out infinite;
-}
-.ShieldedPool__LoadingLabel {
-  position: absolute;
-  top: 8px;
-  right: 16px;
-  z-index: 2;
-  color: var(--pe-color-gray-400);
-  font-family: var(--pe-font-mono);
-  font-size: 0.6875rem;
-  pointer-events: none;
-}
-@keyframes shielded-pool-scan {
-  from {
-    transform: translateX(-100%);
-  }
-  to {
-    transform: translateX(100%);
-  }
-}
 @keyframes shielded-pool-reveal {
   from {
     opacity: 0;
@@ -479,7 +441,6 @@
   .ShieldedPool__AmountEnter {
     animation: none;
   }
-  .ShieldedPool__ChartSkel::before,
   .ShieldedPool__Svg {
     animation: none;
     transition: none;

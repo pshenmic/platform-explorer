@@ -14,12 +14,15 @@ Reference:
 * [Blocks by validator](#blocks-by-validator)
 * [Blocks](#blocks)
 * [Average Block Time History](#average-block-time-history)
+* [Block Proposer Schedule](#block-proposer-schedule)
 * [Validators](#validators)
 * [Validator by ProTxHash](#validator-by-protxhash)
 * [Validator by Masternode Identifier](#validator-by-masternode-identifier)
 * [Validator Rewards Statistic](#validator-rewards-stats-by-protxhash)
 * [Validator Income Statistic](#validator-income-stats-by-protxhash)
 * [Validator Blocks Statistic](#validator-stats-by-protxhash)
+* [Validator Epochs Statistic](#validator-epochs-stats-by-protxhash)
+* [Validator Earnings](#validator-earnings-by-protxhash)
 * [Validator Quorums](#validator-quorums)
 * [Transaction by hash](#transaction-by-hash)
 * [Transactions](#transactions)
@@ -75,7 +78,7 @@ Reference:
 * [Quorum by Hash](#quorum-by-hash)
 * [Platform Addresses](#platform-addresses)
 * [Platform Address Info](#platform-address-info)
-* [Platform Address Transactions](#platform-address-transactions)
+* [Platform Address Transitions](#platform-address-transitions)
 
 ### Status
 Returns basic stats and epoch info
@@ -231,6 +234,9 @@ HTTP /epoch/2492
 ---
 ### Block by hash
 Get a block by hash
+
+* `quorumHash` on the header is the quorum that signed the block
+* `l1LockedBlockHash` on the header is the hash of the Core block at `l1LockedHeight`
 ```
 GET /block/12E5592208322B5A3598C98C1811FCDD403DF40F522511D7A965DDE1D96C97C7
 
@@ -243,7 +249,9 @@ GET /block/12E5592208322B5A3598C98C1811FCDD403DF40F522511D7A965DDE1D96C97C7
     "appVersion": 4,
     "l1LockedHeight": 1124953,
     "validator": "8917BB546318F3410D1A7901C7B846A73446311B5164B45A03F0E613F208F234",
-    "appHash": "49C07BEDB5710565CFC82F678DEB4849D2CA1CCD3DFBA6FDA3F1C0F3C39D0AD9"
+    "appHash": "49C07BEDB5710565CFC82F678DEB4849D2CA1CCD3DFBA6FDA3F1C0F3C39D0AD9",
+    "quorumHash": "000000153FE56C83B62D35897F3B05DCB60CFE95715EFB3014F7D2C8997C70F1",
+    "l1LockedBlockHash": "000000ff8b6f2d201bf4319d7503f962f602bf75c6aa749243bff0dd14afb4e1"
   },
   "txs": [
     {
@@ -297,7 +305,8 @@ GET /validator/B8F90A4F07D9E59C061D41CC8E775093141492A5FD59AB3BBC4241238BB28A18/
             "appVersion": 1,
             "validator": "B8F90A4F07D9E59C061D41CC8E775093141492A5FD59AB3BBC4241238BB28A18",
             "l1LockedHeight": 1337,
-            "appHash": "49C07BEDB5710565CFC82F678DEB4849D2CA1CCD3DFBA6FDA3F1C0F3C39D0AD9"
+            "appHash": "49C07BEDB5710565CFC82F678DEB4849D2CA1CCD3DFBA6FDA3F1C0F3C39D0AD9",
+            "quorumHash": "000000153FE56C83B62D35897F3B05DCB60CFE95715EFB3014F7D2C8997C70F1"
         },
         "txs": ["DEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEFDEADBEEF"]
     }, ...
@@ -309,8 +318,13 @@ GET /validator/B8F90A4F07D9E59C061D41CC8E775093141492A5FD59AB3BBC4241238BB28A18/
 Return all blocks with pagination info
 * `limit` cannot be more then 100
 * `page` cannot be less then 1
+* `validator` narrows the page to the blocks that proTxHash proposed
+* `quorum` narrows the page to the blocks that quorum signed, matched on the quorum hash the
+  indexer stores per block, so it is exact and works for quorums long past the signing-active
+  window. It combines with `validator` to give one member's blocks inside that quorum, and is
+  accepted in either case. An unknown quorum gives an empty page rather than an error
 ```
-GET /blocks?epoch_index_min=1000&epoch_index_max=1200&height_min=2000&height_max=4000&gas_min=1&gas_max=99999999999&timestamp_start=2024-08-29T23:24:11.516z&timestamp_end=2025-08-29T23:24:11.516z&tx_count_min=2&tx_count_max=11&validator=C11C1168DCF9479475CB1355855E30EA75C0CDDA8A8F9EA80591568DD1C33BA8
+GET /blocks?epoch_index_min=1000&epoch_index_max=1200&height_min=2000&height_max=4000&gas_min=1&gas_max=99999999999&timestamp_start=2024-08-29T23:24:11.516z&timestamp_end=2025-08-29T23:24:11.516z&tx_count_min=2&tx_count_max=11&validator=C11C1168DCF9479475CB1355855E30EA75C0CDDA8A8F9EA80591568DD1C33BA8&quorum=000000153FE56C83B62D35897F3B05DCB60CFE95715EFB3014F7D2C8997C70F1
 
 {
   "resultSet": [
@@ -324,7 +338,8 @@ GET /blocks?epoch_index_min=1000&epoch_index_max=1200&height_min=2000&height_max
         "l1LockedHeight": 1093395,
         "validator": "C11C1168DCF9479475CB1355855E30EA75C0CDDA8A8F9EA80591568DD1C33BA8",
         "totalGasUsed": 509281140,
-        "appHash": "49C07BEDB5710565CFC82F678DEB4849D2CA1CCD3DFBA6FDA3F1C0F3C39D0AD9"
+        "appHash": "49C07BEDB5710565CFC82F678DEB4849D2CA1CCD3DFBA6FDA3F1C0F3C39D0AD9",
+        "quorumHash": "000000153FE56C83B62D35897F3B05DCB60CFE95715EFB3014F7D2C8997C70F1"
       },
       "txs": [
         "EA0A1997F31D5204EB9FC6E49CDEF1E9A7FB446AB1D4B9995A9C7ED3C6CE718B",
@@ -375,6 +390,61 @@ Response codes:
 500: Internal Server Error
 ```
 ---
+### Block Proposer Schedule
+Returns the proposers scheduled for the blocks after the chain tip, ordered by height, with
+pagination info.
+
+The quorum holding the Platform validator set proposes one full pass of its members in
+ascending `proTxHash` order, one member per block, and the set then rotates to the next older
+quorum, which starts its own pass at its lowest `proTxHash`. Every platform quorum is
+signing-active the whole time, so a quorum's place in [Quorums](#quorums) is only its age and
+not a turn in a queue — the set moving between them is what puts a member on a block.
+
+* `limit` cannot be more then 100
+* `page` cannot be less then 1
+* `order` does not apply: the schedule only runs forward from the chain tip
+* `total` is how far ahead the schedule reaches, which is one walk of the whole rotation. It
+  falls as the current quorum works through its pass and jumps back up when the set rotates
+* a page far enough out leaves the current quorum and continues into the quorums that take the
+  set after it, so `quorumHash` is per entry
+* a member is skipped when it is offline, so an entry further from the tip is more likely to be
+  off by a member or more. Treat this as a schedule, not a guarantee
+```
+GET /blocks/proposerSchedule?page=1&limit=3
+
+{
+    "resultSet": [
+        {
+            "height": 570358,
+            "proTxHash": "8917BB546318F3410D1A7901C7B846A73446311B5164B45A03F0E613F208F234",
+            "quorumHash": "00000045027E2BE378259D5C71B22E3E2B740A38A91B155541A6B970403CB98F"
+        },
+        {
+            "height": 570359,
+            "proTxHash": "8B8D1193AFD22E538CE0C9FB50FEE155D0F6176CA68E65DA684C5DCE2D1E0815",
+            "quorumHash": "00000045027E2BE378259D5C71B22E3E2B740A38A91B155541A6B970403CB98F"
+        },
+        {
+            "height": 570360,
+            "proTxHash": "8E11EB784883D3DC9D0D74A74633F067DC61C408DFDEE49B8F93BB161F2916C0",
+            "quorumHash": "00000045027E2BE378259D5C71B22E3E2B740A38A91B155541A6B970403CB98F"
+        }
+    ],
+    "pagination": {
+        "page": 1,
+        "limit": 3,
+        "total": 579
+    }
+}
+```
+Response codes:
+```
+200: OK
+404: Not Found
+500: Internal Server Error
+503: Service Temporarily Unavailable
+```
+___
 ### Validators
 Return all validators with pagination info.
 * Valid `order` values are `asc` or `desc`
@@ -412,7 +482,8 @@ GET /validators?blocks_proposed_min=1&blocks_proposed_max=9999999&last_proposed_
                 "l1LockedHeight": 1343619,
                 "validator": "05B687978344FA2433B2AA99D41F643E2D8581A789CDC23084889CECA5244EA8",
                 "totalGasUsed": 0,
-                "appHash": "E81BCE0B1787D512CCAFD6D93043131D6FB4E9BEE6CC549C00F7501E7E1949A8"
+                "appHash": "E81BCE0B1787D512CCAFD6D93043131D6FB4E9BEE6CC549C00F7501E7E1949A8",
+                "quorumHash": "000000153FE56C83B62D35897F3B05DCB60CFE95715EFB3014F7D2C8997C70F1"
             },
             "proTxInfo": {
                 "type": "Evo",
@@ -471,6 +542,14 @@ GET /validators?blocks_proposed_min=1&blocks_proposed_max=9999999&last_proposed_
 ### Validator by ProTxHash
 Get validator by ProTxHash.
 * `lastProposedBlockHeader` field is nullable
+* `totalReward` is what Platform paid the validator for its proposed blocks, in credits, `epochReward` is what it was paid in the current epoch, which pays the previous one
+* `registeredAt` is the time of the Core block the masternode was registered in
+* `votingIdentity` is derived from the current voting key of the masternode, `votingIdentityBalance` is `null` when the identity does not exist
+* `poseScoreMax` is the PoSe penalty that bans the masternode: the size of the masternode list, at least 100
+* `blocksUntilCorePayment` is the position in the Core payment queue, `1` means the next Core block. `null` for a banned or removed masternode
+* `registeredCoreBlockHash`, `lastPaidCoreBlockHash`, `poseRevivedCoreBlockHash` and `poseBanCoreBlockHash` are the hashes of the Core blocks at `registeredHeight`, `lastPaidHeight`, `PoSeRevivedHeight` and `PoSeBanHeight` of `proTxInfo.state`, `null` when the height is not set
+* `coreYieldPerYear` is the estimated gross Core payout of the masternode in DASH per year, owner and operator outputs together: the median of what the enabled masternodes of its type were paid in the last 30 days of Core blocks, annualized. It does not include Platform rewards and expenses. `null` for a banned or removed masternode
+* `coreTipTime` is the time of the latest Core block, `coreBlockIntervalMs` is the mean Core block interval of the last day (576 blocks)
 * `geoIpInfo` contains the node location resolved from its service IP with the [DB-IP City Lite](https://db-ip.com) database; it is `null` when the service address has no IPv4 host, and its fields are `null` when the IP is not present in the database
 * the DB-IP City Lite database is licensed under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/): any page displaying `geoIpInfo` data must include an attribution link back to DB-IP.com, e.g. `<a href='https://db-ip.com'>IP Geolocation by DB-IP</a>`
 ```
@@ -488,7 +567,8 @@ GET /validator/F60A6BF9EC0794BB0CFD1E0F2217933F4B33EDE6FE810692BC275CA18148AEF0
     "appVersion": 1,
     "blockVersion": 13,
     "validator": "F60A6BF9EC0794BB0CFD1E0F2217933F4B33EDE6FE810692BC275CA18148AEF0",
-    "appHash": "49C07BEDB5710565CFC82F678DEB4849D2CA1CCD3DFBA6FDA3F1C0F3C39D0AD9"
+    "appHash": "49C07BEDB5710565CFC82F678DEB4849D2CA1CCD3DFBA6FDA3F1C0F3C39D0AD9",
+    "quorumHash": "000000153FE56C83B62D35897F3B05DCB60CFE95715EFB3014F7D2C8997C70F1"
   },
   "proTxInfo": {
     "type": "Evo",
@@ -557,13 +637,26 @@ GET /validator/F60A6BF9EC0794BB0CFD1E0F2217933F4B33EDE6FE810692BC275CA18148AEF0
     "city": "Boardman",
     "latitude": 45.8399,
     "longitude": -119.7009
-  }
+  },
+  "registeredAt": "2023-06-15T20:10:40.000Z",
+  "votingIdentity": "3fA9mocowUELkqG7ybNzd9mB9ZJ73nP3GkPqE14Wneno",
+  "votingIdentityBalance": "0",
+  "poseScoreMax": 391,
+  "blocksUntilCorePayment": 12,
+  "registeredCoreBlockHash": "0000011b36ac5d60ab17bcdd2443e02b4c349ceabc3a6fca5e20ca1eab6eb145",
+  "lastPaidCoreBlockHash": "000000a71d7d146f921a12a1acb4307e7f351f45d87373da1c4e3c121dba2772",
+  "poseRevivedCoreBlockHash": "0000004f429c99291be00994841ec9fc9288413b9e0384cbf5750a20a21e11e4",
+  "poseBanCoreBlockHash": null,
+  "coreYieldPerYear": 2818.752623913541,
+  "coreTipTime": "2026-10-05T15:24:15.000Z",
+  "coreBlockIntervalMs": 132675
 }
 ```
 ---
 ### Validator by Masternode Identifier
 Get validator by Masternode Identity.
 * `lastProposedBlockHeader` field is nullable
+* `totalReward` is what Platform paid the validator for its proposed blocks, in credits, `epochReward` is what it was paid in the current epoch, which pays the previous one
 ```
 GET /validator/identity/8tsWRSwsTM5AXv4ViCF9gu39kzjbtfFDM6rCyL2RcFzd
 
@@ -579,7 +672,8 @@ GET /validator/identity/8tsWRSwsTM5AXv4ViCF9gu39kzjbtfFDM6rCyL2RcFzd
     "appVersion": 1,
     "blockVersion": 13,
     "validator": "F60A6BF9EC0794BB0CFD1E0F2217933F4B33EDE6FE810692BC275CA18148AEF0",
-    "appHash": "49C07BEDB5710565CFC82F678DEB4849D2CA1CCD3DFBA6FDA3F1C0F3C39D0AD9"
+    "appHash": "49C07BEDB5710565CFC82F678DEB4849D2CA1CCD3DFBA6FDA3F1C0F3C39D0AD9",
+    "quorumHash": "000000153FE56C83B62D35897F3B05DCB60CFE95715EFB3014F7D2C8997C70F1"
   },
   "proTxInfo": {
     "type": "Evo",
@@ -648,7 +742,19 @@ GET /validator/identity/8tsWRSwsTM5AXv4ViCF9gu39kzjbtfFDM6rCyL2RcFzd
     "city": "Boardman",
     "latitude": 45.8399,
     "longitude": -119.7009
-  }
+  },
+  "registeredAt": "2023-06-15T20:10:40.000Z",
+  "votingIdentity": "3fA9mocowUELkqG7ybNzd9mB9ZJ73nP3GkPqE14Wneno",
+  "votingIdentityBalance": "0",
+  "poseScoreMax": 391,
+  "blocksUntilCorePayment": 12,
+  "registeredCoreBlockHash": "0000011b36ac5d60ab17bcdd2443e02b4c349ceabc3a6fca5e20ca1eab6eb145",
+  "lastPaidCoreBlockHash": "000000a71d7d146f921a12a1acb4307e7f351f45d87373da1c4e3c121dba2772",
+  "poseRevivedCoreBlockHash": "0000004f429c99291be00994841ec9fc9288413b9e0384cbf5750a20a21e11e4",
+  "poseBanCoreBlockHash": null,
+  "coreYieldPerYear": 2818.752623913541,
+  "coreTipTime": "2026-10-05T15:24:15.000Z",
+  "coreBlockIntervalMs": 132675
 }
 ```
 ---
@@ -707,6 +813,76 @@ GET /validator/F60A6BF9EC0794BB0CFD1E0F2217933F4B33EDE6FE810692BC275CA18148AEF0/
         }
     },...
 ]
+```
+---
+### Validator epochs stats by ProTxHash
+Return the Platform epochs overlapping the interval with the blocks the validator proposed in them
+
+* `timestamp_start` lower interval threshold in ISO string ( _optional_, an hour ago by default )
+* `timestamp_end` upper interval threshold in ISO string ( _optional_, now by default )
+* `intervalsCount` intervals count in response ( _optional_ ), consecutive epochs are grouped into the intervals: `epoch` and `endEpoch` are the first and the last epoch of the interval, the other fields are the sums of its epochs
+* `endTime` is the start of the next epoch, `null` for the current epoch
+* `fees` are the fees of the transactions in the blocks proposed by the validator, in credits
+* `reward` is what Platform paid the validator for the epoch: its part of the epoch pool (processing fees, distributed storage fees and Core block rewards) by the proposed blocks, in credits, before the masternode reward shares. `0` when the validator proposed no blocks in the epoch, `null` until the first block of the next epoch pays it, and for the epochs paid before Platform protocol version 9. A point of grouped epochs sums the paid ones
+* `totalBlocks` is the amount of blocks in the epoch, still growing for the current epoch
+
+```
+GET /validator/88251BD4B124EFEB87537DEABEEC54F6C8F575F4DF81F10CF5E8EEA073092B6F/epochs/stats?timestamp_start=2025-07-13T13:41:11.493Z&timestamp_end=2025-07-13T13:41:11.493Z
+[
+    {
+        "timestamp": "2025-07-13T13:41:11.493Z",
+        "data": {
+            "epoch": 8628,
+            "endEpoch": 8628,
+            "endTime": "2025-07-13T14:43:09.030Z",
+            "blocksProposed": 2,
+            "totalBlocks": 39,
+            "fees": 0,
+            "reward": 97388808088
+        }
+    }
+]
+```
+---
+### Validator earnings by ProTxHash
+Return what the validator earned during the interval
+
+* `timestamp_start` lower interval threshold in ISO string ( _optional_, 30 days ago by default )
+* `timestamp_end` upper interval threshold in ISO string ( _optional_, now by default )
+* `core` contains the Core payments of the Core blocks chain locked by Platform during the interval, `amount` is in duffs and contains the owner and operator outputs
+* `platform` contains the Platform rewards paid during the interval, every epoch is paid by the first block of the next one. `epochs` is the amount of paid epochs the validator proposed blocks in, `reward` is in credits, before the masternode reward shares
+* `estimate` is the gross monthly income in DASH expected from the last 30 days, regardless of the interval, before the operator and reward shares and expenses: `corePerMonth` from `coreYieldPerYear` and `platformPerMonth` from the Platform rewards paid during the last 30 days. `eligible` is `false` for a banned or removed masternode, then the estimates are `null`. `platformPerMonth` is also `null` for a masternode registered less than 30 days ago and when no Platform rewards were indexed for the period, `totalPerMonth` is `null` when any estimate is
+* `platformHistory` describes the period of `platformPerMonth`: the first and the last paid epoch, the period bounds and the `reward` paid in it, in credits. `null` when `platformPerMonth` is
+
+```
+GET /validator/88251BD4B124EFEB87537DEABEEC54F6C8F575F4DF81F10CF5E8EEA073092B6F/earnings?timestamp_start=2025-07-13T00:00:00.000Z&timestamp_end=2025-07-14T00:00:00.000Z
+{
+    "core": {
+        "payments": 8,
+        "amount": 961575374
+    },
+    "platform": {
+        "epochs": 23,
+        "firstEpoch": 8614,
+        "lastEpoch": 8637,
+        "blocksProposed": 24,
+        "reward": 2205508351284
+    },
+    "estimate": {
+        "periodDays": 30,
+        "eligible": true,
+        "corePerMonth": 231.73198881568877,
+        "platformPerMonth": 382.95264591643,
+        "totalPerMonth": 614.6846347321188,
+        "platformHistory": {
+            "firstEpoch": 18685,
+            "lastEpoch": 19404,
+            "startTime": "2026-09-05T15:24:15.000Z",
+            "endTime": "2026-10-05T15:24:15.000Z",
+            "reward": 38295264591643
+        }
+    }
+}
 ```
 ---
 ### Transaction by hash
@@ -795,6 +971,12 @@ Status can be either `SUCCESS` or `FAIL`. In case of error tx, message will appe
 * `timestamp_start` and `timestamp_end` transaction timestamp
 * `token_name` name of token
 * Valid `order_by` values are `id`, `gas_used`, `timestamp` or `owner`
+* `amount` is the credits the transaction moved, reported the same way by
+  [Transaction by hash](#transaction-by-hash), [Block by hash](#block-by-hash) and
+  [Transactions by Identity](#transactions-by-identity). It is `null` for the transitions that
+  move none: `DATA_CONTRACT_CREATE`, `DATA_CONTRACT_UPDATE`, `IDENTITY_UPDATE`, `MASTERNODE_VOTE`,
+  and a `BATCH` that holds no document purchase. Note that [Platform Address Transitions](#platform-address-transitions) has its own
+  `amount`, netted against the address being queried, which is a different figure
 
 | Batch type string                   | Batch type number |
 |:------------------------------------|:------------------|
@@ -1141,6 +1323,7 @@ GET /dataContract/AJqYb8ZvfbA6ZFgpsvLfpMEzwjaYUPyVmeFxSJrafB18/transactions
       "timestamp": "2024-08-26T13:30:22.211Z",
       "gasUsed": 32230560,
       "error": null,
+      "amount": null,
       "hash": "5FBEE4EC0030159C5D25D0C3DEC3AB894ED0DC89B07BEAFAF8A1BE1E3EFCCC10"
     },
     {
@@ -1443,6 +1626,20 @@ Response codes:
 ### Identity by Identifier
 Return identity by given identifier
 
+`type` tells apart the identities Platform derives for a masternode from the ones users
+register themselves:
+
+| type                  | description                                                |
+|-----------------------|------------------------------------------------------------|
+| `regular`             | registered by a user with an Identity Create transition     |
+| `masternode`          | masternode owner identity, its identifier is the ProTxHash  |
+| `masternode_voting`   | masternode voting identity, votes on contested resources    |
+| `masternode_operator` | masternode operator identity, collects the operator reward  |
+
+All four are indexed, so [Identities](#identities) can filter on any of them with
+`identity_type`. The type is `null` for an identity the indexer has not seen, which happens when
+one is reachable only through the state transitions it owns.
+
 Every endpoint that returns aliases uses the same alias entry shape:
 
 * contested - whether the name matches the DPNS contested-name pattern
@@ -1553,7 +1750,8 @@ GET /identity/EP1g5AGP8QGYMXXUYdmSvhbVxggNURDbvpckF39mTxs3
     "totalWithdrawals": 0,
     "lastWithdrawalTimestamp": null,
     "nonce": "7",
-    "owner": "EP1g5AGP8QGYMXXUYdmSvhbVxggNURDbvpckF39mTxs3"
+    "owner": "EP1g5AGP8QGYMXXUYdmSvhbVxggNURDbvpckF39mTxs3",
+    "type": "regular"
 }
 ```
 Response codes:
@@ -1599,8 +1797,12 @@ Return all identities paged and order by block height, tx count or balance.
 * `data_contracts_min` and `data_contracts_min` allows to filter identities by data contract count
 * `balance_min` and `balance_max` allows to filter identities by balance
 * All range filters can be set with one or two range limit e.g. `balance_min=0` or `balance_min=0&balance_max=1`
+* `identity_type` allows to filter identities by their `type`, see [Identity by Identifier](#identity-by-identifier).
+  Valid values are `regular`, `masternode`, `masternode_voting` and `masternode_operator`, e.g.
+  `identity_type=regular` for the identities users registered themselves or `identity_type=masternode_voting`
+  for the ones masternodes vote on contested resources with
 ```
-GET /identities?limit=10&order=desc&order_by=tx_count&balance_min=100000&balance_max=100000100000100000100000&documents_count_min=1&documents_count_max=5&data_contracts_min=3&data_contracts_max=4&tx_count_min=2&tx_count_max=10
+GET /identities?limit=10&order=desc&order_by=tx_count&identity_type=regular&balance_min=100000&balance_max=100000100000100000100000&documents_count_min=1&documents_count_max=5&data_contracts_min=3&data_contracts_max=4&tx_count_min=2&tx_count_max=10
 
 {
     "pagination": {
@@ -1640,7 +1842,8 @@ GET /identities?limit=10&order=desc&order_by=tx_count&balance_min=100000&balance
             "totalWithdrawals": null,
             "lastWithdrawalTimestamp": null,
             "nonce": null,
-            "owner": "EhGUnphjMD73JZBt98h7BUK7W17PbnMSUhD4pbEceLMi"
+            "owner": "EhGUnphjMD73JZBt98h7BUK7W17PbnMSUhD4pbEceLMi",
+            "type": "regular"
         }, ...
     ]
 }
@@ -1737,6 +1940,11 @@ _Note: this request does not contain any pagination data in the response_
 * returns 404 `not found` if identity don't have withdrawals
 * Pagination always `null`
 * `status` is a string. Possible values: `QUEUED`, `POOLED`, `BROADCASTED`, `COMPLETE`, `EXPIRED`
+* `hash` is the platform state transition that asked for the withdrawal, not a core transaction id
+* `transactionIndex` is the asset unlock index, the same one carried in the payload of the core
+  asset unlock transaction, so an l1 view can be paired with this record by it. It is `null` until
+  the withdrawal is pooled into a transaction, and `transactionSignHeight` alongside it is the core
+  height the transaction was signed at
 ```
 GET /identity/A1rgGVjRGuznRThdAA316VEEpKuVQ7mV8mBK1BFJvXnb/withdrawals?order=asc&start_at=95eiiqMotMvH23f6cv3BPC4ykcHFWTy2g3baCTWZANAs&timestamp_start=2024-10-10T02:37:39.187Z
 
@@ -1754,7 +1962,9 @@ GET /identity/A1rgGVjRGuznRThdAA316VEEpKuVQ7mV8mBK1BFJvXnb/withdrawals?order=asc
       "amount": 200000,
       "timestamp": "2024-10-10T02:37:39.187Z",
       "withdrawalAddress": "yeRZBWYfeNE4yVUHV4ZLs83Ppn9aMRH57A",
-      "hash": "113F86F4D1F48159B0D6690F3C5F8F33E39243086C041CF016454A66AD63F025"
+      "hash": "113F86F4D1F48159B0D6690F3C5F8F33E39243086C041CF016454A66AD63F025",
+      "transactionIndex": 3441,
+      "transactionSignHeight": 1258334
     },
     ...
   ]
@@ -1851,7 +2061,7 @@ Response codes:
 ```
 ---
 ### Transactions by Identity
-Return all transactions made by the given identity
+Return all transactions associated the given identity
 
 Status can be either `SUCCESS` or `FAIL`. In case of error tx, message will appear in the `error` field as Base64 string
 * `limit` cannot be more then 100
@@ -1891,9 +2101,13 @@ Response codes:
 ---
 ### Transfers by Identity
 Return all transfers made by the given identity
+
+`status` is the associated transaction's `SUCCESS` or `FAIL` status. `error` is `null` when no error is present, otherwise the decoded consensus error message. Errors that cannot be decoded return `"Cannot deserialize"`.
+
 * `limit` cannot be more then 100
 * `page` cannot be less then 1
 * `type` cannot be less, then 0 and more then 8
+* `amount` is credits as a string, since credits overflow a JSON number past ~90,000 DASH
 ```
 GET /identity/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec/transfers?hash=445E6F081DEE877867816AD3EF492E2C0BD1DDCCDC9C793B23DDDAF8AEA23118&page=1&limit=10&order=asc&type=6
 
@@ -1905,14 +2119,16 @@ GET /identity/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec/transfers?hash=445E6F
     },
     "resultSet": [
       {
-          "amount": 199997000000,
+          "amount": "199997000000",
           "sender": null,
           "recipient": "46r7vHmNRHFDAH2xcTdhDDeL4kv5aHemgPLThZgCtqt2",
           "timestamp": "2025-07-30T12:20:11.316Z",
           "txHash": "705C8F9C5010BFA50AC1A05E8E6D54B5F7B2D866ECD0C958BD8B9191CADB02EE",
           "type": "IDENTITY_TOP_UP",
           "blockHash": "10B265FA3B46CEF229A78E6ACE10ABDB168DDD5FFA445079181FA8FD2E77BE3E",
-          "gasUsed": 7880180
+          "gasUsed": 7880180,
+          "status": "SUCCESS",
+          "error": null
       }
     ]
 }
@@ -2536,11 +2752,12 @@ Response codes:
 ```
 ___
 ### Rate
-Return a rate DASH to USD
+Return a rate DASH to USD and DASH to BTC
 ```
 GET /rate
 {
     "usd": 24.45,
+    "btc": 0.00073,
     "source": "Kucoin"
 }
 ```
@@ -4195,7 +4412,7 @@ ___
 ### Quorums
 Returns the signing-active quorums of the platform LLMQ type, newest first.
 
-The Platform validator set rotates between these quorums, so the one flagged `isCurrent` holds the set right now and the members of the others become validators once the set rotates to their quorum. Members are omitted here — use [Current Quorum](#current-quorum) or [Quorum by Hash](#quorum-by-hash) for them.
+All of them are signing-active at the same time, so a quorum's place in the list is only age, not a turn in a queue. What does move between them is the Platform validator set: the quorum flagged `isCurrent` holds it now, and it passes to the next older quorum once every member of the current one has proposed a block — see [Block Proposer Schedule](#block-proposer-schedule). Members are omitted here — use [Current Quorum](#current-quorum) or [Quorum by Hash](#quorum-by-hash) for them.
 
 * `healthRatio` is Core's health rating of the quorum
 * `isCurrent` marks the quorum currently holding the validator set
@@ -4390,6 +4607,10 @@ ___
 ### Platform Address Info
 Return platform address info by given addres (base58check or bech32m)
 
+* `balance`, `totalIncomingAmount` and `totalOutgoingAmount` are credits as strings, since credits
+  overflow a JSON number past ~90,000 DASH
+* an address with nothing on one side of the ledger reads `"0"` there, not `null`
+
 ```
 GET /platformAddress/tdashevo1zm37f22lmtkysgznz7mnf3d9tmuh9urrflvjul/info
 
@@ -4413,15 +4634,21 @@ Response codes:
 500: Internal Server Error
 ```
 ___
-### Platform Address Transactions
-Return all transitions for platform address paged and order by creation height.
+### Platform Address Transitions
+Return all transitions for platform address paged and ordered by block height and index.
 
 * Valid `order` values are `asc` or `desc`
 * `limit` cannot be more than 100
 * `page` cannot be less than 1
+* `amount` is the net change to the address balance in credits (negative on outcome and positive on income)
+* `incoming` is the sign of `amount` (`amount >= 0`)
+* `addressesCount` is always 1 here — a single address always describes its own transition
+* `transaction_type` narrows the page to the given state transition types, by name or by number,
+  and repeats for more than one of them (`&transaction_type=SHIELD&transaction_type=17`). The
+  total follows the filter, so the filtered set can be paged on its own
 
 ```
-GET /platformAddress/yRpNvoc3hd66c3rNrPRGubVd9vGUoAVpZV/transitions?page=1&limit=10&order=desc
+GET /platformAddress/yRpNvoc3hd66c3rNrPRGubVd9vGUoAVpZV/transitions?page=1&limit=10&order=desc&transaction_type=ADDRESS_FUNDS_TRANSFER
 
 {
     "resultSet": [
@@ -4442,6 +4669,7 @@ GET /platformAddress/yRpNvoc3hd66c3rNrPRGubVd9vGUoAVpZV/transitions?page=1&limit
                 "aliases": []
             },
             "incoming": false,
+            "amount": "-1000704433560",
             "base58Address": "yRpNvoc3hd66c3rNrPRGubVd9vGUoAVpZV",
             "bech32mAddress": "tdashevo1qq79z66rh34l4u2axlz3jv34zwshggnenut9k093"
         },
@@ -4451,6 +4679,110 @@ GET /platformAddress/yRpNvoc3hd66c3rNrPRGubVd9vGUoAVpZV/transitions?page=1&limit
         "page": 1,
         "limit": 10,
         "total": 80
+    }
+}
+```
+
+Response codes:
+```
+200: OK
+500: Internal Server Error
+```
+___
+### Platform Addresses Info
+Return info for a set of platform addresses in one request, so a wallet can cover a whole
+DIP-17 window without one request per address.
+
+* `addresses` accepts base58check or bech32m, mixed freely
+* at most 100 addresses per request
+* addresses the indexer has never seen are left out of the response, so a short response means
+  the missing addresses are unused
+* the response is ordered by the order the indexer first saw each address, not by the order of
+  the request — key the result by address rather than by position
+
+```
+POST /platformAddresses/info
+{"addresses": ["yRpNvoc3hd66c3rNrPRGubVd9vGUoAVpZV", "tdashevo1qq79z66rh34l4u2axlz3jv34zwshggnenut9k093"]}
+
+[
+    {
+        "base58Address": "yRpNvoc3hd66c3rNrPRGubVd9vGUoAVpZV",
+        "bech32mAddress": "tdashevo1qq79z66rh34l4u2axlz3jv34zwshggnenut9k093",
+        "totalTxs": 80,
+        "incomingTxs": 1,
+        "outgoingTxs": 79,
+        "nonce": 79,
+        "balance": "39506060",
+        "totalIncomingAmount": "1000000000",
+        "totalOutgoingAmount": "960493940"
+    },
+    ...
+]
+```
+
+Response codes:
+```
+200: OK
+500: Internal Server Error
+```
+___
+### Platform Addresses Transitions
+Return one merged page of transitions across a set of platform addresses, ordered by block
+height and index.
+
+* `addresses` accepts base58check or bech32m, mixed freely
+* at most 100 addresses per request
+* Valid `order` values are `asc` or `desc`
+* `limit` cannot be more than 100
+* `page` cannot be less than 1
+* a transition is listed once no matter how many addresses of the set own a row in it, and
+  `amount` is the net change across the whole set
+* `addressesCount` is how many addresses of the requested set own a row in the transition.
+  `base58Address` and `bech32mAddress` name the address the transition belongs to, and are `null`
+  exactly when that count is above one, since no single address of the set describes the row
+* `incoming` is the sign of `amount` (`amount >= 0`), so a transition whose inflow and outflow
+  across the set cancel out exactly reads as `incoming: true`. Read `amount` itself where the
+  direction has to be exact
+* `transaction_type` narrows the page to the given state transition types, by name or by number,
+  and repeats for more than one of them (`&transaction_type=SHIELD&transaction_type=17`). The
+  total follows the filter, so the filtered set can be paged on its own
+* `data` is `null` whenever the request names more than one address — one serialized transition
+  per row across a whole set of them is a large response for something a caller rarely reads, so
+  it is left to `/transaction/:hash`. A request for a single address still carries it
+
+```
+POST /platformAddresses/transitions?page=1&limit=10&order=desc&transaction_type=ADDRESS_FUNDS_TRANSFER
+{"addresses": ["yRpNvoc3hd66c3rNrPRGubVd9vGUoAVpZV", "yjaZy4BRBd99jB4mSpd6hJQkYFaCeprGQm"]}
+
+{
+    "resultSet": [
+        {
+            "hash": "99C5901B019156C0547472B4C825D05E0510DD60C0EE1DDB7730A2387421D52D",
+            "index": 17,
+            "blockHash": "A3D5152ECA3629D4BD8DE05E77B5BDC1AA6D22F8180630EE10CBC01F946A2885",
+            "blockHeight": 246835,
+            "type": "ADDRESS_FUNDS_TRANSFER",
+            "batchType": null,
+            "data": "DAABADxRa0O8a/rxXTfFGTI1E6F0InmfT/wF9eEAZAADfLzYQY3...",
+            "timestamp": "2026-01-15T16:15:33.127Z",
+            "gasUsed": 704433560,
+            "status": "SUCCESS",
+            "error": null,
+            "owner": {
+                "identifier": null,
+                "aliases": []
+            },
+            "incoming": false,
+            "amount": "-1000704433560",
+            "base58Address": "yRpNvoc3hd66c3rNrPRGubVd9vGUoAVpZV",
+            "bech32mAddress": "tdashevo1qq79z66rh34l4u2axlz3jv34zwshggnenut9k093"
+        },
+        ...
+    ],
+    "pagination": {
+        "page": 1,
+        "limit": 10,
+        "total": 142
     }
 }
 ```

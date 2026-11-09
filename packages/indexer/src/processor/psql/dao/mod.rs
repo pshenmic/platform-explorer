@@ -4,11 +4,13 @@ use dpp::dashcore::Network;
 use std::env;
 
 pub mod blocks;
+pub mod core_payments;
 pub mod data_contracts;
 pub mod documents;
 pub mod identities;
 pub mod masternode_votes;
 mod platform_addresses;
+pub mod platform_rewards;
 pub mod shielded_transitions;
 pub mod state_transition_duplicates;
 pub mod state_transitions;
@@ -49,6 +51,8 @@ impl PostgresDAO {
         cfg.dbname = Some(postgres_db);
         cfg.user = Some(postgres_user);
         cfg.password = Some(postgres_pass);
+        // a crash loses the last commits only, the indexer then reindexes them from the chain
+        cfg.options = Some(String::from("-c synchronous_commit=off"));
         cfg.manager = Some(ManagerConfig {
             recycling_method: RecyclingMethod::Fast,
         });
