@@ -3,6 +3,10 @@
   margin-left: auto;
 }
 
+.IdentityPage__ListContainer .Tabs__TabItemsCount--Loading {
+  visibility: hidden;
+}
+
 .IdentityPage__TransactionsFilter,
 .IdentityPage__DocumentsFilter {
   margin: var(--pe-space-3) 0 var(--pe-space-6);

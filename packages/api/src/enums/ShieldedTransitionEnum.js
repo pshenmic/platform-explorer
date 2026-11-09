@@ -9,14 +9,20 @@ const ShieldedDirectionEnum = {
 // transitions that move value into the shielded pool
 const SHIELD_IN_TYPES = [
   StateTransitionEnum.SHIELD,
-  StateTransitionEnum.SHIELD_FROM_ASSET_LOCK
+  StateTransitionEnum.SHIELD_FROM_ASSET_LOCK,
+  StateTransitionEnum.SHIELD_FROM_IDENTITY
 ]
 
 // transitions that move value out of the shielded pool
 const SHIELD_OUT_TYPES = [
   StateTransitionEnum.UNSHIELD,
   StateTransitionEnum.SHIELDED_WITHDRAWAL,
-  StateTransitionEnum.IDENTITY_CREATE_FROM_SHIELDED_POOL
+  StateTransitionEnum.IDENTITY_CREATE_FROM_SHIELDED_POOL,
+  StateTransitionEnum.IDENTITY_TOP_UP_FROM_SHIELDED_POOL,
+  // the token transitions below only move credits out of the pool, to pay the fee or the price
+  StateTransitionEnum.TOKEN_SHIELDED_TRANSFER_WITH_SHIELDED_FEE,
+  StateTransitionEnum.TOKEN_UNSHIELD_WITH_SHIELDED_FEE,
+  StateTransitionEnum.TOKEN_PURCHASE_FROM_SHIELDED_POOL
 ]
 
 // transitions that stay inside the shielded pool

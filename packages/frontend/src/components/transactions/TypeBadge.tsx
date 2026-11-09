@@ -15,10 +15,10 @@ function TypeBadge({ type, className, ...props }: TypeBadgeProps) {
     <Tooltip title={info?.title} content={info?.description} placement={'top'}>
       <Badge
         className={`TypeBadge ${className || ''}`.trim()}
-        colorScheme={info?.colorScheme}
+        colorScheme={info?.colorScheme ?? 'gray'}
         {...props}
       >
-        <span className={'TypeBadge__Label'}>{info?.title}</span>
+        <span className={'TypeBadge__Label'}>{info?.title ?? type ?? 'Unknown'}</span>
       </Badge>
     </Tooltip>
   )

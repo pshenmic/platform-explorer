@@ -11,6 +11,11 @@ use dpp::state_transition::identity_credit_transfer_to_addresses_transition::acc
 use dpp::state_transition::identity_credit_transfer_to_addresses_transition::IdentityCreditTransferToAddressesTransition;
 use dpp::state_transition::identity_topup_from_addresses_transition::accessors::IdentityTopUpFromAddressesTransitionAccessorsV0;
 use dpp::state_transition::identity_topup_from_addresses_transition::IdentityTopUpFromAddressesTransition;
+use dpp::state_transition::shield_from_asset_lock_transition::accessors::ShieldFromAssetLockTransitionAccessorsV0;
+use dpp::state_transition::shield_from_asset_lock_transition::ShieldFromAssetLockTransition;
+use dpp::state_transition::shield_transition::ShieldTransition;
+use dpp::state_transition::unshield_transition::accessors::UnshieldTransitionAccessorsV0;
+use dpp::state_transition::unshield_transition::UnshieldTransition;
 use dpp::state_transition::{StateTransitionLike, StateTransitionWitnessSigned};
 
 #[derive(Clone)]
@@ -209,5 +214,78 @@ impl PlatformAddressTransition {
         }
 
         address_transitions
+    }
+
+    pub fn from_shield_transition(
+        transition: ShieldTransition,
+        transition_hash: String,
+    ) -> Vec<PlatformAddressTransition> {
+        let transition_type: i32 = transition.state_transition_type() as _;
+
+        let inputs = match transition {
+            ShieldTransition::V0(v0) => v0.inputs,
+        };
+
+        inputs
+            .iter()
+            .map(|(addr, (_, amount))| PlatformAddressTransition {
+                transition_type,
+                transition_hash: transition_hash.clone(),
+                sender: Some(addr.clone()),
+                recipient: None,
+                amount: amount.clone(),
+            })
+            .collect()
+    }
+
+    pub fn from_unshield_transition(
+        transition: UnshieldTransition,
+        transition_hash: String,
+        gas_used: u64,
+    ) -> Vec<PlatformAddressTransition> {
+        let transition_type: i32 = transition.state_transition_type() as _;
+
+        // the unshielding amount leaving the pool covers the fee as well, so the output
+        // address only receives what is left of it
+        let amount = transition.unshielding_amount().saturating_sub(gas_used);
+
+        vec![PlatformAddressTransition {
+            transition_type,
+            transition_hash,
+            sender: None,
+            recipient: Some(transition.output_address().clone()),
+            amount,
+        }]
+    }
+
+    pub fn from_shield_from_asset_lock(
+        transition: ShieldFromAssetLockTransition,
+        transition_hash: String,
+        asset_lock_duffs: u64,
+        gas_used: u64,
+    ) -> Vec<PlatformAddressTransition> {
+        let transition_type: i32 = transition.state_transition_type() as _;
+
+        match transition.surplus_output() {
+            // whatever the asset lock did not put into the shielded pool, minus the fee,
+            // lands on the surplus address. Without one it is burned into the fee pools
+            Some(addr) => {
+                // duffs to credits
+                let asset_lock_credits = asset_lock_duffs * CREDITS_PER_DUFF;
+
+                let amount = asset_lock_credits
+                    .saturating_sub(transition.value_balance())
+                    .saturating_sub(gas_used);
+
+                vec![PlatformAddressTransition {
+                    transition_type,
+                    transition_hash,
+                    sender: None,
+                    recipient: Some(addr.clone()),
+                    amount,
+                }]
+            }
+            None => vec![],
+        }
     }
 }

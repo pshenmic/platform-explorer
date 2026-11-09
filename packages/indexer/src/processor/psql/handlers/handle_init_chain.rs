@@ -26,6 +26,26 @@ impl PSQLProcessor {
         self.process_system_data_contract(SystemDataContract::WalletUtils, sql_transaction)
             .await;
 
+        println!("Processing SystemDataContract::TokenHistory");
+        self.process_system_data_contract(SystemDataContract::TokenHistory, sql_transaction)
+            .await;
+
+        println!("Processing SystemDataContract::KeywordSearch");
+        self.process_system_data_contract(SystemDataContract::KeywordSearch, sql_transaction)
+            .await;
+
+        println!("Processing SystemDataContract::DocumentHistory");
+        self.process_system_data_contract(SystemDataContract::DocumentHistory, sql_transaction)
+            .await;
+
+        println!("Processing SystemDataContract::AppConnect");
+        self.process_system_data_contract(SystemDataContract::AppConnect, sql_transaction)
+            .await;
+
+        println!("Processing SystemDataContract::ModerationCharters");
+        self.process_system_data_contract(SystemDataContract::ModerationCharters, sql_transaction)
+            .await;
+
         println!("Processing state transition duplicates");
         self.process_state_transition_duplicates(sql_transaction).await;
 

@@ -1,10 +1,15 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import * as Api from '../../../util/Api'
-import { fetchHandlerSuccess, fetchHandlerError } from '../../../util'
-import ValidatorActivityLists from './ValidatorActivityLists'
-import ValidatorCharts from './ValidatorCharts'
+import { fetchHandlerSuccess, fetchHandlerError, paginationHandler } from '../../../util'
+import { LoadingList } from '../../../components/loading'
+import Pagination from '../../../components/pagination'
+import { ErrorMessageBlock } from '../../../components/Errors'
+import BlocksList from '../../../components/blocks/BlocksList'
+import TransactionsList from '../../../components/transactions/TransactionsList'
+import BlocksChart from './BlocksChart'
+import RewardsChart from './RewardsChart'
 import Link from 'next/link'
 import {
   Identifier,
@@ -20,12 +25,22 @@ import { HorisontalSeparator } from '../../../components/ui/separators'
 import { ValidatorCard } from '../../../components/validators'
 import { CircleIcon } from '../../../components/ui/icons'
 import { RateTooltip } from '../../../components/ui/Tooltips'
+import { WithdrawalsList } from '../../../components/transfers'
 import { useBreadcrumbs } from '../../../contexts/BreadcrumbsContext'
+import { defaultChartConfig } from '../../../components/charts/config'
+import type { TimespanValue } from '../../../components/charts/types'
 import { Badge } from '../../../components/ui/Badge'
+import { Tabs, TabList, TabPanels, Tab, TabPanel } from '../../../components/ui/Tabs'
 import { useActiveNetwork } from 'src/contexts'
-import type { LoadableState, Rate, Validator as ValidatorType } from '../../../types'
-
-import { getValidatorStatus } from '../../../components/validators/validatorStatus'
+import type {
+  Block,
+  LoadableState,
+  PaginatedResultSet,
+  Rate,
+  Transaction,
+  Validator as ValidatorType,
+  Withdrawal
+} from '../../../types'
 
 import './ValidatorPage.css'
 
@@ -64,8 +79,19 @@ type ValidatorDetail = Omit<Partial<ValidatorType>, 'epochInfo' | 'endpoints' | 
   } | null
 }
 
+type PaginatedProps = { currentPage: number }
+
 interface ValidatorProps {
   hash: string
+}
+
+function emptyPaginated<T>(): LoadableState<PaginatedResultSet<T>> {
+  return {
+    data: {} as PaginatedResultSet<T>,
+    props: { currentPage: 0 },
+    loading: true,
+    error: false
+  }
 }
 
 function Validator({ hash }: ValidatorProps) {
@@ -80,7 +106,16 @@ function Validator({ hash }: ValidatorProps) {
     loading: true,
     error: false
   })
+  const [proposedBlocks, setProposedBlocks] = useState(emptyPaginated<Block>())
+  const pageSize = 13
+  const [currentPage, setCurrentPage] = useState(1)
+  const [transactions, setTransactions] = useState(emptyPaginated<Transaction>())
+  const [withdrawals, setWithdrawals] = useState(emptyPaginated<Withdrawal>())
+  const [activeChartTab, setActiveChartTab] = useState(0)
   const { l1explorerBaseUrl } = useActiveNetwork()
+  const [timespan, setTimespan] = useState<TimespanValue>(
+    defaultChartConfig.timespan.values[defaultChartConfig.timespan.defaultIndex]
+  )
 
   useEffect(() => {
     setBreadcrumbs([
@@ -90,32 +125,86 @@ function Validator({ hash }: ValidatorProps) {
     ])
   }, [setBreadcrumbs, hash])
 
-  const status = getValidatorStatus(validator.data)
+  const poseBanHeight = validator.data?.proTxInfo?.state?.PoSeBanHeight ?? 0
   const posePenalty = validator.data?.proTxInfo?.state?.PoSePenalty ?? 0
   const poseStatusColor =
-    status.label === 'Banned' ? 'red.default' : posePenalty > 0 ? 'yellow.default' : 'green.default'
+    poseBanHeight > 0 && validator.data?.proTxInfo?.state?.PoSeRevivedHeight === -1
+      ? 'red.default'
+      : posePenalty > 0
+        ? 'yellow.default'
+        : 'green.default'
+
+  const fetchData = () => {
+    Api.getValidatorByProTxHash(hash)
+      .then(res => fetchHandlerSuccess(setValidator, res as Partial<ValidatorDetail>))
+      .catch(err => fetchHandlerError(setValidator, err))
+
+    Api.getRate()
+      .then(res => fetchHandlerSuccess(setRate, res))
+      .catch(err => fetchHandlerError(setRate, err))
+  }
+
+  useEffect(() => fetchData(), [hash])
 
   useEffect(() => {
-    let cancelled = false
-    setValidator(state => ({ ...state, loading: true, error: false }))
-    Api.getValidatorByProTxHash(hash)
-      .then(res => {
-        if (!cancelled) fetchHandlerSuccess(setValidator, res as Partial<ValidatorDetail>)
-      })
-      .catch(err => {
-        if (!cancelled) fetchHandlerError(setValidator, err)
-      })
-    Api.getRate()
-      .then(res => {
-        if (!cancelled) fetchHandlerSuccess(setRate, res)
-      })
-      .catch(err => {
-        if (!cancelled) fetchHandlerError(setRate, err)
-      })
-    return () => {
-      cancelled = true
-    }
-  }, [hash])
+    setProposedBlocks(state => ({ ...state, loading: true }))
+
+    Api.getBlocksByValidator(
+      hash,
+      Number((proposedBlocks.props as PaginatedProps).currentPage) + 1,
+      pageSize,
+      'desc'
+    )
+      .then(res => fetchHandlerSuccess(setProposedBlocks, res))
+      .catch(err => fetchHandlerError(setProposedBlocks, err))
+  }, [(proposedBlocks.props as PaginatedProps).currentPage])
+
+  useEffect(() => {
+    if (!validator.data?.identity) return
+
+    setTransactions(state => ({ ...state, loading: true }))
+
+    Api.getTransactionsByIdentity(
+      validator.data.identity,
+      Number((transactions.props as PaginatedProps).currentPage) + 1,
+      pageSize,
+      'desc'
+    )
+      .then(res => fetchHandlerSuccess(setTransactions, res))
+      .catch(err => fetchHandlerError(setTransactions, err))
+  }, [validator, (transactions.props as PaginatedProps).currentPage])
+
+  useEffect(() => {
+    if (!validator.data?.identity) return
+
+    setWithdrawals(state => ({ ...state, loading: true }))
+
+    Api.getWithdrawalsByIdentity(validator.data.identity, 1, 100, 'desc')
+      .then(res => fetchHandlerSuccess(setWithdrawals, res))
+      .catch(err => fetchHandlerError(setWithdrawals, err))
+  }, [validator])
+
+  const handlePageClick = useCallback(
+    ({ selected }: { selected: number }) => {
+      setCurrentPage(selected)
+      // original called fetchData with page args even though fetchData ignores them
+      fetchData()
+    },
+    [pageSize]
+  )
+
+  useEffect(() => {
+    setCurrentPage(0)
+    handlePageClick({ selected: 0 })
+  }, [pageSize, handlePageClick])
+
+  const withdrawalsAll = withdrawals?.data?.resultSet || []
+  const withdrawalsPage = Number((withdrawals.props as PaginatedProps).currentPage)
+  const visibleWithdrawals = withdrawalsAll.slice(
+    withdrawalsPage * pageSize,
+    (withdrawalsPage + 1) * pageSize
+  )
+  const withdrawalsPageCount = Math.max(1, Math.ceil(withdrawalsAll.length / pageSize))
 
   return (
     <PageDataContainer className={'ValidatorPage'} title={'Validator Info'}>
@@ -123,6 +212,7 @@ function Validator({ hash }: ValidatorProps) {
         <div className={'ValidatorPage__Column'}>
           <InfoContainer className={'ValidatorPage__GroupContainer'}>
             <ValidatorCard
+              proTxHash={hash}
               validator={validator as LoadableState<ValidatorType>}
               rate={rate.data}
               className={'ValidatorPage__Card'}
@@ -196,7 +286,11 @@ function Validator({ hash }: ValidatorProps) {
               <InfoLine
                 className={'ValidatorPage__InfoLine'}
                 title={'Status'}
-                value={<Badge colorScheme={status.colorScheme}>{status.label}</Badge>}
+                value={
+                  <Badge colorScheme={validator?.data?.isActive ? 'green' : 'orange'}>
+                    {validator?.data?.isActive ? 'Proposing' : 'Waiting for Quorum'}
+                  </Badge>
+                }
                 loading={validator.loading}
                 error={validator.error}
               />
@@ -449,20 +543,146 @@ function Validator({ hash }: ValidatorProps) {
 
         <div className={'ValidatorPage__Column'}>
           <InfoContainer styles={['tabs']} className={'ValidatorPage__ChartsContainer'}>
-            <ValidatorCharts key={hash} hash={hash} />
+            <Tabs onChange={(index: number) => setActiveChartTab(index)} index={activeChartTab}>
+              <TabList>
+                <Tab>Proposed Blocks</Tab>
+                <Tab>Reward Earned</Tab>
+              </TabList>
+              <TabPanels>
+                <TabPanel className={'ValidatorPage__ChartTab'} position={'relative'}>
+                  <BlocksChart
+                    hash={hash}
+                    isActive={activeChartTab === 0}
+                    loading={validator.loading}
+                    timespanChangeCallback={setTimespan}
+                    timespan={timespan}
+                  />
+                </TabPanel>
+                <TabPanel className={'ValidatorPage__ChartTab'} position={'relative'}>
+                  <RewardsChart
+                    hash={hash}
+                    isActive={activeChartTab === 1}
+                    loading={validator.loading}
+                    timespanChangeCallback={setTimespan}
+                    timespan={timespan}
+                  />
+                </TabPanel>
+              </TabPanels>
+            </Tabs>
           </InfoContainer>
 
           <InfoContainer styles={['tabs']} className={'ValidatorPage__Lists'}>
-            <ValidatorActivityLists
-              key={hash}
-              hash={hash}
-              identity={validator.loading ? null : validator.data?.identity}
-              loading={validator.loading}
-              error={validator.error}
-              rate={rate.data}
-              defaultPayoutAddress={validator.data?.proTxInfo?.state?.payoutAddress}
-              l1explorerBaseUrl={l1explorerBaseUrl}
-            />
+            <Tabs
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                flexGrow: 1
+              }}
+            >
+              <TabList>
+                <Tab>Proposed Blocks</Tab>
+                <Tab>Transactions</Tab>
+                <Tab>Withdrawals</Tab>
+              </TabList>
+              <TabPanels
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  flexGrow: 1
+                }}
+              >
+                <TabPanel className={'ValidatorPage__ListContainer'}>
+                  {!proposedBlocks.error ? (
+                    <div className={'ValidatorPage__List'}>
+                      <BlocksList
+                        blocks={proposedBlocks?.data?.resultSet}
+                        loading={proposedBlocks.loading}
+                        skeletonCount={pageSize}
+                        headerStyles={'light'}
+                      />
+                    </div>
+                  ) : (
+                    <ErrorMessageBlock />
+                  )}
+
+                  {proposedBlocks.data?.resultSet && (
+                    <div className={'ValidatorPage__ListPagination'}>
+                      <Pagination
+                        onPageChange={pagination =>
+                          paginationHandler(setProposedBlocks, pagination.selected)
+                        }
+                        pageCount={
+                          Math.ceil((proposedBlocks.data?.pagination?.total ?? 0) / pageSize) || 1
+                        }
+                        forcePage={currentPage}
+                        pageRangeDisplayed={0}
+                      />
+                    </div>
+                  )}
+                </TabPanel>
+                <TabPanel className={'ValidatorPage__ListContainer'}>
+                  {!transactions.error ? (
+                    <div className={'ValidatorPage__List'}>
+                      <TransactionsList
+                        transactions={transactions.data?.resultSet}
+                        loading={transactions.loading}
+                        skeletonCount={pageSize}
+                        headerStyles={'light'}
+                      />
+                    </div>
+                  ) : (
+                    <ErrorMessageBlock />
+                  )}
+
+                  {transactions.data?.resultSet && (
+                    <div className={'ValidatorPage__ListPagination'}>
+                      <Pagination
+                        onPageChange={pagination =>
+                          paginationHandler(setTransactions, pagination.selected)
+                        }
+                        pageCount={
+                          Math.ceil((transactions.data?.pagination?.total ?? 0) / pageSize) || 1
+                        }
+                        forcePage={currentPage}
+                        pageRangeDisplayed={0}
+                      />
+                    </div>
+                  )}
+                </TabPanel>
+                <TabPanel className={'ValidatorPage__ListContainer'}>
+                  {!withdrawals.error ? (
+                    <div className={'ValidatorPage__List'}>
+                      {!withdrawals.loading ? (
+                        <WithdrawalsList
+                          withdrawals={visibleWithdrawals}
+                          l1explorerBaseUrl={l1explorerBaseUrl}
+                          rate={rate.data}
+                          defaultPayoutAddress={validator.data?.proTxInfo?.state?.payoutAddress}
+                          headerStyles={'light'}
+                        />
+                      ) : (
+                        <LoadingList itemsCount={pageSize} />
+                      )}
+                    </div>
+                  ) : (
+                    <ErrorMessageBlock />
+                  )}
+
+                  {withdrawalsAll.length > 0 && (
+                    <div className={'ValidatorPage__ListPagination'}>
+                      <Pagination
+                        onPageChange={pagination =>
+                          paginationHandler(setWithdrawals, pagination.selected)
+                        }
+                        pageCount={withdrawalsPageCount}
+                        forcePage={withdrawalsPage}
+                        pageRangeDisplayed={0}
+                      />
+                    </div>
+                  )}
+                </TabPanel>
+              </TabPanels>
+            </Tabs>
           </InfoContainer>
         </div>
       </div>

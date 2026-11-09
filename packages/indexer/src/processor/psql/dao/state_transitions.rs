@@ -86,6 +86,29 @@ impl PostgresDAO {
         Ok(owner)
     }
 
+    // a recipient that receives no credits, like a token or a document transfer, is written
+    // straight onto the transition, the way create_transfer does it for the ones that do.
+    // A recipient of credits is the more interesting one, so it is never overwritten here
+    pub async fn set_state_transition_recipient(
+        &self,
+        recipient: Identifier,
+        st_hash: String,
+        sql_transaction: &Transaction<'_>,
+    ) -> Result<(), PoolError> {
+        let stmt = sql_transaction
+            .prepare_cached(
+                "UPDATE state_transitions SET recipient = COALESCE(recipient, $1) \
+        WHERE hash = $2;",
+            )
+            .await?;
+
+        sql_transaction
+            .execute(&stmt, &[&recipient.to_string(Base58), &st_hash])
+            .await?;
+
+        Ok(())
+    }
+
     pub async fn get_state_transition_id(
         &self,
         hash: String,

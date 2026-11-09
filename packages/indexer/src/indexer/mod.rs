@@ -1,8 +1,13 @@
 use crate::processor::psql::{state_transition_duplicates, PSQLProcessor};
 use crate::utils::TenderdashRpcApi;
+use dapi_grpc::platform::v0::platform_client::PlatformClient;
+use dapi_grpc::tonic::transport::Channel;
+use chrono::{DateTime, Utc};
 use dashcore_rpc::{Auth, Client};
+use dpp::dashcore::Network;
 use std::cell::Cell;
 use std::env;
+use std::time::Duration;
 
 pub mod index_block;
 pub mod process_block;
@@ -13,6 +18,8 @@ pub struct Indexer {
     processor: PSQLProcessor,
     last_block_height: Cell<i32>,
     txs_to_skip: Vec<String>,
+    network: Network,
+    genesis_time: Cell<Option<DateTime<Utc>>>,
 }
 
 impl Indexer {
@@ -43,12 +50,24 @@ impl Indexer {
         let tenderdash_url = env::var("TENDERDASH_URL").expect("You've not set the TENDERDASH_URL");
         let tenderdash_rpc = TenderdashRpcApi::new(tenderdash_url);
 
-        let network = tenderdash_rpc
-            .get_network()
-            .await
-            .expect("Failed to get network");
+        let network = loop {
+            match tenderdash_rpc.get_network().await {
+                Ok(network) => break network,
+                Err(err) => {
+                    println!("Failed to get network, retrying in 3s: {}", err);
+                    tokio::time::sleep(Duration::from_millis(30000)).await;
+                }
+            }
+        };
 
-        let processor = PSQLProcessor::new(dashcore_rpc, network);
+        let dapi_url = env::var("DAPI_URL").expect("You've not set the DAPI_URL");
+        let dapi_client = PlatformClient::new(
+            Channel::from_shared(dapi_url)
+                .expect("Failed to parse DAPI_URL env")
+                .connect_lazy(),
+        );
+
+        let processor = PSQLProcessor::new(dashcore_rpc, dapi_client, network);
         let txs_to_skip_str = env::var("TXS_TO_SKIP").unwrap_or(String::from(""));
 
         let mut txs_to_skip = txs_to_skip_str
@@ -68,6 +87,8 @@ impl Indexer {
             processor,
             last_block_height: Cell::new(start_height),
             txs_to_skip,
+            network,
+            genesis_time: Cell::new(None),
         }
     }
 }

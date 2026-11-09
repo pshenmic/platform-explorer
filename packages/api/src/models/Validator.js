@@ -17,6 +17,18 @@ module.exports = class Validator {
   lastWithdrawalTime
   endpoints
   geoIpInfo
+  registeredAt
+  votingIdentity
+  votingIdentityBalance
+  poseScoreMax
+  blocksUntilCorePayment
+  registeredCoreBlockHash
+  lastPaidCoreBlockHash
+  poseRevivedCoreBlockHash
+  poseBanCoreBlockHash
+  coreYieldPerYear
+  coreTipTime
+  coreBlockIntervalMs
 
   constructor (
     proTxHash,
@@ -33,7 +45,19 @@ module.exports = class Validator {
     identityBalance,
     epochInfo,
     endpoints,
-    geoIpInfo
+    geoIpInfo,
+    registeredAt,
+    votingIdentity,
+    votingIdentityBalance,
+    poseScoreMax,
+    blocksUntilCorePayment,
+    registeredCoreBlockHash,
+    lastPaidCoreBlockHash,
+    poseRevivedCoreBlockHash,
+    poseBanCoreBlockHash,
+    coreYieldPerYear,
+    coreTipTime,
+    coreBlockIntervalMs
   ) {
     this.proTxHash = proTxHash ?? null
     this.isActive = isActive ?? null
@@ -50,6 +74,18 @@ module.exports = class Validator {
     this.lastWithdrawalTime = lastWithdrawalTime ?? null
     this.endpoints = endpoints ?? null
     this.geoIpInfo = geoIpInfo ?? null
+    this.registeredAt = registeredAt ?? null
+    this.votingIdentity = votingIdentity ?? null
+    this.votingIdentityBalance = votingIdentityBalance ?? null
+    this.poseScoreMax = poseScoreMax ?? null
+    this.blocksUntilCorePayment = blocksUntilCorePayment ?? null
+    this.registeredCoreBlockHash = registeredCoreBlockHash ?? null
+    this.lastPaidCoreBlockHash = lastPaidCoreBlockHash ?? null
+    this.poseRevivedCoreBlockHash = poseRevivedCoreBlockHash ?? null
+    this.poseBanCoreBlockHash = poseBanCoreBlockHash ?? null
+    this.coreYieldPerYear = coreYieldPerYear ?? null
+    this.coreTipTime = coreTipTime ?? null
+    this.coreBlockIntervalMs = coreBlockIntervalMs ?? null
   }
 
   static fromRow ({
@@ -67,7 +103,8 @@ module.exports = class Validator {
     withdrawals_count,
     last_withdrawal,
     last_withdrawal_time,
-    app_hash
+    app_hash,
+    quorum_hash
   }) {
     return new Validator(
       pro_tx_hash,
@@ -82,7 +119,8 @@ module.exports = class Validator {
           app_version: Number(app_version),
           l1_locked_height: Number(l1_locked_height),
           validator: pro_tx_hash,
-          app_hash
+          app_hash,
+          quorum_hash
         })
         : null,
       null,
@@ -109,7 +147,19 @@ module.exports = class Validator {
     identityBalance,
     epochInfo,
     endpoints,
-    geoIpInfo
+    geoIpInfo,
+    registeredAt,
+    votingIdentity,
+    votingIdentityBalance,
+    poseScoreMax,
+    blocksUntilCorePayment,
+    registeredCoreBlockHash,
+    lastPaidCoreBlockHash,
+    poseRevivedCoreBlockHash,
+    poseBanCoreBlockHash,
+    coreYieldPerYear,
+    coreTipTime,
+    coreBlockIntervalMs
   }) {
     return new Validator(
       proTxHash,
@@ -126,7 +176,19 @@ module.exports = class Validator {
       identityBalance,
       epochInfo,
       endpoints,
-      geoIpInfo
+      geoIpInfo,
+      registeredAt,
+      votingIdentity,
+      votingIdentityBalance,
+      poseScoreMax,
+      blocksUntilCorePayment,
+      registeredCoreBlockHash,
+      lastPaidCoreBlockHash,
+      poseRevivedCoreBlockHash,
+      poseBanCoreBlockHash,
+      coreYieldPerYear,
+      coreTipTime,
+      coreBlockIntervalMs
     )
   }
 }

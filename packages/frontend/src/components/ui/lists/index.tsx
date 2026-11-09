@@ -7,7 +7,9 @@ import ListColumnsHeader from './ListColumnsHeader'
 import DataList from './DataList/DataList'
 import { BigNumber, Identifier, Alias } from '../../data'
 import { RateTooltip } from '../Tooltips'
-import { FirstPlaceIcon, SecondPlaceIcon, ThirdPlaceIcon } from '../icons'
+import FirstPlaceIcon from '../icons/FirstPlaceIcon'
+import SecondPlaceIcon from '../icons/SecondPlaceIcon'
+import ThirdPlaceIcon from '../icons/ThirdPlaceIcon'
 
 const placeIcons = {
   1: FirstPlaceIcon,

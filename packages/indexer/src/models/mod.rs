@@ -12,6 +12,7 @@ pub struct TenderdashRPCStatusResponse {
 pub struct TenderdashRPCValidatorsResponse {
     pub block_height: i32,
     pub validators: Vec<TDValidator>,
+    pub quorum_hash: String,
 }
 
 #[derive(Deserialize)]

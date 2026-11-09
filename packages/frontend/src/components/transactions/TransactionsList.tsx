@@ -32,8 +32,7 @@ function TransactionsList({
   onFilterChange,
   paging,
   title,
-  pinFirst = false,
-  showOwner = true
+  pinFirst = false
 }: {
   transactions?: Transaction[]
   showMoreLink?: any
@@ -49,7 +48,6 @@ function TransactionsList({
   paging?: DataListProps['paging']
   title?: ReactNode
   pinFirst?: boolean
-  showOwner?: boolean
 }) {
   const router = useRouter()
   const canFilter = Boolean(onFilterChange)
@@ -128,54 +126,50 @@ function TransactionsList({
           <NotActive />
         )
     },
-    ...(showOwner
-      ? [
-          {
-            ...columnLayout.owner,
-            filterKey: canFilter ? 'owner' : undefined,
-            filterType: canFilter ? ('search' as const) : undefined,
-            filterPlaceholder: 'Owner ID',
-            priority: 4,
-            cell: (tx: Transaction) => {
-              if (!tx?.owner?.identifier) return <NotActive>-</NotActive>
-              const activeAlias = tx?.owner?.aliases?.find((alias: any) => alias.status === 'ok')
-              return (
-                <LinkContainer
-                  onClick={e => {
-                    e.stopPropagation()
-                    e.preventDefault()
-                    router.push(`/identity/${tx?.owner?.identifier}`)
-                  }}
-                >
-                  {activeAlias ? (
-                    <div style={{ display: 'flex', alignItems: 'center' }}>
-                      <ImageGenerator
-                        className={'Identifier__Avatar'}
-                        username={tx?.owner?.identifier}
-                        lightness={50}
-                        saturation={50}
-                        width={24}
-                        height={24}
-                      />
-                      <Alias
-                        alias={
-                          typeof activeAlias?.alias === 'string'
-                            ? activeAlias.alias
-                            : String(activeAlias?.alias || '')
-                        }
-                      />
-                    </div>
-                  ) : (
-                    <Identifier avatar={true} copyButton={true} ellipsis={true}>
-                      {tx?.owner?.identifier}
-                    </Identifier>
-                  )}
-                </LinkContainer>
-              )
-            }
-          }
-        ]
-      : []),
+    {
+      ...columnLayout.owner,
+      filterKey: canFilter ? 'owner' : undefined,
+      filterType: canFilter ? ('search' as const) : undefined,
+      filterPlaceholder: 'Owner ID',
+      priority: 4,
+      cell: (tx: Transaction) => {
+        if (!tx?.owner?.identifier) return <NotActive>-</NotActive>
+        const activeAlias = tx?.owner?.aliases?.find((alias: any) => alias.status === 'ok')
+        return (
+          <LinkContainer
+            onClick={e => {
+              e.stopPropagation()
+              e.preventDefault()
+              router.push(`/identity/${tx?.owner?.identifier}`)
+            }}
+          >
+            {activeAlias ? (
+              <div style={{ display: 'flex', alignItems: 'center' }}>
+                <ImageGenerator
+                  className={'Identifier__Avatar'}
+                  username={tx?.owner?.identifier}
+                  lightness={50}
+                  saturation={50}
+                  width={24}
+                  height={24}
+                />
+                <Alias
+                  alias={
+                    typeof activeAlias?.alias === 'string'
+                      ? activeAlias.alias
+                      : String(activeAlias?.alias || '')
+                  }
+                />
+              </div>
+            ) : (
+              <Identifier avatar={true} copyButton={true} ellipsis={true}>
+                {tx?.owner?.identifier}
+              </Identifier>
+            )}
+          </LinkContainer>
+        )
+      }
+    },
     {
       ...columnLayout.timestamp,
       filterKey: canFilter ? 'timestamp' : undefined,

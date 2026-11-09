@@ -1,25 +1,24 @@
 use crate::entities::block::Block;
 use crate::entities::block_header::BlockHeader;
+use crate::entities::validator::Validator;
 use crate::indexer::Indexer;
 use crate::models::{TransactionResult, TransactionStatus};
-use crate::processor::psql::ProcessorError;
+use crate::processor::psql::{epoch_time_length, ProcessorError};
 use base64::engine::general_purpose;
 use base64::Engine;
 
 impl Indexer {
-    pub(crate) async fn index_block(&self, block_height: i32) -> Result<(), ProcessorError> {
-        let block = self
-            .tenderdash_rpc
-            .get_block_by_height(block_height.clone())
-            .await?;
-        let block_results_response = self
-            .tenderdash_rpc
-            .get_block_results_by_height(block_height.clone())
-            .await?;
-        let validators = self
-            .tenderdash_rpc
-            .get_validators_by_block_height(block_height.clone())
-            .await?;
+    pub(crate) async fn fetch_block(
+        &self,
+        block_height: i32,
+    ) -> Result<(Block, Vec<Validator>), ProcessorError> {
+        let (block, block_results_response, (validators, quorum_hash)) = tokio::try_join!(
+            self.tenderdash_rpc.get_block_by_height(block_height.clone()),
+            self.tenderdash_rpc
+                .get_block_results_by_height(block_height.clone()),
+            self.tenderdash_rpc
+                .get_validators_by_block_height(block_height.clone()),
+        )?;
 
         let tx_results = block_results_response.txs_results.unwrap_or(vec![]);
 
@@ -77,6 +76,24 @@ impl Indexer {
         let core_chain_locked_height = block.block.header.core_chain_locked_height;
         let app_hash = block.block.header.app_hash;
 
+        // Platform starts a new epoch every epoch time length since the genesis block
+        let genesis_time = match (self.genesis_time.get(), block_height) {
+            (Some(genesis_time), _) => genesis_time,
+            (None, 1) => timestamp,
+            (None, _) => {
+                self.tenderdash_rpc
+                    .get_block_by_height(1)
+                    .await?
+                    .block
+                    .header
+                    .timestamp
+            }
+        };
+
+        self.genesis_time.set(Some(genesis_time));
+
+        let epoch = (timestamp - genesis_time).num_milliseconds() / epoch_time_length(self.network);
+
         let block = Block {
             header: BlockHeader {
                 hash: block_hash,
@@ -87,9 +104,21 @@ impl Indexer {
                 l1_locked_height: core_chain_locked_height,
                 app_hash,
                 proposer_pro_tx_hash: block.block.header.proposer_pro_tx_hash,
+                quorum_hash: Some(quorum_hash),
+                epoch: Some(epoch as i32),
             },
             txs,
         };
+
+        Ok((block, validators))
+    }
+
+    pub(crate) async fn index_block(
+        &self,
+        block: Block,
+        validators: Vec<Validator>,
+    ) -> Result<(), ProcessorError> {
+        let block_height = block.header.height;
 
         self.processor.handle_block(block, validators).await?;
 

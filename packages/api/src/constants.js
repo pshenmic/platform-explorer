@@ -9,13 +9,29 @@ module.exports = {
   TCP_CONNECT_TIMEOUT: Number(process.env.TCP_CONNECT_TIMEOUT),
   VALIDATORS_CACHE_LIFE_INTERVAL: Number(process.env.VALIDATORS_CACHE_LIFE_INTERVAL ?? 300000),
   VALIDATORS_CACHE_KEY: 'validators',
+  VALIDATORS_LIST_CACHE_KEY: 'validators_list',
   BANNED_STATE_CACHE_KEY: 'banned_state',
   PLATFORM_QUORUMS_CACHE_KEY: 'platform_quorums',
+  PROTX_LIST_CACHE_KEY: 'protx_list',
+  CORE_BLOCK_HASH_CACHE_KEY: 'core_block_hash',
+  CORE_BLOCK_HASH_CACHE_MAX_ENTRIES: 100000,
+  CORE_BLOCK_HASH_CACHE_LIFE_INTERVAL: 14 * 86400000,
+  CORE_NETWORK_CACHE_KEY: 'core_network',
+  CORE_NETWORK_CACHE_LIFE_INTERVAL: 60000,
+  RATE_CACHE_KEY: 'rate',
+  RATE_CACHE_LIFE_INTERVAL: 60000,
+  DPNS_CONTRACT_CACHE_KEY: 'dpns_contract',
+  // Core targets a block every 2.5 minutes
+  CORE_BLOCKS_PER_DAY: 576,
+  DUFFS_PER_DASH: 100000000,
+  CREDITS_PER_DASH: 100000000000,
+  PROTX_LIST_CACHE_LIFE_INTERVAL: 60000,
   DPNS_CONTRACT: 'GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec',
+  // Drive limit for both the values of an 'in' clause and the documents returned
+  DAPI_DOCUMENTS_QUERY_LIMIT: 100,
   WITHDRAWAL_CONTRACT: '4fJLR2GYTPFdomuTVvNy3VRrvWgvkKPzqehEBpNf2nk6',
   NETWORK: process.env.NETWORK ?? 'testnet',
-  GEOIP_PROVIDER: '@ip-location-db/dbip-city-mmdb',
-  GEOIP_TABLE_NAME: 'dbip-city-ipv4.mmdb',
+  GEOIP_DB_PATH: process.env.GEOIP_DB_PATH ?? 'geoip/dbip-city-ipv4.mmdb',
   get genesisTime () {
     if (!genesisTime || isNaN(genesisTime)) {
       return TenderdashRPC.getBlockByHeight(1).then((blockInfo) => {

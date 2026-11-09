@@ -1,11 +1,6 @@
 import { useId } from 'react'
 import { Icon } from './Icon'
 import type { IconProps } from './Icon'
-import FirstPlaceIcon from './FirstPlaceIcon'
-import SecondPlaceIcon from './SecondPlaceIcon'
-import ThirdPlaceIcon from './ThirdPlaceIcon'
-import PlatformExplorerLogoColor from './PlatformExplorerLogoColor'
-import PlatformExplorerLogoStroke from './PlatformExplorerLogoStroke'
 
 const CalendarIcon = (props: IconProps) => (
   <Icon viewBox="0 0 12 14" {...props}>
@@ -781,11 +776,6 @@ export {
   InfoIcon,
   SearchIcon,
   HourglassIcon,
-  FirstPlaceIcon,
-  SecondPlaceIcon,
-  ThirdPlaceIcon,
-  PlatformExplorerLogoColor,
-  PlatformExplorerLogoStroke,
   SignatureIcon,
   ListIcon,
   LockIcon,
