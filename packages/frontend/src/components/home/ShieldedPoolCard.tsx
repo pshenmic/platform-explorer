@@ -26,7 +26,7 @@ import './ShieldedPoolCard.css'
 
 const DAY_MS = 24 * 60 * 60 * 1000
 
-function PoolAmount({ amount, unit, instant }: { amount: number; unit: string; instant: boolean }) {
+function PoolAmount({ amount, unit }: { amount: number; unit: string }) {
   const [displayed, setDisplayed] = useState({ amount, unit })
   const changingUnit = displayed.unit !== unit
 
@@ -45,23 +45,14 @@ function PoolAmount({ amount, unit, instant }: { amount: number; unit: string; i
         key={displayed.unit}
         amount={changingUnit ? displayed.amount : amount}
         unit={displayed.unit}
-        instant={instant}
       />
     </span>
   )
 }
 
-function CountedPoolAmount({
-  amount,
-  unit,
-  instant
-}: {
-  amount: number
-  unit: string
-  instant: boolean
-}) {
+function CountedPoolAmount({ amount, unit }: { amount: number; unit: string }) {
   const decimals = unit === 'btc' ? 3 : 2
-  const animated = useCountUp(amount, instant ? 0 : 450, true, decimals) as number
+  const animated = useCountUp(amount, 450, true, decimals) as number
   return (
     <span className={'ShieldedPool__AmountEnter'}>
       {animated
@@ -404,11 +395,9 @@ export default function ShieldedPoolCard({
 
   const balanceDash = creditsToDash(Number(pool.balance) || 0)
   const points = series.points
-  const isAll = dateRange == null
   const windowLabel = poolRangeLabel(dateRange)
   const rangeInDash = creditsToDash(period.in)
   const rangeOutDash = creditsToDash(period.out)
-  const rangeNetDash = rangeInDash - rangeOutDash
   const usdPx = typeof rateState?.data?.usd === 'number' ? rateState.data.usd : null
   const inUsd = unit === 'usd' && usdPx != null
   const inBtc = unit === 'btc'
@@ -574,28 +563,18 @@ export default function ShieldedPoolCard({
   const tooltipPosition =
     hovered && chart ? Math.min(1, Math.max(0, chart.x(hovered.x) / width)) : 0
 
-  const statDash = isAll ? balanceDash : rangeNetDash
-  const statLoading = !hovered && (pool.loading || (!isAll && !period.loaded))
-  const targetAmount = (hovered?.tvlDash ?? statDash) * k
+  const targetAmount = balanceDash * k
   const nextUnit =
     unit === 'dash' ? (usdPx == null ? 'btc' : 'usd') : unit === 'usd' ? 'btc' : 'dash'
   const statCount = (() => {
-    if (pool.error || (!isAll && series.error)) return '—'
+    if (pool.error || pool.balance == null) return pool.loading ? null : '—'
     if (inBtc && btcPx == null) return btcRate.isError ? '—' : null
-    if (statLoading) return null
-    return <PoolAmount amount={targetAmount} unit={unit} instant={hovered != null} />
+    if (pool.loading) return null
+    return <PoolAmount amount={targetAmount} unit={unit} />
   })()
-  const statTone =
-    !hovered && !isAll && !period.loading
-      ? rangeNetDash > 0
-        ? ' is-up'
-        : rangeNetDash < 0
-          ? ' is-down'
-          : ''
-      : ''
-  const displayedInDash = hovered?.inDash ?? rangeInDash
-  const displayedOutDash = hovered?.outDash ?? rangeOutDash
-  const flowsLoading = !hovered && !period.loaded
+  const displayedInDash = rangeInDash
+  const displayedOutDash = rangeOutDash
+  const flowsLoading = !period.loaded
 
   return (
     <section
@@ -639,25 +618,25 @@ export default function ShieldedPoolCard({
         </div>
         <div className={'ShieldedPool__Controls'}>
           <PoolDateRange value={dateRange} onChange={setDateRange} />
-          <div
-            className={`ShieldedPool__Stat${period.loading && period.loaded ? ' is-updating' : ''}`}
-            aria-busy={period.loading}
-          >
-            <div className={'ShieldedPool__StatMain'}>
+          <div className={'ShieldedPool__Stat'}>
+            <div className={'ShieldedPool__StatMain'} aria-busy={pool.loading}>
+              <span className={'ShieldedPool__StatUnit'}>Pool balance</span>
               <div className={'ShieldedPool__StatValue'}>
                 <button
                   type={'button'}
-                  className={`ShieldedPool__StatCount${statTone}`}
-                  aria-label={`Amount in ${unit.toUpperCase()}. Switch to ${nextUnit.toUpperCase()}`}
+                  className={'ShieldedPool__StatCount'}
+                  aria-label={`Current pool balance in ${unit.toUpperCase()}. Switch to ${nextUnit.toUpperCase()}`}
                   title={`Switch to ${nextUnit.toUpperCase()}`}
                   onClick={() => setUnit(nextUnit)}
                 >
                   {statCount ?? <Skeleton w={'7ch'} h={'1em'} />}
                 </button>
               </div>
-              <span className={'ShieldedPool__CurrencyHint'}>Switch currency</span>
             </div>
-            <div className={'ShieldedPool__Summary'}>
+            <div
+              className={`ShieldedPool__Summary${period.loading && period.loaded ? ' is-updating' : ''}`}
+              aria-busy={period.loading}
+            >
               {inBtc && (btcRate.isError || btcPx == null) && (
                 <span className={'ShieldedPool__RateStatus'} role={'status'}>
                   {btcRate.isError ? (
@@ -669,10 +648,7 @@ export default function ShieldedPoolCard({
                   )}
                 </span>
               )}
-              <div
-                className={'ShieldedPool__Flows'}
-                aria-label={hovered ? 'Flows · selected interval' : `Flows · ${windowLabel}`}
-              >
+              <div className={'ShieldedPool__Flows'} aria-label={`Flows · ${windowLabel}`}>
                 {pool.error || series.error ? (
                   <span>—</span>
                 ) : flowsLoading ? (

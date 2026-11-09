@@ -164,41 +164,12 @@
   max-width: 100%;
 }
 .ShieldedPool__StatValue {
-  position: relative;
-  isolation: isolate;
   display: flex;
   align-items: center;
   min-height: 44px;
   font-size: clamp(1.5rem, 2.8vw, 2rem);
 }
-.ShieldedPool__StatValue::before {
-  content: "";
-  position: absolute;
-  inset: -8px -12px -5px;
-  z-index: -1;
-  pointer-events: none;
-  background: radial-gradient(
-    ellipse at center,
-    rgba(var(--pe-color-brand-light-rgb), 0.12),
-    rgba(var(--pe-color-brand-light-rgb), 0) 72%
-  );
-}
-.ShieldedPool__StatValue::after {
-  content: "";
-  position: absolute;
-  right: 0;
-  bottom: -5px;
-  left: 0;
-  height: 1px;
-  pointer-events: none;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(var(--pe-color-brand-light-rgb), 0.55),
-    transparent
-  );
-}
-.ShieldedPool__Stat.is-updating {
+.ShieldedPool__Summary.is-updating {
   opacity: 0.55;
 }
 .ShieldedPool__StatCount {
@@ -220,7 +191,6 @@
   line-height: 1;
   color: #fff;
   font-variant-numeric: tabular-nums;
-  text-shadow: 0 0 16px rgba(var(--pe-color-brand-light-rgb), 0.28);
   min-width: 4ch;
 }
 .ShieldedPool__Amount {
@@ -250,11 +220,6 @@
 .ShieldedPool__CurrencySymbol[data-unit="btc"] {
   color: var(--pe-color-orange-default);
 }
-.ShieldedPool__CurrencyHint {
-  font-family: var(--pe-font-mono);
-  font-size: 0.625rem;
-  color: var(--pe-color-gray-400);
-}
 .ShieldedPool__StatCount:hover {
   color: var(--pe-color-brand-light);
 }
@@ -269,12 +234,6 @@
   to {
     opacity: 1;
   }
-}
-.ShieldedPool__StatCount.is-up {
-  color: #2cffb4;
-}
-.ShieldedPool__StatCount.is-down {
-  color: #ff5c7a;
 }
 .ShieldedPool__StatUnit {
   font-family: var(--pe-font-mono);
