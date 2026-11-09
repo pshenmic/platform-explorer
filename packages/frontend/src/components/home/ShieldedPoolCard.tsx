@@ -211,16 +211,16 @@ function trimLeadingEmpty(buckets: any) {
   return buckets.slice(s)
 }
 
-/** Target bucket count for an active span — prefer ~daily up to 120 pts. */
+/** Target bucket count for an active span — prefer ~daily up to 100 pts. */
 function intervalsForSpan(startIso: any, endIso: any) {
   const start = new Date(startIso).getTime()
   const end = new Date(endIso).getTime()
   const days = Math.max(1, Math.ceil((end - start) / DAY_MS))
-  // short ranges: more resolution; long: daily-ish, cap 120
+  // short ranges: more resolution; long: daily-ish, cap 100
   if (days <= 2) return 48
   if (days <= 7) return Math.min(84, days * 8)
   if (days <= 31) return Math.min(90, days * 2)
-  return Math.min(120, Math.max(60, days))
+  return Math.min(100, Math.max(60, days))
 }
 
 /**
