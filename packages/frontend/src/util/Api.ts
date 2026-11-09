@@ -423,10 +423,10 @@ const getDocumentByIdentifier = (
   dataContractId?: string,
   typeName?: string
 ): Promise<Document> => {
-  const params = []
-  if (dataContractId) params.push(`contract_id=${dataContractId}`)
-  if (typeName) params.push(`document_type_name=${typeName}`)
-  const queryParams = params.join('&')
+  const params = new URLSearchParams()
+  if (dataContractId) params.set('contract_id', dataContractId)
+  if (typeName) params.set('document_type_name', typeName)
+  const queryParams = params.toString()
 
   return call<Document>(`document/${identifier}${queryParams ? `?${queryParams}` : ''}`, 'GET')
 }
