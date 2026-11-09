@@ -1,24 +1,30 @@
+.PoolDateRange {
+  display: flex;
+  align-items: center;
+  gap: var(--pe-space-1);
+  max-width: 100%;
+}
+.PoolDateRange .Presets {
+  width: auto;
+  flex-shrink: 1;
+  flex-wrap: wrap;
+}
+.PoolDateRange .Presets__Chip {
+  min-height: 32px;
+}
 .PoolDateRange__Trigger {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
-  max-width: 100%;
+  flex-shrink: 0;
+  width: 32px;
   min-height: 32px;
-  padding: 6px 8px;
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  border-radius: 6px;
-  background: rgba(255, 255, 255, 0.04);
-  color: var(--pe-color-gray-100);
-  font-family: var(--pe-font-mono);
-  font-size: 0.625rem;
-  cursor: pointer;
 }
 .PoolDateRange__Trigger:hover,
 .PoolDateRange__Trigger[aria-expanded="true"] {
-  border-color: var(--pe-color-brand-light);
+  color: var(--pe-color-brand-light);
 }
-.PoolDateRange__Trigger:focus-visible {
+.PoolDateRange .Presets__Chip:focus-visible {
   outline: 2px solid var(--pe-color-brand-light);
   outline-offset: 2px;
 }
