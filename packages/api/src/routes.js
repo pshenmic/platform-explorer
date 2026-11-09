@@ -96,6 +96,14 @@ module.exports = ({
       }
     },
     {
+      path: '/blocks/proposerSchedule',
+      method: 'GET',
+      handler: blocksController.getProposerSchedule,
+      schema: {
+        querystring: { $ref: 'paginationOptions#' }
+      }
+    },
+    {
       path: '/blocks/avgBlockTime/history',
       method: 'GET',
       handler: blocksController.getAvgBlockTimeHistory,
@@ -514,6 +522,34 @@ module.exports = ({
       }
     },
     {
+      path: '/validator/:hash/epochs/stats',
+      method: 'GET',
+      handler: validatorsController.getValidatorEpochStatsByProTxHash,
+      schema: {
+        params: {
+          type: 'object',
+          properties: {
+            hash: { $ref: 'hash#' }
+          }
+        },
+        querystring: { $ref: 'timeInterval#' }
+      }
+    },
+    {
+      path: '/validator/:hash/earnings',
+      method: 'GET',
+      handler: validatorsController.getValidatorEarningsByProTxHash,
+      schema: {
+        params: {
+          type: 'object',
+          properties: {
+            hash: { $ref: 'hash#' }
+          }
+        },
+        querystring: { $ref: 'timeInterval#' }
+      }
+    },
+    {
       path: '/validator/:hash/quorums',
       method: 'GET',
       handler: validatorsController.getValidatorQuorumsByProTxHash,
@@ -773,9 +809,9 @@ module.exports = ({
       }
     },
     {
-      path: '/platformAddress/:platform_address/transactions',
+      path: '/platformAddress/:platform_address/transitions',
       method: 'GET',
-      handler: platformAddressesController.getPlatformAddressTransition,
+      handler: platformAddressesController.getPlatformAddressTransitions,
       schema: {
         querystring: { $ref: 'paginationOptions#' },
         params: {
@@ -796,6 +832,23 @@ module.exports = ({
       handler: platformAddressesController.getPlatformAddresses,
       schema: {
         querystring: { $ref: 'paginationOptions#' }
+      }
+    },
+    {
+      path: '/platformAddresses/info',
+      method: 'POST',
+      handler: platformAddressesController.getPlatformAddressesInfo,
+      schema: {
+        body: { $ref: 'platformAddresses#' }
+      }
+    },
+    {
+      path: '/platformAddresses/transitions',
+      method: 'POST',
+      handler: platformAddressesController.getPlatformAddressesTransitions,
+      schema: {
+        querystring: { $ref: 'paginationOptions#' },
+        body: { $ref: 'platformAddresses#' }
       }
     },
     {

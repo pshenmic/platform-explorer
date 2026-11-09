@@ -75,10 +75,12 @@ impl TenderdashRpcApi {
         Ok(resp)
     }
 
+    /// Returns the validator set of the block together with the hash of the quorum holding it,
+    /// which is the quorum that signs the block at this height.
     pub async fn get_validators_by_block_height(
         &self,
         block_height: i32,
-    ) -> Result<Vec<Validator>, Error> {
+    ) -> Result<(Vec<Validator>, String), Error> {
         let url = format!(
             "{}/validators?height={}&per_page=150",
             self.tenderdash_url, block_height
@@ -88,9 +90,11 @@ impl TenderdashRpcApi {
 
         let resp = res.json::<TenderdashRPCValidatorsResponse>().await?;
 
+        let quorum_hash = resp.quorum_hash.clone();
+
         let validators: Vec<Validator> = Vec::try_from(resp).unwrap();
 
-        Ok(validators)
+        Ok((validators, quorum_hash))
     }
 }
 

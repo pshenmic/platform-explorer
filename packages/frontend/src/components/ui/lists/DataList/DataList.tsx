@@ -222,17 +222,6 @@ export default function DataList<T = any>({
   const wrapRef = useRef<HTMLDivElement | null>(null)
   const scrollRef = useRef<HTMLDivElement | null>(null)
   const sentinelRef = useRef<HTMLDivElement | null>(null)
-  const containedScroll = paging?.scrollTarget === 'container'
-  const scrollResetKey = containedScroll
-    ? `${paging?.mode}:${paging?.page}:${paging?.pageSize}`
-    : ''
-  const previousScrollKey = useRef('')
-  useEffect(() => {
-    if (scrollResetKey && previousScrollKey.current !== scrollResetKey && scrollRef.current) {
-      scrollRef.current.scrollTop = 0
-    }
-    previousScrollKey.current = scrollResetKey
-  }, [scrollResetKey])
   const [width, setWidth] = useState(0)
   const [canScrollEnd, setCanScrollEnd] = useState(false)
   const [overflowX, setOverflowX] = useState(false)
@@ -400,7 +389,7 @@ export default function DataList<T = any>({
   return (
     <div
       ref={wrapRef}
-      className={`DataList ${containedScroll ? 'DataList--contained' : ''} ${fillList ? 'DataList--fill' : ''} ${compactFirst ? 'DataList--compactFirst' : ''} ${isFeed ? 'DataList--feed' : ''} ${showCenteredEmpty ? 'DataList--empty' : ''} ${loading || paging?.loadingMore ? 'DataList--loading' : ''} ${overflowX && !showCenteredEmpty && !isFeed ? 'DataList--overflowX' : ''} ${canScrollEnd && !showCenteredEmpty && !isFeed ? 'DataList--fadeEnd' : ''} ${className}`.trim()}
+      className={`DataList ${fillList ? 'DataList--fill' : ''} ${compactFirst ? 'DataList--compactFirst' : ''} ${isFeed ? 'DataList--feed' : ''} ${showCenteredEmpty ? 'DataList--empty' : ''} ${loading || paging?.loadingMore ? 'DataList--loading' : ''} ${overflowX && !showCenteredEmpty && !isFeed ? 'DataList--overflowX' : ''} ${canScrollEnd && !showCenteredEmpty && !isFeed ? 'DataList--fadeEnd' : ''} ${className}`.trim()}
       aria-busy={loading || paging?.loadingMore ? true : undefined}
       {...wrapperProps}
     >
@@ -480,18 +469,12 @@ export default function DataList<T = any>({
               scrollRef={scrollRef}
               sentinelRef={sentinelRef}
               loading={loading}
-              pageScroll={!containedScroll}
+              pageScroll={true}
             />
           ) : null}
         </div>
       ) : null}
-      <div
-        ref={scrollRef}
-        className={'DataList__Scroll pe-QuietScroll'}
-        tabIndex={containedScroll ? 0 : undefined}
-        role={containedScroll ? 'region' : undefined}
-        aria-label={containedScroll ? 'Table rows' : undefined}
-      >
+      <div ref={scrollRef} className={'DataList__Scroll pe-QuietScroll'}>
         {showCenteredEmpty ? (
           <EmptyListMessage>{emptyMessage}</EmptyListMessage>
         ) : (

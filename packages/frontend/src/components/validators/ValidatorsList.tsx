@@ -1,8 +1,7 @@
 'use client'
 
-import { getValidatorStatus } from './validatorStatus'
-
 import { columnLayout } from './ValidatorsList.columns'
+import { getValidatorStatus } from './validatorStatus'
 
 import type { ReactNode } from 'react'
 import type { Validator } from '../../types'
@@ -17,7 +16,7 @@ const ACTIVE_OPTIONS = [
   {
     value: 'current',
     label: <Badge colorScheme={'green'}>Active</Badge>,
-    searchText: 'active'
+    searchText: 'active current'
   },
   {
     value: 'queued',

@@ -1,5 +1,6 @@
 import { InternalConfigCard } from '@components/dataContracts'
-import { InfoLine, Identifier, JsonViewer } from '@components/data'
+import { InfoLine, Identifier } from '@components/data'
+import JsonViewer from '@components/data/JsonViewer'
 import { ValueCard } from '@components/cards'
 import type { WithLoading } from '../../types'
 
