@@ -14,6 +14,11 @@ use dpp::state_transition::batch_transition::batched_transition::document_transi
 use dpp::state_transition::batch_transition::batched_transition::token_transition::TokenTransition;
 use dpp::state_transition::batch_transition::batched_transition::BatchedTransition;
 use dpp::state_transition::batch_transition::BatchTransition;
+use dpp::state_transition::contract_fee_claim_transition::accessors::ContractFeeClaimTransitionAccessorsV0;
+use dpp::state_transition::contract_user_moderation_transition::accessors::ContractUserModerationTransitionAccessorsV0;
+use dpp::state_transition::token_purchase_from_shielded_pool_transition::accessors::TokenPurchaseFromShieldedPoolTransitionAccessorsV0;
+use dpp::state_transition::token_shielded_transfer_with_shielded_fee_transition::accessors::TokenShieldedTransferWithShieldedFeeTransitionAccessorsV0;
+use dpp::state_transition::token_unshield_with_shielded_fee_transition::accessors::TokenUnshieldWithShieldedFeeTransitionAccessorsV0;
 use dpp::state_transition::{StateTransition, StateTransitionOwned};
 use sha256::digest;
 
@@ -42,6 +47,9 @@ impl PSQLProcessor {
                         Some(BatchType::DocumentUpdatePriceTransition)
                     }
                     DocumentTransition::Purchase(_) => Some(BatchType::DocumentPurchaseTransition),
+                    DocumentTransition::IndexOnlyDelete(_) => {
+                        Some(BatchType::DocumentIndexOnlyDeleteTransition)
+                    }
                 },
                 BatchTransition::V1(v1) => match v1.transitions.first().unwrap() {
                     BatchedTransition::Document(document_transition) => match document_transition {
@@ -58,6 +66,9 @@ impl PSQLProcessor {
                         }
                         DocumentTransition::Purchase(_) => {
                             Some(BatchType::DocumentPurchaseTransition)
+                        }
+                        DocumentTransition::IndexOnlyDelete(_) => {
+                            Some(BatchType::DocumentIndexOnlyDeleteTransition)
                         }
                     },
                     BatchedTransition::Token(token_transition) => match token_transition {
@@ -82,6 +93,23 @@ impl PSQLProcessor {
                         TokenTransition::SetPriceForDirectPurchase(_) => {
                             Some(BatchType::TokenSetPriceForDirectPurchaseTransition)
                         }
+                        TokenTransition::Shield(_) => Some(BatchType::TokenShieldTransition),
+                        TokenTransition::MintToPool(_) => {
+                            Some(BatchType::TokenMintToPoolTransition)
+                        }
+                        TokenTransition::BurnFromPool(_) => {
+                            Some(BatchType::TokenBurnFromPoolTransition)
+                        }
+                        TokenTransition::ClaimToPool(_) => {
+                            Some(BatchType::TokenClaimToPoolTransition)
+                        }
+                        TokenTransition::DirectPurchaseToPool(_) => {
+                            Some(BatchType::TokenDirectPurchaseToPoolTransition)
+                        }
+                        TokenTransition::Unshield(_) => Some(BatchType::TokenUnshieldTransition),
+                        TokenTransition::ShieldedTransfer(_) => {
+                            Some(BatchType::TokenShieldedTransferTransition)
+                        }
                     },
                 },
             },
@@ -94,6 +122,8 @@ impl PSQLProcessor {
 
         let tx_result_status = tx_result.status.clone();
 
+        let gas_used = tx_result.gas_used;
+
         self.dao
             .create_state_transition(
                 block_hash.clone(),
@@ -102,7 +132,7 @@ impl PSQLProcessor {
                 st_type,
                 index,
                 bytes,
-                tx_result.gas_used,
+                gas_used,
                 tx_result.status,
                 tx_result.error,
                 batch_type,
@@ -298,35 +328,8 @@ impl PSQLProcessor {
                 );
             }
             StateTransition::AddressFundingFromAssetLock(st) => {
-                let asset_lock_amount = match AssetLockProved::asset_lock_proof(&st) {
-                    AssetLockProof::Instant(i) => {
-                        i.transaction
-                            .special_transaction_payload
-                            .clone()
-                            .unwrap()
-                            .to_asset_lock_payload()
-                            .expect("Cannot get asset lock payload for instant lock proof")
-                            .credit_outputs[i.output_index as usize]
-                            .value
-                    }
-                    AssetLockProof::Chain(c) => {
-                        let tx = self
-                            .dashcore_rpc
-                            .get_raw_transaction_info(&c.out_point.txid, None)
-                            .unwrap();
-
-                        let payload = tx
-                            .extra_payload
-                            .clone()
-                            .expect("Cannot get Asset Lock Payload");
-
-                        let asset_lock_payload =
-                            AssetLockPayload::consensus_decode(&mut payload.as_slice())
-                                .expect("Cannot parse payload");
-
-                        asset_lock_payload.credit_outputs[c.out_point.vout as usize].value
-                    }
-                };
+                let asset_lock_amount =
+                    self.get_asset_lock_amount(AssetLockProved::asset_lock_proof(&st));
 
                 let address_transitions =
                     PlatformAddressTransition::from_address_funding_from_asset_lock(
@@ -373,6 +376,21 @@ impl PSQLProcessor {
                     .unwrap();
 
                 println!("Processed Shield at block hash {}", block_hash);
+
+                let address_transitions =
+                    PlatformAddressTransition::from_shield_transition(st.clone(), st_hash.clone());
+                self.handle_platform_address_transitions(
+                    address_transitions.clone(),
+                    sql_transaction,
+                )
+                .await
+                .unwrap();
+
+                println!(
+                    "Processed {} Address transitions at block hash {}",
+                    address_transitions.len(),
+                    block_hash
+                );
             }
             StateTransition::ShieldedTransfer(st) => {
                 let shielded_transition = ShieldedTransition::from_shielded_transfer_transition(
@@ -393,6 +411,24 @@ impl PSQLProcessor {
                     .unwrap();
 
                 println!("Processed Unshield at block hash {}", block_hash);
+
+                let address_transitions = PlatformAddressTransition::from_unshield_transition(
+                    st.clone(),
+                    st_hash.clone(),
+                    gas_used,
+                );
+                self.handle_platform_address_transitions(
+                    address_transitions.clone(),
+                    sql_transaction,
+                )
+                .await
+                .unwrap();
+
+                println!(
+                    "Processed {} Address transitions at block hash {}",
+                    address_transitions.len(),
+                    block_hash
+                );
             }
             StateTransition::ShieldFromAssetLock(st) => {
                 let shielded_transition =
@@ -405,6 +441,28 @@ impl PSQLProcessor {
                     .unwrap();
 
                 println!("Processed ShieldFromAssetLock at block hash {}", block_hash);
+
+                let asset_lock_amount =
+                    self.get_asset_lock_amount(AssetLockProved::asset_lock_proof(&st));
+
+                let address_transitions = PlatformAddressTransition::from_shield_from_asset_lock(
+                    st.clone(),
+                    st_hash.clone(),
+                    asset_lock_amount,
+                    gas_used,
+                );
+                self.handle_platform_address_transitions(
+                    address_transitions.clone(),
+                    sql_transaction,
+                )
+                .await
+                .unwrap();
+
+                println!(
+                    "Processed {} Address transitions at block hash {}",
+                    address_transitions.len(),
+                    block_hash
+                );
             }
             StateTransition::ShieldedWithdrawal(st) => {
                 let shielded_transition = ShieldedTransition::from_shielded_withdrawal_transition(
@@ -438,6 +496,195 @@ impl PSQLProcessor {
                 self.handle_shielded_transition(shielded_transition, sql_transaction)
                     .await
                     .unwrap();
+            }
+            StateTransition::ShieldFromIdentity(st) => {
+                self.handle_shield_from_identity(st.clone(), st_hash.clone(), sql_transaction)
+                    .await;
+
+                let shielded_transition = ShieldedTransition::from_shield_from_identity_transition(
+                    st.clone(),
+                    st_hash.clone(),
+                );
+                self.handle_shielded_transition(shielded_transition, sql_transaction)
+                    .await
+                    .unwrap();
+
+                println!("Processed ShieldFromIdentity at block hash {}", block_hash);
+            }
+            StateTransition::IdentityTopUpFromShieldedPool(st) => {
+                self.handle_identity_top_up_from_shielded_pool(
+                    st.clone(),
+                    st_hash.clone(),
+                    gas_used,
+                    sql_transaction,
+                )
+                .await;
+
+                let shielded_transition =
+                    ShieldedTransition::from_identity_top_up_from_shielded_pool_transition(
+                        st.clone(),
+                        st_hash.clone(),
+                    );
+                self.handle_shielded_transition(shielded_transition, sql_transaction)
+                    .await
+                    .unwrap();
+
+                println!(
+                    "Processed IdentityTopUpFromShieldedPool at block hash {}",
+                    block_hash
+                );
+            }
+            StateTransition::IdentityKeyLimitsUpdate(_) => {
+                println!(
+                    "Processed IdentityKeyLimitsUpdate at block hash {}",
+                    block_hash
+                );
+            }
+            StateTransition::ContractUserModeration(st) => {
+                self.handle_data_contract_transition(
+                    Some(st_hash.clone()),
+                    st.data_contract_id(),
+                    sql_transaction,
+                )
+                .await;
+
+                if let Some(target_identity_id) = st.target_identity_id() {
+                    self.dao
+                        .set_state_transition_recipient(
+                            target_identity_id,
+                            st_hash.clone(),
+                            sql_transaction,
+                        )
+                        .await
+                        .unwrap();
+                }
+
+                println!(
+                    "Processed ContractUserModeration at block hash {}",
+                    block_hash
+                );
+            }
+            StateTransition::ContractFeeClaim(st) => {
+                self.handle_data_contract_transition(
+                    Some(st_hash.clone()),
+                    st.data_contract_id(),
+                    sql_transaction,
+                )
+                .await;
+
+                println!("Processed ContractFeeClaim at block hash {}", block_hash);
+            }
+            StateTransition::TokenShieldedTransferWithShieldedFee(st) => {
+                self.handle_data_contract_transition(
+                    Some(st_hash.clone()),
+                    st.data_contract_id(),
+                    sql_transaction,
+                )
+                .await;
+
+                let shielded_transition =
+                    ShieldedTransition::from_token_shielded_transfer_with_shielded_fee_transition(
+                        st.clone(),
+                        st_hash.clone(),
+                    );
+                self.handle_shielded_transition(shielded_transition, sql_transaction)
+                    .await
+                    .unwrap();
+
+                println!(
+                    "Processed TokenShieldedTransferWithShieldedFee at block hash {}",
+                    block_hash
+                );
+            }
+            StateTransition::TokenUnshieldWithShieldedFee(st) => {
+                self.handle_data_contract_transition(
+                    Some(st_hash.clone()),
+                    st.data_contract_id(),
+                    sql_transaction,
+                )
+                .await;
+
+                self.dao
+                    .token_holder(st.recipient_id(), st.token_id(), sql_transaction)
+                    .await
+                    .unwrap();
+
+                self.dao
+                    .set_state_transition_recipient(
+                        st.recipient_id(),
+                        st_hash.clone(),
+                        sql_transaction,
+                    )
+                    .await
+                    .unwrap();
+
+                let shielded_transition =
+                    ShieldedTransition::from_token_unshield_with_shielded_fee_transition(
+                        st.clone(),
+                        st_hash.clone(),
+                    );
+                self.handle_shielded_transition(shielded_transition, sql_transaction)
+                    .await
+                    .unwrap();
+
+                println!(
+                    "Processed TokenUnshieldWithShieldedFee at block hash {}",
+                    block_hash
+                );
+            }
+            StateTransition::TokenPurchaseFromShieldedPool(st) => {
+                self.handle_data_contract_transition(
+                    Some(st_hash.clone()),
+                    st.data_contract_id(),
+                    sql_transaction,
+                )
+                .await;
+
+                let shielded_transition =
+                    ShieldedTransition::from_token_purchase_from_shielded_pool_transition(
+                        st.clone(),
+                        st_hash.clone(),
+                    );
+                self.handle_shielded_transition(shielded_transition, sql_transaction)
+                    .await
+                    .unwrap();
+
+                println!(
+                    "Processed TokenPurchaseFromShieldedPool at block hash {}",
+                    block_hash
+                );
+            }
+        }
+    }
+
+    fn get_asset_lock_amount(&self, asset_lock_proof: &AssetLockProof) -> u64 {
+        match asset_lock_proof {
+            AssetLockProof::Instant(i) => {
+                i.transaction
+                    .special_transaction_payload
+                    .clone()
+                    .unwrap()
+                    .to_asset_lock_payload()
+                    .expect("Cannot get asset lock payload for instant lock proof")
+                    .credit_outputs[i.output_index as usize]
+                    .value
+            }
+            AssetLockProof::Chain(c) => {
+                let tx = self
+                    .dashcore_rpc
+                    .get_raw_transaction_info(&c.out_point.txid, None)
+                    .unwrap();
+
+                let payload = tx
+                    .extra_payload
+                    .clone()
+                    .expect("Cannot get Asset Lock Payload");
+
+                let asset_lock_payload =
+                    AssetLockPayload::consensus_decode(&mut payload.as_slice())
+                        .expect("Cannot parse payload");
+
+                asset_lock_payload.credit_outputs[c.out_point.vout as usize].value
             }
         }
     }

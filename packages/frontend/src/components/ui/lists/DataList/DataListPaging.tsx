@@ -7,7 +7,6 @@ import type { ListScrollMode } from './listScrollMode'
 const DEFAULT_PAGE_SIZES = [10, 25, 50, 75, 100]
 
 export type DataListPagingConfig = {
-  scrollTarget?: 'page' | 'container'
   mode: ListScrollMode
   onModeChange: (mode: ListScrollMode) => void
   total: number
