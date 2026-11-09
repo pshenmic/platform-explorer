@@ -37,7 +37,7 @@ const HEIGHT = 200
 const GHOST_LINE_D = 'M 0 62 L 12 50 L 25 58 L 38 42 L 50 48 L 62 34 L 75 42 L 88 26 L 100 32'
 const GHOST_BARS = [38, 52, 30, 60, 45, 66, 40, 56, 34, 62, 48, 58]
 
-function ChartGhost({ type }: any) {
+export function ChartGhost({ type }: { type: 'bar' | 'line' }) {
   return (
     <svg
       className={'MetricChart__Ghost'}
