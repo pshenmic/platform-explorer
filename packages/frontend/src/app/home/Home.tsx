@@ -1,26 +1,89 @@
 'use client'
 
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect, useMemo, type ReactNode } from 'react'
+import dynamic from 'next/dynamic'
 import { useQuery, useQueries } from '@tanstack/react-query'
 import * as Api from '../../util/Api'
 import HomeHero from './HomeHero'
-import {
-  EpochsOverview,
-  QuorumCard,
-  TxTypesBar,
-  TxActivityChart,
-  IdentityGrowthChart,
-  ShieldedPoolCard,
-  HomeLeaders,
-  CompactTxList,
-  CompactBlocksList,
-  HeroMeta,
-  HeroNodes
-} from '../../components/home'
+import useNearViewport from '../../hooks/useNearViewport'
+import { HeroMeta } from '../../components/home/HeroMeta'
 import { fetchHandlerSuccess, fetchHandlerError } from '../../util'
 import type { LoadableState, Rate } from '../../types'
 import type { QueryFilters } from '../../util/Api'
 import './Home.css'
+
+function HomeChunkPlaceholder({ className = '' }: { className?: string }) {
+  return (
+    <div className={`HomeChunkPlaceholder ${className}`} aria-hidden={'true'} aria-busy={'true'} />
+  )
+}
+
+function HomeViewportContent({
+  enabled,
+  placeholder,
+  children
+}: {
+  enabled: boolean
+  placeholder: 'epochs' | 'chart' | 'leaders'
+  children: ReactNode
+}) {
+  return enabled ? (
+    children
+  ) : (
+    <HomeChunkPlaceholder className={`HomeChunkPlaceholder--${placeholder}`} />
+  )
+}
+
+const CompactTxList = dynamic(
+  () => import('../../components/home/CompactTxList').then(mod => ({ default: mod.CompactTxList })),
+  {
+    ssr: false,
+    loading: () => <HomeChunkPlaceholder className={'HomeChunkPlaceholder--list'} />
+  }
+)
+const CompactBlocksList = dynamic(
+  () =>
+    import('../../components/home/CompactBlocksList').then(mod => ({
+      default: mod.CompactBlocksList
+    })),
+  {
+    ssr: false,
+    loading: () => <HomeChunkPlaceholder className={'HomeChunkPlaceholder--list'} />
+  }
+)
+const HeroNodes = dynamic(() => import('../../components/home/HeroNodes'), { ssr: false })
+const EpochsOverview = dynamic(
+  () =>
+    import('../../components/home/EpochsOverview').then(mod => ({ default: mod.EpochsOverview })),
+  {
+    ssr: false,
+    loading: () => <HomeChunkPlaceholder className={'HomeChunkPlaceholder--epochs'} />
+  }
+)
+const TxActivityChart = dynamic(() => import('../../components/home/TxActivityChart'), {
+  ssr: false,
+  loading: () => <HomeChunkPlaceholder className={'HomeChunkPlaceholder--chart'} />
+})
+const IdentityGrowthChart = dynamic(() => import('../../components/home/IdentityGrowthChart'), {
+  ssr: false,
+  loading: () => <HomeChunkPlaceholder className={'HomeChunkPlaceholder--chart'} />
+})
+const TxTypesBar = dynamic(() => import('../../components/home/TxTypesBar'), {
+  ssr: false,
+  loading: () => <HomeChunkPlaceholder className={'HomeChunkPlaceholder--chart'} />
+})
+const ShieldedPoolCard = dynamic(() => import('../../components/home/ShieldedPoolCard'), {
+  ssr: false,
+  loading: () => <HomeChunkPlaceholder className={'HomeChunkPlaceholder--chart'} />
+})
+const HomeLeaders = dynamic(() => import('../../components/home/HomeLeaders'), {
+  ssr: false,
+  loading: () => <HomeChunkPlaceholder className={'HomeChunkPlaceholder--leaders'} />
+})
+const QuorumCard = dynamic(() => import('../../components/home/QuorumCard'), {
+  ssr: false,
+  loading: () => <HomeChunkPlaceholder className={'HomeChunkPlaceholder--leaders'} />
+})
 
 function computeAvgBlockTime(blocks: any) {
   const stamps = (blocks || [])
@@ -57,8 +120,22 @@ async function fetchAllValidators(filters?: QueryFilters) {
   return rows
 }
 
-function Home() {
+function Home({ brand }: { brand?: ReactNode }) {
+  const listsViewport = useNearViewport<HTMLElement>()
+  const epochsViewport = useNearViewport<HTMLElement>()
+  const metricsViewport = useNearViewport()
+  const chartsViewport = useNearViewport()
+  const leadersViewport = useNearViewport()
+  const [showHeroNodes, setShowHeroNodes] = useState(false)
   const [rate, setRate] = useState<LoadableState<Rate>>({ data: null, loading: true, error: false })
+
+  useEffect(() => {
+    const mq = window.matchMedia('(min-width: 48em)')
+    const apply = () => setShowHeroNodes(mq.matches)
+    apply()
+    mq.addEventListener('change', apply)
+    return () => mq.removeEventListener('change', apply)
+  }, [])
 
   const statusQuery = useQuery({
     queryKey: ['home', 'status'],
@@ -66,36 +143,43 @@ function Home() {
     refetchInterval: 60000
   })
   const txQuery = useQuery({
+    enabled: listsViewport.enabled,
     queryKey: ['home', 'transactions'],
     queryFn: () => Api.getTransactions(1, 10, 'desc'),
     refetchInterval: 30000
   })
   const blocksQuery = useQuery({
+    enabled: listsViewport.enabled,
     queryKey: ['home', 'blocks'],
     queryFn: () => Api.getBlocks(1, 10, 'desc'),
     refetchInterval: 30000
   })
   const validatorsQuery = useQuery({
+    enabled: leadersViewport.enabled,
     queryKey: ['home', 'validators', 'total'],
     queryFn: () => Api.getValidators(1, 1, 'desc'),
     staleTime: 60_000
   })
   const validatorsActiveQuery = useQuery({
+    enabled: leadersViewport.enabled,
     queryKey: ['home', 'validators', 'active'],
     queryFn: () => Api.getValidators(1, 1, 'desc', { isActive: 'true' }),
     staleTime: 60_000
   })
   const validatorsBannedQuery = useQuery({
+    enabled: leadersViewport.enabled,
     queryKey: ['home', 'validators', 'banned'],
     queryFn: () => Api.getValidators(1, 1, 'desc', { isBanned: 'true' }),
     staleTime: 60_000
   })
   const validatorsInactiveQuery = useQuery({
+    enabled: leadersViewport.enabled,
     queryKey: ['home', 'validators', 'inactive'],
     queryFn: () => Api.getValidators(1, 1, 'desc', { isActive: 'false', isBanned: 'false' }),
     staleTime: 60_000
   })
   const validatorsPoolHeadQuery = useQuery({
+    enabled: leadersViewport.enabled,
     queryKey: ['home', 'validators', 'pool', 'head', 'unbanned'],
     queryFn: () => Api.getValidators(1, VALIDATORS_PAGE, 'desc', { isBanned: 'false' }),
     staleTime: 60_000,
@@ -124,7 +208,7 @@ function Home() {
       }
       return rows
     },
-    enabled: validatorsPoolHeadQuery.isSuccess && poolPages > 1,
+    enabled: leadersViewport.enabled && validatorsPoolHeadQuery.isSuccess && poolPages > 1,
     staleTime: 60_000,
     refetchInterval: 120_000
   })
@@ -136,6 +220,7 @@ function Home() {
     return rows
   }, [validatorsPoolHeadQuery.data, validatorsPoolRestQuery.data])
   const validatorsBannedListQuery = useQuery({
+    enabled: leadersViewport.enabled,
     queryKey: ['home', 'validators', 'banned-list'],
     queryFn: () => fetchAllValidators({ isBanned: 'true' }),
     staleTime: 60_000,
@@ -143,6 +228,7 @@ function Home() {
   })
 
   const currentQuorumQuery = useQuery({
+    enabled: leadersViewport.enabled,
     queryKey: ['home', 'quorums', 'current'],
     queryFn: () => Api.getCurrentQuorum(),
     staleTime: 60_000,
@@ -150,6 +236,7 @@ function Home() {
     retry: 1
   })
   const quorumsListQuery = useQuery({
+    enabled: leadersViewport.enabled,
     queryKey: ['home', 'quorums', 'list'],
     queryFn: () => Api.getQuorums(),
     staleTime: 60_000,
@@ -181,6 +268,7 @@ function Home() {
     queries: epochNumbers.map(n => ({
       queryKey: ['home', 'epoch', n],
       queryFn: () => Api.getEpoch(n),
+      enabled: n === currentEpochNumber || epochsViewport.enabled,
       staleTime: 30_000,
       refetchInterval: n === currentEpochNumber ? 60_000 : false
     }))
@@ -235,11 +323,18 @@ function Home() {
     error: false
   }
 
+  const rateEnabled =
+    epochsViewport.enabled ||
+    metricsViewport.enabled ||
+    chartsViewport.enabled ||
+    leadersViewport.enabled
+
   useEffect(() => {
+    if (!rateEnabled) return
     Api.getRate()
       .then(res => fetchHandlerSuccess(setRate, res))
       .catch(err => fetchHandlerError(setRate, err))
-  }, [])
+  }, [rateEnabled])
 
   const epochsSettled =
     epochNumbers.length > 0 &&
@@ -255,22 +350,25 @@ function Home() {
         epochNumber={currentEpochNumber}
         epochEndTime={currentEpochPayload?.epoch?.endTime}
         avgBlockTimeSec={computeAvgBlockTime(blocksQuery.data?.resultSet)}
+        showNodes={showHeroNodes}
+        brand={brand}
       />
 
       <section
+        ref={listsViewport.ref}
         className={'InfoBlock InfoBlock--NoBorder HomeOverview'}
         aria-label={'Network overview'}
       >
         <div className={'HomeOverview__Grid'}>
           <div className={'HomeOverview__Sys'}>
-            <HeroNodes compact className={'HomeOverview__Nodes'} />
+            {showHeroNodes ? <HeroNodes compact className={'HomeOverview__Nodes'} /> : null}
             <HeroMeta status={statusQuery.data ?? {}} loading={statusQuery.isLoading} />
           </div>
           <div className={'HomeOverview__Tx'}>
             <CompactTxList
               transactions={txQuery.data?.resultSet}
               limit={5}
-              loading={txQuery.isLoading}
+              loading={txQuery.isPending}
               moreHref={'/transactions'}
               moreLabel={'View all transactions'}
             />
@@ -279,7 +377,7 @@ function Home() {
             <CompactBlocksList
               blocks={blocksQuery.data?.resultSet}
               limit={5}
-              loading={blocksQuery.isLoading}
+              loading={blocksQuery.isPending}
               moreHref={'/blocks'}
               moreLabel={'View all blocks'}
             />
@@ -288,79 +386,94 @@ function Home() {
       </section>
 
       <section
+        ref={epochsViewport.ref}
         id={'home-epochs'}
         className={'InfoBlock InfoBlock--NoBorder HomeEpochs'}
         tabIndex={-1}
       >
-        <EpochsOverview
-          title={'Epochs'}
-          epochs={epochsList}
-          currentEpoch={epochData}
-          rate={rate}
-          loading={epochsLoading}
-          slotNumbers={epochNumbers}
-        />
+        <HomeViewportContent enabled={epochsViewport.enabled} placeholder={'epochs'}>
+          <EpochsOverview
+            title={'Epochs'}
+            epochs={epochsList}
+            currentEpoch={epochData}
+            rate={rate}
+            loading={epochsLoading}
+            slotNumbers={epochNumbers}
+          />
+        </HomeViewportContent>
       </section>
 
-      <div className={'HomeCardPair HomeCardPair--metrics'}>
+      <div ref={metricsViewport.ref} className={'HomeCardPair HomeCardPair--metrics'}>
         <div className={'HomeCardPair__Cell'}>
-          <TxActivityChart
-            fetcher={Api.getTransactionsHistory}
-            field={'txs'}
-            yAbbr={'txs'}
-            enabled={belowFoldReady}
-          />
+          <HomeViewportContent enabled={metricsViewport.enabled} placeholder={'chart'}>
+            <TxActivityChart
+              fetcher={Api.getTransactionsHistory}
+              field={'txs'}
+              yAbbr={'txs'}
+              enabled={belowFoldReady && metricsViewport.enabled}
+            />
+          </HomeViewportContent>
         </div>
         <div className={'HomeCardPair__Cell'}>
-          <IdentityGrowthChart
-            fetcher={Api.getIdentitiesHistory}
-            field={'registeredIdentities'}
-            yAbbr={'identities'}
-            enabled={belowFoldReady}
-          />
-        </div>
-      </div>
-
-      <div className={'HomeCardPair HomeCardPair--viz'}>
-        <div className={'HomeCardPair__Cell'}>
-          <TxTypesBar enabled={belowFoldReady} />
-        </div>
-        <div className={'HomeCardPair__Cell'}>
-          <ShieldedPoolCard rate={rate} enabled={belowFoldReady} />
+          <HomeViewportContent enabled={metricsViewport.enabled} placeholder={'chart'}>
+            <IdentityGrowthChart
+              fetcher={Api.getIdentitiesHistory}
+              field={'registeredIdentities'}
+              yAbbr={'identities'}
+              enabled={belowFoldReady && metricsViewport.enabled}
+            />
+          </HomeViewportContent>
         </div>
       </div>
 
-      <div className={'HomeCardPair HomeCardPair--leaders'}>
+      <div ref={chartsViewport.ref} className={'HomeCardPair HomeCardPair--viz'}>
         <div className={'HomeCardPair__Cell'}>
-          <HomeLeaders rate={rate} enabled={belowFoldReady} />
+          <HomeViewportContent enabled={chartsViewport.enabled} placeholder={'chart'}>
+            <TxTypesBar enabled={belowFoldReady && chartsViewport.enabled} />
+          </HomeViewportContent>
         </div>
         <div className={'HomeCardPair__Cell'}>
-          <QuorumCard
-            validators={validators}
-            validatorsActive={validatorsActive}
-            validatorsBanned={validatorsBanned}
-            validatorsInactive={validatorsInactive}
-            validatorsList={validatorsPoolList}
-            poolLoading={
-              validatorsPoolHeadQuery.isPending ||
-              (validatorsPoolHeadQuery.isSuccess &&
-                poolPages > 1 &&
-                validatorsPoolRestQuery.isPending)
-            }
-            bannedValidatorsList={validatorsBannedListQuery.data}
-            bannedListLoading={validatorsBannedListQuery.isPending}
-            currentQuorum={currentQuorumQuery.data}
-            currentQuorumLoading={currentQuorumQuery.isPending || currentQuorumQuery.isLoading}
-            currentQuorumError={currentQuorumQuery.isError}
-            quorums={quorumsListQuery.data}
-            l1LockedHeight={blocksQuery.data?.resultSet?.[0]?.header?.l1LockedHeight}
-            lastProposerProTx={blocksQuery.data?.resultSet?.[0]?.header?.validator}
-            avgBlockTimeSec={
-              epochAvgBlockMs > 0
-                ? epochAvgBlockMs / 1000
-                : computeAvgBlockTime(blocksQuery.data?.resultSet)
-            }
-          />
+          <HomeViewportContent enabled={chartsViewport.enabled} placeholder={'chart'}>
+            <ShieldedPoolCard rate={rate} enabled={belowFoldReady && chartsViewport.enabled} />
+          </HomeViewportContent>
+        </div>
+      </div>
+
+      <div ref={leadersViewport.ref} className={'HomeCardPair HomeCardPair--leaders'}>
+        <div className={'HomeCardPair__Cell'}>
+          <HomeViewportContent enabled={leadersViewport.enabled} placeholder={'leaders'}>
+            <HomeLeaders rate={rate} enabled={belowFoldReady && leadersViewport.enabled} />
+          </HomeViewportContent>
+        </div>
+        <div className={'HomeCardPair__Cell'}>
+          <HomeViewportContent enabled={leadersViewport.enabled} placeholder={'leaders'}>
+            <QuorumCard
+              validators={validators}
+              validatorsActive={validatorsActive}
+              validatorsBanned={validatorsBanned}
+              validatorsInactive={validatorsInactive}
+              validatorsList={validatorsPoolList}
+              poolLoading={
+                validatorsPoolHeadQuery.isPending ||
+                (validatorsPoolHeadQuery.isSuccess &&
+                  poolPages > 1 &&
+                  validatorsPoolRestQuery.isPending)
+              }
+              bannedValidatorsList={validatorsBannedListQuery.data}
+              bannedListLoading={validatorsBannedListQuery.isPending}
+              currentQuorum={currentQuorumQuery.data}
+              currentQuorumLoading={currentQuorumQuery.isPending || currentQuorumQuery.isLoading}
+              currentQuorumError={currentQuorumQuery.isError}
+              quorums={quorumsListQuery.data}
+              l1LockedHeight={blocksQuery.data?.resultSet?.[0]?.header?.l1LockedHeight}
+              lastProposerProTx={blocksQuery.data?.resultSet?.[0]?.header?.validator}
+              avgBlockTimeSec={
+                epochAvgBlockMs > 0
+                  ? epochAvgBlockMs / 1000
+                  : computeAvgBlockTime(blocksQuery.data?.resultSet)
+              }
+            />
+          </HomeViewportContent>
         </div>
       </div>
     </div>

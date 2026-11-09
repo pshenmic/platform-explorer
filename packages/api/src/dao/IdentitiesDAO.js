@@ -42,28 +42,22 @@ module.exports = class IdentitiesDAO {
     const subquery = this.knex('identities')
       .select('identities.id', 'identities.identifier as identifier', 'identities.owner as owner',
         'identities.state_transition_hash as tx_hash', 'identities.state_transition_id as tx_id', 'identities.revision as revision',
-        'identities.is_system as is_system')
+        'identities.is_system as is_system', 'identities.type as type')
       .select(this.knex.raw('rank() over (partition by identities.identifier order by identities.id desc) rank'))
       .where('identities.identifier', '=', identifier)
       .as('all_identities')
 
-    const lastRevisionIdentities = this.knex(subquery)
-      .select('identifier', 'owner', 'revision', 'tx_hash', 'tx_id', 'is_system', 'transfers.id as transfer_id',
-        'transfers.sender as sender', 'transfers.recipient as recipient', 'transfers.amount as amount')
-      .where('rank', 1)
-      .leftJoin('transfers', 'transfers.recipient', 'identifier')
-
-    const documentsSubQuery = this.knex('documents')
-      .select('documents.id', 'documents.state_transition_hash', 'documents.owner as owner')
-      .select(this.knex.raw('rank() over (partition by documents.identifier order by documents.id desc) rank'))
-      .where('documents.owner', identifier)
-      .as('as_documents')
-
-    const dataContractsSubQuery = this.knex('data_contracts')
-      .select('data_contracts.id', 'data_contracts.state_transition_hash', 'data_contracts.owner as owner')
-      .select(this.knex.raw('rank() over (partition by data_contracts.identifier order by data_contracts.id desc) rank'))
-      .where('data_contracts.owner', identifier)
-      .as('as_data_contracts')
+    // Masternode voting and operator identities are never written to the identities table
+    const lastRevisionIdentities = this.knex
+      .select('requested_identity.identifier as identifier', 'owner', 'revision', 'tx_hash', 'tx_id',
+        'is_system', 'type', 'transfers.id as transfer_id', 'transfers.sender as sender',
+        'transfers.recipient as recipient', 'transfers.amount as amount')
+      .from(this.knex.raw('(values (?)) as requested_identity(identifier)', [identifier]))
+      .leftJoin(subquery, function () {
+        this.on('all_identities.identifier', '=', 'requested_identity.identifier')
+          .andOnVal('all_identities.rank', '=', 1)
+      })
+      .leftJoin('transfers', 'transfers.recipient', 'requested_identity.identifier')
 
     const transfersSubquery = this.knex('transfers')
       .select('transfers.id as id', 'transfers.sender as sender', 'transfers.recipient as recipient')
@@ -74,14 +68,15 @@ module.exports = class IdentitiesDAO {
     const mainQuery = this.knex.with('with_alias', lastRevisionIdentities)
       .select(
         'identifier', 'with_alias.owner as owner', 'revision',
-        'transfer_id', 'sender', 'tx_hash', 'is_system',
-        'blocks.timestamp as timestamp', 'recipient', 'amount',
+        'transfer_id', 'sender', 'tx_hash', 'is_system', 'with_alias.type as type',
+        'blocks.timestamp as timestamp', 'with_alias.recipient as recipient', 'with_alias.amount as amount',
         'state_transitions.data as tx_data'
       )
       .select(this.knex('state_transitions').count('*').where('owner', identifier).as('total_txs'))
       .select(this.knex('state_transitions').sum('gas_used').where('owner', identifier).as('total_gas_spent'))
-      .select(this.knex(documentsSubQuery).count('*').where('rank', 1).as('total_documents'))
-      .select(this.knex(dataContractsSubQuery).count('*').where('rank', 1).as('total_data_contracts'))
+      // one per identifier, revisions are separate rows
+      .select(this.knex('documents').countDistinct('identifier').where('owner', identifier).as('total_documents'))
+      .select(this.knex('data_contracts').countDistinct('identifier').where('owner', identifier).as('total_data_contracts'))
       .select(this.knex(transfersSubquery).count('*').as('total_transfers'))
       .select(this.knex(aliasSubquery).select('aliases').limit(1).as('aliases'))
       .leftJoin('state_transitions', 'state_transitions.id', 'tx_id')
@@ -97,22 +92,22 @@ module.exports = class IdentitiesDAO {
       .select(
         'identifier', 'owner', 'revision',
         'transfer_id', 'sender', 'tx_hash',
-        'is_system', 'timestamp', 'recipient',
+        'is_system', 'type', 'timestamp', 'recipient',
         'amount', 'total_txs', 'total_gas_spent',
         'total_documents', 'total_data_contracts',
         'total_transfers', 'aliases', 'tx_data',
         this.knex.raw('ROUND(total_gas_spent/total_txs) as average_gas_spent')
       )
       .select(this.knex('transfers')
-        .select(this.knex.raw('sum(amount)'))
-        .where('recipient', identifier)
-        .orWhere('sender', identifier)
+        .select(this.knex.raw('sum(transfers.amount)'))
+        .where('transfers.recipient', identifier)
+        .orWhere('transfers.sender', identifier)
         .andWhere('type', IDENTITY_TOP_UP)
         .leftJoin('state_transitions', 'state_transition_hash', 'hash')
         .as('total_top_ups_amount'))
       .select(this.knex('transfers')
-        .select(this.knex.raw('sum(amount)'))
-        .where('sender', identifier)
+        .select(this.knex.raw('sum(transfers.amount)'))
+        .where('transfers.sender', identifier)
         .andWhere('type', IDENTITY_CREDIT_WITHDRAWAL)
         .leftJoin('state_transitions', 'state_transition_hash', 'hash')
         .as('total_withdrawals_amount'))
@@ -150,32 +145,36 @@ module.exports = class IdentitiesDAO {
       return null
     }
 
-    const identity = Identity.fromRow(row)
-
-    const aliases = await Promise.all(identity.aliases.map(async alias => {
-      const aliasInfo = await getAliasInfo(alias.alias, this.sdk)
-
-      return getAliasStateByVote(aliasInfo, alias, identifier)
-    }))
-
-    const publicKeys = await this.sdk.identities.getIdentityPublicKeys(identity.identifier)
-
-    let fundingCoreTx = null
-
-    if (row.tx_data) {
-      const { assetLockProof } = await decodeStateTransition(row.tx_data)
-
-      fundingCoreTx = assetLockProof?.fundingCoreTx
+    if (row.owner == null && Number(row.total_txs) === 0 && Number(row.total_transfers) === 0) {
+      return null
     }
 
-    const balance = await this.sdk.identities.getIdentityBalance(identity.identifier)
-    const identityNonce = await this.sdk.identities.getIdentityNonce(identity.identifier)
-    const identityInfo = await this.sdk.identities.getIdentityByIdentifier(identity.identifier)
+    const identity = Identity.fromRow(row)
+
+    const [aliases, identityNonce, identityInfo, fundingCoreTx] = await Promise.all([
+      Promise.all(identity.aliases.map(async alias => {
+        const aliasInfo = await getAliasInfo(alias.alias, this.sdk)
+
+        return getAliasStateByVote(aliasInfo, alias, identifier)
+      })),
+      this.sdk.identities.getIdentityNonce(identity.identifier),
+      this.sdk.identities.getIdentityByIdentifier(identity.identifier),
+      row.tx_data
+        ? decodeStateTransition(row.tx_data).then(({ assetLockProof }) => assetLockProof?.fundingCoreTx ?? null)
+        : null
+    ])
+
+    // the identity response already carries all of its public keys
+    const publicKeys = identityInfo.getPublicKeys()
 
     return Identity.fromObject({
       ...identity,
+      // an identity the indexer has not seen has no type to report
+      type: row.type ?? null,
+      owner: identity.owner ?? identity.identifier,
+      isSystem: identity.isSystem ?? false,
       aliases,
-      balance: String(balance),
+      balance: String(identityInfo.balance),
       nonce: String(identityNonce),
       revision: String(identityInfo.revision),
       publicKeys: publicKeys?.map(key => {
@@ -304,13 +303,14 @@ module.exports = class IdentitiesDAO {
 
     const subqueryRanked = this.knex('identities')
       .select('identities.id as identity_id', 'identities.identifier as identifier', 'identities.owner as identity_owner',
-        'identities.is_system as is_system', 'identities.state_transition_hash as tx_hash', 'identities.state_transition_id as tx_id', 'identities.revision as revision')
+        'identities.is_system as is_system', 'identities.state_transition_hash as tx_hash', 'identities.state_transition_id as tx_id',
+        'identities.revision as revision', 'identities.type as type')
       .select(this.knex.raw('rank() over (partition by identities.identifier order by identities.id desc) rank'))
       .as('identities')
 
     const subqueryLastRevision = this.knex(subqueryRanked)
       .select('identity_id', 'identifier', 'identity_owner',
-        'is_system', 'tx_hash', 'tx_id', 'revision')
+        'is_system', 'tx_hash', 'tx_id', 'revision', 'type')
       .where('rank', 1)
       .as('identities')
 
@@ -326,48 +326,63 @@ module.exports = class IdentitiesDAO {
       .where('version', 1)
       .groupBy('owner')
 
+    const txCountRequired = orderBy === 'tx_count' || txCountMin != null || txCountMax != null
+
     const subqueryAdditionalInfo = this.knex(subqueryLastRevision)
       .with('as_documents', documentsSubQuery)
       .with('as_data_contracts', dataContractsSubQuery)
       .select('identity_id', 'identities.identifier', 'identity_owner',
-        'is_system', 'tx_hash', 'tx_id', 'revision', 'total_transfers')
+        'is_system', 'tx_hash', 'tx_id', 'revision', 'type', 'total_transfers')
       .select(
         this.knex.raw('COALESCE(balance, 0) as balance'),
         this.knex.raw('COALESCE(data_contracts_count, 0) as total_data_contracts'),
-        this.knex.raw('COALESCE(documents_count, 0) as total_documents'),
-        this.knex('state_transitions').count('*').whereRaw('owner = identities.identifier').as('total_txs')
+        this.knex.raw('COALESCE(documents_count, 0) as total_documents')
       )
+      .modify(qb => {
+        if (txCountRequired) qb.select(this.knex('state_transitions').count('*').whereRaw('owner = identities.identifier').as('total_txs'))
+      })
       .leftJoin(transfersStatsSubquery, 'transfers_subquery.identifier', 'identities.identifier')
       .leftJoin('as_documents', 'as_documents.owner', 'identities.identifier')
       .leftJoin('as_data_contracts', 'as_data_contracts.owner', 'identities.identifier')
       .as('identities')
 
     const filteredIdentities = this.knex(subqueryAdditionalInfo)
-      .select('balance', 'total_txs', 'identity_id', 'identifier', 'total_data_contracts',
-        'identity_owner', 'tx_hash', 'tx_id', 'revision', 'is_system', 'total_transfers', 'total_documents')
+      .select('balance', 'identity_id', 'identifier', 'total_data_contracts',
+        'identity_owner', 'tx_hash', 'tx_id', 'revision', 'is_system', 'type', 'total_transfers', 'total_documents')
+      .modify(qb => {
+        if (txCountRequired) qb.select('total_txs')
+      })
       .whereRaw(txCountQueryString, txCountQueryBindings)
       .whereRaw(documentCountQueryString, documentCountQueryBindings)
       .whereRaw(dataContractCountQueryString, dataContractsCountQueryBindings)
       .whereRaw(balanceQueryString, balanceQueryBindings)
       .modify(qb => {
-        if (identityType === 'masternode') qb.whereNull('tx_id')
-        if (identityType === 'regular') qb.whereNotNull('tx_id')
+        if (identityType != null) qb.where('type', identityType)
       })
+
+    // the page is cut before joining the creation block, so only its rows are joined
+    const pageSubquery = this.knex('with_alias')
+      .select('*')
+      .select(this.knex('with_alias').count('*').as('total_count'))
+      .offset(fromRank)
+      .limit(limit)
+      .orderBy(orderByOptions)
+      .as('page')
 
     const rows = await this.knex
       .with('with_alias', filteredIdentities)
       .select(
-        'total_txs', 'identity_id', 'identifier', 'identity_owner', 'revision', 'tx_hash',
-        'tx_id', 'blocks.timestamp as timestamp', 'is_system', 'balance', 'total_transfers',
-        'total_documents', 'total_data_contracts'
+        'identity_id', 'identifier', 'identity_owner', 'revision', 'tx_hash',
+        'tx_id', 'blocks.timestamp as timestamp', 'is_system', 'page.type as type',
+        'balance', 'total_transfers', 'total_documents', 'total_data_contracts', 'total_count'
       )
-      .select(this.knex('with_alias').count('*').as('total_count'))
+      .select(txCountRequired
+        ? 'total_txs'
+        : this.knex('state_transitions as owner_transitions').count('*').whereRaw('owner_transitions.owner = page.identifier').as('total_txs'))
       .leftJoin('state_transitions', 'state_transitions.id', 'tx_id')
       .leftJoin('blocks', 'state_transitions.block_height', 'blocks.height')
-      .offset(fromRank)
-      .limit(limit)
       .orderBy(orderByOptions)
-      .from('with_alias')
+      .from(pageSubquery)
 
     const totalCount = rows.length > 0 ? Number(rows[0].total_count) : 0
 
@@ -376,8 +391,8 @@ module.exports = class IdentitiesDAO {
     const aliasDocuments = await getAliasDocumentForIdentifiers(identifiers, this.sdk)
 
     const resultSet = await Promise.all(rows.map(async row => {
-      const balance = await this.sdk.identities.getIdentityBalance(row.identifier.trim())
       const identityInfo = await this.sdk.identities.getIdentityByIdentifier(row.identifier)
+      const balance = identityInfo.balance
 
       const aliasDocument = aliasDocuments[row.identifier.trim()]
 
@@ -554,13 +569,14 @@ module.exports = class IdentitiesDAO {
       .select('state_transitions.id as state_transition_id', 'state_transitions.hash as tx_hash',
         'state_transitions.index as index', 'state_transitions.type as type', 'state_transitions.block_hash as block_hash',
         'state_transitions.gas_used as gas_used', 'state_transitions.status as status', 'state_transitions.error as error',
-        'state_transitions.owner as owner', 'state_transitions.data as data'
+        'state_transitions.owner as owner', 'state_transitions.data as data',
+        'state_transitions.amount as amount'
       )
-      .where('state_transitions.owner', '=', identifier)
+      .whereRaw('(state_transitions.owner = ? OR state_transitions.recipient = ?)', [identifier, identifier])
 
     const rows = await this.knex.with('with_alias', subquery)
       .select('state_transition_id', 'tx_hash', 'index', 'block_hash', 'type',
-        'gas_used', 'status', 'gas_used', 'owner', 'data',
+        'gas_used', 'status', 'gas_used', 'owner', 'data', 'amount',
         'blocks.timestamp as timestamp', 'blocks.height as block_height')
       .select(this.knex('with_alias').count('*').as('total_count'))
       .leftJoin('blocks', 'blocks.hash', 'block_hash')
@@ -608,7 +624,9 @@ module.exports = class IdentitiesDAO {
         'transfers.state_transition_hash as tx_hash',
         'state_transitions.block_hash as block_hash',
         'state_transitions.type as type',
-        'state_transitions.gas_used as gas_used'
+        'state_transitions.gas_used as gas_used',
+        'state_transitions.status as status',
+        'state_transitions.error as error'
       )
       .whereRaw(searchQuery, searchBingings)
       .leftJoin('state_transitions', 'state_transitions.hash', 'transfers.state_transition_hash')
@@ -619,7 +637,7 @@ module.exports = class IdentitiesDAO {
         'amount', 'block_hash', 'type',
         'sender', 'recipient', 'with_alias.id',
         'tx_hash', 'blocks.timestamp as timestamp',
-        'block_hash', 'gas_used'
+        'gas_used', 'status', 'error'
       )
       .select(this.knex('with_alias').count('*').as('total_count'))
       .leftJoin('blocks', 'blocks.hash', 'with_alias.block_hash')
@@ -664,38 +682,31 @@ module.exports = class IdentitiesDAO {
         )
       )
 
-    const subRanges = this.knex('ranges')
-      .select(this.knex.raw('min(date_from) as min_date'))
-      .select(this.knex.raw('max(date_to) as max_date'))
+    const lastBlock = this.knex('blocks')
+      .select('height')
+      .whereRaw('blocks.timestamp <= ranges.date_to')
+      .orderBy('blocks.timestamp', 'desc')
       .limit(1)
 
-    const blocksSubquery = this.knex('blocks')
-      .with('sub_ranges', subRanges)
-      .whereRaw('blocks.timestamp <= (SELECT max_date FROM sub_ranges)')
-      .as('blocks_sub')
+    const bounds = this.knex('ranges')
+      .select('date_from', 'last_block.height as last_height')
+      .joinRaw('left join lateral (?) as last_block on true', [lastBlock])
 
-    const dataSubquery = this.knex(blocksSubquery)
-      .select('blocks_sub.timestamp', 'identifier', 'blocks_sub.height')
-      .leftJoin('state_transitions', function () {
-        this.onIn('type', [StateTransitionEnum.IDENTITY_CREATE, StateTransitionEnum.IDENTITY_CREATE_FROM_SHIELDED_POOL, StateTransitionEnum.IDENTITY_CREATE_FROM_ADDRESSES]).andOn('state_transitions.block_height', '=', 'blocks_sub.height')
-      })
+    const dataSubquery = this.knex('state_transitions')
+      .select('identifier', 'state_transitions.block_height')
+      .whereIn('state_transitions.type', [StateTransitionEnum.IDENTITY_CREATE, StateTransitionEnum.IDENTITY_CREATE_FROM_SHIELDED_POOL, StateTransitionEnum.IDENTITY_CREATE_FROM_ADDRESSES])
       .whereRaw('identifier is not null')
       .leftJoin('identities', 'state_transition_id', 'state_transitions.id')
+      .as('filtered_data')
 
     const rows = await this.knex
       .with('ranges', ranges)
-      .with(
-        'filtered_data',
-        dataSubquery
-      )
+      .with('bounds', bounds)
       .select('date_from')
       .select(this.knex.raw('count(identifier) as identities_count'))
-      .select(this.knex.raw('min(height) as block_height'))
-      .leftJoin('filtered_data', function () {
-        this.on('timestamp', '<=', 'date_to')
-      })
+      .leftJoin(dataSubquery, 'filtered_data.block_height', '<=', 'bounds.last_height')
       .groupBy('date_from')
-      .from('ranges')
+      .from('bounds')
 
     return rows.map(row => ({
       timestamp: row.date_from.toISOString(),

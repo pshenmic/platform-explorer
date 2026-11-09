@@ -91,5 +91,45 @@ export const BatchActions = {
     title: 'Set Purchase Price',
     description: 'Sets or updates the direct purchase price for tokens.',
     colorScheme: 'blue'
+  },
+  DOCUMENT_INDEX_ONLY_DELETE: {
+    title: 'Index-Only Document Delete',
+    description: 'Removes an index-only document entry.',
+    colorScheme: 'red'
+  },
+  TOKEN_SHIELD: {
+    title: 'Token Shield',
+    description: 'Moves tokens into the shielded pool.',
+    colorScheme: 'green'
+  },
+  TOKEN_MINT_TO_POOL: {
+    title: 'Token Mint To Pool',
+    description: 'Mints tokens into the shielded pool.',
+    colorScheme: 'green'
+  },
+  TOKEN_BURN_FROM_POOL: {
+    title: 'Token Burn From Pool',
+    description: 'Burns tokens from the shielded pool.',
+    colorScheme: 'red'
+  },
+  TOKEN_CLAIM_TO_POOL: {
+    title: 'Token Claim To Pool',
+    description: 'Claims a token distribution into the shielded pool.',
+    colorScheme: 'green'
+  },
+  TOKEN_DIRECT_PURCHASE_TO_POOL: {
+    title: 'Token Direct Purchase To Pool',
+    description: 'Purchases tokens with delivery to the shielded pool.',
+    colorScheme: 'green'
+  },
+  TOKEN_UNSHIELD: {
+    title: 'Token Unshield',
+    description: 'Moves tokens out of the shielded pool to an identity.',
+    colorScheme: 'green'
+  },
+  TOKEN_SHIELDED_TRANSFER: {
+    title: 'Token Shielded Transfer',
+    description: 'Transfers tokens privately within the shielded pool.',
+    colorScheme: 'green'
   }
 }

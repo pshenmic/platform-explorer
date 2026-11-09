@@ -21,6 +21,7 @@ module.exports = class Identity {
   totalWithdrawals
   lastWithdrawalTimestamp
   nonce
+  type
 
   constructor (
     identifier, owner, revision,
@@ -31,7 +32,7 @@ module.exports = class Identity {
     totalTopUpsAmount, totalWithdrawalsAmount,
     lastWithdrawalHash, lastWithdrawalTimestamp,
     totalTopUps, totalWithdrawals, publicKeys,
-    fundingCoreTx, nonce
+    fundingCoreTx, nonce, type
   ) {
     this.identifier = identifier ? identifier.trim() : null
     this.owner = owner ? owner.trim() : null
@@ -56,6 +57,7 @@ module.exports = class Identity {
     this.totalWithdrawals = totalWithdrawals ?? null
     this.lastWithdrawalTimestamp = lastWithdrawalTimestamp ?? null
     this.nonce = nonce ?? null
+    this.type = type ?? null
   }
 
   static fromObject ({
@@ -66,7 +68,7 @@ module.exports = class Identity {
     aliases, totalGasSpent, averageGasSpent,
     totalTopUpsAmount, totalWithdrawalsAmount,
     lastWithdrawalHash, publicKeys, fundingCoreTx,
-    totalTopUps, totalWithdrawals, lastWithdrawalTimestamp, nonce
+    totalTopUps, totalWithdrawals, lastWithdrawalTimestamp, nonce, type
   }) {
     return new Identity(
       identifier,
@@ -91,7 +93,8 @@ module.exports = class Identity {
       totalWithdrawals,
       publicKeys,
       fundingCoreTx,
-      nonce
+      nonce,
+      type
     )
   }
 
@@ -104,7 +107,7 @@ module.exports = class Identity {
     aliases, total_gas_spent, average_gas_spent,
     total_top_ups_amount, total_withdrawals_amount,
     last_withdrawal_hash, last_withdrawal_timestamp,
-    total_top_ups, total_withdrawals, nonce
+    total_top_ups, total_withdrawals, nonce, type
   }) {
     return new Identity(
       identifier?.trim(),
@@ -129,7 +132,8 @@ module.exports = class Identity {
       Number(total_withdrawals),
       undefined,
       undefined,
-      nonce !== undefined ? String(nonce) : undefined
+      nonce !== undefined ? String(nonce) : undefined,
+      type
     )
   }
 }

@@ -5,6 +5,10 @@ const server = require('../../src/server')
 const fixtures = require('../utils/fixtures')
 const { getKnex } = require('../../src/utils')
 const tenderdashRpc = require('../../src/tenderdashRpc')
+const DashCoreRPC = require('../../src/dashcoreRpc')
+const StateTransitionEnum = require('../../src/enums/StateTransitionEnum')
+
+const quorumHash = '0'.repeat(63) + '1'
 
 describe('Blocks routes', () => {
   let app
@@ -26,6 +30,32 @@ describe('Blocks routes', () => {
 
     mock.method(tenderdashRpc, 'getBlockByHash', async () => ({ block: { header: {} } }))
 
+    // the block route resolves the quorum stored on the row through Core
+    mock.method(DashCoreRPC, 'getBlockHash', async (height) => height.toString(16).padStart(64, '0'))
+
+    mock.method(DashCoreRPC, 'getQuorumsListExtended', async () => ({
+      llmq_25_67: [
+        {
+          [quorumHash.toLowerCase()]: {
+            creationHeight: 2,
+            minedBlockHash: 'b'.repeat(64),
+            numValidMembers: 1,
+            healthRatio: '1.00'
+          }
+        }
+      ]
+    }))
+
+    mock.method(DashCoreRPC, 'getQuorumInfo', async (hash) => ({
+      height: 1,
+      type: 'llmq_25_67',
+      quorumHash: hash,
+      quorumIndex: 0,
+      minedBlock: 'c'.repeat(64),
+      quorumPublicKey: 'e'.repeat(96),
+      members: [{ proTxHash: 'a'.repeat(64), valid: true }]
+    }))
+
     app = await server.start()
     client = supertest(app.server)
 
@@ -36,7 +66,7 @@ describe('Blocks routes', () => {
     await fixtures.cleanup(knex)
 
     for (let i = 1; i < 31; i++) {
-      const block = await fixtures.block(knex, { height: i })
+      const block = await fixtures.block(knex, { height: i, quorum_hash: quorumHash })
       blocks.push(block)
     }
 
@@ -50,7 +80,8 @@ describe('Blocks routes', () => {
 
       const block = await fixtures.block(knex, {
         validator: validator.pro_tx_hash,
-        height: i
+        height: i,
+        quorum_hash: quorumHash
       })
       blocks.push(block)
     }
@@ -60,7 +91,8 @@ describe('Blocks routes', () => {
 
       const block = await fixtures.block(knex, {
         validator: validator.pro_tx_hash,
-        height: i
+        height: i,
+        quorum_hash: quorumHash
       })
       blocks.push(block)
     }
@@ -89,10 +121,25 @@ describe('Blocks routes', () => {
           l1LockedHeight: block.l1_locked_height,
           validator: block.validator,
           appHash: block.app_hash,
-          totalGasUsed: 0
+          quorumHash: block.quorum_hash,
+          totalGasUsed: 0,
+          l1LockedBlockHash: block.l1_locked_height.toString(16).padStart(64, '0')
         },
         txs: [],
-        quorum: null
+        quorum: {
+          blockHeight: 1,
+          creationHeight: 2,
+          minedBlockHash: 'b'.repeat(64),
+          numValidMembers: 1,
+          healthRatio: '1.00',
+          type: 'llmq_25_67',
+          quorumHash,
+          quorumIndex: 0,
+          quorumPublicKey: 'e'.repeat(96),
+          previousConsecutiveDKGFailures: null,
+          isCurrent: null,
+          members: [{ proTxHash: 'a'.repeat(64), valid: true }]
+        }
       }
 
       assert.deepEqual(expectedBlock, body)
@@ -129,7 +176,8 @@ describe('Blocks routes', () => {
             l1LockedHeight: row.l1_locked_height,
             validator: row.validator,
             totalGasUsed: 0,
-            appHash: row.app_hash
+            appHash: row.app_hash,
+            quorumHash: row.quorum_hash
           },
           txs: []
         }))
@@ -161,7 +209,8 @@ describe('Blocks routes', () => {
             l1LockedHeight: row.l1_locked_height,
             validator: row.validator,
             totalGasUsed: 0,
-            appHash: row.app_hash
+            appHash: row.app_hash,
+            quorumHash: row.quorum_hash
           },
           txs: []
         }))
@@ -193,6 +242,7 @@ describe('Blocks routes', () => {
             l1LockedHeight: row.l1_locked_height,
             validator: row.validator,
             appHash: row.app_hash,
+            quorumHash: row.quorum_hash,
             totalGasUsed: 0
           },
           txs: []
@@ -225,6 +275,7 @@ describe('Blocks routes', () => {
             l1LockedHeight: row.l1_locked_height,
             validator: row.validator,
             appHash: row.app_hash,
+            quorumHash: row.quorum_hash,
             totalGasUsed: 0
           },
           txs: []
@@ -258,6 +309,7 @@ describe('Blocks routes', () => {
             l1LockedHeight: row.l1_locked_height,
             validator: row.validator,
             appHash: row.app_hash,
+            quorumHash: row.quorum_hash,
             totalGasUsed: 0
           },
           txs: []
@@ -291,6 +343,7 @@ describe('Blocks routes', () => {
             l1LockedHeight: row.l1_locked_height,
             validator: row.validator,
             appHash: row.app_hash,
+            quorumHash: row.quorum_hash,
             totalGasUsed: 0
           },
           txs: []
@@ -327,6 +380,7 @@ describe('Blocks routes', () => {
             l1LockedHeight: row.l1_locked_height,
             validator: row.validator,
             appHash: row.app_hash,
+            quorumHash: row.quorum_hash,
             totalGasUsed: 0
           },
           txs: []
@@ -371,6 +425,7 @@ describe('Blocks routes', () => {
             l1LockedHeight: row.l1_locked_height,
             validator: row.validator,
             appHash: row.app_hash,
+            quorumHash: row.quorum_hash,
             totalGasUsed: 0
           },
           txs: []
@@ -402,6 +457,7 @@ describe('Blocks routes', () => {
             l1LockedHeight: row.l1_locked_height,
             validator: row.validator,
             appHash: row.app_hash,
+            quorumHash: row.quorum_hash,
             totalGasUsed: 0
           },
           txs: []
@@ -433,6 +489,7 @@ describe('Blocks routes', () => {
             l1LockedHeight: row.l1_locked_height,
             validator: row.validator,
             appHash: row.app_hash,
+            quorumHash: row.quorum_hash,
             totalGasUsed: 0
           },
           txs: []
@@ -464,6 +521,7 @@ describe('Blocks routes', () => {
             l1LockedHeight: row.l1_locked_height,
             validator: row.validator,
             appHash: row.app_hash,
+            quorumHash: row.quorum_hash,
             totalGasUsed: 0
           },
           txs: []
@@ -495,6 +553,7 @@ describe('Blocks routes', () => {
             l1LockedHeight: row.l1_locked_height,
             validator: row.validator,
             appHash: row.app_hash,
+            quorumHash: row.quorum_hash,
             totalGasUsed: 0
           },
           txs: []
@@ -526,6 +585,7 @@ describe('Blocks routes', () => {
             l1LockedHeight: row.l1_locked_height,
             validator: row.validator,
             appHash: row.app_hash,
+            quorumHash: row.quorum_hash,
             totalGasUsed: 0
           },
           txs: []
@@ -557,6 +617,7 @@ describe('Blocks routes', () => {
             l1LockedHeight: row.l1_locked_height,
             validator: row.validator,
             appHash: row.app_hash,
+            quorumHash: row.quorum_hash,
             totalGasUsed: 0
           },
           txs: []
@@ -590,11 +651,31 @@ describe('Blocks routes', () => {
             l1LockedHeight: row.l1_locked_height,
             validator: row.validator,
             appHash: row.app_hash,
+            quorumHash: row.quorum_hash,
             totalGasUsed: 0
           },
           txs: []
         }))
       assert.deepEqual(expectedBlocks, body.resultSet)
+    })
+
+    it('should filter blocks by quorum', async () => {
+      const { body: unfiltered } = await client.get('/blocks?limit=1')
+        .expect(200)
+
+      const { body: matching } = await client.get(`/blocks?limit=1&quorum=${quorumHash}`)
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      // every fixture block here signs under the same quorum, so the filter keeps all of them
+      assert.equal(matching.pagination.total, unfiltered.pagination.total)
+      assert.equal(matching.resultSet[0].header.quorumHash, quorumHash)
+
+      const { body: other } = await client.get(`/blocks?limit=1&quorum=${'f'.repeat(64)}`)
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      assert.deepEqual(other.resultSet, [])
     })
 
     it('should allow search by gas range', async () => {
@@ -620,6 +701,7 @@ describe('Blocks routes', () => {
             l1LockedHeight: row.l1_locked_height,
             validator: row.validator,
             appHash: row.app_hash,
+            quorumHash: row.quorum_hash,
             totalGasUsed: 0
           },
           txs: []
@@ -664,6 +746,7 @@ describe('Blocks routes', () => {
             l1LockedHeight: row.l1_locked_height,
             validator: row.validator,
             appHash: row.app_hash,
+            quorumHash: row.quorum_hash,
             totalGasUsed: 0
           },
           txs: []
@@ -712,6 +795,7 @@ describe('Blocks routes', () => {
             l1LockedHeight: row.l1_locked_height,
             validator: row.validator,
             appHash: row.app_hash,
+            quorumHash: row.quorum_hash,
             totalGasUsed: 0
           },
           txs: [
@@ -794,6 +878,39 @@ describe('Blocks routes', () => {
     it('should return error when start is after end', async () => {
       await client.get(`/blocks/avgBlockTime/history?timestamp_start=${end.toISOString()}&timestamp_end=${start.toISOString()}`)
         .expect(400)
+    })
+  })
+
+  // declared last so the extra block does not shift the counts the suites above assert
+  describe('block transaction amount', async () => {
+    it('should report the credits a transfer moved', async () => {
+      const block = await fixtures.block(knex, { height: 9001, timestamp: new Date(0), quorum_hash: quorumHash })
+
+      const withTransfer = await fixtures.transaction(knex, {
+        block_hash: block.hash,
+        block_height: block.height,
+        data: '{}',
+        type: StateTransitionEnum.IDENTITY_TOP_UP
+      })
+      await fixtures.transfer(knex, {
+        amount: 1234567,
+        recipient: withTransfer.owner,
+        state_transition_hash: withTransfer.hash
+      })
+
+      const withoutTransfer = await fixtures.transaction(knex, {
+        block_hash: block.hash,
+        block_height: block.height,
+        data: '{}',
+        type: StateTransitionEnum.DATA_CONTRACT_UPDATE
+      })
+
+      const { body } = await client.get(`/block/${block.hash}`)
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      assert.equal(body.txs.find(tx => tx.hash === withTransfer.hash).amount, '1234567')
+      assert.equal(body.txs.find(tx => tx.hash === withoutTransfer.hash).amount, null)
     })
   })
 })

@@ -1,19 +1,32 @@
 import type { ReactNode } from 'react'
 import type { Viewport } from 'next'
+import { Analytics } from '@vercel/analytics/next'
+import { SpeedInsights } from '@vercel/speed-insights/next'
 import RootComponent from '../components/layout/RootComponent'
 import { Montserrat, Open_Sans as OpenSans, Roboto_Mono as RobotoMono } from 'next/font/google'
+import '../styles/tokens/index.css'
+import '../styles/theme.css'
 
 const montserrat = Montserrat({
   subsets: ['latin'],
   style: ['normal', 'italic'],
+  display: 'swap',
+  preload: true,
+  adjustFontFallback: true,
   variable: '--font-montserrat'
 })
 const openSans = OpenSans({
   subsets: ['latin'],
+  display: 'swap',
+  preload: true,
+  adjustFontFallback: true,
   variable: '--font-open-sans'
 })
 const robotoMono = RobotoMono({
   subsets: ['latin'],
+  display: 'swap',
+  preload: true,
+  adjustFontFallback: true,
   variable: '--font-roboto-mono'
 })
 
@@ -38,6 +51,8 @@ export default function RootLayout({ children }: RootLayoutProps) {
     >
       <body className={openSans.className}>
         <RootComponent>{children}</RootComponent>
+        <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   )
