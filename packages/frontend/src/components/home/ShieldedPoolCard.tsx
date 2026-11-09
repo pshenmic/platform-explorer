@@ -14,7 +14,7 @@ import { useQuery } from '@tanstack/react-query'
 import useResizeObserver from '@react-hook/resize-observer'
 
 import * as Api from '../../util/Api'
-import { PRESETS } from './MetricChart'
+import { ChartGhost, PRESETS } from './MetricChart'
 import PoolDateRange, { poolRangeLabel } from './PoolDateRange'
 import type { DateRangeFilterValue } from '../filters/types'
 import { Tooltip } from '../ui/Tooltips'
