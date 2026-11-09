@@ -64,12 +64,24 @@ const fmtMonYear = d3.timeFormat("%b '%y")
 export function buildTimeTicks(
   x: { domain: () => Date[]; ticks: (count: number) => Date[] } & ((value: Date) => number),
   innerWidth: number
-): { v: number; label: string }[] {
+): { v: number; label: string; separator?: boolean }[] {
   const domain = x.domain()
   const start = domain[0]
   const end = domain[1]
   const span = Math.max(3600000, Number(end) - Number(start))
   const minPx = span <= DAY ? 52 : span <= 45 * DAY ? 58 : 50
+  if (span > DAY && span <= 10 * DAY) {
+    const days = d3.timeDay.range(d3.timeDay.ceil(start), end)
+    const ticks: { v: number; label: string; separator: boolean }[] = []
+    let lastLabelPosition = -Infinity
+    for (const date of days) {
+      const position = x(date)
+      const visible = position - lastLabelPosition >= minPx
+      ticks.push({ v: position, label: visible ? fmtDay(date) : '', separator: true })
+      if (visible) lastLabelPosition = position
+    }
+    return ticks
+  }
   const maxTicks = Math.max(3, Math.min(6, Math.floor(Math.max(innerWidth, 1) / minPx)))
 
   let interval = d3.timeHour
@@ -77,9 +89,6 @@ export function buildTimeTicks(
   if (span <= DAY) {
     interval = d3.timeHour
     step = Math.max(4, Math.ceil(24 / maxTicks))
-  } else if (span <= 10 * DAY) {
-    interval = d3.timeDay
-    step = Math.max(1, Math.ceil(7 / maxTicks))
   } else if (span <= 45 * DAY) {
     interval = d3.timeWeek
     step = Math.max(1, Math.ceil(5 / maxTicks))
@@ -219,9 +228,11 @@ export function MetricChart({
     }
     const preset = PRESETS[presetIdx]
     const { start, end } = presetRange(preset)
+    let cancelled = false
     setState(s => ({ ...s, loading: true, error: false }))
     fetcher(start, end, preset.intervals)
       .then((res: any) => {
+        if (cancelled) return
         const pts = (res || [])
           .map((item: any) => ({ x: new Date(item.timestamp), y: item?.data?.[field] }))
           .filter((p: any) => typeof p.y === 'number' && !isNaN(p.y))
@@ -230,7 +241,12 @@ export function MetricChart({
         while (s < pts.length - 1 && pts[s].y === 0) s++
         setState({ loading: false, error: false, points: pts.slice(s) })
       })
-      .catch(() => setState({ loading: false, error: true, points: [] }))
+      .catch(() => {
+        if (!cancelled) setState({ loading: false, error: true, points: [] })
+      })
+    return () => {
+      cancelled = true
+    }
   }, [presetIdx, fetcher, field, enabled])
 
   const { loading, error, points } = state
@@ -349,6 +365,20 @@ export function MetricChart({
               </g>
             ))}
 
+            {xTicks
+              .filter((tick: any) => tick.separator)
+              .map((tick: any) => (
+                <line
+                  key={`day-${tick.v}`}
+                  className={'MetricChart__Grid'}
+                  x1={tick.v}
+                  x2={tick.v}
+                  y1={M.top}
+                  y2={h - M.bottom}
+                  strokeDasharray={'2 4'}
+                  pointerEvents={'none'}
+                />
+              ))}
             {xTicks.map((t: any, i: any) => (
               <text
                 key={i}

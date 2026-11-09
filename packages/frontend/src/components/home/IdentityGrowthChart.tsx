@@ -267,6 +267,20 @@ export default function IdentityGrowthChart({
               </g>
             ))}
 
+            {chart.xTicks
+              .filter((tick: any) => tick.separator)
+              .map((tick: any) => (
+                <line
+                  key={`day-${tick.v}`}
+                  className={'IdentityGrowthChart__Grid'}
+                  x1={tick.v}
+                  x2={tick.v}
+                  y1={M.top}
+                  y2={h - M.bottom}
+                  strokeDasharray={'2 4'}
+                  pointerEvents={'none'}
+                />
+              ))}
             {chart.xTicks.map((t: any, i: number) => (
               <text
                 key={`x${i}`}

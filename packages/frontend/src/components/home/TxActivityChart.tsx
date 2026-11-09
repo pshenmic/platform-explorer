@@ -65,11 +65,13 @@ export default function TxActivityChart({
     }
     const preset = PRESETS[presetIdx]
     const { start, end } = presetRange(preset)
+    let cancelled = false
     setState(s => ({ ...s, loading: true, error: false }))
     setHoverI(null)
     setPinI(null)
     fetcher(start, end, preset.intervals)
       .then((res: any) => {
+        if (cancelled) return
         const pts = (res || [])
           .map((item: any) => ({ x: new Date(item.timestamp), y: item?.data?.[field] }))
           .filter((p: any) => typeof p.y === 'number' && !isNaN(p.y))
@@ -77,7 +79,12 @@ export default function TxActivityChart({
         while (s < pts.length - 1 && pts[s].y === 0) s++
         setState({ loading: false, error: false, points: pts.slice(s) })
       })
-      .catch(() => setState({ loading: false, error: true, points: [] }))
+      .catch(() => {
+        if (!cancelled) setState({ loading: false, error: true, points: [] })
+      })
+    return () => {
+      cancelled = true
+    }
   }, [presetIdx, fetcher, field, enabled])
 
   const { loading, error, points } = state
@@ -233,6 +240,20 @@ export default function TxActivityChart({
               </g>
             ))}
 
+            {chart.xTicks
+              .filter((tick: any) => tick.separator)
+              .map((tick: any) => (
+                <line
+                  key={`day-${tick.v}`}
+                  className={'TxActivityChart__Grid'}
+                  x1={tick.v}
+                  x2={tick.v}
+                  y1={M.top}
+                  y2={h - M.bottom}
+                  strokeDasharray={'2 4'}
+                  pointerEvents={'none'}
+                />
+              ))}
             {chart.xTicks.map((t: any, i: number) => (
               <text
                 key={`x${i}`}
