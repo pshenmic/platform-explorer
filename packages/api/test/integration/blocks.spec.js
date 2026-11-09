@@ -31,6 +31,8 @@ describe('Blocks routes', () => {
     mock.method(tenderdashRpc, 'getBlockByHash', async () => ({ block: { header: {} } }))
 
     // the block route resolves the quorum stored on the row through Core
+    mock.method(DashCoreRPC, 'getBlockHash', async (height) => height.toString(16).padStart(64, '0'))
+
     mock.method(DashCoreRPC, 'getQuorumsListExtended', async () => ({
       llmq_25_67: [
         {
@@ -120,7 +122,8 @@ describe('Blocks routes', () => {
           validator: block.validator,
           appHash: block.app_hash,
           quorumHash: block.quorum_hash,
-          totalGasUsed: 0
+          totalGasUsed: 0,
+          l1LockedBlockHash: block.l1_locked_height.toString(16).padStart(64, '0')
         },
         txs: [],
         quorum: {

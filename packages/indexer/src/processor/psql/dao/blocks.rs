@@ -8,25 +8,15 @@ impl PostgresDAO {
     pub async fn create_block(
         &self,
         block_header: BlockHeader,
+        validator_id: i32,
         sql_transaction: &Transaction<'_>,
     ) -> String {
-        let validator = self
-            .get_validator_by_pro_tx_hash(
-                block_header.proposer_pro_tx_hash.clone(),
-                sql_transaction,
-            )
-            .await
-            .expect(&format!(
-                "Cannot find validator {}",
-                block_header.proposer_pro_tx_hash
-            ))
-            .unwrap();
 
         let stmt = sql_transaction
             .prepare_cached(
                 "INSERT INTO blocks(hash, height, \
-        timestamp, block_version, app_version, l1_locked_height, validator, validator_id, app_hash, quorum_hash) \
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING hash;",
+        timestamp, block_version, app_version, l1_locked_height, validator, validator_id, app_hash, quorum_hash, epoch) \
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING hash;",
             )
             .await
             .unwrap();
@@ -42,11 +32,25 @@ impl PostgresDAO {
                     &block_header.app_version,
                     &block_header.l1_locked_height,
                     &block_header.proposer_pro_tx_hash,
-                    &validator.id,
+                    &validator_id,
                     &block_header.app_hash,
                     &block_header.quorum_hash,
+                    &block_header.epoch,
                 ],
             )
+            .await
+            .unwrap();
+
+        let validator_stmt = sql_transaction
+            .prepare_cached(
+                "UPDATE validators SET proposed_blocks_count = proposed_blocks_count + 1, \
+        last_proposed_block_height = GREATEST(last_proposed_block_height, $1) WHERE id = $2;",
+            )
+            .await
+            .unwrap();
+
+        sql_transaction
+            .execute(&validator_stmt, &[&block_header.height, &validator_id])
             .await
             .unwrap();
 
@@ -62,7 +66,7 @@ impl PostgresDAO {
         let client = self.connection_pool.get().await?;
 
         let stmt = client.prepare_cached("SELECT hash,height,timestamp,\
-        block_version,app_version,l1_locked_height,validator,app_hash,quorum_hash FROM blocks where height = $1;").await.unwrap();
+        block_version,app_version,l1_locked_height,validator,app_hash,quorum_hash,epoch FROM blocks where height = $1;").await.unwrap();
 
         let rows: Vec<Row> = client.query(&stmt, &[&block_height]).await.unwrap();
 
