@@ -144,14 +144,6 @@ export const ValidatorsList = ({
 }: ValidatorsListProps) => {
   const canFilter = Boolean(onFilterChange)
 
-  if (error) {
-    return (
-      <div className={'ListPage__Error'}>
-        <ErrorMessageBlock />
-      </div>
-    )
-  }
-
   return (
     <DataList
       className={'ValidatorsList'}
@@ -163,9 +155,13 @@ export const ValidatorsList = ({
       rowHref={validator => `/validator/${validator.proTxHash}`}
       rowKey={validator => validator.proTxHash || ''}
       emptyMessage={
-        filterValues && Object.keys(filterValues).length
-          ? 'No validators match these filters.'
-          : 'There are no validators yet.'
+        error ? (
+          <ErrorMessageBlock />
+        ) : filterValues && Object.keys(filterValues).length ? (
+          'No validators match these filters.'
+        ) : (
+          'There are no validators yet.'
+        )
       }
       filterValues={filterValues}
       onFilterChange={onFilterChange}

@@ -8,8 +8,8 @@ import {
   writeListScrollMode,
   type ListScrollMode
 } from '../../components/ui/lists/DataList/listScrollMode'
-import { ErrorMessageBlock } from '../../components/Errors'
 import { fetchHandlerSuccess, fetchHandlerError } from '../../util'
+import { ResponseErrorNotFound } from '../../util/Errors'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import type { LoadableState, PaginatedResultSet, Validator } from '../../types'
 import './ValidatorsPage.css'
@@ -180,7 +180,10 @@ function Validators() {
               Api.getValidators(Math.max(1, currentPage + 1), Math.max(1, pageSize), sort.order, {
                 ...listFilters,
                 owner
-              }).catch(() => emptyList(pageSize))
+              }).catch(error => {
+                if (error instanceof ResponseErrorNotFound) return emptyList(pageSize)
+                throw error
+              })
             )
         : Api.getValidators(
             Math.max(1, currentPage + 1),
@@ -309,13 +312,9 @@ function Validators() {
   return (
     <div className={'ListPage ValidatorsPage'}>
       <div className={'InfoBlock'}>
-        {validators.error ? (
-          <div className={'ListPage__Error'}>
-            <ErrorMessageBlock />
-          </div>
-        ) : null}
         <ValidatorsList
           list={items}
+          error={validators.error}
           loading={validators.loading && (scrollMode === 'pages' || items.length === 0)}
           filterValues={columnFilters}
           onFilterChange={onColumnFilterChange}
