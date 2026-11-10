@@ -14,8 +14,9 @@ import { useQuery } from '@tanstack/react-query'
 import useResizeObserver from '@react-hook/resize-observer'
 
 import * as Api from '../../util/Api'
-import { Presets } from '../cards'
-import { ChartGhost, PRESETS } from './MetricChart'
+import { ChartGhost, PRESETS, buildTimeTicks, tipTimeFormat } from './MetricChart'
+import PoolDateRange, { poolRangeLabel } from './PoolDateRange'
+import type { DateRangeFilterValue } from '../filters/types'
 import { Tooltip } from '../ui/Tooltips'
 import DashIcon from '../ui/icons/DashIcon'
 import { creditsToDash, roundUsd } from '../../util'
@@ -25,7 +26,7 @@ import './ShieldedPoolCard.css'
 
 const DAY_MS = 24 * 60 * 60 * 1000
 
-function PoolAmount({ amount, unit, instant }: { amount: number; unit: string; instant: boolean }) {
+function PoolAmount({ amount, unit }: { amount: number; unit: string }) {
   const [displayed, setDisplayed] = useState({ amount, unit })
   const changingUnit = displayed.unit !== unit
 
@@ -44,23 +45,14 @@ function PoolAmount({ amount, unit, instant }: { amount: number; unit: string; i
         key={displayed.unit}
         amount={changingUnit ? displayed.amount : amount}
         unit={displayed.unit}
-        instant={instant}
       />
     </span>
   )
 }
 
-function CountedPoolAmount({
-  amount,
-  unit,
-  instant
-}: {
-  amount: number
-  unit: string
-  instant: boolean
-}) {
+function CountedPoolAmount({ amount, unit }: { amount: number; unit: string }) {
   const decimals = unit === 'btc' ? 3 : 2
-  const animated = useCountUp(amount, instant ? 0 : 450, true, decimals) as number
+  const animated = useCountUp(amount, 450, true, decimals) as number
   return (
     <span className={'ShieldedPool__AmountEnter'}>
       {animated
@@ -76,11 +68,6 @@ function CountedPoolAmount({
   )
 }
 
-const POOL_PRESETS = [
-  ...PRESETS.slice(0, 3),
-  { label: '3M', ms: 90 * DAY_MS, intervals: 100 },
-  ...PRESETS.slice(3)
-]
 const M = { top: 22, right: 16, bottom: 24, left: 48 }
 
 function fmtDash(dash: any) {
@@ -266,15 +253,30 @@ export default function ShieldedPoolCard({
     error: false,
     points: []
   })
-  const [presetIdx, setPresetIdx] = useState(POOL_PRESETS.length - 1)
+  const [dateRange, setDateRange] = useState<DateRangeFilterValue | null>(null)
   const range = useMemo(() => {
     if (!pool.asOf) return null
-    const preset = POOL_PRESETS[presetIdx]
-    return {
+    const preset = PRESETS[PRESETS.length - 1]
+    const current = {
       start: preset.start ?? new Date(Date.parse(pool.asOf) - preset.ms!).toISOString(),
       end: pool.asOf
     }
-  }, [presetIdx, pool.asOf])
+    if (!dateRange?.start || !dateRange.end) return current
+    const start = new Date(dateRange.start)
+    const end = new Date(dateRange.end)
+    if (dateRange.mode === 'rolling') {
+      const duration = end.getTime() - start.getTime()
+      end.setTime(Date.parse(current.end))
+      start.setTime(end.getTime() - duration)
+    } else {
+      start.setHours(0, 0, 0, 0)
+      end.setHours(23, 59, 59, 999)
+    }
+    return {
+      start: start.toISOString(),
+      end: new Date(Math.min(end.getTime(), Date.parse(current.end))).toISOString()
+    }
+  }, [dateRange, pool.asOf])
   const period = useMemo(
     () => ({
       loading: series.loading,
@@ -366,10 +368,17 @@ export default function ShieldedPoolCard({
     setSeries(s => ({ ...s, loading: true, error: false }))
     setHoverI(null)
 
-    loadDenseBuckets(start, end)
-      .then(buckets => {
+    const currentEnd = pool.asOf!
+    const subsequentFlows =
+      Date.parse(end) < Date.parse(currentEnd)
+        ? Api.getShieldedStatistic(new Date(Date.parse(end) + 1).toISOString(), currentEnd)
+        : Promise.resolve({ totalShieldedIn: 0, totalShieldedOut: 0 })
+    Promise.all([loadDenseBuckets(start, end), subsequentFlows])
+      .then(([buckets, subsequent]) => {
         if (cancelled) return
-        setSeries({ loading: false, error: false, points: buildTvlSeries(buckets, balance) })
+        const endBalance =
+          balance - Number(subsequent.totalShieldedIn) + Number(subsequent.totalShieldedOut)
+        setSeries({ loading: false, error: false, points: buildTvlSeries(buckets, endBalance) })
       })
       .catch(() => {
         if (cancelled) return
@@ -382,15 +391,13 @@ export default function ShieldedPoolCard({
     return () => {
       cancelled = true
     }
-  }, [range, enabled, pool.loading, pool.error, pool.balance])
+  }, [range, enabled, pool.loading, pool.error, pool.balance, pool.asOf])
 
   const balanceDash = creditsToDash(Number(pool.balance) || 0)
   const points = series.points
-  const isAll = POOL_PRESETS[presetIdx].label === 'All'
-  const windowLabel = isAll ? 'All time' : POOL_PRESETS[presetIdx].label
+  const windowLabel = poolRangeLabel(dateRange)
   const rangeInDash = creditsToDash(period.in)
   const rangeOutDash = creditsToDash(period.out)
-  const rangeNetDash = rangeInDash - rangeOutDash
   const usdPx = typeof rateState?.data?.usd === 'number' ? rateState.data.usd : null
   const inUsd = unit === 'usd' && usdPx != null
   const inBtc = unit === 'btc'
@@ -469,15 +476,8 @@ export default function ShieldedPoolCard({
       .curve(d3.curveMonotoneX)
 
     const spanMs = Number(pts[pts.length - 1].x) - Number(pts[0].x)
-    const tickFmt = d3.timeFormat(
-      spanMs > 365 * DAY_MS ? '%b %Y' : spanMs > 3 * DAY_MS ? '%b %d' : '%H:%M'
-    )
-    const tipFmt = d3.timeFormat(
-      spanMs > 365 * DAY_MS ? '%b %d, %Y' : spanMs > 3 * DAY_MS ? '%b %d' : '%b %d, %H:%M'
-    )
-
-    const xTickN = Math.max(2, Math.min(6, Math.floor((width - M.left - M.right) / 72)))
-    const xTicks = x.ticks(xTickN)
+    const tipFmt = tipTimeFormat({ ms: spanMs })
+    const xTicks = buildTimeTicks(x, width - M.left - M.right)
     const yTvlTicks = yTvl.ticks(4)
 
     const step =
@@ -524,7 +524,6 @@ export default function ShieldedPoolCard({
       yTvl,
       line: line(pts),
       area: area(pts),
-      tickFmt,
       tipFmt,
       xTicks,
       yTvlTicks,
@@ -556,28 +555,18 @@ export default function ShieldedPoolCard({
   const tooltipPosition =
     hovered && chart ? Math.min(1, Math.max(0, chart.x(hovered.x) / width)) : 0
 
-  const statDash = isAll ? balanceDash : rangeNetDash
-  const statLoading = !hovered && (pool.loading || (!isAll && !period.loaded))
-  const targetAmount = (hovered?.tvlDash ?? statDash) * k
+  const targetAmount = balanceDash * k
   const nextUnit =
     unit === 'dash' ? (usdPx == null ? 'btc' : 'usd') : unit === 'usd' ? 'btc' : 'dash'
   const statCount = (() => {
-    if (pool.error || (!isAll && series.error)) return '—'
+    if (pool.error || pool.balance == null) return pool.loading ? null : '—'
     if (inBtc && btcPx == null) return btcRate.isError ? '—' : null
-    if (statLoading) return null
-    return <PoolAmount amount={targetAmount} unit={unit} instant={hovered != null} />
+    if (pool.loading) return null
+    return <PoolAmount amount={targetAmount} unit={unit} />
   })()
-  const statTone =
-    !hovered && !isAll && !period.loading
-      ? rangeNetDash > 0
-        ? ' is-up'
-        : rangeNetDash < 0
-          ? ' is-down'
-          : ''
-      : ''
-  const displayedInDash = hovered?.inDash ?? rangeInDash
-  const displayedOutDash = hovered?.outDash ?? rangeOutDash
-  const flowsLoading = !hovered && !period.loaded
+  const displayedInDash = rangeInDash
+  const displayedOutDash = rangeOutDash
+  const flowsLoading = !period.loaded
 
   return (
     <section
@@ -620,26 +609,26 @@ export default function ShieldedPoolCard({
           </Tooltip>
         </div>
         <div className={'ShieldedPool__Controls'}>
-          <Presets options={POOL_PRESETS} value={presetIdx} onChange={setPresetIdx} />
-          <div
-            className={`ShieldedPool__Stat${period.loading && period.loaded ? ' is-updating' : ''}`}
-            aria-busy={period.loading}
-          >
-            <div className={'ShieldedPool__StatMain'}>
+          <PoolDateRange value={dateRange} onChange={setDateRange} />
+          <div className={'ShieldedPool__Stat'}>
+            <div className={'ShieldedPool__StatMain'} aria-busy={pool.loading}>
+              <span className={'ShieldedPool__StatUnit'}>Pool balance</span>
               <div className={'ShieldedPool__StatValue'}>
                 <button
                   type={'button'}
-                  className={`ShieldedPool__StatCount${statTone}`}
-                  aria-label={`Amount in ${unit.toUpperCase()}. Switch to ${nextUnit.toUpperCase()}`}
+                  className={'ShieldedPool__StatCount'}
+                  aria-label={`Current pool balance in ${unit.toUpperCase()}. Switch to ${nextUnit.toUpperCase()}`}
                   title={`Switch to ${nextUnit.toUpperCase()}`}
                   onClick={() => setUnit(nextUnit)}
                 >
                   {statCount ?? <Skeleton w={'7ch'} h={'1em'} />}
                 </button>
               </div>
-              <span className={'ShieldedPool__CurrencyHint'}>Switch currency</span>
             </div>
-            <div className={'ShieldedPool__Summary'}>
+            <div
+              className={`ShieldedPool__Summary${period.loading && period.loaded ? ' is-updating' : ''}`}
+              aria-busy={period.loading}
+            >
               {inBtc && (btcRate.isError || btcPx == null) && (
                 <span className={'ShieldedPool__RateStatus'} role={'status'}>
                   {btcRate.isError ? (
@@ -651,10 +640,7 @@ export default function ShieldedPoolCard({
                   )}
                 </span>
               )}
-              <div
-                className={'ShieldedPool__Flows'}
-                aria-label={hovered ? 'Flows · selected interval' : `Flows · ${windowLabel}`}
-              >
+              <div className={'ShieldedPool__Flows'} aria-label={`Flows · ${windowLabel}`}>
                 {pool.error || series.error ? (
                   <span>—</span>
                 ) : flowsLoading ? (
@@ -886,6 +872,20 @@ export default function ShieldedPoolCard({
                     </>
                   )}
 
+                  {chart.xTicks
+                    .filter((tick: any) => tick.separator)
+                    .map((tick: any) => (
+                      <line
+                        key={`day-${tick.v}`}
+                        className={'ShieldedPool__Grid'}
+                        x1={tick.v}
+                        x2={tick.v}
+                        y1={M.top}
+                        y2={plotH - M.bottom}
+                        strokeDasharray={'2 4'}
+                        pointerEvents={'none'}
+                      />
+                    ))}
                   {chart.xTicks.map((t: any, i: any) => (
                     <text
                       key={`x-${i}`}
@@ -894,10 +894,10 @@ export default function ShieldedPoolCard({
                         textAnchor:
                           i === 0 ? 'start' : i === chart.xTicks.length - 1 ? 'end' : 'middle'
                       }}
-                      x={chart.x(t)}
+                      x={t.v}
                       y={plotH - 4}
                     >
-                      {chart.tickFmt(t)}
+                      {t.label}
                     </text>
                   ))}
                 </svg>

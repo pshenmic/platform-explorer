@@ -1,5 +1,10 @@
-import GroupsListItem from './GroupsListItem'
-import type { GroupMember } from './GroupsListItem'
+import { Identifier, BigNumber } from '../../data'
+import { DataList } from '../../ui/lists'
+
+export interface GroupMember {
+  identifier: string
+  power: number | string
+}
 import { EmptyListMessage } from '../../ui/lists'
 import { ErrorMessageBlock } from '../../Errors'
 import { LoadingList } from '../../loading'
@@ -46,11 +51,6 @@ function GroupsList({
   expandedGroup,
   onGroupToggle
 }: GroupsListProps) {
-  const headerExtraClass: Record<string, string> = {
-    default: '',
-    light: 'GroupsList__ColumnTitles--Light'
-  }
-
   const groupsArray: GroupEntry[] = Object.entries(
     groups as Record<string, Partial<DataContractGroup>>
   ).map(([id, group]) => ({
@@ -111,24 +111,32 @@ function GroupsList({
 
                 <SmoothSize className={'GroupsList__MembersContainer'}>
                   {isExpanded && membersArray.length > 0 && (
-                    <div className={'GroupsList__MembersList'}>
-                      <div
-                        className={`GroupsList__ColumnTitles ${headerExtraClass?.[headerStyles] || ''}`}
-                      >
-                        <div
-                          className={'GroupsList__ColumnTitle GroupsList__ColumnTitle--Identifier'}
-                        >
-                          Identifier
-                        </div>
-                        <div className={'GroupsList__ColumnTitle GroupsList__ColumnTitle--Power'}>
-                          Power
-                        </div>
-                      </div>
-
-                      {membersArray.map(member => (
-                        <GroupsListItem key={member.identifier} member={member} />
-                      ))}
-                    </div>
+                    <DataList
+                      items={membersArray}
+                      rowKey={member => member.identifier}
+                      rowHref={member => `/identity/${member.identifier}`}
+                      headerVariant={headerStyles === 'light' ? 'light' : 'default'}
+                      columns={[
+                        {
+                          key: 'identifier',
+                          header: 'Identifier',
+                          minWidth: 180,
+                          grow: true,
+                          cell: member => (
+                            <Identifier avatar ellipsis>
+                              {member.identifier}
+                            </Identifier>
+                          )
+                        },
+                        {
+                          key: 'power',
+                          header: 'Power',
+                          minWidth: 100,
+                          numeric: true,
+                          cell: member => <BigNumber>{member.power}</BigNumber>
+                        }
+                      ]}
+                    />
                   )}
                 </SmoothSize>
               </div>

@@ -5,9 +5,15 @@ import { useState, useEffect, useRef, useId, useMemo, type RefObject } from 'rea
 import * as d3 from 'd3'
 import useResizeObserver from '@react-hook/resize-observer'
 import { Presets } from '../cards'
-import { getDaysBetweenDates, currencyRound } from '../../util'
+import { currencyRound } from '../../util'
 import { Skeleton } from './Skeleton'
-import { PRESETS, presetRange } from './MetricChart'
+import {
+  PRESETS,
+  buildTimeTicks,
+  presetRange,
+  seriesTimeDomain,
+  tipTimeFormat
+} from './MetricChart'
 import './TxActivityChart.css'
 
 const DEFAULT_PRESET = PRESETS.length - 1
@@ -59,11 +65,13 @@ export default function TxActivityChart({
     }
     const preset = PRESETS[presetIdx]
     const { start, end } = presetRange(preset)
+    let cancelled = false
     setState(s => ({ ...s, loading: true, error: false }))
     setHoverI(null)
     setPinI(null)
     fetcher(start, end, preset.intervals)
       .then((res: any) => {
+        if (cancelled) return
         const pts = (res || [])
           .map((item: any) => ({ x: new Date(item.timestamp), y: item?.data?.[field] }))
           .filter((p: any) => typeof p.y === 'number' && !isNaN(p.y))
@@ -71,7 +79,12 @@ export default function TxActivityChart({
         while (s < pts.length - 1 && pts[s].y === 0) s++
         setState({ loading: false, error: false, points: pts.slice(s) })
       })
-      .catch(() => setState({ loading: false, error: true, points: [] }))
+      .catch(() => {
+        if (!cancelled) setState({ loading: false, error: true, points: [] })
+      })
+    return () => {
+      cancelled = true
+    }
   }, [presetIdx, fetcher, field, enabled])
 
   const { loading, error, points } = state
@@ -80,17 +93,8 @@ export default function TxActivityChart({
 
   const chart = useMemo(() => {
     if (!ready) return null
-    const x = d3.scaleTime(
-      d3.extent(points, (p: any) => p.x),
-      [M.left, width - M.right]
-    )
-    const dataSpanDays = getDaysBetweenDates(points[0].x, points[points.length - 1].x)
-    const tickFmt = d3.timeFormat(
-      dataSpanDays > 365 ? '%b %Y' : dataSpanDays > 7 ? '%b %d' : '%H:%M'
-    )
-    const tipFmt = d3.timeFormat(
-      dataSpanDays > 365 ? '%b %d, %Y' : dataSpanDays > 3 ? '%b %d' : '%b %d, %H:%M'
-    )
+    const x = d3.scaleTime(seriesTimeDomain(points, PRESETS[presetIdx]), [M.left, width - M.right])
+    const tipFmt = tipTimeFormat(PRESETS[presetIdx])
     const maxY = d3.max(points, (p: any) => p.y) || 1
     const y = d3.scaleLinear([0, maxY], [h - M.bottom, M.top]).nice()
     const step = points.length > 1 ? Math.abs(x(points[1].x) - x(points[0].x)) : 8
@@ -105,14 +109,13 @@ export default function TxActivityChart({
       value: p.y,
       date: p.x
     }))
-    const tickCount = Math.max(2, Math.min(6, Math.floor((width - M.left - M.right) / 72)))
-    const xTicks = x.ticks(tickCount).map((d: any) => ({ v: x(d), label: tickFmt(d) }))
+    const xTicks = buildTimeTicks(x, width - M.left - M.right)
     const yTicks = y.ticks(4).map((v: any) => ({ v: y(v), label: formatValue(v) }))
     const total = points.reduce((s, p) => s + p.y, 0)
     const peak = d3.max(points, (p: any) => p.y) || 0
     const latest = points[points.length - 1]
     return { bars, xTicks, yTicks, tipFmt, total, peak, latest, maxY }
-  }, [ready, points, width, h])
+  }, [ready, points, width, h, presetIdx])
 
   const activeI = pinI != null ? pinI : hoverI
   const activeBar = chart && activeI != null ? chart.bars[activeI] : null
@@ -237,6 +240,20 @@ export default function TxActivityChart({
               </g>
             ))}
 
+            {chart.xTicks
+              .filter((tick: any) => tick.separator)
+              .map((tick: any) => (
+                <line
+                  key={`day-${tick.v}`}
+                  className={'TxActivityChart__Grid'}
+                  x1={tick.v}
+                  x2={tick.v}
+                  y1={M.top}
+                  y2={h - M.bottom}
+                  strokeDasharray={'2 4'}
+                  pointerEvents={'none'}
+                />
+              ))}
             {chart.xTicks.map((t: any, i: number) => (
               <text
                 key={`x${i}`}

@@ -529,6 +529,7 @@ GET /validators?blocks_proposed_min=1&blocks_proposed_max=9999999&last_proposed_
             },
             "totalReward": null,
             "epochReward": null,
+            "pendingEpochReward": null,
             "withdrawalsCount": null,
             "lastWithdrawal": null,
             "lastWithdrawalTime": null,
@@ -549,6 +550,8 @@ GET /validators?blocks_proposed_min=1&blocks_proposed_max=9999999&last_proposed_
 Get validator by ProTxHash.
 * `lastProposedBlockHeader` field is nullable
 * `totalReward` is what Platform paid the validator for its proposed blocks, in credits, `epochReward` is what it was paid in the current epoch, which pays the previous one
+* `pendingEpochReward` is an estimate of what the validator has earned in the current, not yet paid epoch `epoch` up to block `blockHeight`, not a guaranteed payout: the epoch pool so far (`processingFees`, `distributedStorageFees` and `coreBlockRewards`, all in credits) shared by `proposedBlocks` of the `totalBlocks` of the epoch, before masternode reward shares, as Drive pays it at the end of the epoch. The pool is read from Platform state, so it is exact up to `blockHeight`, the payout also includes the blocks until the end of the epoch. `null` when the pool can't be read
+* `pendingEpochReward.estimatedReward` is the approximate income of the validator for the whole epoch: `reward` scaled from the time passed since the epoch start (to the latest block) to the epoch length, assuming it keeps earning at the same rate. `null` when the times are unknown
 * `registeredAt` is the time of the Core block the masternode was registered in
 * `votingIdentity` is derived from the current voting key of the masternode, `votingIdentityBalance` is `null` when the identity does not exist
 * `poseScoreMax` is the PoSe penalty that bans the masternode: the size of the masternode list, at least 100
@@ -614,6 +617,17 @@ GET /validator/F60A6BF9EC0794BB0CFD1E0F2217933F4B33EDE6FE810692BC275CA18148AEF0
   },
   "totalReward": 0,
   "epochReward": 0,
+  "pendingEpochReward": {
+    "epoch": 20172,
+    "blockHeight": 662240,
+    "proposedBlocks": 3,
+    "totalBlocks": 62,
+    "processingFees": "11137777300",
+    "distributedStorageFees": "1932534464",
+    "coreBlockRewards": "1875071229584",
+    "reward": "91361687484",
+    "estimatedReward": "101597807719"
+  },
   "withdrawalsCount": 1,
   "lastWithdrawal": "01FE1F00379C66C6E3BFD81A088E57E17613EC36E4FF812458535A8ABCB84047",
   "lastWithdrawalTime": "2024-10-12T03:15:19.257Z",
@@ -663,6 +677,8 @@ GET /validator/F60A6BF9EC0794BB0CFD1E0F2217933F4B33EDE6FE810692BC275CA18148AEF0
 Get validator by Masternode Identity.
 * `lastProposedBlockHeader` field is nullable
 * `totalReward` is what Platform paid the validator for its proposed blocks, in credits, `epochReward` is what it was paid in the current epoch, which pays the previous one
+* `pendingEpochReward` is an estimate of what the validator has earned in the current, not yet paid epoch `epoch` up to block `blockHeight`, not a guaranteed payout: the epoch pool so far (`processingFees`, `distributedStorageFees` and `coreBlockRewards`, all in credits) shared by `proposedBlocks` of the `totalBlocks` of the epoch, before masternode reward shares, as Drive pays it at the end of the epoch. The pool is read from Platform state, so it is exact up to `blockHeight`, the payout also includes the blocks until the end of the epoch. `null` when the pool can't be read
+* `pendingEpochReward.estimatedReward` is the approximate income of the validator for the whole epoch: `reward` scaled from the time passed since the epoch start (to the latest block) to the epoch length, assuming it keeps earning at the same rate. `null` when the times are unknown
 ```
 GET /validator/identity/8tsWRSwsTM5AXv4ViCF9gu39kzjbtfFDM6rCyL2RcFzd
 
@@ -719,6 +735,17 @@ GET /validator/identity/8tsWRSwsTM5AXv4ViCF9gu39kzjbtfFDM6rCyL2RcFzd
   },
   "totalReward": 0,
   "epochReward": 0,
+  "pendingEpochReward": {
+    "epoch": 20172,
+    "blockHeight": 662240,
+    "proposedBlocks": 3,
+    "totalBlocks": 62,
+    "processingFees": "11137777300",
+    "distributedStorageFees": "1932534464",
+    "coreBlockRewards": "1875071229584",
+    "reward": "91361687484",
+    "estimatedReward": "101597807719"
+  },
   "withdrawalsCount": 1,
   "lastWithdrawal": "01FE1F00379C66C6E3BFD81A088E57E17613EC36E4FF812458535A8ABCB84047",
   "lastWithdrawalTime": "2024-10-12T03:15:19.257Z",

@@ -18,6 +18,7 @@ export interface DataListHeaderMenuProps {
   anchor: DOMRect
   filterType?: DataListHeaderFilterType
   value?: unknown
+  multiple?: boolean
   options?: DataListHeaderMenuOption[]
   multiple?: boolean
   placeholder?: string
@@ -136,7 +137,11 @@ export default function DataListHeaderMenu({
       return
     }
     onChange?.(
-      selected.includes(next) ? selected.filter(item => item !== next) : [...selected, next]
+      selected.includes(next)
+        ? selected.filter(item => item !== next)
+        : multiple
+          ? [...selected, next]
+          : [next]
     )
   }
 

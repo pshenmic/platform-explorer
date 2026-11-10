@@ -15,6 +15,12 @@ import { QuorumInfo } from '../../../components/blocks/quorum'
 import { useActiveNetwork } from 'src/contexts'
 import type { LoadableState, Rate, Status } from '../../../types'
 
+import { DataListModeSwitch } from '../../../components/ui/lists/DataList/DataListPaging'
+import {
+  readListScrollMode,
+  writeListScrollMode,
+  type ListScrollMode
+} from '../../../components/ui/lists/DataList/listScrollMode'
 import './Block.css'
 
 const tabs = ['transactions', 'quorum-members', 'quorum-info'] as const
@@ -26,6 +32,16 @@ interface BlockProps {
 }
 
 function Block({ hash }: BlockProps) {
+  const [memberMode, setMemberMode] = useState<ListScrollMode>('continuous')
+  const [memberPage, setMemberPage] = useState(0)
+  const [memberPageSize, setMemberPageSize] = useState(10)
+  useEffect(() => setMemberMode(readListScrollMode('quorum-members')), [])
+  useEffect(() => setMemberPage(0), [hash])
+  const changeMemberMode = (mode: ListScrollMode) => {
+    writeListScrollMode('quorum-members', mode)
+    setMemberMode(mode)
+    setMemberPage(0)
+  }
   const { setBreadcrumbs } = useBreadcrumbs()
   const [block, setBlock] = useState<LoadableState<BlockDetail>>({
     data: {} as BlockDetail,
@@ -131,33 +147,38 @@ function Block({ hash }: BlockProps) {
 
       <InfoContainer styles={['tabs']}>
         <Tabs onChange={index => setActiveTab(index)} index={activeTab}>
-          <TabList>
-            <Tab>
-              Transactions{' '}
-              {block.data?.txs?.length !== undefined ? (
-                <span
-                  className={`Tabs__TabItemsCount ${block.data?.txs?.length === 0 ? 'Tabs__TabItemsCount--Empty' : ''}`}
-                >
-                  {block.data?.txs?.length}
-                </span>
-              ) : (
-                ''
-              )}
-            </Tab>
-            <Tab>
-              Quorum Members{' '}
-              {block?.data?.quorum?.members?.length !== undefined ? (
-                <span
-                  className={`Tabs__TabItemsCount ${block?.data?.quorum?.members?.length === 0 ? 'Tabs__TabItemsCount--Empty' : ''}`}
-                >
-                  {block?.data?.quorum?.members?.length}
-                </span>
-              ) : (
-                ''
-              )}
-            </Tab>
-            <Tab>Quorum Info</Tab>
-          </TabList>
+          <div className="Tabs__Toolbar">
+            <TabList>
+              <Tab>
+                Transactions{' '}
+                {block.data?.txs?.length !== undefined ? (
+                  <span
+                    className={`Tabs__TabItemsCount ${block.data?.txs?.length === 0 ? 'Tabs__TabItemsCount--Empty' : ''}`}
+                  >
+                    {block.data?.txs?.length}
+                  </span>
+                ) : (
+                  ''
+                )}
+              </Tab>
+              <Tab>
+                Quorum Members{' '}
+                {block?.data?.quorum?.members?.length !== undefined ? (
+                  <span
+                    className={`Tabs__TabItemsCount ${block?.data?.quorum?.members?.length === 0 ? 'Tabs__TabItemsCount--Empty' : ''}`}
+                  >
+                    {block?.data?.quorum?.members?.length}
+                  </span>
+                ) : (
+                  ''
+                )}
+              </Tab>
+              <Tab>Quorum Info</Tab>
+            </TabList>
+            {activeTab === tabs.indexOf('quorum-members') && (
+              <DataListModeSwitch mode={memberMode} onModeChange={changeMemberMode} />
+            )}
+          </div>
           <TabPanels>
             <TabPanel>
               {!block.error ? (
@@ -175,7 +196,29 @@ function Block({ hash }: BlockProps) {
             <TabPanel>
               {!block.error ? (
                 <QuorumMembersList
-                  members={block?.data?.quorum?.members ?? undefined}
+                  members={
+                    memberMode === 'pages'
+                      ? block.data?.quorum?.members?.slice(
+                          memberPage * memberPageSize,
+                          (memberPage + 1) * memberPageSize
+                        )
+                      : (block.data?.quorum?.members ?? undefined)
+                  }
+                  paging={{
+                    mode: memberMode,
+                    onModeChange: changeMemberMode,
+                    hideModeSwitch: true,
+                    total: block.data?.quorum?.members?.length ?? 0,
+                    page: memberPage,
+                    pageSize: memberPageSize,
+                    onPageChange: setMemberPage,
+                    onPageSizeChange: size => {
+                      setMemberPageSize(size)
+                      setMemberPage(0)
+                    },
+                    onLoadMore: () => {},
+                    hasMore: false
+                  }}
                   loading={block.loading}
                 />
               ) : (

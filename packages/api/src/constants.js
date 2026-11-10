@@ -25,6 +25,12 @@ module.exports = {
   CORE_BLOCKS_PER_DAY: 576,
   DUFFS_PER_DASH: 100000000,
   CREDITS_PER_DASH: 100000000000,
+  CORE_GENESIS_BLOCK_SUBSIDY: 112500000000n,
+  CORE_SUBSIDY_HALVING_INTERVAL: 210240,
+  // GroveDB location of the epoch pools: the Pools root tree, epochs are keyed by
+  // their index plus the offset as big endian u16
+  POOLS_ROOT_TREE: 48,
+  EPOCH_KEY_OFFSET: 256,
   PROTX_LIST_CACHE_LIFE_INTERVAL: 60000,
   DPNS_CONTRACT: 'GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec',
   // Drive limit for both the values of an 'in' clause and the documents returned
