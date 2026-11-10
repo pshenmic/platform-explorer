@@ -17,6 +17,7 @@
   "repository": "git@github.com:pshenmic/platform-explorer.git",
   "overrides": {
     "react": "19.2.8",
-    "react-dom": "19.2.8"
+    "react-dom": "19.2.8",
+    "@yarnpkg/core": "4.9.1"
   }
 }
