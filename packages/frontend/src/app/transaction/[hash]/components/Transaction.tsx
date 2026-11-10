@@ -249,15 +249,13 @@ export const Transaction = () => {
               title={'Core Withdrawal Address'}
               value={
                 <a
-                  href={
-                    getL1ExplorerLink(
-                      l1explorerBaseUrl,
-                      'address',
-                      typeof decodedST.data?.outputAddress === 'string'
-                        ? decodedST.data.outputAddress
-                        : undefined
-                    )
-                  }
+                  href={getL1ExplorerLink(
+                    l1explorerBaseUrl,
+                    'address',
+                    typeof decodedST.data?.outputAddress === 'string'
+                      ? decodedST.data.outputAddress
+                      : undefined
+                  )}
                   target={'_blank'}
                   rel={'noopener noreferrer'}
                 >

@@ -2,15 +2,14 @@
 
 import { useEffect, useState, useCallback, useRef } from 'react'
 import * as Api from '../../util/Api'
-import { ResponseErrorNotFound } from '../../util/Errors'
 import { ValidatorsList } from '../../components/validators'
 import {
   readListScrollMode,
   writeListScrollMode,
   type ListScrollMode
 } from '../../components/ui/lists/DataList/listScrollMode'
-import { ErrorMessageBlock } from '../../components/Errors'
 import { fetchHandlerSuccess, fetchHandlerError } from '../../util'
+import { ResponseErrorNotFound } from '../../util/Errors'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import type { LoadableState, PaginatedResultSet, Validator } from '../../types'
 import './ValidatorsPage.css'
@@ -24,8 +23,8 @@ const paginateConfig = {
 }
 
 type QueryFilters = Record<string, string | number | boolean | string[] | null | undefined>
-const IDENTIFIER_RE = /^[A-Za-z0-9]{43,44}$/
-const HASH_RE = /^[A-Fa-f0-9]{64}$/
+const IDENTIFIER_RE = new RegExp('^[A-Za-z0-9]{43,44}$')
+const HASH_RE = new RegExp('^[A-Fa-f0-9]{64}$')
 
 function toNumber(value: unknown): number | null {
   if (value === '' || value == null) return null
@@ -136,6 +135,10 @@ function Validators() {
   const fetchGen = useRef(0)
   const [filters, setFilters] = useState<QueryFilters>({})
   const [columnFilters, setColumnFilters] = useState<Record<string, unknown>>({})
+  const [sort, setSort] = useState<{ order_by: string; order: 'asc' | 'desc' }>({
+    order_by: 'id',
+    order: 'asc'
+  })
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
@@ -159,12 +162,13 @@ function Validators() {
     const listFilters: QueryFilters = { ...filters }
     delete listFilters.hash
     delete listFilters.owner
+    if (sort.order_by !== 'id') listFilters.order_by = sort.order_by
 
     const request = hash
       ? Api.getValidatorByProTxHash(hash)
           .then(validator => asListResult(validator, pageSize))
           .catch(() =>
-            Api.getValidators(Math.max(1, currentPage + 1), Math.max(1, pageSize), 'asc', {
+            Api.getValidators(Math.max(1, currentPage + 1), Math.max(1, pageSize), sort.order, {
               ...listFilters,
               last_proposed_block_hash: hash
             })
@@ -173,15 +177,20 @@ function Validators() {
         ? Api.getValidatorByMasternodeIdentity(owner)
             .then(validator => asListResult(validator, pageSize))
             .catch(() =>
-              Api.getValidators(Math.max(1, currentPage + 1), Math.max(1, pageSize), 'asc', {
+              Api.getValidators(Math.max(1, currentPage + 1), Math.max(1, pageSize), sort.order, {
                 ...listFilters,
                 owner
-              }).catch(err => {
-                if (err instanceof ResponseErrorNotFound) return emptyList(pageSize)
-                throw err
+              }).catch(error => {
+                if (error instanceof ResponseErrorNotFound) return emptyList(pageSize)
+                throw error
               })
             )
-        : Api.getValidators(Math.max(1, currentPage + 1), Math.max(1, pageSize), 'asc', listFilters)
+        : Api.getValidators(
+            Math.max(1, currentPage + 1),
+            Math.max(1, pageSize),
+            sort.order,
+            listFilters
+          )
 
     request
       .then(res => {
@@ -217,7 +226,7 @@ function Validators() {
         }
         setLoadingMore(false)
       })
-  }, [currentPage, pageSize, filters, scrollMode])
+  }, [currentPage, pageSize, filters, scrollMode, sort.order, sort.order_by])
 
   useEffect(() => {
     setPageSize(
@@ -303,29 +312,25 @@ function Validators() {
   return (
     <div className={'ListPage ValidatorsPage'}>
       <div className={'InfoBlock'}>
-        {validators.error ? (
-          <div className={'ListPage__Error'}>
-            <ErrorMessageBlock text={'Unable to load validators'} />
-            <button
-              type={'button'}
-              className={'DataList__ModeBtn'}
-              onClick={() => setFilters(value => ({ ...value }))}
-            >
-              Retry
-            </button>
-          </div>
-        ) : null}
-        {!validators.error && (
-          <ValidatorsList
-            list={items}
-            loading={validators.loading && (scrollMode === 'pages' || items.length === 0)}
-            filterValues={columnFilters}
-            onFilterChange={onColumnFilterChange}
-            paging={paging}
-            title={'Validators'}
-            pinFirst={true}
-          />
-        )}
+        <ValidatorsList
+          list={items}
+          error={validators.error}
+          loading={validators.loading && (scrollMode === 'pages' || items.length === 0)}
+          filterValues={columnFilters}
+          onFilterChange={onColumnFilterChange}
+          paging={paging}
+          sort={sort}
+          sortDefault={{ order_by: 'id', order: 'asc' }}
+          onSortChange={next => {
+            setSort({
+              order_by: next.order_by,
+              order: next.order === 'asc' ? 'asc' : 'desc'
+            })
+            setCurrentPage(0)
+          }}
+          title={'Validators'}
+          pinFirst={true}
+        />
       </div>
     </div>
   )

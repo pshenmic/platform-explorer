@@ -8,5 +8,5 @@ export const columnLayout = {
     header: 'Blocks proposed',
     minWidth: 120
   },
-  timestamp: { key: 'timestamp', header: 'Last block', minWidth: 128, align: 'right' }
+  timestamp: { key: 'timestamp', header: 'Last proposed', minWidth: 128, align: 'right' }
 } as const

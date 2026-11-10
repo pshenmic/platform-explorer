@@ -99,10 +99,20 @@ describe('indexed validator API', () => {
   })
 
   test.each([2240194064482, 0, null])('preserves payout %s independently of fees', async reward => {
-    const points = [{ timestamp: start, data: {
-      epoch: 81, endEpoch: 83, endTime: end, blocksProposed: 56,
-      totalBlocks: 100, fees: 16574036760, reward
-    } }]
+    const points = [
+      {
+        timestamp: start,
+        data: {
+          epoch: 81,
+          endEpoch: 83,
+          endTime: end,
+          blocksProposed: 56,
+          totalBlocks: 100,
+          fees: 16574036760,
+          reward
+        }
+      }
+    ]
     respond(points)
     const result = await getEpochStatsByValidator(hash, start, end, 84)
     expect(result[0].data?.reward).toBe(reward)
@@ -110,10 +120,20 @@ describe('indexed validator API', () => {
   })
 
   test.each([undefined, '1000', NaN])('rejects invalid payout %s', async reward => {
-    respond([{ timestamp: start, data: {
-      epoch: 81, endEpoch: 83, endTime: end, blocksProposed: 56,
-      totalBlocks: 100, fees: 0, reward
-    } }])
+    respond([
+      {
+        timestamp: start,
+        data: {
+          epoch: 81,
+          endEpoch: 83,
+          endTime: end,
+          blocksProposed: 56,
+          totalBlocks: 100,
+          fees: 0,
+          reward
+        }
+      }
+    ])
     await expect(getEpochStatsByValidator(hash, start, end, 84)).rejects.toThrow('updated API')
   })
 

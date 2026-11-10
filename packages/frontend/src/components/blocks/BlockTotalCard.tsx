@@ -91,10 +91,7 @@ function BlockTotalCard({ block, l1explorerBaseUrl, className }: any) {
           loading={block.loading}
           error={block.error}
           value={
-            <ValueContainer
-              external={Boolean(coreBlockLink)}
-              link={coreBlockLink}
-            >
+            <ValueContainer external={Boolean(coreBlockLink)} link={coreBlockLink}>
               {block.data?.header?.l1LockedHeight}
             </ValueContainer>
           }

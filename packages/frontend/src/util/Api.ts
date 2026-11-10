@@ -797,8 +797,11 @@ const getEpochStatsByValidator = async (
   if (
     !Array.isArray(points) ||
     points.some(
-      point => !point.data || !Number.isFinite(point.data.fees) ||
-        !Number.isFinite(point.data.blocksProposed) || !('endTime' in point.data) ||
+      point =>
+        !point.data ||
+        !Number.isFinite(point.data.fees) ||
+        !Number.isFinite(point.data.blocksProposed) ||
+        !('endTime' in point.data) ||
         !(point.data.reward === null || Number.isFinite(point.data.reward))
     )
   ) {

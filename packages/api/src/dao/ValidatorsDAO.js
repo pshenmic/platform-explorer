@@ -118,7 +118,7 @@ module.exports = class ValidatorsDAO {
     return rows.map(r => r.pro_tx_hash)
   }
 
-  getValidators = async (page, limit, order, isActive, activeValidators, isBanned, validatorsWithoutBan, owner, blocksProposedMin, blocksProposedMax, lastProposedBlockHeightMin, lastProposedBlockHeightMax, lastProposedBlockTimestampStart, lastProposedBlockTimestampEnd, lastProposedBlockHash) => {
+  getValidators = async (page, limit, order, isActive, activeValidators, isBanned, validatorsWithoutBan, owner, blocksProposedMin, blocksProposedMax, lastProposedBlockHeightMin, lastProposedBlockHeightMax, lastProposedBlockTimestampStart, lastProposedBlockTimestampEnd, lastProposedBlockHash, orderBy = 'id') => {
     const fromRank = ((page - 1) * limit)
 
     const proTxHash = owner ? Buffer.from(base58.decode(owner)).toString('hex') : null
@@ -241,8 +241,13 @@ module.exports = class ValidatorsDAO {
       )
       .select(this.knex('subquery').select(this.knex.raw('COUNT(id)')).limit(1).as('total_count'))
       .offset(fromRank)
-      .orderBy('id', order)
       .from('subquery')
+
+    if (orderBy === 'latest_timestamp') {
+      filteredSubquery.orderBy('latest_timestamp', order, 'last')
+    }
+
+    filteredSubquery.orderBy('id', order)
 
     if (limit > 0) {
       filteredSubquery.limit(limit)

@@ -9,12 +9,14 @@ const now = end.getTime() + 60000
 describe('validator chart range', () => {
   test('advances both ends of rolling ranges, preserving duration', () => {
     expect(validatorChartRange({ start, end, mode: 'rolling' }, now, allStart)).toEqual({
-      start: '2026-10-10T12:01:00.000Z', end: '2026-10-11T12:01:00.000Z'
+      start: '2026-10-10T12:01:00.000Z',
+      end: '2026-10-11T12:01:00.000Z'
     })
   })
   test('keeps the All start fixed while advancing its end', () => {
     expect(validatorChartRange({ start: allStart, end, mode: 'rolling' }, now, allStart)).toEqual({
-      start: allStart.toISOString(), end: '2026-10-11T12:01:00.000Z'
+      start: allStart.toISOString(),
+      end: '2026-10-11T12:01:00.000Z'
     })
   })
   test('keeps completed local calendar ranges fixed', () => {
@@ -28,8 +30,10 @@ describe('validator chart range', () => {
   })
   test('advances a calendar range ending today only up to now', () => {
     const today = new Date(2026, 9, 11, 12)
-    expect(validatorChartRange({ start: today, end: today, mode: 'days' }, today.getTime(), allStart)?.end)
-      .toBe(today.toISOString())
+    expect(
+      validatorChartRange({ start: today, end: today, mode: 'days' }, today.getTime(), allStart)
+        ?.end
+    ).toBe(today.toISOString())
   })
   test('requires both dates', () => {
     expect(validatorChartRange({ start }, now, allStart)).toBeNull()
@@ -43,7 +47,8 @@ describe('validator chart history', () => {
 
   test('counts blocks from hidden epochs without treating missing payouts as zero', () => {
     expect(validatorChartHistory([unavailable, zero, ongoing])).toEqual({
-      visiblePoints: [zero, ongoing], totalBlocks: 32
+      visiblePoints: [zero, ongoing],
+      totalBlocks: 32
     })
   })
   test('keeps known blocks even when no payout bars can be displayed', () => {

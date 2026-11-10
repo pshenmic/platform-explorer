@@ -49,6 +49,9 @@ interface ValidatorsListProps {
   paging?: DataListProps['paging']
   title?: ReactNode
   pinFirst?: boolean
+  sort?: DataListProps['sort']
+  sortDefault?: DataListProps['sortDefault']
+  onSortChange?: DataListProps['onSortChange']
 }
 
 function validatorColumns(canFilter: boolean) {
@@ -114,6 +117,7 @@ function validatorColumns(canFilter: boolean) {
     },
     {
       ...columnLayout.timestamp,
+      sortKey: 'latest_timestamp',
       filterKey: canFilter ? 'timestamp' : undefined,
       filterType: canFilter ? ('daterange' as const) : undefined,
       cell: (validator: Validator) => {
@@ -133,17 +137,12 @@ export const ValidatorsList = ({
   onFilterChange,
   paging,
   title,
-  pinFirst = false
+  pinFirst = false,
+  sort,
+  sortDefault,
+  onSortChange
 }: ValidatorsListProps) => {
   const canFilter = Boolean(onFilterChange)
-
-  if (error) {
-    return (
-      <div className={'ListPage__Error'}>
-        <ErrorMessageBlock />
-      </div>
-    )
-  }
 
   return (
     <DataList
@@ -156,13 +155,20 @@ export const ValidatorsList = ({
       rowHref={validator => `/validator/${validator.proTxHash}`}
       rowKey={validator => validator.proTxHash || ''}
       emptyMessage={
-        filterValues && Object.keys(filterValues).length
-          ? 'No validators match these filters.'
-          : 'There are no validators yet.'
+        error ? (
+          <ErrorMessageBlock />
+        ) : filterValues && Object.keys(filterValues).length ? (
+          'No validators match these filters.'
+        ) : (
+          'There are no validators yet.'
+        )
       }
       filterValues={filterValues}
       onFilterChange={onFilterChange}
       paging={paging}
+      sort={sort}
+      sortDefault={sortDefault}
+      onSortChange={onSortChange}
       title={title}
     />
   )

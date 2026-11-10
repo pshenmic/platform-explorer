@@ -80,7 +80,11 @@ function IdentityDigestCard({ identity, rate, className }: IdentityDigestCardPro
           value={
             <a
               {...(l1explorerBaseUrl && {
-                href: getL1ExplorerLink(l1explorerBaseUrl, 'transaction', identity.data?.fundingCoreTx),
+                href: getL1ExplorerLink(
+                  l1explorerBaseUrl,
+                  'transaction',
+                  identity.data?.fundingCoreTx
+                ),
                 target: '_blank',
                 rel: 'noopener noreferrer'
               })}

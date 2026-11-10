@@ -92,11 +92,7 @@ export default function QuorumInfo({
           className={'QuorumInfo__InfoLine'}
           title={'Quorum Block Height'}
           value={
-            <ValueContainer
-              size={'md'}
-              external={true}
-              link={blockLink}
-            >
+            <ValueContainer size={'md'} external={true} link={blockLink}>
               {quorum?.blockHeight}
             </ValueContainer>
           }
@@ -109,13 +105,7 @@ export default function QuorumInfo({
         <InfoLine
           className={'QuorumInfo__InfoLine'}
           title={'Quorum Creation Height'}
-          value={
-            <ValueContainer
-              size={'md'}
-            >
-              {quorum?.creationHeight}
-            </ValueContainer>
-          }
+          value={<ValueContainer size={'md'}>{quorum?.creationHeight}</ValueContainer>}
           loading={loading}
           error={typeof quorum?.creationHeight !== 'number'}
         />
