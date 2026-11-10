@@ -114,7 +114,7 @@ impl From<IdentityUpdateTransition> for Identity {
 
 impl From<SystemDataContract> for Identity {
     fn from(data_contract: SystemDataContract) -> Self {
-        let platform_version = dpp::version::PLATFORM_VERSIONS.first().unwrap();
+        let platform_version = dpp::version::PLATFORM_VERSIONS.last().unwrap();
         let source = data_contract.source(platform_version).unwrap();
         let identifier = Identifier::from(source.owner_id_bytes);
         let owner = Identifier::from(source.owner_id_bytes);

@@ -17,6 +17,7 @@ interface DateRangeFilterProps {
   onSubmit?: () => void
   config?: ChartConfig
   compact?: boolean
+  showPresets?: boolean
 }
 
 function sameDay(a: Date | null | undefined, b: Date | null | undefined): boolean {
@@ -41,7 +42,8 @@ export const DateRangeFilter = ({
   onChange,
   onSubmit,
   config = defaultChartConfig,
-  compact = false
+  compact = false,
+  showPresets = true
 }: DateRangeFilterProps) => {
   const [timespan, setTimespan] = useState<TimespanValue | null>(null)
   const [calendarValue, setCalendarValue] = useState<CalendarRange>([
@@ -98,32 +100,34 @@ export const DateRangeFilter = ({
 
   return (
     <div className={`DateRangeFilter${compact ? ' DateRangeFilter--Compact' : ''}`}>
-      <div className={'DateRangeFilter__ValuesContainer'}>
-        {!compact && (
-          <div className={'DateRangeFilter__ValuesTitle'}>Select a day, period or Timeframe:</div>
-        )}
-        <div className={'DateRangeFilter__Values'}>
-          {config.timespan.values.map((iTimespan, i) => (
-            <button
-              type={'button'}
-              className={`DateRangeFilter__ValueButton ${iTimespan.label === timespan?.label ? 'DateRangeFilter__ValueButton--Active' : ''}`}
-              onClick={() => timeframeButtonHandler(iTimespan)}
-              key={i}
-            >
-              {iTimespan.label}
-            </button>
-          ))}
-          {!compact && onSubmit && (
-            <button
-              type={'button'}
-              className={'DateRangeFilter__ValueButton DateRangeFilter__ValueButton--Submit'}
-              onClick={onSubmit}
-            >
-              ok
-            </button>
+      {showPresets && (
+        <div className={'DateRangeFilter__ValuesContainer'}>
+          {!compact && (
+            <div className={'DateRangeFilter__ValuesTitle'}>Select a day, period or Timeframe:</div>
           )}
+          <div className={'DateRangeFilter__Values'}>
+            {config.timespan.values.map((iTimespan, i) => (
+              <button
+                type={'button'}
+                className={`DateRangeFilter__ValueButton ${iTimespan.label === timespan?.label ? 'DateRangeFilter__ValueButton--Active' : ''}`}
+                onClick={() => timeframeButtonHandler(iTimespan)}
+                key={i}
+              >
+                {iTimespan.label}
+              </button>
+            ))}
+            {!compact && onSubmit && (
+              <button
+                type={'button'}
+                className={'DateRangeFilter__ValueButton DateRangeFilter__ValueButton--Submit'}
+                onClick={onSubmit}
+              >
+                ok
+              </button>
+            )}
+          </div>
         </div>
-      </div>
+      )}
 
       <DateRangePicker
         disableFutureDates={true}

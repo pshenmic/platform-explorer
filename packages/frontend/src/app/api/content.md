@@ -688,6 +688,7 @@ GET /validators?blocks_proposed_min=1&blocks_proposed_max=9999999&last_proposed_
             },
             "totalReward": null,
             "epochReward": null,
+            "pendingEpochReward": null,
             "withdrawalsCount": null,
             "lastWithdrawal": null,
             "lastWithdrawalTime": null,
@@ -715,7 +716,7 @@ GET /validators?blocks_proposed_min=1&blocks_proposed_max=9999999&last_proposed_
 
 #### Errors
 
-`400 Bad Request` is returned for invalid pagination or parameter values, and for reversed block count, height, or timestamp ranges.
+`400 Bad Request` is returned for reversed block count, height, or timestamp ranges. Invalid pagination or query parameter values currently return `500 Internal Server Error` through the API error handler.
 
 #### Location data attribution
 
@@ -740,6 +741,8 @@ Get validator by ProTxHash.
 | `lastProposedBlockHeader` | field is nullable |
 | `totalReward` | Platform rewards paid to the validator for its proposed blocks, in credits. |
 | `epochReward` | Reward paid in the current epoch for the previous epoch, in credits. |
+| `pendingEpochReward` | Current epoch reward estimate before masternode reward shares, read from Platform state up to `blockHeight`. Contains the epoch number, proposed and total block counts, and the pool components (`processingFees`, `distributedStorageFees`, `coreBlockRewards`) in credits. `reward` is the validator's share based on its proposed blocks. Future blocks change the final payout; `null` when the pool cannot be read. |
+| `pendingEpochReward.estimatedReward` | Projected reward for the full epoch, in credits: `reward` scaled by elapsed epoch time to the epoch duration, assuming the earning rate stays unchanged. `null` when the times are unknown. |
 | `registeredAt` | Time of the Core block in which the masternode was registered. |
 | `votingIdentity` | Identity derived from the masternode's current voting key. |
 | `votingIdentityBalance` | Balance of the voting identity; `null` when that identity does not exist. |
@@ -809,6 +812,17 @@ GET /validator/F60A6BF9EC0794BB0CFD1E0F2217933F4B33EDE6FE810692BC275CA18148AEF0
   },
   "totalReward": 0,
   "epochReward": 0,
+  "pendingEpochReward": {
+    "epoch": 20172,
+    "blockHeight": 662240,
+    "proposedBlocks": 3,
+    "totalBlocks": 62,
+    "processingFees": "11137777300",
+    "distributedStorageFees": "1932534464",
+    "coreBlockRewards": "1875071229584",
+    "reward": "91361687484",
+    "estimatedReward": "101597807719"
+  },
   "withdrawalsCount": 1,
   "lastWithdrawal": "01FE1F00379C66C6E3BFD81A088E57E17613EC36E4FF812458535A8ABCB84047",
   "lastWithdrawalTime": "2024-10-12T03:15:19.257Z",
@@ -881,6 +895,8 @@ Get validator by Masternode Identity.
 | `totalReward` | Platform rewards paid to the validator for its proposed blocks, in credits. |
 | `epochReward` | Reward paid in the current epoch for the previous epoch, in credits. |
 
+The response also includes `pendingEpochReward` and `pendingEpochReward.estimatedReward`, with the same fields, units and availability as [Validator by ProTxHash](#validator-by-protxhash).
+
 ```http
 GET /validator/identity/8tsWRSwsTM5AXv4ViCF9gu39kzjbtfFDM6rCyL2RcFzd
 ```
@@ -938,6 +954,17 @@ GET /validator/identity/8tsWRSwsTM5AXv4ViCF9gu39kzjbtfFDM6rCyL2RcFzd
   },
   "totalReward": 0,
   "epochReward": 0,
+  "pendingEpochReward": {
+    "epoch": 20172,
+    "blockHeight": 662240,
+    "proposedBlocks": 3,
+    "totalBlocks": 62,
+    "processingFees": "11137777300",
+    "distributedStorageFees": "1932534464",
+    "coreBlockRewards": "1875071229584",
+    "reward": "91361687484",
+    "estimatedReward": "101597807719"
+  },
   "withdrawalsCount": 1,
   "lastWithdrawal": "01FE1F00379C66C6E3BFD81A088E57E17613EC36E4FF812458535A8ABCB84047",
   "lastWithdrawalTime": "2024-10-12T03:15:19.257Z",
