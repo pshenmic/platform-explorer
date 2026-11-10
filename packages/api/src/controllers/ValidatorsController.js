@@ -202,6 +202,7 @@ class ValidatorsController {
       page = 1,
       limit = 10,
       order = 'asc',
+      order_by: orderBy = 'id',
       isActive = undefined,
       isBanned = undefined,
       owner,
@@ -259,7 +260,8 @@ class ValidatorsController {
       lastProposedBlockHeightMax,
       lastProposedBlockTimestampStart,
       lastProposedBlockTimestampEnd,
-      lastProposedBlockHash
+      lastProposedBlockHash,
+      orderBy
     )
 
     const activeValidatorsHashes = new Set(activeValidators.map(validator => validator.pro_tx_hash))
