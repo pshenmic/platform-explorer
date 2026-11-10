@@ -84,18 +84,31 @@ function Document({ identifier }: DocumentProps) {
   }, [setBreadcrumbs, identifier, document])
 
   const fetchData = () => {
+    let cancelled = false
     setDocument(state => ({ ...state, loading: true }))
 
     Api.getDocumentByIdentifier(identifier, DocumentId ?? undefined, typeName ?? undefined)
-      .then(doc => fetchHandlerSuccess(setDocument, doc as Partial<DocumentDetail>))
-      .catch(err => fetchHandlerError(setDocument, err))
+      .then(doc => {
+        if (!cancelled) fetchHandlerSuccess(setDocument, doc as Partial<DocumentDetail>)
+      })
+      .catch(err => {
+        if (!cancelled) fetchHandlerError(setDocument, err)
+      })
 
     Api.getRate()
-      .then(res => fetchHandlerSuccess(setRate, res))
-      .catch(err => fetchHandlerError(setRate, err))
+      .then(res => {
+        if (!cancelled) fetchHandlerSuccess(setRate, res)
+      })
+      .catch(err => {
+        if (!cancelled) fetchHandlerError(setRate, err)
+      })
+
+    return () => {
+      cancelled = true
+    }
   }
 
-  useEffect(fetchData, [identifier])
+  useEffect(fetchData, [identifier, DocumentId, typeName])
 
   useEffect(() => {
     if (!identifier) return
